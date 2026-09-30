@@ -458,8 +458,12 @@ private:
 	void PART_04();
 
 	// spring bridge
-	void PART_05_HELPER_4(int num);
-	void PART_05_HELPER_5(int frame);
+	void PART_05_HELPER_4_drawPaperOrNot(int num);
+	void PART_05_HELPER_5_drawPaper(int frame);
+	void PART_05_HELPER_3_drawCamera(int frame);
+	void PART_05_HELPER_6();
+	void PART_05_HELPER_1_drawPhotographer();
+	void PART_05_HELPER_2_drawTripod();
 	void PART_05();
 	void PART_05_EXEC_ACTION(int action);
 	void PART_05_ACTION_103_pickPaper();

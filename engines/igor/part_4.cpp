@@ -46,6 +46,7 @@ void IgorEngine::PART_04_EXEC_ACTION(int action) {
 		}
 		break;
 	case 106:
+		// SpringBridge
 		_currentPart = 50;
 		break;
 	default:

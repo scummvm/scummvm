@@ -55,25 +55,66 @@ namespace Igor {
 	}
 }
 
-void IgorEngine::PART_05_HELPER_4(int num) {
+void IgorEngine::PART_05_HELPER_4_drawPaperOrNot(int num) {
+
 	if (_objectsState[60] == 0) {
-		PART_05_HELPER_5(0);
+		// paper not taken, paint "frame 0"
+		PART_05_HELPER_5_drawPaper(0);
 		return;
 	}
-	PART_05_HELPER_5(1);
+	// paper taken, paint "frame 1"
+	PART_05_HELPER_5_drawPaper(1);
+	// disable object
 	_roomObjectAreasTable[24].object = 0;
 	for (int i = 27; i <= 29; ++i) {
 		_roomObjectAreasTable[i].object = 0;
 	}
 }
 
-void IgorEngine::PART_05_HELPER_5(int frame) {
+void IgorEngine::PART_05_HELPER_5_drawPaper(int frame) {
 	const int offset = 41926;
 	for (int i = 0; i <= 2; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 12 + i * 4;
 		memcpy(_screenLayer1 + i * 320 + offset, src, 4);
 	}
 }
+
+void IgorEngine::PART_05_HELPER_1_drawPhotographer() {
+	const int offset = 23521;
+	for (int i = 0; i <= 48; ++i) {
+		memcpy(_animFramesBuffer + 0xDEA8 + i * 23 - 1, _screenLayer1 + i * 320 + offset, 23);
+		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + 0x95C7 + i * 23, 23);
+	}
+}
+
+void IgorEngine::PART_05_HELPER_2_drawTripod() {
+	const int offset = 28668;
+	for (int i = 0; i <= 32; ++i) {
+		const uint8 *src = _animFramesBuffer + 0x7E54 + i * 23;
+		memcpy(_screenLayer1 + i * 320 + offset, src, 23);
+	}
+}
+
+void IgorEngine::PART_05_HELPER_3_drawCamera(int frame) {
+	const int offset = 26756;
+	for (int i = 0; i <= 5; ++i) {
+		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 42 + i * 7;
+		memcpy(_screenLayer1 + i * 320 + offset, src, 7);
+	}
+}
+
+void IgorEngine::PART_05_HELPER_6() {
+	_walkData[0].setPos(0, 141, 2, 0);
+	_walkData[0].setDefaultScale();
+	_walkDataLastIndex = 0;
+	_walkDataCurrentIndex = 1;
+	buildWalkPath(0, 141, 51, 123);
+	_walkData[_walkDataLastIndex].frameNum = 0;
+	_walkDataCurrentIndex = 1;
+	_gameState.igorMoving = true;
+	waitForIgorMove();
+}
+
 
 void IgorEngine::PART_05() {
 	_gameState.enableLight = 1;
@@ -86,6 +127,17 @@ void IgorEngine::PART_05() {
 	static const int anm4[] = {FRM_SpringRock5, FRM_SpringRock6, 0};
 	loadAnimData(anm4, 0xA763);
 
+	// Draws photographer and objects before copying the screenLayer
+	if (_objectsState[61] != 0) {
+		PART_05_HELPER_1_drawPhotographer();
+	}
+	if (_objectsState[63] != 0) {
+		PART_05_HELPER_2_drawTripod();
+	}
+	if (_objectsState[62] != 0) {
+		PART_05_HELPER_3_drawCamera(0);
+	}
+
 	for (int i = 0; i <= 143; ++i) {
 		memcpy(_animFramesBuffer + i * 224, _screenLayer1 + i * 320 + 96, 224);
 	}
@@ -95,18 +147,24 @@ void IgorEngine::PART_05() {
 	loadAnimData(anm1, 0x7E00);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_05_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND;
-	PART_05_HELPER_4(255);
+	PART_05_HELPER_4_drawPaperOrNot(255);
 	loadActionData(DAT_SpringRock);
 	_roomDataOffsets = PART_05_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
 
+	if (_currentPart == 50) {
+		debug("Entering PART_05_HELPER_6");
+		PART_05_HELPER_6();
+	}
+
 	enterPartLoop();
 	while (_currentPart >= 50 && _currentPart <= 52) {
 		runPartLoop();
 	}
 	leavePartLoop();
+	stopSound();
 	if (_currentPart == 255) {
 		fadeOut(768);
 	} else if (_currentPart != 60) {
@@ -117,8 +175,6 @@ void IgorEngine::PART_05() {
 		fadeOut(624);
 	}
 }
-
-
 
 void IgorEngine::PART_05_ACTION_103_pickPaper() {
 	int i = 0;
@@ -139,7 +195,7 @@ void IgorEngine::PART_05_ACTION_103_pickPaper() {
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
-	PART_05_HELPER_4(255);
+	PART_05_HELPER_4_drawPaperOrNot(255);
 }
 
 void IgorEngine::PART_05_ACTION_102_scrollRight() {
@@ -191,7 +247,6 @@ void IgorEngine::PART_05_ACTION_102_scrollRight() {
 	wd->setDefaultScale();
 	_currentPart = 60;
 }
-
 
 void IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND() {
 	if (compareGameTick(61)) {
