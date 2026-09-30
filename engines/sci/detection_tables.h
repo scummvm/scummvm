@@ -2038,6 +2038,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::HE_ISR, Common::kPlatformWindows, ADGF_CD, GUIO_KQ5_CD_WINDOWS},
 
 	// King's Quest 5 - English DOS Floppy
+	// Game version 0.000.062 from VERSION file
 	// SCI interpreter version 1.000.060
 	{"kq5", "", {
 		{"resource.map", 0, "d6172c27b453350e158815fbae23f41e", 8004},
@@ -2087,7 +2088,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// King's Quest 5 - English DOS Floppy (supplied by omer_mor in bug report #5048)
-	// VERSION file reports "0.000.051"
+	// Game version 0.000.051 from VERSION file
+	// SCI interpreter version 1.000.060
 	{"kq5", "", {
 		{"resource.map", 0, "8b2158083302568b73b16fa3655360fe", 8184},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276398},
@@ -2103,8 +2105,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// King's Quest 5 EGA (supplied by markcoolio in bug report #4496)
-	// SCI interpreter version 1.000.060
-	// VERSION file reports "0.000.055"
+	// Game version 0.000.055 from VERSION file
+	// SCI interpreter version 1.000.058
 	{"kq5", "EGA", {
 		{"resource.map", 0, "baf888a4e4797ce0de0b19d4e183583c", 7662},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 394242},
@@ -2120,7 +2122,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// King's Quest 5 EGA 1.2M disk version (from LordHoto)
-	// VERSION file reports "0.000.055"
+	// Game version 0.000.055 from VERSION file
+	// SCI interpreter version 1.000.058
 	{"kq5", "EGA", {
 		{"resource.map", 0, "53206afb4fd73871a484e83acab80f31", 7608},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 413818},
@@ -2132,7 +2135,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// King's Quest 5 EGA (supplied by omer_mor in bug report #4997)
-	// VERSION file reports "0.000.062"
+	// Game version 0.000.062 from VERSION file
+	// SCI interpreter version 1.000.073
 	{"kq5", "EGA", {
 		{"resource.map", 0, "e17cfb38175382b9188da75c53bbab64", 7656},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 394072},
@@ -2148,22 +2152,26 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// King's Quest 5 - English DOS Floppy (from telanus, bug report Trac#9624)
-	// Game version 0.000.062
+	// Game version 0.000.062 from VERSION file
+	// SCI interpreter version 1.000.060
 	{"kq5", "", {
 		{"resource.map", 0, "86a4ae3fafb1bbcc81b78cf427e45ba0", 8184},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276351},
 		{"resource.001", 0, "51797b784eccab97d1d4b1f8dc3ef671", 1099768},
 		{"resource.002", 0, "93c6f0fc7682fda52a632f34bcc1c975", 1060941},
 		{"resource.003", 0, "44388574401a25938f660dca90bdd040", 1109594},
-		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276351},
-		{"resource.007", 0, "a4cb2eba783a7b05f5b005d47bd94936", 1133814},
 		{"resource.004", 0, "464109fa0fd76f722fff73fd26e98271", 1153791},
 		{"resource.005", 0, "3c292d392c3cc3b532e9063d0d1fb7aa", 1032802},
 		{"resource.006", 0, "0380ee8181b39a8d7b66daf61a5b7d51", 921308},
+		{"resource.007", 0, "a4cb2eba783a7b05f5b005d47bd94936", 1133814},
+		{"resource.008", 0, "c1eef048fa9fe76298c2d4705ef9549f", 1131985},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// King's Quest 5 DOS 0.000.062 EGA (5 x 5.25" disks)
+	// King's Quest 5 DOS EGA (5 x 5.25" disks)
 	// Supplied by ssburnout in bug report #5254
+	// Game version 0.000.062 from VERSION file
+	// SCI interpreter version 1.000.073
 	{"kq5", "EGA", {
 		{"resource.map", 0, "ef4fdc72ca7aef62054e8b075d7960d8", 7596},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 413648},
@@ -2174,8 +2182,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// King's Quest 5 DOS 0.000.062 EGA (15 x 5.25" 360k disks)
+	// King's Quest 5 DOS EGA (15 x 5.25" 360k disks)
 	// Supplied by ns394 in bug report #15571
+	// Game version 0.000.062 from VERSION file
+	// SCI interpreter version 1.000.073
 	{"kq5", "EGA", {
 		{"resource.map", 0, "c6c167ee097517f10eb5825678a4d9e0", 6876},
 		{"resource.000", 0, "281c51f7ebbaf9d6507ef3442165069e", 180936},
@@ -2213,7 +2223,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
-	// King's Quest 5 DOS Spanish Floppy VGA (3.5" disks)
+	// King's Quest 5 DOS Spanish Floppy VGA (5.25" disks)
 	// Game version 0.000.162 from about box, 1.000 from VERSION file
 	// SCI interpreter version 1.000.784
 	// Supplied by dianiu in bug report #6121
