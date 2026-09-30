@@ -2856,6 +2856,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO7(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GAMEOPTION_RGB_RENDERING)	},
 
 	// Laura Bow - English Amiga
+	// Game version 1.000.059 from about screen
 	// Executable scanning reports "1.002.030"
 	// SCI interpreter version 0.000.685
 	{"laurabow", "", {
@@ -2870,7 +2871,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Laura Bow - English Atari ST (from jvprat)
-	// Executable scanning reports "1.002.030", Floppy label reports "1.000.062, 9.23.90"
+	// Game version 1.000.062 from about screen
+	// Executable scanning reports "1.002.030"
 	// SCI interpreter version 0.000.685
 	{"laurabow", "", {
 		{"resource.map", 0, "9f90878e6e1b8c96e692203f068ce2b1", 8478},
@@ -2889,7 +2891,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
 
-	// Laura Bow - English DOS 3.5" Floppy (from "The Roberta Williams Anthology"/1996)
+	// Laura Bow - English DOS 3.5" Floppy
+	// Game version 1.000.046 from about screen
 	// SCI interpreter version 0.000.631
 	{"laurabow", "", {
 		{"resource.map", 0, "4e511f47d9893fa529d6621a93fa0030", 8478},
@@ -2900,41 +2903,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
-	// Laura Bow - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
-	// based on English DOS 3.5" Floppy (from "The Roberta Williams Anthology"/1996)
-	// SCI interpreter version 0.000.631
-	{ "laurabow", "", {
-		{"resource.map", 0, "4e511f47d9893fa529d6621a93fa0030", 8478},
-		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 515788},
-		{"resource.002", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 721381},
-		{"resource.003", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 667468},
-		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 683807},
-		{"PATCHES/font.000", 0, "5053e202adbd7a4fdebb30b2ea76ce27", 2835},
-		{"PATCHES/font.001", 0, "f65565f3375ac9972c96fd81c3eb491e", 2709},
-		{"PATCHES/font.004", 0, "4dfbf96cba4c181e9d52eb9e49570b1d", 2256},
-		{"PATCHES/font.008", 0, "8abefd3b44827ff26e2ad298f9e76a2b", 3029},
-		AD_LISTEND},
-		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER },
-
-	// Laura Bow - Russian fan translation by https://github.com/deadman2000/RuSCI
-	// SCI interpreter version 0.000.631
-	{"laurabow", "", {
-		{"resource.map", 0, "b1905f6aa68ff65a057b080b1eae954c", 12030},
-		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 108032},
-		{"resource.002", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 354680},
-		{"resource.003", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 361815},
-		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 339714},
-		{"resource.005", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 327465},
-		{"resource.006", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 328390},
-		{"resource.007", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 317687},
-		{"resource.008", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 352345},
-		{"resource.009", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 257355},
-		{"resource.010", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 356093},
-		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for detecting translation
-		AD_LISTEND},
-		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
-
-	// Laura Bow - English DOS (from FRG)
+	// Laura Bow - English DOS 5.25" Floppy
+	// Game version 1.000.046 from about screen
 	// SCI interpreter version 0.000.631
 	{"laurabow", "", {
 		{"resource.map", 0, "b1905f6aa68ff65a057b080b1eae954c", 12030},
@@ -2969,6 +2939,40 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"PATCHES/font.001", 0, "f65565f3375ac9972c96fd81c3eb491e", 2709},
 		AD_LISTEND},
 		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
+
+	// Laura Bow - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	// based on English DOS 3.5" Floppy
+	// SCI interpreter version 0.000.631
+	{ "laurabow", "", {
+		{"resource.map", 0, "4e511f47d9893fa529d6621a93fa0030", 8478},
+		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 515788},
+		{"resource.002", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 721381},
+		{"resource.003", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 667468},
+		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 683807},
+		{"PATCHES/font.000", 0, "5053e202adbd7a4fdebb30b2ea76ce27", 2835},
+		{"PATCHES/font.001", 0, "f65565f3375ac9972c96fd81c3eb491e", 2709},
+		{"PATCHES/font.004", 0, "4dfbf96cba4c181e9d52eb9e49570b1d", 2256},
+		{"PATCHES/font.008", 0, "8abefd3b44827ff26e2ad298f9e76a2b", 3029},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER },
+
+	// Laura Bow - Russian fan translation by https://github.com/deadman2000/RuSCI
+	// SCI interpreter version 0.000.631
+	{"laurabow", "", {
+		{"resource.map", 0, "b1905f6aa68ff65a057b080b1eae954c", 12030},
+		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 108032},
+		{"resource.002", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 354680},
+		{"resource.003", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 361815},
+		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 339714},
+		{"resource.005", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 327465},
+		{"resource.006", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 328390},
+		{"resource.007", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 317687},
+		{"resource.008", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 352345},
+		{"resource.009", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 257355},
+		{"resource.010", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 356093},
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for detecting translation
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 #define GUIO_LB2_CD_WINDOWS GUIO6(GAMEOPTION_PREFER_DIGITAL_SFX,	\
 							GAMEOPTION_WINDOWS_CURSORS,				\
