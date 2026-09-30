@@ -24,6 +24,7 @@
 
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/util.h"
 
 namespace Scumm {
@@ -275,6 +276,7 @@ bool MortimerMovie::fail(const char *message) {
 }
 
 bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
+	const uint32 started = g_system->getMillis();
 	_initialDoubled = doubled;
 	_frames.clear();
 	_sounds.clear();
@@ -285,8 +287,9 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
 
 	struct Track {
 		uint16 id, flags, nextBlock;
+		uint32 size = 0;
 		MortimerSound sound;
-		Common::Array<byte> bytes;
+		Common::Array<Chunk> blocks;
 	};
 	Common::Array<Track> tracks;
 	uint32 pos = 8;
@@ -375,10 +378,8 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
 					}
 					if (tracks[index].nextBlock++ != block)
 						return fail("Missing Mortimer audio block");
-					Common::Array<byte> &bytes = tracks[index].bytes;
-					const uint oldSize = bytes.size();
-					bytes.resize(oldSize + sub.size - 10);
-					memcpy(bytes.begin() + oldSize, body + 10, sub.size - 10);
+					tracks[index].blocks.push_back(sub);
+					tracks[index].size += sub.size - 10;
 				}
 			}
 			if (backgrounds > 1)
@@ -389,10 +390,21 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
 	if (_frames.size() != expectedFrames || !expectedFrames)
 		return fail("Incomplete Mortimer movie");
 	for (uint i = 0; i < tracks.size(); ++i) {
-		if (!decodeSound(tracks[i].bytes, tracks[i].sound))
+		// Allocate each track once. Growing an exact-sized byte array for
+		// every PSAD block repeatedly copied the entire accumulated audio.
+		Track &track = tracks[i];
+		Common::Array<byte> bytes(track.size);
+		uint32 offset = 0;
+		for (uint j = 0; j < track.blocks.size(); ++j) {
+			const Chunk &block = track.blocks[j];
+			memcpy(bytes.begin() + offset, _data.begin() + block.offset + 10, block.size - 10);
+			offset += block.size - 10;
+		}
+		if (!decodeSound(bytes, track.sound))
 			return fail("Unsupported or incomplete Mortimer audio");
-		_sounds.push_back(tracks[i].sound);
+		_sounds.push_back(Common::move(track.sound));
 	}
+	debug(1, "Mortimer: loaded %u movie frames in %u ms", _frames.size(), g_system->getMillis() - started);
 	return true;
 }
 
@@ -437,11 +449,14 @@ int MortimerMovie::objectScale(byte codec) const {
 
 void MortimerMovie::handlePalette(const byte *data, uint32 size) {
 	if (size == 2308) {
+		// SHELL 414a14 installs XPAL's base palette before initializing the
+		// fade accumulators. Using the preceding scene's colors corrupts
+		// subsequent delta frames, even though this first frame looks right.
+		memcpy(_palette, data + 1540, sizeof(_palette));
 		for (uint i = 0; i < 768; ++i) {
 			_shiftedPalette[i] = _palette[i] << 7;
 			_paletteDelta[i] = READ_LE_INT16(data + 4 + i * 2);
 		}
-		memcpy(_palette, data + 1540, sizeof(_palette));
 	} else {
 		for (uint i = 0; i < 768; ++i) {
 			_shiftedPalette[i] += _paletteDelta[i];
@@ -485,10 +500,11 @@ bool MortimerMovie::decodeObject(Object &object) {
 	return true;
 }
 
-bool MortimerMovie::advance() {
+bool MortimerMovie::advance(bool renderFrame) {
 	if (_nextFrame >= _frames.size())
 		return false;
-	memcpy(_previous.begin(), _pixels.begin(), _pixels.size());
+	if (renderFrame)
+		memcpy(_previous.begin(), _pixels.begin(), _pixels.size());
 	_objects.clear();
 	_captions.clear();
 	const Frame &current = _frames[_nextFrame++];
@@ -525,7 +541,7 @@ bool MortimerMovie::advance() {
 				object.transparent = object.scale == 1 && (_data[object.offset + 26] & 2);
 			object.skipA = skipA;
 			object.skipB = skipB;
-			_objects.push_back(object);
+			_objects.push_back(Common::move(object));
 		} else if (chunk.tag == MKTAG('F', 'O', 'B', 'J')) {
 			Object object;
 			object.offset = chunk.offset;
@@ -538,12 +554,13 @@ bool MortimerMovie::advance() {
 				_storedObject = object;
 				_storeNext = false;
 			}
-			_objects.push_back(object);
+			_objects.push_back(Common::move(object));
 		}
 		skipA = 0xffff;
 		skipB = 0;
 	}
-	render();
+	if (renderFrame)
+		render();
 	return true;
 }
 

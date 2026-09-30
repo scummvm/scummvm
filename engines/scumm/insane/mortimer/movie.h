@@ -64,7 +64,8 @@ public:
 	virtual ~MortimerMovie();
 	bool load(Common::SeekableReadStream &stream, bool doubled = true);
 	virtual void reset();
-	virtual bool advance();
+	// Suppress compositing while seeking to a frame that replaces the image.
+	virtual bool advance(bool renderFrame = true);
 	void setBackground(const byte *pixels);
 
 	const byte *pixels() const { return _pixels.begin(); }

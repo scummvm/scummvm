@@ -320,12 +320,18 @@ bool MortimerEngine::nextScene(bool skip) {
 	}
 	if (skip && !_flight.interactive()) {
 		// Keep TITLE's music at the matching position when skipping its
-		// opening; the same track continues after the cockpit appears.
+		// opening, without compositing images that will never be displayed.
 		while (!_flight.interactive()) {
-			if (!_flight.advance()) {
+			if (!_flight.advance(false)) {
 				_loadError = _flight.errorMessage().empty() ? "Mortimer title has no gameplay transition" : _flight.errorMessage();
 				return false;
 			}
+		}
+		// The frame following the mode switch is a complete keyframe of
+		// the playable scene, so it does not need the skipped title image.
+		if (!_flight.advance()) {
+			_loadError = "Mortimer title has no gameplay frame";
+			return false;
 		}
 		_system->getPaletteManager()->setPalette(_flight.palette(), 0, 256);
 		_nextFrameTime = _system->getMillis() + 1000 / _flight.frameRate();
@@ -540,9 +546,9 @@ Common::Error MortimerEngine::run() {
 	const bool oldCursor = CursorMan.showMouse(false);
 	PauseToken pause;
 	bool exit;
-	// Use the original scene IDs for ScummVM's developer startup shortcut,
-	// with all animals rescued and enough glowstones to review the riddles.
-	const int boot = ConfMan.hasKey("boot_param") ? ConfMan.getInt("boot_param") : 0;
+	// Use the original scene IDs for ScummVM's developer startup shortcut.
+	// Interview entry points supply rescued animals and glowstones.
+	const int boot = ConfMan.hasKey("boot_param") ? ConfMan.getInt("boot_param") : -1;
 	if (boot == 4 || boot == 10 || boot == 18 || boot == 8 || boot == 25) {
 		stopSounds();
 		_introIndex = -1;
@@ -550,8 +556,10 @@ Common::Error MortimerEngine::run() {
 		_interview.start(0x7f, 30, boot);
 		exit = !processInterview();
 		_nextFrameTime = _system->getMillis() + 1000 / currentMovie().frameRate();
+	} else if (boot == 0) {
+		exit = !(loadFlight(0) && startFlight());
 	} else {
-		exit = !(loadIntro(0) && startMovie());
+		exit = !(loadIntro(boot >= 19 && boot <= 23 ? boot - 19 : 0) && startMovie());
 	}
 	while (!shouldQuit() && !exit) {
 		Common::Event event;

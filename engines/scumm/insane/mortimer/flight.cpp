@@ -45,11 +45,11 @@ void MortimerFlight::reset() {
 	memset(_toggles, 0, sizeof(_toggles));
 }
 
-bool MortimerFlight::advance() {
+bool MortimerFlight::advance(bool renderFrame) {
 	_obstacles.clear();
 	for (uint i = 0; i < _targets.size(); ++i)
 		_targets[i].active = false;
-	return MortimerMovie::advance();
+	return MortimerMovie::advance(renderFrame);
 }
 
 int MortimerFlight::objectScale(byte codec) const {
