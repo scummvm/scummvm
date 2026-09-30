@@ -52,8 +52,12 @@ public:
 	// Bits of a tile type id.
 	enum TileFlags : int32 {
 		kTileWalkable	= 0x001,
-		kTileMovable	= 0x010,	// slides along when a line is pushed
-		kTileMissing	= 0x100		// overrides kTileWalkable
+		kTileLake		= 0x002,	// Nancy16: a floe or open water
+		kTileSunk		= 0x004,	// Nancy16: open water
+		kTileRandom		= 0x008,	// Nancy16, see RandomTiles
+		kTileMovable	= 0x010,	// Nancy15: slides along when a line is pushed
+		kTileMissing	= 0x100,	// Nancy15: overrides kTileWalkable
+		kTileVariantBits = 0x1f0	// Nancy16: pick the look, left out of the grid; see pickTileVariant()
 	};
 
 	// The six neighbors of a hex, in the order they are searched.
@@ -64,8 +68,12 @@ public:
 		kSouth		= 3,
 		kSouthWest	= 4,
 		kNorthWest	= 5,
+		kEast		= 6,	// only on boards laid out in rows
+		kWest		= 7,
 		kNumDirections
 	};
+
+	static const uint kNumHexDirections = kEast;
 
 	// Jump animations are indexed clockwise from north; a hex leaves east and west empty.
 	static const uint kNumCompassDirections = 8;
@@ -104,9 +112,16 @@ public:
 		int32 offsetX = 0;
 		int32 offsetY = 0;
 		Common::Array<CharacterTileAnims> tileAnims;
+		RandomSoundBlock jumpSound;		// Nancy16
 		Common::Path jumpNames[kNumCompassDirections];
 		int32 jumpOffsetX[kNumCompassDirections] = {};
 		int32 jumpOffsetY[kNumCompassDirections] = {};
+	};
+
+	struct RandomTiles {
+		int32 id = 0;
+		int32 replacementID = 0;
+		float percent = 0;
 	};
 
 	struct Actor {
@@ -164,9 +179,13 @@ protected:
 	};
 
 	static void readAnimation(Common::SeekableReadStream &stream, Animation &dst);
+	void placeRandomTiles(const RandomTiles &tiles);
+	int32 pickTileVariant(int32 id) const;
 
-	static Common::Point step(const Common::Point &cell, Direction dir);
-	static bool directionTo(const Common::Point &from, const Common::Point &to, Direction &dir);
+	uint numDirections() const { return _isHexGrid ? kNumHexDirections : (uint)kNumDirections; }
+	static Direction opposite(Direction dir);
+	Common::Point step(const Common::Point &cell, Direction dir) const;
+	bool directionTo(const Common::Point &from, const Common::Point &to, Direction &dir) const;
 	static int32 framesToTicks(uint numFrames);
 	static uint frameAt(uint numFrames, int32 elapsed);
 
@@ -186,6 +205,7 @@ protected:
 	void rotateLine(Common::Array<int32> &grid, Common::Array<Common::Point> &cells,
 		const Common::Array<Common::Point> &line) const;
 	void slideBoard(const Common::Point &from, const Common::Point &to);
+	void moveIceFloes(const Common::Point &from, const Common::Point &to);
 
 	int32 tileSinkTime(int32 tileID) const;
 	int32 tileRiseTime(int32 tileID) const;
@@ -237,7 +257,7 @@ protected:
 	Common::Rect _rowStepCell;
 	Common::Rect _colStepCell;
 
-	byte _unknownGridFlag = 0;
+	bool _isHexGrid = true;			// otherwise the cells line up in rows (Nancy16)
 	int32 _numCols = 0;
 	int32 _numRows = 0;
 	int32 _hexDelay = 0;			// between one hex of a sliding line and the next

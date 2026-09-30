@@ -42,7 +42,7 @@ static const int kTileRefTolerance = 8;
 static const Common::Point kNoCell(-1, -1);
 
 // The jump animation of each hex direction.
-static const uint kCompassDirection[EscapeGridPuzzle::kNumDirections] = { 0, 1, 3, 4, 5, 7 };
+static const uint kCompassDirection[EscapeGridPuzzle::kNumDirections] = { 0, 1, 3, 4, 5, 7, 2, 6 };
 
 EscapeGridPuzzle::~EscapeGridPuzzle() {
 	for (uint i = 0; i < _jumpMovies.size(); ++i) {
@@ -83,15 +83,39 @@ void EscapeGridPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _rowStepCell);
 	readRect(stream, _colStepCell);
 
-	_unknownGridFlag = stream.readByte();
+	_isHexGrid = stream.readByte() == 1;
 	_numCols = stream.readSint32LE();
 	_numRows = stream.readSint32LE();
 	_hexDelay = (int32)(stream.readFloatLE() * (1000 / kTickLength) + 0.5f); // in seconds
+
+	// Nancy16 can scatter tiles randomly: a share of the cells marked with a tile id
+	// get replaced, and the rest lose their random marker bit
+	Common::Array<RandomTiles> randomTiles;
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		randomTiles.resize(stream.readUint16LE());
+		for (RandomTiles &tiles : randomTiles) {
+			tiles.id = stream.readSint32LE();
+			tiles.replacementID = stream.readSint32LE();
+			tiles.percent = stream.readFloatLE();
+		}
+	}
 
 	uint numCells = (uint)MAX<int32>(0, _numCols) * (uint)MAX<int32>(0, _numRows);
 	_grid.resize(numCells);
 	for (uint i = 0; i < numCells; ++i) {
 		_grid[i] = stream.readSint32LE();
+	}
+
+	for (const RandomTiles &tiles : randomTiles) {
+		placeRandomTiles(tiles);
+	}
+
+	// Nancy16 grids leave out the variant bits of the tile ids; each cell becomes one
+	// of the tile types that only differ from it in those bits, picked at random
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		for (int32 &id : _grid) {
+			id = pickTileVariant(id);
+		}
 	}
 
 	// Characters are counted in animations, eight each.
@@ -121,6 +145,10 @@ void EscapeGridPuzzle::readData(Common::SeekableReadStream &stream) {
 			for (uint k = 0; k < kNumCharTileAnims; ++k) {
 				readAnimation(stream, tileAnims.anims[k]);
 			}
+		}
+
+		if (g_nancy->getGameType() >= kGameTypeNancy16) {
+			character.jumpSound.readData(stream);
 		}
 
 		for (uint j = 0; j < kNumCompassDirections; ++j) {
@@ -164,6 +192,44 @@ void EscapeGridPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	readExitHotspot(stream);
 	_exitScene._sceneChange.continueSceneSound = kContinueSceneSound;
+}
+
+// Replaces a share of the matching cells, picked at random, and clears the random
+// marker from the others
+void EscapeGridPuzzle::placeRandomTiles(const RandomTiles &tiles) {
+	uint remaining = 0;
+	for (int32 id : _grid) {
+		if (id == tiles.id) {
+			++remaining;
+		}
+	}
+
+	int32 numToReplace = (int32)(tiles.percent * 0.01f * remaining);
+	for (int32 &id : _grid) {
+		if (id != tiles.id) {
+			continue;
+		}
+
+		if ((int32)g_nancy->_randomSource->getRandomNumber(remaining - 1) < numToReplace) {
+			id = tiles.replacementID;
+			--numToReplace;
+		} else {
+			id &= ~kTileRandom;
+		}
+
+		--remaining;
+	}
+}
+
+int32 EscapeGridPuzzle::pickTileVariant(int32 id) const {
+	Common::Array<int32> variants;
+	for (const TileType &type : _tileTypes) {
+		if ((type.id & ~kTileVariantBits) == id) {
+			variants.push_back(type.id);
+		}
+	}
+
+	return variants.empty() ? 0 : variants[g_nancy->_randomSource->getRandomNumber(variants.size() - 1)];
 }
 
 static void loadPuzzleImage(const Common::Path &name, Graphics::ManagedSurface &surface, uint32 transColor) {
@@ -257,8 +323,30 @@ void EscapeGridPuzzle::init() {
 	registerGraphics();
 }
 
-// Odd columns hang half a row lower than even ones.
-Common::Point EscapeGridPuzzle::step(const Common::Point &cell, Direction dir) {
+// On a hex grid, odd columns hang half a row lower than even ones; otherwise the
+// diagonal steps go straight to the next row
+Common::Point EscapeGridPuzzle::step(const Common::Point &cell, Direction dir) const {
+	if (!_isHexGrid) {
+		switch (dir) {
+		case kNorth:
+			return Common::Point(cell.x, cell.y - 1);
+		case kNorthEast:
+			return Common::Point(cell.x + 1, cell.y - 1);
+		case kSouthEast:
+			return Common::Point(cell.x + 1, cell.y + 1);
+		case kSouth:
+			return Common::Point(cell.x, cell.y + 1);
+		case kSouthWest:
+			return Common::Point(cell.x - 1, cell.y + 1);
+		case kNorthWest:
+			return Common::Point(cell.x - 1, cell.y - 1);
+		case kEast:
+			return Common::Point(cell.x + 1, cell.y);
+		default:
+			return Common::Point(cell.x - 1, cell.y);
+		}
+	}
+
 	bool odd = (cell.x & 1) != 0;
 
 	switch (dir) {
@@ -277,8 +365,20 @@ Common::Point EscapeGridPuzzle::step(const Common::Point &cell, Direction dir) {
 	}
 }
 
-bool EscapeGridPuzzle::directionTo(const Common::Point &from, const Common::Point &to, Direction &dir) {
-	for (int i = 0; i < kNumDirections; ++i) {
+EscapeGridPuzzle::Direction EscapeGridPuzzle::opposite(Direction dir) {
+	if (dir == kEast) {
+		return kWest;
+	}
+
+	if (dir == kWest) {
+		return kEast;
+	}
+
+	return (Direction)((dir + kNumHexDirections / 2) % kNumHexDirections);
+}
+
+bool EscapeGridPuzzle::directionTo(const Common::Point &from, const Common::Point &to, Direction &dir) const {
+	for (uint i = 0; i < numDirections(); ++i) {
 		if (step(from, (Direction)i) == to) {
 			dir = (Direction)i;
 			return true;
@@ -360,8 +460,10 @@ bool EscapeGridPuzzle::canStepOnto(const Common::Array<int32> &grid, const Commo
 		return false;
 	}
 
+	// In Nancy16, the missing bit is one of the variant bits, which only pick a floe's shape
 	int32 id = grid[cell.y * _numCols + cell.x];
-	if (!(id & kTileWalkable) || (id & kTileMissing)) {
+	bool isMissing = (id & kTileMissing) && g_nancy->getGameType() <= kGameTypeNancy15;
+	if (!(id & kTileWalkable) || isMissing) {
 		return false;
 	}
 
@@ -394,7 +496,7 @@ void EscapeGridPuzzle::collectLine(const Common::Array<int32> &grid, const Commo
 		return;
 	}
 
-	Direction back = (Direction)((dir + kNumDirections / 2) % kNumDirections);
+	Direction back = opposite(dir);
 	Common::Array<Common::Point> behind;
 	for (Common::Point p = to; validCell(p) && (grid[p.y * _numCols + p.x] & kTileMovable); p = step(p, back)) {
 		behind.push_back(p);
@@ -483,6 +585,70 @@ void EscapeGridPuzzle::slideBoard(const Common::Point &from, const Common::Point
 			}
 			pushTileAnim(cell, kTileRise, id, tileRiseTime(id));
 		}
+	}
+}
+
+// Nancy16's floes don't slide. Instead, the lake cells in line with the jump form a loop:
+// the landing floe, then back from the one jumped off, then from the far end ahead back to
+// the landing floe. The cell four along that loop rises as a floe, and the one right past
+// the landing floe sinks; with nothing ahead of the landing floe, the farthest one behind
+// sinks instead.
+void EscapeGridPuzzle::moveIceFloes(const Common::Point &from, const Common::Point &to) {
+	static const int32 kIceFloe = kTileWalkable | kTileLake;
+	static const int32 kOpenWater = kTileLake | kTileSunk;
+
+	Direction dir;
+	if (!validCell(to) || !(tileAt(to) & kTileLake) || !directionTo(from, to, dir)) {
+		return;
+	}
+
+	Direction back = opposite(dir);
+
+	Common::Array<Common::Point> ahead;
+	for (Common::Point p = to; validCell(p) && (tileAt(p) & kTileLake); p = step(p, dir)) {
+		ahead.push_back(p);
+	}
+
+	Common::Array<Common::Point> behind;
+	for (Common::Point p = from; validCell(p) && (tileAt(p) & kTileLake); p = step(p, back)) {
+		behind.push_back(p);
+	}
+
+	Common::Array<Common::Point> loop;
+	loop.push_back(to);
+	for (const Common::Point &p : behind) {
+		loop.push_back(p);
+	}
+
+	Common::Point sinking = kNoCell;
+	if (ahead.size() > 1) {
+		sinking = ahead[1];
+		for (uint i = ahead.size() - 1; i >= 1; --i) {
+			loop.push_back(ahead[i]);
+		}
+	} else if (!behind.empty()) {
+		sinking = behind.back();
+	}
+
+	if (sinking != kNoCell && (tileAt(sinking) & kOpenWater) == kOpenWater) {
+		sinking = kNoCell;
+	}
+
+	Common::Point rising = loop[4 % loop.size()];
+	if ((tileAt(rising) & kIceFloe) == kIceFloe) {
+		rising = kNoCell;
+	}
+
+	if (rising != kNoCell) {
+		int32 id = pickTileVariant(kIceFloe);
+		tileAt(rising) = id;
+		pushTileAnim(rising, kTileRise, id, tileRiseTime(id));
+	}
+
+	if (sinking != kNoCell && sinking != to && sinking != rising) {
+		int32 id = tileAt(sinking);
+		pushTileAnim(sinking, kTileSink, id, tileSinkTime(id));
+		tileAt(sinking) = pickTileVariant(kOpenWater);
 	}
 }
 
@@ -618,7 +784,7 @@ bool EscapeGridPuzzle::updateTileAnims(int32 ticks) {
 }
 
 bool EscapeGridPuzzle::hasAnyMove(uint actor) const {
-	for (int i = 0; i < kNumDirections; ++i) {
+	for (uint i = 0; i < numDirections(); ++i) {
 		if (canStepOnto(_grid, _actorCells, step(_actorCells[actor], (Direction)i))) {
 			return true;
 		}
@@ -642,7 +808,7 @@ Common::Point EscapeGridPuzzle::chooseOpponentMove(uint actor) {
 		target = bestPath[0];
 	} else {
 		Common::Array<Common::Point> candidates;
-		for (int i = 0; i < kNumDirections; ++i) {
+		for (uint i = 0; i < numDirections(); ++i) {
 			candidates.push_back(step(_actorCells[actor], (Direction)i));
 		}
 
@@ -682,7 +848,7 @@ void EscapeGridPuzzle::searchPath(uint actor, int depth, Common::Array<int32> &g
 		return;
 	}
 
-	for (int i = 0; i < kNumDirections; ++i) {
+	for (uint i = 0; i < numDirections(); ++i) {
 		Common::Point next = step(pos, (Direction)i);
 		if (!canStepOnto(grid, cells, next)) {
 			continue;
@@ -715,6 +881,12 @@ void EscapeGridPuzzle::startMove(const Common::Point &target) {
 	uint compassDir = kCompassDirection[dir];
 	const MoviePlayer *movie = _jumpMovies[_actors[_turn].characterID * kNumCompassDirections + compassDir];
 
+	// Characters make a sound as they start jumping
+	int32 id = _actors[_turn].characterID;
+	if (_actorAnims[_turn].empty() && id >= 0 && (uint)id < _characters.size()) {
+		playSoundBlock(_characters[id].jumpSound);
+	}
+
 	ActorAnim anim;
 	anim.kind = kActorJump;
 	anim.from = from;
@@ -746,7 +918,11 @@ void EscapeGridPuzzle::updateTurn(int32 ticks) {
 		_moveIssued = false;
 		_slidingPhase = true;
 		for (uint i = 0; i < _landedJumps.size(); ++i) {
-			slideBoard(_landedJumps[i].from, _landedJumps[i].to);
+			if (g_nancy->getGameType() >= kGameTypeNancy16) {
+				moveIceFloes(_landedJumps[i].from, _landedJumps[i].to);
+			} else {
+				slideBoard(_landedJumps[i].from, _landedJumps[i].to);
+			}
 		}
 		_landedJumps.clear();
 		return;
