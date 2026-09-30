@@ -100,6 +100,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
 
 	// Castle of Dr. Brain - English DOS 5.25" Floppy EGA (from omer_mor, bug report #4990)
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.066
 	{"castlebrain", "EGA", {
 		{"resource.map", 0, "88d106f945f7fd9d1aeda961cfec38a9", 2646},
 		{"resource.000", 0, "6e125f4ce3f4f5c35f2617c7b66c6e21", 25325},
@@ -113,6 +115,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Castle of Dr. Brain - English DOS 3.5" Floppy EGA (from nozomi77, bug report #5841)
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.066
 	{"castlebrain", "EGA", {
 		{"resource.map", 0, "dfcf23e36cb81223bdf11166aaf90754", 2730},
 		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 300857},
@@ -123,8 +127,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Castle of Dr. Brain - English DOS Floppy (from jvprat)
-	// Executable scanning reports "1.000.044", Floppy label reports "1.0, 10.30.91", VERSION file reports "1.000"
-	// SCI interpreter version 1.000.510
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.044
 	{"castlebrain", "", {
 		{"resource.map", 0, "1302ceb141d44b05a42723791b2d84c6", 2739},
 		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 346731},
@@ -133,7 +137,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// Castle of Dr. Brain - English DOS 5.25" Floppy VGA 1.1 (from rnjacobs, bug report #6162)
+	// Castle of Dr. Brain - English DOS 5.25" Floppy (from rnjacobs, bug report #6162)
+	// Game version 1.1 from VERSION file
+	// SCI interpreter version 1.000.068
 	{"castlebrain", "", {
 		{"resource.map", 0, "a1deac2647ad09472c63656bfb950a4d", 2739},
 		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 347071},
@@ -143,7 +149,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// Castle of Dr. Brain - English DOS Floppy 1.1
+	// Castle of Dr. Brain - English DOS Floppy
+	// Game version 1.1 from VERSION file
+	// SCI interpreter version 1.000.068
 	{"castlebrain", "", {
 		{"resource.map", 0, "f77728304c70017c54793eb6ca648174", 2745},
 		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 347071},
@@ -152,8 +160,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// Castle of Dr. Brain - English DOS Floppy 1.000
-	// Reported by graxer in bug report #5094
+	// Castle of Dr. Brain - English DOS Floppy (from graxer, bug report #5094)
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.044
 	{"castlebrain", "", {
 		{"resource.map", 0, "453daa935535cef68d19704c2b1b78a2", 2649},
 		{"resource.000", 0, "6e125f4ce3f4f5c35f2617c7b66c6e21", 25929},
@@ -167,7 +176,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// Castle of Dr. Brain - German DOS Floppy 1.000 (also includes English language)
+	// Castle of Dr. Brain - German DOS Floppy
+	// Game version 1.000 from VERSION file
 	// SCI interpreter version 1.000.068
 	{"castlebrain", "", {
 		{"resource.map", 0, "a69c03fa6845e7d859a9d5bff9090aad", 2679},
@@ -178,7 +188,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
 	// Castle of Dr. Brain - Spanish DOS (also includes english language)
-	// SCI interpreter version 1.000.510
+	// Game version 1.004 from VERSION file
+	// SCI interpreter version 1.000.068
 	{"castlebrain", "", {
 		{"resource.map", 0, "5738c163e014bbe046474de009020b82", 2727},
 		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 1197694},
