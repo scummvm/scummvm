@@ -58,6 +58,13 @@ public:
 	enum { kWidth = 384, kHeight = 288 };
 	enum Weapon { kRevitascope, kSlimeGun };
 	enum ShotResult { kMiss, kAnimalRescued, kHornetHit, kShellRestored };
+	struct Target {
+		uint16 id, toggle, remapToggle;
+		uint rescuedAt;
+		Common::Rect rect;
+		Weapon hitWeapon;
+		bool active, hit;
+	};
 
 	MortimerFlight();
 	~MortimerFlight();
@@ -77,6 +84,7 @@ public:
 	Weapon weapon() const { return _weapon; }
 	const Common::String &nextFlight() const { return _nextFlight; }
 	const Common::Array<MortimerSound> &sounds() const { return _sounds; }
+	const Common::Array<Target> &targets() const { return _targets; }
 	const Common::String &errorMessage() const { return _error; }
 
 private:
@@ -86,12 +94,6 @@ private:
 	struct Object {
 		uint32 offset, size;
 		uint16 skipA, skipB;
-	};
-	struct Target {
-		uint16 id, toggle, remapToggle;
-		uint rescuedAt;
-		Common::Rect rect;
-		bool active, hit;
 	};
 	struct Obstacle {
 		Common::Point corners[4];

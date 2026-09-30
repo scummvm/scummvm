@@ -22,6 +22,7 @@
 #define SCUMM_INSANE_MORTIMER_MORTIMER_H
 
 #include "engines/engine.h"
+#include "backends/keymapper/keymap.h"
 #include "audio/mixer.h"
 #include "graphics/surface.h"
 #include "scumm/insane/mortimer/flight.h"
@@ -36,6 +37,7 @@ public:
 	~MortimerEngine() override;
 	Common::Error run() override;
 	bool hasFeature(EngineFeature feature) const override;
+	static Common::KeymapArray initKeymaps();
 
 protected:
 	void pauseEngineIntern(bool pause) override;
@@ -47,23 +49,39 @@ private:
 	bool nextFlight(bool skip = false);
 	bool restart(bool all = false);
 	void setMouse(const Common::Point &position);
+	void updateSteering();
+	void updateInterface();
+	void fire();
+	Common::Point moviePoint(const Common::Point &point) const;
+	Common::Point screenPoint(const Common::Point &point) const;
 	void draw();
-	void drawSprite(const MortimerSprite &sprite, int x, int y);
+	void drawSprite(const MortimerSprite &sprite, int x, int y, bool centered = false, const Common::Rect *clip = nullptr);
+	void drawProjectile();
+	void drawTargets();
+	void drawDashboard();
+	bool speechPlaying() const;
 	void playSound(const MortimerSound &sound, Audio::SoundHandle &handle, Audio::Mixer::SoundType type);
 	void playFlightSounds();
 	void stopSounds();
 
 	MortimerFlight _flight;
 	Graphics::Surface _screen;
-	Common::Array<MortimerSprite> _cockpit, _dashboard, _reticles, _icons;
-	MortimerSound _scopeSound, _rescueSound, _collisionSound, _slimeSound, _slimeHitSound;
+	Common::Array<MortimerSprite> _cockpit, _dashboard, _reticles, _icons, _head;
+	Common::Array<MortimerSprite> _scopeHit, _slimeHit, _scopeBeam, _slimeBall, _numbers, _corners;
+	MortimerSound _scopeSound, _rescueSound, _collisionSound, _slimeSound, _slimeHitSound, _glowSound, _balloonSound;
 	Common::Array<Audio::SoundHandle> _flightHandles;
-	Audio::SoundHandle _scopeHandle, _rescueHandle, _collisionHandle;
+	Audio::SoundHandle _scopeHandle, _rescueHandle, _collisionHandle, _glowHandle;
 	Common::String _loadError;
-	Common::Point _mouse, _view;
+	Common::Rect _viewport;
+	Common::Point _mouse, _view, _aim, _shot;
+	Common::Point _steeringHistory[10];
+	int _steering[4];
+	MortimerFlight::Weapon _shotWeapon;
 	uint32 _nextFrameTime, _pauseTime;
 	uint _segment, _completedRescues, _completedSpecies, _shellShocks;
-	bool _finished;
+	uint _uiFrame, _shotFrame, _glowFrame, _glowStones, _pendingGlowStones;
+	uint _iconFlash[7];
+	bool _finished, _controllerMode;
 };
 
 } // End of namespace Scumm

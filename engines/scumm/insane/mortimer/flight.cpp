@@ -406,9 +406,9 @@ void MortimerFlight::handleAction(const byte *data, uint32 size) {
 			Target *target = findTarget(id - 1000);
 			if (target)
 				target->remapToggle = toggle;
-			// Briefly show the rescued animal's silhouette before removing it
-			// from the scene. Flash duration is POC tuning.
-			_toggles[toggle] = !target || !target->hit || frame() - target->rescuedAt >= 5;
+			// Keep the remapped silhouette for the duration of its NUT effect.
+			const uint duration = target && target->hitWeapon == kSlimeGun ? 7 : 11;
+			_toggles[toggle] = !target || !target->hit || frame() - target->rescuedAt >= duration;
 			return;
 		}
 		Target *target = findTarget(id);
@@ -418,6 +418,7 @@ void MortimerFlight::handleAction(const byte *data, uint32 size) {
 			fresh.toggle = toggle;
 			fresh.remapToggle = 0xffff;
 			fresh.rescuedAt = 0;
+			fresh.hitWeapon = kRevitascope;
 			fresh.active = fresh.hit = false;
 			// Salt belongs to the hornet whose ID is 100 lower. Destroying a
 			// hornet also disables its subsequent salt objects (SHELL 407c5f).
@@ -564,6 +565,7 @@ MortimerFlight::ShotResult MortimerFlight::shoot(const Common::Point &point) {
 			continue;
 		target.hit = true;
 		target.rescuedAt = frame();
+		target.hitWeapon = _weapon;
 		_toggles[target.toggle] = true;
 		if (target.remapToggle != 0xffff)
 			_toggles[target.remapToggle] = false;
@@ -584,21 +586,37 @@ MortimerFlight::ShotResult MortimerFlight::shoot(const Common::Point &point) {
 }
 
 bool MortimerFlight::hitsObstacle(const Common::Point &point) const {
+	// SHELL 40e390 uses a 50 x 50 footprint in movie coordinates.
+	const Common::Rect footprint(point.x - 25, point.y - 25, point.x + 25, point.y + 25);
 	for (uint i = 0; i < _targets.size(); ++i) {
 		const Target &target = _targets[i];
-		if (target.id >= 800 && target.id < 900 && target.active && !target.hit && target.rect.contains(point))
+		if (target.id >= 800 && target.id < 900 && target.active && !target.hit && target.rect.intersects(footprint))
 			return true;
 	}
 	for (uint n = 0; n < _obstacles.size(); ++n) {
 		const Obstacle &obstacle = _obstacles[n];
-		bool inside = false;
-		for (uint i = 0, j = 3; i < 4; j = i++) {
-			const Common::Point &a = obstacle.corners[i], &b = obstacle.corners[j];
-			if ((a.y > point.y) != (b.y > point.y) &&
-				point.x < a.x + int64(b.x - a.x) * (point.y - a.y) / (b.y - a.y))
-				inside = !inside;
+		// Separating axes also handle vertical edges and degenerate quads
+		// without the divisions used by the original executable.
+		bool separated = false;
+		for (uint axis = 0; axis < 6 && !separated; ++axis) {
+			int dx = axis == 4 ? 1 : 0, dy = axis == 5 ? 1 : 0;
+			if (axis < 4) {
+				const Common::Point &a = obstacle.corners[axis], &b = obstacle.corners[(axis + 1) % 4];
+				dx = a.y - b.y;
+				dy = b.x - a.x;
+			}
+			int64 minimum = int64(dx) * obstacle.corners[0].x + int64(dy) * obstacle.corners[0].y;
+			int64 maximum = minimum;
+			for (uint i = 1; i < 4; ++i) {
+				const int64 projection = int64(dx) * obstacle.corners[i].x + int64(dy) * obstacle.corners[i].y;
+				minimum = MIN(minimum, projection);
+				maximum = MAX(maximum, projection);
+			}
+			const int64 center = int64(dx) * point.x + int64(dy) * point.y;
+			const int64 radius = 25 * (int64(ABS(dx)) + ABS(dy));
+			separated = center + radius < minimum || center - radius > maximum;
 		}
-		if (inside)
+		if (!separated)
 			return true;
 	}
 	return false;

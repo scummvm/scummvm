@@ -22,6 +22,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "backends/keymapper/action.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -42,9 +43,68 @@ static const char *const kDemoFlights[] = {
 	"RESOURCE/DEMO/DEMO_BT.SAN"
 };
 
+enum MortimerAction {
+	kActionFire, kActionPause, kActionSkip, kActionRestart, kActionQuit,
+	kActionMenu, kActionMouse, kActionJoystick
+};
+
+Common::KeymapArray MortimerEngine::initKeymaps() {
+	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "mortimer", "Mortimer");
+	keymap->setPartialMatchAllowed(false);
+	struct Binding {
+		const char *id, *label;
+		MortimerAction action;
+		const char *inputs[4];
+	};
+	const Binding bindings[] = {
+		{"FIRE", _s("Fire"), kActionFire, {"MOUSE_LEFT", "MOUSE_RIGHT", "JOY_A", "JOY_B"}},
+		{"PAUSE", _s("Pause"), kActionPause, {"SPACE", "JOY_START", nullptr, nullptr}},
+		{"SKIP", _s("Skip"), kActionSkip, {"ESCAPE", "JOY_Y", nullptr, nullptr}},
+		{"RESTART", _s("Restart"), kActionRestart, {"r", "JOY_X", nullptr, nullptr}},
+		{"QUIT", _s("Quit"), kActionQuit, {"q", "A+q", nullptr, nullptr}},
+		{"MENU", _s("Game menu"), kActionMenu, {"F5", "JOY_LEFT_SHOULDER", nullptr, nullptr}},
+		{"MOUSE", _s("Mouse control"), kActionMouse, {"A+m", nullptr, nullptr, nullptr}},
+		{"JOYSTICK", _s("Joystick control"), kActionJoystick, {"A+j", nullptr, nullptr, nullptr}}
+	};
+	for (uint i = 0; i < ARRAYSIZE(bindings); ++i) {
+		Common::Action *action = new Common::Action(bindings[i].id, _(bindings[i].label));
+		action->setCustomEngineActionEvent(bindings[i].action);
+		for (uint j = 0; j < ARRAYSIZE(bindings[i].inputs); ++j)
+			if (bindings[i].inputs[j])
+				action->addDefaultInputMapping(bindings[i].inputs[j]);
+		if (bindings[i].action == kActionFire)
+			action->addDefaultInputMapping("RETURN");
+		keymap->addAction(action);
+	}
+	const char *const directions[] = {"LEFT", "RIGHT", "UP", "DOWN"};
+	const char *const labels[] = {_s("Left"), _s("Right"), _s("Up"), _s("Down")};
+	const char *const axes[] = {"JOY_LEFT_STICK_X-", "JOY_LEFT_STICK_X+", "JOY_LEFT_STICK_Y-", "JOY_LEFT_STICK_Y+"};
+	const char *const keypad[] = {"KP4", "KP6", "KP8", "KP2"};
+	for (uint i = 0; i < ARRAYSIZE(directions); ++i) {
+		Common::Action *action = new Common::Action(directions[i], _(labels[i]));
+		Common::Event event;
+		event.type = Common::EVENT_JOYAXIS_MOTION;
+		event.joystick.axis = i;
+		event.joystick.position = 0;
+		action->setEvent(event);
+		action->addDefaultInputMapping(directions[i]);
+		action->addDefaultInputMapping(keypad[i]);
+		action->addDefaultInputMapping(Common::String("JOY_") + directions[i]);
+		action->addDefaultInputMapping(axes[i]);
+		keymap->addAction(action);
+	}
+	Common::KeymapArray keymaps;
+	keymaps.push_back(keymap);
+	return keymaps;
+}
+
 MortimerEngine::MortimerEngine(OSystem *system) : Engine(system),
-	_mouse(320, 180), _view(32, 24), _nextFrameTime(0), _pauseTime(0),
-	_segment(0), _completedRescues(0), _completedSpecies(0), _shellShocks(0), _finished(false) {
+	_viewport(24, 20, 616, 360), _mouse(320, 240), _view(44, 60), _aim(320, 190), _shotWeapon(MortimerFlight::kRevitascope),
+	_nextFrameTime(0), _pauseTime(0), _segment(0), _completedRescues(0), _completedSpecies(0),
+	_shellShocks(0), _uiFrame(0), _shotFrame(3), _glowFrame(10), _glowStones(0),
+	_pendingGlowStones(0), _finished(false), _controllerMode(false) {
+	memset(_steering, 0, sizeof(_steering));
+	memset(_iconFlash, 0, sizeof(_iconFlash));
 }
 
 MortimerEngine::~MortimerEngine() {
@@ -65,10 +125,17 @@ bool MortimerEngine::loadResources() {
 		uint minFrames;
 	};
 	const SpriteBank banks[] = {
-		{"RESOURCE/GENERAL/COCKPT_H.NUT", &_cockpit, 3},
+		{"RESOURCE/GENERAL/COCKPT_H.NUT", &_cockpit, 14},
 		{"RESOURCE/GENERAL/DASH_H.NUT", &_dashboard, 36},
 		{"RESOURCE/GENERAL/RETICLEH.NUT", &_reticles, 2},
-		{"RESOURCE/SAVANNA/S_ICON_H.NUT", &_icons, 14}
+		{"RESOURCE/SAVANNA/S_ICON_H.NUT", &_icons, 14},
+		{"RESOURCE/GENERAL/MHEAD_H.NUT", &_head, 4},
+		{"RESOURCE/GENERAL/REVITE.NUT", &_scopeHit, 11},
+		{"RESOURCE/GENERAL/SLIME_H.NUT", &_slimeHit, 7},
+		{"RESOURCE/GENERAL/LINE_BLU.NUT", &_scopeBeam, 1},
+		{"RESOURCE/GENERAL/SLMBALL.NUT", &_slimeBall, 1},
+		{"RESOURCE/GENERAL/NUMBER_H.NUT", &_numbers, 11},
+		{"RESOURCE/GENERAL/CORNER_H.NUT", &_corners, 2}
 	};
 	for (uint i = 0; i < ARRAYSIZE(banks); ++i) {
 		if (!file.open(Common::Path(banks[i].name)) || !loadMortimerSprites(file, *banks[i].sprites) || banks[i].sprites->size() < banks[i].minFrames) {
@@ -86,7 +153,9 @@ bool MortimerEngine::loadResources() {
 		{"RESOURCE/GENERAL/SFX/SCOPHIT3.SAD", &_rescueSound},
 		{"RESOURCE/GENERAL/SFX/SHELHIT1.SAD", &_collisionSound},
 		{"RESOURCE/GENERAL/SFX/SLMGUN2.SAD", &_slimeSound},
-		{"RESOURCE/GENERAL/SFX/MUCKHIT1.SAD", &_slimeHitSound}
+		{"RESOURCE/GENERAL/SFX/MUCKHIT1.SAD", &_slimeHitSound},
+		{"RESOURCE/GENERAL/SFX/GLOWIN1.SAD", &_glowSound},
+		{"RESOURCE/GENERAL/SFX/BURST1.SAD", &_balloonSound}
 	};
 	for (uint i = 0; i < ARRAYSIZE(effects); ++i) {
 		if (!file.open(Common::Path(effects[i].name)) || !loadMortimerSound(file, *effects[i].sound)) {
@@ -137,6 +206,7 @@ void MortimerEngine::stopSounds() {
 	_mixer->stopHandle(_scopeHandle);
 	_mixer->stopHandle(_rescueHandle);
 	_mixer->stopHandle(_collisionHandle);
+	_mixer->stopHandle(_glowHandle);
 }
 
 bool MortimerEngine::startFlight() {
@@ -147,7 +217,16 @@ bool MortimerEngine::startFlight() {
 		return false;
 	}
 	_finished = false;
-	setMouse(Common::Point(320, 180));
+	_uiFrame = 0;
+	_shotFrame = 3;
+	_glowFrame = 10;
+	_glowStones = MIN(_completedRescues, 999U);
+	_pendingGlowStones = 0;
+	memset(_iconFlash, 0, sizeof(_iconFlash));
+	for (uint i = 0; i < ARRAYSIZE(_steeringHistory); ++i)
+		_steeringHistory[i] = Common::Point();
+	setMouse(Common::Point(320, 240));
+	updateSteering();
 	_system->warpMouse(_mouse.x, _mouse.y);
 	_system->getPaletteManager()->setPalette(_flight.palette(), 0, 256);
 	_nextFrameTime = _system->getMillis() + 1000 / _flight.frameRate();
@@ -185,10 +264,90 @@ bool MortimerEngine::nextFlight(bool skip) {
 void MortimerEngine::setMouse(const Common::Point &position) {
 	_mouse.x = CLIP<int>(position.x, 0, 639);
 	_mouse.y = CLIP<int>(position.y, 0, 479);
-	// A bounded view into the overscanned movie supplies steering. Exact
-	// acceleration, collision damage and scope behaviour remain POC rules.
-	_view.x = CLIP<int>(32 + (_mouse.x - 320) / 8, 0, MortimerFlight::kWidth - 320);
-	_view.y = CLIP<int>(24 + (_mouse.y - 180) / 4, 0, MortimerFlight::kHeight - 240);
+}
+
+void MortimerEngine::updateSteering() {
+	int x = (_mouse.x - 320) / 2, y = 240 - _mouse.y;
+	if (_controllerMode) {
+		x = (_steering[1] - _steering[0]) * 128 / Common::JOYAXIS_MAX;
+		y = (_steering[2] - _steering[3]) * 128 / Common::JOYAXIS_MAX;
+	}
+	// SHELL 40db90 averages ten input samples before moving the viewport.
+	const int weights[] = {1, 1, 3, 3, 8, 8, 14, 16, 16, 14};
+	int averageX = 0, averageY = 0;
+	for (uint i = 0; i < ARRAYSIZE(weights); ++i) {
+		_steeringHistory[i] = i + 1 < ARRAYSIZE(weights) ? _steeringHistory[i + 1] : Common::Point(x, y);
+		averageX += _steeringHistory[i].x * weights[i];
+		averageY += _steeringHistory[i].y * weights[i];
+	}
+	averageX /= 84;
+	averageY /= 84;
+	// The movie is doubled, and its translation is aligned to four pixels.
+	_view.x = ((88 + CLIP(averageX * 88 / 128, -88, 88) + 3) & ~3) / 2;
+	_view.y = ((118 - CLIP(averageY * 118 / 128, -118, 118) + 3) & ~3) / 2;
+	if (ABS(x) < 3)
+		x = 0;
+	if (ABS(y) < 3)
+		y = 0;
+	_aim.x = 320 + CLIP(x * 296 / 109, -296, 295);
+	_aim.y = 190 - CLIP(y * 170 / 128, -169, 170);
+}
+
+Common::Point MortimerEngine::moviePoint(const Common::Point &point) const {
+	return Common::Point(_view.x + (point.x - _viewport.left) / 2, _view.y + (point.y - _viewport.top) / 2);
+}
+
+Common::Point MortimerEngine::screenPoint(const Common::Point &point) const {
+	return Common::Point(_viewport.left + (point.x - _view.x) * 2, _viewport.top + (point.y - _view.y) * 2);
+}
+
+void MortimerEngine::fire() {
+	if (_shotFrame >= 3) {
+		_shot = _aim;
+		_shotWeapon = _flight.weapon();
+		_shotFrame = 0;
+		playSound(_shotWeapon == MortimerFlight::kSlimeGun ? _slimeSound : _scopeSound,
+			_scopeHandle, Audio::Mixer::kSFXSoundType);
+	}
+	const MortimerFlight::ShotResult result = _flight.shoot(moviePoint(_aim));
+	if (result == MortimerFlight::kAnimalRescued) {
+		playSound(_rescueSound, _rescueHandle, Audio::Mixer::kSFXSoundType);
+		++_pendingGlowStones;
+		if (_glowFrame >= 10) {
+			_glowFrame = 0;
+			playSound(_glowSound, _glowHandle, Audio::Mixer::kSFXSoundType);
+		}
+		for (uint i = 0; i < _flight.targets().size(); ++i) {
+			const MortimerFlight::Target &target = _flight.targets()[i];
+			if (target.hit && target.rescuedAt == _flight.frame() && target.id / 100 < 7)
+				_iconFlash[target.id / 100] = 6;
+		}
+	} else if (result == MortimerFlight::kHornetHit) {
+		playSound(_slimeHitSound, _rescueHandle, Audio::Mixer::kSFXSoundType);
+	} else if (result == MortimerFlight::kShellRestored) {
+		_shellShocks = 0;
+		playSound(_balloonSound, _rescueHandle, Audio::Mixer::kSFXSoundType);
+	}
+}
+
+void MortimerEngine::updateInterface() {
+	++_uiFrame;
+	if (_shotFrame < 3)
+		++_shotFrame;
+	for (uint i = 0; i < ARRAYSIZE(_iconFlash); ++i)
+		if (_iconFlash[i])
+			--_iconFlash[i];
+	if (_glowFrame < 10 && ++_glowFrame == 10) {
+		_glowStones = MIN(_glowStones + _pendingGlowStones, 999U);
+		_pendingGlowStones = 0;
+	}
+}
+
+bool MortimerEngine::speechPlaying() const {
+	for (uint i = 0; i < _flightHandles.size(); ++i)
+		if (!_flight.sounds()[i].music && _mixer->isSoundHandleActive(_flightHandles[i]))
+			return true;
+	return false;
 }
 
 void MortimerEngine::pauseEngineIntern(bool pause) {
@@ -212,45 +371,49 @@ Common::Error MortimerEngine::run() {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			if (event.type == Common::EVENT_MOUSEMOVE) {
-				if (!isPaused())
+				if (!isPaused()) {
 					setMouse(event.mouse);
-			} else if (event.type == Common::EVENT_LBUTTONDOWN && !isPaused() && !_finished) {
-				setMouse(event.mouse);
-				if (_mouse.x >= 54 && _mouse.x < 567 && _mouse.y >= 37 && _mouse.y < 320) {
-					playSound(_flight.weapon() == MortimerFlight::kSlimeGun ? _slimeSound : _scopeSound,
-						_scopeHandle, Audio::Mixer::kSFXSoundType);
-					const MortimerFlight::ShotResult result = _flight.shoot(Common::Point(_view.x + _mouse.x / 2, _view.y + _mouse.y / 2));
-					if (result == MortimerFlight::kAnimalRescued || result == MortimerFlight::kShellRestored)
-						playSound(_rescueSound, _rescueHandle, Audio::Mixer::kSFXSoundType);
-					else if (result == MortimerFlight::kHornetHit)
-						playSound(_slimeHitSound, _rescueHandle, Audio::Mixer::kSFXSoundType);
-					if (result == MortimerFlight::kShellRestored)
-						_shellShocks = 0;
+					_controllerMode = false;
 				}
-			} else if (event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat) {
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
+			} else if (event.type == Common::EVENT_JOYAXIS_MOTION && event.joystick.axis < ARRAYSIZE(_steering)) {
+				_steering[event.joystick.axis] = CLIP<int>(event.joystick.position, 0, Common::JOYAXIS_MAX);
+				if (event.joystick.position && !isPaused())
+					_controllerMode = true;
+			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				switch (event.customType) {
+				case kActionFire:
+					if (!isPaused() && !_finished)
+						fire();
+					break;
+				case kActionSkip:
 					if (pause.isActive())
 						pause.clear();
 					else
 						exit = !nextFlight(true);
 					break;
-				case Common::KEYCODE_q:
+				case kActionQuit:
 					exit = true;
 					break;
-				case Common::KEYCODE_SPACE:
+				case kActionPause:
 					if (pause.isActive())
 						pause.clear();
 					else
 						pause = pauseEngine();
 					break;
-				case Common::KEYCODE_r:
+				case kActionRestart:
 					if (pause.isActive())
 						pause.clear();
 					exit = !restart();
 					break;
-				case Common::KEYCODE_F5:
+				case kActionMenu:
 					openMainMenuDialog();
+					break;
+				case kActionMouse:
+					_controllerMode = false;
+					setMouse(_eventMan->getMousePos());
+					break;
+				case kActionJoystick:
+					_controllerMode = true;
 					break;
 				default:
 					break;
@@ -261,6 +424,8 @@ Common::Error MortimerEngine::run() {
 			break;
 		if (!isPaused() && !_finished && int32(_system->getMillis() - _nextFrameTime) >= 0) {
 			_nextFrameTime += 1000 / _flight.frameRate();
+			updateSteering();
+			updateInterface();
 			if (!_flight.advance()) {
 				if (!_flight.errorMessage().empty()) {
 					_loadError = _flight.errorMessage();
@@ -271,7 +436,7 @@ Common::Error MortimerEngine::run() {
 			} else {
 				playFlightSounds();
 				_system->getPaletteManager()->setPalette(_flight.palette(), 0, 256);
-				if (_flight.hitsObstacle(Common::Point(_view.x + _mouse.x / 2, _view.y + _mouse.y / 2))) {
+				if (_flight.hitsObstacle(moviePoint(_aim))) {
 					++_shellShocks;
 					playSound(_collisionSound, _collisionHandle, Audio::Mixer::kSFXSoundType);
 					// SHELL 40be36 resets the flight after eighteen shell shocks.
@@ -296,9 +461,19 @@ Common::Error MortimerEngine::run() {
 	return _loadError.empty() ? Common::kNoError : Common::Error(Common::kReadingFailed, _loadError);
 }
 
-void MortimerEngine::drawSprite(const MortimerSprite &sprite, int x, int y) {
+void MortimerEngine::drawSprite(const MortimerSprite &sprite, int x, int y, bool centered, const Common::Rect *bounds) {
+	// NUT offsets are relative to the animation's origin, including when its
+	// frames have different bounding boxes (SHELL 402c83/4141bc).
+	if (centered) {
+		x -= (sprite.x + sprite.width) / 2;
+		y -= (sprite.y + sprite.height) / 2;
+	}
+	x += sprite.x;
+	y += sprite.y;
 	Common::Rect clip(x, y, x + sprite.width, y + sprite.height);
 	clip.clip(Common::Rect(_screen.w, _screen.h));
+	if (bounds)
+		clip.clip(*bounds);
 	if (clip.isEmpty())
 		return;
 	for (int row = clip.top; row < clip.bottom; ++row) {
@@ -310,36 +485,109 @@ void MortimerEngine::drawSprite(const MortimerSprite &sprite, int x, int y) {
 	}
 }
 
-void MortimerEngine::draw() {
-	for (int y = 0; y < 480; ++y) {
-		const byte *src = _flight.pixels() + (_view.y + y / 2) * MortimerFlight::kWidth + _view.x;
-		byte *dst = (byte *)_screen.getBasePtr(0, y);
-		for (int x = 0; x < 640; ++x)
-			dst[x] = src[x / 2];
-	}
-	drawSprite(_cockpit[0], 0, _cockpit[0].y);
-	drawSprite(_cockpit[1], 640 - _cockpit[1].width, _cockpit[1].y);
-	drawSprite(_cockpit[2], 0, 0);
-	drawSprite(_dashboard[35], 0, 320);
-	const int iconCenterY[] = {384, 379, 377, 376, 378, 380, 384};
-	for (uint species = 0; species < 7; ++species) {
-		if ((_completedSpecies | _flight.rescuedSpecies()) & (1 << species)) {
-			const MortimerSprite &icon = _icons[species * 2];
-			drawSprite(icon, 176 + species * 45 - icon.width / 2, iconCenterY[species] - icon.height / 2);
+void MortimerEngine::drawTargets() {
+	for (uint i = 0; i < _flight.targets().size(); ++i) {
+		const MortimerFlight::Target &target = _flight.targets()[i];
+		if (!target.active || !target.id || target.id >= 800)
+			continue;
+		if (target.hit) {
+			const Common::Array<MortimerSprite> &effect = target.hitWeapon == MortimerFlight::kSlimeGun ? _slimeHit : _scopeHit;
+			const uint frame = _flight.frame() - target.rescuedAt;
+			if (frame < effect.size()) {
+				const Common::Point center = screenPoint(Common::Point((target.rect.left + target.rect.right) / 2,
+					(target.rect.top + target.rect.bottom) / 2));
+				drawSprite(effect[frame], center.x, center.y, true, &_viewport);
+			}
+		} else if ((target.id < 700 && _flight.weapon() == MortimerFlight::kRevitascope) ||
+			(target.id >= 700 && _flight.weapon() == MortimerFlight::kSlimeGun)) {
+			const Common::Point top = screenPoint(Common::Point(target.rect.left, target.rect.top));
+			const Common::Point bottom = screenPoint(Common::Point(target.rect.right, target.rect.bottom));
+			drawSprite(_corners[0], top.x, top.y, true, &_viewport);
+			drawSprite(_corners[1], bottom.x, bottom.y, true, &_viewport);
 		}
 	}
-	if (_mouse.y < 320) {
-		const MortimerSprite &reticle = _reticles[_flight.weapon() == MortimerFlight::kSlimeGun ? 0 : 1];
-		drawSprite(reticle, _mouse.x - reticle.width / 2, _mouse.y - reticle.height / 2);
-	}
+}
 
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-	_screen.fillRect(Common::Rect(0, 449, 640, 465), 10);
-	font->drawString(&_screen, Common::String::format("Animals rescued: %u   Shell shocks: %u / 18   Flight: %u / 3",
-		_completedRescues + _flight.rescuedCount(), _shellShocks, _segment + 1), 8, 451, 624, 20);
+void MortimerEngine::drawProjectile() {
+	if (_shotFrame >= 3)
+		return;
+	const bool slime = _shotWeapon == MortimerFlight::kSlimeGun;
+	const MortimerSprite &texture = slime ? _slimeBall[0] : _scopeBeam[0];
+	const Common::Point origin(slime ? 599 : 40, 400);
+	// SHELL 403b60 projects a textured streak in three steps from the weapon
+	// towards the sight. Its far endpoint is 7/6 of the distance to the aim.
+	const int dx = (_shot.x - origin.x) * 7 / 6, dy = (_shot.y - origin.y) * 7 / 6;
+	const int distance = 32 * _shotFrame + 16;
+	const Common::Point tail(origin.x + dx - dx * 16 / distance, origin.y + dy - dy * 16 / distance);
+	const Common::Point tip(origin.x + dx - dx * 16 / (distance + 25), origin.y + dy - dy * 16 / (distance + 25));
+	const int lengthX = ABS(tip.x - tail.x), lengthY = ABS(tip.y - tail.y);
+	const bool horizontal = lengthX > lengthY;
+	const int length = MAX(lengthX, lengthY);
+	const int thickness = MIN(horizontal ? 8 : texture.height, length * texture.height / texture.width + 2);
+	for (int row = 0; row < thickness; ++row) {
+		const byte *src = texture.pixels.begin() + (row * texture.height / thickness) * texture.width;
+		for (int step = 0; step <= length; ++step) {
+			const int x = tail.x + (tip.x - tail.x) * step / MAX(length, 1) + (horizontal ? 0 : row - thickness / 2);
+			const int y = tail.y + (tip.y - tail.y) * step / MAX(length, 1) + (horizontal ? row - thickness / 2 : 0);
+			const byte color = src[step * texture.width / (length + 1)];
+			if (color && x >= 0 && x < _screen.w && y >= 0 && y < _screen.h)
+				*(byte *)_screen.getBasePtr(x, y) = color;
+		}
+	}
+}
+
+void MortimerEngine::drawDashboard() {
+	// Origins and frame ranges are from SHELL's animation/position tables
+	// at 441240, 442d20 and 444958. drawSprite adds each frame's own offset.
+	drawSprite(_dashboard[35], 0, 0);
+	drawSprite(_dashboard[29 + _uiFrame % 6], 0, 439);
+	drawSprite(_dashboard[speechPlaying() ? 16 + _uiFrame % 3 : 16], 21, 312);
+	const uint gauge = _shellShocks < 16 ? 19 + _shellShocks / 2 : 27 + _uiFrame % 2;
+	drawSprite(_dashboard[gauge], 180, 442);
+	const Common::Point iconOrigins[] = {{158, 364}, {203, 358}, {248, 358}, {293, 354}, {339, 355}, {383, 360}, {428, 361}};
+	const Common::Point flashOrigins[] = {{154, 345}, {198, 338}, {243, 334}, {288, 332}, {333, 334}, {378, 338}, {422, 345}};
+	for (uint species = 0; species < 7; ++species) {
+		if (_iconFlash[species] & 1)
+			drawSprite(_dashboard[species], flashOrigins[species].x, flashOrigins[species].y);
+		const bool rescued = (_completedSpecies | _flight.rescuedSpecies()) & (1 << species);
+		drawSprite(_icons[species * 2 + (rescued ? 0 : 1)], iconOrigins[species].x, iconOrigins[species].y);
+	}
+	const uint thresholds[] = {1, 2, 3, 4, 7, 20, 30, 40, 50};
+	for (int i = ARRAYSIZE(thresholds) - 1; i >= 0; --i) {
+		if (_glowStones >= thresholds[i]) {
+			drawSprite(_dashboard[7 + i], 468, 368);
+			break;
+		}
+	}
+	drawSprite(_numbers[_glowStones < 100 ? 10 : _glowStones / 100], 504, 360);
+	drawSprite(_numbers[_glowStones < 10 ? 10 : (_glowStones / 10) % 10], 517, 361);
+	drawSprite(_numbers[_glowStones % 10], 529, 363);
+	if (_glowFrame < 10)
+		drawSprite(_cockpit[4 + _glowFrame], 392, 272);
+	if (_flight.weapon() == MortimerFlight::kSlimeGun)
+		drawSprite(_cockpit[3], 306, 465, true);
+}
+
+void MortimerEngine::draw() {
+	_screen.fillRect(Common::Rect(640, 480), 10);
+	for (int y = _viewport.top; y < _viewport.bottom; ++y) {
+		const byte *src = _flight.pixels() + (_view.y + (y - _viewport.top) / 2) * MortimerFlight::kWidth + _view.x;
+		byte *dst = (byte *)_screen.getBasePtr(_viewport.left, y);
+		for (int x = 0; x < _viewport.width(); ++x)
+			dst[x] = src[x / 2];
+	}
+	drawTargets();
+	drawSprite(_head[_uiFrame % 4], 270, 200);
+	drawSprite(_reticles[_flight.weapon() == MortimerFlight::kSlimeGun ? 0 : 1], _aim.x, _aim.y, true, &_viewport);
+	drawSprite(_cockpit[0], 0, 0);
+	drawSprite(_cockpit[1], 567, 0);
+	drawSprite(_cockpit[2], 0, 0);
+	drawDashboard();
+	drawProjectile();
 	if (isPaused()) {
+		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 		_screen.fillRect(Common::Rect(90, 142, 550, 182), 10);
-		font->drawString(&_screen, "Paused - Space to continue", 90, 155, 460, 20, Graphics::kTextAlignCenter);
+		font->drawString(&_screen, _("Paused"), 90, 155, 460, 20, Graphics::kTextAlignCenter);
 	}
 	_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, 640, 480);
 	_system->updateScreen();

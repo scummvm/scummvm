@@ -1134,6 +1134,14 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 	Action *act;
 
+#ifdef ENABLE_SCUMM_7_8
+	if (gameId == "mortimer") {
+		for (uint i = 0; i < keymaps.size(); ++i)
+			delete keymaps[i];
+		return MortimerEngine::initKeymaps();
+	}
+#endif
+
 	if (gameId == "rebel1" || gameId == "rebel2") {
 		for (uint i = 0; i < keymaps.size(); ++i) {
 			if (keymaps[i]->getId() == "engine-default") {
