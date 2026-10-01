@@ -40,8 +40,18 @@ namespace NDUI {
 // The timer whose displays show the time of day
 static const int kPlayerClockTimer = -1;
 
+void Manager::addEngineTarget(const Common::String &name, EngineTarget *target) {
+	_engineTargets.setVal(name, target);
+}
+
+void Manager::removeEngineTarget(const Common::String &name) {
+	_engineTargets.erase(name);
+}
+
 void Manager::takeEngineAction(const Action &action) {
-	if (action.target.equalsIgnoreCase("Engine_Timer")) {
+	if (_engineTargets.contains(action.target)) {
+		_engineTargets[action.target]->onEngineAction(action);
+	} else if (action.target.equalsIgnoreCase("Engine_Timer")) {
 		// A control asks to show the value of a timer
 		if (action.type == kActionSetText && (int)action.value == kPlayerClockTimer) {
 			for (const Common::String &display : _clockDisplays) {

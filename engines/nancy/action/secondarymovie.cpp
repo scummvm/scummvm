@@ -206,6 +206,9 @@ void PlaySecondaryMovie::readRandomSequence(Common::Serializer &ser, RandomSeque
 		case -5:
 			next.condition = kNextIfChannel12Playing;
 			break;
+		case -6:
+			next.condition = kNextIfCommanded;
+			break;
 		default:
 			next.weight = weight;
 			break;
@@ -281,7 +284,7 @@ void PlaySecondaryMovie::readRandomMovieData(Common::Serializer &ser, Common::Se
 // list.
 void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream) {
 	if (g_nancy->getGameType() >= kGameTypeNancy16) {
-		ser.skip(33);	// Movie identifier, not referenced by any supported record
+		readFilename(ser, _playlistName);
 	}
 
 	readFilename(ser, _startingSequenceName);
@@ -377,6 +380,12 @@ bool PlaySecondaryMovie::activateRandomSequence(int index) {
 
 	const RandomSequence &src = _sequences[index];
 	_activeSequenceIndex = index;
+
+	// A commanded movie is done with once it starts
+	if (!_commandedSequences.empty() && src.name == _commandedSequences[0]) {
+		_commandedSequences.remove_at(0);
+	}
+
 	_videoName = src.name;
 	_firstFrame = src.startFrame;
 	_lastFrame = src.lastFrame;
@@ -523,7 +532,7 @@ bool PlaySecondaryMovie::randomPauseElapsed() const {
 	case kPauseUntilNotHovered:
 		return !_isHovered;
 	default:
-		return g_system->getMillis() >= _randomPauseEndTime;
+		return !_commandedSequences.empty() || g_system->getMillis() >= _randomPauseEndTime;
 	}
 }
 
@@ -549,6 +558,23 @@ int PlaySecondaryMovie::pickNextSequence() {
 		_randomPauseMode = kPauseTimed;
 		_randomPauseEndTime = g_system->getMillis() + 1000;	// re-check in 1s
 		return -1;
+	}
+
+	// A commanded movie takes over where the sequence allows it: "commanded_movie" plays
+	// it right away, another name is played on the way to it, and "random_movie" leaves
+	// the pick to chance
+	if (!_commandedSequences.empty()) {
+		for (const NextSequenceRef &next : seq.nextSequences) {
+			if (next.condition != kNextIfCommanded) {
+				continue;
+			}
+
+			if (next.name == "random_movie") {
+				break;
+			}
+
+			return lookupSequence(next.name == "commanded_movie" ? _commandedSequences[0] : next.name);
+		}
 	}
 
 	// The special-flag entries are tried first, in the order the original uses:
@@ -617,7 +643,8 @@ int PlaySecondaryMovie::rollNextSequence() {
 	if (g_nancy->getGameType() >= kGameTypeNancy13) {
 		// First a percent chance to stay on this sequence and pause; the pick
 		// among the next sequences happens once the pause is over.
-		if (seq.stayWeight != 0 && (uint)g_nancy->_randomSource->getRandomNumber(99) < seq.stayWeight) {
+		if (_commandedSequences.empty() && seq.stayWeight != 0 &&
+				(uint)g_nancy->_randomSource->getRandomNumber(99) < seq.stayWeight) {
 			return beginRandomPause(seq);
 		}
 
@@ -1195,6 +1222,16 @@ void PlaySecondaryMovie::execute() {
 		// Frozen by a PlayRandomMovieControl until it resumes the movie.
 		if (_randomPaused) {
 			break;
+		}
+
+		// Nancy16: movies commanded through the playlist left under this movie's name
+		if (isRandom() && !_playlistName.empty()) {
+			Common::Array<Common::String> movies;
+			if (NancySceneState.takeMoviePlaylist(_playlistName, movies)) {
+				for (const Common::String &movie : movies) {
+					_commandedSequences.push_back(Common::Path(movie));
+				}
+			}
 		}
 
 		// Random-movie chain: while paused, wait for the pause to expire

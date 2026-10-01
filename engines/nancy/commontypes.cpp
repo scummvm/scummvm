@@ -24,9 +24,11 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cif.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/state/scene.h"
 
 #include "common/memstream.h"
+#include "common/random.h"
 
 namespace Nancy {
 
@@ -288,6 +290,35 @@ void RandomSoundBlock::readData(Common::SeekableReadStream &stream) {
 		numLoops = stream.readSint32LE();
 		volume = stream.readSint16LE();
 	}
+}
+
+SoundDescription RandomSoundBlock::play() const {
+	SoundDescription desc;
+	if (names.empty()) {
+		return desc;
+	}
+
+	uint idx = names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(names.size() - 1);
+	const Common::String &name = names[idx];
+	if (name.empty() || name == "NO SOUND") {
+		return desc;
+	}
+
+	desc.name = name;
+	desc.channelID = channel;
+	desc.numLoops = numLoops > 0 ? numLoops : 1;
+	desc.volume = volume;
+
+	g_nancy->_sound->loadSound(desc);
+	g_nancy->_sound->playSound(desc);
+
+	Common::String caption = resolveSubtitleText(name);
+	if (caption.empty()) {
+		caption = resolveSubtitleText(name, Common::String(), "CONVO");
+	}
+	showSubtitle(caption);
+
+	return desc;
 }
 
 void ConditionalDialogue::readData(Common::SeekableReadStream &stream) {

@@ -41,6 +41,14 @@ namespace NDUI {
 class Panel;
 class InvButton;
 
+// Something outside the UI that answers the actions sent to an "Engine_" target of its
+// own, for as long as it is registered with the Manager
+class EngineTarget {
+public:
+	virtual ~EngineTarget() {}
+	virtual void onEngineAction(const Action &action) = 0;
+};
+
 // The Nancy16 UI, owned by the scene. It creates the panels from the NDUI chunks of the
 // player character's UI IFF and the IFFs it includes, and stands between them and the
 // rest of the engine:
@@ -105,6 +113,9 @@ public:
 	// Displays a value of the value table, until it gets unregistered
 	void registerValueDisplay(int16 index, const Common::String &display);
 
+	void addEngineTarget(const Common::String &name, EngineTarget *target);
+	void removeEngineTarget(const Common::String &name);
+
 	// The background color outside of the viewport, picked in the options
 	void applyMatteColor();
 
@@ -156,6 +167,8 @@ private:
 	Common::Array<Common::String> _responseNames;
 
 	Common::Array<uint16> _pausedChannels;	// sound channels the UI paused, to resume later
+
+	Common::HashMap<Common::String, EngineTarget *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _engineTargets;
 
 	Common::String _selectedSave;	// in the load dialog
 	Common::String _typedSaveName;	// in the save dialog

@@ -125,6 +125,12 @@ public:
 	// chance save instead, once the current records have run
 	void loadSecondChance() { _isLoadingSecondChance = true; }
 
+	// Nancy16: lists of movies left under the name of the movie or puzzle that plays
+	// them, e.g. the commands given to the wolf. Taking a list forgets it; returns false
+	// when there is none.
+	void setMoviePlaylist(const Common::String &name, const Common::Array<Common::String> &movies);
+	bool takeMoviePlaylist(const Common::String &name, Common::Array<Common::String> &movies);
+
 	bool isRunningAd() const { return _isRunningAd; }
 
 	void changeScene(const SceneChangeDescription &sceneDescription);
@@ -485,6 +491,8 @@ private:
 	bool _hasSkippedMovie = false;
 
 	bool _isLoadingSecondChance = false;
+
+	Common::HashMap<Common::String, Common::Array<Common::String>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _moviePlaylists;
 
 	// Contains a screenshot of the Scene state from the last time it was exited
 	Graphics::ManagedSurface _lastScreenshot;

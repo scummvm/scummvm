@@ -20,6 +20,7 @@ MODULE_OBJS = \
   action/puzzlerecord.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \
+  action/wolfcommands.o \
   action/puzzle/adjustpuzzle.o \
   action/puzzle/analogclock.o \
   action/puzzle/angletosspuzzle.o \
@@ -95,6 +96,7 @@ MODULE_OBJS = \
   action/puzzle/twodialpuzzle.o \
   action/puzzle/typingquizpuzzle.o \
   action/puzzle/weightsortpuzzle.o \
+  action/puzzle/wolfmazepuzzle.o \
   action/puzzle/whalesurvivorpuzzle.o \
   action/puzzle/wordfindpuzzle.o \
   ui/fullscreenimage.o \

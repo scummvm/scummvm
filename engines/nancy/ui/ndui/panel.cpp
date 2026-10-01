@@ -196,7 +196,8 @@ void Panel::arrangeControls() {
 	int y = _margins.top;
 	int rowBottom = y;
 
-	// Controls go one after another along a row, and start a new row when they don't fit
+	// Controls go one after another along a row, and start a new row when they don't fit;
+	// one too wide for a row still goes on it when the row is empty
 	for (Control *control : _arrangeOrder) {
 		if (!control->isVisible()) {
 			continue;
@@ -206,7 +207,7 @@ void Panel::arrangeControls() {
 		int controlHeight = control->_bounds.height();
 
 		if (_arrangement == kArrangeLeftToRight) {
-			if (x + controlWidth > width - _margins.right) {
+			if (x != rowStart && x + controlWidth > width - _margins.right) {
 				x = rowStart;
 				y = rowBottom + _spacing.y;
 			}
@@ -214,7 +215,7 @@ void Panel::arrangeControls() {
 			control->_bounds.moveTo(x, y);
 			x += controlWidth + _spacing.x;
 		} else {
-			if (x - controlWidth < _margins.left) {
+			if (x != rowStart && x - controlWidth < _margins.left) {
 				x = rowStart;
 				y = rowBottom + _spacing.y;
 			}
@@ -234,6 +235,12 @@ void Panel::arrangeControls() {
 		}
 
 		_manager->takeAction(kActionSetRange, _scrollBarName, (double)contentHeight);
+	} else if (rowBottom > _drawSurface.h) {
+		// Controls aren't clipped to a panel that doesn't scroll, so it grows to hold them
+		Common::Rect screenPosition = _screenPosition;
+		screenPosition.bottom = screenPosition.top + rowBottom;
+		moveTo(screenPosition);
+		_drawSurface.create(screenPosition.width(), screenPosition.height(), g_nancy->_graphics->getTransparentPixelFormat());
 	}
 }
 
@@ -471,7 +478,7 @@ void Panel::redraw() {
 	_drawSurface.clear(0);
 
 	if (_backgroundColor >> 24) {
-		_drawSurface.clear(argbToColor(_drawSurface.format, _backgroundColor));
+		_drawSurface.fillRect(_background->_bounds, argbToColor(_drawSurface.format, _backgroundColor));
 	}
 
 	_background->draw(_drawSurface, Common::Point());

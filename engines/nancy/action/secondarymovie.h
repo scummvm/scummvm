@@ -70,7 +70,8 @@ public:
 		kNextIfHovered,				// -2: the mouse is over the movie
 		kNextIfNotHovered,			// -3: it isn't
 		kNextIfChannel13Playing,	// -4
-		kNextIfChannel12Playing		// -5
+		kNextIfChannel12Playing,	// -5
+		kNextIfCommanded			// -6: a movie was commanded; "commanded_movie" plays it, "random_movie" ignores it
 	};
 
 	// Name of the next sequence to chain to once the current one finishes,
@@ -202,6 +203,8 @@ public:
 	// Random-movie state (only populated for kRandomMovie).
 	// "RandomMovie" picks any sequence; otherwise it names the starting one.
 	Common::String _startingSequenceName;
+	// Nancy16: the name movie commands are left under, e.g. the wolf's commands
+	Common::String _playlistName;
 	uint16 _randomPlayerCursorAllowed = kPlayerCursorAllowed;
 	Common::Array<RandomSequence> _sequences;
 
@@ -237,6 +240,7 @@ public:
 	// holds its last frame on screen instead of hiding.
 	enum RandomPauseMode { kPauseTimed, kPauseUntilHovered, kPauseUntilNotHovered };
 	int _activeSequenceIndex = -1;
+	Common::Array<Common::Path> _commandedSequences;
 	RandomChainState _randomChainState = kRandomPlaying;
 	RandomPauseMode _randomPauseMode = kPauseTimed;
 	uint32 _randomPauseEndTime = 0;

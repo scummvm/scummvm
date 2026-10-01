@@ -91,32 +91,7 @@ Common::Point PuzzleRecord::getHeldPiecePos(const Common::Point &mousePos, const
 }
 
 SoundDescription PuzzleRecord::playSoundBlock(const RandomSoundBlock &block) {
-	SoundDescription desc;
-	if (block.names.empty()) {
-		return desc;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return desc;
-	}
-
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-
-	Common::String caption = resolveSubtitleText(name);
-	if (caption.empty()) {
-		caption = resolveSubtitleText(name, Common::String(), "CONVO");
-	}
-	showSubtitle(caption);
-
-	return desc;
+	return block.play();
 }
 
 bool PuzzleRecord::isSoundBlockPlaying(const RandomSoundBlock &block) const {

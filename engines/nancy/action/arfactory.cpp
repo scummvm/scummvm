@@ -33,6 +33,7 @@
 #include "engines/nancy/action/overlay.h"
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/secondarymovie.h"
+#include "engines/nancy/action/wolfcommands.h"
 
 #include "engines/nancy/action/puzzle/adjustpuzzle.h"
 #include "engines/nancy/action/puzzle/analogclock.h"
@@ -109,6 +110,7 @@
 #include "engines/nancy/action/puzzle/twodialpuzzle.h"
 #include "engines/nancy/action/puzzle/typingquizpuzzle.h"
 #include "engines/nancy/action/puzzle/weightsortpuzzle.h"
+#include "engines/nancy/action/puzzle/wolfmazepuzzle.h"
 #include "engines/nancy/action/puzzle/whalesurvivorpuzzle.h"
 #include "engines/nancy/action/puzzle/wordfindpuzzle.h"
 
@@ -706,12 +708,14 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new AnalogClock();
 	case 197:
 		return new AutotextScroll();	// Used for the end credits
-	case 188:	// Empty in the original
-	case 190:	// MemoryPuzzle, moved from 238
-	case 191:	// BeadPuzzle, moved from 243
-	case 198:	// WolfCommands ("Movie Buttons"), builds its buttons in the new UI
-	case 199:	// WolfMaze, driven by the commands queued through 198
+	case 188:	// Empty in Nancy16, added for completeness
+	case 190:	// MemoryPuzzle, moved from 238, unused in Nancy16
+	case 191:	// BeadPuzzle, moved from 243, unused in Nancy16
 		return nullptr;
+	case 198:
+		return new WolfCommands();
+	case 199:
+		return new WolfMazePuzzle();	// Driven by the commands given through 198
 	case 200:
 		return new SoundEqualizerPuzzle();
 	case 201:

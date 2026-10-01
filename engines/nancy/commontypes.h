@@ -327,6 +327,11 @@ struct RandomSoundBlock {
 	int16 volume = 0;
 
 	void readData(Common::SeekableReadStream &stream);
+
+	// Plays one of the sounds, picked at random, and shows its caption, looked up by the
+	// sound's name, first in AUTOTEXT, then in CONVO. Returns the sound's description,
+	// which is left as "NO SOUND" when there is nothing to play.
+	SoundDescription play() const;
 };
 
 // Structs inside nancy.dat, which contains all the data that was

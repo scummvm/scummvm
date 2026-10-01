@@ -2756,6 +2756,20 @@ void Scene::loadUIPrepRecords(const Common::Path &name) {
 	delete iff;
 }
 
+void Scene::setMoviePlaylist(const Common::String &name, const Common::Array<Common::String> &movies) {
+	_moviePlaylists.setVal(name, movies);
+}
+
+bool Scene::takeMoviePlaylist(const Common::String &name, Common::Array<Common::String> &movies) {
+	if (!_moviePlaylists.contains(name)) {
+		return false;
+	}
+
+	movies = _moviePlaylists[name];
+	_moviePlaylists.erase(name);
+	return true;
+}
+
 void Scene::viewInventoryItem(int16 itemID) {
 	removeItemFromInventory(itemID, false);
 
