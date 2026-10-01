@@ -38,14 +38,19 @@ constexpr int PLAYER_VIEWPORT_X = 9;
 constexpr int PLAYER_VIEWPORT_Y = 5;
 
 LocationMap::LocationMap() : Map("LocationMap") {
-	Data::loadTiles(_tiles);
-	Data::loadAttackSprite(_attackSprite);
+	reloadTiles();
 }
 
 LocationMap::~LocationMap() {
 	for (int i = 0; i < Data::TILE_COUNT; ++i)
 		_tiles[i].free();
 	_attackSprite.free();
+}
+
+void LocationMap::reloadTiles() {
+	Data::loadTiles(_tiles, g_engine->getRenderMode());
+	Data::loadAttackSprite(_attackSprite, g_engine->getRenderMode());
+	redraw();
 }
 
 bool LocationMap::msgFocus(const FocusMessage &msg) {
@@ -79,6 +84,12 @@ bool LocationMap::msgAttackTile(const AttackTileMessage &msg) {
 	g_engine->updateScreen();
 
 	return true;
+}
+
+bool LocationMap::msgGame(const GameMessage &msg) {
+	if (msg._name == "RELOAD_TILES")
+		reloadTiles();
+	return false;
 }
 
 void LocationMap::draw() {

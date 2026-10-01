@@ -90,7 +90,7 @@ bool Console::cmdMap(int argc, const char **argv) {
 
 bool Console::cmdTiles(int argc, const char **argv) {
 	Graphics::Surface tiles[Data::TILE_COUNT];
-	Data::loadTiles(tiles);
+	Data::loadTiles(tiles, g_engine->getRenderMode());
 
 	debugPrintf("Loaded %d tiles\n", Data::TILE_COUNT);
 	for (int t = 0; t < Data::TILE_COUNT; ++t) {

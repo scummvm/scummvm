@@ -24,6 +24,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
+#include "ultima/ultima2/data/data.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -51,20 +52,23 @@ constexpr int TILE_WIDTH = 16;
 constexpr int TILE_HEIGHT = 16;
 
 /**
- * Decodes the 64 overworld/town tile graphics embedded directly in
- * ULTIMAII.EXE into 16x16 CLUT8 surfaces, indexed into the same 4-color
- * CGA palette as the pic??? full-screen art (see Gfx::PicDecoder).
+ * Decodes the 64 overworld/town tile graphics and (RENDER_CGA only) puts
+ * them into CLUT8 surfaces indexed into the 4-color CGA_PALETTE1 (see
+ * Gfx::PicDecoder). RENDER_CGA reads them embedded directly in
+ * ULTIMAII.EXE, as the original does; the EGA-family modes instead read
+ * an EGATILES-format file (see docs/enhanced-patch.md §3.8) and index
+ * into EGA_PALETTE16 at EGA_PALETTE_BASE instead
  */
-void loadTiles(Graphics::Surface tiles[TILE_COUNT]);
+void loadTiles(Graphics::Surface tiles[TILE_COUNT], RenderMode mode);
 
 /**
  * Decodes the "sprite circle" graphic used to flash a hit indicator over
  * the player's position during combat (xorSpriteDrawCenter in the
- * original), in the same 16x16 CLUT8/CGA format as the map tiles. A
- * ManagedSurface, unlike the plain map tiles, since it needs to be XOR-
- * blitted (see GfxSurface::xorBlitFrom)
+ * original), in the same 16x16 CLUT8 format and palette convention as
+ * loadTiles above. A ManagedSurface, unlike the plain map tiles, since it
+ * needs to be XOR-blitted (see GfxSurface::xorBlitFrom)
  */
-void loadAttackSprite(Graphics::ManagedSurface &sprite);
+void loadAttackSprite(Graphics::ManagedSurface &sprite, RenderMode mode);
 
 /**
  * Scrolls a tile's rows upwards with wraparound, which is how the water and

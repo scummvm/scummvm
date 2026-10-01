@@ -34,6 +34,33 @@ const byte CGA_PALETTE1[4 * 3] = {
 	0xff, 0xff, 0xff  // 3: white
 };
 
+const char *const RENDER_MODE_NAMES[RENDER_MODE_COUNT] = {
+	"ORIGINAL", "EGA", "EGA (V1.0)", "EGA (WILTSHIRE)", "EGA (C64)"
+};
+
+// The standard 16-color EGA/VGA palette, confirmed as the one ega.drv
+// relies on (via the BIOS's default mode 13h palette, rather than
+// loading its own - see docs/enhanced-patch.md §3.6) - EGATILES' pixel
+// values are literal indices into this
+const byte EGA_PALETTE16[EGA_PALETTE_SIZE * 3] = {
+	0x00, 0x00, 0x00, // 0: black
+	0x00, 0x00, 0xaa, // 1: blue
+	0x00, 0xaa, 0x00, // 2: green
+	0x00, 0xaa, 0xaa, // 3: cyan
+	0xaa, 0x00, 0x00, // 4: red
+	0xaa, 0x00, 0xaa, // 5: magenta
+	0xaa, 0x55, 0x00, // 6: brown
+	0xaa, 0xaa, 0xaa, // 7: light gray
+	0x55, 0x55, 0x55, // 8: dark gray
+	0x55, 0x55, 0xff, // 9: light blue
+	0x55, 0xff, 0x55, // 10: light green
+	0x55, 0xff, 0xff, // 11: light cyan
+	0xff, 0x55, 0x55, // 12: light red
+	0xff, 0x55, 0xff, // 13: light magenta
+	0xff, 0xff, 0x55, // 14: yellow
+	0xff, 0xff, 0xff  // 15: white
+};
+
 const char *const PLANET_NAMES[PLANET_COUNT] = {
 	"EARTH", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"
 };
@@ -43,12 +70,14 @@ const byte PLANET_COORDS[PLANET_COUNT + 1][3] = {
 	{ 2, 8, 5 }, { 9, 4, 6 }, { 4, 0, 5 }, { 0, 1, 4 }, { 9, 9, 9 }
 };
 
-void setCGAPalette() {
-	Graphics::Palette palette(PALETTE_PLAYER_MARKER + 1);
+void setPalette() {
+	Graphics::Palette palette(EGA_PALETTE_BASE + EGA_PALETTE_SIZE);
 	palette.set(CGA_PALETTE1, 0, 4);
 
 	const byte green[3] = { 0x55, 0xff, 0x55 };
 	palette.set(green, PALETTE_PLAYER_MARKER, 1);
+
+	palette.set(EGA_PALETTE16, EGA_PALETTE_BASE, EGA_PALETTE_SIZE);
 	g_system->getPaletteManager()->setPalette(palette);
 }
 

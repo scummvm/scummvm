@@ -53,7 +53,7 @@ Ending::~Ending() {
 }
 
 bool Ending::msgFocus(const FocusMessage &msg) {
-	Data::loadTiles(_tileGfx);
+	Data::loadTiles(_tileGfx, g_engine->getRenderMode());
 
 	// A fixed background, reused from the same file that's the real
 	// planet map of this era/type combination - not loaded as a live map

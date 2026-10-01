@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
+#include "ultima/ultima2/data/data.h"
 #include "ultima/ultima2/views/title.h"
 #include "ultima/ultima2/gfx/pic_decoder.h"
 #include "ultima/ultima2/ultima2.h"
@@ -167,10 +168,12 @@ void Title::draw() {
 		s.writeString(Common::Point(14, 7), "ENCHANTRESS");
 		s.writeString(Common::Point(6, 22), "(C)-1983,1989 BY LORD BRITISH");
 		s.writeString(Common::Point(15, 23), "AND ORIGIN");
-		s.writeString(Common::Point(5, 11), "TYPE -");
-		s.writeString(Common::Point(6, 13), "'D' - FOR A DEMONSTRATION");
-		s.writeString(Common::Point(6, 15), "'P' - PLAY A GAME OF ULTIMA ][");
-		s.writeString(Common::Point(6, 17), "'C' - CREATE A NEW CHARACTER");
+		s.writeString(Common::Point(5, 10), "TYPE -");
+		s.writeString(Common::Point(6, 11), "'D' - FOR A DEMONSTRATION");
+		s.writeString(Common::Point(6, 13), "'P' - PLAY A GAME OF ULTIMA ][");
+		s.writeString(Common::Point(6, 15), "'C' - CREATE A NEW CHARACTER");
+		s.writeString(Common::Point(6, 17), Common::String::format("'G' - GRAPHICS: %s",
+			Data::RENDER_MODE_NAMES[g_engine->getRenderMode()]));
 		s.writeString(Common::Point(5, 19), "CHOICE:");
 		break;
 	}
@@ -222,6 +225,12 @@ bool Title::msgKeypress(const KeypressMessage &msg) {
 		case Common::KEYCODE_c:
 			replaceView("CreateCharacter");
 			break;
+		case Common::KEYCODE_g: {
+			int nextMode = (g_engine->getRenderMode() + 1) % Data::RENDER_MODE_COUNT;
+			g_engine->setRenderMode((Data::RenderMode)nextMode);
+			redraw();
+			break;
+		}
 		default:
 			break;
 		}

@@ -38,6 +38,8 @@ private:
 	Graphics::Surface _tiles[Data::TILE_COUNT];
 	Graphics::ManagedSurface _attackSprite;
 
+	void reloadTiles() override;
+
 protected:
 	Graphics::Surface *tileGraphics() override {
 		return _tiles;
@@ -50,6 +52,7 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgAttackTile(const AttackTileMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 };
 

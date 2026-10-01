@@ -36,6 +36,27 @@ extern const byte CGA_PALETTE1[4 * 3];
 // dungeon minimap's player marker
 constexpr int PALETTE_PLAYER_MARKER = 4;
 
+// The "Ultima II Upgrade" fan patch's alternate renderers: each is VGA
+// mode 13h under the hood (not real EGA hardware - see
+// docs/enhanced-patch.md §3.6-3.8), using 16-of-256 palette entries and
+// tile/picture data from EGATILES-format files instead of the CGA
+// tileset embedded in the EXE. The EGA_* themes are pure data swaps
+// (alternate EGATILES/EGACOLOR/picture files), not different rendering
+// logic
+enum RenderMode {
+	RENDER_CGA = 0, RENDER_EGA = 1, RENDER_EGA_V1 = 2, RENDER_EGA_WILTSHIRE = 3,
+	RENDER_EGA_C64 = 4, RENDER_MODE_COUNT = 5
+};
+extern const char *const RENDER_MODE_NAMES[RENDER_MODE_COUNT];
+
+// The EGA-family renderers' 16-color palette occupies this range, kept
+// well away from CGA_PALETTE1/PALETTE_PLAYER_MARKER (indices 0-4) so
+// CGA-drawn chrome (text, the pic??? title art) keeps rendering
+// correctly no matter which renderer's tiles are currently active
+constexpr int EGA_PALETTE_BASE = 16;
+constexpr int EGA_PALETTE_SIZE = 16;
+extern const byte EGA_PALETTE16[EGA_PALETTE_SIZE * 3];
+
 // Names of the worlds that can be orbited, indexed by Savegame::_orbitTarget
 constexpr int PLANET_COUNT = 9;
 extern const char *const PLANET_NAMES[PLANET_COUNT];
@@ -45,10 +66,12 @@ extern const char *const PLANET_NAMES[PLANET_COUNT];
 extern const byte PLANET_COORDS[PLANET_COUNT + 1][3];
 
 /**
- * Switches the screen to the CGA palette that the game itself, the tile
- * graphics and the pic??? art all use
+ * Switches the screen to the palette the game needs: CGA_PALETTE1 plus
+ * the player-marker green at their fixed low indices (always active, so
+ * CGA-drawn chrome keeps working in any render mode), plus EGA_PALETTE16
+ * at EGA_PALETTE_BASE for whichever EGA-family renderer is active
  */
-void setCGAPalette();
+void setPalette();
 
 constexpr int MAX_NAME_LENGTH = 12;
 

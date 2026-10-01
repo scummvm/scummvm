@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "common/engine_data.h"
 #include "common/savefile.h"
 #include "engines/util.h"
@@ -62,7 +63,7 @@ Common::Error Ultima2Engine::run() {
 
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
-	Data::setCGAPalette();
+	Data::setPalette();
 	_pcSpeakerReady = _pcSpeaker->init();
 
 	// Set the engine's debugger console
@@ -80,6 +81,15 @@ Common::Error Ultima2Engine::run() {
 		GUIErrorMessage(errMsg);
 		return Common::kNoError;
 	}
+
+	// Restore the player's preferred renderer, falling back to the
+	// original CGA look if the stored value is missing or stale. Uses
+	// its own key rather than the generic "render_mode" - that one's
+	// already a reserved, string-valued ScummVM-wide GUI setting (the
+	// "Render mode:" dropdown, see gui/options.cpp), not an engine-local int
+	int renderMode = ConfMan.getInt("graphics_mode");
+	_renderMode = (renderMode >= 0 && renderMode < Data::RENDER_MODE_COUNT) ?
+		(Data::RenderMode)renderMode : Data::RENDER_CGA;
 
 	// Set up secret map
 	SearchMan.add("Secret", new Data::SecretMapArchive());
@@ -230,6 +240,21 @@ void Ultima2Engine::playFX(Data::SoundEffect fx) {
 		queueTone(1170, 60);
 		break;
 	}
+}
+
+void Ultima2Engine::setRenderMode(Data::RenderMode mode) {
+	if (mode == _renderMode)
+		return;
+
+	_renderMode = mode;
+	ConfMan.setInt("graphics_mode", (int)mode);
+	ConfMan.flushToDisk();
+	Data::setPalette();
+
+	// OverworldMap/LocationMap are constructed once up front as part of
+	// Views::Views, so they need to be explicitly told to re-read their
+	// tile graphics now rather than noticing this on their own
+	g_engine->send(Shared::Messages::GameMessage("RELOAD_TILES"));
 }
 
 } // namespace Ultima2

@@ -52,6 +52,15 @@ protected:
 	void checkIdle();
 
 public:
+	/**
+	 * Re-reads whatever tile/sprite graphics this view uses for the
+	 * current render mode. A no-op by default; overridden by subclasses
+	 * that actually own tile surfaces (OverworldMap, LocationMap), since
+	 * those are constructed once up front as part of Views::Views and so
+	 * don't otherwise notice a render mode change made after the fact
+	 */
+	virtual void reloadTiles() {}
+
 	Map(const Common::String &name) : View(name) {
 		setBounds(TextRect(0, 0, 39, 19));
 	}

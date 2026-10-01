@@ -39,14 +39,19 @@ constexpr int PLAYER_VIEWPORT_X = 9;
 constexpr int PLAYER_VIEWPORT_Y = 5;
 
 OverworldMap::OverworldMap() : Map("OverworldMap") {
-	Data::loadTiles(_tiles);
-	Data::loadAttackSprite(_attackSprite);
+	reloadTiles();
 }
 
 OverworldMap::~OverworldMap() {
 	for (int i = 0; i < Data::TILE_COUNT; ++i)
 		_tiles[i].free();
 	_attackSprite.free();
+}
+
+void OverworldMap::reloadTiles() {
+	Data::loadTiles(_tiles, g_engine->getRenderMode());
+	Data::loadAttackSprite(_attackSprite, g_engine->getRenderMode());
+	redraw();
 }
 
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
@@ -82,6 +87,12 @@ bool OverworldMap::msgAttackTile(const AttackTileMessage &msg) {
 	g_engine->updateScreen();
 
 	return true;
+}
+
+bool OverworldMap::msgGame(const GameMessage &msg) {
+	if (msg._name == "RELOAD_TILES")
+		reloadTiles();
+	return false;
 }
 
 void OverworldMap::draw() {

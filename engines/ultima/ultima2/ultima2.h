@@ -90,6 +90,9 @@ public:
 	// movement through normally impassable terrain
 	bool _intangible = false;
 
+private:
+	Data::RenderMode _renderMode = Data::RENDER_CGA;
+
 public:
 	Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima2Engine() override;
@@ -142,6 +145,21 @@ public:
 	 * hardcoded tone sweep, reproduced here as a short note sequence
 	 */
 	void playFX(Data::SoundEffect fx);
+
+	/**
+	 * Returns the currently selected renderer (CGA or one of the "Ultima
+	 * II Upgrade" patch's EGA-family modes)
+	 */
+	Data::RenderMode getRenderMode() const {
+		return _renderMode;
+	}
+
+	/**
+	 * Changes the active renderer, persisting the choice to ConfMan and
+	 * refreshing the palette immediately. Map views pick up the new tile
+	 * data themselves next time they're (re)constructed
+	 */
+	void setRenderMode(Data::RenderMode mode);
 };
 
 extern Ultima2Engine *g_engine;
