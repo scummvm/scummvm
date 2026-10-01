@@ -502,6 +502,23 @@ private:
 	void PART_07_ENTER_FROM_OUTSIDE();
 	void PART_07_EXIT_TO_OUTSIDE();
 
+
+	void PART_08();
+	void PART_08_EXEC_ACTION(int action);
+	void PART_08_APPLY_OBJECT_STATE(int num);
+	void PART_08_ANIMATE_DOOR(bool open);
+	void PART_08_ACTION_105();
+	void PART_08_ACTION_103_TALK_TO_DEAN();
+	void PART_08_ACTION_114();
+	void PART_08_HANDLE_DIALOGUE_DEAN();
+	void PART_08_DRAW_DEAN();
+	void PART_08_DRAW_DEAN_DIALOGUE_FRAME(int frame);
+	void PART_08_UPDATE_DIALOGUE_DEAN(int action);
+	void PART_09();
+	void PART_09_EXEC_ACTION(int action);
+	void PART_09_APPLY_OBJECT_STATE(int num);
+	void PART_09_ANIMATE_DOOR(bool open);
+
 	// Decanato right
 	void PART_10();
 	void PART_10_EXEC_ACTION(int action);
@@ -749,6 +766,8 @@ protected:
 	static const RoomDataOffsets PART_05_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_07_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_08_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_09_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_10_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_11_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_12_ROOM_DATA_OFFSETS;

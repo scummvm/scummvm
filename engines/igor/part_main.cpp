@@ -144,8 +144,15 @@ void IgorEngine::PART_MAIN() {
 		case 70: // enter from outside the administration corridor
 		case 71: // enter from deans door
 		case 72: // enter from secretary
-			PART_07(); // Administration corridor; cseg197:28D4
+			PART_07(); // Administration corridor
 			break;
+		case 80:
+			PART_08(); // Dean Pepper office
+			break;
+		case 90:
+			PART_09(); // Administration secretary room
+			break;
+
 		case 100: // enter from map
 		case 101:
 		case 102:

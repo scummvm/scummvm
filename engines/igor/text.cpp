@@ -370,7 +370,6 @@ void IgorEngine::waitForEndOfIgorDialogue() {
 }
 
 void IgorEngine::animateIgorTalking(int frame) {
-	debug("Animating Igor talking with frame: %d", frame);
 	if (getPart() == 4) {
 		return;
 	}

@@ -515,4 +515,18 @@
 #define MSK_ParkRight 936 // cseg104:00D7-01A8; IGOR.EXE:0x3EBA9A, 0xF84 bytes
 #define BOX_ParkRight 937 // cseg104:009A-00C3; IGOR.EXE:0x3ECA1E, 0x500 bytes
 
+// Dean Peeper's conversation data block from NE segment 194.
+#define DLG_DeanPepperOffice 938 // cseg194:0CD4-0CF7; IGOR.EXE:0x7256FE, 0x3D86 bytes
+
+// Administration secretary-room animation blocks copied by cseg192:0002-01D4.
+#define ANM_AdministrationSecretaryRoom1 923 // cseg192:01D5; IGOR.EXE:0x7057D5, 0xD38 bytes
+#define ANM_AdministrationSecretaryRoom2 924 // cseg192:0F0D; IGOR.EXE:0x70650D, 0x1FB bytes
+#define ANM_AdministrationSecretaryRoom3 925 // cseg192:1108; IGOR.EXE:0x706708, 0x4DD8 bytes
+#define ANM_AdministrationSecretaryRoom4 926 // cseg192:5EE0; IGOR.EXE:0x70B4E0, 0x930 bytes
+#define ANM_AdministrationSecretaryRoom5 927 // cseg192:6810; IGOR.EXE:0x70BE10, 0x7D0 bytes
+#define ANM_AdministrationSecretaryRoom6 928 // cseg192:6FE0; IGOR.EXE:0x70C5E0, 0x18E4 bytes
+#define ANM_AdministrationSecretaryRoom7 929 // cseg192:88C4; IGOR.EXE:0x70DEC4, 0x14B4 bytes
+#define ANM_AdministrationSecretaryRoom8 930 // cseg192:9D78; IGOR.EXE:0x70F378, 0x870 bytes
+#define ANM_AdministrationSecretaryRoom9 931 // cseg192:A5E8; IGOR.EXE:0x70FBE8, 0x399D bytes
+
 #endif // IGOR_RESOURCE_IDS

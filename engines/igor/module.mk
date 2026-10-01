@@ -19,6 +19,8 @@ MODULE_OBJS = \
 	part_90.o \
 	part_6.o \
 	part_7.o \
+	part_8.o \
+	part_9.o \
 	part_10.o \
 	part_11.o \
 	part_12.o \
