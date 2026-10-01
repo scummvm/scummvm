@@ -66,7 +66,7 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 
 
 		// _currentPart = 850;
-		_currentPart = 70;
+		_currentPart = 170;
 		// _currentPart = 62;
 		// _currentPart = 40;
 	}

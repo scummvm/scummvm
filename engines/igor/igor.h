@@ -486,8 +486,8 @@ private:
 	void PART_06_UPDATE_DIALOGUE_PHOTOGRAPHER(int action);
 	void PART_06_HELPER_7_decodePhotographerTalkingFrame(int frame);
 	void PART_06_ACTION_105();
-	void PART_06_ACTION_107();
-	void PART_06_ACTION_108();
+	void PART_06_ACTION_107_giveAnythingToPhotographer();
+	void PART_06_ACTION_108_giveRocketToPhotographer();
 	void PART_06_ACTION_102_scrollLeft();
 	void PART_06_HELPER_6_setPhotographerState(int num);
 	void PART_06_HELPER_8_animatePhotographer(int frame);
@@ -497,7 +497,7 @@ private:
 	void PART_07();
 	void PART_07_EXEC_ACTION(int action);
 	void PART_07_DRAW_DOOR_STATE(int num);
-	void PART_07_ANIMATE_DOOR(int door, bool open);
+	void PART_07_openCloseDoor(int door, bool open);
 	void PART_07_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, int dyPos);
 	void PART_07_ENTER_FROM_OUTSIDE();
 	void PART_07_EXIT_TO_OUTSIDE();
@@ -560,7 +560,7 @@ private:
 
 	// outside college
 	void PART_17_EXEC_ACTION(int action);
-	void PART_17_ACTION_101();
+	void PART_17_ACTION_101_walkIn();
 	void PART_17_ACTION_103();
 	void PART_17_ACTION_105();
 	void PART_17_ACTION_106();
@@ -579,6 +579,22 @@ private:
 	void PART_17_HELPER_10();
 	void PART_17_HELPER_11(int frame);
 	void PART_17();
+
+	// college corridor lucas
+	void PART_23_EXEC_ACTION(int action);
+	void PART_23_ACTION_105();
+	void PART_23_ACTION_107();
+	void PART_23_ACTION_108();
+	void PART_23_UPDATE_ROOM_BACKGROUND();
+	void PART_23_HELPER_1(int num);
+	void PART_23_HELPER_2(int frame);
+	void PART_23_HELPER_3();
+	void PART_23_HELPER_4();
+	void PART_23_HELPER_5();
+	void PART_23_HELPER_6();
+	void PART_23_HELPER_7(int frame);
+	void PART_23_HELPER_8(int frame);
+	void PART_23();
 
 	// park
 	void PART_34();

@@ -33,15 +33,15 @@ void IgorEngine::PART_12_EXEC_ACTION(int action) {
 		PART_12_ACTION_101();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(201, 1, 789); // cseg171:003C-0058
+		ADD_DIALOGUE_TEXT(201, 1, 789);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 103:
 		if (_objectsState[44] == 0) {
-			ADD_DIALOGUE_TEXT(203, 2, 790); // cseg171:0070-0082
+			ADD_DIALOGUE_TEXT(203, 2, 790);
 		} else {
-			ADD_DIALOGUE_TEXT(205, 1, 791); // cseg171:0084-00A0
+			ADD_DIALOGUE_TEXT(205, 1, 791);
 		}
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -53,12 +53,12 @@ void IgorEngine::PART_12_EXEC_ACTION(int action) {
 		PART_12_ACTION_105();
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(207, 2, 793); // cseg171:00B1-00CD
+		ADD_DIALOGUE_TEXT(207, 2, 793);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(206, 1, 792); // cseg171:00DE-00FA
+		ADD_DIALOGUE_TEXT(206, 1, 792);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -395,9 +395,10 @@ void IgorEngine::PART_12_HELPER_4() {
 			waitForTimer(30);
 		}
 	}
-	ADD_DIALOGUE_TEXT(212, 2, 796); // cseg171:120C-1218
-	ADD_DIALOGUE_TEXT(214, 1, 797); // cseg171:121E-122A
-	ADD_DIALOGUE_TEXT(215, 1, 798); // cseg171:1230-123C
+	ADD_DIALOGUE_TEXT(212, 2, 796);
+	ADD_DIALOGUE_TEXT(213, 2, 796);
+	ADD_DIALOGUE_TEXT(214, 1, 797);
+	ADD_DIALOGUE_TEXT(215, 1, 798);
 	SET_DIALOGUE_TEXT(1, 3);
 	_updateDialogue = &IgorEngine::PART_12_UPDATE_DIALOGUE_CHURCHMAN;
 	startCutsceneDialogue(95, 55, 51, 28, 63);

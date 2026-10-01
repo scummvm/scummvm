@@ -81,7 +81,7 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 	case 103:
 		PART_06_ACTION_103_talkToPhotographer();
 		break;
-	case 104:
+	case 104: // look at photographer
 		ADD_DIALOGUE_TEXT(203, 1, 481);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -89,16 +89,16 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 	case 105:
 		PART_06_ACTION_105();
 		break;
-	case 106:
+	case 106: // Look at camera
 		ADD_DIALOGUE_TEXT(204, 1, 482);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 107:
-		PART_06_ACTION_107();
+		PART_06_ACTION_107_giveAnythingToPhotographer();
 		break;
 	case 108:
-		PART_06_ACTION_108();
+		PART_06_ACTION_108_giveRocketToPhotographer();
 		break;
 	default:
 		error("PART_06_EXEC_ACTION unhandled action %d", action);
@@ -195,7 +195,7 @@ void IgorEngine::PART_06_ACTION_105() {
 	PART_06_HELPER_6_setPhotographerState(255);
 }
 
-void IgorEngine::PART_06_ACTION_107() {
+void IgorEngine::PART_06_ACTION_107_giveAnythingToPhotographer() {
 	PART_06_HELPER_8_animatePhotographer(0);
 	ADD_DIALOGUE_TEXT(205, 1, 483);
 	SET_DIALOGUE_TEXT(1, 1);
@@ -207,7 +207,7 @@ void IgorEngine::PART_06_ACTION_107() {
 	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
 }
 
-void IgorEngine::PART_06_ACTION_108() {
+void IgorEngine::PART_06_ACTION_108_giveRocketToPhotographer() {
 	PART_06_HELPER_8_animatePhotographer(0);
 	ADD_DIALOGUE_TEXT(208, 2, 485);
 	ADD_DIALOGUE_TEXT(210, 2, 486);

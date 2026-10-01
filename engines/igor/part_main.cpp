@@ -170,6 +170,11 @@ void IgorEngine::PART_MAIN() {
 		case 171:
 			PART_17();
 			break;
+		case 230:
+		case 231:
+		case 232:
+			PART_23();
+			break;
 		case 340:
 			PART_34(); // Park, left panel; cseg101:1F85
 			break;

@@ -27,26 +27,26 @@ static int VAR_CURRENT_TALKING_ACTOR;
 void IgorEngine::PART_17_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_17_EXEC_ACTION %d", action);
 	switch (action) {
-	case 101:
-		PART_17_ACTION_101();
+	case 101: // walk to door
+		PART_17_ACTION_101_walkIn();
 		break;
-	case 102:
-		ADD_DIALOGUE_TEXT(225, 1, 648); // cseg141:09EC-09F8
+	case 102: // look at door
+		ADD_DIALOGUE_TEXT(225, 1, 648);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 103:
 		PART_17_ACTION_103();
 		break;
-	case 104:
-		ADD_DIALOGUE_TEXT(220, 3, 646); // cseg141:0A19-0A25
+	case 104: // look at file
+		ADD_DIALOGUE_TEXT(220, 3, 646);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 105:
 		PART_17_ACTION_105();
 		break;
-	case 106:
+	case 106: // exchange files
 		PART_17_ACTION_106();
 		break;
 	default:
@@ -55,7 +55,7 @@ void IgorEngine::PART_17_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_17_ACTION_101() {
+void IgorEngine::PART_17_ACTION_101_walkIn() {
 	_roomObjectAreasTable[_screenLayer2[22034]].area = 8;
 	_roomObjectAreasTable[_screenLayer2[23923]].area = 8;
 	--_walkDataLastIndex;
@@ -85,15 +85,15 @@ void IgorEngine::PART_17_ACTION_103() {
 	waitForEndOfCutsceneDialogue(156, 32, 35, 38, 47);
 	_updateDialogue = 0;
 	if (_gameState.counter[4] == 1) {
-		ADD_DIALOGUE_TEXT(203, 1, 634); // cseg141:085E-086A
-		ADD_DIALOGUE_TEXT(204, 2, 635); // cseg141:0870-087C
+		ADD_DIALOGUE_TEXT(203, 1, 634);
+		ADD_DIALOGUE_TEXT(204, 2, 635);
 		SET_DIALOGUE_TEXT(1, 2);
 	} else if (_gameState.counter[4] == 2) {
-		ADD_DIALOGUE_TEXT(208, 2, 637); // cseg141:088E-089A
+		ADD_DIALOGUE_TEXT(208, 2, 637);
 		SET_DIALOGUE_TEXT(1, 1);
 	} else if (_gameState.counter[4] == 3) {
-		ADD_DIALOGUE_TEXT(212, 2, 639); // cseg141:08AC-08B8
-		ADD_DIALOGUE_TEXT(214, 1, 640); // cseg141:08BE-08CA
+		ADD_DIALOGUE_TEXT(212, 2, 639);
+		ADD_DIALOGUE_TEXT(214, 1, 640);
 		SET_DIALOGUE_TEXT(1, 2);
 	}
 	startCutsceneDialogue(135, 33, 63, 63, 0);
@@ -507,6 +507,7 @@ void IgorEngine::PART_17() {
 	if (_objectsState[54] == 0) {
 		_objectsState[54] = 1;
 	}
+	debug("Current part: %d", _currentPart);
 	fadeOut(624);
 }
 

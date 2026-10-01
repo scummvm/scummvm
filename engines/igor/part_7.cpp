@@ -31,7 +31,7 @@ void IgorEngine::PART_07_DRAW_DOOR_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_07_ANIMATE_DOOR(int door, bool open) {
+void IgorEngine::PART_07_openCloseDoor(int door, bool open) {
 	const int stateIndex = door == 1 ? 52 : 53;
 	if ((_objectsState[stateIndex] != 0) == open) {
 		const int text = open ? 19 : 23;
@@ -139,16 +139,16 @@ void IgorEngine::PART_07_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 103:
-		PART_07_ANIMATE_DOOR(1, true);
+		PART_07_openCloseDoor(1, true);
 		break;
 	case 104:
-		PART_07_ANIMATE_DOOR(1, false);
+		PART_07_openCloseDoor(1, false);
 		break;
 	case 105:
-		PART_07_ANIMATE_DOOR(2, true);
+		PART_07_openCloseDoor(2, true);
 		break;
 	case 106:
-		PART_07_ANIMATE_DOOR(2, false);
+		PART_07_openCloseDoor(2, false);
 		break;
 	case 107: // Secretary's plaque
 		ADD_DIALOGUE_TEXT(204, 1, 142);
