@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/engine_data.h"
 #include "common/savefile.h"
 #include "engines/util.h"
 #include "audio/softsynth/pcspk.h"
@@ -72,6 +73,13 @@ Common::Error Ultima2Engine::run() {
 		_rngState[i] = seed;
 	_rngState[0]++;
 	_rngState[1]++;
+
+	// Initialise engine data for the game
+	Common::U32String errMsg;
+	if (!Common::load_engine_data("ultima.dat", "ultima2", 1, 0, errMsg)) {
+		GUIErrorMessage(errMsg);
+		return Common::kNoError;
+	}
 
 	// Set up secret map
 	SearchMan.add("Secret", new Data::SecretMapArchive());
