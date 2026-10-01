@@ -724,6 +724,8 @@ public:
 	void debugPaintWalkAreas();
 	void debugPaintHotspots();
 	void debugClearOverlay();
+	void debugChangePart(int state);
+	bool debugAddObjectToInventory(int object);
 
 	/**
 	 * Uses a serializer to allow implementing savegame

@@ -29,6 +29,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("paint_walk",     WRAP_METHOD(Console, Cmd_paintWalk));
 	registerCmd("paint_hotspots", WRAP_METHOD(Console, Cmd_paintHotspots));
 	registerCmd("paint_off",      WRAP_METHOD(Console, Cmd_paintOff));
+	registerCmd("changePart",     WRAP_METHOD(Console, Cmd_changePart));
+	registerCmd("addObjectToInventory", WRAP_METHOD(Console, Cmd_addObjectToInventory));
 }
 
 Console::~Console() {
@@ -66,6 +68,39 @@ bool Console::Cmd_paintOff(int argc, const char **argv) {
 	}
 	g_engine->debugClearOverlay();
 	debugPrintf("Overlay off\n");
+	return true;
+}
+
+bool Console::Cmd_changePart(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <state code>\n", argv[0]);
+		return true;
+	}
+
+	const int state = atoi(argv[1]);
+	if (state <= 0 || state > 999) {
+		debugPrintf("Invalid state code '%s'\n", argv[1]);
+		return true;
+	}
+
+	g_engine->debugChangePart(state);
+	debugPrintf("Changing to part state %d\n", state);
+	return false;
+}
+
+bool Console::Cmd_addObjectToInventory(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <object ID>\n", argv[0]);
+		return true;
+	}
+
+	const int object = atoi(argv[1]);
+	if (!g_engine->debugAddObjectToInventory(object)) {
+		debugPrintf("Cannot add object %d (valid IDs are 1-36, and it must not already be held)\n", object);
+		return true;
+	}
+
+	debugPrintf("Added object %d to the inventory\n", object);
 	return true;
 }
 

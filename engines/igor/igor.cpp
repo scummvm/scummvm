@@ -466,6 +466,24 @@ void IgorEngine::addObjectToInventory(int object, int index) {
 	playSound(51, 1);
 }
 
+void IgorEngine::debugChangePart(int state) {
+	_currentPart = state;
+}
+
+bool IgorEngine::debugAddObjectToInventory(int object) {
+	if (object < 1 || object > (int)ARRAYSIZE(_inventoryImages)) {
+		return false;
+	}
+
+	const int index = object + ARRAYSIZE(_inventoryImages) - 1;
+	if (_inventoryInfo[index] != 0 || _inventoryInfo[73] >= ARRAYSIZE(_inventoryImages)) {
+		return false;
+	}
+
+	addObjectToInventory(object, index);
+	return true;
+}
+
 void IgorEngine::removeObjectFromInventory(int index) {
 	_inventoryInfo[_inventoryInfo[index] - 1] = 0;
 	_inventoryInfo[index] = 0;

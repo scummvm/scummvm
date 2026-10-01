@@ -33,6 +33,8 @@ private:
 	bool Cmd_paintWalk(int argc, const char **argv);
 	bool Cmd_paintHotspots(int argc, const char **argv);
 	bool Cmd_paintOff(int argc, const char **argv);
+	bool Cmd_changePart(int argc, const char **argv);
+	bool Cmd_addObjectToInventory(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;
