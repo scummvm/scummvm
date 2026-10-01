@@ -516,7 +516,7 @@
 #define BOX_ParkRight 937 // cseg104:009A-00C3; IGOR.EXE:0x3ECA1E, 0x500 bytes
 
 // Dean Peeper's conversation data block from NE segment 194.
-#define DLG_DeanPepperOffice 938 // cseg194:0CD4-0CF7; IGOR.EXE:0x7256FE, 0x3D86 bytes
+#define DLG_DeanPepperOffice 938
 
 // Administration secretary-room animation blocks copied by cseg192:0002-01D4.
 #define ANM_AdministrationSecretaryRoom1 923 // cseg192:01D5; IGOR.EXE:0x7057D5, 0xD38 bytes

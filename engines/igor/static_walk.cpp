@@ -217,17 +217,17 @@ const RoomDataOffsets IgorEngine::PART_07_ROOM_DATA_OFFSETS = {
 };
 
 const RoomDataOffsets IgorEngine::PART_08_ROOM_DATA_OFFSETS = {
-	{ 80, 4, 12, 3 }, // cseg189:250F-2542; transition table at DAT+80, four areas, strides 12 and 3
+	{ 80, 4, 12, 3 },
 	{ 149, 162 },
 	{ 167, 385, 3401, 271, 347, 84 },
 	{
-		165, 30,   // cseg194:0002-0151; question text base and count
-		5188, 100, // cseg194:0154-0269; reply text base and count
-		90,        // cseg194:0DB0-0DBD; dialogue matrix page stride
-		270,   // cseg194:09E1-0A4D
-		15548, // cseg194:0A78-0A92
-		15488, // cseg194:043D-0454
-		30     // cseg194:0002-026D; reply table has 30 sound entries
+		165, 30,
+		5188, 100,
+		90,
+		270,
+		15548,
+		15488,
+		30
 	}
 };
 

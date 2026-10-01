@@ -18,7 +18,7 @@ void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 		_roomActionsTable[150] = _objectsState[52] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
-		// TODO: map the independent s3:0x8AB flag used by cseg189:16EF.
+		// TODO: map the independent s3:0x8AB flag.
 		uint32 srcOffset;
 		int dstOffset;
 		int rows;
@@ -72,18 +72,18 @@ void IgorEngine::PART_08_ANIMATE_DOOR(bool open) {
 }
 
 void IgorEngine::PART_08_DRAW_DEAN() {
-	for (int y = 0; y <= 25; ++y) { // cseg189:08D3-093B
-		const uint8 *src = _animFramesBuffer + 0x23FE + y * 34; // cseg189:08E3-08EE
-		memcpy(_screenVGA + 0x6BC3 + y * 320, src, 34); // cseg189:08D3-0908
-		memcpy(_screenLayer1 + 0x6BC3 + y * 320, src, 34); // cseg189:090D-0931
+	for (int y = 0; y <= 25; ++y) {
+		const uint8 *src = _animFramesBuffer + 0x23FE + y * 34;
+		memcpy(_screenVGA + 0x6BC3 + y * 320, src, 34);
+		memcpy(_screenLayer1 + 0x6BC3 + y * 320, src, 34);
 	}
 }
 
 void IgorEngine::PART_08_DRAW_DEAN_DIALOGUE_FRAME(int frame) {
-	for (int y = 0; y <= 21; ++y) { // cseg189:093F-09CF
-		const uint8 *src = _animFramesBuffer + 0x4E6B + frame * 0x226 + y * 25; // cseg189:095D-0975
-		memcpy(_screenVGA + 0x6BC6 + y * 320, src, 25); // cseg189:094D-098F
-		memcpy(_screenLayer1 + 0x6BC6 + y * 320, src, 25); // cseg189:0994-09C5
+	for (int y = 0; y <= 21; ++y) {
+		const uint8 *src = _animFramesBuffer + 0x4E6B + frame * 0x226 + y * 25;
+		memcpy(_screenVGA + 0x6BC6 + y * 320, src, 25);
+		memcpy(_screenLayer1 + 0x6BC6 + y * 320, src, 25);
 	}
 }
 
@@ -91,102 +91,252 @@ void IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		PART_08_DRAW_DEAN_DIALOGUE_FRAME(0); // cseg194:0B8F-0BAF
+		PART_08_DRAW_DEAN_DIALOGUE_FRAME(0);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_08_DRAW_DEAN_DIALOGUE_FRAME(getRandomNumber(6)); // cseg194:0C33-0C3B
+		PART_08_DRAW_DEAN_DIALOGUE_FRAME(getRandomNumber(6));
 		break;
 	}
 }
 
 void IgorEngine::PART_08_ACTION_105() {
-	for (int frame = 0; frame <= 1; ++frame) { // cseg189:062A-0698
-		for (int y = 0; y <= 48; ++y) { // cseg189:0635-067E
-			const uint8 *src = _animFramesBuffer + 0x125E + frame * 0x55C + y * 28; // cseg189:0645-065A
-			memcpy(_screenVGA + 0x66E3 + y * 320, src, 28); // cseg189:0635-0674
+	for (int frame = 0; frame <= 1; ++frame) {
+		for (int y = 0; y <= 48; ++y) {
+			const uint8 *src = _animFramesBuffer + 0x125E + frame * 0x55C + y * 28;
+			memcpy(_screenVGA + 0x66E3 + y * 320, src, 28);
 		}
 		if (frame == 0)
-			waitForTimer(127); // cseg189:0680-0691
+			waitForTimer(127);
 	}
-	addObjectToInventory(15, 50); // cseg189:069A-06D4; inventory object 15 is slot 50
-	_objectsState[57] = 1; // cseg189:06DE
-	PART_08_APPLY_OBJECT_STATE(255); // cseg189:06D9-06E5
+	addObjectToInventory(15, 50);
+	_objectsState[57] = 1;
+	PART_08_APPLY_OBJECT_STATE(255);
+}
+
+void IgorEngine::PART_08_ACTION_109() {
+	for (int frame = 0; frame <= 1; ++frame) {
+		for (int y = 0; y <= 48; ++y) {
+			for (int x = 0; x <= 22; ++x) {
+				const int dstOffset = 0x4F77 + y * 320 + x;
+				uint8 color = _animFramesBuffer[2448 + frame * 1127 + y * 23 + x];
+				if (color >= 0xC0 && color <= 0xCF) {
+					const RoomObjectArea &area = _roomObjectAreasTable[_screenLayer2[dstOffset]];
+					if (area.y1Lum > 0)
+						color = _screenLayer1[dstOffset];
+					else if (area.y2Lum > 0)
+						color -= area.deltaLum;
+				}
+				_screenTempLayer[y * 100 + x] = color;
+			}
+		}
+		for (int y = 0; y <= 48; ++y)
+			memcpy(_screenVGA + 0x4F77 + y * 320, _screenTempLayer + y * 100, 23);
+		if (frame == 0)
+			waitForTimer(127);
+	}
+
+	addObjectToInventory(13, 48);
+	PART_08_APPLY_OBJECT_STATE(255);
+	_objectsState[54] = 1;
+}
+
+void IgorEngine::PART_08_DRAW_SECRETARY_CUTAWAY_FRAME(int frame) {
+	const uint16 frameOffset = READ_LE_UINT16(_animFramesBuffer + 0xE240 + frame * 2);
+	decodeAnimFrame(_animFramesBuffer + 0x9AC8 + frameOffset - 1, _screenVGA, true);
+}
+
+void IgorEngine::PART_08_UPDATE_DIALOGUE_SECRETARY(int action) {
+	switch (action) {
+	case kUpdateDialogueAnimEndOfSentence:
+	case kUpdateDialogueAnimStanding:
+		PART_08_DRAW_SECRETARY_CUTAWAY_FRAME(1);
+		break;
+	case kUpdateDialogueAnimMiddleOfSentence:
+		PART_08_DRAW_SECRETARY_CUTAWAY_FRAME(getRandomNumber(2) + 2);
+		break;
+	}
+}
+
+void IgorEngine::PART_08_ACTION_108() {
+	const int currentPart = _currentPart;
+	const int actionFrameOffset = _objectsState[57] == 0 ? 0x2773 : 0x328D;
+	playSound(60, 1);
+	for (int frame = 0; frame <= 1; ++frame) {
+		for (int y = 0; y <= 48; ++y)
+			memcpy(_screenVGA + 0x6D1E + y * 320,
+					_animFramesBuffer + actionFrameOffset - 1 + frame * 0x58D + y * 29, 29);
+		if (frame == 0)
+			waitForTimer(127);
+	}
+
+	_currentPart = 91;
+	fadeOut(768);
+	loadActionData(DAT_AdministrationSecretaryRoom);
+	loadRoomData(PAL_AdministrationSecretaryRoom, IMG_AdministrationSecretaryRoom,
+			BOX_AdministrationSecretaryRoom, MSK_AdministrationSecretaryRoom,
+			TXT_AdministrationSecretaryRoom);
+	memcpy(_screenVGA, _screenLayer1, 46080);
+	PART_08_DRAW_SECRETARY_CUTAWAY_FRAME(1);
+	memcpy(_screenLayer1, _screenVGA, 46080);
+	fadeIn(624);
+
+	ADD_DIALOGUE_TEXT(226, 1, 254);
+	SET_DIALOGUE_TEXT(1, 1);
+	_updateDialogue = &IgorEngine::PART_08_UPDATE_DIALOGUE_SECRETARY;
+	startCutsceneDialogue(65, 70, 0, 59, 63);
+	waitForEndOfCutsceneDialogue(65, 70, 0, 59, 63);
+	_updateDialogue = 0;
+
+	for (int frame = 5; frame <= 19; ++frame) {
+		PART_08_DRAW_SECRETARY_CUTAWAY_FRAME(frame);
+		if (frame < 19)
+			waitForTimer(31);
+		else
+			playSound(14, 1);
+	}
+	waitForTimer(255);
+	fadeOut(624);
+	_objectsState[53] = 0;
+	_objectsState[61] = 1;
+
+	loadActionData(DAT_DeanPepperOffice);
+	loadRoomData(PAL_DeanPepperOffice, IMG_DeanPepperOffice,
+			BOX_DeanPepperOffice, MSK_DeanPepperOffice, TXT_DeanPepperOffice);
+	_roomDataOffsets = PART_08_ROOM_DATA_OFFSETS;
+	setRoomWalkBounds(0, 0, 319, 143);
+	PART_08_APPLY_OBJECT_STATE(255);
+	memcpy(_screenVGA, _screenLayer1, 46080);
+	SET_PAL_240_48_1();
+	SET_PAL_208_96_1();
+	drawInventory(_inventoryInfo[72], 0);
+	fadeIn(768);
+	_currentPart = currentPart;
+	_objectsState[58] = 1;
+}
+
+void IgorEngine::PART_08_DEAN_LEAVES() {
+	static const uint8 frames[] = {
+		3, 1, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5,
+		4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 6, 7, 8, 9
+	};
+	PART_08_DRAW_DEAN();
+	for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
+		decodeAnimFrame(getAnimFrame(0x76DD, 0x8475, frames[i]), _screenVGA, true);
+		waitForTimer(31);
+	}
+}
+
+void IgorEngine::PART_08_DEAN_DRINKS() {
+	const uint8 savedTalkMode = _gameState.talkMode;
+	_gameState.talkMode = kTalkModeTextOnly;
+	waitForTimer(255);
+
+	ADD_DIALOGUE_TEXT(229, 1, 0);
+	SET_DIALOGUE_TEXT(1, 1);
+	startCutsceneDialogue(78, 75, 26, 58, 0);
+	playSound(61, 1);
+
+	for (int step = 1; step <= 20; ++step) {
+		const int frame = getRandomNumber(5);
+		for (int y = 0; y <= 28; ++y)
+			memcpy(_screenVGA + 0x6806 + y * 320,
+					_animFramesBuffer + 0x8489 + frame * 0x2D5 + y * 25, 25);
+		waitForTimer(61);
+
+		if (step == 10) {
+			memcpy(_screenVGA + _dialogueDirtyRectY,
+					_screenTextLayer + 320 * 72, _dialogueDirtyRectSize);
+			ADD_DIALOGUE_TEXT(230, 1, 0);
+			SET_DIALOGUE_TEXT(1, 1);
+			startCutsceneDialogue(78, 75, 26, 58, 0);
+		}
+	}
+
+	memcpy(_screenVGA + _dialogueDirtyRectY,
+			_screenTextLayer + 320 * 72, _dialogueDirtyRectSize);
+	_gameState.dialogueTextRunning = false;
+	playSound(15, 1);
+	for (int y = 0; y <= 28; ++y)
+		memcpy(_screenVGA + 0x6806 + y * 320,
+				_animFramesBuffer + 0x9587 + y * 25, 25);
+	waitForTimer(255);
+	_gameState.talkMode = savedTalkMode;
 }
 
 void IgorEngine::PART_08_HANDLE_DIALOGUE_DEAN() {
-	loadDialogueData(DLG_DeanPepperOffice); // cseg194:0CD4-0CF7
+	loadDialogueData(DLG_DeanPepperOffice);
 	_updateDialogue = &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN;
-	handleDialogue(78, 75, 26, 58, 0); // cseg194:0AD5-0AF0
+	handleDialogue(78, 75, 26, 58, 0);
 	_updateDialogue = 0;
 }
 
 void IgorEngine::PART_08_ACTION_103_TALK_TO_DEAN() {
-	if (_objectsState[55] == 1) { // cseg189:128F-12B7
-		ADD_DIALOGUE_TEXT(223, 1, 169); // cseg189:1296-12A2
+	if (_objectsState[55] == 1) {
+		ADD_DIALOGUE_TEXT(223, 1, 169);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		return;
 	}
 
-	if (_objectsState[52] == 1) { // cseg189:12BA-12C4
-		PART_08_DRAW_DEAN(); // cseg189:12C4
-		ADD_DIALOGUE_TEXT(220, 1, 166); // cseg189:12C9-1328
-		ADD_DIALOGUE_TEXT(221, 1, 167); // cseg189:12C9-1328
-		SET_DIALOGUE_TEXT(1, 2); // cseg189:132A-132F
+	if (_objectsState[52] == 1) { // door open
+		PART_08_DRAW_DEAN();
+		ADD_DIALOGUE_TEXT(220, 1, 166);
+		ADD_DIALOGUE_TEXT(221, 1, 167);
+		SET_DIALOGUE_TEXT(1, 2);
 		_updateDialogue = &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN;
-		startCutsceneDialogue(78, 75, 26, 58, 0); // cseg189:1334-1343
-		waitForEndOfCutsceneDialogue(78, 75, 26, 58, 0); // cseg189:1348-14BA
+		startCutsceneDialogue(78, 75, 26, 58, 0);
+		waitForEndOfCutsceneDialogue(78, 75, 26, 58, 0);
 		_updateDialogue = 0;
-		return; // cseg189:14BD jumps to the function epilogue at 14D0
+		return;
 	}
 
-	PART_08_HANDLE_DIALOGUE_DEAN(); // cseg189:14BF
-	PART_08_APPLY_OBJECT_STATE(255); // cseg189:14C4-14CB
+	PART_08_HANDLE_DIALOGUE_DEAN();
+	PART_08_APPLY_OBJECT_STATE(255);
 }
 
 void IgorEngine::PART_08_ACTION_114() {
-	if (_objectsState[55] == 1) { // cseg189:09E3-0A0B
-		ADD_DIALOGUE_TEXT(227, 1, 172); // cseg189:09EA-09F6
+	if (_objectsState[55] == 1) {
+		ADD_DIALOGUE_TEXT(227, 1, 172);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		return;
 	}
-	if (_objectsState[26] == 1) { // cseg189:0A0E-0A36; s3:0x83C maps to object state 26
-		ADD_DIALOGUE_TEXT(226, 1, 171); // cseg189:0A15-0A21
+	if (_objectsState[26] == 1) {
+		ADD_DIALOGUE_TEXT(226, 1, 171);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		return;
 	}
 
-	PART_08_DRAW_DEAN(); // cseg189:0A39
-	ADD_DIALOGUE_TEXT(210, 2, 158); // cseg189:0A3E-0A4A
+	PART_08_DRAW_DEAN();
+	ADD_DIALOGUE_TEXT(210, 2, 158);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
 
 	static const uint8 deanFrames[] = { 1, 2, 3, 0 }; // dseg231:0x01DE,0x01E0,0x01E2,0x01E4
 	static const uint8 igorFrames[] = { 0, 1, 2, 3 }; // dseg231:0x01DF,0x01E1,0x01E3,0x01E5
-	for (int step = 0; step < 4; ++step) { // cseg189:0A64-0B48
+	for (int step = 0; step < 4; ++step) {
 		if (deanFrames[step] != 0) {
-			for (int y = 0; y <= 48; ++y) { // cseg189:0A7D-0AD1
-				const uint8 *src = _animFramesBuffer + 0x5755 + deanFrames[step] * 0x620 + y * 32; // cseg189:0A8D-0AAD
-				memcpy(_screenVGA + 0x6463 + y * 320, src, 32); // cseg189:0A7D-0AC7
+			for (int y = 0; y <= 48; ++y) {
+				const uint8 *src = _animFramesBuffer + 0x5755 + deanFrames[step] * 0x620 + y * 32;
+				memcpy(_screenVGA + 0x6463 + y * 320, src, 32);
 			}
 		}
 		if (igorFrames[step] != 0) {
-			for (int y = 0; y <= 24; ++y) { // cseg189:0AE0-0B33
-				const uint8 *src = _animFramesBuffer + 0x6D7D + igorFrames[step] * 0x258 + y * 24; // cseg189:0AF0-0B0F
-				memcpy(_screenVGA + 0x6D06 + y * 320, src, 24); // cseg189:0AE0-0B29
+			for (int y = 0; y <= 24; ++y) {
+				const uint8 *src = _animFramesBuffer + 0x6D7D + igorFrames[step] * 0x258 + y * 24;
+				memcpy(_screenVGA + 0x6D06 + y * 320, src, 24);
 			}
 		}
-		waitForTimer(41); // cseg189:0B35-0B3F
+		waitForTimer(41);
 	}
 
 	// The original removes object slot 58 here and plays sound 63 only after
-	// the conversation has completed. cseg189:0B4B-0B7C,0D86-0D95.
+	// the conversation has completed.
 	if (_inventoryInfo[58] != 0) {
 		_inventoryInfo[_inventoryInfo[58] - 1] = 0;
 		_inventoryInfo[58] = 0;
@@ -196,25 +346,25 @@ void IgorEngine::PART_08_ACTION_114() {
 		drawInventory(_inventoryInfo[72], 0);
 	}
 
-	ADD_DIALOGUE_TEXT(216, 1, 162); // cseg189:0B7F-0BDE
-	ADD_DIALOGUE_TEXT(217, 1, 163); // cseg189:0B7F-0BDE
-	ADD_DIALOGUE_TEXT(218, 1, 164); // cseg189:0B7F-0BDE
-	ADD_DIALOGUE_TEXT(219, 1, 165); // cseg189:0B7F-0BDE
-	SET_DIALOGUE_TEXT(1, 4); // cseg189:0BE0-0BE5
+	ADD_DIALOGUE_TEXT(216, 1, 162);
+	ADD_DIALOGUE_TEXT(217, 1, 163);
+	ADD_DIALOGUE_TEXT(218, 1, 164);
+	ADD_DIALOGUE_TEXT(219, 1, 165);
+	SET_DIALOGUE_TEXT(1, 4);
 	_updateDialogue = &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN;
-	startCutsceneDialogue(78, 75, 26, 58, 0); // cseg189:0BEA-0BF9
-	waitForEndOfCutsceneDialogue(78, 75, 26, 58, 0); // cseg189:0BFE-0D70
+	startCutsceneDialogue(78, 75, 26, 58, 0);
+	waitForEndOfCutsceneDialogue(78, 75, 26, 58, 0);
 	_updateDialogue = 0;
-	_objectsState[56] = _objectsState[26] < 2 ? 1 : 2; // cseg189:0D73-0D81
-	drawInventory(_inventoryInfo[72], 0); // cseg189:0D86-0D8C
-	playSound(63, 1); // cseg189:0D91-0D95
-	PART_08_APPLY_OBJECT_STATE(255); // cseg189:0D9A-0DA1
+	_objectsState[56] = _objectsState[26] < 2 ? 1 : 2;
+	drawInventory(_inventoryInfo[72], 0);
+	playSound(63, 1);
+	PART_08_APPLY_OBJECT_STATE(255);
 }
 
 void IgorEngine::PART_08_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		if (_objectsState[52] == 0) { // cseg189:10D6-10DD,1229
+		if (_objectsState[52] == 0) {
 			_currentPart = 71;
 			break;
 		}
@@ -229,8 +379,19 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 			_gameState.igorMoving = true;
 			waitForIgorMove();
 			if (_objectsState[56] != 0) {
-				// TODO: translate cseg189:11C7-1224 before enabling the Dean's post-exit sequence.
-				break;
+				waitForTimer(251);
+				PART_08_DEAN_LEAVES();
+				if (_objectsState[68] == 1)
+					_objectsState[68] = 2;
+				else
+					_objectsState[67] = 1;
+				waitForTimer(101);
+				playSound(16, 1);
+				if (_objectsState[56] == 2) {
+					PART_08_DEAN_DRINKS();
+					_objectsState[55] = 1;
+				}
+				_objectsState[56] = 0;
 			}
 			_currentPart = 71;
 		}
@@ -250,8 +411,7 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 106:
-	case 107: // Action 107 maps to sub_189_0E2C. cseg189:1586-15A4
+	case 107:
 		ADD_DIALOGUE_TEXT(205, 2, 155);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -276,33 +436,33 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		PART_08_ACTION_103_TALK_TO_DEAN();
 		break;
 	case 108:
-		if (_objectsState[55] == 0) { // cseg189:0704-072C
-			ADD_DIALOGUE_TEXT(212, 1, 159); // cseg189:070B-0717
+		if (_objectsState[55] == 0) {
+			ADD_DIALOGUE_TEXT(212, 1, 159);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
 			waitForEndOfIgorDialogue();
-		} else if (_objectsState[58] == 1) { // cseg189:072F-0757; s3:0x85C maps to object state 58
-			ADD_DIALOGUE_TEXT(224, 2, 170); // cseg189:0736-0742
+		} else if (_objectsState[58] == 1) {
+			ADD_DIALOGUE_TEXT(224, 2, 170);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
 			waitForEndOfIgorDialogue();
 		} else {
-			// TODO: translate cseg189:075A-08BE (secretary-room transition sequence).
+			PART_08_ACTION_108();
 		}
 		break;
 	case 109:
-		if (_objectsState[55] == 0) { // cseg189:0406-042E
-			ADD_DIALOGUE_TEXT(213, 2, 160); // cseg189:040D-0419
+		if (_objectsState[55] == 0) {
+			ADD_DIALOGUE_TEXT(213, 2, 160);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
 			waitForEndOfIgorDialogue();
-		} else if (_objectsState[54] == 1) { // cseg189:0431-0459; s3:0x858 maps to object state 54
-			ADD_DIALOGUE_TEXT(215, 1, 161); // cseg189:0438-0444
+		} else if (_objectsState[54] == 1) {
+			ADD_DIALOGUE_TEXT(215, 1, 161);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
 			waitForEndOfIgorDialogue();
 		} else {
-			// TODO: translate cseg189:045C-0615 (palette-aware pickup animation).
+			PART_08_ACTION_109();
 		}
 		break;
 	case 114:
@@ -322,9 +482,9 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_08() {
 	_gameState.enableLight = 1;
-	loadActionData(DAT_DeanPepperOffice); // static resource: cseg189:34D7-34FA
+	loadActionData(DAT_DeanPepperOffice);
 	loadRoomData(PAL_DeanPepperOffice, IMG_DeanPepperOffice,
-			BOX_DeanPepperOffice, MSK_DeanPepperOffice, TXT_DeanPepperOffice); // static resources: cseg195/cseg196
+			BOX_DeanPepperOffice, MSK_DeanPepperOffice, TXT_DeanPepperOffice);
 	static const int anim[] = {
 		FRM_DeanPepperOffice1, FRM_DeanPepperOffice2,
 		FRM_DeanPepperOffice3, FRM_DeanPepperOffice4,
@@ -334,7 +494,7 @@ void IgorEngine::PART_08() {
 		FRM_DeanPepperOffice11, FRM_DeanPepperOffice12,
 		FRM_DeanPepperOffice13, FRM_DeanPepperOffice14,
 		FRM_DeanPepperOffice15, FRM_DeanPepperOffice16, 0
-	}; // static resources: cseg195:0002-0337
+	};
 	loadAnimData(anim);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_08_EXEC_ACTION);
 	_roomDataOffsets = PART_08_ROOM_DATA_OFFSETS;

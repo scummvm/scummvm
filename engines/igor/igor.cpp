@@ -40,7 +40,7 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 
 	// The original draws the fifth Dean dialogue choice at y=190 into the
 	// 64-KiB mode-13h VGA segment; its 11th font row is outside the visible
-	// 320x200 area but still inside that segment. cseg194:047F-04F1.
+	// 320x200 area but still inside that segment.
 	_screenVGA = (uint8 *)malloc(65536);
 	for (int i = 0; i < 4; i++) {
 		_facingIgorFrames[i] = (uint8 *)malloc(13500);
