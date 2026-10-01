@@ -41,6 +41,7 @@ public:
 	explicit MortimerFlight(bool isDemo = true);
 	bool load(Common::SeekableReadStream &stream, bool interactive = true, bool continuation = false);
 	void clearProgress();
+	void clearHostiles();
 	void reset() override;
 	bool advance(bool renderFrame = true) override;
 	ShotResult shoot(const Common::Point &point);

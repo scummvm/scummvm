@@ -44,6 +44,12 @@ void MortimerFlight::clearProgress() {
 	context() = MortimerMovieContext();
 }
 
+void MortimerFlight::clearHostiles() {
+	// Retail hornet hits also suppress their salt projectiles.
+	memset(_hitTargets + 800, 0, 100 * sizeof(_hitTargets[0]));
+	memset(_hitTargets + 1000, 0, 400 * sizeof(_hitTargets[0]));
+}
+
 void MortimerFlight::reset() {
 	MortimerCutscene::reset();
 	if (_isDemo)
@@ -171,7 +177,10 @@ void MortimerFlight::handleAction(const byte *data, uint32 size) {
 			_weapon = context().conditions[MortimerMovieContext::kHostilesRemain] ? kSlimeGun : kRevitascope;
 		} else if (id / 1000 == 12) {
 			context().conditions[MortimerMovieContext::kAnimalsRemain] = targetsRemain(text);
-		} else if (_inBranch && !text.hasPrefix("@riddles")) {
+		} else if ((_isDemo || _inBranch) && !text.hasPrefix("@riddles")) {
+			// The demo has a fixed route. TITLE.SAN gives its destination
+			// before the full-frame branch rectangle, so it cannot use the
+			// retail steering predicate at this point in the frame.
 			_nextFlight = text;
 			for (uint i = 0; i < _nextFlight.size(); ++i)
 				if (_nextFlight[i] == '\\')

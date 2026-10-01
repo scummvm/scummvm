@@ -24,6 +24,7 @@
 #include "engines/engine.h"
 #include "backends/keymapper/keymap.h"
 #include "audio/mixer.h"
+#include "common/random.h"
 #include "graphics/surface.h"
 #include "scumm/insane/mortimer/flight.h"
 #include "scumm/insane/mortimer/interview.h"
@@ -45,6 +46,8 @@ protected:
 	void pauseEngineIntern(bool pause) override;
 
 private:
+	enum CrashStage { kNoCrash, kCrashMovie, kRepairMovie };
+
 	bool loadResources();
 	uint introCount() const;
 	bool loadIntro(uint index);
@@ -57,15 +60,19 @@ private:
 	void updateMovieContext();
 	bool startMovie(bool preserveScreen = false);
 	bool startFlight();
+	bool startCrash();
+	bool loadCrashMovie(bool repair);
+	bool finishCrash();
 	bool processInterview();
 	bool updateScene();
 	bool nextScene(bool skip = false);
-	bool restart(bool all = false, bool crashed = false);
+	bool restart(bool all = false);
 	MortimerMovie &currentMovie();
 	const MortimerMovie &currentMovie() const;
-	bool interactive() const { return !_interviewActive && _introIndex < 0 && _flight.interactive(); }
+	bool interactive() const { return _crashStage == kNoCrash && !_interviewActive && _introIndex < 0 && _flight.interactive(); }
 	void setMouse(const Common::Point &position);
 	void updateSteering();
+	void updateView(int x, int y);
 	void updateInterface();
 	void fire();
 	Common::Point moviePoint(const Common::Point &point) const;
@@ -78,9 +85,11 @@ private:
 	bool speechPlaying() const;
 	void playSound(const MortimerSound &sound, Audio::SoundHandle &handle, Audio::Mixer::SoundType type, uint offset = 0);
 	void playMovieSounds(bool seek = false);
+	void playCollisionSound();
 	void stopSounds();
 
 	const bool _isDemo;
+	Common::RandomSource _random;
 	MortimerCutscene _intro;
 	MortimerFlight _flight;
 	MortimerInterview _interview;
@@ -92,23 +101,26 @@ private:
 	MortimerSound _scopeSound, _rescueSound, _collisionSound, _slimeSound, _slimeHitSound, _glowSound, _balloonSound;
 	MortimerSound _buttonSound, _payoutSound;
 	Common::Array<Audio::SoundHandle> _movieHandles;
-	Audio::SoundHandle _scopeHandle, _rescueHandle, _collisionHandle, _glowHandle;
+	Common::Array<Audio::SoundHandle> _collisionHandles;
+	Audio::SoundHandle _scopeHandle, _rescueHandle, _glowHandle;
 	Common::String _loadError;
-	Common::String _pendingFlight, _subtitleName;
+	Common::String _flightName, _pendingFlight, _subtitleName;
 	Common::Rect _viewport;
 	Common::Point _mouse, _view, _aim, _shot;
 	Common::Point _steeringHistory[10];
 	int _steering[4];
 	MortimerFlight::Weapon _shotWeapon;
+	CrashStage _crashStage;
 	uint32 _nextFrameTime, _pauseTime;
 	int _introIndex;
 	int _loadedRegion;
 	uint _creditedRescues;
-	uint _segment, _carriedStones, _completedSpecies, _shellShocks;
+	uint _segment, _carriedStones, _completedSpecies, _shellShocks, _shockFrame, _crashCount;
 	uint _uiFrame, _shotFrame, _glowFrame, _glowStones, _pendingGlowStones;
 	uint _iconFlash[7];
 	bool _finished, _controllerMode, _interviewActive;
 	bool _resourcesLoaded, _playingCached;
+	bool _needsRepair, _hitJolt;
 };
 
 } // End of namespace Scumm
