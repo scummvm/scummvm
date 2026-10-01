@@ -25,7 +25,7 @@
 
 namespace Scumm {
 
-class MortimerFlight : public MortimerMovie {
+class MortimerFlight : public MortimerCutscene {
 public:
 	enum { kWidth = 384, kHeight = 288 };
 	enum Weapon { kRevitascope, kSlimeGun };
@@ -38,8 +38,9 @@ public:
 		bool active, hit;
 	};
 
-	MortimerFlight();
-	bool load(Common::SeekableReadStream &stream, bool interactive = true);
+	explicit MortimerFlight(bool isDemo = true);
+	bool load(Common::SeekableReadStream &stream, bool interactive = true, bool continuation = false);
+	void clearProgress();
 	void reset() override;
 	bool advance(bool renderFrame = true) override;
 	ShotResult shoot(const Common::Point &point);
@@ -48,27 +49,35 @@ public:
 	uint rescuedCount() const { return _rescuedCount; }
 	uint rescuedSpecies() const { return _rescuedSpecies; }
 	Weapon weapon() const { return _weapon; }
+	void resetWeapon() { _weapon = kRevitascope; }
 	const Common::String &nextFlight() const { return _nextFlight; }
 	const Common::Array<Target> &targets() const { return _targets; }
 	bool interactive() const { return _interactive; }
+	void setSteering(const Common::Point &point) { _steering = point; }
+	void setCollisionRadius(uint radius) { _collisionRadius = radius; }
 
 private:
 	struct Obstacle {
 		Common::Point corners[4];
+		bool outside;
 	};
 
 	void handleAction(const byte *data, uint32 size) override;
-	bool skipObject(uint16 a, uint16 b) const override;
 	int objectScale(byte codec) const override;
 	Target *findTarget(uint16 id);
+	bool targetHit(uint16 id) const;
+	void hitTarget(uint16 id);
+	bool targetsRemain(const Common::String &list) const;
 
 	Common::Array<Target> _targets;
 	Common::Array<Obstacle> _obstacles;
 	Common::String _nextFlight;
-	bool _toggles[256];
-	bool _initialInteractive, _interactive;
+	const bool _isDemo;
+	bool _hitTargets[1400];
+	bool _initialInteractive, _interactive, _inBranch;
+	Common::Point _steering;
 	Weapon _weapon;
-	uint _rescuedCount, _rescuedSpecies;
+	uint _rescuedCount, _rescuedSpecies, _collisionRadius;
 };
 
 } // End of namespace Scumm

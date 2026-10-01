@@ -99,9 +99,14 @@ bool MortimerSubtitles::loadText(Common::SeekableReadStream &stream) {
 			if (end == token.c_str() || *end || value < 0 || value > 65535)
 				return false;
 			id = value;
-		} else if (line.hasPrefix("//") && id >= 0) {
-			line = line.substr(2);
+		} else if (id >= 0 && (line.hasPrefix("//") || line.hasPrefix("^c"))) {
+			if (line.hasPrefix("//"))
+				line = line.substr(2);
 			Entry &entry = _entries[id];
+			if (entry.text.empty() && line.hasPrefix("!")) {
+				entry.conditional = true;
+				line = line.substr(1);
+			}
 			if (entry.text.empty() && line.hasPrefix("$")) {
 				entry.information = true;
 				line = line.substr(1);
@@ -119,13 +124,17 @@ bool MortimerSubtitles::loadText(Common::SeekableReadStream &stream) {
 	return !stream.err() && !_entries.empty();
 }
 
-void MortimerSubtitles::draw(Graphics::Surface &screen, const Common::Array<MortimerMovie::Caption> &captions, bool enabled) const {
+void MortimerSubtitles::draw(Graphics::Surface &screen, const Common::Array<MortimerMovie::Caption> &captions, bool enabled,
+		const MortimerMovieContext *context) const {
 	for (uint i = 0; i < captions.size(); ++i) {
 		const MortimerMovie::Caption &caption = captions[i];
 		const auto found = _entries.find(caption.id);
 		if (found == _entries.end())
 			continue;
 		const Entry &entry = found->_value;
+		if (entry.conditional && context && ((caption.id < 1000 && context->riddle != caption.id) ||
+			(caption.id / 1000 == 3 && context->girl) || (caption.id / 1000 == 4 && !context->girl)))
+			continue;
 		if ((!enabled && !entry.information) || entry.text.empty())
 			continue;
 		const MortimerFont &font = entry.information ? _infoFont : _font;

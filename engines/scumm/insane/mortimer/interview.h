@@ -36,9 +36,11 @@ class MortimerInterview {
 public:
 	enum Effect { kNoEffect, kButtonEffect, kPayoutEffect, kSwitchEffect };
 
-	MortimerInterview();
-	bool loadResources();
+	explicit MortimerInterview(bool isDemo = true);
+	bool loadResources(uint region = 0);
+	void setDifficulty(uint difficulty) { _difficulty = difficulty; }
 	void resetRiddle();
+	void resetAttempts();
 	void start(uint species, uint stones, int scene = 10);
 	void click(const Common::Point &point);
 	void scroll(int direction);
@@ -53,9 +55,14 @@ public:
 	bool playingMovie() const { return !_movieName.empty(); }
 	bool fullScreen() const;
 	bool showDashboard() const { return !fullScreen() || _stage == kPopup; }
+	bool forceSubtitles() const { return _stage == kSong; }
 	bool movieDoubled() const;
 	bool wantsFlight() const { return _stage == kFlyAway; }
 	bool finished() const { return _stage == kFinished; }
+	bool restartsRegion() const { return _restartRegion; }
+	int sceneId() const;
+	int riddleId() const { return _answer * 10 + _textDifficulty; }
+	bool outOfGuesses() const { return _guesses == 0; }
 	const Common::String &movieName() const { return _movieName; }
 	const Common::String &errorMessage() const { return _error; }
 	const byte *palette(const MortimerMovie &movie) const;
@@ -68,7 +75,7 @@ private:
 	enum Stage {
 		kGate, kSong, kPopup, kIdle, kAnswer, kRiddle, kSolve,
 		kNoStones, kPay, kGuess, kCorrect, kWrong, kOpenGate,
-		kEnding, kHelp, kFlyAway, kFinished
+		kEnding, kHelp, kFlyAway, kFinished, kCost, kNoAnimals, kTried
 	};
 
 	void enter(Stage stage);
@@ -79,16 +86,18 @@ private:
 	Common::String animalMovie(const char *pattern, int animal) const;
 
 	Common::RandomSource _random;
+	const bool _isDemo;
+	uint _region, _difficulty, _textDifficulty, _tried;
 	Common::Array<MortimerSprite> _panel, _portraits, _gate, _cursor;
 	MortimerFont _font, _captionFont;
-	Common::String _dialogue[7][3], _riddles[7], _captions[16];
+	Common::String _dialogue[7][3], _riddles[7][3], _captions[16];
 	Common::String _movieName, _error;
 	byte _palette[768], _gatePalette[768];
 	Stage _stage;
 	Effect _effect;
-	int _answer, _selected, _question, _guess, _lastAction, _textScroll;
-	uint _species, _stones, _guesses, _frame, _switchFrame, _payment;
-	bool _moviePending, _riddleView, _solving, _help, _helpExplained;
+	int _answer, _previousAnswer, _selected, _question, _guess, _lastAction, _textScroll, _guesses;
+	uint _species, _stones, _frame, _switchFrame, _payment;
+	bool _moviePending, _riddleView, _solving, _help, _helpExplained, _restartRegion;
 };
 
 } // End of namespace Scumm

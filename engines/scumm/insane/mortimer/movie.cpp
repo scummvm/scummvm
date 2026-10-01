@@ -94,9 +94,9 @@ bool validRows(const byte *src, uint32 size, int height, bool remap) {
 }
 
 // Codec37's existing decoder has no input-length argument. Validate the
-// encodings present in the demo movies before passing any data to it.
+// encodings present in the movies before passing any data to it.
 bool validBackground(const byte *src, uint32 size, int width, int height) {
-	if (size < 16 || src[1] != 1 || (src[12] & ~6))
+	if (size < 16 || src[1] != 1 || (src[12] & ~7))
 		return false;
 	uint32 pos = 16;
 	if (src[0] == 2) {
@@ -152,7 +152,7 @@ bool validObject(const byte *data, uint32 size, bool sprite = false) {
 	if (sprite)
 		return codec == 44 || (codec == 1 && validRows(data + 14, size - 14, height, false));
 	if (codec == 37)
-		return !(width & 3) && !(height & 3) && validBackground(data + 14, size - 14, width, height);
+		return validBackground(data + 14, size - 14, (width + 3) & ~3, (height + 3) & ~3);
 	if (codec != 1 && codec != 3 && codec != 23)
 		return false;
 	uint32 offset = 14;
@@ -172,12 +172,12 @@ bool validPalette(const byte *data, uint32 size) {
 }
 
 bool validTransition(const byte *data, uint32 size) {
-	// IACT 8/46 contains a length-prefixed filename followed by CR/LF/EOF.
+	// Text packets contain either a filename or a list of target IDs.
 	if (size < 22 || READ_LE_UINT16(data + 14) != size - 18 ||
 		data[size - 3] != '\r' || data[size - 2] != '\n' || data[size - 1] != 0x1a)
 		return false;
 	for (uint i = 18; i < size - 3; ++i)
-		if (data[i] < 32 || data[i] > 126)
+		if ((data[i] < 32 && data[i] != '\r' && data[i] != '\n' && data[i] != '\t') || data[i] > 126)
 			return false;
 	return true;
 }
@@ -317,13 +317,29 @@ bool MortimerMovie::fail(const char *message) {
 	return false;
 }
 
-bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
+bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled, bool continuation) {
 	const uint32 started = g_system->getMillis();
+	// A LOAD bridge can begin with delta blocks referring to the flight.
+	SmushDeltaBlocksDecoder *previousDecoder = continuation ? _decoder : nullptr;
+	const int previousWidth = _decoderWidth, previousHeight = _decoderHeight;
+	Common::Array<byte> previousPixels;
+	if (continuation) {
+		_decoder = nullptr;
+		previousPixels = _pixels;
+	}
 	_initialDoubled = doubled;
 	_frames.clear();
 	_sounds.clear();
+	_soundOffsets.clear();
+	_soundEnabled.clear();
 	_error.clear();
 	reset();
+	if (continuation) {
+		_decoder = previousDecoder;
+		_decoderWidth = previousWidth;
+		_decoderHeight = previousHeight;
+		_pixels = Common::move(previousPixels);
+	}
 	if (!readData(stream, _data) || !isContainer(_data, MKTAG('A', 'N', 'I', 'M')))
 		return fail("Invalid Mortimer movie ANIM container");
 
@@ -336,7 +352,7 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
 	Common::Array<Track> tracks;
 	uint32 pos = 8;
 	uint expectedFrames = 0;
-	int decoderWidth = 0, decoderHeight = 0;
+	int decoderWidth = _decoderWidth, decoderHeight = _decoderHeight;
 	while (pos < _data.size()) {
 		Chunk chunk;
 		if (!nextChunk(_data.begin(), _data.size(), pos, chunk))
@@ -366,26 +382,29 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
 						return fail("Unsupported or truncated Mortimer movie image");
 					if (body[0] == 37) {
 						++backgrounds;
-						const int width = READ_LE_UINT16(body + 6), height = READ_LE_UINT16(body + 8);
+						const int width = (READ_LE_UINT16(body + 6) + 3) & ~3;
+						const int height = (READ_LE_UINT16(body + 8) + 3) & ~3;
 						if ((width != decoderWidth || height != decoderHeight) && body[14] != 2)
 							return fail("Mortimer movie changes dimensions without a keyframe");
 						decoderWidth = width;
 						decoderHeight = height;
 					}
 				} else if (sub.tag == MKTAG('S', 'K', 'I', 'P')) {
-					if (sub.size != 4 || READ_LE_UINT16(body) >= 256 || READ_LE_UINT16(body + 2) >= 256)
+					if (sub.size != 4)
 						return fail("Invalid Mortimer object toggle");
 				} else if (sub.tag == MKTAG('I', 'A', 'C', 'T')) {
 					if (sub.size < 8)
 						return fail("Truncated Mortimer movie action");
 					const uint16 code = READ_LE_UINT16(body);
-					if ((code >= 2 && code <= 4 && (sub.size < (code == 4 ? 18U : 12U) || READ_LE_UINT16(body + 8) >= 256)) ||
+					if ((code >= 2 && code <= 4 && sub.size < (code == 4 ? 18U : 12U)) ||
 						(code == 5 && sub.size < 28))
 						return fail("Invalid Mortimer movie action");
-					if (code == 2 && READ_LE_UINT16(body + 4) == 3 && READ_LE_UINT16(body + 10) >= 256)
-						return fail("Invalid Mortimer conditional object");
-					if (code == 8 && READ_LE_UINT16(body + 2) == 46 && !validTransition(body, sub.size))
+					if (code == 8 && READ_LE_UINT16(body + 2) == 46 &&
+						(sub.size < 18 || (READ_LE_UINT16(body + 6) / 1000 != 7 && !validTransition(body, sub.size))))
 						return fail("Invalid Mortimer movie transition");
+				} else if (sub.tag == MKTAG('L', 'O', 'A', 'D')) {
+					if (sub.size < 10)
+						return fail("Truncated Mortimer cached movie block");
 				} else if (sub.tag == MKTAG('X', 'P', 'A', 'L')) {
 					if (!validPalette(body, sub.size))
 						return fail("Invalid Mortimer palette change");
@@ -455,6 +474,8 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
 		if (!decodeSound(bytes, track.sound))
 			return fail("Unsupported or incomplete Mortimer audio");
 		_sounds.push_back(Common::move(track.sound));
+		_soundOffsets.push_back(track.blocks[0].offset);
+		_soundEnabled.push_back(false);
 	}
 	debug(1, "Mortimer: loaded %u movie frames in %u ms", _frames.size(), g_system->getMillis() - started);
 	return true;
@@ -470,6 +491,10 @@ void MortimerMovie::reset() {
 	_storedObject = Object();
 	_objects.clear();
 	_captions.clear();
+	_cachedMovie.clear();
+	_cacheBlock = 0;
+	for (uint i = 0; i < _soundEnabled.size(); ++i)
+		_soundEnabled[i] = false;
 	_background.clear();
 	memcpy(_palette, _initialPalette, sizeof(_palette));
 	memset(_paletteDelta, 0, sizeof(_paletteDelta));
@@ -535,15 +560,20 @@ bool MortimerMovie::decodeObject(Object &object) {
 	}
 	object.pixels.resize(object.width * object.height);
 	if (object.codec == 37) {
-		if (_decoderWidth != object.width || _decoderHeight != object.height) {
+		// Interview clips crop the last 4x4 block to their portrait bounds.
+		const int width = (object.width + 3) & ~3, height = (object.height + 3) & ~3;
+		if (_decoderWidth != width || _decoderHeight != height) {
 			if (src[14] != 2)
 				return fail("Mortimer movie changes dimensions without a keyframe");
 			delete _decoder;
-			_decoderWidth = object.width;
-			_decoderHeight = object.height;
+			_decoderWidth = width;
+			_decoderHeight = height;
 			_decoder = new SmushDeltaBlocksDecoder(_decoderWidth, _decoderHeight);
 		}
-		_decoder->decode(object.pixels.begin(), src + 14);
+		_scratch.resize(width * height);
+		_decoder->decode(_scratch.begin(), src + 14);
+		for (int row = 0; row < object.height; ++row)
+			memcpy(object.pixels.begin() + row * object.width, _scratch.begin() + row * width, object.width);
 	} else {
 		memset(object.pixels.begin(), 0, object.pixels.size());
 		smushDecodeRLEOpaque(object.pixels.begin(), src + 14, 0, 0,
@@ -572,8 +602,31 @@ bool MortimerMovie::advance(bool renderFrame) {
 			skipB = READ_LE_UINT16(src + 2);
 			continue;
 		}
+		// Image toggles can change again when the player shoots this frame.
+		// Commands and sound starts must use the toggle at their position in it.
+		if (chunk.tag != MKTAG('F', 'O', 'B', 'J') && chunk.tag != MKTAG('F', 'T', 'C', 'H') && skipObject(skipA, skipB)) {
+			skipA = 0xffff;
+			skipB = 0;
+			continue;
+		}
 		if (chunk.tag == MKTAG('I', 'A', 'C', 'T')) {
 			handleAction(src, chunk.size);
+		} else if (chunk.tag == MKTAG('P', 'S', 'A', 'D')) {
+			if (!READ_LE_UINT16(src + 2))
+				for (uint i = 0; i < _soundOffsets.size(); ++i)
+					if (_soundOffsets[i] == chunk.offset)
+						_soundEnabled[i] = true;
+		} else if (chunk.tag == MKTAG('L', 'O', 'A', 'D')) {
+			const uint block = READ_LE_UINT16(src + 2);
+			if (!block) {
+				_cachedMovie.clear();
+				_cacheBlock = 0;
+			}
+			if (block != _cacheBlock++ || chunk.size - 10 > 32 * 1024 * 1024 - _cachedMovie.size())
+				return fail("Invalid Mortimer cached movie sequence");
+			const uint offset = _cachedMovie.size();
+			_cachedMovie.resize(offset + chunk.size - 10);
+			memcpy(_cachedMovie.begin() + offset, src + 10, chunk.size - 10);
 		} else if (chunk.tag == MKTAG('X', 'P', 'A', 'L')) {
 			handlePalette(src, chunk.size);
 		} else if (chunk.tag == MKTAG('N', 'P', 'A', 'L')) {
@@ -659,7 +712,17 @@ void MortimerMovie::render() {
 	}
 }
 
-MortimerCutscene::MortimerCutscene(bool girl) : _girl(girl) {
+bool MortimerMovieContext::matches(uint code) const {
+	for (uint i = 0; i < kConditionCount; ++i, code /= 3) {
+		const uint digit = code % 3;
+		if (digit && conditions[i] != (digit == 2))
+			return false;
+	}
+	return code == 0;
+}
+
+MortimerCutscene::MortimerCutscene(bool girl) {
+	_context.girl = girl;
 	reset();
 }
 
@@ -670,16 +733,24 @@ void MortimerCutscene::reset() {
 
 void MortimerCutscene::handleAction(const byte *data, uint32 size) {
 	MortimerMovie::handleAction(data, size);
-	if (READ_LE_UINT16(data) != 2 || READ_LE_UINT16(data + 4) != 1)
+	if (READ_LE_UINT16(data) != 2)
 		return;
 	const uint16 id = READ_LE_UINT16(data + 6), toggle = READ_LE_UINT16(data + 8);
-	// INTRO4_H contains both player characters under separate object toggles.
-	if (id == 3000 || id == 4000)
-		_toggles[toggle] = id == 3000 ? _girl : !_girl;
+	if (READ_LE_UINT16(data + 4) == 3) {
+		setToggle(toggle, !this->toggle(READ_LE_UINT16(data + 10)));
+	} else if (READ_LE_UINT16(data + 4) == 1) {
+		const uint family = id / 1000;
+		if (family == 2)
+			setToggle(toggle, false);
+		else if (family == 3 || family == 4 || family == 6)
+			setToggle(toggle, (family == 3 && _context.girl) || (family == 4 && !_context.girl) || !_context.matches(id % 1000));
+		else if (family == 5)
+			setToggle(toggle, _context.riddle != id - 5000);
+	}
 }
 
 bool MortimerCutscene::skipObject(uint16 a, uint16 b) const {
-	return a != 0xffff && (b ? _toggles[a] != _toggles[b] : _toggles[a]);
+	return a != 0xffff && (b ? toggle(a) != toggle(b) : toggle(a));
 }
 
 } // End of namespace Scumm

@@ -45,13 +45,15 @@ class MortimerSubtitles {
 public:
 	bool load(const char *textPath, const char *fontPath, const char *infoFontPath);
 	bool loadText(Common::SeekableReadStream &stream);
-	void draw(Graphics::Surface &screen, const Common::Array<MortimerMovie::Caption> &captions, bool enabled) const;
+	void draw(Graphics::Surface &screen, const Common::Array<MortimerMovie::Caption> &captions, bool enabled,
+		const MortimerMovieContext *context = nullptr) const;
 
 private:
 	struct Entry {
 		Common::String text;
 		byte color = 1;
 		bool information = false;
+		bool conditional = false;
 	};
 
 	MortimerFont _font, _infoFont;

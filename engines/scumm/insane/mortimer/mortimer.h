@@ -27,6 +27,7 @@
 #include "graphics/surface.h"
 #include "scumm/insane/mortimer/flight.h"
 #include "scumm/insane/mortimer/interview.h"
+#include "scumm/insane/mortimer/campaign.h"
 
 namespace Scumm {
 
@@ -48,12 +49,18 @@ private:
 	uint introCount() const;
 	bool loadIntro(uint index);
 	bool loadFlight(uint segment);
+	bool enterCampaignScene();
+	bool loadRegion(uint region);
+	bool loadRetailFlight(const Common::String &name, bool cached = false);
+	bool followFlightBranch();
+	bool loadSubtitles(const char *name);
+	void updateMovieContext();
 	bool startMovie(bool preserveScreen = false);
 	bool startFlight();
 	bool processInterview();
 	bool updateScene();
 	bool nextScene(bool skip = false);
-	bool restart(bool all = false);
+	bool restart(bool all = false, bool crashed = false);
 	MortimerMovie &currentMovie();
 	const MortimerMovie &currentMovie() const;
 	bool interactive() const { return !_interviewActive && _introIndex < 0 && _flight.interactive(); }
@@ -78,6 +85,7 @@ private:
 	MortimerFlight _flight;
 	MortimerInterview _interview;
 	MortimerSubtitles _subtitles;
+	MortimerCampaign _campaign;
 	Graphics::Surface _screen;
 	Common::Array<MortimerSprite> _cockpit, _dashboard, _reticles, _icons, _head;
 	Common::Array<MortimerSprite> _scopeHit, _slimeHit, _scopeBeam, _slimeBall, _numbers, _corners;
@@ -86,6 +94,7 @@ private:
 	Common::Array<Audio::SoundHandle> _movieHandles;
 	Audio::SoundHandle _scopeHandle, _rescueHandle, _collisionHandle, _glowHandle;
 	Common::String _loadError;
+	Common::String _pendingFlight, _subtitleName;
 	Common::Rect _viewport;
 	Common::Point _mouse, _view, _aim, _shot;
 	Common::Point _steeringHistory[10];
@@ -93,10 +102,13 @@ private:
 	MortimerFlight::Weapon _shotWeapon;
 	uint32 _nextFrameTime, _pauseTime;
 	int _introIndex;
+	int _loadedRegion;
+	uint _creditedRescues;
 	uint _segment, _carriedStones, _completedSpecies, _shellShocks;
 	uint _uiFrame, _shotFrame, _glowFrame, _glowStones, _pendingGlowStones;
 	uint _iconFlash[7];
 	bool _finished, _controllerMode, _interviewActive;
+	bool _resourcesLoaded, _playingCached;
 };
 
 } // End of namespace Scumm

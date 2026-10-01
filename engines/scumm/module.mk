@@ -147,6 +147,7 @@ MODULE_OBJS += \
 	insane/insane_enemy.o \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
+	insane/mortimer/campaign.o \
 	insane/mortimer/flight.o \
 	insane/mortimer/interview.o \
 	insane/mortimer/movie.o \

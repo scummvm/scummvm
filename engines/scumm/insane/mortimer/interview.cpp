@@ -19,6 +19,7 @@
  */
 
 #include "scumm/insane/mortimer/interview.h"
+#include "scumm/insane/mortimer/campaign.h"
 
 #include "common/file.h"
 #include "common/tokenizer.h"
@@ -26,8 +27,6 @@
 #include "graphics/surface.h"
 
 namespace Scumm {
-
-namespace {
 
 // SHELL 444030: the order also matches the rescued-animal flags and icons.
 const char *const kAnimals[] = {"Rhinoceros", "Baboon", "Cheetah", "Elephant", "Giraffe", "Lion", "Oxpecker"};
@@ -81,12 +80,11 @@ void blit(Graphics::Surface &screen, const MortimerSprite &sprite, int x, int y)
 	}
 }
 
-} // End of anonymous namespace
-
-MortimerInterview::MortimerInterview() : _random("mortimer"), _stage(kIdle), _effect(kNoEffect),
-	_answer(-1), _selected(-1), _question(0), _guess(-1), _lastAction(46), _textScroll(0),
-	_species(0), _stones(0), _guesses(3), _frame(0), _switchFrame(6), _payment(0),
-	_moviePending(false), _riddleView(false), _solving(false), _help(false), _helpExplained(false) {
+MortimerInterview::MortimerInterview(bool isDemo) : _random("mortimer"), _isDemo(isDemo),
+	_region(0), _difficulty(0), _textDifficulty(0), _tried(0), _stage(kIdle), _effect(kNoEffect),
+	_answer(-1), _previousAnswer(-1), _selected(-1), _question(0), _guess(-1), _lastAction(46), _textScroll(0), _guesses(3),
+	_species(0), _stones(0), _frame(0), _switchFrame(6), _payment(0),
+	_moviePending(false), _riddleView(false), _solving(false), _help(false), _helpExplained(false), _restartRegion(false) {
 	memset(_palette, 0, sizeof(_palette));
 	memset(_gatePalette, 0, sizeof(_gatePalette));
 }
@@ -108,31 +106,38 @@ bool MortimerInterview::loadText(const char *path, bool riddles) {
 			if (heading.hasPrefix("Answer") && heading.size() == 7) {
 				answer = heading[6] - '1';
 			} else if (heading == "Easy" || heading == "Medium" || heading == "Hard") {
-				answer = heading == "Easy" ? 0 : -1;
+				answer = heading == "Easy" ? 0 : heading == "Medium" ? 1 : 2;
 			} else {
 				animal = answer = -1;
 				for (uint i = 0; i < ARRAYSIZE(kAnimals); ++i)
-					if (heading.equalsIgnoreCase(kAnimals[i]))
+					if (heading.equalsIgnoreCase(_isDemo ? kAnimals[i] : mortimerRegion(_region).names[i]))
 						animal = i;
 			}
 		} else if (animal >= 0 && answer >= 0 && answer < 3) {
-			Common::String &text = riddles ? _riddles[animal] : _dialogue[animal][answer];
+			Common::String &text = riddles ? _riddles[animal][answer] : _dialogue[animal][answer];
 			if (!text.empty())
 				text += '\n';
 			text += line;
 		}
 	}
 	for (uint i = 0; i < ARRAYSIZE(kAnimals); ++i) {
-		if (riddles && _riddles[i].empty())
-			return false;
-		for (uint j = 0; !riddles && j < 3; ++j)
-			if (_dialogue[i][j].empty())
+		for (uint j = 0; j < (riddles && _isDemo ? 1U : 3U); ++j)
+			if ((riddles ? _riddles[i][j] : _dialogue[i][j]).empty())
 				return false;
 	}
 	return !file.err();
 }
 
-bool MortimerInterview::loadResources() {
+bool MortimerInterview::loadResources(uint region) {
+	_region = region;
+	for (uint i = 0; i < 7; ++i)
+		for (uint j = 0; j < 3; ++j) {
+			_dialogue[i][j].clear();
+			_riddles[i][j].clear();
+		}
+	const MortimerRegion &resources = mortimerRegion(_region);
+	const Common::String portraits = Common::String::format("%s/%c_ANIM_H.NUT", resources.directory, resources.prefix);
+	const Common::String gate = Common::String::format("%s/%c_GATE_H.NUT", resources.directory, resources.prefix);
 	struct Bank {
 		const char *name;
 		Common::Array<MortimerSprite> *sprites;
@@ -141,9 +146,9 @@ bool MortimerInterview::loadResources() {
 	};
 	const Bank banks[] = {
 		{"RESOURCE/GENERAL/INTERV_H.NUT", &_panel, 21, nullptr},
-		{"RESOURCE/SAVANNA/S_ANIM_H.NUT", &_portraits, 8, _palette},
-		{"RESOURCE/SAVANNA/S_GATE_H.NUT", &_gate, 1, _gatePalette},
-		{"RESOURCE/GENERAL/CURS_I_H.NUT", &_cursor, 4, nullptr}
+		{portraits.c_str(), &_portraits, 8, _palette},
+		{gate.c_str(), &_gate, 1, _gatePalette},
+		{_isDemo ? "RESOURCE/GENERAL/CURS_I_H.NUT" : "RESOURCE/GENERAL/ARROWS.NUT", &_cursor, 4, nullptr}
 	};
 	Common::File file;
 	for (uint i = 0; i < ARRAYSIZE(banks); ++i) {
@@ -154,7 +159,7 @@ bool MortimerInterview::loadResources() {
 		}
 		file.close();
 	}
-	if (!_font.load("RESOURCE/GENERAL/MORTFNTH.NUT") || !_captionFont.load("RESOURCE/GENERAL/SUBTFONT.NUT")) {
+	if (!_font.load("RESOURCE/GENERAL/MORTFNTH.NUT") || !_captionFont.load(_isDemo ? "RESOURCE/GENERAL/SUBTFONT.NUT" : "RESOURCE/GENERAL/ESTRO20.NUT")) {
 		_error = "Missing or invalid Mortimer font";
 		return false;
 	}
@@ -162,6 +167,8 @@ bool MortimerInterview::loadResources() {
 		_error = "Missing or invalid Mortimer dialogue or riddle text";
 		return false;
 	}
+	if (!_isDemo)
+		return true;
 	if (!file.open("RESOURCE/DATA/SAV_SONG.TRS")) {
 		_error = "Missing Mortimer song captions";
 		return false;
@@ -183,13 +190,22 @@ bool MortimerInterview::loadResources() {
 }
 
 void MortimerInterview::resetRiddle() {
+	_previousAnswer = _answer;
 	_answer = -1;
+	resetAttempts();
+}
+
+void MortimerInterview::resetAttempts() {
+	_tried = 0;
+	_guesses = _isDemo ? 3 : mortimerGuessAllowance(_difficulty);
 }
 
 void MortimerInterview::start(uint species, uint stones, int scene) {
 	_species = species;
 	_stones = stones;
-	_guesses = 3;
+	if (_isDemo || _answer < 0)
+		_guesses = _isDemo ? 3 : mortimerGuessAllowance(_difficulty);
+	_restartRegion = false;
 	_frame = _payment = 0;
 	_switchFrame = 6;
 	_selected = -1;
@@ -198,13 +214,27 @@ void MortimerInterview::start(uint species, uint stones, int scene) {
 	_riddleView = _solving = _help = false;
 	_effect = kNoEffect;
 	if (_answer < 0) {
-		// SHELL 40cd65 restricts the demo to baboon, elephant and oxpecker.
-		const int answers[] = {1, 3, 6};
-		_answer = answers[_random.getRandomNumber(2)];
+		if (_isDemo) {
+			// SHELL 40cd65 restricts the demo to baboon, elephant and oxpecker.
+			const int answers[] = {1, 3, 6};
+			_answer = answers[_random.getRandomNumber(2)];
+			_textDifficulty = 0;
+		} else {
+			do {
+				_answer = _random.getRandomNumber(6);
+			} while (_answer == _previousAnswer);
+			const uint roll = _random.getRandomNumber(99);
+			_textDifficulty = _difficulty == 1 ? (roll < 10 ? 0 : roll < 60 ? 1 : 2) : _difficulty;
+		}
 	}
 	for (int i = 0; i < 7 && _selected < 0; ++i)
 		if (_species & (1 << i))
 			_selected = i;
+	if (!_isDemo) {
+		enter(scene == int(4 + _region) ? kPopup : scene == int(8 + _region) ? kIdle :
+			scene == int(17 + _region) ? kSong : kGate);
+		return;
+	}
 	switch (scene) {
 	case 4: enter(kIdle); break;
 	case 8: enter(kPopup); break;
@@ -238,7 +268,36 @@ void MortimerInterview::enter(Stage stage) {
 	case kEnding: _movieName = "RESOURCE/ENDING/DEMOENDH.SAN"; break;
 	default: break;
 	}
+	if (!_isDemo) {
+		const MortimerRegion &r = mortimerRegion(_region);
+		switch (stage) {
+		case kGate: _movieName = Common::String::format("%s/%cGATE.SAN", r.directory, r.prefix); break;
+		case kSong: _movieName = Common::String::format("%s/%c_SONG_%d.SAN", r.directory, r.prefix, _answer < 4 ? 1 : 2); break;
+		case kPopup: _movieName = Common::String::format("%s/%c_POPUPH.SAN", r.directory, r.prefix); break;
+		case kAnswer: _movieName = Common::String::format("%s/%c_%s_%d.SAN", r.directory, r.prefix, r.animals[_selected], _question + 1); break;
+		case kRiddle: _movieName = Common::String::format("%s/%c_RIDD_%d.SAN", r.directory, r.prefix, _answer < 4 ? 1 : 2); break;
+		case kSolve: _movieName = Common::String::format("%s/%c_ANSWER.SAN", r.directory, r.prefix); break;
+		case kCost: _movieName = Common::String::format("%s/%c_GLO_%u.SAN", r.directory, r.prefix, _difficulty); break;
+		case kGuess: _movieName = Common::String::format("%s/ANS_%sH.SAN", r.directory, r.animals[_guess]); break;
+		case kCorrect: _movieName = Common::String::format("%s/ANS%s_%u.SAN", r.directory, r.animals[_answer], _textDifficulty); break;
+		case kWrong: _movieName = Common::String::format("%s/%c_WRONGH.SAN", r.directory, r.prefix); break;
+		case kOpenGate: _movieName = Common::String::format("%s/%cGYESH.SAN", r.directory, r.prefix); break;
+		case kNoAnimals: _movieName = "RESOURCE/GENERAL/NOSCOPE.SAN"; break;
+		case kTried: _movieName = "RESOURCE/GENERAL/TRIEDIT.SAN"; break;
+		default: break;
+		}
+	}
 	_moviePending = !_movieName.empty();
+}
+
+int MortimerInterview::sceneId() const {
+	if (_stage == kGate)
+		return 12 + _region;
+	if (_stage == kSong)
+		return 17 + _region;
+	if (_stage == kPopup)
+		return 4 + _region;
+	return 8 + _region;
 }
 
 bool MortimerInterview::fullScreen() const {
@@ -259,7 +318,7 @@ int MortimerInterview::hitControl(const Common::Point &point) const {
 	for (uint i = 0; i < ARRAYSIZE(kControls); ++i) {
 		const Control &c = kControls[i];
 		if (point.x >= c.left && point.x <= c.right && point.y >= c.top && point.y <= c.bottom) {
-			if (!_help && c.id >= 55 && c.id <= 61 && !(_species & (1 << (c.id - 55))))
+			if (_isDemo && !_help && c.id >= 55 && c.id <= 61 && !(_species & (1 << (c.id - 55))))
 				return -1;
 			if (!_help && c.id >= 46 && c.id <= 48 && (_riddleView || _selected < 0))
 				return -1;
@@ -282,7 +341,7 @@ void MortimerInterview::selectAnimal(int animal) {
 }
 
 void MortimerInterview::click(const Common::Point &point) {
-	if (fullScreen() || _stage == kPay || _stage == kGuess || _stage == kCorrect || _stage == kWrong || _stage == kSolve || _stage == kNoStones)
+	if (fullScreen() || _stage == kPay || _stage == kGuess || _stage == kCorrect || _stage == kWrong || _stage == kSolve || _stage == kNoStones || _stage == kCost || _stage == kNoAnimals)
 		return;
 	int action = hitControl(point);
 	if (action < 0)
@@ -293,7 +352,7 @@ void MortimerInterview::click(const Common::Point &point) {
 	if (action == 50) {
 		_help = !_help;
 		enter(kIdle);
-		if (_help && !_helpExplained) {
+		if (_isDemo && _help && !_helpExplained) {
 			_helpExplained = true;
 			enter(kHelp);
 			_movieName = "RESOURCE/GENERAL/HELP/HBUTTON1.SAN";
@@ -315,16 +374,31 @@ void MortimerInterview::click(const Common::Point &point) {
 		enter(kFlyAway);
 		return;
 	}
-	if (_selected < 0)
+	if (_selected < 0 && _isDemo)
 		return;
 	if (action == 62 || action == 63)
-		action = _lastAction;
+		action = _selected < 0 ? 52 : _lastAction;
 	if (action >= 55 && action <= 61) {
-		if (_solving) {
+		if (!_isDemo && !(_species & (1 << (action - 55)))) {
+			enter(kHelp);
+			_movieName = "RESOURCE/GENERAL/FLYAGAIN.SAN";
+			_moviePending = true;
+		} else if (_solving) {
 			_guess = action - 55;
+			if (!_isDemo && _difficulty == 0 && (_tried & (1 << _guess))) {
+				enter(kTried);
+				return;
+			}
 			_solving = false;
-			_payment = 5;
-			--_guesses;
+			_payment = _isDemo ? 5 : mortimerGuessCost(_region, _difficulty);
+			if (_stones < _payment) {
+				_payment = 0;
+				enter(kNoStones);
+				return;
+			}
+			_tried |= 1 << _guess;
+			if (_guesses > 0)
+				--_guesses;
 			enter(kPay);
 		} else {
 			selectAnimal(action - 55);
@@ -340,7 +414,7 @@ void MortimerInterview::click(const Common::Point &point) {
 		_riddleView = true;
 		_textScroll = 0;
 		_lastAction = 52;
-		enter(action == 52 ? kRiddle : kSolve);
+		enter(action == 52 ? kRiddle : (!_isDemo && !_species ? kNoAnimals : kSolve));
 	}
 }
 
@@ -372,7 +446,13 @@ void MortimerInterview::movieFinished() {
 	case kGate: enter(kSong); break;
 	case kSong: enter(kPopup); break;
 	case kSolve:
-		if (_stones < 5) {
+		if (!_isDemo) {
+			enter(kCost);
+			break;
+		}
+		// Fall through.
+	case kCost:
+		if (_stones < (_isDemo ? 5 : mortimerGuessCost(_region, _difficulty))) {
 			enter(kNoStones);
 		} else {
 			_solving = true;
@@ -382,12 +462,15 @@ void MortimerInterview::movieFinished() {
 	case kGuess: enter(_guess == _answer ? kCorrect : kWrong); break;
 	case kCorrect: enter(kOpenGate); break;
 	case kWrong:
-		if (!_guesses)
+		if (!_guesses) {
+			_restartRegion = !_isDemo;
+			if (_restartRegion)
+				resetRiddle();
 			enter(kFlyAway);
-		else
+		} else
 			enter(kIdle);
 		break;
-	case kOpenGate: enter(kEnding); break;
+	case kOpenGate: enter(_isDemo ? kEnding : kFinished); break;
 	case kEnding: enter(kFinished); break;
 	default: enter(kIdle); break;
 	}
@@ -408,13 +491,13 @@ void MortimerInterview::drawText(Graphics::Surface &screen, const Common::String
 	const int first = MIN<int>(_textScroll, lines.size() - visible);
 	const int top = 96 - visible * height / 2;
 	for (int i = 0; i < visible; ++i)
-		_font.drawString(&screen, lines[first + i], 29, top + i * height, 330, 0, Graphics::kTextAlignCenter);
+		_font.drawString(&screen, lines[first + i], 29, top + i * height, 330, _isDemo ? 0 : 1, Graphics::kTextAlignCenter);
 }
 
 void MortimerInterview::draw(Graphics::Surface &screen, const MortimerMovie &movie) const {
 	if (fullScreen()) {
 		screen.copyRectToSurface(movie.pixels(), MortimerMovie::kScreenWidth, 0, 0, 640, 480);
-		for (uint i = 0; i < movie.captions().size(); ++i) {
+		for (uint i = 0; _isDemo && i < movie.captions().size(); ++i) {
 			const MortimerMovie::Caption &caption = movie.captions()[i];
 			if (caption.id < ARRAYSIZE(_captions))
 				_captionFont.drawString(&screen, _captions[caption.id], 0, caption.y, MIN<int>(640, caption.x * 2), 0, Graphics::kTextAlignCenter);
@@ -445,8 +528,8 @@ void MortimerInterview::draw(Graphics::Surface &screen, const MortimerMovie &mov
 		blit(screen, _panel[9], 400, 6);
 	if (_solving)
 		blit(screen, _panel[2], 11, 174);
-	if (_selected >= 0)
-		drawText(screen, _riddleView ? _riddles[_answer] : _dialogue[_selected][_question]);
+	if (_selected >= 0 || _riddleView)
+		drawText(screen, _riddleView ? _riddles[_answer][_textDifficulty] : _dialogue[_selected][_question]);
 }
 
 void MortimerInterview::drawCursor(Graphics::Surface &screen, const Common::Point &point) const {

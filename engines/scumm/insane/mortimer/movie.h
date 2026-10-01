@@ -50,6 +50,14 @@ struct MortimerSound {
 	Common::Array<byte> samples;
 };
 
+struct MortimerMovieContext {
+	enum Condition { kAtGate, kHasStones, kHostilesRemain, kAnimalsRemain, kDamaged, kOutOfGuesses, kConditionCount };
+	bool girl = false;
+	int riddle = -1;
+	bool conditions[kConditionCount] = {};
+	bool matches(uint code) const;
+};
+
 bool loadMortimerSprites(Common::SeekableReadStream &stream, Common::Array<MortimerSprite> &sprites, byte *palette = nullptr);
 bool loadMortimerSound(Common::SeekableReadStream &stream, MortimerSound &sound);
 
@@ -64,7 +72,7 @@ public:
 
 	MortimerMovie();
 	virtual ~MortimerMovie();
-	bool load(Common::SeekableReadStream &stream, bool doubled = true);
+	bool load(Common::SeekableReadStream &stream, bool doubled = true, bool continuation = false);
 	virtual void reset();
 	// Suppress compositing while seeking to a frame that replaces the image.
 	virtual bool advance(bool renderFrame = true);
@@ -74,9 +82,12 @@ public:
 	const byte *palette() const { return _palette; }
 	uint frame() const { return _nextFrame ? _nextFrame - 1 : 0; }
 	uint frameCount() const { return _frames.size(); }
+	bool started() const { return _nextFrame != 0; }
 	uint frameRate() const { return _frameRate; }
 	const Common::Array<MortimerSound> &sounds() const { return _sounds; }
 	const Common::Array<Caption> &captions() const { return _captions; }
+	bool soundEnabled(uint index) const { return _soundEnabled[index]; }
+	const Common::Array<byte> &cachedMovie() const { return _cachedMovie; }
 	const Common::String &errorMessage() const { return _error; }
 
 protected:
@@ -107,6 +118,10 @@ private:
 	Common::Array<Frame> _frames;
 	Common::Array<Object> _objects;
 	Common::Array<MortimerSound> _sounds;
+	Common::Array<uint32> _soundOffsets;
+	Common::Array<bool> _soundEnabled;
+	Common::Array<byte> _cachedMovie;
+	uint _cacheBlock;
 	Common::Array<Caption> _captions;
 	Object _storedObject;
 	SmushDeltaBlocksDecoder *_decoder;
@@ -123,14 +138,18 @@ class MortimerCutscene : public MortimerMovie {
 public:
 	explicit MortimerCutscene(bool girl = false);
 	void reset() override;
+	MortimerMovieContext &context() { return _context; }
+	const MortimerMovieContext &context() const { return _context; }
 
 protected:
 	void handleAction(const byte *data, uint32 size) override;
 	bool skipObject(uint16 a, uint16 b) const override;
+	bool toggle(uint16 id) const { return id > 0 && id <= 1024 && _toggles[id - 1]; }
+	void setToggle(uint16 id, bool value) { if (id > 0 && id <= 1024) _toggles[id - 1] = value; }
 
 private:
-	const bool _girl;
-	bool _toggles[256];
+	MortimerMovieContext _context;
+	bool _toggles[1024];
 };
 
 } // End of namespace Scumm
