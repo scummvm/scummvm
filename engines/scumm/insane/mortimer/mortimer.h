@@ -49,6 +49,8 @@ private:
 	enum CrashStage { kNoCrash, kCrashMovie, kRepairMovie };
 
 	bool loadResources();
+	bool selectDifficulty();
+	void setDifficulty(uint flight, uint riddle);
 	uint introCount() const;
 	bool loadIntro(uint index);
 	bool loadFlight(uint segment);
@@ -90,6 +92,7 @@ private:
 	void stopSounds();
 
 	const bool _isDemo, _restoredContent;
+	uint _flightDifficulty, _riddleDifficulty;
 	Common::RandomSource _random;
 	MortimerCutscene _intro;
 	MortimerFlight _flight;

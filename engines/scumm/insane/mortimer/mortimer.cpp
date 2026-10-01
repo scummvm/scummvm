@@ -19,6 +19,7 @@
  */
 
 #include "scumm/insane/mortimer/mortimer.h"
+#include "scumm/insane/mortimer/dialogs.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
@@ -112,7 +113,8 @@ Common::KeymapArray MortimerEngine::initKeymaps() {
 }
 
 MortimerEngine::MortimerEngine(OSystem *system, bool isDemo) : Engine(system), _isDemo(isDemo),
-	_restoredContent(isDemo && ConfMan.getBool("mortimer_restored_content")), _random("mortimer-flight"), _flight(isDemo, _restoredContent), _interview(isDemo),
+	_restoredContent(isDemo && ConfMan.getBool("mortimer_restored_content")), _flightDifficulty(0), _riddleDifficulty(0),
+	_random("mortimer-flight"), _flight(isDemo, _restoredContent), _interview(isDemo),
 	_viewport(24, 20, 616, 360), _mouse(320, 240), _view(44, 60), _aim(320, 190), _shotWeapon(MortimerFlight::kRevitascope),
 	_crashStage(kNoCrash), _nextFrameTime(0), _pauseTime(0), _introIndex(-1), _loadedRegion(-1), _creditedRescues(0),
 	_segment(0), _carriedStones(0), _completedSpecies(0), _shellShocks(0), _shockFrame(0), _crashCount(0),
@@ -120,8 +122,6 @@ MortimerEngine::MortimerEngine(OSystem *system, bool isDemo) : Engine(system), _
 	_controllerMode(false), _interviewActive(false), _resourcesLoaded(false), _playingCached(false), _needsRepair(false), _hitJolt(false) {
 	memset(_steering, 0, sizeof(_steering));
 	memset(_iconFlash, 0, sizeof(_iconFlash));
-	ConfMan.registerDefault("mortimer_flight_difficulty", 0);
-	ConfMan.registerDefault("mortimer_riddle_difficulty", 0);
 }
 
 MortimerEngine::~MortimerEngine() {
@@ -131,6 +131,23 @@ MortimerEngine::~MortimerEngine() {
 
 bool MortimerEngine::hasFeature(EngineFeature feature) const {
 	return feature == kSupportsReturnToLauncher;
+}
+
+bool MortimerEngine::selectDifficulty() {
+	if (_isDemo && !_restoredContent)
+		return true;
+	MortimerDifficultyDialog dialog(_isDemo, _flightDifficulty, _riddleDifficulty);
+	if (runDialog(dialog) != 1 || shouldQuit())
+		return false;
+	setDifficulty(dialog.flightDifficulty(), dialog.riddleDifficulty());
+	return true;
+}
+
+void MortimerEngine::setDifficulty(uint flight, uint riddle) {
+	_flightDifficulty = MIN(flight, 2U);
+	_riddleDifficulty = MIN(riddle, 2U);
+	_flight.setCollisionRadius(_isDemo && !_restoredContent ? 25 : 20 * (_flightDifficulty + 1));
+	_interview.setDifficulty(_riddleDifficulty);
 }
 
 bool MortimerEngine::loadResources() {
@@ -280,7 +297,6 @@ bool MortimerEngine::loadRegion(uint region) {
 	}
 	_loadedRegion = region;
 	_flight.clearProgress();
-	_flight.setCollisionRadius(20 * (CLIP(ConfMan.getInt("mortimer_flight_difficulty"), 0, 2) + 1));
 	_interview.resetRiddle();
 	_carriedStones = _completedSpecies = _creditedRescues = _shellShocks = 0;
 	_shockFrame = _crashCount = 0;
@@ -462,8 +478,7 @@ bool MortimerEngine::startFlight() {
 bool MortimerEngine::startCrash() {
 	// SHELL's difficulty table permits these crashes before a full repair.
 	const uint allowances[] = {4, 3, 1};
-	const uint difficulty = CLIP(ConfMan.getInt("mortimer_flight_difficulty"), 0, 2);
-	_needsRepair = ++_crashCount > allowances[difficulty];
+	_needsRepair = ++_crashCount > allowances[_flightDifficulty];
 	if (_needsRepair)
 		_crashCount = 0;
 	_hitJolt = false;
@@ -491,14 +506,13 @@ bool MortimerEngine::loadCrashMovie(bool repair) {
 }
 
 bool MortimerEngine::finishCrash() {
-	const uint difficulty = CLIP(ConfMan.getInt("mortimer_flight_difficulty"), 0, 2);
 	_crashStage = kNoCrash;
 	_shellShocks = _shockFrame = 0;
 	_pendingFlight.clear();
 	if (_needsRepair) {
 		_needsRepair = false;
 		// Easy flight keeps rescues and stones even after a full repair.
-		if (difficulty != 0) {
+		if (_flightDifficulty != 0) {
 			const bool girl = _flight.context().girl;
 			_flight.clearProgress();
 			_flight.context().girl = girl;
@@ -509,7 +523,7 @@ bool MortimerEngine::finishCrash() {
 			return loadFlight(0) && startFlight();
 		return _campaign.returnToFlight() && enterCampaignScene();
 	}
-	if (difficulty == 2)
+	if (_flightDifficulty == 2)
 		_flight.clearHostiles();
 	if (_isDemo)
 		return loadFlight(_segment) && startFlight();
@@ -719,7 +733,7 @@ bool MortimerEngine::updateScene() {
 			return true;
 	} else if (interactive()) {
 		if (_hitJolt) {
-			const int amount = 64 * (CLIP(ConfMan.getInt("mortimer_flight_difficulty"), 0, 2) + 1);
+			const int amount = 64 * (_flightDifficulty + 1);
 			const int y = _random.getRandomBit() ? amount : -amount;
 			const int x = _random.getRandomBit() ? amount : -amount;
 			updateView(x, y);
@@ -873,6 +887,8 @@ Common::Error MortimerEngine::run() {
 	_screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	_screen.fillRect(Common::Rect(640, 480), 10);
 	syncSoundSettings();
+	if (!selectDifficulty())
+		return Common::kNoError;
 	const bool oldCursor = CursorMan.showMouse(false);
 	PauseToken pause;
 	bool exit;
@@ -883,7 +899,6 @@ Common::Error MortimerEngine::run() {
 		_subtitleName = "RESOURCE/DATA/BEGIN.TRS";
 		if (!_campaign.start(boot < 0 ? 24 : boot))
 			_campaign.start();
-		_interview.setDifficulty(CLIP(ConfMan.getInt("mortimer_riddle_difficulty"), 0, 2));
 		exit = !enterCampaignScene();
 	} else if (boot == 4 || boot == 10 || boot == 18 || boot == 8 || boot == 25) {
 		stopSounds();
@@ -975,7 +990,7 @@ Common::Error MortimerEngine::run() {
 		draw();
 		if (_finished) {
 			GUI::MessageDialog dialog(_("Play again?"), _("Restart"), _("Quit"));
-			if (dialog.runModal() != GUI::kMessageOK || !restart(true))
+			if (dialog.runModal() != GUI::kMessageOK || !selectDifficulty() || !restart(true))
 				break;
 		}
 		_system->delayMillis(10);
