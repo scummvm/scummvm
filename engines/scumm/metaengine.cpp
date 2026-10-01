@@ -986,6 +986,15 @@ const ExtraGuiOption enableRebel1RestoredContent = {
 	0
 };
 
+const ExtraGuiOption enableMortimerRestoredContent = {
+	_s("Enable restored content"),
+	_s("Play the demo's unused crash and repair animations using the full game's recovery rules"),
+	"mortimer_restored_content",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -1050,6 +1059,10 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL1_RESTORED_CONTENT)) {
 		options.push_back(enableRebel1RestoredContent);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_MORTIMER_RESTORED_CONTENT) ||
+		(gameid == "mortimer" && extra == "Demo")) {
+		options.push_back(enableMortimerRestoredContent);
 	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);

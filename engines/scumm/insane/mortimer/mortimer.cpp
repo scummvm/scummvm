@@ -111,7 +111,8 @@ Common::KeymapArray MortimerEngine::initKeymaps() {
 	return keymaps;
 }
 
-MortimerEngine::MortimerEngine(OSystem *system, bool isDemo) : Engine(system), _isDemo(isDemo), _random("mortimer-flight"), _flight(isDemo), _interview(isDemo),
+MortimerEngine::MortimerEngine(OSystem *system, bool isDemo) : Engine(system), _isDemo(isDemo),
+	_restoredContent(isDemo && ConfMan.getBool("mortimer_restored_content")), _random("mortimer-flight"), _flight(isDemo, _restoredContent), _interview(isDemo),
 	_viewport(24, 20, 616, 360), _mouse(320, 240), _view(44, 60), _aim(320, 190), _shotWeapon(MortimerFlight::kRevitascope),
 	_crashStage(kNoCrash), _nextFrameTime(0), _pauseTime(0), _introIndex(-1), _loadedRegion(-1), _creditedRescues(0),
 	_segment(0), _carriedStones(0), _completedSpecies(0), _shellShocks(0), _shockFrame(0), _crashCount(0),
@@ -447,7 +448,7 @@ bool MortimerEngine::startFlight() {
 	_uiFrame = 0;
 	_shotFrame = 3;
 	_glowFrame = 10;
-	_glowStones = MIN(_carriedStones + (_isDemo ? 0 : _flight.rescuedCount() - _creditedRescues), 999U);
+	_glowStones = MIN(_carriedStones + (_isDemo && !_restoredContent ? 0 : _flight.rescuedCount() - _creditedRescues), 999U);
 	_pendingGlowStones = 0;
 	memset(_iconFlash, 0, sizeof(_iconFlash));
 	for (uint i = 0; i < ARRAYSIZE(_steeringHistory); ++i)
@@ -474,7 +475,7 @@ bool MortimerEngine::loadCrashMovie(bool repair) {
 	stopSounds();
 	_movieHandles.clear();
 	const char *name = repair ? "RESOURCE/GENERAL/REPAIR.SAN" :
-		(_campaign.scene().region == 3 ? "RESOURCE/GENERAL/D_CRASH.SAN" : "RESOURCE/GENERAL/CRASH.SAN");
+		(!_isDemo && _campaign.scene().region == 3 ? "RESOURCE/GENERAL/D_CRASH.SAN" : "RESOURCE/GENERAL/CRASH.SAN");
 	Common::File file;
 	if (!file.open(Common::Path(name))) {
 		_loadError = Common::String::format("Missing %s", name);
@@ -504,12 +505,24 @@ bool MortimerEngine::finishCrash() {
 			_carriedStones = _completedSpecies = _creditedRescues = 0;
 			_interview.resetAttempts();
 		}
+		if (_isDemo)
+			return loadFlight(0) && startFlight();
 		return _campaign.returnToFlight() && enterCampaignScene();
 	}
 	if (difficulty == 2)
 		_flight.clearHostiles();
+	if (_isDemo)
+		return loadFlight(_segment) && startFlight();
 	// Ordinary crashes replay the current branch, including a cached branch.
 	return loadRetailFlight(_flightName) && startFlight();
+}
+
+void MortimerEngine::creditRescues() {
+	// Restored demo flights retain target IDs across retries and repairs.
+	const uint credited = _isDemo && !_restoredContent ? 0 : _creditedRescues;
+	_carriedStones = MIN(999U, _carriedStones + _flight.rescuedCount() - credited);
+	_creditedRescues = _flight.rescuedCount();
+	_completedSpecies |= _flight.rescuedSpecies();
 }
 
 bool MortimerEngine::restart(bool all) {
@@ -532,7 +545,7 @@ bool MortimerEngine::restart(bool all) {
 		_shellShocks = 0;
 		return _campaign.start(region) && enterCampaignScene();
 	}
-	if (_interviewActive)
+	if (_interviewActive || (_restoredContent && _introIndex < 0))
 		all = true;
 	if (_introIndex >= 0 && !all)
 		return startMovie();
@@ -540,7 +553,8 @@ bool MortimerEngine::restart(bool all) {
 	if (all) {
 		_interviewActive = false;
 		_interview.resetRiddle();
-		_carriedStones = _completedSpecies = 0;
+		_flight.clearProgress();
+		_carriedStones = _completedSpecies = _creditedRescues = 0;
 		if (!loadFlight(0))
 			return false;
 	}
@@ -567,9 +581,7 @@ bool MortimerEngine::nextScene(bool skip) {
 				_pendingFlight.clear();
 				return loadRetailFlight(next) && startMovie();
 			}
-			_carriedStones = MIN(999U, _carriedStones + _flight.rescuedCount() - _creditedRescues);
-			_creditedRescues = _flight.rescuedCount();
-			_completedSpecies |= _flight.rescuedSpecies();
+			creditRescues();
 			_flight.context().conditions[MortimerMovieContext::kAtGate] = true;
 		}
 		if (!_campaign.advance()) {
@@ -604,8 +616,7 @@ bool MortimerEngine::nextScene(bool skip) {
 		return true;
 	}
 	if (_segment + 1 == ARRAYSIZE(kDemoFlights)) {
-		_carriedStones += _flight.rescuedCount();
-		_completedSpecies |= _flight.rescuedSpecies();
+		creditRescues();
 		_glowStones = MIN(_carriedStones, 999U);
 		_pendingGlowStones = 0;
 		_glowFrame = 10;
@@ -622,8 +633,7 @@ bool MortimerEngine::nextScene(bool skip) {
 	}
 	debug(1, "Mortimer: demo flight transition %s -> %s at frame %u/%u%s",
 		kDemoFlights[_segment], kDemoFlights[_segment + 1], _flight.frame() + 1, _flight.frameCount(), skip ? " (skipped)" : "");
-	_carriedStones += _flight.rescuedCount();
-	_completedSpecies |= _flight.rescuedSpecies();
+	creditRescues();
 	return loadFlight(_segment + 1) && startFlight();
 }
 
@@ -641,6 +651,11 @@ bool MortimerEngine::processInterview() {
 				_crashCount = 0;
 			}
 			return _campaign.returnToFlight() && enterCampaignScene();
+		}
+		if (_restoredContent) {
+			// A new demo flight after an interview must offer rescues again.
+			_flight.clearProgress();
+			_creditedRescues = _crashCount = 0;
 		}
 		return loadFlight(0) && startFlight();
 	}
@@ -734,7 +749,7 @@ bool MortimerEngine::updateScene() {
 	if (interactive() && _flight.hitsObstacle(moviePoint(_aim))) {
 		// Retail crashes on the fifteenth hit; the demo allows eighteen.
 		if (_shellShocks + 1 >= (_isDemo ? 18U : 15U)) {
-			if (!(_isDemo ? restart() : startCrash()))
+			if (!(_isDemo && !_restoredContent ? restart() : startCrash()))
 				return false;
 		} else {
 			++_shellShocks;

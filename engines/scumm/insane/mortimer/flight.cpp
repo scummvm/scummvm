@@ -26,7 +26,7 @@
 
 namespace Scumm {
 
-MortimerFlight::MortimerFlight(bool isDemo) : _isDemo(isDemo), _initialInteractive(true), _interactive(true),
+MortimerFlight::MortimerFlight(bool isDemo, bool keepProgress) : _isDemo(isDemo), _keepProgress(keepProgress), _initialInteractive(true), _interactive(true),
 	_inBranch(false), _steering(kWidth / 2, kHeight / 2), _collisionRadius(25) {
 	clearProgress();
 	reset();
@@ -45,14 +45,16 @@ void MortimerFlight::clearProgress() {
 }
 
 void MortimerFlight::clearHostiles() {
-	// Retail hornet hits also suppress their salt projectiles.
+	if (_isDemo)
+		memset(_hitTargets + 700, 0, 100 * sizeof(_hitTargets[0]));
+	// Hornet hits also suppress their salt projectiles.
 	memset(_hitTargets + 800, 0, 100 * sizeof(_hitTargets[0]));
 	memset(_hitTargets + 1000, 0, 400 * sizeof(_hitTargets[0]));
 }
 
 void MortimerFlight::reset() {
 	MortimerCutscene::reset();
-	if (_isDemo)
+	if (_isDemo && !_keepProgress)
 		clearProgress();
 	_nextFlight.clear();
 	_interactive = _initialInteractive;

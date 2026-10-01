@@ -63,6 +63,7 @@ private:
 	bool startCrash();
 	bool loadCrashMovie(bool repair);
 	bool finishCrash();
+	void creditRescues();
 	bool processInterview();
 	bool updateScene();
 	bool nextScene(bool skip = false);
@@ -88,7 +89,7 @@ private:
 	void playCollisionSound();
 	void stopSounds();
 
-	const bool _isDemo;
+	const bool _isDemo, _restoredContent;
 	Common::RandomSource _random;
 	MortimerCutscene _intro;
 	MortimerFlight _flight;

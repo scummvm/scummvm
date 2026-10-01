@@ -38,7 +38,7 @@ public:
 		bool active, hit;
 	};
 
-	explicit MortimerFlight(bool isDemo = true);
+	explicit MortimerFlight(bool isDemo = true, bool keepProgress = false);
 	bool load(Common::SeekableReadStream &stream, bool interactive = true, bool continuation = false);
 	void clearProgress();
 	void clearHostiles();
@@ -73,7 +73,7 @@ private:
 	Common::Array<Target> _targets;
 	Common::Array<Obstacle> _obstacles;
 	Common::String _nextFlight;
-	const bool _isDemo;
+	const bool _isDemo, _keepProgress;
 	bool _hitTargets[1400];
 	bool _initialInteractive, _interactive, _inBranch;
 	Common::Point _steering;
