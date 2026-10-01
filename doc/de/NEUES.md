@@ -15,6 +15,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Mortadelo y Filemón: Mamelucos a la Romana hinzugefügt.
    - Unterstützung für Dracula: Resurrection hinzugefügt.
    - Unterstützung für Dracula 2: The Last Sanctuary hinzugefügt.
+   - Unterstützung für Amerzone: The Explorer's Legacy hinzugefügt.
+   - Unterstützung für The Cameron Files: The Secret at Loch Ness hinzugefügt.
+   - Unterstützung für The Messenger / Louvre: The Final Curse hinzugefügt.
    - Unterstützung für Nancy Drew: The Secret of Shadow Ranch hinzugefügt.
    - Unterstützung für Nancy Drew: Curse of Blackmoor Manor hinzugefügt.
    - Unterstützung für Nancy Drew: Secret of the Old Clock hinzugefügt.
