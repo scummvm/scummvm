@@ -30,6 +30,7 @@
 
 #include "scumm/scumm_v7.h"
 #include "scumm/insane/rebel1/rebel.h"
+#include "scumm/smush/saud.h"
 
 namespace Scumm {
 
@@ -99,44 +100,25 @@ void InsaneRebel1::loadSfx() {
 			continue;
 		}
 
-		const uint32 fileSize = file->size();
-		if (fileSize < 16) {
-			debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: %s too small (%u bytes)", kRA1SfxFiles[i], fileSize);
+		SaudHeader header;
+		if (!readSaudHeader(*file, header, true)) {
+			debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: invalid SAUD file %s", kRA1SfxFiles[i]);
 			file->close();
 			delete file;
 			continue;
 		}
 
-		const uint32 tag = file->readUint32BE();
-		if (tag != MKTAG('S', 'A', 'U', 'D')) {
-			debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: %s not a SAUD file (tag=0x%08x)", kRA1SfxFiles[i], tag);
-			file->close();
-			delete file;
-			continue;
-		}
-		file->readUint32BE();
-
-		bool foundSdat = false;
-		while (file->pos() + 8 <= (int64)fileSize) {
-			const uint32 chunkTag = file->readUint32BE();
-			const uint32 chunkSize = file->readUint32BE();
-			if (chunkTag == MKTAG('S', 'D', 'A', 'T')) {
-				const uint32 pcmSize = MIN(chunkSize, fileSize - (uint32)file->pos());
-				byte *pcm = (byte *)malloc(pcmSize);
-				if (pcm) {
-					file->read(pcm, pcmSize);
-					_sfxData[i] = pcm;
-					_sfxSize[i] = pcmSize;
-					debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: loaded %s (%u bytes PCM)", kRA1SfxFiles[i], pcmSize);
-				}
-				foundSdat = true;
-				break;
+		byte *pcm = (byte *)malloc(header.dataSize);
+		if (pcm) {
+			if (file->read(pcm, header.dataSize) == header.dataSize && !file->err()) {
+				_sfxData[i] = pcm;
+				_sfxSize[i] = header.dataSize;
+				debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: loaded %s (%u bytes PCM)", kRA1SfxFiles[i], header.dataSize);
+			} else {
+				debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: could not read PCM from %s", kRA1SfxFiles[i]);
+				free(pcm);
 			}
-			file->seek(chunkSize, SEEK_CUR);
 		}
-
-		if (!foundSdat)
-			debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: no SDAT chunk in %s", kRA1SfxFiles[i]);
 
 		file->close();
 		delete file;

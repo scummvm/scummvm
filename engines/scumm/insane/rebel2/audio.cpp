@@ -19,12 +19,14 @@
  *
  */
 
+#include "common/memstream.h"
 #include "common/system.h"
 #include "common/util.h"
 
 #include "scumm/file.h"
 #include "scumm/scumm_v7.h"
 
+#include "scumm/smush/saud.h"
 #include "scumm/smush/smush_player.h"
 
 #include "scumm/insane/rebel2/rebel.h"
@@ -79,45 +81,24 @@ void InsaneRebel2::loadSfx() {
 			continue;
 		}
 
-		uint32 fileSize = file->size();
-		if (fileSize < 38) {  // Minimum: 8 (SAUD) + 22 (STRK) + 8 (SDAT header)
-			debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: %s too small (%d bytes)", kRA2SfxFiles[i], fileSize);
+		SaudHeader header;
+		if (!readSaudHeader(*file, header, true)) {
+			debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: Invalid SAUD file %s", kRA2SfxFiles[i]);
 			file->close();
 			delete file;
 			continue;
 		}
 
-		uint32 tag = file->readUint32BE();
-		if (tag != MKTAG('S', 'A', 'U', 'D')) {
-			debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: %s not a SAUD file (tag=0x%08x)", kRA2SfxFiles[i], tag);
-			file->close();
-			delete file;
-			continue;
-		}
-		file->readUint32BE();
-
-		bool foundSdat = false;
-		while (file->pos() + 8 <= (int64)fileSize) {
-			uint32 chunkTag = file->readUint32BE();
-			uint32 chunkSize = file->readUint32BE();
-
-			if (chunkTag == MKTAG('S', 'D', 'A', 'T')) {
-				uint32 pcmSize = MIN(chunkSize, fileSize - (uint32)file->pos());
-				_sfxData[i] = (byte *)malloc(pcmSize);
-				if (_sfxData[i]) {
-					file->read(_sfxData[i], pcmSize);
-					_sfxSize[i] = pcmSize;
-					debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: Loaded %s (%d bytes PCM)", kRA2SfxFiles[i], pcmSize);
-				}
-				foundSdat = true;
-				break;
+		byte *pcm = (byte *)malloc(header.dataSize);
+		if (pcm) {
+			if (file->read(pcm, header.dataSize) == header.dataSize && !file->err()) {
+				_sfxData[i] = pcm;
+				_sfxSize[i] = header.dataSize;
+				debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: Loaded %s (%u bytes PCM)", kRA2SfxFiles[i], header.dataSize);
 			} else {
-				file->seek(chunkSize, SEEK_CUR);
+				debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: Could not read PCM from %s", kRA2SfxFiles[i]);
+				free(pcm);
 			}
-		}
-
-		if (!foundSdat) {
-			debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: No SDAT chunk in %s", kRA2SfxFiles[i]);
 		}
 
 		file->close();
@@ -200,18 +181,15 @@ void InsaneRebel2::playAuxSfx(int buffer, int volume, int pan) {
 	const byte *pcmStart = _auxSfxData[buffer];
 	uint32 pcmSize = _auxSfxSize[buffer];
 
-	if (pcmSize > 8 && READ_BE_UINT32(pcmStart) == MKTAG('S', 'A', 'U', 'D')) {
-		uint32 pos = 8;
-		while (pos + 8 <= pcmSize) {
-			uint32 chunkTag = READ_BE_UINT32(pcmStart + pos);
-			uint32 chunkSize = READ_BE_UINT32(pcmStart + pos + 4);
-			if (chunkTag == MKTAG('S', 'D', 'A', 'T')) {
-				pcmStart = pcmStart + pos + 8;
-				pcmSize = MIN(chunkSize, pcmSize - pos - 8);
-				break;
-			}
-			pos += 8 + chunkSize;
+	if (pcmSize >= 4 && READ_BE_UINT32(pcmStart) == MKTAG('S', 'A', 'U', 'D')) {
+		Common::MemoryReadStream soundStream(pcmStart, pcmSize);
+		SaudHeader header;
+		if (!readSaudHeader(soundStream, header, true)) {
+			debugC(DEBUG_INSANE, "InsaneRebel2::playAuxSfx: Invalid SAUD in buffer %d", buffer);
+			return;
 		}
+		pcmStart += soundStream.pos();
+		pcmSize = header.dataSize;
 	}
 
 	byte *pcmCopy = (byte *)malloc(pcmSize);

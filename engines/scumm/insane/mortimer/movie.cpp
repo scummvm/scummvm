@@ -21,8 +21,10 @@
 #include "scumm/insane/mortimer/movie.h"
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/rebel/codec_ra2.h"
+#include "scumm/smush/saud.h"
 
 #include "common/endian.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -36,7 +38,7 @@ struct Chunk {
 	uint32 tag, offset, size;
 };
 
-bool nextChunk(const byte *data, uint32 end, uint32 &pos, Chunk &chunk, bool padded = true) {
+bool nextChunk(const byte *data, uint32 end, uint32 &pos, Chunk &chunk) {
 	if (pos > end || end - pos < 8)
 		return false;
 	chunk.tag = READ_BE_UINT32(data + pos);
@@ -45,7 +47,7 @@ bool nextChunk(const byte *data, uint32 end, uint32 &pos, Chunk &chunk, bool pad
 	if (chunk.size > end - chunk.offset)
 		return false;
 	pos = chunk.offset + chunk.size;
-	if (padded && (chunk.size & 1)) {
+	if (chunk.size & 1) {
 		if (pos == end)
 			return false;
 		++pos;
@@ -183,30 +185,6 @@ bool validTransition(const byte *data, uint32 size) {
 	return true;
 }
 
-bool decodeSound(const Common::Array<byte> &data, MortimerSound &sound) {
-	if (!isContainer(data, MKTAG('S', 'A', 'U', 'D')))
-		return false;
-	sound.samples.clear();
-	uint32 pos = 8;
-	while (pos < data.size()) {
-		Chunk chunk;
-		// SAUD chunks are not word-aligned, unlike the surrounding SMUSH file.
-		if (!nextChunk(data.begin(), data.size(), pos, chunk, false))
-			return false;
-		const byte *src = data.begin() + chunk.offset;
-		if (chunk.tag == MKTAG('S', 'D', 'A', 'T')) {
-			if (!sound.samples.empty())
-				return false;
-			sound.samples.assign(src, src + chunk.size);
-		} else if (chunk.tag == MKTAG('S', 'H', 'D', 'R') && chunk.size == 4) {
-			sound.rate = READ_LE_UINT32(src);
-		} else if (chunk.tag == MKTAG('S', 'T', 'R', 'K') && chunk.size >= 14 && src[0] == 6 && src[1] == 12) {
-			sound.rate = READ_BE_UINT32(src + 10);
-		}
-	}
-	return !sound.samples.empty() && sound.rate >= 4000 && sound.rate <= 48000;
-}
-
 } // End of anonymous namespace
 
 void MortimerSprite::draw(Graphics::Surface &screen, int dstX, int dstY, bool centered, const Common::Rect *bounds) const {
@@ -314,8 +292,18 @@ bool loadMortimerSprites(Common::SeekableReadStream &stream, Common::Array<Morti
 }
 
 bool loadMortimerSound(Common::SeekableReadStream &stream, MortimerSound &sound) {
-	Common::Array<byte> data;
-	return readData(stream, data) && decodeSound(data, sound);
+	if (stream.size() > 64 * 1024 * 1024 || !stream.seek(0))
+		return false;
+	SaudHeader header;
+	if (!readSaudHeader(stream, header) || header.sampleRate < 4000 || header.sampleRate > 48000)
+		return false;
+	sound.samples.resize(header.dataSize);
+	if (stream.read(sound.samples.begin(), header.dataSize) != header.dataSize || stream.err()) {
+		sound.samples.clear();
+		return false;
+	}
+	sound.rate = header.sampleRate;
+	return true;
 }
 
 MortimerMovie::MortimerMovie() : _decoder(nullptr), _decoderWidth(0), _decoderHeight(0),
@@ -490,7 +478,8 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled, bool 
 			memcpy(bytes.begin() + offset, _data.begin() + block.offset + 10, block.size - 10);
 			offset += block.size - 10;
 		}
-		if (!decodeSound(bytes, track.sound))
+		Common::MemoryReadStream soundStream(bytes.begin(), bytes.size());
+		if (!loadMortimerSound(soundStream, track.sound))
 			return fail("Unsupported or incomplete Mortimer audio");
 		_sounds.push_back(Common::move(track.sound));
 		_soundOffsets.push_back(track.blocks[0].offset);
