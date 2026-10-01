@@ -875,27 +875,7 @@ Common::Error MortimerEngine::run() {
 }
 
 void MortimerEngine::drawSprite(const MortimerSprite &sprite, int x, int y, bool centered, const Common::Rect *bounds) {
-	// NUT offsets are relative to the animation's origin, including when its
-	// frames have different bounding boxes (SHELL 402c83/4141bc).
-	if (centered) {
-		x -= (sprite.x + sprite.width) / 2;
-		y -= (sprite.y + sprite.height) / 2;
-	}
-	x += sprite.x;
-	y += sprite.y;
-	Common::Rect clip(x, y, x + sprite.width, y + sprite.height);
-	clip.clip(Common::Rect(_screen.w, _screen.h));
-	if (bounds)
-		clip.clip(*bounds);
-	if (clip.isEmpty())
-		return;
-	for (int row = clip.top; row < clip.bottom; ++row) {
-		const byte *src = sprite.pixels.begin() + (row - y) * sprite.width + clip.left - x;
-		byte *dst = (byte *)_screen.getBasePtr(clip.left, row);
-		for (int col = clip.left; col < clip.right; ++col, ++src, ++dst)
-			if (*src)
-				*dst = *src;
-	}
+	sprite.draw(_screen, x, y, centered, bounds);
 }
 
 void MortimerEngine::drawTargets() {

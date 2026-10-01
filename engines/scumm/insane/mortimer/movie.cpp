@@ -26,6 +26,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "graphics/surface.h"
 
 namespace Scumm {
 
@@ -207,6 +208,24 @@ bool decodeSound(const Common::Array<byte> &data, MortimerSound &sound) {
 }
 
 } // End of anonymous namespace
+
+void MortimerSprite::draw(Graphics::Surface &screen, int dstX, int dstY, bool centered, const Common::Rect *bounds) const {
+	// Sprite offsets are relative to the animation's origin, even when centered.
+	if (centered) {
+		dstX -= (x + width) / 2;
+		dstY -= (y + height) / 2;
+	}
+	dstX += x;
+	dstY += y;
+	Common::Rect clip(dstX, dstY, dstX + width, dstY + height);
+	clip.clip(Common::Rect(screen.w, screen.h));
+	if (bounds)
+		clip.clip(*bounds);
+	if (clip.isEmpty())
+		return;
+	const byte *src = pixels.begin() + (clip.top - dstY) * width + clip.left - dstX;
+	screen.copyRectToSurfaceWithKey(src, width, clip.left, clip.top, clip.width(), clip.height(), 0);
+}
 
 bool decodeMortimerGlyph(const byte *src, uint32 size, MortimerSprite &sprite) {
 	sprite.mask.resize(sprite.pixels.size());

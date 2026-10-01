@@ -29,6 +29,10 @@ namespace Common {
 class SeekableReadStream;
 }
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Scumm {
 
 class SmushDeltaBlocksDecoder;
@@ -38,6 +42,8 @@ struct MortimerSprite {
 	Common::Array<byte> pixels;
 	// Codec 44 uses skipped pixels for transparency and relative palette colors.
 	Common::Array<byte> mask;
+
+	void draw(Graphics::Surface &screen, int dstX, int dstY, bool centered = false, const Common::Rect *bounds = nullptr) const;
 };
 
 struct MortimerSound {

@@ -64,22 +64,6 @@ const Control kControls[] = {
 
 const Common::Point kQuestionOrigins[] = {{122, 191}, {120, 234}, {124, 278}};
 
-void blit(Graphics::Surface &screen, const MortimerSprite &sprite, int x, int y) {
-	x += sprite.x;
-	y += sprite.y;
-	Common::Rect clip(x, y, x + sprite.width, y + sprite.height);
-	clip.clip(Common::Rect(screen.w, screen.h));
-	if (clip.isEmpty())
-		return;
-	for (int row = clip.top; row < clip.bottom; ++row) {
-		const byte *src = sprite.pixels.begin() + (row - y) * sprite.width;
-		byte *dst = (byte *)screen.getBasePtr(0, row);
-		for (int col = clip.left; col < clip.right; ++col)
-			if (src[col - x])
-				dst[col] = src[col - x];
-	}
-}
-
 MortimerInterview::MortimerInterview(bool isDemo) : _random("mortimer"), _isDemo(isDemo),
 	_region(0), _difficulty(0), _textDifficulty(0), _tried(0), _stage(kIdle), _effect(kNoEffect),
 	_answer(-1), _previousAnswer(-1), _selected(-1), _question(0), _guess(-1), _lastAction(46), _textScroll(0), _guesses(3),
@@ -505,29 +489,28 @@ void MortimerInterview::draw(Graphics::Surface &screen, const MortimerMovie &mov
 		return;
 	}
 	screen.fillRect(Common::Rect(640, 480), 10);
-	blit(screen, _riddleView ? _gate[0] : _portraits[_selected < 0 ? 7 : _selected], 354, 69);
+	const MortimerSprite &portrait = _riddleView ? _gate[0] : _portraits[_selected < 0 ? 7 : _selected];
+	portrait.draw(screen, 354, 69);
 	if (playingMovie() && _stage != kHelp && _stage != kNoStones) {
-		for (int y = 0; y < 320 && y + 69 < screen.h; ++y) {
-			const byte *src = movie.pixels() + y * MortimerMovie::kScreenWidth;
-			byte *dst = (byte *)screen.getBasePtr(354, y + 69);
-			for (int x = 0; x < 640 - 354; ++x)
-				if (src[x])
-					dst[x] = src[x];
-		}
+		Common::Rect clip(354, 69, 640, 389);
+		clip.clip(Common::Rect(screen.w, screen.h));
+		if (!clip.isEmpty())
+			screen.copyRectToSurfaceWithKey(movie.pixels(), MortimerMovie::kScreenWidth,
+				clip.left, clip.top, clip.width(), clip.height(), 0);
 	}
 	if (_switchFrame < 6)
-		blit(screen, _panel[10 + _switchFrame], 354, 69);
-	blit(screen, _panel[0], 0, 0);
+		_panel[10 + _switchFrame].draw(screen, 354, 69);
+	_panel[0].draw(screen, 0, 0);
 	if (_riddleView || _selected < 0) {
-		blit(screen, _panel[7], 123, 175);
-		blit(screen, _panel[1], (_frame / 4) % 2 ? 102 : 30, (_frame / 4) % 2 ? 282 : 286);
+		_panel[7].draw(screen, 123, 175);
+		_panel[1].draw(screen, (_frame / 4) % 2 ? 102 : 30, (_frame / 4) % 2 ? 282 : 286);
 	} else if (_selected >= 0) {
-		blit(screen, _panel[4 + _question], kQuestionOrigins[_question].x, kQuestionOrigins[_question].y);
+		_panel[4 + _question].draw(screen, kQuestionOrigins[_question].x, kQuestionOrigins[_question].y);
 	}
 	if (_help)
-		blit(screen, _panel[9], 400, 6);
+		_panel[9].draw(screen, 400, 6);
 	if (_solving)
-		blit(screen, _panel[2], 11, 174);
+		_panel[2].draw(screen, 11, 174);
 	if (_selected >= 0 || _riddleView)
 		drawText(screen, _riddleView ? _riddles[_answer][_textDifficulty] : _dialogue[_selected][_question]);
 }
@@ -535,9 +518,9 @@ void MortimerInterview::draw(Graphics::Surface &screen, const MortimerMovie &mov
 void MortimerInterview::drawCursor(Graphics::Surface &screen, const Common::Point &point) const {
 	if (!fullScreen()) {
 		if (_stage == kPay)
-			blit(screen, _panel[19 + _frame % 2], 508, 451);
+			_panel[19 + _frame % 2].draw(screen, 508, 451);
 		const int cursor = (_help ? 2 : 0) + (hitControl(point) < 0 ? 1 : 0);
-		blit(screen, _cursor[cursor], point.x, point.y);
+		_cursor[cursor].draw(screen, point.x, point.y);
 	}
 }
 
