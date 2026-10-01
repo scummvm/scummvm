@@ -15,45 +15,41 @@
 
 namespace Igor {
 
-// // Ground truth: code/175_2767.asm, cseg175:0002-3595, cseg177:0002 and cseg134:21AF.
-// namespace {
 
 const uint32 kPart10PanelLeft = 0x0000;
 
-
-
 void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
 	// These three original blitters are byte-for-byte duplicates in the two
-	// halves of the room: cseg175:0002-00F1 and cseg176:0002-00F1.
+	// halves of the room
+
 	if ((num == 2 || num == 255) && _objectsState[67] == 1) {
 		for (int y = 0; y <= 7; ++y)
 			memcpy(_screenLayer1 + 0x7DA1 + y * 320,
-					_animFramesBuffer + 0xC786 + y * 37, 37); // cseg175/cseg176:0002-0051
+					_animFramesBuffer + 0xC786 + y * 37, 37);
 	}
 
 	if (num == 3 || num == 255) {
 		if (_objectsState[68] == 1) {
 			for (int y = 0; y <= 14; ++y)
 				memcpy(_screenLayer1 + 0x4E32 + y * 320,
-						_animFramesBuffer + 0xC5E2 + y * 14, 14); // cseg175/cseg176:0052-00A1
+						_animFramesBuffer + 0xC5E2 + y * 14, 14);
 		} else if (_objectsState[68] == 2) {
 			for (int y = 0; y <= 14; ++y)
 				memcpy(_screenLayer1 + 0x4E32 + y * 320,
-						_animFramesBuffer + 0xC6B4 + y * 14, 14); // cseg175/cseg176:00A2-00F1
+						_animFramesBuffer + 0xC6B4 + y * 14, 14);
 		}
 	}
 }
 
 void IgorEngine::PART_10_EXEC_ACTION(int action) {
-	// The action table order differs from the function listing order.
 	switch (action) {
-	case 101:
+	case 101: // look at plaque
 		ADD_DIALOGUE_TEXT(201, 1, 626);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 102:
+	case 102: //enter door
 		_roomObjectAreasTable[7].deltaLum = 3;
 		for (int area = 11; area <= 12; ++area)
 			_roomObjectAreasTable[area].area = 3;
@@ -65,13 +61,13 @@ void IgorEngine::PART_10_EXEC_ACTION(int action) {
 		waitForIgorMove();
 		_currentPart = 70;
 		break;
-	case 103:
+	case 103: //look at door
 		ADD_DIALOGUE_TEXT(202, 1, 627);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 104:
+	case 104: // pick burger
 		PART_10_ACTION_104_pickHamburger();
 		break;
 	case 105:
@@ -80,22 +76,22 @@ void IgorEngine::PART_10_EXEC_ACTION(int action) {
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 106:
+	case 106: // walk at zebra crossing
 		ADD_DIALOGUE_TEXT(208, 1, 632);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 107:
+	case 107: // look at zebra crossing
 		ADD_DIALOGUE_TEXT(207, 1, 631);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
 	case 108:
-		PART_10_ACTION_108();
+		PART_10_ACTION_108_scrollLeft();
 		break;
-	case 109:
+	case 109: // back to map
 		_currentPart = 40;
 		break;
 	default:
@@ -105,7 +101,7 @@ void IgorEngine::PART_10_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_10_ACTION_104_pickHamburger() {
-	if (_objectsState[64] == 1) {
+	if (_objectsState[64] == 1) { // already picked hamburger
 		ADD_DIALOGUE_TEXT(205, 1, 629);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -132,7 +128,7 @@ void IgorEngine::PART_10_ACTION_104_pickHamburger() {
 	_objectsState[64] = 1;
 }
 
-void IgorEngine::PART_10_ACTION_108() {
+void IgorEngine::PART_10_ACTION_108_scrollLeft() {
 	uint8 *walkTable = loadData(WLK_DecanatoLeft);
 	int xPos = 329;
 	int yPos = 0;
@@ -239,12 +235,10 @@ void IgorEngine::PART_10() {
 		_gameState.igorMoving = true;
 		waitForIgorMove();
 	}
-	// State 102 deliberately performs no entry redraw: the completed pan has
-	// already drawn Igor and stored his state in walk record 0.
-
 	_roomObjectAreasTable[7].deltaLum = 0;
-	for (int area = 11; area <= 12; ++area)
+	for (int area = 11; area <= 12; ++area) {
 		_roomObjectAreasTable[area].area = 0;
+	}
 
 	enterPartLoop();
 	while (_currentPart >= 100 && _currentPart <= 102) {

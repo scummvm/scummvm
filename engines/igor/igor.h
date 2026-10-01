@@ -506,7 +506,7 @@ private:
 	void PART_10();
 	void PART_10_EXEC_ACTION(int action);
 	void PART_10_ACTION_104_pickHamburger();
-	void PART_10_ACTION_108();
+	void PART_10_ACTION_108_scrollLeft();
 	void PART_10_11_DRAW_OBJECT_STATE(int num);
 
 	// Decanato left
@@ -514,7 +514,7 @@ private:
 	void PART_11_EXEC_ACTION(int action);
 	void PART_11_ACTION_105();
 	void PART_11_ACTION_107();
-	void PART_11_ACTION_108();
+	void PART_11_ACTION_108_scrollRight();
 	void PART_11_ACTION_112();
 	void PART_11_APPLY_OBJECT_STATE(int num);
 

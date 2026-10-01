@@ -15,12 +15,7 @@
 
 namespace Igor {
 
-// Ground truth: code/176_2813.asm, cseg176:00F2-29E6 and cseg177:0002.
-// namespace {
-
 const uint32 kPart11PanelRight = 0x0000;
-
-
 
 void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 	PART_10_11_DRAW_OBJECT_STATE(num);
@@ -76,7 +71,7 @@ void IgorEngine::PART_11_ACTION_107() {
 	PART_11_APPLY_OBJECT_STATE(255);
 }
 
-void IgorEngine::PART_11_ACTION_108() {
+void IgorEngine::PART_11_ACTION_108_scrollRight() {
 	uint8 *walkTable = loadData(WLK_DecanatoRight);
 	int xPos = 310;
 	int yPos = 0;
@@ -130,7 +125,7 @@ void IgorEngine::PART_11_ACTION_112() {
 
 void IgorEngine::PART_11_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
+	case 101: // look at window
 		ADD_DIALOGUE_TEXT(201, 2, 616);
 		SET_DIALOGUE_TEXT(1, 2);
 		startIgorDialogue();
@@ -142,13 +137,13 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 103:
+	case 103: // look at pipe
 		ADD_DIALOGUE_TEXT(_objectsState[66] == 0 ? 203 : 204, 1, _objectsState[66] == 0 ? 617 : 618);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 104:
+	case 104: // look at snail
 		ADD_DIALOGUE_TEXT(205, 1, 619);
 		ADD_DIALOGUE_TEXT(206, 1, 620);
 		SET_DIALOGUE_TEXT(1, 2);
@@ -168,21 +163,21 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		PART_11_ACTION_107();
 		break;
 	case 108:
-		PART_11_ACTION_108();
+		PART_11_ACTION_108_scrollRight();
 		break;
-	case 109:
+	case 109: // Look at hole
 		ADD_DIALOGUE_TEXT(207, 1, 621);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 110:
+	case 110: // Look at butterfly net
 		ADD_DIALOGUE_TEXT(_objectsState[68] == 1 ? 208 : 209, 1, _objectsState[68] == 1 ? 622 : 623);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 111:
+	case 111: // look at glass shards
 		ADD_DIALOGUE_TEXT(210, 1, 624);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
