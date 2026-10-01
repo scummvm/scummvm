@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-04-19 13:22+0000\n"
+"PO-Revision-Date: 2026-10-01 19:02+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 2026.7.1\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Svenska\n"
 
@@ -761,16 +761,19 @@ msgid "Enable hotspot display"
 msgstr "Aktivera korta övergångar"
 
 #: gui/editgamedialog.cpp:334
+#, fuzzy
 msgid "Enable visual markers and labels for interactive objects"
-msgstr ""
+msgstr "Aktivera visuella markörer och etiketter för interaktiva objekt"
 
 #: gui/editgamedialog.cpp:339
+#, fuzzy
 msgid "Hotspot marker:"
-msgstr ""
+msgstr "Hotspotmarkör:"
 
 #: gui/editgamedialog.cpp:341
+#, fuzzy
 msgid "Point"
-msgstr ""
+msgstr "Punkt"
 
 #. I18N: Hardware key on controller
 #: gui/editgamedialog.cpp:342 backends/platform/sdl/ps3/ps3.cpp:46
@@ -791,8 +794,9 @@ msgid "Show hotspot labels"
 msgstr "Visa känsliga punkter"
 
 #: gui/editgamedialog.cpp:353
+#, fuzzy
 msgid "Display text labels next to hotspot markers"
-msgstr ""
+msgstr "Visa textetiketter bredvid hotspotmarkörer"
 
 #: gui/editgamedialog.cpp:367 engines/dialogs.cpp:385
 msgid "Achievements"
@@ -4120,44 +4124,54 @@ msgid "RetroWave OPL3"
 msgstr "RetroWave OPL3"
 
 #: audio/fmopl.cpp:133
+#, fuzzy
 msgid "[nFM] NokturnFM2 (OPL2)"
-msgstr ""
+msgstr "[nFM] NokturnFM2 (OPL2)"
 
 #: audio/fmopl.cpp:134
+#, fuzzy
 msgid "[nFM] NokturnFM3 (OPL3)"
-msgstr ""
+msgstr "[nFM] NokturnFM3 (OPL3)"
 
 #: audio/fmopl.cpp:135
+#, fuzzy
 msgid "[nFM] RetroWave USB OPL3 Express (OPL3)"
-msgstr ""
+msgstr "[nFM] RetroWave USB OPL3 Express (OPL3)"
 
 #: audio/fmopl.cpp:136
+#, fuzzy
 msgid "[nFM] Serdaco OPL2LPT (OPL2)"
-msgstr ""
+msgstr "[nFM] Serdaco OPL2LPT (OPL2)"
 
 #: audio/fmopl.cpp:137
+#, fuzzy
 msgid "[nFM] Serdaco OPL3LPT (OPL3)"
-msgstr ""
+msgstr "[nFM] Serdaco OPL3LPT (OPL3)"
 
 #: audio/fmopl.cpp:138
+#, fuzzy
 msgid "[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"
-msgstr ""
+msgstr "[nFM] Cheerful Electronics OPL2-ljudkort (OPL2)"
 
 #: audio/fmopl.cpp:139
+#, fuzzy
 msgid "[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"
-msgstr ""
+msgstr "[nFM] Cheerful Electronics OPL3 Duo! (2×OPL3)"
 
 #: audio/fmopl.cpp:140
+#, fuzzy
 msgid "[nFM] ST Bus ISA / VME SoundBlaster"
-msgstr ""
+msgstr "[nFM] ST-buss ISA/VME SoundBlaster"
 
 #: audio/fmopl.cpp:141
+#, fuzzy
 msgid "[nFM] NatFeats / NULL"
-msgstr ""
+msgstr "[nFM] NatFeats/NULL"
 
 #: audio/fmopl.cpp:142
+#, fuzzy
 msgid "[nFM] Nuked-OPL3 softsynth (OPL3)"
-msgstr ""
+msgstr "[nFM] Nuked-OPL3-programvarusynt (OPL3)"
 
 #: audio/mididrv.cpp:232
 #, c-format
@@ -6370,12 +6384,15 @@ msgid "Check for Updates..."
 msgstr "Leta efter uppdateringar..."
 
 #: engines/access/metaengine.cpp:82
+#, fuzzy
 msgid "Use 'high definition' OGG music"
-msgstr ""
+msgstr "Använd OGG-musik med hög upplösning"
 
 #: engines/access/metaengine.cpp:83
+#, fuzzy
 msgid "Use the OGG audio from the re-release instead of original MIDI tracks"
 msgstr ""
+"Använd OGG-ljudet från nyutgåvan i stället för de ursprungliga MIDI-spåren"
 
 #: engines/access/metaengine.cpp:236 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
@@ -7837,10 +7854,13 @@ msgid "Extended game resolution"
 msgstr "Aktivera hög upplösning"
 
 #: engines/bolt/metaengine.cpp:38
+#, fuzzy
 msgid ""
 "This option allows the game to play at a slightly extended resolution. This "
 "is what the Mac and CDi versions are supposed to play like."
 msgstr ""
+"Det här alternativet låter spelet köras i en något utökad upplösning. Det är "
+"så Mac- och CDi-versionerna är avsedda att spelas."
 
 #: engines/buried/buried.cpp:598
 msgid "Are you sure you want to quit?"
@@ -8311,12 +8331,14 @@ msgid "Fire weapon"
 msgstr "Avfyra vapen"
 
 #: engines/colony/savegame.cpp:291
+#, fuzzy
 msgid "Saving is only available in first-person view."
-msgstr ""
+msgstr "Det går endast att spara i förstapersonsvy."
 
 #: engines/colony/savegame.cpp:300
+#, fuzzy
 msgid "Loading is only available in first-person view."
-msgstr ""
+msgstr "Det går endast att läsa in i förstapersonsvy."
 
 #: engines/crab/input/input.cpp:119
 msgid "Talk / Interact"
@@ -8761,18 +8783,23 @@ msgid "Hide the highlight boxes"
 msgstr "Markera objekt"
 
 #: engines/eem/metaengine.cpp:39
+#, fuzzy
 msgid "Hide the boxes that highlight searchable clue locations."
-msgstr ""
+msgstr "Dölj rutorna som markerar sökbara ledtrådsplatser."
 
 #: engines/eem/metaengine.cpp:49
+#, fuzzy
 msgid "Better fit for dialog balloons"
-msgstr ""
+msgstr "Bättre anpassning för pratbubblor"
 
 #: engines/eem/metaengine.cpp:50
+#, fuzzy
 msgid ""
 "Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
 "original size."
 msgstr ""
+"Välj en mindre pratbubbelgrafik när den radbrutna texten inte behöver "
+"originalstorleken."
 
 #: engines/eem/metaengine.cpp:61
 #, fuzzy
@@ -8781,18 +8808,22 @@ msgid "Skip repeated cases"
 msgstr "Hoppa över tal"
 
 #: engines/eem/metaengine.cpp:62
+#, fuzzy
 msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
-msgstr ""
+msgstr "Hoppa över alla fall i bok 2 och gå till bok 3 när bok 1 är klar."
 
 #: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
 msgid "Enable restored content"
 msgstr "Aktivera återställt innehåll"
 
 #: engines/eem/metaengine.cpp:73
+#, fuzzy
 msgid ""
 "Restore floppy release extras in the CD version, including pre-scrapbook "
 "conversations and first-try badges."
 msgstr ""
+"Återställ extramaterialet från diskettutgåvan i CD-versionen, inklusive "
+"samtal före klippboken och märken för första försök."
 
 #: engines/efh/metaengine.cpp:235
 msgid "Select option 1"
@@ -9162,22 +9193,27 @@ msgstr "Använd WASD-tangenter för förflyttning och Skift för att springa"
 
 #. I18N: Enable background music using AdLib/OPL2 FM synthesis
 #: engines/freescape/metaengine.cpp:164
+#, fuzzy
 msgid "Backported music from C64 releases (AdLib)"
-msgstr ""
+msgstr "Tillbakaporterad musik från C64-utgåvorna (AdLib)"
 
 #: engines/freescape/metaengine.cpp:165
+#, fuzzy
 msgid ""
 "Enable background music ported from the C64 version using AdLib FM synthesis"
 msgstr ""
+"Aktivera bakgrundsmusik som portats från C64-versionen med AdLib FM-syntes"
 
 #. I18N: Enable background music using AY chip emulation
 #: engines/freescape/metaengine.cpp:176
+#, fuzzy
 msgid "Backported music from C64 releases"
-msgstr ""
+msgstr "Tillbakaporterad musik från C64-utgåvorna"
 
 #: engines/freescape/metaengine.cpp:177
+#, fuzzy
 msgid "Enable background music ported from the C64 version"
-msgstr ""
+msgstr "Aktivera bakgrundsmusik som portats från C64-versionen"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:69 engines/mm/mm1/metaengine.cpp:84
@@ -9391,12 +9427,14 @@ msgid "Picture window toggled\n"
 msgstr "Bildfönster växlades\n"
 
 #: engines/glk/dialogs.cpp:141
+#, fuzzy
 msgid "white"
-msgstr ""
+msgstr "vit"
 
 #: engines/glk/dialogs.cpp:142
+#, fuzzy
 msgid "green"
-msgstr ""
+msgstr "grön"
 
 #: engines/glk/dialogs.cpp:143
 #, fuzzy
@@ -9405,48 +9443,59 @@ msgid "red"
 msgstr "Fortsätt"
 
 #: engines/glk/dialogs.cpp:144
+#, fuzzy
 msgid "blue"
-msgstr ""
+msgstr "blå"
 
 #: engines/glk/dialogs.cpp:145
+#, fuzzy
 msgid "black"
-msgstr ""
+msgstr "svart"
 
 #: engines/glk/dialogs.cpp:146
+#, fuzzy
 msgid "grey"
-msgstr ""
+msgstr "grå"
 
 #: engines/glk/dialogs.cpp:195
+#, fuzzy
 msgid "Monospace Regular"
-msgstr ""
+msgstr "Monospace, normal"
 
 #: engines/glk/dialogs.cpp:196
+#, fuzzy
 msgid "Monospace Bold"
-msgstr ""
+msgstr "Monospace, fet"
 
 #: engines/glk/dialogs.cpp:197
+#, fuzzy
 msgid "Monospace Italic"
-msgstr ""
+msgstr "Monospace, kursiv"
 
 #: engines/glk/dialogs.cpp:198
+#, fuzzy
 msgid "Monospace Bold Italic"
-msgstr ""
+msgstr "Monospace, fet kursiv"
 
 #: engines/glk/dialogs.cpp:199
+#, fuzzy
 msgid "Proportional Regular"
-msgstr ""
+msgstr "Proportionell, normal"
 
 #: engines/glk/dialogs.cpp:200
+#, fuzzy
 msgid "Proportional Bold"
-msgstr ""
+msgstr "Proportionell, fet"
 
 #: engines/glk/dialogs.cpp:201
+#, fuzzy
 msgid "Proportional Italic"
-msgstr ""
+msgstr "Proportionell, kursiv"
 
 #: engines/glk/dialogs.cpp:202
+#, fuzzy
 msgid "Proportional Bold Italic"
-msgstr ""
+msgstr "Proportionell, fet kursiv"
 
 #: engines/glk/dialogs.cpp:210
 #, fuzzy
@@ -9461,20 +9510,24 @@ msgid "Text:"
 msgstr "ProText"
 
 #: engines/glk/dialogs.cpp:212
+#, fuzzy
 msgid "Font for the text"
-msgstr ""
+msgstr "Teckensnitt för texten"
 
 #: engines/glk/dialogs.cpp:216 engines/glk/dialogs.cpp:227
+#, fuzzy
 msgid "Grid:"
-msgstr ""
+msgstr "Rutnät:"
 
 #: engines/glk/dialogs.cpp:216
+#, fuzzy
 msgid "Font for drawn graphics like maps, diagrams, puzzles, etc"
-msgstr ""
+msgstr "Teckensnitt för ritad grafik som kartor, diagram, pussel osv."
 
 #: engines/glk/dialogs.cpp:220
+#, fuzzy
 msgid "Color"
-msgstr ""
+msgstr "Färg"
 
 #: engines/glk/dialogs.cpp:222
 #, fuzzy
@@ -9486,12 +9539,14 @@ msgstr "Flytta fokus till interaktivt objekt"
 #: engines/glk/dialogs.cpp:236 engines/glk/dialogs.cpp:242
 #: engines/glk/dialogs.cpp:254 engines/glk/dialogs.cpp:260
 #: engines/glk/dialogs.cpp:269
+#, fuzzy
 msgid "<custom>"
-msgstr ""
+msgstr "<anpassad>"
 
 #: engines/glk/dialogs.cpp:227
+#, fuzzy
 msgid "Color for drawn graphics such as maps, diagrams, puzzles, etc"
-msgstr ""
+msgstr "Färg för ritad grafik som kartor, diagram, pussel osv."
 
 #: engines/glk/dialogs.cpp:232
 #, fuzzy
@@ -9551,8 +9606,9 @@ msgid "Vertical border size"
 msgstr "Vertikal underskanning:"
 
 #: engines/glk/dialogs.cpp:250
+#, fuzzy
 msgid "Caret:"
-msgstr ""
+msgstr "Skrivmarkör:"
 
 #: engines/glk/dialogs.cpp:250
 #, fuzzy
@@ -9561,12 +9617,14 @@ msgid "Color of the cursor"
 msgstr "Teleportera till markör"
 
 #: engines/glk/dialogs.cpp:256
+#, fuzzy
 msgid "Link:"
-msgstr ""
+msgstr "Länk:"
 
 #: engines/glk/dialogs.cpp:256
+#, fuzzy
 msgid "Color for URLs if they appear in-game"
-msgstr ""
+msgstr "Färg för URL:er om de visas i spelet"
 
 #. I18N: "More..." is a prompt in text windows, which appears when the text exceeds the window size
 #: engines/glk/dialogs.cpp:264
