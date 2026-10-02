@@ -610,6 +610,19 @@ bool Window::loadNextMovie() {
 
 	if (_currentMovie && archivePath == _currentMovie->getArchive()->getPathName()) {
 		debug(0, "Window::loadNextMovie: next movie '%s' is the same as current movie, skipping load", archivePath.toString(Common::Path::kNativeSeparator).c_str());
+
+		// Jump to the correct frame
+		_currentMovie->getScore()->_playState = kPlayStarted;
+		_nextMovie.movie.clear();
+		if (!_nextMovie.frameS.empty()) {
+			_currentMovie->getScore()->setStartToLabel(_nextMovie.frameS);
+			_nextMovie.frameS.clear();
+		}
+
+		if (_nextMovie.frameI != -1) {
+			_currentMovie->getScore()->setCurrentFrame(_nextMovie.frameI);
+			_nextMovie.frameI = -1;
+		}
 		return true;
 	}
 
