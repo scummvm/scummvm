@@ -48,6 +48,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for other Wintermute engine games, over 140 titles.
    - Added support for Der Schatz im Silbersee (Treasure of the Silver Lake).
    - Added support for The Fool's Errand.
+   - Added support for Harvester.
 
  General:
    - Optimised mixing and rate converters, for better performance.
