@@ -49,20 +49,17 @@ static const char *const FILENAMES[] = {
 };
 
 static const char *const FILENAMES_EVENTS[] = {
-	"files/configure.engine", "files/console.cpp", "files/console.h",
+	"files_events/configure.engine", "files/console.cpp", "files/console.h",
 	"files/credits.pl", "files/detection.cpp", "files/detection.h",
 	"files/detection_tables.h",
-	"files_events/events.cpp", "files_events/events.h",
-	"files_events/messages.cpp", "files_events/messages.h",
 	"files/metaengine.cpp", "files/metaengine.h",
 	"files_events/module.mk", "files_events/xyzzy.cpp",
 	"files_events/xyzzy.h", "files/POTFILES", "files_events/views.h",
-	"files_events/view.cpp", "files_events/view.h",
 	"files_events/view1.cpp", "files_events/view1.h",
 	nullptr
 };
 
-const char *const ENGINES = "create_project ..\\.. --msvc\n";
+const char *const ENGINES = "create_project ..\\.. --msvc";
 
 bool fileExists(const char *name) {
 #ifdef _WIN32
@@ -183,7 +180,7 @@ void create_batch_file(const char *prefix) {
 
 	// Get each line until there are none left
 	while (fgets(line, MAX_LINE_LENGTH, in)) {
-		if (!strcmp(line, ENGINES)) {
+		if (!strncmp(line, ENGINES, strlen(ENGINES))) {
 			snprintf(line + strlen(line) - 1, MAX_LINE_LENGTH - strlen(line) + 1,
 				" --disable-all-engines --disable-detection-full --enable-engine=%s\n",
 				engineLowercase);

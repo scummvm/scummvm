@@ -22,6 +22,7 @@
 #include "xyzzy/xyzzy.h"
 #include "xyzzy/detection.h"
 #include "xyzzy/console.h"
+#include "xyzzy/views.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -34,8 +35,8 @@ namespace Xyzzy {
 
 XyzzyEngine *g_engine;
 
-XyzzyEngine::XyzzyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Xyzzy") {
+XyzzyEngine::XyzzyEngine(OSystem *syst, const ADGameDescription *gameDesc) :
+		Engine(syst), Events("Xyzzy"), _gameDescription(gameDesc) {
 	g_engine = this;
 }
 
@@ -57,7 +58,11 @@ Common::Error XyzzyEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
+	// Set up the view list and run the game
+	Views views;
+	addView("View1");
 	runGame();
+	(void)views;		// Suppress any warnings of unused local
 
 	return Common::kNoError;
 }

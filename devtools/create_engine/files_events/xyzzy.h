@@ -33,18 +33,18 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
+#include "graphics/views/view.h"
 
 #include "xyzzy/detection.h"
-#include "xyzzy/events.h"
 
 namespace Xyzzy {
 
 struct XyzzyGameDescription;
 
-class XyzzyEngine : public Engine, public Events {
+class XyzzyEngine : public Engine, public Graphics::Views::Events {
 private:
 	const ADGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -66,13 +66,6 @@ public:
 	 * Returns the game Id
 	 */
 	Common::String getGameId() const;
-
-	/**
-	 * Gets a random number
-	 */
-	uint32 getRandomNumber(uint maxNum) {
-		return _randomSource.getRandomNumber(maxNum);
-	}
 
 	bool hasFeature(EngineFeature f) const override {
 		return

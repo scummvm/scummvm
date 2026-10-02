@@ -19,12 +19,13 @@
  *
  */
 
-#ifndef XYZZY_VIEW_H
-#define XYZZY_VIEW_H
+#ifndef GRAPHICS_VIEWS_VIEW_H
+#define GRAPHICS_VIEWS_VIEW_H
 
-#include "xyzzy/events.h"
+#include "graphics/views/events.h"
 
-namespace Xyzzy {
+namespace Graphics {
+namespace Views {
 
 /**
  * Base view class for screens and dialogs that appear on-screen.
@@ -68,6 +69,7 @@ public:
 	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
-} // namespace Xyzzy
+} // namespace Views
+} // namespace Graphics
 
 #endif
