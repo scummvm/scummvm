@@ -35,7 +35,7 @@ void IgorEngine::PART_17_EXEC_ACTION(int action) {
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 103: // look at phillip and jimmy
+	case 103: // talk to philip and jimmy
 		PART_17_ACTION_103();
 		break;
 	case 104: // look at file
@@ -102,7 +102,7 @@ void IgorEngine::PART_17_ACTION_103() {
 	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP_JIMMY;
 	waitForEndOfCutsceneDialogue(135, 33, 63, 63, 0);
 	_updateDialogue = 0;
-	PART_17_HELPER_11(0);
+	PART_17_HELPER_11_PhillipHeadTurned(0);
 
 	waitForTimer(255);
 	const int randomDialogue = getRandomNumber(3);
@@ -147,7 +147,7 @@ void IgorEngine::PART_17_ACTION_105() {
 	_walkData[_walkDataLastIndex].frameNum = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	PART_17_HELPER_5(143);
+	PART_17_HELPER_5_changeZindexOfPath(143);
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[44836]].area = 4;
 	buildWalkPath(41, 86, 36, 143);
@@ -218,7 +218,16 @@ void IgorEngine::PART_17_ACTION_106() {
 }
 
 void IgorEngine::PART_17_HANDLE_DIALOGUE_PHILIP() {
-	loadDialogueData(DLG_OutsideCollege);
+	// cseg141:0955 -> call cseg111:0x2CB2
+	// TODO: derive from cseg111:0x2CB2 (cseg111 is only dumped up to 0x0ECC, so the
+	// callee is not in code/110_28A6.asm). Two things are unverified and must stay
+	// disabled until that segment is disassembled:
+	//  1) the resource id it loads -- DLG_OutsideCollege (128) is a hole in the
+	//     SPA-CD table of IGOR.TBL, so loadDialogueData() aborts in findData();
+	//  2) the DialogueDataOffsets it uses. PART_17_ROOM_DATA_OFFSETS.dlg is
+	//     inherited from the historical reference and is self-contradictory:
+	//     question 4 lands at p+687..727 while reply 0 lands at p+359..459, so the
+	//     two ranges overlap and loadDialogueData() would decode garbage.
 	warning("PART_17_HANDLE_DIALOGUE_PHILIP unimplemented");
 }
 
@@ -239,14 +248,14 @@ void IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP_JIMMY(int action) {
 		if (VAR_CURRENT_TALKING_ACTOR == 0) {
 			PART_17_HELPER_8(0);
 		} else {
-			PART_17_HELPER_11(0);
+			PART_17_HELPER_11_PhillipHeadTurned(0);
 		}
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
 		if (VAR_CURRENT_TALKING_ACTOR == 0) {
 			PART_17_HELPER_8(getRandomNumber(6));
 		} else {
-			PART_17_HELPER_11(getRandomNumber(5));
+			PART_17_HELPER_11_PhillipHeadTurned(getRandomNumber(5));
 		}
 		break;
 	}
@@ -297,7 +306,7 @@ void IgorEngine::PART_17_HELPER_1(int num) {
 	}
 }
 
-void IgorEngine::PART_17_HELPER_2() {
+void IgorEngine::PART_17_HELPER_2_walkFromMap() {
 	for (int i = 17; i <= 85; ++i) {
 		_walkYScaleRoom[i] = ((i - 13) / 4) + 5;
 	}
@@ -339,7 +348,8 @@ void IgorEngine::PART_17_HELPER_2() {
 		_walkData[i].posNum = kFacingPositionFront;
 	}
 	waitForIgorMove();
-	PART_17_HELPER_5(0);
+	PART_17_HELPER_5_changeZindexOfPath(0);
+
 	--_walkDataLastIndex;
 	buildWalkPath(41, 86, 45, 95);
 	_walkDataCurrentIndex = 2;
@@ -362,7 +372,7 @@ void IgorEngine::PART_17_HELPER_3(int lum) {
 	_roomObjectAreasTable[20].y1Lum = lum;
 }
 
-void IgorEngine::PART_17_HELPER_4() {
+void IgorEngine::PART_17_HELPER_4_paintFirsFrameOfPhilipAndJimmy() {
 	int offset = 11642;
 	for (int i = 0; i <= 48; ++i) {
 		memcpy(_screenLayer1 + offset +  i * 320, _animFramesBuffer + i * 44, 44);
@@ -370,14 +380,14 @@ void IgorEngine::PART_17_HELPER_4() {
 	}
 }
 
-void IgorEngine::PART_17_HELPER_5(int lum) {
+void IgorEngine::PART_17_HELPER_5_changeZindexOfPath(int lum) {
 	_roomObjectAreasTable[23].y1Lum = lum;
 	_roomObjectAreasTable[26].y1Lum = lum;
 	_roomObjectAreasTable[27].y1Lum = lum;
 	_roomObjectAreasTable[32].y1Lum = lum;
 }
 
-void IgorEngine::PART_17_HELPER_6() {
+void IgorEngine::PART_17_HELPER_6_walkFromCollege() {
 	playMusic(2);
 	PART_17_HELPER_1(255);
 	fadeIn(768);
@@ -402,7 +412,7 @@ void IgorEngine::PART_17_HELPER_6() {
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	PART_17_HELPER_5(0);
+	PART_17_HELPER_5_changeZindexOfPath(0);
 	_roomObjectAreasTable[5].area = 0;
 	_roomObjectAreasTable[10].area = 0;
 	_roomObjectAreasTable[11].area = 0;
@@ -451,7 +461,7 @@ void IgorEngine::PART_17_HELPER_9(int num) {
 	}
 }
 
-void IgorEngine::PART_17_HELPER_11(int frame) {
+void IgorEngine::PART_17_HELPER_11_PhillipHeadTurned(int frame) {
 	for (int i = 0; i <= 8; ++i) {
 		for (int j = 0; j <= 10; ++j) {
 			int offset = (i + 36) * 320 + j + 130;
@@ -485,6 +495,8 @@ void IgorEngine::PART_17() {
 	PART_17_HELPER_1(255);
 
 	memcpy(_screenVGA, _screenLayer1, 46080);
+
+	_objectsState[56] = 1;
 	if (_objectsState[56] == 1) {
 		_gameState.unkF = false;
 		PART_17_HELPER_3(6);
@@ -492,19 +504,22 @@ void IgorEngine::PART_17() {
 		_roomObjectAreasTable[15].object = 0;
 		_roomObjectAreasTable[19].object = 0;
 	} else if (_gameState.unkF) {
-		PART_17_HELPER_4();
+		PART_17_HELPER_4_paintFirsFrameOfPhilipAndJimmy();
 		_gameState.counter[4] = 1;
 	} else {
 		_roomObjectAreasTable[14].object = 0;
 		_roomObjectAreasTable[15].object = 0;
 		_roomObjectAreasTable[19].object = 0;
 	}
+
 	_currentAction.verb = kVerbWalk;
 	if (_currentPart == 170) {
+		// from map
 		fadeIn(768);
-		PART_17_HELPER_2();
+		PART_17_HELPER_2_walkFromMap();
 	} else if (_currentPart == 171) {
-		PART_17_HELPER_6();
+		// from inside college
+		PART_17_HELPER_6_walkFromCollege();
 	}
 	enterPartLoop();
 	while (_currentPart >= 170 && _currentPart <= 171) {
@@ -517,7 +532,6 @@ void IgorEngine::PART_17() {
 	if (_objectsState[54] == 0) {
 		_objectsState[54] = 1;
 	}
-	debug("Current part: %d", _currentPart);
 	fadeOut(624);
 }
 

@@ -575,15 +575,15 @@ private:
 	void PART_17_UPDATE_DIALOGUE_PHILIP_JIMMY(int action);
 	void PART_17_UPDATE_ROOM_BACKGROUND();
 	void PART_17_HELPER_1(int num);
-	void PART_17_HELPER_2();
+	void PART_17_HELPER_2_walkFromMap();
 	void PART_17_HELPER_3(int lum);
-	void PART_17_HELPER_4();
-	void PART_17_HELPER_5(int lum);
-	void PART_17_HELPER_6();
+	void PART_17_HELPER_4_paintFirsFrameOfPhilipAndJimmy();
+	void PART_17_HELPER_5_changeZindexOfPath(int lum);
+	void PART_17_HELPER_6_walkFromCollege();
 	void PART_17_HELPER_8(int num);
 	void PART_17_HELPER_9(int num);
 	void PART_17_HELPER_10();
-	void PART_17_HELPER_11(int frame);
+	void PART_17_HELPER_11_PhillipHeadTurned(int frame);
 	void PART_17();
 
 	// college corridor lucas
@@ -601,6 +601,21 @@ private:
 	void PART_23_HELPER_7(int frame);
 	void PART_23_HELPER_8(int frame);
 	void PART_23();
+
+	// college corridor stairs first floor
+	void PART_30_EXEC_ACTION(int action);
+	void PART_30_ACTION_102();
+	void PART_30_ACTION_104();
+	void PART_30_UPDATE_DIALOGUE_LAURA(int action);
+	void PART_30_HANDLE_DIALOGUE_LAURA();
+	void PART_30_HELPER_1(int num);
+	void PART_30_HELPER_2();
+	void PART_30_HELPER_3();
+	void PART_30_HELPER_4();
+	void PART_30_HELPER_5();
+	void PART_30_HELPER_8();
+	void PART_30_HELPER_9(int frame);
+	void PART_30();
 
 	// park
 	void PART_34();
