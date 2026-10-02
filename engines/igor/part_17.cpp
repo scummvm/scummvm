@@ -63,6 +63,8 @@ void IgorEngine::PART_17_ACTION_101_walkIn() {
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
+	// Added this line compared to the 2009 version to correct the walk path origin.
+	--_walkDataLastIndex;
 	buildWalkPath(243, 74, 274, 68);
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
@@ -218,16 +220,7 @@ void IgorEngine::PART_17_ACTION_106() {
 }
 
 void IgorEngine::PART_17_HANDLE_DIALOGUE_PHILIP() {
-	// cseg141:0955 -> call cseg111:0x2CB2
-	// TODO: derive from cseg111:0x2CB2 (cseg111 is only dumped up to 0x0ECC, so the
-	// callee is not in code/110_28A6.asm). Two things are unverified and must stay
-	// disabled until that segment is disassembled:
-	//  1) the resource id it loads -- DLG_OutsideCollege (128) is a hole in the
-	//     SPA-CD table of IGOR.TBL, so loadDialogueData() aborts in findData();
-	//  2) the DialogueDataOffsets it uses. PART_17_ROOM_DATA_OFFSETS.dlg is
-	//     inherited from the historical reference and is self-contradictory:
-	//     question 4 lands at p+687..727 while reply 0 lands at p+359..459, so the
-	//     two ranges overlap and loadDialogueData() would decode garbage.
+	loadDialogueData(DLG_OutsideCollege);
 	warning("PART_17_HANDLE_DIALOGUE_PHILIP unimplemented");
 }
 
@@ -496,7 +489,6 @@ void IgorEngine::PART_17() {
 
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
-	_objectsState[56] = 1;
 	if (_objectsState[56] == 1) {
 		_gameState.unkF = false;
 		PART_17_HELPER_3(6);
