@@ -181,6 +181,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`enable_hq_video <hq>`",boolean,true,
 		":ref:`enable_larryscale <larry>`",boolean,true,
 		":ref:`enable_reporter <reporter>`",boolean,false,RISC OS only.
+		":ref:`enable_sharp_hires_scaling <sharphires>`",boolean,false,
 		":ref:`enable_video_upscale <upscale>`",boolean,true,
 		":ref:`enable_tts <ttsenabled>`",boolean,false,
 		enable_unsupported_game_warning,boolean,true, Shows a warning when adding a game that is unsupported.
