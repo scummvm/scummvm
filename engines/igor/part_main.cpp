@@ -25,11 +25,27 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 	switch (action) {
 	case 0:
 	case 1:
-        break;
-    default:
+		break;
+	case 2: {
+		int num, rnd = getRandomNumber(100);
+		if (rnd < 34) {
+			num = 11;
+		} else if (rnd < 69) {
+			num = 12;
+		} else if (rnd < 94) {
+			num = 13;
+		} else {
+			num = 14;
+		}
+		ADD_DIALOGUE_TEXT(num, 1, num);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+	} break;
+
+	default:
 		warning("EXEC_MAIN_ACTION() Unhandled action %d", action);
 		break;
-    }
+	}
 }
 
 void IgorEngine::SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p) {
@@ -47,13 +63,13 @@ void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		switch (_objectsState[0]) {
 		case 0:
-			Common::strlcpy(_globalObjectNames[23], getString(STR_BottleOfWhisky),sizeof(_globalObjectNames[23]));
+			Common::strlcpy(_globalObjectNames[23], getString(STR_BottleOfWhisky), sizeof(_globalObjectNames[23]));
 			break;
 		case 1:
-			Common::strlcpy(_globalObjectNames[23], getString(STR_EmptyBottle),sizeof(_globalObjectNames[23]));
+			Common::strlcpy(_globalObjectNames[23], getString(STR_EmptyBottle), sizeof(_globalObjectNames[23]));
 			break;
 		case 2:
-			Common::strlcpy(_globalObjectNames[23], getString(STR_BottleOfWater),sizeof(_globalObjectNames[23]));
+			Common::strlcpy(_globalObjectNames[23], getString(STR_BottleOfWater), sizeof(_globalObjectNames[23]));
 			break;
 		}
 	}
@@ -117,33 +133,33 @@ void IgorEngine::PART_MAIN() {
 	_inventoryInfo[39] = 3;
 	_inventoryInfo[72] = 1; // first object
 	_inventoryInfo[73] = 3; // last object
-    UPDATE_OBJECT_STATE(255);
-    if (_currentPart != kStartupPart) { // boot param
+	UPDATE_OBJECT_STATE(255);
+	if (_currentPart != kStartupPart) { // boot param
 		SET_PAL_208_96_1();
 		SET_PAL_240_48_1();
 		drawVerbsPanel();
 		drawInventory(1, 0);
 	}
 
-    do {
-        debugC(9, kDebugGame, "PART_MAIN _currentPart %d", _currentPart);
+	do {
+		debugC(9, kDebugGame, "PART_MAIN _currentPart %d", _currentPart);
 		switch (_currentPart) {
 
-        case 40:
-            PART_04(); // Map
-            break;
-        case 50: // arrive from map
-        case 51: // arrive from SpringRock through scroll
-        case 52:
-            PART_05(); // SpringBridge
-            break;
-		case 60: // arrive through scroll
-		case 61: // arrive from intro
+		case 40:
+			PART_04(); // Map
+			break;
+		case 50: // arrive from map
+		case 51: // arrive from SpringRock through scroll
+		case 52:
+			PART_05(); // SpringBridge
+			break;
+		case 60:       // arrive through scroll
+		case 61:       // arrive from intro
 			PART_06(); // SpringRock
 			break;
-		case 70: // enter from outside the administration corridor
-		case 71: // enter from deans door
-		case 72: // enter from secretary
+		case 70:       // enter from outside the administration corridor
+		case 71:       // enter from deans door
+		case 72:       // enter from secretary
 			PART_07(); // Administration corridor
 			break;
 		case 80:
@@ -183,16 +199,16 @@ void IgorEngine::PART_MAIN() {
 			PART_35(); // Park, right panel; cseg100:1644
 			break;
 		case 850: // Intro cutscene
-            // Clear the entire screen buffer before starting the intro cutscene
-            memset(_screenVGA, 0, 64000);
+			// Clear the entire screen buffer before starting the intro cutscene
+			memset(_screenVGA, 0, 64000);
 			g_engine->_screen->updateScreen();
-            _screenVGAVOffset = 24;
-            // copy the initial portion of the screen to the display, with the vertical offset
+			_screenVGAVOffset = 24;
+			// copy the initial portion of the screen to the display, with the vertical offset
 			_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, _screenVGAVOffset);
 			g_engine->_screen->updateScreen();
 			PART_85();
-            // Clears the bottom portion of the screen
-            memset(_screenVGA + 46080, 0, 17920);
+			// Clears the bottom portion of the screen
+			memset(_screenVGA + 46080, 0, 17920);
 			moveScreenUp(_screenVGAVOffset);
 			_screenVGAVOffset = 0;
 			_inputVars[kInputCursorXPos] = 160;

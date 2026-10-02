@@ -364,7 +364,7 @@ private:
 
 	bool _scrollInventory;
 	int _scrollInventoryStartY, _scrollInventoryEndY, _scrollInventoryDy;
-	WalkData _walkData[100];
+	WalkData _walkData[101];
 	uint8 _walkCurrentPos;
 	uint8 _walkDataLastIndex;
 	uint8 _walkDataCurrentIndex;
