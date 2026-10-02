@@ -19,12 +19,13 @@
  *
  */
 
-#include "xyzzy/messages.h"
+#include "graphics/views/messages.h"
 
-namespace Xyzzy {
+namespace Graphics {
+namespace Views {
 
 MouseMessage::MouseMessage(Common::EventType type,
-		const Common::Point &pos) : Message(), _pos(pos) {
+	const Common::Point &pos) : Message(), _pos(pos) {
 	switch (type) {
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
@@ -40,4 +41,5 @@ MouseMessage::MouseMessage(Common::EventType type,
 	}
 }
 
-} // namespace Xyzzy
+} // namespace Views
+} // namespace Graphics

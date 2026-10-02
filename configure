@@ -210,6 +210,7 @@ _mt32emu=yes
 _lua=yes
 _mactoolbox=yes
 _mfc=yes
+_views=yes
 _build_scalers=yes
 _build_hq_scalers=yes
 _build_edge_scalers=yes
@@ -370,6 +371,7 @@ add_component truemotion1 "TrueMotion 1" "_truemotion1" "USE_TRUEMOTION1"
 add_component universaltracker "External Tracker Libraries" "_universaltracker" "USE_UNIVERSALTRACKER"
 add_component unp64 "UNP64" "_unp64" "USE_UNP64"
 add_component vc1 "VC-1 / WMV3" "_vc1" "USE_VC1"
+add_component views "Event-based Views" "_views" "USE_VIEWS"
 add_component vgmtrans_audio "VGMTrans Soundfont audio" "_vgmtrans_audio" "USE_VGMTRANS_AUDIO"
 add_component xan "XAN" "_xan" "USE_XAN"
 

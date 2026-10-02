@@ -22,11 +22,13 @@
 #ifndef XYZZY_VIEW1_H
 #define XYZZY_VIEW1_H
 
-#include "xyzzy/view.h"
+#include "graphics/views/view.h"
 
 namespace Xyzzy {
 
-class View1 : public View {
+using namespace Graphics::Views;
+
+class View1 : public Graphics::Views::View {
 private:
 	byte _pal[256 * 3] = { 0 };
 	int _offset = 0;
