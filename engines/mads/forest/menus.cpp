@@ -109,7 +109,7 @@ static void global_alert(int status) {
 	default: return;
 	}
 
-	popup_dialog_create(game_menu_popup, 0x1000, 20);
+	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
 	popup_message(menu_quote(quote_id), 0x8000, -1);
 
 	if (status == SAVE_SUCCESSFUL) {
@@ -129,7 +129,7 @@ static void global_menu_save_restore(int save) {
 	PopupItem *cancel_button;
 	PopupItem *result;
 
-	popup_dialog_create(game_menu_popup, 0x1000, 20);
+	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
 
 	popup_message(menu_quote(save ? quote_save_title : quote_restore_title), 0x8000, -1);
 	popup_blank(4);
@@ -194,7 +194,7 @@ static void global_menu_options() {
 	box_param.menu_text_y_offset = 3;
 	box_param.menu_text_x_bonus = 0;
 
-	popup_dialog_create(game_menu_popup, 0x1000, 20);
+	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
 
 	popup_blank(1);
 	popup_blank(2);
@@ -258,7 +258,7 @@ static void global_menu_main() {
 	box_param.menu_text_y_offset = 3;
 	box_param.menu_text_x_bonus = 0;
 
-	popup_dialog_create(game_menu_popup, 0x1000, 20);
+	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
 
 	popup_blank(1);
 	popup_blank(2);
