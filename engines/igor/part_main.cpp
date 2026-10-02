@@ -564,10 +564,19 @@ void IgorEngine::PART_MAIN() {
 		case 171:
 			PART_17();
 			break;
+		case 210:
+		case 211:
+		case 212:
+			PART_21();
+			break;
 		case 230:
 		case 231:
 		case 232:
 			PART_23();
+			break;
+		case 280:
+		case 281:
+			PART_28();
 			break;
 		case 300:
 		case 301:

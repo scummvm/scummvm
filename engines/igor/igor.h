@@ -589,6 +589,32 @@ private:
 	void PART_17_HELPER_11_PhillipHeadTurned(int frame);
 	void PART_17();
 
+	// college corridor margaret
+	void PART_21_EXEC_ACTION(int action);
+	void PART_21_ACTION_101();
+	void PART_21_ACTION_102();
+	void PART_21_ACTION_107();
+	void PART_21_ACTION_108();
+	void PART_21_ACTION_110();
+	void PART_21_ACTION_111();
+	void PART_21_ACTION_113();
+	void PART_21_UPDATE_ROOM_BACKGROUND();
+	void PART_21_UPDATE_DIALOGUE_MARGARET_1(int action);
+	void PART_21_UPDATE_DIALOGUE_MARGARET_2(int action);
+	void PART_21_UPDATE_DIALOGUE_MARGARET_3(int action);
+	void PART_21_HANDLE_DIALOGUE_MARGARET();
+	void PART_21_HELPER_1(int num);
+	void PART_21_HELPER_2();
+	void PART_21_HELPER_3();
+	void PART_21_HELPER_4();
+	void PART_21_HELPER_6(int frame);
+	void PART_21_HELPER_7();
+	void PART_21_HELPER_8();
+	void PART_21_HELPER_9();
+	void PART_21_HELPER_10();
+	void PART_21_HELPER_11(int frame);
+	void PART_21();
+
 	// college corridor lucas
 	void PART_23_EXEC_ACTION(int action);
 	void PART_23_ACTION_105();
@@ -604,6 +630,21 @@ private:
 	void PART_23_HELPER_7(int frame);
 	void PART_23_HELPER_8(int frame);
 	void PART_23();
+
+
+	// college corridor caroline
+	void PART_28_EXEC_ACTION(int action);
+	void PART_28_ACTION_108();
+	void PART_28_ACTION_109();
+	void PART_28_UPDATE_DIALOGUE_CAROLINE(int action);
+	void PART_28_UPDATE_ROOM_BACKGROUND();
+	void PART_28_HELPER_1(int num);
+	void PART_28_HELPER_2();
+	void PART_28_HELPER_3();
+	void PART_28_HELPER_5(int frame);
+	void PART_28_HELPER_6();
+	void PART_28_HELPER_8(int frame);
+	void PART_28();
 
 	// college corridor stairs first floor
 	void PART_30_EXEC_ACTION(int action);
