@@ -47,6 +47,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Shadows on the Vatican series hinzugefügt.
    - Unterstützung für mehr als 140 weitere Wintermute-Spiele hinzugefügt.
    - Unterstützung für Der Schatz im Silbersee hinzugefügt.
+   - Unterstützung für The Fool's Errand hinzugefügt.
 
  Allgemein:
    - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
