@@ -32,6 +32,9 @@ private:
 	bool Cmd_test(int argc, const char **argv);
 	bool Cmd_paintWalk(int argc, const char **argv);
 	bool Cmd_paintHotspots(int argc, const char **argv);
+	bool Cmd_paintY1Lum(int argc, const char **argv);
+	bool Cmd_paintY2Lum(int argc, const char **argv);
+	bool Cmd_paintDeltaLum(int argc, const char **argv);
 	bool Cmd_paintOff(int argc, const char **argv);
 	bool Cmd_changePart(int argc, const char **argv);
 	bool Cmd_addObjectToInventory(int argc, const char **argv);

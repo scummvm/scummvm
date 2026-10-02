@@ -228,7 +228,10 @@ enum Verb {
 enum DebugOverlay {
 	kOverlayOff = 0,
 	kOverlayWalkAreas,
-	kOverlayHotspots
+	kOverlayHotspots,
+	kOverlayY1Lum,
+	kOverlayY2Lum,
+	kOverlayDeltaLum
 };
 
 enum {
@@ -772,11 +775,16 @@ public:
 
 	void handlePause();
 
-	// Debug overlays (console: paint_walk / paint_hotspots / paint_off).
+	// Debug overlays (console: paint_walk / paint_hotspots / paint_y1lum /
+	// paint_y2lum / paint_deltalum / paint_off).
 	// Paint the mask regions whose BOX record has a non-zero walk area or
-	// object; applied on top of the presented frame until cleared.
+	// object, or whose y1Lum / y2Lum / deltaLum threshold is set; applied on
+	// top of the presented frame until cleared.
 	void debugPaintWalkAreas();
 	void debugPaintHotspots();
+	void debugPaintY1Lum();
+	void debugPaintY2Lum();
+	void debugPaintDeltaLum();
 	void debugClearOverlay();
 	void debugChangePart(int state);
 	bool debugAddObjectToInventory(int object);

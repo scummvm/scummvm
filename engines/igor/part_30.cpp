@@ -199,7 +199,7 @@ void IgorEngine::PART_30_HELPER_5() {
 void IgorEngine::PART_30_HELPER_8() {
 	playMusic(3);
 	memset(_screenVGA + 46080, 0, 17920);
-	fadeInPalette(768);
+	fadeIn(768);
 	for (int i = 1; i <= 40; ++i) {
 		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA, true);
@@ -282,7 +282,7 @@ void IgorEngine::PART_30() {
 		 PART_30_HELPER_8();
 	} else {
 		if (_currentPart != 302) {
-			fadeInPalette(768);
+			fadeIn(768);
 		}
 		if (_currentPart == 300) {
 			PART_30_HELPER_2();
@@ -290,7 +290,7 @@ void IgorEngine::PART_30() {
 			PART_30_HELPER_3();
 		} else if (_currentPart == 302) {
 			playMusic(3);
-			fadeInPalette(768);
+			fadeIn(768);
 			PART_30_HELPER_4();
 		} else if (_currentPart == 303) {
 			PART_30_HELPER_5();
@@ -301,7 +301,7 @@ void IgorEngine::PART_30() {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOutPalette(624);
+	fadeOut(624);
 }
 
 } // End of namespace Igor

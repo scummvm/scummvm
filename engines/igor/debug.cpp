@@ -33,7 +33,17 @@ namespace Igor {
 //
 //   debugPaintWalkAreas()  -> regions whose BOX record has area  != 0
 //   debugPaintHotspots()   -> regions whose BOX record has object != 0
+//   debugPaintY1Lum()      -> regions whose BOX record has y1Lum  != 0
+//   debugPaintY2Lum()      -> regions whose BOX record has y2Lum  != 0
+//   debugPaintDeltaLum()   -> regions whose BOX record has deltaLum != 0
 //
+// y1Lum / y2Lum are the depth thresholds of the enableLight == 1 shading
+// (`wd->y > y1Lum && wd->y <= y2Lum`, see ROOM_LIGHTING.md) and are compared
+// against Igor's scanline, so they are quantised into 16 buckets of 16 lines
+// (value >> 4). deltaLum is the amount subtracted from the pixel colour, whose
+// observed range is 0..15 (e.g. part_10.cpp:62 sets 3), so its low nibble is
+// painted directly. Regions with a zero value are left untouched, which also
+// means "no threshold" and "no darkening" show up as background.
 // Each region/object id gets a distinct colour from the 16-entry ramp written
 // to palette entries 240..255, so different walk areas (and different objects)
 // are told apart. debugClearOverlay() restores those palette entries from
@@ -58,6 +68,21 @@ void IgorEngine::debugPaintWalkAreas() {
 
 void IgorEngine::debugPaintHotspots() {
 	_debugOverlayMode = kOverlayHotspots;
+	debugApplyOverlay();
+}
+
+void IgorEngine::debugPaintY1Lum() {
+	_debugOverlayMode = kOverlayY1Lum;
+	debugApplyOverlay();
+}
+
+void IgorEngine::debugPaintY2Lum() {
+	_debugOverlayMode = kOverlayY2Lum;
+	debugApplyOverlay();
+}
+
+void IgorEngine::debugPaintDeltaLum() {
+	_debugOverlayMode = kOverlayDeltaLum;
 	debugApplyOverlay();
 }
 
@@ -87,7 +112,24 @@ void IgorEngine::debugApplyOverlay() {
 		uint8 *dst = _debugOverlayBuffer + y * 320;
 		for (int x = 0; x < 320; ++x) {
 			const RoomObjectArea &roa = _roomObjectAreasTable[mask[x]];
-			uint8 id = (_debugOverlayMode == kOverlayWalkAreas) ? roa.area : roa.object;
+			uint8 id;
+			switch (_debugOverlayMode) {
+			case kOverlayWalkAreas:
+				id = roa.area;
+				break;
+			case kOverlayHotspots:
+				id = roa.object;
+				break;
+			case kOverlayY1Lum:
+				id = roa.y1Lum >> 4;
+				break;
+			case kOverlayY2Lum:
+				id = roa.y2Lum >> 4;
+				break;
+			default:
+				id = roa.deltaLum & 0x0F;
+				break;
+			}
 			if (id != 0) {
 				dst[x] = 240 + (id & 0x0F);
 			}

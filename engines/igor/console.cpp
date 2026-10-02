@@ -28,6 +28,9 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
 	registerCmd("paint_walk",     WRAP_METHOD(Console, Cmd_paintWalk));
 	registerCmd("paint_hotspots", WRAP_METHOD(Console, Cmd_paintHotspots));
+	registerCmd("paint_y1lum",    WRAP_METHOD(Console, Cmd_paintY1Lum));
+	registerCmd("paint_y2lum",    WRAP_METHOD(Console, Cmd_paintY2Lum));
+	registerCmd("paint_deltalum", WRAP_METHOD(Console, Cmd_paintDeltaLum));
 	registerCmd("paint_off",      WRAP_METHOD(Console, Cmd_paintOff));
 	registerCmd("changePart",     WRAP_METHOD(Console, Cmd_changePart));
 	registerCmd("addObjectToInventory", WRAP_METHOD(Console, Cmd_addObjectToInventory));
@@ -58,6 +61,36 @@ bool Console::Cmd_paintHotspots(int argc, const char **argv) {
 	}
 	debugPrintf("Overlay: hotspots (BOX .object != 0); colours are the object id\n");
 	g_engine->debugPaintHotspots();
+	return true;
+}
+
+bool Console::Cmd_paintY1Lum(int argc, const char **argv) {
+	if (!g_engine) {
+		debugPrintf("Engine not running\n");
+		return true;
+	}
+	debugPrintf("Overlay: y1Lum (BOX .y1Lum != 0); colour index is value / 16\n");
+	g_engine->debugPaintY1Lum();
+	return true;
+}
+
+bool Console::Cmd_paintY2Lum(int argc, const char **argv) {
+	if (!g_engine) {
+		debugPrintf("Engine not running\n");
+		return true;
+	}
+	debugPrintf("Overlay: y2Lum (BOX .y2Lum != 0); colour index is value / 16\n");
+	g_engine->debugPaintY2Lum();
+	return true;
+}
+
+bool Console::Cmd_paintDeltaLum(int argc, const char **argv) {
+	if (!g_engine) {
+		debugPrintf("Engine not running\n");
+		return true;
+	}
+	debugPrintf("Overlay: deltaLum (BOX .deltaLum != 0); colour index is value & 0x0F\n");
+	g_engine->debugPaintDeltaLum();
 	return true;
 }
 
