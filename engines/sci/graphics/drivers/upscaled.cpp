@@ -103,8 +103,7 @@ void UpscaledGfxDriver::copyRectToScreen(const byte *src, int srcX, int srcY, in
 	// to keep the scaled non-color-modified bitmap for palette updates in rgb rendering mode.
 	renderBitmap(src, pitch, destX, destY, w, h, realWidth, realHeight);
 
-	Common::Point p(destX, destY);
-	p = getRealCoords(p);
+	Common::Point p = getScreenCoords(Common::Point(destX, destY));
 
 	updateScreen(p.x, p.y, realWidth, realHeight, palMods, palModMapping);
 }

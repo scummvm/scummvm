@@ -106,6 +106,9 @@ protected:
 	UpscaledGfxDriver(uint16 scaledW, uint16 scaledH, int16 textAlignX, bool scaleCursor, bool rgbRendering);
 	void updateScreen(int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping);
 	void adjustCursorBuffer(uint16 newWidth, uint16 newHeight);
+	// Maps virtual coordinates to the backend screen. This differs from getRealCoords() only for drivers
+	// whose screen is larger than the hires coordinate space exposed to the engine.
+	virtual Common::Point getScreenCoords(Common::Point pos) const { return getRealCoords(pos); }
 	typedef void (*GlyphRenderProc)(byte*, int, const byte*, int, int, int, int);
 	GlyphRenderProc _renderGlyph;
 	typedef void (*ScaledRenderProc)(byte*, const byte*, int, int, int);
