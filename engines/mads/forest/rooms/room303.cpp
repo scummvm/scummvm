@@ -430,11 +430,11 @@ static void room_303_init() {
 			aainfo[i]._val4 = 0;
 		}
 
-		if (previous_room != 199 && flags[34] != 3)
-			flags[34]++;
+		if (previous_room != 199 && flags[17] != 3)
+			flags[17]++;
 	}
 
-	int16 f = flags[34];
+	int16 f = flags[17];
 	if (f == 1) {
 		room_303_init1();
 	} else if (f == 2 || f == 3) {
