@@ -245,11 +245,11 @@ static void room_301_init() {
 			aainfo[count]._val4 = 0;
 		}
 
-		if (previous_room != 199 && flags[30] != 3)
-			flags[30]++;
+		if (previous_room != 199 && flags[15] != 3)
+			flags[15]++;
 	}
 
-	if (flags[30] == 1)
+	if (flags[15] == 1)
 		room_301_init1();
 	else
 		room_301_init2();
@@ -260,7 +260,7 @@ static void room_301_anim1() {
 		aainfo[0]._frame = kernel_anim[aa[0]].frame;
 		int16 f = aainfo[0]._frame;
 
-		if (flags[30] == 1) {
+		if (flags[15] == 1) {
 			if (f == 2) {
 				digi_play_build(301, '_', 2, 1);
 			} else if (f == 11) {
@@ -270,12 +270,12 @@ static void room_301_anim1() {
 		}
 	}
 
-	if (flags[30] == 1 && kernel.trigger == 7) {
+	if (flags[15] == 1 && kernel.trigger == 7) {
 		aainfo[0]._frame = 12;
 		kernel_reset_animation(aa[0], 12);
 	}
 
-	if (global[player_hyperwalked] == -1 && flags[30] != 1) {
+	if (global[player_hyperwalked] == -1 && flags[15] != 1) {
 		int16 reset_frame = scratch._92 - 1;
 		aainfo[0]._frame = reset_frame;
 		kernel_reset_animation(aa[0], reset_frame);
@@ -612,7 +612,7 @@ static void room_301_daemon() {
 	case 100:
 		kernel_abort_animation(aa[0]);
 		aainfo[0]._active = 0;
-		if (flags[30] == 1) {
+		if (flags[15] == 1) {
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			aainfo[1]._active = -1;
 			global[g017] = 0;
