@@ -256,6 +256,17 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	{"lochness",
+		"USA Retail version",
+		AD_ENTRY3s("install.EXE", "872c13b9a3a7be96300d0fc4419e1569", 8048204,
+				   "cd1/LEVEL1/script1.pak", "f0ee2e406999f2c983e4a5de2e6a25c5", 21132,
+				   "cd2/LEVEL3/script3.pak", "c8ef637a44287b12de150407555ceaad", 26189),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
 	{"messenger",
 		"Retail version",
 		AD_ENTRY6s("script.pak", "1e0f9cb47bc203e9e2983b03ffa85174", 185,
