@@ -51,7 +51,7 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::Seekab
 	_score = nullptr;
 	_flags = 0;
 
-	if (cast->_version >= kFileVer400) {
+	if (cast->_version >= kFileVer300) {
 		_initialRect = Movie::readRect(stream);
 		_flags = stream.readUint32BE();
 		uint16 unk1 = stream.readUint16BE();
@@ -60,7 +60,7 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::Seekab
 		_crop = _flags & 2 ? 0 : 1;
 		_center = _flags & 1 ? 1 : 0;
 
-		debugC(5, kDebugLoading, "FilmLoopCastMember::FilmLoopCastMember(): flags: %d, unk1: %d, looping: %d, enableSound: %d, crop: %d, center: %d", _flags, unk1, _looping, _enableSound, _crop, _center);
+		debugC(5, kDebugLoading, "FilmLoopCastMember::FilmLoopCastMember(): initialRect: %s, flags: %d, unk1: %d, looping: %d, enableSound: %d, crop: %d, center: %d", _initialRect.toString().c_str(), _flags, unk1, _looping, _enableSound, _crop, _center);
 	}
 }
 
