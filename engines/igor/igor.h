@@ -570,12 +570,12 @@ private:
 	// outside college
 	void PART_17_EXEC_ACTION(int action);
 	void PART_17_ACTION_101_walkIn();
-	void PART_17_ACTION_103();
+	void PART_17_ACTION_103_talkPhilipJimmy();
 	void PART_17_ACTION_105();
 	void PART_17_ACTION_106();
 	void PART_17_HANDLE_DIALOGUE_PHILIP();
-	void PART_17_UPDATE_DIALOGUE_PHILIP(int action);
-	void PART_17_UPDATE_DIALOGUE_PHILIP_JIMMY(int action);
+	void PART_17_UPDATE_DIALOGUE_Jimmy(int action);
+	void PART_17_UPDATE_DIALOGUE_Philip(int action);
 	void PART_17_UPDATE_ROOM_BACKGROUND();
 	void PART_17_HELPER_1(int num);
 	void PART_17_HELPER_2_walkFromMap();
@@ -583,10 +583,10 @@ private:
 	void PART_17_HELPER_4_paintFirsFrameOfPhilipAndJimmy();
 	void PART_17_HELPER_5_changeZindexOfPath(int lum);
 	void PART_17_HELPER_6_walkFromCollege();
-	void PART_17_HELPER_8(int num);
-	void PART_17_HELPER_9(int num);
+	void PART_17_HELPER_8_PhillipToJimmyAnimFrame(int num);
+	void PART_17_HELPER_9_JimmyTalkingAnimFrame(int num);
 	void PART_17_HELPER_10();
-	void PART_17_HELPER_11_PhillipHeadTurned(int frame);
+	void PART_17_HELPER_11_PhillipToIgor(int frame);
 	void PART_17();
 
 	// college corridor margaret

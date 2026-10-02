@@ -36,7 +36,7 @@ void IgorEngine::PART_17_EXEC_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 103: // talk to philip and jimmy
-		PART_17_ACTION_103();
+		PART_17_ACTION_103_talkPhilipJimmy();
 		break;
 	case 104: // look at file
 		ADD_DIALOGUE_TEXT(220, 3, 646);
@@ -73,8 +73,9 @@ void IgorEngine::PART_17_ACTION_101_walkIn() {
 	_currentPart = 302;
 }
 
-void IgorEngine::PART_17_ACTION_103() {
-	PART_17_HELPER_8(0);
+void IgorEngine::PART_17_ACTION_103_talkPhilipJimmy() {
+	PART_17_HELPER_8_PhillipToJimmyAnimFrame(0);
+
 	if (_gameState.counter[4] == 1) {
 		ADD_DIALOGUE_TEXT(201, 2, 633);
 	} else if (_gameState.counter[4] == 2) {
@@ -84,28 +85,32 @@ void IgorEngine::PART_17_ACTION_103() {
 	}
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(156, 32, 35, 38, 47);
-	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP;
+	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_Jimmy;
 	waitForEndOfCutsceneDialogue(156, 32, 35, 38, 47);
 	_updateDialogue = 0;
 
 	if (_gameState.counter[4] == 1) {
+		debug("PART_17_ACTION_103_talkPhilipJimmy: counter[4] == 1");
 		ADD_DIALOGUE_TEXT(203, 1, 634);
 		ADD_DIALOGUE_TEXT(204, 2, 635);
 		SET_DIALOGUE_TEXT(1, 2);
 	} else if (_gameState.counter[4] == 2) {
+		debug("PART_17_ACTION_103_talkPhilipJimmy: counter[4] == 2");
 		ADD_DIALOGUE_TEXT(208, 2, 637);
 		SET_DIALOGUE_TEXT(1, 1);
 	} else if (_gameState.counter[4] == 3) {
+		debug("PART_17_ACTION_103_talkPhilipJimmy: counter[4] == 3");
 		ADD_DIALOGUE_TEXT(212, 2, 639);
 		ADD_DIALOGUE_TEXT(214, 1, 640);
 		SET_DIALOGUE_TEXT(1, 2);
 	}
 	startCutsceneDialogue(135, 33, 63, 63, 0);
 	VAR_CURRENT_TALKING_ACTOR = 0;
-	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP_JIMMY;
+	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_Philip;
 	waitForEndOfCutsceneDialogue(135, 33, 63, 63, 0);
 	_updateDialogue = 0;
-	PART_17_HELPER_11_PhillipHeadTurned(0);
+
+	PART_17_HELPER_11_PhillipToIgor(0);
 
 	waitForTimer(255);
 	const int randomDialogue = getRandomNumber(3);
@@ -113,12 +118,14 @@ void IgorEngine::PART_17_ACTION_103() {
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(135, 33, 63, 63, 0);
 	VAR_CURRENT_TALKING_ACTOR = 1;
-	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP_JIMMY;
+	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_Philip;
 	waitForEndOfCutsceneDialogue(135, 33, 63, 63, 0);
 	_updateDialogue = 0;
+
 	PART_17_HANDLE_DIALOGUE_PHILIP();
 	PART_17_HELPER_1(255);
-	PART_17_HELPER_8(0);
+	PART_17_HELPER_8_PhillipToJimmyAnimFrame(0);
+
 	--_walkDataLastIndex;
 	buildWalkPath(104, 87, 143, 123);
 	_walkDataCurrentIndex = 1;
@@ -128,6 +135,7 @@ void IgorEngine::PART_17_ACTION_103() {
 	ADD_DIALOGUE_TEXT(219, 1, 645);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
+	waitForEndOfIgorDialogue();
 	if (_gameState.counter[4] == 3) {
 		_gameState.counter[4] = 1;
 	} else {
@@ -225,31 +233,34 @@ void IgorEngine::PART_17_HANDLE_DIALOGUE_PHILIP() {
 	warning("PART_17_HANDLE_DIALOGUE_PHILIP unimplemented");
 }
 
-void IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP(int action) {
+void IgorEngine::PART_17_UPDATE_DIALOGUE_Jimmy(int action) {
+	debug("PART_17_UPDATE_DIALOGUE_Jimmy action: %d", action);
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_17_HELPER_9(0);
+		PART_17_HELPER_9_JimmyTalkingAnimFrame(0);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_17_HELPER_9(getRandomNumber(6));
+		PART_17_HELPER_9_JimmyTalkingAnimFrame(getRandomNumber(6));
 		break;
 	}
 }
 
-void IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP_JIMMY(int action) {
+void IgorEngine::PART_17_UPDATE_DIALOGUE_Philip(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 		if (VAR_CURRENT_TALKING_ACTOR == 0) {
-			PART_17_HELPER_8(0);
+			PART_17_HELPER_8_PhillipToJimmyAnimFrame(0);
 		} else {
-			PART_17_HELPER_11_PhillipHeadTurned(0);
+			PART_17_HELPER_11_PhillipToIgor(0);
 		}
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
 		if (VAR_CURRENT_TALKING_ACTOR == 0) {
-			PART_17_HELPER_8(getRandomNumber(6));
+			debug("PART_17_HELPER_8_PhillipToJimmyAnimFrame");
+			PART_17_HELPER_8_PhillipToJimmyAnimFrame(getRandomNumber(6));
 		} else {
-			PART_17_HELPER_11_PhillipHeadTurned(getRandomNumber(5));
+			debug("PART_17_HELPER_11_PhillipToIgor");
+			PART_17_HELPER_11_PhillipToIgor(getRandomNumber(5));
 		}
 		break;
 	}
@@ -261,12 +272,12 @@ void IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND() {
 		// Counter (unk10) values 16 through 31 animate the other character.
 		switch (_gameState.unk10 / 16) {
 		case 0: // animate jimmy
-			PART_17_HELPER_8(0);
-			PART_17_HELPER_9(getRandomNumber(6));
+			PART_17_HELPER_8_PhillipToJimmyAnimFrame(0);
+			PART_17_HELPER_9_JimmyTalkingAnimFrame(getRandomNumber(6));
 			break;
 		case 1: // animate philip
-			PART_17_HELPER_8(getRandomNumber(6));
-			PART_17_HELPER_9(0);
+			PART_17_HELPER_8_PhillipToJimmyAnimFrame(getRandomNumber(6));
+			PART_17_HELPER_9_JimmyTalkingAnimFrame(0);
 		}
 		if (_gameState.unk10 == 31) {
 			_gameState.unk10 = 0;
@@ -417,7 +428,7 @@ void IgorEngine::PART_17_HELPER_6_walkFromCollege() {
 	_roomObjectAreasTable[28].area = 0;
 }
 
-void IgorEngine::PART_17_HELPER_8(int num) {
+void IgorEngine::PART_17_HELPER_8_PhillipToJimmyAnimFrame(int num) {
 	for (int i = 0; i <= 8; ++i) {
 		for (int j = 0; j <= 10; ++j) {
 			int offset = (36 + i) * 320 + 130 + j;
@@ -436,7 +447,7 @@ void IgorEngine::PART_17_HELPER_8(int num) {
 	}
 }
 
-void IgorEngine::PART_17_HELPER_9(int num) {
+void IgorEngine::PART_17_HELPER_9_JimmyTalkingAnimFrame(int num) {
 	for (int i = 0; i <= 26; ++i) {
 		for (int j = 0; j <= 22; ++j) {
 			int offset = (36 + i) * 320 + 143 + j;
@@ -455,7 +466,7 @@ void IgorEngine::PART_17_HELPER_9(int num) {
 	}
 }
 
-void IgorEngine::PART_17_HELPER_11_PhillipHeadTurned(int frame) {
+void IgorEngine::PART_17_HELPER_11_PhillipToIgor(int frame) {
 	for (int i = 0; i <= 8; ++i) {
 		for (int j = 0; j <= 10; ++j) {
 			int offset = (i + 36) * 320 + j + 130;
@@ -489,7 +500,7 @@ void IgorEngine::PART_17() {
 	PART_17_HELPER_1(255);
 
 	memcpy(_screenVGA, _screenLayer1, 46080);
-
+	_gameState.unkF = true;
 	if (_objectsState[56] == 1) {
 		_gameState.unkF = false;
 		PART_17_HELPER_3(6);

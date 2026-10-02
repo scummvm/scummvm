@@ -112,6 +112,7 @@ void IgorEngine::SET_DIALOGUE_TEXT(int start, int count) {
  * sets the positional state of the text to be displayed
  */
 void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
+	debugC(9, kDebugEngine, "fixDialogueTextPosition() for line %s, count %d, x %d, y %d", _globalDialogueTexts[num], count, *x, *y);
 	int textLineWidth = 0;
 	for (int i = 0; i < count; ++i) {
 		int w = _font.getStringWidth(_globalDialogueTexts[num + i]);
