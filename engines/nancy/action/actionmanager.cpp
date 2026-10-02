@@ -571,6 +571,36 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			// This dependency type keeps its data in the time variables
 			// Note: nancy7 completely flipped the meaning of 1 and 2
 			int count = NancySceneState.getSceneCounts(dep.hours);
+
+			if (g_nancy->getGameType() >= kGameTypeNancy16) {
+				// Nancy16 compares the count the same way it compares resources
+				switch (dep.milliseconds) {
+				case 0:
+					dep.satisfied = count == dep.minutes;
+					break;
+				case 1:
+					dep.satisfied = count > dep.minutes;
+					break;
+				case 2:
+					dep.satisfied = count >= dep.minutes;
+					break;
+				case 3:
+					dep.satisfied = count < dep.minutes;
+					break;
+				case 4:
+					dep.satisfied = count <= dep.minutes;
+					break;
+				case 5:
+					dep.satisfied = count != dep.minutes;
+					break;
+				default:
+					dep.satisfied = false;
+					break;
+				}
+
+				break;
+			}
+
 			switch (dep.milliseconds) {
 			case 1:
 				if (	(dep.minutes < count && g_nancy->getGameType() <= kGameTypeNancy6) ||
