@@ -607,17 +607,20 @@ private:
 
 	// college corridor stairs first floor
 	void PART_30_EXEC_ACTION(int action);
-	void PART_30_ACTION_102();
-	void PART_30_ACTION_104();
+	void PART_30_ACTION_102_goUpstairs();
+	void PART_30_ACTION_104_goDownstairs();
 	void PART_30_UPDATE_DIALOGUE_LAURA(int action);
 	void PART_30_HANDLE_DIALOGUE_LAURA();
 	void PART_30_HELPER_1(int num);
-	void PART_30_HELPER_2();
-	void PART_30_HELPER_3();
-	void PART_30_HELPER_4();
-	void PART_30_HELPER_5();
-	void PART_30_HELPER_8();
-	void PART_30_HELPER_9(int frame);
+	void PART_30_HELPER_2_walkInFromLeft();
+	void PART_30_HELPER_3_walkInFromUpstairs();
+	void PART_30_HELPER_2_walkInFromOutside();
+	void PART_30_HELPER_5_walkInFromRight();
+	void PART_30_HELPER_8_LauraCutscene();
+	void lauraAndIgorBumpIntoEachOther();
+	void igorCrossesArms();
+	void lauraLeaves();
+	void PART_30_HELPER_9_setLauraFrame(int frame);
 	void PART_30();
 
 	// park

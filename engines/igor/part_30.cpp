@@ -30,15 +30,15 @@ void IgorEngine::PART_30_EXEC_ACTION(int action) {
 		_currentPart = 231;
 		break;
 	case 102:
-		PART_30_ACTION_102();
+		PART_30_ACTION_102_goUpstairs();
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(203, 1);
+		ADD_DIALOGUE_TEXT(201, 1);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 104:
-		PART_30_ACTION_104();
+		PART_30_ACTION_104_goDownstairs();
 		break;
 	case 105:
 		ADD_DIALOGUE_TEXT(202, 1);
@@ -54,7 +54,7 @@ void IgorEngine::PART_30_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_30_ACTION_102() {
+void IgorEngine::PART_30_ACTION_102_goUpstairs() {
 	_roomObjectAreasTable[_screenLayer2[24108]].area = 2;
 	--_walkDataLastIndex;
 	buildWalkPath(99, 119, 108, 75);
@@ -70,7 +70,7 @@ void IgorEngine::PART_30_ACTION_102() {
 	_currentPart = 312;
 }
 
-void IgorEngine::PART_30_ACTION_104() {
+void IgorEngine::PART_30_ACTION_104_goDownstairs() {
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[36318]].area = 2;
 	buildWalkPath(158, 119, 158, 113);
@@ -98,28 +98,28 @@ void IgorEngine::PART_30_ACTION_104() {
 void IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_30_HELPER_9(42);
+		PART_30_HELPER_9_setLauraFrame(42);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_30_HELPER_9(getRandomNumber(8) + 42);
+		PART_30_HELPER_9_setLauraFrame(getRandomNumber(8) + 42);
 		break;
 	case kUpdateDialogueAnimStanding:
-		PART_30_HELPER_9(33);
+		PART_30_HELPER_9_setLauraFrame(33);
 		break;
 	}
 }
 
 void IgorEngine::PART_30_HANDLE_DIALOGUE_LAURA() {
-	loadDialogueData(DLG_CollegeStairsFirstFloor);
-	_updateDialogue = &IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA;
-	handleDialogue(201, 85, 63, 0, 38);
-	_updateDialogue = 0;
+	// loadDialogueData(DLG_CollegeStairsFirstFloor);
+	// _updateDialogue = &IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA;
+	// handleDialogue(201, 85, 63, 0, 38);
+	// _updateDialogue = 0;
 }
 
 void IgorEngine::PART_30_HELPER_1(int num) {
 }
 
-void IgorEngine::PART_30_HELPER_2() {
+void IgorEngine::PART_30_HELPER_2_walkInFromLeft() {
 	_walkData[0].setPos(0, 138, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -132,7 +132,7 @@ void IgorEngine::PART_30_HELPER_2() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_30_HELPER_3() {
+void IgorEngine::PART_30_HELPER_3_walkInFromUpstairs() {
 	_roomObjectAreasTable[_screenLayer2[24170]].area = 2;
 	_walkData[0].setPos(170, 75, 4, 0);
 	_walkData[0].setDefaultScale();
@@ -157,7 +157,7 @@ void IgorEngine::PART_30_HELPER_3() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_30_HELPER_4() {
+void IgorEngine::PART_30_HELPER_2_walkInFromOutside() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	_walkCurrentPos = 3;
@@ -184,7 +184,7 @@ void IgorEngine::PART_30_HELPER_4() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_30_HELPER_5() {
+void IgorEngine::PART_30_HELPER_5_walkInFromRight() {
 	_walkData[0].setPos(319, 138, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -196,19 +196,11 @@ void IgorEngine::PART_30_HELPER_5() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_30_HELPER_8() {
+void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
 	playMusic(3);
 	memset(_screenVGA + 46080, 0, 17920);
 	fadeIn(768);
-	for (int i = 1; i <= 40; ++i) {
-		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
-		decodeAnimFrame(src, _screenVGA, true);
-		if (i < 34) {
-			waitForTimer(25);
-		} else {
-			waitForTimer(15);
-		}
-	}
+    lauraAndIgorBumpIntoEachOther();
 	_walkData[0].setPos(172, 134, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
@@ -224,32 +216,29 @@ void IgorEngine::PART_30_HELPER_8() {
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(201, 85, 63, 0, 38);
 	waitForEndOfCutsceneDialogue(201, 85, 63, 0, 38);
-	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBEE6) - 1, _screenVGA, true);
-	for (int i = 1; i <= 41; ++i) {
-		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
-		decodeAnimFrame(src, _screenVGA, true);
-	}
+    // igor crosses arms
+	igorCrossesArms();
+	// real dialogue
+
 	PART_30_HANDLE_DIALOGUE_LAURA();
+    // "Nunca me habian descrito tan bien"
 	ADD_DIALOGUE_TEXT(207, 1);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
+    // at least you're funny
 	ADD_DIALOGUE_TEXT(208, 1);
 	ADD_DIALOGUE_TEXT(209, 1);
 	SET_DIALOGUE_TEXT(1, 2);
 	startCutsceneDialogue(201, 85, 63, 0, 38);
 	waitForEndOfCutsceneDialogue(201, 85, 63, 0, 38);
 	_updateDialogue = 0;
-	for (int i = 51; i <= 70; ++i) {
-		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
-		decodeAnimFrame(src, _screenVGA, true);
-		if (i < 68) {
-			waitForTimer(25);
-		}
-	}
+    // Laura leaves
+	lauraLeaves();
 	_walkData[0].setPos(164, 135, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
+    // Que caracter
 	ADD_DIALOGUE_TEXT(210, 1);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
@@ -261,7 +250,38 @@ void IgorEngine::PART_30_HELPER_8() {
 	PART_30_HELPER_1(255);
 }
 
-void IgorEngine::PART_30_HELPER_9(int frame) {
+void IgorEngine::lauraAndIgorBumpIntoEachOther() {
+// they both walk in
+	for (int i = 1; i <= 40; ++i) {
+		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
+		decodeAnimFrame(src, _screenVGA, true);
+		if (i < 34) {
+			waitForTimer(25);
+		} else {
+			waitForTimer(15);
+		}
+	}
+}
+
+void IgorEngine::igorCrossesArms() {
+    decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBEE6) - 1, _screenVGA, true);
+	for (int i = 1; i <= 41; ++i) {
+		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
+		decodeAnimFrame(src, _screenVGA, true);
+	}
+}
+
+void IgorEngine::lauraLeaves() {
+	for (int i = 51; i <= 70; ++i) {
+		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
+		decodeAnimFrame(src, _screenVGA, true);
+		if (i < 68) {
+			waitForTimer(25);
+		}
+	}
+}
+
+void IgorEngine::PART_30_HELPER_9_setLauraFrame(int frame) {
 	const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + frame * 2) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
 }
@@ -278,22 +298,23 @@ void IgorEngine::PART_30() {
 	PART_30_HELPER_1(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
+
 	if (_objectsState[73] == 0) {
-		 PART_30_HELPER_8();
+		 PART_30_HELPER_8_LauraCutscene();
 	} else {
 		if (_currentPart != 302) {
 			fadeIn(768);
 		}
-		if (_currentPart == 300) {
-			PART_30_HELPER_2();
+		if (_currentPart == 300) { // enter from outside
+			PART_30_HELPER_2_walkInFromLeft();
 		} else if (_currentPart == 301) {
-			PART_30_HELPER_3();
+			PART_30_HELPER_3_walkInFromUpstairs();
 		} else if (_currentPart == 302) {
 			playMusic(3);
 			fadeIn(768);
-			PART_30_HELPER_4();
+			PART_30_HELPER_2_walkInFromOutside();
 		} else if (_currentPart == 303) {
-			PART_30_HELPER_5();
+			PART_30_HELPER_5_walkInFromRight();
 		}
 	}
 	enterPartLoop();

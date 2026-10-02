@@ -381,7 +381,25 @@ const RoomDataOffsets IgorEngine::PART_30_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },
 	{ 75, 84 },
 	{ 87, 259, 3135, 151, 227, 80 },
-	{ -90, 9, 1489, 11, 30, 0, 0, 0, 0 }
+	{
+		// Spanish DLG_CollegeStairsFirstFloor (TBL id 34, 0x426040, 2753 bytes) stores its
+		// question cells at blob offset 0, with no leading dialogue matrix. The sound
+		// tables use the same layout proven for part 12 and part 17: questionSoundsOffset
+		// points at a non-indexed residue word, entry i is read at + (i + 1) * 2, and
+		// replySoundsOffset == questionSoundsOffset + questionsSize * 2.
+		// TODO: derive from cseg110 handleDialogue call site (cseg110:018E-019E) where the
+		// original sources room 30's reply graph -- the 115 bytes trailing the sound table
+		// (blob offset 2638..2753) look like it, but that is not yet proven.
+		-205, // -(164 + 41): question 0 line 0 lands on blob offset 0
+		9,    // 9 question cells of 164 bytes, two 41-byte lines each
+		1374, // = 1476 - 102: reply 0 lands at blob offset 1476 = 9 * 164
+		11,   // 11 reply cells of 102 bytes
+		30,
+		0,
+		2596, // residue word 64760 at blob+2596
+		2614, // = 2596 + 9 * 2, shares question 8's word as its own residue
+		11    // reply 10 reads 477 at blob+2636, leaving 115 trailing bytes
+	}
 };
 
 const RoomDataOffsets IgorEngine::PART_31_ROOM_DATA_OFFSETS = {
