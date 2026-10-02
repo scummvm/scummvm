@@ -128,16 +128,16 @@ void IgorEngine::PART_23_ACTION_108() {
 
 void IgorEngine::PART_23_UPDATE_ROOM_BACKGROUND() {
 	if (compareGameTick(29) || compareGameTick(61)) {
-		int rnd = getRandomNumber(11);
+		int rnd = getRandomNumber(10);
 		if (rnd <= 4) {
 			_gameState.unk10 = 1;
 		} else if (rnd <= 9) {
 			_gameState.unk10 = 2;
 		} else if (rnd == 10) {
 			if (_gameState.unk10 < 3) {
-				_gameState.unk10 = getRandomNumber(2) + 3;
+				_gameState.unk10 = getRandomNumber(1) + 3;
 			} else {
-				_gameState.unk10 = getRandomNumber(2) + 1;
+				_gameState.unk10 = getRandomNumber(1) + 1;
 			}
 		}
 		PART_23_HELPER_7(_gameState.unk10);

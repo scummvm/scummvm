@@ -35,7 +35,7 @@ void IgorEngine::PART_17_EXEC_ACTION(int action) {
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 103:
+	case 103: // look at phillip and jimmy
 		PART_17_ACTION_103();
 		break;
 	case 104: // look at file
@@ -73,17 +73,18 @@ void IgorEngine::PART_17_ACTION_101_walkIn() {
 void IgorEngine::PART_17_ACTION_103() {
 	PART_17_HELPER_8(0);
 	if (_gameState.counter[4] == 1) {
-		ADD_DIALOGUE_TEXT(201, 2, 633); // cseg141:07FA-0800
+		ADD_DIALOGUE_TEXT(201, 2, 633);
 	} else if (_gameState.counter[4] == 2) {
-		ADD_DIALOGUE_TEXT(206, 2, 636); // cseg141:080D-0813
+		ADD_DIALOGUE_TEXT(206, 2, 636);
 	} else if (_gameState.counter[4] == 3) {
-		ADD_DIALOGUE_TEXT(210, 2, 638); // cseg141:0820-082C
+		ADD_DIALOGUE_TEXT(210, 2, 638);
 	}
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(156, 32, 35, 38, 47);
 	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP;
 	waitForEndOfCutsceneDialogue(156, 32, 35, 38, 47);
 	_updateDialogue = 0;
+
 	if (_gameState.counter[4] == 1) {
 		ADD_DIALOGUE_TEXT(203, 1, 634);
 		ADD_DIALOGUE_TEXT(204, 2, 635);
@@ -102,9 +103,10 @@ void IgorEngine::PART_17_ACTION_103() {
 	waitForEndOfCutsceneDialogue(135, 33, 63, 63, 0);
 	_updateDialogue = 0;
 	PART_17_HELPER_11(0);
+
 	waitForTimer(255);
-	const int randomDialogue = getRandomNumber(4); // cseg141:0910-0917
-	ADD_DIALOGUE_TEXT(215 + randomDialogue, 1, 641 + randomDialogue); // cseg141:091A-092C
+	const int randomDialogue = getRandomNumber(3);
+	ADD_DIALOGUE_TEXT(215 + randomDialogue, 1, 641 + randomDialogue);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(135, 33, 63, 63, 0);
 	VAR_CURRENT_TALKING_ACTOR = 1;
@@ -120,7 +122,7 @@ void IgorEngine::PART_17_ACTION_103() {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	ADD_DIALOGUE_TEXT(219, 1, 645); // cseg141:09AC-09B8
+	ADD_DIALOGUE_TEXT(219, 1, 645);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	if (_gameState.counter[4] == 3) {
@@ -226,7 +228,7 @@ void IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP(int action) {
 		PART_17_HELPER_9(0);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_17_HELPER_9(getRandomNumber(7));
+		PART_17_HELPER_9(getRandomNumber(6));
 		break;
 	}
 }
@@ -242,9 +244,9 @@ void IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP_JIMMY(int action) {
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
 		if (VAR_CURRENT_TALKING_ACTOR == 0) {
-			PART_17_HELPER_8(getRandomNumber(7));
+			PART_17_HELPER_8(getRandomNumber(6));
 		} else {
-			PART_17_HELPER_11(getRandomNumber(6));
+			PART_17_HELPER_11(getRandomNumber(5));
 		}
 		break;
 	}
@@ -252,13 +254,15 @@ void IgorEngine::PART_17_UPDATE_DIALOGUE_PHILIP_JIMMY(int action) {
 
 void IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND() {
 	if (compareGameTick(3, 32) && _gameState.unkF) {
+		// Counter (unk10) values 0 through 15 animate one character while holding the other on its resting frame.
+		// Counter (unk10) values 16 through 31 animate the other character.
 		switch (_gameState.unk10 / 16) {
-		case 0:
+		case 0: // animate jimmy
 			PART_17_HELPER_8(0);
-			PART_17_HELPER_9(getRandomNumber(7));
+			PART_17_HELPER_9(getRandomNumber(6));
 			break;
-		case 1:
-			PART_17_HELPER_8(getRandomNumber(7));
+		case 1: // animate philip
+			PART_17_HELPER_8(getRandomNumber(6));
 			PART_17_HELPER_9(0);
 		}
 		if (_gameState.unk10 == 31) {
@@ -270,6 +274,7 @@ void IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND() {
 }
 
 void IgorEngine::PART_17_HELPER_1(int num) {
+	// Enable or disable phillip and jimmy animation
 	if (num == 1 || num == 255) {
 		if (_objectsState[54] == 0) {
 			_gameState.unkF = false;
@@ -278,6 +283,7 @@ void IgorEngine::PART_17_HELPER_1(int num) {
 			_gameState.unkF = true;
 		}
 	}
+
 	if (num == 2 || num == 255) {
 		if (_objectsState[55] == 1) {
 			_roomActionsTable[2698] = 0;
@@ -469,11 +475,15 @@ void IgorEngine::PART_17() {
 	static const int anm[] = { FRM_OutsideCollege1, FRM_OutsideCollege2, FRM_OutsideCollege3, FRM_OutsideCollege4, FRM_OutsideCollege5, 0 };
 	loadAnimData(anm);
 	loadActionData(DAT_OutsideCollege);
+
 	_roomDataOffsets = PART_17_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 286, 143);
+
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_17_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND;
+
 	PART_17_HELPER_1(255);
+
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (_objectsState[56] == 1) {
 		_gameState.unkF = false;
