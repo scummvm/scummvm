@@ -312,7 +312,6 @@ static void global_menu_main() {
 
 void global_game_menu() {
 	bool loaded = false;
-	bool music = true;
 
 	if (box_param.series == NULL) {
 		Common::strcpy_s(box_param.name, "*BOX");
@@ -348,10 +347,8 @@ void global_game_menu() {
 			}
 			break;
 		case GAME_OPTIONS_MENU:
-			if (section_id != 9) {
+			if (section_id != 9)
 				global_menu_options();
-				music = config_file.music_flag != 0;
-			}
 			break;
 		default:
 			kernel.activate_menu = GAME_NO_MENU;
@@ -368,12 +365,7 @@ void global_game_menu() {
 	}
 
 done:
-	if (!music) {
-		config_file.music_flag = true;
-		midi_stop();
-		config_file.music_flag = false;
-		midi_playing = false;
-	}
+	g_engine->syncSoundSettings();
 }
 
 } // namespace Forest

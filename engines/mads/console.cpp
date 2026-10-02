@@ -163,6 +163,10 @@ bool Console::cmdSoundCommand(int argc, const char **argv) {
 		debugPrintf("Usage: %s <command> [parameter]\n", argv[0]);
 		return true;
 	}
+	if (!g_engine->_soundManager) {
+		debugPrintf("This game does not use MADS section sound drivers.\n");
+		return true;
+	}
 	if (!g_engine->_soundManager->isLoaded()) {
 		debugPrintf("No section sound driver is loaded. Use soundsection first.\n");
 		return true;
@@ -195,6 +199,10 @@ bool Console::cmdPlaySound(int argc, const char **argv) {
 		debugPrintf("Section must be between 1 and 9.\n");
 		return true;
 	}
+	if (!g_engine->_soundManager) {
+		debugPrintf("This game does not use MADS section sound drivers.\n");
+		return true;
+	}
 
 	g_engine->_soundManager->init(section);
 	if (!g_engine->_soundManager->isLoaded()) {
@@ -219,6 +227,10 @@ bool Console::cmdSoundSection(int argc, const char **argv) {
 		debugPrintf("Section must be between 1 and 9.\n");
 		return true;
 	}
+	if (!g_engine->_soundManager) {
+		debugPrintf("This game does not use MADS section sound drivers.\n");
+		return true;
+	}
 
 	g_engine->_soundManager->init(section);
 	debugPrintf(
@@ -232,6 +244,10 @@ bool Console::cmdSoundSection(int argc, const char **argv) {
 bool Console::cmdSoundStop(int argc, const char **argv) {
 	if (argc != 1) {
 		debugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+	if (!g_engine->_soundManager) {
+		debugPrintf("This game does not use MADS section sound drivers.\n");
 		return true;
 	}
 
