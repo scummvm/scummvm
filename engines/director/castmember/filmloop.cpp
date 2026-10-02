@@ -105,7 +105,6 @@ bool FilmLoopCastMember::isModified() {
 }
 
 Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, uint frame) {
-	Common::Rect widgetRect(bbox.width() ? bbox.width() : _initialRect.width(), bbox.height() ? bbox.height() : _initialRect.height());
 
 	_subchannels.clear();
 
@@ -153,19 +152,20 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, u
 				src._startPoint.x, src._startPoint.y, src._width, src._height);
 
 		// translate sprite relative to the global bounding box
+		Common::Point widgetDelta(src._startPoint.x - _initialRect.left, src._startPoint.y - _initialRect.top);
 		if (needToScale) {
-			src._startPoint.x = (src._startPoint.x - _initialRect.left) * scaleX + bbox.left;
-			src._startPoint.y = (src._startPoint.y - _initialRect.top) * scaleY + bbox.top;
-			src._width = widgetRect.width();
-			src._height = widgetRect.height();
+			src._startPoint.x = widgetDelta.x * scaleX + bbox.left;
+			src._startPoint.y = widgetDelta.y * scaleY + bbox.top;
+			src._width = src._width * scaleX;
+			src._height = src._height * scaleY;
 			src._stretch = true;
 
-			debugCN(5, kDebugImages, ", scaled: %d,%d %dx%d", src._startPoint.x, src._startPoint.y, src._width, src._height);
+			debugC(5, kDebugImages, ", scaled: %d,%d %dx%d", src._startPoint.x, src._startPoint.y, src._width, src._height);
 		} else {
-			src._startPoint.x = (src._startPoint.x - _initialRect.left) + bbox.left;
-			src._startPoint.y = (src._startPoint.y - _initialRect.top) + bbox.top;
+			src._startPoint.x = widgetDelta.x + bbox.left;
+			src._startPoint.y = widgetDelta.y + bbox.top;
 
-			debugCN(5, kDebugImages, ", no scaling");
+			debugC(5, kDebugImages, ", no scaling");
 		}
 
 		// Film loop frames are constructed as a series of Channels, much like how a normal frame
