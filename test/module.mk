@@ -57,6 +57,11 @@ ifeq ($(ENABLE_TWINE), STATIC_PLUGIN)
 	TEST_LIBS += engines/twine/libtwine.a
 endif
 
+ifeq ($(ENABLE_RIPPER), STATIC_PLUGIN)
+	TESTS += $(srcdir)/test/engines/ripper/*.h
+	TEST_LIBS += engines/ripper/libripper.a
+endif
+
 #
 TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh
 TEST_CFLAGS  := $(CFLAGS) -I$(srcdir)/test/cxxtest
