@@ -36,6 +36,7 @@ namespace Common {
  * @{
  */
 
+class ReadStream;
 class SeekableReadStream;
 class WriteStream;
 
@@ -89,6 +90,25 @@ bool inflateZlibHeaderless(byte *dst, uint *dstLen, const byte *src, uint srcLen
 static inline bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen, const byte *dict = nullptr, uint dictLen = 0) {
 	return inflateZlibHeaderless(dst, &dstLen, src, srcLen, dict, dictLen);
 }
+
+/**
+ * Wrapper around zlib's inflate functions. This function will call the
+ * necessary inflate functions to uncompress data compressed with deflate
+ * but *not* with the standard zlib header.
+ * It decompress all data until inflate returns end of the stream.
+ * If a dictionary is provided through the dict buffer, uses it to initializes
+ * the internal decompression dictionary, before the decompression takes place.
+ *
+ * @param dst       the stream to write into.
+ * @param src       the stream to be decompressed.
+ * @param dict      (optional) a decompress dictionary.
+ * @param dictLen   (optional) the size of the dictionary.
+ *                  Mandatory if dict is not 0.
+ *
+ * @return true on success (Z_OK or Z_STREAM_END), false otherwise.
+ */
+
+bool inflateZlibHeaderless(Common::WriteStream &dst, Common::ReadStream &src, const byte *dict = nullptr, uint dictLen = 0);
 
 /**
  * Wrapper around zlib's inflate functions. This function will call the
