@@ -628,7 +628,7 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 			debugPrintf("kClosedCaptioning, %s", dep.condition == 2 ? "true" : "false");
 			break;
 		case DependencyType::kSound:
-			debugPrintf("kSound, channel %i", dep.condition);
+			debugPrintf("kSound, channel %i, %s", dep.label, dep.condition == 1 ? "playing" : "not playing");
 			break;
 		case DependencyType::kOpenParenthesis:
 			debugPrintf("((((((((\n");
