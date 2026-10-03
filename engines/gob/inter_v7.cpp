@@ -896,14 +896,23 @@ void Inter_v7::o7_playVmdOrMusic() {
 
 }
 void Inter_v7::o7_setActiveCD() {
-	Common::String str0 = _vm->_game->_script->evalString();
-	Common::String str1 = _vm->_game->_script->evalString();
+	// Search for a "CD" directory containing a file matching a pattern, and mark it as the current CD directory (if found).
+	Common::String filePattern1 = _vm->_game->_script->evalString();
+	Common::String filePattern2 = _vm->_game->_script->evalString();
 
 	Common::ArchiveMemberDetailsList files;
-	SearchMan.listMatchingMembers(files, Common::Path(str0, '\\'));
+	SearchMan.listMatchingMembers(files, Common::Path(filePattern1, '\\'));
 	Common::Path savedCDpath = _currentCDPath;
 
 	for (const auto &file : files) {
+		if (!filePattern2.empty()) {
+			// If a second pattern is given, the searched directory must also contain a file matching it.
+			Common::Archive *cdDirArchive = SearchMan.getArchive(file.arcName);
+			Common::ArchiveMemberList cdDirFiles;
+			if (!cdDirArchive || cdDirArchive->listMatchingMembers(cdDirFiles, Common::Path(filePattern2, '\\')) == 0)
+				continue;
+		}
+
 		if (setCurrentCDPath(file.arcName)) {
 			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s", savedCDpath.toString().c_str(),  _currentCDPath.toString().c_str());
 			storeValue(1);
