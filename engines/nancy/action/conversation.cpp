@@ -1076,6 +1076,7 @@ void ConversationCel::init() {
 	// talking head, which is played into the tree's rect while the body keeps
 	// animating from cels.
 	_treeMovies.resize(_celRObjects.size());
+	_treeShownFrames.resize(_celRObjects.size(), kMovieFrameFreeRunning);
 	for (uint i = 0; i < _celRObjects.size(); ++i) {
 		// _treeRects is only filled in from Nancy15 on, so earlier games always
 		// take the cel path here
@@ -1095,12 +1096,42 @@ void ConversationCel::init() {
 			continue;
 		}
 
-		movie->start();
 		_treeMovies[i] = movie;
 		_celRObjects[i].moveTo(_treeRects[i]);
+
+		if (isTreeFreeRunning(i)) {
+			movie->start();
+		} else {
+			showMovieFrame(i, _firstFrame);
+		}
 	}
 
 	registerGraphics();
+}
+
+bool ConversationCel::isTreeFreeRunning(uint tree) const {
+	if (tree >= _treeMovieFrames.size() || _firstFrame >= _treeMovieFrames[tree].size()) {
+		return true;
+	}
+
+	return _treeMovieFrames[tree][_firstFrame] == kMovieFrameFreeRunning;
+}
+
+void ConversationCel::showMovieFrame(uint tree, uint xsheetFrame) {
+	if (tree >= _treeMovieFrames.size() || xsheetFrame >= _treeMovieFrames[tree].size()) {
+		return;
+	}
+
+	const int32 movieFrame = _treeMovieFrames[tree][xsheetFrame];
+	if (movieFrame == kMovieFrameFreeRunning || movieFrame == _treeShownFrames[tree]) {
+		return;
+	}
+
+	const Graphics::Surface *frame = _treeMovies[tree]->decodeNextFrame(movieFrame);
+	if (frame) {
+		_celRObjects[tree].setMovieFrame(*frame);
+		_treeShownFrames[tree] = movieFrame;
+	}
 }
 
 void ConversationCel::registerGraphics() {
@@ -1120,7 +1151,7 @@ void ConversationCel::updateGraphics() {
 	uint32 currentTime = g_nancy->getTotalPlayTime();
 
 	for (uint i = 0; i < _treeMovies.size(); ++i) {
-		if (_treeMovies[i] && _treeMovies[i]->needsUpdate()) {
+		if (_treeMovies[i] && isTreeFreeRunning(i) && _treeMovies[i]->needsUpdate()) {
 			const Graphics::Surface *frame = _treeMovies[i]->decodeNextFrame();
 			if (frame) {
 				_celRObjects[i].setMovieFrame(*frame);
@@ -1131,7 +1162,9 @@ void ConversationCel::updateGraphics() {
 	if (_state == kRun && currentTime > _nextFrameTime && _curFrame < MIN<uint>(_lastFrame + 1, _celNames[0].size())) {
 		for (uint i = 0; i < _celRObjects.size(); ++i) {
 			if (i < _treeMovies.size() && _treeMovies[i]) {
-				// Movie trees run on the movie's own clock
+				// Movie trees run on the movie's own clock, unless the XSheet
+				// picks their frames
+				showMovieFrame(i, _curFrame);
 				continue;
 			}
 
@@ -1271,6 +1304,26 @@ void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Commo
 	}
 
 	_celNames.resize(numTrees, Common::Array<Common::Path>(numFrames));
+
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		// The frame records name a movie frame per tree slot instead of a cel
+		const uint kMaxTrees = 4;
+
+		_treeMovieFrames.resize(numTrees, Common::Array<int32>(numFrames));
+		for (uint i = 0; i < numFrames; ++i) {
+			for (uint j = 0; j < kMaxTrees; ++j) {
+				const int32 movieFrame = xsheet->readSint32LE();
+				if (j < numTrees) {
+					_treeMovieFrames[j][i] = movieFrame;
+				}
+			}
+			xsheet->skip(8);
+		}
+
+		delete xsheet;
+		return;
+	}
+
 	for (uint i = 0; i < numFrames; ++i) {
 		for (uint j = 0; j < numTrees; ++j) {
 			readFilename(*xsheet, _celNames[j][i]);

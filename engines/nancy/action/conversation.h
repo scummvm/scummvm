@@ -242,6 +242,17 @@ protected:
 	Common::Array<Common::Rect> _treeRects;
 	Common::Array<Common::SharedPtr<MoviePlayer>> _treeMovies;
 
+	// Nancy16 has no cels left: every tree is a movie, and each XSheet frame holds
+	// the movie frame to show per tree. kMovieFrameFreeRunning leaves the tree
+	// playing on the movie's own clock (the lip-synced head); the body movie is a
+	// library of fidgets the XSheet picks frames from.
+	static const int32 kMovieFrameFreeRunning = -1;
+	Common::Array<Common::Array<int32>> _treeMovieFrames;
+	Common::Array<int32> _treeShownFrames;
+
+	bool isTreeFreeRunning(uint tree) const;
+	void showMovieFrame(uint tree, uint xsheetFrame);
+
 	uint _curFrame = 0;
 	uint32 _nextFrameTime = 0;
 
