@@ -32,6 +32,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("paint_y2lum",    WRAP_METHOD(Console, Cmd_paintY2Lum));
 	registerCmd("paint_deltalum", WRAP_METHOD(Console, Cmd_paintDeltaLum));
 	registerCmd("paint_off",      WRAP_METHOD(Console, Cmd_paintOff));
+	registerCmd("fast_mode",     WRAP_METHOD(Console, Cmd_fastMode));
 	registerCmd("changePart",     WRAP_METHOD(Console, Cmd_changePart));
 	registerCmd("addObjectToInventory", WRAP_METHOD(Console, Cmd_addObjectToInventory));
 }
@@ -45,62 +46,61 @@ bool Console::Cmd_test(int argc, const char **argv) {
 }
 
 bool Console::Cmd_paintWalk(int argc, const char **argv) {
-	if (!g_engine) {
-		debugPrintf("Engine not running\n");
-		return true;
-	}
 	debugPrintf("Overlay: walk areas (BOX .area != 0); colours are the area id\n");
 	g_engine->debugPaintWalkAreas();
 	return true;
 }
 
 bool Console::Cmd_paintHotspots(int argc, const char **argv) {
-	if (!g_engine) {
-		debugPrintf("Engine not running\n");
-		return true;
-	}
 	debugPrintf("Overlay: hotspots (BOX .object != 0); colours are the object id\n");
 	g_engine->debugPaintHotspots();
 	return true;
 }
 
 bool Console::Cmd_paintY1Lum(int argc, const char **argv) {
-	if (!g_engine) {
-		debugPrintf("Engine not running\n");
-		return true;
-	}
 	debugPrintf("Overlay: y1Lum (BOX .y1Lum != 0); colour index is value / 16\n");
 	g_engine->debugPaintY1Lum();
 	return true;
 }
 
 bool Console::Cmd_paintY2Lum(int argc, const char **argv) {
-	if (!g_engine) {
-		debugPrintf("Engine not running\n");
-		return true;
-	}
+
 	debugPrintf("Overlay: y2Lum (BOX .y2Lum != 0); colour index is value / 16\n");
 	g_engine->debugPaintY2Lum();
 	return true;
 }
 
 bool Console::Cmd_paintDeltaLum(int argc, const char **argv) {
-	if (!g_engine) {
-		debugPrintf("Engine not running\n");
-		return true;
-	}
+
 	debugPrintf("Overlay: deltaLum (BOX .deltaLum != 0); colour index is value & 0x0F\n");
 	g_engine->debugPaintDeltaLum();
 	return true;
 }
 
 bool Console::Cmd_paintOff(int argc, const char **argv) {
-	if (!g_engine) {
-		debugPrintf("Engine not running\n");
-		return true;
-	}
 	g_engine->debugClearOverlay();
 	debugPrintf("Overlay off\n");
+	return true;
+}
+
+bool Console::Cmd_fastMode(int argc, const char **argv) {
+
+	if (argc != 2) {
+		debugPrintf("Usage: %s <factor>\n", argv[0]);
+		debugPrintf("  1 = original speed (%d ms per tick), higher is faster; Ctrl+F toggles 1/%d\n",
+		            kTimerTicksCount * 1000 / kTickDelay, kFastModeFactor);
+		debugPrintf("  Current factor: %d\n", g_engine->debugGetFastMode());
+		return true;
+	}
+
+	const int factor = atoi(argv[1]);
+	if (factor < 1 || factor > kFastModeMaxFactor) {
+		debugPrintf("Invalid factor '%s' (valid range 1-%d)\n", argv[1], kFastModeMaxFactor);
+		return true;
+	}
+
+	g_engine->debugSetFastMode(factor);
+	debugPrintf("Speed factor %d (%d ms per tick)\n", factor, kTimerTicksCount * 1000 / kTickDelay / factor);
 	return true;
 }
 

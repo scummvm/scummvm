@@ -61,6 +61,8 @@ enum {
 	kTalkShadowColor = 241,
 	kTickDelay = 1193180 / 4096,
 	kTimerTicksCount = 8,
+	kFastModeFactor = 4,
+	kFastModeMaxFactor = 16,
 	kQuickSaveSlot = 0,
 	kMaxSaveStates = 10,
 	kNoSpeechSound = 999
@@ -343,6 +345,12 @@ private:
 	bool _eventQuitGame;
 	GameStateData _gameState;
 	uint32 _nextTimer;
+
+	// Speed multiplier, 1 = original timing. Divides the millisecond
+	// deadlines in waitForTimer();
+	// Toggled with Ctrl+F (1 <-> kFastModeFactor), or set to any 1..kFastModeMaxFactor
+	// with the console's fast_mode command.
+	int _fastMode;
 
 	int _language;
 	DetectedGameVersion _game;
@@ -830,6 +838,8 @@ public:
 	void debugPaintY2Lum();
 	void debugPaintDeltaLum();
 	void debugClearOverlay();
+	void debugSetFastMode(int factor) { _fastMode = factor; }
+	int debugGetFastMode() const { return _fastMode; }
 	void debugChangePart(int state);
 	bool debugAddObjectToInventory(int object);
 

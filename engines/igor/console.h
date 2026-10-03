@@ -36,6 +36,7 @@ private:
 	bool Cmd_paintY2Lum(int argc, const char **argv);
 	bool Cmd_paintDeltaLum(int argc, const char **argv);
 	bool Cmd_paintOff(int argc, const char **argv);
+	bool Cmd_fastMode(int argc, const char **argv);
 	bool Cmd_changePart(int argc, const char **argv);
 	bool Cmd_addObjectToInventory(int argc, const char **argv);
 public:

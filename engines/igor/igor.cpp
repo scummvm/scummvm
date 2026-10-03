@@ -77,6 +77,8 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 	// } else {
 	// 	_midiPlayer = 0;
 	// }
+
+	_fastMode = 1;
 }
 
 IgorEngine::~IgorEngine() {
@@ -117,7 +119,7 @@ void IgorEngine::restart() {
 
 	memset(&_gameState, 0, sizeof(_gameState));
 	_nextTimer = 0;
-	// _fastMode = false;
+	_fastMode = 1;
 	_language = 0;
 
 	memset(_walkData, 0, sizeof(_walkData));

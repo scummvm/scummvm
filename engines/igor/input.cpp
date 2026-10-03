@@ -40,7 +40,8 @@ void IgorEngine::waitForTimer(int ticks) {
 	_system->updateScreen();
 
 	// wait till next timer if no param is passed, ticks if not
-	uint32 endTicks = (ticks == -1) ? _nextTimer : _system->getMillis() + ticks * 1000 / kTickDelay;
+	// _fastMode divides the wall-clock deadlines
+	uint32 endTicks = (ticks == -1) ? _nextTimer : _system->getMillis() + ticks * 1000 / kTickDelay / _fastMode;
 	do {
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
@@ -51,7 +52,11 @@ void IgorEngine::waitForTimer(int ticks) {
 				_eventQuitGame = true;
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				if (ev.kbd.keycode == Common::KEYCODE_f && (ev.kbd.flags & Common::KBD_CTRL)) {
+					_fastMode = (_fastMode == 1) ? kFastModeFactor : 1;
+					debugC(1, kDebugEngine, "Ctrl+F: fast mode %d (%d ms per tick)",
+					       _fastMode, kTimerTicksCount * 1000 / kTickDelay / _fastMode);
+				} else if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_inputVars[kInputEscape] = 1;
 				} else if (ev.kbd.keycode == Common::KEYCODE_SPACE) {
 					_inputVars[kInputOptions] = 1;
@@ -86,13 +91,15 @@ void IgorEngine::waitForTimer(int ticks) {
 				break;
 			}
 		}
-		_system->delayMillis(10);
+		// Keep the poll granularity proportional, otherwise a 10 ms sleep
+		// overshoots the shortened deadline at high factors.
+		_system->delayMillis(MAX(1, 10 / _fastMode));
 		if (_system->getMillis() >= endTicks) {
 			break;
 		}
 
 	} while (true);
-	_nextTimer = _system->getMillis() + kTimerTicksCount * 1000 / kTickDelay;
+	_nextTimer = _system->getMillis() + kTimerTicksCount * 1000 / kTickDelay / _fastMode;
 	if (ticks != -1) {
 		return;
 	}
@@ -175,6 +182,7 @@ void IgorEngine::handleRoomInput() {
 			_talkSpeechCounter = -1;
 		}
 		_inputVars[kInputSkipDialogue] = 0;
+
 	}
 
 	if (!_roomCursorOn || _gameState.dialogueTextRunning || _scrollInventory) {
