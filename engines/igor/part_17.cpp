@@ -200,17 +200,24 @@ void IgorEngine::PART_17_ACTION_106_swapFolders() {
 		return;
 	}
 	playSound(24, 1);
-	for (int i = 0; i <= 8; ++i) {
+
+	for (int j = 0; j <= 8; ++j) { // 8 frames
 		int offset = 12575;
-		for (int j = 0; j <= 27; ++j) {
-			memcpy(_screenVGA + offset + i * 320, _animFramesBuffer + 0x1E6E + j * 40 + i * 1120, 40);
+		for (int i = 0; i <= 27; ++i) {
+			memcpy(_screenVGA + offset + i * 320, _animFramesBuffer + 0x1E6E + i * 40 +  j * 1120, 40);
 		}
 		waitForTimer(30);
 	}
+
 	int offset = 12575;
 	for (int i = 0; i <= 27; ++i) {
 		memcpy(_screenVGA + offset + i * 320, _animFramesBuffer + 0x1E6E + i * 40, 40);
 	}
+
+	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
+	g_engine->_screen->updateScreen();
+
+
 	_objectsState[55] = 1;
 	_objectsState[3] = 1;
 	PART_17_HELPER_1(255);
@@ -219,6 +226,8 @@ void IgorEngine::PART_17_ACTION_106_swapFolders() {
 		++_demoActionsCounter;
 	}
 	--_walkDataLastIndex;
+	debugC(9, kDebugWalk, "PART_17_ACTION_106 walk: _walkDataLastIndex %d _walkData[%d] %d,%d",
+	       _walkDataLastIndex, _walkDataLastIndex, _walkData[_walkDataLastIndex].x, _walkData[_walkDataLastIndex].y);
 	buildWalkPath(104, 87, 143, 123);
 	_walkDataCurrentIndex = 1;
 	_walkData[_walkDataLastIndex].frameNum = 0;
