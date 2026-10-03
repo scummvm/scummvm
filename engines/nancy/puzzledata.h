@@ -259,6 +259,21 @@ struct TableData : public PuzzleData {
 	int16 getValue(uint16 index) const;
 	void setValue(uint16 index, int16 value);
 
+	// Nancy16 reads a value that was never set as 0
+	int16 getValueOrZero(uint16 index) const;
+
+	// How Nancy14+ value tests compare a value against another
+	enum Comparison {
+		kEqual			= 0,
+		kGreater		= 1,
+		kGreaterOrEqual	= 2,
+		kLess			= 3,
+		kLessOrEqual	= 4,
+		kNotEqual		= 5		// Nancy16+
+	};
+
+	static bool compare(int32 value, int32 other, uint16 comparison);
+
 	Common::Array<int16> singleValues;
 	Common::Array<float> comboValues;
 };

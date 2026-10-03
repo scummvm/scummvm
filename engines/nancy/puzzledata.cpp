@@ -430,6 +430,30 @@ int16 TableData::getValue(uint16 index) const {
 	return (int16)(value + (value < 0 ? -0.5f : 0.5f));
 }
 
+int16 TableData::getValueOrZero(uint16 index) const {
+	int16 value = getValue(index);
+	return value == kNoTableValue ? 0 : value;
+}
+
+bool TableData::compare(int32 value, int32 other, uint16 comparison) {
+	switch (comparison) {
+	case kEqual:
+		return value == other;
+	case kGreater:
+		return value > other;
+	case kGreaterOrEqual:
+		return value >= other;
+	case kLess:
+		return value < other;
+	case kLessOrEqual:
+		return value <= other;
+	case kNotEqual:
+		return value != other;
+	default:
+		return false;
+	}
+}
+
 void TableData::setValue(uint16 index, int16 value) {
 	uint numSingleValues = getNumSingleValues();
 	if (index < numSingleValues) {

@@ -331,16 +331,6 @@ enum PlayerTimeComparison {
 	kPlayerTimeBetween	= 3		// Nancy11+
 };
 
-// How a value-table test dependency (see below) compares the value against its
-// threshold. Matches the Nancy14 comparator's condition encoding.
-enum ValueTestComparison {
-	kValueEqual				= 0,
-	kValueGreater			= 1,
-	kValueGreaterOrEqual	= 2,
-	kValueLess				= 3,
-	kValueLessOrEqual		= 4
-};
-
 // A value-table test dependency with this in its hours field compares against
 // another value instead of a constant
 static const int16 kValueTestAgainstValue = 1;
@@ -377,6 +367,17 @@ static bool evaluateValueTestDependency(const DependencyRecord &dep) {
 	// test (kElapsedPlayerDay) that shares this layout. When the hours field is
 	// kValueTestAgainstValue, the milliseconds field is a value index instead.
 	int32 threshold = dep.milliseconds;
+
+	// Nancy16 indexes every value with a signed byte (-1 is the day), and
+	// reads unset values as 0
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		if (dep.hours == kValueTestAgainstValue) {
+			threshold = table->getValueOrZero((byte)dep.milliseconds);
+		}
+
+		return TableData::compare(table->getValueOrZero((byte)dep.label), threshold, dep.condition);
+	}
+
 	if (dep.hours == kValueTestAgainstValue) {
 		threshold = getValueTestValue(*table, dep.milliseconds, threshold);
 	}
@@ -388,20 +389,7 @@ static bool evaluateValueTestDependency(const DependencyRecord &dep) {
 		return false;
 	}
 
-	switch (dep.condition) {
-	case kValueEqual:
-		return value == threshold;
-	case kValueGreater:
-		return value > threshold;
-	case kValueGreaterOrEqual:
-		return value >= threshold;
-	case kValueLess:
-		return value < threshold;
-	case kValueLessOrEqual:
-		return value <= threshold;
-	default:
-		return false;
-	}
+	return TableData::compare(value, threshold, dep.condition);
 }
 
 // Nancy15+ dependencies that act on a player character name them in the

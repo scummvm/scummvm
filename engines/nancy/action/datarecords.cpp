@@ -166,6 +166,10 @@ void SetValue::execute() {
 	finishExecution();
 }
 
+// Nancy16's index markers inside SetValueCombo and ValueTest records
+static const byte kNoIndexNancy16		= 0xFC;
+static const byte kLiteralIndexNancy16	= 0xFD;
+
 void SetValueCombo::readData(Common::SeekableReadStream &stream) {
 	_valueIndex = stream.readByte();
 
@@ -180,6 +184,33 @@ void SetValueCombo::readData(Common::SeekableReadStream &stream) {
 void SetValueCombo::execute() {
 	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 	assert(playerTable);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		// Nancy16 can store the sum in any value, and leaves it alone when
+		// the record has nothing to add up
+		float sum = 0;
+		bool hasEntries = false;
+		for (uint i = 0; i < _indices.size(); ++i) {
+			if (_indices[i] == kNoIndexNancy16) {
+				continue;
+			}
+
+			if (_indices[i] == kLiteralIndexNancy16) {
+				sum += _percentages[i];
+			} else {
+				sum += playerTable->getValueOrZero(_indices[i]) * (_percentages[i] / 100.f);
+			}
+
+			hasEntries = true;
+		}
+
+		if (hasEntries) {
+			playerTable->setValue(_valueIndex, (int16)sum);
+		}
+
+		finishExecution();
+		return;
+	}
 
 	uint numSingleValues = playerTable->getNumSingleValues();
 
@@ -244,6 +275,32 @@ static const byte kTestPercentLessThanOrEqual       = 7;
 void ValueTest::execute() {
 	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 	assert(playerTable);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		// Nancy16 compares like the value test dependency, treats unset values
+		// as 0, and its literals are signed
+		int16 value = playerTable->getValueOrZero(_valueIndex);
+		bool satisfied = false;
+
+		if (_testType == kTestSome || _testType == kTestActualValue) {
+			for (uint i = 0; i < _indicesToTest.size() && !satisfied; ++i) {
+				if (_indicesToTest[i] == kNoIndexNancy16) {
+					continue;
+				}
+
+				int16 otherValue = _testType == kTestActualValue ?
+					(int8)_indicesToTest[i] : playerTable->getValueOrZero(_indicesToTest[i]);
+				satisfied = TableData::compare(value, otherValue, _condition);
+			}
+		}
+
+		if (satisfied) {
+			NancySceneState.setEventFlag(_flagToSet, g_nancy->_true);
+		}
+
+		finishExecution();
+		return;
+	}
 
 	uint numSingleValues = playerTable->getNumSingleValues();
 
