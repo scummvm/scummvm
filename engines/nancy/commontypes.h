@@ -49,6 +49,7 @@ static const int8 kFlagNoLabel						= -1;
 static const int8 kEvNoEvent						= -1;
 static const int8 kFrNoFrame						= -1;
 static const uint16 kNoScene						= 9999;
+static const uint16 kNoSceneNancy17					= 0x7fff;	// what the Nancy17 data has in its place
 
 // Nancy15 alternates between three protagonists (Nancy and the Hardy boys
 // Frank and Joe), each of whom keeps their own UI and journal. The two

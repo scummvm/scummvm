@@ -590,6 +590,32 @@ struct BuildPuzzleData : public PuzzleData {
 	Common::Array<int16> zones;		// per zone: numWrong, then one count per ingredient
 };
 
+// Nancy17. The scenes that run in streams next to the main one, so they can be
+// started again after loading
+struct StreamData : public PuzzleData {
+	struct Child {
+		Common::String name;
+		byte lifetime = 0;
+	};
+
+	struct Stream {
+		bool isMainStream = false;
+		Common::String name;
+		byte lifetime = 0;
+		bool capturesInput = false;
+		bool runsFirst = false;
+		int32 zOffset = 0;
+		Common::String sceneName;
+		uint16 frameID = 0;
+		Common::Array<Child> children;
+	};
+
+	static constexpr uint32 getTag() { return MKTAG('S', 'T', 'R', 'M'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<Stream> streams;
+};
+
 PuzzleData *makePuzzleData(const uint32 tag);
 
 } // End of namespace Nancy

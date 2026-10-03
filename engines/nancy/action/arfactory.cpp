@@ -123,8 +123,8 @@ namespace Nancy {
 namespace Action {
 
 ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableReadStream *recordStream) {
-	// The types returning nullptr in Nancy16 were changed there, and their new data
-	// hasn't been analyzed yet. This keeps the readers of the older games from
+	// The types returning nullptr in Nancy16 and Nancy17 were changed there, and their
+	// new data hasn't been analyzed yet. This keeps the readers of the older games from
 	// misparsing it.
 	switch (type) {
 	case 10:
@@ -163,12 +163,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new Hot1FrSceneChange(CursorManager::kMoveUp);
 		else
-			return nullptr;	// TODO: Scene change with frame and event flag
+			return new SceneChangeWithExtras(SceneChangeWithExtras::kSingleFlag);
 	case 18:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new Hot1FrSceneChange(CursorManager::kMoveDown);
 		else
-			return nullptr;	// TODO: Scene change with frame and event flags
+			return new SceneChangeWithExtras(SceneChangeWithExtras::kFlagList);
 	case 19:
 		if (g_nancy->getGameType() <= kGameTypeNancy9)
 			return new HotMultiframeSceneChange(CursorManager::kMoveForward);
@@ -184,14 +184,16 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new Hot1FrSceneChange(CursorManager::kMoveRight);	// Moved from 23
 		else
-			return nullptr;	// TODO: Scene change with cursor and multiple hotspots
+			return new SceneChangeWithExtras(SceneChangeWithExtras::kHotspots);
 	case 21:
 		if (g_nancy->getGameType() == kGameTypeVampire)
 			return new PaletteNextScene();
 		else if (g_nancy->getGameType() <= kGameTypeNancy9)
 			return new HotMultiframeSceneChange(CursorManager::kMoveDown);
-		else
+		else if (g_nancy->getGameType() <= kGameTypeNancy16)
 			return new HotSingleFrameSceneChange();
+		else
+			return new SceneChangeWithExtras(SceneChangeWithExtras::kStreamName);
 	case 22:
 		if (g_nancy->getGameType() <= kGameTypeNancy9)
 			return new Hot1FrSceneChange(CursorManager::kMoveLeft);
@@ -221,8 +223,11 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return newRec;
 		} else if (g_nancy->getGameType() <= kGameTypeNancy15) {
 			return new HotMultiframeSceneChange(CursorManager::kMoveDown);		// Moved from 21
+		} else if (g_nancy->getGameType() <= kGameTypeNancy16) {
+			return new SceneChangeWithExtras(SceneChangeWithExtras::kFlagList | SceneChangeWithExtras::kHotspots);
 		} else {
-			return nullptr;	// TODO: Scene change with event flags, cursor and multiple hotspots
+			// Nancy17 added the name of the stream to change the scene of
+			return new SceneChangeWithExtras(SceneChangeWithExtras::kStreamName | SceneChangeWithExtras::kFlagList | SceneChangeWithExtras::kHotspots);
 		}
 	}
 	case 26:
@@ -230,15 +235,19 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new InteractiveVideo();
 		else if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new HotMultiframeMultiSceneChange();	// Moved from 13
-		else
+		else if (g_nancy->getGameType() <= kGameTypeNancy16)
 			return nullptr;	// TODO: InvCursorAR
+		else
+			return new BeginStream();
 	case 27:	// Nancy10
 		if (g_nancy->getGameType() <= kGameTypeNancy12)
 			return new HotMultiframeMultiSceneCursorTypeSceneChange();	// Moved from 24
 		else if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new HotMultiframeInvTypeSceneChange();
-		else
+		else if (g_nancy->getGameType() <= kGameTypeNancy16)
 			return new HideCursor();
+		else
+			return new EndStream();
 	case 28:	// Nancy10
 		return new InteractiveVideo();	// Moved from 26
 	case 29:	// Nancy10
@@ -386,6 +395,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new EventFlags(EventFlags::kEventFlags);
 	case 91:	// Nancy16
 		return new EventFlagsMultiHS(EventFlagsMultiHS::kCursorHS);
+	case 93:	// Nancy17
+		return new OnSceneChange();
 	case 94:	// Nancy12
 		return new EventFlagsMultiHS(EventFlagsMultiHS::kMultiHS);	// Moved from 106
 	case 95:	// Nancy12

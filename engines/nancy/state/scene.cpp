@@ -159,6 +159,7 @@ Scene::~Scene() {
 	delete _viewportFader;
 	delete _ndui;
 
+	_streams.clear();
 	clearPuzzleData();
 }
 
@@ -266,7 +267,19 @@ bool Scene::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
-	if (sceneDescription.sceneID == kNoScene || _state == kLoad) {
+	if (sceneDescription.sceneID == kNoScene ||
+			(sceneDescription.sceneID == kNoSceneNancy17 && g_nancy->getGameType() >= kGameTypeNancy17)) {
+		return;
+	}
+
+	// A stream's records change the scene of their own stream
+	SceneStream *runningStream = _streams.getRunning();
+	if (runningStream) {
+		runningStream->changeScene(Common::String::format("s%u", sceneDescription.sceneID), sceneDescription.frameID);
+		return;
+	}
+
+	if (_state == kLoad) {
 		return;
 	}
 
@@ -1056,6 +1069,17 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 	}
 }
 
+// The generic flags are the ones that get cleared with every scene
+static bool isGenericEventFlag(int16 index) {
+	for (uint16 id : g_nancy->getStaticData().genericEventFlags) {
+		if (id == index) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 int16 Scene::eventFlagToIndex(int16 label) const {
 	// Nancy3+ number their event flags from 1000. Nancy12 then split the flags
 	// into two ranges: the generic engine flags kept the 1xxx numbering, while
@@ -1073,6 +1097,12 @@ int16 Scene::eventFlagToIndex(int16 label) const {
 void Scene::setEventFlag(int16 label, byte flag) {
 	label = eventFlagToIndex(label);
 
+	SceneStream *runningStream = _streams.getRunning();
+	if (runningStream && isGenericEventFlag(label)) {
+		runningStream->setEventFlag(label, flag);
+		return;
+	}
+
 	if (label > kEvNoEvent && (uint)label < g_nancy->getStaticData().numEventFlags) {
 		_flags.eventFlags[label] = flag;
 	}
@@ -1084,6 +1114,11 @@ void Scene::setEventFlag(FlagDescription eventFlag) {
 
 bool Scene::getEventFlag(int16 label, byte flag) const {
 	label = eventFlagToIndex(label);
+
+	SceneStream *runningStream = _streams.getRunning();
+	if (runningStream && isGenericEventFlag(label)) {
+		return runningStream->getEventFlag(label) == flag;
+	}
 
 	if (label > kEvNoEvent && (uint)label < g_nancy->getStaticData().numEventFlags) {
 		return _flags.eventFlags[label] == flag;
@@ -1445,6 +1480,33 @@ bool Scene::applyPlayerCharacter(uint characterIndex) {
 	// screen while the data they were built from is still around
 	closeActivePopups();
 
+	if (_ndui) {
+		// Nancy17 has a script for a character to take over with, and one to leave
+		// with. The first runs for as long as the character is played.
+		const PUIH *puih = GetEngineData(PUIH);
+		const Common::String becomeScriptName = puih->becomeScriptName.toString();
+		const Common::String leaveScriptName = puih->leaveScriptName.toString();
+
+		if (!g_nancy->setPlayerCharacter(characterIndex)) {
+			return false;
+		}
+
+		initUI();
+
+		if (!becomeScriptName.empty()) {
+			_streams.end(becomeScriptName + "_Stream");
+		}
+
+		if (!leaveScriptName.empty()) {
+			StreamFlags flags;
+			flags.runsFirst = true;
+			_streams.begin(leaveScriptName + "_Stream", leaveScriptName, 0, flags);
+		}
+
+		g_nancy->_graphics->redrawAll();
+		return true;
+	}
+
 	if (!g_nancy->setPlayerCharacter(characterIndex)) {
 		return false;
 	}
@@ -1507,6 +1569,10 @@ void Scene::synchronize(Common::Serializer &ser) {
 	if (_flags.eventFlags.empty())
 		init();
 
+	if (ser.isSaving() && !_streams.isEmpty()) {
+		_streams.store();
+	}
+
 	ser.syncAsUint16LE(_sceneState.currentScene.sceneID);
 	ser.syncAsUint16LE(_sceneState.currentScene.frameID);
 	ser.syncAsUint16LE(_sceneState.currentScene.verticalOffset);
@@ -1525,6 +1591,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 		g_nancy->_sound->stopAllSounds();
 
+		_streams.clear();
 		load(true);
 	}
 
@@ -1734,6 +1801,10 @@ void Scene::synchronize(Common::Serializer &ser) {
 			initUI();
 			_ndui->restoreState(((UIStateData *)getPuzzleData(UIStateData::getTag()))->changes);
 		}
+
+		if (!_streams.isEmpty()) {
+			_streams.restore();
+		}
 	}
 
 	_isRunningAd = false;
@@ -1934,6 +2005,8 @@ void Scene::load(bool fromSaveFile) {
 	const bool nextIsNoArt = _sceneState.summary.videoFile == "NO_ART_SCENE";
 
 	clearSceneData(nextIsNoArt);
+
+	_streams.onMainSceneChange();
 	g_nancy->_graphics->suppressNextDraw();
 
 	debugC(0, kDebugScene, "Loading new scene %i: description \"%s\", frame %i, vertical scroll %i, %s",
@@ -1967,8 +2040,15 @@ void Scene::load(bool fromSaveFile) {
 
 	// "NO_ART_SCENE" and (Nancy 11+) "POPUP_PREP_SCENE" are videoless sentinel
 	// scenes that carry only logic ARs; they have no viewport art to load.
+	// Nancy17 scenes with no background leave the viewport empty
+	const bool hasNoBackground = _sceneState.summary.videoFile.equalsIgnoreCase("NO_BG");
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		_viewport.setVisible(!hasNoBackground);
+	}
+
 	if (_sceneState.summary.videoFile != "NO_ART_SCENE" &&
-			_sceneState.summary.videoFile != "POPUP_PREP_SCENE") {
+			_sceneState.summary.videoFile != "POPUP_PREP_SCENE" &&
+			!hasNoBackground) {
 		const Common::Path palettePath = !_sceneState.summary.palettes.empty() ?
 			_sceneState.summary.palettes[(byte)_sceneState.currentScene.paletteID] :
 			Common::Path();
@@ -2021,6 +2101,10 @@ void Scene::load(bool fromSaveFile) {
 
 	if (_ndui) {
 		_ndui->onSceneChange(_sceneState.currentScene.sceneID);
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		_streams.changeEnvironment(_sceneState.summary.sound.name);
 	}
 
 	// Re-evaluate taskbar notification states against the new scene.
@@ -2081,7 +2165,7 @@ void Scene::run() {
 		return;
 	}
 
-	_actionManager.processActionRecords();
+	_streams.process();
 
 	// The records a skipped cinematic set off have started by now; its dialogue
 	// shouldn't go on without it
@@ -2499,7 +2583,10 @@ void Scene::handleInput() {
 		getClock()->handleInput(input);
 	}
 
-	if (!cameraActive) {
+	// The streams in front of the main one get the input first, and may keep it
+	const bool isInputCaptured = _streams.handleInput(input, true);
+
+	if (!cameraActive && !isInputCaptured) {
 		_viewport.handleInput(input);
 	}
 
@@ -2510,8 +2597,9 @@ void Scene::handleInput() {
 		g_nancy->_sound->recalculateSoundEffects();
 	}
 
-	if (!cameraActive) {
+	if (!cameraActive && !isInputCaptured) {
 		_actionManager.handleInput(input);
+		_streams.handleInput(input, false);
 	}
 
 	// The whole Nancy 10+ taskbar (inventory / notebook / cell phone / MENU /
@@ -2628,6 +2716,10 @@ void Scene::initStaticData() {
 	if (g_nancy->getGameType() >= kGameTypeNancy16) {
 		_frame.initBlank();
 		_viewport.init();
+
+		if (g_nancy->getGameType() >= kGameTypeNancy17) {
+			_streams.clear();
+		}
 
 		initUI();
 
@@ -2753,9 +2845,20 @@ void Scene::initUI() {
 		}
 	}
 
+	// Nancy17 has no prep records; the script that runs when a character takes
+	// over starts the streams that fill the journal and the task list
 	_uiPrepActions.clearActionRecords();
-	loadUIPrepRecords(puih->journalPrepName);
-	loadUIPrepRecords(puih->tasklistPrepName);
+	if (!puih->journalPrepName.empty()) {
+		loadUIPrepRecords(puih->journalPrepName);
+		loadUIPrepRecords(puih->tasklistPrepName);
+	}
+
+	if (!puih->becomeScriptName.empty()) {
+		StreamFlags flags;
+		flags.runsFirst = true;
+		const Common::String scriptName = puih->becomeScriptName.toString();
+		_streams.begin(scriptName + "_Stream", scriptName, 0, flags);
+	}
 
 	_ndui->applyMatteColor();
 	_ndui->registerGraphics();

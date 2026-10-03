@@ -24,6 +24,8 @@
 
 #include "engines/nancy/action/actionrecord.h"
 
+#include "engines/nancy/state/scenestream.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -283,6 +285,76 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "MapCallHotMultiframe"; }
+};
+
+// Nancy16+ scene change which can also set event flags, wait for a click on a
+// hotspot, and (Nancy17) change the scene of another stream
+class SceneChangeWithExtras : public SceneChange {
+public:
+	enum Extras {
+		kStreamName	= 1 << 0,
+		kSingleFlag	= 1 << 1,
+		kFlagList	= 1 << 2,
+		kHotspots	= 1 << 3
+	};
+
+	SceneChangeWithExtras(uint extras) : _extras(extras) { _flags.descs.clear(); }
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
+	bool canHaveHotspot() const override { return (_extras & kHotspots) != 0; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "SceneChangeWithExtras"; }
+
+	uint _extras;
+	Common::String _streamName;
+	MultiEventFlagDescription _flags;
+	CursorManager::CursorType _hoverCursor = CursorManager::kHotspot;
+	Common::Array<HotspotDescription> _hotspots;
+};
+
+// Nancy17. Starts a scene in a stream of its own, next to the scene that asks for it
+class BeginStream : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "BeginStream"; }
+
+	Common::String _sceneName;	// e.g. "s4409"
+	uint32 _frameID = 0;
+	Common::String _streamName;	// e.g. "BRU_Random_sfx"
+	State::StreamFlags _flags;
+};
+
+// Nancy17. Ends a stream; without a name, the one the record runs in
+class EndStream : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "EndStream"; }
+
+	Common::String _streamName;
+};
+
+// Nancy17. Sets a flag once a stream has moved on to another scene
+class OnSceneChange : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "OnSceneChange"; }
+
+	Common::String _streamName;
+	FlagDescription _flag;
+	Common::String _sceneName;
 };
 
 } // End of namespace Action

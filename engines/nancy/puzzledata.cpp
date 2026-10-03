@@ -811,8 +811,35 @@ void BuildPuzzleData::synchronize(Common::Serializer &ser) {
 	syncInt16Array(ser, zones);
 }
 
+void StreamData::synchronize(Common::Serializer &ser) {
+	uint16 numStreams = streams.size();
+	ser.syncAsUint16LE(numStreams);
+	streams.resize(numStreams);
+
+	for (Stream &stream : streams) {
+		ser.syncAsByte(stream.isMainStream);
+		ser.syncString(stream.name);
+		ser.syncAsByte(stream.lifetime);
+		ser.syncAsByte(stream.capturesInput);
+		ser.syncAsByte(stream.runsFirst);
+		ser.syncAsSint32LE(stream.zOffset);
+		ser.syncString(stream.sceneName);
+		ser.syncAsUint16LE(stream.frameID);
+
+		uint16 numChildren = stream.children.size();
+		ser.syncAsUint16LE(numChildren);
+		stream.children.resize(numChildren);
+		for (Child &child : stream.children) {
+			ser.syncString(child.name);
+			ser.syncAsByte(child.lifetime);
+		}
+	}
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
+	case StreamData::getTag():
+		return new StreamData();
 	case BuildPuzzleData::getTag():
 		return new BuildPuzzleData();
 	case MirrorLightData::getTag():

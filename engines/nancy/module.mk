@@ -137,6 +137,7 @@ MODULE_OBJS = \
   state/map.o \
   state/savedialog.o \
   state/scene.o \
+  state/scenestream.o \
   state/setupmenu.o \
   misc/hypertext.o \
   misc/lightning.o \

@@ -31,6 +31,7 @@
 #include "engines/nancy/action/actionmanager.h"
 
 #include "engines/nancy/state/state.h"
+#include "engines/nancy/state/scenestream.h"
 
 #include "engines/nancy/ui/fullscreenimage.h"
 #include "engines/nancy/ui/viewport.h"
@@ -134,6 +135,11 @@ public:
 	bool isRunningAd() const { return _isRunningAd; }
 
 	void changeScene(const SceneChangeDescription &sceneDescription);
+
+	// Nancy17 streams: scenes that run next to the one the player walks around in,
+	// which is the main stream
+	SceneStreamManager &getStreams() { return _streams; }
+	void addSceneVisit(uint16 sceneID) { _flags.sceneCounts.getOrCreateVal(sceneID)++; }
 	void pushScene(int16 itemID = -1);
 
 	// Nancy16: an item looked at in its own scene leaves the inventory until the
@@ -276,9 +282,12 @@ public:
 	UI::Camera *getCamera() { return _camera; }
 	UI::Taskbar *getTaskbar() { return _taskbar; }
 
-	Action::ActionManager &getActionManager() { return _actionManager; }
+	// The records of a stream get the manager and the scene of their own stream
+	Action::ActionManager &getActionManager() { return _streams.getRunning() ? _streams.getRunning()->getActionManager() : _actionManager; }
+	Action::ActionManager &getMainActionManager() { return _actionManager; }
 
-	SceneChangeDescription &getSceneInfo() { return _sceneState.currentScene; }
+	SceneChangeDescription &getSceneInfo() { return _streams.getRunning() ? _streams.getRunning()->getSceneInfo() : _sceneState.currentScene; }
+	const SceneChangeDescription &getMainSceneInfo() const { return _sceneState.currentScene; }
 	SceneChangeDescription &getNextSceneInfo() { return _sceneState.nextScene; }
 	const SceneSummary &getSceneSummary() const { return _sceneState.summary; }
 
@@ -478,6 +487,9 @@ private:
 	// Nancy16: the records that fill the journal and the task list, which wait for
 	// their conditions for the whole game
 	Action::ActionManager _uiPrepActions;
+
+	// Nancy17: the scenes running next to this one
+	SceneStreamManager _streams;
 	Action::PlaySecondaryMovie *_activeMovie;
 	Action::ConversationSound *_activeConversation;
 
