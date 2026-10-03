@@ -46,7 +46,7 @@ class Title : public Shared::Gfx::View {
 private:
 	enum State {
 		TEXT1, TEXT2, PICDRA, MENU,
-		DEMO_OUT, DEMO_TWN, DEMO_DNG, DEMO_SPA, DEMO_MIN
+		DEMO_OUT, DEMO_TWN, DEMO_CAS, DEMO_DNG, DEMO_SPA, DEMO_MIN
 	};
 	State _state = TEXT1;
 	bool _demoMode = false;

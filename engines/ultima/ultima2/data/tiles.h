@@ -22,6 +22,8 @@
 #ifndef ULTIMA2_DATA_TILES_H
 #define ULTIMA2_DATA_TILES_H
 
+#include "common/stream.h"
+#include "common/str.h"
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
 #include "ultima/ultima2/data/data.h"
@@ -50,6 +52,14 @@ enum TileId {
 
 constexpr int TILE_WIDTH = 16;
 constexpr int TILE_HEIGHT = 16;
+
+/**
+ * Opens one of the EGA-family renderers' data files by name (e.g.
+ * "egatiles" or "picdng.ega") the way the upgrade's ega.drv does: the
+ * active theme's own copy if it has one, otherwise the base copy at the
+ * data root. Returns nullptr if neither exists; the caller owns the stream
+ */
+Common::SeekableReadStream *openEgaFile(RenderMode mode, const Common::String &filename);
 
 /**
  * Decodes the 64 overworld/town tile graphics and (RENDER_CGA only) puts

@@ -117,6 +117,7 @@ MODULE_OBJS += \
 	ultima2/data/savegame.o \
 	ultima2/data/secret_archive.o \
 	ultima2/data/tiles.o \
+	ultima2/gfx/ega_picture.o \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/gfx/text_cursor.o \
 	ultima2/logic/city_castle_logic.o \

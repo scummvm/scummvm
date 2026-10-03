@@ -24,6 +24,7 @@
 #include "graphics/paletteman.h"
 #include "ultima/ultima2/data/data.h"
 #include "ultima/ultima2/views/title.h"
+#include "ultima/ultima2/gfx/ega_picture.h"
 #include "ultima/ultima2/gfx/pic_decoder.h"
 #include "ultima/ultima2/ultima2.h"
 
@@ -40,6 +41,14 @@ Title::Title() : View("Title"), _cursor("Cursor", this) {
 }
 
 void Title::loadPic(const Common::String &filename) {
+	// The upgrade patch's EGA-family renderers show their own versions
+	Data::RenderMode mode = g_engine->getRenderMode();
+	if (mode != Data::RENDER_CGA) {
+		if (!Gfx::loadEgaPicture(filename, mode, _pic))
+			error("Could not load %s", filename.c_str());
+		return;
+	}
+
 	Gfx::PicDecoder decoder;
 	Common::File f;
 	if (!f.open(filename.c_str()) || !decoder.loadStream(f))
@@ -71,27 +80,31 @@ void Title::showState(State state) {
 		delaySeconds(4);
 		break;
 	case PICDRA:
-		loadPic("PICDRA");
+		loadPic("picdra");
 		delaySeconds(3);
 		break;
 	case DEMO_OUT:
-		loadPic("PICOUT");
+		loadPic("picout");
 		delaySeconds(5);
 		break;
 	case DEMO_TWN:
-		loadPic("PICTWN");
+		loadPic("pictwn");
+		delaySeconds(5);
+		break;
+	case DEMO_CAS:
+		loadPic("piccas");
 		delaySeconds(5);
 		break;
 	case DEMO_DNG:
-		loadPic("PICDNG");
+		loadPic("picdng");
 		delaySeconds(5);
 		break;
 	case DEMO_SPA:
-		loadPic("PICSPA");
+		loadPic("picspa");
 		delaySeconds(5);
 		break;
 	case DEMO_MIN:
-		loadPic("PICMIN");
+		loadPic("picmin");
 		delaySeconds(5);
 		break;
 	case MENU:
@@ -146,6 +159,11 @@ void Title::draw() {
 		s.writeString(Common::Point(2, 24), "      SPOKEN AT THE LOCAL PUB");
 		break;
 
+	case DEMO_CAS:
+		s.writeString(Common::Point(0, 23), "        PLEAD WITH MEDIEVAL KINGS");
+		s.writeString(Common::Point(4, 24), "         FOR ASSISTANCE");
+		break;
+
 	case DEMO_DNG:
 		s.writeString(Common::Point(0, 23), "   TRAVERSE DEEP DARK DEADLY DUNGEONS");
 		s.writeString(Common::Point(1, 24), "      AND TALL TERRIFYING TOWERS");
@@ -196,6 +214,9 @@ void Title::timeout() {
 		showState(DEMO_TWN);
 		break;
 	case DEMO_TWN:
+		showState(DEMO_CAS);
+		break;
+	case DEMO_CAS:
 		showState(DEMO_DNG);
 		break;
 	case DEMO_DNG:

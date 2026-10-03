@@ -19,7 +19,10 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/file.h"
+#include "common/scummsys.h"
+#include "common/ptr.h"
 #include "ultima/ultima2/data/tiles.h"
 
 namespace Ultima {
@@ -74,32 +77,43 @@ static void decodeEgaTileRecord(const byte record[EGA_RECORD_SIZE], SurfaceT &su
 	}
 }
 
-// The base EGA tileset lives at the data root; each "theme" is an
-// alternate EGATILES file in its own subfolder (confirmed pure data
+// The base EGA data files live at the data root; each "theme" is a
+// subfolder holding alternate copies of some of them (confirmed pure data
 // swaps, no code differences - see docs/enhanced-patch.md §3.6)
-static Common::String egaTilesFilename(RenderMode mode) {
+static const char *egaThemeFolder(RenderMode mode) {
 	switch (mode) {
 	case RENDER_EGA_V1:
-		return "egatheme.10/egatiles";
+		return "egatheme.10/";
 	case RENDER_EGA_WILTSHIRE:
-		return "egatheme.alt/egatiles";
+		return "egatheme.alt/";
 	case RENDER_EGA_C64:
-		return "egatheme.c64/egatiles";
+		return "egatheme.c64/";
 	default:
-		return "egatiles";
+		return "";
 	}
 }
 
+Common::SeekableReadStream *openEgaFile(RenderMode mode, const Common::String &filename) {
+	Common::String folder = egaThemeFolder(mode);
+	if (!folder.empty()) {
+		Common::SeekableReadStream *stream =
+			SearchMan.createReadStreamForMember(Common::Path(folder + filename));
+		if (stream)
+			return stream;
+	}
+
+	return SearchMan.createReadStreamForMember(Common::Path(filename));
+}
+
 static void loadEgaTiles(Graphics::Surface tiles[TILE_COUNT], RenderMode mode) {
-	Common::File f;
-	Common::String filename = egaTilesFilename(mode);
-	if (!f.open(filename.c_str()))
-		error("Could not open %s", filename.c_str());
+	Common::ScopedPtr<Common::SeekableReadStream> f(openEgaFile(mode, "egatiles"));
+	if (!f)
+		error("Could not open egatiles");
 
 	for (int t = 0; t < TILE_COUNT; ++t) {
 		byte record[EGA_RECORD_SIZE];
-		if (f.read(record, EGA_RECORD_SIZE) != (uint32)EGA_RECORD_SIZE)
-			error("Could not read tile %d from %s", t, filename.c_str());
+		if (f->read(record, EGA_RECORD_SIZE) != (uint32)EGA_RECORD_SIZE)
+			error("Could not read tile %d from egatiles", t);
 
 		decodeEgaTileRecord(record, tiles[t]);
 	}
@@ -127,22 +141,21 @@ void loadTiles(Graphics::Surface tiles[TILE_COUNT], RenderMode mode) {
 }
 
 void loadAttackSprite(Graphics::ManagedSurface &sprite, RenderMode mode) {
-	Common::File f;
-
 	if (mode != RENDER_CGA) {
-		Common::String filename = egaTilesFilename(mode);
-		if (!f.open(filename.c_str()))
-			error("Could not open %s", filename.c_str());
+		Common::ScopedPtr<Common::SeekableReadStream> egaFile(openEgaFile(mode, "egatiles"));
+		if (!egaFile)
+			error("Could not open egatiles");
 
-		f.seek(EGA_ATTACK_SPRITE_RECORD * EGA_RECORD_SIZE);
+		egaFile->seek(EGA_ATTACK_SPRITE_RECORD * EGA_RECORD_SIZE);
 		byte record[EGA_RECORD_SIZE];
-		if (f.read(record, EGA_RECORD_SIZE) != (uint32)EGA_RECORD_SIZE)
-			error("Could not read attack sprite from %s", filename.c_str());
+		if (egaFile->read(record, EGA_RECORD_SIZE) != (uint32)EGA_RECORD_SIZE)
+			error("Could not read attack sprite from egatiles");
 
 		decodeEgaTileRecord(record, sprite);
 		return;
 	}
 
+	Common::File f;
 	if (!f.open("ULTIMAII.EXE"))
 		error("Could not open ULTIMAII.EXE");
 
