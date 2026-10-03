@@ -113,6 +113,12 @@ public:
 	// Displays a value of the value table, until it gets unregistered
 	void registerValueDisplay(int16 index, const Common::String &display);
 
+	// What scenes and the player changed about the panels and controls, kept in saved games
+	void saveState(Common::Array<UIStateData::Change> &changes) const;
+	// The controls show up as they were saved right away, since a UI that was
+	// already on screen has nothing to fade in from
+	void restoreState(const Common::Array<UIStateData::Change> &changes);
+
 	void addEngineTarget(const Common::String &name, EngineTarget *target);
 	void removeEngineTarget(const Common::String &name);
 

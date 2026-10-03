@@ -71,6 +71,12 @@ public:
 	void addRadioButton(RadioButton *button);
 	void setDirty() { _isDirty = true; }
 
+	// Adds what differs from the state the panel and its controls start in
+	void saveState(Common::Array<UIStateData::Change> &changes) const;
+
+	// Gives the controls the colors of the state they are in, without fading to them
+	void finishBlending();
+
 	// Reads a control of the given type and adds it
 	Control *addNewControl(int32 type, Common::SeekableReadStream &stream);
 	bool removeControl(const Common::String &name);
@@ -90,12 +96,6 @@ private:
 		kArrangeNone		= 0,
 		kArrangeLeftToRight	= 1,
 		kArrangeRightToLeft	= 2
-	};
-
-	enum Mode {
-		kModeVisible			= 0,
-		kModeVisibleDisabled	= 1,
-		kModeHidden				= 2
 	};
 
 	void readControl(Common::SeekableReadStream &stream);
@@ -126,6 +126,7 @@ private:
 	int32 _scrollStep = 1;
 	int32 _scrollOffset = 0;
 
+	int32 _initialState = kStartVisible;
 	int _showCount = 0;
 	bool _enabled = true;
 	uint32 _lastUpdateTime = 0;

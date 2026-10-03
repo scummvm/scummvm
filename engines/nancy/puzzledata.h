@@ -226,6 +226,23 @@ struct TasklistData : public PuzzleData {
 	Common::Array<Common::String> checkedEntries;
 };
 
+// Nancy16: how the panels and controls of the UI differ from the state they start in,
+// as the actions that bring them there, e.g. a meter a scene has shown or disabled
+struct UIStateData : public PuzzleData {
+	UIStateData() {}
+	virtual ~UIStateData() {}
+
+	struct Change {
+		Common::String name;
+		int32 action = 0;
+	};
+
+	static constexpr uint32 getTag() { return MKTAG('U', 'I', 'S', 'T'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<Change> changes;
+};
+
 // Contains variables that can be read and modified through action records.
 // Mixes two separate things:
 // - the exhibit data table in nancy6

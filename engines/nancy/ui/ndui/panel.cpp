@@ -55,7 +55,7 @@ Panel::~Panel() {
 void Panel::read(Common::SeekableReadStream &stream) {
 	stream.skip(33); // version
 
-	int32 mode = stream.readSint32LE();
+	_initialState = stream.readSint32LE();
 	_arrangement = (Arrangement)stream.readSint32LE();
 	stream.skip(4);
 	_spacing.x = stream.readSint32LE();
@@ -85,11 +85,11 @@ void Panel::read(Common::SeekableReadStream &stream) {
 	moveTo(screenPosition);
 	_drawSurface.create(screenPosition.width(), screenPosition.height(), g_nancy->_graphics->getTransparentPixelFormat());
 
-	switch (mode) {
-	case kModeVisible:
+	switch (_initialState) {
+	case kStartVisible:
 		_showCount = 1;
 		break;
-	case kModeVisibleDisabled:
+	case kStartDisabled:
 		_showCount = 1;
 		_enabled = false;
 		break;
@@ -317,6 +317,23 @@ void Panel::showItem(int16 itemID, bool show) {
 		arrangeControls();
 		return;
 	}
+}
+
+void Panel::saveState(Common::Array<UIStateData::Change> &changes) const {
+	for (const Control *control : _controls) {
+		addStateChanges(changes, control->getName(), control->getInitialState(), control->isVisible(), control->isEnabled());
+	}
+
+	addStateChanges(changes, getName(), _initialState, isVisible(), _enabled);
+}
+
+void Panel::finishBlending() {
+	_background->update(kFinishBlendingTime);
+	for (Control *control : _controls) {
+		control->update(kFinishBlendingTime);
+	}
+
+	_isDirty = true;
 }
 
 // Every show needs a matching hide before the panel goes away

@@ -25,6 +25,8 @@
 #include "common/str.h"
 #include "common/stream.h"
 
+#include "engines/nancy/puzzledata.h"
+
 namespace Nancy {
 namespace UI {
 namespace NDUI {
@@ -65,6 +67,13 @@ enum ControlState {
 	kStateMouseOver		= 4,
 	kStatePressed		= 5,
 	kNumStates			= 6
+};
+
+// What a panel or control starts as
+enum InitialState {
+	kStartVisible	= 0,
+	kStartDisabled	= 1,
+	kStartHidden	= 2
 };
 
 enum EventType {
@@ -113,9 +122,15 @@ struct Action {
 	Common::String sender;		// the control that fired the event
 };
 
+// Adds the actions that bring a panel or control from the state it starts in to the given one
+void addStateChanges(Common::Array<UIStateData::Change> &changes, const Common::String &name, int32 initialState, bool visible, bool enabled);
+
 // How quickly colors move toward the ones of a new state; a lower rate is faster
 static const float kStaticBlendRate = 0.7f;
 static const float kControlBlendRate = 0.8f;
+
+// Long enough for any color to reach the one it is moving toward
+static const float kFinishBlendingTime = 1000.0f;
 
 // The lines a notch of the mouse wheel scrolls
 static const int kWheelLines = 3;

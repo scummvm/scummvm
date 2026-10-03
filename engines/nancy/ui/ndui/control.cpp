@@ -32,10 +32,10 @@ namespace NDUI {
 void Control::read(Common::SeekableReadStream &stream) {
 	stream.skip(33); // version
 
-	int32 initialState = stream.readSint32LE();
-	if (initialState == kStateDisabled) {
+	_initialState = stream.readSint32LE();
+	if (_initialState == kStartDisabled) {
 		_enabled = false;
-	} else if (initialState == kStateHidden) {
+	} else if (_initialState == kStartHidden) {
 		_visible = false;
 	}
 

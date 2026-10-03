@@ -130,6 +130,23 @@ void Manager::takeAction(int32 type, const Common::String &target, const Common:
 	takeAction(action);
 }
 
+void Manager::saveState(Common::Array<UIStateData::Change> &changes) const {
+	changes.clear();
+	for (const Panel *panel : _panels) {
+		panel->saveState(changes);
+	}
+}
+
+void Manager::restoreState(const Common::Array<UIStateData::Change> &changes) {
+	for (const UIStateData::Change &change : changes) {
+		takeAction(change.action, change.name, 0.0);
+	}
+
+	for (Panel *panel : _panels) {
+		panel->finishBlending();
+	}
+}
+
 Manager::Request Manager::takeRequest() {
 	Request request = _request;
 	_request = Request();

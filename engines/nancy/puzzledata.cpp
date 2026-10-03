@@ -183,6 +183,17 @@ void TasklistData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void UIStateData::synchronize(Common::Serializer &ser) {
+	uint32 numChanges = changes.size();
+	ser.syncAsUint32LE(numChanges);
+	changes.resize(numChanges);
+
+	for (Change &change : changes) {
+		ser.syncString(change.name);
+		ser.syncAsSint32LE(change.action);
+	}
+}
+
 void JournalData::syncOneJournal(Common::Serializer &ser, Common::HashMap<uint16, Common::Array<Entry>> &journal) {
 	uint16 numEntries = journal.size();
 	ser.syncAsUint16LE(numEntries);
@@ -840,6 +851,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new JournalData();
 	case TasklistData::getTag():
 		return new TasklistData();
+	case UIStateData::getTag():
+		return new UIStateData();
 	case TableData::getTag():
 		return new TableData();
 	case CellPhoneData::getTag():

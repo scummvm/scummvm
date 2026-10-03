@@ -45,6 +45,23 @@ void Action::read(Common::SeekableReadStream &stream) {
 	readFilename(stream, text);
 }
 
+static void addStateChange(Common::Array<UIStateData::Change> &changes, const Common::String &name, int32 action) {
+	UIStateData::Change change;
+	change.name = name;
+	change.action = action;
+	changes.push_back(change);
+}
+
+void addStateChanges(Common::Array<UIStateData::Change> &changes, const Common::String &name, int32 initialState, bool visible, bool enabled) {
+	if (visible != (initialState != kStartHidden)) {
+		addStateChange(changes, name, visible ? kActionShow : kActionHide);
+	}
+
+	if (enabled != (initialState != kStartDisabled)) {
+		addStateChange(changes, name, enabled ? kActionEnable : kActionDisable);
+	}
+}
+
 } // End of namespace NDUI
 } // End of namespace UI
 } // End of namespace Nancy

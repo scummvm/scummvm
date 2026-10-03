@@ -66,6 +66,7 @@ public:
 	void setName(const Common::String &name) { _name = name; }
 	bool isVisible() const { return _visible; }
 	bool isEnabled() const { return _enabled; }
+	int32 getInitialState() const { return _initialState; }
 
 	// Fires the actions bound to an event; the ones without a value of their own
 	// get the given one
@@ -97,6 +98,7 @@ protected:
 	Panel *_panel;
 	Common::String _name;
 	Common::String _text;
+	int32 _initialState = kStartVisible;
 	bool _visible = true;
 	bool _enabled = true;
 	bool _autoHeight = false;	// controls without a height are as tall as their text

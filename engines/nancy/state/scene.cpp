@@ -1672,6 +1672,10 @@ void Scene::synchronize(Common::Serializer &ser) {
 		return;
 	}
 
+	if (_ndui && ser.isSaving()) {
+		_ndui->saveState(((UIStateData *)getPuzzleData(UIStateData::getTag()))->changes);
+	}
+
 	byte numPuzzleData = _puzzleData.size();
 	ser.syncAsByte(numPuzzleData);
 
@@ -1728,6 +1732,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 		if (_ndui) {
 			initUI();
+			_ndui->restoreState(((UIStateData *)getPuzzleData(UIStateData::getTag()))->changes);
 		}
 	}
 
