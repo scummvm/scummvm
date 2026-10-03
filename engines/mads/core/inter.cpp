@@ -1929,7 +1929,7 @@ void inter_turn_off_object() {
 
 
 	if (new_room == room_id) {
-		Forest::paul_object_showing = true;
+		Forest::paul_object_showing = -1;
 	}
 
 	// will wipe out other 4 sprites
