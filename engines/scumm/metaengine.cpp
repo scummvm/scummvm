@@ -988,7 +988,7 @@ const ExtraGuiOption enableRebel1RestoredContent = {
 
 const ExtraGuiOption enableMortimerRestoredContent = {
 	_s("Enable restored content"),
-	_s("Play the demo's unused crash and repair animations using the full game's recovery rules"),
+	_s("Enable the full game's view jolt and recovery rules, including the demo's unused crash and repair animations"),
 	"mortimer_restored_content",
 	false,
 	0,

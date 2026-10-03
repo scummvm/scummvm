@@ -768,7 +768,7 @@ bool MortimerEngine::updateScene() {
 		} else {
 			++_shellShocks;
 			_shockFrame = 0;
-			_hitJolt = !_isDemo;
+			_hitJolt = !_isDemo || _restoredContent;
 		}
 		// Movie changes stop audio, so enqueue the fatal impact afterwards.
 		playCollisionSound();
