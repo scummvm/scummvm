@@ -155,13 +155,13 @@ static void room_204_init() {
 			aainfo[count]._val4 = 0;
 		}
 
-		if (previous_room != 199 && flags[18] != 3)
-			flags[18]++;
+		if (previous_room != 199 && flags[9] != 3)
+			flags[9]++;
 	}
 
 	room_204_init1();
-	if (flags[18] == -3)
-		flags[18] = 1;
+	if (flags[9] == -3)
+		flags[9] = 1;
 }
 
 static void room_204_anim1() {
@@ -470,7 +470,7 @@ trigger_26:
 trigger_100:
 	kernel_abort_animation(aa[0]);
 	aainfo[0]._active = 0;
-	if (flags[18] == 1) {
+	if (flags[9] == 1) {
 		kernel_synch(2, 0, 4, 0);
 		global[g017] = 0;
 		global[g154] = 0;
