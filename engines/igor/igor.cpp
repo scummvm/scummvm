@@ -268,10 +268,18 @@ void IgorEngine::runPartLoop() {
 
 void IgorEngine::handleRoomDialogue() {
 	if (_gameState.dialogueTextRunning) {
+		// Speech completion ends the sentence, exactly as in the two blocking
+		// dialogue loops. Without this the sentence only ever ends on a click:
+		if (_gameState.talkMode != kTalkModeTextOnly && !isDialogueSpeechPlaying()) {
+			_talkDelayCounter = _talkDelay;
+		}
 		if (_talkDelayCounter == _talkDelay) {
 			animateIgorTalking(0);
 			memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
 			if (_dialogueTextsCount == 0) {
+				// Speech must stop with the last line, otherwise it keeps playing
+				// after the text is gone and nothing is left to stop it.
+				stopDialogueSpeech();
 				_gameState.dialogueTextRunning = false;
 				showCursor();
 			} else {

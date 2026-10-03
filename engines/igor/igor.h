@@ -464,6 +464,7 @@ private:
 	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
 
 	bool isDialogueSpeechPlaying() const;
+	void stopDialogueSpeech();
 
 	void PART_MAIN();
 	void moveScreenUp(int offset);

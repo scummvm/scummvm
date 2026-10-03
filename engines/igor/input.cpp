@@ -182,7 +182,9 @@ void IgorEngine::handleRoomInput() {
 			_talkSpeechCounter = -1;
 		}
 		_inputVars[kInputSkipDialogue] = 0;
-
+		// The click that dismissed the dialogue must not survive into the room
+		// handler: handleRoomInput()
+		_inputVars[kInputClick] = 0;
 	}
 
 	if (!_roomCursorOn || _gameState.dialogueTextRunning || _scrollInventory) {

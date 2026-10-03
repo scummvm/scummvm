@@ -201,9 +201,7 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 	do {
 		// stop speech if skip dialogue hit
 		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
-			if (_mixer->isSoundHandleActive(_speechHandle)) {
-				_mixer->stopHandle(_speechHandle);
-			}
+			stopDialogueSpeech();
 			_talkDelayCounter = _talkDelay;
 			_inputVars[kInputSkipDialogue] = 0;
 		}
@@ -220,6 +218,7 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 					}
 					memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
 					if (_dialogueTextsCount == 0) {
+						stopDialogueSpeech();
 						_gameState.dialogueTextRunning = 0;
 					} else {
 						++_dialogueTextsStart;
@@ -265,6 +264,12 @@ void IgorEngine::fixIgorDialogueTextPosition(int num, int count, int *x, int *y)
 
 bool IgorEngine::isDialogueSpeechPlaying() const {
 	return _gameState.talkMode != kTalkModeTextOnly && _mixer->isSoundHandleActive(_speechHandle);
+}
+
+void IgorEngine::stopDialogueSpeech() {
+	if (_mixer->isSoundHandleActive(_speechHandle)) {
+		_mixer->stopHandle(_speechHandle);
+	}
 }
 
 void IgorEngine::startIgorDialogue() {
@@ -319,9 +324,7 @@ void IgorEngine::startIgorDialogue() {
 void IgorEngine::waitForEndOfIgorDialogue() {
 	do {
 		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
-			if (_mixer->isSoundHandleActive(_speechHandle)) {
-				_mixer->stopHandle(_speechHandle);
-			}
+			stopDialogueSpeech();
 			_talkDelayCounter = _talkDelay;
 			_inputVars[kInputSkipDialogue] = 0;
 		}
@@ -336,6 +339,7 @@ void IgorEngine::waitForEndOfIgorDialogue() {
 					animateIgorTalking(0);
 					memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
 					if (_dialogueTextsCount == 0) {
+						stopDialogueSpeech();
 						_gameState.dialogueTextRunning = 0;
 					} else {
 						++_dialogueTextsStart;
