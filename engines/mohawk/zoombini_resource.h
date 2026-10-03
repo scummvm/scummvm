@@ -121,8 +121,10 @@ struct ZmbResource {
 	/** Return whether the complete stream length is within the inclusive range. */
 	static bool hasSize(Common::SeekableReadStream *stream, int64 minimumSize, int64 maximumSize);
 
-	/** Parse a decimal resource ID without changing the archive kind. */
-	static bool parseInt(const char *str, int32 &result);
+	/** Parse a signed decimal or non-negative 0x-prefixed integer. */
+	static bool parseSignedInt(const char *str, int32 &result);
+	/** Parse an unsigned decimal or 0x-prefixed integer. */
+	static bool parseUnsignedInt(const char *str, uint32 &result);
 	/** Parse an archive-qualified resource string into @p outRes. */
 	static bool parse(const char *str, ZmbResource &outRes);
 

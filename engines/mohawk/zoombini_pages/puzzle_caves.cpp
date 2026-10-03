@@ -688,7 +688,7 @@ bool ZoombiniPuzzleCaves::debugDoBuiltinDebugCommand(int argc, const char **argv
 	int32 argument = -1;
 	if (action == BuiltinDebugAction::kDifficulty) {
 		int32 level = 0;
-		if (argc != 4 || !ZmbResource::parseInt(argv[3], level) || level < 1 || 4 < level) {
+		if (argc != 4 || !ZmbResource::parseSignedInt(argv[3], level) || level < 1 || 4 < level) {
 			output = Common::String::format("Usage: page builtin_debug %s <1-4>\n", kBuiltinDebugActionDifficulty);
 			return true;
 		}
@@ -701,8 +701,8 @@ bool ZoombiniPuzzleCaves::debugDoBuiltinDebugCommand(int argc, const char **argv
 		}
 	}
 	if (action == BuiltinDebugAction::kEntrance) {
-		int32 traitKindIndex = -1;
-		if (argc != 4 || !ZmbResource::parseInt(argv[3], traitKindIndex) || traitKindIndex < 0 || 3 < traitKindIndex) {
+		int32 traitKindIndex = 0;
+		if (argc != 4 || !ZmbResource::parseSignedInt(argv[3], traitKindIndex) || traitKindIndex < 0 || 3 < traitKindIndex) {
 			output = Common::String::format("Usage: page builtin_debug %s <0-3>\n", kBuiltinDebugActionEntrance);
 			return true;
 		}
