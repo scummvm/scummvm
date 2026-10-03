@@ -44,12 +44,14 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.skip(0x49, kGameTypeNancy1, kGameTypeNancy1);
 	s.skip(0x43, kGameTypeNancy2, kGameTypeNancy9);
 	s.skip(0x41, kGameTypeNancy10, kGameTypeNancy15);
-	s.skip(0x55, kGameTypeNancy16);
+	s.skip(0x55, kGameTypeNancy16, kGameTypeNancy16);
+	s.skip(0x51, kGameTypeNancy17);
 
 	readFilename(s, conversationTextsFilename, kGameTypeNancy6);
 	readFilename(s, autotextFilename, kGameTypeNancy6);
 	readFilename(s, fontFilename, kGameTypeNancy12);
 	readFilename(s, flagsFilename, kGameTypeNancy12);
+	readFilename(s, inventoryFilename, kGameTypeNancy17);
 
 	// Nancy16 went back to the pre-Nancy14 field order, and dropped both vertical
 	// offsets and the ad scene
@@ -923,7 +925,8 @@ ImageChunk::ImageChunk(Common::SeekableReadStream *chunkStream) : EngineData(chu
 LogoScreen::LogoScreen(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(*chunkStream, imageName);
 	readFilename(*chunkStream, movieName);
-	chunkStream->skip(8);
+	// Nancy17 dropped two of the four values in front of the position
+	chunkStream->skip(g_nancy->getGameType() >= kGameTypeNancy17 ? 4 : 8);
 	position.x = chunkStream->readSint16LE();
 	position.y = chunkStream->readSint16LE();
 
@@ -1495,6 +1498,37 @@ MMIX::MMIX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	}
 }
 
+ENVS::ENVS(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	const uint16 count = chunkStream->readUint16LE();
+	environments.resize(count);
+
+	for (uint16 i = 0; i < count; ++i) {
+		Environment &env = environments[i];
+		readFilename(*chunkStream, env.code);
+		readFilename(*chunkStream, env.name);
+		readFilename(*chunkStream, env.ambientScriptName);
+		chunkStream->skip(33);	// A third name, empty in the game data
+
+		const uint16 numTracks = chunkStream->readUint16LE();
+		readFilenameArray(*chunkStream, env.musicNames, numTracks);
+	}
+}
+
+INVD::INVD(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	const uint16 count = chunkStream->readUint16LE();
+	items.resize(count);
+
+	for (uint16 i = 0; i < count; ++i) {
+		Item &item = items[i];
+		item.id = chunkStream->readSint16LE();
+		readFilename(*chunkStream, item.name);
+		item.kind = chunkStream->readSint32LE();
+		readFilename(*chunkStream, item.sceneName);
+		item.valueIndex = chunkStream->readSint16LE();
+		readExclusiveRect(*chunkStream, item.sourceRect);
+	}
+}
+
 LVLN::LVLN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	// The count is the total number of strings, which always comes in
 	// (code, name) pairs - hence it must be even.
@@ -1510,7 +1544,15 @@ LVLN::LVLN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 PCUI::PCUI(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	flag = chunkStream->readByte();
+	// Nancy17 replaced the leading byte and the per-entry slot bytes with
+	// character names ("Tutor", "Nancy", "Bess"), listed in slot order
+	const bool hasNames = g_nancy->getGameType() >= kGameTypeNancy17;
+
+	if (hasNames) {
+		readFilename(*chunkStream, startCharacterName);
+	} else {
+		flag = chunkStream->readByte();
+	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy16) {
 		readFilename(*chunkStream, uiName);
@@ -1521,8 +1563,13 @@ PCUI::PCUI(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 	for (uint16 i = 0; i < count; ++i) {
 		// Each entry begins with the slot index it populates.
-		const byte slot = chunkStream->readByte();
+		const byte slot = hasNames ? i : chunkStream->readByte();
 		Character &chr = (slot < characters.size()) ? characters[slot] : characters[i];
+
+		if (hasNames) {
+			readFilename(*chunkStream, chr.name);
+		}
+
 		readFilename(*chunkStream, chr.imageName);
 		readFilename(*chunkStream, chr.defaultImageName);
 		chr.id = chunkStream->readUint16LE();
@@ -1543,13 +1590,21 @@ LDSN::LDSN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 PUIH::PUIH(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	flag = chunkStream->readByte();
+	// Nancy17 dropped the leading byte
+	if (g_nancy->getGameType() <= kGameTypeNancy16) {
+		flag = chunkStream->readByte();
+	}
+
 	readFilename(*chunkStream, themeName);
 	readFilename(*chunkStream, swatchImageName);
 
-	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+	if (g_nancy->getGameType() == kGameTypeNancy16) {
 		readFilename(*chunkStream, journalPrepName);
 		readFilename(*chunkStream, tasklistPrepName);
+	} else if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		readFilename(*chunkStream, becomeScriptName);
+		readFilename(*chunkStream, leaveScriptName);
+		readFilename(*chunkStream, textsName);
 	}
 }
 

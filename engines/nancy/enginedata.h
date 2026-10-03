@@ -50,6 +50,9 @@ struct BSUM : public EngineData {
 	Common::Path fontFilename;
 	Common::Path flagsFilename;
 
+	// Nancy17+
+	Common::Path inventoryFilename;
+
 	// Game start section
 	SceneChangeDescription firstScene;
 	uint16 startTimeHours;
@@ -932,6 +935,40 @@ struct MMIX : public EngineData {
 	Common::Array<Record> records;
 };
 
+// Environment table. Introduced in Nancy 17, where it replaces both the music
+// mix table and the level name table. Each record describes one location code
+// (e.g. "CUR"): its name ("Curio Shop"), the script with its ambient sounds
+// ("CUR_Amb_Sfx") and the music tracks that may play there.
+struct ENVS : public EngineData {
+	struct Environment {
+		Common::String code;
+		Common::String name;
+		Common::Path ambientScriptName;
+		Common::Array<Common::String> musicNames;
+	};
+
+	ENVS(Common::SeekableReadStream *chunkStream);
+
+	Common::Array<Environment> environments;
+};
+
+// Inventory item table. Introduced in Nancy 17, in the file named by the boot
+// summary. The inventory panel creates one button per item out of it.
+struct INVD : public EngineData {
+	struct Item {
+		int16 id = -1;
+		Common::String name;
+		int32 kind = 0;				// what clicking the item does
+		Common::Path sceneName;		// e.g. "s6200", for the kinds that open a scene
+		int16 valueIndex = 0;
+		Common::Rect sourceRect;
+	};
+
+	INVD(Common::SeekableReadStream *chunkStream);
+
+	Common::Array<Item> items;
+};
+
 // Level name table. Introduced in Nancy 15. Maps a short scene-prefix
 // code (e.g. "KAP") to its human-readable level name (e.g. "Kapu Cave").
 struct LVLN : public EngineData {
@@ -946,6 +983,7 @@ struct LVLN : public EngineData {
 // Each entry supplies the image names for one selectable character.
 struct PCUI : public EngineData {
 	struct Character {
+		Common::String name;				// Nancy 17+, e.g. "Nancy"
 		Common::String imageName;			// e.g. "PUI_CRE_Nancy"
 		Common::String defaultImageName;	// e.g. "PUI_CRE_Nancy_Default"
 		uint16 id = 0;
@@ -954,6 +992,7 @@ struct PCUI : public EngineData {
 	PCUI(Common::SeekableReadStream *chunkStream);
 
 	byte flag = 0;
+	Common::String startCharacterName;		// Nancy 17+, e.g. "Tutor"
 	Common::Path uiName;					// Nancy 16+, e.g. "UI_Main"
 	Common::Array<Character> characters;	// indexed by the on-disk slot byte
 };
@@ -991,9 +1030,15 @@ struct PUIH : public EngineData {
 	Common::String themeName;	// e.g. "Nancy Classic Look (Default)"
 	Common::String swatchImageName;	// e.g. "UI_Swatch_ND"
 
-	// Nancy 16+. Names of the IFFs describing the journal and task list popups
+	// Nancy 16. Names of the IFFs describing the journal and task list popups
 	Common::Path journalPrepName;	// e.g. "Journal_Prep"
 	Common::Path tasklistPrepName;	// e.g. "Tasklist_Prep"
+
+	// Nancy 17+. Scripts run when switching to and away from the character,
+	// and the character's UI texts
+	Common::Path becomeScriptName;	// e.g. "OnBecomeNancy"
+	Common::Path leaveScriptName;	// e.g. "OnLeaveNancy"
+	Common::Path textsName;			// e.g. "UI_Text"
 };
 
 // Task list sounds. Introduced in Nancy 16 (per-character boot). Holds two

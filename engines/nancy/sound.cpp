@@ -263,6 +263,23 @@ SoundManager::~SoundManager() {
 }
 
 Common::String SoundManager::resolveMusicMix(const Common::String &name) const {
+	// Nancy17 keeps the music tracks in the environment table
+	auto *envs = GetEngineData(ENVS);
+	if (envs) {
+		for (const ENVS::Environment &env : envs->environments) {
+			if (env.code.equalsIgnoreCase(name)) {
+				if (env.musicNames.empty()) {
+					return "NO SOUND";
+				}
+
+				uint pick = g_nancy->_randomSource->getRandomNumber(env.musicNames.size() - 1);
+				return env.musicNames[pick];
+			}
+		}
+
+		return name;
+	}
+
 	auto *mmix = GetEngineData(MMIX);
 	if (!mmix) {
 		// Pre-Nancy13, or no mix table present

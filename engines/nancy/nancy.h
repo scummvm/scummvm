@@ -124,6 +124,9 @@ public:
 	bool setPlayerCharacter(uint characterIndex);
 	uint getPlayerCharacter() const { return _playerCharacter; }
 
+	// Adds the texts of a text file to the autotext
+	void addAutotext(const Common::Path &name);
+
 	// A character's "design" is the look their UI wears; it names the CIF tree
 	// everything is loaded from. Nancy's can be changed on the Design Select
 	// screen, and defaults to the character's PCUI entry.

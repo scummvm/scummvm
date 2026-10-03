@@ -270,11 +270,16 @@ bool NancyEngine::setPlayerCharacter(uint characterIndex) {
 	// Every character ships their own copy of the popup UI resources, so the
 	// incoming character's tree has to outrank the ones already loaded
 	if (_resource->readCifTree(treeName, "dat", 1)) {
+		// Nancy17 has the UI itself in the tree of the character the game starts
+		// with, which the others fall back on. It still has to outrank the main
+		// tree: both have a file called "convo".
+		const int basePriority = getGameType() >= kGameTypeNancy17 ? 2 : 1;
+
 		if (!_playerCharacterTree.empty()) {
-			_resource->setCifTreePriority(_playerCharacterTree, 1);
+			_resource->setCifTreePriority(_playerCharacterTree, basePriority);
 		}
 
-		_resource->setCifTreePriority(treeName, 2);
+		_resource->setCifTreePriority(treeName, basePriority + 1);
 	}
 
 	// The UI description chunks live in the character's own boot IFF, e.g.
@@ -322,10 +327,37 @@ bool NancyEngine::setPlayerCharacter(uint characterIndex) {
 
 	delete iff;
 
+	// Nancy17 characters can bring their own UI texts, which join the autotext
+	const PUIH *puih = GetEngineData(PUIH);
+	if (puih && !puih->textsName.empty()) {
+		addAutotext(puih->textsName);
+	}
+
 	_playerCharacter = characterIndex;
 	_playerCharacterTree = treeName;
 
 	return true;
+}
+
+void NancyEngine::addAutotext(const Common::Path &name) {
+	CVTX *autotext = (CVTX *)_engineData.getValOrDefault("AUTOTEXT", nullptr);
+	IFF *iff = _resource->loadIFF(name);
+	if (!autotext || !iff) {
+		delete iff;
+		return;
+	}
+
+	Common::SeekableReadStream *chunkStream = iff->getChunkStream("CVTX");
+	if (chunkStream) {
+		CVTX texts(chunkStream);
+		for (auto &text : texts.texts) {
+			autotext->texts.setVal(text._key, text._value);
+		}
+
+		delete chunkStream;
+	}
+
+	delete iff;
 }
 
 // From Nancy12 the event flags are split into two ranges: 1000 generic engine
@@ -741,6 +773,11 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(PCUI)	// Player-character selector (Nancy / Frank / Joe)
 	LOAD_BOOT(LDSN)	// Player-character "Design Select" screen layout
 
+	// Nancy 17
+	// LVLN and MMIX have been merged into the new ENVS chunk, and PCAL and CRED are gone.
+	// The inventory items are back in the game data, in a file of their own.
+	LOAD_BOOT(ENVS)	// Environment table (location code -> name, ambient sounds, music tracks)
+
 	// Nancy 16
 	// Only BSUM, PCUI, LVLN, PCAL, LGx, LOAD, CURS, VIEW and MMIX are left in BOOT.
 	// The LDSN chunk has been removed along with the player-character switcher, and
@@ -782,9 +819,22 @@ void NancyEngine::bootGameEngine() {
 		LOAD_CHUNK(bsum->autotextFilename.toString().c_str(), CVTX, "CVTX", "AUTOTEXT")
 	}
 
+	if (bsum && !bsum->inventoryFilename.empty()) {
+		LOAD_CHUNK(bsum->inventoryFilename.toString().c_str(), INVD, "INVD", "INVD")
+	}
+
 	if (getGameType() >= kGameTypeNancy15) {
-		// The default player character is Nancy, who always occupies the first PCUI slot
-		setPlayerCharacter(0);
+		// The default player character is Nancy, who always occupies the first PCUI slot.
+		// Nancy17 names the starting character instead
+		uint startCharacter = 0;
+		const PCUI *pcui = GetEngineData(PCUI);
+		for (uint i = 0; pcui && i < pcui->characters.size(); ++i) {
+			if (!pcui->startCharacterName.empty() && pcui->characters[i].name.equalsIgnoreCase(pcui->startCharacterName)) {
+				startCharacter = i;
+			}
+		}
+
+		setPlayerCharacter(startCharacter);
 	}
 
 	if (getGameType() >= kGameTypeNancy12) {
@@ -961,7 +1011,8 @@ void NancyEngine::populateStaticData() {
 	case kGameTypeNancy14:
 	case kGameTypeNancy15:
 	case kGameTypeNancy16:
-		// Nancy16 has 40 items, but its cursor table still has room for 49
+	case kGameTypeNancy17:
+		// Nancy16 and Nancy17 have 40 items, but their cursor table still has room for 49
 		_staticData.numItems = 49;
 		_staticData.numCursorTypes = 45;
 		break;
