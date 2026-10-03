@@ -25,6 +25,7 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/noncopyable.h"
 #include "common/rect.h"
 #include "common/serializer.h"
 #include "common/str.h"
@@ -1578,7 +1579,7 @@ private:
 	static bool zmbWriteToFolder(const Common::FSNode &node, const Common::Array<byte> &bytes);
 };
 
-class ZoombiniGameState {
+class ZoombiniGameState : private Common::NonCopyable {
 public:
 	/**
 	 * On-disk game-state layouts, identified by exact file length.
@@ -2287,7 +2288,7 @@ public:
 	 * Releases without that pool generate names procedurally and do not use this table.
 	 * This table is not serialized and survives save loads and new games within the engine session.
 	 */
-	byte _nameIdDrawnFlags[625] = { 0 };
+	byte _nameIdDrawnFlags[625] = {0};
 	/** Runtime-only ambient scheduler state for this engine session. */
 	AmbientSoundState _ambientSoundState;
 	/** Runtime-only Slides celebration scheduler state for this engine session. */
