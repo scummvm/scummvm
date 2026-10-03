@@ -312,6 +312,14 @@ void TabWidget::adjustTabs(int value) {
 
 	setActiveTab(tabID);
 
+	// Announce the tab we moved to. This is only reached when the user cycles
+	// tabs, not while the dialog is being built, so it will not recite every
+	// tab title on open.
+	if (tabID != _lastRead) {
+		read(_tabs[tabID].title);
+		_lastRead = tabID;
+	}
+
 	if (_navButtonsVisible) {
 		if (lastVis != _lastVisibleTab) {
 			_navLeft->setEnabled(true);
