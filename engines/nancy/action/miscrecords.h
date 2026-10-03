@@ -651,6 +651,31 @@ protected:
 	PhoneBookData::Entry _entry;
 };
 
+// Nancy17. A hotspot that sets a different event flag for every item it can get
+// clicked with, one for any other item, and one for an empty hand
+class HeldItemFlags : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
+	bool canHaveHotspot() const override { return true; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "HeldItemFlags"; }
+
+	struct ItemFlag {
+		int16 itemID = -1;
+		FlagDescription flag;
+	};
+
+	CursorManager::CursorType _hoverCursor = CursorManager::kHotspot;
+	FlagDescription _noItemFlag;
+	Common::Array<ItemFlag> _itemFlags;
+	FlagDescription _otherItemFlag;
+	Common::Array<HotspotDescription> _hotspots;
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 

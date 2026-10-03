@@ -181,13 +181,18 @@ static Common::String resolveConversationText(const Common::String &key) {
 }
 
 void ConversationSound::readDataNancy13(Common::SeekableReadStream &stream) {
-	readFilename(stream, _sound.name);
+	// Nancy17 always lists the sound files of the line after their count
+	const bool hasSoundList = g_nancy->getGameType() >= kGameTypeNancy17;
+	if (!hasSoundList) {
+		readFilename(stream, _sound.name);
+	}
+
 	_sound.channelID = 12;	// hardcoded, as in the terse variants
 	_sound.numLoops = 1;
 
 	// A sound name of "CONCAT" (Nancy14+) means the line is split across several
 	// sound files, which follow after their count. The original allows 5 at most.
-	if (_sound.name.equalsIgnoreCase("CONCAT")) {
+	if (hasSoundList || _sound.name.equalsIgnoreCase("CONCAT")) {
 		const uint16 numSounds = stream.readUint16LE();
 		_concatSounds.resize(numSounds);
 		for (uint i = 0; i < numSounds; ++i) {
@@ -220,6 +225,10 @@ void ConversationSound::readDataNancy13(Common::SeekableReadStream &stream) {
 	_sceneChange.sceneID = stream.readUint16LE();
 	_sceneChange.frameID = stream.readUint16LE();
 	_sceneChange.continueSceneSound = kContinueSceneSound;
+
+	if (_sceneChange.sceneID == kNoSceneNancy17 && g_nancy->getGameType() >= kGameTypeNancy17) {
+		_sceneChange.sceneID = kNoScene;
+	}
 
 	// Caption and response texts are external, keyed by sound name.
 	// Each part of a concatenated line has its own caption; they make up one

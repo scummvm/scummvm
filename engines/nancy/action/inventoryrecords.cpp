@@ -33,10 +33,29 @@
 namespace Nancy {
 namespace Action {
 
+// Nancy17 names the character an item belongs to; anything that isn't a
+// character's name stands for whoever is being played
+static byte readCharacterName(Common::SeekableReadStream &stream) {
+	Common::String name;
+	readFilename(stream, name);
+
+	const PCUI *pcui = GetEngineData(PCUI);
+	for (uint i = 0; pcui && i < pcui->characters.size(); ++i) {
+		if (pcui->characters[i].name.equalsIgnoreCase(name)) {
+			return i;
+		}
+	}
+
+	return kPlayerCharacterActive;
+}
+
 void AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 	_itemID = stream.readUint16LE();
 
-	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		_characterIndex = readCharacterName(stream);
+		_setCursor = stream.readByte();
+	} else if (g_nancy->getGameType() >= kGameTypeNancy15) {
 		// The character the item goes to took the first half of the cursor flag
 		_characterIndex = stream.readByte();
 		_setCursor = stream.readByte();
@@ -63,7 +82,9 @@ void AddInventoryNoHS::execute() {
 void RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 	_itemID = stream.readUint16LE();
 
-	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		_characterIndex = readCharacterName(stream);
+	} else if (g_nancy->getGameType() >= kGameTypeNancy15) {
 		_characterIndex = stream.readByte();
 	}
 }

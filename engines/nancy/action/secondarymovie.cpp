@@ -289,7 +289,8 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 
 	readFilename(ser, _startingSequenceName);
 
-	ser.syncAsUint16LE(_videoFormat);
+	// Nancy17 dropped the video format
+	ser.syncAsUint16LE(_videoFormat, 0, kGameTypeNancy16);
 	_videoFormat = kLargeVideoFormat;
 	if (g_nancy->getGameType() >= kGameTypeNancy16) {
 		ser.syncAsUint16LE(_z);
@@ -304,6 +305,10 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 	ser.syncAsSint16LE(_talkCursorType);
 	ser.syncAsUint16LE(_talkSceneID);
 	ser.skip(2);	// Conversation frame ID (0 in known data)
+
+	if (g_nancy->getGameType() >= kGameTypeNancy17 && _talkSceneID == kNoSceneNancy17) {
+		_talkSceneID = kNoScene;
+	}
 
 	ser.syncAsByte(_movieVolume);
 	_movieVolume = MIN<byte>(_movieVolume, 100);
@@ -339,10 +344,10 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 }
 
 void PlaySecondaryMovie::applyStartingRandomSequence() {
-	// "RandomMovie" picks any sequence; otherwise look up by name.
+	// "RandomMovie" ("random_movie" from Nancy16 on) picks any sequence; otherwise look up by name.
 	if (!_sequences.empty()) {
 		int startIdx = -1;
-		if (_startingSequenceName == "RandomMovie") {
+		if (_startingSequenceName == "RandomMovie" || _startingSequenceName.equalsIgnoreCase("random_movie")) {
 			startIdx = g_nancy->_randomSource->getRandomNumber(_sequences.size() - 1);
 		} else {
 			for (uint i = 0; i < _sequences.size(); ++i) {
@@ -749,7 +754,8 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 
 	readFilename(ser, _videoName);
 
-	ser.syncAsUint16LE(_videoFormat);
+	// Nancy17 dropped the video format
+	ser.syncAsUint16LE(_videoFormat, 0, kGameTypeNancy16);
 	_videoFormat = kLargeVideoFormat;
 
 	if (g_nancy->getGameType() >= kGameTypeNancy16) {
@@ -780,6 +786,8 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 			(uint16)(minLoops + g_nancy->_randomSource->getRandomNumber(maxLoops - minLoops - 1)) : minLoops;
 	}
 
+	ser.skip(1, kGameTypeNancy17);	// Always 0 in the game data
+
 	ser.syncAsUint16LE(_firstFrame);
 	ser.syncAsUint16LE(_lastFrame);
 
@@ -788,6 +796,11 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 
 	ser.syncAsSint16LE(_sceneChange.sceneID);
 	ser.syncAsUint16LE(_sceneChange.frameID);
+
+	// Nancy17 marks "no scene change" with a different value
+	if (g_nancy->getGameType() >= kGameTypeNancy17 && _sceneChange.sceneID == kNoSceneNancy17) {
+		_sceneChange.sceneID = kNoScene;
+	}
 
 	_videoSceneChange = _sceneChange.sceneID != kNoScene ? kMovieSceneChange : kMovieNoSceneChange;
 
@@ -1476,6 +1489,12 @@ void PlayRandomMovieControl::readData(Common::SeekableReadStream &stream) {
 	}
 
 	_mode = stream.readByte();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		// A list of names follows, which is a single empty one in the game data
+		const uint16 numNames = stream.readUint16LE();
+		stream.skip(numNames * 33);
+	}
 
 	_hasSceneChange = g_nancy->getGameType() < kGameTypeNancy13;
 	if (_hasSceneChange) {

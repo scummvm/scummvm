@@ -131,6 +131,12 @@ static void readTextboxText(Common::SeekableReadStream &stream, Common::String &
 		assert(autotext);
 
 		out = autotext->texts.getValOrDefault(stringID, "");
+
+		// The spoken lines have their captions with the conversation texts
+		const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+		if (out.empty() && convo) {
+			out = convo->texts.getValOrDefault(stringID, "");
+		}
 	} else if (size > 0) {
 		char *buf = new char[size];
 		stream.read(buf, size);
@@ -1297,6 +1303,22 @@ void ResourceUse::execute() {
 }
 
 void PlayChar::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		// Nancy17 names the character, and has no background to swap in
+		Common::String name;
+		readFilename(stream, name);
+
+		_characterIndex = kPlayerCharacterActive;
+		const PCUI *pcui = GetEngineData(PCUI);
+		for (uint i = 0; pcui && i < pcui->characters.size(); ++i) {
+			if (pcui->characters[i].name.equalsIgnoreCase(name)) {
+				_characterIndex = i;
+			}
+		}
+
+		return;
+	}
+
 	_characterIndex = stream.readByte();
 	readFilename(stream, _videoFile);
 }
@@ -1358,6 +1380,60 @@ void AddPhoneEntry::execute() {
 
 	NancySceneState.getNDUI()->showPhoneBookEntry(_entry, isNew);
 	_isDone = true;
+}
+
+static void readWideFlag(Common::SeekableReadStream &stream, FlagDescription &flag) {
+	flag.label = stream.readSint16LE();
+	flag.flag = stream.readUint16LE();
+}
+
+void HeldItemFlags::readData(Common::SeekableReadStream &stream) {
+	_hoverCursor = (CursorManager::CursorType)stream.readUint32LE();
+	readWideFlag(stream, _noItemFlag);
+
+	_itemFlags.resize(stream.readUint16LE());
+	for (ItemFlag &itemFlag : _itemFlags) {
+		itemFlag.itemID = stream.readSint32LE();
+		readWideFlag(stream, itemFlag.flag);
+	}
+
+	readWideFlag(stream, _otherItemFlag);
+
+	_hotspots.resize(stream.readUint16LE());
+	for (HotspotDescription &hotspot : _hotspots) {
+		hotspot.readData(stream);
+	}
+}
+
+void HeldItemFlags::execute() {
+	if (_state != kActionTrigger) {
+		_state = kRun;
+		_hasHotspot = false;
+
+		for (const HotspotDescription &hotspot : _hotspots) {
+			if (hotspot.frameID == NancySceneState.getSceneInfo().frameID) {
+				_hasHotspot = true;
+				_hotspot = hotspot.coords;
+			}
+		}
+
+		return;
+	}
+
+	FlagDescription flag = _noItemFlag;
+	int16 heldItem = NancySceneState.getHeldItem();
+	if (heldItem != -1) {
+		flag = _otherItemFlag;
+		for (const ItemFlag &itemFlag : _itemFlags) {
+			if (itemFlag.itemID == heldItem) {
+				flag = itemFlag.flag;
+			}
+		}
+	}
+
+	NancySceneState.setEventFlag(flag);
+	_hasHotspot = false;
+	finishExecution();
 }
 
 } // End of namespace Action
