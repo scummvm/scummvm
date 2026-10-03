@@ -699,12 +699,16 @@ void ResetAndStartTimer::execute() {
 	}
 
 	// Nancy 12+ issues a command to one of the software-timer slots. Every
-	// command other than kStart only takes effect while the slot is running.
+	// command other than kStart only takes effect while the slot is running
+	// (Nancy16: also while it's paused).
 	TimerData::Timer *timer = getSoftwareTimer(_timerIndex);
 	if (timer) {
+		const bool acceptsCommands = g_nancy->getGameType() >= kGameTypeNancy16 ?
+			timer->state != TimerData::Timer::kIdle : timer->state == TimerData::Timer::kRunning;
+
 		if (_command == kStart) {
 			timer->state = TimerData::Timer::kRunning;
-		} else if (timer->state == TimerData::Timer::kRunning) {
+		} else if (acceptsCommands) {
 			const bool isNancy14 = g_nancy->getGameType() >= kGameTypeNancy14;
 
 			// Seconds from kTimerDurationIndexBase (Nancy14+: above it) index

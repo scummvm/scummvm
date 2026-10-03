@@ -206,6 +206,7 @@ public:
 
 	// Nancy 11+ software-timer queries used by timer dependencies.
 	bool isSoftwareTimerActive(uint16 index) const;
+	int32 getSoftwareTimerState(uint16 index) const;
 	uint32 getSoftwareTimerElapsed(uint16 index) const;
 
 	// Nancy 12+ UI resource values (the UIRC boot chunk). Resource 0 is the

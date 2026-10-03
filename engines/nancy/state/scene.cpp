@@ -2266,6 +2266,14 @@ bool Scene::isSoftwareTimerActive(uint16 index) const {
 		timer.state == TimerData::Timer::kRepeating;
 }
 
+int32 Scene::getSoftwareTimerState(uint16 index) const {
+	if (index >= TimerData::kNumTimers || !_puzzleData.contains(TimerData::getTag())) {
+		return TimerData::Timer::kIdle;
+	}
+
+	return ((const TimerData *)_puzzleData.getVal(TimerData::getTag()))->timers[index].state;
+}
+
 uint32 Scene::getSoftwareTimerElapsed(uint16 index) const {
 	if (index >= TimerData::kNumTimers || !_puzzleData.contains(TimerData::getTag())) {
 		return 0;

@@ -745,8 +745,13 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 
 			break;
 		case DependencyType::kTimerIsActive:
-			// Nancy11+ only: satisfied while the software-timer slot is active
-			dep.satisfied = NancySceneState.isSoftwareTimerActive(dep.label);
+			if (g_nancy->getGameType() >= kGameTypeNancy16) {
+				// Nancy16 compares the slot's state against the one in the hours field
+				dep.satisfied = (NancySceneState.getSoftwareTimerState(dep.label) == dep.hours) == (dep.condition != 0);
+			} else {
+				// Nancy11+ only: satisfied while the software-timer slot is active
+				dep.satisfied = NancySceneState.isSoftwareTimerActive(dep.label);
+			}
 
 			break;
 		case DependencyType::kTimerEqualsDependencyTime:
