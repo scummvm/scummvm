@@ -33,7 +33,7 @@ void IgorEngine::PART_30_EXEC_ACTION(int action) {
 		PART_30_ACTION_102_goUpstairs();
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(201, 1);
+		ADD_DIALOGUE_TEXT(201, 1, 450);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -41,7 +41,7 @@ void IgorEngine::PART_30_EXEC_ACTION(int action) {
 		PART_30_ACTION_104_goDownstairs();
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(202, 1);
+		ADD_DIALOGUE_TEXT(202, 1, 451);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -206,13 +206,13 @@ void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
 	_updateDialogue = &IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA;
-	ADD_DIALOGUE_TEXT(203, 1);
-	ADD_DIALOGUE_TEXT(204, 1);
-	ADD_DIALOGUE_TEXT(205, 1);
+	ADD_DIALOGUE_TEXT(203, 1, 452);
+	ADD_DIALOGUE_TEXT(204, 1, 453);
+	ADD_DIALOGUE_TEXT(205, 1, 454);
 	SET_DIALOGUE_TEXT(1, 3);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(206, 1);
+	ADD_DIALOGUE_TEXT(206, 1, 455);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(201, 85, 63, 0, 38);
 	waitForEndOfCutsceneDialogue(201, 85, 63, 0, 38);
@@ -222,13 +222,13 @@ void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
 
 	PART_30_HANDLE_DIALOGUE_LAURA();
     // "Nunca me habian descrito tan bien"
-	ADD_DIALOGUE_TEXT(207, 1);
+	ADD_DIALOGUE_TEXT(207, 1, 456);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
     // at least you're funny
-	ADD_DIALOGUE_TEXT(208, 1);
-	ADD_DIALOGUE_TEXT(209, 1);
+	ADD_DIALOGUE_TEXT(208, 1, 457);
+	ADD_DIALOGUE_TEXT(209, 1, 458);
 	SET_DIALOGUE_TEXT(1, 2);
 	startCutsceneDialogue(201, 85, 63, 0, 38);
 	waitForEndOfCutsceneDialogue(201, 85, 63, 0, 38);
@@ -239,7 +239,7 @@ void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
     // Que caracter
-	ADD_DIALOGUE_TEXT(210, 1);
+	ADD_DIALOGUE_TEXT(210, 1, 459);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	memset(_screenVGA + 46080, 0, 17920);

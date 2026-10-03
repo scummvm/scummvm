@@ -30,39 +30,39 @@ void IgorEngine::PART_28_EXEC_ACTION(int action) {
 		_currentPart = 230;
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(201, 1);
+		ADD_DIALOGUE_TEXT(201, 1, 1226);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(202, 1);
+		ADD_DIALOGUE_TEXT(202, 1, 1227);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(203, 1);
+		ADD_DIALOGUE_TEXT(203, 1, 1228);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(204, 1);
+		ADD_DIALOGUE_TEXT(204, 1, 1229);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 106:
 		if (_objectsState[111] == 0) {
-			ADD_DIALOGUE_TEXT(205, 1);
-			ADD_DIALOGUE_TEXT(206, 1);
+			ADD_DIALOGUE_TEXT(205, 1, 1230);
+			ADD_DIALOGUE_TEXT(206, 1, 1231);
 			SET_DIALOGUE_TEXT(1, 2);
 			startIgorDialogue();
 		} else {
-			ADD_DIALOGUE_TEXT(234, 1);
+			ADD_DIALOGUE_TEXT(234, 1, 1253);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
 		}
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(237, 1);
+		ADD_DIALOGUE_TEXT(237, 1, 1256);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -73,28 +73,28 @@ void IgorEngine::PART_28_EXEC_ACTION(int action) {
 		PART_28_ACTION_109();
 		break;
 	case 110:
-		ADD_DIALOGUE_TEXT(228, 1);
-		ADD_DIALOGUE_TEXT(229, 1);
+		ADD_DIALOGUE_TEXT(228, 1, 1248);
+		ADD_DIALOGUE_TEXT(229, 1, 1249);
 		SET_DIALOGUE_TEXT(1, 2);
 		startIgorDialogue();
 		break;
 	case 111:
 		if (_objectsState[3] == 0) {
-			ADD_DIALOGUE_TEXT(226, 1);
+			ADD_DIALOGUE_TEXT(226, 1, 1246);
 			SET_DIALOGUE_TEXT(1, 1);
 		} else {
-			ADD_DIALOGUE_TEXT(227, 1);
+			ADD_DIALOGUE_TEXT(227, 1, 1247);
 			SET_DIALOGUE_TEXT(1, 1);
 		}
 		startIgorDialogue();
 		break;
 	case 112:
-		ADD_DIALOGUE_TEXT(235, 1);
+		ADD_DIALOGUE_TEXT(235, 1, 1254);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 113:
-		ADD_DIALOGUE_TEXT(236, 1);
+		ADD_DIALOGUE_TEXT(236, 1, 1255);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -106,20 +106,20 @@ void IgorEngine::PART_28_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_28_ACTION_108() {
 	if (_objectsState[111] == 1) {
-		ADD_DIALOGUE_TEXT(218, 1);
+		ADD_DIALOGUE_TEXT(218, 1, 1241);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
-		ADD_DIALOGUE_TEXT(211, 1);
-		ADD_DIALOGUE_TEXT(212, 1);
-		ADD_DIALOGUE_TEXT(213, 2);
-		ADD_DIALOGUE_TEXT(215, 1);
-		ADD_DIALOGUE_TEXT(216, 1);
+		ADD_DIALOGUE_TEXT(211, 1, 1235);
+		ADD_DIALOGUE_TEXT(212, 1, 1236);
+		ADD_DIALOGUE_TEXT(213, 2, 1237);
+		ADD_DIALOGUE_TEXT(215, 1, 1238);
+		ADD_DIALOGUE_TEXT(216, 1, 1239);
 		SET_DIALOGUE_TEXT(1, 5);
 		startCutsceneDialogue(182, 81, 63, 17, 17);
 		_updateDialogue = &IgorEngine::PART_28_UPDATE_DIALOGUE_CAROLINE;
 		waitForEndOfCutsceneDialogue(182, 81, 63, 17, 17);
-		ADD_DIALOGUE_TEXT(217, 1);
+		ADD_DIALOGUE_TEXT(217, 1, 1240);
 		SET_DIALOGUE_TEXT(1, 5);
 		startCutsceneDialogue(182, 81, 63, 17, 17);
 		waitForEndOfCutsceneDialogue(182, 81, 63, 17, 17);
@@ -131,26 +131,26 @@ void IgorEngine::PART_28_ACTION_108() {
 		_walkData[_walkDataLastIndex].posNum = 3;
 		_gameState.igorMoving = true;
 		waitForIgorMove();
-		ADD_DIALOGUE_TEXT(222, 2);
+		ADD_DIALOGUE_TEXT(222, 2, 1244);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		return;
 	}
 	if (_objectsState[87] < 2) {
-		ADD_DIALOGUE_TEXT(207, 1);
+		ADD_DIALOGUE_TEXT(207, 1, 1232);
 		SET_DIALOGUE_TEXT(1, 1);
 	} else {
-		ADD_DIALOGUE_TEXT(218, 1);
+		ADD_DIALOGUE_TEXT(218, 1, 1241);
 		SET_DIALOGUE_TEXT(1, 1);
 	}
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
 	if (_objectsState[87] < 2) {
-		ADD_DIALOGUE_TEXT(208, 1);
+		ADD_DIALOGUE_TEXT(208, 1, 1233);
 		SET_DIALOGUE_TEXT(1, 1);
 	} else {
-		ADD_DIALOGUE_TEXT(219, 2);
-		ADD_DIALOGUE_TEXT(221, 1);
+		ADD_DIALOGUE_TEXT(219, 2, 1242);
+		ADD_DIALOGUE_TEXT(221, 1, 1243);
 		SET_DIALOGUE_TEXT(1, 2);
 	}
 	startCutsceneDialogue(182, 81, 63, 17, 17);
@@ -172,7 +172,7 @@ void IgorEngine::PART_28_ACTION_109() {
 	addObjectToInventory(22, 57);
 	_objectsState[87] = 1;
 	PART_28_HELPER_1(255);
-	ADD_DIALOGUE_TEXT(230, 1);
+	ADD_DIALOGUE_TEXT(230, 1, 1250);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	if (_game.version == kIdEngDemo110) {
@@ -291,12 +291,12 @@ void IgorEngine::PART_28_HELPER_6() {
 	_walkData[_walkDataLastIndex].posNum = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	ADD_DIALOGUE_TEXT(209, 2);
+	ADD_DIALOGUE_TEXT(209, 2, 1234);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
 	waitForTimer(255);
-	ADD_DIALOGUE_TEXT(231, 1);
+	ADD_DIALOGUE_TEXT(231, 1, 1251);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
@@ -306,8 +306,8 @@ void IgorEngine::PART_28_HELPER_6() {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	ADD_DIALOGUE_TEXT(224, 2);
-	ADD_DIALOGUE_TEXT(232, 2);
+	ADD_DIALOGUE_TEXT(224, 2, 1245);
+	ADD_DIALOGUE_TEXT(232, 2, 1252);
 	SET_DIALOGUE_TEXT(1, 2);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
@@ -334,6 +334,13 @@ void IgorEngine::PART_28() {
 	PART_28_HELPER_1(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
+	// cseg123:2E04 -- the original's only write to the background-animation frame
+	// counter (s3:0xEB2C) is an unconditional set to 1 in this room's setup, made
+	// before the state dispatch below. PART_28_HELPER_5() forms its source address
+	// as animBase + frame * 1320 + i * 30 + j - 1320 (cseg123:0B7-0D5), so the frame
+	// is 1-based and a counter of 0 reads 1320 bytes before _animFramesBuffer.
+	// Without this the first background update reads out of bounds.
+	_gameState.unk10 = 1;
 	if (_currentPart == 280) {
 		fadeIn(768);
 		PART_28_HELPER_3();

@@ -30,47 +30,47 @@ void IgorEngine::PART_23_EXEC_ACTION(int action) {
 	case 101:
 		_currentPart = 280;
 		break;
-	case 102:
-		ADD_DIALOGUE_TEXT(201, 2);
+	case 102: // look at portrait
+		ADD_DIALOGUE_TEXT(201, 2, 1217);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 105:
-		PART_23_ACTION_105();
+		PART_23_ACTION_105_enterLadiesRoom();
 		break;
-	case 106:
-		ADD_DIALOGUE_TEXT(205, 1);
+	case 106: // look at door
+		ADD_DIALOGUE_TEXT(205, 1, 1220);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 107:
-		PART_23_ACTION_107();
+	case 107: // open door
+		PART_23_ACTION_107_openDoor();
 		break;
-	case 108:
-		PART_23_ACTION_108();
+	case 108: // close door
+		PART_23_ACTION_108_closeDoor();
 		break;
-	case 109:
+	case 109: // go through right corridor
 		_currentPart = 300;
 		break;
-	case 110:
-		ADD_DIALOGUE_TEXT(203, 1);
-		ADD_DIALOGUE_TEXT(204, 1);
+	case 110: // Look at Lucas
+		ADD_DIALOGUE_TEXT(203, 1, 1218);
+		ADD_DIALOGUE_TEXT(204, 1, 1219);
 		SET_DIALOGUE_TEXT(1, 2);
 		startIgorDialogue();
 		break;
 	case 111:
-		ADD_DIALOGUE_TEXT(208, 2);
+		ADD_DIALOGUE_TEXT(208, 2, 1222);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 112:
-		ADD_DIALOGUE_TEXT(210, 1);
-		ADD_DIALOGUE_TEXT(211, 1);
+		ADD_DIALOGUE_TEXT(210, 1, 1223);
+		ADD_DIALOGUE_TEXT(211, 1, 1224);
 		SET_DIALOGUE_TEXT(1, 2);
 		startIgorDialogue();
 		break;
 	case 113:
-		ADD_DIALOGUE_TEXT(212, 1);
+		ADD_DIALOGUE_TEXT(212, 1, 1225);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -80,7 +80,7 @@ void IgorEngine::PART_23_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_23_ACTION_105() {
+void IgorEngine::PART_23_ACTION_105_enterLadiesRoom() {
 	if (_objectsState[66] != 0) {
 		_roomObjectAreasTable[_screenLayer2[38633]].area = 1;
 		--_walkDataLastIndex;
@@ -92,7 +92,7 @@ void IgorEngine::PART_23_ACTION_105() {
 	}
 }
 
-void IgorEngine::PART_23_ACTION_107() {
+void IgorEngine::PART_23_ACTION_107_openDoor() {
 	if (_objectsState[66] == 1) {
 		EXEC_MAIN_ACTION(11);
 	} else {
@@ -109,7 +109,7 @@ void IgorEngine::PART_23_ACTION_107() {
 	}
 }
 
-void IgorEngine::PART_23_ACTION_108() {
+void IgorEngine::PART_23_ACTION_108_closeDoor() {
 	if (_objectsState[66] == 0) {
 		EXEC_MAIN_ACTION(14);
 	} else {
@@ -171,7 +171,7 @@ void IgorEngine::PART_23_HELPER_3() {
 	}
 }
 
-void IgorEngine::PART_23_HELPER_4() {
+void IgorEngine::PART_23_HELPER_4_walkFromDoor() {
 	_walkData[0].setPos(233, 120, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 0;
@@ -199,13 +199,13 @@ void IgorEngine::PART_23_HELPER_4() {
 		playSound(14, 1);
 		_objectsState[66] = 0;
 		PART_23_HELPER_1(1);
-		ADD_DIALOGUE_TEXT(206, 2);
+		ADD_DIALOGUE_TEXT(206, 2, 1221);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 	}
 }
 
-void IgorEngine::PART_23_HELPER_5() {
+void IgorEngine::PART_23_HELPER_5_walkFromLeft() {
 	_walkData[0].setPos(0, 134, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 15;
@@ -218,7 +218,7 @@ void IgorEngine::PART_23_HELPER_5() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_23_HELPER_6() {
+void IgorEngine::PART_23_HELPER_6_walkFromRight() {
 	_walkData[0].setPos(319, 134, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -261,18 +261,20 @@ void IgorEngine::PART_23() {
 	loadActionData(DAT_CollegeCorridorLucas);
 	_roomDataOffsets = PART_23_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(15, 0, 319, 143);
+
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_23_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_23_UPDATE_ROOM_BACKGROUND;
 	PART_23_HELPER_1(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
+
 	if (_currentPart == 230) {
-		PART_23_HELPER_5();
+		PART_23_HELPER_5_walkFromLeft();
 	} else if (_currentPart == 231) {
-		PART_23_HELPER_6();
+		PART_23_HELPER_6_walkFromRight();
 	} else if (_currentPart == 232) {
-		PART_23_HELPER_4();
+		PART_23_HELPER_4_walkFromDoor();
 	}
 	enterPartLoop();
 	while (_currentPart >= 230 && _currentPart <= 232) {

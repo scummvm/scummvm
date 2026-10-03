@@ -625,16 +625,16 @@ private:
 
 	// college corridor lucas
 	void PART_23_EXEC_ACTION(int action);
-	void PART_23_ACTION_105();
-	void PART_23_ACTION_107();
-	void PART_23_ACTION_108();
+	void PART_23_ACTION_105_enterLadiesRoom();
+	void PART_23_ACTION_107_openDoor();
+	void PART_23_ACTION_108_closeDoor();
 	void PART_23_UPDATE_ROOM_BACKGROUND();
 	void PART_23_HELPER_1(int num);
 	void PART_23_HELPER_2(int frame);
 	void PART_23_HELPER_3();
-	void PART_23_HELPER_4();
-	void PART_23_HELPER_5();
-	void PART_23_HELPER_6();
+	void PART_23_HELPER_4_walkFromDoor();
+	void PART_23_HELPER_5_walkFromLeft();
+	void PART_23_HELPER_6_walkFromRight();
 	void PART_23_HELPER_7(int frame);
 	void PART_23_HELPER_8(int frame);
 	void PART_23();
