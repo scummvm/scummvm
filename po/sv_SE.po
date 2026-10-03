@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-10-02 05:39+0000\n"
+"PO-Revision-Date: 2026-10-03 16:22+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -2840,7 +2840,7 @@ msgstr "* 123"
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:603
 msgid "*  Abc"
-msgstr "* ABC"
+msgstr "*  Abc"
 
 #: gui/printing-dialog.cpp:54
 msgid "Print"
@@ -8522,7 +8522,7 @@ msgid ""
 "designed for it"
 msgstr ""
 "Använd äkta färggrafikläge (32 bitar per bildpunkt), även om spelet inte är "
-"utformat för det."
+"utformat för det"
 
 #: engines/dm/metaengine.cpp:71
 msgid "Dialog choice selection keymappings"
