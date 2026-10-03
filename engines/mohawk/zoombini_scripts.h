@@ -25,6 +25,7 @@
 #include "audio/mixer.h"
 
 #include "common/array.h"
+#include "common/noncopyable.h"
 #include "common/ptr.h"
 #include "common/rect.h"
 #include "common/stablemap.h"
@@ -369,7 +370,7 @@ struct ZmbPreparedRenderHotspot {
  * feature replaces script data but preserves the runner identity, position,
  * hooks, and sound policy used by the page.
  */
-class ZmbFeature {
+class ZmbFeature : private Common::NonCopyable {
 public:
 	/**
 	 * Select how this runner dispatches embedded SCRB/SCRS sounds.

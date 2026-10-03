@@ -22,6 +22,7 @@
 #ifndef MOHAWK_ZOOMBINI_H
 #define MOHAWK_ZOOMBINI_H
 
+#include "common/noncopyable.h"
 #include "common/queue.h"
 #include "common/stack.h"
 
@@ -87,7 +88,7 @@ struct ZmbBuiltinDebugRuntimeState {
  * replacing the active page, clearing page image caches when archive namespaces
  * change, and keeping system resources available across page transitions.
  */
-class MohawkEngine_Zoombini : public MohawkEngine {
+class MohawkEngine_Zoombini : public MohawkEngine, private Common::NonCopyable {
 public:
 	/**
 	 * Debug channels registered and owned by the Zoombini engine.

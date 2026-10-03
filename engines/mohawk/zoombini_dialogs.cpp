@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/language.h"
+#include "common/noncopyable.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -49,7 +50,7 @@ namespace Mohawk {
 
 namespace {
 
-class ZoombiniSeparatorWidget : public GUI::Widget {
+class ZoombiniSeparatorWidget : public GUI::Widget, private Common::NonCopyable {
 public:
 	ZoombiniSeparatorWidget(GUI::GuiObject *boss, const Common::String &name) : GUI::Widget(boss, name) {
 		setFlags(GUI::WIDGET_ENABLED | GUI::WIDGET_CLEARBG);
@@ -61,7 +62,7 @@ protected:
 	}
 };
 
-class ZoombiniSaveListWidget : public GUI::ScrollContainerWidget {
+class ZoombiniSaveListWidget : public GUI::ScrollContainerWidget, private Common::NonCopyable {
 public:
 	ZoombiniSaveListWidget(GUI::GuiObject *boss, int x, int y, int w, int h, const Common::U32String &corruptedTooltip)
 		: GUI::ScrollContainerWidget(boss, x, y, w, h), _corruptedTooltip(corruptedTooltip) {

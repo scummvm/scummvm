@@ -26,6 +26,8 @@
 
 #ifdef ENABLE_ZOOMBINI
 
+#include "common/noncopyable.h"
+
 #include "mohawk/zoombini_page.h"
 #include "mohawk/zoombini_resource.h"
 
@@ -39,7 +41,7 @@ namespace Mohawk {
 
 class MohawkEngine_Zoombini;
 
-class ZoombiniConsole : public GUI::Debugger {
+class ZoombiniConsole : public GUI::Debugger, private Common::NonCopyable {
 public:
 	/** Create the Zoombini debugger and register its commands. */
 	explicit ZoombiniConsole(MohawkEngine_Zoombini *vm);

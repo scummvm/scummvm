@@ -24,6 +24,7 @@
 
 #include "common/hashmap.h"
 #include "common/language.h"
+#include "common/noncopyable.h"
 #include "common/scummsys.h"
 #include "common/str-enc.h"
 #include "graphics/fontman.h"
@@ -42,7 +43,7 @@ class TTFLoader;
 class MohawkEngine_Zoombini;
 
 /** Extract the localized hard-coded strings from the Zoombinis executable, and provide access to them by key. */
-class ZoombiniText {
+class ZoombiniText : private Common::NonCopyable {
 public:
 	/** Load localized text sources for the selected engine language. */
 	ZoombiniText(MohawkEngine_Zoombini *vm, Common::Language lang);
