@@ -315,192 +315,37 @@ void RebelAudio::setGroupPan(SmushPlayer *player, int groupId, int pan) {
 }
 
 bool RebelAudio::processAudioCodes(SmushPlayer *player, int idx, int32 &tmpFeedSize, int &mixVolume) {
-	uint8 *code, *buf, subcode, value;
-	int chunk;
-
-	while (tmpFeedSize) {
-		code = player->_smushDispatch[idx].headerPtr;
-
-		switch (code[0]) {
-		case SAUD_OP_INIT:
-			player->_smushDispatch[idx].audioLength = 0;
-			buf = player->_smushDispatch[idx].headerPtr;
-			player->_smushDispatch[idx].audioRemaining = READ_BE_UINT32(buf + 2);
-			player->_smushDispatch[idx].currentOffset = READ_BE_UINT32(buf + 6);
-			player->_smushDispatch[idx].sampleRate = player->_smushAudioSampleRate;
-			player->_smushDispatch[idx].headerPtr += player->_smushDispatch[idx].headerPtr[1] + 2;
-			if (player->_smushDispatch[idx].audioRemaining < player->_smushTracks[idx].availableSize + (player->_smushTracks[idx].availableSize >= player->_smushTracks[idx].sdatSize ? 0 : 15000) - player->_smushTracks[idx].dataSize) {
-				chunk = player->_smushTracks[idx].availableSize - player->_smushTracks[idx].dataSize - player->_smushDispatch[idx].audioRemaining + 15000;
-				if (chunk > player->_smushDispatch[idx].currentOffset) {
-					player->_smushTracks[idx].state = TRK_STATE_INACTIVE;
-					player->_smushTracks[idx].groupId = GRP_MASTER;
-					tmpFeedSize = 0;
-					break;
-				}
-
-				player->_smushDispatch[idx].audioRemaining += chunk;
-				player->_smushDispatch[idx].currentOffset -= chunk;
-			}
+	if (tmpFeedSize <= 0)
+		return true;
+	SmushPlayer::SmushAudioTrack &track = player->_smushTracks[idx];
+	SmushPlayer::SmushAudioDispatch &dispatch = player->_smushDispatch[idx];
+	SaudSpan span;
+	uint skippedSpans = 0;
+	while (tmpFeedSize > 0 && _scripts[idx].nextSpan(span, player->_smushAudioTable,
+			player->_smushTrackVols[0], track.volume, track.pan)) {
+		if (++skippedSpans > 65536) {
+			warning("SAUD: track %d loops over replaced audio", idx);
 			break;
-
-		case SAUD_OP_UPDATE_HEADER:
-		case SAUD_OP_COMPARE_GT:
-		case SAUD_OP_COMPARE_LT:
-		case SAUD_OP_COMPARE_EQ:
-		case SAUD_OP_COMPARE_NE:
-			subcode = code[4];
-			switch (subcode) {
-			case SAUD_VALUEID_ALL_VOLS:
-				value = player->_smushTrackVols[0];
-				break;
-			case SAUD_VALUEID_TRK_VOL:
-				value = player->_smushTracks[idx].volume;
-				break;
-			case SAUD_VALUEID_TRK_PAN:
-				value = player->_smushTracks[idx].pan;
-				break;
-			default:
-				value = player->_smushAudioTable[subcode];
-				break;
-			}
-
-			switch (code[0]) {
-			case SAUD_OP_UPDATE_HEADER:
-				value = value || (subcode == 0);
-				break;
-			case SAUD_OP_COMPARE_GT:
-				value = value > code[5];
-				break;
-			case SAUD_OP_COMPARE_LT:
-				value = value < code[5];
-				break;
-			case SAUD_OP_COMPARE_EQ:
-				value = value == code[5];
-				break;
-			case SAUD_OP_COMPARE_NE:
-				value = value != code[5];
-				break;
-			default:
-				break;
-			}
-
-			if (!value) {
-				player->_smushDispatch[idx].headerPtr = &code[code[1] + 2];
-			} else {
-				// Rebel Assault SAUD branch targets are signed relative displacements.
-				player->_smushDispatch[idx].headerPtr = code + READ_BE_INT16(&code[2]);
-			}
-			break;
-
-		case SAUD_OP_SET_PARAM:
-			switch (code[2]) {
-			case SAUD_VALUEID_ALL_VOLS:
-				player->_smushTrackVols[0] = code[3];
-				mixVolume = computeMixVolume(player, idx);
-				break;
-			case SAUD_VALUEID_TRK_VOL:
-				player->_smushTracks[idx].volume = code[3];
-				mixVolume = computeMixVolume(player, idx);
-				break;
-			case SAUD_VALUEID_TRK_PAN:
-				player->_smushTracks[idx].pan = code[3];
-				break;
-			default:
-				player->_smushAudioTable[code[2]] = code[3];
-				break;
-			}
-			player->_smushDispatch[idx].headerPtr = &code[code[1] + 2];
-			break;
-
-		case SAUD_OP_INCR_PARAM:
-			switch (code[2]) {
-			case SAUD_VALUEID_ALL_VOLS:
-				player->_smushTrackVols[0] += code[3];
-				mixVolume = computeMixVolume(player, idx);
-				break;
-			case SAUD_VALUEID_TRK_VOL:
-				player->_smushTracks[idx].volume += code[3];
-				mixVolume = computeMixVolume(player, idx);
-				break;
-			case SAUD_VALUEID_TRK_PAN:
-				player->_smushTracks[idx].pan += code[3];
-				break;
-			default:
-				player->_smushAudioTable[code[2]] += code[3];
-				break;
-			}
-			player->_smushDispatch[idx].headerPtr = &code[code[1] + 2];
-			break;
-
-		case SAUD_OP_SET_OFFSET:
-			player->_smushDispatch[idx].audioLength = 0;
-			buf = player->_smushDispatch[idx].headerPtr;
-			player->_smushDispatch[idx].audioRemaining = READ_BE_UINT32(buf + 2);
-			player->_smushDispatch[idx].currentOffset = READ_BE_UINT32(buf + 6);
-			player->_smushDispatch[idx].sampleRate = READ_BE_UINT32(buf + 10);
-
-			player->_smushDispatch[idx].headerPtr += player->_smushDispatch[idx].headerPtr[1] + 2;
-			if (player->_smushDispatch[idx].audioRemaining < player->_smushTracks[idx].availableSize + (player->_smushTracks[idx].availableSize >= player->_smushTracks[idx].sdatSize ? 0 : 15000) - player->_smushTracks[idx].dataSize) {
-				chunk = player->_smushTracks[idx].availableSize - player->_smushTracks[idx].dataSize - player->_smushDispatch[idx].audioRemaining + 15000;
-				if (chunk > player->_smushDispatch[idx].currentOffset) {
-					player->_smushTracks[idx].state = TRK_STATE_INACTIVE;
-					player->_smushTracks[idx].groupId = GRP_MASTER;
-					tmpFeedSize = 0;
-					break;
-				}
-
-				player->_smushDispatch[idx].audioRemaining += chunk;
-				player->_smushDispatch[idx].currentOffset -= chunk;
-			}
-			break;
-
-		case SAUD_OP_SET_LENGTH:
-			if (!player->_smushDispatch[idx].audioLength) {
-				player->_smushDispatch[idx].audioLength = READ_BE_UINT32(&code[6]);
-				player->_smushDispatch[idx].elapsedAudio = 0;
-			}
-
-			buf = player->_smushDispatch[idx].headerPtr;
-			player->_smushDispatch[idx].audioRemaining = player->_smushDispatch[idx].elapsedAudio + READ_BE_UINT32(buf + 2);
-
-			player->_smushDispatch[idx].currentOffset = READ_BE_UINT32(buf + 14);
-			if (player->_smushDispatch[idx].currentOffset > player->_smushDispatch[idx].audioLength)
-				player->_smushDispatch[idx].currentOffset = player->_smushDispatch[idx].audioLength;
-
-			player->_smushDispatch[idx].sampleRate = READ_BE_UINT32(buf + 10);
-
-			player->_smushDispatch[idx].audioLength -= player->_smushDispatch[idx].currentOffset;
-			player->_smushDispatch[idx].elapsedAudio += player->_smushDispatch[idx].currentOffset;
-
-			if (player->_smushDispatch[idx].audioLength) {
-				player->_smushDispatch[idx].headerPtr = &code[code[1] + 2];
-			} else {
-				player->_smushDispatch[idx].headerPtr = code + READ_BE_INT16(&code[18]);
-			}
-
-			if (player->_smushDispatch[idx].audioRemaining >= player->_smushTracks[idx].availableSize + (player->_smushTracks[idx].availableSize >= player->_smushTracks[idx].sdatSize ? 0 : 15000) - player->_smushTracks[idx].dataSize) {
-				chunk = player->_smushTracks[idx].availableSize - player->_smushTracks[idx].dataSize - player->_smushDispatch[idx].audioRemaining + 15000;
-				if (chunk > player->_smushDispatch[idx].currentOffset) {
-					player->_smushTracks[idx].state = TRK_STATE_INACTIVE;
-					player->_smushTracks[idx].groupId = GRP_MASTER;
-					tmpFeedSize = 0;
-				} else {
-					player->_smushDispatch[idx].audioRemaining += chunk;
-					player->_smushDispatch[idx].currentOffset -= chunk;
-				}
-			}
-			break;
-
-		default:
-			player->_smushTracks[idx].state = TRK_STATE_INACTIVE;
-			player->_smushTracks[idx].groupId = GRP_MASTER;
-			tmpFeedSize = 0;
 		}
+		mixVolume = computeMixVolume(player, idx);
+		dispatch.audioRemaining = span.offset;
+		dispatch.currentOffset = span.length;
+		dispatch.sampleRate = span.rate;
 
-		if (player->_smushDispatch[idx].currentOffset > 0)
+		// A backward branch may refer to samples already replaced in the ring buffer.
+		if (dispatch.audioRemaining < track.availableSize + (track.availableSize >= track.sdatSize ? 0 : 15000) - track.dataSize) {
+			const int32 skipped = track.availableSize - track.dataSize - dispatch.audioRemaining + 15000;
+			if (skipped > dispatch.currentOffset)
+				break;
+			dispatch.audioRemaining += skipped;
+			dispatch.currentOffset -= skipped;
+		}
+		if (dispatch.currentOffset > 0)
 			return false;
 	}
-
+	track.state = TRK_STATE_INACTIVE;
+	track.groupId = GRP_MASTER;
+	tmpFeedSize = 0;
 	return true;
 }
 
@@ -628,7 +473,7 @@ void RebelAudio::processFrame(SmushPlayer *player, int16 feedSize) {
 				dispatch.volumeStep = 16;
 
 			stopStream(i);
-			dispatch.headerPtr = track.dataBuf;
+			_scripts[i].reset(track.dataBuf, track.subChunkPtr - track.dataBuf - 8, player->_smushAudioSampleRate);
 			dispatch.dataBuf = track.subChunkPtr;
 			dispatch.dataSize = track.dataSize;
 			dispatch.currentOffset = 0;

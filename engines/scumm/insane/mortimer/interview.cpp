@@ -143,6 +143,15 @@ bool MortimerInterview::loadResources(uint region) {
 		}
 		file.close();
 	}
+	_mouth.clear();
+	if (!_isDemo) {
+		const Common::String mouth = Common::String::format("%s/%cG_MOUTH.NUT", resources.directory, resources.prefix);
+		if (!file.open(Common::Path(mouth)) || !loadMortimerSprites(file, _mouth) || _mouth.size() < 6) {
+			_error = Common::String::format("Missing or invalid %s", mouth.c_str());
+			return false;
+		}
+		file.close();
+	}
 	if (!_font.load("RESOURCE/GENERAL/MORTFNTH.NUT") || !_captionFont.load(_isDemo ? "RESOURCE/GENERAL/SUBTFONT.NUT" : "RESOURCE/GENERAL/ESTRO20.NUT")) {
 		_error = "Missing or invalid Mortimer font";
 		return false;
@@ -478,9 +487,14 @@ void MortimerInterview::drawText(Graphics::Surface &screen, const Common::String
 		_font.drawString(&screen, lines[first + i], 29, top + i * height, 330, _isDemo ? 0 : 1, Graphics::kTextAlignCenter);
 }
 
-void MortimerInterview::draw(Graphics::Surface &screen, const MortimerMovie &movie) const {
+void MortimerInterview::draw(Graphics::Surface &screen, const MortimerMovie &movie, byte mouth) const {
 	if (fullScreen()) {
 		screen.copyRectToSurface(movie.pixels(), MortimerMovie::kScreenWidth, 0, 0, 640, 480);
+		if (!_isDemo && _stage == kSong) {
+			// Song callback 4119a0 and tables 4438a0/442d4c use STRK variable 1.
+			const Common::Point origins[] = {{97, 63}, {88, 17}, {181, 0}, {100, 33}};
+			_mouth[MIN<uint>(mouth, 5)].draw(screen, origins[_region].x * 2, origins[_region].y * 2, false, nullptr, 2);
+		}
 		for (uint i = 0; _isDemo && i < movie.captions().size(); ++i) {
 			const MortimerMovie::Caption &caption = movie.captions()[i];
 			if (caption.id < ARRAYSIZE(_captions))

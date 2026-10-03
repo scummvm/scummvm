@@ -43,17 +43,18 @@ struct MortimerSprite {
 	// Codec 44 uses skipped pixels for transparency and relative palette colors.
 	Common::Array<byte> mask;
 
-	void draw(Graphics::Surface &screen, int dstX, int dstY, bool centered = false, const Common::Rect *bounds = nullptr) const;
+	void draw(Graphics::Surface &screen, int dstX, int dstY, bool centered = false, const Common::Rect *bounds = nullptr, int scale = 1) const;
 };
 
 struct MortimerSound {
 	uint frame = 0;
 	uint rate = 11025;
-	byte volume = 255;
+	byte volume = 127;
 	int8 balance = 0;
 	bool music = false;
 	bool speech = true;
 	Common::Array<byte> samples;
+	Common::Array<byte> script;
 };
 
 struct MortimerMovieContext {

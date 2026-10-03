@@ -22,7 +22,6 @@
 #include "scumm/insane/mortimer/dialogs.h"
 
 #include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
 #include "backends/keymapper/action.h"
 #include "common/config-manager.h"
 #include "common/endian.h"
@@ -201,7 +200,7 @@ bool MortimerEngine::loadResources() {
 		file.close();
 	}
 	// The hit sound animation uses volume 50 on the original 0..127 scale.
-	_collisionSound.volume = 100;
+	_collisionSound.volume = 50;
 	if (_isDemo && !_interview.loadResources()) {
 		_loadError = _interview.errorMessage();
 		return false;
@@ -398,24 +397,28 @@ bool MortimerEngine::enterCampaignScene() {
 	return startMovie();
 }
 
-void MortimerEngine::playSound(const MortimerSound &sound, Audio::SoundHandle &handle, Audio::Mixer::SoundType type, uint offset) {
+void MortimerEngine::playSound(const MortimerSound &sound, Audio::SoundHandle &handle, Audio::Mixer::SoundType type, uint64 skipFrames) {
 	_mixer->stopHandle(handle);
-	// The engine owns the samples until all its handles have been stopped.
-	Audio::AudioStream *stream = Audio::makeRawStream(sound.samples.begin() + offset, sound.samples.size() - offset, sound.rate,
-		Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-	_mixer->playStream(type, &handle, stream, -1, sound.volume, sound.balance);
+	SaudStream *stream = new SaudStream(sound.samples, sound.script, sound.rate, _soundState, sound.volume, sound.balance);
+	stream->skip(skipFrames);
+	if (stream->endOfData()) {
+		delete stream;
+		return;
+	}
+	_mixer->playStream(type, &handle, stream);
 }
 
 void MortimerEngine::playMovieSounds(bool seek) {
+	if (seek)
+		stopSounds();
 	const MortimerMovie &movie = currentMovie();
 	for (uint i = 0; i < movie.sounds().size(); ++i) {
 		const MortimerSound &sound = movie.sounds()[i];
 		if (!movie.soundEnabled(i) || sound.frame > movie.frame() || (!seek && sound.frame != movie.frame()))
 			continue;
-		const uint64 offset = uint64(movie.frame() - sound.frame) * sound.rate / movie.frameRate();
-		if (offset < sound.samples.size())
-			playSound(sound, _movieHandles[i], sound.music ? Audio::Mixer::kMusicSoundType :
-				(sound.speech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType), offset);
+		const uint64 elapsed = uint64(movie.frame() - sound.frame) * SaudStream::kRate / movie.frameRate();
+		playSound(sound, _movieHandles[i], sound.music ? Audio::Mixer::kMusicSoundType :
+			(sound.speech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType), elapsed);
 	}
 }
 
@@ -437,6 +440,7 @@ void MortimerEngine::stopSounds() {
 	_mixer->stopHandle(_scopeHandle);
 	_mixer->stopHandle(_rescueHandle);
 	_mixer->stopHandle(_glowHandle);
+	_soundState.reset();
 }
 
 bool MortimerEngine::startMovie(bool preserveScreen) {
@@ -864,6 +868,8 @@ void MortimerEngine::updateInterface() {
 }
 
 bool MortimerEngine::speechPlaying() const {
+	if (!_soundState.variable(2))
+		return false;
 	for (uint i = 0; i < _movieHandles.size(); ++i)
 		if (currentMovie().sounds()[i].speech && _mixer->isSoundHandleActive(_movieHandles[i]))
 			return true;
@@ -1095,7 +1101,7 @@ void MortimerEngine::drawDashboard() {
 
 void MortimerEngine::draw() {
 	if (_interviewActive) {
-		_interview.draw(_screen, _intro);
+		_interview.draw(_screen, _intro, _soundState.variable(1));
 		if (_interview.showDashboard())
 			drawDashboard();
 		_interview.drawCursor(_screen, _mouse);

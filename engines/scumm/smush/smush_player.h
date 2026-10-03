@@ -26,6 +26,7 @@
 #include "common/list.h"
 #include "common/rect.h"
 #include "scumm/charset_v7.h"
+#include "scumm/smush/saud.h"
 
 namespace Audio {
 class SoundHandle;
@@ -56,21 +57,6 @@ namespace Scumm {
 #define TRK_STATE_ENDING   3
 
 #define TRK_TYPE_MASK 0xC0
-
-#define SAUD_OP_INIT          1
-#define SAUD_OP_UPDATE_HEADER 2
-#define SAUD_OP_SET_PARAM     3
-#define SAUD_OP_INCR_PARAM    4
-#define SAUD_OP_SET_OFFSET    6
-#define SAUD_OP_SET_LENGTH    7
-#define SAUD_OP_COMPARE_GT    8
-#define SAUD_OP_COMPARE_LT    9
-#define SAUD_OP_COMPARE_EQ    10
-#define SAUD_OP_COMPARE_NE    11
-
-#define SAUD_VALUEID_ALL_VOLS 0xFF
-#define SAUD_VALUEID_TRK_VOL  0xFE
-#define SAUD_VALUEID_TRK_PAN  0xFD
 
 #define TRK_USERID_SPEECH 1
 #define TRK_USERID_MUSIC  2

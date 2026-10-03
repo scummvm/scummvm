@@ -29,6 +29,7 @@
 #include "scumm/insane/mortimer/flight.h"
 #include "scumm/insane/mortimer/interview.h"
 #include "scumm/insane/mortimer/campaign.h"
+#include "scumm/smush/saud_stream.h"
 
 namespace Scumm {
 
@@ -86,7 +87,7 @@ private:
 	void drawTargets();
 	void drawDashboard();
 	bool speechPlaying() const;
-	void playSound(const MortimerSound &sound, Audio::SoundHandle &handle, Audio::Mixer::SoundType type, uint offset = 0);
+	void playSound(const MortimerSound &sound, Audio::SoundHandle &handle, Audio::Mixer::SoundType type, uint64 skipFrames = 0);
 	void playMovieSounds(bool seek = false);
 	void playCollisionSound();
 	void stopSounds();
@@ -104,6 +105,7 @@ private:
 	Common::Array<MortimerSprite> _scopeHit, _slimeHit, _scopeBeam, _slimeBall, _numbers, _corners;
 	MortimerSound _scopeSound, _rescueSound, _collisionSound, _slimeSound, _slimeHitSound, _glowSound, _balloonSound;
 	MortimerSound _buttonSound, _payoutSound;
+	SaudStreamState _soundState;
 	Common::Array<Audio::SoundHandle> _movieHandles;
 	Common::Array<Audio::SoundHandle> _collisionHandles;
 	Audio::SoundHandle _scopeHandle, _rescueHandle, _glowHandle;

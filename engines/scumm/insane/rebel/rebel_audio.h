@@ -24,6 +24,7 @@
 
 #include "audio/mixer.h"
 #include "common/scummsys.h"
+#include "scumm/smush/saud.h"
 
 namespace Audio {
 class QueuingAudioStream;
@@ -70,6 +71,7 @@ private:
 	bool _fadeTrackActive[kMaxTracks];
 	Audio::Mixer::SoundType _streamTypes[kMaxTracks];
 	Audio::Mixer::SoundType _fadeStreamTypes[kMaxTracks];
+	SaudScript _scripts[kMaxTracks];
 	int _sampleRate;
 };
 

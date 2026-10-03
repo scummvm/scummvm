@@ -153,7 +153,7 @@ bool validObject(const byte *data, uint32 size, bool sprite = false) {
 		return false;
 	const byte codec = data[0];
 	if (sprite)
-		return codec == 44 || (codec == 1 && validRows(data + 14, size - 14, height, false));
+		return codec == 44 || ((codec == 1 || codec == 3) && validRows(data + 14, size - 14, height, false));
 	if (codec == 37)
 		return validBackground(data + 14, size - 14, (width + 3) & ~3, (height + 3) & ~3);
 	if (codec != 1 && codec != 3 && codec != 23)
@@ -187,20 +187,32 @@ bool validTransition(const byte *data, uint32 size) {
 
 } // End of anonymous namespace
 
-void MortimerSprite::draw(Graphics::Surface &screen, int dstX, int dstY, bool centered, const Common::Rect *bounds) const {
+void MortimerSprite::draw(Graphics::Surface &screen, int dstX, int dstY, bool centered, const Common::Rect *bounds, int scale) const {
 	// Sprite offsets are relative to the animation's origin, even when centered.
 	if (centered) {
-		dstX -= (x + width) / 2;
-		dstY -= (y + height) / 2;
+		dstX -= (x + width) * scale / 2;
+		dstY -= (y + height) * scale / 2;
 	}
-	dstX += x;
-	dstY += y;
-	Common::Rect clip(dstX, dstY, dstX + width, dstY + height);
+	dstX += x * scale;
+	dstY += y * scale;
+	Common::Rect clip(dstX, dstY, dstX + width * scale, dstY + height * scale);
 	clip.clip(Common::Rect(screen.w, screen.h));
 	if (bounds)
 		clip.clip(*bounds);
 	if (clip.isEmpty())
 		return;
+	if (scale != 1) {
+		for (int row = clip.top; row < clip.bottom; ++row) {
+			const byte *src = pixels.begin() + (row - dstY) / scale * width;
+			byte *dst = (byte *)screen.getBasePtr(clip.left, row);
+			for (int col = clip.left; col < clip.right; ++col, ++dst) {
+				const byte color = src[(col - dstX) / scale];
+				if (color)
+					*dst = color;
+			}
+		}
+		return;
+	}
 	const byte *src = pixels.begin() + (clip.top - dstY) * width + clip.left - dstX;
 	screen.copyRectToSurfaceWithKey(src, width, clip.left, clip.top, clip.width(), clip.height(), 0);
 }
@@ -301,6 +313,16 @@ bool loadMortimerSound(Common::SeekableReadStream &stream, MortimerSound &sound)
 	if (stream.read(sound.samples.begin(), header.dataSize) != header.dataSize || stream.err()) {
 		sound.samples.clear();
 		return false;
+	}
+	sound.script.clear();
+	if (header.scriptOffset >= 0) {
+		sound.script.resize(header.scriptSize);
+		if (!stream.seek(header.scriptOffset) || stream.read(sound.script.begin(), header.scriptSize) != header.scriptSize || stream.err())
+			return false;
+		if (sound.script.empty()) {
+			sound.script.push_back(SAUD_OP_STOP);
+			sound.script.push_back(0);
+		}
 	}
 	sound.rate = header.sampleRate;
 	return true;
@@ -449,8 +471,8 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled, bool 
 						track.sound.frame = _frames.size();
 						track.sound.music = (flags & 64) != 0;
 						track.sound.speech = (flags & 128) != 0;
-						track.sound.volume = MIN(255, body[8] * 2);
-						track.sound.balance = body[9] == 128 ? 0 : (int(body[9]) - 64) * 2;
+						track.sound.volume = MIN(127, body[8] * 127 >> 7);
+						track.sound.balance = body[9] == 128 ? 0 : int8(body[9]);
 						index = tracks.size();
 						tracks.push_back(track);
 					}

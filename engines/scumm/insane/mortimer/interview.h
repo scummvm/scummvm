@@ -48,7 +48,7 @@ public:
 	void movieFinished();
 	void movieLoaded() { _moviePending = false; }
 	void skip();
-	void draw(Graphics::Surface &screen, const MortimerMovie &movie) const;
+	void draw(Graphics::Surface &screen, const MortimerMovie &movie, byte mouth) const;
 	void drawCursor(Graphics::Surface &screen, const Common::Point &point) const;
 
 	bool needsMovie() const { return _moviePending; }
@@ -88,7 +88,7 @@ private:
 	Common::RandomSource _random;
 	const bool _isDemo;
 	uint _region, _difficulty, _textDifficulty, _tried;
-	Common::Array<MortimerSprite> _panel, _portraits, _gate, _cursor;
+	Common::Array<MortimerSprite> _panel, _portraits, _gate, _cursor, _mouth;
 	MortimerFont _font, _captionFont;
 	Common::String _dialogue[7][3], _riddles[7][3], _captions[16];
 	Common::String _movieName, _error;

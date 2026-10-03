@@ -32,6 +32,8 @@ namespace Scumm {
 struct SaudHeader {
 	uint32 dataSize = 0;
 	uint32 sampleRate = 11025;
+	int64 scriptOffset = -1;
+	uint32 scriptSize = 0;
 };
 
 // Read a SAUD container spanning the rest of the stream, leaving it at its PCM.
@@ -40,6 +42,49 @@ struct SaudHeader {
 // without reading trailing metadata. This supports Rebel SFX and auxiliary buffers.
 // The header is only updated on success.
 bool readSaudHeader(Common::SeekableReadStream &stream, SaudHeader &header, bool allowTruncated = false);
+
+enum SaudOpcode {
+	SAUD_OP_INIT = 1,
+	SAUD_OP_UPDATE_HEADER = 2,
+	SAUD_OP_SET_PARAM = 3,
+	SAUD_OP_INCR_PARAM = 4,
+	SAUD_OP_STOP = 5,
+	SAUD_OP_SET_OFFSET = 6,
+	SAUD_OP_SET_LENGTH = 7,
+	SAUD_OP_COMPARE_GT = 8,
+	SAUD_OP_COMPARE_LT = 9,
+	SAUD_OP_COMPARE_EQ = 10,
+	SAUD_OP_COMPARE_NE = 11
+};
+
+enum SaudValueId {
+	SAUD_VALUEID_ALL_VOLS = 0xff,
+	SAUD_VALUEID_TRK_VOL = 0xfe,
+	SAUD_VALUEID_TRK_PAN = 0xfd
+};
+
+struct SaudSpan {
+	uint32 offset = 0;
+	uint32 length = 0;
+	uint32 rate = 0;
+};
+
+// STRK interpreter shared by the standalone INSANE sound players.
+// Script storage and the 256 global variables belong to the caller.
+class SaudScript {
+public:
+	SaudScript();
+	void reset(const byte *data, uint32 size, uint32 defaultRate);
+	bool nextSpan(SaudSpan &span, byte *variables, int &masterVolume, byte &volume, byte &pan);
+
+private:
+	bool fail(const char *message);
+	bool branch(int16 displacement);
+
+	const byte *_data;
+	uint32 _size, _position, _defaultRate;
+	uint32 _remaining, _elapsed;
+};
 
 } // End of namespace Scumm
 
