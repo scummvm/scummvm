@@ -618,8 +618,8 @@ static void room_302_daemon() {
 			if (scratch._a8 == 1) {
 				kernel_reset_animation(scratch._9a, 0);
 				kernel_reset_animation(scratch._9c, 0);
-				kernel_synch(KERNEL_ANIM, aa[scratch._9a], KERNEL_NOW, 0);
-				kernel_synch(KERNEL_ANIM, aa[scratch._9c], KERNEL_NOW, 0);
+				kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
+				kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 				global[g133] = 1;
 				global[g143] = 1;
 				global[g131] = 0;
