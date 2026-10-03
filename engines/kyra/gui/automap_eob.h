@@ -76,6 +76,13 @@ private:
 		const char *const legendStrings[kNumLegendStrings];
 		const char *const controlStrings[kNumControlStrings];
 		const char *const levelNames[2][16];
+		const char *const specialMarkerStrings[2][3];
+	};
+
+	struct SpecialMarkers {
+		int8 level;
+		uint16 block;
+		int8 iconColor;
 	};
 
 	enum IconID : int {
@@ -110,7 +117,7 @@ private:
 	void createIcons(bool lowResSurface);
 	void releaseIcons();
 	void drawBackground(int width, int height);
-	void drawLegend(uint flags);
+	void drawLegend(int level, uint flags);
 
 	enum IconAlignment : int {
 		kAlignTopLeft = -1,
@@ -167,11 +174,17 @@ private:
 	const char *const *_levelNames;
 	const int _numLevelNames;
 
+	static const SpecialMarkers _specialMarkersEOB2[];
+	const SpecialMarkers *_specialMarkers;
+	const char *const *_specialMarkerStrings;
+	int _numSpecialMarkers;
+
 	AutomapLayout _l;
 	int _levelStrScl;
 	int _coordStrScl;
 	int _legendHeadScl;
 	int _legendBodyScl;
+	int _reduceSpace;
 	int _levelStrY;
 	int _coordStrY;
 
@@ -214,6 +227,13 @@ private:
 		kColorGold,
 		kColorGoldDim,
 		kColorPanelTxt,
+		kColorSpecial1,
+		kColorSpecial2,
+		kColorSpecial3,
+		kColorSpecial4,
+		kColorSpecial5,
+		kColorSpecial6,
+		kColorSpecial7,
 		kColorTransp,
 		kColorPartyFrame0,
 		kColorPartyFrame1,
@@ -228,7 +248,7 @@ private:
 		kNumColors
 	};
 
-	const uint32 *_colors;
+	/* const */uint32 *_colors;
 	int _partyIconColor;
 	int _partyIconColorStep;
 };
