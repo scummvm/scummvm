@@ -836,8 +836,33 @@ void StreamData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+Common::String PhoneBookData::Entry::getDisplayText() const {
+	if (nameFlag == -1 || NancySceneState.getEventFlag(nameFlag, g_nancy->_true)) {
+		return name;
+	}
+
+	return number;
+}
+
+void PhoneBookData::synchronize(Common::Serializer &ser) {
+	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
+		uint16 numEntries = entries[i].size();
+		ser.syncAsUint16LE(numEntries);
+		entries[i].resize(numEntries);
+
+		for (Entry &entry : entries[i]) {
+			ser.syncString(entry.name);
+			ser.syncString(entry.number);
+			ser.syncString(entry.sceneName);
+			ser.syncAsSint16LE(entry.nameFlag);
+		}
+	}
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
+	case PhoneBookData::getTag():
+		return new PhoneBookData();
 	case StreamData::getTag():
 		return new StreamData();
 	case BuildPuzzleData::getTag():

@@ -19,7 +19,13 @@
  *
  */
 
+#include "graphics/font.h"
+
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/graphics.h"
 #include "engines/nancy/util.h"
+
+#include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/ui/ndui/control.h"
 #include "engines/nancy/ui/ndui/panel.h"
@@ -43,6 +49,20 @@ void Control::read(Common::SeekableReadStream &stream) {
 	readExclusiveRect(stream, _bounds);
 	readFilename(stream, _text);
 	_autoHeight = _bounds.height() == 0;
+
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		readFilename(stream, _tooltip);
+
+		// The texts are the keys of autotext entries, when there are any by their name
+		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+		if (autotext && autotext->texts.contains(_text)) {
+			_text = autotext->texts[_text];
+		}
+
+		if (autotext && autotext->texts.contains(_tooltip)) {
+			_tooltip = autotext->texts[_tooltip];
+		}
+	}
 
 	_events.resize(stream.readSint16LE());
 	for (Action &event : _events) {
@@ -211,6 +231,36 @@ bool Static::doAction(const Action &action) {
 	default:
 		return Control::doAction(action);
 	}
+}
+
+void Tooltip::readExtra(Common::SeekableReadStream &stream) {
+	_showAfter = stream.readDoubleLE();
+	_hideAfter = stream.readDoubleLE();
+	_preventFlag = stream.readSint16LE();
+}
+
+bool Tooltip::isPrevented() const {
+	return NancySceneState.getEventFlag(_preventFlag, g_nancy->_true);
+}
+
+void Tooltip::render(Graphics::ManagedSurface &surface, const Common::String &text) {
+	static const int kPadding = 3;
+
+	const Graphics::Font *font = _elements[0].getSystemFont();
+	int width = (font ? font->getStringWidth(text) : 0) + 2 * kPadding;
+	int height = _elements[0].getFontHeight() + 2 * kPadding;
+
+	surface.create(width, height, g_nancy->_graphics->getTransparentPixelFormat());
+	surface.clear(argbToColor(surface.format, _elements[0]._colors[kStateNormal]));
+
+	_text = text;
+	_bounds = Common::Rect(width, height);
+	_visible = true;
+
+	// The colors are there at once
+	update(10.0f);
+	draw(surface, Common::Point());
+	_visible = false;
 }
 
 void VarStatic::readExtra(Common::SeekableReadStream &stream) {

@@ -39,6 +39,7 @@ class Static;
 class RadioButton;
 class EditBox;
 class InvButton;
+class Tooltip;
 
 // A window of the UI, like the inventory, the journal or the bars around the viewport.
 // Each NDUI chunk describes one panel: its background, which is a Static that also gives
@@ -53,6 +54,11 @@ public:
 	virtual ~Panel();
 
 	void read(Common::SeekableReadStream &stream);
+
+	// Nancy17 keeps the items apart from the panel that shows them, which comes
+	// with nothing but a template for their buttons
+	void addItemButtons(const Common::Array<byte> &buttonTemplate);
+	Tooltip *getTooltip() const { return _tooltip; }
 
 	void updateGraphics() override;
 
@@ -111,6 +117,7 @@ private:
 
 	uint32 _backgroundColor = 0;
 	Static *_background = nullptr;
+	Tooltip *_tooltip = nullptr;
 	Common::Array<Control *> _controls;
 	Common::Array<Control *> _arrangeOrder;
 	Common::Array<RadioButton *> _radioButtons;

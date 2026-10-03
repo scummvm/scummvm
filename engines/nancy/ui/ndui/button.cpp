@@ -19,6 +19,7 @@
  *
  */
 
+#include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/ui/ndui/button.h"
@@ -120,13 +121,28 @@ bool Button::getValue(int32 eventType, double &value, Common::String &text) cons
 void InvButton::readExtra(Common::SeekableReadStream &stream) {
 	Button::readExtra(stream);
 
-	_itemID = stream.readSint16LE();
-	_kind = stream.readSint32LE();
-	_scene = stream.readSint32LE();
-	_valueIndex = stream.readSint16LE();
+	if (g_nancy->getGameType() <= kGameTypeNancy16) {
+		_itemID = stream.readSint16LE();
+		_kind = stream.readSint32LE();
+		_scene = stream.readSint32LE();
+		_valueIndex = stream.readSint16LE();
+	}
 
 	// The count gets drawn over the item picture
 	_elements[0].moveFontTo(_elements[1]);
+}
+
+void InvButton::setItem(const INVD::Item &item) {
+	_name = item.name;
+	_itemID = item.id;
+	_kind = item.kind;
+	_valueIndex = item.valueIndex;
+
+	// The scene is named after its number, e.g. "s6200"
+	const Common::String sceneName = item.sceneName.toString();
+	_scene = sceneName.size() > 1 ? atoi(sceneName.c_str() + 1) : 0;
+
+	_elements[1].setTexture(_elements[1]._textureName, item.sourceRect);
 }
 
 bool InvButton::doAction(const Action &action) {

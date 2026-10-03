@@ -616,6 +616,24 @@ struct StreamData : public PuzzleData {
 	Common::Array<Stream> streams;
 };
 
+// Nancy17. The contacts in the cell phone of every player character
+struct PhoneBookData : public PuzzleData {
+	struct Entry {
+		Common::String name;
+		Common::String number;
+		Common::String sceneName;	// the scene that plays the call
+		int16 nameFlag = -1;		// the number shows in place of the name until this is set
+
+		// What the phone lists the contact as
+		Common::String getDisplayText() const;
+	};
+
+	static constexpr uint32 getTag() { return MKTAG('P', 'H', 'B', 'K'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<Entry> entries[kMaxPlayerCharacters];
+};
+
 PuzzleData *makePuzzleData(const uint32 tag);
 
 } // End of namespace Nancy

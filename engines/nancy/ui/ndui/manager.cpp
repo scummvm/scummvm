@@ -27,6 +27,7 @@
 #include "engines/nancy/iff.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/graphics.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/ui/ndui/manager.h"
@@ -95,6 +96,51 @@ void Manager::registerGraphics() {
 	for (Panel *panel : _panels) {
 		panel->registerGraphics();
 	}
+
+	_tooltipWindow.setNativeResolution(true);
+	_tooltipWindow.setVisible(false);
+	_tooltipWindow.registerGraphics();
+}
+
+void Manager::setHoveredTooltip(const Control *control, Tooltip *tooltip) {
+	_hoveredControl = control;
+	_hoveredTooltip = tooltip;
+}
+
+void Manager::updateTooltip(const Common::Point &mousePos) {
+	const uint32 now = g_nancy->getTotalPlayTime();
+
+	if (_hoveredControl != _tooltipControl) {
+		// Another control starts over
+		_tooltipControl = _hoveredControl;
+		_tooltipHoverStart = now;
+		_isTooltipDismissed = false;
+	}
+
+	bool show = _tooltipControl && !_isTooltipDismissed && !_hoveredTooltip->isPrevented() &&
+		_hoveredTooltip->isTimeToShow((now - _tooltipHoverStart) / 1000.0f);
+
+	if (show && _tooltipWindow.isVisible()) {
+		// The mouse getting to the tooltip takes it down for good
+		if (_tooltipWindow.getScreenPositionRaw().contains(mousePos)) {
+			_isTooltipDismissed = true;
+			show = false;
+		}
+	} else if (show) {
+		_hoveredTooltip->render(_tooltipWindow._drawSurface, _tooltipControl->getTooltip());
+
+		// Above the mouse, and inside of the screen
+		const int width = _tooltipWindow._drawSurface.w;
+		const int height = _tooltipWindow._drawSurface.h;
+		const Common::Rect screen = g_nancy->_graphics->getScreen()->getBounds();
+		int x = MAX<int>(MIN<int>(mousePos.x + 1, screen.right - width - 7), 5);
+		int y = MAX<int>(MIN<int>(mousePos.y - height - 6, screen.bottom - height - 7), 5);
+
+		_tooltipWindow.moveTo(Common::Rect(x, y, x + width, y + height));
+		_tooltipWindow.setNeedsRedraw(true);
+	}
+
+	_tooltipWindow.setVisible(show);
 }
 
 void Manager::takeAction(const Action &action) {
@@ -213,6 +259,8 @@ void Manager::handleInput(NancyInput &input) {
 		}
 	}
 
+	_hoveredControl = nullptr;
+
 	// The panels drawn on top get the mouse first
 	bool isOverUI = false;
 	bool isOverControl = false;
@@ -223,6 +271,8 @@ void Manager::handleInput(NancyInput &input) {
 			isOverControl |= isOverPanelControl;
 		}
 	}
+
+	updateTooltip(input.screenMousePos);
 
 	if (isOverUI) {
 		g_nancy->_cursor->setCursorType((CursorManager::CursorType)kUICursor, true, isOverControl);

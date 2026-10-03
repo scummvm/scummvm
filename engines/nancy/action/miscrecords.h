@@ -24,6 +24,7 @@
 
 #include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/enginedata.h"
+#include "engines/nancy/puzzledata.h"
 
 namespace Nancy {
 
@@ -636,6 +637,18 @@ protected:
 
 	byte _characterIndex = 0;	// index into the PCUI character list
 	Common::Path _videoFile;	// replacement scene background, empty to keep the current one
+};
+
+// Nancy17. Adds a contact to the cell phone of the character being played
+class AddPhoneEntry : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "AddPhoneEntry"; }
+
+	PhoneBookData::Entry _entry;
 };
 
 } // End of namespace Action

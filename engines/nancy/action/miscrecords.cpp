@@ -1334,5 +1334,31 @@ void PlayChar::execute() {
 	finishExecution();
 }
 
+void AddPhoneEntry::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _entry.name);
+	readFilename(stream, _entry.number);
+	readFilename(stream, _entry.sceneName);
+	_entry.nameFlag = stream.readSint16LE();
+}
+
+void AddPhoneEntry::execute() {
+	auto *data = (PhoneBookData *)NancySceneState.getPuzzleData(PhoneBookData::getTag());
+	Common::Array<PhoneBookData::Entry> &entries = data->entries[g_nancy->getPlayerCharacter()];
+
+	bool isNew = true;
+	for (const PhoneBookData::Entry &entry : entries) {
+		if (entry.name.equalsIgnoreCase(_entry.name)) {
+			isNew = false;
+		}
+	}
+
+	if (isNew) {
+		entries.push_back(_entry);
+	}
+
+	NancySceneState.getNDUI()->showPhoneBookEntry(_entry, isNew);
+	_isDone = true;
+}
+
 } // End of namespace Action
 } // End of namespace Nancy

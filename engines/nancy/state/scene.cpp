@@ -2837,6 +2837,11 @@ void Scene::initUI() {
 	_ndui = new UI::NDUI::Manager();
 	_ndui->load(pcui->uiName.toString());
 
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		_ndui->createItemButtons();
+		_ndui->createPhoneBook();
+	}
+
 	// The most recent items come first
 	const Common::Array<int16> &order = _inventoryBox.getOrder();
 	for (int i = (int)order.size() - 1; i >= 0; --i) {

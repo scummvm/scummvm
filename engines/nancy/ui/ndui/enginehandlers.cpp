@@ -81,7 +81,14 @@ void Manager::takeEngineAction(const Action &action) {
 			}
 		}
 	} else if (action.target.equalsIgnoreCase("Engine_Inv")) {
-		if (action.type == kActionSetValue) {
+		if (g_nancy->getGameType() >= kGameTypeNancy17) {
+			// The buttons send their name; the panel behind them only takes a held item back
+			if (action.type == kActionSetText) {
+				onInventoryClicked((int16)action.value);
+			} else if (action.type == kActionSetValue) {
+				NancySceneState.addItemToInventory(NancySceneState.getHeldItem());
+			}
+		} else if (action.type == kActionSetValue) {
 			onInventoryClicked((int16)action.value);
 		}
 	} else if (action.target.equalsIgnoreCase("Engine_Convo")) {
@@ -101,6 +108,13 @@ void Manager::takeEngineAction(const Action &action) {
 		onSaveQueryAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_GameWindow")) {
 		onGameWindowAction(action);
+	} else if (action.target.equalsIgnoreCase("Engine_Matte")) {
+		// Nancy17 gave the matte color a target of its own
+		if (action.type == kActionSetValue || action.type == kActionQuery) {
+			onGameWindowAction(action);
+		}
+	} else if (action.target.equalsIgnoreCase("Engine_CellPhone")) {
+		onCellPhoneAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_VoiceVolume")) {
 		onVolumeAction(action, "speech_volume");
 	} else if (action.target.equalsIgnoreCase("Engine_FXVolume")) {
@@ -130,6 +144,11 @@ void Manager::onInventoryClicked(int16 itemID) {
 		return;
 	}
 
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		onItemStreamClicked(*button);
+		return;
+	}
+
 	SceneChangeDescription scene;
 	scene.sceneID = button->getScene();
 	scene.continueSceneSound = kContinueSceneSound;
@@ -150,6 +169,95 @@ void Manager::onInventoryClicked(int16 itemID) {
 	}
 }
 
+// Nancy17 shows the scene of an item in a stream of its own, on top of the scene
+// the player is in. That scene ends its stream, and puts back an item that was
+// taken out to be looked at.
+void Manager::onItemStreamClicked(const InvButton &button) {
+	const int16 itemID = button.getItemID();
+	const Common::String streamName = "INVSTR_" + button.getName();
+	const Common::String sceneName = Common::String::format("s%u", button.getScene());
+
+	// On top of everything the scenes below draw
+	static const int32 kItemStreamZOffset = 15;
+
+	State::StreamFlags flags;
+	flags.capturesInput = true;
+	flags.runsFirst = true;
+	flags.zOffset = kItemStreamZOffset;
+
+	switch (button.getKind()) {
+	case InvButton::kItemView: {
+		// One item is looked at at a time
+		const INVD *items = GetEngineData(INVD);
+		for (const INVD::Item &item : items->items) {
+			if (item.kind == InvButton::kItemView && item.id != itemID) {
+				NancySceneState.getStreams().end("INVSTR_" + item.name);
+			}
+		}
+
+		if (!NancySceneState.getStreams().isRunning(streamName)) {
+			NancySceneState.getStreams().begin(streamName, sceneName, 0, flags);
+			NancySceneState.removeItemFromInventory(itemID, false);
+		}
+
+		break;
+	}
+	case InvButton::kItemOpenCountedScene:
+	case InvButton::kItemOpenScene:
+		if (!NancySceneState.getStreams().isRunning(streamName)) {
+			NancySceneState.getStreams().begin(streamName, sceneName, 0, flags);
+		}
+
+		break;
+	default:
+		NancySceneState.removeItemFromInventory(itemID, true);
+		break;
+	}
+}
+
+// The contacts are buttons made from a template, named after the contact
+static const char *const kPhoneBookEntryPrefix = "PB:";
+
+void Manager::showPhoneBookEntry(const PhoneBookData::Entry &entry, bool isNew) {
+	const Common::String buttonName = kPhoneBookEntryPrefix + entry.name;
+
+	if (isNew) {
+		createObject(buttonName, "PhoneBookEntry", "CellPhoneDialog");
+	}
+
+	takeAction(kActionSetText, buttonName, entry.getDisplayText());
+}
+
+void Manager::createPhoneBook() {
+	auto *data = (PhoneBookData *)NancySceneState.getPuzzleData(PhoneBookData::getTag());
+	for (const PhoneBookData::Entry &entry : data->entries[g_nancy->getPlayerCharacter()]) {
+		showPhoneBookEntry(entry, true);
+	}
+}
+
+// Picking a contact calls them: the call is a scene in a stream of its own, and
+// the phone can't be used until that scene enables it again
+void Manager::onCellPhoneAction(const Action &action) {
+	if (action.type != kActionSetValue) {
+		return;
+	}
+
+	auto *data = (PhoneBookData *)NancySceneState.getPuzzleData(PhoneBookData::getTag());
+	for (const PhoneBookData::Entry &entry : data->entries[g_nancy->getPlayerCharacter()]) {
+		if (!action.text.equalsIgnoreCase(kPhoneBookEntryPrefix + entry.name)) {
+			continue;
+		}
+
+		takeAction(kActionDisable, "CellPhoneDialog", 0.0);
+
+		State::StreamFlags flags;
+		flags.capturesInput = true;
+		flags.runsFirst = true;
+		NancySceneState.getStreams().begin("CellPhoneStream", entry.sceneName, 0, flags);
+		return;
+	}
+}
+
 // An item that was taken out to be looked at goes back once its scene is left
 void Manager::onSceneChange(uint16 sceneID) {
 	int16 viewedItem = NancySceneState.getPushedInvItemID();
@@ -160,6 +268,14 @@ void Manager::onSceneChange(uint16 sceneID) {
 	InvButton *button = findItemButton(viewedItem);
 	if (!button || button->getScene() != sceneID) {
 		NancySceneState.returnViewedInventoryItem();
+	}
+}
+
+// Nancy17 makes the buttons of the inventory out of the item table
+void Manager::createItemButtons() {
+	Panel *panel = findPanel("InvDialog");
+	if (panel && _templates.contains("InvButton")) {
+		panel->addItemButtons(_templates["InvButton"]);
 	}
 }
 

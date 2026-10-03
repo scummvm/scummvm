@@ -64,6 +64,7 @@ public:
 
 	const Common::String &getName() const { return _name; }
 	void setName(const Common::String &name) { _name = name; }
+	const Common::String &getTooltip() const { return _tooltip; }
 	bool isVisible() const { return _visible; }
 	bool isEnabled() const { return _enabled; }
 	int32 getInitialState() const { return _initialState; }
@@ -98,6 +99,7 @@ protected:
 	Panel *_panel;
 	Common::String _name;
 	Common::String _text;
+	Common::String _tooltip;	// Nancy17
 	int32 _initialState = kStartVisible;
 	bool _visible = true;
 	bool _enabled = true;
@@ -116,6 +118,27 @@ public:
 
 protected:
 	bool doAction(const Action &action) override;
+};
+
+// Nancy17. Every panel has one, to show the tooltip of the control under the mouse.
+// It comes up once the mouse has been over the control for a while, and gives up
+// after another while.
+class Tooltip : public Static {
+public:
+	Tooltip(Panel *panel) : Static(panel) {}
+
+	bool isTimeToShow(float hoverSeconds) const { return hoverSeconds >= _showAfter && hoverSeconds <= _hideAfter; }
+	bool isPrevented() const;
+
+	// Draws the tooltip into a surface that gets just large enough for it
+	void render(Graphics::ManagedSurface &surface, const Common::String &text);
+
+protected:
+	void readExtra(Common::SeekableReadStream &stream) override;
+
+	double _showAfter = 0;
+	double _hideAfter = 0;
+	int16 _preventFlag = -1;
 };
 
 // A static that shows a number

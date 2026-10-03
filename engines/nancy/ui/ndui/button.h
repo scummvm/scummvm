@@ -22,6 +22,8 @@
 #ifndef NANCY_UI_NDUI_BUTTON_H
 #define NANCY_UI_NDUI_BUTTON_H
 
+#include "engines/nancy/enginedata.h"
+
 #include "engines/nancy/ui/ndui/control.h"
 
 namespace Nancy {
@@ -61,6 +63,9 @@ public:
 	};
 
 	InvButton(Panel *panel) : Button(panel) {}
+
+	// Nancy17 buttons are made from a template, and get their item afterwards
+	void setItem(const INVD::Item &item);
 
 	int16 getItemID() const { return _itemID; }
 	int32 getKind() const { return _kind; }

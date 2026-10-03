@@ -47,7 +47,8 @@ enum ControlType {
 	kControlScrollBar	= 9,
 	kControlCheckBox	= 10,
 	kControlInvButton	= 12,
-	kControlVarStatic	= 14
+	kControlVarStatic	= 14,
+	kControlTooltip		= 15	// Nancy17
 };
 
 // The kinds of objects an NDUI chunk describes

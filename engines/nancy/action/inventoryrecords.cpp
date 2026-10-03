@@ -28,6 +28,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/ndui/manager.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -228,10 +230,21 @@ void PopInvViewPriorScene::execute() {
 
 void GoInvViewScene::readData(Common::SeekableReadStream &stream) {
 	_itemID = stream.readUint16LE();
-	_addToInventory = stream.readUint16LE();
+
+	// Nancy17 only names the item
+	if (g_nancy->getGameType() <= kGameTypeNancy16) {
+		_addToInventory = stream.readUint16LE();
+	}
 }
 
 void GoInvViewScene::execute() {
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		// The same as clicking the item in the inventory
+		NancySceneState.getNDUI()->clickInventoryItem(_itemID);
+		_isDone = true;
+		return;
+	}
+
 	auto *inv = GetEngineData(INV);
 	assert(inv);
 

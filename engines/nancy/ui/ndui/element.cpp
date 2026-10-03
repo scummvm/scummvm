@@ -101,6 +101,10 @@ void Element::read(Common::SeekableReadStream &stream) {
 	_fontColors[kStateDisabled] = stream.readUint32BE();
 	_fontColors[kStateMouseOver] = stream.readUint32BE();
 	_fontColors[kStatePressed] = stream.readUint32BE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		stream.skip(1);	// A flag of the control, taken from its first element
+	}
 }
 
 void Element::setTexture(const Common::String &textureName, const Common::Rect &src) {

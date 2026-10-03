@@ -25,6 +25,9 @@
 #include "common/array.h"
 #include "common/hash-str.h"
 
+#include "engines/nancy/puzzledata.h"
+#include "engines/nancy/renderobject.h"
+
 #include "engines/nancy/ui/ndui/common.h"
 
 namespace Graphics {
@@ -39,6 +42,8 @@ namespace UI {
 namespace NDUI {
 
 class Panel;
+class Control;
+class Tooltip;
 class InvButton;
 
 // Something outside the UI that answers the actions sent to an "Engine_" target of its
@@ -64,6 +69,8 @@ public:
 // get created while the game runs, like journal entries and conversation responses.
 class Manager {
 public:
+	static const uint16 kTooltipZ = 2000;
+
 	// What the UI asked of the engine, which has to wait until the UI is done
 	// handling the player's input, since it can replace the UI
 	enum RequestType {
@@ -93,6 +100,9 @@ public:
 	void handleInput(NancyInput &input);
 	void registerGraphics();
 
+	// Nancy17: the control under the mouse that has a tooltip, and the panel's control that shows it
+	void setHoveredTooltip(const Control *control, Tooltip *tooltip);
+
 	const Graphics::ManagedSurface *getTexture(const Common::String &name);
 
 	// Creates a control from a template, as the last one of a panel
@@ -103,6 +113,12 @@ public:
 	void update();
 	void setCaption(const Common::String &text);
 	void setPlayerTime(uint32 minutesOfDay, bool isDaytime);
+	void createItemButtons();
+	void clickInventoryItem(int16 itemID) { onInventoryClicked(itemID); }
+
+	// Nancy17 cell phone
+	void createPhoneBook();
+	void showPhoneBookEntry(const PhoneBookData::Entry &entry, bool isNew);
 	void showInventoryItem(int16 itemID, bool show);
 	void onSceneChange(uint16 sceneID);
 	void addJournalEntry(const Common::String &pageName, const Common::String &textKey);
@@ -147,6 +163,8 @@ private:
 	void onSaverAction(const Action &action);
 	void onSaveQueryAction(const Action &action);
 	void onGameWindowAction(const Action &action);
+	void onCellPhoneAction(const Action &action);
+	void onItemStreamClicked(const InvButton &button);
 	void onVolumeAction(const Action &action, const char *configKey);
 	void onFlagsAction(const Action &action);
 	void askToSaveFirst(const Action &action);
@@ -161,6 +179,16 @@ private:
 	Common::Array<Panel *> _panels;
 	Common::HashMap<Common::String, Graphics::ManagedSurface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _textures;
 	Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _templates;
+
+	void updateTooltip(const Common::Point &mousePos);
+
+	// Nancy17 tooltips are drawn on top of every panel
+	RenderObject _tooltipWindow{kTooltipZ};
+	const Control *_hoveredControl = nullptr;
+	Tooltip *_hoveredTooltip = nullptr;
+	const Control *_tooltipControl = nullptr;
+	uint32 _tooltipHoverStart = 0;
+	bool _isTooltipDismissed = false;
 
 	Common::Array<Common::String> _clockDisplays;
 	Common::Array<ValueDisplay> _valueDisplays;

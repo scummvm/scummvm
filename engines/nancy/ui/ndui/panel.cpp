@@ -24,6 +24,8 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
 
+#include "common/memstream.h"
+
 #include "engines/nancy/ui/ndui/panel.h"
 #include "engines/nancy/ui/ndui/control.h"
 #include "engines/nancy/ui/ndui/button.h"
@@ -46,6 +48,7 @@ Panel::Panel(Manager *manager, uint16 z, byte kind) : RenderObject(z), _manager(
 
 Panel::~Panel() {
 	delete _background;
+	delete _tooltip;
 
 	for (Control *control : _controls) {
 		delete control;
@@ -62,12 +65,17 @@ void Panel::read(Common::SeekableReadStream &stream) {
 	_spacing.y = stream.readSint32LE();
 	readExclusiveRect(stream, _margins);
 	_backgroundColor = stream.readUint32BE();
-	stream.skip(1);
+	stream.skip(g_nancy->getGameType() >= kGameTypeNancy17 ? 2 : 1);
 
 	// The background is a static that also gives the panel its name, position and events
 	_background = new Static(this);
 	if (stream.readSint32LE() == kControlStatic) {
 		_background->read(stream);
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy17 && stream.readSint32LE() == kControlTooltip) {
+		_tooltip = new Tooltip(this);
+		_tooltip->read(stream);
 	}
 
 	int16 numControls = stream.readSint16LE();
@@ -155,6 +163,28 @@ Control *Panel::addNewControl(int32 type, Common::SeekableReadStream &stream) {
 	control->read(stream);
 	addControl(control);
 	return control;
+}
+
+void Panel::addItemButtons(const Common::Array<byte> &buttonTemplate) {
+	const INVD *items = GetEngineData(INVD);
+	if (!items) {
+		return;
+	}
+
+	_kind = kObjectInvPanel;
+
+	for (const INVD::Item &item : items->items) {
+		Common::MemoryReadStream stream(buttonTemplate.data(), buttonTemplate.size());
+		stream.skip(33 + 4); // version and control type
+
+		InvButton *button = new InvButton(this);
+		button->read(stream);
+		button->setItem(item);
+		button->setVisible(false);
+		addControl(button);
+	}
+
+	arrangeControls();
 }
 
 // Controls are numbered in the order they get added; inventory buttons after their item
@@ -561,6 +591,10 @@ bool Panel::handleInput(NancyInput &input, bool canHover, bool &isOverControl) {
 
 	if (!isInside) {
 		return false;
+	}
+
+	if (hovered && _tooltip && !hovered->getTooltip().empty()) {
+		_manager->setHoveredTooltip(hovered, _tooltip);
 	}
 
 	int notches = 0;

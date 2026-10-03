@@ -481,6 +481,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PopInvViewPriorScene();
 	case 126:
 		return new GoInvViewScene();
+	case 127:	// Nancy17
+		return new AddPhoneEntry();
 	case 128:	// Nancy10
 		return new CellPhonePopCellSceneFromStack();
 	case 129:	// Nancy10
