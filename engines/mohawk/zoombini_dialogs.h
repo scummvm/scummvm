@@ -22,6 +22,7 @@
 #ifndef MOHAWK_ZOOMBINI_DIALOGS_H
 #define MOHAWK_ZOOMBINI_DIALOGS_H
 
+#include "common/noncopyable.h"
 #include "common/str.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
@@ -42,7 +43,7 @@ class ThemeEval;
 namespace Mohawk {
 
 /** Modal dialog for entering or renaming a Zoombini save name. */
-class ZoombiniSaveNameDialog : public GUI::Dialog {
+class ZoombiniSaveNameDialog : public GUI::Dialog, private Common::NonCopyable {
 public:
 	/** Create a save-name dialog with the target's save-name code page. */
 	ZoombiniSaveNameDialog(const Common::U32String &initialName, bool rename, Common::CodePage codePage);
@@ -58,7 +59,7 @@ private:
 };
 
 /** Modal ScummVM dialog for managing Logical Journey of the Zoombini saves. */
-class ZoombiniSaveManagementDialog : public GUI::Dialog {
+class ZoombiniSaveManagementDialog : public GUI::Dialog, private Common::NonCopyable {
 public:
 	/** Create the save-management dialog for a configuration target. */
 	ZoombiniSaveManagementDialog(const Common::String &domain);
@@ -196,7 +197,7 @@ private:
 };
 
 /** ScummVM options dialog for Logical Journey of the Zoombinis */
-class ZoombiniOptionsWidget : public GUI::OptionsContainerWidget {
+class ZoombiniOptionsWidget : public GUI::OptionsContainerWidget, private Common::NonCopyable {
 public:
 	/** Create the Zoombini options widget. */
 	ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &domain);

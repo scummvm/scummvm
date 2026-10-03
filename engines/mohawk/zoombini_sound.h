@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/noncopyable.h"
 #include "common/queue.h"
 
 #include "mohawk/resource.h"
@@ -53,7 +54,7 @@ class ZoombiniPage;
  * still owns the MHWK/WAVE format rules, including embedded loop points; this
  * class decides which code path owns the resulting mixer handle.
  */
-class ZoombiniSound : public Sound {
+class ZoombiniSound : public Sound, private Common::NonCopyable {
 public:
 	/** Create the page-aware Zoombini sound manager. */
 	ZoombiniSound(MohawkEngine_Zoombini *vm);
@@ -239,7 +240,7 @@ private:
  * The service and endpoint state remain warm outside the ScummVM process,
  * so later launches are normally fast.
  */
-class ZoombiniMidiPlayer : public MidiPlayer {
+class ZoombiniMidiPlayer : public MidiPlayer, private Common::NonCopyable {
 public:
 	/** Create the Zoombini MIDI player. */
 	ZoombiniMidiPlayer(MohawkEngine_Zoombini *vm);
