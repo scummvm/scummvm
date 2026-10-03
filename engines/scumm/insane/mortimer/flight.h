@@ -51,11 +51,15 @@ public:
 	uint rescuedSpecies() const { return _rescuedSpecies; }
 	Weapon weapon() const { return _weapon; }
 	void resetWeapon() { _weapon = kRevitascope; }
+	void setWeapon(Weapon weapon) { _weapon = weapon; }
 	const Common::String &nextFlight() const { return _nextFlight; }
 	const Common::Array<Target> &targets() const { return _targets; }
 	bool interactive() const { return _interactive; }
 	void setSteering(const Common::Point &point) { _steering = point; }
 	void setCollisionRadius(uint radius) { _collisionRadius = radius; }
+
+protected:
+	void handleAction(const byte *data, uint32 size) override;
 
 private:
 	struct Obstacle {
@@ -63,7 +67,6 @@ private:
 		bool outside;
 	};
 
-	void handleAction(const byte *data, uint32 size) override;
 	int objectScale(byte codec) const override;
 	Target *findTarget(uint16 id);
 	bool targetHit(uint16 id) const;
@@ -75,7 +78,7 @@ private:
 	Common::String _nextFlight;
 	const bool _isDemo, _keepProgress;
 	bool _hitTargets[1400];
-	bool _initialInteractive, _interactive, _inBranch;
+	bool _initialInteractive, _interactive, _inBranch, _ignoreCollisions;
 	Common::Point _steering;
 	Weapon _weapon;
 	uint _rescuedCount, _rescuedSpecies, _collisionRadius;

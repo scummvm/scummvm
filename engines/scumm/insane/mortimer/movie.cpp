@@ -392,6 +392,9 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled, bool 
 				return fail("Unsupported Mortimer movie header");
 			expectedFrames = READ_LE_UINT16(src + 2);
 			_frameRate = READ_LE_UINT32(src + 774);
+			// Single-frame NUT backgrounds have no playback clock.
+			if (!_frameRate && expectedFrames == 1)
+				_frameRate = 10;
 			if (!expectedFrames || _frameRate != 10)
 				return fail("Unsupported Mortimer movie timing");
 			memcpy(_initialPalette, src + 6, sizeof(_initialPalette));

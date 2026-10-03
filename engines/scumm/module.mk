@@ -148,6 +148,7 @@ MODULE_OBJS += \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
 	insane/mortimer/campaign.o \
+	insane/mortimer/castle.o \
 	insane/mortimer/dialogs.o \
 	insane/mortimer/flight.o \
 	insane/mortimer/interview.o \

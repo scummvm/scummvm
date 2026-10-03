@@ -61,9 +61,11 @@ void MortimerFlight::reset() {
 	_targets.clear();
 	_obstacles.clear();
 	_inBranch = false;
+	_ignoreCollisions = false;
 }
 
 bool MortimerFlight::advance(bool renderFrame) {
+	_ignoreCollisions = false;
 	_obstacles.clear();
 	for (uint i = 0; i < _targets.size(); ++i)
 		_targets[i].active = false;
@@ -172,6 +174,8 @@ void MortimerFlight::handleAction(const byte *data, uint32 size) {
 		_weapon = flags == 9 ? kSlimeGun : kRevitascope;
 	} else if (code == 6 && (flags == 11 || flags == 25)) {
 		_interactive = flags == 11;
+	} else if (code == 6 && flags == 40) {
+		_ignoreCollisions = true;
 	} else if (code == 8 && flags == 46 && size >= 21 && id / 1000 != 7) {
 		Common::String text((const char *)data + 18, size - 21);
 		if (id / 1000 == 11) {
@@ -227,6 +231,8 @@ MortimerFlight::ShotResult MortimerFlight::shoot(const Common::Point &point) {
 }
 
 bool MortimerFlight::hitsObstacle(const Common::Point &point) const {
+	if (_ignoreCollisions)
+		return false;
 	const int radius = _collisionRadius;
 	const Common::Rect footprint(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
 	for (uint i = 0; i < _targets.size(); ++i) {

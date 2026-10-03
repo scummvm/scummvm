@@ -29,6 +29,7 @@
 #include "scumm/insane/mortimer/flight.h"
 #include "scumm/insane/mortimer/interview.h"
 #include "scumm/insane/mortimer/campaign.h"
+#include "scumm/insane/mortimer/castle.h"
 #include "scumm/smush/saud_stream.h"
 
 namespace Scumm {
@@ -68,14 +69,18 @@ private:
 	bool finishCrash();
 	void creditRescues();
 	bool processInterview();
+	bool processCastle();
+	bool updateCastle();
 	bool updateScene();
 	bool nextScene(bool skip = false);
 	bool restart(bool all = false);
 	MortimerMovie &currentMovie();
 	const MortimerMovie &currentMovie() const;
-	bool interactive() const { return _crashStage == kNoCrash && !_interviewActive && _introIndex < 0 && _flight.interactive(); }
+	MortimerFlight &currentFlight() { return _castleActive ? _castle : _flight; }
+	bool interactive() const { return _castleActive ? _castle.courseView() :
+		_crashStage == kNoCrash && !_interviewActive && _introIndex < 0 && _flight.interactive(); }
 	void setMouse(const Common::Point &position);
-	void updateSteering();
+	void updateSteering(bool centerView = false);
 	void updateView(int x, int y);
 	void updateInterface();
 	void fire();
@@ -98,6 +103,7 @@ private:
 	MortimerCutscene _intro;
 	MortimerFlight _flight;
 	MortimerInterview _interview;
+	MortimerCastle _castle;
 	MortimerSubtitles _subtitles;
 	MortimerCampaign _campaign;
 	Graphics::Surface _screen;
@@ -108,7 +114,7 @@ private:
 	SaudStreamState _soundState;
 	Common::Array<Audio::SoundHandle> _movieHandles;
 	Common::Array<Audio::SoundHandle> _collisionHandles;
-	Audio::SoundHandle _scopeHandle, _rescueHandle, _glowHandle;
+	Audio::SoundHandle _scopeHandle, _rescueHandle, _glowHandle, _castleHandle;
 	Common::String _loadError;
 	Common::String _flightName, _pendingFlight, _subtitleName;
 	Common::Rect _viewport;
@@ -124,7 +130,7 @@ private:
 	uint _segment, _carriedStones, _completedSpecies, _shellShocks, _shockFrame, _crashCount;
 	uint _uiFrame, _shotFrame, _glowFrame, _glowStones, _pendingGlowStones;
 	uint _iconFlash[7];
-	bool _finished, _controllerMode, _interviewActive;
+	bool _finished, _controllerMode, _interviewActive, _castleActive;
 	bool _resourcesLoaded, _playingCached;
 	bool _needsRepair, _hitJolt;
 };

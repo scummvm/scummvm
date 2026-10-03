@@ -118,7 +118,7 @@ MortimerEngine::MortimerEngine(OSystem *system, bool isDemo) : Engine(system), _
 	_crashStage(kNoCrash), _nextFrameTime(0), _pauseTime(0), _introIndex(-1), _loadedRegion(-1), _creditedRescues(0),
 	_segment(0), _carriedStones(0), _completedSpecies(0), _shellShocks(0), _shockFrame(0), _crashCount(0),
 	_uiFrame(0), _shotFrame(3), _glowFrame(10), _glowStones(0), _pendingGlowStones(0), _finished(false),
-	_controllerMode(false), _interviewActive(false), _resourcesLoaded(false), _playingCached(false), _needsRepair(false), _hitJolt(false) {
+	_controllerMode(false), _interviewActive(false), _castleActive(false), _resourcesLoaded(false), _playingCached(false), _needsRepair(false), _hitJolt(false) {
 	memset(_steering, 0, sizeof(_steering));
 	memset(_iconFlash, 0, sizeof(_iconFlash));
 }
@@ -209,12 +209,16 @@ bool MortimerEngine::loadResources() {
 }
 
 MortimerMovie &MortimerEngine::currentMovie() {
+	if (_castleActive)
+		return _castle;
 	if (_crashStage != kNoCrash || _interviewActive || _introIndex >= 0)
 		return _intro;
 	return _flight;
 }
 
 const MortimerMovie &MortimerEngine::currentMovie() const {
+	if (_castleActive)
+		return _castle;
 	if (_crashStage != kNoCrash || _interviewActive || _introIndex >= 0)
 		return _intro;
 	return _flight;
@@ -342,6 +346,12 @@ bool MortimerEngine::followFlightBranch() {
 }
 
 void MortimerEngine::updateMovieContext() {
+	if (_castleActive) {
+		_castle.setSteering(moviePoint(_aim));
+		_castle.context().conditions[MortimerMovieContext::kDamaged] = _castle.damage() != 0;
+		_intro.context() = _castle.context();
+		return;
+	}
 	_flight.setSteering(moviePoint(_aim));
 	if (_isDemo)
 		return;
@@ -358,6 +368,8 @@ bool MortimerEngine::enterCampaignScene() {
 	stopSounds();
 	const MortimerCampaign::Scene &scene = _campaign.scene();
 	_interviewActive = false;
+	_castleActive = false;
+	_viewport = Common::Rect(24, 20, 616, 360);
 	_pendingFlight.clear();
 	_playingCached = false;
 	if (!loadSubtitles(scene.subtitles))
@@ -378,8 +390,18 @@ bool MortimerEngine::enterCampaignScene() {
 		return processInterview();
 	}
 	if (scene.kind == MortimerCampaign::kCastle || scene.kind == MortimerCampaign::kCastleRiddle) {
-		_loadError = "Mortimer castle gameplay is not implemented yet";
-		return false;
+		if (!_resourcesLoaded) {
+			if (!loadResources())
+				return false;
+			_resourcesLoaded = true;
+		}
+		_castleActive = true;
+		_viewport = Common::Rect(8, 104, 632, 448);
+		if (!_castle.start(scene.id, _flightDifficulty, _riddleDifficulty, _intro.context().girl)) {
+			_loadError = _castle.errorMessage();
+			return false;
+		}
+		return processCastle();
 	}
 	_movieHandles.clear();
 	const Common::String name = _campaign.movieName(_intro.context().girl);
@@ -440,6 +462,7 @@ void MortimerEngine::stopSounds() {
 	_mixer->stopHandle(_scopeHandle);
 	_mixer->stopHandle(_rescueHandle);
 	_mixer->stopHandle(_glowHandle);
+	_mixer->stopHandle(_castleHandle);
 	_soundState.reset();
 }
 
@@ -554,6 +577,8 @@ bool MortimerEngine::restart(bool all) {
 			_campaign.start();
 			return enterCampaignScene();
 		}
+		if (_castleActive)
+			return _campaign.start(21) && enterCampaignScene();
 		if (!_interviewActive && _introIndex >= 0)
 			return startMovie();
 		const uint region = _campaign.scene().region;
@@ -581,6 +606,17 @@ bool MortimerEngine::restart(bool all) {
 
 bool MortimerEngine::nextScene(bool skip) {
 	stopSounds();
+	if (_castleActive) {
+		if (!_castle.skip()) {
+			_loadError = _castle.errorMessage();
+			return false;
+		}
+		if (!_castle.needsMovie() && !_castle.finished()) {
+			_system->getPaletteManager()->setPalette(_castle.palette(), 0, 256);
+			playMovieSounds(true);
+		}
+		return processCastle();
+	}
 	if (_crashStage != kNoCrash) {
 		if (_crashStage == kCrashMovie && _needsRepair)
 			return loadCrashMovie(true);
@@ -722,7 +758,88 @@ bool MortimerEngine::processInterview() {
 	return true;
 }
 
+bool MortimerEngine::processCastle() {
+	if (!_castle.errorMessage().empty()) {
+		_loadError = _castle.errorMessage();
+		return false;
+	}
+	if (_castle.finished()) {
+		stopSounds();
+		_castleActive = false;
+		return _campaign.start(36) && enterCampaignScene();
+	}
+	_campaign.start(_castle.sceneId());
+	if (!loadSubtitles(_castle.subtitleName()))
+		return false;
+	if (_castle.needsMovie()) {
+		stopSounds();
+		_movieHandles.clear();
+		if (!_castle.loadMovie()) {
+			_loadError = _castle.errorMessage();
+			return false;
+		}
+		_introIndex = -1;
+		_movieHandles.resize(_castle.sounds().size());
+		_hitJolt = false;
+		_shotFrame = 3;
+		for (uint i = 0; i < ARRAYSIZE(_steeringHistory); ++i)
+			_steeringHistory[i] = Common::Point();
+		setMouse(Common::Point(320, 240));
+		updateSteering();
+		_system->warpMouse(_mouse.x, _mouse.y);
+		if (!startMovie())
+			return false;
+	}
+	const MortimerSound *speech = _castle.takeSpeech(_mixer->isSoundHandleActive(_castleHandle));
+	if (speech)
+		playSound(*speech, _castleHandle, Audio::Mixer::kSpeechSoundType);
+	return true;
+}
+
+bool MortimerEngine::updateCastle() {
+	if (_controllerMode && (_castle.choosing() || !_castle.courseView()))
+		setMouse(Common::Point(_mouse.x + (_steering[1] - _steering[0]) * 18 / Common::JOYAXIS_MAX,
+			_mouse.y + (_steering[3] - _steering[2]) * 18 / Common::JOYAXIS_MAX));
+	_castle.update();
+	updateInterface();
+	if (_castle.needsMovie() || _castle.finished())
+		return processCastle();
+	if (_castle.courseView()) {
+		if (_hitJolt) {
+			const int amount = 64 * (_flightDifficulty + 1);
+			updateView(_random.getRandomBit() ? amount : -amount, _random.getRandomBit() ? amount : -amount);
+			_hitJolt = false;
+		}
+		updateSteering(!_castle.acceptsShots());
+	}
+	updateMovieContext();
+	if (_castle.paused())
+		return processCastle();
+	if (!_castle.advance()) {
+		if (!_castle.errorMessage().empty()) {
+			_loadError = _castle.errorMessage();
+			return false;
+		}
+		if (_castle.hasSpeech() || _mixer->isSoundHandleActive(_castleHandle))
+			return processCastle();
+		_castle.movieFinished();
+		return processCastle();
+	}
+	playMovieSounds();
+	_system->getPaletteManager()->setPalette(_castle.palette(), 0, 256);
+	if (_castle.courseView() && _castle.acceptsShots() && _castle.hitsObstacle(moviePoint(_aim))) {
+		_castle.hit();
+		_hitJolt = true;
+		if (!processCastle())
+			return false;
+		playCollisionSound();
+	}
+	return processCastle();
+}
+
 bool MortimerEngine::updateScene() {
+	if (_castleActive)
+		return updateCastle();
 	if (_interviewActive) {
 		if (_controllerMode) {
 			setMouse(Common::Point(_mouse.x + (_steering[1] - _steering[0]) * 18 / Common::JOYAXIS_MAX,
@@ -785,19 +902,20 @@ void MortimerEngine::setMouse(const Common::Point &position) {
 	_mouse.y = CLIP<int>(position.y, 0, 479);
 }
 
-void MortimerEngine::updateSteering() {
+void MortimerEngine::updateSteering(bool centerView) {
 	int x = (_mouse.x - 320) / 2, y = 240 - _mouse.y;
 	if (_controllerMode) {
 		x = (_steering[1] - _steering[0]) * 128 / Common::JOYAXIS_MAX;
 		y = (_steering[2] - _steering[3]) * 128 / Common::JOYAXIS_MAX;
 	}
-	updateView(x, y);
+	updateView(centerView ? 0 : x, centerView ? 0 : y);
 	if (ABS(x) < 3)
 		x = 0;
 	if (ABS(y) < 3)
 		y = 0;
-	_aim.x = 320 + CLIP(x * 296 / 109, -296, 295);
-	_aim.y = 190 - CLIP(y * 170 / 128, -169, 170);
+	const int halfWidth = _viewport.width() / 2, halfHeight = _viewport.height() / 2;
+	_aim.x = _viewport.left + halfWidth + CLIP(x * halfWidth / 109, -halfWidth, halfWidth - 1);
+	_aim.y = _viewport.top + halfHeight - CLIP(y * halfHeight / 128, 1 - halfHeight, halfHeight);
 }
 
 void MortimerEngine::updateView(int x, int y) {
@@ -812,8 +930,9 @@ void MortimerEngine::updateView(int x, int y) {
 	averageX /= 84;
 	averageY /= 84;
 	// The movie is doubled, and its translation is aligned to four pixels.
-	_view.x = ((88 + CLIP(averageX * 88 / 128, -88, 88) + 3) & ~3) / 2;
-	_view.y = ((118 - CLIP(averageY * 118 / 128, -118, 118) + 3) & ~3) / 2;
+	const int horizontal = _castleActive ? 72 : 88, vertical = _castleActive ? 116 : 118;
+	_view.x = ((horizontal + CLIP(averageX * horizontal / 128, -horizontal, horizontal) + 3) & ~3) / 2;
+	_view.y = ((vertical - CLIP(averageY * vertical / 128, -vertical, vertical) + 3) & ~3) / 2;
 }
 
 Common::Point MortimerEngine::moviePoint(const Common::Point &point) const {
@@ -825,14 +944,15 @@ Common::Point MortimerEngine::screenPoint(const Common::Point &point) const {
 }
 
 void MortimerEngine::fire() {
+	MortimerFlight &flight = currentFlight();
 	if (_shotFrame >= 3) {
 		_shot = _aim;
-		_shotWeapon = _flight.weapon();
+		_shotWeapon = flight.weapon();
 		_shotFrame = 0;
 		playSound(_shotWeapon == MortimerFlight::kSlimeGun ? _slimeSound : _scopeSound,
 			_scopeHandle, Audio::Mixer::kSFXSoundType);
 	}
-	const MortimerFlight::ShotResult result = _flight.shoot(moviePoint(_aim));
+	const MortimerFlight::ShotResult result = flight.shoot(moviePoint(_aim));
 	if (result == MortimerFlight::kAnimalRescued) {
 		playSound(_rescueSound, _rescueHandle, Audio::Mixer::kSFXSoundType);
 		++_pendingGlowStones;
@@ -840,9 +960,9 @@ void MortimerEngine::fire() {
 			_glowFrame = 0;
 			playSound(_glowSound, _glowHandle, Audio::Mixer::kSFXSoundType);
 		}
-		for (uint i = 0; i < _flight.targets().size(); ++i) {
-			const MortimerFlight::Target &target = _flight.targets()[i];
-			if (target.hit && target.rescuedAt == _flight.frame() && target.id / 100 < 7)
+		for (uint i = 0; i < flight.targets().size(); ++i) {
+			const MortimerFlight::Target &target = flight.targets()[i];
+			if (target.hit && target.rescuedAt == flight.frame() && target.id / 100 < 7)
 				_iconFlash[target.id / 100] = 6;
 		}
 	} else if (result == MortimerFlight::kHornetHit) {
@@ -937,7 +1057,13 @@ Common::Error MortimerEngine::run() {
 				switch (event.customType) {
 				case kActionFire:
 					if (!isPaused() && !_finished) {
-						if (_interviewActive) {
+						if (_castleActive) {
+							if (_castle.courseView() && _castle.acceptsShots())
+								fire();
+							else
+								_castle.click(_mouse);
+							exit = !processCastle();
+						} else if (_interviewActive) {
 							const bool playing = _interview.playingMovie();
 							_interview.click(_mouse);
 							if (playing && !_interview.playingMovie())
@@ -1013,21 +1139,22 @@ void MortimerEngine::drawSprite(const MortimerSprite &sprite, int x, int y, bool
 }
 
 void MortimerEngine::drawTargets() {
-	for (uint i = 0; i < _flight.targets().size(); ++i) {
-		const MortimerFlight::Target &target = _flight.targets()[i];
+	MortimerFlight &flight = currentFlight();
+	for (uint i = 0; i < flight.targets().size(); ++i) {
+		const MortimerFlight::Target &target = flight.targets()[i];
 		const bool hostile = (target.id >= 700 && target.id < 800) || (target.id >= 9000 && target.id < 9400);
 		if (!target.active || !target.id || (target.id >= 800 && !hostile))
 			continue;
 		if (target.hit) {
 			const Common::Array<MortimerSprite> &effect = target.hitWeapon == MortimerFlight::kSlimeGun ? _slimeHit : _scopeHit;
-			const uint frame = _flight.frame() - target.rescuedAt;
+			const uint frame = flight.frame() - target.rescuedAt;
 			if (frame < effect.size()) {
 				const Common::Point center = screenPoint(Common::Point((target.rect.left + target.rect.right) / 2,
 					(target.rect.top + target.rect.bottom) / 2));
 				drawSprite(effect[frame], center.x, center.y, true, &_viewport);
 			}
-		} else if ((target.id < 700 && _flight.weapon() == MortimerFlight::kRevitascope) ||
-			(hostile && _flight.weapon() == MortimerFlight::kSlimeGun)) {
+		} else if ((target.id < 700 && flight.weapon() == MortimerFlight::kRevitascope) ||
+			(hostile && flight.weapon() == MortimerFlight::kSlimeGun)) {
 			const Common::Point top = screenPoint(Common::Point(target.rect.left, target.rect.top));
 			const Common::Point bottom = screenPoint(Common::Point(target.rect.right, target.rect.bottom));
 			drawSprite(_corners[0], top.x, top.y, true, &_viewport);
@@ -1108,25 +1235,33 @@ void MortimerEngine::draw() {
 	} else if (interactive()) {
 		_screen.fillRect(Common::Rect(640, 480), 10);
 		for (int y = _viewport.top; y < _viewport.bottom; ++y) {
-			const byte *src = _flight.pixels() + (_view.y + (y - _viewport.top) / 2) * MortimerMovie::kScreenWidth + _view.x;
+			const byte *src = currentFlight().pixels() + (_view.y + (y - _viewport.top) / 2) * MortimerMovie::kScreenWidth + _view.x;
 			byte *dst = (byte *)_screen.getBasePtr(_viewport.left, y);
 			for (int x = 0; x < _viewport.width(); ++x)
 				dst[x] = src[x / 2];
 		}
 		drawTargets();
-		drawSprite(_head[_uiFrame % 4], 270, 200);
-		drawSprite(_reticles[_flight.weapon() == MortimerFlight::kSlimeGun ? 0 : 1], _aim.x, _aim.y, true, &_viewport);
-		drawSprite(_cockpit[0], 0, 0);
-		drawSprite(_cockpit[1], 567, 0);
-		drawSprite(_cockpit[2], 0, 0);
-		drawDashboard();
+		if (_castleActive) {
+			_castle.drawOverlay(_screen, _mouse, screenPoint(Common::Point()), _soundState.variable(1));
+			drawSprite(_reticles[0], _castle.choosing() ? _mouse.x : _aim.x,
+				_castle.choosing() ? _mouse.y : _aim.y, true, &_viewport);
+		} else {
+			drawSprite(_head[_uiFrame % 4], 270, 200);
+			drawSprite(_reticles[_flight.weapon() == MortimerFlight::kSlimeGun ? 0 : 1], _aim.x, _aim.y, true, &_viewport);
+			drawSprite(_cockpit[0], 0, 0);
+			drawSprite(_cockpit[1], 567, 0);
+			drawSprite(_cockpit[2], 0, 0);
+			drawDashboard();
+		}
 		drawProjectile();
 	} else {
 		_screen.copyRectToSurface(currentMovie().pixels(), MortimerMovie::kScreenWidth, 0, 0, 640, 480);
+		if (_castleActive)
+			_castle.drawOverlay(_screen, _mouse, Common::Point(), _soundState.variable(1));
 	}
 	if (!_isDemo)
 		_subtitles.draw(_screen, currentMovie().captions(), ConfMan.getBool("subtitles") ||
-			(_interviewActive && _interview.forceSubtitles()), &_intro.context());
+			(_interviewActive && _interview.forceSubtitles()) || (_castleActive && _castle.forceSubtitles()), &_intro.context());
 	if (isPaused()) {
 		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 		_screen.fillRect(Common::Rect(90, 142, 550, 182), 10);
