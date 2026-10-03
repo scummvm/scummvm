@@ -39,6 +39,10 @@ int Font::getFontLeading() const {
 	return -1;
 }
 
+GlyphPresence Font::hasGlyph(uint32 chr) const {
+	return GlyphPresence::kUnknown;
+}
+
 int Font::getKerningOffset(uint32 left, uint32 right) const {
 	return 0;
 }
