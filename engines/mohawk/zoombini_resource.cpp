@@ -23,8 +23,10 @@
 #include "zoombini_resource.h"
 
 #include "common/stream.h"
+#include "common/util.h"
 
 #include <errno.h>
+#include <stdint.h>
 
 namespace Mohawk {
 
@@ -59,42 +61,106 @@ bool ZmbResource::hasSize(Common::SeekableReadStream *stream, int64 minimumSize,
 	return minimumSize <= streamSize && streamSize <= maximumSize;
 }
 
-bool ZmbResource::parseInt(const char *str, int32 &result) {
+bool ZmbResource::parseSignedInt(const char *str, int32 &result) {
 	if (!str || *str == '\0') {
-		warning("Error: Empty string\n");
+		warning("parseSignedInt: Empty string\n");
 		return false;
 	}
 
 	char *endPtr = nullptr;
-	int base = 10;
+	const char *digits = str;
+	while (Common::isSpace(digits[0]))
+		digits += 1;
 
 	// Check if it's a hexadecimal number (starts with "0x" or "0X")
-	if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
+	int base = 10;
+	if (digits[0] == '0' && (digits[1] == 'x' || digits[1] == 'X'))
 		base = 16;
-	}
 
 	errno = 0;
 	long parsed = strtol(str, &endPtr, base);
 
 	// Check for conversion errors
+	if (errno == ERANGE) {
+		warning("parseSignedInt: int32 overflow or underflow in '%s'\n", str);
+		return false;
+	}
 	if (errno != 0) {
-		warning("Error: Integer overflow or underflow in '%s'\n", str);
+		warning("parseSignedInt: int32 conversion failed in '%s'\n", str);
 		return false;
 	}
 
 	// Check if any characters were converted
 	if (endPtr == str) {
-		warning("Error: '%s' is not a valid integer\n", str);
+		warning("parseSignedInt: '%s' is not a valid int32\n", str);
 		return false;
 	}
 
 	// Check if there are trailing characters
 	if (*endPtr != '\0') {
-		warning("Error: '%s' contains invalid characters\n", str);
+		warning("parseSignedInt: '%s' contains invalid characters\n", str);
+		return false;
+	}
+
+	if (parsed < INT32_MIN || INT32_MAX < parsed) {
+		warning("parseSignedInt: int32 overflow or underflow in '%s'\n", str);
 		return false;
 	}
 
 	result = static_cast<int32>(parsed);
+	return true;
+}
+
+bool ZmbResource::parseUnsignedInt(const char *str, uint32 &result) {
+	if (!str || str[0] == '\0') {
+		warning("parseUnsignedInt: Empty string\n");
+		return false;
+	}
+
+	const char *digits = str;
+	while (Common::isSpace(digits[0]))
+		digits += 1;
+	if (digits[0] == '-') {
+		warning("parseUnsignedInt: '%s' is not a valid uint32\n", str);
+		return false;
+	}
+
+	// Check if it's a hexadecimal number (starts with "0x" or "0X")
+	int base = 10;
+	if (digits[0] == '0' && (digits[1] == 'x' || digits[1] == 'X'))
+		base = 16;
+
+	char *endPtr = nullptr;
+	errno = 0;
+	const unsigned long parsed = strtoul(str, &endPtr, base);
+
+	// Check for conversion errors
+	if (errno == ERANGE) {
+		warning("parseUnsignedInt: uint32 overflow in '%s'\n", str);
+		return false;
+	}
+	if (errno != 0) {
+		warning("parseUnsignedInt: uint32 conversion failed in '%s'\n", str);
+		return false;
+	}
+
+	// Check if any characters were converted
+	if (endPtr == str) {
+		warning("parseUnsignedInt: '%s' is not a valid uint32\n", str);
+		return false;
+	}
+
+	// Check if there are trailing characters
+	if (*endPtr != '\0') {
+		warning("parseUnsignedInt: '%s' contains invalid characters\n", str);
+		return false;
+	}
+	if (UINT32_MAX < parsed) {
+		warning("parseUnsignedInt: uint32 overflow in '%s'\n", str);
+		return false;
+	}
+
+	result = static_cast<uint32>(parsed);
 	return true;
 }
 
@@ -111,19 +177,19 @@ bool ZmbResource::parse(const char *str, ZmbResource &outRes) {
 		else
 			success = false;
 
-		if (success && !parseInt(str + 2, parsedId))
+		if (success && !parseSignedInt(str + 2, parsedId))
 			success = false;
 	} else {
 		// Defaults to page, Ex) 4100, 0x1004
 		outRes._archiveKind = ZmbResource::kPage;
 
-		if (!parseInt(str, parsedId))
+		if (!parseSignedInt(str, parsedId))
 			success = false;
 	}
 
 	if (success) {
 		if (parsedId < 0 || 0x7FFF < parsedId) {
-			warning("Error: Resource ID %d is out of range (0-32767)\n", parsedId);
+			warning("ZmbResource::parse: Resource ID %d is out of range (0-32767)\n", parsedId);
 			success = false;
 		} else {
 			outRes._id = static_cast<int16>(parsedId);
@@ -131,7 +197,7 @@ bool ZmbResource::parse(const char *str, ZmbResource &outRes) {
 	}
 
 	if (!success)
-		warning("Cannot parse string(%s), try <ID>, <s:ID> or <p:ID> with ID in the 0-32767 range (hex supported with 0x prefix)\n", str);
+		warning("ZmbResource::parse: Cannot parse string(%s), try <ID>, <s:ID> or <p:ID> with ID in the 0-32767 range (hex supported with 0x prefix)\n", str);
 	return success;
 }
 
