@@ -555,7 +555,7 @@ bool ZoombiniConsole::CmdSub_DrawCursor(int argc, const char **argv) {
 
 	// Cursor is always in system ZOOMBINI.MHK
 	int32 parsedCursorId = 0;
-	if (!parseInt(argv[2], parsedCursorId) || parsedCursorId < 0 || 0x7FFF < parsedCursorId) {
+	if (!parseSignedInt(argv[2], parsedCursorId) || parsedCursorId < 0 || 0x7FFF < parsedCursorId) {
 		debugPrintf("Cannot parse argument %s\n", argv[2]);
 		debugPrintf("\n");
 		return true;
@@ -594,7 +594,7 @@ bool ZoombiniConsole::CmdSub_DrawImage(int argc, const char **argv) {
 
 	// There is no palette resource in system ZOOMBINI.MHK
 	int32 parsedImageId = 0;
-	if (!parseInt(argv[2], parsedImageId) || parsedImageId < 0 || 0x7FFF < parsedImageId) {
+	if (!parseSignedInt(argv[2], parsedImageId) || parsedImageId < 0 || 0x7FFF < parsedImageId) {
 		debugPrintf("Cannot parse argument %s\n", argv[2]);
 		debugPrintf("\n");
 		return true;
@@ -748,7 +748,7 @@ bool ZoombiniConsole::CmdSub_DrawFeature(int argc, const char **argv) {
 	}
 
 	int32 parsedScrbId = 0;
-	if (!parseInt(argv[3], parsedScrbId) || parsedScrbId < 0 || 0x7FFF < parsedScrbId) {
+	if (!parseSignedInt(argv[3], parsedScrbId) || parsedScrbId < 0 || 0x7FFF < parsedScrbId) {
 		debugPrintf("Cannot parse argument %s!\n", argv[3]);
 		debugPrintf("\n");
 		return true;
@@ -785,16 +785,16 @@ bool ZoombiniConsole::CmdSub_DrawMsgBox(int argc, const char **argv) {
 		return true;
 	}
 
-	int32 textKey = 0;
-	if (!parseInt(argv[2], textKey)) {
+	uint32 textKey = 0;
+	if (!parseUnsignedInt(argv[2], textKey)) {
 		debugPrintf("\n");
 		return true;
 	}
 
 	// Reject unknown keys while the debugger remains open to show the diagnostic.
-	const Common::U32String &message = _vm->_text->getLocalizedString(static_cast<uint32>(textKey));
+	const Common::U32String &message = _vm->_text->getLocalizedString(textKey);
 	if (message.empty()) {
-		debugPrintf("No localized text for key %d.\n", textKey);
+		debugPrintf("No localized text for key %u.\n", textKey);
 		debugPrintf("\n");
 		return true;
 	}
@@ -860,7 +860,7 @@ bool ZoombiniConsole::CmdSub_DumpImage(int argc, const char **argv) {
 
 	// There is no palette resource in system ZOOMBINI.MHK
 	int32 parsedImageId = 0;
-	if (!parseInt(argv[2], parsedImageId) || parsedImageId < 0 || 0x7FFF < parsedImageId) {
+	if (!parseSignedInt(argv[2], parsedImageId) || parsedImageId < 0 || 0x7FFF < parsedImageId) {
 		debugPrintf("Cannot parse argument %s\n", argv[2]);
 		debugPrintf("\n");
 		return true;
@@ -946,7 +946,7 @@ bool ZoombiniConsole::CmdSub_DumpShapes(int argc, const char **argv) {
 			return true;
 	} else if (4 <= argc) {
 		int32 parsedShplId = 0;
-		if (!parseInt(argv[3], parsedShplId) || parsedShplId < 0 || 0x7FFF < parsedShplId) {
+		if (!parseSignedInt(argv[3], parsedShplId) || parsedShplId < 0 || 0x7FFF < parsedShplId) {
 			debugPrintf("Cannot parse argument %s!\n", argv[3]);
 			debugPrintf("\n");
 			return true;
@@ -1636,24 +1636,23 @@ bool ZoombiniConsole::CmdSub_PlotPoint(int argc, const char **argv) {
 		return true;
 	}
 
-	int32 xVal = 0, yVal = 0, colorVal = 0;
-	if (!parseInt(argv[2], xVal) || !parseInt(argv[3], yVal)) {
+	int32 xVal = 0, yVal = 0;
+	if (!parseSignedInt(argv[2], xVal) || !parseSignedInt(argv[3], yVal)) {
 		debugPrintf("\n");
 		return true;
 	}
 
 	uint32 color = static_cast<uint32>(ZoombiniGraphics::kColor0A_White);
 	if (argc == 5) {
-		if (!parseInt(argv[4], colorVal)) {
+		if (!parseUnsignedInt(argv[4], color)) {
 			debugPrintf("\n");
 			return true;
 		}
-		if (colorVal < 0 || 0xFF < colorVal) {
+		if (0xFF < color) {
 			debugPrintf("Error: Color must be 0-255\n");
 			debugPrintf("\n");
 			return true;
 		}
-		color = static_cast<uint32>(colorVal);
 	}
 
 	int16 x = static_cast<int16>(xVal);
@@ -1693,25 +1692,24 @@ bool ZoombiniConsole::CmdSub_PlotLine(int argc, const char **argv) {
 		return true;
 	}
 
-	int32 x0Val = 0, y0Val = 0, x1Val = 0, y1Val = 0, colorVal = 0;
-	if (!parseInt(argv[2], x0Val) || !parseInt(argv[3], y0Val) ||
-		!parseInt(argv[4], x1Val) || !parseInt(argv[5], y1Val)) {
+	int32 x0Val = 0, y0Val = 0, x1Val = 0, y1Val = 0;
+	if (!parseSignedInt(argv[2], x0Val) || !parseSignedInt(argv[3], y0Val) ||
+		!parseSignedInt(argv[4], x1Val) || !parseSignedInt(argv[5], y1Val)) {
 		debugPrintf("\n");
 		return true;
 	}
 
 	uint32 color = static_cast<uint32>(ZoombiniGraphics::kColor0A_White);
 	if (argc == 7) {
-		if (!parseInt(argv[6], colorVal)) {
+		if (!parseUnsignedInt(argv[6], color)) {
 			debugPrintf("\n");
 			return true;
 		}
-		if (colorVal < 0 || 0xFF < colorVal) {
+		if (0xFF < color) {
 			debugPrintf("Error: Color must be 0-255\n");
 			debugPrintf("\n");
 			return true;
 		}
-		color = static_cast<uint32>(colorVal);
 	}
 
 	int16 x0 = static_cast<int16>(x0Val);
@@ -1747,25 +1745,24 @@ bool ZoombiniConsole::CmdSub_PlotRect(int argc, const char **argv) {
 		return true;
 	}
 
-	int32 x1Val = 0, y1Val = 0, x2Val = 0, y2Val = 0, colorVal = 0;
-	if (!parseInt(argv[2], x1Val) || !parseInt(argv[3], y1Val) ||
-		!parseInt(argv[4], x2Val) || !parseInt(argv[5], y2Val)) {
+	int32 x1Val = 0, y1Val = 0, x2Val = 0, y2Val = 0;
+	if (!parseSignedInt(argv[2], x1Val) || !parseSignedInt(argv[3], y1Val) ||
+		!parseSignedInt(argv[4], x2Val) || !parseSignedInt(argv[5], y2Val)) {
 		debugPrintf("\n");
 		return true;
 	}
 
 	uint32 color = static_cast<uint32>(ZoombiniGraphics::kColor0A_White);
 	if (argc == 7) {
-		if (!parseInt(argv[6], colorVal)) {
+		if (!parseUnsignedInt(argv[6], color)) {
 			debugPrintf("\n");
 			return true;
 		}
-		if (colorVal < 0 || 0xFF < colorVal) {
+		if (0xFF < color) {
 			debugPrintf("Error: Color must be 0-255\n");
 			debugPrintf("\n");
 			return true;
 		}
-		color = static_cast<uint32>(colorVal);
 	}
 
 	int16 x1 = static_cast<int16>(x1Val);
@@ -1867,8 +1864,8 @@ bool ZoombiniConsole::CmdSub_GoXfer(int argc, const char **argv) {
 	// Parse optional level parameter
 	uint16 level = 0;
 	if (argc == 4) {
-		int32 levelVal;
-		if (!ZmbResource::parseInt(argv[3], levelVal) || levelVal < 1 || 4 < levelVal) {
+		uint32 levelVal;
+		if (!ZmbResource::parseUnsignedInt(argv[3], levelVal) || levelVal < 1 || 4 < levelVal) {
 			debugPrintf("Invalid level '%s'. Must be 1-4.\n", argv[3]);
 			debugPrintf("\n");
 			return true;
@@ -1886,11 +1883,10 @@ bool ZoombiniConsole::CmdSub_GoXfer(int argc, const char **argv) {
 	}
 
 	const char *destArg = argv[2];
-	const bool destLooksNumeric = ('0' <= destArg[0] && destArg[0] <= '9') ||
-								  destArg[0] == '-' || destArg[0] == '+';
+	const bool destLooksNumeric = ('0' <= destArg[0] && destArg[0] <= '9') || destArg[0] == '-' || destArg[0] == '+';
 	if (srcSiPage == ZmbSrcPageKind::kMinus1 && destLooksNumeric) {
 		int32 numVal;
-		if (ZmbResource::parseInt(destArg, numVal)) {
+		if (ZmbResource::parseSignedInt(destArg, numVal)) {
 			for (uint i = 0; i < xferRouteCount; i++) {
 				if (static_cast<int16>(numVal) == static_cast<int16>(xferRoutes[i].destPage)) {
 					srcSiPage = xferRoutes[i].srcPage;
@@ -2029,7 +2025,7 @@ bool ZoombiniConsole::CmdSub_GoPractice(int argc, const char **argv) {
 	// Parse puzzle name or page type number
 	ZoombiniPageType targetPage = ZoombiniPageType::kNone;
 	int32 numVal;
-	if (ZmbResource::parseInt(argv[2], numVal)) {
+	if (ZmbResource::parseSignedInt(argv[2], numVal)) {
 		for (uint i = 0; i < xferRouteCount; i++) {
 			if (!isPuzzleDestination(xferRoutes[i]))
 				continue;
@@ -2057,8 +2053,8 @@ bool ZoombiniConsole::CmdSub_GoPractice(int argc, const char **argv) {
 	}
 
 	// Parse level
-	int32 level;
-	if (!ZmbResource::parseInt(argv[3], level) || level < 1 || 4 < level) {
+	uint32 level;
+	if (!ZmbResource::parseUnsignedInt(argv[3], level) || level < 1 || 4 < level) {
 		debugPrintf("Invalid level '%s'. Must be 1-4.\n", argv[3]);
 		debugPrintf("\n");
 		return true;
@@ -2068,7 +2064,7 @@ bool ZoombiniConsole::CmdSub_GoPractice(int argc, const char **argv) {
 	int16 packCount = 16;
 	if (argc == 5) {
 		int32 countVal;
-		if (!ZmbResource::parseInt(argv[4], countVal) || countVal < 1 || 16 < countVal) {
+		if (!ZmbResource::parseSignedInt(argv[4], countVal) || countVal < 1 || 16 < countVal) {
 			debugPrintf("Invalid count '%s'. Must be 1-16.\n", argv[4]);
 			debugPrintf("\n");
 			return true;
@@ -2548,7 +2544,7 @@ bool ZoombiniConsole::CmdSub_StateSet(int argc, const char **argv) {
 	if (keyKind == kStateKindFleensTraitValueRotation || keyKind == kStateKindFleensTraitDestSlot) {
 		const int32 maximumValue = (keyKind == kStateKindFleensTraitValueRotation) ? 5 : 4;
 		int32 newValue = 0;
-		if (!ZmbResource::parseInt(valueArg, newValue) || newValue < 0 || maximumValue < newValue) {
+		if (!ZmbResource::parseSignedInt(valueArg, newValue) || newValue < 0 || maximumValue < newValue) {
 			debugPrintf("Invalid Fleens trait value '%s'. Use a value from 0 to %d (hex supported).\n",
 						valueArg, static_cast<int>(maximumValue));
 			debugPrintf("\n");
@@ -2609,7 +2605,7 @@ bool ZoombiniConsole::CmdSub_StateSet(int argc, const char **argv) {
 			enabled = false;
 		} else {
 			int32 numericValue = 0;
-			valid = ZmbResource::parseInt(valueArg, numericValue) &&
+			valid = ZmbResource::parseSignedInt(valueArg, numericValue) &&
 					(numericValue == 0 || numericValue == 1);
 			enabled = numericValue == 1;
 		}
@@ -2727,8 +2723,8 @@ bool ZoombiniConsole::CmdSub_StateSet(int argc, const char **argv) {
 	}
 
 	if (kStateKindRoute1Level <= keyKind && keyKind <= kStateKindRoute4Level) {
-		int32 difficultyLevel = 0;
-		if (!ZmbResource::parseInt(valueArg, difficultyLevel) || difficultyLevel < 1 || 4 < difficultyLevel) {
+		int32 level = 0;
+		if (!ZmbResource::parseSignedInt(valueArg, level) || level < 1 || 4 < level) {
 			debugPrintf("Invalid route difficulty level '%s'. Use a value from 1 to 4 (hex supported).\n", valueArg);
 			debugPrintf("\n");
 			return true;
@@ -2736,14 +2732,14 @@ bool ZoombiniConsole::CmdSub_StateSet(int argc, const char **argv) {
 
 		const uint routeIndex = static_cast<uint>(keyKind - kStateKindRoute1Level);
 		const int16 previousLevel = state._routeLevels[routeIndex] + 1;
-		if (previousLevel == difficultyLevel) {
+		if (previousLevel == static_cast<int16>(level)) {
 			debugPrintf("State key '%s': no-op (already level=%d)\n", key, previousLevel);
 			debugPrintf("\n");
 			return true;
 		}
 
 		printStateSetWarning();
-		if (!_vm->_state->setRouteDifficultyLevel(static_cast<ZmbRouteId>(routeIndex), static_cast<int16>(difficultyLevel))) {
+		if (!_vm->_state->setRouteDifficultyLevel(static_cast<ZmbRouteId>(routeIndex), static_cast<int16>(level))) {
 			debugPrintf("Could not set route difficulty level for '%s'.\n", key);
 			debugPrintf("\n");
 			return true;
@@ -2752,7 +2748,7 @@ bool ZoombiniConsole::CmdSub_StateSet(int argc, const char **argv) {
 		_vm->_state->markDebugStateMutation();
 		debugPrintf("State key '%s':\n", key);
 		debugPrintf("  before: level=%d\n", previousLevel);
-		debugPrintf("  after:  level=%d\n", difficultyLevel);
+		debugPrintf("  after:  level=%d\n", level);
 		debugPrintf("  rollback: state set %s %d\n", key, previousLevel);
 		debugPrintf("\n");
 		return true;
@@ -2810,7 +2806,7 @@ bool ZoombiniConsole::CmdSub_StateSet(int argc, const char **argv) {
 	}
 
 	int32 perfectCounter = 0;
-	if (!ZmbResource::parseInt(valueArg, perfectCounter) || perfectCounter < 0 || 2 < perfectCounter) {
+	if (!ZmbResource::parseSignedInt(valueArg, perfectCounter) || perfectCounter < 0 || 2 < perfectCounter) {
 		debugPrintf("Invalid perfect counter '%s'. Use a value from 0 to 2 (hex supported).\n", valueArg);
 		debugPrintf("\n");
 		return true;
@@ -3525,7 +3521,7 @@ bool ZoombiniConsole::CmdSub_Puzzle_Chances(int argc, const char **argv) {
 
 		const char *remainingArg = argv[3];
 		int32 remaining = -1;
-		if (!ZmbResource::parseInt(remainingArg, remaining) || remaining < 0) {
+		if (!ZmbResource::parseSignedInt(remainingArg, remaining) || remaining < 0) {
 			debugPrintf("Invalid remaining chances '%s'. Must be a non-negative integer.\n", remainingArg);
 			debugPrintf("\n");
 			return true;
@@ -3946,10 +3942,17 @@ bool ZoombiniConsole::parseMemorialDate(const char *value, uint16 &year, byte &m
 	return 1 <= year && 1 <= month && month <= 12 && 1 <= day && day <= 31;
 }
 
-bool ZoombiniConsole::parseInt(const char *str, int32 &result) {
-	bool success = ZmbResource::parseInt(str, result);
+bool ZoombiniConsole::parseSignedInt(const char *str, int32 &result) {
+	bool success = ZmbResource::parseSignedInt(str, result);
 	if (!success)
-		debugPrintf("Cannot parse integer(%s) (hex supported with 0x prefix)\n", str);
+		debugPrintf("Cannot parse int32(%s) (hex supported with 0x prefix)\n", str);
+	return success;
+}
+
+bool ZoombiniConsole::parseUnsignedInt(const char *str, uint32 &result) {
+	bool success = ZmbResource::parseUnsignedInt(str, result);
+	if (!success)
+		debugPrintf("Cannot parse uint32(%s) (hex supported with 0x prefix)\n", str);
 	return success;
 }
 

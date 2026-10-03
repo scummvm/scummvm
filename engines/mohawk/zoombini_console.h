@@ -384,8 +384,10 @@ private:
 	void printShortcutRemapping(const char *actionId);
 	/** Print the serialized debug flag and runtime-only MIDI test state. */
 	void printBuiltinDebugStatus();
-	/** Parse a signed integer debugger argument. */
-	bool parseInt(const char *str, int32 &result);
+	/** Wrap @ref ZmbResource::parseSignedInt and report failure through @ref GUI::Debugger::debugPrintf. */
+	bool parseSignedInt(const char *str, int32 &result);
+	/** Wrap @ref ZmbResource::parseUnsignedInt and report failure through @ref GUI::Debugger::debugPrintf. */
+	bool parseUnsignedInt(const char *str, uint32 &result);
 	/** Parse a memorial date in yyyyMMdd form. */
 	static bool parseMemorialDate(const char *value, uint16 &year, byte &month, byte &day);
 	/** Parse a qualified Zoombini resource argument. */
