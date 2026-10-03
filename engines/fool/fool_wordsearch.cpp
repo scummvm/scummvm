@@ -230,18 +230,35 @@ void FoolGame::wordSearchOnClick() {
 		getGridFromMouse(var_i16_68a, var_i16_68c);
 		sub_128_342(var_i16_68a, var_i16_68c);
 		if (!((var_i16_68a == var_i16_1a96) && (var_i16_68c == var_i16_1a98))) {
-			// 131:0934
-			var_i16_1574 = var_i16_68a + (var_i16_68c - 1)*arr_i16_1eb8[0];
-			var_i16_1a96 = var_i16_68a;
-			var_i16_1a98 = var_i16_68c;
-			var_str_1070 += _zbasic->chr(arr_i16_3b38[var_i16_68a*32 + var_i16_68c]);
-			_toolbox->InvertRect(_screenGrid[var_i16_1574]);
-			var_i16_1a94++;
-			// 131:09c4
-			arr_i16_4338[var_i16_1a94] = var_i16_1574;
-			if (var_i16_1a94 == 0x64) {
-				wordSearchBadSelect();
-				return;
+			// The mouse can cross several cells between polls, so also select
+			// every cell on the line from the previous cell to the current one.
+			const int16 startX = var_i16_1a96;
+			const int16 startY = var_i16_1a98;
+			const int16 targetX = var_i16_68a;
+			const int16 targetY = var_i16_68c;
+			const int16 dx = targetX - startX;
+			const int16 dy = targetY - startY;
+			const int16 steps = (startX < 0) ? 1 : MAX(ABS(dx), ABS(dy));
+			for (int16 s = 1; s <= steps; s++) {
+				int16 cellX = targetX;
+				int16 cellY = targetY;
+				if (startX >= 0) {
+					cellX = startX + (dx * s * 2 + (dx < 0 ? -steps : steps)) / (2 * steps);
+					cellY = startY + (dy * s * 2 + (dy < 0 ? -steps : steps)) / (2 * steps);
+				}
+				// 131:0934
+				var_i16_1574 = cellX + (cellY - 1)*arr_i16_1eb8[0];
+				var_i16_1a96 = cellX;
+				var_i16_1a98 = cellY;
+				var_str_1070 += _zbasic->chr(arr_i16_3b38[cellX*32 + cellY]);
+				_toolbox->InvertRect(_screenGrid[var_i16_1574]);
+				var_i16_1a94++;
+				// 131:09c4
+				arr_i16_4338[var_i16_1a94] = var_i16_1574;
+				if (var_i16_1a94 == 0x64) {
+					wordSearchBadSelect();
+					return;
+				}
 			}
 		}
 		// 131:09ec
