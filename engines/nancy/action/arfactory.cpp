@@ -98,6 +98,7 @@
 #include "engines/nancy/action/puzzle/setplayerclock.h"
 #include "engines/nancy/action/puzzle/sewingmachinepuzzle.h"
 #include "engines/nancy/action/puzzle/sliderpuzzle.h"
+#include "engines/nancy/action/puzzle/snowmobilepuzzle.h"
 #include "engines/nancy/action/puzzle/sortpuzzle.h"
 #include "engines/nancy/action/puzzle/soundequalizerpuzzle.h"
 #include "engines/nancy/action/puzzle/soundmatchpuzzle.h"
@@ -561,7 +562,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new DrivingPuzzle(DrivingPuzzle::kDriving);
 		else
-			return nullptr;	// Snowmobile
+			return new SnowmobilePuzzle(SnowmobilePuzzle::kDriving);
 	case 161:
 		if (g_nancy->getGameType() <= kGameTypeNancy11)
 			return new PlaySoundEventFlagTerse();
@@ -601,7 +602,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new DrivingPuzzle(DrivingPuzzle::kChase);
 		else
-			return nullptr;	// Snowmobile chase
+			return new SnowmobilePuzzle(SnowmobilePuzzle::kChase);
 	case 168:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new Set3DSoundListenerPosition();
