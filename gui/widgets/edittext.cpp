@@ -82,15 +82,13 @@ void EditTextWidget::drawWidget() {
 	int x = -_editScrollOffset;
 	int y = drawRect.top;
 
-	int selBegin = _selCaretPos;
-	int selEnd = _selOffset + _selCaretPos;
-	if (selBegin > selEnd)
-		SWAP(selBegin, selEnd);
-	selBegin = MAX(selBegin, 0);
-	selEnd = MAX(selEnd, 0);
+	const Common::U32String displayedText = getDisplayedEditString();
+	int selBegin;
+	int selEnd;
+	getDisplayedSelection(selBegin, selEnd);
 	
 	if (!g_gui.useRTL()) {
-		Common::UnicodeBiDiText utxt(_editString);
+		Common::UnicodeBiDiText utxt(displayedText);
 		Common::U32String left = Common::U32String(utxt.visual.c_str(), utxt.visual.c_str() + selBegin);
 		Common::U32String selected = Common::U32String(utxt.visual.c_str() + selBegin, selEnd - selBegin);
 		Common::U32String right = Common::U32String(utxt.visual.c_str() + selEnd);
@@ -115,10 +113,8 @@ void EditTextWidget::drawWidget() {
 		}
 	} else {
 		// The above method does not render RTL languages correctly, so fallback to default method
-		// There are only two possible cases, either the whole string has been selected
-		// or nothing has been selected.
-		_inversion = _selOffset ? ThemeEngine::kTextInversionFocus : ThemeEngine::kTextInversionNone;
-		g_gui.theme()->drawText(drawRect, _editString, _state, _drawAlign, _inversion, 
+		_inversion = selBegin != selEnd ? ThemeEngine::kTextInversionFocus : ThemeEngine::kTextInversionNone;
+		g_gui.theme()->drawText(drawRect, displayedText, _state, _drawAlign, _inversion,
 		                        -_editScrollOffset, false, _font, ThemeEngine::kFontColorNormal, true, 
 		                        _textDrawableArea);
 	}
@@ -145,15 +141,18 @@ Common::Rect EditTextWidget::getEditRect() const {
 
 void EditTextWidget::receivedFocusWidget() {
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	g_system->setFeatureState(OSystem::kFeatureImeComposition, true);
 }
 
 void EditTextWidget::lostFocusWidget() {
 	// If we lose focus, 'commit' the user changes and clear selection
 	_backupString = _editString;
 	drawCaret(true);
+	clearImeComposition();
 	clearSelection();
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	g_system->setFeatureState(OSystem::kFeatureImeComposition, false);
 }
 
 void EditTextWidget::startEditMode() {
