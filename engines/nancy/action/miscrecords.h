@@ -639,6 +639,109 @@ protected:
 	Common::Path _videoFile;	// replacement scene background, empty to keep the current one
 };
 
+// Nancy17. Covers a part of the viewport with a color that changes into another
+// one over time, e.g. from transparent to black. It stays at the last color for
+// as long as the scene does.
+class FadeOverlay : public RenderActionRecord {
+public:
+	FadeOverlay() : RenderActionRecord(7) {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	bool isViewportRelative() const override { return true; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "FadeOverlay"; }
+
+	float _seconds = 0;
+	uint32 _fromColor = 0;	// ARGB
+	uint32 _toColor = 0;	// ARGB
+	Common::Rect _bounds;
+	FlagDescription _doneFlag;
+
+	uint32 _startTime = 0;
+	bool _hasEnded = false;
+};
+
+// Nancy17. Sets one of several flags, each of which has a percent chance to be the one
+class SetRandomFlag : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "SetRandomFlag"; }
+
+	struct Choice {
+		FlagDescription flag;
+		int32 percent = 0;
+	};
+
+	Common::Array<Choice> _choices;
+};
+
+// Nancy17. A collection is a named list of numbers, which keeps the most recent
+// ones once it is full. Scenes use them for combinations, e.g. to add every
+// button the player presses and check the last few against the solution.
+class CollectionControl : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	enum Operation { kCreate = 0, kDelete = 1 };
+
+	Common::String getRecordTypeName() const override { return "CollectionControl"; }
+
+	byte _operation = kCreate;
+	Common::String _name;
+	bool _replaceExisting = false;
+	uint32 _maxSize = 0;
+};
+
+// Nancy17. Adds numbers to a collection
+class CollectionEdit : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "CollectionEdit"; }
+
+	Common::String _name;
+	Common::Array<double> _values;
+};
+
+// Nancy17. Compares a collection against a list of numbers or a size, and sets
+// one of its flags by the result
+class CollectionCheck : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	enum CheckType {
+		kContainsAll	= 0,	// every listed number is in the collection, in any order
+		kIsEqual		= 1,
+		kSize			= 2,
+		kFollowsPattern	= 3		// the collection goes through the list, over and over
+	};
+
+	Common::String getRecordTypeName() const override { return "CollectionCheck"; }
+
+	bool check(const Common::Array<double> &collection) const;
+
+	byte _checkType = kContainsAll;
+	Common::String _name;
+
+	// Match and mismatch; the size check has one for a bigger, an equal and a
+	// smaller collection
+	FlagDescription _flags[3];
+	int32 _size = 0;
+	Common::Array<double> _values;
+};
+
 // Nancy17. Adds a contact to the cell phone of the character being played
 class AddPhoneEntry : public ActionRecord {
 public:
@@ -674,6 +777,37 @@ protected:
 	Common::Array<ItemFlag> _itemFlags;
 	FlagDescription _otherItemFlag;
 	Common::Array<HotspotDescription> _hotspots;
+};
+
+// Nancy17. Rain over a part of the viewport: a number of drops, which get placed
+// anew a few times a second. The further away a drop is, the shorter and the
+// fainter it gets drawn.
+class Rain : public RenderActionRecord {
+public:
+	Rain() : RenderActionRecord(7) {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	bool isViewportRelative() const override { return true; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "Rain"; }
+
+	void drawDrops();
+	void drawDrop(const Common::Rect &src, const Common::Point &pos, int height, byte alpha);
+
+	Common::Path _imageName;
+	Common::Array<Common::Rect> _dropSrcs;
+	Common::Array<HotspotDescription> _areas;	// where it rains, for every frame of the scene
+	float _minDistance = 0;
+	float _maxDistance = 1;
+	int32 _numDrops = 0;
+	uint32 _interval = 0;
+
+	Graphics::ManagedSurface _image;
+	int _areaIndex = -1;
+	uint32 _nextDrawTime = 0;
 };
 
 } // End of namespace Action

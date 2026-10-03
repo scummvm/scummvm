@@ -836,6 +836,37 @@ void StreamData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void CollectionData::synchronize(Common::Serializer &ser) {
+	uint16 numCollections = collections.size();
+	ser.syncAsUint16LE(numCollections);
+
+	if (ser.isSaving()) {
+		for (auto &entry : collections) {
+			Common::String name = entry._key;
+			ser.syncString(name);
+			ser.syncAsUint32LE(entry._value.maxSize);
+
+			uint16 numValues = entry._value.values.size();
+			ser.syncAsUint16LE(numValues);
+			ser.syncArray(entry._value.values.data(), numValues, Common::Serializer::DoubleLE);
+		}
+	} else {
+		collections.clear();
+		for (uint i = 0; i < numCollections; ++i) {
+			Common::String name;
+			ser.syncString(name);
+
+			Collection &collection = collections[name];
+			ser.syncAsUint32LE(collection.maxSize);
+
+			uint16 numValues = 0;
+			ser.syncAsUint16LE(numValues);
+			collection.values.resize(numValues);
+			ser.syncArray(collection.values.data(), numValues, Common::Serializer::DoubleLE);
+		}
+	}
+}
+
 Common::String PhoneBookData::Entry::getDisplayText() const {
 	if (nameFlag == -1 || NancySceneState.getEventFlag(nameFlag, g_nancy->_true)) {
 		return name;
@@ -865,6 +896,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new PhoneBookData();
 	case StreamData::getTag():
 		return new StreamData();
+	case CollectionData::getTag():
+		return new CollectionData();
 	case BuildPuzzleData::getTag():
 		return new BuildPuzzleData();
 	case MirrorLightData::getTag():

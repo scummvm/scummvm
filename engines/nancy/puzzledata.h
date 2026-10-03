@@ -616,6 +616,20 @@ struct StreamData : public PuzzleData {
 	Common::Array<Stream> streams;
 };
 
+// Nancy17. Named lists of numbers that the scenes fill and check, e.g. the
+// buttons the player pressed so far
+struct CollectionData : public PuzzleData {
+	struct Collection {
+		uint32 maxSize = 0;
+		Common::Array<double> values;
+	};
+
+	static constexpr uint32 getTag() { return MKTAG('C', 'O', 'L', 'L'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::HashMap<Common::String, Collection, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> collections;
+};
+
 // Nancy17. The contacts in the cell phone of every player character
 struct PhoneBookData : public PuzzleData {
 	struct Entry {

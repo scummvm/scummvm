@@ -1356,6 +1356,75 @@ void PlayChar::execute() {
 	finishExecution();
 }
 
+void FadeOverlay::readData(Common::SeekableReadStream &stream) {
+	_seconds = stream.readFloatLE();
+	_z = stream.readUint32LE();
+	_fromColor = stream.readUint32BE();
+	_toColor = stream.readUint32BE();
+	readExclusiveRect(stream, _bounds);
+	_doneFlag.label = stream.readSint16LE();
+	_doneFlag.flag = stream.readByte();
+}
+
+void FadeOverlay::execute() {
+	if (_state == kBegin) {
+		_drawSurface.create(_bounds.width(), _bounds.height(), g_nancy->_graphics->getTransparentPixelFormat());
+		moveTo(_bounds);
+		RenderObject::init();
+
+		_startTime = g_nancy->getTotalPlayTime();
+		_state = kRun;
+	}
+
+	if (_hasEnded) {
+		return;
+	}
+
+	float seconds = (g_nancy->getTotalPlayTime() - _startTime) / 1000.0f;
+	float progress = _seconds > 0 ? CLIP<float>(seconds / _seconds, 0, 1) : 1;
+
+	// The color eases in and out of the change
+	float amount = 0.5f + 0.5f * sin((progress - 0.5f) * M_PI);
+
+	uint32 color = 0;
+	for (uint shift = 0; shift < 32; shift += 8) {
+		float from = (_fromColor >> shift) & 0xFF;
+		float to = (_toColor >> shift) & 0xFF;
+		color |= (uint32)(from + (to - from) * amount) << shift;
+	}
+
+	_drawSurface.clear(argbToColor(_drawSurface.format, color));
+	_needsRedraw = true;
+
+	if (seconds > _seconds) {
+		_hasEnded = true;
+		NancySceneState.setEventFlag(_doneFlag);
+	}
+}
+
+void SetRandomFlag::readData(Common::SeekableReadStream &stream) {
+	_choices.resize(stream.readUint16LE());
+	for (Choice &choice : _choices) {
+		choice.flag.label = stream.readSint16LE();
+		choice.flag.flag = stream.readByte();
+		choice.percent = stream.readSint32LE();
+	}
+}
+
+void SetRandomFlag::execute() {
+	// The percentages add up to 100
+	int roll = g_nancy->_randomSource->getRandomNumber(99);
+	for (const Choice &choice : _choices) {
+		roll -= choice.percent;
+		if (roll < 0) {
+			NancySceneState.setEventFlag(choice.flag);
+			break;
+		}
+	}
+
+	_isDone = true;
+}
+
 void AddPhoneEntry::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _entry.name);
 	readFilename(stream, _entry.number);
@@ -1379,6 +1448,152 @@ void AddPhoneEntry::execute() {
 	}
 
 	NancySceneState.getNDUI()->showPhoneBookEntry(_entry, isNew);
+	_isDone = true;
+}
+
+// The numbers of a collection record take up the rest of its data. The original
+// also has collections of flags and of names, which no scene makes use of.
+static void readCollectionValues(Common::SeekableReadStream &stream, Common::Array<double> &values) {
+	const uint16 numValues = stream.readUint16LE();
+	if (!numValues) {
+		return;
+	}
+
+	if ((stream.size() - stream.pos()) / numValues != 8) {
+		warning("Unsupported collection item type");
+		return;
+	}
+
+	values.resize(numValues);
+	for (double &value : values) {
+		value = stream.readDoubleLE();
+	}
+}
+
+void CollectionControl::readData(Common::SeekableReadStream &stream) {
+	_operation = stream.readByte();
+	readFilename(stream, _name);
+
+	if (_operation == kCreate) {
+		_replaceExisting = stream.readByte();
+		stream.skip(1);
+		_maxSize = stream.readUint32LE();
+		stream.skip(1);		// Item type, always numbers
+		stream.skip(21);	// A flag, a rectangle and a color
+	}
+}
+
+void CollectionControl::execute() {
+	auto *data = (CollectionData *)NancySceneState.getPuzzleData(CollectionData::getTag());
+
+	if (_operation == kDelete) {
+		data->collections.erase(_name);
+	} else if (_replaceExisting || !data->collections.contains(_name)) {
+		CollectionData::Collection &collection = data->collections[_name];
+		collection.maxSize = _maxSize;
+		collection.values.clear();
+	}
+
+	_isDone = true;
+}
+
+void CollectionEdit::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);	// Edit type, always "add"
+	readFilename(stream, _name);
+	readCollectionValues(stream, _values);
+}
+
+void CollectionEdit::execute() {
+	auto *data = (CollectionData *)NancySceneState.getPuzzleData(CollectionData::getTag());
+
+	if (data->collections.contains(_name)) {
+		CollectionData::Collection &collection = data->collections[_name];
+		collection.values.push_back(_values);
+
+		// The oldest values make room for the new ones
+		while (collection.values.size() > collection.maxSize) {
+			collection.values.remove_at(0);
+		}
+	} else {
+		warning("%s: tried to add but collection does not exist", _name.c_str());
+	}
+
+	_isDone = true;
+}
+
+void CollectionCheck::readData(Common::SeekableReadStream &stream) {
+	_checkType = stream.readByte();
+	readFilename(stream, _name);
+
+	const uint numFlags = _checkType == kSize ? 3 : 2;
+	for (uint i = 0; i < numFlags; ++i) {
+		_flags[i].label = stream.readSint16LE();
+		_flags[i].flag = stream.readByte();
+	}
+
+	if (_checkType == kSize) {
+		_size = stream.readSint32LE();
+	} else {
+		readCollectionValues(stream, _values);
+	}
+}
+
+bool CollectionCheck::check(const Common::Array<double> &collection) const {
+	switch (_checkType) {
+	case kContainsAll: {
+		Common::Array<double> remaining = collection;
+		for (double value : _values) {
+			bool found = false;
+			for (uint i = 0; i < remaining.size() && !found; ++i) {
+				if (remaining[i] == value) {
+					remaining.remove_at(i);
+					found = true;
+				}
+			}
+
+			if (!found) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+	case kIsEqual:
+		return collection == _values;
+	case kFollowsPattern:
+		for (uint i = 0; i < collection.size(); ++i) {
+			if (_values.empty() || collection[i] != _values[i % _values.size()]) {
+				return false;
+			}
+		}
+
+		return true;
+	default:
+		return false;
+	}
+}
+
+void CollectionCheck::execute() {
+	auto *data = (CollectionData *)NancySceneState.getPuzzleData(CollectionData::getTag());
+
+	if (data->collections.contains(_name)) {
+		const Common::Array<double> &collection = data->collections[_name].values;
+
+		if (_checkType == kSize) {
+			if (_size < (int32)collection.size()) {
+				NancySceneState.setEventFlag(_flags[0]);
+			} else if (_size == (int32)collection.size()) {
+				NancySceneState.setEventFlag(_flags[1]);
+			} else {
+				NancySceneState.setEventFlag(_flags[2]);
+			}
+		} else {
+			NancySceneState.setEventFlag(_flags[check(collection) ? 0 : 1]);
+		}
+	} else {
+		warning("%s: tried to check collection does not exist", _name.c_str());
+	}
+
 	_isDone = true;
 }
 
@@ -1434,6 +1649,130 @@ void HeldItemFlags::execute() {
 	NancySceneState.setEventFlag(flag);
 	_hasHotspot = false;
 	finishExecution();
+}
+
+void Rain::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+
+	_dropSrcs.resize(stream.readUint16LE());
+	for (Common::Rect &src : _dropSrcs) {
+		readRect(stream, src);
+	}
+
+	_areas.resize(stream.readUint16LE());
+	for (HotspotDescription &area : _areas) {
+		area.frameID = stream.readUint16LE();
+		readExclusiveRect(stream, area.coords);
+	}
+
+	_z = stream.readSint32LE();
+	_minDistance = stream.readFloatLE();
+	_maxDistance = stream.readFloatLE();
+	_numDrops = stream.readSint32LE();
+	_interval = (uint32)(stream.readFloatLE() * 1000);
+}
+
+void Rain::execute() {
+	if (_state == kBegin) {
+		g_nancy->_resource->loadImage(_imageName, _image);
+		RenderObject::init();
+		setVisible(false);
+		_state = kRun;
+	}
+
+	int areaIndex = -1;
+	for (uint i = 0; i < _areas.size(); ++i) {
+		if (_areas[i].frameID == NancySceneState.getSceneInfo().frameID) {
+			areaIndex = i;
+		}
+	}
+
+	if (areaIndex != _areaIndex) {
+		_areaIndex = areaIndex;
+		_nextDrawTime = 0;
+		setVisible(areaIndex != -1);
+
+		if (areaIndex != -1) {
+			const Common::Rect &area = _areas[areaIndex].coords;
+			_drawSurface.create(area.width(), area.height(), g_nancy->_graphics->getTransparentPixelFormat());
+			moveTo(area);
+		}
+	}
+
+	if (_areaIndex != -1 && !_dropSrcs.empty() && g_nancy->getTotalPlayTime() >= _nextDrawTime) {
+		_nextDrawTime = g_nancy->getTotalPlayTime() + _interval;
+		drawDrops();
+	}
+}
+
+void Rain::drawDrops() {
+	static const float kDistanceCurve = 0.85f;
+	static const float kDistanceFade = 0.75f;
+
+	_drawSurface.clear(0);
+
+	const float exponent = 1.0f - (_maxDistance - _minDistance) * kDistanceCurve;
+
+	for (int i = 0; i < _numDrops; ++i) {
+		const Common::Rect &src = _dropSrcs[g_nancy->_randomSource->getRandomNumber(_dropSrcs.size() - 1)];
+
+		float distance = _minDistance + (_maxDistance - _minDistance) * g_nancy->_randomSource->getRandomNumber(32767) / 32767.0f;
+		distance = pow(distance, exponent);
+
+		byte alpha = (byte)((1.0f - kDistanceFade * distance) * 255);
+		int height = MAX<int>((int)((1.0f - distance) * src.height()), 1);
+
+		// Anywhere that leaves a part of the drop inside
+		int rangeX = _drawSurface.w + src.width() - 2;
+		int rangeY = _drawSurface.h + height - 2;
+		if (rangeX <= 0 || rangeY <= 0) {
+			continue;
+		}
+
+		Common::Point pos;
+		pos.x = 1 - src.width() + g_nancy->_randomSource->getRandomNumber(rangeX - 1);
+		pos.y = 1 - height + g_nancy->_randomSource->getRandomNumber(rangeY - 1);
+
+		drawDrop(src, pos, height, alpha);
+	}
+
+	_needsRedraw = true;
+}
+
+// Draws a drop squeezed to the given height, on top of the ones already there
+void Rain::drawDrop(const Common::Rect &src, const Common::Point &pos, int height, byte alpha) {
+	for (int y = 0; y < height; ++y) {
+		int destY = pos.y + y;
+		int srcY = src.top + y * src.height() / height;
+		if (destY < 0 || destY >= _drawSurface.h || srcY >= _image.h) {
+			continue;
+		}
+
+		for (int x = 0; x < src.width(); ++x) {
+			int destX = pos.x + x;
+			int srcX = src.left + x;
+			if (destX < 0 || destX >= _drawSurface.w || srcX >= _image.w) {
+				continue;
+			}
+
+			byte a, r, g, b;
+			_image.format.colorToARGB(_image.getPixel(srcX, srcY), a, r, g, b);
+			a = a * alpha / 255;
+			if (a == 0) {
+				continue;
+			}
+
+			byte destA, destR, destG, destB;
+			_drawSurface.format.colorToARGB(_drawSurface.getPixel(destX, destY), destA, destR, destG, destB);
+
+			uint outA = a + destA * (255 - a) / 255;
+			r = (r * a + destR * destA * (255 - a) / 255) / outA;
+			g = (g * a + destG * destA * (255 - a) / 255) / outA;
+			b = (b * a + destB * destA * (255 - a) / 255) / outA;
+
+			_drawSurface.setPixel(destX, destY, _drawSurface.format.ARGBToColor(outA, r, g, b));
+		}
+	}
 }
 
 } // End of namespace Action

@@ -261,7 +261,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new HideCursor();	// Moved from 27
 	case 30:	// Nancy11
-		return new StopPlayerScrolling();
+		if (g_nancy->getGameType() <= kGameTypeNancy16)
+			return new StopPlayerScrolling();
+		else
+			return nullptr;	// SetCursor, which the game doesn't use
 	case 31:	// Nancy11
 		return new StartPlayerScrolling();
 	case 32:	// Nancy10
@@ -272,13 +275,21 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new ConversationInfoCheck();
 	case 36:	// Nancy12
 		return new ConversationGoodbye();
+	case 37:	// Nancy17
+		return new CollectionControl();
+	case 38:	// Nancy17
+		return new CollectionEdit();
+	case 39:	// Nancy17
+		return new CollectionCheck();
 	case 40:
 		if (g_nancy->getGameType() <= kGameTypeNancy1)
 			return new LightningOn(); // Only used in TVD
 		else if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new SpecialEffect();
-		else
+		else if (g_nancy->getGameType() <= kGameTypeNancy16)
 			return new Fader();
+		else
+			return new FadeOverlay();
 	case 41:	// Nancy13
 		return new PlaySecondaryMovie(PlaySecondaryMovie::kSecondaryMovieTerse);
 	case 42:	// Nancy14
@@ -406,6 +417,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new EventFlags(EventFlags::kEventFlags);
 	case 91:	// Nancy16
 		return new EventFlagsMultiHS(EventFlagsMultiHS::kCursorHS);
+	case 92:	// Nancy17
+		return new SetRandomFlag();
 	case 93:	// Nancy17
 		return new OnSceneChange();
 	case 94:	// Nancy12
@@ -744,7 +757,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 199:
 		return new WolfMazePuzzle();	// Driven by the commands given through 198
 	case 200:
-		return new SoundEqualizerPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy15)
+			return new SoundEqualizerPuzzle();
+		else
+			return new Rain();
 	case 201:
 		return new TowerPuzzle();
 	case 202:
