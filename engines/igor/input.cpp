@@ -167,6 +167,7 @@ void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
 }
 
 void IgorEngine::handleRoomInput() {
+	// ESCAPE for pause
 	if (_inputVars[kInputPause]) {
 		_inputVars[kInputPause] = 0;
 		handlePause();
@@ -175,6 +176,7 @@ void IgorEngine::handleRoomInput() {
 		_inputVars[kInputOptions] = 0;
 		// handleOptionsMenu();
 	}
+	// dialogue skip
 	if (_inputVars[kInputSkipDialogue] && _gameState.dialogueTextRunning) {
 		_talkDelayCounter = _talkDelay;
 		if (_gameState.talkMode != kTalkModeTextOnly && _talkSpeechCounter > 2) {
@@ -190,6 +192,7 @@ void IgorEngine::handleRoomInput() {
 	if (!_roomCursorOn || _gameState.dialogueTextRunning || _scrollInventory) {
 		return;
 	}
+	// verbs panel click
 	if (_inputVars[kInputCursorYPos] >= 156 && _inputVars[kInputCursorYPos] <= 167) {
 		if (_inputVars[kInputClick]) {
 			int verb = getVerbUnderCursor(_inputVars[kInputCursorXPos]);
@@ -252,6 +255,7 @@ void IgorEngine::handleRoomInput() {
 	}
 
 	// Action previousAction = _currentAction;
+	// Handle inventory and room object selection based on cursor position and clicks
 	if (_inputVars[kInputCursorYPos] >= 170 && _inputVars[kInputCursorYPos] <= 199) {
 		int object = getObjectFromInventory(_inputVars[kInputCursorXPos]);
 		if (_currentAction.verbType == 0) {
@@ -276,6 +280,7 @@ void IgorEngine::handleRoomInput() {
 			_currentAction.object2Type = kObjectTypeInventory;
 		}
 	} else if (_inputVars[kInputCursorYPos] < 144) {
+		// screen object under cursor
 		int area = _screenLayer2[_inputVars[kInputCursorYPos] * 320 + _inputVars[kInputCursorXPos]];
 		int object = _roomObjectAreasTable[area].object;
 		if (_currentAction.verbType == 0) {
@@ -289,6 +294,7 @@ void IgorEngine::handleRoomInput() {
 				return;
 			}
 			if (_currentAction.verb == kVerbGive && _roomActionsTable[_roomDataOffsets.action.giveVerb + 48 + _currentAction.object1Num] != 0) {
+
 				formatActionSentence(0);
 				if (!actionHovering) {
 					_currentAction.verbType = 2;
@@ -307,7 +313,7 @@ void IgorEngine::handleRoomInput() {
 		if (_currentAction.object1Type == kObjectTypeInventory) {
 			_actionCode = _inventoryActionsTable[(_currentAction.verb - 1) * 2 + _currentAction.object1Num * 20];
 		} else {
-		_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
+			_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
 		}
 		// The original only exposes a room object when this action byte is
 		// non-zero; otherwise hover text is verb-only. cseg175:2C8B-2CBC;
@@ -337,7 +343,21 @@ void IgorEngine::handleRoomInput() {
 		_actionCode = 0;
 		return;
 	}
+	// verbatim from reference/scummvm-igor-engine/igor.cpp:1611
+	debugC(9, kDebugEngine, "handleRoomInput() actionCode %d", _actionCode);
+	// expanded: shows what the clicks resolved to and how the offset was built
+	debugC(9, kDebugEngine, "  verb %d verbType %d | obj1: type %d num %d (row %d) | obj2: type %d num %d (col %d) | verbBase %d offset %d -> %d",
+	       _currentAction.verb, _currentAction.verbType,
+	       _currentAction.object1Type, _currentAction.object1Num,
+	       _currentAction.object1Type == 0 ? -1 : _roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38],
+	       _currentAction.object2Type, _currentAction.object2Num,
+	       _currentAction.object2Type == 0 ? -1 : _roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38],
+	       _currentAction.verbType == 1 ? _roomDataOffsets.action.useVerb : _roomDataOffsets.action.giveVerb,
+	       (_roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38] * 2) +
+	           (_roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38] * _roomDataOffsets.action.objectSize),
+	       _actionCode);
 	if (_actionCode == 0) {
+		debugC(9, kDebugEngine, "handleRoomInput() actionCode is 0, clearing action");
 		clearAction();
 		return;
 	}
@@ -395,14 +415,16 @@ void IgorEngine::handleRoomInput() {
 				return;
 			}
 		}
-		hideCursor();
-		executeAction(_actionCode);
-		if (!_gameState.dialogueTextRunning) {
-			showCursor();
-		}
-		clearAction();
-		return;
 	}
+
+	hideCursor();
+	debugC(9, kDebugEngine, "handleRoomInput() executing action with actionCode %d", _actionCode);
+	executeAction(_actionCode);
+	if (!_gameState.dialogueTextRunning) {
+		showCursor();
+	}
+	clearAction();
+	return;
 }
 
 void IgorEngine::clearAction() {
@@ -437,6 +459,7 @@ void IgorEngine::formatActionSentence(uint8 color) {
 			}
 		}
 	}
+
 	drawActionSentence(actionSentence, kSentenceColorIndex[color]);
 }
 

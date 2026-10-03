@@ -472,6 +472,7 @@ void IgorEngine::drawInventory(int start, int mode) {
 
 
 void IgorEngine::addObjectToInventory(int object, int index) {
+	debugC(9, kDebugEngine, "addObjectToInventory %d %d", object, index);
 	++_inventoryInfo[73];
 	_inventoryInfo[_inventoryInfo[73] - 1] = object;
 	_inventoryInfo[index] = _inventoryInfo[73];

@@ -581,7 +581,7 @@ private:
 	void PART_17_ACTION_101_walkIn();
 	void PART_17_ACTION_103_talkPhilipJimmy();
 	void PART_17_ACTION_105();
-	void PART_17_ACTION_106();
+	void PART_17_ACTION_106_swapFolders();
 	void PART_17_HANDLE_DIALOGUE_PHILIP();
 	void PART_17_UPDATE_DIALOGUE_Jimmy(int action);
 	void PART_17_UPDATE_DIALOGUE_Philip(int action);

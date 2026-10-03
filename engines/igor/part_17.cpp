@@ -47,7 +47,7 @@ void IgorEngine::PART_17_EXEC_ACTION(int action) {
 		PART_17_ACTION_105();
 		break;
 	case 106: // exchange files
-		PART_17_ACTION_106();
+		PART_17_ACTION_106_swapFolders();
 		break;
 	default:
 		error("PART_17_EXEC_ACTION unhandled action %d", action);
@@ -191,9 +191,10 @@ void IgorEngine::PART_17_ACTION_105() {
 	_currentPart = 40;
 }
 
-void IgorEngine::PART_17_ACTION_106() {
+void IgorEngine::PART_17_ACTION_106_swapFolders() {
+	// folder already exchanged
 	if (_objectsState[55] == 1) {
-		ADD_DIALOGUE_TEXT(226, 1, 649); // cseg141:0A51-0A5D
+		ADD_DIALOGUE_TEXT(226, 1, 649);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		return;
@@ -223,6 +224,7 @@ void IgorEngine::PART_17_ACTION_106() {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
+	// Creo q no ha notado nada
 	ADD_DIALOGUE_TEXT(223, 2, 647); // cseg141:0B75-0B81
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();

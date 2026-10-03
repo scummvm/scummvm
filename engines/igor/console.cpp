@@ -33,8 +33,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("paint_deltalum", WRAP_METHOD(Console, Cmd_paintDeltaLum));
 	registerCmd("paint_off",      WRAP_METHOD(Console, Cmd_paintOff));
 	registerCmd("fast_mode",     WRAP_METHOD(Console, Cmd_fastMode));
-	registerCmd("changePart",     WRAP_METHOD(Console, Cmd_changePart));
-	registerCmd("addObjectToInventory", WRAP_METHOD(Console, Cmd_addObjectToInventory));
+	registerCmd("room",     WRAP_METHOD(Console, Cmd_changePart));
+	registerCmd("give", WRAP_METHOD(Console, Cmd_addObjectToInventory));
 }
 
 Console::~Console() {
