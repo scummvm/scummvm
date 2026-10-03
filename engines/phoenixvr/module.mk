@@ -18,7 +18,8 @@ MODULE_OBJS = \
 	script_v2.o \
 	subtitles.o \
 	variables.o \
-	vr.o
+	vr.o \
+	wise.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PHOENIXVR), DYNAMIC_PLUGIN)

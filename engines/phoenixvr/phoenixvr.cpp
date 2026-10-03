@@ -53,6 +53,7 @@
 #include "phoenixvr/script.h"
 #include "phoenixvr/subtitles.h"
 #include "phoenixvr/vr.h"
+#include "phoenixvr/wise.h"
 #include "video/4xm_decoder.h"
 #include "video/smk_decoder.h"
 
@@ -342,6 +343,10 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 			debug("adding level %s %s", path.c_str(), name.c_str());
 			_levels.push_back(Level{path, name});
 		}
+	}
+	Common::ScopedPtr<Common::File> file(new Common::File);
+	if (file->open("install.exe")) {
+		SearchMan.add("install.exe", createWISEArchive(file.release()), 0, true);
 	}
 }
 
