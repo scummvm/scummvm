@@ -320,7 +320,7 @@ bool ZoombiniShelterTown::debugDoPageCommand(int argc, const char **argv, Common
 		}
 
 		int32 population;
-		if (!ZmbResource::parseInt(argv[2], population) || population < 0 || 625 < population) {
+		if (!ZmbResource::parseSignedInt(argv[2], population) || population < 0 || 625 < population) {
 			output = Common::String::format("Invalid population '%s'. Must be 0-625 or reset.\n", argv[2]);
 			return true;
 		}
@@ -370,7 +370,7 @@ bool ZoombiniShelterTown::debugDoPageCommand(int argc, const char **argv, Common
 		}
 
 		int32 count;
-		if (!ZmbResource::parseInt(argv[2], count) || count < 1 || 50 < count) {
+		if (!ZmbResource::parseSignedInt(argv[2], count) || count < 1 || 50 < count) {
 			output = Common::String::format("Invalid fireworks count '%s'. Must be 1-50, cycle, or stop.\n", argv[2]);
 			return true;
 		}
