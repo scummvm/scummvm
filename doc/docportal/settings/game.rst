@@ -1152,6 +1152,13 @@ Enable high resolution graphics
 
 	*enable_high_resolution_graphics*
 
+.. _sharphires:
+
+Sharp high resolution scaling
+	Renders high resolution graphics at 3200x2200 so that text and low resolution graphics are scaled evenly. Requires more CPU power; works best with the OpenGL graphics mode, a stretch mode that fits the window, and graphics filtering enabled. King's Quest VI only; requires **Enable high resolution graphics**.
+
+	*enable_sharp_hires_scaling*
+
 .. _blackline:
 
 Enable black-lined video

@@ -2452,16 +2452,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	                      GAMEOPTION_RGB_RENDERING,            \
 	                      GAMEOPTION_ENABLE_GMM_SAVE)
 
-#define GUIO_KQ6_CD GUIO6(GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
+#define GUIO_KQ6_CD GUIO7(GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
+						  GAMEOPTION_SHARP_HIRES_SCALING,      \
 						  GAMEOPTION_PREFER_DIGITAL_SFX,       \
 						  GAMEOPTION_ORIGINAL_SAVELOAD,        \
 						  GAMEOPTION_MIDI_MODE,                \
 						  GAMEOPTION_RGB_RENDERING,            \
 						  GAMEOPTION_ENABLE_GMM_SAVE)
 
-#define GUIO_KQ6_CD_WINDOWS GUIO8(GUIO_NOASPECT,                       \
+#define GUIO_KQ6_CD_WINDOWS GUIO9(GUIO_NOASPECT,                       \
 								  GAMEOPTION_WINDOWS_CURSORS,          \
 								  GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
+								  GAMEOPTION_SHARP_HIRES_SCALING,      \
 								  GAMEOPTION_PREFER_DIGITAL_SFX,       \
 								  GAMEOPTION_ORIGINAL_SAVELOAD,        \
 								  GAMEOPTION_MIDI_MODE,                \
