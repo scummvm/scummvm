@@ -68,7 +68,7 @@ MortimerInterview::MortimerInterview(bool isDemo) : _random("mortimer"), _isDemo
 	_region(0), _difficulty(0), _textDifficulty(0), _tried(0), _stage(kIdle), _effect(kNoEffect),
 	_answer(-1), _previousAnswer(-1), _selected(-1), _question(0), _guess(-1), _lastAction(46), _textScroll(0), _guesses(3),
 	_species(0), _stones(0), _frame(0), _switchFrame(6), _payment(0),
-	_moviePending(false), _riddleView(false), _solving(false), _help(false), _helpExplained(false), _restartRegion(false) {
+	_moviePending(false), _riddleView(false), _solving(false), _help(false), _helpExplained(false), _restartRegion(false), _programmer(false) {
 	memset(_palette, 0, sizeof(_palette));
 	memset(_gatePalette, 0, sizeof(_gatePalette));
 }
@@ -93,9 +93,12 @@ bool MortimerInterview::loadText(const char *path, bool riddles) {
 				answer = heading == "Easy" ? 0 : heading == "Medium" ? 1 : 2;
 			} else {
 				animal = answer = -1;
-				for (uint i = 0; i < ARRAYSIZE(kAnimals); ++i)
-					if (heading.equalsIgnoreCase(_isDemo ? kAnimals[i] : mortimerRegion(_region).names[i]))
+				for (uint i = 0; i < ARRAYSIZE(kAnimals); ++i) {
+					const char *name = _programmer && !i ? "Programmer" :
+						_isDemo ? kAnimals[i] : mortimerRegion(_region).names[i];
+					if (heading.equalsIgnoreCase(name))
 						animal = i;
+				}
 			}
 		} else if (animal >= 0 && answer >= 0 && answer < 3) {
 			Common::String &text = riddles ? _riddles[animal][answer] : _dialogue[animal][answer];
@@ -105,6 +108,9 @@ bool MortimerInterview::loadText(const char *path, bool riddles) {
 		}
 	}
 	for (uint i = 0; i < ARRAYSIZE(kAnimals); ++i) {
+		// The alternate resource table has dialogue, but no Programmer riddle.
+		if (riddles && _programmer && !i)
+			continue;
 		for (uint j = 0; j < (riddles && _isDemo ? 1U : 3U); ++j)
 			if ((riddles ? _riddles[i][j] : _dialogue[i][j]).empty())
 				return false;
@@ -112,8 +118,9 @@ bool MortimerInterview::loadText(const char *path, bool riddles) {
 	return !file.err();
 }
 
-bool MortimerInterview::loadResources(uint region) {
+bool MortimerInterview::loadResources(uint region, bool programmer) {
 	_region = region;
+	_programmer = programmer && !_isDemo && !region;
 	for (uint i = 0; i < 7; ++i)
 		for (uint j = 0; j < 3; ++j) {
 			_dialogue[i][j].clear();

@@ -37,6 +37,9 @@ public:
 	bool skip();
 	void movieFinished();
 	void hit();
+	void clearDamage() { _damage = 0; }
+	void forceChoice(bool correct) { _forcedChoice = correct ? 1 : 2; }
+	void setProgrammer(bool enabled) { _programmer = enabled; }
 	void drawOverlay(Graphics::Surface &screen, const Common::Point &mouse, const Common::Point &origin, byte mouth) const;
 	const MortimerSound *takeSpeech(bool playing);
 
@@ -71,6 +74,7 @@ private:
 	void retry(bool crash);
 	void resolveChoice();
 	void showChoices();
+	void selectSide(uint side);
 	int animal(uint side) const;
 	void drawText(Graphics::Surface &screen, const Common::String &text, int x, int y, int width, byte color) const;
 
@@ -85,9 +89,9 @@ private:
 	uint _nextVoice, _flightDifficulty, _riddleDifficulty, _puzzle, _step, _damage, _checkpointDamage;
 	uint _wrongChoices, _crashes, _frame, _choiceFrame, _hintFrames, _holdFrames;
 	uint _rooms[5], _sides[6];
-	int _answer, _selection;
+	int _answer, _selection, _forcedChoice;
 	Stage _stage;
-	bool _moviePending, _choosing, _leaving, _correct, _resourcesLoaded;
+	bool _moviePending, _choosing, _leaving, _correct, _resourcesLoaded, _programmer;
 };
 
 } // End of namespace Scumm

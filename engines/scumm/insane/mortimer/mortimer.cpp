@@ -61,6 +61,8 @@ enum MortimerAction {
 	kActionMenu, kActionMouse, kActionJoystick
 };
 
+enum { kBootProgrammer = 1000 };
+
 Common::KeymapArray MortimerEngine::initKeymaps() {
 	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "mortimer", "Mortimer");
 	keymap->setPartialMatchAllowed(false);
@@ -73,7 +75,7 @@ Common::KeymapArray MortimerEngine::initKeymaps() {
 		{"FIRE", _s("Fire"), kActionFire, {"MOUSE_LEFT", "MOUSE_RIGHT", "JOY_A", "JOY_B"}},
 		{"PAUSE", _s("Pause"), kActionPause, {"SPACE", "JOY_START", nullptr, nullptr}},
 		{"SKIP", _s("Skip"), kActionSkip, {"ESCAPE", "JOY_Y", nullptr, nullptr}},
-		{"RESTART", _s("Restart"), kActionRestart, {"r", "JOY_X", nullptr, nullptr}},
+		{"RESTART", _s("Restart"), kActionRestart, {"C+r", "JOY_X", nullptr, nullptr}},
 		{"QUIT", _s("Quit"), kActionQuit, {"q", "A+q", nullptr, nullptr}},
 		{"MENU", _s("Game menu"), kActionMenu, {"F5", "JOY_LEFT_SHOULDER", nullptr, nullptr}},
 		{"MOUSE", _s("Mouse control"), kActionMouse, {"A+m", nullptr, nullptr, nullptr}},
@@ -118,7 +120,8 @@ MortimerEngine::MortimerEngine(OSystem *system, bool isDemo) : Engine(system), _
 	_crashStage(kNoCrash), _nextFrameTime(0), _pauseTime(0), _introIndex(-1), _loadedRegion(-1), _creditedRescues(0),
 	_segment(0), _carriedStones(0), _completedSpecies(0), _shellShocks(0), _shockFrame(0), _crashCount(0),
 	_uiFrame(0), _shotFrame(3), _glowFrame(10), _glowStones(0), _pendingGlowStones(0), _finished(false),
-	_controllerMode(false), _interviewActive(false), _castleActive(false), _resourcesLoaded(false), _playingCached(false), _needsRepair(false), _hitJolt(false) {
+	_controllerMode(false), _interviewActive(false), _castleActive(false), _resourcesLoaded(false), _playingCached(false), _needsRepair(false), _hitJolt(false),
+	_cheats(ConfMan.getBool("mortimer_cheats")), _programmer(!isDemo && ConfMan.getBool("mortimer_programmer_easter_egg")), _invulnerable(false) {
 	memset(_steering, 0, sizeof(_steering));
 	memset(_iconFlash, 0, sizeof(_iconFlash));
 }
@@ -294,7 +297,7 @@ bool MortimerEngine::loadRegion(uint region) {
 		_loadError = Common::String::format("Missing or invalid %s", name.c_str());
 		return false;
 	}
-	if (!_interview.loadResources(region)) {
+	if (!_interview.loadResources(region, _programmer)) {
 		_loadError = _interview.errorMessage();
 		return false;
 	}
@@ -397,6 +400,7 @@ bool MortimerEngine::enterCampaignScene() {
 		}
 		_castleActive = true;
 		_viewport = Common::Rect(8, 104, 632, 448);
+		_castle.setProgrammer(_programmer);
 		if (!_castle.start(scene.id, _flightDifficulty, _riddleDifficulty, _intro.context().girl)) {
 			_loadError = _castle.errorMessage();
 			return false;
@@ -827,13 +831,8 @@ bool MortimerEngine::updateCastle() {
 	}
 	playMovieSounds();
 	_system->getPaletteManager()->setPalette(_castle.palette(), 0, 256);
-	if (_castle.courseView() && _castle.acceptsShots() && _castle.hitsObstacle(moviePoint(_aim))) {
-		_castle.hit();
-		_hitJolt = true;
-		if (!processCastle())
-			return false;
-		playCollisionSound();
-	}
+	if (_castle.courseView() && _castle.acceptsShots() && _castle.hitsObstacle(moviePoint(_aim)) && !addShellShock())
+		return false;
 	return processCastle();
 }
 
@@ -881,18 +880,100 @@ bool MortimerEngine::updateScene() {
 		return followFlightBranch();
 	playMovieSounds();
 	_system->getPaletteManager()->setPalette(_interviewActive ? _interview.palette(movie) : movie.palette(), 0, 256);
-	if (interactive() && _flight.hitsObstacle(moviePoint(_aim))) {
+	if (interactive() && _flight.hitsObstacle(moviePoint(_aim)) && !addShellShock())
+		return false;
+	return true;
+}
+
+bool MortimerEngine::addShellShock() {
+	if (_invulnerable || isPaused() || !interactive())
+		return true;
+	if (_castleActive) {
+		if (!_castle.acceptsShots())
+			return true;
+		_castle.hit();
+		_hitJolt = true;
+		if (!processCastle())
+			return false;
+	} else if (_shellShocks + 1 >= (_isDemo ? 18U : 15U)) {
 		// Retail crashes on the fifteenth hit; the demo allows eighteen.
-		if (_shellShocks + 1 >= (_isDemo ? 18U : 15U)) {
-			if (!(_isDemo && !_restoredContent ? restart() : startCrash()))
-				return false;
-		} else {
-			++_shellShocks;
-			_shockFrame = 0;
-			_hitJolt = !_isDemo || _restoredContent;
+		if (!(_isDemo && !_restoredContent ? restart() : startCrash()))
+			return false;
+	} else {
+		++_shellShocks;
+		_shockFrame = 0;
+		_hitJolt = !_isDemo || _restoredContent;
+	}
+	// Movie changes stop audio, so enqueue the fatal impact afterwards.
+	playCollisionSound();
+	return true;
+}
+
+void MortimerEngine::clearShellShock() {
+	if (_castleActive)
+		_castle.clearDamage();
+	else
+		_shellShocks = _shockFrame = 0;
+	_hitJolt = false;
+	updateMovieContext();
+}
+
+bool MortimerEngine::skipRegion() {
+	const uint region = _campaign.scene().region;
+	const uint next = region < 5 ? (region + 1) % 5 : 0;
+	_loadedRegion = -1;
+	_crashStage = kNoCrash;
+	_needsRepair = _hitJolt = false;
+	_flight.clearProgress();
+	_interview.resetRiddle();
+	_carriedStones = _completedSpecies = _creditedRescues = _shellShocks = 0;
+	_shockFrame = _crashCount = 0;
+	return _campaign.start(next == 4 ? 34 : next) && enterCampaignScene();
+}
+
+bool MortimerEngine::handleCheatKey(const Common::KeyState &key) {
+	if (!_cheats || _finished || (key.flags & (Common::KBD_CTRL | Common::KBD_META)))
+		return false;
+	const bool alt = key.flags & Common::KBD_ALT;
+	const bool plus = key.keycode == Common::KEYCODE_EQUALS || key.keycode == Common::KEYCODE_PLUS ||
+		key.keycode == Common::KEYCODE_KP_PLUS;
+	const bool minus = key.keycode == Common::KEYCODE_MINUS || key.keycode == Common::KEYCODE_UNDERSCORE ||
+		key.keycode == Common::KEYCODE_KP_MINUS;
+	if ((plus || minus) && alt == !_isDemo) {
+		if (interactive()) {
+			if (plus)
+				clearShellShock();
+			else
+				addShellShock();
 		}
-		// Movie changes stop audio, so enqueue the fatal impact afterwards.
-		playCollisionSound();
+		return true;
+	}
+	if (alt)
+		return false;
+	if (key.keycode == Common::KEYCODE_a) {
+		_completedSpecies = 0x7f;
+		if (_interviewActive)
+			_interview.rescueAll();
+		return true;
+	}
+	if (key.keycode == Common::KEYCODE_i) {
+		_invulnerable = !_invulnerable;
+		return true;
+	}
+	if (_isDemo)
+		return false;
+	switch (key.keycode) {
+	case Common::KEYCODE_s:
+		if (!isPaused())
+			skipRegion();
+		break;
+	case Common::KEYCODE_r:
+	case Common::KEYCODE_w:
+		if (_castleActive && _castle.sceneId() == 21)
+			_castle.forceChoice(key.keycode == Common::KEYCODE_r);
+		break;
+	default:
+		return false;
 	}
 	return true;
 }
@@ -1005,6 +1086,9 @@ void MortimerEngine::pauseEngineIntern(bool pause) {
 }
 
 Common::Error MortimerEngine::run() {
+	const int boot = ConfMan.hasKey("boot_param") ? ConfMan.getInt("boot_param") : -1;
+	if (_isDemo && boot == kBootProgrammer)
+		return Common::Error(Common::kUnsupportedGameidError, "The Programmer interview requires the full Mortimer game data");
 	if (_isDemo && !(_resourcesLoaded = loadResources()))
 		return Common::Error(Common::kReadingFailed, _loadError);
 	if (!_isDemo && !_subtitles.load("RESOURCE/DATA/BEGIN.TRS", "RESOURCE/GENERAL/ESTRO20.NUT", "RESOURCE/GENERAL/MORTFNTH.NUT"))
@@ -1018,10 +1102,17 @@ Common::Error MortimerEngine::run() {
 	const bool oldCursor = CursorMan.showMouse(false);
 	PauseToken pause;
 	bool exit;
-	// Use the original scene IDs for ScummVM's developer startup shortcut.
-	// Interview entry points supply rescued animals and glowstones.
-	const int boot = ConfMan.hasKey("boot_param") ? ConfMan.getInt("boot_param") : -1;
-	if (!_isDemo) {
+	// 1000 opens the hidden interview; other values select original scene IDs.
+	if (boot == kBootProgrammer) {
+		_programmer = true;
+		exit = !loadRegion(0);
+		if (!exit) {
+			_completedSpecies = 0x7f;
+			_carriedStones = 30;
+			_campaign.start(8);
+			exit = !enterCampaignScene();
+		}
+	} else if (!_isDemo) {
 		_subtitleName = "RESOURCE/DATA/BEGIN.TRS";
 		if (!_campaign.start(boot < 0 ? 24 : boot))
 			_campaign.start();
@@ -1041,6 +1132,17 @@ Common::Error MortimerEngine::run() {
 	while (!shouldQuit() && !exit) {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbdRepeat)
+					continue;
+				if (handleCheatKey(event.kbd)) {
+					if (!_loadError.empty()) {
+						exit = true;
+						break;
+					}
+					continue;
+				}
+			}
 			if (event.type == Common::EVENT_MOUSEMOVE) {
 				if (!isPaused()) {
 					setMouse(event.mouse);
@@ -1077,7 +1179,7 @@ Common::Error MortimerEngine::run() {
 				case kActionSkip:
 					if (pause.isActive())
 						pause.clear();
-					else
+					else if (!interactive() || _cheats)
 						exit = !nextScene(true);
 					break;
 				case kActionQuit:

@@ -96,6 +96,10 @@ private:
 	void playMovieSounds(bool seek = false);
 	void playCollisionSound();
 	void stopSounds();
+	bool handleCheatKey(const Common::KeyState &key);
+	bool skipRegion();
+	bool addShellShock();
+	void clearShellShock();
 
 	const bool _isDemo, _restoredContent;
 	uint _flightDifficulty, _riddleDifficulty;
@@ -133,6 +137,7 @@ private:
 	bool _finished, _controllerMode, _interviewActive, _castleActive;
 	bool _resourcesLoaded, _playingCached;
 	bool _needsRepair, _hitJolt;
+	bool _cheats, _programmer, _invulnerable;
 };
 
 } // End of namespace Scumm

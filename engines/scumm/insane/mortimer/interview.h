@@ -37,11 +37,12 @@ public:
 	enum Effect { kNoEffect, kButtonEffect, kPayoutEffect, kSwitchEffect };
 
 	explicit MortimerInterview(bool isDemo = true);
-	bool loadResources(uint region = 0);
+	bool loadResources(uint region = 0, bool programmer = false);
 	void setDifficulty(uint difficulty) { _difficulty = difficulty; }
 	void resetRiddle();
 	void resetAttempts();
 	void start(uint species, uint stones, int scene = 10);
+	void rescueAll() { _species = 0x7f; _selected = 0; }
 	void click(const Common::Point &point);
 	void scroll(int direction);
 	void update();
@@ -97,7 +98,7 @@ private:
 	Effect _effect;
 	int _answer, _previousAnswer, _selected, _question, _guess, _lastAction, _textScroll, _guesses;
 	uint _species, _stones, _frame, _switchFrame, _payment;
-	bool _moviePending, _riddleView, _solving, _help, _helpExplained, _restartRegion;
+	bool _moviePending, _riddleView, _solving, _help, _helpExplained, _restartRegion, _programmer;
 };
 
 } // End of namespace Scumm

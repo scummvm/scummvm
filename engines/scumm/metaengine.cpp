@@ -995,6 +995,24 @@ const ExtraGuiOption enableMortimerRestoredContent = {
 	0
 };
 
+const ExtraGuiOption enableMortimerCheats = {
+	_s("Enable cheats"),
+	_s("Enable the original game's cheat shortcuts for rescuing animals, changing shellshock and skipping flights"),
+	"mortimer_cheats",
+	false,
+	0,
+	0
+};
+
+const ExtraGuiOption enableMortimerProgrammer = {
+	_s("Programmer's Easter egg"),
+	_s("Replace the rhinoceros interview text with the hidden programmer dialogue"),
+	"mortimer_programmer_easter_egg",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -1063,6 +1081,13 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	if (target.empty() || guiOptions.contains(GAMEOPTION_MORTIMER_RESTORED_CONTENT) ||
 		(gameid == "mortimer" && extra == "Demo")) {
 		options.push_back(enableMortimerRestoredContent);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_MORTIMER_CHEATS) || gameid == "mortimer") {
+		options.push_back(enableMortimerCheats);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_MORTIMER_PROGRAMMER) ||
+		(gameid == "mortimer" && extra != "Demo" && !guiOptions.contains(GAMEOPTION_MORTIMER_RESTORED_CONTENT))) {
+		options.push_back(enableMortimerProgrammer);
 	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);

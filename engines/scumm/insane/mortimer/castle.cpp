@@ -66,8 +66,8 @@ const byte kCastlePuzzles[3][8][12] = {
 
 MortimerCastle::MortimerCastle() : MortimerFlight(false), _random("mortimer-castle"),
 	_nextVoice(0), _flightDifficulty(0), _riddleDifficulty(0), _puzzle(0), _step(0), _damage(0), _checkpointDamage(0),
-	_wrongChoices(0), _crashes(0), _frame(0), _choiceFrame(0), _hintFrames(0), _holdFrames(0), _answer(0), _selection(-1),
-	_stage(kEntry), _moviePending(false), _choosing(false), _leaving(false), _correct(false), _resourcesLoaded(false) {
+	_wrongChoices(0), _crashes(0), _frame(0), _choiceFrame(0), _hintFrames(0), _holdFrames(0), _answer(0), _selection(-1), _forcedChoice(0),
+	_stage(kEntry), _moviePending(false), _choosing(false), _leaving(false), _correct(false), _resourcesLoaded(false), _programmer(false) {
 	memset(_rooms, 0, sizeof(_rooms));
 	memset(_sides, 0, sizeof(_sides));
 }
@@ -172,6 +172,7 @@ bool MortimerCastle::loadResources() {
 
 bool MortimerCastle::start(int scene, uint flightDifficulty, uint riddleDifficulty, bool girl) {
 	_error.clear();
+	_forcedChoice = 0;
 	context().girl = girl;
 	_flightDifficulty = MIN(flightDifficulty, 2U);
 	_riddleDifficulty = MIN(riddleDifficulty, 2U);
@@ -379,6 +380,10 @@ void MortimerCastle::update() {
 		--_hintFrames;
 	if (!_choosing)
 		return;
+	if (_forcedChoice && _selection < 0) {
+		selectSide(!_step ? 0 : _sides[_step] ^ (_forcedChoice == 2));
+		_forcedChoice = 0;
+	}
 	++_choiceFrame;
 	if (_selection < 0 || _choiceFrame < 2)
 		return;
@@ -389,13 +394,17 @@ void MortimerCastle::update() {
 		enter(kLeft);
 }
 
+void MortimerCastle::selectSide(uint side) {
+	_selection = side;
+	_correct = !_step || side == _sides[_step];
+	_choiceFrame = 0;
+	_voices.clear();
+	_nextVoice = 0;
+}
+
 void MortimerCastle::click(const Common::Point &point) {
 	if (_choosing && _selection < 0) {
-		_selection = _step ? (point.x <= 310 ? 1 : 0) : 0;
-		_correct = !_step || uint(_selection) == _sides[_step];
-		_choiceFrame = 0;
-		_voices.clear();
-		_nextVoice = 0;
+		selectSide(_step && point.x <= 310 ? 1 : 0);
 	} else if (_stage == kIdle) {
 		if (Common::Rect(184, 341, 459, 447).contains(point)) {
 			enter(kRiddle);
@@ -519,7 +528,8 @@ void MortimerCastle::drawOverlay(Graphics::Surface &screen, const Common::Point 
 				const MortimerSprite &sprite = _selection >= 0 ? _spin[2 + MIN(_choiceFrame, 1U)] :
 					_choiceFrame < 2 ? _spin[_choiceFrame] : plaque[(_choiceFrame / 2) % 2];
 				sprite.draw(screen, origin.x + (side ? 248 : 404), origin.y + 132, false, &clip, 2);
-				drawText(screen, mortimerRegion(code / 10).names[code % 10], side ? 26 : 416, 35, 208, 5);
+				const char *name = _programmer && !code ? "Programmer" : mortimerRegion(code / 10).names[code % 10];
+				drawText(screen, name, side ? 26 : 416, 35, 208, 5);
 			}
 			const Common::Point flames[] = {{43, 131}, {101, 68}, {258, 68}, {325, 131}};
 			for (uint i = 0; i < 4; ++i)
