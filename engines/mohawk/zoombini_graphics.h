@@ -23,6 +23,7 @@
 #define MOHAWK_ZOOMBINI_GRAPHICS_H
 
 #include "common/array.h"
+#include "common/noncopyable.h"
 #include "common/stack.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -57,7 +58,7 @@ class ZmbDrawRecord;
  * Use the matching @ref findSubImage() or @ref findShape() family so the two
  * conventions are not mixed.
  */
-class ZoombiniGraphics : public GraphicsManager {
+class ZoombiniGraphics : public GraphicsManager, private Common::NonCopyable {
 public:
 	/** Create the Zoombini graphics manager and its bitmap decoder. */
 	explicit ZoombiniGraphics(MohawkEngine_Zoombini *vm);

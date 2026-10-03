@@ -28,6 +28,7 @@
 #include "common/events.h"
 #include "common/hashmap.h"
 #include "common/list.h"
+#include "common/noncopyable.h"
 #include "common/stablemap.h"
 #include "common/stack.h"
 #include "common/str.h"
@@ -179,7 +180,7 @@ class MohawkSurface;
  * runs the post-render shape callbacks. @ref checkCloseFeatures() then detaches
  * runners that completed or were scheduled for removal.
  */
-class ZoombiniPage {
+class ZoombiniPage : private Common::NonCopyable {
 public:
 	/**
 	 * Animation event codes passed to @ref ZoombiniPage::onFeatureAnimEvent().
