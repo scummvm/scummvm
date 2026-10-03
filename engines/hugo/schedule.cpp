@@ -741,15 +741,20 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 	}
 }
 
-/**
- * Restore the action data from file with handle f
- */
+void Scheduler::skipLegacyActions(Common::ReadStream *f) {
+	// Version 6 did not store the number of action lists. These are the counts
+	// written for each game variant.
+	static const uint16 legacyActListArrSizes[] = {
+		174, 289, 273, 156, 273, 265
+	};
 
-void Scheduler::restoreActions(Common::ReadStream *f) {
-	for (int i = 0; i < _actListArrSize; i++) {
+	for (int i = 0; i < legacyActListArrSizes[_vm->_gameVariant]; i++) {
 		uint16 numSubElem = f->readUint16BE();
 		for (int j = 0; j < numSubElem; j++) {
-			readAct(*f, _actListArr[i][j]);
+			Act tmpAct;
+			readAct(*f, tmpAct);
+			if (tmpAct._a0._actType == PROMPT)
+				free(tmpAct._a3._responsePtr);
 		}
 	}
 }
@@ -759,300 +764,6 @@ int16 Scheduler::calcMaxPoints() const {
 	for (int i = 0; i < _numBonuses; i++)
 		tmpScore += _points[i]._score;
 	return tmpScore;
-}
-
-/*
-* Save the action data in the file with handle f
-*/
-void Scheduler::saveActions(Common::WriteStream *f) const {
-	byte  subElemType;
-	int16 nbrCpt;
-	uint16 nbrSubElem;
-
-	for (int i = 0; i < _actListArrSize; i++) {
-		// write all the sub elems data
-		for (nbrSubElem = 1; _actListArr[i][nbrSubElem - 1]._a0._actType != ANULL; nbrSubElem++)
-			;
-
-		f->writeUint16BE(nbrSubElem);
-		for (int j = 0; j < nbrSubElem; j++) {
-			subElemType = _actListArr[i][j]._a0._actType;
-			f->writeByte(subElemType);
-			switch (subElemType) {
-			case ANULL:              // -1
-				break;
-			case ASCHEDULE:          // 0
-				f->writeSint16BE(_actListArr[i][j]._a0._timer);
-				f->writeUint16BE(_actListArr[i][j]._a0._actIndex);
-				break;
-			case START_OBJ:          // 1
-				f->writeSint16BE(_actListArr[i][j]._a1._timer);
-				f->writeSint16BE(_actListArr[i][j]._a1._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a1._cycleNumb);
-				f->writeByte(_actListArr[i][j]._a1._cycle);
-				break;
-			case INIT_OBJXY:         // 2
-				f->writeSint16BE(_actListArr[i][j]._a2._timer);
-				f->writeSint16BE(_actListArr[i][j]._a2._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a2._x);
-				f->writeSint16BE(_actListArr[i][j]._a2._y);
-				break;
-			case PROMPT:             // 3
-				f->writeSint16BE(_actListArr[i][j]._a3._timer);
-				f->writeSint16BE(_actListArr[i][j]._a3._promptIndex);
-				for (nbrCpt = 0; _actListArr[i][j]._a3._responsePtr[nbrCpt] != -1; nbrCpt++)
-					;
-				nbrCpt++;
-				f->writeUint16BE(nbrCpt);
-				for (int k = 0; k < nbrCpt; k++)
-					f->writeSint16BE(_actListArr[i][j]._a3._responsePtr[k]);
-				f->writeUint16BE(_actListArr[i][j]._a3._actPassIndex);
-				f->writeUint16BE(_actListArr[i][j]._a3._actFailIndex);
-				f->writeByte((_actListArr[i][j]._a3._encodedFl) ? 1 : 0);
-				break;
-			case BKGD_COLOR:         // 4
-				f->writeSint16BE(_actListArr[i][j]._a4._timer);
-				f->writeUint32BE(_actListArr[i][j]._a4._newBackgroundColor);
-				break;
-			case INIT_OBJVXY:        // 5
-				f->writeSint16BE(_actListArr[i][j]._a5._timer);
-				f->writeSint16BE(_actListArr[i][j]._a5._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a5._vx);
-				f->writeSint16BE(_actListArr[i][j]._a5._vy);
-				break;
-			case INIT_CARRY:         // 6
-				f->writeSint16BE(_actListArr[i][j]._a6._timer);
-				f->writeSint16BE(_actListArr[i][j]._a6._objIndex);
-				f->writeByte((_actListArr[i][j]._a6._carriedFl) ? 1 : 0);
-				break;
-			case INIT_HF_COORD:      // 7
-				f->writeSint16BE(_actListArr[i][j]._a7._timer);
-				f->writeSint16BE(_actListArr[i][j]._a7._objIndex);
-				break;
-			case NEW_SCREEN:         // 8
-				f->writeSint16BE(_actListArr[i][j]._a8._timer);
-				f->writeSint16BE(_actListArr[i][j]._a8._screenIndex);
-				break;
-			case INIT_OBJSTATE:      // 9
-				f->writeSint16BE(_actListArr[i][j]._a9._timer);
-				f->writeSint16BE(_actListArr[i][j]._a9._objIndex);
-				f->writeByte(_actListArr[i][j]._a9._newState);
-				break;
-			case INIT_PATH:          // 10
-				f->writeSint16BE(_actListArr[i][j]._a10._timer);
-				f->writeSint16BE(_actListArr[i][j]._a10._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a10._newPathType);
-				f->writeByte(_actListArr[i][j]._a10._vxPath);
-				f->writeByte(_actListArr[i][j]._a10._vyPath);
-				break;
-			case COND_R:             // 11
-				f->writeSint16BE(_actListArr[i][j]._a11._timer);
-				f->writeSint16BE(_actListArr[i][j]._a11._objIndex);
-				f->writeByte(_actListArr[i][j]._a11._stateReq);
-				f->writeUint16BE(_actListArr[i][j]._a11._actPassIndex);
-				f->writeUint16BE(_actListArr[i][j]._a11._actFailIndex);
-				break;
-			case TEXT:               // 12
-				f->writeSint16BE(_actListArr[i][j]._a12._timer);
-				f->writeSint16BE(_actListArr[i][j]._a12._stringIndex);
-				break;
-			case SWAP_IMAGES:        // 13
-				f->writeSint16BE(_actListArr[i][j]._a13._timer);
-				f->writeSint16BE(_actListArr[i][j]._a13._objIndex1);
-				f->writeSint16BE(_actListArr[i][j]._a13._objIndex2);
-				break;
-			case COND_SCR:           // 14
-				f->writeSint16BE(_actListArr[i][j]._a14._timer);
-				f->writeSint16BE(_actListArr[i][j]._a14._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a14._screenReq);
-				f->writeUint16BE(_actListArr[i][j]._a14._actPassIndex);
-				f->writeUint16BE(_actListArr[i][j]._a14._actFailIndex);
-				break;
-			case AUTOPILOT:          // 15
-				f->writeSint16BE(_actListArr[i][j]._a15._timer);
-				f->writeSint16BE(_actListArr[i][j]._a15._objIndex1);
-				f->writeSint16BE(_actListArr[i][j]._a15._objIndex2);
-				f->writeByte(_actListArr[i][j]._a15._dx);
-				f->writeByte(_actListArr[i][j]._a15._dy);
-				break;
-			case INIT_OBJ_SEQ:       // 16
-				f->writeSint16BE(_actListArr[i][j]._a16._timer);
-				f->writeSint16BE(_actListArr[i][j]._a16._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a16._seqIndex);
-				break;
-			case SET_STATE_BITS:     // 17
-				f->writeSint16BE(_actListArr[i][j]._a17._timer);
-				f->writeSint16BE(_actListArr[i][j]._a17._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a17._stateMask);
-				break;
-			case CLEAR_STATE_BITS:   // 18
-				f->writeSint16BE(_actListArr[i][j]._a18._timer);
-				f->writeSint16BE(_actListArr[i][j]._a18._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a18._stateMask);
-				break;
-			case TEST_STATE_BITS:    // 19
-				f->writeSint16BE(_actListArr[i][j]._a19._timer);
-				f->writeSint16BE(_actListArr[i][j]._a19._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a19._stateMask);
-				f->writeUint16BE(_actListArr[i][j]._a19._actPassIndex);
-				f->writeUint16BE(_actListArr[i][j]._a19._actFailIndex);
-				break;
-			case DEL_EVENTS:         // 20
-				f->writeSint16BE(_actListArr[i][j]._a20._timer);
-				f->writeByte(_actListArr[i][j]._a20._actTypeDel);
-				break;
-			case GAMEOVER:           // 21
-				f->writeSint16BE(_actListArr[i][j]._a21._timer);
-				break;
-			case INIT_HH_COORD:      // 22
-				f->writeSint16BE(_actListArr[i][j]._a22._timer);
-				f->writeSint16BE(_actListArr[i][j]._a22._objIndex);
-				break;
-			case EXIT:               // 23
-				f->writeSint16BE(_actListArr[i][j]._a23._timer);
-				break;
-			case BONUS:              // 24
-				f->writeSint16BE(_actListArr[i][j]._a24._timer);
-				f->writeSint16BE(_actListArr[i][j]._a24._pointIndex);
-				break;
-			case COND_BOX:           // 25
-				f->writeSint16BE(_actListArr[i][j]._a25._timer);
-				f->writeSint16BE(_actListArr[i][j]._a25._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a25._x1);
-				f->writeSint16BE(_actListArr[i][j]._a25._y1);
-				f->writeSint16BE(_actListArr[i][j]._a25._x2);
-				f->writeSint16BE(_actListArr[i][j]._a25._y2);
-				f->writeUint16BE(_actListArr[i][j]._a25._actPassIndex);
-				f->writeUint16BE(_actListArr[i][j]._a25._actFailIndex);
-				break;
-			case SOUND:              // 26
-				f->writeSint16BE(_actListArr[i][j]._a26._timer);
-				f->writeSint16BE(_actListArr[i][j]._a26._soundIndex);
-				break;
-			case ADD_SCORE:          // 27
-				f->writeSint16BE(_actListArr[i][j]._a27._timer);
-				f->writeSint16BE(_actListArr[i][j]._a27._objIndex);
-				break;
-			case SUB_SCORE:          // 28
-				f->writeSint16BE(_actListArr[i][j]._a28._timer);
-				f->writeSint16BE(_actListArr[i][j]._a28._objIndex);
-				break;
-			case COND_CARRY:         // 29
-				f->writeSint16BE(_actListArr[i][j]._a29._timer);
-				f->writeSint16BE(_actListArr[i][j]._a29._objIndex);
-				f->writeUint16BE(_actListArr[i][j]._a29._actPassIndex);
-				f->writeUint16BE(_actListArr[i][j]._a29._actFailIndex);
-				break;
-			case INIT_MAZE:          // 30
-				f->writeSint16BE(_actListArr[i][j]._a30._timer);
-				f->writeByte(_actListArr[i][j]._a30._mazeSize);
-				f->writeSint16BE(_actListArr[i][j]._a30._x1);
-				f->writeSint16BE(_actListArr[i][j]._a30._y1);
-				f->writeSint16BE(_actListArr[i][j]._a30._x2);
-				f->writeSint16BE(_actListArr[i][j]._a30._y2);
-				f->writeSint16BE(_actListArr[i][j]._a30._x3);
-				f->writeSint16BE(_actListArr[i][j]._a30._x4);
-				f->writeByte(_actListArr[i][j]._a30._firstScreenIndex);
-				break;
-			case EXIT_MAZE:          // 31
-				f->writeSint16BE(_actListArr[i][j]._a31._timer);
-				break;
-			case INIT_PRIORITY:      // 32
-				f->writeSint16BE(_actListArr[i][j]._a32._timer);
-				f->writeSint16BE(_actListArr[i][j]._a32._objIndex);
-				f->writeByte(_actListArr[i][j]._a32._priority);
-				break;
-			case INIT_SCREEN:        // 33
-				f->writeSint16BE(_actListArr[i][j]._a33._timer);
-				f->writeSint16BE(_actListArr[i][j]._a33._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a33._screenIndex);
-				break;
-			case AGSCHEDULE:         // 34
-				f->writeSint16BE(_actListArr[i][j]._a34._timer);
-				f->writeUint16BE(_actListArr[i][j]._a34._actIndex);
-				break;
-			case REMAPPAL:           // 35
-				f->writeSint16BE(_actListArr[i][j]._a35._timer);
-				f->writeSint16BE(_actListArr[i][j]._a35._oldColorIndex);
-				f->writeSint16BE(_actListArr[i][j]._a35._newColorIndex);
-				break;
-			case COND_NOUN:          // 36
-				f->writeSint16BE(_actListArr[i][j]._a36._timer);
-				f->writeUint16BE(_actListArr[i][j]._a36._nounIndex);
-				f->writeUint16BE(_actListArr[i][j]._a36._actPassIndex);
-				f->writeUint16BE(_actListArr[i][j]._a36._actFailIndex);
-				break;
-			case SCREEN_STATE:       // 37
-				f->writeSint16BE(_actListArr[i][j]._a37._timer);
-				f->writeSint16BE(_actListArr[i][j]._a37._screenIndex);
-				f->writeByte(_actListArr[i][j]._a37._newState);
-				break;
-			case INIT_LIPS:          // 38
-				f->writeSint16BE(_actListArr[i][j]._a38._timer);
-				f->writeSint16BE(_actListArr[i][j]._a38._lipsObjIndex);
-				f->writeSint16BE(_actListArr[i][j]._a38._objIndex);
-				f->writeByte(_actListArr[i][j]._a38._dxLips);
-				f->writeByte(_actListArr[i][j]._a38._dyLips);
-				break;
-			case INIT_STORY_MODE:    // 39
-				f->writeSint16BE(_actListArr[i][j]._a39._timer);
-				f->writeByte((_actListArr[i][j]._a39._storyModeFl) ? 1 : 0);
-				break;
-			case WARN:               // 40
-				f->writeSint16BE(_actListArr[i][j]._a40._timer);
-				f->writeSint16BE(_actListArr[i][j]._a40._stringIndex);
-				break;
-			case COND_BONUS:         // 41
-				f->writeSint16BE(_actListArr[i][j]._a41._timer);
-				f->writeSint16BE(_actListArr[i][j]._a41._bonusIndex);
-				f->writeUint16BE(_actListArr[i][j]._a41._actPassIndex);
-				f->writeUint16BE(_actListArr[i][j]._a41._actFailIndex);
-				break;
-			case TEXT_TAKE:          // 42
-				f->writeSint16BE(_actListArr[i][j]._a42._timer);
-				f->writeSint16BE(_actListArr[i][j]._a42._objIndex);
-				break;
-			case YESNO:              // 43
-				f->writeSint16BE(_actListArr[i][j]._a43._timer);
-				f->writeSint16BE(_actListArr[i][j]._a43._promptIndex);
-				f->writeUint16BE(_actListArr[i][j]._a43._actYesIndex);
-				f->writeUint16BE(_actListArr[i][j]._a43._actNoIndex);
-				break;
-			case STOP_ROUTE:         // 44
-				f->writeSint16BE(_actListArr[i][j]._a44._timer);
-				break;
-			case COND_ROUTE:         // 45
-				f->writeSint16BE(_actListArr[i][j]._a45._timer);
-				f->writeSint16BE(_actListArr[i][j]._a45._routeIndex);
-				f->writeUint16BE(_actListArr[i][j]._a45._actPassIndex);
-				f->writeUint16BE(_actListArr[i][j]._a45._actFailIndex);
-				break;
-			case INIT_JUMPEXIT:      // 46
-				f->writeSint16BE(_actListArr[i][j]._a46._timer);
-				f->writeByte((_actListArr[i][j]._a46._jumpExitFl) ? 1 : 0);
-				break;
-			case INIT_VIEW:          // 47
-				f->writeSint16BE(_actListArr[i][j]._a47._timer);
-				f->writeSint16BE(_actListArr[i][j]._a47._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a47._viewx);
-				f->writeSint16BE(_actListArr[i][j]._a47._viewy);
-				f->writeSint16BE(_actListArr[i][j]._a47._direction);
-				break;
-			case INIT_OBJ_FRAME:     // 48
-				f->writeSint16BE(_actListArr[i][j]._a48._timer);
-				f->writeSint16BE(_actListArr[i][j]._a48._objIndex);
-				f->writeSint16BE(_actListArr[i][j]._a48._seqIndex);
-				f->writeSint16BE(_actListArr[i][j]._a48._frameIndex);
-				break;
-			case OLD_SONG:           // 49, Added by Strangerke for DOS versions
-				f->writeSint16BE(_actListArr[i][j]._a49._timer);
-				f->writeUint16BE(_actListArr[i][j]._a49._songIndex);
-				break;
-			default:
-				error("Unknown action %d", subElemType);
-			}
-		}
-	}
 }
 
 /*
@@ -1087,19 +798,26 @@ void Scheduler::saveSchedulerData(Common::WriteStream *out) {
 
 	// Now save current time and all current events in event queue
 	saveEvents(out);
-
-	// Now save current actions
-	saveActions(out);
 }
 
-void Scheduler::restoreSchedulerData(Common::ReadStream *in) {
+void Scheduler::restoreSchedulerData(Common::ReadStream *in, int saveVersion) {
 	restorePoints(in);
 
 	// Now restore time of the save and the event queue
 	restoreEvents(in);
 
-	// Now restore actions
-	restoreActions(in);
+	if (saveVersion == kSavegameVersionMin)
+		skipLegacyActions(in);
+
+	// Global actions were stored as local before they were converted from
+	// INIT_OBJSTATE to AGSCHEDULE.  Derive the flag from the current action so
+	// pending version 6 events receive the fix too.
+	if (saveVersion == kSavegameVersionMin) {
+		for (Event *event = _headEvent; event; event = event->_nextEvent) {
+			if (event->_action)
+				event->_localActionFl = event->_action->_a0._actType != AGSCHEDULE;
+		}
+	}
 }
 
 /**

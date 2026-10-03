@@ -534,7 +534,7 @@ public:
 	void newScreen(const int screenIndex);
 	void processBonus(const int bonusIndex);
 	virtual void processMaze(const int x1, const int x2, const int y1, const int y2);
-	void restoreSchedulerData(Common::ReadStream *in);
+	void restoreSchedulerData(Common::ReadStream *in, int saveVersion);
 	void restoreScreen(const int screenIndex);
 	void saveSchedulerData(Common::WriteStream *out);
 	void waitForRefresh();
@@ -583,13 +583,12 @@ protected:
 	void findAction(const Act* action, int16* index, int16* subElem);
 	void insertAction(Act *action);
 	void readAct(Common::ReadStream &in, Act &curAct);
-	void restoreActions(Common::ReadStream *f);
 	void restoreEvents(Common::ReadStream *f);
 	void restorePoints(Common::ReadStream *in);
-	void saveActions(Common::WriteStream* f) const;
 	void saveEvents(Common::WriteStream *f);
 	void savePoints(Common::WriteStream *out) const;
 	void screenActions(const int screenNum);
+	void skipLegacyActions(Common::ReadStream *f);
 
 };
 
