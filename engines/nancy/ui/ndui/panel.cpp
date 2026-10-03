@@ -227,14 +227,20 @@ void Panel::arrangeControls() {
 		rowBottom = MAX(rowBottom, y + controlHeight);
 	}
 
-	// A scroll panel's scroll bar covers everything the controls take up
 	if (!_scrollBarName.empty()) {
-		int contentHeight = rowBottom + _margins.bottom;
-		if (contentHeight <= _screenPosition.height()) {
+		// Scroll panels can share a scroll bar, which covers what the controls
+		// of the visible one take up, to the end of the last scroll step
+		int contentHeight = rowBottom;
+		int overflow = contentHeight - _screenPosition.height();
+		if (overflow <= 0) {
 			_scrollOffset = 0;
+		} else if (overflow % _scrollStep) {
+			contentHeight += _scrollStep - overflow % _scrollStep;
 		}
 
-		_manager->takeAction(kActionSetRange, _scrollBarName, (double)contentHeight);
+		if (isVisible()) {
+			_manager->takeAction(kActionSetRange, _scrollBarName, (double)contentHeight);
+		}
 	} else if (rowBottom > _drawSurface.h) {
 		// Controls aren't clipped to a panel that doesn't scroll, so it grows to hold them
 		Common::Rect screenPosition = _screenPosition;
@@ -283,6 +289,12 @@ bool Panel::takeAction(const Action &action) {
 		}
 
 		_scrollOffset = ((int)action.value + _scrollStep / 2) / _scrollStep * _scrollStep;
+
+		// The scroll bar starts over when something else moves the panel
+		if (!action.sender.equalsIgnoreCase(_scrollBarName)) {
+			_manager->takeAction(kActionSetRange, _scrollBarName, action.value);
+		}
+
 		break;
 	case kActionShowItem:
 	case kActionHideItem:
@@ -340,6 +352,7 @@ void Panel::finishBlending() {
 void Panel::show() {
 	++_showCount;
 	setVisible(true);
+	arrangeControls();
 	fireEvent(kEventShow);
 }
 
