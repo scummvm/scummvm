@@ -227,6 +227,10 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	return true;
 }
 
+Graphics::PixelFormat BaseRenderOpenGL3DShader::getPixelFormat(bool hasAlpha) const {
+	return Graphics::PixelFormat::createFormatRGBA32();
+}
+
 bool BaseRenderOpenGL3DShader::flip() {
 	_lastTexture = nullptr;
 

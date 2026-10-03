@@ -257,7 +257,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	}
 
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create((uint16)width, (uint16)(textHeight), _game->_renderer->getPixelFormat());
+	surface->create((uint16)width, (uint16)(textHeight), _game->_renderer->getPixelFormat(true));
 
 	Graphics::TextAlign alignment = Graphics::kTextAlignInvalid;
 	if (align == TAL_LEFT) {
