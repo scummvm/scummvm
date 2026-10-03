@@ -576,6 +576,7 @@ void ConversationSound::skipLine() {
 		// skipped makes the next execute() take the "line has finished" path.
 		g_nancy->_sound->stopSound(_sound);
 		_isSkipped = true;
+		skipVideo();
 		break;
 	case kActionTrigger:
 		// The player's chosen response is playing; cut that short instead
@@ -1336,6 +1337,33 @@ void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Commo
 
 bool ConversationCel::isVideoDonePlaying() {
 	return _curFrame >= MIN<uint>(_lastFrame, _celNames[0].size()) && _nextFrameTime <= g_nancy->getTotalPlayTime();
+}
+
+void ConversationCel::skipVideo() {
+	if (_celNames.empty() || _celNames[0].empty()) {
+		return;
+	}
+
+	// Jump to the last frame of the line; updateGraphics() draws it on its next
+	// pass and then has nothing left to play.
+	const uint lastFrame = MIN<uint>(_lastFrame, _celNames[0].size() - 1);
+	if (_curFrame <= lastFrame) {
+		_curFrame = lastFrame;
+		_nextFrameTime = 0;
+	}
+
+	// Movies on their own clock don't follow the frame counter, so park them
+	// on their last frame as well
+	for (uint i = 0; i < _treeMovies.size(); ++i) {
+		if (!_treeMovies[i] || !isTreeFreeRunning(i) || _treeMovies[i]->endOfVideo()) {
+			continue;
+		}
+
+		const Graphics::Surface *frame = _treeMovies[i]->decodeNextFrame(_treeMovies[i]->getFrameCount() - 1);
+		if (frame) {
+			_celRObjects[i].setMovieFrame(*frame);
+		}
+	}
 }
 
 ConversationCel::Cel &ConversationCel::loadCel(const Common::Path &name, const Common::String &treeName) {

@@ -48,6 +48,8 @@ public:
 	void execute() override;
 
 	virtual bool isVideoDonePlaying() { return true; }
+	// Called when the line gets skipped, so the character stops animating with it
+	virtual void skipVideo() {}
 	bool isViewportRelative() const override { return true; }
 
 	// Enhancement: cut the currently playing line short, as if its sound and
@@ -217,6 +219,7 @@ protected:
 	static const byte kCelOverrideTreeRectsOn	= 2;
 
 	bool isVideoDonePlaying() override;
+	void skipVideo() override;
 	Cel &loadCel(const Common::Path &name, const Common::String &treeName);
 
 	void readXSheet(Common::SeekableReadStream &stream, const Common::String &xsheetName);
