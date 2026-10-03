@@ -10,6 +10,9 @@ This file contains Achievements and Statistics IDs and localization from Steam a
 bagel.dat:
 This file contains essential game data used by the BAGEL engine.
 
+buried_subtitles.dat:
+This file contains English subtitle tracks.
+
 classicmacfonts.dat:
 This file contains fonts used for recreation of Classic Mac OS GUI. To generate it,
 use the following commnand:
