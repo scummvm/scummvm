@@ -242,7 +242,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 	}
 
 	_gfx = new ZoombiniGraphics(this);
-	_gfx->showDemoStartupLoadingScreen();
+	_gfx->showStartupLoadingScreen();
 	_video = new VideoManager(this);
 	_sound = new ZoombiniSound(this);
 	_midi = new ZoombiniMidiPlayer(this);
