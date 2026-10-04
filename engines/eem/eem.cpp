@@ -1004,10 +1004,10 @@ bool EEMEngine::openArchives() {
 
 bool EEMEngine::loadSitePalettes() {
 	Common::File f;
-	// EEM2 DOS uses "SITEPALS." (8.3); EEM1 and both Mac releases use "SITEPALS".
-	const char *palFile = (isLondon() && !isMacintosh()) ? "SITEPALS." : "SITEPALS";
-	if (!openDataFile(f, Common::Path(palFile))) {
-		warning("%s missing", palFile);
+	// Also accept the trailing dot found in some DOS EEM2 game data.
+	if (!openDataFile(f, Common::Path("SITEPALS")) &&
+		!openDataFile(f, Common::Path("SITEPALS."))) {
+		warning("SITEPALS missing");
 		return false;
 	}
 	_sitePals.resize(f.size());
