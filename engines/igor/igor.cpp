@@ -19,16 +19,17 @@
  *
  */
 
-#include "igor/igor.h"
+#include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "engines/util.h"
+
+#include "igor/igor.h"
 #include "igor/console.h"
 #include "igor/detection.h"
 
-#include "audio/mixer.h"
 
 namespace Igor {
 
@@ -65,9 +66,9 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
 
 
-		// _currentPart = 850;
+		_currentPart = 850;
 
-		_currentPart = 171;
+		// _currentPart = 171;
 		// _currentPart = 62;
 		// _currentPart = 40;
 	}
@@ -555,12 +556,148 @@ void IgorEngine::handlePause() {
 }
 
 Common::Error IgorEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+	// Serialize in the same order as reference implementation
+
+	// 1. Walk data (100 entries)
+	for (int i = 0; i < 100; ++i) {
+		if (s.isSaving()) {
+			s.syncBytes(0, 2);
+		} else {
+			byte pad[2];
+			s.syncBytes(pad, 2);
+		}
+		s.syncAsSint16LE(_walkData[i].x);
+		s.syncAsSint16LE(_walkData[i].y);
+		s.syncAsByte(_walkData[i].posNum);
+		s.syncAsByte(_walkData[i].frameNum);
+		s.syncAsByte(_walkData[i].clipSkipX);
+		s.syncAsSint16LE(_walkData[i].clipWidth);
+		s.syncAsSint16LE(_walkData[i].scaleWidth);
+		s.syncAsByte(_walkData[i].xPosChanged);
+		s.syncAsSint16LE(_walkData[i].dxPos);
+		s.syncAsByte(_walkData[i].yPosChanged);
+		s.syncAsSint16LE(_walkData[i].dyPos);
+		s.syncAsByte(_walkData[i].scaleHeight);
+	}
+
+	// 2. Walk path state
+	if (s.isSaving()) {
+		s.syncBytes(0, 20);
+	} else {
+		byte pad[20];
+		s.syncBytes(pad, 20);
+	}
+	s.syncAsByte(_walkDataCurrentIndex);
+	s.syncAsByte(_walkDataLastIndex);
+	s.syncAsByte(_walkCurrentFrame);
+	s.syncAsByte(_walkCurrentPos);
+	if (s.isSaving()) {
+		s.syncBytes(0, 23);
+	} else {
+		byte pad[23];
+		s.syncBytes(pad, 23);
+	}
+
+	// 3. Current action
+	s.syncAsByte(_currentAction.verb);
+	s.syncAsByte(_currentAction.object1Num);
+	s.syncAsByte(_currentAction.object1Type);
+	s.syncAsByte(_currentAction.verbType);
+	s.syncAsByte(_currentAction.object2Num);
+	s.syncAsByte(_currentAction.object2Type);
+	if (s.isSaving()) {
+		s.syncBytes(0, 10);
+	} else {
+		byte pad[10];
+		s.syncBytes(pad, 10);
+	}
+
+	// 4. Part/state
+	s.syncAsSint16LE(_currentPart);
+	if (s.isSaving()) {
+		s.syncBytes(0, 8);
+	} else {
+		byte pad[8];
+		s.syncBytes(pad, 8);
+	}
+
+	// 5. Action state
+	s.syncAsByte(_actionCode);
+	s.syncAsByte(_actionWalkPoint);
+	if (s.isSaving()) {
+		s.syncBytes(0, 2);
+	} else {
+		byte pad[2];
+		s.syncBytes(pad, 2);
+	}
+
+	// 6. Cursor position
+	s.syncAsSint16LE(_inputVars[kInputCursorXPos]);
+	s.syncAsSint16LE(_inputVars[kInputCursorYPos]);
+
+	// 7. Game state
+	s.syncAsByte(_gameState.enableLight);
+	s.syncAsByte(_gameState.colorLum);
+	for (int i = 0; i < 5; ++i) {
+		s.syncAsSint16LE(_gameState.counter[i]);
+	}
+	{ byte v = _gameState.igorMoving ? 1 : 0; s.syncAsByte(v); }
+	{ byte v = _gameState.dialogueTextRunning ? 1 : 0; s.syncAsByte(v); }
+	{ byte v = _gameState.updateLight ? 1 : 0; s.syncAsByte(v); }
+	{ byte v = _gameState.unkF ? 1 : 0; s.syncAsByte(v); }
+	s.syncAsByte(_gameState.unk10);
+	s.syncAsByte(_gameState.unk11);
+	{ byte v = _gameState.dialogueStarted ? 1 : 0; s.syncAsByte(v); }
+	if (s.isSaving()) {
+		s.syncBytes(0, 1);
+	} else {
+		byte pad[1];
+		s.syncBytes(pad, 1);
+	}
+	for (int i = 0; i < 500; ++i) {
+		s.syncAsByte(_gameState.dialogueData[i]);
+	}
+	s.syncAsByte(_gameState.dialogueChoiceStart);
+	s.syncAsByte(_gameState.dialogueChoiceCount);
+	if (s.isSaving()) {
+		s.syncBytes(0, 2);
+	} else {
+		byte pad[2];
+		s.syncBytes(pad, 2);
+	}
+	s.syncAsByte(_gameState.nextMusicCounter);
+	{ byte v = _gameState.jumpToNextMusic ? 1 : 0; s.syncAsByte(v); }
+	s.syncAsByte(_gameState.configSoundEnabled);
+	s.syncAsByte(_gameState.talkSpeed);
+	s.syncAsByte(_gameState.talkMode);
+	if (s.isSaving()) {
+		s.syncBytes(0, 3);
+	} else {
+		byte pad[3];
+		s.syncBytes(pad, 3);
+	}
+	s.syncAsByte(_gameState.musicNum);
+	s.syncAsByte(_gameState.musicSequenceIndex);
+
+	// 8. Object states
+	for (int i = 0; i < 112; ++i) {
+		s.syncAsByte(_objectsState[i]);
+	}
+
+	// 9. Inventory
+	for (int i = 0; i < 74; ++i) {
+		s.syncAsByte(_inventoryInfo[i]);
+	}
+
+	if (s.isLoading()) {
+		memcpy(_igorPalette, (_currentPart == 760) ? PAL_IGOR_1 : PAL_IGOR_1, 48);
+		UPDATE_OBJECT_STATE(255);
+		playMusic(_gameState.musicNum);
+		_system->warpMouse(_inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos]);
+		if (_currentPart < 900) {
+			showCursor();
+		}
+	}
 
 	return Common::kNoError;
 }

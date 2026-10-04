@@ -429,6 +429,7 @@ private:
 
 	ResourceEntry *_resourceEntries;
 	Common::Array<StringEntry> _stringEntries;
+	char _saveStateDescriptions[kMaxSaveStates][100];
 
 	void restart();
 
@@ -714,6 +715,7 @@ private:
 	void redrawVerb(uint8 verb, bool highlight);
 	int getVerbUnderCursor(int x) const { return ((x % 46) < 44) ? (kVerbTalk + x / 46) : 0; }
 	void handleRoomInventoryScroll();
+	void handleOptionsMenu();
 	void scrollInventory();
 	void drawInventory(int start, int mode);
 	void addObjectToInventory(int object, int index);
@@ -801,6 +803,15 @@ private:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+
+	void handleOptionsMenu_paintSave();
+	bool handleOptionsMenu_handleKeyDownSave(int key);
+	void handleOptionsMenu_paintLoad();
+	bool handleOptionsMenu_handleKeyDownLoad(int key);
+	void handleOptionsMenu_paintQuit();
+	bool handleOptionsMenu_handleKeyDownQuit(int key);
+	void handleOptionsMenu_paintCtrl();
+	bool handleOptionsMenu_handleKeyDownCtrl(int key);
 
 public:
 	IgorEngine(OSystem *syst, const ADGameDescription *gameDesc);

@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	input.o \
 	static_walk.o \
 	static_cursor.o \
+	options.o \
 	part_0.o \
 	part_4.o \
 	part_5.o \

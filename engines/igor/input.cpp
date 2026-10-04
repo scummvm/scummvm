@@ -174,7 +174,7 @@ void IgorEngine::handleRoomInput() {
 	}
 	if (_inputVars[kInputOptions]) {
 		_inputVars[kInputOptions] = 0;
-		// handleOptionsMenu();
+		handleOptionsMenu();
 	}
 	// dialogue skip
 	if (_inputVars[kInputSkipDialogue] && _gameState.dialogueTextRunning) {
