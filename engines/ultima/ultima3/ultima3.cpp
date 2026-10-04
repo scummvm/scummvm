@@ -107,6 +107,20 @@ void Ultima3Engine::playErrorBeep() {
 	queueTone(3216, 65);
 }
 
+void Ultima3Engine::playSoundEffect(byte effect) {
+	switch (effect) {
+	case 0xFE:
+		playErrorBeep();
+		break;
+	case 0xFF:
+		// ~132Hz for ~60ms, from the original's raw 16-toggle loop at 4.77MHz
+		queueTone(9040, 60);
+		break;
+	default:
+		break;
+	}
+}
+
 bool Ultima3Engine::savegamesExist() const {
 	Common::String slotName = getSaveStateName(1);
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);

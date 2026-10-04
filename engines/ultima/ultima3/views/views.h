@@ -30,6 +30,7 @@
 #include "ultima/ultima3/views/journey_onward.h"
 #include "ultima/ultima3/views/logo_screen.h"
 #include "ultima/ultima3/views/main_menu.h"
+#include "ultima/ultima3/views/overworld_map.h"
 #include "ultima/ultima3/views/party_menu.h"
 #include "ultima/ultima3/views/register.h"
 #include "ultima/ultima3/views/terminate_character.h"
@@ -47,6 +48,7 @@ struct Views {
 	JourneyOnward _journeyOnward;
 	LogoScreen _logoScreen;
 	MainMenu _mainMenu;
+	OverworldMap _overworldMap;
 	PartyMenu _partyMenu;
 	Register _register;
 	TerminateCharacter _terminateCharacter;

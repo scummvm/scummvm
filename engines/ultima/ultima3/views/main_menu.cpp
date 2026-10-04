@@ -64,9 +64,12 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 			addView("PartyMenu");
 			break;
 		case 'J':
-			// Setting out is wired up once the world engine lands
-			if (_G(savegame)._partySize == 0 || !_G(savegame).hasLivingPartyMember())
+			if (_G(savegame)._partySize == 0 || !_G(savegame).hasLivingPartyMember()) {
 				addView("JourneyOnward");
+			} else {
+				replaceView("OverworldMap", true);
+				return true;
+			}
 			break;
 		default:
 			close();

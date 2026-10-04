@@ -46,6 +46,18 @@ inline byte toBcd(int value) {
 	return ((value / 10) << 4) | (value % 10);
 }
 
+inline uint16 toBcdWord(int value) {
+	return (toBcd(value / 100) << 8) | toBcd(value % 100);
+}
+
+inline int fromBcd(byte value) {
+	return (value >> 4) * 10 + (value & 0xF);
+}
+
+inline int fromBcdWord(uint16 value) {
+	return fromBcd(value >> 8) * 100 + fromBcd(value & 0xFF);
+}
+
 /**
  * A character record. Numeric fields hold BCD values, exactly as in the
  * original, so the same digits are shown when they're printed as hex.

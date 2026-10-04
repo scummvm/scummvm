@@ -41,6 +41,7 @@ struct Savegame {
 	byte _location = 0;
 	byte _posX = 0;
 	byte _posY = 0;
+	byte _moveCount[4] = {};
 
 	/**
 	 * Returns a roster entry by its 1-based number

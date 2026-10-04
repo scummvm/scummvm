@@ -31,7 +31,10 @@
 #include "engines/engine.h"
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima3/data/map.h"
 #include "ultima/ultima3/data/savegame.h"
+#include "ultima/ultima3/gfx/message_log.h"
+#include "ultima/ultima3/gfx/screen_effects.h"
 #include "ultima/ultima3/gfx/shapes.h"
 
 namespace Audio {
@@ -80,8 +83,17 @@ public:
 	 */
 	void playErrorBeep();
 
+	/**
+	 * Plays one of the game's sound effects, identified by its original number
+	 */
+	void playSoundEffect(byte effect);
+
 	Data::Savegame _savegame;
+	Data::Map _map;
 	Gfx::Shapes _shapes;
+	Gfx::MessageLog _messages;
+	Gfx::ScreenEffects _effects;
+	byte _windDirection = 0;
 
 	// Debug flag toggled by the "intangible" console command, allowing
 	// movement through normally impassable terrain
