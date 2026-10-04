@@ -117,6 +117,7 @@
 #include "engines/nancy/action/puzzle/twodialpuzzle.h"
 #include "engines/nancy/action/puzzle/typingquizpuzzle.h"
 #include "engines/nancy/action/puzzle/weightsortpuzzle.h"
+#include "engines/nancy/action/puzzle/whackitpuzzle.h"
 #include "engines/nancy/action/puzzle/wolfmazepuzzle.h"
 #include "engines/nancy/action/puzzle/whalesurvivorpuzzle.h"
 #include "engines/nancy/action/puzzle/wordfindpuzzle.h"
@@ -763,7 +764,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 202:
 		return new BombPuzzle();
 	case 203:
-		return new RippedLetterPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy15)
+			return new RippedLetterPuzzle();
+		else
+			return new WhackItPuzzle();
 	case 204:
 		return new OverrideLockPuzzle();
 	case 205:

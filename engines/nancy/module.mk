@@ -17,6 +17,7 @@ MODULE_OBJS = \
   action/conversation.o \
   action/interactivevideo.o \
   action/overlay.o \
+  action/physicalobject.o \
   action/puzzlerecord.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \
@@ -103,6 +104,7 @@ MODULE_OBJS = \
   action/puzzle/twodialpuzzle.o \
   action/puzzle/typingquizpuzzle.o \
   action/puzzle/weightsortpuzzle.o \
+  action/puzzle/whackitpuzzle.o \
   action/puzzle/wolfmazepuzzle.o \
   action/puzzle/whalesurvivorpuzzle.o \
   action/puzzle/wordfindpuzzle.o \
