@@ -59,6 +59,14 @@ public:
 	// Nancy16+: an event flag that also has to be set for the puzzle to count as solved
 	FlagDescription _solveCondition;
 
+	// Nancy17: a clicked up or down button shows as pressed for a moment. An
+	// empty picture means the button has none.
+	Common::Rect _upPressedSrc;
+	Common::Rect _downPressedSrc;
+	uint32 _pressedTime = 0;	// in milliseconds
+	Common::Rect _pressedButton;
+	uint32 _pressedEndTime = 0;
+
 	SolveState _solveState = kNotSolved;
 	Common::Array<byte> _currentSequence;
 	Time _solveSoundPlayTime;
@@ -70,6 +78,7 @@ protected:
 
 	void readDataNancy16(Common::SeekableReadStream &stream);
 	void drawDial(uint id);
+	void drawPressedButton(const Common::Rect &src, const Common::Rect &button);
 };
 
 } // End of namespace Action
