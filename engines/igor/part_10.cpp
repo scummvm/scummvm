@@ -24,10 +24,6 @@
 
 namespace Igor {
 
-// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
-// _objectsState[38] = s3:0x862 and [41..42] = s3:0x865..0x866;
-// cseg175:015A-27FD.
-
 
 const uint32 kPart10PanelLeft = 0x0000;
 

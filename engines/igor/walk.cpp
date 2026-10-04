@@ -141,6 +141,12 @@ void IgorEngine::moveIgor(int pos, int frame) {
 	int16 _walkDataCurrentPosX2 = wd->x;
 	int16 _walkDataCurrentPosY2 = wd->y;
 
+	if (_walkDxPos <= 0) {
+		debugC(9, kDebugWalk, "moveIgor NEGATIVE dxPos: wd->dxPos %d _walkDxPos %d clipWidth %d wd->x %d wd->y %d _walkData[0] %d,%d idx %d",
+		       wd->dxPos, _walkDxPos, _walkClipWidth, _walkDataCurrentPosX2, _walkDataCurrentPosY2,
+		       _walkData[0].x, _walkData[0].y, _walkDataCurrentIndex);
+	}
+
 	uint16 _walkDataDrawOffset = (wd->y - wd->scaleWidth + 1) * 320;
 
 	int xPos = _walkWidthScaleTable[wd->scaleHeight - 1] / 2;

@@ -10,13 +10,10 @@
 
 namespace Igor {
 
-// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
-// _objectsState[26] = s3:0x856 and [27] = s3:0x857; cseg197:0150-03D8.
-
-const uint32 kDoor1Closed = 0x2175; // cseg197:007B
-const uint32 kDoor1Open = 0x23F1;   // cseg197:002B
-const uint32 kDoor2Closed = 0x266D; // cseg197:011B
-const uint32 kDoor2Open = 0x28DD;   // cseg197:00CB
+const uint32 kDoor1Closed = 0x2175;
+const uint32 kDoor1Open = 0x23F1;
+const uint32 kDoor2Closed = 0x266D;
+const uint32 kDoor2Open = 0x28DD;
 
 void IgorEngine::PART_07_DRAW_DOOR_STATE(int num) {
 	_roomActionsTable[297] = 109;

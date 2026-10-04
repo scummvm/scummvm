@@ -10,10 +10,6 @@
 
 namespace Igor {
 
-// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
-// _objectsState[27] = s3:0x857 and [34..36] = s3:0x85E..0x860;
-// cseg190:0288-112A.
-
 void IgorEngine::PART_09_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		const uint32 srcOffset = _objectsState[27] == 0 ? 0x5D0B : 0x61A3;
@@ -39,7 +35,8 @@ void IgorEngine::PART_09_ANIMATE_DOOR(bool open) {
 		return;
 	}
 
-	static const uint8 openFrames[] = { 3, 0 }; // static frame selectors: s3:0x202-0x203
+	static const uint8 openFrames[] = { 3, 0 };
+
 	for (int i = 0; i < 2; ++i) {
 		const int frame = open ? openFrames[i] : i + 1;
 		for (int y = 0; y <= 52; ++y)
@@ -121,17 +118,17 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_09() {
 	_gameState.enableLight = 1;
-	loadActionData(DAT_AdministrationSecretaryRoom); // static resource: cseg190:2F69-2F8C
+	loadActionData(DAT_AdministrationSecretaryRoom);
 	loadRoomData(PAL_AdministrationSecretaryRoom, IMG_AdministrationSecretaryRoom,
 			BOX_AdministrationSecretaryRoom, MSK_AdministrationSecretaryRoom,
-			TXT_AdministrationSecretaryRoom); // static resources: cseg192/cseg193
+			TXT_AdministrationSecretaryRoom);
 	static const int anim[] = {
 		ANM_AdministrationSecretaryRoom1, ANM_AdministrationSecretaryRoom2,
 		ANM_AdministrationSecretaryRoom3, ANM_AdministrationSecretaryRoom4,
 		ANM_AdministrationSecretaryRoom5, ANM_AdministrationSecretaryRoom6,
 		ANM_AdministrationSecretaryRoom7, ANM_AdministrationSecretaryRoom8,
 		ANM_AdministrationSecretaryRoom9, 0
-	}; // static resources: cseg192:0002-01D4
+	};
 	loadAnimData(anim);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_09_EXEC_ACTION);
 	_roomDataOffsets = PART_09_ROOM_DATA_OFFSETS;

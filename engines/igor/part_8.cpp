@@ -10,10 +10,6 @@
 
 namespace Igor {
 
-// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
-// Indices are addresses relative to s3:0x83C: [0]=0x83C, [26]=0x856,
-// [28..32]=0x858..0x85C, [41..42]=0x865..0x866 and [111]=0x8AB;
-// cseg189:02B0-16EF.
 
 void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
@@ -23,10 +19,10 @@ void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 		_roomActionsTable[150] = _objectsState[26] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
-		if (_objectsState[111] == 1) { // s3:0x8AB; cseg189:16EF-1700
-			_roomObjectAreasTable[7].object = 0; // s3:0xDC7A; cseg189:16F6
-			_roomObjectAreasTable[8].object = 0; // s3:0xDC7F; cseg189:16FB
-			_roomActionsTable[146] = 4; // cseg189:1732-1743
+		if (_objectsState[111] == 1) {
+			_roomObjectAreasTable[7].object = 0;
+			_roomObjectAreasTable[8].object = 0;
+			_roomActionsTable[146] = 4;
 			return;
 		}
 		uint32 srcOffset;

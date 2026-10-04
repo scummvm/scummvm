@@ -10,23 +10,19 @@
 
 namespace Igor {
 
-// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
-// _objectsState[73] = s3:0x885, [80] = s3:0x88C and [82] = s3:0x88E;
-// cseg101:0A17-0F91.
-
 void IgorEngine::PART_34_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_34_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(201, 2, 562); // cseg101:0AC4-0AEA
+		ADD_DIALOGUE_TEXT(201, 2, 562);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(203, 2, 563); // cseg101:0AF1-0B17
+		ADD_DIALOGUE_TEXT(203, 2, 563);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
-		_objectsState[82] = 1; // cseg101:0B1C
+		_objectsState[82] = 1;
 		PART_34_APPLY_OBJECT_STATE(3);
 		break;
 	case 103:
@@ -34,7 +30,7 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 		warning("PART_34_EXEC_ACTION action 103 unimplemented");
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(205, 1, 564); // cseg101:0B2A-0B50
+		ADD_DIALOGUE_TEXT(205, 1, 564);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -43,12 +39,12 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 		warning("PART_34_EXEC_ACTION action 105 unimplemented");
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(206, 2, 565); // cseg101:0B57-0B7D
+		ADD_DIALOGUE_TEXT(206, 2, 565);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(208, 2, 566); // cseg101:0B84-0BAA
+		ADD_DIALOGUE_TEXT(208, 2, 566);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -66,26 +62,24 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_34_ACTION_109_SCROLL_RIGHT() {
-	int xPos = 240; // cseg101:0BC8
-	const int yPos = 124; // cseg101:0C9B
-	int step = 1; // cseg101:0BCD
+	int xPos = 240;
+	const int yPos = 124;
+	int step = 1;
 	_gameTicks = 8; // original counter 15 normalized to 8-tick engine units; cseg101:0BD1-0BE7
 	do {
-		if (compareGameTick(1, 16)) { // cseg101:0BD6-0BE7
-			for (int y = 0; y <= 143; ++y) { // cseg101:0BEA-0C7F
-				memcpy(_screenLayer2 + y * 320,
-						_screenLayer1 + y * 320 + step * 8, 320 - step * 8);
-				memcpy(_screenLayer2 + y * 320 + 320 - step * 8,
-						_animFramesBuffer + y * 160, step * 8); // cseg101:0C36-0C74
+		if (compareGameTick(1, 16)) {
+			for (int y = 0; y <= 143; ++y) {
+				memcpy(_screenLayer2 + y * 320, _screenLayer1 + y * 320 + step * 8, 320 - step * 8);
+				memcpy(_screenLayer2 + y * 320 + 320 - step * 8, _animFramesBuffer + y * 160, step * 8);
 			}
-			if (step < 15) { // cseg101:0C82-0CB2
-				xPos += _walkScaleTable[0x8F9 + _walkCurrentFrame]; // s3:4637; cseg101:0C88-0C98
+			if (step < 15) {
+				xPos += _walkScaleTable[0x8F9 + _walkCurrentFrame];
 				WalkData::setNextFrame(kFacingPositionRight, _walkCurrentFrame);
 			} else {
 				_walkCurrentFrame = 0;
 			}
-			int dstOffset = (yPos - 50) * 320 + xPos - 15 - step * 8; // cseg101:0CB9-0CD5
-			for (int row = 0; row <= 49; ++row) { // cseg101:0CD8-0D58
+			int dstOffset = (yPos - 50) * 320 + xPos - 15 - step * 8;
+			for (int row = 0; row <= 49; ++row) {
 				dstOffset += 320;
 				for (int col = 0; col <= 29; ++col) {
 					const uint8 color = _facingIgorFrames[kFacingPositionRight - 1]
@@ -95,46 +89,45 @@ void IgorEngine::PART_34_ACTION_109_SCROLL_RIGHT() {
 					}
 				}
 			}
-			memcpy(_screenVGA, _screenLayer2, 46080); // cseg101:0D5A-0D6F
+			memcpy(_screenVGA, _screenLayer2, 46080);
 			++step;
 		}
-		waitForTimer(); // cseg101:0D73-0D90
-	} while (step != 21); // cseg101:0D94-0D9A
+		waitForTimer();
+	} while (step != 21);
 
-	_walkData[0].setPos(xPos - 160, yPos, kFacingPositionRight, 0); // cseg101:0D9D-0DB1
-	_walkData[0].setDefaultScale(); // cseg101:0DB6-0DDB
-	_currentPart = 351; // cseg101:0DE0
+	_walkData[0].setPos(xPos - 160, yPos, kFacingPositionRight, 0);
+	_walkData[0].setDefaultScale();
+	_currentPart = 351;
 }
 
 void IgorEngine::PART_34_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		if (!(_objectsState[80] == 0 && _objectsState[73] == 1)) {
-			_roomObjectAreasTable[5].object = 0; // s3:0xDC70; cseg101:0F3C-0F80
+			_roomObjectAreasTable[5].object = 0;
 		} else {
 			// TODO: draw the state-dependent frame from FRM_Park1; cseg101:0F4A-0F79.
 		}
 	}
 	if (num == 3 || num == 255) {
-		_roomObjectAreasTable[4].object = (_objectsState[82] == 0) ? 2 : 3; // s3:0xDC6B; cseg101:0F85-0FA4
+		_roomObjectAreasTable[4].object = (_objectsState[82] == 0) ? 2 : 3;
 	}
 }
 
 void IgorEngine::PART_34() {
-	_gameState.enableLight = 1; // cseg101:1FC0
-	loadActionData(DAT_ParkLeft); // cseg101:1FD6-1FF9; resource 101
-	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight,
-			TXT_ParkRight); // right panel snapshot source; cseg101:1FFE; cseg104:0002-0D20
+	_gameState.enableLight = 1;
+	loadActionData(DAT_ParkLeft);
+	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight, TXT_ParkRight);
 	for (int y = 0; y <= 143; ++y) {
-		memcpy(_animFramesBuffer + y * 160, _screenLayer1 + y * 320 + 160, 160); // cseg101:2003-2040
+		memcpy(_animFramesBuffer + y * 160, _screenLayer1 + y * 320 + 160, 160);
 	}
-	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park); // active left panel; cseg101:2045-206A; cseg106:0002-06A1
+	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park); // active left panel;
 	static const int frames[] = { FRM_Park1, FRM_Park2, FRM_Park3, FRM_Park4, 0 };
-	loadAnimData(frames, 0x5A00); // cseg105:0002-00D8
+	loadAnimData(frames, 0x5A00);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_34_EXEC_ACTION);
 	_roomDataOffsets = PART_34_ROOM_DATA_OFFSETS;
-	setRoomWalkBounds(0, 0, 319, 143); // cseg101:1F85-2E97; full park viewport
+	setRoomWalkBounds(0, 0, 319, 143);
 	PART_34_APPLY_OBJECT_STATE(255);
 
 	_walkDataLastIndex = 1;
@@ -145,7 +138,7 @@ void IgorEngine::PART_34() {
 	}
 	leavePartLoop();
 	if (_currentPart == kInvalidPart) {
-		fadeOut(768); // cseg101:2E7F-2E91
+		fadeOut(768);
 	}
 }
 

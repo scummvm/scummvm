@@ -368,11 +368,11 @@ void IgorEngine::handleRoomInput() {
 	} else if (_currentAction.verbType != 0) {
 		// Pair records are two bytes. Byte 0 is the action and byte 1 selects
 		// the Action field containing the room object to approach. Values above
-		// one walk; for example 5 selects object2Num. cseg175:229F-246B.
+		// one walk; for example 5 selects object2Num.
 		_actionWalkPoint = _roomActionsTable[pairVerbOffset + pairActionOffset + 1];
 		if (_actionWalkPoint > 1 && _actionWalkPoint <= sizeof(Action)) {
 			const uint8 *actionFields = reinterpret_cast<const uint8 *>(&_currentAction);
-			walkObjectNum = actionFields[_actionWalkPoint - 1]; // cseg175:246E-2479
+			walkObjectNum = actionFields[_actionWalkPoint - 1];
 			pairWalk = true;
 		}
 	}
