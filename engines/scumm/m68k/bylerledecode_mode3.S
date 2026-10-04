@@ -60,8 +60,12 @@ SYM(ByleRLEDecode_Mode3_HE90):
 	move.w	#256,d0
 
 .Lmode3_common:
-// TODO: __FASTCALL__
 	link	a6,#-sizeof_local_vars		| a6: frame pointer
+#ifdef __FASTCALL__
+	move.l	a0,(arg_pcompData,a6)
+	move.l	a1,(arg_srcPtr,a6)
+	move.w	d2,(arg_height,a6)
+#endif
 	movem.l	d2-d7/a2-a5,-(sp)
 	move.w	d0,(shadow_threshold,a6)
 

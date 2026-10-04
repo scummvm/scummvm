@@ -68,6 +68,27 @@ compData.scaleIndexMask:
 	.set	\name,-sizeof_local_vars
 	.endm
 
+#ifdef __FASTCALL__
+	add_var	arg_pcompData,4		// a0
+	add_var	arg_srcPtr,4		// a1
+	add_var	arg_height,2		// d2
+	add_var	arg_scaleX,1		// d0
+	add_var	arg_scaleY,1		// d1
+
+	.struct 0
+arg_fp:
+	.space	4
+arg_rts:
+	.space	4
+arg_pitch:
+	.space	4	// const int pitch
+arg_numStrips:
+	.space	4	// const int _numStrips
+arg_shadowTable:
+	.space	4	// const byte *_shadowTable
+arg_palette:
+	.space	4	// const uint16 *_palette
+#else
 	.struct 0
 arg_fp:
 	.space	4
@@ -98,3 +119,4 @@ arg_shadowTable:
 	.space	4	// const byte *_shadowTable
 arg_palette:
 	.space	4	// const uint16 *_palette
+#endif
