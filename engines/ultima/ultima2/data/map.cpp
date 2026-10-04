@@ -25,7 +25,7 @@
 #include "ultima/ultima2/logic/overworld_logic.h"
 #include "ultima/ultima2/logic/city_castle_logic.h"
 #include "ultima/ultima2/logic/dungeon_logic.h"
-#include "ultima/shared/gfx/view.h"
+#include "graphics/views/view.h"
 
 namespace Ultima {
 namespace Ultima2 {

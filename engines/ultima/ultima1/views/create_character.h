@@ -30,7 +30,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 constexpr int ATTRIBUTE_COUNT = 6;
 constexpr int STARTING_POINTS = 30;
@@ -51,11 +51,11 @@ private:
 	Gfx::TextCursor _cursor;
 	Gfx::TextInput _nameInput;
 
-	void drawAttributes(Shared::Gfx::GfxSurface &s);
-	void drawHelp(Shared::Gfx::GfxSurface &s);
-	void drawConfirmedRace(Shared::Gfx::GfxSurface &s);
-	void drawConfirmedSex(Shared::Gfx::GfxSurface &s);
-	void drawConfirmedClass(Shared::Gfx::GfxSurface &s);
+	void drawAttributes(Graphics::Views::GfxSurface &s);
+	void drawHelp(Graphics::Views::GfxSurface &s);
+	void drawConfirmedRace(Graphics::Views::GfxSurface &s);
+	void drawConfirmedSex(Graphics::Views::GfxSurface &s);
+	void drawConfirmedClass(Graphics::Views::GfxSurface &s);
 
 	bool msgAttributesKey(const KeypressMessage &msg);
 	bool msgRaceKey(const KeypressMessage &msg);

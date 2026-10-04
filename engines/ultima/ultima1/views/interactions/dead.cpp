@@ -103,7 +103,7 @@ static const uint8 DEATH_GRAPHIC_DATA[DEATH_GRAPHIC_HEIGHT * 8] = {
 // Shared by Dead and SpaceDead - both claim the map viewport area (inside
 // the game border, which is left drawn by whatever view was showing
 // underneath) and centre the same skull glyph within it
-static void drawSkullGraphic(Shared::Gfx::GfxSurface &s) {
+static void drawSkullGraphic(Graphics::Views::GfxSurface &s) {
 	// This view's own bounds start at absolute screen (8, 8), so convert
 	// down to the local coordinates its surface uses
 	int startX = DEATH_GRAPHIC_SCREEN_X - 8;

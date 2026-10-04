@@ -25,7 +25,7 @@
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/tiles.h"
 #include "ultima/ultima1/metaengine.h"
-#include "ultima/shared/gfx/rect.h"
+#include "graphics/views/rect.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -35,15 +35,15 @@ namespace Views {
 constexpr int COLOR_BORDER = 1;  // blue - thick outer band
 constexpr int COLOR_EDGE = 15;   // white - thin inner highlight line
 
-Game::Game() : Shared::Gfx::View("Game"), _commands(this), _stats(this) {
-	setBounds(TextRect(0, 0, 39, 24));
-	_commands.setBounds(TextRect(0, 20, 29, 24));
-	_stats.setBounds(TextRect(31, 21, 39, 24));
+Game::Game() : Shared::View("Game"), _commands(this), _stats(this) {
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
+	_commands.setBounds(Graphics::Views::TextRect(0, 20, 29, 24));
+	_stats.setBounds(Graphics::Views::TextRect(31, 21, 39, 24));
 }
 
 void Game::draw() {
 	auto s = getSurface();
-	Shared::UIElement::draw();
+	Graphics::Views::UIElement::draw();
 
 	// Vertical divider between the command/message log (left) and the stats panel (right)
 	s.fillRect(Common::Rect(241, 160, 247, 200), COLOR_BORDER);

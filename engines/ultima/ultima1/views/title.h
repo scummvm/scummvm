@@ -24,19 +24,19 @@
 
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Contains the loop of the Presents screen, blurb, and the castle scenes.
  * Any key press interrupts this.
  */
-class Title : public Shared::Gfx::View {
+class Title : public Shared::View {
 private:
 	enum State {
 		PRESENTS, INTRO_A, INTRO_B, CASTLE, CREDITS
@@ -61,10 +61,10 @@ private:
 
 	void showCredits();
 	void showMainMenu();
-	void drawCastleFlag(Shared::Gfx::GfxSurface &s, int xp);
+	void drawCastleFlag(Graphics::Views::GfxSurface &s, int xp);
 	void resetLogoReveal();
-	void revealLogoPixels(Shared::Gfx::GfxSurface &s);
-	void drawCreditsLogo(Shared::Gfx::GfxSurface &s);
+	void revealLogoPixels(Graphics::Views::GfxSurface &s);
+	void drawCreditsLogo(Graphics::Views::GfxSurface &s);
 
 public:
 	Title();

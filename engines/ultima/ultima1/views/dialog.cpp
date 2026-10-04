@@ -33,7 +33,7 @@ constexpr int COLOR_EDGE = 15;   // white - thin inner highlight line
 constexpr int COLOR_NOTCH = 0;   // black - corner notch pixels
 
 Dialog::Dialog(const Common::String &name) : View(name) {
-	setBounds(TextRect(0, 0, 39, 19));
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 }
 
 void Dialog::draw() {
@@ -70,7 +70,7 @@ void Dialog::draw() {
 
 bool Dialog::tick() {
 	g_engine->findView(_G(map)._mapType == Data::MAPTYPE_SPACE ? "SpaceGame" : "Game")->tick();
-	return Shared::Gfx::View::tick();
+	return Graphics::Views::View::tick();
 }
 
 } // namespace Views

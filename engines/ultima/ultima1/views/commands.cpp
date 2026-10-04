@@ -21,7 +21,7 @@
 
 #include "ultima/ultima1/views/commands.h"
 #include "ultima/ultima1/ultima1.h"
-#include "ultima/shared/gfx/rect.h"
+#include "graphics/views/rect.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -30,7 +30,7 @@ namespace Views {
 constexpr int COLOR_TEXT = 11;      // light cyan - normal values
 constexpr int NEWLINE_DELAY = 50;	// Delay after a newline
 
-Commands::Commands(UIElement *parent) : Shared::UIElement("Commands", parent), _textCursor("CommandsCursor", this) {
+Commands::Commands(UIElement *parent) : Graphics::Views::UIElement("Commands", parent), _textCursor("CommandsCursor", this) {
 }
 
 void Commands::draw() {
@@ -79,8 +79,8 @@ void Commands::writeString(const Common::String &msg) {
 }
 
 void Commands::resetLine() {
-	_surface.fillRect(TextRect(0, 4, 29, 4), 0);	// Clear entire bottom row
-	_surface.setTextPos(Point(0, 4));
+	_surface.fillRect(Graphics::Views::TextRect(0, 4, 29, 4), 0);	// Clear entire bottom row
+	_surface.setTextPos(Common::Point(0, 4));
 }
 
 void Commands::showCursor() {

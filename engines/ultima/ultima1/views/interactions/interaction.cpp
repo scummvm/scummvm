@@ -27,7 +27,7 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-using namespace Ultima::Shared::Messages;
+using namespace Graphics::Views;
 
 Interaction::Interaction(const Common::String &name) : View(name) {
 	setBounds(Common::Rect(0, 0, 0, 0));
@@ -35,7 +35,7 @@ Interaction::Interaction(const Common::String &name) : View(name) {
 
 bool Interaction::tick() {
 	g_engine->baseView()->findView("Commands")->tick();
-	return Shared::Gfx::View::tick();
+	return Graphics::Views::View::tick();
 }
 
 void Interaction::writeString(const Common::String &msg) {

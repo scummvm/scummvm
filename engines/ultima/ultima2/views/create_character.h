@@ -22,14 +22,14 @@
 #ifndef ULTIMA2_VIEWS_CREATE_CHARACTER_H
 #define ULTIMA2_VIEWS_CREATE_CHARACTER_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 #include "ultima/ultima2/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Point-buy character creation: six attributes distributed from a shared
@@ -39,7 +39,7 @@ using namespace Shared::Messages;
  * remaining pool) discards all progress and starts over, matching the
  * harsh but simple validation of the original.
  */
-class CreateCharacter : public Shared::Gfx::View {
+class CreateCharacter : public Shared::View {
 private:
 	enum State {
 		STRENGTH, AGILITY, STAMINA, CHARISMA, WISDOM, INTELLIGENCE,

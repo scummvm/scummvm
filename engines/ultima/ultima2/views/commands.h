@@ -22,22 +22,22 @@
 #ifndef ULTIMA2_VIEWS_COMMANDS_H
 #define ULTIMA2_VIEWS_COMMANDS_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 #include "ultima/ultima2/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The scrolling message log and "CMD: " prompt at the bottom of the
  * game screen.
  */
-class Commands : public Shared::UIElement {
+class Commands : public Graphics::Views::UIElement {
 private:
-	Shared::Gfx::GfxSurface _surface;
+	Graphics::Views::GfxSurface _surface;
 	Gfx::TextCursor _textCursor;
 
 	void delay(uint milli);

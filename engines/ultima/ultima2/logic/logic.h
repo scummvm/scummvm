@@ -148,7 +148,7 @@ public:
 	}
 
 	virtual void action(int action);
-	virtual void keypress(const Shared::Messages::KeypressMessage &msg);
+	virtual void keypress(const Graphics::Views::KeypressMessage &msg);
 	virtual void entering() {
 	}
 

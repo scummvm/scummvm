@@ -24,7 +24,7 @@
 #include "ultima/ultima1/data/space_map.h"
 #include "ultima/ultima1/metaengine.h"
 #include "ultima/ultima1/ultima1.h"
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 
 namespace Ultima {
 namespace Ultima1 {

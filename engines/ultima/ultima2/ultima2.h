@@ -29,8 +29,8 @@
 #include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
-#include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/detection.h"
 #include "ultima/ultima2/data/map.h"
 #include "ultima/ultima2/data/map_dungeon.h"
 #include "ultima/ultima2/data/savegame.h"
@@ -160,6 +160,11 @@ public:
 	 * data themselves next time they're (re)constructed
 	 */
 	void setRenderMode(Data::RenderMode mode);
+
+	/**
+	 * Pause for a given number of milliseconds
+	 */
+	void pauseMillis(uint32 millis);
 };
 
 extern Ultima2Engine *g_engine;

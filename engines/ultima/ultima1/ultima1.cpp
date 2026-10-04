@@ -37,8 +37,8 @@ namespace Ultima1 {
 
 Ultima1Engine *g_engine;
 
-Ultima1Engine::Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : Engine(syst),
-_gameDescription(gameDesc) {
+Ultima1Engine::Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
+		Engine(syst), Shared::Events("ultima1"), _gameDescription(gameDesc) {
 	g_engine = this;
 }
 
@@ -69,7 +69,8 @@ Common::Error Ultima1Engine::run() {
 
 	Views::Views views;
 	addView("Startup");
-	runGame(views);
+	runGame();
+	(void)views;		// Suppress any warnings of unused local
 
 	return Common::kNoError;
 }
@@ -109,6 +110,10 @@ bool Ultima1Engine::savegamesExist() const {
 
 void Ultima1Engine::playFX(int num) {
 	warning("TODO: playFX(%d)", num);
+}
+
+void Ultima1Engine::pauseMillis(uint32 millis) {
+	g_system->delayMillis(millis);
 }
 
 } // namespace Ultima1

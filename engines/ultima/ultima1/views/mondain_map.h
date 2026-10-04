@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 class MondainMap : public Map {
 public:

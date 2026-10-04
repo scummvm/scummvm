@@ -37,7 +37,7 @@ constexpr int COLOR_STAR = 3;
 constexpr int WARP_STEPS_PER_TICK = 2;
 
 SpaceMap::SpaceMap() : View("SpaceMap") {
-	setBounds(TextRect(0, 0, 39, 24));
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
 }
 
 void SpaceMap::seedStars() {
@@ -88,11 +88,11 @@ bool SpaceMap::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
-void SpaceMap::plot(Shared::Gfx::GfxSurface &s, int x, int y, int color) {
+void SpaceMap::plot(Graphics::Views::GfxSurface &s, int x, int y, int color) {
 	s.setPixel(x + VIEW_OFFSET, y + VIEW_OFFSET, color);
 }
 
-void SpaceMap::drawMarker(Shared::Gfx::GfxSurface &s, int color) {
+void SpaceMap::drawMarker(Graphics::Views::GfxSurface &s, int color) {
 	for (int i = -3; i <= 3; ++i) {
 		plot(s, _shipX, (byte)(_shipY + i), color);
 		if (i != 0)

@@ -22,7 +22,7 @@
 #ifndef ULTIMA2_VIEWS_H
 #define ULTIMA2_VIEWS_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 #include "ultima/ultima2/views/create_character.h"
 #include "ultima/ultima2/views/dungeon_map.h"
 #include "ultima/ultima2/views/ending.h"
@@ -53,7 +53,7 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-struct Views : public Shared::Views {
+struct Views {
 	Interactions::ClueSeller _clueSeller;
 	Interactions::Dead _dead;
 	Interactions::Direction _direction;

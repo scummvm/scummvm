@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_DIALOG_H
 #define ULTIMA1_VIEWS_DIALOG_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -31,7 +31,7 @@ namespace Views {
 /**
  * Base class for views that appear on the top hand of the screen, such as the maps, dungeon, etc.
  */
-class Dialog : public Shared::Gfx::View {
+class Dialog : public Shared::View {
 public:
 	Dialog(const Common::String &name);
 	~Dialog() override {}

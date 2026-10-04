@@ -81,7 +81,7 @@ static int wrappedPositions(int x, int y, int w, int h, Common::Point extra[3]) 
 // cropped. Instead, split the tile at the sector's wrap edge and draw each
 // piece at its own fully-in-bounds position, wrapping the clipped part
 // around to the opposite edge - up to 4 pieces at a corner
-static void drawWrappedTile(Shared::Gfx::GfxSurface &s, const Graphics::ManagedSurface &tile, int x, int y) {
+static void drawWrappedTile(Graphics::Views::GfxSurface &s, const Graphics::ManagedSurface &tile, int x, int y) {
 	int w = tile.w, h = tile.h;
 	int splitX = (x + w > Data::SPACE_SECTOR_MAX_X) ? (Data::SPACE_SECTOR_MAX_X - x) : w;
 	int splitY = (y + h > Data::SPACE_SECTOR_MAX_Y) ? (Data::SPACE_SECTOR_MAX_Y - y) : h;
@@ -218,7 +218,7 @@ void SpaceMap::draw() {
 	}
 }
 
-void SpaceMap::drawStarGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
+void SpaceMap::drawStarGraphic(Graphics::Views::GfxSurface &s, int x, int y) {
 	for (int row = 0; row < 18; ++row) {
 		for (int col = 0; col < 19; ++col) {
 			switch (STAR_BITMAP[row][col]) {
@@ -235,7 +235,7 @@ void SpaceMap::drawStarGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
 	}
 }
 
-void SpaceMap::drawPlanetGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
+void SpaceMap::drawPlanetGraphic(Graphics::Views::GfxSurface &s, int x, int y) {
 	for (int row = 0; row < 20; ++row) {
 		for (int col = 0; col < 20; ++col) {
 			if (PLANET_BITMAP[row][col] != 0)
@@ -244,7 +244,7 @@ void SpaceMap::drawPlanetGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
 	}
 }
 
-void SpaceMap::drawStationGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
+void SpaceMap::drawStationGraphic(Graphics::Views::GfxSurface &s, int x, int y) {
 	for (int row = 0; row < 18; ++row) {
 		for (int col = 0; col < 21; ++col) {
 			switch (STATION_BITMAP[row][col]) {
@@ -265,13 +265,13 @@ void SpaceMap::drawStationGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
 	}
 }
 
-void SpaceMap::drawShipOutline(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship) {
+void SpaceMap::drawShipOutline(Graphics::Views::GfxSurface &s, const Data::SpaceMapShip &ship) {
 	int tileIndex = ship._shipType * 4 + ship._facing;
 	const Graphics::ManagedSurface &tile = _G(map).spaceShipTiles()[tileIndex];
 	drawWrappedTile(s, tile, ship._x, ship._y);
 }
 
-void SpaceMap::drawShipExhaust(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship) {
+void SpaceMap::drawShipExhaust(Graphics::Views::GfxSurface &s, const Data::SpaceMapShip &ship) {
 	switch (ship._shipType) {
 	case Data::SHIP_LARGE_FIGHTER:
 		drawLargeFighterExhaust(s, ship._x, ship._y, ship._facing);
@@ -286,7 +286,7 @@ void SpaceMap::drawShipExhaust(Shared::Gfx::GfxSurface &s, const Data::SpaceMapS
 	}
 }
 
-void SpaceMap::drawShuttleExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing) {
+void SpaceMap::drawShuttleExhaust(Graphics::Views::GfxSurface &s, int x, int y, int facing) {
 	auto plot = [&s](int px, int py, int color) {
 		if (withinShipView(px, py))
 			s.setPixel(px, py, color);
@@ -348,7 +348,7 @@ void SpaceMap::drawShuttleExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int 
 	}
 }
 
-void SpaceMap::drawSmallFighterExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing) {
+void SpaceMap::drawSmallFighterExhaust(Graphics::Views::GfxSurface &s, int x, int y, int facing) {
 	auto plot = [&s](int px, int py) {
 		if (withinShipView(px, py))
 			s.setPixel(px, py, EXHAUST_COLOR_MAIN);
@@ -410,7 +410,7 @@ void SpaceMap::drawSmallFighterExhaust(Shared::Gfx::GfxSurface &s, int x, int y,
 	}
 }
 
-void SpaceMap::drawLargeFighterExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing) {
+void SpaceMap::drawLargeFighterExhaust(Graphics::Views::GfxSurface &s, int x, int y, int facing) {
 	auto plot = [&s](int px, int py) {
 		if (withinShipView(px, py))
 			s.setPixel(px, py, EXHAUST_COLOR_MAIN);

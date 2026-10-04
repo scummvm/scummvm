@@ -192,8 +192,8 @@ void Merchant::draw() {
 		return;
 
 	auto s = getSurface();
-	s.writeString(Point(15, 0), "\x10 Transact \x11");
-	s.fillRect(TextRect(1, 1, 38, 18), 0);
+	s.writeString(Common::Point(15, 0), "\x10 Transact \x11");
+	s.fillRect(Graphics::Views::TextRect(1, 1, 38, 18), 0);
 
 	if (_mode == SHOP_BUY) {
 		switch (_shopType) {
@@ -242,9 +242,9 @@ void Merchant::drawShopName() {
 
 	auto s = getSurface();
 	s.setColor(COLOR_TEXT);
-	s.writeString(Point(19 - (int)Common::String(name._line1).size() / 2, 2), "%s", name._line1);
+	s.writeString(Common::Point(19 - (int)Common::String(name._line1).size() / 2, 2), "%s", name._line1);
 	if (name._line2)
-		s.writeString(Point(19 - (int)Common::String(name._line2).size() / 2, 3), "%s", name._line2);
+		s.writeString(Common::Point(19 - (int)Common::String(name._line2).size() / 2, 3), "%s", name._line2);
 }
 
 bool Merchant::isWenchNearby() const {
@@ -285,7 +285,7 @@ void Merchant::chooseBuy() {
 	case SHOP_WEAPONS:
 	case SHOP_MAGIC:
 		_mode = SHOP_BUY;
-		setBounds(TextRect(0, 0, 39, 19));
+		setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 		redraw();
 		break;
 
@@ -333,7 +333,7 @@ void Merchant::chooseBuy() {
 		}
 
 		_mode = SHOP_BUY;
-		setBounds(TextRect(0, 0, 39, 19));
+		setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 		redraw();
 		break;
 	}
@@ -360,7 +360,7 @@ void Merchant::chooseSell() {
 			nothing();
 		} else {
 			_mode = SHOP_SELL;
-			setBounds(TextRect(0, 0, 39, 19));
+			setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 			redraw();
 		}
 		break;
@@ -377,7 +377,7 @@ void Merchant::chooseSell() {
 			nothing();
 		} else {
 			_mode = SHOP_SELL;
-			setBounds(TextRect(0, 0, 39, 19));
+			setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 			redraw();
 		}
 		break;
@@ -418,8 +418,8 @@ void Merchant::drawArmoryBuy() {
 	int y = 8;
 	for (int idx = 1; idx <= maxIdx; ++idx, ++y) {
 		int price = ((200 - _G(savegame)._intelligence) / 4) * idx;
-		s.writeString(Point(10, y), "%c) %s", 'a' + idx, Data::ARMOR_NAMES[idx]);
-		s.writeString(Point(27, y), "-%3d", price);
+		s.writeString(Common::Point(10, y), "%c) %s", 'a' + idx, Data::ARMOR_NAMES[idx]);
+		s.writeString(Common::Point(27, y), "-%3d", price);
 	}
 }
 
@@ -459,8 +459,8 @@ void Merchant::drawArmorySell() {
 	for (int idx = 1; idx < Data::ARMOR_COUNT; ++idx) {
 		if (_G(savegame)._armor[idx]) {
 			int price = (_G(savegame)._charisma + 40) * idx * idx / 256 + 1;
-			s.writeString(Point(10, y), "%c) %s", 'a' + idx, Data::ARMOR_NAMES[idx]);
-			s.writeString(Point(27, y), "-%3d", price);
+			s.writeString(Common::Point(10, y), "%c) %s", 'a' + idx, Data::ARMOR_NAMES[idx]);
+			s.writeString(Common::Point(27, y), "-%3d", price);
 			++y;
 		}
 	}
@@ -513,8 +513,8 @@ void Merchant::drawWeaponsBuy() {
 	int y = 8;
 	for (int idx = minIdx; idx <= maxIdx; idx += 2, ++y) {
 		int price = (255 - _G(savegame)._intelligence) * idx * idx / 256 + 5;
-		s.writeString(Point(9, y), "%c) %s", 'a' + idx, Data::WEAPON_NAMES[idx]);
-		s.writeString(Point(26, y), "-%3d", price);
+		s.writeString(Common::Point(9, y), "%c) %s", 'a' + idx, Data::WEAPON_NAMES[idx]);
+		s.writeString(Common::Point(26, y), "-%3d", price);
 	}
 }
 
@@ -555,8 +555,8 @@ void Merchant::drawWeaponsSell() {
 	for (int idx = 1; idx < Data::WEAPON_COUNT; ++idx) {
 		if (_G(savegame)._weapons[idx]) {
 			int price = (_G(savegame)._charisma + 40) * idx * idx / 256 + 1;
-			s.writeString(Point(9, y), "%c) %s", 'a' + idx, Data::WEAPON_NAMES[idx]);
-			s.writeString(Point(26, y), "-%3d", price);
+			s.writeString(Common::Point(9, y), "%c) %s", 'a' + idx, Data::WEAPON_NAMES[idx]);
+			s.writeString(Common::Point(26, y), "-%3d", price);
 			++y;
 		}
 	}
@@ -606,8 +606,8 @@ void Merchant::drawMagicBuy() {
 			continue;
 
 		int price = ((200 - _G(savegame)._wisdom) / 32) * idx;
-		s.writeString(Point(9, y), "%c) %s", 'a' + idx, Data::SPELL_NAMES[idx]);
-		s.writeString(Point(26, y), "-%3d", price);
+		s.writeString(Common::Point(9, y), "%c) %s", 'a' + idx, Data::SPELL_NAMES[idx]);
+		s.writeString(Common::Point(26, y), "-%3d", price);
 		++y;
 	}
 }
@@ -748,8 +748,8 @@ void Merchant::drawTransportBuy() {
 
 		int transportId = _transportIds[i];
 		int price = ((200 - _G(savegame)._intelligence) / 5) * transportId * transportId;
-		s.writeString(Point(11, y), "%c) %s", 'a' + i, Data::TRANSPORT_NAMES[transportId]);
-		s.writeString(Point(22, y), "-%4d", price);
+		s.writeString(Common::Point(11, y), "%c) %s", 'a' + i, Data::TRANSPORT_NAMES[transportId]);
+		s.writeString(Common::Point(22, y), "-%4d", price);
 	}
 }
 

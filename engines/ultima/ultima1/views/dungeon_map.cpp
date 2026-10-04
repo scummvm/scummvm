@@ -114,7 +114,7 @@ void DungeonMap::draw() {
 	auto s = getSurface();
 
 	// Write title showing the dungeon level
-	s.writeString(Point(15, 0), "\x10 Level %2d \x11", _G(savegame)._dungeonLevel);
+	s.writeString(Common::Point(15, 0), "\x10 Level %2d \x11", _G(savegame)._dungeonLevel);
 
 	drawDungeonView();
 }
@@ -210,7 +210,7 @@ void DungeonMap::drawFacingDirection() {
 	}
 
 	s.setColor(EDGE_COLOR);
-	s.writeString(Point(16, 19), "\x10 %s \x11", dirName);
+	s.writeString(Common::Point(16, 19), "\x10 %s \x11", dirName);
 }
 
 void DungeonMap::drawWall(int distance) {
@@ -589,7 +589,7 @@ void DungeonMap::drawDungeonView() {
 	}
 
 	auto s = getSurface();
-	s.fillRect(TextRect(1, 1, 38, 18), 0);
+	s.fillRect(Graphics::Views::TextRect(1, 1, 38, 18), 0);
 	drawFacingDirection();
 
 	const Data::DungeonCell ownCell = cellAt(pos.x, pos.y);

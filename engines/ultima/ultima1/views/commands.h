@@ -22,18 +22,18 @@
 #ifndef ULTIMA1_VIEWS_COMMANDS_H
 #define ULTIMA1_VIEWS_COMMANDS_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 #include "ultima/ultima1/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
-class Commands : public Shared::UIElement {
+class Commands : public Graphics::Views::UIElement {
 private:
-	Shared::Gfx::GfxSurface _surface;
+	Graphics::Views::GfxSurface _surface;
 	Gfx::TextCursor _textCursor;
 
 	/**

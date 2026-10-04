@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_STATS_H
 #define ULTIMA1_VIEWS_STATS_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,9 +32,9 @@ namespace Views {
  * The always-visible Hits/Food/Exp./Coin display in the corner of the
  * game screen. Shared between the overworld/town and dungeon views.
  */
-class Stats : public Shared::UIElement {
+class Stats : public Graphics::Views::UIElement {
 public:
-	Stats(UIElement *parent) : Shared::UIElement("Stats", parent) {}
+	Stats(UIElement *parent) : Graphics::Views::UIElement("Stats", parent) {}
 	~Stats() override {}
 
 	void draw() override;

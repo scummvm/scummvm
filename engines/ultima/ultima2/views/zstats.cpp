@@ -29,17 +29,17 @@ namespace Views {
 constexpr int COLOR_TEXT = 3;
 
 ZStats::ZStats() : View("ZStats") {
-	setBounds(TextRect(0, 0, 39, 24));
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
 }
 
 bool ZStats::msgFocus(const FocusMessage &msg) {
 	// Clear the entire screen
-	setBounds(TextRect(0, 0, 39, 24));
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
 	getSurface().clear();
 
 	// Set up a slightly reduced bounds to exclude columns 0 and 39
-	setBounds(TextRect(1, 0, 38, 24));
-	return Shared::Gfx::View::msgFocus(msg);
+	setBounds(Graphics::Views::TextRect(1, 0, 38, 24));
+	return Graphics::Views::View::msgFocus(msg);
 }
 
 void ZStats::draw() {

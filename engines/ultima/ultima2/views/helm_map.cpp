@@ -41,11 +41,11 @@ static const byte ICON_SWAMP[][2] = { {1, 0}, {3, 0} };
 static const byte ICON_ROAD[][2] = { {0, 0}, {0, 1}, {2, 0}, {2, 1} };
 static const byte ICON_OTHER[][2] = { {1, 0}, {2, 0}, {2, 1}, {1, 1} };
 
-HelmMap::HelmMap() : Shared::Gfx::View("HelmMap") {
-	setBounds(TextRect(0, 0, 39, 19));
+HelmMap::HelmMap() : Shared::View("HelmMap") {
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 }
 
-void HelmMap::plotIcon(Shared::Gfx::GfxSurface &s, int cellX, int cellY, Data::TileId tile) {
+void HelmMap::plotIcon(Graphics::Views::GfxSurface &s, int cellX, int cellY, Data::TileId tile) {
 	const byte (*points)[2];
 	int count;
 

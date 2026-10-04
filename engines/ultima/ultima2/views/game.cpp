@@ -20,14 +20,14 @@
  */
 
 #include "ultima/ultima2/views/game.h"
-#include "ultima/shared/gfx/rect.h"
+#include "graphics/views/rect.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-Game::Game() : Shared::Gfx::View("Game"), _commands(this), _stats(this) {
-	setBounds(TextRect(0, 0, 39, 24));
+Game::Game() : Shared::View("Game"), _commands(this), _stats(this) {
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
 }
 
 } // namespace Views

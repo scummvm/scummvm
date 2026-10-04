@@ -57,7 +57,7 @@ void SpaceCockpit::draw() {
 	Map::draw();
 
 	auto s = getSurface();
-	s.fillRect(Rect(8, 8, 312, 152), 0);
+	s.fillRect(Common::Rect(8, 8, 312, 152), 0);
 
 	drawCockpitFrame(s);
 
@@ -217,12 +217,12 @@ bool SpaceCockpit::msgKeypress(const KeypressMessage &msg) {
 	return Map::msgKeypress(msg);
 }
 
-void SpaceCockpit::drawCockpitFrame(Shared::Gfx::GfxSurface &s) {
+void SpaceCockpit::drawCockpitFrame(Graphics::Views::GfxSurface &s) {
 	// The ~7px surround around the viewport
-	s.fillRect(Rect(8, 8, 312, 16), FRAME_COLOR);
-	s.fillRect(Rect(8, 144, 312, 152), FRAME_COLOR);
-	s.fillRect(Rect(8, 16, 16, 145), FRAME_COLOR);
-	s.fillRect(Rect(304, 16, 312, 145), FRAME_COLOR);
+	s.fillRect(Common::Rect(8, 8, 312, 16), FRAME_COLOR);
+	s.fillRect(Common::Rect(8, 144, 312, 152), FRAME_COLOR);
+	s.fillRect(Common::Rect(8, 16, 16, 145), FRAME_COLOR);
+	s.fillRect(Common::Rect(304, 16, 312, 145), FRAME_COLOR);
 
 	// Rivet detail along the top and bottom
 	for (int i = 1; i < 20; ++i) {

@@ -58,7 +58,7 @@ bool Ready::msgKeypress(const KeypressMessage &msg) {
 			showCursor();
 
 			// Draw a proper dialog with the list of selections
-			setBounds(TextRect(0, 0, 39, 19));
+			setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 			redraw();
 			break;
 
@@ -70,7 +70,7 @@ bool Ready::msgKeypress(const KeypressMessage &msg) {
 			showCursor();
 
 			// Draw a proper dialog with the list of selections
-			setBounds(TextRect(0, 0, 39, 19));
+			setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 			redraw();
 			break;
 
@@ -82,7 +82,7 @@ bool Ready::msgKeypress(const KeypressMessage &msg) {
 			showCursor();
 
 			// Draw a proper dialog with the list of selections
-			setBounds(TextRect(0, 0, 39, 19));
+			setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 			redraw();
 			break;
 
@@ -122,10 +122,10 @@ void Ready::draw() {
 
 	// Display title
 	auto s = getSurface();
-	s.writeString(Point(16, 0), "\x10 Ready \x11");
+	s.writeString(Common::Point(16, 0), "\x10 Ready \x11");
 
 	// Clear dialog content
-	s.fillRect(TextRect(1, 1, 38, 18), 0);
+	s.fillRect(Graphics::Views::TextRect(1, 1, 38, 18), 0);
 
 	// Draw list of selections
 	switch (_mode) {
@@ -158,7 +158,7 @@ void Ready::drawItemList(const int16 *items, const char *const *names, int maxIn
 
 	for (int idx = 0; idx <= maxIndex; ++idx) {
 		if (items[idx]) {
-			s.writeString(Point(15, y), "%c) %s", 'a' + idx, names[idx]);
+			s.writeString(Common::Point(15, y), "%c) %s", 'a' + idx, names[idx]);
 			++y;
 		}
 	}

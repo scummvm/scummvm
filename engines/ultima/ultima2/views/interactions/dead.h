@@ -29,7 +29,7 @@ namespace Ultima2 {
 namespace Views {
 namespace Interactions {
 
-using namespace Ultima::Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Shown when the player dies, to allow them time to see the death message

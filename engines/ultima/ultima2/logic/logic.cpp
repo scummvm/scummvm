@@ -28,7 +28,7 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Logic {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 void Logic::writeString(const Common::String &msg) {
 	g_engine->baseView()->findView("Commands")->send(GameMessage("TEXT", msg));
@@ -90,7 +90,7 @@ byte Logic::randByte() {
 }
 
 void Logic::showAttackTile(int x, int y) {
-	g_engine->focusedView()->send(AttackTileMessage(x, y, 0));
+	g_engine->focusedView()->send(Shared::AttackTileMessage(x, y, 0));
 }
 
 void Logic::playFX(Data::SoundEffect fx) {
@@ -274,7 +274,7 @@ bool Logic::trySpendGold(int amount) {
 	return true;
 }
 
-void Logic::keypress(const Shared::Messages::KeypressMessage &msg) {
+void Logic::keypress(const Graphics::Views::KeypressMessage &msg) {
 	writeString("-ILLEGAL COMMAND!\n");
 	endOfTurn();
 	prompt();

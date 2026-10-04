@@ -76,7 +76,7 @@ bool Pillar::msgGame(const GameMessage &msg) {
 }
 
 bool Pillar::msgFocus(const FocusMessage &msg) {
-	setBounds(TextRect(0, 0, 39, 19));
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 	_borderColor = COLOR_BORDER;
 
 	auto &sg = _G(savegame);
@@ -119,8 +119,8 @@ void Pillar::timeout() {
 
 void Pillar::draw() {
 	auto s = getSurface();
-	s.fillRect(Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
-	s.frameRect(Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), _borderColor);
+	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
+	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), _borderColor);
 
 	s.setColor(COLOR_TEXT);
 	drawInscription();
@@ -131,44 +131,44 @@ void Pillar::drawInscription() {
 
 	switch (_locationNum) {
 	case 0:
-		s.writeString(Point(8, 8), "You feel a strong magic");
-		s.writeString(Point(12, 9), "surrounding you!");
+		s.writeString(Common::Point(8, 8), "You feel a strong magic");
+		s.writeString(Common::Point(12, 9), "surrounding you!");
 		break;
 	case 1:
-		s.writeString(Point(10, 7), "You hear someone say,");
-		s.writeString(Point(6, 9), " \"TURIS-SCIENTIA-MAGNOPERE\"");
+		s.writeString(Common::Point(10, 7), "You hear someone say,");
+		s.writeString(Common::Point(6, 9), " \"TURIS-SCIENTIA-MAGNOPERE\"");
 		break;
 	case 2:
-		s.writeString(Point(13, 7), "A sign reads:");
-		s.writeString(Point(8, 9), "\"FORTES FORTUNA ADIUVAT!\"");
+		s.writeString(Common::Point(13, 7), "A sign reads:");
+		s.writeString(Common::Point(8, 9), "\"FORTES FORTUNA ADIUVAT!\"");
 		break;
 	case 3:
-		s.writeString(Point(13, 5), "On a pedestal,");
-		s.writeString(Point(10, 6), "these words appear:");
-		s.writeString(Point(8, 7), "\"MY NAME IS OZYMANDIAS,");
-		s.writeString(Point(13, 8), "KING OF KINGS:");
-		s.writeString(Point(11, 9), "LOOK AT MY WORKS,");
-		s.writeString(Point(8, 10), "YE MIGHTY, AND DESPAIR!\"");
-		s.writeString(Point(8, 12), "Nothing beside remains.");
-		s.writeString(Point(7, 13), "You feel a strange force!");
+		s.writeString(Common::Point(13, 5), "On a pedestal,");
+		s.writeString(Common::Point(10, 6), "these words appear:");
+		s.writeString(Common::Point(8, 7), "\"MY NAME IS OZYMANDIAS,");
+		s.writeString(Common::Point(13, 8), "KING OF KINGS:");
+		s.writeString(Common::Point(11, 9), "LOOK AT MY WORKS,");
+		s.writeString(Common::Point(8, 10), "YE MIGHTY, AND DESPAIR!\"");
+		s.writeString(Common::Point(8, 12), "Nothing beside remains.");
+		s.writeString(Common::Point(7, 13), "You feel a strange force!");
 		break;
 	case 4:
-		s.writeString(Point(12, 6), "The sign reads:");
-		s.writeString(Point(12, 8), "\"ULTIMA THULE!\"");
-		s.writeString(Point(7, 10), "The sky grows dark, and a");
-		s.writeString(Point(7, 11), "strong magic engulfs you!");
+		s.writeString(Common::Point(12, 6), "The sign reads:");
+		s.writeString(Common::Point(12, 8), "\"ULTIMA THULE!\"");
+		s.writeString(Common::Point(7, 10), "The sky grows dark, and a");
+		s.writeString(Common::Point(7, 11), "strong magic engulfs you!");
 		break;
 	case 5:
-		s.writeString(Point(12, 7), "The sign reads:");
-		s.writeString(Point(11, 9), "\"OMNIA MUTANTUR!\"");
+		s.writeString(Common::Point(12, 7), "The sign reads:");
+		s.writeString(Common::Point(11, 9), "\"OMNIA MUTANTUR!\"");
 		break;
 	case 6:
-		s.writeString(Point(12, 7), "The sign reads:");
-		s.writeString(Point(9, 9), "\"GO EAST TO GO EAST!\"");
+		s.writeString(Common::Point(12, 7), "The sign reads:");
+		s.writeString(Common::Point(9, 9), "\"GO EAST TO GO EAST!\"");
 		break;
 	case 7:
-		s.writeString(Point(10, 7), "The grave is marked:");
-		s.writeString(Point(14, 9), "\"VAE VICTIS\"");
+		s.writeString(Common::Point(10, 7), "The grave is marked:");
+		s.writeString(Common::Point(14, 9), "\"VAE VICTIS\"");
 		break;
 	default:
 		break;

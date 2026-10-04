@@ -19,29 +19,40 @@
  *
  */
 
-#include "ultima/shared/engine/messages.h"
+#ifndef ULTIMA_SHARED_ENGINE_VIEW_H
+#define ULTIMA_SHARED_ENGINE_VIEW_H
+
+#include "graphics/views/view.h"
+#include "ultima/shared/engine/events.h"
 
 namespace Ultima {
 namespace Shared {
-namespace Messages {
 
-MouseMessage::MouseMessage(Common::EventType type,
-	const Common::Point &pos) : Message(), _pos(pos) {
-	switch (type) {
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
-		_button = MB_RIGHT;
-		break;
-	case Common::EVENT_MBUTTONDOWN:
-	case Common::EVENT_MBUTTONUP:
-		_button = MB_MIDDLE;
-		break;
-	default:
-		_button = MB_LEFT;
-		break;
+/**
+ * Base class for the Ultima engines' views. Adds handling of
+ * the Ultima-specific messages on top of the common View
+ */
+class View : public Graphics::Views::View {
+	ULTIMA_CUSTOM_MESSAGES(Graphics::Views::View)
+public:
+	View(const Common::String &name, Graphics::Views::UIElement *uiParent) : Graphics::Views::View(name, uiParent) {
 	}
-}
+	View(const Common::String &name) : Graphics::Views::View(name) {
+	}
+	~View() override {
+	}
 
-} // namespace Messages
+	/**
+	 * Returns a surface for drawing the element
+	 */
+	Graphics::Views::GfxSurface getSurface(bool innerBounds = false) const {
+		auto s = Graphics::Views::View::getSurface(innerBounds);
+		s.setColor(15);		// EGA white color
+		return s;
+	}
+};
+
 } // namespace Shared
 } // namespace Ultima
+
+#endif

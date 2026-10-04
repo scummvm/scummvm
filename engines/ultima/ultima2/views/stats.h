@@ -22,7 +22,7 @@
 #ifndef ULTIMA2_VIEWS_STATS_H
 #define ULTIMA2_VIEWS_STATS_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -32,7 +32,7 @@ namespace Views {
  * The always-visible H.P./FOOD/EXP./GOLD display in the corner of the
  * game screen.
  */
-class Stats : public Shared::UIElement {
+class Stats : public Graphics::Views::UIElement {
 public:
 	Stats(UIElement *parent);
 	~Stats() override {}

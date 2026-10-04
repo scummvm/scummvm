@@ -29,14 +29,15 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Base class for map views
  */
 class Map : public Dialog {
 private:
-	int _passCtr = 0;
+	uint32 _passStartTime = 0;
+
 public:
 	Map(const Common::String &name);
 	~Map() override {}

@@ -21,7 +21,7 @@
 
 #include "ultima/ultima2/views/commands.h"
 #include "ultima/ultima2/ultima2.h"
-#include "ultima/shared/gfx/rect.h"
+#include "graphics/views/rect.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -32,8 +32,8 @@ constexpr int NEWLINE_DELAY = 50;
 constexpr int PROMPT_ROW = 3; // last of the 4 rows within Commands' own bounds
 constexpr int PROMPT_ABSOLUTE_ROW = 23;
 
-Commands::Commands(UIElement *parent) : Shared::UIElement("Commands", parent), _textCursor("CommandsCursor", this, COLOR_TEXT) {
-	setBounds(TextRect(0, 20, 29, 23));
+Commands::Commands(UIElement *parent) : Graphics::Views::UIElement("Commands", parent), _textCursor("CommandsCursor", this, COLOR_TEXT) {
+	setBounds(Graphics::Views::TextRect(0, 20, 29, 23));
 }
 
 void Commands::draw() {
@@ -76,7 +76,7 @@ void Commands::writeString(const Common::String &msg) {
 }
 
 void Commands::resetLine() {
-	_surface.fillRect(TextRect(0, PROMPT_ROW, 29, PROMPT_ROW), 0);
+	_surface.fillRect(Graphics::Views::TextRect(0, PROMPT_ROW, 29, PROMPT_ROW), 0);
 	_surface.setTextPos(Common::Point(0, PROMPT_ROW));
 }
 

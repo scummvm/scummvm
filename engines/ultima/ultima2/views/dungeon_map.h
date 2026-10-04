@@ -41,17 +41,17 @@ private:
 	/**
 	 * Draws a small map of the current level in the top right corner
 	 */
-	void drawMinimap(Shared::Gfx::GfxSurface &s);
+	void drawMinimap(Graphics::Views::GfxSurface &s);
 
 	/**
 	 * Draws the corridor ahead. Returns the depth it was drawn out to
 	 */
-	int drawCorridor(Shared::Gfx::GfxSurface &s);
+	int drawCorridor(Graphics::Views::GfxSurface &s);
 
 	/**
 	 * Draws the nearest monster in the corridor, out to the given depth
 	 */
-	void drawMonster(Shared::Gfx::GfxSurface &s, const byte *monsters, int depth);
+	void drawMonster(Graphics::Views::GfxSurface &s, const byte *monsters, int depth);
 
 protected:
 	Graphics::Surface *tileGraphics() override {
@@ -64,7 +64,7 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgAttackTile(const AttackTileMessage &msg) override;
+	bool msgAttackTile(const Shared::AttackTileMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	bool tick() override;

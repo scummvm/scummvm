@@ -29,7 +29,7 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-using namespace Ultima::Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Shown when the player boards the time machine without having all four

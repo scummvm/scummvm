@@ -171,7 +171,7 @@ bool OverworldLogic::enter() {
 		writeString(msg);
 
 		if (location >= 41 && location < 49) {
-			g_engine->send("Pillar", Shared::Messages::GameMessage("PILLAR", location - 41));
+			g_engine->send("Pillar", Graphics::Views::GameMessage("PILLAR", location - 41));
 
 		} else {
 			// Load the new location

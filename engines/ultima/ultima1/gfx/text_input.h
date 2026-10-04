@@ -22,14 +22,14 @@
 #ifndef ULTIMA1_GFX_TEXT_INPUT_H
 #define ULTIMA1_GFX_TEXT_INPUT_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 #include "ultima/ultima1/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Gfx {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Simple text entry field. Accepts printable characters up to a maximum
@@ -41,7 +41,7 @@ using namespace Shared::Messages;
  * animation is used consistently, whether it's parked at a prompt or
  * following text as it's typed.
  */
-class TextInput : public Shared::UIElement {
+class TextInput : public Graphics::Views::UIElement {
 private:
 	Common::String _text;
 	Common::Point _pos;

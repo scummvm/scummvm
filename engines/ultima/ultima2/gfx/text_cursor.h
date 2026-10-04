@@ -22,7 +22,7 @@
 #ifndef ULTIMA2_GFX_TEXT_CURSOR_H
 #define ULTIMA2_GFX_TEXT_CURSOR_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -33,7 +33,7 @@ namespace Gfx {
  * "CHOICE:", and later character creation's text entry). Doesn't handle
  * keypresses itself - that's left to whichever view owns it.
  */
-class TextCursor : public Shared::UIElement {
+class TextCursor : public Graphics::Views::UIElement {
 private:
 	bool _active = false;
 	bool _visible = true;

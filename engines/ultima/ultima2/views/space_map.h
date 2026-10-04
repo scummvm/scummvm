@@ -22,14 +22,14 @@
 #ifndef ULTIMA2_VIEWS_SPACE_MAP_H
 #define ULTIMA2_VIEWS_SPACE_MAP_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 #include "ultima/ultima2/views/space_stats.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The starfield seen from a rocket in flight, with the steering marker and
@@ -37,7 +37,7 @@ using namespace Shared::Messages;
  * animation, which passes through several phases of stars streaking and
  * then speeding past
  */
-class SpaceMap : public Shared::Gfx::View {
+class SpaceMap : public Shared::View {
 private:
 	enum Phase {
 		PHASE_IDLE, PHASE_WARP_TRAILS, PHASE_WARP_ACCELERATE, PHASE_WARP_RUSH,
@@ -56,8 +56,8 @@ private:
 	int _counter = 0;
 
 	void seedStars();
-	void plot(Shared::Gfx::GfxSurface &s, int x, int y, int color);
-	void drawMarker(Shared::Gfx::GfxSurface &s, int color);
+	void plot(Graphics::Views::GfxSurface &s, int x, int y, int color);
+	void drawMarker(Graphics::Views::GfxSurface &s, int color);
 
 	/**
 	 * Moves every star one step away from the ship's steering position

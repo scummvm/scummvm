@@ -22,20 +22,20 @@
 #ifndef ULTIMA2_VIEWS_ZSTATS_H
 #define ULTIMA2_VIEWS_ZSTATS_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 #include "ultima/ultima2/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The "Z" full character stats screen. Closes and resumes the turn on any
  * keypress.
  */
-class ZStats : public Shared::Gfx::View {
+class ZStats : public Shared::View {
 private:
 	Gfx::TextCursor _textCursor = Gfx::TextCursor("ZStatsCursor", this);
 

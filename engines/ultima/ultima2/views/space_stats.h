@@ -22,7 +22,7 @@
 #ifndef ULTIMA2_VIEWS_SPACE_STATS_H
 #define ULTIMA2_VIEWS_SPACE_STATS_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -31,7 +31,7 @@ namespace Views {
 /**
  * The stats display shown when in outer space
  */
-class SpaceStats : public Shared::UIElement {
+class SpaceStats : public Graphics::Views::UIElement {
 public:
 	SpaceStats(UIElement *parent);
 	~SpaceStats() override {

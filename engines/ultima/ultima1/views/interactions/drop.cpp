@@ -81,7 +81,7 @@ bool Drop::msgKeypress(const KeypressMessage &msg) {
 			showCursor();
 
 			// Draw a proper dialog with the list of selections
-			setBounds(TextRect(0, 0, 39, 19));
+			setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 			redraw();
 			break;
 
@@ -97,7 +97,7 @@ bool Drop::msgKeypress(const KeypressMessage &msg) {
 			showCursor();
 
 			// Draw a proper dialog with the list of selections
-			setBounds(TextRect(0, 0, 39, 19));
+			setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 			redraw();
 			break;
 
@@ -137,10 +137,10 @@ void Drop::draw() {
 
 	// Display title
 	auto s = getSurface();
-	s.writeString(Point(16, 0), "\x10 Drop \x11");
+	s.writeString(Common::Point(16, 0), "\x10 Drop \x11");
 
 	// Clear dialog content
-	s.fillRect(TextRect(1, 1, 38, 18), 0);
+	s.fillRect(Graphics::Views::TextRect(1, 1, 38, 18), 0);
 
 	switch (_mode) {
 	case DROP_WEAPON:
@@ -162,7 +162,7 @@ void Drop::drawItemList(const int16 *items, const char *const *names, int maxInd
 	s.setColor(COLOR_TEXT);
 	for (int idx = 1; idx <= maxIndex; ++idx) {
 		if (items[idx]) {
-			s.writeString(Point(col, y), "%c) %s", 'a' + idx, names[idx]);
+			s.writeString(Common::Point(col, y), "%c) %s", 'a' + idx, names[idx]);
 			++y;
 		}
 	}

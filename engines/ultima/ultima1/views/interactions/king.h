@@ -30,7 +30,7 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-using namespace Ultima::Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Handler for the Transact command's king interaction within castles.

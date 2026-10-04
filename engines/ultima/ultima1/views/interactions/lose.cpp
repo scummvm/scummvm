@@ -35,7 +35,7 @@ constexpr int DIALOG_X1 = 31, DIALOG_Y1 = 23, DIALOG_X2 = 287, DIALOG_Y2 = 127;
 constexpr int BORDER_X1 = 34, BORDER_Y1 = 26, BORDER_X2 = 284, BORDER_Y2 = 124;
 
 bool Lose::msgFocus(const FocusMessage &msg) {
-	setBounds(TextRect(0, 0, 39, 19));
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 
 	g_engine->send("Commands", GameMessage("TEXT", "THOU ART DEAD!"));
 	g_engine->playFX(2);
@@ -51,13 +51,13 @@ void Lose::draw() {
 
 void Lose::drawDialog() {
 	auto s = getSurface();
-	s.fillRect(Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
-	s.frameRect(Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), BORDER_COLOR);
+	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
+	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), BORDER_COLOR);
 
 	s.setColor(TEXT_COLOR);
-	s.writeString(Point(5, 6), "   Thou hast been defeated by");
-	s.writeString(Point(5, 7), "      Mondain the Wizard!");
-	s.writeString(Point(5, 12), "    THE UNIVERSE IS DOOMED!");
+	s.writeString(Common::Point(5, 6), "   Thou hast been defeated by");
+	s.writeString(Common::Point(5, 7), "      Mondain the Wizard!");
+	s.writeString(Common::Point(5, 12), "    THE UNIVERSE IS DOOMED!");
 }
 
 bool Lose::msgAction(const ActionMessage &msg) {

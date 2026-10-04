@@ -25,13 +25,13 @@
 #include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/space_map.h"
-#include "ultima/shared/gfx/gfx_surface.h"
+#include "graphics/views/gfx_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The overhead view of the player's current galaxy sector - the station
@@ -44,34 +44,34 @@ private:
 	 * Draws the station's raw bitmap (drawStationGraphic), only shown in
 	 * sector (3,3)
 	 */
-	void drawStationGraphic(Shared::Gfx::GfxSurface &s, int x, int y);
+	void drawStationGraphic(Graphics::Views::GfxSurface &s, int x, int y);
 
 	/**
 	 * Draws a sector's star/heat hazard raw bitmap (drawStarGraphic)
 	 */
-	void drawStarGraphic(Shared::Gfx::GfxSurface &s, int x, int y);
+	void drawStarGraphic(Graphics::Views::GfxSurface &s, int x, int y);
 
 	/**
 	 * Draws a sector's docking/encounter anchor raw bitmap (drawPlanetGraphic)
 	 */
-	void drawPlanetGraphic(Shared::Gfx::GfxSurface &s, int x, int y);
+	void drawPlanetGraphic(Graphics::Views::GfxSurface &s, int x, int y);
 
 	/**
 	 * XOR-blits a ship's glyph (egaspace.bin, via Data::Map::spaceShipTiles,
 	 * indexed by shipType*4+facing) at its current position
 	 * (blitShipSpriteXor)
 	 */
-	void drawShipOutline(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship);
+	void drawShipOutline(Graphics::Views::GfxSurface &s, const Data::SpaceMapShip &ship);
 
 	/**
 	 * Draws the player ship's engine exhaust trail while
 	 * _G(shipExhaustCountdown) is active, dispatching by ship type
 	 * (drawShipSprite, vector-plotted rather than a sprite tile)
 	 */
-	void drawShipExhaust(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship);
-	void drawShuttleExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing);
-	void drawLargeFighterExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing);
-	void drawSmallFighterExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing);
+	void drawShipExhaust(Graphics::Views::GfxSurface &s, const Data::SpaceMapShip &ship);
+	void drawShuttleExhaust(Graphics::Views::GfxSurface &s, int x, int y, int facing);
+	void drawLargeFighterExhaust(Graphics::Views::GfxSurface &s, int x, int y, int facing);
+	void drawSmallFighterExhaust(Graphics::Views::GfxSurface &s, int x, int y, int facing);
 
 public:
 	SpaceMap() : Map("SpaceMap") {}

@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_GFX_TEXT_CURSOR_H
 #define ULTIMA1_GFX_TEXT_CURSOR_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -33,7 +33,7 @@ namespace Gfx {
  * through 4 frames while visible. Doesn't handle keypresses itself -
  * that's left to whichever view owns it.
  */
-class TextCursor : public Shared::UIElement {
+class TextCursor : public Graphics::Views::UIElement {
 private:
 	int _frame = 0;
 	bool _visible = true;

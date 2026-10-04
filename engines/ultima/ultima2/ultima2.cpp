@@ -40,8 +40,8 @@ namespace Ultima2 {
 
 Ultima2Engine *g_engine;
 
-Ultima2Engine::Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : Engine(syst),
-_gameDescription(gameDesc) {
+Ultima2Engine::Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
+		Engine(syst), Shared::Events("ultima2"), _gameDescription(gameDesc) {
 	g_engine = this;
 	_pcSpeaker = new Audio::PCSpeaker();
 }
@@ -97,7 +97,8 @@ Common::Error Ultima2Engine::run() {
 	// Create all the views and run the game
 	Views::Views views;
 	addView("Title");
-	runGame(views);
+	runGame();
+	(void)views;		// Suppress any warnings of unused local
 
 	return Common::kNoError;
 }
@@ -254,7 +255,11 @@ void Ultima2Engine::setRenderMode(Data::RenderMode mode) {
 	// OverworldMap/LocationMap are constructed once up front as part of
 	// Views::Views, so they need to be explicitly told to re-read their
 	// tile graphics now rather than noticing this on their own
-	g_engine->send(Shared::Messages::GameMessage("RELOAD_TILES"));
+	g_engine->send(Graphics::Views::GameMessage("RELOAD_TILES"));
+}
+
+void Ultima2Engine::pauseMillis(uint32 millis) {
+	g_system->delayMillis(millis);
 }
 
 } // namespace Ultima2

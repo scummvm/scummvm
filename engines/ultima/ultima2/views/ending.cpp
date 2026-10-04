@@ -44,7 +44,7 @@ constexpr uint32 STEP_DELAY = 90;
 } // namespace
 
 Ending::Ending() : View("Ending") {
-	setBounds(TextRect(0, 0, 39, 24));
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
 }
 
 Ending::~Ending() {
@@ -68,7 +68,7 @@ bool Ending::msgFocus(const FocusMessage &msg) {
 	_panX = _panY = 0;
 	_lastStep = g_system->getMillis();
 
-	g_engine->baseView()->findView("Commands")->send(Shared::Messages::GameMessage("TEXT",
+	g_engine->baseView()->findView("Commands")->send(Graphics::Views::GameMessage("TEXT",
 		"\n\nYOU HAVE SAVED THE UNIVERSE,\nAND COMPLETED ULTIMA ][! SEEK\n"
 		"NOW TO CONQUER WICKED EXODUS,\nFOUND IN ULTIMA ]I[-D ]II[-P!\n"));
 

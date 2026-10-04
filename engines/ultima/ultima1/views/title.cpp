@@ -342,7 +342,7 @@ void Title::resetLogoReveal() {
 	_logoTextShown = false;
 }
 
-void Title::revealLogoPixels(Shared::Gfx::GfxSurface &s) {
+void Title::revealLogoPixels(Graphics::Views::GfxSurface &s) {
 	// Galois LFSR, polynomial x^17 + x^14 + 1: a maximal-length sequence
 	// giving a full-coverage pseudo-random pixel order, replicating the original's fade in
 	const uint32 TAP_MASK = (1u << 16) | (1u << 13);
@@ -366,7 +366,7 @@ void Title::revealLogoPixels(Shared::Gfx::GfxSurface &s) {
 	}
 }
 
-void Title::drawCreditsLogo(Shared::Gfx::GfxSurface &s) {
+void Title::drawCreditsLogo(Graphics::Views::GfxSurface &s) {
 	// New lines are revealed from the top (growing downward) and bottom
 	// (growing upward) each call, meeting in the middle after
 	// CREDITS_LOGO_LINES steps
@@ -429,7 +429,7 @@ void Title::timeout() {
 	redraw();
 }
 
-void Title::drawCastleFlag(Shared::Gfx::GfxSurface &s, int xp) {
+void Title::drawCastleFlag(Graphics::Views::GfxSurface &s, int xp) {
 	s.blitFrom(_flags[getRandomNumber(0, 2)], Common::Point(xp, FLAG_Y));
 }
 

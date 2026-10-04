@@ -22,14 +22,14 @@
 #ifndef ULTIMA2_VIEWS_ENDING_H
 #define ULTIMA2_VIEWS_ENDING_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 #include "ultima/ultima2/data/map.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The game's final, non-interactive screen: the victory text over MAPX30,
@@ -37,7 +37,7 @@ using namespace Shared::Messages;
  * diagonal with the player shown as a rocket. There's no way back from
  * here short of quitting - matches the original, which loops forever
  */
-class Ending : public Shared::Gfx::View {
+class Ending : public Shared::View {
 private:
 	Data::TileId _tiles[Data::MAP_HEIGHT][Data::MAP_WIDTH] = {};
 	Graphics::Surface _tileGfx[Data::TILE_COUNT];

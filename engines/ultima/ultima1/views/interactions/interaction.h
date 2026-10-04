@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_INTERACTIONS_INTERACTION_H
 #define ULTIMA1_VIEWS_INTERACTIONS_INTERACTION_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -34,7 +34,7 @@ namespace Interactions {
  * It creates a dummy 0x0 size window on top of the current one that
  * can receive input, and does any output in the commands window
  */
-class Interaction : public Shared::Gfx::View {
+class Interaction : public Shared::View {
 protected:
 	void writeString(const Common::String &msg);
 	void writeString(const char *format, ...);

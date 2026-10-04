@@ -85,7 +85,7 @@ public:
 	void warpFinished();
 
 	void action(int action) override;
-	void keypress(const Shared::Messages::KeypressMessage &msg) override;
+	void keypress(const Graphics::Views::KeypressMessage &msg) override;
 };
 
 } // namespace Logic

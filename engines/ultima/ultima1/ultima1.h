@@ -35,8 +35,8 @@
 #include "engines/savestate.h"
 #include "graphics/palette.h"
 #include "graphics/screen.h"
-#include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/detection.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/map_dungeon.h"
 #include "ultima/ultima1/data/savegame.h"
@@ -138,6 +138,11 @@ public:
 	 * Play a sound effect
 	 */
 	void playFX(int num);
+
+	/**
+	 * Pause for a given number of milliseconds
+	 */
+	void pauseMillis(uint32 millis);
 };
 
 extern Ultima1Engine *g_engine;

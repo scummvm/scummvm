@@ -52,9 +52,9 @@ void ZStats::draw() {
 	auto s = getSurface();
 	Dialog::draw();
 
-	s.writeString(Point(13, 0), "\x10 Inventory \x11");
-	s.writeString(Point(2, 2), "Player: %s", sg._name);
-	s.writeString(Point(2, 3), "A Level %d %s %s %s", sg.getCurrentLevel(), Data::SEX_NAMES[sg._sex],
+	s.writeString(Common::Point(13, 0), "\x10 Inventory \x11");
+	s.writeString(Common::Point(2, 2), "Player: %s", sg._name);
+	s.writeString(Common::Point(2, 3), "A Level %d %s %s %s", sg.getCurrentLevel(), Data::SEX_NAMES[sg._sex],
 		Data::RACE_NAMES[sg._race], Data::CLASS_NAMES[sg._class]);
 
 	uint pageEnd = MIN(_pageStart + (uint)LINES_PER_PAGE, (uint)_lines.size());
@@ -68,7 +68,7 @@ void ZStats::draw() {
 	// If there's more to show on a following page, prompt for it
 	if (pageEnd < _lines.size()) {
 		s.setColor(COLOR_TEXT);
-		s.writeString(Point(16, 19), "\x10 More \x11");
+		s.writeString(Common::Point(16, 19), "\x10 More \x11");
 	}
 }
 

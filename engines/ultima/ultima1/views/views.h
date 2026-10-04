@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_H
 #define ULTIMA1_VIEWS_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 #include "ultima/ultima1/views/interactions/dead.h"
 #include "ultima/ultima1/views/interactions/drop.h"
 #include "ultima/ultima1/views/interactions/entering_craft.h"
@@ -55,7 +55,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-struct Views : public Shared::Views {
+struct Views {
 	Interactions::Dead _dead;
 	Interactions::Drop _drop;
 	Interactions::EnteringCraft _enteringCraft;

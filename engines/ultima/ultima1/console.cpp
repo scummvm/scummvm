@@ -69,7 +69,7 @@ bool Console::cmdMap(int argc, const char **argv) {
 		int location = atoi(argv[1]);
 
 		if (location >= 41 && location < 49) {
-			g_engine->send("Pillar", Shared::Messages::GameMessage("PILLAR", location - 41));
+			g_engine->send("Pillar", Graphics::Views::GameMessage("PILLAR", location - 41));
 		} else {
 			if (location == Data::MAP_SPACE) {
 				_G(savegame)._shipFuel = 9999;

@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_FULL_SCREEN_DIALOG_H
 #define ULTIMA1_VIEWS_FULL_SCREEN_DIALOG_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -31,7 +31,7 @@ namespace Views {
 /**
  * Base class for views with the thick beveled-corner frame drawn around the edge of the screen
  */
-class FullScreenDialog : public Shared::Gfx::View {
+class FullScreenDialog : public Shared::View {
 public:
 	FullScreenDialog(const Common::String &name) : View(name) {}
 	~FullScreenDialog() override {}

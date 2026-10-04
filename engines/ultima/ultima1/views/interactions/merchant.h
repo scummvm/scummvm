@@ -30,7 +30,7 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-using namespace Ultima::Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The kind of shop found at the counter tile the player is standing on

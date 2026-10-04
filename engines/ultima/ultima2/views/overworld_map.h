@@ -51,7 +51,7 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgAttackTile(const AttackTileMessage &msg) override;
+	bool msgAttackTile(const Shared::AttackTileMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 };

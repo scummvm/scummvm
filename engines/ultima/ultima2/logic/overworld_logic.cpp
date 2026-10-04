@@ -590,7 +590,7 @@ void OverworldLogic::minaxDeathSequence() {
 
 	// The castle crumbles into rubble before the screen hands off to the
 	// endless victory pan
-	Shared::UIElement *curView = g_engine->focusedView();
+	Graphics::Views::UIElement *curView = g_engine->focusedView();
 	for (int step = 0; step < 64; ++step) {
 		for (int i = 0; i < 64; ++i) {
 			int x = randByte() & 0x3F, y = randByte() & 0x3F;

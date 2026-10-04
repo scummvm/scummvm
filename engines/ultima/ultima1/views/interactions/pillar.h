@@ -29,7 +29,7 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-using namespace Ultima::Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Handles Pillar locations on the overworld map. Each of the 8 pillars

@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_SPACE_STATS_H
 #define ULTIMA1_VIEWS_SPACE_STATS_H
 
-#include "ultima/shared/engine/events.h"
+#include "graphics/views/events.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -33,9 +33,9 @@ namespace Views {
  * the character's Exp. and Coin. The space counterpart of Stats (which
  * shows Hits/Food instead)
  */
-class SpaceStats : public Shared::UIElement {
+class SpaceStats : public Graphics::Views::UIElement {
 public:
-	SpaceStats(UIElement *parent) : Shared::UIElement("Stats", parent) {}
+	SpaceStats(UIElement *parent) : Graphics::Views::UIElement("Stats", parent) {}
 	~SpaceStats() override {}
 
 	void draw() override;

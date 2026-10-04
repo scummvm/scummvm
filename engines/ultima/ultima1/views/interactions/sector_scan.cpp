@@ -59,11 +59,11 @@ void SectorScan::draw() {
 	auto s = getSurface();
 
 	// Inset dialog box
-	s.fillRect(Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
-	s.frameRect(Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), FRAME_COLOR);
+	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
+	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), FRAME_COLOR);
 
 	s.setColor(TEXT_COLOR);
-	s.writeString(Point(5, 4), "Sector Scan:");
+	s.writeString(Common::Point(5, 4), "Sector Scan:");
 
 	// The scan grid outline
 	s.drawLine(GRID_X1, GRID_Y1, GRID_X2, GRID_Y1, MARKER_COLOR);
@@ -80,11 +80,11 @@ void SectorScan::draw() {
 	// beat
 	if (!_blipVisible) {
 		int px = cellX(_G(savegame)._sectorX), py = cellY(_G(savegame)._sectorY);
-		s.fillRect(Rect(px, py, px + 8, py + 9), 0);
+		s.fillRect(Common::Rect(px, py, px + 8, py + 9), 0);
 	}
 }
 
-void SectorScan::drawSectorIcon(Shared::Gfx::GfxSurface &s, int sx, int sy) {
+void SectorScan::drawSectorIcon(Graphics::Views::GfxSurface &s, int sx, int sy) {
 	const Data::SpaceMapCell &cell = _G(savegame)._starmap._sectors[sx][sy];
 	int px = cellX(sx), py = cellY(sy);
 
@@ -98,7 +98,7 @@ void SectorScan::drawSectorIcon(Shared::Gfx::GfxSurface &s, int sx, int sy) {
 		drawEmptyMarker(s, px, py);
 }
 
-void SectorScan::drawEnemyMarker(Shared::Gfx::GfxSurface &s, int x, int y) {
+void SectorScan::drawEnemyMarker(Graphics::Views::GfxSurface &s, int x, int y) {
 	// Two side bars each end, two rungs across the middle - a fighter shape
 	for (int i = 0; i < 2; ++i) {
 		s.drawLine(x + i, y, x + i, y + 7, MARKER_COLOR);
@@ -107,7 +107,7 @@ void SectorScan::drawEnemyMarker(Shared::Gfx::GfxSurface &s, int x, int y) {
 	}
 }
 
-void SectorScan::drawStationMarker(Shared::Gfx::GfxSurface &s, int x, int y) {
+void SectorScan::drawStationMarker(Graphics::Views::GfxSurface &s, int x, int y) {
 	// A cross
 	for (int i = 0; i < 2; ++i) {
 		s.drawLine(x + i + 3, y, x + i + 3, y + 7, MARKER_COLOR);
@@ -115,7 +115,7 @@ void SectorScan::drawStationMarker(Shared::Gfx::GfxSurface &s, int x, int y) {
 	}
 }
 
-void SectorScan::drawStarMarker(Shared::Gfx::GfxSurface &s, int x, int y) {
+void SectorScan::drawStarMarker(Graphics::Views::GfxSurface &s, int x, int y) {
 	// A small diamond
 	for (int i = 0; i < 3; ++i) {
 		s.drawLine(x + 3 - i, y + i + 1, x + 3 + i, y + i + 1, MARKER_COLOR);
@@ -123,7 +123,7 @@ void SectorScan::drawStarMarker(Shared::Gfx::GfxSurface &s, int x, int y) {
 	}
 }
 
-void SectorScan::drawEmptyMarker(Shared::Gfx::GfxSurface &s, int x, int y) {
+void SectorScan::drawEmptyMarker(Graphics::Views::GfxSurface &s, int x, int y) {
 	// A sparse scattering of dots
 	s.setPixel(x + 1, y + 1, MARKER_COLOR);
 	s.setPixel(x + 3, y + 3, EMPTY_HILIGHT_COLOR);

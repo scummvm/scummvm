@@ -27,31 +27,33 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-constexpr int PASS_TIMEOUT = 4 * 60 * FRAME_RATE;
+constexpr int PASS_TIME = 4 * 60 * 1000;
 
 Map::Map(const Common::String &name) : Dialog(name) {
 }
 
 bool Map::msgFocus(const FocusMessage &msg) {
-	_passCtr = 0;
+	_passStartTime = g_system->getMillis();
 	return Dialog::msgFocus(msg);
 }
 
 bool Map::msgAction(const ActionMessage &msg) {
-	_passCtr = 0;
+	_passStartTime = g_system->getMillis();
 	g_engine->_logic->action(msg._action);
 	return true;
 }
 
 bool Map::msgKeypress(const KeypressMessage &msg) {
-	_passCtr = 0;
+	_passStartTime = g_system->getMillis();
 	g_engine->_logic->keypress(msg.keycode);
 	return true;
 }
 
 bool Map::tick() {
-	if (++_passCtr >= PASS_TIMEOUT) {
-		_passCtr = 0;
+	uint32 time = g_system->getMillis();
+
+	if (time >= (_passStartTime + PASS_TIME)) {
+		_passStartTime = time;
 		msgAction(ActionMessage(KEYBIND_PASS));
 	}
 

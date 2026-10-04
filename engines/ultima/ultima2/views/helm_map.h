@@ -22,22 +22,22 @@
 #ifndef ULTIMA2_VIEWS_HELM_MAP_H
 #define ULTIMA2_VIEWS_HELM_MAP_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 #include "ultima/ultima2/data/tiles.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The "view" command's full-map overview, shown as a small icon per world/location
  * cell. Closes and resumes the turn on any keypress.
  */
-class HelmMap : public Shared::Gfx::View {
+class HelmMap : public Shared::View {
 private:
-	void plotIcon(Shared::Gfx::GfxSurface &s, int cellX, int cellY, Data::TileId tile);
+	void plotIcon(Graphics::Views::GfxSurface &s, int cellX, int cellY, Data::TileId tile);
 
 public:
 	HelmMap();

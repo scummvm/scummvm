@@ -29,7 +29,7 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-using namespace Ultima::Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Shown when Mondain kills the player. Unlike the normal Dead view there's

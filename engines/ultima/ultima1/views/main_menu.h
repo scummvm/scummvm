@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The game's main menu - offers generating a new character or

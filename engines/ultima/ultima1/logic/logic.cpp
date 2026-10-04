@@ -24,12 +24,13 @@
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/metaengine.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 void Logic::writeString(const Common::String &msg) {
 	g_engine->baseView()->findView("Commands")->send(GameMessage("TEXT", msg));
@@ -59,7 +60,7 @@ void Logic::redrawMap() {
 }
 
 void Logic::showAttackTile(int x, int y, int tileId) {
-	g_engine->focusedView()->send(AttackTileMessage(x, y, tileId));
+	g_engine->focusedView()->send(Shared::AttackTileMessage(x, y, tileId));
 }
 
 void Logic::redrawStats() {

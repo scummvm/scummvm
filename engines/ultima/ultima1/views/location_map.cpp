@@ -44,7 +44,7 @@ bool LocationMap::msgUnfocus(const UnfocusMessage &msg) {
 	return Map::msgUnfocus(msg);
 }
 
-bool LocationMap::msgAttackTile(const AttackTileMessage &msg) {
+bool LocationMap::msgAttackTile(const Shared::AttackTileMessage &msg) {
 	if (msg._x >= 0 && msg._x < MAP_VISIBLE_WIDTH && msg._y >= 0 && msg._y < MAP_VISIBLE_HEIGHT) {
 		const Graphics::ManagedSurface *tiles = g_engine->_map.tiles();
 		auto s = getSurface();

@@ -42,7 +42,7 @@ bool OverworldMap::msgUnfocus(const UnfocusMessage &msg) {
 	return Map::msgUnfocus(msg);
 }
 
-bool OverworldMap::msgAttackTile(const AttackTileMessage &msg) {
+bool OverworldMap::msgAttackTile(const Shared::AttackTileMessage &msg) {
 	int mapLeft = _G(savegame)._overworldPos.x - Data::OVERWORLD_VISIBLE_CENTER_X;
 	int mapTop = _G(savegame)._overworldPos.y - Data::OVERWORLD_VISIBLE_CENTER_Y;
 	int ox = msg._x - mapLeft;

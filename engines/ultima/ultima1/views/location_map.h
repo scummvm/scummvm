@@ -28,7 +28,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 class LocationMap : public Map {
 public:
@@ -37,7 +37,7 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgAttackTile(const AttackTileMessage &msg) override;
+	bool msgAttackTile(const Shared::AttackTileMessage &msg) override;
 	void draw() override;
 	void timeout() override;
 };

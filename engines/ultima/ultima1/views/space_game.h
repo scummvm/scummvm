@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_SPACE_GAME_H
 #define ULTIMA1_VIEWS_SPACE_GAME_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 #include "ultima/ultima1/views/commands.h"
 #include "ultima/ultima1/views/space_stats.h"
 
@@ -35,7 +35,7 @@ namespace Views {
  * shared frame and owns the message log and the Shld/Fuel/Exp/Coin corner
  * readout; SpaceMap or SpaceCockpit is layered on top for the actual view
  */
-class SpaceGame : public Shared::Gfx::View {
+class SpaceGame : public Shared::View {
 private:
 	Commands _commands;
 	SpaceStats _stats;

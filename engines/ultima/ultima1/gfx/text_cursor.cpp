@@ -20,7 +20,7 @@
  */
 
 #include "ultima/ultima1/gfx/text_cursor.h"
-#include "ultima/shared/gfx/rect.h"
+#include "graphics/views/rect.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -55,7 +55,7 @@ void TextCursor::hide() {
 }
 
 void TextCursor::setPosition(const Common::Point &pt) {
-	setBounds(TextRect(pt.x, pt.y, pt.x, pt.y));
+	setBounds(Graphics::Views::TextRect(pt.x, pt.y, pt.x, pt.y));
 }
 
 void TextCursor::draw() {

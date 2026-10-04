@@ -23,14 +23,14 @@
 #define ULTIMA1_VIEWS_INTERACTIONS_SECTOR_SCAN_H
 
 #include "ultima/ultima1/views/interactions/interaction.h"
-#include "ultima/shared/gfx/gfx_surface.h"
+#include "graphics/views/gfx_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-using namespace Ultima::Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The outer-space Inform command's "Sector Scan" dialog (SPACE.EXE's own
@@ -43,11 +43,11 @@ private:
 	int _blinkCtr = 0;
 	bool _blipVisible = true;
 
-	void drawSectorIcon(Shared::Gfx::GfxSurface &s, int sx, int sy);
-	void drawEnemyMarker(Shared::Gfx::GfxSurface &s, int x, int y);
-	void drawStationMarker(Shared::Gfx::GfxSurface &s, int x, int y);
-	void drawStarMarker(Shared::Gfx::GfxSurface &s, int x, int y);
-	void drawEmptyMarker(Shared::Gfx::GfxSurface &s, int x, int y);
+	void drawSectorIcon(Graphics::Views::GfxSurface &s, int sx, int sy);
+	void drawEnemyMarker(Graphics::Views::GfxSurface &s, int x, int y);
+	void drawStationMarker(Graphics::Views::GfxSurface &s, int x, int y);
+	void drawStarMarker(Graphics::Views::GfxSurface &s, int x, int y);
+	void drawEmptyMarker(Graphics::Views::GfxSurface &s, int x, int y);
 
 public:
 	SectorScan() : Interaction("SectorScan") {

@@ -24,13 +24,13 @@
 
 #include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/data/map.h"
-#include "ultima/shared/gfx/gfx_surface.h"
+#include "graphics/views/gfx_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The first-person cockpit view of outer space - the panning warp starfield
@@ -64,7 +64,7 @@ private:
 	/**
 	 * Draws the static cockpit frame around the viewport (drawCockpitFrame)
 	 */
-	void drawCockpitFrame(Shared::Gfx::GfxSurface &s);
+	void drawCockpitFrame(Graphics::Views::GfxSurface &s);
 
 	/**
 	 * Advances whichever phase of the hyperjump animation is running -

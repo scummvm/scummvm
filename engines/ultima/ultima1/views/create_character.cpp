@@ -80,7 +80,7 @@ void CreateCharacter::draw() {
 	FullScreenDialog::draw();
 
 	auto s = getSurface();
-	s.setTextPos(Point(8, 0));
+	s.setTextPos(Common::Point(8, 0));
 	s.writeString(Common::Point(8, 0), "\x10 Character Generation \x11");
 
 	drawAttributes(s);
@@ -91,9 +91,9 @@ void CreateCharacter::draw() {
 		s.writeString(Common::Point(6, 4),
 			Common::String::format("Points left to distribute: %d", _pointsRemaining));
 		drawHelp(s);
-		s.setTextPos(Point(11, _selectedAttribute + 6));
+		s.setTextPos(Common::Point(11, _selectedAttribute + 6));
 		s.writeChar(16);	// Right arrow
-		s.setTextPos(Point(30, _selectedAttribute + 6));
+		s.setTextPos(Common::Point(30, _selectedAttribute + 6));
 		s.writeChar(17);	// Left arrow
 		break;
 
@@ -144,7 +144,7 @@ void CreateCharacter::draw() {
 	}
 }
 
-void CreateCharacter::drawAttributes(Shared::Gfx::GfxSurface &s) {
+void CreateCharacter::drawAttributes(Graphics::Views::GfxSurface &s) {
 	const Savegame &p = _G(savegame);
 	s.setColor(COLOR_TEXT);
 
@@ -156,7 +156,7 @@ void CreateCharacter::drawAttributes(Shared::Gfx::GfxSurface &s) {
 	s.writeString(Common::Point(12, 11), padLabel("Intelligence", 16) + Common::String::format("%2d", p._intelligence));
 }
 
-void CreateCharacter::drawHelp(Shared::Gfx::GfxSurface &s) {
+void CreateCharacter::drawHelp(Graphics::Views::GfxSurface &s) {
 	s.setColor(COLOR_TEXT);
 	s.writeString(Common::Point(2, 16), "Move cursor with up and down arrows;");
 	s.writeString(Common::Point(2, 17), "increase and decrease attributes");
@@ -165,19 +165,19 @@ void CreateCharacter::drawHelp(Shared::Gfx::GfxSurface &s) {
 	s.writeString(Common::Point(2, 20), "to return to the main menu.");
 }
 
-void CreateCharacter::drawConfirmedRace(Shared::Gfx::GfxSurface &s) {
+void CreateCharacter::drawConfirmedRace(Graphics::Views::GfxSurface &s) {
 	s.setColor(COLOR_TEXT);
 	s.writeString(Common::Point(14, 13),
 		Common::String::format("Race: %s", RACE_NAMES[_G(savegame)._race]));
 }
 
-void CreateCharacter::drawConfirmedSex(Shared::Gfx::GfxSurface &s) {
+void CreateCharacter::drawConfirmedSex(Graphics::Views::GfxSurface &s) {
 	s.setColor(COLOR_TEXT);
 	s.writeString(Common::Point(15, 14),
 		Common::String::format("Sex: %s", SEX_NAMES[_G(savegame)._sex]));
 }
 
-void CreateCharacter::drawConfirmedClass(Shared::Gfx::GfxSurface &s) {
+void CreateCharacter::drawConfirmedClass(Graphics::Views::GfxSurface &s) {
 	s.setColor(COLOR_TEXT);
 	s.writeString(Common::Point(13, 15),
 		Common::String::format("Class: %s", CLASS_NAMES[_G(savegame)._class]));

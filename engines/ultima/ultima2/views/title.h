@@ -24,14 +24,14 @@
 
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 #include "ultima/ultima2/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * The attract-mode sequence: two text screens ("ORIGIN / PROUDLY
@@ -42,7 +42,7 @@ using namespace Shared::Messages;
  * start; any keypress or action before the menu is reached jumps
  * straight to it.
  */
-class Title : public Shared::Gfx::View {
+class Title : public Shared::View {
 private:
 	enum State {
 		TEXT1, TEXT2, PICDRA, MENU,

@@ -20,7 +20,7 @@
  */
 
 #include "ultima/ultima1/gfx/text_input.h"
-#include "ultima/shared/gfx/rect.h"
+#include "graphics/views/rect.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -33,7 +33,7 @@ TextInput::TextInput(const Common::String &name, UIElement *parent, TextCursor &
 void TextInput::setPosition(const Common::Point &pt, int maxWidth) {
 	_pos = pt;
 	_maxWidth = maxWidth;
-	setBounds(TextRect(pt.x, pt.y, pt.x + maxWidth, pt.y));
+	setBounds(Graphics::Views::TextRect(pt.x, pt.y, pt.x + maxWidth, pt.y));
 
 	_text.clear();
 	_visible = true;

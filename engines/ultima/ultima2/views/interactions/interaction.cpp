@@ -36,7 +36,7 @@ bool Interaction::tick() {
 	if (view)
 		view->tick();
 
-	return Shared::Gfx::View::tick();
+	return Graphics::Views::View::tick();
 }
 
 void Interaction::writeString(const Common::String &msg) {

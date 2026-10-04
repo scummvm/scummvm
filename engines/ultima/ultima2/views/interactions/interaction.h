@@ -22,14 +22,14 @@
 #ifndef ULTIMA2_VIEWS_INTERACTIONS_INTERACTION_H
 #define ULTIMA2_VIEWS_INTERACTIONS_INTERACTION_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 namespace Interactions {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Base view for a modal interaction that prompts the player for input and
@@ -37,7 +37,7 @@ using namespace Shared::Messages;
  * window pushed on top of the current map/game view purely to take input
  * focus.
  */
-class Interaction : public Shared::Gfx::View {
+class Interaction : public Shared::View {
 protected:
 	void writeString(const Common::String &msg);
 	void writeString(const char *format, ...);

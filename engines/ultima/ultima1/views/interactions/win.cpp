@@ -41,9 +41,8 @@ constexpr int BORDER_X1 = 34, BORDER_Y1 = 26, BORDER_X2 = 284, BORDER_Y2 = 124;
 // of an 8px-tall font) - matching the 21 lines of text below exactly
 constexpr int ENDING_WIDTH = 320, ENDING_HEIGHT = 168;
 
-// FRAME_RATE ticks/second (see shared/engine/events.h) - about 10 seconds
-// to fully reveal, matching the original's scanline-by-scanline draw
-constexpr int REVEAL_TICKS = FRAME_RATE * 10;
+// About 10 seconds to fully reveal, matching the original's scanline-by-scanline draw
+constexpr int REVEAL_TIME = 10000;
 
 // The full text of the original's "nif.bin" ending picture, transcribed
 // from the decoded bitmap - 21 lines, matching its exact line breaks
@@ -72,7 +71,7 @@ static const char *const ENDING_TEXT[] = {
 };
 
 bool Win::msgFocus(const FocusMessage &msg) {
-	setBounds(TextRect(0, 0, 39, 19));
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 	_phase = PHASE_DIALOG;
 	_revealedRows = 0;
 	_elapsedTicks = 0;
@@ -100,24 +99,26 @@ void Win::draw() {
 	}
 
 	auto s = getSurface();
-	s.fillRect(Rect(0, 0, 320, 200), 0);
+	s.fillRect(Common::Rect(0, 0, 320, 200), 0);
 	s.blitFrom(_textSurface, Common::Rect(0, 0, ENDING_WIDTH, _revealedRows), Common::Point(0, 0));
 }
 
 void Win::drawDialog() {
 	auto s = getSurface();
-	s.fillRect(Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
-	s.frameRect(Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), BORDER_COLOR);
+	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
+	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), BORDER_COLOR);
 
 	s.setColor(TEXT_COLOR);
-	s.writeString(Point(11, 8), "THOU ART VICTORIOUS!");
+	s.writeString(Common::Point(11, 8), "THOU ART VICTORIOUS!");
 }
 
 bool Win::tick() {
 	if (_phase == PHASE_GLYPH && _revealedRows < ENDING_HEIGHT) {
 		++_elapsedTicks;
 
-		int rows = MIN(ENDING_HEIGHT, ENDING_HEIGHT * _elapsedTicks / REVEAL_TICKS);
+		uint32 time = g_system->getMillis();
+		uint32 diff = time - _revealStartTime;
+		int rows = MIN<uint32>(ENDING_HEIGHT, ENDING_HEIGHT * diff / REVEAL_TIME);
 		if (rows != _revealedRows) {
 			_revealedRows = rows;
 			redraw();
@@ -142,6 +143,7 @@ void Win::advancePhase() {
 		// First key wipes the announcement dialog and starts the ending
 		// text revealing itself from the top down
 		_phase = PHASE_GLYPH;
+		_revealStartTime = g_system->getMillis();
 		setBounds(Common::Rect(0, 0, 320, 200));
 		redraw();
 		return;

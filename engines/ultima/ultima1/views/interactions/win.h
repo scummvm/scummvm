@@ -23,14 +23,14 @@
 #define ULTIMA1_VIEWS_INTERACTIONS_WIN_H
 
 #include "ultima/ultima1/views/interactions/interaction.h"
-#include "ultima/shared/gfx/gfx_surface.h"
+#include "graphics/views/gfx_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-using namespace Ultima::Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Shown when Mondain is defeated for good (the gem has already been
@@ -57,10 +57,11 @@ private:
 	};
 
 	Phase _phase = PHASE_DIALOG;
+	uint32 _revealStartTime = 0;
 
 	// The ending text, rendered once into its own surface on focus, then
 	// revealed gradually from the top down as _revealedRows grows
-	Shared::Gfx::GfxSurface _textSurface;
+	Graphics::Views::GfxSurface _textSurface;
 	int _revealedRows = 0;
 	int _elapsedTicks = 0;
 

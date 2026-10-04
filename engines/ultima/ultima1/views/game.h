@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_GAME_H
 #define ULTIMA1_VIEWS_GAME_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 #include "ultima/ultima1/views/commands.h"
 #include "ultima/ultima1/views/stats.h"
 
@@ -34,7 +34,7 @@ namespace Views {
  * The main in-game screen. Draws the outer frame, and contains the shared
  * Commands area and Stats display. Only the actual map/dungeon area changes.
  */
-class Game : public Shared::Gfx::View {
+class Game : public Shared::View {
 private:
 	Commands _commands;
 	Stats _stats;

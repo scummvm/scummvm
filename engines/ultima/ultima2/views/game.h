@@ -22,7 +22,7 @@
 #ifndef ULTIMA2_VIEWS_GAME_H
 #define ULTIMA2_VIEWS_GAME_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 #include "ultima/ultima2/views/commands.h"
 #include "ultima/ultima2/views/stats.h"
 
@@ -34,7 +34,7 @@ namespace Views {
  * The main in-game screen frame. Owns the Commands log/prompt and Stats
  * panel; the map viewport above them is a separate view pushed on top.
  */
-class Game : public Shared::Gfx::View {
+class Game : public Shared::View {
 private:
 	Commands _commands;
 	Stats _stats;

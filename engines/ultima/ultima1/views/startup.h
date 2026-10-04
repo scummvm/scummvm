@@ -22,18 +22,18 @@
 #ifndef ULTIMA1_VIEWS_STARTUP_H
 #define ULTIMA1_VIEWS_STARTUP_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Startup splash screen - the game title and copyright
  */
-class Startup : public Shared::Gfx::View {
+class Startup : public Shared::View {
 private:
 	void showTitle() {
 		replaceView("Title");

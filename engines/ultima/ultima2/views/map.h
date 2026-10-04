@@ -22,19 +22,19 @@
 #ifndef ULTIMA2_VIEWS_MAP_H
 #define ULTIMA2_VIEWS_MAP_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/view.h"
 #include "ultima/ultima2/data/tiles.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-using namespace Shared::Messages;
+using namespace Graphics::Views;
 
 /**
  * Base class for map views - forwards player input into the active Logic
  */
-class Map : public Shared::Gfx::View {
+class Map : public Shared::View {
 public:
 private:
 	uint32 _lastAnimation = 0;
@@ -62,7 +62,7 @@ public:
 	virtual void reloadTiles() {}
 
 	Map(const Common::String &name) : View(name) {
-		setBounds(TextRect(0, 0, 39, 19));
+		setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 	}
 	~Map() override {}
 

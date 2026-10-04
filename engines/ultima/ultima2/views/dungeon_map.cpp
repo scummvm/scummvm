@@ -140,7 +140,7 @@ const byte SPRITE_BAND_OFFSETS[MAX_DEPTH] = { 0, 0, 0x80, 0xC0, 0xE0, 0xF0, 0xF8
  */
 class Painter {
 private:
-	Shared::Gfx::GfxSurface &_s;
+	Graphics::Views::GfxSurface &_s;
 
 	void plot(byte x, byte y) {
 		int px = x + VIEW_OFFSET, py = y + VIEW_OFFSET;
@@ -152,7 +152,7 @@ public:
 	byte _x1 = 0, _y1 = 0, _x2 = 0, _y2 = 0;
 	int _depth = 0;
 
-	Painter(Shared::Gfx::GfxSurface &s) : _s(s) {
+	Painter(Graphics::Views::GfxSurface &s) : _s(s) {
 	}
 
 	/**
@@ -401,7 +401,7 @@ bool DungeonMap::msgUnfocus(const UnfocusMessage &msg) {
 	return Map::msgUnfocus(msg);
 }
 
-bool DungeonMap::msgAttackTile(const AttackTileMessage &msg) {
+bool DungeonMap::msgAttackTile(const Shared::AttackTileMessage &msg) {
 	// Being hit inverts the whole view, briefly
 	for (int i = 0; i < 2; ++i) {
 		auto s = getSurface();
@@ -433,7 +433,7 @@ bool DungeonMap::msgKeypress(const KeypressMessage &msg) {
 	return Map::msgKeypress(msg);
 }
 
-void DungeonMap::drawMinimap(Shared::Gfx::GfxSurface &s) {
+void DungeonMap::drawMinimap(Graphics::Views::GfxSurface &s) {
 	Data::Savegame &sg = _G(savegame);
 	Data::MapDungeon &dungeon = _G(dungeon);
 	const int left = 320 - (Data::DUNGEON_WIDTH + 2) * MINIMAP_SCALE;
@@ -465,10 +465,10 @@ void DungeonMap::drawMinimap(Shared::Gfx::GfxSurface &s) {
 bool DungeonMap::tick() {
 	// There's no water or forcefield to animate here
 	checkIdle();
-	return Shared::Gfx::View::tick();
+	return Graphics::Views::View::tick();
 }
 
-int DungeonMap::drawCorridor(Shared::Gfx::GfxSurface &s) {
+int DungeonMap::drawCorridor(Graphics::Views::GfxSurface &s) {
 	Data::Savegame &sg = _G(savegame);
 	Data::MapDungeon &dungeon = _G(dungeon);
 	int level = sg._dungeonLevel;
@@ -554,7 +554,7 @@ int DungeonMap::drawCorridor(Shared::Gfx::GfxSurface &s) {
 	return d;
 }
 
-void DungeonMap::drawMonster(Shared::Gfx::GfxSurface &s, const byte *monsters, int depth) {
+void DungeonMap::drawMonster(Graphics::Views::GfxSurface &s, const byte *monsters, int depth) {
 	for (int d = 1; d < depth && d < MAX_DEPTH; ++d) {
 		if (monsters[d] == 0)
 			continue;
