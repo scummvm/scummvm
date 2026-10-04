@@ -164,6 +164,7 @@ MODULE_OBJS += \
 	ultima3/metaengine.o \
 	ultima3/data/data.o \
 	ultima3/data/map.o \
+	ultima3/data/roster.o \
 	ultima3/data/savegame.o \
 	ultima3/gfx/charset.o \
 	ultima3/gfx/message_log.o \

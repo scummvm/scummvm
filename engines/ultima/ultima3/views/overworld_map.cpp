@@ -47,11 +47,18 @@ static int stepToCentre(int pos) {
 }
 
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
-	// A new game starts when arriving from the main menu
-	if (msg._priorView && msg._priorView->getName() == "MainMenu") {
+	// The game starts when arriving from the main menu, or continues on from a load
+	bool fromMenu = msg._priorView && msg._priorView->getName() == "MainMenu";
+	if (fromMenu || _G(resumeGame)) {
 		startGame();
-		_G(map).load("SOSARIA.ULT");
 		_G(shapes).load();
+
+		if (!_G(savegame)._mapLoaded) {
+			_G(map).load("SOSARIA.ULT");
+			_G(savegame)._mapLoaded = true;
+		}
+
+		_G(resumeGame) = false;
 		startPrompt();
 	}
 

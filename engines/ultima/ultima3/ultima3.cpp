@@ -74,15 +74,31 @@ Common::Error Ultima3Engine::run() {
 }
 
 bool Ultima3Engine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return false;
+	// Anything but the title sequence, which isn't a state worth keeping
+	UIElement *view = focusedView();
+
+	return dynamic_cast<Views::Game *>(view) != nullptr ||
+		dynamic_cast<Views::WindowView *>(view) != nullptr;
 }
 
 bool Ultima3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return false;
+	return true;
 }
 
 Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
-	// TODO
+	s.syncVersion(1);
+
+	_savegame.synchronize(s);
+	if (_savegame._mapLoaded)
+		_map.synchronize(s);
+
+	if (s.isLoading()) {
+		// Carry on in the world if there's a party able to adventure in it,
+		// otherwise return to where the party can be organized
+		_resumeGame = _savegame._mapLoaded && _savegame._partySize > 0 &&
+			_savegame.hasLivingPartyMember();
+		replaceView(_resumeGame ? "OverworldMap" : "LogoScreen", true);
+	}
 
 	return Common::kNoError;
 }

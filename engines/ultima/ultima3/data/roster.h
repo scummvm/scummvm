@@ -23,6 +23,7 @@
 #define ULTIMA3_DATA_ROSTER_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -105,6 +106,8 @@ struct RosterEntry {
 	bool isAlive() const {
 		return _status == STATUS_GOOD || _status == STATUS_POISONED;
 	}
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // namespace Data

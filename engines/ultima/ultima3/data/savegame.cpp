@@ -52,6 +52,23 @@ void Savegame::clearPartySelection() {
 	}
 }
 
+void Savegame::synchronize(Common::Serializer &s) {
+	for (int i = 0; i < ROSTER_COUNT; ++i)
+		_roster[i].synchronize(s);
+
+	byte partySize = _partySize;
+	s.syncBytes(_partyEntries, PARTY_MAX);
+	s.syncAsByte(partySize);
+	_partySize = partySize;
+
+	s.syncAsByte(_transport);
+	s.syncAsByte(_location);
+	s.syncAsByte(_posX);
+	s.syncAsByte(_posY);
+	s.syncBytes(_moveCount, sizeof(_moveCount));
+	s.syncAsByte(_mapLoaded);
+}
+
 void Savegame::formParty() {
 	_transport = TRANSPORT_ON_FOOT;
 	_location = LOCATION_SOSARIA;

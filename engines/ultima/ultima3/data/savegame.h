@@ -43,6 +43,9 @@ struct Savegame {
 	byte _posY = 0;
 	byte _moveCount[4] = {};
 
+	// Set once the world map has been loaded, which the map in a save then replaces
+	bool _mapLoaded = false;
+
 	/**
 	 * Returns a roster entry by its 1-based number
 	 */
@@ -68,6 +71,8 @@ struct Savegame {
 	 * Undoes a partially selected party
 	 */
 	void clearPartySelection();
+
+	void synchronize(Common::Serializer &s);
 
 	/**
 	 * Completes a selected party, placing it at the starting point on foot

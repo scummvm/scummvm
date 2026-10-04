@@ -32,6 +32,10 @@ void Map::load(const char *filename) {
 		error("Could not load %s", filename);
 }
 
+void Map::synchronize(Common::Serializer &s) {
+	s.syncBytes(_cells, sizeof(_cells));
+}
+
 } // namespace Data
 } // namespace Ultima3
 } // namespace Ultima

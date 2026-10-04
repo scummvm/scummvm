@@ -95,6 +95,9 @@ public:
 	Gfx::ScreenEffects _effects;
 	byte _windDirection = 0;
 
+	// Set when a loaded game should continue in the world rather than start it
+	bool _resumeGame = false;
+
 	// Debug flag toggled by the "intangible" console command, allowing
 	// movement through normally impassable terrain
 	bool _intangible = false;

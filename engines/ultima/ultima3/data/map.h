@@ -23,6 +23,7 @@
 #define ULTIMA3_DATA_MAP_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -43,6 +44,8 @@ public:
 	 * Loads a map from the start of a .ULT file
 	 */
 	void load(const char *filename);
+
+	void synchronize(Common::Serializer &s);
 
 	/**
 	 * Returns the raw cell value. The coordinates wrap around the map
