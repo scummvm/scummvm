@@ -636,10 +636,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 166:
 		if (g_nancy->getGameType() <= kGameTypeNancy13)
 			return new OneBuildPuzzle();	// Moved from 234
-		else if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new BuildPuzzle();
 		else
-			return nullptr;
+			return new BuildPuzzle();
 	case 167:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new DrivingPuzzle(DrivingPuzzle::kChase);

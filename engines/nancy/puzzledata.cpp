@@ -811,6 +811,53 @@ void BuildPuzzleData::synchronize(Common::Serializer &ser) {
 	syncInt16Array(ser, zones);
 }
 
+int16 BuildBoardData::Board::getPieceInZone(int16 zoneID) const {
+	for (const Piece &piece : pieces) {
+		if (piece.zoneID == zoneID) {
+			return piece.sourceID;
+		}
+	}
+
+	return -1;
+}
+
+void BuildBoardData::synchronize(Common::Serializer &ser) {
+	uint16 numBoards = boards.size();
+	ser.syncAsUint16LE(numBoards);
+
+	Common::Array<Common::String> names;
+	if (ser.isSaving()) {
+		for (auto &entry : boards) {
+			names.push_back(entry._key);
+		}
+	} else {
+		boards.clear();
+		names.resize(numBoards);
+	}
+
+	for (Common::String &name : names) {
+		ser.syncString(name);
+
+		Board &board = boards[name];
+		ser.syncAsSint16LE(board.placedCount);
+		ser.syncAsSint16LE(board.heldPiece);
+
+		uint16 numPieces = board.pieces.size();
+		ser.syncAsUint16LE(numPieces);
+		board.pieces.resize(numPieces);
+
+		for (Piece &piece : board.pieces) {
+			ser.syncAsSint16LE(piece.sourceID);
+			ser.syncAsSint16LE(piece.zoneID);
+			ser.syncAsSint16LE(piece.rect.left);
+			ser.syncAsSint16LE(piece.rect.top);
+			ser.syncAsSint16LE(piece.rect.right);
+			ser.syncAsSint16LE(piece.rect.bottom);
+			ser.syncAsByte(piece.isLocked);
+		}
+	}
+}
+
 void StreamData::synchronize(Common::Serializer &ser) {
 	uint16 numStreams = streams.size();
 	ser.syncAsUint16LE(numStreams);
@@ -896,6 +943,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new PhoneBookData();
 	case StreamData::getTag():
 		return new StreamData();
+	case BuildBoardData::getTag():
+		return new BuildBoardData();
 	case CollectionData::getTag():
 		return new CollectionData();
 	case BuildPuzzleData::getTag():

@@ -590,6 +590,31 @@ struct BuildPuzzleData : public PuzzleData {
 	Common::Array<int16> zones;		// per zone: numWrong, then one count per ingredient
 };
 
+// Nancy17 BuildPuzzle. The boards the puzzles were left with, by the name each
+// puzzle keeps its board under. GoldbergPuzzle looks at what was built.
+struct BuildBoardData : public PuzzleData {
+	struct Piece {
+		int16 sourceID = -1;	// index of the piece in the puzzle's record
+		int16 zoneID = -1;		// -1 when the piece is not in a zone
+		Common::Rect rect;		// where the piece sits
+		bool isLocked = false;
+	};
+
+	struct Board {
+		int16 placedCount = 0;
+		int16 heldPiece = -1;
+		Common::Array<Piece> pieces;
+
+		// The sourceID of the piece in a zone, -1 when the zone is empty
+		int16 getPieceInZone(int16 zoneID) const;
+	};
+
+	static constexpr uint32 getTag() { return MKTAG('B', 'L', 'D', 'B'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::HashMap<Common::String, Board, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> boards;
+};
+
 // Nancy17. The scenes that run in streams next to the main one, so they can be
 // started again after loading
 struct StreamData : public PuzzleData {

@@ -28,6 +28,7 @@
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/enginedata.h"
+#include "engines/nancy/puzzledata.h"
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/action/puzzle/buildpuzzle.h"
@@ -48,6 +49,11 @@ static void readSoundBlock(Common::SeekableReadStream &stream, SoundDescription 
 }
 
 void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		readDataNancy17(stream);
+		return;
+	}
+
 	readFilename(stream, _imageName);
 	readFilename(stream, _altImageName);
 
@@ -183,6 +189,125 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 }
 
+void BuildPuzzle::readDataNancy17(Common::SeekableReadStream &stream) {
+	_isNancy17 = true;
+
+	readFilename(stream, _imageName);
+	readFilename(stream, _altImageName);
+
+	_trayImageMode = stream.readByte();
+	readFilename(stream, _saveKey);
+
+	int16 requiredPlaced = stream.readSint16LE();
+	_isSolvable = requiredPlaced != -1;
+	_requiredPlaced = MAX<int16>(requiredPlaced, 0);
+	_usePlacedGate = stream.readByte();
+
+	int16 stateItemID = stream.readSint16LE();
+	_stateItemID = stateItemID < 0 ? 255 : stateItemID;
+
+	readFilename(stream, _anim1Name);
+	readRect(stream, _anim1Rect);
+	readFilename(stream, _anim2Name);
+	readRect(stream, _anim2Rect);
+	_pieceCursorType = stream.readSint16LE();
+	_heldPieceCursorType = stream.readSint16LE();
+	_carryCursorType = stream.readSint16LE();
+
+	uint16 numZones = stream.readUint16LE() / 2;
+	_zones.resize(numZones);
+	for (uint i = 0; i < numZones; ++i) {
+		Zone &zone = _zones[i];
+		readRect(stream, zone.hotspot);
+		readRect(stream, zone.highlightSrc);
+		zone.capacity = stream.readUint16LE();
+		stream.skip(1);
+		zone.fill = (ZoneFill)stream.readByte();
+		zone.marksPlaced = stream.readByte();
+
+		uint16 numIngredients = stream.readUint16LE();
+		zone.ingredients.resize(numIngredients);
+		for (uint j = 0; j < numIngredients; ++j) {
+			Ingredient &ingredient = zone.ingredients[j];
+			ingredient.pieceID = stream.readSint16LE();
+			ingredient.quantity = stream.readByte();
+			ingredient.mode = stream.readByte();
+		}
+	}
+
+	uint16 numHolds = stream.readUint16LE();
+	_holds.resize(numHolds);
+	for (uint i = 0; i < numHolds; ++i) {
+		HoldSlot &hold = _holds[i];
+		readRect(stream, hold.srcRect);
+		readRect(stream, hold.destRect);
+		readRect(stream, hold.fillSrcRect1);
+		readRect(stream, hold.fillSrcRect2);
+		hold.amount = stream.readByte();
+	}
+
+	if (numHolds > 0)
+		readSoundBlock(stream, _holdSound);
+
+	uint16 numPieces = stream.readUint16LE();
+	_pieces.resize(numPieces);
+	for (uint i = 0; i < numPieces; ++i) {
+		Piece &piece = _pieces[i];
+		readRect(stream, piece.srcRect);
+		piece.startZone = stream.readSint16LE();
+		readRect(stream, piece.destRect);
+		readRect(stream, piece.dragSrcRect);
+		readRect(stream, piece.placedSrcRect);
+		readRect(stream, piece.closeupSrcRect);
+		readRect(stream, piece.closeupDestRect);
+		readRect(stream, piece.placedDestRect);
+
+		piece.kind = stream.readByte();
+		piece.zoneID = stream.readSint16LE();
+		piece.itemID = stream.readSint16LE();
+		piece.placedFlag = stream.readSint16LE();
+		piece.inventoryItem = stream.readSint16LE();
+
+		int16 numValues = stream.readSint16LE();
+		if (numValues > 0) {
+			piece.holds.resize(numValues - 1);
+			for (int16 j = 0; j < numValues - 1; ++j) {
+				piece.holds[j] = stream.readSint16LE();
+			}
+
+			piece.fillVariant = stream.readSint16LE();
+		}
+	}
+
+	readSoundBlock(stream, _pickupSound);
+	readSoundBlock(stream, _dropSound);
+	readSoundBlock(stream, _notebookSound);
+	readSoundBlock(stream, _putDownSound);
+
+	_wrongIngredientFlag = stream.readSint16LE();
+	_solvedFlag = stream.readSint16LE();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
+	_solveSoundBlock.readData(stream);
+
+	_failScene.sceneID = stream.readUint16LE();
+	_failScene.frameID = stream.readUint16LE();
+	_failScene.continueSceneSound = kContinueSceneSound;
+	_failFlag.label = stream.readSint16LE();
+	_failFlag.flag = stream.readByte();
+
+	SoundDescription unused;
+	readSoundBlock(stream, unused);
+
+	readExitHotspots(stream, _exitHotspots);
+	for (uint i = 0; i < _exitHotspots.size(); ++i) {
+		_exitHotspots[i].scene.continueSceneSound = kContinueSceneSound;
+	}
+}
+
 void BuildPuzzle::setFlagOnChange(int16 label, bool value, int8 &last) {
 	if (label == -1 || last == (int8)value) {
 		return;
@@ -203,23 +328,29 @@ void BuildPuzzle::setPieceCursor(bool isHeld) {
 }
 
 void BuildPuzzle::init() {
-	BuildPuzzleData *data = (BuildPuzzleData *)NancySceneState.getPuzzleData(BuildPuzzleData::getTag());
-	assert(data);
+	// Nancy17 keeps its boards by name instead
+	BuildPuzzleData *data = nullptr;
+	bool resume = false;
 
-	uint16 sceneID = NancySceneState.getSceneInfo().sceneID;
-	// Several scenes share this puzzle and the one saved board, so the board is
-	// only picked up by the scene it was saved for. Any other scene starts over
-	// and drops the board, so a later resume can't load another puzzle's pieces.
-	bool resume = data->sceneID == sceneID && _resumeFlag != -1 &&
+	if (!_isNancy17) {
+		data = (BuildPuzzleData *)NancySceneState.getPuzzleData(BuildPuzzleData::getTag());
+		assert(data);
+
+		uint16 sceneID = NancySceneState.getSceneInfo().sceneID;
+		// Several scenes share this puzzle and the one saved board, so the board is
+		// only picked up by the scene it was saved for. Any other scene starts over
+		// and drops the board, so a later resume can't load another puzzle's pieces.
+		resume = data->sceneID == sceneID && _resumeFlag != -1 &&
 					NancySceneState.getEventFlag(_resumeFlag, g_nancy->_true);
 
-	if (!resume) {
-		data->sceneID = sceneID;
-		data->placedCount = 0;
-		data->solved = false;
-		data->wrongIngredient = false;
-		data->pieces.clear();
-		data->zones.clear();
+		if (!resume) {
+			data->sceneID = sceneID;
+			data->placedCount = 0;
+			data->solved = false;
+			data->wrongIngredient = false;
+			data->pieces.clear();
+			data->zones.clear();
+		}
 	}
 
 	const uint32 transColor = g_nancy->_graphics->getTransColor();
@@ -246,7 +377,17 @@ void BuildPuzzle::init() {
 	_pieces.resize(_numDefined + numSpare);
 
 	for (uint i = 0; i < _zones.size(); ++i) {
-		_zones[i].counts.resize(_zones[i].ingredients.size());
+		Zone &zone = _zones[i];
+		zone.counts.resize(zone.ingredients.size());
+
+		if (!zone.highlightSrc.isEmpty()) {
+			zone.highlight._drawSurface.create(_image, zone.highlightSrc);
+			zone.highlight.setTransparent(true);
+			zone.highlight.moveTo(zone.hotspot);
+			// Above the pieces in the zones, below a close-up
+			zone.highlight.setZOrder(_z + (uint16)_pieces.size() + 1);
+			zone.highlight.setVisible(false);
+		}
 	}
 
 	for (uint i = 0; i < _pieces.size(); ++i) {
@@ -299,7 +440,9 @@ void BuildPuzzle::init() {
 	_counter.setTransparent(true);
 	_counter.setVisible(false);
 
-	if (resume) {
+	if (_isNancy17) {
+		initBoard();
+	} else if (resume) {
 		restoreState(*data);
 	} else {
 		// Starting over clears everything the puzzle wrote.
@@ -328,6 +471,12 @@ void BuildPuzzle::registerGraphics() {
 
 	for (uint i = 0; i < _holds.size(); ++i) {
 		_holds[i].registerGraphics();
+	}
+
+	for (uint i = 0; i < _zones.size(); ++i) {
+		if (!_zones[i].highlightSrc.isEmpty()) {
+			_zones[i].highlight.registerGraphics();
+		}
 	}
 
 	_cursorItem.registerGraphics();
@@ -370,7 +519,8 @@ void BuildPuzzle::updateCursorItem(const Common::Point &mouseVP) {
 	Common::Rect dest((int16)(mouseVP.x - width / 2), (int16)(mouseVP.y - height / 2),
 						(int16)(mouseVP.x - width / 2 + width), (int16)(mouseVP.y - height / 2 + height));
 
-	_cursorItem._drawSurface.create(_altImage, *src);
+	// Nancy17 keeps the art of a carried piece in the main image
+	_cursorItem._drawSurface.create(_isNancy17 ? _image : _altImage, *src);
 	_cursorItem.setTransparent(true);
 	_cursorItem.moveTo(dest);
 	_cursorItem.setVisible(true);
@@ -386,7 +536,7 @@ void BuildPuzzle::updatePieceRender(int16 pieceIdx) {
 
 	// Each of the three states has its own art, and only a piece resting at home
 	// is drawn from the image the puzzle selects; the other two always come from
-	// the alt one.
+	// the alt one, or from the main one in Nancy17.
 	// A carried piece lives on the cursor instead of on the board.
 	if (pieceIdx == _heldPiece) {
 		piece.setVisible(false);
@@ -400,7 +550,7 @@ void BuildPuzzle::updatePieceRender(int16 pieceIdx) {
 
 	if (isPlaced) {
 		src = &piece.placedSrcRect;
-		surf = &_altImage;
+		surf = _isNancy17 ? &_image : &_altImage;
 	}
 
 	if (src->isEmpty()) {
@@ -433,6 +583,7 @@ int16 BuildPuzzle::clonePiece(int16 pieceIdx) {
 		clone.kind = original.kind;
 		clone.zoneID = original.zoneID;
 		clone.itemID = original.itemID;
+		clone.placedFlag = original.placedFlag;
 		clone.holds = original.holds;
 		clone.fillVariant = original.fillVariant;
 		clone.liveRect = original.liveRect;
@@ -472,6 +623,10 @@ void BuildPuzzle::adjustZone(int16 zoneIdx, int16 pieceID, int8 delta) {
 }
 
 bool BuildPuzzle::checkSolved() const {
+	if (!_isSolvable) {
+		return false;
+	}
+
 	for (uint i = 0; i < _zones.size(); ++i) {
 		const Zone &zone = _zones[i];
 
@@ -557,15 +712,12 @@ void BuildPuzzle::pickUpPiece(int16 pieceIdx) {
 	// Taking a piece back out of a zone undoes its contribution. A copy only
 	// exists while it is in a zone, so it goes away rather than onto the cursor.
 	if (piece.assignedZone != -1) {
-		adjustZone(piece.assignedZone, piece.sourceID, -1);
-		addItemValue(piece.itemID, -1);
-		setPlacedCount(_placedCount - 1);
-		piece.assignedZone = -1;
-		updateDoneOverlay();
+		takeOutOfZone(pieceIdx);
 
 		if (pieceIdx >= (int16)_numDefined) {
 			piece.inUse = false;
 			piece.setVisible(false);
+			saveBoard();
 			return;
 		}
 	}
@@ -576,6 +728,23 @@ void BuildPuzzle::pickUpPiece(int16 pieceIdx) {
 	g_nancy->_sound->loadSound(_pickupSound);
 	g_nancy->_sound->playSound(_pickupSound);
 	updatePieceRender(pieceIdx);
+	saveBoard();
+}
+
+void BuildPuzzle::takeOutOfZone(int16 pieceIdx) {
+	Piece &piece = _pieces[pieceIdx];
+
+	adjustZone(piece.assignedZone, piece.sourceID, -1);
+	addItemValue(piece.itemID, -1);
+	setPlacedCount(_placedCount - 1);
+
+	if (piece.placedFlag != -1) {
+		NancySceneState.setEventFlag(piece.placedFlag, g_nancy->_false);
+	}
+
+	piece.assignedZone = -1;
+	piece.locked = false;
+	updateDoneOverlay();
 }
 
 void BuildPuzzle::returnPiece(int16 pieceIdx) {
@@ -585,6 +754,7 @@ void BuildPuzzle::returnPiece(int16 pieceIdx) {
 	_heldPiece = -1;
 	_pieces[pieceIdx].setZOrder((uint16)(_z + pieceIdx + 1));
 	updatePieceRender(pieceIdx);
+	saveBoard();
 }
 
 void BuildPuzzle::placePiece(int16 pieceIdx, int16 zoneIdx, const Common::Point &dropPos) {
@@ -639,6 +809,10 @@ void BuildPuzzle::placePiece(int16 pieceIdx, int16 zoneIdx, const Common::Point 
 	adjustZone(zoneIdx, piece.sourceID, (int8)carriedAmount());
 	addItemValue(piece.itemID, carriedAmount());
 
+	if (piece.placedFlag != -1) {
+		NancySceneState.setEventFlag(piece.placedFlag, g_nancy->_true);
+	}
+
 	g_nancy->_sound->loadSound(_dropSound);
 	g_nancy->_sound->playSound(_dropSound);
 
@@ -654,6 +828,15 @@ void BuildPuzzle::placePiece(int16 pieceIdx, int16 zoneIdx, const Common::Point 
 
 	if (_saveState) {
 		saveState();
+	}
+
+	saveBoard();
+
+	// Nancy17 has nothing to hand the puzzle in with, it ends once it is solved
+	if (_isNancy17 && solved) {
+		_isSolved = true;
+		_state = kActionTrigger;
+		return;
 	}
 
 	// Without the gate the puzzle waits to be handed in, so a wrong mix can be
@@ -851,6 +1034,160 @@ void BuildPuzzle::updateDoneOverlay() {
 	_doneOverlay.setVisible(allFull);
 }
 
+bool BuildPuzzle::zoneAccepts(const Piece &piece, int16 zoneIdx) const {
+	if (piece.zoneID == zoneIdx || piece.zoneID == kAnyZone) {
+		return true;
+	}
+
+	const Common::Rect &hotspot = _zones[zoneIdx].hotspot;
+	return piece.zoneID == kAnyZoneOfItsSize &&
+			piece.srcRect.width() == hotspot.width() && piece.srcRect.height() == hotspot.height();
+}
+
+int16 BuildPuzzle::findInventoryPiece() const {
+	int16 heldItem = NancySceneState.getHeldItem();
+	if (heldItem == -1) {
+		return -1;
+	}
+
+	for (uint i = 0; i < _numDefined; ++i) {
+		if (_pieces[i].inventoryItem == heldItem) {
+			return (int16)i;
+		}
+	}
+
+	return -1;
+}
+
+void BuildPuzzle::updateZoneHighlights(int16 pieceIdx) {
+	for (uint i = 0; i < _zones.size(); ++i) {
+		Zone &zone = _zones[i];
+		if (!zone.highlightSrc.isEmpty()) {
+			zone.highlight.setVisible(pieceIdx != -1 && zoneAccepts(_pieces[pieceIdx], (int16)i));
+		}
+	}
+}
+
+void BuildPuzzle::placeAtStart(int16 pieceIdx) {
+	Piece &piece = _pieces[pieceIdx];
+	const Zone &zone = _zones[piece.startZone];
+
+	if (zone.fill == kFillTopLeft) {
+		// Left aligned to the zone, sitting on its bottom edge
+		piece.liveRect = Common::Rect(zone.hotspot.left, (int16)(zone.hotspot.bottom - piece.srcRect.height()),
+										(int16)(zone.hotspot.left + piece.srcRect.width()), zone.hotspot.bottom);
+	} else {
+		piece.liveRect = zone.hotspot;
+	}
+
+	piece.assignedZone = piece.startZone;
+	adjustZone(piece.startZone, piece.sourceID, 1);
+	++_placedCount;
+	updatePieceRender(pieceIdx);
+}
+
+void BuildPuzzle::initBoard() {
+	for (uint i = 0; i < _numDefined; ++i) {
+		if (_pieces[i].placedFlag != -1) {
+			NancySceneState.setEventFlag(_pieces[i].placedFlag, g_nancy->_false);
+		}
+	}
+
+	setFlagOnChange(_solvedFlag, false, _lastSolvedFlag);
+	setFlagOnChange(_wrongIngredientFlag, false, _lastWrongFlag);
+
+	const BuildBoardData *boards = (const BuildBoardData *)NancySceneState.getPuzzleData(BuildBoardData::getTag());
+	assert(boards);
+
+	if (!_saveKey.empty() && boards->boards.contains(_saveKey)) {
+		restoreBoard(*boards);
+
+		// A board that was left solved ends the puzzle right away
+		if (checkSolved()) {
+			setFlagOnChange(_solvedFlag, true, _lastSolvedFlag);
+			_isSolved = true;
+		}
+	} else {
+		for (uint i = 0; i < _numDefined; ++i) {
+			if (_pieces[i].startZone >= 0 && _pieces[i].startZone < (int16)_zones.size()) {
+				placeAtStart((int16)i);
+			}
+		}
+	}
+
+	setPlacedCount(_placedCount);
+	saveBoard();
+}
+
+void BuildPuzzle::saveBoard() {
+	if (_saveKey.empty()) {
+		return;
+	}
+
+	BuildBoardData *boards = (BuildBoardData *)NancySceneState.getPuzzleData(BuildBoardData::getTag());
+	assert(boards);
+
+	BuildBoardData::Board &board = boards->boards[_saveKey];
+	board.placedCount = _placedCount;
+	board.heldPiece = _heldPiece;
+	board.pieces.clear();
+
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		const Piece &piece = _pieces[i];
+		if (!piece.inUse) {
+			continue;
+		}
+
+		BuildBoardData::Piece saved;
+		saved.sourceID = piece.sourceID;
+		saved.zoneID = piece.assignedZone;
+		saved.rect = piece.liveRect;
+		saved.isLocked = piece.locked;
+		board.pieces.push_back(saved);
+	}
+}
+
+void BuildPuzzle::restoreBoard(const BuildBoardData &boards) {
+	const BuildBoardData::Board &board = boards.boards[_saveKey];
+
+	for (uint i = 0; i < board.pieces.size(); ++i) {
+		const BuildBoardData::Piece &saved = board.pieces[i];
+		if (saved.sourceID < 0 || saved.sourceID >= (int16)_numDefined) {
+			continue;
+		}
+
+		// The pieces from the record come first, in order; anything after them
+		// is a copy of one of them.
+		int16 pieceIdx = (int16)i;
+		if (pieceIdx >= (int16)_numDefined) {
+			pieceIdx = clonePiece(saved.sourceID);
+			if (pieceIdx == -1) {
+				break;
+			}
+		}
+
+		Piece &piece = _pieces[pieceIdx];
+		piece.liveRect = saved.rect;
+		piece.locked = saved.isLocked;
+
+		if (saved.zoneID >= 0 && saved.zoneID < (int16)_zones.size()) {
+			piece.assignedZone = saved.zoneID;
+			adjustZone(saved.zoneID, piece.sourceID, 1);
+		}
+
+		updatePieceRender(pieceIdx);
+	}
+
+	_placedCount = board.placedCount;
+
+	// The piece that was being carried is back on the cursor
+	if (board.heldPiece >= 0 && board.heldPiece < (int16)_numDefined) {
+		_heldPiece = board.heldPiece;
+		_pieces[_heldPiece].setZOrder((uint16)(_z + _pieces.size() + 1));
+		updatePieceRender(_heldPiece);
+	}
+}
+
 void BuildPuzzle::saveState() {
 	BuildPuzzleData *data = (BuildPuzzleData *)NancySceneState.getPuzzleData(BuildPuzzleData::getTag());
 	assert(data);
@@ -932,7 +1269,7 @@ void BuildPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
-		_state = kRun;
+		_state = _isSolved ? kActionTrigger : kRun;
 		break;
 	case kRun:
 		updateCounter();
@@ -951,6 +1288,7 @@ void BuildPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_isSolved) {
+			playSoundBlock(_solveSoundBlock);
 			_solveScene.execute();
 		} else if (_isFailed) {
 			NancySceneState.setEventFlag(_failFlag);
@@ -984,6 +1322,14 @@ void BuildPuzzle::handleInput(NancyInput &input) {
 	bool clicked = (input.input & NancyInput::kLeftMouseButtonUp) != 0;
 
 	updateCursorItem(mouseVP);
+
+	if (_isNancy17) {
+		if (!handleBoardInputNancy17(mouseVP, clicked)) {
+			handleExitInput(input, clicked);
+		}
+
+		return;
+	}
 
 	// The buttons sit above the board, and submitting needs enough pieces placed.
 	if (!_startOverHotspot.isEmpty() && _startOverHotspot.contains(mouseVP)) {
@@ -1145,6 +1491,148 @@ void BuildPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
+	handleExitInput(input, clicked);
+}
+
+bool BuildPuzzle::handleBoardInputNancy17(const Common::Point &mouseVP, bool clicked) {
+	// A close-up covers the board; clicking it takes the piece, except for a
+	// piece that is only ever there to be looked at.
+	if (_closeupPiece != -1) {
+		updateZoneHighlights(-1);
+
+		if (!_closeupDest.contains(mouseVP)) {
+			return false;
+		}
+
+		setPieceCursor(false);
+
+		if (clicked) {
+			int16 pieceIdx = _closeupPiece;
+			closeCloseup();
+
+			if (_pieces[pieceIdx].kind != 3) {
+				pickUpPiece(pieceIdx);
+				updateCursorItem(mouseVP);
+			}
+		}
+
+		return true;
+	}
+
+	// What a click on a zone would put into it: the carried piece, or the one
+	// that stands for the inventory item in hand
+	int16 carried = _heldPiece != -1 ? _heldPiece : findInventoryPiece();
+	updateZoneHighlights(carried);
+
+	// The first zone under the mouse is the only one the piece can go into
+	int16 target = -1;
+	bool isOverZone = false;
+	for (uint i = 0; i < _zones.size() && carried != -1 && !isOverZone; ++i) {
+		const Zone &zone = _zones[i];
+		if (!zone.hotspot.contains(mouseVP)) {
+			continue;
+		}
+
+		isOverZone = true;
+		bool isClosed = zone.marksPlaced != 0 && zone.numHeld > (int16)zone.capacity;
+		if (!isClosed && zoneAccepts(_pieces[carried], (int16)i)) {
+			target = (int16)i;
+		}
+	}
+
+	// Over a full zone the piece in it is the one that is pointed at, and nothing
+	// is over a zone that turns the carried piece down
+	int16 hovered = -1;
+	for (uint i = 0; i < _pieces.size() && hovered == -1 && (target != -1 || !isOverZone); ++i) {
+		const Piece &piece = _pieces[i];
+		if (!piece.inUse || (int16)i == _heldPiece) {
+			continue;
+		}
+
+		if (target != -1) {
+			if (piece.assignedZone == target && _zones[target].numHeld >= (int16)_zones[target].capacity) {
+				hovered = (int16)i;
+			}
+
+			continue;
+		}
+
+		if (piece.locked || !piece.liveRect.contains(mouseVP)) {
+			continue;
+		}
+
+		// A piece in a zone can only be swapped for one that goes into the same zones
+		if (_heldPiece != -1 && piece.assignedZone != -1) {
+			int16 heldZoneID = _pieces[_heldPiece].zoneID;
+			if (heldZoneID != kAnyZone && heldZoneID != piece.zoneID) {
+				continue;
+			}
+		}
+
+		hovered = (int16)i;
+	}
+
+	if (hovered != -1) {
+		setPieceCursor(false);
+	} else if (target != -1) {
+		setPieceCursor(true);
+	} else if (_heldPiece != -1) {
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_carryCursorType, true, false);
+	} else {
+		return false;
+	}
+
+	if (!clicked) {
+		return true;
+	}
+
+	if (target != -1) {
+		// The piece that was in the zone makes room, and ends up being picked up below
+		if (hovered != -1) {
+			takeOutOfZone(hovered);
+			_pieces[hovered].liveRect = _pieces[hovered].destRect;
+			updatePieceRender(hovered);
+		}
+
+		if (_heldPiece == -1) {
+			// The inventory item is used up
+			NancySceneState.removeItemFromInventory(_pieces[carried].inventoryItem, false);
+		}
+
+		placePiece(carried, target, mouseVP);
+
+		if (_isSolved) {
+			updateZoneHighlights(-1);
+			updateCursorItem(mouseVP);
+			return true;
+		}
+	} else if (_heldPiece != -1) {
+		// A piece without a place of its own can only be put down in a zone
+		if (_pieces[_heldPiece].destRect.isEmpty()) {
+			return true;
+		}
+
+		g_nancy->_sound->loadSound(_putDownSound);
+		g_nancy->_sound->playSound(_putDownSound);
+		returnPiece(_heldPiece);
+	}
+
+	if (hovered != -1) {
+		if (!_pieces[hovered].closeupSrcRect.isEmpty()) {
+			g_nancy->_sound->loadSound(_pickupSound);
+			g_nancy->_sound->playSound(_pickupSound);
+			openCloseup(hovered);
+		} else {
+			pickUpPiece(hovered);
+		}
+	}
+
+	updateZoneHighlights(_closeupPiece == -1 ? _heldPiece : -1);
+	updateCursorItem(mouseVP);
+	return true;
+}
+
+void BuildPuzzle::handleExitInput(NancyInput &input, bool clicked) {
 	for (uint i = 0; i < _exitHotspots.size(); ++i) {
 		const ExitHotspot &exit = _exitHotspots[i];
 		if (exit.hotspot.isEmpty() ||
