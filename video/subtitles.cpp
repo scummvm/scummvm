@@ -616,11 +616,7 @@ void Subtitles::renderSubtitle() const {
 
 		Common::U32String u32_text = convertBiDiU32String(part.text).visual;
 
-		font->drawString(&_surface, u32_text, part.left, currentY, partWidth, _blackColor, Graphics::kTextAlignLeft);
-		font->drawString(&_surface, u32_text, part.left + SHADOW * 2, currentY, partWidth, _blackColor, Graphics::kTextAlignLeft);
-		font->drawString(&_surface, u32_text, part.left, currentY + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
-		font->drawString(&_surface, u32_text, part.left + SHADOW * 2, currentY + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
-		font->drawString(&_surface, u32_text, part.left + SHADOW, currentY + SHADOW, partWidth, _color, Graphics::kTextAlignLeft);
+		drawSubtitleText(*font, u32_text, part.left, currentY, partWidth);
 
 	}
 
@@ -631,6 +627,14 @@ void Subtitles::renderSubtitle() const {
 	_drawRect.setWidth(maxWidth + SHADOW * 2);
 	_drawRect.setHeight(currentY + SHADOW * 2);
 	_drawRect.clip(_realBBox.width(), _realBBox.height());
+}
+
+void Subtitles::drawSubtitleText(const Graphics::Font &font, const Common::U32String &text, int x, int y, int width) const {
+	font.drawString(&_surface, text, x, y, width, _blackColor, Graphics::kTextAlignLeft);
+	font.drawString(&_surface, text, x + SHADOW * 2, y, width, _blackColor, Graphics::kTextAlignLeft);
+	font.drawString(&_surface, text, x, y + SHADOW * 2, width, _blackColor, Graphics::kTextAlignLeft);
+	font.drawString(&_surface, text, x + SHADOW * 2, y + SHADOW * 2, width, _blackColor, Graphics::kTextAlignLeft);
+	font.drawString(&_surface, text, x + SHADOW, y + SHADOW, width, _color, Graphics::kTextAlignLeft);
 }
 
 } // End of namespace Video
