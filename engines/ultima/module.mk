@@ -7,7 +7,8 @@ MODULE_OBJS := \
 	shared/engine/events.o \
 	shared/engine/messages.o \
 	shared/gfx/gfx_surface.o \
-	shared/gfx/view.o
+	shared/gfx/view.o \
+	shared/engine/view.o
 
 ifdef ENABLE_AKALABETH
 MODULE_OBJS += \

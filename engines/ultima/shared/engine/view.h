@@ -50,6 +50,8 @@ public:
 		s.setColor(15);		// EGA white color
 		return s;
 	}
+
+	bool msgKeypress(const Graphics::Views::KeypressMessage &msg) override;
 };
 
 } // namespace Shared

@@ -22,7 +22,7 @@
 #ifndef ULTIMA3_VIEWS_GAME_H
 #define ULTIMA3_VIEWS_GAME_H
 
-#include "graphics/views/view.h"
+#include "ultima/shared/engine/view.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -38,7 +38,7 @@ constexpr int FRAME_COLS = 40;
  * window on the right, and runs the animation that goes on while waiting
  * for a command. Derived views supply the contents of the viewport.
  */
-class Game : public View {
+class Game : public Shared::View {
 private:
 	int _idleFrames = 0;
 	int _windCounter = 1;

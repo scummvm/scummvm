@@ -22,7 +22,7 @@
 #ifndef ULTIMA3_VIEWS_WINDOW_VIEW_H
 #define ULTIMA3_VIEWS_WINDOW_VIEW_H
 
-#include "graphics/views/view.h"
+#include "ultima/shared/engine/view.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -35,7 +35,7 @@ using namespace Graphics::Views;
  * bordered window at the bottom of the display, over whatever the title
  * screen left above it
  */
-class WindowView : public View {
+class WindowView : public Shared::View {
 protected:
 	/**
 	 * Blanks the inside of the window

@@ -72,9 +72,13 @@ bool Map::tick() {
 }
 
 bool Map::msgKeypress(const KeypressMessage &msg) {
-	_lastInput = g_system->getMillis();
-	g_engine->_logic->keypress(msg);
-	return true;
+	if (Shared::View::msgKeypress(msg)) {
+		return true;
+	} else {
+		_lastInput = g_system->getMillis();
+		g_engine->_logic->keypress(msg);
+		return true;
+	}
 }
 
 } // namespace Views

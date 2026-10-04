@@ -149,6 +149,8 @@ void OverworldMap::idleTimeout() {
 bool OverworldMap::msgKeypress(const KeypressMessage &msg) {
 	if (isModifierKey(msg.keycode))
 		return true;
+	if (Game::msgKeypress(msg))
+		return true;
 
 	if (_gameOver) {
 		replaceView("Title", true);
