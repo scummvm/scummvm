@@ -90,16 +90,17 @@ void IgorEngine::PART_00_APPLY_OBJECT_STATE(int num) {
 void IgorEngine::PART_00_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_00_EXEC_ACTION %d", action);
 	switch (action) {
-	case 101: // cseg206:00A2-0248
+	case 101: // open window
 		if (_objectsState[13] != 1) {
-			PART_00_ANIMATE_RAW(0x1200, 1, 3, 0x480, 36, 32, 0x6B2C, 62, 2, 1);
+
+			PART_00_ANIMATE_RAW(0, 1, 3, 0x480, 36, 32, 0x6B2C, 62, 2, 1);
 			_objectsState[13] = 1;
 			PART_00_APPLY_OBJECT_STATE(6);
 		}
 		break;
-	case 102: // cseg206:0249-03F6
+	case 102: // close window
 		if (_objectsState[13] == 1) {
-			PART_00_ANIMATE_RAW(0x1200, 2, 0, 0x480, 36, 32, 0x6B2C, 62, 2, 2);
+			PART_00_ANIMATE_RAW(0, 2, 0, 0x480, 36, 32, 0x6B2C, 62, 2, 2);
 			_objectsState[13] = 2;
 			PART_00_APPLY_OBJECT_STATE(6);
 		}
@@ -160,14 +161,14 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 			PART_00_APPLY_OBJECT_STATE(1);
 		}
 		break;
-	case 110: // cseg206:0497-063F
+	case 110: // open closet
 		if (_objectsState[10] == 0) {
 			PART_00_ANIMATE_RAW(0x1678, 0, 2, 0x940, 37, 64, 0x556C, 126, 2, 3);
 			_objectsState[10] = 1;
 			PART_00_APPLY_OBJECT_STATE(3);
 		}
 		break;
-	case 111: // cseg206:0640-07E8
+	case 111: // close closet
 		if (_objectsState[10] != 0) {
 			PART_00_ANIMATE_RAW(0x1678, 2, 0, 0x940, 37, 64, 0x556C, 126, 1, 4);
 			_objectsState[10] = 0;
