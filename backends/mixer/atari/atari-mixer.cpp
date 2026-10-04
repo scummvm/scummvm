@@ -26,10 +26,7 @@
 #include <mint/falcon.h>
 #include <mint/osbind.h>
 #include <mint/ostruct.h>
-// https://github.com/mikrosk/usound
-// Use usound_compat.h until SDL 1.2 + uSound have been upgraded in the build image.
-// Replace with #include <usound.h> once ihe image ships usound.h >= 2; it will #error in such case.
-#include "usound_compat.h"
+#include <usound.h>
 
 #include "common/config-manager.h"
 #include "common/debug.h"
