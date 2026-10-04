@@ -146,57 +146,62 @@ void ZoombiniGraphics::clearScreens() {
 	_isScreenDirty = false;
 }
 
-void ZoombiniGraphics::showDemoStartupLoadingScreen() {
+void ZoombiniGraphics::showStartupLoadingScreen() {
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
 	if (!font)
 		return;
 
 	const Common::U32String loadingText = _("Loading game...");
-	const byte maxTextColor = static_cast<byte>(kBlackKey - 1);
-	// Reserve index 0 for the black background and preserve the black-key index.
+
+	// Setup a temporary CLUT8 grayscale palette, which will get its antialiased text rendered.
+	// 0 is #000000, 254 is #FEFEFE. 255 is set to a key.
 	byte loadingPalette[3 * 256] = {};
-	for (uint16 paletteIndex = 0; paletteIndex < kBlackKey; paletteIndex++) {
-		const byte component = static_cast<byte>(paletteIndex);
-		loadingPalette[paletteIndex * 3 + 0] = component;
-		loadingPalette[paletteIndex * 3 + 1] = component;
-		loadingPalette[paletteIndex * 3 + 2] = component;
+	for (uint16 palIdx = 0; palIdx < kBlackKey; palIdx++) {
+		const byte val = static_cast<byte>(palIdx);
+		loadingPalette[palIdx * 3 + 0] = val;
+		loadingPalette[palIdx * 3 + 1] = val;
+		loadingPalette[palIdx * 3 + 2] = val;
 	}
 	_vm->_system->getPaletteManager()->setPalette(loadingPalette, 0, ARRAYSIZE(loadingPalette) / 3);
+
+	// Render text with 254: #FEFEFE.
+	const byte fgColor = static_cast<byte>(kBlackKey - 1);
 
 	_shapeScreen->fillRect(_screenRect, kTransparentKey);
 	const int textX = (_screenRect.width() - font->getStringWidth(loadingText)) / 2;
 	const int textY = (_screenRect.height() - font->getFontHeight()) / 2;
-	const Common::Rect textBounds = font->getBoundingBox(loadingText);
-	if (!textBounds.isEmpty()) {
+
+#ifdef USE_RGB_COLOR
+	// Preserve font hinting with best effort if a 2bpp/4bpp RGB surface is available.
+	const Common::Rect bboxRect = font->getBoundingBox(loadingText);
+	if (!bboxRect.isEmpty()) {
 		// Render only the glyph bounds in true color so FreeType coverage survives.
-		const Graphics::PixelFormat textFormat = Graphics::PixelFormat::createFormatARGB32();
+		const Graphics::PixelFormat textFormat = Graphics::PixelFormat::createFormatBGRA32();
 		Graphics::Surface textSurface;
-		textSurface.create(textBounds.width(), textBounds.height(), textFormat);
+		textSurface.create(bboxRect.width(), bboxRect.height(), textFormat);
 		textSurface.fillRect(textSurface.getRect(), 0);
 
-		const uint32 textColor = textFormat.ARGBToColor(0xFF, maxTextColor, maxTextColor, maxTextColor);
-		font->drawAlphaString(&textSurface, loadingText, -textBounds.left, -textBounds.top,
-							  textSurface.w, textColor, Graphics::kTextAlignLeft, 0, false, true);
+		// Render text to a 4bpp surface with explicit #FEFEFE RGB color, possibly with a hinting.
+		const uint32 fgRgbColor = textFormat.ARGBToColor(0xFF, fgColor, fgColor, fgColor);
+		font->drawAlphaString(&textSurface, loadingText, -bboxRect.left, -bboxRect.top,
+							  textSurface.w, fgRgbColor, Graphics::kTextAlignLeft, 0, false, true);
 
-		const Common::Rect destRect(textX + textBounds.left, textY + textBounds.top,
-									textX + textBounds.right, textY + textBounds.bottom);
+		// Quantize pixles of 4bpp surface into a CLUT8 grayscale surface.
+		const Common::Rect destRect(textX + bboxRect.left, textY + bboxRect.top,
+									textX + bboxRect.right, textY + bboxRect.bottom);
 		Common::Rect clippedDestRect = destRect;
 		clippedDestRect.clip(_screenRect);
-		const int sourceX = clippedDestRect.left - destRect.left;
-		const int sourceY = clippedDestRect.top - destRect.top;
-
-		// Quantize alpha into the startup grayscale palette while copying to CLUT8.
-		for (int rowIdx = 0; rowIdx < clippedDestRect.height(); rowIdx++) {
-			const uint32 *sourceRow = static_cast<const uint32 *>(textSurface.getBasePtr(sourceX, sourceY + rowIdx));
-			byte *destRow = static_cast<byte *>(_shapeScreen->getBasePtr(clippedDestRect.left, clippedDestRect.top + rowIdx));
-			for (int columnIdx = 0; columnIdx < clippedDestRect.width(); columnIdx++) {
-				const byte alpha = static_cast<byte>((sourceRow[columnIdx] >> textFormat.aShift) & 0xFF);
-				destRow[columnIdx] = static_cast<byte>((static_cast<uint32>(alpha) * maxTextColor + 0x7F) / 0xFF);
-			}
-		}
+		if (!clippedDestRect.isEmpty())
+			quantizeHintedTextPixels(&textSurface, _shapeScreen, destRect, clippedDestRect, loadingPalette,
+									 ARRAYSIZE(loadingPalette) / 3, fgColor);
 
 		textSurface.free();
 	}
+#else
+	// RGB surface is not available.
+	// Draw to a CLUT8 surface directly without hinting.
+	font->drawString(_shapeScreen, loadingText, textX, textY, _screenRect.width(), fgColor, Graphics::kTextAlignLeft, 0, false, true);
+#endif
 
 	setDirty();
 	flushScreens();
@@ -744,7 +749,7 @@ void ZoombiniGraphics::copyRectToSurfaceWithColorAssistPaletteRemap(Graphics::Su
 	}
 
 	Graphics::crossKeyBlitMap(static_cast<byte *>(screen->getBasePtr(destX, destY)), static_cast<const byte *>(source->getBasePtr(sourceRect.left, sourceRect.top)),
-		screen->pitch, source->pitch, sourceRect.width(), sourceRect.height(), 1, remapTable, kTransparentKey);
+							  screen->pitch, source->pitch, sourceRect.width(), sourceRect.height(), 1, remapTable, kTransparentKey);
 }
 
 void ZoombiniGraphics::fillColorAssistPaletteRemapTable(Common::Array<uint32> &paletteMap, PaletteRemapMode remapMode) {
@@ -1041,107 +1046,128 @@ void ZoombiniGraphics::copyTextPixels(Graphics::Surface *textSurface, Graphics::
 	screen->copyRectToSurfaceWithKey(*textSurface, copyRect.left, copyRect.top, sourceRect, kTransparentKey);
 }
 
-void ZoombiniGraphics::blendTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect, uint32 palette) {
-	assert(palette < 256);
+#ifdef USE_RGB_COLOR
+void ZoombiniGraphics::quantizeHintedTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect, const byte *paletteBytes, uint paletteColorCount, uint32 color) {
+	// textSurface has 4bpp pixels of hinted text drawing.
+	// Those pixels will be quantized to a CLUT8 target surface: screen.
+	assert(0 < paletteColorCount && paletteColorCount <= Graphics::PALETTE_COUNT);
+	assert(color < paletteColorCount);
 	assert(textSurface->format.bytesPerPixel == 4);
 	assert(screen->format.bytesPerPixel == 1);
 
-	_textPaletteLookup.setPalette(_paletteBytes, ARRAYSIZE(_paletteBytes) / 3);
-	const byte textRed = _paletteBytes[palette * 3 + 0];
-	const byte textGreen = _paletteBytes[palette * 3 + 1];
-	const byte textBlue = _paletteBytes[palette * 3 + 2];
+	// Keep this lookup as a member so its nearest-color cache survives repeated draws with the same palette.
+	_textPaletteLookup.setPalette(paletteBytes, paletteColorCount);
+	const byte textRed = paletteBytes[color * 3 + 0];
+	const byte textGreen = paletteBytes[color * 3 + 1];
+	const byte textBlue = paletteBytes[color * 3 + 2];
 	const int localLeft = copyRect.left - destRect.left;
 	const int localTop = copyRect.top - destRect.top;
 
 	for (int rowIdx = 0; rowIdx < copyRect.height(); rowIdx++) {
 		const uint32 *src = static_cast<const uint32 *>(textSurface->getBasePtr(localLeft, localTop + rowIdx));
 		byte *dst = static_cast<byte *>(screen->getBasePtr(copyRect.left, copyRect.top + rowIdx));
-		for (int columnIdx = 0; columnIdx < copyRect.width(); columnIdx++) {
-			const byte alpha = static_cast<byte>((src[columnIdx] >> textSurface->format.aShift) & 0xFF);
+		for (int colIdx = 0; colIdx < copyRect.width(); colIdx++) {
+			const byte alpha = static_cast<byte>((src[colIdx] >> textSurface->format.aShift) & 0xFF);
+			// Alpha is glyph coverage: zero preserves the destination, while full coverage uses the exact text palette index.
 			if (alpha == 0)
 				continue;
 			if (alpha == 0xFF) {
-				dst[columnIdx] = static_cast<byte>(palette);
+				dst[colIdx] = static_cast<byte>(color);
 				continue;
 			}
 
-			const uint32 inverseAlpha = 0xFF - alpha;
-			const byte backgroundPalette = dst[columnIdx];
-			const byte backgroundRed = _paletteBytes[backgroundPalette * 3 + 0];
-			const byte backgroundGreen = _paletteBytes[backgroundPalette * 3 + 1];
-			const byte backgroundBlue = _paletteBytes[backgroundPalette * 3 + 2];
-			const byte blendedRed = static_cast<byte>((static_cast<uint32>(textRed) * alpha +
-													   static_cast<uint32>(backgroundRed) * inverseAlpha + 0x7F) /
-													  0xFF);
-			const byte blendedGreen = static_cast<byte>((static_cast<uint32>(textGreen) * alpha +
-														 static_cast<uint32>(backgroundGreen) * inverseAlpha + 0x7F) /
-														0xFF);
-			const byte blendedBlue = static_cast<byte>((static_cast<uint32>(textBlue) * alpha +
-														static_cast<uint32>(backgroundBlue) * inverseAlpha + 0x7F) /
-													   0xFF);
-			dst[columnIdx] = _textPaletteLookup.findBestColor(blendedRed, blendedGreen, blendedBlue);
+			// Composite partial coverage in RGB space, then map the result to the nearest active CLUT8 palette entry.
+			const uint32 invAlpha = 0xFF - alpha;
+			const byte bgPalette = dst[colIdx];
+			assert(bgPalette < paletteColorCount);
+			const byte bgRed = paletteBytes[bgPalette * 3 + 0];
+			const byte bgGreen = paletteBytes[bgPalette * 3 + 1];
+			const byte bgBlue = paletteBytes[bgPalette * 3 + 2];
+			const byte quantedRed = static_cast<byte>((textRed * alpha + bgRed * invAlpha + 0x7F) / 0xFF);
+			const byte quantedGreen = static_cast<byte>((textGreen * alpha + bgGreen * invAlpha + 0x7F) / 0xFF);
+			const byte quantedBlue = static_cast<byte>((textBlue * alpha + bgBlue * invAlpha + 0x7F) / 0xFF);
+			dst[colIdx] = _textPaletteLookup.findBestColor(quantedRed, quantedGreen, quantedBlue);
 		}
 	}
 }
+#endif
 
-void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font *font, const Common::Array<Common::U32String> &lines, const Common::Rect &destRect, uint32 palette, Graphics::TextAlign hAlign, bool useAntialiasing, uint32 fillBackgroundColor) {
+void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font *font, const Common::Array<Common::U32String> &lines, const Common::Rect &destRect, uint32 color, Graphics::TextAlign hAlign, bool useAntialiasing, uint32 fillBackgroundColor) {
 	// Clip text to the caller's destination rectangle.
 	if (destRect.isEmpty())
 		return;
 
 	Graphics::Surface *screen = _vm->_gfx->getScreen(screenKind);
 	assert(screen->format.bytesPerPixel == 1);
+#ifdef USE_RGB_COLOR
 	if (useAntialiasing)
-		assert(palette < 256);
+		assert(color < 256);
+#endif
 
-	// Render to a transparent local surface first. This gives every text path
-	// the same exact caller-rectangle clipping that GDI applies, including
-	// partially visible glyphs at the top, bottom, left and right edges.
+	// Render to a transparent local surface first.
+	// This gives every text path the same exact caller-rectangle clipping that GDI applies,
+	// including partially visible glyphs at the top, bottom, left and right edges.
 	Graphics::Surface textSurface;
-	if (useAntialiasing) {
-		textSurface.create(destRect.width(), destRect.height(), Graphics::PixelFormat::createFormatARGB32());
-		textSurface.fillRect(textSurface.getRect(), 0);
-	} else {
+	do {
+#ifdef USE_RGB_COLOR
+		if (useAntialiasing) {
+			// Text hinting on CLUT surfaces are achieved by these pipeline:
+			// - Render texts on a temporary BGRA32 surface, with hinting.
+			// - Quantize a temp BGRA32 surface to a target CLUT surface with its palettes.
+			// So, it requires a build with 16bit color support.
+			textSurface.create(destRect.width(), destRect.height(), Graphics::PixelFormat::createFormatBGRA32());
+			textSurface.fillRect(textSurface.getRect(), 0);
+			break;
+		}
+#endif
 		textSurface.create(destRect.width(), destRect.height(), screen->format);
 		textSurface.fillRect(textSurface.getRect(), kTransparentKey);
-	}
+	} while (false);
 
-	// Use @ref Graphics::Font::getFontHeight() for line advancement to match GDI DrawTextA with DT_EXTERNALLEADING.
+	// Use @ref Graphics::Font::getFontHeight() for line advancement to match GDI DrawTextA() with DT_EXTERNALLEADING.
 	const int lineHeight = font->getFontHeight();
 	Common::Rect drawRect = destRect;
 
 	for (uint32 i = 0; i < lines.size(); i++) {
 		const Common::U32String &line = lines[i];
 
-		// Clip: skip lines whose top is below the dest rect bottom (matching GDI IntersectClipRect)
+		// Clip: skip lines whose top is below the dest rect bottom, matching GDI IntersectClipRect().
 		if (destRect.bottom <= drawRect.top)
 			break;
 
 		const int localTop = drawRect.top - destRect.top;
 
-		// Background is for debug purposes, Zoombini game itself does not use this feature.
+		// Background feature is for debug purposes, Zoombini gameplay itself does not use this feature.
 		if (fillBackgroundColor != kTransparentKey) {
 			const Common::Rect bbox = font->getBoundingBox(line, 0, localTop, destRect.width(), hAlign);
-			if (useAntialiasing) {
-				Common::Rect screenBbox = bbox;
-				screenBbox.translate(destRect.left, destRect.top);
-				screenBbox.clip(destRect);
-				screenBbox.clip(_screenRect);
-				fillArea(screenKind, screenBbox, fillBackgroundColor);
-			} else {
+			do {
+#ifdef USE_RGB_COLOR
+				if (useAntialiasing) {
+					Common::Rect screenBBox = bbox;
+					screenBBox.translate(destRect.left, destRect.top);
+					screenBBox.clip(destRect);
+					screenBBox.clip(_screenRect);
+					fillArea(screenKind, screenBBox, fillBackgroundColor);
+					break;
+				}
+#endif
 				textSurface.fillRect(bbox, fillBackgroundColor);
-			}
+			} while (false);
 		}
 
-		if (useAntialiasing) {
-			const byte textRed = _paletteBytes[palette * 3 + 0];
-			const byte textGreen = _paletteBytes[palette * 3 + 1];
-			const byte textBlue = _paletteBytes[palette * 3 + 2];
-			const uint32 textColor = textSurface.format.ARGBToColor(0xFF, textRed, textGreen, textBlue);
-			font->drawAlphaString(&textSurface, line, 0, localTop, destRect.width(), textColor, hAlign);
-		} else {
-			font->drawString(&textSurface, line, 0, localTop, destRect.width(), palette, hAlign);
-		}
+		do {
+#ifdef USE_RGB_COLOR
+			if (useAntialiasing) {
+				const byte textRed = _paletteBytes[color * 3 + 0];
+				const byte textGreen = _paletteBytes[color * 3 + 1];
+				const byte textBlue = _paletteBytes[color * 3 + 2];
+				const uint32 textColor = textSurface.format.ARGBToColor(0xFF, textRed, textGreen, textBlue);
+				font->drawAlphaString(&textSurface, line, 0, localTop, destRect.width(), textColor, hAlign);
+				break;
+			}
+#endif
+			font->drawString(&textSurface, line, 0, localTop, destRect.width(), color, hAlign);
+		} while (false);
 
 		if (i + 1 < lines.size()) {
 			drawRect.top += lineHeight;
@@ -1163,18 +1189,28 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 				Common::Rect clipped = screenRect;
 				clipped.clip(dirtyRect);
 				if (!clipped.isEmpty()) {
-					if (useAntialiasing)
-						blendTextPixels(&textSurface, screen, destRect, clipped, palette);
-					else
+					do {
+#ifdef USE_RGB_COLOR
+						if (useAntialiasing) {
+							quantizeHintedTextPixels(&textSurface, screen, destRect, clipped, _paletteBytes, ARRAYSIZE(_paletteBytes) / 3, color);
+							break;
+						}
+#endif
 						copyTextPixels(&textSurface, screen, destRect, clipped);
+					} while (false);
 				}
 			}
 		}
 	} else {
-		if (useAntialiasing)
-			blendTextPixels(&textSurface, screen, destRect, screenRect, palette);
-		else
+		do {
+#ifdef USE_RGB_COLOR
+			if (useAntialiasing) {
+				quantizeHintedTextPixels(&textSurface, screen, destRect, screenRect, _paletteBytes, ARRAYSIZE(_paletteBytes) / 3, color);
+				break;
+			}
+#endif
 			copyTextPixels(&textSurface, screen, destRect, screenRect);
+		} while (false);
 	}
 
 	textSurface.free();
