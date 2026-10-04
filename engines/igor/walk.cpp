@@ -1090,6 +1090,30 @@ void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
 }
 
 void IgorEngine::fixWalkPosition(int *x, int *y) {
+	if (getPart() == 0) {
+		int xPos = *x;
+		int yPos = *y;
+		if (yPos > 143)
+			yPos = 143;
+		if (xPos < 41) {
+			xPos = 41;
+			if (yPos < 141)
+				yPos = 141;
+		} else if (xPos > 253) {
+			xPos = 253;
+			if (yPos < 138)
+				yPos = 138;
+		} else {
+			do {
+				if (yPos >= 143)
+					break;
+				++yPos;
+			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0);
+		}
+		*x = xPos;
+		*y = yPos;
+		return;
+	}
 	int xPos = *x;
 	if (xPos < _roomWalkBounds.x1) {
 		xPos = _roomWalkBounds.x1;

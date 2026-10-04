@@ -63,12 +63,12 @@ void IgorEngine::waitForTimer(int ticks) {
 				} else if (ev.kbd.keycode == Common::KEYCODE_p) {
 					_inputVars[kInputPause] = 1;
 				}
-				// else if (ev.kbd.keycode == Common::KEYCODE_F11) {
-				// 	sprintf(_saveStateDescriptions[kQuickSaveSlot], "Quicksave part %d", _currentPart);
-				// 	saveGameState(kQuickSaveSlot);
-				// } else if (ev.kbd.keycode == Common::KEYCODE_F12) {
-				// 	loadGameState(kQuickSaveSlot);
-				// }
+				else if (ev.kbd.keycode == Common::KEYCODE_F1) {
+					debug("Quicksave part %d", _currentPart);
+					saveGameState(kQuickSaveSlot, "");
+				} else if (ev.kbd.keycode == Common::KEYCODE_F2) {
+					loadGameState(kQuickSaveSlot);
+				}
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_inputVars[kInputCursorXPos] = ev.mouse.x;
