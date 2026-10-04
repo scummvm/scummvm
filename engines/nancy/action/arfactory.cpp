@@ -48,6 +48,7 @@
 #include "engines/nancy/action/puzzle/buildpuzzle.h"
 #include "engines/nancy/action/puzzle/bulpuzzle.h"
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
+#include "engines/nancy/action/puzzle/booksortpuzzle.h"
 #include "engines/nancy/action/puzzle/cardgamepuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/cookingpuzzle.h"
@@ -753,7 +754,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new Rain();
 	case 201:
-		return new TowerPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy15)
+			return new TowerPuzzle();
+		else
+			return new BookSortPuzzle();
 	case 202:
 		return new BombPuzzle();
 	case 203:
