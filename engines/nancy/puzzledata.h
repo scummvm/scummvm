@@ -615,6 +615,15 @@ struct BuildBoardData : public PuzzleData {
 	Common::HashMap<Common::String, Board, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> boards;
 };
 
+// Nancy17 DragSurfacePuzzle. The part of each picture that was last looked at,
+// by the name the puzzle keeps it under.
+struct DragSurfaceData : public PuzzleData {
+	static constexpr uint32 getTag() { return MKTAG('D', 'R', 'G', 'S'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::HashMap<Common::String, Common::Point, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> viewOrigins;
+};
+
 // Nancy17. The scenes that run in streams next to the main one, so they can be
 // started again after loading
 struct StreamData : public PuzzleData {

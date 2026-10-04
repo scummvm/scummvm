@@ -858,6 +858,29 @@ void BuildBoardData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void DragSurfaceData::synchronize(Common::Serializer &ser) {
+	uint16 numViews = viewOrigins.size();
+	ser.syncAsUint16LE(numViews);
+
+	Common::Array<Common::String> names;
+	if (ser.isSaving()) {
+		for (auto &entry : viewOrigins) {
+			names.push_back(entry._key);
+		}
+	} else {
+		viewOrigins.clear();
+		names.resize(numViews);
+	}
+
+	for (Common::String &name : names) {
+		ser.syncString(name);
+
+		Common::Point &origin = viewOrigins[name];
+		ser.syncAsSint16LE(origin.x);
+		ser.syncAsSint16LE(origin.y);
+	}
+}
+
 void StreamData::synchronize(Common::Serializer &ser) {
 	uint16 numStreams = streams.size();
 	ser.syncAsUint16LE(numStreams);
@@ -947,6 +970,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new BuildBoardData();
 	case CollectionData::getTag():
 		return new CollectionData();
+	case DragSurfaceData::getTag():
+		return new DragSurfaceData();
 	case BuildPuzzleData::getTag():
 		return new BuildPuzzleData();
 	case MirrorLightData::getTag():

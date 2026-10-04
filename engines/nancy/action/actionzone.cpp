@@ -88,6 +88,7 @@ void ActionZone::readSubtype(Common::SeekableReadStream &stream, bool isNancy13)
 		slopeAngle = stream.readSint16LE();
 		break;
 	case kZoneEventFlag:
+	case kZoneCursor:
 		tailId = stream.readSint16LE();
 		tailFlag = stream.readByte();
 		break;

@@ -43,6 +43,7 @@ MODULE_OBJS = \
   action/puzzle/decoderpuzzle.o \
   action/puzzle/dialsequencepuzzle.o \
   action/puzzle/dotconnectpuzzle.o \
+  action/puzzle/dragsurfacepuzzle.o \
   action/puzzle/drivingpuzzle.o \
   action/puzzle/dropsortpuzzle.o \
   action/puzzle/escapegridpuzzle.o \

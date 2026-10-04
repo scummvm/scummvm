@@ -57,6 +57,7 @@
 #include "engines/nancy/action/puzzle/decoderpuzzle.h"
 #include "engines/nancy/action/puzzle/dialsequencepuzzle.h"
 #include "engines/nancy/action/puzzle/dotconnectpuzzle.h"
+#include "engines/nancy/action/puzzle/dragsurfacepuzzle.h"
 #include "engines/nancy/action/puzzle/drivingpuzzle.h"
 #include "engines/nancy/action/puzzle/dropsortpuzzle.h"
 #include "engines/nancy/action/puzzle/escapegridpuzzle.h"
@@ -769,7 +770,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 206:
 		return new RaycastPuzzle();
 	case 207:
-		return new TangramPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy15)
+			return new TangramPuzzle();
+		else
+			return new DragSurfacePuzzle();
 	case 208:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kPiano);

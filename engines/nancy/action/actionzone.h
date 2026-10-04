@@ -58,7 +58,8 @@ enum ActionZoneType : byte {
 	kZoneBoundary		= 0x14,	// play-area wall
 	kZoneUnknown15		= 0x15,	// Nancy12: on entry, sound + special effect + change to scene specialEffectId; a damage range in Nancy13
 	kZoneBumper			= 0x16,	// Nancy12: an overlay variant; Nancy13: a pachinko hole
-	kZoneFlatTire		= 0x17	// pothole: damages the car driving over it
+	kZoneFlatTire		= 0x17,	// pothole: damages the car driving over it
+	kZoneCursor			= 0x1a	// Nancy17: changes the cursor over the zone
 };
 
 // A polymorphic "ActionZone" record, embedded as a count-prefixed array inside
@@ -92,7 +93,8 @@ struct ActionZone {
 
 	// int16 + byte trailer carried by kZoneEventFlag and kZoneSceneChange. For the
 	// former it is an event-flag id + on/off; for the latter a target scene id + a
-	// flag. Left at their defaults for the other subtypes.
+	// flag. kZoneCursor has a cursor type + whether the cursor is the highlighted
+	// one. Left at their defaults for the other subtypes.
 	int16 tailId = 0;
 	byte tailFlag = 0;
 
