@@ -69,31 +69,31 @@ struct Page {
 
 static const Page pages[] = {
 	{
-		{ "SAVE", "Choose a position to SAVE to" },
-		{ 53, 75 },
+		{ "Salvar", "Elige una posición donde salvar" },
+		{ 50, 75 },
 		&IgorEngine::handleOptionsMenu_paintSave,
 		&IgorEngine::handleOptionsMenu_handleKeyDownSave
 	},
 	{
-		{ "LOAD", "Choose a game to load" },
-		{ 98, 93 },
+		{ "Cargar", "Elige el juego que quieres cargar" },
+		{ 95, 93 },
 		&IgorEngine::handleOptionsMenu_paintLoad,
 		&IgorEngine::handleOptionsMenu_handleKeyDownLoad
 	},
 	{
-		{ "QUIT", "QUIT" },
-		{ 146, 146 },
+		{ "Salir", "Salir" },
+		{ 145, 145 },
 		&IgorEngine::handleOptionsMenu_paintQuit,
 		&IgorEngine::handleOptionsMenu_handleKeyDownQuit
 	},
 	{
-		{ "CTRL", "Game CONTROLS" },
-		{ 190, 112 },
+		{ "Opcion.", "Opciones" },
+		{ 185, 112 },
 		&IgorEngine::handleOptionsMenu_paintCtrl,
 		&IgorEngine::handleOptionsMenu_handleKeyDownCtrl
 	},
 	{
-		{ "PLAY", 0 },
+		{ "Jugar", 0 },
 		{ 237, 0 },
 		0,
 		0
