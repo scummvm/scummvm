@@ -1376,7 +1376,7 @@ static void room_203_daemon() {
 
 			player.walker_visible = false;
 			player_demand_facing(3);
-			player_demand_location(124, 91);
+			player_demand_location(91, 124);
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.commands_allowed = true;
 			player.walker_visible = true;
