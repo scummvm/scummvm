@@ -359,13 +359,13 @@ void Title::timeout() {
 	case PH_DRAIN:
 		_keyPending = false;
 		draw();
-		showMainMenu();
+		showLogoScreen();
 		break;
 	}
 }
 
-void Title::showMainMenu() {
-	replaceView("MainMenu");
+void Title::showLogoScreen() {
+	replaceView("LogoScreen");
 }
 
 bool Title::msgKeypress(const KeypressMessage &msg) {

@@ -52,7 +52,7 @@ struct TitleBox {
  * remaining reveal/pause (matching the original's keyboard-buffer-peek
  * behaviour: a single buffered keystroke stays "pending" and skips every
  * subsequent wait without needing to be pressed again) until a final
- * step consumes it and moves on to the main menu.
+ * step consumes it and moves on to the logo screen.
  */
 class Title : public View {
 private:
@@ -120,7 +120,7 @@ private:
 	bool tickWait();
 
 	void playSoundBurst();
-	void showMainMenu();
+	void showLogoScreen();
 
 public:
 	Title();

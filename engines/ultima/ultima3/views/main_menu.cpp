@@ -69,8 +69,8 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 				addView("JourneyOnward");
 			break;
 		default:
-			// Returning to the view is wired up once the world engine lands
-			break;
+			close();
+			return true;
 		}
 	}
 

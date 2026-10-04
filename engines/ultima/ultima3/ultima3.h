@@ -32,6 +32,7 @@
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima3/data/savegame.h"
+#include "ultima/ultima3/gfx/shapes.h"
 
 namespace Audio {
 class PCSpeaker;
@@ -80,6 +81,7 @@ public:
 	void playErrorBeep();
 
 	Data::Savegame _savegame;
+	Gfx::Shapes _shapes;
 
 	// Debug flag toggled by the "intangible" console command, allowing
 	// movement through normally impassable terrain

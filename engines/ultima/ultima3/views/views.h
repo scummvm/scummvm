@@ -28,6 +28,7 @@
 #include "ultima/ultima3/views/disperse_party.h"
 #include "ultima/ultima3/views/form_party.h"
 #include "ultima/ultima3/views/journey_onward.h"
+#include "ultima/ultima3/views/logo_screen.h"
 #include "ultima/ultima3/views/main_menu.h"
 #include "ultima/ultima3/views/party_menu.h"
 #include "ultima/ultima3/views/register.h"
@@ -44,6 +45,7 @@ struct Views {
 	DisperseParty _disperseParty;
 	FormParty _formParty;
 	JourneyOnward _journeyOnward;
+	LogoScreen _logoScreen;
 	MainMenu _mainMenu;
 	PartyMenu _partyMenu;
 	Register _register;
