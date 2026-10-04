@@ -1247,18 +1247,18 @@ void MortimerEngine::drawTargets() {
 		const bool hostile = (target.id >= 700 && target.id < 800) || (target.id >= 9000 && target.id < 9400);
 		if (!target.active || !target.id || (target.id >= 800 && !hostile))
 			continue;
+		const Common::Point top = screenPoint(Common::Point(target.rect.left, target.rect.top));
+		const Common::Point bottom = screenPoint(Common::Point(target.rect.right, target.rect.bottom));
 		if (target.hit) {
 			const Common::Array<MortimerSprite> &effect = target.hitWeapon == MortimerFlight::kSlimeGun ? _slimeHit : _scopeHit;
 			const uint frame = flight.frame() - target.rescuedAt;
 			if (frame < effect.size()) {
-				const Common::Point center = screenPoint(Common::Point((target.rect.left + target.rect.right) / 2,
-					(target.rect.top + target.rect.bottom) / 2));
+				// Average after scaling to retain the midpoint of odd-sized targets.
+				const Common::Point center((top.x + bottom.x) / 2, (top.y + bottom.y) / 2);
 				drawSprite(effect[frame], center.x, center.y, true, &_viewport);
 			}
 		} else if ((target.id < 700 && flight.weapon() == MortimerFlight::kRevitascope) ||
 			(hostile && flight.weapon() == MortimerFlight::kSlimeGun)) {
-			const Common::Point top = screenPoint(Common::Point(target.rect.left, target.rect.top));
-			const Common::Point bottom = screenPoint(Common::Point(target.rect.right, target.rect.bottom));
 			drawSprite(_corners[0], top.x, top.y, true, &_viewport);
 			drawSprite(_corners[1], bottom.x, bottom.y, true, &_viewport);
 		}
@@ -1303,14 +1303,17 @@ void MortimerEngine::drawDashboard() {
 	const uint level = _isDemo || _shellShocks <= 10 ? _shellShocks / 2 : _shellShocks - 5;
 	const uint gauge = level < 8 ? 19 + level : 27 + _shockFrame;
 	drawSprite(_dashboard[gauge], 180, 442);
-	const Common::Point iconOrigins[] = {{158, 364}, {203, 358}, {248, 358}, {293, 354}, {339, 355}, {383, 360}, {428, 361}};
+	const Common::Point demoIconOrigins[] = {{158, 364}, {203, 358}, {248, 358}, {293, 354}, {339, 355}, {383, 360}, {428, 361}};
+	// Retail uses centered icons (SHELL 43f12c, 44304c); the demo uses sprite origins.
+	const Common::Point iconCenters[] = {{176, 384}, {222, 378}, {265, 378}, {310, 376}, {355, 379}, {399, 380}, {444, 384}};
 	const Common::Point flashOrigins[] = {{154, 345}, {198, 338}, {243, 334}, {288, 332}, {333, 334}, {378, 338}, {422, 345}};
 	for (uint species = 0; species < 7; ++species) {
 		if ((_iconFlash[species] & 1) || (_interviewActive && int(species) == _interview.highlightedAnimal()))
 			drawSprite(_dashboard[species], flashOrigins[species].x, flashOrigins[species].y);
 		const uint available = _interviewActive ? _interview.species() : (_completedSpecies | _flight.rescuedSpecies());
 		const bool rescued = available & (1 << species);
-		drawSprite(_icons[species * 2 + (rescued ? 0 : 1)], iconOrigins[species].x, iconOrigins[species].y);
+		const Common::Point &origin = _isDemo ? demoIconOrigins[species] : iconCenters[species];
+		drawSprite(_icons[species * 2 + (rescued ? 0 : 1)], origin.x, origin.y, !_isDemo);
 	}
 	const uint thresholds[] = {1, 2, 3, 4, 7, 20, 30, 40, 50};
 	for (int i = ARRAYSIZE(thresholds) - 1; i >= 0; --i) {
@@ -1348,8 +1351,8 @@ void MortimerEngine::draw() {
 			drawSprite(_reticles[0], _castle.choosing() ? _mouse.x : _aim.x,
 				_castle.choosing() ? _mouse.y : _aim.y, true, &_viewport);
 		} else {
-			drawSprite(_head[_uiFrame % 4], 270, 200);
 			drawSprite(_reticles[_flight.weapon() == MortimerFlight::kSlimeGun ? 0 : 1], _aim.x, _aim.y, true, &_viewport);
+			drawSprite(_head[_uiFrame % 4], 270, 200);
 			drawSprite(_cockpit[0], 0, 0);
 			drawSprite(_cockpit[1], 567, 0);
 			drawSprite(_cockpit[2], 0, 0);
