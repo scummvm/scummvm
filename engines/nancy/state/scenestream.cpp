@@ -277,6 +277,15 @@ void SceneStreamManager::changeScene(const Common::String &name, const SceneChan
 	}
 }
 
+void SceneStreamManager::changeScene(const Common::String &name, const Common::String &sceneName, uint16 frameID) {
+	SceneStream *stream = name.empty() ? _running : find(name);
+	if (stream) {
+		stream->changeScene(sceneName, frameID);
+	} else {
+		warning("Tried to change the scene of stream %s, which is not running", name.c_str());
+	}
+}
+
 Common::String SceneStreamManager::getSceneName(const Common::String &name) const {
 	if (name.equalsIgnoreCase(kMainStreamName)) {
 		return Common::String::format("s%u", NancySceneState.getMainSceneInfo().sceneID);

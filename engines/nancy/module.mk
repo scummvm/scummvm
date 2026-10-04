@@ -46,6 +46,7 @@ MODULE_OBJS = \
   action/puzzle/escapegridpuzzle.o \
   action/puzzle/fishingpuzzle.o \
   action/puzzle/foxgeesepuzzle.o \
+  action/puzzle/goldbergpuzzle.o \
   action/puzzle/gridmappuzzle.o \
   action/puzzle/hamradiopuzzle.o \
   action/puzzle/hangmanpuzzle.o \

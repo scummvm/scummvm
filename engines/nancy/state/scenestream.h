@@ -125,6 +125,7 @@ public:
 	void begin(const Common::String &name, const Common::String &sceneName, uint16 frameID, const StreamFlags &flags);
 	void end(const Common::String &name);
 	void changeScene(const Common::String &name, const SceneChangeDescription &sceneDescription);
+	void changeScene(const Common::String &name, const Common::String &sceneName, uint16 frameID);
 	Common::String getSceneName(const Common::String &name) const;
 	bool isRunning(const Common::String &name) const { return find(name) != nullptr; }
 
