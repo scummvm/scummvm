@@ -263,10 +263,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new HideCursor();	// Moved from 27
 	case 30:	// Nancy11
-		if (g_nancy->getGameType() <= kGameTypeNancy16)
-			return new StopPlayerScrolling();
-		else
-			return nullptr;	// SetCursor, which the game doesn't use
+		return new StopPlayerScrolling();
 	case 31:	// Nancy11
 		return new StartPlayerScrolling();
 	case 32:	// Nancy10
@@ -301,19 +298,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 44:	// Nancy14
 		return new PlaySecondaryMovie(PlaySecondaryMovie::kMovieWithVolume);
 	case 46:	// Nancy11
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new PlayRandomMovieControl();
-		else if (g_nancy->getGameType() <= kGameTypeNancy16)
-			return nullptr;	// Not used by the game
-		else
-			return new PlayRandomMovieControl();
+		return new PlayRandomMovieControl();
 	case 47:	// Nancy14
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new PlaySecondaryMovie(PlaySecondaryMovie::kInteractiveMovie);
-		else if (g_nancy->getGameType() <= kGameTypeNancy16)
-			return nullptr;	// Not used by the game
-		else
-			return new PlaySecondaryMovie(PlaySecondaryMovie::kInteractiveMovie);
+		return new PlaySecondaryMovie(PlaySecondaryMovie::kInteractiveMovie);
 	case 48:	// Nancy16
 		return new PlaySecondaryMovie(PlaySecondaryMovie::kMovieWithRandomPosition);
 	case 50:
@@ -527,12 +514,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 134:	// Nancy15
 		// Switches the active player character (Nancy / Frank / Joe), the
 		// dual-protagonist mechanic new to The Creature of Kapu Cave
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new PlayChar();
-		else if (g_nancy->getGameType() <= kGameTypeNancy16)
-			return nullptr;	// Nancy16 has a single player character
-		else
-			return new PlayChar();	// Nancy17 switches between Nancy and Bess
+		return new PlayChar();
 	case 140:
 		if (g_nancy->getGameType() <= kGameTypeNancy11)
 			return new SetVolume();			// Moved to 149 in Nancy9, empty slot in Nancy9-11
