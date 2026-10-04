@@ -88,6 +88,13 @@ protected:
 		bool isViewportRelative() const override { return true; }
 	};
 
+	// Follows the mouse over the board, so it is placed like the board is
+	struct CursorItem : RenderObject {
+		CursorItem(uint16 zOrder) : RenderObject(zOrder) {}
+
+		bool isViewportRelative() const override { return true; }
+	};
+
 	// A container pieces are dropped into.
 	struct Zone {
 		Common::Rect hotspot;
@@ -251,7 +258,7 @@ protected:
 	int16 _placedCount = 0;
 
 	// Whatever is currently on the cursor: a scoop, or an ingredient.
-	RenderObject _cursorItem;
+	CursorItem _cursorItem;
 	int16 _activeHold = -1;
 	int8 _lastWrongFlag = -1;
 	int8 _lastSolvedFlag = -1;

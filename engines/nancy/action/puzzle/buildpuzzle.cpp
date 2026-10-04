@@ -1308,8 +1308,8 @@ void BuildPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	const VIEW *viewData = GetEngineData(VIEW);
-	if (!viewData || !viewData->screenPosition.contains(input.mousePos)) {
+	Common::Rect viewportBounds = NancySceneState.getViewport().getBounds();
+	if (!NancySceneState.getViewport().convertViewportToScreen(viewportBounds).contains(input.mousePos)) {
 		return;
 	}
 
@@ -1317,8 +1317,9 @@ void BuildPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	Common::Point mouseVP(input.mousePos.x - viewData->screenPosition.left,
-							input.mousePos.y - viewData->screenPosition.top);
+	Common::Rect mouseRect = NancySceneState.getViewport().convertScreenToViewport(
+		Common::Rect(input.mousePos.x, input.mousePos.y, input.mousePos.x + 1, input.mousePos.y + 1));
+	Common::Point mouseVP = mouseRect.origin();
 	bool clicked = (input.input & NancyInput::kLeftMouseButtonUp) != 0;
 
 	updateCursorItem(mouseVP);
