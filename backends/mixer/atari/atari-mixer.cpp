@@ -200,7 +200,10 @@ bool AtariMixerManager::notifyEvent(const Common::Event &event) {
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 		if (s_playbackState != kPlaybackStopped) {
 			debug("silencing the mixer");
-			suspendAudio();
+			// Stop the DMA but don't suspend the mixer: nothing would
+			// resume it, update() restarts the playback when needed.
+			Buffoper(0x00);
+			s_playbackState = kPlaybackStopped;
 		}
 		return false;
 	default:
