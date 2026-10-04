@@ -201,15 +201,20 @@ void IgorEngine::PART_17_ACTION_106_swapFolders() {
 	}
 	playSound(24, 1);
 
-	for (int j = 0; j <= 8; ++j) { // 8 frames
-		int offset = 12575;
+	// The pair record for action 106 is { 106, 5 }; selector 5 makes the common
+	// input handler walk to object2, the room folder beside Philip and Jimmy,
+	// before dispatching this action. Its walk point is (104, 87). The action
+	// animation itself has the fixed destination 0x311F.
+	// DAT_OutsideCollege use matrix offset 0x68E; cseg141:0A89,0AEE.
+	const int offset = 0x311F;
+
+	for (int j = 0; j <= 8; ++j) { // frames 0..8; cseg141:0A7E-0AEC
 		for (int i = 0; i <= 27; ++i) {
 			memcpy(_screenVGA + offset + i * 320, _animFramesBuffer + 0x1E6E + i * 40 +  j * 1120, 40);
 		}
 		waitForTimer(30);
 	}
 
-	int offset = 12575;
 	for (int i = 0; i <= 27; ++i) {
 		memcpy(_screenVGA + offset + i * 320, _animFramesBuffer + 0x1E6E + i * 40, 40);
 	}

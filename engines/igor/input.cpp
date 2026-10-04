@@ -326,15 +326,13 @@ void IgorEngine::handleRoomInput() {
 		}
 	}
 
-	if (_currentAction.verbType == 1) {
-		int offset = _roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38] * 2;
-		offset += _roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38] * _roomDataOffsets.action.objectSize;
-		_actionCode = _roomActionsTable[_roomDataOffsets.action.useVerb + offset];
-	}
-	if (_currentAction.verbType == 2) {
-		int offset = _roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38] * 2;
-		offset += _roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38] * _roomDataOffsets.action.objectSize;
-		_actionCode = _roomActionsTable[_roomDataOffsets.action.giveVerb + offset];
+	int pairActionOffset = 0;
+	int pairVerbOffset = 0;
+	if (_currentAction.verbType != 0) {
+		pairActionOffset = _roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38] * 2;
+		pairActionOffset += _roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38] * _roomDataOffsets.action.objectSize;
+		pairVerbOffset = _currentAction.verbType == 1 ? _roomDataOffsets.action.useVerb : _roomDataOffsets.action.giveVerb;
+		_actionCode = _roomActionsTable[pairVerbOffset + pairActionOffset];
 	}
 
 	if (actionHovering) {
@@ -362,58 +360,69 @@ void IgorEngine::handleRoomInput() {
 		return;
 	}
 	formatActionSentence(1);
-	if (_currentAction.verbType == 0) {
-		if (_currentAction.object1Type == kObjectTypeRoom) {
-			_actionWalkPoint = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20 + 1];
-			if (_actionWalkPoint > 0) {
-				if (_currentAction.object1Num == 0) {
-					// no object selected, just walk
-					_walkToObjectPosX = _inputVars[kInputCursorXPos];
-					_walkToObjectPosY = _inputVars[kInputCursorYPos];
-					if (_roomObjectAreasTable[_screenLayer2[_walkToObjectPosY * 320 + _walkToObjectPosX]].area == 0) {
-						fixWalkPosition(&_walkToObjectPosX, &_walkToObjectPosY);
-					}
-				} else {
-					// walk to object
-					int offset = READ_LE_UINT16(_roomActionsTable + _roomDataOffsets.obj.walkPoints + _currentAction.object1Num * 2);
-					_walkToObjectPosX = offset % 320;
-					_walkToObjectPosY = offset / 320;
-					debugC(9, kDebugEngine, "handleRoomInput() walkToObject offset %d (0x%X)", offset, _roomDataOffsets.obj.walkPoints);
-				}
-				if (_gameState.igorMoving) {
-					// stop igor at the current position
-					_walkDataLastIndex = _walkDataCurrentIndex - 1;
-					_walkDataCurrentPosX = _walkData[_walkDataLastIndex].x;
-					_walkDataCurrentPosY = _walkData[_walkDataLastIndex].y;
-					_walkCurrentFrame = _walkData[_walkDataLastIndex].frameNum;
-					_walkCurrentPos = _walkData[_walkDataLastIndex].posNum;
-					WalkData::setNextFrame(_walkCurrentPos, _walkCurrentFrame);
-				} else {
-					--_walkDataLastIndex;
-					_walkDataCurrentPosX = _walkData[_walkDataLastIndex].x;
-					_walkDataCurrentPosY = _walkData[_walkDataLastIndex].y;
-					_walkCurrentPos = _walkData[_walkDataLastIndex].posNum;
-					_walkCurrentFrame = 1;
-				}
-				if (_walkDataCurrentPosX != _walkToObjectPosX || _walkDataCurrentPosY != _walkToObjectPosY) {
-					if (_roomDataOffsets.area.boxSize == 0) {
-						buildWalkPathSimple(_walkDataCurrentPosX, _walkDataCurrentPosY, _walkToObjectPosX, _walkToObjectPosY);
-					} else {
-						buildWalkPath(_walkDataCurrentPosX, _walkDataCurrentPosY, _walkToObjectPosX, _walkToObjectPosY);
-					}
-					if (_actionWalkPoint != 3) {
-						_walkCurrentFrame = 0;
-						_walkData[_walkDataLastIndex].frameNum = 0;
-					}
-					if (_actionWalkPoint == 1) {
-						_walkCurrentPos = _roomActionsTable[_roomDataOffsets.obj.walkFacingPosition + _currentAction.object1Num];
-						_walkData[_walkDataLastIndex].posNum = _walkCurrentPos;
-					}
-					_walkDataCurrentIndex = 1;
-					_gameState.igorMoving = true;
-				}
-				return;
+	int walkObjectNum = 0;
+	bool pairWalk = false;
+	if (_currentAction.verbType == 0 && _currentAction.object1Type == kObjectTypeRoom) {
+		walkObjectNum = _currentAction.object1Num;
+		_actionWalkPoint = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + walkObjectNum * 20 + 1];
+	} else if (_currentAction.verbType != 0) {
+		// Pair records are two bytes. Byte 0 is the action and byte 1 selects
+		// the Action field containing the room object to approach. Values above
+		// one walk; for example 5 selects object2Num. cseg175:229F-246B.
+		_actionWalkPoint = _roomActionsTable[pairVerbOffset + pairActionOffset + 1];
+		if (_actionWalkPoint > 1 && _actionWalkPoint <= sizeof(Action)) {
+			const uint8 *actionFields = reinterpret_cast<const uint8 *>(&_currentAction);
+			walkObjectNum = actionFields[_actionWalkPoint - 1]; // cseg175:246E-2479
+			pairWalk = true;
+		}
+	}
+	if ((_currentAction.verbType == 0 && _actionWalkPoint > 0) || pairWalk) {
+		if (!pairWalk && walkObjectNum == 0) {
+			// no object selected, just walk
+			_walkToObjectPosX = _inputVars[kInputCursorXPos];
+			_walkToObjectPosY = _inputVars[kInputCursorYPos];
+			if (_roomObjectAreasTable[_screenLayer2[_walkToObjectPosY * 320 + _walkToObjectPosX]].area == 0) {
+				fixWalkPosition(&_walkToObjectPosX, &_walkToObjectPosY);
 			}
+		} else {
+			// walk to object
+			int offset = READ_LE_UINT16(_roomActionsTable + _roomDataOffsets.obj.walkPoints + walkObjectNum * 2);
+			_walkToObjectPosX = offset % 320;
+			_walkToObjectPosY = offset / 320;
+			debugC(9, kDebugEngine, "handleRoomInput() walkToObject offset %d (0x%X)", offset, _roomDataOffsets.obj.walkPoints);
+		}
+		if (_gameState.igorMoving) {
+			// stop igor at the current position
+			_walkDataLastIndex = _walkDataCurrentIndex - 1;
+			_walkDataCurrentPosX = _walkData[_walkDataLastIndex].x;
+			_walkDataCurrentPosY = _walkData[_walkDataLastIndex].y;
+			_walkCurrentFrame = _walkData[_walkDataLastIndex].frameNum;
+			_walkCurrentPos = _walkData[_walkDataLastIndex].posNum;
+			WalkData::setNextFrame(_walkCurrentPos, _walkCurrentFrame);
+		} else {
+			--_walkDataLastIndex;
+			_walkDataCurrentPosX = _walkData[_walkDataLastIndex].x;
+			_walkDataCurrentPosY = _walkData[_walkDataLastIndex].y;
+			_walkCurrentPos = _walkData[_walkDataLastIndex].posNum;
+			_walkCurrentFrame = 1;
+		}
+		if (_walkDataCurrentPosX != _walkToObjectPosX || _walkDataCurrentPosY != _walkToObjectPosY) {
+			if (_roomDataOffsets.area.boxSize == 0) {
+				buildWalkPathSimple(_walkDataCurrentPosX, _walkDataCurrentPosY, _walkToObjectPosX, _walkToObjectPosY);
+			} else {
+				buildWalkPath(_walkDataCurrentPosX, _walkDataCurrentPosY, _walkToObjectPosX, _walkToObjectPosY);
+			}
+			if (pairWalk || _actionWalkPoint != 3) {
+				_walkCurrentFrame = 0;
+				_walkData[_walkDataLastIndex].frameNum = 0;
+			}
+			if (pairWalk || _actionWalkPoint == 1) {
+				_walkCurrentPos = _roomActionsTable[_roomDataOffsets.obj.walkFacingPosition + walkObjectNum];
+				_walkData[_walkDataLastIndex].posNum = _walkCurrentPos;
+			}
+			_walkDataCurrentIndex = 1;
+			_gameState.igorMoving = true;
+			return;
 		}
 	}
 
