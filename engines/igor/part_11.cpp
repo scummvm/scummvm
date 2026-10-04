@@ -24,16 +24,20 @@
 
 namespace Igor {
 
+// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
+// _objectsState[0] = s3:0x83C and [40..42] = s3:0x864..0x866;
+// cseg176:01AD-0A40.
+
 const uint32 kPart11PanelRight = 0x0000;
 
 void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 	PART_10_11_DRAW_OBJECT_STATE(num);
 
 	if (num == 1 || num == 255)
-		_roomObjectAreasTable[13].object = _objectsState[66] == 0 ? 4 : 3;
+		_roomObjectAreasTable[13].object = _objectsState[40] == 0 ? 4 : 3;
 
 	if (num == 2 || num == 255) {
-		if (_objectsState[67] == 1) {
+		if (_objectsState[41] == 1) {
 			// make area selectable
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].object = 7;
@@ -45,13 +49,13 @@ void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 	}
 
 	if (num == 3 || num == 255) {
-		if (_objectsState[68] == 0) {
+		if (_objectsState[42] == 0) {
 			for (int area = 7; area <= 8; ++area)
 				_roomObjectAreasTable[area].object = 0;
-		} else if (_objectsState[68] == 1) {
+		} else if (_objectsState[42] == 1) {
 			for (int area = 7; area <= 8; ++area)
 				_roomObjectAreasTable[area].object = 6;
-		} else if (_objectsState[68] == 2) {
+		} else if (_objectsState[42] == 2) {
 			_roomObjectAreasTable[7].object = 6;
 			_roomObjectAreasTable[8].object = 8;
 		}
@@ -65,7 +69,7 @@ void IgorEngine::PART_11_ACTION_105() {
 		waitForTimer(127);
 	}
 	addObjectToInventory(18, 53);
-	_objectsState[66] = 1;
+	_objectsState[40] = 1;
 	PART_11_APPLY_OBJECT_STATE(255);
 }
 
@@ -76,7 +80,7 @@ void IgorEngine::PART_11_ACTION_107() {
 		waitForTimer(61);
 	}
 	removeObjectFromInventory(42);
-	_objectsState[68] = 1;
+	_objectsState[42] = 1;
 	PART_11_APPLY_OBJECT_STATE(255);
 }
 
@@ -126,9 +130,9 @@ void IgorEngine::PART_11_ACTION_112() {
 		waitForTimer(61);
 	}
 	addObjectToInventory(23, 58);
-	_objectsState[68] = 1;
+	_objectsState[42] = 1;
 	PART_11_APPLY_OBJECT_STATE(3);
-	_objectsState[26] = 1;
+	_objectsState[0] = 1;
 	UPDATE_OBJECT_STATE(1);
 }
 
@@ -147,7 +151,7 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 103: // look at pipe
-		ADD_DIALOGUE_TEXT(_objectsState[66] == 0 ? 203 : 204, 1, _objectsState[66] == 0 ? 617 : 618);
+		ADD_DIALOGUE_TEXT(_objectsState[40] == 0 ? 203 : 204, 1, _objectsState[40] == 0 ? 617 : 618);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
@@ -181,7 +185,7 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 110: // Look at butterfly net
-		ADD_DIALOGUE_TEXT(_objectsState[68] == 1 ? 208 : 209, 1, _objectsState[68] == 1 ? 622 : 623);
+		ADD_DIALOGUE_TEXT(_objectsState[42] == 1 ? 208 : 209, 1, _objectsState[42] == 1 ? 622 : 623);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();

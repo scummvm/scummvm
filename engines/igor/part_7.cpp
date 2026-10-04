@@ -10,6 +10,9 @@
 
 namespace Igor {
 
+// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
+// _objectsState[26] = s3:0x856 and [27] = s3:0x857; cseg197:0150-03D8.
+
 const uint32 kDoor1Closed = 0x2175; // cseg197:007B
 const uint32 kDoor1Open = 0x23F1;   // cseg197:002B
 const uint32 kDoor2Closed = 0x266D; // cseg197:011B
@@ -18,21 +21,21 @@ const uint32 kDoor2Open = 0x28DD;   // cseg197:00CB
 void IgorEngine::PART_07_DRAW_DOOR_STATE(int num) {
 	_roomActionsTable[297] = 109;
 	if (num == 1 || num == 255) {
-		const uint32 srcOffset = _objectsState[52] == 0 ? kDoor1Closed : kDoor1Open;
+		const uint32 srcOffset = _objectsState[26] == 0 ? kDoor1Closed : kDoor1Open;
 		for (int y = 0; y <= 52; ++y)
 			memcpy(_screenLayer1 + 0x4DB8 + y * 320, _animFramesBuffer + srcOffset + y * 12, 12);
-		_roomActionsTable[146] = _objectsState[52] == 0 ? 6 : 7;
+		_roomActionsTable[146] = _objectsState[26] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
-		const uint32 srcOffset = _objectsState[53] == 0 ? kDoor2Closed : kDoor2Open;
+		const uint32 srcOffset = _objectsState[27] == 0 ? kDoor2Closed : kDoor2Open;
 		for (int y = 0; y <= 51; ++y)
 			memcpy(_screenLayer1 + 0x4E1A + y * 320, _animFramesBuffer + srcOffset + y * 12, 12);
-		_roomActionsTable[147] = _objectsState[53] == 0 ? 6 : 7;
+		_roomActionsTable[147] = _objectsState[27] == 0 ? 6 : 7;
 	}
 }
 
 void IgorEngine::PART_07_openCloseDoor(int door, bool open) {
-	const int stateIndex = door == 1 ? 52 : 53;
+	const int stateIndex = door == 1 ? 26 : 27; // s3:0x856/0x857; cseg197:0150-03D8
 	if ((_objectsState[stateIndex] != 0) == open) {
 		const int text = open ? 19 : 23;
 		ADD_DIALOGUE_TEXT(text, 1, text);
@@ -190,7 +193,7 @@ void IgorEngine::PART_07_EXEC_ACTION(int action) {
 		PART_07_EXIT_TO_OUTSIDE();
 		break;
 	case 111: // Go through dean's door
-		if (_objectsState[52] != 0) {
+		if (_objectsState[26] != 0) {
 			for (int area = 11; area <= 13; ++area) {
 				_roomObjectAreasTable[area].area = 3;
 			}
@@ -203,7 +206,7 @@ void IgorEngine::PART_07_EXEC_ACTION(int action) {
 		}
 		break;
 	case 112: // Go through secretary's door
-		if (_objectsState[53] != 0) {
+		if (_objectsState[27] != 0) {
 			WalkData &wd = _walkData[0];
 			wd.setPos(156, 113, kFacingPositionBack, 1);
 			wd.setDefaultScale();

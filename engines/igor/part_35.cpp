@@ -10,6 +10,9 @@
 
 namespace Igor {
 
+// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
+// _objectsState[82] = s3:0x88E; cseg100:006D-064E.
+
 void IgorEngine::PART_35_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_35_EXEC_ACTION %d", action);
 	switch (action) {
@@ -17,7 +20,7 @@ void IgorEngine::PART_35_EXEC_ACTION(int action) {
 		ADD_DIALOGUE_TEXT(201, 2, 611); // cseg100:0042-0068
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
-		_objectsState[88] = 1; // cseg100:006D
+		_objectsState[82] = 1; // cseg100:006D
 		PART_35_APPLY_OBJECT_STATE(3);
 		break;
 	case 102:
@@ -106,7 +109,7 @@ void IgorEngine::PART_35_ACTION_106_EXIT_TO_MAP() {
 
 void IgorEngine::PART_35_APPLY_OBJECT_STATE(int num) {
 	if (num == 3 || num == 255) {
-		_roomObjectAreasTable[4].area = (_objectsState[88] == 0) ? 1 : 2; // cseg100:0634-0653; s3:DC7A
+		_roomObjectAreasTable[7].object = (_objectsState[82] == 0) ? 1 : 2; // s3:0xDC7A; cseg100:0634-0653
 	}
 }
 

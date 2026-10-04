@@ -10,6 +10,10 @@
 
 namespace Igor {
 
+// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
+// _objectsState[73] = s3:0x885, [80] = s3:0x88C and [82] = s3:0x88E;
+// cseg101:0A17-0F91.
+
 void IgorEngine::PART_34_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_34_EXEC_ACTION %d", action);
 	switch (action) {
@@ -22,7 +26,7 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 		ADD_DIALOGUE_TEXT(203, 2, 563); // cseg101:0AF1-0B17
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
-		_objectsState[88] = 1; // cseg101:0B1C
+		_objectsState[82] = 1; // cseg101:0B1C
 		PART_34_APPLY_OBJECT_STATE(3);
 		break;
 	case 103:
@@ -104,14 +108,14 @@ void IgorEngine::PART_34_ACTION_109_SCROLL_RIGHT() {
 
 void IgorEngine::PART_34_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		if (!(_objectsState[86] == 0 && _objectsState[79] == 1)) {
-			_roomObjectAreasTable[2].area = 0; // cseg101:0F3C-0F80; table byte at s3:DC70
+		if (!(_objectsState[80] == 0 && _objectsState[73] == 1)) {
+			_roomObjectAreasTable[5].object = 0; // s3:0xDC70; cseg101:0F3C-0F80
 		} else {
 			// TODO: draw the state-dependent frame from FRM_Park1; cseg101:0F4A-0F79.
 		}
 	}
 	if (num == 3 || num == 255) {
-		_roomObjectAreasTable[1].area = (_objectsState[88] == 0) ? 2 : 3; // cseg101:0F85-0FA4
+		_roomObjectAreasTable[4].object = (_objectsState[82] == 0) ? 2 : 3; // s3:0xDC6B; cseg101:0F85-0FA4
 	}
 }
 

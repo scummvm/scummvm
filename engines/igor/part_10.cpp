@@ -24,6 +24,10 @@
 
 namespace Igor {
 
+// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
+// _objectsState[38] = s3:0x862 and [41..42] = s3:0x865..0x866;
+// cseg175:015A-27FD.
+
 
 const uint32 kPart10PanelLeft = 0x0000;
 
@@ -31,18 +35,18 @@ void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
 	// These three original blitters are byte-for-byte duplicates in the two
 	// halves of the room
 
-	if ((num == 2 || num == 255) && _objectsState[67] == 1) {
+	if ((num == 2 || num == 255) && _objectsState[41] == 1) {
 		for (int y = 0; y <= 7; ++y)
 			memcpy(_screenLayer1 + 0x7DA1 + y * 320,
 					_animFramesBuffer + 0xC786 + y * 37, 37);
 	}
 
 	if (num == 3 || num == 255) {
-		if (_objectsState[68] == 1) {
+		if (_objectsState[42] == 1) {
 			for (int y = 0; y <= 14; ++y)
 				memcpy(_screenLayer1 + 0x4E32 + y * 320,
 						_animFramesBuffer + 0xC5E2 + y * 14, 14);
-		} else if (_objectsState[68] == 2) {
+		} else if (_objectsState[42] == 2) {
 			for (int y = 0; y <= 14; ++y)
 				memcpy(_screenLayer1 + 0x4E32 + y * 320,
 						_animFramesBuffer + 0xC6B4 + y * 14, 14);
@@ -110,7 +114,7 @@ void IgorEngine::PART_10_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_10_ACTION_104_pickHamburger() {
-	if (_objectsState[64] == 1) { // already picked hamburger
+	if (_objectsState[38] == 1) { // already picked hamburger
 		ADD_DIALOGUE_TEXT(205, 1, 629);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -134,7 +138,7 @@ void IgorEngine::PART_10_ACTION_104_pickHamburger() {
 	}
 
 	addObjectToInventory(17, 52);
-	_objectsState[64] = 1;
+	_objectsState[38] = 1;
 }
 
 void IgorEngine::PART_10_ACTION_108_scrollLeft() {

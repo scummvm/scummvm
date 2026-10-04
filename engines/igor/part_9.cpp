@@ -10,23 +10,27 @@
 
 namespace Igor {
 
+// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
+// _objectsState[27] = s3:0x857 and [34..36] = s3:0x85E..0x860;
+// cseg190:0288-112A.
+
 void IgorEngine::PART_09_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		const uint32 srcOffset = _objectsState[53] == 0 ? 0x5D0B : 0x61A3;
+		const uint32 srcOffset = _objectsState[27] == 0 ? 0x5D0B : 0x61A3;
 		for (int y = 0; y <= 48; ++y)
 			memcpy(_screenLayer1 + 0x46C2 + y * 320, _animFramesBuffer + srcOffset + y * 24, 24);
-		_roomActionsTable[150] = _objectsState[53] == 0 ? 6 : 7;
+		_roomActionsTable[150] = _objectsState[27] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
-		const uint32 srcOffset = _objectsState[60] == 0 ? 0x663B : 0x6A23;
+		const uint32 srcOffset = _objectsState[34] == 0 ? 0x663B : 0x6A23;
 		for (int y = 0; y <= 49; ++y)
 			memcpy(_screenLayer1 + 0x48E6 + y * 320, _animFramesBuffer + srcOffset + y * 20, 20);
-		_roomObjectAreasTable[4].object = (_objectsState[60] == 0 || _objectsState[62] != 0) ? 3 : 5;
+		_roomObjectAreasTable[4].object = (_objectsState[34] == 0 || _objectsState[36] != 0) ? 3 : 5;
 	}
 }
 
 void IgorEngine::PART_09_ANIMATE_DOOR(bool open) {
-	if ((_objectsState[53] != 0) == open) {
+	if ((_objectsState[27] != 0) == open) {
 		const int text = open ? 19 : 23;
 		ADD_DIALOGUE_TEXT(text, 1, text);
 		SET_DIALOGUE_TEXT(1, 1);
@@ -45,7 +49,7 @@ void IgorEngine::PART_09_ANIMATE_DOOR(bool open) {
 			playSound(open ? 13 : 14, 1);
 		waitForTimer(127);
 	}
-	_objectsState[53] = open ? 1 : 0;
+	_objectsState[27] = open ? 1 : 0;
 	PART_09_APPLY_OBJECT_STATE(1);
 }
 
@@ -71,7 +75,7 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 109:
-		if (_objectsState[61] == 0)
+		if (_objectsState[35] == 0)
 			ADD_DIALOGUE_TEXT(216, 1, 244);
 		else
 			ADD_DIALOGUE_TEXT(224, 1, 252);
@@ -86,7 +90,7 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 115:
-		if (_objectsState[53] != 0) {
+		if (_objectsState[27] != 0) {
 			_walkData[0].setPos(207, 106, kFacingPositionBack, 1);
 			_walkData[0].setDefaultScale();
 			_walkDataCurrentIndex = 0;

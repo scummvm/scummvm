@@ -10,31 +10,41 @@
 
 namespace Igor {
 
+// _objectsState[] is a flat mirror of the original's s3:0x83C-based globals.
+// Indices are addresses relative to s3:0x83C: [0]=0x83C, [26]=0x856,
+// [28..32]=0x858..0x85C, [41..42]=0x865..0x866 and [111]=0x8AB;
+// cseg189:02B0-16EF.
+
 void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		const uint32 srcOffset = _objectsState[52] == 0 ? 0 : 0x4C8;
+		const uint32 srcOffset = _objectsState[26] == 0 ? 0 : 0x4C8;
 		for (int y = 0; y <= 50; ++y)
 			memcpy(_screenLayer1 + 0x572C + y * 320, _animFramesBuffer + srcOffset + y * 24, 24);
-		_roomActionsTable[150] = _objectsState[52] == 0 ? 6 : 7;
+		_roomActionsTable[150] = _objectsState[26] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
-		// TODO: map the independent s3:0x8AB flag.
+		if (_objectsState[111] == 1) { // s3:0x8AB; cseg189:16EF-1700
+			_roomObjectAreasTable[7].object = 0; // s3:0xDC7A; cseg189:16F6
+			_roomObjectAreasTable[8].object = 0; // s3:0xDC7F; cseg189:16FB
+			_roomActionsTable[146] = 4; // cseg189:1732-1743
+			return;
+		}
 		uint32 srcOffset;
 		int dstOffset;
 		int rows;
 		int width;
-		if (_objectsState[55] == 0) {
+		if (_objectsState[29] == 0) {
 			srcOffset = 0x208A;
 			dstOffset = 0x6BC3;
 			rows = 26;
 			width = 34;
 			_roomObjectAreasTable[8].object = 0;
 		} else {
-			srcOffset = _objectsState[57] == 0 ? 0x9992 : 0x985C;
+			srcOffset = _objectsState[31] == 0 ? 0x9992 : 0x985C;
 			dstOffset = 0x7FC8;
 			rows = 10;
 			width = 31;
-			_roomObjectAreasTable[8].object = _objectsState[57] == 0 ? 3 : 0;
+			_roomObjectAreasTable[8].object = _objectsState[31] == 0 ? 3 : 0;
 		}
 		for (int y = 0; y < rows; ++y) {
 			const uint8 *src = _animFramesBuffer + srcOffset + y * width;
@@ -46,7 +56,7 @@ void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 }
 
 void IgorEngine::PART_08_ANIMATE_DOOR(bool open) {
-	if ((_objectsState[52] != 0) == open) {
+	if ((_objectsState[26] != 0) == open) {
 		const int text = open ? 19 : 23;
 		ADD_DIALOGUE_TEXT(text, 1, text);
 		SET_DIALOGUE_TEXT(1, 1);
@@ -67,7 +77,7 @@ void IgorEngine::PART_08_ANIMATE_DOOR(bool open) {
 			break;
 		waitForTimer(127);
 	}
-	_objectsState[52] = open ? 1 : 0;
+	_objectsState[26] = open ? 1 : 0;
 	PART_08_APPLY_OBJECT_STATE(1);
 }
 
@@ -109,7 +119,7 @@ void IgorEngine::PART_08_ACTION_105() {
 			waitForTimer(127);
 	}
 	addObjectToInventory(15, 50);
-	_objectsState[57] = 1;
+	_objectsState[31] = 1;
 	PART_08_APPLY_OBJECT_STATE(255);
 }
 
@@ -137,7 +147,7 @@ void IgorEngine::PART_08_ACTION_109() {
 
 	addObjectToInventory(13, 48);
 	PART_08_APPLY_OBJECT_STATE(255);
-	_objectsState[54] = 1;
+	_objectsState[28] = 1;
 }
 
 void IgorEngine::PART_08_DRAW_SECRETARY_CUTAWAY_FRAME(int frame) {
@@ -159,7 +169,7 @@ void IgorEngine::PART_08_UPDATE_DIALOGUE_SECRETARY(int action) {
 
 void IgorEngine::PART_08_ACTION_108() {
 	const int currentPart = _currentPart;
-	const int actionFrameOffset = _objectsState[57] == 0 ? 0x2773 : 0x328D;
+	const int actionFrameOffset = _objectsState[31] == 0 ? 0x2773 : 0x328D;
 	playSound(60, 1);
 	for (int frame = 0; frame <= 1; ++frame) {
 		for (int y = 0; y <= 48; ++y)
@@ -196,8 +206,10 @@ void IgorEngine::PART_08_ACTION_108() {
 	}
 	waitForTimer(255);
 	fadeOut(624);
-	_objectsState[53] = 0;
-	_objectsState[61] = 1;
+	// The two stores this port used to do here (_objectsState[53] = 0 and
+	// _objectsState[61] = 1) have no counterpart in cseg189, which writes only
+	// s3:0x856, s3:0x858-0x85C, s3:0x865 and s3:0x866. s3:0x879 (index 61) is
+	// part_5/part_6's flag, so that store was corrupting another room.
 
 	loadActionData(DAT_DeanPepperOffice);
 	loadRoomData(PAL_DeanPepperOffice, IMG_DeanPepperOffice,
@@ -211,7 +223,7 @@ void IgorEngine::PART_08_ACTION_108() {
 	drawInventory(_inventoryInfo[72], 0);
 	fadeIn(768);
 	_currentPart = currentPart;
-	_objectsState[58] = 1;
+	_objectsState[32] = 1;
 }
 
 void IgorEngine::PART_08_DEAN_LEAVES() {
@@ -271,7 +283,7 @@ void IgorEngine::PART_08_HANDLE_DIALOGUE_DEAN() {
 }
 
 void IgorEngine::PART_08_ACTION_103_TALK_TO_DEAN() {
-	if (_objectsState[55] == 1) {
+	if (_objectsState[29] == 1) {
 		ADD_DIALOGUE_TEXT(223, 1, 169);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -279,7 +291,7 @@ void IgorEngine::PART_08_ACTION_103_TALK_TO_DEAN() {
 		return;
 	}
 
-	if (_objectsState[52] == 1) { // door open
+	if (_objectsState[26] == 1) { // door open
 		PART_08_DRAW_DEAN();
 		ADD_DIALOGUE_TEXT(220, 1, 166);
 		ADD_DIALOGUE_TEXT(221, 1, 167);
@@ -296,14 +308,14 @@ void IgorEngine::PART_08_ACTION_103_TALK_TO_DEAN() {
 }
 
 void IgorEngine::PART_08_ACTION_114() {
-	if (_objectsState[55] == 1) {
+	if (_objectsState[29] == 1) {
 		ADD_DIALOGUE_TEXT(227, 1, 172);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		return;
 	}
-	if (_objectsState[26] == 1) {
+	if (_objectsState[0] == 1) {
 		ADD_DIALOGUE_TEXT(226, 1, 171);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -355,7 +367,7 @@ void IgorEngine::PART_08_ACTION_114() {
 	startCutsceneDialogue(78, 75, 26, 58, 0);
 	waitForEndOfCutsceneDialogue(78, 75, 26, 58, 0);
 	_updateDialogue = 0;
-	_objectsState[56] = _objectsState[26] < 2 ? 1 : 2;
+	_objectsState[30] = _objectsState[0] < 2 ? 1 : 2;
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(63, 1);
 	PART_08_APPLY_OBJECT_STATE(255);
@@ -364,11 +376,11 @@ void IgorEngine::PART_08_ACTION_114() {
 void IgorEngine::PART_08_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		if (_objectsState[52] == 0) {
+		if (_objectsState[26] == 0) {
 			_currentPart = 71;
 			break;
 		}
-		if (_objectsState[52] != 0) {
+		if (_objectsState[26] != 0) {
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].area = 4;
 			for (int area = 13; area <= 14; ++area)
@@ -378,20 +390,20 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 			_walkDataCurrentIndex = 1;
 			_gameState.igorMoving = true;
 			waitForIgorMove();
-			if (_objectsState[56] != 0) {
+			if (_objectsState[30] != 0) {
 				waitForTimer(251);
 				PART_08_DEAN_LEAVES();
-				if (_objectsState[68] == 1)
-					_objectsState[68] = 2;
+				if (_objectsState[42] == 1)
+					_objectsState[42] = 2;
 				else
-					_objectsState[67] = 1;
+					_objectsState[41] = 1;
 				waitForTimer(101);
 				playSound(16, 1);
-				if (_objectsState[56] == 2) {
+				if (_objectsState[30] == 2) {
 					PART_08_DEAN_DRINKS();
-					_objectsState[55] = 1;
+					_objectsState[29] = 1;
 				}
-				_objectsState[56] = 0;
+				_objectsState[30] = 0;
 			}
 			_currentPart = 71;
 		}
@@ -403,7 +415,7 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 104:
-		if (_objectsState[55] == 1)
+		if (_objectsState[29] == 1)
 			ADD_DIALOGUE_TEXT(222, 1, 168);
 		else
 			ADD_DIALOGUE_TEXT(203, 2, 154);
@@ -436,12 +448,12 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		PART_08_ACTION_103_TALK_TO_DEAN();
 		break;
 	case 108:
-		if (_objectsState[55] == 0) {
+		if (_objectsState[29] == 0) {
 			ADD_DIALOGUE_TEXT(212, 1, 159);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
 			waitForEndOfIgorDialogue();
-		} else if (_objectsState[58] == 1) {
+		} else if (_objectsState[32] == 1) {
 			ADD_DIALOGUE_TEXT(224, 2, 170);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
@@ -451,12 +463,12 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		}
 		break;
 	case 109:
-		if (_objectsState[55] == 0) {
+		if (_objectsState[29] == 0) {
 			ADD_DIALOGUE_TEXT(213, 2, 160);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
 			waitForEndOfIgorDialogue();
-		} else if (_objectsState[54] == 1) {
+		} else if (_objectsState[28] == 1) {
 			ADD_DIALOGUE_TEXT(215, 1, 161);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
