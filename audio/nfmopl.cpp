@@ -21,7 +21,7 @@
 
 /*
     OPL interface using nFM library(https://framagit.org/nokturnal/nfm)
-    for NokturnFM2 / 3, OPL-L carts, CE OPL2 Audio board, CE OPL3 Duo!, Serdaco OPL2LPT / OPL3LPT, RetroWave OPL3 Express and more ...
+    for NokturnFM2 / 3, CE OPL2 Audio board, CE OPL3 Duo!, Serdaco OPL2LPT / OPL3LPT, ST Bus ISA / VME SoundBlaster and NatFeats
     (c) 2023-26 Paweł Góralski
  */
 
@@ -32,108 +32,87 @@
 #include "audio/fmopl.h"
 #include "audio/nfmopl.h"
 
-#include <nfmoplshadowregs.h>
+extern "C"
+{
+#include <nfmcore.h>
+#include <nfmutil.h>
+}
 
-#ifndef RELEASE_BUILD
-	#include "common/debug.h"
-	#define NFM_ENABLE_LOGS 1
-#endif
+#include <mint/osbind.h>
 
 #define NFM_ENABLE_BUFFERED_OUTPUT false
-#define NFM_ENABLE_CUSTOM_ALLOC 1
-
-// TODO set for Linux / Win
-//static const char gsOpl3ExpressPortName[] = "";
-
-#if NFM_ENABLE_CUSTOM_ALLOC
-	// custom allocators
-	#include "backends/platform/atari/dlmalloc.h"
-	#define NFM_MSPACE_SIZE 1*1024
-#endif
 
 namespace OPL {
 namespace NfmOPL {
 
-#if NFM_ENABLE_CUSTOM_ALLOC
-
-extern "C"
-{
-	static mspace s_mNfmSpace = nullptr;
-	static sNfUserMemoryCallbacks s_MemCallbacks;
-	static void *s_nfmMemoryBase = nullptr;
-
-	static void *nfmAlloc(size_t amount, const eNfMemoryFlag flag, void* userData, const char* functionName, char* fileName, uint32_t lineNo) {
-#if NFM_ENABLE_LOGS
-		debug("nfmAlloc()");
-#endif
-		return mspace_malloc(s_mNfmSpace, amount);
-	}
-
-	static void *nfmAlignedAlloc(size_t alignment, size_t amount, const eNfMemoryFlag flag, void* userData, const char* functionName, char* fileName, uint32_t lineNo) {
-#if NFM_ENABLE_LOGS
-		debug("nfmAlignedAlloc()");
-#endif
-		return mspace_memalign(s_mNfmSpace, alignment, amount);
-	}
-
-	static void *nfmRealloc(void* pOriginal, size_t size, void* userData) {
-#if NFM_ENABLE_LOGS
-		debug("nfmRealloc()");
-#endif
-		return mspace_realloc(s_mNfmSpace, pOriginal, size);
-	}
-
-	static void nfmFree(void* ptr, void* userData) {
-#if NFM_ENABLE_LOGS
-		debug("nfmFree()");
-#endif
-		mspace_free(s_mNfmSpace, ptr);
-	}
-
-	static void nfmOutOfMemoryCb(void* userData) {
-#if NFM_ENABLE_LOGS
-		debug("nfmOutOfMemoryCb() out of memory!");
-#endif
-	}
-
-}
-#endif
-
-#if NFM_ENABLE_LOGS
-static const char *s_DebugConfigMsgStrs[NfmOPL::dtNumDevices] = {
-	"Configuring NokturnFM2 cartridge",
-	"Configuring NokturnFM3 cartridge",
-	"Configuring RetroWave OPL3 Express",
-	"Configuring Serdaco OPL2LPT",
-	"Configuring Serdaco OPL3LPT",
-	"Configuring CE OPL2 Audio Board",
-	"Configuring CE OPL3 Duo!",
-	"Configuring ST Bus ISA / VME SoundBlaster",
-	"Configuring NatFeats / NULL",
-	"Configuring Nuked-OPL3",
-};
-
-static const char *s_DebugOplWriteStrs[NfmOPL::dtNumDevices] = {
-	"NfmOPL NokturnFM2 writeReg",
-	"NfmOPL NokturnFM3 writeReg",
-	"NfmOPL OPL3 Express writeReg",
-	"NfmOPL OPL2LPT writeReg",
-	"NfmOPL OPL3LPT writeReg",
-	"NfmOPL OPL2AudioBoard writeReg",
-	"NfmOPL OPL3Duo writeReg",
-	"NfmOPL ST Bus ISA / VME SoundBlaster writeReg",
-	"NfmOPL NatFeats / NULL writeReg",
-	"NfmOPL Nuked-OPL3 writeReg",
-};
-#endif
 namespace RealChip {
-// hardware opl
-OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _deviceType(deviceType), _activeReg(0), _initialized(false), _useBuffer(NFM_ENABLE_BUFFERED_OUTPUT), _incapableDevice(false) {
-#if NFM_ENABLE_LOGS
-	debug("NfmOPL::RealChip create");
-#endif
 
+class OPL : public ::OPL::OPL, public Audio::RealChip {
+private:
+	Config::OplType _type;
+	OplDevice _deviceType;
+	sFmInterface _iface;
+	funcPtrOplWrite _oplWrite;
+	funcPtrOplWrite _oplEnqueWrite;
+	funcPtrOplFlush _oplFlush;
+	funcPtrOplReset _oplReset;
+
+	sInterfaceInitData _params;
+	sOplInterfaceConfiguration _ifaceCfg;
+
+	int _activeReg;
+	bool _initialized;
+	bool _useBuffer;
+	bool _incapableDevice;
+	bool _needsSupervisor;	// driver accesses I/O registers directly
+	bool _inSupervisor;		// set while a SupervisorScope holds supervisor mode
+public:
+	explicit OPL(Config::OplType type, enum NfmOPL::OplDevice deviceType);
+	~OPL();
+
+	bool init() override final;
+	void reset() override final;
+
+	void write(int portAddress, int value) override final;
+	void writeReg(int reg, int value) override final;
+
+protected:
+
+	void onTimer() override final;
+};
+
+// Drivers which access I/O registers directly (e.g. the parallel port through
+// the YM2149 at $FFFF8800) cause a bus error in user mode, which is where all
+// ScummVM threads run. The cartridge port and NatFeats are accessible from user
+// mode. ISA access goes through an _ISA cookie driver or machine specific
+// addresses whose requirements are not known, so it uses supervisor mode as a
+// precaution. Nested scopes are cheap: only the outermost one enters
+// supervisor mode.
+class SupervisorScope {
+public:
+	SupervisorScope(bool needed, bool &active) : _active(active), _oldSsp(nullptr) {
+		if (needed && !_active && Super(SUP_INQUIRE) == 0) {
+			_oldSsp = (void *)Super(SUP_SET);
+			_active = true;
+		}
+	}
+
+	~SupervisorScope() {
+		if (_oldSsp) {
+			_active = false;
+			SuperToUser(_oldSsp);
+		}
+	}
+
+private:
+	bool &_active;
+	void *_oldSsp;
+};
+
+// hardware opl
+OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _deviceType(deviceType), _activeReg(0), _initialized(false), _useBuffer(NFM_ENABLE_BUFFERED_OUTPUT), _incapableDevice(false), _needsSupervisor(false), _inSupervisor(false) {
 	// defaults
+	memset(&_params, 0, sizeof(_params));
 	_ifaceCfg.deviceType = eFmDriverType::FMD_UNDEFINED;
 	_ifaceCfg.soundchip = CM_UNDEFINED;
 	_ifaceCfg.operationMode = CO_UNDEFINED;
@@ -155,12 +134,6 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 
 	_ifaceCfg.setup = CC_SINGLE;
 
-#if NFM_ENABLE_LOGS
-	if (deviceType < dtNumDevices) {
-		debug(s_DebugConfigMsgStrs[deviceType]);
-	}
-#endif
-
 	switch (deviceType) {
 	case dtNokturnFM2: {
 		_params.uParam.outputPort = OPT_ST_CART;
@@ -180,17 +153,9 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 		_ifaceCfg.setup = CC_SINGLE;
 	}
 	break;
-	case dtRWOpl3Express: {
-		_useBuffer = true;                                          // use buffered output, sending data has significant overhead
-		_params.uOpl3ExpressSettings.outputPort = OPT_USB;
-		_ifaceCfg.deviceType = eFmDriverType::FMD_OPL3EXPRESS;
-		_ifaceCfg.soundchip = CM_OPL3;
-		_ifaceCfg.setup = CC_SINGLE;
-		// TODO set serial port on Win / Linux requested by user
-	}
-	break;
 	case dtOPL2LPT: {
 		_params.uParam.outputPort = OPT_LPT;
+		_needsSupervisor = true;
 
 		_ifaceCfg.deviceType = eFmDriverType::FMD_OPL2LPT;
 		_ifaceCfg.soundchip = CM_OPL2;
@@ -204,6 +169,7 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 	case dtOPL3LPT: {
 		// OPL2 mode is forced internally on anything below TT due to lack of signals
 		_params.uParam.outputPort = OPT_LPT;
+		_needsSupervisor = true;
 
 		_ifaceCfg.deviceType = eFmDriverType::FMD_OPL3LPT;
 		_ifaceCfg.soundchip = CM_OPL3;
@@ -212,6 +178,7 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 	break;
 	case dtOPL2AudioBoard: {
 		_params.uParam.outputPort = OPT_LPT_SPI;
+		_needsSupervisor = true;
 		_params.uCeAudioBoardSettings.isOpl2AudioBoard = true;
 		_ifaceCfg.deviceType = eFmDriverType::FMD_CE_OPL2AUDIO_LPT_SPI;
 		_ifaceCfg.soundchip = CM_OPL2;
@@ -224,6 +191,7 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 	break;
 	case dtOPL3Duo: {
 		_params.uParam.outputPort = OPT_LPT_SPI;
+		_needsSupervisor = true;
 		_params.uCeAudioBoardSettings.isOpl2AudioBoard = false;
 		_ifaceCfg.deviceType = eFmDriverType::FMD_CE_OPL3DUO_LPT_SPI;
 		_ifaceCfg.soundchip = CM_OPL3;
@@ -233,11 +201,11 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 	case dtStBusIsaVmeSb: {
 		// TODO: handle additional VME / ISA parameters if needed
 		_params.uParam.outputPort = OPT_ISA;
+		_needsSupervisor = true;	// precaution, see SupervisorScope
 		_params.uParam.param = 0;
 
 		_ifaceCfg.deviceType = eFmDriverType::FMD_ISA_SB;
 		_ifaceCfg.soundchip = CM_OPL3;
-		_ifaceCfg.operationMode = CO_OPL2,
 		_ifaceCfg.setup = CC_SINGLE;
 	}
 	break;
@@ -256,15 +224,14 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 }
 
 OPL::~OPL() {
+	// stop the timer callbacks before the interface goes away
+	stop();
+
 	if (_initialized == true) {
-#if NFM_ENABLE_LOGS
-		debug("NfmOPL destroy");
-#endif
+		SupervisorScope supervisor(_needsSupervisor, _inSupervisor);
+
 		if (_useBuffer) {
 			// flush
-#if NFM_ENABLE_LOGS
-			debug("OPL flush");
-#endif
 			_oplFlush();
 		}
 
@@ -279,62 +246,20 @@ OPL::~OPL() {
 		_incapableDevice = false;
 		_useBuffer = false;
 		_initialized = false;
-#if NFM_ENABLE_CUSTOM_ALLOC
-		if (s_mNfmSpace) {
-			destroy_mspace(s_mNfmSpace);
-			Mfree(s_nfmMemoryBase);
-			s_nfmMemoryBase = nullptr;
-		}
-#endif
 	}
 }
 
 bool OPL::init() {
-#if NFM_ENABLE_LOGS
-	debug("NfmOPL::RealChip init");
-#endif
 	if (_incapableDevice) {
-#if NFM_ENABLE_LOGS
-	debug("NfmOPL::RealChip OPL2 device cannot emulate requested dual OPL2 / OPL3!");
-#endif
 		return false;
 	}
 
-#if NFM_ENABLE_CUSTOM_ALLOC
-
-	s_nfmMemoryBase = (void *)Mxalloc((int32_t)NFM_MSPACE_SIZE + 256, (int16_t)3);
-
-	if (s_nfmMemoryBase) {
-		s_mNfmSpace = create_mspace_with_base(s_nfmMemoryBase, NFM_MSPACE_SIZE, 0);
-
-		if (s_mNfmSpace == 0) {
-#if NFM_ENABLE_LOGS
-			debug("NfmOPL::RealChip create_mspace failed!");
-#endif
-			return false;
-		}
-
-		// install user memory allocator callbacks
-		s_MemCallbacks.alloc = nfmAlloc;
-		s_MemCallbacks.alignedAlloc = nfmAlignedAlloc;
-		s_MemCallbacks.release = nfmFree;
-		s_MemCallbacks.realloc = nfmRealloc;
-		s_MemCallbacks.outOfMemory = nfmOutOfMemoryCb;
-
-		nfInit(&s_MemCallbacks, NULL);
-
-	} else {
-#if NFM_ENABLE_LOGS
-		debug("NfmOPL::RealChip Out of system memory!");
-#endif
-		return false;
-	}
-#else
-	nfInit(NULL,NULL);
-#endif
+	nfInit(NULL, NULL);
 	_iface = nfCreateInterface(_ifaceCfg);
 
 	if (_iface.setup != CC_UNDEFINED) {
+		SupervisorScope supervisor(_needsSupervisor, _inSupervisor);
+
 		const int32_t retval = nfInitialiseInterface(&_iface, &_params);
 
 		if (retval >= 0) {
@@ -346,23 +271,20 @@ bool OPL::init() {
 			initDualOpl2OnOpl3(_type);
 			_initialized = true;
 
-#if NFM_ENABLE_LOGS
-			debug("NfmOPL::RealChip init OK");
-#endif
 			return true;
 		}
+
+		(void)nfDestroyInterface(&_iface);
 	}
 
-#if NFM_ENABLE_LOGS
-	debug("NfmOPL::RealChip init failed!");
-#endif
+	(void)nfDeinit();
+
 	return false;
 }
 
 void OPL::reset() {
-#if NFM_ENABLE_LOGS
-	debug("NfmOPL::RealChip reset");
-#endif
+	SupervisorScope supervisor(_needsSupervisor, _inSupervisor);
+
 	for (int16_t i = 0; i < 256; i ++) {
 		writeReg((int)i, 0);
 	}
@@ -397,10 +319,6 @@ void OPL::write(int portAddress, int value) {
 }
 
 void OPL::writeReg(int reg, int value) {
-#if NFM_ENABLE_LOGS
-	debug(s_DebugOplWriteStrs[_deviceType]);
-#endif
-
 	if (_type == Config::kOpl3 || _type == Config::kDualOpl2) {
 		reg &= 0x1ff;
 	} else {
@@ -410,6 +328,7 @@ void OPL::writeReg(int reg, int value) {
 	value &= 0xff;
 
 	if (emulateDualOpl2OnOpl3(reg, value, _type)) {
+		SupervisorScope supervisor(_needsSupervisor, _inSupervisor);
 		sOplRegisterWrite regWrite;
 
 		if (reg < 0x100) {
@@ -429,10 +348,7 @@ void OPL::writeReg(int reg, int value) {
 void OPL::onTimer() {
 	if (_useBuffer) {
 		if (_initialized) {
-#if NFM_ENABLE_LOGS
-			// flush
-			debug("NfmOPL::RealChip flush");
-#endif
+			SupervisorScope supervisor(_needsSupervisor, _inSupervisor);
 			_oplFlush();
 		}
 	}
@@ -440,256 +356,10 @@ void OPL::onTimer() {
 	Audio::RealChip::onTimer();
 }
 
-OPL *create(Config::OplType type, OplDevice device) {
+::OPL::OPL *create(Config::OplType type, OplDevice device) {
 	return new OPL(type, device);
 }
 } // End of namespace RealChip
-
-namespace EmulatedChip {
-OPL::OPL(Config::OplType type, enum NfmOPL::OplDevice deviceType): _type(type), _rate(0), _deviceType(deviceType), _activeReg(0), _initialized(false), _useBuffer(NFM_ENABLE_BUFFERED_OUTPUT), _incapableDevice(false) {
-#if NFM_ENABLE_LOGS
-	debug("NfmOPL::EmulatedChip create");
-#endif
-	
-	// defaults
-	_ifaceCfg.deviceType = eFmDriverType::FMD_UNDEFINED;
-	_ifaceCfg.soundchip = CM_UNDEFINED;
-	_ifaceCfg.operationMode = CO_UNDEFINED;
-	_ifaceCfg.setup = CC_UNDEFINED;
-	_ifaceCfg.dualChipEmulationEnabled = false;
-
-	_oplWrite = nullptr;
-	_oplEnqueWrite = nullptr;
-	_oplFlush = nullptr;
-	_oplReset = nullptr;
-	_generateAudioStream = nullptr;
-
-	if (_type == Config::kOpl2) {
-		_ifaceCfg.operationMode = CO_OPL2;
-	}
-
-	if (_type == Config::kOpl3 || _type == Config::kDualOpl2) {
-		_ifaceCfg.operationMode = CO_OPL3;
-	}
-
-	_ifaceCfg.setup = CC_SINGLE;
-
-#if NFM_ENABLE_LOGS
-	if (deviceType < dtNumDevices) {
-		debug(s_DebugConfigMsgStrs[deviceType]);
-	}
-#endif
-	switch (deviceType) {
-	case dtNukedOpl3: {
-		_rate = g_system->getMixer()->getOutputRate();
-		_params.uSoftSynthSettings.outputPort = OPT_INTERNAL;
-		_params.uSoftSynthSettings.sampleRate = _rate;
-		_params.uSoftSynthSettings.enableDualChipEmulation = _ifaceCfg.dualChipEmulationEnabled;
-
-		_ifaceCfg.deviceType = FMD_NUKEDOPL3;
-		_ifaceCfg.soundchip = CM_OPL3;
-		_ifaceCfg.operationMode = CO_OPL3;
-		_ifaceCfg.setup = CC_SINGLE;
-	}
-	break;
-
-	default: {
-		warning("NfmOPL::EmulatedChip Unrecognized device type or not software synthesizer!");
-		_incapableDevice = true;
-	}
-	break;
-	};
-}
-
-OPL::~OPL() {
-
-	if (_initialized == true) {
-#if NFM_ENABLE_LOGS
-		debug("NfmOPL::EmulatedChip destroy");
-#endif
-		stop();
-
-		if (_useBuffer) {
-#if NFM_ENABLE_LOGS
-			// flush
-			debug("NfmOPL::EmulatedChip OPL flush");
-#endif
-			_oplFlush();
-		}
-
-		_oplWrite = nullptr;
-		_oplEnqueWrite = nullptr;
-		_oplFlush = nullptr;
-		_oplReset = nullptr;
-		_generateAudioStream = nullptr;
-
-		(void)nfDestroyInterface(&_iface);
-		(void)nfDeinit();
-		_incapableDevice = false;
-		_useBuffer = false;
-		_initialized = false;
-
-#if NFM_ENABLE_CUSTOM_ALLOC
-		if (s_mNfmSpace) {
-			destroy_mspace(s_mNfmSpace);
-			Mfree(s_nfmMemoryBase);
-			s_nfmMemoryBase = nullptr;
-		}
-#endif
-	}
-}
-
-bool OPL::init() {
-#if NFM_ENABLE_LOGS
-	debug("NfmOPL::EmulatedChip init");
-#endif
-	if (_incapableDevice) {
-#if NFM_ENABLE_LOGS
-		debug("NfmOPL::EmulatedChip device isn't soft synth type!");
-#endif
-		return false;
-	}
-
-#if NFM_ENABLE_CUSTOM_ALLOC
-
-	s_nfmMemoryBase = (void *)Mxalloc((int32_t)NFM_MSPACE_SIZE + 256, (int16_t)3);
-
-	if (s_nfmMemoryBase) {
-		s_mNfmSpace = create_mspace_with_base(s_nfmMemoryBase, NFM_MSPACE_SIZE, 0);
-
-		if (s_mNfmSpace == 0) {
-#if NFM_ENABLE_LOGS
-			debug("NfmOPL::EmulatedChip create_mspace failed!");
-#endif
-			return false;
-		}
-
-		// install custom memory allocator callbacks
-		s_MemCallbacks.alloc = nfmAlloc;
-		s_MemCallbacks.alignedAlloc = nfmAlignedAlloc;
-		s_MemCallbacks.release = nfmFree;
-		s_MemCallbacks.realloc = nfmRealloc;
-		s_MemCallbacks.outOfMemory = nfmOutOfMemoryCb;
-
-		nfInit(&s_MemCallbacks,NULL);
-
-	} else {
-#if NFM_ENABLE_LOGS
-		debug("NfmOPL::EmulatedChip Out of system memory!");
-#endif
-		return false;
-	}
-#else
-	nfInit(NULL,NULL);
-#endif
-	_iface = nfCreateInterface(_ifaceCfg);
-
-	if (_iface.setup != CC_UNDEFINED) {
-		const int32_t retval = nfInitialiseInterface(&_iface, &_params);
-
-		if (retval >= 0) {
-			_oplWrite = _iface.write;
-			_oplEnqueWrite = _iface.enqueWrite;
-			_oplFlush = _iface.flush;
-			_oplReset = _iface.reset;
-			_generateAudioStream = _iface.generateAudioStream;
-
-			_activeReg = 0;
-
-			initDualOpl2OnOpl3(_type);
-
-			_initialized = true;
-
-#if NFM_ENABLE_LOGS
-			debug("NfmOPL::RealChip init OK");
-#endif
-			return true;
-		}
-	}
-
-#if NFM_ENABLE_LOGS
-	debug("NfmOPL::RealChip init failed!");
-#endif
-	return false;
-}
-
-void OPL::reset() {
-
-	_oplReset();
-
-	for (int16_t i = 0; i < 256; i ++) {
-		writeReg((int)i, 0);
-	}
-
-	if (_type == Config::kOpl3 || _type == Config::kDualOpl2) {
-		for (int16_t i = 0; i < 256; i++) {
-			writeReg((int)i + 256, 0);
-		}
-	}
-
-	_activeReg = 0;
-
-	initDualOpl2OnOpl3(_type);
-}
-
-void OPL::write(int portAddress, int value) {
-	if (portAddress & 1) {
-		writeReg(_activeReg, value);
-		return;
-	} else {
-		if (_type == Config::kOpl2) {
-			_activeReg = value & 0xff;
-			return;
-		} else {
-			// opl3 / dual opl2
-			_activeReg = (value & 0xff) | ((portAddress << 7) & 0x100);
-			return;
-		}
-
-		warning("NfmOPL::EmulatedChip: unsupported OPL mode %d", _type);
-	}
-}
-
-void OPL::writeReg(int reg, int value) {
-#if NFM_ENABLE_LOGS
-	debug(s_DebugOplWriteStrs[_deviceType]);
-#endif
-
-	if (_type == Config::kOpl3 || _type == Config::kDualOpl2) {
-		reg &= 0x1ff;
-	} else {
-		reg &= 0xff;
-	}
-
-	value &= 0xff;
-
-	if (emulateDualOpl2OnOpl3(reg, value, _type)) {
-		sOplRegisterWrite regWrite;
-
-		if (reg < 0x100) {
-			regWrite = {0, (uint8_t)reg, (uint8_t)value};
-		} else {
-			regWrite = {1, (uint8_t)(reg - 0x100), (uint8_t)value};
-		}
-
-		if (_useBuffer) {
-			_oplEnqueWrite(&regWrite);
-		} else {
-			_oplWrite(&regWrite);
-		}
-	}
-}
-
-void OPL::generateSamples(int16 *buffer, int length) {
-	assert(buffer != nullptr);
-	assert(length!=0);
-	_generateAudioStream(buffer, 0, (uint16_t)length / 2);
-}
-
-OPL *create(Config::OplType type, OplDevice device) {
-	return new OPL(type, device);
-}
-} // End of namespace EmulatedChip
 
 } // End of namespace NfmOPL
 } // End of namespace OPL

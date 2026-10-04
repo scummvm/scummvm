@@ -1516,8 +1516,8 @@ for ac_option in $@; do
 		;;
 	--with-nfm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
-		NFM_CFLAGS="-I$arg/include -I$arg/include/platform/atari"
-		NFM_LIBS="-L$arg/lib/m68020-60"
+		NFM_CFLAGS="-I$arg/include/nfm"
+		NFM_LIBS="-L$arg/lib"
 		;;
 	--with-flac-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5640,49 +5640,53 @@ echo "$_retrowave"
 # Check for nFM OPL2/3 library
 #
 echocheck "nFM OPL2 / OPL3"
+case $_host_os in
+mint*)
+	if test -z "$NFM_CFLAGS" ; then
+		NFM_CFLAGS="-I`$CXX --print-sysroot`/usr/include/nfm"
+	fi
+	;;
+*)
+	# only the Atari hardware drivers are supported
+	if test "$_nfm" = yes ; then
+		echo "nFM is supported on Atari only"
+		exit 1
+	fi
+	_nfm=no
+	;;
+esac
+# nfmcore references every driver it was built with, so all of them have to be
+# linked
+NFM_LIBS="$NFM_LIBS -lnfmcore -lnfmutil -ldrvcommon -ldrvnokturnfm -ldrvopl3duo -ldrvopl3express -ldrvoplxlpt -ldrvopllcart -ldrvisasb -ldrvoplnull -lsyscore -lcontainers -lallocators"
 if test "$_nfm" = auto ; then
 	_nfm=no
 	cat > $TMPC << EOF
-
 #include <nfmcore.h>
 #include <nfmutil.h>
 
-sFmInterface gOplIf;
+int main(void) {
+	sOplInterfaceConfiguration ifCfg = {};
+	sInterfaceInitData params = {};
 
-int main(void)
-{
 	nfInit(NULL, NULL);
 
-	sOplInterfaceConfiguration ifCfg;
 	ifCfg.deviceType = FMD_NULL;
-    ifCfg.soundchip = CM_OPL3;
-    ifCfg.operationMode = CO_OPL3;
-    ifCfg.setup = CC_SINGLE;
-    ifCfg.dualChipEmulationEnabled = false;
-
-    sInterfaceInitData params;
+	ifCfg.soundchip = CM_OPL3;
+	ifCfg.operationMode = CO_OPL3;
+	ifCfg.setup = CC_SINGLE;
 	params.uParam.outputPort = OPT_INTERNAL;
-    params.uParam.param = 0;
 
-    gOplIf = nfCreateInterface(ifCfg);
-
-    const int32_t retval = nfInitialiseInterface(&gOplIf, &params);
-
-    if (retval >= 0)
-    {
-	 (void)nfDestroyInterface(&gOplIf);
-     return 0;
-    }
-
-  return -1;
+	sFmInterface iface = nfCreateInterface(ifCfg);
+	(void)nfInitialiseInterface(&iface, &params);
+	(void)nfDestroyInterface(&iface);
+	return nfDeinit();
 }
 EOF
-	cc_check $NFM_CFLAGS -DSC_ENABLE_MALLOC=0 -DNFM_OPL_SHADOW_REG_WRITE_ENABLE=1 $NFM_LIBS -lnfmcore -lnfmutil -ldrvcommon -ldrvnokturnfm -ldrvopl3Duo -ldrvopl3express -ldrvoplxlpt -ldrvopllcart -ldrvisasb -ldrvoplnull -lsyscore -lcontainers -lallocators &&\
-	_nfm=yes
+	cc_check $NFM_CFLAGS -DSC_ENABLE_MALLOC=0 -DNFM_OPL_SHADOW_REG_WRITE_ENABLE=1 $NFM_LIBS && _nfm=yes
 fi
 if test "$_nfm" = yes; then
 	append_var DEFINES "-DSC_ENABLE_MALLOC=0 -DNFM_OPL_SHADOW_REG_WRITE_ENABLE=1"
-	append_var LIBS "$NFM_LIBS -lnfmcore -lnfmutil -ldrvcommon -ldrvnokturnfm -ldrvopl3Duo -ldrvopl3express -ldrvoplxlpt -ldrvopllcart -ldrvisasb -ldrvoplnull -lsyscore -lcontainers -lallocators"
+	append_var LIBS "$NFM_LIBS"
 	append_var INCLUDES "$NFM_CFLAGS"
 fi
 define_in_config_if_yes "$_nfm" 'USE_NFM'
