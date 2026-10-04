@@ -23,6 +23,13 @@
 
 namespace Igor {
 
+const RoomDataOffsets IgorEngine::PART_00_ROOM_DATA_OFFSETS = {
+	{ 45, 3, 6, 2 },       // cseg206:29BB-29EF
+	{ 79, 96 },            // cseg206:2FF8-301F,3191-31B5
+	{ 103, 347, 3503, 247, 323, 88 }, // cseg206:2DCA-2E69
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
 const uint8 IgorEngine::_walkWidthScaleTable[] = {
 	0x01, 0x01, 0x02, 0x02, 0x03, 0x04, 0x04, 0x05, 0x05, 0x06, 0x07, 0x07, 0x08, 0x08, 0x09, 0x0A,
 	0x0A, 0x0B, 0x0B, 0x0C, 0x0D, 0x0D, 0x0E, 0x0E, 0x0F, 0x10, 0x10, 0x11, 0x11, 0x12, 0x13, 0x13,
@@ -225,8 +232,8 @@ const RoomDataOffsets IgorEngine::PART_08_ROOM_DATA_OFFSETS = {
 		5188, 100,
 		90,
 		270,
-		15548,
-		15488,
+		15488, // cseg195:4B98-4BC0
+		15548, // cseg195:51AE-51D4
 		30
 	}
 };
@@ -382,23 +389,15 @@ const RoomDataOffsets IgorEngine::PART_30_ROOM_DATA_OFFSETS = {
 	{ 75, 84 },
 	{ 87, 259, 3135, 151, 227, 80 },
 	{
-		// Spanish DLG_CollegeStairsFirstFloor (TBL id 34, 0x426040, 2753 bytes) stores its
-		// question cells at blob offset 0, with no leading dialogue matrix. The sound
-		// tables use the same layout proven for part 12 and part 17: questionSoundsOffset
-		// points at a non-indexed residue word, entry i is read at + (i + 1) * 2, and
-		// replySoundsOffset == questionSoundsOffset + questionsSize * 2.
-		// TODO: derive from cseg110 handleDialogue call site (cseg110:018E-019E) where the
-		// original sources room 30's reply graph -- the 115 bytes trailing the sound table
-		// (blob offset 2638..2753) look like it, but that is not yet proven.
-		-205, // -(164 + 41): question 0 line 0 lands on blob offset 0
-		9,    // 9 question cells of 164 bytes, two 41-byte lines each
-		1374, // = 1476 - 102: reply 0 lands at blob offset 1476 = 9 * 164
-		11,   // 11 reply cells of 102 bytes
+		-90,  // cseg110:018E-019E; first question at blob+115
+		9,
+		1489, // cseg110:018E-019E; first reply at blob+1591
+		11,
 		30,
 		0,
-		2596, // residue word 64760 at blob+2596
-		2614, // = 2596 + 9 * 2, shares question 8's word as its own residue
-		11    // reply 10 reads 477 at blob+2636, leaving 115 trailing bytes
+		2711, // cseg110:018E-019E; derived from the packed-tail layout
+		2729,
+		11
 	}
 };
 

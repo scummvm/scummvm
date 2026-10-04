@@ -136,8 +136,10 @@ void IgorEngine::loadDialogueData(int dlg) {
 	int replySoundsOffset = _roomDataOffsets.dlg.replySoundsOffset;
 	int replySoundsSize = _roomDataOffsets.dlg.replySoundsSize;
 	if (questionSoundsOffset == 0) {
-		questionSoundsOffset = dataSize - (_roomDataOffsets.dlg.questionsSize + _roomDataOffsets.dlg.repliesSize + 2) * 2;
-		replySoundsOffset = questionSoundsOffset + (_roomDataOffsets.dlg.questionsSize + 1) * 2;
+		// The packed tail shares the last question word with the reply table's
+		// leading residue word. cseg172:043B-0452,0A4A-0A92.
+		questionSoundsOffset = dataSize - (_roomDataOffsets.dlg.questionsSize + _roomDataOffsets.dlg.repliesSize + 1) * 2;
+		replySoundsOffset = questionSoundsOffset + _roomDataOffsets.dlg.questionsSize * 2;
 		replySoundsSize = _roomDataOffsets.dlg.repliesSize;
 	}
 	assert(questionSoundsOffset >= 0);

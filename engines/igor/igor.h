@@ -474,6 +474,13 @@ private:
 	void PART_04_EXEC_ACTION(int action);
 	void PART_04_CLEAR_OBJECT_STATE_84(int num);
 	void PART_04();
+	void PART_00();
+	void PART_00_EXEC_ACTION(int action);
+	void PART_00_APPLY_OBJECT_STATE(int num);
+	void PART_00_DRAW_RAW_FRAME(int srcOffset, int frame, int frameSize, int width, int height, int dstOffset);
+	void PART_00_ANIMATE_RAW(int srcOffset, int firstFrame, int lastFrame, int frameSize, int width, int height, int dstOffset, int delay, int soundFrame, int sound);
+	void PART_00_ENTRY_ANIMATION();
+	void PART_00_WALK_IN();
 
 	// spring bridge
 	void PART_05_HELPER_4_drawPaperOrNot(int num);
@@ -863,6 +870,7 @@ protected:
 	// Engine APIs
 	Common::Error run() override;
 	static const RoomDataOffsets PART_04_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_00_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_05_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_07_ROOM_DATA_OFFSETS;

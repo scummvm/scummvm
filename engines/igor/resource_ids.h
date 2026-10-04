@@ -518,6 +518,19 @@
 // Dean Peeper's conversation data block from NE segment 194.
 #define DLG_DeanPepperOffice 938
 
+// Student dormitory animation blocks copied contiguously by cseg207:0002-0239.
+#define ANM_StudentDormitoryRoom1 939 // cseg207:023B; IGOR.EXE:0x7A843B, 0x1200 bytes
+#define ANM_StudentDormitoryRoom2 940 // cseg207:143B; IGOR.EXE:0x7A963B, 0x0478 bytes
+#define ANM_StudentDormitoryRoom3 941 // cseg207:18B3; IGOR.EXE:0x7A9AB3, 0x1BC0 bytes
+#define ANM_StudentDormitoryRoom4 942 // cseg207:3473; IGOR.EXE:0x7AB673, 0x0D90 bytes
+#define ANM_StudentDormitoryRoom5 943 // cseg207:4203; IGOR.EXE:0x7AC403, 0x0CA2 bytes
+#define ANM_StudentDormitoryRoom6 944 // cseg207:4EA5; IGOR.EXE:0x7AD0A5, 0x0120 bytes
+#define ANM_StudentDormitoryRoom7 945 // cseg207:4FC5; IGOR.EXE:0x7AD1C5, 0x0BB8 bytes
+#define ANM_StudentDormitoryRoom8 946 // cseg207:5B7D; IGOR.EXE:0x7ADD7D, 0x0CE4 bytes
+#define ANM_StudentDormitoryRoom9 947 // cseg207:6861; IGOR.EXE:0x7AEA61, 0x15E0 bytes
+#define ANM_StudentDormitoryRoom10 948 // cseg207:7E41; IGOR.EXE:0x7B0041, 0x080A bytes
+#define ANM_StudentDormitoryRoom11 949 // cseg207:864B; IGOR.EXE:0x7B084B, 0x080A bytes
+
 // Administration secretary-room animation blocks copied by cseg192:0002-01D4.
 #define ANM_AdministrationSecretaryRoom1 923 // cseg192:01D5; IGOR.EXE:0x7057D5, 0xD38 bytes
 #define ANM_AdministrationSecretaryRoom2 924 // cseg192:0F0D; IGOR.EXE:0x70650D, 0x1FB bytes
