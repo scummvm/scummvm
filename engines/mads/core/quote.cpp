@@ -96,7 +96,7 @@ char *quote_vload(int quote_id, va_list marker) {
 
 			Common::strcpy_s(pointer, QUOTE_MAX_LIST_LENGTH, quoteStr.c_str());
 			pointer += (mem_needed - 2);
-			*(uint16 *)(pointer) = list[now_finding];
+			WRITE_UINT16(pointer, list[now_finding]);
 			pointer += 2;
 			now_finding++;
 
@@ -140,7 +140,7 @@ char *quote_string(char *quote_list, int quote_id) {
 	for (marker = quote_list; *marker && (result == NULL); marker = search + 2) {
 		for (search = marker; *search; search++);
 		search++;
-		id = *((uint16 *)search);
+		id = READ_UINT16(search);
 		if (id == quote_id)
 			result = marker;
 	}
