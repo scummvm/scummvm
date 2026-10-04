@@ -89,6 +89,7 @@ MODULE_OBJS = \
   action/puzzle/setplayerclock.o \
   action/puzzle/sewingmachinepuzzle.o \
   action/puzzle/shovelmeasurepuzzle.o \
+  action/puzzle/skeeballpuzzle.o \
   action/puzzle/sliderpuzzle.o \
   action/puzzle/snowmobilepuzzle.o \
   action/puzzle/sortpuzzle.o \

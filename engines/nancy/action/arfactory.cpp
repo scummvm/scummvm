@@ -102,6 +102,7 @@
 #include "engines/nancy/action/puzzle/setplayerclock.h"
 #include "engines/nancy/action/puzzle/sewingmachinepuzzle.h"
 #include "engines/nancy/action/puzzle/shovelmeasurepuzzle.h"
+#include "engines/nancy/action/puzzle/skeeballpuzzle.h"
 #include "engines/nancy/action/puzzle/sliderpuzzle.h"
 #include "engines/nancy/action/puzzle/snowmobilepuzzle.h"
 #include "engines/nancy/action/puzzle/sortpuzzle.h"
@@ -776,7 +777,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new ShovelMeasurePuzzle();
 	case 206:
-		return new RaycastPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy15)
+			return new RaycastPuzzle();
+		else
+			return new SkeeBallPuzzle();
 	case 207:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new TangramPuzzle();
