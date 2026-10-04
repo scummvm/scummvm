@@ -285,7 +285,7 @@ Common::SeekableReadStream *WinSysTTFLoader::getStream() {
 }
 
 bool WinSysTTFLoader::getFileNode(Common::FSNode &node) {
-	// FIXME: Is this kind of host system access is allowed in ScummVM?
+	// FIXME: Is this kind of host system access allowed in ScummVM?
 	//        If not, disable this code and explicitly make sure that users have to source the font themselves.
 #if defined(WIN32)
 	const char *winDir = getenv("WINDIR");

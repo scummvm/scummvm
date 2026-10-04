@@ -25,7 +25,7 @@
 #include "mohawk/video.h"
 #include "mohawk/zoombini_pages/transition_base.h"
 
-#ifdef USE_BINK
+#if defined(USE_BINK) && defined(USE_RGB_COLOR)
 namespace Video {
 
 class BinkDecoder;
@@ -40,7 +40,7 @@ namespace Mohawk {
  *
  * The page plays the release-specific logo video and advances the startup
  * reveal state on the animation frame clock. When the demo startup sequence is
- * active, @ref ZoombiniTransitionLogo::applyDemoStartupRevealMask() recreates
+ * active, @ref ZoombiniTransitionLogo::applyV20DemoStartupRevealMask() recreates
  * the staged block presentation over the decoder's complete video surface.
  */
 class ZoombiniTransitionLogo : public ZoombiniTransition {
@@ -59,20 +59,20 @@ public:
 
 protected:
 	/** Apply the demo-only startup mask to the current frame. */
-	void applyDemoStartupRevealMask();
+	void applyV20DemoStartupRevealMask();
 
 	/** QuickTime CDTOONS video used by Broderbund releases. */
 	VideoEntryPtr _cdtoonsVideo = nullptr;
-#ifdef USE_BINK
+#if defined(USE_BINK) && defined(USE_RGB_COLOR)
 	/** Bink decoder used by The Learning Company releases. */
 	Video::BinkDecoder *_binkDecoder = nullptr;
 	/** Most recently decoded Bink frame used while advancing the startup mask. */
-	const Graphics::Surface *_binkFrame = nullptr;
+	const Graphics::Surface *_binkFrameSurface = nullptr;
 #endif
 	/** Whether the startup page has switched from indexed to true-color output. */
 	bool _switchedToTrueColor = false;
 	/** Whether the demo-only startup reveal mask is active. */
-	bool _demoStartupRevealActive = false;
+	bool _applyDemoStartupRevealEffect = false;
 	/** Animation frame at which the demo startup reveal begins. */
 	uint32 _demoStartupRevealStartFrame = 0;
 };
