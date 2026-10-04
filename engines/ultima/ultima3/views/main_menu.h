@@ -22,36 +22,24 @@
 #ifndef ULTIMA3_VIEWS_MAIN_MENU_H
 #define ULTIMA3_VIEWS_MAIN_MENU_H
 
-#include "graphics/views/view.h"
+#include "ultima/ultima3/views/menu_input.h"
+#include "ultima/ultima3/views/window_view.h"
 
 namespace Ultima {
 namespace Ultima3 {
 namespace Views {
 
-using namespace Graphics::Views;
-
 /**
  * The main menu: Return to the View / Organize a Party / Journey Onward.
  * Like the original, it is drawn over whatever the title screen left on the
- * display. Pressing R, O, J or Escape only echoes the choice on the Option
- * line; it must then be confirmed with Enter, or taken back with Backspace
- * or Left. The confirmed options are wired up as the roster/party data
- * model and the world engine land in later stages.
+ * display. Choosing Return is wired up once the world engine lands.
  */
-class MainMenu : public View {
+class MainMenu : public WindowView {
 private:
-	enum State {
-		CHOOSING,
-		CONFIRMING
-	};
-
-	State _state = CHOOSING;
-	int _choice = 0;
-
-	void drawBorder(GfxSurface &s);
+	MenuChoice _choice;
 
 public:
-	MainMenu() : View("MainMenu") {}
+	MainMenu();
 	~MainMenu() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;

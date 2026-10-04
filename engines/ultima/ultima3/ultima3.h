@@ -31,6 +31,7 @@
 #include "engines/engine.h"
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima3/data/savegame.h"
 
 namespace Audio {
 class PCSpeaker;
@@ -77,6 +78,8 @@ public:
 	 * Plays the short low buzz used to reject invalid input
 	 */
 	void playErrorBeep();
+
+	Data::Savegame _savegame;
 
 	// Debug flag toggled by the "intangible" console command, allowing
 	// movement through normally impassable terrain

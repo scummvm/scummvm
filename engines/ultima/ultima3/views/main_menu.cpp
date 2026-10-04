@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/keyboard.h"
 #include "ultima/ultima3/views/main_menu.h"
 #include "ultima/ultima3/ultima3.h"
 
@@ -27,132 +26,55 @@ namespace Ultima {
 namespace Ultima3 {
 namespace Views {
 
-constexpr int GLYPH_UP_ARROW = 0x1E;
-constexpr int BORDER_TOP = 10;
-constexpr int BORDER_BOTTOM = 23;
-constexpr int BORDER_RIGHT = 39;
-constexpr int OPTION_ROW = 15;
-constexpr int OPTION_COL = 16;
-constexpr int CHOICE_COL = 23;
-
-// Letter keys for each option, with Escape (the last) acting as Return
-static const char OPTION_KEYS[] = { 'R', 'O', 'J' };
+// Escape (the last key) acts as Return
+static const char OPTION_KEYS[] = "ROJ\x1B";
 static const char *const OPTION_WORDS[] = { "Return", "Organize", "Journey", "Return" };
-constexpr int OPTION_ESCAPE = 3;
 
-static bool isModifierKey(Common::KeyCode key) {
-	switch (key) {
-	case Common::KEYCODE_LSHIFT:
-	case Common::KEYCODE_RSHIFT:
-	case Common::KEYCODE_LCTRL:
-	case Common::KEYCODE_RCTRL:
-	case Common::KEYCODE_LALT:
-	case Common::KEYCODE_RALT:
-	case Common::KEYCODE_LMETA:
-	case Common::KEYCODE_RMETA:
-	case Common::KEYCODE_CAPSLOCK:
-	case Common::KEYCODE_NUMLOCK:
-	case Common::KEYCODE_SCROLLOCK:
-		return true;
-	default:
-		return false;
-	}
-}
-
-static int findOption(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE)
-		return OPTION_ESCAPE;
-
-	char c = msg.ascii;
-	if (c >= 'a' && c <= 'z')
-		c -= 'a' - 'A';
-
-	for (int i = 0; i < ARRAYSIZE(OPTION_KEYS); ++i) {
-		if (OPTION_KEYS[i] == c)
-			return i;
-	}
-
-	return -1;
+MainMenu::MainMenu() : WindowView("MainMenu") {
+	_choice.setup(OPTION_KEYS, OPTION_WORDS, 4, 23, 15);
 }
 
 bool MainMenu::msgFocus(const FocusMessage &msg) {
-	_state = CHOOSING;
+	_choice.reset();
 	return View::msgFocus(msg);
-}
-
-void MainMenu::drawBorder(GfxSurface &s) {
-	// Alternating black and magenta pixels, filling whole 8x8 cells
-	auto cell = [&](int col, int row) {
-		for (int y = 0; y < 8; ++y)
-			for (int x = 0; x < 8; ++x)
-				s.setPixel(col * 8 + x, row * 8 + y, (x & 1) ? 2 : 0);
-	};
-
-	s.fillRect(Common::Rect(0, 24 * 8, 320, 25 * 8), 0);
-
-	for (int col = 0; col <= BORDER_RIGHT; ++col)
-		cell(col, BORDER_BOTTOM);
-	for (int col = 1; col < BORDER_RIGHT; ++col)
-		cell(col, BORDER_TOP);
-	for (int row = BORDER_TOP; row <= BORDER_BOTTOM; ++row) {
-		cell(0, row);
-		cell(BORDER_RIGHT, row);
-	}
 }
 
 void MainMenu::draw() {
 	auto s = getSurface();
 
-	s.fillRect(Common::Rect(8, 11 * 8, 39 * 8, 23 * 8), 0);
+	clearWindow(s);
 	drawBorder(s);
 
 	s.writeString(Common::Point(3, 21), "(C)-1983 By James R. Van Artsdalen");
 	s.writeString(Common::Point(13, 22), "and Lord British");
 	s.writeString(Common::Point(7, 11), "From the depths of hell...");
 	s.writeString(Common::Point(7, 12), "...he comes for VENGEANCE!");
-	s.writeString(Common::Point(OPTION_COL, OPTION_ROW), "Option: ");
+	s.writeString(Common::Point(16, 15), "Option: ");
 	s.writeString(Common::Point(11, 17), "Return to the View");
 	s.writeString(Common::Point(12, 18), "Organize a Party");
 	s.writeString(Common::Point(13, 19), "Journey Onward");
 
-	s.setTextPos(Common::Point(CHOICE_COL, OPTION_ROW));
-	if (_state == CONFIRMING) {
-		const char *word = OPTION_WORDS[_choice];
-		s.writeString(word);
-	}
-	s.writeChar(GLYPH_UP_ARROW);
+	_choice.draw(s, true);
 }
 
 bool MainMenu::msgKeypress(const KeypressMessage &msg) {
-	if (isModifierKey(msg.keycode))
-		return true;
-
-	if (_state == CONFIRMING) {
-		switch (msg.keycode) {
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
-			// The confirmed option is wired up in later stages
+	if (_choice.handleKey(msg)) {
+		switch (_choice.key()) {
+		case 'O':
+			addView("PartyMenu");
 			break;
-		case Common::KEYCODE_BACKSPACE:
-		case Common::KEYCODE_LEFT:
-			_state = CHOOSING;
-			redraw();
+		case 'J':
+			// Setting out is wired up once the world engine lands
+			if (_G(savegame)._partySize == 0 || !_G(savegame).hasLivingPartyMember())
+				addView("JourneyOnward");
 			break;
 		default:
-			g_engine->playErrorBeep();
+			// Returning to the view is wired up once the world engine lands
 			break;
-		}
-	} else {
-		int option = findOption(msg);
-		if (option >= 0) {
-			_choice = option;
-			_state = CONFIRMING;
-			redraw();
-		} else {
-			g_engine->playErrorBeep();
 		}
 	}
 
+	redraw();
 	return true;
 }
 

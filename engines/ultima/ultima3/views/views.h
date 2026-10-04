@@ -23,7 +23,15 @@
 #define ULTIMA3_VIEWS_H
 
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima3/views/character_details.h"
+#include "ultima/ultima3/views/create_character.h"
+#include "ultima/ultima3/views/disperse_party.h"
+#include "ultima/ultima3/views/form_party.h"
+#include "ultima/ultima3/views/journey_onward.h"
 #include "ultima/ultima3/views/main_menu.h"
+#include "ultima/ultima3/views/party_menu.h"
+#include "ultima/ultima3/views/register.h"
+#include "ultima/ultima3/views/terminate_character.h"
 #include "ultima/ultima3/views/title.h"
 
 namespace Ultima {
@@ -31,7 +39,15 @@ namespace Ultima3 {
 namespace Views {
 
 struct Views {
+	CharacterDetails _characterDetails;
+	CreateCharacter _createCharacter;
+	DisperseParty _disperseParty;
+	FormParty _formParty;
+	JourneyOnward _journeyOnward;
 	MainMenu _mainMenu;
+	PartyMenu _partyMenu;
+	Register _register;
+	TerminateCharacter _terminateCharacter;
 	Title _title;
 };
 

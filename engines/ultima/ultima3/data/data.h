@@ -34,6 +34,32 @@ extern const byte CGA_PALETTE1[4 * 3];
 
 void setCGAPalette();
 
+// The letters a character's sex, race and class are stored as, with the
+// names shown for each
+constexpr int SEX_COUNT = 3;
+constexpr int RACE_COUNT = 5;
+constexpr int CLASS_COUNT = 11;
+constexpr int STATUS_COUNT = 4;
+constexpr int WEAPON_COUNT = 16;
+constexpr int ARMOUR_COUNT = 8;
+
+extern const char SEX_KEYS[];
+extern const char RACE_KEYS[];
+extern const char CLASS_KEYS[];
+extern const char STATUS_KEYS[];
+extern const char *const SEX_NAMES[SEX_COUNT];
+extern const char *const RACE_NAMES[RACE_COUNT];
+extern const char *const CLASS_NAMES[CLASS_COUNT];
+extern const char *const STATUS_NAMES[STATUS_COUNT];
+extern const char *const WEAPON_NAMES[WEAPON_COUNT];
+extern const char *const ARMOUR_NAMES[ARMOUR_COUNT];
+
+/**
+ * Returns the index of a key within the first count entries of a key list.
+ * As in the original, a key that isn't present maps to the last entry.
+ */
+int lookupIndex(char key, const char *keys, int count);
+
 } // namespace Data
 } // namespace Ultima3
 } // namespace Ultima

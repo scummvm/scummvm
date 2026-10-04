@@ -40,6 +40,35 @@ void setCGAPalette() {
 	g_system->getPaletteManager()->setPalette(palette);
 }
 
+const char SEX_KEYS[] = "MFO";
+const char RACE_KEYS[] = "HEDBF";
+const char CLASS_KEYS[] = "FCWTPLBDIAR";
+const char STATUS_KEYS[] = "GPDA";
+
+const char *const SEX_NAMES[SEX_COUNT] = { "Male", "Female", "Other" };
+const char *const RACE_NAMES[RACE_COUNT] = { "Human", "Elf", "Dwarf", "Bobbit", "Fuzzy" };
+const char *const CLASS_NAMES[CLASS_COUNT] = {
+	"Fighter", "Cleric", "Wizard", "Thief", "Paladin", "Lark", "Barbarian",
+	"Druid", "Illusionist", "Alchemist", "Ranger"
+};
+const char *const STATUS_NAMES[STATUS_COUNT] = { "Good", "Poisoned", "Dead", "Ashes" };
+const char *const WEAPON_NAMES[WEAPON_COUNT] = {
+	"Hand", "Dagger", "Mace", "Sling", "Axe", "Bow", "Sword", "2-H-Swd",
+	"+2 Axe", "+2 Bow", "+2 Swd", "Gloves", "+4 Axe", "+4 Bow", "+4 Swd", "Exotic"
+};
+const char *const ARMOUR_NAMES[ARMOUR_COUNT] = {
+	"Skin", "Cloth", "Leather", "Chain", "Plate", "+2 Chain", "+2 Plate", "Exotic"
+};
+
+int lookupIndex(char key, const char *keys, int count) {
+	for (int i = 0; i < count; ++i) {
+		if (keys[i] == key)
+			return i;
+	}
+
+	return count - 1;
+}
+
 } // namespace Data
 } // namespace Ultima3
 } // namespace Ultima
