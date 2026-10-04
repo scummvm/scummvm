@@ -2366,6 +2366,8 @@ ZoombiniText::ZoombiniText(MohawkEngine_Zoombini *vm, Common::Language lang) : _
 			_fallbackTTFLoaders.clear();
 			_fallbackTTFLoaders.push_back(new FileTTFLoader("D2CodingBold.ttf", "D2Coding", true, 0, fontSizeMode));
 			// Without hinting, quality of Noto Sans KR rendering in low resolution is terrible.
+			// Thus, prefer light hinting for Noto Sans KR when RGB rendering is available.
+			// ZoombiniGraphics will utilize temporary 4bpp surface to acheive a best-effort hinting on CLUT8 surface.
 			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansKR-Bold.otf", "Noto Sans KR Bold", Graphics::kTTFRenderModeLight, fontSizeMode));
 			// TODO: Unifont support? The font is small while supporting every possible Unicode glyphs.
 		} else if (_lang == Common::EN_USA) {

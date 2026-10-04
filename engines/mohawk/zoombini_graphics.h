@@ -127,7 +127,7 @@ public:
 	 * the notice with the shared progress dialog, while fast queries proceed to the
 	 * logo video almost immediately.
 	 */
-	void showDemoStartupLoadingScreen();
+	void showStartupLoadingScreen();
 	/**
 	 * Switch the OSystem graphics mode between true-color and CLUT8.
 	 * v2.0TLC only; Bink video playback requires true-color mode, but the rest of the game is palette-based.
@@ -598,11 +598,24 @@ private:
 	/** Calculate total draw height and max draw width */
 	Common::Point getTextLinesBounds(const Graphics::Font *font, bool outlineEffect, const Common::Array<Common::U32String> &lines);
 	/** Draw prepared text lines and optionally fill their background. */
-	void drawTextLines(ScreenKind screenKind, const Graphics::Font *font, const Common::Array<Common::U32String> &lines, const Common::Rect &destRect, uint32 palette, Graphics::TextAlign hAlign, bool useAntialiasing, uint32 fillBackgroundColor = kTransparentKey);
+	void drawTextLines(ScreenKind screenKind, const Graphics::Font *font, const Common::Array<Common::U32String> &lines, const Common::Rect &destRect, uint32 color, Graphics::TextAlign hAlign, bool useAntialiasing, uint32 fillBackgroundColor = kTransparentKey);
 	/** Copy text pixels while preserving the game transparency convention. */
 	static void copyTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect);
-	/** Blend grayscale text coverage into a CLUT8 screen using its active palette. */
-	void blendTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect, uint32 palette);
+#ifdef USE_RGB_COLOR
+	/**
+	 * Quantize 32-bit text coverage into a CLUT8 screen using the supplied RGB palette.
+	 * This preserves antialiased TrueType output on indexed surfaces.
+	 *
+	 * @param textSurface 4bpp surface containing the rendered text pixels, representing hinting with glyph alpha coverage.
+	 * @param screen CLUT8 dest surface, which will have text rendered with best-effort hinting.
+	 * @param destRect Screen rect corresponding to the origin of textSurface.
+	 * @param copyRect Screen-space portion of destRect to quantize.
+	 * @param paletteBytes A palette buffer of @ref screen containing RGB triplets.
+	 * @param paletteColorCount Number of RGB colors in paletteBytes.
+	 * @param color Palette index of foreground color.
+	 */
+	void quantizeHintedTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect, const byte *paletteBytes, uint paletteColorCount, uint32 color);
+#endif
 	/** Record one text draw rectangle in the selected screen's dirty set. */
 	void recordDirtyRect(ScreenKind screenKind, const Common::Rect &rect);
 	/** Copy pixels using the requested Color Assist palette remap. */
@@ -625,8 +638,10 @@ private:
 	Common::Array<uint32> _colorAssistNoseNetRemapTable = Common::Array<uint32>(256);
 	/** Fixed index maps used by Color Assist blits, independent of palette RGB values. */
 	Common::Array<uint32> _colorAssistMazePurpleRemapTable = Common::Array<uint32>(256);
+#ifdef USE_RGB_COLOR
 	/** Cached nearest-color lookups used by antialiased CLUT8 text blending. */
 	Graphics::PaletteLookup _textPaletteLookup;
+#endif
 
 	/** Pixel format of the active game screen. */
 	Graphics::PixelFormat _pixelFormat;

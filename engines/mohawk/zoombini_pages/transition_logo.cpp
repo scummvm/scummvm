@@ -21,7 +21,8 @@
 
 #include "common/archive.h"
 #include "common/scummsys.h"
-#ifdef USE_BINK
+#include "common/translation.h"
+#if defined(USE_BINK) && defined(USE_RGB_COLOR)
 #include "video/bink_decoder.h"
 #endif
 
@@ -41,7 +42,7 @@ ZoombiniTransitionLogo::~ZoombiniTransitionLogo() {
 	if (_cdtoonsVideo)
 		_vm->_video->removeEntry(_cdtoonsVideo);
 
-#ifdef USE_BINK
+#if defined(USE_BINK) && defined(USE_RGB_COLOR)
 	if (_binkDecoder) {
 		delete _binkDecoder;
 		_binkDecoder = nullptr;
@@ -62,6 +63,11 @@ void ZoombiniTransitionLogo::loadFeatures() {
 	// 2.0 retail: LOGO025.BIK (Bink)
 	// 2.0 demo: LOGODEMO.BIK (Bink)
 	if (_vm->isVersionFamilyTlcV2()) {
+#ifndef USE_RGB_COLOR
+		_vm->_system->displayMessageOnOSD(_("16-bit color support is required to play Bink videos. Skipping the intro."));
+		close();
+		return;
+#else
 		const char *videoFile = _vm->isV20UsDemo() ? ZMB_VIDEO_BINK_DEMO : ZMB_VIDEO_BINK;
 		const Common::Path videoPath = Common::Path(_vm->getArchiveRoot()).append(videoFile);
 		if (!Common::File::exists(videoPath)) {
@@ -71,20 +77,23 @@ void ZoombiniTransitionLogo::loadFeatures() {
 		}
 
 #ifdef USE_BINK
-		// Bink requires a true-color pixel format (2 or 4 bpp).
-		// Switch OSystem and internal buffers to true-color for the duration
-		// of logo playback; reinitGraphics(false) in the destructor restores CLUT8.
+		// Bink requires RGB-based pixel format (2bpp or 4bpp).
+		// Switch to a RGB-based pixel format for a video playback, then restore to CLUT8 on a page destruction.
 		_vm->_gfx->reinitGraphics(true);
 		_switchedToTrueColor = true;
 		_vm->_gfx->clearScreens();
 
 		_binkDecoder = new Video::BinkDecoder();
-		_binkDecoder->setSoundType(Audio::Mixer::kSFXSoundType);
+		_binkDecoder->setSoundType(Audio::Mixer::kMusicSoundType);
 		if (_binkDecoder->loadFile(videoPath)) {
-			_binkDecoder->setOutputPixelFormat(_vm->_system->getScreenFormat());
+			if (!_binkDecoder->setOutputPixelFormat(_vm->_system->getScreenFormat())) {
+				warning("Unsupported screen pixel format for Bink video [%s], skip", videoPath.toString().c_str());
+				close();
+				return;
+			}
 			_binkDecoder->start();
-			_binkFrame = nullptr;
-			_demoStartupRevealActive = _vm->consumeDemoStartupLogoReveal();
+			_binkFrameSurface = nullptr;
+			_applyDemoStartupRevealEffect = _vm->consumeDemoStartupLogoReveal();
 			_demoStartupRevealStartFrame = 0;
 		} else {
 			delete _binkDecoder;
@@ -99,6 +108,7 @@ void ZoombiniTransitionLogo::loadFeatures() {
 		close();
 		return;
 #endif
+#endif
 	} else {
 		_vm->_gfx->clearScreens();
 
@@ -108,7 +118,7 @@ void ZoombiniTransitionLogo::loadFeatures() {
 			close();
 			return;
 		}
-		_cdtoonsVideo = _vm->_video->playMovie(videoPath.toString().c_str(), Audio::Mixer::kSFXSoundType);
+		_cdtoonsVideo = _vm->_video->playMovie(videoPath.toString().c_str(), Audio::Mixer::kMusicSoundType);
 		if (!_cdtoonsVideo) {
 			warning("Failed to open the CDToons video [%s], skip", videoPath.toString().c_str());
 			close();
@@ -121,7 +131,7 @@ void ZoombiniTransitionLogo::loadFeatures() {
 
 void ZoombiniTransitionLogo::onEveryFrame() {
 	if (_vm->isVersionFamilyTlcV2()) {
-#ifdef USE_BINK
+#if defined(USE_BINK) && defined(USE_RGB_COLOR)
 		if (!_binkDecoder || _binkDecoder->endOfVideo()) {
 			close();
 			return;
@@ -129,22 +139,21 @@ void ZoombiniTransitionLogo::onEveryFrame() {
 
 		bool decodedFrameChanged = false;
 		if (_binkDecoder->needsUpdate()) {
-			const Graphics::Surface *frame = _binkDecoder->decodeNextFrame();
-			if (frame) {
-				const bool firstDecodedFrame = !_binkFrame;
-				_binkFrame = frame;
+			const Graphics::Surface *frameSurface = _binkDecoder->decodeNextFrame();
+			if (frameSurface) {
+				const bool firstDecodedFrame = !_binkFrameSurface;
+				_binkFrameSurface = frameSurface;
 				decodedFrameChanged = true;
-				if (firstDecodedFrame && _demoStartupRevealActive)
+				if (firstDecodedFrame && _applyDemoStartupRevealEffect)
 					_demoStartupRevealStartFrame = _currentFrameCounter;
 			}
 		}
 
-		if (_binkFrame && (decodedFrameChanged || _demoStartupRevealActive)) {
-			// Write the decoded frame into the graphics compositor's shape
-			// screen so that the normal flushScreens() pipeline delivers it
-			// to the display. The video is 640x480, matching the game screen.
-			_vm->_gfx->getShapeScreen()->copyRectToSurface(*_binkFrame, 0, 0, Common::Rect(_binkFrame->w, _binkFrame->h));
-			applyDemoStartupRevealMask();
+		if (_binkFrameSurface && (decodedFrameChanged || _applyDemoStartupRevealEffect)) {
+			// Write the decoded 640x480 frame surface into the graphics compositor's shape screen.
+			// Normal flushScreens() pipeline will deliver it to the display.
+			_vm->_gfx->getShapeScreen()->copyRectToSurface(*_binkFrameSurface, 0, 0, Common::Rect(_binkFrameSurface->w, _binkFrameSurface->h));
+			applyV20DemoStartupRevealMask();
 			_vm->_gfx->setDirty();
 		}
 #endif
@@ -161,21 +170,45 @@ void ZoombiniTransitionLogo::onEveryFrame() {
 void ZoombiniTransitionLogo::onAnimFrame() {
 }
 
-void ZoombiniTransitionLogo::applyDemoStartupRevealMask() {
-	if (!_demoStartupRevealActive)
+void ZoombiniTransitionLogo::applyV20DemoStartupRevealMask() {
+	if (!_applyDemoStartupRevealEffect)
 		return;
 
-	// The demo reveals its first logo through a fixed sequence of 16x16 regions.
+	// v2.0US demo reveals its first logo through a fixed sequence of 16x16 regions.
 	// ScummVM recreates that presentation over the decoder's complete surface.
-	// kRevealStateRows is a 30 by 40 temporal mask for the 640 by 480 screen, not ASCII art.
-	// Its character at [tileY][tileX] gives the first reveal state at which that tile remains visible.
-	// Codes are a base-24 state index: '0' through '9' mean states 0 through 9, and 'A' through 'N' mean states 10 through 23.
+
 	// kRevealStateStartFrames maps each state index to its first animation frame.
 	// Until the current state reaches a tile's code, that tile is filled black over the decoded video frame.
 	static constexpr byte kRevealStateStartFrames[] = {
-		0, 1, 2, 5, 6, 7, 10, 11, 12, 15, 16, 19,
-		20, 21, 25, 26, 30, 31, 35, 39, 40, 44, 45, 50
+		0,
+		1,
+		2,
+		5,
+		6,
+		7,
+		10,
+		11,
+		12,
+		15,
+		16,
+		19,
+		20,
+		21,
+		25,
+		26,
+		30,
+		31,
+		35,
+		39,
+		40,
+		44,
+		45,
+		50,
 	};
+
+	// kRevealStateRows is a 30x40 temporal mask for the 640x480 screen.
+	// Its character at [tileY][tileX] gives the first reveal state at which that tile remains visible.
+	// Codes are a base-24 state index: '0'-'9' mean states 0-9, and 'A'-'N' mean states 10 through 23.
 	static constexpr char kRevealStateRows[][41] = {
 		"0J06E3B0I300G0E30I630390B033300303300300",
 		"BI3360063333093060003E3300I9300000000003",
@@ -206,7 +239,7 @@ void ZoombiniTransitionLogo::applyDemoStartupRevealMask() {
 		"114411111171D411711411141AA1111111111151",
 		"11555151115277557A5222552A25255255522225",
 		"2222858222228285228222522522228282552252",
-		"22828522222225852825555D5585582222222522"
+		"22828522222225852825555D5585582222222522",
 	};
 
 	const uint32 revealFrame = _currentFrameCounter - _demoStartupRevealStartFrame;
@@ -223,12 +256,16 @@ void ZoombiniTransitionLogo::applyDemoStartupRevealMask() {
 
 	for (byte tileY = 0; tileY < ARRAYSIZE(kRevealStateRows); tileY++) {
 		for (byte tileX = 0; tileX < 40; tileX++) {
+			// Encoded as base24 string.
 			const char revealCode = kRevealStateRows[tileY][tileX];
+
+			// Decode base24 string into a integer (0 ~ 23).
 			byte tileRevealState;
 			if (revealCode <= '9')
 				tileRevealState = static_cast<byte>(revealCode - '0');
 			else
 				tileRevealState = static_cast<byte>(revealCode - 'A' + 10);
+
 			if (revealState < tileRevealState) {
 				const int left = tileX * 16;
 				const int top = tileY * 16;
@@ -238,7 +275,7 @@ void ZoombiniTransitionLogo::applyDemoStartupRevealMask() {
 	}
 
 	if (kRevealStateStartFrames[ARRAYSIZE(kRevealStateStartFrames) - 1] < revealFrame)
-		_demoStartupRevealActive = false;
+		_applyDemoStartupRevealEffect = false;
 }
 
 } // End of namespace Mohawk
