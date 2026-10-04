@@ -88,9 +88,9 @@ protected:
 		bool isViewportRelative() const override { return true; }
 	};
 
-	// Follows the mouse over the board, so it is placed like the board is
-	struct CursorItem : RenderObject {
-		CursorItem(uint16 zOrder) : RenderObject(zOrder) {}
+	// Something drawn over the board, which is placed like the board is
+	struct BoardObject : RenderObject {
+		BoardObject(uint16 zOrder) : RenderObject(zOrder) {}
 
 		bool isViewportRelative() const override { return true; }
 	};
@@ -249,16 +249,16 @@ protected:
 	};
 	HeldButton _heldButton = kNoButton;
 	uint32 _buttonTimerEnd = 0;
-	RenderObject _doneOverlay;
-	RenderObject _counter;
+	BoardObject _doneOverlay;
+	BoardObject _counter;
 	int16 _shownCounterValue = -1;
 	Common::Rect _closeupDest;
-	RenderObject _buttonPress;
+	BoardObject _buttonPress;
 
 	int16 _placedCount = 0;
 
 	// Whatever is currently on the cursor: a scoop, or an ingredient.
-	CursorItem _cursorItem;
+	BoardObject _cursorItem;
 	int16 _activeHold = -1;
 	int8 _lastWrongFlag = -1;
 	int8 _lastSolvedFlag = -1;
