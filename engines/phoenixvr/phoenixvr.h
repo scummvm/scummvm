@@ -54,13 +54,10 @@ namespace Graphics {
 class Font;
 }
 
-namespace Video {
-class Subtitles;
-}
-
 namespace PhoenixVR {
 
 class ARN;
+class Subtitles;
 struct PhoenixVRGameDescription;
 struct GameState;
 
@@ -299,8 +296,8 @@ private:
 	void resetState();
 	const Graphics::Font *getFont(int size, bool bold) const;
 	Common::Path getSubtitlePath(const Common::String &path) const;
-	Common::SharedPtr<Video::Subtitles> loadSubtitles(const Common::String &path) const;
-	void setupSubtitles(Video::Subtitles &subtitles) const;
+	Common::SharedPtr<Subtitles> loadSubtitles(const Common::String &path) const;
+	void setupSubtitles(Subtitles &subtitles) const;
 	void drawAudioSubtitles();
 
 	void processGenericEvents(const Common::Event &event);
@@ -340,7 +337,7 @@ private:
 		float angle;
 		uint8 volume;
 		int loops;
-		Common::SharedPtr<Video::Subtitles> subtitles;
+		Common::SharedPtr<Subtitles> subtitles;
 	};
 	Common::HashMap<Common::String, Sound, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
 

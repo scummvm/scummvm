@@ -51,10 +51,10 @@
 #include "phoenixvr/pakf.h"
 #include "phoenixvr/region_set.h"
 #include "phoenixvr/script.h"
+#include "phoenixvr/subtitles.h"
 #include "phoenixvr/vr.h"
 #include "video/4xm_decoder.h"
 #include "video/smk_decoder.h"
-#include "video/subtitles.h"
 
 namespace PhoenixVR {
 
@@ -946,7 +946,7 @@ void PhoenixVREngine::playSound(const Common::String &sound, Audio::Mixer::Sound
 	_mixer->playStream(type, &h, Audio::makeWAVStream(stream.release(), DisposeAfterUse::YES), -1, volume, spatial ? 0 : panToBalance(_globalPan));
 	if (loops < 0 || music)
 		_mixer->loopChannel(h);
-	Common::SharedPtr<Video::Subtitles> subtitles;
+	Common::SharedPtr<Subtitles> subtitles;
 	if (!music)
 		subtitles = loadSubtitles(sound);
 
@@ -1001,21 +1001,21 @@ Common::Path PhoenixVREngine::getSubtitlePath(const Common::String &path) const 
 	return Common::Path("subtitle").appendComponent(language).appendComponent(filename);
 }
 
-Common::SharedPtr<Video::Subtitles> PhoenixVREngine::loadSubtitles(const Common::String &path) const {
-	Common::SharedPtr<Video::Subtitles> subtitles;
+Common::SharedPtr<Subtitles> PhoenixVREngine::loadSubtitles(const Common::String &path) const {
+	Common::SharedPtr<Subtitles> subtitles;
 	if (!ConfMan.getBool("subtitles"))
 		return subtitles;
 
-	subtitles = Common::SharedPtr<Video::Subtitles>(new Video::Subtitles());
+	subtitles = Common::SharedPtr<Subtitles>(new Subtitles(_screen));
 	subtitles->loadSRTFile(getSubtitlePath(path));
 	if (!subtitles->isLoaded())
-		return Common::SharedPtr<Video::Subtitles>();
+		return Common::SharedPtr<Subtitles>();
 
 	setupSubtitles(*subtitles);
 	return subtitles;
 }
 
-void PhoenixVREngine::setupSubtitles(Video::Subtitles &subtitles) const {
+void PhoenixVREngine::setupSubtitles(Subtitles &subtitles) const {
 	// Subtitle positioning constants (as percentages of screen height)
 	const int HORIZONTAL_MARGIN = 20;
 	const int MIN_BOTTOM_MARGIN = 4;
@@ -1024,19 +1024,19 @@ void PhoenixVREngine::setupSubtitles(Video::Subtitles &subtitles) const {
 	const float SUBTITLE_HEIGHT_PERCENT = 0.2f;
 
 	// Font sizing constants (as percentage of screen height)
-	const int MIN_FONT_SIZE = 18;
-	const float BASE_FONT_SIZE_PERCENT = 1.0f / 36.0f;
+	const int MIN_FONT_SIZE = 16;
+	const float BASE_FONT_SIZE_PERCENT = 1.0f / 48.0f;
 
-	int16 h = g_system->getOverlayHeight();
-	int16 w = g_system->getOverlayWidth();
+	int16 h = _screen->h;
+	int16 w = _screen->w;
 	int bottomMargin = MAX<int>(MIN_BOTTOM_MARGIN, int(h * BOTTOM_MARGIN_PERCENT));
 	int topOffset = MAX<int>(MIN_SUBTITLE_HEIGHT, int(h * SUBTITLE_HEIGHT_PERCENT));
 	int fontSize = MAX<int>(MIN_FONT_SIZE, int(h * BASE_FONT_SIZE_PERCENT));
 
 	subtitles.setBBox(Common::Rect(HORIZONTAL_MARGIN, h - topOffset, w - HORIZONTAL_MARGIN, h - bottomMargin));
 	subtitles.setColor(0xff, 0xff, 0x80);
-	subtitles.setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
-	subtitles.setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
+	subtitles.setFont("LiberationSans-Regular.ttf", fontSize, Subtitles::kFontStyleRegular);
+	subtitles.setFont("LiberationSans-Italic.ttf", fontSize, Subtitles::kFontStyleItalic);
 }
 
 void PhoenixVREngine::playMovie(const Common::String &movie) {
@@ -1066,14 +1066,10 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 	dec->start();
 	_currentDecoder = dec.get();
 
-	Common::SharedPtr<Video::Subtitles> subtitles = loadSubtitles(movie);
-	if (subtitles) {
-		g_system->showOverlay(false);
-		g_system->clearOverlay();
-	}
-
+	Common::SharedPtr<Subtitles> subtitles = loadSubtitles(movie);
 	bool playing = true;
 	Common::ScopedPtr<Graphics::Palette> palette;
+	const Graphics::Surface *frame = nullptr;
 	while (!shouldQuit() && playing && !dec->endOfVideo()) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -1091,28 +1087,24 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 			}
 		}
 		if (dec->needsUpdate()) {
-			auto *s = dec->decodeNextFrame();
+			frame = dec->decodeNextFrame();
 			if (dec->hasDirtyPalette()) {
 				palette.reset(new Graphics::Palette(dec->getPalette(), 256));
 			}
-			if (s) {
-				if (!s->format.isCLUT8() || palette) {
-					Common::Point dstPos((g_system->getWidth() - s->w) / 2, (g_system->getHeight() - s->h) / 2);
-					_screen->simpleBlitFrom(*s, dstPos, Graphics::FLIP_NONE, false, 0xff, palette.get());
-				}
-			}
+		}
+		if (frame && (!frame->format.isCLUT8() || palette)) {
+			Common::Point dstPos((g_system->getWidth() - frame->w) / 2, (g_system->getHeight() - frame->h) / 2);
+			_screen->simpleBlitFrom(*frame, dstPos, Graphics::FLIP_NONE, false, 0xff, palette.get());
 		}
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
 		_frameLimiter.delayBeforeSwap();
 		if (subtitles && !dec->isPaused())
-			subtitles->drawSubtitle(dec->getTime(), false);
+			subtitles->drawSubtitle(dec->getTime());
 		_screen->update();
 		_frameLimiter.startFrame();
 	}
-	if (subtitles)
-		g_system->hideOverlay();
 	_system->lockMouse(_vr.isVR());
 	_currentDecoder = nullptr;
 }
@@ -1932,7 +1924,7 @@ void PhoenixVREngine::drawAudioSubtitles() {
 	for (auto &kv : _sounds) {
 		auto &sound = kv._value;
 		if (sound.subtitles && _mixer->isSoundHandleActive(sound.handle))
-			sound.subtitles->drawSubtitle(_mixer->getElapsedTime(sound.handle).msecs(), false);
+			sound.subtitles->drawSubtitle(_mixer->getElapsedTime(sound.handle).msecs());
 	}
 }
 

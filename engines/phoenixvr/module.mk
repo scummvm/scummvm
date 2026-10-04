@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	script.o \
 	script_v1.o \
 	script_v2.o \
+	subtitles.o \
 	variables.o \
 	vr.o
 
