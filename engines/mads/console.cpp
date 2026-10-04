@@ -140,7 +140,7 @@ bool Console::cmdQuotes(int argc, const char **argv) {
 			for (search = marker; *search; search++)
 				;
 			search++;
-			int id = *((uint16 *)search);
+			int id = READ_UINT16(search);
 
 			if (quoteId == -1) {
 				debugPrintf("%d: %s\n", id, marker);
