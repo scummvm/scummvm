@@ -466,6 +466,15 @@ void PlaySecondaryMovie::resolveSentinelFrames() {
 		int frameCount = _decoder.getFrameCount();
 		_lastFrame = frameCount > 0 ? (uint16)(frameCount - 1) : 0;
 	}
+
+	// Nancy17 uses the same values for the frames its flags get set at
+	for (FlagAtFrame &frameFlag : _frameFlags) {
+		if (frameFlag.frameID == -1) {
+			frameFlag.frameID = 0;
+		} else if (frameFlag.frameID == -2) {
+			frameFlag.frameID = MAX<int>(_decoder.getFrameCount() - 1, 0);
+		}
+	}
 }
 
 void PlaySecondaryMovie::stopRandomNow() {
@@ -1452,7 +1461,12 @@ bool PlaySecondaryMovie::skip() {
 
 	// The flags of the frames that won't be played get set, as if the movie had
 	// reached its end. Other records may be waiting for them.
-	int curFrame = _decoder.isVideoLoaded() ? _decoder.getCurFrame() : -1;
+	int curFrame = -1;
+	if (_decoder.isVideoLoaded()) {
+		curFrame = _decoder.getCurFrame();
+		resolveSentinelFrames();
+	}
+
 	for (const FlagAtFrame &frameFlag : _frameFlags) {
 		bool isPending;
 		if (_playDirection == kPlayMovieReverse) {
