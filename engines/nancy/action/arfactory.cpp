@@ -54,6 +54,7 @@
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
 #include "engines/nancy/action/puzzle/cuttingpuzzle.h"
 #include "engines/nancy/action/puzzle/decoderpuzzle.h"
+#include "engines/nancy/action/puzzle/dialsequencepuzzle.h"
 #include "engines/nancy/action/puzzle/dotconnectpuzzle.h"
 #include "engines/nancy/action/puzzle/drivingpuzzle.h"
 #include "engines/nancy/action/puzzle/dropsortpuzzle.h"
@@ -736,6 +737,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	// -- Nancy16 new puzzles (types 186-199) --
 	case 186:
 		return new FoxGeesePuzzle();
+	case 187:	// Nancy17
+		return new DialSequencePuzzle();
 	case 189:
 		return new QuizPuzzle();		// Moved from 231
 	case 192:
