@@ -108,6 +108,7 @@
 #include "engines/nancy/action/puzzle/stepobjectspuzzle.h"
 #include "engines/nancy/action/puzzle/tangrampuzzle.h"
 #include "engines/nancy/action/puzzle/telephone.h"
+#include "engines/nancy/action/puzzle/tilecyclepuzzle.h"
 #include "engines/nancy/action/puzzle/towerpuzzle.h"
 #include "engines/nancy/action/puzzle/turningpuzzle.h"
 #include "engines/nancy/action/puzzle/twodialpuzzle.h"
@@ -646,7 +647,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return nullptr;
 	case 171:
-		return new TurningPuzzle();	// Moved from 209
+		if (g_nancy->getGameType() <= kGameTypeNancy16)
+			return new TurningPuzzle();	// Moved from 209
+		else
+			return new TileCyclePuzzle();
 	case 172:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new BlocksPuzzle();

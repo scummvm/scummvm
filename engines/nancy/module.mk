@@ -94,6 +94,7 @@ MODULE_OBJS = \
   action/puzzle/stepobjectspuzzle.o \
   action/puzzle/tangrampuzzle.o \
   action/puzzle/telephone.o \
+  action/puzzle/tilecyclepuzzle.o \
   action/puzzle/towerpuzzle.o \
   action/puzzle/turningpuzzle.o \
   action/puzzle/twodialpuzzle.o \
