@@ -522,6 +522,7 @@ void IgorEngine::PART_MAIN() {
 	do {
 		debugC(9, kDebugGame, "PART_MAIN _currentPart %d", _currentPart);
 		switch (_currentPart) {
+		case 0:
 		case 1:
 			PART_00(); // Student dormitory; cseg001:08BA-08C1
 			break;

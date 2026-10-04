@@ -1,12 +1,25 @@
 /* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
-
 #include "igor/igor.h"
+
 
 namespace Igor {
 
@@ -196,6 +209,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		break;
 	case 117: // cseg206:14EA-159D
 		{
+			_walkDataCurrentIndex = 0;
 			int walkFrame = 1;
 			for (int i = 9; i >= 0; --i) {
 				WalkData *wd = &_walkData[0];
@@ -266,32 +280,35 @@ void IgorEngine::PART_00_WALK_IN() {
 		startIgorDialogue();
 		_objectsState[14] = 1;
 	} else {
-		// cseg206:173F-1821: restore the room, scale Igor into view, then
-		// walk from the doorway to the room's normal entrance point.
-		PART_00_APPLY_OBJECT_STATE(255);
-		int walkFrame = 1;
-		for (int i = 0; i <= 9; ++i) {
-			WalkData *entry = &_walkData[0];
-			entry->setPos(145, 143, kFacingPositionBack, walkFrame);
-			walkFrame = walkFrame == 6 ? 1 : walkFrame + 1;
-			entry->clipSkipX = 1;
-			entry->clipWidth = 30;
-			entry->scaleWidth = i * 3 + 23;
-			entry->xPosChanged = 1;
-			entry->dxPos = 0;
-			entry->yPosChanged = 1;
-			entry->dyPos = 0;
-			entry->scaleHeight = 50;
-			moveIgor(entry->posNum, entry->frameNum);
-			waitForTimer(15);
-		}
-		_walkDataLastIndex = 0;
-		buildWalkPath(145, 143, 125, 138);
-		_walkData[_walkDataLastIndex].frameNum = 0;
-		_walkDataCurrentIndex = 1;
-		_gameState.igorMoving = true;
-		waitForIgorMove();
+		PART_00_ENTER_FROM_BELOW();
 	}
+}
+
+void IgorEngine::PART_00_ENTER_FROM_BELOW() {
+	PART_00_APPLY_OBJECT_STATE(255);
+	_walkDataCurrentIndex = 0;
+	int walkFrame = 1;
+	for (int i = 0; i <= 9; ++i) {
+		WalkData *entry = &_walkData[0];
+		entry->setPos(145, 143, kFacingPositionBack, walkFrame);
+		walkFrame = walkFrame == 6 ? 1 : walkFrame + 1;
+		entry->clipSkipX = 1;
+		entry->clipWidth = 30;
+		entry->scaleWidth = i * 3 + 23;
+		entry->xPosChanged = 1;
+		entry->dxPos = 0;
+		entry->yPosChanged = 1;
+		entry->dyPos = 0;
+		entry->scaleHeight = 50;
+		moveIgor(entry->posNum, entry->frameNum);
+		waitForTimer(15);
+	}
+	_walkDataLastIndex = 0;
+	buildWalkPath(145, 143, 125, 138);
+	_walkData[_walkDataLastIndex].frameNum = 0;
+	_walkDataCurrentIndex = 1;
+	_gameState.igorMoving = true;
+	waitForIgorMove();
 }
 
 void IgorEngine::PART_00() {
@@ -317,10 +334,13 @@ void IgorEngine::PART_00() {
 	fadeIn(768);
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
-	PART_00_WALK_IN();
+	if (_currentPart == 1)
+		PART_00_WALK_IN();
+	else
+		PART_00_ENTER_FROM_BELOW();
 
 	enterPartLoop();
-	while (_currentPart == 1)
+	while (_currentPart == 0 || _currentPart == 1)
 		runPartLoop();
 	leavePartLoop();
 	if (_currentPart == kInvalidPart)

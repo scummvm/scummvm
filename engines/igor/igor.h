@@ -482,6 +482,7 @@ private:
 	void PART_00_ANIMATE_RAW(int srcOffset, int firstFrame, int lastFrame, int frameSize, int width, int height, int dstOffset, int delay, int soundFrame, int sound);
 	void PART_00_ENTRY_ANIMATION();
 	void PART_00_WALK_IN();
+	void PART_00_ENTER_FROM_BELOW();
 
 	// spring bridge
 	void PART_05_HELPER_4_drawPaperOrNot(int num);

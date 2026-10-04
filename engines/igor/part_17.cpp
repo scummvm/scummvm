@@ -516,7 +516,8 @@ void IgorEngine::PART_17() {
 	PART_17_HELPER_1(255);
 
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	_gameState.unkF = true;
+
+
 	if (_objectsState[56] == 1) {
 		_gameState.unkF = false;
 		PART_17_HELPER_3(6);
