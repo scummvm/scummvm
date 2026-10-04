@@ -73,6 +73,11 @@ public:
 	 */
 	void queueSilence(uint32 lengthMs);
 
+	/**
+	 * Plays the short low buzz used to reject invalid input
+	 */
+	void playErrorBeep();
+
 	// Debug flag toggled by the "intangible" console command, allowing
 	// movement through normally impassable terrain
 	bool _intangible = false;
@@ -116,6 +121,11 @@ public:
 	 * Returns true if any savegames exist
 	 */
 	bool savegamesExist() const;
+
+	/**
+	 * Returns a font object that GfxSurface instances can use
+	 */
+	Graphics::Font *createFont() const override;
 };
 
 extern Ultima3Engine *g_engine;

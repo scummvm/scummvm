@@ -358,6 +358,7 @@ void Title::timeout() {
 
 	case PH_DRAIN:
 		_keyPending = false;
+		draw();
 		showMainMenu();
 		break;
 	}

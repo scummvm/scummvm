@@ -31,15 +31,30 @@ namespace Views {
 using namespace Graphics::Views;
 
 /**
- * BOOTUP.BIN's main menu: Return to the View / Organize a Party /
- * Journey Onward. The option handlers are wired up as the roster/party
- * data model and the world engine land in later stages.
+ * The main menu: Return to the View / Organize a Party / Journey Onward.
+ * Like the original, it is drawn over whatever the title screen left on the
+ * display. Pressing R, O, J or Escape only echoes the choice on the Option
+ * line; it must then be confirmed with Enter, or taken back with Backspace
+ * or Left. The confirmed options are wired up as the roster/party data
+ * model and the world engine land in later stages.
  */
 class MainMenu : public View {
+private:
+	enum State {
+		CHOOSING,
+		CONFIRMING
+	};
+
+	State _state = CHOOSING;
+	int _choice = 0;
+
+	void drawBorder(GfxSurface &s);
+
 public:
 	MainMenu() : View("MainMenu") {}
 	~MainMenu() override {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 };

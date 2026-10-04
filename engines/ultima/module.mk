@@ -163,6 +163,7 @@ MODULE_OBJS += \
 	ultima3/console.o \
 	ultima3/metaengine.o \
 	ultima3/data/data.o \
+	ultima3/gfx/charset.o \
 	ultima3/gfx/pic_decoder.o \
 	ultima3/views/main_menu.o \
 	ultima3/views/title.o
