@@ -1461,8 +1461,6 @@ static void room_203_daemon() {
 		aainfo[1]._active = 0;
 		aainfo[1]._frame = 0;
 
-		warning("LOCAL 96: %d", local->_96);
-
 		switch (local->_96) {
 		case 50:
 			global[tunnel_exit_2_opened] = -1;
