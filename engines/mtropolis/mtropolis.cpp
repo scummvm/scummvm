@@ -330,6 +330,8 @@ Common::Error MTropolisEngine::run() {
 		Palette pal;
 		pal.initDefaultPalette(2);
 		_runtime->setGlobalPalette(pal);
+	} else if (_gameDescription->gameID == GID_WORLDBROKE) {
+		HackSuites::addTDTWBQuirks(*_gameDescription, _runtime->getHacks());
 	}
 
 
