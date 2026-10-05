@@ -84,23 +84,29 @@ void IgorEngine::waitForTimer(int ticks) {
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				_inputVars[kInputClick] = 1;
 				_inputVars[kInputCursorXPos] = ev.mouse.x;
 				_inputVars[kInputCursorYPos] = ev.mouse.y;
 				if (_gameState.dialogueTextRunning) {
+					// Dialogue dismissal and room clicks are separate DOS flags;
+					// consuming this event here prevents it reaching the room loop.
+					_inputVars[kInputClick] = 0;
 					_inputVars[kInputSkipDialogue] = 1;
+				} else {
+					_inputVars[kInputClick] = 1;
 				}
 				break;
 			default:
 				break;
 			}
 		}
-		// Keep the poll granularity proportional, otherwise a 10 ms sleep
-		// overshoots the shortened deadline at high factors.
-		_system->delayMillis(MAX(1, 10 / _fastMode));
-		if (_system->getMillis() >= endTicks) {
+		const uint32 now = _system->getMillis();
+		if (now >= endTicks) {
 			break;
 		}
+		// Do not overshoot short explicit DOS-timer waits. One DOS timer unit
+		// is 1000 / kTickDelay ms; if requested delay is smaller then respect that
+		const uint32 pollDelay = MAX(1, 10 / _fastMode);
+		_system->delayMillis(MIN<uint32>(pollDelay, endTicks - now));
 
 	} while (true);
 	_nextTimer = _system->getMillis() + kTimerTicksCount * 1000 / kTickDelay / _fastMode;
@@ -328,12 +334,8 @@ void IgorEngine::handleRoomInput() {
 			_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
 		}
 		// The original only exposes a room object when this action byte is
-		// non-zero; otherwise hover text is verb-only. cseg175:2C8B-2CBC;
-		// cseg176:2CBC-2CED.
-		if (((_currentPart >= 100 && _currentPart <= 102) || // cseg175:29AA-29B5
-			 _currentPart == 110) &&                         // cseg176:29DF-29E6
-			_actionCode == 0 &&
-			_currentAction.object1Type == kObjectTypeRoom) {
+		// non-zero; otherwise hover text is verb-only.
+		if (((_currentPart >= 100 && _currentPart <= 102) || _currentPart == 110) && _actionCode == 0 && _currentAction.object1Type == kObjectTypeRoom) {
 			_currentAction.object1Num = 0;
 		}
 	}

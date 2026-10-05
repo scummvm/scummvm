@@ -33,80 +33,65 @@ void IgorEngine::PART_01_CLOSE_WINDOW() {
 	waitForEndOfIgorDialogue();
 }
 
-// sub_200_0053 (cseg200:0053-00A4): 13 rows of 16 bytes from the animation
-// buffer, source stride 16 (cseg200:0074-007D), to the screen with stride 320
-// (cseg200:0087-008D), 16 bytes per row (cseg200:0095). s3:0xEB20 is the loop
-// counter and runs until 0x0C (cseg200:0068-006D, 009C).
-void IgorEngine::PART_01_STATE_11_BLIT_0053() {
+void IgorEngine::PART_01_STATE_11_BLIT_blitIgor() {
 	for (int i = 0; i < 13; ++i)
 		memcpy(_screenVGA + 0x5476 + i * 320, _animFramesBuffer + 0x1859 + i * 16, 16);
 }
 
-// sub_200_00A5 (cseg200:00A5-00F7): 40 rows of 218 bytes, source stride 0xDA
-// (cseg200:00C3), to the screen with stride 320 (cseg200:00D9-00DF), 0xDA bytes
-// per row (cseg200:00E7). Loop counter s3:0xEB20 until 0x27 (cseg200:00BF, 00EF).
 void IgorEngine::PART_01_STATE_11_BLIT_00A5() {
 	for (int i = 0; i < 40; ++i)
 		memcpy(_screenVGA + 0x118F + i * 320, _animFramesBuffer + 0xA7F9 + i * 0xDA, 0xDA);
 }
 
-// sub_200_0153 (cseg200:0153-01B5): one of five 5x4 pigeon frames. The frame
-// parameter is multiplied by 0x14 at cseg200:017E-018C; each row is five bytes
-// (cseg200:0171-017C), and the destination stride is 320 (cseg200:0198-01A6).
-void IgorEngine::PART_01_STATE_11_BLIT_0153(int frame) {
+//
+void IgorEngine::PART_01_STATE_11_BLIT_drawIgorsEyes(int frame) {
 	for (int i = 0; i < 4; ++i)
 		memcpy(_screenVGA + 0x55BB + i * 320,
 				_animFramesBuffer + 0xA7A9 + frame * 20 + i * 5, 5);
 }
 
-// sub_200_01B8 (cseg200:01B8-01F3): a single 0x2F80-byte copy from
-// _animFramesBuffer + 0x1929 + 0x2F80*index (cseg200:01CB-01DA) to
-// _screenVGA + 0x6F40 (cseg200:01C6, 01E4), 0x2F80 bytes per call
-// (cseg200:01EA).
-void IgorEngine::PART_01_STATE_11_DRAW_01B8(int index) {
+//
+void IgorEngine::PART_01_STATE_11_DRAW_drawPigeons(int index) {
 	memcpy(_screenVGA + 0x6F40, _animFramesBuffer + 0x1929 + index * 0x2F80, 0x2F80);
 }
 
-// State 11: the window-exit cutscene, cseg200:195A-19F0. It blits two regions,
+// 11: the window-pigeons cutscene It blits two regions,
 // restores the current palette from the saved one, then runs a 1000-tick
 // animation loop before handing over to state 22.
 void IgorEngine::PART_01_STATE_11() {
-	PART_01_STATE_11_BLIT_0053(); // cseg200:195A
-	PART_01_STATE_11_BLIT_00A5(); // cseg200:195F
+	PART_01_STATE_11_BLIT_blitIgor();
+	PART_01_STATE_11_BLIT_00A5();
 
-	// cseg200:1964-1971 copies 768 bytes with s3:0xE15E pushed first and
-	// s3:0xE45E second, so s3:0xE15E is the source. The inverse pair at
-	// cseg209:0425-0432 and cseg209:064E-065B pins s3:0xE15E to
-	// _paletteBuffer and s3:0xE45E to _currentPalette.
 	memcpy(_currentPalette, _paletteBuffer, 768);
-
-	// cseg221:0x21DA is setPalette(), as identified by the original-runtime
-	// trap table in reference/cyxx/igor/game.cpp and called at cseg200:1976.
 	updatePalette(768);
 
-	// s3:0xEACA is a 0..63 DOS-timer counter and s3:0xEB26 counts 1000
-	// iterations (cseg200:197B-1986,19CC-19E8). The EAC8/EAC9 spin at
-	// cseg200:19BD-19C9 waits for one DOS timer unit after every iteration.
-	uint8 eaca = 0;
-	for (int eb26 = 0; eb26 < 1000; ++eb26) { // cseg200:197B-197D, 19DE-19E8
-		if (eaca == 0x3D) { // cseg200:198B
-			// DOS random(4) returns 0..3; the C++ helper's bound is inclusive.
-			PART_01_STATE_11_BLIT_0153(getRandomNumber(3)); // cseg200:1992-199A
+	uint8 dosTimerPhase = 0;
+	int pendingTicks = 0;
+	// for 1000 ticks
+	for (int k = 0; k < 1000; ++k) {
+		const bool drawIgorsEyes = dosTimerPhase == 0x3D;
+		const bool drawPigeons = ((dosTimerPhase + 1) % 0x20) == 0;
+		if ((drawIgorsEyes || drawPigeons) && pendingTicks != 0) {
+			waitForTimer(pendingTicks);
+			pendingTicks = 0;
 		}
-		if (((eaca + 1) % 0x20) == 0) { // cseg200:199F-19B8
-			// DOS random(3) returns 0..2. ANM_OutsideStudentDormitory6 is
-			// exactly three 0x2F80-byte frames (0x8E80 bytes).
-			PART_01_STATE_11_DRAW_01B8(getRandomNumber(2));
+		if (drawIgorsEyes) {
+			PART_01_STATE_11_BLIT_drawIgorsEyes(getRandomNumber(3)); // cseg200:1992-199A
+		}
+		if (drawPigeons) {
+			PART_01_STATE_11_DRAW_drawPigeons(getRandomNumber(2));
 		}
 
-		waitForTimer(); // cseg200:19BD-19C9: one DOS timer unit
+		++pendingTicks;
 
-		if (eaca == 0x3F) // cseg200:19CC-19D8
-			eaca = 0;
+		if (dosTimerPhase == 0x3F)
+			dosTimerPhase = 0;
 		else
-			++eaca; // cseg200:19DA
+			++dosTimerPhase;
 	}
-	_currentPart = 22; // cseg200:19EA
+	if (pendingTicks != 0)
+		waitForTimer(pendingTicks);
+	_currentPart = 22;
 }
 
 void IgorEngine::PART_01_EXEC_ACTION(int action) {

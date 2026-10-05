@@ -40,7 +40,9 @@ const RoomDataOffsets IgorEngine::PART_01_ROOM_DATA_OFFSETS = {
 const RoomDataOffsets IgorEngine::PART_02_ROOM_DATA_OFFSETS = {
 	{ 125, 5, 20, 4 }, // cseg203:323B-324D; five-area transition table
 	{ 259, 280 }, // cseg203:385E-3884,39F9
-	{ 289, 473, 4193, 565, 549, 96 }, // cseg203:49B1-4AF9
+	// use matrix 565: cseg203:4A89; object2 map 473: cseg203:4A43;
+	// object1 map 549: cseg203:4A6D; row size 0x60: cseg203:4A74.
+	{ 289, 565, 4193, 473, 549, 96 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } // cseg203 has no room-specific dialogue matrix
 };
 

@@ -490,10 +490,10 @@ private:
 	void PART_01();
 	void PART_01_EXEC_ACTION(int action);
 	void PART_01_CLOSE_WINDOW();
-	void PART_01_STATE_11_BLIT_0053();
+	void PART_01_STATE_11_BLIT_blitIgor();
 	void PART_01_STATE_11_BLIT_00A5();
-	void PART_01_STATE_11_BLIT_0153(int frame);
-	void PART_01_STATE_11_DRAW_01B8(int index);
+	void PART_01_STATE_11_BLIT_drawIgorsEyes(int frame);
+	void PART_01_STATE_11_DRAW_drawPigeons(int index);
 	void PART_01_STATE_11();
 	void PART_02();
 	void PART_02_EXEC_ACTION(int action);
