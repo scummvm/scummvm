@@ -898,6 +898,17 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy13
 	},
+	{ // MD5 by owow126 from bug #17262 - version from Big Fish Games
+		{
+			"nancy13", nullptr,
+			AD_ENTRY1s("ciftree.dat", "c8eb114bff0b700c3ab805f02a2f0d0f", 58578828),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy13
+	},
 	{ // MD5 by bluegr
 		{
 			"nancy14", nullptr,
