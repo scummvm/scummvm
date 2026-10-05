@@ -1069,11 +1069,12 @@ void IgorEngine::handleRoomIgorWalk() {
 		if (_actionCode > 0) {
 			hideCursor();
 			debugC(9, kDebugEngine, "Executing action code %d", _actionCode);
+			const int actionPart = _currentPart;
 			executeAction(_actionCode);
 			if (!_gameState.dialogueTextRunning) {
 				showCursor();
 			}
-			clearAction();
+			clearAction(_currentPart == actionPart);
 		}
 	}
 	if (_gameState.igorMoving) {

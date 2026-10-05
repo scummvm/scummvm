@@ -303,7 +303,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			playSound(68, 1);
 			PART_00_ANIMATE_RAW(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
 			waitForTimer(127);
-			// formatActionSentence(0);
+
 
 			PART_02_START_DIALOGUE(221, 1, 125);
 			if (_gameState.talkMode == kTalkModeTextOnly)
@@ -413,9 +413,22 @@ void IgorEngine::PART_02() {
 			PART_00_DRAW_RAW_FRAME(0x820B, 0, 0xA19, 47, 55, 0x6C3B);
 			updatePalette(768);
 
-			// TODO: Port the remaining sequence once its undisassembled static
-			// selector table has been recovered. It selects the 20 animation
-			// frames and their exact delays; guessing would change DOS behavior.
+			// Igor lies stunned, stands up, and shakes his head.
+			static const uint8 postExplosionFrames[] = {
+				0, 1, 2, 1, 2, 1, 2, 1, 2, 1,
+				2, 1, 2, 1, 2, 1, 2, 1, 3, 4
+			};
+			for (uint i = 0; i < ARRAYSIZE(postExplosionFrames); ++i) {
+				const int frame = postExplosionFrames[i];
+				PART_00_DRAW_RAW_FRAME(0x820B, frame, 0xA19, 47, 55, 0x6C3B);
+				if (frame == 0)
+					waitForTimer(2 * 255);
+				else if (frame == 1 || frame == 2)
+					waitForTimer(31);
+				else
+					waitForTimer(127);
+			}
+			PART_02_START_DIALOGUE(224, 1, 127);
 
 			// Rebuild the panels erased above.
 			drawVerbsPanel();

@@ -752,7 +752,7 @@ private:
 	void handleRoomInput();
 
 	void executeAction(int action);
-	void clearAction();
+	void clearAction(bool redraw = true);
 	void formatActionSentence(uint8 color);
 	void drawActionSentence(const char *sentence, uint8 color);
 	void handleRoomIgorWalk();

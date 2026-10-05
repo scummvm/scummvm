@@ -442,16 +442,18 @@ void IgorEngine::handleRoomInput() {
 
 	hideCursor();
 	debugC(9, kDebugEngine, "handleRoomInput() executing action with actionCode %d", _actionCode);
+	const int actionPart = _currentPart;
 	executeAction(_actionCode);
 	if (!_gameState.dialogueTextRunning) {
 		showCursor();
 	}
-	clearAction();
+	clearAction(_currentPart == actionPart);
 	return;
 }
 
-void IgorEngine::clearAction() {
-	redrawVerb(_currentAction.verb, false);
+void IgorEngine::clearAction(bool redraw) {
+	if (redraw)
+		redrawVerb(_currentAction.verb, false);
 	memset(&_currentAction, 0, sizeof(_currentAction));
 	_currentAction.verb = kVerbWalk;
 	_actionCode = 0;
