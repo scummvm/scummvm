@@ -1309,6 +1309,16 @@ void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Commo
 			readRectArray(*xsheet, _treeRects, kMaxTrees);
 		}
 
+		// Nancy17 leaves the right and bottom edge out of the rect
+		if (g_nancy->getGameType() >= kGameTypeNancy17) {
+			for (Common::Rect &rect : _treeRects) {
+				if (!rect.isEmpty()) {
+					--rect.right;
+					--rect.bottom;
+				}
+			}
+		}
+
 		_frameTime = xsheet->readUint32LE();
 	} else {
 		xsheet->skip(2);
