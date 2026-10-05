@@ -61,6 +61,7 @@ void Manager::takeEngineAction(const Action &action) {
 			}
 
 			_clockDisplays.push_back(action.sender);
+			updatePlayerTime();
 		}
 	} else if (action.target.equalsIgnoreCase("Engine_ClosedCaption")) {
 		if (action.type == kActionQuery) {
@@ -494,7 +495,13 @@ void Manager::setCaption(const Common::String &text) {
 }
 
 // The time of day is shown as "1:05 pm", grayed out at night
-void Manager::setPlayerTime(uint32 minutesOfDay, bool isDaytime) {
+void Manager::updatePlayerTime() {
+	const BSUM *bootSummary = GetEngineData(BSUM);
+	assert(bootSummary);
+
+	const Time playerTime = NancySceneState.getPlayerTime();
+	uint32 minutesOfDay = playerTime.getHours() * 60 + playerTime.getMinutes();
+	bool isDaytime = minutesOfDay >= (uint32)bootSummary->dayStartMinutes && minutesOfDay <= (uint32)bootSummary->dayEndMinutes;
 	uint32 hours = minutesOfDay / 60;
 	uint32 displayHours = hours % 12 == 0 ? 12 : hours % 12;
 	Common::String text = Common::String::format("%u:%02u %s", displayHours, minutesOfDay % 60, hours < 12 ? "am" : "pm");

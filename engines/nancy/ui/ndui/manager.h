@@ -116,7 +116,7 @@ public:
 	// Engine state shown by the UI
 	void update();
 	void setCaption(const Common::String &text);
-	void setPlayerTime(uint32 minutesOfDay, bool isDaytime);
+	void updatePlayerTime();
 	void createItemButtons();
 	void clickInventoryItem(int16 itemID) { onInventoryClicked(itemID); }
 

@@ -398,6 +398,10 @@ void Scene::setPlayerTime(Time time, byte relative) {
 	}
 
 	_timers.playerTimeNextMinute = g_nancy->getTotalPlayTime() + bootSummary->playerTimeMinuteLength;
+
+	if (_ndui) {
+		_ndui->updatePlayerTime();
+	}
 }
 
 uint Scene::getPlayerTimeMinutes() const {
@@ -2151,8 +2155,7 @@ void Scene::run() {
 		}
 
 		if (_ndui) {
-			uint minutes = _timers.playerTime.getHours() * 60 + _timers.playerTime.getMinutes();
-			_ndui->setPlayerTime(minutes, minutes >= bootSummary->dayStartMinutes && minutes <= bootSummary->dayEndMinutes);
+			_ndui->updatePlayerTime();
 		}
 	}
 
