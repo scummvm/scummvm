@@ -93,6 +93,13 @@ static Common::String resolveSoundSubtitle(const Common::String &soundName) {
 		}
 	}
 
+	// Enhancement: the muffled takes of a few Nancy16 lines have no text of their
+	// own (e.g. "NIC312_muffled" in scene 4735), so show the text of the clear take
+	static const char *const kMuffledSuffix = "_muffled";
+	if (soundName.hasSuffixIgnoreCase(kMuffledSuffix)) {
+		return resolveSoundSubtitle(soundName.substr(0, soundName.size() - strlen(kMuffledSuffix)));
+	}
+
 	return Common::String();
 }
 
