@@ -1371,6 +1371,7 @@ void FadeOverlay::execute() {
 		_drawSurface.create(_bounds.width(), _bounds.height(), g_nancy->_graphics->getTransparentPixelFormat());
 		moveTo(_bounds);
 		RenderObject::init();
+		registerGraphics();
 
 		_startTime = g_nancy->getTotalPlayTime();
 		_state = kRun;
@@ -1676,6 +1677,7 @@ void Rain::execute() {
 	if (_state == kBegin) {
 		g_nancy->_resource->loadImage(_imageName, _image);
 		RenderObject::init();
+		registerGraphics();
 		setVisible(false);
 		_state = kRun;
 	}
