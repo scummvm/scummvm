@@ -36,7 +36,7 @@ void IgorEngine::PART_01_CLOSE_WINDOW() {
 void IgorEngine::PART_01_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_01_EXEC_ACTION %d", action);
 	switch (action) {
-	case 101:
+	case 101: // walk past pigeon
 		ADD_DIALOGUE_TEXT(201, 2, 131);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -51,32 +51,32 @@ void IgorEngine::PART_01_EXEC_ACTION(int action) {
 		}
 		_currentPart = 20;
 		break;
-	case 103:
+	case 103: // look at pigeon
 		ADD_DIALOGUE_TEXT(205, 1, 134);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 104:
+	case 104: // look at closed window
 		ADD_DIALOGUE_TEXT(206, 2, 135);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 105:
+	case 105: // look at other window
 		ADD_DIALOGUE_TEXT(208, 1, 136);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 106:
+	case 106: // close other window
 		ADD_DIALOGUE_TEXT(209, 1, 137);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 107:
+	case 107: // open window
 		ADD_DIALOGUE_TEXT(210, 1, 138);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 108:
+	case 108: // pick up pigeon
 		ADD_DIALOGUE_TEXT(211, 2, 139);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -90,9 +90,7 @@ void IgorEngine::PART_01_EXEC_ACTION(int action) {
 void IgorEngine::PART_01() {
 	_gameState.enableLight = 1;
 	loadActionData(DAT_OutsideStudentDormitory);
-	loadRoomData(PAL_OutsideStudentDormitory, IMG_OutsideStudentDormitory,
-			BOX_OutsideStudentDormitory, MSK_OutsideStudentDormitory,
-			TXT_OutsideStudentDormitory);
+	loadRoomData(PAL_OutsideStudentDormitory, IMG_OutsideStudentDormitory, BOX_OutsideStudentDormitory, MSK_OutsideStudentDormitory, TXT_OutsideStudentDormitory);
 	static const int animFrames[] = {
 		ANM_OutsideStudentDormitory1, ANM_OutsideStudentDormitory2,
 		ANM_OutsideStudentDormitory3, ANM_OutsideStudentDormitory4,
@@ -100,6 +98,7 @@ void IgorEngine::PART_01() {
 		ANM_OutsideStudentDormitory7, ANM_OutsideStudentDormitory8, 0
 	};
 	loadAnimData(animFrames);
+
 	_roomDataOffsets = PART_01_ROOM_DATA_OFFSETS;
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_01_EXEC_ACTION);
 	memcpy(_screenVGA, _screenLayer1, 46080);

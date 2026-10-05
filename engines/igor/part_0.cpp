@@ -129,14 +129,14 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 106: // cseg206:088B-0A33
+	case 106: // open bedside table
 		if (_objectsState[8] == 0) {
 			PART_00_ANIMATE_RAW(0x3FC8, 0, 2, 0x436, 22, 49, 0x693C, 126, 2, 6);
 			_objectsState[8] = 1;
 			PART_00_APPLY_OBJECT_STATE(1);
 		}
 		break;
-	case 107: // cseg206:0A34-0BDC
+	case 107: // close bedside table
 		if (_objectsState[8] != 0) {
 			PART_00_ANIMATE_RAW(0x3FC8, 2, 0, 0x436, 22, 49, 0x693C, 126, 1, 6);
 			_objectsState[8] = 0;
@@ -243,7 +243,6 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_00_ENTRY_ANIMATION() {
-	// cseg206:0BDD-0DCD.
 	waitForTimer(62);
 	if (_objectsState[10] == 0) {
 		for (int y = 0; y < 56; ++y)
@@ -257,7 +256,6 @@ void IgorEngine::PART_00_ENTRY_ANIMATION() {
 }
 
 void IgorEngine::PART_00_WALK_IN() {
-	// cseg206:3AB1-3B5C.
 	PART_00_ENTRY_ANIMATION();
 	WalkData *wd = &_walkData[0];
 	wd->setPos(120, 131, kFacingPositionFront, 0);
@@ -275,7 +273,7 @@ void IgorEngine::PART_00_WALK_IN() {
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	if (_objectsState[14] == 0) { // s3:084A; cseg206:3B2F-3B57
+	if (_objectsState[14] == 0) {
 		ADD_DIALOGUE_TEXT(215, 2, 103);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();

@@ -26,45 +26,45 @@ namespace Igor {
 void IgorEngine::PART_18_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(201, 1);
+		ADD_DIALOGUE_TEXT(201, 1, 896);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(202, 1);
+		ADD_DIALOGUE_TEXT(202, 1, 897);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(205, 1);
+		ADD_DIALOGUE_TEXT(205, 1, 899);
 		SET_DIALOGUE_TEXT(1, 1);
 		startCutsceneDialogue(99, 54, 43, 63, 0);
 		waitForEndOfCutsceneDialogue(99, 54, 43, 63, 0);
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(206, 1);
+		ADD_DIALOGUE_TEXT(206, 1, 900);
 		SET_DIALOGUE_TEXT(1, 1);
 		startCutsceneDialogue(132, 55, 63, 42, 0);
 		waitForEndOfCutsceneDialogue(132, 55, 63, 42, 0);
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(207, 1);
+		ADD_DIALOGUE_TEXT(207, 1, 901);
 		SET_DIALOGUE_TEXT(1, 1);
 		startCutsceneDialogue(167, 56, 0, 42, 42);
 		waitForEndOfCutsceneDialogue(167, 56, 0, 42, 42);
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(208, 1);
+		ADD_DIALOGUE_TEXT(208, 1, 902);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(209, 1);
+		ADD_DIALOGUE_TEXT(209, 1, 903);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 108:
-		ADD_DIALOGUE_TEXT(210, 1);
+		ADD_DIALOGUE_TEXT(210, 1, 904);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -108,20 +108,20 @@ void IgorEngine::PART_18_ACTION_109() {
 	removeObjectFromInventory(53);
 	fadeIn(768);
 	_currentPart = part;
-	ADD_DIALOGUE_TEXT(215, 1);
+	ADD_DIALOGUE_TEXT(215, 1, 908);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 }
 
 void IgorEngine::PART_18_ACTION_111() {
 	if (_objectsState[0] == 0) {
-		ADD_DIALOGUE_TEXT(211, 1);
+		ADD_DIALOGUE_TEXT(211, 1, 905);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		return;
 	}
 	if (_objectsState[0] == 2) {
-		ADD_DIALOGUE_TEXT(212, 1);
+		ADD_DIALOGUE_TEXT(212, 1, 906);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		return;
@@ -137,7 +137,7 @@ void IgorEngine::PART_18_ACTION_111() {
 	for (int i = 0; i <= 28; ++i) {
 		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + i * 28 + 0xBDE, 28);
 	}
-	ADD_DIALOGUE_TEXT(213, 2);
+	ADD_DIALOGUE_TEXT(213, 2, 907);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	_objectsState[0] = 2;
