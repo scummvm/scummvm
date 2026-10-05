@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 
 #include "image/bmp.h"
+#include "image/png.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
@@ -161,6 +162,25 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 	if (outDest) {
 		*outDest = info.dest;
 	}
+
+#ifdef USE_PNG
+	// Nancy18 stores its images as PNG files
+	if (g_nancy->getGameType() >= kGameTypeNancy18) {
+		Image::PNGDecoder pngDec;
+		if (!pngDec.loadStream(*stream)) {
+			warning("Couldn't decode PNG image '%s'", name.toString().c_str());
+			delete stream;
+			return false;
+		}
+
+		Graphics::Surface *converted = pngDec.getSurface()->convertTo(g_nancy->_graphics->getInputPixelFormat(32));
+		GraphicsManager::copyToManaged(*converted, surf);
+		converted->free();
+		delete converted;
+		delete stream;
+		return true;
+	}
+#endif
 
 	// Nancy16 stores its images as uncompressed, top-down TGA files. Only the header
 	// needs skipping; the image's size and depth come from the CIF info.
