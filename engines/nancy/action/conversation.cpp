@@ -237,7 +237,14 @@ void ConversationSound::readDataNancy13(Common::SeekableReadStream &stream) {
 		_text = resolveConversationText(_sound.name);
 	} else {
 		for (uint i = 0; i < _concatSounds.size(); ++i) {
-			_text += resolveConversationText(_concatSounds[i]);
+			Common::String part = resolveConversationText(_concatSounds[i]);
+
+			// Nancy16 starts every part on a line of its own
+			if (g_nancy->getGameType() >= kGameTypeNancy16 && !part.empty() && !_text.empty()) {
+				_text += "<n>";
+			}
+
+			_text += part;
 		}
 	}
 
