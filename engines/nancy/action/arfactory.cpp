@@ -58,6 +58,7 @@
 #include "engines/nancy/action/puzzle/dialsequencepuzzle.h"
 #include "engines/nancy/action/puzzle/dotconnectpuzzle.h"
 #include "engines/nancy/action/puzzle/dragsurfacepuzzle.h"
+#include "engines/nancy/action/puzzle/escapepuzzle.h"
 #include "engines/nancy/action/puzzle/drivingpuzzle.h"
 #include "engines/nancy/action/puzzle/dropsortpuzzle.h"
 #include "engines/nancy/action/puzzle/escapegridpuzzle.h"
@@ -770,7 +771,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new WhackItPuzzle();
 	case 204:
-		return new OverrideLockPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy15)
+			return new OverrideLockPuzzle();
+		else
+			return new EscapePuzzle();
 	case 205:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new RiddlePuzzle();
