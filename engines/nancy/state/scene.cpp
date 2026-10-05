@@ -2202,6 +2202,10 @@ void Scene::run() {
 			break;
 		case UI::NDUI::Manager::kRequestSave:
 			g_nancy->saveGameState(request.slot, request.name, false);
+			if (request.hasFollowUpAction) {
+				_ndui->runPendingAction();
+			}
+
 			break;
 		case UI::NDUI::Manager::kRequestQuit:
 			g_nancy->quitGame();

@@ -85,11 +85,15 @@ public:
 		RequestType type = kRequestNone;
 		int slot = -1;
 		Common::String name;
+		bool hasFollowUpAction = false;	// a quit or load follows the save
 	};
 
 	~Manager();
 
 	Request takeRequest();
+
+	// Goes on with the quit or load that was put off to ask whether to save first
+	void runPendingAction();
 
 	// Creates every panel in the IFF with the given name, and in the ones it includes
 	void load(const Common::String &name);
@@ -168,9 +172,9 @@ private:
 	void onVolumeAction(const Action &action, const char *configKey);
 	void onFlagsAction(const Action &action);
 	void askToSaveFirst(const Action &action);
-	void runPendingAction();
 	uint fillSaveList(const Common::String &listName);
 	int findSaveSlot(const Common::String &name) const;
+	int runScummVMSaveLoadDialog(bool isSave, Common::String &saveName);
 	void setSaveScreenshot(const Graphics::ManagedSurface &image, const Common::Rect &src);
 
 	Panel *findPanel(const Common::String &name) const;

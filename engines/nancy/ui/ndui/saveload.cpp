@@ -28,8 +28,11 @@
 
 #include "graphics/screen.h"
 
+#include "gui/saveload.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/input.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -126,11 +129,33 @@ void Manager::setSaveScreenshot(const Graphics::ManagedSurface &image, const Com
 	texture->blitFrom(image, src, Common::Rect(kScreenshotWidth, kScreenshotHeight));
 }
 
+// The ScummVM dialog, when picked over the game's own. Returns the slot, or -1
+// when the player backs out of it
+int Manager::runScummVMSaveLoadDialog(bool isSave, Common::String &saveName) {
+	PauseToken pause = g_nancy->pauseEngine();
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(isSave);
+	int slot = dialog->runModalWithCurrentTarget();
+	saveName = dialog->getResultString();
+	delete dialog;
+
+	g_nancy->_input->forceCleanInput();
+
+	return slot;
+}
+
 void Manager::onLoaderAction(const Action &action) {
 	switch (action.type) {
 	case kActionShow:
 		if (action.value >= 0) {
 			askToSaveFirst(action);
+		} else if (!ConfMan.getBool("originalsaveload")) {
+			Common::String saveName;
+			int slot = runScummVMSaveLoadDialog(false, saveName);
+			if (slot >= 0) {
+				_request.type = kRequestLoad;
+				_request.slot = slot;
+			}
 		} else {
 			takeAction(fillSaveList("LoadList") > 0 ? kActionEnable : kActionDisable, "LoadButton", 0.0);
 			takeAction(kActionSetValue, "LoadList", 0.0);
@@ -181,6 +206,23 @@ void Manager::onLoaderAction(const Action &action) {
 void Manager::onSaverAction(const Action &action) {
 	switch (action.type) {
 	case kActionShow: {
+		if (!ConfMan.getBool("originalsaveload")) {
+			Common::String saveName;
+			int slot = runScummVMSaveLoadDialog(true, saveName);
+			if (slot >= 0) {
+				// A quit or load that was put off to save first is a request
+				// of its own, so it waits for the save
+				_request.type = kRequestSave;
+				_request.slot = slot;
+				_request.name = saveName;
+				_request.hasFollowUpAction = true;
+			} else {
+				runPendingAction();
+			}
+
+			break;
+		}
+
 		fillSaveList("SaveList");
 		_typedSaveName = _lastSaveName;
 
