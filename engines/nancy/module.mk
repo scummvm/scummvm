@@ -47,6 +47,7 @@ MODULE_OBJS = \
   action/puzzle/dragsurfacepuzzle.o \
   action/puzzle/drivingpuzzle.o \
   action/puzzle/escapepuzzle.o \
+  action/puzzle/flashmemorypuzzle.o \
   action/puzzle/dropsortpuzzle.o \
   action/puzzle/escapegridpuzzle.o \
   action/puzzle/fishingpuzzle.o \
