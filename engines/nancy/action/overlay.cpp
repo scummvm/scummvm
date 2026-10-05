@@ -425,6 +425,15 @@ Common::String Overlay::getRecordTypeName() const {
 
 void OverlayStaticTerse::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
+
+	// Workaround: the image name of an overlay in Nancy16 scenes 3509 and 3532 ends
+	// with a dot ("LOB_Ia_OVL."), which keeps the image from being found
+	Common::String imageName = _imageName.toString();
+	if (imageName.hasSuffix(".")) {
+		imageName.deleteLastChar();
+		_imageName = Common::Path(imageName);
+	}
+
 	_transparency = stream.readUint16LE();
 	_z = stream.readUint16LE();
 

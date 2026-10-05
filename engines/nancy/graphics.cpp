@@ -718,6 +718,11 @@ void GraphicsManager::screenshotScreen(Graphics::ManagedSurface &inSurf) {
 
 // Draw a given screen-space rectangle of an object
 void GraphicsManager::blitObject(Graphics::ManagedSurface &target, const RenderObject &src, Common::Rect screenRect) {
+	// An object whose image is missing has nothing to draw
+	if (src._drawSurface.empty()) {
+		return;
+	}
+
 	target.blitFrom(src._drawSurface, src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(screenRect)), screenRect);
 }
 
