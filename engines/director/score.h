@@ -37,6 +37,7 @@ namespace Common {
 	class MemoryReadStreamEndian;
 	class SeekableReadStreamEndian;
 	class SeekableWriteStream;
+	class MemoryWriteStreamDynamic;
 }
 
 namespace Director {
@@ -78,6 +79,7 @@ public:
 
 	void writeVWSCResource(Common::SeekableWriteStream *writeStream, uint32 offset);
 	uint32 getVWSCResourceSize();
+	bool buildD6Score(Common::MemoryWriteStreamDynamic &out);
 
 	void loadLabels(Common::SeekableReadStreamEndian &stream);
 	void loadActions(Common::SeekableReadStreamEndian &stream);
@@ -198,7 +200,8 @@ public:
 	uint16 _spriteRecordSize;
 	uint16 _numChannels;
 	int16 _numChannelsDisplayed;  // D7+, no-op in earlier versions
-	//  20 bytes in total
+	int32 _scoreWrapperVer = 0;	// D6+ wrapper header version (e.g. -3)
+	bool _spriteDetailIndexValid = false;	// D6+ index had the trailing sentinel
 
 	int16 _maxChannelsUsed; // max channel number used in the score, used to optimize rendering
 
