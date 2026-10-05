@@ -119,6 +119,7 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 
 	_theoraDecoder = new Video::TheoraDecoder();
 	_theoraDecoder->loadStream(file);
+	_theoraDecoder->setOutputPixelFormat(_game->_renderer->getPixelFormat(false));
 #else
 	warning("VideoTheoraPlayer::initialize - Theora support not compiled in, video will be skipped: %s", filename.c_str());
 	return STATUS_FAILED;
@@ -160,6 +161,7 @@ bool VideoTheoraPlayer::resetStream() {
 
 	_theoraDecoder = new Video::TheoraDecoder();
 	_theoraDecoder->loadStream(file);
+	_theoraDecoder->setOutputPixelFormat(_game->_renderer->getPixelFormat(false));
 #else
 	return STATUS_FAILED;
 #endif
