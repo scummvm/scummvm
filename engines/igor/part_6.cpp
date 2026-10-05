@@ -341,7 +341,7 @@ void IgorEngine::PART_06() {
 		PART_05_06_DRAW_TRIPOD(true);
 	}
 
-	if (_currentPart == 61) {
+	if (_currentPart == 61 && !_gameStateLoaded) {
 		SET_PAL_208_96_1();
 		drawVerbsPanel();
 		drawInventory(1, 0);
@@ -352,12 +352,14 @@ void IgorEngine::PART_06() {
 	}
 	loadActionData(DAT_SpringBridge);
 	_roomDataOffsets = PART_06_ROOM_DATA_OFFSETS;
-	_walkDataLastIndex = 1;
-	_walkDataCurrentIndex = 1;
-	_gameState.unkF = (_objectsState[61] == 1);
+	if (!restoreRoomAfterLoad()) {
+		_gameState.unkF = (_objectsState[61] == 1);
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+	}
 	enterPartLoop();
 
-	while (_currentPart >= 60 && _currentPart <= 61) {
+	while (_currentPart >= 60 && _currentPart <= 61 && !_gameStateLoaded) {
 		setRoomWalkBounds(0, 0, _objectsState[61] == 0 ? 234 : 142, 143);
 		handleRoomInput();
 		if (compareGameTick(1, 16)) {

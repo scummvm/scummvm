@@ -130,14 +130,16 @@ void IgorEngine::PART_34() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	PART_34_APPLY_OBJECT_STATE(255);
 
-	_walkDataLastIndex = 1;
-	_walkDataCurrentIndex = 1;
+	if (!restoreRoomAfterLoad()) {
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+	}
 	enterPartLoop();
-	while (_currentPart == 340) {
+	while (_currentPart == 340 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	if (_currentPart == kInvalidPart) {
+	if (_currentPart == kInvalidPart && !_gameStateLoaded) {
 		fadeOut(768);
 	}
 }

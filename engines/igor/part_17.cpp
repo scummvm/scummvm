@@ -533,27 +533,31 @@ void IgorEngine::PART_17() {
 		_roomObjectAreasTable[19].object = 0;
 	}
 
-	_currentAction.verb = kVerbWalk;
-	if (_currentPart == 170) {
-		// from map
-		fadeIn(768);
-		PART_17_HELPER_2_walkFromMap();
-	} else if (_currentPart == 171) {
-		// from inside college
-		PART_17_HELPER_6_walkFromCollege();
+	if (!restoreRoomAfterLoad()) {
+		_currentAction.verb = kVerbWalk;
+		if (_currentPart == 170) {
+			// from map
+			fadeIn(768);
+			PART_17_HELPER_2_walkFromMap();
+		} else if (_currentPart == 171) {
+			// from inside college
+			PART_17_HELPER_6_walkFromCollege();
+		}
 	}
 	enterPartLoop();
-	while (_currentPart >= 170 && _currentPart <= 171) {
+	while (_currentPart >= 170 && _currentPart <= 171 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	if (_objectsState[55] == 1) {
-		_objectsState[56] = 1;
+	if (!_gameStateLoaded) {
+		if (_objectsState[55] == 1) {
+			_objectsState[56] = 1;
+		}
+		if (_objectsState[54] == 0) {
+			_objectsState[54] = 1;
+		}
+		fadeOut(624);
 	}
-	if (_objectsState[54] == 0) {
-		_objectsState[54] = 1;
-	}
-	fadeOut(624);
 }
 
 } // namespace Igor

@@ -81,19 +81,21 @@ void IgorEngine::PART_04() {
 	PART_04_CLEAR_OBJECT_STATE_84(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
-	fadeIn(768);
-	_currentAction.verb = kVerbWalk;
 	if (_gameState.musicNum != 2) {
 		playMusic(2);
 	}
-	_walkData[0].x = 160;
-	_walkData[0].y = 133;
-	_walkData[0].scaleWidth = 49;
-	_walkData[0].scaleHeight = 49;
-	_walkDataLastIndex = 1;
-	_walkDataCurrentIndex = 1;
+	if (!restoreRoomAfterLoad(false)) {
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		_walkData[0].x = 160;
+		_walkData[0].y = 133;
+		_walkData[0].scaleWidth = 49;
+		_walkData[0].scaleHeight = 49;
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+	}
 	enterPartLoop();
-	while (_currentPart == 40) {
+	while (_currentPart == 40 && !_gameStateLoaded) {
 		handleRoomInput();
 		if (compareGameTick(19, 32)) {
 			handleRoomDialogue();
@@ -111,7 +113,8 @@ void IgorEngine::PART_04() {
 		waitForTimer();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // End of namespace Igor

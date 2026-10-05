@@ -499,18 +499,20 @@ void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 
 void IgorEngine::PART_MAIN() {
 	SET_EXEC_ACTION_FUNC(0, &IgorEngine::EXEC_MAIN_ACTION);
-	memset(_objectsState, 0, 112);
-	_objectsState[21] = 1;
-	_objectsState[49] = 1;
-	memset(_inventoryInfo, 0, 36);
-	_inventoryInfo[0] = 1; // ordering
-	_inventoryInfo[1] = 2;
-	_inventoryInfo[2] = 4;
-	_inventoryInfo[36] = 1;
-	_inventoryInfo[37] = 2;
-	_inventoryInfo[39] = 3;
-	_inventoryInfo[72] = 1; // first object
-	_inventoryInfo[73] = 3; // last object
+	if (!_gameStateLoaded) {
+		memset(_objectsState, 0, 112);
+		_objectsState[21] = 1;
+		_objectsState[49] = 1;
+		memset(_inventoryInfo, 0, 36);
+		_inventoryInfo[0] = 1; // ordering
+		_inventoryInfo[1] = 2;
+		_inventoryInfo[2] = 4;
+		_inventoryInfo[36] = 1;
+		_inventoryInfo[37] = 2;
+		_inventoryInfo[39] = 3;
+		_inventoryInfo[72] = 1; // first object
+		_inventoryInfo[73] = 3; // last object
+	}
 	UPDATE_OBJECT_STATE(255);
 	if (_currentPart != kStartupPart) { // boot param
 		SET_PAL_208_96_1();

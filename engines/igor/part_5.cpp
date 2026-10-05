@@ -164,26 +164,30 @@ void IgorEngine::PART_05() {
 	loadActionData(DAT_SpringRock);
 	_roomDataOffsets = PART_05_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	_walkDataLastIndex = 1;
-	_walkDataCurrentIndex = 1;
 
 	// Part 50: Arriving from the map, Igor should walk in
 	// Part 51: Arriving from SpringRock through scroll
 	// Part 52: ?
-	if (_currentPart == 50) {
-		debug("Entering PART_05_HELPER_6");
-		memcpy(_screenVGA, _screenLayer1, 46080);
-		fadeIn(768);
-		PART_05_HELPER_6_walkIgorToScene();
+	if (!restoreRoomAfterLoad()) {
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+		if (_currentPart == 50) {
+			debug("Entering PART_05_HELPER_6");
+			memcpy(_screenVGA, _screenLayer1, 46080);
+			fadeIn(768);
+			PART_05_HELPER_6_walkIgorToScene();
+		}
 	}
 
 	enterPartLoop();
-	while (_currentPart >= 50 && _currentPart <= 52) {
+	while (_currentPart >= 50 && _currentPart <= 52 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
 	stopSound();
-	if (_currentPart == 255) {
+	if (_gameStateLoaded) {
+		return;
+	} else if (_currentPart == 255) {
 		fadeOut(768);
 	} else if (_currentPart != 60) {
 		if (_objectsState[63] == 0) {

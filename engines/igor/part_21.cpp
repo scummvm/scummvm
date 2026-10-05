@@ -454,22 +454,25 @@ void IgorEngine::PART_21() {
 	_updateRoomBackground = &IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND;
 	PART_21_HELPER_1(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	_gameState.unk10 = 1;
-	fadeIn(768);
-	if (_currentPart == 210) {
-		PART_21_HELPER_2();
-	} else if (_currentPart == 211) {
-		PART_21_HELPER_3();
-	} else if (_currentPart == 212) {
-		PART_21_HELPER_4();
+	if (!restoreRoomAfterLoad()) {
+		_gameState.unk10 = 1;
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		if (_currentPart == 210) {
+			PART_21_HELPER_2();
+		} else if (_currentPart == 211) {
+			PART_21_HELPER_3();
+		} else if (_currentPart == 212) {
+			PART_21_HELPER_4();
+		}
 	}
 	enterPartLoop();
-	while (_currentPart >= 210 && _currentPart <= 212) {
+	while (_currentPart >= 210 && _currentPart <= 212 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // End of namespace Igor

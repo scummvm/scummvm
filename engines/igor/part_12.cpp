@@ -524,41 +524,44 @@ void IgorEngine::PART_12() {
 	if (_objectsState[44] == 0) {
 		PART_12_HELPER_3();
 	}
-	if (_currentPart == 122) {
+	if (_currentPart == 122 && !_gameStateLoaded) {
 		PART_12_HELPER_4();
 		return;
 	}
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	if (_currentPart == 120) {
-		PART_12_HELPER_5();
-	}
-	if (_currentPart == 121) {
-		PART_12_HELPER_6();
-		if (_objectsState[106] == 1) {
-			ADD_DIALOGUE_TEXT(216, 2, 799); // cseg171:3766-3772
-			ADD_DIALOGUE_TEXT(218, 1, 800); // cseg171:3778-3784
-			SET_DIALOGUE_TEXT(1, 2);
-			startIgorDialogue();
-			waitForEndOfIgorDialogue();
-			--_walkDataLastIndex;
-			buildWalkPath(126, 108, 196, 64);
-			_walkData[_walkDataLastIndex].frameNum = 0;
-			_walkDataCurrentIndex = 1;
-			_gameState.igorMoving = true;
-			waitForIgorMove();
-			_currentPart = 40;
-			goto PART_12_EXIT;
+	if (!restoreRoomAfterLoad()) {
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		if (_currentPart == 120) {
+			PART_12_HELPER_5();
+		}
+		if (_currentPart == 121) {
+			PART_12_HELPER_6();
+			if (_objectsState[106] == 1) {
+				ADD_DIALOGUE_TEXT(216, 2, 799); // cseg171:3766-3772
+				ADD_DIALOGUE_TEXT(218, 1, 800); // cseg171:3778-3784
+				SET_DIALOGUE_TEXT(1, 2);
+				startIgorDialogue();
+				waitForEndOfIgorDialogue();
+				--_walkDataLastIndex;
+				buildWalkPath(126, 108, 196, 64);
+				_walkData[_walkDataLastIndex].frameNum = 0;
+				_walkDataCurrentIndex = 1;
+				_gameState.igorMoving = true;
+				waitForIgorMove();
+				_currentPart = 40;
+				goto PART_12_EXIT;
+			}
 		}
 	}
 	PART_12_HELPER_2();
 	enterPartLoop();
-	while (_currentPart >= 120 && _currentPart <= 122) {
+	while (_currentPart >= 120 && _currentPart <= 122 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 PART_12_EXIT:
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // namespace Igor

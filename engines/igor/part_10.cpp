@@ -214,35 +214,36 @@ void IgorEngine::PART_10() {
 	// handoff, the original jumps directly to the walk-index setup instead,
 	// preserving the completed pan (including Igor) already in screen VGA.
 
-	if (_currentPart != 102) {
+	if (_currentPart != 102 && !_gameStateLoaded) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 	}
-	_walkDataLastIndex = 1;
-	_walkDataCurrentIndex = 1;
-
-	if (_currentPart == 100) {
-		// Enter at the right edge and walk left into the room.
-		_walkData[0].setPos(319, 79, kFacingPositionLeft, 0);
-		_walkData[0].setDefaultScale();
-		_walkData[0].clipWidth = 15;
-		_walkDataLastIndex = 0;
-		buildWalkPath(319, 79, 288, 84);
-		_walkData[_walkDataLastIndex].frameNum = 0;
+	if (!restoreRoomAfterLoad()) {
+		_walkDataLastIndex = 1;
 		_walkDataCurrentIndex = 1;
-		_gameState.igorMoving = true;
-		waitForIgorMove();
-	} else if (_currentPart == 101) {
-		// Enter from the adjacent panel and walk right into the room.
-		_walkData[0].setPos(136, 86, kFacingPositionRight, 0);
-		_walkData[0].setDefaultScale();
-		_walkDataLastIndex = 0;
-		buildWalkPath(136, 86, 171, 97);
-		_walkData[_walkDataLastIndex].frameNum = 0;
-		_walkDataCurrentIndex = 1;
-		_gameState.igorMoving = true;
-		waitForIgorMove();
+		if (_currentPart == 100) {
+			// Enter at the right edge and walk left into the room.
+			_walkData[0].setPos(319, 79, kFacingPositionLeft, 0);
+			_walkData[0].setDefaultScale();
+			_walkData[0].clipWidth = 15;
+			_walkDataLastIndex = 0;
+			buildWalkPath(319, 79, 288, 84);
+			_walkData[_walkDataLastIndex].frameNum = 0;
+			_walkDataCurrentIndex = 1;
+			_gameState.igorMoving = true;
+			waitForIgorMove();
+		} else if (_currentPart == 101) {
+			// Enter from the adjacent panel and walk right into the room.
+			_walkData[0].setPos(136, 86, kFacingPositionRight, 0);
+			_walkData[0].setDefaultScale();
+			_walkDataLastIndex = 0;
+			buildWalkPath(136, 86, 171, 97);
+			_walkData[_walkDataLastIndex].frameNum = 0;
+			_walkDataCurrentIndex = 1;
+			_gameState.igorMoving = true;
+			waitForIgorMove();
+		}
 	}
 	_roomObjectAreasTable[7].deltaLum = 0;
 	for (int area = 11; area <= 12; ++area) {
@@ -250,11 +251,11 @@ void IgorEngine::PART_10() {
 	}
 
 	enterPartLoop();
-	while (_currentPart >= 100 && _currentPart <= 102) {
+	while (_currentPart >= 100 && _currentPart <= 102 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	if (_currentPart != 110)
+	if (_currentPart != 110 && !_gameStateLoaded)
 		fadeOut(624);
 }
 

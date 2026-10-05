@@ -25,7 +25,7 @@ namespace Igor {
 
 void IgorEngine::PART_00_DRAW_RAW_FRAME(int srcOffset, int frame, int frameSize,
 		int width, int height, int dstOffset) {
-	// cseg206:00E0-01BF and the corresponding raw-frame loops through 14D5.
+
 	const uint8 *src = _animFramesBuffer + srcOffset + frame * frameSize;
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
@@ -62,7 +62,7 @@ void IgorEngine::PART_00_ANIMATE_RAW(int srcOffset, int firstFrame, int lastFram
 
 void IgorEngine::PART_00_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		const bool open = _objectsState[8] != 0; // s3:0844; cseg206:1AA8-1AF0
+		const bool open = _objectsState[8] != 0;
 		const int src = open ? 0x4CFA : 0x4C6A;
 		for (int y = 0; y < 9; ++y)
 			memcpy(_screenLayer1 + 0x8EBD + y * 320, _animFramesBuffer + src + y * 16, 16);
@@ -78,7 +78,7 @@ void IgorEngine::PART_00_APPLY_OBJECT_STATE(int num) {
 		_roomObjectAreasTable[3].object = (_objectsState[11] == 0) ? 4 : 5;
 	}
 	if (num == 6 || num == 255) {
-		// s3:0849 maps to _objectsState[13]; cseg206:1B51-1BBD.
+
 		const int state = _objectsState[13];
 		const int src = state == 1 ? 0x143C : 0x1200;
 		for (int y = 0; y < 22; ++y)
@@ -105,12 +105,12 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 			PART_00_APPLY_OBJECT_STATE(6);
 		}
 		break;
-	case 103: // cseg206:159E-15CA
+	case 103: // look at window
 		ADD_DIALOGUE_TEXT(201, 3, 95);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 104: // cseg206:132A-14E9
+	case 104: // go to window
 		if (_objectsState[13] != 1)
 			break;
 		if (_objectsState[15] != 0) {
@@ -124,7 +124,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		_objectsState[15] = 1;
 		_currentPart = 10;
 		break;
-	case 105: // cseg206:15CB-15F7
+	case 105: // look at bed
 		ADD_DIALOGUE_TEXT(204, 1, 96);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -143,7 +143,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 			PART_00_APPLY_OBJECT_STATE(1);
 		}
 		break;
-	case 108: // cseg206:15F8-1678
+	case 108: // look bedside table
 		if (_objectsState[8] == 0)
 			ADD_DIALOGUE_TEXT(205, 1, 97);
 		else if (_objectsState[9] == 0)
@@ -153,7 +153,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 109: // cseg206:0FC7-1194
+	case 109: // take alarm clock
 		if (_objectsState[9] == 0) {
 			PART_00_ANIMATE_RAW(0x8410, 0, 1, 0x405, 21, 49, 0x693D, 126, -1, 0);
 			addObjectToInventory(6, 41); // s3:0903; cseg206:113C-1176
@@ -175,12 +175,12 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 			PART_00_APPLY_OBJECT_STATE(3);
 		}
 		break;
-	case 112: // cseg206:1679-16A5
+	case 112: // look at closet
 		ADD_DIALOGUE_TEXT(206, 1, 98);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 113: // cseg206:16A6-16D2
+	case 113: // look at hole
 		ADD_DIALOGUE_TEXT(207, 2, 99);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -191,12 +191,12 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		PART_00_ANIMATE_RAW(0x5942, 0, 2, 0x44C, 22, 50, 0x66EE, 30, -1, 0);
 		_currentPart = 24;
 		break;
-	case 115: // cseg206:16D3-16FF
+	case 115: // look at records
 		ADD_DIALOGUE_TEXT(209, 3, 100);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 116: // cseg206:0DCE-0FC6
+	case 116: // take records
 		if (_objectsState[12] == 0) {
 			PART_00_ANIMATE_RAW(0x7C06, 0, 1, 0x405, 21, 49, 0x7146, 126, -1, 0);
 			addObjectToInventory(5, 40); // s3:0902; cseg206:0F75-0FAF
@@ -208,7 +208,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 			startIgorDialogue();
 		}
 		break;
-	case 117: // cseg206:14EA-159D
+	case 117: // exit to map
 		{
 			_walkDataCurrentIndex = 0;
 			int walkFrame = 1;
@@ -231,7 +231,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		}
 		_currentPart = 40;
 		break;
-	case 118: // cseg206:1700-173E
+	case 118: // use bed
 		ADD_DIALOGUE_TEXT(219, 1, 106);
 		ADD_DIALOGUE_TEXT(220, 1, 107);
 		SET_DIALOGUE_TEXT(1, 2);
@@ -331,23 +331,27 @@ void IgorEngine::PART_00() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_00_EXEC_ACTION);
 	PART_00_APPLY_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080); // cseg206:39B3-39C5
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	_walkDataLastIndex = 1;
-	_walkDataCurrentIndex = 1;
-	if (_currentPart == 1)
-		PART_00_WALK_IN();
-	else
-		PART_00_ENTER_FROM_BELOW();
+	if (!restoreRoomAfterLoad()) {
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+		if (_currentPart == 1)
+			PART_00_WALK_IN();
+		else
+			PART_00_ENTER_FROM_BELOW();
+	}
 
 	enterPartLoop();
-	while (_currentPart == 0 || _currentPart == 1)
+	while ((_currentPart == 0 || _currentPart == 1) && !_gameStateLoaded)
 		runPartLoop();
 	leavePartLoop();
-	if (_currentPart == kInvalidPart)
-		fadeOut(768);
-	else
-		fadeOut(624);
+	if (!_gameStateLoaded) {
+		if (_currentPart == kInvalidPart)
+			fadeOut(768);
+		else
+			fadeOut(624);
+	}
 }
 
 } // End of namespace Igor

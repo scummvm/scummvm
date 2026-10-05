@@ -239,31 +239,33 @@ void IgorEngine::PART_07() {
 	for (int area = 11; area <= 13; ++area) {
 		_roomObjectAreasTable[area].area = 0;
 	}
-	_currentAction.verb = kVerbWalk;
+	if (!restoreRoomAfterLoad()) {
+		_currentAction.verb = kVerbWalk;
+		if (_currentPart == 71) { // enter from dean's door
+			_walkData[0].setPos(78, 114, kFacingPositionRight, 0);
+			_walkData[0].setDefaultScale();
+			_walkDataCurrentIndex = 0;
+			moveIgor(kFacingPositionRight, 0);
+		} else if (_currentPart == 72) { // enter from secretary's door
+			_walkData[0].setPos(153, 116, kFacingPositionFront, 0);
+			_walkData[0].setDefaultScale();
+			_walkDataCurrentIndex = 0;
+			moveIgor(kFacingPositionFront, 0);
+		}
 
-	if (_currentPart == 71) { // enter from dean's door
-		_walkData[0].setPos(78, 114, kFacingPositionRight, 0);
-		_walkData[0].setDefaultScale();
-		_walkDataCurrentIndex = 0;
-		moveIgor(kFacingPositionRight, 0);
-	} else if (_currentPart == 72) { // enter from secretary's door
-		_walkData[0].setPos(153, 116, kFacingPositionFront, 0);
-		_walkData[0].setDefaultScale();
-		_walkDataCurrentIndex = 0;
-		moveIgor(kFacingPositionFront, 0);
-	}
-
-	_walkDataLastIndex = 1;
-	_walkDataCurrentIndex = 1;
-	fadeIn(768);
-	if (_currentPart == 70) { // enter from outside
-		PART_07_ENTER_FROM_OUTSIDE();
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+		fadeIn(768);
+		if (_currentPart == 70) { // enter from outside
+			PART_07_ENTER_FROM_OUTSIDE();
+		}
 	}
 	enterPartLoop();
-	while (_currentPart >= 70 && _currentPart <= 72)
+	while (_currentPart >= 70 && _currentPart <= 72 && !_gameStateLoaded)
 		runPartLoop();
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // End of namespace Igor

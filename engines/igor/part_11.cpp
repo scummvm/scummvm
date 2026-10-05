@@ -237,11 +237,13 @@ void IgorEngine::PART_11() {
 	PART_11_APPLY_OBJECT_STATE(255);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
-	_walkDataLastIndex = 1;
-	_walkDataCurrentIndex = 1;
+	if (!restoreRoomAfterLoad()) {
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+	}
 
 	enterPartLoop();
-	while (_currentPart == 110) {
+	while (_currentPart == 110 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();

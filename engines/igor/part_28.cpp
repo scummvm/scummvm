@@ -333,28 +333,31 @@ void IgorEngine::PART_28() {
 	PART_28_HELPER_2();
 	PART_28_HELPER_1(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
 	// cseg123:2E04 -- the original's only write to the background-animation frame
 	// counter (s3:0xEB2C) is an unconditional set to 1 in this room's setup, made
 	// before the state dispatch below. PART_28_HELPER_5() forms its source address
 	// as animBase + frame * 1320 + i * 30 + j - 1320 (cseg123:0B7-0D5), so the frame
 	// is 1-based and a counter of 0 reads 1320 bytes before _animFramesBuffer.
 	// Without this the first background update reads out of bounds.
-	_gameState.unk10 = 1;
-	if (_currentPart == 280) {
-		fadeIn(768);
-		PART_28_HELPER_3();
-	} else if (_currentPart == 281) {
-		PART_28_HELPER_6();
+	if (!restoreRoomAfterLoad()) {
+		_gameState.unk10 = 1;
+		_currentAction.verb = kVerbWalk;
+		if (_currentPart == 280) {
+			fadeIn(768);
+			PART_28_HELPER_3();
+		} else if (_currentPart == 281) {
+			PART_28_HELPER_6();
+		}
 	}
 	enterPartLoop();
-	while (_currentPart == 280 || _currentPart == 281) {
+	while ((_currentPart == 280 || _currentPart == 281) && !_gameStateLoaded) {
 		runPartLoop();
 	}
-	if (_objectsState[87] == 1) {
+	if (!_gameStateLoaded && _objectsState[87] == 1) {
 		_objectsState[87] = 2;
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 } // End of namespace Igor

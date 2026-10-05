@@ -297,32 +297,34 @@ void IgorEngine::PART_30() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_30_EXEC_ACTION);
 	PART_30_HELPER_1(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-
-	if (_objectsState[73] == 0) {
-		 PART_30_HELPER_8_LauraCutscene();
-	} else {
-		if (_currentPart != 302) {
-			fadeIn(768);
-		}
-		if (_currentPart == 300) { // enter from outside
-			PART_30_HELPER_2_walkInFromLeft();
-		} else if (_currentPart == 301) {
-			PART_30_HELPER_3_walkInFromUpstairs();
-		} else if (_currentPart == 302) {
-			playMusic(3);
-			fadeIn(768);
-			PART_30_HELPER_2_walkInFromOutside();
-		} else if (_currentPart == 303) {
-			PART_30_HELPER_5_walkInFromRight();
+	if (!restoreRoomAfterLoad()) {
+		_currentAction.verb = kVerbWalk;
+		if (_objectsState[73] == 0) {
+			PART_30_HELPER_8_LauraCutscene();
+		} else {
+			if (_currentPart != 302) {
+				fadeIn(768);
+			}
+			if (_currentPart == 300) { // enter from outside
+				PART_30_HELPER_2_walkInFromLeft();
+			} else if (_currentPart == 301) {
+				PART_30_HELPER_3_walkInFromUpstairs();
+			} else if (_currentPart == 302) {
+				playMusic(3);
+				fadeIn(768);
+				PART_30_HELPER_2_walkInFromOutside();
+			} else if (_currentPart == 303) {
+				PART_30_HELPER_5_walkInFromRight();
+			}
 		}
 	}
 	enterPartLoop();
-	while (_currentPart >= 300 && _currentPart <= 303) {
+	while (_currentPart >= 300 && _currentPart <= 303 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // End of namespace Igor

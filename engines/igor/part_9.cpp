@@ -137,20 +137,23 @@ void IgorEngine::PART_09() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
-	_currentAction.verb = kVerbWalk;
-	_walkData[0].setPos(206, 109, kFacingPositionFront, 0);
-	_walkData[0].setDefaultScale();
-	_walkDataCurrentIndex = 0;
-	moveIgor(kFacingPositionFront, 0);
-	_walkDataLastIndex = 1;
-	_walkDataCurrentIndex = 1;
-	fadeIn(768);
+	if (!restoreRoomAfterLoad()) {
+		_currentAction.verb = kVerbWalk;
+		_walkData[0].setPos(206, 109, kFacingPositionFront, 0);
+		_walkData[0].setDefaultScale();
+		_walkDataCurrentIndex = 0;
+		moveIgor(kFacingPositionFront, 0);
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+		fadeIn(768);
+	}
 
 	enterPartLoop();
-	while (_currentPart == 90)
+	while (_currentPart == 90 && !_gameStateLoaded)
 		runPartLoop();
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // End of namespace Igor

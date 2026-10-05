@@ -63,7 +63,7 @@ enum {
 	kTimerTicksCount = 8,
 	kFastModeFactor = 4,
 	kFastModeMaxFactor = 16,
-	kQuickSaveSlot = 0,
+	kQuickSaveSlot = 100,
 	kMaxSaveStates = 10,
 	kNoSpeechSound = 999
 };
@@ -343,6 +343,7 @@ private:
 	int _debugOverlayMode;
 
 	bool _eventQuitGame;
+	bool _gameStateLoaded;
 	GameStateData _gameState;
 	uint32 _nextTimer;
 
@@ -728,6 +729,7 @@ private:
 	void enterPartLoop();
 	void leavePartLoop();
 	void runPartLoop();
+	bool restoreRoomAfterLoad(bool drawIgor = true);
 
 	void handleRoomDialogue();
 

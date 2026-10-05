@@ -64,10 +64,14 @@ void IgorEngine::waitForTimer(int ticks) {
 					_inputVars[kInputPause] = 1;
 				}
 				else if (ev.kbd.keycode == Common::KEYCODE_F1) {
-					debug("Quicksave part %d", _currentPart);
-					saveGameState(kQuickSaveSlot, "");
+					const Common::String description = Common::String::format("Quicksave part %d", _currentPart);
+					const Common::Error err = saveGameState(kQuickSaveSlot, description);
+					if (err.getCode() != Common::kNoError)
+						warning("Unable to quick-save: %s", err.getDesc().c_str());
 				} else if (ev.kbd.keycode == Common::KEYCODE_F2) {
-					loadGameState(kQuickSaveSlot);
+					const Common::Error err = loadGameState(kQuickSaveSlot);
+					if (err.getCode() != Common::kNoError)
+						warning("Unable to quick-load: %s", err.getDesc().c_str());
 				}
 				break;
 			case Common::EVENT_MOUSEMOVE:

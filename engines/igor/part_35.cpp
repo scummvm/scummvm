@@ -128,41 +128,44 @@ void IgorEngine::PART_35() {
 	setRoomWalkBounds(0, 0, 281, 143); // rightmost walkable column is 281
 	PART_35_APPLY_OBJECT_STATE(255);
 
-	if (_currentPart != 351) {
+	if (_currentPart != 351 && !_gameStateLoaded) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 	}
-	_walkDataLastIndex = 1;
-	_walkDataCurrentIndex = 1;
-
-	if (_currentPart == 350) {
-		WalkData *wd = &_walkData[0];
-		wd->setPos(319, 33, kFacingPositionFront, 1);
-		wd->clipSkipX = 1;
-		wd->clipWidth = 10;
-		wd->scaleWidth = 34;
-		wd->xPosChanged = 1;
-		wd->dxPos = 0;
-		wd->yPosChanged = 1;
-		wd->dyPos = 0;
-		wd->scaleHeight = 34;
-		_walkDataLastIndex = 0;
-		const uint8 area = _screenLayer2[10879]; // (319, 33); cseg100:04CF-04E4
-		_roomObjectAreasTable[area].area = 1;
-		buildWalkPath(319, 33, 242, 111);
-		_roomObjectAreasTable[area].area = 0;
+	if (!restoreRoomAfterLoad()) {
+		_walkDataLastIndex = 1;
 		_walkDataCurrentIndex = 1;
-		_gameState.igorMoving = true;
-		waitForIgorMove();
+		if (_currentPart == 350) {
+			WalkData *wd = &_walkData[0];
+			wd->setPos(319, 33, kFacingPositionFront, 1);
+			wd->clipSkipX = 1;
+			wd->clipWidth = 10;
+			wd->scaleWidth = 34;
+			wd->xPosChanged = 1;
+			wd->dxPos = 0;
+			wd->yPosChanged = 1;
+			wd->dyPos = 0;
+			wd->scaleHeight = 34;
+			_walkDataLastIndex = 0;
+			const uint8 area = _screenLayer2[10879]; // (319, 33); cseg100:04CF-04E4
+			_roomObjectAreasTable[area].area = 1;
+			buildWalkPath(319, 33, 242, 111);
+			_roomObjectAreasTable[area].area = 0;
+			_walkDataCurrentIndex = 1;
+			_gameState.igorMoving = true;
+			waitForIgorMove();
+		}
 	}
 
 	enterPartLoop();
-	while (_currentPart == 350 || _currentPart == 351) {
+	while ((_currentPart == 350 || _currentPart == 351) && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	if (_currentPart == kInvalidPart) {
+	if (_gameStateLoaded) {
+		return;
+	} else if (_currentPart == kInvalidPart) {
 		fadeOut(768);
 	} else if (_currentPart != 340) {
 		fadeOut(624);
