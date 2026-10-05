@@ -528,22 +528,29 @@ bool ResourceManager::exportCifTree(const Common::String &treeName, const Common
 		file.addInfo(info);
 	}
 
-	uint16 dataOffset = headerSize + file.writeFileMapSize() * infoSize; // Initial offset after header/infos
-	for (uint i = 0; i < file.writeFileMapSize(); ++i) {
-		file.setDataOffset(i, dataOffset);
-		for (uint j = 0; j < i; ++j) {
-			file.setDataOffset(i, file.getDataOffset(i) + resStreams[j]->size()); // Final offset, following raw data of previous files
-		}
-	}
-
 	Common::DumpFile dump;
 	dump.open(Common::Path(treeName + ".dat"));
 
-	Common::Serializer ser(nullptr, &dump);
-	file.sync(ser);
+	if (g_nancy->getGameType() >= kGameTypeNancy18) {
+		file.write(dump, resStreams);
+	} else {
+		uint16 dataOffset = headerSize + file.writeFileMapSize() * infoSize; // Initial offset after header/infos
+		for (uint i = 0; i < file.writeFileMapSize(); ++i) {
+			file.setDataOffset(i, dataOffset);
+			for (uint j = 0; j < i; ++j) {
+				file.setDataOffset(i, file.getDataOffset(i) + resStreams[j]->size()); // Final offset, following raw data of previous files
+			}
+		}
+
+		Common::Serializer ser(nullptr, &dump);
+		file.sync(ser);
+
+		for (uint i = 0; i < resStreams.size(); ++i) {
+			dump.writeStream(resStreams[i]);
+		}
+	}
 
 	for (uint i = 0; i < resStreams.size(); ++i) {
-		dump.writeStream(resStreams[i]);
 		delete resStreams[i];
 	}
 

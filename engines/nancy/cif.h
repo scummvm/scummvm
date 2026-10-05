@@ -28,6 +28,7 @@
 
 namespace Common {
 class SeekableReadStream;
+class SeekableWriteStream;
 class Serializer;
 }
 
@@ -39,7 +40,8 @@ struct CifInfo {
 		// Type 1 seems to be obsolete
 		kResTypeImage = 2,
 		kResTypeScript = 3,
-		kResTypeEmpty = 4
+		kResTypeEmpty = 4,
+		kResTypeXSheet = 6 // Nancy18+
 	};
 
 	enum ResCompression {
@@ -77,6 +79,8 @@ private:
 };
 
 // Container type comprising of multiple CIF files. Contrary to its name it contains no tree structure.
+// Up to Nancy17 a tree starts with a table of info blocks, and holds only the files' data. From Nancy18
+// on it holds whole CIF files, and ends with an index of their names and offsets.
 class CifTree : public Common::Archive {
 public:
 	CifTree() : _stream(nullptr) {}
@@ -99,6 +103,10 @@ public:
 	static CifTree *makeCifTreeArchive(const Common::String &name, const Common::String &ext);
 	Common::SeekableReadStream *createReadStreamRaw(const Common::Path &path) const;
 	bool sync(Common::Serializer &ser);
+
+	// Nancy18+
+	bool readIndex(Common::SeekableReadStream &stream);
+	void write(Common::SeekableWriteStream &stream, const Common::Array<Common::SeekableReadStream *> &fileData);
 
 	void addInfo(const CifInfo &info) { _writeFileMap.push_back(info); }
 	uint writeFileMapSize() const { return _writeFileMap.size(); }
