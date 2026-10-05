@@ -348,7 +348,7 @@ void IgorEngine::PART_06() {
 		_currentAction.verb = kVerbWalk;
 		memcpy(_paletteBuffer, _currentPalette, 624);
 		// Part 61 is arriving from intro so it doesnt need to copy the screen buffer
-		fadeIn(768);
+		fadeIn(624);
 	}
 	loadActionData(DAT_SpringBridge);
 	_roomDataOffsets = PART_06_ROOM_DATA_OFFSETS;

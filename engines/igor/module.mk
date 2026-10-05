@@ -15,6 +15,8 @@ MODULE_OBJS = \
 	static_cursor.o \
 	options.o \
 	part_0.o \
+	part_1.o \
+	part_2.o \
 	part_4.o \
 	part_5.o \
 	part_85.o \

@@ -32,7 +32,7 @@ void IgorEngine::PART_07_DRAW_DOOR_STATE(int num) {
 }
 
 void IgorEngine::PART_07_openCloseDoor(int door, bool open) {
-	const int stateIndex = door == 1 ? 26 : 27; // s3:0x856/0x857; cseg197:0150-03D8
+	const int stateIndex = door == 1 ? 26 : 27;
 	if ((_objectsState[stateIndex] != 0) == open) {
 		const int text = open ? 19 : 23;
 		ADD_DIALOGUE_TEXT(text, 1, text);

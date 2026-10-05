@@ -528,6 +528,18 @@ void IgorEngine::PART_MAIN() {
 		case 1:
 			PART_00(); // Student dormitory; cseg001:08BA-08C1
 			break;
+		case 10:
+		case 11:
+		case 12:
+			PART_01(); // Outside the dormitory window; cseg001:08C6-08D5
+			break;
+		case 20:
+		case 21:
+		case 22:
+		case 23:
+		case 24:
+			PART_02(); // Dormitory attic; cseg001:08DA-08F5
+			break;
 
 		case 40:
 			PART_04(); // Map

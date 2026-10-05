@@ -531,6 +531,44 @@
 #define ANM_StudentDormitoryRoom10 948 // cseg207:7E41; IGOR.EXE:0x7B0041, 0x080A bytes
 #define ANM_StudentDormitoryRoom11 949 // cseg207:864B; IGOR.EXE:0x7B084B, 0x080A bytes
 
+// Outside Igor's dormitory window (PART_01), from NE segments 200-202.
+#define DAT_OutsideStudentDormitory 950 // cseg200:278F; IGOR.EXE:0x75EF8F, 0x17DD bytes
+#define TXT_OutsideStudentDormitory 951 // cseg202:06AD; IGOR.EXE:0x76F9AD, 0x0549 bytes
+#define IMG_OutsideStudentDormitory 952 // cseg202:0BF6; IGOR.EXE:0x76FEF6, 0xB400 bytes
+#define PAL_OutsideStudentDormitory 953 // cseg202:BFF6; IGOR.EXE:0x77B2F6, 0x0270 bytes
+#define MSK_OutsideStudentDormitory 954 // cseg202:C266; IGOR.EXE:0x77B566, 0x05F4 bytes
+#define BOX_OutsideStudentDormitory 955 // cseg202:C85A; IGOR.EXE:0x77BB5A, 0x0500 bytes
+#define ANM_OutsideStudentDormitory1 956 // cseg201:01A1; IGOR.EXE:0x7627A1, 0x00D8 bytes
+#define ANM_OutsideStudentDormitory2 957 // cseg201:0279; IGOR.EXE:0x762879, 0x0E1C bytes
+#define ANM_OutsideStudentDormitory3 958 // cseg201:1095; IGOR.EXE:0x763695, 0x07B0 bytes
+#define ANM_OutsideStudentDormitory4 959 // cseg201:1845; IGOR.EXE:0x763E45, 0x01B5 bytes
+#define ANM_OutsideStudentDormitory5 960 // cseg201:19FA; IGOR.EXE:0x763FFA, 0x00D0 bytes
+#define ANM_OutsideStudentDormitory6 961 // cseg201:1ACA; IGOR.EXE:0x7640CA, 0x8E80 bytes
+#define ANM_OutsideStudentDormitory7 962 // cseg201:A94A; IGOR.EXE:0x76CF4A, 0x0050 bytes
+#define ANM_OutsideStudentDormitory8 963 // cseg201:A99A; IGOR.EXE:0x76CF9A, 0x2210 bytes
+
+// Dormitory attic/crawlspace (PART_02), from NE segments 203-205.
+#define DAT_StudentDormitoryAttic 964 // cseg203:52D7; IGOR.EXE:0x7814D7, 0x1EA3 bytes
+#define TXT_StudentDormitoryAttic 965 // cseg205:06A2; IGOR.EXE:0x7926A2, 0x0744 bytes
+#define IMG_StudentDormitoryAttic 966 // cseg205:0DE6; IGOR.EXE:0x792DE6, 0xB400 bytes
+#define PAL_StudentDormitoryAttic 967 // cseg205:C1E6; IGOR.EXE:0x79E1E6, 0x0270 bytes
+#define MSK_StudentDormitoryAttic 968 // cseg205:C456; IGOR.EXE:0x79E456, 0x11C1 bytes
+#define BOX_StudentDormitoryAttic 969 // cseg205:D617; IGOR.EXE:0x79F617, 0x0500 bytes
+#define ANM_StudentDormitoryAttic1 970 // cseg204:02D3; IGOR.EXE:0x7860D3, 0x02BC bytes
+#define ANM_StudentDormitoryAttic2 971 // cseg204:058F; IGOR.EXE:0x78638F, 0x00DC bytes
+#define ANM_StudentDormitoryAttic3 972 // cseg204:066B; IGOR.EXE:0x78646B, 0x0028 bytes
+#define ANM_StudentDormitoryAttic4 973 // cseg204:0693; IGOR.EXE:0x786493, 0x153F bytes
+#define ANM_StudentDormitoryAttic5 974 // cseg204:1BD2; IGOR.EXE:0x7879D2, 0x153F bytes
+#define ANM_StudentDormitoryAttic6 975 // cseg204:3111; IGOR.EXE:0x788F11, 0x057C bytes
+#define ANM_StudentDormitoryAttic7 976 // cseg204:368D; IGOR.EXE:0x78948D, 0x0E10 bytes
+#define ANM_StudentDormitoryAttic8 977 // cseg204:449D; IGOR.EXE:0x78A29D, 0x1308 bytes
+#define ANM_StudentDormitoryAttic9 978 // cseg204:57A5; IGOR.EXE:0x78B5A5, 0x080A bytes
+#define ANM_StudentDormitoryAttic10 979 // cseg204:5FAF; IGOR.EXE:0x78BDAF, 0x0CE4 bytes
+#define ANM_StudentDormitoryAttic11 980 // cseg204:6C93; IGOR.EXE:0x78CA93, 0x160B bytes
+#define ANM_StudentDormitoryAttic12 981 // cseg204:829E; IGOR.EXE:0x78E09E, 0x0240 bytes
+#define ANM_StudentDormitoryAttic13 982 // cseg204:84DE; IGOR.EXE:0x78E2DE, 0x327D bytes
+#define ANM_StudentDormitoryAttic14 983 // cseg204:B75B; IGOR.EXE:0x79155B, 0x0960 bytes
+
 // Administration secretary-room animation blocks copied by cseg192:0002-01D4.
 #define ANM_AdministrationSecretaryRoom1 923 // cseg192:01D5; IGOR.EXE:0x7057D5, 0xD38 bytes
 #define ANM_AdministrationSecretaryRoom2 924 // cseg192:0F0D; IGOR.EXE:0x70650D, 0x1FB bytes

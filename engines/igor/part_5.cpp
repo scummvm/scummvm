@@ -174,7 +174,7 @@ void IgorEngine::PART_05() {
 		if (_currentPart == 50) {
 			debug("Entering PART_05_HELPER_6");
 			memcpy(_screenVGA, _screenLayer1, 46080);
-			fadeIn(768);
+			fadeIn(624);
 			PART_05_HELPER_6_walkIgorToScene();
 		}
 	}

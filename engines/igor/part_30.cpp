@@ -110,10 +110,10 @@ void IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA(int action) {
 }
 
 void IgorEngine::PART_30_HANDLE_DIALOGUE_LAURA() {
-	// loadDialogueData(DLG_CollegeStairsFirstFloor);
-	// _updateDialogue = &IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA;
-	// handleDialogue(201, 85, 63, 0, 38);
-	// _updateDialogue = 0;
+	loadDialogueData(DLG_CollegeStairsFirstFloor);
+	_updateDialogue = &IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA;
+	handleDialogue(201, 85, 63, 0, 38);
+	_updateDialogue = 0;
 }
 
 void IgorEngine::PART_30_HELPER_1(int num) {

@@ -484,6 +484,13 @@ private:
 	void PART_00_ENTRY_ANIMATION();
 	void PART_00_WALK_IN();
 	void PART_00_ENTER_FROM_BELOW();
+	void PART_01();
+	void PART_01_EXEC_ACTION(int action);
+	void PART_01_CLOSE_WINDOW();
+	void PART_02();
+	void PART_02_EXEC_ACTION(int action);
+	void PART_02_APPLY_OBJECT_STATE(int num);
+	void PART_02_START_DIALOGUE(int text, int count, int sound);
 
 	// spring bridge
 	void PART_05_HELPER_4_drawPaperOrNot(int num);
@@ -885,6 +892,8 @@ protected:
 	Common::Error run() override;
 	static const RoomDataOffsets PART_04_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_00_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_01_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_02_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_05_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_07_ROOM_DATA_OFFSETS;

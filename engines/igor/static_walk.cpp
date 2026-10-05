@@ -30,6 +30,20 @@ const RoomDataOffsets IgorEngine::PART_00_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+const RoomDataOffsets IgorEngine::PART_01_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 }, // cseg200 has no area-transition table
+	{ 4, 15 }, // cseg200:0EBA-0EF5 (walk points), 1067,1672 (facing)
+	{ 19, 103, 3155, 209, 179, 82 }, // cseg200:1E43-1F88
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } // cseg200 has no room-specific dialogue matrix
+};
+
+const RoomDataOffsets IgorEngine::PART_02_ROOM_DATA_OFFSETS = {
+	{ 125, 5, 20, 4 }, // cseg203:323B-324D; five-area transition table
+	{ 259, 280 }, // cseg203:385E-3884,39F9
+	{ 289, 473, 4193, 565, 549, 96 }, // cseg203:49B1-4AF9
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } // cseg203 has no room-specific dialogue matrix
+};
+
 const uint8 IgorEngine::_walkWidthScaleTable[] = {
 	0x01, 0x01, 0x02, 0x02, 0x03, 0x04, 0x04, 0x05, 0x05, 0x06, 0x07, 0x07, 0x08, 0x08, 0x09, 0x0A,
 	0x0A, 0x0B, 0x0B, 0x0C, 0x0D, 0x0D, 0x0E, 0x0E, 0x0F, 0x10, 0x10, 0x11, 0x11, 0x12, 0x13, 0x13,
@@ -394,7 +408,7 @@ const RoomDataOffsets IgorEngine::PART_30_ROOM_DATA_OFFSETS = {
 		1489, // cseg110:018E-019E; first reply at blob+1591
 		11,
 		30,
-		0,
+		90,   // seg111:0ECD+90; reply 4 starts at +94 (cseg111 dialogue matrix)
 		2711, // cseg110:018E-019E; derived from the packed-tail layout
 		2729,
 		11
