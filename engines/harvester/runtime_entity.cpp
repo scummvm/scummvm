@@ -446,6 +446,13 @@ bool Entity::tickVisualState(uint32 now) {
 	_nextAnimationTick = now + _animationTickInterval;
 	_animationAdvancedLastTick = true;
 
+	if (_classId == kRuntimeEntityClassPlayer) {
+		debugC(3, kDebugPlayer,
+			"Harvester: player animation advance frame=%d->%d range=%d..%d rate=%d tick=%u interval=%u next_tick=%u",
+			previousFrameIndex, _currentFrame, _firstFrame, _lastFrame,
+			_animationRate, now, _animationTickInterval, _nextAnimationTick);
+	}
+
 	if (_classId == kRuntimeEntityClassNpc) {
 		const AbmFrame &currentFrame = _frames[(uint)_currentFrame];
 		const Common::Point drawOrigin = getDrawOrigin();

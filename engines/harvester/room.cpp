@@ -4439,11 +4439,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					playerState, regionFacing)) {
 				notePlayerActivity();
 				needsRedraw = true;
-			} else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
-					!playerState.turnActive && !playerState.hitActive &&
-					playerState.entity && playerState.facing >= 0 &&
-					Player::setIdleAnimation(playerState, playerState.facing)) {
-				needsRedraw = true;
 			}
 
 			if (!showingInspectText && !keyboardAttackRequested &&

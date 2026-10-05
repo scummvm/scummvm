@@ -61,6 +61,8 @@ struct RoomPlayerState {
 	// Mirrors native RenderEntityRuntime.player_combat_loadout_id (+0x11bc).
 	int combatLoadout = 0;
 	uint32 nextMovementTick = 0;
+	// Held input queues the next walk bank; release preserves that request.
+	int keyboardWalkRequest = -1;
 	bool hasMoveTarget = false;
 	int targetX = 0;
 	int targetBottomY = 0;

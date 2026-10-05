@@ -1380,6 +1380,7 @@ bool Player::setIdleAnimation(RoomPlayerState &playerState, int facing) {
 		playerState.entity->getAnimationRate() != 0;
 	playerState.facing = facing;
 	playerState.nextMovementTick = 0;
+	playerState.keyboardWalkRequest = -1;
 	playerState.entity->setAnimationRate(0);
 	playerState.entity->setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
 	playerState.entity->setCurrentFrame(range.idleFrame);
@@ -1844,13 +1845,34 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 		RoomPlayerState &playerState, bool moveLeft, bool moveRight, bool moveUp, bool moveDown) {
 	if (!playerState.entity || !supportsMovementBand(state))
 		return false;
-
-	const int horizontalInput = (moveRight ? 1 : 0) - (moveLeft ? 1 : 0);
-	const int verticalInput = (moveDown ? 1 : 0) - (moveUp ? 1 : 0);
-	if (horizontalInput == 0 && verticalInput == 0)
-		return false;
 	if (playerState.turnActive || playerState.hitActive)
 		return false;
+
+	int horizontalInput = (moveRight ? 1 : 0) - (moveLeft ? 1 : 0);
+	int verticalInput = (moveDown ? 1 : 0) - (moveUp ? 1 : 0);
+	const PlayerAnimationRange range = resolvePlayerAnimationRange(playerState.facing);
+	const int currentFrame = playerState.entity->getCurrentFrame();
+	const bool keyboardWalking = !playerState.hasMoveTarget &&
+		playerState.entity->getAnimationRate() == kRoomPlayerWalkAnimationRate &&
+		currentFrame >= range.walkFirstFrame && currentFrame <= range.walkLastFrame;
+	if (keyboardWalking) {
+		if (horizontalInput != 0 || verticalInput != 0)
+			playerState.keyboardWalkRequest = resolveFacingFromMoveDirection(
+				horizontalInput, verticalInput, playerState.facing);
+		if (!playerState.entity->didAnimationAdvanceLastTick())
+			return false;
+		const int stepFacing = currentFrame < range.walkLastFrame
+			? playerState.facing : playerState.keyboardWalkRequest;
+		horizontalInput = stepFacing == 1 ? -1 : stepFacing == 2 ? 1 : 0;
+		verticalInput = stepFacing == 3 ? -1 : stepFacing == 0 ? 1 : 0;
+	} else {
+		playerState.keyboardWalkRequest = -1;
+	}
+	if (horizontalInput == 0 && verticalInput == 0) {
+		if (playerState.hasMoveTarget || playerState.facing < 0)
+			return false;
+		return setIdleAnimation(playerState, playerState.facing);
+	}
 
 	const int previousCenterX = playerState.centerX;
 	const int previousBottomY = playerState.bottomY;
@@ -1892,13 +1914,15 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 			}
 			return stopped;
 		}
-		return false;
+		return setIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
 	}
 
 	const int desiredFacing = resolveFacingFromRoomMovement(
 		playerState.centerX, playerState.bottomY, candidateCenterX, candidateBottomY);
-	if (desiredFacing != playerState.facing && startTurnAnimation(playerState, desiredFacing))
+	if (desiredFacing != playerState.facing && startTurnAnimation(playerState, desiredFacing)) {
+		playerState.keyboardWalkRequest = -1;
 		return true;
+	}
 
 	if (!consumePlayerMovementTick(playerState))
 		return false;
@@ -1908,14 +1932,22 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 		playerState, previousCenterX, previousBottomY, previousZ,
 		candidateCenterX, candidateBottomY, candidateZ);
 	if (!moved)
-		return false;
+		return setIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
 
 	const int actualFacing = resolveFacingFromRoomMovement(
 		previousCenterX, previousBottomY, playerState.centerX, playerState.bottomY);
 	(void)setPlayerWalkAnimation(playerState, actualFacing);
+	if (keyboardWalking && currentFrame == range.walkLastFrame) {
+		playerState.keyboardWalkRequest = -1;
+		playerState.entity->setCurrentFrame(resolvePlayerAnimationRange(actualFacing).walkFirstFrame);
+		debugC(2, kDebugPlayer,
+			"Harvester: player keyboard walk bank restart facing=%d frame=%d",
+			actualFacing, playerState.entity->getCurrentFrame());
+	}
 	debugC(2, kDebugPlayer,
-		"Harvester: player keyboard move room='%s' input=(%d,%d) pos=(%d,%d,z=%.2f) facing=%d frame=%d moved=%d",
-		state.roomName.c_str(), horizontalInput, verticalInput,
+		"Harvester: player keyboard move room='%s' input=(%d,%d) step=(%d,%d) pos=(%d,%d,z=%.2f) facing=%d frame=%d moved=%d",
+		state.roomName.c_str(), (moveRight ? 1 : 0) - (moveLeft ? 1 : 0),
+		(moveDown ? 1 : 0) - (moveUp ? 1 : 0), horizontalInput, verticalInput,
 		playerState.centerX, playerState.bottomY, (double)playerState.z,
 		playerState.facing, playerState.entity->getCurrentFrame(), moved);
 	return true;
