@@ -492,13 +492,14 @@ private:
 	void PART_01_CLOSE_WINDOW();
 	void PART_01_STATE_11_BLIT_0053();
 	void PART_01_STATE_11_BLIT_00A5();
-	void PART_01_STATE_11_BLIT_0153();
-	uint16 PART_01_STATE_11_DRAW_01B8(int index);
+	void PART_01_STATE_11_BLIT_0153(int frame);
+	void PART_01_STATE_11_DRAW_01B8(int index);
 	void PART_01_STATE_11();
 	void PART_02();
 	void PART_02_EXEC_ACTION(int action);
 	void PART_02_APPLY_OBJECT_STATE(int num);
 	void PART_02_START_DIALOGUE(int text, int count, int sound);
+	void PART_02_SEARCH_TRUNK();
 
 	// spring bridge
 	void PART_05_HELPER_4_drawPaperOrNot(int num);
