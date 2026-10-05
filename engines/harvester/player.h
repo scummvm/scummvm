@@ -75,7 +75,7 @@ public:
 	static bool stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state,
 		const Common::Array<ObjectRecord> &sceneObjects,
 		const Common::Array<AnimRecord> &sceneAnimations,
-		RoomPlayerState &playerState);
+		RoomPlayerState &playerState, int regionFacing = -1);
 	static bool stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState &state,
 		const Common::Array<ObjectRecord> &sceneObjects,
 		const Common::Array<AnimRecord> &sceneAnimations,

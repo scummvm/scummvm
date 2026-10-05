@@ -613,22 +613,22 @@ static void resetPlayerMoveTargetProgress(RoomPlayerState &playerState) {
 }
 
 static int resolveMoveTargetHorizontalDirection(const RoomSetupState &state,
-		const RoomPlayerState &playerState) {
+		const RoomPlayerState &playerState, int regionFacing) {
 	const float slack = Player::computeDepthScale(state, playerState.z) *
 		kRoomPlayerHorizontalTargetSlackBase;
 	const float frameLeftX = (float)computePlayerFrameLeftX(playerState);
-	if (frameLeftX < (float)playerState.targetX - slack)
+	if (frameLeftX < (float)playerState.targetX - slack || regionFacing == 2)
 		return 1;
-	if ((float)playerState.targetX + slack < frameLeftX)
+	if ((float)playerState.targetX + slack < frameLeftX || regionFacing == 1)
 		return -1;
 
 	return 0;
 }
 
-static int resolveMoveTargetDepthDirection(const RoomPlayerState &playerState) {
-	if (playerState.targetZ < playerState.z - kRoomPlayerDepthTargetSlack)
+static int resolveMoveTargetDepthDirection(const RoomPlayerState &playerState, int regionFacing) {
+	if (playerState.targetZ < playerState.z - kRoomPlayerDepthTargetSlack || regionFacing == 0)
 		return 1;
-	if (playerState.z + kRoomPlayerDepthTargetSlack < playerState.targetZ)
+	if (playerState.z + kRoomPlayerDepthTargetSlack < playerState.targetZ || regionFacing == 3)
 		return -1;
 
 	return 0;
@@ -639,13 +639,13 @@ static bool hasPlayerReachedMoveTarget(const RoomPlayerState &playerState) {
 }
 
 static void updatePlayerMoveTargetProgress(const RoomSetupState &state,
-		RoomPlayerState &playerState) {
+		RoomPlayerState &playerState, int regionFacing) {
 	if (!playerState.moveTargetXReached &&
-			resolveMoveTargetHorizontalDirection(state, playerState) == 0) {
+			resolveMoveTargetHorizontalDirection(state, playerState, regionFacing) == 0) {
 		playerState.moveTargetXReached = true;
 	}
 	if (!playerState.moveTargetZReached &&
-			resolveMoveTargetDepthDirection(playerState) == 0) {
+			resolveMoveTargetDepthDirection(playerState, regionFacing) == 0) {
 		playerState.moveTargetZReached = true;
 	}
 }
@@ -1633,12 +1633,16 @@ bool Player::startTurnAnimation(RoomPlayerState &playerState, int targetFacing) 
 			playerState.facing < 0 || playerState.facing == targetFacing)
 		return false;
 
+	// update_actor_runtime_state (0x4d750) routes desired states 1/2 from the
+	// opposite horizontal facing through front-facing state 0.
+	const int nextFacing = (playerState.facing == 1 && targetFacing == 2) ||
+			(playerState.facing == 2 && targetFacing == 1) ? 0 : targetFacing;
 	PlayerTurnAnimationRange range;
-	if (!resolvePlayerTurnAnimationRange(playerState.facing, targetFacing, range))
+	if (!resolvePlayerTurnAnimationRange(playerState.facing, nextFacing, range))
 		return false;
 
 	playerState.turnActive = true;
-	playerState.turnTargetFacing = targetFacing;
+	playerState.turnTargetFacing = nextFacing;
 	playerState.turnFirstFrame = range.firstFrame;
 	playerState.turnLastFrame = range.lastFrame;
 	playerState.turnEndFrame = range.playBackwards ? range.firstFrame : range.lastFrame;
@@ -1649,9 +1653,9 @@ bool Player::startTurnAnimation(RoomPlayerState &playerState, int targetFacing) 
 	playerState.entity->setAnimationRate(kRoomPlayerWalkAnimationRate);
 	playerState.entity->setCurrentFrame(range.playBackwards ? range.lastFrame : range.firstFrame);
 	debugC(1, kDebugPlayer,
-		"Harvester: player turn animation from=%d to=%d frames=%d..%d backwards=%d rate=%d",
-		playerState.facing, targetFacing, range.firstFrame, range.lastFrame,
-		range.playBackwards, kRoomPlayerWalkAnimationRate);
+		"Harvester: player turn animation from=%d to=%d frames=%d..%d backwards=%d rate=%d requested_facing=%d",
+		playerState.facing, nextFacing, range.firstFrame, range.lastFrame,
+		range.playBackwards, kRoomPlayerWalkAnimationRate, targetFacing);
 	return true;
 }
 
@@ -1678,13 +1682,16 @@ bool Player::updateTurnAnimationState(RoomPlayerState &playerState) {
 bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state,
 		const Common::Array<ObjectRecord> &sceneObjects,
 		const Common::Array<AnimRecord> &sceneAnimations,
-		RoomPlayerState &playerState) {
+		RoomPlayerState &playerState, int regionFacing) {
 	if (!playerState.entity || !playerState.hasMoveTarget || playerState.turnActive || playerState.hitActive)
 		return false;
 
 	refreshPlayerCurrentBlocker(engine, sceneObjects, sceneAnimations, playerState);
 
-	updatePlayerMoveTargetProgress(state, playerState);
+	// run_harvester_main_loop (0x6dc70) latches the clicked region facing at
+	// 0xc3f0c. update_actor_runtime_state (0x4d750) uses it to keep the matching
+	// target component active inside the usual X/Z stopping tolerance.
+	updatePlayerMoveTargetProgress(state, playerState, regionFacing);
 	if (hasPlayerReachedMoveTarget(playerState)) {
 		playerState.hasMoveTarget = false;
 		return setIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
@@ -1694,7 +1701,7 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 	const int previousBottomY = playerState.bottomY;
 	int horizontalDirection = playerState.moveTargetXReached
 		? 0
-		: resolveMoveTargetHorizontalDirection(state, playerState);
+		: resolveMoveTargetHorizontalDirection(state, playerState, regionFacing);
 	if (horizontalDirection != 0 && isHorizontalDirectionBlockedByHistory(playerState, horizontalDirection)) {
 		if (engine.isPathfindingDebugEnabled()) {
 			debugC(1, kDebugPathfinding,
@@ -1708,7 +1715,7 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 		horizontalDirection = 0;
 	}
 	int depthDirection = horizontalDirection == 0 && !playerState.moveTargetZReached
-		? resolveMoveTargetDepthDirection(playerState)
+		? resolveMoveTargetDepthDirection(playerState, regionFacing)
 		: 0;
 	if (depthDirection != 0 && isDepthDirectionBlockedByHistory(playerState, depthDirection)) {
 		if (engine.isPathfindingDebugEnabled()) {
@@ -1726,6 +1733,16 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 		playerState.hasMoveTarget = false;
 		return setIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
 	}
+	const int desiredFacing = resolveFacingFromMoveDirection(
+		horizontalDirection, depthDirection, playerState.facing);
+	if (regionFacing >= 0 && desiredFacing != playerState.facing &&
+			startTurnAnimation(playerState, desiredFacing)) {
+		debugC(2, kDebugPlayer,
+			"Harvester: player region target turn room='%s' required_facing=%d movement_facing=%d target=(%d,z=%.2f)",
+			state.roomName.c_str(), regionFacing, desiredFacing,
+			playerState.targetX, (double)playerState.targetZ);
+		return true;
+	}
 	if (!consumePlayerMovementTick(playerState))
 		return false;
 
@@ -1739,9 +1756,16 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 	} else if (depthDirection != 0) {
 		const int verticalStep = computeRoomPlayerVerticalScreenStep();
 		const float depthStep = computeRoomPlayerDepthStep(state);
-		candidateBottomY = clampRoomMovementY(state,
-			playerState.bottomY + depthDirection * verticalStep);
-		candidateZ = stepTowardsFloat(playerState.z, playerState.targetZ, depthStep);
+		const bool depthBoundaryReached = depthDirection < 0
+			? playerState.z >= (float)state.roomMaxZ
+			: playerState.z <= (float)state.roomMinZ;
+		if (!depthBoundaryReached) {
+			candidateBottomY = clampRoomMovementY(state,
+				playerState.bottomY + depthDirection * verticalStep);
+			candidateZ = regionFacing == 0 || regionFacing == 3
+				? clampRoomDepth(state, playerState.z - depthDirection * depthStep)
+				: stepTowardsFloat(playerState.z, playerState.targetZ, depthStep);
+		}
 	}
 
 	if (engine.isPathfindingDebugEnabled()) {
@@ -1800,7 +1824,7 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 			playerState.centerX, playerState.bottomY, (double)playerState.z,
 			actualFacing);
 	}
-	updatePlayerMoveTargetProgress(state, playerState);
+	updatePlayerMoveTargetProgress(state, playerState, regionFacing);
 	if (hasPlayerReachedMoveTarget(playerState)) {
 		playerState.hasMoveTarget = false;
 		(void)setIdleAnimation(playerState, actualFacing);

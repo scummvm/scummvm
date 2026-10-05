@@ -3424,7 +3424,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				playerRect.left, playerRect.top, playerRect.right, playerRect.bottom,
 				playerOverlapsRegion, region.actionTag.c_str());
 		}
-		if (playerOverlapsRegion)
+		if (playerOverlapsRegion && doesPlayerFacingMatchRegion(playerState.facing, region))
 			return;
 
 		Player::setRegionMoveTarget(scene.state, playerState,
@@ -4427,13 +4427,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (playerCanAct &&
 				!playerState.attackActive && !playerState.hitActive &&
 				!keyboardAttackRequested && !idleState.active && !idleState.exiting) {
+			const RegionRecord *pendingRegion = findSceneRegionByName(scene.sceneRegions, pendingRegionName);
+			const int regionFacing = pendingRegion && pendingRegion->startEnabled
+				? pendingRegion->desiredFacing : -1;
 			if (Player::stepKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, moveLeft, moveRight, moveUp, moveDown)) {
 				notePlayerActivity();
 				needsRedraw = true;
 			} else if (Player::stepMoveTarget(
 					_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
-					playerState)) {
+					playerState, regionFacing)) {
 				notePlayerActivity();
 				needsRedraw = true;
 			} else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
