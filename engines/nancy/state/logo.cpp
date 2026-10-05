@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 
 #include "engines/nancy/nancy.h"
@@ -89,8 +90,7 @@ bool Logo::onStateExit(const NancyState::NancyState nextState) {
 
 void Logo::init() {
 	if (g_nancy->getGameType() >= kGameTypeNancy16) {
-		// The logo screens are made for the screen's resolution, not the game's
-		_logoImage.setNativeResolution(true);
+		// The logo movies are made for the screen's resolution, not the game's
 		_videoObj.setNativeResolution(true);
 		_screenID = 0;
 		_state = kShowScreens;
@@ -175,9 +175,15 @@ void Logo::startScreen() {
 		return;
 	}
 
-	_logoImage.init(screen->imageName);
-	_logoImage.moveTo(screen->position);
-	_logoImage.registerGraphics();
+	// Nancy17 names a picture for its first screen that it doesn't have
+	if (SearchMan.hasFile(screen->imageName) || SearchMan.hasFile(screen->imageName.append(".cif"))) {
+		_logoImage.init(screen->imageName);
+
+		// A picture made for the game's resolution gets scaled up with the game
+		_logoImage.setNativeResolution(_logoImage._drawSurface.w > g_nancy->_graphics->getGameBounds().width());
+		_logoImage.moveTo(screen->position);
+		_logoImage.registerGraphics();
+	}
 
 	_screenMovie.close();
 	_videoObj.setVisible(false);
