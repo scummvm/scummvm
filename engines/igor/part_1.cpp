@@ -11,72 +11,73 @@
 namespace Igor {
 
 void IgorEngine::PART_01_CLOSE_WINDOW() {
-	// s3:0230-0233 (IGOR.EXE:0x8B0230); selected at cseg200:0231-0249.
 	static const uint8 windowFrames[] = { 0, 1, 2, 1 };
 	for (int i = 0; i < 4; ++i) {
-		// cseg200:0226-035C: 28x43 raw frames at ANM offset 216,
-		// frame stride 1204, drawn at screen offset 0x5919.
 		PART_00_DRAW_RAW_FRAME(216, windowFrames[i], 1204, 28, 43, 0x5919);
 		if (i == 0)
-			playSound(2, 1); // cseg200:035E-0369
+			playSound(2, 1);
 		if (i != 3) {
-			// cseg200:0375-037D; ANM offset 0 contains four 9x6 frames.
+			// ANM offset 0 contains four 9x6 frames.
 			const int backgroundFrame = getRandomNumber(3);
 			const uint8 *src = _animFramesBuffer + backgroundFrame * 54;
 			for (int y = 0; y < 6; ++y)
 				memcpy(_screenVGA + 0x8EA4 + y * 320, src + y * 9, 9);
-			waitForTimer(94); // cseg200:0382-038C
+			waitForTimer(94);
 		}
 	}
 
-	ADD_DIALOGUE_TEXT(203, 1, 132); // cseg200:0398-03AA
-	ADD_DIALOGUE_TEXT(204, 1, 133); // cseg200:03AA-03BC
-	SET_DIALOGUE_TEXT(1, 2); // cseg200:03BC-03C1
-	startIgorDialogue(); // cseg200:03C6
-	waitForEndOfIgorDialogue(); // cseg200:03CB
+	ADD_DIALOGUE_TEXT(203, 1, 132);
+	ADD_DIALOGUE_TEXT(204, 1, 133);
+	SET_DIALOGUE_TEXT(1, 2);
+	startIgorDialogue();
+	waitForEndOfIgorDialogue();
 }
 
 void IgorEngine::PART_01_EXEC_ACTION(int action) {
-	// Action-to-function mapping: cseg200:068A-079F.
 	debugC(9, kDebugGame, "PART_01_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(201, 2, 131); // cseg200:054F-0575
+		ADD_DIALOGUE_TEXT(201, 2, 131);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 102:
-		// TODO: transcribe the roof-crossing animation from cseg200:03D2-054E.
-		// It ends in state 20 at cseg200:0547; do not skip observable behavior.
-		warning("PART_01_EXEC_ACTION action 102 is not yet transcribed");
+		//  draws two 24x41 roof-crossing frames at screen
+		// waiting for the video update after each one, then
+		// changes to part 20.
+		for (int frame = 0; frame <= 1; ++frame) {
+			PART_00_DRAW_RAW_FRAME(0x0EF4, frame, 0x3D8, 24, 41, 0x51F4);
+			waitForTimer(); // video-update wait
+		}
+		_currentPart = 20;
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(205, 1, 134); // cseg200:057C-05A2
+		ADD_DIALOGUE_TEXT(205, 1, 134);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(206, 2, 135); // cseg200:05A9-05CF
+		ADD_DIALOGUE_TEXT(206, 2, 135);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(208, 1, 136); // cseg200:05D6-05FC
+		ADD_DIALOGUE_TEXT(208, 1, 136);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(209, 1, 137); // cseg200:0603-0629
+		ADD_DIALOGUE_TEXT(209, 1, 137);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(210, 1, 138); // cseg200:0630-0656
+		ADD_DIALOGUE_TEXT(210, 1, 138);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 108:
-		ADD_DIALOGUE_TEXT(211, 2, 139); // cseg200:065D-0683
+		ADD_DIALOGUE_TEXT(211, 2, 139);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -87,40 +88,40 @@ void IgorEngine::PART_01_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_01() {
-	_gameState.enableLight = 1; // cseg200:1836
-	loadActionData(DAT_OutsideStudentDormitory); // cseg200:1853-186A
+	_gameState.enableLight = 1;
+	loadActionData(DAT_OutsideStudentDormitory);
 	loadRoomData(PAL_OutsideStudentDormitory, IMG_OutsideStudentDormitory,
 			BOX_OutsideStudentDormitory, MSK_OutsideStudentDormitory,
-			TXT_OutsideStudentDormitory); // cseg202:0002
+			TXT_OutsideStudentDormitory);
 	static const int animFrames[] = {
 		ANM_OutsideStudentDormitory1, ANM_OutsideStudentDormitory2,
 		ANM_OutsideStudentDormitory3, ANM_OutsideStudentDormitory4,
 		ANM_OutsideStudentDormitory5, ANM_OutsideStudentDormitory6,
 		ANM_OutsideStudentDormitory7, ANM_OutsideStudentDormitory8, 0
 	};
-	loadAnimData(animFrames); // cseg201:0002-019F
+	loadAnimData(animFrames);
 	_roomDataOffsets = PART_01_ROOM_DATA_OFFSETS;
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_01_EXEC_ACTION); // cseg200:068A-079F
-	memcpy(_screenVGA, _screenLayer1, 46080); // cseg200:187E-1890
+	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_01_EXEC_ACTION);
+	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		if (_currentPart == 10) {
-			fadeIn(768); // cseg200:1AD2-1AD5
-			_walkData[0].setPos(108, 113, kFacingPositionRight, 0); // cseg200:1ADA-1AE6
-			_walkData[0].clipSkipX = 1; // cseg200:1AF0
-			_walkData[0].clipWidth = 24; // cseg200:1AF5
-			_walkData[0].scaleWidth = 40; // cseg200:1AFB
-			_walkData[0].xPosChanged = 1; // cseg200:1B01
-			_walkData[0].dxPos = 0; // cseg200:1B06-1B08
-			_walkData[0].yPosChanged = 1; // cseg200:1B0B
-			_walkData[0].dyPos = 0; // cseg200:1B10-1B12
-			_walkData[0].scaleHeight = 40; // cseg200:1B15
+			fadeIn(768);
+			_walkData[0].setPos(108, 113, kFacingPositionRight, 0);
+			_walkData[0].clipSkipX = 1;
+			_walkData[0].clipWidth = 24;
+			_walkData[0].scaleWidth = 40;
+			_walkData[0].xPosChanged = 1;
+			_walkData[0].dxPos = 0;
+			_walkData[0].yPosChanged = 1;
+			_walkData[0].dyPos = 0;
+			_walkData[0].scaleHeight = 40;
 			_walkDataCurrentIndex = 0;
 			moveIgor(_walkData[0].posNum, _walkData[0].frameNum);
-			_walkDataLastIndex = 1; // cseg200:1B1A
-			_walkDataCurrentIndex = 1; // cseg200:1B1F
-			PART_01_CLOSE_WINDOW(); // cseg200:1B24
+			_walkDataLastIndex = 1;
+			_walkDataCurrentIndex = 1;
+			PART_01_CLOSE_WINDOW();
 		} else {
 			// TODO: transcribe state 11 and 12 transition cutscenes from
 			// cseg200:1950-1AB0 before enabling their state changes to 22/23.

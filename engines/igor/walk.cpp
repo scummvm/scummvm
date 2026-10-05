@@ -1114,6 +1114,39 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 		*y = yPos;
 		return;
 	}
+	// Part 1 walks on the roof ledge, whose only walkable area
+	// (mask region 5) runs from (60,117) up to (276,98); both clamp values are
+	// that ledge's endpoints.
+	if (getPart() == 1) {
+		int xPos = *x;
+		int yPos = *y;
+		if (yPos > 143)
+			yPos = 143;
+		if (xPos < 60) {
+			xPos = 60;
+			yPos = 117;
+		} else if (xPos > 276) {
+			xPos = 276;
+			yPos = 98;
+		} else {
+			do {
+				if (yPos < 143)
+					++yPos;
+				//
+				if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area != 0)
+					break;
+			} while (yPos != 143);
+			if (yPos == 143) {
+				//
+				do {
+					--yPos;
+				} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0);
+			}
+		}
+		*x = xPos;
+		*y = yPos;
+		return;
+	}
 	int xPos = *x;
 	if (xPos < _roomWalkBounds.x1) {
 		xPos = _roomWalkBounds.x1;
