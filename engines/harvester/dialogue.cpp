@@ -457,6 +457,7 @@ public:
 	struct DialogueResponseOptionLayout {
 		Common::String text;
 		Common::Array<Common::String> wrappedLines;
+		char hotkey = 0;
 		int rowStart = 0;
 		int rowCount = 0;
 	};
@@ -842,7 +843,7 @@ public:
 					if (clickedTopic >= 0) {
 						selectedTopic = topics[(uint)clickedTopic];
 						selection.fromGenericBye = clickedTopic == (int)topics.size() - 1;
-						debugC(1, kDebugDialogue, "Harvester: keyword menu selected topic[%d]='%s'",
+						debugC(2, kDebugDialogue, "Harvester: keyword menu selected topic[%d]='%s' via click",
 							clickedTopic + 1, selectedTopic.c_str());
 						return Common::kNoError;
 					}
@@ -1158,6 +1159,9 @@ private:
 
 			DialogueResponseOptionLayout option;
 			option.text = optionText;
+			if (optionText.size() > 1 && optionText[0] >= '1' && optionText[0] <= '9' &&
+					optionText[1] == '.')
+				option.hotkey = optionText[0];
 			option.rowStart = (int)totalRows;
 			for (const Common::String &explicitLine : explicitLines) {
 				Common::Array<Common::String> wrappedExplicitLines;
@@ -1181,20 +1185,12 @@ private:
 			if (segmentText.empty())
 				return;
 
-			uint digitEnd = 0;
-			while (digitEnd < segmentText.size() && segmentText[digitEnd] >= '0' &&
-					segmentText[digitEnd] <= '9') {
-				++digitEnd;
-			}
-			const bool startsNewOption = digitEnd > 0 && digitEnd < segmentText.size() &&
-				segmentText[digitEnd] == '.';
+			const bool startsNewOption = segmentText.size() > 1 && segmentText[0] >= '1' &&
+				segmentText[0] <= '9' && segmentText[1] == '.';
 			if (startsNewOption) {
 				flushOption();
-
-				Common::String optionLine = segmentText.substr(digitEnd + 1);
-				optionLine.trim();
-				optionText = optionLine;
-				explicitLines.push_back(Common::move(optionLine));
+				optionText = segmentText;
+				explicitLines.push_back(Common::move(segmentText));
 				return;
 			}
 
@@ -1310,8 +1306,11 @@ private:
 		}
 
 		Common::Array<Common::String> optionTexts;
-		for (const DialogueResponseOptionLayout &option : options)
+		for (const DialogueResponseOptionLayout &option : options) {
 			optionTexts.push_back(option.text);
+			debugC(3, kDebugDialogue, "Harvester: response menu option[%u] hotkey=%c rowStart=%d rowCount=%d",
+				optionTexts.size(), option.hotkey ? option.hotkey : '-', option.rowStart, option.rowCount);
+		}
 		logDialogueMenuItems("Response menu", responseLineIndex, responseLine, optionTexts);
 
 		const IndexedBitmap *textboxBitmap = _art->getTextboxBitmap(resolveDialogueResponseTextboxIndex(totalRows));
@@ -1331,43 +1330,44 @@ private:
 					return result;
 
 				if (event.type == Common::EVENT_KEYDOWN) {
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						if (responseLineIndex >= 0) {
-							debugC(1, kDebugDialogue, "Harvester: response menu line 0x%x (%d) cancelled",
-								responseLineIndex, responseLineIndex + 1);
-						} else {
-							debugC(1, kDebugDialogue, "Harvester: response menu text cancelled");
-						}
-						return Common::kNoError;
-					}
-					if (event.kbd.ascii >= '1' && event.kbd.ascii <= '9') {
-						const int menuIndex = event.kbd.ascii - '0';
-						if (menuIndex >= 1 && menuIndex <= (int)options.size()) {
-							selectedIndex = menuIndex;
+					debugC(3, kDebugDialogue, "Harvester: response menu keycode=%d ascii=%u",
+						(int)event.kbd.keycode, event.kbd.ascii);
+					if (event.kbd.keycode >= Common::KEYCODE_1 && event.kbd.keycode <= Common::KEYCODE_9) {
+						const char hotkey = '1' + event.kbd.keycode - Common::KEYCODE_1;
+						for (int optionIndex = (int)options.size() - 1; optionIndex >= 0; --optionIndex) {
+							const DialogueResponseOptionLayout &option = options[(uint)optionIndex];
+							if (option.hotkey != hotkey)
+								continue;
+							selectedIndex = optionIndex + 1;
 							if (responseLineIndex >= 0) {
-								debugC(1, kDebugDialogue,
-									"Harvester: response menu line 0x%x (%d) selected option[%d]='%s' via hotkey",
+								debugC(2, kDebugDialogue,
+									"Harvester: response menu line 0x%x (%d) selected option[%d]='%s' via hotkey=%c result=%d",
 									responseLineIndex, responseLineIndex + 1,
-									selectedIndex, options[(uint)(selectedIndex - 1)].text.c_str());
+									optionIndex + 1, option.text.c_str(), hotkey, selectedIndex);
 							} else {
-								debugC(1, kDebugDialogue,
-									"Harvester: response menu text selected option[%d]='%s' via hotkey",
-									selectedIndex, options[(uint)(selectedIndex - 1)].text.c_str());
+								debugC(2, kDebugDialogue,
+									"Harvester: response menu text selected option[%d]='%s' via hotkey=%c result=%d",
+									optionIndex + 1, option.text.c_str(), hotkey, selectedIndex);
 							}
 							return waitForPointerRelease();
 						}
 					}
-				} else if (event.type == Common::EVENT_LBUTTONDOWN && hoveredOptionIndex >= 0) {
-					selectedIndex = hoveredOptionIndex + 1;
+				} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+					const int clickedOptionIndex = getResponseMenuItemAt(options, totalRows, event.mouse);
+					if (clickedOptionIndex < 0)
+						continue;
+					selectedIndex = clickedOptionIndex + 1;
 					if (responseLineIndex >= 0) {
-						debugC(1, kDebugDialogue,
-							"Harvester: response menu line 0x%x (%d) selected option[%d]='%s' via click",
+						debugC(2, kDebugDialogue,
+							"Harvester: response menu line 0x%x (%d) selected option[%d]='%s' via click x=%d y=%d result=%d",
 							responseLineIndex, responseLineIndex + 1,
-							selectedIndex, options[(uint)hoveredOptionIndex].text.c_str());
+							selectedIndex, options[(uint)clickedOptionIndex].text.c_str(),
+							event.mouse.x, event.mouse.y, selectedIndex);
 					} else {
-						debugC(1, kDebugDialogue,
-							"Harvester: response menu text selected option[%d]='%s' via click",
-							selectedIndex, options[(uint)hoveredOptionIndex].text.c_str());
+						debugC(2, kDebugDialogue,
+							"Harvester: response menu text selected option[%d]='%s' via click x=%d y=%d result=%d",
+							selectedIndex, options[(uint)clickedOptionIndex].text.c_str(),
+							event.mouse.x, event.mouse.y, selectedIndex);
 					}
 					return waitForPointerRelease();
 				}
