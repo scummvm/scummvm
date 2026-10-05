@@ -53,6 +53,7 @@
 #include "mohawk/zoombini_page.h"
 #include "mohawk/zoombini_pages/interactive_base.h"
 #include "mohawk/zoombini_pages/puzzle_base.h"
+#include "mohawk/zoombini_pages/shelter_base.h"
 #include "mohawk/zoombini_sound.h"
 #include "mohawk/zoombini_text.h"
 
@@ -1915,7 +1916,10 @@ bool ZoombiniConsole::CmdSub_GoXfer(int argc, const char **argv) {
 	// @ref ZoombiniConsole::CmdSub_GoXfer() bypasses that result and must carry every Snoid still owned by the puzzle.
 	// Rest pages already distinguish the traveling party from residents, so preserve their stored occupancy.
 	ZoombiniPage *activePage = _vm->getActivePage();
-	if (activePage && 0 < activePage->getPackSnoidCount()) {
+	ZoombiniShelterBasecamp *basecamp = dynamic_cast<ZoombiniShelterBasecamp *>(activePage);
+	if (basecamp) {
+		basecamp->debugPreparePackForXfer();
+	} else if (activePage && 0 < activePage->getPackSnoidCount()) {
 		const ZoombiniPageType pageType = activePage->getPageType();
 		if (ZoombiniPageType::kBridge <= pageType && pageType <= ZoombiniPageType::kMaze)
 			activePage->schedulePackSnoids(true, true);
@@ -1933,36 +1937,10 @@ bool ZoombiniConsole::CmdSub_GoXfer(int argc, const char **argv) {
 	}
 	_vm->_state->markDebugStateMutation();
 
-	// Simulate source-puzzle completion so its per-puzzle level flag is up to date.
-	// @ref ZoombiniInteractive::executeDeparture() normally updates routing before starting the transition.
-	// It calls @ref ZoombiniInteractive::routeNonOccupiedToRestingPack() for that update.
-	// That records the route-level bit and perfect-clear bit in @ref ZmbStateFile::_pageLevelFlags.
-	// @ref ZoombiniConsole::CmdSub_GoXfer() bypasses the puzzle, so update those flags explicitly.
-	// Otherwise, the preceding segment would use stale completion colors.
+	// Simulate the selected route's completion without completing its alternative branch.
 	const ZmbXferRouteInfo *xferRoute = ZmbXferRouteInfo::getZmbXferRouteInfo(srcSiPage);
-	const ZmbDestPageKind srcDi = xferRoute ? xferRoute->srcPuzzlePage : ZmbDestPageKind::kUnk_00;
-	const int16 xferRouteId = xferRoute ? static_cast<int16>(xferRoute->routeId) : -1;
-	if (0 <= xferRouteId && !_vm->_state->inPracticeMode()) {
-		ZmbStateFile &f = _vm->_state->getCurrentState();
-		// Container icons use route-completion slots rather than the per-puzzle slots.
-		// A debug jump can skip the container departure that normally records them.
-		for (int16 routeId = 0; routeId < xferRouteId; routeId += 1)
-			f.setRouteCompletionFlag(static_cast<ZmbRouteId>(routeId), f._routeLevels[routeId]);
-
-		if (srcDi != ZmbDestPageKind::kUnk_00) {
-			const uint16 srcRouteLevel = f._routeLevels[xferRouteId];
-			const uint8 srcBitmask = static_cast<uint8>(1 << (srcRouteLevel & 3));
-			// Set both the played and perfect nibbles because the simulated jump assumes a perfect run.
-			// A natural play-through completes every earlier puzzle on the route at the current level.
-			// The route map draws each traveled leg from its puzzle flag, so backfill every preceding puzzle.
-			// For example, "go xfer pizza" at level 4 needs Bridge bit 3 as well as the Tunnels bit.
-			const int16 firstDi = static_cast<int16>(ZmbDestPageKind::kBridge_07) + xferRouteId * 3;
-			for (int16 di = firstDi; di <= static_cast<int16>(srcDi); di++) {
-				f._pageLevelFlags[di - 4] |= srcBitmask;
-				f._pageLevelFlags[di - 4] |= static_cast<uint8>(srcBitmask << 4);
-			}
-		}
-	}
+	if (xferRoute && !_vm->_state->inPracticeMode())
+		_vm->_state->getCurrentState().markDebugXferProgress(*xferRoute);
 
 	// Close the current page and queue the transition.
 	_vm->_debugPreserveActivePackOnXferClose = true;
