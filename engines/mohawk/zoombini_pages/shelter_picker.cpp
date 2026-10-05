@@ -90,11 +90,7 @@ void ZoombiniShelterPicker::open() {
 	if (_vm->isVersionFamilyTlcV2())
 		openArchive(ZMB_MHK_MUSIC);
 	else
-		// v1.x MIDI BGM (tMID 30000-30001).
-		// @ref ZoombiniPage::openMidiArchive() loads MIDIMPC.MHK
-		// (Windows profile) or, when "use_mac_midi" is set, MIDIMAC.MHK
-		// (Macintosh profile). Both hold the same tMID IDs.
-		openMidiArchive();
+		openMidiArchive(); // v1.x MIDI BGM (tMID 30000-30001).
 	openArchive(ZMB_MHK_PICKER);
 }
 

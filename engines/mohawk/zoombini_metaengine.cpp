@@ -45,19 +45,17 @@ void Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings() {
 	ConfMan.registerDefault(kOptionFixHotelMidiHaltBug, true);
 	ConfMan.registerDefault(kOptionFixCavesL4MidiSilentBug, true);
 	// Gameplay improvements.
-	ConfMan.registerDefault(kOptionUseAccurate60FPS, true);
+	ConfMan.registerDefault(kOptionTickRate, static_cast<int>(TickRate::kAccurate60FPS));
 	ConfMan.registerDefault(kOptionEnhancedKbdShortcuts, true);
 	ConfMan.registerDefault(kOptionShowRemappedOptionDialogShortcuts, true);
 	// Gameplay tuning.
-	ConfMan.registerDefault(kOptionBrightenPalette, true);
-	ConfMan.registerDefault(kOptionOriginalPRNG, true);
+	ConfMan.registerDefault(kOptionPaletteFilter, static_cast<int>(PaletteFilter::kBrightenPalette));
+	ConfMan.registerDefault(kOptionPrngAlgorithm, static_cast<int>(PrngAlgorithm::kOriginalPrng));
+	ConfMan.registerDefault(kOptionMidiSoundtrack, static_cast<int>(MidiSoundtrack::kWindowsMPC));
 	ConfMan.registerDefault(kOptionColorBlindMode, false);
 	ConfMan.registerDefault(kOptionMazeAlwaysPlayCelebrationSfx, false);
 	ConfMan.registerDefault(kOptionTownAlwaysPlayMemorialSfx, true);
 	ConfMan.registerDefault(kOptionMazeRestoreUnusedL4Layout, false);
 	ConfMan.registerDefault(kOptionMazeRandomizeInitialLayout, false);
 	ConfMan.registerDefault(kOptionFerryHighlightTraitMatch, false);
-	// Default off: preserve the authentic Windows-engine behavior (MIDIMPC.MHK).
-	// The Macintosh soundtrack (MIDIMAC.MHK) is opt-in.
-	ConfMan.registerDefault(kOptionUseMacMidi, false);
 }
