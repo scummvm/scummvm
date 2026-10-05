@@ -66,7 +66,7 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
 
 
-		_currentPart = 20;
+		_currentPart = 850;
 
 		// _currentPart = 171;
 		// _currentPart = 62;
@@ -402,7 +402,7 @@ void IgorEngine::drawInventory(int start, int mode) {
 	loadData(IMG_InventoryPanel, _inventoryPanelBuffer);
 	loadData(IMG_Objects, _inventoryImagesBuffer);
 	int y, i;
-	int end = start + 6;
+	int end = start + 7; // seven slots
 	int x = 1;
 	// Paint inventory icons
 	for (y = start; y != end; ++y) {
@@ -542,15 +542,16 @@ int IgorEngine::getObjectFromInventory(int x) const {
 
 void IgorEngine::packInventory() {
 	for (int i = 1; i <= _inventoryInfo[73]; ++i) {
-		if (_inventoryImages[i - 1] != 0) {
+
+		if (_inventoryInfo[i - 1] != 0) {
 			continue;
 		}
 		int count = _inventoryInfo[73] - 1;
 		for (int index = i; index <= count; ++index) {
-			_inventoryImages[index - 1] = _inventoryImages[index];
-			_inventoryImages[_inventoryImages[index - 1] - 1] = index;
+			_inventoryInfo[index - 1] = _inventoryInfo[index];
+			_inventoryInfo[_inventoryInfo[index - 1] + ARRAYSIZE(_inventoryImages) - 1] = index;
 		}
-		_inventoryImages[_inventoryInfo[73] - 1] = 0;
+		_inventoryInfo[_inventoryInfo[73] - 1] = 0;
 		--_inventoryInfo[73];
 	}
 }
