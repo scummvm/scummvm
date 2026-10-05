@@ -25,6 +25,8 @@
 #include "common/random.h"
 #include "common/scummsys.h"
 
+#include "mohawk/zoombini_metaengine.h"
+
 namespace Mohawk {
 
 /**
@@ -33,16 +35,16 @@ namespace Mohawk {
  * The compatibility stream uses the MSVC LCG transition constants, but its
  * game-owned bounded helper consumes all 16 high state bits rather than the
  * 15-bit result returned by the MSVC CRT rand() function.
- * The active algorithm is selected by the "original_prng" config option.
+ * The active algorithm is selected by the "prng_algorithm" config option.
  */
 class ZoombiniRandom {
 private:
-	/** Compatibility PRNG state used when original mode is enabled. */
+	/** State of the original PRNG. */
 	uint32 _randState;
-	/** ScummVM PRNG used when compatibility mode is disabled. */
+	/** ScummVM standard PRNG. */
 	Common::RandomSource _scummRnd;
-	/** Whether calls should use the original compatibility algorithm. */
-	bool _useOriginal;
+	/** Currently selected PRNG algorithm. */
+	MohawkMetaEngine_Zoombini::PrngAlgorithm _prngAlgorithm;
 
 	/**
 	 * Generate one inclusive bounded value with the compatibility algorithm.
@@ -56,17 +58,19 @@ public:
 	 * The name must be globally unique.
 	 * It registers the randomness source with the active event recorder, if any.
 	 *
-	 * Reads "original_prng" from ConfMan to select the algorithm.
+	 * Reads "prng_algorithm" from ConfMan to select the algorithm.
 	 * Defaults to the compatibility PRNG if the key is absent.
 	 */
 	ZoombiniRandom(const Common::String &name);
 
 	/** Generates new seed based on the current date/time */
 	static uint32 generateNewSeed();
-	/** Seed both backing streams after applying the compatibility stream's zero normalization. */
+	/** Switch algorithms and start a new random sequence only when the selection changes. */
+	void setAlgorithm(MohawkMetaEngine_Zoombini::PrngAlgorithm prngAlgorithm);
+	/** Seed the selected stream after applying zero normalization. */
 	void setSeed(uint32 seed);
 	/** Return the current state of the selected stream. */
-	uint32 getSeed() const { return _useOriginal ? _randState : _scummRnd.getSeed(); }
+	uint32 getSeed() const { return _prngAlgorithm == MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng ? _randState : _scummRnd.getSeed(); }
 
 	/**
 	 * Generate a random signed integer in the interval [0, max].

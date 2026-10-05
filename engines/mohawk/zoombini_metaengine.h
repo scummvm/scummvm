@@ -73,18 +73,72 @@ public:
 	constexpr static const char *kOptionFixCavesL4MidiSilentBug = "fix_caves_l4_midi_silent_bug";
 
 	// Gameplay improvements.
-	/** Use a stable 60 FPS timing model for the engine. */
-	constexpr static const char *kOptionUseAccurate60FPS = "use_accurate_60fps";
+	/** Persisted animation tick-rate selection. */
+	enum class TickRate : uint32 {
+		/**
+		 * Accurate 60TPS tickrate for modern displays.
+		 */
+		kAccurate60FPS = 0,
+		/**
+		 * Original engine's 17ms tickrate.
+		 */
+		kOriginal17ms = 1
+	};
+	/** Select the animation tick timing. */
+	static constexpr const char *kOptionTickRate = "tick_rate";
 	/** Enable the enhanced keyboard shortcut set. */
 	constexpr static const char *kOptionEnhancedKbdShortcuts = "enhanced_kbd_shortcuts";
 	/** Show current remapped shortcuts in the in-game Options dialog. */
 	constexpr static const char *kOptionShowRemappedOptionDialogShortcuts = "show_remapped_option_dialog_shortcuts";
 
 	// Gameplay tuning.
-	/** Enable the brighter palette presentation. */
-	constexpr static const char *kOptionBrightenPalette = "brighten_palette";
-	/** Use the original pseudo-random generator behavior. */
-	constexpr static const char *kOptionOriginalPRNG = "original_prng";
+	/** Persisted palette-filter selection. */
+	enum class PaletteFilter : uint32 {
+		/**
+		 * Original engine's palette brightening filter.
+		 */
+		kBrightenPalette = 0,
+		/**
+		 * Do not apply any filtering.
+		 */
+		kRawPalette = 1
+	};
+	/** Select the palette brightness filter. */
+	static constexpr const char *kOptionPaletteFilter = "palette_filter";
+	/** Persisted pseudo-random generator selection. */
+	enum class PrngAlgorithm : uint32 {
+		/**
+		 * Original engine's LCG PRNG.
+		 */
+		kOriginalPrng = 0,
+		/**
+		 * ScummVM standard xorshift-based PRNG.
+		 */
+		kStandardPrng = 1
+	};
+	/** Select the pseudo-random generator algorithm. */
+	static constexpr const char *kOptionPrngAlgorithm = "prng_algorithm";
+	/**
+	 * MIDI soundtrack selection for v1.x releases.
+	 * Both songs are the same songs; the instruments and assumed synthesizers are different.
+	 */
+	enum class MidiSoundtrack : uint32 {
+		/**
+		 * Select MIDIMPC.MHK for MIDI soundtrack archive.
+		 * Assumes GS synthesizers.
+		 */
+		kWindowsMPC = 0,
+		/**
+		 * Select MIDIMAC.MHK for MIDI soundtrack archive.
+		 * Assumes SC-55 instrumentation.
+		 */
+		kMacintosh = 1,
+	};
+	/**
+	 * Select the archive for MIDI music playback.
+	 * @remarks Broderbund v1.x only; TLC v2.0 rebuild does not contain any MIDI resources.
+	 */
+	static constexpr const char *kOptionMidiSoundtrack = "midi_soundtrack";
 	/** Enable color-blind presentation adjustments. */
 	constexpr static const char *kOptionColorBlindMode = "color_blind_mode";
 	/** Always play the Maze completion celebration sound. */
@@ -93,18 +147,10 @@ public:
 	constexpr static const char *kOptionTownAlwaysPlayMemorialSfx = "town_always_play_memorial_sfx";
 	/** Restore the unused Maze level-4 layout REGS 16607 to the layout pool. */
 	constexpr static const char *kOptionMazeRestoreUnusedL4Layout = "maze_restore_unused_l4_layout";
-	/** Randomize the first Maze layout selection from non-gameplay system time. */
+	/** Randomize the next Maze layouts at startup and when layout options change. */
 	constexpr static const char *kOptionMazeRandomizeInitialLayout = "maze_randomize_initial_layout";
 	/** Restore the dormant Ferry trait-match highlight in every game mode. */
 	constexpr static const char *kOptionFerryHighlightTraitMatch = "ferry_restore_unused_highlight_trait_match";
-
-	/**
-	 * When enabled, v1.x pages load MIDIMAC.MHK instead of MIDIMPC.MHK.
-	 * This plays the Macintosh MIDI soundtrack instead of the Windows soundtrack.
-	 * Mac MIDI assumes SC-55 instrumentation, while Windows MIDI assumes GS.
-	 * @remarks Broderbund v1.x only; TLC v2.0 rebuild does not contain any MIDI resources.
-	 */
-	constexpr static const char *kOptionUseMacMidi = "use_mac_midi";
 
 	/** Register Zoombini-specific configuration defaults with ConfMan. */
 	static void registerDefaultSettings();

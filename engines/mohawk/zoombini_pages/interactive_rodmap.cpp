@@ -46,8 +46,6 @@ ZoombiniInteractiveRodMap::ZoombiniInteractiveRodMap(MohawkEngine_Zoombini *vm) 
 		_pageClickRects[i] = Common::Rect(_pageClickPoints[i].x - 20, _pageClickPoints[i].y - 15, _pageClickPoints[i].x + 20, _pageClickPoints[i].y + 15);
 	}
 
-	// Latch the session's first Maze layouts before this map can launch a Maze page.
-	_vm->initializeMazeLayoutVariants();
 	buildPageRouteLevelMap();
 }
 
