@@ -30,6 +30,7 @@
 #include "mohawk/resource.h"
 
 #include "mohawk/zoombini_debug.h"
+#include "mohawk/zoombini_metaengine.h"
 #include "mohawk/zoombini_resource.h"
 #include "mohawk/zoombini_scripts.h"
 #include "mohawk/zoombini_state.h"
@@ -456,8 +457,8 @@ public:
 	void applyGameSettings() override;
 	/** Build the engine keymaps for the selected target. */
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
-	/** Return whether the selected palette-brightening option is active. */
-	bool useBrightenPalette() const { return _brightenPalette; }
+	/** Return the selected palette filter. */
+	MohawkMetaEngine_Zoombini::PaletteFilter getPaletteFilter() const { return _paletteFilter; }
 	/** Return whether enhanced keyboard shortcuts are enabled. */
 	bool useEnhancedKbdShortcuts() const;
 	/** Set the serialized built-in debug mode and apply its shared mutation feedback. */
@@ -479,7 +480,7 @@ public:
 	/** Return whether color-blind presentation adjustments are enabled. */
 	bool isColorBlindModeEnabled() const { return _colorBlindMode; }
 	/** Latch the initial per-level Maze layout selectors once for this engine session. */
-	void initializeMazeLayoutVariants();
+	void updateMazeLayoutVariants();
 	/** Convert elapsed milliseconds to the engine's monotonic animation frame. */
 	uint32 getAnimationFrameCounter(uint32 timeMs) const;
 
@@ -543,12 +544,12 @@ private:
 	Common::StableMap<int16, ZmbScriptDecoder::DecodedScrb> _systemDecodedScrbCache;
 	/** Stable engine-lifetime decoded system SCRS resources keyed by their raw 16-bit ID. */
 	Common::StableMap<int16, ZmbScriptDecoder::DecodedScrs> _systemDecodedScrsCache;
-	/** Whether indexed palettes receive the optional brightness adjustment. */
-	bool _brightenPalette = true;
+	/** Filter applied to indexed palettes. */
+	MohawkMetaEngine_Zoombini::PaletteFilter _paletteFilter = MohawkMetaEngine_Zoombini::PaletteFilter::kBrightenPalette;
 	/** Whether the enhanced engine keyboard shortcuts are enabled. */
 	bool _enhancedKbdShortcuts = true;
-	/** Whether the engine uses the original integer 60 FPS timing interval. */
-	bool _useAccurate60FPS = true;
+	/** Timing model used by the animation clock. */
+	MohawkMetaEngine_Zoombini::TickRate _tickRate = MohawkMetaEngine_Zoombini::TickRate::kAccurate60FPS;
 	/** Whether color-blind palette and UI adjustments are enabled. */
 	bool _colorBlindMode = false;
 	/** Millisecond epoch used to make animation time monotonic across frame calls. */

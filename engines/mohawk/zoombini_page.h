@@ -343,8 +343,7 @@ public:
 	 *
 	 * v1.x hybrid Mac/PC discs ship two device-profile archives with the SAME
 	 * tMID resource IDs come from MIDIMPC.MHK (Windows/MPC) or MIDIMAC.MHK (Macintosh).
-	 * This helper picks MIDIMAC.MHK when the "use_mac_midi" option is set and MIDIMPC.MHK otherwise.
-	 * Callers must still gate this on a v1.x check (TLC v2.0 has no MIDI).
+	 * Callers must check the version of the release before calling this; TLC v2.0 has no MIDI.
 	 */
 	void openMidiArchive();
 	ZoombiniPageType getPageType() const { return _pageType; }

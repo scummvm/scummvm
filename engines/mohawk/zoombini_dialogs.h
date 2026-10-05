@@ -33,6 +33,7 @@ class CheckboxWidget;
 class CommandSender;
 class ContainerWidget;
 class EditTextWidget;
+class PopUpWidget;
 class RadiobuttonGroup;
 class RadiobuttonWidget;
 class ScrollContainerWidget;
@@ -232,13 +233,13 @@ private:
 	bool _isV1x;
 
 	/** Save-file section header. */
-	GUI::StaticTextWidget *_saveFilesHeader;
+	GUI::StaticTextWidget *_saveFilesHeader = nullptr;
 	/** Button that imports original-format save files. */
-	GUI::ButtonWidget *_importSavesButton;
+	GUI::ButtonWidget *_importSavesButton = nullptr;
 	/** Button that exports save files to the original format. */
-	GUI::ButtonWidget *_exportSavesButton;
+	GUI::ButtonWidget *_exportSavesButton = nullptr;
 	/** Button that opens the separate save-management modal. */
-	GUI::ButtonWidget *_manageSavesButton;
+	GUI::ButtonWidget *_manageSavesButton = nullptr;
 	/** Audio-pop compatibility option control. */
 	GUI::CheckboxWidget *_audioPopFixCheckbox;
 	/** Fleens tree-descending feet compatibility option control. */
@@ -247,16 +248,26 @@ private:
 	GUI::CheckboxWidget *_fixHotelMidiHaltBugCheckbox;
 	/** Caves level 4 MIDI compatibility option control. */
 	GUI::CheckboxWidget *_fixCavesL4MidiSilentBugCheckbox;
-	/** Accurate 60 FPS option control. */
-	GUI::CheckboxWidget *_useAccurate60FPSCheckbox;
+	/** Animation tick-rate label. */
+	GUI::StaticTextWidget *_tickRateLabel = nullptr;
+	/** Animation tick-rate selection control. */
+	GUI::PopUpWidget *_tickRatePopUp;
 	/** Enhanced keyboard shortcut option control. */
 	GUI::CheckboxWidget *_enhancedKbdShortcutsCheckbox;
 	/** Remapped OptionDialog shortcut display option control. */
 	GUI::CheckboxWidget *_showRemappedOptionDialogShortcutsCheckbox;
-	/** Brighten-palette option control. */
-	GUI::CheckboxWidget *_brightenPaletteCheckbox;
-	/** Original PRNG option control. */
-	GUI::CheckboxWidget *_originalPrngCheckbox;
+	/** Palette filter label. */
+	GUI::StaticTextWidget *_paletteFilterLabel = nullptr;
+	/** Palette filter selection control. */
+	GUI::PopUpWidget *_paletteFilterPopUp;
+	/** Random number generator label. */
+	GUI::StaticTextWidget *_prngAlgorithmLabel = nullptr;
+	/** Random number generator selection control. */
+	GUI::PopUpWidget *_prngAlgorithmPopUp;
+	/** MIDI soundtrack label for v1.x releases. */
+	GUI::StaticTextWidget *_midiSoundtrackLabel = nullptr;
+	/** MIDI soundtrack selection control for v1.x releases. */
+	GUI::PopUpWidget *_midiSoundtrackPopUp = nullptr;
 	/** Color-blind mode option control. */
 	GUI::CheckboxWidget *_colorBlindModeCheckbox;
 	/** Maze celebration SFX option control. */
@@ -269,10 +280,8 @@ private:
 	GUI::CheckboxWidget *_mazeRandomizeInitialLayoutCheckbox;
 	/** Ferry trait-match highlight option control. */
 	GUI::CheckboxWidget *_ferryHighlightTraitMatchCheckbox;
-	/** Macintosh MIDI option control. */
-	GUI::CheckboxWidget *_useMacMidiCheckbox;
 	/** Button that restores all engine options to their defaults. */
-	GUI::ButtonWidget *_resetButton;
+	GUI::ButtonWidget *_resetButton = nullptr;
 };
 
 } // End of namespace Mohawk

@@ -1456,7 +1456,7 @@ void ZoombiniGraphics::setPalette(uint16 id) {
 		error("gfx: palette resource id %u is outside the authored int16 range", id);
 		return;
 	}
-	if (!readPaletteInternal(static_cast<int16>(id), _unmodifiedPaletteBytes, ARRAYSIZE(_unmodifiedPaletteBytes), false)) {
+	if (!readPaletteInternal(static_cast<int16>(id), _unmodifiedPaletteBytes, ARRAYSIZE(_unmodifiedPaletteBytes), MohawkMetaEngine_Zoombini::PaletteFilter::kRawPalette)) {
 		error("gfx: required palette SHPL p:%04u is malformed", id);
 		return;
 	}
@@ -1482,10 +1482,10 @@ void ZoombiniGraphics::rotatePaletteRight(uint16 startEntry, uint16 count) {
 }
 
 bool ZoombiniGraphics::readPalette(int16 id, byte *destBuf, size_t destBufSize) {
-	return readPaletteInternal(id, destBuf, destBufSize, _vm->useBrightenPalette());
+	return readPaletteInternal(id, destBuf, destBufSize, _vm->getPaletteFilter());
 }
 
-bool ZoombiniGraphics::readPaletteInternal(int16 id, byte *destBuf, size_t destBufSize, bool applyBrightness) {
+bool ZoombiniGraphics::readPaletteInternal(int16 id, byte *destBuf, size_t destBufSize, MohawkMetaEngine_Zoombini::PaletteFilter filter) {
 	if (!destBuf || destBufSize == 0)
 		return false;
 
@@ -1500,12 +1500,41 @@ bool ZoombiniGraphics::readPaletteInternal(int16 id, byte *destBuf, size_t destB
 	const uint16 shapeCount = shplStream->readUint16BE();
 	uint16 paletteColorStart = shplStream->readUint16BE();
 	uint16 paletteColorCount = shplStream->readUint16BE();
+
+	if (shplId != id) {
+		warning("ZmbGraphics: SHPL %d header has mismatched id %d", id, shplId);
+		delete shplStream;
+		return false;
+	}
+	if (shplId < 0) {
+		warning("ZmbGraphics: Invalid SHPL %d shape id", id);
+		delete shplStream;
+		return false;
+	}
+	if (shapeCount == 0) {
+		warning("ZmbGraphics: Invalid SHPL %d shape count", id);
+		delete shplStream;
+		return false;
+	}
+	if (static_cast<uint32>(INT16_MAX - shplId) < static_cast<uint32>(shapeCount - 1)) {
+		warning("ZmbGraphics: Invalid SHPL %d shape range", id);
+		delete shplStream;
+		return false;
+	}
+	if (255 < paletteColorStart) {
+		warning("ZmbGraphics: Invalid SHPL %d palette start", id);
+		delete shplStream;
+		return false;
+	}
+	if (256 - paletteColorStart < paletteColorCount) {
+		warning("ZmbGraphics: Invalid SHPL %d palette range", id);
+		delete shplStream;
+		return false;
+	}
+
 	const uint32 expectedSize = 8 + static_cast<uint32>(paletteColorCount) * 4;
-	const bool shapeRangeFits = 0 <= shplId && shapeCount != 0 && static_cast<uint32>(shapeCount - 1) <= static_cast<uint32>(INT16_MAX - shplId);
-	if (shplId != id || !shapeRangeFits ||
-		255 < paletteColorStart || 256 - paletteColorStart < paletteColorCount ||
-		!ZmbResource::hasSize(shplStream, expectedSize, expectedSize)) {
-		warning("ZmbGraphics: Invalid SHPL %d header, range, or payload", id);
+	if (!ZmbResource::hasSize(shplStream, expectedSize, expectedSize)) {
+		warning("ZmbGraphics: Invalid SHPL %d payload size", id);
 		delete shplStream;
 		return false;
 	}
@@ -1527,31 +1556,28 @@ bool ZoombiniGraphics::readPaletteInternal(int16 id, byte *destBuf, size_t destB
 	delete shplStream;
 
 	// Apply brightness adjustment when enabled.
-	if (applyBrightness) {
-		for (uint16 entryIdx = paletteColorStart; entryIdx < paletteColorStart + paletteColorCount; entryIdx++) {
-			for (int ch = 0; ch < 3; ch++) {
-				byte &v = destBuf[entryIdx * 3 + ch];
-				if (v != 0)
-					v = v + 31 - (v >> 3);
-			}
-		}
-	}
+	applyPaletteFilter(destBuf, paletteColorStart, paletteColorCount, filter);
 
 	return true;
 }
 
-void ZoombiniGraphics::refreshPalette() {
-	memcpy(_paletteBytes, _unmodifiedPaletteBytes, sizeof(_paletteBytes));
+void ZoombiniGraphics::applyPaletteFilter(byte *paletteBytes, uint16 startIdx, uint16 colorCount, MohawkMetaEngine_Zoombini::PaletteFilter filter) {
+	if (filter != MohawkMetaEngine_Zoombini::PaletteFilter::kBrightenPalette)
+		return;
 
-	if (_vm->useBrightenPalette()) {
-		for (uint16 colorIdx = 0; colorIdx < 256; colorIdx++) {
-			for (int ch = 0; ch < 3; ch++) {
-				byte &v = _paletteBytes[colorIdx * 3 + ch];
-				if (v != 0)
-					v = v + 31 - (v >> 3);
-			}
+	const uint16 endEntry = startIdx + colorCount;
+	for (uint16 colorIdx = startIdx; colorIdx < endEntry; colorIdx++) {
+		for (int ch = 0; ch < 3; ch++) {
+			byte &v = paletteBytes[colorIdx * 3 + ch];
+			if (v != 0)
+				v = v + 31 - (v >> 3);
 		}
 	}
+}
+
+void ZoombiniGraphics::refreshPalette() {
+	memcpy(_paletteBytes, _unmodifiedPaletteBytes, sizeof(_paletteBytes));
+	applyPaletteFilter(_paletteBytes, 0, ARRAYSIZE(_paletteBytes) / 3, _vm->getPaletteFilter());
 
 	_vm->_system->getPaletteManager()->setPalette(_paletteBytes, 0, ARRAYSIZE(_paletteBytes) / 3);
 }

@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "mohawk/graphics.h"
+#include "mohawk/zoombini_metaengine.h"
 #include "mohawk/zoombini_resource.h"
 
 namespace Mohawk {
@@ -623,7 +624,9 @@ private:
 	/** Fill one Color Assist remap table from the static index mapping. */
 	static void fillColorAssistPaletteRemapTable(Common::Array<uint32> &paletteMap, PaletteRemapMode remapMode);
 	/** Read and optionally brighten one SHPL palette into a caller buffer. */
-	bool readPaletteInternal(int16 id, byte *destBuf, size_t destBufSize, bool applyBrightness);
+	bool readPaletteInternal(int16 id, byte *destBuf, size_t destBufSize, MohawkMetaEngine_Zoombini::PaletteFilter paletteFilter);
+	/** Apply the selected brightness filter to one RGB palette range. */
+	static void applyPaletteFilter(byte *paletteBytes, uint16 startIdx, uint16 colorCount, MohawkMetaEngine_Zoombini::PaletteFilter filter);
 
 	/** Engine instance that owns this graphics manager. */
 	MohawkEngine_Zoombini *_vm;
