@@ -1316,6 +1316,8 @@ public:
 	void setCurrentPageType(ZoombiniPageType pageType);
 	/** Set the completion bit for a route at its zero-based difficulty level. */
 	void setRouteCompletionFlag(ZmbRouteId routeId, int16 routeLevel);
+	/** Record the selected transfer's puzzle progress and required shelter discoveries. */
+	void markDebugXferProgress(const ZmbXferRouteInfo &routeInfo);
 
 	/**
 	 * (v1.0BR) 0x00CE
