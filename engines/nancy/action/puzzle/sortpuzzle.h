@@ -23,7 +23,7 @@
 #define NANCY_ACTION_SORTPUZZLE_H
 
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -133,7 +133,7 @@ protected:
 	bool _hasHeld   = false;
 	bool _isSolved  = false;
 
-	Misc::MouseFollowObject _heldObject;
+	MouseFollowObject _heldObject;
 
 	Graphics::ManagedSurface _boardImage;
 	Graphics::ManagedSurface _cursorImage;

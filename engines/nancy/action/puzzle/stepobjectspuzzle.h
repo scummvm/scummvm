@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -121,7 +121,7 @@ protected:
 	Common::Array<Step> _playerSteps;
 	PuzzleState _puzzleState = kIdle;
 	int _carriedID = -1;
-	Misc::MouseFollowObject _carriedObject;
+	MouseFollowObject _carriedObject;
 	uint32 _stepSoundEnd = 0;
 	bool _lastStepWasDrop = false;
 	bool _lastStepCorrect = false;

@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -101,7 +101,7 @@ protected:
 	Common::Array<Common::Rect> _destRects;
 	int _carriedCol = -1;				// the peg currently picked up (dragged), or -1
 	int _carriedRow = -1;
-	Misc::MouseFollowObject _carriedObject;	// the carried peg's sprite, riding the cursor
+	MouseFollowObject _carriedObject;	// the carried peg's sprite, riding the cursor
 	bool _ended = false;
 	bool _solved = false;
 	bool _exitRequested = false;

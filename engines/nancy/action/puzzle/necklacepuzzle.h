@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -158,7 +158,7 @@ protected:
 	Common::Array<Graphics::ManagedSurface> _images;
 
 	int16 _heldBead = kNoBead;
-	Misc::MouseFollowObject _heldBeadObject;
+	MouseFollowObject _heldBeadObject;
 
 	int _fallingStrand = -1;
 	int _fallingStartY = 0;

@@ -19,13 +19,13 @@
  *
  */
 
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 
 namespace Nancy {
-namespace Misc {
+namespace Action {
 
 MouseFollowObject::MouseFollowObject()
 		: RenderObject(8) {
@@ -66,5 +66,5 @@ void MouseFollowObject::handleInput(NancyInput &input) {
 	}
 }
 
-} // End of namespace Misc
+} // End of namespace Action
 } // End of namespace Nancy

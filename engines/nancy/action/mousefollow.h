@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_MISC_MOUSEFOLLOW_H
-#define NANCY_MISC_MOUSEFOLLOW_H
+#ifndef NANCY_ACTION_MOUSEFOLLOW_H
+#define NANCY_ACTION_MOUSEFOLLOW_H
 
 #include "engines/nancy/renderobject.h"
 #include "engines/nancy/input.h"
@@ -29,7 +29,7 @@ namespace Nancy {
 
 struct VIEW;
 
-namespace Misc {
+namespace Action {
 
 // Describes an object that follows the mouse's movement, making
 // sure that its center stays above the mouse hotspot. The position
@@ -68,7 +68,7 @@ protected:
 	const VIEW *_viewportData = nullptr;
 };
 
-} // End of namespace Misc
+} // End of namespace Action
 } // End of namespace Nancy
 
-#endif // NANCY_MISC_MOUSEFOLLOW_H
+#endif // NANCY_ACTION_MOUSEFOLLOW_H

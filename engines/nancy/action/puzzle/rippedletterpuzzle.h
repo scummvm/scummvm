@@ -23,7 +23,7 @@
 #define NANCY_ACTION_RIPPEDLETTERPUZZLE_H
 
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 
 namespace Nancy {
 
@@ -72,7 +72,7 @@ public:
 
 	int16 _customCursorID = -1;
 
-	Misc::MouseFollowObject _pickedUpPiece;
+	MouseFollowObject _pickedUpPiece;
 
 	SolveState _solveState = kNotSolved;
 	RippedLetterPuzzleData *_puzzleState = nullptr;

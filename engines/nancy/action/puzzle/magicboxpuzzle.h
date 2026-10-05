@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -98,7 +98,7 @@ protected:
 	Common::Array<int> _slotContents;	// piece in each slot, or -1
 	Common::Array<int> _piecePlacement;	// slot each piece sits in, or -1 while in the tray
 	int _carriedPiece = -1;
-	Misc::MouseFollowObject _carriedObject;
+	MouseFollowObject _carriedObject;
 	bool _solved = false;
 	bool _exitRequested = false;
 	SoundDescription _endSound;

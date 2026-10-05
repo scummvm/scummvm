@@ -23,7 +23,7 @@
 #define NANCY_ACTION_CUBEPUZZLE_H
 
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -79,7 +79,7 @@ protected:
 	// Multiple solve scenes, one for each cube orientation
 	Common::Array<uint> _solveSceneIDs;
 
-	Misc::MouseFollowObject _curPiece;
+	MouseFollowObject _curPiece;
 
 	Common::Array<bool> _placedPieces;
 	int _pickedUpPiece = -1;

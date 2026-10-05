@@ -12,6 +12,7 @@ MODULE_OBJS = \
   action/navigationrecords.o \
   action/soundrecords.o \
   action/miscrecords.o \
+  action/mousefollow.o \
   action/conversation.o \
   action/interactivevideo.o \
   action/overlay.o \
@@ -116,7 +117,6 @@ MODULE_OBJS = \
   state/setupmenu.o \
   misc/hypertext.o \
   misc/lightning.o \
-  misc/mousefollow.o \
   misc/specialeffect.o \
   cif.o \
   commontypes.o \

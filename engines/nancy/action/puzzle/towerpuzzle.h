@@ -23,7 +23,7 @@
 #define NANCY_ACTION_TOWERPUZZLE_H
 
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 
 namespace Nancy {
 
@@ -61,7 +61,7 @@ protected:
 	SoundDescription _takeSound;
 	SoundDescription _dropSound;
 
-	Misc::MouseFollowObject _heldRing;
+	MouseFollowObject _heldRing;
 	int8 _heldRingID = -1;
 	int8 _heldRingPoleID = -1;
 	SolveState _solveState = kNotSolved;

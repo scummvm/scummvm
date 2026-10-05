@@ -23,7 +23,7 @@
 #define NANCY_ACTION_TANGRAMPUZZLE_H
 
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -48,7 +48,7 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "TangramPuzzle"; }
 
-	class Tile : public Misc::MouseFollowObject {
+	class Tile : public MouseFollowObject {
 	public:
 		Tile();
 		virtual ~Tile();

@@ -23,7 +23,7 @@
 #define NANCY_ACTION_MINDPUZZLE_H
 
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -89,7 +89,7 @@ protected:
 
 	int16 _currentRow = 0;
 	int16 _heldColor = -1;
-	Misc::MouseFollowObject _heldBall;	// the held ball's sprite, riding the cursor
+	MouseFollowObject _heldBall;	// the held ball's sprite, riding the cursor
 	int16 _remainingGuesses = 0;
 	bool _solved = false;
 

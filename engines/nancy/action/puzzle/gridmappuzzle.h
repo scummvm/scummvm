@@ -23,7 +23,7 @@
 #define NANCY_ACTION_GRIDMAPPUZZLE_H
 
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -124,7 +124,7 @@ protected:
 
 	ItemSlot _items[kMaxItems];
 	int      _heldItem = -1;
-	Misc::MouseFollowObject _heldObject;
+	MouseFollowObject _heldObject;
 	bool     _isSolved = false;
 
 	Graphics::ManagedSurface _boardImage;

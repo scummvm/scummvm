@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -124,7 +124,7 @@ protected:
 	int16 _carriedBlock = kNoBlock;		// the block on the cursor, or kNoBlock
 	byte _carriedRotation = 0;
 	Common::Rect _carriedSrc;
-	Misc::MouseFollowObject _carriedObject;
+	MouseFollowObject _carriedObject;
 
 	int16 _turnBlock = kNoBlock;		// the block being turned, or kNoBlock
 	byte _turnRotation = 0;

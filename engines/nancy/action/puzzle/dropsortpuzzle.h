@@ -25,7 +25,7 @@
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
 #include "engines/nancy/action/puzzlerecord.h"
-#include "engines/nancy/misc/mousefollow.h"
+#include "engines/nancy/action/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -129,7 +129,7 @@ protected:
 	int _rejectBin = -1;				// bin at the end of the belt (unsorted candies land here)
 
 	int16 _carriedType = kNoItem;
-	Misc::MouseFollowObject _carriedObject;
+	MouseFollowObject _carriedObject;
 
 	int _strikes = 0;
 	bool _solved = false;
