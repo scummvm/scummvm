@@ -101,11 +101,13 @@ void IgorEngine::ADD_DIALOGUE_TEXT(int num, int count, int sound) {
  * start page of dialogues, count of dialogue screens
  */
 void IgorEngine::SET_DIALOGUE_TEXT(int start, int count) {
-	// The original writes each new batch directly from slot 0 before setting the
-	// independent playback range at 0x31D4/0x31D5. See cseg209:0x0EE0-0x0F09.
 	_dialogueTextsBuildCount = 0;
 	_dialogueTextsStart = start - 1;
 	_dialogueTextsCount = count;
+	// _talkSpeechCounter is the engine-side state used only by the blocking
+	// dialogue loops to pause between pages. A skipped previous dialogue can
+	// leave it at -1
+	_talkSpeechCounter = 3;
 }
 
 /**
@@ -147,10 +149,22 @@ void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
  */
 void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 	debugC(9, kDebugEngine, "startCutsceneDialogue() pos %d,%d color %d,%d,%d", x, y, r, g, b);
+	if (_dialogueTextsCount <= 0 || _dialogueTextsStart < 0 || _dialogueTextsStart >= MAX_DIALOGUE_TEXTS) {
+		warning("startCutsceneDialogue() invalid playback range start %d count %d",	_dialogueTextsStart, _dialogueTextsCount);
+		stopDialogueSpeech();
+		_gameState.dialogueTextRunning = false;
+		return;
+	}
 	--_dialogueTextsCount;
 	int talkX = x;
 	int talkY = y;
 	const DialogueText *dt = &_dialogueTextsTable[_dialogueTextsStart];
+	if (dt->count <= 0 || dt->num < 0 || dt->num + dt->count > ARRAYSIZE(_globalDialogueTexts)) {
+		warning("startCutsceneDialogue() invalid text record num %d count %d", dt->num, dt->count);
+		stopDialogueSpeech();
+		_gameState.dialogueTextRunning = false;
+		return;
+	}
 	fixDialogueTextPosition(dt->num, dt->count, &talkX, &talkY);
 	_dialogueDirtyRectY = talkY * 320;
 	_dialogueDirtyRectSize = dt->count * 11 * 320;
@@ -274,9 +288,21 @@ void IgorEngine::stopDialogueSpeech() {
 
 void IgorEngine::startIgorDialogue() {
 	debugC(9, kDebugEngine, "startIgorDialogue()");
+	if (_dialogueTextsCount <= 0 || _dialogueTextsStart < 0 || _dialogueTextsStart >= MAX_DIALOGUE_TEXTS) {
+		warning("startIgorDialogue() invalid playback range start %d count %d", _dialogueTextsStart, _dialogueTextsCount);
+		stopDialogueSpeech();
+		_gameState.dialogueTextRunning = false;
+		return;
+	}
 	--_dialogueTextsCount;
 	int talkX, talkY;
 	const DialogueText *dt = &_dialogueTextsTable[_dialogueTextsStart];
+	if (dt->count <= 0 || dt->num < 0 || dt->num + dt->count > ARRAYSIZE(_globalDialogueTexts)) {
+		warning("startIgorDialogue() invalid text record num %d count %d", dt->num, dt->count);
+		stopDialogueSpeech();
+		_gameState.dialogueTextRunning = false;
+		return;
+	}
 	fixIgorDialogueTextPosition(dt->num, dt->count, &talkX, &talkY);
 	_dialogueDirtyRectY = talkY * 320;
 	_dialogueDirtyRectSize = dt->count * 11 * 320;
