@@ -157,7 +157,10 @@ Scene::~Scene() {
 	delete _camera;
 	delete _lightning;
 	delete _viewportFader;
+
+	// The records, which go away after this, can't reach the UI anymore
 	delete _ndui;
+	_ndui = nullptr;
 
 	_streams.clear();
 	clearPuzzleData();

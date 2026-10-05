@@ -150,6 +150,7 @@ protected:
 	Common::Array<SceneBranchStruct> _sceneBranchStructs;
 
 	bool _hasDrawnTextbox;
+	bool _isDialogOpen = false;	// in the Nancy16 UI
 	int16 _pickedResponse;
 	bool _isSkipped = false;
 

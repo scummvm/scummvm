@@ -56,6 +56,12 @@ ConversationSound::~ConversationSound() {
 	if (NancySceneState.getActiveConversation() == this) {
 		NancySceneState.setActiveConversation(nullptr);
 	}
+
+	// A line that never got to its end still closes the dialog it opened, e.g. the
+	// one of Nancy16 scene 1875, which changes the scene as soon as it starts
+	if (_isDialogOpen && NancySceneState.getNDUI()) {
+		NancySceneState.getNDUI()->endConversation();
+	}
 }
 
 void ConversationSound::init() {
@@ -462,6 +468,7 @@ void ConversationSound::execute() {
 
 			if (ndui) {
 				ndui->startConversation(ConfMan.getBool("subtitles") ? _text : Common::String(), responseTexts);
+				_isDialogOpen = true;
 			}
 		}
 
@@ -574,6 +581,7 @@ void ConversationSound::execute() {
 
 			if (NancySceneState.getNDUI()) {
 				NancySceneState.getNDUI()->endConversation();
+				_isDialogOpen = false;
 			} else if (g_nancy->getGameType() >= kGameTypeNancy10) {
 				NancySceneState.getConversationPopup().close();
 			}
