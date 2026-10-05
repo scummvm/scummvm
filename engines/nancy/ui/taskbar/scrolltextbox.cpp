@@ -28,7 +28,7 @@
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/ui/scrollbar.h"
-#include "engines/nancy/ui/scrolltextbox.h"
+#include "engines/nancy/ui/taskbar/scrolltextbox.h"
 
 namespace Nancy {
 namespace UI {

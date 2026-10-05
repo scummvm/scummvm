@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_UI_CAMERA_H
-#define NANCY_UI_CAMERA_H
+#ifndef NANCY_UI_TASKBAR_CAMERA_H
+#define NANCY_UI_TASKBAR_CAMERA_H
 
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/renderobject.h"
@@ -73,4 +73,4 @@ protected:
 } // End of namespace UI
 } // End of namespace Nancy
 
-#endif // NANCY_UI_CAMERA_H
+#endif // NANCY_UI_TASKBAR_CAMERA_H

@@ -31,7 +31,7 @@
 
 #include "engines/nancy/ui/textbox.h"
 #include "engines/nancy/ui/scrollbar.h"
-#include "engines/nancy/ui/scrolltextbox.h"
+#include "engines/nancy/ui/taskbar/scrolltextbox.h"
 #include "engines/nancy/ui/ndui/manager.h"
 
 namespace Nancy {

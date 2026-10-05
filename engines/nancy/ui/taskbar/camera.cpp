@@ -30,7 +30,7 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 
-#include "engines/nancy/ui/camera.h"
+#include "engines/nancy/ui/taskbar/camera.h"
 
 #include "engines/nancy/state/scene.h"
 

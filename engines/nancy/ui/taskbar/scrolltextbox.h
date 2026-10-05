@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_UI_SCROLLTEXTBOX_H
-#define NANCY_UI_SCROLLTEXTBOX_H
+#ifndef NANCY_UI_TASKBAR_SCROLLTEXTBOX_H
+#define NANCY_UI_TASKBAR_SCROLLTEXTBOX_H
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/misc/hypertext.h"
@@ -120,4 +120,4 @@ private:
 } // End of namespace UI
 } // End of namespace Nancy
 
-#endif // NANCY_UI_SCROLLTEXTBOX_H
+#endif // NANCY_UI_TASKBAR_SCROLLTEXTBOX_H

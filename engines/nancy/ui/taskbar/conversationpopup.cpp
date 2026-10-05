@@ -29,7 +29,7 @@
 
 #include "engines/nancy/ui/scrollbar.h"
 
-#include "engines/nancy/ui/conversationpopup.h"
+#include "engines/nancy/ui/taskbar/conversationpopup.h"
 
 namespace Nancy {
 namespace UI {

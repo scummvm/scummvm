@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_UI_TASKBAR_H
-#define NANCY_UI_TASKBAR_H
+#ifndef NANCY_UI_TASKBAR_TASKBAR_H
+#define NANCY_UI_TASKBAR_TASKBAR_H
 
 #include "engines/nancy/renderobject.h"
 
@@ -152,4 +152,4 @@ private:
 } // End of namespace UI
 } // End of namespace Nancy
 
-#endif // NANCY_UI_TASKBAR_H
+#endif // NANCY_UI_TASKBAR_TASKBAR_H

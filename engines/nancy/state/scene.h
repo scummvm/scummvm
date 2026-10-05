@@ -37,10 +37,10 @@
 #include "engines/nancy/ui/viewport.h"
 #include "engines/nancy/ui/textbox.h"
 #include "engines/nancy/ui/inventorybox.h"
-#include "engines/nancy/ui/inventorypopup.h"
-#include "engines/nancy/ui/notebookpopup.h"
-#include "engines/nancy/ui/cellphonepopup.h"
-#include "engines/nancy/ui/conversationpopup.h"
+#include "engines/nancy/ui/taskbar/inventorypopup.h"
+#include "engines/nancy/ui/taskbar/notebookpopup.h"
+#include "engines/nancy/ui/taskbar/cellphonepopup.h"
+#include "engines/nancy/ui/taskbar/conversationpopup.h"
 
 namespace Common {
 class SeekableReadStream;

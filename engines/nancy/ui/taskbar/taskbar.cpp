@@ -32,7 +32,7 @@
 
 #include "engines/nancy/state/scene.h"
 
-#include "engines/nancy/ui/taskbar.h"
+#include "engines/nancy/ui/taskbar/taskbar.h"
 
 namespace Nancy {
 namespace UI {

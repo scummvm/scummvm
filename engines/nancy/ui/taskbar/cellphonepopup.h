@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_UI_CELLPHONEPOPUP_H
-#define NANCY_UI_CELLPHONEPOPUP_H
+#ifndef NANCY_UI_TASKBAR_CELLPHONEPOPUP_H
+#define NANCY_UI_TASKBAR_CELLPHONEPOPUP_H
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/enginedata.h"
@@ -428,4 +428,4 @@ private:
 } // End of namespace UI
 } // End of namespace Nancy
 
-#endif // NANCY_UI_CELLPHONEPOPUP_H
+#endif // NANCY_UI_TASKBAR_CELLPHONEPOPUP_H

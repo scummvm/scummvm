@@ -41,9 +41,9 @@
 
 #include "engines/nancy/ui/button.h"
 #include "engines/nancy/ui/ornaments.h"
-#include "engines/nancy/ui/camera.h"
+#include "engines/nancy/ui/taskbar/camera.h"
 #include "engines/nancy/ui/clock.h"
-#include "engines/nancy/ui/taskbar.h"
+#include "engines/nancy/ui/taskbar/taskbar.h"
 
 #include "engines/nancy/misc/lightning.h"
 #include "engines/nancy/misc/specialeffect.h"

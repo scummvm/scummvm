@@ -35,12 +35,12 @@
 
 #include "engines/nancy/state/scene.h"
 
-#include "engines/nancy/ui/taskbar.h"
+#include "engines/nancy/ui/taskbar/taskbar.h"
 #include "engines/nancy/ui/viewport.h"
 
 #include "graphics/surface.h"
 
-#include "engines/nancy/ui/cellphonepopup.h"
+#include "engines/nancy/ui/taskbar/cellphonepopup.h"
 
 namespace Nancy {
 namespace UI {

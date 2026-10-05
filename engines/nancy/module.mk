@@ -115,11 +115,7 @@ MODULE_OBJS = \
   ui/animatedbutton.o \
   ui/button.o \
   ui/clock.o \
-  ui/camera.o \
-  ui/cellphonepopup.o \
-  ui/conversationpopup.o \
   ui/inventorybox.o \
-  ui/inventorypopup.o \
   ui/ndui/button.o \
   ui/ndui/common.o \
   ui/ndui/control.o \
@@ -132,11 +128,15 @@ MODULE_OBJS = \
   ui/ndui/saveload.o \
   ui/ndui/scrollbar.o \
   ui/ndui/slider.o \
-  ui/notebookpopup.o \
   ui/ornaments.o \
   ui/scrollbar.o \
-  ui/scrolltextbox.o \
-  ui/taskbar.o \
+  ui/taskbar/camera.o \
+  ui/taskbar/cellphonepopup.o \
+  ui/taskbar/conversationpopup.o \
+  ui/taskbar/inventorypopup.o \
+  ui/taskbar/notebookpopup.o \
+  ui/taskbar/scrolltextbox.o \
+  ui/taskbar/taskbar.o \
   ui/textbox.o \
   ui/viewport.o \
   state/credits.o \

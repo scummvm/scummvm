@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_UI_CONVERSATIONPOPUP_H
-#define NANCY_UI_CONVERSATIONPOPUP_H
+#ifndef NANCY_UI_TASKBAR_CONVERSATIONPOPUP_H
+#define NANCY_UI_TASKBAR_CONVERSATIONPOPUP_H
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/misc/hypertext.h"
@@ -112,4 +112,4 @@ private:
 } // End of namespace UI
 } // End of namespace Nancy
 
-#endif // NANCY_UI_CONVERSATIONPOPUP_H
+#endif // NANCY_UI_TASKBAR_CONVERSATIONPOPUP_H

@@ -28,9 +28,9 @@
 
 #include "engines/nancy/state/scene.h"
 
-#include "engines/nancy/ui/inventorypopup.h"
+#include "engines/nancy/ui/taskbar/inventorypopup.h"
 #include "engines/nancy/ui/scrollbar.h"
-#include "engines/nancy/ui/taskbar.h"
+#include "engines/nancy/ui/taskbar/taskbar.h"
 
 namespace Nancy {
 namespace UI {

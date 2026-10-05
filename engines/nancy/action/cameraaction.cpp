@@ -29,7 +29,7 @@
 
 #include "engines/nancy/action/cameraaction.h"
 
-#include "engines/nancy/ui/camera.h"
+#include "engines/nancy/ui/taskbar/camera.h"
 
 #include "engines/nancy/state/scene.h"
 

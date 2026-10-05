@@ -41,7 +41,7 @@
 
 #include "image/png.h"
 
-#include "nancy/ui/taskbar.h"
+#include "nancy/ui/taskbar/taskbar.h"
 
 namespace Nancy {
 namespace Action {
