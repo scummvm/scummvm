@@ -106,9 +106,6 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniPuzzleSmoke::getScriptSou
 
 void ZoombiniPuzzleSmoke::open() {
 	// MIDI BGM (tMID 30030-30033) - Broderbund v1.x only.
-	// @ref ZoombiniPage::openMidiArchive() loads MIDIMPC.MHK (Windows profile) or, when "use_mac_midi" is set,
-	// MIDIMAC.MHK (Macintosh profile).
-	// Both hold the same tMID IDs.
 	if (!_vm->isVersionFamilyTlcV2())
 		openMidiArchive();
 	openArchive(ZMB_MHK_SMOKE);

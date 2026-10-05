@@ -100,10 +100,6 @@ Audio::Mixer::SoundType ZoombiniPuzzleHotel::getFeatureSoundType(const ZmbFeatur
 
 void ZoombiniPuzzleHotel::open() {
 	// MIDI BGM (tMID 30020-30023) -- Broderbund v1.x only.
-	// @ref ZoombiniPage::openMidiArchive() loads MIDIMPC.MHK (Windows profile) or, when "use_mac_midi" is set,
-	// MIDIMAC.MHK (Macintosh profile).
-	// Both hold the same tMID IDs.
-	// TLC v2.0 removed all MIDI resources.
 	if (!_vm->isVersionFamilyTlcV2())
 		openMidiArchive();
 	openArchive(ZMB_MHK_HOTEL);

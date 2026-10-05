@@ -1801,8 +1801,8 @@ public:
 
 	/**
 	 * Runtime-only Maze layout selectors shared by every Maze page instance.
-	 * They are not serialized and remain stable for the lifetime of one engine.
-	 * The initial values are latched before the first Maze layout is generated.
+	 * They are not serialized or reset by New Game or Load Game.
+	 * Layout option changes replace the affected next selections.
 	 */
 	struct MazeLayoutVariantState {
 		/** Next layout variant for level 1. */
@@ -1813,8 +1813,12 @@ public:
 		int16 _level3 = 0;
 		/** Next layout variant for level 4. */
 		int16 _level4 = 0;
-		/** Prevent later page loads and option changes from replacing the first selection. */
+		/** Whether the layout selectors have been initialized. */
 		bool _initialVariantsSelected = false;
+		/** Randomization option used for the current selectors. */
+		bool _randomizeInitialLayout = false;
+		/** Level-4 layout-pool option used for the current selector. */
+		bool _restoreUnusedL4Layout = false;
 	};
 
 	/**

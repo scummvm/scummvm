@@ -523,9 +523,9 @@ private:
 
 	// --- Initialization ---
 	/** Select the level-specific 16600-series Maze layout REGS resource. */
-	void loadRegsConfigByLevel();
+	void loadLayoutRegsConfigByLevel();
 	/** Read the launcher header and cell records from the selected layout REGS resource. */
-	void loadAndParseRegsData();
+	void loadLayoutRegsData();
 	/** Create the authored creature launcher features. */
 	void createCreatureFeatures();
 	/** Create remaining grid, bubble, and overlay features. */
@@ -1314,11 +1314,17 @@ private:
 	/** Control launches one generic plan may contain. */
 	static const int kDebugMazeMaxControlSteps = 40;
 
-	// Solver-only plan types used by the private answer-plan search helpers
-	// below. They hold no instance state, so they live in this class instead
-	// of at namespace scope.
+	/**
+	 * Standard 64-bit FNV-1a offset basis shared by both solver state fingerprints.
+	 * @see https://datatracker.ietf.org/doc/html/rfc9923#section-2
+	 */
+	static constexpr uint64 kSolverHashOffsetBasis = 14695981039346656037ULL;
+	/** Standard 64-bit FNV prime used after XORing each encoded state byte. */
+	static constexpr uint64 kSolverHashPrime = 1099511628211ULL;
 
-	/** Read-only snapshot of one maze layout and its Zoombini pack that the answer-plan builders search against. */
+	// Plan builders advance private simulation state; the live page is read only when constructing the context.
+
+	/** Read-only layout and pack snapshot shared by the answer-plan builders. */
 	struct SolverPlanContext {
 		MazeCellType cellTypes[kDebugMazeRows][kDebugMazeCols];
 		int16 cellIndices[kDebugMazeRows][kDebugMazeCols];
@@ -1354,13 +1360,13 @@ private:
 		SolverPlanSnoidState snoids[kDebugMazeMaxSnoids];
 	};
 
-	/** Outcome of one Zoombini passing through a single trait-condition cell during a simulated launch. */
+	/** Result of one trait test encountered during a simulated launch. */
 	struct SolverTraitDecision {
 		int16 cellIdx;
 		bool matched;
 	};
 
-	/** Recorded effect of launching one Zoombini from one launcher in a plan, used to replay or report the step. */
+	/** Recorded launch effects used to verify a plan and describe its steps. */
 	struct SolverPlanAction {
 		int16 snoidIdx;
 		int16 launcherSeatIdx;
@@ -1381,7 +1387,7 @@ private:
 		}
 	};
 
-	/** Complete level-4 answer plan, holding the ordered key launches and their staged actions. */
+	/** Complete Level4 relay plan with its selected keys and ordered actions. */
 	struct SolverLevel4Plan {
 		bool valid;
 		int16 primaryGroup;
@@ -1420,10 +1426,9 @@ private:
 	};
 
 	/**
-	 * One candidate assignment of colored groups to the level-4 relay roles.
+	 * Candidate assignment of colored groups to the Level4 relay roles.
 	 *
-	 * The staged-relay search must choose all four roles together because each
-	 * group must be distinct and have the device behavior required by its role.
+	 * Choose the four roles together so each uses a distinct group with the required devices.
 	 */
 	struct SolverLevel4GroupSelection {
 		/** Group activated by the primary key before the staging keys enter the highway. */
@@ -1437,10 +1442,9 @@ private:
 	};
 
 	/**
-	 * Candidate relay after its staging keys reached the highway phase.
+	 * Candidate relay after the staging keys complete their highway launches.
 	 *
-	 * The state, keys, and recorded actions form one input to the search for
-	 * the rescue, push, and final launches.
+	 * The saved state and actions seed the search for rescue, push, and final launches.
 	 */
 	struct SolverLevel4StagedRelay {
 		/** Simulated state after every staging key has made its highway launch. */
@@ -1467,7 +1471,7 @@ private:
 		}
 	};
 
-	/** Answer plan for maze levels one through three, including the optional two-switch relay phase. */
+	/** Level1-Level3 answer plan with an optional two-switch phase. */
 	struct SolverLevel123Plan {
 		bool valid;
 		bool hasSwitchPhase;
@@ -1536,9 +1540,8 @@ private:
 	};
 
 	/**
-	 * Read-only tables the generic search consults instead of resimulating.
-	 * Zoombinis that answer every trait cell identically share one class, so the
-	 * tables are indexed by class rather than by pack slot.
+	 * Precomputed routes used to screen candidate launches and test relaxed reachability.
+	 * Zoombinis with identical trait-test results share a route class.
 	 */
 	struct SolverTables {
 		int16 controlCellIdx[kDebugMazeMaxControlCells];
@@ -1566,8 +1569,8 @@ private:
 
 	/**
 	 * One generic search node.
-	 * @p covered marks Zoombinis that already had a side-effect-free route to the
-	 * goal, so they no longer need a decision of their own.
+	 * @ref ZoombiniPuzzleMaze::SolverSearchNode::covered records earlier direct delivery opportunities.
+	 * The complete replay inserts and verifies those deliveries instead of expanding separate search branches.
 	 */
 	struct SolverSearchNode {
 		int32 parent;
@@ -1617,8 +1620,8 @@ private:
 
 	/**
 	 * Ordered launch list that delivers every Zoombini of the pack.
-	 * @p postSpots records where the launched Zoombini stands after each step, so
-	 * the progress report can tell which steps the player has already made.
+	 * @ref ZoombiniPuzzleMaze::SolverGenericPlan::postSpots records each launched Zoombini's resulting position.
+	 * The progress report compares these positions with the live pack.
 	 */
 	struct SolverGenericPlan {
 		bool valid;
@@ -1640,7 +1643,7 @@ private:
 
 	/** Status published by one layout-agnostic answer-plan search. */
 	struct SolverGenericSearchResult {
-		/** Whether the search explored every reachable node without finding a plan. */
+		/** Whether all queued search nodes were exhausted without finding a plan. */
 		bool searchExhausted;
 		/** Whether a configured step or node cap stopped the search. */
 		bool limitReached;
@@ -1660,10 +1663,8 @@ private:
 	/**
 	 * Mutable state shared by every recursive call in one accepted-only search.
 	 *
-	 * The current @ref SolverPlanState remains a separate parameter because each
-	 * recursive branch supplies its own candidate state. The requirements,
-	 * optional final launch, accumulated actions, and visited set remain common
-	 * to all branches.
+	 * Each branch receives a separate @ref ZoombiniPuzzleMaze::SolverPlanState.
+	 * Required deliveries, the final key, the action list, and visited states are shared across branches.
 	 */
 	struct SolverAcceptedPlanSearch {
 		/** Whether each pack slot must reach the accepted exit before completion. */
@@ -1678,7 +1679,7 @@ private:
 		SolverPlanState resultState;
 		/** Hashes of states already explored by this search. */
 		Common::HashMap<uint64, bool> visited;
-		/** Number of states inserted into @ref visited. */
+		/** Number of states inserted into @ref ZoombiniPuzzleMaze::SolverAcceptedPlanSearch::visited. */
 		int32 visitedStateCount;
 
 		SolverAcceptedPlanSearch() : finalSnoid(-1), finalSwitchGroup(0), visitedStateCount(0) {
@@ -1688,8 +1689,7 @@ private:
 
 	/**
 	 * Publishes a search budget's step count on every exit path.
-	 * The plan builders return from many places, so the count is copied out here
-	 * instead of at each return.
+	 * Copying the count on destruction includes successful, failed, and budget-limited returns.
 	 */
 	struct SolverStepCounter {
 		const SolverBudget &budget;
@@ -1705,117 +1705,182 @@ private:
 		}
 	};
 
-	static bool debugMazeApplyPlanLaunch(const SolverPlanContext &context,
-										 SolverPlanState &state, int16 snoidIdx, int16 seatIdx,
-										 SolverPlanAction &action, SolverBudget &budget);
-	static bool debugTransferMazeStagingKey(const SolverPlanContext &context,
-											SolverPlanState &state, int16 snoidIdx,
-											int16 requiredCorner, SolverPlanAction &action,
-											SolverBudget &budget);
-	static bool debugCompleteExpandedMazeLevel4Plan(
-		const SolverPlanContext &context, const SolverLevel4StagedRelay &stagedRelay,
-		SolverLevel4Plan &plan, SolverBudget &budget);
-	static bool debugBuildMazeLevel4PlanForGroups(const SolverPlanContext &context,
-												  const SolverLevel4GroupSelection &groupSelection,
-												  SolverLevel4Plan &plan,
-												  SolverBudget &budget);
-	static bool debugBuildMazeLevel4Plan(const SolverPlanContext &context,
-										 SolverLevel4Plan &plan, bool &searchExhausted,
-										 uint32 &stepsUsed);
-	static bool debugFindMazeAcceptedPlan(const SolverPlanContext &context, const SolverPlanState &state,
-										  SolverAcceptedPlanSearch &search, SolverBudget &budget);
-	static bool debugBuildMazeSimplePlan(const SolverPlanContext &context,
-										 SolverLevel123Plan &plan,
-										 SolverBudget &budget);
-	static bool debugBuildMazeSwitchPlan(const SolverPlanContext &context,
-										 SolverLevel123Plan &plan,
-										 SolverBudget &budget);
-	static bool debugBuildMazeLevel123Plan(const SolverPlanContext &context,
-										   SolverLevel123Plan &plan,
-										   SolverBudget &budget);
+	/**
+	 * Simulate one launch and its pushes, releases, and switch effects in @p state and @p action.
+	 * Each permitted launch attempt consumes a step from @p budget.
+	 * Failed simulations may leave partial changes.
+	 * @return true when the launch and all resulting movement finish within the simulation limits.
+	 */
+	static bool debugMazeApplyPlanLaunch(const SolverPlanContext &context, SolverPlanState &state, int16 snoidIdx, int16 seatIdx, SolverPlanAction &action, SolverBudget &budget);
+	/**
+	 * Find a launch that stages a key at an upper-left or lower-right corner without pressing a switch.
+	 * A non-negative @p requiredCorner restricts the destination.
+	 * Update @p state and @p action only on success.
+	 */
+	static bool debugTransferMazeStagingKey(const SolverPlanContext &context, SolverPlanState &state, int16 snoidIdx, int16 requiredCorner, SolverPlanAction &action, SolverBudget &budget);
+	/** Complete a staged Level4 relay with batch, rescue, push, and final launches within @p budget. */
+	static bool debugCompleteExpandedMazeL4Plan(const SolverPlanContext &context, const SolverLevel4StagedRelay &stagedRelay, SolverLevel4Plan &plan, SolverBudget &budget);
+	/** Search for a complete Level4 relay using the selected switch groups and shared @p budget. */
+	static bool debugBuildMazeL4PlanForGroups(const SolverPlanContext &context, const SolverLevel4GroupSelection &groupSel, SolverLevel4Plan &plan, SolverBudget &budget);
+	/**
+	 * Search switch-group combinations for a complete Level4 relay and report @p stepsUsed.
+	 * On failure, @p searchExhausted reports whether the simulated-launch budget was reached.
+	 */
+	static bool debugBuildMazeL4Plan(const SolverPlanContext &context, SolverLevel4Plan &plan, bool &searchExhausted, uint32 &stepsUsed);
+	/**
+	 * Search recursively for accepted launches of all required Zoombinis without pressing switches.
+	 * An optional final key must reach the goal and press only its requested switch group.
+	 * Successful actions and the resulting state are stored in @p search.
+	 */
+	static bool debugFindMazeAcceptedPlan(const SolverPlanContext &context, const SolverPlanState &state, SolverAcceptedPlanSearch &search, SolverBudget &budget);
+	/** Build a complete L1-L3 plan using only accepted launches that press no switches. */
+	static bool debugBuildMazeSimplePlan(const SolverPlanContext &context, SolverLevel123Plan &plan, SolverBudget &budget);
+	/** Build a L1-L3 plan with two branch-switch groups and a trait-based launch order. */
+	static bool debugBuildMazeSwitchPlan(const SolverPlanContext &context, SolverLevel123Plan &plan, SolverBudget &budget);
+	/** Select the L1-L3 plan builder according to whether switches control any branch arrows. */
+	static bool debugBuildMazePlan(const SolverPlanContext &context, SolverLevel123Plan &plan, SolverBudget &budget);
 
 	// Generic (layout-agnostic) answer-plan search.
+	/** Return the solver slot for a sticky cell, or -1 when the cell is absent from @p tables. */
 	static int16 debugMazeStickySlot(const SolverTables &tables, int16 cellIdx);
-	static void debugMazeApplyControlState(const SolverTables &tables, int16 stateIdx,
-										   SolverDirectionGrid &grid);
-	static int16 debugMazeControlStateIndex(const SolverTables &tables,
-											const SolverDirectionGrid &grid);
-	static void debugMazeTraceRoute(const SolverPlanContext &context,
-									const SolverTables &tables, const SolverMovingSnoid &start,
-									SolverDirectionGrid &grid, SolverRouteResult &route);
-	static bool debugMazeBuildSolverTables(const SolverPlanContext &context,
-										   SolverTables &tables);
-	static void debugMazeSolverNodeToPlanState(const SolverPlanContext &context,
-											   const SolverTables &tables,
-											   const SolverSearchNode &node,
-											   SolverPlanState &state);
-	static bool debugMazeSolverNodeFromPlanState(const SolverTables &tables,
-												 const SolverPlanState &state,
-												 SolverSearchNode &node);
-	static int16 debugMazeSolverPlainSeat(const SolverTables &tables, int16 classIdx,
-										  int16 corner, int16 controlState);
-	static void debugMazeSolverUpdateCover(const SolverTables &tables,
-										   SolverSearchNode &node);
-	static int16 debugMazeSolverUncovered(const SolverTables &tables,
-										  const SolverSearchNode &node);
-	static uint64 debugMazeSolverNodeKey(const SolverTables &tables,
-										 const SolverSearchNode &node);
+	/** Restore base arrow directions in @p grid and apply the indexed control state when valid. */
+	static void debugMazeApplyControlState(const SolverTables &tables, int16 stateIdx, SolverDirectionGrid &grid);
+	/** Return the control-state index matching @p grid, or -1 when no stored state matches. */
+	static int16 debugMazeControlStateIndex(const SolverTables &tables, const SolverDirectionGrid &grid);
+	/** Trace one Zoombini to a route terminal, recording switches and updating arrow directions in @p grid. */
+	static void debugMazeTraceRoute(const SolverPlanContext &context, const SolverTables &tables, const SolverMovingSnoid &start, SolverDirectionGrid &grid, SolverRouteResult &route);
+	/**
+	 * Precompute control states, equivalent Zoombini classes, and launch and sticky-resume routes.
+	 * @return false when the context is invalid or exceeds the solver table capacities.
+	 */
+	static bool debugMazeBuildSolverTables(const SolverPlanContext &context, SolverTables &tables);
+	/** Expand a compact search node into arrow directions, Zoombini positions, and sticky-cell occupants. */
+	static void debugMazeSolverNodeToPlanState(const SolverPlanContext &context, const SolverTables &tables, const SolverSearchNode &node, SolverPlanState &state);
+	/**
+	 * Copy simulated positions and control state into @p node.
+	 * @return false when the control state is unknown or a Zoombini has been rejected.
+	 */
+	static bool debugMazeSolverNodeFromPlanState(const SolverTables &tables, const SolverPlanState &state, SolverSearchNode &node);
+	/** Return a launcher at @p corner whose route reaches the goal without pressing switches, or -1. */
+	static int16 debugMazeSolverPlainSeat(const SolverTables &tables, int16 classIdx, int16 corner, int16 controlState);
+	/** Mark Zoombinis with a direct goal route in the current control state as covered. */
+	static void debugMazeSolverUpdateCover(const SolverTables &tables, SolverSearchNode &node);
+	/** Count Zoombinis that are neither accepted nor covered by a previously found direct goal route. */
+	static int16 debugMazeSolverUncovered(const SolverTables &tables, const SolverSearchNode &node);
+	/**
+	 * Build a 64-bit FNV-1a fingerprint for the generic search's visited set.
+	 * Mix the control-state index, class counts by corner and coverage, then each sticky slot's occupant class and heading.
+	 * Zoombinis with identical trait-test results are interchangeable, so their pack identities are omitted.
+	 * The layout and route-class tables are fixed within one search and are not mixed again.
+	 * Search parents, launch records, and depth describe how a node was reached and do not contribute to its routing fingerprint.
+	 * @ref ZoombiniPuzzleMaze::debugBuildMazeGenericPlan skips nodes with an already visited fingerprint.
+	 * The fingerprint is not a packed state, and collisions are not checked against the full node.
+	 * A collision between distinct encodings can therefore suppress a different continuation.
+	 * @return The FNV-1a hash of the canonical state encoding described in the implementation.
+	 */
+	static uint64 debugMazeSolverNodeKey(const SolverTables &tables, const SolverSearchNode &node);
+	/** Add a valid, previously unseen control state to @p reach and return whether the set changed. */
 	static bool debugMazeSolverAddState(SolverReachSet &reach, int16 stateIdx);
-	static void debugMazeSolverExpandReach(const SolverTables &tables,
-										   SolverReachSet &reach);
-	static bool debugMazeSolverGoalReachable(const SolverTables &tables,
-											 const SolverSearchNode &node);
-	static bool debugMazeGenericPlanFromKeys(const SolverPlanContext &context,
-											 const SolverTables &tables,
-											 const Common::Array<SolverKeyLaunch> &keyLaunches,
-											 SolverGenericPlan &plan);
-	static bool debugBuildMazeGenericPlan(const SolverPlanContext &context,
-										  SolverGenericPlan &plan, const SolverGenericSearchLimits &limits,
-										  SolverGenericSearchResult &result);
+	/** Expand relaxed control-state, corner, and sticky-cell reachability until no new routes remain. */
+	static void debugMazeSolverExpandReach(const SolverTables &tables, SolverReachSet &reach);
+	/**
+	 * Check the remaining Zoombinis against the relaxed reachability model.
+	 * @return false when the node can be pruned; true allows further search without proving a complete plan.
+	 */
+	static bool debugMazeSolverGoalReachable(const SolverTables &tables, const SolverSearchNode &node);
+	/** Replay control launches, insert ordinary deliveries, and verify that the assembled plan accepts every Zoombini. */
+	static bool debugMazeGenericPlanFromKeys(const SolverPlanContext &context, const SolverTables &tables, const Common::Array<SolverKeyLaunch> &keyLaunches, SolverGenericPlan &plan);
+	/**
+	 * Search for a complete launch order using layout-derived tables within @p limits.
+	 * Store search cost and termination status in @p result; return true only for a verified complete plan.
+	 */
+	static bool debugBuildMazeGenericPlan(const SolverPlanContext &context, SolverGenericPlan &plan, const SolverGenericSearchLimits &limits, SolverGenericSearchResult &result);
+
 	/** Fill the search context from the current grid, launchers, and pack. */
 	void debugBuildMazePlanContext(SolverPlanContext &context) const;
-	/** Whether the current layout and pack still have a complete solution. */
+	/** Run a bounded solvability probe for the current layout and pack, reporting the simulated-launch count. */
 	bool isMazeLayoutSolvable(uint32 &stepsUsed) const;
-	/** Retune one condition cell's trait test, updating router, search, and shape. */
+	/** Change a condition cell's trait test and synchronize the runtime and solver grids. */
 	void setConditionCellTrait(int16 cellIdx, int16 category, int16 value);
 	/**
-	 * Retune one restored-layout condition cell when the arriving pack cannot
-	 * finish REGS 16607 as authored. Returns whether a cell was changed.
+	 * Try one trait-condition substitution when the arriving pack cannot finish the restored Level4 layout as authored.
+	 * @return true when a changed condition produces a verified complete plan.
 	 */
-	bool repairRestoredLayoutConditionCell();
-	/** Describe one substitution in the wording the answer and the log share. */
+	bool repairRestoredL4LayoutConditionCell();
+	/** Format a condition substitution for both the answer text and the log. */
 	Common::String describeConditionSubstitution(const MazeConditionSubstitution &substitution) const;
-	/** Tell the player which condition cells the layout repair substituted. */
+	/** Log the substituted trait conditions and the number of simulated launches used to verify the repair. */
 	void logConditionSubstitutions(uint32 stepsUsed) const;
+	/**
+	 * Return the live Zoombini's waiting corner or accepted/held solver marker.
+	 * Return -4 when no stable position is available.
+	 */
 	int16 debugMazeLiveSnoidSpot(const SolverPlanContext &context, int16 snoidIdx) const;
+	/** Describe one plan step's switches, pushes, releases, and terminal outcome using the selected color names. */
 	Common::String debugMazeGenericStepText(const SolverPlanContext &context, const SolverGenericStep &step, bool colorBlindMode) const;
 
+	/** Return the authored direction's compass name, or an unknown-direction label when invalid. */
 	static const char *debugMazeDirectionName(int16 direction);
+	/** Return the color name associated with an arrow shape bank, or an unknown-color label. */
 	static const char *debugMazeColorName(MazeColorShapeBase shapeBase);
+	/** Describe a simulated launch's terminal outcome for the answer text. */
 	static const char *debugMazeOutcomeName(LaunchSimulationOutcome outcome);
+	/** Return the name of an exit corner, or an unknown-corner label when invalid. */
 	static const char *debugMazePlanCornerName(int16 corner);
+	/** Return the next enabled direction in the four-way cycle, retaining the current direction when none is enabled. */
 	static int16 debugMazeNextDirection(int16 direction, const bool *dirFlags);
+	/** Read a cell's initial direction from its layout REGS record, using @p fallback when the record is unavailable. */
 	static int16 debugMazeInitialDirection(const Common::Array<int16> &regsData, int16 cellIdx, int16 fallback);
+	/** Test whether @p cells contains the requested cell index. */
 	static bool debugMazeContainsCell(const Common::Array<int16> &cells, int16 cellIdx);
+	/** Test whether a candidate key reaches an exit or sticky cell instead of a trap, loop, or invalid route. */
 	static bool debugMazeIsPreferredKeyOutcome(LaunchSimulationOutcome outcome);
+	/** Test whether @p values contains the requested value. */
 	static bool debugMazeArrayContains(const Common::Array<int16> &values, int16 value);
+	/** Return the trait value for category 1-4, or zero when the category is invalid. */
 	static byte debugMazeTraitValue(const ZmbTrait &trait, int16 category);
+	/** Initialize a simulated grid with no sticky occupants and every Zoombini waiting at the lower-left corner. */
 	static void debugMazeInitializePlanState(const SolverPlanContext &context, SolverPlanState &state);
+	/** Test whether the indexed simulated Zoombini has reached the completion exit. */
 	static bool debugMazePlanSnoidAccepted(const SolverPlanState &state, int16 snoidIdx);
+	/** Test whether the indexed Zoombini is held by a sticky cell belonging to @p waveGroup. */
 	static bool debugMazePlanSnoidHeldInGroup(const SolverPlanContext &context, const SolverPlanState &state, int16 snoidIdx, int16 waveGroup);
+	/** Test whether every Zoombini in @p context is accepted in the simulated state. */
 	static bool debugMazePlanAllAccepted(const SolverPlanContext &context, const SolverPlanState &state);
+	/** Test whether the five Level4 key roles use distinct Zoombini indices. */
 	static bool debugMazePlanDistinctKeys(int16 stagingKey, int16 primaryKey, int16 rescueKey, int16 pusherKey, int16 finalKey);
+	/** Test whether @p snoidIdx belongs to the active staging-key list. */
 	static bool debugMazePlanIsStagingKey(const int16 *stagingKeys, int16 stagingKeyCount, int16 snoidIdx);
+	/** Test whether two valid Zoombinis have identical values in all four trait categories. */
 	static bool debugMazePlanSameTraits(const SolverPlanContext &context, int16 firstSnoid, int16 secondSnoid);
+	/** Test whether a Zoombini satisfies the requested trait match or nonmatch. */
 	static bool debugMazePlanMatchesTrait(const SolverPlanContext &context, int16 snoidIdx, int16 category, int16 value, bool matched);
+	/**
+	 * Build a 64-bit FNV-1a fingerprint for the accepted-only search's visited set.
+	 * Mix arrow directions in row-major order, then each pack slot's corner, held-cell index, and accepted flag.
+	 * The layout, traits, launchers, and delivery requirements are fixed within one search and are not mixed again.
+	 * @ref ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan uses the fingerprint to skip repeated remaining-delivery searches.
+	 * Different launch orders can produce the same routing state and therefore the same continuation problem.
+	 * The fingerprint is not a packed state, and collisions are not checked against the full state.
+	 * A collision between distinct encodings can therefore suppress a different continuation.
+	 * @return The FNV-1a hash of the ordered state encoding described in the implementation.
+	 */
 	static uint64 debugMazePlanStateHash(const SolverPlanContext &context, const SolverPlanState &state);
+	/** Test whether a simulated action presses exactly one switch group and that group is @p switchGroup. */
 	static bool debugMazePlanActionPressesOnly(const SolverPlanAction &action, int16 switchGroup);
+	/** Return the first switch cell belonging to @p waveGroup, or -1 when no such cell exists. */
 	static int16 debugMazePlanGroupSwitchCell(const SolverPlanContext &context, int16 waveGroup);
+	/** Describe a launcher's coordinates, optionally including its screen quadrant. */
 	static Common::String debugMazeLauncherLabel(const Common::Point (&launcherPositions)[14], int16 seatIdx, bool includeRegion);
+	/** Format the distinct trait conditions encountered by a simulated action. */
 	static Common::String debugMazePlanRouteFilters(const SolverPlanContext &context, const SolverPlanAction &action);
+	/** Format a trait equality or inequality for the answer text. */
 	static Common::String debugMazePlanTraitCondition(int16 category, int16 value, bool matched);
+	/** Return a staging key's printed ordinal, distinguishing multiple keys with letter suffixes. */
 	static Common::String debugMazePlanStagingLabel(const SolverLevel4Plan &plan, int16 stagingKey);
+	/** Format the ordered staging-key launches for the staging or highway-switch phase. */
 	static Common::String debugMazePlanStagingLaunchSequence(const SolverLevel4Plan &plan, bool highwayPhase, const Common::Point (&launcherPositions)[14]);
+	/** Return a switch group's display color name, applying the color-assistance substitution when enabled. */
 	static const char *debugMazePlanGroupColor(const SolverPlanContext &context, int16 waveGroup, bool colorBlindMode);
 
 	// =================================================================

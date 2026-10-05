@@ -33,7 +33,8 @@
 namespace Mohawk {
 
 ZoombiniRandom::ZoombiniRandom(const Common::String &name) : _scummRnd(name) {
-	_useOriginal = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionOriginalPRNG);
+	const int prngAlgorithmVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionPrngAlgorithm);
+	_prngAlgorithm = static_cast<MohawkMetaEngine_Zoombini::PrngAlgorithm>(prngAlgorithmVal);
 
 #ifdef ENABLE_EVENTRECORDER
 	assert(g_system);
@@ -43,11 +44,19 @@ ZoombiniRandom::ZoombiniRandom(const Common::String &name) : _scummRnd(name) {
 #endif
 }
 
+void ZoombiniRandom::setAlgorithm(MohawkMetaEngine_Zoombini::PrngAlgorithm prngAlgorithm) {
+	if (_prngAlgorithm == prngAlgorithm)
+		return;
+
+	_prngAlgorithm = prngAlgorithm;
+	setSeed(generateNewSeed());
+}
+
 void ZoombiniRandom::setSeed(uint32 seed) {
 	if (seed == 0)
 		seed += 1;
 
-	if (_useOriginal)
+	if (_prngAlgorithm == MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng)
 		_randState = seed;
 	else
 		_scummRnd.setSeed(seed);
@@ -72,7 +81,7 @@ int16 ZoombiniRandom::getRandomNumber(int16 max) {
 		return getRandomNumber(max, 0);
 	}
 
-	if (_useOriginal)
+	if (_prngAlgorithm == MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng)
 		return static_cast<int16>(getOriginalRandomNumber(static_cast<uint32>(max)));
 
 	return static_cast<int16>(_scummRnd.getRandomNumber(max));
@@ -88,7 +97,7 @@ int16 ZoombiniRandom::getRandomNumber(int16 min, int16 max) {
 
 	uint32 span = static_cast<uint32>(static_cast<int32>(max) - static_cast<int32>(min));
 	uint16 offset;
-	if (_useOriginal)
+	if (_prngAlgorithm == MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng)
 		offset = getOriginalRandomNumber(span);
 	else
 		offset = static_cast<uint16>(_scummRnd.getRandomNumber(span));

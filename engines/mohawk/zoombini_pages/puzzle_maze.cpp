@@ -203,9 +203,8 @@ void ZoombiniPuzzleMaze::loadFeatures() {
 	registerScrsGroup(kResScrs15000_NormalBase, 96);
 
 	// Overlay anim feature
-	_collisionOverlayAnchorFeature = loadScrbFeature(
-		ZmbResource(ZmbResource::kPage, kResBitmapShape12000_Exit), kResScrb12001_Overlay, 7,
-		ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE);
+	_collisionOverlayAnchorFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape12000_Exit), kResScrb12001_Overlay, 7,
+													 ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE);
 
 	loadZoombinisFromPack(kSnoidPositions, ARRAYSIZE(kSnoidPositions));
 	_celebrationTarget = _pageLoadedZmbCount - 1;
@@ -214,14 +213,13 @@ void ZoombiniPuzzleMaze::loadFeatures() {
 	if (_difficultyLevel == kPuzzleLevel4 && _pageLoadedZmbCount < 5)
 		_layoutLevel = kMazeLayoutLevel4SmallPack;
 
-	loadRegsConfigByLevel();
-	loadAndParseRegsData();
+	loadLayoutRegsConfigByLevel();
+	loadLayoutRegsData();
 	createCreatureFeatures();
 
 	// The shared type-0 companion precedes the grid-cell layer.
-	_launcherCompanionFeatures[0] = loadScrbFeature(
-		ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path), kResScrb9005_CreatureBase, 7,
-		ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_04000000_OVERLAY);
+	_launcherCompanionFeatures[0] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path), kResScrb9005_CreatureBase, 7,
+													ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_04000000_OVERLAY);
 
 	if (0 < _pageLoadedZmbCount)
 		initGridAndSelectPaths();
@@ -262,9 +260,8 @@ void ZoombiniPuzzleMaze::loadFeatures() {
 
 	// Reserve eleven callback-free overlay layers.
 	for (int i = 0; i < 11; i++) {
-		_columnDepthAnchors[i] = loadScrbFeature(
-			ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8011_Noop, 0,
-			ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00008000_LOOP_ANIM);
+		_columnDepthAnchors[i] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8011_Noop, 0,
+												 ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00008000_LOOP_ANIM);
 	}
 
 	createRemainingCreatureFeatures();
@@ -281,9 +278,8 @@ void ZoombiniPuzzleMaze::loadFeatures() {
 					ZmbFeature::FLAG_04000000_OVERLAY);
 
 	// Reserve the final callback-free overlay layer.
-	_columnDepthAnchors[11] = loadScrbFeature(
-		ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8011_Noop, 0,
-		ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00008000_LOOP_ANIM);
+	_columnDepthAnchors[11] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8011_Noop, 0,
+											  ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00008000_LOOP_ANIM);
 
 	layoutStaticAndWalkIn(0, false);
 	// Materialize the feature list and advance each independent cell visual
@@ -476,10 +472,9 @@ void ZoombiniPuzzleMaze::debugMazeInitializePlanState(const ZoombiniPuzzleMaze::
 	}
 }
 
-bool ZoombiniPuzzleMaze::debugMazeApplyPlanLaunch(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-												  ZoombiniPuzzleMaze::SolverPlanState &state, int16 snoidIdx, int16 seatIdx,
-												  ZoombiniPuzzleMaze::SolverPlanAction &action, ZoombiniPuzzleMaze::SolverBudget &budget) {
+bool ZoombiniPuzzleMaze::debugMazeApplyPlanLaunch(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverPlanState &state, int16 snoidIdx, int16 seatIdx, ZoombiniPuzzleMaze::SolverPlanAction &action, ZoombiniPuzzleMaze::SolverBudget &budget) {
 	action.clear();
+
 	// Count every simulated launch so the answer can report the search cost.
 	// A zero limit only disables the cap, not the count.
 	if (budget.limit && budget.limit <= budget.steps)
@@ -494,20 +489,23 @@ bool ZoombiniPuzzleMaze::debugMazeApplyPlanLaunch(const ZoombiniPuzzleMaze::Solv
 
 	action.snoidIdx = snoidIdx;
 	action.launcherSeatIdx = seatIdx;
+
+	// A single launch can move several Zoombinis through sticky pushes and switch releases.
 	ZoombiniPuzzleMaze::SolverMovingSnoid movingQueue[ZoombiniPuzzleMaze::kDebugMazeMaxSnoids * 2];
 	int16 movingCount = 1;
 	movingQueue[0].snoidIdx = snoidIdx;
 	movingQueue[0].row = context.seatRow[seatIdx];
 	movingQueue[0].col = context.seatCol[seatIdx];
 	movingQueue[0].direction = context.seatDirection[seatIdx];
-	// Row-entry launch scripts finish on the launcher cell, so their first
-	// row-change dispatch must process that cell before moving beyond it.
+
+	// Row-entry scripts stop on the launcher cell; start one cell behind so the traversal processes it first.
 	if (movingQueue[0].direction == kMazeDirection01_South)
 		movingQueue[0].row -= 1;
 	else if (movingQueue[0].direction == kMazeDirection03_North)
 		movingQueue[0].row += 1;
 	rootState.heldCellIdx = -1;
 
+	// Finish every resulting movement before testing this candidate's final state.
 	while (0 < movingCount) {
 		movingCount -= 1;
 		ZoombiniPuzzleMaze::SolverMovingSnoid moving = movingQueue[movingCount];
@@ -516,9 +514,8 @@ bool ZoombiniPuzzleMaze::debugMazeApplyPlanLaunch(const ZoombiniPuzzleMaze::Solv
 			ZmbGridDirection gridDirection;
 			if (!decodeMazeGridDirection(moving.direction, gridDirection))
 				return false;
-			const ZmbGridStep gridStep = ZmbGridTraversal::computeStep(
-				ZmbGridCell(moving.row, moving.col), gridDirection,
-				ZmbGridBounds(0, ZoombiniPuzzleMaze::kDebugMazeRows - 1, 0, ZoombiniPuzzleMaze::kDebugMazeCols - 1));
+			const ZmbGridStep gridStep = ZmbGridTraversal::computeStep(ZmbGridCell(moving.row, moving.col), gridDirection,
+																	   ZmbGridBounds(0, ZoombiniPuzzleMaze::kDebugMazeRows - 1, 0, ZoombiniPuzzleMaze::kDebugMazeCols - 1));
 			if (!gridStep.inBounds)
 				return false;
 			moving.row = gridStep.cell.row;
@@ -552,6 +549,7 @@ bool ZoombiniPuzzleMaze::debugMazeApplyPlanLaunch(const ZoombiniPuzzleMaze::Solv
 			case kMazeCellType05_ColoredSticky: {
 				if (cellIdx < 0)
 					return false;
+				// The new arrival takes the sticky cell and pushes its occupant along the arrival direction.
 				const int16 captive = state.stickyHeldSnoids[cellIdx];
 				if (0 <= captive) {
 					state.stickyHeldSnoids[cellIdx] = -1;
@@ -582,6 +580,7 @@ bool ZoombiniPuzzleMaze::debugMazeApplyPlanLaunch(const ZoombiniPuzzleMaze::Solv
 				const int16 waveGroup = context.cells[cellIdx].waveGroup;
 				if (!debugMazeArrayContains(action.switchGroups, waveGroup))
 					action.switchGroups.push_back(waveGroup);
+				// Apply the whole linked group so the plan includes both arrow turns and released occupants.
 				for (int16 linkedIdx = 0; linkedIdx < context.cellCount; linkedIdx++) {
 					const MazeCellState &linked = context.cells[linkedIdx];
 					if (linked.waveGroup != waveGroup)
@@ -628,6 +627,7 @@ bool ZoombiniPuzzleMaze::debugMazeApplyPlanLaunch(const ZoombiniPuzzleMaze::Solv
 			return false;
 	}
 
+	// Report the launched key separately from the other Zoombinis moved by this action.
 	const ZoombiniPuzzleMaze::SolverPlanSnoidState &result = state.snoids[snoidIdx];
 	if (result.accepted)
 		action.rootOutcome = 3;
@@ -674,33 +674,28 @@ bool ZoombiniPuzzleMaze::debugMazePlanIsStagingKey(const int16 stagingKeys[Zoomb
 	return false;
 }
 
-bool ZoombiniPuzzleMaze::debugTransferMazeStagingKey(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-													 ZoombiniPuzzleMaze::SolverPlanState &state, int16 snoidIdx,
-													 int16 requiredCorner, ZoombiniPuzzleMaze::SolverPlanAction &action,
-													 ZoombiniPuzzleMaze::SolverBudget &budget) {
+bool ZoombiniPuzzleMaze::debugTransferMazeStagingKey(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverPlanState &state, int16 snoidIdx, int16 requiredCorner, ZoombiniPuzzleMaze::SolverPlanAction &action, ZoombiniPuzzleMaze::SolverBudget &budget) {
+	// Stage the key before any switch closes the transfer route, keeping failed trials out of the caller's state.
 	for (int16 seatIdx = 0; seatIdx < ZoombiniPuzzleMaze::kDebugMazeSeatCount; seatIdx++) {
 		if (!context.seatActive[seatIdx] || context.seatCorner[seatIdx] != 0)
 			continue;
-		ZoombiniPuzzleMaze::SolverPlanState candidateState = state;
-		ZoombiniPuzzleMaze::SolverPlanAction candidateAction;
-		if (!debugMazeApplyPlanLaunch(context, candidateState, snoidIdx, seatIdx, candidateAction, budget) ||
-			!candidateAction.switchGroups.empty() || candidateAction.rootOutcome < 1 ||
-			2 < candidateAction.rootOutcome)
+		ZoombiniPuzzleMaze::SolverPlanState trialState = state;
+		ZoombiniPuzzleMaze::SolverPlanAction trialAction;
+		if (!debugMazeApplyPlanLaunch(context, trialState, snoidIdx, seatIdx, trialAction, budget) ||
+			!trialAction.switchGroups.empty() || trialAction.rootOutcome < 1 ||
+			2 < trialAction.rootOutcome)
 			continue;
-		const int16 stagingCorner = candidateState.snoids[snoidIdx].corner;
+		const int16 stagingCorner = trialState.snoids[snoidIdx].corner;
 		if (0 <= requiredCorner && stagingCorner != requiredCorner)
 			continue;
-		state = candidateState;
-		action = candidateAction;
+		state = trialState;
+		action = trialAction;
 		return true;
 	}
 	return false;
 }
 
-bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeLevel4Plan(
-	const ZoombiniPuzzleMaze::SolverPlanContext &context,
-	const ZoombiniPuzzleMaze::SolverLevel4StagedRelay &stagedRelay,
-	ZoombiniPuzzleMaze::SolverLevel4Plan &plan, ZoombiniPuzzleMaze::SolverBudget &budget) {
+bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeL4Plan(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverLevel4StagedRelay &stagedRelay, ZoombiniPuzzleMaze::SolverLevel4Plan &plan, ZoombiniPuzzleMaze::SolverBudget &budget) {
 	const ZoombiniPuzzleMaze::SolverPlanState &highwayState = stagedRelay.postHighwayState;
 	const int16 *stagingKeys = stagedRelay.stagingKeys;
 	const ZoombiniPuzzleMaze::SolverPlanAction *stagingActions = stagedRelay.stagingActions;
@@ -710,6 +705,8 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeLevel4Plan(
 	const int16 stagingStickyGroup = stagedRelay.stagingStickyGroup;
 	const int16 primaryKey = stagedRelay.primaryKey;
 	const ZoombiniPuzzleMaze::SolverPlanAction &primaryAction = stagedRelay.primaryAction;
+
+	// The expanded relay must leave exactly one staging key held; all other staging keys are already safe.
 	int16 heldStagingKey = -1;
 	for (int16 keyIdx = 0; keyIdx < stagingKeyCount; keyIdx++) {
 		const int16 stagingKey = stagingKeys[keyIdx];
@@ -722,6 +719,7 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeLevel4Plan(
 	if (heldStagingKey < 0)
 		return false;
 
+	// Reserve distinct rescue, push, and final keys before testing the remaining pack's highway route.
 	for (int16 rescueKey = 0; rescueKey < context.snoidCount; rescueKey++) {
 		if (rescueKey == primaryKey ||
 			debugMazePlanIsStagingKey(stagingKeys, stagingKeyCount, rescueKey))
@@ -737,6 +735,7 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeLevel4Plan(
 				for (int16 highwaySeat = 0; highwaySeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; highwaySeat++) {
 					if (!context.seatActive[highwaySeat] || context.seatCorner[highwaySeat] != 0)
 						continue;
+					// Ordinary deliveries must finish without changing the switches needed by the reserved keys.
 					ZoombiniPuzzleMaze::SolverPlanState batchState = highwayState;
 					int16 highwayCount = 0;
 					bool batchValid = true;
@@ -757,6 +756,7 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeLevel4Plan(
 					if (!batchValid)
 						continue;
 
+					// The rescue switch must deliver its key and leave each staging key accepted or ready for final release.
 					for (int16 rescueSeat = 0; rescueSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; rescueSeat++) {
 						if (!context.seatActive[rescueSeat] || context.seatCorner[rescueSeat] != 0)
 							continue;
@@ -773,8 +773,7 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeLevel4Plan(
 							if (debugMazePlanSnoidAccepted(rescueState, stagingKey))
 								continue;
 							allStagingKeysReleased = false;
-							if (!debugMazePlanSnoidHeldInGroup(
-									context, rescueState, stagingKey, plan.finalStickyGroup)) {
+							if (!debugMazePlanSnoidHeldInGroup(context, rescueState, stagingKey, plan.finalStickyGroup)) {
 								stagingRelayValid = false;
 								break;
 							}
@@ -782,6 +781,7 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeLevel4Plan(
 						if (!stagingRelayValid)
 							continue;
 
+						// Push the primary key to safety and retain the pusher in the final sticky group.
 						for (int16 pusherSeat = 0; pusherSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; pusherSeat++) {
 							if (!context.seatActive[pusherSeat] || context.seatCorner[pusherSeat] != 0)
 								continue;
@@ -789,11 +789,11 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeLevel4Plan(
 							ZoombiniPuzzleMaze::SolverPlanAction pushAction;
 							if (!debugMazeApplyPlanLaunch(context, pushState, pusherKey, pusherSeat, pushAction, budget) ||
 								!debugMazeArrayContains(pushAction.pushedSnoids, primaryKey) ||
-								!debugMazePlanSnoidHeldInGroup(
-									context, pushState, pusherKey, plan.finalStickyGroup) ||
+								!debugMazePlanSnoidHeldInGroup(context, pushState, pusherKey, plan.finalStickyGroup) ||
 								!debugMazePlanSnoidAccepted(pushState, primaryKey))
 								continue;
 
+							// Keep a relay only when its last switch releases the pusher and completes the entire pack.
 							for (int16 finalSeat = 0; finalSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; finalSeat++) {
 								if (!context.seatActive[finalSeat] || context.seatCorner[finalSeat] != 0)
 									continue;
@@ -841,19 +841,17 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeLevel4Plan(
 	return false;
 }
 
-bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-														   const ZoombiniPuzzleMaze::SolverLevel4GroupSelection &groupSelection,
-														   ZoombiniPuzzleMaze::SolverLevel4Plan &plan,
-														   ZoombiniPuzzleMaze::SolverBudget &budget) {
-	// Build one complete relay from the initial authored control state. Prefer
-	// the minimal five-key form, then reserve four staging keys when N=1 is needed.
-	plan.primaryGroup = groupSelection.primaryGroup;
-	plan.finalStickyGroup = groupSelection.finalStickyGroup;
-	plan.rescueGroup = groupSelection.rescueGroup;
-	plan.highwayGroup = groupSelection.highwayGroup;
+bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverLevel4GroupSelection &groupSel, ZoombiniPuzzleMaze::SolverLevel4Plan &plan, ZoombiniPuzzleMaze::SolverBudget &budget) {
+	// Try the five-key relay first, then expand its staging group when the pack needs more reserved keys.
+	plan.primaryGroup = groupSel.primaryGroup;
+	plan.finalStickyGroup = groupSel.finalStickyGroup;
+	plan.rescueGroup = groupSel.rescueGroup;
+	plan.highwayGroup = groupSel.highwayGroup;
 
 	ZoombiniPuzzleMaze::SolverPlanState initialState;
 	debugMazeInitializePlanState(context, initialState);
+
+	// Transfer the staging key to a corner with an onward launcher before operating the primary switch.
 	for (int16 stagingKey = 0; stagingKey < context.snoidCount; stagingKey++) {
 		for (int16 stagingSeat = 0; stagingSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; stagingSeat++) {
 			if (!context.seatActive[stagingSeat] || context.seatCorner[stagingSeat] != 0)
@@ -874,6 +872,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 			if (!hasStagingLauncher)
 				continue;
 
+			// The primary key opens the next branch and waits in the sticky cell that the pusher will later reach.
 			for (int16 primaryKey = 0; primaryKey < context.snoidCount; primaryKey++) {
 				if (primaryKey == stagingKey)
 					continue;
@@ -887,6 +886,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 						!debugMazePlanSnoidHeldInGroup(context, primaryState, primaryKey, plan.finalStickyGroup))
 						continue;
 
+					// Relaunch the staged key to open the highway and establish the staging sticky group.
 					for (int16 stagingExitSeat = 0; stagingExitSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; stagingExitSeat++) {
 						if (!context.seatActive[stagingExitSeat] ||
 							context.seatCorner[stagingExitSeat] != stagingCorner)
@@ -902,11 +902,13 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 							continue;
 						const int16 stagingStickyGroup = context.cells[highwayState.snoids[stagingKey].heldCellIdx].waveGroup;
 
+						// Choose the remaining relay keys together so ordinary deliveries cannot consume a required key.
 						for (int16 rescueKey = 0; rescueKey < context.snoidCount; rescueKey++) {
 							for (int16 pusherKey = 0; pusherKey < context.snoidCount; pusherKey++) {
 								for (int16 finalKey = 0; finalKey < context.snoidCount; finalKey++) {
 									if (!debugMazePlanDistinctKeys(stagingKey, primaryKey, rescueKey, pusherKey, finalKey))
 										continue;
+									// Deliver every non-key Zoombini while preserving the open highway's switch state.
 									for (int16 highwaySeat = 0; highwaySeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; highwaySeat++) {
 										if (!context.seatActive[highwaySeat] || context.seatCorner[highwaySeat] != 0)
 											continue;
@@ -929,6 +931,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 										if (!batchValid)
 											continue;
 
+										// The rescue must make the primary key's escape safe without stranding the staging key.
 										for (int16 rescueSeat = 0; rescueSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; rescueSeat++) {
 											if (!context.seatActive[rescueSeat] || context.seatCorner[rescueSeat] != 0)
 												continue;
@@ -939,11 +942,12 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 												!debugMazePlanSnoidAccepted(rescueState, rescueKey))
 												continue;
 											const bool stagingKeyReleased = debugMazePlanSnoidAccepted(rescueState, stagingKey);
-											const bool stagingKeyWaitsForFinal = debugMazePlanSnoidHeldInGroup(
-												context, rescueState, stagingKey, plan.finalStickyGroup);
+											const bool stagingKeyWaitsForFinal = debugMazePlanSnoidHeldInGroup(context,
+																											   rescueState, stagingKey, plan.finalStickyGroup);
 											if (!stagingKeyReleased && !stagingKeyWaitsForFinal)
 												continue;
 
+											// Replace the primary key with a pusher whose stored direction permits a safe release.
 											for (int16 pusherSeat = 0; pusherSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; pusherSeat++) {
 												if (!context.seatActive[pusherSeat] || context.seatCorner[pusherSeat] != 0)
 													continue;
@@ -955,6 +959,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 													!debugMazePlanSnoidAccepted(pushState, primaryKey))
 													continue;
 
+												// Validate the final release against the whole pack before publishing the named relay stages.
 												for (int16 finalSeat = 0; finalSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; finalSeat++) {
 													if (!context.seatActive[finalSeat] || context.seatCorner[finalSeat] != 0)
 														continue;
@@ -1003,8 +1008,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 		}
 	}
 
-	// Some generated packs need four staging keys (3N+1 with N=1) so every
-	// highway-incompatible Snoid can be reserved for the relay instead.
+	// Four staging keys (3N+1 with N=1) can reserve Zoombinis that cannot use the ordinary highway route.
+	// Try each launch order because the highway branch cycles as these keys pass.
 	static constexpr int16 kStagingPermutations[24][ZoombiniPuzzleMaze::kDebugMazeMaxStagingKeys] = {
 		{0, 1, 2, 3},
 		{0, 1, 3, 2},
@@ -1043,10 +1048,9 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 					stagedRelay.stagingKeys[3] = key3;
 					ZoombiniPuzzleMaze::SolverPlanState stagedState = initialState;
 					bool stagingValid = true;
+					// All staging keys must share a corner so one onward launcher can carry the relay.
 					for (int16 keyIdx = 0; keyIdx < ZoombiniPuzzleMaze::kDebugMazeMaxStagingKeys; keyIdx++) {
-						if (!debugTransferMazeStagingKey(
-								context, stagedState, stagedRelay.stagingKeys[keyIdx], stagedRelay.stagingCorner,
-								stagedRelay.stagingActions[keyIdx], budget)) {
+						if (!debugTransferMazeStagingKey(context, stagedState, stagedRelay.stagingKeys[keyIdx], stagedRelay.stagingCorner, stagedRelay.stagingActions[keyIdx], budget)) {
 							stagingValid = false;
 							break;
 						}
@@ -1073,11 +1077,9 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 								continue;
 							ZoombiniPuzzleMaze::SolverPlanState primaryState = stagedState;
 							ZoombiniPuzzleMaze::SolverPlanAction primaryAction;
-							if (!debugMazeApplyPlanLaunch(
-									context, primaryState, primaryKey, primarySeat, primaryAction, budget) ||
+							if (!debugMazeApplyPlanLaunch(context, primaryState, primaryKey, primarySeat, primaryAction, budget) ||
 								!debugMazeArrayContains(primaryAction.switchGroups, plan.primaryGroup) ||
-								!debugMazePlanSnoidHeldInGroup(
-									context, primaryState, primaryKey, plan.finalStickyGroup))
+								!debugMazePlanSnoidHeldInGroup(context, primaryState, primaryKey, plan.finalStickyGroup))
 								continue;
 							stagedRelay.primaryKey = primaryKey;
 							stagedRelay.primaryAction = primaryAction;
@@ -1087,6 +1089,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 								if (!context.seatActive[stagingExitSeat] ||
 									context.seatCorner[stagingExitSeat] != stagedRelay.stagingCorner)
 									continue;
+								// Test each highway order from the same primary state; failed orders must not affect later trials.
 								for (int16 permutationIdx = 0; permutationIdx < 24; permutationIdx++) {
 									stagedRelay.postHighwayState = primaryState;
 									bool highwayValid = true;
@@ -1094,9 +1097,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 									for (int16 actionIdx = 0; actionIdx < ZoombiniPuzzleMaze::kDebugMazeMaxStagingKeys; actionIdx++) {
 										const int16 stagingKey = stagedRelay.stagingKeys[kStagingPermutations[permutationIdx][actionIdx]];
 										ZoombiniPuzzleMaze::SolverPlanAction &action = stagedRelay.highwayActions[actionIdx];
-										if (!debugMazeApplyPlanLaunch(
-												context, stagedRelay.postHighwayState, stagingKey, stagingExitSeat, action, budget) ||
-											action.rootOutcome == -1) {
+										if (!debugMazeApplyPlanLaunch(context, stagedRelay.postHighwayState, stagingKey, stagingExitSeat, action, budget) || action.rootOutcome == -1) {
 											highwayValid = false;
 											break;
 										}
@@ -1122,8 +1123,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 									}
 									if (stagedRelay.stagingStickyGroup == 0)
 										continue;
-									if (debugCompleteExpandedMazeLevel4Plan(
-											context, stagedRelay, plan, budget))
+									// Reuse the rescue/push/final search once the expanded staging phase is verified.
+									if (debugCompleteExpandedMazeL4Plan(context, stagedRelay, plan, budget))
 										return true;
 								}
 							}
@@ -1136,13 +1137,12 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4PlanForGroups(const ZoombiniPuzzleM
 	return false;
 }
 
-bool ZoombiniPuzzleMaze::debugBuildMazeLevel4Plan(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-												  ZoombiniPuzzleMaze::SolverLevel4Plan &plan, bool &searchExhausted,
-												  uint32 &stepsUsed) {
+bool ZoombiniPuzzleMaze::debugBuildMazeL4Plan(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverLevel4Plan &plan, bool &searchExhausted, uint32 &stepsUsed) {
 	ZoombiniPuzzleMaze::SolverBudget budget;
 	budget.steps = 0;
 	budget.limit = kDebugMazeSolverMaxSteps;
 	SolverStepCounter stepCounter(budget, stepsUsed);
+	// Classify switch groups by their devices before assigning the four distinct relay roles.
 	int16 switchCellsByGroup[9];
 	int16 branchCounts[9];
 	int16 stickyCounts[9];
@@ -1163,12 +1163,14 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4Plan(const ZoombiniPuzzleMaze::Solv
 			stickyCounts[cell.waveGroup] += 1;
 	}
 
+	// Device counts screen role combinations; simulated launches then verify the actual wiring and traits.
 	for (int16 primaryGroup = 2; primaryGroup < 9; primaryGroup++) {
 		if (switchCellsByGroup[primaryGroup] < 0 || branchCounts[primaryGroup] < 2)
 			continue;
 		for (int16 finalStickyGroup = 2; finalStickyGroup < 9; finalStickyGroup++) {
 			if (switchCellsByGroup[finalStickyGroup] < 0 || stickyCounts[finalStickyGroup] < 2)
 				continue;
+			// Prefer a rescue group with a sticky cell, then allow a branch-only rescue.
 			for (int16 rescuePass = 0; rescuePass < 2; rescuePass++) {
 				for (int16 rescueGroup = 2; rescueGroup < 9; rescueGroup++) {
 					if (switchCellsByGroup[rescueGroup] < 0 || branchCounts[rescueGroup] < 1 ||
@@ -1182,18 +1184,19 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4Plan(const ZoombiniPuzzleMaze::Solv
 							highwayGroup == primaryGroup || highwayGroup == finalStickyGroup ||
 							highwayGroup == rescueGroup)
 							continue;
-						ZoombiniPuzzleMaze::SolverLevel4GroupSelection groupSelection;
-						groupSelection.primaryGroup = primaryGroup;
-						groupSelection.finalStickyGroup = finalStickyGroup;
-						groupSelection.rescueGroup = rescueGroup;
-						groupSelection.highwayGroup = highwayGroup;
+						ZoombiniPuzzleMaze::SolverLevel4GroupSelection groupSel;
+						groupSel.primaryGroup = primaryGroup;
+						groupSel.finalStickyGroup = finalStickyGroup;
+						groupSel.rescueGroup = rescueGroup;
+						groupSel.highwayGroup = highwayGroup;
 						ZoombiniPuzzleMaze::SolverLevel4Plan candidate;
-						if (debugBuildMazeLevel4PlanForGroups(context, groupSelection, candidate, budget)) {
+						if (debugBuildMazeL4PlanForGroups(context, groupSel, candidate, budget)) {
 							plan = candidate;
 							budget.limit = 0;
 							return true;
 						}
 						if (kDebugMazeSolverMaxSteps <= budget.steps) {
+							// Every role combination shares one budget so a difficult pack cannot restart the cap repeatedly.
 							budget.limit = 0;
 							searchExhausted = true;
 							return false;
@@ -1208,8 +1211,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel4Plan(const ZoombiniPuzzleMaze::Solv
 	return false;
 }
 
-bool ZoombiniPuzzleMaze::debugMazePlanSameTraits(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-												 int16 firstSnoid, int16 secondSnoid) {
+bool ZoombiniPuzzleMaze::debugMazePlanSameTraits(const ZoombiniPuzzleMaze::SolverPlanContext &context, int16 firstSnoid, int16 secondSnoid) {
 	if (firstSnoid < 0 || context.snoidCount <= firstSnoid || secondSnoid < 0 ||
 		context.snoidCount <= secondSnoid || !context.snoids[firstSnoid] ||
 		!context.snoids[secondSnoid])
@@ -1222,47 +1224,53 @@ bool ZoombiniPuzzleMaze::debugMazePlanSameTraits(const ZoombiniPuzzleMaze::Solve
 	return true;
 }
 
-bool ZoombiniPuzzleMaze::debugMazePlanMatchesTrait(const ZoombiniPuzzleMaze::SolverPlanContext &context, int16 snoidIdx,
-												   int16 category, int16 value, bool matched) {
+bool ZoombiniPuzzleMaze::debugMazePlanMatchesTrait(const ZoombiniPuzzleMaze::SolverPlanContext &context, int16 snoidIdx, int16 category, int16 value, bool matched) {
 	if (snoidIdx < 0 || context.snoidCount <= snoidIdx || !context.snoids[snoidIdx])
 		return false;
 	return (debugMazeTraitValue(context.snoids[snoidIdx]->_trait, category) == value) == matched;
 }
 
-uint64 ZoombiniPuzzleMaze::debugMazePlanStateHash(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-												  const ZoombiniPuzzleMaze::SolverPlanState &state) {
-	uint64 hash = 1469598103934665603ULL;
+uint64 ZoombiniPuzzleMaze::debugMazePlanStateHash(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverPlanState &state) {
+	// FNV-1a starts with the offset basis, then XORs each encoded byte and multiplies by the FNV prime.
+	// Unsigned multiplication wraps modulo 2^64; no bit range in the result represents an individual field.
+	// For valid solver states, every value below fits in one byte after its encoding offset is applied.
+	// Hash logical bytes rather than struct memory, so padding and native byte order do not affect the fingerprint.
+	uint64 hash = kSolverHashOffsetBasis;
+
+	// Mix the full arrow grid first, in row-major order, with direction codes shifted by 5.
 	for (int16 row = 0; row < ZoombiniPuzzleMaze::kDebugMazeRows; row++) {
 		for (int16 col = 0; col < ZoombiniPuzzleMaze::kDebugMazeCols; col++) {
 			hash ^= static_cast<uint64>(state.directions[row][col] + 5);
-			hash *= 1099511628211ULL;
+			hash *= kSolverHashPrime;
 		}
 	}
+
+	// Mix positions in pack order, preserving each Zoombini's identity for this accepted-only search.
+	// Each slot contributes corner + 5, held-cell index + 2 (-1 means not held), and accepted as 0 or 1.
+	// The offsets encode negative position markers as positive bytes; they are not part of the FNV algorithm.
+	// For example, corner 0 with no held cell and accepted == false contributes bytes 5, 1, 0.
 	for (int16 snoidIdx = 0; snoidIdx < context.snoidCount; snoidIdx++) {
 		const ZoombiniPuzzleMaze::SolverPlanSnoidState &snoidState = state.snoids[snoidIdx];
 		hash ^= static_cast<uint64>(snoidState.corner + 5);
-		hash *= 1099511628211ULL;
+		hash *= kSolverHashPrime;
 		hash ^= static_cast<uint64>(snoidState.heldCellIdx + 2);
-		hash *= 1099511628211ULL;
+		hash *= kSolverHashPrime;
 		hash ^= snoidState.accepted ? 1 : 0;
-		hash *= 1099511628211ULL;
+		hash *= kSolverHashPrime;
 	}
 	return hash;
 }
 
-bool ZoombiniPuzzleMaze::debugMazePlanActionPressesOnly(const ZoombiniPuzzleMaze::SolverPlanAction &action,
-														int16 switchGroup) {
+bool ZoombiniPuzzleMaze::debugMazePlanActionPressesOnly(const ZoombiniPuzzleMaze::SolverPlanAction &action, int16 switchGroup) {
 	return action.switchGroups.size() == 1 && action.switchGroups[0] == switchGroup;
 }
 
-bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-												   const ZoombiniPuzzleMaze::SolverPlanState &state,
-												   ZoombiniPuzzleMaze::SolverAcceptedPlanSearch &search,
-												   ZoombiniPuzzleMaze::SolverBudget &budget) {
+bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverPlanState &state, ZoombiniPuzzleMaze::SolverAcceptedPlanSearch &search, ZoombiniPuzzleMaze::SolverBudget &budget) {
 	static constexpr int32 kMaxVisitedStates = 200000;
 	if (kMaxVisitedStates <= search.visitedStateCount)
 		return false;
 
+	// Finish the required deliveries before allowing the reserved key to change the final switch group.
 	bool allRequiredAccepted = true;
 	for (int16 snoidIdx = 0; snoidIdx < context.snoidCount; snoidIdx++) {
 		if (search.requiredSnoids[snoidIdx] && !state.snoids[snoidIdx].accepted) {
@@ -1279,20 +1287,21 @@ bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::Sol
 			if (!context.seatActive[seatIdx] ||
 				context.seatCorner[seatIdx] != state.snoids[search.finalSnoid].corner)
 				continue;
-			ZoombiniPuzzleMaze::SolverPlanState candidateState = state;
-			ZoombiniPuzzleMaze::SolverPlanAction candidateAction;
-			if (!debugMazeApplyPlanLaunch(
-					context, candidateState, search.finalSnoid, seatIdx, candidateAction, budget) ||
-				!debugMazePlanSnoidAccepted(candidateState, search.finalSnoid) ||
-				!debugMazePlanActionPressesOnly(candidateAction, search.finalSwitchGroup))
+			ZoombiniPuzzleMaze::SolverPlanState trialState = state;
+			ZoombiniPuzzleMaze::SolverPlanAction trialAction;
+			if (!debugMazeApplyPlanLaunch(context, trialState, search.finalSnoid, seatIdx, trialAction, budget) ||
+				!debugMazePlanSnoidAccepted(trialState, search.finalSnoid) ||
+				!debugMazePlanActionPressesOnly(trialAction, search.finalSwitchGroup))
 				continue;
-			search.actions.push_back(candidateAction);
-			search.resultState = candidateState;
+			search.actions.push_back(trialAction);
+			search.resultState = trialState;
 			return true;
 		}
 		return false;
 	}
 
+	// Different launch orders can leave the same arrows, positions, and remaining deliveries.
+	// Skip an already visited fingerprint instead of repeating that continuation; full states are not compared for hash collisions.
 	const uint64 stateHash = debugMazePlanStateHash(context, state);
 	if (search.visited.contains(stateHash))
 		return false;
@@ -1303,6 +1312,7 @@ bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::Sol
 		if (!search.requiredSnoids[snoidIdx] || state.snoids[snoidIdx].accepted ||
 			0 <= state.snoids[snoidIdx].heldCellIdx || state.snoids[snoidIdx].corner < 0)
 			continue;
+		// Identical traits at the same corner give equivalent choices in this accepted-only phase.
 		bool duplicateTraits = false;
 		for (int16 earlierIdx = 0; earlierIdx < snoidIdx; earlierIdx++) {
 			if (search.requiredSnoids[earlierIdx] && !state.snoids[earlierIdx].accepted &&
@@ -1315,19 +1325,19 @@ bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::Sol
 		if (duplicateTraits)
 			continue;
 
+		// Each branch owns its simulated state; only the current action list needs explicit backtracking.
 		for (int16 seatIdx = 0; seatIdx < ZoombiniPuzzleMaze::kDebugMazeSeatCount; seatIdx++) {
 			if (!context.seatActive[seatIdx] ||
 				context.seatCorner[seatIdx] != state.snoids[snoidIdx].corner)
 				continue;
-			ZoombiniPuzzleMaze::SolverPlanState candidateState = state;
-			ZoombiniPuzzleMaze::SolverPlanAction candidateAction;
-			if (!debugMazeApplyPlanLaunch(
-					context, candidateState, snoidIdx, seatIdx, candidateAction, budget) ||
-				!candidateAction.switchGroups.empty() ||
-				!debugMazePlanSnoidAccepted(candidateState, snoidIdx))
+			ZoombiniPuzzleMaze::SolverPlanState trialState = state;
+			ZoombiniPuzzleMaze::SolverPlanAction trialAction;
+			if (!debugMazeApplyPlanLaunch(context, trialState, snoidIdx, seatIdx, trialAction, budget) ||
+				!trialAction.switchGroups.empty() ||
+				!debugMazePlanSnoidAccepted(trialState, snoidIdx))
 				continue;
-			search.actions.push_back(candidateAction);
-			if (debugFindMazeAcceptedPlan(context, candidateState, search, budget))
+			search.actions.push_back(trialAction);
+			if (debugFindMazeAcceptedPlan(context, trialState, search, budget))
 				return true;
 			search.actions.pop_back();
 		}
@@ -1335,9 +1345,8 @@ bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::Sol
 	return false;
 }
 
-bool ZoombiniPuzzleMaze::debugBuildMazeSimplePlan(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-												  ZoombiniPuzzleMaze::SolverLevel123Plan &plan,
-												  ZoombiniPuzzleMaze::SolverBudget &budget) {
+bool ZoombiniPuzzleMaze::debugBuildMazeSimplePlan(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverLevel123Plan &plan, ZoombiniPuzzleMaze::SolverBudget &budget) {
+	// Self-cycling white arrows make launch order matter even when no colored switch is needed.
 	ZoombiniPuzzleMaze::SolverPlanState initialState;
 	debugMazeInitializePlanState(context, initialState);
 	ZoombiniPuzzleMaze::SolverAcceptedPlanSearch search;
@@ -1353,9 +1362,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeSimplePlan(const ZoombiniPuzzleMaze::Solv
 	return true;
 }
 
-bool ZoombiniPuzzleMaze::debugBuildMazeSwitchPlan(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-												  ZoombiniPuzzleMaze::SolverLevel123Plan &plan,
-												  ZoombiniPuzzleMaze::SolverBudget &budget) {
+bool ZoombiniPuzzleMaze::debugBuildMazeSwitchPlan(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverLevel123Plan &plan, ZoombiniPuzzleMaze::SolverBudget &budget) {
+	// This plan shape requires two branch-switch groups: one opens the priority route and one closes it.
 	int16 switchGroups[2] = {0, 0};
 	int16 switchGroupCount = 0;
 	for (int16 cellIdx = 0; cellIdx < context.cellCount; cellIdx++) {
@@ -1391,6 +1399,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeSwitchPlan(const ZoombiniPuzzleMaze::Solv
 
 	ZoombiniPuzzleMaze::SolverPlanState initialState;
 	debugMazeInitializePlanState(context, initialState);
+	// Try each distinct trait test as the priority split, including both matching and nonmatching Zoombinis.
 	for (int16 traitCellIdx = 0; traitCellIdx < context.cellCount; traitCellIdx++) {
 		const MazeCellState &traitCell = context.cells[traitCellIdx];
 		if (traitCell.type != kMazeCellType02_TraitArrow || traitCell.traitCategory < 1 || 4 < traitCell.traitCategory)
@@ -1411,18 +1420,16 @@ bool ZoombiniPuzzleMaze::debugBuildMazeSwitchPlan(const ZoombiniPuzzleMaze::Solv
 			const bool priorityMatched = matchPass == 0;
 			int16 priorityCount = 0;
 			for (int16 snoidIdx = 0; snoidIdx < context.snoidCount; snoidIdx++) {
-				if (debugMazePlanMatchesTrait(
-						context, snoidIdx, traitCell.traitCategory,
-						traitCell.traitValue, priorityMatched))
+				if (debugMazePlanMatchesTrait(context, snoidIdx, traitCell.traitCategory, traitCell.traitValue, priorityMatched))
 					priorityCount += 1;
 			}
 			if (priorityCount < 2 || context.snoidCount <= priorityCount)
 				continue;
 
+			// Reserve an opening key and enough priority members for the protected launch and closing key.
 			for (int16 precursorKey = 0; precursorKey < context.snoidCount; precursorKey++) {
-				const bool precursorInPriorityGroup = debugMazePlanMatchesTrait(
-					context, precursorKey, traitCell.traitCategory,
-					traitCell.traitValue, priorityMatched);
+				const bool precursorInPriorityGroup = debugMazePlanMatchesTrait(context, precursorKey, traitCell.traitCategory,
+																				traitCell.traitValue, priorityMatched);
 				if (precursorInPriorityGroup && priorityCount < 3)
 					continue;
 				for (int16 precursorSeat = 0; precursorSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; precursorSeat++) {
@@ -1430,8 +1437,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeSwitchPlan(const ZoombiniPuzzleMaze::Solv
 						continue;
 					ZoombiniPuzzleMaze::SolverPlanState precursorState = initialState;
 					ZoombiniPuzzleMaze::SolverPlanAction precursorAction;
-					if (!debugMazeApplyPlanLaunch(
-							context, precursorState, precursorKey, precursorSeat, precursorAction, budget) ||
+					if (!debugMazeApplyPlanLaunch(context, precursorState, precursorKey, precursorSeat, precursorAction, budget) ||
 						!debugMazePlanSnoidAccepted(precursorState, precursorKey) ||
 						precursorAction.switchGroups.size() != 1)
 						continue;
@@ -1446,42 +1452,33 @@ bool ZoombiniPuzzleMaze::debugBuildMazeSwitchPlan(const ZoombiniPuzzleMaze::Solv
 
 					for (int16 finalKey = 0; finalKey < context.snoidCount; finalKey++) {
 						if (finalKey == precursorKey ||
-							!debugMazePlanMatchesTrait(
-								context, finalKey, traitCell.traitCategory,
-								traitCell.traitValue, priorityMatched))
+							!debugMazePlanMatchesTrait(context, finalKey, traitCell.traitCategory, traitCell.traitValue, priorityMatched))
 							continue;
 						for (int16 victim = 0; victim < context.snoidCount; victim++) {
 							if (victim == precursorKey || victim == finalKey ||
-								!debugMazePlanMatchesTrait(
-									context, victim, traitCell.traitCategory,
-									traitCell.traitValue, priorityMatched))
+								!debugMazePlanMatchesTrait(context, victim, traitCell.traitCategory, traitCell.traitValue, priorityMatched))
 								continue;
 							for (int16 victimSeat = 0; victimSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; victimSeat++) {
-								if (!context.seatActive[victimSeat] ||
-									context.seatCorner[victimSeat] != precursorState.snoids[victim].corner)
+								if (!context.seatActive[victimSeat] || context.seatCorner[victimSeat] != precursorState.snoids[victim].corner)
 									continue;
+								// Compare the same route before and after the opening key to justify the protected launch's order.
 								ZoombiniPuzzleMaze::SolverPlanState unprotectedState = initialState;
 								ZoombiniPuzzleMaze::SolverPlanAction unprotectedAction;
-								if (!debugMazeApplyPlanLaunch(
-										context, unprotectedState, victim, victimSeat,
-										unprotectedAction, budget) ||
-									unprotectedAction.rootOutcome != -1)
+								if (!debugMazeApplyPlanLaunch(context, unprotectedState, victim, victimSeat, unprotectedAction, budget) || unprotectedAction.rootOutcome != -1)
 									continue;
 								ZoombiniPuzzleMaze::SolverPlanState victimState = precursorState;
 								ZoombiniPuzzleMaze::SolverPlanAction victimAction;
-								if (!debugMazeApplyPlanLaunch(
-										context, victimState, victim, victimSeat, victimAction, budget) ||
+								if (!debugMazeApplyPlanLaunch(context, victimState, victim, victimSeat, victimAction, budget) ||
 									!debugMazePlanSnoidAccepted(victimState, victim) ||
 									!victimAction.switchGroups.empty())
 									continue;
 
+								// Deliver the priority group first and require its last key to press the closing switch.
 								ZoombiniPuzzleMaze::SolverAcceptedPlanSearch prioritySearch;
 								for (int16 snoidIdx = 0; snoidIdx < context.snoidCount; snoidIdx++) {
 									prioritySearch.requiredSnoids[snoidIdx] = snoidIdx != precursorKey &&
 																			  snoidIdx != victim && snoidIdx != finalKey &&
-																			  debugMazePlanMatchesTrait(
-																				  context, snoidIdx, traitCell.traitCategory,
-																				  traitCell.traitValue, priorityMatched);
+																			  debugMazePlanMatchesTrait(context, snoidIdx, traitCell.traitCategory, traitCell.traitValue, priorityMatched);
 								}
 								prioritySearch.finalSnoid = finalKey;
 								prioritySearch.finalSwitchGroup = finalGroup;
@@ -1491,11 +1488,10 @@ bool ZoombiniPuzzleMaze::debugBuildMazeSwitchPlan(const ZoombiniPuzzleMaze::Solv
 									continue;
 								const int16 finalActionIdx = static_cast<int16>(prioritySearch.actions.size()) - 1;
 
+								// The remaining trait group must complete from that closing state without further switch changes.
 								ZoombiniPuzzleMaze::SolverAcceptedPlanSearch remainderSearch;
 								for (int16 snoidIdx = 0; snoidIdx < context.snoidCount; snoidIdx++) {
-									remainderSearch.requiredSnoids[snoidIdx] = !debugMazePlanMatchesTrait(
-										context, snoidIdx, traitCell.traitCategory,
-										traitCell.traitValue, priorityMatched);
+									remainderSearch.requiredSnoids[snoidIdx] = !debugMazePlanMatchesTrait(context, snoidIdx, traitCell.traitCategory, traitCell.traitValue, priorityMatched);
 								}
 								remainderSearch.actions = prioritySearch.actions;
 								if (!debugFindMazeAcceptedPlan(context, prioritySearch.resultState, remainderSearch, budget) ||
@@ -1529,9 +1525,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeSwitchPlan(const ZoombiniPuzzleMaze::Solv
 	return false;
 }
 
-bool ZoombiniPuzzleMaze::debugBuildMazeLevel123Plan(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-													ZoombiniPuzzleMaze::SolverLevel123Plan &plan,
-													ZoombiniPuzzleMaze::SolverBudget &budget) {
+bool ZoombiniPuzzleMaze::debugBuildMazePlan(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverLevel123Plan &plan, ZoombiniPuzzleMaze::SolverBudget &budget) {
+	// Choose the plan shape from the devices, since difficulty alone does not describe the active variant.
 	bool hasBranchSwitch = false;
 	for (int16 cellIdx = 0; cellIdx < context.cellCount && !hasBranchSwitch; cellIdx++) {
 		if (context.cells[cellIdx].type != kMazeCellType06_ColoredSwitch)
@@ -1553,16 +1548,12 @@ bool ZoombiniPuzzleMaze::debugBuildMazeLevel123Plan(const ZoombiniPuzzleMaze::So
 // Generic answer-plan search
 // =================================================================
 //
-// The staged level-4 search above matches one authored relay shape. A layout
-// whose colored groups are wired differently needs a search that reads the
-// layout instead of assuming its shape.
+// The staged Level4 search assumes a particular relay structure.
+// The generic search derives routes from the active layout when that structure does not yield a plan.
 //
-// The search branches only on control launches: launches that press a switch,
-// stop on a sticky cell, push or release another Zoombini, or move the
-// launched Zoombini to another corner. A launch that simply walks to the goal
-// changes nothing else, so it can be made at any later moment; the search only
-// records that the Zoombini became deliverable and schedules those launches
-// while assembling the printed plan.
+// The search branches on control launches and records opportunities for direct deliveries separately.
+// @ref ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys inserts those deliveries at the recorded points,
+// then replays the complete sequence to verify that every Zoombini reaches the goal.
 
 int16 ZoombiniPuzzleMaze::debugMazeStickySlot(const ZoombiniPuzzleMaze::SolverTables &tables, int16 cellIdx) {
 	for (int16 slot = 0; slot < tables.stickyCount; slot++) {
@@ -1572,8 +1563,7 @@ int16 ZoombiniPuzzleMaze::debugMazeStickySlot(const ZoombiniPuzzleMaze::SolverTa
 	return -1;
 }
 
-void ZoombiniPuzzleMaze::debugMazeApplyControlState(const ZoombiniPuzzleMaze::SolverTables &tables,
-													int16 stateIdx, ZoombiniPuzzleMaze::SolverDirectionGrid &grid) {
+void ZoombiniPuzzleMaze::debugMazeApplyControlState(const ZoombiniPuzzleMaze::SolverTables &tables, int16 stateIdx, ZoombiniPuzzleMaze::SolverDirectionGrid &grid) {
 	memcpy(grid.directions, tables.baseDirections, sizeof(grid.directions));
 	if (stateIdx < 0 || tables.controlStateCount <= stateIdx)
 		return;
@@ -1582,8 +1572,7 @@ void ZoombiniPuzzleMaze::debugMazeApplyControlState(const ZoombiniPuzzleMaze::So
 			tables.controlStates[stateIdx][cellIdx];
 }
 
-int16 ZoombiniPuzzleMaze::debugMazeControlStateIndex(const ZoombiniPuzzleMaze::SolverTables &tables,
-													 const ZoombiniPuzzleMaze::SolverDirectionGrid &grid) {
+int16 ZoombiniPuzzleMaze::debugMazeControlStateIndex(const ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverDirectionGrid &grid) {
 	for (int16 stateIdx = 0; stateIdx < tables.controlStateCount; stateIdx++) {
 		bool same = true;
 		for (int16 cellIdx = 0; cellIdx < tables.controlCellCount; cellIdx++) {
@@ -1599,11 +1588,8 @@ int16 ZoombiniPuzzleMaze::debugMazeControlStateIndex(const ZoombiniPuzzleMaze::S
 	return -1;
 }
 
-void ZoombiniPuzzleMaze::debugMazeTraceRoute(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-											 const ZoombiniPuzzleMaze::SolverTables &tables,
-											 const ZoombiniPuzzleMaze::SolverMovingSnoid &start,
-											 ZoombiniPuzzleMaze::SolverDirectionGrid &grid,
-											 ZoombiniPuzzleMaze::SolverRouteResult &route) {
+void ZoombiniPuzzleMaze::debugMazeTraceRoute(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverMovingSnoid &start, ZoombiniPuzzleMaze::SolverDirectionGrid &grid, ZoombiniPuzzleMaze::SolverRouteResult &route) {
+	// Trace one Zoombini without sticky occupants; the full launch simulator handles pushes and releases.
 	int16 row = start.row;
 	int16 col = start.col;
 	int16 direction = start.direction;
@@ -1615,9 +1601,8 @@ void ZoombiniPuzzleMaze::debugMazeTraceRoute(const ZoombiniPuzzleMaze::SolverPla
 			route.terminal = ZoombiniPuzzleMaze::kDebugMazeRouteRejected;
 			return;
 		}
-		const ZmbGridStep gridStep = ZmbGridTraversal::computeStep(
-			ZmbGridCell(row, col), gridDirection,
-			ZmbGridBounds(0, ZoombiniPuzzleMaze::kDebugMazeRows - 1, 0, ZoombiniPuzzleMaze::kDebugMazeCols - 1));
+		const ZmbGridStep gridStep = ZmbGridTraversal::computeStep(ZmbGridCell(row, col), gridDirection,
+																   ZmbGridBounds(0, ZoombiniPuzzleMaze::kDebugMazeRows - 1, 0, ZoombiniPuzzleMaze::kDebugMazeCols - 1));
 		if (!gridStep.inBounds) {
 			route.terminal = ZoombiniPuzzleMaze::kDebugMazeRouteRejected;
 			return;
@@ -1632,9 +1617,7 @@ void ZoombiniPuzzleMaze::debugMazeTraceRoute(const ZoombiniPuzzleMaze::SolverPla
 			route.terminal = ZoombiniPuzzleMaze::kDebugMazeRouteRejected;
 			return;
 		case kMazeCellType02_TraitArrow:
-			if (debugMazeTraitValue(context.snoids[start.snoidIdx]->_trait,
-									context.traitCategories[row][col]) ==
-				context.traitValues[row][col])
+			if (debugMazeTraitValue(context.snoids[start.snoidIdx]->_trait, context.traitCategories[row][col]) == context.traitValues[row][col])
 				direction = grid.directions[row][col];
 			break;
 		case kMazeCellType03_FixedArrow:
@@ -1685,8 +1668,8 @@ void ZoombiniPuzzleMaze::debugMazeTraceRoute(const ZoombiniPuzzleMaze::SolverPla
 	route.terminal = ZoombiniPuzzleMaze::kDebugMazeRouteRejected;
 }
 
-bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-													ZoombiniPuzzleMaze::SolverTables &tables) {
+bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverTables &tables) {
+	// Cache active launchers and immutable directions shared by every route trace.
 	tables.controlCellCount = 0;
 	tables.stickyCount = 0;
 	tables.controlStateCount = 0;
@@ -1710,7 +1693,7 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 	if (tables.seatCount == 0)
 		return false;
 
-	// Sticky cells, plus every arrow a switch or a pass-through cycle can turn.
+	// Only mutable arrows need control-state slots; sticky slots record where launches can pause.
 	for (int16 cellIdx = 0; cellIdx < context.cellCount; cellIdx++) {
 		const MazeCellState &cell = context.cells[cellIdx];
 		if (cell.type == kMazeCellType05_ColoredSticky) {
@@ -1745,8 +1728,7 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 		tables.controlCellCount += 1;
 	}
 
-	// Every way the arrow set can change: one switch group at a time, and one
-	// pass over a self-cycling arrow at a time.
+	// A switch turns its linked arrows together, while a pass cycles only the arrow being traversed.
 	int16 transitionCells[ZoombiniPuzzleMaze::kDebugMazeMaxControlCells + kMaxWaveGroups][ZoombiniPuzzleMaze::kDebugMazeMaxControlCells];
 	int16 transitionSizes[ZoombiniPuzzleMaze::kDebugMazeMaxControlCells + kMaxWaveGroups];
 	int16 transitionCount = 0;
@@ -1782,6 +1764,7 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 		transitionCount += 1;
 	}
 
+	// Close the initial direction set under those transitions so every traced route can name its resulting state.
 	tables.controlStateCount = 1;
 	for (int16 slot = 0; slot < tables.controlCellCount; slot++)
 		tables.controlStates[0][slot] = tables.baseDirections[tables.controlRows[slot]][tables.controlCols[slot]];
@@ -1815,7 +1798,7 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 		}
 	}
 
-	// Zoombinis that answer every trait cell the same way behave identically.
+	// Share route tables for Zoombinis with the same trait-test results; unrelated trait differences do not affect routing.
 	for (int16 snoidIdx = 0; snoidIdx < context.snoidCount; snoidIdx++) {
 		int16 matchedClass = -1;
 		for (int16 otherIdx = 0; otherIdx < snoidIdx && matchedClass < 0; otherIdx++) {
@@ -1840,6 +1823,7 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 		tables.classOf[snoidIdx] = matchedClass;
 	}
 
+	// Precompute launcher routes once per trait class and control state to screen candidates cheaply during search.
 	for (int16 classIdx = 0; classIdx < tables.classCount; classIdx++) {
 		const int16 repIdx = tables.classRepresentative[classIdx];
 		for (int16 seatSlot = 0; seatSlot < tables.seatCount; seatSlot++) {
@@ -1852,8 +1836,7 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 				routeStart.row = context.seatRow[seatIdx];
 				routeStart.col = context.seatCol[seatIdx];
 				routeStart.direction = context.seatDirection[seatIdx];
-				// Row-entry launch scripts finish on the launcher cell, so start
-				// one cell behind and let the tracer dispatch that cell first.
+				// Start behind row-entry launchers so the tracer processes their own cell first.
 				if (routeStart.direction == kMazeDirection01_South)
 					routeStart.row -= 1;
 				else if (routeStart.direction == kMazeDirection03_North)
@@ -1866,6 +1849,7 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 				route.nextControlState = nextState;
 			}
 		}
+		// A switch preserves a captive's heading; a push supplies a new one, so cache every resume direction.
 		for (int16 slot = 0; slot < tables.stickyCount; slot++) {
 			for (int16 direction = 0; direction < 4; direction++) {
 				for (int16 stateIdx = 0; stateIdx < tables.controlStateCount; stateIdx++) {
@@ -1889,10 +1873,8 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 	return true;
 }
 
-void ZoombiniPuzzleMaze::debugMazeSolverNodeToPlanState(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-														const ZoombiniPuzzleMaze::SolverTables &tables,
-														const ZoombiniPuzzleMaze::SolverSearchNode &node,
-														ZoombiniPuzzleMaze::SolverPlanState &state) {
+void ZoombiniPuzzleMaze::debugMazeSolverNodeToPlanState(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverSearchNode &node, ZoombiniPuzzleMaze::SolverPlanState &state) {
+	// Reconstruct a private simulation state without copying any live runners or animation state.
 	ZoombiniPuzzleMaze::SolverDirectionGrid grid;
 	debugMazeApplyControlState(tables, node.controlState, grid);
 	memcpy(state.directions, grid.directions, sizeof(state.directions));
@@ -1919,6 +1901,7 @@ void ZoombiniPuzzleMaze::debugMazeSolverNodeToPlanState(const ZoombiniPuzzleMaze
 			snoidState.corner = spot;
 		}
 	}
+	// Held Zoombinis also need their cell and heading restored for subsequent pushes or releases.
 	for (int16 slot = 0; slot < tables.stickyCount; slot++) {
 		const int8 holder = node.stickyHolder[slot];
 		if (holder < 0)
@@ -1933,9 +1916,8 @@ void ZoombiniPuzzleMaze::debugMazeSolverNodeToPlanState(const ZoombiniPuzzleMaze
 	}
 }
 
-bool ZoombiniPuzzleMaze::debugMazeSolverNodeFromPlanState(const ZoombiniPuzzleMaze::SolverTables &tables,
-														  const ZoombiniPuzzleMaze::SolverPlanState &state,
-														  ZoombiniPuzzleMaze::SolverSearchNode &node) {
+bool ZoombiniPuzzleMaze::debugMazeSolverNodeFromPlanState(const ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverPlanState &state, ZoombiniPuzzleMaze::SolverSearchNode &node) {
+	// Keep only routing state in the node; the caller retains its search parent, depth, and delivery coverage.
 	ZoombiniPuzzleMaze::SolverDirectionGrid grid;
 	memcpy(grid.directions, state.directions, sizeof(grid.directions));
 	const int16 stateIdx = debugMazeControlStateIndex(tables, grid);
@@ -1967,8 +1949,7 @@ bool ZoombiniPuzzleMaze::debugMazeSolverNodeFromPlanState(const ZoombiniPuzzleMa
 	return true;
 }
 
-int16 ZoombiniPuzzleMaze::debugMazeSolverPlainSeat(const ZoombiniPuzzleMaze::SolverTables &tables,
-												   int16 classIdx, int16 corner, int16 controlState) {
+int16 ZoombiniPuzzleMaze::debugMazeSolverPlainSeat(const ZoombiniPuzzleMaze::SolverTables &tables, int16 classIdx, int16 corner, int16 controlState) {
 	for (int16 seatSlot = 0; seatSlot < tables.seatCount; seatSlot++) {
 		const int16 seatIdx = tables.seats[seatSlot];
 		if (tables.seatCorner[seatIdx] != corner)
@@ -1980,8 +1961,8 @@ int16 ZoombiniPuzzleMaze::debugMazeSolverPlainSeat(const ZoombiniPuzzleMaze::Sol
 	return -1;
 }
 
-void ZoombiniPuzzleMaze::debugMazeSolverUpdateCover(const ZoombiniPuzzleMaze::SolverTables &tables,
-													ZoombiniPuzzleMaze::SolverSearchNode &node) {
+void ZoombiniPuzzleMaze::debugMazeSolverUpdateCover(const ZoombiniPuzzleMaze::SolverTables &tables, ZoombiniPuzzleMaze::SolverSearchNode &node) {
+	// Remember a direct delivery opportunity without expanding a separate search branch for it.
 	for (int16 snoidIdx = 0; snoidIdx < tables.snoidCount; snoidIdx++) {
 		if (node.covered & (1u << snoidIdx))
 			continue;
@@ -1993,8 +1974,7 @@ void ZoombiniPuzzleMaze::debugMazeSolverUpdateCover(const ZoombiniPuzzleMaze::So
 	}
 }
 
-int16 ZoombiniPuzzleMaze::debugMazeSolverUncovered(const ZoombiniPuzzleMaze::SolverTables &tables,
-												   const ZoombiniPuzzleMaze::SolverSearchNode &node) {
+int16 ZoombiniPuzzleMaze::debugMazeSolverUncovered(const ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverSearchNode &node) {
 	int16 count = 0;
 	for (int16 snoidIdx = 0; snoidIdx < tables.snoidCount; snoidIdx++) {
 		if (node.spot[snoidIdx] == ZoombiniPuzzleMaze::kDebugMazeSpotAccepted)
@@ -2006,10 +1986,10 @@ int16 ZoombiniPuzzleMaze::debugMazeSolverUncovered(const ZoombiniPuzzleMaze::Sol
 	return count;
 }
 
-uint64 ZoombiniPuzzleMaze::debugMazeSolverNodeKey(const ZoombiniPuzzleMaze::SolverTables &tables,
-												  const ZoombiniPuzzleMaze::SolverSearchNode &node) {
-	// Zoombinis of one class are interchangeable, so the key counts them by
-	// class, place and cover state instead of by pack slot.
+uint64 ZoombiniPuzzleMaze::debugMazeSolverNodeKey(const ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverSearchNode &node) {
+	// Count equivalent Zoombinis by class, position, and coverage to merge permutations of the same search state.
+	// Each corner has an uncovered/covered bucket pair; covered means an earlier direct delivery opportunity was recorded.
+	// Buckets: 0/1 lower-left, 2/3 upper-left, 4/5 lower-right, 6 accepted, 7 unused.
 	int16 counts[ZoombiniPuzzleMaze::kDebugMazeMaxSnoids][8];
 	memset(counts, 0, sizeof(counts));
 	for (int16 snoidIdx = 0; snoidIdx < tables.snoidCount; snoidIdx++) {
@@ -2027,22 +2007,31 @@ uint64 ZoombiniPuzzleMaze::debugMazeSolverNodeKey(const ZoombiniPuzzleMaze::Solv
 		}
 		counts[tables.classOf[snoidIdx]][bucket] += 1;
 	}
-	uint64 hash = 1469598103934665603ULL;
+
+	// Apply 64-bit FNV-1a to this canonical byte sequence: control state, class/bucket counts, then sticky-slot state.
+	// Each XOR is followed by multiplication modulo 2^64, using the same basis and prime as the accepted-only search.
+	// Valid encoded values fit in one byte; the resulting uint64 is a fingerprint, not a bit-packed node.
+	// Hash logical bytes rather than struct memory, so padding and native byte order do not affect the fingerprint.
+	uint64 hash = kSolverHashOffsetBasis;
+	// State 0 becomes byte 1; count 0 likewise becomes byte 1 in the class-major, bucket-minor sequence.
 	hash ^= static_cast<uint64>(node.controlState + 1);
-	hash *= 1099511628211ULL;
+	hash *= kSolverHashPrime;
 	for (int16 classIdx = 0; classIdx < tables.classCount; classIdx++) {
 		for (int16 bucket = 0; bucket < 8; bucket++) {
 			hash ^= static_cast<uint64>(counts[classIdx][bucket] + 1);
-			hash *= 1099511628211ULL;
+			hash *= kSolverHashPrime;
 		}
 	}
+
+	// Sticky position and heading remain significant even when the occupant's pack identity is interchangeable.
+	// Preserve slot order: empty occupant class -1 becomes byte 1, class 0 becomes byte 2, and heading 0 becomes byte 1.
 	for (int16 slot = 0; slot < tables.stickyCount; slot++) {
 		const int8 holder = node.stickyHolder[slot];
 		const int16 holderClass = (0 <= holder) ? tables.classOf[holder] : -1;
 		hash ^= static_cast<uint64>(holderClass + 2);
-		hash *= 1099511628211ULL;
+		hash *= kSolverHashPrime;
 		hash ^= static_cast<uint64>(node.stickyDirection[slot] + 1);
-		hash *= 1099511628211ULL;
+		hash *= kSolverHashPrime;
 	}
 	return hash;
 }
@@ -2056,16 +2045,15 @@ bool ZoombiniPuzzleMaze::debugMazeSolverAddState(ZoombiniPuzzleMaze::SolverReach
 	return true;
 }
 
-void ZoombiniPuzzleMaze::debugMazeSolverExpandReach(const ZoombiniPuzzleMaze::SolverTables &tables,
-													ZoombiniPuzzleMaze::SolverReachSet &reach) {
-	// Relaxed closure: assume every Zoombini that can stand somewhere may be
-	// launched from there any number of times. The result is a superset of the
-	// control states and corners the puzzle can still reach.
+void ZoombiniPuzzleMaze::debugMazeSolverExpandReach(const ZoombiniPuzzleMaze::SolverTables &tables, ZoombiniPuzzleMaze::SolverReachSet &reach) {
+	// Allow each available trait class to be launched repeatedly, ignoring the number of actual Zoombinis.
+	// This overestimate can prune an unreachable goal but cannot establish a complete plan.
 	bool changed = true;
 	while (changed) {
 		changed = false;
 		for (int16 stateSlot = 0; stateSlot < reach.stateCount; stateSlot++) {
 			const int16 stateIdx = reach.stateList[stateSlot];
+			// Propagate corner launches, possible sticky occupants, and headings enabled by pushes or switches.
 			for (int16 classIdx = 0; classIdx < tables.classCount; classIdx++) {
 				for (int16 corner = 0; corner < 3; corner++) {
 					if (!reach.available[classIdx][corner])
@@ -2114,6 +2102,7 @@ void ZoombiniPuzzleMaze::debugMazeSolverExpandReach(const ZoombiniPuzzleMaze::So
 					}
 				}
 			}
+			// Released occupants can expose more corners or sticky cells, which feed the next closure pass.
 			for (int16 slot = 0; slot < tables.stickyCount; slot++) {
 				for (int16 occClass = 0; occClass < tables.classCount; occClass++) {
 					bool present = false;
@@ -2128,8 +2117,7 @@ void ZoombiniPuzzleMaze::debugMazeSolverExpandReach(const ZoombiniPuzzleMaze::So
 						if (route.terminal == ZoombiniPuzzleMaze::kDebugMazeRouteRejected)
 							continue;
 						changed |= debugMazeSolverAddState(reach, route.nextControlState);
-						if (0 <= route.terminal && route.terminal <= 2 &&
-							!reach.available[occClass][route.terminal]) {
+						if (0 <= route.terminal && route.terminal <= 2 && !reach.available[occClass][route.terminal]) {
 							reach.available[occClass][route.terminal] = true;
 							changed = true;
 						}
@@ -2151,8 +2139,8 @@ void ZoombiniPuzzleMaze::debugMazeSolverExpandReach(const ZoombiniPuzzleMaze::So
 	}
 }
 
-bool ZoombiniPuzzleMaze::debugMazeSolverGoalReachable(const ZoombiniPuzzleMaze::SolverTables &tables,
-													  const ZoombiniPuzzleMaze::SolverSearchNode &node) {
+bool ZoombiniPuzzleMaze::debugMazeSolverGoalReachable(const ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverSearchNode &node) {
+	// Seed the optimistic model with the actual corners and captives of this node.
 	ZoombiniPuzzleMaze::SolverReachSet reach;
 	memset(&reach, 0, sizeof(reach));
 	debugMazeSolverAddState(reach, node.controlState);
@@ -2168,12 +2156,14 @@ bool ZoombiniPuzzleMaze::debugMazeSolverGoalReachable(const ZoombiniPuzzleMaze::
 	}
 	debugMazeSolverExpandReach(tables, reach);
 
+	// Reject a branch only if a remaining Zoombini fails even this relaxed reachability test.
 	for (int16 snoidIdx = 0; snoidIdx < tables.snoidCount; snoidIdx++) {
 		if (node.spot[snoidIdx] == ZoombiniPuzzleMaze::kDebugMazeSpotAccepted || (node.covered & (1u << snoidIdx)))
 			continue;
 		const int16 classIdx = tables.classOf[snoidIdx];
 		bool reachable = false;
 		if (node.spot[snoidIdx] == ZoombiniPuzzleMaze::kDebugMazeSpotHeld) {
+			// Follow possible releases and pushes through sticky chains before considering corner relaunches.
 			int16 startSlot = -1;
 			for (int16 slot = 0; slot < tables.stickyCount && startSlot < 0; slot++) {
 				if (node.stickyHolder[slot] == snoidIdx)
@@ -2231,6 +2221,7 @@ bool ZoombiniPuzzleMaze::debugMazeSolverGoalReachable(const ZoombiniPuzzleMaze::
 				}
 			}
 		} else {
+			// Corner transfers may expose another launcher; a releasable sticky route also keeps this branch alive.
 			bool seenCorner[3] = {false, false, false};
 			int16 frontier[3];
 			int16 frontierCount = 0;
@@ -2277,17 +2268,13 @@ bool ZoombiniPuzzleMaze::debugMazeSolverGoalReachable(const ZoombiniPuzzleMaze::
 	return true;
 }
 
-bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-													  const ZoombiniPuzzleMaze::SolverTables &tables,
-													  const Common::Array<ZoombiniPuzzleMaze::SolverKeyLaunch> &keyLaunches,
-													  ZoombiniPuzzleMaze::SolverGenericPlan &plan) {
-	// Replay the control launches once to learn where each remaining Zoombini
-	// first gains a side-effect-free route, then emit those launches in place.
+bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverTables &tables, const Common::Array<ZoombiniPuzzleMaze::SolverKeyLaunch> &keyLaunches, ZoombiniPuzzleMaze::SolverGenericPlan &plan) {
+	// First locate direct delivery opportunities along the selected control-launch sequence.
 	const int16 keyCount = static_cast<int16>(keyLaunches.size());
-	int16 coverPosition[ZoombiniPuzzleMaze::kDebugMazeMaxSnoids];
+	int16 coverStep[ZoombiniPuzzleMaze::kDebugMazeMaxSnoids];
 	int16 coverSeat[ZoombiniPuzzleMaze::kDebugMazeMaxSnoids];
 	for (int16 snoidIdx = 0; snoidIdx < ZoombiniPuzzleMaze::kDebugMazeMaxSnoids; snoidIdx++) {
-		coverPosition[snoidIdx] = -1;
+		coverStep[snoidIdx] = -1;
 		coverSeat[snoidIdx] = -1;
 	}
 
@@ -2301,12 +2288,12 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 		return false;
 	for (int16 position = 0; position <= keyCount; position++) {
 		for (int16 snoidIdx = 0; snoidIdx < tables.snoidCount; snoidIdx++) {
-			if (0 <= coverPosition[snoidIdx] || node.spot[snoidIdx] < 0 || 2 < node.spot[snoidIdx])
+			if (0 <= coverStep[snoidIdx] || node.spot[snoidIdx] < 0 || 2 < node.spot[snoidIdx])
 				continue;
 			const int16 seatIdx = debugMazeSolverPlainSeat(tables, tables.classOf[snoidIdx], node.spot[snoidIdx], node.controlState);
 			if (seatIdx < 0)
 				continue;
-			coverPosition[snoidIdx] = position;
+			coverStep[snoidIdx] = position;
 			coverSeat[snoidIdx] = seatIdx;
 		}
 		if (keyCount <= position)
@@ -2318,16 +2305,16 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 		ZoombiniPuzzleMaze::SolverSearchNode nextNode = node;
 		if (!debugMazeSolverNodeFromPlanState(tables, state, nextNode))
 			return false;
-		// A Zoombini that moved, or that a control launch just consumed, must
-		// find its plain route again after this launch.
+		// Moving or using a key invalidates its earlier delivery opportunity.
 		for (int16 snoidIdx = 0; snoidIdx < tables.snoidCount; snoidIdx++) {
 			if (nextNode.spot[snoidIdx] != node.spot[snoidIdx] || snoidIdx == keyLaunch.snoidIdx)
-				coverPosition[snoidIdx] = -1;
+				coverStep[snoidIdx] = -1;
 		}
 		node = nextNode;
 	}
 
-	// Assemble and verify the launch order on a fresh state.
+	// Replay from the start with deliveries inserted at their recorded points.
+	// This verifies interactions omitted by the compact search and supplies effects for the printed steps.
 	plan.steps.clear();
 	plan.postSpots.clear();
 	plan.controlStepCount = keyCount;
@@ -2336,15 +2323,14 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 	ZoombiniPuzzleMaze::SolverBudget replayBudget;
 	for (int16 position = 0; position <= keyCount; position++) {
 		for (int16 snoidIdx = 0; snoidIdx < tables.snoidCount; snoidIdx++) {
-			if (coverPosition[snoidIdx] != position || replay.snoids[snoidIdx].accepted)
+			if (coverStep[snoidIdx] != position || replay.snoids[snoidIdx].accepted)
 				continue;
 			ZoombiniPuzzleMaze::SolverGenericStep step;
 			step.snoidIdx = snoidIdx;
 			step.launcherSeatIdx = coverSeat[snoidIdx];
 			step.controlStep = false;
 			ZoombiniPuzzleMaze::SolverPlanAction action;
-			if (!debugMazeApplyPlanLaunch(context, replay, snoidIdx, coverSeat[snoidIdx], action,
-										  replayBudget))
+			if (!debugMazeApplyPlanLaunch(context, replay, snoidIdx, coverSeat[snoidIdx], action, replayBudget))
 				return false;
 			if (!replay.snoids[snoidIdx].accepted || !action.switchGroups.empty() ||
 				!action.pushedSnoids.empty() || !action.releasedSnoids.empty())
@@ -2353,6 +2339,7 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 			plan.steps.push_back(step);
 			plan.postSpots.push_back(ZoombiniPuzzleMaze::kDebugMazeSpotAccepted);
 		}
+		// Preserve the chosen control order after emitting the deliveries available at this point.
 		if (keyCount <= position)
 			break;
 		const ZoombiniPuzzleMaze::SolverKeyLaunch &keyLaunch = keyLaunches[position];
@@ -2361,8 +2348,7 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 		step.launcherSeatIdx = keyLaunch.launcherSeatIdx;
 		step.controlStep = true;
 		ZoombiniPuzzleMaze::SolverPlanAction action;
-		if (!debugMazeApplyPlanLaunch(context, replay, step.snoidIdx, step.launcherSeatIdx, action,
-									  replayBudget))
+		if (!debugMazeApplyPlanLaunch(context, replay, step.snoidIdx, step.launcherSeatIdx, action, replayBudget))
 			return false;
 		step.outcome = action.rootOutcome;
 		step.switchGroups = action.switchGroups;
@@ -2384,13 +2370,11 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 	return true;
 }
 
-bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-												   ZoombiniPuzzleMaze::SolverGenericPlan &plan,
-												   const ZoombiniPuzzleMaze::SolverGenericSearchLimits &limits,
-												   ZoombiniPuzzleMaze::SolverGenericSearchResult &result) {
+bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverGenericPlan &plan, const ZoombiniPuzzleMaze::SolverGenericSearchLimits &limits, ZoombiniPuzzleMaze::SolverGenericSearchResult &result) {
 	result.searchExhausted = false;
 	result.limitReached = false;
 	result.stepsUsed = 0;
+	// Route tables are large; keep them on the heap and share them across all search nodes.
 	ZoombiniPuzzleMaze::SolverTables *tables = new ZoombiniPuzzleMaze::SolverTables();
 	if (!tables)
 		return false;
@@ -2399,6 +2383,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 		return false;
 	}
 
+	// Bucket nodes by undeliverable Zoombinis so promising states are explored first.
 	Common::Array<ZoombiniPuzzleMaze::SolverSearchNode> nodes;
 	Common::HashMap<uint64, bool> visited;
 	Common::Array<uint32> buckets[ZoombiniPuzzleMaze::kDebugMazeMaxSnoids + 1];
@@ -2406,6 +2391,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 	for (int16 bucketIdx = 0; bucketIdx <= ZoombiniPuzzleMaze::kDebugMazeMaxSnoids; bucketIdx++)
 		bucketHead[bucketIdx] = 0;
 
+	// Start from the authored layout and original pack positions, independently of the player's current progress.
 	ZoombiniPuzzleMaze::SolverPlanState rootState;
 	debugMazeInitializePlanState(context, rootState);
 	ZoombiniPuzzleMaze::SolverSearchNode root;
@@ -2445,6 +2431,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 		if (ZoombiniPuzzleMaze::kDebugMazeMaxControlSteps <= current.depth)
 			continue;
 
+		// Try one representative of each equivalent class/corner/launcher choice.
 		bool tried[ZoombiniPuzzleMaze::kDebugMazeMaxSnoids][3][ZoombiniPuzzleMaze::kDebugMazeSeatCount];
 		memset(tried, 0, sizeof(tried));
 		for (int16 snoidIdx = 0; snoidIdx < tables->snoidCount && !result.limitReached; snoidIdx++) {
@@ -2461,7 +2448,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 				if (route.terminal == ZoombiniPuzzleMaze::kDebugMazeRouteRejected)
 					continue;
 				if (route.terminal == ZoombiniPuzzleMaze::kDebugMazeRouteGoal && route.pressedGroups == 0)
-					continue; // A plain delivery is scheduled later instead.
+					continue; // Direct deliveries are inserted when the selected control sequence is replayed.
 
 				steps += 1;
 				result.stepsUsed = steps;
@@ -2469,6 +2456,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 					result.limitReached = true;
 					break;
 				}
+				// Full simulation resolves sticky interactions that the single-route tables do not model.
 				ZoombiniPuzzleMaze::SolverPlanState childState;
 				debugMazeSolverNodeToPlanState(context, *tables, current, childState);
 				ZoombiniPuzzleMaze::SolverPlanAction action;
@@ -2482,11 +2470,14 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 				child.keySnoid = static_cast<int8>(snoidIdx);
 				child.keySeat = static_cast<int8>(seatIdx);
 				child.depth = static_cast<int8>(current.depth + 1);
+				// A moved or consumed key needs a new delivery opportunity; stationary Zoombinis keep earlier ones.
 				for (int16 otherIdx = 0; otherIdx < tables->snoidCount; otherIdx++) {
 					if (child.spot[otherIdx] != current.spot[otherIdx] || otherIdx == snoidIdx)
 						child.covered &= ~(1u << otherIdx);
 				}
 				debugMazeSolverUpdateCover(*tables, child);
+				// Merge equivalent states and discard branches that cannot finish even under relaxed assumptions.
+				// The visited key is the canonical FNV-1a fingerprint; no full-node comparison resolves fingerprint collisions.
 				const uint64 key = debugMazeSolverNodeKey(*tables, child);
 				if (visited.contains(key))
 					continue;
@@ -2505,6 +2496,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 
 	bool built = false;
 	if (0 <= goalNode) {
+		// Recover control launches through the parent chain, then insert and verify the omitted direct deliveries.
 		Common::Array<ZoombiniPuzzleMaze::SolverKeyLaunch> keyLaunches;
 		for (int32 walkIdx = goalNode; 0 <= walkIdx; walkIdx = nodes[walkIdx].parent) {
 			if (nodes[walkIdx].parent < 0)
@@ -2519,7 +2511,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 		}
 		built = debugMazeGenericPlanFromKeys(context, *tables, keyLaunches, plan);
 		if (!built) {
-			// The replay rejected the assembled order, so the search proved nothing.
+			// Coverage alone is insufficient if the complete replay rejects the assembled order.
 			result.searchExhausted = false;
 			result.limitReached = false;
 		}
@@ -2547,25 +2539,16 @@ void ZoombiniPuzzleMaze::setConditionCellTrait(int16 cellIdx, int16 category, in
 	MazeCellState &cell = _cellStates[cellIdx];
 	cell.traitCategory = category;
 	cell.traitValue = value;
-	// The runtime router reads the cell, the answer search reads the grid tables,
-	// and the cell renderer picks the drawn condition shape from the same pair.
+	// Keep the runtime cell and solver grid in sync; the renderer also uses this trait pair.
 	_cellTraitKind[cell.row][cell.col] = category;
 	_cellTraitValue[cell.row][cell.col] = value;
 }
 
-bool ZoombiniPuzzleMaze::repairRestoredLayoutConditionCell() {
-	// The restored level-4 layout REGS 16607 is content the shipped game never
-	// selects, so its pack generator was never tuned against it. Its device
-	// chain is strict: the only route to the goal opens through the group-4
-	// switch, whose presser is stranded on a sticky cell that kills it on a
-	// plain release, and the only rescue is a push that needs the linked branch
-	// turned and turned back. A pack that lacks the Zoombinis those switches
-	// need therefore cannot be completed at all, whatever the player does.
-	//
-	// The pack arrives from the previous page and must not be touched, so the
-	// repair changes one condition cell instead: it keeps the trait category
-	// the cell tests and only moves the value it looks for, which is the
-	// smallest edit that can hand the device the keys it is missing.
+bool ZoombiniPuzzleMaze::repairRestoredL4LayoutConditionCell() {
+	// The restored Level4 layout needs a switch-and-sticky relay that some arriving packs cannot supply.
+	// Its goal route requires the group-4 switch, whose key can be stranded on a sticky cell with an unsafe release.
+	// A push provides the escape, but only after the linked branch has been turned and restored.
+	// Try changing one trait condition to make a complete route available while preserving the device layout.
 	if (_layoutLevel != kMazeLayoutLevel4 || _mazeLayoutRegsId != kResRegs16607_MazeLayoutL4Unused)
 		return false;
 
@@ -2573,6 +2556,7 @@ bool ZoombiniPuzzleMaze::repairRestoredLayoutConditionCell() {
 	if (isMazeLayoutSolvable(probeSteps))
 		return false;
 
+	// Prefer another value in the same trait category, then try other categories if necessary.
 	uint32 spentSteps = probeSteps;
 	for (int16 sameCategoryPass = 1; 0 <= sameCategoryPass; sameCategoryPass -= 1) {
 		for (int16 cellIdx = 0; cellIdx < _cellStateCount; cellIdx++) {
@@ -2595,6 +2579,7 @@ bool ZoombiniPuzzleMaze::repairRestoredLayoutConditionCell() {
 				setConditionCellTrait(cellIdx, category, value);
 				uint32 candidateSteps = 0;
 				if (isMazeLayoutSolvable(candidateSteps)) {
+					// Keep only a substitution with a verified full plan, and retain the authored test for the answer log.
 					MazeConditionSubstitution substitution;
 					substitution.cellIdx = cellIdx;
 					substitution.fromCategory = authoredCategory;
@@ -2605,6 +2590,7 @@ bool ZoombiniPuzzleMaze::repairRestoredLayoutConditionCell() {
 				}
 				spentSteps += candidateSteps;
 			}
+			// Restore unsuccessful trials before trying a different cell.
 			setConditionCellTrait(cellIdx, authoredCategory, authoredValue);
 		}
 	}
@@ -2612,20 +2598,18 @@ bool ZoombiniPuzzleMaze::repairRestoredLayoutConditionCell() {
 	return false;
 }
 
-Common::String ZoombiniPuzzleMaze::describeConditionSubstitution(
-	const MazeConditionSubstitution &substitution) const {
+Common::String ZoombiniPuzzleMaze::describeConditionSubstitution(const MazeConditionSubstitution &substitution) const {
 	if (substitution.cellIdx < 0 || _cellStateCount <= substitution.cellIdx)
 		return "an unknown condition cell";
 	const MazeCellState &cell = _cellStates[substitution.cellIdx];
 	const ZmbTrait::TraitKind cellKind = ZmbTrait::traitKindFromIndex(cell.traitCategory - 1);
 	const ZmbTrait::TraitKind sourceKind = ZmbTrait::traitKindFromIndex(substitution.fromCategory - 1);
-	return Common::String::format(
-		"cell (%d, %d) now tests %s %s instead of %s %s",
-		cell.row + 1, cell.col + 1,
-		ZmbTrait::debugTraitKindName(cellKind),
-		ZmbTrait::debugTraitValueName(cellKind, cell.traitValue),
-		ZmbTrait::debugTraitKindName(sourceKind),
-		ZmbTrait::debugTraitValueName(sourceKind, substitution.fromValue));
+	return Common::String::format("cell (%d, %d) now tests %s %s instead of %s %s",
+								  cell.row + 1, cell.col + 1,
+								  ZmbTrait::debugTraitKindName(cellKind),
+								  ZmbTrait::debugTraitValueName(cellKind, cell.traitValue),
+								  ZmbTrait::debugTraitKindName(sourceKind),
+								  ZmbTrait::debugTraitValueName(sourceKind, substitution.fromValue));
 }
 
 void ZoombiniPuzzleMaze::logConditionSubstitutions(uint32 stepsUsed) const {
@@ -2649,8 +2633,7 @@ int16 ZoombiniPuzzleMaze::debugMazePlanGroupSwitchCell(const ZoombiniPuzzleMaze:
 	return -1;
 }
 
-const char *ZoombiniPuzzleMaze::debugMazePlanGroupColor(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-														int16 waveGroup, bool colorBlindMode) {
+const char *ZoombiniPuzzleMaze::debugMazePlanGroupColor(const ZoombiniPuzzleMaze::SolverPlanContext &context, int16 waveGroup, bool colorBlindMode) {
 	const int16 cellIdx = debugMazePlanGroupSwitchCell(context, waveGroup);
 	if (cellIdx < 0)
 		return "Unknown-color";
@@ -2666,8 +2649,7 @@ const char *ZoombiniPuzzleMaze::debugMazePlanCornerName(int16 corner) {
 	return (0 <= corner && corner < 4) ? kCornerNames[corner] : "unknown";
 }
 
-int16 ZoombiniPuzzleMaze::debugMazeLiveSnoidSpot(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-												 int16 snoidIdx) const {
+int16 ZoombiniPuzzleMaze::debugMazeLiveSnoidSpot(const ZoombiniPuzzleMaze::SolverPlanContext &context, int16 snoidIdx) const {
 	if (snoidIdx < 0 || context.snoidCount <= snoidIdx || !context.snoids[snoidIdx])
 		return -4;
 	const ZmbSnoid *snoid = context.snoids[snoidIdx];
@@ -2692,9 +2674,7 @@ int16 ZoombiniPuzzleMaze::debugMazeLiveSnoidSpot(const ZoombiniPuzzleMaze::Solve
 	return -4;
 }
 
-Common::String ZoombiniPuzzleMaze::debugMazeGenericStepText(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-															const ZoombiniPuzzleMaze::SolverGenericStep &step,
-															bool colorBlindMode) const {
+Common::String ZoombiniPuzzleMaze::debugMazeGenericStepText(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverGenericStep &step, bool colorBlindMode) const {
 	Common::String text;
 	for (uint groupIdx = 0; groupIdx < step.switchGroups.size(); groupIdx++) {
 		text += Common::String::format(" It presses the %s switch.", debugMazePlanGroupColor(context, step.switchGroups[groupIdx], colorBlindMode));
@@ -2724,8 +2704,7 @@ Common::String ZoombiniPuzzleMaze::debugMazeGenericStepText(const ZoombiniPuzzle
 	return text;
 }
 
-Common::String ZoombiniPuzzleMaze::debugMazeLauncherLabel(const Common::Point (&launcherPositions)[14], int16 seatIdx,
-														  bool includeRegion) {
+Common::String ZoombiniPuzzleMaze::debugMazeLauncherLabel(const Common::Point (&launcherPositions)[14], int16 seatIdx, bool includeRegion) {
 	if (seatIdx < 0 || 14 <= seatIdx)
 		return "launcher at an unknown position";
 
@@ -2738,8 +2717,7 @@ Common::String ZoombiniPuzzleMaze::debugMazeLauncherLabel(const Common::Point (&
 	return Common::String::format("%s-%s launcher at (%d, %d)", vertical, horizontal, pos.x, pos.y);
 }
 
-Common::String ZoombiniPuzzleMaze::debugMazePlanRouteFilters(const ZoombiniPuzzleMaze::SolverPlanContext &context,
-															 const ZoombiniPuzzleMaze::SolverPlanAction &action) {
+Common::String ZoombiniPuzzleMaze::debugMazePlanRouteFilters(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverPlanAction &action) {
 	Common::String result;
 	Common::Array<Common::String> conditions;
 	for (uint decisionIdx = 0; decisionIdx < action.traitDecisions.size(); decisionIdx++) {
@@ -2750,9 +2728,8 @@ Common::String ZoombiniPuzzleMaze::debugMazePlanRouteFilters(const ZoombiniPuzzl
 		if (cell.traitCategory < 1 || 4 < cell.traitCategory)
 			continue;
 		const ZmbTrait::TraitKind kind = ZmbTrait::traitKindFromIndex(cell.traitCategory - 1);
-		const Common::String condition = Common::String::format(
-			"%s %s %s", ZmbTrait::debugTraitKindName(kind), decision.matched ? "=" : "!=",
-			ZmbTrait::debugTraitValueName(kind, cell.traitValue));
+		const Common::String condition = Common::String::format("%s %s %s", ZmbTrait::debugTraitKindName(kind), decision.matched ? "=" : "!=",
+																ZmbTrait::debugTraitValueName(kind, cell.traitValue));
 		bool duplicate = false;
 		for (uint conditionIdx = 0; conditionIdx < conditions.size(); conditionIdx++) {
 			if (conditions[conditionIdx] == condition) {
@@ -2783,8 +2760,7 @@ Common::String ZoombiniPuzzleMaze::debugMazePlanTraitCondition(int16 category, i
 	return Common::String::format("%s %s %s", ZmbTrait::debugTraitKindName(kind), matchOperator, ZmbTrait::debugTraitValueName(kind, value));
 }
 
-Common::String ZoombiniPuzzleMaze::debugMazePlanStagingLabel(const ZoombiniPuzzleMaze::SolverLevel4Plan &plan,
-															 int16 stagingKey) {
+Common::String ZoombiniPuzzleMaze::debugMazePlanStagingLabel(const ZoombiniPuzzleMaze::SolverLevel4Plan &plan, int16 stagingKey) {
 	for (int16 keyIdx = 0; keyIdx < plan.stagingKeyCount; keyIdx++) {
 		if (plan.stagingKeys[keyIdx] == stagingKey) {
 			if (plan.stagingKeyCount == 1)
@@ -2795,9 +2771,7 @@ Common::String ZoombiniPuzzleMaze::debugMazePlanStagingLabel(const ZoombiniPuzzl
 	return "1?";
 }
 
-Common::String ZoombiniPuzzleMaze::debugMazePlanStagingLaunchSequence(const ZoombiniPuzzleMaze::SolverLevel4Plan &plan,
-																	  bool highwayPhase,
-																	  const Common::Point (&launcherPositions)[14]) {
+Common::String ZoombiniPuzzleMaze::debugMazePlanStagingLaunchSequence(const ZoombiniPuzzleMaze::SolverLevel4Plan &plan, bool highwayPhase, const Common::Point (&launcherPositions)[14]) {
 	Common::String result;
 	for (int16 actionIdx = 0; actionIdx < plan.stagingKeyCount; actionIdx++) {
 		const ZoombiniPuzzleMaze::SolverPlanAction *action;
@@ -2814,8 +2788,7 @@ Common::String ZoombiniPuzzleMaze::debugMazePlanStagingLaunchSequence(const Zoom
 	return result;
 }
 
-ZoombiniPuzzleMaze::LaunchSimulationOutcome ZoombiniPuzzleMaze::simulateNextLaunch(const ZmbSnoid *snoid, int16 seatIdx,
-																				   Common::Array<int16> *switchCells) const {
+ZoombiniPuzzleMaze::LaunchSimulationOutcome ZoombiniPuzzleMaze::simulateNextLaunch(const ZmbSnoid *snoid, int16 seatIdx, Common::Array<int16> *switchCells) const {
 	if (switchCells)
 		switchCells->clear();
 
@@ -2916,6 +2889,7 @@ ZoombiniPuzzleMaze::LaunchSimulationOutcome ZoombiniPuzzleMaze::simulateNextLaun
 }
 
 void ZoombiniPuzzleMaze::debugBuildMazePlanContext(ZoombiniPuzzleMaze::SolverPlanContext &context) const {
+	// Snapshot routing data so answer searches can simulate independently of live runners and animations.
 	if (_cellStateCount < ZoombiniPuzzleMaze::kDebugMazeMaxCells)
 		context.cellCount = _cellStateCount;
 	else
@@ -2935,6 +2909,7 @@ void ZoombiniPuzzleMaze::debugBuildMazePlanContext(ZoombiniPuzzleMaze::SolverPla
 				context.directionFlags[rowIdx][colIdx][direction] = _nodeDirFlags[rowIdx][colIdx][direction];
 		}
 	}
+	// Use authored starting directions rather than arrows already changed by the player's launches.
 	for (int16 cellIdx = 0; cellIdx < context.cellCount; cellIdx++) {
 		context.cells[cellIdx] = _cellStates[cellIdx];
 		const MazeCellState &cell = _cellStates[cellIdx];
@@ -2963,26 +2938,26 @@ void ZoombiniPuzzleMaze::debugBuildMazePlanContext(ZoombiniPuzzleMaze::SolverPla
 Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 	Common::String s = getDebugBanner();
 	s += "\n";
-	const bool includeLauncherRegion = _layoutLevel == kMazeLayoutLevel4;
-	const char *layoutDescription = "Unknown Layout";
-	// Levels 1-3 use two variants: zero is Base and one is Alt.
+	const bool includeRegion = _layoutLevel == kMazeLayoutLevel4;
+	const char *layoutDesc = "Unknown Layout";
+	// Levels 1-3 use Base (0) and Alt (1); Level4 also has the restored variant.
 	if (_layoutLevel <= kMazeLayoutLevel3) {
 		if (_levelVariantIdx == 0)
-			layoutDescription = "Base";
+			layoutDesc = "Base";
 		else if (_levelVariantIdx == 1)
-			layoutDescription = "Alt";
+			layoutDesc = "Alt";
 	} else if (_layoutLevel == kMazeLayoutLevel4) {
-		// Level 4 uses zero for Base, two for Alt, and one for the restored layout.
+		// Level 4 uses Base (0), Restored (1), and Alt (2).
 		if (_levelVariantIdx == 0)
-			layoutDescription = "Base";
+			layoutDesc = "Base";
 		else if (_levelVariantIdx == 1)
-			layoutDescription = "Restored";
+			layoutDesc = "Restored";
 		else if (_levelVariantIdx == 2)
-			layoutDescription = "Alt";
+			layoutDesc = "Alt";
 	} else if (_layoutLevel == kMazeLayoutLevel4SmallPack) {
-		layoutDescription = "Exception for small-pack";
+		layoutDesc = "Exception for small-pack";
 	}
-	s += Common::String::format("  Active layout: %s (REGS %d).\n", layoutDescription, _mazeLayoutRegsId);
+	s += Common::String::format("  Active layout: %s (REGS %d).\n", layoutDesc, _mazeLayoutRegsId);
 	if (!_conditionSubstitutions.empty()) {
 		const char *conditionCountSuffix;
 		const char *conditionVerb;
@@ -2993,19 +2968,19 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 			conditionCountSuffix = "s";
 			conditionVerb = "were";
 		}
-		s += Common::String::format(
-			"  The arriving pack could not finish this layout as authored, so %u condition cell%s\n"
-			"  %s substituted:\n",
-			_conditionSubstitutions.size(), conditionCountSuffix, conditionVerb);
+		s += Common::String::format("  The arriving pack could not finish this layout as authored, so %u condition cell%s\n"
+									"  %s substituted:\n",
+									_conditionSubstitutions.size(), conditionCountSuffix, conditionVerb);
 		for (uint substitutionIdx = 0; substitutionIdx < _conditionSubstitutions.size(); substitutionIdx++)
 			s += Common::String::format("    %s.\n", describeConditionSubstitution(_conditionSubstitutions[substitutionIdx]).c_str());
 	}
 
+	// Derive a complete plan from the starting layout, then compare it with live progress below.
 	ZoombiniPuzzleMaze::SolverPlanContext planContext = {};
 	debugBuildMazePlanContext(planContext);
-	ZoombiniPuzzleMaze::SolverLevel4Plan level4Plan;
-	bool level4PlanSearchExhausted = false;
-	uint32 level4Steps = 0;
+	ZoombiniPuzzleMaze::SolverLevel4Plan l4Plan;
+	bool l4SearchLimitReached = false;
+	uint32 l4Steps = 0;
 	ZoombiniPuzzleMaze::SolverGenericPlan genericPlan;
 	const ZoombiniPuzzleMaze::SolverGenericSearchLimits genericSearchLimits = {
 		kDebugMazeGenericSolverMaxSteps,
@@ -3013,30 +2988,28 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 	ZoombiniPuzzleMaze::SolverGenericSearchResult genericSearch;
 	bool genericSearchRan = false;
 	if (_layoutLevel == kMazeLayoutLevel4) {
-		// The search may run up to kDebugMazeSolverMaxSteps simulated launches,
-		// so announce the cap before the console prints the assembled answer.
+		// Announce the search cap because the debugger receives the assembled answer only after the search finishes.
 		GUI::Debugger *debugger = _vm->getDebugger();
 		if (debugger)
 			debugger->debugPrintf("Finding... (max %u simulated launches)\n",
 								  static_cast<uint>(kDebugMazeSolverMaxSteps));
-		debugBuildMazeLevel4Plan(planContext, level4Plan, level4PlanSearchExhausted, level4Steps);
-		if (!level4Plan.valid) {
-			// A layout the staged relay shape does not describe, such as the
-			// restored REGS 16607, still has an answer; search for it directly.
+		debugBuildMazeL4Plan(planContext, l4Plan, l4SearchLimitReached, l4Steps);
+		if (!l4Plan.valid) {
+			// Failure to find the named relay does not rule out another launch order, especially on the restored layout.
 			if (debugger)
 				debugger->debugPrintf("Finding a direct launch order... (max %u simulated launches)\n",
 									  static_cast<uint>(kDebugMazeGenericSolverMaxSteps));
 			genericSearchRan = true;
 			debugBuildMazeGenericPlan(planContext, genericPlan, genericSearchLimits, genericSearch);
 		}
-		s += Common::String::format("  Staged relay search: %u steps used (max %u).\n", static_cast<uint>(level4Steps), static_cast<uint>(kDebugMazeSolverMaxSteps));
+		s += Common::String::format("  Staged relay search: %u steps used (max %u).\n", static_cast<uint>(l4Steps), static_cast<uint>(kDebugMazeSolverMaxSteps));
 		if (genericSearchRan)
 			s += Common::String::format("  Direct launch-order search: %u steps used (max %u).\n", static_cast<uint>(genericSearch.stepsUsed), static_cast<uint>(kDebugMazeGenericSolverMaxSteps));
 	}
-	ZoombiniPuzzleMaze::SolverLevel123Plan level123Plan;
+	ZoombiniPuzzleMaze::SolverLevel123Plan l123Plan;
 	if (_layoutLevel <= kMazeLayoutLevel3) {
 		ZoombiniPuzzleMaze::SolverBudget budget123;
-		debugBuildMazeLevel123Plan(planContext, level123Plan, budget123);
+		debugBuildMazePlan(planContext, l123Plan, budget123);
 		s += Common::String::format("  Routing search: %u steps used (uncapped).\n", static_cast<uint>(budget123.steps));
 	}
 
@@ -3049,9 +3022,9 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 	Common::Array<DebugLaunchPrediction> predictions;
 	int16 loadedSnoidCount = 0;
 	int16 acceptedSnoidCount = 0;
-	int16 traversingSnoidCount = 0;
+	int16 movingSnoidCount = 0;
 
-	// Dry-run each currently legal launch on a private copy of the arrow state.
+	// Predict currently legal launches separately from the starting-layout plan to describe the player's next choices.
 	for (int16 snoidIdx = 0; snoidIdx < _pageLoadedZmbCount; snoidIdx++) {
 		ZmbSnoid *snoid = getSnoid(10000 + snoidIdx);
 		if (!snoid)
@@ -3075,7 +3048,7 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 		}
 		if (isPlaced) {
 			if (!isHeld)
-				traversingSnoidCount += 1;
+				movingSnoidCount += 1;
 			continue;
 		}
 		for (int16 seatIdx = 0; seatIdx < 14; seatIdx++) {
@@ -3090,7 +3063,8 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 		}
 	}
 
-	int16 directCompletionSnoidCount = 0;
+	// Count Zoombinis with at least one immediate completion route, rather than counting their launcher choices.
+	int16 directCompleteSnoidCount = 0;
 	for (int16 snoidIdx = 0; snoidIdx < _pageLoadedZmbCount; snoidIdx++) {
 		const ZmbSnoid *snoid = getSnoid(10000 + snoidIdx);
 		if (!snoid)
@@ -3104,9 +3078,10 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 			}
 		}
 		if (hasDirectCompletion)
-			directCompletionSnoidCount += 1;
+			directCompleteSnoidCount += 1;
 	}
 
+	// Summarize each switch's live branch changes, held occupants, and reachable keys for fallback guidance.
 	struct DebugSwitchRequirement {
 		int16 switchCellIdx;
 		bool hasLinkedBranch;
@@ -3116,7 +3091,7 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 		int16 reachableRouteCount;
 		int16 preferredRouteCount;
 	};
-	Common::Array<DebugSwitchRequirement> switchRequirements;
+	Common::Array<DebugSwitchRequirement> switchReqs;
 	int16 branchSwitchCount = 0;
 	int16 changedBranchSwitchCount = 0;
 	int16 occupiedStickyCellCount = 0;
@@ -3126,34 +3101,34 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 			kMaxWaveGroups < switchCell.waveGroup)
 			continue;
 
-		DebugSwitchRequirement requirement;
-		requirement.switchCellIdx = cellIdx;
-		requirement.hasLinkedBranch = false;
-		requirement.linkedBranchChanged = false;
-		requirement.hasOccupiedSticky = false;
-		requirement.neededNow = false;
-		requirement.reachableRouteCount = 0;
-		requirement.preferredRouteCount = 0;
+		DebugSwitchRequirement req;
+		req.switchCellIdx = cellIdx;
+		req.hasLinkedBranch = false;
+		req.linkedBranchChanged = false;
+		req.hasOccupiedSticky = false;
+		req.neededNow = false;
+		req.reachableRouteCount = 0;
+		req.preferredRouteCount = 0;
 
 		const int16 groupIdx = switchCell.waveGroup - 1;
 		for (int16 groupCellIdx = 0; groupCellIdx < _waveGroupCellCounts[groupIdx]; groupCellIdx++) {
 			const int16 linkedCellIdx = _waveGroupCellIndices[groupIdx][groupCellIdx];
 			const MazeCellState &linked = _cellStates[linkedCellIdx];
 			if (linked.type == kMazeCellType04_ColoredArrow) {
-				requirement.hasLinkedBranch = true;
-				const int16 currentDirection = _nodeDirection[linked.row][linked.col];
-				const int16 initialDirection = debugMazeInitialDirection(_layoutRegsWords, linkedCellIdx, currentDirection);
-				if (currentDirection != initialDirection)
-					requirement.linkedBranchChanged = true;
+				req.hasLinkedBranch = true;
+				const int16 curDir = _nodeDirection[linked.row][linked.col];
+				const int16 initDir = debugMazeInitialDirection(_layoutRegsWords, linkedCellIdx, curDir);
+				if (curDir != initDir)
+					req.linkedBranchChanged = true;
 			} else if (linked.type == kMazeCellType05_ColoredSticky && 0 <= linked.heldRunner) {
-				requirement.hasOccupiedSticky = true;
+				req.hasOccupiedSticky = true;
 				occupiedStickyCellCount += 1;
 			}
 		}
 
-		if (requirement.hasLinkedBranch) {
+		if (req.hasLinkedBranch) {
 			branchSwitchCount += 1;
-			if (requirement.linkedBranchChanged)
+			if (req.linkedBranchChanged)
 				changedBranchSwitchCount += 1;
 		}
 
@@ -3161,179 +3136,157 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 			const DebugLaunchPrediction &prediction = predictions[predictionIdx];
 			if (!debugMazeContainsCell(prediction.switchCells, cellIdx))
 				continue;
-			requirement.reachableRouteCount += 1;
+			req.reachableRouteCount += 1;
 			if (debugMazeIsPreferredKeyOutcome(prediction.outcome))
-				requirement.preferredRouteCount += 1;
+				req.preferredRouteCount += 1;
 		}
-		switchRequirements.push_back(requirement);
+		switchReqs.push_back(req);
 	}
 
-	for (uint requirementIdx = 0; requirementIdx < switchRequirements.size(); requirementIdx++) {
-		DebugSwitchRequirement &requirement = switchRequirements[requirementIdx];
+	// Prioritize occupied sticky cells on Level4; otherwise expose branches still in their starting state.
+	for (uint reqIdx = 0; reqIdx < switchReqs.size(); reqIdx++) {
+		DebugSwitchRequirement &req = switchReqs[reqIdx];
 		if (_layoutLevel == kMazeLayoutLevel4 && 0 < occupiedStickyCellCount)
-			requirement.neededNow = requirement.hasOccupiedSticky;
+			req.neededNow = req.hasOccupiedSticky;
 		else
-			requirement.neededNow = requirement.hasLinkedBranch && !requirement.linkedBranchChanged;
+			req.neededNow = req.hasLinkedBranch && !req.linkedBranchChanged;
 	}
 
+	// Print the verified plan shape when available, with heuristic guidance only when no complete plan was found.
 	s += Common::String::format("  Layout selector %d solution scenario:\n", static_cast<int>(_layoutLevel));
 	switch (_layoutLevel) {
 	case kMazeLayoutLevel1:
 	case kMazeLayoutLevel2:
 	case kMazeLayoutLevel3:
-		if (level123Plan.valid && level123Plan.hasSwitchPhase) {
+		if (l123Plan.valid && l123Plan.hasSwitchPhase) {
 			const bool colorBlindMode = _vm->isColorBlindModeEnabled();
-			const char *precursorColor = debugMazePlanGroupColor(planContext, level123Plan.precursorGroup, colorBlindMode);
-			const char *finalColor = debugMazePlanGroupColor(planContext, level123Plan.finalGroup, colorBlindMode);
-			const Common::String priorityCondition = debugMazePlanTraitCondition(level123Plan.priorityCategory, level123Plan.priorityValue,
-																				 level123Plan.priorityMatched);
-			const ZoombiniPuzzleMaze::SolverPlanAction &precursorAction = level123Plan.actions[0];
-			const ZoombiniPuzzleMaze::SolverPlanAction &victimAction = level123Plan.actions[level123Plan.victimActionIdx];
-			const ZoombiniPuzzleMaze::SolverPlanAction &finalAction = level123Plan.actions[level123Plan.finalActionIdx];
-			if (level123Plan.precursorInPriorityGroup) {
-				s += Common::String::format(
-					"    1. Separate the %d Zoombinis with %s as the priority group. Reserve key 1, the protected Zoombini, and key 2 listed below; no non-priority Zoombini should be sent yet.\n",
-					level123Plan.priorityCount, priorityCondition.c_str());
+			const char *precursorColor = debugMazePlanGroupColor(planContext, l123Plan.precursorGroup, colorBlindMode);
+			const char *finalColor = debugMazePlanGroupColor(planContext, l123Plan.finalGroup, colorBlindMode);
+			const Common::String priorityCondition = debugMazePlanTraitCondition(l123Plan.priorityCategory, l123Plan.priorityValue, l123Plan.priorityMatched);
+			const ZoombiniPuzzleMaze::SolverPlanAction &precursorAction = l123Plan.actions[0];
+			const ZoombiniPuzzleMaze::SolverPlanAction &victimAction = l123Plan.actions[l123Plan.victimActionIdx];
+			const ZoombiniPuzzleMaze::SolverPlanAction &finalAction = l123Plan.actions[l123Plan.finalActionIdx];
+			if (l123Plan.precursorInPriorityGroup) {
+				s += Common::String::format("    1. Separate the %d Zoombinis with %s as the priority group. Reserve key 1, the protected Zoombini, and key 2 listed below; no non-priority Zoombini should be sent yet.\n",
+											l123Plan.priorityCount, priorityCondition.c_str());
 			} else {
-				s += Common::String::format(
-					"    1. Separate the %d Zoombinis with %s as the priority group and reserve the separate precursor key 1. Also mark the protected Zoombini and key 2 listed below; no other Zoombini should be sent yet.\n",
-					level123Plan.priorityCount, priorityCondition.c_str());
+				s += Common::String::format("    1. Separate the %d Zoombinis with %s as the priority group and reserve the separate precursor key 1. Also mark the protected Zoombini and key 2 listed below; no other Zoombini should be sent yet.\n",
+											l123Plan.priorityCount, priorityCondition.c_str());
 			}
-			s += Common::String::format(
-				"    2. Send key 1 first through the %s. It presses the %s precursor switch and opens the route that otherwise rejects the protected Zoombini.\n",
-				debugMazeLauncherLabel(kLauncherPositions, precursorAction.launcherSeatIdx, includeLauncherRegion).c_str(), precursorColor);
+			s += Common::String::format("    2. Send key 1 first through the %s. It presses the %s precursor switch and opens the route that otherwise rejects the protected Zoombini.\n",
+										debugMazeLauncherLabel(kLauncherPositions, precursorAction.launcherSeatIdx, includeRegion).c_str(), precursorColor);
 			int16 deliveredPriorityCount;
-			if (level123Plan.precursorInPriorityGroup)
-				deliveredPriorityCount = level123Plan.priorityCount - 2;
+			if (l123Plan.precursorInPriorityGroup)
+				deliveredPriorityCount = l123Plan.priorityCount - 2;
 			else
-				deliveredPriorityCount = level123Plan.priorityCount - 1;
+				deliveredPriorityCount = l123Plan.priorityCount - 1;
 			const char *deliveredPrioritySuffix;
 			if (deliveredPriorityCount == 1)
 				deliveredPrioritySuffix = "";
 			else
 				deliveredPrioritySuffix = "s";
-			s += Common::String::format(
-				"    3. Send the protected Zoombini through the %s, then send every other waiting member of the %s group except key 2. This phase delivers %d group member%s after key 1 without changing another colored switch.\n",
-				debugMazeLauncherLabel(kLauncherPositions, victimAction.launcherSeatIdx, includeLauncherRegion).c_str(), priorityCondition.c_str(),
-				deliveredPriorityCount, deliveredPrioritySuffix);
-			s += Common::String::format(
-				"    4. Send key 2 last among that group through the %s. It presses the %s closing switch and changes the branch so the non-priority group can use the completion route.\n",
-				debugMazeLauncherLabel(kLauncherPositions, finalAction.launcherSeatIdx, includeLauncherRegion).c_str(), finalColor);
-			s += Common::String::format(
-				"    5. Send all %d remaining non-priority Zoombinis. Follow the same trait-routing cycle as the simpler layouts: use the currently compatible route, let the white arrow advance, and repeat until all are accepted.\n",
-				level123Plan.remainderCount);
-		} else if (level123Plan.valid) {
-			const ZoombiniPuzzleMaze::SolverPlanAction &firstAction = level123Plan.actions[0];
+			s += Common::String::format("    3. Send the protected Zoombini through the %s, then send every other waiting member of the %s group except key 2. This phase delivers %d group member%s after key 1 without changing another colored switch.\n",
+										debugMazeLauncherLabel(kLauncherPositions, victimAction.launcherSeatIdx, includeRegion).c_str(), priorityCondition.c_str(),
+										deliveredPriorityCount, deliveredPrioritySuffix);
+			s += Common::String::format("    4. Send key 2 last among that group through the %s. It presses the %s closing switch and changes the branch so the non-priority group can use the completion route.\n",
+										debugMazeLauncherLabel(kLauncherPositions, finalAction.launcherSeatIdx, includeRegion).c_str(), finalColor);
+			s += Common::String::format("    5. Send all %d remaining non-priority Zoombinis. Follow the same trait-routing cycle as the simpler layouts: use the currently compatible route, let the white arrow advance, and repeat until all are accepted.\n",
+										l123Plan.remainderCount);
+		} else if (l123Plan.valid) {
+			const ZoombiniPuzzleMaze::SolverPlanAction &firstAction = l123Plan.actions[0];
 			const Common::String firstFilters = debugMazePlanRouteFilters(planContext, firstAction);
 			if (!firstFilters.empty()) {
-				s += Common::String::format(
-					"    1. Start the verified routing cycle through the %s with a waiting Zoombini that follows this route: %s.\n",
-					debugMazeLauncherLabel(kLauncherPositions, firstAction.launcherSeatIdx, includeLauncherRegion).c_str(), firstFilters.c_str());
+				s += Common::String::format("    1. Start the verified routing cycle through the %s with a waiting Zoombini that follows this route: %s.\n",
+											debugMazeLauncherLabel(kLauncherPositions, firstAction.launcherSeatIdx, includeRegion).c_str(), firstFilters.c_str());
 			} else {
-				s += Common::String::format(
-					"    1. Start the verified routing cycle through the %s with any Zoombini accepted by the currently open route.\n",
-					debugMazeLauncherLabel(kLauncherPositions, firstAction.launcherSeatIdx, includeLauncherRegion).c_str());
+				s += Common::String::format("    1. Start the verified routing cycle through the %s with any Zoombini accepted by the currently open route.\n",
+											debugMazeLauncherLabel(kLauncherPositions, firstAction.launcherSeatIdx, includeRegion).c_str());
 			}
-			s += Common::String::format(
-				"    2. Each successful passage advances the white arrow to the next trait route. At each state send a compatible waiting group member; the verified cycle accepts all %d Zoombinis without rejection.\n",
-				level123Plan.remainderCount);
+			s += Common::String::format("    2. Each successful passage advances the white arrow to the next trait route. At each state send a compatible waiting group member; the verified cycle accepts all %d Zoombinis without rejection.\n",
+										l123Plan.remainderCount);
 		} else if (_layoutLevel == kMazeLayoutLevel1) {
 			s += "    Read the trait branches and alternate compatible groups with the white arrow.\n";
-		} else if (switchRequirements.empty()) {
+		} else if (switchReqs.empty()) {
 			s += "    Sort the trait groups through the open route and cycle the white arrow between groups.\n";
 		} else {
 			s += "    The full priority-group switch plan could not be derived from this layout and pack.\n";
 		}
 		break;
 	case kMazeLayoutLevel4:
-		if (level4Plan.valid) {
+		if (l4Plan.valid) {
 			const bool colorBlindMode = _vm->isColorBlindModeEnabled();
-			const char *primaryColor = debugMazePlanGroupColor(planContext, level4Plan.primaryGroup, colorBlindMode);
-			const char *stickyColor = debugMazePlanGroupColor(planContext, level4Plan.finalStickyGroup, colorBlindMode);
-			const char *rescueColor = debugMazePlanGroupColor(planContext, level4Plan.rescueGroup, colorBlindMode);
-			const char *highwayColor = debugMazePlanGroupColor(planContext, level4Plan.highwayGroup, colorBlindMode);
-			const char *stagingStickyColor = debugMazePlanGroupColor(planContext, level4Plan.stagingStickyGroup, colorBlindMode);
-			const int16 totalKeyCount = level4Plan.stagingKeyCount + 4;
-			const int16 stagingN = (level4Plan.stagingKeyCount - 1) / 3;
+			const char *primaryColor = debugMazePlanGroupColor(planContext, l4Plan.primaryGroup, colorBlindMode);
+			const char *stickyColor = debugMazePlanGroupColor(planContext, l4Plan.finalStickyGroup, colorBlindMode);
+			const char *rescueColor = debugMazePlanGroupColor(planContext, l4Plan.rescueGroup, colorBlindMode);
+			const char *highwayColor = debugMazePlanGroupColor(planContext, l4Plan.highwayGroup, colorBlindMode);
+			const char *stagingStickyColor = debugMazePlanGroupColor(planContext, l4Plan.stagingStickyGroup, colorBlindMode);
+			const int16 totalKeyCount = l4Plan.stagingKeyCount + 4;
+			const int16 stagingN = (l4Plan.stagingKeyCount - 1) / 3;
 			const char *stagingKeySuffix;
-			if (level4Plan.stagingKeyCount == 1)
+			if (l4Plan.stagingKeyCount == 1)
 				stagingKeySuffix = "";
 			else
 				stagingKeySuffix = "s";
-			const Common::String stagingSequence = debugMazePlanStagingLaunchSequence(level4Plan, false, kLauncherPositions);
-			const Common::String highwaySequence = debugMazePlanStagingLaunchSequence(level4Plan, true, kLauncherPositions);
-			s += Common::String::format(
-				"    1. Select and reserve all %d keys listed below. The key-1 staging group uses 3N+1 = %d Zoombini%s (N=%d).\n",
-				totalKeyCount, level4Plan.stagingKeyCount,
-				stagingKeySuffix, stagingN);
-			s += Common::String::format(
-				"    2. Before touching the %s switch, send the staging group to the %s corner in this order: %s. They must wait there because the onward colored branch is still locked; the primary switch will also close this transfer route.\n",
-				primaryColor, debugMazePlanCornerName(level4Plan.stagingCorner),
-				stagingSequence.c_str());
-			s += Common::String::format(
-				"    3. Send key 2 through the %s. It presses the %s primary switch and waits in a %s sticky cell.\n",
-				debugMazeLauncherLabel(kLauncherPositions, level4Plan.stagePrimary.launcherSeatIdx, includeLauncherRegion).c_str(), primaryColor, stickyColor);
-			s += Common::String::format(
-				"    4. Relaunch the staging group from the %s corner in this order: %s. Together they press the %s highway switch, leave the linked 3-cycle branch in the start-to-goal state, and park one staging key in a %s sticky cell.\n",
-				debugMazePlanCornerName(level4Plan.stagingCorner), highwaySequence.c_str(),
-				highwayColor, stagingStickyColor);
-			s += Common::String::format(
-				"    5. Keep keys 3-5 aside and send all other %d non-key Zoombinis through the %s while the %s highway from the start to the goal is open.\n",
-				level4Plan.highwaySnoidCount,
-				debugMazeLauncherLabel(kLauncherPositions, level4Plan.highwaySeat, includeLauncherRegion).c_str(), highwayColor);
-			if (level4Plan.rescueReleasesStagingKey) {
-				s += Common::String::format(
-					"    6. Send key 4 through the %s to press the %s rescue switch. The parked staging key is released to the goal, and the linked branch opens the route to key 2.\n",
-					debugMazeLauncherLabel(kLauncherPositions, level4Plan.stageRescue.launcherSeatIdx, includeLauncherRegion).c_str(), rescueColor);
+			const Common::String stagingSequence = debugMazePlanStagingLaunchSequence(l4Plan, false, kLauncherPositions);
+			const Common::String highwaySequence = debugMazePlanStagingLaunchSequence(l4Plan, true, kLauncherPositions);
+			s += Common::String::format("    1. Select and reserve all %d keys listed below. The key-1 staging group uses 3N+1 = %d Zoombini%s (N=%d).\n",
+										totalKeyCount, l4Plan.stagingKeyCount,
+										stagingKeySuffix, stagingN);
+			s += Common::String::format("    2. Before touching the %s switch, send the staging group to the %s corner in this order: %s. They must wait there because the onward colored branch is still locked; the primary switch will also close this transfer route.\n",
+										primaryColor, debugMazePlanCornerName(l4Plan.stagingCorner),
+										stagingSequence.c_str());
+			s += Common::String::format("    3. Send key 2 through the %s. It presses the %s primary switch and waits in a %s sticky cell.\n",
+										debugMazeLauncherLabel(kLauncherPositions, l4Plan.stagePrimary.launcherSeatIdx, includeRegion).c_str(), primaryColor, stickyColor);
+			s += Common::String::format("    4. Relaunch the staging group from the %s corner in this order: %s. Together they press the %s highway switch, leave the linked 3-cycle branch in the start-to-goal state, and park one staging key in a %s sticky cell.\n",
+										debugMazePlanCornerName(l4Plan.stagingCorner), highwaySequence.c_str(),
+										highwayColor, stagingStickyColor);
+			s += Common::String::format("    5. Keep keys 3-5 aside and send all other %d non-key Zoombinis through the %s while the %s highway from the start to the goal is open.\n",
+										l4Plan.highwaySnoidCount,
+										debugMazeLauncherLabel(kLauncherPositions, l4Plan.highwaySeat, includeRegion).c_str(), highwayColor);
+			if (l4Plan.rescueReleasesStagingKey) {
+				s += Common::String::format("    6. Send key 4 through the %s to press the %s rescue switch. The parked staging key is released to the goal, and the linked branch opens the route to key 2.\n",
+											debugMazeLauncherLabel(kLauncherPositions, l4Plan.stageRescue.launcherSeatIdx, includeRegion).c_str(), rescueColor);
 			} else {
-				s += Common::String::format(
-					"    6. Send key 4 through the %s to press the %s rescue switch. Its linked branch opens key 2's safe escape route; the remaining staging key stays parked for the final release.\n",
-					debugMazeLauncherLabel(kLauncherPositions, level4Plan.stageRescue.launcherSeatIdx, includeLauncherRegion).c_str(), rescueColor);
+				s += Common::String::format("    6. Send key 4 through the %s to press the %s rescue switch. Its linked branch opens key 2's safe escape route; the remaining staging key stays parked for the final release.\n",
+											debugMazeLauncherLabel(kLauncherPositions, l4Plan.stageRescue.launcherSeatIdx, includeRegion).c_str(), rescueColor);
 			}
-			s += Common::String::format(
-				"    7. Send key 3 through the %s into key 2's %s sticky cell. Key 2 is pushed safely to the goal; key 3 takes its place with the safe release direction.\n",
-				debugMazeLauncherLabel(kLauncherPositions, level4Plan.stagePush.launcherSeatIdx, includeLauncherRegion).c_str(), stickyColor);
-			if (level4Plan.rescueReleasesStagingKey) {
-				s += Common::String::format(
-					"    8. Send key 5 through the %s to press the %s final-release switch. Key 3 is released to the goal.\n",
-					debugMazeLauncherLabel(kLauncherPositions, level4Plan.stageFinal.launcherSeatIdx, includeLauncherRegion).c_str(), stickyColor);
+			s += Common::String::format("    7. Send key 3 through the %s into key 2's %s sticky cell. Key 2 is pushed safely to the goal; key 3 takes its place with the safe release direction.\n",
+										debugMazeLauncherLabel(kLauncherPositions, l4Plan.stagePush.launcherSeatIdx, includeRegion).c_str(), stickyColor);
+			if (l4Plan.rescueReleasesStagingKey) {
+				s += Common::String::format("    8. Send key 5 through the %s to press the %s final-release switch. Key 3 is released to the goal.\n",
+											debugMazeLauncherLabel(kLauncherPositions, l4Plan.stageFinal.launcherSeatIdx, includeRegion).c_str(), stickyColor);
 			} else {
-				s += Common::String::format(
-					"    8. Send key 5 through the %s to press the %s final-release switch. The parked staging key and key 3 are released to the goal together.\n",
-					debugMazeLauncherLabel(kLauncherPositions, level4Plan.stageFinal.launcherSeatIdx, includeLauncherRegion).c_str(), stickyColor);
+				s += Common::String::format("    8. Send key 5 through the %s to press the %s final-release switch. The parked staging key and key 3 are released to the goal together.\n",
+											debugMazeLauncherLabel(kLauncherPositions, l4Plan.stageFinal.launcherSeatIdx, includeRegion).c_str(), stickyColor);
 			}
 		} else if (genericPlan.valid) {
 			const bool colorBlindMode = _vm->isColorBlindModeEnabled();
-			s += Common::String::format(
-				"    This layout does not fit the staged relay shape, so the answer is a direct launch order.\n"
-				"    %d launches in total; %d of them change the control state.\n",
-				static_cast<int>(genericPlan.steps.size()), genericPlan.controlStepCount);
+			s += Common::String::format("    This layout does not fit the staged relay shape, so the answer is a direct launch order.\n"
+										"    %d launches in total; %d of them change the control state.\n",
+										static_cast<int>(genericPlan.steps.size()), genericPlan.controlStepCount);
 			int16 stepNumber = 0;
 			for (uint stepIdx = 0; stepIdx < genericPlan.steps.size(); stepIdx++) {
 				const ZoombiniPuzzleMaze::SolverGenericStep &step = genericPlan.steps[stepIdx];
 				const Common::String launcher =
-					debugMazeLauncherLabel(kLauncherPositions, step.launcherSeatIdx, includeLauncherRegion);
+					debugMazeLauncherLabel(kLauncherPositions, step.launcherSeatIdx, includeRegion);
 				stepNumber += 1;
 				if (step.controlStep) {
-					s += Common::String::format(
-						"    %2d. Send %s through the %s.%s\n", stepNumber,
-						planContext.snoids[step.snoidIdx]->toStr(true).c_str(), launcher.c_str(),
-						debugMazeGenericStepText(planContext, step, colorBlindMode).c_str());
+					s += Common::String::format("    %2d. Send %s through the %s.%s\n", stepNumber,
+												planContext.snoids[step.snoidIdx]->toStr(true).c_str(), launcher.c_str(),
+												debugMazeGenericStepText(planContext, step, colorBlindMode).c_str());
 					continue;
 				}
-				// Deliveries that share a launcher change nothing, so group them.
+				// Group consecutive direct deliveries through the same launcher to keep the printed plan readable.
 				uint runEnd = stepIdx;
 				while (runEnd < genericPlan.steps.size() && !genericPlan.steps[runEnd].controlStep &&
 					   genericPlan.steps[runEnd].launcherSeatIdx == step.launcherSeatIdx)
 					runEnd += 1;
 				if (runEnd - stepIdx == 1) {
-					s += Common::String::format(
-						"    %2d. Send %s through the %s. It reaches the completion exit.\n", stepNumber,
-						planContext.snoids[step.snoidIdx]->toStr(true).c_str(), launcher.c_str());
+					s += Common::String::format("    %2d. Send %s through the %s. It reaches the completion exit.\n", stepNumber,
+												planContext.snoids[step.snoidIdx]->toStr(true).c_str(), launcher.c_str());
 				} else {
-					s += Common::String::format(
-						"    %2d. Send these %u Zoombinis through the %s in any order; each reaches the completion exit:\n",
-						stepNumber, runEnd - stepIdx, launcher.c_str());
+					s += Common::String::format("    %2d. Send these %u Zoombinis through the %s in any order; each reaches the completion exit:\n",
+												stepNumber, runEnd - stepIdx, launcher.c_str());
 					for (uint runIdx = stepIdx; runIdx < runEnd; runIdx++)
 						s += Common::String::format("          %s\n", planContext.snoids[genericPlan.steps[runIdx].snoidIdx]->toStr(true).c_str());
 				}
@@ -3344,17 +3297,15 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 			s += "    reachable control state, so at least one Zoombini has to be given up here.\n";
 			s += "    Inspect the colored branches, sticky cells, and launcher routes below.\n";
 		} else if (genericSearch.limitReached) {
-			s += Common::String::format(
-				"    Neither the staged relay plan nor a direct launch order was found. The direct\n"
-				"    search stopped at its own bound of %u simulated launches or %u search nodes,\n"
-				"    so this pack is undecided rather than proven impossible.\n",
-				static_cast<uint>(kDebugMazeGenericSolverMaxSteps),
-				static_cast<uint>(kDebugMazeGenericSolverMaxNodes));
+			s += Common::String::format("    Neither the staged relay plan nor a direct launch order was found. The direct\n"
+										"    search stopped at its own bound of %u simulated launches or %u search nodes,\n"
+										"    so this pack is undecided rather than proven impossible.\n",
+										static_cast<uint>(kDebugMazeGenericSolverMaxSteps),
+										static_cast<uint>(kDebugMazeGenericSolverMaxNodes));
 			s += "    Inspect the colored branches, sticky cells, and launcher routes below.\n";
-		} else if (level4PlanSearchExhausted) {
-			s += Common::String::format(
-				"    The level-4 relay plan search stopped without finding a plan after %u simulated launches.\n",
-				static_cast<uint>(kDebugMazeSolverMaxSteps));
+		} else if (l4SearchLimitReached) {
+			s += Common::String::format("    The level-4 relay plan search stopped without finding a plan after %u simulated launches.\n",
+										static_cast<uint>(kDebugMazeSolverMaxSteps));
 			s += "    Inspect the colored branches, sticky cells, and launcher routes below.\n";
 		} else {
 			s += "    The full level-4 relay plan could not be derived from this layout and pack.\n";
@@ -3366,14 +3317,15 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 		break;
 	}
 
+	// Match the live pack to the plan's milestones without advancing the simulation or changing the page.
 	const int16 remainingSnoidCount = loadedSnoidCount - acceptedSnoidCount;
 	s += "  Current progress:\n";
 	s += Common::String::format("    Accepted: %d/%d; remaining: %d.\n", acceptedSnoidCount, loadedSnoidCount, remainingSnoidCount);
-	if (0 < traversingSnoidCount)
+	if (0 < movingSnoidCount)
 		s += Common::String::format("    %d Zoombini%s currently traversing; wait for the result before acting on this snapshot.\n",
-									traversingSnoidCount, traversingSnoidCount == 1 ? " is" : "s are");
+									movingSnoidCount, movingSnoidCount == 1 ? " is" : "s are");
 	s += Common::String::format("    %d waiting Zoombini%s can reach completion in the current control state.\n",
-								directCompletionSnoidCount, directCompletionSnoidCount == 1 ? "" : "s");
+								directCompleteSnoidCount, directCompleteSnoidCount == 1 ? "" : "s");
 	if (0 < branchSwitchCount)
 		s += Common::String::format("    Colored branch switches changed from their starting state: %d/%d.\n", changedBranchSwitchCount, branchSwitchCount);
 	if (0 < occupiedStickyCellCount)
@@ -3381,39 +3333,36 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 
 	if (remainingSnoidCount == 0) {
 		s += "    Current stage: complete -- every Zoombini has reached the completion exit.\n";
-	} else if (_layoutLevel <= kMazeLayoutLevel3 && level123Plan.valid) {
-		if (level123Plan.hasSwitchPhase) {
+	} else if (_layoutLevel <= kMazeLayoutLevel3 && l123Plan.valid) {
+		if (l123Plan.hasSwitchPhase) {
 			auto actualAccepted = [&](int16 snoidIdx) -> bool {
 				return 0 <= snoidIdx && snoidIdx < planContext.snoidCount &&
 					   planContext.snoids[snoidIdx] && planContext.snoids[snoidIdx]->_packIsOccupied;
 			};
 			int16 acceptedPriorityCount = 0;
 			for (int16 snoidIdx = 0; snoidIdx < planContext.snoidCount; snoidIdx++) {
-				if (debugMazePlanMatchesTrait(
-						planContext, snoidIdx, level123Plan.priorityCategory,
-						level123Plan.priorityValue, level123Plan.priorityMatched) &&
+				if (debugMazePlanMatchesTrait(planContext, snoidIdx, l123Plan.priorityCategory,
+											  l123Plan.priorityValue, l123Plan.priorityMatched) &&
 					actualAccepted(snoidIdx))
 					acceptedPriorityCount += 1;
 			}
-			if (!actualAccepted(level123Plan.precursorKey)) {
+			if (!actualAccepted(l123Plan.precursorKey)) {
 				s += "    Current stage: 2/5 precursor unlock -- send key 1 before the protected Zoombini.\n";
-			} else if (!actualAccepted(level123Plan.finalKey) &&
-					   acceptedPriorityCount < level123Plan.priorityCount - 1) {
-				s += Common::String::format(
-					"    Current stage: 3/5 priority delivery -- send %d remaining priority-group member%s before key 2.\n",
-					level123Plan.priorityCount - 1 - acceptedPriorityCount,
-					level123Plan.priorityCount - 1 - acceptedPriorityCount == 1 ? "" : "s");
-			} else if (!actualAccepted(level123Plan.finalKey)) {
+			} else if (!actualAccepted(l123Plan.finalKey) &&
+					   acceptedPriorityCount < l123Plan.priorityCount - 1) {
+				s += Common::String::format("    Current stage: 3/5 priority delivery -- send %d remaining priority-group member%s before key 2.\n",
+											l123Plan.priorityCount - 1 - acceptedPriorityCount,
+											l123Plan.priorityCount - 1 - acceptedPriorityCount == 1 ? "" : "s");
+			} else if (!actualAccepted(l123Plan.finalKey)) {
 				s += "    Current stage: 4/5 closing switch -- every other priority member is safe; send key 2 now.\n";
 			} else {
-				s += Common::String::format(
-					"    Current stage: 5/5 cyclic delivery -- send the %d remaining non-priority Zoombinis through the opened route.\n",
-					remainingSnoidCount);
+				s += Common::String::format("    Current stage: 5/5 cyclic delivery -- send the %d remaining non-priority Zoombinis through the opened route.\n",
+											remainingSnoidCount);
 			}
 		} else {
 			const ZoombiniPuzzleMaze::SolverPlanAction *nextAction = nullptr;
-			for (uint actionIdx = 0; actionIdx < level123Plan.actions.size(); actionIdx++) {
-				const ZoombiniPuzzleMaze::SolverPlanAction &action = level123Plan.actions[actionIdx];
+			for (uint actionIdx = 0; actionIdx < l123Plan.actions.size(); actionIdx++) {
+				const ZoombiniPuzzleMaze::SolverPlanAction &action = l123Plan.actions[actionIdx];
 				if (0 <= action.snoidIdx && action.snoidIdx < planContext.snoidCount &&
 					planContext.snoids[action.snoidIdx] &&
 					!planContext.snoids[action.snoidIdx]->_packIsOccupied) {
@@ -3424,22 +3373,20 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 			if (nextAction) {
 				const Common::String nextFilters = debugMazePlanRouteFilters(planContext, *nextAction);
 				if (!nextFilters.empty()) {
-					s += Common::String::format(
-						"    Current stage: cyclic routing -- next use the %s with a waiting Zoombini following %s; %d remain.\n",
-						debugMazeLauncherLabel(kLauncherPositions, nextAction->launcherSeatIdx, includeLauncherRegion).c_str(),
-						nextFilters.c_str(), remainingSnoidCount);
+					s += Common::String::format("    Current stage: cyclic routing -- next use the %s with a waiting Zoombini following %s; %d remain.\n",
+												debugMazeLauncherLabel(kLauncherPositions, nextAction->launcherSeatIdx, includeRegion).c_str(),
+												nextFilters.c_str(), remainingSnoidCount);
 				} else {
-					s += Common::String::format(
-						"    Current stage: cyclic routing -- next use the %s with a Zoombini accepted by the open route; %d remain.\n",
-						debugMazeLauncherLabel(kLauncherPositions, nextAction->launcherSeatIdx, includeLauncherRegion).c_str(),
-						remainingSnoidCount);
+					s += Common::String::format("    Current stage: cyclic routing -- next use the %s with a Zoombini accepted by the open route; %d remain.\n",
+												debugMazeLauncherLabel(kLauncherPositions, nextAction->launcherSeatIdx, includeRegion).c_str(),
+												remainingSnoidCount);
 				}
 			} else {
 				s += "    Current stage: cyclic routing -- follow the currently open trait route to completion.\n";
 			}
 		}
 	} else if (_layoutLevel == kMazeLayoutLevel4) {
-		if (level4Plan.valid) {
+		if (l4Plan.valid) {
 			auto actualHeldGroup = [&](int16 snoidIdx) -> int16 {
 				if (snoidIdx < 0 || planContext.snoidCount <= snoidIdx || !planContext.snoids[snoidIdx])
 					return 0;
@@ -3464,57 +3411,52 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 			};
 			int16 stagingAtCorner = 0;
 			int16 stagingRelayComplete = 0;
-			for (int16 keyIdx = 0; keyIdx < level4Plan.stagingKeyCount; keyIdx++) {
-				const int16 stagingKey = level4Plan.stagingKeys[keyIdx];
-				if (actualCorner(stagingKey) == level4Plan.stagingCorner)
+			for (int16 keyIdx = 0; keyIdx < l4Plan.stagingKeyCount; keyIdx++) {
+				const int16 stagingKey = l4Plan.stagingKeys[keyIdx];
+				if (actualCorner(stagingKey) == l4Plan.stagingCorner)
 					stagingAtCorner += 1;
-				if (actualAccepted(stagingKey) ||
-					actualHeldGroup(stagingKey) == level4Plan.stagingStickyGroup)
+				if (actualAccepted(stagingKey) || actualHeldGroup(stagingKey) == l4Plan.stagingStickyGroup)
 					stagingRelayComplete += 1;
 			}
 			int16 nonKeyRemaining = 0;
 			for (int16 snoidIdx = 0; snoidIdx < planContext.snoidCount; snoidIdx++) {
-				if (debugMazePlanIsStagingKey(
-						level4Plan.stagingKeys, level4Plan.stagingKeyCount, snoidIdx) ||
-					snoidIdx == level4Plan.primaryKey ||
-					snoidIdx == level4Plan.pusherKey || snoidIdx == level4Plan.rescueKey ||
-					snoidIdx == level4Plan.finalKey)
+				if (debugMazePlanIsStagingKey(l4Plan.stagingKeys, l4Plan.stagingKeyCount, snoidIdx) ||
+					snoidIdx == l4Plan.primaryKey ||
+					snoidIdx == l4Plan.pusherKey || snoidIdx == l4Plan.rescueKey ||
+					snoidIdx == l4Plan.finalKey)
 					continue;
 				if (!actualAccepted(snoidIdx))
 					nonKeyRemaining += 1;
 			}
 			if (remainingSnoidCount == 0) {
 				s += "    Current stage: complete -- the planned relay and highway delivery are finished.\n";
-			} else if (actualHeldGroup(level4Plan.pusherKey) == level4Plan.finalStickyGroup) {
-				if (level4Plan.rescueReleasesStagingKey)
+			} else if (actualHeldGroup(l4Plan.pusherKey) == l4Plan.finalStickyGroup) {
+				if (l4Plan.rescueReleasesStagingKey)
 					s += "    Current stage: 8/8 final release -- send key 5 to release key 3.\n";
 				else
 					s += "    Current stage: 8/8 final release -- send key 5 to release the parked staging key and key 3 together.\n";
-			} else if (actualAccepted(level4Plan.rescueKey) &&
-					   actualHeldGroup(level4Plan.primaryKey) == level4Plan.finalStickyGroup) {
+			} else if (actualAccepted(l4Plan.rescueKey) && actualHeldGroup(l4Plan.primaryKey) == l4Plan.finalStickyGroup) {
 				s += "    Current stage: 7/8 sticky push -- send key 3 to push key 2 safely onward.\n";
-			} else if (stagingRelayComplete == level4Plan.stagingKeyCount) {
+			} else if (stagingRelayComplete == l4Plan.stagingKeyCount) {
 				if (0 < nonKeyRemaining)
 					s += Common::String::format("    Current stage: 5/8 highway delivery -- send %d remaining non-key Zoombinis before the rescue relay.\n", nonKeyRemaining);
-				else if (level4Plan.rescueReleasesStagingKey)
+				else if (l4Plan.rescueReleasesStagingKey)
 					s += "    Current stage: 6/8 rescue switch -- send key 4 to release the parked staging key and open key 2's route.\n";
 				else
 					s += "    Current stage: 6/8 rescue switch -- send key 4 to open key 2's route; the remaining staging key stays parked.\n";
-			} else if (actualHeldGroup(level4Plan.primaryKey) == level4Plan.finalStickyGroup) {
-				s += Common::String::format(
-					"    Current stage: 4/8 highway unlock -- relay %d remaining staging key%s from the staging corner.\n",
-					level4Plan.stagingKeyCount - stagingRelayComplete,
-					level4Plan.stagingKeyCount - stagingRelayComplete == 1 ? "" : "s");
-			} else if (stagingAtCorner == level4Plan.stagingKeyCount) {
+			} else if (actualHeldGroup(l4Plan.primaryKey) == l4Plan.finalStickyGroup) {
+				s += Common::String::format("    Current stage: 4/8 highway unlock -- relay %d remaining staging key%s from the staging corner.\n",
+											l4Plan.stagingKeyCount - stagingRelayComplete,
+											l4Plan.stagingKeyCount - stagingRelayComplete == 1 ? "" : "s");
+			} else if (stagingAtCorner == l4Plan.stagingKeyCount) {
 				s += "    Current stage: 3/8 primary switch -- send key 2 only after all staging transfers are done.\n";
 			} else {
-				s += Common::String::format(
-					"    Current stage: 2/8 staging transfer -- send %d remaining staging key%s before the primary switch locks that route.\n",
-					level4Plan.stagingKeyCount - stagingAtCorner,
-					level4Plan.stagingKeyCount - stagingAtCorner == 1 ? "" : "s");
+				s += Common::String::format("    Current stage: 2/8 staging transfer -- send %d remaining staging key%s before the primary switch locks that route.\n",
+											l4Plan.stagingKeyCount - stagingAtCorner,
+											l4Plan.stagingKeyCount - stagingAtCorner == 1 ? "" : "s");
 			}
 		} else if (genericPlan.valid) {
-			// A launch is done once its Zoombini stands where the plan expects.
+			// Compare live positions with recorded post-launch positions to identify the next generic step.
 			int16 nextStep = -1;
 			for (uint stepIdx = 0; stepIdx < genericPlan.steps.size() && nextStep < 0; stepIdx++) {
 				if (debugMazeLiveSnoidSpot(planContext, genericPlan.steps[stepIdx].snoidIdx) != genericPlan.postSpots[stepIdx])
@@ -3524,11 +3466,10 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 				s += "    Current stage: complete -- every planned launch has been made.\n";
 			} else {
 				const ZoombiniPuzzleMaze::SolverGenericStep &step = genericPlan.steps[nextStep];
-				s += Common::String::format(
-					"    Current stage: launch order step %d of %d -- next send %s through the %s.\n",
-					nextStep + 1, static_cast<int>(genericPlan.steps.size()),
-					planContext.snoids[step.snoidIdx]->toStr(true).c_str(),
-					debugMazeLauncherLabel(kLauncherPositions, step.launcherSeatIdx, includeLauncherRegion).c_str());
+				s += Common::String::format("    Current stage: launch order step %d of %d -- next send %s through the %s.\n",
+											nextStep + 1, static_cast<int>(genericPlan.steps.size()),
+											planContext.snoids[step.snoidIdx]->toStr(true).c_str(),
+											debugMazeLauncherLabel(kLauncherPositions, step.launcherSeatIdx, includeRegion).c_str());
 			}
 		} else if (0 < occupiedStickyCellCount) {
 			s += "    Current stage: sticky relay -- release the held Zoombini with the matching switch key.\n";
@@ -3545,55 +3486,54 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 		s += "    Current stage: final routing -- all colored branches have changed; finish the remaining groups.\n";
 	}
 	const bool hasCompletePlan =
-		(_layoutLevel == kMazeLayoutLevel4 && (level4Plan.valid || genericPlan.valid)) ||
-		(_layoutLevel <= kMazeLayoutLevel3 && level123Plan.valid);
+		(_layoutLevel == kMazeLayoutLevel4 && (l4Plan.valid || genericPlan.valid)) ||
+		(_layoutLevel <= kMazeLayoutLevel3 && l123Plan.valid);
 	if (!hasCompletePlan)
 		s += "    Rerun after every launch, switch press, sticky release, or arrow cycle.\n";
 
 	bool anyCurrentKey = false;
-	for (uint requirementIdx = 0; requirementIdx < switchRequirements.size(); requirementIdx++) {
-		const DebugSwitchRequirement &requirement = switchRequirements[requirementIdx];
-		if (requirement.neededNow && 0 < requirement.reachableRouteCount) {
+	for (uint reqIdx = 0; reqIdx < switchReqs.size(); reqIdx++) {
+		const DebugSwitchRequirement &req = switchReqs[reqIdx];
+		if (req.neededNow && 0 < req.reachableRouteCount) {
 			anyCurrentKey = true;
 			break;
 		}
 	}
 
-	if (_layoutLevel == kMazeLayoutLevel4 && level4Plan.valid) {
+	// Show the verified key roster, or currently reachable switch keys when only fallback guidance is available.
+	if (_layoutLevel == kMazeLayoutLevel4 && l4Plan.valid) {
 		const bool colorBlindMode = _vm->isColorBlindModeEnabled();
-		const char *primaryColor = debugMazePlanGroupColor(planContext, level4Plan.primaryGroup, colorBlindMode);
-		const char *stickyColor = debugMazePlanGroupColor(planContext, level4Plan.finalStickyGroup, colorBlindMode);
-		const char *rescueColor = debugMazePlanGroupColor(planContext, level4Plan.rescueGroup, colorBlindMode);
-		const char *highwayColor = debugMazePlanGroupColor(planContext, level4Plan.highwayGroup, colorBlindMode);
-		const char *stagingStickyColor = debugMazePlanGroupColor(planContext, level4Plan.stagingStickyGroup, colorBlindMode);
+		const char *primaryColor = debugMazePlanGroupColor(planContext, l4Plan.primaryGroup, colorBlindMode);
+		const char *stickyColor = debugMazePlanGroupColor(planContext, l4Plan.finalStickyGroup, colorBlindMode);
+		const char *rescueColor = debugMazePlanGroupColor(planContext, l4Plan.rescueGroup, colorBlindMode);
+		const char *highwayColor = debugMazePlanGroupColor(planContext, l4Plan.highwayGroup, colorBlindMode);
+		const char *stagingStickyColor = debugMazePlanGroupColor(planContext, l4Plan.stagingStickyGroup, colorBlindMode);
 		s += "  Complete key roster for the full solution:\n";
-		for (int16 keyIdx = 0; keyIdx < level4Plan.stagingKeyCount; keyIdx++) {
-			const int16 stagingKey = level4Plan.stagingKeys[keyIdx];
-			const ZoombiniPuzzleMaze::SolverPlanAction &transferAction = level4Plan.stageStagingActions[keyIdx];
+		for (int16 keyIdx = 0; keyIdx < l4Plan.stagingKeyCount; keyIdx++) {
+			const int16 stagingKey = l4Plan.stagingKeys[keyIdx];
+			const ZoombiniPuzzleMaze::SolverPlanAction &transferAction = l4Plan.stageStagingActions[keyIdx];
 			const ZoombiniPuzzleMaze::SolverPlanAction *highwayAction = nullptr;
-			for (int16 actionIdx = 0; actionIdx < level4Plan.stagingKeyCount; actionIdx++) {
-				if (level4Plan.stageHighwaySwitchActions[actionIdx].snoidIdx == stagingKey) {
-					highwayAction = &level4Plan.stageHighwaySwitchActions[actionIdx];
+			for (int16 actionIdx = 0; actionIdx < l4Plan.stagingKeyCount; actionIdx++) {
+				if (l4Plan.stageHighwaySwitchActions[actionIdx].snoidIdx == stagingKey) {
+					highwayAction = &l4Plan.stageHighwaySwitchActions[actionIdx];
 					break;
 				}
 			}
 			if (!highwayAction)
 				continue;
-			const Common::String keyLabel = debugMazePlanStagingLabel(level4Plan, stagingKey);
+			const Common::String keyLabel = debugMazePlanStagingLabel(l4Plan, stagingKey);
 			s += Common::String::format("    %s. %s\n", keyLabel.c_str(), planContext.snoids[stagingKey]->toStr(true).c_str());
-			if (stagingKey == level4Plan.stagingKey) {
-				s += Common::String::format(
-					"       Staging/highway key: %s -> %s corner, then %s -> %s relay -> %s sticky.\n",
-					debugMazeLauncherLabel(kLauncherPositions, transferAction.launcherSeatIdx, includeLauncherRegion).c_str(),
-					debugMazePlanCornerName(level4Plan.stagingCorner),
-					debugMazeLauncherLabel(kLauncherPositions, highwayAction->launcherSeatIdx, includeLauncherRegion).c_str(),
-					highwayColor, stagingStickyColor);
+			if (stagingKey == l4Plan.stagingKey) {
+				s += Common::String::format("       Staging/highway key: %s -> %s corner, then %s -> %s relay -> %s sticky.\n",
+											debugMazeLauncherLabel(kLauncherPositions, transferAction.launcherSeatIdx, includeRegion).c_str(),
+											debugMazePlanCornerName(l4Plan.stagingCorner),
+											debugMazeLauncherLabel(kLauncherPositions, highwayAction->launcherSeatIdx, includeRegion).c_str(),
+											highwayColor, stagingStickyColor);
 			} else {
-				s += Common::String::format(
-					"       Staging/highway key: %s -> %s corner, then %s -> %s relay -> goal.\n",
-					debugMazeLauncherLabel(kLauncherPositions, transferAction.launcherSeatIdx, includeLauncherRegion).c_str(),
-					debugMazePlanCornerName(level4Plan.stagingCorner),
-					debugMazeLauncherLabel(kLauncherPositions, highwayAction->launcherSeatIdx, includeLauncherRegion).c_str(), highwayColor);
+				s += Common::String::format("       Staging/highway key: %s -> %s corner, then %s -> %s relay -> goal.\n",
+											debugMazeLauncherLabel(kLauncherPositions, transferAction.launcherSeatIdx, includeRegion).c_str(),
+											debugMazePlanCornerName(l4Plan.stagingCorner),
+											debugMazeLauncherLabel(kLauncherPositions, highwayAction->launcherSeatIdx, includeRegion).c_str(), highwayColor);
 			}
 			const Common::String transferFilters = debugMazePlanRouteFilters(planContext, transferAction);
 			const Common::String highwayFilters = debugMazePlanRouteFilters(planContext, *highwayAction);
@@ -3602,54 +3542,46 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 			if (!highwayFilters.empty())
 				s += Common::String::format("       Required highway-relay traits: %s.\n", highwayFilters.c_str());
 		}
-		s += Common::String::format("    2. %s\n", planContext.snoids[level4Plan.primaryKey]->toStr(true).c_str());
-		s += Common::String::format(
-			"       Primary-switch key: %s -> %s switch -> %s sticky; later pushed out by key 3.\n",
-			debugMazeLauncherLabel(kLauncherPositions, level4Plan.stagePrimary.launcherSeatIdx, includeLauncherRegion).c_str(),
-			primaryColor, stickyColor);
-		s += Common::String::format("    3. %s\n", planContext.snoids[level4Plan.pusherKey]->toStr(true).c_str());
-		s += Common::String::format(
-			"       Sticky-push key: %s pushes key 2 out of the %s sticky and waits there in the safe release direction.\n",
-			debugMazeLauncherLabel(kLauncherPositions, level4Plan.stagePush.launcherSeatIdx, includeLauncherRegion).c_str(), stickyColor);
-		s += Common::String::format("    4. %s\n", planContext.snoids[level4Plan.rescueKey]->toStr(true).c_str());
-		if (level4Plan.rescueReleasesStagingKey) {
-			s += Common::String::format(
-				"       Rescue-switch key: %s -> %s switch; releases the parked staging key and opens key 2's escape branch.\n",
-				debugMazeLauncherLabel(kLauncherPositions, level4Plan.stageRescue.launcherSeatIdx, includeLauncherRegion).c_str(), rescueColor);
+		s += Common::String::format("    2. %s\n", planContext.snoids[l4Plan.primaryKey]->toStr(true).c_str());
+		s += Common::String::format("       Primary-switch key: %s -> %s switch -> %s sticky; later pushed out by key 3.\n",
+									debugMazeLauncherLabel(kLauncherPositions, l4Plan.stagePrimary.launcherSeatIdx, includeRegion).c_str(),
+									primaryColor, stickyColor);
+		s += Common::String::format("    3. %s\n", planContext.snoids[l4Plan.pusherKey]->toStr(true).c_str());
+		s += Common::String::format("       Sticky-push key: %s pushes key 2 out of the %s sticky and waits there in the safe release direction.\n",
+									debugMazeLauncherLabel(kLauncherPositions, l4Plan.stagePush.launcherSeatIdx, includeRegion).c_str(), stickyColor);
+		s += Common::String::format("    4. %s\n", planContext.snoids[l4Plan.rescueKey]->toStr(true).c_str());
+		if (l4Plan.rescueReleasesStagingKey) {
+			s += Common::String::format("       Rescue-switch key: %s -> %s switch; releases the parked staging key and opens key 2's escape branch.\n",
+										debugMazeLauncherLabel(kLauncherPositions, l4Plan.stageRescue.launcherSeatIdx, includeRegion).c_str(), rescueColor);
 		} else {
-			s += Common::String::format(
-				"       Rescue-switch key: %s -> %s switch; opens key 2's safe escape branch.\n",
-				debugMazeLauncherLabel(kLauncherPositions, level4Plan.stageRescue.launcherSeatIdx, includeLauncherRegion).c_str(), rescueColor);
+			s += Common::String::format("       Rescue-switch key: %s -> %s switch; opens key 2's safe escape branch.\n",
+										debugMazeLauncherLabel(kLauncherPositions, l4Plan.stageRescue.launcherSeatIdx, includeRegion).c_str(), rescueColor);
 		}
-		s += Common::String::format("    5. %s\n", planContext.snoids[level4Plan.finalKey]->toStr(true).c_str());
-		s += Common::String::format(
-			"       Final-release key: %s -> %s switch; releases %s after every other Zoombini is safe.\n",
-			debugMazeLauncherLabel(kLauncherPositions, level4Plan.stageFinal.launcherSeatIdx, includeLauncherRegion).c_str(), stickyColor,
-			level4Plan.rescueReleasesStagingKey ? "key 3" : "the parked staging key and key 3");
-	} else if (_layoutLevel <= kMazeLayoutLevel3 && level123Plan.valid) {
-		if (level123Plan.hasSwitchPhase) {
+		s += Common::String::format("    5. %s\n", planContext.snoids[l4Plan.finalKey]->toStr(true).c_str());
+		s += Common::String::format("       Final-release key: %s -> %s switch; releases %s after every other Zoombini is safe.\n",
+									debugMazeLauncherLabel(kLauncherPositions, l4Plan.stageFinal.launcherSeatIdx, includeRegion).c_str(), stickyColor,
+									l4Plan.rescueReleasesStagingKey ? "key 3" : "the parked staging key and key 3");
+	} else if (_layoutLevel <= kMazeLayoutLevel3 && l123Plan.valid) {
+		if (l123Plan.hasSwitchPhase) {
 			const bool colorBlindMode = _vm->isColorBlindModeEnabled();
-			const char *precursorColor = debugMazePlanGroupColor(planContext, level123Plan.precursorGroup, colorBlindMode);
-			const char *finalColor = debugMazePlanGroupColor(planContext, level123Plan.finalGroup, colorBlindMode);
-			const Common::String priorityCondition = debugMazePlanTraitCondition(level123Plan.priorityCategory, level123Plan.priorityValue,
-																				 level123Plan.priorityMatched);
-			const ZoombiniPuzzleMaze::SolverPlanAction &precursorAction = level123Plan.actions[0];
-			const ZoombiniPuzzleMaze::SolverPlanAction &victimAction = level123Plan.actions[level123Plan.victimActionIdx];
-			const ZoombiniPuzzleMaze::SolverPlanAction &finalAction = level123Plan.actions[level123Plan.finalActionIdx];
+			const char *precursorColor = debugMazePlanGroupColor(planContext, l123Plan.precursorGroup, colorBlindMode);
+			const char *finalColor = debugMazePlanGroupColor(planContext, l123Plan.finalGroup, colorBlindMode);
+			const Common::String priorityCondition = debugMazePlanTraitCondition(l123Plan.priorityCategory, l123Plan.priorityValue,
+																				 l123Plan.priorityMatched);
+			const ZoombiniPuzzleMaze::SolverPlanAction &precursorAction = l123Plan.actions[0];
+			const ZoombiniPuzzleMaze::SolverPlanAction &victimAction = l123Plan.actions[l123Plan.victimActionIdx];
+			const ZoombiniPuzzleMaze::SolverPlanAction &finalAction = l123Plan.actions[l123Plan.finalActionIdx];
 			s += "  Complete critical roster for the full solution:\n";
-			s += Common::String::format("    1. %s\n", planContext.snoids[level123Plan.precursorKey]->toStr(true).c_str());
-			s += Common::String::format(
-				"       Precursor-switch key: %s -> %s switch. Send first to make the protected Zoombini's route safe.\n",
-				debugMazeLauncherLabel(kLauncherPositions, precursorAction.launcherSeatIdx, includeLauncherRegion).c_str(), precursorColor);
-			s += Common::String::format("    V. %s\n", planContext.snoids[level123Plan.victim]->toStr(true).c_str());
-			s += Common::String::format(
-				"       Protected Zoombini: %s after key 1 and before key 2. In the starting switch state this same route is rejected.\n",
-				debugMazeLauncherLabel(kLauncherPositions, victimAction.launcherSeatIdx, includeLauncherRegion).c_str());
-			s += Common::String::format("    2. %s\n", planContext.snoids[level123Plan.finalKey]->toStr(true).c_str());
-			s += Common::String::format(
-				"       Priority-group closing key: %s -> %s switch. Send last among all Zoombinis with %s to open the route for everyone else.\n",
-				debugMazeLauncherLabel(kLauncherPositions, finalAction.launcherSeatIdx, includeLauncherRegion).c_str(),
-				finalColor, priorityCondition.c_str());
+			s += Common::String::format("    1. %s\n", planContext.snoids[l123Plan.precursorKey]->toStr(true).c_str());
+			s += Common::String::format("       Precursor-switch key: %s -> %s switch. Send first to make the protected Zoombini's route safe.\n",
+										debugMazeLauncherLabel(kLauncherPositions, precursorAction.launcherSeatIdx, includeRegion).c_str(), precursorColor);
+			s += Common::String::format("    V. %s\n", planContext.snoids[l123Plan.victim]->toStr(true).c_str());
+			s += Common::String::format("       Protected Zoombini: %s after key 1 and before key 2. In the starting switch state this same route is rejected.\n",
+										debugMazeLauncherLabel(kLauncherPositions, victimAction.launcherSeatIdx, includeRegion).c_str());
+			s += Common::String::format("    2. %s\n", planContext.snoids[l123Plan.finalKey]->toStr(true).c_str());
+			s += Common::String::format("       Priority-group closing key: %s -> %s switch. Send last among all Zoombinis with %s to open the route for everyone else.\n",
+										debugMazeLauncherLabel(kLauncherPositions, finalAction.launcherSeatIdx, includeRegion).c_str(),
+										finalColor, priorityCondition.c_str());
 			const Common::String precursorFilters = debugMazePlanRouteFilters(planContext, precursorAction);
 			const Common::String victimFilters = debugMazePlanRouteFilters(planContext, victimAction);
 			const Common::String finalFilters = debugMazePlanRouteFilters(planContext, finalAction);
@@ -3666,11 +3598,11 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 	} else {
 		s += "  Key Zoombinis for the current stage:\n";
 		if (anyCurrentKey) {
-			for (uint requirementIdx = 0; requirementIdx < switchRequirements.size(); requirementIdx++) {
-				const DebugSwitchRequirement &requirement = switchRequirements[requirementIdx];
-				if (!requirement.neededNow || requirement.reachableRouteCount <= 0)
+			for (uint reqIdx = 0; reqIdx < switchReqs.size(); reqIdx++) {
+				const DebugSwitchRequirement &req = switchReqs[reqIdx];
+				if (!req.neededNow || req.reachableRouteCount <= 0)
 					continue;
-				const MazeCellState &switchCell = _cellStates[requirement.switchCellIdx];
+				const MazeCellState &switchCell = _cellStates[req.switchCellIdx];
 				const MazeColorShapeBase colorShapeBase = static_cast<MazeColorShapeBase>(switchCell.shapeBase);
 				const char *colorName;
 				if (_vm->isColorBlindModeEnabled() && colorShapeBase == MazeColorShapeBase::kPurple157)
@@ -3683,30 +3615,30 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 				for (int16 groupCellIdx = 0; groupCellIdx < _waveGroupCellCounts[groupIdx]; groupCellIdx++) {
 					const MazeCellState &linked = _cellStates[_waveGroupCellIndices[groupIdx][groupCellIdx]];
 					if (linked.type == kMazeCellType04_ColoredArrow) {
-						const int16 currentDirection = _nodeDirection[linked.row][linked.col];
-						const int16 nextDirection = debugMazeNextDirection(currentDirection, linked.dirFlags);
+						const int16 curDir = _nodeDirection[linked.row][linked.col];
+						const int16 nextDirection = debugMazeNextDirection(curDir, linked.dirFlags);
 						s += Common::String::format("        - rotate branch cell (%d, %d) from %s to %s\n",
 													linked.row + 1, linked.col + 1,
-													debugMazeDirectionName(currentDirection), debugMazeDirectionName(nextDirection));
+													debugMazeDirectionName(curDir), debugMazeDirectionName(nextDirection));
 					} else if (linked.type == kMazeCellType05_ColoredSticky && 0 <= linked.heldRunner) {
 						s += Common::String::format("        - release the Zoombini held at sticky cell (%d, %d)\n", linked.row + 1, linked.col + 1);
 					}
 				}
 				s += "      Key choices:\n";
-				const bool preferNonRejectingRoute = 0 < requirement.preferredRouteCount;
+				const bool preferNonRejectingRoute = 0 < req.preferredRouteCount;
 				for (uint predictionIdx = 0; predictionIdx < predictions.size(); predictionIdx++) {
 					const DebugLaunchPrediction &prediction = predictions[predictionIdx];
-					if (!debugMazeContainsCell(prediction.switchCells, requirement.switchCellIdx))
+					if (!debugMazeContainsCell(prediction.switchCells, req.switchCellIdx))
 						continue;
 					if (preferNonRejectingRoute && !debugMazeIsPreferredKeyOutcome(prediction.outcome))
 						continue;
 					s += Common::String::format("        %s -- %s; %s\n",
 												prediction.snoid->toStr(true).c_str(),
-												debugMazeLauncherLabel(kLauncherPositions, prediction.launcherSeatIdx, includeLauncherRegion).c_str(),
+												debugMazeLauncherLabel(kLauncherPositions, prediction.launcherSeatIdx, includeRegion).c_str(),
 												debugMazeOutcomeName(prediction.outcome));
 				}
 			}
-		} else if (switchRequirements.empty()) {
+		} else if (switchReqs.empty()) {
 			s += "    (none required in this level's routing scenario)\n";
 		} else if (changedBranchSwitchCount == branchSwitchCount && occupiedStickyCellCount == 0) {
 			s += "    (none required now; the colored-switch setup is complete)\n";
@@ -3718,9 +3650,9 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 	return s;
 }
 
-void ZoombiniPuzzleMaze::loadRegsConfigByLevel() {
-	// Direct practice boot can load Maze before Rod Map initializes the session selectors.
-	_vm->initializeMazeLayoutVariants();
+void ZoombiniPuzzleMaze::loadLayoutRegsConfigByLevel() {
+	// Apply layout option changes before reading the next selector.
+	_vm->updateMazeLayoutVariants();
 	ZoombiniGameState::MazeLayoutVariantState &variantState = _vm->_state->getMazeLayoutVariantState();
 
 	// ID_REGS identifies a family of page resources, not one universal payload format.
@@ -3755,10 +3687,9 @@ void ZoombiniPuzzleMaze::loadRegsConfigByLevel() {
 	}
 	_pathLayoutVariantIdx = _levelVariantIdx;
 	debugC(2, MohawkEngine_Zoombini::kDebugPage02, "maze: layout level %d, variant %d, REGS %d", static_cast<int>(_layoutLevel), _levelVariantIdx, _mazeLayoutRegsId);
-
 }
 
-void ZoombiniPuzzleMaze::loadAndParseRegsData() {
+void ZoombiniPuzzleMaze::loadLayoutRegsData() {
 	// The selected 16600-series REGS resource is a Maze layout table.
 	// Its first ten words contain the launcher header, followed by ten-word cell records.
 	// Other Maze REGS resources have different schemas and are read by loadRegsCoordinateTables().
@@ -3839,7 +3770,6 @@ void ZoombiniPuzzleMaze::loadAndParseRegsData() {
 	debugC(3, MohawkEngine_Zoombini::kDebugPage02, "maze: loaded REGS %d with %d cells and launcher seats [%d %d %d %d %d %d %d %d %d]",
 		   _mazeLayoutRegsId, _layoutCellRecordCount, _launcherSeatIds[1], _launcherSeatIds[2], _launcherSeatIds[3],
 		   _launcherSeatIds[4], _launcherSeatIds[5], _launcherSeatIds[6], _launcherSeatIds[7], _launcherSeatIds[8], _launcherSeatIds[9]);
-
 }
 
 void ZoombiniPuzzleMaze::createCreatureFeatures() {
@@ -3854,10 +3784,9 @@ void ZoombiniPuzzleMaze::createCreatureFeatures() {
 			continue;
 		int16 typeId = kCreatureTypeId[slotIdx];
 		if (typeId == 1) {
-			_launcherCompanionFeatures[1] = loadScrbFeature(
-				ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path), kResScrb9006_CreatureSlot, 7,
-				ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE |
-					ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
+			_launcherCompanionFeatures[1] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path), kResScrb9006_CreatureSlot, 7,
+															ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE |
+																ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
 		}
 	}
 
@@ -3869,12 +3798,11 @@ void ZoombiniPuzzleMaze::createCreatureFeatures() {
 		int16 slotIdx = slot - 1;
 		if (slotIdx < 0 || 14 <= slotIdx)
 			continue;
-		loadScrbFeature(
-			ZmbResource(ZmbResource::kPage, kResBitmapShape7000_Maze),
-			kResScrb7000_CreatureBase + slotIdx, 6,
-			ZmbFeature::FLAG_00008000_LOOP_ANIM |
-				ZmbFeature::FLAG_00100000_PLAY_ONCE |
-				ZmbFeature::FLAG_04000000_OVERLAY);
+		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape7000_Maze),
+						kResScrb7000_CreatureBase + slotIdx, 6,
+						ZmbFeature::FLAG_00008000_LOOP_ANIM |
+							ZmbFeature::FLAG_00100000_PLAY_ONCE |
+							ZmbFeature::FLAG_04000000_OVERLAY);
 	}
 
 	// SCRB 7014..7027 render only while a Snoid occupies the slot.
@@ -3885,10 +3813,10 @@ void ZoombiniPuzzleMaze::createCreatureFeatures() {
 		int16 slotIdx = slot - 1;
 		if (slotIdx < 0 || 14 <= slotIdx)
 			continue;
-		_launcherDropTargetFeatures[slotIdx] = loadScrbFeature(
-			ZmbResource(ZmbResource::kPage, kResBitmapShape7000_Maze), kResScrb7014_HighlightBase + slotIdx, 7, kSeatPositions[slotIdx],
-			ZmbFeature::FLAG_00002000_DRAW_ON_REG | ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM |
-				ZmbFeature::FLAG_01000000_DEFER_RENDER | ZmbFeature::FLAG_04000000_OVERLAY);
+		_launcherDropTargetFeatures[slotIdx] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape7000_Maze),
+															   kResScrb7014_HighlightBase + slotIdx, 7, kSeatPositions[slotIdx],
+															   ZmbFeature::FLAG_00002000_DRAW_ON_REG | ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM |
+																   ZmbFeature::FLAG_01000000_DEFER_RENDER | ZmbFeature::FLAG_04000000_OVERLAY);
 	}
 
 	// Type-1 launchers are registered in a separate pass.
@@ -3907,10 +3835,9 @@ void ZoombiniPuzzleMaze::createCreatureFeatures() {
 
 		int16 scrbId = kCreatureScrbTable[slotIdx];
 		bool hasShadow = (kCreatureHasShadow[slotIdx] != 0);
-		_launcherFeatures[slotIdx] = loadScrbFeature(
-			ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path), scrbId, 7, kLauncherPositions[slotIdx],
-			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE |
-				ZmbFeature::FLAG_00800000_POS_DELTA | ZmbFeature::FLAG_04000000_OVERLAY);
+		_launcherFeatures[slotIdx] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path), scrbId, 7, kLauncherPositions[slotIdx],
+													 ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE |
+														 ZmbFeature::FLAG_00800000_POS_DELTA | ZmbFeature::FLAG_04000000_OVERLAY);
 		type1Anchor = _launcherFeatures[slotIdx];
 
 		if (slotIdx == 6) {
@@ -3922,22 +3849,20 @@ void ZoombiniPuzzleMaze::createCreatureFeatures() {
 		}
 
 		if (hasShadow) {
-			_launcherShadowFeatures[slotIdx] = loadScrbFeature(
-				ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path), scrbId + 1, 7, kLauncherPositions[slotIdx],
-				ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE |
-					ZmbFeature::FLAG_00800000_POS_DELTA | ZmbFeature::FLAG_01000000_DEFER_RENDER | ZmbFeature::FLAG_04000000_OVERLAY);
+			_launcherShadowFeatures[slotIdx] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path),
+															   scrbId + 1, 7, kLauncherPositions[slotIdx],
+															   ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE |
+																   ZmbFeature::FLAG_00800000_POS_DELTA | ZmbFeature::FLAG_01000000_DEFER_RENDER | ZmbFeature::FLAG_04000000_OVERLAY);
 		}
 	}
 
 	if (type1Anchor) {
-		ZmbFeature *foreground = loadScrbFeature(
-			ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8005_FinalForeground, 0,
-			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
+		ZmbFeature *foreground = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8005_FinalForeground, 0,
+												 ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
 		manualLinkAfter(foreground, type1Anchor);
 	} else {
-		loadScrbFeature(
-			ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8010_FinalForegroundThird, 0,
-			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
+		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8010_FinalForegroundThird, 0,
+						ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
 	}
 }
 
@@ -3953,10 +3878,8 @@ void ZoombiniPuzzleMaze::createRemainingCreatureFeatures() {
 			continue;
 		int16 typeId = kCreatureTypeId[slotIdx];
 		if (typeId == 2) {
-			_launcherCompanionFeatures[2] = loadScrbFeature(
-				ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path), kResScrb9007_CreatureSlotAlt, 7,
-				ZmbFeature::FLAG_00080000_DEFER_ANIM |
-					ZmbFeature::FLAG_00100000_PLAY_ONCE);
+			_launcherCompanionFeatures[2] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path), kResScrb9007_CreatureSlotAlt, 7,
+															ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE);
 		}
 	}
 
@@ -3979,16 +3902,12 @@ void ZoombiniPuzzleMaze::createRemainingCreatureFeatures() {
 														 ZmbFeature::FLAG_00800000_POS_DELTA | ZmbFeature::FLAG_04000000_OVERLAY);
 
 		if (slotIdx == 3) {
-			loadScrbFeature(
-				ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8002_ForegroundAlt, 0,
-				ZmbFeature::FLAG_00008000_LOOP_ANIM |
-					ZmbFeature::FLAG_04000000_OVERLAY);
+			loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8002_ForegroundAlt, 0,
+							ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
 			lowerAnchor = _launcherFeatures[slotIdx];
 		} else if (slotIdx == 4) {
-			loadScrbFeature(
-				ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8003_ForegroundThird, 0,
-				ZmbFeature::FLAG_00008000_LOOP_ANIM |
-					ZmbFeature::FLAG_04000000_OVERLAY);
+			loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8003_ForegroundThird, 0,
+							ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
 			lowerAnchor = _launcherFeatures[slotIdx];
 		} else if (slotIdx == 5) {
 			lowerAnchor = _launcherFeatures[slotIdx];
@@ -4004,23 +3923,21 @@ void ZoombiniPuzzleMaze::createRemainingCreatureFeatures() {
 		// The non-type-1 pass registers its shadow without LOOP_ANIM, unlike the type-1 pass.
 		// The shadow therefore joins the overlay bucket and keeps its list position behind its launcher.
 		if (kCreatureHasShadow[slotIdx]) {
-			_launcherShadowFeatures[slotIdx] = loadScrbFeature(
-				ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path), scrbId + 1, 7, kLauncherPositions[slotIdx],
-				ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_00800000_POS_DELTA |
-					ZmbFeature::FLAG_01000000_DEFER_RENDER | ZmbFeature::FLAG_04000000_OVERLAY);
+			_launcherShadowFeatures[slotIdx] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path),
+															   scrbId + 1, 7, kLauncherPositions[slotIdx],
+															   ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_00800000_POS_DELTA |
+																   ZmbFeature::FLAG_01000000_DEFER_RENDER | ZmbFeature::FLAG_04000000_OVERLAY);
 		}
 	}
 
 	if (lowerAnchor) {
-		ZmbFeature *foreground = loadScrbFeature(
-			ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8001_Foreground, 0,
-			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
+		ZmbFeature *foreground = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8001_Foreground, 0,
+												 ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
 		manualLinkAfter(foreground, lowerAnchor);
 	}
 	if (rightAnchor) {
-		ZmbFeature *foreground = loadScrbFeature(
-			ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8008_FinalForegroundAlt, 0,
-			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
+		ZmbFeature *foreground = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape8000_Mudball), kResScrb8008_FinalForegroundAlt, 0,
+												 ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
 		manualLinkAfter(foreground, rightAnchor);
 	}
 
@@ -4055,7 +3972,7 @@ void ZoombiniPuzzleMaze::relinkSolidLauncherDropTargetHelpers() {
 
 void ZoombiniPuzzleMaze::loadRegsCoordinateTables() {
 	// Maze uses ID_REGS for several page-specific tables with different schemas.
-	// The selected 16600-series layout table is decoded by loadAndParseRegsData().
+	// The selected 16600-series layout table is decoded by loadLayoutRegsData().
 	// The resources below provide screen anchors, registration values, and collision lookup data.
 	// REGS 16000 is not an X/Y registration pair: it is 169 packed POINTS.
 	memset(_gridCellPos, 0, sizeof(_gridCellPos));
@@ -4268,11 +4185,10 @@ void ZoombiniPuzzleMaze::initGridAndSelectPaths() {
 
 	// The restored level-4 layout can be handed a pack it cannot deliver.
 	// Retune one condition cell rather than leave the crossing unwinnable.
-	repairRestoredLayoutConditionCell();
+	repairRestoredL4LayoutConditionCell();
 
 	_queueProcessingEnabled = true;
 	debugC(2, MohawkEngine_Zoombini::kDebugPage02, "maze: initialized grid for layout level %d with %d path slots", static_cast<int>(_layoutLevel), _selectedPathSlotCount);
-
 }
 
 void ZoombiniPuzzleMaze::generateBaseNodes() {
@@ -5273,7 +5189,6 @@ void ZoombiniPuzzleMaze::registerGridCellState() {
 		_waveGroupCellIndices[groupIdx][_waveGroupCellCounts[groupIdx]] = cellIdx;
 		_waveGroupCellCounts[groupIdx] += 1;
 	}
-
 }
 
 ZoombiniPuzzleMaze::MazeCellState *ZoombiniPuzzleMaze::getCellState(int16 cellIdx) {
@@ -5913,9 +5828,8 @@ void ZoombiniPuzzleMaze::handleGridDrop(int16 seatIdx, ZmbSnoid *snoid) {
 		_launcherSetupQueue[_launcherSetupQueueSize] = seatIdx;
 		_launcherSetupQueueSize += 1;
 	}
-	debugC(4, MohawkEngine_Zoombini::kDebugPage02, "maze: placed runner %d at launcher %d (row %d, column %d, direction %d)", runnerIdx, seatIdx,
-		   rs.oldRow, rs.oldCol, rs.direction);
-
+	debugC(4, MohawkEngine_Zoombini::kDebugPage02, "maze: placed runner %d at launcher %d (row %d, column %d, direction %d)",
+		   runnerIdx, seatIdx, rs.oldRow, rs.oldCol, rs.direction);
 }
 void ZoombiniPuzzleMaze::processQueues() {
 	processLauncherSetupQueue();
@@ -6510,9 +6424,8 @@ void ZoombiniPuzzleMaze::zmbArriveAtNode(MazeCellType cellType, int16 runnerIdx)
 	activateRunnerBubble(runnerIdx, kResScrb10040_ExitBubbleBase, pos);
 	rs.bubbleFeature->setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleMaze::adjustExitBubbleHotspotPosition));
 	if (!rs.overlayFeature) {
-		rs.overlayFeature = loadScrbFeature(
-			ZmbResource(ZmbResource::kPage, kResBitmapShape10000_Cell), kResScrb10041_BubbleOverlayAlt, 7, pos,
-			ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_00800000_POS_DELTA);
+		rs.overlayFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape10000_Cell), kResScrb10041_BubbleOverlayAlt, 7, pos,
+											ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_00800000_POS_DELTA);
 		// Reload the newly registered runner so frame zero is materialized in this render pass
 		// instead of waiting for its first tick.
 		loadScrbOntoFeature(rs.overlayFeature, kResScrb10041_BubbleOverlayAlt);
@@ -6551,10 +6464,9 @@ void ZoombiniPuzzleMaze::zmbArriveAtNodeAlt(int16 cellIdx, int16 runnerIdx) {
 	rs.rejecting = true;
 	activateRunnerBubble(runnerIdx, kResScrb10030_BubbleBase, bubblePos);
 	if (!rs.overlayFeature) {
-		rs.overlayFeature = loadScrbFeature(
-			ZmbResource(ZmbResource::kPage, kResBitmapShape10000_Cell), kResScrb10031_BubbleOverlay, 7, bubblePos,
-			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE |
-				ZmbFeature::FLAG_00800000_POS_DELTA | ZmbFeature::FLAG_04000000_OVERLAY);
+		rs.overlayFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape10000_Cell), kResScrb10031_BubbleOverlay, 7, bubblePos,
+											ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE |
+												ZmbFeature::FLAG_00800000_POS_DELTA | ZmbFeature::FLAG_04000000_OVERLAY);
 		// The explicit load clears the initial-registration sentinel before the
 		// next pre-render, so DEFER_ANIM does not freeze shape 42 at frame zero.
 		loadScrbOntoFeature(rs.overlayFeature, kResScrb10031_BubbleOverlay);

@@ -378,10 +378,11 @@ void ZoombiniMidiPlayer::playMidi(ZmbResource resource) {
 		error("ZoombiniMidiPlayer: required MIDI resource %s is missing", resource.toString().c_str());
 		return;
 	}
-	// The Macintosh MIDI profile (MIDIMAC.MHK, selected by "use_mac_midi") has no inline GM/GS setup,
-	// so request a GM reset per song to keep a clean device state.
-	// The Windows profile (MIDIMPC.MHK) re-initializes itself and needs no reset, so the flag tracks the option on every play.
-	setResetChannelsOnPlay(ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionUseMacMidi));
+	// The Macintosh MIDI profile (MIDIMAC.MHK) has no inline GM/GS setup, so manually issue a GM reset per song.
+	// The Windows profile (MIDIMPC.MHK) re-inits itself, so it does not need a reset.
+	const int midiSoundtrackVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack);
+	const MohawkMetaEngine_Zoombini::MidiSoundtrack midiSoundtrack = static_cast<MohawkMetaEngine_Zoombini::MidiSoundtrack>(midiSoundtrackVal);
+	setResetChannelsOnPlay(midiSoundtrack == MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh);
 	playMidiStream(_vm->getResource(ID_TMID, resource), static_cast<uint16>(resource._id));
 	syncBgmVolume(!_vm->_state || _vm->_state->getEnableMusic());
 }

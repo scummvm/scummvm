@@ -819,46 +819,56 @@ void MohawkEngine_Zoombini::syncSoundSettings() {
 }
 
 void MohawkEngine_Zoombini::applyGameSettings() {
-	// The original_prng setting is intentionally not refreshed here.
-	// @ref ZoombiniRandom samples it once at engine startup.
-	// Changing the PRNG mid-run can alter puzzle algorithms.
-	const bool brightenPalette = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionBrightenPalette);
-	if (_brightenPalette != brightenPalette) {
-		_brightenPalette = brightenPalette;
+	bool needsRedraw = false;
+
+	if (_rnd) {
+		const int prngAlgorithmVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionPrngAlgorithm);
+		const MohawkMetaEngine_Zoombini::PrngAlgorithm prngAlgorithm = static_cast<MohawkMetaEngine_Zoombini::PrngAlgorithm>(prngAlgorithmVal);
+		_rnd->setAlgorithm(prngAlgorithm);
+	}
+
+	const int paletteFilterVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionPaletteFilter);
+	const MohawkMetaEngine_Zoombini::PaletteFilter paletteFilter = static_cast<MohawkMetaEngine_Zoombini::PaletteFilter>(paletteFilterVal);
+	if (_paletteFilter != paletteFilter) {
+		_paletteFilter = paletteFilter;
 		if (_gfx) {
 			_gfx->refreshPalette();
-			ZoombiniPage *page = getCurrentPage();
-			if (page)
-				page->scheduleForceRedraw();
+			needsRedraw = true;
 		}
 	}
 
-	const bool useAccurate60FPS = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionUseAccurate60FPS);
-	if (_useAccurate60FPS != useAccurate60FPS) {
+	const int tickRateVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionTickRate);
+	const MohawkMetaEngine_Zoombini::TickRate tickRate = static_cast<MohawkMetaEngine_Zoombini::TickRate>(tickRateVal);
+	if (_tickRate != tickRate) {
 		const uint32 now = _system->getMillis();
 		const uint32 currentFrame = getAnimationFrameCounter(now);
 		_animationClockEpochTimeMs = now;
 		_animationClockEpochFrame = currentFrame;
-		_useAccurate60FPS = useAccurate60FPS;
-		if (useAccurate60FPS)
+		_tickRate = tickRate;
+		if (tickRate == MohawkMetaEngine_Zoombini::TickRate::kAccurate60FPS)
 			debug(1, "engine: using exact 60fps animation clock");
 		else
 			debug(1, "engine: using %u ms integer animation tick", kOriginalAnimateFrameTimeMs);
 
-		ZoombiniPage *page = getCurrentPage();
-		if (page)
-			page->scheduleForceRedraw();
+		needsRedraw = true;
 	}
 
 	const bool colorBlindMode = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionColorBlindMode);
 	if (_colorBlindMode != colorBlindMode) {
 		_colorBlindMode = colorBlindMode;
+		needsRedraw = true;
+	}
+
+	_enhancedKbdShortcuts = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionEnhancedKbdShortcuts);
+
+	if (_state)
+		updateMazeLayoutVariants();
+
+	if (needsRedraw) {
 		ZoombiniPage *page = getCurrentPage();
 		if (page)
 			page->scheduleForceRedraw();
 	}
-
-	_enhancedKbdShortcuts = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionEnhancedKbdShortcuts);
 }
 
 Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
@@ -1052,41 +1062,52 @@ bool MohawkEngine_Zoombini::useEnhancedKbdShortcuts() const {
 	return _enhancedKbdShortcuts;
 }
 
-void MohawkEngine_Zoombini::initializeMazeLayoutVariants() {
+void MohawkEngine_Zoombini::updateMazeLayoutVariants() {
 	ZoombiniGameState::MazeLayoutVariantState &variants = _state->getMazeLayoutVariantState();
-	// Latch this state even with the option disabled.
-	// A later option change must not alter an active engine session.
-	if (variants._initialVariantsSelected)
-		return;
-	variants._initialVariantsSelected = true;
-
 	const bool randomizeInitialLayout = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionMazeRandomizeInitialLayout);
-	if (randomizeInitialLayout) {
-		// Use system time instead of ZoombiniRandom so this selection does not affect/consume gameplay RNG state.
-		const uint32 entryMillis = _system->getMillis();
-		const int16 baseAltVariant = static_cast<int16>(entryMillis % 2);
-		// Practice mode can switch levels after entry, so each level needs its own initialized selector.
-		// Levels 1 through 3 use the same Base/Alt selection.
+	const bool restoreUnusedL4Layout = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionMazeRestoreUnusedL4Layout);
+	const bool resetAllVariants = !variants._initialVariantsSelected || variants._randomizeInitialLayout != randomizeInitialLayout;
+	if (!resetAllVariants && variants._restoreUnusedL4Layout == restoreUnusedL4Layout)
+		return;
+
+	// Use system time so layout selection does not consume gameplay RNG state.
+	const uint32 entryMillis = randomizeInitialLayout ? _system->getMillis() : 0;
+	const int16 baseAltVariant = static_cast<int16>(entryMillis % 2);
+	if (resetAllVariants) {
+		// Practice mode can switch levels, so each level needs its own selector.
 		variants._level1 = baseAltVariant;
 		variants._level2 = baseAltVariant;
 		variants._level3 = baseAltVariant;
-		if (ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionMazeRestoreUnusedL4Layout)) {
+	}
+
+	if (randomizeInitialLayout) {
+		if (restoreUnusedL4Layout) {
 			// Level 4 uses 0 for Base, 1 for Restored, and 2 for Alt.
 			variants._level4 = static_cast<int16>(entryMillis % 3);
 		} else {
 			// Without Restored, map the shared Alt choice from 1 to Level 4's index 2.
 			variants._level4 = static_cast<int16>(baseAltVariant * 2);
 		}
+	} else {
+		variants._level4 = 0;
 	}
+
+	variants._initialVariantsSelected = true;
+	variants._randomizeInitialLayout = randomizeInitialLayout;
+	variants._restoreUnusedL4Layout = restoreUnusedL4Layout;
 }
 
 uint32 MohawkEngine_Zoombini::getAnimationFrameCounter(uint32 timeMs) const {
 	// Let's avoid floating-point math, since ScummVM can be ported to everywhere.
 	const uint32 elapsed = timeMs - _animationClockEpochTimeMs;
-	if (_useAccurate60FPS) { // 16.6667ms mode (perfect 60FPS for modern displays)
+	switch (_tickRate) {
+	case MohawkMetaEngine_Zoombini::TickRate::kAccurate60FPS: // 16.6667ms mode (perfect 60FPS for modern displays)
 		return _animationClockEpochFrame + static_cast<uint32>((static_cast<uint64>(elapsed) * kAnimateFrameRate) / kAnimationClockTimeBaseMs);
-	} else { // 17ms mode (faithful to original Zoombini engine, 58.8235FPS)
+		break;
+	case MohawkMetaEngine_Zoombini::TickRate::kOriginal17ms: // 17ms mode (faithful to original Zoombini engine, 58.8235FPS)
+	default:
 		return _animationClockEpochFrame + elapsed / kOriginalAnimateFrameTimeMs;
+		break;
 	}
 }
 
@@ -1117,7 +1138,9 @@ MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
 	if (!isVersionFamilyV1())
 		return nullptr;
 
-	const bool useMac = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionUseMacMidi);
+	const int midiSoundtrackVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack);
+	const MohawkMetaEngine_Zoombini::MidiSoundtrack midiSoundtrack = static_cast<MohawkMetaEngine_Zoombini::MidiSoundtrack>(midiSoundtrackVal);
+	const bool useMac = midiSoundtrack == MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh;
 	if (_midiMhk && _midiMhkUsesMacProfile == useMac)
 		return _midiMhk;
 	if (_midiMhk) {
@@ -1173,7 +1196,8 @@ void MohawkEngine_Zoombini::loadNextPage() {
 	}
 
 	// Cache the setting before the page loads its first palette.
-	_brightenPalette = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionBrightenPalette);
+	const int paletteFilterVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionPaletteFilter);
+	_paletteFilter = static_cast<MohawkMetaEngine_Zoombini::PaletteFilter>(paletteFilterVal);
 
 	assert(!_pageQueue.empty());
 	ZoombiniPageType nextPageType = _pageQueue.pop();
@@ -1228,7 +1252,7 @@ void MohawkEngine_Zoombini::loadNextPage() {
 		page = new ZoombiniPuzzleHotel(this);
 		break;
 	case ZoombiniPageType::kNet:
-		// The v2.0 demo Net starts each page instance with a fresh active pack.
+		// The v2.0US demo starts a page instance with a fresh active pack.
 		if (isV20UsDemo())
 			_state->generateRandomPack();
 		page = new ZoombiniPuzzleNet(this);
