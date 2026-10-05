@@ -185,7 +185,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 114: // cseg206:1195-1329
+	case 114: // go through hole
 		if (_objectsState[10] == 0)
 			PART_00_EXEC_ACTION(110);
 		PART_00_ANIMATE_RAW(0x5942, 0, 2, 0x44C, 22, 50, 0x66EE, 30, -1, 0);

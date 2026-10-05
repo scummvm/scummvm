@@ -587,7 +587,7 @@ void IgorEngine::PART_MAIN() {
 		case 300:
 		case 301:
 		case 302:
-		case 303:
+		case 303: // college stairs first floor
 			PART_30();
 			break;
 		case 340:

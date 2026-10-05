@@ -257,6 +257,14 @@ void IgorEngine::handleRoomInput() {
 	if (actionHovering && _actionCode != 0) {
 		return;
 	}
+	// checks whether the specified verb-object pair action is available
+	// and thus doesnt move to the "use A with B" state.
+	auto hasPairAction = [this](int verbOffset, int objectNum, int objectType) {
+		const int offset = verbOffset +
+			(_roomDataOffsets.action.object1 - _roomDataOffsets.action.useVerb) +
+			objectType * 38 + objectNum;
+		return _roomActionsTable[offset] != 0;
+	};
 
 	// Action previousAction = _currentAction;
 	// Handle inventory and room object selection based on cursor position and clicks
@@ -265,14 +273,14 @@ void IgorEngine::handleRoomInput() {
 		if (_currentAction.verbType == 0) {
 			_currentAction.object1Num = object;
 			_currentAction.object1Type = kObjectTypeInventory;
-			if (_currentAction.verb == kVerbUse && _roomActionsTable[_roomDataOffsets.action.useVerb + 10 + _currentAction.object1Num] != 0) {
+			if (_currentAction.verb == kVerbUse && hasPairAction(_roomDataOffsets.action.useVerb, _currentAction.object1Num, kObjectTypeInventory)) {
 				formatActionSentence(0);
 				if (!actionHovering) {
 					_currentAction.verbType = 1;
 				}
 				return;
 			}
-			if (_currentAction.verb == kVerbGive && _roomActionsTable[_roomDataOffsets.action.giveVerb + 10 + _currentAction.object1Num] != 0) {
+			if (_currentAction.verb == kVerbGive && hasPairAction(_roomDataOffsets.action.giveVerb, _currentAction.object1Num, kObjectTypeInventory)) {
 				formatActionSentence(0);
 				if (!actionHovering) {
 					_currentAction.verbType = 2;
@@ -290,14 +298,14 @@ void IgorEngine::handleRoomInput() {
 		if (_currentAction.verbType == 0) {
 			_currentAction.object1Num = object;
 			_currentAction.object1Type = kObjectTypeRoom;
-			if (_currentAction.verb == kVerbUse && _roomActionsTable[_roomDataOffsets.action.useVerb + 48 + _currentAction.object1Num] != 0) {
+			if (_currentAction.verb == kVerbUse && hasPairAction(_roomDataOffsets.action.useVerb, _currentAction.object1Num, kObjectTypeRoom)) {
 				formatActionSentence(0);
 				if (!actionHovering) {
 					_currentAction.verbType = 1;
 				}
 				return;
 			}
-			if (_currentAction.verb == kVerbGive && _roomActionsTable[_roomDataOffsets.action.giveVerb + 48 + _currentAction.object1Num] != 0) {
+			if (_currentAction.verb == kVerbGive && hasPairAction(_roomDataOffsets.action.giveVerb, _currentAction.object1Num, kObjectTypeRoom)) {
 
 				formatActionSentence(0);
 				if (!actionHovering) {
