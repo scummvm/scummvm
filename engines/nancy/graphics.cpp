@@ -229,14 +229,23 @@ bool GraphicsManager::isInLayer(const RenderObject &object, Layer layer) const {
 
 // Filter out dirty rects that are completely inside others to reduce overdraw
 void GraphicsManager::filterDirtyRects(Common::List<Common::Rect> &rects) {
-	for (auto outer = rects.begin(); outer != rects.end(); ++outer) {
-		for (auto inner = rects.begin(); inner != rects.end(); ++inner) {
-			if (inner != outer && outer->contains(*inner)) {
-				rects.erase(inner);
-				break;
+	// Rects that overlap are merged into one. An area that gets drawn twice would
+	// have the objects with an alpha channel blended onto it twice.
+	bool hasMerged;
+	do {
+		hasMerged = false;
+
+		for (auto outer = rects.begin(); outer != rects.end() && !hasMerged; ++outer) {
+			for (auto inner = rects.begin(); inner != rects.end(); ++inner) {
+				if (inner != outer && outer->intersects(*inner)) {
+					outer->extend(*inner);
+					rects.erase(inner);
+					hasMerged = true;
+					break;
+				}
 			}
 		}
-	}
+	} while (hasMerged);
 }
 
 // Perform the actual drawing. This checks for cases where something would be fully obscured,
