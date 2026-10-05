@@ -54,6 +54,8 @@ public:
 	Common::String debugGetPageCommandHelp() const override;
 	/** Handle the common Basecamp pedestal debugger subcommands. */
 	bool debugDoPageCommand(int argc, const char **argv, Common::String &output) override;
+	/** Preserve residents and debit the selected party before a debugger transfer. */
+	void debugPreparePackForXfer();
 
 protected:
 	ZoombiniShelterBasecamp(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType,
@@ -251,7 +253,7 @@ protected:
 	 * entries but materializes only non-occupied residents when reopened.
 	 * @return The number of occupied Snoids that remain in @p activePack for departure.
 	 */
-	int16 splitActivePackForBasecamp(ZmbStateActivePack &activePack, ZmbStateActivePack &basecampPack, bool isDeparture);
+	static int16 splitActivePackForBasecamp(ZmbStateActivePack &activePack, ZmbStateActivePack &basecampPack, bool isDeparture);
 	/** Return true when @p snoid is in a state that permits Basecamp dragging. */
 	bool isBasecampSnoidDraggable(const ZmbSnoid &snoid) const;
 	/**

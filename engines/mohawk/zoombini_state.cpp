@@ -2801,6 +2801,34 @@ void ZmbStateFile::setRouteCompletionFlag(ZmbRouteId routeId, int16 routeLevel) 
 	}
 }
 
+void ZmbStateFile::markDebugXferProgress(const ZmbXferRouteInfo &routeInfo) {
+	const uint16 routeIdx = static_cast<uint16>(routeInfo.routeId);
+	if (static_cast<uint16>(ZmbRouteId::kMontDespair) < routeIdx)
+		return;
+
+	if (routeInfo.routeId != ZmbRouteId::kBigBadHungry)
+		setRouteCompletionFlag(ZmbRouteId::kBigBadHungry, _routeLevels[0]);
+
+	// Either incoming branch discovers BC2. Preserve existing discoveries.
+	if (routeInfo.routeId == ZmbRouteId::kMontDespair && _levelFlagLoWhosBayouHiDeepDarkForest == 0) {
+		ZmbRouteId incomingRoute = ZmbRouteId::kWhosBayou;
+		if ((ZmbDestPageKind::kFleens_13 <= _currentPage && _currentPage <= ZmbDestPageKind::kNet_15) || (_routeLevels[1] == 0 && 0 < _routeLevels[2]))
+			incomingRoute = ZmbRouteId::kDeepDarkForest;
+		setRouteCompletionFlag(incomingRoute, _routeLevels[static_cast<uint16>(incomingRoute)]);
+	}
+
+	if (routeInfo.entersContainer())
+		setRouteCompletionFlag(routeInfo.routeId, _routeLevels[routeIdx]);
+
+	if (routeInfo.srcPuzzlePage != ZmbDestPageKind::kUnk_00) {
+		// A simulated perfect run completes every preceding puzzle on this route.
+		const byte levelBitmask = static_cast<byte>(1 << (_routeLevels[routeIdx] & 3));
+		const int16 firstPage = static_cast<int16>(ZmbDestPageKind::kBridge_07) + routeIdx * 3;
+		for (int16 pageIdx = firstPage; pageIdx <= static_cast<int16>(routeInfo.srcPuzzlePage); pageIdx++)
+			_pageLevelFlags[pageIdx - 4] |= static_cast<byte>(levelBitmask | (levelBitmask << 4));
+	}
+}
+
 void ZmbStateFile::sync(Common::Serializer &s, bool isTlcLayout, bool hasCompletionCounters) {
 	// 0x0000: The state file stores the magic and auto-sticky delay big-endian
 	// (on-disk bytes 00 6B and 00 1E).

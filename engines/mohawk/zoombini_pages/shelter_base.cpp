@@ -134,6 +134,21 @@ void ZoombiniShelterBasecamp::clearHoverCursor() {
 	_storageButtonCursorShapeIdx = ZmbHotspot::kShapeNone;
 }
 
+void ZoombiniShelterBasecamp::debugPreparePackForXfer() {
+	saveSnoidsToPack();
+	saveBasecampPackState(true);
+
+	// Residents remain in the shelter snapshot; only travelers belong to Xfer.
+	// An empty selection must also allow the debugger's empty-pack fallback.
+	ZmbStateActivePack &activePack = _vm->_state->getCurrentState()._zmbPackActive;
+	for (int16 entryIdx = 0; entryIdx < activePack.getPackZmbCount(); entryIdx++) {
+		if (!activePack.getEntry(entryIdx).getIsOccupied()) {
+			activePack.removeEntryAt(entryIdx);
+			entryIdx -= 1;
+		}
+	}
+}
+
 void ZoombiniShelterBasecamp::saveStateBeforeMapTransition() {
 	saveSnoidsToPack();
 	saveBasecampPackState(false);
