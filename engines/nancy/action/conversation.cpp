@@ -1194,7 +1194,10 @@ void ConversationCel::updateGraphics() {
 }
 
 void ConversationCel::RenderedCel::setMovieFrame(const Graphics::Surface &frame) {
-	GraphicsManager::copyToManaged(frame, _drawSurface);
+	// Nancy17 movies are padded to a multiple of 16 pixels, by repeating their
+	// last row and column; the picture itself is the size of the tree's rect
+	const Common::Rect picture(MIN<int>(frame.w, _screenPosition.width()), MIN<int>(frame.h, _screenPosition.height()));
+	GraphicsManager::copyToManaged(frame.getSubArea(picture), _drawSurface);
 	_needsRedraw = true;
 }
 
