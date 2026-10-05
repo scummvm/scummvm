@@ -1290,6 +1290,7 @@ static void room_203_daemon() {
 			kernel_synch(KERNEL_ANIM, aa[1], KERNEL_NOW, 0);
 			aainfo[1]._active = -1;
 			aainfo[1]._frame = 0;
+			local->_96 = 53;
 			local->_a8 = 0;
 			break;
 
@@ -1459,6 +1460,8 @@ static void room_203_daemon() {
 		kernel_abort_animation(aa[1]);
 		aainfo[1]._active = 0;
 		aainfo[1]._frame = 0;
+
+		warning("LOCAL 96: %d", local->_96);
 
 		switch (local->_96) {
 		case 50:
