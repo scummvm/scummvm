@@ -582,6 +582,14 @@ void IgorEngine::PART_MAIN() {
 		case 171:
 			PART_17();
 			break;
+		case 180:
+		case 181:
+			PART_18();
+			break;
+		case 190:
+		case 191:
+			PART_19();
+			break;
 		case 210:
 		case 211:
 		case 212:
@@ -655,6 +663,18 @@ void IgorEngine::moveScreenUp(int offset) {
 		}
 		_nextTimer = _system->getMillis() + 1000 / 60;
 	}
+}
+
+void IgorEngine::PART_UPDATE_FIGURES_ON_PAPER(int delay) {
+	uint8 *framesData = loadData(FRM_NumbersPaper1);
+	uint8 *framesOffsets = loadData(FRM_NumbersPaper2);
+	for (int i = 1; i <= 20; ++i) {
+		const uint8 *p = framesData + READ_LE_UINT16(framesOffsets + (i - 1) * 2) - 1;
+		decodeAnimFrame(p, _screenVGA, true);
+		waitForTimer(delay);
+	}
+	free(framesData);
+	free(framesOffsets);
 }
 
 } // End of namespace Igor

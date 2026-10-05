@@ -105,6 +105,7 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 		break;
 	}
 }
+
 void IgorEngine::PART_06_ACTION_103_talkToPhotographer() {
 	ADD_DIALOGUE_TEXT(215, 1, 489);
 	SET_DIALOGUE_TEXT(1, 1);

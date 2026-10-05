@@ -456,6 +456,7 @@ private:
 	void SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p);
 
 	void UPDATE_OBJECT_STATE(int num);
+	void PART_UPDATE_FIGURES_ON_PAPER(int delay);
 
 	void animateIgorTalking(int frame);
 	void fixIgorDialogueTextPosition(int num, int count, int *x, int *y);
@@ -614,6 +615,30 @@ private:
 	void PART_17_HELPER_10();
 	void PART_17_HELPER_11_PhillipToIgor(int frame);
 	void PART_17();
+
+	// men toilets
+	void PART_18_EXEC_ACTION(int action);
+	void PART_18_ACTION_109();
+	void PART_18_ACTION_111();
+	void PART_18_HELPER_1(int num);
+	void PART_18_HELPER_2();
+	void PART_18();
+	void loadResourceData__ROOM_MenToilets();
+	void loadResourceData__ANIM_MenToilets();
+
+	// women toilets
+	void PART_19_EXEC_ACTION(int action);
+	void PART_19_ACTION_107();
+	void PART_19_ACTION_109();
+	void PART_19_UPDATE_DIALOGUE_WOMEN(int action);
+	void PART_19_UPDATE_BACKGROUND_HELPER_9();
+	void PART_19_HELPER_1(int num);
+	void PART_19_HELPER_2();
+	void PART_19_HELPER_3();
+	void PART_19_HELPER_4();
+	void PART_19_HELPER_5();
+	void PART_19_HELPER_7(int frame);
+	void PART_19();
 
 	// college corridor margaret
 	void PART_21_EXEC_ACTION(int action);
