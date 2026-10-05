@@ -41,7 +41,7 @@ struct EngineData {
 struct BSUM : public EngineData {
 	BSUM(Common::SeekableReadStream *chunkStream);
 
-	byte header[90];
+	byte header[90] = {};
 
 	Common::Path conversationTextsFilename;
 	Common::Path autotextFilename;

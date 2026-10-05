@@ -37,15 +37,16 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
-	// The header is used to verify savegames
-	s.syncBytes(header, 90);
+	// The header is used to verify savegames. Nancy18 dropped the game's title from it
+	s.syncBytes(header, 90, kGameTypeVampire, kGameTypeNancy17);
+	s.syncBytes(header, 60, kGameTypeNancy18);
 
 	s.skip(0x17, kGameTypeVampire, kGameTypeVampire);
 	s.skip(0x49, kGameTypeNancy1, kGameTypeNancy1);
 	s.skip(0x43, kGameTypeNancy2, kGameTypeNancy9);
 	s.skip(0x41, kGameTypeNancy10, kGameTypeNancy15);
 	s.skip(0x55, kGameTypeNancy16, kGameTypeNancy16);
-	s.skip(0x51, kGameTypeNancy17);
+	s.skip(0x51, kGameTypeNancy17, kGameTypeNancy17);
 
 	readFilename(s, conversationTextsFilename, kGameTypeNancy6);
 	readFilename(s, autotextFilename, kGameTypeNancy6);
