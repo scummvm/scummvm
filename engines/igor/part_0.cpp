@@ -311,11 +311,9 @@ void IgorEngine::PART_00_ENTER_FROM_BELOW() {
 }
 
 void IgorEngine::PART_00() {
-	_gameState.enableLight = 1; // cseg206:3964
-	loadActionData(DAT_StudentDormitoryRoom); // cseg206:3975-3998
-	loadRoomData(PAL_StudentDormitoryRoom, IMG_StudentDormitoryRoom,
-			BOX_StudentDormitoryRoom, MSK_StudentDormitoryRoom,
-			TXT_StudentDormitoryRoom); // cseg208:0002
+	_gameState.enableLight = 1;
+	loadActionData(DAT_StudentDormitoryRoom);
+	loadRoomData(PAL_StudentDormitoryRoom, IMG_StudentDormitoryRoom, BOX_StudentDormitoryRoom, MSK_StudentDormitoryRoom, TXT_StudentDormitoryRoom);
 	static const int animFrames[] = {
 		ANM_StudentDormitoryRoom1, ANM_StudentDormitoryRoom2,
 		ANM_StudentDormitoryRoom3, ANM_StudentDormitoryRoom4,
@@ -324,14 +322,14 @@ void IgorEngine::PART_00() {
 		ANM_StudentDormitoryRoom9, ANM_StudentDormitoryRoom10,
 		ANM_StudentDormitoryRoom11, 0
 	};
-	loadAnimData(animFrames); // cseg207:0002-0239
+	loadAnimData(animFrames);
 	_roomDataOffsets = PART_00_ROOM_DATA_OFFSETS;
 	// clamps clicks to x 41..253 and y <= 143; clicks past the
 	// horizontal edges also clamp to y >= 141/138
 	setRoomWalkBounds(41, 0, 253, 143, 141, 138);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_00_EXEC_ACTION);
 	PART_00_APPLY_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080); // cseg206:39B3-39C5
+	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);

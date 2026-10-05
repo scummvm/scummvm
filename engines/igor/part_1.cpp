@@ -58,7 +58,7 @@ void IgorEngine::PART_01_STATE_11_DRAW_drawPigeons(int index) {
 // 11: the window-pigeons cutscene It blits two regions,
 // restores the current palette from the saved one, then runs a 1000-tick
 // animation loop before handing over to state 22.
-void IgorEngine::PART_01_STATE_11() {
+void IgorEngine::PART_01_STATE_11_pigeonsCutscene() {
 	PART_01_STATE_11_BLIT_blitIgor();
 	PART_01_STATE_11_BLIT_00A5();
 
@@ -76,7 +76,7 @@ void IgorEngine::PART_01_STATE_11() {
 			pendingTicks = 0;
 		}
 		if (drawIgorsEyes) {
-			PART_01_STATE_11_BLIT_drawIgorsEyes(getRandomNumber(3)); // cseg200:1992-199A
+			PART_01_STATE_11_BLIT_drawIgorsEyes(getRandomNumber(3));
 		}
 		if (drawPigeons) {
 			PART_01_STATE_11_DRAW_drawPigeons(getRandomNumber(2));
@@ -94,6 +94,20 @@ void IgorEngine::PART_01_STATE_11() {
 	_currentPart = 22;
 }
 
+void IgorEngine::PART_01_STATE_12_explosion() {
+	int shakeY = 0;
+	int elapsed = 0;
+	for (int nextShake = 15; nextShake < 500; nextShake += 16) {
+		waitForTimer(nextShake - elapsed);
+		elapsed = nextShake;
+		shakeY ^= 1;
+		_system->setShakePos(0, shakeY);
+	}
+	waitForTimer(500 - elapsed);
+	_system->setShakePos(0, 0);
+	waitForTimer(16);
+}
+
 void IgorEngine::PART_01_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_01_EXEC_ACTION %d", action);
 	switch (action) {
@@ -103,7 +117,7 @@ void IgorEngine::PART_01_EXEC_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 102:
-		//  draws two 24x41 roof-crossing frames at screen
+		// draws two 24x41 roof-crossing frames at screen
 		// waiting for the video update after each one, then
 		// changes to part 20.
 		for (int frame = 0; frame <= 1; ++frame) {
@@ -186,14 +200,15 @@ void IgorEngine::PART_01() {
 			_walkDataCurrentIndex = 1;
 			PART_01_CLOSE_WINDOW();
 		} else {
-			if (_currentPart == 11) // cseg200:1950-195A
-				PART_01_STATE_11();
-			// TODO: transcribe the state 12 cutscene, cseg200:19FD-1AB0.
-			// It exits to 0x17 (23) at cseg200:1AD8 and ends in state 0x6C
-			// (108) at cseg200:1ADA. Its body repeats the same s3:0xE15E ->
-			// s3:0xE45E palette copy as state 11 (cseg200:19FD-1A0A).
-			else if (_currentPart == 12) // cseg200:19F3
-				warning("PART_01 state %d entrance is not yet transcribed", _currentPart);
+			if (_currentPart == 11)
+				PART_01_STATE_11_pigeonsCutscene();
+			else if (_currentPart == 12) {
+				memcpy(_currentPalette, _paletteBuffer, 768);
+				updatePalette(768);
+				playSound(12, 1);
+				PART_01_STATE_12_explosion();
+				_currentPart = 23;
+			}
 		}
 	}
 

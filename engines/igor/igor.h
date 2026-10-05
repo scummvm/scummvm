@@ -494,12 +494,16 @@ private:
 	void PART_01_STATE_11_BLIT_00A5();
 	void PART_01_STATE_11_BLIT_drawIgorsEyes(int frame);
 	void PART_01_STATE_11_DRAW_drawPigeons(int index);
-	void PART_01_STATE_11();
+	void PART_01_STATE_11_pigeonsCutscene();
+	void PART_01_STATE_12_explosion();
 	void PART_02();
 	void PART_02_EXEC_ACTION(int action);
 	void PART_02_APPLY_OBJECT_STATE(int num);
 	void PART_02_START_DIALOGUE(int text, int count, int sound);
 	void PART_02_SEARCH_TRUNK();
+	void PART_02_DRAW_FUSE_SPARK(int frame);
+	void PART_02_UPDATE_FUSE();
+	void PART_02_WALK_WITH_FUSE(int srcX, int srcY, int dstX, int dstY);
 
 	// spring bridge
 	void PART_05_HELPER_4_drawPaperOrNot(int num);
