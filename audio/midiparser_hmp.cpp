@@ -35,6 +35,7 @@ MidiParser_HMP::MidiParser_HMP(int8 source) : MidiParser_SMF(source) {
 	_songLength = 0;
 	memset(_channelPriorities, 0, sizeof(_channelPriorities));
 	memset(_deviceTrackMappings, 0, sizeof(_deviceTrackMappings));
+	_hmiDevice = kHmiDeviceNone;
 	memset(_restoreControllers, 0, sizeof(_restoreControllers));
 	_callbackPointer = 0;
 	_callbackSegment = 0;
@@ -77,7 +78,12 @@ bool MidiParser_HMP::loadMusic(const byte *data, uint32 size) {
 	}
 
 	_numTracks = 1;
-	_numSubtracks[0] = readWord(pos, _version);
+	const uint32 sourceSubtrackCount = readWord(pos, _version);
+	if (sourceSubtrackCount > MAXIMUM_SUBTRACKS) {
+		warning("HMI/HMP data has too many subtracks (%u)", sourceSubtrackCount);
+		return false;
+	}
+	_numSubtracks[0] = sourceSubtrackCount;
 	// Doesn't seem like this field is actually used...
 	//uint32 ppqn = readWord(pos, _version);
 	_ppqn = 60;
@@ -89,9 +95,15 @@ bool MidiParser_HMP::loadMusic(const byte *data, uint32 size) {
 	for (int i = 0; i < 16; i++) {
 		_channelPriorities[i] = readWord(pos, _version);
 	}
-	for (int i = 0; i < 5; i++) {
-		for (int j = 0; j < 32; j++) {
-			_deviceTrackMappings[j][i] = readWord(pos, _version);
+	if (isHmi) {
+		for (int track = 0; track < 32; track++) {
+			for (int device = 0; device < 5; device++)
+				_deviceTrackMappings[track][device] = readWord(pos, _version);
+		}
+	} else {
+		for (int device = 0; device < 5; device++) {
+			for (int track = 0; track < 32; track++)
+				_deviceTrackMappings[track][device] = readWord(pos, _version);
 		}
 	}
 	if (_version == HmpVersion::VERSION_HMP_013195) {
@@ -103,20 +115,45 @@ bool MidiParser_HMP::loadMusic(const byte *data, uint32 size) {
 	_callbackSegment = readWord(pos, _version);
 
 	// Read the tracks
-	for (uint currTrack = 0; currTrack < _numSubtracks[0]; currTrack++) {
+	_numSubtracks[0] = 0;
+	for (uint currTrack = 0; currTrack < sourceSubtrackCount; currTrack++) {
 		//uint32 chunkNumber = readWord(pos, _version);
 		pos += isHmi ? 2 : 4;
 		uint32 chunkSize = readWord(pos, _version);
 		//uint32 trackNumber = readWord(pos, _version);
 		pos += isHmi ? 2 : 4;
 
-		_tracks[0][currTrack] = pos;
+		if (!isHmi || isHmiTrackCompatible(currTrack))
+			_tracks[0][_numSubtracks[0]++] = pos;
 		pos += (chunkSize - (isHmi ? 6 : 12));
 	}
 
 	// TODO Read branching data
 
 	return true;
+}
+
+bool MidiParser_HMP::isHmiTrackCompatible(uint track) const {
+	if (_hmiDevice == kHmiDeviceNone)
+		return true;
+
+	bool hasMapping = false;
+	for (int device = 0; device < 5; device++) {
+		const uint32 mappedDevice = _deviceTrackMappings[track][device];
+		if (!mappedDevice)
+			continue;
+
+		hasMapping = true;
+		if (mappedDevice == _hmiDevice ||
+				(mappedDevice == kHmiDeviceSoundMasterII &&
+						(_hmiDevice == kHmiDeviceMpu401 ||
+						 _hmiDevice == kHmiDeviceAwe32)) ||
+				(mappedDevice == kHmiDeviceAdLib &&
+						_hmiDevice == kHmiDeviceOpl3))
+			return true;
+	}
+
+	return !hasMapping;
 }
 
 int32 MidiParser_HMP::determineDataSize(Common::SeekableReadStream *stream) {
