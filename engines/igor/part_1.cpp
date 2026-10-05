@@ -100,6 +100,9 @@ void IgorEngine::PART_01() {
 	loadAnimData(animFrames);
 
 	_roomDataOffsets = PART_01_ROOM_DATA_OFFSETS;
+	// clamps clicks to x 60..276 and y <= 143 before consulting
+	// the room mask
+	setRoomWalkBounds(60, 0, 276, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_01_EXEC_ACTION);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 

@@ -31,12 +31,15 @@ static int16 truncReal(float f) {
 	return (int16)f;
 }
 
-void IgorEngine::setRoomWalkBounds(int x1, int y1, int x2, int y2) {
+void IgorEngine::setRoomWalkBounds(int x1, int y1, int x2, int y2,
+		int x1MinY, int x2MinY) {
 	assert(x1 <= x2 && y1 <= y2);
 	_roomWalkBounds.x1 = x1;
 	_roomWalkBounds.x2 = x2;
 	_roomWalkBounds.y1 = y1;
 	_roomWalkBounds.y2 = y2;
+	_roomWalkBounds.x1MinY = x1MinY < 0 ? y1 : x1MinY;
+	_roomWalkBounds.x2MinY = x2MinY < 0 ? y1 : x2MinY;
 }
 
 void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
@@ -1090,76 +1093,22 @@ void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
 }
 
 void IgorEngine::fixWalkPosition(int *x, int *y) {
-	if (getPart() == 0) {
-		int xPos = *x;
-		int yPos = *y;
-		if (yPos > 143)
-			yPos = 143;
-		if (xPos < 41) {
-			xPos = 41;
-			if (yPos < 141)
-				yPos = 141;
-		} else if (xPos > 253) {
-			xPos = 253;
-			if (yPos < 138)
-				yPos = 138;
-		} else {
-			do {
-				if (yPos >= 143)
-					break;
-				++yPos;
-			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0);
-		}
-		*x = xPos;
-		*y = yPos;
-		return;
-	}
-	// Part 1 walks on the roof ledge, whose only walkable area
-	// (mask region 5) runs from (60,117) up to (276,98); both clamp values are
-	// that ledge's endpoints.
-	if (getPart() == 1) {
-		int xPos = *x;
-		int yPos = *y;
-		if (yPos > 143)
-			yPos = 143;
-		if (xPos < 60) {
-			xPos = 60;
-			yPos = 117;
-		} else if (xPos > 276) {
-			xPos = 276;
-			yPos = 98;
-		} else {
-			do {
-				if (yPos < 143)
-					++yPos;
-				//
-				if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area != 0)
-					break;
-			} while (yPos != 143);
-			if (yPos == 143) {
-				//
-				do {
-					--yPos;
-				} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0);
-			}
-		}
-		*x = xPos;
-		*y = yPos;
-		return;
-	}
 	int xPos = *x;
+	int edgeMinY = _roomWalkBounds.y1;
 	if (xPos < _roomWalkBounds.x1) {
 		xPos = _roomWalkBounds.x1;
+		edgeMinY = _roomWalkBounds.x1MinY;
 	}
 	if (xPos > _roomWalkBounds.x2) {
 		xPos = _roomWalkBounds.x2;
+		edgeMinY = _roomWalkBounds.x2MinY;
 	}
 	if (getPart() == 22) {
 		*x = xPos;
 		*y = _roomWalkBounds.y1;
 		return;
 	}
-	int yPos = *y;
+	int yPos = MAX(MIN(*y, _roomWalkBounds.y2), edgeMinY);
 	if (getPart() == 13) {
 		if (xPos >= 92 && xPos <= 186 && yPos > 127) {
 			*x = xPos;

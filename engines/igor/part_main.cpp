@@ -526,19 +526,19 @@ void IgorEngine::PART_MAIN() {
 		switch (_currentPart) {
 		case 0:
 		case 1:
-			PART_00(); // Student dormitory; cseg001:08BA-08C1
+			PART_00(); // Student dormitory
 			break;
 		case 10:
 		case 11:
 		case 12:
-			PART_01(); // Outside the dormitory window; cseg001:08C6-08D5
+			PART_01(); // Outside the dormitory window
 			break;
 		case 20:
 		case 21:
 		case 22:
 		case 23:
 		case 24:
-			PART_02(); // Dormitory attic; cseg001:08DA-08F5
+			PART_02(); // Dormitory attic
 			break;
 
 		case 40:
@@ -580,42 +580,42 @@ void IgorEngine::PART_MAIN() {
 			break;
 		case 170:
 		case 171:
-			PART_17();
+			PART_17(); // College entrance
 			break;
 		case 180:
 		case 181:
-			PART_18();
+			PART_18(); // men toilets
 			break;
 		case 190:
 		case 191:
-			PART_19();
+			PART_19(); // women toilets
 			break;
 		case 210:
 		case 211:
 		case 212:
-			PART_21();
+			PART_21(); //college corridor margaret
 			break;
 		case 230:
 		case 231:
 		case 232:
-			PART_23();
+			PART_23(); // college corridor lucas
 			break;
 		case 280:
 		case 281:
-			PART_28();
+			PART_28(); // college corridor caroline
 			break;
 		case 300:
 		case 301:
 		case 302:
-		case 303: // college stairs first floor
-			PART_30();
+		case 303:
+			PART_30(); // college stairs first floor
 			break;
 		case 340:
-			PART_34(); // Park, left panel; cseg101:1F85
+			PART_34(); // Park, left panel
 			break;
 		case 350:
 		case 351:
-			PART_35(); // Park, right panel; cseg100:1644
+			PART_35(); // Park, right panel
 			break;
 		case 850: // Intro cutscene
 			// Clear the entire screen buffer before starting the intro cutscene

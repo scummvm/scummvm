@@ -326,6 +326,9 @@ void IgorEngine::PART_00() {
 	};
 	loadAnimData(animFrames); // cseg207:0002-0239
 	_roomDataOffsets = PART_00_ROOM_DATA_OFFSETS;
+	// clamps clicks to x 41..253 and y <= 143; clicks past the
+	// horizontal edges also clamp to y >= 141/138
+	setRoomWalkBounds(41, 0, 253, 143, 141, 138);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_00_EXEC_ACTION);
 	PART_00_APPLY_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080); // cseg206:39B3-39C5

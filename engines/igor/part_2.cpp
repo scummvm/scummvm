@@ -125,11 +125,14 @@ void IgorEngine::PART_02() {
 		ANM_StudentDormitoryAttic11, ANM_StudentDormitoryAttic12,
 		ANM_StudentDormitoryAttic13, ANM_StudentDormitoryAttic14, 0
 	};
-	loadAnimData(animFrames); // cseg204:0002-02CC
+	loadAnimData(animFrames);
 	_roomDataOffsets = PART_02_ROOM_DATA_OFFSETS;
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_02_EXEC_ACTION); // cseg203:1FD9-22AE
-	PART_02_APPLY_OBJECT_STATE(255); // cseg203:4213-421A
-	memcpy(_screenVGA, _screenLayer1, 46080); // cseg203:421F-4231
+	// clamps clicks to x 41..253 and y <= 143; clicks past the
+	// horizontal edges also clamp to y >= 141/138.
+	setRoomWalkBounds(41, 0, 253, 143, 141, 138);
+	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_02_EXEC_ACTION);
+	PART_02_APPLY_OBJECT_STATE(255);
+	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;

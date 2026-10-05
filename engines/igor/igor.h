@@ -105,6 +105,8 @@ enum InputVar {
 struct RoomWalkBounds {
 	int x1, y1;
 	int x2, y2;
+	// Minimum y after clamping a click past the corresponding horizontal edge.
+	int x1MinY, x2MinY;
 };
 
 struct DetectedGameVersion {
@@ -488,6 +490,11 @@ private:
 	void PART_01();
 	void PART_01_EXEC_ACTION(int action);
 	void PART_01_CLOSE_WINDOW();
+	void PART_01_STATE_11_BLIT_0053();
+	void PART_01_STATE_11_BLIT_00A5();
+	void PART_01_STATE_11_BLIT_0153();
+	uint16 PART_01_STATE_11_DRAW_01B8(int index);
+	void PART_01_STATE_11();
 	void PART_02();
 	void PART_02_EXEC_ACTION(int action);
 	void PART_02_APPLY_OBJECT_STATE(int num);
@@ -822,7 +829,8 @@ private:
 	const uint8 *getAnimFrame(int baseOffset, int tableOffset, int frame);
 	void decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText = false);
 
-	void setRoomWalkBounds(int x1, int y1, int x2, int y2);
+	void setRoomWalkBounds(int x1, int y1, int x2, int y2,
+			int x1MinY = -1, int x2MinY = -1);
 	void fixWalkPosition(int *x, int *y);
 	void recolorDialogueChoice(int num, bool highlight);
 	void handleDialogue(int x, int y, int r, int g, int b);
