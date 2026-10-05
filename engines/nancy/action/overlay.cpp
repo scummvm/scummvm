@@ -103,6 +103,15 @@ void Overlay::updateGraphics() {
 		setVisible(_isActive);
 	}
 
+	// Nancy16 only shows an overlay for as long as its dependencies hold, e.g. the key
+	// in scene 1383, which goes away when picked up. It comes back once they hold again.
+	if (g_nancy->getGameType() >= kGameTypeNancy16 && _state == kRun && _overlayType == kPlayOverlayStatic &&
+			!_isActive && isVisible()) {
+		setVisible(false);
+		_hasHotspot = false;
+		_currentViewportFrame = -1;
+	}
+
 	// Update inactive animated overlays
 	if (!_isActive && _state == kRun && !_blitDescriptions.empty() && _overlayType == kPlayOverlayAnimated) {
 		uint16 newFrame = NancySceneState.getSceneInfo().frameID;
