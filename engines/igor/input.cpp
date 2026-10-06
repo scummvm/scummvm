@@ -598,8 +598,11 @@ void IgorEngine::handleRoomInput() {
 			}
 			_walkDataCurrentIndex = 1;
 			_gameState.igorMoving = true;
-			return;
 		}
+		// Already at the target: the action is not run here. The walk index was
+		// decremented above, so the per-tick walk handler resynchronizes it and
+		// then executes the pending action.
+		return;
 	}
 
 	hideCursor();

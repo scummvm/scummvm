@@ -25,10 +25,10 @@ namespace Igor {
 
 void IgorEngine::PART_27_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
+	case 101: // go to right
 		_currentPart = 211;
 		break;
-	case 102:
+	case 102: // look at lockers
 		if (_objectsState[85] == 0) {
 			ADD_DIALOGUE_TEXT(216, 2, 1173);
 			SET_DIALOGUE_TEXT(1, 1);
@@ -41,23 +41,23 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 			startIgorDialogue();
 		}
 		break;
-	case 103:
+	case 103: // open lockers
 		ADD_DIALOGUE_TEXT(203, 1, 1163);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 104:
+	case 104: // close lockers
 		ADD_DIALOGUE_TEXT(204, 1, 1164);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 105:
+	case 105: // look at philips locker
 		ADD_DIALOGUE_TEXT(205, 1, 1165);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 106:
-		PART_27_ACTION_106();
+		PART_27_ACTION_106_openPhilipLocker();
 		break;
 	case 107:
 		PART_27_ACTION_107();
@@ -80,12 +80,12 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		SET_DIALOGUE_TEXT(1, 3);
 		startIgorDialogue();
 		break;
-	case 112:
+	case 112: // look at plaque
 		ADD_DIALOGUE_TEXT(221, 1, 1176);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 113:
+	case 113: // go to library
 		_currentPart = 150;
 		break;
 	default:
@@ -94,7 +94,7 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_27_ACTION_106() {
+void IgorEngine::PART_27_ACTION_106_openPhilipLocker() {
 	if (_objectsState[84] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
@@ -109,8 +109,9 @@ void IgorEngine::PART_27_ACTION_106() {
 		ADD_DIALOGUE_TEXT(209, 3, 1169);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
+		waitForEndOfIgorDialogue();
 		_objectsState[5] = 2;
-		return;
+		// return;
 	}
 	const int offset = 21810;
 	for (int i = 2; i <= 3; ++i) {

@@ -262,19 +262,21 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		SET_DIALOGUE_TEXT(1, 2);
 		startIgorDialogue();
 		break;
-	case 46:
+	case 46: // look at folder
 		if (_objectsState[3] == 0) {
 			ADD_DIALOGUE_TEXT(85, 1, 60);
 		} else {
 			ADD_DIALOGUE_TEXT(86, 2, 61);
+			_objectsState[5] = 1;
 		}
-		SET_DIALOGUE_TEXT(1, 2);
+		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 48:
 		ADD_DIALOGUE_TEXT(77 + _objectsState[0], 1, 53 + _objectsState[0]);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
+		break;
 	case 50:
 		if (_objectsState[1] == 0) {
 			ADD_DIALOGUE_TEXT(80, 1, 56);

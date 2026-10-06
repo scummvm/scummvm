@@ -756,7 +756,7 @@ private:
 
 	// college lockers
 	void PART_27_EXEC_ACTION(int action);
-	void PART_27_ACTION_106();
+	void PART_27_ACTION_106_openPhilipLocker();
 	void PART_27_ACTION_107();
 	void PART_27_ACTION_108();
 	void PART_27_ACTION_110();
