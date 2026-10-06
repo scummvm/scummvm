@@ -18,7 +18,7 @@ void IgorEngine::PART_02_START_DIALOGUE(int text, int count, int sound) {
 
 void IgorEngine::PART_02_SEARCH_TRUNK() {
 	for (int frame = 0; frame <= 2; ++frame) {
-		PART_00_ANIMATE_RAW(0x3C0 + frame * 0x715, 0, 0, 0x715, 37, 49, 0x608C, 0, -1, 0);
+		PART_00_animateRaw(0x3C0 + frame * 0x715, 0, 0, 0x715, 37, 49, 0x608C, 0, -1, 0);
 		if (frame > 0)
 			waitForTimer(127);
 	}
@@ -127,7 +127,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			PART_02_START_DIALOGUE(201, 1, 108);
 			break;
 		}
-		PART_00_ANIMATE_RAW(0x18FF, 1, 2, 0x715, 37, 49, 0x608C, 127, 1, 7);
+		PART_00_animateRaw(0x18FF, 1, 2, 0x715, 37, 49, 0x608C, 127, 1, 7);
 		_objectsState[16] = 1;
 		PART_02_APPLY_OBJECT_STATE(1);
 		break;
@@ -137,14 +137,14 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			break;
 		}
 		playSound(8, 1);
-		PART_00_ANIMATE_RAW(0x18FF, 1, 0, 0x715, 37, 49, 0x608C, 127, -1, 0);
+		PART_00_animateRaw(0x18FF, 1, 0, 0x715, 37, 49, 0x608C, 127, -1, 0);
 		_objectsState[16] = 0;
 		PART_02_APPLY_OBJECT_STATE(1);
 		break;
 	case 103: { // hammer the nail
 		for (int step = 1; step <= 21; ++step) {
 			const int frame = step == 21 ? 2 : ((step + 1) & 1);
-			PART_00_ANIMATE_RAW(0x33BA + frame * 0x4B0, 0, 0, 0x4B0,
+			PART_00_animateRaw(0x33BA + frame * 0x4B0, 0, 0, 0x4B0,
 					24, 50, 0x5989, 0, -1, 0);
 			if ((step & 1) != 0 && step < 21)
 				playSound(9, 1);
@@ -166,7 +166,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		// 0/1 and finish on frame 2 (indexed from s3:0x0249).
 		for (int step = 1; step <= 21; ++step) {
 			const int frame = step == 21 ? 2 : ((step + 1) & 1);
-			PART_00_ANIMATE_RAW(0x41CA + frame * 0x658, 0, 0, 0x658,
+			PART_00_animateRaw(0x41CA + frame * 0x658, 0, 0, 0x658,
 					29, 56, 0x5349, 0, -1, 0);
 			if ((step & 1) != 0 && step < 21)
 				playSound(10, 1);
@@ -228,7 +228,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		}
 		break;
 	case 107: // take butterfly net; cseg203:0D71-0F3E
-		PART_00_ANIMATE_RAW(0x54D2, 0, 1, 0x405, 21, 49, 0x5A6D, 127, -1, 0);
+		PART_00_animateRaw(0x54D2, 0, 1, 0x405, 21, 49, 0x5A6D, 127, -1, 0);
 		waitForTimer(127);
 		addObjectToInventory(7, 42);
 		_objectsState[17] = 1;
@@ -253,7 +253,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		PART_02_START_DIALOGUE(216, 1, 120);
 		break;
 	case 113: // place dynamite in the crack
-		PART_00_ANIMATE_RAW(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
+		PART_00_animateRaw(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
 		waitForTimer(127);
 		_objectsState[23] = 1;
 		PART_02_APPLY_OBJECT_STATE(8);
@@ -279,7 +279,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		}
 		break;
 	case 119:
-		PART_00_ANIMATE_RAW(0xB488, 0, 1, 0x4B0, 24, 50, 0x5988, 64, -1, 0);
+		PART_00_animateRaw(0xB488, 0, 1, 0x4B0, 24, 50, 0x5988, 64, -1, 0);
 		waitForTimer(64);
 		_currentPart = 1;
 		break;
@@ -301,7 +301,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		} else {
 			memset(_screenVGA + 0xB400, 0, 0x4BFF);
 			playSound(68, 1);
-			PART_00_ANIMATE_RAW(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
+			PART_00_animateRaw(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
 			waitForTimer(127);
 
 
@@ -388,7 +388,7 @@ void IgorEngine::PART_02() {
 		case 20:
 			fadeIn(768);
 			// Igor climbs through the window on the first attic entrance.
-			PART_00_ANIMATE_RAW(0x69C0, 0, 2, 0x759, 33, 57, 0x4B26, 31, -1, 0);
+			PART_00_animateRaw(0x69C0, 0, 2, 0x759, 33, 57, 0x4B26, 31, -1, 0);
 			waitForTimer(31);
 			_walkData[0].setPos(57, 117, kFacingPositionRight, 0);
 			break;
@@ -410,7 +410,7 @@ void IgorEngine::PART_02() {
 			// the attic palette before drawing its post-explosion frame.
 			memset(_screenVGA + 0xB400, 0, 0x4600);
 			memcpy(_currentPalette, _paletteBuffer, 768);
-			PART_00_DRAW_RAW_FRAME(0x820B, 0, 0xA19, 47, 55, 0x6C3B);
+			part_00_drawRawFrame(0x820B, 0, 0xA19, 47, 55, 0x6C3B);
 			updatePalette(768);
 
 			// Igor lies stunned, stands up, and shakes his head.
@@ -420,7 +420,7 @@ void IgorEngine::PART_02() {
 			};
 			for (uint i = 0; i < ARRAYSIZE(postExplosionFrames); ++i) {
 				const int frame = postExplosionFrames[i];
-				PART_00_DRAW_RAW_FRAME(0x820B, frame, 0xA19, 47, 55, 0x6C3B);
+				part_00_drawRawFrame(0x820B, frame, 0xA19, 47, 55, 0x6C3B);
 				if (frame == 0)
 					waitForTimer(2 * 255);
 				else if (frame == 1 || frame == 2)

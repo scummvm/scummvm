@@ -23,7 +23,7 @@
 
 namespace Igor {
 
-void IgorEngine::PART_00_DRAW_RAW_FRAME(int srcOffset, int frame, int frameSize,
+void IgorEngine::part_00_drawRawFrame(int srcOffset, int frame, int frameSize,
 		int width, int height, int dstOffset) {
 
 	const uint8 *src = _animFramesBuffer + srcOffset + frame * frameSize;
@@ -45,12 +45,12 @@ void IgorEngine::PART_00_DRAW_RAW_FRAME(int srcOffset, int frame, int frameSize,
 		memcpy(_screenVGA + dstOffset + y * 320, _screenTempLayer + y * 100, width);
 }
 
-void IgorEngine::PART_00_ANIMATE_RAW(int srcOffset, int firstFrame, int lastFrame,
+void IgorEngine::PART_00_animateRaw(int srcOffset, int firstFrame, int lastFrame,
 		int frameSize, int width, int height, int dstOffset, int delay,
 		int soundFrame, int sound) {
 	const int step = firstFrame <= lastFrame ? 1 : -1;
 	for (int frame = firstFrame;; frame += step) {
-		PART_00_DRAW_RAW_FRAME(srcOffset, frame, frameSize, width, height, dstOffset);
+		part_00_drawRawFrame(srcOffset, frame, frameSize, width, height, dstOffset);
 		if (frame == soundFrame)
 			playSound(sound, 1);
 		if (frame != lastFrame)
@@ -93,14 +93,14 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 	case 101: // open window
 		if (_objectsState[13] != 1) {
 
-			PART_00_ANIMATE_RAW(0, 1, 3, 0x480, 36, 32, 0x6B2C, 62, 2, 1);
+			PART_00_animateRaw(0, 1, 3, 0x480, 36, 32, 0x6B2C, 62, 2, 1);
 			_objectsState[13] = 1;
 			PART_00_APPLY_OBJECT_STATE(6);
 		}
 		break;
 	case 102: // close window
 		if (_objectsState[13] == 1) {
-			PART_00_ANIMATE_RAW(0, 2, 0, 0x480, 36, 32, 0x6B2C, 62, 2, 2);
+			PART_00_animateRaw(0, 2, 0, 0x480, 36, 32, 0x6B2C, 62, 2, 2);
 			_objectsState[13] = 2;
 			PART_00_APPLY_OBJECT_STATE(6);
 		}
@@ -119,7 +119,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 			startIgorDialogue();
 			break;
 		}
-		PART_00_ANIMATE_RAW(0x4D8A, 0, 1, 0x5DC, 30, 50, 0x6B2C, 62, -1, 0);
+		PART_00_animateRaw(0x4D8A, 0, 1, 0x5DC, 30, 50, 0x6B2C, 62, -1, 0);
 		_objectsState[13] = 2;
 		_objectsState[15] = 1;
 		_currentPart = 10;
@@ -131,14 +131,14 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		break;
 	case 106: // open bedside table
 		if (_objectsState[8] == 0) {
-			PART_00_ANIMATE_RAW(0x3FC8, 0, 2, 0x436, 22, 49, 0x693C, 126, 2, 6);
+			PART_00_animateRaw(0x3FC8, 0, 2, 0x436, 22, 49, 0x693C, 126, 2, 6);
 			_objectsState[8] = 1;
 			PART_00_APPLY_OBJECT_STATE(1);
 		}
 		break;
 	case 107: // close bedside table
 		if (_objectsState[8] != 0) {
-			PART_00_ANIMATE_RAW(0x3FC8, 2, 0, 0x436, 22, 49, 0x693C, 126, 1, 6);
+			PART_00_animateRaw(0x3FC8, 2, 0, 0x436, 22, 49, 0x693C, 126, 1, 6);
 			_objectsState[8] = 0;
 			PART_00_APPLY_OBJECT_STATE(1);
 		}
@@ -155,7 +155,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		break;
 	case 109: // take alarm clock
 		if (_objectsState[9] == 0) {
-			PART_00_ANIMATE_RAW(0x8410, 0, 1, 0x405, 21, 49, 0x693D, 126, -1, 0);
+			PART_00_animateRaw(0x8410, 0, 1, 0x405, 21, 49, 0x693D, 126, -1, 0);
 			addObjectToInventory(6, 41); // s3:0903; cseg206:113C-1176
 			_objectsState[9] = 1;
 			PART_00_APPLY_OBJECT_STATE(1);
@@ -163,14 +163,14 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		break;
 	case 110: // open closet
 		if (_objectsState[10] == 0) {
-			PART_00_ANIMATE_RAW(0x1678, 0, 2, 0x940, 37, 64, 0x556C, 126, 2, 3);
+			PART_00_animateRaw(0x1678, 0, 2, 0x940, 37, 64, 0x556C, 126, 2, 3);
 			_objectsState[10] = 1;
 			PART_00_APPLY_OBJECT_STATE(3);
 		}
 		break;
 	case 111: // close closet
 		if (_objectsState[10] != 0) {
-			PART_00_ANIMATE_RAW(0x1678, 2, 0, 0x940, 37, 64, 0x556C, 126, 1, 4);
+			PART_00_animateRaw(0x1678, 2, 0, 0x940, 37, 64, 0x556C, 126, 1, 4);
 			_objectsState[10] = 0;
 			PART_00_APPLY_OBJECT_STATE(3);
 		}
@@ -188,7 +188,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 	case 114: // go through hole
 		if (_objectsState[10] == 0)
 			PART_00_EXEC_ACTION(110);
-		PART_00_ANIMATE_RAW(0x5942, 0, 2, 0x44C, 22, 50, 0x66EE, 30, -1, 0);
+		PART_00_animateRaw(0x5942, 0, 2, 0x44C, 22, 50, 0x66EE, 30, -1, 0);
 		_currentPart = 24;
 		break;
 	case 115: // look at records
@@ -198,7 +198,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		break;
 	case 116: // take records
 		if (_objectsState[12] == 0) {
-			PART_00_ANIMATE_RAW(0x7C06, 0, 1, 0x405, 21, 49, 0x7146, 126, -1, 0);
+			PART_00_animateRaw(0x7C06, 0, 1, 0x405, 21, 49, 0x7146, 126, -1, 0);
 			addObjectToInventory(5, 40); // s3:0902; cseg206:0F75-0FAF
 			_objectsState[12] = 1;
 			PART_00_APPLY_OBJECT_STATE(255);
@@ -252,10 +252,10 @@ void IgorEngine::PART_00_ENTRY_ANIMATION() {
 		playSound(3, 1);
 		waitForTimer(30);
 	}
-	PART_00_ANIMATE_RAW(0x6626, 0, 3, 0x578, 25, 56, 0x5F6E, 30, -1, 0);
+	PART_00_animateRaw(0x6626, 0, 3, 0x578, 25, 56, 0x5F6E, 30, -1, 0);
 }
 
-void IgorEngine::PART_00_WALK_IN() {
+void IgorEngine::PART_00_WALK_IN_FROM_CLOSET() {
 	PART_00_ENTRY_ANIMATION();
 	WalkData *wd = &_walkData[0];
 	wd->setPos(120, 131, kFacingPositionFront, 0);
@@ -336,7 +336,7 @@ void IgorEngine::PART_00() {
 		_walkDataLastIndex = 1;
 		_walkDataCurrentIndex = 1;
 		if (_currentPart == 1)
-			PART_00_WALK_IN();
+			PART_00_WALK_IN_FROM_CLOSET();
 		else
 			PART_00_ENTER_FROM_BELOW();
 	}

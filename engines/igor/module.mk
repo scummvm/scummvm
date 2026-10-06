@@ -40,7 +40,7 @@ MODULE_OBJS = \
 	parts/part_28.o \
 	parts/part_30.o \
 	parts/part_34.o \
-	part_35.o \
+	parts/part_35.o \
 	text.o \
 	part_main.o \
 	sound.o

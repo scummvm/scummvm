@@ -13,7 +13,7 @@ namespace Igor {
 void IgorEngine::PART_01_CLOSE_WINDOW() {
 	static const uint8 windowFrames[] = { 0, 1, 2, 1 };
 	for (int i = 0; i < 4; ++i) {
-		PART_00_DRAW_RAW_FRAME(216, windowFrames[i], 1204, 28, 43, 0x5919);
+		part_00_drawRawFrame(216, windowFrames[i], 1204, 28, 43, 0x5919);
 		if (i == 0)
 			playSound(2, 1);
 		if (i != 3) {
@@ -121,7 +121,7 @@ void IgorEngine::PART_01_EXEC_ACTION(int action) {
 		// waiting for the video update after each one, then
 		// changes to part 20.
 		for (int frame = 0; frame <= 1; ++frame) {
-			PART_00_DRAW_RAW_FRAME(0x0EF4, frame, 0x3D8, 24, 41, 0x51F4);
+			part_00_drawRawFrame(0x0EF4, frame, 0x3D8, 24, 41, 0x51F4);
 			waitForTimer(); // video-update wait
 		}
 		_currentPart = 20;

@@ -242,7 +242,7 @@ const RoomDataOffsets IgorEngine::PART_07_ROOM_DATA_OFFSETS = {
 const RoomDataOffsets IgorEngine::PART_08_ROOM_DATA_OFFSETS = {
 	{ 80, 4, 12, 3 },
 	{ 149, 162 },
-	{ 167, 385, 3401, 271, 347, 84 },
+	{ 167, 375, 3391, 271, 347, 84 },
 	{
 		165, 30,
 		5188, 100,
