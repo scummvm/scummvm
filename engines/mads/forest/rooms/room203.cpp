@@ -1395,11 +1395,12 @@ static void room_203_daemon() {
 			kernel_reset_animation(local->_a0, 1);
 			kernel_synch(KERNEL_ANIM, local->_9e, KERNEL_NOW, 0);
 			kernel_synch(KERNEL_ANIM, local->_a0, KERNEL_NOW, 0);
+			global[g047] = -1;
 			global[g133] = 0;
 			global[g143] = 0;
 
 			kernel_flip_hotspot(words_room_210, true);
-			seq[1] = kernel_seq_stamp(ss[1], true, -1);
+			seq[1] = kernel_seq_stamp(ss[1], false, -1);
 			kernel_seq_depth(seq[1], 15);
 			kernel_seq_loc(seq[1], 128, 74);
 			kernel_seq_scale(seq[1], 100);
