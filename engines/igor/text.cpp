@@ -567,12 +567,13 @@ int IgorEngine::selectDialogue() {
 void IgorEngine::dialogueAskQuestion() {
 	memset(_screenVGA + 46080, 0, 17920);
 	int offset = (_dialogueInfo[_dialogueChoiceSelected] - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
-	const int question = _gameState.dialogueData[offset + 3];
-	int num = question - 1;
-	const int sound = _dialogueQuestionSounds[question - 1]; // cseg172:043B-0460, 0B34-0B43
+	int question = _gameState.dialogueData[offset + 3];
+	// For part 5 igor always chickens out from Phillip
 	if (getPart() == 17) {
-		num = 5;
+		question = 5;
 	}
+	const int num = question - 1;
+	const int sound = _dialogueQuestionSounds[question - 1]; // cseg172:043B-0460, 0B34-0B43
 	debugC(9, kDebugEngine, "dialogueAskQuestion() num %d offset %d", num, offset);
 	Common::strlcpy(_globalDialogueTexts[250], _dialogueQuestions[num][0], sizeof(_globalDialogueTexts[250]));
 	Common::strlcpy(_globalDialogueTexts[251], _dialogueQuestions[num][1], sizeof(_globalDialogueTexts[251]));

@@ -246,7 +246,9 @@ void IgorEngine::PART_17_ACTION_106_swapFolders() {
 
 void IgorEngine::PART_17_HANDLE_DIALOGUE_PHILIP() {
 	loadDialogueData(DLG_OutsideCollege);
-	warning("PART_17_HANDLE_DIALOGUE_PHILIP unimplemented");
+	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_Philip;
+	handleDialogue(135, 33, 63, 63, 0);
+	_updateDialogue = 0;
 }
 
 void IgorEngine::PART_17_UPDATE_DIALOGUE_Jimmy(int action) {
