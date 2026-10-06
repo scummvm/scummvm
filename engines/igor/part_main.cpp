@@ -605,6 +605,19 @@ void IgorEngine::PART_MAIN() {
 		case 242:
 			PART_24();
 			break;
+		case 250:
+		case 251:
+		case 252:
+			PART_25();
+			break;
+		case 260:
+		case 261:
+			PART_26();
+			break;
+		case 270:
+		case 271:
+			PART_27();
+			break;
 		case 280:
 		case 281:
 			PART_28(); // college corridor caroline
