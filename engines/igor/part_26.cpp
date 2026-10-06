@@ -28,12 +28,12 @@ static const uint8 PART_26_ANIM_DATA_1[12] = { 6, 0, 2, 3, 4, 5, 6, 5, 4, 3, 2, 
 void IgorEngine::PART_26_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(202, 1);
+		ADD_DIALOGUE_TEXT(202, 1, 1279);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(203, 1);
+		ADD_DIALOGUE_TEXT(203, 1, 1280);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -44,7 +44,7 @@ void IgorEngine::PART_26_EXEC_ACTION(int action) {
 		PART_26_ACTION_104();
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(224, 2);
+		ADD_DIALOGUE_TEXT(224, 2, 1290);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -55,24 +55,24 @@ void IgorEngine::PART_26_EXEC_ACTION(int action) {
 		PART_26_ACTION_107();
 		break;
 	case 108:
-		ADD_DIALOGUE_TEXT(216, 2);
-		ADD_DIALOGUE_TEXT(218, 1);
+		ADD_DIALOGUE_TEXT(216, 2, 1284);
+		ADD_DIALOGUE_TEXT(218, 1, 1285);
 		SET_DIALOGUE_TEXT(1, 2);
 		startIgorDialogue();
 		break;
 	case 109:
-		ADD_DIALOGUE_TEXT(219, 1);
+		ADD_DIALOGUE_TEXT(219, 1, 1286);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 110:
-		ADD_DIALOGUE_TEXT(220, 2);
-		ADD_DIALOGUE_TEXT(222, 1);
+		ADD_DIALOGUE_TEXT(220, 2, 1287);
+		ADD_DIALOGUE_TEXT(222, 1, 1288);
 		SET_DIALOGUE_TEXT(1, 2);
 		startIgorDialogue();
 		break;
 	case 111:
-		ADD_DIALOGUE_TEXT(223, 1);
+		ADD_DIALOGUE_TEXT(223, 1, 1289);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -210,9 +210,9 @@ void IgorEngine::PART_26_HELPER_5() {
 	_gameState.igorMoving = true;
 	waitForIgorMove();
 	if (_objectsState[65] == 3) {
-		ADD_DIALOGUE_TEXT(212, 1);
-		ADD_DIALOGUE_TEXT(213, 2);
-		ADD_DIALOGUE_TEXT(215, 1);
+		ADD_DIALOGUE_TEXT(212, 1, 1281);
+		ADD_DIALOGUE_TEXT(213, 2, 1282);
+		ADD_DIALOGUE_TEXT(215, 1, 1283);
 		SET_DIALOGUE_TEXT(1, 3);
 		startIgorDialogue();
 		_objectsState[65] = 4;

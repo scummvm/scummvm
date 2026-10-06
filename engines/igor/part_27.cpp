@@ -26,33 +26,33 @@ namespace Igor {
 void IgorEngine::PART_27_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		_currentPart = 231;
+		_currentPart = 211;
 		break;
 	case 102:
 		if (_objectsState[85] == 0) {
-			ADD_DIALOGUE_TEXT(216, 2);
+			ADD_DIALOGUE_TEXT(216, 2, 1173);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
 			_objectsState[85] = 1;
 			PART_27_HELPER_1(255);
 		} else {
-			ADD_DIALOGUE_TEXT(201, 1);
+			ADD_DIALOGUE_TEXT(201, 1, 1162);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
 		}
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(203, 1);
+		ADD_DIALOGUE_TEXT(203, 1, 1163);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(204, 1);
+		ADD_DIALOGUE_TEXT(204, 1, 1164);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(205, 1);
+		ADD_DIALOGUE_TEXT(205, 1, 1165);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -66,7 +66,7 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		PART_27_ACTION_108();
 		break;
 	case 109:
-		ADD_DIALOGUE_TEXT(215, 1);
+		ADD_DIALOGUE_TEXT(215, 1, 1172);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -74,14 +74,14 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		PART_27_ACTION_110();
 		break;
 	case 111:
-		ADD_DIALOGUE_TEXT(222, 1);
-		ADD_DIALOGUE_TEXT(223, 2);
-		ADD_DIALOGUE_TEXT(225, 4);
+		ADD_DIALOGUE_TEXT(222, 1, kNoSpeechSound);
+		ADD_DIALOGUE_TEXT(223, 2, kNoSpeechSound);
+		ADD_DIALOGUE_TEXT(225, 4, kNoSpeechSound);
 		SET_DIALOGUE_TEXT(1, 3);
 		startIgorDialogue();
 		break;
 	case 112:
-		ADD_DIALOGUE_TEXT(221, 1);
+		ADD_DIALOGUE_TEXT(221, 1, 1176);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -100,13 +100,13 @@ void IgorEngine::PART_27_ACTION_106() {
 		return;
 	}
 	if (_objectsState[5] == 0) {
-		ADD_DIALOGUE_TEXT(206, 1);
+		ADD_DIALOGUE_TEXT(206, 1, 1166);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		return;
 	}
 	if (_objectsState[5] == 1) {
-		ADD_DIALOGUE_TEXT(209, 3);
+		ADD_DIALOGUE_TEXT(209, 3, 1169);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		_objectsState[5] = 2;
@@ -149,12 +149,12 @@ void IgorEngine::PART_27_ACTION_107() {
 
 void IgorEngine::PART_27_ACTION_108() {
 	if (_inventoryInfo[58] > 0 || _objectsState[42] == 2) {
-		ADD_DIALOGUE_TEXT(208, 1);
+		ADD_DIALOGUE_TEXT(208, 1, 1168);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		return;
 	}
-	ADD_DIALOGUE_TEXT(207, 1);
+	ADD_DIALOGUE_TEXT(207, 1, 1167);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
@@ -175,8 +175,8 @@ void IgorEngine::PART_27_ACTION_108() {
 }
 
 void IgorEngine::PART_27_ACTION_110() {
-	ADD_DIALOGUE_TEXT(212, 1);
-	ADD_DIALOGUE_TEXT(213, 2);
+	ADD_DIALOGUE_TEXT(212, 1, 1170);
+	ADD_DIALOGUE_TEXT(213, 2, 1171);
 	SET_DIALOGUE_TEXT(1, 2);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();

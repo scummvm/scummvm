@@ -32,7 +32,7 @@ void IgorEngine::PART_24_EXEC_ACTION(int action) {
 		PART_24_ACTION_102();
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(201, 1);
+		ADD_DIALOGUE_TEXT(201, 1, 1257);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -43,7 +43,7 @@ void IgorEngine::PART_24_EXEC_ACTION(int action) {
 		PART_24_ACTION_105();
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(202, 1);
+		ADD_DIALOGUE_TEXT(202, 1, 1258);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -51,29 +51,29 @@ void IgorEngine::PART_24_EXEC_ACTION(int action) {
 		PART_24_ACTION_107();
 		break;
 	case 108:
-		ADD_DIALOGUE_TEXT(203, 1);
+		ADD_DIALOGUE_TEXT(203, 1, 1259);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 109:
-		ADD_DIALOGUE_TEXT(204, 1);
-		ADD_DIALOGUE_TEXT(205, 1);
+		ADD_DIALOGUE_TEXT(204, 1, 1260);
+		ADD_DIALOGUE_TEXT(205, 1, 1261);
 		SET_DIALOGUE_TEXT(1, 2);
 		startIgorDialogue();
 		break;
 	case 110:
-		ADD_DIALOGUE_TEXT(206, 2);
+		ADD_DIALOGUE_TEXT(206, 2, 1262);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 111:
-		ADD_DIALOGUE_TEXT(208, 2);
-		ADD_DIALOGUE_TEXT(210, 2);
+		ADD_DIALOGUE_TEXT(208, 2, 1263);
+		ADD_DIALOGUE_TEXT(210, 2, 1264);
 		SET_DIALOGUE_TEXT(1, 2);
 		startIgorDialogue();
 		break;
 	case 112:
-		ADD_DIALOGUE_TEXT(212, 2);
+		ADD_DIALOGUE_TEXT(212, 2, 1265);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;

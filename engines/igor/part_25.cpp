@@ -29,41 +29,43 @@ void IgorEngine::PART_25_EXEC_ACTION(int action) {
 		_currentPart = 260;
 		break;
 	case 102:
+		// TODO: the trailing 206 page of every branch has no verified speech
+		// reference; that text id is not part of this room's original text set.
 		switch (getRandomNumber(2) + 1) {
 		case 1:
-			ADD_DIALOGUE_TEXT(204, 2);
-			ADD_DIALOGUE_TEXT(206, 1);
+			ADD_DIALOGUE_TEXT(204, 2, 1273);
+			ADD_DIALOGUE_TEXT(206, 1, kNoSpeechSound);
 			SET_DIALOGUE_TEXT(1, 2);
 			startIgorDialogue();
 			break;
 		case 2:
-			ADD_DIALOGUE_TEXT(207, 1);
-			ADD_DIALOGUE_TEXT(208, 1);
-			ADD_DIALOGUE_TEXT(209, 1);
-			ADD_DIALOGUE_TEXT(206, 1);
+			ADD_DIALOGUE_TEXT(207, 1, 1274);
+			ADD_DIALOGUE_TEXT(208, 1, 1275);
+			ADD_DIALOGUE_TEXT(209, 1, 1276);
+			ADD_DIALOGUE_TEXT(206, 1, kNoSpeechSound);
 			SET_DIALOGUE_TEXT(1, 4);
 			startIgorDialogue();
 			break;
 		case 3:
-			ADD_DIALOGUE_TEXT(210, 1);
-			ADD_DIALOGUE_TEXT(211, 1);
-			ADD_DIALOGUE_TEXT(206, 1);
+			ADD_DIALOGUE_TEXT(210, 1, 1277);
+			ADD_DIALOGUE_TEXT(211, 1, 1278);
+			ADD_DIALOGUE_TEXT(206, 1, kNoSpeechSound);
 			SET_DIALOGUE_TEXT(1, 3);
 			startIgorDialogue();
 			break;
 		}
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(201, 1);
+		ADD_DIALOGUE_TEXT(201, 1, 1271);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(212, 1);
-		ADD_DIALOGUE_TEXT(213, 1);
-		ADD_DIALOGUE_TEXT(214, 1);
-		ADD_DIALOGUE_TEXT(215, 1);
-		ADD_DIALOGUE_TEXT(216, 2);
+		ADD_DIALOGUE_TEXT(212, 1, kNoSpeechSound);
+		ADD_DIALOGUE_TEXT(213, 1, kNoSpeechSound);
+		ADD_DIALOGUE_TEXT(214, 1, kNoSpeechSound);
+		ADD_DIALOGUE_TEXT(215, 1, kNoSpeechSound);
+		ADD_DIALOGUE_TEXT(216, 2, kNoSpeechSound);
 		SET_DIALOGUE_TEXT(1, 5);
 		startIgorDialogue();
 		break;
@@ -71,7 +73,7 @@ void IgorEngine::PART_25_EXEC_ACTION(int action) {
 		PART_25_ACTION_105();
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(203, 1);
+		ADD_DIALOGUE_TEXT(203, 1, 1272);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
