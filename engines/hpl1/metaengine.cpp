@@ -95,7 +95,7 @@ Common::Array<Common::Keymap *> Hpl1MetaEngine::initKeymaps(const char *target) 
 	misc->addAction(createKeyBoardAction("NOTEBOOK", _("Notebook"), "n", Common::KEYCODE_n));
 	misc->addAction(createKeyBoardAction("PERSONAL_NOTES", _("Personal notes"), "p", Common::KEYCODE_p));
 	misc->addAction(createKeyBoardAction("FLASHLIGHT", _("Flashlight"), "f", Common::KEYCODE_f));
-	misc->addAction(createKeyBoardAction("GLOWSTICK", _("Glowstick"), "g", Common::KEYCODE_f));
+	misc->addAction(createKeyBoardAction("GLOWSTICK", _("Glowstick"), "g", Common::KEYCODE_g));
 
 	Common::Array<Common::Keymap *> keymaps(3);
 	keymaps[0] = movement;
