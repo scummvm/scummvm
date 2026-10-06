@@ -87,6 +87,7 @@ public:
 	void build() override;
 	void apply() override;
 	bool validate() override;
+	void handleKeyDown(Common::KeyState state) override;
 
 private:
 	OptionsContainerWidget *_engineOptions;

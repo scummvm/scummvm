@@ -574,6 +574,9 @@ public:
 	 */
 	virtual bool validate() { return true; }
 
+	/** Optional active-page keyboard routing and cancellation from any page. */
+	virtual bool handleOptionsKeyDown(Common::KeyState state) { return false; }
+
 	/** Implementing classes should return if there are relevant keys set in the configuration domain
 	 *
 	 * @return true if there are relevant keys set in the configuration domain
