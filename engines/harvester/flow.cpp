@@ -80,8 +80,8 @@ static const int kIdentTextboxTextInsetX = 10;
 static const int kIdentTextboxTextInsetY = 5;
 static const int kNativeIdentTextLineSpacing = 3;
 static const char *const kPlayerActorEntityName = "PLAYER";
-static const uint32 kPaletteFadeTickMs = 4;
-static const float kPaletteFadeStep = 0.1f;
+// ramp_palette_brightness (0x23a30) waits four DOS centiseconds per step.
+static const uint32 kPaletteFadeIntervalTicks = 4;
 static const float kPaletteBrightnessBlack = 0.0f;
 static const float kPaletteBrightnessFull = 1.0f;
 static const uint32 kDemoEndingScreenDurationMs = 10000;
@@ -2403,19 +2403,16 @@ Common::Error Flow::beginRoomSetupTransition() {
 		}
 
 		if (hasVisiblePalette) {
-			for (float brightness = 1.0f - kPaletteFadeStep;
-					brightness > kPaletteBrightnessBlack; brightness -= kPaletteFadeStep) {
+			for (double brightness = 1.0;
+					brightness > kPaletteBrightnessBlack; brightness -= 0.1) {
+				const uint32 startTick = getRuntimeClockTicks();
 				setScaledDisplayPalette(*screen, displayPalette, brightness);
 				screen->makeAllDirty();
 				screen->update();
 
-				const uint32 nextTick = g_system->getMillis() + kPaletteFadeTickMs;
-				while ((int32)(nextTick - g_system->getMillis()) > 0) {
-					Common::Error result = Common::kNoError;
-					if (pumpTransitionEvents(result))
-						return result;
-					g_system->delayMillis(1);
-				}
+				Common::Error fadeError = Common::kNoError;
+				if (waitForPaletteFadeTick(startTick, fadeError))
+					return fadeError;
 			}
 
 			setScaledDisplayPalette(*screen, displayPalette, kPaletteBrightnessBlack);
@@ -2460,18 +2457,15 @@ Common::Error Flow::fadeInRoomScene(const byte *palette, float targetBrightness)
 	if (!screen || !palette)
 		return Common::kNoError;
 
-	for (float brightness = kPaletteFadeStep; brightness < targetBrightness; brightness += kPaletteFadeStep) {
+	for (double brightness = 0.0; brightness < targetBrightness; brightness += 0.1) {
+		const uint32 startTick = getRuntimeClockTicks();
 		setScaledPalette(*screen, palette, brightness);
 		screen->makeAllDirty();
 		screen->update();
 
-		const uint32 nextTick = g_system->getMillis() + kPaletteFadeTickMs;
-		while ((int32)(nextTick - g_system->getMillis()) > 0) {
-			Common::Error result = Common::kNoError;
-			if (pumpTransitionEvents(result))
-				return result;
-			g_system->delayMillis(1);
-		}
+		Common::Error fadeError = Common::kNoError;
+		if (waitForPaletteFadeTick(startTick, fadeError))
+			return fadeError;
 	}
 
 	setScaledPalette(*screen, palette, targetBrightness);
@@ -2486,27 +2480,37 @@ Common::Error Flow::fadePalette(const byte *palette, float fromBrightness,
 	if (!screen || !palette)
 		return Common::kNoError;
 
-	const float step = fromBrightness < toBrightness ? kPaletteFadeStep : -kPaletteFadeStep;
-	for (float brightness = fromBrightness;
+	const double step = fromBrightness < toBrightness ? 0.1 : -0.1;
+	for (double brightness = fromBrightness;
 			step > 0.0f ? brightness < toBrightness : brightness > toBrightness;
 			brightness += step) {
+		const uint32 startTick = getRuntimeClockTicks();
 		setScaledPalette(*screen, palette, brightness);
 		screen->makeAllDirty();
 		screen->update();
 
-		const uint32 nextTick = g_system->getMillis() + kPaletteFadeTickMs;
-		while ((int32)(nextTick - g_system->getMillis()) > 0) {
-			Common::Error eventError = Common::kNoError;
-			if (pumpTransitionEvents(eventError))
-				return eventError;
-			g_system->delayMillis(1);
-		}
+		Common::Error fadeError = Common::kNoError;
+		if (waitForPaletteFadeTick(startTick, fadeError))
+			return fadeError;
 	}
 
 	setScaledPalette(*screen, palette, toBrightness);
 	screen->makeAllDirty();
 	screen->update();
 	return Common::kNoError;
+}
+
+bool Flow::waitForPaletteFadeTick(uint32 startTick, Common::Error &result) {
+	const uint32 deadline = startTick + kPaletteFadeIntervalTicks;
+	while ((int32)(deadline - getRuntimeClockTicks()) > 0) {
+		if (pumpTransitionEvents(result))
+			return true;
+		g_system->delayMillis(1);
+	}
+	debugC(3, kDebugScene,
+		"Harvester: palette fade step tick=%u->%u interval=%u",
+		startTick, getRuntimeClockTicks(), kPaletteFadeIntervalTicks);
+	return false;
 }
 
 bool Flow::pumpTransitionEvents(Common::Error &result) {

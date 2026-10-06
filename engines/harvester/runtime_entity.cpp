@@ -69,18 +69,6 @@ static void scaleIndexedBitmapNearest(const IndexedBitmap &source, IndexedBitmap
 	}
 }
 
-static uint32 getAnimationClockTicks() {
-	if (!g_system)
-		return 0;
-
-	// Native obtains time through DOS int 21h/AH=2Ch. Its hundredths field
-	// advances on the 18.2 Hz BIOS timer, so preserve that quantization instead
-	// of deriving idealized centiseconds directly from wall-clock milliseconds.
-	const uint64 pitTicks = ((uint64)g_system->getMillis() * kDosPitInputFrequency) /
-		((uint64)kDosPitTimerDivisor * 1000U);
-	return (uint32)((pitTicks * kDosPitTimerDivisor * 100U) / kDosPitInputFrequency);
-}
-
 static void blitAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames, uint frameIndex,
 		int x, int y) {
 	if (frameIndex >= frames.size() || !frames[frameIndex].isValid())
@@ -151,6 +139,18 @@ static bool decodeAnimationFrame(const byte *source, uint32 sourceSize, bool com
 }
 
 } // End of anonymous namespace
+
+uint32 getRuntimeClockTicks() {
+	if (!g_system)
+		return 0;
+
+	// Original game obtains time through DOS int 21h/AH=2Ch. Its hundredths field
+	// advances on the 18.2 Hz BIOS timer, so preserve that quantization instead
+	// of deriving idealized centiseconds directly from wall-clock milliseconds.
+	const uint64 pitTicks = ((uint64)g_system->getMillis() * kDosPitInputFrequency) /
+		((uint64)kDosPitTimerDivisor * 1000U);
+	return (uint32)((pitTicks * kDosPitTimerDivisor * 100U) / kDosPitInputFrequency);
+}
 
 static bool isRectangleOnlyHitClass(int classId) {
 	return classId == kRuntimeEntityClassRectHotspot ||
@@ -517,7 +517,7 @@ void Entity::setTimerEnabled(bool enabled) {
 		return;
 	}
 
-	const uint32 now = getAnimationClockTicks();
+	const uint32 now = getRuntimeClockTicks();
 	const int remainingValue = _timerCurrentValue > 0 ? _timerCurrentValue : _timerInitialValue;
 	_timerEnabled = true;
 	_timerPaused = false;
@@ -991,7 +991,7 @@ void EntityManager::configureSceneTimerEntity(Entity &entity, int initialValue, 
 		bool enabled, bool looping, bool global) {
 	entity.configureTimerCountdown(initialValue, currentValue, enabled, looping, global);
 	if (_timerPauseDepth > 0)
-		entity.pauseTimerCountdown(getAnimationClockTicks());
+		entity.pauseTimerCountdown(getRuntimeClockTicks());
 }
 
 void EntityManager::hideCursor() {
@@ -1008,7 +1008,7 @@ void EntityManager::pauseTimerCountdowns() {
 	if (_timerPauseDepth++ > 0)
 		return;
 
-	const uint32 now = getAnimationClockTicks();
+	const uint32 now = getRuntimeClockTicks();
 	for (Entity *entity : _sceneEntities)
 		entity->pauseTimerCountdown(now);
 }
@@ -1019,7 +1019,7 @@ void EntityManager::resumeTimerCountdowns() {
 	if (--_timerPauseDepth > 0)
 		return;
 
-	const uint32 now = getAnimationClockTicks();
+	const uint32 now = getRuntimeClockTicks();
 	for (Entity *entity : _sceneEntities)
 		entity->resumeTimerCountdown(now);
 }
@@ -1034,7 +1034,7 @@ bool EntityManager::takeExpiredTimerNames(Common::Array<Common::String> &expired
 }
 
 bool EntityManager::tickSceneEntities() {
-	const uint32 now = getAnimationClockTicks();
+	const uint32 now = getRuntimeClockTicks();
 	bool changed = false;
 
 	for (Entity *entity : _sceneEntities) {
@@ -1056,7 +1056,7 @@ bool EntityManager::syncCursorEntityPosition(const Common::Point &position) {
 
 	const bool moved = _cursorEntity->getX() != position.x || _cursorEntity->getY() != position.y;
 	_cursorEntity->setPosition(position.x, position.y, kCursorEntityZ);
-	return _cursorEntity->tickVisualState(getAnimationClockTicks()) || moved;
+	return _cursorEntity->tickVisualState(getRuntimeClockTicks()) || moved;
 }
 
 void EntityManager::drawCursor(Graphics::Screen &screen) const {

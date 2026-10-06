@@ -35,6 +35,8 @@ namespace Harvester {
 
 class ResourceManager;
 
+uint32 getRuntimeClockTicks();
+
 enum RuntimeEntityClass {
 	kRuntimeEntityClassObject = 0,
 	kRuntimeEntityClassAnimation = 1,
