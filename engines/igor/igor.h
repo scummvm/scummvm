@@ -99,6 +99,10 @@ enum InputVar {
 	kInputEscape,
 	kInputPause,
 	kInputOptions,
+	kInputRightClick,
+	kInputRightRelease,
+	kInputRightMoveLeft,
+	kInputRightMoveRight,
 	kInputVarCount
 };
 
@@ -376,6 +380,9 @@ private:
 
 	int16 _inputVars[kInputVarCount];
 
+	bool _rightButtonSelecting;
+	int _rightButtonSelectCursorX, _rightButtonSelectCursorY;
+
 	bool _scrollInventory;
 	int _scrollInventoryStartY, _scrollInventoryEndY, _scrollInventoryDy;
 	WalkData _walkData[101];
@@ -568,7 +575,7 @@ private:
 	void PART_09_ANIMATE_DOOR(bool open);
 	void PART_09_DRAW_SECRETARY_FRAME(int frame, bool background);
 	void PART_09_DRAW_DRAWER_FRAME(int frame);
-	void PART_09_ACTION_101();
+	void PART_09_ACTION_101_openFileCabinet();
 	void PART_09_ACTION_106(bool search);
 	void PART_09_ACTION_110();
 	void PART_09_UPDATE_DIALOGUE_SECRETARY(int action);
@@ -824,6 +831,10 @@ private:
 
 	void drawVerbsPanel();
 	void redrawVerb(uint8 verb, bool highlight);
+	void beginRightButtonVerbPick();
+	void updateRightButtonVerbPick();
+	void endRightButtonVerbPick();
+	void formatRightButtonSentence();
 	int getVerbUnderCursor(int x) const { return ((x % 46) < 44) ? (kVerbTalk + x / 46) : 0; }
 	void handleRoomInventoryScroll();
 	void handleOptionsMenu();

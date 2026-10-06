@@ -75,15 +75,32 @@ void IgorEngine::waitForTimer(int ticks) {
 				}
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				_inputVars[kInputCursorXPos] = ev.mouse.x;
-				_inputVars[kInputCursorYPos] = ev.mouse.y;
+				if (_rightButtonSelecting) {
+					if (ev.mouse.x < _rightButtonSelectCursorX) {
+						_inputVars[kInputRightMoveLeft] = 1;
+					} else if (ev.mouse.x > _rightButtonSelectCursorX) {
+						_inputVars[kInputRightMoveRight] = 1;
+					}
+					_system->warpMouse(_rightButtonSelectCursorX, _rightButtonSelectCursorY);
+				} else {
+					_inputVars[kInputCursorXPos] = ev.mouse.x;
+					_inputVars[kInputCursorYPos] = ev.mouse.y;
+				}
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				debugC(9, kDebugEngine, "waitForTimer() right button at %d,%d running %d",
 				       ev.mouse.x, ev.mouse.y, _gameState.dialogueTextRunning);
 				if (_gameState.dialogueTextRunning) {
 					_inputVars[kInputSkipDialogue] = 1;
+				} else {
+					_inputVars[kInputCursorXPos] = ev.mouse.x;
+					_inputVars[kInputCursorYPos] = ev.mouse.y;
+					_inputVars[kInputRightRelease] = 0;
+					_inputVars[kInputRightClick] = 1;
 				}
+				break;
+			case Common::EVENT_RBUTTONUP:
+				_inputVars[kInputRightRelease] = 1;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				debugC(9, kDebugEngine, "waitForTimer() left button at %d,%d running %d",
@@ -102,6 +119,9 @@ void IgorEngine::waitForTimer(int ticks) {
 			default:
 				break;
 			}
+		}
+		if (_rightButtonSelecting && !(_eventMan->getButtonState() & Common::EventManager::RBUTTON)) {
+			_inputVars[kInputRightRelease] = 1;
 		}
 		const uint32 now = _system->getMillis();
 		if (now >= endTicks) {
@@ -180,6 +200,118 @@ void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
 	}
 }
 
+/**
+ * Action to select a verb with moving the right mouse button clicked
+ */
+void IgorEngine::beginRightButtonVerbPick() {
+	_rightButtonSelecting = true;
+	_rightButtonSelectCursorX = _inputVars[kInputCursorXPos];
+	_rightButtonSelectCursorY = _inputVars[kInputCursorYPos];
+	_inputVars[kInputRightMoveLeft] = 0;
+	_inputVars[kInputRightMoveRight] = 0;
+
+	const bool inventorySlot = _rightButtonSelectCursorY >= 170 && _rightButtonSelectCursorY <= 199 &&
+		_rightButtonSelectCursorX > 19 && _rightButtonSelectCursorX < 299;
+	int defaultVerb = 0;
+	// if in the scene, choose the hotspot's default verb as starting point
+	if (_rightButtonSelectCursorY < 144) {
+		const int area = _screenLayer2[_rightButtonSelectCursorY * 320 + _rightButtonSelectCursorX];
+		const int object = _roomObjectAreasTable[area].object;
+		const int defaultVerbOffset = _roomDataOffsets.obj.walkPoints +
+			_roomDataOffsets.obj.walkFacingPosition - _roomDataOffsets.action.defaultVerb;
+		defaultVerb = _roomActionsTable[defaultVerbOffset + object];
+	} else if (inventorySlot) { // for items, look is default
+		defaultVerb = kVerbLook;
+	}
+	if (defaultVerb < 2 && _currentAction.verb == kVerbWalk) {
+		defaultVerb = kVerbUse;
+	}
+	// if in inventory area but no item is below the mouse, choose use
+	if (inventorySlot && getObjectFromInventory(_rightButtonSelectCursorX) == 0 && defaultVerb == kVerbLook) {
+		defaultVerb = (_currentAction.verb == kVerbWalk) ? kVerbUse : _currentAction.verb;
+	}
+	const int previousVerb = _currentAction.verb;
+	if (defaultVerb > 0) {
+		_currentAction.verb = defaultVerb;
+	}
+	if (previousVerb != _currentAction.verb) {
+		// redraw the selected verb, and the previous one
+		redrawVerb(previousVerb, false);
+		redrawVerb(_currentAction.verb, true);
+	}
+	_currentAction.verbType = 0;
+	_currentAction.object2Num = 0;
+	_currentAction.object2Type = 0;
+	// set the current action's object1 based on the cursor position
+	if (inventorySlot) {
+		_currentAction.object1Num = getObjectFromInventory(_rightButtonSelectCursorX);
+		_currentAction.object1Type = kObjectTypeInventory;
+	} else if (_rightButtonSelectCursorY < 144) {
+		const int area = _screenLayer2[_rightButtonSelectCursorY * 320 + _rightButtonSelectCursorX];
+		_currentAction.object1Num = _roomObjectAreasTable[area].object;
+		_currentAction.object1Type = kObjectTypeRoom;
+	}
+	formatRightButtonSentence();
+}
+
+void IgorEngine::updateRightButtonVerbPick() {
+	if (_inputVars[kInputRightMoveLeft]) {
+		_inputVars[kInputRightMoveLeft] = 0;
+		const int candidate = MAX<int>(_currentAction.verb - 1, kVerbTalk);
+		if (candidate != _currentAction.verb) {
+			redrawVerb(_currentAction.verb, false);
+			redrawVerb(candidate, true);
+			_currentAction.verb = candidate;
+			formatRightButtonSentence();
+		}
+	}
+	if (_inputVars[kInputRightMoveRight]) {
+		_inputVars[kInputRightMoveRight] = 0;
+		const int candidate = MIN<int>(_currentAction.verb + 1, kVerbGive);
+		if (candidate == _currentAction.verb) {
+			return;
+		}
+		redrawVerb(_currentAction.verb, false);
+		redrawVerb(candidate, true);
+		_currentAction.verb = candidate;
+		formatRightButtonSentence();
+	}
+}
+
+void IgorEngine::endRightButtonVerbPick() {
+	_rightButtonSelecting = false;
+	_inputVars[kInputRightMoveLeft] = 0;
+	_inputVars[kInputRightMoveRight] = 0;
+	_inputVars[kInputClick] = 0;
+	_inputVars[kInputCursorXPos] = _rightButtonSelectCursorX;
+	_inputVars[kInputCursorYPos] = _rightButtonSelectCursorY;
+	//return mouse to the position the right click happened
+	_system->warpMouse(_rightButtonSelectCursorX, _rightButtonSelectCursorY);
+}
+
+/**
+ * Formats the sentence displayed when the right mouse button is used to select a verb.
+ */
+void IgorEngine::formatRightButtonSentence() {
+	const int object1Num = _currentAction.object1Num;
+	uint8 actionCode = 0;
+	if (object1Num != 0) {
+		if (_currentAction.object1Type == kObjectTypeInventory) {
+			actionCode = _inventoryActionsTable[(_currentAction.verb - 1) * 2 + object1Num * 20];
+		} else {
+			actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + object1Num * 20];
+		}
+	}
+	// Without an action byte the sentence names only the verb.
+	if (actionCode == 0) {
+		_currentAction.object1Num = 0;
+		formatActionSentence(0);
+		_currentAction.object1Num = object1Num;
+	} else {
+		formatActionSentence(0);
+	}
+}
+
 void IgorEngine::handleRoomInput() {
 	// Escape is a transient abort input. Do not let an unused press from the
 	// room loop leak into a later blocking walk or dialogue sequence.
@@ -208,10 +340,30 @@ void IgorEngine::handleRoomInput() {
 		// handler: handleRoomInput()
 		_inputVars[kInputClick] = 0;
 	}
+	if (_rightButtonSelecting && _inputVars[kInputRightRelease]) {
+		_inputVars[kInputRightRelease] = 0;
+		endRightButtonVerbPick();
+	}
 
 	if (!_roomCursorOn || _gameState.dialogueTextRunning || _scrollInventory) {
 		return;
 	}
+	if (_inputVars[kInputRightClick]) {
+		_inputVars[kInputRightClick] = 0;
+		if (!_rightButtonSelecting) {
+			beginRightButtonVerbPick();
+		}
+	}
+	if (_rightButtonSelecting) {
+		if (_inputVars[kInputRightRelease]) {
+			_inputVars[kInputRightRelease] = 0;
+			endRightButtonVerbPick();
+		} else {
+			updateRightButtonVerbPick();
+		}
+		return;
+	}
+	_inputVars[kInputRightRelease] = 0;
 	// verbs panel click
 	if (_inputVars[kInputCursorYPos] >= 156 && _inputVars[kInputCursorYPos] <= 167) {
 		if (_inputVars[kInputClick]) {

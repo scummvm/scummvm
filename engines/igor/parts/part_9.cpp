@@ -134,10 +134,10 @@ void IgorEngine::PART_09_ACTION_110() {
 	PART_09_APPLY_OBJECT_STATE(255);
 }
 
-void IgorEngine::PART_09_ACTION_101() {
-	if (_objectsState[35] == 0) {
+void IgorEngine::PART_09_ACTION_101_openFileCabinet() {
+	if (_objectsState[35] == 0) { // secretary dismissed
 		ADD_DIALOGUE_TEXT(220, 1, 248);
-	} else if (_objectsState[37] == 1) {
+	} else if (_objectsState[37] == 1) { // already changed file
 		ADD_DIALOGUE_TEXT(225, 1, 253);
 	} else {
 		static const uint8 frames[] = { 1, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 2, 1, 6 };
@@ -199,29 +199,29 @@ void IgorEngine::PART_09_UPDATE_ROOM_BACKGROUND() {
 
 void IgorEngine::PART_09_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
-		PART_09_ACTION_101();
+	case 101: // open file cabinet
+		PART_09_ACTION_101_openFileCabinet();
 		break;
-	case 102:
+	case 102: // look at file cabinet
 		ADD_DIALOGUE_TEXT(201, 2, 234);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 103:
+	case 103: // talk to secretary
 		loadDialogueData(DLG_AdministrationSecretaryRoom);
 		_updateDialogue = &IgorEngine::PART_09_UPDATE_DIALOGUE_SECRETARY;
 		handleDialogue(63, 59, 0, 90, 65);
 		_updateDialogue = 0;
 		PART_09_APPLY_OBJECT_STATE(255);
 		break;
-	case 104:
+	case 104: // look at secretary
 		ADD_DIALOGUE_TEXT(203, 2, 235);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 105: {
+	case 105: { // look at closet
 		const int text = _objectsState[34] == 0 ? 205 : (_objectsState[36] == 0 ? 218 : 219);
 		ADD_DIALOGUE_TEXT(text, _objectsState[34] == 0 ? 2 : 1, _objectsState[34] == 0 ? 236 : text + 28);
 		SET_DIALOGUE_TEXT(1, 1);
@@ -242,7 +242,7 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 			waitForEndOfIgorDialogue();
 		}
 		break;
-	case 108:
+	case 108: // look at intercom
 		ADD_DIALOGUE_TEXT(207, 1, 237);
 		ADD_DIALOGUE_TEXT(208, 1, 238);
 		SET_DIALOGUE_TEXT(1, 2);
@@ -258,16 +258,16 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 	case 110:
 		PART_09_ACTION_110();
 		break;
-	case 112:
+	case 112: // look at door
 		ADD_DIALOGUE_TEXT(211, 1, 240);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 113:
+	case 113: // open door
 		PART_09_ANIMATE_DOOR(true);
 		break;
-	case 114:
+	case 114: // close door
 		PART_09_ANIMATE_DOOR(false);
 		break;
 	case 115:

@@ -135,6 +135,8 @@ void IgorEngine::restart() {
 	_currentAction.verb = kVerbWalk;
 	_actionCode = 0;
 	_actionWalkPoint = 0;
+	_rightButtonSelecting = false;
+	_rightButtonSelectCursorX = _rightButtonSelectCursorY = 0;
 	memset(_inputVars, 0, sizeof(_inputVars));
 
 	_talkDelay = _talkSpeechCounter = _talkDelayCounter = 0;
