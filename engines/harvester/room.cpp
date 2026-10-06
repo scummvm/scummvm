@@ -4372,6 +4372,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 		}
 
+		// At 60 Hz, consume animation advances before the next screen update so
+		// a walk frame and its movement step are presented together.
+		if (flow.tickRuntimeEntities())
+			needsRedraw = true;
+		syncAnimatedRoomActorPlacement();
+
 		Common::Error combatError = Common::kNoError;
 		if (!playerControlPaused) {
 			combatError = resolvePlayerAttackContact();
@@ -4463,9 +4469,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				return Common::kReadingFailed;
 			break;
 		}
-		if (flow.tickRuntimeEntities())
-			needsRedraw = true;
-		syncAnimatedRoomActorPlacement();
 		if (Player::updateDeathAnimationState(playerState)) {
 			requestPlayerGameOver("combat_player_death_complete", Common::String());
 			needsRedraw = true;

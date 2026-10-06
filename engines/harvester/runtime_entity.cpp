@@ -591,6 +591,11 @@ void Entity::draw(Graphics::Screen &screen) const {
 		return;
 
 	const Common::Point drawOrigin = getDrawOrigin();
+	if (_classId == kRuntimeEntityClassPlayer) {
+		debugC(4, kDebugPlayer,
+			"Harvester: player animation draw frame=%d pos=(%d,%d,z=%.2f) origin=(%d,%d) tick=%u",
+			_currentFrame, _x, _y, _z, drawOrigin.x, drawOrigin.y, getRuntimeClockTicks());
+	}
 	blitAnimationFrame(screen, _frames, _currentFrame, drawOrigin.x, drawOrigin.y);
 }
 
