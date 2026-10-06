@@ -566,6 +566,14 @@ private:
 	void PART_09_EXEC_ACTION(int action);
 	void PART_09_APPLY_OBJECT_STATE(int num);
 	void PART_09_ANIMATE_DOOR(bool open);
+	void PART_09_DRAW_SECRETARY_FRAME(int frame, bool background);
+	void PART_09_DRAW_DRAWER_FRAME(int frame);
+	void PART_09_ACTION_101();
+	void PART_09_ACTION_106(bool search);
+	void PART_09_ACTION_110();
+	void PART_09_UPDATE_DIALOGUE_SECRETARY(int action);
+	void PART_09_SECRETARY_GESTURE();
+	void PART_09_UPDATE_ROOM_BACKGROUND();
 
 	// Decanato right
 	void PART_10();
@@ -630,7 +638,7 @@ private:
 
 	// men toilets
 	void PART_18_EXEC_ACTION(int action);
-	void PART_18_ACTION_109();
+	void PART_18_ACTION_109_useSlugOnGrating();
 	void PART_18_ACTION_111();
 	void PART_18_HELPER_1(int num);
 	void PART_18_HELPER_2();

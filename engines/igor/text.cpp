@@ -486,6 +486,14 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 		dialogueReplyToQuestion(x, y, r, g, b);
 		int offset = (_dialogueInfo[_dialogueChoiceSelected] - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
 		int code = _gameState.dialogueData[offset + 5];
+		if (getPart() == 9) {
+			if (code == 4)
+				_gameState.dialogueData[120] = 0;
+			if (code == 98 || code == 101) {
+				PART_09_SECRETARY_GESTURE();
+				dialogueReplyToQuestion(x, y, r, g, b, code);
+			}
+		}
 		if ((code >= 1 && code <= 99) || (getPart() == 15 && code == 1)) {
 			_gameState.dialogueData[offset] = 0;
 			if (getPart() == 21 && (code == 60 || code == 70 || code == 80) && _dialogueInfo[0] == 1) {

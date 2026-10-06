@@ -25,53 +25,53 @@ namespace Igor {
 
 void IgorEngine::PART_18_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
+	case 101: // look at grating
 		ADD_DIALOGUE_TEXT(201, 1, 896);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 102:
+	case 102: // look at door
 		ADD_DIALOGUE_TEXT(202, 1, 897);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 103:
+	case 103: // use left-most door
 		ADD_DIALOGUE_TEXT(205, 1, 899);
 		SET_DIALOGUE_TEXT(1, 1);
 		startCutsceneDialogue(99, 54, 43, 63, 0);
 		waitForEndOfCutsceneDialogue(99, 54, 43, 63, 0);
 		break;
-	case 104:
+	case 104: // use middle door
 		ADD_DIALOGUE_TEXT(206, 1, 900);
 		SET_DIALOGUE_TEXT(1, 1);
 		startCutsceneDialogue(132, 55, 63, 42, 0);
 		waitForEndOfCutsceneDialogue(132, 55, 63, 42, 0);
 		break;
-	case 105:
+	case 105: // use right-most door
 		ADD_DIALOGUE_TEXT(207, 1, 901);
 		SET_DIALOGUE_TEXT(1, 1);
 		startCutsceneDialogue(167, 56, 0, 42, 42);
 		waitForEndOfCutsceneDialogue(167, 56, 0, 42, 42);
 		break;
-	case 106:
+	case 106: // look at dryer
 		ADD_DIALOGUE_TEXT(208, 1, 902);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 107:
+	case 107: // look at tap
 		ADD_DIALOGUE_TEXT(209, 1, 903);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 108:
+	case 108: // use tap
 		ADD_DIALOGUE_TEXT(210, 1, 904);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 109:
-		PART_18_ACTION_109();
+	case 109: // use slug on grating
+		PART_18_ACTION_109_useSlugOnGrating();
 		break;
-	case 110:
+	case 110: // leave
 		_currentPart = 252;
 		break;
 	case 111:
@@ -83,7 +83,7 @@ void IgorEngine::PART_18_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_18_ACTION_109() {
+void IgorEngine::PART_18_ACTION_109_useSlugOnGrating() {
 	const int offset = 29480;
 	for (int i = 1; i <= 2; ++i) {
 		for (int j = 1; j <= 48; ++j) {
@@ -94,8 +94,11 @@ void IgorEngine::PART_18_ACTION_109() {
 	int part = _currentPart;
 	_currentPart = 191;
 	fadeOut(768);
+	// loads part 19
 	PART_19();
+
 	memcpy(_screenVGA, _screenLayer2, 46080);
+
 	loadResourceData__ROOM_MenToilets();
 	loadResourceData__ANIM_MenToilets();
 	loadActionData(DAT_MenToilets);
@@ -103,8 +106,10 @@ void IgorEngine::PART_18_ACTION_109() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_18_EXEC_ACTION);
 	PART_18_HELPER_1(255);
+	// paints bottom of screen black
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
+	drawInventory(1, 0);
 	removeObjectFromInventory(53);
 	fadeIn(768);
 	_currentPart = part;

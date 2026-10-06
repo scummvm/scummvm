@@ -257,13 +257,13 @@ const RoomDataOffsets IgorEngine::PART_08_ROOM_DATA_OFFSETS = {
 const RoomDataOffsets IgorEngine::PART_09_ROOM_DATA_OFFSETS = {
 	{ 80, 4, 12, 3 }, // cseg190:1FA1-1FD4; transition table at DAT+80, four areas, strides 12 and 3
 	{ 149, 162 },
-	{ 167, 385, 3401, 271, 347, 84 },
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+	{ 167, 375, 3391, 271, 347, 84 },
+	{ 378, 29, 5237, 46, 120, 480, 10029, 10087, 46 }
 };
 
 const RoomDataOffsets IgorEngine::PART_04_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
-	{ 0, 0 },
+	{ 5, 18 },             // walk points and facing positions of the room objects
 	{ 23, 231, 3247, 127, 203, 84 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };

@@ -580,4 +580,6 @@
 #define ANM_AdministrationSecretaryRoom8 930 // cseg192:9D78; IGOR.EXE:0x70F378, 0x870 bytes
 #define ANM_AdministrationSecretaryRoom9 931 // cseg192:A5E8; IGOR.EXE:0x70FBE8, 0x399D bytes
 
+#define DLG_AdministrationSecretaryRoom 984
+
 #endif // IGOR_RESOURCE_IDS

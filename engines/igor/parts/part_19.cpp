@@ -302,7 +302,9 @@ void IgorEngine::PART_19() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
-	PART_19_HELPER_3();
+	if(_currentPart != 191) {
+		PART_19_HELPER_3();
+	}
 	if (_objectsState[59] == 0) {
 		PART_19_HELPER_4();
 	} else {
