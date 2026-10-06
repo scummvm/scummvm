@@ -313,6 +313,7 @@ static void global_menu_main() {
 void global_game_menu() {
 	bool loaded = false;
 	bool music = true;
+	bool priorMenu = kernel.activate_menu != GAME_MAIN_MENU;
 
 	if (box_param.series == NULL) {
 		Common::strcpy_s(box_param.name, "*BOX");
@@ -334,7 +335,8 @@ void global_game_menu() {
 				global_menu_save_restore(true);
 			} else {
 				kernel.activate_menu = GAME_NO_MENU;
-				g_engine->saveGameDialog();
+				if (!g_engine->saveGameDialog())
+					kernel.activate_menu = GAME_MAIN_MENU;
 			}
 			break;
 		case GAME_RESTORE_MENU:
@@ -357,6 +359,10 @@ void global_game_menu() {
 			kernel.activate_menu = GAME_NO_MENU;
 			break;
 		}
+
+		if (kernel.activate_menu == GAME_MAIN_MENU && priorMenu)
+			kernel.activate_menu = GAME_NO_MENU;
+
 	} while (!g_engine->shouldQuit() && game.going && kernel.activate_menu != GAME_NO_MENU);
 
 	game_menu_shutdown();
