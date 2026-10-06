@@ -64,6 +64,10 @@ AutotextScroll::~AutotextScroll() {
 }
 
 void AutotextScroll::readData(Common::SeekableReadStream &stream) {
+	if (_hasDrawingOrder) {
+		_z = stream.readSint32LE();
+	}
+
 	_startDepth = stream.readSint32LE();
 	readRect(stream, _bounds);
 

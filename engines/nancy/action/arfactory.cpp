@@ -593,7 +593,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new RotatingLockPuzzle();	// Moved from 114
 	case 157:
-		return new PlaySoundCC();
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
+			return new PlaySoundCC();
+		else
+			return new KeypadPhone();	// Moved from 116
 	case 158:
 		return new PlayRandomSound();
 	case 159:
@@ -766,7 +769,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 198:
 		return new WolfCommands();
 	case 199:
-		return new WolfMazePuzzle();	// Driven by the commands given through 198
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
+			return new WolfMazePuzzle();	// Driven by the commands given through 198
+		else
+			return new AutotextScroll(true);
 	case 200:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new SoundEqualizerPuzzle();

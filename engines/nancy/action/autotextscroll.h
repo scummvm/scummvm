@@ -28,12 +28,12 @@
 namespace Nancy {
 namespace Action {
 
-// Nancy16 scrolling text (AR 197), used for the end credits. Each of the listed AUTOTEXT
+// Nancy16 scrolling text, used for the end credits. Each of the listed AUTOTEXT
 // entries is rendered as hypertext and scrolled through a rectangle, one after another.
 // Once they have all scrolled out of view, an event flag gets set.
 class AutotextScroll : public RenderActionRecord {
 public:
-	AutotextScroll() : RenderActionRecord(7) {}
+	AutotextScroll(bool hasDrawingOrder = false) : RenderActionRecord(7), _hasDrawingOrder(hasDrawingOrder) {}
 	virtual ~AutotextScroll();
 
 	void init() override;
@@ -59,6 +59,7 @@ protected:
 	void redraw();
 
 	// -- File data --
+	bool _hasDrawingOrder;			// Nancy18 has a type that can be put above or below other records
 	int32 _startDepth = 0;			// how far below the top of the rect the text starts
 	Common::Rect _bounds;
 	int32 _intervalTicks = 0;		// between two entries starting
