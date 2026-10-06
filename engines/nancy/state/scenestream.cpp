@@ -383,7 +383,8 @@ void SceneStreamManager::onMainSceneChange() {
 }
 
 // Every environment has a script of its own, with its ambient sounds for example,
-// which runs for as long as the main stream stays in it
+// which runs for as long as the main stream stays in it. It can have another one
+// that is run once the main stream leaves it.
 void SceneStreamManager::changeEnvironment(const Common::String &newEnvironment) {
 	if (newEnvironment.equalsIgnoreCase(_environment)) {
 		return;
@@ -397,6 +398,12 @@ void SceneStreamManager::changeEnvironment(const Common::String &newEnvironment)
 	for (const ENVS::Environment &env : envs->environments) {
 		if (env.code.equalsIgnoreCase(_environment)) {
 			end(env.code + "_Enter_Stream");
+
+			if (!env.leaveScriptName.empty()) {
+				StreamFlags flags;
+				flags.runsFirst = true;
+				begin(env.code + "_Leave_Stream", env.leaveScriptName.toString(), 0, flags);
+			}
 		}
 	}
 

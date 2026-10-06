@@ -1508,7 +1508,7 @@ ENVS::ENVS(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		readFilename(*chunkStream, env.code);
 		readFilename(*chunkStream, env.name);
 		readFilename(*chunkStream, env.ambientScriptName);
-		chunkStream->skip(33);	// A third name, empty in the game data
+		readFilename(*chunkStream, env.leaveScriptName);
 
 		const uint16 numTracks = chunkStream->readUint16LE();
 		readFilenameArray(*chunkStream, env.musicNames, numTracks);

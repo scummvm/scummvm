@@ -944,6 +944,7 @@ struct ENVS : public EngineData {
 		Common::String code;
 		Common::String name;
 		Common::Path ambientScriptName;
+		Common::Path leaveScriptName;	// only used from Nancy18 on
 		Common::Array<Common::String> musicNames;
 	};
 
