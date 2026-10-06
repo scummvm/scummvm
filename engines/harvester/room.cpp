@@ -4489,7 +4489,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					bool didTransition = false;
 					Common::Error interactionError =
 						interactionProcessor.handleInteractionResult(
-							timerInteraction, didTransition, Common::String());
+							timerInteraction, didTransition, Common::String(), false);
 					if (interactionError.getCode() != Common::kNoError)
 						return interactionError;
 					if (flow.hasPendingMainMenuReturn())

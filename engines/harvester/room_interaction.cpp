@@ -51,13 +51,21 @@ RoomInteractionProcessor::RoomInteractionProcessor(HarvesterEngine &engine, Flow
 }
 
 Common::Error RoomInteractionProcessor::handleInteractionResult(const InteractionResult &interaction,
-		bool &didTransition, const Common::String &usedItemName) {
+		bool &didTransition, const Common::String &usedItemName, bool interruptPlayerMovement) {
 	didTransition = false;
 
-	_playerState.hasMoveTarget = false;
-	_playerState.turnActive = false;
-	_playerState.turnTargetFacing = -1;
-	_pendingRegionName.clear();
+	if (interruptPlayerMovement) {
+		_playerState.hasMoveTarget = false;
+		_playerState.turnActive = false;
+		_playerState.turnTargetFacing = -1;
+		_pendingRegionName.clear();
+	} else if (_playerState.hasMoveTarget || _playerState.turnActive) {
+		debugC(2, kDebugPlayer,
+			"Harvester: background action preserving player movement room='%s' pos=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f) region='%s' turning=%d",
+			_scene.state.roomName.c_str(), _playerState.centerX, _playerState.bottomY,
+			_playerState.z, _playerState.targetX, _playerState.targetBottomY,
+			_playerState.targetZ, _pendingRegionName.c_str(), _playerState.turnActive);
+	}
 	if (interaction.requestDemoEnding) {
 		Common::Error endingError = _flow.runDemoEnding();
 		if (endingError.getCode() != Common::kNoError)
@@ -295,7 +303,7 @@ Common::Error RoomInteractionProcessor::handleInteractionResult(const Interactio
 				interaction.continuationTag, continuationInteraction, true,
 				_scene.state.roomName)) {
 			Common::Error interactionError =
-				handleInteractionResult(continuationInteraction, didTransition, usedItemName);
+				handleInteractionResult(continuationInteraction, didTransition, usedItemName, interruptPlayerMovement);
 			if (interactionError.getCode() != Common::kNoError)
 				return interactionError;
 		}
