@@ -317,6 +317,7 @@ ConfigDialog::ConfigDialog() :
 	}
 
 	if (_engineOptions) {
+		_engineOptions->setHostContext(OptionsContainerWidget::kInGameOptions);
 		_engineOptions->setParentDialog(this);
 	} else {
 		tab->removeTab(tabId);

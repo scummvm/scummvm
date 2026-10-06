@@ -156,6 +156,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 		_engineOptions = enginePlugin->get<MetaEngine>().buildEngineOptionsWidget(_gameContainer, "GameOptions_Game_Container.Container", _domain);
 
 		if (_engineOptions) {
+			_engineOptions->setHostContext(OptionsContainerWidget::kLauncherOptions);
 			_engineOptions->setParentDialog(this);
 		}
 	}

@@ -541,6 +541,11 @@ protected:
 /* OptionsContainerWidget */
 class OptionsContainerWidget : public Widget {
 public:
+	enum HostContext { kLauncherOptions, kInGameOptions };
+
+	/** The containing dialog supplies its context before load(). */
+	virtual void setHostContext(HostContext context) {}
+
 	/**
 	 * @param widgetsBoss  parent widget for the container widget
 	 * @param name         name of the container widget in the layout system
