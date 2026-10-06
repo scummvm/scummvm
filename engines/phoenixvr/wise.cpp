@@ -262,7 +262,7 @@ public:
 		if (script.script.size() != header[6])
 			error("script uncompressed size does not match header");
 
-		debug("packed dll at %08lx, size: %u", stream->pos(), header[8]);
+		debug("packed dll at %08x, size: %u", (uint32)stream->pos(), header[8]);
 		Common::Array<byte> dllData;
 		dllData = inflate(*stream, header[8]);
 
@@ -339,7 +339,7 @@ public:
 			skipStream(header[13]);
 
 		baseStreamsOffset = stream->pos();
-		debug("base stream offset: %08lx", baseStreamsOffset);
+		debug("base stream offset: %08x", (uint32)baseStreamsOffset);
 		for (auto entry : script.parse()) {
 			_entries.setVal(Common::move(entry.path), {entry.begin, entry.end});
 		}
