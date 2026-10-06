@@ -92,6 +92,22 @@ void ScrollContainerWidget::handleTickle() {
 	}
 }
 
+void ScrollContainerWidget::setScrollPosition(int position) {
+	_fluidScroller->stopAnimation();
+	const int maximum = MAX(0, _verticalScroll->_numEntries - _limitH);
+	_scrollPos = _fluidScroller->setPosition(
+		(float)CLIP(position, 0, maximum), false);
+	applyScrollPos();
+}
+
+int ScrollContainerWidget::getScrollPosition() const {
+	return _scrolledY;
+}
+
+int ScrollContainerWidget::getMaximumScrollPosition() const {
+	return MAX(0, _verticalScroll->_numEntries - _limitH);
+}
+
 void ScrollContainerWidget::cancelTickle() {
 	_fluidScroller->stopAnimation();
 }
