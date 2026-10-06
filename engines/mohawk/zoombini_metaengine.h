@@ -101,7 +101,7 @@ public:
 		/**
 		 * Do not apply any filtering.
 		 */
-		kRawPalette = 1
+		kRawPalette = 1,
 	};
 	/** Select the palette brightness filter. */
 	static constexpr const char *kOptionPaletteFilter = "palette_filter";
@@ -114,7 +114,7 @@ public:
 		/**
 		 * ScummVM standard xorshift-based PRNG.
 		 */
-		kStandardPrng = 1
+		kStandardPrng = 1,
 	};
 	/** Select the pseudo-random generator algorithm. */
 	static constexpr const char *kOptionPrngAlgorithm = "prng_algorithm";
