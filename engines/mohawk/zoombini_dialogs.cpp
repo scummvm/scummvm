@@ -1019,10 +1019,10 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 	_paletteFilterPopUp->appendEntry(_("Brighten (Original Behavior)"), static_cast<uint32>(MohawkMetaEngine_Zoombini::PaletteFilter::kBrightenPalette));
 	_paletteFilterPopUp->appendEntry(_("Raw"), static_cast<uint32>(MohawkMetaEngine_Zoombini::PaletteFilter::kRawPalette));
 
-	const Common::U32String prngTooltip = _("Selects the pseudo random number generator algorithm.");
-	_prngAlgorithmLabel = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.PrngAlgorithmLabel", _("PRNG algorithm:"), prngTooltip);
+	const Common::U32String prngAlgorithmTooltip = _("Selects the pseudo random number generator algorithm.");
+	_prngAlgorithmLabel = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.PrngAlgorithmLabel", _("PRNG algorithm:"), prngAlgorithmTooltip);
 	_prngAlgorithmLabel->setAlign(Graphics::TextAlign::kTextAlignEnd);
-	_prngAlgorithmPopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.PrngAlgorithm", prngTooltip);
+	_prngAlgorithmPopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.PrngAlgorithm", prngAlgorithmTooltip);
 	_prngAlgorithmPopUp->appendEntry(_("Original PRNG"), static_cast<uint32>(MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng));
 	_prngAlgorithmPopUp->appendEntry(_("ScummVM Standard PRNG"), static_cast<uint32>(MohawkMetaEngine_Zoombini::PrngAlgorithm::kStandardPrng));
 

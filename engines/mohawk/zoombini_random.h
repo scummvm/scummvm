@@ -70,7 +70,7 @@ public:
 	/** Seed the selected stream after applying zero normalization. */
 	void setSeed(uint32 seed);
 	/** Return the current state of the selected stream. */
-	uint32 getSeed() const { return _prngAlgorithm == MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng ? _randState : _scummRnd.getSeed(); }
+	uint32 getSeed() const;
 
 	/**
 	 * Generate a random signed integer in the interval [0, max].
@@ -91,8 +91,8 @@ public:
 	 */
 	bool getRandomBool();
 	/**
-	 * Pick a non-repeating random index from a pool of size poolSize.
-	 * Uses a bitmask to track which indices have been used; resets when all exhausted.
+	 * Pick a non-repeating random index from a pool of size @p poolSize.
+	 * Uses a @p bitmask to track which indices have been used; resets when all exhausted.
 	 * @param poolSize Number of items in the pool (max 32)
 	 * @param bitmask Caller-owned state tracking which indices have been picked
 	 * @return A randomly chosen index in [0, poolSize-1]
