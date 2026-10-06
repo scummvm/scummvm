@@ -36,18 +36,6 @@
 namespace Nancy {
 namespace Action {
 
-// Reads one of the puzzle's grouped sound blocks into a plain SoundDescription,
-// keeping only the first of the random alternatives.
-static void readSoundBlock(Common::SeekableReadStream &stream, SoundDescription &out) {
-	RandomSoundBlock block;
-	block.readData(stream);
-
-	out.name = block.names.empty() ? "NO SOUND" : block.names[0];
-	out.channelID = block.channel;
-	out.numLoops = block.numLoops;
-	out.volume = block.volume;
-}
-
 void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	if (g_nancy->getGameType() >= kGameTypeNancy17) {
 		readDataNancy17(stream);
@@ -65,10 +53,10 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_stateItemID = stream.readUint16LE();
 	readRect(stream, _submitSrcRect);
 	readRect(stream, _submitHotspot);
-	readSoundBlock(stream, _submitSound);
+	_submitSound.readData(stream);
 	readRect(stream, _startOverSrcRect);
 	readRect(stream, _startOverHotspot);
-	readSoundBlock(stream, _startOverSound);
+	_startOverSound.readData(stream);
 	readRect(stream, _doneSrcRect);
 	readRect(stream, _doneDestRect);
 
@@ -113,7 +101,7 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	// Only present when the puzzle has hold slots.
 	if (numHolds > 0)
-		readSoundBlock(stream, _holdSound);
+		_holdSound.readData(stream);
 
 	uint16 numPieces = stream.readUint16LE();
 	_pieces.resize(numPieces);
@@ -158,10 +146,10 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 		_counterSpacing = stream.readSint32LE();
 	}
 
-	readSoundBlock(stream, _pickupSound);
-	readSoundBlock(stream, _dropSound);
-	readSoundBlock(stream, _notebookSound);
-	readSoundBlock(stream, _putDownSound);
+	_pickupSound.readData(stream);
+	_dropSound.readData(stream);
+	_notebookSound.readData(stream);
+	_putDownSound.readData(stream);
 
 	_wrongIngredientFlag = stream.readSint16LE();
 	_solvedFlag = stream.readSint16LE();
@@ -171,8 +159,8 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag = stream.readByte();
 
-	SoundDescription unused;
-	readSoundBlock(stream, unused);
+	RandomSoundBlock unused;
+	unused.readData(stream);
 
 	_failScene.sceneID = stream.readUint16LE();
 	_failScene.frameID = stream.readUint16LE();
@@ -180,7 +168,7 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_failFlag.label = stream.readSint16LE();
 	_failFlag.flag = stream.readByte();
 
-	readSoundBlock(stream, unused);
+	unused.readData(stream);
 
 	// The count-prefixed 23-byte hotspot records shared by the later puzzles.
 	readExitHotspots(stream, _exitHotspots);
@@ -213,6 +201,12 @@ void BuildPuzzle::readDataNancy17(Common::SeekableReadStream &stream) {
 	_pieceCursorType = stream.readSint16LE();
 	_heldPieceCursorType = stream.readSint16LE();
 	_carryCursorType = stream.readSint16LE();
+
+	// Nancy18 has several of these puzzles on top of each other
+	const bool isNancy18 = g_nancy->getGameType() >= kGameTypeNancy18;
+	if (isNancy18) {
+		_z = stream.readSint32LE();
+	}
 
 	uint16 numZones = stream.readUint16LE() / 2;
 	_zones.resize(numZones);
@@ -247,7 +241,7 @@ void BuildPuzzle::readDataNancy17(Common::SeekableReadStream &stream) {
 	}
 
 	if (numHolds > 0)
-		readSoundBlock(stream, _holdSound);
+		_holdSound.readData(stream);
 
 	uint16 numPieces = stream.readUint16LE();
 	_pieces.resize(numPieces);
@@ -256,6 +250,10 @@ void BuildPuzzle::readDataNancy17(Common::SeekableReadStream &stream) {
 		readRect(stream, piece.srcRect);
 		piece.startZone = stream.readSint16LE();
 		readRect(stream, piece.destRect);
+		if (isNancy18) {
+			readRect(stream, piece.homeHotspot);
+		}
+
 		readRect(stream, piece.dragSrcRect);
 		readRect(stream, piece.placedSrcRect);
 		readRect(stream, piece.closeupSrcRect);
@@ -265,6 +263,10 @@ void BuildPuzzle::readDataNancy17(Common::SeekableReadStream &stream) {
 		piece.kind = stream.readByte();
 		piece.zoneID = stream.readSint16LE();
 		piece.itemID = stream.readSint16LE();
+		if (isNancy18) {
+			piece.availableFlag = stream.readSint16LE();
+		}
+
 		piece.placedFlag = stream.readSint16LE();
 		piece.inventoryItem = stream.readSint16LE();
 
@@ -279,10 +281,10 @@ void BuildPuzzle::readDataNancy17(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	readSoundBlock(stream, _pickupSound);
-	readSoundBlock(stream, _dropSound);
-	readSoundBlock(stream, _notebookSound);
-	readSoundBlock(stream, _putDownSound);
+	_pickupSound.readData(stream);
+	_dropSound.readData(stream);
+	_notebookSound.readData(stream);
+	_putDownSound.readData(stream);
 
 	_wrongIngredientFlag = stream.readSint16LE();
 	_solvedFlag = stream.readSint16LE();
@@ -299,8 +301,8 @@ void BuildPuzzle::readDataNancy17(Common::SeekableReadStream &stream) {
 	_failFlag.label = stream.readSint16LE();
 	_failFlag.flag = stream.readByte();
 
-	SoundDescription unused;
-	readSoundBlock(stream, unused);
+	RandomSoundBlock unused;
+	unused.readData(stream);
 
 	readExitHotspots(stream, _exitHotspots);
 	for (uint i = 0; i < _exitHotspots.size(); ++i) {
@@ -402,7 +404,9 @@ void BuildPuzzle::init() {
 			piece.placedSrcRect = piece.dragSrcRect;
 		}
 
-		piece.inUse = (i < _numDefined);
+		// Nancy18 leaves out the pieces whose flag isn't set, like clothes that aren't owned yet
+		piece.inUse = i < _numDefined &&
+			(piece.availableFlag == -1 || NancySceneState.getEventFlag(piece.availableFlag, g_nancy->_true));
 		piece.sourceID = (int16)i;
 		piece.liveRect = piece.destRect;
 		piece.setZOrder(_z + (uint16)i + 1);
@@ -725,8 +729,7 @@ void BuildPuzzle::pickUpPiece(int16 pieceIdx) {
 	_heldPiece = pieceIdx;
 	_pieces[pieceIdx].setZOrder((uint16)(_z + _pieces.size() + 1));
 
-	g_nancy->_sound->loadSound(_pickupSound);
-	g_nancy->_sound->playSound(_pickupSound);
+	playSoundBlock(_pickupSound);
 	updatePieceRender(pieceIdx);
 	saveBoard();
 }
@@ -813,8 +816,7 @@ void BuildPuzzle::placePiece(int16 pieceIdx, int16 zoneIdx, const Common::Point 
 		NancySceneState.setEventFlag(piece.placedFlag, g_nancy->_true);
 	}
 
-	g_nancy->_sound->loadSound(_dropSound);
-	g_nancy->_sound->playSound(_dropSound);
+	playSoundBlock(_dropSound);
 
 	_heldPiece = -1;
 	_pieces[placedIdx].setZOrder((uint16)(_z + placedIdx + 1));
@@ -898,7 +900,7 @@ void BuildPuzzle::addItemValue(int16 itemID, int16 delta) {
 void BuildPuzzle::pressButton(HeldButton button) {
 	const Common::Rect &src = button == kSubmitButton ? _submitSrcRect : _startOverSrcRect;
 	const Common::Rect &dest = button == kSubmitButton ? _submitHotspot : _startOverHotspot;
-	SoundDescription &sound = button == kSubmitButton ? _submitSound : _startOverSound;
+	const RandomSoundBlock &sound = button == kSubmitButton ? _submitSound : _startOverSound;
 
 	// Both buttons draw their pressed art out of the main image.
 	if (!src.isEmpty()) {
@@ -908,8 +910,7 @@ void BuildPuzzle::pressButton(HeldButton button) {
 		_buttonPress.setVisible(true);
 	}
 
-	g_nancy->_sound->loadSound(sound);
-	g_nancy->_sound->playSound(sound);
+	playSoundBlock(sound);
 
 	_heldButton = button;
 	// Submit holds a little longer than the button that clears the board.
@@ -1484,8 +1485,7 @@ void BuildPuzzle::handleInput(NancyInput &input) {
 				_holds[i].setVisible(false);
 			}
 
-			g_nancy->_sound->loadSound(_pickupSound);
-			g_nancy->_sound->playSound(_pickupSound);
+			playSoundBlock(_pickupSound);
 			updateCursorItem(mouseVP);
 		}
 
@@ -1558,7 +1558,10 @@ bool BuildPuzzle::handleBoardInputNancy17(const Common::Point &mouseVP, bool cli
 			continue;
 		}
 
-		if (piece.locked || !piece.liveRect.contains(mouseVP)) {
+		// At home only a part of the piece may be there to click on
+		const bool isAtHome = piece.assignedZone == -1 && piece.liveRect == piece.destRect;
+		const Common::Rect &hotspot = isAtHome && !piece.homeHotspot.isEmpty() ? piece.homeHotspot : piece.liveRect;
+		if (piece.locked || !hotspot.contains(mouseVP)) {
 			continue;
 		}
 
@@ -1613,15 +1616,13 @@ bool BuildPuzzle::handleBoardInputNancy17(const Common::Point &mouseVP, bool cli
 			return true;
 		}
 
-		g_nancy->_sound->loadSound(_putDownSound);
-		g_nancy->_sound->playSound(_putDownSound);
+		playSoundBlock(_putDownSound);
 		returnPiece(_heldPiece);
 	}
 
 	if (hovered != -1) {
 		if (!_pieces[hovered].closeupSrcRect.isEmpty()) {
-			g_nancy->_sound->loadSound(_pickupSound);
-			g_nancy->_sound->playSound(_pickupSound);
+			playSoundBlock(_pickupSound);
 			openCloseup(hovered);
 		} else {
 			pickUpPiece(hovered);

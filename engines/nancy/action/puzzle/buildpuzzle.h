@@ -133,6 +133,7 @@ protected:
 		Common::Rect srcRect;			// art while the piece sits at home
 		int16 startZone = -1;			// Nancy17: the zone the piece is in when the puzzle starts
 		Common::Rect destRect;			// where the piece is drawn
+		Common::Rect homeHotspot;		// Nancy18: the part of that to click on; empty means all of it
 		Common::Rect dragSrcRect;		// art while the piece is on the cursor; empty means srcRect
 		Common::Rect placedSrcRect;		// art once the piece is in a zone; empty means dragSrcRect
 		Common::Rect closeupSrcRect;
@@ -142,6 +143,7 @@ protected:
 		Common::String imageName;	// only when kind == 3
 		int16 zoneID = kAnyZone;	// the only zone this piece may go in, or a PieceZone
 		int16 itemID = 0;			// index into the shared item state, 255 = none
+		int16 availableFlag = -1;	// Nancy18: the piece is only there while this is set
 		int16 placedFlag = -1;		// Nancy17: set while the piece is in a zone
 		int16 inventoryItem = -1;	// Nancy17: holding this item is holding the piece
 		Common::Array<int16> holds;	// the scoops this piece can be taken with, empty = by hand
@@ -197,20 +199,20 @@ protected:
 	Common::Point _counterPos;
 	int32 _counterSpacing = 0;
 
-	SoundDescription _pickupSound;
-	SoundDescription _dropSound;
-	SoundDescription _notebookSound;
-	SoundDescription _putDownSound;
-	SoundDescription _holdSound;
+	RandomSoundBlock _pickupSound;
+	RandomSoundBlock _dropSound;
+	RandomSoundBlock _notebookSound;
+	RandomSoundBlock _putDownSound;
+	RandomSoundBlock _holdSound;
 
 	// Two on-screen buttons: one hands the puzzle in, one clears it. Only the
 	// parfait puzzle has them; the rest are handed in through an exit hotspot.
 	Common::Rect _submitSrcRect;
 	Common::Rect _submitHotspot;
-	SoundDescription _submitSound;
+	RandomSoundBlock _submitSound;
 	Common::Rect _startOverSrcRect;
 	Common::Rect _startOverHotspot;
-	SoundDescription _startOverSound;
+	RandomSoundBlock _startOverSound;
 
 	// Drawn over the zones once every one of them is full.
 	Common::Rect _doneSrcRect;
