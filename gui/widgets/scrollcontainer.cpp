@@ -92,6 +92,17 @@ void ScrollContainerWidget::handleTickle() {
 	}
 }
 
+void ScrollContainerWidget::ensureVisible(const Widget *widget) {
+	if (!widget)
+		return;
+	const int top = widget->getAbsY() - getAbsY();
+	const int bottom = top + widget->getHeight();
+	if (top < 0 || widget->getHeight() > _limitH)
+		setScrollPosition(_scrolledY + top);
+	else if (bottom > _limitH)
+		setScrollPosition(_scrolledY + bottom - _limitH);
+}
+
 void ScrollContainerWidget::setScrollPosition(int position) {
 	_fluidScroller->stopAnimation();
 	const int maximum = MAX(0, _verticalScroll->_numEntries - _limitH);

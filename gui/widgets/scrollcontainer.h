@@ -70,6 +70,7 @@ public:
 
 	/** Set a stable, clamped content position without kinetic scrolling. */
 	void setScrollPosition(int position);
+	void ensureVisible(const Widget *widget);
 	int getScrollPosition() const;
 	int getMaximumScrollPosition() const;
 
