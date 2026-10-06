@@ -268,7 +268,8 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 		if (_updateRoomBackground) {
 			(this->*_updateRoomBackground)();
 		}
-		if (_inputVars[kInputEscape]) {
+		// Escape only aborts dialogue during the intro cutscene (or on quit).
+		if (_inputVars[kInputEscape] && (_currentPart == 850 || _eventQuitGame)) {
 			warning("waitForEndOfCutsceneDialogue() early exit with text active %d start %d count %d speechCounter %d delay %d/%d",
 			        _gameState.dialogueTextRunning, _dialogueTextsStart, _dialogueTextsCount,
 			        _talkSpeechCounter, _talkDelayCounter, _talkDelay);
@@ -404,7 +405,7 @@ void IgorEngine::waitForEndOfIgorDialogue() {
 		if (_updateRoomBackground) {
 			(this->*_updateRoomBackground)();
 		}
-		if (_inputVars[kInputEscape])
+		if (_inputVars[kInputEscape] && (_currentPart == 850 || _eventQuitGame))
 			return;
 		waitForTimer();
 	} while (_gameState.dialogueTextRunning);

@@ -458,6 +458,10 @@ void IgorEngine::handleRoomInput() {
 		} else {
 			_currentAction.object2Num = object;
 			_currentAction.object2Type = kObjectTypeInventory;
+			// An object cannot be combined with itself.
+			if (object == _currentAction.object1Num && _currentAction.object1Type == kObjectTypeInventory) {
+				_currentAction.object2Num = 0;
+			}
 		}
 	} else if (_inputVars[kInputCursorYPos] < 144) {
 		// screen object under cursor
@@ -484,6 +488,9 @@ void IgorEngine::handleRoomInput() {
 		} else {
 			_currentAction.object2Num = object;
 			_currentAction.object2Type = kObjectTypeRoom;
+			if (object == _currentAction.object1Num && _currentAction.object1Type == kObjectTypeRoom) {
+				_currentAction.object2Num = 0;
+			}
 		}
 	} else {
 		return;
@@ -657,6 +664,12 @@ void IgorEngine::drawActionSentence(const char *sentence, uint8 color) {
 	memset(_screenVGA + 144 * 320, 0, 11 * 320);
 	int w = _font.getStringWidth(sentence);
 	int x = (320 - w) / 2;
+	// A sentence wider than the screen would start at a negative offset and
+	// wrap into the previous scanline; keep it left-aligned and let drawString
+	// stop at the right edge instead.
+	if (x < 0) {
+		x = 0;
+	}
 	_font.drawString(_screenVGA, sentence, x, 144, color, 0, 0);
 }
 

@@ -685,6 +685,7 @@ private:
 	void PART_21_HELPER_2();
 	void PART_21_HELPER_3();
 	void PART_21_HELPER_4();
+	void PART_21_HELPER_5();
 	void PART_21_HELPER_6(int frame);
 	void PART_21_HELPER_7();
 	void PART_21_HELPER_8();
