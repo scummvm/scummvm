@@ -49,6 +49,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Der Schatz im Silbersee (Treasure of the Silver Lake).
    - Added support for The Fool's Errand.
    - Added support for Harvester.
+   - Added support for Lord Avalot d'Argent.
 
  General:
    - Optimised mixing and rate converters, for better performance.
