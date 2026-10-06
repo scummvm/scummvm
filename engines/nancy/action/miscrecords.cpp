@@ -1676,6 +1676,125 @@ void HeldItemFlags::execute() {
 	finishExecution();
 }
 
+void UTurn::readData(Common::SeekableReadStream &stream) {
+	readExclusiveRect(stream, _hotspotRect);
+	_hoverCursor = (CursorManager::CursorType)stream.readSint16LE();
+	_excludesFrames = stream.readByte();
+
+	_frames.resize(MAX<int16>(stream.readSint16LE(), 0));
+	for (int16 &frame : _frames) {
+		frame = stream.readSint16LE();
+	}
+}
+
+bool UTurn::isActiveOnFrame(uint16 frame) const {
+	bool isListed = false;
+	for (int16 listed : _frames) {
+		if (listed == frame) {
+			isListed = true;
+		}
+	}
+
+	if (_excludesFrames) {
+		return !isListed;
+	}
+
+	return isListed || _frames.empty();
+}
+
+void UTurn::execute() {
+	// A node is a full turn made out of this many frames
+	const uint kFramesPerTurn = 20;
+
+	if (_state == kActionTrigger) {
+		UI::Viewport &viewport = NancySceneState.getViewport();
+		uint frame = (viewport.getCurFrame() + kFramesPerTurn / 2) % kFramesPerTurn;
+		if (frame < viewport.getFrameCount()) {
+			viewport.setFrame(frame);
+		}
+	}
+
+	_state = kRun;
+	_hasHotspot = isActiveOnFrame(NancySceneState.getSceneInfo().frameID);
+	_hotspot = _hotspotRect;
+}
+
+void GraphChase::readData(Common::SeekableReadStream &stream) {
+	_chaserTableIndex = stream.readSint16LE();
+	_chasedTableIndex = stream.readSint16LE();
+	_avoidsAdjacentNodes = stream.readByte();
+
+	for (uint i = 0; i < kNumLinkTypes; ++i) {
+		_linkTypeFlags[i] = stream.readSint16LE();
+	}
+
+	_nodes.resize(MAX<int16>(stream.readSint16LE(), 0));
+	for (Node &node : _nodes) {
+		stream.skip(2);	// The node's ID, which is its place in the list
+
+		node.resize(MAX<int16>(stream.readSint16LE(), 0));
+		for (Link &link : node) {
+			link.nodeID = stream.readSint32LE();
+			link.type = stream.readByte();
+		}
+	}
+}
+
+bool GraphChase::canMoveTo(const Link &link, int16 chaserNode) const {
+	if (link.nodeID == chaserNode) {
+		return false;
+	}
+
+	if (_avoidsAdjacentNodes) {
+		for (const Link &chaserLink : _nodes[chaserNode - 1]) {
+			if (chaserLink.nodeID == link.nodeID) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+void GraphChase::execute() {
+	_isDone = true;
+
+	TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	if (!table) {
+		return;
+	}
+
+	const int16 chaserNode = table->getSingleValue(_chaserTableIndex);
+	const int16 chasedNode = table->getSingleValue(_chasedTableIndex);
+	if (chaserNode < 1 || chaserNode > (int16)_nodes.size() || chasedNode < 1 || chasedNode > (int16)_nodes.size()) {
+		warning("GraphChase: nodes %d and %d are not on the map", chaserNode, chasedNode);
+		return;
+	}
+
+	// Links get tried at random until one will do. Once none of them does,
+	// the places next to the player's stop being avoided, for good.
+	Node remaining = _nodes[chasedNode - 1];
+	while (!remaining.empty()) {
+		uint pick = g_nancy->_randomSource->getRandomNumber(remaining.size() - 1);
+		const Link link = remaining[pick];
+
+		if (canMoveTo(link, chaserNode)) {
+			table->setSingleValue(_chasedTableIndex, link.nodeID);
+			for (uint i = 0; i < kNumLinkTypes; ++i) {
+				NancySceneState.setEventFlag(_linkTypeFlags[i], link.type == i ? g_nancy->_true : g_nancy->_false);
+			}
+
+			return;
+		}
+
+		remaining.remove_at(pick);
+		if (remaining.empty() && _avoidsAdjacentNodes) {
+			_avoidsAdjacentNodes = false;
+			remaining = _nodes[chasedNode - 1];
+		}
+	}
+}
+
 void ClearSavedData::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _name);
 }

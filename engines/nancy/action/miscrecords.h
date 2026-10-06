@@ -810,6 +810,56 @@ protected:
 	uint32 _nextDrawTime = 0;
 };
 
+// Nancy18. A hotspot that turns the player around to face the opposite way
+class UTurn : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
+	bool canHaveHotspot() const override { return true; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "UTurn"; }
+
+	bool isActiveOnFrame(uint16 frame) const;
+
+	Common::Rect _hotspotRect;
+	CursorManager::CursorType _hoverCursor = CursorManager::kHotspot;
+	bool _excludesFrames = false;	// the hotspot is on every frame but the listed ones
+	Common::Array<int16> _frames;
+};
+
+// Nancy18. A chase over a map: the places are linked to each other, and the
+// record moves the one being chased to a place next to theirs, picked at random,
+// that the player isn't at. Both places are kept in the value table, and the
+// kind of link that got taken sets one of three event flags.
+class GraphChase : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	static const uint kNumLinkTypes = 3;
+
+	struct Link {
+		int32 nodeID = 0;	// counted from 1, as are the places in the value table
+		byte type = 0;
+	};
+
+	typedef Common::Array<Link> Node;
+
+	Common::String getRecordTypeName() const override { return "GraphChase"; }
+
+	bool canMoveTo(const Link &link, int16 chaserNode) const;
+
+	int16 _chaserTableIndex = 0;
+	int16 _chasedTableIndex = 0;
+	bool _avoidsAdjacentNodes = false;	// keeps a place away from the player's, while it can
+	int16 _linkTypeFlags[kNumLinkTypes] = { -1, -1, -1 };
+	Common::Array<Node> _nodes;
+};
+
 // Nancy18. Throws away what a puzzle has kept under a name
 class ClearSavedData : public ActionRecord {
 public:

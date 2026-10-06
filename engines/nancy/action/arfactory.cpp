@@ -273,7 +273,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 30:	// Nancy11
 		return new StopPlayerScrolling();
 	case 31:	// Nancy11
-		return new StartPlayerScrolling();
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
+			return new StartPlayerScrolling();
+		else
+			return new UTurn();
 	case 32:	// Nancy10
 		return new UIPopupPrepScene();
 	case 34:	// Nancy17
@@ -816,7 +819,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 212:
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kOrderItems);
 	case 213:
-		return new CollisionPuzzle(CollisionPuzzle::PuzzleType::kTileMove);
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
+			return new CollisionPuzzle(CollisionPuzzle::PuzzleType::kTileMove);
+		else
+			return new GraphChase();
 	case 214:
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kKeypad);
 	case 215:
