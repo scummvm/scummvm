@@ -1019,7 +1019,9 @@ void NancyEngine::populateStaticData() {
 	case kGameTypeNancy15:
 	case kGameTypeNancy16:
 	case kGameTypeNancy17:
-		// Nancy16 and Nancy17 have 40 items, but their cursor table still has room for 49
+	case kGameTypeNancy18:
+		// Nancy16 and Nancy17 have 40 items, but their cursor table still has room for 49,
+		// and so does the one of Nancy18
 		_staticData.numItems = 49;
 		_staticData.numCursorTypes = 45;
 		break;
