@@ -127,7 +127,7 @@ void IgorEngine::loadDialogueData(int dlg) {
 	int dataSize;
 	uint8 *p = loadData(dlg, 0, &dataSize);
 	int dialogueDataSize = _roomDataOffsets.dlg.questionsOffset + 164 + 41;
-	assert(dialogueDataSize <= 500);
+	assert(dialogueDataSize <= (int)sizeof(_gameState.dialogueData));
 	memcpy(_gameState.dialogueData, p, dialogueDataSize);
 	assert(_roomDataOffsets.dlg.questionsSize <= MAX_DIALOGUE_QUESTIONS);
 	// A zero speech layout retains the legacy packed-tail layout for dialogue

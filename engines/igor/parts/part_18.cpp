@@ -152,7 +152,7 @@ void IgorEngine::PART_18_ACTION_111() {
 void IgorEngine::PART_18_HELPER_1(int num) {
 }
 
-void IgorEngine::PART_18_HELPER_2() {
+void IgorEngine::PART_18_HELPER_2_walkIn() {
 	_walkData[0].setPos(319, 142, 4, 0);
 	_walkData[0].clipSkipX = 1;
 	_walkData[0].clipWidth = 15;
@@ -182,7 +182,9 @@ void IgorEngine::PART_18() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
-	PART_18_HELPER_2();
+	if(_currentPart == 190) {
+		PART_18_HELPER_2_walkIn();
+	}
 	enterPartLoop();
 	while (_currentPart == 180) {
 		runPartLoop();

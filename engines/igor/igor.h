@@ -151,7 +151,7 @@ struct GameStateData {
 	uint8 unk11;
 	bool dialogueStarted;
 	// byte[1]
-	uint8 dialogueData[500];
+	uint8 dialogueData[583];
 	uint8 dialogueChoiceStart;
 	uint8 dialogueChoiceCount;
 	// byte[2]
@@ -641,7 +641,7 @@ private:
 	void PART_18_ACTION_109_useSlugOnGrating();
 	void PART_18_ACTION_111();
 	void PART_18_HELPER_1(int num);
-	void PART_18_HELPER_2();
+	void PART_18_HELPER_2_walkIn();
 	void PART_18();
 	void loadResourceData__ROOM_MenToilets();
 	void loadResourceData__ANIM_MenToilets();
