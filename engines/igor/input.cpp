@@ -79,11 +79,15 @@ void IgorEngine::waitForTimer(int ticks) {
 				_inputVars[kInputCursorYPos] = ev.mouse.y;
 				break;
 			case Common::EVENT_RBUTTONDOWN:
+				debugC(9, kDebugEngine, "waitForTimer() right button at %d,%d running %d",
+				       ev.mouse.x, ev.mouse.y, _gameState.dialogueTextRunning);
 				if (_gameState.dialogueTextRunning) {
 					_inputVars[kInputSkipDialogue] = 1;
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
+				debugC(9, kDebugEngine, "waitForTimer() left button at %d,%d running %d",
+				       ev.mouse.x, ev.mouse.y, _gameState.dialogueTextRunning);
 				_inputVars[kInputCursorXPos] = ev.mouse.x;
 				_inputVars[kInputCursorYPos] = ev.mouse.y;
 				if (_gameState.dialogueTextRunning) {
@@ -177,6 +181,12 @@ void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
 }
 
 void IgorEngine::handleRoomInput() {
+	// Escape is a transient abort input. Do not let an unused press from the
+	// room loop leak into a later blocking walk or dialogue sequence.
+	if (_inputVars[kInputEscape] && !_eventQuitGame) {
+		_inputVars[kInputEscape] = 0;
+	}
+
 	// ESCAPE for pause
 	if (_inputVars[kInputPause]) {
 		_inputVars[kInputPause] = 0;

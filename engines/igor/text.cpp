@@ -212,6 +212,9 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
  * Loop for character talking
  */
 void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b) {
+	debugC(9, kDebugEngine, "waitForEndOfCutsceneDialogue() begin running %d start %d count %d speechCounter %d delay %d/%d",
+	       _gameState.dialogueTextRunning, _dialogueTextsStart, _dialogueTextsCount,
+	       _talkSpeechCounter, _talkDelayCounter, _talkDelay);
 	do {
 		// stop speech if skip dialogue hit
 		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
@@ -231,6 +234,8 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 						(this->*_updateDialogue)(kUpdateDialogueAnimEndOfSentence);
 					}
 					memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+					debugC(9, kDebugEngine, "waitForEndOfCutsceneDialogue() restored text rect y %d size %d remaining %d",
+					       _dialogueDirtyRectY, _dialogueDirtyRectSize, _dialogueTextsCount);
 					if (_dialogueTextsCount == 0) {
 						stopDialogueSpeech();
 						_gameState.dialogueTextRunning = 0;
@@ -263,10 +268,15 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 		if (_updateRoomBackground) {
 			(this->*_updateRoomBackground)();
 		}
-		if (_inputVars[kInputEscape])
+		if (_inputVars[kInputEscape]) {
+			warning("waitForEndOfCutsceneDialogue() early exit with text active %d start %d count %d speechCounter %d delay %d/%d",
+			        _gameState.dialogueTextRunning, _dialogueTextsStart, _dialogueTextsCount,
+			        _talkSpeechCounter, _talkDelayCounter, _talkDelay);
 			return;
+		}
 		waitForTimer();
 	} while (_gameState.dialogueTextRunning);
+	debugC(9, kDebugEngine, "waitForEndOfCutsceneDialogue() end running %d", _gameState.dialogueTextRunning);
 }
 
 void IgorEngine::fixIgorDialogueTextPosition(int num, int count, int *x, int *y) {
@@ -448,6 +458,9 @@ void IgorEngine::animateIgorTalking(int frame) {
 	}
 }
 
+/**
+ * Pos and color
+ */
 void IgorEngine::handleDialogue(int x, int y, int r, int g, int b) {
 	_gameState.dialogueStarted = true;
 	_gameState.dialogueChoiceStart = 1;
@@ -510,6 +523,12 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b) {
 }
 
 void IgorEngine::drawDialogueChoices() {
+	debugC(9, kDebugEngine, "drawDialogueChoices() enter running %d start %d count %d click %d skip %d escape %d quit %d",
+	       _gameState.dialogueTextRunning, _dialogueTextsStart, _dialogueTextsCount,
+	       _inputVars[kInputClick], _inputVars[kInputSkipDialogue], _inputVars[kInputEscape], _eventQuitGame);
+	if (_gameState.dialogueTextRunning) {
+		warning("drawDialogueChoices() entered while dialogue text is still active");
+	}
 	memset(_screenVGA + 46080, 0, 56 * 320);
 	setPaletteColor(240, 0, 0, 0);
 	_dialogueInfo[0] = 0;
@@ -534,6 +553,9 @@ void IgorEngine::drawDialogueChoices() {
 
 int IgorEngine::selectDialogue() {
 	showCursor();
+	debugC(9, kDebugEngine, "selectDialogue() begin cursor %d,%d choices %d running %d",
+	       _inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos],
+	       _dialogueInfo[0], _gameState.dialogueTextRunning);
 	int hoveredChoice = 0;
 	bool end = false;
 	do {
@@ -552,6 +574,9 @@ int IgorEngine::selectDialogue() {
 			}
 		}
 		if (_inputVars[kInputClick]) {
+			debugC(9, kDebugEngine, "selectDialogue() click cursor %d,%d hovered %d choices %d running %d skip %d",
+			       _inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos], hoveredChoice,
+			       _dialogueInfo[0], _gameState.dialogueTextRunning, _inputVars[kInputSkipDialogue]);
 			if (hoveredChoice != 0 && hoveredChoice <= _dialogueInfo[0]) {
 				end = true;
 			}
@@ -561,6 +586,7 @@ int IgorEngine::selectDialogue() {
 		waitForTimer();
 	} while (!end && !_eventQuitGame);
 	hideCursor();
+	debugC(9, kDebugEngine, "selectDialogue() end hovered %d quit %d", hoveredChoice, _eventQuitGame);
 	return hoveredChoice;
 }
 
