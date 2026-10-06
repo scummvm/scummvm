@@ -14,32 +14,32 @@ MODULE_OBJS = \
 	static_walk.o \
 	static_cursor.o \
 	options.o \
-	part_0.o \
-	part_1.o \
-	part_2.o \
-	part_4.o \
-	part_5.o \
-	part_85.o \
-	part_90.o \
-	part_6.o \
-	part_7.o \
-	part_8.o \
-	part_9.o \
-	part_10.o \
-	part_11.o \
-	part_12.o \
-	part_17.o \
-	part_18.o \
-	part_19.o \
-	part_21.o \
-	part_23.o \
-	part_24.o \
-	part_25.o \
-	part_26.o \
-	part_27.o \
-	part_28.o \
-	part_30.o \
-	part_34.o \
+	parts/part_0.o \
+	parts/part_1.o \
+	parts/part_2.o \
+	parts/part_4.o \
+	parts/part_5.o \
+	parts/part_85.o \
+	parts/part_90.o \
+	parts/part_6.o \
+	parts/part_7.o \
+	parts/part_8.o \
+	parts/part_9.o \
+	parts/part_10.o \
+	parts/part_11.o \
+	parts/part_12.o \
+	parts/part_17.o \
+	parts/part_18.o \
+	parts/part_19.o \
+	parts/part_21.o \
+	parts/part_23.o \
+	parts/part_24.o \
+	parts/part_25.o \
+	parts/part_26.o \
+	parts/part_27.o \
+	parts/part_28.o \
+	parts/part_30.o \
+	parts/part_34.o \
 	part_35.o \
 	text.o \
 	part_main.o \
