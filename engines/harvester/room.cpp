@@ -630,6 +630,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 		};
 		auto captureCurrentSaveState = [&]() {
+			Player::syncAnimationPlacement(playerState);
 			syncCurrentRoomRuntimeState();
 			const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
 			_engine.captureCurrentSaveRoomState(scene.state.entranceName, scene.state.roomName,
@@ -1382,6 +1383,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			playerState.turnTargetFacing = -1;
 			if (playerState.entity && playerState.facing >= 0)
 				(void)Player::setIdleAnimation(playerState, playerState.facing);
+			Player::syncAnimationPlacement(playerState);
 		};
 		auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
 			Common::Array<AudioCommand> entryAudioCommands = scene.state.audioCommands;
@@ -1451,10 +1453,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return _inventory.refresh();
 		};
 		auto syncAnimatedRoomActorPlacement = [&]() {
-			if (playerState.entity) {
-				(void)applyRoomActorPlacement(scene.state, *playerState.entity,
-					playerState.centerX, playerState.bottomY, playerState.z);
-			}
+			Player::syncAnimationPlacement(playerState);
 			if (!entityManager)
 				return;
 
