@@ -562,6 +562,13 @@ public:
 	 */
 	virtual bool save() = 0;
 
+	/**
+	 * Validate the current widget state before the containing dialog applies it.
+	 * Implementations should focus the first invalid control before returning
+	 * false.
+	 */
+	virtual bool validate() { return true; }
+
 	/** Implementing classes should return if there are relevant keys set in the configuration domain
 	 *
 	 * @return true if there are relevant keys set in the configuration domain
@@ -573,6 +580,7 @@ public:
 
 	void setParentDialog(Dialog *parentDialog) { _parentDialog = parentDialog; }
 	void setDomain(const Common::String &domain) { _domain = domain; }
+
 
 protected:
 	// Widget API

@@ -421,6 +421,14 @@ void ConfigDialog::apply() {
 	OptionsDialog::apply();
 }
 
+
+bool ConfigDialog::validate() {
+	if (_engineOptions && !_engineOptions->validate())
+		return false;
+
+	return OptionsDialog::validate();
+}
+
 ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
 		OptionsContainerWidget(containerBoss, name, "ExtraGuiOptionsDialog", domain),
 		_options(options) {

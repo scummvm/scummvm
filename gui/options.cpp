@@ -1132,6 +1132,10 @@ void OptionsDialog::close() {
 	Dialog::close();
 }
 
+bool OptionsDialog::validate() {
+	return !_backendOptions || _backendOptions->validate();
+}
+
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kClearShaderCmd:
@@ -1232,9 +1236,13 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		break;
 	}
 	case kApplyCmd:
+		if (!validate())
+			break;
 		apply();
 		break;
 	case kOKCmd:
+		if (!validate())
+			break;
 		setResult(1);
 		close();
 		break;

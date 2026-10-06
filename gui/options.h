@@ -87,6 +87,7 @@ protected:
 
 	virtual void build();
 	virtual void clean();
+	virtual bool validate();
 	void rebuild();
 	bool testGraphicsSettings();
 
