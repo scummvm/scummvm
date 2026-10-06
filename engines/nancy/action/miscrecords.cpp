@@ -1676,6 +1676,16 @@ void HeldItemFlags::execute() {
 	finishExecution();
 }
 
+void ClearSavedData::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _name);
+}
+
+void ClearSavedData::execute() {
+	auto *data = (SavedStateData *)NancySceneState.getPuzzleData(SavedStateData::getTag());
+	data->states.erase(_name);
+	_isDone = true;
+}
+
 void Rain::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 

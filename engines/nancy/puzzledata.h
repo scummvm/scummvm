@@ -672,6 +672,16 @@ struct CollectionData : public PuzzleData {
 	Common::HashMap<Common::String, Collection, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> collections;
 };
 
+// Nancy18. What puzzles keep under a name of their own, like where the player
+// stands in each of the sentry rooms, or a card game that was left unfinished.
+// The scenes can throw away what a name holds.
+struct SavedStateData : public PuzzleData {
+	static constexpr uint32 getTag() { return MKTAG('S', 'V', 'S', 'T'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::HashMap<Common::String, Common::Array<int32>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> states;
+};
+
 // Nancy17. The contacts in the cell phone of every player character
 struct PhoneBookData : public PuzzleData {
 	struct Entry {

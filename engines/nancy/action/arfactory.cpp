@@ -133,7 +133,7 @@ namespace Nancy {
 namespace Action {
 
 ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableReadStream *recordStream) {
-	// The types returning nullptr in Nancy16 and Nancy17 were changed there, and their
+	// The types returning nullptr in Nancy16 and later were changed there, and their
 	// new data hasn't been analyzed yet. This keeps the readers of the older games from
 	// misparsing it.
 	switch (type) {
@@ -458,8 +458,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 108:
 		if (g_nancy->getGameType() <= kGameTypeNancy6)
 			return new OrderingPuzzle(OrderingPuzzle::kOrdering);
-		else
+		else if (g_nancy->getGameType() <= kGameTypeNancy17)
 			return new GotoMenu();
+		else
+			return new ClearSavedData();
 	case 109:
 		return new LoseGame();
 	case 110:

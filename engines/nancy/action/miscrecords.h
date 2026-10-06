@@ -810,6 +810,18 @@ protected:
 	uint32 _nextDrawTime = 0;
 };
 
+// Nancy18. Throws away what a puzzle has kept under a name
+class ClearSavedData : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "ClearSavedData"; }
+
+	Common::String _name;
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 
