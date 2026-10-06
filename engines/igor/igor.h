@@ -75,7 +75,7 @@ enum {
 	MAX_VERB_NAME_LENGTH = 12,
 	MAX_ROOM_OBJECT_AREAS = 256,
 	MAX_DIALOGUE_QUESTIONS = 30,
-	MAX_DIALOGUE_REPLIES = 100 // cseg181:12B1-12C0
+	MAX_DIALOGUE_REPLIES = 100
 };
 
 enum FacingPosition {
@@ -404,15 +404,15 @@ private:
 	int _dialogueDirtyRectY;
 	int _dialogueDirtyRectSize;
 	char _dialogueQuestions[MAX_DIALOGUE_QUESTIONS][2][41];
-	uint16 _dialogueQuestionSounds[MAX_DIALOGUE_QUESTIONS]; // cseg172:043B-0460
+	uint16 _dialogueQuestionSounds[MAX_DIALOGUE_QUESTIONS];
 	char _dialogueReplies[MAX_DIALOGUE_REPLIES][51];
-	uint16 _dialogueReplySounds[MAX_DIALOGUE_REPLIES]; // cseg172:0A59-0A82
+	uint16 _dialogueReplySounds[MAX_DIALOGUE_REPLIES];
 	bool _dialogueEnded;
 	int _dialogueChoiceSelected;
 	uint8 _dialogueInfo[6];
 
 	uint8 _objectsState[112];
-	bool _part07FirstVisitDone; // cseg197:0795-0845; original global s3:0xED2E
+	bool _part07FirstVisitDone;
 	uint8 _inventoryImages[36];
 	uint8 _inventoryInfo[74];
 	char _verbPrepositions[3][7];
