@@ -734,6 +734,7 @@ void GrimEngine::cameraChangeHandle(int prev, int next) {
 	LuaBase::instance()->callback("camChangeHandler", objects);
 }
 
+// Used to establish sort orders for actors when the camera changes. (And trigger any other Lua based commands.)
 void GrimEngine::cameraPostChangeHandle(int num) {
 	LuaObjects objects;
 	objects.add(num);

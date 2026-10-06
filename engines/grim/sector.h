@@ -96,6 +96,11 @@ private:
 	int _numVertices;
 	int _id;
 	int _numSortplanes;
+	/**
+	 * Sort planes represent how one actor is displayed in front of another.
+	 * For instance, if an actor is walking around a table,
+	 * the sort plane will determine whether the actor is displayed in front of or behind the table.
+	 */
 	int *_sortplanes;
 
 	Common::String _name;

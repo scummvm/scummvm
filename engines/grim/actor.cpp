@@ -1538,7 +1538,19 @@ void Actor::update(uint frameTime) {
 		if (_followBoxes) {
 			// Check for sort order information in the current sector
 			int oldSortOrder = getEffectiveSortOrder();
-			_sectorSortOrder = set->findSectorSortOrder(_pos, Sector::WalkType);
+
+			Actor *selectedActor = g_grim->getSelectedActor();
+			const bool isMainActor = (selectedActor == this);
+
+			// Guybrush requires a special case for sort order.
+			// Since he is the main actor, we don't want to use the sector sort order logic, but rather the scene's sort order.
+			// When using any sort orders greater than -1, this logic is useful.
+			if (_sortOrder >= 0 && !isMainActor) {
+				_sectorSortOrder = _sortOrder;
+			} else {
+				// This should pickup -1s in lua sortorder tables and defer them to the scene's sort order.
+				_sectorSortOrder = set->findSectorSortOrder(_pos, Sector::WalkType);
+			}
 
 			if (oldSortOrder != getEffectiveSortOrder())
 				g_emi->invalidateSortOrder();
