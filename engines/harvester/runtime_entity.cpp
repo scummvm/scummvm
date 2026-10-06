@@ -180,6 +180,8 @@ bool Entity::loadBitmapResource(ResourceManager &resources, const Common::String
 	_frames.clear();
 	_frames.push_back(Common::move(frame));
 	_baseFrames = _frames;
+	_frameDepthScales.clear();
+	_frameDepthScales.resize(_frames.size(), 1.0f);
 	_resourcePath = path;
 	_currentFrame = 0;
 	_firstFrame = 0;
@@ -233,6 +235,8 @@ bool Entity::loadAbmResource(ResourceManager &resources, const Common::String &p
 
 	_resourcePath = path;
 	_baseFrames = _frames;
+	_frameDepthScales.clear();
+	_frameDepthScales.resize(_frames.size(), 1.0f);
 	_currentFrame = _frames.empty() ? -1 : 0;
 	_firstFrame = _currentFrame;
 	_lastFrame = _frames.empty() ? -1 : (int)_frames.size() - 1;
@@ -369,6 +373,7 @@ void Entity::setAnimationSequence(int sequence) {
 void Entity::configureHotspotBounds(int width, int height) {
 	_frames.clear();
 	_baseFrames.clear();
+	_frameDepthScales.clear();
 	_currentFrame = -1;
 	_firstFrame = -1;
 	_lastFrame = -1;
@@ -424,11 +429,15 @@ void Entity::setDepthScale(float scale) {
 	if (fabsf(_depthScale - newScale) < 0.0001f)
 		return;
 
-	if (_baseFrames.empty())
+	if (_baseFrames.empty()) {
 		_baseFrames = _frames;
+		_frameDepthScales.clear();
+		_frameDepthScales.resize(_frames.size(), 1.0f);
+	}
 
 	_depthScale = newScale;
-	rebuildScaledFrames();
+	updateBoundsFromCurrentFrame();
+	updateScreenBaseFromCurrentFrame();
 }
 
 bool Entity::tickVisualState(uint32 now) {
@@ -764,6 +773,7 @@ done:
 }
 
 void Entity::updateBoundsFromCurrentFrame() {
+	scaleCurrentFrame();
 	if (_frames.empty()) {
 		_boundsWidth = 0;
 		_boundsHeight = 0;
@@ -788,36 +798,31 @@ void Entity::updateScreenBaseFromCurrentFrame() {
 	_screenBaseY = baseY;
 }
 
-void Entity::rebuildScaledFrames() {
-	if (_baseFrames.empty()) {
-		_frames.clear();
-		updateBoundsFromCurrentFrame();
-		updateScreenBaseFromCurrentFrame();
+void Entity::scaleCurrentFrame() {
+	if (_baseFrames.empty() || _currentFrame < 0 ||
+			(uint)_currentFrame >= _baseFrames.size())
 		return;
-	}
 
+	const uint frameIndex = (uint)_currentFrame;
+	if (_frameDepthScales[frameIndex] == _depthScale)
+		return;
+
+	const AbmFrame &source = _baseFrames[frameIndex];
+	AbmFrame &scaled = _frames[frameIndex];
 	if (fabsf(_depthScale - 1.0f) < 0.0001f) {
-		_frames = _baseFrames;
-		updateBoundsFromCurrentFrame();
-		updateScreenBaseFromCurrentFrame();
-		return;
-	}
-
-	_frames.resize(_baseFrames.size());
-	for (uint i = 0; i < _baseFrames.size(); ++i) {
-		const AbmFrame &source = _baseFrames[i];
-		AbmFrame &scaled = _frames[i];
-		const int scaledWidth = scaleDimension(source.width, _depthScale);
-		const int scaledHeight = scaleDimension(source.height, _depthScale);
-
-		scaleIndexedBitmapNearest(source, scaled, scaledWidth, scaledHeight);
+		scaled = source;
+	} else {
+		scaleIndexedBitmapNearest(source, scaled,
+			scaleDimension(source.width, _depthScale),
+			scaleDimension(source.height, _depthScale));
 		// Native depth scaling preserves the authored horizontal frame offset.
 		scaled.xOffset = source.xOffset;
 		scaled.yOffset = roundToInt((float)source.yOffset * _depthScale);
 	}
-
-	updateBoundsFromCurrentFrame();
-	updateScreenBaseFromCurrentFrame();
+	_frameDepthScales[frameIndex] = _depthScale;
+	debugC(3, kDebugPlayer,
+		"Harvester: entity depth scale name='%s' frame=%u scale=%.4f size=%ux%u",
+		_name.c_str(), frameIndex, (double)_depthScale, scaled.width, scaled.height);
 }
 
 EntityManager::EntityManager(ResourceManager &resources) : _resources(resources) {

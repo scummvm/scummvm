@@ -55,7 +55,6 @@ static const float kRoomPlayerAttackUpperYOffset = 144.44f;
 static const float kRoomPlayerAttackMidYOffset = 75.36f;
 static const char *const kPlayerIdleAnimationEntityName = "IDLE_ANIM";
 static const char *const kPlayerIdleAnimationResourcePath = "1:/GRAPHIC/ROOMANIM/PCLOUN02.ABM";
-static const uint32 kRuntimeClockDivisorMs = 10;
 static const uint32 kRoomPlayerIdleDelayTicks = 3000;
 static const int kPlayerHitKnockbackDistance = 18;
 static const int kPlayerHitKnockbackDecayStep = 3;
@@ -1193,7 +1192,7 @@ bool Player::supportsMovementBand(const RoomSetupState &state) {
 }
 
 uint32 Player::getRuntimeClockTicks() {
-	return g_system ? (g_system->getMillis() / kRuntimeClockDivisorMs) : 0;
+	return Harvester::getRuntimeClockTicks();
 }
 
 bool Player::isIdleAnimationExcludedRoom(const Common::String &roomName) {
