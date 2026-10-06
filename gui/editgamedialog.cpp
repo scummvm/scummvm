@@ -577,6 +577,21 @@ void EditGameDialog::apply() {
 	OptionsDialog::apply();
 }
 
+
+bool EditGameDialog::validate() {
+	if (_engineOptions && !_engineOptions->validate()) {
+		if (!_tabWidget->containsWidget(_engineOptions)) {
+			Widget *invalid = getFocusWidget();
+			_tabWidget->setActiveTab(0);
+			if (invalid && _tabWidget->containsWidget(invalid))
+				setFocusWidget(invalid);
+		}
+		return false;
+	}
+
+	return OptionsDialog::validate();
+}
+
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kEnableHotspotsCmd: {
@@ -707,6 +722,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	case kOKCmd:
 	{
+		if (!validate())
+			return;
+
 		// Write back changes made to config object
 		Common::String newDomain(Common::convertFromU32String(_domainWidget->getEditString()));
 		if (newDomain != _domain) {
@@ -727,8 +745,11 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				_backendOptions->setDomain(newDomain);
 			}
 		}
+
+		setResult(1);
+		close();
+		return;
 	}
-	// fall through
 	default:
 		OptionsDialog::handleCommand(sender, cmd, data);
 	}

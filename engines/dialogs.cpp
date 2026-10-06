@@ -421,6 +421,21 @@ void ConfigDialog::apply() {
 	OptionsDialog::apply();
 }
 
+
+bool ConfigDialog::validate() {
+	if (_engineOptions && !_engineOptions->validate()) {
+		if (!_tabWidget->containsWidget(_engineOptions)) {
+			Widget *invalid = getFocusWidget();
+			_tabWidget->setActiveTab(0);
+			if (invalid && _tabWidget->containsWidget(invalid))
+				setFocusWidget(invalid);
+		}
+		return false;
+	}
+
+	return OptionsDialog::validate();
+}
+
 ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
 		OptionsContainerWidget(containerBoss, name, "ExtraGuiOptionsDialog", domain),
 		_options(options) {

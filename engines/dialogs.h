@@ -86,6 +86,7 @@ public:
 	// OptionsDialog API
 	void build() override;
 	void apply() override;
+	bool validate() override;
 
 private:
 	OptionsContainerWidget *_engineOptions;
