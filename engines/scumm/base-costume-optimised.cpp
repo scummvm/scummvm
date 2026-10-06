@@ -69,6 +69,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	compData.boundsRect.top = 0;
 	compData.boundsRect.right = _out.w;
 	compData.boundsRect.bottom = _out.h;
+	clipBoundsRect(compData.boundsRect);
 
 	if (actorIsScaled) {
 		/* Scale direction */
@@ -1585,6 +1586,8 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *x
 	} else {
 		if (_shadowMode == 1) {
 			shadowMode = ShadowMode::Mode1;
+		} else if (_shadowMode == 2) {
+			error("AkosRenderer::byleRLEDecode(): shadowMode 2 not implemented.");
 		} else if (_shadowMode == 3) {
 			if (_vm->_game.heversion >= 90) {
 				shadowMode = ShadowMode::Mode3_HE;

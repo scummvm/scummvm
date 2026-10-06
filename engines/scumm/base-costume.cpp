@@ -196,6 +196,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	compData.skipWidth = _width;
 	compData.scaleXStep = _drawActorToRight ? 1 : -1;
 
+	clipBoundsRect(compData.boundsRect);
 	markAsDirty(rect, compData, decode);
 	if (!decode)
 		return 0;
