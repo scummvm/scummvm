@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "phoenixvr/wise.h"
 
 #include "common/array.h"
@@ -9,8 +30,6 @@
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "common/substream.h"
-#include <array>
-#include <functional>
 
 namespace PhoenixVR {
 namespace {
@@ -161,23 +180,25 @@ class WiseArchive : public Common::Archive {
 		}
 	};
 
+	template<typename Callback>
+	static long patternFind(const Common::Array<byte> &data, byte initial, ssize_t patternSize, const Callback &func) {
+		if (data.size() < patternSize)
+			return -1;
+		auto *start = data.data();
+		while ((data.size() - (start - data.data())) >= patternSize) {
+			auto tailSize = (data.size() - (start - data.data()));
+			auto *next = static_cast<const byte *>(memchr(start, initial, tailSize));
+			if (!next)
+				break;
+			if (func(next))
+				return next - data.data();
+			start = next + 1;
+		}
+		return -1;
+	}
+
 public:
 	WiseArchive(Common::SeekableReadStream *s) : stream(s) {
-		auto patternFind = [&](const Common::Array<byte> &data, byte initial, ssize_t patternSize, const std::function<bool(const byte *)> &func) -> long {
-			if (data.size() < patternSize)
-				return -1;
-			auto *start = data.data();
-			while ((data.size() - (start - data.data())) >= patternSize) {
-				auto tailSize = (data.size() - (start - data.data()));
-				auto *next = static_cast<const byte *>(memchr(start, initial, tailSize));
-				if (!next)
-					break;
-				if (func(next))
-					return next - data.data();
-				start = next + 1;
-			}
-			return -1;
-		};
 		NE ne(*s);
 		long overlayOffset = -1;
 		for (auto &seg : ne.segments) {
@@ -225,7 +246,7 @@ public:
 			error("can't find overlay offset");
 
 		stream->seek(overlayOffset);
-		std::array<uint, 16> header = {};
+		Common::Array<uint> header(16);
 		for (size_t i = 0; i != header.size(); ++i)
 			header[i] = stream->readUint32LE();
 
