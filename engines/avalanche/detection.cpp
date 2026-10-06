@@ -45,7 +45,7 @@ static const AvalancheGameDescription gameDescriptions[] = {
 				   "mainmenu.avd",	"89f31211af579a872045b175cc264298", 18880),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	}},
 
