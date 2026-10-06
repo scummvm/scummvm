@@ -285,7 +285,7 @@ void IgorEngine::PART_17_UPDATE_DIALOGUE_Philip(int action) {
 }
 
 void IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND() {
-	if (compareGameTick(3, 32) && _gameState.unkF) {
+	if (!_gameState.dialogueTextRunning && compareGameTick(3, 32) && _gameState.unkF) {
 		// Counter (unk10) values 0 through 15 animate one character while holding the other on its resting frame.
 		// Counter (unk10) values 16 through 31 animate the other character.
 		switch (_gameState.unk10 / 16) {
@@ -390,9 +390,9 @@ void IgorEngine::PART_17_HELPER_2_walkFromMap() {
 }
 
 void IgorEngine::PART_17_HELPER_3(int lum) {
-	_roomObjectAreasTable[18].y1Lum = lum;
-	_roomObjectAreasTable[19].y1Lum = lum;
-	_roomObjectAreasTable[20].y1Lum = lum;
+	_roomObjectAreasTable[18].area = lum;
+	_roomObjectAreasTable[19].area = lum;
+	_roomObjectAreasTable[20].area = lum;
 }
 
 void IgorEngine::PART_17_HELPER_4_paintFirsFrameOfPhilipAndJimmy() {
