@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/random.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "gui/EventRecorder.h"
 
 #include "mohawk/zoombini.h"
@@ -37,7 +38,8 @@ ZoombiniRandom::ZoombiniRandom(const Common::String &name) : _scummRnd(name) {
 	_prngAlgorithm = static_cast<MohawkMetaEngine_Zoombini::PrngAlgorithm>(prngAlgorithmVal);
 
 #ifdef ENABLE_EVENTRECORDER
-	assert(g_system);
+	if (!g_system)
+		error("ZoombiniRandom: system interface is not initialized");
 	setSeed(g_eventRec.getRandomSeed(name));
 #else
 	setSeed(generateNewSeed());
@@ -56,10 +58,25 @@ void ZoombiniRandom::setSeed(uint32 seed) {
 	if (seed == 0)
 		seed += 1;
 
-	if (_prngAlgorithm == MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng)
+	switch (_prngAlgorithm) {
+	case MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng:
 		_randState = seed;
-	else
+		break;
+	case MohawkMetaEngine_Zoombini::PrngAlgorithm::kStandardPrng:
+	default:
 		_scummRnd.setSeed(seed);
+		break;
+	}
+}
+
+uint32 ZoombiniRandom::getSeed() const {
+	switch (_prngAlgorithm) {
+	case MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng:
+		return _randState;
+	case MohawkMetaEngine_Zoombini::PrngAlgorithm::kStandardPrng:
+	default:
+		return _scummRnd.getSeed();
+	}
 }
 
 uint32 ZoombiniRandom::generateNewSeed() {
@@ -81,10 +98,13 @@ int16 ZoombiniRandom::getRandomNumber(int16 max) {
 		return getRandomNumber(max, 0);
 	}
 
-	if (_prngAlgorithm == MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng)
+	switch (_prngAlgorithm) {
+	case MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng:
 		return static_cast<int16>(getOriginalRandomNumber(static_cast<uint32>(max)));
-
-	return static_cast<int16>(_scummRnd.getRandomNumber(max));
+	case MohawkMetaEngine_Zoombini::PrngAlgorithm::kStandardPrng:
+	default:
+		return static_cast<int16>(_scummRnd.getRandomNumber(max));
+	}
 }
 
 int16 ZoombiniRandom::getRandomNumber(int16 min, int16 max) {
@@ -97,10 +117,15 @@ int16 ZoombiniRandom::getRandomNumber(int16 min, int16 max) {
 
 	uint32 span = static_cast<uint32>(static_cast<int32>(max) - static_cast<int32>(min));
 	uint16 offset;
-	if (_prngAlgorithm == MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng)
+	switch (_prngAlgorithm) {
+	case MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng:
 		offset = getOriginalRandomNumber(span);
-	else
+		break;
+	case MohawkMetaEngine_Zoombini::PrngAlgorithm::kStandardPrng:
+	default:
 		offset = static_cast<uint16>(_scummRnd.getRandomNumber(span));
+		break;
+	}
 
 	return static_cast<int16>(static_cast<int32>(min) + offset);
 }
@@ -110,7 +135,8 @@ bool ZoombiniRandom::getRandomBool() {
 }
 
 uint16 ZoombiniRandom::getNonRepeatRandom(uint16 poolSize, uint32 &bitmask) {
-	assert(poolSize <= 32);
+	if (32 < poolSize)
+		error("ZoombiniRandom::getNonRepeatRandom: pool size %u exceeds 32", static_cast<uint>(poolSize));
 	uint32 fullMask = (poolSize < 32) ? ((1u << poolSize) - 1u) : 0xFFFFFFFFu;
 	if ((bitmask & fullMask) == fullMask)
 		bitmask = 0;
