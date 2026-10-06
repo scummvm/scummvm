@@ -111,12 +111,11 @@ void IgorEngine::PART_27_ACTION_106_openPhilipLocker() {
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		_objectsState[5] = 2;
-		// return;
 	}
 	const int offset = 21810;
 	for (int i = 2; i <= 3; ++i) {
 		for (int j = 0; j <= 48; ++j) {
-			memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + 0x3A0 + i * 1568 + j * 32, 32);
+			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + 0x3A0 + i * 1568 + j * 32, 32);
 		}
 		if (i == 3) {
 			playSound(3, 1);
@@ -137,7 +136,7 @@ void IgorEngine::PART_27_ACTION_107() {
 	const int offset = 21810;
 	for (int i = 2; i >= 1; --i) {
 		for (int j = 0; j <= 48; ++j) {
-			memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + 0x3A0 + i * 1568 + j * 32, 32);
+			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + 0x3A0 + i * 1568 + j * 32, 32);
 		}
 		if (i == 2) {
 			playSound(14, 1);
