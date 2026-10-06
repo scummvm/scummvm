@@ -578,6 +578,13 @@ void EditGameDialog::apply() {
 	OptionsDialog::apply();
 }
 
+void EditGameDialog::handleKeyDown(Common::KeyState state) {
+	if (_engineOptions && (state.keycode == Common::KEYCODE_ESCAPE ||
+			_tabWidget->containsWidget(_engineOptions)) &&
+			_engineOptions->handleOptionsKeyDown(state))
+		return;
+	OptionsDialog::handleKeyDown(state);
+}
 
 bool EditGameDialog::validate() {
 	if (_engineOptions && !_engineOptions->validate())
