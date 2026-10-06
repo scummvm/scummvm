@@ -112,7 +112,7 @@ void IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA(int action) {
 void IgorEngine::PART_30_HANDLE_DIALOGUE_LAURA() {
 	loadDialogueData(DLG_CollegeStairsFirstFloor);
 	_updateDialogue = &IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA;
-	handleDialogue(201, 85, 63, 0, 38);
+	handleDialogue(201, 85, 63, 0, 38, false);
 	_updateDialogue = 0;
 }
 
@@ -238,6 +238,8 @@ void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
 	_walkData[0].setPos(164, 135, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
+	drawVerbsPanel();
+	drawInventory(_inventoryInfo[72], 0);
     // Que caracter
 	ADD_DIALOGUE_TEXT(210, 1, 459);
 	SET_DIALOGUE_TEXT(1, 1);

@@ -461,7 +461,7 @@ void IgorEngine::animateIgorTalking(int frame) {
 /**
  * Pos and color
  */
-void IgorEngine::handleDialogue(int x, int y, int r, int g, int b) {
+void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreUI) {
 	_gameState.dialogueStarted = true;
 	_gameState.dialogueChoiceStart = 1;
 	_gameState.dialogueChoiceCount = 1;
@@ -516,8 +516,10 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b) {
 		debugC(9, kDebugEngine, "handleDialogue() end %d start %d count %d", _dialogueEnded, _gameState.dialogueChoiceStart, _gameState.dialogueChoiceCount);
 	} while (!_dialogueEnded);
 	memset(_screenVGA + 46080, 0, 17920);
-	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	if(restoreUI) {
+		drawVerbsPanel();
+		drawInventory(_inventoryInfo[72], 0);
+	}
 	_currentAction.verb = kVerbWalk;
 	_gameState.dialogueStarted = false;
 }

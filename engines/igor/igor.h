@@ -895,7 +895,7 @@ private:
 			int x1MinY = -1, int x2MinY = -1);
 	void fixWalkPosition(int *x, int *y);
 	void recolorDialogueChoice(int num, bool highlight);
-	void handleDialogue(int x, int y, int r, int g, int b);
+	void handleDialogue(int x, int y, int r, int g, int b, bool restoreUI = true);
 	void drawDialogueChoices();
 	int selectDialogue();
 	void dialogueAskQuestion();
