@@ -579,7 +579,7 @@ public:
 	virtual void setEnabled(bool e) {}
 
 	void setParentDialog(Dialog *parentDialog) { _parentDialog = parentDialog; }
-	void setDomain(const Common::String &domain) { _domain = domain; }
+	virtual void setDomain(const Common::String &domain) { _domain = domain; }
 
 
 protected:
