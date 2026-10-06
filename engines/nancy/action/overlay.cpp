@@ -482,6 +482,57 @@ void OverlayMultiframeTerse::readData(Common::SeekableReadStream &stream) {
 	_overlayType = kPlayOverlayStatic;
 }
 
+void OverlayRandomColor::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+	_z = stream.readUint16LE();
+
+	_choices.resize(MAX<int16>(stream.readSint16LE(), 0));
+	for (ColorChoice &choice : _choices) {
+		choice.color = stream.readUint32BE();
+		choice.flag = stream.readSint16LE();
+	}
+
+	uint16 numBlitDescriptions = stream.readUint16LE();
+	_blitDescriptions.resize(numBlitDescriptions);
+	for (auto &bm : _blitDescriptions) {
+		bm.readData(stream);
+	}
+
+	_srcRects.push_back(Common::Rect());
+
+	_overlayType = kPlayOverlayStatic;
+}
+
+void OverlayRandomColor::init() {
+	Overlay::init();
+
+	if (_choices.empty() || _fullSurface.empty()) {
+		return;
+	}
+
+	const ColorChoice &choice = _choices[g_nancy->_randomSource->getRandomNumber(_choices.size() - 1)];
+	const uint colorA = choice.color >> 24;
+	const uint colorR = (choice.color >> 16) & 0xFF;
+	const uint colorG = (choice.color >> 8) & 0xFF;
+	const uint colorB = choice.color & 0xFF;
+
+	for (int y = 0; y < _fullSurface.h; ++y) {
+		for (int x = 0; x < _fullSurface.w; ++x) {
+			byte a, r, g, b;
+			_fullSurface.format.colorToARGB(_fullSurface.getPixel(x, y), a, r, g, b);
+			if (a == 0) {
+				continue;
+			}
+
+			_fullSurface.setPixel(x, y, _fullSurface.format.ARGBToColor(a * colorA / 255, r * colorR / 255, g * colorG / 255, b * colorB / 255));
+		}
+	}
+
+	if (choice.flag != -1) {
+		NancySceneState.setEventFlag(choice.flag, g_nancy->_true);
+	}
+}
+
 void OverlayAnimTerse::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 	stream.skip(2); // VIDEO_STOP_RENDERING, VIDEO_CONTINUE_RENDERING

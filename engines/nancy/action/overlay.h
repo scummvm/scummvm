@@ -124,6 +124,27 @@ protected:
 	Common::String getRecordTypeName() const override { return "OverlayMultiframeTerse"; }
 };
 
+// Nancy18. A static overlay that gets drawn in one of several colors, picked at
+// random. Every color comes with an event flag, which tells the scene the pick.
+class OverlayRandomColor : public OverlayMultiframeTerse {
+public:
+	virtual ~OverlayRandomColor() {}
+
+	void init() override;
+
+	void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "OverlayRandomColor"; }
+
+	struct ColorChoice {
+		uint32 color = 0xFFFFFFFF;	// ARGB, multiplied with the image
+		int16 flag = -1;
+	};
+
+	Common::Array<ColorChoice> _choices;
+};
+
 // Short version of an animated overlay; assumes scene background doesn't move
 class OverlayAnimTerse : public Overlay {
 public:

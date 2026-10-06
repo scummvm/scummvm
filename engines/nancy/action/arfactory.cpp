@@ -331,8 +331,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 54:
 		if (g_nancy->getGameType() <= kGameTypeNancy1)
 			return new Overlay(Overlay::kStaticAnimation);
-		else
+		else if (g_nancy->getGameType() <= kGameTypeNancy17)
 			return new Overlay(Overlay::kInterruptibleAnimation);
+		else
+			return new OverlayRandomColor();
 	case 55:
 		if (g_nancy->getGameType() <= kGameTypeNancy1)
 			return new Overlay(Overlay::kInterruptibleAnimation);
