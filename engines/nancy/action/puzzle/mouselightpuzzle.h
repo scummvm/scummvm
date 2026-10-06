@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MOUSELIGHTPUZZLE_H
 #define NANCY_ACTION_MOUSELIGHTPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -33,12 +33,13 @@ namespace Action {
 
 // TODO: Optimize blitting; currently, the whole screen is redrawn
 // TODO: Add noise to the circle mask; there are artifacts at low brightness
-class MouseLightPuzzle : public RenderActionRecord {
+class MouseLightPuzzle : public PuzzleRecord {
 public:
-	MouseLightPuzzle() : RenderActionRecord(7) {}
+	MouseLightPuzzle() : PuzzleRecord(10) {}
 	virtual ~MouseLightPuzzle() {}
 
 	void init() override;
+	void updateGraphics() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -49,7 +50,6 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "MouseLightPuzzle"; }
 
-	Common::Path _imageName;
 	byte _radius = 0;
 	bool _smoothEdges = false;
 

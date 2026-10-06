@@ -1112,6 +1112,10 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/stark/shaders/stark_shadow.vertex");
 		}
 		if (CONTAINS_DEFINE(setup.defines, "ENABLE_WINTERMUTE")) {
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_brightness_julia.fragment");
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_brightness_julia.vertex");
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_brightness_oknytt.fragment");
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_brightness_oknytt.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment");
@@ -1498,7 +1502,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 		ADD_SETTING(iPhone_Debug, "ONLY_ACTIVE_ARCH", "YES");
 		ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", PROJECT_NAME);
 		ADD_SETTING(iPhone_Debug, "PRODUCT_BUNDLE_IDENTIFIER", "\"org.scummvm.${PRODUCT_NAME}\"");
-		ADD_SETTING(iPhone_Debug, "IPHONEOS_DEPLOYMENT_TARGET", "9.0");
+		ADD_SETTING(iPhone_Debug, "IPHONEOS_DEPLOYMENT_TARGET", "13.0");
 		ADD_SETTING_QUOTE_VAR(iPhone_Debug, "PROVISIONING_PROFILE[sdk=iphoneos*]", "");
 		ADD_SETTING(iPhone_Debug, "SDKROOT", "iphoneos");
 		ADD_SETTING_QUOTE(iPhone_Debug, "TARGETED_DEVICE_FAMILY", "1,2");
@@ -1581,7 +1585,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 		ADD_SETTING(tvOS_Debug, "ONLY_ACTIVE_ARCH", "YES");
 		ADD_SETTING(tvOS_Debug, "PRODUCT_NAME", PROJECT_NAME);
 		ADD_SETTING(tvOS_Debug, "PRODUCT_BUNDLE_IDENTIFIER", "\"org.scummvm.${PRODUCT_NAME}\"");
-		ADD_SETTING(tvOS_Debug, "TVOS_DEPLOYMENT_TARGET", "9.0");
+		ADD_SETTING(tvOS_Debug, "TVOS_DEPLOYMENT_TARGET", "15.0");
 		ADD_SETTING_QUOTE_VAR(tvOS_Debug, "PROVISIONING_PROFILE[sdk=appletvos*]", "");
 		ADD_SETTING(tvOS_Debug, "SDKROOT", "appletvos");
 		ADD_SETTING_QUOTE(tvOS_Debug, "TARGETED_DEVICE_FAMILY", "3");

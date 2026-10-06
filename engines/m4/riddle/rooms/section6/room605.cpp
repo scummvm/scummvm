@@ -204,6 +204,7 @@ void Room605::daemon() {
 			case 6:
 			case 7:
 				sendWSMessage_10000(1, _tt, _605tt, 58, 66, 200, _605tt, 67, 67, 0);
+				_ttMode = 6;
 				break;
 
 			case 8:
@@ -739,6 +740,25 @@ bool Room605::sleeveDisk1() {
 		sendWSMessage_10000(1, _ripley, _ripGetsIrisWithCloth, 42, 43, 11,
 			_ripGetsIrisWithCloth, 43, 43, 1);
 		digi_play("605_S02", 2);
+		return true;
+
+	case 11:
+		_ttShould = 0;
+		kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
+		inv_move_object("OBSIDIAN DISK", 605);
+		_pupil = series_show("605eye", 0x600, 16);
+		hotspot_set_active("PUPIL", true);
+		hotspot_set_active("OBSIDIAN DISK", true);
+		sendWSMessage_10000(1, _ripley, _ripGetsIrisWithCloth, 44, 75, 12,
+			_ripGetsIrisWithCloth, 75, 75, 1);
+		return true;
+
+	case 12:
+		terminateMachineAndNull(_ripley);
+		series_unload(_ripGetsIrisWithCloth);
+		digi_unload("605_s01");
+		digi_unload("605_s02");
+		player_set_commands_allowed(true);
 		return true;
 
 	default:

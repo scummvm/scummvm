@@ -636,7 +636,7 @@ void ContainerView::pointerRelease(gPanelMessage &) {
 
 void ContainerView::timerTick(gPanelMessage &msg) {
 	// validate objToGet and make sure that the number selected for move
-	// is less then or equal to the number of items present in the merged object
+	// is less than or equal to the number of items present in the merged object
 	if (g_vm->_cnm->_objToGet && g_vm->_cnm->_amountIndY != -1) {
 		int32   rate = (g_vm->_cnm->_amountIndY - msg._pickAbsPos.y);
 
@@ -906,7 +906,7 @@ void ReadyContainerView::setScrollOffset(int8 num) {
 
 void ReadyContainerView::timerTick(gPanelMessage &msg) {
 	// validate objToGet and make sure that the number selected for move
-	// is less then or equal to the number of items present in the merged object
+	// is less than or equal to the number of items present in the merged object
 	if (g_vm->_cnm->_objToGet && g_vm->_cnm->_amountIndY != -1) {
 		ContainerView::timerTick(msg);
 

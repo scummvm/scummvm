@@ -60,9 +60,9 @@ void RiddlePuzzle::readData(Common::SeekableReadStream &stream) {
 	_typeSound.readNormal(stream);
 	_eraseSound.readNormal(stream);
 	_enterSound.readNormal(stream);
-	_successSceneChange.readData(stream);
-	_successSound.readNormal(stream);
-	_exitSceneChange.readData(stream);
+	_solveScene.readData(stream);
+	_solveSound.readNormal(stream);
+	_exitScene.readData(stream);
 	_exitSound.readNormal(stream);
 	readRect(stream, _exitHotspot);
 
@@ -175,8 +175,7 @@ void RiddlePuzzle::execute() {
 
 						if (_puzzleState->solvedRiddleIDs.size() == _riddles.size()) {
 							// Solved all riddles
-							g_nancy->_sound->loadSound(_successSound);
-							g_nancy->_sound->playSound(_successSound);
+							playSolveSound();
 							_solveState = kSolvedAll;
 							_state = kActionTrigger;
 
@@ -227,7 +226,7 @@ void RiddlePuzzle::execute() {
 		switch (_solveState) {
 		case kNotSolved:
 			sound = &_exitSound;
-			sceneChange = &_exitSceneChange;
+			sceneChange = &_exitScene;
 
 			break;
 		case kFailed:
@@ -242,8 +241,8 @@ void RiddlePuzzle::execute() {
 
 			break;
 		case kSolvedAll:
-			sound = &_successSound;
-			sceneChange = &_successSceneChange;
+			sound = &_solveSound;
+			sceneChange = &_solveScene;
 
 			break;
 		default:
@@ -268,7 +267,7 @@ void RiddlePuzzle::execute() {
 
 void RiddlePuzzle::onPause(bool paused) {
 	g_nancy->_input->setVKEnabled(!paused);
-	RenderActionRecord::onPause(paused);
+	PuzzleRecord::onPause(paused);
 }
 
 void RiddlePuzzle::handleInput(NancyInput &input) {
@@ -276,9 +275,7 @@ void RiddlePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

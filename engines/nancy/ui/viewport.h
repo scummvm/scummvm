@@ -72,7 +72,7 @@ public:
 	uint16 getMaxScroll() const;
 
 	// The currently-visible scene background, in viewport-local coords. Used by
-	// puzzles that composite additively over the background (e.g. MirrorLight).
+	// puzzles that blend over the background (e.g. MirrorLight).
 	const Graphics::ManagedSurface &getBackground() const { return _drawSurface; }
 
 	Common::Rect convertViewportToScreen(const Common::Rect &viewportRect) const;
@@ -82,6 +82,9 @@ public:
 	void enableEdges(byte edges);
 
 protected:
+	// Whether the frames of the loaded video need their alpha flattened, see setFrame()
+	enum FrameAlpha { kAlphaUnchecked, kAlphaOpaque, kAlphaNeedsFlattening };
+
 	void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
 
 	Common::Rect _nonScrollZone;
@@ -96,6 +99,7 @@ protected:
 	uint16 _currentFrame;
 	uint16 _videoFormat;
 	Graphics::ManagedSurface _fullFrame;
+	FrameAlpha _frameAlpha = kAlphaUnchecked;
 	Common::Rect _format1Bounds;
 	Common::Rect _format2Bounds;
 	Common::Point _stickyCursorPos;

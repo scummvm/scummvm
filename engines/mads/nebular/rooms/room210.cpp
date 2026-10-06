@@ -396,23 +396,23 @@ static void setDialogNode(int node) {
 
 static void handleConversation1() {
 	switch (player2.words[0]) {
-	case 180:
+	case words_ignite:
 		setDialogNode(2);
 		break;
 
-	case 181:
+	case words_inflate:
 		setDialogNode(6);
 		break;
 
-	case 182:
+	case words_insert:
 		setDialogNode(4);
 		break;
 
-	case 183:
+	case words_inspect:
 		setDialogNode(9);
 		break;
 
-	case 184:
+	case words_jungle:
 		setDialogNode(0);
 		break;
 
@@ -423,15 +423,15 @@ static void handleConversation1() {
 
 static void handleConversation2() {
 	switch (player2.words[0]) {
-	case 187:
+	case words_key_1:
 		setDialogNode(3);
 		break;
 
-	case 188:
+	case words_key_2:
 		setDialogNode(4);
 		break;
 
-	case 189:
+	case words_key_3:
 		setDialogNode(0);
 		break;
 
@@ -442,19 +442,19 @@ static void handleConversation2() {
 
 static void handleConversation3() {
 	switch (player2.words[0]) {
-	case 193:
+	case words_key_7:
 		setDialogNode(6);
 		break;
 
-	case 194:
+	case words_key_8:
 		setDialogNode(5);
 		break;
 
-	case 195:
+	case words_key_9:
 		setDialogNode(4);
 		break;
 
-	case 196:
+	case words_keypad:
 		setDialogNode(0);
 		break;
 
@@ -465,16 +465,16 @@ static void handleConversation3() {
 
 static void handleConversation5() {
 	switch (player2.words[0]) {
-	case 204:
+	case words_life_support_section:
 		setDialogNode(6);
 		break;
 
-	case 205:
-	case 206:
+	case words_light:
+	case words_load:
 		setDialogNode(4);
 		break;
 
-	case 207:
+	case words_lock:
 		setDialogNode(0);
 		break;
 
@@ -485,15 +485,15 @@ static void handleConversation5() {
 
 static void handleConversation6() {
 	switch (player2.words[0]) {
-	case 211:
+	case words_look_through:
 		setDialogNode(7);
 		break;
 
-	case 212:
+	case words_lounge_area:
 		setDialogNode(4);
 		break;
 
-	case 213:
+	case words_love_altar:
 		setDialogNode(0);
 		break;
 
@@ -504,17 +504,17 @@ static void handleConversation6() {
 
 static void handleConversation7() {
 	switch (player2.words[0]) {
-	case 216:
-	case 217:
-	case 219:
+	case words_magnet:
+	case words_main_airlock:
+	case words_marshy_wetlands:
 		setDialogNode(4);
 		break;
 
-	case 218:
+	case words_manta_ray:
 		setDialogNode(8);
 		break;
 
-	case 220:
+	case words_match:
 		setDialogNode(0);
 		break;
 
@@ -525,17 +525,17 @@ static void handleConversation7() {
 
 static void handleConversation8() {
 	switch (player2.words[0]) {
-	case 223:
-	case 224:
+	case words_men_who_came_before:
+	case words_mine:
 		setDialogNode(4);
 		break;
 
-	case 225:
-	case 226:
+	case words_mirror:
+	case words_monitor:
 		setDialogNode(9);
 		break;
 
-	case 227:
+	case words_monkey:
 		setDialogNode(0);
 		break;
 
@@ -549,7 +549,7 @@ static void handleConversations() {
 		kernel_message_purge();
 		player.commands_allowed = false;
 		char *curQuote = quote_string(kernel.quotes, player2.words[0]);
-		if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
+		if (g_engine->getMessageTextWidth(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 			static char line1[40], line2[40];
 			quote_split_string(curQuote, line1, line2);
 			Common::strcpy_s(local._subQuote2, line2);

@@ -33,7 +33,8 @@ namespace GUI {
 
 ScrollBarWidget::ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget (boss, x, y, w, h), CommandSender(boss) {
-	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
+	// WIDGET_HOOK_DRAG: prevent hooking by a container as we need drag for ourselves
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_WANT_TICKLE | WIDGET_HOOK_DRAG);
 	_type = kScrollBarWidget;
 
 	_part = kNoPart;

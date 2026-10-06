@@ -80,18 +80,18 @@ void MagnetMazePuzzle::readData(Common::SeekableReadStream &stream) {
 	_bumpSound.readNormal(stream);
 
 	stream.seek(start + 0x48a);
-	_winScene.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.seek(start + 0x4a0);
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag  = stream.readByte();
-	_winDelaySec   = stream.readUint16LE();
-	_winSound.readNormal(stream);
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag  = stream.readByte();
+	_solveSoundDelay   = stream.readUint16LE();
+	_solveSound.readNormal(stream);
 
 	stream.seek(start + 0x4d6);
-	_cancelScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.seek(start + 0x4ec);
-	_cancelFlag.label = stream.readSint16LE();
-	_cancelFlag.flag  = stream.readByte();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag  = stream.readByte();
 
 	readRect(stream, _exitHotspot);
 }
@@ -157,9 +157,8 @@ void MagnetMazePuzzle::execute() {
 			break;
 		case kWaitWinDelay:
 			if (g_system->getMillis() >= _winDelayEndTime) {
-				if (_winSound.name != "NO SOUND") {
-					g_nancy->_sound->loadSound(_winSound);
-					g_nancy->_sound->playSound(_winSound);
+				if (hasSolveSound()) {
+					playSolveSound();
 					_subState = kWaitWinSound;
 				} else {
 					_subState = kExitToWin;
@@ -167,8 +166,8 @@ void MagnetMazePuzzle::execute() {
 			}
 			break;
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_subState = kExitToWin;
 			}
 			break;
@@ -184,16 +183,14 @@ void MagnetMazePuzzle::execute() {
 		g_nancy->_sound->stopSound(_placeSound);
 		g_nancy->_sound->stopSound(_resetSound);
 		g_nancy->_sound->stopSound(_bumpSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_subState == kExitToWin) {
 			MagnetMazePuzzleData *mmd = (MagnetMazePuzzleData *)NancySceneState.getPuzzleData(MagnetMazePuzzleData::getTag());
 			if (mmd)
 				mmd->magnetState.clear();
-			NancySceneState.setEventFlag(_winFlag);
-			NancySceneState.changeScene(_winScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_cancelFlag);
-			NancySceneState.changeScene(_cancelScene);
+			_exitScene.execute();
 		}
 		finishExecution();
 		break;
@@ -302,8 +299,7 @@ void MagnetMazePuzzle::handleInput(NancyInput &input) {
 			redraw();
 	}
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp)
 			_subState = kExitToCancel;
 		return;
@@ -392,7 +388,7 @@ void MagnetMazePuzzle::checkSolved() {
 	}
 	_isSolved = true;
 	_subState = kWaitWinDelay;
-	_winDelayEndTime = g_system->getMillis() + (uint32)_winDelaySec * 1000;
+	_winDelayEndTime = g_system->getMillis() + (uint32)_solveSoundDelay * 1000;
 }
 
 void MagnetMazePuzzle::redraw() {

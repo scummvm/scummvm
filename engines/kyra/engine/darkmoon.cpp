@@ -591,8 +591,8 @@ void DarkMoonEngine::restParty_npc() {
 
 	_items[createItemOnCurrentBlock(28)].value = 26;
 
-	gui_drawPlayField(false);
-	gui_drawAllCharPortraitsWithStats();
+	gui_drawPlayField(false, false);
+	gui_drawAllCharPortraitsWithStats(false);
 
 	_screen->setClearScreenDim(10);
 	_screen->set16bitShadingLevel(4);

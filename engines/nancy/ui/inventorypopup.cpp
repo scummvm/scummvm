@@ -29,6 +29,7 @@
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/ui/inventorypopup.h"
+#include "engines/nancy/ui/scrollbar.h"
 #include "engines/nancy/ui/taskbar.h"
 
 namespace Nancy {
@@ -427,6 +428,13 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			return;
 		}
 
+		// The mouse wheel moves a whole page of items at a time
+		const uint numPages = (_visibleItems.size() + kSlotsPerPage - 1) / kSlotsPerPage;
+		if (numPages > 1 && scrollWithMouseWheel(input, _screenPosition, _scrollPos, 1.0f / (float)(numPages - 1))) {
+			updatePageFromScroll();
+			refreshGrid();
+		}
+
 		if (overScrollbar != _scrollbarHovered) {
 			_scrollbarHovered = overScrollbar;
 			drawScrollbar(overScrollbar ? kUIButtonHover : kUIButtonIdle);
@@ -542,13 +550,16 @@ void InventoryPopup::handleInput(NancyInput &input) {
 
 			if (item.keepItem == kInvItemNewSceneView) {
 				// Close-up view: stash the item and warp to its scene, which
-				// dismisses the popup. A normal pickup keeps the popup open.
+				// dismisses the popup.
 				g_nancy->_sound->playSound("BUOK");
 				NancySceneState.pushScene(itemID);
 				SceneChangeDescription sceneChange;
 				sceneChange.sceneID = item.sceneID;
 				sceneChange.continueSceneSound = item.sceneSoundFlag;
 				NancySceneState.changeScene(sceneChange);
+				close();
+			} else if (_uiivData->closeOnPickup) {
+				// Dismiss the popup so the held item can be used on the scene
 				close();
 			}
 

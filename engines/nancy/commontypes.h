@@ -50,6 +50,18 @@ static const int8 kEvNoEvent						= -1;
 static const int8 kFrNoFrame						= -1;
 static const uint16 kNoScene						= 9999;
 
+// Nancy15 alternates between three protagonists (Nancy and the Hardy boys
+// Frank and Joe), each of whom keeps their own UI and journal. The two
+// brothers share their progress: whichever is played second inherits it
+// from the other.
+static const uint kMaxPlayerCharacters				= 3;
+static const uint kPlayerCharacterFrank				= 1;
+static const uint kPlayerCharacterJoe				= 2;
+
+// Inventory action records name the character whose inventory they change.
+// This value stands for whoever is being played at the time.
+static const byte kPlayerCharacterActive			= 9;
+
 // Taskbar popup UI types. Shared by ControlUIItems (AR 29), UIPopupPrepScene
 // (AR 32) and the Scene UI-prep-scene machinery.
 enum UIType {
@@ -63,6 +75,12 @@ static const byte kInvItemUseThenLose				= 0;
 static const byte kInvItemKeepAlways				= 1;
 static const byte kInvItemReturn					= 2;
 static const byte kInvItemNewSceneView				= 3;
+
+// Nancy15 EnableDisableInventory records can name a whole group of items
+// instead of a single one
+static const uint16 kInvItemGroupAll				= 100;
+static const uint16 kInvItemGroupViewable			= 101;
+static const uint16 kInvItemGroupPortable			= 102;
 
 // Inventory item sound override commands
 static const byte kInvSoundOverrideCommandNoSound	= 0;
@@ -101,8 +119,10 @@ static const byte kPlayerDuskDawn					= 2;
 static const byte kSmallVideoFormat					= 1;
 static const byte kLargeVideoFormat					= 2;
 
+// Video container. Auto picks per game type.
 static const byte kVideoPlaytypeAVF					= 0;
 static const byte kVideoPlaytypeBink				= 1;
+static const byte kVideoPlaytypeAuto				= 2;
 
 // Overlay transparency mode. 1 = opaque, anything >= kPlayOverlayTransparent is
 // drawn transparent (the original engine is 16bpp color-key, with no alpha/blend
@@ -132,6 +152,7 @@ static const byte kIncrementTableValue				= 1;
 static const byte kDecrementTableValue				= 2;
 static const uint16 kNoTableIndex					= 99;
 static const int16 kNoTableValue					= 9999;
+static const int16 kTimerDurationIndexBase			= 5000;
 
 // Autotext ordering info
 static const uint16 kListLIFO						= 0;
@@ -151,6 +172,7 @@ enum NancyState {
 	kBoot, kLogo, kCredits, kMap,
 	kMainMenu, kLoadSave, kSetup,
 	kHelp, kScene, kSaveDialog,
+	kDesignSelect,	// Nancy15 only
 
 	// Not real states
 	kNone,

@@ -54,7 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GUIO_GAMEOPTIONS1)
 	},
 
 	// Kingdom 3DO, provided by Strangerke

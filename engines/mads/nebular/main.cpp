@@ -28,7 +28,6 @@
 #include "mads/core/error.h"
 #include "mads/core/fileio.h"
 #include "mads/core/game.h"
-#include "mads/core/himem.h"
 #include "mads/core/imath.h"
 #include "mads/core/keys.h"
 #include "mads/core/kernel.h"
@@ -44,15 +43,15 @@
 #include "mads/core/speech.h"
 #include "mads/core/timer.h"
 #include "mads/core/video.h"
+#include "mads/nebular/mac_frontend.h"
 #include "mads/nebular/main_menu.h"
 #include "mads/nebular/mac_menus.h"
 #include "mads/nebular/menus.h"
-#include "mads/mads.h"
+#include "mads/nebular/nebular.h"
 
 namespace MADS {
 namespace RexNebular {
 
-//constexpr bool SHOW_LINES = true;
 constexpr byte LINE_COLOR = 2;
 
 char *quotes;
@@ -196,7 +195,8 @@ static void main_menu_main() {
 
 	kernel_unload_sound_driver();
 
-	if (selected_item == 5)
+	if (selected_item == 5 &&
+			g_engine->getPlatform() != Common::kPlatformMacintosh)
 		show_exit_advert(palette);
 
 	keys_remove();
@@ -257,9 +257,6 @@ static void game_main(int argc, const char **argv) {
 
 	game_cold_data_init();
 	main_cold_data_init();
-	if (g_engine->getPlatform() == Common::kPlatformMacintosh &&
-			!ConfMan.hasKey("save_slot"))
-		selectMacintoshDifficulty();
 	global_load_config_parameters();
 
 	if (argc >= 2) {
@@ -289,10 +286,6 @@ static void game_main(int argc, const char **argv) {
 		art_hags_are_on_hd = false;
 	}
 
-	himem_startup();
-
-	himem_shutdown();
-
 	if (!mads_mode && (env_search_mode == ENV_SEARCH_MADS_PATH))
 		error("false start");
 
@@ -307,6 +300,30 @@ done:
 	global_write_config_file();
 }
 
+static void run_full_frame_animview(RexNebularEngine *engine,
+		const char *resource) {
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+		MacFrontend::runAnimView(*engine, resource);
+	else {
+		AnimView::Presentation presentation;
+		presentation.bufferHeight = 0;
+		presentation.boundaryLines = AnimView::kBoundaryLinesHidden;
+		presentation.serviceFramesInline = false;
+		if (ConfMan.hasKey("animview_boundary_lines"))
+			presentation.boundaryLines = ConfMan.getBool("animview_boundary_lines") ?
+				AnimView::kBoundaryLinesShown : AnimView::kBoundaryLinesHidden;
+		AnimView::animview_main(resource, presentation);
+	}
+}
+
+static void run_full_frame_textview(RexNebularEngine *engine,
+		const char *resource) {
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+		MacFrontend::runTextView(*engine, resource);
+	else
+		TextView::textview_main(resource);
+}
+
 void nebular_main() {
 	static const char *CMD_LINE[] = { nullptr, "-p" };
 	Palette palette;
@@ -316,13 +333,9 @@ void nebular_main() {
 		env_search_mode = ENV_SEARCH_CONCAT_FILES;
 
 	g_engine->readConfigFile();
+	RexNebularEngine *const engine = (RexNebularEngine *)g_engine;
 
-	if (g_engine->getPlatform() == Common::kPlatformMacintosh)
-		// FIXME: The Macintosh application has a native resource-based
-		// outer menu, not the DOS MADS menu and playlist files used below.
-		// The ScummVM launcher provides that outer-menu boundary.
-		selected_item = 0;
-	else if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
+	if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
 		selected_item = 0;
 	else if (g_engine->isDemo())
 		selected_item = 9;
@@ -336,9 +349,20 @@ void nebular_main() {
 
 		switch (selected_item) {
 		case -1:
+			// Macintosh CODE 133 uses the same room-990 series and six
+			// selections as the existing MADS controller. Only its native
+			// window composition differs.
+			engine->setMacintoshOuterMenuActive(
+				g_engine->getPlatform() == Common::kPlatformMacintosh);
 			main_menu_main();
+			if (g_engine->getPlatform() != Common::kPlatformMacintosh ||
+					selected_item < 2 || selected_item > 4)
+				engine->setMacintoshOuterMenuActive(false);
 
-			if (selected_item >= 0) {
+			// Native CODE 133 performs this transition inside
+			// main_menu_main(), before dispatching the selected action.
+			if (selected_item >= 0 &&
+					!engine->usesOriginalMacintoshMenus()) {
 				Common::fill(magic_color_values, magic_color_values + 3, 0);
 				Common::fill(magic_color_flags, magic_color_flags + 3, 0);
 				mcga_getpal(&palette);
@@ -360,9 +384,16 @@ void nebular_main() {
 		case 1: {
 			// Resume savegame
 			// Get a list of saves and choose the last one
-			auto saves = g_engine->listSaves();
+			SaveStateList saves = g_engine->listSaves();
 			if (!saves.empty())
 				savegame_slot = saves.back().getSaveSlot();
+			else if (engine->usesOriginalMacintoshMenus()) {
+				savegame_slot = engine->selectMacintoshResumeSlot();
+				if (savegame_slot < 0) {
+					selected_item = -1;
+					break;
+				}
+			}
 
 			// Start the game, which will also load the selected savegame
 			game_main(2, CMD_LINE);
@@ -371,46 +402,65 @@ void nebular_main() {
 
 		case 2:
 			// Intro
-			AnimView::animview_main("@rexopen");
+			run_full_frame_animview(engine, "@rexopen");
 			selected_item = -1;
 			break;
 
 		case 3:
 			// Credits
-			TextView::textview_main("credits");
+			run_full_frame_textview(engine, "credits");
 			selected_item = -1;
 			break;
 
 		case 4:
 			// Quotes
-			TextView::textview_main("quotes");
+			run_full_frame_textview(engine, "quotes");
 			selected_item = -1;
 			break;
 
 		case 9:
 			// The DOS demo batch file plays this ANIMVIEW playlist before
 			// starting its three-room playable section.
-			AnimView::animview_main("@demodisk");
+			run_full_frame_animview(engine, "@demodisk");
 			selected_item = 0;
 			break;
 
 		case WIN_QUICK_DEATH + 16:
-			AnimView::animview_main("@rexend1");
-			TextView::textview_main("ending1");
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+				MacFrontend::runEndingSequence(*engine, "@rexend1",
+					"ending1", true);
+			else {
+				run_full_frame_animview(engine, "@rexend1");
+				run_full_frame_textview(engine, "ending1");
+			}
 			return;
 
 		case WIN_SLOW_DEATH + 16:
-			AnimView::animview_main("@rexend2");
-			TextView::textview_main("ending2");
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+				MacFrontend::runEndingSequence(*engine, "@rexend2",
+					"ending2", true);
+			else {
+				run_full_frame_animview(engine, "@rexend2");
+				run_full_frame_textview(engine, "ending2");
+			}
 			return;
 
 		case WIN_ALL_THE_MONEY + 16:
-			AnimView::animview_main("@rexend3");
-			TextView::textview_main("credits");
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+				MacFrontend::runEndingSequence(*engine, "@rexend3",
+					nullptr, true);
+			else {
+				run_full_frame_animview(engine, "@rexend3");
+				run_full_frame_textview(engine, "credits");
+			}
 			return;
 
 		case WIN_A_HEAD_POW + 16:
-			TextView::textview_main("ending4");
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+				MacFrontend::runEndingSequence(*engine, nullptr,
+					"ending4", true);
+			else
+				run_full_frame_textview(engine, "ending4");
 			return;
 
 		case 5:

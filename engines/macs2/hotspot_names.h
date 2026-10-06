@@ -28,6 +28,7 @@
 namespace Macs2 {
 
 Common::String lookupSceneHotspotName(uint16 sceneIndex, uint16 hotspotIndex);
+Common::String lookupObjectHotspotName(uint16 objectIndex);
 Graphics::HotspotType lookupSceneHotspotType(uint16 sceneIndex, uint16 hotspotIndex);
 
 } // namespace Macs2

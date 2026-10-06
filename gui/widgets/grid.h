@@ -252,11 +252,9 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void reflowLayout() override;
 
-	bool wantsFocus() override { return true; }
+	void cancelDrag() override;
+	void cancelTickle() override;
 
-	void lostFocusWidget() override;
-	bool handleKeyDown(Common::KeyState state) override;
-	bool handleKeyUp(Common::KeyState state) override;
 	void openTrayAtSelected();
 	void scrollBarRecalc();
 

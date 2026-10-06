@@ -178,7 +178,6 @@ void room_111_init() {
 				/* Daae kicked Raoul out — send to daemon to close door */
 				player_walk_trigger(ROOM_111_MADE_IT_OUT_DOOR);
 				player.commands_allowed        = false;
-				player.commands_allowed        = false;
 				global[christine_door_status]  = CHRIS_DOOR_CLOSED;
 				global[chris_kicked_raoul_out] = true;
 				global[hint_that_daae_is_home_1] = true;
@@ -186,7 +185,7 @@ void room_111_init() {
 			}
 		}
 
-	} else if ((previous_room == 109) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(OFF_SCREEN_X_FROM_109, OFF_SCREEN_Y_FROM_109, FACING_WEST,
 		                  PLAYER_X_FROM_109, PLAYER_Y_FROM_109, FACING_WEST, true);
 	}

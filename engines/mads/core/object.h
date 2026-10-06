@@ -65,7 +65,6 @@ struct FileObjectBuf {
 	HagVerb verb[OBJECT_MAX_VERBS];
 	char quality_name[OBJECT_MAX_QUALITIES][QU_MAXWORDLEN + 1];
 	int32 quality_value[OBJECT_MAX_QUALITIES];
-	/* char short_name[OBJECT_SHORT_NAME_LEN + 1]; */
 };
 
 typedef FileObjectBuf FileObject;

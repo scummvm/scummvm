@@ -25,11 +25,15 @@
 #include "common/endian.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 
 #include "gui/message.h"
+#include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
+#include "image/cgbi.h"
 #include "sky/compact.h"
 #include "sky/control.h"
 #include "sky/disk.h"
@@ -269,6 +273,967 @@ void Control::removePanel() {
 		free(_textSprite);
 		_textSprite = NULL;
 	}
+}
+
+Common::Array<Hint> Control::buildHints() {
+	Common::Array<Hint> hints;
+	Hint h;
+
+	switch (SkyEngine::giveCurrentScreen()) {
+	case 0:
+	case 1:
+	case 2:
+	case 4:
+		if (!SkyEngine::hasSeenScreen(5)) {
+			debug(1, "Section RECYCLING PLANT 1");
+
+			// fire exit unopened, fire_exit_flag == 106
+			if (2 == SkyEngine::giveScriptVar(106)) {
+				h.question = 0;
+				h.answers.clear();
+				h.answers.push_back(1057);
+				h.answers.push_back(1058);
+				hints.push_back(h);
+				break;
+			}
+
+			// if joey not alive and on transporter screen - joey_born == 125
+			if (!SkyEngine::giveScriptVar(125)) {
+				if (SkyEngine::giveCurrentScreen() == 2) {
+					h.question = 1;
+					h.answers.clear();
+					h.answers.push_back(1059);
+					h.answers.push_back(1060);
+					hints.push_back(h);
+				} else {
+					h.question = 50;
+					h.answers.clear();
+					h.answers.push_back(1213);
+					hints.push_back(h);
+				}
+				break;
+			}
+
+			h.question = 2;
+			h.answers.clear();
+			h.answers.push_back(1061);
+			h.answers.push_back(1062);
+			h.answers.push_back(1063);
+			hints.push_back(h);
+			h.question = 3;
+			h.answers.clear();
+			h.answers.push_back(1064);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(90) && !SkyEngine::hasSeenScreen(90)) {
+			h.question = 19;
+			h.answers.clear();
+			h.answers.push_back(1108);
+			h.answers.push_back(1109);
+			hints.push_back(h);
+			break;
+		}
+		break;
+	case 3: // furnace
+		if (!SkyEngine::hasSeenScreen(6)) {
+			h.question = 4;
+			h.answers.clear();
+			h.answers.push_back(1065);
+			h.answers.push_back(1066);
+			hints.push_back(h);
+		}
+		break;
+	case 10:
+	case 11:
+		if (SkyEngine::giveScriptVar(337) && !SkyEngine::giveScriptVar(788)) {
+			h.question = 31;
+			h.answers.clear();
+			h.answers.push_back(1146);
+			h.answers.push_back(1147);
+			h.answers.push_back(1148);
+			hints.push_back(h);
+			break;
+		}
+
+		if (SkyEngine::giveScriptVar(822) && !SkyEngine::giveScriptVar(337)) {
+			h.question = 29;
+			h.answers.clear();
+			h.answers.push_back(1139);
+			h.answers.push_back(1140);
+			h.answers.push_back(1141);
+			h.answers.push_back(1142);
+			hints.push_back(h);
+			break;
+		}
+
+		h.question = 20;
+		h.answers.clear();
+		h.answers.push_back(1110);
+		hints.push_back(h);
+
+		if (SkyEngine::hasSeenScreen(93)) {
+			h.question = 24;
+			h.answers.clear();
+			h.answers.push_back(1123);
+			h.answers.push_back(1124);
+			h.answers.push_back(1125);
+			h.answers.push_back(1126);
+			h.answers.push_back(1127);
+			hints.push_back(h);
+			break;
+		}
+		break;
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 12:
+	case 13:
+	case 14:
+	case 15:
+	case 18:
+		if (SkyEngine::giveScriptVar(787)) {
+			break;
+		}
+		if (SkyEngine::giveScriptVar(830) && !SkyEngine::giveScriptVar(787)) {
+			h.question = 33;
+			h.answers.clear();
+			h.answers.push_back(1153);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(337) && !SkyEngine::giveScriptVar(788)) {
+			h.question = 31;
+			h.answers.clear();
+			h.answers.push_back(1146);
+			h.answers.push_back(1147);
+			h.answers.push_back(1148);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(822) && !SkyEngine::giveScriptVar(337)) {
+			h.question = 29;
+			h.answers.clear();
+			h.answers.push_back(1139);
+			h.answers.push_back(1140);
+			h.answers.push_back(1141);
+			h.answers.push_back(1142);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(190) && !SkyEngine::giveScriptVar(256)) {
+			h.question = 15;
+			h.answers.clear();
+			h.answers.push_back(1096);
+			h.answers.push_back(1097);
+			h.answers.push_back(1098);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::hasSeenScreen(90)) {
+			if (!SkyEngine::hasSeenScreen(31)) {
+				h.question = 53;
+				h.answers.clear();
+				h.answers.push_back(1216);
+				hints.push_back(h);
+			}
+			break;
+		}
+		if (SkyEngine::giveScriptVar(90)) {
+			h.question = 19;
+			h.answers.clear();
+			h.answers.push_back(1108);
+			h.answers.push_back(1109);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(282) && !SkyEngine::hasSeenScreen(18)) {
+			h.question = 14;
+			h.answers.clear();
+			h.answers.push_back(1092);
+			h.answers.push_back(1093);
+			h.answers.push_back(1094);
+			h.answers.push_back(1095);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::hasSeenScreen(12) && !SkyEngine::giveScriptVar(428)) {
+			h.question = 5;
+			h.answers.clear();
+			h.answers.push_back(1067);
+			h.answers.push_back(1068);
+			h.answers.push_back(1069);
+			h.answers.push_back(1070);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::hasSeenScreen(12) && !SkyEngine::giveScriptVar(446)) {
+			h.question = 6;
+			h.answers.clear();
+			h.answers.push_back(1071);
+			h.answers.push_back(1072);
+			h.answers.push_back(1073);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::hasSeenScreen(13)) {
+			if (SkyEngine::giveScriptVar(224) != 42 && !SkyEngine::giveScriptVar(75)) {
+				h.question = 7;
+				h.answers.clear();
+				h.answers.push_back(1074);
+				h.answers.push_back(1075);
+				hints.push_back(h);
+
+				if (SkyEngine::giveScriptVar(270)) {
+					h.question = 8;
+					h.answers.clear();
+					h.answers.push_back(1076);
+					h.answers.push_back(1077);
+					hints.push_back(h);
+				}
+			}
+		}
+		if (SkyEngine::hasSeenScreen(18)) {
+			if (SkyEngine::giveScriptVar(224) != 42) {
+				h.question = 9;
+				h.answers.clear();
+				h.answers.push_back(1078);
+				h.answers.push_back(1079);
+				hints.push_back(h);
+			}
+			if (!SkyEngine::giveScriptVar(445) && SkyEngine::giveScriptVar(75)) {
+				h.question = 10;
+				h.answers.clear();
+				h.answers.push_back(1080);
+				h.answers.push_back(1081);
+				h.answers.push_back(1082);
+				h.answers.push_back(1083);
+				h.answers.push_back(1084);
+				hints.push_back(h);
+			}
+		}
+		if (!SkyEngine::hasSeenScreen(29) && SkyEngine::giveScriptVar(445)) {
+			h.question = 11;
+			h.answers.clear();
+			h.answers.push_back(1085);
+			h.answers.push_back(1086);
+			hints.push_back(h);
+			break;
+		}
+		if (!SkyEngine::hasSeenScreen(12)) {
+			h.question = 51;
+			h.answers.clear();
+			h.answers.push_back(1214);
+			hints.push_back(h);
+		}
+		if (!SkyEngine::hasSeenScreen(18)) {
+			if (SkyEngine::giveScriptVar(75) && SkyEngine::giveScriptVar(224) != 42) {
+				h.question = 52;
+				h.answers.clear();
+				h.answers.push_back(1215);
+				hints.push_back(h);
+			}
+		}
+		break;
+	case 16:
+	case 17:
+		if (SkyEngine::giveScriptVar(822) && !SkyEngine::giveScriptVar(337)) {
+			h.question = 29;
+			h.answers.clear();
+			h.answers.push_back(1139);
+			h.answers.push_back(1140);
+			h.answers.push_back(1141);
+			h.answers.push_back(1142);
+			hints.push_back(h);
+		}
+		break;
+	case 19:
+	case 20:
+	case 21:
+	case 22:
+	case 23:
+	case 24:
+	case 25:
+	case 26:
+	case 28:
+	case 29:
+		if (SkyEngine::giveScriptVar(282) && !SkyEngine::giveScriptVar(190)) {
+			h.question = 14;
+			h.answers.clear();
+			h.answers.push_back(1092);
+			h.answers.push_back(1093);
+			h.answers.push_back(1094);
+			h.answers.push_back(1095);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(787)) {
+			h.question = 34;
+			h.answers.clear();
+			h.answers.push_back(1154);
+			h.answers.push_back(1155);
+			h.answers.push_back(1156);
+			h.answers.push_back(1157);
+			h.answers.push_back(1158);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(830) && !SkyEngine::giveScriptVar(787)) {
+			h.question = 33;
+			h.answers.clear();
+			h.answers.push_back(1153);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(337) && !SkyEngine::giveScriptVar(788)) {
+			h.question = 31;
+			h.answers.clear();
+			h.answers.push_back(1146);
+			h.answers.push_back(1147);
+			h.answers.push_back(1148);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(822) && !SkyEngine::giveScriptVar(337)) {
+			h.question = 29;
+			h.answers.clear();
+			h.answers.push_back(1139);
+			h.answers.push_back(1140);
+			h.answers.push_back(1141);
+			h.answers.push_back(1142);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::hasSeenScreen(38) && !SkyEngine::giveScriptVar(814)) {
+			h.question = 26;
+			h.answers.clear();
+			h.answers.push_back(1131);
+			h.answers.push_back(1132);
+			h.answers.push_back(1133);
+			h.answers.push_back(1134);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::hasSeenScreen(90)) {
+			if (!SkyEngine::hasSeenScreen(31)) {
+				h.question = 53;
+				h.answers.clear();
+				h.answers.push_back(1216);
+				hints.push_back(h);
+			}
+			break;
+		}
+		if (SkyEngine::giveScriptVar(90)) {
+			h.question = 19;
+			h.answers.clear();
+			h.answers.push_back(1108);
+			h.answers.push_back(1109);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(190) && !SkyEngine::giveScriptVar(256)) {
+			h.question = 15;
+			h.answers.clear();
+			h.answers.push_back(1096);
+			h.answers.push_back(1097);
+			h.answers.push_back(1098);
+			hints.push_back(h);
+			break;
+		}
+		if (!SkyEngine::giveScriptVar(282)) {
+			if (!SkyEngine::giveScriptVar(88)) {
+				h.question = 12;
+				h.answers.clear();
+				h.answers.push_back(1087);
+				h.answers.push_back(1088);
+				h.answers.push_back(1089);
+				h.answers.push_back(1090);
+				hints.push_back(h);
+			}
+			if (SkyEngine::giveScriptVar(88)) {
+				h.question = 13;
+				h.answers.clear();
+				h.answers.push_back(1091);
+				hints.push_back(h);
+			}
+			break;
+		}
+		if (!SkyEngine::giveScriptVar(83) && !SkyEngine::giveScriptVar(90)) {
+			h.question = 17;
+			h.answers.clear();
+			h.answers.push_back(1100);
+			h.answers.push_back(1101);
+			h.answers.push_back(1102);
+			h.answers.push_back(1103);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(83)) {
+			h.question = 18;
+			h.answers.clear();
+			h.answers.push_back(1104);
+			h.answers.push_back(1105);
+			h.answers.push_back(1106);
+			h.answers.push_back(1107);
+			hints.push_back(h);
+			break;
+		}
+		break;
+	case 27:
+		if (SkyEngine::giveScriptVar(830) && !SkyEngine::giveScriptVar(787)) {
+			h.question = 33;
+			h.answers.clear();
+			h.answers.push_back(1153);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(256)) {
+			h.question = 16;
+			h.answers.clear();
+			h.answers.push_back(1099);
+			hints.push_back(h);
+			break;
+		}
+		break;
+	case 90:
+	case 91:
+	case 92:
+	case 93:
+	case 94:
+	case 95:
+		if (SkyEngine::giveScriptVar(703) == 1) {
+			h.question = 44;
+			h.answers.clear();
+			if (SkyEngine::giveScriptVar(497) != 6) {
+				h.answers.push_back(1191);
+			} else {
+				h.answers.push_back(1192);
+				h.answers.push_back(1193);
+				h.answers.push_back(1194);
+				h.answers.push_back(1195);
+				h.answers.push_back(1196);
+			}
+			hints.push_back(h);
+		}
+		if (SkyEngine::giveScriptVar(82)) {
+			if (!SkyEngine::giveScriptVar(337)) {
+				h.question = 30;
+				h.answers.clear();
+				h.answers.push_back(1143);
+				h.answers.push_back(1144);
+				h.answers.push_back(1145);
+				hints.push_back(h);
+			}
+			break;
+		}
+		if (SkyEngine::giveCurrentScreen() == 90 || SkyEngine::giveCurrentScreen() == 91) {
+			h.question = 21;
+			h.answers.clear();
+			h.answers.push_back(1111);
+			h.answers.push_back(1112);
+			h.answers.push_back(1113);
+			h.answers.push_back(1114);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveCurrentScreen() == 92) {
+			h.question = 22;
+			h.answers.clear();
+			h.answers.push_back(1115);
+			h.answers.push_back(1116);
+			h.answers.push_back(1117);
+			h.answers.push_back(1118);
+			hints.push_back(h);
+			break;
+		}
+		h.question = 23;
+		h.answers.clear();
+		h.answers.push_back(1119);
+		h.answers.push_back(1120);
+		h.answers.push_back(1121);
+		h.answers.push_back(1122);
+		hints.push_back(h);
+		break;
+	case 30:
+	case 31:
+	case 32:
+	case 33:
+	case 34:
+	case 35:
+	case 36:
+	case 38:
+		if (SkyEngine::giveScriptVar(787)) {
+			h.question = 34;
+			h.answers.clear();
+			h.answers.push_back(1154);
+			h.answers.push_back(1155);
+			h.answers.push_back(1156);
+			h.answers.push_back(1157);
+			h.answers.push_back(1158);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(830) && !SkyEngine::giveScriptVar(787)) {
+			h.question = 33;
+			h.answers.clear();
+			h.answers.push_back(1153);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(788) || SkyEngine::giveScriptVar(789)) {
+			h.question = 32;
+			h.answers.clear();
+			h.answers.push_back(1149);
+			h.answers.push_back(1150);
+			h.answers.push_back(1151);
+			h.answers.push_back(1152);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(337) && !SkyEngine::giveScriptVar(788)) {
+			h.question = 31;
+			h.answers.clear();
+			h.answers.push_back(1146);
+			h.answers.push_back(1147);
+			h.answers.push_back(1148);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(822) && !SkyEngine::giveScriptVar(337)) {
+			h.question = 29;
+			h.answers.clear();
+			h.answers.push_back(1139);
+			h.answers.push_back(1140);
+			h.answers.push_back(1141);
+			h.answers.push_back(1142);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::hasSeenScreen(38) && !SkyEngine::giveScriptVar(814)) {
+			h.question = 26;
+			h.answers.clear();
+			h.answers.push_back(1131);
+			h.answers.push_back(1132);
+			h.answers.push_back(1133);
+			h.answers.push_back(1134);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::hasSeenScreen(38)) {
+			h.question = 25;
+			h.answers.clear();
+			h.answers.push_back(1128);
+			h.answers.push_back(1129);
+			h.answers.push_back(1130);
+			hints.push_back(h);
+		}
+		if (SkyEngine::giveCurrentScreen() != 38 && SkyEngine::hasSeenScreen(38)) {
+			h.question = 27;
+			h.answers.clear();
+			h.answers.push_back(1135);
+			h.answers.push_back(1136);
+			h.answers.push_back(1137);
+			hints.push_back(h);
+		}
+		break;
+	case 39:
+	case 40:
+	case 41:
+		h.question = 28;
+		h.answers.clear();
+		h.answers.push_back(1138);
+		hints.push_back(h);
+		if (SkyEngine::giveScriptVar(822) && !SkyEngine::giveScriptVar(337)) {
+			h.question = 29;
+			h.answers.clear();
+			h.answers.push_back(1139);
+			h.answers.push_back(1140);
+			h.answers.push_back(1141);
+			h.answers.push_back(1142);
+			hints.push_back(h);
+		}
+		break;
+	case 37:
+		h.question = 34;
+		h.answers.clear();
+		h.answers.push_back(1154);
+		h.answers.push_back(1155);
+		h.answers.push_back(1156);
+		h.answers.push_back(1157);
+		h.answers.push_back(1158);
+		hints.push_back(h);
+		if (!SkyEngine::giveScriptVar(79) && SkyEngine::giveScriptVar(813) == 1) {
+			h.question = 35;
+			h.answers.clear();
+			h.answers.push_back(1159);
+			h.answers.push_back(1160);
+			h.answers.push_back(1161);
+			h.answers.push_back(1162);
+			hints.push_back(h);
+		}
+		if (SkyEngine::giveScriptVar(813) == 1) {
+			h.question = 36;
+			h.answers.clear();
+			h.answers.push_back(1163);
+			h.answers.push_back(1164);
+			hints.push_back(h);
+		}
+		break;
+	case 48:
+		h.question = 37;
+		h.answers.clear();
+		h.answers.push_back(1165);
+		hints.push_back(h);
+		break;
+	case 67:
+		h.question = 38;
+		h.answers.clear();
+		h.answers.push_back(1166);
+		h.answers.push_back(1168);
+		h.answers.push_back(1169);
+		h.answers.push_back(1170);
+		hints.push_back(h);
+		break;
+	case 68:
+	case 69:
+	case 70:
+	case 71:
+	case 72:
+	case 73:
+	case 74:
+	case 75:
+	case 76:
+	case 77:
+	case 78:
+	case 79:
+	case 80:
+		if (!SkyEngine::giveScriptVar(700)) {
+			if (SkyEngine::hasSeenScreen(70) && !SkyEngine::giveScriptVar(696)) {
+				h.question = 39;
+				h.answers.clear();
+				h.answers.push_back(1171);
+				h.answers.push_back(1172);
+				h.answers.push_back(1173);
+				h.answers.push_back(1174);
+				hints.push_back(h);
+			}
+			if (SkyEngine::giveScriptVar(72) > 0) {
+				h.question = 40;
+				h.answers.clear();
+				h.answers.push_back(1175);
+				h.answers.push_back(1176);
+				h.answers.push_back(1177);
+				h.answers.push_back(1178);
+				hints.push_back(h);
+			}
+			if (!SkyEngine::giveScriptVar(72)) {
+				h.question = 41;
+				h.answers.clear();
+				h.answers.push_back(1179);
+				h.answers.push_back(1180);
+				h.answers.push_back(1181);
+				h.answers.push_back(1182);
+				h.answers.push_back(1183);
+				hints.push_back(h);
+			}
+			break;
+		}
+		if (!SkyEngine::giveScriptVar(703)) {
+			h.question = 42;
+			h.answers.clear();
+			h.answers.push_back(1184);
+			h.answers.push_back(1185);
+			h.answers.push_back(1186);
+			h.answers.push_back(1187);
+			h.answers.push_back(1188);
+			hints.push_back(h);
+			break;
+		}
+		if (!SkyEngine::giveScriptVar(642)) {
+			h.question = 43;
+			h.answers.clear();
+			h.answers.push_back(1189);
+			h.answers.push_back(1190);
+			hints.push_back(h);
+			break;
+		}
+		if (!SkyEngine::giveScriptVar(713)) {
+			h.question = 45;
+			h.answers.clear();
+			h.answers.push_back(1197);
+			h.answers.push_back(1198);
+			h.answers.push_back(1199);
+			h.answers.push_back(1200);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(719) != 2) {
+			h.question = 46;
+			h.answers.clear();
+			h.answers.push_back(1201);
+			h.answers.push_back(1202);
+			h.answers.push_back(1203);
+			hints.push_back(h);
+			break;
+		}
+		if (SkyEngine::giveScriptVar(708) != 3) {
+			h.question = 47;
+			h.answers.clear();
+			h.answers.push_back(1204);
+			h.answers.push_back(1205);
+			h.answers.push_back(1206);
+			h.answers.push_back(1207);
+			hints.push_back(h);
+			break;
+		} else {
+			h.question = 48;
+			h.answers.clear();
+			h.answers.push_back(1208);
+			h.answers.push_back(1209);
+			h.answers.push_back(1210);
+			h.answers.push_back(1211);
+			hints.push_back(h);
+			break;
+		}
+		break;
+	case 81:
+		h.question = 49;
+		h.answers.clear();
+		h.answers.push_back(1212);
+		hints.push_back(h);
+		break;
+	default:
+		break;
+	}
+	h.question = 54;
+	h.answers.clear();
+	hints.push_back(h);
+	h.question = 55;
+	hints.push_back(h);
+
+	if (2 == SkyEngine::giveScriptVar(106)) {
+		h.question = 56;
+		hints.push_back(h);
+	}
+	return hints;
+}
+
+int Control::drawHintList(Graphics::Surface *scaled, int destX, int destY, int newW, Graphics::Font *font, const Common::Array<Hint> &hints, Common::Array<Common::Rect> &hintRects, int scrollOffset) {
+	_skyScreen->_screen32.fillRect(Common::Rect(0, 0, _skyScreen->_screen32.w, _skyScreen->_screen32.h), 0);
+	_skyScreen->_screen32.copyRectToSurface(*scaled, destX, destY, Common::Rect(0, 0, scaled->w, scaled->h));
+	hintRects.clear();
+
+	int textWrapWidth = newW - 30;
+	uint32 colorWhite = _skyScreen->_screen32.format.RGBToColor(255, 255, 255);
+	int y = destY + 40 - scrollOffset;
+
+	for (uint i = 0; i < hints.size(); i++) {
+		Common::U32String text = SkyEngine::lookUpAscii(hints[i].question + 1000);
+		Common::Array<Common::U32String> lines;
+		font->wordWrapText(text, textWrapWidth, lines);
+		int startY = y;
+		for (uint l = 0; l < lines.size(); l++) {
+			if (y >= destY + 20 && y + font->getFontHeight() <= destY + scaled->h - 20)
+				font->drawString(&_skyScreen->_screen32, lines[l], destX + 10, y, textWrapWidth, colorWhite);
+			y += font->getFontHeight() + 2;
+		}
+		hintRects.push_back(Common::Rect(destX + 10, startY, destX + 10 + textWrapWidth, y));
+		y += 8;
+	}
+	return y;
+}
+
+TappableAnswer Control::drawHintDetail(Graphics::Surface *scaled, int destX, int destY, int newW, Graphics::Font *font, const Hint &hint, int detailScrollOffset, int &detailContentBottom) {
+	_skyScreen->_screen32.fillRect(Common::Rect(0, 0, _skyScreen->_screen32.w, _skyScreen->_screen32.h), 0);
+	_skyScreen->_screen32.copyRectToSurface(*scaled, destX, destY, Common::Rect(0, 0, scaled->w, scaled->h));
+
+	int textWrapWidth = newW - 30;
+	uint32 colorWhite = _skyScreen->_screen32.format.RGBToColor(255, 255, 255);
+	int y = destY + 40 - detailScrollOffset;
+	int topBound = destY + 20;
+	int bottomBound = destY + scaled->h - 20;
+
+	// question text
+	Common::U32String qText = SkyEngine::lookUpAscii(hint.question + 1000);
+	Common::Array<Common::U32String> qLines;
+	font->wordWrapText(qText, textWrapWidth, qLines);
+	for (uint l = 0; l < qLines.size(); l++) {
+		if (y >= topBound && y + font->getFontHeight() <= bottomBound)
+			font->drawString(&_skyScreen->_screen32, qLines[l], destX + 10, y, textWrapWidth, colorWhite);
+		y += font->getFontHeight() + 2;
+	}
+	y += 12;
+
+	// answers
+	TappableAnswer tappable;
+	tappable.answerId = -1;
+	bool foundTappable = false;
+	for (uint j = 0; j < hint.answers.size(); j++) {
+		int answer = hint.answers[j];
+		bool seen = SkyEngine::isHintAnswerSeen(answer - 1057);
+		debug(1, "answer %d, normalized %d, seen %d", answer, answer - 1057, (int)seen);
+
+		Common::U32String text;
+		if (seen) {
+			text = SkyEngine::lookUpAscii(answer);
+		} else {
+			Common::String fmt = Common::String::format(SkyEngine::lookUpAscii(1254).c_str(), j + 1, (int)hint.answers.size());
+			text = Common::U32String(fmt);
+		}
+
+		int startY = y;
+		Common::Array<Common::U32String> lines;
+		font->wordWrapText(text, textWrapWidth, lines);
+		for (uint l = 0; l < lines.size(); l++) {
+			if (y >= topBound && y + font->getFontHeight() <= bottomBound)
+				font->drawString(&_skyScreen->_screen32, lines[l], destX + 10, y, textWrapWidth, colorWhite);
+			y += font->getFontHeight() + 2;
+		}
+
+		if (!seen) {
+			if (!foundTappable) {
+				foundTappable = true;
+				tappable.rect = Common::Rect(destX + 10, startY, destX + 10 + textWrapWidth, y);
+				tappable.answerId = answer;
+			} else {
+				break;
+			}
+		}
+		y += 8;
+	}
+	detailContentBottom = y;
+	return tappable;
+}
+
+void Control::drawScrollButtons(Graphics::Font *font, Graphics::Surface &screen, int destX, int destY, int newW, int panelBottom, int scrollOffset, int contentBottom, uint32 colorGray, Common::Rect &scrollUpRect, Common::Rect &scrollDownRect) {
+	scrollUpRect = Common::Rect();
+	scrollDownRect = Common::Rect();
+	if (scrollOffset > 0) {
+		scrollUpRect = Common::Rect(destX + newW / 2 - 20, destY + 42, destX + newW / 2 + 20, destY + 58);
+		font->drawString(&screen, Common::U32String("^"), scrollUpRect.left, scrollUpRect.top, 40, colorGray);
+	}
+	int textBottomBound = panelBottom - 10;
+	if (contentBottom > textBottomBound) {
+		scrollDownRect = Common::Rect(destX + newW / 2 - 20, panelBottom - 16, destX + newW / 2 + 20, panelBottom);
+		font->drawString(&screen, Common::U32String("v"), scrollDownRect.left, scrollDownRect.top, 40, colorGray);
+	}
+}
+
+void Control::initHelpPanel() {
+	Image::CgBIDecoder d;
+	Common::File f;
+	Common::String fileName = SkyEngine::giveButton("hints_txtbox.png");
+	if (!f.open(Common::Path(fileName)) || !d.loadStream(f)) {
+		debug(1, "Cannot open file");
+		return;
+	}
+	Graphics::Surface *surface = d.getSurface();
+	if (!surface) {
+		debug(1, "No surface");
+		return;
+	}
+	Graphics::Surface *converted = surface->convertTo(_skyScreen->_screen32.format);
+
+	float scaleX = (float)GAME_SCREEN_WIDTH / converted->w;
+	float scaleY = (float)FULL_SCREEN_HEIGHT / converted->h;
+	float scaleFactor = MIN(scaleX, scaleY);
+
+	int16 newW = (int16)(converted->w * scaleFactor);
+	int16 newH = (int16)(converted->h * scaleFactor);
+
+	Graphics::Surface *scaled = converted->scale(newW, newH, true);
+	converted->free();
+	delete converted;
+
+	int destX = (GAME_SCREEN_WIDTH - newW) / 2;
+	int destY = (FULL_SCREEN_HEIGHT - newH) / 2;
+	Graphics::Font *font = nullptr;
+#ifdef USE_FREETYPE2
+	font = Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 12);
+#endif
+	if (!font) {
+		warning("Cannot load font, hints disabled");
+		scaled->free();
+		delete scaled;
+		return;
+	}
+	Common::Array<Hint> hints = buildHints();
+	Common::Array<Common::Rect> hintRects;
+	TappableAnswer currentTappable;
+	currentTappable.answerId = -1;
+	int selectedHint = -1;
+	int scrollOffset = 0;
+	int detailScrollOffset = 0;
+	int detailContentBottom = 0;
+	Common::Rect scrollUpRect;
+	Common::Rect scrollDownRect;
+	int contentBottom = drawHintList(scaled, destX, destY, newW, font, hints, hintRects, scrollOffset);
+	int panelBottom = destY + newH - 10;
+	uint32 colorGray = _skyScreen->_screen32.format.RGBToColor(180, 180, 180);
+	drawScrollButtons(font, _skyScreen->_screen32, destX, destY, newW, panelBottom, scrollOffset, contentBottom, colorGray, scrollUpRect, scrollDownRect);
+	_mouseClicked = false;
+	while (!Engine::shouldQuit()) {
+		if (_skyScreen->_screen32.getPixels())
+			_system->copyRectToScreen(_skyScreen->_screen32.getPixels(), _skyScreen->_screen32.pitch, 0, 0, _skyScreen->_screen32.w, _skyScreen->_screen32.h);
+		_system->updateScreen();
+		delay(ANIM_DELAY);
+		if (_action == kSkyActionSkip)
+			break;
+
+		if (_mouseClicked) {
+			Common::Point mouse = _system->getEventManager()->getMousePos();
+			_mouseClicked = false;
+			if (selectedHint == -1) {
+				if (scrollUpRect.width() > 0 && scrollUpRect.contains(mouse)) {
+					scrollOffset = MAX(0, scrollOffset - 50);
+					contentBottom = drawHintList(scaled, destX, destY, newW, font, hints, hintRects, scrollOffset);
+					drawScrollButtons(font, _skyScreen->_screen32, destX, destY, newW, panelBottom, scrollOffset, contentBottom, colorGray, scrollUpRect, scrollDownRect);
+				} else if (scrollDownRect.width() > 0 && scrollDownRect.contains(mouse)) {
+					scrollOffset += 50;
+					contentBottom = drawHintList(scaled, destX, destY, newW, font, hints, hintRects, scrollOffset);
+					drawScrollButtons(font, _skyScreen->_screen32, destX, destY, newW, panelBottom, scrollOffset, contentBottom, colorGray, scrollUpRect, scrollDownRect);
+				} else {
+					for (uint i = 0; i < hintRects.size(); i++) {
+						if (hintRects[i].contains(mouse)) {
+							selectedHint = (int)i;
+							detailScrollOffset = 0;
+							currentTappable = drawHintDetail(scaled, destX, destY, newW, font, hints[selectedHint], detailScrollOffset, detailContentBottom);
+							drawScrollButtons(font, _skyScreen->_screen32, destX, destY, newW, panelBottom, detailScrollOffset, detailContentBottom, colorGray, scrollUpRect, scrollDownRect);
+							break;
+						}
+					}
+				}
+			} else {
+				if (scrollUpRect.width() > 0 && scrollUpRect.contains(mouse)) {
+					detailScrollOffset = MAX(0, detailScrollOffset - 50);
+					currentTappable = drawHintDetail(scaled, destX, destY, newW, font, hints[selectedHint], detailScrollOffset, detailContentBottom);
+					drawScrollButtons(font, _skyScreen->_screen32, destX, destY, newW, panelBottom, detailScrollOffset, detailContentBottom, colorGray, scrollUpRect, scrollDownRect);
+				} else if (scrollDownRect.width() > 0 && scrollDownRect.contains(mouse)) {
+					detailScrollOffset += 50;
+					currentTappable = drawHintDetail(scaled, destX, destY, newW, font, hints[selectedHint], detailScrollOffset, detailContentBottom);
+					drawScrollButtons(font, _skyScreen->_screen32, destX, destY, newW, panelBottom, detailScrollOffset, detailContentBottom, colorGray, scrollUpRect, scrollDownRect);
+				} else if (currentTappable.answerId != -1 && currentTappable.rect.contains(mouse)) {
+					SkyEngine::setHintAnswerSeen(currentTappable.answerId - 1057);
+					currentTappable = drawHintDetail(scaled, destX, destY, newW, font, hints[selectedHint], detailScrollOffset, detailContentBottom);
+					drawScrollButtons(font, _skyScreen->_screen32, destX, destY, newW, panelBottom, detailScrollOffset, detailContentBottom, colorGray, scrollUpRect, scrollDownRect);
+					debug(1, "tappable answerId: %d, rect: (%d, %d, %d, %d)", currentTappable.answerId, currentTappable.rect.left, currentTappable.rect.top, currentTappable.rect.right, currentTappable.rect.bottom);
+				} else {
+					// back to question
+					selectedHint = -1;
+					currentTappable.answerId = -1;
+					contentBottom = drawHintList(scaled, destX, destY, newW, font, hints, hintRects, scrollOffset);
+					drawScrollButtons(font, _skyScreen->_screen32, destX, destY, newW, panelBottom, scrollOffset, contentBottom, colorGray, scrollUpRect, scrollDownRect);
+				}
+			}
+		}
+	}
+	_skyScreen->forceRefresh();
+	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars->currentPalette));
+	delete font;
+	scaled->free();
+	delete scaled;
 }
 
 void Control::initPanel() {
@@ -557,6 +1522,10 @@ void Control::doControlPanel() {
 	removePanel();
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	_skyText->fnSetFont(_savedCharSet);
+}
+
+void Control::doHelpPanel() {
+	initHelpPanel();
 }
 
 uint16 Control::handleClick(ConResource *pButton) {
@@ -1559,6 +2528,15 @@ void Control::restartGame() {
 	uint8 *resetData = _skyCompact->createResetData((uint16)SkyEngine::_systemVars->gameVersion);
 	parseSaveData((uint8 *)resetData);
 	free(resetData);
+
+	// reset the hints
+	for (int i = 0; i < TOTAL_HINT_ANSWERS; i++)
+		SkyEngine::_systemVars->pastIntro = true;
+
+	// seen screen flags
+	for (int i = 0; i < TOTAL_SCREENS; i++)
+		SkyEngine::_systemVars->pastIntro = true;
+
 	_skyScreen->forceRefresh();
 
 	memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);

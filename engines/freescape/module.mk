@@ -52,13 +52,26 @@ MODULE_OBJS := \
 	games/eclipse/opl.music.o \
 	games/eclipse/cpc.o \
 	games/eclipse/zx.o \
+	games/3dck/3dck.o \
+	games/3dck/8bit.o \
+	games/3dck/8bitUI.o \
+	games/3dck/atari.o \
+	games/3dck/c64.o \
+	games/3dck/ui.o \
+	games/3dck/zx.o \
 	games/palettes.o \
 	gfx.o \
 	loaders/8bitImage.o \
 	loaders/8bitBinaryLoader.o \
 	loaders/c64.o \
-	language/8bitDetokeniser.o \
+	language/detokeniser.o \
+	language/detokeniser_freescape.o \
+	language/detokeniser_3dck8.o \
+	language/detokeniser_3dck16.o \
 	language/instruction.o \
+	language/execution_freescape.o \
+	language/execution_3dck8.o \
+	language/execution_3dck16.o \
 	metaengine.o \
 	movement.o \
 	objects/geometricobject.o \
@@ -68,6 +81,10 @@ MODULE_OBJS := \
 	sound/amiga.o \
 	sound/atari.o \
 	sound/common.o \
+	sound/3dck.o \
+	sound/3dck_adlib.o \
+	sound/3dck_cpc.o \
+	sound/3dck_zx.o \
 	sound/cpc.o \
 	sound/dos.o \
 	sound/fx.o \
@@ -116,5 +133,5 @@ DETECT_OBJS += $(MODULE)/detection.o
 # module is enabled, because it already has the contents.
 ifneq ($(ENABLE_FREESCAPE), STATIC_PLUGIN)
 # External dependencies for detection.
-DETECT_OBJS += $(MODULE)/zx_tape.o
+DETECT_OBJS += $(MODULE)/detection_zx_tape.o
 endif

@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef MM_BITMAP_FONT_H
+#define MM_BITMAP_FONT_H
+
 #include "mm/shared/utils/bitmap_font.h"
 
 namespace MM {
@@ -45,3 +48,5 @@ public:
 } // namespace Gfx
 } // namespace MM1
 } // namespace MM
+
+#endif // MM_BITMAP_FONT_H

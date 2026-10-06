@@ -22,6 +22,7 @@
 #include "mads/animview/anim_timer.h"
 #include "mads/animview/animview.h"
 #include "mads/animview/functions.h"
+#include "mads/core/config.h"
 #include "mads/core/cycle.h"
 #include "mads/core/matte.h"
 #include "mads/core/mcga.h"
@@ -37,6 +38,9 @@ static const byte FX_TIMES[16] = {
 	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0, 0, 0
 };
 
+static const int DOS_FADE_STEP_RATE = 70;
+static const int MACINTOSH_FADE_STEP_RATE = 60;
+
 constexpr int MESSAGES_COUNT = 8;
 static int messageHandle[MESSAGES_COUNT];
 
@@ -47,14 +51,32 @@ static int normalTimer1, imageCount;
 static int messageCount;
 static int16 panningX, panningY;
 
+static void clearSpeechMessages() {
+	if (runVal8) {
+		matte_clear_message(matteId);
+		pal_deallocate(paletteHandle);
+		runVal8 = 0;
+	}
+
+	for (int count = 0; count < messageCount; ++count)
+		matte_clear_message(messageHandle[count]);
+	messageCount = 0;
+	paletteHandle = 0;
+	matteId = 0;
+}
+
 void anim_timer_init() {
 	paletteHandle = 0;
 	palIndex1 = palIndex2 = 0;
 	matteId = 0;
-	normalTimer1 = messageCount = 0;
+	normalTimer1 = 0;
 	currentViewX = currentViewY = 0;
 	panningX = panningY = 0;
-	normalTimer1 = imageCount = 0;
+	messageCount = imageCount = 0;
+}
+
+void anim_timer_shutdown() {
+	clearSpeechMessages();
 }
 
 void anim_timer() {
@@ -63,8 +85,13 @@ void anim_timer() {
 	Speech *speech;
 	Frame *frame;
 	int sound, count;
+	bool full_fade_in;
+	int fade_step_rate;
+	long completion_deadline;
+	long *completion_deadline_ptr;
+	int minimum_black_ticks;
 
-	if (current_error_code || speechStream)
+	if (current_error_code || speechResourceId != -1)
 		goto done;
 	if (currentFrame < 0 || currentFrame >= maxFrame)
 		goto done;
@@ -113,9 +140,11 @@ void anim_timer() {
 		goto block2;
 
 	speech = &current_anim->speech[speechIndex];
-	flag = speech->display_condition != 0x4000 &&
-		speech->display_condition != 0x800 &&
-		speech->resource_id >= 0;
+	if (hasSpeechAudio) {
+		flag = speech->display_condition != 0x4000 &&
+			speech->display_condition != 0x800 &&
+			speech->resource_id >= 0;
+	}
 
 	if (g_engine->getGameID() != GType_RexNebular) {
 		// In Phantom sound_dma is one of the sound card params which can be configurable via flags.
@@ -127,7 +156,7 @@ void anim_timer() {
 	}
 
 	if (flag) {
-		speechStream = speech->speech;
+		speechResourceId = speech->resource_id;
 		speechFlags = speech->flags;
 		goto done;
 	}
@@ -201,7 +230,7 @@ block2:
 
 	imageCount = image_marker;
 	for (; imageFrame < current_anim->num_images; ++imageFrame) {
-		Image *img = &current_anim->image[imageFrame];
+		const Image *img = &current_anim->image[imageFrame];
 
 		if (img->flags > currentFrame)
 			break;
@@ -212,7 +241,8 @@ block2:
 		for (count = 0; !found && count < imageCount; ++count) {
 			Image *img2 = &image_list[count];
 
-			found = img->series_id == img2->series_id &&
+			found = img->segment_id == img2->segment_id &&
+				img->series_id == img2->series_id &&
 				img->sprite_id == img2->sprite_id &&
 				img->x == img2->x &&
 				img->y == img2->y &&
@@ -245,7 +275,30 @@ block2:
 		matte_refresh_work();
 	}
 
-	matte_frame(runFx, 0);
+	full_fade_in = g_engine->getGameID() == GType_RexNebular ||
+		g_engine->getGameID() == GType_Phantom;
+	fade_step_rate = g_engine->hasMacintoshInterface() ?
+		MACINTOSH_FADE_STEP_RATE : DOS_FADE_STEP_RATE;
+	minimum_black_ticks = config_file.animview_minimum_black_ticks;
+	completion_deadline = timer1;
+	completion_deadline_ptr = nullptr;
+	if ((g_engine->getGameID() == GType_RexNebular ||
+			minimum_black_ticks > 0) &&
+			(runFx == MATTE_FX_FADE_FROM_BLACK ||
+			runFx == MATTE_FX_FADE_THRU_BLACK))
+		completion_deadline_ptr = &completion_deadline;
+
+	// Rex and Phantom AnimView use the full 16-step fade-in. The later
+	// Dragonsphere executable uses the quick fade. DOS palette updates are
+	// paced by VGA retrace, while Macintosh fades use the 60 Hz TickCount.
+	// Rex uses its existing transition deadline to keep an early fade-in black.
+	// The optional minimum starts after incoming-palette preparation and is a
+	// fast-host presentation policy, not a native delay. If it extends the
+	// reveal, move the completion deadline used by subsequent scheduling.
+	matte_frame(runFx, 0, full_fade_in, fade_step_rate,
+		completion_deadline_ptr, minimum_black_ticks, boundaryLineColor);
+	if (completion_deadline_ptr != nullptr)
+		timer1 = completion_deadline;
 	mouse_hide();
 
 block3:
@@ -296,16 +349,7 @@ block3:
 		imageFrame = speech->first_image;
 	} else {
 		speechIndex = -1;
-
-		if (runVal8) {
-			matte_clear_message(matteId);
-			pal_deallocate(paletteHandle);
-			runVal8 = 0;
-
-			for (count = 0; count < messageCount; ++count)
-				matte_clear_message(messageHandle[count]);
-			messageCount = 0;
-		}
+		clearSpeechMessages();
 	}
 
 done:

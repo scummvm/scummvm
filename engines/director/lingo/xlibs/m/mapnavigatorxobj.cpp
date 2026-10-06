@@ -234,7 +234,7 @@ void MapNavigatorXObj::m_new(int nargs) {
 					NavInstruction ii;
 
 					ii.instruction_type = in.readByte();
-					ii.reserved = in.readByte();;
+					ii.reserved = in.readByte();
 					ii.text = in.readPascalString();
 
 					if (in.pos() % 2) // align to a word

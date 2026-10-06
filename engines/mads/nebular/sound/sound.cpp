@@ -20,25 +20,58 @@
  */
 
 #include "mads/nebular/sound/sound.h"
+
+#include "audio/fmopl.h"
+#include "common/textconsole.h"
 #include "mads/nebular/sound/asound_nebular.h"
 #include "mads/nebular/sound/isound_nebular.h"
+#include "mads/nebular/sound/psound_nebular.h"
 #include "mads/nebular/sound/rsound_nebular.h"
 
 namespace MADS {
 namespace RexNebular {
 namespace Sound {
 
+RexSoundManager::RexSoundManager(Audio::Mixer *mixer, bool &soundFlag,
+		bool usePas, bool isDemo) :
+		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
+	if (usePas && _driverType == SOUND_ADLIB) {
+		if (OPL::Config::detect(OPL::Config::kOpl3) >= 0) {
+			_driverType = SOUND_PAS;
+		} else {
+			warning("Pro Audio Spectrum 16 requires OPL3 output; "
+					"falling back to AdLib");
+		}
+	}
+	if (_driverType == SOUND_MT32) {
+		// TODO Move to SoundManager superclass when other sound drivers have been reworked
+		_midiDriver = new MidiDriver_MT32GM(MusicType::MT_MT32);
+		int returnCode;
+		returnCode = _midiDriver->open();
+		if (returnCode != 0)
+			error("SoundManager - Failed to open MIDI music driver - error code %d.", returnCode);
+
+		_driverCallbackDelta = _midiDriver->getBaseTempo();
+		_midiDriver->setTimerCallback(this, &timerCallback);
+	}
+}
+
 void RexSoundManager::validate() {
-	if (_isDemo)
+	// The demo has distinct AdLib, MT-32 and PAS overlays, but no ISOUND set.
+	if (_isDemo && _driverType == SOUND_PCSPEAKER)
 		_driverType = SOUND_ADLIB;
 
 	switch (_driverType) {
 	case SOUND_MT32:
-		RSound::validate();
+		RSound::validate(_isDemo);
 		break;
 
 	case SOUND_PCSPEAKER:
-		// No validation needed
+		ISound::validate();
+		break;
+
+	case SOUND_PAS:
+		PSound::validate(_isDemo);
 		break;
 
 	default:
@@ -48,47 +81,48 @@ void RexSoundManager::validate() {
 }
 
 void RexSoundManager::loadDriver(int sectionNumber) {
-	removeDriver();
-
-	if (_isDemo) {
-		assert(sectionNumber == 1 || sectionNumber == 9);
-		if (sectionNumber == 1)
-			_driver = new ASoundDemo1(_mixer);
-		else
-			_driver = new ASoundDemo9(_mixer);
-		return;
-	}
+	closeDriver();
 
 	switch (_driverType) {
 	case SOUND_MT32:
 		// Roland MT32 drivers
+		if (_isDemo) {
+			// The demo shares RSOUND.001 across numbered gameplay sections
+			// and uses RSOUND.009 only for its opening presentation.
+			if (sectionNumber == 9)
+				_driver = new RSoundDemo9(_mixer, _midiDriver);
+			else
+				_driver = new RSoundDemo1(_mixer, _midiDriver);
+			break;
+		}
+
 		switch (sectionNumber) {
 		case 1:
-			_driver = new RSound1(_mixer);
+			_driver = new RSound1(_mixer, _midiDriver);
 			break;
 		case 2:
-			_driver = new RSound2(_mixer);
+			_driver = new RSound2(_mixer, _midiDriver);
 			break;
 		case 3:
-			_driver = new RSound3(_mixer);
+			_driver = new RSound3(_mixer, _midiDriver);
 			break;
 		case 4:
-			_driver = new RSound4(_mixer);
+			_driver = new RSound4(_mixer, _midiDriver);
 			break;
 		case 5:
-			_driver = new RSound5(_mixer);
+			_driver = new RSound5(_mixer, _midiDriver);
 			break;
 		case 6:
-			_driver = new RSound6(_mixer);
+			_driver = new RSound6(_mixer, _midiDriver);
 			break;
 		case 7:
-			_driver = new RSound7(_mixer);
+			_driver = new RSound7(_mixer, _midiDriver);
 			break;
 		case 8:
-			_driver = new RSound8(_mixer);
+			_driver = new RSound8(_mixer, _midiDriver);
 			break;
 		case 9:
-			_driver = new RSound9(_mixer);
+			_driver = new RSound9(_mixer, _midiDriver);
 			break;
 		default:
 			return;
@@ -129,39 +163,112 @@ void RexSoundManager::loadDriver(int sectionNumber) {
 		}
 		break;
 
-	default:
-		// Adlib drivers
-		switch (sectionNumber) {
-		case 1:
-			_driver = new ASound1(_mixer);
-			break;
-		case 2:
-			_driver = new ASound2(_mixer);
-			break;
-		case 3:
-			_driver = new ASound3(_mixer);
-			break;
-		case 4:
-			_driver = new ASound4(_mixer);
-			break;
-		case 5:
-			_driver = new ASound5(_mixer);
-			break;
-		case 6:
-			_driver = new ASound6(_mixer);
-			break;
-		case 7:
-			_driver = new ASound7(_mixer);
-			break;
-		case 8:
-			_driver = new ASound8(_mixer);
-			break;
-		case 9:
-			_driver = new ASound9(_mixer);
-			break;
-		default:
+	case SOUND_PAS:
+		// Pro Audio Spectrum drivers
+		if (_isDemo) {
+			switch (sectionNumber) {
+			case 1:
+				_driver = new PSoundDemo1(_mixer);
+				break;
+			case 9:
+				_driver = new PSoundDemo9(_mixer);
+				break;
+			default:
+				return;
+			}
+		} else {
+			switch (sectionNumber) {
+			case 1:
+				_driver = new PSound1(_mixer);
+				break;
+			case 2:
+				_driver = new PSound2(_mixer);
+				break;
+			case 3:
+				_driver = new PSound3(_mixer);
+				break;
+			case 4:
+				_driver = new PSound4(_mixer);
+				break;
+			case 5:
+				_driver = new PSound5(_mixer);
+				break;
+			case 6:
+				_driver = new PSound6(_mixer);
+				break;
+			case 7:
+				_driver = new PSound7(_mixer);
+				break;
+			case 8:
+				_driver = new PSound8(_mixer);
+				break;
+			case 9:
+				_driver = new PSound9(_mixer);
+				break;
+			default:
+				return;
+			}
+		}
+
+		if (_driver && !static_cast<PSound *>(_driver)->isReady()) {
+			warning("Could not initialize Pro Audio Spectrum 16 OPL3 output; "
+					"falling back to AdLib");
+			removeDriver();
+			_driverType = SOUND_ADLIB;
+			loadDriver(sectionNumber);
 			return;
 		}
+		break;
+
+	default:
+		// Adlib drivers
+		if (_isDemo) {
+			switch (sectionNumber) {
+			case 1:
+				_driver = new ASoundDemo1(_mixer);
+				break;
+			case 9:
+				_driver = new ASoundDemo9(_mixer);
+				break;
+			default:
+				return;
+			}
+		} else {
+			switch (sectionNumber) {
+			case 1:
+				_driver = new ASound1(_mixer);
+				break;
+			case 2:
+				_driver = new ASound2(_mixer);
+				break;
+			case 3:
+				_driver = new ASound3(_mixer);
+				break;
+			case 4:
+				_driver = new ASound4(_mixer);
+				break;
+			case 5:
+				_driver = new ASound5(_mixer);
+				break;
+			case 6:
+				_driver = new ASound6(_mixer);
+				break;
+			case 7:
+				_driver = new ASound7(_mixer);
+				break;
+			case 8:
+				_driver = new ASound8(_mixer);
+				break;
+			case 9:
+				_driver = new ASound9(_mixer);
+				break;
+			default:
+				return;
+			}
+		}
+
+		// Reset the driver
+		_driver->command(0, 0);
 	}
 }
 

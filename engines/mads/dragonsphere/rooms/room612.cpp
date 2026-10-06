@@ -165,7 +165,7 @@ static void room_612_init() {
 		aa[0] = kernel_run_animation(kernel_name('w', 1), 0);
 		kernel_reset_animation(aa[0], 37);
 
-	} else if ((previous_room == 606) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = PLAYER_X_FROM_606;
 		player.y = PLAYER_Y_FROM_606;
 		player.facing = FACING_NORTH;
@@ -204,7 +204,6 @@ static void handle_animation_tele() {
 
 		case 86:  /* end of walking out of water */
 			kernel_abort_animation(aa[0]);
-			tele_reset_frame = -1;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.walker_visible = true;
 			player.commands_allowed = true;

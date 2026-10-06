@@ -118,11 +118,11 @@ Common::SeekableReadStream *codfil;
 static int crcStart(const byte version[4]) {
 	/* Some earlier versions had a shorter header */
 	if (isPreAlpha5(version))
-		return sizeof(Pre3_0alpha5Header) / sizeof(Aword);
+		return ASIZE(Pre3_0alpha5Header);
 	else if (isPreBeta2(version))
-		return sizeof(Pre3_0beta2Header) / sizeof(Aword);
+		return ASIZE(Pre3_0beta2Header);
 	else
-		return sizeof(ACodeHeader) / sizeof(Aword);
+		return ASIZE(ACodeHeader);
 }
 
 
@@ -357,7 +357,7 @@ static void load(CONTEXT) {
 	reverseHdr(&tmphdr);
 #endif
 
-	if (tmphdr.size <= sizeof(ACodeHeader) / sizeof(Aword))
+	if (tmphdr.size <= ASIZE(ACodeHeader))
 		syserr("Malformed game file. Too small.");
 
 	loadAndCheckMemory(tmphdr, crc, err);

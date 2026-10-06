@@ -85,6 +85,47 @@ bool inflateZlibHeaderless(byte *dst, uint *dstLen, const byte *src, uint srcLen
 	return true;
 }
 
+bool inflateZlibHeaderless(Common::WriteStream &dst, Common::ReadStream &src, const byte *dict, uint dictLen) {
+	byte in[16384], out[16384];
+	// Initialize zlib
+	z_stream stream = {};
+
+	// Negative MAX_WBITS tells zlib there's no zlib header
+	int err = inflateInit2(&stream, -MAX_WBITS);
+	if (err != Z_OK)
+		return false;
+
+	// Set the dictionary, if provided
+	if (dict != nullptr) {
+		err = inflateSetDictionary(&stream, const_cast<byte *>(dict), dictLen);
+		if (err != Z_OK) {
+			inflateEnd(&stream);
+			return false;
+		}
+	}
+
+	int ret = Z_OK;
+	while (ret != Z_STREAM_END) {
+		stream.avail_in = src.read(in, sizeof(in));
+		if (stream.avail_in == 0)
+			break;
+		stream.next_in = in;
+
+		do {
+			stream.next_out = out;
+			stream.avail_out = sizeof(out);
+			ret = inflate(&stream, Z_NO_FLUSH);
+			if (ret == Z_NEED_DICT || ret == Z_DATA_ERROR || ret == Z_MEM_ERROR) {
+				inflateEnd(&stream);
+				return false;
+			}
+			dst.write(out, sizeof(out) - stream.avail_out);
+		} while (stream.avail_out == 0);
+	}
+	inflateEnd(&stream);
+	return ret == Z_STREAM_END;
+}
+
 #ifndef RELEASE_BUILD
 static bool _shownBackwardSeekingWarning = false;
 #endif

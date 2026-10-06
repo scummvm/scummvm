@@ -24,25 +24,15 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcat
 
-// Following are pulled in for wchar.h header on XCode iOS-7
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fgetwc
-#define FORBIDDEN_SYMBOL_EXCEPTION_fgetws
-#define FORBIDDEN_SYMBOL_EXCEPTION_asctime
-#define FORBIDDEN_SYMBOL_EXCEPTION_clock
-#define FORBIDDEN_SYMBOL_EXCEPTION_ctime
-#define FORBIDDEN_SYMBOL_EXCEPTION_difftime
-#define FORBIDDEN_SYMBOL_EXCEPTION_getdate
-#define FORBIDDEN_SYMBOL_EXCEPTION_gmtime
-#define FORBIDDEN_SYMBOL_EXCEPTION_localtime
-#define FORBIDDEN_SYMBOL_EXCEPTION_mktime
-#define FORBIDDEN_SYMBOL_EXCEPTION_time
+// <wchar.h> is included here directly, because it's required for wcslen() on some platforms.
+// It is included before scummsys.h, to avoid clutter with symbol exceptions for forbidden symbols
+// that are pulled due this inclusion in some toolchains (eg. XCode iOS-7, MinGW-w64)
+#include <wchar.h>
 
 #include "common/scummsys.h"
 
 #ifdef USE_FREETYPE2
 
-#include <wchar.h>
 #include "ags/lib/alfont/alfont.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/draw.h"

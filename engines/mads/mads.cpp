@@ -54,8 +54,6 @@
 #include "mads/core/sprite.h"
 #include "mads/core/timer.h"
 #include "mads/core/vocab.h"
-#include "mads/phantom/main.h"
-#include "mads/forest/extra.h"
 #include "mads/forest/global.h"
 #include "mads/core/sound_manager.h"
 
@@ -124,7 +122,6 @@ void MADSEngine::initGlobals() {
 	init_sprite();
 	init_timer();
 	init_vocab();
-	Forest::init_extra();
 }
 
 void MADSEngine::readConfigFile() {
@@ -135,6 +132,13 @@ void MADSEngine::readConfigFile() {
 
 	if (ConfMan.hasKey("save_slot"))
 		savegame_slot = ConfMan.getInt("save_slot");
+}
+
+int MADSEngine::getMessageTextWidth(FontPtr font, const char *text,
+		int spacing) const {
+	const int macintoshWidth = getMacintoshTextWidth(font, text, spacing);
+	return macintoshWidth >= 0 ? macintoshWidth :
+		font_string_width(font, text, spacing);
 }
 
 bool MADSEngine::canLoadGameStateCurrently(Common::U32String *msg) {
@@ -244,16 +248,21 @@ void MADSEngine::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(previous_room);
 }
 
-void MADSEngine::pollEvents() {
+void MADSEngine::pollEvents(bool presentScreen) {
 	// Check for screen update time
 	uint32 time = g_system->getMillis();
 	if (time >= _nextFrameTime) {
-		updateScreen();
+		if (presentScreen)
+			updateScreen();
 		_nextFrameTime = time + GAME_FRAME_TIME;
+		serviceMacintoshUI();
 	}
 
 	// Handle calling any set timer function
 	checkForTimerFunction();
+
+	// Slight delay to prevent throttling
+	g_system->delayMillis(5);
 
 	// Poll for events
 	Common::Event e;
@@ -374,10 +383,12 @@ void MADSEngine::checkForTimerFunction() {
 			_nextTimerTime = time + (1000 / 60);
 		}
 	}
+
+	serviceMacintoshSound();
 }
 
-bool MADSEngine::hasPendingKey() {
-	pollEvents();
+bool MADSEngine::hasPendingKey(bool presentScreen) {
+	pollEvents(presentScreen);
 
 	return !_keyEvents.empty();
 }

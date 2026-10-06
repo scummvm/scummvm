@@ -115,27 +115,8 @@ void Widget::draw() {
 		}
 		oldClip = g_gui.theme()->swapClipRect(clip);
 
-		// Draw border
-		if (_flags & WIDGET_BORDER) {
-			g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
-			                                    ThemeEngine::kWidgetBackgroundBorder);
-			_x += 4;
-			_y += 4;
-			_w -= 8;
-			_h -= 8;
-		}
-
 		// Now perform the actual widget draw
 		drawWidget();
-
-
-		// Restore x/y
-		if (_flags & WIDGET_BORDER) {
-			_x -= 4;
-			_y -= 4;
-			_w += 8;
-			_h += 8;
-		}
 
 		_x = oldX;
 		_y = oldY;
@@ -184,16 +165,6 @@ Widget *Widget::findWidgetInChain(Widget *w, uint32 type) {
 		w = w->_next;
 	}
 	return nullptr;
-}
-
-bool Widget::hasVisibleScrollBar() const {
-	Widget *w = _firstWidget;
-	while (w) {
-		if (w->getType() == kScrollBarWidget && w->isVisible())
-			return true;
-		w = w->_next;
-	}
-	return false;
 }
 
 bool Widget::containsWidgetInChain(Widget *w, Widget *search) {
@@ -396,7 +367,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, bool sca
 		_lowresHotkey = hotkey;
 	}
 
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -418,7 +389,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 		_lowresHotkey = hotkey;
 	}
 
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -618,7 +589,7 @@ PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, bo
 	: ButtonWidget(boss, x, y, w, h, scale, Common::U32String(), tooltip, cmd, hotkey),
 	  _showButton(true) {
 	Common::fill(_alphaType, _alphaType + ARRAYSIZE(_alphaType), Graphics::ALPHA_OPAQUE);
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -630,7 +601,7 @@ PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, co
 	: ButtonWidget(boss, name, Common::U32String(), tooltip, cmd, hotkey),
 	  _showButton(true) {
 	Common::fill(_alphaType, _alphaType + ARRAYSIZE(_alphaType), Graphics::ALPHA_OPAQUE);
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -762,7 +733,6 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 void CheckboxWidget::setState(bool state) {
 	if (_state != state) {
 		_state = state;
-		//_flags ^= WIDGET_INV_BORDER;
 		markAsDirty();
 	}
 	sendCommand(_cmd, _state);
@@ -842,7 +812,6 @@ void RadiobuttonWidget::setState(bool state, bool setGroup) {
 
 	if (_state != state) {
 		_state = state;
-		//_flags ^= WIDGET_INV_BORDER;
 		markAsDirty();
 	}
 	sendCommand(_cmd, _state);
@@ -857,7 +826,8 @@ void RadiobuttonWidget::drawWidget() {
 SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip, uint32 cmd)
 	: Widget(boss, x, y, w, h, scale, tooltip), CommandSender(boss),
 	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false), _labelWidth(0) {
-	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
+	// WIDGET_HOOK_DRAG: prevent hooking by a container as we need drag for ourselves
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_HOOK_DRAG);
 	_type = kSliderWidget;
 }
 
@@ -868,7 +838,8 @@ SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 SliderWidget::SliderWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip, uint32 cmd)
 	: Widget(boss, name, tooltip), CommandSender(boss),
 	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false), _labelWidth(0) {
-	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
+	// WIDGET_HOOK_DRAG: prevent hooking by a container as we need drag for ourselves
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_HOOK_DRAG);
 	_type = kSliderWidget;
 }
 

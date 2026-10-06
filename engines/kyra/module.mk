@@ -72,7 +72,6 @@ MODULE_OBJS := \
 	sound/sound_lok.o \
 	sound/drivers/adlib.o \
 	sound/drivers/audstream.o \
-	sound/drivers/halestorm.o \
 	sound/drivers/pcspeaker_v2.o \
 	text/text.o \
 	text/text_lok.o \
@@ -127,6 +126,7 @@ MODULE_OBJS += \
 	graphics/screen_eob_pc98.o \
 	graphics/screen_eob_segacd.o \
 	graphics/screen_eob_towns.o \
+	gui/automap_eob.o \
 	gui/gui_eob.o \
 	gui/gui_eob_segacd.o \
 	gui/saveload_eob.o \

@@ -69,6 +69,8 @@ Common::Error FoolEngine::run() {
 		version = kFool11;
 	} else if (versionStr == "v2.0") {
 		version = kFool20;
+	} else if (versionStr == "v2.0.1") {
+		version = kFool201;
 	} else if (versionStr == "v3.0") {
 		version = kFool30;
 	}

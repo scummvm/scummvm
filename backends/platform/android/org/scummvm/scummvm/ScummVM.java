@@ -23,6 +23,7 @@ package org.scummvm.scummvm;
 
 import android.content.res.AssetManager;
 import android.graphics.PixelFormat;
+import android.media.midi.MidiDevice;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -128,6 +129,12 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 	abstract protected void setCurrentGame(String target);
 	/** @noinspection unused */ @Keep
 	abstract protected void notifyHTTPService(int localPort, boolean minimal);
+	/** @noinspection unused */ @Keep
+	abstract protected TextToSpeechManager getTTSManager();
+	/** @noinspection unused */ @Keep
+	abstract protected String[] getMIDIDevices();
+	/** @noinspection unused */ @Keep
+	abstract protected MidiDevice openMIDIDevice(int device, int[] portId);
 	/** @noinspection unused */ @Keep
 	abstract protected String[] getSysArchives();
 	/** @noinspection unused */ @Keep

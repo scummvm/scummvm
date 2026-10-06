@@ -33,9 +33,11 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/images.h"
+#include "director/channel.h"
 #include "director/movie.h"
 #include "director/picture.h"
 #include "director/score.h"
+#include "director/sprite.h"
 #include "director/types.h"
 #include "director/window.h"
 #include "director/castmember/bitmap.h"
@@ -1100,10 +1102,24 @@ void BitmapCastMember::setField(int field, const Datum &d) {
 			// This is a random PICT from somewhere,
 			// set the external flag so we remap the palette.
 			_external = true;
-			// Remove the canvas-space transformation
-			_regX -= _initialRect.left;
-			_regY -= _initialRect.top;
+			// Recenter the registration point on the new image, rounded to nearest.
 			_initialRect = Common::Rect(_picture->_surface.w, _picture->_surface.h);
+			_regX = (_picture->_surface.w + 1) / 2;
+			_regY = (_picture->_surface.h + 1) / 2;
+
+			// The castId is unchanged, so resize the sprites showing this cast.
+			Movie *movie = g_director->getCurrentMovie();
+			Score *score = movie ? movie->getScore() : nullptr;
+			if (score) {
+				for (uint i = 0; i < score->_channels.size(); i++) {
+					Channel *ch = score->_channels[i];
+					if (ch && ch->_sprite && ch->_sprite->_cast == this && !ch->_sprite->_stretch) {
+						ch->_sprite->_width = _initialRect.width();
+						ch->_sprite->_height = _initialRect.height();
+						ch->setDirty();
+					}
+				}
+			}
 		} else {
 			warning("BitmapCastMember::setField(): Wrong Datum type %d for kThePicture (or nullptr)", d.type);
 		}

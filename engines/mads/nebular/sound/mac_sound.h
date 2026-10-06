@@ -32,25 +32,86 @@ class MacResourceProvider;
 
 namespace Sound {
 
+enum MacSoundOperation {
+	kMacSoundPlay = 1,
+	kMacSoundPlayRepeated = 2,
+	kMacSoundChangeVolume = 3,
+	kMacSoundPlayPriority = 4,
+	kMacSoundPlayRepeatedPriority = 5,
+	kMacSoundPlayPriorityVolume = 6,
+	kMacSoundPlayRepeatedPriorityVolume = 7,
+	kMacSoundPlayVolume = 8,
+	kMacSoundPlayRepeatedVolume = 9,
+	kMacSoundWait = 10,
+	kMacSoundHalt = 11,
+	kMacSoundHaltAll = 12,
+	kMacSoundRampDown = 13
+};
+
+struct MacSoundCommand {
+	MacSoundOperation operation;
+	int resourceID;
+	int argument1;
+	int argument2;
+	int argument3;
+};
+
+struct MacSoundVoice {
+	Audio::SoundHandle handle;
+	int resourceID;
+	int volume;
+	bool priority;
+	bool delayed;
+	uint32 delayEndTick;
+	MacSoundCommand delayedCommand;
+
+	MacSoundVoice();
+};
+
+struct MacSoundQueueEntry {
+	bool used;
+	MacSoundCommand command;
+
+	MacSoundQueueEntry();
+};
+
 class MacSoundDriver : public SoundDriver {
 private:
 	MacResourceProvider *_resources;
 	int _section;
-	Common::Array<Audio::SoundHandle> _handles;
-	int _volume = Audio::Mixer::kMaxChannelVolume;
-	bool _paused = false;
+	MacSoundVoice _voices[2];
+	MacSoundQueueEntry _queue[4];
+	int _volume;
+	bool _paused;
+	bool _ramping;
+	int _rampVolume;
+	uint32 _serviceTick;
+	uint32 _pausedAtTick;
 
 	void setPaused(bool paused);
-	void discardFinishedSounds();
+	void updateVoice(MacSoundVoice &voice);
+	MacSoundVoice *selectVoice();
+	int effectiveVolume(int volume) const;
+	void setVoiceVolume(MacSoundVoice &voice, int volume);
+	void play(const MacSoundCommand &command);
+	void wait(const MacSoundCommand &command);
+	void halt(int resourceID);
+	void enqueue(const MacSoundCommand &command);
+	void execute(const MacSoundCommand &command);
+	MacSoundCommand mapCommand(int commandId, int param) const;
 
 public:
 	MacSoundDriver(Audio::Mixer *mixer, MacResourceProvider *resources, int section);
 
 	int command(int commandId, int param) override;
 	int stop() override;
-	int poll() override { return 0; }
+	int poll() override;
 	void noise() override {}
 	void setVolume(int volume) override;
+	void commandMacintosh(const MacSoundCommand &command);
+	void queueMacintosh(const MacSoundCommand &command);
+	void dispatchQueue();
+	void service(uint32 tick);
 };
 
 class MacSoundManager : public SoundManager {
@@ -59,13 +120,22 @@ private:
 
 protected:
 	void loadDriver(int sectionNum) override;
+	MacSoundDriver *getMacintoshDriver() const;
 
 public:
 	MacSoundManager(Audio::Mixer *mixer, bool &soundFlag, MacResourceProvider *resources) :
 			SoundManager(mixer, soundFlag), _resources(resources) {}
 
 	void validate() override {}
+	void startQueuedCommands() override;
+	void commandMacintosh(const MacSoundCommand &cmd, bool queued);
+	void service(uint32 tick);
 };
+
+bool commandMacintoshSound(const MacSoundCommand &cmd, bool queued = false);
+bool commandMacintoshSound(MacSoundOperation operation, int resourceID,
+	int argument1 = 0, int argument2 = 0, int argument3 = 0,
+	bool queued = false);
 
 } // namespace Sound
 } // namespace RexNebular

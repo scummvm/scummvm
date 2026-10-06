@@ -166,31 +166,6 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 			  FROM_LE_32(ah->downMin), FROM_LE_32(ah->downMax));
 	}
 
-#if defined(USE_ENET) && defined(USE_BASIC_NET)
-	if (_enableHECompetitiveOnlineMods) {
-		// Mod for Backyard Baseball 2001 online competitive play: allow baserunners to be
-		// turned around while they're jogging to the next base on a pop-up.
-		// The game checks if the runner is forced to the next base (i.e. there's a runner on the base behind them),
-		// and if they are then basepath clicks to turn them around have no effect.
-		// Here we return 0 (false) under certain conditions, so these clicks now have the desired effect.
-		if (_game.id == GID_BASEBALL2001 &&
-			_currentRoom == 3 && currentScriptSlotIs(2076) &&  // This is the script that handles basepath clicks
-			readVar(399) == 1 &&  // This checks that we're playing online
-			readVar(ROOM_VAL(11)) == 1 &&  // The ball is a pop-up
-			readVar(291) < 2 &&  // Less than two outs
-			// This is the array of baserunner status info, and the value in position 8 specifies whether the runner is forced
-			array == 295 && idx1 == 8) {
-				int runnerIdx = readVar(342);
-				if (readArray(array, runnerIdx, 6) == 1 && readArray(array, runnerIdx, 7) == 1) {
-					// Bugfix: if runner is going forward to 1st base, return 1 so they can't turn around
-					return 1;
-				} else {
-					return 0;
-				}
-		}
-	}
-#endif
-
 	const int offset = (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
 		(idx2 - FROM_LE_32(ah->downMin)) + (idx1 - FROM_LE_32(ah->acrossMin));
 

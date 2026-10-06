@@ -22,15 +22,15 @@
 #ifndef NANCY_ACTION_PASSWORDPUZZLE_H
 #define NANCY_ACTION_PASSWORDPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
-class PasswordPuzzle : public RenderActionRecord {
+class PasswordPuzzle : public PuzzleRecord {
 public:
 	enum SolveState { kNotSolved, kFailed, kSolved };
-	PasswordPuzzle() : RenderActionRecord(7) {}
+	PasswordPuzzle() : PuzzleRecord(7) {}
 	virtual ~PasswordPuzzle();
 
 	void init() override;
@@ -47,12 +47,8 @@ public:
 	// _screenPosition 0x24
 	Common::Array<Common::String> _names;
 	Common::Array<Common::String> _passwords;
-	SceneChangeWithFlag _solveExitScene;
-	SoundDescription _solveSound;
 	SceneChangeWithFlag _failExitScene;
 	SoundDescription _failSound;
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 
 	Common::String _playerNameInput;
 	Common::String _playerPasswordInput;

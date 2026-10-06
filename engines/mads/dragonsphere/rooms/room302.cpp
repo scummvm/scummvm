@@ -483,11 +483,8 @@ static void guard_leave_screen() {
 }
 
 static void handle_anim_death() {
-	int death_reset_frame;
-
 	if (kernel_anim[aa[0]].frame != local->death_frame) {
 		local->death_frame = kernel_anim[aa[0]].frame;
-		death_reset_frame = -1;
 
 		switch (local->death_frame) {
 		case 6:
@@ -512,11 +509,6 @@ static void handle_anim_death() {
 			}
 			kernel.force_restart = true;
 			break;
-		}
-
-		if (death_reset_frame >= 0) {
-			kernel_reset_animation(aa[0], death_reset_frame);
-			local->death_frame = death_reset_frame;
 		}
 	}
 }
@@ -600,7 +592,7 @@ static void room_302_init() {
 		player_first_walk(PLAYER_X_FROM_303, PLAYER_Y_FROM_303, FACING_EAST,
 		                  WALK_TO_X_FROM_303, WALK_TO_Y_FROM_303, FACING_EAST, true);
 
-	} else if ((previous_room == 301) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(PLAYER_X_FROM_301, PLAYER_Y_FROM_301, FACING_WEST,
 		                  WALK_TO_X_FROM_301, WALK_TO_Y_FROM_301, FACING_WEST, true);
 	}

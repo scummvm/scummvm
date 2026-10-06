@@ -140,6 +140,10 @@ DirectorPlotData Channel::getPlotData() {
 		// Add override flag for 1-bit images
 		pd.oneBitImage = true;
 	}
+	// Videos are rendered as an overlay, ink doesn't affect them.
+	if (_sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
+		pd.ink = kInkTypeCopy;
+	}
 
 	if (!pd.srf && _sprite->_spriteType != kBitmapSprite) {
 		// Shapes come colourized from macDrawPixel
@@ -470,9 +474,6 @@ void Channel::setCast(CastMemberID memberID) {
 
 	bool hasChanged = _sprite->_castId != memberID;
 
-	// Save bbox before swapping cast so we can restore visual position afterward.
-	Common::Rect oldBbox = getBbox();
-
 	// Replace the cast member in the sprite.
 	// Only change the dimensions if the "stretch" flag is set,
 	// indicating that the sprite has already been warped away from cast
@@ -480,14 +481,6 @@ void Channel::setCast(CastMemberID memberID) {
 	// dimensions of the sprite, -then- change the cast ID, and expect
 	// those custom dimensions to stick around.
 	_sprite->setCast(memberID, !_sprite->_stretch);
-
-	// If the new cast member is a film loop, adjust _startPoint so the sprite
-	// stays at the same visual position regardless of registration offset changes.
-	if (hasChanged && _sprite->_cast && _sprite->_cast->_type == kCastFilmLoop) {
-		Common::Rect newBbox = getBbox();
-		_sprite->_startPoint.x += oldBbox.left - newBbox.left;
-		_sprite->_startPoint.y += oldBbox.top - newBbox.top;
-	}
 
 	// Duplicate of the special cases in setClean.
 	// Maybe it makes sense to force setClean to use setCast instead?
@@ -772,8 +765,10 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 			_widget->_priority = _priority;
 			_widget->draw();
 
-			if (_sprite->_cast->_type == kCastText || _sprite->_cast->_type == kCastButton) {
-
+			// Only auto-expanding text (and buttons) size the sprite from the widget:
+			// fixed text would re-add its shadow chrome each rebuild and creep larger.
+			if (_sprite->_cast->_type == kCastButton ||
+					(_sprite->_cast->_type == kCastText && !((Graphics::MacText *)_widget)->getFixDims())) {
 				_sprite->_width = _widget->_dims.width();
 				_sprite->_height = _widget->_dims.height();
 			}

@@ -303,7 +303,7 @@ static void room_404_init() {
 		// WORKAROUND: Invalid line from the original commented out
 		//kernel_reset_animation(aa[25], 30);
 
-	} else if (previous_room == 120 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		ss[fx_dune_1] = kernel_load_series(kernel_name('x', 0), false);
 		ss[fx_dune_2] = kernel_load_series(kernel_name('x', 3), false);
 		ss[fx_lean_to] = kernel_load_series(kernel_name('x', 1), false);

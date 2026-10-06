@@ -881,6 +881,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("actors.dcp", "170c7ade10edd7ff6d24b16f2eecd818", 453328582,
 					"stageplay.dcp", "ed67b4d6e35c19597241eb1d863aa315", 226453373), Common::EN_ANY, GF_3D, WME_1_8_10),
 
+	// Dark Fall: Lost Souls (GOG)
+	WME_WINENTRY("darkfallls", "",
+		WME_ENTRY2s("actors.dcp", "170c7ade10edd7ff6d24b16f2eecd818", 453328582,
+					"stageplay.dcp", "64b8b1eff4ac386f61776fad63a1a177", 226458563), Common::EN_ANY, GF_3D, WME_1_8_10),
+
 	// Dark Fall: Lost Souls (German)
 	WME_WINENTRY("darkfallls", "",
 		WME_ENTRY2s("actors.dcp", "17df9d381d49100d2bd79c5f3eefe53c", 454049405,
@@ -894,7 +899,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Twilight: Dark Summer (Ario) (Persian)
 	WME_WINENTRY("darksummer", "",
-		WME_ENTRY1s("data.dcp", "da1142983240a5bb62c32f79a863eac5", 1030873185), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "da1142983240a5bb62c32f79a863eac5", 1030873185), Common::FA_IRN, GF_3D, WME_1_9_3),
 
 	// Dead City (Czech) (25.06.2004)
 	WME_WINENTRY("deadcity", "v1.0.1",

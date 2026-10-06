@@ -148,7 +148,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa2.emc", "d0a8eb184e813cf337840bb0e5270ee8", 40452),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_1
@@ -163,7 +163,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa2.emc", "d0a8eb184e813cf337840bb0e5270ee8", 40452),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_1
@@ -181,7 +181,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa1.emc", "d0a8eb184e813cf337840bb0e5270ee8", 33515),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_1
@@ -199,7 +199,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa2.emc", "d0a8eb184e813cf337840bb0e5270ee8", 40452),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_1
@@ -218,7 +218,22 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa2.emc", "c04b7b6424c02d5da0719bdf648003a1", 67129),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE,
+			GUIO0()
+		},
+		EngineVersion::V2_0
+	},
+	{
+		{
+			"secta",
+			"Агенты 008: Месть скарабея",
+			AD_ENTRY3s(
+				"Fondos/MUSEO_O.ANI", "148b89fc676589ce9a05f0915d881122", 10445,
+				"Mapas/mapa1.emc", "c04b7b6424c02d5da0719bdf648003a1", 36530,
+				"Mapas/mapa2.emc", "c04b7b6424c02d5da0719bdf648003a1", 67129),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_0
@@ -236,7 +251,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa1.emc", "c04b7b6424c02d5da0719bdf648003a1", 36530),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_0
@@ -251,7 +266,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa1.emc", "c04b7b6424c02d5da0719bdf648003a1", 36530),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_0
@@ -269,7 +284,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa2.emc", "c04b7b6424c02d5da0719bdf648003a1", 67129),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_0
@@ -289,7 +304,23 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_CD,
+			ADGF_USEEXTRAASTITLE | ADGF_CD,
+			GUIO1(GAMEOPTION_TEXTURE_FILTER)
+		},
+		EngineVersion::V1_0
+	},
+	{
+		// Installed with music extracted manually
+		{
+			"aventuradecine",
+			"Агенты 008: Кинопрерии",
+			AD_ENTRY2s(
+				"oeste.emc", "b53b0acf8116de5fafa9a1082172d5ee", 205321591,
+				"terror.emc", "e316a6365fe424eb51c8d92da8b7892c", 185677437
+			),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_USEEXTRAASTITLE,
 			GUIO1(GAMEOPTION_TEXTURE_FILTER)
 		},
 		EngineVersion::V1_0
@@ -306,7 +337,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("terror.emc", "dc9357ee618bff160e2e2afa168ba913", 170113868),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_CD,
+			ADGF_USEEXTRAASTITLE | ADGF_CD,
 			GUIO1(GAMEOPTION_TEXTURE_FILTER)
 		},
 		EngineVersion::V1_0
@@ -323,7 +354,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("oeste.emc", "b4c1084557d4cfbae336f0e741ec9e9f", 183099320),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_CD,
+			ADGF_USEEXTRAASTITLE | ADGF_CD,
 			GUIO1(GAMEOPTION_TEXTURE_FILTER)
 		},
 		EngineVersion::V1_0

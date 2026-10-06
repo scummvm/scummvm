@@ -548,10 +548,24 @@ static void tokenizeTownScriptLine(const Common::String &line, Common::Array<Com
 		if (line[i] == '"') {
 			++i;
 			Common::String token;
-			while (i < line.size() && line[i] != '"')
+			bool hasEmbeddedQuote = false;
+			while (i < line.size()) {
+				const bool isClosingQuote = line[i] == '"' &&
+					(i + 1 == line.size() || line[i + 1] == ' ' || line[i + 1] == '\t');
+				if (isClosingQuote)
+					break;
+
+				// French TEXT records contain quotes inside underscore-separated values.
+				// The native word reader keeps them and strips only the outer quote pair.
+				if (line[i] == '"')
+					hasEmbeddedQuote = true;
 				token += line[i++];
+			}
 			if (i < line.size() && line[i] == '"')
 				++i;
+			if (hasEmbeddedQuote)
+				debugC(3, kDebugGeneral, "Harvester: TownScript token contains embedded quote value='%s'",
+					token.c_str());
 			tokens.push_back(Common::move(token));
 			continue;
 		}
@@ -2406,6 +2420,18 @@ bool Script::consumePlayerCombatResourceUnit(int loadout) {
 	}
 
 	return adjustPlayerCombatResourceCount(loadout, -1, maxCount, "PLAYER_ATTACK");
+}
+
+bool Script::setPlayerCombatResourceCount(int loadout, int count) {
+	int *currentCount = getPlayerCombatResourceCountPtr(loadout);
+	const int maxCount = resolveCombatResourceDisplayMax(loadout);
+	if (!currentCount || maxCount <= 0)
+		return false;
+
+	const int clampedCount = CLIP<int>(count, 0, maxCount);
+	const bool changed = *currentCount != clampedCount;
+	*currentCount = clampedCount;
+	return changed;
 }
 
 int *Script::getPlayerCombatResourceCountPtr(int loadout) {

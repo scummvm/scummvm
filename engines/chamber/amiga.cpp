@@ -100,7 +100,7 @@ static AmigaResEnt amiga_res[] = {
 	{ "ICONE.BIN", &icone_data, 117284,  2752, 116838,  2752 },
 	{ "LUTIN.BIN", &lutin_data, 120036,  2800, 119594,  2800 },
 };
-static const int kAmigaNumRes = sizeof(amiga_res) / sizeof(amiga_res[0]);
+static const int kAmigaNumRes = ARRAYSIZE(amiga_res);
 
 // Copy an exe-embedded text bank into its fixed engine buffer, clamped to the
 // buffer size and to the space up to the next bank so we never overrun either.

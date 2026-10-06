@@ -38,8 +38,22 @@
 |     const int textPitch    4+9*4+24(sp)
 | );
 SYM(asmDrawStripToScreen):
-// TODO: __FASTCALL__
 	movem.l	d2-d7/a2-a4,-(sp)		| 9 × 4 = 36 bytes
+#ifdef __FASTCALL__
+						| a0: src32
+						| a1: dst32
+	move.l	(4+9*4,sp),a2			| a2: text32
+
+	lsl.l	#2,d2				| vsPitch
+	move.l	d2,a3				| a3: vsPitch in bytes
+
+	move.l	(4+9*4+4,sp),d2			| textPitch
+	lsl.l	#2,d2				|
+	move.l	d2,a4				| a4: textPitch in bytes
+
+	move.l	d1,d5				| width
+	move.l	d0,d7				| height
+#else
 	move.l	(4+9*4+8,sp),a0			| a0: src32
 	move.l	(4+9*4+12,sp),a1		| a1: dst32
 	move.l	(4+9*4+20,sp),a2		| a2: text32
@@ -53,12 +67,14 @@ SYM(asmDrawStripToScreen):
 	move.l	d0,a4				| a4: textPitch in bytes
 
 	move.l	(4+9*4+4,sp),d5			| width
+	move.l	(4+9*4,sp),d7			| height
+#endif
 	lsr.l	#2,d5				|
 	beq.b	3f
 	subq.l	#1,d5				| d5.w: width/4 - 1 for dbra
 
 	// for (int h = height * m; h > 0; --h) {
-	move.l	(4+9*4,sp),d7
+	tst.l	d7
 	beq.b	3f
 
 	move.w	d5,-(sp)

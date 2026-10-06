@@ -22,7 +22,6 @@
 #ifndef NUVIE_PATHFINDER_SEEK_PATH_H
 #define NUVIE_PATHFINDER_SEEK_PATH_H
 
-#include "ultima/shared/std/containers.h"
 #include "ultima/nuvie/pathfinder/path.h"
 
 namespace Ultima {

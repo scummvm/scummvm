@@ -43,8 +43,14 @@
 |	const byte *_shadowTable, /* unused */
 |	const uint16 *_palette);
 SYM(ByleRLEDecode_Scaled_Mode0_SMask):
-// TODO: __FASTCALL__
 	link	a6,#-sizeof_local_vars		| a6: frame pointer
+#ifdef __FASTCALL__
+	move.l	a0,(arg_pcompData,a6)
+	move.l	a1,(arg_srcPtr,a6)
+	move.w	d2,(arg_height,a6)
+	move.b	d0,(arg_scaleX,a6)
+	move.b	d1,(arg_scaleY,a6)
+#endif
 	movem.l	d2-d7/a2-a5,-(sp)
 
 	// registers taken so far:

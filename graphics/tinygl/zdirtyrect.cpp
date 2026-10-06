@@ -171,8 +171,8 @@ void GLContext::presentBufferDirtyRects(Common::List<Common::Rect> &dirtyAreas) 
 		for (RectangleIterator it1 = rectangles.begin(); it1 != rectangles.end(); ++it1) {
 			for (RectangleIterator it2 = rectangles.begin(); it2 != rectangles.end();) {
 				if (it1 != it2) {
-					if ((*it1).rectangle.intersects((*it2).rectangle)) {
-						(*it1).rectangle.extend((*it2).rectangle);
+					if (it1->rectangle.intersects(it2->rectangle)) {
+						it1->rectangle.extend(it2->rectangle);
 						it2 = rectangles.erase(it2);
 						restartMerge = true;
 					} else {
@@ -189,7 +189,7 @@ void GLContext::presentBufferDirtyRects(Common::List<Common::Rect> &dirtyAreas) 
 		RectangleIterator it2 = it1;
 		it2++;
 		while (it2 != rectangles.end()) {
-			if ((*it1).rectangle.contains((*it2).rectangle)) {
+			if (it1->rectangle.contains(it2->rectangle)) {
 				it2 = rectangles.erase(it2);
 			} else {
 				++it2;

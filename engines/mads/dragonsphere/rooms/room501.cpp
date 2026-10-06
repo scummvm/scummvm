@@ -73,7 +73,7 @@ static void room_501_init() {
 		                  PLAYER_X_FROM_120, PLAYER_Y_FROM_120, FACING_WEST, false);
 		player_walk_trigger(ROOM_501_BYE + 2);
 
-	} else if ((previous_room == 120) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(PLAYER_X_FROM_120, PLAYER_Y_FROM_120, FACING_WEST,
 		                  PLAYER_X_FROM_502, PLAYER_Y_FROM_502, FACING_NORTHWEST, false);
 		player_walk_trigger(ROOM_501_BYE);

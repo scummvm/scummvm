@@ -45,6 +45,46 @@ const Graphics::TTFMap ttfFamily[] = {
 	{nullptr, 0}
 };
 
+const Graphics::TTFMap ttfFamilyJapanese[] = {
+	{"NotoSansJP-Regular.otf", Graphics::kMacFontRegular},
+	{"NotoSansJP-Bold.otf", Graphics::kMacFontBold},
+	{nullptr, 0}
+};
+
+const Graphics::TTFMap ttfFamilyKorean[] = {
+	{"NotoSansKR-Regular.otf", Graphics::kMacFontRegular},
+	{"NotoSansKR-Bold.otf", Graphics::kMacFontBold},
+	{nullptr, 0}
+};
+
+const Graphics::TTFMap ttfFamilySimplifiedChinese[] = {
+	{"NotoSansSC-Regular.otf", Graphics::kMacFontRegular},
+	{"NotoSansSC-Bold.otf", Graphics::kMacFontBold},
+	{nullptr, 0}
+};
+
+const Graphics::TTFMap ttfFamilyTraditionalChinese[] = {
+	{"NotoSansTC-Regular.otf", Graphics::kMacFontRegular},
+	{"NotoSansTC-Bold.otf", Graphics::kMacFontBold},
+	{nullptr, 0}
+};
+
+static const Graphics::TTFMap *getTTFFamily() {
+#ifdef USE_TRANSLATION
+	const Common::String language = TransMan.getCurrentLanguage();
+	if (language == "ja")
+		return ttfFamilyJapanese;
+	if (language == "ko")
+		return ttfFamilyKorean;
+	if (language == "zh_Hans")
+		return ttfFamilySimplifiedChinese;
+	if (language == "zh_Hant" || language == "zh")
+		return ttfFamilyTraditionalChinese;
+#endif
+
+	return ttfFamily;
+}
+
 RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip)
 	: Widget(boss, x, y, w, h, scale, tooltip), CommandSender(nullptr)  {
 
@@ -66,7 +106,8 @@ RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, cons
 }
 
 void RichTextWidget::init() {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_TRACK_MOUSE | WIDGET_DYN_TOOLTIP | WIDGET_WANT_TICKLE | WIDGET_RETAIN_FOCUS);
+	// WIDGET_HOOK_DRAG: prevent hooking by a container as we need drag for ourselves
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_TRACK_MOUSE | WIDGET_DYN_TOOLTIP | WIDGET_HOOK_DRAG);
 
 	_type = kRichTextWidget;
 
@@ -99,6 +140,8 @@ RichTextWidget::~RichTextWidget() {
 	if (_cachedTextSurface)
 		_cachedTextSurface->free();
 	delete _cachedTextSurface;
+
+	unregisterTickleWidget(this);
 	delete _fluidScroller;
 }
 
@@ -106,7 +149,7 @@ void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
 	if (!_verticalScroll->isVisible())
 		return;
 	_fluidScroller->handleMouseWheel(direction);
-	applyScrollPos();
+	registerTickleWidget(this);
 }
 
 void RichTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -115,18 +158,13 @@ void RichTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (_isDragging)
+	_mouseDownY = _mouseDownStartY = 0;
+	if (_isDragging) {
 		_fluidScroller->startFling();
-
-	// Allow some tiny finger slipping
-	if (ABS(_mouseDownY - _mouseDownStartY) > 5 || _isDragging) {
-		_mouseDownY = _mouseDownStartY = 0;
+		registerTickleWidget(this);
 		_isDragging = false;
-
 		return;
 	}
-
-	_mouseDownY = _mouseDownStartY = 0;
 	_isDragging = false;
 
 	if (!_txtWnd)
@@ -136,6 +174,14 @@ void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 	if (link.hasPrefixIgnoreCase("http"))
 		g_system->openUrl(link);
+}
+
+void RichTextWidget::cancelDrag() {
+	if (_isDragging) {
+		_fluidScroller->stopAnimation();
+	}
+	_mouseDownY = _mouseDownStartY = 0;
+	_isDragging = false;
 }
 
 void RichTextWidget::handleMouseMoved(int x, int y, int button) {
@@ -166,8 +212,15 @@ void RichTextWidget::handleMouseMoved(int x, int y, int button) {
 }
 
 void RichTextWidget::handleTickle() {
-	if (_fluidScroller->update(g_system->getMillis(), _scrollPos))
+	if (_fluidScroller->update(g_system->getMillis(), _scrollPos)) {
 		applyScrollPos();
+	} else {
+		unregisterTickleWidget(this);
+	}
+}
+
+void RichTextWidget::cancelTickle() {
+	_fluidScroller->stopAnimation();
 }
 
 void RichTextWidget::applyScrollPos() {
@@ -276,7 +329,7 @@ void RichTextWidget::createWidget() {
 #endif
 
 	if (useTTF)
-		newId = wm->_fontMan->registerTTFFont(ttfFamily);
+		newId = wm->_fontMan->registerTTFFont(getTTFFamily());
 	else
 		newId = Graphics::kMacFontNewYork;
 
@@ -390,11 +443,6 @@ void RichTextWidget::markAsDirty() {
 	if (_verticalScroll->isVisible()) {
 		_verticalScroll->markAsDirty();
 	}
-}
-
-void RichTextWidget::lostFocusWidget() {
-	_mouseDownY = _mouseDownStartY = 0;
-	_isDragging = false;
 }
 
 bool RichTextWidget::containsWidget(Widget *w) const {

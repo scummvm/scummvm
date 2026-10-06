@@ -398,7 +398,7 @@ void room_103_init() {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, 1);
 		kernel_seq_depth(seq[fx_door], 14);
 
-	} else if ((previous_room == 105) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x                = PLAYER_X_FROM_105;
 		player.y                = PLAYER_Y_FROM_105;
 		player.facing           = FACING_WEST;
@@ -408,7 +408,7 @@ void room_103_init() {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, 6);
 		kernel_seq_depth(seq[fx_door], 14);
 
-	} else if (previous_room == KERNEL_RESTORING_GAME) {
+	} else {
 		if (local->top_of_stand == YES_LEFT) {
 			player.walker_visible = false;
 			aa[5]                 = kernel_run_animation(kernel_name('w', 3), 0);
@@ -1134,148 +1134,140 @@ void room_103_parser() {
 			if (global[prompter_stand_status] == PROMPT_LEFT) {
 				switch (kernel.trigger) {
 				case 0:
-					if (global[prompter_stand_status] == PROMPT_LEFT) {
-						player.commands_allowed = false;
-						player.walker_visible   = false;
-						aa[0]                   = kernel_run_animation(kernel_name('s', 1), ROOM_103_DONE_MOVING_PROMPT);
-						player.clock            = kernel.clock;
-						kernel_synch(KERNEL_ANIM, aa[0], KERNEL_PLAYER, 0);
-						kernel_seq_delete(seq[fx_steps]);
-					}
+					player.commands_allowed = false;
+					player.walker_visible   = false;
+					aa[0]                   = kernel_run_animation(kernel_name('s', 1), ROOM_103_DONE_MOVING_PROMPT);
+					player.clock            = kernel.clock;
+					kernel_synch(KERNEL_ANIM, aa[0], KERNEL_PLAYER, 0);
+					kernel_seq_delete(seq[fx_steps]);
 					break;
 
 				case ROOM_103_DONE_MOVING_PROMPT:
-					if (global[prompter_stand_status] == PROMPT_LEFT) {
-						seq[fx_rail_pieces] = kernel_seq_stamp(ss[fx_rail_pieces], false, 1);
-						kernel_seq_depth(seq[fx_rail_pieces], 1);
-						seq[fx_steps] = kernel_seq_stamp(ss[fx_steps], false, 1);
-						kernel_seq_depth(seq[fx_steps], 4);
-						kernel_seq_loc(seq[fx_steps], PROMPT_RIGHT_X, PROMPT_RIGHT_Y);
-						kernel_synch(KERNEL_SERIES, seq[fx_steps], KERNEL_ANIM, aa[0]);
-						global[prompter_stand_status] = PROMPT_RIGHT;
-						player.commands_allowed       = true;
-						player.walker_visible         = true;
-						player.x                      = AFTER_STEPS_FROM_LEFT_X;
-						player.y                      = AFTER_STEPS_FROM_LEFT_Y;
-						player_demand_facing(FACING_EAST);
-						kernel_synch(KERNEL_PLAYER, 0, KERNEL_ANIM, aa[0]);
+					seq[fx_rail_pieces] = kernel_seq_stamp(ss[fx_rail_pieces], false, 1);
+					kernel_seq_depth(seq[fx_rail_pieces], 1);
+					seq[fx_steps] = kernel_seq_stamp(ss[fx_steps], false, 1);
+					kernel_seq_depth(seq[fx_steps], 4);
+					kernel_seq_loc(seq[fx_steps], PROMPT_RIGHT_X, PROMPT_RIGHT_Y);
+					kernel_synch(KERNEL_SERIES, seq[fx_steps], KERNEL_ANIM, aa[0]);
+					global[prompter_stand_status] = PROMPT_RIGHT;
+					player.commands_allowed       = true;
+					player.walker_visible         = true;
+					player.x                      = AFTER_STEPS_FROM_LEFT_X;
+					player.y                      = AFTER_STEPS_FROM_LEFT_Y;
+					player_demand_facing(FACING_EAST);
+					kernel_synch(KERNEL_PLAYER, 0, KERNEL_ANIM, aa[0]);
 
-						kernel_delete_dynamic(local->prompt_1);
-						kernel_delete_dynamic(local->prompt_2);
-						kernel_delete_dynamic(local->prompt_3);
-						kernel_delete_dynamic(local->prompt_5);
-						kernel_delete_dynamic(local->floor_l_1);
-						kernel_delete_dynamic(local->floor_l_2);
-						local->prompt_1 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
-						                  DYN_PROMPT_RIGHT_1_X, DYN_PROMPT_RIGHT_1_Y,
-						                  DYN_PROMPT_X_SIZE_1, DYN_PROMPT_Y_SIZE_1);
-						kernel_dynamic_hot[local->prompt_1].prep = PREP_ON;
-						kernel_dynamic_walk(local->prompt_1, DYN_PROMPT_R_WALK_TO_X, DYN_PROMPT_R_WALK_TO_Y, FACING_NORTHWEST);
-						local->prompt_2 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
-						                  DYN_PROMPT_RIGHT_2_X, DYN_PROMPT_RIGHT_2_Y,
-						                  DYN_PROMPT_X_SIZE_2, DYN_PROMPT_Y_SIZE_2);
-						kernel_dynamic_hot[local->prompt_2].prep = PREP_ON;
-						kernel_dynamic_walk(local->prompt_2, DYN_PROMPT_R_WALK_TO_X, DYN_PROMPT_R_WALK_TO_Y, FACING_NORTHWEST);
-						local->prompt_3 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
-						                  DYN_PROMPT_RIGHT_3_X, DYN_PROMPT_RIGHT_3_Y,
-						                  DYN_PROMPT_X_SIZE_3, DYN_PROMPT_Y_SIZE_3);
-						kernel_dynamic_hot[local->prompt_3].prep = PREP_ON;
-						kernel_dynamic_walk(local->prompt_3, DYN_PROMPT_R_WALK_TO_X, DYN_PROMPT_R_WALK_TO_Y, FACING_NORTHWEST);
-						local->prompt_4 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
-						                  DYN_PROMPT_RIGHT_4_X, DYN_PROMPT_RIGHT_4_Y,
-						                  DYN_PROMPT_X_SIZE_4, DYN_PROMPT_Y_SIZE_4);
-						kernel_dynamic_hot[local->prompt_4].prep = PREP_ON;
-						kernel_dynamic_walk(local->prompt_4, DYN_PROMPT_R_WALK_TO_X, DYN_PROMPT_R_WALK_TO_Y, FACING_NORTHWEST);
-						local->prompt_5 = kernel_add_dynamic(words_prompter_s_stand, words_climb, SYNTAX_SINGULAR, KERNEL_NONE,
-						                  DYN_PROMPT_RIGHT_5_X, DYN_PROMPT_LEFT_5_Y,
-						                  DYN_PROMPT_X_SIZE_5, DYN_PROMPT_Y_SIZE_5);
-						kernel_dynamic_hot[local->prompt_5].prep = PREP_ON;
-						kernel_dynamic_walk(local->prompt_5, PROMPT_UP_RIGHT_X, PROMPT_UP_RIGHT_Y, FACING_SOUTHWEST);
-						kernel_dynamic_cursor(local->prompt_5, CURSOR_UP);
+					kernel_delete_dynamic(local->prompt_1);
+					kernel_delete_dynamic(local->prompt_2);
+					kernel_delete_dynamic(local->prompt_3);
+					kernel_delete_dynamic(local->prompt_5);
+					kernel_delete_dynamic(local->floor_l_1);
+					kernel_delete_dynamic(local->floor_l_2);
+					local->prompt_1 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_PROMPT_RIGHT_1_X, DYN_PROMPT_RIGHT_1_Y,
+						                DYN_PROMPT_X_SIZE_1, DYN_PROMPT_Y_SIZE_1);
+					kernel_dynamic_hot[local->prompt_1].prep = PREP_ON;
+					kernel_dynamic_walk(local->prompt_1, DYN_PROMPT_R_WALK_TO_X, DYN_PROMPT_R_WALK_TO_Y, FACING_NORTHWEST);
+					local->prompt_2 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_PROMPT_RIGHT_2_X, DYN_PROMPT_RIGHT_2_Y,
+						                DYN_PROMPT_X_SIZE_2, DYN_PROMPT_Y_SIZE_2);
+					kernel_dynamic_hot[local->prompt_2].prep = PREP_ON;
+					kernel_dynamic_walk(local->prompt_2, DYN_PROMPT_R_WALK_TO_X, DYN_PROMPT_R_WALK_TO_Y, FACING_NORTHWEST);
+					local->prompt_3 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_PROMPT_RIGHT_3_X, DYN_PROMPT_RIGHT_3_Y,
+						                DYN_PROMPT_X_SIZE_3, DYN_PROMPT_Y_SIZE_3);
+					kernel_dynamic_hot[local->prompt_3].prep = PREP_ON;
+					kernel_dynamic_walk(local->prompt_3, DYN_PROMPT_R_WALK_TO_X, DYN_PROMPT_R_WALK_TO_Y, FACING_NORTHWEST);
+					local->prompt_4 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_PROMPT_RIGHT_4_X, DYN_PROMPT_RIGHT_4_Y,
+						                DYN_PROMPT_X_SIZE_4, DYN_PROMPT_Y_SIZE_4);
+					kernel_dynamic_hot[local->prompt_4].prep = PREP_ON;
+					kernel_dynamic_walk(local->prompt_4, DYN_PROMPT_R_WALK_TO_X, DYN_PROMPT_R_WALK_TO_Y, FACING_NORTHWEST);
+					local->prompt_5 = kernel_add_dynamic(words_prompter_s_stand, words_climb, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_PROMPT_RIGHT_5_X, DYN_PROMPT_LEFT_5_Y,
+						                DYN_PROMPT_X_SIZE_5, DYN_PROMPT_Y_SIZE_5);
+					kernel_dynamic_hot[local->prompt_5].prep = PREP_ON;
+					kernel_dynamic_walk(local->prompt_5, PROMPT_UP_RIGHT_X, PROMPT_UP_RIGHT_Y, FACING_SOUTHWEST);
+					kernel_dynamic_cursor(local->prompt_5, CURSOR_UP);
 
-						local->floor_r_1 = kernel_add_dynamic(words_floor, words_walk_across, SYNTAX_SINGULAR, KERNEL_NONE,
-						                   DYN_FLOOR_R_1_X, DYN_FLOOR_R_1_Y,
-						                   DYN_FLOOR_R_1_X_SIZE, DYN_FLOOR_R_1_Y_SIZE);
-						kernel_dynamic_hot[local->floor_r_1].prep = PREP_ON;
-						kernel_dynamic_walk(local->floor_r_1, DYN_FLOOR_R_1_WALK_TO_X, DYN_FLOOR_R_1_WALK_TO_Y, 5);
-						local->floor_r_2 = kernel_add_dynamic(words_floor, words_walk_across, SYNTAX_SINGULAR, KERNEL_NONE,
-						                   DYN_FLOOR_R_2_X, DYN_FLOOR_R_2_Y,
-						                   DYN_FLOOR_R_2_X_SIZE, DYN_FLOOR_R_2_Y_SIZE);
-						kernel_dynamic_hot[local->floor_r_2].prep = PREP_ON;
-						kernel_dynamic_walk(local->floor_r_2, DYN_FLOOR_R_2_WALK_TO_X, DYN_FLOOR_R_2_WALK_TO_Y, 5);
-						kernel_load_variant(1);
-						room_103_adjust_rails(1);
-					}
+					local->floor_r_1 = kernel_add_dynamic(words_floor, words_walk_across, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_FLOOR_R_1_X, DYN_FLOOR_R_1_Y,
+						                DYN_FLOOR_R_1_X_SIZE, DYN_FLOOR_R_1_Y_SIZE);
+					kernel_dynamic_hot[local->floor_r_1].prep = PREP_ON;
+					kernel_dynamic_walk(local->floor_r_1, DYN_FLOOR_R_1_WALK_TO_X, DYN_FLOOR_R_1_WALK_TO_Y, 5);
+					local->floor_r_2 = kernel_add_dynamic(words_floor, words_walk_across, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_FLOOR_R_2_X, DYN_FLOOR_R_2_Y,
+						                DYN_FLOOR_R_2_X_SIZE, DYN_FLOOR_R_2_Y_SIZE);
+					kernel_dynamic_hot[local->floor_r_2].prep = PREP_ON;
+					kernel_dynamic_walk(local->floor_r_2, DYN_FLOOR_R_2_WALK_TO_X, DYN_FLOOR_R_2_WALK_TO_Y, 5);
+					kernel_load_variant(1);
+					room_103_adjust_rails(1);
 					break;
 				}
 			} else {
 				switch (kernel.trigger) {
 				case 0:
-					if (global[prompter_stand_status] == PROMPT_RIGHT) {
-						player.commands_allowed = false;
-						player.walker_visible   = false;
-						aa[0]                   = kernel_run_animation(kernel_name('s', 2), ROOM_103_DONE_MOVING_PROMPT);
-						player.clock            = kernel.clock;
-						kernel_synch(KERNEL_ANIM, aa[0], KERNEL_PLAYER, 0);
-						kernel_seq_delete(seq[fx_rail_pieces]);
-						kernel_seq_delete(seq[fx_steps]);
-					}
+					player.commands_allowed = false;
+					player.walker_visible   = false;
+					aa[0]                   = kernel_run_animation(kernel_name('s', 2), ROOM_103_DONE_MOVING_PROMPT);
+					player.clock            = kernel.clock;
+					kernel_synch(KERNEL_ANIM, aa[0], KERNEL_PLAYER, 0);
+					kernel_seq_delete(seq[fx_rail_pieces]);
+					kernel_seq_delete(seq[fx_steps]);
 					break;
 
 				case ROOM_103_DONE_MOVING_PROMPT:
-					if (global[prompter_stand_status] == PROMPT_RIGHT) {
-						seq[fx_steps] = kernel_seq_stamp(ss[fx_steps], false, 1);
-						kernel_seq_depth(seq[fx_steps], 4);
-						kernel_seq_loc(seq[fx_steps], PROMPT_LEFT_X, PROMPT_LEFT_Y);
-						kernel_synch(KERNEL_SERIES, seq[fx_steps], KERNEL_ANIM, aa[0]);
-						global[prompter_stand_status] = PROMPT_LEFT;
-						player.commands_allowed = true;
-						player.walker_visible   = true;
-						player.x                = AFTER_STEPS_FROM_RIGHT_X;
-						player.y                = AFTER_STEPS_FROM_RIGHT_Y;
-						player_demand_facing(FACING_WEST);
-						kernel_synch(KERNEL_PLAYER, 0, KERNEL_ANIM, aa[0]);
-						kernel_delete_dynamic(local->prompt_1);
-						kernel_delete_dynamic(local->prompt_2);
-						kernel_delete_dynamic(local->prompt_3);
-						kernel_delete_dynamic(local->prompt_4);
-						kernel_delete_dynamic(local->prompt_5);
-						kernel_delete_dynamic(local->floor_r_1);
-						kernel_delete_dynamic(local->floor_r_2);
-						local->prompt_1 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
-						                  DYN_PROMPT_LEFT_1_X, DYN_PROMPT_LEFT_1_Y,
-						                  DYN_PROMPT_X_SIZE_1, DYN_PROMPT_Y_SIZE_1);
-						kernel_dynamic_hot[local->prompt_1].prep = PREP_ON;
-						kernel_dynamic_walk(local->prompt_1, DYN_PROMPT_L_WALK_TO_X, DYN_PROMPT_L_WALK_TO_Y, FACING_NORTHWEST);
-						local->prompt_2 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
-						                  DYN_PROMPT_LEFT_2_X, DYN_PROMPT_LEFT_2_Y,
-						                  DYN_PROMPT_X_SIZE_2, DYN_PROMPT_Y_SIZE_2);
-						kernel_dynamic_hot[local->prompt_2].prep = PREP_ON;
-						kernel_dynamic_walk(local->prompt_2, DYN_PROMPT_L_WALK_TO_X, DYN_PROMPT_L_WALK_TO_Y, FACING_NORTHWEST);
-						local->prompt_3 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
-						                  DYN_PROMPT_LEFT_3_X, DYN_PROMPT_LEFT_3_Y,
-						                  DYN_PROMPT_X_SIZE_3, DYN_PROMPT_Y_SIZE_3);
-						kernel_dynamic_hot[local->prompt_3].prep = PREP_ON;
-						kernel_dynamic_walk(local->prompt_3, DYN_PROMPT_L_WALK_TO_X, DYN_PROMPT_L_WALK_TO_Y, FACING_NORTHWEST);
-						local->floor_l_1 = kernel_add_dynamic(words_floor, words_walk_across, SYNTAX_SINGULAR, KERNEL_NONE,
-						                   DYN_FLOOR_L_1_X, DYN_FLOOR_L_1_Y,
-						                   DYN_FLOOR_L_1_X_SIZE, DYN_FLOOR_L_1_Y_SIZE);
-						kernel_dynamic_hot[local->floor_l_1].prep = PREP_ON;
-						kernel_dynamic_walk(local->floor_l_1, DYN_FLOOR_L_1_WALK_TO_X, DYN_FLOOR_L_1_WALK_TO_Y, 5);
-						local->floor_l_2 = kernel_add_dynamic(words_floor, words_walk_across, SYNTAX_SINGULAR, KERNEL_NONE,
-						                   DYN_FLOOR_L_2_X, DYN_FLOOR_L_2_Y,
-						                   DYN_FLOOR_L_2_X_SIZE, DYN_FLOOR_L_2_Y_SIZE);
-						kernel_dynamic_hot[local->floor_l_2].prep = PREP_ON;
-						kernel_dynamic_walk(local->floor_l_2, DYN_FLOOR_L_2_WALK_TO_X, DYN_FLOOR_L_2_WALK_TO_Y, 5);
-						local->prompt_5 = kernel_add_dynamic(words_prompter_s_stand, words_climb, SYNTAX_SINGULAR, KERNEL_NONE,
-						                   DYN_PROMPT_LEFT_5_X, DYN_PROMPT_LEFT_5_Y,
-						                   DYN_PROMPT_X_SIZE_5, DYN_PROMPT_Y_SIZE_5);
-						kernel_dynamic_hot[local->prompt_5].prep = PREP_ON;
-						kernel_dynamic_walk(local->prompt_5, PROMPT_UP_LEFT_X, PROMPT_UP_LEFT_Y, FACING_SOUTHWEST);
-						kernel_dynamic_cursor(local->prompt_5, CURSOR_UP);
-						kernel_load_variant(0);
-						room_103_adjust_rails(0);
-					}
+					seq[fx_steps] = kernel_seq_stamp(ss[fx_steps], false, 1);
+					kernel_seq_depth(seq[fx_steps], 4);
+					kernel_seq_loc(seq[fx_steps], PROMPT_LEFT_X, PROMPT_LEFT_Y);
+					kernel_synch(KERNEL_SERIES, seq[fx_steps], KERNEL_ANIM, aa[0]);
+					global[prompter_stand_status] = PROMPT_LEFT;
+					player.commands_allowed = true;
+					player.walker_visible   = true;
+					player.x                = AFTER_STEPS_FROM_RIGHT_X;
+					player.y                = AFTER_STEPS_FROM_RIGHT_Y;
+					player_demand_facing(FACING_WEST);
+					kernel_synch(KERNEL_PLAYER, 0, KERNEL_ANIM, aa[0]);
+					kernel_delete_dynamic(local->prompt_1);
+					kernel_delete_dynamic(local->prompt_2);
+					kernel_delete_dynamic(local->prompt_3);
+					kernel_delete_dynamic(local->prompt_4);
+					kernel_delete_dynamic(local->prompt_5);
+					kernel_delete_dynamic(local->floor_r_1);
+					kernel_delete_dynamic(local->floor_r_2);
+					local->prompt_1 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_PROMPT_LEFT_1_X, DYN_PROMPT_LEFT_1_Y,
+						                DYN_PROMPT_X_SIZE_1, DYN_PROMPT_Y_SIZE_1);
+					kernel_dynamic_hot[local->prompt_1].prep = PREP_ON;
+					kernel_dynamic_walk(local->prompt_1, DYN_PROMPT_L_WALK_TO_X, DYN_PROMPT_L_WALK_TO_Y, FACING_NORTHWEST);
+					local->prompt_2 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_PROMPT_LEFT_2_X, DYN_PROMPT_LEFT_2_Y,
+						                DYN_PROMPT_X_SIZE_2, DYN_PROMPT_Y_SIZE_2);
+					kernel_dynamic_hot[local->prompt_2].prep = PREP_ON;
+					kernel_dynamic_walk(local->prompt_2, DYN_PROMPT_L_WALK_TO_X, DYN_PROMPT_L_WALK_TO_Y, FACING_NORTHWEST);
+					local->prompt_3 = kernel_add_dynamic(words_prompter_s_stand, words_walk_to, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_PROMPT_LEFT_3_X, DYN_PROMPT_LEFT_3_Y,
+						                DYN_PROMPT_X_SIZE_3, DYN_PROMPT_Y_SIZE_3);
+					kernel_dynamic_hot[local->prompt_3].prep = PREP_ON;
+					kernel_dynamic_walk(local->prompt_3, DYN_PROMPT_L_WALK_TO_X, DYN_PROMPT_L_WALK_TO_Y, FACING_NORTHWEST);
+					local->floor_l_1 = kernel_add_dynamic(words_floor, words_walk_across, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_FLOOR_L_1_X, DYN_FLOOR_L_1_Y,
+						                DYN_FLOOR_L_1_X_SIZE, DYN_FLOOR_L_1_Y_SIZE);
+					kernel_dynamic_hot[local->floor_l_1].prep = PREP_ON;
+					kernel_dynamic_walk(local->floor_l_1, DYN_FLOOR_L_1_WALK_TO_X, DYN_FLOOR_L_1_WALK_TO_Y, 5);
+					local->floor_l_2 = kernel_add_dynamic(words_floor, words_walk_across, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_FLOOR_L_2_X, DYN_FLOOR_L_2_Y,
+						                DYN_FLOOR_L_2_X_SIZE, DYN_FLOOR_L_2_Y_SIZE);
+					kernel_dynamic_hot[local->floor_l_2].prep = PREP_ON;
+					kernel_dynamic_walk(local->floor_l_2, DYN_FLOOR_L_2_WALK_TO_X, DYN_FLOOR_L_2_WALK_TO_Y, 5);
+					local->prompt_5 = kernel_add_dynamic(words_prompter_s_stand, words_climb, SYNTAX_SINGULAR, KERNEL_NONE,
+						                DYN_PROMPT_LEFT_5_X, DYN_PROMPT_LEFT_5_Y,
+						                DYN_PROMPT_X_SIZE_5, DYN_PROMPT_Y_SIZE_5);
+					kernel_dynamic_hot[local->prompt_5].prep = PREP_ON;
+					kernel_dynamic_walk(local->prompt_5, PROMPT_UP_LEFT_X, PROMPT_UP_LEFT_Y, FACING_SOUTHWEST);
+					kernel_dynamic_cursor(local->prompt_5, CURSOR_UP);
+					kernel_load_variant(0);
+					room_103_adjust_rails(0);
 					break;
 				}
 			}

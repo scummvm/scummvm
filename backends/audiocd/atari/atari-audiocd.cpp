@@ -28,6 +28,8 @@
 #include <errno.h>
 #include <string.h>
 
+#include <mint/falcon.h>
+
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/str.h"
@@ -70,6 +72,7 @@ AtariAudioCDManager::AtariAudioCDManager()
 	: _numDrives(0),
 	  _drive(-1),
 	  _log2phys(nullptr),
+	  _adcRouted(false),
 	  _cdTrack(0),
 	  _cdNumLoops(0),
 	  _cdStartFrame(0),
@@ -160,10 +163,31 @@ void AtariAudioCDManager::close() {
 		_drive = -1;
 	}
 
+	routeADC(false);
+
 	_tocEntries.clear();
 	_cdNumLoops = 0;
 	_cdEndTime = 0;
 	_cdStopTime = 0;
+}
+
+// The drive's analog audio output is wired to the Falcon's mic input, which
+// reaches the output through the A/D converter.
+void AtariAudioCDManager::routeADC(bool enable) {
+	if (enable == _adcRouted)
+		return;
+
+	if (enable) {
+		// route both mic channels to the ADC
+		Soundcmd(ADCINPUT, 0);
+		// enable and mix both sources (ADC and connection matrix) to the output
+		Soundcmd(ADDERIN, MATIN|ADCIN);
+	} else {
+		// mix only the connection matrix to the output
+		Soundcmd(ADDERIN, MATIN);
+	}
+
+	_adcRouted = enable;
 }
 
 int AtariAudioCDManager::ioctl(int command, void *arg) const {
@@ -226,6 +250,9 @@ bool AtariAudioCDManager::startPlayback(int track, int startFrame, int duration)
 			track, startAbs, endAbs, strerror(-ret));
 		return false;
 	}
+
+	// The disc is spinning now, so let its audio through
+	routeADC(true);
 
 	const int playFrames = endAbs - startAbs;
 	_cdEndTime = g_system->getMillis() + (uint32)playFrames * 1000u / kFramesPerSecond;
@@ -349,13 +376,20 @@ void AtariAudioCDManager::update() {
 
 	if (_cdStopTime != 0 && now >= _cdStopTime) {
 		ioctl(CDROMSTOP, nullptr);
+		routeADC(false);
 		_cdNumLoops = 0;
 		_cdStopTime = 0;
 		return;
 	}
 
-	if (_cdNumLoops == 0 || now < _cdEndTime)
+	if (now < _cdEndTime)
 		return;
+
+	if (_cdNumLoops == 0) {
+		// a track played once has reached its end on its own
+		routeADC(false);
+		return;
+	}
 
 	// Make sure the drive has really finished before we restart the track
 	cdrom_subchnl info;
@@ -374,4 +408,7 @@ void AtariAudioCDManager::update() {
 
 	if (_cdNumLoops != 0)
 		startPlayback(_cdTrack, _cdStartFrame, _cdDuration);
+	else
+		// the drive has run out of tracks to play on its own
+		routeADC(false);
 }

@@ -35,6 +35,9 @@
 
 namespace Colony {
 
+// CALCROBO.C projects both axes with (coordinate << 8) / depth.
+const float kProjectionFocalLength = 256.0f;
+
 class Renderer {
 public:
 	virtual ~Renderer() {}
@@ -70,10 +73,13 @@ public:
 	virtual void setMacColors(uint32 fg, uint32 bg) {}
 	virtual void setDepthState(bool testEnabled, bool writeEnabled) {}
 	virtual void setDepthRange(float nearVal, float farVal) {}
+	// features.c clipped each wall feature to its own wall (ClipRect(&rClip)).
+	virtual void setFeatureClipX(int left, int right) {}
+	virtual void clearFeatureClipX() {}
+	virtual void setSquarePixelViewport(bool enable) = 0;
 	virtual void computeScreenViewport() = 0;
 
-	// Window-pixel rect the logical canvas is drawn into: the whole window
-	// with the widescreen mod on, pillar/letterboxed otherwise.
+	// Window-pixel rect the logical canvas is currently drawn into.
 	const Common::Rect &screenViewport() const { return _screenViewport; }
 
 	// Overlay a RGBA software surface onto the GL framebuffer (for Mac menu bar).

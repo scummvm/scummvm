@@ -22,6 +22,7 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/engine/eobcommon.h"
+#include "kyra/gui/automap_eob.h"
 #include "kyra/resource/resource.h"
 #include "kyra/script/script_eob.h"
 #include "kyra/engine/timer.h"
@@ -751,6 +752,8 @@ void EoBCoreEngine::moveParty(uint16 block) {
 	updateAllMonsterDests();
 	uint16 old = _currentBlock;
 	_currentBlock = block;
+
+	_automap->markVisited(block);
 
 	runLevelScript(old, 2);
 

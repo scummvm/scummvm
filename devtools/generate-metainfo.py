@@ -157,12 +157,13 @@ def po_to_lang(po_file_name):
     primary_subtag = lang
 
     assert(len(primary_subtag) == 2)
-    assert(region_subtag is None or len(region_subtag) == 2)
-    assert(variant_subtag is None or 6 <= len(variant_subtag) <= 8)
 
     lang = primary_subtag.lower()
     if region_subtag:
-        lang += '-' + region_subtag.upper()
+        if len(region_subtag) == 2:
+            lang += '-' + region_subtag.upper()
+        else:
+            lang += '-' + region_subtag.capitalize()
     if variant_subtag:
         lang += '-' + variant_subtag.lower()
 

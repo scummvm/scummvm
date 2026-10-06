@@ -326,7 +326,7 @@ static void room_614_init() {
 		player.y = WALK_TO_Y_FROM_613;
 		player.facing = FACING_EAST;
 
-	} else if ((previous_room == 613) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 
@@ -490,7 +490,6 @@ static void handle_animation_pid_float() {
 				local->anim_2_running = false;
 				local->anim_3_running = false;
 				local->anim_7_running = true;
-				pid_float_reset_frame = -1;
 				break;
 
 			case DIE:
@@ -1098,8 +1097,6 @@ static void process_conv_31() {
 }
 
 static void process_conv_32() {
-	int you_trig_flag = false;
-
 	switch (player_verb) {
 	case conv032_pid_dies_b_b:
 		conv_abort();
@@ -1172,9 +1169,8 @@ static void process_conv_32() {
 		local->wiz_float_action = TALK;
 	}
 
-	if (!you_trig_flag) {
-		conv_you_trigger(ROOM_614_YOU_TALK);
-	} /* if you_trig_flag == true, then a you trigger is called from above, not here. */
+	/* !you_trig_flag */
+	conv_you_trigger(ROOM_614_YOU_TALK);
 
 	local->king_enter_talk_count = 0;
 	local->wiz_float_talk_count = 0;

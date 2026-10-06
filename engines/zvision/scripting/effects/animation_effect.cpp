@@ -57,11 +57,11 @@ AnimationEffect::~AnimationEffect() {
 
 	PlayNodes::iterator it = _playList.begin();
 	if (it != _playList.end()) {
-		_engine->getScriptManager()->setStateValue((*it).slot, 2);
+		_engine->getScriptManager()->setStateValue(it->slot, 2);
 
-		if ((*it)._scaled) {
-			(*it)._scaled->free();
-			delete(*it)._scaled;
+		if (it->_scaled) {
+			it->_scaled->free();
+			delete it->_scaled;
 		}
 	}
 
@@ -197,10 +197,10 @@ void AnimationEffect::addPlayNode(int32 slot, int x, int y, int x2, int y2, int 
 bool AnimationEffect::stop() {
 	PlayNodes::iterator it = _playList.begin();
 	if (it != _playList.end()) {
-		_engine->getScriptManager()->setStateValue((*it).slot, 2);
-		if ((*it)._scaled) {
-			(*it)._scaled->free();
-			delete(*it)._scaled;
+		_engine->getScriptManager()->setStateValue(it->slot, 2);
+		if (it->_scaled) {
+			it->_scaled->free();
+			delete it->_scaled;
 		}
 	}
 

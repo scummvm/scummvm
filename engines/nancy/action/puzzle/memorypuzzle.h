@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MEMORYPUZZLE_H
 #define NANCY_ACTION_MEMORYPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -32,9 +32,9 @@ namespace Action {
 // It has three tabs, each containing 24 cards(6x4 grid).
 // The player flips cards to find matching pairs; matching pairs stay face-up.
 // Player wins when matchedPairs >= requiredPairs.
-class MemoryPuzzle : public RenderActionRecord {
+class MemoryPuzzle : public PuzzleRecord {
 public:
-	MemoryPuzzle() : RenderActionRecord(7) {}
+	MemoryPuzzle() : PuzzleRecord(7) {}
 	virtual ~MemoryPuzzle() {}
 
 	void init() override;
@@ -51,8 +51,6 @@ protected:
 
 	// File data
 
-	Common::Path _imageName;
-
 	static const int kMaxTypes    = 36; // 3 tabs x 12 pairs each
 	static const int kCardsPerTab = 24; // hardcoded in original
 	static const int kNumTabs     = 3;  // hardcoded in original
@@ -63,9 +61,8 @@ protected:
 	Common::Rect _cardRects[kCardsPerTab];   // viewport-relative screen positions (shared across tabs)
 	Common::Rect _tabRect;                   // screen rect where the active tab indicator is drawn
 	Common::Rect _tabHotspots[kNumTabs][3];  // [currentTab][targetTab]: hit-test rects for tab switching
-	Common::Rect _exitHotspot;
 
-	uint32 _numPairs      = 12;    // pairs in the shuffled layout (clamped [4..36])
+	uint32 _numPairs      = 12;    // distinct faces dealt out (clamped [4..36])
 	uint32 _requiredPairs = 12;    // pairs needed to win (clamped [2..36])
 	uint32 _flipDelay     = 1500;  // ms before non-matching cards flip back
 
@@ -75,11 +72,14 @@ protected:
 	int _numTypes     = kMaxTypes;
 
 	bool _shuffleGlobal = false;  // false = pairs stay within same tab; true = can cross tabs
+	bool _hasPageTabs   = true;   // Nancy 11 onwards can lay the puzzle out without page tabs
 
-	SoundDescription _cardFlipSound; // played when a card is flipped face-up
+	// Nancy 11 onwards has a sound for each of the two card flips; before that the first
+	// flip uses the generic button click and the second one is silent
+	SoundDescription _firstFlipSound;
+	SoundDescription _secondFlipSound;
 	SoundDescription _matchSound;    // played when a matching pair is found
-	SceneChangeWithFlag _winScene;
-	SoundDescription _winSound;
+	SoundDescription _noMatchSound;  // pre-Nancy 11: played when a pair doesn't match
 
 	// Runtime state
 
@@ -91,8 +91,7 @@ protected:
 
 	// _cards[tab * kCardsPerTab + i] = state of card i on tab `tab`
 	CardState _cards[kNumTabs * kCardsPerTab];
-
-	Graphics::ManagedSurface _image;
+	bool _typeUsed[kMaxTypes];  // faces already handed out while filling _cards
 
 	int    _currentTab      = 0;
 	int    _firstFlip       = -1;   // absolute card index of first face-up unmatched card
@@ -111,6 +110,7 @@ protected:
 
 	// Internal methods
 
+	int  pickCardType();  // next face to place, preferring unused ones
 	void initCards();     // shuffle types into all 72 card slots
 	void checkIfSolved();
 	void flipBackCards(); // unflip non-matching pair after timer expires

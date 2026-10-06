@@ -35,6 +35,8 @@ class SeekableReadStream;
 
 namespace EEM {
 
+bool openDataFile(Common::File &file, const Common::Path &path);
+
 struct DBEntry {
 	uint32 offset;     ///< Byte offset in the .DBD file.
 	uint16 compressed; ///< Non-zero = PKWARE DCL ("Implode") packed payload.
@@ -86,6 +88,9 @@ private:
 Common::SeekableReadStream *openMacResource(const Common::Path &path,
 											uint32 typeId,
 											uint16 resourceId);
+
+/// Decode a csnd resource to a snd resource. The caller owns the returned stream.
+Common::SeekableReadStream *decompressMacSound(Common::SeekableReadStream &stream);
 
 } // End of namespace EEM
 

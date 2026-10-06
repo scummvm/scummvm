@@ -47,15 +47,9 @@ static const char *morseCodeTable[] = {
 };
 
 void HamRadioPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 }
 
 void HamRadioPuzzle::updateGraphics() {
@@ -231,7 +225,7 @@ void HamRadioPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_solveScene.readData(stream);
 	_solveSoundDelay = stream.readUint16LE();
-	_solveSound.readData(stream);
+	_solveCCSound.readData(stream);
 
 	readRect(stream, _exitButtonDest);
 	readRect(stream, _exitButtonSrc);
@@ -256,6 +250,7 @@ void HamRadioPuzzle::execute() {
 	case kBegin :
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_digitRollSound);
 		setFrequency(_startFreq.frequency);
@@ -355,7 +350,7 @@ void HamRadioPuzzle::execute() {
 							_solvedCodeword = true;
 							_curCharString.clear();
 
-							_solveSound.loadAndPlay(); // Sound delay is ignored
+							_solveCCSound.loadAndPlay(); // Sound delay is ignored
 						}
 					}
 				}

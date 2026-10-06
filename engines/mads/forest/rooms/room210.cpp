@@ -537,15 +537,26 @@ static void room_210_daemon() {
 		break;
 
 	case 111:
+		kernel_abort_animation(aa[7]);
+		aainfo[7]._active = false;
+		scratch._a4 = kernel_run_animation_disp('r', 9, 0);
+		extra_change_animation(scratch._a4, 147, 155, 80, 1);
+		scratch._a2 = kernel_run_animation_disp('e', 7, 0);
+		extra_change_animation(scratch._a2, 95, 155, 80, 1);
+
 		global[g131] = -1;
 		global[g141] = -1;
 		kernel_reset_animation(scratch._a2, 1);
 		kernel_synch(KERNEL_ANIM, scratch._a2, KERNEL_NOW, 0);
 		kernel_reset_animation(scratch._a4, 1);
 		kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
-		player.walker_visible = true;
+
 		global[g133] = 0; global[g143] = 0;
+		player_demand_location(120, 144);
+		player_demand_facing(FACING_SOUTH);
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
+
+		player.walker_visible = true;
 		player.commands_allowed = true;
 		scratch._a8 = -1;
 		kernel_timing_trigger(1, 109);

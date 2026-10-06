@@ -100,6 +100,14 @@ ISound::OverlayLayout ISound::readOverlayLayout(
 	return result;
 }
 
+void ISound::validate() {
+	for (int section = 1; section <= 9; ++section) {
+		const Common::Path filename(Common::String::format(
+				"ISOUND.%03d", section));
+		(void)readOverlayLayout(filename);
+	}
+}
+
 ISound::ISound(Audio::Mixer *mixer, const Common::Path &filename) :
 	ISound(mixer, filename, readOverlayLayout(filename)) {
 }

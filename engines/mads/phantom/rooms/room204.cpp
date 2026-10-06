@@ -162,10 +162,6 @@ static void handle_animation_flor() {
 			local->raoul_action = CONV22_RAOUL_SHUT_UP;
 			break;
 
-		case 86:  /* a few frames just after kiss (where Florent leaves) */
-			conv_release();
-			break;
-
 		case 173: /* end of leave */
 			flor_reset_frame = 172;
 			break;
@@ -187,6 +183,7 @@ static void handle_animation_flor() {
 
 		case 21:  /* end of Raoul awaking          */
 		case 180: /* end of Raoul glancing to case */
+		case 86:  /* a few frames just after kiss (where Florent leaves) */
 			conv_release();
 			break;
 
@@ -999,7 +996,7 @@ void room_204_init() {
 		conv_run(CONV_END_22);
 		conv_export_pointer(&global[player_score]);
 
-	} else if ((previous_room == 203) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else {
 		player_first_walk(WALK_TO_X_BEHIND_DOOR - 10, WALK_TO_Y_BEHIND_DOOR, FACING_EAST,
 		                  WALK_TO_X_FROM_203, WALK_TO_Y_FROM_203, FACING_EAST, true);
 		player_walk_trigger(ROOM_204_DOOR_CLOSES);

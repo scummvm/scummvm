@@ -107,10 +107,6 @@ static void room_104_init() {
 		room_104_init1();
 		return;
 	case -2:
-		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
-		flags[2] = -3;
-		room_104_init1();
-		return;
 	case -1:
 		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
 		flags[2] = -3;
@@ -130,7 +126,6 @@ static void room_104_init() {
 		room_104_init2();
 		return;
 	case 5:
-		if (previous_room == 107) flags[2] = 5;
 		room_104_init2();
 		return;
 	case 6:
@@ -848,7 +843,10 @@ static void room_104_daemon() {
 
 	case 100:
 		kernel_abort_animation(aa[0]);
-		// TODO: word_79954 = 0;
+
+		// WORKAROUND: Nonsensical assignment from the original disabled
+		//room_510_array1[52].quote_id = 0;
+
 		global[g131] = -1;
 		global[g141] = -1;
 		kernel_reset_animation(scratch._9a, 1);

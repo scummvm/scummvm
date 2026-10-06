@@ -188,15 +188,13 @@ String String::vformat(const char *fmt, va_list args) {
 	int len = vsnprintf(output._str, _builtinCapacity, fmt, va);
 	va_end(va);
 
-	if (len == -1 || len == _builtinCapacity - 1) {
-		// MSVC and IRIX don't return the size the full string would take up.
-		// MSVC returns -1, IRIX returns the number of characters actually written,
-		// which is at the most the size of the buffer minus one, as the string is
-		// truncated to fit.
+#if defined(IRIX)
+	if (len == _builtinCapacity - 1) {
+		// IRIX doesn't return the size the full string would take up but
+		// the number of characters actually written, which is at the most
+		// the size of the buffer minus one, as the string is truncated to fit.
 
-		// We assume MSVC failed to output the correct, null-terminated string
-		// if the return value is either -1 or size.
-		// For IRIX, because we lack a better mechanism, we assume failure
+		// For IRIX, because we lack a better mechanism, we assume a too small buffer
 		// if the return value equals size - 1.
 		// The downside to this is that whenever we try to format a string where the
 		// size is 1 below the built-in capacity, the size is needlessly increased.
@@ -212,8 +210,19 @@ String String::vformat(const char *fmt, va_list args) {
 			scumm_va_copy(va, args);
 			len = vsnprintf(output._str, size, fmt, va);
 			va_end(va);
-		} while (len == -1 || len >= size - 1);
+		} while (len >= size - 1);
 		output._size = len;
+		return output;
+	}
+#endif
+	if (len < 0) {
+		// there is an error with the vsnprintf call,
+		// avoid an infinite recursive loop if vsnprintf
+		// is broken beyond repair: format ourselves
+		output = "<vsnprintf error for \"";
+		output += fmt;
+		output += "\">";
+		return output;
 	} else if (len < (int)_builtinCapacity) {
 		// vsnprintf succeeded
 		output._size = len;

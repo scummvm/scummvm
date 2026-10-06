@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_WHALESURVIVORPUZZLE_H
 #define NANCY_ACTION_WHALESURVIVORPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 #include "graphics/managed_surface.h"
@@ -34,9 +34,9 @@ namespace Action {
 // The player controls Dolly the dall's porpoise, eating fish while avoiding hazards
 // (sharks, octopuses, orcas, pollution) and periodically surfacing to breathe.
 // Win by reaching the score target. Two difficulty levels (easy/hard).
-class WhaleSurvivorPuzzle : public RenderActionRecord {
+class WhaleSurvivorPuzzle : public PuzzleRecord {
 public:
-	WhaleSurvivorPuzzle() : RenderActionRecord(7) {}
+	WhaleSurvivorPuzzle() : PuzzleRecord(7) {}
 	virtual ~WhaleSurvivorPuzzle() {}
 
 	void init() override;
@@ -156,8 +156,6 @@ private:
 	SoundDescription _sound5;        // 0x9ea - unused (silence)
 
 	SceneChangeWithFlag _lossScene;  // 0xa1b
-	SoundDescription    _winSound;   // 0xa35
-	SceneChangeWithFlag _winScene;   // 0xa66
 
 	SoundDescription _gameOverSound; // 0xa80
 	SoundDescription _tryAgainSound; // 0xab1

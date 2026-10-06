@@ -712,9 +712,6 @@ int LiftbotScript::sentence1(const TTsentence *sentence) {
 		selectResponse(210138);
 		applyResponse();
 		return 1;
-	} else if (diff >= 0) {
-		addResponse1(diff, true, newId);
-		return 1;
 	} else {
 		return 0;
 	}

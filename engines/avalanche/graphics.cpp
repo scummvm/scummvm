@@ -217,16 +217,11 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 		return endPoint;
 	}
 
-	// Check if valid angles.
-	stAngle = stAngle % 361;
-	endAngle = endAngle % 361;
-
-	// If impossible angles, then swap them!
-	if (endAngle < stAngle) {
-		uint16 tmpAngle=endAngle;
-		endAngle=stAngle;
-		stAngle=tmpAngle;
-	}
+	// Normalize angles modulo 360
+	stAngle = stAngle % 360;
+	endAngle = endAngle % 360;
+	if (endAngle == 0 && stAngle > 0)
+		endAngle = 360;
 
 	// Approximate the number of pixels required by using the circumference equation of an ellipse.
 	uint16 numOfPixels = (uint16)floor(sqrt(3.0) * sqrt(pow(double(xRadius), 2) + pow(double(yRadius), 2)) + 0.5);
@@ -264,17 +259,25 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 		int16 yp = y + yTemp;
 		int16 ym = y - yTemp;
 
-		if ((j >= stAngle) && (j <= endAngle))
-			*(byte *)_scrolls.getBasePtr(xp, yp) = color;
+		if ((j >= stAngle) && (j <= endAngle)) {
+			if ((xp >= 0) && (xp < surface.w) && (yp >= 0) && (yp < surface.h))
+				*(byte *)surface.getBasePtr(xp, yp) = color;
+		}
 
-		if (((180 - j) >= stAngle) && ((180 - j) <= endAngle))
-			*(byte *)_scrolls.getBasePtr(xm, yp) = color;
+		if (((180 - j) >= stAngle) && ((180 - j) <= endAngle)) {
+			if ((xm >= 0) && (xm < surface.w) && (yp >= 0) && (yp < surface.h))
+				*(byte *)surface.getBasePtr(xm, yp) = color;
+		}
 
-		if (((j + 180) >= stAngle) && ((j + 180) <= endAngle))
-			*(byte *)_scrolls.getBasePtr(xm, ym) = color;
+		if (((j + 180) >= stAngle) && ((j + 180) <= endAngle)) {
+			if ((xm >= 0) && (xm < surface.w) && (ym >= 0) && (ym < surface.h))
+				*(byte *)surface.getBasePtr(xm, ym) = color;
+		}
 
-		if (((360 - j) >= stAngle) && ((360 - j) <= endAngle))
-			*(byte *)_scrolls.getBasePtr(xp, ym) = color;
+		if (((360 - j) >= stAngle) && ((360 - j) <= endAngle)) {
+			if ((xp >= 0) && (xp < surface.w) && (ym >= 0) && (ym < surface.h))
+				*(byte *)surface.getBasePtr(xp, ym) = color;
+		}
 
 		j += delta;
 	} while (j <= deltaEnd);
@@ -283,7 +286,8 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 }
 
 void GraphicManager::drawDot(int x, int y, Color color) {
-	*(byte *)_surface.getBasePtr(x, y) = color;
+	if ((x >= 0) && (x < _surface.w) && (y >= 0) && (y < _surface.h))
+		*(byte *)_surface.getBasePtr(x, y) = color;
 }
 
 void GraphicManager::drawLine(int x1, int y1, int x2, int y2, int penX, int penY, Color color) {
@@ -342,8 +346,12 @@ void GraphicManager::drawText(Graphics::Surface &surface, const Common::String &
 			byte pixel = font[(byte)text[i]][j];
 			for (int bit = 0; bit < 8; bit++) {
 				byte pixelBit = (pixel >> bit) & 1;
-				if (pixelBit)
-					*(byte *)surface.getBasePtr(x + i * 8 + 7 - bit, y + j) = color;
+				if (pixelBit) {
+					int px = x + i * 8 + 7 - bit;
+					int py = y + j;
+					if (px >= 0 && px < surface.w && py >= 0 && py < surface.h)
+						*(byte *)surface.getBasePtr(px, py) = color;
+				}
 			}
 		}
 	}

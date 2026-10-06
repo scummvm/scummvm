@@ -265,9 +265,11 @@ void AtariSurface::drawMaskedSprite(
 
 #ifdef USE_SUPERVIDEL
 static long hasSvRamBoosted() {
-	register long ret __asm__ ("d0") = 0;
+	register long ret __asm__ ("d0");
 
 	__asm__ volatile(
+		"\tmoveq	#0,%%d0\n"
+
 		"\tmovec	%%itt0,%%d1\n"
 		"\tcmp.l	#0xA007E060,%%d1\n"
 		"\tbne.s	1f\n"

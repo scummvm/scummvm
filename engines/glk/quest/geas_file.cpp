@@ -57,12 +57,12 @@ const GeasBlock *GeasFile::find_by_name(String type, String name) const {
 const GeasBlock &GeasFile::block(String type, uint index) const {
 	StringArrayIntMap::const_iterator iter;
 	iter = type_indecies.find(type);
-	if (!(iter != type_indecies.end() && index < (*iter)._value.size()))
+	if (!(iter != type_indecies.end() && index < iter->_value.size()))
 		cerr << "Unable to find type " << type << "\n";
 
-	assert(iter != type_indecies.end() && index < (*iter)._value.size());
+	assert(iter != type_indecies.end() && index < iter->_value.size());
 	//assert (index >= 0 && index < size(type));
-	return blocks[(*iter)._value[index]];
+	return blocks[iter->_value[index]];
 }
 
 uint GeasFile::size(String type) const {
@@ -78,7 +78,7 @@ uint GeasFile::size(String type) const {
 		return 0;
 	}
 	//cerr << "  returning " << (*iter)._value.size() << endl;
-	return (*iter)._value.size();
+	return iter->_value.size();
 }
 
 
@@ -228,7 +228,7 @@ bool GeasFile::get_obj_property(String objname, String propname, String &string_
 		debug_print("Checking nonexistent object <" + objname + "> for property <" + propname + ">");
 		return false;
 	}
-	String objtype = (*obj_types.find(objname))._value;
+	String objtype = obj_types.find(objname)->_value;
 
 	const GeasBlock *geasBlock = find_by_name(objtype, objname);
 
@@ -355,7 +355,7 @@ bool GeasFile::obj_of_type(String objname, String typenamex) const {
 		            typenamex + ">");
 		return false;
 	}
-	String objtype = (*obj_types.find(objname))._value;
+	String objtype = obj_types.find(objname)->_value;
 
 	const GeasBlock *geasBlock = find_by_name(objtype, objname);
 
@@ -422,7 +422,7 @@ bool GeasFile::get_obj_action(String objname, String propname, String &string_rv
 		debug_print("Checking nonexistent object <" + objname + "> for action <" + propname + ">.");
 		return false;
 	}
-	String objtype = (*obj_types.find(objname))._value;
+	String objtype = obj_types.find(objname)->_value;
 
 	//reserved_words *rw;
 

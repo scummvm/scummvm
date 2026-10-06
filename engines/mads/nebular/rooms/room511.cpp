@@ -276,7 +276,7 @@ static void room_511_parser() {
 			text_show(51131);
 		else if (global[kLineStatus] == 1)
 			text_show(51130);
-		else if (!global[kBoatRaised] && local._handingLine) {
+		else if (local._handingLine) {
 			if (global[kLineStatus] != 3) {
 				if (kernel.trigger == 0) {
 					player.commands_allowed = false;

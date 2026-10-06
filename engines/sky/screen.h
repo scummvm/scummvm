@@ -119,8 +119,9 @@ public:
 	Graphics::Surface _screen32;
 	Graphics::Surface _iconSurface;
 	void renderFinalFrame();
+	void renderRect(const uint8 *buffer, uint16 x, uint16 y, uint16 width, uint16 height);
 	void renderControlPanel(uint8 *buffer);
-	void update32BitScreen(uint8 *overrideBuffer);
+	void update32BitScreen(uint8 *overrideBuffer, uint16 x, uint16 y, uint16 width, uint16 height);
 	Icon _uiIcon[NUM_UI_ICONS];
 	Icon _proximityIcon[NUM_PROXIMITY_ICONS];
 	Icon _invIcon[NUM_INV_ICONS];
@@ -169,6 +170,7 @@ private:
 	static uint8 _top16Colors[16 * 3];
 	uint8 _palette[VGA_COLORS * 3];
 	uint32 _currentPalette;
+	bool _paletteDirty;
 	uint8 _seqGrid[20 * 12];
 
 	void waitForTick();

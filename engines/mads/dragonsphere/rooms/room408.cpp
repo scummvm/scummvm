@@ -160,7 +160,7 @@ static void room_408_init() {
 
 		global[perform_displacements] = false;
 
-	} else if (previous_room == 409 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 
 		kernel_reset_animation(aa[0], 41);
 		kernel_reset_animation(aa[1], 8);
@@ -405,9 +405,6 @@ static void room_408_daemon() {
 }
 
 static void process_conv_pid() {
-	int you_trig_flag = false;
-	int me_trig_flag = false;
-
 	if (player_verb == conv046_exit_b_b) {
 		*conv_my_next_start = conv046_advicelp;
 		conv_abort();
@@ -439,13 +436,11 @@ static void process_conv_pid() {
 		local->shaman_1_action = SHUT_UP;
 	}
 
-	if (!you_trig_flag) {
-		conv_you_trigger(ROOM_408_YOU_TALK);
-	} /* if you_trig_flag == true, then a you trigger is called from above, not here. */
+	/* !you_trig_flag */
+	conv_you_trigger(ROOM_408_YOU_TALK);
 
-	if (!me_trig_flag) {
-		conv_me_trigger(ROOM_408_ME_TALK);
-	} /* if me_trig_flag == true, then a me trigger is called from above, not here. */
+	/* !me_trig_flag */
+	conv_me_trigger(ROOM_408_ME_TALK);
 
 	local->shaman_1_talk_count = 0;
 }

@@ -496,7 +496,7 @@ static void reversePreAlpha5Header(Pre3_0alpha5Header *hdr) {
 	uint i;
 
 	/* Reverse all words in the header except the tag */
-	for (i = 1; i < sizeof(*hdr) / sizeof(Aword); i++)
+	for (i = 1; i < ASIZE(*hdr); i++)
 		reverseWord(&((Aword *)hdr)[i]);
 }
 
@@ -536,7 +536,7 @@ static void reversePreBeta2Header(Pre3_0beta2Header *hdr) {
 	uint i;
 
 	/* Reverse all words in the header except the tag */
-	for (i = 1; i < sizeof(*hdr) / sizeof(Aword); i++)
+	for (i = 1; i < ASIZE(*hdr); i++)
 		reverseWord(&((Aword *)hdr)[i]);
 }
 
@@ -576,7 +576,7 @@ void reverseHdr(ACodeHeader *hdr) {
 	uint i;
 
 	/* Reverse all words in the header except the tag and the version marking */
-	for (i = 1; i < sizeof(*hdr) / sizeof(Aword); i++)
+	for (i = 1; i < ASIZE(*hdr); i++)
 		reverseWord(&((Aword *)hdr)[i]);
 }
 

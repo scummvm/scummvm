@@ -644,18 +644,20 @@ void AkosRenderer::markRectAsDirty(Common::Rect rect) {
 	_vm->markRectAsDirty(kMainVirtScreen, rect, _actorID);
 }
 
-void AkosRenderer::markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) {
+void AkosRenderer::clipBoundsRect(Common::Rect &boundsRect) {
 	if (_vm->_game.heversion >= 71) {
 		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
-			compData.boundsRect = _clipOverride;
-			compData.boundsRect.right += 1;
-			compData.boundsRect.bottom += 1;
+			boundsRect = _clipOverride;
+			boundsRect.right += 1;
+			boundsRect.bottom += 1;
 
-			compData.boundsRect.right = CLIP<int16>(compData.boundsRect.right, 0, _vm->_screenWidth);
-			compData.boundsRect.bottom = CLIP<int16>(compData.boundsRect.bottom, 0, _vm->_screenHeight);
+			boundsRect.right = CLIP<int16>(boundsRect.right, 0, _vm->_screenWidth);
+			boundsRect.bottom = CLIP<int16>(boundsRect.bottom, 0, _vm->_screenHeight);
 		}
 	}
+}
 
+void AkosRenderer::markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) {
 	if (_actorHitMode) {
 		if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
 			decode = false;

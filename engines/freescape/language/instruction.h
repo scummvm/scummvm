@@ -26,43 +26,56 @@
 #define FREESCAPE_INSTRUCTION_H
 
 #include "common/array.h"
+#include "common/str.h"
 #include "freescape/language/token.h"
 
 namespace Freescape {
 
+enum {
+	kConditionalShot = 1 << 0,
+	kConditionalTimeout = 1 << 1,
+	kConditionalCollided = 1 << 2,
+	kConditionalActivated = 1 << 3,
+	kConditionalSensed = 1 << 4,
+	kConditionalFallen = 1 << 5,
+	kConditionalCrushed = 1 << 6,
+};
+
 class FCLInstruction;
 typedef Common::Array<FCLInstruction> FCLInstructionVector;
+
+FCLInstructionVector *duplicateCondition(const FCLInstructionVector *condition);
 
 class FCLInstruction {
 public:
 	FCLInstruction();
 	FCLInstruction(Token::Type type);
-	void setSource(int32 source);
-	void setAdditional(int32 additional);
-	void setDestination(int32 destination);
+	void setSource(int32 source, Token::Type type = Token::CONSTANT);
+	void setAdditional(int32 additional, Token::Type type = Token::CONSTANT);
+	void setDestination(int32 destination, Token::Type type = Token::CONSTANT);
 
 	Token::Type getType() const;
 
-	bool isConditional() const {
-		Token::Type type = getType();
-		return 	type == Token::Type::BITNOTEQ || type == Token::Type::VARNOTEQ || \
-				type == Token::Type::IFGTEQ || type == Token::Type::IFLTEQ || \
-				type == Token::Type::VAREQ || _type == Token::Type::INVISQ;
-	}
-
 	void setBranches(FCLInstructionVector *thenBranch, FCLInstructionVector *elseBranch);
 
-	FCLInstruction duplicate();
+	FCLInstruction duplicate() const;
 
+	// Source/destination: arithmetic uses (variable, value); GOTO uses (area, entrance).
+	// Object commands use (object) or (area, object).
 	int32 _source;
 	int32 _additional;
 	int32 _destination;
+	// Kit decoders mark omitted operands as UNKNOWN.
+	Token::Type _sourceType;
+	Token::Type _additionalType;
+	Token::Type _destinationType;
+	Common::String _text;
 
 	FCLInstructionVector *_thenInstructions;
 	FCLInstructionVector *_elseInstructions;
 
 private:
-	enum Token::Type _type;
+	Token::Type _type;
 };
 
 } // End of namespace Freescape

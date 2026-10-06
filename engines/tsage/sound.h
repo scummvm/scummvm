@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 #include "common/queue.h"
+#include "audio/mididrv.h"
 #include "audio/mixer.h"
 #include "common/list.h"
 #include "tsage/saveload.h"
@@ -46,6 +47,7 @@ class Sound;
 #define ROLAND_DRIVER_NUM 2
 #define ADLIB_DRIVER_NUM 3
 #define SBLASTER_DRIVER_NUM 4
+#define GENERAL_MIDI_DRIVER_NUM 6
 #define CALLBACKS_PER_SECOND 60
 
 struct trackInfoStruct {
@@ -104,10 +106,10 @@ public:
 	virtual void method6() {}									// Method #6
 	virtual int setMasterVolume(int volume) { return 0; }		// Method #7
 	virtual void proc16() {}									// Method #8
-	virtual void proc18(int al, VoiceType voiceType) {}			// Method #9
-	virtual void proc20(int al, VoiceType voiceType) {}			// Method #10
+	virtual void noteOff(int channel, int note) {}				// Method #9
+	virtual void noteOn(int channel, int note, int velocity) {}	// Method #10
 	virtual void proc22(int al, VoiceType voiceType, int v3) {}	// Method #11
-	virtual void proc24(int channel, int voiceIndex, Sound *sound, int v1, int v2) {}
+	virtual void controlChange(int channel, int controller, int value) {} // Method #12
 	virtual void setProgram(int channel, int program) {}			// Method #13
 	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
 	virtual void setPitchBlend(int channel, int pitchBlend) {}		// Method #15
@@ -169,7 +171,8 @@ public:
 
 class SoundManager : public SaveListener {
 private:
-	SoundDriver *instantiateDriver(int driverNum);
+	SoundDriver *instantiateDriver(int driverNum, MidiDriver::DeviceHandle midiDevice);
+	bool _serverPaused;
 public:
 	bool _sndmgrReady;
 	int _ourSndResVersion, _ourDrvResVersion;
@@ -205,7 +208,7 @@ public:
 	Common::List<SoundDriverEntry> &buildDriverList(bool detectFlag);
 	Common::List<SoundDriverEntry> &getDriverList(bool detectFlag);
 	void dumpDriverList();
-	void installDriver(int driverNum);
+	bool installDriver(int driverNum, MidiDriver::DeviceHandle midiDevice = 0);
 	bool isInstalled(int driverNum) const;
 	void unInstallDriver(int driverNum);
 	void checkResVersion(const byte *soundData);
@@ -224,6 +227,7 @@ public:
 	void updateSoundLoop(Sound *sound);
 	void setMasterVol(int volume);
 	int getMasterVol() const;
+	void setPaused(bool paused);
 	void loadSound(int soundNum, bool showErrors);
 	void unloadSound(int soundNum);
 	bool isFading();
@@ -449,6 +453,39 @@ public:
 
 #define ADLIB_CHANNEL_COUNT 9
 
+class MidiSoundDriver : public SoundDriver {
+private:
+	GroupData _groupData;
+	MidiDriver *_midiDriver;
+	MidiDriver::DeviceHandle _device;
+	MusicType _musicType;
+	int _masterVolume;
+	byte _modulation[SOUND_ARR_SIZE];
+	byte _channelVolume[SOUND_ARR_SIZE];
+	byte _pan[SOUND_ARR_SIZE];
+	byte _damper[SOUND_ARR_SIZE];
+	byte _program[SOUND_ARR_SIZE];
+	uint16 _pitchBlend[SOUND_ARR_SIZE];
+	bool _active[SOUND_ARR_SIZE];
+
+	void send(byte status, byte firstOp, byte secondOp);
+	void sendMt32SysEx(uint32 address, const byte *data, uint16 size);
+public:
+	MidiSoundDriver(MidiDriver::DeviceHandle device, MusicType musicType);
+	~MidiSoundDriver() override;
+
+	bool open() override;
+	void close() override;
+	const GroupData *getGroupData() override;
+	void installPatch(const byte *data, int size) override;
+	int setMasterVolume(int volume) override;
+	void noteOff(int channel, int note) override;
+	void noteOn(int channel, int note, int velocity) override;
+	void controlChange(int channel, int controller, int value) override;
+	void setProgram(int channel, int program) override;
+	void setPitchBlend(int channel, int pitchBlend) override;
+};
+
 class AdlibSoundDriver: public SoundDriver {
 private:
 	GroupData _groupData;
@@ -502,12 +539,12 @@ private:
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	Audio::QueuingAudioStream *_audioStream;
-	int _sampleRate;
 
 	byte _masterVolume;
 	byte _channelVolume;
-	const byte *_channelData;
+
+	byte getVolume() const;
+	void updateVolume();
 public:
 	SoundBlasterDriver();
 	~SoundBlasterDriver() override;

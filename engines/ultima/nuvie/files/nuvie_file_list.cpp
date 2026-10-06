@@ -80,7 +80,7 @@ const Common::String *NuvieFileList::get_latest() const {
 	iter = file_list.begin();
 
 	if (iter != file_list.end()) {
-		return &((*iter).filename);
+		return &(iter->filename);
 	}
 
 	return nullptr;

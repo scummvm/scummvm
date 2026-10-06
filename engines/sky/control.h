@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/str-array.h"
+#include "graphics/font.h"
 
 class OSystem;
 namespace Common {
@@ -132,6 +133,16 @@ struct AllocedMem {
 	AllocedMem *next;
 };
 
+struct Hint {
+	int question;
+	Common::Array<int> answers;
+};
+
+struct TappableAnswer {
+	Common::Rect rect;
+	int answerId;
+};
+
 class ConResource {
 public:
 	ConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
@@ -182,12 +193,16 @@ class Control {
 public:
 	Control(SkyEngine *vm, Common::SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system, Common::Keymap *shortcutsKeymap);
 	void doControlPanel();
+	void doHelpPanel();
 	void doLoadSavePanel();
 	void restartGame();
 	void showGameQuitMsg();
 	uint16 quickXRestore(uint16 slot);
 	bool loadSaveAllowed();
 	bool isControlPanelOpen();
+	int drawHintList(Graphics::Surface *scaled, int destX, int destY, int newW, Graphics::Font *font, const Common::Array<Hint> &hints, Common::Array<Common::Rect> &hintRects, int scrollOffset);
+	TappableAnswer drawHintDetail(Graphics::Surface *scaled, int destX, int destY, int newW, Graphics::Font *font, const Hint &hint, int detailScrollOffset, int &detailContentBottom);
+	void drawScrollButtons(Graphics::Font *font, Graphics::Surface &screen, int destX, int destY, int newW, int panelBottom, int scrollOffset, int contentBottom, uint32 colorGray, Common::Rect &scrollUpRect, Common::Rect &scrollDownRect);
 
 	SkyEngine *_vm;
 
@@ -201,6 +216,8 @@ private:
 	int displayMessage(MSVC_PRINTF const char *message, ...) GCC_PRINTF(2, 3);
 
 	void initPanel();
+	void initHelpPanel(); // for ibass
+	Common::Array<Hint> buildHints();
 	void removePanel();
 
 	void drawMainPanel();

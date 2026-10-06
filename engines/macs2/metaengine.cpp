@@ -136,27 +136,28 @@ SaveStateList Macs2MetaEngine::listSaves(const char *target) const {
 		if (f) {
 			// Validate magic
 			char magic[12];
-			f->read(magic, 12);
-			if (memcmp(magic, "AHFFMSGM0100", 12) == 0) {
+			f->read(magic, sizeof(magic));
+			if (memcmp(magic, "AHFFMSGM0100", sizeof(magic)) == 0) {
 				// Read slot name (Pascal string: 1 byte length + up to 20 chars)
 				byte nameLen = f->readByte();
-				if (nameLen > 20)
+				if (nameLen > 20) {
 					nameLen = 20;
+				}
 				char name[21];
 				f->read(name, nameLen);
 				name[nameLen] = '\0';
 				// Use slots 100+ for original saves to avoid conflicts
-				int scummSlot = 100 + slot;
+				const int scummSlot = 100 + slot;
 				// Check if this slot is already in the list
 				bool found = false;
-				for (const auto &s : saves) {
+				for (const SaveStateDescriptor &s : saves) {
 					if (s.getSaveSlot() == scummSlot) {
 						found = true;
 						break;
 					}
 				}
 				if (!found) {
-					Common::String desc = Common::String::format("[DOS] %s", name);
+					const Common::String &desc = Common::String::format("[DOS] %s", name);
 					saves.push_back(SaveStateDescriptor(this, scummSlot, desc));
 				}
 			}

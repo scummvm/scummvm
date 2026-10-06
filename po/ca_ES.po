@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-08-01 22:22+0000\n"
+"PO-Revision-Date: 2026-08-27 16:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -762,14 +762,15 @@ msgstr "Habilita la visualització de zones interactives"
 #: gui/editgamedialog.cpp:334
 msgid "Enable visual markers and labels for interactive objects"
 msgstr ""
+"Habilita els marcadors visuals i les etiquetes per als objectes interactius"
 
 #: gui/editgamedialog.cpp:339
 msgid "Hotspot marker:"
-msgstr ""
+msgstr "Marcador de punt d'interès:"
 
 #: gui/editgamedialog.cpp:341
 msgid "Point"
-msgstr ""
+msgstr "Punt"
 
 #. I18N: Hardware key on controller
 #: gui/editgamedialog.cpp:342 backends/platform/sdl/ps3/ps3.cpp:46
@@ -787,7 +788,7 @@ msgstr "Mostra les etiquetes de les zones interactives"
 
 #: gui/editgamedialog.cpp:353
 msgid "Display text labels next to hotspot markers"
-msgstr ""
+msgstr "Mostra etiquetes de text al costat dels marcadors de punts d'interès"
 
 #: gui/editgamedialog.cpp:367 engines/dialogs.cpp:385
 msgid "Achievements"
@@ -3430,6 +3431,8 @@ msgstr "Tanca la finestra emergent"
 msgid ""
 "Local network access permission was denied: Web server won't be reachable"
 msgstr ""
+"S'ha denegat el permís d'accés a la xarxa local: el servidor web no serà "
+"accessible"
 
 #: dists/android.strings.xml.cpp:51
 msgid "ScummVM Web server"
@@ -3758,6 +3761,9 @@ msgid ""
 "testing mode.\n"
 "If you encounter any bugs or oddities, please report them to our bugtracker."
 msgstr ""
+"AVÍS: El joc que esteu a punt d'iniciar és compatible recentment i està en "
+"mode de proves.\n"
+"Si trobeu algun error o estranyesa, informeu-ne al nostre gestor d'errors."
 
 #: engines/engine.cpp:933
 #, c-format
@@ -4013,43 +4019,43 @@ msgstr "RetroWave OPL3"
 
 #: audio/fmopl.cpp:133
 msgid "[nFM] NokturnFM2 (OPL2)"
-msgstr ""
+msgstr "[nFM] NokturnFM2 (OPL2)"
 
 #: audio/fmopl.cpp:134
 msgid "[nFM] NokturnFM3 (OPL3)"
-msgstr ""
+msgstr "[nFM] NokturnFM3 (OPL3)"
 
 #: audio/fmopl.cpp:135
 msgid "[nFM] RetroWave USB OPL3 Express (OPL3)"
-msgstr ""
+msgstr "[nFM] RetroWave USB OPL3 Express (OPL3)"
 
 #: audio/fmopl.cpp:136
 msgid "[nFM] Serdaco OPL2LPT (OPL2)"
-msgstr ""
+msgstr "[nFM] Serdaco OPL2LPT (OPL2)"
 
 #: audio/fmopl.cpp:137
 msgid "[nFM] Serdaco OPL3LPT (OPL3)"
-msgstr ""
+msgstr "[nFM] Serdaco OPL3LPT (OPL3)"
 
 #: audio/fmopl.cpp:138
 msgid "[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"
-msgstr ""
+msgstr "[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"
 
 #: audio/fmopl.cpp:139
 msgid "[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"
-msgstr ""
+msgstr "[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"
 
 #: audio/fmopl.cpp:140
 msgid "[nFM] ST Bus ISA / VME SoundBlaster"
-msgstr ""
+msgstr "[nFM] ST Bus ISA / VME SoundBlaster"
 
 #: audio/fmopl.cpp:141
 msgid "[nFM] NatFeats / NULL"
-msgstr ""
+msgstr "[nFM] NatFeats / NULL"
 
 #: audio/fmopl.cpp:142
 msgid "[nFM] Nuked-OPL3 softsynth (OPL3)"
-msgstr ""
+msgstr "[nFM] Nuked-OPL3 softsynth (OPL3)"
 
 #: audio/mididrv.cpp:232
 #, c-format
@@ -5439,6 +5445,27 @@ msgid ""
 "| `CMD + RIGHT`     | END               \n"
 "\n"
 msgstr ""
+"## Ús del teclat\n"
+"Els teclats externs són compatibles i des d'iOS 13.4 la majoria de les "
+"tecles especials, p. ex. tecles de funció, Inici i Final, estan mapejades.\n"
+"Per a teclats externs que no disposen de tecles especials, p. ex. l'Apple "
+"Magic Keyboard per a iPads, les tecles especials es poden activar utilitzant "
+"les següents combinacions de tecles:\n"
+"\n"
+"\n"
+"| Combinació de tecles     | Acció            \n"
+"| ------------------|-------------------\n"
+"| `CMD + 1`         | F1                \n"
+"| `CMD + 2`         | F2                \n"
+"| `...`             | ...               \n"
+"| `CMD + 0`         | F10               \n"
+"| `CMD + SHIFT + 1` | F11               \n"
+"| `CMD + SHIFT + 2` | F12               \n"
+"| `CMD + UP`        | PÀG AMUNT           \n"
+"| `CMD + DOWN`      | PÀG AVALL         \n"
+"| `CMD + LEFT`      | INICI              \n"
+"| `CMD + RIGHT`     | FINAL               \n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 msgid ""
@@ -5585,6 +5612,21 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## Llistes de reproducció Libretro per al nucli de ScummVM\n"
+"Les llistes de reproducció utilitzades en els frontals del Libretro (p. ex. "
+"el Retroarch) són llistes de text pla utilitzades per llançar directament un "
+"joc amb un nucli específic des de la interfície d'usuari. Aquestes llistes "
+"estan estructurades per passar al nucli el camí d'un fitxer de contingut "
+"específic a carregar (p. ex. ROM).\n"
+"\n"
+"El nucli de ScummVM pot acceptar com a contingut el camí proporcionat per la "
+"llista de reproducció a qualsevol dels fitxers dins d'una carpeta de joc "
+"vàlida, el sistema de detecció intentarà detectar automàticament el joc des "
+"de la carpeta pare del fitxer de contingut i executar el joc amb les opcions "
+"de ScummVM predeterminades.\n"
+"\n"
+"El nucli també admet fitxers de text sense format amb **hook (enllaços)** "
+"dedicats per a cada joc utilitzant **."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -5946,11 +5988,11 @@ msgstr "Comprova si hi ha actualitzacions..."
 
 #: engines/access/metaengine.cpp:82
 msgid "Use 'high definition' OGG music"
-msgstr ""
+msgstr "Utilitza la música en format OGG d'alta definició"
 
 #: engines/access/metaengine.cpp:83
 msgid "Use the OGG audio from the re-release instead of original MIDI tracks"
-msgstr ""
+msgstr "Usa l'àudio OGG de la reedició en lloc de les pistes MIDI originals"
 
 #: engines/access/metaengine.cpp:236 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
@@ -8341,16 +8383,20 @@ msgstr "Amaga els quadres de ressaltat"
 #: engines/eem/metaengine.cpp:39
 msgid "Hide the boxes that highlight searchable clue locations."
 msgstr ""
+"Oculta els quadres que realcen les ubicacions de les pistes que es poden "
+"cercar."
 
 #: engines/eem/metaengine.cpp:49
 msgid "Better fit for dialog balloons"
-msgstr ""
+msgstr "Millor ajust per als globus de diàleg"
 
 #: engines/eem/metaengine.cpp:50
 msgid ""
 "Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
 "original size."
 msgstr ""
+"Trieu un gràfic de la bombolla de veu més petit quan el text ajustat no "
+"necessiti la mida original."
 
 #: engines/eem/metaengine.cpp:61
 msgid "Skip repeated cases"
@@ -8359,6 +8405,8 @@ msgstr "Omet els casos repetits"
 #: engines/eem/metaengine.cpp:62
 msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
 msgstr ""
+"Salta tots els casos del Llibre 2 i ves al Llibre 3 un cop estigui complet "
+"el Llibre 1."
 
 #: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
 msgid "Enable restored content"
@@ -8369,6 +8417,8 @@ msgid ""
 "Restore floppy release extras in the CD version, including pre-scrapbook "
 "conversations and first-try badges."
 msgstr ""
+"Restaura els extres de la versió de disquets a la versió de CD, incloses les "
+"converses prèvies a l'àlbum de retalls i les insígnies de primers intents."
 
 #: engines/efh/metaengine.cpp:235
 msgid "Select option 1"
@@ -9116,16 +9166,16 @@ msgstr "Enllaç:"
 
 #: engines/glk/dialogs.cpp:256
 msgid "Color for URLs if they appear in-game"
-msgstr ""
+msgstr "Color per als URL si apareixen dins del joc"
 
 #. I18N: "More..." is a prompt in text windows, which appears when the text exceeds the window size
 #: engines/glk/dialogs.cpp:264
 msgid "More:"
-msgstr ""
+msgstr "Més:"
 
 #: engines/glk/dialogs.cpp:265
 msgid "Color for the \"More...\" markers in the text"
-msgstr ""
+msgstr "Color per als marcadors \"Més...\" del text"
 
 #: engines/glk/dialogs.cpp:272
 msgid "Typography"
@@ -9355,49 +9405,52 @@ msgstr "Interlineat:"
 #: engines/glk/dialogs.cpp:354
 msgid "Vertical distance between text rows. Valid inputs - 12, 16, 22 etc."
 msgstr ""
+"Distància vertical entre files de text. Entrades vàlides: 12, 16, 22, etc."
 
 #. I18N: This is a setting for baseline, which is the invisible horizontal line on which text sits
 #: engines/glk/dialogs.cpp:356
 msgid "Baseline:"
-msgstr ""
+msgstr "Línia base:"
 
 #: engines/glk/dialogs.cpp:357
 msgid ""
 "Invisible horizontal line on which text sits. Valid inputs - 8, 16 etc. as "
 "per your font size"
 msgstr ""
+"Línia horitzontal invisible sobre la qual es troba el text. Entrades "
+"vàlides: 8, 16, etc. segons la mida de lletra"
 
 #. I18N: Font size scaling for the monospace text font
 #: engines/glk/dialogs.cpp:360
 msgid "Monosize:"
-msgstr ""
+msgstr "Mida monoespai:"
 
 #: engines/glk/dialogs.cpp:361
 msgid "Font size scaling for the monospace text font"
-msgstr ""
+msgstr "Escalat de la mida de lletra per al tipus de lletra de text monoespai"
 
 #. I18N: Font size scaling for the proportional text font
 #: engines/glk/dialogs.cpp:363
 msgid "Propsize:"
-msgstr ""
+msgstr "Mida proporcional:"
 
 #: engines/glk/dialogs.cpp:364
 msgid "Font size scaling for the proportional text font"
-msgstr ""
+msgstr "Escalat de la mida de lletra per al tipus de lletra proporcional"
 
 #. I18N: This is a section for settings related to the "More..." prompt in text windows
 #: engines/glk/dialogs.cpp:367
 msgid "More"
-msgstr ""
+msgstr "Més"
 
 #. I18N: This is a setting for alignment of the "More..." prompt in text windows
 #: engines/glk/dialogs.cpp:369
 msgid "Align:"
-msgstr ""
+msgstr "Alineació:"
 
 #: engines/glk/dialogs.cpp:370
 msgid "Alignment of the \"More...\" marker on the window"
-msgstr ""
+msgstr "Alineació del marcador \"Més...\" a la finestra"
 
 #: engines/glk/dialogs.cpp:375
 msgid "Font:"
@@ -9405,7 +9458,7 @@ msgstr "Font:"
 
 #: engines/glk/dialogs.cpp:375
 msgid "Font for the \"More...\" marker"
-msgstr ""
+msgstr "Tipus de lletra per al marcador \"Més...\""
 
 #: engines/glk/glulx/glulx.cpp:81
 msgid "This is too short to be a valid Glulx file."
@@ -9733,6 +9786,8 @@ msgid ""
 "When disabled, the startup movie player follows the original GORE=NO "
 "censorship path."
 msgstr ""
+"Quan està desactivat, el reproductor de pel·lícules d'inici segueix la "
+"censura original GORE=NO."
 
 #: engines/harvester/metaengine.cpp:44
 msgid "Show CD change prompts"
@@ -9743,6 +9798,8 @@ msgid ""
 "Display the original CD swap image and wait for a left click when the script "
 "requests disc 2 or 3."
 msgstr ""
+"Mostra la imatge d'intercanvi de CD original i espera un clic esquerre quan "
+"l'script sol·liciti els discs 2 o 3."
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
@@ -9829,7 +9886,7 @@ msgstr "Utilitza la interfície Windows"
 
 #: engines/hugo/metaengine.cpp:46
 msgid "Use mouse and toolbar from Windows version"
-msgstr ""
+msgstr "Utilitza el ratolí i la barra d'eines des de la versió de Windows"
 
 #: engines/hugo/metaengine.cpp:148
 msgid "User help"
@@ -9977,7 +10034,7 @@ msgstr "Apunta a la dreta"
 
 #: engines/hypno/metaengine.cpp:170
 msgid "Aim up"
-msgstr ""
+msgstr "Apunta amunt"
 
 #: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1202
 #: engines/scumm/metaengine.cpp:1279
@@ -10248,24 +10305,31 @@ msgid ""
 "- Correct projectile weapon damage (per AD&D 2nd Edition rules)\n"
 "- Elves get +1 to hit with swords and bows (per official game manual)"
 msgstr ""
+"- Elimina els errors d'arrodoniment de guany de PV\n"
+"- Corregeix el dany de l'arma del projectil (per a les regles de la 2a "
+"edició d'AD&D)\n"
+"- Els elfs obtenen +1 per colpejar amb espases i arcs (segons el manual de "
+"joc oficial)"
 
 #: engines/kyra/metaengine.cpp:175
 msgid "Fix Ileria and Beohram NPCs"
-msgstr ""
+msgstr "Corregeix els NPCs d'Ileria i Beohram"
 
 #: engines/kyra/metaengine.cpp:176
 msgid "Make Ileria a female and Beohram a paladin"
-msgstr ""
+msgstr "Tracta a Ileria com una dona i a Beohram com un paladí"
 
 #: engines/kyra/metaengine.cpp:187
 msgid "Enhanced thrown weapon reload"
-msgstr ""
+msgstr "Recàrrega millorada d'armes llançables"
 
 #: engines/kyra/metaengine.cpp:188
 msgid ""
 "Thrown weapons (daggers, darts, spears...) get replaced from belt and "
 "backpack inventory slots, with thrown weapons only"
 msgstr ""
+"Les armes llançables (dagues, dards, llances...) es substitueixen de les "
+"ranures d'inventari del cinturó i la motxilla, només amb armes llançables"
 
 #: engines/kyra/metaengine.cpp:275
 msgid "Lands of Lore support is not compiled in"
@@ -10676,7 +10740,7 @@ msgstr "Obre el menú d'opcions"
 
 #: engines/macs2/metaengine.cpp:85
 msgid "Help / map"
-msgstr ""
+msgstr "Ajuda / mapa"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"
@@ -11255,6 +11319,7 @@ msgstr "Desa automàticament en els punts de progrés"
 #: engines/mtropolis/metaengine.cpp:76
 msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
+"Desa automàticament el joc després de completar trencaclosques i capítols."
 
 #: engines/mtropolis/metaengine.cpp:86
 msgid "Enable short transitions"
@@ -11264,10 +11329,12 @@ msgstr "Activa transicions curtes"
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
+"Habilita que les transicions es passin a la velocitat màxima en lloc "
+"d'ometre-les."
 
 #: engines/mtropolis/metaengine.cpp:97
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "Habilita els subtítols per a efectes de so importants"
 
 #: engines/mtropolis/metaengine.cpp:98
 msgid ""

@@ -22,6 +22,9 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/util.h"
 
 #include "audio/audiostream.h"
 #include "image/bmp.h"
@@ -60,10 +63,14 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("list_actionrecords", WRAP_METHOD(NancyConsole, Cmd_listActionRecords));
 	registerCmd("actionrecord_export", WRAP_METHOD(NancyConsole, Cmd_actionRecordExport));
 	registerCmd("scan_ar_type", WRAP_METHOD(NancyConsole, Cmd_scanForActionRecordType));
+	registerCmd("list_includes", WRAP_METHOD(NancyConsole, Cmd_listIncludes));
+	registerCmd("find_include", WRAP_METHOD(NancyConsole, Cmd_findInclude));
 	registerCmd("get_eventflags", WRAP_METHOD(NancyConsole, Cmd_getEventFlags));
 	registerCmd("set_eventflags", WRAP_METHOD(NancyConsole, Cmd_setEventFlags));
 	registerCmd("get_inventory", WRAP_METHOD(NancyConsole, Cmd_getInventory));
 	registerCmd("set_inventory", WRAP_METHOD(NancyConsole, Cmd_setInventory));
+	registerCmd("get_money", WRAP_METHOD(NancyConsole, Cmd_getMoney));
+	registerCmd("set_money", WRAP_METHOD(NancyConsole, Cmd_setMoney));
 	registerCmd("get_player_time", WRAP_METHOD(NancyConsole, Cmd_getPlayerTime));
 	registerCmd("set_player_time", WRAP_METHOD(NancyConsole, Cmd_setPlayerTime));
 	registerCmd("get_difficulty", WRAP_METHOD(NancyConsole, Cmd_getDifficulty));
@@ -493,6 +500,35 @@ void NancyConsole::printActionRecord(const Action::ActionRecord *record, bool no
 	}
 }
 
+// Nancy15 gives every playable character their own inventory, so the console
+// has to name the one it reports on. The PCUI chunk holds the image names the
+// characters are known by, e.g. "PUI_CRE_Nancy".
+static Common::String playerCharacterName(uint characterIndex) {
+	const PCUI *pcui = GetEngineData(PCUI);
+	if (pcui && characterIndex < pcui->characters.size()) {
+		const Common::String &imageName = pcui->characters[characterIndex].imageName;
+		size_t lastSeparator = imageName.findLastOf('_');
+		if (lastSeparator != Common::String::npos) {
+			return imageName.substr(lastSeparator + 1);
+		}
+
+		if (!imageName.empty()) {
+			return imageName;
+		}
+	}
+
+	return Common::String::format("character %u", characterIndex);
+}
+
+static uint numPlayerCharacters() {
+	if (g_nancy->getGameType() < kGameTypeNancy15) {
+		return 1;
+	}
+
+	const PCUI *pcui = GetEngineData(PCUI);
+	return pcui ? MIN<uint>(pcui->characters.size(), kMaxPlayerCharacters) : 1;
+}
+
 void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &record) {
 	using namespace Action;
 
@@ -512,6 +548,13 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 					inventoryData->itemDescriptions[dep.label].name.c_str() :
 					"Invalid",
 				dep.condition == g_nancy->_true ? "true" : "false");
+
+			// Nancy15+ can ask about a character other than the one being played
+			if (g_nancy->getGameType() >= kGameTypeNancy15 && dep.hours >= 0 &&
+					dep.hours != kPlayerCharacterActive) {
+				debugPrintf(", %s", playerCharacterName(dep.hours).c_str());
+			}
+
 			break;
 		case DependencyType::kEvent:
 			debugPrintf("kEvent, flag %u, %s, %s",
@@ -540,7 +583,7 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 			break;
 		case DependencyType::kElapsedPlayerTime:
 			debugPrintf("kPlayerTime, player time %s %i hours, %i minutes, %i seconds, %i milliseconds",
-				dep.condition == 0 ? "greater than" : (dep.condition == 1 ? "less than" : "equals"),
+				dep.condition == 0 ? "at or after" : (dep.condition == 1 ? "at or before" : (dep.condition == 2 ? "equals" : "between")),
 				dep.hours,
 				dep.minutes,
 				dep.seconds,
@@ -565,7 +608,15 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 				dep.label == 0 ? "kPlayerDay" : dep.label == 1 ? "kPLayerNight" : "kPLayerDuskDawn");
 			break;
 		case DependencyType::kTimerLessThanDependencyTime:
-			debugPrintf("kTimerLessThanDependencyTime");
+			if (g_nancy->getGameType() >= kGameTypeNancy14) {
+				// Repurposed as a value-table test in Nancy14
+				static const char *const comparisons[] = { "==", ">", ">=", "<", "<=" };
+				debugPrintf("kValueTest, value %u %s %i", dep.label,
+					dep.condition < ARRAYSIZE(comparisons) ? comparisons[dep.condition] : "?",
+					dep.milliseconds);
+			} else {
+				debugPrintf("kTimerLessThanDependencyTime");
+			}
 			break;
 		case DependencyType::kTimerGreaterThanDependencyTime:
 			debugPrintf("kTimerGreaterThanDependencyTime");
@@ -586,6 +637,15 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 			break;
 		case DependencyType::kRandom:
 			debugPrintf("kRandom, chance %i", dep.condition);
+			break;
+		case DependencyType::kDefaultAR:
+			if (g_nancy->getGameType() >= kGameTypeNancy14) {
+				debugPrintf("kDefaultAR, no record of this type (or types %i, %i, %i, %i) executed in this scene",
+					dep.hours, dep.minutes, dep.seconds, dep.milliseconds);
+			} else {
+				debugPrintf("kDefaultAR, previous record did not execute");
+			}
+
 			break;
 		default:
 			debugPrintf("unknown type %u", (uint)dep.type);
@@ -612,21 +672,29 @@ bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 
 		for (uint i = 0; i < records.size(); ++i) {
 			ActionRecord *rec = records[i];
-			debugPrintf("Record %u:\n", i);
+			if (rec->_includeSource.empty()) {
+				debugPrintf("Record %u:\n", i);
+			} else {
+				debugPrintf("Record %u (from %s):\n", i, rec->_includeSource.c_str());
+			}
 			printActionRecord(rec);
 			debugPrintf("\n\n");
 		}
 	} else if (argc == 2) {
-		// Print a different scene. We need to load all records into a temporary array and read from it
+		// Print a different scene, or an included script given by name. We need to
+		// load all records into a temporary array and read from it
 		Common::String s = argv[1];
+		if (Common::isDigit(s.firstChar())) {
+			s = "S" + s;
+		}
 
 		Common::Array<ActionRecord *> records;
 		Common::Queue<uint> unknownTypes;
 		Common::Queue<Common::String> unknownDescs;
 		Common::SeekableReadStream *chunk;
-		IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path("S" + s));
+		IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path(s));
 		if (!sceneIFF) {
-			debugPrintf("Invalid scene S%s\n", argv[1]);
+			debugPrintf("Invalid scene or script %s\n", s.c_str());
 			return true;
 		}
 
@@ -647,7 +715,12 @@ bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 
 		for (uint i = 0; i < records.size(); ++i) {
 			ActionRecord *rec = records[i];
-			debugPrintf("Record %u:\n", i);
+			Common::String source = sceneIFF->getChunkSource("ACT", i);
+			if (source.empty()) {
+				debugPrintf("Record %u:\n", i);
+			} else {
+				debugPrintf("Record %u (from %s):\n", i, source.c_str());
+			}
 
 			if (rec == nullptr) {
 				// For unknown record types, we want to print the typeID and description
@@ -733,6 +806,40 @@ bool NancyConsole::Cmd_actionRecordExport(int argc, const char **argv) {
 	return true;
 }
 
+// The name of an IFF, without any .iff extension
+static Common::String getIFFName(const Common::Path &path) {
+	Common::String name = path.baseName();
+	if (name.hasSuffixIgnoreCase(".iff")) {
+		name = name.substr(0, name.size() - 4);
+	}
+
+	return name;
+}
+
+// Lists all scene IFFs (S#, S##, ...) in the ciftree, the promotree, and loose .iff files
+static void listSceneIFFs(Common::Array<Common::Path> &sceneList) {
+	Common::Array<Common::Path> list;
+	// Action records only appear in the ciftree and promotree
+	g_nancy->_resource->list("ciftree", list, CifInfo::kResTypeScript);
+	g_nancy->_resource->list("promotree", list, CifInfo::kResTypeScript);
+
+	Common::ArchiveMemberList searchManList;
+	SearchMan.listMatchingMembers(searchManList, "*.iff");
+	for (auto &i : searchManList) {
+		list.push_back(i->getPathInArchive());
+	}
+
+	for (Common::Path &path : list) {
+		Common::String name = getIFFName(path);
+		if (name.matchString("S#") ||
+			name.matchString("S##") ||
+			name.matchString("S###") ||
+			name.matchString("S####")) {
+			sceneList.push_back(path);
+		}
+	}
+}
+
 bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 	if (argc < 2 || argc % 2) {
 		debugPrintf("Scans all IFFs for ActionRecords of the provided type\n");
@@ -769,63 +876,151 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 	}
 
 	Common::Array<Common::Path> list;
-	// Action records only appear in the ciftree and promotree
-	g_nancy->_resource->list("ciftree", list, CifInfo::kResTypeScript);
-	g_nancy->_resource->list("promotree", list, CifInfo::kResTypeScript);
+	listSceneIFFs(list);
 
 	char descBuf[0x30];
 
-	Common::ArchiveMemberList searchManList;
-	SearchMan.listMatchingMembers(searchManList, "*.iff");
-	for (auto &i : searchManList) {
-		list.push_back(i->getPathInArchive());
-	}
-
 	for (Common::Path &cifName : list) {
-		Common::String name = cifName.baseName();
-		if (name.hasSuffixIgnoreCase(".iff")) {
-			name = name.substr(0, name.size() - 4);
+		IFF *iff = g_nancy->_resource->loadIFF(cifName);
+		if (!iff) {
+			continue;
 		}
 
-		// Only check inside scenes
-		if (name.matchString("S#") ||
-			name.matchString("S##") ||
-			name.matchString("S###") ||
-			name.matchString("S####")) {
-
-			IFF *iff = g_nancy->_resource->loadIFF(cifName);
-			if (iff) {
-				uint num = 0;
-				Common::SeekableReadStream *chunk = nullptr;
-				while (chunk = iff->getChunkStream("ACT", num), chunk != nullptr) {
-					bool isSatisfied = true;
-					for (uint i = 0; i < vals.size(); i += 2) {
-						if ((int64)vals[i] >= chunk->size()) {
-							isSatisfied = false;
-							break;
-						}
-
-						chunk->seek(vals[i]);
-						if (chunk->readByte() != vals[i + 1]) {
-							isSatisfied = false;
-							break;
-						}
-					}
-
-					if (isSatisfied) {
-						chunk->seek(0);
-						chunk->read(descBuf, 0x30);
-						descBuf[0x2F] = '\0';
-						debugPrintf("%s: ACT chunk %u, %s\n", cifName.toString().c_str(), num, descBuf);
-					}
-
-					++num;
-					delete chunk;
+		uint num = 0;
+		Common::SeekableReadStream *chunk = nullptr;
+		while (chunk = iff->getChunkStream("ACT", num), chunk != nullptr) {
+			bool isSatisfied = true;
+			for (uint i = 0; i < vals.size(); i += 2) {
+				if ((int64)vals[i] >= chunk->size()) {
+					isSatisfied = false;
+					break;
 				}
 
-				delete iff;
+				chunk->seek(vals[i]);
+				if (chunk->readByte() != vals[i + 1]) {
+					isSatisfied = false;
+					break;
+				}
+			}
+
+			if (isSatisfied) {
+				chunk->seek(0);
+				chunk->read(descBuf, 0x30);
+				descBuf[0x2F] = '\0';
+
+				Common::String source = iff->getChunkSource("ACT", num);
+				if (source.empty()) {
+					debugPrintf("%s: ACT chunk %u, %s\n", cifName.toString().c_str(), num, descBuf);
+				} else {
+					debugPrintf("%s: ACT chunk %u, %s (from %s)\n", cifName.toString().c_str(), num, descBuf, source.c_str());
+				}
+			}
+
+			++num;
+			delete chunk;
+		}
+
+		delete iff;
+	}
+
+	return true;
+}
+
+bool NancyConsole::Cmd_listIncludes(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Lists the files included (via USE chunks) by the current or a specified scene\n");
+		debugPrintf("Usage: %s [sceneID]\n", argv[0]);
+		return true;
+	}
+
+	uint sceneID = 0;
+	if (argc == 2) {
+		sceneID = atoi(argv[1]);
+	} else if (g_nancy->getState() == NancyState::kScene) {
+		sceneID = NancySceneState.getSceneInfo().sceneID;
+	} else {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path(Common::String::format("S%u", sceneID)));
+	if (!sceneIFF) {
+		debugPrintf("Invalid scene S%u\n", sceneID);
+		return true;
+	}
+
+	const Common::Array<Common::String> &includes = sceneIFF->getIncludes();
+	if (includes.empty()) {
+		debugPrintf("Scene S%u has no includes\n", sceneID);
+	} else {
+		debugPrintf("Scene S%u includes:\n", sceneID);
+		for (const Common::String &include : includes) {
+			debugPrintf("\t%s\n", include.c_str());
+		}
+	}
+
+	delete sceneIFF;
+	return true;
+}
+
+bool NancyConsole::Cmd_findInclude(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Lists the scenes that include (via USE chunks) the given file,\n");
+		debugPrintf("or every included file and the scenes using it if none is given\n");
+		debugPrintf("Warning: can be quite slow, especially on archived game versions\n");
+		debugPrintf("Usage: %s [filename]\n", argv[0]);
+		return true;
+	}
+
+	Common::Array<Common::Path> list;
+	listSceneIFFs(list);
+
+	// Included file name -> including scenes, in first-seen order
+	Common::Array<Common::String> includeNames;
+	Common::HashMap<Common::String, Common::Array<Common::String>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> users;
+
+	for (Common::Path &cifName : list) {
+		IFF *iff = g_nancy->_resource->loadIFF(cifName);
+		if (!iff) {
+			continue;
+		}
+
+		for (const Common::String &include : iff->getIncludes()) {
+			if (argc == 2 && !include.equalsIgnoreCase(argv[1])) {
+				continue;
+			}
+
+			if (!users.contains(include)) {
+				includeNames.push_back(include);
+			}
+
+			users[include].push_back(getIFFName(cifName));
+		}
+
+		delete iff;
+	}
+
+	if (includeNames.empty()) {
+		if (argc == 2) {
+			debugPrintf("No scene includes %s\n", argv[1]);
+		} else {
+			debugPrintf("No scene includes any files\n");
+		}
+
+		return true;
+	}
+
+	for (const Common::String &include : includeNames) {
+		const Common::Array<Common::String> &scenes = users[include];
+		debugPrintf("%s is included by %u scene(s):\n", include.c_str(), scenes.size());
+		for (uint i = 0; i < scenes.size(); ++i) {
+			debugPrintf("%-7s", scenes[i].c_str());
+			if ((i % 10) == 9 && i + 1 != scenes.size()) {
+				debugPrintf("\n");
 			}
 		}
+
+		debugPrintf("\n\n");
 	}
 
 	return true;
@@ -910,6 +1105,31 @@ bool NancyConsole::Cmd_setEventFlags(int argc, const char **argv) {
 	return cmdExit(0, nullptr);
 }
 
+void NancyConsole::printInventoryItem(uint itemID) {
+	auto *inventoryData = GetEngineData(INV);
+	assert(inventoryData);
+
+	byte keep = inventoryData->itemDescriptions[itemID].keepItem;
+	debugPrintf("\nItem %u, %s, %s",
+		itemID,
+		inventoryData->itemDescriptions[itemID].name.c_str(),
+		keep == 0 ? "UseThenLose" : keep == 1 ? "KeepAlways" : keep == 2 ? "ReturnToInventory" : "NewSceneView");
+
+	uint numCharacters = numPlayerCharacters();
+	if (numCharacters == 1) {
+		debugPrintf(", %s", NancySceneState.hasItem(itemID) == g_nancy->_true ? "true" : "false");
+		return;
+	}
+
+	// Every character keeps their own copy of the item flags, and scene
+	// dependencies can ask about any of them, so list them all
+	for (uint i = 0; i < numCharacters; ++i) {
+		debugPrintf(", %s: %s",
+			playerCharacterName(i).c_str(),
+			NancySceneState.hasCharacterItem(i, itemID) == g_nancy->_true ? "true" : "false");
+	}
+}
+
 bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
@@ -917,34 +1137,26 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 	}
 
 	uint numItems = g_nancy->getStaticData().numItems;
-	auto *inventoryData = GetEngineData(INV);
-	assert(inventoryData);
 
 	debugPrintf("Total number of inventory items: %u\n", numItems);
 
+	if (numPlayerCharacters() > 1) {
+		debugPrintf("Playing as %s\n", playerCharacterName(g_nancy->getPlayerCharacter()).c_str());
+	}
+
 	if (argc == 1) {
 		for (uint i = 0; i < numItems; ++i) {
-			byte keep = inventoryData->itemDescriptions[i].keepItem;
-			debugPrintf("\nItem %u, %s, %s, %s",
-				i,
-				inventoryData->itemDescriptions[i].name.c_str(),
-				keep == 0 ? "UseThenLose" : keep == 1 ? "KeepAlways" : "ReturnToInventory",
-				NancySceneState.hasItem(i) == g_nancy->_true ? "true" : "false");
+			printInventoryItem(i);
 		}
 	} else {
 		for (int i = 1; i < argc; ++i) {
-			byte keep = inventoryData->itemDescriptions[i].keepItem;
-			int flagID = atoi(argv[i]);
-			if (flagID < 0 || flagID >= (int)numItems) {
-				debugPrintf("\nInvalid flag %s", argv[i]);
+			int itemID = atoi(argv[i]);
+			if (itemID < 0 || itemID >= (int)numItems) {
+				debugPrintf("\nInvalid item %s", argv[i]);
 				continue;
 			}
-			debugPrintf("\nItem %u, %s, %s, %s",
-				flagID,
-				inventoryData->itemDescriptions[flagID].name.c_str(),
-				keep == 0 ? "UseThenLose" : keep == 1 ? "KeepAlways" : "ReturnToInventory",
-				NancySceneState.hasItem(i) == g_nancy->_true ? "true" : "false");
 
+			printInventoryItem(itemID);
 		}
 	}
 
@@ -962,13 +1174,39 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 		return true;
 	}
 
-	if (argc < 2 || argc % 2 == 0) {
+	// Without -c the items go to whoever is being played, which is the only
+	// inventory the games before Nancy15 have
+	uint characterIndex = g_nancy->getPlayerCharacter();
+	int firstItemArg = 1;
+
+	if (argc > 1 && Common::String(argv[1]).equalsIgnoreCase("-c")) {
+		if (argc < 3) {
+			debugPrintf("Missing character index after -c\n");
+			return true;
+		}
+
+		int requestedCharacter = atoi(argv[2]);
+		if (requestedCharacter < 0 || requestedCharacter >= (int)numPlayerCharacters()) {
+			debugPrintf("Invalid character %s\n", argv[2]);
+			return true;
+		}
+
+		characterIndex = requestedCharacter;
+		firstItemArg = 3;
+	}
+
+	if (argc < firstItemArg + 2 || (argc - firstItemArg) % 2 != 0) {
 		debugPrintf("Sets one or more inventory items to the provided value.\n");
-		debugPrintf("Usage: %s <itemID> <true/false>...\n", argv[0]);
+		debugPrintf("Usage: %s [-c <characterIndex>] <itemID> <true/false>...\n", argv[0]);
+		debugPrintf("-c picks the player character to give the items to (Nancy15+); the character being played is the default.\n");
 		return true;
 	}
 
-	for (int i = 1; i < argc; i += 2) {
+	Common::String targetDescription = numPlayerCharacters() > 1 ?
+		Common::String::format("the inventory of %s", playerCharacterName(characterIndex).c_str()) :
+		Common::String("inventory");
+
+	for (int i = firstItemArg; i < argc; i += 2) {
 		int itemID = atoi(argv[i]);
 		if (itemID < 0 || itemID >= (int)g_nancy->getStaticData().numItems) {
 			debugPrintf("Invalid item %s\n", argv[i]);
@@ -976,19 +1214,138 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 		}
 
 		if (Common::String(argv[i + 1]).compareTo("true") == 0) {
-			NancySceneState.addItemToInventory(itemID);
-			debugPrintf("Added item %i, %s, to inventory\n",
+			NancySceneState.addItemToCharacterInventory(characterIndex, itemID);
+			debugPrintf("Added item %i, %s, to %s\n",
 				itemID,
-				inventoryData->itemDescriptions[itemID].name.c_str());
+				inventoryData->itemDescriptions[itemID].name.c_str(),
+				targetDescription.c_str());
 		} else if (Common::String(argv[i + 1]).compareTo("false") == 0) {
-			NancySceneState.removeItemFromInventory(itemID, false);
-			debugPrintf("Removed item %i, %s, from inventory\n",
+			NancySceneState.removeItemFromCharacterInventory(characterIndex, itemID);
+			debugPrintf("Removed item %i, %s, from %s\n",
 				itemID,
-				inventoryData->itemDescriptions[itemID].name.c_str());
+				inventoryData->itemDescriptions[itemID].name.c_str(),
+				targetDescription.c_str());
 		} else {
 			debugPrintf("Invalid value %s\n", argv[i + 1]);
 			continue;
 		}
+	}
+
+	return cmdExit(0, nullptr);
+}
+
+bool NancyConsole::Cmd_getMoney(int argc, const char **argv) {
+	if (g_nancy->getState() != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	if (!hasMoneyResource()) {
+		debugPrintf("This game doesn't have a coin purse\n");
+		return true;
+	}
+
+	auto *resourceData = GetEngineData(UIRC);
+	if (!resourceData || resourceData->items.empty()) {
+		debugPrintf("No UI resource data loaded\n");
+		return true;
+	}
+
+	// Money is UI resource 0; the purse formats it using that record's settings
+	const UIRC::ItemRecord &item = resourceData->items[0];
+	uint numCharacters = numPlayerCharacters();
+
+	if (numCharacters == 1) {
+		int32 value = NancySceneState.getUIResource(0);
+		debugPrintf("Money: %s (%d)\n", formatUIResourceValue(item, value).c_str(), value);
+		return true;
+	}
+
+	// From Nancy15 every player character carries their own money
+	debugPrintf("Playing as %s\n", playerCharacterName(g_nancy->getPlayerCharacter()).c_str());
+
+	for (uint i = 0; i < numCharacters; ++i) {
+		int32 value = NancySceneState.getUIResource(0, (byte)i);
+		debugPrintf("%s: %s (%d)\n",
+			playerCharacterName(i).c_str(),
+			formatUIResourceValue(item, value).c_str(),
+			value);
+	}
+
+	return true;
+}
+
+bool NancyConsole::Cmd_setMoney(int argc, const char **argv) {
+	if (g_nancy->getState() != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	if (!hasMoneyResource()) {
+		debugPrintf("This game doesn't have a coin purse\n");
+		return true;
+	}
+
+	auto *resourceData = GetEngineData(UIRC);
+	if (!resourceData || resourceData->items.empty()) {
+		debugPrintf("No UI resource data loaded\n");
+		return true;
+	}
+
+	// Without -c the money goes to whoever is being played, which is the only
+	// purse the games before Nancy15 have
+	uint characterIndex = g_nancy->getPlayerCharacter();
+	int valueArg = 1;
+
+	if (argc > 1 && Common::String(argv[1]).equalsIgnoreCase("-c")) {
+		if (argc < 3) {
+			debugPrintf("Missing character index after -c\n");
+			return true;
+		}
+
+		int requestedCharacter = atoi(argv[2]);
+		if (requestedCharacter < 0 || requestedCharacter >= (int)numPlayerCharacters()) {
+			debugPrintf("Invalid character %s\n", argv[2]);
+			return true;
+		}
+
+		characterIndex = requestedCharacter;
+		valueArg = 3;
+	}
+
+	const UIRC::ItemRecord &item = resourceData->items[0];
+
+	if (argc != valueArg + 1) {
+		debugPrintf("Sets the money a player character carries.\n");
+		debugPrintf("Usage: %s [-c <characterIndex>] <value>\n", argv[0]);
+		debugPrintf("-c picks the player character to give the money to (Nancy15+); the character being played is the default.\n");
+		debugPrintf("The value is a whole number in the purse's smallest unit, so 1234 means %s\n",
+			formatUIResourceValue(item, 1234).c_str());
+		return true;
+	}
+
+	int32 value = atoi(argv[valueArg]);
+
+	if (value < 0) {
+		debugPrintf("Invalid value %s\n", argv[valueArg]);
+		return true;
+	}
+
+	// Nancy14 added a maximum that empties the purse instead of capping it,
+	// so setting a value above it would leave the character with nothing
+	if (g_nancy->getGameType() >= kGameTypeNancy14 && value > (int32)item.maxValue) {
+		debugPrintf("Value %d is above the maximum of %u, which would empty the purse\n", value, item.maxValue);
+		return true;
+	}
+
+	NancySceneState.setUIResource(0, value, (byte)characterIndex);
+
+	if (numPlayerCharacters() > 1) {
+		debugPrintf("Set the money %s carries to %s\n",
+			playerCharacterName(characterIndex).c_str(),
+			formatUIResourceValue(item, value).c_str());
+	} else {
+		debugPrintf("Set money to %s\n", formatUIResourceValue(item, value).c_str());
 	}
 
 	return cmdExit(0, nullptr);
@@ -1006,6 +1363,13 @@ bool NancyConsole::Cmd_getPlayerTime(int argc, const char **argv) {
 		time.getHours(),
 		time.getMinutes(),
 		(uint32)time);
+
+	auto *bootSummary = GetEngineData(BSUM);
+	if (bootSummary && bootSummary->endOfDayFlag != kEvNoEvent) {
+		// Games with an end of day keep the day separately from the clock
+		debugPrintf("Day: %d\n", NancySceneState._timers.playerDay);
+	}
+
 	return true;
 }
 
@@ -1022,9 +1386,15 @@ bool NancyConsole::Cmd_setPlayerTime(int argc, const char **argv) {
 	}
 
 	Time &time = NancySceneState._timers.playerTime;
+	auto *bootSummary = GetEngineData(BSUM);
 
 	if (argc == 2) {
 		time = atoi(argv[1]);
+	} else if (bootSummary && bootSummary->endOfDayFlag != kEvNoEvent) {
+		// Games with an end of day keep the day separately from the clock
+		NancySceneState.setPlayerDay(atoi(argv[1]));
+		time = 	atoi(argv[2]) * 3600000 +	// hours
+				atoi(argv[3]) * 60000;		// minutes
 	} else {
 		time = 	atoi(argv[1]) * 86400000 +	// days
 				atoi(argv[2]) * 3600000 +	// hours

@@ -63,7 +63,7 @@ void FoolPrologue::finaleRun() {
 		}
 	}
 	// 131:00e6
-	for (int i = 6; i <= 9; i++) {
+	for (int16 i = 6; i <= 9; i++) {
 		setPortBitsToPage(i);
 		fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
 		// 131:0110
@@ -240,7 +240,7 @@ void FoolPrologue::finaleRun() {
 			finaleDrawWind(windCount);
 		}
 		// 131:07ea
-		for (int i = 1; i <= windCount; i++) {
+		for (int16 i = 1; i <= windCount; i++) {
 			finaleDrawWind(i);
 			_rain[i].xPos += _rain[i].veloc;
 

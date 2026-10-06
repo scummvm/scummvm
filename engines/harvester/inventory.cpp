@@ -29,6 +29,7 @@
 #include "graphics/screen.h"
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
+#include "harvester/menu.h"
 #include "harvester/player.h"
 #include "harvester/resources.h"
 #include "harvester/art.h"
@@ -148,15 +149,6 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 		screen.format.bytesPerPixel, kTransparentPaletteIndex);
 }
 
-static Common::String buildUseItemPrompt(const Common::String &itemLabel, const Common::String &targetLabel) {
-	if (itemLabel.empty())
-		return Common::String();
-	if (targetLabel.empty())
-		return Common::String::format("Use %s on ...", itemLabel.c_str());
-
-	return Common::String::format("Use %s on %s", itemLabel.c_str(), targetLabel.c_str());
-}
-
 static Common::Rect getHotspotBounds(const ObjectRecord &object) {
 	if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
 		return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
@@ -235,25 +227,6 @@ static bool usesObjectActionForInventorySecondaryClick(const Common::String &obj
 	}
 
 	return false;
-}
-
-static Common::String resolveInventoryWeekdayLabel(int storyDayIndex) {
-	switch (storyDayIndex) {
-	case 1:
-		return "Monday";
-	case 2:
-		return "Tuesday";
-	case 3:
-		return "Wednesday";
-	case 4:
-		return "Thursday";
-	case 5:
-		return "Friday";
-	case 6:
-		return "Saturday";
-	default:
-		return Common::String();
-	}
 }
 
 static void debugLogInventoryVisual(const InventoryVisual &visual, const Common::String &spritePath) {
@@ -436,8 +409,9 @@ Common::String InventorySystem::resolveSelectedLabel() const {
 	return normalizeHarvesterResourcePath(_selectedItemName);
 }
 
-Common::String InventorySystem::buildSelectedPrompt(const Common::String &targetLabel) const {
-	return buildUseItemPrompt(resolveSelectedLabel(), targetLabel);
+Common::String InventorySystem::buildSelectedPrompt(const Common::String &targetLabel,
+		const MenuTextConfig &menuTextConfig) const {
+	return buildUseItemPrompt(menuTextConfig, resolveSelectedLabel(), targetLabel);
 }
 
 void InventorySystem::selectItem(const Common::String &objectName) {
@@ -509,12 +483,16 @@ const Common::String &InventorySystem::getPromptText() const {
 	return _promptText;
 }
 
-Common::String InventorySystem::resolveWeekdayLabel() const {
+Common::String InventorySystem::resolveWeekdayLabel(const MenuTextConfig &menuTextConfig) const {
 	Script *script = _engine.getScript();
 	if (!script || script->isObjectInInventory(kHarvestBladeObjectName))
 		return Common::String();
 
-	return resolveInventoryWeekdayLabel(script->getCurrentStoryDayIndex());
+	const int storyDayIndex = script->getCurrentStoryDayIndex();
+	if (storyDayIndex < 1 || storyDayIndex > (int)menuTextConfig.weekdayLabels.size())
+		return Common::String();
+
+	return menuTextConfig.weekdayLabels[storyDayIndex - 1];
 }
 
 const InventoryVisual *InventorySystem::findItemAtPoint(const Common::Point &point) const {

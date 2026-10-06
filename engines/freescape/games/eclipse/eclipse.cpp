@@ -37,7 +37,7 @@
 #include "freescape/games/eclipse/opl.music.h"
 #include "freescape/games/eclipse/eclipse.h"
 #include "freescape/objects/entrance.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 
 namespace Freescape {
 

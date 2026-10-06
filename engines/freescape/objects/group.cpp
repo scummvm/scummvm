@@ -21,7 +21,7 @@
 #include "freescape/freescape.h"
 #include "freescape/objects/group.h"
 #include "freescape/objects/geometricobject.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 
 namespace Freescape {
 

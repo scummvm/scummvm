@@ -44,11 +44,8 @@ static char _msgText2[256];
 
 void teleporter_init() {
 	_buttonTyped = -1;
-	_curCode = -1;
-	_digitCount = -1;
 	_curMessageId = -1;
 	_handSequenceId = -1;
-	_finishedCodeCounter = -1;
 	_meteorologistNextPlace = -1;
 	_meteorologistCurPlace = -1;
 	_teleporterSceneId = -1;
@@ -60,7 +57,6 @@ void teleporter_init() {
 	_curCode = 0;
 	_digitCount = 0;
 	_finishedCodeCounter = 0;
-	_curMessageId = -1;
 	Common::strcpy_s(_msgText2, "_");
 
 	if (previous_room == KERNEL_RESTORING_GAME)

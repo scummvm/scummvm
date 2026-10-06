@@ -29,7 +29,9 @@
 namespace Harvester {
 
 const int kRoomMonsterAnimationRate = 17;
-const int kNativeMonsterAttackAnimationRate = 4;
+// update_actor_runtime_state (0x4d750), states 0x16..0x1b: the block at
+// 0x53525 forces a three-centisecond interval by assigning animation rate 0x1e.
+const int kNativeMonsterAttackAnimationRate = 30;
 const int kNativeMonsterHitAnimationRate = 5;
 const uint32 kNativeMonsterAttackCooldownBaseTicks = 50;
 const float kNativeNpcMonsterZExtent = 5.0f;

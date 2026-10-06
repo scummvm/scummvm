@@ -238,7 +238,7 @@ public:
 class ASound4 : public ASound {
 private:
 	typedef int (ASound4:: *CommandPtr)();
-	static const CommandPtr _commandList[61];
+	static const CommandPtr _commandList[60];
 
 	int command10();
 	int command12();
@@ -264,8 +264,6 @@ private:
 	int command57();
 	int command58();
 	int command59();
-	int command60();
-
 	void method1();
 public:
 	ASound4(Audio::Mixer *mixer);
@@ -454,8 +452,7 @@ public:
 class ASound9 : public ASound {
 private:
 	/**
-	 * Deferred sound-loader callback state (word_1949E/word_194A0/_soundPtr
-	 * in the original disassembly). Unlike every other Rex Nebular driver,
+	 * Deferred sound-loader callback state. Unlike every other Rex Nebular driver,
 	 * ASound9 arms a recurring timer that re-invokes a scheduled loader
 	 * function every _callbackPeriod ticks, without ever clearing the
 	 * pointer itself (the loader body clears it if it wants the recurrence

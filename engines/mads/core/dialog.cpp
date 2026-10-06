@@ -81,7 +81,7 @@ int alert_hilite_color = DD_DEFAULT_HILITE_COLOR;
 
 static Dialog say_dialog_box;
 static DialogPtr say_dialog = &say_dialog_box;
-static char say_dialog_work[SAY_DIALOG_SIZE];
+//static char say_dialog_work[SAY_DIALOG_SIZE];
 
 #define write_flag      0x01
 #define error_mask      0x06
@@ -416,12 +416,14 @@ ItemPtr dialog_add_message(DialogPtr dialog, int x, int y, const char *prompt) {
 
 	if (item != NULL) {
 		item->prompt = space;
-		if (prompt == NULL) {
+
+		if (!prompt) {
 			item->width = DD_LINEACROSS;
 		} else {
-			item->width = strlen(prompt);
+			item->width = (short)strlen(prompt);
 			Common::strcpy_s(item->prompt, 65536, prompt);
 		}
+
 		item_locate(dialog, item, x, y);
 		dialog->width = MAX<short>(dialog->width, (item->x + item->width + 1));
 		item->status = 0;
@@ -1298,13 +1300,7 @@ static void dialog_show_any(DialogPtr dialog, ItemPtr item) {
 		break;
 
 	case DD_I_STRING:
-		dialog_show_string(dialog, item);
-		break;
-
 	case DD_I_FILENAME:
-		dialog_show_string(dialog, item);
-		break;
-
 	case DD_I_LISTBASED:
 		dialog_show_string(dialog, item);
 		break;
@@ -2404,14 +2400,12 @@ static void dialog_exec_mouse_list(DialogPtr dialog, ItemPtr item) {
 					}
 					if (mouse_start_stroke) mouse_list_timing = timer_read_dos();
 
-					if (!abort) {
-						baseitem = &dialog->item[item->status];
-						buf = baseitem->buf_id;
-						strncpy(dialog->buffer[buf], list->list + (list->picked_entry * list->element_offset), baseitem->buf_width);
-						dialog->buffer[buf][baseitem->buf_width] = 0;
-						fileio_purge_trailing_spaces(dialog->buffer[buf]);
-						dialog_update_any(dialog, baseitem, false);
-					}
+					baseitem = &dialog->item[item->status];
+					buf = baseitem->buf_id;
+					strncpy(dialog->buffer[buf], list->list + (list->picked_entry * list->element_offset), baseitem->buf_width);
+					dialog->buffer[buf][baseitem->buf_width] = 0;
+					fileio_purge_trailing_spaces(dialog->buffer[buf]);
+					dialog_update_any(dialog, baseitem, false);
 				}
 			}
 		}

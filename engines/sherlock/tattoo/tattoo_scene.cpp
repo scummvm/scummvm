@@ -595,7 +595,7 @@ int TattooScene::getScaleVal(const Point32 &pt) {
 		if (sz.contains(pos)) {
 			int n = (sz._bottomNumber - sz._topNumber) * 100 / sz.height() * (pos.y - sz.top) / 100 + sz._topNumber;
 			result = 25600L / n;
-			// CHECKME: Shouldn't we set 'found' at this place?
+			found = true;
 		}
 	}
 

@@ -25,7 +25,7 @@
 #include "freescape/copylock.h"
 #include "freescape/freescape.h"
 #include "freescape/games/castle/castle.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 
 namespace Freescape {
 

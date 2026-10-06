@@ -105,7 +105,7 @@ void GraphicsManager::draw(bool updateScreen) {
 	// Filter out dirty rects that are completely inside others to reduce overdraw
 	for (auto outer = _dirtyRects.begin(); outer != _dirtyRects.end(); ++outer) {
 		for (auto inner = _dirtyRects.begin(); inner != _dirtyRects.end(); ++inner) {
-			if (inner != outer && (*outer).contains(*inner)) {
+			if (inner != outer && outer->contains(*inner)) {
 				_dirtyRects.erase(inner);
 				break;
 			}
@@ -190,6 +190,20 @@ void GraphicsManager::addObject(RenderObject *object) {
 	}
 
 	_objects.insert(object);
+}
+
+void GraphicsManager::reorderObject(RenderObject *object) {
+	// The array is kept sorted as objects are inserted, so an object that has
+	// changed its z depth has to be taken out and put back to move. One that is
+	// not in the list yet has nothing to reorder; it will be sorted when it is
+	// added.
+	for (auto &r : _objects) {
+		if (r == object) {
+			_objects.erase(&r);
+			_objects.insert(object);
+			return;
+		}
+	}
 }
 
 void GraphicsManager::removeObject(RenderObject *object) {
@@ -325,11 +339,11 @@ void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, ui
 void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest, byte rotation) {
 	assert(!src.empty() && !dest.empty());
 	assert(rotation <= 3);
-	assert(src.format.bytesPerPixel == 2 && dest.format.bytesPerPixel == 2);
+	assert(src.format.bytesPerPixel == dest.format.bytesPerPixel);
 
-	uint srcW = src.w;
-	uint srcH = src.h;
-	const uint16 *s, *e;
+	const uint srcW = src.w;
+	const uint srcH = src.h;
+	const uint bpp = src.format.bytesPerPixel;
 
 	if (rotation % 2) {
 		if (src.h != dest.w || src.w != dest.h) {
@@ -343,45 +357,33 @@ void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::
 		}
 	}
 
-	switch (rotation) {
-	case 0 :
+	if (rotation == 0) {
 		// No rotation, just blit
 		dest.rawBlitFrom(src, src.getBounds(), Common::Point());
 		return;
-	case 2 : {
-		// 180 degrees
-		uint16 *d;
-		for (uint y = 0; y < srcH; ++y) {
-			s = (const uint16 *)src.getBasePtr(0, y);
-			e = (const uint16 *)src.getBasePtr(srcW, y);
-			d = (uint16 *)dest.getBasePtr(srcW - 1, srcH - y - 1);
-			for (; s < e; ++s, --d) {
-				*d = *s;
-			}
-		}
-
-		break;
 	}
-	case 1 :
-		// 90 degrees
-		for (uint y = 0; y < srcH; ++y) {
-			s = (const uint16 *)src.getBasePtr(0, y);
-			for (uint x = 0; x < srcW; ++x, ++s) {
-				*((uint16 *)dest.getBasePtr(srcH - y - 1, x)) = *s;
-			}
-		}
 
-		break;
-	case 3 :
-		// 270 degrees
-		for (uint y = 0; y < srcH; ++y) {
-			s = (const uint16 *)src.getBasePtr(0, y);
-			for (uint x = 0; x < srcW; ++x, ++s) {
-				*((uint16 *)dest.getBasePtr(y, srcW - x - 1)) = *s;
+	for (uint y = 0; y < srcH; ++y) {
+		const byte *s = (const byte *)src.getBasePtr(0, y);
+		for (uint x = 0; x < srcW; ++x, s += bpp) {
+			byte *d;
+			switch (rotation) {
+			case 1:
+				// 90 degrees
+				d = (byte *)dest.getBasePtr(srcH - y - 1, x);
+				break;
+			case 2:
+				// 180 degrees
+				d = (byte *)dest.getBasePtr(srcW - x - 1, srcH - y - 1);
+				break;
+			default:
+				// 270 degrees
+				d = (byte *)dest.getBasePtr(y, srcW - x - 1);
+				break;
 			}
-		}
 
-		break;
+			memcpy(d, s, bpp);
+		}
 	}
 }
 

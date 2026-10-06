@@ -245,12 +245,31 @@ bool Entity::loadAbmResource(ResourceManager &resources, const Common::String &p
 }
 
 void Entity::setPosition(int x, int y, float z) {
+	const int previousX = _x;
+	const int previousY = _y;
+	const float previousZ = _z;
+	const Common::Point previousDrawOrigin = getDrawOrigin();
 	const bool anchorChanged = _x != x || _y != y;
 	_x = x;
 	_y = y;
 	_z = z;
 	if (anchorChanged)
 		updateScreenBaseFromCurrentFrame();
+
+	if ((anchorChanged || previousZ != z) && _classId == kRuntimeEntityClassNpc) {
+		int width = 0;
+		int height = 0;
+		int xOffset = 0;
+		int yOffset = 0;
+		(void)getCurrentFrameMetrics(width, height, xOffset, yOffset);
+		const Common::Point drawOrigin = getDrawOrigin();
+		debugC(3, kDebugPlayer,
+			"Harvester: npc position npc='%s' frame=%d entity=(%d,%d,z=%.2f)->(%d,%d,z=%.2f) frame_size=%dx%d frame_offset=(%d,%d) draw=(%d,%d)->(%d,%d)",
+			_name.c_str(), _currentFrame,
+			previousX, previousY, (double)previousZ, _x, _y, (double)_z,
+			width, height, xOffset, yOffset,
+			previousDrawOrigin.x, previousDrawOrigin.y, drawOrigin.x, drawOrigin.y);
+	}
 }
 
 void Entity::setAnchorMode(RuntimeEntityAnchorMode anchorMode) {
@@ -259,6 +278,7 @@ void Entity::setAnchorMode(RuntimeEntityAnchorMode anchorMode) {
 }
 
 void Entity::setAnimationRate(int rate) {
+	const int previousRate = _animationRate;
 	if (rate == 0)
 		_animationTickInterval = 0;
 	else
@@ -267,11 +287,24 @@ void Entity::setAnimationRate(int rate) {
 	if (rate != _animationRate) {
 		_nextAnimationTick = 0;
 		_animationRate = rate;
+		if (_classId == kRuntimeEntityClassNpc) {
+			debugC(2, kDebugPlayer,
+				"Harvester: npc animation rate npc='%s' rate=%d->%d interval_ticks=%u next_tick=%u",
+				_name.c_str(), previousRate, _animationRate,
+				_animationTickInterval, _nextAnimationTick);
+		}
 	}
 }
 
 void Entity::setAnimationEnabled(bool enabled) {
+	const bool wasEnabled = _animationEnabled;
 	_animationEnabled = enabled && !_frames.empty() && _currentFrame >= 0;
+	if (wasEnabled != _animationEnabled && _classId == kRuntimeEntityClassNpc) {
+		debugC(2, kDebugPlayer,
+			"Harvester: npc animation enabled npc='%s' enabled=%d->%d frame=%d range=%d..%d",
+			_name.c_str(), wasEnabled, _animationEnabled,
+			_currentFrame, _firstFrame, _lastFrame);
+	}
 }
 
 void Entity::setCurrentFrame(int frame) {
@@ -286,6 +319,9 @@ void Entity::setAnimationFrameRange(int firstFrame, int lastFrame, bool looping)
 	if (_frames.empty())
 		return;
 
+	const int previousFirstFrame = _firstFrame;
+	const int previousLastFrame = _lastFrame;
+	const bool wasLooping = _looping;
 	firstFrame = CLIP<int>(firstFrame, 0, (int)_frames.size() - 1);
 	lastFrame = CLIP<int>(lastFrame, 0, (int)_frames.size() - 1);
 	if (lastFrame < firstFrame)
@@ -301,6 +337,14 @@ void Entity::setAnimationFrameRange(int firstFrame, int lastFrame, bool looping)
 		advanceAnimationFrame(_firstFrame);
 	else
 		updateBoundsFromCurrentFrame();
+
+	if (_classId == kRuntimeEntityClassNpc) {
+		debugC(2, kDebugPlayer,
+			"Harvester: npc animation range npc='%s' frames=%d..%d->%d..%d current=%d looping=%d->%d enabled=%d",
+			_name.c_str(), previousFirstFrame, previousLastFrame,
+			_firstFrame, _lastFrame, _currentFrame,
+			wasLooping, _looping, _animationEnabled);
+	}
 }
 
 void Entity::setAnimationSequence(int sequence) {
@@ -394,9 +438,31 @@ bool Entity::tickVisualState(uint32 now) {
 	if (now < _nextAnimationTick)
 		return false;
 
+	const int previousFrameIndex = _currentFrame;
+	const bool wasPlayingBackwards = _playBackwards;
+	const AbmFrame &previousFrame = _frames[(uint)previousFrameIndex];
+	const Common::Point previousDrawOrigin = getDrawOrigin();
 	advanceAnimationFrame(_playBackwards ? -1 : -2);
 	_nextAnimationTick = now + _animationTickInterval;
 	_animationAdvancedLastTick = true;
+
+	if (_classId == kRuntimeEntityClassNpc) {
+		const AbmFrame &currentFrame = _frames[(uint)_currentFrame];
+		const Common::Point drawOrigin = getDrawOrigin();
+		const bool loopReset = _looping && !_pingPong &&
+			((!wasPlayingBackwards && previousFrameIndex == _lastFrame && _currentFrame == _firstFrame) ||
+			 (wasPlayingBackwards && previousFrameIndex == _firstFrame && _currentFrame == _lastFrame));
+		debugC(3, kDebugPlayer,
+			"Harvester: npc animation advance npc='%s' frame=%d->%d range=%d..%d loop_reset=%d backwards=%d->%d rate=%d interval=%u entity=(%d,%d,z=%.2f) previous=(size=%ux%u offset=%d,%d draw=%d,%d) current=(size=%ux%u offset=%d,%d draw=%d,%d)",
+			_name.c_str(),
+			previousFrameIndex, _currentFrame, _firstFrame, _lastFrame,
+			loopReset, wasPlayingBackwards, _playBackwards,
+			_animationRate, _animationTickInterval, _x, _y, (double)_z,
+			previousFrame.width, previousFrame.height, previousFrame.xOffset, previousFrame.yOffset,
+			previousDrawOrigin.x, previousDrawOrigin.y,
+			currentFrame.width, currentFrame.height, currentFrame.xOffset, currentFrame.yOffset,
+			drawOrigin.x, drawOrigin.y);
+	}
 	return true;
 }
 

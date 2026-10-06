@@ -101,6 +101,9 @@ public:
 	static jint getAndroidSDKVersionId();
 	static void setCurrentGame(const Common::String &target);
 	static void notifyHTTPService(int localPort, bool minimal);
+	static jobject getTTSManager();
+	static Common::Array<Common::String> getMIDIDevices();
+	static jobject openMIDIDevice(int deviceId, int *port);
 
 	static inline bool haveSurface();
 	static inline bool swapBuffers();
@@ -122,6 +125,8 @@ public:
 	static int exportBackup(const Common::U32String &prompt);
 	static int importBackup(const Common::U32String &prompt, const Common::String &path);
 
+	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);
+	static Common::U32String convertFromJString(JNIEnv *env, const jstring &jstr);
 private:
 	static pthread_key_t _env_tls;
 
@@ -157,6 +162,9 @@ private:
 	static jmethodID _MID_getScummVMLogPath;
 	static jmethodID _MID_setCurrentGame;
 	static jmethodID _MID_notifyHTTPService;
+	static jmethodID _MID_getTTSManager;
+	static jmethodID _MID_getMIDIDevices;
+	static jmethodID _MID_openMIDIDevice;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;
@@ -197,8 +205,6 @@ private:
 	static void notifyAudioDisconnect(JNIEnv *env, jclass clazz);
 
 	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);
-	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);
-	static Common::U32String convertFromJString(JNIEnv *env, const jstring &jstr);
 
 	static JNIEnv *fetchEnv();
 	static int fetchEGLVersion();

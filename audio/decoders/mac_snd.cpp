@@ -26,11 +26,12 @@
  * We implement both type 1 and type 2 snd resources, but only those that are sampled
  */
 
-#include "common/textconsole.h"
 #include "common/stream.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 
 #include "audio/decoders/mac_snd.h"
+#include "audio/decoders/mac_snd_mace.h"
 #include "audio/decoders/raw.h"
 
 namespace Audio {
@@ -90,23 +91,64 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 	byte encoding = stream->readByte();
 	stream->readByte(); // base frequency
 
-	if (encoding != 0) {
-		// 0 == PCM
+	if (encoding == 0) {
+		stream->skip(soundDataOffset);
+		const uint32 availableSize = stream->pos() < stream->size() ? stream->size() - stream->pos() : 0;
+		if (size > availableSize) {
+			warning("makeMacSndStream(): Sample size %u exceeds available resource data %u", size, availableSize);
+			size = availableSize;
+		}
+
+		Common::SeekableReadStream *dataStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + size, disposeAfterUse);
+
+		// Since we allocated our own stream for the data, we must specify DisposeAfterUse::YES.
+		return makeRawStream(dataStream, rate, Audio::FLAG_UNSIGNED);
+	}
+
+	if (encoding != 0xfe) {
 		warning("makeMacSndStream(): Unsupported compression %d", encoding);
 		return nullptr;
 	}
 
-	stream->skip(soundDataOffset);
-	const uint32 availableSize = stream->pos() < stream->size() ? stream->size() - stream->pos() : 0;
-	if (size > availableSize) {
-		warning("makeMacSndStream(): Sample size %u exceeds available resource data %u", size, availableSize);
-		size = availableSize;
+	// In a compressed sound header, the field occupying the old length slot
+	// is numChannels, followed by numFrames. Apple defines numFrames here as
+	// the number of compressed packet frames, not the number of decoded PCM
+	// frames. A packet contains data for every interleaved channel, and each
+	// MACE packet frame expands to six PCM frames per channel.
+	const uint32 channels = size;
+	const uint32 packetFrameCount = stream->readUint32BE();
+	stream->skip(10); // AIFF sample rate
+	stream->readUint32BE(); // marker chunk
+	const uint32 format = stream->readUint32BE();
+	stream->readUint32BE(); // future use
+	stream->readUint32BE(); // codec state
+	stream->readUint32BE(); // leftover samples
+	const uint16 compressionID = stream->readUint16BE();
+	const uint16 packetSize = stream->readUint16BE();
+	stream->readUint16BE(); // synthesizer ID
+	const uint16 sampleSize = stream->readUint16BE();
+
+	MacSndMACEType maceType;
+	if (compressionID == 3 ||
+			(compressionID == 0xffff && format == MKTAG('M', 'A', 'C', '3'))) {
+		maceType = kMacSndMACE3;
+	} else if (compressionID == 4 ||
+			(compressionID == 0xffff && format == MKTAG('M', 'A', 'C', '6'))) {
+		maceType = kMacSndMACE6;
+	} else {
+		warning("makeMacSndStream(): Unsupported compressed sound format");
+		return nullptr;
 	}
 
-	Common::SeekableReadStream *dataStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + size, disposeAfterUse);
+	const uint16 expectedPacketSize = maceType == kMacSndMACE3 ? 16 : 8;
+	if (sampleSize != 8 ||
+			(packetSize != 0 && packetSize != expectedPacketSize)) {
+		warning("makeMacSndStream(): Unsupported MACE packet layout");
+		return nullptr;
+	}
 
-	// Since we allocated our own stream for the data, we must specify DisposeAfterUse::YES.
-	return makeRawStream(dataStream, rate, Audio::FLAG_UNSIGNED);
+	return makeMacSndMACEStream(stream, disposeAfterUse, rate,
+		packetFrameCount, channels, maceType);
 }
 
 } // End of namespace Audio

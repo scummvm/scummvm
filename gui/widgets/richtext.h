@@ -74,14 +74,15 @@ public:
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseMoved(int x, int y, int button) override;
-	void lostFocusWidget() override;
 	void handleTickle() override;
 	void handleTooltipUpdate(int x, int y) override;
+
+	void cancelDrag() override;
+	void cancelTickle() override;
 
 	void markAsDirty() override;
 
 	bool containsWidget(Widget *) const override;
-	bool wantsFocus() override { return true; }
 
 	void setImageArchive(const Common::Path &fname) { _imageArchive = fname; }
 

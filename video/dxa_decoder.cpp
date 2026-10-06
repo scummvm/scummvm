@@ -48,7 +48,7 @@ bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint32 tag = stream->readUint32BE();
 
 	if (tag != MKTAG('D','E','X','A')) {
-		close();
+		delete stream;
 		return false;
 	}
 

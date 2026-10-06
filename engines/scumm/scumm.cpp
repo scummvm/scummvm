@@ -208,6 +208,15 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		}
 	}
 
+#ifdef USE_SID_AUDIO
+	if (_game.platform == Common::kPlatformC64) {
+		ConfMan.registerDefault("c64_sid_type", "ntsc");
+		if (ConfMan.hasKey("c64_sid_type", _targetName)) {
+			_isC64PALSystem = SID::Config::parseSidType(ConfMan.get("c64_sid_type")) == SID::Config::kSidPAL;
+		}
+	}
+#endif
+
 	if (_game.platform == Common::kPlatformMacintosh) {
 		ConfMan.registerDefault("mac_graphics_smoothing", true);
 		ConfMan.registerDefault("gamma_correction", true);
@@ -412,7 +421,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	} else if (_game.id == GID_REBEL2 && _game.platform == Common::kPlatformPSX) {
 		_screenHeight = 240;
 #endif
-	} else if (_game.id == GID_REBEL2 && ConfMan.getBool("rebel2_hires")) {
+	} else if (_game.id == GID_REBEL2 &&
+			Common::checkGameGUIOption(GAMEOPTION_REBEL2_HIRES, _game.guioptions) && ConfMan.getBool("rebel2_hires")) {
 		_screenWidth = 640;
 		_screenHeight = 400;
 	} else if (_game.version == 8 || _game.heversion >= 71) {
@@ -1069,8 +1079,10 @@ Common::Error ScummEngine::init() {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	}
 
-	if (_game.id == GID_REBEL1 && _game.platform == Common::kPlatformMacintosh)
+	if (_game.id == GID_REBEL1 && _game.platform == Common::kPlatformMacintosh) {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "REBEL", 0, 2);
+		SearchMan.addSubDirectoryMatching(gameDataDir, "REBELMAC", 0, 2);
+	}
 #endif
 
 	// Extra directories needed for the Steam versions
@@ -1186,6 +1198,9 @@ Common::Error ScummEngine::init() {
 			_filenamePattern.genMethod = kGenRoomNum;
 		} else if (_game.id == GID_REBEL1 || _game.id == GID_REBEL2) {
 			_fileHandle = new ScummFile(this);
+			// RA2 must disable the SCUMM GUI before Mac screen initialization.
+			if (_game.id == GID_REBEL2)
+				_useOriginalGUI = false;
 		} else if (_game.platform == Common::kPlatformMacintosh) {
 			// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
 			// special meta (container) file format to store the actual SCUMM data
@@ -1873,8 +1888,6 @@ void ScummEngine_v7::setupScumm(const Common::Path &macResourceFile) {
 		_numActors = 0;
 
 		setupScummVars();
-
-		_useOriginalGUI = false;
 
 		_sound = new Sound(this, _mixer, false);
 		// Rebel Assault 2 doesn't use iMUSE for audio.
@@ -2824,8 +2837,8 @@ Common::Error ScummEngine::go() {
 		filenames = saveFileMan->listSavefiles(_targetName + "-chase???.???");
 
 		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-			Common::String from = (*file).c_str();
-			Common::String to = (*file).c_str();
+			Common::String from = file->c_str();
+			Common::String to = file->c_str();
 			to.insertString("000-", from.size() - 12);
 			saveFileMan->renameSavefile(from, to);
 		}
@@ -3051,6 +3064,8 @@ void ScummEngine::setTimerAndShakeFrequency() {
 			}
 		} else if (_game.platform == Common::kPlatformAmiga && _game.id != GID_MONKEY_VGA) {
 			_shakeTimerRate = _timerFrequency = _isAmigaPALSystem ? AMIGA_PAL_VBLANK_RATE : AMIGA_NTSC_VBLANK_RATE;
+		} else if (_game.platform == Common::kPlatformC64) {
+			_shakeTimerRate = _timerFrequency = _isC64PALSystem ? C64_PAL_VBLANK_RATE : C64_NTSC_VBLANK_RATE;
 		}
 	} else {
 		if (_game.heversion < 70 && _game.platform == Common::kPlatformDOS) {

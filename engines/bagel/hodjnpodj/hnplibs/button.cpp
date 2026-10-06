@@ -67,7 +67,7 @@ CBmpButton::CBmpButton() {
 
 CBmpButton::~CBmpButton() {
 	if (m_pPalette != nullptr) {               // release the palette resource
-		(*m_pPalette).DeleteObject();
+		m_pPalette->DeleteObject();
 		delete m_pPalette;
 		m_pPalette = nullptr;
 	}
@@ -115,7 +115,7 @@ void CBmpButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	pParentWnd = GetParent();
 	if (!IsWindowVisible() ||                       // punt if not visible
 	        (pParentWnd == nullptr) ||
-	        !(*pParentWnd).IsWindowVisible())
+	        !pParentWnd->IsWindowVisible())
 		return;
 	/*
 	    pActiveWindow = GetActiveWindow();              // get the active window and if it is
@@ -124,29 +124,29 @@ void CBmpButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	        bActiveWindow = true;                       // ... in a foreground mode
 	*/
 	pDC = new CDC;                                  // setup the device context given to us
-	(*pDC).Attach((*lpDrawItemStruct).hDC);         // ... as a pointer to a CDC object
+	pDC->Attach(lpDrawItemStruct->hDC);         // ... as a pointer to a CDC object
 
 	if (m_pPalette != nullptr) {                       // map the palette into the context
-		pPalOld = (*pDC).SelectPalette(m_pPalette, true);
-		(*pDC).RealizePalette();              // ... and tell the system to use it
+		pPalOld = pDC->SelectPalette(m_pPalette, true);
+		pDC->RealizePalette();              // ... and tell the system to use it
 	}
 
-	if (((*lpDrawItemStruct).itemState & ODS_GRAYED) || // display the correct bitmap based on state
-	        ((*lpDrawItemStruct).itemState & ODS_DISABLED))
+	if ((lpDrawItemStruct->itemState & ODS_GRAYED) || // display the correct bitmap based on state
+	        (lpDrawItemStruct->itemState & ODS_DISABLED))
 		pBitmap = &m_bitmapDisabled;
-	else if ((*lpDrawItemStruct).itemState & ODS_SELECTED)
+	else if (lpDrawItemStruct->itemState & ODS_SELECTED)
 		pBitmap = &m_bitmapSel;
-	else if ((*lpDrawItemStruct).itemState & ODS_FOCUS)
+	else if (lpDrawItemStruct->itemState & ODS_FOCUS)
 		pBitmap = &m_bitmapFocus;
 	else
 		pBitmap = &m_bitmap;
 
-	PaintBitmap(pDC, nullptr, pBitmap, (*lpDrawItemStruct).rcItem.left, (*lpDrawItemStruct).rcItem.top);
+	PaintBitmap(pDC, nullptr, pBitmap, lpDrawItemStruct->rcItem.left, lpDrawItemStruct->rcItem.top);
 
 	if (pPalOld != nullptr)
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
-	(*pDC).Detach();                          // dismantle the temporary CDC we built
+	pDC->Detach();                          // dismantle the temporary CDC we built
 	delete pDC;
 }
 
@@ -242,27 +242,27 @@ bool CBmpButton::LoadBitmaps(CPalette *pPalette, CBitmap *pBase, CBitmap *pSelec
 	}
 
 	m_bitmap.DeleteObject();
-	hBitmap = (HBITMAP)(*pBase).Detach();
+	hBitmap = (HBITMAP)pBase->Detach();
 	m_bitmap.Attach(hBitmap);
 	delete pBase;
 
 	m_bitmapSel.DeleteObject();
 	if (pSelected != nullptr) {
-		hBitmap = (HBITMAP)(*pSelected).Detach();
+		hBitmap = (HBITMAP)pSelected->Detach();
 		m_bitmapSel.Attach(hBitmap);
 		delete pSelected;
 	}
 
 	m_bitmapFocus.DeleteObject();
 	if (pFocus != nullptr) {
-		hBitmap = (HBITMAP)(*pFocus).Detach();
+		hBitmap = (HBITMAP)pFocus->Detach();
 		m_bitmapFocus.Attach(hBitmap);
 		delete pFocus;
 	}
 
 	m_bitmapDisabled.DeleteObject();
 	if (pDisabled != nullptr) {
-		hBitmap = (HBITMAP)(*pDisabled).Detach();
+		hBitmap = (HBITMAP)pDisabled->Detach();
 		m_bitmapDisabled.Attach(hBitmap);
 		delete pDisabled;
 	}
@@ -297,7 +297,7 @@ bool CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
 	bool        bSuccess = true;
 
 	if (m_pPalette != nullptr) {                       // release any existing palette resource
-		(*m_pPalette).DeleteObject();
+		m_pPalette->DeleteObject();
 		delete m_pPalette;
 		m_pPalette = nullptr;
 	}
@@ -310,7 +310,7 @@ bool CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
 		pBitmap = FetchResourceBitmap(pDC, &m_pPalette, nBase);
 		if (pBitmap != nullptr) {                      // ... and plug it into our instance
 			m_bitmap.DeleteObject();                // release what ever was already there
-			hBitmap = (HBITMAP)(*pBitmap).Detach();
+			hBitmap = (HBITMAP)pBitmap->Detach();
 			m_bitmap.Attach(hBitmap);
 			delete pBitmap;
 			if (nSelected != 0) {               // get the SELECTED bitmap and plug it in
@@ -319,7 +319,7 @@ bool CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
 					bSuccess = false;
 				else {
 					m_bitmapSel.DeleteObject();     // release what ever was already there
-					hBitmap = (HBITMAP)(*pBitmap).Detach();
+					hBitmap = (HBITMAP)pBitmap->Detach();
 					m_bitmapSel.Attach(hBitmap);
 					delete pBitmap;
 				}
@@ -331,7 +331,7 @@ bool CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
 					bSuccess = false;
 				else {
 					m_bitmapFocus.DeleteObject();   // release what ever was already there
-					hBitmap = (HBITMAP)(*pBitmap).Detach();
+					hBitmap = (HBITMAP)pBitmap->Detach();
 					m_bitmapFocus.Attach(hBitmap);
 					delete pBitmap;
 				}
@@ -343,7 +343,7 @@ bool CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
 					bSuccess = false;
 				else {
 					m_bitmapDisabled.DeleteObject();// release what ever was already there
-					hBitmap = (HBITMAP)(*pBitmap).Detach();
+					hBitmap = (HBITMAP)pBitmap->Detach();
 					m_bitmapDisabled.Attach(hBitmap);
 					delete pBitmap;
 				}
@@ -386,7 +386,7 @@ bool CBmpButton::LoadBitmaps(const char *lpszBase, const char *lpszSelected, con
 	bool        bSuccess = true;
 
 	if (m_pPalette != nullptr) {                       // release any existing palette resource
-		(*m_pPalette).DeleteObject();
+		m_pPalette->DeleteObject();
 		delete m_pPalette;
 		m_pPalette = nullptr;
 	}
@@ -399,7 +399,7 @@ bool CBmpButton::LoadBitmaps(const char *lpszBase, const char *lpszSelected, con
 		pBitmap = FetchResourceBitmap(pDC, &m_pPalette, lpszBase);
 		if (pBitmap != nullptr) {                      // ... and plug it into our instance
 			m_bitmap.DeleteObject();                // release what ever was already there
-			hBitmap = (HBITMAP)(*pBitmap).Detach();
+			hBitmap = (HBITMAP)pBitmap->Detach();
 			m_bitmap.Attach(hBitmap);
 			delete pBitmap;
 			if (lpszSelected != nullptr) {             // get the SELECTED bitmap and plug it in
@@ -408,7 +408,7 @@ bool CBmpButton::LoadBitmaps(const char *lpszBase, const char *lpszSelected, con
 					bSuccess = false;
 				else {
 					m_bitmapSel.DeleteObject();     // release what ever was already there
-					hBitmap = (HBITMAP)(*pBitmap).Detach();
+					hBitmap = (HBITMAP)pBitmap->Detach();
 					m_bitmapSel.Attach(hBitmap);
 					delete pBitmap;
 				}
@@ -420,7 +420,7 @@ bool CBmpButton::LoadBitmaps(const char *lpszBase, const char *lpszSelected, con
 					bSuccess = false;
 				else {
 					m_bitmapFocus.DeleteObject();   // release what ever was already there
-					hBitmap = (HBITMAP)(*pBitmap).Detach();
+					hBitmap = (HBITMAP)pBitmap->Detach();
 					m_bitmapFocus.Attach(hBitmap);
 					delete pBitmap;
 				}
@@ -432,7 +432,7 @@ bool CBmpButton::LoadBitmaps(const char *lpszBase, const char *lpszSelected, con
 					bSuccess = false;
 				else {
 					m_bitmapDisabled.DeleteObject();// release what ever was already there
-					hBitmap = (HBITMAP)(*pBitmap).Detach();
+					hBitmap = (HBITMAP)pBitmap->Detach();
 					m_bitmapDisabled.Attach(hBitmap);
 					delete pBitmap;
 				}
@@ -475,7 +475,7 @@ bool CBmpButton::LoadBmpBitmaps(const char *lpszBase, const char *lpszSelected, 
 	bool        bSuccess = true;
 
 	if (m_pPalette != nullptr) {                       // release any existing palette resource
-		(*m_pPalette).DeleteObject();
+		m_pPalette->DeleteObject();
 		delete m_pPalette;
 		m_pPalette = nullptr;
 	}
@@ -488,7 +488,7 @@ bool CBmpButton::LoadBmpBitmaps(const char *lpszBase, const char *lpszSelected, 
 		pBitmap = FetchBitmap(pDC, &m_pPalette, lpszBase);
 		if (pBitmap != nullptr) {                      // ... and plug it into our instance
 			m_bitmap.DeleteObject();                // release what ever was already there
-			hBitmap = (HBITMAP)(*pBitmap).Detach();
+			hBitmap = (HBITMAP)pBitmap->Detach();
 			m_bitmap.Attach(hBitmap);
 			delete pBitmap;
 			if (lpszSelected != nullptr) {             // get the SELECTED bitmap and plug it in
@@ -497,7 +497,7 @@ bool CBmpButton::LoadBmpBitmaps(const char *lpszBase, const char *lpszSelected, 
 					bSuccess = false;
 				else {
 					m_bitmapSel.DeleteObject();     // release what ever was already there
-					hBitmap = (HBITMAP)(*pBitmap).Detach();
+					hBitmap = (HBITMAP)pBitmap->Detach();
 					m_bitmapSel.Attach(hBitmap);
 					delete pBitmap;
 				}
@@ -509,7 +509,7 @@ bool CBmpButton::LoadBmpBitmaps(const char *lpszBase, const char *lpszSelected, 
 					bSuccess = false;
 				else {
 					m_bitmapFocus.DeleteObject();   // release what ever was already there
-					hBitmap = (HBITMAP)(*pBitmap).Detach();
+					hBitmap = (HBITMAP)pBitmap->Detach();
 					m_bitmapFocus.Attach(hBitmap);
 					delete pBitmap;
 				}
@@ -521,7 +521,7 @@ bool CBmpButton::LoadBmpBitmaps(const char *lpszBase, const char *lpszSelected, 
 					bSuccess = false;
 				else {
 					m_bitmapDisabled.DeleteObject();// release what ever was already there
-					hBitmap = (HBITMAP)(*pBitmap).Detach();
+					hBitmap = (HBITMAP)pBitmap->Detach();
 					m_bitmapDisabled.Attach(hBitmap);
 					delete pBitmap;
 				}
@@ -611,7 +611,7 @@ CMaskedButton::CMaskedButton() {
 
 CMaskedButton::~CMaskedButton() {
 	if (m_pPalette != nullptr) {               // release the palette resource
-		(*m_pPalette).DeleteObject();
+		m_pPalette->DeleteObject();
 		delete m_pPalette;
 		m_pPalette = nullptr;
 	}
@@ -662,44 +662,44 @@ void CMaskedButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	pParentWnd = GetParent();
 	if (!IsWindowVisible() ||                       // punt if not visible
 	        (pParentWnd == nullptr) ||
-	        !(*pParentWnd).IsWindowVisible())
+	        !pParentWnd->IsWindowVisible())
 		return;
 
 	pDC = new CDC;                                  // setup the device context given to us
-	(*pDC).Attach((*lpDrawItemStruct).hDC);         // ... as a pointer to a CDC object
+	pDC->Attach(lpDrawItemStruct->hDC);         // ... as a pointer to a CDC object
 
 	if (m_pPalette != nullptr) {                       // map the palette into the context
-		pPalOld = (*pDC).SelectPalette(m_pPalette, true);
-		(*pDC).RealizePalette();              // ... and tell the system to use it
+		pPalOld = pDC->SelectPalette(m_pPalette, true);
+		pDC->RealizePalette();              // ... and tell the system to use it
 	}
 
 	if (m_pBackground == nullptr)
 		m_pBackground = FetchScreenBitmap(pDC, m_pPalette,
-		                                  (*lpDrawItemStruct).rcItem.left,
-		                                  (*lpDrawItemStruct).rcItem.top,
-		                                  (*lpDrawItemStruct).rcItem.right - (*lpDrawItemStruct).rcItem.left,
-		                                  (*lpDrawItemStruct).rcItem.bottom - (*lpDrawItemStruct).rcItem.top);
+		                                  lpDrawItemStruct->rcItem.left,
+		                                  lpDrawItemStruct->rcItem.top,
+		                                  lpDrawItemStruct->rcItem.right - lpDrawItemStruct->rcItem.left,
+		                                  lpDrawItemStruct->rcItem.bottom - lpDrawItemStruct->rcItem.top);
 	else
 		PaintBitmap(pDC, m_pPalette, m_pBackground,
-		            (*lpDrawItemStruct).rcItem.left,
-		            (*lpDrawItemStruct).rcItem.top);
+		            lpDrawItemStruct->rcItem.left,
+		            lpDrawItemStruct->rcItem.top);
 
-	if (((*lpDrawItemStruct).itemState & ODS_GRAYED) || // display the correct bitmap based on state
-	        ((*lpDrawItemStruct).itemState & ODS_DISABLED))
+	if ((lpDrawItemStruct->itemState & ODS_GRAYED) || // display the correct bitmap based on state
+	        (lpDrawItemStruct->itemState & ODS_DISABLED))
 		pBitmap = &m_bitmapDisabled;
-	else if ((*lpDrawItemStruct).itemState & ODS_SELECTED)
+	else if (lpDrawItemStruct->itemState & ODS_SELECTED)
 		pBitmap = &m_bitmapSel;
-	else if ((*lpDrawItemStruct).itemState & ODS_FOCUS)
+	else if (lpDrawItemStruct->itemState & ODS_FOCUS)
 		pBitmap = &m_bitmapFocus;
 	else
 		pBitmap = &m_bitmap;
 
-	PaintMaskedBitmap(pDC, nullptr, pBitmap, (*lpDrawItemStruct).rcItem.left, (*lpDrawItemStruct).rcItem.top);
+	PaintMaskedBitmap(pDC, nullptr, pBitmap, lpDrawItemStruct->rcItem.left, lpDrawItemStruct->rcItem.top);
 
 	if (pPalOld != nullptr)
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
-	(*pDC).Detach();                          // dismantle the temporary CDC we built
+	pDC->Detach();                          // dismantle the temporary CDC we built
 	delete pDC;
 }
 
@@ -892,7 +892,7 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	pParentWnd = GetParent();
 	if (!IsWindowVisible() ||                       // punt if not visible
 	        (pParentWnd == nullptr) ||
-	        !(*pParentWnd).IsWindowVisible())
+	        !pParentWnd->IsWindowVisible())
 		return;
 
 	nMyTextLength = GetWindowText((char *) &chMyText, 127);
@@ -910,20 +910,20 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	y = 0;
 
 	pDC = new CDC;                                  // setup the device context given to us
-	(*pDC).Attach((*lpDrawItemStruct).hDC);         // ... as a pointer to a CDC object
+	pDC->Attach(lpDrawItemStruct->hDC);         // ... as a pointer to a CDC object
 
 	if (m_pPalette != nullptr) {                       // map the palette into the context
-		pPalOld = (*pDC).SelectPalette(m_pPalette, true);
-		(*pDC).RealizePalette();              // ... and tell the system to use it
+		pPalOld = pDC->SelectPalette(m_pPalette, true);
+		pDC->RealizePalette();              // ... and tell the system to use it
 	}
 
-	if (((*lpDrawItemStruct).itemState & ODS_GRAYED) ||
-	        ((*lpDrawItemStruct).itemState & ODS_DISABLED)) {
+	if ((lpDrawItemStruct->itemState & ODS_GRAYED) ||
+	        (lpDrawItemStruct->itemState & ODS_DISABLED)) {
 		myPen.CreatePen(PS_INSIDEFRAME, BUTTON_EDGE_WIDTH, m_cButtonHighlight);
 		myInversePen.CreatePen(PS_INSIDEFRAME, 1, m_cButtonShadow);
 		myBrush.CreateSolidBrush(m_cButtonFace);
 		myTextColor = m_cButtonTextDisabled;
-	} else if ((*lpDrawItemStruct).itemState & ODS_SELECTED) {
+	} else if (lpDrawItemStruct->itemState & ODS_SELECTED) {
 		myPen.CreatePen(PS_INSIDEFRAME, BUTTON_EDGE_WIDTH, m_cButtonShadow);
 		myInversePen.CreatePen(PS_SOLID, 1, m_cButtonHighlight);
 		myBrush.CreateSolidBrush(m_cButtonFace);
@@ -937,60 +937,60 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		myTextColor = m_cButtonText;
 	}
 
-	pOldPen = (*pDC).SelectObject(&myPen);                  // select in the pens and brushes
-	pOldBrush = (*pDC).SelectObject(&myBrush);
-	(*pDC).Rectangle(&(*lpDrawItemStruct).rcItem);
-	(*pDC).SelectObject(pOldPen);
-	pOldPen = (*pDC).SelectObject(&myInversePen);
+	pOldPen = pDC->SelectObject(&myPen);                  // select in the pens and brushes
+	pOldBrush = pDC->SelectObject(&myBrush);
+	pDC->Rectangle(&lpDrawItemStruct->rcItem);
+	pDC->SelectObject(pOldPen);
+	pOldPen = pDC->SelectObject(&myInversePen);
 
 	for (i = 1; i <= BUTTON_EDGE_WIDTH; i++) {              // draw the button edges
-		(*pDC).MoveTo((*lpDrawItemStruct).rcItem.left + i, (*lpDrawItemStruct).rcItem.bottom - i);
-		(*pDC).LineTo((*lpDrawItemStruct).rcItem.right - i, (*lpDrawItemStruct).rcItem.bottom - i);
-		(*pDC).LineTo((*lpDrawItemStruct).rcItem.right - i, (*lpDrawItemStruct).rcItem.top + i - 1);
+		pDC->MoveTo(lpDrawItemStruct->rcItem.left + i, lpDrawItemStruct->rcItem.bottom - i);
+		pDC->LineTo(lpDrawItemStruct->rcItem.right - i, lpDrawItemStruct->rcItem.bottom - i);
+		pDC->LineTo(lpDrawItemStruct->rcItem.right - i, lpDrawItemStruct->rcItem.top + i - 1);
 	}
 
-	(*pDC).SelectObject(pOldPen);
-	(*pDC).SelectObject(pOldBrush);
+	pDC->SelectObject(pOldPen);
+	pDC->SelectObject(pOldBrush);
 
 	myFrame.CreateSolidBrush(m_cButtonOutline);             // outline the button
-	(*pDC).FrameRect(&(*lpDrawItemStruct).rcItem, &myFrame);
+	pDC->FrameRect(&lpDrawItemStruct->rcItem, &myFrame);
 
-	(*pDC).GetTextMetrics(&fontMetrics);                    // get some info about the font
-	textInfo = (*pDC).GetTextExtent(chMyText, nMyTextLength); // get the area spanned by the text
-	dx = (*lpDrawItemStruct).rcItem.right - (*lpDrawItemStruct).rcItem.left;
-	dy = (*lpDrawItemStruct).rcItem.bottom - (*lpDrawItemStruct).rcItem.top;
+	pDC->GetTextMetrics(&fontMetrics);                    // get some info about the font
+	textInfo = pDC->GetTextExtent(chMyText, nMyTextLength); // get the area spanned by the text
+	dx = lpDrawItemStruct->rcItem.right - lpDrawItemStruct->rcItem.left;
+	dy = lpDrawItemStruct->rcItem.bottom - lpDrawItemStruct->rcItem.top;
 	x += (dx - textInfo.cx) >> 1;
 	y += (dy - textInfo.cy) >> 1;
 
-	(*pDC).SetBkMode(TRANSPARENT);                          // make the text overlay transparently
-	oldTextColor = (*pDC).SetTextColor(myTextColor);         // set the color of the text
+	pDC->SetBkMode(TRANSPARENT);                          // make the text overlay transparently
+	oldTextColor = pDC->SetTextColor(myTextColor);         // set the color of the text
 
-	(*pDC).TextOut(x, y, (const char *) &chMyText, nMyTextLength);
+	pDC->TextOut(x, y, (const char *) &chMyText, nMyTextLength);
 
 	if (nUnderscore >= 0) {
-		underscoreInfo = (*pDC).GetTextExtent(chMyText, nUnderscore);
+		underscoreInfo = pDC->GetTextExtent(chMyText, nUnderscore);
 		dx = x + underscoreInfo.cx;
-		letterInfo = (*pDC).GetTextExtent(&chMyText[nUnderscore], 1);
-		underscoreInfo = (*pDC).GetTextExtent((const char *) "_", 1);
+		letterInfo = pDC->GetTextExtent(&chMyText[nUnderscore], 1);
+		underscoreInfo = pDC->GetTextExtent((const char *) "_", 1);
 		dx += (letterInfo.cx - underscoreInfo.cx) >> 1;
-		(*pDC).TextOut(dx, y, (const char *) "_", 1);
+		pDC->TextOut(dx, y, (const char *) "_", 1);
 	}
 
-	(*pDC).SetTextColor(oldTextColor);                // set the color of the text
+	pDC->SetTextColor(oldTextColor);                // set the color of the text
 
-	if ((*lpDrawItemStruct).itemState & ODS_FOCUS) {
+	if (lpDrawItemStruct->itemState & ODS_FOCUS) {
 		focusRect.SetRect(x - FOCUS_RECT_DX,
 		                  y - FOCUS_RECT_DY,
 		                  x + textInfo.cx + FOCUS_RECT_DX,
 		                  y + textInfo.cy + FOCUS_RECT_DY + 1);
 		myQuill.CreateStockObject(DKGRAY_BRUSH);
-		(*pDC).FrameRect(&focusRect, &myQuill);
+		pDC->FrameRect(&focusRect, &myQuill);
 	}
 
 	if (pPalOld != nullptr)
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
-	(*pDC).Detach();                          // dismantle the temporary CDC we built
+	pDC->Detach();                          // dismantle the temporary CDC we built
 	delete pDC;
 }
 
@@ -1180,7 +1180,7 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	pParentWnd = GetParent();
 	if (!IsWindowVisible() ||                       // punt if not visible
 	        (pParentWnd == nullptr) ||
-	        !(*pParentWnd).IsWindowVisible())
+	        !pParentWnd->IsWindowVisible())
 		return;
 
 	nMyTextLength = GetWindowText((char *) &chMyText, 127);
@@ -1196,94 +1196,94 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	nMyTextLength = j - 1;
 
 	pDC = new CDC;                                  // setup the device context given to us
-	(*pDC).Attach((*lpDrawItemStruct).hDC);         // ... as a pointer to a CDC object
+	pDC->Attach(lpDrawItemStruct->hDC);         // ... as a pointer to a CDC object
 
 	if (m_pPalette != nullptr) {                       // map the palette into the context
-		pPalOld = (*pDC).SelectPalette(m_pPalette, true);
-		(*pDC).RealizePalette();              // ... and tell the system to use it
+		pPalOld = pDC->SelectPalette(m_pPalette, true);
+		pDC->RealizePalette();              // ... and tell the system to use it
 	}
 
-	if (((*lpDrawItemStruct).itemState & ODS_GRAYED) || // setup text color based on enable/disable state
-	        ((*lpDrawItemStruct).itemState & ODS_DISABLED))
+	if ((lpDrawItemStruct->itemState & ODS_GRAYED) || // setup text color based on enable/disable state
+	        (lpDrawItemStruct->itemState & ODS_DISABLED))
 		myTextColor = m_cButtonTextDisabled;
 	else
 		myTextColor = m_cButtonText;
 	// calculate the button width and height
-	dx = (*lpDrawItemStruct).rcItem.right - (*lpDrawItemStruct).rcItem.left;
-	dy = (*lpDrawItemStruct).rcItem.bottom - (*lpDrawItemStruct).rcItem.top;
+	dx = lpDrawItemStruct->rcItem.right - lpDrawItemStruct->rcItem.left;
+	dy = lpDrawItemStruct->rcItem.bottom - lpDrawItemStruct->rcItem.top;
 	// create the bounding rectangle for the box
-	controlRect.SetRect((*lpDrawItemStruct).rcItem.left + CHECK_BOX_DX,
-	                    (*lpDrawItemStruct).rcItem.top + ((dy - CHECK_BOX_SIZE) >> 1),
-	                    (*lpDrawItemStruct).rcItem.left + CHECK_BOX_DX + CHECK_BOX_SIZE,
-	                    (*lpDrawItemStruct).rcItem.top + ((dy - CHECK_BOX_SIZE) >> 1) + CHECK_BOX_SIZE);
+	controlRect.SetRect(lpDrawItemStruct->rcItem.left + CHECK_BOX_DX,
+	                    lpDrawItemStruct->rcItem.top + ((dy - CHECK_BOX_SIZE) >> 1),
+	                    lpDrawItemStruct->rcItem.left + CHECK_BOX_DX + CHECK_BOX_SIZE,
+	                    lpDrawItemStruct->rcItem.top + ((dy - CHECK_BOX_SIZE) >> 1) + CHECK_BOX_SIZE);
 	// create the pens and brushes we need
 	outlinePen.CreatePen(PS_INSIDEFRAME, 1, m_cButtonOutline);
 	faceBrush.CreateSolidBrush(m_cButtonFace);
 	controlPen.CreatePen(PS_INSIDEFRAME, 1, m_cButtonControl);
 	frameBrush.CreateSolidBrush(m_cButtonControl);
 
-	pOldBrush = (*pDC).SelectObject(&faceBrush);
-	if ((*lpDrawItemStruct).itemAction & ODA_DRAWENTIRE) {
-		pOldPen = (*pDC).SelectObject(&outlinePen); // fill in the whole control
-		(*pDC).Rectangle(&(*lpDrawItemStruct).rcItem);
+	pOldBrush = pDC->SelectObject(&faceBrush);
+	if (lpDrawItemStruct->itemAction & ODA_DRAWENTIRE) {
+		pOldPen = pDC->SelectObject(&outlinePen); // fill in the whole control
+		pDC->Rectangle(&lpDrawItemStruct->rcItem);
 	} else {
-		pOldPen = (*pDC).SelectObject(&controlPen); // fill in just the box
-		(*pDC).Rectangle(&controlRect);
+		pOldPen = pDC->SelectObject(&controlPen); // fill in just the box
+		pDC->Rectangle(&controlRect);
 	}
-	(*pDC).SelectObject(pOldPen);
-	(*pDC).SelectObject(pOldBrush);
+	pDC->SelectObject(pOldPen);
+	pDC->SelectObject(pOldBrush);
 
-	(*pDC).FrameRect(&controlRect, &frameBrush);    // paint the box and indicate selection
+	pDC->FrameRect(&controlRect, &frameBrush);    // paint the box and indicate selection
 
 	if (m_bCheckState) {                            // indicate that the box is checked
-		pOldPen = (*pDC).SelectObject(&controlPen);
-		(*pDC).MoveTo(controlRect.left, controlRect.top);
-		(*pDC).LineTo(controlRect.right - 1, controlRect.bottom - 1);
-		(*pDC).MoveTo(controlRect.left, controlRect.bottom - 1);
-		(*pDC).LineTo(controlRect.right - 1, controlRect.top);
-		(*pDC).SelectObject(pOldPen);
+		pOldPen = pDC->SelectObject(&controlPen);
+		pDC->MoveTo(controlRect.left, controlRect.top);
+		pDC->LineTo(controlRect.right - 1, controlRect.bottom - 1);
+		pDC->MoveTo(controlRect.left, controlRect.bottom - 1);
+		pDC->LineTo(controlRect.right - 1, controlRect.top);
+		pDC->SelectObject(pOldPen);
 	}
 
-	if ((*lpDrawItemStruct).itemState & ODS_SELECTED) {
+	if (lpDrawItemStruct->itemState & ODS_SELECTED) {
 		controlRect.InflateRect(-1, -1);
-		(*pDC).FrameRect(&controlRect, &frameBrush);
+		pDC->FrameRect(&controlRect, &frameBrush);
 	}
 
-	(*pDC).GetTextMetrics(&fontMetrics);                    // get some info about the font
-	textInfo = (*pDC).GetTextExtent(chMyText, nMyTextLength); // get the area spanned by the text
-	x = (*lpDrawItemStruct).rcItem.left + CHECK_TEXT_DX;
-	y = (*lpDrawItemStruct).rcItem.top + ((dy - textInfo.cy) >> 1);
+	pDC->GetTextMetrics(&fontMetrics);                    // get some info about the font
+	textInfo = pDC->GetTextExtent(chMyText, nMyTextLength); // get the area spanned by the text
+	x = lpDrawItemStruct->rcItem.left + CHECK_TEXT_DX;
+	y = lpDrawItemStruct->rcItem.top + ((dy - textInfo.cy) >> 1);
 
-	(*pDC).SetBkMode(TRANSPARENT);                      // make the text overlay transparently
-	oldTextColor = (*pDC).SetTextColor(myTextColor);    // set the color of the text
+	pDC->SetBkMode(TRANSPARENT);                      // make the text overlay transparently
+	oldTextColor = pDC->SetTextColor(myTextColor);    // set the color of the text
 
-	(*pDC).TextOut(x, y, (const char *) &chMyText, nMyTextLength);
+	pDC->TextOut(x, y, (const char *) &chMyText, nMyTextLength);
 
 	if (nUnderscore >= 0) {                         // put the underscore where it belongs
-		underscoreInfo = (*pDC).GetTextExtent(chMyText, nUnderscore);
+		underscoreInfo = pDC->GetTextExtent(chMyText, nUnderscore);
 		dx = x + underscoreInfo.cx;
-		letterInfo = (*pDC).GetTextExtent(&chMyText[nUnderscore], 1);
-		underscoreInfo = (*pDC).GetTextExtent((const char *) "_", 1);
+		letterInfo = pDC->GetTextExtent(&chMyText[nUnderscore], 1);
+		underscoreInfo = pDC->GetTextExtent((const char *) "_", 1);
 		dx += (letterInfo.cx - underscoreInfo.cx) >> 1;
-		(*pDC).TextOut(dx, y, (const char *) "_", 1);
+		pDC->TextOut(dx, y, (const char *) "_", 1);
 	}
 
-	(*pDC).SetTextColor(oldTextColor);
+	pDC->SetTextColor(oldTextColor);
 
 	focusRect.SetRect(x - FOCUS_RECT_DX,           // set the focus rectangle
 	                  y - FOCUS_RECT_DY,             // ... then paint it or clear it
 	                  x + textInfo.cx + FOCUS_RECT_DX,
 	                  y + textInfo.cy + FOCUS_RECT_DY + 1);
-	if ((*lpDrawItemStruct).itemState & ODS_FOCUS) {
+	if (lpDrawItemStruct->itemState & ODS_FOCUS) {
 		myQuill.CreateStockObject(DKGRAY_BRUSH);
-		(*pDC).FrameRect(&focusRect, &myQuill);
+		pDC->FrameRect(&focusRect, &myQuill);
 	} else
-		(*pDC).FrameRect(&focusRect, &faceBrush);
+		pDC->FrameRect(&focusRect, &faceBrush);
 
 	if (pPalOld != nullptr)
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
-	(*pDC).Detach();                          // dismantle the temporary CDC we built
+	pDC->Detach();                          // dismantle the temporary CDC we built
 	delete pDC;
 }
 
@@ -1526,7 +1526,7 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	pParentWnd = GetParent();
 	if (!IsWindowVisible() ||                       // punt if not visible
 	        (pParentWnd == nullptr) ||
-	        !(*pParentWnd).IsWindowVisible())
+	        !pParentWnd->IsWindowVisible())
 		return;
 
 	nMyTextLength = GetWindowText((char *) &chMyText, 127);
@@ -1542,26 +1542,26 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	nMyTextLength = j - 1;
 
 	pDC = new CDC;                                  // setup the device context given to us
-	(*pDC).Attach((*lpDrawItemStruct).hDC);         // ... as a pointer to a CDC object
+	pDC->Attach(lpDrawItemStruct->hDC);         // ... as a pointer to a CDC object
 
 	if (m_pPalette != nullptr) {                       // map the palette into the context
-		pPalOld = (*pDC).SelectPalette(m_pPalette, true);
-		(*pDC).RealizePalette();              // ... and tell the system to use it
+		pPalOld = pDC->SelectPalette(m_pPalette, true);
+		pDC->RealizePalette();              // ... and tell the system to use it
 	}
 
-	if (((*lpDrawItemStruct).itemState & ODS_GRAYED) || // setup text color based on enable/disable state
-	        ((*lpDrawItemStruct).itemState & ODS_DISABLED))
+	if ((lpDrawItemStruct->itemState & ODS_GRAYED) || // setup text color based on enable/disable state
+	        (lpDrawItemStruct->itemState & ODS_DISABLED))
 		myTextColor = m_cButtonTextDisabled;
 	else
 		myTextColor = m_cButtonText;
 	// calculate the button width and height
-	dx = (*lpDrawItemStruct).rcItem.right - (*lpDrawItemStruct).rcItem.left;
-	dy = (*lpDrawItemStruct).rcItem.bottom - (*lpDrawItemStruct).rcItem.top;
+	dx = lpDrawItemStruct->rcItem.right - lpDrawItemStruct->rcItem.left;
+	dy = lpDrawItemStruct->rcItem.bottom - lpDrawItemStruct->rcItem.top;
 	// create the bounding rectangle for the box
-	controlRect.SetRect((*lpDrawItemStruct).rcItem.left + RADIO_BOX_DX,
-	                    (*lpDrawItemStruct).rcItem.top + ((dy - RADIO_BOX_SIZE) >> 1),
-	                    (*lpDrawItemStruct).rcItem.left + RADIO_BOX_DX + RADIO_BOX_SIZE,
-	                    (*lpDrawItemStruct).rcItem.top + ((dy - RADIO_BOX_SIZE) >> 1) + RADIO_BOX_SIZE);
+	controlRect.SetRect(lpDrawItemStruct->rcItem.left + RADIO_BOX_DX,
+	                    lpDrawItemStruct->rcItem.top + ((dy - RADIO_BOX_SIZE) >> 1),
+	                    lpDrawItemStruct->rcItem.left + RADIO_BOX_DX + RADIO_BOX_SIZE,
+	                    lpDrawItemStruct->rcItem.top + ((dy - RADIO_BOX_SIZE) >> 1) + RADIO_BOX_SIZE);
 	selectRect = controlRect;
 	// create the pens and brushes we need
 	outlinePen.CreatePen(PS_INSIDEFRAME, 1, m_cButtonOutline);
@@ -1570,70 +1570,70 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	controlBrush.CreateSolidBrush(m_cButtonControl);
 	framePen.CreatePen(PS_INSIDEFRAME, 1, m_cButtonControl);
 
-	pOldBrush = (*pDC).SelectObject(&faceBrush);
-	if ((*lpDrawItemStruct).itemAction & ODA_DRAWENTIRE) {
-		pOldPen = (*pDC).SelectObject(&outlinePen); // fill in the whole control
-		(*pDC).Rectangle(&(*lpDrawItemStruct).rcItem);
+	pOldBrush = pDC->SelectObject(&faceBrush);
+	if (lpDrawItemStruct->itemAction & ODA_DRAWENTIRE) {
+		pOldPen = pDC->SelectObject(&outlinePen); // fill in the whole control
+		pDC->Rectangle(&lpDrawItemStruct->rcItem);
 	} else {
-		pOldPen = (*pDC).SelectObject(&controlPen); // fill in just the box
-		(*pDC).Ellipse(&controlRect);
+		pOldPen = pDC->SelectObject(&controlPen); // fill in just the box
+		pDC->Ellipse(&controlRect);
 	}
-	(*pDC).SelectObject(pOldPen);
+	pDC->SelectObject(pOldPen);
 
-	pOldPen = (*pDC).SelectObject(&framePen);
-	(*pDC).Ellipse(&controlRect);       // paint the box and indicate selection
-	if ((*lpDrawItemStruct).itemState & ODS_SELECTED) {
+	pOldPen = pDC->SelectObject(&framePen);
+	pDC->Ellipse(&controlRect);       // paint the box and indicate selection
+	if (lpDrawItemStruct->itemState & ODS_SELECTED) {
 		controlRect.InflateRect(-1, -1);
-		(*pDC).Ellipse(&controlRect);
+		pDC->Ellipse(&controlRect);
 	}
-	(*pDC).SelectObject(pOldPen);
-	(*pDC).SelectObject(pOldBrush);
+	pDC->SelectObject(pOldPen);
+	pDC->SelectObject(pOldBrush);
 
 	if (m_bCheckState) {                            // indicate that the box is checked
 		selectRect.InflateRect(-2, -2);
-		pOldPen = (*pDC).SelectObject(&controlPen);
-		pOldBrush = (*pDC).SelectObject(&controlBrush);
-		(*pDC).Ellipse(&selectRect);
-		(*pDC).SelectObject(pOldBrush);
-		(*pDC).SelectObject(pOldPen);
+		pOldPen = pDC->SelectObject(&controlPen);
+		pOldBrush = pDC->SelectObject(&controlBrush);
+		pDC->Ellipse(&selectRect);
+		pDC->SelectObject(pOldBrush);
+		pDC->SelectObject(pOldPen);
 	}
 
-	(*pDC).GetTextMetrics(&fontMetrics);                    // get some info about the font
-	textInfo = (*pDC).GetTextExtent(chMyText, nMyTextLength); // get the area spanned by the text
-	x = (*lpDrawItemStruct).rcItem.left + RADIO_TEXT_DX;
-	y = (*lpDrawItemStruct).rcItem.top + ((dy - textInfo.cy) >> 1);
+	pDC->GetTextMetrics(&fontMetrics);                    // get some info about the font
+	textInfo = pDC->GetTextExtent(chMyText, nMyTextLength); // get the area spanned by the text
+	x = lpDrawItemStruct->rcItem.left + RADIO_TEXT_DX;
+	y = lpDrawItemStruct->rcItem.top + ((dy - textInfo.cy) >> 1);
 
-	(*pDC).SetBkMode(TRANSPARENT);                      // make the text overlay transparently
-	oldTextColor = (*pDC).SetTextColor(myTextColor);    // set the color of the text
+	pDC->SetBkMode(TRANSPARENT);                      // make the text overlay transparently
+	oldTextColor = pDC->SetTextColor(myTextColor);    // set the color of the text
 
-	(*pDC).TextOut(x, y, (const char *) &chMyText, nMyTextLength);
+	pDC->TextOut(x, y, (const char *) &chMyText, nMyTextLength);
 
 	if (nUnderscore >= 0) {                         // put the underscore where it belongs
-		underscoreInfo = (*pDC).GetTextExtent(chMyText, nUnderscore);
+		underscoreInfo = pDC->GetTextExtent(chMyText, nUnderscore);
 		dx = x + underscoreInfo.cx;
-		letterInfo = (*pDC).GetTextExtent(&chMyText[nUnderscore], 1);
-		underscoreInfo = (*pDC).GetTextExtent((const char *) "_", 1);
+		letterInfo = pDC->GetTextExtent(&chMyText[nUnderscore], 1);
+		underscoreInfo = pDC->GetTextExtent((const char *) "_", 1);
 		dx += (letterInfo.cx - underscoreInfo.cx) >> 1;
-		(*pDC).TextOut(dx, y, (const char *) "_", 1);
+		pDC->TextOut(dx, y, (const char *) "_", 1);
 	}
 
-	(*pDC).SetTextColor(oldTextColor);
+	pDC->SetTextColor(oldTextColor);
 
 	focusRect.SetRect(x - FOCUS_RECT_DX,                            // set the focus rectangle
 	                  y - FOCUS_RECT_DY,              // ... then paint it or clear it
 	                  x + textInfo.cx + FOCUS_RECT_DX - 1,
 	                  y + textInfo.cy + FOCUS_RECT_DY + 1);
-	if ((*lpDrawItemStruct).itemState & ODS_FOCUS) {
+	if (lpDrawItemStruct->itemState & ODS_FOCUS) {
 		myQuill.CreateStockObject(DKGRAY_BRUSH);
-		(*pDC).FrameRect(&focusRect, &myQuill);
+		pDC->FrameRect(&focusRect, &myQuill);
 	} else {
 //		(*pDC).FrameRect(&focusRect, &faceBrush);
 	}
 
 	if (pPalOld != nullptr)
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
-	(*pDC).Detach();                          // dismantle the temporary CDC we built
+	pDC->Detach();                          // dismantle the temporary CDC we built
 	delete pDC;
 }
 
@@ -1669,12 +1669,12 @@ LRESULT CRadioButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
 
 	if (m_bCheckState == true) {                    // if we are the control in the
 		pBase = pWnd = FromHandlePermanent(m_hWnd); // ... group being set, then we
-		pParent = (*pWnd).GetParent();              // ... need to clear all of the others
+		pParent = pWnd->GetParent();              // ... need to clear all of the others
 		while (true) {                              // so fetch the next control
-			pWnd = (*pParent).GetNextDlgGroupItem(pWnd, true);
+			pWnd = pParent->GetNextDlgGroupItem(pWnd, true);
 			if (pWnd == pBase)                      // ... and clear it if its not us
 				break;
-			(*pWnd).SendMessage(BM_SETCHECK, false, 0);
+			pWnd->SendMessage(BM_SETCHECK, false, 0);
 		}
 	}
 

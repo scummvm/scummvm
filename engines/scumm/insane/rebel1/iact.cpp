@@ -461,9 +461,10 @@ inline bool isLevel14Phase2DamageLatch(uint16 code) {
 	}
 }
 
-inline bool hasLevel8WalkerHazardRoute0(uint16 frame, int16 viewX, int16 viewY) {
+inline bool hasLevel8WalkerHazardRoute0(uint16 frame, int16 viewX, int16 viewY, bool earlyShot) {
 	switch (frame) {
 	case 0x00CD:
+		return earlyShot && viewX <= 0x28;
 	case 0x00EF:
 		return viewX <= 0x28;
 	case 0x0294:
@@ -512,10 +513,10 @@ inline bool hasLevel8WalkerHazardRoute2(uint16 frame, int16 viewX, int16 viewY) 
 	}
 }
 
-inline bool hasLevel8WalkerPlayerHit(int route, uint16 frame, int16 viewX, int16 viewY) {
+inline bool hasLevel8WalkerPlayerHit(int route, uint16 frame, int16 viewX, int16 viewY, bool earlyShot) {
 	switch (CLIP<int>(route, 0, 2)) {
 	case 0:
-		return hasLevel8WalkerHazardRoute0(frame, viewX, viewY);
+		return hasLevel8WalkerHazardRoute0(frame, viewX, viewY, earlyShot);
 	case 1:
 		return hasLevel8WalkerHazardRoute1(frame, viewX, viewY);
 	case 2:
@@ -694,19 +695,21 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 		return;
 
 	if ((_currentLevel == 6 || _currentLevel == 7) && _pendingRouteIndex >= 0) {
-		const uint32 routeFrame = (_currentLevel == 6 && curFrame >= 0) ?
-			(uint32)curFrame : (uint32)_gameCounter;
+		const uint32 routeFrame = (curFrame >= 0) ?
+			(uint32)curFrame : (uint32)_currentSmushFrame;
 		if (!_vm->_smushVideoShouldFinish &&
 			_pendingRouteCutoverFrame >= 0 &&
 			routeFrame >= (uint32)_pendingRouteCutoverFrame) {
-			if (_player && _currentLevel != 6)
-				_player->setPreserveGameVideoStateOnRelease(true);
+			// L7 destinations can contain no audio chunks at all. L8 preservation
+			// is decided by SmushPlayer at the actual stop, after the final frame
+			// has resolved whether the player or walker was destroyed.
+			if (_currentLevel == 6)
+				preserveInteractiveVideoAudioState();
 			_vm->_smushVideoShouldFinish = true;
 			const int32 resumeFrame = (_currentLevel == 6 && _pendingRouteStartFrame < 0) ?
 				0 : _pendingRouteStartFrame;
-			debugC(DEBUG_INSANE, "L%d cutover: route=%d -> %d at %s=%u (resumeFrame=%d)",
+			debugC(DEBUG_INSANE, "L%d cutover: route=%d -> %d at localFrame=%u (resumeFrame=%d)",
 				_currentLevel + 1, _levelRouteIndex, _pendingRouteIndex,
-				_currentLevel == 6 ? "localFrame" : "frame",
 				(unsigned)routeFrame, (int)resumeFrame);
 		}
 		return;
@@ -760,8 +763,8 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 		}
 	}
 
-	// Level 8 owns its branch choice in updateLevel8WalkerState(), where the
-	// choice variable. This function only performs the delayed route cutover.
+	// Level 8 schedules its branch in updateLevel8WalkerState() and commits it
+	// after rendering the following frame.
 }
 
 void InsaneRebel1::projectGameplayPoint(int16 &x, int16 &y) const {
@@ -889,14 +892,16 @@ bool InsaneRebel1::updateGamepadReticleAim(int16 &inputX, int16 &inputY, bool *u
 		(_vm->getActionState(kScummActionInsaneRight) ? 1 : 0) -
 		(_vm->getActionState(kScummActionInsaneLeft) ? 1 : 0);
 	int dpadY =
-		(_vm->getActionState(kScummActionInsaneUp) ? 1 : 0) -
-		(_vm->getActionState(kScummActionInsaneDown) ? 1 : 0);
+		(_vm->getActionState(kScummActionInsaneDown) ? 1 : 0) -
+		(_vm->getActionState(kScummActionInsaneUp) ? 1 : 0);
 
 	const int16 analogAxisX = applyRebel1AnalogDeadzone(_joystickAxisX);
 	const int16 analogAxisY = applyRebel1AnalogDeadzone(_joystickAxisY);
 	const int analogX = CLIP<int32>(((int32)analogAxisX * kRA1CenteredAxisMax) / Common::JOYAXIS_MAX,
 		-kRA1CenteredAxisMax, kRA1CenteredAxisMax);
-	int analogY = CLIP<int32>((-(int32)analogAxisY * kRA1Op0BVerticalAxisMax) / Common::JOYAXIS_MAX,
+	// DOS FUN_231BE leaves joystick-up negative, and the opcode 0x0B handler
+	// (FUN_1CDA7) negates Y when it computes the on-screen flight position.
+	int analogY = CLIP<int32>(((int32)analogAxisY * kRA1Op0BVerticalAxisMax) / Common::JOYAXIS_MAX,
 		-kRA1Op0BVerticalAxisMax, kRA1Op0BVerticalAxisMax);
 
 	if (_optControlsYFlip) {
@@ -1224,17 +1229,21 @@ void InsaneRebel1::updateShipPhysics() {
 
 	_damageFlags = 0;
 
-	// After this point, drift goes strongly negative (pushing ship left for the hard path).
-	if (_pathBranchEnabled && _gameCounter >= kPathBranchCounter) {
-		if (_shipPosX > kRA1CenterX) {
-			_rightPathSelected = true;
+	// The original chooses at frame 386, then keeps the source through frame
+	// 391. The right-hand clip resumes at local frame 1 after that shared frame.
+	if (_pathBranchEnabled && _currentSmushFrame >= kLevel1BranchDecisionFrame) {
+		if (!_rightPathSelected) {
+			_rightPathSelected = _shipPosX > kRA1CenterX;
+			if (!_rightPathSelected)
+				_pathBranchEnabled = false;
+			debugC(DEBUG_INSANE, "L1 path selected: right=%d localFrame=%d shipX=%d",
+				_rightPathSelected ? 1 : 0, (int)_currentSmushFrame, _shipPosX);
+		}
+		if (_rightPathSelected && _currentSmushFrame >= kLevel1BranchCutoverFrame) {
+			_pathBranchEnabled = false;
 			preserveInteractiveVideoAudioState();
 			_vm->_smushVideoShouldFinish = true;
-			debugC(DEBUG_INSANE, "Right path selected (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
-		} else {
-			debugC(DEBUG_INSANE, "Left path retained (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
 		}
-		_pathBranchEnabled = false;
 	}
 
 	if (_currentLevel != 6)
@@ -1507,9 +1516,9 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 
 	bool level8WalkerPlayerHit = false;
 	if (_currentLevel == 7) {
-		const uint16 walkerFrame = (uint16)_gameCounter;
+		const uint16 walkerFrame = (uint16)_currentSmushFrame;
 		level8WalkerPlayerHit = hasLevel8WalkerPlayerHit(_levelRouteIndex, walkerFrame,
-			_perspectiveX, _perspectiveY);
+			_perspectiveX, _perspectiveY, _release.walker->earlyShot);
 		// Player collision and boss damage are tracked separately.
 		if (level8WalkerPlayerHit)
 			_damageFlags |= 0x20;

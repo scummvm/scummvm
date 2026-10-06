@@ -112,7 +112,7 @@ ErrorCode CBagInv::deactivateLocalObject(const CBofString &objectName) {
 		}
 	}
 
-	return CBagStorageDevBmp::deactivateLocalObject(objectName);;
+	return CBagStorageDevBmp::deactivateLocalObject(objectName);
 }
 
 } // namespace SpaceBar

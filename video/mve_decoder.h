@@ -156,6 +156,7 @@ public:
 	MveDecoder();
 	virtual ~MveDecoder();
 
+	void close() override;
 	bool loadStream(Common::SeekableReadStream *stream) override;
 	void setAudioTrack(int track);
 	void applyPalette(PaletteManager *paletteManager);

@@ -57,7 +57,8 @@ private:
 	static const CommandPtr _commandList[102];
 
 	int command16();
-	void loadCommand16();
+	int loadCommand16();
+	int loadCallback2478();
 
 	int command17();
 
@@ -72,26 +73,26 @@ private:
 	int command31();
 
 	int command32();
-	void loadCommand32();
+	int loadCommand32();
 	int command33();
-	void loadCommand33();
+	int loadCommand33();
 	int command34();
 	int command35();
-	void loadCommand35();
+	int loadCommand35();
 	int command36();
-	void loadCommand36();
+	int loadCommand36();
 	int command37();
-	void loadCommand37();
+	int loadCommand37();
 	int command38();
-	void loadCommand38();
+	int loadCommand38();
 	int command39();
-	void loadCommand39();
+	int loadCommand39();
 	int command40();
-	void loadCommand40();
+	int loadCommand40();
 	int command41();
-	void loadCommand41();
+	int loadCommand41();
 	int command42();
-	void loadCommand42();
+	int loadCommand42();
 
 	/**
 	 * Shared tail of command43()/command48(): writes a variant byte
@@ -106,13 +107,13 @@ private:
 	void loadCommand43_48();
 
 	int command44();
-	void loadCommand44();
+	int loadCommand44();
 	int command45();
-	void loadCommand45();
+	int loadCommand45();
 	int command46();
-	void loadCommand46();
+	int loadCommand46();
 	int command47();
-	void loadCommand47();
+	int loadCommand47();
 
 	int command64();
 	int command65();
@@ -149,6 +150,7 @@ private:
 	int command99();
 	int command100();
 	int command101();
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
 
 public:
 	RSound1(Audio::Mixer *mixer);
@@ -168,7 +170,7 @@ public:
  * channel 9 is untouched), and command5 enables channels 7,8 (confirmed
  * via raw offsets 0x19CA/0x19F2, spaced by the channel stride).
  *
- * command2 calls resetChannels1to6() (matches sub_1079A) + sendGmReset(4)
+ * command2 calls resetChannels1to6() + sendGmReset(4)
  * - a genuinely different 6-channel range from the base class's
  * resetChannels1to5(), matching command3's own shifted grouping.
  *
@@ -192,7 +194,7 @@ private:
 	void resetChannels1to6();
 
 	int command16();
-	void loadCommand16();
+	int loadCommand16();
 	int command17();
 	int command18();
 
@@ -205,14 +207,14 @@ private:
 	int command31();
 
 	int command32();
-	void loadCommand32();
+	int loadCommand32();
 	int command33();
-	void loadCommand33();
+	int loadCommand33();
 	int command34();
-	void loadCommand34();
+	int loadCommand34();
 
 	int command35();
-	void loadCommand35();
+	int loadCommand35();
 
 	int command64();
 	int command65();
@@ -235,7 +237,7 @@ public:
  *
  * command0/command2/command4/command6/command7/command8 all confirmed to
  * match the shared RSound base exactly (no overrides needed) -
- * including command4 (whose reset helper sub_107E7 matches the base
+ * including command4 (whose reset helper matches the base
  * class's own resetChannels6to8() exactly) and command2 (whose
  * resetChannels1to5 matches the base class's own method exactly,
  * including the channel-9 fix).
@@ -277,7 +279,7 @@ private:
 	int command5();
 
 	int command16();
-	void loadCommand16();
+	int loadCommand16();
 	int command17();
 	int command18();
 
@@ -290,7 +292,7 @@ private:
 	int command31();
 
 	/**
-	 * Shared tail of command31()/command64() (matches loc_124D8): writes
+	 * Shared tail of command31()/command64(): writes
 	 * a variant byte (0x5A for command31, 0x78 for command64) into the
 	 * sound data at offset 0x1402 before playing 0x13FF.
 	 */
@@ -298,9 +300,9 @@ private:
 	int command64();
 
 	int command32();
-	void loadCommand32();
+	int loadCommand32();
 	int command33();
-	void loadCommand33();
+	int loadCommand33();
 
 	int command65();
 	int command67();
@@ -310,6 +312,7 @@ private:
 	int command71();
 	int command72();
 	int command73();
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
 
 public:
 	RSound3(Audio::Mixer *mixer);
@@ -328,7 +331,7 @@ public:
  *
  * command1/command2/command3/command4 are all genuinely different from
  * the base class, in two ways:
- *   - They use the base class's disableChannelTo() (matching sub_1092A)
+ *   - They use the base class's disableChannelTo()
  *     instead of Channel::enable().
  *   - Channel 6 (the boundary between the "lower" 1-5,9 group and
  *     "upper" 6,7,8 group) is conditionally included/excluded based on
@@ -370,7 +373,7 @@ private:
 	 * deferred callback.
 	 */
 	int command16();
-	void loadCommand16();
+	int loadCommand16();
 
 	int command17();
 	int command18();
@@ -387,24 +390,24 @@ private:
 	int command31();
 
 	int command32();
-	void loadCommand32();
+	int loadCommand32();
 	int command33();
-	void loadCommand33();
+	int loadCommand33();
 
 	/** Calls command1() (not command3(), unlike every other bucket-4 command here) before loading a single channel. */
 	int command35();
-	void loadCommand35();
+	int loadCommand35();
 
 	int command36();
-	void loadCommand36();
+	int loadCommand36();
 	int command37();
-	void loadCommand37();
+	int loadCommand37();
 	int command38();
-	void loadCommand38();
+	int loadCommand38();
 	int command39();
-	void loadCommand39();
+	int loadCommand39();
 	int command40();
-	void loadCommand40();
+	int loadCommand40();
 
 	int command64();
 	int command65();
@@ -421,6 +424,7 @@ private:
 	int command76();
 	int command77();
 	int command78();
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
 
 public:
 	RSound4(Audio::Mixer *mixer);
@@ -438,8 +442,8 @@ public:
  * one) and command3 (matches the base's default 1-5,9 lower-group
  * enable exactly).
  *
- * command5 uses the base class's disableChannelTo() (matching
- * sub_10854) instead of Channel::enable(), for channels 6,7,8 (three
+ * command5 uses the base class's disableChannelTo()
+ * instead of Channel::enable(), for channels 6,7,8 (three
  * channels, matching the base's default upper group range, just via a
  * different mechanic).
  *
@@ -456,7 +460,7 @@ private:
 	int command5();
 
 	/**
-	 * Matches byte_134D8: false the first time command16 is ever called,
+	 * False the first time command16 is ever called,
 	 * true forever after (there is no code path that resets it back to
 	 * false) - selects between two near-identical variants (A the first
 	 * time, B every time after).
@@ -464,8 +468,9 @@ private:
 	bool _command16Played = false;
 
 	int command16();
-	void loadCommand16A();
-	void loadCommand16B();
+	int loadCommand16A();
+	int loadCommand16B();
+	void dispatchCommand16B();
 
 	int command17();
 	int command18();
@@ -479,7 +484,7 @@ private:
 	int command30();
 
 	/**
-	 * Shared tail of command31()/command78() (matches loc_126FF): writes
+	 * Shared tail of command31()/command78(): writes
 	 * a variant byte (0x5A for command31, 0x78 for command78) into the
 	 * sound data at offset 0x2301 (3 bytes into the block about to be
 	 * played) before playing 0x22FE.
@@ -488,20 +493,20 @@ private:
 	int command31();
 
 	int command32();
-	void loadCommand32();
+	int loadCommand32();
 	int command33();
-	void loadCommand33();
+	int loadCommand33();
 	int command34();
-	void loadCommand34();
+	int loadCommand34();
 	int command35();
-	void loadCommand35();
+	int loadCommand35();
 	int command36();
 
 	/** No gate at all (unlike every other bucket-4 command here): just clears _callbackFnPtr, calls command1(), then 4x playSoundChannels1To5(). */
 	int command37();
 
 	int command38();
-	void loadCommand38();
+	int loadCommand38();
 
 	int command64();
 	int command65();
@@ -520,6 +525,7 @@ private:
 	/** Uses _commandParam: if 0, conditionally redirects channel 8's inner loop pointer; otherwise writes a clamped 7-bit value into the sound data at offset 0x20D6 (11 bytes into the block about to be played) and gate-loads channel 8. */
 	int command77();
 	int command78();
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
 
 public:
 	RSound5(Audio::Mixer *mixer);
@@ -561,6 +567,8 @@ public:
  */
 class RSound6 : public RSound {
 private:
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
+
 	int command1();
 	int command2();
 	int command3();
@@ -575,7 +583,7 @@ private:
 	void resetChannels6to8();
 
 	/**
-	 * Hides the base class's method: matches sub_10539 - channels 1-6
+	 * Hides the base class's method: channels 1-6
 	 * AND 9 (seven channels), matching command3()'s own wider group,
 	 * not the base class's default (1-5,9).
 	 */
@@ -602,7 +610,7 @@ private:
 	static const CommandPtr _commandList[99];
 
 	int command16();
-	void loadCommand16();
+	int loadCommand16();
 	int command17();
 	int command18();
 
@@ -622,25 +630,32 @@ private:
 	 */
 	int command32();
 	int command33();
-	void command32_33Load();
+	int command32_33Load();
 	void command32_33LoadCh4();
-	byte _command33Flag = 0; // matches byte_13378
+	byte _command33Flag = 0;
 
 	int command34();
-	void command34LoadCh1AndRest();
+	int command34LoadCh1AndRest();
 	void command34LoadRestOnly();
 
 	int command35();
+	int retryCommand35();
 
 	int command36();
+	int retryCommand36();
 	int command37();
+	int retryCommand37();
 	int command38();
+	int retryCommand38();
 	int command39();
+	int retryCommand39();
 	int command40();
+	int retryCommand40();
 
 	int command44();
-	void loadCommand44();
+	int loadCommand44();
 	int command45();
+	int retryCommand45();
 
 	int command64();
 	int command65();
@@ -675,6 +690,7 @@ private:
 	int command94();
 	int command95();
 	int command96();
+	int retryCommand96();
 	int command97();
 	int command98();
 
@@ -712,17 +728,13 @@ public:
  *   commands 32-63  (this class); 44,56 confirmed nullsub_2. Two shared
  *                    handlers: commands 33 and 47 point to the exact
  *                    same function (command33Or47()); commands 34 and
- *                    54 likewise (command34Or54()). command53's body is
- *                    an unlabeled function in the disassembly (no proc
- *                    name/index shown) - assigned to index 53 by
- *                    elimination (the only index in this range with no
- *                    other confirmed body), not from an explicit label;
- *                    flag if that's wrong.
- *   commands 64-95  CONFIRMED by the user to be an exact duplicate of
- *                    the 32-63 table (index 64+N behaves identically to
- *                    index 32+N) - the flat _commandList[] below just
- *                    reuses the same function pointers for that range,
- *                    no separate implementation needed.
+ *                    54 likewise (command34Or54()). Command 53 maps
+ *                    directly to 0x22DA, which schedules command1 after
+ *                    1200 polls.
+ *   commands 64+    rejected. The native dispatcher enters a fifth
+ *                    bucket at command 64, but its maximum-command word
+ *                    is zero, so every command in that bucket is above
+ *                    the accepted maximum.
  */
 class RSound9 : public RSound {
 private:
@@ -732,19 +744,19 @@ private:
 
 	int command32();
 
-	/** Matches sub_123E0: writes a "variant A" set of bytes into the shared command33Or47()/command60() sound block, at the same 8 offsets touched by variantSetupB(). Called only by command60(). */
+	/** Writes a "variant A" set of bytes into the shared command33Or47()/command60() sound block, at the same 8 offsets touched by variantSetupB(). Called only by command60(). */
 	void variantSetupA();
 
-	/** Matches sub_123FF: same 8 offsets as variantSetupA(), with different "variant B" byte values. Called only by command33Or47(). */
+	/** Same 8 offsets as variantSetupA(), with different "variant B" byte values. Called only by command33Or47(). */
 	void variantSetupB();
 
 	/**
-	 * Shared tail of command60()/command33Or47() (matches loc_12450) -
+	 * Shared tail of command60()/command33Or47() -
 	 * the two commands are otherwise identical (same gate, same
 	 * counter=98/period=84 timer) and differ only in which variant setup
 	 * helper runs first.
 	 */
-	void command33_47_60Load();
+	int command33_47_60Load();
 	int command60();
 
 	/** Dispatch table entries 33 AND 47 both point to this single function (confirmed identical symbol at both table slots). */
@@ -752,33 +764,28 @@ private:
 
 	/** Dispatch table entries 34 AND 54 both point to this single function (confirmed identical symbol at both table slots). */
 	int command34Or54();
-	void loadCommand34Or54();
+	int loadCommand34Or54();
 
 	int command35();
-	void loadCommand35();
+	int loadCommand35();
 	int command36();
-	void loadCommand36();
+	int loadCommand36();
 	int command37();
-	void loadCommand37();
+	int loadCommand37();
 	int command38();
-	void loadCommand38();
+	int loadCommand38();
 	int command39();
-	void loadCommand39();
+	int loadCommand39();
 	int command40();
-	void loadCommand40();
+	int loadCommand40();
 	int command41();
-	void loadCommand41();
+	int loadCommand41();
 
-	/**
-	 * Matches an unlabeled function immediately following command41() in
-	 * the disassembly - see class comment re: its index being inferred
-	 * by elimination.
-	 */
 	int command53();
-	void loadCommand53();
+	int command53Callback();
 
 	int command42();
-	void loadCommand42();
+	int loadCommand42();
 
 	int command43();
 
@@ -790,7 +797,7 @@ private:
 	int command50();
 
 	int command51();
-	void loadCommand51();
+	int loadCommand51();
 
 	/**
 	 * Matches rsound_command52: the deferred-schedule branch loads bx
@@ -801,16 +808,16 @@ private:
 	 * omitted here.
 	 */
 	int command52();
-	void loadCommand52();
+	int loadCommand52();
 
 	int command55();
-	void loadCommand55();
+	int loadCommand55();
 	int command57();
-	void loadCommand57();
+	int loadCommand57();
 
 	/** Calls the full command0() reset (not command1(), unlike every other command in this batch) before loading. */
 	int command58();
-	void loadCommand58();
+	int loadCommand58();
 
 	int command59();
 
@@ -819,11 +826,106 @@ private:
 	int command63();
 
 	typedef int (RSound9:: *CommandPtr)();
-	static const CommandPtr _commandList[96];
+	static const CommandPtr _commandList[64];
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
 
 public:
 	RSound9(Audio::Mixer *mixer);
 
+	int command(int commandId, int param) override;
+};
+
+/**
+ * Shared support for the Dragonsphere demo RSOUND overlays.
+ *
+ * The demos use the retail game's bytecode interpreter and host cadence, but
+ * have their own overlay layouts, dispatch tables and embedded sequence roots.
+ */
+class RSoundDemo : public RSound {
+protected:
+	RSoundDemo(Audio::Mixer *mixer, const Common::Path &filename,
+			int dataOffset, int dataSize, int sysExOffset);
+
+	int executeDemoCommonCommand(int commandId);
+	int queueDemoMusic(CallbackFunction callback, uint16 counter,
+			uint16 period);
+	Channel *playDemoSoundAny(int offset);
+
+public:
+	static void validate();
+};
+
+/** Demo RSOUND.DR1: `RLND DragonS07/21/93`. */
+class RSoundDemo1 : public RSoundDemo {
+private:
+	int command16();
+	int loadCommand16();
+	int command32();
+	int loadCommand32();
+	int command33();
+	int loadCommand33();
+	int command34();
+	int loadCommand34();
+	int command35();
+	int loadCommand35();
+	int command36();
+	int loadCommand36();
+	int command37();
+	int loadCommand37();
+	int command38();
+	int loadCommand38();
+	int command39();
+	int loadCommand39();
+	int command40();
+	int loadCommand40();
+	int command41();
+	int loadCommand41();
+	int command42();
+	int loadCommand42();
+	int command43();
+	int loadCommand43();
+	int command44();
+	int loadCommand44();
+	int command45();
+	int loadCommand45();
+	int command92();
+	int loadCommand92();
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
+
+public:
+	explicit RSoundDemo1(Audio::Mixer *mixer);
+	int command(int commandId, int param) override;
+};
+
+/** Demo RSOUND.DR9: `RLND DragonS07/30/93`. */
+class RSoundDemo9 : public RSoundDemo {
+private:
+	int command32();
+	int command33Or47();
+	int loadCommand33Or47();
+	int command34();
+	int loadCommand34();
+	int command35();
+	int loadCommand35();
+	int command36();
+	int loadCommand36();
+	int command37();
+	int loadCommand37();
+	int command38();
+	int loadCommand38();
+	int command39();
+	int loadCommand39();
+	int command40();
+	int loadCommand40();
+	int command41();
+	int loadCommand41();
+	int command42();
+	int loadCommand42();
+	int command43();
+	int command44();
+
+public:
+	explicit RSoundDemo9(Audio::Mixer *mixer);
 	int command(int commandId, int param) override;
 };
 

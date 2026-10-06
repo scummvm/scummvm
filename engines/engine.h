@@ -411,7 +411,7 @@ public:
 	 */
 	virtual bool hasFeature(EngineFeature f) const { return false; }
 
-	bool enhancementEnabled(int32 cls);
+	bool enhancementEnabled(int32 cls) const;
 
 	/**
 	 * Notify the engine that the sound settings in the config manager might have

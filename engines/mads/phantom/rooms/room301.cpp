@@ -122,7 +122,7 @@ void room_301_init() {
 			PLAYER_X_FROM_302, PLAYER_Y_FROM_302, FACING_EAST, true);
 		camera_jump_to(LEFT_STAGE, 0);
 
-	} else if ((previous_room == 106) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = PLAYER_X_FROM_106;
 		player.y = PLAYER_Y_FROM_106;
 		player.facing = FACING_WEST;

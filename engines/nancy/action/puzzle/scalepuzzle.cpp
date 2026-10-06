@@ -54,12 +54,12 @@ void ScalePuzzle::readData(Common::SeekableReadStream &stream) {
 
 	// Applied when the puzzle comes out solved. Several scenes use 9999 (no scene) and
 	// leave the transition to whatever watches the solve flag.
-	_solveScene.sceneID = stream.readUint16LE();	// 0x25
-	_solveScene.continueSceneSound = kContinueSceneSound;
-	_solveFlag.label = stream.readSint16LE();		// 0x27
-	_solveFlag.flag = stream.readByte();			// 0x29
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x25
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();		// 0x27
+	_solveScene._flag.flag = stream.readByte();			// 0x29
 
-	_latchSound.readData(stream);				// played on give-up
+	_solveSoundBlock.readData(stream);				// played once the puzzle comes out solved
 
 	// The figures to match this scene: a required coin count, the figure's number, its
 	// open-latch sprite and destination rects, and the sound played when it lights.
@@ -104,38 +104,13 @@ void ScalePuzzle::readData(Common::SeekableReadStream &stream) {
 	// A count-prefixed array of fixed 23-byte hotspot records:
 	// {rect, u16 cursorType, u16 sceneID, u16 frameID, byte}. The sample carries one - the
 	// "give up / exit" hotspot, with the exit cursor type.
-	int16 numZones = stream.readSint16LE();
-	for (int16 i = 0; i < numZones; ++i) {
-		Common::Rect r;
-		readRect(stream, r);
-		uint16 cursorType = stream.readUint16LE();
-		uint16 sceneID = stream.readUint16LE();
-		int16 flagLabel = stream.readSint16LE();
-		byte flagValue = stream.readByte();
-
-		if (i == 0) {
-			_exitHotspot = r;
-			_exitCursorType = cursorType;
-			_exitScene.sceneID = sceneID;
-			// The field after the scene id is a flag label (set on give-up), not a frame; the
-			// exit always goes to the scene's first frame.
-			_exitScene.frameID = 0;
-			_exitFlag.label = flagLabel;
-			_exitFlag.flag = flagValue;
-		}
-	}
+	readExitHotspot(stream);
 }
 
 void ScalePuzzle::init() {
-	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(vpBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// The indicator reads zero at the middle frame of its strip; the running total shifts it.
 	_indicatorZeroFrame = _indicatorFrames.size() / 2;
@@ -241,7 +216,7 @@ void ScalePuzzle::recomputeBalance() {
 			if ((int)ABS(_tilt) == t.number) {
 				if (!t.lit) {
 					t.lit = true;
-					_endSound = playSoundBlock(t.sound);
+					playSoundBlock(t.sound);
 				}
 			} else {
 				for (uint j = i; j < _targets.size(); ++j) {
@@ -329,34 +304,6 @@ void ScalePuzzle::redraw() {
 	_needsRedraw = true;
 }
 
-void ScalePuzzle::setDataCursor(uint16 cursorType) const {
-	// The ids in the AR data are raw Nancy13 cursor types, which is exactly what the
-	// "set from script" path expects.
-	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true);
-}
-
-SoundDescription ScalePuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	SoundDescription desc;
-	if (block.names.empty()) {
-		return desc;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return desc;
-	}
-
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-	return desc;
-}
-
 void ScalePuzzle::execute() {
 	switch (_state) {
 	case kBegin:
@@ -369,30 +316,28 @@ void ScalePuzzle::execute() {
 			break;
 		}
 
-		if (_solved) {
-			bool soundDone = _endSound.name.empty() || !g_nancy->_sound->isSoundPlaying(_endSound);
-			if (soundDone) {
-				_state = kActionTrigger;
-			}
+		if (_solved && !_solveTriggered) {
+			_state = kActionTrigger;
 		}
 		break;
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
+			finishExecution();
 		} else {
-			// Solved: play the latch sound, set the solve flag, change scene (9999 = stay).
-			playSoundBlock(_latchSound);
-			NancySceneState.setEventFlag(_solveFlag);
-			NancySceneState.changeScene(_solveScene);
+			// Solved: play the sound, set the solve flag, change scene (9999 = stay). The puzzle
+			// keeps running afterwards, so the player can still leave through the exit hotspot.
+			playSoundBlock(_solveSoundBlock);
+			_solveScene.execute();
+			_solveTriggered = true;
+			_state = kRun;
 		}
-		finishExecution();
 		break;
 	}
 }
 
 void ScalePuzzle::handleInput(NancyInput &input) {
-	if (_state != kRun || _solved) {
+	if (_state != kRun) {
 		return;
 	}
 
@@ -400,23 +345,24 @@ void ScalePuzzle::handleInput(NancyInput &input) {
 
 	// -- Carrying a coin: it follows the cursor; drop it on an empty slot. --
 	if (_carriedCoin != kNoCoin) {
-		setDataCursor(_dragCursorType);
+		SlotRegion region;
+		uint idx;
+		const bool overSlot = slotAtCursor(input.mousePos, true, region, idx);
+
+		// The drag cursor only takes its hotspot sprite while over a slot that can take the coin.
+		setDataCursor(_dragCursorType, overSlot);
 
 		Common::Rect screenPt(input.mousePos.x, input.mousePos.y, input.mousePos.x + 1, input.mousePos.y + 1);
 		Common::Rect vpPt = NancySceneState.getViewport().convertScreenToViewport(screenPt);
 		_dragPos = Common::Point(vpPt.left, vpPt.top);
 		redraw();
 
-		if (click) {
-			SlotRegion region;
-			uint idx;
-			if (slotAtCursor(input.mousePos, true, region, idx)) {
-				group(region).coins[idx] = _carriedCoin;
-				_carriedCoin = kNoCoin;
-				playSoundBlock(region == kSourceTray ? _dropTraySound : _dropPanSound);
-				recomputeBalance();
-				redraw();
-			}
+		if (click && overSlot) {
+			group(region).coins[idx] = _carriedCoin;
+			_carriedCoin = kNoCoin;
+			playSoundBlock(region == kSourceTray ? _dropTraySound : _dropPanSound);
+			recomputeBalance();
+			redraw();
 		}
 
 		input.eatMouseInput();
@@ -445,9 +391,7 @@ void ScalePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

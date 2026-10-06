@@ -66,10 +66,6 @@ enum GameType {
 	// Mystery of the Seven Keys was made with Unity
 };
 
-enum NancyGameFlags {
-	GF_COMPRESSED 		= 1 << 0
-};
-
 struct NancyGameDescription {
 	AD_GAME_DESCRIPTION_HELPERS(desc);
 

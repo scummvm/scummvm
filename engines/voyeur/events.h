@@ -74,6 +74,7 @@ private:
 	Common::List<IntNode *> _intNodes;
 	Common::Point _mousePos;
 
+	void resetEvents();
 	void mainVoyeurIntFunc();
 	void checkForNextFrameCounter();
 	void voyeurTimer();

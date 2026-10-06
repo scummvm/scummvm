@@ -27,8 +27,19 @@
 namespace MADS {
 namespace TextView {
 
+struct Presentation {
+	int bufferHeight;
+	int visibleHeight;
+	int matteHeight;
+	bool drawBoundaryLines;
+	bool macintoshFullFrame;
+	RGBcolor textColor;
+	RGBcolor shadowColor;
+};
+
 // Main textview function
 extern void textview_main(const char *resName);
+extern void textview_main(const char *resName, const Presentation &presentation);
 
 } // namespace TextView
 } // namespace MADS

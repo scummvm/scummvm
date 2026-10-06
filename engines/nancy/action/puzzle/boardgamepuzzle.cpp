@@ -58,7 +58,7 @@ void BoardGamePuzzle::readData(Common::SeekableReadStream &stream) {
 		_moves[i].jumpFrameEnd = stream.readSint16LE();
 	}
 
-	_winScene.readData(stream);				// 0x2e2, SceneChangeWithFlag
+	_solveScene.readData(stream);				// 0x2e2, SceneChangeWithFlag
 	_loseScene.readData(stream);			// 0x2fb, SceneChangeWithFlag
 
 	// Six random-sound blocks (button/click/clank/slide/key/beep).
@@ -76,8 +76,7 @@ void BoardGamePuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	_moviePlayer.loadFile(_movieName);
 	_buttonUsed.clear();
@@ -132,7 +131,7 @@ void BoardGamePuzzle::redraw() {
 	_needsRedraw = true;
 }
 
-void BoardGamePuzzle::playSoundBlock(uint index) {
+void BoardGamePuzzle::playSoundByIndex(uint index) {
 	if (index >= kNumSounds) {
 		return;
 	}
@@ -184,7 +183,7 @@ void BoardGamePuzzle::resolveMove(int button) {
 	_buttonUsed[button] = true;
 	_activeCard = button;			// shows the white sprite while the move plays
 	_boardState = kBoardAnimating;
-	playSoundBlock(kSlideSound);
+	playSoundByIndex(kSlideSound);
 	_moviePlayer.playRange(startFrame, endFrame);
 
 	// Full redraw once at the start so the played card turns white and the first
@@ -219,15 +218,15 @@ void BoardGamePuzzle::execute() {
 				redraw();
 
 				if (_solved) {
-					playSoundBlock(kWinSound);
+					playSoundByIndex(kWinSound);
 					_resultTime = g_nancy->getTotalPlayTime();
 					_boardState = kBoardResult;
 				} else if (_lost) {
-					playSoundBlock(kLoseSound);
+					playSoundByIndex(kLoseSound);
 					_resultTime = g_nancy->getTotalPlayTime();
 					_boardState = kBoardResult;
 				} else {
-					playSoundBlock(kLandSound);
+					playSoundByIndex(kLandSound);
 					_boardState = kBoardWaiting;
 				}
 			}
@@ -240,7 +239,7 @@ void BoardGamePuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_solved) {
-			_winScene.execute();
+			_solveScene.execute();
 		} else if (_lost) {
 			_loseScene.execute();
 		}
@@ -265,7 +264,7 @@ void BoardGamePuzzle::handleInput(NancyInput &input) {
 			}
 			_resetPressed = true;
 			_resetPressedTime = g_nancy->getTotalPlayTime();
-			playSoundBlock(kResetSound);
+			playSoundByIndex(kResetSound);
 			_moviePlayer.goToFrame(framePosition(_position));
 			redraw();
 		}
@@ -282,7 +281,7 @@ void BoardGamePuzzle::handleInput(NancyInput &input) {
 		}
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			playSoundBlock(kButtonSound);
+			playSoundByIndex(kButtonSound);
 			resolveMove(i);
 		}
 		return;

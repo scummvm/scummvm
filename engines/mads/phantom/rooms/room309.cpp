@@ -127,7 +127,7 @@ void room_309_init() {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[fx_door], 10);
 
-	} else if ((previous_room == 308) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = PLAYER_X_FROM_308;
 		player.y = PLAYER_Y_FROM_308;
 		player.facing = FACING_SOUTHEAST;

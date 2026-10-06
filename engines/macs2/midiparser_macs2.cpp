@@ -38,7 +38,7 @@ bool MidiParser_Macs2::loadMusic(const byte *data, uint32 size) {
 	// Offset 0x06: instrument data offset (relative to file start)
 	// Offset 0x08: song data offset (relative to file start)
 	// Offset 0x0C: timer frequency
-	uint16 dataOffset = READ_LE_UINT16(data + 0x08);
+	const uint16 dataOffset = READ_LE_UINT16(data + 0x08);
 	_timerFrequency = READ_LE_UINT16(data + 0x0C);
 
 	if (dataOffset >= size)

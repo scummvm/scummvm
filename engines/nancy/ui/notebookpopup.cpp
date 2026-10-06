@@ -33,6 +33,7 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/scrollbar.h"
 #include "engines/nancy/ui/taskbar.h"
 
 #include "engines/nancy/ui/notebookpopup.h"
@@ -315,6 +316,11 @@ void NotebookPopup::handleInput(NancyInput &input) {
 			return;
 		}
 
+		if (scrollWithMouseWheel(input, _screenPosition, _scrollPos,
+				wheelScrollStep(toPopupLocal(_uinbData->textRect, false).height(), _drawnTextHeight))) {
+			redrawScroll();
+		}
+
 		if (overThumb != _scrollbarHovered) {
 			_scrollbarHovered = overThumb;
 			drawScrollbar(overThumb ? kUIButtonHover : kUIButtonIdle);
@@ -490,13 +496,13 @@ void NotebookPopup::buildTextLines() {
 		return;
 	}
 
-	if (!journalData->journalEntries.contains(surfaceID))
+	if (!journalData->hasEntries(surfaceID))
 		return;
 
 	// Newest-first. All entries go into one addTextLine — separate
 	// calls would put every mark on its own "first line" and stack
 	// them at the textbox top.
-	const Common::Array<JournalData::Entry> &entries = journalData->journalEntries[surfaceID];
+	const Common::Array<JournalData::Entry> &entries = journalData->entries(surfaceID);
 	Common::String combined;
 	for (int i = (int)entries.size() - 1; i >= 0; --i) {
 		Common::String stringID = entries[i].stringID;
@@ -610,10 +616,10 @@ void NotebookPopup::redrawScroll() {
 
 void NotebookPopup::buildCheckboxRects(const Common::Rect &localTextRect, int scrollY, int visibleH) {
 	JournalData *journalData = (JournalData *)NancySceneState.getPuzzleData(JournalData::getTag());
-	if (!journalData || !journalData->journalEntries.contains(kNotebookTabTasks)) {
+	if (!journalData || !journalData->hasEntries(kNotebookTabTasks)) {
 		return;
 	}
-	const Common::Array<JournalData::Entry> &entries = journalData->journalEntries[kNotebookTabTasks];
+	const Common::Array<JournalData::Entry> &entries = journalData->entries(kNotebookTabTasks);
 
 	const Common::Rect visibleWindow(localTextRect.left, localTextRect.top,
 										localTextRect.left + localTextRect.width(),
@@ -644,10 +650,10 @@ void NotebookPopup::buildCheckboxRects(const Common::Rect &localTextRect, int sc
 
 void NotebookPopup::toggleCheckbox(uint entryIndex) {
 	JournalData *journalData = (JournalData *)NancySceneState.getPuzzleData(JournalData::getTag());
-	if (!journalData || !journalData->journalEntries.contains(kNotebookTabTasks)) {
+	if (!journalData || !journalData->hasEntries(kNotebookTabTasks)) {
 		return;
 	}
-	Common::Array<JournalData::Entry> &entries = journalData->journalEntries[kNotebookTabTasks];
+	Common::Array<JournalData::Entry> &entries = journalData->entries(kNotebookTabTasks);
 	if (entryIndex >= entries.size() || entries[entryIndex].mark != 7) {
 		return;
 	}

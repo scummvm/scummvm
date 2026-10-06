@@ -955,6 +955,7 @@ PlainGameDescriptor AdvancedMetaEngineDetectionBase::findGame(const char *gameId
 }
 
 static const char *const grayList[] = {
+	"bonus.exe",
 	"game.exe",
 	"demo.exe",
 	"game",
@@ -973,6 +974,8 @@ static const char *const grayList[] = {
 	"Double-click me",
 	"engine.exe",
 	"install.exe",
+	// Some Zoombinis v2 discs use NET.EXE for a non-game Director link menu.
+	"net.exe",
 	"play.exe",
 	"start.exe",
 	"item.dat",

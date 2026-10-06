@@ -56,7 +56,7 @@ namespace {
 static const char *const kQuickTipsPath = "ADJHEAD.RCS";
 static const char *const kMenuPath = "MENU.INI";
 static const char *const kMenuSectionName = "menu";
-static const char *const kDemoMenuItems[] = {
+static const char *const kBuiltInMenuItems[] = {
 	"NEW GAME",
 	"SAVE GAME",
 	"LOAD GAME",
@@ -72,13 +72,6 @@ static const char *const kTownMapBitmapPaths[] = {
 	"1:/GRAPHIC/TOWN/HARVMAP3.BM",
 	"1:/GRAPHIC/TOWN/HARVMAP4.BM"
 };
-
-static const int kQuickTipsOverlayX = 167;
-static const int kQuickTipsOverlayY = 200;
-
-static const int kQuickTipTextX = 180;
-static const int kQuickTipTextY = 228;
-static const int kQuickTipTextWidth = 280;
 
 static const int kCursorSequence7 = 7;
 static const int kIdentTextboxX = 177;
@@ -112,9 +105,7 @@ static const int kTownMapEdgeThreshold = 9;
 static const int kTownMapCursorHitExtent = 5;
 
 static const byte kIdentTextColor = 0xd3;
-static const byte kTextColorNormal = 255;
 static const byte kShadowColor = 0;
-static const byte kQuickTipActionColor = 0xc3;
 static const byte kTownMapLabelColor = 0x28;
 static const int kRoomDebugLabelPaddingX = 3;
 static const int kRoomDebugLabelPaddingY = 2;
@@ -601,18 +592,6 @@ void logScenePaletteSummary(const char *label, const RoomSceneResources &scene, 
 		palette[255 * 3], palette[255 * 3 + 1], palette[255 * 3 + 2]);
 }
 
-static Common::Rect quickTipsExitRect() {
-	return Common::Rect(180, 280, 238, 291);
-}
-
-static Common::Rect quickTipsNextRect() {
-	return Common::Rect(420, 280, 492, 291);
-}
-
-static Common::Rect quickTipsToggleRect() {
-	return Common::Rect(258, 280, 366, 291);
-}
-
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
 	if (!bitmap.isValid())
 		return;
@@ -670,9 +649,12 @@ static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Fo
 }
 
 static void drawWrappedText(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
-		int x, int y, int width, byte color, int lineSpacing) {
+		int x, int y, int width, byte color, int lineSpacing, bool useCftCharacterWrapping = false) {
 	Common::Array<Common::String> lines;
-	font.wordWrapText(text, width, lines);
+	if (useCftCharacterWrapping)
+		wrapCftTextByCharacterCount(font, text, width, lines);
+	else
+		font.wordWrapText(text, width, lines);
 
 	const int lineHeight = font.getFontHeight() + lineSpacing;
 	for (uint i = 0; i < lines.size(); ++i)
@@ -1052,7 +1034,8 @@ void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphic
 			kIdentTextboxY + kIdentTextboxTextInsetY,
 			MAX<int>(0, (int)textbox->width - 2),
 			0,
-			kNativeIdentTextLineSpacing);
+			kNativeIdentTextLineSpacing,
+			true);
 		return;
 	}
 
@@ -1106,7 +1089,7 @@ static int resolveRoomObjectCursorSequence(const ObjectRecord &object, Script &s
 }
 
 static Common::String buildRoomObjectPrompt(const ObjectRecord &object, Script &script,
-		int cursorSequence) {
+		int cursorSequence, const MenuTextConfig &menuTextConfig) {
 	// Native room prompts come from explicit interaction metadata. Neutral scene sprites
 	// should not surface synthetic "Examine <object id>" prompts or steal hover/click focus.
 	if (cursorSequence == kCursorSequenceNeutral)
@@ -1119,19 +1102,20 @@ static Common::String buildRoomObjectPrompt(const ObjectRecord &object, Script &
 	if (cursorSequence == kCursorSequenceOperate) {
 		if (usesBareOperatePrompt(object))
 			return label;
-		return Common::String::format("Operate the %s", label.c_str());
+		return Common::String::format("%s %s", menuTextConfig.operateVerb.c_str(), label.c_str());
 	}
 	if (cursorSequence == kCursorSequencePickup)
-		return Common::String::format("Pick up the %s", label.c_str());
+		return Common::String::format("%s %s", menuTextConfig.pickUpVerb.c_str(), label.c_str());
 	if (cursorSequence == kCursorSequenceTalk)
-		return Common::String::format("Talk to %s", label.c_str());
+		return Common::String::format("%s %s", menuTextConfig.talkToVerb.c_str(), label.c_str());
 	if (cursorSequence == kCursorSequenceTransition)
 		return Common::String::format("Go to %s", label.c_str());
 
-	return Common::String::format("Examine %s", label.c_str());
+	return Common::String::format("%s %s", menuTextConfig.examineTheVerb.c_str(), label.c_str());
 }
 
-static Common::String buildRoomNpcPrompt(const NpcRecord &npc) {
+static Common::String buildRoomNpcPrompt(const NpcRecord &npc,
+		const MenuTextConfig &menuTextConfig) {
 	Common::String label = !npc.entityInitArg.empty() ? npc.entityInitArg : npc.npcName;
 	for (uint i = 0; i < label.size(); ++i) {
 		if (label[i] == '_')
@@ -1140,7 +1124,7 @@ static Common::String buildRoomNpcPrompt(const NpcRecord &npc) {
 
 	if (label.empty())
 		return Common::String();
-	return Common::String::format("Talk to %s", label.c_str());
+	return Common::String::format("%s %s", menuTextConfig.talkToVerb.c_str(), label.c_str());
 }
 
 bool doesPlayerFacingMatchRegion(int playerFacing, const RegionRecord &region) {
@@ -1151,8 +1135,18 @@ bool doesPlayerOverlapRegion(const Entity &playerEntity, const RegionRecord &reg
 	const Common::Rect regionBounds = getRegionBounds(region);
 	if (regionBounds.isEmpty())
 		return false;
-	if (!playerEntity.getScreenRect().intersects(regionBounds))
+
+	// Native do_entity_screen_bounds_overlap (0x4b700) compares each entity's
+	// origin plus width/height and rejects only when one edge is strictly before
+	// the other. Common::Rect uses exclusive right/bottom edges, so intersects()
+	// would incorrectly reject the edge contact that activates narrow exits.
+	const Common::Rect playerBounds = playerEntity.getScreenRect();
+	if (playerBounds.right < regionBounds.left ||
+			regionBounds.right < playerBounds.left ||
+			playerBounds.bottom < regionBounds.top ||
+			regionBounds.bottom < playerBounds.top) {
 		return false;
+	}
 
 	const float playerMaxZ = playerEntity.getZ() + playerEntity.getZExtent();
 	return playerMaxZ >= (float)region.minZ && (float)region.maxZ >= playerEntity.getZ();
@@ -1162,7 +1156,7 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 		const Common::Array<ObjectRecord> &sceneObjects,
 		const Common::Array<NpcRecord> &sceneNpcs,
 		const Common::Array<RegionRecord> &sceneRegions, const Common::Point &mousePos,
-		const DialogueSystem *dialogue) {
+		const MenuTextConfig &menuTextConfig, const DialogueSystem *dialogue) {
 	RoomHoverState hoverState;
 	EntityManager *entityManager = engine.getRuntimeEntities();
 	if (const Entity *playerEntity = findRoomPlayerAtPoint(engine, mousePos)) {
@@ -1173,7 +1167,7 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 	if (const NpcRecord *npc = findRoomNpcAtPoint(engine, sceneNpcs, mousePos, dialogue)) {
 		hoverState.npc = npc;
 		hoverState.cursorSequence = kCursorSequenceTalk;
-		hoverState.promptText = buildRoomNpcPrompt(*npc);
+		hoverState.promptText = buildRoomNpcPrompt(*npc, menuTextConfig);
 		return hoverState;
 	}
 
@@ -1192,7 +1186,8 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 	}
 	if (hoverState.object) {
 		hoverState.cursorSequence = resolveRoomObjectCursorSequence(*hoverState.object, *script);
-		hoverState.promptText = buildRoomObjectPrompt(*hoverState.object, *script, hoverState.cursorSequence);
+		hoverState.promptText = buildRoomObjectPrompt(
+			*hoverState.object, *script, hoverState.cursorSequence, menuTextConfig);
 		if (hoverState.cursorSequence != kCursorSequenceNeutral || !hoverState.promptText.empty())
 			return hoverState;
 		hoverState.object = nullptr;
@@ -1252,7 +1247,8 @@ static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Arra
 }
 
 void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scene,
-		const Common::String &entranceName, Common::Point &mousePos) {
+		const Common::String &entranceName, Common::Point &mousePos,
+		const MenuTextConfig &menuTextConfig) {
 	EntityManager *entityManager = engine.getRuntimeEntities();
 	Script *script = engine.getScript();
 	if (!entityManager || !script)
@@ -1299,7 +1295,8 @@ void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scen
 		const Common::String objectLabel = script->resolveObjectLabel(*hoveredObject);
 		ResolvedText inspectText;
 		const RoomHoverState hoverState = resolveRoomHoverState(
-			engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, probePoint);
+			engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
+			probePoint, menuTextConfig);
 		const bool hasInteraction = script->hasObjectInteraction(*hoveredObject);
 		const bool hasInspectText = script->resolveObjectInspectText(*hoveredObject, inspectText);
 		debugC(1, kDebugRoom,
@@ -1316,7 +1313,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scen
 				for (int x = 48; x < 592; x += 16) {
 					const RoomHoverState candidateHover = resolveRoomHoverState(
 						engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
-						Common::Point(x, y));
+						Common::Point(x, y), menuTextConfig);
 					if (candidateHover.cursorSequence == kCursorSequenceWalk) {
 						floorProbe = Common::Point(x, y);
 						foundFloorProbe = true;
@@ -1327,7 +1324,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scen
 
 			const RoomHoverState floorHover = foundFloorProbe
 				? resolveRoomHoverState(engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
-					scene.sceneRegions, floorProbe)
+					scene.sceneRegions, floorProbe, menuTextConfig)
 				: RoomHoverState();
 			debugC(1, kDebugRoom,
 				"Harvester: startup probe floor room='%s' point=(%d,%d) found=%d cursor_sequence=%d prompt='%s'",
@@ -1387,29 +1384,14 @@ static bool loadQuickTipsScene(HarvesterEngine &engine, RoomSceneResources &scen
 }
 
 static void renderQuickTipsScreen(HarvesterEngine &engine, const RoomSceneResources &scene,
-		const Common::Point &mousePos, const Common::String &tipText) {
+		const MenuTextConfig &config, const QuickTipsLayout &layout,
+		const Common::String &tipText) {
 	Graphics::Screen *screen = engine.getScreen();
-	const Art *art = engine.getArt();
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	Script *script = engine.getScript();
-	if (!screen || !art || !font || !script)
+	if (!screen)
 		return;
 
 	drawRoomScene(engine, *screen, scene, scene.targetPaletteBrightness);
-	blitBitmap(*screen, art->getTipsBitmap(), kQuickTipsOverlayX, kQuickTipsOverlayY);
-
-	drawWrappedShadowedText(*screen, *font, tipText, kQuickTipTextX, kQuickTipTextY, kQuickTipTextWidth, kTextColorNormal);
-	const Common::Rect exitRect = quickTipsExitRect();
-	const Common::Rect nextRect = quickTipsNextRect();
-	const Common::Rect toggleRect = quickTipsToggleRect();
-	const Common::String toggleLabel = script->resolveTextValue(
-		script->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF");
-	drawShadowedString(*screen, *font, "Exit", exitRect.left, exitRect.top, exitRect.width(),
-		kQuickTipActionColor);
-	drawShadowedString(*screen, *font, "Next", nextRect.left, nextRect.top, nextRect.width(),
-		kQuickTipActionColor);
-	drawShadowedString(*screen, *font, toggleLabel,
-		toggleRect.left, toggleRect.top, toggleRect.width(), kQuickTipActionColor);
+	drawQuickTipsPanel(engine, config, layout, tipText);
 
 	if (engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawCursor(*screen);
@@ -1419,10 +1401,12 @@ static void renderQuickTipsScreen(HarvesterEngine &engine, const RoomSceneResour
 
 Flow::Flow(HarvesterEngine &engine)
 	: _engine(engine), _mousePos(320, 200), _dialogue(engine, _mousePos), _inventory(engine),
-	  _menu(engine, _mousePos, _menuItems), _room(engine, _mousePos, _inventory) {
+	  _menu(engine, _mousePos, _menuItems), _cheats(engine),
+	  _room(engine, _mousePos, _inventory, _cheats) {
 }
 
 bool Flow::load() {
+	(void)loadMenuTextConfig(_engine, _menuTextConfig);
 	return loadQuickTips() && loadMenuItems();
 }
 
@@ -1454,6 +1438,9 @@ bool Flow::loadDialogueSaveStateBlob(const Common::Array<byte> &blob, uint32 sav
 Common::Error Flow::run() {
 	if (!ensureCursorEntity())
 		return Common::kReadingFailed;
+	Common::Error passwordError = _menu.validateParentalPassword(*this);
+	if (passwordError.getCode() != Common::kNoError || _engine.shouldQuit())
+		return passwordError;
 
 	clearPendingMainMenuReturn();
 	clearPendingGameOverReturn();
@@ -1531,16 +1518,11 @@ bool Flow::loadMenuItems() {
 
 	Common::Array<byte> data;
 	if (!_engine.getResources()->loadFile(kMenuPath, data)) {
-		if (_engine.isDemo()) {
-			for (const char *item : kDemoMenuItems)
-				_menuItems.push_back(item);
-			debugC(1, kDebugGeneral,
-				"Harvester: using %u built-in DOS demo menu items",
-				(uint)_menuItems.size());
-			return true;
-		}
-
-		warning("Harvester: unable to load startup menu '%s'", kMenuPath);
+		for (const char *item : kBuiltInMenuItems)
+			_menuItems.push_back(item);
+		debugC(2, kDebugGeneral,
+			"Harvester: using %u built-in startup menu items because '%s' is unavailable",
+			(uint)_menuItems.size(), kMenuPath);
 		return true;
 	}
 
@@ -1599,10 +1581,16 @@ Common::Error Flow::runQuickTips() {
 
 	resetCursorAnimationSequence();
 
+	QuickTipsLayout quickTipsLayout;
+	if (!resolveQuickTipsLayout(_engine, _menuTextConfig, quickTipsLayout))
+		return Common::kReadingFailed;
+	const Common::String &toggleLabel = _engine.getScript()->isQuickTipsEnabled()
+		? _menuTextConfig.quickTipsOnLabel : _menuTextConfig.quickTipsOffLabel;
 	debugC(1, kDebugGeneral,
-		"Harvester: quick tips labels exit='Exit' next='Next' toggle='%s'",
-		_engine.getScript()->resolveTextValue(
-			_engine.getScript()->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF").c_str());
+		"Harvester: quick tips panel='%s' header='%s' exit='%s' next='%s' toggle='%s'",
+		_menuTextConfig.hasQuickTipsHeader() ? "TEXTBOX6.BM" : "TIPS.BM",
+		_menuTextConfig.quickTipsHeader.c_str(), _menuTextConfig.quickTipsExitLabel.c_str(),
+		_menuTextConfig.quickTipsNextLabel.c_str(), toggleLabel.c_str());
 
 	uint tipIndex = _engine.getRandomNumber(_quickTips.size() - 1);
 	bool needsRedraw = true;
@@ -1610,7 +1598,7 @@ Common::Error Flow::runQuickTips() {
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderQuickTipsScreen(_engine, scene, _mousePos, _quickTips[tipIndex]);
+			renderQuickTipsScreen(_engine, scene, _menuTextConfig, quickTipsLayout, _quickTips[tipIndex]);
 			needsRedraw = false;
 		}
 
@@ -1625,14 +1613,16 @@ Common::Error Flow::runQuickTips() {
 				needsRedraw = true;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				if (quickTipsExitRect().contains(_mousePos))
+				if (quickTipsLayout.exitRect.contains(_mousePos))
 					return Common::kNoError;
 
-				if (quickTipsNextRect().contains(_mousePos)) {
+				if (quickTipsLayout.nextRect.contains(_mousePos)) {
 					tipIndex = (tipIndex + 1) % _quickTips.size();
 					needsRedraw = true;
-				} else if (quickTipsToggleRect().contains(_mousePos)) {
+				} else if (quickTipsLayout.toggleRect.contains(_mousePos)) {
 					_engine.getScript()->setQuickTipsEnabled(!_engine.getScript()->isQuickTipsEnabled());
+					if (!resolveQuickTipsLayout(_engine, _menuTextConfig, quickTipsLayout))
+						return Common::kReadingFailed;
 					needsRedraw = true;
 				}
 				break;
@@ -2028,6 +2018,7 @@ void Flow::prepareForNewGame() {
 	_engine.clearCurrentSaveRoomState();
 	if (_engine.getScript())
 		_engine.getScript()->resetRuntimeState();
+	_cheats.reset();
 	resetRoomNpcDialogueState();
 }
 
@@ -2277,6 +2268,12 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 			npc.deathDamageType != 0 &&
 			npc.runtimeState >= 0;
 		entity->setHitTestMode(isCorpse ? kRuntimeEntityHitTestNone : kRuntimeEntityHitTestOpaquePixels);
+		// Native spawn positions frame 0 before selecting ambient or corpse frame banks.
+		if (!applyRoomActorPlacementInternal(state, *entity,
+				npc.posX, npc.posY, (float)npc.posZ, nullptr, false)) {
+			debug(1, "Harvester: unable to apply room npc placement for '%s'",
+				npc.npcName.c_str());
+		}
 		if (isCorpse) {
 			const int corpseFrame = MIN(entity->getLastFrame(), npc.runtimeState);
 			entity->setAnimationFrameRange(corpseFrame, corpseFrame, false);
@@ -2288,12 +2285,6 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 			entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
 			if (npc.frameDelay > 0)
 				entity->setAnimationRate(npc.frameDelay);
-		}
-		// Native room NPCs come from spawn_abm_entity_base, which leaves the depth-scale flag cleared.
-		if (!applyRoomActorPlacementInternal(state, *entity,
-				npc.posX, npc.posY, (float)npc.posZ, nullptr, false)) {
-			debug(1, "Harvester: unable to apply room npc placement for '%s'",
-				npc.npcName.c_str());
 		}
 		entityManager->reinsertSceneEntity(entity);
 		debugC(1, kDebugRoom,

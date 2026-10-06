@@ -41,7 +41,7 @@ namespace Scumm {
 // Per-difficulty tuning tables from assault_data_3.bin (also loadable from C:\rebltune.txt)
 // 21 sub-levels x 3 difficulties x 13 fields
 // Fields: roll, lift, slide, drift, snap, miss, wham, shot, kill, time, levelPts, bonus, flags
-const int16 kTuningTable[21][3][13] = {
+const Rebel1TuningTable kTuningTable = {
 	// Sub-level 0: "1A" (Flight Training part 1)
 	{
 		{ 100, 100,  60, 110,   0,   0,  15,   0,   0,   5,  500,  100, 2048 },  // Easy
@@ -169,25 +169,38 @@ const int16 kTuningTable[21][3][13] = {
 		{   0,   0,   0,   0,   2,  22,  35,   4,  75,  10, 1500,  500, 2050 },  // Hard
 	},
 };
-const int kNumTunedLevels = 21;
+const int kNumTunedLevels = ARRAYSIZE(kTuningTable);
+
+void InsaneRebel1::loadTuningData() {
+	memcpy(_tuningTable, kTuningTable, sizeof(_tuningTable));
+	if (!_release.tuning.offset)
+		return;
+
+	Common::File f;
+	if (!f.open(_release.executable))
+		error("Unable to open %s for Rebel Assault tuning data", _release.executable);
+
+	if (!_release.readTuningData(f, _tuningTable))
+		error("Unable to read Rebel Assault tuning data from %s", _release.executable);
+}
 
 
 void InsaneRebel1::loadTuningForLevel(int level) {
 	int d = CLIP(_difficulty, 0, 2);
 	int l = CLIP(level, 0, kNumTunedLevels - 1);
-	_tuning.roll     = kTuningTable[l][d][0];
-	_tuning.lift     = kTuningTable[l][d][1];
-	_tuning.slide    = kTuningTable[l][d][2];
-	_tuning.drift    = kTuningTable[l][d][3];
-	_tuning.snap     = kTuningTable[l][d][4];
-	_tuning.miss     = kTuningTable[l][d][5];
-	_tuning.wham     = kTuningTable[l][d][6];
-	_tuning.shot     = kTuningTable[l][d][7];
-	_tuning.kill     = kTuningTable[l][d][8];
-	_tuning.time     = kTuningTable[l][d][9];
-	_tuning.levelPts = kTuningTable[l][d][10];
-	_tuning.bonus    = kTuningTable[l][d][11];
-	_tuning.flags    = kTuningTable[l][d][12];
+	_tuning.roll     = _tuningTable[l][d][0];
+	_tuning.lift     = _tuningTable[l][d][1];
+	_tuning.slide    = _tuningTable[l][d][2];
+	_tuning.drift    = _tuningTable[l][d][3];
+	_tuning.snap     = _tuningTable[l][d][4];
+	_tuning.miss     = _tuningTable[l][d][5];
+	_tuning.wham     = _tuningTable[l][d][6];
+	_tuning.shot     = _tuningTable[l][d][7];
+	_tuning.kill     = _tuningTable[l][d][8];
+	_tuning.time     = _tuningTable[l][d][9];
+	_tuning.levelPts = _tuningTable[l][d][10];
+	_tuning.bonus    = _tuningTable[l][d][11];
+	_tuning.flags    = _tuningTable[l][d][12];
 	resetGameplayFlagsFromTuning();
 	_protectedTargetA = 0;
 	_protectedTargetB = 0;
@@ -282,13 +295,16 @@ const char *InsaneRebel1::uiStr(int id) const {
 	return kRebel1UiFallback[id];
 }
 
-// All localized DOS releases keep their UI text in ASSAULT.EXE as NUL-terminated
+// DOS releases keep their UI text in the executable as NUL-terminated
 // strings interleaved with the (language-neutral) data file names, in the same
 // local order across builds. Extract them anchored on those neighbors; anything
 // that fails validation keeps its English fallback.
 void InsaneRebel1::loadLocalizedUiStrings() {
+	if (!_release.executable)
+		return;
+
 	Common::File f;
-	if (!f.open("ASSAULT.EXE"))
+	if (!f.open(_release.executable))
 		return;
 
 	int32 size = (int32)f.size();
@@ -348,12 +364,18 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 		return true;
 	};
 
-	// Main menu: title and the five original items follow OPEN\O1OPTION.ANM.
+	// The early demo has only START GAME, GAME OPTIONS and CONTINUE DEMO.
 	int idx = find("OPEN\\O1OPTION.ANM", 0);
 	if (idx >= 0) {
 		assign(kR1StrMainMenuTitle, idx + 1);
-		for (int i = 0; i < 5; i++)
-			assign(kR1StrMenuNewGame + i, idx + 2 + i);
+		assign(kR1StrMenuNewGame, idx + 2);
+		assign(kR1StrMenuGameOptions, idx + 3);
+		if (_release.passcodes) {
+			for (int i = 2; i < 5; i++)
+				assign(kR1StrMenuNewGame + i, idx + 2 + i);
+		} else {
+			assign(kR1StrMenuContinueDemo, idx + 4);
+		}
 	}
 
 	// High score table title follows OPEN\O1SCORE.ANM.
@@ -406,6 +428,14 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 		// calibration block.
 		if (!assign(kR1StrNewHighScore, pw - 4) && paren >= 0)
 			assign(kR1StrNewHighScore, paren - 7);
+	} else if (!_release.passcodes) {
+		// The early demo places these three strings after the options movie.
+		idx = find("OPEN\\O1HWARE.ANM", 0);
+		if (idx >= 0) {
+			assign(kR1StrCompletionBonusFmt, idx + 1);
+			assign(kR1StrBonusFmt, idx + 2);
+			assign(kR1StrChapterComplete, idx + 3);
+		}
 	}
 
 	// Level result strings, each anchored on the video played before them.
@@ -457,11 +487,15 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 	for (int i = 0; i < kR1StrUiCount; i++)
 		if (!_uiStrings[i].empty())
 			loaded++;
-	debugC(DEBUG_INSANE, "InsaneRebel1: %d/%d UI strings loaded from ASSAULT.EXE", loaded, kR1StrUiCount);
+	debugC(DEBUG_INSANE, "InsaneRebel1: %d/%d UI strings loaded from %s", loaded, kR1StrUiCount, _release.executable);
 }
 
-InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
+InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm),
+		_release(getRebel1Release(scumm->_game.variant, ConfMan.getBool("rebel1_restored_content"))) {
 	Insane::_vm = scumm;
+	// Rebel Assault skips ScummEngine::resetScumm(), which normally clears this state.
+	for (int i = 0; i < kScummActionCount; i++)
+		_vm->_actionMap[i] = false;
 
 	_screenWidth = 384;
 	_screenHeight = 242;
@@ -489,6 +523,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_driftParam = 0;
 
 	_difficulty = 0;
+	loadTuningData();
 	loadTuningForLevel(0);
 
 	_perspectiveX = 0;
@@ -521,7 +556,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_activeInputSource = kInputSourceMouse;
 
 	_currentLevel = 0;
-	_resumeLevel = 1;
+	_resumeLevel = _release.levels[0];
 	_activeSaveSlot = -1;
 	_loadRequested = false;
 	_flyControlMode = 0;
@@ -562,10 +597,6 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_interactiveVideoActive = false;
 	_preserveInteractiveRuntimeState = false;
 	_interactiveVideoCheatSkipped = false;
-	_restoreInteractiveVideoAudioState = false;
-	memset(_savedInteractiveVideoTrackState, 0, sizeof(_savedInteractiveVideoTrackState));
-	memset(_savedInteractiveVideoTrackGroupId, 0, sizeof(_savedInteractiveVideoTrackGroupId));
-	_savedInteractiveVideoTrackCount = 0;
 	_gameCounter = 0;
 	_pathBranchEnabled = false;
 	_rightPathSelected = false;
@@ -577,6 +608,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_level7WarningFrames = 0;
 	_level7WarningThreshold = 0;
 	_levelGameplayPhase = 0;
+	_level9PathLoopOffset = -1;
+	_level9SelectedPath = -1;
 	_level14Play2BSplicePending = false;
 	_level14Play2BSpliced = false;
 	_level14Play2BSpliceFrame = 0;
@@ -595,7 +628,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_optionsSel = 0;
 	_levelSelectActive = false;
 	_levelSelectSel = 0;
-	_startLevel = 1;
+	_startLevel = _release.levels[0];
 
 	_optRookieOneFemale = false;
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
@@ -742,6 +775,10 @@ InsaneRebel1::~InsaneRebel1() {
 	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	terminateAudio();
 	freeSfx();
+}
+
+bool InsaneRebel1::shouldPreserveWalkerRouteOnStop() const {
+	return _vm->_smushVideoShouldFinish && shouldPreserveWalkerRouteVideoState();
 }
 
 } // End of namespace Scumm

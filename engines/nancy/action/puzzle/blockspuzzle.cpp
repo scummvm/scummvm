@@ -52,33 +52,15 @@ void BlocksPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	// The scene change and flag applied once the board comes out solved. The frame is
 	// always the scene's first, and its sound carries over.
-	_solveScene.sceneID = stream.readUint16LE();	// 0x6a
-	_solveScene.continueSceneSound = kContinueSceneSound;
-	_solveFlag.label = stream.readSint16LE();		// 0x6c
-	_solveFlag.flag = stream.readByte();			// 0x6e
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x6a
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();		// 0x6c
+	_solveScene._flag.flag = stream.readByte();			// 0x6e
 
 	// A count-prefixed array of fixed 23-byte hotspot records:
 	// {rect, u16 cursorType, u16 sceneID, u16 frameID, byte}. The sample carries one - the
 	// "give up / exit" hotspot (leave the puzzle unsolved), with the exit cursor type.
-	int16 numZones = stream.readSint16LE();
-	for (int16 i = 0; i < numZones; ++i) {
-		Common::Rect r;
-		readRect(stream, r);
-		uint16 cursorType = stream.readUint16LE();
-		uint16 sceneID = stream.readUint16LE();
-		int16 exitFlagLabel = stream.readSint16LE();
-		byte exitFlagValue = stream.readByte();
-
-		if (i == 0) {
-			_exitHotspot = r;
-			_exitCursorType = cursorType;
-			_exitScene.sceneID = sceneID;
-			// The field after the scene id is a flag label (set on give-up), not a frame.
-			_exitScene.frameID = 0;
-			_exitFlag.label = exitFlagLabel;
-			_exitFlag.flag = exitFlagValue;
-		}
-	}
+	readExitHotspot(stream);
 
 	// The block shapes, each a 13-byte descriptor of its row in the atlas image.
 	int16 numBlocks = stream.readSint16LE();
@@ -115,15 +97,9 @@ void BlocksPuzzle::readData(Common::SeekableReadStream &stream) {
 }
 
 void BlocksPuzzle::init() {
-	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(vpBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	_hasTurntable = !_turntableDest.isEmpty();
 
@@ -132,6 +108,7 @@ void BlocksPuzzle::init() {
 
 	redraw();
 	registerGraphics();
+	_carriedObject.registerGraphics();
 }
 
 Common::Rect BlocksPuzzle::blockSrc(int16 block, byte rotation, int16 frame) const {
@@ -166,7 +143,24 @@ bool BlocksPuzzle::isSolved() const {
 	return true;
 }
 
-void BlocksPuzzle::pickUp(int16 cell) {
+void BlocksPuzzle::updateCarried(NancyInput *input) {
+	if (_carriedBlock == kNoBlock || !_image.getBounds().contains(_carriedSrc)) {
+		_carriedObject.setVisible(false);
+		_carriedObject.putDown();
+		return;
+	}
+
+	_carriedObject._drawSurface.create(_image, _carriedSrc);
+	_carriedObject.setTransparent(true);
+	_carriedObject.setVisible(true);
+	_carriedObject.pickUp();
+
+	if (input) {
+		_carriedObject.handleInput(*input);
+	}
+}
+
+void BlocksPuzzle::pickUp(int16 cell, NancyInput &input) {
 	playSoundBlock(_sounds[kHandleSound]);
 
 	if (cell == kTurntableCell) {
@@ -182,10 +176,11 @@ void BlocksPuzzle::pickUp(int16 cell) {
 		c.block = kNoBlock;
 	}
 
+	updateCarried(&input);
 	redraw();
 }
 
-void BlocksPuzzle::drop(int16 cell) {
+void BlocksPuzzle::drop(int16 cell, NancyInput &input) {
 	playSoundBlock(_sounds[kHandleSound]);
 
 	// Putting a block down where one already sits swaps them, so the displaced block ends
@@ -214,6 +209,7 @@ void BlocksPuzzle::drop(int16 cell) {
 		}
 	}
 
+	updateCarried(&input);
 	redraw();
 }
 
@@ -251,42 +247,7 @@ void BlocksPuzzle::redraw() {
 		_drawSurface.blitFrom(_image, _turnSrc, Common::Point(_turntableDest.left, _turntableDest.top));
 	}
 
-	// The carried block rides the cursor. While it is being turned in hand its sprite is
-	// the animation's current frame.
-	if (_carriedBlock != kNoBlock) {
-		_drawSurface.blitFrom(_image, _carriedSrc,
-			Common::Point(_dragPos.x - _carriedSrc.width() / 2, _dragPos.y - _carriedSrc.height() / 2));
-	}
-
 	_needsRedraw = true;
-}
-
-void BlocksPuzzle::setDataCursor(uint16 cursorType) const {
-	// The ids in the AR data are raw Nancy13 cursor types, which is exactly what the
-	// "set from script" path expects.
-	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true);
-}
-
-SoundDescription BlocksPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	SoundDescription desc;
-	if (block.names.empty()) {
-		return desc;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return desc;
-	}
-
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-	return desc;
 }
 
 void BlocksPuzzle::execute() {
@@ -313,7 +274,7 @@ void BlocksPuzzle::execute() {
 			_solveSound = playSoundBlock(_sounds[kSuccessSound]);
 			_puzzleState = kWaitSolved;
 
-			if (_solveSound.name.empty()) {
+			if (!hasSolveSound()) {
 				_state = kActionTrigger;
 			}
 
@@ -350,6 +311,7 @@ void BlocksPuzzle::execute() {
 			}
 
 			_carriedSrc = _turnSrc;
+			updateCarried(nullptr);
 			redraw();
 			break;
 		}
@@ -360,7 +322,7 @@ void BlocksPuzzle::execute() {
 
 			break;
 		case kWaitSolved:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				_state = kActionTrigger;
 			}
 
@@ -370,11 +332,9 @@ void BlocksPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_solveFlag);
-			NancySceneState.changeScene(_solveScene);
+			_solveScene.execute();
 		}
 
 		finishExecution();
@@ -388,12 +348,7 @@ void BlocksPuzzle::handleInput(NancyInput &input) {
 	}
 
 	// The carried block keeps tracking the cursor even while it is being turned.
-	if (_carriedBlock != kNoBlock) {
-		Common::Rect screenPt(input.mousePos.x, input.mousePos.y, input.mousePos.x + 1, input.mousePos.y + 1);
-		Common::Rect vpPt = NancySceneState.getViewport().convertScreenToViewport(screenPt);
-		_dragPos = Common::Point(vpPt.left, vpPt.top);
-		redraw();
-	}
+	_carriedObject.handleInput(input);
 
 	if (_puzzleState != kPlaying) {
 		return;
@@ -419,7 +374,7 @@ void BlocksPuzzle::handleInput(NancyInput &input) {
 		if (cell != kNoBlock) {
 			setDataCursor(_carryCursorType);
 			if (click) {
-				drop(cell);
+				drop(cell, input);
 			}
 
 			input.eatMouseInput();
@@ -433,7 +388,7 @@ void BlocksPuzzle::handleInput(NancyInput &input) {
 	if (cell != kNoBlock) {
 		setDataCursor(_carryCursorType);
 		if (click) {
-			pickUp(cell);
+			pickUp(cell, input);
 		}
 
 		input.eatMouseInput();
@@ -454,7 +409,7 @@ void BlocksPuzzle::handleInput(NancyInput &input) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_turntableDest).contains(input.mousePos)) {
 			setDataCursor(_carryCursorType);
 			if (click) {
-				pickUp(kTurntableCell);
+				pickUp(kTurntableCell, input);
 			}
 
 			input.eatMouseInput();
@@ -462,9 +417,7 @@ void BlocksPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

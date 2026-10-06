@@ -167,13 +167,13 @@ void room_106_init() {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, 1);
 		kernel_seq_depth(seq[fx_door], 14);
 
-	} else if ((previous_room == 108) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(OFF_SCREEN_X_FROM_108, OFF_SCREEN_Y_FROM_108, FACING_SOUTHEAST,
 		                  PLAYER_X_FROM_108, PLAYER_Y_FROM_108, FACING_NORTHEAST, true);
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, 1);
 		kernel_seq_depth(seq[fx_door], 14);
 
-	} else if (previous_room == KERNEL_RESTORING_GAME) {
+	} else {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[fx_door], 14);
 	}

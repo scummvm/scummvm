@@ -345,6 +345,18 @@ class ResourceManager;
 #define AMIGA_PAL_VBLANK_RATE  200.0
 
 /**
+ * C64 timing constants
+ *
+ * While we don't detect from the game if it's for PAL or NTSC, we
+ * do allow the user to specify by using an engine setting. The music
+ * plays slower on PAL systems, so we have to adjust the frame rate
+ * from 60Hz for NTSC to 50Hz for PAL.
+ */
+
+#define C64_NTSC_VBLANK_RATE 240.0
+#define C64_PAL_VBLANK_RATE  200.0
+
+/**
  * Game saving/loading outcome codes
  */
 
@@ -566,6 +578,7 @@ public:
 	bool _enableAudioOverride = false;
 	bool _enableCOMISong = false;
 	bool _isAmigaPALSystem = false;
+	bool _isC64PALSystem = false;
 	bool _quitFromScriptCmd = false;
 	bool _isHE995 = false;
 	bool _enableHECompetitiveOnlineMods = false;
@@ -602,6 +615,7 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::String getSaveStateName(int slot) const override { return makeSavegameName(slot, false); }
 
 	void pauseEngineIntern(bool pause) override;
 

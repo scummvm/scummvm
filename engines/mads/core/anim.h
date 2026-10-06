@@ -247,6 +247,7 @@ typedef ImageInter *ImageInterPtr;
 struct MessageBuf {
 	char active;
 	char spacing;
+	char macintosh_font;
 	int x, y;
 	int xs, ys;
 	int status;
@@ -312,7 +313,6 @@ struct Speech {
 	char text[60];                /* Text to be displayed     */
 	byte misc[3];                 /* 3 extra bonus bytes      */
 	byte sound;                   /* Sound to be used         */
-	Audio::AudioStream *speech;	  /* Speech audio stream      */
 	int16 x, y;                   /* Text coordinates         */
 	uint16 display_condition;     /* Condition for display    */
 	RGBcolor color[2];            /* Colors for text display  */

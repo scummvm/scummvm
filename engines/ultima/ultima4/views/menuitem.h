@@ -23,7 +23,6 @@
 #define ULTIMA4_VIEWS_MENUITEM_H
 
 #include "common/str.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {

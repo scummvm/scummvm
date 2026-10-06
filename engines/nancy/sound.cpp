@@ -288,6 +288,12 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 		return;
 	}
 
+	if (description.channelID >= _channels.size()) {
+		warning("Sound '%s' asks for channel %u, but only %u exist", description.name.c_str(),
+			description.channelID, _channels.size());
+		return;
+	}
+
 	Channel &existing = _channels[description.channelID];
 	if (!forceReload && existing.stream != nullptr) {
 		// There's a channel already loaded. Check if we're trying to reload the exact same sound

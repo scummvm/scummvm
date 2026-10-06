@@ -752,7 +752,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 		pGameSound = new CSound(this, GAME_THEME,
 		                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		if (pGameSound != nullptr)
-			(*pGameSound).midiLoopPlaySegment(2310, 29400, 0, FMT_MILLISEC);
+			pGameSound->midiLoopPlaySegment(2310, 29400, 0, FMT_MILLISEC);
 	} // end if pGameSound
 
 	if (m_lpGameStruct->bPlayingMetagame) {
@@ -764,7 +764,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	bStart = false;
 	bInLoop = false;
 	EndWaitCursor();
-	(*this).SetFocus();
+	(this)->SetFocus();
 }
 
 void CMainPackRatWindow::initStatics() {
@@ -1360,7 +1360,7 @@ void CMainPackRatWindow::KillPlayer(bool bFirstTime) {
 			}
 			cMessageBoxDlg.SetInitialOptions(4, m_lScore);
 			cMessageBoxDlg.DoModal();
-			(*this).SetFocus();
+			(this)->SetFocus();
 			m_nPDirection = 0;
 			m_nNextDir = 0;
 			m_bSuspend = true;
@@ -1387,7 +1387,7 @@ void CMainPackRatWindow::KillPlayer(bool bFirstTime) {
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
 				sndPlaySound(nullptr, SND_ASYNC);
 			}
-			(*this).SetFocus();
+			(this)->SetFocus();
 		}
 	}
 
@@ -1870,7 +1870,7 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 			}
 			cMessageBoxDlg.SetInitialOptions(5, m_lScore);
 			cMessageBoxDlg.DoModal();
-			(*this).SetFocus();
+			(this)->SetFocus();
 			m_nPDirection = 0;
 			m_nNextDir = 0;
 			m_bSuspend = true;
@@ -1893,7 +1893,7 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 				}
 				cMessageBoxDlg.SetInitialOptions(2, m_lScore);
 				cMessageBoxDlg.DoModal();
-				(*this).SetFocus();
+				(this)->SetFocus();
 				m_bSuspend = true;
 				if (m_lpGameStruct->bPlayingMetagame) {
 					sndPlaySound(nullptr, SND_ASYNC);
@@ -1913,7 +1913,7 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 				}
 				cMessageBoxDlg.SetInitialOptions(1, m_lScore, (m_nGameLevel - 1));
 				cMessageBoxDlg.DoModal();
-				(*this).SetFocus();
+				(this)->SetFocus();
 				SetMaze();
 				m_bSuspend = false;
 			}
@@ -2653,7 +2653,7 @@ void CMainPackRatWindow::ResetGame() {
 	nExtraLives = 4;
 	bEndGame = false;
 	SetMaze();
-	(*this).SetFocus();
+	(this)->SetFocus();
 	return;
 }
 
@@ -2772,7 +2772,7 @@ bool CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					pGameSound = new CSound(this, GAME_THEME,
 					                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					if (pGameSound != nullptr)
-						(*pGameSound).midiLoopPlaySegment(2310, 29400, 0, FMT_MILLISEC);
+						pGameSound->midiLoopPlaySegment(2310, 29400, 0, FMT_MILLISEC);
 				}
 			} // end if pGameSound
 			else {
@@ -2804,7 +2804,7 @@ bool CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 // if the Hols buttons are hit then set then accordingly
 
-	(*this).SetFocus();                         // Reset focus back to the main window
+	(this)->SetFocus();                         // Reset focus back to the main window
 	return true;
 }
 
@@ -2996,7 +2996,7 @@ void CMainPackRatWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, uns
 		CFrameWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 		break;
 	}
-	(*this).SetFocus();
+	(this)->SetFocus();
 	return;
 }
 
@@ -3044,7 +3044,7 @@ void CMainPackRatWindow::MainLoop() {
 	POINT       ptLive;
 	bool        bRedrawLives = false;
 
-	(*this).SetFocus();
+	(this)->SetFocus();
 	while (bEndGame == false) {
 		if (m_bSuspend == false) {
 			if ((nEatTurtle <= (EATTURTLE - (4 * m_nGameLevel))) && (bEatTurtle)) {
@@ -3442,7 +3442,7 @@ void CMainPackRatWindow::ReleaseResources() {
 	CSprite::ClearBackdrop();
 
 	if (pGamePalette) {
-		(*pGamePalette).DeleteObject();         // release the game color palette
+		pGamePalette->DeleteObject();         // release the game color palette
 
 		delete pGamePalette;
 		pGamePalette = nullptr;

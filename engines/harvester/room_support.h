@@ -41,6 +41,7 @@ class Entity;
 class Art;
 class DialogueSystem;
 struct IndexedBitmap;
+struct MenuTextConfig;
 
 struct RoomSceneResources {
 	RoomSetupState state;
@@ -64,7 +65,6 @@ struct RoomPlayerState {
 	int targetX = 0;
 	int targetBottomY = 0;
 	float targetZ = 0.0f;
-	bool moveTargetRequiresScreenY = false;
 	bool moveTargetXReached = false;
 	bool moveTargetZReached = false;
 	Common::String currentBlockerName;
@@ -152,9 +152,11 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 	const Common::Array<ObjectRecord> &sceneObjects,
 	const Common::Array<NpcRecord> &npcs,
 	const Common::Array<RegionRecord> &regions,
-	const Common::Point &mousePos, const DialogueSystem *dialogue = nullptr);
+	const Common::Point &mousePos, const MenuTextConfig &menuTextConfig,
+	const DialogueSystem *dialogue = nullptr);
 void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scene,
-	const Common::String &entranceName, Common::Point &mousePos);
+	const Common::String &entranceName, Common::Point &mousePos,
+	const MenuTextConfig &menuTextConfig);
 
 } // End of namespace Harvester
 

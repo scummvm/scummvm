@@ -23,7 +23,6 @@
 #define ULTIMA4_GAME_ARMOR_H
 
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/shared/std/containers.h"
 #include "common/str.h"
 
 namespace Ultima {

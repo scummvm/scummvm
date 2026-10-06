@@ -160,7 +160,7 @@ void room_506_init() {
 			kernel_dynamic_anim(id, aa[0], 6);
 		}
 
-	} else if ((previous_room == 501) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else {
 		player.x = PLAYER_X_FROM_501;
 		player.y = PLAYER_Y_FROM_501;
 		player.facing = FACING_EAST;

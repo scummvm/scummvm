@@ -37,15 +37,13 @@ class ScrollContainerWidget: public Widget, public CommandSender {
 	uint32 _reflowCmd;
 	ThemeEngine::WidgetBackground _backgroundType;
 	Common::String _dialogName;
+	static const int kDragThreshold = 5;
 	int _mouseDownY = 0;
-	static const int kDragThreshold;
 	int _mouseDownStartY = 0;
 	bool _isMouseDown = false;
 	bool _isDragging = false;
-	bool _wasAnimating = false;
 	float _scrollPos = 0.0f;
 	FluidScroller *_fluidScroller = nullptr;
-	Widget *_childUnderMouse = nullptr;
 
 	void recalc();
 	void applyScrollPos();
@@ -67,8 +65,11 @@ public:
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseMoved(int x, int y, int button) override;
-	void lostFocusWidget() override;
 	void handleTickle() override;
+	bool handleDragHook(Widget *origTarget, int state, int x, int y, int button) override;
+
+	void cancelDrag() override;
+	void cancelTickle() override;
 
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.
@@ -76,7 +77,6 @@ public:
 	int16	getChildY() const override;
 	uint16	getWidth() const override;
 	uint16	getHeight() const override;
-	bool wantsFocus() override { return true; }
 
 	void draw() override;
 	void markAsDirty() override;

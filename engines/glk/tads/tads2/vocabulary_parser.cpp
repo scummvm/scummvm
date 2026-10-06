@@ -1847,7 +1847,7 @@ startover:
 			Common::sprintf_s(buf, "... %s (", cmd[cur]);
 			p = buf + strlen(buf);
 			cnt = 0;
-			for (i = 0 ; i < sizeof(type_names)/sizeof(type_names[0]) ; ++i)
+			for (i = 0 ; i < ARRAYSIZE(type_names); ++i)
 			{
 				if (t & (1 << i))
 				{
@@ -3754,8 +3754,7 @@ void voc_parse_dict_lookup(voccxdef *ctx)
 				curtyp = (int)osrp4(typp+1);
 
 				/* search for a type */
-				for (mapp = typemap, i = sizeof(typemap)/sizeof(typemap[0]) ;
-					 i != 0 ; ++mapp, --i)
+				for (mapp = typemap, i = ARRAYSIZE(typemap); i != 0 ; ++mapp, --i)
 				{
 					/* if this flag is set, use this type property */
 					if ((curtyp & mapp->flag) != 0)

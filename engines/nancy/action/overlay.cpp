@@ -31,6 +31,7 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "common/random.h"
 #include "common/serializer.h"
 
 #include "graphics/font.h"
@@ -150,7 +151,7 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 
 	ser.syncAsUint16LE(_z, kGameTypeNancy1, kGameTypeNancy1);
 
-	if (_isInterruptible) {
+	if (_animationType == kInterruptibleAnimation) {
 			ser.syncAsSint16LE(_interruptCondition.label);
 			ser.syncAsUint16LE(_interruptCondition.flag);
 		} else {
@@ -412,7 +413,7 @@ void Overlay::execute() {
 
 Common::String Overlay::getRecordTypeName() const {
 	if (g_nancy->getGameType() <= kGameTypeNancy1) {
-		if (_isInterruptible) {
+		if (_animationType == kInterruptibleAnimation) {
 			return "PlayIntStaticBitmapAnimation";
 		} else {
 			return "PlayStaticBitmapAnimation";
@@ -441,6 +442,24 @@ void OverlayStaticTerse::readData(Common::SeekableReadStream &stream) {
 	_blitDescriptions.resize(1);
 	_blitDescriptions[0].src = Common::Rect(dest.width(), dest.height());
 	_blitDescriptions[0].dest = dest;
+
+	_overlayType = kPlayOverlayStatic;
+}
+
+void OverlayMultiframeTerse::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+	_z = stream.readUint16LE();
+
+	uint16 numBlitDescriptions = stream.readUint16LE();
+	_blitDescriptions.resize(numBlitDescriptions);
+	for (auto &bm : _blitDescriptions) {
+		bm.readData(stream);
+	}
+
+	// Every blit description carries its own source rect, so the single general
+	// source rect they all point to is left empty; execute() then takes both the
+	// position and the size from the description itself.
+	_srcRects.push_back(Common::Rect());
 
 	_overlayType = kPlayOverlayStatic;
 }
@@ -499,48 +518,103 @@ void TableIndexOverlay::execute() {
 	}
 }
 
+void TextLineOverlay::init() {
+	if (!_digitImageName.empty()) {
+		g_nancy->_resource->loadImage(_digitImageName, _digitImage);
+	}
+
+	RenderObject::init();
+}
+
 void TextLineOverlay::readData(Common::SeekableReadStream &stream) {
 	_fontID = stream.readUint16LE();
 	_textColor = stream.readUint16LE();
-	_position.x = stream.readSint16LE();
-	stream.skip(2);
-	_position.y = stream.readSint16LE();
-	stream.skip(2);
+	_position.x = stream.readSint32LE();
+	_position.y = stream.readSint32LE();
 	readFilename(stream, _textKey);
 	_tableIndex = stream.readSint16LE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		_numDigits = stream.readSint16LE();
+
+		Common::String imageName;
+		readFilename(stream, imageName);
+		if (!imageName.empty() && imageName != "NO_FILE") {
+			_digitImageName = Common::Path(imageName);
+			_digitSpacing = stream.readUint16LE();
+			for (uint i = 0; i < 10; ++i) {
+				readRect(stream, _digitSrcRects[i]);
+			}
+		}
+	}
 }
 
 void TextLineOverlay::execute() {
-	if (_isDone) {
-		return;
+	switch (_state) {
+	case kBegin:
+		init();
+		_state = kRun;
+		// fall through
+	case kRun: {
+		// The table value can change while the scene is shown, so the text is
+		// re-evaluated every frame and only redrawn when it differs
+		Common::String text = getText();
+		if (text != _displayedText) {
+			_displayedText = text;
+			if (_digitImageName.empty()) {
+				drawText(text);
+			} else {
+				drawDigitImages(text);
+			}
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+Common::String TextLineOverlay::getText() const {
+	if (!_textKey.empty()) {
+		return _textKey;
 	}
 
+	int value = 0;
+	if (_tableIndex != kZeroTableIndex) {
+		TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+		assert(playerTable);
+
+		value = playerTable->getValue(_tableIndex);
+	}
+
+	// An unset value is displayed as zero
+	if (value == kNoTableValue) {
+		value = 0;
+	}
+
+	// Nancy14 keeps only the lowest _numDigits digits of the value
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		int modulus = 1;
+		for (int i = 0; i < _numDigits; ++i) {
+			modulus *= 10;
+		}
+
+		value = (int16)(value % modulus);
+	}
+
+	return Common::String::format("%d", value);
+}
+
+void TextLineOverlay::drawText(const Common::String &text) {
 	const Graphics::Font *font = g_nancy->_graphics->getFont(_fontID);
 	if (!font) {
 		return;
 	}
 
-	Common::String text;
-	if (!_textKey.empty()) {
-		text = _textKey;
-	} else {
-		TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
-		assert(playerTable);
-
-		int16 value = playerTable->getValue(_tableIndex);
-
-		// An unset value is displayed as zero
-		if (value == kNoTableValue) {
-			value = 0;
-		}
-
-		text = Common::String::format("%d", value);
-	}
-
 	uint width = font->getStringWidth(text);
 	uint height = font->getFontHeight();
 	if (!width || !height) {
-		_isDone = true;
+		setVisible(false);
 		return;
 	}
 
@@ -554,8 +628,166 @@ void TextLineOverlay::execute() {
 	setTransparent(true);
 	setVisible(true);
 	registerGraphics();
+}
 
-	_isDone = true;
+void TextLineOverlay::drawDigitImages(const Common::String &text) {
+	// Each digit is drawn with its bottom row on the stored y; the next digit
+	// starts at the previous digit's last column plus the spacing
+	Common::Array<const Common::Rect *> srcRects;
+	Common::Array<int16> offsets;
+	int16 x = 0;
+	int16 width = 0;
+	int16 height = 0;
+	for (uint i = 0; i < text.size(); ++i) {
+		if (text[i] < '0' || text[i] > '9') {
+			continue;
+		}
+
+		const Common::Rect &src = _digitSrcRects[text[i] - '0'];
+		srcRects.push_back(&src);
+		offsets.push_back(x);
+		width = x + src.width();
+		height = MAX<int16>(height, src.height());
+		x += src.width() - 1 + _digitSpacing;
+	}
+
+	if (srcRects.empty() || !width || !height) {
+		setVisible(false);
+		return;
+	}
+
+	_drawSurface.create(width, height, g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	for (uint i = 0; i < srcRects.size(); ++i) {
+		_drawSurface.blitFrom(_digitImage, *srcRects[i], Common::Point(offsets[i], height - srcRects[i]->height()));
+	}
+
+	moveTo(Common::Rect(_position.x, _position.y - height + 1, _position.x + width, _position.y + 1));
+	setTransparent(true);
+	setVisible(true);
+	registerGraphics();
+}
+
+void RolloverOverlay::init() {
+	g_nancy->_resource->loadImage(_imageName, _fullSurface);
+
+	RenderObject::init();
+}
+
+void RolloverOverlay::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+	_transparency = stream.readUint16LE();
+	_z = stream.readUint16LE();
+	_hoverCursor = stream.readUint16LE();
+
+	readRect(stream, _hotspotRect);
+	readRect(stream, _srcRect);
+	readRect(stream, _destRect);
+
+	_flagOnHover.label = stream.readSint16LE();
+	_flagOnHover.flag = stream.readByte();
+	stream.skip(1);
+
+	_hoverSound.readData(stream);
+	_hoverSoundOnce = stream.readUint16LE();
+
+	_sceneChange.sceneID = stream.readUint16LE();
+	_sceneChange.frameID = stream.readUint16LE();
+	_sceneChange.continueSceneSound = kContinueSceneSound;
+
+	_flagOnClick.label = stream.readSint16LE();
+	_flagOnClick.flag = stream.readByte();
+
+	_clickSound.readData(stream);
+}
+
+void RolloverOverlay::playSoundBlock(const RandomSoundBlock &block) {
+	if (block.names.empty()) {
+		return;
+	}
+
+	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
+	const Common::String &name = block.names[idx];
+	if (name.empty() || name == "NO SOUND") {
+		return;
+	}
+
+	SoundDescription desc;
+	desc.name = name;
+	desc.channelID = block.channel;
+	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
+	desc.volume = block.volume;
+
+	g_nancy->_sound->loadSound(desc);
+	g_nancy->_sound->playSound(desc);
+}
+
+void RolloverOverlay::handleInput(NancyInput &input) {
+	if (_state != kRun) {
+		return;
+	}
+
+	bool hovered = NancySceneState.getViewport().convertViewportToScreen(_hotspot).contains(input.mousePos);
+	if (hovered == _isHovered) {
+		return;
+	}
+
+	_isHovered = hovered;
+	setVisible(hovered);
+
+	if (!hovered) {
+		return;
+	}
+
+	if (_hoverSoundOnce == 0 || !_hoverSoundPlayed) {
+		playSoundBlock(_hoverSound);
+		_hoverSoundPlayed = true;
+	}
+
+	NancySceneState.setEventFlag(_flagOnHover);
+}
+
+void RolloverOverlay::execute() {
+	switch (_state) {
+	case kBegin:
+		init();
+
+		_drawSurface.create(_fullSurface, _srcRect);
+		setTransparent(_transparency >= kPlayOverlayTransparent);
+		moveTo(_destRect);
+		setVisible(false);
+		registerGraphics();
+
+		_hotspot = _hotspotRect;
+		_hasHotspot = true;
+
+		_state = kRun;
+		break;
+	case kRun:
+		// Visibility follows the mouse, see handleInput()
+		break;
+	case kActionTrigger:
+		if (!_clickSoundStarted) {
+			playSoundBlock(_clickSound);
+			_clickSoundStarted = true;
+		}
+
+		if (!_clickSound.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)_clickSound.channel)) {
+			return;
+		}
+
+		setVisible(false);
+		_hasHotspot = false;
+
+		NancySceneState.setEventFlag(_flagOnClick);
+
+		if (_sceneChange.sceneID != kNoScene) {
+			NancySceneState.changeScene(_sceneChange);
+		}
+
+		finishExecution();
+		break;
+	}
 }
 
 } // End of namespace Action

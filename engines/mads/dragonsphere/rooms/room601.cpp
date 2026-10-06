@@ -279,7 +279,6 @@ static void handle_animation_king_1() {
 				global[vine_will_grab] = false;
 				global[player_score]  += 3;
 				local->anim_6_running  = true;
-				king_1_reset_frame     = -1;
 				aa[6]                  = kernel_run_animation(kernel_name('v', 3), 0);
 				kernel_synch(KERNEL_ANIM, aa[6], KERNEL_NOW, 0);
 				kernel_reset_animation(aa[6], 18);
@@ -291,7 +290,6 @@ static void handle_animation_king_1() {
 				local->anim_1_running = false;
 				aa[6]                 = kernel_run_animation(kernel_name('v', 3), 0);
 				local->anim_6_running = true;
-				king_1_reset_frame    = -1;
 				kernel_synch(KERNEL_ANIM, aa[6], KERNEL_NOW, 0);
 				break;
 
@@ -852,7 +850,7 @@ static void room_601_init() {
 		player_walk(WALK_TO_X_FROM_603, WALK_TO_Y_FROM_603, FACING_SOUTH);
 		player_walk_trigger(ROOM_601_DOOR_CLOSES);
 
-	} else if (previous_room == 508 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(PLAYER_X_FROM_508, PLAYER_Y_FROM_508, FACING_EAST,
 		                  WALK_TO_X_FROM_508, WALK_TO_Y_FROM_508, FACING_EAST, true);
 	}
@@ -1248,6 +1246,7 @@ static void room_601_daemon() {
 		break;
 
 	case 23:
+	case 33:
 		conv_release();
 		break;
 
@@ -1347,10 +1346,6 @@ static void room_601_daemon() {
 		                   218, 33, MESSAGE_COLOR, time, 33, 0);
 		clear_all();
 		local->vine_4_action = TALK;
-		break;
-
-	case 33:
-		conv_release();
 		break;
 	}
 

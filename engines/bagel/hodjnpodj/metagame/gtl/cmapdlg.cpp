@@ -100,7 +100,7 @@ bool CMapDialog::OnInitDialog() {
 	                 nText_row_offset + nTextHeight);
 
 	if ((m_pTextMessage = new CText()) != nullptr) {
-		bSuccess = (*m_pTextMessage).SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
+		bSuccess = m_pTextMessage->SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
 		ASSERT(bSuccess);   // initialize the text objext
 	}
 
@@ -108,8 +108,8 @@ bool CMapDialog::OnInitDialog() {
 
 	m_pOKButton = new CColorButton();                   // build a color QUIT button to let us exit
 	ASSERT(m_pOKButton != nullptr);
-	(*m_pOKButton).SetPalette(m_pPalette);                       // set the palette to use
-	bSuccess = (*m_pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
+	m_pOKButton->SetPalette(m_pPalette);                       // set the palette to use
+	bSuccess = m_pOKButton->SetControl((int) GetDefID(), this); // tie to the dialog control
 	ASSERT(bSuccess);
 
 	return true;  // return true  unless you set the focus to a control
@@ -126,7 +126,7 @@ void CMapDialog::OnPaint() {
 	pDC = GetDC();
 
 	Common::strcpy_s(buf, "");
-	bSuccess = (*m_pTextMessage).DisplayString(pDC, buf, 20, FW_BOLD, TEXT_COLOR);
+	bSuccess = m_pTextMessage->DisplayString(pDC, buf, 20, FW_BOLD, TEXT_COLOR);
 	ASSERT(bSuccess);
 
 	m_ptZoomHodj.x = (int)(((long)m_HodjLoc.x * ZOOMMAP_WIDTH) / BIGMAP_WIDTH);

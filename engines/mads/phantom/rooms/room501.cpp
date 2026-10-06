@@ -129,7 +129,7 @@ void room_501_init() {
 		(ss[fx_left_door], false, KERNEL_LAST);
 		kernel_seq_depth(seq[fx_left_door], 1);
 
-	} else if ((previous_room == 401) || (previous_room == 408) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(WEST_X, WEST_Y, FACING_EAST, WALK_TO_WEST_X, WALK_TO_WEST_Y, FACING_EAST, true);
 		seq[fx_door] = kernel_seq_stamp
 		(ss[fx_door], false, 1);

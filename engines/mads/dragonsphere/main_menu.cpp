@@ -45,13 +45,10 @@
 #include "mads/core/btype.h"
 #include "mads/core/hspot.h"
 #include "mads/core/magic.h"
-#include "mads/core/ems.h"
-#include "mads/core/xms.h"
 #include "mads/core/imath.h"
 #include "mads/core/kernel.h"
 #include "mads/core/game.h"
 #include "mads/core/pack.h"
-#include "mads/core/quote.h"
 #include "mads/dragonsphere/mads/sounds.h"
 #include "mads/dragonsphere/main_menu.h"
 
@@ -72,15 +69,6 @@ namespace Dragonsphere {
 #define MENU_DISAPPEARING       2
 
 #define MENU_HIGH_SPRITE        15
-
-
-#define EYE_QUOTES      16
-#define EYE_HOTSPOT     32
-#define EYE_MESSAGES    2
-
-#undef MESSAGE_COLOR
-#define MESSAGE_COLOR   1284
-
 
 int mads_mode = false;
 
@@ -128,25 +116,7 @@ int  swap_line;                          /* Currently active swap line          
 long swap_clock;                         /* Time for next swap */
 
 int  current_item;
-int  current_eye   = false;
-int  eye_latch     = false;
 int  selected_item = -1;
-
-#define LEFT_EYE   0
-#define RIGHT_EYE  1
-
-extern char *quotes;
-int  eye_message[2];
-int  eye_pokes   = 0;
-int  recent_eye  = 0;
-int  rebel_base  = 0;
-int  poke_count_message = -1;
-int  poke_count         = 0;
-int  poke_counting      = false;
-
-char poke_count_buf[2][20];
-
-char bonus_buf[80] = "";
 
 Palette special_pal;                     /* Palette for fadeout */
 
@@ -168,7 +138,7 @@ static void start_series() {
 		if (handle < 0) goto done;
 
 		menu_item[count].handle = handle;
-		menu_item[count].active = count != 6;	// Quotes button was never implemented
+		menu_item[count].active = true;
 		menu_item[count].status = 0;
 	}
 
@@ -215,14 +185,8 @@ static void process_menu() {
 
 	myspot = hspot_which(mouse_x, mouse_y - viewing_at_y, mcga_mode);
 
-	current_eye = false;
-
 	if ((myspot > 0) && mouse_any_stroke && (menu_mode == MENU_ACCEPTING_COMMANDS)) {
 		current_item = spot[myspot].num;
-		if (current_item >= EYE_HOTSPOT) {
-			current_item = -1;
-			current_eye = true;
-		}
 	} else {
 		current_item = -1;
 	}
@@ -278,8 +242,7 @@ static void process_sprites() {
 			image.depth = 0;
 			image.scale = 100;
 
-			match = !(sprite <= MENU_HIGH_SPRITE);
-
+			match = false;
 			for (look = 0; !match && (look < (int)image_marker); look++) {
 				if (image_list[look].segment_id == image.segment_id) {
 					if (image_list[look].equals(image)) {

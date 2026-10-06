@@ -109,15 +109,15 @@ static void global_alert(int status) {
 	default: return;
 	}
 
-	popup_dialog_create(game_menu_popup, 0x1000, 20);
-	popup_message(menu_quote(quote_id), 0x8000, -1);
+	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
+	popup_message(menu_quote(quote_id), POPUP_CENTER, POPUP_FILL);
 
 	if (status == SAVE_SUCCESSFUL) {
 		mads_strlwr(save_game_buf);
-		popup_message(save_game_buf, 0x8000, -1);
+		popup_message(save_game_buf, POPUP_CENTER, POPUP_FILL);
 	}
 
-	popup_button(menu_quote(quote_menu_ok), 0x8000);
+	popup_button(menu_quote(quote_menu_ok), POPUP_CENTER);
 	popup_execute();
 	popup_dialog_destroy();
 }
@@ -129,19 +129,19 @@ static void global_menu_save_restore(int save) {
 	PopupItem *cancel_button;
 	PopupItem *result;
 
-	popup_dialog_create(game_menu_popup, 0x1000, 20);
+	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
 
-	popup_message(menu_quote(save ? quote_save_title : quote_restore_title), 0x8000, -1);
+	popup_message(menu_quote(save ? quote_save_title : quote_restore_title), POPUP_CENTER, POPUP_FILL);
 	popup_blank(4);
 
 	save_list = popup_savelist(game_save_directory, menu_quote(quote_menu_empty),
 		99, 64, 63, 200, 10, save, game.last_save);
 
 	if (save) {
-		go_button = popup_button(menu_quote(quote_menu_save), 0x400);
-		game_menu_popup->clear_item = popup_button(menu_quote(quote_menu_clear), 0x8000);
+		go_button = popup_button(menu_quote(quote_menu_save), POPUP_BUTTON_LEFT);
+		game_menu_popup->clear_item = popup_button(menu_quote(quote_menu_clear), POPUP_CENTER);
 	} else {
-		go_button = popup_button(menu_quote(quote_menu_restore), 0x400);
+		go_button = popup_button(menu_quote(quote_menu_restore), POPUP_BUTTON_LEFT);
 	}
 	cancel_button = popup_cancel_button(menu_quote(quote_menu_cancel));
 
@@ -194,7 +194,7 @@ static void global_menu_options() {
 	box_param.menu_text_y_offset = 3;
 	box_param.menu_text_x_bonus = 0;
 
-	popup_dialog_create(game_menu_popup, 0x1000, 20);
+	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
 
 	popup_blank(1);
 	popup_blank(2);
@@ -202,18 +202,18 @@ static void global_menu_options() {
 	int initial_music = config_file.music_flag ? 0 : 1;
 	int former_screen_fade = config_file.screen_fade;
 
-	music_item = popup_menu(menu_quote(quote_options_music), 0x8000, -1, 160, 10, 2, 40, initial_music);
+	music_item = popup_menu(menu_quote(quote_options_music), POPUP_CENTER, POPUP_FILL, 160, 10, 2, 40, initial_music);
 	popup_menu_option(music_item, menu_quote(quote_options_music_on));
 	popup_menu_option(music_item, menu_quote(quote_options_music_off));
 
 	popup_blank(1);
 
-	fade_item = popup_menu(menu_quote(quote_options_fade), 0x8000, -1, 160, 10, 3, 40, former_screen_fade);
+	fade_item = popup_menu(menu_quote(quote_options_fade), POPUP_CENTER, POPUP_FILL, 160, 10, 3, 40, former_screen_fade);
 	popup_menu_option(fade_item, menu_quote(quote_options_fade_1));
 	popup_menu_option(fade_item, menu_quote(quote_options_fade_2));
 	popup_menu_option(fade_item, menu_quote(quote_options_fade_3));
 
-	done_button   = popup_button(menu_quote(quote_menu_done), 5);
+	done_button   = popup_button(menu_quote(quote_menu_done), POPUP_LEFT);
 	cancel_button = popup_cancel_button(menu_quote(quote_menu_cancel));
 
 	popup_width_force(170);
@@ -258,18 +258,18 @@ static void global_menu_main() {
 	box_param.menu_text_y_offset = 3;
 	box_param.menu_text_x_bonus = 0;
 
-	popup_dialog_create(game_menu_popup, 0x1000, 20);
+	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
 
 	popup_blank(1);
 	popup_blank(2);
 
-	save_item    = popup_menu(menu_quote(quote_main_save),    0x8000, -1, 140, 0, 0, 0, 0);
+	save_item    = popup_menu(menu_quote(quote_main_save),    POPUP_CENTER, POPUP_FILL, 140, 0, 0, 0, 0);
 	popup_blank(1);
-	restore_item = popup_menu(menu_quote(quote_main_restore), 0x8000, -1, 140, 0, 0, 0, 0);
+	restore_item = popup_menu(menu_quote(quote_main_restore), POPUP_CENTER, POPUP_FILL, 140, 0, 0, 0, 0);
 	popup_blank(1);
-	resume_item  = popup_menu(menu_quote(quote_main_resume),  0x8000, -1, 140, 0, 0, 0, 0);
+	resume_item  = popup_menu(menu_quote(quote_main_resume),  POPUP_CENTER, POPUP_FILL, 140, 0, 0, 0, 0);
 	popup_blank(1);
-	exit_item    = popup_menu(menu_quote(quote_main_exit),    0x8000, -1, 140, 0, 0, 0, 0);
+	exit_item    = popup_menu(menu_quote(quote_main_exit),    POPUP_CENTER, POPUP_FILL, 140, 0, 0, 0, 0);
 
 	popup_width_force(160);
 	game_menu_popup->cancel_item = resume_item;

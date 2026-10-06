@@ -75,7 +75,7 @@ void room_307_init() {
 		player_walk(END_X_FROM_308, END_Y_FROM_308, FACING_EAST);
 		player_walk_trigger(ROOM_307_DOOR_CLOSES);
 
-	} else if ((previous_room == 303) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(OFF_SCREEN_X_FROM_303, OFF_SCREEN_Y_FROM_303, FACING_WEST,
 			PLAYER_X_FROM_303, PLAYER_Y_FROM_303, FACING_WEST, true);
 	}

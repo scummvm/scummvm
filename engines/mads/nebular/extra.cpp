@@ -321,11 +321,12 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 	bool sceneFlag = id >= 0;
 	int width, height;
 	SeriesPtr sprites[10] = { nullptr };
-	int16 spritesHandles[10] = { -1 };
+	int16 spritesHandles[10];
 
 	// Initialize structures
 	mem_last_alloc_loader = MODULE_ROOM_LOADER;
 	load_handle.open = false;
+	Common::fill(spritesHandles, spritesHandles + 10, -1);
 
 	// Open the room data file
 	room_resolve_base(base, temp_buf, id, base_path);
@@ -380,7 +381,6 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 
 	width = roomfile.xs;
 	height = roomfile.ys;
-	//picSize = width * height;
 
 	if (!picture->data)
 		buffer_init(picture, width, height);
@@ -462,6 +462,64 @@ error:
 
 done:
 	return roomPtr;
+}
+
+void sort_insertion_8(int elements, byte *id, byte *value) {
+	int endIndex = elements - 1;
+
+	for (;;) {  // restart_sort
+		bool continueFlag = false;
+		if (endIndex <= 0)
+			return;
+
+		int di = 0;
+		for (;;) {
+			if (continueFlag)
+				break;
+
+			int palIndex = di;
+			byte v1 = value[di];
+			byte v2 = id[di];
+
+			if (value[di + 1] < v1) {
+				// Extract the out-of-place (larger) element, close the gap
+				int deletion = elements - di - 1;
+				if (deletion > 0) {
+					memmove(&value[di], &value[di + 1], deletion * sizeof(byte));
+					memmove(&id[di], &id[di + 1], deletion * sizeof(byte));
+				}
+
+				// Find the insertion point: just after the last element <= v1
+				int si = 0;
+				bool found = false;
+				while (endIndex > si) {
+					if (found)
+						break;
+					if (value[si] > v1)
+						found = true;
+					si++;
+				}
+
+				continueFlag = true;
+
+				int insertion = elements - si - 1;
+				if (insertion > 0) {
+					memmove(&value[si + 1], &value[si], insertion * sizeof(byte));
+					memmove(&id[si + 1], &id[si], insertion * sizeof(byte));
+				}
+				value[si] = v1;
+				id[si] = v2;
+			}
+
+			++palIndex;
+			if (endIndex <= palIndex)
+				break;
+			di = palIndex;
+		}
+
+		if (!continueFlag)
+			return;
+	}
 }
 
 int buffer_legal(const Buffer &special, int orig_wrap,

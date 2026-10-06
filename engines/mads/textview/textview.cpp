@@ -62,6 +62,25 @@ static Buffer room_picture[3];
 static Buffer *background_ptr;
 static int16 xPos;
 static byte line_slice[156];
+static int bufferHeight;
+static int visibleHeight;
+static int matteHeight;
+static bool drawBoundaryLines;
+static bool macintoshFullFrame;
+static RGBcolor textColor;
+static RGBcolor shadowColor;
+
+static void present_matte_frame(int specialEffect, int fullScreen) {
+	if (!macintoshFullFrame) {
+		matte_frame(specialEffect, fullScreen);
+		return;
+	}
+
+	const int workHeight = scr_work.y;
+	scr_work.y = fullScreen ? visibleHeight : matteHeight;
+	matte_frame(specialEffect, fullScreen);
+	scr_work.y = workHeight;
+}
 
 static void read_line_slice(int xp) {
 	const byte *src = buffer_pointer(background_ptr, xp, 0);
@@ -149,18 +168,32 @@ static void load_background(const char *value) {
 
 	pal_init(8, 8);
 	pal_white(master_palette);
-	master_palette[5].r = 0;
-	master_palette[5].g = 63;
-	master_palette[5].b = 63;
-	master_palette[6].r = 0;
-	master_palette[6].g = 45;
-	master_palette[6].b = 45;
+	master_palette[5] = textColor;
+	master_palette[6] = shadowColor;
 
 	room = room_load(room_id, 0, nullptr, &scr_orig, &scr_depth, &scr_walk,
 		&scr_special, &picture_map, &depth_map, &picture_resource,
 		&depth_resource, -1, -1, 0);
 	if (!room)
 		error("Could not load room %d", room_id);
+
+	if (macintoshFullFrame && scr_orig.y < visibleHeight) {
+		Buffer paddedBackground;
+		memset(&paddedBackground, 0, sizeof(paddedBackground));
+		buffer_init(&paddedBackground, scr_orig.x, visibleHeight);
+		assert(paddedBackground.data);
+		buffer_fill(paddedBackground, 0);
+		buffer_rect_copy_2(scr_orig, paddedBackground, 0, 0, 0, 0,
+			scr_orig.x, scr_orig.y);
+		buffer_free(&scr_orig);
+		scr_orig = paddedBackground;
+	}
+
+	if (macintoshFullFrame) {
+		buffer_rect_copy_2(scr_orig, scr_work, 0, 0, 0, 0,
+			MIN(scr_orig.x, scr_work.x),
+			MIN(scr_orig.y, visibleHeight));
+	}
 
 	image_marker = 1;
 	image_list[0].flags = IMAGE_REFRESH;
@@ -408,7 +441,7 @@ static void animate() {
 			curr_time = timer_read();
 
 			if (curr_time < timer2) {
-				matte_frame(0, 0);
+				present_matte_frame(0, 0);
 				mouse_hide();
 			}
 		}
@@ -433,7 +466,7 @@ static void animate() {
 			if (isEnd && total == 0)
 				isGoing = false;
 
-			matte_frame(has_background ? 2 : 0, 0);
+			present_matte_frame(has_background ? 2 : 0, 0);
 			mouse_hide();
 
 			flag3 = has_background = false;
@@ -445,6 +478,33 @@ static void animate() {
 }
 
 void textview_main(const char *resName) {
+	Presentation presentation;
+	presentation.bufferHeight = 156;
+	presentation.visibleHeight = 156;
+	presentation.matteHeight = presentation.visibleHeight;
+	presentation.drawBoundaryLines = true;
+	presentation.macintoshFullFrame = false;
+	presentation.textColor.r = 0;
+	presentation.textColor.g = 63;
+	presentation.textColor.b = 63;
+	presentation.shadowColor.r = 0;
+	presentation.shadowColor.g = 45;
+	presentation.shadowColor.b = 45;
+	textview_main(resName, presentation);
+}
+
+void textview_main(const char *resName, const Presentation &presentation) {
+	bufferHeight = presentation.bufferHeight;
+	visibleHeight = presentation.visibleHeight;
+	matteHeight = presentation.matteHeight;
+	drawBoundaryLines = presentation.drawBoundaryLines;
+	macintoshFullFrame = presentation.macintoshFullFrame;
+	textColor = presentation.textColor;
+	shadowColor = presentation.shadowColor;
+	assert(bufferHeight >= 156 && visibleHeight > 0 &&
+		visibleHeight <= bufferHeight && visibleHeight <= 200 &&
+		matteHeight > 0 && matteHeight <= visibleHeight);
+
 	active = false;
 	isGoing = flag2 = true;
 	isEnd = flag3 = false;
@@ -452,7 +512,8 @@ void textview_main(const char *resName) {
 	timer1 = timer2 = timer3 = 0;
 	has_background = pan_flag = false;
 	flag5 = 0;
-	text_x = text_y = 0;
+	text_x = -1;
+	text_y = 0;
 	font_auto_spacing = -1;
 	room_id = 0;
 	memset(spare, 0, sizeof(spare));
@@ -482,12 +543,12 @@ void textview_main(const char *resName) {
 	// Initialize surfaces
 	pal_init(8, 8);
 	pal_white(master_palette);
-	buffer_init(&scr_work, 320, 156);
-	buffer_init(&scr_depth, 320, 156);
-	buffer_init(&scr_orig, 320, 156);
+	buffer_init(&scr_work, 320, bufferHeight);
+	buffer_init(&scr_depth, 320, bufferHeight);
+	buffer_init(&scr_orig, 320, bufferHeight);
 	assert(scr_work.data && scr_depth.data && scr_orig.data);
 
-	viewing_at_y = (200 - scr_work.y) / 2;
+	viewing_at_y = (200 - visibleHeight) / 2;
 	room = nullptr;
 
 	// Clear buffers and palette
@@ -497,16 +558,17 @@ void textview_main(const char *resName) {
 	mcga_setpal(&master_palette);
 
 	mouse_set_work_buffer(scr_work.data, scr_work.x);
-	mouse_set_view_port_loc(0, viewing_at_y, scr_work.x, scr_work.y + viewing_at_y - 1);
+	mouse_set_view_port_loc(0, viewing_at_y, scr_work.x,
+		visibleHeight + viewing_at_y - 1);
 	mouse_set_view_port(0, 0);
 	timer_install();
 	matte_init(-1);
 	timer_activate_low_priority(cycle_colors);
 
 	// Draw boundary horizontal lines at top and bottom of the screen
-	if (viewing_at_y) {
+	if (drawBoundaryLines && viewing_at_y) {
 		screen.hLine(0, viewing_at_y - 2, 319, 2);
-		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 2);
+		screen.hLine(0, viewing_at_y + visibleHeight + 1, 319, 2);
 	}
 
 	// Clear the lines
@@ -519,7 +581,10 @@ void textview_main(const char *resName) {
 	g_engine->_soundManager->removeDriver();
 	pal_interface(master_palette);
 	mcga_setpal(&master_palette);
-	mcga_reset();
+	// Native CODE 133 returns after restoring the interface palette. The
+	// additional MCGA reset belongs to the DOS viewer teardown.
+	if (!macintoshFullFrame)
+		mcga_reset();
 
 	buffer_free(&scr_depth);
 	buffer_free(&scr_orig);

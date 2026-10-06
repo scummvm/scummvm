@@ -73,6 +73,8 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		_dat = new GameDatabaseV2(this);
 	} else if (getGameID() == GID_RTZ) {
 		_dat = new GameDatabaseV3(this);
+	} else if (getGameID() == GID_RSBESTNDE || getGameID() == GID_RSBUSYNDE) {
+		_dat = new GameDatabaseV3_1(this);
 	} else {
 		error("Unknown GameID");
 	}
@@ -111,7 +113,9 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		_soundRate = 8000;
 		break;
 	case GID_RTZ:
-		// Return to Zork sets it itself via a script function
+	case GID_RSBESTNDE:
+	case GID_RSBUSYNDE:
+		// Return to Zork and the Scarry games sets it via script function
 		break;
 	default:
 		break;
@@ -465,6 +469,17 @@ Common::Error MadeEngine::run() {
 				delete exe;
 			}
 		}
+	} else if (getGameID() == GID_RSBESTNDE) {
+		if (getFeatures() & GF_DEMO) {
+			_dat->open("bestdemo.dat");
+			_res->open("bestdemo.prj");
+		} else {
+			_dat->open("best.dat");
+			_res->open("best.prj");
+		}
+	} else if (getGameID() == GID_RSBUSYNDE) {
+		_dat->open("busy.dat");
+		_res->open("busy.prj");
 	} else {
 		error ("Unknown MADE game");
 	}
@@ -485,7 +500,8 @@ Common::Error MadeEngine::run() {
 	if (! _useWinCursors)
 		_screen->setDefaultMouseCursor();
 
-	_script->runScript(_dat->getMainCodeObjectIndex());
+	int16 scriptReturn = _script->runScript(_dat->getMainCodeObjectIndex());
+	debug(3, "Main script return code: %04X (%d)", scriptReturn, scriptReturn);
 #endif
 
 	if (_music)

@@ -37,15 +37,45 @@ namespace Nancy {
 namespace Action {
 
 void TurningPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
 	g_nancy->_resource->loadImage(_imageName, _image);
+
+	if (!_overlaySrcRects.empty() && !_overlayDestRects.empty()) {
+		g_nancy->_resource->loadImage(_overlayImageName, _overlayImage);
+		_overlayFrameIDs.resize(_overlayDestRects.size(), 0);
+
+		if (_randomizeOverlayStart) {
+			for (uint i = 0; i < _overlayFrameIDs.size(); ++i) {
+				_overlayFrameIDs[i] = g_nancy->_randomSource->getRandomNumber(_overlaySrcRects.size() - 1);
+			}
+		}
+
+		_nextOverlayFrameTime = g_nancy->getTotalPlayTime() + _overlayFrameTime;
+	}
+
+	if (_timeLimit) {
+		_timeoutTime = g_nancy->getTotalPlayTime() + (_timeLimit * 1000);
+	}
+
 	registerGraphics();
+}
+
+// Every slot plays the same frames, but each starts wherever init() left it.
+void TurningPuzzle::drawOverlay(bool advanceFrames) {
+	for (uint i = 0; i < _overlayDestRects.size(); ++i) {
+		_drawSurface.blitFrom(_overlayImage, _overlaySrcRects[_overlayFrameIDs[i]], _overlayDestRects[i]);
+
+		if (advanceFrames) {
+			if ((uint)_overlayFrameIDs[i] + 1 < _overlaySrcRects.size()) {
+				++_overlayFrameIDs[i];
+			} else {
+				_overlayFrameIDs[i] = 0;
+			}
+		}
+	}
+
+	_needsRedraw = true;
 }
 
 void TurningPuzzle::updateGraphics() {
@@ -54,6 +84,11 @@ void TurningPuzzle::updateGraphics() {
 	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		if (!_overlayFrameIDs.empty() && g_nancy->getTotalPlayTime() >= _nextOverlayFrameTime) {
+			drawOverlay(true);
+			_nextOverlayFrameTime = g_nancy->getTotalPlayTime() + _overlayFrameTime;
+		}
+
 		if (_objectCurrentlyTurning == -1 || g_nancy->getTotalPlayTime() <= _nextTurnTime) {
 			return;
 		}
@@ -170,30 +205,13 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 	_hitInset = stream.readUint16LE();			// 0x25
 	_turnFlagLabel = stream.readSint16LE();		// 0x27
 	_turnFlagValue = stream.readByte();			// 0x29
-	stream.skip(5);								// 0x2a - not yet identified
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x2a
+	_solveScene._flag.label = stream.readSint16LE();			// 0x2c
+	_solveScene._flag.flag = stream.readByte();					// 0x2e
 
-	// A count-prefixed array of 23-byte hotspot records (as in PegsPuzzle); the first is
-	// the "give up" hotspot, and its scene doubles as the one shown once solved.
-	int16 numZones = stream.readSint16LE();
-	for (int16 i = 0; i < numZones; ++i) {
-		Common::Rect r;
-		readRect(stream, r);
-		uint16 cursorType = stream.readUint16LE();
-		uint16 sceneID = stream.readUint16LE();
-		int16 exitFlagLabel = stream.readSint16LE();
-		byte exitFlagValue = stream.readByte();
-
-		if (i == 0) {
-			_exitHotspot = r;
-			_exitCursorType = cursorType;
-			_exitScene._sceneChange.sceneID = sceneID;
-			// The field after the scene id is a flag label (set on give-up), not a frame.
-			_exitScene._sceneChange.frameID = 0;
-			_exitScene._flag.label = exitFlagLabel;
-			_exitScene._flag.flag = exitFlagValue;
-			_solveScene._sceneChange = _exitScene._sceneChange;
-		}
-	}
+	// A count-prefixed array of 23-byte hotspot records (as in PegsPuzzle);
+	// the first one is the "give up" hotspot.
+	readExitHotspot(stream);
 
 	uint16 numTypes = stream.readUint16LE();
 	_pieceTypes.resize(numTypes);
@@ -242,8 +260,32 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 		_hotspots[i].grow(-(int16)_hitInset);
 	}
 
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		Common::String overlayName;
+		readFilename(stream, overlayName);
+
+		if (!overlayName.empty() && overlayName != "NO_FILE") {
+			_overlayImageName = Common::Path(overlayName);
+			readRectArray(stream, _overlaySrcRects, stream.readUint16LE());
+			_randomizeOverlayStart = stream.readByte();
+			_overlayFrameTime = stream.readUint16LE();
+			readRectArray(stream, _overlayDestRects, stream.readUint16LE());
+		}
+	}
+
 	_turnSoundBlock.readData(stream);
 	_solveSoundBlock.readData(stream);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		_timeLimit = stream.readUint16LE();
+
+		if (_timeLimit) {
+			_timeoutScene._sceneChange.sceneID = stream.readUint16LE();
+			_timeoutScene._flag.label = stream.readSint16LE();
+			_timeoutScene._flag.flag = stream.readByte();
+			_timeoutSoundBlock.readData(stream);
+		}
+	}
 }
 
 uint TurningPuzzle::numFacesOf(uint objectID) const {
@@ -288,28 +330,6 @@ void TurningPuzzle::drawAllObjects() {
 	for (uint i = 0; i < _currentOrder.size(); ++i) {
 		drawObject(i, _currentOrder[i], 0);
 	}
-}
-
-SoundDescription TurningPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	SoundDescription desc;
-	if (block.names.empty()) {
-		return desc;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return desc;
-	}
-
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-	return desc;
 }
 
 void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -401,6 +421,10 @@ void TurningPuzzle::execute() {
 		_currentOrder = _startPositions;
 		drawAllObjects();
 
+		if (!_overlayFrameIDs.empty()) {
+			drawOverlay(false);
+		}
+
 		NancySceneState.setNoHeldItem();
 
 		_state = kRun;
@@ -419,8 +443,16 @@ void TurningPuzzle::execute() {
 				_solveState = kWaitForAnimation;
 			} else {
 				_solveState = kWaitForSound;
-				NancySceneState.setEventFlag(_solveScene._flag);
+				_shouldSetSolveFlag = true;
 			}
+			_objectCurrentlyTurning = -1;
+			_turnFrameID = 0;
+		} else if (_timeLimit && g_nancy->getTotalPlayTime() > _timeoutTime) {
+			// Out of time: the puzzle plays its own sound, then sends the player elsewhere.
+			_timedOut = true;
+			_state = kActionTrigger;
+			_solveSound = playSoundBlock(_timeoutSoundBlock);
+			_solveState = kWaitForSound;
 			_objectCurrentlyTurning = -1;
 			_turnFrameID = 0;
 		}
@@ -437,19 +469,33 @@ void TurningPuzzle::execute() {
 			if (_solveSoundDelayTime == 0) {
 				_solveSoundDelayTime = g_nancy->getTotalPlayTime() + (_solveSoundDelay * 1000);
 			} else if (g_nancy->getTotalPlayTime() > _solveSoundDelayTime) {
-				g_nancy->_sound->loadSound(_solveSound);
-				g_nancy->_sound->playSound(_solveSound);
-				NancySceneState.setEventFlag(_solveScene._flag);
+				playSolveSound();
+				_shouldSetSolveFlag = true;
 				_solveState = kWaitForSound;
 			}
 
 			return;
 		case kWaitForSound :
-			if (g_nancy->_sound->isSoundPlaying(_solveSound) || g_nancy->_sound->isSoundPlaying(_turnSound)) {
+			if (isSolveSoundPlaying()) {
 				return;
 			}
 
-			NancySceneState.changeScene(_solveScene._sceneChange);
+			if (g_nancy->getGameType() < kGameTypeNancy13 && g_nancy->_sound->isSoundPlaying(_turnSound)) {
+				return;
+			}
+
+			// Nancy13 takes the solve scene and its event flag from the header. In every case
+			// the flag is only set here: setting it as soon as the puzzle is solved can
+			// invalidate this record's own dependencies, which stops it from being executed
+			// again before it ever reaches this point.
+			if (_timedOut) {
+				_timeoutScene.execute();
+			} else if (g_nancy->getGameType() >= kGameTypeNancy13 || _shouldSetSolveFlag) {
+				_solveScene.execute();
+			} else {
+				NancySceneState.changeScene(_solveScene._sceneChange);
+			}
+
 			break;
 		case kNotSolved :
 			_exitScene.execute();
@@ -464,12 +510,7 @@ void TurningPuzzle::execute() {
 void TurningPuzzle::handleInput(NancyInput &input) {
 	const bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		if (isNancy13)
-			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
-		else
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp)
 			_state = kActionTrigger;
 

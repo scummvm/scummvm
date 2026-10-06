@@ -38,7 +38,7 @@ Audio::AudioStream *speech_stream;
 
 
 struct SpeechDir {
-	int16 field0 = 0;
+	int16 sampleRate = 0;
 	int16 compression = 0;
 	int16 field4 = 0, field6 = 0, field8 = 0;
 	int32 size = 0;
@@ -50,11 +50,13 @@ struct SpeechDir {
 
 
 void SpeechDir::load(Common::SeekableReadStream *src) {
-	src->readMultipleLE(field0, compression, field4, field6, field8, size, offset);
+	src->readMultipleLE(sampleRate, compression, field4, field6, field8, size,
+		offset);
 }
 
 void speech_init() {
 	speech_system_active = true;
+	speech_on = true;
 }
 
 void speech_shutdown() {
@@ -63,6 +65,7 @@ void speech_shutdown() {
 		speech_stream = nullptr;
 	}
 
+	global_speech_ready = -1;
 	speech_system_active = false;
 }
 
@@ -107,7 +110,8 @@ Audio::AudioStream *speech_load(const char *resName, int id, bool) {
 
 	// At this point we have valid data
 	memStream = new Common::MemoryReadStream(load_buf, speechDir.size, DisposeAfterUse::YES);
-	audioStream = Audio::makeRawStream(memStream, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	audioStream = Audio::makeRawStream(memStream, speechDir.sampleRate,
+		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
 done:
 	delete handle;
@@ -125,6 +129,7 @@ void speech_play(const char *resName, int id) {
 		g_engine->playSpeech(speech);
 
 	speech_stream = nullptr;
+	global_speech_ready = -1;
 }
 
 void speech_all_off() {
@@ -140,6 +145,7 @@ void speech_go() {
 		g_engine->playSpeech(speech_stream);
 		speech_stream = nullptr;
 	}
+	global_speech_ready = -1;
 }
 
 void global_speech(int id) {

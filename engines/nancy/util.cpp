@@ -19,7 +19,9 @@
  */
 
 #include "engines/nancy/enginedata.h"
+#include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/puzzledata.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/state/scene.h"
@@ -253,6 +255,50 @@ void readFilenameArray(Common::Serializer &stream, Common::Array<Common::Path> &
 	}
 }
 
+Common::Rect viewportScreenToBackground(const Common::Rect &screenRegion) {
+	const UI::Viewport &viewport = NancySceneState.getViewport();
+	const Graphics::ManagedSurface &background = viewport.getBackground();
+	const Common::Rect vpScreen = viewport.getScreenPosition();
+	const int scrollY = (int)viewport.getCurVerticalScroll();
+
+	Common::Rect grab;
+	if (screenRegion.isEmpty()) {
+		grab = Common::Rect(vpScreen.width(), vpScreen.height());
+		grab.translate(0, scrollY);
+	} else {
+		grab = screenRegion;
+		grab.translate(-vpScreen.left, -vpScreen.top + scrollY);
+	}
+
+	grab.clip(Common::Rect(background.w, background.h));
+	return grab;
+}
+
+bool captureViewportPicture(const Common::Rect &backgroundRegion, CapturedPicture &picture) {
+	const Graphics::ManagedSurface &background = NancySceneState.getViewport().getBackground();
+	if (background.w == 0 || background.h == 0 || backgroundRegion.isEmpty()) {
+		return false;
+	}
+
+	Graphics::Surface sub = background.rawSurface().getSubArea(backgroundRegion);
+	Graphics::Surface *converted = sub.convertTo(g_nancy->_graphics->getScreenPixelFormat());
+	if (!converted) {
+		return false;
+	}
+
+	picture.width = (uint16)converted->w;
+	picture.height = (uint16)converted->h;
+	picture.pixels.resize((uint)picture.width * (uint)picture.height * 4);
+	for (int y = 0; y < converted->h; ++y) {
+		memcpy(picture.pixels.data() + (uint)y * (uint)picture.width * 4,
+				converted->getBasePtr(0, y), (uint)picture.width * 4);
+	}
+
+	converted->free();
+	delete converted;
+	return true;
+}
+
 void readUIButton(Common::SeekableReadStream &stream, UIButtonRecord &dst) {
 	// Read common fields for both buttons and sliders
 	readFilename(stream, dst.primaryImageName);
@@ -358,6 +404,34 @@ Common::String resolveSubtitleText(const Common::String &keyOrText, const Common
 	}
 
 	return fallback;
+}
+
+void readExitHotspots(Common::SeekableReadStream &stream, Common::Array<ExitHotspot> &hotspots) {
+	int16 numZones = stream.readSint16LE();
+	hotspots.resize(numZones);
+
+	for (int16 i = 0; i < numZones; ++i) {
+		ExitHotspot &zone = hotspots[i];
+		readRect(stream, zone.hotspot);
+		zone.cursorType = stream.readUint16LE();
+		zone.scene.sceneID = stream.readUint16LE();
+		zone.scene.frameID = 0;
+		zone.flag.label = stream.readSint16LE();
+		zone.flag.flag = stream.readByte();
+	}
+}
+
+void readExitHotspot(Common::SeekableReadStream &stream, Common::Rect &hotspot, uint16 &cursorType,
+					SceneChangeDescription &scene, FlagDescription &flag) {
+	Common::Array<ExitHotspot> hotspots;
+	readExitHotspots(stream, hotspots);
+
+	if (!hotspots.empty()) {
+		hotspot = hotspots[0].hotspot;
+		cursorType = hotspots[0].cursorType;
+		scene = hotspots[0].scene;
+		flag = hotspots[0].flag;
+	}
 }
 
 Common::String readSubtitleText(Common::SeekableReadStream &stream) {

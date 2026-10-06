@@ -290,6 +290,11 @@ extern void inter_setup_hotspots();
  * @param new_active	
  */
 extern void inter_set_active_inven(int inven_id);
+
+/**
+ * Scrolls the visible inventory by one item in the requested direction.
+ */
+extern void inter_scroll_inventory(int direction);
 /*
  * inter_give_to_player ()
  * Adds the specified object to the player's inventory.
@@ -325,6 +330,9 @@ extern void inter_init_sentence();
 extern void inter_main_loop(int allow_input);
 
 extern void inter_screen_update();
+
+extern void inter_hide_macintosh_sentence();
+extern void inter_restore_macintosh_sentence();
 
 extern void inter_turn_off_object();
 extern void inter_spin_object(int object_id);

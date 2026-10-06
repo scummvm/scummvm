@@ -103,16 +103,16 @@ void SortPuzzle::readData(Common::SeekableReadStream &stream) {
 	_pickupSound.readNormal(stream);
 	_dropSound.readNormal(stream);
 
-	_winScene.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag  = stream.readByte();
-	_winSound.readNormal(stream);
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag  = stream.readByte();
+	_solveSound.readNormal(stream);
 
-	_cancelScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_cancelFlag.label = stream.readSint16LE();
-	_cancelFlag.flag  = stream.readByte();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag  = stream.readByte();
 
 	readRect(stream, _exitHotspot);
 	stream.skip(2); // exit cursor type id
@@ -164,16 +164,16 @@ void SortPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	_pickupSound.readNormal(stream);          // 0x842
 	_dropSound.readNormal(stream);            // 0x873
 
-	_winScene.readData(stream);               // 0x8a4
+	_solveScene._sceneChange.readData(stream);               // 0x8a4
 	stream.skip(2);
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag  = stream.readByte();
-	_winSound.readNormal(stream);             // 0x8bd
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag  = stream.readByte();
+	_solveSound.readNormal(stream);             // 0x8bd
 
-	_cancelScene.readData(stream);            // 0x8ee
+	_exitScene._sceneChange.readData(stream);            // 0x8ee
 	stream.skip(2);
-	_cancelFlag.label = stream.readSint16LE();
-	_cancelFlag.flag  = stream.readByte();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag  = stream.readByte();
 
 	readRect(stream, _exitHotspot);           // 0x907
 	stream.skip(2); // exit cursor type id
@@ -322,6 +322,8 @@ void SortPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		_heldObject.registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 
@@ -330,17 +332,16 @@ void SortPuzzle::execute() {
 		case kPlaying:
 			break;
 		case kPlayWinSound:
-			if (_winSound.name != "NO SOUND") {
-				g_nancy->_sound->loadSound(_winSound);
-				g_nancy->_sound->playSound(_winSound);
+			if (hasSolveSound()) {
+				playSolveSound();
 				_subState = kWaitWinSound;
 			} else {
 				_subState = kExitToWin;
 			}
 			break;
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_subState = kExitToWin;
 			}
 			break;
@@ -354,18 +355,16 @@ void SortPuzzle::execute() {
 	case kActionTrigger:
 		g_nancy->_sound->stopSound(_pickupSound);
 		g_nancy->_sound->stopSound(_dropSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_subState == kExitToWin) {
 			SortPuzzleData *spd = (SortPuzzleData *)NancySceneState.getPuzzleData(SortPuzzleData::getTag());
 			if (spd) {
 				spd->currentState.clear();
 				spd->solvedState.clear();
 			}
-			NancySceneState.setEventFlag(_winFlag);
-			NancySceneState.changeScene(_winScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_cancelFlag);
-			NancySceneState.changeScene(_cancelScene);
+			_exitScene.execute();
 		}
 		finishExecution();
 		break;
@@ -423,10 +422,7 @@ void SortPuzzle::handleInput(NancyInput &input) {
 		debug("-----");
 	}
 
-	if (_hasHeld && _heldDrawPos != mouseVP) {
-		_heldDrawPos = mouseVP;
-		redraw();
-	}
+	_heldObject.handleInput(input);
 
 	// Nancy 12 uses the dedicated puzzle hands: a closed one over a piece that can
 	// be picked up, an open one over a slot the carried piece can go into. Off the
@@ -442,8 +438,7 @@ void SortPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (!hitCell) {
-		if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+		if (hoverExitHotspot(input)) {
 			if (input.input & NancyInput::kLeftMouseButtonUp)
 				_subState = kExitToCancel;
 		} else if (_hasHeld && useNewCursors) {
@@ -464,12 +459,7 @@ void SortPuzzle::handleInput(NancyInput &input) {
 		return;
 
 	if (!_hasHeld) {
-		_held = _current[row][col];
-		_hasHeld = true;
-		// Anchor the piece to the mouse right away; the move check above only runs
-		// once something is already held, so it would otherwise be drawn for one
-		// frame at the spot where the previous piece was dropped
-		_heldDrawPos = mouseVP;
+		holdCell(_current[row][col], true, input);
 		_current[row][col].isEmpty = true;
 		if (_pickupSound.name != "NO SOUND") {
 			g_nancy->_sound->loadSound(_pickupSound);
@@ -484,10 +474,10 @@ void SortPuzzle::handleInput(NancyInput &input) {
 			g_nancy->_sound->playSound(_dropSound);
 		}
 		if (target.isEmpty) {
-			_hasHeld = false;
+			holdCell(_held, false, input);
 			checkSolved();
 		} else {
-			_held = target;
+			holdCell(target, true, input);
 		}
 	}
 
@@ -557,6 +547,38 @@ void SortPuzzle::checkSolved() {
 	_subState = kPlayWinSound;
 }
 
+// Puts a piece on the cursor, or takes the held one off it when hasHeld is false.
+void SortPuzzle::holdCell(const Cell &cell, bool hasHeld, NancyInput &input) {
+	_held = cell;
+	_hasHeld = hasHeld;
+
+	if (!_hasHeld) {
+		_heldObject.setVisible(false);
+		_heldObject.putDown();
+		return;
+	}
+
+	// Older games carry a separate cursor image with one sprite per value;
+	// Nancy 12 has no cursor image and draws the held gem from the board image.
+	if (g_nancy->getGameType() < kGameTypeNancy12 && _held.value >= 0 && _held.value < kNumCursors &&
+			_cursorImage.getBounds().contains(_cursorSrcRects[_held.value])) {
+		_heldObject._drawSurface.create(_cursorImage, _cursorSrcRects[_held.value]);
+	} else {
+		Common::Rect src = g_nancy->getGameType() >= kGameTypeNancy12 ? heldSprite(_held) : cellSprite(_held);
+		if (!_boardImage.getBounds().contains(src)) {
+			_heldObject.setVisible(false);
+			_heldObject.putDown();
+			return;
+		}
+		_heldObject._drawSurface.create(_boardImage, src);
+	}
+
+	_heldObject.setTransparent(true);
+	_heldObject.setVisible(true);
+	_heldObject.pickUp();
+	_heldObject.handleInput(input);
+}
+
 void SortPuzzle::redraw() {
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 
@@ -570,29 +592,6 @@ void SortPuzzle::redraw() {
 				continue;
 			Common::Rect dst = cellRect(r, c);
 			_drawSurface.blitFrom(_boardImage, src, Common::Point(dst.left, dst.top));
-		}
-	}
-
-	if (_hasHeld) {
-		bool drawn = false;
-		// Older games carry a separate cursor image with one sprite per value;
-		// Nancy 12 has no cursor image and draws the held gem from the board image.
-		if (g_nancy->getGameType() < kGameTypeNancy12 && _held.value >= 0 && _held.value < kNumCursors) {
-			const Common::Rect &src = _cursorSrcRects[_held.value];
-			if (!src.isEmpty()) {
-				int x = _heldDrawPos.x - src.width()  / 2;
-				int y = _heldDrawPos.y - src.height() / 2;
-				_drawSurface.blitFrom(_cursorImage, src, Common::Point(x, y));
-				drawn = true;
-			}
-		}
-		if (!drawn) {
-			Common::Rect src = g_nancy->getGameType() >= kGameTypeNancy12 ? heldSprite(_held) : cellSprite(_held);
-			if (!src.isEmpty()) {
-				int x = _heldDrawPos.x - src.width()  / 2;
-				int y = _heldDrawPos.y - src.height() / 2;
-				_drawSurface.blitFrom(_boardImage, src, Common::Point(x, y));
-			}
 		}
 	}
 

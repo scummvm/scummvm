@@ -6,6 +6,7 @@ MODULE_OBJS = \
   action/actionzone.o \
   action/arfactory.o \
   action/autotext.o \
+  action/cameraaction.o \
   action/datarecords.o \
   action/inventoryrecords.o \
   action/navigationrecords.o \
@@ -14,37 +15,47 @@ MODULE_OBJS = \
   action/conversation.o \
   action/interactivevideo.o \
   action/overlay.o \
+  action/puzzlerecord.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \
+  action/puzzle/adjustpuzzle.o \
   action/puzzle/angletosspuzzle.o \
   action/puzzle/arcadepuzzle.o \
   action/puzzle/assemblypuzzle.o \
   action/puzzle/bballpuzzle.o \
   action/puzzle/beadpuzzle.o \
+  action/puzzle/blockingpuzzle.o \
   action/puzzle/blockspuzzle.o \
   action/puzzle/boardgamepuzzle.o \
+  action/puzzle/buildpuzzle.o \
   action/puzzle/bulpuzzle.o \
   action/puzzle/bombpuzzle.o \
   action/puzzle/cardgamepuzzle.o \
   action/puzzle/collisionpuzzle.o \
   action/puzzle/cubepuzzle.o \
   action/puzzle/cuttingpuzzle.o \
+  action/puzzle/decoderpuzzle.o \
   action/puzzle/dotconnectpuzzle.o \
   action/puzzle/drivingpuzzle.o \
   action/puzzle/dropsortpuzzle.o \
+  action/puzzle/escapegridpuzzle.o \
   action/puzzle/gridmappuzzle.o \
   action/puzzle/hamradiopuzzle.o \
   action/puzzle/hangmanpuzzle.o \
+  action/puzzle/lettergridpuzzle.o \
   action/puzzle/leverpuzzle.o \
   action/puzzle/magnetmazepuzzle.o \
   action/puzzle/mazechasepuzzle.o \
+  action/puzzle/magicboxpuzzle.o \
   action/puzzle/matchpuzzle.o \
   action/puzzle/memorypuzzle.o \
+  action/puzzle/meterpuzzle.o \
   action/puzzle/mindpuzzle.o \
   action/puzzle/minigolfpuzzle.o \
   action/puzzle/mirrorlightpuzzle.o \
   action/puzzle/mouselightpuzzle.o \
   action/puzzle/multibuildpuzzle.o \
+  action/puzzle/necklacepuzzle.o \
   action/puzzle/onebuildpuzzle.o \
   action/puzzle/orderingpuzzle.o \
   action/puzzle/overridelockpuzzle.o \
@@ -74,12 +85,14 @@ MODULE_OBJS = \
   action/puzzle/turningpuzzle.o \
   action/puzzle/twodialpuzzle.o \
   action/puzzle/typingquizpuzzle.o \
+  action/puzzle/weightsortpuzzle.o \
   action/puzzle/whalesurvivorpuzzle.o \
   action/puzzle/wordfindpuzzle.o \
   ui/fullscreenimage.o \
   ui/animatedbutton.o \
   ui/button.o \
   ui/clock.o \
+  ui/camera.o \
   ui/cellphonepopup.o \
   ui/conversationpopup.o \
   ui/inventorybox.o \
@@ -92,6 +105,7 @@ MODULE_OBJS = \
   ui/textbox.o \
   ui/viewport.o \
   state/credits.o \
+  state/designselect.o \
   state/logo.o \
   state/loadsave.o \
   state/help.o \

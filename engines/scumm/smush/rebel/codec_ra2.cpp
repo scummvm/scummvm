@@ -27,30 +27,31 @@
 
 namespace Scumm {
 
-static void bompDecodeLineOpaqueBounded(byte *dst, const byte *src, const byte *srcEnd, int len) {
+static void bompDecodeLineBounded(byte *dst, const byte *src, const byte *srcEnd, int len, int sourceSkipX, bool opaque) {
 	while (len > 0 && src < srcEnd) {
 		byte code = *src++;
 		int num = (code >> 1) + 1;
-		if (num > len)
-			num = len;
+		int skip = MIN(num, sourceSkipX);
+		sourceSkipX -= skip;
 
 		if (code & 1) {
 			if (src >= srcEnd)
 				break;
-			memset(dst, *src++, num);
-			dst += num;
-			len -= num;
+			byte color = *src++;
+			num = MIN(num - skip, len);
+			if (opaque || color != 0)
+				memset(dst, color, num);
 		} else {
-			int toCopy = num;
-			if (toCopy > (int)(srcEnd - src))
-				toCopy = (int)(srcEnd - src);
-			memcpy(dst, src, toCopy);
-			src += toCopy;
-			dst += toCopy;
-			len -= toCopy;
-			if (toCopy < num)
+			num = MIN(num, (int)(srcEnd - src));
+			if (skip > num)
 				break;
+			src += skip;
+			num = MIN(num - skip, len);
+			memcpy(dst, src, num);
+			src += num;
 		}
+		dst += num;
+		len -= num;
 	}
 }
 
@@ -187,6 +188,10 @@ void copyRA2Handler7PerspectiveViewport(byte *dst, int dstPitch, int dstWidth, i
 
 // RLE decoder for opaque backgrounds, including color 0.
 void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize) {
+	smushDecodeRA2RLE(dst, src, left, top, width, height, pitch, dataSize, 0, true);
+}
+
+void smushDecodeRA2RLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize, int sourceSkipX, bool opaque) {
 	if (dataSize <= 0)
 		return;
 
@@ -200,7 +205,7 @@ void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int wid
 		const byte *lineEnd = src + lineSize;
 
 		dst += left;
-		bompDecodeLineOpaqueBounded(dst, src, lineEnd, width);
+		bompDecodeLineBounded(dst, src, lineEnd, width, sourceSkipX, opaque);
 		src = lineEnd;
 		dst += pitch - left;
 	}

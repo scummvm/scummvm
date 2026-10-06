@@ -882,24 +882,25 @@ void VoyeurEngine::synchronize(Common::Serializer &s) {
 }
 
 void VoyeurEngine::showLogo8Intro() {
-	Common::File file;
-	if(!file.open("logo8.exe")) {
+	Common::File *file = new Common::File();
+	if(!file->open("logo8.exe")) {
+		delete file;
 		return;
 	}
-	file.seek(2);
-	int lastPageLength = file.readUint16LE();
-	int numPages = file.readUint16LE();
+	file->seek(2);
+	int lastPageLength = file->readUint16LE();
+	int numPages = file->readUint16LE();
 	int exeLength = (numPages - 1) * 512 + lastPageLength;
 
 	// The MVE movie data is appended to the end of the EXE
-	file.seek(exeLength, SEEK_SET);
+	file->seek(exeLength, SEEK_SET);
 
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	keymapper->getKeymap("voyeur-default")->setEnabled(false);
 	keymapper->getKeymap("intro")->setEnabled(true);
 
 	Video::MveDecoder *decoder = new Video::MveDecoder();
-	if (decoder->loadStream(&file)) {
+	if (decoder->loadStream(file)) {
 		decoder->setAudioTrack(0);
 		decoder->start();
 
@@ -943,7 +944,6 @@ void VoyeurEngine::showLogo8Intro() {
 	keymapper->getKeymap("intro")->setEnabled(false);
 	keymapper->getKeymap("voyeur-default")->setEnabled(true);
 
-	file.close();
 	delete decoder;
 }
 

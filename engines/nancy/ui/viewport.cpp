@@ -19,19 +19,14 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/input.h"
-#include "engines/nancy/util.h"
-
 #include "engines/nancy/state/scene.h"
-
-#include "engines/nancy/ui/viewport.h"
-
-#include "common/config-manager.h"
 
 namespace Nancy {
 namespace UI {
@@ -225,11 +220,12 @@ void Viewport::loadVideo(const Common::Path &filename, uint frameNr, uint vertic
 	// Only panorama scenes step through frames, so only they need the frame cache
 	// for fast bidirectional scrubbing; other scenes would just waste memory.
 	const bool isPanorama = panningType == kPan360 || panningType == kPanLeftRight;
-	if (!_decoder.loadFile(filename, isPanorama)) {
+	if (!_decoder.loadFile(filename, kVideoPlaytypeAuto, isPanorama)) {
 		error("Couldn't load video file %s.avf or %s.bik", filename.toString().c_str(), filename.toString().c_str());
 	}
 
 	_videoFormat = format;
+	_frameAlpha = kAlphaUnchecked;
 
 	enableEdges(kUp | kDown | kLeft | kRight);
 
@@ -255,15 +251,21 @@ void Viewport::setFrame(uint frameNr) {
 
 	// Format 1 uses quarter-size images, while format 2 uses full-size ones
 	// Videos in TVD are always upside-down
-	if (newFrame->format != _fullFrame.format && newFrame->format.bytesPerPixel == _fullFrame.format.bytesPerPixel) {
-		// Character closeups are in a different format than the main viewport
-		// in Nancy10+, so convert them before copying to the main surface.
-		Graphics::Surface *converted = newFrame->convertTo(_fullFrame.format);
-		GraphicsManager::copyToManaged(*converted, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
-		converted->free();
-		delete converted;
-	} else {
-		GraphicsManager::copyToManaged(*newFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
+	GraphicsManager::copyToManaged(*newFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
+
+	// Some scene backgrounds are Bink videos carrying an alpha plane, e.g. Nancy14's
+	// PHO_WallOpn_ANIM_Last, whose whole wall opening is transparent. The original engine
+	// draws the viewport opaquely, so the alpha is never used; honoring it would punch a
+	// hole through the bottom-most layer and show the frame image behind the scene.
+	// Alpha is a property of the video file, so the first frame decides for all of them;
+	// panorama scenes decode a frame per scroll step and should not pay for the check.
+	if (_frameAlpha == kAlphaUnchecked) {
+		_frameAlpha = _fullFrame.format.aBits() && _fullFrame.rawSurface().detectAlpha() != Graphics::ALPHA_OPAQUE ?
+			kAlphaNeedsFlattening : kAlphaOpaque;
+	}
+
+	if (_frameAlpha == kAlphaNeedsFlattening) {
+		_fullFrame.surfacePtr()->setAlpha(0xFF);
 	}
 
 	_needsRedraw = true;

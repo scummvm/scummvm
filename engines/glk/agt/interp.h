@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef GLK_AGT_INTERP_H
+#define GLK_AGT_INTERP_H
+
 #include "common/file.h"
 
 #ifndef GLK_AGT_INTERP
@@ -537,3 +540,5 @@ extern void agt_newgame(fc_type fc);
 } // End of namespace Glk
 
 #endif
+
+#endif // GLK_AGT_INTERP_H

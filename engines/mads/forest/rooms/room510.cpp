@@ -208,7 +208,6 @@ static void room_510_anim2() {
 
 	if (kernel.trigger == 8) {
 		if (scratch._90 == 1) {
-			scratch._90 = 1;
 			digi_play_build(503, '_', 2, 3);
 			digi_val2 = -1;
 		} else if (scratch._90 == 133) {

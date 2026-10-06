@@ -381,7 +381,10 @@ public:
 	}
 
 	Path getVideoPath(int32 videoId) override {
-		return Path(String::format("disk1/Install/bin/data%02d.bin", videoId));
+		const auto &desc = g_engine->gameDescription();
+		return desc.desc.flags & ADGF_CD
+			? Path(String::format("disk1/Install/bin/data%02d.bin", videoId))
+			: Path(String::format("bin/data%02d.bin", videoId));
 	}
 
 	String getMusicPath(int32 trackId) override {

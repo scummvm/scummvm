@@ -100,8 +100,8 @@ void EffectManager::unwatch_effect(CallBack *callback_target, Effect *watch) {
 	if (!watched.empty()) {
 		WatchIterator i = watched.begin();
 		while (i != watched.end())
-			if ((*i).watcher == callback_target
-			        && ((*i).effect == watch || watch == nullptr)) {
+			if (i->watcher == callback_target
+			        && (i->effect == watch || watch == nullptr)) {
 				i = watched.erase(i); // resume from next element
 			} else ++i;
 	}
@@ -124,7 +124,7 @@ EffectManager::EffectWatch *EffectManager::find_effect_watch(Effect *effect) {
 	if (!watched.empty()) {
 		WatchIterator i = watched.begin();
 		while (i != watched.end())
-			if ((*i).effect == effect)
+			if (i->effect == effect)
 				return (&(*i));
 			else ++i;
 	}

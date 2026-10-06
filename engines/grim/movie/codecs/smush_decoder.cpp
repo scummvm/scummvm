@@ -257,6 +257,7 @@ bool SmushDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// Load the video
 	if (!readHeader()) {
 		warning("Failure loading SMUSH-file");
+		close();
 		return false;
 	}
 

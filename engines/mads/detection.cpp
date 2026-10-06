@@ -31,6 +31,7 @@
 static const PlainGameDescriptor MADSGames[] = {
 	{"dragonsphere", "Dragonsphere"},
 	{"nebular", "Rex Nebular and the Cosmic Gender Bender"},
+	{"nebularbonus", "Rex Nebular Bonus Disk"},
 	{"phantom", "Return of the Phantom"},
 	{"forest", "Once Upon a Forest"},
 	{nullptr, nullptr}

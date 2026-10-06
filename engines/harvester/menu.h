@@ -37,6 +37,51 @@ namespace Harvester {
 class HarvesterEngine;
 class Flow;
 
+struct MenuTextConfig {
+	Common::Array<Common::String> optionItems;
+	Common::String yesLabel = "YES";
+	Common::String noLabel = "NO";
+	Common::String clickLabel = "CLICK";
+	Common::String onLabel = "On";
+	Common::String offLabel = "Off";
+	Common::String enterPasswordLabel = "ENTER PASSWORD";
+	Common::String newGamePrompt = "NEW GAME";
+	Common::String quitGamePrompt = "QUIT GAME";
+	Common::String talkToVerb = "Talk to";
+	Common::String examineVerb = "Examine";
+	Common::String examineTheVerb = "Examine the";
+	Common::String operateVerb = "Operate the";
+	Common::String pickUpVerb = "Pick up the";
+	Common::String useVerb = "Use";
+	Common::String useOnPreposition = "on";
+	Common::String dialogueOtherLabel = "Other";
+	Common::String dialogueResponsesLabel = "Responses";
+	Common::String dialogueKeywordLabel;
+	Common::Array<Common::String> weekdayLabels;
+	Common::String quickTipsExitLabel = "Exit";
+	Common::String quickTipsNextLabel = "Next";
+	Common::String quickTipsOnLabel = "Show Tips ON";
+	Common::String quickTipsOffLabel = "Show Tips OFF";
+	Common::String quickTipsHeader;
+
+	bool hasDialogueKeywordLabel() const { return !dialogueKeywordLabel.empty(); }
+	bool hasQuickTipsHeader() const { return !quickTipsHeader.empty(); }
+};
+
+struct QuickTipsLayout {
+	Common::Rect exitRect;
+	Common::Rect nextRect;
+	Common::Rect toggleRect;
+};
+
+bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config);
+Common::String buildUseItemPrompt(const MenuTextConfig &config,
+	const Common::String &itemLabel, const Common::String &targetLabel);
+bool resolveQuickTipsLayout(HarvesterEngine &engine, const MenuTextConfig &config,
+	QuickTipsLayout &layout);
+void drawQuickTipsPanel(HarvesterEngine &engine, const MenuTextConfig &config,
+	const QuickTipsLayout &layout, const Common::String &tipText);
+
 class MenuSystem {
 public:
 	MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
@@ -45,6 +90,7 @@ public:
 	Common::Error runMainMenuStub(Flow &flow);
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow, bool canSaveGame);
+	Common::Error validateParentalPassword(Flow &flow);
 
 private:
 	Common::Error runLoadGameMenu(const byte *palette, float paletteBrightness,
@@ -61,6 +107,9 @@ private:
 		bool &confirmed);
 	Common::Error runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow);
+	Common::Error runPasswordPrompt(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &flow, bool drawLogo, Common::String &password,
+		bool &accepted) const;
 	Common::Error showGameOverBackdrop(Flow &flow);
 	void clearMainMenuBackdrop();
 	void renderMainMenuStub(const Common::Array<Common::String> &menuItems, int selectedItem,

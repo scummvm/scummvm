@@ -34,6 +34,10 @@ private:
 	bool cmdWalkable(int argc, const char **argv);
 	bool cmdDepth(int argc, const char **argv);
 	bool cmdQuotes(int argc, const char **argv);
+	bool cmdPlaySound(int argc, const char **argv);
+	bool cmdSoundCommand(int argc, const char **argv);
+	bool cmdSoundSection(int argc, const char **argv);
+	bool cmdSoundStop(int argc, const char **argv);
 	bool cmdText(int argc, const char **argv);
 
 public:

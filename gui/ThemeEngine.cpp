@@ -83,6 +83,10 @@ struct WidgetDrawData {
 	uint16 _backgroundOffset;
 	uint16 _shadowOffset;
 
+	/** Extra space occupied by the items drawn on top of this one */
+	uint16 _restoreOffset;    ///< To the left and to the top
+	uint16 _restoreEndOffset; ///< To the right and to the bottom
+
 	DrawLayer _layer;
 
 
@@ -759,7 +763,24 @@ void ThemeEngine::loadTheme(const Common::String &themeId) {
 			warning("Missing data asset: '%s' in theme '%s", kDrawDataDefaults[i].name, themeId.c_str());
 		} else {
 			_widgets[i]->calcBackgroundOffset();
+			_widgets[i]->_restoreOffset = _widgets[i]->_restoreEndOffset = 0;
 		}
+	}
+
+	// A draw data item only ever has to restore what the items drawn on top of
+	// it can have covered
+	for (int i = 0; i < kDrawDataMAX; ++i) {
+		DrawData parentType = kDrawDataDefaults[i].parent;
+
+		if (parentType == kDDNone || parentType == i || !_widgets[i] || !_widgets[parentType])
+			continue;
+
+		const WidgetDrawData *child = _widgets[i];
+		WidgetDrawData *parent = _widgets[parentType];
+
+		parent->_restoreOffset = MAX(parent->_restoreOffset, child->_backgroundOffset);
+		parent->_restoreEndOffset = MAX<uint16>(parent->_restoreEndOffset,
+		                                        child->_backgroundOffset + 1 + child->_shadowOffset);
 	}
 
 	debug(6, "Finished loading theme %s", themeId.c_str());
@@ -906,12 +927,34 @@ Common::Rect ThemeEngine::getDrawDataExtendedRect(DrawData type, const Common::R
 
 	Common::Rect extendedRect = r;
 	extendedRect.clip(_screen.w, _screen.h);
-	extendedRect.grow(kDirtyRectangleThreshold + drawData->_backgroundOffset);
-	if (drawData->_shadowOffset > drawData->_backgroundOffset) {
-		extendedRect.right += drawData->_shadowOffset - drawData->_backgroundOffset;
-		extendedRect.bottom += drawData->_shadowOffset - drawData->_backgroundOffset;
-	}
+
+	// A frame drawn around the widget extends on all four sides
+	extendedRect.grow(drawData->_backgroundOffset);
+
+	// The drawing primitives paint the widget's own edge one pixel past its
+	// rectangle, and shadows are cast to the right and to the bottom only
+	extendedRect.right += 1 + drawData->_shadowOffset;
+	extendedRect.bottom += 1 + drawData->_shadowOffset;
+
 	return extendedRect;
+}
+
+Common::Rect ThemeEngine::getDrawDataRestoreRect(DrawData type, const Common::Rect &r) const {
+	WidgetDrawData *drawData = _widgets[type];
+	if (!drawData)
+		return Common::Rect();
+
+	Common::Rect restoreRect = r;
+	restoreRect.clip(_screen.w, _screen.h);
+
+	// The item's own edge and shadow reach further out, onto pixels that belong
+	// to the neighbouring widgets and must not be restored over what they drew
+	restoreRect.left -= drawData->_restoreOffset;
+	restoreRect.top -= drawData->_restoreOffset;
+	restoreRect.right += drawData->_restoreEndOffset;
+	restoreRect.bottom += drawData->_restoreEndOffset;
+
+	return restoreRect;
 }
 
 void ThemeEngine::drawDD(DrawData type, const Common::Rect &r, uint32 dynamic, bool forceRestore) {
@@ -941,8 +984,14 @@ void ThemeEngine::drawDD(DrawData type, const Common::Rect &r, uint32 dynamic, b
 		return;
 	}
 
-	if (forceRestore || drawData->_layer == kDrawLayerBackground)
-		restoreBackground(extendedRect);
+	if (forceRestore || drawData->_layer == kDrawLayerBackground) {
+		// Clearing the background wipes everything the widget draws into, a
+		// plain redraw only what the items drawn on top of it can have covered
+		Common::Rect restoreRect = forceRestore ? extendedRect : getDrawDataRestoreRect(type, r);
+		restoreRect.clip(_clip);
+
+		restoreBackground(restoreRect);
+	}
 
 	if (drawData->_layer == _layerToDraw) {
 		Common::List<Graphics::DrawStep>::const_iterator step;

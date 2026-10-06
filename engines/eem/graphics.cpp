@@ -29,6 +29,7 @@
 #include "common/textconsole.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/macgamma.h"
 #include "graphics/managed_surface.h"
 
 #include "eem/audio.h"
@@ -38,6 +39,28 @@
 #include "eem/site.h"
 
 namespace EEM {
+
+void MacPaletteManager::setPalette(const byte *colors, uint start, uint num) {
+	assert(start <= 256 && num <= 256 - start);
+	memcpy(_colors + start * 3, colors, num * 3);
+	byte corrected[kPalSize];
+	for (uint i = 0; i < num * 3; ++i)
+		corrected[i] = Graphics::macGammaCorrectionLookUp[colors[i]];
+	g_system->getPaletteManager()->setPalette(corrected, start, num);
+}
+
+void MacPaletteManager::grabPalette(byte *colors, uint start, uint num) const {
+	assert(start <= 256 && num <= 256 - start);
+	memcpy(colors, _colors + start * 3, num * 3);
+}
+
+PaletteManager *EEMEngine::getPaletteManager() {
+	return isMacintosh() ? &_macPaletteManager : g_system->getPaletteManager();
+}
+
+PaletteManager *getPaletteManager() {
+	return static_cast<EEMEngine *>(g_engine)->getPaletteManager();
+}
 
 const uint16 kHelpPics[][2] = {
 	{ 0x0063, 0x01ae },
@@ -116,7 +139,10 @@ uint EEMEngine::getBalloonLineCapacity(uint16 balloonId, int lineH) const {
 
 	const BalloonInsets &insets = kBalloonInsetTable[idx];
 	int textHeight = (int)insets.indDY - (int)insets.y;
-	if (isMacintosh())
+	if (isMacTalkie())
+		textHeight = insets.indDY * kMacScreenHeight / kScreenHeight -
+			insets.y * kMacScreenHeight / kScreenHeight;
+	else if (isMacintosh())
 		textHeight = scaleY(textHeight); // table is in DOS coords; Mac renders scaled
 	return MAX<uint>(1, textHeight / lineH + 1);
 }
@@ -235,6 +261,9 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 				puzzleId);
 		return true;
 	}
+
+	if (isMacintosh() && isLondon() && bigEndian)
+		return doMacLondonPuzzle(f);
 
 	const uint16 type = readPuzzleU16(f, bigEndian);
 	const int sw = screenWidth();
@@ -810,14 +839,15 @@ uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
 		return bubNum;
 
 	const BalloonInsets &originalInsets = kBalloonInsetTable[originalId];
-	const int lineH = _font.getFontHeight();
+	const int lineH = isMacTalkie() ? 16 : _font.getFontHeight();
 	const uint originalCapacity = getBalloonLineCapacity(originalId, lineH);
 	if (originalCapacity == 0)
 		return bubNum;
 
 	Common::Array<Common::String> lines;
-	const int wrapW = isMacintosh() ? scaleX((int)originalInsets.w)
-									: (int)originalInsets.w;
+	uint16 insetX, insetY, wrapWidth;
+	getBalloonInsets(originalId, insetX, insetY, wrapWidth);
+	const int wrapW = wrapWidth - (isMacTalkie() ? 5 : 0);
 	_font.wordWrapText(text, MAX<int>(8, wrapW), lines);
 	if (lines.empty())
 		return bubNum;
@@ -868,7 +898,12 @@ bool EEMEngine::getBalloonInsets(uint16 bubNum, uint16 &xInset,
 	const uint idx = bubNum & 0x7F;
 	if (idx >= ARRAYSIZE(kBalloonInsetTable))
 		return false;
-	if (isMacintosh()) {
+	if (isMacTalkie()) {
+		// Mac CD truncates the fixed-point products.
+		xInset = kBalloonInsetTable[idx].x * kMacScreenWidth / kScreenWidth;
+		yInset = kBalloonInsetTable[idx].y * kMacScreenHeight / kScreenHeight;
+		textW = kBalloonInsetTable[idx].w * kMacScreenWidth / kScreenWidth;
+	} else if (isMacintosh()) {
 		xInset = (uint16)scaleX(kBalloonInsetTable[idx].x);
 		yInset = (uint16)scaleY(kBalloonInsetTable[idx].y);
 		textW  = (uint16)scaleX(kBalloonInsetTable[idx].w);

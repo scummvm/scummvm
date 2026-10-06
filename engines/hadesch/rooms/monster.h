@@ -20,6 +20,10 @@
  * Copyright 2020 Google
  *
  */
+
+#ifndef HADESCH_MONSTER_H
+#define HADESCH_MONSTER_H
+
 namespace Hadesch {
 
 enum {
@@ -203,3 +207,5 @@ private:
 };
 
 }
+
+#endif // HADESCH_MONSTER_H

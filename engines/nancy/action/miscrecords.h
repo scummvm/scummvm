@@ -95,8 +95,9 @@ protected:
 class TextBoxWrite : public ActionRecord {
 public:
 	enum WaitMode { kWaitNone = 0, kWaitForSound = 1, kWaitForTimer = 2 };
+	enum WriteType { kTextBoxWrite, kAutotextWrite };
 
-	TextBoxWrite(bool isAutotext = false) : _isAutotext(isAutotext) {}
+	TextBoxWrite(WriteType writeType) : _writeType(writeType) {}
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -104,13 +105,13 @@ public:
 	Common::String _text;
 
 	// Nancy 11+ AR 81 only
-	bool _isAutotext;
+	WriteType _writeType;
 	int16 _waitMode = 0;
 	uint16 _soundChannel = 0;
 	uint32 _waitTimeMs = 0;
 
 protected:
-	Common::String getRecordTypeName() const override { return _isAutotext ? "AutotextTextBoxWrite" : "TextBoxWrite"; }
+	Common::String getRecordTypeName() const override { return _writeType == kAutotextWrite ? "AutotextTextBoxWrite" : "TextBoxWrite"; }
 
 private:
 	uint32 _endTime = 0;
@@ -130,12 +131,14 @@ protected:
 // text into the new (UICO-driven) textbox
 class FrameTextBox : public ActionRecord {
 public:
-	FrameTextBox(bool fullMode) : _fullMode(fullMode) {}
+	enum BoxMode { kNormalBox, kFullBox };
+
+	FrameTextBox(BoxMode boxMode) : _boxMode(boxMode) {}
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	bool _fullMode;
+	BoxMode _boxMode;
 	Common::String _text;
 
 protected:
@@ -150,14 +153,15 @@ public:
 	void execute() override;
 
 	uint16 _uiButton = 0;
+	byte _characterIndex = kPlayerCharacterActive; // Nancy15+: whose taskbar the disable applies to
 	byte _autoOpenOrBadgeSound = 0; // 1 = auto-open popup; 0/10 = notification-badge click-sound selector
 	byte _flagB = 0;    // 0 = clear, 1 = enable+remember scene
 	int16 _startScene = 0; // start scene id (9999 = none); also the auto-open cell phone's call target
 	int16 _endScene = 0;   // end scene id (9999 = none)
 
 	Common::String getRecordExtraInfo() const override {
-		return Common::String::format("uiButton: %d, autoOpenOrBadgeSound: %d, flagB: %d, startScene: %d, endScene: %d",
-									  _uiButton, _autoOpenOrBadgeSound, _flagB, _startScene, _endScene);
+		return Common::String::format("uiButton: %d, character: %d, autoOpenOrBadgeSound: %d, flagB: %d, startScene: %d, endScene: %d",
+									  _uiButton, _characterIndex, _autoOpenOrBadgeSound, _flagB, _startScene, _endScene);
 	}
 
 protected:
@@ -247,8 +251,8 @@ public:
 	void execute() override;
 
 	byte _relative;
-	uint16 _hours;
-	uint16 _minutes;
+	int16 _hours;
+	int16 _minutes;
 
 protected:
 	Common::String getRecordTypeName() const override { return "BumpPlayerClock"; }
@@ -262,6 +266,26 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "SaveContinueGame"; }
+};
+
+// Nancy9 AR 148, moved to AR 141 in Nancy12. Saves a cropped picture of the
+// current frame to a PNG file. Used as an easter egg, e.g. on the sandcastle
+// screen in Danger on Deception Island.
+class MakeScreenFile : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::String _filename;
+	Common::Rect _cropRect;
+
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Filename: %s.png, crop rect: (%d, %d, %d, %d)",
+			_filename.c_str(), _cropRect.left, _cropRect.top, _cropRect.right, _cropRect.bottom);
+	}
+
+protected:
+	Common::String getRecordTypeName() const override { return "MakeScreenFile"; }
 };
 
 // Stops the screen from rendering. Our rendering system is different from the original engine's,
@@ -310,6 +334,7 @@ public:
 	int16 _hours = 0;
 	int16 _minutes = 0;
 	int16 _seconds = 0;
+	int16 _milliseconds = 0;
 	SoundDescription _sound;               // Played on expiry when configured
 	Common::Array<FlagDescription> _flags; // Fired on expiry when configured
 
@@ -483,9 +508,23 @@ protected:
 	// flag and starts the matching outcome sound.
 	void applyChange();
 
+	// The protagonist whose resources this record changes
+	byte getCharacterIndex() const;
+
+	enum ResourceUseMode : byte {
+		kSetValue = 0,			// set the resource to _amount
+		kAddValue = 1,			// add _amount, if the resource can cover it
+		kAddTableValue = 2,		// same, with the amount taken from the table
+		kSetTableValue = 3		// set to the table value at _amount
+	};
+
+	// Nancy15 pays from a named protagonist's resources; kPlayerCharacterActive
+	// (and every earlier game) means whoever is being played.
+	byte _characterIndex = kPlayerCharacterActive;
+
 	int16 _resourceIndex = 0;
-	int16 _amount = 0;
-	byte _mode = 0;        // 0 = set the resource, non-zero = add (clamped to >= 0)
+	int16 _amount = 0;     // an amount, or a table index in the table modes
+	byte _mode = kSetValue;
 	FlagDescription _flag; // event flag set when the change is applied
 
 	Common::String _failSoundName;    // played when the change can't be applied
@@ -509,6 +548,22 @@ protected:
 	bool _interactive = false;
 	bool _paymentResolved = false;
 	bool _paymentApplied = false;
+};
+
+// Added in Nancy15 (AR 134). Hands control to one of the game's protagonists
+// (Nancy, Frank or Joe), which swaps in that character's own copy of the popup
+// UI, and optionally replaces the current scene's background with one showing
+// the location from the incoming character's point of view.
+class PlayChar : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "PlayChar"; }
+
+	byte _characterIndex = 0;	// index into the PCUI character list
+	Common::Path _videoFile;	// replacement scene background, empty to keep the current one
 };
 
 } // End of namespace Action

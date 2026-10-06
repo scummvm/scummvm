@@ -303,8 +303,7 @@ GeasFile::GeasFile(const Common::Array<String> &v, GeasInterface *_gi) : gi(_gi)
 	reserved_words dir_tag_property("north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) nullptr);
 
 	//Common::Array <GeasBlock> outv;
-	for (uint pass = 0; pass < sizeof(pass_names) / sizeof(*pass_names);
-	        pass ++) {
+	for (uint pass = 0; pass < ARRAYSIZE(pass_names); pass ++) {
 		String this_pass = pass_names[pass];
 		bool recursive = recursive_passes[this_pass];
 		//bool is_object = object_passes[this_pass];
@@ -408,9 +407,9 @@ Common::WriteStream &operator<<(Common::WriteStream &o, const GeasFile &gf) {
 	*/
 	o << "Geas File\n";
 	for (StringArrayIntMap::const_iterator i = gf.type_indecies.begin(); i != gf.type_indecies.end(); i ++) {
-		o << "Blocks of type " << (*i)._key << "\n";
-		for (uint j = 0; j < (*i)._value.size(); j ++)
-			o << gf.blocks[(*i)._value[j]];
+		o << "Blocks of type " << i->_key << "\n";
+		for (uint j = 0; j < i->_value.size(); j ++)
+			o << gf.blocks[i->_value[j]];
 		o << "\n";
 	}
 

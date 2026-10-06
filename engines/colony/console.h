@@ -40,10 +40,17 @@ public:
 
 private:
 	ColonyEngine *_vm = nullptr;
+	int _pendingEnding = 0;
+	void postEnter() override;
 	bool cmdTeleport(int argc, const char **argv);
+	bool cmdTeleporter(int argc, const char **argv);
+	bool cmdTeleporters(int argc, const char **argv);
 	bool cmdPos(int argc, const char **argv);
 	bool cmdInfo(int argc, const char **argv);
+	bool cmdGoals(int argc, const char **argv);
+	bool cmdWin(int argc, const char **argv);
 	bool cmdRobots(int argc, const char **argv);
+	bool cmdEradicate(int argc, const char **argv);
 	bool cmdMap(int argc, const char **argv);
 	bool cmdGive(int argc, const char **argv);
 	bool cmdPower(int argc, const char **argv);
@@ -52,6 +59,7 @@ private:
 	bool cmdColony(int argc, const char **argv);
 	bool cmdForklift(int argc, const char **argv);
 	bool cmdSpawn(int argc, const char **argv);
+	bool getTeleporterLocation(int number, int &level, int &x, int &y) const;
 };
 
 }

@@ -62,11 +62,13 @@ public:
 		kPShot,
 		kTest,
 		kDit,
+		kDiDit,
 		kSink,
 		kClatter,
 		kStop,
 		kTeleport,
 		kSlug,
+		kTunnel1,
 		kTunnel2,
 		kLift,
 		kDrop,
@@ -79,7 +81,10 @@ public:
 		kToilet,
 		kBath,
 		kMars,
-		kBeamMe
+		kBeamMe,
+		kDave,
+		kSwish,
+		kEnd
 	};
 
 private:
@@ -91,7 +96,7 @@ private:
 
 	void playPCSpeaker(int soundID);
 	bool playMacSound(int soundID, bool loop);
-	bool playResource(int resID, bool loop);
+	bool playResource(int resID, bool loop, int sampleRate = 11127);
 };
 
 } // End of namespace Colony

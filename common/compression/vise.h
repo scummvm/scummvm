@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef COMPRESSION_VISE_H
+#define COMPRESSION_VISE_H
+
 /**
  * @file
  * Installer VISE decompressor used in engines:
@@ -33,3 +36,5 @@ namespace Common {
 Common::Archive *createMacVISEArchive(Common::SeekableReadStream *stream);
 
 } // End of namespace Common
+
+#endif // COMPRESSION_VISE_H

@@ -160,6 +160,7 @@ namespace Kingdom {
 		int _mouseValue;
 		int _cursorDef; // TODO: Could be removed by using the return value of CursorTypeExit()
 		int _oldCursorDef; // CHECKME: Unused in our implementation?
+		bool _monoSound;
 
 		Common::Point _cursorPos;
 		Common::Point _oldCursorPos; // CHECKME: Unused in out implementation?

@@ -26,8 +26,10 @@
 #include "common/str-enc.h"
 #include "common/system.h"
 #include "common/ustr.h"
+#include "common/util.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
+#include "macs2/hotspot_names.h"
 #include "macs2/macs2.h"
 #include "macs2/music.h"
 #include "macs2/view1.h"
@@ -790,7 +792,7 @@ static void showVariablesWindow() {
 				ImGui::Text("Showing: Y | Count: %u", view->_dialogueChoiceCount);
 				ImGui::Text("BoxPos: (%d,%d)", view->_stringBoxPosition.x, view->_stringBoxPosition.y);
 				Common::Point mousePos = g_system->getEventManager()->getMousePos();
-				int lineHeight = g_engine->maxGlyphHeight + 2;
+				int lineHeight = g_engine->_text._maxGlyphHeight + 2;
 				int firstLineY = view->_stringBoxPosition.y + 9;
 				int relY = mousePos.y - firstLineY;
 				int hoveredChoice = -1;
@@ -889,7 +891,7 @@ static void showAnimViewerWindow() {
 						}
 					}
 
-					ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*animViewSurface.surfacePtr(), g_engine->_pal, 256);
+					ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*animViewSurface.surfacePtr(), g_engine->_pal.data(), g_engine->_pal.size());
 					if (texId) {
 						float scale = MIN(128.0f / (float)fi.width, 128.0f / (float)fi.height);
 						if (scale > 3.0f)
@@ -986,12 +988,8 @@ static void showCharactersWindow() {
 						// --- Editable GameObject fields ---
 						int orient = (int)c->_gameObject->_orientation;
 						if (ImGui::InputInt("Orientation", &orient)) {
-							c->_gameObject->_orientation = (uint8)CLIP(orient, 0, 255);
-						}
-
-						int animIdx = (int)c->_animationIndex;
-						if (ImGui::InputInt("Animation Index", &animIdx)) {
-							c->_animationIndex = (uint8)CLIP(animIdx, 0, 255);
+							// TODO: add a combo box for orientation instead of raw int input including speaking names
+							c->_gameObject->_orientation = (ObjectOrientation)CLIP((uint16)orient, (uint16)OrientationNone, (uint16)OrientationPickup);
 						}
 
 						ImGui::Text("Vertical Offset: %u", c->getVerticalOffset());
@@ -1023,9 +1021,6 @@ static void showCharactersWindow() {
 							if (ImGui::InputInt("Progress", &motionProg))
 								c->_motionProgress = (uint16)CLIP(motionProg, 0, 65535);
 							ImGui::Text("Pending VOffset Motion: %s", c->hasPendingVerticalMotion() ? "Y" : "N");
-							bool shouldMirror = c->_shouldMirrorCurrentAnimation;
-							if (ImGui::Checkbox("Mirror Animation", &shouldMirror))
-								c->_shouldMirrorCurrentAnimation = shouldMirror;
 							ImGui::TreePop();
 						}
 
@@ -1139,7 +1134,6 @@ static void showCharactersWindow() {
 								df.writeString(Common::String::format("  \"character\": {\n"));
 								df.writeString(Common::String::format("    \"positionX\": %d,\n", c->getPosition().x));
 								df.writeString(Common::String::format("    \"positionY\": %d,\n", c->getPosition().y));
-								df.writeString(Common::String::format("    \"shouldMirror\": %s,\n", c->_shouldMirrorCurrentAnimation ? "true" : "false"));
 								df.writeString(Common::String::format("    \"verticalOffset\": %u\n", c->getVerticalOffset()));
 								df.writeString("  }\n");
 								df.writeString("}\n");
@@ -1206,9 +1200,9 @@ static void showInventoryWindow() {
 			if (ImGui::CollapsingHeader("Current Inventory", ImGuiTreeNodeFlags_DefaultOpen)) {
 				for (uint i = 0; i < view->_inventoryItems.size(); i++) {
 					GameObject *obj = view->_inventoryItems[i];
-					const Common::String &name = (obj->_index < GameObjects::instance()._objectNames.size() && !GameObjects::instance()._objectNames[obj->_index].empty())
-													 ? GameObjects::instance()._objectNames[obj->_index]
-													 : "???";
+					Common::String name = lookupObjectHotspotName(obj->_index);
+					if (name.empty())
+						name = "???";
 					Common::String utf8Name = Common::U32String(name.c_str(), Common::kDos850).encode(Common::kUtf8);
 					ImGui::PushID(obj->_index);
 					if (ImGui::Button("Remove")) {
@@ -1230,9 +1224,9 @@ static void showInventoryWindow() {
 						continue;
 					if (obj->_blobs.size() <= 0x13 || obj->_blobs[0x13].empty())
 						continue;
-					const Common::String &name = (obj->_index < GameObjects::instance()._objectNames.size() && !GameObjects::instance()._objectNames[obj->_index].empty())
-													 ? GameObjects::instance()._objectNames[obj->_index]
-													 : "???";
+					Common::String name = lookupObjectHotspotName(obj->_index);
+					if (name.empty())
+						name = "???";
 					Common::String utf8Name = Common::U32String(name.c_str(), Common::kDos850).encode(Common::kUtf8);
 					if (filterBuf[0] != '\0' && !utf8Name.contains(filterBuf))
 						continue;
@@ -1315,17 +1309,17 @@ static void showSceneMapsWindow() {
 		static Graphics::ManagedSurface overlayComposite;
 
 		if (selectedTab == 0) {
-			surface = &g_engine->_pathfindingMap;
+			surface = &g_engine->_pathfinding._map;
 		} else if (selectedTab == 1) {
 			surface = &g_engine->_depthMap;
 		} else if (selectedTab == 2) {
 			// Composite: pathfinding map + character path overlay + pathfinding points
-			overlayComposite.copyFrom(g_engine->_pathfindingMap);
+			overlayComposite.copyFrom(g_engine->_pathfinding._map);
 			View1 *view = (View1 *)g_engine->findView("View1");
 			if (view) {
 				// Draw pathfinding point nodes and connections
 				for (int i = 0; i < 16; i++) {
-					PathfindingPoint &pt = g_engine->pathfindingPoints[i];
+					PathfindingPoint &pt = g_engine->_pathfinding._points[i];
 					if (pt._position.x >= 0 && pt._position.x < kScreenWidth && pt._position.y >= 0 && pt._position.y < kGameHeight) {
 						// Draw cross at node
 						for (int d = -2; d <= 2; d++) {
@@ -1341,16 +1335,21 @@ static void showSceneMapsWindow() {
 						for (uint8 adj : pt._adjacentPoints) {
 							if (adj == 0 || adj > 16)
 								continue;
-							PathfindingPoint &other = g_engine->pathfindingPoints[adj - 1];
+							PathfindingPoint &other = g_engine->_pathfinding._points[adj - 1];
 							overlayComposite.drawLine(pt._position.x, pt._position.y, other._position.x, other._position.y, 0xFE);
 						}
 					}
 				}
-				// Draw current path
-				if (g_engine->_path.size() >= 2) {
-					for (uint i = 0; i < g_engine->_path.size() - 1; i++) {
-						overlayComposite.drawLine(g_engine->_path[i].x, g_engine->_path[i].y,
-												  g_engine->_path[i + 1].x, g_engine->_path[i + 1].y, 0x0F);
+				// Draw each character's remaining walk
+				Common::Array<Common::Point> pathPts;
+				for (uint i = 0; i < view->_characters.size(); i++) {
+					Character *c = view->_characters[i];
+					if (c == nullptr)
+						continue;
+					c->getPathPolyline(pathPts);
+					for (uint p = 0; p + 1 < pathPts.size(); p++) {
+						overlayComposite.drawLine(pathPts[p].x, pathPts[p].y,
+												  pathPts[p + 1].x, pathPts[p + 1].y, 0x0F);
 					}
 				}
 				// Draw character positions
@@ -1398,7 +1397,7 @@ static void showSceneMapsWindow() {
 		}
 
 		if (surface && surface->w > 0 && surface->h > 0) {
-			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*surface->surfacePtr(), g_engine->_pal, 256);
+			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*surface->surfacePtr(), g_engine->_pal.data(), g_engine->_pal.size());
 			if (texId) {
 				ImVec2 avail = ImGui::GetContentRegionAvail();
 				float scale = MIN(avail.x / (float)kScreenWidth, avail.y / (float)kGameHeight);
@@ -1409,7 +1408,7 @@ static void showSceneMapsWindow() {
 					ImDrawList *dl = ImGui::GetWindowDrawList();
 					ImVec2 imgOrigin = ImGui::GetItemRectMin();
 					for (int i = 0; i < 16; i++) {
-						PathfindingPoint &pt = g_engine->pathfindingPoints[i];
+						PathfindingPoint &pt = g_engine->_pathfinding._points[i];
 						if (pt._position.x >= 0 && pt._position.x < kScreenWidth && pt._position.y >= 0 && pt._position.y < kGameHeight) {
 							char buf[4];
 							snprintf(buf, sizeof(buf), "%d", i);
@@ -1500,11 +1499,11 @@ static void showSceneMapsWindow() {
 					uint8 val = surface->getPixel(mx, my);
 					if (val >= 0xC8 && val <= 0xEF) {
 						uint16 overrideResult;
-						bool overrideActive = g_engine->getPathfindingOverride(val, overrideResult);
+						bool overrideActive = g_engine->_pathfinding.getWalkOverride(val, overrideResult);
 						if (overrideActive)
 							ImGui::SetTooltip("(%d, %d) = %u (0x%02X) [override zone → %u = %s]",
 											  mx, my, val, val, overrideResult,
-											  Macs2Engine::isWalkabilityWalkable(overrideResult) ? "WALKABLE" : "non-walkable");
+											  Pathfinding::isWalkabilityWalkable(overrideResult) ? "WALKABLE" : "non-walkable");
 						else
 							ImGui::SetTooltip("(%d, %d) = %u (0x%02X) [override zone, DISABLED → non-walkable]",
 											  mx, my, val, val);
@@ -1533,24 +1532,26 @@ static void showSceneMapsWindow() {
 		ImGui::Separator();
 		ImGui::Text("_walkDepthThresholdY=%u  _walkDepthScaleFactor=%u  _walkBaseSpeedPct=%u",
 					g_engine->_walkDepthThresholdY, g_engine->_walkDepthScaleFactor, g_engine->_walkBaseSpeedPct);
+
+		View1 *view = (View1 *)g_engine->findView("View1");
+		Character *protagonist = view ? view->getCharacterByIndex(Scenes::instance()._currentActorIndex) : nullptr;
 		ImGui::Text("Pathfinding points: %u  Path nodes: %u",
-					(uint)g_engine->pathfindingPoints.size(), (uint)g_engine->_path.size());
+					(uint)g_engine->_pathfinding._points.size(),
+					protagonist ? (uint)protagonist->_path.size() : 0);
 
 		// Node detail table
 		if (ImGui::CollapsingHeader("Node Graph", ImGuiTreeNodeFlags_DefaultOpen)) {
-			View1 *view = (View1 *)g_engine->findView("View1");
-			Character *protagonist = view ? view->getCharacterByIndex(Scenes::instance()._currentActorIndex) : nullptr;
 			Common::Point charPos = protagonist ? protagonist->getPosition() : Common::Point(0, 0);
 
-			for (int i = 0; i < (int)g_engine->pathfindingPoints.size(); i++) {
-				const PathfindingPoint &pt = g_engine->pathfindingPoints[i];
+			for (int i = 0; i < (int)g_engine->_pathfinding._points.size(); i++) {
+				const PathfindingPoint &pt = g_engine->_pathfinding._points[i];
 				// Check reachability from character
-				bool reachable = protagonist && g_engine->isPathWalkable(charPos.y, charPos.x, pt._position.y, pt._position.x);
+				bool reachable = protagonist && g_engine->_pathfinding.isLineWalkable(charPos.y, charPos.x, pt._position.y, pt._position.x);
 				// Check if node is in current path
 				bool inPath = false;
 				if (protagonist) {
 					for (uint p = 0; p < protagonist->_path.size(); p++) {
-						if (protagonist->_path[p] == (uint16)i) {
+						if (protagonist->_path[p] == (uint16)(i + 1)) {
 							inPath = true;
 							break;
 						}
@@ -1645,7 +1646,7 @@ static void showImageResourcesWindow() {
 				x += f._width;
 			}
 
-			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*imgSurface.surfacePtr(), g_engine->_pal, 256);
+			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*imgSurface.surfacePtr(), g_engine->_pal.data(), g_engine->_pal.size());
 			if (texId) {
 				ImVec2 avail = ImGui::GetContentRegionAvail();
 				float scale = MIN(avail.x / (float)kScreenWidth, avail.y / (float)totalH);
@@ -1897,7 +1898,6 @@ static void showDebugToolbarWindow() {
 			} channels[] = {
 				{kDebugGraphics, "Graphics"},
 				{kDebugPath, "Path"},
-				{kDebugScan, "Scan"},
 				{kDebugFilePath, "FilePath"},
 				{kDebugInput, "Input"},
 				{kDebugImGui, "ImGui"},
@@ -2050,7 +2050,7 @@ static void showSoundWindow() {
 	// Channel selector
 	static int selectedVoice = 0;
 	if (ImGui::BeginCombo("Voice", Common::String::format("Voice %d", selectedVoice).c_str())) {
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < ARRAYSIZE(ds.voices); i++) {
 			bool selected = (selectedVoice == i);
 			const char *label = ds.voices[i].active
 									? Common::String::format("Voice %d [CH%d N%02X]", i, ds.voices[i].channel, ds.voices[i].note).c_str()
@@ -2080,7 +2080,7 @@ static void showSoundWindow() {
 	// All voices overview
 	ImGui::Separator();
 	ImGui::TextUnformatted("All Voices:");
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < ARRAYSIZE(ds.regHistory); i++) {
 		float voiceData[Music::kDebugRingSize];
 		for (int j = 0; j < Music::kDebugRingSize; j++) {
 			voiceData[j] = ds.regHistory[i][(ringPos + j) % Music::kDebugRingSize];

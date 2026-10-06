@@ -71,7 +71,6 @@ class AnimationReader {
 public:
 	Common::MemoryReadStreamEndian *_readStream;
 
-	// TODO: Can the init list also go into the cpp file?
 	AnimationReader(const Common::Array<uint8> &blob);
 	~AnimationReader();
 
@@ -82,6 +81,27 @@ public:
 	// Expects us to be pointed at the header of an animation frame,
 	// will seek to the start of the next header
 	void skipCurrentAnimationFrame();
+};
+
+enum ObjectOrientation : uint16 {
+	OrientationNone = 0,
+	OrientationNorth = 1,
+	OrientationNorthEast = 2,
+	OrientationEast = 3,
+	OrientationSouthEast = 4,
+	OrientationSouth = 5,
+	OrientationSouthWest = 6,
+	OrientationWest = 7,
+	OrientationNorthWest = 8,
+	OrientationStandingNorth = 9,
+	OrientationStandingNorthEast = 10,
+	OrientationStandingEast = 11,
+	OrientationStandingSouthEast = 12,
+	OrientationStandingSouth = 13,
+	OrientationStandingSouthWest = 14,
+	OrientationStandingWest = 15,
+	OrientationStandingNorthWest = 16,
+	OrientationPickup = 17
 };
 
 class GameObject {
@@ -96,33 +116,27 @@ public:
 	bool _useOverloadAnimation = false;
 	// Runtime field +0x22D: when the character's orientation matches this value,
 	// the renderer uses animation slot 0x15 (overload) instead of the normal slot.
-	// Initialized to 0x7FFF (never match). Set by opcode 0x27.
+	// Initialized to 0x7FFF (never match). Set by opcode 0x27 (V1).
 	uint16 _overloadAnimTriggerDirection = 0x7FFF;
+	// V2: five trigger words at runtime+0x50e.
+	// 0x7FFF = inactive. When orientation matches entry i, play specialAnimSlotToAnimSlot(i+1).
+	uint16 _specialAnimTriggers[5] = {0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF};
 
 	// These are the values read by the code around l0037_082D:
 	Common::Point _position;
 	uint16 _sceneIndex = 0;
-	// 8-directional movement system from walkAlongPath (1008:1b8f).
-	// Direction codes 1-8 are walking directions, 9-16 are standing (idle) variants.
 	// The direction is chosen based on the angle between current and target position:
-	//   1 = North (up)         - deltaY dominates, target above
-	//   2 = NorthEast          - diagonal (deltaX/4 < deltaY < deltaX*2)
-	//   3 = East (right)       - deltaX dominates, target to the right
-	//   4 = SouthEast          - diagonal
-	//   5 = South (down)       - deltaY dominates, target below
-	//   6 = SouthWest          - diagonal
-	//   7 = West (left)        - deltaX dominates, target to the left
-	//   8 = NorthWest          - diagonal
-	//   9-16 = Standing idle variants (walking direction + 8)
-	//   17 (0x11) = Pickup animation
 	// Each direction has a validity flag at runtime offset +0x43 + (dir-1)*0x20
 	// that indicates whether the object has animation data for that direction.
-	uint16 _orientation = 0;
+	ObjectOrientation _orientation = OrientationNone;
 	// Per-object percentage multiplier for ground-elevation vertical offset.
 	// Walkability map values < 0xC8 represent ground height at each pixel;
 	// this factor scales how much that height displaces the object upward
 	// when drawn. 0 = no vertical offset. 100 = full elevation offset.
 	uint16 _verticalOffsetScale = 0;
+	// Dialect v2 setObjectAdjust: runtime object adjust pair.
+	uint16 _objectAdjust1 = 0;
+	uint16 _objectAdjust2 = 0;
 	// Runtime +0x217: frame index during pickup animation at which the item is grabbed
 	uint16 _pickupFrameStart = 0;
 	// Runtime +0x219: frame index at which pickup animation completes
@@ -135,6 +149,8 @@ public:
 	// Runtime +0x186: per-object flag loaded from file. When set, character sprites
 	// are scaled based on Y position (perspective depth scaling).
 	bool _hasScaling = false;
+	// V2: half-res anim data drawn at 2x
+	bool _hasDoubleResAnim = false;
 	// Runtime field +0x231: "frozen/attached" flag. Set by scriptSetObjectBounds (opcode 0x35).
 	// When set, the object cannot be walked (opcode 0x11 returns error 0x1F)
 	// and walkAlongPath skips movement for this object.
@@ -189,12 +205,12 @@ public:
 	// survives scene change / off-scene script opcodes). Restored on Character create.
 	struct StoredWalkRuntime {
 		bool valid = false;
+		bool stepDirectionSet = false;
 		Common::Point targetPosition;
 		Common::Point pathFinalDestination;
 		int16 stepDeltaX = 0;
 		int16 stepDeltaY = 0;
 		int16 stepError = 0;
-		bool stepDirectionSet = false;
 		int16 currentPathIndex = 0;
 		Common::Array<uint16> path;
 		uint16 motionTargetVerticalOffset = 0;
@@ -217,16 +233,7 @@ public:
 
 class GameObjects : public Common::Singleton<GameObjects> {
 public:
-	// Maximum of 200h objects
-	// How to address them in the original code:
-	// mov	di,[bp+6h]
-	//	shl di, 2h;
-	// les di, [di + 77Ch]
 	Common::Array<GameObject *> _objects;
-
-	Common::Array<Common::String> _objectNames;
-
-	void init();
 
 	/** True for character/NPC object indices (not inventory items). */
 	static bool isNpcIndex(uint16 objectIndex);

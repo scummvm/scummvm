@@ -104,6 +104,7 @@ typedef struct ImGuiWindows {
 	bool imageViewer = false;
 	bool windows = false;
 	bool help = false;
+	bool profiler = false;
 } ImGuiWindows;
 
 // Rebindable debugger actions. Keep in sync with kShortcutDefs (dt-help.cpp).
@@ -209,6 +210,18 @@ struct DebuggerTheme {
 	ImVec4 logger_warning;
 	ImVec4 logger_info;
 	ImVec4 logger_debug;
+
+	// Profiler
+	ImVec4 prof_ruler_bg;
+	ImVec4 prof_grid_line;
+	ImVec4 prof_freeze;
+	ImVec4 prof_thaw;
+	ImVec4 prof_zone_border;
+	ImVec4 prof_zone_text;
+	ImVec4 prof_selected;
+	ImVec4 prof_highlight;
+	ImVec4 prof_live_edge;
+	ImVec4 prof_crosshair;
 };
 
 struct QuickOpenItem {
@@ -444,6 +457,7 @@ void showImageViewer();	// dt-castdetails.cpp
 void showCastDetails();	// dt-castdetails.cpp
 void showControlPanel();// dt-controlpanel.cpp
 void handleDebuggerShortcuts();	// dt-controlpanel.cpp
+void showProfiler();	// dt-profiler.cpp
 
 // dt-help.cpp
 extern const ShortcutDef kShortcutDefs[kActCount];

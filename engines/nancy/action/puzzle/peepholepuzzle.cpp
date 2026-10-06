@@ -30,6 +30,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/scrollbar.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -105,12 +107,28 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 
 	bool justReleased = false;
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}
+	}
+
+	// The mouse wheel scrolls the contents vertically while the cursor is over them,
+	// as an alternative to holding down the up/down buttons
+	if ((input.input & NancyInput::kMouseWheel) && _innerBounds.height() > _dest.height() &&
+			NancySceneState.getViewport().convertViewportToScreen(_dest).contains(input.mousePos)) {
+		const int scrollPixels = UI::wheelScrollPixels(_dest.height());
+		_currentSrc.translate(0, (input.input & NancyInput::kMouseWheelUp) ? -scrollPixels : scrollPixels);
+
+		if (_currentSrc.top < _innerBounds.top) {
+			_currentSrc.translate(0, _innerBounds.top - _currentSrc.top);
+		} else if (_currentSrc.bottom > _innerBounds.bottom) {
+			_currentSrc.translate(0, _innerBounds.bottom - _currentSrc.bottom);
+		}
+
+		input.eatMouseWheelInput();
+		checkButtons();
+		drawInner();
 	}
 
 	if (_pressedButton != -1) {
@@ -330,7 +348,7 @@ void TextScroll::readExtraData(Common::SeekableReadStream &stream) {
 
 	_pixelsToScroll = stream.readByte();
 
-	if (!_isEntryList) {
+	if (_scrollType == kTextScroll) {
 		Autotext::readExtraData(stream);
 	}
 }

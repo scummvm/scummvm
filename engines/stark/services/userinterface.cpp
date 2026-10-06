@@ -55,6 +55,8 @@
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/item.h"
 
+#include "engines/stark/savemetadata.h"
+
 #include "gui/message.h"
 
 namespace Stark {
@@ -353,26 +355,8 @@ void UserInterface::saveGameScreenThumbnail() {
 		_gameScreen->render();
 	}
 
-	Graphics::Surface *big = _gameScreen->getGameWindow()->getScreenshot();
-	assert(big->format.bytesPerPixel == 4);
-
-	_gameWindowThumbnail = new Graphics::Surface();
-	_gameWindowThumbnail->create(kThumbnailWidth, kThumbnailHeight, big->format);
-
-	uint32 *dst = (uint32 *)_gameWindowThumbnail->getPixels();
-	for (int i = 0; i < _gameWindowThumbnail->h; i++) {
-		for (int j = 0; j < _gameWindowThumbnail->w; j++) {
-			uint32 srcX = big->w * j / _gameWindowThumbnail->w;
-			uint32 srcY = big->h * i / _gameWindowThumbnail->h;
-			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);
-
-			// Copy RGBA pixel
-			*dst++ = *src;
-		}
-	}
-
-	big->free();
-	delete big;
+	_gameWindowThumbnail = _gameScreen->getGameWindow()->getScreenshot(kThumbnailWidth, kThumbnailHeight);
+	_gameWindowThumbnail->convertToInPlace(SaveMetadata::getPixelFormat());
 }
 
 void UserInterface::freeGameScreenThumbnail() {

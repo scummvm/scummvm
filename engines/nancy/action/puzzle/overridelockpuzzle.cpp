@@ -36,17 +36,9 @@ namespace Nancy {
 namespace Action {
 
 void OverrideLockPuzzle::init() {
-	Common::Rect bounds = NancySceneState.getViewport().getBounds();
+	initViewportSurface();
 
-	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-
-	setTransparent(true);
-	setVisible(true);
-	moveTo(bounds);
-
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 }
 
 void OverrideLockPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -67,7 +59,7 @@ void OverrideLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_buttonPopTime = stream.readUint16LE();
 
-	_solveExitScene.readData(stream);
+	_solveScene.readData(stream);
 	_solveSound.readNormal(stream);
 
 	_exitScene.readData(stream);
@@ -136,8 +128,7 @@ void OverrideLockPuzzle::execute() {
 
 			if (_playerOrder.size() == _buttonOrder.size()) {
 				// Solved the puzzle
-				g_nancy->_sound->loadSound(_solveSound);
-				g_nancy->_sound->playSound(_solveSound);
+				playSolveSound();
 				_state = kActionTrigger;
 				_solveState = kSolved;
 			}
@@ -150,11 +141,11 @@ void OverrideLockPuzzle::execute() {
 			_exitScene.execute();
 			break;
 		case kSolved:
-			if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (isSolveSoundPlaying()) {
 				return;
 			}
 
-			_solveExitScene.execute();
+			_solveScene.execute();
 			g_nancy->_sound->stopSound(_solveSound);
 		}
 
@@ -170,9 +161,7 @@ void OverrideLockPuzzle::handleInput(NancyInput &input) {
 	}
 
 	// Check the exit hotspot
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

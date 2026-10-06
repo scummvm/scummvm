@@ -46,7 +46,6 @@ void room_101_init() {
 		local->execute_wipe = RESET;
 		local->start_walking = false;
 		local->start_walking_0 = false;
-		local->anim_0_running = false;
 		local->anim_0_running = true;
 
 		/* ======== When false, camera hasn't panned past 208 ======== */
@@ -141,7 +140,7 @@ void room_101_init() {
 			player_first_walk(OFF_SCREEN_X_FROM_202, OFF_SCREEN_Y_FROM_202, FACING_EAST,
 				PLAYER_X_FROM_202, PLAYER_Y_FROM_202, FACING_EAST, true);
 
-		} else if ((previous_room == 102) || (previous_room != KERNEL_RESTORING_GAME)) {
+		} else if (previous_room != KERNEL_RESTORING_GAME) {
 			player_first_walk(OFF_SCREEN_X_FROM_102, OFF_SCREEN_Y_FROM_102, FACING_WEST,
 				PLAYER_X_FROM_102, PLAYER_Y_FROM_102, FACING_WEST, true);
 			camera_jump_to(RIGHT_HALF, 0);
@@ -340,7 +339,6 @@ static void handle_animation_001() {
 			break;
 
 		case 315:  /* end of CALLING_TURN_AND_WALK */
-			/* global[brie_talk_status] = AFTER_CONVS_0_AND_1; */
 			kernel_abort_animation(aa[1]);
 			break;
 		}

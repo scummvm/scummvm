@@ -38,18 +38,31 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("xn--The Fool's Errand-306j", "rt:44749119459beb47f37a02bd629ed9e9", 175275),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
 	// The Fool's Errand - Version 2.0 (1988-07-25)
+	// Last modified 1988-09-13
 	{
 		"foolserrand",
 		"v2.0",
 		AD_ENTRY1s("The Fool's Errand", "rt:7319cc059fde4535a196a744761b293f", 178663),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	// The Fool's Errand - Version 2.0 (1988-07-25)
+	// Last modified 1989-03-03 - has lowercase filenames, "vers" tag, different string table
+	{
+		"foolserrand",
+		"v2.0.1",
+		AD_ENTRY1s("the fool's errand", "rt:89c3a866c26db6c0716e50a5e98322e8", 178715),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -60,7 +73,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("The Fool's Errand", "rt:b36443d20490fa45c6a58fd2d7be5ffb", 186482),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -71,7 +84,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("Fool's DEMO", "rt:3890f5ed98166cf213e6d04fa2ce21b7", 142388),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_UNSTABLE | ADGF_DEMO,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 

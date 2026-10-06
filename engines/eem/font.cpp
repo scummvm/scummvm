@@ -180,6 +180,21 @@ int EEMFont::drawWordWrapped(Graphics::ManagedSurface *dst, int x, int y,
 	return (int)lines.size() * lineH;
 }
 
+int EEMFont::drawMacWordWrapped(Graphics::ManagedSurface *dst, int x, int y,
+								int width, const Common::String &s, uint32 color,
+								int lineHeight) const {
+	if (!_macFont || width <= 5)
+		return 0;
+
+	// Mac WriteText adds a left margin and advances the baseline first.
+	Common::Array<Common::String> lines;
+	wordWrapText(s, width - 5, lines);
+	y += lineHeight - _macFont->getFontAscent();
+	for (uint i = 0; i < lines.size(); i++)
+		drawString(dst, lines[i], x + 5, y + (int)i * lineHeight, width - 5, color);
+	return (int)lines.size() * lineHeight;
+}
+
 void EEMFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y,
 					   uint32 color) const {
 	if (!dst)

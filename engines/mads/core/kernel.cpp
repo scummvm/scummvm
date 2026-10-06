@@ -33,8 +33,6 @@
 #include "mads/core/error.h"
 #include "mads/core/screen.h"
 #include "mads/core/speech.h"
-#include "mads/core/ems.h"
-#include "mads/core/himem.h"
 #include "mads/core/echo.h"
 #include "mads/core/mcga.h"
 #include "mads/core/timer.h"
@@ -43,7 +41,7 @@
 #include "mads/core/keys.h"
 #include "mads/core/pack.h"
 #include "mads/core/room.h"
-#include "mads/core/xms.h"
+#include "mads/core/sound.h"
 #include "mads/core/tile.h"
 #include "mads/core/popup.h"
 #include "mads/core/pal.h"
@@ -215,7 +213,6 @@ void kernel_game_shutdown() {
 	pack_set_special_buffer(NULL, NULL);
 
 	object_unload();
-	// inter_deallocate_objects();
 	popup_available = false;
 
 	// Remove special keyboard handler
@@ -233,8 +230,7 @@ void kernel_game_shutdown() {
 	font_inter = font_main = font_tele = NULL;
 
 	// Deallocate main screen buffer
-	if (work_screen_ems_handle < 0)
-		buffer_free(&scr_main);
+	buffer_free(&scr_main);
 
 	// Turn of speech system
 	if (speech_system_active)
@@ -245,9 +241,6 @@ void kernel_game_shutdown() {
 	check_mode = video_mode;
 	mouse_init(false, text_mode);
 	video_init(text_mode, (check_mode != text_mode));
-
-	// Deallocate EMS/XMS memory
-	himem_shutdown();
 
 	// Remove timer interrupt stuff
 	timer_activate_low_priority(NULL);
@@ -271,57 +264,9 @@ void kernel_force_refresh() {
 int kernel_game_startup(int game_video_mode, int load_flag,
 		const char *release_version, const char *release_date) {
 	int error_flag = true;
-	int count, count2;
-	int ems_temp;
-	int pages;
-	int reserve[EMS_PAGING_CLASSES];
 	byte *interrupt_stack;
 
-	// Set up EMS/XMS paging system, if any
-	himem_startup();
-
 	speech_init();
-
-	if (ems_exists) {
-		if (load_flag & KERNEL_STARTUP_POPUP) {
-			object_ems_handle = ems_get_page_handle(4);
-
-			ems_temp = ems_get_page_handle(4);
-			if (ems_temp >= 0) popup_preserve_initiator[0] = ems_temp;
-
-			ems_temp = ems_get_page_handle(4);
-			if (ems_temp >= 0) popup_preserve_initiator[1] = ems_temp;
-
-			ems_temp = ems_get_page_handle(4);
-			if (ems_temp >= 0) popup_preserve_initiator[2] = ems_temp;
-		}
-	}
-
-
-	if (ems_exists) {
-		pages = ems_pages_free;
-		for (count = 0; count < EMS_PAGING_CLASSES; count++) {
-			reserve[count] = 0;
-		}
-		if (pages >= 4) {
-			reserve[EMS_PAGING_SYSTEM] = 4;
-			pages -= 4;
-		}
-		ems_temp = MIN(pages >> 1, 64);
-		reserve[EMS_PAGING_ROOM] = ems_temp;
-		pages -= ems_temp;
-
-		ems_temp = pages >> 2;
-		reserve[EMS_PAGING_SECTION] = ems_temp;
-		pages -= ems_temp;
-
-		for (count = 0; count < EMS_PAGING_CLASSES; count++) {
-			ems_paging_reserve[count] = 0;
-			for (count2 = count - 1; count2 >= 0; count2--) {
-				ems_paging_reserve[count] += reserve[count2];
-			}
-		}
-	}
 
 	timer_set_sound_flag(0);
 
@@ -335,14 +280,7 @@ int kernel_game_startup(int game_video_mode, int load_flag,
 	}
 
 	// Initialize the main screen work buffer & its sub-buffers
-	if (work_screen_ems_handle >= 0) {
-		scr_main.x = video_x;
-		scr_main.y = video_y;
-		scr_main.data = ems_page[0];
-		ems_map_buffer(work_screen_ems_handle);
-	} else {
-		buffer_init_name(&scr_main, video_x, video_y, "$scrmain");
-	}
+	buffer_init_name(&scr_main, video_x, video_y, "$scrmain");
 	if (scr_main.data == NULL) {
 		goto done;
 	}
@@ -597,9 +535,6 @@ int kernel_room_startup(int newRoom, int initial_variant, const char *interface,
 	viewing_at_y = 0;
 	inter_viewing_at_y = inter_base_y;
 
-	// Mark the boundary between interface and room sprite series
-	kernel_room_series_marker = series_list_marker;
-
 	if (barebones) {
 		room_spots = nullptr;
 		goto finish;
@@ -633,6 +568,9 @@ int kernel_room_startup(int newRoom, int initial_variant, const char *interface,
 			inter_anim = nullptr;
 		}
 	}
+
+	// Mark the boundary between interface and room sprite series
+	kernel_room_series_marker = series_list_marker;
 
 	// Set up interface background screen
 	kernel_set_interface_mode(inter_input_mode);
@@ -1659,8 +1597,8 @@ static void kernel_process_animation(int handle, int asynchronous) {
 	}
 
 	if (!asynchronous) {
-		if (kernel_anim[handle].anim->frame[kernel_anim[handle].frame].sound) {
-			// pl sound_play(kernel_anim[handle].anim->frame[kernel_anim[handle].frame].sound);
+		if (g_engine->getGameID() != GType_Forest && kernel_anim[handle].anim->frame[kernel_anim[handle].frame].sound) {
+			sound_play(kernel_anim[handle].anim->frame[kernel_anim[handle].frame].sound);
 		}
 
 		if ((kernel_anim[handle].anim->misc_peel_x != 0) || (kernel_anim[handle].anim->misc_peel_y != 0)) {
@@ -1708,8 +1646,7 @@ static void kernel_process_animation(int handle, int asynchronous) {
 			match = false;
 			for (count = 0; !match && (count < image_base); count++) {
 				if (image_list[count].segment_id == (byte)(KERNEL_SEGMENT_ANIMATION + handle)) {
-					if (memcmp(&image_list[count].series_id,
-						&kernel_anim[handle].anim->image[kernel_anim[handle].image].series_id, 9) == 0) {
+					if (image_list[count].equals(kernel_anim[handle].anim->image[kernel_anim[handle].image])) {
 						image_list[count].flags = 0;
 
 						if (hot >= 0) {
@@ -2175,7 +2112,8 @@ static void kernel_message_update(KernelMessagePtr my_message) {
 		}
 	}
 
-	width = font_string_width(kernel_message_font, my_message->message, kernel_message_spacing);
+	width = g_engine->getMessageTextWidth(kernel_message_font,
+		my_message->message, kernel_message_spacing);
 
 	if (my_message->flags & (KERNEL_MESSAGE_CENTER | KERNEL_MESSAGE_RIGHT)) {
 		if (my_message->flags & KERNEL_MESSAGE_CENTER) {
@@ -2201,7 +2139,9 @@ static void kernel_message_update(KernelMessagePtr my_message) {
 	}
 
 	if (my_message->matte_message_handle < 0) {
-		matte_id = matte_add_message(kernel_message_font, my_message->message, xx, yy, my_message->color, kernel_message_spacing);
+		matte_id = matte_add_message(kernel_message_font, my_message->message,
+			xx, yy, my_message->color, kernel_message_spacing,
+			g_engine->hasMacintoshInterface());
 		if (matte_id < 0) goto done;
 		my_message->matte_message_handle = matte_id;
 	}

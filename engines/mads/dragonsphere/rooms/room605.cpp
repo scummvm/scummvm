@@ -276,7 +276,6 @@ static void handle_animation_pid() {
 		case 48:
 			kernel_abort_animation(aa[2]);
 			local->anim_2_running = false;
-			pid_reset_frame       = -1;
 
 			if (player_said_2(take_magic_from, rope)) {
 				player.walker_visible = true;
@@ -478,7 +477,7 @@ static void room_605_init() {
 			player_walk_trigger(ROOM_605_RUN_ANIM);
 		}
 
-	} else if (previous_room == 604 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(PLAYER_X_FROM_604, PLAYER_Y_FROM_604, FACING_EAST,
 		                  WALK_TO_X_FROM_604, WALK_TO_Y_FROM_604, FACING_EAST, true);
 	}
@@ -1175,8 +1174,7 @@ static void room_605_parser() {
 			    game.difficulty == HARD_MODE) {
 				text_show(60551);
 
-			} else if ((global[object_is_in_freezer_605] != NEVER_USED_FREEZER) &&
-			           (game.difficulty == EASY_MODE)) {
+			} else if (game.difficulty == EASY_MODE) {
 				text_show(60554);
 			}
 		}
@@ -1241,9 +1239,7 @@ static void room_605_parser() {
 			} else if (last_removed == dead_rat) {
 				text_show(60556);
 
-			} else if (last_removed != bone && last_removed != fruit && last_removed != bottle_of_flies &&
-			           last_removed != feathers && last_removed != dead_rat && last_removed != partly_built_bundle &&
-			           last_removed != dates && last_removed != tentacle_parts) {
+			} else {
 				text_show(60552);
 			}
 

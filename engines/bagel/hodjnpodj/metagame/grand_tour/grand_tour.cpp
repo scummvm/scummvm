@@ -335,7 +335,7 @@ CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStru
 		if (nNewRank > -1) {
 			pScoresResetButton->EnableWindow(false);
 			pScoresLeaveButton->EnableWindow(false);
-			(*this).SetFocus();
+			(this)->SetFocus();
 		}
 		//  else {
 		//      pScoresLeaveButton->SetFocus();
@@ -539,7 +539,7 @@ CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStru
 
 		}
 	}
-	(*this).SetFocus();
+	(this)->SetFocus();
 
 	EndWaitCursor();
 }
@@ -818,7 +818,7 @@ void CMainGTWindow::SplashScreen() {
 
 			pDC->TextOut(ScoresLeaveRect.left, nTop + 300, "Press Enter When Done.", 22);
 
-			(*this).SetFocus();                         // Reset focus back to the main window
+			(this)->SetFocus();                         // Reset focus back to the main window
 
 		} else {
 			rgbOldColorRef = pDC->SetTextColor(RGB(0, 0, 255));
@@ -1081,7 +1081,7 @@ bool CMainGTWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	(*this).SetFocus();                         // Reset focus back to the main window
+	(this)->SetFocus();                         // Reset focus back to the main window
 	return true;
 }
 
@@ -1188,7 +1188,7 @@ void CMainGTWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned in
 								pText = new CText();
 								cTextRect.SetRect(SCROLL_LEFT + 69, SCROLL_TOP + (nNewRank * 20) + 90, SCROLL_LEFT + 349, SCROLL_TOP + (nNewRank * 20) + 110);
 								pText->SetupText(pDC, pGamePalette, &cTextRect, JUSTIFY_LEFT);
-								(*this).SetFocus();
+								(this)->SetFocus();
 								break;
 							}
 						}

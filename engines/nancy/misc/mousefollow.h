@@ -35,10 +35,18 @@ namespace Misc {
 // sure that its center stays above the mouse hotspot. The position
 // of such an object is clipped to the Viewport. Used in puzzles:
 // - AssemblyPuzzle
+// - BeadPuzzle
+// - BlocksPuzzle
 // - CubePuzzle
+// - DropSortPuzzle
+// - GridMapPuzzle
+// - MindPuzzle
+// - PegsPuzzle
 // - RippedLetterPuzzle
-// - TowerPuzzle
+// - SortPuzzle
+// - StepObjectsPuzzle
 // - TangramPuzzle
+// - TowerPuzzle
 class MouseFollowObject : public RenderObject {
 public:
 	MouseFollowObject();
@@ -49,7 +57,6 @@ public:
 	virtual void pickUp() { _isPickedUp = true; }
 	virtual void putDown() { _isPickedUp = false; }
 
-	void setZ(uint16 z) { _z = z; _needsRedraw = true; }
 	void handleInput(NancyInput &input);
 	bool isViewportRelative() const override { return true; }
 

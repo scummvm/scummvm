@@ -400,7 +400,7 @@ int pal_allocate(ColorListPtr new_list, ShadowListPtr shadow_list, int pal_flags
 					if (list_color == master_shadow->shadow_color[shadow]) {
 						found = true;
 						best_target_color = shadow + PAL_FORCE_SHADOW;
-						memcpy(&(master_palette[best_target_color].r), &(new_list->table[list_color].r), 3);
+						memcpy(&(master_palette[best_target_color]), &(new_list->table[list_color]), 3);
 					}
 				}
 			}
@@ -442,7 +442,7 @@ int pal_allocate(ColorListPtr new_list, ShadowListPtr shadow_list, int pal_flags
 							} else {
 								// This is a little hack (or "optimization") to compare the 3 RGB bytes much
 								// more quickly when we are looking for an exact match only.
-								hash = !memcmp(&new_list->table[list_color].r, &master_palette[target_color].r, 3) ? 0 : 1;
+								hash = !memcmp(&new_list->table[list_color], &master_palette[target_color], 3) ? 0 : 1;
 							}
 							if (hash < best_hash) {
 								found = true;
@@ -473,7 +473,6 @@ int pal_allocate(ColorListPtr new_list, ShadowListPtr shadow_list, int pal_flags
 					found = true;
 					best_target_color = target_color;
 					*(RGBcolor *) &master_palette[target_color].r = *(RGBcolor *) & new_list->table[list_color].r;
-					// memcpy(&(master_palette[target_color].r), &(new_list->table[list_color].r), 3);
 				}
 			}
 		}
@@ -564,8 +563,8 @@ void pal_grey(Palette &fixpal, int base_color, int num_colors,
 	int level;
 	word accum = 0;
 
-	dif = (high_grey - low_grey);
-	level = low_grey;
+	dif = (low_grey - high_grey);
+	level = high_grey;
 
 	for (count = 0; count < num_colors; count++) {
 		fixpal[base_color + count].r = (byte)level;
@@ -610,7 +609,7 @@ int pal_get_color(RGBcolor color, int color_handle, int override_reserved, int *
 	for (count = 0; (!found) && (count < 256); count++) {
 		if (!(color_status[count] & PAL_RESERVED) || override_reserved) {
 			if (!(color_status[count] & PAL_CYCLE)) {
-				if (memcmp(&color, &master_palette[count].r, sizeof(RGBcolor)) == 0) {
+				if (memcmp(&color, &master_palette[count], sizeof(RGBcolor)) == 0) {
 					color_status[count] |= mask;
 					if (color_number != NULL) *color_number = count;
 					found = true;
@@ -622,7 +621,7 @@ int pal_get_color(RGBcolor color, int color_handle, int override_reserved, int *
 	if (!found) {
 		for (count = 0; (!found) && (count < 256); count++) {
 			if (color_status[count] == 0) {
-				memcpy(&master_palette[count].r, &color, sizeof(RGBcolor));
+				memcpy(&master_palette[count], &color, sizeof(RGBcolor));
 				color_status[count] = mask;
 				if (color_number != NULL) *color_number = count;
 				found = true;

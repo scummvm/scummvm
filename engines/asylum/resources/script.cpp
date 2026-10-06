@@ -61,10 +61,10 @@ void ActionArea::load(Common::SeekableReadStream *stream) {
 
 	field_7C             = stream->readSint32LE();
 	polygonIndex         = stream->readUint32LE();
-	soundResourceIdFrame = (ResourceId)stream->readSint32LE();
-	field_88             = stream->readSint32LE();
-	soundResourceId      = (ResourceId)stream->readSint32LE();
-	field_90             = stream->readSint32LE();
+
+	for (int32 i = 0; i < ARRAYSIZE(walkingSounds); i++)
+		walkingSounds[i] = (ResourceId)stream->readSint32LE();
+
 	paletteResourceId    = (ResourceId)stream->readSint32LE();
 
 	for (int32 i = 0; i < 5; i++)
@@ -90,10 +90,10 @@ void ActionArea::saveLoadWithSerializer(Common::Serializer &s) {
 
 	s.syncAsSint32LE(field_7C);
 	s.syncAsUint32LE(polygonIndex);
-	s.syncAsSint32LE(soundResourceIdFrame);
-	s.syncAsSint32LE(field_88);
-	s.syncAsSint32LE(soundResourceId);
-	s.syncAsSint32LE(field_90);
+
+	for (int32 i = 0; i < 4; i++)
+		s.syncAsSint32LE(walkingSounds[i]);
+
 	s.syncAsSint32LE(paletteResourceId);
 
 	for (int32 i = 0; i < 5; i++)
@@ -261,6 +261,10 @@ void ScriptManager::load(Common::SeekableReadStream *stream) {
 		_scripts.push_back(script);
 	}
 
+	patchScriptData();
+}
+
+void ScriptManager::patchScriptData() {
 	// Patch for Chapter 2 Lockout bug
 	if (_vm->checkGameVersion("Unpatched") && getWorld()->chapter == kChapter2) {
 		_scripts[ 3].commands[ 2].param1 = 1506;
@@ -273,11 +277,27 @@ void ScriptManager::load(Common::SeekableReadStream *stream) {
 		_scripts[1].commands[6].param2 = 151;
 		_scripts[1].commands[6].param3 = 332;
 	}
+
+	// Script 13 cancels a pending wagon exit fade by setting flag 480. The
+	// shipped command tests flag 479, which remains set until that fade ends.
+	if (getWorld()->chapter == kChapter4) {
+		ScriptEntry &wagonEnter = _scripts[13].commands[0];
+
+		if (wagonEnter.opcode == kOpcodeJumpIfGameFlag
+		 && wagonEnter.param1 == 479
+		 && wagonEnter.param2 == 0
+		 && wagonEnter.param3 == 4) {
+			wagonEnter.param1 = 480;
+		}
+	}
 }
 
 void ScriptManager::saveLoadWithSerializer(Common::Serializer &s) {
 	for (uint i = 0; i < _scripts.size(); i++)
 		_scripts[i].saveLoadWithSerializer(s);
+
+	if (s.isLoading())
+		patchScriptData();
 }
 
 // Save the script queue (in the original, it is part of the shared data)
@@ -1239,7 +1259,7 @@ IMPLEMENT_OPCODE(CreatePalette)
 		return;
 	}
 
-	getScreen()->updatePalette(cmd->param1);
+	getScreen()->blendScenePaletteForFadeStep(cmd->param1);
 
 	_processNextEntry = true;
 	++cmd->param1;

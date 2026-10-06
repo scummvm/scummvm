@@ -23,6 +23,7 @@
 #define NUVIE_CORE_CONVERSE_INTERPRET_H
 
 #include "ultima/nuvie/core/converse.h"
+#include "common/stack.h"
 
 namespace Ultima {
 namespace Nuvie {

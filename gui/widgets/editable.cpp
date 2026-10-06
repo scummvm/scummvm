@@ -30,7 +30,8 @@ namespace GUI {
 
 EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip, uint32 cmd)
 	: Widget(boss, x, y, w, h, scale, tooltip), CommandSender(boss), _cmd(cmd) {
-	setFlags(WIDGET_TRACK_MOUSE);
+	// WIDGET_HOOK_DRAG: prevent hooking by a container as we need drag for ourselves
+	setFlags(WIDGET_TRACK_MOUSE | WIDGET_HOOK_DRAG);
 	init();
 }
 
@@ -40,7 +41,8 @@ EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, cons
 
 EditableWidget::EditableWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip, uint32 cmd)
 	: Widget(boss, name, tooltip), CommandSender(boss), _cmd(cmd) {
-	setFlags(WIDGET_TRACK_MOUSE);
+	// WIDGET_HOOK_DRAG: prevent hooking by a container as we need drag for ourselves
+	setFlags(WIDGET_TRACK_MOUSE | WIDGET_HOOK_DRAG);
 	init();
 }
 

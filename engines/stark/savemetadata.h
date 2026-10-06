@@ -79,6 +79,10 @@ public:
 	/** Write the game screen thumbnail to a stream */
 	void writeGameScreenThumbnail(Common::WriteStream *stream);
 
+	static constexpr inline Graphics::PixelFormat getPixelFormat() {
+		return Graphics::PixelFormat::createFormatRGBA32();
+	}
+
 private:
 	void saveLoad(ResourceSerializer *s);
 	static void syncResourceIndexAsString(ResourceSerializer *s, uint &index);

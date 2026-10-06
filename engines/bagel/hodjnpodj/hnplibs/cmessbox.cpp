@@ -122,7 +122,7 @@ bool CMessageBox::OnInitDialog() {
 	);
 
 	if ((m_cTextMessage1 = new CText()) != nullptr) {
-		bAssertCheck = (*m_cTextMessage1).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+		bAssertCheck = m_cTextMessage1->SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
 
@@ -135,15 +135,15 @@ bool CMessageBox::OnInitDialog() {
 	);
 
 	if ((m_cTextMessage2 = new CText()) != nullptr) {
-		bAssertCheck = (*m_cTextMessage2).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+		bAssertCheck = m_cTextMessage2->SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
 
 	ReleaseDC(pDC);
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(m_pPalette);                        // set the palette to use
-		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
+		pOKButton->SetPalette(m_pPalette);                        // set the palette to use
+		pOKButton->SetControl(IDOK, this);            // tie to the dialog control
 	}
 
 	return true;  // return true  unless you set the focus to a control
@@ -160,12 +160,12 @@ void CMessageBox::OnPaint() {
 	pDC = GetDC();
 
 	if (m_pMessage1 != nullptr) {
-		bAssertCheck = (*m_cTextMessage1).DisplayString(pDC, m_pMessage1, 21, FW_BOLD, TEXT_COLOR);
+		bAssertCheck = m_cTextMessage1->DisplayString(pDC, m_pMessage1, 21, FW_BOLD, TEXT_COLOR);
 		ASSERT(bAssertCheck);
 	}
 
 	if (m_pMessage2 != nullptr) {
-		bAssertCheck = (*m_cTextMessage2).DisplayString(pDC, m_pMessage2, 21, FW_BOLD, TEXT_COLOR);
+		bAssertCheck = m_cTextMessage2->DisplayString(pDC, m_pMessage2, 21, FW_BOLD, TEXT_COLOR);
 		ASSERT(bAssertCheck);
 	}
 

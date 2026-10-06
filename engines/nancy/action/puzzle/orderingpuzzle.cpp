@@ -218,12 +218,12 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 
 	if (ser.getVersion() == kGameTypeVampire) {
-		_solveExitScene._sceneChange.readData(stream, true);
+		_solveScene._sceneChange.readData(stream, true);
 		ser.skip(2); // shouldStopRendering
-		ser.syncAsSint16LE(_solveExitScene._flag.label);
-		ser.syncAsByte(_solveExitScene._flag.flag);
+		ser.syncAsSint16LE(_solveScene._flag.label);
+		ser.syncAsByte(_solveScene._flag.flag);
 	} else {
-		_solveExitScene.readData(stream);
+		_solveScene.readData(stream);
 	}
 
 	ser.syncAsUint16LE(_solveSoundDelay);
@@ -308,10 +308,18 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		} else if (_puzzleType == kKeypadTerse) {
 			// Terse elements are the same size & placed on a grid (in the source image AND on screen)
 
+			// Nancy 12 added the button and exit hover cursors, same as the non-terse keypad
+			if (g_nancy->getGameType() >= kGameTypeNancy12) {
+				_buttonCursorID = stream.readUint16LE();
+				_exitCursorID = stream.readUint16LE();
+			}
+
 			// In Nancy 11 the grid block is preceded by the scene to advance to on solving, which
 			// overrides the solve scene's target (the rest of the solve scene change is reused).
 			// 0 and 9999 mean "none", falling back to the solve scene read earlier.
-			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+			// From Nancy 12 on, this scene is only taken when the puzzle ends unsolved with no
+			// buttons pressed, so it doesn't override the solve scene.
+			if (g_nancy->getGameType() == kGameTypeNancy11) {
 				uint16 advanceSceneID = stream.readUint16LE();
 
 				// HACK: In Nancy11, in the Betty automaton scene, this is set to scene 2721, but
@@ -319,12 +327,14 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 				// to gain the needed token to proceed.
 				// TODO: What is the correct way to handle this?
 				if (g_nancy->getGameType() == kGameTypeNancy11 && advanceSceneID == 2721 &&
-					_solveExitScene._sceneChange.sceneID == 2720)
+					_solveScene._sceneChange.sceneID == 2720)
 					advanceSceneID = 2720;
 
 				if (advanceSceneID != 0 && advanceSceneID != kNoScene) {
-					_solveExitScene._sceneChange.sceneID = advanceSceneID;
+					_solveScene._sceneChange.sceneID = advanceSceneID;
 				}
+			} else if (g_nancy->getGameType() >= kGameTypeNancy12) {
+				stream.skip(2); // advance scene
 			}
 
 			uint16 columns = stream.readUint16LE();
@@ -374,11 +384,6 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 				dest.setWidth(width + 1);
 				dest.setHeight(height + 1);
 			}
-		}
-
-		if (g_nancy->getGameType() >= kGameTypeNancy12 && _puzzleType == kKeypadTerse) {
-			// Nancy 12 keypad-terse grew by 4 bytes (exact layout not yet mapped).
-			stream.skip(4);
 		}
 
 		_hotspots = _destRects;
@@ -439,8 +444,7 @@ void OrderingPuzzle::execute() {
 				_needsRedraw = true;
 
 				if (enteredKeysMatchStage()) {
-					g_nancy->_sound->loadSound(_solveSound);
-					g_nancy->_sound->playSound(_solveSound);
+					playSolveSound();
 					_stageBlinkEndTime = g_nancy->getTotalPlayTime() + 400 + _solveSoundDelay * 1000;
 					_stageBlinkNextToggle = g_nancy->getTotalPlayTime() + 100;
 					_stageSymbolVisible = !_stageDisplayBlink;
@@ -594,11 +598,11 @@ void OrderingPuzzle::execute() {
 						return;
 					}
 
-					NancySceneState.setEventFlag(_solveExitScene._flag);
+					_shouldSetSolveFlag = true;
 				} else {
 					// Earlier games advance to the success scene regardless; the flag is set only on a solve.
 					if (solved) {
-						NancySceneState.setEventFlag(_solveExitScene._flag);
+						_shouldSetSolveFlag = true;
 					}
 				}
 			} else {
@@ -618,7 +622,7 @@ void OrderingPuzzle::execute() {
 						}
 					}
 
-					NancySceneState.setEventFlag(_solveExitScene._flag);
+					_shouldSetSolveFlag = true;
 				} else {
 					return;
 				}
@@ -633,12 +637,11 @@ void OrderingPuzzle::execute() {
 				break;
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solveState = kWaitForSound;
 			break;
 		case kWaitForSound:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				_state = kActionTrigger;
 			}
 
@@ -652,7 +655,7 @@ void OrderingPuzzle::execute() {
 				drawStageDisplay();
 			}
 
-			if (g_nancy->getTotalPlayTime() < _stageBlinkEndTime || g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (g_nancy->getTotalPlayTime() < _stageBlinkEndTime || isSolveSoundPlaying()) {
 				break;
 			}
 
@@ -668,7 +671,7 @@ void OrderingPuzzle::execute() {
 				break;
 			}
 
-			NancySceneState.setEventFlag(_solveExitScene._flag);
+			_shouldSetSolveFlag = true;
 			_currentStage = 0;
 			_state = kActionTrigger;
 			break;
@@ -688,8 +691,13 @@ void OrderingPuzzle::execute() {
 			_deathScene.execute();
 		} else if (_solveState == kNotSolved) {
 			_exitScene.execute();
+		} else if (_shouldSetSolveFlag) {
+			// The flag is only set here: setting it as soon as the solution is entered can
+			// invalidate this record's own dependencies, which stops it from being executed
+			// again before it ever reaches this point.
+			_solveScene.execute();
 		} else {
-			NancySceneState.changeScene(_solveExitScene._sceneChange);
+			NancySceneState.changeScene(_solveScene._sceneChange);
 		}
 
 		finishExecution();
@@ -714,7 +722,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+	if (isExitHotspotHovered(input)) {
 		setHoverCursor(_exitCursorID, g_nancy->_cursor->_puzzleExitCursor);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {

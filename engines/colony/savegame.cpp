@@ -29,6 +29,7 @@
 namespace Colony {
 
 const uint32 kSaveVersion = 1;
+const uint32 kDoorStateTag = MKTAG('D', 'O', 'O', 'R');
 const uint32 kMaxSaveObjects = 4096;
 const uint32 kMaxSavePatches = 100;
 
@@ -201,10 +202,11 @@ void writeLevelData(Common::WriteStream *stream, const LevelData &levelData) {
 		for (int j = 0; j < 5; j++)
 			stream->writeByte(levelData.data[i][j]);
 	}
+	stream->writeUint32BE(kDoorStateTag);
+	stream->write(levelData.openDoors, sizeof(levelData.openDoors));
 }
 
-LevelData readLevelData(Common::SeekableReadStream *stream) {
-	LevelData levelData;
+bool readLevelData(Common::SeekableReadStream *stream, LevelData &levelData) {
 	levelData.visit = stream->readByte();
 	levelData.queen = stream->readByte();
 	for (int i = 0; i <= kBaseObject; i++)
@@ -219,7 +221,18 @@ LevelData readLevelData(Common::SeekableReadStream *stream) {
 		for (int j = 0; j < 5; j++)
 			levelData.data[i][j] = stream->readByte();
 	}
-	return levelData;
+	// Door states are required. The tag prevents saves without this block from
+	// being decoded using the following level's data as door states.
+	if (stream->readUint32BE() != kDoorStateTag ||
+			stream->read(levelData.openDoors, sizeof(levelData.openDoors)) != sizeof(levelData.openDoors))
+		return false;
+	for (int x = 0; x < 31; x++) {
+		for (int y = 0; y < 31; y++) {
+			if (levelData.openDoors[x][y] & ~0x0F)
+				return false;
+		}
+	}
+	return !stream->err() && !stream->eos();
 }
 
 bool validateGridReferences(const uint8 grid[32][32], uint32 objectCount, bool allowPlayerMarker) {
@@ -459,8 +472,10 @@ Common::Error ColonyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	for (int i = 0; i < 3; i++)
 		_corePower[i] = stream->readSint32LE();
 
-	for (uint i = 0; i < ARRAYSIZE(_levelData); i++)
-		_levelData[i] = readLevelData(stream);
+	for (uint i = 0; i < ARRAYSIZE(_levelData); i++) {
+		if (!readLevelData(stream, _levelData[i]))
+			return makeCorruptSaveError(Common::String::format("missing or invalid door state data for level %u", i + 1).c_str());
+	}
 
 	const uint32 patchCount = stream->readUint32LE();
 	if (patchCount > kMaxSavePatches)
@@ -527,7 +542,7 @@ Common::Error ColonyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		}
 	}
 
-	if (stream->err())
+	if (stream->err() || stream->eos())
 		return makeCorruptSaveError("stream read error while decoding save payload");
 
 	if (_coreIndex < 0 || _coreIndex > 1)

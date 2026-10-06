@@ -38,6 +38,7 @@
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/window.h"
+#include "director/lingo/lingo-profiler.h"
 #include "director/debugger/debugtools.h"
 
 /**
@@ -56,6 +57,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	g_director = this;
 	g_debugger = new Debugger();
 	setDebugger(g_debugger);
+	_lingoProfiler = new LingoProfiler();
 
 	// parseOptions depends on the _dirSeparator
 	_version = getDescriptionVersion();
@@ -161,6 +163,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 DirectorEngine::~DirectorEngine() {
 	delete _lingo;
+	delete _lingoProfiler;
 
 	clearPalettes();
 

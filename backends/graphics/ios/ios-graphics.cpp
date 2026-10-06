@@ -48,8 +48,9 @@ void iOSGraphicsManager::initSurface() {
 
 	_old_touch_mode = kTouchModeTouchpad;
 
-	// not in 3D, not in GUI
-	sys->applyTouchSettings(false, false);
+	_rendering3d = (_renderer3d != nullptr);
+	// maybe in 3D, not in GUI
+	sys->applyTouchSettings(_rendering3d, false);
 }
 
 void iOSGraphicsManager::deinitSurface() {
@@ -68,6 +69,14 @@ bool iOSGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight
 		warning("Requesting antialiased video mode while not available");
 	}
 
+	const bool render3d = (_renderer3d != nullptr);
+	if (_rendering3d != render3d) {
+		_rendering3d = render3d;
+	}
+	// 3D status may have changed: refresh the touch mode
+	applyTouchSettings();
+
+
 	/* The iOS and tvOS video modes are always full screen */
 	return true;
 }
@@ -79,8 +88,8 @@ void iOSGraphicsManager::showOverlay(bool inGUI) {
 	// Don't change touch mode when not changing mouse coordinates
 	if (inGUI) {
 		_old_touch_mode = dynamic_cast<OSystem_iOS7 *>(g_system)->getCurrentTouchMode();
-		// not in 3D, in overlay
-		dynamic_cast<OSystem_iOS7 *>(g_system)->applyTouchSettings(false, true);
+		// maybe in 3D, in overlay
+		dynamic_cast<OSystem_iOS7 *>(g_system)->applyTouchSettings(_renderer3d != nullptr, true);
 	} else if (_overlayInGUI) {
 		// Restore touch mode active before overlay was shown
 		dynamic_cast<OSystem_iOS7 *>(g_system)->setCurrentTouchMode(static_cast<TouchMode>(_old_touch_mode));
@@ -96,6 +105,11 @@ void iOSGraphicsManager::hideOverlay() {
 	}
 
 	OpenGL::OpenGLGraphicsManager::hideOverlay();
+}
+
+void iOSGraphicsManager::applyTouchSettings() const {
+	// maybe in 3D, maybe in GUI
+	dynamic_cast<OSystem_iOS7 *>(g_system)->applyTouchSettings(_renderer3d != nullptr, _overlayVisible && _overlayInGUI);
 }
 
 float iOSGraphicsManager::getHiDPIScreenFactor() const {

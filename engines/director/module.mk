@@ -54,6 +54,7 @@ MODULE_OBJS = \
 	lingo/lingo-object.o \
 	lingo/lingo-patcher.o \
 	lingo/lingo-preprocessor.o \
+	lingo/lingo-profiler.o \
 	lingo/lingo-the.o \
 	lingo/lingo-utils.o \
 	lingo/lingodec/ast.o \
@@ -235,6 +236,7 @@ MODULE_OBJS += \
 	debugger/dt-controlpanel.o \
 	debugger/dt-help.o \
 	debugger/dt-lists.o \
+	debugger/dt-profiler.o \
 	debugger/dt-save-state.o \
 	debugger/dt-score.o \
 	debugger/dt-script-d2.o \

@@ -166,7 +166,7 @@ static void room_211_daemon() {
 		break;
 
 		case 73:
-			kernel_message_add(quote_string(kernel.quotes, 157), 102, 95, 0xFDFC, 75, 0, 32);
+			(void)kernel_message_add(quote_string(kernel.quotes, 157), 102, 95, 0xFDFC, 75, 0, 32);
 			break;
 
 		case 90:

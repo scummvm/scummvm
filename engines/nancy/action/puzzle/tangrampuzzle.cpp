@@ -38,12 +38,7 @@ TangramPuzzle::~TangramPuzzle() {
 }
 
 void TangramPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
 	g_nancy->_resource->loadImage(_tileImageName, _tileImage);
 	g_nancy->_resource->loadImage(_maskImageName, _maskImage);
@@ -63,7 +58,7 @@ void TangramPuzzle::init() {
 	curTile->setTransparent(true);
 	curTile->setVisible(true);
 	drawToBuffer(*curTile);
-	curTile->setZ(_z + 1);
+	curTile->setZOrder(_z + 1);
 
 	// Then, add the actual tiles
 	for (uint i = 0; i < _tileSrcs.size(); ++i) {
@@ -74,7 +69,7 @@ void TangramPuzzle::init() {
 		curTile->moveTo(_tileDests[i]);
 		curTile->setTransparent(true);
 		curTile->setVisible(true);
-		curTile->setZ(_z + curTile->_id + 1);
+		curTile->setZOrder(_z + curTile->_id + 1);
 		curTile->drawMask();
 		drawToBuffer(*curTile);
 
@@ -108,7 +103,7 @@ void TangramPuzzle::registerGraphics() {
 		tile.registerGraphics();
 	}
 
-	RenderActionRecord::registerGraphics();
+	PuzzleRecord::registerGraphics();
 }
 
 void TangramPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -168,8 +163,7 @@ void TangramPuzzle::execute() {
 				}
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solved = true;
 			_state = kActionTrigger;
 		}
@@ -177,7 +171,7 @@ void TangramPuzzle::execute() {
 		break;
 	case kActionTrigger :
 		if (_solved) {
-			if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (isSolveSoundPlaying()) {
 				break;
 			}
 
@@ -234,9 +228,7 @@ void TangramPuzzle::handleInput(NancyInput &input) {
 		}
 
 		// No tile under cursor, check exit hotspot
-		if (_exitHotspot.contains(mousePos)) {
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+		if (hoverExitHotspot(input)) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_state = kActionTrigger;
 			}
@@ -366,13 +358,11 @@ void TangramPuzzle::moveToTop(uint id) {
 	for (uint i = 1; i < _tiles.size(); ++i) {
 		Tile &tile = _tiles[i];
 		if (tile.getZOrder() > _tiles[id].getZOrder()) {
-			tile.setZ(tile.getZOrder() - 1);
-			tile.registerGraphics();
+			tile.setZOrder(tile.getZOrder() - 1);
 		}
 	}
 
-	_tiles[id].setZ(_z + _tiles.size());
-	_tiles[id].registerGraphics();
+	_tiles[id].setZOrder(_z + _tiles.size());
 }
 
 void TangramPuzzle::redrawBuffer(const Common::Rect &rect) {

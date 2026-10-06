@@ -821,7 +821,7 @@ void LilliputScript::disasmScript(ScriptStream script) {
 			}
 
 			// op code type 1
-			assert(val < sizeof(opCodes1) / sizeof(OpCode));
+			assert(val < ARRAYSIZE(opCodes1));
 			const OpCode *opCode = &opCodes1[val];
 			const kValueType *opArgType = &opCode->_arg1;
 
@@ -862,7 +862,7 @@ void LilliputScript::disasmScript(ScriptStream script) {
 
 		while (val != 0xFFF7) {
 			// op code type 2
-			assert(val < sizeof(opCodes2) / sizeof(OpCode));
+			assert(val < ARRAYSIZE(opCodes2));
 			const OpCode *opCode = &opCodes2[val];
 			const kValueType *opArgType = &opCode->_arg1;
 

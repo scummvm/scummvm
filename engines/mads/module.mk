@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	core/cursor.o \
 	core/cycle.o \
 	core/dialog.o \
-	core/ems.o \
 	core/env.o \
 	core/error.o \
 	core/fileio.o \
@@ -26,7 +25,6 @@ MODULE_OBJS := \
 	core/game.o \
 	core/global.o \
 	core/heap.o \
-	core/himem.o \
 	core/hspot.o \
 	core/image.o \
 	core/imath.o \
@@ -42,7 +40,6 @@ MODULE_OBJS := \
 	core/mem.o \
 	core/mouse.o \
 	core/mps_archive.o \
-	core/mps_installer.o \
 	core/object.o \
 	core/pack.o \
 	core/pack_dcl.o \
@@ -66,7 +63,10 @@ MODULE_OBJS := \
 	core/video.o \
 	core/vocab.o \
 	core/window.o \
-	core/xms.o \
+	nebular/bonus/bonus.o \
+	nebular/bonus/bonus_exe_data.o \
+	nebular/bonus/bonus_text_ui.o \
+	nebular/bonus/dos_text_screen.o \
 	nebular/nebular.o \
 	nebular/console.o \
 	nebular/copy.o \
@@ -74,10 +74,13 @@ MODULE_OBJS := \
 	nebular/global.o \
 	nebular/main.o \
 	nebular/main_menu.o \
+	nebular/mac_frontend.o \
+	nebular/mac_dialogs.o \
 	nebular/mac_menus.o \
 	nebular/mac_nebular.o \
 	nebular/mac_resources.o \
 	nebular/menus.o \
+	nebular/mps_installer.o \
 	nebular/popup.o \
 	nebular/mads/mads.o \
 	nebular/rooms/room101.o \
@@ -208,6 +211,8 @@ MODULE_OBJS := \
 	nebular/sound/isound.o \
 	nebular/sound/isound_nebular.o \
 	nebular/sound/mac_sound.o \
+	nebular/sound/psound.o \
+	nebular/sound/psound_nebular.o \
 	nebular/sound/rsound.o \
 	nebular/sound/rsound_nebular.o \
 	nebular/sound/sound.o \
@@ -274,6 +279,10 @@ MODULE_OBJS := \
 	phantom/rooms/room506.o \
 	phantom/sound/asound.o \
 	phantom/sound/asound_phantom.o \
+	phantom/sound/isound.o \
+	phantom/sound/isound_phantom.o \
+	phantom/sound/psound.o \
+	phantom/sound/psound_phantom.o \
 	phantom/sound/rsound.o \
 	phantom/sound/rsound_phantom.o \
 	phantom/sound/sound.o \
@@ -357,6 +366,10 @@ MODULE_OBJS := \
 	dragonsphere/rooms/room909.o \
 	dragonsphere/sound/asound.o \
 	dragonsphere/sound/asound_dragonsphere.o \
+	dragonsphere/sound/gsound.o \
+	dragonsphere/sound/gsound_dragonsphere.o \
+	dragonsphere/sound/psound.o \
+	dragonsphere/sound/psound_dragonsphere.o \
 	dragonsphere/sound/rsound.o \
 	dragonsphere/sound/rsound_dragonsphere.o \
 	dragonsphere/sound/sound.o \

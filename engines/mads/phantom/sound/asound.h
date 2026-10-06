@@ -26,6 +26,7 @@
 #include "common/mutex.h"
 #include "common/queue.h"
 #include "common/util.h"
+#include "mads/core/native_sound_timer.h"
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
@@ -132,6 +133,8 @@ struct AdlibSample {
 class ASound : public SoundDriver {
 private:
 	OPL::OPL *_opl;
+	NativeSoundTimer _hostTimer;
+	bool _noiseEnabled = false;
 	uint16 _callbackCounter = 0;		// Period counter
 	uint16 _callbackPeriod = 0;			// Period reload
 	AdlibChannel *_activeChannelPtr = NULL;
@@ -144,6 +147,7 @@ private:
 	int16 _resultFlag = 0;
 	uint16 _randomSeed = 0x4D2;
 	uint8  _isDisabled = 0;
+	int _masterVolume = 255;
 	uint8  _findChannelMode = 0;		// findFreeChannel mode
 	uint8  _ch5SweepLive = 0;			// Channel5 savedFreqSweep shadow
 	uint8  _ch5SweepSaved = 0;			// Channel5 savedFreqSweep shadow 2
@@ -190,6 +194,7 @@ private:
 	 *   >= 0x18 -> patch-attenuation-aware mapping using _patchAttenToTL table
 	 */
 	void writeVolume();
+	void refreshVolumes();
 
 	/**
 	 * Computes the OPL F-number / block (octave) from the channel's note,
@@ -305,6 +310,18 @@ protected:
 	 * Polls all the channels
 	 */
 	void pollAllChannels();
+
+	/**
+	 * Applies game-specific state reset alongside the shared driver reset.
+	 */
+	virtual void resetGameState() {
+	}
+
+	/**
+	 * Runs game-specific controller work after the channel poll.
+	 */
+	virtual void tickGameCallback() {
+	}
 
 	/**
 	 * Per-channel update, called once per frame by pollAllChannels.
@@ -431,8 +448,9 @@ protected:
 	/**
 	 * Calls a function at a fixed offset within the sound driver.
 	 * @param offset		Offset of the function
+	 * @param channel	Channel which encountered the callback opcode
 	 */
-	virtual void callFunction(uint16 offset);
+	virtual void callFunction(uint16 offset, AdlibChannel &channel);
 
 public:
 	/**
@@ -471,9 +489,7 @@ public:
 	 */
 	void noise() override;
 
-	void setVolume(int volume) override {
-		// TODO: Does this need implementation?
-	}
+	void setVolume(int volume) override;
 };
 
 } // namespace Sound

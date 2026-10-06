@@ -25,6 +25,8 @@
 #include "harvester/npc/dialogue_flags.h"
 #include "harvester/npc/dialogue_runtime.h"
 
+#include "common/util.h"
+
 namespace Harvester {
 
 namespace {
@@ -70,7 +72,7 @@ Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				{ 0x1598, kMcknightNpc, 2 },
 				{ 0x159d, kPcSpeaker, 0 }
 			};
-			return playSequence(lines, sizeof(lines) / sizeof(lines[0]));
+			return playSequence(lines, ARRAYSIZE(lines));
 		}
 		return playMcknightLine(0x15e4);
 	}
@@ -116,7 +118,7 @@ Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			{ 0x162b, kPcSpeaker, 4 },
 			{ 0x1631, kMcknightNpc, 0 }
 		};
-		return playSequence(lines, sizeof(lines) / sizeof(lines[0]));
+		return playSequence(lines, ARRAYSIZE(lines));
 	}
 
 	return playMcknightLine(0x15de);

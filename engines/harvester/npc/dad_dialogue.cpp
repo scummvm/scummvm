@@ -22,7 +22,9 @@
 
 #include "harvester/npc/dad_dialogue.h"
 
+#include "harvester/harvester.h"
 #include "harvester/npc/dialogue_runtime.h"
+#include "harvester/text.h"
 
 namespace Harvester {
 
@@ -31,14 +33,45 @@ namespace {
 static const char *const kDadNpc = "DAD";
 static const char *const kPcSpeaker = "PC";
 static const char *const kInventoryOwnerName = "INVENTORY";
+static const char *const kEnglishDadIntroResponseMenu = "1. I'd like that./2. I'd rather not.";
+static const int kFrenchDadIntroResponseMenuLineIndex = 0x328;
 static const char *const kDialogueC011FstPath = "GRAPHIC/FST/C011.FST";
 static const char *const kDialogueC112S4FstPath = "GRAPHIC/FST/C112S4.FST";
+static const char *const kDialogueC112S7FstPath = "GRAPHIC/FST/C112S7.FST";
 
 static const DialogueLineEntry kDadIntroLines[] = {
 	{ 0x39a5, kDadNpc, 0 },
 	{ 0x39a9, kPcSpeaker, 0 },
 	{ 0x39ad, kDadNpc, 0 },
 	{ 0x39b1, kPcSpeaker, 2 }
+};
+
+static const DialogueLineEntry kDadIntroContinuationLines[] = {
+	{ 0x39b5, kDadNpc, 0 },
+	{ 0x39ba, kPcSpeaker, 3 }
+};
+
+static const DialogueLineEntry kDadOfferPromptLines[] = {
+	{ 0x39c2, kPcSpeaker, 2 },
+	{ 0x39c6, kDadNpc, 0 }
+};
+
+static const DialogueLineEntry kDadOfferAcceptedLines[] = {
+	{ 0x39d3, kDadNpc, 0 },
+	{ 0x39d4, kDadNpc, 0 },
+	{ 0x39d5, kDadNpc, 0 },
+	{ 0x39d6, kDadNpc, 0 },
+	{ 0x39d7, kDadNpc, 0 }
+};
+
+static const DialogueLineEntry kDadOfferClosingLines[] = {
+	{ 0x39e6, kPcSpeaker, 0 },
+	{ 0x39eb, kDadNpc, 0 }
+};
+
+static const DialogueLineEntry kDadMeatPermissionUnavailableLines[] = {
+	{ 0x39fe, kPcSpeaker, 0 },
+	{ 0x3a02, kDadNpc, 0 }
 };
 
 static const DialogueLineEntry kDadWhaleyPhotoLines[] = {
@@ -63,6 +96,24 @@ static const DialogueLineEntry kDadLodgeTopicLines[] = {
 	{ 0x3a83, kPcSpeaker, 0 },
 	{ 0x3a88, kDadNpc, 0 }
 };
+
+static Common::String getDadIntroResponseMenu(DialogueRuntime &runtime) {
+	if (runtime.engine().getLanguage() == Common::FR_FRA) {
+		const Common::Array<Common::String> &responseLines =
+			runtime.startupText().getDialogueResponseLines();
+		if (responseLines.empty())
+			return kEnglishDadIntroResponseMenu;
+
+		if (responseLines.size() > (uint)kFrenchDadIntroResponseMenuLineIndex)
+			return responseLines[kFrenchDadIntroResponseMenuLineIndex];
+
+		// The French executable requests DIALOG.RSP[0x328], but failed reads past
+		// its 807-line file leave the final line in the native reader's buffer.
+		return responseLines[responseLines.size() - 1];
+	}
+
+	return kEnglishDadIntroResponseMenu;
+}
 
 } // End of namespace
 
@@ -144,26 +195,79 @@ Common::Error DadDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return playDadLine(0x3a32);
 	}
 
+	Common::Error lineError = Common::kNoError;
 	if (state.introPending) {
 		sharedState.dialogueStateD2ed0 = true;
 		state.introPending = false;
 
-		Common::Error lineError = playSequence(kDadIntroLines, ARRAYSIZE(kDadIntroLines));
+		lineError = playSequence(kDadIntroLines, ARRAYSIZE(kDadIntroLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		sharedState.dialogueStateD2f04 = true;
-		return playDadLine(0x39b5);
-	}
-
-	Common::Error lineError = playDadLine(0x3a17);
-	if (lineError.getCode() != Common::kNoError)
-		return lineError;
-
-	if (sharedState.dadMeatPermissionState != 0) {
-		lineError = playDadMeatPermissionConversion();
+		lineError = playSequence(kDadIntroContinuationLines,
+			ARRAYSIZE(kDadIntroContinuationLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+
+		lineError = runtime.playDialogueFst(kDialogueC112S7FstPath);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		lineError = playSequence(kDadOfferPromptLines, ARRAYSIZE(kDadOfferPromptLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		const Common::String responseMenu = getDadIntroResponseMenu(runtime);
+		Common::Error responseError = runtime.runResponseMenuText(
+			responseMenu, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playSequence(kDadOfferAcceptedLines,
+				ARRAYSIZE(kDadOfferAcceptedLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else if (responseIndex == 2) {
+			lineError = playDadLine(0x39e0);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		lineError = playSequence(kDadOfferClosingLines, ARRAYSIZE(kDadOfferClosingLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		if (sharedState.dadMeatPermissionState != 0) {
+			lineError = playDadMeatPermissionConversion();
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else {
+			lineError = playSequence(kDadMeatPermissionUnavailableLines,
+				ARRAYSIZE(kDadMeatPermissionUnavailableLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			lineError = runtime.playDialogueFst(kDialogueC011FstPath);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			lineError = playDadLine(0x3a0f);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+	} else {
+		lineError = playDadLine(0x3a17);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		if (sharedState.dadMeatPermissionState != 0) {
+			lineError = playDadMeatPermissionConversion();
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
 	}
 
 	const Common::String emptyKeywordList;

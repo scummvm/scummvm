@@ -485,6 +485,9 @@ uint16 QuickTimeDecoder::VideoTrackHandler::getHeight() const {
 }
 
 Graphics::PixelFormat QuickTimeDecoder::VideoTrackHandler::getPixelFormat() const {
+	if (!((VideoSampleDesc *)_parent->sampleDescs[0])->_videoCodec)
+		return Graphics::PixelFormat::createFormatCLUT8(); // Safe fallback
+
 	// TODO: What should happen if there are multiple codecs with different formats?
 	return ((VideoSampleDesc *)_parent->sampleDescs[0])->_videoCodec->getPixelFormat();
 }

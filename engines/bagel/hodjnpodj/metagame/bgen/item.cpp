@@ -268,7 +268,7 @@ CItem::~CItem() {
 
 	while (m_pNotes != nullptr) {                      // remove all associated notes
 		pNote = m_pNotes;
-		m_pNotes = (*pNote).m_pNext;
+		m_pNotes = pNote->m_pNext;
 		delete pNote;
 	}
 }
@@ -332,9 +332,9 @@ bool CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
 
 	pNote = new CNote(nID, nClue, nRepeat, nPerson, nPlace);    // create the note object
 	if (pNote != nullptr) {                            // ... and add it to the list
-		(*pNote).m_pNext = m_pNotes;                // make head of list follow us
+		pNote->m_pNext = m_pNotes;                // make head of list follow us
 		if (m_pNotes != nullptr)                       // have list point back at us
-			(*m_pNotes).m_pPrev = pNote;
+			m_pNotes->m_pPrev = pNote;
 		m_pNotes = pNote;                           // make us be new head of list
 		bSuccess = true;
 	}
@@ -361,9 +361,9 @@ bool CItem::AddNote(CNote *pNote) {
 	bool    bSuccess = false;
 
 	if (pNote != nullptr) {                            // ... and add it to the list
-		(*pNote).m_pNext = m_pNotes;                // make head of list follow us
+		pNote->m_pNext = m_pNotes;                // make head of list follow us
 		if (m_pNotes != nullptr)                       // have list point back at us
-			(*m_pNotes).m_pPrev = pNote;
+			m_pNotes->m_pPrev = pNote;
 		m_pNotes = pNote;                           // make us be new head of list
 		bSuccess = true;
 	}

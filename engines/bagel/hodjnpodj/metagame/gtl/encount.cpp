@@ -611,16 +611,16 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, bool bHodj, CInventory *pInvento
 			nRandom = brand() % RAND_FACTOR;
 			if (nTestProb >= nRandom) {                                        // If we are in the probability percentage...
 				// check ItemCount(), set Item flag
-				pItem = (*pInventory).FindItem(MG_OBJ_MISH);                    // See if they have mish or mosh
+				pItem = pInventory->FindItem(MG_OBJ_MISH);                    // See if they have mish or mosh
 				if (pItem != nullptr)                                              // don't count crowns and notebook
-					nItems = (*pInventory).ItemCount() - INVENT_MIN_ITEM_COUNT - ENC_MISHMOSH; // and Mish & Mosh
+					nItems = pInventory->ItemCount() - INVENT_MIN_ITEM_COUNT - ENC_MISHMOSH; // and Mish & Mosh
 				else
-					nItems = (*pInventory).ItemCount() - INVENT_MIN_ITEM_COUNT;     // don't count crowns and notebook
-				pItem = (*pInventory).FindItem(MG_OBJ_CROWN);               // get money item obj, set Money int to am't
+					nItems = pInventory->ItemCount() - INVENT_MIN_ITEM_COUNT;     // don't count crowns and notebook
+				pItem = pInventory->FindItem(MG_OBJ_CROWN);               // get money item obj, set Money int to am't
 				if (pItem == nullptr)
 					lCrowns = 0;
 				else
-					lCrowns = (int)(*pItem).GetQuantity();
+					lCrowns = (int)pItem->GetQuantity();
 
 				// players crowns in his inventory is bogus if this fails
 				assert(lCrowns >= 0);
@@ -663,9 +663,9 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, bool bHodj, CInventory *pInvento
 							if (lCrowns < 0)                                        // If we end up with negative
 								lCrowns = 0;                                        //...crowns, make it zero
 
-							pItem = (*pInventory).FindItem(MG_OBJ_CROWN);           // get money item obj
+							pItem = pInventory->FindItem(MG_OBJ_CROWN);           // get money item obj
 							if (pItem != nullptr)                                      //...if successful
-								(*pItem).SetQuantity(lCrowns);                      //...set Money int to am't
+								pItem->SetQuantity(lCrowns);                      //...set Money int to am't
 							CItemDialog ItemDlg(pWnd, pPalette, pItem, bHodj, (nRandFactor > 0) ? true : false, nChangeAmount);
 							i++;                                                    // skip the one we just read in
 						} else if (Encounters[nID].m_Actions[i] == MG_ACT_OBJECT) { // Trap effects the inventory
@@ -678,34 +678,34 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, bool bHodj, CInventory *pInvento
 									pTryOne = pPawn;
 									pTryTwo = pGeneral;
 								}
-								if ((*pTryOne).ItemCount() > 0) {                   // If the first one has items
-									nItems = (*pTryOne).ItemCount();                // How many items
-									pItem = (*pTryOne).FetchItem(brand() % nItems);  // Get one and
-									(*pTryOne).RemoveItem(pItem);                   //...remove it to pItem
+								if (pTryOne->ItemCount() > 0) {                   // If the first one has items
+									nItems = pTryOne->ItemCount();                // How many items
+									pItem = pTryOne->FetchItem(brand() % nItems);  // Get one and
+									pTryOne->RemoveItem(pItem);                   //...remove it to pItem
 								} else {                                            // Otherwise, get the first
-									nItems = (*pTryTwo).ItemCount();                // How many items
-									pItem = (*pTryTwo).FetchItem(brand() % nItems);  // Get one and
-									(*pTryTwo).RemoveItem(pItem);                   //...and remove _it_ to pItem
+									nItems = pTryTwo->ItemCount();                // How many items
+									pItem = pTryTwo->FetchItem(brand() % nItems);  // Get one and
+									pTryTwo->RemoveItem(pItem);                   //...and remove _it_ to pItem
 								}
-								(*pInventory).AddItem(pItem);                       // And put pItem in the player's
+								pInventory->AddItem(pItem);                       // And put pItem in the player's
 								CItemDialog ItemDlg(pWnd, pPalette, pItem, bHodj, true, 1);
 							}                                                       //...backpack Inventory
 							else {                                                  // Otherwise, he loses an item
-								nItems = (*pInventory).ItemCount() - INVENT_MIN_ITEM_COUNT;     // don't count crowns and notebook
+								nItems = pInventory->ItemCount() - INVENT_MIN_ITEM_COUNT;     // don't count crowns and notebook
 								bDone = false;
 								while (!bDone) {
 									assert(nItems != 0);
-									pItem = (*pInventory).FetchItem(INVENT_MIN_ITEM_COUNT + brand() % nItems);   // Get one
+									pItem = pInventory->FetchItem(INVENT_MIN_ITEM_COUNT + brand() % nItems);   // Get one
 									if ((pItem != nullptr) &&                          //...make sure it's valid
 									        ((pItem->GetID() != MG_OBJ_MISH) &&
 									         (pItem->GetID() != MG_OBJ_MOSH))) {
 
-										(*pInventory).RemoveItem(pItem);            // Remove it from the backpack
+										pInventory->RemoveItem(pItem);            // Remove it from the backpack
 										nPick = brand() % 2;                         //...get a random destination
 										if (nPick == 0)
-											(*pGeneral).AddItem(pItem);             //...and put it there
+											pGeneral->AddItem(pItem);             //...and put it there
 										else
-											(*pPawn).AddItem(pItem);
+											pPawn->AddItem(pItem);
 										CItemDialog ItemDlg(pWnd, pPalette, pItem, bHodj, false, 1);
 										bDone = true;
 									} // end if
@@ -872,8 +872,8 @@ bool PlayEncounter(CWnd *pWnd, int nID) {
 	if (pNarration == nullptr)
 		return false;
 
-	(*pNarration).setDrivePath(lpMetaGameStruct->m_chCDPath);
-	(*pNarration).play();                                           //...play the narration
+	pNarration->setDrivePath(lpMetaGameStruct->m_chCDPath);
+	pNarration->play();                                           //...play the narration
 	if (nID < MG_TRAP_COUNT)                                            // For Booby Traps:
 		CSound::waitWaveSounds();
 

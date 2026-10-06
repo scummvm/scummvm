@@ -337,9 +337,6 @@ public:
 		kGfxAntialias  ///< Optimized AA renderer.
 	};
 
-	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
-	static const int kDirtyRectangleThreshold = 1;
-
 	struct Renderer {
 		const char *name;
 		const char *shortname;
@@ -759,6 +756,13 @@ protected:
 	 * to the given base rect. Includes background and shadow offsets.
 	 */
 	Common::Rect getDrawDataExtendedRect(DrawData type, const Common::Rect &r) const;
+
+	/**
+	 * Compute the rectangle to restore from the backbuffer for a given draw data
+	 * type applied to the given base rect. Covers the item and the ones drawn on
+	 * top of it, but not its own edge and shadow.
+	 */
+	Common::Rect getDrawDataRestoreRect(DrawData type, const Common::Rect &r) const;
 
 	/**
 	 * DEBUG: Draws a white square and writes some text next to it.

@@ -29,8 +29,19 @@
 namespace MADS {
 namespace AnimView {
 
+enum BoundaryLineMode {
+	kBoundaryLinesFromResource,
+	kBoundaryLinesHidden,
+	kBoundaryLinesShown
+};
+
+struct Presentation {
+	int bufferHeight;
+	BoundaryLineMode boundaryLines;
+	bool serviceFramesInline;
+};
+
 // Variables shared with other AnimView namespace files
-extern Audio::AudioStream *speechStream;
 extern int speechFlags;
 extern int current_error_code;
 extern int currentFrame, minFrame, maxFrame;
@@ -51,12 +62,15 @@ extern int imageFrame;
 extern CycleList anim_cycle_list;
 extern bool has_cycles;
 extern int currentViewX, currentViewY;
+extern int boundaryLineColor;
 extern int concat_mode;
 extern bool wait_for_music_at_end;
 extern bool stop_music_at_end;
+extern bool hasSpeechAudio;
+extern int speechResourceId;
 
 // Main animview function
-extern void animview_main(const char *resName);
+extern void animview_main(const char *resName, const Presentation &presentation);
 
 } // namespace AnimView
 } // namespace MADS

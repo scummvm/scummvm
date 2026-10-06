@@ -31,6 +31,10 @@ LibretroTimerManager::LibretroTimerManager(uint32 refresh_rate) {
 void LibretroTimerManager::switchThread(uint8 caller) {
 	_spentOnMainThread = g_system->getMillis();
 	_threadSwitchCaller = caller;
+#ifdef USE_OPENGL
+	if (retro_consume_context_reset())
+		LIBRETRO_G_SYSTEM->resetGraphicsContext();
+#endif
 	LIBRETRO_G_SYSTEM->refreshScreen();
 	retro_switch_to_main_thread();
 	_spentOnMainThread = g_system->getMillis() - _spentOnMainThread;

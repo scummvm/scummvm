@@ -60,7 +60,7 @@ long timer_read() {
 	// by pointing timer_address at the interrupt handler's timer_60_low counter;
 	// here we derive the same rate directly from wall-clock milliseconds.
 	unsigned long ms = g_engine->getMillis();
-	return (long)(ms * 60 / 1000);
+	return (long)(ms * TIMER_TICKS_PER_SECOND / 1000);
 }
 
 long timer_read_600() {
@@ -70,7 +70,7 @@ long timer_read_600() {
 
 long timer_read_60() {
 	unsigned long ms = g_engine->getMillis();
-	return ms * 60 / 1000;
+	return ms * TIMER_TICKS_PER_SECOND / 1000;
 }
 
 void timer_set_sound_flag(int sound_flag) {

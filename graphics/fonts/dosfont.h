@@ -34,6 +34,10 @@ public:
 	int getMaxCharWidth() const override;
 	int getCharWidth(uint32 chr) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	void drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override {
+		return Graphics::Font::drawChar(dst, chr, x, y, color);
+	}
+
 public:
 // 8x8 font patterns
 

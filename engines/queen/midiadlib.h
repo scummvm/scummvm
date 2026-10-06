@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef QUEEN_MIDIADLIB_H
+#define QUEEN_MIDIADLIB_H
+
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
 
@@ -125,3 +128,5 @@ private:
 };
 
 } // End of namespace Queen
+
+#endif // QUEEN_MIDIADLIB_H

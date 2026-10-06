@@ -259,6 +259,7 @@ struct EoBMenuButtonDef {
 };
 
 class EoBInfProcessor;
+class Automap_EoB;
 
 class EoBCoreEngine : public KyraRpgEngine {
 friend class TextDisplayer_rpg;
@@ -652,6 +653,10 @@ protected:
 	void drawSceneShapes(int start = 0, int end = 18, int drawFlags = 0xFF);
 	void drawDecorations(int index);
 
+	// Automap (non-original): a north-up map toggled with Tab
+	Automap_EoB *_automap;
+	uint32 _hasTempDataMapFlags;
+
 	int calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction);
 	void notifyBlockNotPassable();
 	void increaseStepsCounter();
@@ -699,7 +704,7 @@ protected:
 	const uint8 *_dscItemPosIndex;
 	const int16 *_dscItemShpX;
 	const uint8 *_dscItemScaleIndex;
-	const uint8 *_dscItemTileIndex;
+	const int8 *_dscItemTileIndex;
 	const uint8 *_dscItemShapeMap;
 
 	const uint8 *_dscDoorScaleMult1;
@@ -739,10 +744,10 @@ protected:
 	uint8 _scriptTimersMode;
 
 	// Gui
-	virtual void gui_drawPlayField(bool refresh);
+	virtual void gui_drawPlayField(bool refresh, bool screenUpdt = true);
 	virtual void gui_setupPlayFieldHelperPages(bool keepText = false);
 	void gui_restorePlayField();
-	void gui_drawAllCharPortraitsWithStats();
+	void gui_drawAllCharPortraitsWithStats(bool screenUpdt = true);
 	void gui_drawCharPortraitWithStats(int index, bool screenUpdt = true);
 	void gui_drawFaceShape(int index);
 	void gui_drawWeaponSlot(int charIndex, int slot);
@@ -797,6 +802,7 @@ protected:
 	int clickedSceneSpecial(Button *button);
 	int clickedSpellbookAbort(Button *button);
 	int clickedSpellbookScroll(Button *button);
+	int clickedAutomap(Button *button);
 	int clickedButtonReturnIndex(Button *button);
 
 	void gui_processCharPortraitClick(int index);
@@ -857,6 +863,7 @@ protected:
 	bool _configADDRuleEnhancements;
 	bool _configEnhancedReload;
 	bool _configNPCPatch;
+	bool _configAutomap; // non-original: in-game automap overlay enabled (opt-out)
 
 	Graphics::Surface _thumbNail;
 
@@ -963,12 +970,15 @@ protected:
 	Common::String readOriginalSaveFile(const Common::Path &file);
 	bool saveAsOriginalSaveFile(int slot = -1);
 
-	void *generateMonsterTempData(LevelTempData *tmp) override;
+	const void *generateMonsterTempData(uint8 &monsterDifficulty) const override;
 	void restoreMonsterTempData(LevelTempData *tmp) override;
 	void releaseMonsterTempData(LevelTempData *tmp) override;
-	void *generateWallOfForceTempData(LevelTempData *tmp) override;
+	const void *generateWallOfForceTempData() const override;
 	void restoreWallOfForceTempData(LevelTempData *tmp) override;
 	void releaseWallOfForceTempData(LevelTempData *tmp) override;
+	const void *generateAutoMapTempData() override;
+	void restoreAutoMapTempData(LevelTempData *tmp) override;
+	void releaseAutoMapTempData(LevelTempData *tmp) override;
 
 	const char *const *_saveLoadStrings;
 

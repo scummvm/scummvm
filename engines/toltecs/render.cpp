@@ -62,7 +62,7 @@ void RenderQueue::addSprite(SpriteDrawItem &sprite) {
 
 	// Add sprite sorted by priority
 	RenderQueueArray::iterator iter = _currQueue->begin();
-	while (iter != _currQueue->end() && (*iter).priority <= item.priority) {
+	while (iter != _currQueue->end() && iter->priority <= item.priority) {
 		++iter;
 	}
 	_currQueue->insert(iter, item);
@@ -101,7 +101,7 @@ void RenderQueue::addMask(SegmapMaskRect &mask) {
 	// Only add the mask if a sprite intersects its rect
 	if (rectIntersectsItem(item.rect)) {
 		RenderQueueArray::iterator iter = _currQueue->begin();
-		while (iter != _currQueue->end() && (*iter).priority <= item.priority) {
+		while (iter != _currQueue->end() && iter->priority <= item.priority) {
 			++iter;
 		}
 		_currQueue->insert(iter, item);

@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_CUBEPUZZLE_H
 #define NANCY_ACTION_CUBEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
@@ -31,9 +31,9 @@ namespace Action {
 // Similar idea to AssemblyPuzzle; the player is provided with broken pieces of
 // a cube, and has to assemble it back together. However, the data is completely
 // different to AssemblyPuzzle's, so we need separate implementations.
-class CubePuzzle : public RenderActionRecord {
+class CubePuzzle : public PuzzleRecord {
 public:
-	CubePuzzle() : RenderActionRecord(7) {}
+	CubePuzzle() : PuzzleRecord(7) {}
 	virtual ~CubePuzzle() {}
 
 	void init() override;
@@ -49,8 +49,6 @@ protected:
 	Common::String getRecordTypeName() const override { return "CubePuzzle"; }
 
 	void rotateBase(int dir);
-
-	Common::Path _imageName;
 
 	Common::Rect _cwCursorDest;
 	Common::Rect _ccwCursorDest;
@@ -80,13 +78,7 @@ protected:
 
 	// Multiple solve scenes, one for each cube orientation
 	Common::Array<uint> _solveSceneIDs;
-	SceneChangeWithFlag _solveScene;
-	SoundDescription _solveSound;
 
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
-
-	Graphics::ManagedSurface _image;
 	Misc::MouseFollowObject _curPiece;
 
 	Common::Array<bool> _placedPieces;

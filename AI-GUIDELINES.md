@@ -16,9 +16,15 @@ assistance when contributing to the ScummVM project.
  - No slop. Do not submit code changes that solely rely on "vibe coding" without
    understanding the generated code.
 
+ - AI must be restrained to write the appropriate amount of code comments. Lengthy LLM-oriented explanations are forbidden.
+
  - AI assistance MUST be disclosed in the commit message. See "Attribution".  
    Using AI assistance repeatedly without disclosure or with the goal of appearing
    more capable than you actually are WILL have consequences, up to a permanent ban on the ScummVM project resources.
+
+ - Use of AI-assisted tooling to write extensive parts of code is reserved for established team members who are experienced with the codebase and its conventions.
+
+ - Every commit and PR must be done by humans and with proper scoping. All messages must be written by a human being.
 
  - Code MUST NOT be authored by an AI agent. Even with using AI assistance, you are the sole author of the code you submit. AI agents must never have (Co-) authorship of your code.
 

@@ -169,7 +169,7 @@ static void room_607_init() {
 		kernel_seq_range(seq[fx_down], KERNEL_FIRST, KERNEL_LAST);
 		kernel_seq_trigger(seq[fx_down], KERNEL_TRIGGER_EXPIRE, 0, ROOM_607_DONE_UP);
 
-	} else if (previous_room == 604 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = PLAYER_X_FROM_606;
 		player.y = PLAYER_Y_FROM_606;
 		player.facing = FACING_NORTH;

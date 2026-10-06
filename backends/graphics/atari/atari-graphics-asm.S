@@ -267,7 +267,7 @@ SYM(asm_draw_8bpl_sprite):
 	move.l	(36+7*4,sp),d7			| d7.w: h
 	tst.l	(40+7*4,sp)			| skipFirstPix16?
 	sne	skip_first_pix16
-	tst.l	(45+7*4,sp)			| skipLastPix16?
+	tst.l	(44+7*4,sp)			| skipLastPix16?
 	sne	skip_last_pix16
 #endif
 	move.w	d0,d2				| / Calculate the

@@ -40,7 +40,6 @@ namespace MADS {
 #define FROM_DISK                     1       /* Read disk    */
 #define TO_MEMORY                     0       /* Write memory */
 #define TO_DISK                       1       /* Write disk   */
-#define TO_EMS                        2       /* Write EMS    */
 
 #define PACK_NONE                     0       /* No compression */
 #define PACK_PFAB                     1       /* Dave's Stuff   */
@@ -134,10 +133,6 @@ extern byte pack_zip_enabled;           /* ZIP packing enabled           */
 extern byte pack_pfab_enabled;          /* PFAB packing enabled          */
 extern int  pack_strategy;              /* Current packing strategy      */
 
-extern int pack_ems_page_handle;
-extern int pack_ems_page_marker;
-extern int pack_ems_page_offset;
-
 /* All compression routines called through function pointers, so that */
 /* we can determine at compile time which compression modules will be */
 /* linked.                                                            */
@@ -211,10 +206,8 @@ extern word pack_a_packet(int packing_flag, int explode_mode);
  * source          If FROM_DISK, then this is a FILE *handle.
  * If FROM_MEMORY, this is a far memory pointer.
  * dest_type       Specifies the destination type:
- * TO_DISK, TO_MEMORY, or TO_EMS.
- * dest            Same as "source" but for destination. For
- * TO_EMS, "dest" is a far pointer to an
- * EmsPtr structure.
+ * TO_DISK or TO_MEMORY.
+ * dest            Same as "source" but for destination.
  * Example:
  * result =pack_data (PACK_EXPLODE, 132000,
  * FROM_DISK, file_handle,
@@ -250,7 +243,6 @@ extern void pack_enable_pfab();
 extern void pack_enable_pfab_explode();
 extern void pack_enable_zip_explode();
 extern long pack_rle(byte *target, byte *source, word source_size);
-extern word pack_write_ems(char *buffer, word *mysize);
 
 } // namespace MADS
 

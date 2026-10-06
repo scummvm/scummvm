@@ -203,7 +203,7 @@ Common::String GlkMetaEngineDetection::findFileByGameId(const Common::String &ga
 
 		// If a detection was found with the correct game Id, we have a winner
 		if (!games.empty() && games.front().gameId == gameId)
-			return (*i).getName();
+			return i->getName();
 	}
 
 	// No match found

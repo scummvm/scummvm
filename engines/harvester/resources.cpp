@@ -319,12 +319,11 @@ Common::SeekableReadStream *ResourceManager::openFile(const Common::String &path
 		}
 	} else {
 		const Common::Path memberPath(normalized, '/');
-		stream = openFromMountedArchives(memberPath);
-		if (!stream) {
-			const Common::String loosePath = resolveDiscLooseResourcePath(_currentDisc, normalized);
-			if (!loosePath.empty())
-				stream = SearchMan.createReadStreamForMember(Common::Path(loosePath, '/'));
-		}
+		const Common::String loosePath = resolveDiscLooseResourcePath(_currentDisc, normalized);
+		if (!loosePath.empty())
+			stream = SearchMan.createReadStreamForMember(Common::Path(loosePath, '/'));
+		if (!stream)
+			stream = openFromMountedArchives(memberPath);
 	}
 
 	debugC(3, kDebugResources, "Harvester: openFile(disc=%d, '%s' -> '%s') %s",

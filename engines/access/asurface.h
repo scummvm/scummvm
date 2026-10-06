@@ -150,7 +150,7 @@ public:
 	SpriteResource(const AccessEngine *vm, Resource *res);
 	~SpriteResource();
 
-	int getCount() { return _frames.size(); }
+	int getCount() const { return _frames.size(); }
 
 	const SpriteFrame *getFrame(int idx) const { return _frames[idx]; }
 };

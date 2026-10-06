@@ -52,10 +52,12 @@ protected:
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, bool resizable, int antialiasing) override;
 	void showOverlay(bool inGUI) override;
 	void hideOverlay() override;
+	void applyTouchSettings() const;
 
 	void refreshScreen() override;
 
 	int _old_touch_mode;
+	bool _rendering3d;
 	WindowedGraphicsManager::Insets _insets;
 };
 

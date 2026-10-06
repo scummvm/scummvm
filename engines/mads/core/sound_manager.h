@@ -22,10 +22,12 @@
 #ifndef MADS_CORE_SOUND_MANAGER_H
 #define MADS_CORE_SOUND_MANAGER_H
 
+#include "audio/mt32gm.h"
 #include "common/array.h"
 #include "common/memstream.h"
 #include "common/mutex.h"
 #include "common/queue.h"
+#include "native_sound_timer.h"
 
 namespace Audio {
 class Mixer;
@@ -51,6 +53,13 @@ protected:
 	explicit SoundDriver(Audio::Mixer *mixer) : _mixer(mixer) {}
 
 public:
+	/**
+	 * Loads a driver data block from an absolute file offset.
+	 *
+	 * For DOS MZ overlays, dataOffset includes the executable header. Offsets
+	 * passed to getDataStream() and stored in sequence data are relative to
+	 * the loaded block instead.
+	 */
 	SoundDriver(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize);
 	virtual ~SoundDriver() {}
@@ -86,16 +95,28 @@ public:
 
 class SoundManager {
 protected:
-	enum DriverType { SOUND_ADLIB, SOUND_MT32, SOUND_PCSPEAKER };
+	struct QueuedCommand {
+		int _commandId;
+		int _param;
+	};
+
+	// Number of microseconds between driver updates (60 Hz frequency)
+	static const uint32 UPDATE_DELTA;
+
+	enum DriverType { SOUND_ADLIB, SOUND_MT32, SOUND_GM, SOUND_PCSPEAKER, SOUND_PAS };
 	Audio::Mixer *_mixer;
 	DriverType _driverType;
+	MidiDriver_MT32GM *_midiDriver;
+	uint32 _driverCallbackDelta;
+	uint32 _updateDeltaRemainder;
+
 	bool &_soundFlag;
 	SoundDriver *_driver = nullptr;
-	bool _pollSoundEnabled = false;
-	bool _soundPollFlag = false;
 	bool _newSoundsPaused = false;
-	Common::Queue<int> _queuedCommands;
+	Common::Queue<QueuedCommand> _queuedCommands;
 	int _masterVolume = 255;
+
+	NativeSoundTimer _hostTimer;
 
 protected:
 	/**
@@ -105,10 +126,9 @@ protected:
 	virtual void loadDriver(int sectionNum) = 0;
 
 public:
-	SoundManager(Audio::Mixer *mixer, bool &soundFlag);
+	SoundManager(Audio::Mixer *mixer, bool &soundFlag,
+			bool supportsGeneralMidi = false);
 	virtual ~SoundManager();
-
-	//bool _preferRoland = false;
 
 	/**
 	 * Validate the sound driver files needed for data
@@ -128,6 +148,18 @@ public:
 	}
 
 	/**
+	 * Returns whether the current driver reports an active sound.
+	 */
+	bool isDriverActive();
+
+	/**
+	 * Returns whether the selected driver family uses PC speaker data.
+	 */
+	bool usesPCSpeaker() const {
+		return _driverType == SOUND_PCSPEAKER;
+	}
+
+	/**
 	 * Stop any currently active sound and remove the driver
 	 */
 	void closeDriver();
@@ -138,12 +170,6 @@ public:
 	void removeDriver();
 
 	/**
-	 * Sets the enabled status of the sound
-	 * @flag		True if sound should be enabled
-	 */
-	void setEnabled(bool flag);
-
-	/**
 	 * Temporarily pause the playback of any new sound commands
 	 */
 	void pauseNewCommands();
@@ -151,7 +177,7 @@ public:
 	/**
 	 * Stop queueing sound commands, and execute any previously queued ones
 	 */
-	void startQueuedCommands();
+	virtual void startQueuedCommands();
 
 	/**
 	 * Set the master volume
@@ -178,6 +204,9 @@ public:
 	void noise();
 
 	//@}
+
+	void onTimer();
+	static void timerCallback(void *data);
 };
 
 } // namespace MADS

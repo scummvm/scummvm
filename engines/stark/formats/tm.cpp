@@ -46,7 +46,7 @@ public:
 		delete[] _palette;
 	}
 
-	const byte *getPalette() {
+	const byte *getPalette() const {
 		return _palette;
 	}
 
@@ -117,10 +117,14 @@ Gfx::Texture *Texture::acquireTexturePointer() {
 	return texture;
 }
 
-Graphics::Surface *Texture::getSurface() const {
+const Graphics::Surface &Texture::getSurface() const {
+	return _surface;
+}
+
+const byte *Texture::getPalette() const {
 	TextureGroup *textureGroup = static_cast<TextureGroup *>(_parent);
 
-	return _surface.convertTo(Gfx::Driver::getRGBAPixelFormat(), textureGroup->getPalette());
+	return textureGroup->getPalette();
 }
 
 Gfx::TextureSet *TextureSetReader::read(ArchiveReadStream *stream) {

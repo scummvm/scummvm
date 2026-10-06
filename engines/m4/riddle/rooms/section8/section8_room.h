@@ -43,7 +43,9 @@ protected:
 	int32 _byte1A19BC = 0;
 	int32 _field68 = 0;
 
-	// The array seems to be set and never read. Idem for the index
+	// _unkArrayIndex is the index of the position Mei Chen is standing at (or heading to).
+	// It selects the hotspot matching that position, see MEI_CHEN_HOTSPOTS in section8_room.cpp.
+	// The array itself seems to be set and never read.
 	int32 _unkArrayIndex = 0;
 	int32 _unkArray[8];
 

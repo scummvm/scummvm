@@ -198,7 +198,7 @@ private:
 	// GUI
 	int clickedCamp(Button *button) override;
 
-	void gui_drawPlayField(bool refresh) override;
+	void gui_drawPlayField(bool refresh, bool screenUpdt = true) override;
 	void gui_setupPlayFieldHelperPages(bool keepText = false) override;
 	void gui_drawWeaponSlotStatus(int x, int y, int status) override;
 	void gui_printInventoryDigits(int x, int y, int val) override;

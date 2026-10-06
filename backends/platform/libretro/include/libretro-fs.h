@@ -50,7 +50,7 @@ protected:
 	/**
 	 * Plain constructor, for internal use only (hence protected).
 	 */
-	LibRetroFilesystemNode() : _isDirectory(false), _isValid(false) {}
+	LibRetroFilesystemNode() : _isDirectory(false), _isValid(false), _isReadable(false), _isWritable(false) {}
 
 public:
 	/**
@@ -61,7 +61,7 @@ public:
 	LibRetroFilesystemNode(const Common::String &path);
 
 	virtual bool exists() const {
-		return access(_path.c_str(), F_OK) == 0;
+		return _isValid;
 	}
 	virtual Common::U32String getDisplayName() const {
 		return _displayName;
@@ -91,6 +91,13 @@ public:
 	virtual bool createDirectory();
 
 	static Common::String getHomeDir(void);
+	static Common::String getDefaultDir(void);
+	static Common::String getAuthorizedRootPath(void);
+	static void clearAuthorizedLocations(void);
+	static void addAuthorizedLocation(const Common::String &path, const Common::String &label);
+	static bool hasAuthorizedLocations(void);
+	static bool useAuthorizedRoot(void);
+	static bool isBrowserLastPathCompatible(const Common::String &path);
 private:
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.

@@ -154,15 +154,13 @@ static void room_220_anim2() {
 		digi_play_build(220, '_', 3, 2);
 		break;
 	case 28:
+	case 46:
+	case 54:
 		digi_play_build(220, '_', 1, 2);
 		break;
 	case 30:
 		digi_play_build(220, 'R', 2, 1);
 		scratch._9e = 2;
-		break;
-	case 46:
-	case 54:
-		digi_play_build(220, '_', 1, 2);
 		break;
 	case 55:
 		new_room = 221;

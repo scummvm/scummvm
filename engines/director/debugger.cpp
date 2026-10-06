@@ -33,6 +33,7 @@
 #include "director/util.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-profiler.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-object.h"
@@ -557,12 +558,12 @@ void Debugger::disasmAllCast(Cast *cast) {
 		if (cast->_lingoArchive->factoryContexts.empty()) {
 			debugPrintf("    [empty]\n");
 		} else {
-			for (auto it : cast->_lingoArchive->factoryContexts) {
+			for (const auto &it : cast->_lingoArchive->factoryContexts) {
 				debugPrintf("  %d:\n", it._key);
 				if (it._value->empty()) {
 					debugPrintf("    [empty]\n");
 				} else {
-					for (auto jt : *it._value) {
+					for (const auto &jt : *it._value) {
 						debugPrintf("    %s:\n", jt._key.c_str());
 						for (auto &kt : jt._value->_functionHandlers) {
 							debugPrintf("%s\n", g_lingo->formatFunctionBody(kt._value).c_str());
@@ -1350,6 +1351,8 @@ void Debugger::eventHook(LEvent eventId) {
 }
 
 void Debugger::pushContextHook() {
+	if (g_director->_lingoProfiler)
+		g_director->_lingoProfiler->onPushContext();
 	if (_next)
 		_nextCounter++;
 	if (_finish)
@@ -1358,6 +1361,8 @@ void Debugger::pushContextHook() {
 }
 
 void Debugger::popContextHook() {
+	if (g_director->_lingoProfiler)
+		g_director->_lingoProfiler->onPopContext();
 	if (_next && _nextCounter > 0)
 		_nextCounter--;
 	if (_finish)

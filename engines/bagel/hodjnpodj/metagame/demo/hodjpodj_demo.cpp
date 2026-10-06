@@ -140,14 +140,14 @@ void CHodjPodjDemoWindow::blackScreen() {
 	pDC->FillRect(&MainRect, &Brush);
 
 	if (pGamePalette != nullptr) {                                  // map in color palette to be used
-		pPalOld = (*pDC).SelectPalette(pGamePalette, false);
-		(*pDC).RealizePalette();
+		pPalOld = pDC->SelectPalette(pGamePalette, false);
+		pDC->RealizePalette();
 	}
 
 	pDC->FillRect(&MainRect, &Brush);
 
 	if (pPalOld != nullptr)                                 // relinquish the resources we built
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);
 }
@@ -179,13 +179,13 @@ void CHodjPodjDemoWindow::playMovie(const int nMovieId, const char *pszMovie, bo
 void CHodjPodjDemoWindow::startBackgroundMidi() {
 	if (pBackgroundMidi == nullptr) {
 		pBackgroundMidi = new CSound(this, LOGO_MIDI, SOUND_MIDI | SOUND_LOOP /* | SOUND_DONT_LOOP_TO_END */);
-		(*pBackgroundMidi).play();
+		pBackgroundMidi->play();
 	}
 }
 
 void CHodjPodjDemoWindow::stopBackgroundMidi() {
 	if (pBackgroundMidi != nullptr) {
-		(*pBackgroundMidi).stop();
+		pBackgroundMidi->stop();
 		delete pBackgroundMidi;
 		pBackgroundMidi = nullptr;
 	}

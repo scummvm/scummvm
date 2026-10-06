@@ -2451,7 +2451,7 @@ void EoBEngine::seq_xdeath() {
 	if (_flags.platform == Common::kPlatformSegaCD)
 		_screen->sega_fadeToBlack(7);
 	else
-		gui_drawPlayField(false);
+		gui_drawPlayField(false, false);
 	gui_drawAllCharPortraitsWithStats();
 }
 

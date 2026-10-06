@@ -69,7 +69,7 @@ void Renderer::initGL() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	auto perspectiveMatrix = Math::makePerspectiveMatrix(60.0, ratio, 1.0, 1024.0);;
+	auto perspectiveMatrix = Math::makePerspectiveMatrix(60.0, ratio, 1.0, 1024.0);
 	glLoadMatrixf(perspectiveMatrix.getData());
 }
 

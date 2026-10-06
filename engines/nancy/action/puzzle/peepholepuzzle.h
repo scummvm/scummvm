@@ -23,15 +23,16 @@
 #define NANCY_ACTION_PEEPHOLEPUZZLE_H
 
 #include "engines/nancy/action/autotext.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
 // Action record that, despite what its name suggests, is mostly used
 // to render Nancy's diary in nancy6 and up.
-class PeepholePuzzle : public RenderActionRecord {
+class PeepholePuzzle : public PuzzleRecord {
 public:
-	PeepholePuzzle() : RenderActionRecord(7) {}
+	PeepholePuzzle() : PuzzleRecord(7) {}
 	virtual ~PeepholePuzzle() {}
 
 	void init() override;
@@ -64,9 +65,6 @@ protected:
 
 	byte _pixelsToScroll = 0;
 
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
-
 	Graphics::ManagedSurface _innerImage;
 	Graphics::ManagedSurface _buttonsImage;
 
@@ -82,7 +80,9 @@ protected:
 // on the fly and replaces the TextScroll/AutotextEntryList
 class TextScroll : public Autotext, public PeepholePuzzle {
 public:
-	TextScroll(bool isEntryList) : _isEntryList(isEntryList) { _selfDisplay = false; _hasPlacementDescriptor = false; }
+	enum ScrollType { kTextScroll, kAutotextEntryList };
+
+	TextScroll(ScrollType scrollType) : _scrollType(scrollType) { _selfDisplay = false; _hasPlacementDescriptor = false; }
 
 	void init() override;
 	void execute() override { PeepholePuzzle::execute(); }
@@ -91,10 +91,10 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 
 protected:
-	Common::String getRecordTypeName() const override { return _isEntryList ? "AutotextEntryList" : "TextScroll"; }
+	Common::String getRecordTypeName() const override { return _scrollType == kAutotextEntryList ? "AutotextEntryList" : "TextScroll"; }
 	void readExtraData(Common::SeekableReadStream &stream) override;
 
-	bool _isEntryList;
+	ScrollType _scrollType;
 };
 
 } // End of namespace Action

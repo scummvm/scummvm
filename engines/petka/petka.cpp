@@ -83,7 +83,7 @@ Common::Error PetkaEngine::run() {
 	}
 
 	const char *const videos[] = {"buka.avi", "skif.avi", "adv.avi"};
-	for (uint i = 0; i < sizeof(videos) / sizeof(char *); ++i) {
+	for (uint i = 0; i < ARRAYSIZE(videos); ++i) {
 		Common::ScopedPtr<Common::File> file(new Common::File);
 		if (file->open(videos[i])) {
 			playVideo(file.release());
@@ -209,7 +209,7 @@ void PetkaEngine::loadStores() {
 	parts.getKey("PathSpeech", section, _speechPath);
 
 	Common::String storeName;
-	for (uint i = 0; i < sizeof(names) / sizeof(char *); ++i) {
+	for (uint i = 0; i < ARRAYSIZE(names); ++i) {
 		parts.getKey(names[i], section, storeName);
 		_fileMgr->openStore(storeName);
 	}

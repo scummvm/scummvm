@@ -25,11 +25,10 @@
 #ifndef FREESCAPE_ENTRANCE_H
 #define FREESCAPE_ENTRANCE_H
 
+#include "freescape/language/instruction.h"
 #include "freescape/objects/object.h"
 
 namespace Freescape {
-
-extern FCLInstructionVector *duplicateCondition(FCLInstructionVector *condition);
 
 class Entrance : public Object {
 public:

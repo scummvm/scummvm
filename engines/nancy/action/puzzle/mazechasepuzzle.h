@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MAZECHASEPUZZLE_H
 #define NANCY_ACTION_MAZECHASEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -32,9 +32,9 @@ namespace Action {
 // is performed via buttons, and both player and enemy navigate one
 // tile at a time. Has some similarities to CollisionPuzzle, but was
 // different enough to warrant its own class.
-class MazeChasePuzzle : public RenderActionRecord {
+class MazeChasePuzzle : public PuzzleRecord {
 public:
-	MazeChasePuzzle() : RenderActionRecord(7) {}
+	MazeChasePuzzle() : PuzzleRecord(7) {}
 	virtual ~MazeChasePuzzle() {}
 
 	void init() override;
@@ -46,7 +46,9 @@ public:
 	void handleInput(NancyInput &input) override;
 
 protected:
-	enum WallType { kWallLeft = 1, kWallUp = 2, kWallRight = 3, kWallDown = 4, kWallLeftRight = 6, kWallUpDown = 6 };
+	enum WallType { kWallLeft = 1, kWallUp = 2, kWallRight = 3, kWallDown = 4, kWallLeftRight = 5, kWallUpDown = 6 };
+
+	enum ExitBehavior { kExitDisappear = 0, kExitSlideLeft = 1, kExitSlideRight = 2, kExitStay = 3 };
 
 	class Piece : public RenderObject {
 	public:
@@ -69,8 +71,6 @@ protected:
 	void enemyMovement(uint enemyID);
 	bool canMove(uint pieceID, WallType direction);
 	void reset();
-
-	Common::Path _imageName;
 
 	Common::Point _exitPos = Common::Point(-1, -1);
 
@@ -105,23 +105,13 @@ protected:
 	SoundDescription _failSound;
 	SoundDescription _moveSound;
 
-	SceneChangeWithFlag _solveScene;
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
-
-	Graphics::ManagedSurface _image;
 	Common::Array<Piece> _pieces;
 
 	int _currentAnimFrame = -1;
 
-	// nancy10 added a byte before the grid selecting how the player piece
-	// leaves the board once it reaches the exit. When zero (the roadrunner
-	// minigame), the piece simply vanishes at the hole; otherwise it slides
-	// off past the edge of the board and stays visible (the nancy5 dancers).
-	bool _pieceDisappearsAtExit = false;
+	// How the player piece leaves the board once it reaches the exit. nancy10
+	// added a byte selecting this; older games always slide off the edge.
+	ExitBehavior _exitBehavior = kExitSlideRight;
 
 	uint32 _solveSoundPlayTime = 0;
 	bool _solved = false;

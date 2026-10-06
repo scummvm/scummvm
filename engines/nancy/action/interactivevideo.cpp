@@ -32,6 +32,104 @@
 namespace Nancy {
 namespace Action {
 
+void readInteractiveVideoFile(const Common::Path &filename, InteractiveVideoData &data) {
+	Common::SeekableReadStream *ivFile = SearchMan.createReadStreamForMember(filename.append(".iv"));
+	assert(ivFile);
+
+	readFilename(*ivFile, data.videoName);
+
+	uint32 numFrames = ivFile->readUint32LE();
+	data.frames.resize(numFrames);
+	for (uint i = 0; i < numFrames; ++i) {
+		InteractiveFrame &frame = data.frames[i];
+		frame.frameID = ivFile->readUint16LE();
+		uint16 numHotspots = ivFile->readUint16LE();
+		frame.triggerOnNoHotspot = ivFile->readByte();
+		frame.noHSFlagID = ivFile->readSint16LE();
+		frame.noHSCursorID = ivFile->readSint16LE();
+
+		frame.hotspots.resize(numHotspots);
+		for (uint j = 0; j < numHotspots; ++j) {
+			frame.hotspots[j].setID = ivFile->readSint32LE();
+			readRect(*ivFile, frame.hotspots[j].hotspot);
+			frame.hotspots[j].flagID = ivFile->readSint16LE();
+			frame.hotspots[j].cursorID = ivFile->readSint16LE();
+		}
+	}
+
+	delete ivFile;
+}
+
+// Length-prefixed string, the length being a 7-bits-per-byte varint
+static Common::String readIVString(Common::SeekableReadStream &stream) {
+	uint32 len = 0;
+	for (uint shift = 0; shift < 35; shift += 7) {
+		byte b = stream.readByte();
+		len |= (uint32)(b & 0x7f) << shift;
+		if (!(b & 0x80)) {
+			break;
+		}
+	}
+
+	Common::String ret;
+	while (len-- && !stream.eos()) {
+		ret += (char)stream.readByte();
+	}
+
+	return ret;
+}
+
+void readInteractiveVideoFileNancy14(const Common::Path &filename, InteractiveVideoData &data) {
+	// Nancy14 keeps this data inside a ciftree, under the bare name; earlier
+	// games ship it as a loose .iv file
+	Common::ScopedPtr<Common::SeekableReadStream> ivFile(
+		SearchMan.createReadStreamForMember(filename.append(".iv")));
+	if (!ivFile) {
+		ivFile.reset(SearchMan.createReadStreamForMember(filename));
+	}
+
+	if (!ivFile) {
+		warning("Could not open iv resource %s", filename.toString().c_str());
+		return;
+	}
+
+	if (readIVString(*ivFile) != "IVDataHI") {
+		warning("Invalid iv file %s", filename.toString().c_str());
+		return;
+	}
+
+	if (ivFile->readSint32LE() != 1 || ivFile->readSint32LE() != 1) {
+		warning("iv file %s is an old version", filename.toString().c_str());
+		return;
+	}
+
+	int32 numSets = ivFile->readSint32LE();
+	data.setNames.resize(MAX<int32>(numSets, 0));
+	for (int32 i = 0; i < numSets; ++i) {
+		data.setNames[i] = readIVString(*ivFile);
+		ivFile->readSint32LE();	// Legacy numeric set id, unused
+	}
+
+	// Frames run up to and including this id rather than being counted
+	int32 lastFrameID = ivFile->readSint32LE();
+	while (lastFrameID >= 0 && !ivFile->eos()) {
+		data.frames.push_back(InteractiveFrame());
+		InteractiveFrame &frame = data.frames.back();
+		frame.frameID = ivFile->readSint32LE();
+
+		int32 numHotspots = ivFile->readSint32LE();
+		frame.hotspots.resize(MAX<int32>(numHotspots, 0));
+		for (int32 i = 0; i < numHotspots; ++i) {
+			frame.hotspots[i].setID = ivFile->readSint32LE();
+			readRect(*ivFile, frame.hotspots[i].hotspot);
+		}
+
+		if ((int32)frame.frameID >= lastFrameID) {
+			break;
+		}
+	}
+}
+
 void InteractiveVideo::readData(Common::SeekableReadStream &stream) {
 	Common::Path ivFilename;
 	readFilename(stream, ivFilename);
@@ -50,10 +148,7 @@ void InteractiveVideo::readData(Common::SeekableReadStream &stream) {
 		_cursors[i] = stream.readSint16LE();
 	}
 
-	Common::SeekableReadStream *ivFile = SearchMan.createReadStreamForMember(ivFilename.append(".iv"));
-	assert(ivFile);
-
-	readFilename(*ivFile, _videoName);
+	readInteractiveVideoFile(ivFilename, _ivData);
 
 	// WORKAROUND: In Nancy 9, the Feeding Frenzy mini-game plays 6 videos (the whales that pop up)
 	// with a normal arrow cursor. In such cases, the cursor manager reverts to the default arrow
@@ -63,31 +158,10 @@ void InteractiveVideo::readData(Common::SeekableReadStream &stream) {
 	// all supported games. Fixes bug #16792.
 	const uint16 sceneId = NancySceneState.getSceneInfo().sceneID;
 	if (g_nancy->getGameType() == kGameTypeNancy9 && (sceneId == 2992 || sceneId == 2995 || sceneId == 2996)) {
-		if (_videoName.toString().contains("WhaleFeed") && _cursors[0] == CursorManager::kNormalArrow) {
+		if (_ivData.videoName.toString().contains("WhaleFeed") && _cursors[0] == CursorManager::kNormalArrow) {
 			_cursors[0] = CursorManager::kNormal;
 		}
 	}
-
-	uint32 numFrames = ivFile->readUint32LE();
-	_frames.resize(numFrames);
-	for (uint i = 0; i < numFrames; ++i) {
-		InteractiveFrame &frame = _frames[i];
-		frame.frameID = ivFile->readUint16LE();
-		uint16 numHotspots = ivFile->readUint16LE();
-		frame.triggerOnNoHotspot = ivFile->readByte();
-		frame.noHSFlagID = ivFile->readSint16LE();
-		frame.noHSCursorID = ivFile->readSint16LE();
-
-		frame.hotspots.resize(numHotspots);
-		for (uint j = 0; j < numHotspots; ++j) {
-			ivFile->skip(4);
-			readRect(*ivFile, frame.hotspots[j].hotspot);
-			frame.hotspots[j].flagID = ivFile->readSint16LE();
-			frame.hotspots[j].cursorID = ivFile->readSint16LE();
-		}
-	}
-
-	delete ivFile;
 }
 
 void InteractiveVideo::execute() {
@@ -121,7 +195,7 @@ void InteractiveVideo::handleInput(NancyInput &input) {
 		return;
 	}
 
-	for (auto &frame : _frames) {
+	for (auto &frame : _ivData.frames) {
 		if (frame.frameID == curFrame) {
 			// Found data for the current video frame
 

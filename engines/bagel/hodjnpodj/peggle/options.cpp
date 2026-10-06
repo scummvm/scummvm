@@ -54,7 +54,7 @@ void COptions::OnMouseMove(unsigned int nFlags, CPoint point) {
 void COptions::OnClickedRules() {
 	CWnd    *pControl = nullptr;
 
-	CRules  RulesDlg(this, RULESSPEC, pOptionsPalette, ((*pGameInfo).bSoundEffectsEnabled ? NARRATIVESPEC : nullptr));
+	CRules  RulesDlg(this, RULESSPEC, pOptionsPalette, (pGameInfo->bSoundEffectsEnabled ? NARRATIVESPEC : nullptr));
 	RulesDlg.DoModal();                      // invoke the help dialog box
 	SetDefID(IDC_OPTIONS_OPTIONS);
 	SetDefID(IDC_OPTIONS_RETURN);

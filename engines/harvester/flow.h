@@ -26,6 +26,7 @@
 #include "common/error.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "harvester/cheats.h"
 #include "harvester/dialogue.h"
 #include "harvester/inventory.h"
 #include "harvester/menu.h"
@@ -117,10 +118,12 @@ private:
 	HarvesterEngine &_engine;
 	Common::Array<Common::String> _quickTips;
 	Common::Array<Common::String> _menuItems;
+	MenuTextConfig _menuTextConfig;
 	Common::Point _mousePos;
 	DialogueSystem _dialogue;
 	InventorySystem _inventory;
 	MenuSystem _menu;
+	CheatSystem _cheats;
 	RoomSystem _room;
 	InteractionResult _queuedDialogueInteraction;
 	bool _hasQueuedDialogueInteraction = false;

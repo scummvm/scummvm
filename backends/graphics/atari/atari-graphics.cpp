@@ -178,15 +178,9 @@ void AtariGraphicsShutdown() {
 
 		VsetScreen(SCR_NOCHANGE, s_oldPhysbase, SCR_NOCHANGE, SCR_NOCHANGE);
 
-		if (g_hasSuperVidel) {
-			// SuperVidel XBIOS does not restore those (unlike TOS/EmuTOS)
-			long ssp = Super(SUP_SET);
-			//*((volatile char *)0xFFFF8265) = 0;
-			*((volatile short *)0xFFFF820E) = 0;
-			Super(ssp);
-
+		if (g_hasSuperVidel)
 			VsetMode(SVEXT | SVEXT_BASERES(0) | COL80 | BPS8C);	// resync to proper 640x480
-		}
+
 		VsetMode(s_oldMode);
 
 		VsetRGB(0, s_oldPalette.entries, s_oldPalette.falcon);

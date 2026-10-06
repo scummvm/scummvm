@@ -22,8 +22,8 @@
 #ifndef ULTIMA4_FILE_H
 #define ULTIMA4_FILE_H
 
+#include "common/array.h"
 #include "common/str.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {

@@ -140,7 +140,7 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	ASSERT(pDibDoc);                                    // ... and verify we got it
 	bTestDibDoc = pDibDoc->OpenDocument(SPLASHSPEC);    // next load in the actual DIB based artwork
 	ASSERT(bTestDibDoc);
-	pGamePalette = (*pDibDoc).DetachPalette();          // grab its palette and save it for later use
+	pGamePalette = pDibDoc->DetachPalette();          // grab its palette and save it for later use
 	delete pDibDoc;                                     // now discard the splash screen
 
 	// set window coordinates to center game on screeen
@@ -303,7 +303,7 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 	if (m_lpGameStruct->bMusicEnabled) {
 		if (pGameSound != nullptr)
-			(*pGameSound).midiLoopPlaySegment(1480, 30700, 0, FMT_MILLISEC);
+			pGameSound->midiLoopPlaySegment(1480, 30700, 0, FMT_MILLISEC);
 	} // end if pGameSound
 
 
@@ -415,7 +415,7 @@ void CMainDFAWindow::SplashScreen() {
 	rcDIB.top = rcDIB.left = 0;                                     // setup the source rectangle from which
 	rcDIB.right = cxDIB;                                            // ... we'll do the painting
 	rcDIB.bottom = cyDIB;
-	PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);  // transfer the image to the screen
+	PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);  // transfer the image to the screen
 
 	if (m_nTimeForGame > 0) {
 		pTimerSprite->SetCel(nCurrentCel);
@@ -641,14 +641,14 @@ bool CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			if ((m_lpGameStruct->bMusicEnabled == false) && (pGameSound != nullptr)) {
 				if (pGameSound->playing())
-					(*pGameSound).stop();
+					pGameSound->stop();
 			} else if (m_lpGameStruct->bMusicEnabled == true) {
 				if (pGameSound == nullptr) {
 					pGameSound = new CSound(this, GAME_THEME,
 					                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 				}
 				if (pGameSound != nullptr) {
-					(*pGameSound).midiLoopPlaySegment(1480, 30700, 0, FMT_MILLISEC);
+					pGameSound->midiLoopPlaySegment(1480, 30700, 0, FMT_MILLISEC);
 				} // end if pGameSound
 			}
 
@@ -669,7 +669,7 @@ bool CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	(*this).SetFocus();                         // Reset focus back to the main window
+	(this)->SetFocus();                         // Reset focus back to the main window
 	return true;
 }
 
@@ -718,7 +718,7 @@ void CMainDFAWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		sndPlaySound(nullptr, 0);
 		pEffect = new CSound((CWnd *)this, WATCH_WAV,
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-		(*pEffect).play();                                                      //...play the narration
+		pEffect->play();                                                      //...play the narration
 	}
 
 	else if (rLake.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)   {
@@ -726,7 +726,7 @@ void CMainDFAWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		sndPlaySound(nullptr, 0);
 		pEffect = new CSound((CWnd *)this, LAKE_WAV,
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-		(*pEffect).play();                                                      //...play the narration
+		pEffect->play();                                                      //...play the narration
 	}
 
 	else if (rMount.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)  {
@@ -734,7 +734,7 @@ void CMainDFAWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		sndPlaySound(nullptr, 0);
 		pEffect = new CSound((CWnd *)this, MOUNT_WAV,
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-		(*pEffect).play();                                                      //...play the narration
+		pEffect->play();                                                      //...play the narration
 	}
 
 	else if (rFlowers.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)    {
@@ -742,7 +742,7 @@ void CMainDFAWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		sndPlaySound(nullptr, 0);
 		pEffect = new CSound((CWnd *)this, BEE_WAV,
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-		(*pEffect).play();                                                      //...play the narration
+		pEffect->play();                                                      //...play the narration
 	}
 
 	if (bEndGame)
@@ -917,7 +917,7 @@ void CMainDFAWindow::OnTimer(uintptr nWhichTimer) {
 				sndPlaySound(nullptr, 0);
 				pEffect = new CSound((CWnd *)this, TIME_WAV,
 				                     SOUND_WAVE | SOUND_ASYNCH /*| SOUND_QUEUE*/ | SOUND_AUTODELETE);    //...Wave file, to delete itself
-				(*pEffect).play();                                                      //...play the narration
+				pEffect->play();                                                      //...play the narration
 			}
 
 			msgBox.SetInitialOptions(1, m_lScore);

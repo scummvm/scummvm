@@ -64,7 +64,7 @@ public:
 	Common::Rect getUnscaledViewport() const;
 	void setupLights(const LightEntryArray &lights);
 
-	Graphics::Surface *getViewportScreenshot() const override;
+	Graphics::Surface *getViewportScreenshot(uint w, uint h) const override;
 
 private:
 	Common::Rect _viewport;

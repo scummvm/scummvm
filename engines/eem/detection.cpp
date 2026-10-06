@@ -32,13 +32,13 @@ const PlainGameDescriptor eemGames[] = {
 	{ nullptr, nullptr }
 };
 
-// The EEM2 (London) Macintosh CD keeps its data in subfolders ("EEM2 CD" with
-// "Data Files"/"Mac Scripts", and the app in "EEM London CD"). Let the detector
-// descend into them; the DOS releases have no such folders and are unaffected.
+// Macintosh CDs keep data and scripts in separate subfolders.
 static const char *const directoryGlobs[] = {
+	"EEM CD",
 	"EEM2 CD",
 	"Data Files",
 	"Mac Scripts",
+	"Eagle Eye Mysteries CD",
 	"EEM London CD",
 	nullptr
 };
@@ -47,6 +47,7 @@ static const char *const directoryGlobs[] = {
 #define GUI_OPTIONS_EEM_CD     GUIO6(GAMEOPTION_HIDE_HIGHLIGHT_BOXES, GAMEOPTION_FIT_DIALOG_BALLOONS, GAMEOPTION_SKIP_REPEATED_CASES, GAMEOPTION_RESTORED_CONTENT, GUIO_MIDIADLIB, GUIO_MIDIMT32)
 #define GUI_OPTIONS_EEM_DEMO   GUIO2(GAMEOPTION_HIDE_HIGHLIGHT_BOXES, GUIO_NOMIDI)
 #define GUI_OPTIONS_EEM_MAC    GUIO3(GAMEOPTION_HIDE_HIGHLIGHT_BOXES, GAMEOPTION_FIT_DIALOG_BALLOONS, GUIO_NOMIDI)
+#define GUI_OPTIONS_EEM_MAC_CD GUIO4(GAMEOPTION_HIDE_HIGHLIGHT_BOXES, GAMEOPTION_FIT_DIALOG_BALLOONS, GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 
 const ADGameDescription gameDescriptions[] = {
 	{
@@ -92,7 +93,7 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"eem",
-		"",
+		"Floppy",
 		AD_ENTRY2s("MysteryData", "d94c087c27e68cc299d7c5e737e458f9", 941029,
 				   "PICS.DBD",    "8905041070ff1352666d98cd78d5501c", 3800445),
 		Common::EN_ANY,
@@ -106,13 +107,23 @@ const ADGameDescription gameDescriptions[] = {
 		// the fly (see installer.cpp). "d:" hashes the data fork so this matches
 		// both the raw-fork (CD/floppy) and MacBinary-wrapped captures.
 		"eem",
-		"",
+		"Floppy",
 		AD_ENTRY2s("Eagle Eye Installer", "d:08440dbf0cb47fb57e522f050159ffaa", 1391577,
 				   "EEM Install Data 2",  "aebccc677e149b37285f291f6ac72f57", 1446428),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_TESTING,
 		GUI_OPTIONS_EEM_MAC
+	},
+	{
+		"eem",
+		"CD",
+		AD_ENTRY2s("pics.dbd", "d:abbef80edd830e0a85d7fdc42e6a419c", 3840029,
+				   "m0.bin",   "d:acd867b61ef36dd98f94bbf00cc5adb0", 12193),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUI_OPTIONS_EEM_MAC_CD
 	},
 	{
 		// Eagle Eye Mysteries in London
@@ -169,7 +180,7 @@ const DebugChannelDef debugFlagList[] = {
 class EEMMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	EEMMetaEngineDetection() : AdvancedMetaEngineDetection(EEM::gameDescriptions, EEM::eemGames) {
-		// Reach the EEM2 Mac data nested under "EEM2 CD/Data Files" etc.
+		// Reach the Mac CD data and script folders.
 		_maxScanDepth = 3;
 		_directoryGlobs = EEM::directoryGlobs;
 	}

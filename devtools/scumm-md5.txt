@@ -450,11 +450,20 @@ ft	Full Throttle
 	8ead2c01c48c2e3d15d6a89b86cd84ab	19697	he	DOS	-	-	-	Hebrew fan translation
 
 rebel1	Star Wars: Rebel Assault
+	0ca9c07185b4969764eaf3ecd0de06e9	111530	en	DOS	Demo v0.67	Demo v0.67	Non-interactive demo	-
+	a29730a42dfcff7bc2e10acfca1e76a2	212951	en	DOS	Demo v1.5	Demo v1.5	CD-ROM demo (chapters 2 and 10)	-
+	274f6026d41fa2a2990a6d6b7a561dc2	217559	en	DOS	Demo v1.51	Demo v1.51	CD-ROM demo	-
+	5a76a7967ae1d87b43c3e8c6ba9773a0	217559	en	DOS	Demo v1.51	Demo Special Edition	Dark Forces and Rebel Assault Special Editions CD	-
+	0d6b6e42fffc11c4c7957951d3601b80	218075	en	DOS	Demo v1.7	Demo v1.7	PC Media 1 non-interactive demo	-
+	551a7c06bf5098b32d5fe7641d695df8	226750	en	DOS	Demo 1994-04-13	Demo 1994-04-13	CD-ROM demo (chapters 8 and 10)	-
+	f3207ec861b0e0db9b5117c339c734ad	453724	en	Mac	Demo v1.0	Demo v1.0	MacFormat 18 68k demo (chapters 6 and 9)	-
+	4e9f4571f5859ea50f1e505a1f15c408	451096	en	Mac	Demo v1.02c	Demo v1.02c	68k demo application (chapters 6 and 9)	-
 	b9ac90e4411da1b6f7dd075cc4b03c2a	214435	en	DOS	-	v1.0	-	-
 	e210a57b756473be705d24b9378a8233	212383	en	DOS	-	v1.3	-	-
 	6bb0fe2d7816c5528c773f2898e4e0ff	212915	en	DOS	-	v1.7	-	-
 	02236dcfb0cac59457153fc296233825	213171	fr	DOS	-	v1.7	-	-
 	b978b92affdfe5744711ca0cb3548720	213115	de	DOS	-	v1.7	-	-
+	2f258cec59ae69fb451d82d0881208db	212915	en	DOS	-	v1.8	Official patch	-
 	bb1d02798011e5906c4c726be4d63544	1908	en	3DO	-	-	-	-
 	d77be4d8a3e609092703508e09f1ed5d	132904	ja	SEGA	-	-	-	-
 	62543831f454b46ef8d0f50b9e1c063c	560453	en	Mac	-	-	68k application	-
@@ -466,6 +475,12 @@ rebel2	Star Wars: Rebel Assault II: The Hidden Empire
 	ae607f6ed270311d7dbc033d3e943d3e	750723120	us	PSX	PlayStation	-	Disc 1 raw image	-
 
 	e977ed046b88e75b645491caeff37b0c	313689	en	DOS	Demo	Demo	-	-
+	d738db94e852d8a0e2405b0bc4f4d4fb	126976	en	Windows	Demo Windows 95	Demo Windows 95	LucasArts non-interactive demo bundle	-
+	967409fc4c12b39fb3cf47f45de2623c	646373	en	DOS	Demo DA1.06	Demo DA1.06	Playable demo (chapter 6)	-
+	54b33908bb1e1632fa96edee53edb697	641717	en	DOS	Demo DB1.03	Demo DB1.03	Softgold demo CD (chapters 6 and 8)	-
+	8e0788210af982fbbc43c244ac6f9581	663561	en	DOS	Demo DG1.15	Demo DG1.15	The Dreighton Encounter (chapters 1, 2 and 4)	-
+	ca546c05ec7be680bb7d97675dc9ba59	662441	en	DOS	Demo Special Edition	Demo Special Edition	Special Edition (chapters 1, 2 and 3)	-
+	d89f31e209c0642b4d20ccf615840401	128658792	en	Mac	Demo v1.0	Demo v1.0	Mac bundle (chapter 6)	-
 
 dig	The Dig
 	d8323015ecb8b10bf53474f6e6b0ae33	16304	All	All	-	-	-	Fingolfin

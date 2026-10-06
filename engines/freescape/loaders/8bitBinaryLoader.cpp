@@ -26,7 +26,8 @@
 #include "common/file.h"
 
 #include "freescape/freescape.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/detokeniser.h"
+#include "freescape/language/variables.h"
 #include "freescape/objects/connections.h"
 #include "freescape/objects/global.h"
 #include "freescape/objects/group.h"
@@ -170,7 +171,7 @@ Group *FreescapeEngine::load8bitGroupV1(Common::SeekableReadStream *file, byte r
 			debugC(1, kFreescapeDebugParser, "Length of condition: %d at %lx", lengthOfCondition, long(file->pos()));
 			// get the condition
 			Common::Array<uint16> conditionArray = readArray(file, lengthOfCondition);
-			operation->conditionSource = detokenise8bitCondition(conditionArray, operation->condition, isAmiga() || isAtariST());
+			operation->conditionSource = detokeniseFreescapeCondition(conditionArray, operation->condition, isAmiga() || isAtariST());
 			debugC(1, kFreescapeDebugParser, "%s", operation->conditionSource.c_str());
 			byteSizeOfObject = byteSizeOfObject - lengthOfCondition;
 		} else {
@@ -276,7 +277,7 @@ Group *FreescapeEngine::load8bitGroupV2(Common::SeekableReadStream *file, byte r
 			debugC(1, kFreescapeDebugParser, "Length of condition: %d at %lx", lengthOfCondition, long(file->pos()));
 			// get the condition
 			Common::Array<uint16> conditionArray = readArray(file, lengthOfCondition);
-			operation->conditionSource = detokenise8bitCondition(conditionArray, operation->condition, isAmiga() || isAtariST());
+			operation->conditionSource = detokeniseFreescapeCondition(conditionArray, operation->condition, isAmiga() || isAtariST());
 			debugC(1, kFreescapeDebugParser, "%s", operation->conditionSource.c_str());
 			byteSizeOfObject = byteSizeOfObject - lengthOfCondition;
 		} else {
@@ -455,7 +456,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		Common::String conditionSource;
 		if (byteSizeOfObject) {
 			Common::Array<uint16> conditionArray = readArray(file, byteSizeOfObject);
-			conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
+			conditionSource = detokeniseFreescapeCondition(conditionArray, instructions, isAmiga() || isAtariST());
 			// instructions = getInstructions(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 		}
@@ -486,7 +487,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 					debugC(1, kFreescapeDebugParser, "b: %x", readField(file, 8));
 			} else {
 				Common::Array<uint16> conditionArray = readArray(file, byteSizeOfObject);
-				conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
+				conditionSource = detokeniseFreescapeCondition(conditionArray, instructions, isAmiga() || isAtariST());
 				debugC(1, kFreescapeDebugParser, "Entrance condition:");
 				debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 			}
@@ -573,7 +574,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		// grab the object condition, if there is one
 		if (byteSizeOfObject) {
 			Common::Array<uint16> conditionArray = readArray(file, byteSizeOfObject);
-			conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
+			conditionSource = detokeniseFreescapeCondition(conditionArray, instructions, isAmiga() || isAtariST());
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 		}
 		debugC(1, kFreescapeDebugParser, "End of object at %lx", long(file->pos()));
@@ -793,7 +794,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 		if (newObject) {
 			newObject->scale(scale);
-			newObject->_loadIndex = 0x4000 + object; // area objects render after globals (original pass 2)
+			// Seed the sort with globals (area 255) before local objects.
+			newObject->_loadIndex = (areaNumber == 255 ? 0 : 0x4000) + object;
 			if (newObject->getType() == kEntranceType) {
 				if (entrancesByID->contains(newObject->getObjectID() & 0x7fff))
 					error("WARNING: replacing object id %d (%d)", newObject->getObjectID(), newObject->getObjectID() & 0x7fff);
@@ -859,7 +861,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		// get the condition
 		if (lengthOfCondition > 0) {
 			Common::Array<uint16> conditionArray = readArray(file, lengthOfCondition);
-			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
+			Common::String conditionSource = detokeniseFreescapeCondition(conditionArray, instructions, isAmiga() || isAtariST());
 			area->_conditions.push_back(instructions);
 			area->_conditionSources.push_back(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
@@ -975,7 +977,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		// get the condition
 		if (lengthOfCondition > 0) {
 			Common::Array<uint16> conditionArray = readArray(file, lengthOfCondition);
-			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
+			Common::String conditionSource = detokeniseFreescapeCondition(conditionArray, instructions, isAmiga() || isAtariST());
 			_conditions.push_back(instructions);
 			_conditionSources.push_back(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());

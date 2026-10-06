@@ -24,7 +24,8 @@
 
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/core/observer.h"
-#include "ultima/shared/std/containers.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 namespace Common {
 class File;

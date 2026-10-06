@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 
@@ -37,9 +37,9 @@ namespace Action {
 // scene visits), building a connected chain of orthogonally-adjacent letter cells;
 // once the chain has the word's length and matches the answer path, the word's
 // animation plays and the next word becomes active.
-class WordFindPuzzle : public RenderActionRecord {
+class WordFindPuzzle : public PuzzleRecord {
 public:
-	WordFindPuzzle() : RenderActionRecord(7) {}
+	WordFindPuzzle() : PuzzleRecord(7) {}
 	virtual ~WordFindPuzzle() {}
 
 	void init() override;
@@ -78,14 +78,8 @@ protected:
 	uint16 _cursorType = 0;			// base 0x00
 	uint16 _cellGapX = 0;			// base 0x06 - added to a letter's width to get the column pitch
 	uint16 _cellGapY = 0;			// base 0x08 - row pitch component
-	SceneChangeDescription _solveScene;		// base 0x2a - shown once every word is found
 	Common::Path _solutionImageName;		// base 0x2f
 	Common::Array<Word> _words;
-
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;			// set on give-up
 
 	Common::Array<RandomSoundBlock> _sounds;	// 4 blocks
 

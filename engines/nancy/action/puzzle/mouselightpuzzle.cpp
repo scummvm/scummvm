@@ -65,6 +65,15 @@ void MouseLightPuzzle::init() {
 	}
 }
 
+void MouseLightPuzzle::updateGraphics() {
+	// The light only exists while the player holds the light source. The record stops
+	// receiving input as soon as its cursor dependency stops being satisfied, so hide
+	// it instead of leaving the last drawn circle on screen.
+	if (_state == kRun && isVisible() != _isActive) {
+		setVisible(_isActive);
+	}
+}
+
 void MouseLightPuzzle::execute() {
 	if (_state == kBegin) {
 		init();
@@ -105,11 +114,13 @@ void MouseLightPuzzle::handleInput(NancyInput &input) {
 	Common::Rect::getBlitRect(blitDestPoint, srcRect, _drawSurface.getBounds());
 
 	// Copy over the transparency to the draw surface
+	const uint32 alphaMask = (uint32)0xFF << _drawSurface.format.aShift;
+
 	for (int y = srcRect.top; y < srcRect.bottom; ++y) {
 		uint32 *drawSurfPtr = (uint32 *)_drawSurface.getBasePtr(blitDestPoint.x, y + blitDestPoint.y - srcRect.top);
 		uint16 *circlePtr = (uint16 *)_maskCircle.getBasePtr(srcRect.left, y);
 		for (int x = srcRect.left; x < srcRect.right; ++x) {
-			*drawSurfPtr = (*drawSurfPtr & 0xFFFFFF00) | (byte)*circlePtr;
+			*drawSurfPtr = (*drawSurfPtr & ~alphaMask) | ((uint32)*circlePtr << _drawSurface.format.aShift);
 			++drawSurfPtr;
 			++circlePtr;
 		}

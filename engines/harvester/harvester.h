@@ -56,6 +56,7 @@ public:
 	 * Returns the game Id
 	 */
 	Common::String getGameId() const;
+	Common::Language getLanguage() const;
 	bool isDemo() const;
 
 	/**

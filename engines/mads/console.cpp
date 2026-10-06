@@ -27,6 +27,7 @@
 #include "mads/core/matte.h"
 #include "mads/core/mem.h"
 #include "mads/core/text.h"
+#include "mads/mads.h"
 
 namespace MADS {
 
@@ -35,6 +36,10 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
 	registerCmd("walkable", WRAP_METHOD(Console, cmdWalkable));
 	registerCmd("quotes", WRAP_METHOD(Console, cmdQuotes));
+	registerCmd("playsound", WRAP_METHOD(Console, cmdPlaySound));
+	registerCmd("soundcommand", WRAP_METHOD(Console, cmdSoundCommand));
+	registerCmd("soundsection", WRAP_METHOD(Console, cmdSoundSection));
+	registerCmd("soundstop", WRAP_METHOD(Console, cmdSoundStop));
 	registerCmd("text", WRAP_METHOD(Console, cmdText));
 }
 
@@ -150,6 +155,88 @@ bool Console::cmdQuotes(int argc, const char **argv) {
 	if (quoteId != -1 && !found)
 		debugPrintf("Quote %d not found.\n", quoteId);
 
+	return true;
+}
+
+bool Console::cmdSoundCommand(int argc, const char **argv) {
+	if (argc < 2 || argc > 3) {
+		debugPrintf("Usage: %s <command> [parameter]\n", argv[0]);
+		return true;
+	}
+	if (!g_engine->_soundManager->isLoaded()) {
+		debugPrintf("No section sound driver is loaded. Use soundsection first.\n");
+		return true;
+	}
+
+	const int commandId = strToInt(argv[1]);
+	const int parameter = argc == 3 ? strToInt(argv[2]) : 0;
+	const int result = g_engine->_soundManager->command(commandId, parameter);
+	debugPrintf("Sound command %d(%d) returned %d.\n",
+		commandId, parameter, result);
+	return true;
+}
+
+bool Console::cmdPlaySound(int argc, const char **argv) {
+	int section;
+	int commandId;
+	int parameter = 0;
+	char trailing;
+
+	if (argc != 2 ||
+			(sscanf(argv[1], "%d:%d:%d%c", &section, &commandId,
+				&parameter, &trailing) != 3 &&
+			sscanf(argv[1], "%d:%d%c", &section, &commandId,
+				&trailing) != 2)) {
+		debugPrintf("Usage: %s <section:command[:parameter]>\n", argv[0]);
+		return true;
+	}
+
+	if (section < 1 || section > 9) {
+		debugPrintf("Section must be between 1 and 9.\n");
+		return true;
+	}
+
+	g_engine->_soundManager->init(section);
+	if (!g_engine->_soundManager->isLoaded()) {
+		debugPrintf("No sound driver is available for section %d.\n", section);
+		return true;
+	}
+
+	const int result = g_engine->_soundManager->command(commandId, parameter);
+	debugPrintf("Loaded section %d and issued sound command %d(%d), returned %d.\n",
+		section, commandId, parameter, result);
+	return true;
+}
+
+bool Console::cmdSoundSection(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <section 1-9>\n", argv[0]);
+		return true;
+	}
+
+	const int section = strToInt(argv[1]);
+	if (section < 1 || section > 9) {
+		debugPrintf("Section must be between 1 and 9.\n");
+		return true;
+	}
+
+	g_engine->_soundManager->init(section);
+	debugPrintf(
+		g_engine->_soundManager->isLoaded()
+			? "Loaded section %d for the configured audio device.\n"
+			: "No sound driver is available for section %d.\n",
+		section);
+	return true;
+}
+
+bool Console::cmdSoundStop(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	g_engine->_soundManager->stop();
+	debugPrintf("Stopped the current section sound driver.\n");
 	return true;
 }
 

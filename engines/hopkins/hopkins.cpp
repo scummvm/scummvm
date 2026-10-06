@@ -20,6 +20,7 @@
  */
 
 #include "hopkins/hopkins.h"
+#include "hopkins/base.h"
 #include "hopkins/graphics.h"
 #include "hopkins/files.h"
 #include "hopkins/saveload.h"
@@ -31,11 +32,12 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 
 namespace Hopkins {
 
 HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("Hopkins") {
+		_gameDescription(gameDesc), _randomSource("Hopkins"), _inBaseGame(false) {
 	_animMan = new AnimationManager(this);
 	_computer = new ComputerManager(this);
 	_dialog = new DialogsManager(this);
@@ -78,14 +80,14 @@ HopkinsEngine::~HopkinsEngine() {
  * Returns true if it is currently okay to restore a game
  */
 bool HopkinsEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl && _globals->_curRoomNum != 0;
+	return !_inBaseGame && !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl && _globals->_curRoomNum != 0;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool HopkinsEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl
+	return !_inBaseGame && !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl
 		&& _globals->_curRoomNum != 0 && !isUnderwaterSubScene();
 }
 
@@ -1555,19 +1557,48 @@ bool HopkinsEngine::runFull() {
 		case 196:
 		case 197:
 		case 198:
-		case 199:
+		case 199: {
+			const int baseEntryId = _globals->_exitId;
+			bool baseQuitRequested = false;
 			_globals->_characterSpriteBuf = _globals->freeMemory(_globals->_characterSpriteBuf);
 			_globals->_eventMode = EVENTMODE_IGNORE;
 			_soundMan->stopSound();
 			_soundMan->playSound(23);
-			_globals->_exitId = handleBaseMap();	// Handles the base map (non-Windows)
-			//_globals->_exitId = WBASE();	// Handles the 3D Doom level (Windows)
+
+			if (getPlatform() == Common::kPlatformWindows && !getIsDemo()) {
+				Common::String missingBaseResources;
+				if (BaseGame::hasRequiredResources(&missingBaseResources)) {
+					BaseGame baseGame(this);
+					const BaseRunResult baseResult = baseGame.run(baseEntryId);
+					switch (baseResult.status) {
+					case kBaseRunCompleted:
+						_globals->_exitId = baseResult.roomId;
+						break;
+					case kBaseRunFallback:
+						_globals->_exitId = handleBaseMap();
+						break;
+					case kBaseRunQuit:
+						baseQuitRequested = true;
+						break;
+					}
+				} else {
+					debug(1, "Hopkins WBASE resources unavailable (%s); using static map", missingBaseResources.c_str());
+					_globals->_exitId = handleBaseMap();
+				}
+			} else {
+				debug(1, "Hopkins WBASE is only enabled for the full Windows data set; using static map");
+				_globals->_exitId = handleBaseMap();
+			}
+
 			_soundMan->stopSound();
 			_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
 			_globals->_characterType = CHARACTER_HOPKINS;
 			_globals->_eventMode = EVENTMODE_DEFAULT;
-			_graphicsMan->_lineNbr = SCREEN_WIDTH;
+			_graphicsMan->setScreenWidth(SCREEN_WIDTH);
+			if (baseQuitRequested)
+				return false;
 			break;
+		}
 
 		default:
 			break;

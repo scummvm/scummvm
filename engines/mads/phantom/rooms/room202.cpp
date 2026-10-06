@@ -274,13 +274,10 @@ static void handle_animation_degas() {
 				degas_reset_frame = 1;
 				break; /* do talk */
 
-			case 2:
+			case 2: /* pull bag up under arm (new node) */
+			case 3: /* pull bag up under arm (new node) while shutting up */
 				degas_reset_frame = 58;
-				break; /* pull bag up under arm (new node) */
-
-			case 3:
-				degas_reset_frame = 58;
-				break; /* pull bag up under arm (new node) while shutting up */
+				break; 
 
 			default:
 				degas_reset_frame = 0;
@@ -506,7 +503,7 @@ void room_202_init() {
 		seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, 1);
 		kernel_seq_depth(seq[fx_left_door], 14);
 
-	} else if ((previous_room == 101) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x          = PLAYER_X_FROM_101;
 		player.y          = PLAYER_Y_FROM_101;
 		player_walk(WALK_TO_X_FROM_101, WALK_TO_Y_FROM_101, FACING_WEST);
@@ -514,7 +511,7 @@ void room_202_init() {
 		seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, 1);
 		kernel_seq_depth(seq[fx_left_door], 14);
 
-	} else if (previous_room == KERNEL_RESTORING_GAME) {
+	} else {
 		seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[fx_left_door], 14);
 	}

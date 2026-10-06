@@ -23,7 +23,6 @@
 #define ULTIMA4_MAP_XML_MAP_H
 
 #include "ultima/ultima4/map/city.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {

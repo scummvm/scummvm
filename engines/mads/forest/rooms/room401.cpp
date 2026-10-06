@@ -340,7 +340,6 @@ static void room_401_anim4() {
 	if (kernel.trigger != 7 && kernel.trigger != 28)
 		return;
 
-	result = -1;
 	int16 a0 = scratch._a0 - 53;
 	if (a0 == 0) {
 		kernel_timing_trigger(30, 28);

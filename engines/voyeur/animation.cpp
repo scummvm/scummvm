@@ -71,6 +71,7 @@ bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 	// Check RL2 magic number
 	if (!_header.isValid()) {
 		warning("RL2Decoder::loadStream(): attempted to load non-RL2 data (0x%08X)", _header._signature);
+		close();
 		return false;
 	}
 

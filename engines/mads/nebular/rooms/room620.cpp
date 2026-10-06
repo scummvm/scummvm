@@ -60,7 +60,7 @@ static void room_620_daemon() {
 			global[kCityFlooded] = true;
 			global[kTeleporterRoom + 5] = 0;
 			new_room = previous_room;
-		} else if (previous_room >= 501 && previous_room <= 612) {
+		} else if (previous_room <= 612) {
 			global[kResurrectRoom] = global[kHoverCarLocation];
 			inter_give_to_player(OBJ_TIMEBOMB);
 			global[kTimebombStatus] = 0;

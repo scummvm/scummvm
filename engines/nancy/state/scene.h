@@ -69,6 +69,7 @@ class ViewportOrnaments;
 class TextboxOrnaments;
 class InventoryBoxOrnaments;
 class Clock;
+class Camera;
 }
 
 namespace State {
@@ -120,6 +121,7 @@ public:
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene(int16 itemID = -1);
 	void popScene(bool inventory = false);
+	int16 getPushedInvItemID() const { return _sceneState.pushedInvItemID; }
 
 	// Nancy 11+ "UI prep scenes": opening a taskbar popup first runs a hidden,
 	// videoless scene whose event-flag-gated ARs populate the popup's content;
@@ -138,10 +140,29 @@ public:
 	void setPlayerTime(Time time, byte relative);
 	Time getPlayerTime() const { return _timers.playerTime; }
 	Time getTimerTime() const { return _timers.timerIsActive ? _timers.timerTime : 0; }
+	uint getPlayerTimeMinutes() const;
 	byte getPlayerTOD() const;
+	// Nancy14-15. The day is kept separately from the clock, and copied into the
+	// day value so the scripts can read it.
+	void requestSleep() { _timers.sleepRequested = true; }
+	void setPlayerDay(int16 day);
 
 	void addItemToInventory(int16 id);
 	void removeItemFromInventory(int16 id, bool pickUp = true);
+
+	// Nancy15+ inventory action records and dependencies pick the character to
+	// act on, which needn't be the one being played. Anyone else is served from
+	// their parked inventory instead of the live one.
+	void addItemToCharacterInventory(uint characterIndex, int16 id);
+	void removeItemFromCharacterInventory(uint characterIndex, int16 id, bool pickUp = false);
+	byte hasCharacterItem(uint characterIndex, int16 id);
+	void setCharacterItemDisabledState(uint characterIndex, int16 id, byte state);
+
+	// AddInventoryNoHS (AR 120): hand the item over, into the character's hand
+	// when the record asks for it and their hand is free or forceIntoHand is set
+	void giveItemToCharacter(uint characterIndex, int16 id, bool intoHand, bool forceIntoHand);
+
+	int32 getCharacterUIResource(uint characterIndex, uint index);
 	int16 getHeldItem() const { return _flags.heldItem; }
 	void setHeldItem(int16 id);
 	void setNoHeldItem();
@@ -152,7 +173,10 @@ public:
 			_flags.disabledItems[id] = state;
 	}
 
-	void installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID);
+	// Nancy15 records name the player character the override belongs to;
+	// kPlayerCharacterActive (and every earlier game) means whoever is played
+	void installInventorySoundOverride(byte command, const SoundDescription &sound,
+		const Common::String &caption, uint16 itemID, byte characterIndex = kPlayerCharacterActive);
 	void playItemCantSound(int16 itemID = -1, bool notHoldingSound = false);
 
 	void setEventFlag(int16 label, byte flag);
@@ -168,8 +192,10 @@ public:
 	// coin purse amount in cents. Backed by the lazily-created, saved
 	// UIResourceData puzzle chunk, seeded from UIRC on first use and mutated by
 	// AR 132 (ResourceUse). Non-const because the first access creates/seeds it.
-	int32 getUIResource(uint index);
-	void setUIResource(uint index, int32 value);
+	// Nancy15 records name the protagonist whose resources they change;
+	// kPlayerCharacterActive (and every earlier game) means whoever is played.
+	int32 getUIResource(uint index, byte characterIndex = kPlayerCharacterActive);
+	void setUIResource(uint index, int32 value, byte characterIndex = kPlayerCharacterActive);
 
 	void setLogicCondition(int16 label, byte flag);
 	bool getLogicCondition(int16 label, byte flag) const;
@@ -200,6 +226,21 @@ public:
 
 	void registerGraphics();
 
+	// Nancy15+ AR 134. Hands the game over to another protagonist: swaps in that
+	// character's own copy of the popup UI data and rebuilds every widget built
+	// from it, then swaps the inventories. Returns whether the character
+	// actually changed.
+	bool changePlayerCharacter(uint characterIndex);
+
+	// Nancy15+ Design Select screen. Records the look a character wears; the UI
+	// is rebuilt from it the next time the scene is entered.
+	void setPlayerCharacterDesign(uint characterIndex, const Common::String &designName);
+
+	// Replaces the current scene's background video without leaving the scene.
+	// Nancy15+ uses this to show the same location from the newly selected
+	// player character's point of view.
+	void changeSceneVideo(const Common::Path &videoFile);
+
 	void synchronize(Common::Serializer &serializer);
 
 	UI::FullScreenImage &getFrame() { return _frame; }
@@ -211,6 +252,7 @@ public:
 	UI::CellPhonePopup &getCellPhonePopup() { return _cellPhonePopup; }
 	UI::ConversationPopup &getConversationPopup() { return _conversationPopup; }
 	UI::Clock *getClock();
+	UI::Camera *getCamera() { return _camera; }
 	UI::Taskbar *getTaskbar() { return _taskbar; }
 
 	Action::ActionManager &getActionManager() { return _actionManager; }
@@ -261,6 +303,8 @@ public:
 		bool timerIsActive = false;
 		Time playerTime;           // In-game time of day, adds a minute every 5 seconds
 		Time playerTimeNextMinute; // Stores the next tick count until we add a minute to playerTime
+		bool sleepRequested = false; // Nancy14-15: start the next day on the following frame
+		int16 playerDay = 0;         // Nancy14-15: the current day, also copied into the day value
 	};
 
 	Timers _timers;
@@ -276,11 +320,25 @@ private:
 	// Nancy 11+ AR 69. Advances all running software timers (stored as TimerData
 	// puzzle data) and fires any whose configured duration has just elapsed.
 	void tickSoftwareTimers(uint32 deltaMs);
+
+	// Raises the late night flag (Nancy11-13) or the end-of-day flag (Nancy14-15)
+	// once it gets late. In Nancy14-15, also starts the next day at the wake-up
+	// hour after the player has been sent to sleep.
+	void updateEndOfDay();
 	void fireSoftwareTimer(TimerData::Timer &timer);
 	void fireTimerTrigger(TimerData::Trigger &trigger);
 
 	// Rect of the open Nancy 10+ taskbar popup, or empty if none.
 	Common::Rect activePopupConfinement() const;
+
+	int16 getCharacterHeldItem(uint characterIndex);
+	void setCharacterHeldItem(uint characterIndex, int16 id);
+	void returnCharacterHeldItem(uint characterIndex);
+
+	// Nancy15's "can't" responses live in the active player character's PUIV
+	// bank instead of the inventory data
+	bool getPlayerCantSound(int16 itemID, SoundDescription &sound) const;
+	void playPlayerCantSound(int16 itemID);
 
 	void initStaticData();
 
@@ -289,6 +347,22 @@ private:
 
 	// Maps an event flag label to its index in the eventFlags array
 	int16 eventFlagToIndex(int16 label) const;
+
+	// Rebuilds the popup UI from a Nancy15+ player character's own data files,
+	// without touching the inventory. Returns whether the character changed.
+	bool applyPlayerCharacter(uint characterIndex);
+
+	// Nancy15+ per-character inventories and UI resources. The active
+	// character's are the live ones (_flags plus the inventory box order, and
+	// UIResourceData::values); the others are parked in the same puzzle data.
+	void storeCharacterInventory(uint characterIndex);
+	void loadCharacterInventory(uint characterIndex);
+	void storeCharacterResources(uint characterIndex);
+	void loadCharacterResources(uint characterIndex);
+
+	// Seeds a Hardy boy's journal and UI resources from his brother's the first
+	// time he is played.
+	void inheritBrotherProgress(uint characterIndex);
 
 	struct SceneState {
 		SceneSummary summary;
@@ -323,6 +397,9 @@ private:
 		Common::String caption;
 	};
 
+	// The overrides of the character being played
+	Common::HashMap<uint16, InventorySoundOverride> &activeSoundOverrides();
+
 	// UI
 	UI::FullScreenImage _frame;
 	UI::Viewport _viewport;
@@ -347,6 +424,8 @@ private:
 	UI::InventoryBoxOrnaments *_inventoryBoxOrnaments;
 	RenderObject *_clock;
 
+	UI::Camera *_camera;	// Nancy14 only
+
 	Common::Rect _mapHotspot;
 
 	// General data
@@ -357,7 +436,9 @@ private:
 	int16 _lastHintCharacter;
 	int16 _lastHintID;
 	NancyState::NancyState _gameStateRequested;
-	Common::HashMap<uint16, InventorySoundOverride> _inventorySoundOverrides;
+	// One set of overrides per player character; everything before Nancy15 only
+	// ever touches the first
+	Common::HashMap<uint16, InventorySoundOverride> _inventorySoundOverrides[kMaxPlayerCharacters];
 
 	Misc::Lightning *_lightning;
 	Common::Queue<Misc::SpecialEffect> _specialEffects;
@@ -371,6 +452,9 @@ private:
 	// Set by notifyRandomMovieARLoaded; checked in clearSceneData to wind
 	// down a persistent random-movie whose scene chain is over.
 	bool _hadRandomMovieARThisScene = false;
+
+	// Whether esc was already down last frame, so a held key only skips once
+	bool _escHeld = false;
 
 	// Contains a screenshot of the Scene state from the last time it was exited
 	Graphics::ManagedSurface _lastScreenshot;

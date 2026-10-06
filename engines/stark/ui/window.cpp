@@ -53,13 +53,13 @@ void Window::render() {
 	onRender();
 }
 
-Graphics::Surface *Window::getScreenshot() const {
+Graphics::Surface *Window::getScreenshot(uint w, uint h) const {
 	if (!_visible) {
 		return nullptr;
 	}
 
 	_gfx->setViewport(_position);
-	return _gfx->getViewportScreenshot();
+	return _gfx->getViewportScreenshot(w, h);
 }
 
 bool Window::isMouseInside() const {

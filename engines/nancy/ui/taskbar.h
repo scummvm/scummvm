@@ -123,10 +123,11 @@ private:
 	bool isButtonActive(uint index) const;
 
 	// Nancy12 replaces the (era-inappropriate) cell phone with a coin purse that
-	// is not clickable but shows Nancy's money when hovered. True only for that
-	// game and button slot.
+	// is not clickable but shows Nancy's money when hovered. Nancy14 does the
+	// same, and in Nancy15 the Hardy boys carry a wallet in that slot. True
+	// only for those games and that button slot.
 	bool isMoneyDisplay(uint index) const;
-	// Draw Nancy's current money over the coin purse button (Nancy12 only).
+	// Draw the played character's current money over the coin purse button.
 	void drawMoney();
 
 	// Play a normal click sound (the button's clickSound), or the "popup

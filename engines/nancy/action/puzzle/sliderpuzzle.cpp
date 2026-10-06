@@ -100,7 +100,7 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip((6 - _height) * 6 * 2);
 
 	_clickSound.readNormal(stream);
-	_solveExitScene.readData(stream);
+	_solveScene.readData(stream);
 	_solveSound.readNormal(stream);
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
@@ -141,12 +141,11 @@ void SliderPuzzle::execute() {
 				}
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solveState = kWaitForSound;
 			break;
 		case kWaitForSound:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
@@ -161,7 +160,7 @@ void SliderPuzzle::execute() {
 			_exitScene.execute();
 			break;
 		case kWaitForSound:
-			_solveExitScene.execute();
+			_solveScene.execute();
 			_puzzleState->playerHasTriedPuzzle = false;
 			break;
 		}
@@ -176,9 +175,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

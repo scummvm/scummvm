@@ -215,7 +215,7 @@ bool qdTriggerElement::add_child(qdTriggerElementPtr p, int link_type, bool auto
 
 bool qdTriggerElement::remove_parent(qdTriggerElementPtr p) {
 	for (auto it = _parents.begin(); it != _parents.end(); it++) {
-		if ((*it).element() == p) {
+		if (it->element() == p) {
 			_parents.erase(it);
 			return true;
 		}
@@ -225,7 +225,7 @@ bool qdTriggerElement::remove_parent(qdTriggerElementPtr p) {
 
 bool qdTriggerElement::remove_child(qdTriggerElementPtr p) {
 	for (auto it = _children.begin(); it != _children.end(); it++) {
-		if ((*it).element() == p) {
+		if (it->element() == p) {
 			_children.erase(it);
 			return true;
 		}

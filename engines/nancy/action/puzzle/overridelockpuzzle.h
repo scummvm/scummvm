@@ -22,12 +22,12 @@
 #ifndef NANCY_ACTION_OVERRIDELOCKPUZZLE_H
 #define NANCY_ACTION_OVERRIDELOCKPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
-class OverrideLockPuzzle : public RenderActionRecord {
+class OverrideLockPuzzle : public PuzzleRecord {
 public:
 	static const byte kButtonsStayDown 	= 1;
 	static const byte kButtonsPopUp 	= 2;
@@ -35,7 +35,7 @@ public:
 	static const byte kLightsCircular 	= 3;
 	static const byte kLightsRandom 	= 4;
 
-	OverrideLockPuzzle() : RenderActionRecord(7) {}
+	OverrideLockPuzzle() : PuzzleRecord(7) {}
 	virtual ~OverrideLockPuzzle() {}
 
 	void init() override;
@@ -53,8 +53,6 @@ protected:
 
 	enum SolveState { kNotSolved, kSolved };
 
-	Common::Path _imageName;
-
 	byte _popButtons = kButtonsStayDown;
 	byte _randomizeLights = kLightsCircular;
 
@@ -68,14 +66,6 @@ protected:
 	SoundDescription _wrongSound;
 
 	Time _buttonPopTime;
-
-	SceneChangeWithFlag _solveExitScene;
-	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
-
-	Graphics::ManagedSurface _image;
 
 	Common::Array<byte> _buttonOrder;
 	Common::Array<byte> _lightsOrder;

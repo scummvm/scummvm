@@ -1290,6 +1290,7 @@ static void room_203_daemon() {
 			kernel_synch(KERNEL_ANIM, aa[1], KERNEL_NOW, 0);
 			aainfo[1]._active = -1;
 			aainfo[1]._frame = 0;
+			local->_96 = 53;
 			local->_a8 = 0;
 			break;
 
@@ -1376,7 +1377,7 @@ static void room_203_daemon() {
 
 			player.walker_visible = false;
 			player_demand_facing(3);
-			player_demand_location(124, 91);
+			player_demand_location(91, 124);
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.commands_allowed = true;
 			player.walker_visible = true;

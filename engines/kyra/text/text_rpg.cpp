@@ -163,7 +163,14 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 	int sdx = _screen->curDimIndex();
 
 	bool sjisTextMode = (_pc98TextMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
-	Screen::FontId of = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? _screen->setFont(Screen::FID_8_FNT) : _screen->_currentFont;
+	Screen::FontId of = _screen->_currentFont;
+
+	if (_vm->game() == GI_EOB2) {
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+			of = _screen->setFont(Screen::FID_8_FNT);
+		else if (_vm->gameFlags().platform == Common::kPlatformPC98)
+			of = _screen->setFont(Screen::FID_SJIS_FNT);
+	}
 
 	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charSpacing);
 
@@ -587,7 +594,12 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 	vsnprintf(_dialogueBuffer, kEoBTextBufferSize - 1, str, args);
 	va_end(args);
 
+	int cs = (_vm->gameFlags().platform == Common::kPlatformPC98 && !_vm->gameFlags().use16ColorMode && _screen->curDimIndex() == 9) ? _screen->setFontStyles(_screen->_currentFont, Font::kStyleFat) : -1;
+
 	displayText(_dialogueBuffer, textColor);
+
+	if (cs != -1)
+		_screen->setFontStyles(_screen->_currentFont, cs);
 
 	if (_vm->game() != GI_EOB1)
 		_textDimData[_screen->curDimIndex()].color1= tc;
@@ -746,7 +758,7 @@ void TextDisplayer_rpg::textPageBreak() {
 		_screen->fillRect(x, y, x + w - 1, y + _vm->guiSettings()->buttons.height - 1, _textDimData[sdx].color2);
 
 	// Fix border overdraw glitch
-	if (_vm->game() == GI_EOB2 && _isChinese && y + _vm->guiSettings()->buttons.height == 200)
+	if (_vm->game() == GI_EOB2 && (_isChinese || _vm->gameFlags().platform == Common::kPlatformPC98) && y + _vm->guiSettings()->buttons.height == 200)
 		_screen->drawClippedLine(x, 199, x + w - 1, 199, _vm->guiSettings()->colors.frame1);
 
 	clearCurDim();
@@ -799,6 +811,9 @@ void TextDisplayer_rpg::displayWaitButton() {
 
 	_screen->set16bitShadingLevel(4);
 	_screen->fillRect(_vm->_dialogueButtonPosX[0], _vm->_dialogueButtonPosY[0], _vm->_dialogueButtonPosX[0] + _vm->_dialogueButtonWidth - 1, _vm->_dialogueButtonPosY[0] + _vm->guiSettings()->buttons.height - 1, _vm->guiSettings()->colors.fill);
+	// Fix border overdraw glitch
+	if (_vm->game() == GI_EOB2 && (_isChinese || _vm->gameFlags().platform == Common::kPlatformPC98) && _vm->_dialogueButtonPosY[0] + _vm->guiSettings()->buttons.height == 200)
+		_screen->drawClippedLine(_vm->_dialogueButtonPosX[0], 199, _vm->_dialogueButtonPosX[0] + _vm->_dialogueButtonWidth - 1, 199, _vm->guiSettings()->colors.frame1);
 	clearCurDim();
 	_screen->set16bitShadingLevel(0);
 	_screen->updateScreen();

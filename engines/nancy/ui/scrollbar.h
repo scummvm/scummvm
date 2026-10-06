@@ -30,6 +30,18 @@ struct NancyInput;
 
 namespace UI {
 
+// Returns the number of pixels a single mouse wheel notch should scroll a view of
+// the given height, so that scrolling advances by a fixed part of a page.
+int wheelScrollPixels(int visibleHeight);
+
+// Same, expressed as a fraction of the total scroll range. Returns 0 when the
+// content fits inside the viewport and thus cannot be scrolled.
+float wheelScrollStep(int visibleHeight, int contentHeight);
+
+// Applies mouse wheel input to a [0, 1] scroll position, as long as the mouse is
+// inside the hotspot. Consumes the wheel input and returns true if the position changed.
+bool scrollWithMouseWheel(NancyInput &input, const Common::Rect &hotspot, float &scrollPos, float step);
+
 class Scrollbar : public RenderObject {
 public:
 	Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical = true);
@@ -42,6 +54,10 @@ public:
 
 	void resetPosition();
 	float getPos() const { return _currentPosition; }
+
+	// The screen rect the thumb travels along. Unlike _screenPosition, which only
+	// covers the thumb itself, this covers the whole scrollbar.
+	Common::Rect getTrackRect() const;
 
 	void setPosition(float pos);
 	void calculatePosition();

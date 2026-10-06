@@ -141,7 +141,7 @@ void ArcadePuzzle::readData(Common::SeekableReadStream &stream) {
 		_sounds[i].readNormal(stream);
 
 	_levelClearSound.readNormal(stream);              // 49 bytes, +0x43b..+0x46b
-	_winScene.readData(stream);                       // 25 bytes, +0x46c..+0x484
+	_solveScene.readData(stream);                       // 25 bytes, +0x46c..+0x484
 	stream.skip(1);                                // 1-byte gap, +0x485
 
 	_gameOverSound.readNormal(stream);                // 49 bytes, +0x486..+0x4b6
@@ -159,8 +159,7 @@ void ArcadePuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Determine game field bounds within viewport
 	int vpDataWidth  = (vpBounds.right  - vpBounds.left);
@@ -481,6 +480,7 @@ void ArcadePuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		// Load sounds
 		for (int i = 0; i < 6; ++i)
@@ -594,7 +594,7 @@ void ArcadePuzzle::execute() {
 		// forever until they clear the required level(s). So
 		// kActionTrigger is only ever reached via kGameOverWin, and
 		// we just execute the win scene change + flag set.
-		_winScene.execute();
+		_solveScene.execute();
 
 		finishExecution();
 		break;

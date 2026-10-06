@@ -298,7 +298,6 @@ ys = sprite->ys;
 	}
 
 	skip_y = cx;
-	//draw_y = bx;
 	stop_y = cx + bx;
 
 	if (bx <= 0)

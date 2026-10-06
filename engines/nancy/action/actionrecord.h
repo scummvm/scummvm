@@ -53,6 +53,11 @@ enum struct DependencyType : int16 {
 	kElapsedPlayerDay				= 10,
 	kCursorType						= 11,
 	kPlayerTOD						= 12,
+	// Nancy11 used types 13/14 for software-timer less-/greater-than checks (with 22
+	// for "is active"). Nancy12 moved the software-timer checks to types 22-25 and
+	// left 13/14 unused. Nancy14 then repurposed type 13 into a value-table test
+	// (label = value index, milliseconds = threshold, condition = comparison); 14
+	// stays unused.
 	kTimerLessThanDependencyTime	= 13,
 	kTimerGreaterThanDependencyTime	= 14,
 	kDifficultyLevel				= 15,
@@ -62,7 +67,11 @@ enum struct DependencyType : int16 {
 	kCloseParenthesis				= 19,
 	kRandom							= 20,
 	kDefaultAR						= 21,
-	kTimerIsActive					= 22	// Nancy11+ software-timer slot is running/counting
+	kTimerIsActive					= 22,	// Nancy11+ software-timer slot is running (or paused, in Nancy12+)
+	kTimerEqualsDependencyTime		= 23,	// The next three compare a running software
+	kTimerBelowDependencyTime		= 24,	// timer's elapsed time against the dependency's
+	kTimerAboveDependencyTime		= 25,	// own time, and only while that slot is running
+	kPlayerCharacter				= 26	// Nancy15+ which protagonist is being played
 };
 
 // Describes a condition that needs to be fulfilled before the
@@ -106,7 +115,6 @@ public:
 		_isDone(false),
 		_hasHotspot(false),
 		_state(ExecutionState::kBegin),
-		_days(-1),
 		_cursorDependency(nullptr) {}
 	virtual ~ActionRecord() {}
 
@@ -140,6 +148,7 @@ protected:
 
 public:
 	Common::String _description;
+	Common::String _includeSource; // the included file this record came from, empty for the scene's own
 	byte _type;
 	ExecutionType _execType;
 	// 0x32 data
@@ -153,7 +162,6 @@ public:
 	bool _hasHotspot;
 	Common::Rect _hotspot;
 	ExecutionState _state;
-	int16 _days;
 	DependencyRecord *_cursorDependency;
 };
 

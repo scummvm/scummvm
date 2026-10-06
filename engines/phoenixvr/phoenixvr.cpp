@@ -51,10 +51,11 @@
 #include "phoenixvr/pakf.h"
 #include "phoenixvr/region_set.h"
 #include "phoenixvr/script.h"
+#include "phoenixvr/subtitles.h"
 #include "phoenixvr/vr.h"
+#include "phoenixvr/wise.h"
 #include "video/4xm_decoder.h"
 #include "video/smk_decoder.h"
-#include "video/subtitles.h"
 
 namespace PhoenixVR {
 
@@ -317,11 +318,12 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 		_levels.push_back({"level4", "Level 4"});
 		_levels.push_back({"level5", "Level 5"});
 		setNextLevel();
-	} else if (gameIdMatches("pharaoncurse")) {
+	} else if (gameIdMatches("pharaohcurse")) {
 		Common::INIFile file;
-		Common::ScopedPtr<Common::SeekableReadStream> stream(open("pharaohs.wbm"));
+		Common::String filename((_gameDescription->flags & ADGF_DEMO) ? "demo.wbm" : "pharaohs.wbm");
+		Common::ScopedPtr<Common::SeekableReadStream> stream(open(filename));
 		if (!stream || !file.loadFromStream(*stream))
-			error("can't open install/pharaohs.wbm");
+			error("can't open %s", filename.c_str());
 		Common::String strNumLevels;
 		if (!file.getKey("LEVELS", "GAME", strNumLevels))
 			error("can't find levels number");
@@ -336,11 +338,15 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 				error("no path in level section");
 			if (!file.getKey("NAME", Common::String::format("LEVEL_%d", i), name))
 				error("no name in level section");
-			if (media == "HD")
+			if (media == "HD" && !(_gameDescription->flags & ADGF_DEMO))
 				path = "install\\" + path;
 			debug("adding level %s %s", path.c_str(), name.c_str());
 			_levels.push_back(Level{path, name});
 		}
+	}
+	Common::ScopedPtr<Common::File> file(new Common::File);
+	if (file->open("install.exe")) {
+		SearchMan.add("install.exe", createWISEArchive(file.release()), 0, true);
 	}
 }
 
@@ -451,7 +457,7 @@ Common::SeekableReadStream *PhoenixVREngine::open(const Common::String &filename
 Common::String PhoenixVREngine::getLevelScript(const Level &level) const {
 	auto mainScript = gameIdMatches("amerzone") ? "amerzone" : "script";
 	Common::String script = Common::String::format("%s\\%s.lst", level.path.c_str(), mainScript);
-	if (!gameIdMatches("pharaoncurse") || SearchMan.hasFile(Common::Path(script, '\\')))
+	if (!gameIdMatches("pharaohcurse") || SearchMan.hasFile(Common::Path(script, '\\')))
 		return script;
 
 	if (level.name.equalsIgnoreCase("Menu"))
@@ -799,6 +805,7 @@ bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 		_nextWarp = _script->getWarp(warp);
 
 	_hoverIndex = -1;
+	_hoverLeaveIndex = -1;
 	_messengerInventoryHover = -1;
 	if (savePrev) {
 		assert(_warpIdx >= 0);
@@ -944,7 +951,7 @@ void PhoenixVREngine::playSound(const Common::String &sound, Audio::Mixer::Sound
 	_mixer->playStream(type, &h, Audio::makeWAVStream(stream.release(), DisposeAfterUse::YES), -1, volume, spatial ? 0 : panToBalance(_globalPan));
 	if (loops < 0 || music)
 		_mixer->loopChannel(h);
-	Common::SharedPtr<Video::Subtitles> subtitles;
+	Common::SharedPtr<Subtitles> subtitles;
 	if (!music)
 		subtitles = loadSubtitles(sound);
 
@@ -999,21 +1006,21 @@ Common::Path PhoenixVREngine::getSubtitlePath(const Common::String &path) const 
 	return Common::Path("subtitle").appendComponent(language).appendComponent(filename);
 }
 
-Common::SharedPtr<Video::Subtitles> PhoenixVREngine::loadSubtitles(const Common::String &path) const {
-	Common::SharedPtr<Video::Subtitles> subtitles;
+Common::SharedPtr<Subtitles> PhoenixVREngine::loadSubtitles(const Common::String &path) const {
+	Common::SharedPtr<Subtitles> subtitles;
 	if (!ConfMan.getBool("subtitles"))
 		return subtitles;
 
-	subtitles = Common::SharedPtr<Video::Subtitles>(new Video::Subtitles());
+	subtitles = Common::SharedPtr<Subtitles>(new Subtitles(_screen));
 	subtitles->loadSRTFile(getSubtitlePath(path));
 	if (!subtitles->isLoaded())
-		return Common::SharedPtr<Video::Subtitles>();
+		return Common::SharedPtr<Subtitles>();
 
 	setupSubtitles(*subtitles);
 	return subtitles;
 }
 
-void PhoenixVREngine::setupSubtitles(Video::Subtitles &subtitles) const {
+void PhoenixVREngine::setupSubtitles(Subtitles &subtitles) const {
 	// Subtitle positioning constants (as percentages of screen height)
 	const int HORIZONTAL_MARGIN = 20;
 	const int MIN_BOTTOM_MARGIN = 4;
@@ -1022,19 +1029,19 @@ void PhoenixVREngine::setupSubtitles(Video::Subtitles &subtitles) const {
 	const float SUBTITLE_HEIGHT_PERCENT = 0.2f;
 
 	// Font sizing constants (as percentage of screen height)
-	const int MIN_FONT_SIZE = 18;
-	const float BASE_FONT_SIZE_PERCENT = 1.0f / 36.0f;
+	const int MIN_FONT_SIZE = 16;
+	const float BASE_FONT_SIZE_PERCENT = 1.0f / 48.0f;
 
-	int16 h = g_system->getOverlayHeight();
-	int16 w = g_system->getOverlayWidth();
+	int16 h = _screen->h;
+	int16 w = _screen->w;
 	int bottomMargin = MAX<int>(MIN_BOTTOM_MARGIN, int(h * BOTTOM_MARGIN_PERCENT));
 	int topOffset = MAX<int>(MIN_SUBTITLE_HEIGHT, int(h * SUBTITLE_HEIGHT_PERCENT));
 	int fontSize = MAX<int>(MIN_FONT_SIZE, int(h * BASE_FONT_SIZE_PERCENT));
 
 	subtitles.setBBox(Common::Rect(HORIZONTAL_MARGIN, h - topOffset, w - HORIZONTAL_MARGIN, h - bottomMargin));
 	subtitles.setColor(0xff, 0xff, 0x80);
-	subtitles.setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
-	subtitles.setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
+	subtitles.setFont("LiberationSans-Regular.ttf", fontSize, Subtitles::kFontStyleRegular);
+	subtitles.setFont("LiberationSans-Italic.ttf", fontSize, Subtitles::kFontStyleItalic);
 }
 
 void PhoenixVREngine::playMovie(const Common::String &movie) {
@@ -1064,14 +1071,10 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 	dec->start();
 	_currentDecoder = dec.get();
 
-	Common::SharedPtr<Video::Subtitles> subtitles = loadSubtitles(movie);
-	if (subtitles) {
-		g_system->showOverlay(false);
-		g_system->clearOverlay();
-	}
-
+	Common::SharedPtr<Subtitles> subtitles = loadSubtitles(movie);
 	bool playing = true;
 	Common::ScopedPtr<Graphics::Palette> palette;
+	const Graphics::Surface *frame = nullptr;
 	while (!shouldQuit() && playing && !dec->endOfVideo()) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -1089,28 +1092,24 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 			}
 		}
 		if (dec->needsUpdate()) {
-			auto *s = dec->decodeNextFrame();
+			frame = dec->decodeNextFrame();
 			if (dec->hasDirtyPalette()) {
 				palette.reset(new Graphics::Palette(dec->getPalette(), 256));
 			}
-			if (s) {
-				if (!s->format.isCLUT8() || palette) {
-					Common::Point dstPos((g_system->getWidth() - s->w) / 2, (g_system->getHeight() - s->h) / 2);
-					_screen->simpleBlitFrom(*s, dstPos, Graphics::FLIP_NONE, false, 0xff, palette.get());
-				}
-			}
+		}
+		if (frame && (!frame->format.isCLUT8() || palette)) {
+			Common::Point dstPos((g_system->getWidth() - frame->w) / 2, (g_system->getHeight() - frame->h) / 2);
+			_screen->simpleBlitFrom(*frame, dstPos, Graphics::FLIP_NONE, false, 0xff, palette.get());
 		}
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
 		_frameLimiter.delayBeforeSwap();
 		if (subtitles && !dec->isPaused())
-			subtitles->drawSubtitle(dec->getTime(), false);
+			subtitles->drawSubtitle(dec->getTime());
 		_screen->update();
 		_frameLimiter.startFrame();
 	}
-	if (subtitles)
-		g_system->hideOverlay();
 	_system->lockMouse(_vr.isVR());
 	_currentDecoder = nullptr;
 }
@@ -1270,11 +1269,11 @@ Graphics::ManagedSurface *PhoenixVREngine::loadSurface(const Common::String &pat
 	if (dec->hasPalette())
 		s->setPalette(dec->getPalette().data(), 0, dec->getPalette().size());
 	// TODO: Skip conversion for surfaces with palettes?
-	if (version() == 1) {
+	if (s->format.aBits() == 0) {
 		s->convertToInPlace(_pixelFormat);
 		s->setTransparentColor(s->format.RGBToColor(0, 0, 0));
-	} else {
-		s->convertToInPlace(Graphics::BlendBlit::getSupportedPixelFormat());
+	} else if (_pixelFormat.aBits() >= s->format.aBits()) {
+		s->convertToInPlace(_pixelFormat);
 	}
 	return s;
 }
@@ -1538,6 +1537,7 @@ void PhoenixVREngine::renderLensflare() {
 		const int dstX = static_cast<int>(sourceX + (_screenCenter.x - sourceX) * lens.scale);
 		const int dstY = static_cast<int>(sourceY + (_screenCenter.y - sourceY) * lens.scale);
 
+		// TODO: Could ManagedSurface routines be used here?
 		for (int y = 0; y != src.h; ++y) {
 			const int screenY = dstY + y;
 			if (screenY < 0 || screenY >= _screen->h)
@@ -1781,6 +1781,8 @@ void PhoenixVREngine::tick(float dt) {
 		_rolloverText = TextState();
 		_archiveImages.clear();
 		_archiveTexts.clear();
+		_hoverIndex = -1;
+		_hoverLeaveIndex = -1;
 		_warpIdx = _nextWarp;
 		_warp = _script->getWarp(_nextWarp);
 		debug("warp %d -> %s %s", _nextWarp, _warp->vrFile.c_str(), _warp->testFile.c_str());
@@ -1842,6 +1844,8 @@ void PhoenixVREngine::tick(float dt) {
 	auto &cursors = _cursors[_warpIdx];
 	bool anyMatched = false;
 	int messengerInventoryHover = -1;
+	int hoverIndex = -1;
+	int hoverLeaveIndex = -1;
 	int regionCount = _regSet ? _regSet->size() : 0;
 	for (int i = 0, n = MAX<int>(regionCount, cursors.size()); i != n; ++i) {
 		auto *region = getRegion(i);
@@ -1855,24 +1859,33 @@ void PhoenixVREngine::tick(float dt) {
 				messengerInventoryHover = i;
 
 			auto test = _warp->getTest(i);
-			if (test && test->hover == 1 && _hoverIndex < 0) {
-				debug("executing hover test %d", i);
-				_hoverIndex = i;
-				executeTest(i);
+			if (test) {
+				if (test->hover == 1 && hoverIndex < 0)
+					hoverIndex = i;
+				else if (test->hover == 2 && hoverLeaveIndex < 0)
+					hoverLeaveIndex = i;
 			}
 
 			if (!cursor && validTestIdx) {
 				cursor = loadCursor(cursors[i].name);
 			}
-		} else if (i == _hoverIndex) {
-			debug("leaving hover region");
-			auto leave = _warp->getTest(i - 1);
-			if (!leave || leave->hover != 2)
-				leave = _warp->getTest(i + 1);
-			if (leave && leave->hover == 2) {
-				executeTest(leave->idx);
-			}
-			_hoverIndex = -1;
+		}
+	}
+
+	if (hoverLeaveIndex != _hoverLeaveIndex) {
+		int prevHoverLeaveIndex = _hoverLeaveIndex;
+		_hoverLeaveIndex = hoverLeaveIndex;
+		if (prevHoverLeaveIndex >= 0) {
+			debug("executing hover leave test %d", prevHoverLeaveIndex);
+			executeTest(prevHoverLeaveIndex);
+		}
+	}
+
+	if (hoverIndex != _hoverIndex) {
+		_hoverIndex = hoverIndex;
+		if (hoverIndex >= 0) {
+			debug("executing hover test %d", hoverIndex);
+			executeTest(hoverIndex);
 		}
 	}
 
@@ -1902,8 +1915,8 @@ void PhoenixVREngine::tick(float dt) {
 	if (!cursor)
 		cursor = loadCursor(anyMatched ? _defaultCursor[1] : _defaultCursor[0]);
 	if (cursor) {
-		if (cursor->surface->format.aBits() != 0)
-			_screen->blendBlitFrom(*cursor->surface, _mousePos - cursor->offset);
+		if (!cursor->surface->hasTransparentColor())
+			_screen->simpleBlitFrom(*cursor->surface, _mousePos - cursor->offset, Graphics::FLIP_NONE, true);
 		else
 			_screen->simpleBlitFrom(*cursor->surface, _mousePos - cursor->offset);
 	}
@@ -1916,7 +1929,7 @@ void PhoenixVREngine::drawAudioSubtitles() {
 	for (auto &kv : _sounds) {
 		auto &sound = kv._value;
 		if (sound.subtitles && _mixer->isSoundHandleActive(sound.handle))
-			sound.subtitles->drawSubtitle(_mixer->getElapsedTime(sound.handle).msecs(), false);
+			sound.subtitles->drawSubtitle(_mixer->getElapsedTime(sound.handle).msecs());
 	}
 }
 
@@ -1926,8 +1939,7 @@ Common::Error PhoenixVREngine::run() {
 		formats.push_back(_rgb565);
 		initGraphics(640, 480, formats);
 	} else {
-		_pixelFormat = Graphics::BlendBlit::getSupportedPixelFormat();
-		initGraphics(640, 480, &_pixelFormat);
+		initGraphics(640, 480, nullptr);
 	}
 
 	_pixelFormat = g_system->getScreenFormat();
@@ -2208,7 +2220,7 @@ void PhoenixVREngine::captureContext() {
 			ms.writeByte(0);
 	};
 
-	ms.writeSint32LE(fromAngle(_angleY.angle() + kPi2));
+	ms.writeSint32LE(fromAngle(kPi2 - _angleY.angle()));
 	ms.writeSint32LE(fromAngle(_angleX.angle()));
 	ms.writeSint32LE(0);
 	ms.writeSint32LE(0);

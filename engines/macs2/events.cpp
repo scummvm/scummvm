@@ -53,8 +53,8 @@ void Events::runGame() {
 	// ISR counter exceeds 1 (every 2 ticks) -> ~10.8fps / ~92.6ms.
 	// Tick period / ticks-per-frame come from engine facades for later platforms.
 	uint32 lastTickTime = g_system->getMillis();
-	const uint32 kTimerTickMs = g_engine->timerTickMs();
-	const uint16 kNormalTicksPerGameFrame = g_engine->ticksPerGameFrame();
+	const uint32 timerTickMs = g_engine->timerTickMs();
+	const uint16 normalTicksPerGameFrame = g_engine->ticksPerGameFrame();
 	uint16 timerTickCounter = 0;
 
 	Common::Event e;
@@ -76,10 +76,10 @@ void Events::runGame() {
 
 		// Accumulate timer ticks based on elapsed wall-clock time
 		const uint32 elapsed = currentMillis - lastTickTime;
-		if (elapsed >= kTimerTickMs) {
-			const uint16 ticks = elapsed / kTimerTickMs;
+		if (elapsed >= timerTickMs) {
+			const uint16 ticks = elapsed / timerTickMs;
 			timerTickCounter += ticks;
-			lastTickTime += ticks * kTimerTickMs;
+			lastTickTime += ticks * timerTickMs;
 		}
 
 		bool doTick = false;
@@ -91,7 +91,7 @@ void Events::runGame() {
 			doTick = (timerTickCounter >= 0x12); // TODO: this is running at different speed compared to running this in dosbox
 			break;
 		default: // normal: every kNormalTicksPerGameFrame timer ticks
-			doTick = (timerTickCounter >= kNormalTicksPerGameFrame);
+			doTick = (timerTickCounter >= normalTicksPerGameFrame);
 			break;
 		}
 

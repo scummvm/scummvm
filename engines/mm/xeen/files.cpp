@@ -102,7 +102,7 @@ SaveArchive::SaveArchive(Party *party) : BaseCCArchive(), _party(party), _data(n
 
 SaveArchive::~SaveArchive() {
 	for (Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *>::iterator it = _newData.begin(); it != _newData.end(); ++it) {
-		delete (*it)._value;
+		delete it->_value;
 	}
 	delete[] _data;
 }

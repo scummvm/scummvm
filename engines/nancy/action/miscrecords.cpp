@@ -35,6 +35,10 @@
 #include "common/events.h"
 #include "common/config-manager.h"
 #include "common/random.h"
+#include "common/file.h"
+
+#include "image/png.h"
+
 #include "nancy/ui/taskbar.h"
 
 namespace Nancy {
@@ -137,7 +141,7 @@ static void readTextboxText(Common::SeekableReadStream &stream, Common::String &
 }
 
 void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
-	if (_isAutotext) {
+	if (_writeType == kAutotextWrite) {
 		// AR 81 prefixes the body with a wait header (runtime state at 0x00 is
 		// always 0 in the data, so skip it)
 		stream.skip(2);
@@ -148,7 +152,7 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 
 	readTextboxText(stream, _text);
 
-	if (_isAutotext) {
+	if (_writeType == kAutotextWrite) {
 		// The original terminates the body with the "<e>" end-of-line hypertext tag
 		_text += "<e>";
 	}
@@ -163,7 +167,7 @@ void TextBoxWrite::execute() {
 		}
 		tb.setVisible(true);
 
-		if (!_isAutotext) {
+		if (_writeType == kTextBoxWrite) {
 			// Plain TextBoxWrite completes immediately
 			finishExecution();
 			return;
@@ -226,12 +230,17 @@ void FrameTextBox::execute() {
 	if (!_text.empty())
 		tb.addTextLine(_text);
 
-	tb.setFullMode(_fullMode);
+	tb.setFullMode(_boxMode == kFullBox);
 	finishExecution();
 }
 
 void ControlUIItems::readData(Common::SeekableReadStream &stream) {
-	_uiButton = stream.readUint16LE();
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		_uiButton = stream.readByte();
+		_characterIndex = stream.readByte();
+	} else {
+		_uiButton = stream.readUint16LE();
+	}
 	_autoOpenOrBadgeSound = stream.readByte();
 	_flagB  = stream.readByte();
 	_startScene = stream.readSint16LE();
@@ -283,8 +292,12 @@ void ControlUIItems::execute() {
 		// (kNoScene). _flagB != 0 also sets the disabled button's rejection-sound
 		// mode from _autoOpenOrBadgeSound (which clickSoundName line plays when
 		// the button is clicked while its popup is unavailable).
+		// Nancy15 keeps separate overrides per player character. Only the
+		// active character's taskbar is modeled, so skip the others'.
+		uint characterIndex = _characterIndex == kPlayerCharacterActive ?
+			g_nancy->getPlayerCharacter() : _characterIndex;
 		UI::Taskbar *taskbar = NancySceneState.getTaskbar();
-		if (taskbar) {
+		if (taskbar && characterIndex == g_nancy->getPlayerCharacter()) {
 			if (_flagB != 0) {
 				int16 start = _startScene;
 				int16 end = _endScene;
@@ -359,14 +372,7 @@ void SetCellPhoneBatteryAndSignal::execute() {
 }
 
 void ChangeCellPhoneInfo::readData(Common::SeekableReadStream &stream) {
-	stream.read(_contact.unknownPrefix, sizeof(_contact.unknownPrefix));
-
-	char nameBuf[21];
-	stream.read(nameBuf, 20);
-	nameBuf[20] = '\0';
-	_contact.name = nameBuf;
-
-	stream.read(_contact.unknownSuffix, sizeof(_contact.unknownSuffix));
+	readContact(stream, _contact);
 }
 
 void ChangeCellPhoneInfo::execute() {
@@ -408,12 +414,12 @@ void CellPhonePopCellSceneFromStack::execute() {
 
 void BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
 	_relative = stream.readByte();
-	_hours = stream.readUint16LE();
-	_minutes = stream.readUint16LE();
+	_hours = stream.readSint16LE();
+	_minutes = stream.readSint16LE();
 }
 
 void BumpPlayerClock::execute() {
-	NancySceneState.setPlayerTime(_hours * 3600000 + _minutes * 60000, _relative);
+	NancySceneState.setPlayerTime((uint32)(_hours * 3600000 + _minutes * 60000), _relative);
 	finishExecution();
 }
 
@@ -424,6 +430,44 @@ void SaveContinueGame::readData(Common::SeekableReadStream &stream) {
 void SaveContinueGame::execute() {
 	g_nancy->secondChance();
 	_isDone = true;
+}
+
+void MakeScreenFile::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _filename);
+
+	readRect(stream, _cropRect);
+
+	// Image format selector, unused
+	stream.skip(1);
+}
+
+void MakeScreenFile::execute() {
+	Graphics::ManagedSurface screenshot;
+	g_nancy->_graphics->screenshotScreen(screenshot);
+
+	Common::Rect cropRect = _cropRect;
+
+	if (cropRect.isValidRect()) {
+		cropRect.clip(Common::Rect(screenshot.w, screenshot.h));
+
+		if (!cropRect.isEmpty()) {
+			Common::Path outName(_filename + ".png");
+			Common::DumpFile outFile;
+
+			if (outFile.open(outName)) {
+				if (!Image::writePNG(outFile, screenshot.getSubArea(cropRect))) {
+					warning("Could not write screen file %s", outName.toString().c_str());
+				}
+
+				outFile.finalize();
+				outFile.close();
+			} else {
+				warning("Could not create screen file %s", outName.toString().c_str());
+			}
+		}
+	}
+
+	finishExecution();
 }
 
 void TurnOffMainRendering::readData(Common::SeekableReadStream &stream) {
@@ -488,6 +532,37 @@ static void addTimerTrigger(TimerData::Timer &timer, TimerData::Trigger::Type ty
 	timer.triggers.push_back(trigger);
 }
 
+// Nancy 12-13 add to, subtract from or set the elapsed time's hours, minutes and
+// seconds separately (clamping each at 0 when subtracting), dropping any
+// fraction of a second
+static void adjustTimerComponents(TimerData::Timer &timer, int16 command, int16 hours, int16 minutes, int16 seconds) {
+	int32 h = timer.currentTimeMs / 3600000;
+	int32 m = (timer.currentTimeMs / 60000) % 60;
+	int32 s = (timer.currentTimeMs / 1000) % 60;
+
+	switch (command) {
+	case ResetAndStartTimer::kAddTime:
+		h += hours;
+		m += minutes;
+		s += seconds;
+		break;
+	case ResetAndStartTimer::kSubtractTime:
+		h = MAX<int32>(h - hours, 0);
+		m = MAX<int32>(m - minutes, 0);
+		s = MAX<int32>(s - seconds, 0);
+		break;
+	case ResetAndStartTimer::kSetTime:
+		h = hours;
+		m = minutes;
+		s = seconds;
+		break;
+	default:
+		return;
+	}
+
+	timer.currentTimeMs = MAX<int32>((h * 60 + m) * 60 + s, 0) * 1000;
+}
+
 // Reads exactly size bytes from the stream, returning the text up to the first
 // null byte. Used for the fixed-size string fields inside a TimerControl chunk.
 static Common::String readFixedSizeString(Common::SeekableReadStream &stream, uint size) {
@@ -519,17 +594,17 @@ void ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
 	case kAddTime:
 	case kSubtractTime:
 	case kSetTime:
-		_hours = stream.readSint16LE();      // 0x04
-		_minutes = stream.readSint16LE();    // 0x06
-		_seconds = stream.readSint16LE();    // 0x08
-		stream.skip(2);                      // 0x0a, unused
+		_hours = stream.readSint16LE();          // 0x04
+		_minutes = stream.readSint16LE();        // 0x06
+		_seconds = stream.readSint16LE();        // 0x08
+		_milliseconds = stream.readSint16LE();   // 0x0a
 		break;
 	case kConfigOneShot:
 	case kConfigRepeating: {
 		_hours = stream.readSint16LE();          // 0x04
 		_minutes = stream.readSint16LE();        // 0x06
 		_seconds = stream.readSint16LE();        // 0x08
-		stream.skip(2);                          // 0x0a, unused
+		_milliseconds = stream.readSint16LE();   // 0x0a
 		_sound.volume = stream.readUint16LE();   // 0x0c
 		_sound.channelID = stream.readUint16LE(); // 0x0e
 		_sound.numLoops = 1;
@@ -576,7 +651,7 @@ void ResetAndStartTimer::execute() {
 			}
 		}
 
-		_isDone = true;
+		finishExecution();
 		return;
 	}
 
@@ -587,7 +662,22 @@ void ResetAndStartTimer::execute() {
 		if (_command == kStart) {
 			timer->state = TimerData::Timer::kRunning;
 		} else if (timer->state == TimerData::Timer::kRunning) {
-			const uint32 durationMs = ((uint32)_hours * 3600 + (uint32)_minutes * 60 + (uint32)_seconds) * 1000;
+			const bool isNancy14 = g_nancy->getGameType() >= kGameTypeNancy14;
+
+			// Seconds from kTimerDurationIndexBase (Nancy14+: above it) index
+			// the BSUM duration table
+			int16 seconds = _seconds;
+			if (isNancy14 ? seconds > kTimerDurationIndexBase : seconds >= kTimerDurationIndexBase) {
+				auto *bootSummary = GetEngineData(BSUM);
+				uint index = seconds - kTimerDurationIndexBase;
+				if (bootSummary && index < bootSummary->timerDurations.size()) {
+					seconds = bootSummary->timerDurations[index];
+				}
+			}
+
+			// Only Nancy14+ uses the milliseconds field
+			const uint32 durationMs = ((uint32)_hours * 3600 + (uint32)_minutes * 60 + (uint32)seconds) * 1000 +
+				(isNancy14 ? _milliseconds : 0);
 
 			switch (_command) {
 			case kClear:
@@ -597,13 +687,31 @@ void ResetAndStartTimer::execute() {
 				timer->state = TimerData::Timer::kPaused;
 				break;
 			case kAddTime:
-				timer->currentTimeMs += durationMs;
+				if (!isNancy14) {
+					adjustTimerComponents(*timer, _command, _hours, _minutes, seconds);
+				} else {
+					timer->currentTimeMs += durationMs;
+				}
+
 				break;
 			case kSubtractTime:
-				timer->currentTimeMs = timer->currentTimeMs > durationMs ? timer->currentTimeMs - durationMs : 0;
-				break;
 			case kSetTime:
-				timer->currentTimeMs = durationMs;
+				if (!isNancy14) {
+					adjustTimerComponents(*timer, _command, _hours, _minutes, seconds);
+				} else if (_command == kSubtractTime) {
+					timer->currentTimeMs = timer->currentTimeMs > durationMs ? timer->currentTimeMs - durationMs : 0;
+				} else {
+					timer->currentTimeMs = durationMs;
+				}
+
+				// Reset triggers whose target time is now later than the
+				// elapsed time, so they fire again once the timer reaches them
+				for (TimerData::Trigger &trigger : timer->triggers) {
+					if (timer->currentTimeMs < trigger.durationMs) {
+						trigger.hasFired = false;
+					}
+				}
+
 				break;
 			case kConfigOneShot:
 			case kConfigRepeating:
@@ -617,7 +725,8 @@ void ResetAndStartTimer::execute() {
 		}
 	}
 
-	_isDone = true;
+	// Repeating records (e.g. gradually refilling a timer) run again next frame
+	finishExecution();
 }
 
 void StopTimer::readData(Common::SeekableReadStream &stream) {
@@ -634,7 +743,7 @@ void StopTimer::execute() {
 		}
 	}
 
-	_isDone = true;
+	finishExecution();
 }
 
 void TimerControl::readData(Common::SeekableReadStream &stream) {
@@ -669,7 +778,7 @@ void TimerControl::readData(Common::SeekableReadStream &stream) {
 void TimerControl::execute() {
 	TimerData::Timer *timer = getSoftwareTimer(_timerIndex);
 	if (!timer) {
-		_isDone = true;
+		finishExecution();
 		return;
 	}
 
@@ -716,7 +825,7 @@ void TimerControl::execute() {
 		break;
 	}
 
-	_isDone = true;
+	finishExecution();
 }
 
 void StopPlayerScrolling::readData(Common::SeekableReadStream &stream) {
@@ -889,9 +998,13 @@ void HintSystem::selectHint() {
 }
 
 void ResourceUse::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		_characterIndex = stream.readByte();     // whose resources are changed
+	}
+
 	_resourceIndex = stream.readSint16LE();      // which UIRC resource to change
-	_amount = stream.readSint16LE();             // value / delta
-	_mode = stream.readByte();                   // 0 = set, non-zero = add
+	_amount = stream.readSint16LE();             // value / delta, or a table index
+	_mode = stream.readByte();                   // see ResourceUseMode
 	_flag.label = stream.readSint16LE();         // event flag set on success
 	_flag.flag = stream.readByte();
 
@@ -911,6 +1024,10 @@ void ResourceUse::readData(Common::SeekableReadStream &stream) {
 	_drawResourceValue = stream.readByte() != 0;
 	_valueDest.x = stream.readSint32LE();
 	_valueDest.y = stream.readSint32LE();
+}
+
+byte ResourceUse::getCharacterIndex() const {
+	return _characterIndex == kPlayerCharacterActive ? (byte)g_nancy->getPlayerCharacter() : _characterIndex;
 }
 
 void ResourceUse::init() {
@@ -936,14 +1053,17 @@ void ResourceUse::init() {
 	}
 
 	if (haveItem && _drawResourceValue) {
-		// The value is rendered with a '$' prefix and `unknown2` decimal places
-		// (Old Clock tracks cents), using the font selected by `unknown1`.
+		// Unlike the taskbar coin purse, the overlay prints the bare number:
+		// no currency symbol and no decimal point, whatever the record says
 		const UIRC::ItemRecord &item = uirc->items[_resourceIndex];
-		const Font *font = g_nancy->_graphics->getFont(item.unknown1);
-		if (font && item.unknown2 > 0) {
-			const int32 value = NancySceneState.getUIResource(_resourceIndex);
-			const Common::String text = Common::String::format("$%d.%02d", value / 100, value % 100);
-			font->drawString(&_drawSurface, text, _valueDest.x, _valueDest.y, screenBounds.width() - _valueDest.x, 0);
+		const Font *font = g_nancy->_graphics->getFont(item.fontID);
+		if (font) {
+			const Common::String text =
+				Common::String::format("%d", NancySceneState.getUIResource(_resourceIndex, getCharacterIndex()));
+
+			// The record's y is the bottom row the glyphs are aligned on
+			const int y = _valueDest.y - font->getFontHeight() + 1;
+			font->drawString(&_drawSurface, text, _valueDest.x, y, screenBounds.width() - _valueDest.x, 0);
 		}
 	}
 
@@ -952,18 +1072,31 @@ void ResourceUse::init() {
 }
 
 void ResourceUse::applyChange() {
-	if (_mode == 0) {
+	const byte characterIndex = getCharacterIndex();
+
+	if (_mode > kSetTableValue) {
+		warning("Unknown ResourceUse mode %u, treating it as an addition", _mode);
+	}
+
+	// In the table modes the amount is a table index, not the amount itself.
+	int32 amount = _amount;
+	if (_mode == kAddTableValue || _mode == kSetTableValue) {
+		auto *tableData = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+		amount = (tableData && _amount != tableData->getNoIndex()) ? tableData->getValue(_amount) : 0;
+	}
+
+	if (_mode == kSetValue || _mode == kSetTableValue) {
 		// Set the resource outright.
-		NancySceneState.setUIResource(_resourceIndex, _amount);
+		NancySceneState.setUIResource(_resourceIndex, amount, characterIndex);
 		NancySceneState.setEventFlag(_flag);
 		_paymentApplied = true;
 	} else {
 		// Add the (signed) amount, but never let the resource go negative —
 		// the original skips the change (e.g. when Nancy can't afford it).
-		const int32 result = NancySceneState.getUIResource(_resourceIndex) + _amount;
+		const int32 result = NancySceneState.getUIResource(_resourceIndex, characterIndex) + amount;
 		_paymentApplied = result >= 0;
 		if (_paymentApplied) {
-			NancySceneState.setUIResource(_resourceIndex, result);
+			NancySceneState.setUIResource(_resourceIndex, result, characterIndex);
 			NancySceneState.setEventFlag(_flag);
 		}
 	}
@@ -1048,6 +1181,44 @@ void ResourceUse::execute() {
 		finishExecution();
 		break;
 	}
+}
+
+void PlayChar::readData(Common::SeekableReadStream &stream) {
+	_characterIndex = stream.readByte();
+	readFilename(stream, _videoFile);
+}
+
+void PlayChar::execute() {
+	const PCUI *pcui = GetEngineData(PCUI);
+	if (!pcui || _characterIndex >= pcui->characters.size()) {
+		warning("PlayChar: no player character %u", _characterIndex);
+		finishExecution();
+		return;
+	}
+
+	// Every character owns an event flag that marks them as the one being
+	// played; conditions elsewhere in the game branch on those
+	for (uint i = 0; i < pcui->characters.size(); ++i) {
+		const uint16 flagLabel = pcui->characters[i].id;
+		if (flagLabel != 0) {
+			NancySceneState.setEventFlag(flagLabel, i == _characterIndex ? g_nancy->_true : g_nancy->_false);
+		}
+	}
+
+	NancySceneState.changePlayerCharacter(_characterIndex);
+
+	auto *playerChar = (PlayerCharacterData *)NancySceneState.getPuzzleData(PlayerCharacterData::getTag());
+	if (playerChar) {
+		playerChar->characterIndex = _characterIndex;
+	}
+
+	// The scene itself doesn't change; only the video showing it does, so that
+	// the location is seen through the incoming character's eyes
+	if (!_videoFile.empty()) {
+		NancySceneState.changeSceneVideo(_videoFile);
+	}
+
+	finishExecution();
 }
 
 } // End of namespace Action

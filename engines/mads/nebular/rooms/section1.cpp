@@ -22,8 +22,10 @@
 #include "math/utils.h"
 #include "mads/core/config.h"
 #include "mads/core/pal.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/rooms/section1.h"
+#include "mads/nebular/sound/mac_sound.h"
 #include "mads/nebular/global.h"
 
 namespace MADS {
@@ -68,8 +70,10 @@ void section_1_walker() {
 	}
 
 	player.scaling_velocity = 0;
-	pal_change_color(16, 10, 63, 63);
-	pal_change_color(17, 10, 45, 45);
+	if (!setMacintoshMessageColors(63, 63, 0, 63, 63, 0)) {
+		pal_change_color(16, 10, 63, 63);
+		pal_change_color(17, 10, 45, 45);
+	}
 }
 
 void section_1_interface() {
@@ -136,7 +140,9 @@ void section_1_music() {
 	if (config_file.music_flag) {
 		switch (new_room) {
 		case 101:
-			g_engine->_soundManager->command(11, 0);
+			if (!Sound::commandMacintoshSound(Sound::kMacSoundPlayPriority,
+					1011, 0, 0, 0, true))
+				g_engine->_soundManager->command(11, 0);
 			break;
 		case 102:
 			g_engine->_soundManager->command(12, 0);

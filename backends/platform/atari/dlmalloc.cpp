@@ -21,6 +21,13 @@
 
 #include "backends/platform/atari/dlmalloc.h"
 
+/* GCC 12+ reports false positives on the chunk pointer arithmetic */
+#pragma GCC diagnostic ignored "-Warray-bounds"
+/* mem2chunk() drops const from its argument */
+#pragma GCC diagnostic ignored "-Wcast-qual"
+/* Keep GCC from turning malloc + memset in calloc() into a call to calloc() */
+#pragma GCC optimize ("no-optimize-strlen")
+
 /*------------------------------ internal #includes ---------------------- */
 
 #ifdef _MSC_VER

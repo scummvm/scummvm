@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef WINTERMUTE_KEYMAPPER_TABLES_H
+#define WINTERMUTE_KEYMAPPER_TABLES_H
+
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
@@ -61,6 +64,16 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE"); // original keyboard
 	act->addDefaultInputMapping("JOY_X"); // extra joy
+	engineKeyMap->addAction(act);
+
+	act = new Action("PAUSE", _("Pause game anytime"));
+	act->setKeyEvent(KeyState(KEYCODE_p, 0, KBD_CTRL));
+	act->addDefaultInputMapping("C+p"); // original keyboard
+	engineKeyMap->addAction(act);
+
+	act = new Action("HIGHLIGHT", _("Highlight active items"));
+	act->setKeyEvent(KeyState(KEYCODE_TAB, 0, KBD_CTRL));
+	act->addDefaultInputMapping("C+TAB"); // original keyboard
 	engineKeyMap->addAction(act);
 
 	Common::KeymapArray result = Keymap::arrayOf(engineKeyMap);
@@ -2328,3 +2341,5 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 }
 
 } // End of namespace Wintermute
+
+#endif // WINTERMUTE_KEYMAPPER_TABLES_H

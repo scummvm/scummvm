@@ -36,15 +36,9 @@ namespace Nancy {
 namespace Action {
 
 void BulPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	reset(false);
 
@@ -325,7 +319,7 @@ void BulPuzzle::readData(Common::SeekableReadStream &stream) {
 		_solveSoundDelay = stream.readUint16LE();
 		_solveSound.readNormal(stream);
 
-		_exitScene.readData(stream);
+		_exitScene.readData(stream); // when losing (Nancy 11 shares the win scene, set apart by the flag)
 		_loseSoundDelay = stream.readUint16LE();
 		_loseSound.readNormal(stream);
 	}
@@ -366,6 +360,7 @@ void BulPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_rollSound);
 		g_nancy->_sound->loadSound(_resetSound);
@@ -491,9 +486,7 @@ void BulPuzzle::doAiTurn() {
 }
 
 void BulPuzzle::handleInput(NancyInput &input) {
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 			_nextMoveTime = 0;

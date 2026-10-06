@@ -31,6 +31,7 @@ namespace {
 static const char *const kDialogueC135FstPath = "GRAPHIC/FST/C135.FST";
 static const char *const kDialogueC096FstPath = "GRAPHIC/FST/C096.FST";
 static const char *const kDialogueC096AFstPath = "GRAPHIC/FST/C096A.FST";
+static const char *const kDialogueC097FstPath = "GRAPHIC/FST/C097.FST";
 static const char *const kDialogueC098FstPath = "GRAPHIC/FST/C098.FST";
 static const char *const kDialogueNudetatuFstPath = "GRAPHIC/FST/NUDETATU.FST";
 
@@ -103,18 +104,32 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (responseIndex == 1) {
 			sharedState.dialogueStateD2f04 = true;
-			return playSparkyLine(0x319, 1);
+			const DialogueLineEntry responseLines[] = {
+				{ 0x319, "SPARKY", 1 },
+				{ 0x322, "PC", 0 },
+				{ 0x326, "SPARKY", 4 },
+				{ 0x330, "PC", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(responseLines, ARRAYSIZE(responseLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else if (responseIndex == 2) {
+			lineError = playSparkyLine(0x334, 0);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 		}
-		if (responseIndex == 2)
-			return playSparkyLine(0x334, 0);
 
 		lineError = runtime.playDialogueFst(kDialogueC096FstPath);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		return playSparkyLine(0x33f, 0);
-	}
-
-	if (state.returnVisitPending) {
+		lineError = playSparkyLine(0x33f, 0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = runtime.playDialogueFst(kDialogueC097FstPath);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		assignSparkyTopicBuffer(0x2c1);
+	} else if (state.returnVisitPending) {
 		Common::Error lineError = Common::kNoError;
 		if (runtime.startupScript().getCurrentStoryDayIndex() == state.returnVisitDayIndex) {
 			lineError = playSparkyLine(0x3bb, 1);

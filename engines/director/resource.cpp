@@ -155,11 +155,11 @@ void Window::probeResources(Archive *archive) {
 			int num = name->readUint16();
 			if (num < 2) {
 				warning("Window::probeResources: Missing data in the Filenames resource of the Projector file");
-				delete name;
 			} else {
 				_soundsFilenameHint = decodePlatformEncoding(name->readPascalString());
 				_sharedCastFilenameHint = decodePlatformEncoding(name->readPascalString());
 			}
+			delete name;
 		}
 
 		if (archive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {

@@ -182,8 +182,10 @@ void DOSMusicPlayer::resume() {
 }
 
 void DOSMusicPlayer::stop() {
+	// The parser reads the resource buffer directly, so unload it before the
+	// resource is freed below.
 	if (_parser)
-		_parser->stopPlaying();
+		_parser->unloadMusic();
 
 	if (_musicRes) {
 		_vm->_res->freeResource(_musicRes);
@@ -198,6 +200,17 @@ bool DOSMusicPlayer::isPlaying() {
 void DOSMusicPlayer::syncSoundSettings() {
 	if (_driver)
 		_driver->syncSoundSettings();
+}
+
+SynthType DOSMusicPlayer::getSynthType() const {
+	switch (_driverType) {
+	case MT_MT32:
+		return kSynthTypeMT32;
+	case MT_ADLIB:
+		return kSynthTypeAdLib;
+	default:
+		return kSynthTypeDefault;
+	}
 }
 
 void DOSMusicPlayer::onTimer() {

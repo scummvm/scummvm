@@ -326,7 +326,7 @@ void PathWalker_NS::walk() {
 	PointList::iterator it = _walkPath.begin();
 	if (it != _walkPath.end()) {
 		if (*it == curPos) {
-			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it).x, (*it).y);
+			debugC(1, kDebugWalk, "walk reached node (%i, %i)", it->x, it->y);
 			it = _walkPath.erase(it);
 		}
 	}

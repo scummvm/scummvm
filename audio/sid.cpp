@@ -22,6 +22,7 @@
 #include "audio/sid.h"
 #include "audio/softsynth/sid.h"
 
+#include "common/str.h"
 #include "common/textconsole.h"
 
 namespace SID {
@@ -34,6 +35,14 @@ SID *Config::create(SidType type) {
 #else
 	return nullptr;
 #endif
+}
+
+Config::SidType Config::parseSidType(const Common::String &str) {
+	if (str.equalsIgnoreCase("ntsc"))
+		return kSidNTSC;
+	if (str.equalsIgnoreCase("pal"))
+		return kSidPAL;
+	error("parseSidType: Unknown SID type '%s'", str.c_str());
 }
 
 bool SID::_hasInstance = false;

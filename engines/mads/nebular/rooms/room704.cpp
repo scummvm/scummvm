@@ -25,6 +25,7 @@
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
 #include "mads/nebular/rooms/section7.h"
+#include "mads/nebular/sound/mac_sound.h"
 #include "mads/nebular/rooms/dialog.h"
 
 namespace MADS {
@@ -172,7 +173,9 @@ static void room_704_init() {
 	local._dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
 
 	section_7_music();
-	g_engine->_soundManager->command(28, 0);
+	if (!Sound::commandMacintoshSound(Sound::kMacSoundPlay, 7028,
+			0, 0, 0, true))
+		g_engine->_soundManager->command(28, 0);
 }
 
 static void room_704_daemon() {
@@ -245,6 +248,7 @@ static void room_704_daemon() {
 				break;
 
 			case 90:
+			case 98:
 				if (local._takeBottleFl) {
 					kernel_seq_delete(g_sequence_ids[1]);
 					kernel_delete_dynamic(local._bottleHotspotId);
@@ -259,16 +263,6 @@ static void room_704_daemon() {
 				if (!player.commands_allowed && !local._takeBottleFl) {
 					kernel_timing_trigger(30, 70);
 					player.commands_allowed = true;
-				}
-				break;
-
-			case 98:
-				if (local._takeBottleFl) {
-					kernel_seq_delete(g_sequence_ids[1]);
-					kernel_delete_dynamic(local._bottleHotspotId);
-					inter_give_to_player(OBJ_BOTTLE);
-					g_engine->_soundManager->command(15, 0);
-					object_examine(OBJ_BOTTLE, 70415, 0);
 				}
 				break;
 

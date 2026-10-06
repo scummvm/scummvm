@@ -23,6 +23,7 @@
 #define MADS_DRAGONSPHERE_SOUND_ASOUND_DRAGONSPHERE_H
 
 #include "mads/dragonsphere/sound/asound.h"
+#include "mads/phantom/sound/asound.h"
 
 namespace MADS {
 namespace Dragonsphere {
@@ -32,17 +33,17 @@ namespace Sound {
  * ASound1  (asound.dr1, _dataOffset = 0x2520, _dataSize = 0x49e0)
  *
  * Dispatch table layout (five tables collapsed to flat [102]):
- *   off_11A14:   commands  0– 8  (base=0,    max=8)
- *   off_11A26:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
- *   off_11A2E:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op)
- *   funcs_12251: commands 32–49  (base=0x20, max=0x31; slot 49 = no-op)
- *   off_11A64:   commands 64–101 (base=0x40, max=0x65)
+ *   Table 1:   commands  0– 8  (base=0,    max=8)
+ *   Table 2:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
+ *   Table 3:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op)
+ *   Table 4: commands 32–49  (base=0x20, max=0x31; slot 49 = no-op)
+ *   Table 5:   commands 64–101 (base=0x40, max=0x65)
  *     Slot 92 and slot 98 are no-ops (command98); slots 102–103 are
- *     nullsub_1/nullsub_4, both beyond the [102] array.
+ *     no-op stubs, both beyond the [102] array.
  *
- * word_12370 (_musicIndex in base): tracks the last music-piece launched
- * via command18 for re-entry.  Values <=0x12 use off_11A26; >0x12 use
- * funcs_12251 with index = musicIndex - 0x20.
+ * _musicIndex: tracks the last music-piece launched
+ * via command18 for re-entry.  Values <=0x12 use table 2; >0x12 use
+ * table 4 with index = musicIndex - 0x20.
  *
  * Mutable sound-data bytes (modified before channel loads):
  *   _soundData[0x28C9] — pitch-bend variant byte (command43 / command48)
@@ -59,6 +60,7 @@ private:
 	void loadCommand32();
 	void loadCommand33();
 	void loadCommand34();
+	void loadCallback1FBA();
 	void loadCommand35();
 	void loadCommand36();
 	void loadCommand37();
@@ -154,6 +156,8 @@ private:
 	int command100();
 	int command101();
 
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
+
 public:
 	ASound1(Audio::Mixer *mixer);
 	~ASound1() override {}
@@ -164,11 +168,11 @@ public:
  * ASound2  (asound.dr2, _dataOffset = 0x1FA0, _dataSize = 0x2950)
  *
  * Dispatch table layout (five tables collapsed to flat [76]):
- *   off_11A14:   commands  0–8   (base=0,    max=8)
- *   off_11A26:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
- *   off_11A2E:   commands 24–31  (base=0x18, max=0x1F; slot at cmd32 unreachable)
- *   funcs_11C87: commands 32–36  (base=0x20, max=0x24; slot 36 = no-op)
- *   off_11A4A:   commands 64–75  (base=0x40, max=0x4B; slots 73–75 = no-ops)
+ *   Table 1:   commands  0–8   (base=0,    max=8)
+ *   Table 2:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
+ *   Table 3:   commands 24–31  (base=0x18, max=0x1F; slot at cmd32 unreachable)
+ *   Table 4: commands 32–36  (base=0x20, max=0x24; slot 36 = no-op)
+ *   Table 5:   commands 64–75  (base=0x40, max=0x4B; slots 73–75 = no-ops)
  *
  * command16 sets _musicIndex = 0x10 for command18 re-entry.
  * commands 32–35: _musicIndex saved by dispatcher for command18 re-entry.
@@ -201,6 +205,8 @@ private:
 	int command64(); int command65(); int command66(); int command67();
 	int command68(); int command69_70(); int command71(); int command72();
 
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
+
 public:
 	ASound2(Audio::Mixer *mixer);
 	~ASound2() override {}
@@ -211,11 +217,11 @@ public:
  * ASound3  (asound.dr3, _dataOffset = 0x1F30, _dataSize = 0x2750)
  *
  * Dispatch table layout (five tables collapsed to flat [77]):
- *   off_11A14:   commands  0–8   (base=0,    max=8)
- *   off_11A26:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
- *   off_11A2E:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op/unreachable)
- *   funcs_11C61: commands 32–34  (base=0x20, max=0x22; slot 34 = no-op)
- *   off_11A46:   commands 64–76  (base=0x40, max=0x4C; slots 74–76 = no-ops)
+ *   Table 1:   commands  0–8   (base=0,    max=8)
+ *   Table 2:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
+ *   Table 3:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op/unreachable)
+ *   Table 4: commands 32–34  (base=0x20, max=0x22; slot 34 = no-op)
+ *   Table 5:   commands 64–76  (base=0x40, max=0x4C; slots 74–76 = no-ops)
  *
  * command16 sets _musicIndex = 0x10 for command18 re-entry.
  * commands 32–33: _musicIndex saved by dispatcher for command18 re-entry.
@@ -270,6 +276,8 @@ private:
 	int command72();
 	int command73();
 
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
+
 public:
 	ASound3(Audio::Mixer *mixer);
 	~ASound3() override {}
@@ -280,11 +288,11 @@ public:
  * ASound4  (asound.dr4, _dataOffset = 0x2120, _dataSize = 0x31D0)
  *
  * Dispatch table layout (five tables collapsed to flat [82]):
- *   off_11A14:   commands  0–8   (base=0,    max=8;    slot 5 = no-op)
- *   off_11A26:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
- *   off_11A2E:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op/unreachable)
- *   funcs_11E51: commands 32–41  (base=0x20, max=0x29; slots 34,41 = no-ops)
- *   off_11A54:   commands 64–81  (base=0x40, max=0x51; slot 79 = no-op; slots 80,81 = stubs)
+ *   Table 1:   commands  0–8   (base=0,    max=8;    slot 5 = no-op)
+ *   Table 2:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
+ *   Table 3:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op/unreachable)
+ *   Table 4: commands 32–41  (base=0x20, max=0x29; slots 34,41 = no-ops)
+ *   Table 5:   commands 64–81  (base=0x40, max=0x51; slot 79 = no-op; slots 80,81 = stubs)
  *
  * command16 sets _musicIndex = 0x10 for command18 re-entry.
  * commands 32–33 and 35–40: _musicIndex saved by dispatcher for command18 re-entry.
@@ -336,11 +344,11 @@ public:
  * ASound5  (asound.dr5, _dataOffset = 0x20D0, _dataSize = 0x2EE0)
  *
  * Dispatch table layout (five tables collapsed to flat [82]):
- *   off_11A14:   commands  0–8   (base=0,    max=8)
- *   off_11A26:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
- *   off_11A2E:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op/unreachable)
- *   funcs_11E05: commands 32–39  (base=0x20, max=0x27; slot 39 = no-op)
- *   off_11A50:   commands 64–81  (base=0x40, max=0x51; slot 79 = no-op; slots 80–81 = stubs)
+ *   Table 1:   commands  0–8   (base=0,    max=8)
+ *   Table 2:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
+ *   Table 3:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op/unreachable)
+ *   Table 4: commands 32–39  (base=0x20, max=0x27; slot 39 = no-op)
+ *   Table 5:   commands 64–81  (base=0x40, max=0x51; slot 79 = no-op; slots 80–81 = stubs)
  *
  * command16 and command32/33 set _musicIndex = 0x10 for command18 re-entry.
  * command38 sets _musicIndex = 0x26; command36 sets it to 0x29 (beyond table).
@@ -359,6 +367,7 @@ private:
 
 	// Deferred loader callbacks (void, Pattern B)
 	void loadCommand16();
+	void loadCallback1B7B();
 	void loadCommand32();
 	void loadCommand33();
 	void loadCommand34();
@@ -385,6 +394,8 @@ private:
 	int command76(); int command77(); int command78();
 	int command80(); int command81();
 
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
+
 public:
 	ASound5(Audio::Mixer *mixer);
 	~ASound5() override {}
@@ -395,11 +406,11 @@ public:
 /**
  * ASound6  (asound.dr6, _dataOffset = 0x2370, _dataSize = 0x3870)
  * Dispatch table layout (five tables collapsed to flat [102]):
- *   off_11A14:   commands  0– 8  (base=0,    max=8)
- *   off_11A26:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
- *   off_11A2E:   commands 24–31  (base=0x18, max=0x1F)
- *   funcs_1204D: commands 32–47  (base=0x20, max=0x2F; slots 41–43, 46–47 = no-op)
- *   off_11A60:   commands 64–101 (base=0x40, max=0x65; slot 99 = no-op)
+ *   Table 1:   commands  0– 8  (base=0,    max=8)
+ *   Table 2:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
+ *   Table 3:   commands 24–31  (base=0x18, max=0x1F)
+ *   Table 4: commands 32–47  (base=0x20, max=0x2F; slots 41–43, 46–47 = no-op)
+ *   Table 5:   commands 64–101 (base=0x40, max=0x65; slot 99 = no-op)
  */
 class ASound6 : public ASound {
 private:
@@ -419,7 +430,7 @@ private:
 	void loadCommand45();
 	void loadCommand96();
 
-	uint8 _cmd33Flag;   // byte_134D1: set by command33 to extend loadCommand32
+	uint8 _cmd33Flag;   // set by command33 to extend loadCommand32
 	int   _lastParam;   // param stored by command() for use by command64
 
 	int command0();  int command1();  int command2();  int command3();
@@ -446,6 +457,8 @@ private:
 	int command96(); int command97(); int command98();
 	int command100(); int command101();
 
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
+
 public:
 	ASound6(Audio::Mixer *mixer);
 	~ASound6() override {}
@@ -453,22 +466,65 @@ public:
 };
 
 /**
+ * Shared runtime for the Dragonsphere demo ASOUND overlays.
+ *
+ * Both demo overlays use the older bytecode VM also used by Return of the
+ * Phantom rather than the grouped retail Dragonsphere VM. This adapter adds
+ * only the Dragonsphere demo controller callback used by their command
+ * handlers.
+ */
+class ASoundDemo : public MADS::Phantom::Sound::ASound {
+protected:
+	typedef void (ASoundDemo::*CallbackFunction)();
+
+private:
+	uint16 _callbackCounter;
+	uint16 _callbackPeriod;
+	CallbackFunction _callbackFnPtr;
+
+	void clearGameCallback();
+	void resetGameState() override;
+	void tickGameCallback() override;
+
+protected:
+	ASoundDemo(Audio::Mixer *mixer, const Common::Path &filename,
+		int dataOffset, int dataSize);
+
+	int isMusicChannelsActive() const;
+	void scheduleCallback(CallbackFunction fn) {
+		_callbackFnPtr = fn;
+	}
+	void resetCallbackTimer(uint16 period) {
+		_callbackFnPtr = nullptr;
+		_callbackCounter = period;
+		_callbackPeriod = period;
+	}
+	void resetCallbackTimerEx(uint16 counter, uint16 period) {
+		_callbackFnPtr = nullptr;
+		_callbackCounter = counter;
+		_callbackPeriod = period;
+	}
+};
+
+/**
  * ASoundDemo1  (asound.dr1 [demo], _dataOffset = 0x23e0, _dataSize = 0x4900)
  *
- * Dispatch table layout (four tables collapsed to flat [93]):
+ * Dispatch table layout (five tables collapsed to flat [93]):
  *   commands0:  commands  0– 8  (base=0,    max=8)
  *   commands16: command   16    (base=0x10, max=0x10, 1 entry)
- *   commands24: commands 24–43  (base=0x18, max=0x2B; slots 28,29,44 = no-op)
+ *   commands24: commands 24–29  (base=0x18, max=0x1D; slots 28,29 = no-op)
+ *   commands32: commands 32–46  (base=0x20, max=0x2E; slot 46 = no-op)
  *   commands64: commands 64–92  (base=0x40, max=0x5C; slots 64–89 = no-op)
  */
-class ASoundDemo1 : public ASound {
+class ASoundDemo1 : public ASoundDemo {
 private:
 	typedef int (ASoundDemo1::*CommandPtr)();
 	static const CommandPtr _commandList[93];
 
+	void callFunction(uint16 offset,
+		MADS::Phantom::Sound::AdlibChannel &channel) override;
+
 	void loadCommand16();
-	void loadCommand30();
-	void loadCommand31();
 	void loadCommand32();
 	void loadCommand33();
 	void loadCommand34();
@@ -481,6 +537,8 @@ private:
 	void loadCommand41();
 	void loadCommand42();
 	void loadCommand43();
+	void loadCommand44();
+	void loadCommand45();
 	void loadCommand92();
 
 	int command0(); int command1(); int command2(); int command3();
@@ -490,10 +548,10 @@ private:
 	int command16();
 
 	int command24(); int command25(); int command26(); int command27();
-	int command30(); int command31(); int command32(); int command33();
-	int command34(); int command35(); int command36(); int command37();
-	int command38(); int command39(); int command40(); int command41();
-	int command42(); int command43();
+	int command32(); int command33(); int command34(); int command35();
+	int command36(); int command37(); int command38(); int command39();
+	int command40(); int command41(); int command42(); int command43();
+	int command44(); int command45();
 
 	int command90(); int command91(); int command92();
 
@@ -544,6 +602,8 @@ private:
 	int command57(); int command58(); int command59();
 	int command61(); int command62(); int command63();
 
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
+
 	static const CommandPtr _commandList[65];
 
 public:
@@ -566,7 +626,7 @@ public:
  *     outside the array, not via separate array slots)
  *   commands 64+ are unreachable (dispatcher upper bound is 0 for that range)
  */
-class ASoundDemo9 : public ASound {
+class ASoundDemo9 : public ASoundDemo {
 private:
 	typedef int (ASoundDemo9::*CommandPtr)();
 	static const CommandPtr _commandList[51];

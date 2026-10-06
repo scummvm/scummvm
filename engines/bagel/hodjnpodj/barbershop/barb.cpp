@@ -628,13 +628,13 @@ void CBarber::OnLButtonUp(CWnd *pWnd) {
 	/*************************
 	* Update visual display. *
 	*************************/
-	pDC = (*pWnd).GetDC();
+	pDC = pWnd->GetDC();
 	if (bSuccess != true) {                                  // card dropped over stack?
 		m_cPnt->UpdateCard(pDC, m_pCrd);                    // no - redraw card over original stack
 	} else {
 		m_cPnt->Stack(pDC, m_pCrd);                         // draw card apro stack
 	} // end if
-	(*pWnd).ReleaseDC(pDC);
+	pWnd->ReleaseDC(pDC);
 
 	m_pCrd = nullptr;                                          // clear current card
 	if (m_cBrd->GetStack(stock)->IsEmpty() == true)

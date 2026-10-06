@@ -80,6 +80,10 @@ public:
 	void setMacColors(uint32 fg, uint32 bg) override;
 	void setDepthState(bool testEnabled, bool writeEnabled) override;
 	void setDepthRange(float nearVal, float farVal) override;
+	void setFeatureClipX(int left, int right) override;
+	void clearFeatureClipX() override;
+	void applyScissorRect(const Common::Rect &logical);
+	void setSquarePixelViewport(bool enable) override;
 	void computeScreenViewport() override;
 
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
@@ -116,8 +120,10 @@ private:
 	void drawWireframeable3D(const float *positions, int vertCount, uint32 color);
 
 	OSystem *_system = nullptr;
+	Common::Rect _active3DViewport;
 	int _width = 0;
 	int _height = 0;
+	bool _squarePixelViewport = false;
 	byte _palette[256 * 3] = {};
 
 	OpenGL::Shader *_solidShader = nullptr;
@@ -188,14 +194,14 @@ OpenGLShaderRenderer::OpenGLShaderRenderer(OSystem *system, int width, int heigh
 	for (int i = 0; i < 256 * 3; i++)
 		_palette[i] = 255;
 
-	static const char *solidAttribs[] = { "position", nullptr };
+	const char *const solidAttribs[] = { "position", nullptr };
 	_solidShader = OpenGL::Shader::fromFiles("colony_solid", solidAttribs);
 	_solidVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER,
 		sizeof(float) * 2 * kSolidVertexCapacity, nullptr, GL_DYNAMIC_DRAW);
 	_solidShader->enableVertexAttribute("position", _solidVBO, 2, GL_FLOAT, GL_FALSE,
 		2 * sizeof(float), 0);
 
-	static const char *bitmapAttribs[] = { "position", "texcoord", nullptr };
+	const char *const bitmapAttribs[] = { "position", "texcoord", nullptr };
 	_bitmapShader = OpenGL::Shader::fromFiles("colony_bitmap", bitmapAttribs);
 	// Per-draw vec2 position + vec2 texcoord, 4 vertices for a quad.
 	_bitmapVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER,
@@ -208,7 +214,7 @@ OpenGLShaderRenderer::OpenGLShaderRenderer(OSystem *system, int width, int heigh
 	// 3D solid: vec3 vertex consuming mvpMatrix; the fragment shader has
 	// its own stipple-emulation branch (Freescape pattern, GLES2 safe),
 	// so we use a dedicated colony_solid_3d.{vertex,fragment} pair.
-	static const char *solid3dAttribs[] = { "position", nullptr };
+	const char *const solid3dAttribs[] = { "position", nullptr };
 	_solid3dShader = OpenGL::Shader::fromFiles("colony_solid_3d", solid3dAttribs);
 	_solid3dVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER,
 		sizeof(float) * 3 * kSolid3DVertexCapacity, nullptr, GL_DYNAMIC_DRAW);
@@ -626,13 +632,35 @@ void OpenGLShaderRenderer::setPalette(const byte *palette, uint start, uint coun
 	memcpy(_palette + start * 3, palette, count * 3);
 }
 
+void OpenGLShaderRenderer::setSquarePixelViewport(bool enable) {
+	if (_squarePixelViewport == enable)
+		return;
+
+	_squarePixelViewport = enable;
+	computeScreenViewport();
+}
+
 void OpenGLShaderRenderer::computeScreenViewport() {
 	const int32 screenWidth = _system->getWidth();
 	const int32 screenHeight = _system->getHeight();
 	const bool widescreen = ConfMan.getBool("widescreen_mod");
 
-	if (widescreen) {
-		_screenViewport = Common::Rect(screenWidth, screenHeight);
+	if (_squarePixelViewport) {
+		// Animation bitmaps use square pixels. Fit the uncorrected logical
+		// canvas so their authored 416x264 geometry matches the Mac version.
+		const int32 vpW = MIN<int32>(screenWidth,
+			(screenHeight * _width + _height / 2) / _height);
+		const int32 vpH = MIN<int32>(screenHeight,
+			(screenWidth * _height + _width / 2) / _width);
+		_screenViewport = Common::Rect(vpW, vpH);
+		_screenViewport.translate((screenWidth - vpW) / 2, (screenHeight - vpH) / 2);
+	} else if (widescreen) {
+		// Widescreen is a 16:9 presentation even when fullscreen uses a
+		// taller or wider display. Keep it centered instead of stretching it.
+		const int32 vpW = MIN<int32>(screenWidth, (screenHeight * 16 + 4) / 9);
+		const int32 vpH = MIN<int32>(screenHeight, (screenWidth * 9 + 8) / 16);
+		_screenViewport = Common::Rect(vpW, vpH);
+		_screenViewport.translate((screenWidth - vpW) / 2, (screenHeight - vpH) / 2);
 	} else if (_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
 		const int32 vpW = MIN<int32>(screenWidth, screenHeight * 4 / 3);
 		const int32 vpH = MIN<int32>(screenHeight, screenWidth * 3 / 4);
@@ -722,6 +750,32 @@ void OpenGLShaderRenderer::setDepthRange(float nearVal, float farVal) {
 	setGLDepthRange(nearVal, farVal);
 }
 
+void OpenGLShaderRenderer::applyScissorRect(const Common::Rect &logical) {
+	const float scaleX = (float)_screenViewport.width() / (float)_width;
+	const float scaleY = (float)_screenViewport.height() / (float)_height;
+	const int sysH = _system->getHeight();
+	const int vpX = _screenViewport.left + (int)(logical.left * scaleX);
+	const int vpY = sysH - (_screenViewport.top + (int)(logical.bottom * scaleY));
+	const int vpW = (int)(logical.width() * scaleX);
+	const int vpH = (int)(logical.height() * scaleY);
+	glScissor(vpX, vpY, vpW > 0 ? vpW : 0, vpH > 0 ? vpH : 0);
+}
+
+void OpenGLShaderRenderer::setFeatureClipX(int left, int right) {
+	Common::Rect clipped = _active3DViewport;
+	if (left > clipped.left)
+		clipped.left = left;
+	if (right < clipped.right)
+		clipped.right = right;
+	if (clipped.left >= clipped.right)
+		clipped.right = clipped.left;
+	applyScissorRect(clipped);
+}
+
+void OpenGLShaderRenderer::clearFeatureClipX() {
+	applyScissorRect(_active3DViewport);
+}
+
 void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY,
 		const Common::Rect &viewport) {
 	glEnable(GL_DEPTH_TEST);
@@ -738,18 +792,17 @@ void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int 
 	const int vpH = (int)(viewport.height() * scaleY);
 	glViewport(vpX, vpY, vpW, vpH);
 	glScissor(vpX, vpY, vpW, vpH);
+	_active3DViewport = viewport;
 	glEnable(GL_SCISSOR_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
 
-	// Perspective: 75° vertical FOV, near=1, far=10000 — matches the
-	// fixed-function path so geometry lands at the same screen positions.
-	const float aspectRatio = (float)viewport.width() / (float)viewport.height();
-	const float fov = 75.0f;
+	// Match CALCROBO.C's center + (coordinate << 8) / depth projection and
+	// the fixed-function path by using a 256-logical-pixel focal length.
 	const float nearClip = 1.0f;
 	const float farClip = 10000.0f;
-	const float ymax = nearClip * tanf(fov * (float)M_PI / 360.0f);
-	const float xmax = ymax * aspectRatio;
+	const float xmax = nearClip * viewport.width() * 0.5f / kProjectionFocalLength;
+	const float ymax = nearClip * viewport.height() * 0.5f / kProjectionFocalLength;
 
 	// Build perspective frustum directly. Math::makeFrustumMatrix exists in
 	// math/glmath.h, but its sign convention requires a final transpose to

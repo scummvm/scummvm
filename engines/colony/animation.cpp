@@ -197,6 +197,7 @@ const AnimColorEntry kAnimColors[] = {
 	{ "vanity",      kBMC_Vanity,     ARRAYSIZE(kBMC_Vanity) },
 	{ "reactor",     kBMC_Reactor,    ARRAYSIZE(kBMC_Reactor) },
 	{ "security",    kBMC_Security,   ARRAYSIZE(kBMC_Security) },
+	{ "tele",        kBMC_Teleport,   ARRAYSIZE(kBMC_Teleport) },
 	{ "teleporter",  kBMC_Teleport,   ARRAYSIZE(kBMC_Teleport) },
 	{ "teleporter2", kBMC_Teleport,   ARRAYSIZE(kBMC_Teleport) },
 	{ "slides",      kBMC_Creatures,  ARRAYSIZE(kBMC_Creatures) },
@@ -283,6 +284,7 @@ bool ColonyEngine::loadAnimation(const Common::String &name) {
 		{ "elev",   "elevator" },
 		{ "slides", "slideshow" },
 		{ "lift",   "lifter" },
+		{ "tele",   "teleporter" },
 		{ nullptr,  nullptr }
 	};
 
@@ -370,6 +372,28 @@ bool ColonyEngine::loadAnimation(const Common::String &name) {
 	return true;
 }
 
+bool ColonyEngine::loadLiftAnimation(int objectType) {
+	switch (objectType) {
+	case kObjTeleport:
+		_liftObject = 1;
+		break;
+	case kObjBox1:
+	case kObjBox2:
+		_liftObject = 2;
+		break;
+	case kObjCryo:
+		_liftObject = 3;
+		break;
+	case kObjReactor:
+		_liftObject = 4;
+		break;
+	default:
+		return false;
+	}
+
+	return loadAnimation("lift");
+}
+
 void ColonyEngine::deleteAnimation() {
 	delete _backgroundMask;
 	_backgroundMask = nullptr;
@@ -407,6 +431,9 @@ void ColonyEngine::playAnimation() {
 	_coderWin = Common::Rect();
 	_coderPressed = -1;
 	_coderPressInside = false;
+	const bool useSquarePixelViewport = !isMacRenderMode();
+	if (useSquarePixelViewport)
+		_gfx->setSquarePixelViewport(true);
 	_system->lockMouse(false);
 	warpMouseLogical(_centerX, _centerY);
 	const char *cursorName = "default arrow cursor";
@@ -546,28 +573,10 @@ void ColonyEngine::playAnimation() {
 			setObjectOnOff(4, false);
 		}
 	} else if (_animationName == "lift") {
-		// Original DoLift: set up initial state based on forklift mode.
-		// _fl==1 → picking up (up=0, object starts at bottom)
-		// _fl==2 → putting down (up=1, object starts at top)
-		// Object sprite mapping: BOX1/BOX2→2, TELEPORT→1, CRYO→3, REACTOR→4
+		if (getPlatform() == Common::kPlatformMacintosh)
+			_sound->stop();
+
 		_liftUp = (_fl == 2);
-		switch (_fl == 2 ? _carryType : 0) {
-		case kObjBox1: case kObjBox2: _liftObject = 2; break;
-		case kObjTeleport: _liftObject = 1; break;
-		case kObjCryo: _liftObject = 3; break;
-		case kObjReactor: _liftObject = 4; break;
-		default: _liftObject = 2; break; // pickup: we don't know yet, but dolSprite handles it
-		}
-		// For pickup, determine object from what we're about to pick up
-		if (!_liftUp) {
-			// The interaction code sets _carryType AFTER the animation,
-			// but the object type is in the Thing we're interacting with.
-			// We can infer from which sprites are visible.
-			for (int i = 1; i <= 4; i++) {
-				if (i < (int)_lSprites.size() && _lSprites[i - 1] && _lSprites[i - 1]->onoff)
-					_liftObject = i;
-			}
-		}
 		// Hide all object sprites except the active one
 		for (int i = 1; i <= 4; i++) {
 			if (i != _liftObject)
@@ -597,12 +606,13 @@ void ColonyEngine::playAnimation() {
 		while (_system->getEventManager()->pollEvent(event)) {
 			if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_animationRunning = false;
-				return;
+				break;
 			} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
 				_gfx->computeScreenViewport();
 				needsDraw = true;
 			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 				const Common::Point pt = eventMouseToLogical(event.mouse);
+				_messageSourceRect = Common::Rect();
 				if (handleColonyCoderClick(pt)) {
 					needsDraw = true;
 				} else if (!_animExitStrip.isEmpty() && _animExitStrip.contains(pt)) {
@@ -615,6 +625,7 @@ void ColonyEngine::playAnimation() {
 					int item = whichSprite(pt);
 					if (item > 0) {
 						handleAnimationClick(item);
+						_messageSourceRect = Common::Rect();
 						needsDraw = true;
 					}
 				}
@@ -690,11 +701,14 @@ void ColonyEngine::playAnimation() {
 				}
 
 				if (item > 0) {
+					_messageSourceRect = Common::Rect();
 					handleAnimationClick(item);
 					needsDraw = true;
 				}
 			}
 		}
+		if (!_animationRunning || shouldQuit())
+			break;
 
 		// updateAnimation has its own 50ms throttle; only redraw when we know
 		// the visible state changed (click feedback) or the cadence is due.
@@ -715,6 +729,15 @@ void ColonyEngine::playAnimation() {
 		_system->delayMillis(2);
 	}
 
+	if (_animationName == "lift" && getPlatform() == Common::kPlatformMacintosh) {
+		// Mac KillTSound waits for the lift sample before returning.
+		while (_sound->isPlaying() && !shouldQuit())
+			responsiveAnimationDelay(_system, 10);
+		_sound->stop();
+	}
+
+	if (useSquarePixelViewport)
+		_gfx->setSquarePixelViewport(false);
 	_system->lockMouse(true);
 	CursorMan.showMouse(false);
 	CursorMan.popAllCursors();
@@ -994,7 +1017,7 @@ void ColonyEngine::loadCoderTiles() {
 		delete imgs[i];
 }
 
-static void drawCoderTile(Graphics::ManagedSurface &s, const Image *img, int x, int y, uint32 fg, uint32 bg) {
+void drawCoderTile(Graphics::ManagedSurface &s, const Image *img, int x, int y, uint32 fg, uint32 bg) {
 	if (!img || !img->data)
 		return;
 	for (int r = 0; r < img->height; r++) {
@@ -1031,7 +1054,7 @@ void ColonyEngine::drawColonyCoder(int animOx, int animOy) {
 	const int contentW = 172;
 	const char *instrText = (_animationName == "security")
 		? "Press the symbols as shown on the display to determine the correct value."
-		: "Press the symbols from the desk in reverse order to determine the correct value.";
+		: "Enter the appropriate symbol sequence to determine this reactor's code.";
 	Common::Array<Common::U32String> instrLines;
 	instrFont->wordWrapText(Common::U32String(instrText), contentW - 16, instrLines);
 	const int instrLineH = instrFont->getFontHeight() + 1;
@@ -1388,6 +1411,8 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 
 		debugC(1, kColonyDebugAnimation, "Sprite %d HIT. type=%d frozen=%d Frame %d, Sprite %d. Box: (%d,%d,%d,%d)",
 			i + 1, ls->type, ls->frozen, cnum, spriteIdx, r.left, r.top, r.right, r.bottom);
+		r.translate(ox, oy);
+		_messageSourceRect = r;
 		return i + 1;
 	}
 
@@ -1449,6 +1474,8 @@ void ColonyEngine::handleAnimationClick(int item) {
 		handleAirlockClick(item);
 	} else if (_animationName == "elev" || _animationName == "elevator" || _animationName == "elevator2") {
 		handleElevatorClick(item);
+	} else if (_animationName == "tele" || _animationName == "teleporter2") {
+		handleTeleportClick(item);
 	} else if (_animationName == "controls") {
 		handleControlsClick(item);
 	} else if (_animationName == "forklift") {
@@ -1462,6 +1489,7 @@ void ColonyEngine::handleAnimationClick(int item) {
 		// item 8 = lower button (active when _liftUp)
 		// item 9 = raise button (active when !_liftUp)
 		if (item == 8 && _liftUp) {
+			_sound->play(Sound::kDrop);
 			// Lower the object: animate states 5→1
 			setObjectState(8, 2); // lower arrow OFF
 			setObjectState(9, 1); // raise arrow ON
@@ -1472,8 +1500,8 @@ void ColonyEngine::handleAnimationClick(int item) {
 				responsiveAnimationDelay(_system, 50);
 			}
 			_liftUp = false;
-			_animationResult = 1;
 		} else if (item == 9 && !_liftUp) {
+			_sound->play(Sound::kLift);
 			// Raise the object: animate states 1→5
 			setObjectState(9, 2); // raise arrow OFF
 			setObjectState(8, 1); // lower arrow ON
@@ -1484,8 +1512,8 @@ void ColonyEngine::handleAnimationClick(int item) {
 				responsiveAnimationDelay(_system, 50);
 			}
 			_liftUp = true;
-			_animationResult = 1;
 		}
+		_animationResult = (_liftUp != (_fl == 2));
 	}
 }
 
@@ -2026,29 +2054,96 @@ void ColonyEngine::handleElevatorClick(int item) {
 	}
 }
 
+// DoTeleport(): the screen inverts while the transport sound runs.
+void ColonyEngine::flashTeleportBooth() {
+	int ox = _screenR.left + (_screenR.width() - 416) / 2;
+	ox = (ox / 8) * 8;
+	const int oy = _screenR.top + (_screenR.height() - 264) / 2;
+	const Common::Rect booth(ox, oy, ox + 416, oy + 264);
+
+	for (int i = 0; i < 8; i++) {
+		_gfx->fillRect(booth, (i & 1) ? _gfx->black() : _gfx->white());
+		_gfx->copyToScreen();
+		responsiveAnimationDelay(_system, 60);
+	}
+	drawAnimation();
+	_gfx->copyToScreen();
+}
+
+// DoTeleport(): stepping in and closing the door are separate clicks, and the
+// player can leave either stage without being transported.
+void ColonyEngine::handleTeleportClick(int item) {
+	if (getPlatform() == Common::kPlatformMacintosh) {
+		if (_animationName == "teleporter2") {
+			if (item == 2 && !_teleportDone) {
+				_sound->play(Sound::kTeleport);
+				flashTeleportBooth();
+				_teleportDone = true;
+				teleportPlayer();
+			} else if (item == 1 && objectState(2) == 6) {
+				_animationRunning = false;
+			}
+			return;
+		}
+
+		if (item == 1) {
+			if (!loadAnimation("teleporter2")) {
+				_animationRunning = false;
+				return;
+			}
+			setObjectState(2, 6);
+			drawAnimation();
+			_gfx->copyToScreen();
+		}
+		return;
+	}
+
+	// DOS keeps both stages in one file.
+	if (!_teleportInside) {
+		if (item == 3) {
+			_teleportInside = true;
+			setObjectOnOff(3, false);
+			setObjectOnOff(1, false);
+			drawAnimation();
+			_gfx->copyToScreen();
+		}
+		return;
+	}
+
+	if (item == 4 && !_teleportDone) {
+		_sound->play(Sound::kTeleport);
+		flashTeleportBooth();
+		_teleportDone = true;
+		teleportPlayer();
+	} else if (item == 2) {
+		_animationRunning = false;
+	}
+}
+
 void ColonyEngine::handleControlsClick(int item) {
 	switch (item) {
 	case 4: // Accelerator
+		// GANIMATE.C: if(corepower<2) DoStopSound(); else if(corestate!=0) DoStopSound();
 		if (_corePower[_coreIndex] < 2 || _coreState[_coreIndex] != 0) {
-			// GANIMATE.C: if(corepower<2) DoStopSound(); else if(corestate!=0) DoStopSound();
 			_sound->play(Sound::kStop);
 			debugC(1, kColonyDebugAnimation, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
 			setObjectState(4, 1);
-			for (int i = 6; i > 0; i--) {
-				setObjectState(4, i);
-				drawAnimation();
-				_gfx->copyToScreen();
-				responsiveAnimationDelay(_system, 20);
-			}
-			break;
-		}
-
-		_animationRunning = false;
-		if (_orbit) {
+		} else if (_orbit) {
+			_animationRunning = false;
 			gameOver(false);
+			return;
 		} else {
 			takeOff();
 			_orbit = 1;
+		}
+
+		// The lever sweeps whether or not it fired, and the console stays open
+		// so the next press can launch.
+		for (int i = 6; i > 0; i--) {
+			setObjectState(4, i);
+			drawAnimation();
+			_gfx->copyToScreen();
+			responsiveAnimationDelay(_system, 20);
 		}
 		break;
 	case 5: // Emergency power

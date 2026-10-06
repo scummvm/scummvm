@@ -312,27 +312,6 @@ void MinigolfPuzzle::redraw() {
 	_needsRedraw = true;
 }
 
-void MinigolfPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	if (block.names.empty()) {
-		return;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return;
-	}
-
-	SoundDescription desc;
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-}
-
 void MinigolfPuzzle::aimToVelocity(double aimX, double aimY, double &vx, double &vy) const {
 	// Struck speed is proportional to the drag length (clamped to maxSpeed), aimed
 	// along the drag vector: speed = drag * kPowerScale * maxSpeed.
@@ -615,7 +594,7 @@ void MinigolfPuzzle::updateBall() {
 			_sunkTime = now;
 			playSoundBlock(cup._sound);
 
-			_winScene.sceneID = cup.specialEffectId;
+			_solveScene._sceneChange.sceneID = cup.specialEffectId;
 			if (cup.type == kZoneSceneChange && cup.tailId != -1) {
 				NancySceneState.setEventFlag(cup.tailId, cup.tailFlag ? g_nancy->_true : g_nancy->_false);
 			}
@@ -661,11 +640,11 @@ void MinigolfPuzzle::execute() {
 		// zone's special effect is the fade that covers the change, so start it just
 		// before the scene change (it captures the current frame, then dissolves to
 		// the new scene).
-		if (_solved && _winScene.sceneID >= 1000 && _winScene.sceneID != kNoScene) {
+		if (_solved && _solveScene._sceneChange.sceneID >= 1000 && _solveScene._sceneChange.sceneID != kNoScene) {
 			if (_winHasFade) {
 				NancySceneState.specialEffect(_winFadeType, _winFadeTotalTime, _winFadeToBlackTime, _winFadeRect);
 			}
-			NancySceneState.changeScene(_winScene);
+			NancySceneState.changeScene(_solveScene._sceneChange);
 		}
 		finishExecution();
 		break;

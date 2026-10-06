@@ -131,10 +131,12 @@ void ConvVariable::load(Common::SeekableReadStream *src) {
 			if (val >= 0 && val < 20) {
 				// Index into one of the four 5-element arrays in turn:
 				// speaker_frame[5], x[5], y[5], width[5]
-				int16 *const fieldArrays[] = {
-					conv_control.speaker_frame, conv_control.x, conv_control.y, conv_control.width
-				};
-				ptr = &fieldArrays[val / CONV_MAX_DATA][val % CONV_MAX_DATA];
+				switch (val / CONV_MAX_DATA) {
+				case 0: ptr = &conv_control.speaker_frame[val % CONV_MAX_DATA]; break;
+				case 1: ptr = &conv_control.x[val % CONV_MAX_DATA]; break;
+				case 2: ptr = &conv_control.y[val % CONV_MAX_DATA]; break;
+				case 3: ptr = &conv_control.width[val % CONV_MAX_DATA]; break;
+				}
 			} else if (val == 20) {
 				ptr = &conv_control.speaker_val;
 			} else {
@@ -321,11 +323,18 @@ static void conv_set_variable(int idx, int16 *ptr) {
 		if (ptr >= global && ptr < (global + GLOBAL_LIST_SIZE)) {
 			var.type = ConvVariable::PTRTYPE_GLOBAL;
 			var.val = ptr - global;
-		} else if (ptr >= conv_control.speaker_frame && ptr < conv_control.speaker_frame + 20) {
-			// Index into one of the sequential 5 element arrays:
-			// speaker_frame[5], x[5], y[5], width[5]
+		} else if (ptr >= conv_control.speaker_frame && ptr < conv_control.speaker_frame + CONV_MAX_DATA) {
 			var.type = ConvVariable::PTRTYPE_CONV_CONTROL;
-			var.val = ptr - conv_control.speaker_frame;
+			var.val = 0 * CONV_MAX_DATA + (ptr - conv_control.speaker_frame);
+		} else if (ptr >= conv_control.x && ptr < conv_control.x + CONV_MAX_DATA) {
+			var.type = ConvVariable::PTRTYPE_CONV_CONTROL;
+			var.val = 1 * CONV_MAX_DATA + (ptr - conv_control.x);
+		} else if (ptr >= conv_control.y && ptr < conv_control.y + CONV_MAX_DATA) {
+			var.type = ConvVariable::PTRTYPE_CONV_CONTROL;
+			var.val = 2 * CONV_MAX_DATA + (ptr - conv_control.y);
+		} else if (ptr >= conv_control.width && ptr < conv_control.width + CONV_MAX_DATA) {
+			var.type = ConvVariable::PTRTYPE_CONV_CONTROL;
+			var.val = 3 * CONV_MAX_DATA + (ptr - conv_control.width);
 		} else if (ptr == &conv_control.speaker_val) {
 			var.type = ConvVariable::PTRTYPE_CONV_CONTROL;
 			var.val = 20;
@@ -1179,6 +1188,7 @@ void conv_system_init() {
 
 void conv_system_cleanup() {
 	delete savedConv;
+	savedConv = nullptr;
 }
 
 
@@ -1346,7 +1356,6 @@ static void conv_generate_message(Conv *convIn, ConvData *convData,
 		int16 *msgList, int msgListSize, int16 *voiceList, int voiceListSize) {
 	Box *priorBox = box;
 	box = &conv_box;
-	conv_control.has_text = 0;
 	int personSpeaking;
 	int messageId;
 	int lineStart, lineCount;
@@ -1412,7 +1421,7 @@ done:
 // engine has a pending player command ready (mirrors player.command_ready in
 // the callers for modes 1 and 2).
 //
-// Status dispatch table (off_2D438):
+// Status dispatch table:
 //   0  (NEXT_NODE)   — advance to next node or build player menu
 //   1  (WAIT_AUTO)   — wait for auto-trigger then advance to EXECUTE
 //   2  (WAIT_ENTRY)  — player chose an option; execute it + show NPC portrait
@@ -1702,8 +1711,6 @@ void conv_flush() {
 	for (i = 0; i < CONV_MAX_SLOTS; ++i) {
 		if (conv_indexes[i] >= 2) {
 			dest = conv_open_write(i);
-			if (!dest)
-				goto done;
 
 			ConvData *convData = conv_data[conv_indexes[i] - 2];
 			errCode = conv_write(dest, convData);
@@ -1802,8 +1809,6 @@ int conv_expand(Common::SeekableReadStream *handle) {
 
 		// Open a temporary file for the conversation
 		Common::WriteStream *dest = conv_open_write(index);
-		if (!dest)
-			break;
 
 		// Read it's data from the savegame
 		convData = conv_read(handle);

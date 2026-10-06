@@ -151,6 +151,18 @@ diff --color -rbu ./backends/imgui_impl_sdl3.cpp ../scummvm/scummvm/backends/img
  #include "imgui_impl_sdl3.h"
  
  // Clang warnings with -Weverything
+@@ -389,6 +390,11 @@
+     io.AddKeyEvent(ImGuiMod_Shift, (sdl_key_mods & SDL_KMOD_SHIFT) != 0);
+     io.AddKeyEvent(ImGuiMod_Alt, (sdl_key_mods & SDL_KMOD_ALT) != 0);
+     io.AddKeyEvent(ImGuiMod_Super, (sdl_key_mods & SDL_KMOD_GUI) != 0);
++}
++
++bool ImGui_ImplSDL3_Ready()
++{
++       return ImGui_ImplSDL3_GetBackendData() != nullptr;
+ }
+ 
+ // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
 diff --color -rbu ./backends/imgui_impl_sdl3.h ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl3.h
 --- ./backends/imgui_impl_sdl3.h	2026-02-22 18:19:48
 +++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl3.h	2026-02-22 18:20:13
@@ -163,6 +175,14 @@ diff --color -rbu ./backends/imgui_impl_sdl3.h ../scummvm/scummvm/backends/imgui
  #ifndef IMGUI_DISABLE
  
  struct SDL_Window;
+@@ -41,6 +41,7 @@
+ IMGUI_IMPL_API void     ImGui_ImplSDL3_Shutdown();
+ IMGUI_IMPL_API void     ImGui_ImplSDL3_NewFrame();
+ IMGUI_IMPL_API bool     ImGui_ImplSDL3_ProcessEvent(const SDL_Event* event);
++IMGUI_IMPL_API bool     ImGui_ImplSDL3_Ready();
+ 
+ // Gamepad selection automatically starts in AutoFirst mode, picking first available SDL_Gamepad. You may override this.
+ // When using manual mode, caller is responsible for opening/closing gamepad.
 diff --color -rbu ./backends/imgui_impl_sdlrenderer2.cpp ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.cpp
 --- ./backends/imgui_impl_sdlrenderer2.cpp	2026-02-22 18:19:48
 +++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.cpp	2026-02-22 18:20:13

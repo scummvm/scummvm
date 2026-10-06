@@ -24,11 +24,9 @@
 namespace Glk {
 
 
-#define NUMCLASSES   \
-	(sizeof(class_table) / sizeof(gidispatch_intconst_t))
+#define NUMCLASSES ARRAYSIZE(class_table)
 
-#define NUMINTCONSTANTS   \
-	(sizeof(intconstant_table) / sizeof(gidispatch_intconst_t))
+#define NUMINTCONSTANTS ARRAYSIZE(intconstant_table)
 
 /**
  * The constants in this table must be ordered alphabetically.

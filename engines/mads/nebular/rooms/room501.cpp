@@ -108,7 +108,6 @@ static void room_501_init() {
 	local._rexPunched = true;
 
 	if (previous_room == 504) {
-		player.commands_allowed = false;
 		player.x = 74;
 		player.y = 121;
 		player.facing = FACING_NORTHWEST;

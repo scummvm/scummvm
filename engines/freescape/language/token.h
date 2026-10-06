@@ -78,6 +78,8 @@ public:
 		TRIGANIM,
 		UPDATEI,
 		VAREQ,
+		VARGT,
+		VARLT,
 		IFGTEQ,
 		IFLTEQ,
 		VISQ,
@@ -97,7 +99,19 @@ public:
 		TOGGLEBIT,
 		SWAPJET,
 		BITNOTEQ,
-		VARNOTEQ
+		VARNOTEQ,
+		ADCV,
+		SBCV,
+		XORV,
+		TESTV,
+		CMPV,
+		IFEQ,
+		IFGT,
+		IFLT,
+		CROSS,
+		COLOUR,
+		TEXTCOL,
+		TIMER
 	};
 
 	Type getType();

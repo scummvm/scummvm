@@ -338,7 +338,6 @@ static void handle_animation_seal() {
 			player.walker_visible = true;
 			kernel_abort_animation(aa[0]);
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-			seal_reset_frame = -1;
 			local->side_of_room = LEFT_SIDE;
 			player.commands_allowed = true;
 			local->anim_0_running = false;
@@ -353,7 +352,6 @@ static void handle_animation_seal() {
 			sound_play(N_UnderGroundMus);
 			kernel_abort_animation(aa[0]);
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-			seal_reset_frame = -1;
 			local->side_of_room = RIGHT_SIDE;
 			player.commands_allowed = true;
 			local->anim_0_running = false;
@@ -619,7 +617,6 @@ static void room_113_parser() {
 					break;
 
 				case 1:
-					/* sound_queue (N_PickUpObject006);*/
 					kernel_seq_delete(seq[fx_rare_coin]);
 					kernel_flip_hotspot(words_rare_coin, false);
 					sound_play(N_TakeObjectSnd);
@@ -698,7 +695,6 @@ static void room_113_parser() {
 					break;
 
 				case 1:
-					/* sound_queue (N_PickUpObject006);*/
 					kernel_seq_delete(seq[fx_emerald]);
 					kernel_flip_hotspot(words_emerald, false);
 					sound_play(N_TakeObjectSnd);

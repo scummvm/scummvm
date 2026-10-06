@@ -87,7 +87,7 @@ String CfgFindKey(const ConfigTree &cfg, const String &sectn, const String &item
 	if (sec_it == cfg.end())
 		return "";
 	if (nocase) {
-		for (auto item_it : sec_it->_value) {
+		for (const auto &item_it : sec_it->_value) {
 			if (item_it._key.CompareNoCase(item) == 0)
 				return item_it._key;
 		}

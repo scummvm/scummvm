@@ -30,12 +30,6 @@ namespace MADS {
 namespace RexNebular {
 namespace Rooms {
 
-struct Scratch {
-
-};
-
-//static Scratch local;
-
 static void room_354_init() {
 	global[kAfterHavoc] = true;
 	global[kTeleporterRoom + 1] = 351;

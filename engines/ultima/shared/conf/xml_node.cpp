@@ -146,7 +146,7 @@ void XMLNode::xmlAssign(const Common::String &key, const Common::String &value) 
 	t->_parent = this;
 	t->_id = k2;
 	_nodeList.push_back(t);
-	(*t).xmlAssign(k, value);
+	t->xmlAssign(k, value);
 }
 
 

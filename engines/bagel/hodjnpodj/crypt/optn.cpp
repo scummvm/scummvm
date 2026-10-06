@@ -168,7 +168,7 @@ bool COptn::OnInitDialog() {
 	);
 
 	if ((m_pLttrsSlvd = new CText()) != nullptr) {
-		bAssertCheck = (*m_pLttrsSlvd).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
+		bAssertCheck = m_pLttrsSlvd->SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);               // initialize the text objext
 	}
 	m_LttrsSlvd.SetScrollRange(MIN_LTTRSSLVD, MAX_LTTRSSLVD, false);    // setup Letters Solved defaults
@@ -183,7 +183,7 @@ bool COptn::OnInitDialog() {
 	);
 
 	if ((m_pTime = new CText()) != nullptr) {
-		bAssertCheck = (*m_pTime).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
+		bAssertCheck = m_pTime->SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);               // initialize the text objext
 	}
 
@@ -191,13 +191,13 @@ bool COptn::OnInitDialog() {
 	m_Time.SetScrollPos(m_nTime, true);
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(pGamePalette);                      // set the palette to use
-		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
+		pOKButton->SetPalette(pGamePalette);                      // set the palette to use
+		pOKButton->SetControl(IDOK, this);            // tie to the dialog control
 	}
 
 	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pCancelButton).SetPalette(pGamePalette);                      // set the palette to use
-		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
+		pCancelButton->SetPalette(pGamePalette);                      // set the palette to use
+		pCancelButton->SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
 	ReleaseDC(pDC);
@@ -257,7 +257,7 @@ void COptn::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScro
 			m_nLttrsSlvd = MAX_LTTRSSLVD;
 
 		Common::sprintf_s(msg, "Letters Solved: %d", m_nLttrsSlvd);
-		bAssertCheck = (*m_pLttrsSlvd).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+		bAssertCheck = m_pLttrsSlvd->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 		ASSERT(bAssertCheck);
 		pScrollBar->SetScrollPos(m_nLttrsSlvd, true);
 
@@ -295,7 +295,7 @@ void COptn::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScro
 
 		Common::sprintf_s(msg, "Time Limit: %s", m_chTime[m_nTime].c_str());
 
-		bAssertCheck = (*m_pTime).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+		bAssertCheck = m_pTime->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 
 		pScrollBar->SetScrollPos(m_nTime, true);
@@ -317,11 +317,11 @@ void COptn::OnPaint() {
 	pDC = GetDC();
 
 	Common::sprintf_s(msg, "Letters Solved: %d", m_nLttrsSlvd); // Display Letters Solved stats
-	bAssertCheck = (*m_pLttrsSlvd).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+	bAssertCheck = m_pLttrsSlvd->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);
 
 	Common::sprintf_s(msg, "Time: %s", m_chTime[m_nTime].c_str());      // Display Time stats
-	bAssertCheck = (*m_pTime).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+	bAssertCheck = m_pTime->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);
 
 	ReleaseDC(pDC);

@@ -32,6 +32,7 @@
 #include "mads/core/video.h"
 #include "mads/nebular/copy.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/nebular.h"
 #include "mads/nebular/popup.h"
 #include "mads/mads.h"
 
@@ -122,6 +123,49 @@ static int copy_pop_and_ask() {
 
 	if (copy_load(&copy_prot)) goto finish;
 
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh) {
+		RexNebularEngine *engine = static_cast<RexNebularEngine *>(g_engine);
+		Common::String version = engine->getMacintoshApplicationVersion();
+		const char versionPrefix[] = "Rex Nebular v";
+		if (version.hasPrefix(versionPrefix))
+			version = version.substr(sizeof(versionPrefix) - 1);
+
+		for (count = 0; count < COPY_TRIES_ALLOWED; ++count) {
+			const Common::String title = count == 0 ?
+				Common::String("Macintosh REX NEBULAR version ") + version :
+				Common::String("ANSWER INCORRECT!");
+			const Common::String subtitle = count == 0 ?
+				"(Copy Protection, for your convenience)" :
+				"(But we'll give you another chance!)";
+			const char *manual = copy_prot.manual == 'g' ?
+				"the GAME MANUAL" : "REX'S LOGBOOK";
+			const Common::String prompt = Common::String::format(
+				"Take out your copy of %s.  See!  That was easy.  Next, "
+				"just turn to page %d.  On line %d, find word number %d.",
+				manual, copy_prot.page, copy_prot.line,
+				copy_prot.word_number);
+
+			entry_buf[0] = copy_prot.say[0];
+			entry_buf[1] = '\0';
+			result = engine->runMacintoshCopyProtectionDialog(title,
+				subtitle, prompt, entry_buf, 12);
+			if (result < 0) {
+				warning("Could not open Macintosh copy-protection dialog");
+				error_flag = COPY_ESCAPE;
+				goto done;
+			}
+			if (result > 0) {
+				error_flag = COPY_ESCAPE;
+				goto done;
+			}
+
+			mads_strlwr(entry_buf);
+			if (strcmp(entry_buf, copy_prot.say) == 0)
+				goto finish;
+		}
+		goto done;
+	}
+
 	mads_itoa(copy_prot.page, page_buf, 10);
 	mads_itoa(copy_prot.line, line_buf, 10);
 	mads_itoa(copy_prot.word_number, word_buf, 10);
@@ -131,8 +175,21 @@ static int copy_pop_and_ask() {
 			goto finish;
 
 		if (!count) {
-			Common::strcpy_s(work_buf, "REX NEBULAR version ");
-			Common::strcat_s(work_buf, global_release_version);
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh) {
+				const char versionPrefix[] = "Rex Nebular v";
+				Common::String version =
+					static_cast<RexNebularEngine *>(g_engine)->
+					getMacintoshApplicationVersion();
+				if (version.hasPrefix(versionPrefix))
+					version = version.substr(sizeof(versionPrefix) - 1);
+
+				Common::strcpy_s(work_buf,
+					"Macintosh REX NEBULAR version ");
+				Common::strcat_s(work_buf, version.c_str());
+			} else {
+				Common::strcpy_s(work_buf, "REX NEBULAR version ");
+				Common::strcat_s(work_buf, global_release_version);
+			}
 			popup_center_string(work_buf, true);
 			popup_write_string("\n");
 			popup_center_string("(Copy Protection, for your convenience)", false);

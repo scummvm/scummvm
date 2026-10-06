@@ -47,6 +47,9 @@ namespace EEM {
 // members; the application and "EEM Sound&Music" resource forks are exposed as
 // Mac resource-fork alt streams so Common::MacResManager can read them.
 //
+// "Eagle Eye CD Installer" uses the same format for the CD application;
+// its game data and mystery scripts are stored separately on the disc.
+//
 // Returns nullptr when the installer files are absent or cannot be parsed.
 Common::Archive *createInstallerArchive(const Common::FSNode &dir);
 

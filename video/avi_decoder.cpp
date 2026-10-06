@@ -438,12 +438,14 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	if (!stream->size()) {
 		debugC(8, kDebugLevelGVideo, "AVIDecoder::loadStream(): skipping empty stream");
+		delete stream;
 		return false;
 	}
 
 	uint32 riffTag = stream->readUint32BE();
 	if (riffTag != ID_RIFF) {
 		warning("Failed to find RIFF header");
+		delete stream;
 		return false;
 	}
 
@@ -452,6 +454,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	if (riffType != ID_AVI) {
 		warning("RIFF not an AVI file");
+		delete stream;
 		return false;
 	}
 

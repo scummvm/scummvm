@@ -35,7 +35,8 @@
 #include "freescape/freescape.h"
 #include "freescape/gfx.h"
 #include "freescape/games/castle/castle.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/games/castle/c64.music.h"
+#include "freescape/language/variables.h"
 #include "freescape/music.h"
 
 namespace Freescape {
@@ -553,9 +554,9 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	act->addDefaultInputMapping("q");
 	infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("TOGGLESOUND", _("Toggle sound"));
+	act = new Common::Action("TOGGLESOUND", isC64() ? _("Toggle music/sound effects") : _("Toggle sound"));
 	act->setCustomEngineActionEvent(kActionToggleSound);
-	act->addDefaultInputMapping("t");
+	act->addDefaultInputMapping(isC64() ? "f" : "t");
 	infoScreenKeyMap->addAction(act);
 
 	act = new Common::Action("ROTL", _("Rotate left"));
@@ -610,6 +611,8 @@ void CastleEngine::beforeStarting() {
 		waitInLoop(250);
 	else if (isSpectrum() || isCPC())
 		waitInLoop(100);
+	else if (isC64())
+		liftC64Gate();
 	else if (isAmiga() || isAtariST())
 		waitInLoop(250);
 }
@@ -627,6 +630,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	assert(_areaMap.contains(areaID));
 	_currentArea = _areaMap[areaID];
+	if (isC64())
+		_c64SpiritAttackStartTicks = -1;
 	_currentArea->show();
 	_maxFallingDistance = MAX(32, _currentArea->getScale() * 16 - 2);
 
@@ -678,6 +683,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->fillColorPairArray();
 
 	swapPalette(areaID);
+	if (isC64())
+		updateC64BackgroundPalette();
 
 	// Enable/disable COLOR15 cycling based on per-area flag (Amiga/Atari)
 	if ((isAmiga() || isAtariST()) && _currentArea)
@@ -740,6 +747,13 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 }
 
 void CastleEngine::initGameState() {
+	if (isC64()) {
+		stopAllSounds();
+		stopAllSounds(Sound::kTypeMovement);
+		_syncSound = false;
+		_c64SpiritAttackStartTicks = -1;
+		resetC64Lightning();
+	}
 	FreescapeEngine::initGameState();
 	_playerHeightNumber = 1;
 
@@ -799,10 +813,12 @@ void CastleEngine::initGameState() {
 	_lastMinute = minutes;
 	_lastTenSeconds = seconds / 10;
 
-	_droppingGateStartTicks = 0;
+	_droppingGateStartTicks = isC64() ? -1 : 0;
 	_thunderFrameDuration = 0;
 
-	if (_playerMusic)
+	if (isC64())
+		enableCastleC64Sound(_sound, !_c64MusicEnabled);
+	if (_playerMusic && (!isC64() || _c64MusicEnabled))
 		_playerMusic->startMusic();
 }
 
@@ -1164,6 +1180,8 @@ void CastleEngine::drawInfoMenu() {
 				surface->copyRectToSurfaceWithKey((const Graphics::Surface)*sndIndicator, 96, 103,
 					Common::Rect(0, 0, sndIndicator->w, sndIndicator->h), black);
 		}
+	} else if (isC64()) {
+		drawC64InfoMenu(surface);
 	} else if (isSpectrum() || isCPC()) {
 		Common::Array<Common::String> lines;
 		lines.push_back(centerAndPadString("********************", 21));
@@ -1252,6 +1270,10 @@ void CastleEngine::drawInfoMenu() {
 
 					loadGameDialog();
 					_eventManager->purgeMouseEvents();
+					if (isC64()) {
+						drawC64InfoMenu(surface);
+						menuTexture->update(surface);
+					}
 					if (isDOS() || isAmiga() || isAtariST()) {
 						g_system->lockMouse(false);
 						CursorMan.showMouse(true);
@@ -1271,6 +1293,10 @@ void CastleEngine::drawInfoMenu() {
 					}
 
 					_gfx->setViewport(_viewArea);
+				} else if (isC64() && event.customType == kActionToggleSound) {
+					toggleC64AudioMode();
+					drawC64InfoMenu(surface);
+					menuTexture->update(surface);
 				} else if (isDOS() && event.customType == kActionToggleSound) {
 					// TODO
 				} else if (event.customType == kActionQuit) {
@@ -1295,7 +1321,7 @@ void CastleEngine::drawInfoMenu() {
 			case Common::EVENT_RBUTTONDOWN:
 			// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
-				if (isSpectrum() || isCPC())
+				if (isSpectrum() || isCPC() || isC64())
 					break;
 
 				mousePos = getNormalizedPosition(event.mouse);
@@ -1470,7 +1496,10 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	Common::String keysCollectedString;
 	if (isDOS())
 		keysCollectedString = _messagesList[130];
-	else if (isSpectrum()) {
+	else if (isC64()) {
+		keysCollectedString = _messagesList[72];
+		Common::replace(keysCollectedString, "XX", "X");
+	} else if (isSpectrum()) {
 		if (_language == Common::EN_ANY)
 			keysCollectedString = "X COLLECTED";
 		else if (_language == Common::ES_ESP)
@@ -1488,6 +1517,8 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	Common::String scoreString;
 	if (isDOS())
 		scoreString = _messagesList[131];
+	else if (isC64())
+		scoreString = _messagesList[74];
 	else if (isSpectrum() || isCPC()) {
 		if (_language == Common::EN_ANY)
 			scoreString = "SCORE XXXXXXX";
@@ -1503,7 +1534,10 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	Common::String spiritsDestroyedString;
 	if (isDOS())
 		spiritsDestroyedString = _messagesList[133];
-	else if (isSpectrum() || isCPC()) {
+	else if (isC64()) {
+		spiritsDestroyedString = _messagesList[73];
+		Common::replace(spiritsDestroyedString, "XX", "X");
+	} else if (isSpectrum() || isCPC()) {
 		if (_language == Common::EN_ANY)
 			spiritsDestroyedString = "X DESTROYED";
 		else if (_language == Common::ES_ESP)
@@ -1520,6 +1554,8 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 		// TODO: playSound(X, false);
 	} else if (isSpectrum() || isCPC()) {
 		playSound(9, false);
+	} else if (isC64() && !hasEscaped()) {
+		dropC64Gate();
 	}
 
 	if (!isDOS() && hasEscaped()) {
@@ -1564,7 +1600,7 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	}
 }
 
-// Same as FreescapeEngine::executeExecute but updates the spirits destroyed counter
+// Same as FreescapeEngine::executeCall but updates the spirits destroyed counter
 void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();
@@ -1823,6 +1859,8 @@ void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 	if (isAmiga())
 		front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0xAA, 0x00);
+	else if (isC64())
+		front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 119, 83, 0);
 	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 
 	Graphics::Surface *surface = new Graphics::Surface();
@@ -1887,6 +1925,10 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 		x = 40;
 		y = 46;
 		maxWidth = 139;
+	} else if (isC64()) {
+		x = 40;
+		y = 45;
+		maxWidth = 137;
 	} else if (isSpectrum()) {
 		x = 64;
 		y = 37;
@@ -1929,8 +1971,9 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 		}
 	}
 	if (_riddleBottomFrame) {
-		Common::Rect srcRect(0, 0, _riddleBottomFrame->w, _riddleBottomFrame->h - 1);
-		Common::Rect destRect(x, maxWidth, x + _riddleBottomFrame->w, maxWidth + _riddleBottomFrame->h - 1);
+		int height = _riddleBottomFrame->h - (isC64() ? 0 : 1);
+		Common::Rect srcRect(0, 0, _riddleBottomFrame->w, height);
+		Common::Rect destRect(x, maxWidth, x + _riddleBottomFrame->w, maxWidth + height);
 		destRect.clip(_viewArea);
 		srcRect = Common::Rect(destRect.left - x, destRect.top - maxWidth, destRect.right - x, destRect.bottom - maxWidth);
 		if (srcRect.isValidRect() && !srcRect.isEmpty())
@@ -1974,6 +2017,8 @@ void CastleEngine::drawRiddleStringInSurface(const Common::String &str, int x, i
 		_fontRiddle.drawString(surface, ustr, x, y, _screenW, fontColor);
 	} else {
 		_font.setBackground(backColor);
+		if (isC64())
+			_font.setSecondaryColor(fontColor);
 		_font.drawString(surface, ustr, x, y, _screenW, fontColor);
 	}
 }
@@ -2106,6 +2151,12 @@ void CastleEngine::checkSensors() {
 
 	_lastTick = _ticks;
 
+	if (isC64()) {
+		// The IRQ at $73a1 supplies the ghost tone while a live spirit is
+		// present. Ordinary effects take priority over this repeating cue.
+		updateCastleC64GhostSound(_sound, _gameStateControl == kFreescapeGameStatePlaying && !_disableSensors && ghostInArea());
+	}
+
 	if (_sensors.empty()) {
 		_gfx->_shakeOffset = Common::Point();
 		return;
@@ -2127,8 +2178,9 @@ void CastleEngine::checkSensors() {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxGhostHandle, speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 	}*/
 
-	// This is the frequency to shake the screen
-	if (_ticks % 5 == 0) {
+	// C64 cycles its viewport colours before rendering in drawC64Background.
+	// The other platforms use the generic attack flash/shake path.
+	if (!isC64() && _ticks % 5 == 0) {
 		if (_underFireFrames <= 0)
 			_underFireFrames = 1;
 	}
@@ -2569,6 +2621,16 @@ Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, 
 }
 
 Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
+	if (isC64()) {
+		_c64LiftingGateStartTicks = -1;
+		_droppingGateStartTicks = -1;
+		_c64SpiritAttackStartTicks = -1;
+		resetC64Lightning();
+		stopAllSounds();
+		stopAllSounds(Sound::kTypeMovement);
+		_syncSound = false;
+	}
+
 	_keysCollected.clear();
 	int numberKeys = stream->readUint32LE();
 	for (int i = 0; i < numberKeys; i++) {
@@ -2593,6 +2655,10 @@ Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *s
 
 
 void CastleEngine::drawBackground() {
+	if (isC64()) {
+		drawC64Background();
+		return;
+	}
 	clearBackground();
 	_gfx->drawBackground(_currentArea->_skyColor);
 

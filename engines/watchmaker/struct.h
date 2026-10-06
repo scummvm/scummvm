@@ -463,12 +463,8 @@ struct SD3DBitmap {
 	int32 rtype = 0;
 };
 struct SDDBitmap {
-	int32 tnum;
-	int32 px, py, ox, oy, dx, dy;
-
-	SDDBitmap() {
-		reset();
-	}
+	int32 tnum = 0;
+	int32 px = 0, py = 0, ox = 0, oy = 0, dx = 0, dy = 0;
 
 	void reset() {
 		tnum =0;
@@ -482,9 +478,7 @@ struct SDDBitmap {
 };
 
 struct SDDText {
-	SDDText() {
-		reset();
-	}
+	constexpr SDDText() = default;
 
 	SDDText(const char *_text, FontKind _font, FontColor _color, int32 _tnum) : font(_font),
 																			color(_color),
@@ -499,10 +493,10 @@ struct SDDText {
 		tnum = 0;
 	}
 
-	char text[MAX_STRING_LEN];
-	FontKind font;
-	FontColor color;
-	int32 tnum;
+	char text[MAX_STRING_LEN] = {};
+	FontKind font = FontKind::Standard;
+	FontColor color = FontColor::WHITE_FONT;
+	int32 tnum = 0;
 };
 
 struct SScript {
@@ -597,7 +591,7 @@ struct SRoomInfo {
 	int32 tnum = 0;               //bitmap
 	char *letter_ptr = nullptr;    //puntatore alla lettera corrente
 	int16 t_next_letter = 0;      //quando deve apparire la nuova lettera
-	FontKind f;     //il font
+	FontKind f = FontKind::Standard; //il font
 };
 
 } // End of namespace Watchmaker

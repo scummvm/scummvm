@@ -72,7 +72,7 @@ public:
 	/**
 	 * Load a video from a generic read stream. The ownership of the
 	 * stream object transfers to this VideoDecoder instance, which is
-	 * hence also responsible for eventually deleting it.
+	 * hence also responsible for eventually deleting it even in case of failure.
 	 *
 	 * Implementations of this function are required to call addTrack()
 	 * for each track in the video upon success.
@@ -499,6 +499,27 @@ public:
 	bool setAudioTrack(int index);
 
 	/**
+	 * Get the mute status of an audio track.
+	 *
+	 * Has no effect if the container does not support this.
+	 * @see supportsAudioTrackSwitching()
+	 *
+	 * @param index The index of the track, whose meaning is dependent on the container
+	 */
+	bool getAudioTrackMute(int index);
+
+	/**
+	 * Mute or unmute an audio track.
+	 *
+	 * Has no effect if the container does not support this.
+	 * @see supportsAudioTrackSwitching()
+	 *
+	 * @param index The index of the track, whose meaning is dependent on the container
+	 * @param muted Whether to mute the track or not.
+	 */
+	bool setAudioTrackMute(int index, bool muted);
+
+	/**
 	 * Get the number of internal audio tracks.
 	 */
 	uint getAudioTrackCount() const;
@@ -807,6 +828,11 @@ protected:
 		 * running
 		 */
 		uint32 getRunningTime() const;
+
+		/**
+		 * Get the current muted status.
+		 */
+		bool getMute() { return _muted; }
 
 		/**
 		 * Mute the track

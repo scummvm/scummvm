@@ -51,7 +51,6 @@
 #include "mads/forest/mads/inventory.h"
 #include "mads/forest/mads/sounds.h"
 #include "mads/forest/mads/words.h"
-#include "mads/core/mps_installer.h"
 
 namespace MADS {
 namespace Forest {

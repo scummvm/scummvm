@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_SLIDERPUZZLE_H
 #define NANCY_ACTION_SLIDERPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 
@@ -31,10 +31,10 @@ struct SliderPuzzleData;
 
 namespace Action {
 
-class SliderPuzzle: public RenderActionRecord {
+class SliderPuzzle: public PuzzleRecord {
 public:
 	enum SolveState { kNotSolved, kWaitForSound };
-	SliderPuzzle() : RenderActionRecord(7) {}
+	SliderPuzzle() : PuzzleRecord(7) {}
 	virtual ~SliderPuzzle() {}
 
 	void init() override;
@@ -45,7 +45,6 @@ public:
 
 	SliderPuzzleData *_puzzleState = nullptr;
 
-	Common::Path _imageName;
 	uint16 _width = 0;
 	uint16 _height = 0;
 	Common::Array<Common::Array<Common::Rect>> _srcRects;
@@ -53,15 +52,10 @@ public:
 	Common::Array<Common::Array<int16>> _startTileOrder;
 	Common::Array<Common::Array<int16>> _correctTileOrder;
 	SoundDescription _clickSound;
-	SceneChangeWithFlag _solveExitScene;
-	SoundDescription _solveSound;
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 
 	bool _retainState = true;
 
 	SolveState _solveState = kNotSolved;
-	Graphics::ManagedSurface _image;
 
 	bool isViewportRelative() const override { return true; }
 

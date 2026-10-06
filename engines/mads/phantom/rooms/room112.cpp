@@ -359,7 +359,7 @@ void room_112_init() {
 		player.facing         = FACING_EAST;
 		player.walker_visible = false;
 
-	} else if ((previous_room == 110) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x      = PLAYER_X_FROM_110;
 		player.y      = PLAYER_Y_FROM_110;
 		player.facing = FACING_NORTH;

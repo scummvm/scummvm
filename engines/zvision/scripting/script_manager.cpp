@@ -869,7 +869,7 @@ void ScriptManager::addEvent(Common::Event event) {
 void ScriptManager::flushEvent(Common::EventType type) {
 	auto event = _controlEvents.begin();
 	while (event != _controlEvents.end()) {
-		if ((*event).type == type)
+		if (event->type == type)
 			event = _controlEvents.erase(event);
 		else
 			event++;

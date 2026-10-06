@@ -355,6 +355,8 @@ static void handle_animation_giry() {
 
 		switch (local->giry_frame) {
 		case 77:  /* almost end of trance */
+		case 85:  /* just starting to walk to left door */
+		case 66:  /* almost at end of getting to trance */
 			conv_release();
 			break;
 
@@ -567,10 +569,6 @@ static void handle_animation_giry() {
 			}
 			break;
 
-		case 85:  /* just starting to walk to left door */
-			conv_release();
-			break;
-
 		case 110:  /* almost end of unlock box 5 */
 			kernel_flip_hotspot_loc(words_Madame_Giry, true, HS_MADAME_X_L_1, HS_MADAME_Y_L_1);
 			kernel_flip_hotspot_loc(words_Madame_Giry, true, HS_MADAME_X_L_2, HS_MADAME_Y_L_2);
@@ -613,10 +611,6 @@ static void handle_animation_giry() {
 				giry_reset_frame = 137;
 				break; /* freeze standing by left door */
 			}
-			break;
-
-		case 66:  /* almost at end of getting to trance */
-			conv_release();
 			break;
 
 		case 67:  /* end of trance and freeze */
@@ -1745,7 +1739,7 @@ void room_205_init() {
 		kernel_flip_hotspot(words_Monsieur_Richard, true);
 		conv_run(CONV_RICHARD_18);
 
-	} else if ((previous_room == 202) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else {
 
 		if (global[jacques_status] == JACQUES_IS_DEAD) {
 			aa[0]                 = kernel_run_animation(kernel_name('b', 9), 1);

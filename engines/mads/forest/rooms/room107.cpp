@@ -53,7 +53,7 @@ static Scratch scratch;
 static void room_107_anim1();
 
 static void room_107_init() {
-	flags[8] = 5;
+	flags[4] = 5;
 
 	ss[0] = kernel_load_series(kernel_name('b', 1), 0);
 	seq[0] = kernel_seq_stamp(ss[0], false, KERNEL_FIRST);

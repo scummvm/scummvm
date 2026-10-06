@@ -390,7 +390,7 @@ bool EventLoop::isMouseMsg(const Common::Event &ev) const {
 		ev.type == Common::EVENT_WHEELUP ||
 		ev.type == Common::EVENT_WHEELDOWN ||
 		ev.type == Common::EVENT_MBUTTONDOWN ||
-		ev.type == Common::EVENT_MBUTTONUP;;
+		ev.type == Common::EVENT_MBUTTONUP;
 }
 
 bool EventLoop::isJoystickMsg(const Common::Event &ev) const {

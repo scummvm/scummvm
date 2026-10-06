@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_DRIVINGPUZZLE_H
 #define NANCY_ACTION_DRIVINGPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/navigationrecords.h"
 #include "engines/nancy/action/actionzone.h"
@@ -64,11 +64,11 @@ namespace Action {
 //  - kChase: the "caught Jane" transition (state 1 -> 2, the win) is gated on an event
 //    flag the chase scene is expected to set (nothing in this record sets it); confirm
 //    what triggers it so a missed catch can't still win.
-class DrivingPuzzle : public RenderActionRecord {
+class DrivingPuzzle : public PuzzleRecord {
 public:
 	enum Variant { kDriving = 0, kChase };
 
-	DrivingPuzzle(Variant variant) : RenderActionRecord(7), _variant(variant) {}
+	DrivingPuzzle(Variant variant) : PuzzleRecord(7), _variant(variant) {}
 	virtual ~DrivingPuzzle() {}
 
 	void init() override;
@@ -192,8 +192,8 @@ protected:
 	// boundary zones), decoding the destination scenes and their transition effects.
 	void classifyZones(const Common::Array<ActionZone> &zones);
 
-	// Plays one (randomly chosen) entry of a random-sound block.
-	void playSoundBlock(const RandomSoundBlock &block);
+	// Like playSoundBlock(), but a loop count of 0 keeps looping (the engine ambience)
+	void playSoundBlockRawLoops(const RandomSoundBlock &block);
 
 	// Arms a pending exit (applied in kActionTrigger): from a destination zone (keeping
 	// its fade), or from a raw scene id plus an optional event flag to set.
@@ -246,7 +246,6 @@ protected:
 	Variant _variant;
 
 	// Three filenames decoded from the header blob.
-	Common::Path _imageName;			// visible town map ("MAP_Titusville")
 	Common::Path _collisionName;		// collision mask ("MAP_TitusvilleCollision")
 	Common::Path _carSpriteName;		// car rotation atlas ("MAP_Roadster_OVL")
 
@@ -298,15 +297,12 @@ protected:
 	int _parkedDest = -1;		// destination zone the car is currently parked in (-1 == none)
 
 	// A pending exit to another scene (a location, the chase finish, or a chase outcome).
-	// Armed via armExit()/armExitScene(); applied and finished in the kActionTrigger state.
-	SceneChangeDescription _exitScene;
+	// Armed via armExit()/armExitScene() into _exitScene; applied and finished in the kActionTrigger state.
 	bool _exitHasFade = false;
 	byte _exitFadeType = 0;
 	uint16 _exitFadeTotalTime = 0;
 	uint16 _exitFadeToBlackTime = 0;
 	Common::Rect _exitFadeRect;
-	int16 _exitFlag = -1;
-	byte _exitFlagValue = 0;
 
 	// Chase (167) state machine: 0 = following the first path, 1 = waiting to switch,
 	// 2 = following the second path.
@@ -330,7 +326,6 @@ protected:
 	double _chaserY = 0.0;
 	double _chaserHeading = 0.0;
 
-	Graphics::ManagedSurface _image;			// the town map
 	Graphics::ManagedSurface _carImage;			// the player car rotation atlas
 	Graphics::ManagedSurface _chaseCarImage;	// the chaser car rotation atlas
 	Graphics::ManagedSurface _collisionMask;	// road/off-road mask ("MAP_TitusvilleCollision")

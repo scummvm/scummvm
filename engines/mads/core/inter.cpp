@@ -137,7 +137,7 @@ int  picked_word = 0;           /* Word most recently picked.         */
 
 char inter_sentence[64];                /* Sentence building buffer            */
 int  inter_sentence_handle = -1;       /* Sentence message handle (for matte) */
-static int inter_sentence_shadow_handle = -1;
+static bool inter_macintosh_sentence_hidden = false;
 int  inter_sentence_changed = false;    /* Mark if sentence contents changed   */
 
 int  inter_look_around;                 /* "Look around" command            */
@@ -245,7 +245,7 @@ void init_inter() {
 	picked_word = 0;
 	memset(inter_sentence, 0, sizeof(inter_sentence));
 	inter_sentence_handle = -1;
-	inter_sentence_shadow_handle = -1;
+	inter_macintosh_sentence_hidden = false;
 	inter_sentence_changed = false;
 	inter_look_around = 0;
 	inter_command = 0;
@@ -419,11 +419,12 @@ static void inter_show_word(int class_, int id) {
 	int x, y, junk;
 	int word_id = 0;
 	char temp_buf[80] = { 0 };
-	int write_it = true;
 
 	if (!inter_get_spot(class_, id, &x, &y, &junk, &junk)) {
 		goto done;
 	}
+	if (g_engine->hasMacintoshInterface())
+		goto done;
 
 	switch (class_) {
 	case STROKE_COMMAND:
@@ -506,8 +507,7 @@ static void inter_show_word(int class_, int id) {
 	temp_buf[0] = (char)toupper((int)temp_buf[0]);
 
 write:
-	if (write_it)
-		font_write(font_inter, &scr_inter, temp_buf, x, y, 0);
+	font_write(font_inter, &scr_inter, temp_buf, x, y, 0);
 
 done:
 	;
@@ -599,12 +599,6 @@ void inter_prepare_background() {
 }
 
 static void inter_refresh() {
-	// int count;
-	// for (count = 0; count < (int)image_inter_marker; count++) {
-	// if (image_inter_list[count].segment_id == INTER_SPINNING_OBJECT) {
-	// image_inter_list[count].flags = IMAGE_REFRESH + IMAGE_UPDATE_ONLY;
-	// }
-	// }
 	image_inter_marker = 0;
 	matte_refresh_inter();
 
@@ -761,6 +755,25 @@ static void inter_set_active_word(int class_, int *old, int new_) {
 			}
 		}
 	}
+}
+
+void inter_scroll_inventory(int direction) {
+	if (!direction || (inter_input_mode != INTER_BUILDING_SENTENCES &&
+			inter_input_mode != INTER_LIMITED_SENTENCES))
+		return;
+
+	const int lastPage = MAX(0, inven_num_objects - inter_columns);
+	const int newFirst = CLIP(first_inven + (direction < 0 ? -1 : 1),
+		0, lastPage);
+	if (newFirst == first_inven)
+		return;
+
+	int unused = 0;
+	first_inven = newFirst;
+	first_inven_changed = true;
+	inter_set_active_word(STROKE_INVEN, &unused, 0);
+	inter_scrollbar_refresh();
+	inter_force_rescan = true;
 }
 
 void inter_set_active_inven(int new_active) {
@@ -1420,7 +1433,6 @@ static void inter_compile_sentence() {
 
 			inter_add_word_to_sentence(inter_verb, true);
 			if (inter_verb == words_look) {
-				// inter_prep = PREP_AT;
 				Common::strcat_s(inter_sentence, istring_prep_names[PREP_AT]);
 				Common::strcat_s(inter_sentence, istring_space);
 			}
@@ -1505,9 +1517,10 @@ static void inter_compile_sentence() {
 	}
 
 	len = strlen(inter_sentence);
-	if (strlen(inter_sentence)) {
+	if (len > 0) {
 		mark = &inter_sentence[len - 1];
-		if (*mark == ' ') *mark = 0;
+		if (*mark == ' ')
+			*mark = 0;
 	}
 
 done:
@@ -1916,7 +1929,7 @@ void inter_turn_off_object() {
 
 
 	if (new_room == room_id) {
-		Forest::paul_object_showing = true;
+		Forest::paul_object_showing = -1;
 	}
 
 	// will wipe out other 4 sprites
@@ -1959,6 +1972,24 @@ void inter_screen_update() {
 			}
 		}
 	}
+}
+
+void inter_hide_macintosh_sentence() {
+	bool changed = false;
+	inter_macintosh_sentence_hidden = true;
+	if (inter_sentence_handle >= 0) {
+		matte_clear_message(inter_sentence_handle);
+		inter_sentence_handle = -1;
+		changed = true;
+	}
+	if (changed)
+		matte_frame(false, false);
+	inter_sentence_changed = true;
+}
+
+void inter_restore_macintosh_sentence() {
+	inter_macintosh_sentence_hidden = false;
+	inter_sentence_changed = true;
 }
 
 static void inter_exec_function(void (*(target))()) {
@@ -2135,20 +2166,17 @@ void inter_main_loop(int allow_input) {
 		}
 	}
 
-	if (inter_sentence_changed) {
+	if (inter_sentence_changed && !inter_macintosh_sentence_hidden) {
 		if (inter_sentence_handle >= 0) {
 			matte_clear_message(inter_sentence_handle);
 			inter_sentence_handle = -1;
-		}
-		if (inter_sentence_shadow_handle >= 0) {
-			matte_clear_message(inter_sentence_shadow_handle);
-			inter_sentence_shadow_handle = -1;
 		}
 		if (g_engine->getGameID() != GType_Forest && (strlen(inter_sentence) > 0) &&
 				((inter_input_mode == INTER_BUILDING_SENTENCES) || (inter_input_mode == INTER_LIMITED_SENTENCES))) {
 			use_font = font_main;
 			use_spacing = -1;
-			width = font_string_width(use_font, inter_sentence, use_spacing);
+			width = g_engine->getMessageTextWidth(use_font, inter_sentence,
+				use_spacing);
 
 			if (width > video_x) {
 				use_font = font_inter;
@@ -2161,15 +2189,10 @@ void inter_main_loop(int allow_input) {
 
 			byte sentenceColor = g_engine->getGameID() == GType_RexNebular ?
 				INTER_MESSAGE_COLOR_REX : INTER_MESSAGE_COLOR;
-			byte shadowColor = 0;
-			if (g_engine->getInterfaceSentenceColors(sentenceColor, shadowColor)) {
-				inter_sentence_shadow_handle = matte_add_message(use_font,
-					inter_sentence, x + 1, y + 1, shadowColor,
-					use_spacing);
-			}
+			g_engine->getInterfaceSentenceColor(sentenceColor);
 			inter_sentence_handle = matte_add_message(use_font, inter_sentence, x, y,
 				sentenceColor,
-				use_spacing);
+				use_spacing, g_engine->hasMacintoshInterface());
 		}
 		inter_sentence_changed = false;
 	}

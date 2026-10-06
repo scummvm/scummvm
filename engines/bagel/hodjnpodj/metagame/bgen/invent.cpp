@@ -71,7 +71,7 @@ CInventory::~CInventory() {
 		pItem = m_pEquipment;                       // ... one item at a time
 		if (pItem == nullptr)
 			break;
-		m_pEquipment = (*pItem).m_pNext;            // make next item be first
+		m_pEquipment = pItem->m_pNext;            // make next item be first
 		delete pItem;
 	}
 	m_pEquipment = nullptr;
@@ -94,13 +94,13 @@ CInventory::~CInventory() {
 void CInventory::AddItem(CItem *pItem) {
 	CItem   *pTemp;
 
-	if (((*pItem).m_pPrev != nullptr) ||               // don't relink a linked item
-	        ((*pItem).m_pNext != nullptr))
+	if ((pItem->m_pPrev != nullptr) ||               // don't relink a linked item
+	        (pItem->m_pNext != nullptr))
 		return;
 
-	pTemp = FindItem((*pItem).m_nID);               // see if it is already in the list
+	pTemp = FindItem(pItem->m_nID);               // see if it is already in the list
 	if (pTemp != nullptr) {                            // ... and if so, just bump the quantity
-		(*pTemp).m_nQuantity += (*pItem).m_nQuantity;   // ... of the existing item and
+		pTemp->m_nQuantity += pItem->m_nQuantity;   // ... of the existing item and
 		delete pItem;                               // ... then purge the item given us
 		return;
 	}
@@ -109,10 +109,10 @@ void CInventory::AddItem(CItem *pItem) {
 		m_pEquipment = pItem;                       // ... if no existing items
 	else {
 		pTemp = m_pEquipment;                       // otherwise hunt for the last item
-		while ((*pTemp).m_pNext != nullptr)            // ... and insert it as the new last one
-			pTemp = (*pTemp).m_pNext;
-		(*pTemp).m_pNext = pItem;
-		(*pItem).m_pPrev = pTemp;
+		while (pTemp->m_pNext != nullptr)            // ... and insert it as the new last one
+			pTemp = pTemp->m_pNext;
+		pTemp->m_pNext = pItem;
+		pItem->m_pPrev = pTemp;
 	}
 
 	m_nItemCount += 1;                              // increment item count accordingly
@@ -139,10 +139,10 @@ void CInventory::AddItem(int nID, long nQuantity) {
 	pItem = FindItem(nID);                          // see if we already have it
 	if (pItem == nullptr) {                            // if not, then create it
 		pItem = new CItem(nID);                     // ... initialize its values
-		(*pItem).m_nQuantity = nQuantity;           // ... and link it into the list
+		pItem->m_nQuantity = nQuantity;           // ... and link it into the list
 		AddItem(pItem);
 	} else
-		(*pItem).m_nQuantity += nQuantity;          // just bump the quantity field
+		pItem->m_nQuantity += nQuantity;          // just bump the quantity field
 }
 
 
@@ -162,23 +162,23 @@ void CInventory::AddItem(int nID, long nQuantity) {
 void CInventory::RemoveItem(CItem *pItem) {
 	CItem   *pTemp;
 
-	if (((*pItem).m_pPrev == nullptr) &&               // don't unlink a lone item
-	        ((*pItem).m_pNext == nullptr) &&
+	if ((pItem->m_pPrev == nullptr) &&               // don't unlink a lone item
+	        (pItem->m_pNext == nullptr) &&
 	        (m_pEquipment != pItem))
 		return;
 
-	if ((*pItem).m_pPrev == nullptr) {                 // handle being first item in list
-		m_pEquipment = (*pItem).m_pNext;            // ... next item becomes new head
+	if (pItem->m_pPrev == nullptr) {                 // handle being first item in list
+		m_pEquipment = pItem->m_pNext;            // ... next item becomes new head
 		if (m_pEquipment != nullptr)                   // ... if we weren't the only item
-			(*m_pEquipment).m_pPrev = nullptr;         // ... then clear head's previous pointer
+			m_pEquipment->m_pPrev = nullptr;         // ... then clear head's previous pointer
 	} else {                                        // handle being not head of list
-		pTemp = (*pItem).m_pPrev;                   // ... make previous item point to after us
-		(*pTemp).m_pNext = (*pItem).m_pNext;
-		if ((*pTemp).m_pNext != nullptr)               // ... if something was after us, then
-			(*(*pTemp).m_pNext).m_pPrev = pTemp;    // ... have it point to what's previous
+		pTemp = pItem->m_pPrev;                   // ... make previous item point to after us
+		pTemp->m_pNext = pItem->m_pNext;
+		if (pTemp->m_pNext != nullptr)               // ... if something was after us, then
+			pTemp->m_pNext->m_pPrev = pTemp;    // ... have it point to what's previous
 	}
 
-	(*pItem).m_pNext = (*pItem).m_pPrev = nullptr;
+	pItem->m_pNext = pItem->m_pPrev = nullptr;
 	m_nItemCount -= 1;                              // decrement item count accordingly
 }
 
@@ -219,12 +219,12 @@ void CInventory::DiscardItem(CItem *pItem) {
  ************************************************************************/
 
 void CInventory::DiscardItem(CItem *pItem, long nQuantity) {
-	(*pItem).m_nQuantity -= nQuantity;              // debit the requested quantity
+	pItem->m_nQuantity -= nQuantity;              // debit the requested quantity
 
-	if ((*pItem).m_nID == MG_OBJ_CROWN) {           // special case handling for crowns
-		if ((*pItem).m_nQuantity < 0)               // ... can have zero count
-			(*pItem).m_nQuantity = 0;
-	} else if ((*pItem).m_nQuantity <= 0)               // else if we exhausted the supply
+	if (pItem->m_nID == MG_OBJ_CROWN) {           // special case handling for crowns
+		if (pItem->m_nQuantity < 0)               // ... can have zero count
+			pItem->m_nQuantity = 0;
+	} else if (pItem->m_nQuantity <= 0)               // else if we exhausted the supply
 		DiscardItem(pItem);                         // ... then purge the item
 }
 
@@ -302,7 +302,7 @@ CItem *CInventory::FetchItem(int nIdx) {
 	for (i = 0; pItem != nullptr; i++) {               // scan through the list
 		if (nIdx == i)                              // ... looking for item
 			break;
-		pItem = (*pItem).m_pNext;
+		pItem = pItem->m_pNext;
 	}
 
 	return pItem;                                   // return what we found
@@ -328,9 +328,9 @@ CItem *CInventory::FindItem(int nID) {
 
 	pItem = m_pEquipment;                           // get head of equipment list
 	while (pItem != nullptr) {                         // scan through the list
-		if (nID == (*pItem).m_nID)                  // ... looking for a match
+		if (nID == pItem->m_nID)                  // ... looking for a match
 			break;
-		pItem = (*pItem).m_pNext;
+		pItem = pItem->m_pNext;
 	}
 
 	return pItem;                                   // return what we found

@@ -222,12 +222,15 @@ Common::Error LoLEngine::loadGameState(int slot) {
 			releaseMonsterTempData(_lvlTempData[i]);
 			releaseFlyingObjectTempData(_lvlTempData[i]);
 			releaseWallOfForceTempData(_lvlTempData[i]);
+			releaseAutoMapTempData(_lvlTempData[i]);
 			delete _lvlTempData[i];
 		}
 
 		_lvlTempData[i] = new LevelTempData;
-		_lvlTempData[i]->wallsXorData = new uint8[4096];
-		_lvlTempData[i]->flags = new uint16[1024];
+		uint8 *wd = new uint8[4096]();
+		_lvlTempData[i]->wallsXorData = wd;
+		uint16 *wf = new uint16[1024]();
+		_lvlTempData[i]->flags = wf;
 		LoLMonster *lm = new LoLMonster[30];
 		_lvlTempData[i]->monsters = lm;
 		FlyingObject *lf = new FlyingObject[_numFlyingObjects];
@@ -240,13 +243,13 @@ Common::Error LoLEngine::loadGameState(int slot) {
 			in.skip(4);
 			in.read(origCmp, in.readUint16());
 			_screen->decodeFrame4(origCmp, _tempBuffer5120, 5120);
-			memcpy(l->wallsXorData, _tempBuffer5120, 4096);
+			memcpy(wd, _tempBuffer5120, 4096);
 			for (int ii = 0; ii < 1024; ii++)
-				l->flags[ii] = _tempBuffer5120[4096 + ii];
+				*wf++ = _tempBuffer5120[4096 + ii];
 		} else {
-			in.read(l->wallsXorData, 4096);
+			in.read(wd, 4096);
 			for (int ii = 0; ii < 1024; ii++)
-				l->flags[ii] = in.readByte();
+				*wf++ = in.readByte();
 		}
 
 		if (header.originalSave)
@@ -440,11 +443,11 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 		for (int ii = 0; ii < 1024; ii++)
 			out->writeByte(l->flags[ii] & 0xFF);
 
-		LoLMonster *lm = (LoLMonster *)_lvlTempData[i]->monsters;
-		FlyingObject *lf = (FlyingObject *)_lvlTempData[i]->flyingObjects;
+		const LoLMonster *lm = reinterpret_cast<const LoLMonster*>(_lvlTempData[i]->monsters);
+		const FlyingObject *lf = reinterpret_cast<const FlyingObject*>(_lvlTempData[i]->flyingObjects);
 
 		for (int ii = 0; ii < 30; ii++) {
-			LoLMonster *m = &lm[ii];
+			const LoLMonster *m = &lm[ii];
 			out->writeUint16BE(m->nextAssignedObject);
 			out->writeUint16BE(m->nextDrawObject);
 			out->writeByte(m->flyingHeight);
@@ -476,7 +479,7 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 		}
 
 		for (int ii = 0; ii < _numFlyingObjects; ii++) {
-			FlyingObject *m = &lf[ii];
+			const FlyingObject *m = &lf[ii];
 			out->writeByte(m->enable);
 			out->writeByte(m->objectType);
 			out->writeUint16BE(m->attackerId);
@@ -537,10 +540,10 @@ void LoLEngine::restoreBlockTempData(int levelIndex) {
 	restoreTempDataAdjustMonsterStrength(levelIndex - 1);
 }
 
-void *LoLEngine::generateMonsterTempData(LevelTempData *tmp) {
+const void *LoLEngine::generateMonsterTempData(uint8 &monsterDifficulty) const {
 	LoLMonster *m = new LoLMonster[30];
 	memcpy(m, _monsters,  sizeof(LoLMonster) * 30);
-	tmp->monsterDifficulty = _monsterDifficulty;
+	monsterDifficulty = _monsterDifficulty;
 	return m;
 }
 
@@ -575,8 +578,7 @@ void LoLEngine::restoreMonsterTempData(LevelTempData *tmp) {
 }
 
 void LoLEngine::releaseMonsterTempData(LevelTempData *tmp) {
-	LoLMonster *p = (LoLMonster *)tmp->monsters;
-	delete[] p;
+	delete[] reinterpret_cast<const LoLMonster*>(tmp->monsters);
 }
 
 } // End of namespace Kyra

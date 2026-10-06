@@ -928,7 +928,7 @@ bool CMnkWindow::FreePitResources(bool bDelete)
 		{
 			m_xpFreeStoneChain = xpcNextStone->m_xpcNext ;
 			// unlink it from stone sprite chain
-			(*(CSprite *)xpcNextStone).UnlinkSprite();                          // ... unlinking it
+			((CSprite *)xpcNextStone)->UnlinkSprite();                          // ... unlinking it
 			// unlink it from sprite chain
 			delete xpcNextStone ;       // delete stone sprite
 		}

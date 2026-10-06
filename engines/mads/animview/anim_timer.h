@@ -28,6 +28,7 @@ namespace MADS {
 namespace AnimView {
 
 extern void anim_timer_init();
+extern void anim_timer_shutdown();
 extern void anim_timer();
 
 } // namespace AnimView

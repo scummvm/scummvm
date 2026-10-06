@@ -15,11 +15,39 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Mortadelo y Filemón: Mamelucos a la Romana hinzugefügt.
    - Unterstützung für Dracula: Resurrection hinzugefügt.
    - Unterstützung für Dracula 2: The Last Sanctuary hinzugefügt.
+   - Unterstützung für Amerzone: The Explorer's Legacy hinzugefügt.
+   - Unterstützung für The Cameron Files: The Secret at Loch Ness hinzugefügt.
+   - Unterstützung für The Messenger / Louvre: The Final Curse hinzugefügt.
    - Unterstützung für Nancy Drew: The Secret of Shadow Ranch hinzugefügt.
    - Unterstützung für Nancy Drew: Curse of Blackmoor Manor hinzugefügt.
+   - Unterstützung für Nancy Drew: Secret of the Old Clock hinzugefügt.
+   - Unterstützung für Nancy Drew: Last Train to Blue Moon Canyon hinzugefügt.
+   - Unterstützung für Nancy Drew: Danger by Design hinzugefügt.
+   - Unterstützung für Nancy Drew: The Creature of Kapu Cave hinzugefügt.
    - Unterstützung für Chamber of the Sci-Mutant Priestess hinzugefügt.
    - Unterstützung für Star Wars: Rebel Assault hinzugefügt.
    - Unterstützung für Star Wars: Rebel Assault II: The Hidden Empire hinzugefügt.
+   - Unterstützung für Dragonsphere hinzugefügt.
+   - Unterstützung für Return of the Phantom hinzugefügt.
+   - Unterstützung für Once Upon a Forest hinzugefügt.
+   - Unterstützung für Alpha Polaris hinzugefügt.
+   - Unterstützung für Art of Murder: FBI Confidential hinzugefügt.
+   - Unterstützung für Barrow Hill - The Dark Path hinzugefügt.
+   - Unterstützung für Dark Fall: Lost Souls hinzugefügt.
+   - Unterstützung für Devil In The Capital hinzugefügt.
+   - Unterstützung für Dirty Split hinzugefügt.
+   - Unterstützung für Face Noir hinzugefügt.
+   - Unterstützung für Ghost in the Sheet hinzugefügt.
+   - Unterstützung für Hamlet hinzugefügt.
+   - Unterstützung für The Lost Crown - A Ghost-Hunting Adventure hinzugefügt.
+   - Unterstützung für Murder In Tehran's Alleys 2016 hinzugefügt.
+   - Unterstützung für Murder In Tehran's Alleys 1933 hinzugefügt.
+   - Unterstützung für Reversion series hinzugefügt.
+   - Unterstützung für Rhiannon: Curse of the Four Branches hinzugefügt.
+   - Unterstützung für Shadows on the Vatican series hinzugefügt.
+   - Unterstützung für mehr als 140 weitere Wintermute-Spiele hinzugefügt.
+   - Unterstützung für Der Schatz im Silbersee hinzugefügt.
+   - Unterstützung für The Fool's Errand hinzugefügt.
 
  Allgemein:
    - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
@@ -27,6 +55,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler korrigiert, durch den MIDI- und MT-32-Geräte in den Spiel-Optionen
      nicht überschrieben werden konnten
    - Der Nuked-OPL3 AdLib-Emulator wurden durch den Nuked-OPL3-fast-Fork ausgetauscht.
+
+ Asylum:
+   - Fehlende oder falsche Schrittegeräusche in einigen Szenen wurden behoben.
 
  AWE:
    - Absturz des Audio-Codes in OpenBSD korrigiert.
@@ -41,14 +72,24 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Freescape:
    - Unterstützung für das Laden von ZX Spectrum-Spielen von TAP/TZX-Tape-Images hinzugefügt.
 
+ Hopkins:
+   - Fehlender 3D-Shooter "Unterwasser-Basis" hinzugefügt.
+
  Kyra:
    - Unterstützung für die koreanische Fan-Übersetzung in Kyra1 hinzugefügt (in ScummVM 2026.3.0).
    - Fehlerhafte nicht-koreanische kyra1-Spiele (Fehlermeldung "You're missing the 'KYRA.DAT'
      engine data file or it got corrupted...) wiederhergestellt.
+   - Unterstützung für ein optionales Automap-Overlay in Eye of the Beholder 1 und 2 hinzugefügt.
 
  Lure:
    - Charakter-Wegfindung optimiert.
    - Fehler korrigiert, durch den Charaktere nach einer einseitigen Konversation nicht mehr angesprochen werden konnten.
+
+ M4:
+   - Mehrere Fehlerkorrekturen für Riddle of Master Lu, einschließlich Abstürzen, fehlender Funktionen und Spiel-Fehler.
+   - Fehler im Originalspiel korrigiert, der dafür sorgt, dass bei einer Unterhaltung mit Wolf das Spiel einfriert.
+   - Unterstützung für originale Cheat-Codes hinzugefügt.
+   - Log-Einträge können jetzt übersetzt werden.
 
  MM:
    - Mehrere Abstürze in Kämpfen in M&M1 korrigiert.
@@ -65,12 +106,34 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Allgemeine Flags werden nicht mehr gelöscht, wenn das Spiel (automatisch) gespeichert
      wird. Das Löschen der Flags hat in einigen Szenen zu Problemen geführt.
    - Spielstände können jetzt über den GMM geladen werden, bevor eine neue Szene gestartet wird.
+   - Zwischensequenzen und Dialoge können jetzt mit "ESC" übersprungen werden.
+   - Unterstützung für das Mausrad zu einigen UI-Elementen hinzugefügt.
+   - Mehrere Probleme mit dem Memory-Puzzle in Nancy 9 korrigiert.
+   - Mehrere Probleme mit dem "I can't" Item-Sound korrigiert.
+   - Die Passwort-Angaben in einigen Puzzles sind jetzt fehlertoleranter, so sind etwa
+     "Xoc" und "Lady Xoc" akzeptierte Antworten).
 
  SCUMM:
    - Cursor-Skalierung in frühen Windows HE-Spielen korrigiert.
+   - In C64-Spielen kann jetzt das PAL-Timing für die SID-Emulation genutzt werden.
+     Dadurch wird die Musik langsamer abgespielt, was dem Spiel-Erlebnis für viele nicht-US-Spieler entspricht.
+
+ Sherlock:
+   - Abweichung in der Darstellung der Bewegungen in Rose Tattoo korrigiert.
 
  SLUDGE:
    - Shape-Shift Escape wurde zur Spiele-Datenbank hinzugefügt.
+
+ TsAGE:
+   - Unterstützung für MIDI und MT-32 hinzugefügt.
+   - Verbesserte Wiedergabe von Sound Blaster-Samples.
+   - Sound wird jetzt korrekt pausiert, wenn das Spiel selbst pausiert wird.
+
+ V-Cruise:
+   - Fehler behoben, durch den einige zeitgesteuerte Puzzles nach einem Neustart von ScummVM nicht mehr korrekt funktioniert haben.
+
+ Voyeur:
+   - Die Bewegung aus der Ego-Perspektive beim Anblick der Villa entspricht jetzt dem Original.
 
  Atari-Portierung:
    - Unterstützung für die nFM-Bibliothek hinzugefügt.

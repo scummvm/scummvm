@@ -34,15 +34,9 @@ namespace Nancy {
 namespace Action {
 
 void BBallPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Set up flags
 	if (NancySceneState.getEventFlag(_goodShootFlag, g_nancy->_true)) {
@@ -149,6 +143,7 @@ void BBallPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_plusSound);
 		g_nancy->_sound->loadSound(_minusSound);
@@ -223,9 +218,7 @@ void BBallPuzzle::handleInput(NancyInput &input) {
 	Common::Rect vpPos = NancySceneState.getViewport().getScreenPosition();
 	localMousePos -= { vpPos.left, vpPos.top };
 
-	if (_exitHotspot.contains(localMousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (!_pressedButton &&input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

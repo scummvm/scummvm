@@ -158,7 +158,7 @@ bool Taskbar::isButtonActive(uint index) const {
 }
 
 bool Taskbar::isMoneyDisplay(uint index) const {
-	return g_nancy->getGameType() == kGameTypeNancy12 && index == kTaskButtonCoinPurse;
+	return hasMoneyResource() && index == kTaskButtonCoinPurse;
 }
 
 void Taskbar::drawMoney() {
@@ -168,20 +168,18 @@ void Taskbar::drawMoney() {
 		return;
 	}
 
-	// The coin purse displays UI resource 0: its current value rendered with a
-	// '$' prefix and `unknown2` decimal places. Old Clock tracks cents
-	// (decimals 2), so a value of 350 shows as "$3.50". `unknown1` selects the
-	// font. The live value lives in the scene state (seeded from UIRC, changed
-	// by AR 132); UIRC only supplies the formatting config.
+	// The coin purse displays UI resource 0: its current value, rendered in the
+	// font the record selects. The live value lives in the scene state (seeded
+	// from UIRC, changed by AR 132); UIRC only supplies the formatting config.
+	// From Nancy15 both are per player character, so the wallet each Hardy boy
+	// carries draws from his own chunk and his own resource set.
 	const UIRC::ItemRecord &res = uirc->items[0];
-	if (res.unknown2 < 1) {
+	if (res.numDecimals < 0) {
 		return;
 	}
-	const int32 value = NancySceneState.getUIResource(0);
-	const Common::String text =
-		Common::String::format("$%d.%02d", value / 100, value % 100);
+	const Common::String text = formatUIResourceValue(res, NancySceneState.getUIResource(0));
 
-	const Font *font = g_nancy->_graphics->getFont(res.unknown1);
+	const Font *font = g_nancy->_graphics->getFont(res.fontID);
 	if (!font) {
 		return;
 	}
@@ -189,10 +187,27 @@ void Taskbar::drawMoney() {
 	Common::Rect dst = taskData->buttons[kTaskButtonCoinPurse].button.destRect;
 	dst.translate(-_screenPosition.left, -_screenPosition.top);
 
-	// Position matches the original: a small inset from the left, and a little
-	// below the button's vertical centre.
-	const int x = dst.left + 12;
-	const int y = dst.top + dst.height() / 2 + 10;
+	// A small inset from the left, and (up to Nancy14) a little below the
+	// button's vertical center. That vertical coordinate is the bottom row the
+	// glyphs are aligned on, while drawString() takes the top of the line, so
+	// shift it up by the height of a line.
+	int inset = 12;
+	int drop = 10;
+	switch (g_nancy->getGameType()) {
+	case kGameTypeNancy14 :
+		inset = 15;
+		drop = 8;
+		break;
+	case kGameTypeNancy15 :
+		inset = 20;
+		drop = 0;
+		break;
+	default :
+		break;
+	}
+
+	const int x = dst.left + inset;
+	const int y = dst.top + dst.height() / 2 + drop - font->getFontHeight() + 1;
 	font->drawString(&_drawSurface, text, x, y, dst.right - x, 0, Graphics::kTextAlignLeft);
 	_needsRedraw = true;
 }
@@ -460,8 +475,8 @@ void Taskbar::handleInput(NancyInput &input) {
 
 	g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
-	// The Nancy12 coin purse shows Nancy's money on hover but isn't clickable, so
-	// it skips the press/click handling below.
+	// The coin purse shows the played character's money on hover but isn't
+	// clickable, so it skips the press/click handling below.
 	if (isMoneyDisplay(newHovered)) {
 		return;
 	}

@@ -133,33 +133,33 @@ LRESULT BackpackHookProc(int code, WPARAM wParam, LPARAM lParam) {
 				nFirstSlot -= (nItemsPerRow * nItemsPerColumn);
 				if (nFirstSlot < 0)
 					nFirstSlot = 0;
-				pDC = (*pBackpackDialog).GetDC();
+				pDC = pBackpackDialog->GetDC();
 			}
 			break;
 		case VK_DOWN:                               // go to next page of text
 		case VK_NUMPAD2:
 		case VK_NEXT:
-			if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < (*pInventory).ItemCount()) {
+			if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < pInventory->ItemCount()) {
 				nFirstSlot += (nItemsPerRow * nItemsPerColumn);
-				pDC = (*pBackpackDialog).GetDC();
+				pDC = pBackpackDialog->GetDC();
 			}
 			break;
 		case VK_HOME:                               // go to first page of text
 			if (nFirstSlot != 0) {
 				nFirstSlot = 0;
-				pDC = (*pBackpackDialog).GetDC();
+				pDC = pBackpackDialog->GetDC();
 			}
 			break;
 		case VK_END:                                // go to last page of text
-			nFirstSlot = (*pInventory).ItemCount() - (nItemsPerRow * nItemsPerColumn);
+			nFirstSlot = pInventory->ItemCount() - (nItemsPerRow * nItemsPerColumn);
 			if (nFirstSlot < 0)
 				nFirstSlot = 0;
-			pDC = (*pBackpackDialog).GetDC();
+			pDC = pBackpackDialog->GetDC();
 		}
 
 	if (pDC != nullptr) {                                  // update the inventory page if required
 		CBackpack::UpdatePage(pDC);
-		(*pBackpackDialog).ReleaseDC(pDC);
+		pBackpackDialog->ReleaseDC(pDC);
 		return true;
 	}
 
@@ -231,11 +231,11 @@ void CBackpack::OnDestroy() {
 		RemoveKeyboardHook();
 
 	if (pWorkOld != nullptr) {
-		(*pWorkDC).SelectObject(pWorkOld);
+		pWorkDC->SelectObject(pWorkOld);
 		pWorkOld = nullptr;
 	}
 	if (pWorkPalOld != nullptr) {
-		(*pWorkDC).SelectPalette(pWorkPalOld, false);
+		pWorkDC->SelectPalette(pWorkPalOld, false);
 		pWorkPalOld = nullptr;
 	}
 	if (pWork != nullptr) {
@@ -255,9 +255,9 @@ void CBackpack::OnDestroy() {
 	if (pBackgroundBitmap != nullptr) {
 		delete pBackgroundBitmap;
 		pBackgroundBitmap = nullptr;
-		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, false);
+		bUpdateNeeded = pParentWnd->GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
-			(*pParentWnd).ValidateRect(nullptr);
+			pParentWnd->ValidateRect(nullptr);
 	}
 
 	if (pTitleText != nullptr) {
@@ -286,7 +286,7 @@ bool CBackpack::OnInitDialog() {
 		m_pParentWnd = ((CWnd *)this)->GetParent();            // ... as passed to us or inquired about
 	assert(m_pParentWnd);
 
-	(*m_pParentWnd).GetWindowRect(&myRect);
+	m_pParentWnd->GetWindowRect(&myRect);
 	x = myRect.left + (((myRect.right - myRect.left) - BACKPACK_DX) >> 1);
 	y = myRect.top + (((myRect.bottom - myRect.top) - BACKPACK_DY) >> 1);
 	BackpackRect.SetRect(0, 0, BACKPACK_DX, BACKPACK_DY);
@@ -294,20 +294,20 @@ bool CBackpack::OnInitDialog() {
 
 	pButton = GetDlgItem((int)GetDefID());                     // get the window for the okay button
 	ASSERT(pButton != nullptr);                                    // ... and verify we have it
-	(*pButton).GetWindowRect(&myRect);                          // get the button's position and size
+	pButton->GetWindowRect(&myRect);                          // get the button's position and size
 
 	dx = myRect.right - myRect.left;                            // calculate where to place the button
 	x = (BackpackRect.right - dx) >> 1;                         // ... centered at the bottom edge
 	dy = myRect.bottom - myRect.top;
 	y = BackpackRect.bottom - dy - BUTTON_DY;
 
-	(*pButton).MoveWindow(x, y, dx, dy);                        // reposition the button
+	pButton->MoveWindow(x, y, dx, dy);                        // reposition the button
 	OkayRect.SetRect(x, y, x + dx, y + dy);
 
 	pOKButton = new CColorButton();                   // build a color QUIT button to let us exit
 	ASSERT(pOKButton != nullptr);
-	(*pOKButton).SetPalette(pBackgroundPalette);        // set the palette to use
-	bSuccess = (*pOKButton).SetControl((int)GetDefID(), this); // tie to the dialog control
+	pOKButton->SetPalette(pBackgroundPalette);        // set the palette to use
+	bSuccess = pOKButton->SetControl((int)GetDefID(), this); // tie to the dialog control
 	ASSERT(bSuccess);
 
 	ScrollTopRect.SetRect(0, 0, BACKPACK_DX, BACKPACK_CURL_DY); // setup rectangles for scrolling areas
@@ -359,26 +359,26 @@ void CBackpack::UpdateBackpack(CDC *pDC) {
 
 	ShowWaitCursor();                                             // put up the hourglass cursor
 
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);      // setup the proper palette
-	(*pDC).RealizePalette();
+	pPalOld = pDC->SelectPalette(pBackgroundPalette, false);      // setup the proper palette
+	pDC->RealizePalette();
 
 	if (pWorkDC == nullptr) {                                      // if we don't have a work area
 		RefreshBackground();                                    // ... then update the screen directly
 		PaintMaskedBitmap(pDC, pBackgroundPalette, pBackpackBitmap, 0, 0, BACKPACK_DX, BACKPACK_DY);
 		UpdateContent(pDC);
 		if (pTitleText != nullptr)
-			(*pTitleText).DisplayString(pDC, (*pInventory).GetTitle(), 32, TEXT_HEAVY, BACKPACK_TEXT_COLOR);
+			pTitleText->DisplayString(pDC, pInventory->GetTitle(), 32, TEXT_HEAVY, BACKPACK_TEXT_COLOR);
 	} else {
 		if (pBackgroundBitmap != nullptr)                                                      // ... otherwise revise work area
 			PaintBitmap(pWorkDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, BACKPACK_DX, BACKPACK_DY);
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pBackpackBitmap, 0, 0, BACKPACK_DX, BACKPACK_DY);
 		UpdateContent(pWorkDC);                                 // ... then zap it to the screen
 		if (pTitleText != nullptr)
-			(*pTitleText).DisplayString(pWorkDC, (*pInventory).GetTitle(), 32, TEXT_HEAVY, BACKPACK_TEXT_COLOR);
-		(*pDC).BitBlt(0, 0, BACKPACK_DX, BACKPACK_DY, pWorkDC, 0, 0, SRCCOPY);
+			pTitleText->DisplayString(pWorkDC, pInventory->GetTitle(), 32, TEXT_HEAVY, BACKPACK_TEXT_COLOR);
+		pDC->BitBlt(0, 0, BACKPACK_DX, BACKPACK_DY, pWorkDC, 0, 0, SRCCOPY);
 	}
 
-	(*pDC).SelectPalette(pPalOld, false);                       // reset the palette
+	pDC->SelectPalette(pPalOld, false);                       // reset the palette
 
 	DoArrowCursor();                                            // return to an arrow cursor
 }
@@ -388,14 +388,14 @@ void CBackpack::UpdatePage(CDC *pDC) {
 	CPalette *pPalOld;
 
 	if (pWorkDC == nullptr)                                        // update everything if no work area
-		(*pBackpackDialog).InvalidateRect(nullptr, false);
+		pBackpackDialog->InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
 		ShowWaitCursor();                                         // put up the hourglass cursor
-		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
-		(*pDC).RealizePalette();
+		pPalOld = pDC->SelectPalette(pBackgroundPalette, false); // setup the proper palette
+		pDC->RealizePalette();
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pBackpackBitmap, 0, 0, BACKPACK_DX, BACKPACK_DY);
 		UpdateContent(pWorkDC);                                 // zap it to the screen
-		(*pDC).BitBlt(
+		pDC->BitBlt(
 			0,
 			BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY,
 			BACKPACK_DX,
@@ -404,7 +404,7 @@ void CBackpack::UpdatePage(CDC *pDC) {
 			0,
 			BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY,
 			SRCCOPY);
-		(*pDC).BitBlt(
+		pDC->BitBlt(
 			BACKPACK_DX - TEXT_MORE_DX,
 			BACKPACK_DY - BACKPACK_CURL_DY,
 			TEXT_MORE_DX,
@@ -413,7 +413,7 @@ void CBackpack::UpdatePage(CDC *pDC) {
 			BACKPACK_DX - TEXT_MORE_DX,
 			BACKPACK_DY - BACKPACK_CURL_DY,
 			SRCCOPY);
-		(*pDC).SelectPalette(pPalOld, false);                   // reset the palette
+		pDC->SelectPalette(pPalOld, false);                   // reset the palette
 		DoArrowCursor();
 	}                                                           // return to an arrow cursor
 }
@@ -427,7 +427,7 @@ void CBackpack::UpdateContent(CDC *pDC) {
 	TEXTMETRIC  fontMetrics;
 	int     i, x, y, dx, dy;
 
-	if ((*pInventory).ItemCount() <= 0)
+	if (pInventory->ItemCount() <= 0)
 		return;
 
 	nBackpack_DX = BACKPACK_DX - (BACKPACK_BORDER_DX << 1);     // calculate the horizontal space we have available
@@ -450,36 +450,36 @@ void CBackpack::UpdateContent(CDC *pDC) {
 		nItemsPerColumn -= 1;
 	}
 
-	pItem = (*pInventory).FetchItem(nFirstSlot);                // get first item on this page
+	pItem = pInventory->FetchItem(nFirstSlot);                // get first item on this page
 	for (i = 0; (i < (nItemsPerRow * nItemsPerColumn)) && (pItem != nullptr); i++) {                           // will thumb through all of them
 		x = (i % nItemsPerRow);                                 // calculate its horizontal position
 		x *= (BACKPACK_BITMAP_DX + nItem_DDX);                      // ... allowing proper spacing between items
 		y = (i / nItemsPerRow);                                 // calculate its vertical position
 		y *= (BACKPACK_BITMAP_DY + nItem_DDY);                      // ... allowing proper spacing between items
 		UpdateItem(pDC, pItem, x + BACKPACK_BORDER_DX, y + BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY);     // now show the item
-		pItem = (*pItem).GetNext();
+		pItem = pItem->GetNext();
 	}
 
 	if (pBackpackBitmap != nullptr) {
-		pFontOld = (*pDC).SelectObject(pFont);                  // select it into our context
-		(*pDC).SetBkMode(TRANSPARENT);                              // make the text overlay transparently
-		(*pDC).GetTextMetrics(&fontMetrics);                        // show whether there are more notes
+		pFontOld = pDC->SelectObject(pFont);                  // select it into our context
+		pDC->SetBkMode(TRANSPARENT);                              // make the text overlay transparently
+		pDC->GetTextMetrics(&fontMetrics);                        // show whether there are more notes
 		x = BACKPACK_DX - TEXT_MORE_DX;                             // ... that can be scrolled through
 		y = BACKPACK_DY -
 			BACKPACK_CURL_DY +
 			((BACKPACK_CURL_DY - fontMetrics.tmHeight) >> 1) -
 			TEXT_MORE_DY;
-		textInfo = (*pDC).GetTextExtent(MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
+		textInfo = pDC->GetTextExtent(MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 		dx = textInfo.cx;
 		dy = fontMetrics.tmHeight;
 		if (pItem == nullptr) {
 			myRect.SetRect(x, y, x + dx, y + dy);
 			BltBitmap(pDC, pBackgroundPalette, pBackpackBitmap, &myRect, &myRect, SRCCOPY);
 		} else {
-			(*pDC).SetTextColor(BACKPACK_MORE_COLOR);
-			(*pDC).TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
+			pDC->SetTextColor(BACKPACK_MORE_COLOR);
+			pDC->TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 		}
-		(*pDC).SelectObject(pFontOld);                            // map out the font
+		pDC->SelectObject(pFontOld);                            // map out the font
 	}
 }
 
@@ -488,20 +488,20 @@ void CBackpack::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
 	CFont *pFontOld = nullptr;               // font that was mapped to the context
 	char    chBuffer[32];
 
-	PaintMaskedDIB(pDC, pBackgroundPalette, (*pItem).GetArtSpec(), nX, nY, BACKPACK_BITMAP_DX, BACKPACK_BITMAP_DY);
+	PaintMaskedDIB(pDC, pBackgroundPalette, pItem->GetArtSpec(), nX, nY, BACKPACK_BITMAP_DX, BACKPACK_BITMAP_DY);
 
-	if (((*pItem).m_nQuantity == 0) ||
-		((*pItem).m_nQuantity > 1)) {
-		Common::sprintf_s(chBuffer, "%ld", (*pItem).m_nQuantity);
-		pFontOld = (*pDC).SelectObject(pFont);                  // select it into our context
-		(*pDC).SetBkMode(TRANSPARENT);                          // make the text overlay transparently
-		(*pDC).SetTextColor(BACKPACK_BLURB_COLOR);              // set the color of the text
-		(*pDC).TextOut(                             // zap the text to the work area
+	if ((pItem->m_nQuantity == 0) ||
+		(pItem->m_nQuantity > 1)) {
+		Common::sprintf_s(chBuffer, "%ld", pItem->m_nQuantity);
+		pFontOld = pDC->SelectObject(pFont);                  // select it into our context
+		pDC->SetBkMode(TRANSPARENT);                          // make the text overlay transparently
+		pDC->SetTextColor(BACKPACK_BLURB_COLOR);              // set the color of the text
+		pDC->TextOut(                             // zap the text to the work area
 			nX,
 			nY,
 			(const char *)chBuffer,
 			strlen(chBuffer));
-		(*pDC).SelectObject(pFontOld);                     // map out the font
+		pDC->SelectObject(pFontOld);                     // map out the font
 	}
 }
 
@@ -515,7 +515,7 @@ void CBackpack::ClearDialogImage() {
 	if (pBackgroundBitmap != nullptr) {
 		delete pOKButton;
 		pOKButton = nullptr;
-		(*pBackpackDialog).ValidateRect(nullptr);
+		pBackpackDialog->ValidateRect(nullptr);
 		RefreshBackground();
 	}
 }
@@ -525,9 +525,9 @@ void CBackpack::RefreshBackground() {
 	CDC *pDC;
 
 	if (pBackgroundBitmap != nullptr) {
-		pDC = (*pBackpackDialog).GetDC();                       // get a context for our window
+		pDC = pBackpackDialog->GetDC();                       // get a context for our window
 		PaintBitmap(pDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, BACKPACK_DX, BACKPACK_DY);
-		(*pBackpackDialog).ReleaseDC(pDC);                      // release the context
+		pBackpackDialog->ReleaseDC(pDC);                      // release the context
 	}
 }
 
@@ -554,7 +554,7 @@ int CBackpack::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	AddFontResource("msserif.fon");
 	pFont = new CFont();
 	ASSERT(pFont != nullptr);
-	bSuccess = (*pFont).CreateFont(BACKPACK_FONT_SIZE, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
+	bSuccess = pFont->CreateFont(BACKPACK_FONT_SIZE, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 	ASSERT(bSuccess);
 
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
@@ -575,19 +575,19 @@ bool CBackpack::CreateWorkAreas(CDC *pDC) {
 
 	pBackgroundBitmap = FetchScreenBitmap(pDC, pBackgroundPalette, 0, 0, BACKPACK_DX, BACKPACK_DY);
 
-	(*pDC).SelectPalette(pBackgroundPalette, false);
-	(*pDC).RealizePalette();
+	pDC->SelectPalette(pBackgroundPalette, false);
+	pDC->RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long)1000000) &&
 		(GlobalCompact((unsigned long)500000) >= (unsigned long)450000)) {
 		pWork = new CBitmap();
-		if ((*pWork).CreateCompatibleBitmap(pDC, BACKPACK_DX, BACKPACK_DY)) {
+		if (pWork->CreateCompatibleBitmap(pDC, BACKPACK_DX, BACKPACK_DY)) {
 			pWorkDC = new CDC();
 			if ((pWorkDC != nullptr) &&
-				(*pWorkDC).CreateCompatibleDC(pDC)) {
-				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, false);
-				(*pWorkDC).RealizePalette();
-				pWorkOld = (*pWorkDC).SelectObject(pWork);
+				pWorkDC->CreateCompatibleDC(pDC)) {
+				pWorkPalOld = pWorkDC->SelectPalette(pBackgroundPalette, false);
+				pWorkDC->RealizePalette();
+				pWorkOld = pWorkDC->SelectObject(pWork);
 				if (pWorkOld != nullptr)
 					bSuccess = true;
 			}
@@ -600,7 +600,7 @@ bool CBackpack::CreateWorkAreas(CDC *pDC) {
 
 	if (!bSuccess) {
 		if (pWorkPalOld != nullptr) {
-			(*pWorkDC).SelectPalette(pWorkPalOld, false);
+			pWorkDC->SelectPalette(pWorkPalOld, false);
 			pWorkPalOld = nullptr;
 		}
 		if (pWork != nullptr) {
@@ -612,7 +612,7 @@ bool CBackpack::CreateWorkAreas(CDC *pDC) {
 		bSuccess = true;
 	}
 
-	(*pDC).SelectPalette(pWorkPalOld, false);
+	pDC->SelectPalette(pWorkPalOld, false);
 
 	myRect.SetRect(BACKPACK_TEXTZONE_DX,
 		BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DDY,
@@ -638,30 +638,30 @@ void CBackpack::OnMouseMove(unsigned int nFlags, CPoint point) {
 	pMyApp = AfxGetApp();
 
 	if (OkayRect.PtInRect(point))                   // use standard arrow in buttons
-		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
+		hNewCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 	else if (ScrollTopRect.PtInRect(point)) {           // set cursor to scolling up okay or invalid
 		if (nFirstSlot == 0)                        // ... depending on current slot for page
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_INVALID);
 		else
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWUP);
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_ARROWUP);
 	} else if (ScrollBotRect.PtInRect(point)) {         // set cursor to scrolling down okay or invalid
-		if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) >= (*pInventory).ItemCount())
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
+		if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) >= pInventory->ItemCount())
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_INVALID);
 		else
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWDN);
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_ARROWDN);
 	} else {                                        // see if cursor is on an inventory item
 		i = SelectedItem(point);                    // ... and if so, then show the text blurb
 		if ((i >= 0) &&                             // ... for it at the base of the scroll
-			((i + nFirstSlot) < (*pInventory).ItemCount())) {
-			pItem = (*pInventory).FetchItem(i + nFirstSlot);
+			((i + nFirstSlot) < pInventory->ItemCount())) {
+			pItem = pInventory->FetchItem(i + nFirstSlot);
 			if (pItem != nullptr) {
-				if ((*pItem).m_nActionCode == ITEM_ACTION_NOTEBOOK)
-					hNewCursor = (*pMyApp).LoadCursor(IDC_NOTEBOOK_BOOK);
-				else if ((*pItem).GetSoundSpec() != nullptr) {
-					hNewCursor = (*pMyApp).LoadCursor(IDC_NOTEBOOK_SOUND);
-					(*pItem).m_nActionCode = ITEM_ACTION_SOUND;
+				if (pItem->m_nActionCode == ITEM_ACTION_NOTEBOOK)
+					hNewCursor = pMyApp->LoadCursor(IDC_NOTEBOOK_BOOK);
+				else if (pItem->GetSoundSpec() != nullptr) {
+					hNewCursor = pMyApp->LoadCursor(IDC_NOTEBOOK_SOUND);
+					pItem->m_nActionCode = ITEM_ACTION_SOUND;
 				} else
-					hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
+					hNewCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 				pDC = GetDC();
 				if (pItemText == nullptr) {
 					testRect.SetRect(BACKPACK_TEXTZONE_DX,
@@ -671,17 +671,17 @@ void CBackpack::OnMouseMove(unsigned int nFlags, CPoint point) {
 					pItemText = new CText(pDC, pBackgroundPalette, &testRect, JUSTIFY_CENTER);
 				}
 				if (pItemText != nullptr)
-					(*pItemText).DisplayString(pDC, (*pItem).GetDescription(), 24, TEXT_BOLD, BACKPACK_TEXT_COLOR);
+					pItemText->DisplayString(pDC, pItem->GetDescription(), 24, TEXT_BOLD, BACKPACK_TEXT_COLOR);
 				ReleaseDC(pDC);
 			}
 		}
 	}
 
 	if (hNewCursor == nullptr) {                       // use default cursor if not specified
-		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
+		hNewCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 		if (pItemText != nullptr) {
 			pDC = GetDC();
-			(*pItemText).RestoreBackground(pDC);    // clear any extant item text
+			pItemText->RestoreBackground(pDC);    // clear any extant item text
 			delete pItemText;
 			pItemText = nullptr;
 			ReleaseDC(pDC);
@@ -714,36 +714,36 @@ void CBackpack::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		pDC = GetDC();
 	} else                                          // if click is in lower curl, then
 		if (ScrollBotRect.PtInRect(point) &&            // ... scroll down if not show last item
-			(nFirstSlot + (nItemsPerRow * nItemsPerColumn) < (*pInventory).ItemCount())) {
+			(nFirstSlot + (nItemsPerRow * nItemsPerColumn) < pInventory->ItemCount())) {
 			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
 			pDC = GetDC();
 		} else {                                        // see if cursor is on an inventory item
 			i = SelectedItem(point);                    // ... and if so, then show then dispatch
 			if ((i >= 0) &&                             // ... on its action code
-				((i + nFirstSlot) < (*pInventory).ItemCount())) {
-				pItem = (*pInventory).FetchItem(i + nFirstSlot);
+				((i + nFirstSlot) < pInventory->ItemCount())) {
+				pItem = pInventory->FetchItem(i + nFirstSlot);
 				if (pItem != nullptr) {
-					CNotebook   NotebookDlg(this, pBackgroundPalette, (*pItem).GetFirstNote(), nullptr);
-					switch ((*pItem).GetActionCode()) {
+					CNotebook   NotebookDlg(this, pBackgroundPalette, pItem->GetFirstNote(), nullptr);
+					switch (pItem->GetActionCode()) {
 					case ITEM_ACTION_NOTEBOOK:      // open the notebook
-						pItem = (*pInventory).FindItem(MG_OBJ_HODJ_NOTEBOOK);
+						pItem = pInventory->FindItem(MG_OBJ_HODJ_NOTEBOOK);
 						if (pItem == nullptr)
-							pItem = (*pInventory).FindItem(MG_OBJ_PODJ_NOTEBOOK);
+							pItem = pInventory->FindItem(MG_OBJ_PODJ_NOTEBOOK);
 						if (pItem != nullptr) {
 							pButton = GetDlgItem((int)GetDefID()); // get the window for the okay button
 							ASSERT(pButton != nullptr);                // ... and verify we have it
-							(*pButton).EnableWindow(false);  // disable & enable across note entries
+							pButton->EnableWindow(false);  // disable & enable across note entries
 							NotebookDlg.DoModal();   // invoke the notebook dialog box
-							(*pButton).EnableWindow(true);
+							pButton->EnableWindow(true);
 							pControl = GetDlgItem((int)GetDefID());
 							GotoDlgCtrl(pControl);
 							bActiveWindow = true;
 						}
 						break;
 					case ITEM_ACTION_SOUND:
-						pSound = new CSound(this, (*pItem).GetSoundSpec(), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-						(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
-						(*pSound).play();
+						pSound = new CSound(this, pItem->GetSoundSpec(), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
+						pSound->setDrivePath(lpMetaGameStruct->m_chCDPath);
+						pSound->play();
 						break;
 					}
 				}
@@ -785,7 +785,7 @@ int CBackpack::SelectedItem(CPoint point) {
 
 
 bool CBackpack::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
-	if ((*pWnd).m_hWnd == (*this).m_hWnd)
+	if (pWnd->m_hWnd == (this)->m_hWnd)
 		return true;
 	else
 		return false;
@@ -797,7 +797,7 @@ void CBackpack::ShowWaitCursor() {
 
 	pMyApp = AfxGetApp();
 
-	(*pMyApp).BeginWaitCursor();
+	pMyApp->BeginWaitCursor();
 }
 
 
@@ -806,7 +806,7 @@ void CBackpack::DoArrowCursor() {
 
 	pMyApp = AfxGetApp();
 
-	(*pMyApp).EndWaitCursor();
+	pMyApp->EndWaitCursor();
 }
 
 } // namespace Gtl

@@ -125,16 +125,16 @@ void CardGamePuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_winSceneStartPlayer = stream.readUint16LE();        // 0x1304
 	_winSceneStartEnemy  = stream.readUint16LE();        // 0x1306
-	_winScene.frameID          = stream.readUint16LE();  // 0x1308
-	_winScene.verticalOffset   = stream.readUint16LE();  // 0x130a
-	_winScene.continueSceneSound = stream.readUint16LE();// 0x130c
+	_solveScene._sceneChange.frameID          = stream.readUint16LE();  // 0x1308
+	_solveScene._sceneChange.verticalOffset   = stream.readUint16LE();  // 0x130a
+	_solveScene._sceneChange.continueSceneSound = stream.readUint16LE();// 0x130c
 	stream.skip(0x131c - 0x130e);                        // listener vector + frame id
 	_winFlagPlayer = stream.readSint16LE();              // 0x131c
 	_winFlagEnemy  = stream.readSint16LE();              // 0x131e
-	_exitScene     = stream.readUint16LE();              // 0x1320
-	_exitSceneChange.frameID          = stream.readUint16LE(); // 0x1322
-	_exitSceneChange.verticalOffset   = stream.readUint16LE(); // 0x1324
-	_exitSceneChange.continueSceneSound = stream.readUint16LE();// 0x1326
+	_exitScene._sceneChange.sceneID            = stream.readUint16LE(); // 0x1320
+	_exitScene._sceneChange.frameID            = stream.readUint16LE(); // 0x1322
+	_exitScene._sceneChange.verticalOffset     = stream.readUint16LE(); // 0x1324
+	_exitScene._sceneChange.continueSceneSound = stream.readUint16LE(); // 0x1326
 	stream.skip(0x1336 - 0x1328);                        // listener vector + flag
 
 	readRect(stream, _exitHotspot);                      // 0x1336 (ends at 0x1346)
@@ -503,15 +503,9 @@ void CardGamePuzzle::playVoice(const Common::String &name) {
 }
 
 void CardGamePuzzle::init() {
-	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(vpBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Reset board state and the shared deck (every table cell starts available)
 	for (int side = 0; side < 2; ++side) {
@@ -548,6 +542,7 @@ void CardGamePuzzle::execute() {
 	if (_state == kBegin) {
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		// Kick off the first turn. When the AI is dealt the opening move, it asks first.
 		if (_startPlayer == 0) {
@@ -567,10 +562,9 @@ void CardGamePuzzle::execute() {
 		SceneChangeDescription sceneChange;
 
 		if (_gaveUp) {
-			sceneChange = _exitSceneChange;
-			sceneChange.sceneID = _exitScene;
+			sceneChange = _exitScene._sceneChange;
 		} else {
-			sceneChange = _winScene;
+			sceneChange = _solveScene._sceneChange;
 
 			const int playerScore = _board[1].score;
 			const int aiScore = _board[0].score;
@@ -644,8 +638,7 @@ void CardGamePuzzle::handleInput(NancyInput &input) {
 	}
 
 	// Exit hotspot is always available; leaving this way is "giving up" (goes to the exit scene)
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_gaveUp = true;
 			_state = kActionTrigger;

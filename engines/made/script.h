@@ -45,7 +45,7 @@ public:
 		_stackPos = kScriptStackSize;
 	}
 	~ScriptStack() {}
-	inline int16 top() { return _stack[_stackPos]; }
+	inline int16 top() const { return _stack[_stackPos]; }
 	inline int16 pop() {
 		if (_stackPos == kScriptStackSize)
 			error("ScriptStack::pop() Stack underflow");
@@ -57,12 +57,30 @@ public:
 		_stack[--_stackPos] = value;
 	}
 	inline void setTop(int16 value) { _stack[_stackPos] = value; }
-	inline int16 peek(int16 index) { return _stack[index]; }
-	inline void poke(int16 index, int16 value) { _stack[index] = value; }
+	inline int16 peek(int16 index) const {
+		if (index >= kScriptStackSize)
+			error("ScriptStack::peek(%d) Stack underflow", index);
+		else if (index < 0)
+			error("ScriptStack::peek(%d) Stack overflow", index);
+		return _stack[index];
+	}
+	inline void poke(int16 index, int16 value) {
+		if (index >= kScriptStackSize)
+			error("ScriptStack::poke(%d) Stack underflow", index);
+		else if (index < 0)
+			error("ScriptStack::poke(%d) Stack overflow", index);
+		_stack[index] = value;
+	}
 	inline void alloc(int16 count) { _stackPos -= count; }
 	inline void free(int16 count) { _stackPos += count; }
 	inline int16 getStackPos() const { return _stackPos; }
-	inline void setStackPos(int16 stackPtr) { _stackPos = stackPtr; }
+	inline void setStackPos(int16 stackPtr) {
+		if (stackPtr > kScriptStackSize)
+			error("ScriptStack::setStackPos(%d) Stack underflow", stackPtr);
+		else if (stackPtr < 0)
+			error("ScriptStack::setStackPos(%d) Stack overflow", stackPtr);
+		_stackPos = stackPtr;
+	}
 	inline int16 *getStackPtr() { return &_stack[_stackPos]; }
 protected:
 	int16 _stack[kScriptStackSize];
@@ -73,16 +91,20 @@ class ScriptInterpreter {
 public:
 	ScriptInterpreter(MadeEngine *vm);
 	~ScriptInterpreter();
-	void runScript(int16 scriptObjectIndex);
+	int16 runScript(int16 scriptObjectIndex, int16 argc = 0, int16 *argv = nullptr);
+#ifdef DUMP_SCRIPTS
 	void dumpScript(int16 objectIndex, int *opcodeStats, int *externStats);
+	void dumpObject(int16 objectIndex);
 	void dumpAllScripts();
+#endif
 protected:
 	MadeEngine *_vm;
 
 	ScriptStack _stack;
-	int16 _localStackPos;
+	int16 _entryStackPos, _localStackPos;
 	int16 _runningScriptObjectIndex;
 	byte *_codeBase, *_codeIp;
+	bool _running;
 
 	ScriptFunctions *_functions;
 

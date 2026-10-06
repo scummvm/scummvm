@@ -141,11 +141,12 @@ static void room_804_daemon() {
 				global[kInSpace] = false;
 				global[kBeamIsUp] = true;
 
-				if (global[kCopyProtectFailed]) {
+				// The DOS release inserts its warning here. The Macintosh
+				// executable proceeds directly from this scene to ending 4.
+				if (global[kCopyProtectFailed] &&
+						g_engine->getPlatform() != Common::kPlatformMacintosh)
 					copy_protection_fail_screen();
-				} else {
-					win_status = WIN_A_HEAD_POW;
-				}
+				win_status = WIN_A_HEAD_POW;
 				game.going = false;
 			}
 			break;

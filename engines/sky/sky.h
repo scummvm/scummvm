@@ -28,6 +28,7 @@
 #include "common/keyboard.h"
 #include "engines/engine.h"
 #include "graphics/big5.h"
+#include "sky/ibasstext.h"
 
 /**
  * This is the namespace of the Sky engine.
@@ -38,6 +39,10 @@
  * - Beneath a Steel Sky
  */
 namespace Sky {
+
+
+#define TOTAL_SCREENS 100
+#define TOTAL_HINT_ANSWERS 164
 
 struct SystemVars {
 	uint32 systemFlags;
@@ -50,6 +55,8 @@ struct SystemVars {
 	bool pastIntro;
 	bool paused;
 	bool textDirRTL;
+	bool _seenScreen[TOTAL_SCREENS];
+	bool _answerSeen[TOTAL_HINT_ANSWERS];
 };
 
 class Sound;
@@ -118,7 +125,18 @@ public:
 	Graphics::Big5Font *_big5Font;
 
 	bool canSaveGameStateCurrently();
-	int	giveCurrentScreen();
+	static int giveCurrentScreen();
+
+	static uint32 giveScriptVar(uint32 s);
+	void setSeenScreen(int screen);
+	static bool hasSeenScreen(int screen);
+	static void setHintAnswerSeen(int answer);
+	static bool isHintAnswerSeen(int answer);
+
+	uint16 _curScreen;
+	
+	static Common::String lookUpAscii(int line);
+	static Common::String giveButton(const Common::String &button);
 
 protected:
 	// Engine APIs

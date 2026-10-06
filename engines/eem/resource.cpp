@@ -21,6 +21,7 @@
 
 #include "common/compression/dcl.h"
 #include "common/array.h"
+#include "common/crc.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
@@ -31,9 +32,14 @@
 #include "graphics/pixelformat.h"
 
 #include "eem/detection.h"
+#include "eem/mac_sound_patches.h"
 #include "eem/resource.h"
 
 namespace EEM {
+
+bool openDataFile(Common::File &file, const Common::Path &path) {
+	return file.open(Common::MacResManager::openFileOrDataFork(path), path.toString());
+}
 
 DBDArchive::DBDArchive() {
 }
@@ -147,17 +153,100 @@ Common::SeekableReadStream *openMacResource(const Common::Path &path,
 	return openRawMacResource(path, typeId, resourceId);
 }
 
+Common::SeekableReadStream *decompressMacSound(Common::SeekableReadStream &stream) {
+	if (stream.size() < 4) {
+		warning("decompressMacSound: resource too short");
+		return nullptr;
+	}
+
+	const uint32 decodedSize = stream.readUint32BE();
+	const uint32 packedSize = (uint32)(stream.size() - stream.pos());
+	Common::Array<byte> packed;
+	packed.resize(packedSize);
+	if (stream.read(packed.data(), packedSize) != packedSize) {
+		warning("decompressMacSound: short packed read (%u bytes)", packedSize);
+		return nullptr;
+	}
+
+	byte *decoded = (byte *)malloc(decodedSize);
+	if (!decoded) {
+		warning("decompressMacSound: oom (%u bytes)", decodedSize);
+		return nullptr;
+	}
+
+	uint32 src = 0;
+	uint32 dst = 0;
+	bool ok = true;
+	while (ok && dst < decodedSize && src < packedSize) {
+		byte flags = packed[src++];
+		for (uint bit = 0; bit < 8 && dst < decodedSize; bit++, flags >>= 1) {
+			if (flags & 1) {
+				if (src >= packedSize) {
+					ok = false;
+					break;
+				}
+				decoded[dst++] = packed[src++];
+			} else {
+				if (src + 1 >= packedSize) {
+					ok = false;
+					break;
+				}
+				const uint16 token = ((uint16)packed[src] << 8) | packed[src + 1];
+				src += 2;
+				int32 copyPos = (int32)dst + (int32)(token & 0x0fff) - 0x1000;
+				uint count = ((token >> 12) & 0x0f) + 3;
+				while (count-- && dst < decodedSize) {
+					if (copyPos < 0 || (uint32)copyPos >= dst) {
+						ok = false;
+						break;
+					}
+					decoded[dst++] = decoded[copyPos++];
+				}
+			}
+		}
+	}
+
+	if (!ok || dst != decodedSize) {
+		warning("decompressMacSound: decoded %u of %u bytes", dst, decodedSize);
+		free(decoded);
+		return nullptr;
+	}
+
+	if (decodedSize != 0) {
+		byte acc = decoded[0];
+		for (uint32 i = 1; i < decodedSize; i++) {
+			acc = (byte)(acc + decoded[i]);
+			decoded[i] = acc;
+		}
+	}
+
+	for (const MacSoundPatch &patch : kMacSoundPatches) {
+		if (patch.decodedSize != decodedSize)
+			continue;
+		const Common::CRC32 crc;
+		if (crc.crcFast(decoded, decodedSize) != patch.crc)
+			continue;
+		for (uint i = 0; i < patch.offsetCount; i++)
+			decoded[kMacSoundPatchOffsets[patch.offsetIndex + i]] |= 0x80;
+		debugC(1, kDebugSound, "decompressMacSound: repaired %u damaged samples",
+			   patch.offsetCount);
+		break;
+	}
+
+	return new Common::MemoryReadStream(decoded, decodedSize, DisposeAfterUse::YES);
+}
+
 bool DBDArchive::open(const Common::Path &dbdName, const Common::Path &dbxName, bool bigEndian) {
 	close();
 	_bigEndian = bigEndian;
 
-	if (!_dbd.open(dbdName)) {
+	if (!openDataFile(_dbd, dbdName)) {
 		warning("DBDArchive: cannot open %s", dbdName.toString().c_str());
 		return false;
 	}
 
 	Common::File dbx;
-	if (!dbx.open(dbxName)) {
+	if (!openDataFile(dbx, dbxName)) {
 		warning("DBDArchive: cannot open %s", dbxName.toString().c_str());
 		_dbd.close();
 		return false;

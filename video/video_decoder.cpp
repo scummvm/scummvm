@@ -84,10 +84,7 @@ bool VideoDecoder::loadFile(const Common::Path &filename) {
 		return false;
 	}
 
-	bool result = loadStream(file);
-	if (!result)
-		delete file;
-	return result;
+	return loadStream(file);
 }
 
 bool VideoDecoder::needsUpdate() const {
@@ -898,6 +895,31 @@ bool VideoDecoder::setAudioTrack(int index) {
 	_mainAudioTrack = audioTrack;
 	return true;
 }
+
+bool VideoDecoder::getAudioTrackMute(int index) {
+	if (!supportsAudioTrackSwitching())
+		return true;
+
+	AudioTrack *audioTrack = getAudioTrack(index);
+
+	if (!audioTrack)
+		return true;
+
+	return audioTrack->getMute();
+}
+
+bool VideoDecoder::setAudioTrackMute(int index, bool muted) {
+	AudioTrack *audioTrack = getAudioTrack(index);
+	if (!supportsAudioTrackSwitching())
+		return false;
+
+	if (!audioTrack)
+		return false;
+
+	audioTrack->setMute(muted);
+	return true;
+}
+
 
 uint VideoDecoder::getAudioTrackCount() const {
 	uint count = 0;

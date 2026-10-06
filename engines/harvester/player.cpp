@@ -44,7 +44,11 @@ static const int kRoomPlayerWalkAnimationRate = 17;
 static const int kRoomPlayerVerticalScreenStep = 1;
 static const int kRoomPlayerAttackAnimationRate = kRoomPlayerWalkAnimationRate;
 static const int kRoomPlayerHitAnimationRate = 4;
-static const int kRoomPlayerDeathAnimationRate = 4;
+// update_actor_runtime_state (0x4d750) seeds a zero-HP transition at 0x4e576
+// with rate 14, then death states 0x28..0x33 consume the normal rate 17 seeded
+// at 0x4d889 after the first death frame advances.
+static const int kNativePlayerDeathEntryAnimationRate = 14;
+static const int kNativePlayerDeathAnimationRate = kRoomPlayerWalkAnimationRate;
 static const int kRoomPlayerMinOpaqueLeftX = 4;
 static const int kRoomPlayerMaxOpaqueRightX = 0x27c;
 static const float kRoomPlayerAttackUpperYOffset = 144.44f;
@@ -626,10 +630,6 @@ static int resolveMoveTargetDepthDirection(const RoomPlayerState &playerState) {
 		return 1;
 	if (playerState.z + kRoomPlayerDepthTargetSlack < playerState.targetZ)
 		return -1;
-	if (playerState.moveTargetRequiresScreenY && playerState.bottomY < playerState.targetBottomY)
-		return 1;
-	if (playerState.moveTargetRequiresScreenY && playerState.bottomY > playerState.targetBottomY)
-		return -1;
 
 	return 0;
 }
@@ -1007,13 +1007,12 @@ static bool recordNativePrimaryWalkBlockerHistory(const RoomSetupState &state,
 }
 
 static void setMoveTargetInternal(const RoomSetupState &state, RoomPlayerState &playerState,
-		int targetX, float targetZ, int targetBottomY, bool requireScreenY) {
+		int targetX, float targetZ, int targetBottomY) {
 	playerState.hasMoveTarget = true;
 	playerState.nextMovementTick = 0;
 	playerState.targetX = CLIP<int>(targetX, 0, 639);
 	playerState.targetBottomY = clampRoomMovementY(state, targetBottomY);
 	playerState.targetZ = clampRoomDepth(state, targetZ);
-	playerState.moveTargetRequiresScreenY = requireScreenY;
 	resetPlayerMoveTargetProgress(playerState);
 	debugC(1, kDebugPlayer,
 		"Harvester: player move target room='%s' current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f)",
@@ -1224,20 +1223,20 @@ void Player::updateIdleTrigger(RoomIdleAnimationState &idleState) {
 void Player::setMoveTarget(const RoomSetupState &state, RoomPlayerState &playerState,
 		int targetX, float targetZ) {
 	setMoveTargetInternal(state, playerState, targetX, targetZ,
-		mapRoomDepthToScreenY(state, targetZ), false);
+		mapRoomDepthToScreenY(state, targetZ));
 }
 
 void Player::setRegionMoveTarget(const RoomSetupState &state, RoomPlayerState &playerState,
 		int targetX, float targetZ) {
 	setMoveTargetInternal(state, playerState, targetX, targetZ,
-		mapRoomDepthToScreenY(state, targetZ), true);
+		mapRoomDepthToScreenY(state, targetZ));
 }
 
 void Player::setMoveTargetFromScreenPoint(const RoomSetupState &state,
 		RoomPlayerState &playerState, int targetX, int targetBottomY) {
 	const int clampedTargetBottomY = clampRoomMovementY(state, targetBottomY);
 	setMoveTargetInternal(state, playerState, targetX,
-		mapRoomScreenYToDepth(state, clampedTargetBottomY), clampedTargetBottomY, false);
+		mapRoomScreenYToDepth(state, clampedTargetBottomY), clampedTargetBottomY);
 }
 
 bool Player::resolveBlockedStartupSpawn(HarvesterEngine &engine, const RoomSetupState &state,
@@ -1590,25 +1589,42 @@ bool Player::startDeathAnimation(RoomPlayerState &playerState, int damageType, b
 	playerState.deathLastFrame = range.lastFrame;
 	playerState.deathDamageType = damageType;
 	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
-	playerState.entity->setAnimationRate(kRoomPlayerDeathAnimationRate);
+	playerState.entity->setAnimationRate(kNativePlayerDeathEntryAnimationRate);
 	playerState.entity->setCurrentFrame(range.firstFrame);
 	playerState.entity->setVisible(true);
-	debugC(1, kDebugCombat,
+	debugC(2, kDebugCombat,
 		"Harvester: player death animation start damage_type=%d gore=%d facing=%d frames=%d..%d",
 		damageType, goreEnabled, playerState.facing, range.firstFrame, range.lastFrame);
+	debugC(3, kDebugCombat,
+		"Harvester: player death animation timing frames=%d..%d entry_rate=%d entry_interval_ticks=%d running_rate=%d running_interval_ticks=%d",
+		range.firstFrame, range.lastFrame,
+		kNativePlayerDeathEntryAnimationRate, 100 / kNativePlayerDeathEntryAnimationRate,
+		kNativePlayerDeathAnimationRate, 100 / kNativePlayerDeathAnimationRate);
 	return true;
 }
 
 bool Player::updateDeathAnimationState(RoomPlayerState &playerState) {
 	if (!playerState.deathActive || !playerState.entity)
 		return false;
-	if (playerState.entity->getCurrentFrame() < playerState.deathLastFrame)
+
+	const int currentFrame = playerState.entity->getCurrentFrame();
+	if (currentFrame > playerState.deathFirstFrame &&
+			currentFrame < playerState.deathLastFrame &&
+			playerState.entity->getAnimationRate() != kNativePlayerDeathAnimationRate) {
+		playerState.entity->setAnimationRate(kNativePlayerDeathAnimationRate);
+		debugC(3, kDebugCombat,
+			"Harvester: player death animation running frame=%d rate=%d interval_ticks=%d",
+			currentFrame, kNativePlayerDeathAnimationRate,
+			100 / kNativePlayerDeathAnimationRate);
+	}
+
+	if (currentFrame < playerState.deathLastFrame)
 		return false;
 
 	playerState.deathActive = false;
-	debugC(1, kDebugCombat,
+	debugC(2, kDebugCombat,
 		"Harvester: player death animation complete damage_type=%d frame=%d",
-		playerState.deathDamageType, playerState.entity->getCurrentFrame());
+		playerState.deathDamageType, currentFrame);
 	return true;
 }
 
@@ -1822,16 +1838,36 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 		playerState, playerState.centerX + horizontalInput * horizontalStep);
 	int candidateBottomY = playerState.bottomY;
 	float candidateZ = playerState.z;
+	bool depthBoundaryReached = false;
 	if (verticalInput != 0) {
-		candidateBottomY = clampRoomMovementY(state,
-			playerState.bottomY + verticalInput * verticalStep);
-		// Native room-combat movement advances screen Y and room depth independently:
-		// down-walk states apply -z_velocity_step while up-walk states apply +z_velocity_step.
-		candidateZ = clampRoomDepth(state, playerState.z - verticalInput * depthStep);
+		// update_actor_runtime_state (0x4d750) only emits the paired screen-Y and Z
+		// steps for state 0x04 while min_z < z and state 0x0b while z < max_z.
+		// At either depth limit it zeros both steps and returns to the facing idle state.
+		depthBoundaryReached = verticalInput < 0
+			? playerState.z >= (float)state.roomMaxZ
+			: playerState.z <= (float)state.roomMinZ;
+		if (!depthBoundaryReached) {
+			candidateBottomY = clampRoomMovementY(state,
+				playerState.bottomY + verticalInput * verticalStep);
+			candidateZ = clampRoomDepth(state, playerState.z - verticalInput * depthStep);
+		}
 	}
 	if (candidateCenterX == playerState.centerX &&
 			candidateBottomY == playerState.bottomY &&
 			fabsf(candidateZ - playerState.z) <= kRoomDepthCompareEpsilon) {
+		playerState.hasMoveTarget = false;
+		if (depthBoundaryReached) {
+			const bool stopped = setIdleAnimation(
+				playerState, playerState.facing >= 0 ? playerState.facing : 0);
+			if (stopped) {
+				debugC(3, kDebugPathfinding,
+					"Harvester: player keyboard depth boundary room='%s' input_y=%d pos=(%d,%d,z=%.2f) bounds=(%d,%d)",
+					state.roomName.c_str(), verticalInput,
+					playerState.centerX, playerState.bottomY, (double)playerState.z,
+					state.roomMinZ, state.roomMaxZ);
+			}
+			return stopped;
+		}
 		return false;
 	}
 

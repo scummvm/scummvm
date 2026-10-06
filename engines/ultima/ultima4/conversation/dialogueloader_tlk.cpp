@@ -21,7 +21,6 @@
 
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader_tlk.h"
-#include "ultima/shared/std/containers.h"
 #include "common/stream.h"
 
 namespace Ultima {

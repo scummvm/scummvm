@@ -29,8 +29,9 @@ int sound_play(int soundNum) {
 	return sound_queue(soundNum);
 }
 
-int sound_queue(int soundNum, int /*distance*/) {
-	return (g_engine->_soundManager) ? g_engine->_soundManager->command(soundNum) : 0;
+int sound_queue(int soundNum, int distance) {
+	return (g_engine->_soundManager) ?
+		g_engine->_soundManager->command(soundNum, distance) : 0;
 }
 
 void sound_queue_hold() {

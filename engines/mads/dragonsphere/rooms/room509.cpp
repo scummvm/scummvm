@@ -331,7 +331,7 @@ static void room_509_init() {
 		player_first_walk(PLAYER_X_FROM_510, PLAYER_Y_FROM_510, FACING_EAST,
 		                  WALK_TO_X_FROM_510, WALK_TO_Y_FROM_510, FACING_SOUTHEAST, true);
 
-	} else if ((previous_room == 508) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(PLAYER_X_FROM_508, PLAYER_Y_FROM_508, FACING_WEST,
 		                  WALK_TO_X_FROM_508, WALK_TO_Y_FROM_508, FACING_NORTHWEST, true);
 	}
@@ -376,9 +376,6 @@ static void room_509_daemon() {
 }
 
 static void process_conv_shak_in_way() {
-	int you_trig_flag = false;
-	int me_trig_flag  = false;
-
 	if (kernel.trigger == ROOM_509_YOU_TALK) {
 		local->shak_action = SHAK_TALK;
 	}
@@ -387,21 +384,16 @@ static void process_conv_shak_in_way() {
 		local->shak_action = SHAK_SHUT_UP;
 	}
 
-	if (!you_trig_flag) {
-		conv_you_trigger(ROOM_509_YOU_TALK);
-	}
+	/* !you_trig_flag */
+	conv_you_trigger(ROOM_509_YOU_TALK);
 
-	if (!me_trig_flag) {
-		conv_me_trigger(ROOM_509_ME_TALK);
-	}
+	/* !me_trig_flag */
+	conv_me_trigger(ROOM_509_ME_TALK);
 
 	local->shak_talk_count = 0;
 }
 
 static void process_conv_shak_ledge() {
-	int you_trig_flag = false;
-	int me_trig_flag  = false;
-
 	if (kernel.trigger == ROOM_509_YOU_TALK) {
 		local->shak_action = SHAK_TALK;
 	}
@@ -410,13 +402,11 @@ static void process_conv_shak_ledge() {
 		local->shak_action = SHAK_SHUT_UP;
 	}
 
-	if (!you_trig_flag) {
-		conv_you_trigger(ROOM_509_YOU_TALK);
-	}
+	/* !you_trig_flag */
+	conv_you_trigger(ROOM_509_YOU_TALK);
 
-	if (!me_trig_flag) {
-		conv_me_trigger(ROOM_509_ME_TALK);
-	}
+	/* !me_trig_flag */
+	conv_me_trigger(ROOM_509_ME_TALK);
 
 	local->shak_talk_count = 0;
 }

@@ -58,15 +58,24 @@ private:
 };
 
 Audio::RewindableAudioStream *makeAPCStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
-	if (stream->readUint32BE() != MKTAG('C', 'R', 'Y', 'O'))
+	if (!stream || stream->size() < 32 ||
+			stream->readUint32BE() != MKTAG('C', 'R', 'Y', 'O') ||
+			stream->readUint32BE() != MKTAG('_', 'A', 'P', 'C')) {
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
 		return nullptr;
-	if (stream->readUint32BE() != MKTAG('_', 'A', 'P', 'C'))
-		return nullptr;
+	}
+
 	stream->readUint32BE(); // version
 	stream->readUint32LE(); // out size
-	uint32 rate = stream->readUint32LE();
+	const uint32 rate = stream->readUint32LE();
 	stream->skip(8); // initial values, will be handled by the class
-	bool stereo = stream->readUint32LE() != 0;
+	const bool stereo = stream->readUint32LE() != 0;
+	if (stream->err() || stream->eos() || rate == 0) {
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
+		return nullptr;
+	}
 
 	return new APC_ADPCMStream(stream, disposeAfterUse, rate, stereo ? 2 : 1);
 }
@@ -371,6 +380,8 @@ void SoundManager::stopSound() {
 
 	for (int i = 1; i <= 48; ++i)
 		removeWavSample(i);
+	for (int i = 0; i < SOUND_COUNT; ++i)
+		_sound[i]._active = false;
 
 	if (_modPlayingFl) {
 		stopMusic();
@@ -616,6 +627,9 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		}
 	}
 	int oldMusicVol = _musicVolume;
+	// Speech always occupies slot 20. Clear any stale stream/handle first so
+	// a failed replacement cannot leave an older voice marked as current.
+	removeWavSample(20);
 	if (!loadVoice(filename, catPos, catLen, _sWav[20])) {
 		// This case only concerns the English Win95 demo
 		// If it's not possible to load the voice, we force the active flag
@@ -670,10 +684,13 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 }
 
 void SoundManager::removeSample(int soundIndex) {
-	if (checkVoiceStatus(1))
-		stopVoice(1);
-	if (checkVoiceStatus(2))
-		stopVoice(2);
+	if (!isValidSoundIndex(soundIndex))
+		return;
+
+	for (int voiceIndex = 0; voiceIndex < VOICE_COUNT; ++voiceIndex) {
+		if (_voice[voiceIndex]._status && _voice[voiceIndex]._wavIndex == soundIndex)
+			stopVoice(voiceIndex);
+	}
 	removeWavSample(soundIndex);
 	_sound[soundIndex]._active = false;
 }
@@ -727,40 +744,70 @@ void SoundManager::setMODMusicVolume(int volume) {
 		_vm->_mixer->setChannelVolume(_musicHandle, volume * 255 / 16);
 }
 
-void SoundManager::loadSample(int wavIndex, const Common::Path &file) {
-	loadWavSample(wavIndex, file, false);
-	_sound[wavIndex]._active = true;
+bool SoundManager::loadSample(int wavIndex, const Common::Path &file) {
+	if (!isValidSoundIndex(wavIndex)) {
+		warning("Hopkins: invalid sample index %d", wavIndex);
+		return false;
+	}
+
+	const bool loaded = loadWavSample(wavIndex, file, false);
+	_sound[wavIndex]._active = loaded;
+	return loaded;
 }
 
 void SoundManager::playSample(int wavIndex, int voiceMode) {
-	if (_soundOffFl || !_sound[wavIndex]._active)
+	if (!isValidSoundIndex(wavIndex) || _soundOffFl || !_sound[wavIndex]._active)
 		return;
 
 	if (_soundFl)
 		delWav(_currentSoundIndex);
 
+	int voiceIndex = -1;
 	switch (voiceMode) {
 	case 5:
-	// Case added to identify the former PLAY_SAMPLE2 calls
-	case 9:
-		if (checkVoiceStatus(1))
-			stopVoice(1);
-		playWavSample(1, wavIndex);
+	case 8:
+		voiceIndex = 0;
 		break;
 	case 6:
-		if (checkVoiceStatus(2))
-			stopVoice(1);
-		playWavSample(2, wavIndex);
+		voiceIndex = 1;
+		break;
+	case 7:
+		voiceIndex = 2;
+		break;
+	// ScummVM uses mode 9 to identify calls to the original PLAY_SAMPLE2
+	// helper, which always used channel 0.
+	case 9:
+		voiceIndex = 0;
 		break;
 	default:
-		break;
+		return;
 	}
+
+	if (checkVoiceStatus(voiceIndex))
+		stopVoice(voiceIndex);
+	playWavSample(voiceIndex, wavIndex);
+}
+
+bool SoundManager::isValidVoiceIndex(int voiceIndex) const {
+	return voiceIndex >= 0 && voiceIndex < VOICE_COUNT;
+}
+
+bool SoundManager::isValidWavIndex(int wavIndex) const {
+	return wavIndex >= 0 && wavIndex < SWAV_COUNT;
+}
+
+bool SoundManager::isValidSoundIndex(int soundIndex) const {
+	return soundIndex >= 0 && soundIndex < SOUND_COUNT;
 }
 
 bool SoundManager::checkVoiceStatus(int voiceIndex) {
+	if (!isValidVoiceIndex(voiceIndex))
+		return false;
+
 	if (_voice[voiceIndex]._status) {
-		int wavIndex = _voice[voiceIndex]._wavIndex;
-		if (_sWav[wavIndex]._audioStream && _sWav[wavIndex]._audioStream->endOfStream())
+		const int wavIndex = _voice[voiceIndex]._wavIndex;
+		if (!isValidWavIndex(wavIndex) || !_sWav[wavIndex]._active ||
+				!_sWav[wavIndex]._audioStream || _sWav[wavIndex]._audioStream->endOfStream())
 			stopVoice(voiceIndex);
 	}
 
@@ -768,36 +815,56 @@ bool SoundManager::checkVoiceStatus(int voiceIndex) {
 }
 
 void SoundManager::stopVoice(int voiceIndex) {
+	if (!isValidVoiceIndex(voiceIndex))
+		return;
+
 	if (_voice[voiceIndex]._status) {
+		const int wavIndex = _voice[voiceIndex]._wavIndex;
 		_voice[voiceIndex]._status = false;
-		int wavIndex = _voice[voiceIndex]._wavIndex;
-		if (_sWav[wavIndex]._active && _sWav[wavIndex]._freeSampleFl)
-			removeWavSample(wavIndex);
+		_voice[voiceIndex]._wavIndex = 0;
+
+		if (isValidWavIndex(wavIndex) && _sWav[wavIndex]._active) {
+			if (_sWav[wavIndex]._freeSampleFl)
+				removeWavSample(wavIndex);
+			else
+				_vm->_mixer->stopHandle(_sWav[wavIndex]._soundHandle);
+		}
+	} else {
+		_voice[voiceIndex]._wavIndex = 0;
 	}
-	_voice[voiceIndex]._status = false;
 }
 
 void SoundManager::playVoice() {
-	if (!_sWav[20]._active)
+	if (!_sWav[20]._active || !_sWav[20]._audioStream)
 		return;
 
 	if (!_voice[2]._status) {
-		int wavIndex = _voice[2]._wavIndex;
-		if (_sWav[wavIndex]._active && _sWav[wavIndex]._freeSampleFl)
+		const int wavIndex = _voice[2]._wavIndex;
+		if (isValidWavIndex(wavIndex) && _sWav[wavIndex]._active && _sWav[wavIndex]._freeSampleFl)
 			removeWavSample(wavIndex);
 	}
 
-	playWavSample(2, 20);
+	playWavSample(2, 20, true);
 }
 
 bool SoundManager::removeWavSample(int wavIndex) {
-	if (!_sWav[wavIndex]._active)
+	if (!isValidWavIndex(wavIndex))
+		return false;
+
+	const bool existed = _sWav[wavIndex]._active || _sWav[wavIndex]._audioStream != nullptr;
+	if (!existed)
 		return false;
 
 	_vm->_mixer->stopHandle(_sWav[wavIndex]._soundHandle);
 	delete _sWav[wavIndex]._audioStream;
-	_sWav[wavIndex]._audioStream = nullptr;
-	_sWav[wavIndex]._active = false;
+	_sWav[wavIndex] = SwavItem();
+
+	for (int voiceIndex = 0; voiceIndex < VOICE_COUNT; ++voiceIndex) {
+		if (_voice[voiceIndex]._wavIndex == wavIndex) {
+			_voice[voiceIndex]._status = false;
+			_voice[voiceIndex]._wavIndex = 0;
+		}
+	}
 
 	return true;
 }
@@ -815,23 +882,63 @@ bool SoundManager::loadVoice(const Common::Path &filename, size_t fileOffset, si
 		}
 	}
 
-	f.seek(fileOffset);
-	item._audioStream = makeSoundStream(f.readStream((entryLength == 0) ? f.size() : entryLength));
+	const int64 signedFileSize = f.size();
+	if (signedFileSize < 0) {
+		warning("Hopkins: could not determine audio size for %s", filename.toString().c_str());
+		return false;
+	}
+
+	const uint64 fileSize = (uint64)signedFileSize;
+	const uint64 offset = (uint64)fileOffset;
+	const uint64 requestedLength = (uint64)entryLength;
+	if (offset > fileSize || (requestedLength != 0 && requestedLength > fileSize - offset)) {
+		warning("Hopkins: invalid audio range in %s", filename.toString().c_str());
+		return false;
+	}
+
+	const uint64 readLength = requestedLength == 0 ? fileSize - offset : requestedLength;
+	if (readLength > 0xffffffffULL) {
+		warning("Hopkins: audio range too large in %s", filename.toString().c_str());
+		return false;
+	}
+	if (!f.seek((int64)offset)) {
+		warning("Hopkins: could not seek in audio file %s", filename.toString().c_str());
+		return false;
+	}
+
+	Common::SeekableReadStream *audioData = f.readStream((uint32)readLength);
 	f.close();
+	if (!audioData || audioData->size() != (int64)readLength) {
+		delete audioData;
+		warning("Hopkins: truncated audio data in %s", filename.toString().c_str());
+		return false;
+	}
+
+	item._audioStream = makeSoundStream(audioData);
+	if (!item._audioStream) {
+		item = SwavItem();
+		warning("Hopkins: unsupported or malformed audio file %s", filename.toString().c_str());
+		return false;
+	}
 
 	return true;
 }
 
-void SoundManager::loadWavSample(int wavIndex, const Common::Path &filename, bool freeSample) {
-	if (_sWav[wavIndex]._active)
+bool SoundManager::loadWavSample(int wavIndex, const Common::Path &filename, bool freeSample) {
+	if (!isValidWavIndex(wavIndex)) {
+		warning("Hopkins: invalid WAV slot %d", wavIndex);
+		return false;
+	}
+
+	if (_sWav[wavIndex]._active || _sWav[wavIndex]._audioStream)
 		removeWavSample(wavIndex);
 
-	if (loadVoice(filename, 0, 0, _sWav[wavIndex])) {
-		_sWav[wavIndex]._active = true;
-		_sWav[wavIndex]._freeSampleFl = freeSample;
-	} else{
-		_sWav[wavIndex]._active = false;
-	}
+	if (!loadVoice(filename, 0, 0, _sWav[wavIndex]))
+		return false;
+
+	_sWav[wavIndex]._active = true;
+	_sWav[wavIndex]._freeSampleFl = freeSample;
+	return true;
 }
 
 void SoundManager::loadWav(const Common::Path &file, int wavIndex) {
@@ -839,7 +946,8 @@ void SoundManager::loadWav(const Common::Path &file, int wavIndex) {
 }
 
 void SoundManager::playWav(int wavIndex) {
-	if (_soundFl || _soundOffFl)
+	if (_soundFl || _soundOffFl || !isValidWavIndex(wavIndex) ||
+			!_sWav[wavIndex]._active || !_sWav[wavIndex]._audioStream)
 		return;
 
 	_soundFl = true;
@@ -848,35 +956,49 @@ void SoundManager::playWav(int wavIndex) {
 }
 
 void SoundManager::delWav(int wavIndex) {
-	if (!removeWavSample(wavIndex))
+	if (!isValidWavIndex(wavIndex))
 		return;
 
-	if (checkVoiceStatus(1))
-		stopVoice(1);
+	for (int voiceIndex = 0; voiceIndex < VOICE_COUNT; ++voiceIndex) {
+		if (_voice[voiceIndex]._status && _voice[voiceIndex]._wavIndex == wavIndex)
+			stopVoice(voiceIndex);
+	}
+	removeWavSample(wavIndex);
 
-	_currentSoundIndex = 0;
-	_soundFl = false;
+	if (_currentSoundIndex == wavIndex) {
+		_currentSoundIndex = 0;
+		_soundFl = false;
+	}
 }
 
-void SoundManager::playWavSample(int voiceIndex, int wavIndex) {
-	if (!_sWav[wavIndex]._active)
-		warning("Bad handle");
+void SoundManager::playWavSample(int voiceIndex, int wavIndex, bool useVoiceVolume) {
+	if (!isValidVoiceIndex(voiceIndex) || !isValidWavIndex(wavIndex) ||
+			!_sWav[wavIndex]._active || !_sWav[wavIndex]._audioStream) {
+		warning("Hopkins: cannot play unloaded sample %d on voice %d", wavIndex, voiceIndex);
+		return;
+	}
 
-	if (_voice[voiceIndex]._status && _sWav[wavIndex]._active && _sWav[wavIndex]._freeSampleFl)
-		removeWavSample(wavIndex);
+	if (_voice[voiceIndex]._status) {
+		const int oldWavIndex = _voice[voiceIndex]._wavIndex;
+		if (oldWavIndex == wavIndex) {
+			_vm->_mixer->stopHandle(_sWav[wavIndex]._soundHandle);
+			_voice[voiceIndex]._status = false;
+			_voice[voiceIndex]._wavIndex = 0;
+		} else {
+			stopVoice(voiceIndex);
+		}
+	}
 
 	_voice[voiceIndex]._status = true;
 	_voice[voiceIndex]._wavIndex = wavIndex;
 
-	int volume = (voiceIndex == 2) ? _voiceVolume * 255 / 16 : _soundVolume * 255 / 16;
+	const int volume = (useVoiceVolume ? _voiceVolume : _soundVolume) * 255 / 16;
 
 	// If the handle is still in use, stop it. Otherwise we'll lose the
-	// handle to that sound. This can currently happen (but probably
-	// shouldn't) when skipping a movie.
+	// handle to that sound. This can currently happen when skipping a movie.
 	if (_vm->_mixer->isSoundHandleActive(_sWav[wavIndex]._soundHandle))
-		  _vm->_mixer->stopHandle(_sWav[wavIndex]._soundHandle);
+		_vm->_mixer->stopHandle(_sWav[wavIndex]._soundHandle);
 
-	// Start the voice playing
 	_sWav[wavIndex]._audioStream->rewind();
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sWav[wavIndex]._soundHandle,
 		_sWav[wavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);

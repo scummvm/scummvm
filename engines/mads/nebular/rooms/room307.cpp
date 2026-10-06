@@ -24,6 +24,7 @@
 #include "mads/core/matte.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
@@ -58,7 +59,7 @@ static Scratch local;
 
 static void handleRexDialog(int quote) {
 	char *curQuote = quote_string(kernel.quotes, quote);
-	if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
+	if (g_engine->getMessageTextWidth(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		quote_split_string(curQuote, subQuote1, subQuote2);
 		Common::strcpy_s(local._subQuote2, subQuote2);
@@ -199,15 +200,15 @@ static void setDialogNode(int node) {
 
 static void handlePrisonerEncounter() {
 	switch (player2.words[0]) {
-	case 275:
+	case words_plunger:
 		setDialogNode(5);
 		break;
 
-	case 277:
+	case words_polycement:
 		setDialogNode(4);
 		break;
 
-	case 276:
+	case words_poison_darts:
 		setDialogNode(6);
 		break;
 
@@ -218,39 +219,39 @@ static void handlePrisonerEncounter() {
 
 static void handlePrisonerDialog() {
 	switch (player2.words[0]) {
-	case 0x11A:
+	case words_press:
 		setDialogNode(7);
 		break;
 
-	case 0x11B:
+	case words_pressure_gauge:
 		setDialogNode(8);
 		break;
 
-	case 0x11C:
+	case words_pry:
 		setDialogNode(12);
 		break;
 
-	case 0x11D:
+	case words_raging_river:
 		setDialogNode(9);
 		break;
 
-	case 0x11E:
+	case words_ramolyan_rugby_rats:
 		setDialogNode(10);
 		break;
 
-	case 0x11F:
+	case words_read:
 		setDialogNode(11);
 		break;
 
-	case 0x120:
+	case words_rearview_mirror:
 		setDialogNode(13);
 		break;
 
-	case 0x121:
+	case words_rebreather:
 		setDialogNode(14);
 		break;
 
-	case 0x122:
+	case words_refrigerator:
 		setDialogNode(15);
 		break;
 
@@ -362,6 +363,7 @@ static void room_307_init() {
 
 	pal_change_color(252, 63, 30, 20);
 	pal_change_color(253, 45, 15, 12);
+	setMacintoshMessageColors(0, 30, 63, 0, 30, 63);
 
 	section_3_music();
 
@@ -413,7 +415,7 @@ static void room_307_daemon() {
 		}
 		local._lastFrameTime = kernel.clock;
 
-		if ((local._guardTime > 3000) && !local._duringPeeingFl && (kernel_anim[0].anim == nullptr)
+		if ((local._guardTime > 3000) && (kernel_anim[0].anim == nullptr)
 			&& (inter_input_mode != INTER_CONVERSATION) && global[kMetBuddyBeast] && !local._activePrisonerFl) {
 			if (!player_has(OBJ_SCALPEL) && !local._grateOpenedFl) {
 				player.commands_allowed = false;

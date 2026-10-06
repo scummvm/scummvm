@@ -57,17 +57,17 @@ void DotConnectPuzzle::readData(Common::SeekableReadStream &stream) {
 	_tooManyLinesSound.readNormal(stream);
 	_allCoveredSound.readNormal(stream);
 
-	_winScene.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag  = stream.readByte();
-	_winDelaySec = stream.readUint16LE();
-	_winSound.readNormal(stream);
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag  = stream.readByte();
+	_solveSoundDelay = stream.readUint16LE();
+	_solveSound.readNormal(stream);
 
-	_exitScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_exitFlag.label = stream.readSint16LE();
-	_exitFlag.flag  = stream.readByte();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag  = stream.readByte();
 
 	readRect(stream, _exitHotspot);
 }
@@ -81,8 +81,7 @@ void DotConnectPuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (int i = 0; i < kNumDots; ++i)
 		_isActiveDot[i] = false;
@@ -109,6 +108,7 @@ void DotConnectPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 
@@ -118,9 +118,8 @@ void DotConnectPuzzle::execute() {
 			break;
 		case kWaitWinDelay:
 			if (g_system->getMillis() >= _winDelayEndTime) {
-				if (_winSound.name != "NO SOUND") {
-					g_nancy->_sound->loadSound(_winSound);
-					g_nancy->_sound->playSound(_winSound);
+				if (hasSolveSound()) {
+					playSolveSound();
 					_subState = kWaitWinSound;
 				} else {
 					_subState = kExitToWin;
@@ -131,8 +130,8 @@ void DotConnectPuzzle::execute() {
 			_subState = kWaitWinSound;
 			break;
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_subState = kExitToWin;
 			}
 			break;
@@ -149,13 +148,11 @@ void DotConnectPuzzle::execute() {
 		g_nancy->_sound->stopSound(_startHint);
 		g_nancy->_sound->stopSound(_tooManyLinesSound);
 		g_nancy->_sound->stopSound(_allCoveredSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_subState == kExitToWin) {
-			NancySceneState.setEventFlag(_winFlag);
-			NancySceneState.changeScene(_winScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		}
 		finishExecution();
 		break;
@@ -169,8 +166,7 @@ void DotConnectPuzzle::handleInput(NancyInput &input) {
 	Common::Rect vpScreen = NancySceneState.getViewport().getScreenPosition();
 	Common::Point mouseVP = input.mousePos - Common::Point(vpScreen.left, vpScreen.top);
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_subState = kExitToCancel;
 		}
@@ -284,7 +280,7 @@ void DotConnectPuzzle::checkWin() {
 
 	if (allMatch) {
 		_subState = kWaitWinDelay;
-		_winDelayEndTime = g_system->getMillis() + (uint32)_winDelaySec * 1000;
+		_winDelayEndTime = g_system->getMillis() + (uint32)_solveSoundDelay * 1000;
 		return;
 	}
 

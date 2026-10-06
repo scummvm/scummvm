@@ -304,17 +304,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 				getEventManager()->resetReturnToLauncher();
 				if (!_messageBannerActive) {
 					if (_macGui) {
-						if (!(ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) ||
-							_macGui->runQuitDialog()) {
-							_quitByGUIPrompt = true;
-							if (exitType) {
-								Common::Event fakeEvent;
-								fakeEvent.type = Common::EVENT_RETURN_TO_LAUNCHER;
-								getEventManager()->pushEvent(fakeEvent);
-							} else {
-								quitGame();
-							}
-						}
+						_macGui->queryQuit(exitType);
 					} else {
 						queryQuit(exitType);
 					}

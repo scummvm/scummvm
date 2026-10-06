@@ -646,7 +646,7 @@ void room_104_init() {
 		player_first_walk(OFF_SCREEN_X_FROM_108, player.y, FACING_EAST,
 		                  PLAYER_X_FROM_108, player.y, FACING_EAST, true);
 
-	} else if ((previous_room == 107) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else {
 		if (player.x > 191) {
 			player.y = PLAYER_Y_FROM_107_3;
 		} else if (player.x > 104) {

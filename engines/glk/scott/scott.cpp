@@ -1498,7 +1498,7 @@ void Scott::listExits() {
 	writeToRoomDescriptionStream("\n\n%s", _G(_sys)[EXITS].c_str());
 
 	while (ct < 6) {
-		if ((&_G(_rooms)[MY_LOC])->_exits[ct] != 0) {
+		if (_G(_rooms)[MY_LOC]._exits[ct] != 0) {
 			if (f) {
 				writeToRoomDescriptionStream("%s", _G(_sys)[EXITS_DELIMITER].c_str());
 			}
@@ -1518,7 +1518,7 @@ void Scott::listExitsSpectrumStyle() {
 	int f = 0;
 
 	while (ct < 6) {
-		if ((&_G(_rooms)[MY_LOC])->_exits[ct] != 0) {
+		if (_G(_rooms)[MY_LOC]._exits[ct] != 0) {
 			if (f == 0) {
 				writeToRoomDescriptionStream("\n\n%s", _G(_sys)[EXITS].c_str());
 			} else {

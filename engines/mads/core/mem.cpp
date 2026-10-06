@@ -52,6 +52,8 @@ void *mem_get_name(long size, const char *) {
 	byte *memory_block = nullptr;
 	if (size > 0) {
 		memory_block = (byte *)malloc(size);
+		if (!memory_block)
+			error("mem_get_name: Out of memory allocating %ld bytes", size);
 		Common::fill(memory_block, memory_block + size, 0);
 	}
 

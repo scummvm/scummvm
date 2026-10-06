@@ -254,7 +254,7 @@ endif
 ifeq ($(DEBUG), 1)
    DEFINES += -O0 -g -DLIBRETRO_DEBUG -DDEBUG_BUILD
 else
-   DEFINES += -DDISABLE_TEXT_CONSOLE -DRELEASE_BUILD
+   DEFINES += -DRELEASE_BUILD
 endif
 
 ifeq ($(HAVE_NEON), 1)
@@ -286,6 +286,8 @@ LIBRETRO_OBJS := $(CORE_PATH)/libretro-core.o \
 ifeq ($(or $(HAVE_OPENGL), $(HAVE_OPENGLES2)), 1)
 	LIBRETRO_OBJS += $(CORE_PATH)/libretro-graphics-opengl.o
 endif
+
+LIBRETRO_OBJS += $(CORE_PATH)/libretro-gl-context-handoff.o
 
 OBJS += $(LIBRETRO_OBJS)
 

@@ -2082,8 +2082,7 @@ static int get_ext_key_name(char *namebuf, int c, int extc)
 	}
 
 	/* if it's in the key name array, use the array entry */
-	if (extc >= 1
-		&& extc <= (int)(sizeof(ext_key_names)/sizeof(ext_key_names[0])))
+	if (extc >= 1 && extc <= ARRAYSIZE(ext_key_names))
 	{
 		/* use the array name */
 		Common::strcpy_s(namebuf, 20, ext_key_names[extc - 1]);
@@ -4256,8 +4255,7 @@ void bifinpdlg(bifcxdef *ctx, int argc)
 			}
 
 			/* if we have exhausted our label array, stop now */
-			if (bcnt >= sizeof(labels)/sizeof(labels[0])
-				|| dst >= lblbuf + sizeof(lblbuf))
+			if (bcnt >= ARRAYSIZE(labels) || dst >= lblbuf + sizeof(lblbuf))
 				break;
 		}
 	}

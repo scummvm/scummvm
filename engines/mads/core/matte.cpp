@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "mads/core/general.h"
 #include "mads/core/sprite.h"
 #include "mads/core/buffer.h"
@@ -31,7 +32,6 @@
 #include "mads/core/magic.h"
 #include "mads/core/mcga.h"
 #include "mads/core/tile.h"
-#include "mads/core/ems.h"
 #include "mads/core/keys.h"
 #include "mads/core/timer.h"
 #include "mads/core/sound.h"
@@ -97,16 +97,7 @@ Buffer scr_inter_orig = { 0, 0, NULL }; /* Interface original buffer */
 
 
 int matte_map_work_screen() {
-	int error_flag = false;
-
-	if (work_screen_ems_handle >= 0) {
-		if (ems_mapping_changed) {
-			error_flag = ems_map_buffer(work_screen_ems_handle);
-		}
-		ems_mapping_changed = false;
-	}
-
-	return error_flag;
+	return false;
 }
 
 static void matte_init_series() {
@@ -237,12 +228,10 @@ void matte_init(int init_series) {
 int matte_allocate_image() {
 	int result;
 
-	if (image_marker >= IMAGE_LIST_SIZE) {
-		result = -1;
-	} else {
-		result = image_marker++;
-	}
+	if (image_marker >= IMAGE_LIST_SIZE)
+		error("Out of image list space");
 
+	result = image_marker++;
 	return result;
 }
 
@@ -254,7 +243,8 @@ void matte_refresh_work() {
 	image_list[id].segment_id = (byte)-1;
 }
 
-int matte_add_message(FontPtr font, char *text, int x, int y, int message_color, int auto_spacing) {
+int matte_add_message(FontPtr font, char *text, int x, int y,
+		int message_color, int auto_spacing, bool useMacintoshFont) {
 	int message_handle;
 	int count;
 
@@ -266,10 +256,13 @@ int matte_add_message(FontPtr font, char *text, int x, int y, int message_color,
 			message_list[message_handle].y = y;
 			message_list[message_handle].font = font;
 			message_list[message_handle].text = text;
-			message_list[message_handle].xs = font_string_width(font, text, auto_spacing);
+			message_list[message_handle].xs = useMacintoshFont ?
+				g_engine->getMessageTextWidth(font, text, auto_spacing) :
+				font_string_width(font, text, auto_spacing);
 			message_list[message_handle].ys = font ? font->max_y_size : 0;
 			message_list[message_handle].main_color = message_color;
 			message_list[message_handle].spacing = (char)auto_spacing;
+			message_list[message_handle].macintosh_font = useMacintoshFont;
 			message_list[message_handle].status = 1;
 			message_list[message_handle].active = true;
 		}
@@ -464,14 +457,19 @@ void filter_matte_list(MattePtr matte, int size, int base_index) {
 	}
 }
 
-static void matte_quick_from_black(byte *special_pal, int ticks) {
+static void matte_quick_from_black(byte *special_pal, int ticks,
+		int fade_step_rate, long *completion_deadline,
+		int minimum_black_ticks) {
 	int going;
+	int step = 0;
+	int fade_steps = 1;
 	byte *source;
 	byte *dest;
 	byte *special;
 	byte increments[768];
-	long fade_clock;
+	long fade_clock = 0;
 	long now_clock;
+	MagicFadePacer fade_pacer;
 
 	source = &master_palette[0].r;
 	special = increments;
@@ -483,11 +481,21 @@ static void matte_quick_from_black(byte *special_pal, int ticks) {
 		if (inc == 0)
 			inc = 1;
 		special[i] = inc;
+		if (source[i])
+			fade_steps = MAX(fade_steps,
+				((int)source[i] + inc - 1) / inc);
+	}
+
+	if (fade_step_rate > 0) {
+		magic_wait_for_fade_start(completion_deadline, fade_steps,
+			fade_step_rate, minimum_black_ticks);
+		magic_fade_pacer_init(fade_pacer);
 	}
 
 	do {
 		going = false;
-		fade_clock = timer_read_600() + ticks;
+		if (fade_step_rate <= 0)
+			fade_clock = timer_read_600() + ticks;
 
 		for (int i = 0; i < 768; i++) {
 			byte current = dest[i];  // current fading value (starts at black)
@@ -507,14 +515,38 @@ static void matte_quick_from_black(byte *special_pal, int ticks) {
 
 		mcga_setpal((Palette *)special_pal);
 
-		do {
-			now_clock = timer_read_600();
-		} while (now_clock < fade_clock);
+		if (fade_step_rate > 0) {
+			if (g_engine->hasMacintoshInterface())
+				g_system->updateScreen();
+			else
+				g_engine->getScreen()->update();
+
+			magic_fade_pacer_wait(fade_pacer, step, fade_step_rate);
+		} else {
+			do {
+				now_clock = timer_read_600();
+			} while (now_clock < fade_clock);
+		}
+
+		++step;
 
 	} while (going);
 }
 
-static void matte_special_effect(int special_effect, int full_screen) {
+static void matte_restore_boundary_lines(Buffer *work_screen,
+		int boundary_line_color) {
+	if (boundary_line_color < 0 || !viewing_at_y)
+		return;
+
+	g_engine->getScreen()->hLine(0, viewing_at_y - 2, video_x - 1,
+		boundary_line_color);
+	g_engine->getScreen()->hLine(0, viewing_at_y + work_screen->y + 1,
+		video_x - 1, boundary_line_color);
+}
+
+static void matte_special_effect(int special_effect, int full_screen,
+		bool full_fade_in, int fade_step_rate, long *completion_deadline,
+		int minimum_black_ticks, int boundary_line_color) {
 	int  count;
 	int  pixel_rate;
 	byte *background_swap;
@@ -549,7 +581,8 @@ static void matte_special_effect(int special_effect, int full_screen) {
 
 		if (special_effect == MATTE_FX_FADE_THRU_BLACK) {
 			mcga_getpal(&special_pal);
-			magic_fade_to_grey(special_pal, NULL, 0, 256, 0, 1, 1, 16);
+			magic_fade_to_grey(special_pal, NULL, 0, 256, 0, 1,
+				1, 16, fade_step_rate);
 			buffer_fill(scr_live, 0);
 		}
 
@@ -559,8 +592,17 @@ static void matte_special_effect(int special_effect, int full_screen) {
 		video_update(work_screen, 0, 0,
 			viewing_at_x, viewing_at_y,
 			work_screen->x, work_screen->y);
+		if (special_effect == MATTE_FX_FADE_THRU_BLACK)
+			matte_restore_boundary_lines(work_screen, boundary_line_color);
 
-		matte_quick_from_black(&special_pal[0].r, 1);
+		if (full_fade_in)
+			magic_fade_from_grey(&special_pal[0], master_palette,
+				0, 256, 0, 1, 1, 16, fade_step_rate,
+				completion_deadline, minimum_black_ticks);
+		else
+			matte_quick_from_black(&special_pal[0].r, 1,
+				fade_step_rate, completion_deadline,
+				minimum_black_ticks);
 		break;
 
 	case MATTE_FX_CORNER_LOWER_LEFT:
@@ -605,6 +647,9 @@ static void matte_special_effect(int special_effect, int full_screen) {
 		buffer_fill(scr_live, 0);
 		video_update(work_screen, 0, 0, viewing_at_x, viewing_at_y,
 			work_screen->x, work_screen->y);
+		matte_restore_boundary_lines(work_screen, boundary_line_color);
+		if (boundary_line_color >= 0)
+			g_engine->getScreen()->update();
 		mcga_setpal(&master_palette);
 		break;
 
@@ -624,7 +669,9 @@ static void matte_special_effect(int special_effect, int full_screen) {
 	}
 }
 
-void matte_frame(int special_effect, int full_screen) {
+void matte_frame(int special_effect, int full_screen, bool full_fade_in,
+		int fade_step_rate, long *completion_deadline,
+		int minimum_black_ticks, int boundary_line_color) {
 	Matte *matte;
 	Image *image;
 	int id;
@@ -873,9 +920,14 @@ void matte_frame(int special_effect, int full_screen) {
 					high_color,
 					low_color,
 					0);
-				font_write(message->font,
-					&scr_work, message->text,
-					message->x, message->y, message->spacing);
+				if (!message->macintosh_font ||
+						!g_engine->drawMacintoshText(message->font,
+						&scr_work, message->text, message->x, message->y,
+						message->main_color, message->spacing)) {
+					font_write(message->font,
+						&scr_work, message->text,
+						message->x, message->y, message->spacing);
+				}
 			}
 		}
 		message++;
@@ -927,7 +979,9 @@ void matte_frame(int special_effect, int full_screen) {
 			}
 
 		} else {
-			matte_special_effect(special_effect, full_screen);
+			matte_special_effect(special_effect, full_screen, full_fade_in,
+				fade_step_rate, completion_deadline,
+				minimum_black_ticks, boundary_line_color);
 			sound_queue_flush();
 		}
 	}
@@ -981,8 +1035,10 @@ void matte_refresh_inter() {
 	int id;
 
 	id = matte_allocate_inter_image();
-	image_inter_list[id].flags = IMAGE_REFRESH;
-	image_inter_list[id].segment_id = (byte)-1;
+	if (id >= 0) {
+		image_inter_list[id].flags = IMAGE_REFRESH;
+		image_inter_list[id].segment_id = (byte)-1;
+	}
 }
 
 static void make_inter_matte(ImageInterPtr image, MattePtr matte) {

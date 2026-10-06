@@ -422,7 +422,9 @@ public:
 	int getPlayerCombatResourceCount(int loadout) const;
 	bool consumePlayerCombatResourceUnit(int loadout);
 	bool isPlayerControlPaused() const { return _playerControlPaused; }
+	bool setPlayerCurrentHitPoints(int hitPoints);
 	bool adjustPlayerCurrentHitPoints(int delta);
+	bool setPlayerCombatResourceCount(int loadout, int count);
 	bool setPlayerCombatLoadout(int loadout);
 	bool setPlayerControlPaused(bool paused);
 	bool syncRuntimeAnimState(const Common::String &animName, bool active, bool visible, int currentFrame);
@@ -476,7 +478,6 @@ private:
 	bool probePickupBlockingCommandChain(const Common::String &initialTag,
 		const Common::String &contextName, InteractionResult &result, uint recursionDepth) const;
 	bool hasActionableCommandChain(const Common::String &initialTag) const;
-	bool setPlayerCurrentHitPoints(int hitPoints);
 	int *getPlayerCombatResourceCountPtr(int loadout);
 	const int *getPlayerCombatResourceCountPtr(int loadout) const;
 	bool adjustPlayerCombatResourceCount(int loadout, int delta, int maxCount,

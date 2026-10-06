@@ -678,7 +678,6 @@ void room_120_preload() {
 	room_parser_code_pointer = room_120_parser;
 	room_daemon_code_pointer = room_120_daemon;
 
-	/* inter_init_sentence(); */
 	section_1_walker();
 	section_1_interface();
 }

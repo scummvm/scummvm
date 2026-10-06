@@ -1089,16 +1089,21 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 		return true;
 	}
 
-	animationMovie.reset();
-
-	if (audioStream)
-		_vm->_sound->restart();
-
+	// Update `_preBuffer` with the destination background and push it to the screen BEFORE
+	// destroying the video window. Resetting animationMovie triggers an immediate window repaint.
+	// Blitting newBackground into _preBuffer here ensures that when the movie ends, the display
+	// shows the intended target destination frame rather than stale video content.
 	if (newBackground) {
 		_vm->_gfx->crossBlit(_preBuffer, 0, 0, 432, 189, newBackground, 0, 0);
 		newBackground->free();
 		delete newBackground;
+		newBackground = nullptr;
 	}
+
+	animationMovie.reset();
+
+	if (audioStream)
+		_vm->_sound->restart();
 
 	_paused = false;
 
@@ -2381,6 +2386,14 @@ void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 }
 
 void SceneViewWindow::onPaint() {
+	// Bypass scene-specific painting while a transition animation or cutscene is playing.
+	// During active transitions, the scene view is in a transient state. Painting at that time
+	// can cause access of frame data with mismatched data e.g. post-transition still frame data
+	// indexed using pre-transition frame information.
+	if (_paused) {
+		return;
+	}
+
 	// Original didn't draw if the async movie was playing, but that doesn't seem right.
 	if (_currentScene && !_infoWindowDisplayed && !_bioChipWindowDisplayed) {
 		if (_currentScene->_staticData.navFrameIndex >= -1) {

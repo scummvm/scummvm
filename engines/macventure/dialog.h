@@ -113,6 +113,9 @@ public:
 private:
 	bool doProcessEvent(Dialog *dialog, Common::Event event) override;
 	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) override;
+
+	bool _pressed;
+	bool _mouseOverPressed;
 };
 
 class DialogPlainText : public DialogElement {

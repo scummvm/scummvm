@@ -1219,7 +1219,7 @@ void Encounter::drawScreen() {
 			if (getSharedData()->getMatteInitialized()) {
 				getScreen()->drawWideScreenBars(82);
 
-				getScreen()->updatePalette();
+				getScreen()->copyGrayPaletteToWorkingPalette();
 				getScreen()->setupPalette(NULL, 0, 0);
 				getScreen()->paletteFade(0, 25, 10);
 			} else {
@@ -1243,7 +1243,7 @@ void Encounter::drawScreen() {
 					getScene()->updateScreen();
 					getScreen()->drawWideScreenBars(82);
 
-					getScreen()->updatePalette(0);
+					getScreen()->copyGrayPaletteToWorkingPalette();
 					getScreen()->setupPalette(NULL, 0, 0);
 
 					if (getSharedData()->getMattePlaySound() /* Scene::updateScreen() does script processing, so the value might have changed */
@@ -1268,7 +1268,7 @@ void Encounter::drawScreen() {
 			ResourceId paletteId = getWorld()->actions[getScene()->getActor()->getActionIndex3()]->paletteResourceId;
 			getScreen()->setPaletteGamma(paletteId ? paletteId : getWorld()->currentPaletteId);
 
-			updatePalette1();
+			blendPaletteFromGray();
 			getScreen()->setupPalette(NULL, 0, 0);
 		}
 	} else {
@@ -1277,7 +1277,7 @@ void Encounter::drawScreen() {
 
 		getScreen()->setPaletteGamma(getWorld()->currentPaletteId);
 
-		updatePalette2();
+		blendPaletteToGray();
 		getScreen()->setupPalette(NULL, 0, 0);
 	}
 }
@@ -1492,12 +1492,16 @@ bool Encounter::updateScreen() {
 	return false;
 }
 
-void Encounter::updatePalette1() {
-	debugC(kDebugLevelEncounter, "[Encounter::updatePalette1] Not implemented!");
+void Encounter::blendPaletteFromGray() {
+	const int32 step = getSharedData()->getMatteBarHeight() - 90;
+	debugC(kDebugLevelEncounter, "[Encounter] Blending palette from grayscale: step %d/80", step);
+	getScreen()->blendPaletteFromGray(step, 80);
 }
 
-void Encounter::updatePalette2() {
-	debugC(kDebugLevelEncounter, "[Encounter::updatePalette2] Not implemented!");
+void Encounter::blendPaletteToGray() {
+	const int32 step = getSharedData()->getMatteBarHeight();
+	debugC(kDebugLevelEncounter, "[Encounter] Blending palette to grayscale: step %d/85", step);
+	getScreen()->blendPaletteToGray(step, 85);
 }
 
 //////////////////////////////////////////////////////////////////////////

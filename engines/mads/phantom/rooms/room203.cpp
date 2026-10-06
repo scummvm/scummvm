@@ -1830,7 +1830,7 @@ void room_203_init() {
 		conv_export_pointer(&global[christine_told_envelope]);
 		global[walker_converse] = imath_random(CONVERSE_LEAN, CONVERSE_HAND_CHIN);
 
-	} else if ((previous_room == 204) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_LAST);
 		kernel_seq_depth(seq[fx_door], 1);
 		player.x                = WALK_TO_X_BEHIND_DOOR;

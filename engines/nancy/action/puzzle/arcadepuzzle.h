@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_ARCADEPUZZLE_H
 #define NANCY_ACTION_ARCADEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 #include "graphics/managed_surface.h"
@@ -36,9 +36,9 @@ namespace Action {
 // The player controls a paddle at the bottom of the screen, bouncing a ball
 // to destroy bricks. The player needs to beat 2 levels to get the full prize.
 // Data file is 0x4e8 (1256) bytes.
-class ArcadePuzzle : public RenderActionRecord {
+class ArcadePuzzle : public PuzzleRecord {
 public:
-	ArcadePuzzle() : RenderActionRecord(7) {}
+	ArcadePuzzle() : PuzzleRecord(7) {}
 	virtual ~ArcadePuzzle();
 
 	void init() override;
@@ -101,7 +101,6 @@ protected:
 	void drawYouWin();     // shown during the kLevelClear / kGameOverWin wait states
 
 	// ---------- Data (read from stream) ----------
-	Common::Path _imageName;
 
 	uint32 _numLevelsToWin = 0;
 
@@ -164,9 +163,6 @@ protected:
 	SoundDescription _levelClearSound;   // 0x43b
 	SoundDescription _gameOverSound;     // 0x486
 	SoundDescription _lifeLostSound;     // 0x4b7
-
-	// Win scene (0x46c, 25 bytes)
-	SceneChangeWithFlag _winScene;
 
 	// ---------- Runtime state ----------
 
@@ -287,7 +283,6 @@ protected:
 	bool _launchBall = false;
 
 	// Surfaces
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _backgroundCache; // copy of initial draw surface for erasing
 };
 

@@ -28,6 +28,8 @@
 #include "scumm/insane/insane.h"
 #include "scumm/insane/rebel/rebel_audio.h"
 #include "scumm/insane/rebel/rebel_gamepad.h"
+#include "scumm/insane/rebel/rebel_touch.h"
+#include "scumm/insane/rebel1/releases.h"
 #include "scumm/smush/rebel/smush_player_ra1.h"
 
 namespace Scumm {
@@ -148,12 +150,16 @@ public:
 	void handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 		byte *renderBitmap = nullptr, int width = 0, int height = 0);
 	bool isInteractiveVideoActive() const { return _interactiveVideoActive; }
+	bool shouldPreserveWalkerRouteVideoState() const {
+		return _interactiveVideoActive && _currentLevel == 7 && _health >= 0 &&
+			_walkerHealth > 0 && !_interactiveVideoCheatSkipped;
+	}
+	bool shouldPreserveWalkerRouteOnStop() const;
 	// Touch devices use absolute aiming instead of cursor locking.
 	bool isTouchscreenActive() const;
 	void setFrameHasGameChunk(bool hasGameChunk) { _frameHasGameChunk = hasGameChunk; }
 	void setCurrentSmushFrame(int32 frame);
 	int getCurrentLevel() const { return _currentLevel; }
-	int getLevelGameplayPhase() const { return _levelGameplayPhase; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
 	uint16 getEffectiveGameOpcode() const;
 	uint16 getTargetHitGameOpcode() const;
@@ -178,6 +184,7 @@ public:
 	void resetFrameObjectState();
 
 	void runGame();
+	bool hasPlayableLevels() const { return _release.getLevelCount() != 0; }
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 	Common::Error loadGameState(int slot, bool startupLoad = false);
 	bool shouldAbortGameFlow() const { return _vm->shouldQuit() || _loadRequested; }
@@ -239,10 +246,9 @@ private:
 	void playInteractiveVideo(const char *filename, int32 startFrame = 0);
 	void resetInteractiveVideoAudio();
 	void preserveInteractiveVideoAudioState();
-	void restoreInteractiveVideoAudioState();
 	void setupInteractiveVideoState(int32 startFrame);
 	void resolveSeek(const char *filename, int32 startFrame, int32 &videoOffset, int32 &videoStartFrame);
-	void captureInteractiveVideoInput();
+	void captureInteractiveVideoInput(bool preserveInputState);
 	void releaseInteractiveVideoInput();
 	void playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame);
 	void enableIOSGamepadController();
@@ -329,6 +335,7 @@ public:
 private:
 
 	ScummEngine_v7 *_vm;
+	const Rebel1Release _release;
 
 	// Sprite and font banks.
 	RA1SpriteBank _shipBank;
@@ -414,6 +421,7 @@ private:
 	void updateOnFootSequence();
 	void updateOnFootAimVariant();
 	void finishOnFootFrame();
+	void updateLevel9PathSelector(int32 curFrame, int32 maxFrame);
 	int16 _onFootCharX;
 	int16 _onFootCharY;
 	int16 _onFootAnimCounter;
@@ -495,7 +503,9 @@ private:
 		int16 flags;
 	};
 	TuningParams _tuning;
+	Rebel1TuningTable _tuningTable;
 
+	void loadTuningData();
 	void loadTuningForLevel(int level);
 	void resetGameplayFlagsFromTuning();
 
@@ -525,14 +535,10 @@ private:
 	static const int16 kMaxHealth = 98;
 	static const int16 kDeathTimerInit = 30;
 	static const int16 kDamageCooldownInit = 10;
-	enum { kNumLevels = 15 };
+	enum { kNumLevels = Rebel1Release::kNumLevels };
 
 	// Streamed SMUSH audio.
 	RebelAudio _audio;
-	bool _restoreInteractiveVideoAudioState;
-	int16 _savedInteractiveVideoTrackState[SMUSH_MAX_TRACKS];
-	int _savedInteractiveVideoTrackGroupId[SMUSH_MAX_TRACKS];
-	int _savedInteractiveVideoTrackCount;
 	static const int kNumSfx = 8;
 	enum SfxSlot {
 		kSfxLaserShot = 0,
@@ -552,9 +558,11 @@ private:
 	bool _preserveInteractiveRuntimeState;
 	bool _interactiveVideoCheatSkipped;
 	RebelIOSGamepadControllerState _iosGamepadControllerState;
+	RebelTouchTapDetector _touchTapDetector;
 
 	// Path branching for levels with left/right alternative videos.
-	static const int32 kPathBranchCounter = 394;
+	static const int32 kLevel1BranchDecisionFrame = 0x182;
+	static const int32 kLevel1BranchCutoverFrame = 0x187;
 	int32 _gameCounter;
 	bool _pathBranchEnabled;
 	bool _rightPathSelected;
@@ -566,6 +574,8 @@ private:
 	int16 _level7WarningFrames;
 	int16 _level7WarningThreshold;
 	int _levelGameplayPhase;
+	int32 _level9PathLoopOffset;
+	int16 _level9SelectedPath;
 	bool _level14Play2BSplicePending;
 	bool _level14Play2BSpliced;
 	int32 _level14Play2BSpliceFrame;
@@ -714,11 +724,6 @@ private:
 	int16 _walkerTimer;
 	int16 _walkerBranchChoice;
 	bool _walkerRoundReplay;
-
-	// Attack window frame numbers per route.
-	static const int16 kWalkerAttackWindow1[3];
-	static const int16 kWalkerAttackWindow2[3];
-	static const int16 kWalkerAttackWindow3[3];
 
 	static const int kFrameObjectStateBytes = 300;
 	byte _frameObjectState[kFrameObjectStateBytes];

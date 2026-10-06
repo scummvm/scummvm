@@ -227,7 +227,7 @@ void room_504_init() {
 		player.y = PLAYER_Y_FROM_502;
 		player.facing = FACING_EAST;
 
-	} else if ((previous_room == 502) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 
 		seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, 1);
 		kernel_seq_depth(seq[fx_left_door], 14);
@@ -353,7 +353,6 @@ void room_504_init() {
 				kernel_draw_to_background(ss[fx_burn], 1, KERNEL_HOME, KERNEL_HOME, 0, 100);
 
 				ss[fx_test] = kernel_load_series("*CHR_3", false);
-				/* ss[fx_test]       = kernel_load_series(kernel_name('b', 0), false); */
 				ss[fx_test] = kernel_load_series("*FACERAL", PAL_MAP_ALL_TO_CLOSEST |
 					PAL_MAP_ANY_TO_CLOSEST);
 				ss[fx_test] = kernel_load_series("*FACEXDFR", PAL_MAP_ALL_TO_CLOSEST |
@@ -418,8 +417,7 @@ void room_504_init() {
 			kernel_draw_to_background(ss[fx_trap_door], 1, KERNEL_HOME, KERNEL_HOME, 0, 100);
 			seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, 1);
 			kernel_seq_depth(seq[fx_left_door], 14);
-			seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, 1);
-			kernel_seq_depth(seq[fx_left_door], 14);
+
 			if (!global[he_listened]) {
 				kernel_timing_trigger(HALF_SECOND, ROOM_504_FROM_502 + 2);
 				/* start listen conversation */
@@ -1047,9 +1045,6 @@ static void handle_animation_play_organ() {
 
 static void handle_animation_phantom_1() {
 	int phan_reset_frame;
-	/* int id; */
-
-
 
 	if (kernel_anim[aa[3]].frame != local->phan_frame) {
 		local->phan_frame = kernel_anim[aa[3]].frame;
@@ -1156,7 +1151,6 @@ static void handle_animation_phantom_1() {
 			aa[3] = kernel_run_animation(kernel_name('p', 2), ROOM_504_RUN_PART_3);
 
 			kernel_reset_animation(aa[3], 27);
-			phan_reset_frame = -1;
 			local->anim_3_running = false;
 			local->anim_4_running = true;  /* still keep aa[3], though */
 			break;
@@ -1169,8 +1163,6 @@ static void handle_animation_phantom_1() {
 		}
 	}
 }
-
-
 
 static void handle_animation_phantom_2() {
 	int phan_reset_frame;
@@ -1326,7 +1318,6 @@ static void handle_animation_chair() {
 			break;
 
 		case 47:
-			chair_reset_frame = -1;
 			player.commands_allowed = true;
 			player.walker_visible = true;
 			player.ready_to_walk = true;
@@ -1342,7 +1333,6 @@ static void handle_animation_chair() {
 		}
 	}
 }
-
 
 void room_504_daemon() {
 	int id;

@@ -115,82 +115,82 @@ static int computeQuoteAndQuantity() {
 	int quantity;
 
 	switch (player2.words[0]) {
-	case 0x252:
+	case words_hoop:
 		quoteId = 0x26F;
 		quantity = 0;
 		break;
 
-	case 0x253:
+	case words_cannonballs:
 		quoteId = 0x271;
 		quantity = 0;
 		break;
 
-	case 0x254:
+	case words_water_fountain:
 		quoteId = 0x270;
 		quantity = 0;
 		break;
 
-	case 0x255:
+	case words_hallway_to_east:
 		quoteId = 0x272;
 		quantity = 0;
 		break;
 
-	case 0x256:
+	case words_hallway_to_west:
 		quoteId = 0x267;
 		quantity = 2;
 		break;
 
-	case 0x257:
+	case words_support:
 		quoteId = 0x269;
 		quantity = 2;
 		break;
 
-	case 0x258:
+	case words_backboard:
 		quoteId = 0x268;
 		quantity = 2;
 		break;
 
-	case 0x259:
+	case words_wide_door:
 		quoteId = 0x26A;
 		quantity = 2;
 		break;
 
-	case 0x25A:
+	case words_sign_post:
 		quoteId = 0x26B;
 		quantity = 3;
 		break;
 
-	case 0x25B:
+	case words_fire_extinguisher:
 		quoteId = 0x26D;
 		quantity = 3;
 		break;
 
-	case 0x25C:
+	case words_trash:
 		quoteId = 0x26C;
 		quantity = 3;
 		break;
 
-	case 0x25D:
+	case words_missiles:
 		quoteId = 0x26E;
 		quantity = 3;
 		break;
 
-	case 0x25E:
+	case words_tank:
 		quoteId = 0x263;
 		quantity = 1;
 		break;
 
-	case 0x25F:
+	case words_two_ton_weight:
 		quoteId = 0x265;
 		quantity = 1;
 		break;
 
-	case 0x260:
+	case words_one_ton_tomato:
 		quoteId = 0x264;
 		quantity = 1;
 		break;
 
-	case 0x261:
+	case words_anvil:
 		quoteId = 0x266;
 		quantity = 1;
 		break;
@@ -226,7 +226,7 @@ static void handleKettleAction() {
 }
 
 static void handleDialog() {
-	if ((player2.words[0] != 0x262) && (kernel.trigger == 0)) {
+	if ((player2.words[0] != words_minuteman_iv_icbm) && (kernel.trigger == 0)) {
 		if (player_has(local._newIngredient)) {
 			switch (local._newIngredient) {
 			case OBJ_FORMALDEHYDE:
@@ -263,7 +263,7 @@ static void handleDialog() {
 			local._killRox = true;
 
 		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
-	} else if (player2.words[0] == 0x262)
+	} else if (player2.words[0] == words_minuteman_iv_icbm)
 		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 }
 

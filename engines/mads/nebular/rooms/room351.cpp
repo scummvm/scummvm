@@ -21,6 +21,7 @@
 
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
@@ -69,7 +70,7 @@ static void room_351_init() {
 		case 1:
 			suffixNum = 0;
 			trigger = 60;
-			global[kTeleporterCommand] = true;
+			global[kTeleporterUnderstood] = true;
 			break;
 
 		case 2:
@@ -82,7 +83,6 @@ static void room_351_init() {
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			player.turn_to_facing = FACING_SOUTH;
-			suffixNum = -1;
 			break;
 
 		default:
@@ -95,6 +95,7 @@ static void room_351_init() {
 			kernel_run_animation(kernel_name(sepChar, suffixNum), trigger);
 	}
 
+	setMacintoshMessageColors(63, 0, 0, 63, 0, 0);
 	section_3_music();
 }
 

@@ -22,9 +22,9 @@
 #include "audio/audiostream.h"
 #include "common/file.h"
 #include "mads/core/env.h"
-#include "mads/core/himem.h"
 #include "mads/core/kernel.h"
 #include "mads/core/matte.h"
+#include "mads/core/mem.h"
 #include "mads/core/mcga.h"
 #include "mads/core/mouse.h"
 #include "mads/core/pack.h"
@@ -32,6 +32,7 @@
 #include "mads/core/speech.h"
 #include "mads/core/tile.h"
 #include "mads/core/timer.h"
+#include "mads/core/video.h"
 #include "mads/animview/animview.h"
 #include "mads/animview/anim_timer.h"
 #include "mads/animview/functions.h"
@@ -45,7 +46,6 @@ namespace AnimView {
 
 constexpr bool in_mads_mode = true;
 
-Audio::AudioStream *speechStream;
 int speechFlags;
 int current_error_code;
 int currentFrame;
@@ -67,13 +67,12 @@ int imageFrame;
 CycleList anim_cycle_list;
 bool has_cycles;
 int currentViewX, currentViewY;
+int boundaryLineColor;
 int concat_mode;
 bool stop_music_at_end;
 bool wait_for_music_at_end;
-
-//static const byte FX_TIMES[16] = {
-//	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0
-//};
+bool hasSpeechAudio;
+int speechResourceId;
 
 static bool has_sound_file;
 static char sound_file_name[80];
@@ -81,9 +80,6 @@ static TileResource picture_res, depth_res;
 static Buffer scr_work_orig;
 static Room *room;
 static int viewing_at_y2;
-constexpr int SPEECH_LINES_COUNT = 10;
-static Audio::AudioStream *speech_lines[SPEECH_LINES_COUNT];
-static int speech_lines_count;
 static SeriesPtr animSeries;
 static SpritePageInfoPtr pageInfo;
 static SpritePageTablePtr pageTable;
@@ -96,13 +92,18 @@ static bool hasAnimInited;
 static int runVal1, runVal2, runVal3;
 static int runVal12;
 static int error_code;
+static int presentationBufferHeight;
+static BoundaryLineMode presentationBoundaryLines;
+static bool presentationServiceFramesInline;
 
 /**
  * Initializes animview global variables
  */
 static void init_globals() {
 	anim_timer_init();
-	functions_init();
+	// The DOS viewers initialize the resource-controlled boundary flag on;
+	// Macintosh Rex uses a separate full-height presentation without lines.
+	functions_init(!g_engine->hasMacintoshInterface());
 	concat_mode = 0;
 	has_sound_file = false;
 	*sound_file_name = '\0';
@@ -116,9 +117,10 @@ static void init_globals() {
 	current_anim = nullptr;
 	current_anim_inter = nullptr;
 	has_cycles = false;
+	boundaryLineColor = -1;
 	viewing_at_y2 = 0;
-	memset(speech_lines, 0, sizeof(speech_lines));
-	speech_lines_count = 0;
+	hasSpeechAudio = false;
+	speechResourceId = -1;
 	animSeries = nullptr;
 	pageInfo = nullptr;
 	pageTable = nullptr;
@@ -138,7 +140,6 @@ static void init_globals() {
 	runVal2 = runVal3 = -1;
 	speechIndex = speechLoops = runVal6 = 0;
 	runVal7 = runVal8 = 0;
-	speechStream = nullptr;
 	timerFlag1 = false;
 	runVal12 = 0;
 	loadFontFlag = 0;
@@ -152,7 +153,31 @@ static void init_globals() {
 	imageFrame = 0;
 }
 
+static bool isBonusDiskMode() {
+	return (g_engine->getGameFeatures() & GF_BONUS_DISK) != 0;
+}
+
+static bool bonusDiskAbortRequested() {
+	while (g_engine->hasPendingKey()) {
+		if (g_engine->getKey() == Common::KEYCODE_ESCAPE)
+			return true;
+	}
+
+	return false;
+}
+
+static void unloadRoom() {
+	if (!room)
+		return;
+
+	pal_deallocate(room->color_handle);
+	mem_free(room);
+	room = nullptr;
+}
+
 static void anim_inter_timer() {
+	// This doesn't seem to be ever used, so I didn't implement it. It seems to be
+	// for the alternate "interface" style of animations
 	error("TODO: Inter anim timer");
 }
 
@@ -169,13 +194,16 @@ static void run_animation(int animIndex) {
 		mouse_set_view_port(0, 0);
 	}
 
-	auto &screen = *g_engine->getScreen();
-	if (viewing_at_y && anim_list[animIndex].show_bars) {
-		screen.hLine(0, viewing_at_y - 2, 319, 253);
-		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 253);
-	} else if (viewing_at_y) {
-		screen.hLine(0, viewing_at_y - 2, 319, 0);
-		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 0);
+	boundaryLineColor = -1;
+	if (viewing_at_y) {
+		bool showLines = presentationBoundaryLines == kBoundaryLinesShown ||
+			(presentationBoundaryLines == kBoundaryLinesFromResource &&
+			anim_list[animIndex].show_bars);
+		boundaryLineColor = showLines ? 253 : 0;
+		g_engine->getScreen()->hLine(0, viewing_at_y - 2, 319,
+			boundaryLineColor);
+		g_engine->getScreen()->hLine(0, viewing_at_y + scr_work.y + 1,
+			319, boundaryLineColor);
 	}
 
 	buffer_fill(scr_work, 0);
@@ -201,7 +229,6 @@ static void run_animation(int animIndex) {
 	loadFontFlag = (current_anim->load_flags & AA_LOAD_FONT) != 0;
 
 	speechLoops = runVal6 = runVal7 = runVal8 = 0;
-	speechStream = 0;
 	timerFlag1 = false;
 
 	if (current_anim->background_type == AA_INTERFACE) {
@@ -225,22 +252,26 @@ static void run_animation(int animIndex) {
 		runCtr1 = 0;
 		peelFlag = current_anim->misc_peel_x || current_anim->misc_peel_y;
 		timer2 = timer1;
-		timer_activate_low_priority(anim_timer);
+		timer_activate_low_priority(presentationServiceFramesInline ?
+			nullptr : anim_timer);
 	}
 
 	// Main animation loop
 	while (currentFrame < maxFrame && !current_error_code) {
-		if (speechStream) {
-			if (current_anim->load_flags & AA_LOAD_SPEECH) {
-				//char speechName[80];
-				//MADS_FORMAT(speechName, current_anim->speech_file);
+		if (presentationServiceFramesInline &&
+				current_anim->background_type != AA_INTERFACE)
+			anim_timer();
 
-				g_engine->playSpeech(speechStream);
-				//speech_play(speechName, speechStream);
+		if (speechResourceId != -1) {
+			if (current_anim->load_flags & AA_LOAD_SPEECH) {
+				char buf[80];
+				MADS_FORMAT(buf, current_anim->speech_file);
+
+				speech_play(buf, speechResourceId);
 			}
 
 			timerFlag1 = true;
-			speechStream = 0;
+			speechResourceId = -1;
 		}
 
 		if (foundSeries && seriesMinFrame < seriesMaxFrame) {
@@ -265,10 +296,8 @@ static void run_animation(int animIndex) {
 			if (seriesFlag2 && currentFrame <= seriesMinFrame && !picture_map.one_to_one)
 				flag1 = false;
 
-			if (flag1)
-				seriesFlag2 = false;
-
 			if (flag1) {
+				seriesFlag2 = false;
 				(void)sprite_data_load(animSeries, frameIndex, largeBuffer2);
 				largeBuffer2 += pageMemNeeded;
 				++seriesMinFrame;
@@ -292,16 +321,23 @@ static void run_animation(int animIndex) {
 			}
 		}
 
-		if (g_engine->shouldQuit())
-			current_error_code = 1;
-		if (g_engine->hasPendingKey()) {
-			g_engine->flushKeys();
-			error_code = 1;
-			current_error_code = 1;
-		}
-		if (mouse_get_status(&mouse_x, &mouse_y)) {
-			current_error_code = -1;
-			error_code = 3;
+		if (isBonusDiskMode()) {
+			if (g_engine->shouldQuit() || bonusDiskAbortRequested()) {
+				error_code = 1;
+				current_error_code = 1;
+			}
+		} else {
+			if (g_engine->shouldQuit())
+				current_error_code = 1;
+			if (g_engine->hasPendingKey()) {
+				g_engine->flushKeys();
+				error_code = 1;
+				current_error_code = 1;
+			}
+			if (mouse_get_status(&mouse_x, &mouse_y)) {
+				current_error_code = -1;
+				error_code = 3;
+			}
 		}
 
 		// Animation loop delay
@@ -321,15 +357,20 @@ static void run_animation(int animIndex) {
 				// Brief pause
 				g_system->delayMillis(10);
 
-				// Check for any keypress
-				if (g_engine->hasPendingKey()) {
-					g_engine->flushKeys();
-					error_code = 1;
-					current_error_code = 1;
+				if (isBonusDiskMode()) {
+					if (g_engine->shouldQuit() || bonusDiskAbortRequested()) {
+						error_code = 1;
+						current_error_code = 1;
+					}
+				} else {
+					if (g_engine->hasPendingKey()) {
+						g_engine->flushKeys();
+						error_code = 1;
+						current_error_code = 1;
+					}
+					if (g_engine->shouldQuit())
+						current_error_code = 1;
 				}
-
-				if (g_engine->shouldQuit())
-					current_error_code = 1;
 			} while (timer_read() < timer2);
 
 			if (peelFlag) {
@@ -346,23 +387,29 @@ static void run_animation(int animIndex) {
 	if ((animIndex == (anim_count - 1)) &&
 			(wait_for_music_at_end || !exit_immediately_at_end)) {
 		while (current_error_code == 0) {
-			// Check for any keypress or mouse clicks
-			if (g_engine->hasPendingKey()) {
-				g_engine->flushKeys();
-				error_code = 1;
-				current_error_code = 1;
+			if (isBonusDiskMode()) {
+				if (g_engine->shouldQuit() || bonusDiskAbortRequested()) {
+					error_code = 1;
+					current_error_code = 1;
+				}
+			} else {
+				if (g_engine->hasPendingKey()) {
+					g_engine->flushKeys();
+					error_code = 1;
+					current_error_code = 1;
+				}
+
+				int mouseX = 0, mouseY = 0;
+				if (mouse_get_status(&mouseX, &mouseY))
+					current_error_code = 1;
+
+				if (g_engine->shouldQuit())
+					current_error_code = 1;
 			}
-
-			int mouseX = 0, mouseY = 0;
-			if (mouse_get_status(&mouseX, &mouseY))
-				current_error_code = 1;
-
-			if (g_engine->shouldQuit())
-				current_error_code = 1;
 
 			if (!exit_immediately_at_end)
 				continue;
-			if (g_engine->_soundManager->command(8))
+			if (g_engine->_soundManager->isDriverActive())
 				continue;
 			current_error_code = 1;
 		}
@@ -383,13 +430,12 @@ static void run_animation(int animIndex) {
 static void animate() {
 	char buf[80];
 	AnimFile anim_in;
-	int count, series_ctr, ctr;
+	int count, ctr;
 	int soundLoadFlag = 0;
 	int imageIndex;
 	static int packIndex = 0;
 	bool found_sound = false;
 
-	himem_startup();
 	(void)tile_setup();
 
 	mcga_compute_retrace_parameters();
@@ -407,32 +453,9 @@ static void animate() {
 		AnimEntry &entry = anim_list[count];
 
 		MADS_FORMAT(buf, entry.name);
-		himem_preload_series(buf, 0);
 
 		if (anim_get_header_info(buf, &anim_in))
 			continue;
-
-		// Preload resources used by the animation
-		if (anim_in.load_flags & AA_LOAD_FONT) {
-			*buf = '\0';
-			if (in_mads_mode)
-				Common::strcpy_s(buf, "*");
-			Common::strcat_s(buf, anim_in.font_file);
-			himem_preload_series(buf, 0);
-		}
-
-		for (series_ctr = 0; series_ctr < anim_in.num_series; ++series_ctr) {
-			MADS_FORMAT(buf, anim_in.series_name[series_ctr]);
-			himem_preload_series(buf, 0);
-		}
-
-		if (anim_in.background_type == AA_ROOM) {
-			static const char *EXT[5] = { ".dat", ".tt", ".mm", ".tt0", ".mm0" };
-			for (int i = 0; i < 5; ++i) {
-				env_get_level_path(buf, anim_in.background_room, EXT[i], 3, 0);
-				himem_preload_series(buf, 0);
-			}
-		}
 
 		if (g_engine->shouldQuit())
 			error_code = 1;
@@ -459,7 +482,7 @@ static void animate() {
 
 		if ((!stop_music_at_end || found_sound) && !g_engine->_soundManager->isLoaded()) {
 			// Initialize the sound driver
-			char ext = sound_file_name[strlen(sound_file_name) - 1];
+			char ext = strlen(sound_file_name) > 0 ? sound_file_name[strlen(sound_file_name) - 1] : '0';
 			int section = (g_engine->isDemo() && !Common::isDigit(ext)) ? 1 : ext - '0';
 			g_engine->_soundManager->init(section);
 		}
@@ -471,8 +494,7 @@ static void animate() {
 			tile_map_free(&depth_map);
 
 			if (room) {
-				pal_deallocate(room->color_handle);
-				mem_free(room);
+				unloadRoom();
 			} else {
 				pal_init(1, 8);
 				mouse_hard_cursor_mode(2, master_palette);
@@ -505,7 +527,8 @@ static void animate() {
 		has_cycles = anim_cycle_list.num_cycles > 0;
 		current_anim_inter = (AnimInterPtr)current_anim;
 
-		int height = (scr_orig.y == 200) ? 200 : 156;
+		int height = presentationBufferHeight ? presentationBufferHeight :
+			((scr_orig.y == 200) ? 200 : 156);
 		buffer_init(&scr_work, 320, height);
 		scr_inter = scr_work;
 		assert(scr_work.data);
@@ -514,20 +537,29 @@ static void animate() {
 		viewing_at_y2 = viewing_at_y;
 
 		buffer_fill(scr_work, 0);
+		if (isBonusDiskMode() && count == 0) {
+			// AnimView normally relies on its first timer callback for the full
+			// background refresh. The Bonus text renderer uses a separate output
+			// surface, so establish the MADS game surface before any delta frames
+			// can expose the preceding cutscene. Do not present it yet: the first
+			// animation effect still owns the transition from the black screen.
+			buffer_rect_copy_2(scr_orig, scr_work,
+					picture_map.pan_offset_x, picture_map.pan_offset_y,
+					0, 0, scr_work.x, scr_work.y);
+			video_update(&scr_work, 0, 0, 0, viewing_at_y,
+					scr_work.x, scr_work.y);
+		}
 
 		// Speech handling
-		speech_lines_count = 0;
-		for (ctr = 0; ctr < current_anim->num_speech; ++ctr) {
-			Speech &speech = current_anim->speech[ctr];
-			speech.speech = nullptr;
+		hasSpeechAudio = false;
+		speechResourceId = -1;
 
-			if ((speech.flags & 0x2000) && speech_lines_count < SPEECH_LINES_COUNT) {
+		for (ctr = 0; ctr < current_anim->num_speech && !hasSpeechAudio; ++ctr) {
+			Speech &speech = current_anim->speech[ctr];
+			if (g_engine->getGameID() == GType_RexNebular || (speech.flags & 0x2000)) {
 				// Load the speech audio
 				MADS_FORMAT(buf, current_anim->speech_file);
-				speech_lines[speech_lines_count] = speech.speech =
-					speech_load(buf, speech.resource_id);
-
-				++speech_lines_count;
+				hasSpeechAudio = *current_anim->speech_file && env_exist(buf);
 			}
 		}
 
@@ -566,10 +598,8 @@ static void animate() {
 		// Run the animation
 		run_animation(count);
 
-		for (auto &line : speech_lines) {
-			mem_free(line);
-			line = nullptr;
-		}
+		// Stop any speech
+		speech_all_off();
 
 		mem_free(largeBuffer);
 		largeBuffer = nullptr;
@@ -594,6 +624,7 @@ static void animate() {
 	}
 done:
 	timer_activate_low_priority(nullptr);
+	anim_timer_shutdown();
 	buffer_free(&scr_work);
 	anim_unload(current_anim);
 	buffer_free(&scr_depth);
@@ -601,21 +632,32 @@ done:
 	tile_map_free(&picture_map);
 	tile_map_free(&depth_map);
 
-	if (room)
-		mem_free(room);
+	unloadRoom();
 	timer_set_sound_flag(false);
 
 	if (g_engine->_soundManager->isLoaded())
 		g_engine->_soundManager->removeDriver();
 
 	timer_remove();
-	himem_shutdown();
 }
 
-void animview_main(const char *resName) {
+void animview_main(const char *resName, const Presentation &presentation) {
 	char name[16];
+	presentationBufferHeight = presentation.bufferHeight;
+	presentationBoundaryLines = presentation.boundaryLines;
+	presentationServiceFramesInline = presentation.serviceFramesInline;
 
 	init_globals();
+
+	if (isBonusDiskMode()) {
+		// The Bonus Disk text UI draws directly to the backend. Clear the MADS
+		// game surface as well so a subsequent AnimView cannot inherit pixels
+		// from an earlier, interrupted presentation.
+		g_engine->getScreen()->fillRect(
+				Common::Rect(0, 0, g_engine->getScreen()->w,
+						g_engine->getScreen()->h), 0);
+		g_engine->updateDisplay();
+	}
 
 	pack_enable_pfab_explode();
 	(void)env_verify();
@@ -650,6 +692,5 @@ void animview_main(const char *resName) {
 
 	g_engine->flushKeys();
 }
-
 } // namespace AnimView
 } // namespace MADS

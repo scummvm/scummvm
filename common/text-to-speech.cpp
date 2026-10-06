@@ -149,6 +149,14 @@ Array<int> TextToSpeechManager::getVoiceIndicesByGender(TTSVoice::Gender gender)
 		if (_ttsState->_availableVoices[i].getGender() == gender)
 			results.push_back(i);
 	}
+	if (results.size() > 0) {
+		return results;
+	}
+	// If there were no results, add unknown gender ones
+	for (unsigned i = 0; i < _ttsState->_availableVoices.size(); i++) {
+		if (_ttsState->_availableVoices[i].getGender() == TTSVoice::UNKNOWN_GENDER)
+			results.push_back(i);
+	}
 	return results;
 }
 

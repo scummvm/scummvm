@@ -19,32 +19,53 @@
  *
  */
 
+#include "common/compression/unp64.h"
+#include "common/endian.h"
+
 #include "freescape/freescape.h"
 
 namespace Freescape {
 
-byte *FreescapeEngine::decompressC64RLE(byte *buffer, int *size, byte marker) {
-	Common::MemoryReadWriteStream *tmp = new Common::MemoryReadWriteStream(DisposeAfterUse::NO);
-	// Format is: [ Byte, Marker, Length ] or [ Byte ]
-	for (int i = 0; i < *size - 1; ) {
-		if (buffer[i] == marker && i > 0) {
-			int length = buffer[i + 1];
-			byte value = buffer[i - 1];
-			if (length == 0)
-				tmp->writeByte(value);
+Common::Array<byte> FreescapeEngine::unpackC64Snapshot(Common::SeekableReadStream *file, const Common::Path &continuation) {
+	if (file->size() <= 2 || file->size() > 0x10002)
+		error("Invalid C64 program size");
 
-			for (int j = 0; j < length; j++) {
-				tmp->writeByte(value);
-			}
-			i += 2;
-		} else {
-			tmp->writeByte(buffer[i]);
-			i += 1;
-		}
-	}
-	*size = tmp->size();
-	byte *data = tmp->getData();
-	delete tmp;
+	Common::Array<byte> packed;
+	packed.resize(file->size());
+	file->seek(0);
+	if (file->read(packed.data(), packed.size()) != packed.size())
+		error("Unable to read C64 program");
+
+	uint32 endAddress = READ_LE_UINT16(packed.data()) + packed.size() - 2;
+	if (endAddress > 0x10000)
+		error("Invalid C64 program load address");
+
+	Common::File part;
+	if (!part.open(continuation))
+		error("Unable to open C64 continuation %s", continuation.toString().c_str());
+	if (part.size() <= 2 || part.size() - 2 > 0x10000 - endAddress || part.readUint16LE() != endAddress)
+		error("Invalid C64 continuation %s", continuation.toString().c_str());
+
+	uint32 offset = packed.size();
+	uint32 partSize = part.size() - 2;
+	packed.resize(offset + partSize);
+	if (part.read(packed.data() + offset, partSize) != partSize)
+		error("Truncated C64 continuation %s", continuation.toString().c_str());
+
+	return unpackC64Snapshot(packed);
+}
+
+Common::Array<byte> FreescapeEngine::unpackC64Snapshot(const Common::Array<byte> &packed) {
+	Common::Array<byte> data;
+	data.resize(0x10000);
+	uint32 size = 0;
+	if (!Common::Unp64::unp64(packed.data(), packed.size(), data.data(), &size, nullptr))
+		error("Unable to unpack C64 snapshot");
+	if (size != data.size() || READ_LE_UINT16(data.data()) != 2)
+		error("Incomplete C64 snapshot");
+
+	// The PRG covers $0002..$ffff, so its payload is already at the RAM offsets.
+	data[0] = data[1] = 0;
 	return data;
 }
 

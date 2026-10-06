@@ -1292,6 +1292,29 @@ void MacGuiImpl::drawFakeDriveLabel(MacDialogWindow *window, Common::Rect r, con
 	drawBitmap(window->innerSurface(), iconRect, hardDriveIcon, black);
 }
 
+void MacGuiImpl::queryQuit(bool returnToLauncher) {
+	Common::EventManager *eventMan = _system->getEventManager();
+	Common::Event event;
+
+	// Flush any remaining QUIT events
+	while (eventMan->pollEvent(event))
+		;
+
+	eventMan->resetQuit();
+	eventMan->resetReturnToLauncher();
+
+	if (!(ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) || runQuitDialog()) {
+		_vm->_quitByGUIPrompt = true;
+		if (returnToLauncher) {
+			Common::Event fakeEvent;
+			event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+			eventMan->pushEvent(event);
+		} else {
+			_vm->quitGame();
+		}
+	}
+}
+
 bool MacGuiImpl::runQuitDialog() {
 	return runOkCancelDialog(_strsStrings[kMSIAreYouSureYouWantToQuit].c_str());
 }

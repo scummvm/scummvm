@@ -21,6 +21,7 @@
 
 #include "mads/nebular/rooms/forcefield.h"
 #include "mads/mads.h"
+#include "mads/nebular/sound/mac_sound.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -43,7 +44,8 @@ void init_forcefield(Forcefield *force, bool flag) {
 	for (int count = 0; count < 40; count++)
 		force->_seqId[count] = -1;
 
-	if (force->_flag)
+	if (force->_flag && !Sound::commandMacintoshSound(Sound::kMacSoundPlay,
+			3024, 0, 0, 0, true))
 		g_engine->_soundManager->command(24);
 }
 

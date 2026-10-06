@@ -103,7 +103,7 @@ void DuckmanSpecialCode::init() {
 void DuckmanSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
 	SpecialCodeMapIterator it = _specialCodeMap.find(specialCodeId);
 	if (it != _specialCodeMap.end()) {
-		(*(*it)._value)(opCall);
+		(*it->_value)(opCall);
 	} else {
 		debug("DuckmanSpecialCode::run() Unimplemented special code %08X", specialCodeId);
 		_vm->notifyThreadId(opCall._threadId);

@@ -211,7 +211,7 @@ bool AnimationResource::precacheAllFrames() const {
 			return false;
 		}
 #else
-		Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource((*iter).fileName);
+		Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(iter->fileName);
 		pResource->release(); //unlock precached resource
 #endif
 	}
@@ -231,8 +231,8 @@ bool AnimationResource::computeFeatures() {
 	Common::Array<Frame>::const_iterator iter = _frames.begin();
 	for (; iter != _frames.end(); ++iter) {
 		BitmapResource *pBitmap;
-		if (!(pBitmap = static_cast<BitmapResource *>(Kernel::getInstance()->getResourceManager()->requestResource((*iter).fileName)))) {
-			error("Could not request \"%s\".", (*iter).fileName.c_str());
+		if (!(pBitmap = static_cast<BitmapResource *>(Kernel::getInstance()->getResourceManager()->requestResource(iter->fileName)))) {
+			error("Could not request \"%s\".", iter->fileName.c_str());
 			return false;
 		}
 

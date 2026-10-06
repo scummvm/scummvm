@@ -27,6 +27,7 @@
 #include "common/textconsole.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
+#include "graphics/macgamma.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/surface.h"
@@ -34,6 +35,7 @@
 #include "mads/core/color.h"
 #include "mads/core/inter.h"
 #include "mads/core/pack.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/mac_resources.h"
 
 namespace MADS {
@@ -94,6 +96,14 @@ static byte *createUncompressedPack(uint32 payloadSize, byte priority) {
 	WRITE_LE_UINT32(data + PACK_HEADER + 2, payloadSize);
 	WRITE_LE_UINT32(data + PACK_HEADER + 6, payloadSize);
 	return data;
+}
+
+static byte macGammaCorrectPaletteComponent(byte color) {
+	return Graphics::macGammaCorrectionLookUp[color & 0xfc];
+}
+
+static byte macPaletteComponentToSixBit(byte color) {
+	return (color * 63 + 127) / 255;
 }
 
 struct GlobalSeriesFamily {
@@ -194,6 +204,25 @@ Common::SeekableReadStream *MacResourceProvider::openResource(
 	return resourceContainer ? resourceContainer->getResource(type, id) : nullptr;
 }
 
+Common::String MacResourceProvider::getApplicationVersion() const {
+	Common::SeekableReadStream *stream = openResource(kApplicationContainer,
+		MKTAG('R', 'X', 'g', 'm'), 0);
+	if (!stream)
+		return Common::String();
+
+	const uint length = stream->readByte();
+	char version[256];
+	if (length > stream->size() - stream->pos() ||
+			stream->read(version, length) != length) {
+		delete stream;
+		return Common::String();
+	}
+
+	version[length] = '\0';
+	delete stream;
+	return Common::String(version);
+}
+
 const Graphics::Font *MacResourceProvider::getDialogFont() {
 	if (!_fontManager)
 		return nullptr;
@@ -215,6 +244,23 @@ const Graphics::Font *MacResourceProvider::getInterfaceFont() {
 		Graphics::kMacFontGeneva, 10, Graphics::kMacFontRegular));
 }
 
+const Graphics::Font *MacResourceProvider::getGameFont() {
+	if (!_fontManager)
+		return nullptr;
+
+	return _fontManager->getFont(Graphics::MacFont(
+		Graphics::kMacFontGeneva, 10, Graphics::kMacFontBold));
+}
+
+const Graphics::Font *MacResourceProvider::getAboutFont(int size, bool bold) {
+	if (!_fontManager)
+		return nullptr;
+
+	return _fontManager->getFont(Graphics::MacFont(
+		Graphics::kMacFontGeneva, size,
+		bold ? Graphics::kMacFontBold : Graphics::kMacFontRegular));
+}
+
 MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::String &filename) {
 	Common::String name(filename);
 	name.toUppercase();
@@ -226,7 +272,7 @@ MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::S
 		return { kGlobalContainer, MKTAG('V', 'o', 'c', 'a'), 1000 };
 	if (name == "OBJECTS.DAT")
 		return { kGlobalContainer, MKTAG('O', 'b', 'j', 'e'), 1000 };
-	if (name == "QUOTES.DAT")
+	if (name == "QUOTES.DAT" || name == "QUOTES.TXR")
 		return { kGlobalContainer, MKTAG('Q', 'u', 'o', 't'), 1000 };
 	if (name == "HOGANUS.DAT")
 		return { kGlobalContainer, MKTAG('H', 'o', 'g', 'a'), 1000 };
@@ -240,6 +286,15 @@ MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::S
 		return { kGlobalContainer, MKTAG('M', 'e', 't', 'h'), 1000 };
 	if (name == "BTSPIN.SS")
 		return { kGlobalContainer, MKTAG('B', 't', 's', 'p'), 1000 };
+	if (name == "@REXOPEN")
+		return { kSection9Container, MKTAG('A', 'R', 'e', 's'), 1078 };
+	if (name.hasPrefix("@REXEND") && name.size() == 8 &&
+			name[7] >= '1' && name[7] <= '3') {
+		return { kSection9Container, MKTAG('A', 'R', 'e', 's'),
+			(uint16)(1048 + name[7] - '0') };
+	}
+	if (name == "CREDITS.TXR")
+		return { kGlobalContainer, MKTAG('C', 'R', 'E', 'D'), 1000 };
 
 	if (name.hasPrefix("ENDING") && name.hasSuffix(".TXR") && name.size() == 11 &&
 			name[6] >= '0' && name[6] <= '9') {
@@ -310,8 +365,6 @@ MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::S
 		return result;
 
 	const int section = room / 100;
-	if (section < 1 || section > 9)
-		return result;
 	result.container = (Container)(kSection1Container + section - 1);
 
 	const int extensionAt = name.findLastOf('.');
@@ -381,8 +434,7 @@ Common::SeekableReadStream *MacResourceProvider::createFontResource() {
 	// The native executable consistently selects bold Geneva (font ID 3) at
 	// 10 points for in-game text. MADS' DOS renderer expects its own packed
 	// font format, so rasterize the native system font into that format.
-	const Graphics::Font *font = _fontManager->getFont(Graphics::MacFont(
-		Graphics::kMacFontGeneva, 10, Graphics::kMacFontBold));
+	const Graphics::Font *font = getGameFont();
 	if (!font)
 		return nullptr;
 
@@ -446,7 +498,7 @@ Common::SeekableReadStream *MacResourceProvider::createFontResource() {
 Common::SeekableReadStream *MacResourceProvider::createInterfaceResource(int interfaceID) {
 	// The Macintosh port replaces each DOS I#.INT bitmap with an InBx ILBM.
 	// Adapt its 512x88 native interface to the shared 320x44 MADS renderer;
-	// the images use only the first eight palette indices.
+	// the native loader maps its first ten palette indices to slots 2 through 11.
 	Common::SeekableReadStream *source = _containers[kGlobalContainer]->getResource(
 		MKTAG('I', 'n', 'B', 'x'), 1000 + interfaceID);
 	if (!source)
@@ -457,15 +509,31 @@ Common::SeekableReadStream *MacResourceProvider::createInterfaceResource(int int
 	delete source;
 	const Graphics::Surface *surface = decoder.getSurface();
 	if (!loaded || !surface || surface->format.bytesPerPixel != 1 ||
-			surface->w <= 0 || surface->h <= 0 || decoder.getPalette().size() < 16) {
+			surface->w <= 0 || surface->h <= 0 || decoder.getPalette().size() < 10) {
 		warning("Invalid Macintosh Rex interface resource I%d", interfaceID);
 		return nullptr;
+	}
+
+	for (int y = 0; y < surface->h; ++y) {
+		const byte *sourceRow = (const byte *)surface->getBasePtr(0, y);
+		for (int x = 0; x < surface->w; ++x) {
+			if (sourceRow[x] >= 10) {
+				warning("Macintosh Rex interface I%d uses unsupported color %u",
+					interfaceID, sourceRow[x]);
+				return nullptr;
+			}
+		}
 	}
 
 	// Keep the unscaled native panel for the Macintosh presentation path.
 	// The synthetic pack below exists only so the shared interface state
 	// machine can continue operating in its original 320x44 coordinate space.
 	_nativeInterface.copyFrom(*surface);
+	for (int y = 0; y < _nativeInterface.h; ++y) {
+		byte *row = (byte *)_nativeInterface.getBasePtr(0, y);
+		for (int x = 0; x < _nativeInterface.w; ++x)
+			row[x] += 2;
+	}
 
 	const uint32 payloadSize = sizeof(Color) * 16 + video_x * inter_size_y;
 	const uint32 size = PackList::SIZE + payloadSize;
@@ -474,26 +542,28 @@ Common::SeekableReadStream *MacResourceProvider::createInterfaceResource(int int
 		return nullptr;
 
 	Color *colors = (Color *)(data + PackList::SIZE);
-	const Graphics::Palette &palette = decoder.getPalette();
-	for (uint i = 0; i < 16; ++i) {
-		byte r, g, b;
-		palette.get(i, r, g, b);
-		_nativeInterfacePalette[i * 3 + 0] = r;
-		_nativeInterfacePalette[i * 3 + 1] = g;
-		_nativeInterfacePalette[i * 3 + 2] = b;
-		colors[i].r = PALETTE_8BIT_TO_6BIT(r);
-		colors[i].g = PALETTE_8BIT_TO_6BIT(g);
-		colors[i].b = PALETTE_8BIT_TO_6BIT(b);
+	for (int i = 0; i < 16; ++i) {
+		colors[i].r = master_palette[i].r;
+		colors[i].g = master_palette[i].g;
+		colors[i].b = master_palette[i].b;
 	}
 
-	// InBx pixels use only colors 0 through 7. The native interface code
-	// selects 13, 14, and 15 for its two selection states and normal text,
-	// respectively; supply those QuickDraw foreground colors independently
-	// of the bitmap's otherwise-black unused CMAP entries.
-	colors[8].r = colors[8].g = colors[8].b = 0;
-	colors[13] = colors[1];
-	colors[14] = colors[2];
-	colors[15].r = colors[15].g = colors[15].b = 63;
+	const Graphics::Palette &palette = decoder.getPalette();
+	for (uint i = 0; i < 10; ++i) {
+		byte r, g, b;
+		palette.get(i, r, g, b);
+		// The native loader truncates CMAP components to six bits before
+		// Macintosh display gamma is applied.
+		const byte correctedR = macGammaCorrectPaletteComponent(r);
+		const byte correctedG = macGammaCorrectPaletteComponent(g);
+		const byte correctedB = macGammaCorrectPaletteComponent(b);
+		_nativeInterfacePalette[i * 3 + 0] = correctedR;
+		_nativeInterfacePalette[i * 3 + 1] = correctedG;
+		_nativeInterfacePalette[i * 3 + 2] = correctedB;
+		colors[i + 2].r = macPaletteComponentToSixBit(correctedR);
+		colors[i + 2].g = macPaletteComponentToSixBit(correctedG);
+		colors[i + 2].b = macPaletteComponentToSixBit(correctedB);
+	}
 
 	byte *target = data + PackList::SIZE + sizeof(Color) * 16;
 	for (int y = 0; y < inter_size_y; ++y) {
@@ -501,13 +571,7 @@ Common::SeekableReadStream *MacResourceProvider::createInterfaceResource(int int
 		const byte *sourceRow = (const byte *)surface->getBasePtr(0, sourceY);
 		for (int x = 0; x < video_x; ++x) {
 			const int sourceX = ((2 * x + 1) * surface->w) / (2 * video_x);
-			const byte color = sourceRow[sourceX];
-			if (color >= 16) {
-				warning("Macintosh Rex interface I%d uses unsupported color %u", interfaceID, color);
-				free(data);
-				return nullptr;
-			}
-			target[y * video_x + x] = color;
+			target[y * video_x + x] = sourceRow[sourceX] + 2;
 		}
 	}
 
@@ -575,7 +639,8 @@ bool MacResourceProvider::setCursor(int id) {
 		_nextCursorTime = g_system->getMillis() + 15;
 		return installCursorResource(1000);
 	}
-	if (id >= 3 && id <= 6)
+
+	if (id <= 6)
 		return installCursorResource(3000 + id);
 	return false;
 }

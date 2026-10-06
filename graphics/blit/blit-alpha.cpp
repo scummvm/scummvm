@@ -64,7 +64,7 @@ static inline void alphaBlitLogic(byte *dst, const byte *src, const byte *mask, 
 						const int srcInc, const int dstInc, const int maskInc,
 						const uint32 key, const byte flip, const byte aMod) {
 	const uint32 alphaMask = srcFmt.ARGBToColor(255, 0, 0, 0);
-	const bool convert = hasMap ? false : ((SrcSize != DstSize) ? true : srcFmt == dstFmt);
+	const bool convert = hasMap ? false : ((SrcSize != DstSize) ? true : srcFmt != dstFmt);
 
 	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
@@ -151,9 +151,9 @@ static inline bool alphaBlitHelper(byte *dst, const byte *src, const byte *mask,
 	if (flipy && flipx)
 		dstDelta = -dstDelta;
 	else if (flipy)
-		dstDelta = -((dstPitch * 2) - dstDelta);
+		dstDelta = -(static_cast<int>(dstPitch * 2) - dstDelta);
 	else if (flipx)
-		dstDelta =   (dstPitch * 2) - dstDelta;
+		dstDelta = static_cast<int>(dstPitch * 2) - dstDelta;
 
 	if (aMod == 0)
 		return true;
@@ -209,9 +209,9 @@ static inline bool alphaBlitMapHelper(byte *dst, const byte *src, const byte *ma
 	if (flipy && flipx)
 		dstDelta = -dstDelta;
 	else if (flipy)
-		dstDelta = -((dstPitch * 2) - dstDelta);
+		dstDelta = -(static_cast<int>(dstPitch * 2) - dstDelta);
 	else if (flipx)
-		dstDelta =   (dstPitch * 2) - dstDelta;
+		dstDelta = static_cast<int>(dstPitch * 2) - dstDelta;
 
 	// TODO: optimized cases for dstDelta of 0
 	if (dstFmt.bytesPerPixel == 2) {

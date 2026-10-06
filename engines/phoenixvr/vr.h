@@ -40,14 +40,15 @@ class VR {
 	struct Animation {
 		struct Frame {
 			Common::Array<byte> blockData;
-			int restartAtFrame = -1;
 			void render(Graphics::Surface &pic) const;
 		};
 
 		Common::String name;
 		Common::Array<Frame> frames;
+		int restartAtFrame = -1;
 
 		bool active = false;
+		bool stopRequested = false;
 		float t = 0;
 		float speed = 25.0f;
 

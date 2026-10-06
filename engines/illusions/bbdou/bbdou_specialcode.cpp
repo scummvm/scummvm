@@ -210,7 +210,7 @@ void BbdouSpecialCode::init() {
 void BbdouSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
 	MapIterator it = _map.find(specialCodeId);
 	if (it != _map.end()) {
-		(*(*it)._value)(opCall);
+		(*it->_value)(opCall);
 	} else {
 		debug("BbdouSpecialCode::run() Unimplemented special code %08X", specialCodeId);
 		_vm->notifyThreadId(opCall._threadId);

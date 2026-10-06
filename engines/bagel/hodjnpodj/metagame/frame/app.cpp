@@ -98,7 +98,7 @@ int CTheApp::ExitInstance() {
 }
 
 void CTheApp::selectMinigame() {
-	bool isMODDemo = false, isAPDemo = false;;
+	bool isMODDemo = false, isAPDemo = false;
 	const auto *game = Metagame::CMgStatic::cGameTable;
 
 	for (; game->m_iGameCode; ++game) {

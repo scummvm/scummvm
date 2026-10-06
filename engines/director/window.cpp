@@ -31,6 +31,7 @@
 #include "director/cast.h"
 #include "director/debugger.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-profiler.h"
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/score.h"
@@ -609,6 +610,19 @@ bool Window::loadNextMovie() {
 
 	if (_currentMovie && archivePath == _currentMovie->getArchive()->getPathName()) {
 		debug(0, "Window::loadNextMovie: next movie '%s' is the same as current movie, skipping load", archivePath.toString(Common::Path::kNativeSeparator).c_str());
+
+		// Jump to the correct frame
+		_currentMovie->getScore()->_playState = kPlayStarted;
+		_nextMovie.movie.clear();
+		if (!_nextMovie.frameS.empty()) {
+			_currentMovie->getScore()->setStartToLabel(_nextMovie.frameS);
+			_nextMovie.frameS.clear();
+		}
+
+		if (_nextMovie.frameI != -1) {
+			_currentMovie->getScore()->setCurrentFrame(_nextMovie.frameI);
+			_nextMovie.frameI = -1;
+		}
 		return true;
 	}
 
@@ -820,6 +834,8 @@ Common::Path Window::getSharedCastPath() {
 }
 
 void Window::freezeLingoState() {
+	if (g_director->_lingoProfiler)
+		g_director->_lingoProfiler->onFreeze();
 	_frozenLingoStates.push_back(_lingoState);
 	_lingoState = new LingoState;
 	debugC(3, kDebugLingoExec, "Freezing Lingo state, depth %d", _frozenLingoStates.size());
@@ -834,6 +850,8 @@ void Window::thawLingoState() {
 		warning("Can't thaw a Lingo state in mid-execution, ignoring");
 		return;
 	}
+	if (g_director->_lingoProfiler)
+		g_director->_lingoProfiler->onThaw();
 	delete _lingoState;
 	debugC(3, kDebugLingoExec, "Thawing Lingo state, depth %d", _frozenLingoStates.size());
 	_lingoState = _frozenLingoStates.back();

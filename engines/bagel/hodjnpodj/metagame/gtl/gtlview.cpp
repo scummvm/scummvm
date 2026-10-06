@@ -512,7 +512,7 @@ void CGtlView::OnTimer(uintptr nEventID) {
 
 
 bool CGtlView::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
-	if ((*pWnd).m_hWnd == (*this).m_hWnd)
+	if (pWnd->m_hWnd == (this)->m_hWnd)
 		return true;
 	else
 		return false;

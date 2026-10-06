@@ -20,8 +20,11 @@
  */
 
 #include "common/util.h"
+#include "graphics/managed_surface.h"
 
 #include "director/director.h"
+#include "director/picture.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -371,7 +374,45 @@ XOBJSTUB(MovUtilsXObj::m_bitOr, 0)
 XOBJSTUB(MovUtilsXObj::m_bitXOr, 0)
 XOBJSTUB(MovUtilsXObj::m_bitNot, 0)
 XOBJSTUB(MovUtilsXObj::m_bitStringToNumber, 0)
-XOBJSTUB(MovUtilsXObj::m_stageToCast, 0)
+void MovUtilsXObj::m_stageToCast(int nargs) {
+	Datum result(0);
+	if (nargs != 1) {
+		warning("MovUtilsXObj::m_stageToCast(): expected 1 arg");
+		g_lingo->dropStack(nargs);
+	} else {
+		Datum rectArg = g_lingo->pop();
+		if (rectArg.type != RECT) {
+			warning("MovUtilsXObj::m_stageToCast(): expected a rect, got %s", rectArg.type2str());
+		} else {
+			Graphics::ManagedSurface *stage = g_director->getStage()->getSurface();
+			Common::Rect rect(rectArg.u.farr->arr[0].asInt(), rectArg.u.farr->arr[1].asInt(),
+				rectArg.u.farr->arr[2].asInt(), rectArg.u.farr->arr[3].asInt());
+			rect.clip(Common::Rect(stage->w, stage->h));
+
+			if (rect.isEmpty()) {
+				warning("MovUtilsXObj::m_stageToCast(): capture rect is empty");
+			} else {
+				// Snapshot the requested region of the stage into a picture.
+				Picture *pic = new Picture();
+				pic->_surface.copyFrom(stage->getSubArea(rect));
+
+				const byte *palette = g_director->_wm->getPalette();
+				if (palette) {
+					int numColors = MIN<int>(g_director->_wm->getPaletteSize(), 256);
+					pic->_paletteColors = numColors;
+					memcpy(pic->_palette, palette, numColors * 3);
+				}
+
+				PictureReference *ref = new PictureReference;
+				ref->_picture = pic;
+				result.type = PICTUREREF;
+				result.u.picture = ref;
+			}
+		}
+	}
+	g_lingo->push(result);
+}
+
 XOBJSTUB(MovUtilsXObj::m_stageToDIB, 0)
 XOBJSTUB(MovUtilsXObj::m_stageToPICT, 0)
 XOBJSTUB(MovUtilsXObj::m_cRtoCRLF, "")

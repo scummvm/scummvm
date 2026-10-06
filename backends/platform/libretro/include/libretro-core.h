@@ -25,15 +25,17 @@ extern retro_input_state_t retro_input_cb;
 extern struct retro_midi_interface *retro_midi_interface;
 
 bool retro_get_input_bitmask_supported(void);
-void retro_osd_notification(const char *msg);
+void retro_osd_notification(const char *msg, enum retro_log_level level = RETRO_LOG_INFO);
 int retro_get_input_device(void);
 const char *retro_get_core_dir(void);
 const char *retro_get_system_dir(void);
+const char *retro_get_file_browser_start_dir(void);
 const char *retro_get_save_dir(void);
 const char *retro_get_playlist_dir(void);
 
 float retro_setting_get_frame_rate(void);
 uint16 retro_setting_get_sample_rate(void);
+bool retro_setting_get_browsing_mode_authorized(void);
 uint16 retro_setting_get_audio_samples_buffer_size(void);
 int retro_setting_get_analog_deadzone(void);
 bool retro_setting_get_analog_response_is_quadratic(void);

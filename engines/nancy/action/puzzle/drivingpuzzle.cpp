@@ -206,7 +206,7 @@ void DrivingPuzzle::classifyZones(const Common::Array<ActionZone> &zones) {
 	}
 }
 
-void DrivingPuzzle::playSoundBlock(const RandomSoundBlock &block) {
+void DrivingPuzzle::playSoundBlockRawLoops(const RandomSoundBlock &block) {
 	if (block.names.empty()) {
 		return;
 	}
@@ -228,23 +228,23 @@ void DrivingPuzzle::playSoundBlock(const RandomSoundBlock &block) {
 }
 
 void DrivingPuzzle::armExit(const DestinationZone &dest) {
-	_exitScene = dest.scene;
+	_exitScene._sceneChange = dest.scene;
+	_exitScene._flag.label = dest.eventFlag;
+	_exitScene._flag.flag = dest.eventFlagValue ? g_nancy->_true : g_nancy->_false;
 	_exitHasFade = dest.hasFade;
 	_exitFadeType = dest.fadeType;
 	_exitFadeTotalTime = dest.fadeTotalTime;
 	_exitFadeToBlackTime = dest.fadeToBlackTime;
 	_exitFadeRect = dest.fadeRect;
-	_exitFlag = dest.eventFlag;
-	_exitFlagValue = dest.eventFlagValue;
 	_state = kActionTrigger;
 }
 
 void DrivingPuzzle::armExitScene(uint16 sceneID, int16 flag, byte flagValue) {
-	_exitScene = SceneChangeDescription();
-	_exitScene.sceneID = sceneID;
+	_exitScene._sceneChange = SceneChangeDescription();
+	_exitScene._sceneChange.sceneID = sceneID;
+	_exitScene._flag.label = flag;
+	_exitScene._flag.flag = flagValue ? g_nancy->_true : g_nancy->_false;
 	_exitHasFade = false;
-	_exitFlag = flag;
-	_exitFlagValue = flagValue;
 	_state = kActionTrigger;
 }
 
@@ -394,7 +394,7 @@ void DrivingPuzzle::saveState() const {
 void DrivingPuzzle::refillFuel() {
 	const UIRC *uirc = GetEngineData(UIRC)
 	if (uirc && _frictionIndex >= 0 && (uint)_frictionIndex < uirc->items.size()) {
-		NancySceneState.setUIResource(_frictionIndex, uirc->items[_frictionIndex].id);
+		NancySceneState.setUIResource(_frictionIndex, uirc->items[_frictionIndex].startingValue);
 		_fuelBurnAccum = 0.0;
 	}
 }
@@ -403,7 +403,7 @@ void DrivingPuzzle::repairTire() {
 	_tireDamage = 0;
 	const UIRC *uirc = GetEngineData(UIRC)
 	if (uirc && kTireResourceIndex < uirc->items.size()) {
-		NancySceneState.setUIResource(kTireResourceIndex, uirc->items[kTireResourceIndex].id);
+		NancySceneState.setUIResource(kTireResourceIndex, uirc->items[kTireResourceIndex].startingValue);
 	}
 }
 
@@ -658,7 +658,7 @@ void DrivingPuzzle::updatePhysics(int throttle, double cursorDist) {
 			if (_tireDamage >= kTireFlatThreshold) {
 				_tireDamage = 0;
 				_flatTirePending = true;
-				playSoundBlock(_soundBlocks[0]);	// tire blowout
+				playSoundBlockRawLoops(_soundBlocks[0]);	// tire blowout
 			}
 		}
 		hole.carInside = nowInside;
@@ -712,7 +712,7 @@ void DrivingPuzzle::execute() {
 		if (_variant == kChase) {
 			classifyZones(_zones2);
 		}
-		playSoundBlock(_soundBlocks[2]);	// looping engine ambience
+		playSoundBlockRawLoops(_soundBlocks[2]);	// looping engine ambience
 		drawScene();
 		_state = kRun;
 		break;
@@ -720,10 +720,9 @@ void DrivingPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		g_nancy->_sound->stopSound(_soundBlocks[2].channel);	// stop the engine ambience
-		NancySceneState.setEventFlag(_exitFlag, _exitFlagValue ? g_nancy->_true : g_nancy->_false);
 		if (_exitHasFade)
 			NancySceneState.specialEffect(_exitFadeType, _exitFadeTotalTime, _exitFadeToBlackTime, _exitFadeRect);
-		NancySceneState.changeScene(_exitScene);
+		_exitScene.execute();
 		finishExecution();
 		break;
 	}

@@ -24,6 +24,7 @@
 #include "engines/nancy/util.h"
 #include "engines/nancy/nancy.h"
 
+#include "common/fs.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/serializer.h"
@@ -204,11 +205,26 @@ bool CifFile::sync(Common::Serializer &ser) {
 }
 
 CifTree::CifTree(Common::SeekableReadStream *stream, const Common::Path &name) :
-		_stream(stream),
-		_name(name) {}
+		_name(name),
+		_stream(stream) {}
+
+CifTree::CifTree(const Common::ArchiveMemberPtr &member, const Common::Path &name) :
+		_name(name),
+		_stream(nullptr),
+		_member(member) {}
 
 CifTree::~CifTree() {
 	delete _stream;
+}
+
+Common::SeekableReadStream *CifTree::openStream() const {
+	return _member ? _member->createReadStream() : _stream;
+}
+
+void CifTree::closeStream(Common::SeekableReadStream *stream) const {
+	if (_member) {
+		delete stream;
+	}
 }
 
 const CifInfo &CifTree::getCifInfo(const Common::Path &name) const {
@@ -241,22 +257,28 @@ Common::SeekableReadStream *CifTree::createReadStreamForMember(const Common::Pat
 	}
 
 	const CifInfo &info = _fileMap[path];
+	Common::SeekableReadStream *stream = openStream();
+	if (!stream) {
+		warning("Failed to open CifTree '%s'", _name.toString().c_str());
+		return nullptr;
+	}
+
 	byte *buf = (byte *)malloc(info.size);
 
 	bool success = true;
 
 	if (info.comp == CifInfo::kResCompression) {
 		// Decompress the data into the buffer
-		if (_stream->seek(info.dataOffset)) {
+		if (stream->seek(info.dataOffset)) {
 			Common::MemoryWriteStream write(buf, info.size);
-			Common::SeekableSubReadStream read(_stream, info.dataOffset, info.dataOffset + info.compressedSize);
+			Common::SeekableSubReadStream read(stream, info.dataOffset, info.dataOffset + info.compressedSize);
 			Decompressor dec;
 			success = dec.decompress(read, write);
 		} else {
 			success = false;
 		}
 	} else {
-		if (!_stream->seek(info.dataOffset) || _stream->read(buf, info.size) < info.size) {
+		if (!stream->seek(info.dataOffset) || stream->read(buf, info.size) < info.size) {
 			success = false;
 		}
 	}
@@ -265,10 +287,12 @@ Common::SeekableReadStream *CifTree::createReadStreamForMember(const Common::Pat
 		warning("Failed to read data for '%s' from CifTree '%s'", info.name.toString().c_str(), _name.toString().c_str());
 		free(buf);
 		buf = nullptr;
-		_stream->clearErr();
+		stream->clearErr();
+		closeStream(stream);
 		return nullptr;
 	}
 
+	closeStream(stream);
 	return new Common::MemoryReadStream(buf, info.size, DisposeAfterUse::YES);
 }
 
@@ -278,13 +302,20 @@ Common::SeekableReadStream *CifTree::createReadStreamRaw(const Common::Path &pat
 	}
 
 	const CifInfo &info = _fileMap[path];
+	Common::SeekableReadStream *stream = openStream();
+	if (!stream) {
+		warning("Failed to open CifTree '%s'", _name.toString().c_str());
+		return nullptr;
+	}
+
 	uint32 size = (info.comp == CifInfo::kResCompression ? info.compressedSize : info.size);
 	byte *buf = new byte[size];
 
-	if (!_stream->seek(info.dataOffset) || _stream->read(buf, size) < size) {
+	if (!stream->seek(info.dataOffset) || stream->read(buf, size) < size) {
 		warning("Failed to read data for '%s' from CifTree '%s'", info.name.toString().c_str(), _name.toString().c_str());
 	}
 
+	closeStream(stream);
 	return new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
 }
 
@@ -292,16 +323,36 @@ CifTree *CifTree::makeCifTreeArchive(const Common::String &name, const Common::S
 	Common::Path path(name);
 	path.appendInPlace('.' + ext);
 
-	auto *stream = SearchMan.createReadStreamForMember(path);
+	Common::Archive *container = nullptr;
+	Common::ArchiveMemberPtr member = SearchMan.getMember(path, &container);
 
-	if (!stream) {
+	if (!member) {
 		return nullptr;
 	}
 
-	CifTree *ret = new CifTree(stream, path);
-	Common::Serializer ser(stream, nullptr);
+	CifTree *ret = nullptr;
+	if (dynamic_cast<Common::FSDirectory *>(container)) {
+		ret = new CifTree(member, path);
+	} else {
+		Common::SeekableReadStream *stream = member->createReadStream();
+		if (!stream) {
+			return nullptr;
+		}
 
-	if (!ret->sync(ser)) {
+		ret = new CifTree(stream, path);
+	}
+
+	Common::SeekableReadStream *headerStream = ret->openStream();
+	if (!headerStream) {
+		delete ret;
+		return nullptr;
+	}
+
+	Common::Serializer ser(headerStream, nullptr);
+	bool synced = ret->sync(ser);
+	ret->closeStream(headerStream);
+
+	if (!synced) {
 		delete ret;
 		return nullptr;
 	}

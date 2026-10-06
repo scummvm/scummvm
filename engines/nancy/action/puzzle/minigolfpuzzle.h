@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MINIGOLFPUZZLE_H
 #define NANCY_ACTION_MINIGOLFPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/action/actionzone.h"
 #include "engines/nancy/commontypes.h"
 
@@ -34,9 +34,9 @@ namespace Action {
 // golf club (angle + power) to putt it around a brick-walled course into the hole.
 // Derives from the shared Nancy12 PuzzleBase layout (header + frame rects + two
 // sound blocks + ActionZone array), see ActionZone.
-class MinigolfPuzzle : public RenderActionRecord {
+class MinigolfPuzzle : public PuzzleRecord {
 public:
-	MinigolfPuzzle() : RenderActionRecord(7) {}
+	MinigolfPuzzle() : PuzzleRecord(7) {}
 	virtual ~MinigolfPuzzle() {}
 
 	void init() override;
@@ -54,7 +54,6 @@ protected:
 	void drawBall();
 	void drawGhostBall(const Common::Rect &src, const Common::Point &dest);
 	void drawAimPreview();
-	void playSoundBlock(const RandomSoundBlock &block);
 	void launchBall(const Common::Point &maskCursor);
 	void writeStrokeCount();			// mirror _strokes into the scorecard's TableData slot
 	void aimToVelocity(double aimX, double aimY, double &vx, double &vy) const;
@@ -85,7 +84,6 @@ protected:
 
 	// A hole can have several cups, each with its own target scene/flag (e.g. hole
 	// 4a's middle cup plays a cutscene). Set from the cup the ball actually drops in.
-	SceneChangeDescription _winScene;
 	bool _winHasFade = false;			// the cup's fade, played over the scene change
 	byte _winFadeType = 0;
 	uint16 _winFadeTotalTime = 0;
@@ -136,7 +134,6 @@ protected:
 	double _pipeInVy = 0.0;
 	bool _ballHidden = false;			// ball is inside a pipe (not drawn)
 
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _boundaryMask;
 
 	// Cosmetic overlay sprite (ActionZone type 0xd), e.g. hole 6a's broken wall.

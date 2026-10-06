@@ -147,7 +147,7 @@ static void room_609_init() {
 		local->anim_1_running = true;
 		kernel_flip_hotspot(words_torch, false);
 
-	} else if (previous_room == 606 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		if (global[torch_is_in_609]) {
 			player.x = PLAYER_X_FROM_606;
 			player.y = PLAYER_Y_FROM_606;
@@ -227,7 +227,6 @@ static void room_609_daemon() {
 			local->prevent = true;
 			player_walk(DEATH_X, DEATH_Y, FACING_WEST);
 			player_walk_trigger(ROOM_609_DONE_WALK);
-			/* error_watch_point ("you're dead", kernel.trigger, kernel.trigger); */
 		}
 	}
 

@@ -112,10 +112,10 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 	Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
 
 	// Skip fake kernel stack frame if it's on top
-	if ((*iter).type == EXEC_STACK_TYPE_KERNEL)
+	if (iter->type == EXEC_STACK_TYPE_KERNEL)
 		--iter;
 
-	assert((iter != s->_executionStack.end()) && ((*iter).type != EXEC_STACK_TYPE_KERNEL));
+	assert((iter != s->_executionStack.end()) && (iter->type != EXEC_STACK_TYPE_KERNEL));
 
 	const StackPtr sp = iter->sp;
 

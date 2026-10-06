@@ -402,16 +402,13 @@ void room_406_parser() {
 			seq[fx_bend_down_9] = kernel_seq_stamp
 			(ss[fx_bend_down_9], true, KERNEL_LAST);
 			kernel_seq_player(seq[fx_bend_down_9], true);
-			/* kernel_seq_depth (seq[fx_bend_down_9], 1); */
 			kernel_timing_trigger(HALF_SECOND, 3);
 			break;
 
 		case 3:
-			/* temp = seq[fx_bend_down_9]; */
 			kernel_seq_delete(seq[fx_bend_down_9]);
 			seq[fx_bend_down_9] = kernel_seq_backward(ss[fx_bend_down_9], true,
 				5, 0, 0, 1);
-			/* kernel_synch (KERNEL_SERIES, seq[fx_bend_down_9], KERNEL_SERIES, temp); */
 			kernel_seq_range(seq[fx_bend_down_9], KERNEL_FIRST, KERNEL_LAST);
 			kernel_seq_player(seq[fx_bend_down_9], false);
 			kernel_seq_trigger(seq[fx_bend_down_9],

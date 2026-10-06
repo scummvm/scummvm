@@ -52,7 +52,7 @@ public:
 
 	void subscribeEvent(PluginEventEntry &event) {
 		for (auto it = _entries.begin(); it != _entries.end(); ++it) {
-			if (event._type == (*it)._type && event._callback == (*it)._callback) {
+			if (event._type == it->_type && event._callback == it->_callback) {
 				break;
 			}
 		}
@@ -61,7 +61,7 @@ public:
 
 	void unsubscribeEvent(PluginEventEntry &event) {
 		for (auto it = _entries.begin(); it != _entries.end(); ++it) {
-			if (event._type == (*it)._type && event._callback == (*it)._callback) {
+			if (event._type == it->_type && event._callback == it->_callback) {
 				_entries.erase(it);
 				break;
 			}
@@ -70,8 +70,8 @@ public:
 
 	void applyEvent(EWmeEvent type, void *eventData) {
 		for (auto it = _entries.begin(); it != _entries.end(); ++it) {
-			if (type == (*it)._type && (*it)._callback != nullptr) {
-				(*it)._callback(eventData, (*it)._plugin);
+			if (type == it->_type && it->_callback != nullptr) {
+				it->_callback(eventData, it->_plugin);
 			}
 		}
 	}

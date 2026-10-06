@@ -23,6 +23,8 @@
 #include "scumm/smush/smush_font.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/scumm.h"
+#include "scumm/scumm_v7.h"
+#include "scumm/insane/rebel2/rebel.h"
 
 namespace Scumm {
 
@@ -47,30 +49,19 @@ NutRenderer *SmushMultiFont::getCurrentFont() const {
 }
 
 Rebel2FontSet SmushMultiFont::getRebel2FontSet() {
-	// High-res mode uses dedicated larger-glyph font assets.
-	static const char *ra2FontsLo[] = {
-		"SYSTM/TALKFONT.NUT",
-		"SYSTM/SMALFONT.NUT",
-		"SYSTM/TITLFONT.NUT",
-		"SYSTM/POVFONT.NUT"
-	};
-	static const char *ra2FontsHi[] = {
-		"SYSTM/TKHIFONT.NUT",
-		"SYSTM/SMHIFONT.NUT",
-		"SYSTM/TIHIFONT.NUT",
-		"SYSTM/POHIFONT.NUT"
-	};
+	const Rebel2Release &release = static_cast<InsaneRebel2 *>(
+		static_cast<ScummEngine_v7 *>(_vm)->getInsane())->_release;
 	const bool highRes = _vm->_screenWidth >= 640 && _vm->_screenHeight >= 400;
-	const char *const *ra2Fonts = highRes ? ra2FontsHi : ra2FontsLo;
 
 	Rebel2FontSet fontSet(_vm->_language == Common::JA_JPN);
-	fontSet.numFonts = ARRAYSIZE(ra2FontsLo);
+	fontSet.numFonts = release.getFontCount();
 	fontSet.defaultFont = CLIP<int>(_defaultFont, 0, fontSet.numFonts - 1);
 	for (int i = 0; i < fontSet.numFonts; i++) {
 		if (!_rebel2Fonts[i]) {
-			_rebel2Fonts[i] = makeRebel2Font(_vm, ra2Fonts[i]);
+			const char *filename = release.getFontFile(i, highRes);
+			_rebel2Fonts[i] = makeRebel2Font(_vm, filename);
 			debugC(DEBUG_SMUSH, "SmushMultiFont::getRebel2FontSet: loaded RA2 font[%d]=%s (highRes=%d)",
-				i, ra2Fonts[i], (int)highRes);
+				i, filename, (int)highRes);
 		}
 		fontSet.fonts[i] = _rebel2Fonts[i];
 	}

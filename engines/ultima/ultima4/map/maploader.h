@@ -23,7 +23,6 @@
 #define ULTIMA4_MAP_MAPLOADER_H
 
 #include "ultima/ultima4/map/map.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Common {
 class SeekableReadStream;

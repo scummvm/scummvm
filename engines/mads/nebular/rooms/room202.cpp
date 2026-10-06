@@ -21,10 +21,12 @@
 
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
 #include "mads/nebular/rooms/section2.h"
+#include "mads/nebular/sound/mac_sound.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -167,6 +169,7 @@ static void room_202_init() {
 
 	local._meteorologistSpecial = false;
 
+	setMacintoshMessageColors(63, 10, 0, 63, 10, 0);
 	section_2_music();
 }
 
@@ -430,7 +433,9 @@ static void room_202_pre_parser() {
 
 	if (local._ladderTopFl && (player_said_2(climb_down, ladder) || player.need_to_walk)) {
 		if (kernel.trigger == 0) {
-			g_engine->_soundManager->command(29, 0);
+			if (!Sound::commandMacintoshSound(
+					Sound::kMacSoundPlayRepeatedVolume, 2029, 2, 200))
+				g_engine->_soundManager->command(29, 0);
 			player.ready_to_walk = false;
 			player.commands_allowed = false;
 			kernel_seq_delete(g_sequence_ids[9]);
@@ -447,7 +452,7 @@ static void room_202_pre_parser() {
 		}
 	}
 
-	if (player_said_2(look, binoculars) && (player2.words[2] > 0)) {
+	if (player_said_2(look, binoculars) && (player2.words[2] > words_none)) {
 		if (!player.ready_to_walk || local._ladderTopFl)
 			player.need_to_walk = false;
 		else
@@ -521,7 +526,9 @@ static void room_202_parser() {
 	} else if (player_said_2(climb_up, ladder) && !global[kLadderBroken]) {
 		switch (kernel.trigger) {
 		case 0:
-			g_engine->_soundManager->command(29, 0);
+			if (!Sound::commandMacintoshSound(Sound::kMacSoundWait,
+					2029, 60, 2))
+				g_engine->_soundManager->command(29, 0);
 			local._meteoClock1 = kernel.clock;
 			player.walker_visible = false;
 			player.commands_allowed = false;

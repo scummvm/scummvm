@@ -24,6 +24,7 @@
 
 #include "audio/fmopl.h"
 #include "mads/core/sound_manager.h"
+#include "mads/core/native_sound_timer.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -57,8 +58,8 @@ public:
 	byte *_pSrc = nullptr;
 	byte *_innerLoopPtr = nullptr;	// inner-loop restart address (opcode 0)
 	byte *_outerLoopPtr = nullptr;	// outer-loop restart address (opcode 1)
-	int _innerLoopCount = 0;    // remaining inner-loop iterations (opcode 0)
-	int _outerLoopCount = 0;    // remaining outer-loop iterations (opcode 1)
+	uint16 _innerLoopCount = 0; // signed byte stored as a 16-bit inner-loop count
+	uint16 _outerLoopCount = 0; // signed byte stored as a 16-bit outer-loop count
 	byte *_soundData = nullptr;
 	int _transpose = 0;         // fine-tune offset added into the frequency table lookup
 	int _volumeOffset = 0;
@@ -138,6 +139,8 @@ private:
 	OPL::OPL *_opl;
 	uint16 _randomSeed;
 	int _masterVolume;
+	NativeSoundTimer _hostTimer;
+	bool _noiseEnabled;
 
 	/**
 	 * Does the initial Adlib initialisation
@@ -192,8 +195,7 @@ protected:
 	/**
 	 * Hook called once per update() frame, immediately after the disabled
 	 * check and before the frame counter/channel polling. Only ASound9's
-	 * driver data makes use of a recurring deferred-callback timer (the
-	 * word_1949E/word_194A0/_soundPtr trio in the original disassembly);
+	 * driver data makes use of a recurring deferred-callback timer;
 	 * every other driver leaves this as a no-op.
 	 */
 	virtual void tickCallback() {
@@ -303,18 +305,18 @@ public:
 	AdlibSample *_samplePtr;
 	int _frameCounter;
 	bool _isDisabled;
-	int _noiseTicks1;       // remaining duration for noise voice 1 (byte_11F86)
-	int _noiseTicks2;       // remaining duration for noise voice 2 (byte_11F87)
+	int _noiseTicks1;       // remaining duration for noise voice 1
+	int _noiseTicks2;       // remaining duration for noise voice 2
 	int _activeChannelNumber;
 	int _freqMask1;
 	int _freqMask2;
 	int _freqBase1;
 	int _freqBase2;
 	int _noiseChannel1, _noiseChannel2;
-	int _noiseFreqStep1;    // per-tick frequency-sweep step for noise voice 1 (word_11F8A)
-	int _noiseFreqStep2;    // per-tick frequency-sweep step for noise voice 2 (word_11F8C)
-	int _savedNoiseTicks1;  // _noiseTicks1 saved across command6/7 (byte_194B0)
-	int _savedNoiseTicks2;  // _noiseTicks2 saved across command6/7 (byte_194B1)
+	int _noiseFreqStep1;    // per-tick frequency-sweep step for noise voice 1
+	int _noiseFreqStep2;    // per-tick frequency-sweep step for noise voice 2
+	int _savedNoiseTicks1;  // _noiseTicks1 saved across command6/7
+	int _savedNoiseTicks2;  // _noiseTicks2 saved across command6/7
 	int _pollResult;
 	int _resultFlag;
 	byte _nullData[2];

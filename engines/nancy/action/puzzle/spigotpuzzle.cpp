@@ -34,12 +34,7 @@ namespace Nancy {
 namespace Action {
 
 void SpigotPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
 	g_nancy->_resource->loadImage(_imageName, _image);
 	registerGraphics();
@@ -225,8 +220,7 @@ void SpigotPuzzle::execute() {
 		// fall through
 	case kRun:
 		if (_currentOrder == _correctOrder) {
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solved = true;
 			_state = kActionTrigger;
 		}
@@ -235,7 +229,7 @@ void SpigotPuzzle::execute() {
 	case kActionTrigger:
 		if (_solved) {
 			// Sound delay not used
-			if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (isSolveSoundPlaying()) {
 				return;
 			}
 
@@ -261,9 +255,7 @@ void SpigotPuzzle::handleInput(NancyInput &input) {
 	Common::Point mousePos = input.mousePos;
 	mousePos -= { vpScreenPos.left, vpScreenPos.top };
 
-	if (_exitHotspot.contains(mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

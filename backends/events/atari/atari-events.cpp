@@ -50,7 +50,7 @@ AtariEventSource::AtariEventSource() {
 	_system = dynamic_cast<OSystem_Atari*>(g_system);
 	assert(_system != nullptr);
 
-	_KEYTAB *pKeyTables = (_KEYTAB*)Keytbl(KT_NOCHANGE, KT_NOCHANGE, KT_NOCHANGE);
+	_KEYTAB *pKeyTables = (_KEYTAB *)Keytbl(KT_NOCHANGE, KT_NOCHANGE, KT_NOCHANGE);
 
 	memcpy(_unshiftToAscii, pKeyTables->unshift, 128);
 	memcpy(_shiftToAscii, pKeyTables->shift, 128);

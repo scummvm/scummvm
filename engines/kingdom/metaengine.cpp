@@ -24,6 +24,7 @@
 #include "common/savefile.h"
 #include "engines/advancedDetector.h"
 #include "common/file.h"
+#include "common/translation.h"
 
 #include "kingdom/kingdom.h"
 
@@ -34,6 +35,21 @@ namespace Kingdom {
 const char *KingdomGame::getGameId() const { return _gameDescription->gameId; }
 Common::Platform KingdomGame::getPlatform() const { return _gameDescription->platform; }
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GUIO_GAMEOPTIONS1,
+		{
+			_s("Mono music"),
+			_s("Use monophonic music"),
+			"mono_sound",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 } // End of namespace Kingdom
 
 
@@ -41,6 +57,10 @@ class KingdomMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "kingdom";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Kingdom::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

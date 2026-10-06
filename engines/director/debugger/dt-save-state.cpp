@@ -45,6 +45,7 @@ Common::Array<WindowFlag> getWindowFlags() {
 		{ "Execution Context",	&_state->_w.executionContext },
 		{ "Functions",			&_state->_w.funcList		 },
 		{ "Log",				&_state->_w.logger			 },
+		{ "Profiler",			&_state->_w.profiler		 },
 		{ "Score",				&_state->_w.score			 },
 		{ "Settings",			&_state->_w.settings		 },
 		{ "Vars",				&_state->_w.vars			 },

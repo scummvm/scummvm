@@ -196,7 +196,7 @@ void GlobalUIV3::drawChangingButton() {
 
 bool GlobalUIV3::isHoveringInventoryExit() const {
 	int16 size = kInventoryTriggerSizeV3 * 1024 / g_system->getWidth();
-	auto bounds = Rect(g_system->getWidth() - size, g_system->getHeight() - size, g_system->getWidth(), g_system->getHeight());;
+	auto bounds = Rect(g_system->getWidth() - size, g_system->getHeight() - size, g_system->getWidth(), g_system->getHeight());
 	return bounds.contains(g_engine->input().mousePos2D());
 }
 

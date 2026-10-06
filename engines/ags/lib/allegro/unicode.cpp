@@ -67,7 +67,7 @@ static UTYPE_INFO *find_utype(int type) {
 	if (type == U_CURRENT)
 		type = _G(utype);
 
-	for (i = 0; i < (int)(sizeof(utypes) / sizeof(UTYPE_INFO)); i++)
+	for (i = 0; i < ARRAYSIZE(utypes); i++)
 		if (utypes[i].id == type)
 			return &utypes[i];
 

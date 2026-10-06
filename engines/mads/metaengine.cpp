@@ -34,6 +34,7 @@
 #include "graphics/surface.h"
 #include "mads/detection.h"
 #include "mads/nebular/nebular.h"
+#include "mads/nebular/bonus/bonus.h"
 #include "mads/phantom/phantom.h"
 #include "mads/dragonsphere/dragonsphere.h"
 #include "mads/forest/forest.h"
@@ -127,6 +128,31 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_PAS,
+		{
+			_s("Use Pro Audio Spectrum 16 instead of AdLib"),
+			_s("Use the Pro Audio Spectrum 16 driver for music and sound effects "
+				"instead of the AdLib driver."),
+			"use_pas",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_RESTORE_PHANTOM_MAIN_MENU_CONTENT,
+		{
+			_s("Enable restored main menu content"),
+			_s("Restore unused content in the main menu."),
+			"restore_main_menu_content",
+			false,
+			0,
+			0
+		}
+	},
+
 #ifdef USE_TTS
 	{
 		GAMEOPTION_TTS_NARRATOR,
@@ -210,9 +236,12 @@ bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const {
-	if (desc->gameID == MADS::GType_RexNebular)
-		*engine = new MADS::RexNebular::RexNebularEngine(syst, desc);
-	else if (desc->gameID == MADS::GType_Phantom)
+	if (desc->gameID == MADS::GType_RexNebular) {
+		if (desc->features & MADS::GF_BONUS_DISK)
+			*engine = new MADS::RexNebular::BonusEngine(syst, desc);
+		else
+			*engine = new MADS::RexNebular::RexNebularEngine(syst, desc);
+	} else if (desc->gameID == MADS::GType_Phantom)
 		*engine = new MADS::Phantom::PhantomEngine(syst, desc);
 	else if (desc->gameID == MADS::GType_Forest)
 		*engine = new MADS::Forest::ForestEngine(syst, desc);

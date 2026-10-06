@@ -20,7 +20,7 @@
  */
 
 #include "engines/util.h"
-#include "mads/core/mps_installer.h"
+#include "common/config-manager.h"
 #include "mads/core/attr.h"
 #include "mads/core/config.h"
 #include "mads/core/conv.h"
@@ -41,6 +41,7 @@
 #include "mads/nebular/global.h"
 #include "mads/nebular/main.h"
 #include "mads/nebular/mac_nebular.h"
+#include "mads/nebular/mps_installer.h"
 #include "mads/nebular/popup.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
@@ -99,7 +100,9 @@ Common::Error RexNebularEngine::run() {
 			return Common::Error(Common::kNoGameDataFoundError,
 				"Could not open the Macintosh Rex resource files");
 	} else {
-		_soundManager = new Sound::RexSoundManager(_mixer, _soundFlag, isDemo());
+		const bool usePas = ConfMan.getBool("use_pas");
+		_soundManager = new Sound::RexSoundManager(_mixer, _soundFlag,
+			usePas, isDemo());
 	}
 	_soundManager->validate();
 

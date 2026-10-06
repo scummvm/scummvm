@@ -40,6 +40,14 @@ enum {
 	kOpcodeSnoop = 20
 };
 
+uint8 objWorldAng(uint8 objectAng) {
+	return (uint8)(objectAng + 32);
+}
+
+uint8 objAngFromPlayer(uint8 playerAng) {
+	return (uint8)(playerAng - 32);
+}
+
 bool isBaseRobotType(int type) {
 	return type >= kRobEye && type <= kRobUPyramid;
 }
@@ -307,7 +315,8 @@ void ColonyEngine::queenThink(int num) {
 
 	updatedObj.alive = 0;
 	_allGrow = false;
-	_sound->play(Sound::kExplode);
+	// Both builds strobe the viewport here; the silent fallback differs.
+	explodeFlash(isMacRenderMode() ? 16 : 4);
 
 	for (uint i = 0; i < _objects.size(); ++i) {
 		Thing &other = _objects[i];
@@ -337,7 +346,7 @@ void ColonyEngine::droneThink(int num) {
 			_robotArray[obj.where.xindex][obj.where.yindex] == num)
 			_robotArray[obj.where.xindex][obj.where.yindex] = 0;
 		obj.alive = 0;
-		_sound->play(Sound::kExplode);
+		explodeFlash(16);
 		copyOverflowObjectToSlot(num);
 	} else {
 		obj.type = kRobDrone;
@@ -439,8 +448,9 @@ void ColonyEngine::moveThink(int num) {
 			_robotArray[obj.where.xindex][obj.where.yindex] = 0;
 
 		_suppressCollisionSound = true;
-		const int collide = checkwall(obj.where.xloc + (_cost[obj.where.ang] >> 2),
-			obj.where.yloc + (_sint[obj.where.ang] >> 2), &obj.where);
+		const uint8 wang = objWorldAng(obj.where.ang);
+		const int collide = checkwall(obj.where.xloc + (_cost[wang] >> 2),
+			obj.where.yloc + (_sint[wang] >> 2), &obj.where);
 		_suppressCollisionSound = false;
 
 		if (collide) {
@@ -461,8 +471,9 @@ void ColonyEngine::moveThink(int num) {
 			_robotArray[obj.where.xindex][obj.where.yindex] = 0;
 
 		_suppressCollisionSound = true;
-		const int collide = checkwall(obj.where.xloc + obj.where.dx + (_me.dx >> 2) + (_cost[obj.where.ang] >> 2),
-			obj.where.yloc + obj.where.dy + (_me.dy >> 2) + (_sint[obj.where.ang] >> 2), &obj.where);
+		const uint8 wang = objWorldAng(obj.where.ang);
+		const int collide = checkwall(obj.where.xloc + obj.where.dx + (_me.dx >> 2) + (_cost[wang] >> 2),
+			obj.where.yloc + obj.where.dy + (_me.dy >> 2) + (_sint[wang] >> 2), &obj.where);
 		_suppressCollisionSound = false;
 
 		if (collide) {
@@ -499,6 +510,12 @@ void ColonyEngine::snoopThink(int num) {
 	if (!obj.alive)
 		return;
 
+	_snoopSnoutZ += _snoopSniff;
+	if (++_snoopSniffCount == 25) {
+		_snoopSniff = -_snoopSniff;
+		_snoopSniffCount = 0;
+	}
+
 	switch (obj.opcode) {
 	case kOpcodeLRotate:
 		obj.where.ang = (uint8)(obj.where.ang + 7);
@@ -533,8 +550,9 @@ void ColonyEngine::snoopThink(int num) {
 		if (oldX >= 0 && oldX < 32 && oldY >= 0 && oldY < 32 && _robotArray[oldX][oldY] == num)
 			_robotArray[oldX][oldY] = 0;
 
-		const int fx = obj.where.xloc + (_cost[obj.where.ang] >> 2);
-		const int fy = obj.where.yloc + (_sint[obj.where.ang] >> 2);
+		const uint8 wang = objWorldAng(obj.where.ang);
+		const int fx = obj.where.xloc + (_cost[wang] >> 2);
+		const int fy = obj.where.yloc + (_sint[wang] >> 2);
 		_suppressCollisionSound = true;
 		const int collide = checkwall(fx, fy, &obj.where);
 		_suppressCollisionSound = false;
@@ -716,14 +734,15 @@ int ColonyEngine::scanForPlayer(int num) {
 	int fireX = obj.where.xloc;
 	int fireY = obj.where.yloc;
 	int collide = 0;
+	const uint8 wang = objWorldAng(fire.ang);
 
 	do {
 		fire.xloc = fireX;
 		fire.yloc = fireY;
 		fire.xindex = fireX >> 8;
 		fire.yindex = fireY >> 8;
-		fireX += _cost[fire.ang] * 2;
-		fireY += _sint[fire.ang] * 2;
+		fireX += _cost[wang] * 2;
+		fireY += _sint[wang] * 2;
 		_suppressCollisionSound = true;
 		collide = checkwall(fireX, fireY, &fire);
 		_suppressCollisionSound = false;
@@ -852,9 +871,8 @@ void ColonyEngine::meEat() {
 	_foodArray[_me.xindex][_me.yindex] = 0;
 	obj.alive = 0;
 	_sound->play(Sound::kEat);
-	if (foodNum <= getColonyActiveRobotLimit())
-		copyOverflowObjectToSlot(foodNum);
 
+	// Read the type before CopyMax(), which can move another object into the slot.
 	switch (obj.type) {
 	case kRobMUPyramid:
 	case kRobFUPyramid:
@@ -879,6 +897,9 @@ void ColonyEngine::meEat() {
 	default:
 		break;
 	}
+
+	if (foodNum <= getColonyActiveRobotLimit())
+		copyOverflowObjectToSlot(foodNum);
 }
 
 } // End of namespace Colony

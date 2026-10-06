@@ -56,7 +56,7 @@ public:
 	void resetScreen(int width, int height);
 	bool loadArt();
 	bool loadText();
-	bool loadQuickTipsResources();
+	bool loadQuickTipsResources(bool useTextboxPanel);
 	void drawWaitFrame() const;
 	void applyMixerLevels(int fxLevel, int musicLevel);
 	bool isMusicPlaying() const;

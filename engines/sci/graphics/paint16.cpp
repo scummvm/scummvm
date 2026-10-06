@@ -307,7 +307,7 @@ void GfxPaint16::bitsShow(const Common::Rect &rect) {
 	// the engine would normally be unable to update the screen. We just have to offset the rect first, before clipping it,
 	// to make it work. Another solution would be to improve the script patches that implement the speech/text mode for
 	// better vertical placement of the portrait frames (inside the port rect).
-	bool triggeredWorkaround = false;;
+	bool triggeredWorkaround = false;
 	if (rect.top < 0 && _hiresPortraitWorkaroundFlag) {
 		_ports->offsetRect(workerRect);
 		triggeredWorkaround = true;

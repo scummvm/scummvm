@@ -43,14 +43,11 @@
 #include "mads/core/env.h"
 #include "mads/core/player.h"
 #include "mads/core/cycle.h"
-#include "mads/core/ems.h"
-#include "mads/core/xms.h"
 #include "mads/core/loader.h"
 #include "mads/core/anim.h"
 #include "mads/core/error.h"
 #include "mads/core/popup.h"
 #include "mads/core/object.h"
-#include "mads/core/himem.h"
 #include "mads/core/magic.h"
 #include "mads/core/btype.h"
 #include "mads/core/pack.h"
@@ -276,25 +273,10 @@ void flag_parse(const char **myscan) {
 		break;
 
 	case 'H':
+		// EMS/XMS preload is permanently disabled in ScummVM, so this flag's
+		// E/X/U suboptions no longer have anything to toggle.
 		if (scan_past(myscan, ':')) {
-			while (**myscan) {
-				switch (toupper(**myscan)) {
-				case 'E':
-					himem_preload_ems_disabled = true;
-					break;
-				case 'X':
-					himem_preload_xms_disabled = true;
-					break;
-				case 'U':
-					xms_disabled = true;
-					break;
-				}
-				(*myscan)++;
-			}
 			scan_past(myscan, 0);
-		} else {
-			himem_preload_ems_disabled = true;
-			himem_preload_xms_disabled = true;
 		}
 		break;
 
@@ -978,6 +960,11 @@ int game_parse_keystroke(int mykey) {
 		}
 		break;
 
+	case f4_key:
+		kernel.activate_menu = GAME_OPTIONS_MENU;
+		break;
+
+	case f5_key:
 	case f2_key:
 	case alt_s_key:
 		if (room_id != 199 && section_id != 9) {
@@ -985,24 +972,9 @@ int game_parse_keystroke(int mykey) {
 		}
 		break;
 
+	case f7_key:
 	case f3_key:
 	case alt_r_key:
-		if (room_id != 199) {
-			kernel.activate_menu = GAME_RESTORE_MENU;
-		}
-		break;
-
-	case f4_key:
-		kernel.activate_menu = GAME_OPTIONS_MENU;
-		break;
-
-	case f5_key:
-		if (room_id != 199 && section_id != 9) {
-			kernel.activate_menu = GAME_SAVE_MENU;
-		}
-		break;
-
-	case f7_key:
 		if (room_id != 199 && section_id != 9) {
 			kernel.activate_menu = GAME_RESTORE_MENU;
 		}
@@ -1031,9 +1003,16 @@ int game_parse_keystroke(int mykey) {
 		mouse_force(kernel.cursor_x[1 - current_mode], kernel.cursor_y[1 - current_mode]);
 		break;
 
+	case pgup_key:
+		inter_scroll_inventory(-1);
+		break;
+
+	case pgdn_key:
+		inter_scroll_inventory(1);
+		break;
+
 	case ctrl_k_key:
 		inter_report_hotspots = !inter_report_hotspots;
-		// config_file.interface_hotspots = inter_report_hotspots ? INTERFACE_BRAINDEAD : INTERFACE_MACINTOSH;
 		inter_init_sentence();
 		break;
 
@@ -1181,8 +1160,7 @@ void game_control() {
 			if (gameId == GType_RexNebular)
 				game.going = !kernel_section_startup(new_section);
 
-			if (gameId != GType_Forest)
-				kernel.activate_menu = GAME_DIFFICULTY_MENU;
+			kernel.activate_menu = GAME_DIFFICULTY_MENU;
 			game_exec_function(game_menu_routine);
 			if (!game.going)
 				return;
@@ -1200,7 +1178,6 @@ void game_control() {
 	if (game.difficulty < 0) game.difficulty = HARD_MODE;
 
 	if ((result != COPY_FAIL) && (result != COPY_ESCAPE)) {
-		ems_paging_mode(EMS_PAGING_GLOBAL);
 		global_init_code();
 	}
 
@@ -1228,8 +1205,6 @@ void game_control() {
 		kernel_mode = KERNEL_SECTION_PRELOAD;
 
 		global_sound_driver();
-
-		ems_paging_mode(EMS_PAGING_SECTION);
 
 		global_section_constructor();
 		game_exec_function(section_preload_code_pointer);
@@ -1259,12 +1234,10 @@ void game_control() {
 				g_engine->getGameID() == GType_RexNebular || !player.walker_is_loaded);
 
 			quote_emergency = false;
-			// vocab_emergency = false;
 			game_wait_cursor();
 
 			kernel.quotes = NULL;
 
-			// vocab_init_active();
 			kernel_init_dynamic();
 
 			game_exec_function(section_room_constructor);
@@ -1288,8 +1261,6 @@ void game_control() {
 
 			picture_view_x = 0;
 			picture_view_y = 0;
-
-			ems_paging_mode(EMS_PAGING_ROOM);
 
 			kernel_initial_variant = 0;
 
@@ -1437,8 +1408,6 @@ void game_control() {
 
 			kernel.teleported_in = false;
 
-			ems_paging_mode(EMS_PAGING_SYSTEM);
-
 			if (quote_emergency && !game_any_emergency) {
 				room_id = previous_room;
 				game_any_emergency = true;
@@ -1490,9 +1459,6 @@ void game_control() {
 
 			new_section = new_room / 100;
 
-			// Flush all EMS/XMS preloads at the room level
-			himem_flush(ROOM);
-
 			// Rex Nebular menu display
 			if (g_engine->getGameID() == GType_RexNebular && kernel.activate_menu != GAME_NO_MENU &&
 					player.commands_allowed && !global[RexNebular::kCopyProtectFailed]) {
@@ -1530,9 +1496,6 @@ void game_control() {
 
 		// Shut down current section
 		kernel_section_shutdown();
-
-		// Flush all EMS/XMS preloads at the section level
-		himem_flush(SECTION);
 	}
 
 	// Shut down the game
@@ -1540,7 +1503,7 @@ void game_control() {
 
 	kernel_game_shutdown();
 
-	// pl conv_system_cleanup();
+	conv_system_cleanup();
 	mcga_reset();
 }
 
@@ -2069,8 +2032,6 @@ done:
 }
 
 void game_debugger_reset() {
-	//screen = mono_text_video;
-
 	screen_normal_color = colorbyte(hi_white, black);
 	screen_hilite_color = screen_normal_color + 128;
 
@@ -2091,7 +2052,6 @@ static void game_main_update() {
 	screen_printf(0, 2, "%-3d, %-3d Mem: %-6ld Min: %-6ld", room_id, previous_room, mem_get_avail(), mem_min_free);
 
 	screen_printf(0, 4, "%s @ %3d, %3d Dpt: %d   ", player.series_name, player.x, player.y, player.depth);
-	// screen_printf (0, 5, "        Series: %d   Sprite: %-2d   Mirror: %-2d   Frame Rate: %d    ", player.series, player.sprite, player.mirror, player.frame_delay);
 	screen_printf(0, 7, "Sc: %-3d  Fr %d => %d%, Bk %d => %d%", player.scale, room->front_y, room->front_scale, room->back_y, room->back_scale);
 
 	if (!player.walker_visible) {
@@ -2124,7 +2084,7 @@ static void game_palette_update() {
 	int count;
 	int count2;
 	int x, y;
-	long handle;
+	int handle;
 	long any_flag;
 	long walker_flag;
 	long picture_flag;
@@ -2174,13 +2134,13 @@ static void game_palette_update() {
 			item = 'c';
 		} else if (color_status[count]) {
 			handle = picture_resource.color_handle;
-			picture_flag = 1 << handle;
+			picture_flag = 1L << handle;
 			any_flag = picture_flag;
 
 			walker_flag = 0;
 			for (count2 = 0; count2 < player.num_series; count2++) {
 				handle = series_list[count2 + player.series_base]->color_handle;
-				walker_flag |= 1 << handle;
+				walker_flag |= 1L << handle;
 			}
 
 			any_flag |= walker_flag;
@@ -2249,8 +2209,6 @@ static void game_palette_update() {
 			delta = old_free - free;
 		}
 
-		// screen_printf (0, 22, "Free: %-3d", free);
-		// screen_printf (0, 23, "Previous: %-3d", old_free);
 		screen_printf(0, 24, "Added: %-3d", delta);
 
 
@@ -2442,29 +2400,30 @@ static void game_matte() {
 		if (count < image_max) {
 			switch (image_list[count].flags) {
 			case IMAGE_UPDATE:
-				// Common::strcpy_s (flags_buf, "Update");
+				Common::strcpy_s (flags_buf, "Update");
 				break;
 
 			case IMAGE_STATIC:
-				// Common::strcpy_s (flags_buf, "Static");
+				Common::strcpy_s (flags_buf, "Static");
 				break;
 
 			case IMAGE_ERASE:
-				// Common::strcpy_s (flags_buf, "Erase");
+				Common::strcpy_s (flags_buf, "Erase");
 				break;
 
 			case IMAGE_REFRESH:
-				// Common::strcpy_s (flags_buf, "Refresh");
+				Common::strcpy_s (flags_buf, "Refresh");
 				break;
 
 			case IMAGE_DELTA:
-				// Common::strcpy_s (flags_buf, "Delta");
+				Common::strcpy_s (flags_buf, "Delta");
 				break;
 
 			default:
 				Common::sprintf_s(flags_buf, "(%d)", image_list[count].flags);
 				break;
 			}
+
 			if (image_list[count].flags != IMAGE_REFRESH) {
 				series_id = image_list[count].series_id;
 				Common::strcpy_s(name_buf, series_name[series_id]);

@@ -23,6 +23,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 #include "engines/nancy/video.h"
@@ -39,9 +40,9 @@
 namespace Nancy {
 namespace Action {
 
-PlaySecondaryMovie::PlaySecondaryMovie(bool isRandom)
-		: RenderActionRecord(8), _isRandom(isRandom) {
-	if (_isRandom) {
+PlaySecondaryMovie::PlaySecondaryMovie(MovieType movieType)
+		: RenderActionRecord(8), _movieType(movieType) {
+	if (isRandom()) {
 		NancySceneState.notifyRandomMovieARLoaded();
 	}
 }
@@ -58,26 +59,90 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
 }
 
 bool PlaySecondaryMovie::survivesSceneChange(bool nextSceneIsNoArt) const {
+	// A NO_ART_SCENE keeps every movie on screen: conversations that play the
+	// character's animation in one scene and show their reply options in a
+	// videoless one rely on it, so the character stays put instead of vanishing
+	// as the options come up.
+	if (nextSceneIsNoArt) {
+		return true;
+	}
+
 	// Nancy11's random movies can be ambient loops that intentionally keep
 	// playing across scene changes. Nancy13's per-character reaction movies
 	// (AR 42) are scene-local: they must stop when their scene is left, and are
-	// reloaded if it's re-entered. A plain (non-random) cinematic movie is
-	// self-contained and does not persist, not even into a NO_ART_SCENE — so the
-	// NO_ART flag is deliberately ignored here.
-	return _isRandom && g_nancy->getGameType() < kGameTypeNancy13 && !_isDone && !_randomStopRequested;
+	// reloaded if it's re-entered.
+	return isRandom() && g_nancy->getGameType() < kGameTypeNancy13 && !_isDone && !_randomStopRequested;
 }
 
-void PlaySecondaryMovie::handleInput(NancyInput &input) {
-	// The character's box (set as the hotspot while it is on screen) is
-	// clickable; clicking opens its conversation scene, and hovering drives the
-	// recognition movie. The talk hover cursor is applied by ActionManager via
-	// getHoverCursor().
-	if (!_hasHotspot || _talkSceneID == kNoScene) {
-		_isHovered = false;
+const PlaySecondaryMovie::InteractiveSet *PlaySecondaryMovie::getInteractiveSet(int32 setID) const {
+	for (const InteractiveSet &set : _interactiveSets) {
+		if (set.setID == setID) {
+			return &set;
+		}
+	}
+
+	return nullptr;
+}
+
+void PlaySecondaryMovie::handleInteractiveInput(NancyInput &input) {
+	if (_state != kRun) {
 		return;
 	}
 
-	_isHovered = NancySceneState.getViewport().convertViewportToScreen(_hotspot).contains(input.mousePos);
+	int curFrame = _decoder.getCurFrame();
+	if (curFrame < 0) {
+		return;
+	}
+
+	for (const InteractiveFrame &frame : _interactiveVideo.frames) {
+		if (frame.frameID != curFrame) {
+			continue;
+		}
+
+		for (const InteractiveHotspot &hotspot : frame.hotspots) {
+			if (!NancySceneState.getViewport().convertViewportToScreen(hotspot.hotspot).contains(input.mousePos)) {
+				continue;
+			}
+
+			// The set the hotspot belongs to describes what it does; hotspots
+			// carry their own flag and cursor in Nancy10 and earlier instead.
+			const InteractiveSet *set = getInteractiveSet(hotspot.setID);
+			if (!set) {
+				return;
+			}
+
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)set->cursorID, true);
+
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				NancySceneState.setEventFlag(set->flagDesc);
+			}
+
+			return;
+		}
+
+		return;
+	}
+}
+
+void PlaySecondaryMovie::handleInput(NancyInput &input) {
+	if (_movieType == kInteractiveMovie) {
+		handleInteractiveInput(input);
+		return;
+	}
+
+	// The mouse is hit-tested against the movie's own box whether or not the
+	// record is clickable, since the sequence chain reacts to hovering on its
+	// own (Nancy14 characters turn toward the player that way, Nancy13 ones
+	// play their recognition movie).
+	//
+	// A character that names a conversation scene is clickable on top of that;
+	// its hover cursor is applied by ActionManager via getHoverCursor().
+	_isHovered = _isVisible &&
+		NancySceneState.getViewport().convertViewportToScreen(_screenPosition).contains(input.mousePos);
+
+	if (_talkSceneID == kNoScene) {
+		return;
+	}
 
 	if (_isHovered && (input.input & NancyInput::kLeftMouseButtonUp)) {
 		input.eatMouseInput();
@@ -88,9 +153,10 @@ void PlaySecondaryMovie::handleInput(NancyInput &input) {
 }
 
 CursorManager::CursorType PlaySecondaryMovie::getHoverCursor() const {
-	// The character's own cursor type (a raw Nancy13 cursor id) comes from the
-	// secondary record; cursorSetFromScript() routes it through the raw-slot path.
-	return (CursorManager::CursorType)_talkCursorType;
+	// The character's own cursor type (a raw cursor id) comes from the chunk;
+	// cursorSetFromScript() routes it through the raw-slot path. Records that
+	// don't name one keep the generic hotspot cursor.
+	return _talkCursorType >= 0 ? (CursorManager::CursorType)_talkCursorType : CursorManager::kHotspot;
 }
 
 void PlaySecondaryMovie::readRandomSequence(Common::Serializer &ser, RandomSequence &seq) {
@@ -115,8 +181,35 @@ void PlaySecondaryMovie::readRandomSequence(Common::Serializer &ser, RandomSeque
 
 	seq.nextSequences.resize(nextCount);
 	for (uint i = 0; i < nextCount; ++i) {
-		readFilename(ser, seq.nextSequences[i].name);
-		ser.syncAsUint16LE(seq.nextSequences[i].weight);
+		NextSequenceRef &next = seq.nextSequences[i];
+		readFilename(ser, next.name);
+
+		// A negative weight isn't a weight at all, but one of the special flags
+		// that make this entry the one picked when its condition holds.
+		int16 weight = 0;
+		ser.syncAsSint16LE(weight);
+
+		switch (weight) {
+		case -1:
+			next.condition = kNextEqualChance;
+			seq.equalChanceNext = true;
+			break;
+		case -2:
+			next.condition = kNextIfHovered;
+			break;
+		case -3:
+			next.condition = kNextIfNotHovered;
+			break;
+		case -4:
+			next.condition = kNextIfChannel13Playing;
+			break;
+		case -5:
+			next.condition = kNextIfChannel12Playing;
+			break;
+		default:
+			next.weight = weight;
+			break;
+		}
 	}
 }
 
@@ -130,7 +223,7 @@ void PlaySecondaryMovie::readSecondaryRandomMovie(Common::Serializer &ser, Rando
 	readFilename(ser, seq.name);
 	ser.syncAsUint16LE(seq.startFrame);
 	ser.syncAsUint16LE(seq.lastFrame);
-	ser.syncAsUint16LE(_talkCursorType);	// hover cursor for the character
+	ser.syncAsSint16LE(_talkCursorType);	// hover cursor for the character
 	ser.syncAsUint16LE(_talkSceneID);
 	ser.skip(2);	// conversation frameID (0 in known data)
 
@@ -183,8 +276,8 @@ void PlaySecondaryMovie::readRandomMovieData(Common::Serializer &ser, Common::Se
 // The header grew to mirror the non-random AR (videoFormat / visibility / cursor
 // / sceneID / frameID, plus two currently unmapped u16s and a per-movie volume
 // byte). The sequence records are unchanged. The tail is a blt-descriptor list
-// for the main movie, then the recognition ("secondary") movie's name and its
-// own blt-descriptor list, in place of Nancy13's secondaryMovie record + hotspot
+// for the main movie, then the name of a foreground mask image and its own
+// blt-descriptor list, in place of Nancy13's secondaryMovie record + hotspot
 // list.
 void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream) {
 	readFilename(ser, _startingSequenceName);
@@ -193,10 +286,16 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 	_videoFormat = kLargeVideoFormat;
 	ser.skip(2);	// Visibility frame ID; ScummVM drives visibility from the videoDescs
 	ser.syncAsUint16LE(_randomPlayerCursorAllowed);
-	ser.skip(4);	// Two u16s (object offsets 0x8c / 0xe7); purpose not yet mapped
-	ser.syncAsSint16LE(_sceneChange.sceneID);
-	ser.syncAsUint16LE(_sceneChange.frameID);
-	ser.skip(1);	// Per-movie volume byte (movie sound off since Nancy6)
+	ser.skip(2);	// Event flag gating the roll for a next sequence; -1 = always roll
+	// Talkable character: the cursor shown while the mouse is over it, and the
+	// conversation scene a click opens. -1 / kNoScene mean the record carries
+	// neither, i.e. the character isn't clickable.
+	ser.syncAsSint16LE(_talkCursorType);
+	ser.syncAsUint16LE(_talkSceneID);
+	ser.skip(2);	// Conversation frame ID (0 in known data)
+
+	ser.syncAsByte(_movieVolume);
+	_movieVolume = MIN<byte>(_movieVolume, 100);
 
 	uint16 sequenceCount = 0;
 	ser.syncAsUint16LE(sequenceCount);
@@ -213,15 +312,14 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 		_videoDescs[i].readData(stream);
 	}
 
-	// Recognition ("secondary") movie: its name followed by its own blt
-	// descriptors. Stored for future playback; the descriptors are consumed to
-	// keep the stream aligned (no home in the struct yet).
-	readFilename(ser, _secondaryMovie.name);
-	uint16 numSecondaryDescs = 0;
-	ser.syncAsUint16LE(numSecondaryDescs);
-	for (uint i = 0; i < numSecondaryDescs; ++i) {
-		SecondaryVideoDescription unused;
-		unused.readData(stream);
+	// Foreground mask: the name of an image, followed by the blt descriptors
+	// that place it over the movie for each background frame.
+	readFilename(ser, _maskName);
+	uint16 numMaskDescs = 0;
+	ser.syncAsUint16LE(numMaskDescs);
+	_maskDescs.resize(numMaskDescs);
+	for (uint i = 0; i < numMaskDescs; ++i) {
+		_maskDescs[i].readData(stream);
 	}
 
 	applyStartingRandomSequence();
@@ -229,7 +327,6 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 
 void PlaySecondaryMovie::applyStartingRandomSequence() {
 	// "RandomMovie" picks any sequence; otherwise look up by name.
-	// Only the first sequence is played; chained playback is TODO.
 	if (!_sequences.empty()) {
 		int startIdx = -1;
 		if (_startingSequenceName == "RandomMovie") {
@@ -279,6 +376,8 @@ bool PlaySecondaryMovie::activateRandomSequence(int index) {
 		return false;
 	}
 
+	_decoder.setVolume(_movieVolume);
+
 	resolveSentinelFrames();
 
 	_isFinished = false;
@@ -296,11 +395,40 @@ bool PlaySecondaryMovie::activateSecondaryMovie() {
 		return false;
 	}
 
+	_decoder.setVolume(_movieVolume);
+
 	resolveSentinelFrames();
 
 	_isFinished = false;
+	_secondaryRewinding = false;
 	_curViewportFrame = -1;
 	return true;
+}
+
+void PlaySecondaryMovie::beginSecondaryRewind() {
+	_secondaryRewinding = true;
+	_rewindFrame = _decoder.getCurFrame();
+	_rewindLastFrameTime = g_system->getMillis();
+
+	const int frameCount = _decoder.getFrameCount();
+	const uint32 durationMs = _decoder.getDuration().msecs();
+	_rewindFrameDelay = (frameCount > 0 && durationMs > 0) ? (durationMs / frameCount) : 66;
+	_isFinished = false;
+}
+
+const Graphics::Surface *PlaySecondaryMovie::updateSecondaryRewind() {
+	uint32 now = g_system->getMillis();
+	if (now - _rewindLastFrameTime < _rewindFrameDelay) {
+		return nullptr;
+	}
+
+	_rewindLastFrameTime = now;
+
+	if (_rewindFrame > (int)_firstFrame) {
+		--_rewindFrame;
+	}
+
+	return _decoder.decodeNextFrame(_rewindFrame);
 }
 
 void PlaySecondaryMovie::resolveSentinelFrames() {
@@ -316,8 +444,35 @@ void PlaySecondaryMovie::resolveSentinelFrames() {
 	}
 }
 
+void PlaySecondaryMovie::stopRandomNow() {
+	if (!isRandom()) {
+		return;
+	}
+
+	_randomStopRequested = true;
+
+	if (_state == kRun) {
+		if (!_isFinished) {
+			_decoder.pauseVideo(true);
+			_isFinished = true;
+		}
+
+		_state = kActionTrigger;
+	}
+}
+
+void PlaySecondaryMovie::pauseRandom(bool pause) {
+	// The decoder counts pause levels, so only follow an actual change.
+	if (!isRandom() || _randomPaused == pause) {
+		return;
+	}
+
+	_randomPaused = pause;
+	_decoder.pauseVideo(pause);
+}
+
 void PlaySecondaryMovie::playRandomSequence() {
-	if (!_isRandom || _sequences.empty()) {
+	if (!isRandom() || _sequences.empty()) {
 		return;
 	}
 	int picked = g_nancy->_randomSource->getRandomNumber(_sequences.size() - 1);
@@ -327,15 +482,39 @@ void PlaySecondaryMovie::playRandomSequence() {
 }
 
 int PlaySecondaryMovie::beginRandomPause(const RandomSequence &seq) {
+	_randomChainState = kRandomPaused;
+
+	// Two of the pause values are sentinels: instead of a duration they hold
+	// the sequence on its last frame until the mouse enters or leaves the
+	// movie, which is how a character keeps looking at the player for as long
+	// as the mouse stays on them.
+	if (seq.minPauseMs == -2 || seq.minPauseMs == -3) {
+		_randomPauseMode = seq.minPauseMs == -2 ? kPauseUntilHovered : kPauseUntilNotHovered;
+		return -1;
+	}
+
 	int32 pauseMs = seq.minPauseMs;
 	if (seq.maxPauseMs > seq.minPauseMs) {
 		pauseMs += g_nancy->_randomSource->getRandomNumber(seq.maxPauseMs - seq.minPauseMs - 1);
 	}
+
+	_randomPauseMode = kPauseTimed;
 	_randomPauseEndTime = g_system->getMillis() + (uint32)MAX<int32>(0, pauseMs);
-	_randomChainState = kRandomPaused;
 	setVisible(false);
+	_mask.setVisible(false);
 	_decoder.pauseVideo(true);
 	return -1;
+}
+
+bool PlaySecondaryMovie::randomPauseElapsed() const {
+	switch (_randomPauseMode) {
+	case kPauseUntilHovered:
+		return _isHovered;
+	case kPauseUntilNotHovered:
+		return !_isHovered;
+	default:
+		return g_system->getMillis() >= _randomPauseEndTime;
+	}
 }
 
 int PlaySecondaryMovie::lookupSequence(const Common::Path &name) const {
@@ -348,6 +527,76 @@ int PlaySecondaryMovie::lookupSequence(const Common::Path &name) const {
 	return -1;
 }
 
+int PlaySecondaryMovie::pickNextSequence() {
+	if (_activeSequenceIndex < 0 || _activeSequenceIndex >= (int)_sequences.size()) {
+		return -1;
+	}
+
+	const RandomSequence &seq = _sequences[_activeSequenceIndex];
+
+	if (seq.nextSequences.empty()) {
+		_randomChainState = kRandomPaused;
+		_randomPauseMode = kPauseTimed;
+		_randomPauseEndTime = g_system->getMillis() + 1000;	// re-check in 1s
+		return -1;
+	}
+
+	// The special-flag entries are tried first, in the order the original uses:
+	// the one matching the current hover state, then the sound-gated ones.
+	const NextCondition hoverCondition = _isHovered ? kNextIfHovered : kNextIfNotHovered;
+	for (const NextSequenceRef &next : seq.nextSequences) {
+		if (next.condition == hoverCondition) {
+			return lookupSequence(next.name);
+		}
+
+		if (next.condition == kNextIfChannel12Playing || next.condition == kNextIfChannel13Playing) {
+			warning("PlayRandomMovie: sound-gated next-sequence \"%s\" is not implemented",
+				next.name.toString().c_str());
+		}
+	}
+
+	// Otherwise a percent-weighted pick among the weighted entries, whose
+	// weights sum to 100 (or take an equal share each).
+	uint numWeighted = 0;
+	for (const NextSequenceRef &next : seq.nextSequences) {
+		if (next.condition == kNextWeighted || next.condition == kNextEqualChance) {
+			++numWeighted;
+		}
+	}
+
+	if (numWeighted == 0) {
+		// Nothing but conditions that don't hold right now. Hold the sequence
+		// on its last frame and re-check shortly, since moving the mouse can
+		// change the answer.
+		_randomChainState = kRandomPaused;
+		_randomPauseMode = kPauseTimed;
+		_randomPauseEndTime = g_system->getMillis() + 100;
+		return -1;
+	}
+
+	const uint step = 100 / numWeighted;
+	const uint roll = g_nancy->_randomSource->getRandomNumber(99);
+	uint cumulative = 0;
+	uint weightedIndex = 0;
+	for (const NextSequenceRef &next : seq.nextSequences) {
+		if (next.condition != kNextWeighted && next.condition != kNextEqualChance) {
+			continue;
+		}
+
+		if (++weightedIndex == numWeighted) {
+			cumulative = 100;
+		} else {
+			cumulative += seq.equalChanceNext ? step : next.weight;
+		}
+
+		if (roll < cumulative) {
+			return lookupSequence(next.name);
+		}
+	}
+
+	return -1;
+}
+
 int PlaySecondaryMovie::rollNextSequence() {
 	if (_activeSequenceIndex < 0 || _activeSequenceIndex >= (int)_sequences.size()) {
 		return -1;
@@ -356,35 +605,13 @@ int PlaySecondaryMovie::rollNextSequence() {
 	const RandomSequence &seq = _sequences[_activeSequenceIndex];
 
 	if (g_nancy->getGameType() >= kGameTypeNancy13) {
-		// Two independent rolls: first a percent chance to stay on this
-		// sequence and pause, then a percent-weighted pick among the next
-		// sequences (weights sum to 100, or all EQUAL_CHANCE for a uniform pick).
+		// First a percent chance to stay on this sequence and pause; the pick
+		// among the next sequences happens once the pause is over.
 		if (seq.stayWeight != 0 && (uint)g_nancy->_randomSource->getRandomNumber(99) < seq.stayWeight) {
 			return beginRandomPause(seq);
 		}
 
-		if (seq.nextSequences.empty()) {
-			_randomChainState = kRandomPaused;
-			_randomPauseEndTime = g_system->getMillis() + 1000;	// re-check in 1s
-			return -1;
-		}
-
-		const bool equalChance = seq.nextSequences[0].weight == 0xFFFF;
-		const uint step = 100 / seq.nextSequences.size();
-		uint roll = g_nancy->_randomSource->getRandomNumber(99);
-		uint cumulative = 0;
-		for (uint i = 0; i < seq.nextSequences.size(); ++i) {
-			if (i == seq.nextSequences.size() - 1) {
-				cumulative = 100;
-			} else {
-				cumulative += equalChance ? step : seq.nextSequences[i].weight;
-			}
-			if (roll < cumulative) {
-				return lookupSequence(seq.nextSequences[i].name);
-			}
-		}
-
-		return -1;
+		return pickNextSequence();
 	}
 
 	uint32 totalWeight = seq.stayWeight;
@@ -416,15 +643,70 @@ int PlaySecondaryMovie::rollNextSequence() {
 	return -1;
 }
 
+// Orders a frame field that may still hold a sentinel: -1 is the movie's own
+// first frame, -2 its last.
+static int32 orderSentinelFrame(uint16 frame) {
+	switch ((int16)frame) {
+	case -1:
+		return -1;
+	case -2:
+		return 0x7FFFFFFF;
+	default:
+		return frame;
+	}
+}
+
+void PlaySecondaryMovie::readDataNancy13(Common::Serializer &ser, Common::SeekableReadStream &stream) {
+	readFilename(ser, _videoName);
+
+	ser.skip(2);	// Z order
+
+	// 2 selects an alpha plane, 1 no alpha; transparency comes from the
+	// decoded pixel format instead.
+	ser.syncAsUint16LE(_videoFormat);
+	_videoFormat = kLargeVideoFormat;
+
+	ser.syncAsUint16LE(_playerCursorAllowed);
+	ser.syncAsUint16LE(_numLoops);
+	ser.syncAsUint16LE(_firstFrame);
+	ser.syncAsUint16LE(_lastFrame);
+	ser.syncAsSint16LE(_sceneChange.sceneID);
+	ser.syncAsUint16LE(_sceneChange.frameID);
+
+	_playDirection = orderSentinelFrame(_lastFrame) < orderSentinelFrame(_firstFrame) ?
+		kPlayMovieReverse : kPlayMovieForward;
+
+	_videoSceneChange = _sceneChange.sceneID != kNoScene ? kMovieSceneChange : kMovieNoSceneChange;
+
+	uint16 numFrameFlags = 0;
+	ser.syncAsUint16LE(numFrameFlags);
+	_frameFlags.resize(numFrameFlags);
+	for (uint i = 0; i < numFrameFlags; ++i) {
+		ser.syncAsSint16LE(_frameFlags[i].frameID);
+		ser.syncAsSint16LE(_frameFlags[i].flagDesc.label);
+		ser.syncAsUint16LE(_frameFlags[i].flagDesc.flag);
+	}
+
+	uint16 numVideoDescs = 0;
+	ser.syncAsUint16LE(numVideoDescs);
+	_videoDescs.resize(numVideoDescs);
+	for (uint i = 0; i < numVideoDescs; ++i) {
+		_videoDescs[i].readData(stream);
+	}
+
+	_sound.name = "NO SOUND";
+}
+
 // Nancy14 compacted the non-random layout: the videoSceneChange 5/6 flag is
-// gone (a scene change is now requested via the sceneID sentinel), playDirection
-// moved after lastFrame, and a "hide on finish" flag was added. AR 44 matches
-// AR 41 plus a trailing movie-volume byte.
+// gone (a scene change is now requested via the sceneID sentinel), a loop count
+// and a "hide on finish" flag were added, and the play direction follows from
+// the frame range, as in Nancy13. AR 44 matches AR 41 plus a trailing
+// movie-volume byte.
 //
 // Nancy15 adds two things on top: AR 44 gained a "play style" u16 (1/3) after
-// the hide-on-finish flag, and the firstFrame field can be -1 (LOOP_RANDOM),
-// in which case a min/max loop-count pair follows and a random value in that
-// range is chosen.
+// the hide-on-finish flag, and the loop count can be -1 (LOOP_RANDOM), in which
+// case a min/max loop-count pair follows and a random value in that range is
+// chosen.
 void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream) {
 	const bool isNancy15 = g_nancy->getGameType() >= kGameTypeNancy15;
 
@@ -439,35 +721,40 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 
 	// AR 44 and its subclass AR 47 read the play-style field (retail "mode 0");
 	// AR 41 ("mode 1") does not.
-	if (isNancy15 && (_type == 44 || _type == 47)) {
+	if (isNancy15 && (_movieType == kMovieWithVolume || _movieType == kInteractiveMovie)) {
 		ser.syncAsUint16LE(_playStyle);
 	}
 
-	ser.syncAsUint16LE(_firstFrame);
+	// 0 loops forever
+	ser.syncAsUint16LE(_numLoops);
 
-	if (isNancy15 && (int16)_firstFrame == -1) {
-		// LOOP_RANDOM: firstFrame -1 is followed by a min/max loop count; the
-		// game picks a random value in [min, max) (min must be < max).
+	if (isNancy15 && (int16)_numLoops == -1) {
+		// LOOP_RANDOM: a min/max loop count follows; the game picks a random
+		// value in [min, max) (min must be < max).
 		uint16 minLoops = 0, maxLoops = 0;
 		ser.syncAsUint16LE(minLoops);
 		ser.syncAsUint16LE(maxLoops);
-		_firstFrame = maxLoops > minLoops ?
+		_numLoops = maxLoops > minLoops ?
 			(uint16)(minLoops + g_nancy->_randomSource->getRandomNumber(maxLoops - minLoops - 1)) : minLoops;
 	}
 
+	ser.syncAsUint16LE(_firstFrame);
 	ser.syncAsUint16LE(_lastFrame);
-	ser.syncAsUint16LE(_playDirection);
+
+	_playDirection = orderSentinelFrame(_lastFrame) < orderSentinelFrame(_firstFrame) ?
+		kPlayMovieReverse : kPlayMovieForward;
+
 	ser.syncAsSint16LE(_sceneChange.sceneID);
 	ser.syncAsUint16LE(_sceneChange.frameID);
 
 	_videoSceneChange = _sceneChange.sceneID != kNoScene ? kMovieSceneChange : kMovieNoSceneChange;
 
-	// Per-movie volume; consumed but unused (movie sound is off since Nancy6).
-	// AR 44 always carries it. AR 47 does too, but only from Nancy15 - the
-	// retail flipped the "mode" convention, and Nancy14's AR 47 omits the byte.
-	if (_type == 44 || (_type == 47 && isNancy15)) {
-		byte movieVolume = 0;
-		ser.syncAsByte(movieVolume);
+	// Per-movie volume. AR 44 always carries it. AR 47 does too, but only from
+	// Nancy15 - the retail flipped the "mode" convention, and Nancy14's AR 47
+	// omits the byte.
+	if (_movieType == kMovieWithVolume || (_movieType == kInteractiveMovie && isNancy15)) {
+		ser.syncAsByte(_movieVolume);
+		_movieVolume = MIN<byte>(_movieVolume, 100);
 	}
 
 	uint16 numFrameFlags = 0;
@@ -488,21 +775,51 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 
 	_sound.name = "NO SOUND";
 
-	// AR 47 ("InteractiveVideo") appends a name, a flag byte, and a list of
-	// named {value, flag} entries on top of the AR-44 movie data.
-	if (_type == 47) {
-		readFilename(ser, _interactiveName);
-		byte flag = 0;
-		ser.syncAsByte(flag);
-		_interactiveFlag = flag != 0;
+	// AR 47 ("InteractiveVideo") appends its interactive-video data on top of
+	// the AR-44 movie data.
+	if (_movieType == kInteractiveMovie) {
+		readInteractiveData(ser);
+		readInteractiveVideoFileNancy14(_interactiveName, _interactiveVideo);
+		resolveInteractiveSets();
+	}
+}
 
-		uint16 numEntries = 0;
-		ser.syncAsUint16LE(numEntries);
-		_interactiveEntries.resize(numEntries);
-		for (uint i = 0; i < numEntries; ++i) {
-			readFilename(ser, _interactiveEntries[i].name);
-			ser.syncAsUint32LE(_interactiveEntries[i].value);
-			ser.syncAsByte(_interactiveEntries[i].flag);
+void PlaySecondaryMovie::readInteractiveData(Common::Serializer &ser) {
+	const bool named = g_nancy->getGameType() >= kGameTypeNancy14;
+
+	readFilename(ser, _interactiveName);
+
+	ser.skip(1);	// Draws the hotspot rects on top of the movie when set
+
+	uint16 numSets = 0;
+	ser.syncAsUint16LE(numSets);
+	_interactiveSets.resize(numSets);
+	for (uint i = 0; i < numSets; ++i) {
+		InteractiveSet &set = _interactiveSets[i];
+
+		if (named) {
+			readFilename(ser, set.name);
+		} else {
+			int16 setID = 0;
+			ser.syncAsSint16LE(setID);
+			set.setID = setID;
+		}
+
+		ser.syncAsSint16LE(set.flagDesc.label);
+		ser.syncAsByte(set.flagDesc.flag);
+		ser.syncAsSint16LE(set.cursorID);
+	}
+}
+
+// Turns the Nancy14 sets' names into the set indices the .iv file's hotspots use
+void PlaySecondaryMovie::resolveInteractiveSets() {
+	for (InteractiveSet &set : _interactiveSets) {
+		set.setID = -1;
+		for (uint i = 0; i < _interactiveVideo.setNames.size(); ++i) {
+			if (_interactiveVideo.setNames[i].equalsIgnoreCase(set.name)) {
+				set.setID = i;
+				break;
+			}
 		}
 	}
 }
@@ -511,7 +828,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	Common::Serializer ser(&stream, nullptr);
 	ser.setVersion(g_nancy->getGameType());
 
-	if (_isRandom) {
+	if (isRandom()) {
 		// Nancy14 reworked the random-movie layout (Nancy13 and earlier use the
 		// older secondaryMovie-record + hotspot-list form).
 		if (g_nancy->getGameType() >= kGameTypeNancy14) {
@@ -527,11 +844,34 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 		return;
 	}
 
+	// Nancy13's AR 41 shares this class but carries a more compact chunk, and
+	// AR 47 stacks its interactive-video data on top of that same layout.
+	if (g_nancy->getGameType() == kGameTypeNancy13 &&
+			(_movieType == kSecondaryMovieTerse || _movieType == kInteractiveMovie)) {
+		readDataNancy13(ser, stream);
+
+		if (_movieType == kInteractiveMovie) {
+			readInteractiveData(ser);
+			readInteractiveVideoFile(_interactiveName, _interactiveVideo);
+		}
+
+		return;
+	}
+
 	readFilename(ser, _videoName);
 	readFilename(ser, _paletteName, kGameTypeVampire, kGameTypeVampire);
 	readFilename(ser, _bitmapOverlayName, kGameTypeVampire, kGameTypeNancy9);
 
-	ser.skip(2, kGameTypeNancy7);	// videoType
+	if (g_nancy->getGameType() >= kGameTypeNancy7) {
+		uint16 videoType = 0;
+		ser.syncAsUint16LE(videoType);
+
+		// Nancy13 dropped AVF altogether, so the slot no longer selects a container.
+		if (g_nancy->getGameType() <= kGameTypeNancy12) {
+			_videoPlaytype = videoType == kVideoPlaytypeBink ? kVideoPlaytypeBink : kVideoPlaytypeAVF;
+		}
+	}
+
 	ser.skip(2, kGameTypeVampire, kGameTypeNancy9); // videoPlaySource
 	ser.syncAsUint16LE(_videoFormat);
 	if (g_nancy->getGameType() >= kGameTypeNancy10)
@@ -593,9 +933,11 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 
 void PlaySecondaryMovie::init() {
 	if (!_decoder.isVideoLoaded()) {
-		if (!_decoder.loadFile(_videoName)) {
+		if (!_decoder.loadFile(_videoName, _videoPlaytype)) {
 			error("Couldn't load video file %s", _videoName.toString().c_str());
 		}
+
+		_decoder.setVolume(_movieVolume);
 
 		if (!_paletteName.empty()) {
 			GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);
@@ -612,13 +954,133 @@ void PlaySecondaryMovie::init() {
 		}
 	}
 
-	if (_isRandom) {
+	if (isRandom()) {
 		resolveSentinelFrames();
+	}
+
+	if (!_maskName.empty() && _maskImage.empty()) {
+		g_nancy->_resource->loadImage(_maskName, _maskImage);
+		_mask.setVisible(false);
+		_mask.init();
 	}
 
 	_screenPosition = _drawSurface.getBounds();
 
 	RenderObject::init();
+}
+
+void PlaySecondaryMovie::registerGraphics() {
+	if (!_maskImage.empty()) {
+		_mask.registerGraphics();
+	}
+
+	RenderActionRecord::registerGraphics();
+}
+
+void PlaySecondaryMovie::updateMask(int viewportFrame) {
+	if (_maskImage.empty()) {
+		return;
+	}
+
+	for (const SecondaryVideoDescription &desc : _maskDescs) {
+		if (desc.frameID == viewportFrame) {
+			_mask._drawSurface.create(_maskImage, desc.srcRect);
+			_mask.setTransparent(true);
+			_mask.moveTo(desc.destRect);
+			_mask.setVisible(_isVisible);
+			return;
+		}
+	}
+
+	_mask.setVisible(false);
+}
+
+void PlaySecondaryMovie::updateGraphics() {
+	// A movie that played to its end keeps its last frame on screen after the
+	// record is done, and one whose dependencies stopped holding isn't executed
+	// anymore. Neither follows the viewport through execute(), so keep them
+	// attached to their background frame here. Records that never got to show a
+	// frame, or random movies that were stopped, have nothing to keep on screen.
+	if (_fullFrame.empty() || _randomStopRequested) {
+		return;
+	}
+
+	if (_isDone || !_isActive) {
+		updateViewportFrame();
+	}
+}
+
+void PlaySecondaryMovie::updateViewportFrame() {
+	int newFrame = NancySceneState.getSceneInfo().frameID;
+	if (newFrame == _curViewportFrame) {
+		return;
+	}
+
+	_curViewportFrame = newFrame;
+	int activeFrame = -1;
+	for (uint i = 0; i < _videoDescs.size(); ++i) {
+		if (newFrame == _videoDescs[i].frameID) {
+			activeFrame = i;
+			break;
+		}
+	}
+
+	if (activeFrame != -1) {
+		if (_fullFrame.empty()) {
+			moveTo(_videoDescs[activeFrame].destRect);
+		} else {
+			// Crop the last decoded frame for the new background frame, since a
+			// finished or paused movie won't decode another one.
+			applyVideoDesc(activeFrame);
+		}
+
+		setVisible(true);
+
+		// Nancy13 talkable characters: the character's on-screen box
+		// doubles as a clickable hotspot that opens its conversation.
+		if (_talkSceneID != kNoScene) {
+			_hotspot = _screenPosition;
+			_hasHotspot = true;
+		}
+	} else if (isRandom() && _videoDescs.empty()) {
+		// A random movie with no descriptors isn't tied to a specific
+		// background frame: play it across the full viewport.
+		moveTo(NancySceneState.getViewport().getBounds());
+		setVisible(true);
+		_hasHotspot = false;
+	} else {
+		setVisible(false);
+		_hasHotspot = false;
+	}
+
+	updateMask(newFrame);
+}
+
+void PlaySecondaryMovie::applyVideoDesc(int descID) {
+	// Nancy14 stores an all -1 srcRect to mean "use the whole frame".
+	Common::Rect srcRect = descID != -1 ? _videoDescs[descID].srcRect : Common::Rect();
+	if (srcRect.isEmpty()) {
+		srcRect = Common::Rect(_fullFrame.w, _fullFrame.h);
+	}
+
+	Common::Rect destRect = descID != -1 ? _videoDescs[descID].destRect : _screenPosition;
+
+	// The videoDesc's size might be larger than the decoded video (for example, nancy10's
+	// COR_AceFidgetEars_ANIM, and nancy12's PAR_ArcadeAnimationB); clamp here to avoid
+	// reading out-of-bounds during draw. (Adjust destRect too: avoid stretching)
+	const int16 decodedWidth = (int16)_decoder.getWidth();
+	if (srcRect.width() > decodedWidth) {
+		srcRect.setWidth(decodedWidth);
+		destRect.setWidth(decodedWidth);
+	}
+	const int16 decodedHeight = (int16)_decoder.getHeight();
+	if (srcRect.height() > decodedHeight) {
+		srcRect.setHeight(decodedHeight);
+		destRect.setHeight(decodedHeight);
+	}
+
+	_drawSurface.create(_fullFrame, srcRect);
+	moveTo(destRect);
 }
 
 void PlaySecondaryMovie::onPause(bool pause) {
@@ -629,6 +1091,12 @@ void PlaySecondaryMovie::onPause(bool pause) {
 void PlaySecondaryMovie::execute() {
 	switch (_state) {
 	case kBegin:
+		// WORKAROUND: Skip playing a known broken overlay animation in Nancy14
+		if (g_nancy->getGameType() == kGameTypeNancy14 && _videoName.baseName().equalsIgnoreCase("OFF0007_Water_OVLANIM")) {
+			_isDone = true;
+			return;
+		}
+
 		init();
 		registerGraphics();
 		g_nancy->_sound->loadSound(_sound);
@@ -659,19 +1127,24 @@ void PlaySecondaryMovie::execute() {
 
 		// fall through
 	case kRun: {
+		// Frozen by a PlayRandomMovieControl until it resumes the movie.
+		if (_randomPaused) {
+			break;
+		}
+
 		// Random-movie chain: while paused, wait for the pause to expire
 		// then re-roll. The roll itself may set up another pause, swap to
 		// the next sequence, or finish the AR if stop was requested.
-		if (_isRandom && _randomChainState == kRandomPaused) {
+		if (isRandom() && _randomChainState == kRandomPaused) {
 			if (_randomStopRequested) {
 				_state = kActionTrigger;
 				break;
 			}
-			if (g_system->getMillis() < _randomPauseEndTime) {
+			if (!randomPauseElapsed()) {
 				break;
 			}
 			_randomChainState = kRandomPlaying;
-			int picked = rollNextSequence();
+			int picked = g_nancy->getGameType() >= kGameTypeNancy13 ? pickNextSequence() : rollNextSequence();
 			if (picked >= 0) {
 				activateRandomSequence(picked);
 			}
@@ -679,59 +1152,35 @@ void PlaySecondaryMovie::execute() {
 			break;
 		}
 
-		// Talkable character: swap immediately between the idle loop and the
-		// recognition ("turn around") movie as the mouse enters/leaves the
-		// character, without waiting for the current cycle to finish.
+		// Talkable character: swap immediately from the idle loop to the
+		// recognition ("turn around") movie as the mouse enters the character,
+		// without waiting for the current cycle to finish. On the way out the
+		// recognition movie is played backwards instead, so the character turns
+		// away again before the idle loop resumes.
 		if (isTalkable()) {
-			if (_isHovered && !_playingSecondary) {
-				_playingSecondary = true;
-				activateSecondaryMovie();
-			} else if (!_isHovered && _playingSecondary) {
-				_playingSecondary = false;
-				activateRandomSequence(_activeSequenceIndex);
+			if (_isHovered) {
+				if (!_playingSecondary) {
+					_playingSecondary = true;
+					activateSecondaryMovie();
+				} else if (_secondaryRewinding) {
+					// The mouse came back mid-turn: play forward again from here.
+					_secondaryRewinding = false;
+					_isFinished = false;
+					_decoder.pauseVideo(false);
+				}
+			} else if (_playingSecondary && !_secondaryRewinding) {
+				beginSecondaryRewind();
 			}
 		}
 
-		int newFrame = NancySceneState.getSceneInfo().frameID;
-
-		if (newFrame != _curViewportFrame) {
-			_curViewportFrame = newFrame;
-			int activeFrame = -1;
-			for (uint i = 0; i < _videoDescs.size(); ++i) {
-				if (newFrame == _videoDescs[i].frameID) {
-					activeFrame = i;
-					break;
-				}
-			}
-
-			if (activeFrame != -1) {
-				_screenPosition = _videoDescs[activeFrame].destRect;
-				setVisible(true);
-
-				// Nancy13 talkable characters: the character's on-screen box
-				// doubles as a clickable hotspot that opens its conversation.
-				if (_talkSceneID != kNoScene) {
-					_hotspot = _screenPosition;
-					_hasHotspot = true;
-				}
-			} else if (_isRandom) {
-				// Random movies aren't gated on hotspot/viewport-frame
-				// matches the way regular PSMs are: play full viewport.
-				_screenPosition = NancySceneState.getViewport().getBounds();
-				setVisible(true);
-				_hasHotspot = false;
-			} else {
-				setVisible(false);
-				_hasHotspot = false;
-			}
-		}
+		updateViewportFrame();
 
 		// We update the decoder here instead of in updateGraphics() to avoid an
 		// edge case in nancy4 (scene 3180) where the very last frame has a frameFlag that should trigger
 		// another action record, but doesn't do so, because updateGraphics() gets called after all
 		// action record execution. Instead, the movie's own scene change (which is inexplicably enabled)
 		// gets triggered, and teleports the player to the wrong place instead of making them lose the game
-		if (!_decoder.isPlaying() && _isVisible && !_isFinished) {
+		if (!_decoder.isPlaying() && _isVisible && !_isFinished && !_secondaryRewinding) {
 			_decoder.start();
 			resolveSentinelFrames();
 
@@ -743,8 +1192,11 @@ void PlaySecondaryMovie::execute() {
 			}
 		}
 
-		if (_decoder.needsUpdate()) {
-			uint descID = 0;
+		const Graphics::Surface *decodedFrame = _secondaryRewinding ? updateSecondaryRewind() :
+			(_decoder.needsUpdate() ? _decoder.decodeNextFrame() : nullptr);
+
+		if (decodedFrame) {
+			int descID = -1;
 
 			for (uint i = 0; i < _videoDescs.size(); ++i) {
 				if (_videoDescs[i].frameID == _curViewportFrame) {
@@ -752,32 +1204,8 @@ void PlaySecondaryMovie::execute() {
 				}
 			}
 
-			GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
-
-			// Nancy14 stores an all -1 srcRect to mean "use the whole frame".
-			Common::Rect srcRect = _videoDescs[descID].srcRect;
-			if (srcRect.isEmpty()) {
-				srcRect = Common::Rect(_fullFrame.w, _fullFrame.h);
-			}
-
-			Common::Rect destRect = _videoDescs[descID].destRect;
-
-			// The videoDesc's size might be larger than the decoded video (for example, nancy10's
-			// COR_AceFidgetEars_ANIM, and nancy12's PAR_ArcadeAnimationB); clamp here to avoid
-			// reading out-of-bounds during draw. (Adjust destRect too: avoid stretching)
-			const int16 decodedWidth = (int16)_decoder.getWidth();
-			if (srcRect.width() > decodedWidth) {
-				srcRect.setWidth(decodedWidth);
-				destRect.setWidth(decodedWidth);
-			}
-			const int16 decodedHeight = (int16)_decoder.getHeight();
-			if (srcRect.height() > decodedHeight) {
-				srcRect.setHeight(decodedHeight);
-				destRect.setHeight(decodedHeight);
-			}
-
-			_drawSurface.create(_fullFrame, srcRect);
-			moveTo(destRect);
+			GraphicsManager::copyToManaged(*decodedFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
+			applyVideoDesc(descID);
 
 			_needsRedraw = true;
 
@@ -788,14 +1216,27 @@ void PlaySecondaryMovie::execute() {
 			}
 		}
 
-		if ((_decoder.getCurFrame() == _lastFrame && _playDirection == kPlayMovieForward) ||
+		if (_secondaryRewinding) {
+			// The character has turned away again: hand the screen back to the
+			// idle loop it was playing before the mouse arrived.
+			if (_rewindFrame <= (int)_firstFrame) {
+				_playingSecondary = false;
+				_secondaryRewinding = false;
+				activateRandomSequence(_activeSequenceIndex);
+			}
+		} else if ((_decoder.getCurFrame() == _lastFrame && _playDirection == kPlayMovieForward) ||
 			(_decoder.getCurFrame() == _firstFrame && _playDirection == kPlayMovieReverse) ||
 			_decoder.endOfVideo()) {
 
-			_decoder.pauseVideo(true);
-			_isFinished = true;
+			// A movie held on its last frame keeps matching the check above every
+			// tick; only pause it the once, so the pause level stays balanced for
+			// whoever resumes playback.
+			if (!_isFinished) {
+				_decoder.pauseVideo(true);
+				_isFinished = true;
+			}
 
-			if (_isRandom) {
+			if (isRandom()) {
 				// Sequence finished: roll for next. If stop was requested
 				// by a PlayRandomMovieControl, wind the AR down normally.
 				if (_randomStopRequested) {
@@ -818,6 +1259,12 @@ void PlaySecondaryMovie::execute() {
 					// Otherwise the chain entered the paused state; no
 					// state-trigger transition.
 				}
+			} else if (_numLoops == 0 || _playCount + 1 < _numLoops) {
+				// More plays to go; restart in place.
+				++_playCount;
+				_isFinished = false;
+				_decoder.seekToFrame(_playDirection == kPlayMovieReverse ? _lastFrame : _firstFrame);
+				_decoder.pauseVideo(false);
 			} else if (!g_nancy->_sound->isSoundPlaying(_sound)) {
 				// Stop the video and block it from starting again, but also wait for
 				// sound to end before changing state
@@ -840,6 +1287,7 @@ void PlaySecondaryMovie::execute() {
 		// Allow looping
 		if (!_isDone) {
 			_isFinished = false;
+			_playCount = 0;
 			_decoder.seek(0);
 			_decoder.pauseVideo(false);
 		} else if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
@@ -858,20 +1306,124 @@ void PlaySecondaryMovie::execute() {
 	}
 }
 
+bool PlaySecondaryMovie::isSkippable() {
+	// Interactive videos (AR 47) wait for the player to click their hotspots,
+	// so they must play out in full.
+	if (isRandom() || _movieType == kInteractiveMovie || _state != kRun) {
+		return false;
+	}
+
+	// Movies that hide the player cursor are cinematics by definition.
+	if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
+		return true;
+	}
+
+	// Some records (Nancy14's AR 44 in particular) leave the cursor enabled
+	// while still playing a cutscene over the whole viewport. Those count as
+	// cinematics as well, as long as they are not looping forever - an endless
+	// loop is an ambient animation the player isn't waiting on.
+	return _numLoops != 0 &&
+		Common::Rect(_decoder.getWidth(), _decoder.getHeight()) == NancySceneState.getViewport().getBounds();
+}
+
+void PlaySecondaryMovie::skip() {
+	if (!isSkippable()) {
+		return;
+	}
+
+	g_nancy->_sound->stopSound(_sound);
+
+	if (!_isFinished) {
+		_decoder.pauseVideo(true);
+		_isFinished = true;
+	}
+
+	_state = kActionTrigger;
+}
+
 // --- PlayRandomMovieControl --------------------------------------------
 
 void PlayRandomMovieControl::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		// Nancy15 names the movie to control. The literal "RandomMovie" keeps the
+		// old behavior of addressing the scene's random movie; any other name is
+		// a movie file, which is looked up among the loaded movies.
+		readFilename(stream, _movieName);
+		_isRandomMovie = _movieName.baseName().equalsIgnoreCase("RandomMovie");
+	}
+
 	_mode = stream.readByte();
-	_sceneChange.readData(stream, true, true);
+
+	_hasSceneChange = g_nancy->getGameType() < kGameTypeNancy13;
+	if (_hasSceneChange) {
+		_sceneChange.readData(stream, true, true);
+	}
 }
 
 void PlayRandomMovieControl::execute() {
-	PlaySecondaryMovie *target = NancySceneState.getActiveMovie();
-	if (target && target->_isRandom) {
-		target->stopRandom();
+	if (_isRandomMovie) {
+		PlaySecondaryMovie *target = NancySceneState.getActiveMovie();
+		if (target && target->isRandom()) {
+			if (_hasSceneChange) {
+				target->stopRandom();
+			} else {
+				switch (_mode) {
+				case kStopNow:
+					target->stopRandomNow();
+					break;
+				case kPauseMovie:
+					target->pauseRandom(true);
+					break;
+				case kResumeMovie:
+					target->pauseRandom(false);
+					break;
+				case kStopAtEnd:
+					target->stopRandom();
+					break;
+				case kPauseAtEnd:
+					// The original defers the pause until the movie reaches its
+					// end; nothing in the shipped data uses it
+					warning("Unimplemented PlayRandomMovieControl mode kPauseAtEnd");
+					break;
+				default:
+					warning("Unknown PlayRandomMovieControl mode %u", _mode);
+					break;
+				}
+			}
+		}
+	} else {
+		MoviePlayer *movie = MoviePlayer::findLoadedMovie(_movieName);
+		if (movie) {
+			switch (_mode) {
+			case kStopNow:
+				movie->stop();
+				break;
+			case kPauseMovie:
+				movie->pauseVideo(true);
+				break;
+			case kResumeMovie:
+				movie->pauseVideo(false);
+				break;
+			case kStopAtEnd:
+			case kPauseAtEnd:
+				warning("Unimplemented deferred PlayRandomMovieControl mode %u for movie %s",
+					_mode, _movieName.toString().c_str());
+				break;
+			default:
+				warning("Unknown PlayRandomMovieControl mode %u", _mode);
+				break;
+			}
+		} else if (_mode == kResumeMovie) {
+			// The original loads the movie and starts playing it here
+			warning("PlayRandomMovieControl can't play movie %s, it is not loaded",
+				_movieName.toString().c_str());
+		}
 	}
 
-	_sceneChange.execute();
+	if (_hasSceneChange) {
+		_sceneChange.execute();
+	}
+
 	finishExecution();
 }
 

@@ -128,7 +128,7 @@ void room_505_init() {
 		}
 	}
 
-	if ((previous_room == 504) || (previous_room != KERNEL_RESTORING_GAME)) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = PLAYER_X_FROM_504;
 		player.y = PLAYER_Y_FROM_504;
 		player.facing = FACING_EAST;
@@ -217,9 +217,6 @@ static void process_conversation_coffin() {
 		break;
 
 	case ROOM_505_END_CONV + 1:
-		conv_release();
-		break;
-
 	case ROOM_505_START_CONV:
 		conv_release();
 		break;
@@ -816,7 +813,6 @@ void room_505_daemon() {
 		local->they_parted = true;
 		local->anim_2_running = true;
 		local->anim_1_running = false;
-		/* player.commands_allowed = false; */
 		aa[2] = kernel_run_animation(kernel_name('b', 1), 0);
 		id = kernel_add_dynamic(words_Christine, words_walk_to, SYNTAX_SINGULAR_FEM, KERNEL_NONE,
 			0, 0, 0, 0);

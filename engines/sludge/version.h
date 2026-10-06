@@ -18,6 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef SLUDGE_VERSION_H
+#define SLUDGE_VERSION_H
+
 #define MAJOR_VERSION 2
 #define MINOR_VERSION 2
 #define RELEASE_VERSION 1
@@ -35,3 +39,5 @@ namespace Sludge {
 extern int gameVersion;
 
 } // End of namespace Sludge
+
+#endif // SLUDGE_VERSION_H

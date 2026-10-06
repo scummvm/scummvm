@@ -56,7 +56,7 @@ enum ActionZoneType : byte {
 	kZoneUnknown12		= 0x12,	// another special-effect variant
 	kZoneUnknown13		= 0x13,	// another special-effect variant
 	kZoneBoundary		= 0x14,	// play-area wall
-	kZoneUnknown15		= 0x15,	// special effect + int32; a damage range in Nancy13
+	kZoneUnknown15		= 0x15,	// Nancy12: on entry, sound + special effect + change to scene specialEffectId; a damage range in Nancy13
 	kZoneBumper			= 0x16,	// Nancy12: an overlay variant; Nancy13: a pachinko hole
 	kZoneFlatTire		= 0x17	// pothole: damages the car driving over it
 };
@@ -121,6 +121,7 @@ struct ActionZone {
 	Common::String overlayName;
 	Common::Array<Common::Rect> overlaySrcRects;
 	Common::Rect overlayDestRect;
+	byte overlayPlayMode = 0;	// 1 = drawn opaque; anything else = color-keyed
 	int32 overlayLayer = 0;	// draw pass: 0 renders under the car, 1 over it
 
 	// The Nancy13 pinball layout (AR 175) differs from the Nancy12 one: the base carries an

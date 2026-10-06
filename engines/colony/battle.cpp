@@ -46,7 +46,6 @@ const int kBattleSize = 150;   // BSIZE: collision/spawn radius
 const int kMaxQuad = 15;       // pyramids per quadrant
 const int kTankMax = 24;       // turret pincer animation range
 const int kFloor = 160;        // ground z-offset
-const float kBattleFovY = 75.0f;
 
 // =====================================================================
 // Battle color constants (original Mac QuickDraw pattern indices)
@@ -78,9 +77,8 @@ int battleHorizonY(const Common::Rect &screenR, int lookY) {
 	const float centerY = screenR.top + halfHeight;
 	const float clampedLookY = CLIP<float>((float)lookY, -63.5f, 63.5f);
 	const float pitchRad = clampedLookY * 2.0f * (float)M_PI / 256.0f;
-	const float focalY = halfHeight / tanf(kBattleFovY * (float)M_PI / 360.0f);
 
-	return (int)roundf(centerY - focalY * tanf(pitchRad));
+	return (int)roundf(centerY - kProjectionFocalLength * tanf(pitchRad));
 }
 
 int battlePowerLevel(int32 power) {
@@ -126,12 +124,11 @@ bool battleProjectPoint(const Common::Rect &screenR, uint8 look, int8 lookY, con
 	if (eyeZ >= -1.0f)
 		return false;
 
-	const float focal = (screenR.height() * 0.5f) / tanf(kBattleFovY * (float)M_PI / 360.0f);
 	const float centerX = screenR.left + screenR.width() * 0.5f;
 	const float centerY = screenR.top + screenR.height() * 0.5f;
 
-	screenX = (int)roundf(centerX + (eyeX * focal / -eyeZ));
-	screenY = (int)roundf(centerY - (eyeY * focal / -eyeZ));
+	screenX = (int)roundf(centerX + (eyeX * kProjectionFocalLength / -eyeZ));
+	screenY = (int)roundf(centerY - (eyeY * kProjectionFocalLength / -eyeZ));
 	return true;
 }
 
@@ -455,6 +452,7 @@ void ColonyEngine::battleInit() {
 	_battleShip.look = _battleShip.ang = 32;
 
 	_battleRound = 0;
+	_battleSendFarX = false;
 	_projon = false;
 	_pcount = 0;
 
@@ -721,8 +719,8 @@ void ColonyEngine::battleDrawTanks() {
 
 		// Build animated left pincer vertices
 		int lPincerPts[4][3];
-		int nabs_lookx = (drone.lookx > 0) ? -drone.lookx : drone.lookx; // nabs
-		int lLook = nabs_lookx - 32;
+		// BATTLE.C's -32 is the phase-shifted table's, not an angle.
+		int lLook = (drone.lookx > 0) ? -drone.lookx : drone.lookx; // nabs
 		if (lLook < 0)
 			lLook += 256;
 		for (int j = 0; j < 4; j++) {
@@ -740,7 +738,7 @@ void ColonyEngine::battleDrawTanks() {
 
 		// Build animated right pincer vertices
 		int rPincerPts[4][3];
-		int rLook = ABS(drone.lookx) - 32;
+		int rLook = ABS(drone.lookx);
 		if (rLook < 0)
 			rLook += 256;
 		for (int j = 0; j < 4; j++) {
@@ -884,8 +882,9 @@ void ColonyEngine::battleDrawTanks() {
 
 void ColonyEngine::battleThink() {
 	if (_projon) {
-		const int fx = battleNormalizeCoord(_battleProj.xloc + (_cost[_battleProj.ang] * 4));
-		const int fy = battleNormalizeCoord(_battleProj.yloc + (_sint[_battleProj.ang] * 4));
+		const uint8 pang = objWorldAng(_battleProj.ang);
+		const int fx = battleNormalizeCoord(_battleProj.xloc + (_cost[pang] * 4));
+		const int fy = battleNormalizeCoord(_battleProj.yloc + (_sint[pang] * 4));
 		if (0 == (_pcount--))
 			_projon = false;
 		battleProjCommand(fx, fy);
@@ -924,7 +923,7 @@ void ColonyEngine::battleThink() {
 			tooFar = true;
 		}
 
-		int32 dir = dx * _sint[ang] - dy * _cost[ang];
+		int32 dir = dx * _sint[objWorldAng(ang)] - dy * _cost[objWorldAng(ang)];
 		if (!tooFar) {
 			distance = (int32)sqrt((double)(dx * dx + dy * dy));
 			if (distance > 0) {
@@ -954,8 +953,8 @@ void ColonyEngine::battleThink() {
 				ang += 4;
 		}
 
-		const int fx = _bfight[i].xloc + (_cost[ang] >> 2);
-		const int fy = _bfight[i].yloc + (_sint[ang] >> 2);
+		const int fx = _bfight[i].xloc + (_cost[objWorldAng(ang)] >> 2);
+		const int fy = _bfight[i].yloc + (_sint[objWorldAng(ang)] >> 2);
 		if (distance > 250 || tooFar) {
 			if ((!_orbit) &&
 				fx > _battleShip.xloc - 2 * kBattleSize &&
@@ -984,8 +983,8 @@ void ColonyEngine::battleThink() {
 		_sound->play(Sound::kShoot);
 		_battleProj.ang = _bfight[shooter].ang;
 		_battleProj.look = _bfight[shooter].look;
-		_battleProj.xloc = battleNormalizeCoord(_bfight[shooter].xloc + (_cost[_battleProj.ang] * 2));
-		_battleProj.yloc = battleNormalizeCoord(_bfight[shooter].yloc + (_sint[_battleProj.ang] * 2));
+		_battleProj.xloc = battleNormalizeCoord(_bfight[shooter].xloc + (_cost[objWorldAng(_battleProj.ang)] * 2));
+		_battleProj.yloc = battleNormalizeCoord(_bfight[shooter].yloc + (_sint[objWorldAng(_battleProj.ang)] * 2));
 		debugC(1, kColonyDebugCombat,
 			"battleEnemyShoot: enemy=%d pos=(%d,%d) ang=%d proj=(%d,%d)",
 			shooter, _bfight[shooter].xloc, _bfight[shooter].yloc, _battleProj.ang,
@@ -1005,7 +1004,6 @@ void ColonyEngine::enterColonyFromBattle(int mapNum, int xloc, int yloc) {
 	_me.xindex = _me.xloc >> 8;
 	_me.yindex = _me.yloc >> 8;
 	loadMap(mapNum);
-	_coreIndex = (mapNum == 1) ? 0 : 1;
 }
 
 void ColonyEngine::battleCommand(int xnew, int ynew) {
@@ -1076,8 +1074,6 @@ void ColonyEngine::battleCommand(int xnew, int ynew) {
 }
 
 void ColonyEngine::battleShoot() {
-	static bool s_sendFarX = false;
-
 	if (_me.power[0] <= 0 || _weapons <= 0 || _fl)
 		return;
 
@@ -1116,14 +1112,14 @@ void ColonyEngine::battleShoot() {
 	target->power[1] -= battlePowerLevel(_me.power[0]);
 	if (target->power[1] < 0) {
 		target->power[1] = 15 + (_randomSource.getRandomNumber(0x0F) & 0x0F);
-		if (s_sendFarX) {
+		if (_battleSendFarX) {
 			target->xloc = battleNormalizeCoord(_me.xloc + 16000);
 			target->yloc = battleNormalizeCoord(_me.yloc + _randomSource.getRandomNumber(0x7FFF));
 		} else {
 			target->xloc = battleNormalizeCoord(_me.xloc + _randomSource.getRandomNumber(0x7FFF));
 			target->yloc = battleNormalizeCoord(_me.yloc + 16000);
 		}
-		s_sendFarX = !s_sendFarX;
+		_battleSendFarX = !_battleSendFarX;
 		_sound->play(Sound::kExplode);
 	}
 }

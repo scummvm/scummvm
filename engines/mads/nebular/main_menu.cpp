@@ -21,6 +21,7 @@
 
 #include "mads/core/general.h"
 #include "mads/core/config.h"
+#include "mads/core/env.h"
 #include "mads/core/error.h"
 #include "mads/core/font.h"
 #include "mads/core/hspot.h"
@@ -37,6 +38,7 @@
 #include "mads/nebular/main_menu.h"
 #include "mads/nebular/extra.h"
 #include "mads/nebular/mads/sounds.h"
+#include "mads/nebular/nebular.h"
 #include "mads/mads.h"
 
 namespace MADS {
@@ -149,11 +151,13 @@ static void load_title_screen() {
 	pal_white(master_palette);
 
 	// Set up mouse cursor
-	Graphics::Surface surf;
-	surf.format = Graphics::PixelFormat::createFormatCLUT8();
-	surf.w = surf.pitch = surf.h = 16;
-	surf.setPixels(const_cast<byte *>(&ARROW_CURSOR[0][0]));
-	mouse_cursor_surface(surf, 1, 1);
+	if (!env_set_cursor(1)) {
+		Graphics::Surface surf;
+		surf.format = Graphics::PixelFormat::createFormatCLUT8();
+		surf.w = surf.pitch = surf.h = 16;
+		surf.setPixels(const_cast<byte *>(&ARROW_CURSOR[0][0]));
+		mouse_cursor_surface(surf, 1, 1);
+	}
 	mouse_show();
 
 	// Load the title screen room
@@ -232,8 +236,6 @@ static void process_menu() {
 	int myspot;
 
 	myspot = hspot_which(mouse_x, mouse_y - viewing_at_y, mcga_mode);
-
-	//current_eye = false;
 
 	if ((myspot > 0) && mouse_any_stroke && (menu_mode == MENU_ACCEPTING_COMMANDS)) {
 		current_item = spot[myspot].num;
@@ -330,6 +332,7 @@ static void process_sprites() {
 void menu_control() {
 	int fx;
 	int mykey;
+	bool outerMenuFrameReady = false;
 
 	menu_mode = MENU_APPEARING;
 	animating_item = 0;
@@ -340,8 +343,6 @@ void menu_control() {
 
 	going = true;
 	must_perform_matte = false;
-
-	frame_clock = 0;
 
 	g_engine->_soundManager->init(7);
 	sound_queue(N_TitleScreen);
@@ -424,6 +425,11 @@ void menu_control() {
 
 			fx = new_background ? 1 : 0;
 			matte_frame(fx, false);
+			if (!outerMenuFrameReady) {
+				static_cast<RexNebularEngine *>(g_engine)->
+					notifyMacintoshOuterMenuFrameReady();
+				outerMenuFrameReady = true;
+			}
 
 			if (fx) {
 				now_clock = timer_read();

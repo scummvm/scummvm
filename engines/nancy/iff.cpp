@@ -25,6 +25,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/iff.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/util.h"
 
 namespace Nancy {
 
@@ -51,6 +52,8 @@ IFF::IFF(Common::SeekableReadStream *stream) {
 
 	delete _stream;
 	_stream = nullptr;
+
+	resolveIncludes();
 }
 
 IFF::~IFF() {
@@ -85,9 +88,78 @@ bool IFF::callback(Common::IFFChunk &c) {
 		error("IFF::callback: error reading '%s' chunk", idToString(chunk.id).c_str());
 
 	debugN(3, "IFF::callback: Adding '%s' chunk\n", idToString(chunk.id).c_str());
+	chunk.key = _chunks.size();
 	_chunks.push_back(chunk);
 
 	return false;
+}
+
+// A USE chunk (Nancy14+) names other IFF files whose action records get merged
+// in, so e.g. shared action records can be reused by many scenes. Every chunk
+// has an ordering key: an IFF's own chunks are numbered 0, 1, 2... and an
+// included ACT chunk gets the USE chunk's key plus a tenth of its own key. So
+// the records of an include with ten or more chunks interleave with the chunks
+// following the USE chunk, and several includes interleave with each other.
+void IFF::resolveIncludes() {
+	const uint32 useID = stringToId("USE");
+	const uint32 actID = stringToId("ACT");
+
+	// Collect the USE chunks first, since inserting shifts the chunk indices
+	Common::Array<uint> useChunks;
+	for (uint i = 0; i < _chunks.size(); ++i) {
+		if (_chunks[i].id == useID) {
+			useChunks.push_back(i);
+		}
+	}
+
+	Common::Array<Chunk> includedChunks;
+	for (uint useChunk : useChunks) {
+		const Chunk &use = _chunks[useChunk];
+		Common::MemoryReadStream useStream(use.buf, use.size);
+		uint16 numIncludes = useStream.readUint16LE();
+
+		for (uint i = 0; i < numIncludes; ++i) {
+			Common::String includeName;
+			readFilename(useStream, includeName);
+			_includes.push_back(includeName);
+
+			IFF *include = g_nancy->_resource->loadIFF(Common::Path(includeName));
+			if (!include) {
+				warning("IFF::resolveIncludes: failed to load included file '%s'", includeName.c_str());
+				continue;
+			}
+
+			// Only action records are included. Their buffers change owner
+			for (Chunk &chunk : include->_chunks) {
+				if (chunk.id != actID) {
+					continue;
+				}
+
+				Chunk included = chunk;
+				included.key = chunk.key * 0.1 + use.key;
+
+				// Chunks from nested includes keep their innermost source
+				if (included.source.empty()) {
+					included.source = includeName;
+				}
+
+				includedChunks.push_back(included);
+				chunk.buf = nullptr;
+			}
+
+			delete include;
+		}
+	}
+
+	// Insert after all chunks with a lower or equal key
+	for (const Chunk &chunk : includedChunks) {
+		uint pos = _chunks.size();
+		while (pos > 0 && _chunks[pos - 1].key > chunk.key) {
+			--pos;
+		}
+
+		_chunks.insert_at(pos, chunk);
+	}
 }
 
 const byte *IFF::getChunk(uint32 id, uint &size, uint index) const {
@@ -104,6 +176,21 @@ const byte *IFF::getChunk(uint32 id, uint &size, uint index) const {
 	}
 
 	return nullptr;
+}
+
+Common::String IFF::getChunkSource(const Common::String &id, uint index) const {
+	uint32 chunkID = stringToId(id);
+	uint found = 0;
+	for (const Chunk &chunk : _chunks) {
+		if (chunk.id == chunkID) {
+			if (found == index) {
+				return chunk.source;
+			}
+			++found;
+		}
+	}
+
+	return Common::String();
 }
 
 Common::SeekableReadStream *IFF::getChunkStream(const Common::String &id, uint index) const {

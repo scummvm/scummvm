@@ -716,7 +716,7 @@ static void gagt_status_update_extended() {
 		 */
 		g_vm->glk_window_move_cursor(g_vm->gagt_status_window, 0, 1);
 		g_vm->glk_put_string("  Exits: ");
-		for (exit = 0; exit < (int)sizeof(exitname) / (int)sizeof(exitname[0]); exit++) {
+		for (exit = 0; exit < ARRAYSIZE(exitname); exit++) {
 			if (compass_rose & (1 << exit)) {
 				g_vm->glk_put_string(exitname[exit]);
 				g_vm->glk_put_char(' ');

@@ -87,12 +87,133 @@ void wallPoint(const float corners[4][3], float u, float v, float out[3]) {
 	out[2] = botZ + (topZ - botZ) * v;
 }
 
+// Far mouth of a one-cell recess. Taking the direction from the quad's own normal
+// keeps it in step with whichever face getWallFace3D() built.
+void ColonyEngine::getWallRecess3D(const float corners[4][3], float farC[4][3]) const {
+	const float ux = corners[1][0] - corners[0][0];
+	const float uy = corners[1][1] - corners[0][1];
+	const float uz = corners[1][2] - corners[0][2];
+	const float vx = corners[3][0] - corners[0][0];
+	const float vy = corners[3][1] - corners[0][1];
+	const float vz = corners[3][2] - corners[0][2];
+
+	float nx = uy * vz - uz * vy;
+	float ny = uz * vx - ux * vz;
+	float nz = ux * vy - uy * vx;
+	const float len = sqrtf(nx * nx + ny * ny + nz * nz);
+	if (len < 0.001f) {
+		memcpy(farC, corners, sizeof(float) * 12);
+		return;
+	}
+	nx /= len;
+	ny /= len;
+	nz /= len;
+
+	const float awayX = corners[0][0] - (float)_me.xloc;
+	const float awayY = corners[0][1] - (float)_me.yloc;
+	const float awayZ = corners[0][2];
+	if (nx * awayX + ny * awayY + nz * awayZ < 0.0f) {
+		nx = -nx;
+		ny = -ny;
+		nz = -nz;
+	}
+
+	for (int i = 0; i < 4; i++) {
+		farC[i][0] = corners[i][0] + nx * 256.0f;
+		farC[i][1] = corners[i][1] + ny * 256.0f;
+		farC[i][2] = corners[i][2] + nz * 256.0f;
+	}
+}
+
+// Depth 0 at the wall face, 1 a cell in. renderCorridor3D() drops the wall
+// segment, so this needs no depth trickery.
+void ColonyEngine::recessPoint(const float nearC[4][3], const float farC[4][3],
+		float u, float v, float depth, float out[3]) const {
+	float pn[3];
+	float pf[3];
+	wallPoint(nearC, u, v, pn);
+	wallPoint(farC, u, v, pf);
+	for (int i = 0; i < 3; i++)
+		out[i] = pn[i] + (pf[i] - pn[i]) * depth;
+}
+
+void ColonyEngine::recessLine(const float nearC[4][3], const float farC[4][3],
+		float u1, float v1, float d1, float u2, float v2, float d2, uint32 color) {
+	float p1[3];
+	float p2[3];
+	recessPoint(nearC, farC, u1, v1, d1, p1);
+	recessPoint(nearC, farC, u2, v2, d2, p2);
+	_gfx->draw3DLine(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], color);
+}
+
+void ColonyEngine::recessQuad(const float nearC[4][3], const float farC[4][3],
+		const float *u, const float *v, const float *d, int count, uint32 color) {
+	float px[8];
+	float py[8];
+	float pz[8];
+	if (count > 8)
+		count = 8;
+	for (int i = 0; i < count; i++) {
+		float p[3];
+		recessPoint(nearC, farC, u[i], v[i], d[i], p);
+		px[i] = p[0];
+		py[i] = p[1];
+		pz[i] = p[2];
+	}
+	_gfx->draw3DPolygon(px, py, pz, count, color);
+}
+
+// A well legitimately projects outside its opening, so it needs the original's
+// per-wall clip or it paints over the neighbours.
+void ColonyEngine::clipToWallFace(const float corners[4][3]) {
+	int minX = 0;
+	int maxX = 0;
+	for (int i = 0; i < 4; i++) {
+		int sx = 0;
+		int sy = 0;
+		projectCorridorPointClamped(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
+			corners[i][0], corners[i][1], corners[i][2], sx, sy);
+		if (i == 0) {
+			minX = sx;
+			maxX = sx;
+			continue;
+		}
+		if (sx < minX)
+			minX = sx;
+		if (sx > maxX)
+			maxX = sx;
+	}
+	_gfx->setFeatureClipX(minX, maxX + 1);
+}
+
+void ColonyEngine::macFillRecess(const float nearC[4][3], const float farC[4][3],
+		const float *u, const float *v, const float *d, int count, int macIdx, bool macColors) {
+	if (macColors) {
+		if (_corePower[_coreIndex] == 0) {
+			_gfx->setWireframe(true, 0);
+			recessQuad(nearC, farC, u, v, d, count, 0);
+			return;
+		}
+
+		uint32 fg = packMacColor(_macColors[macIdx].fg);
+		uint32 bg = packMacColor(_macColors[macIdx].bg);
+		const byte *stipple = setupMacPattern(_gfx, _macColors[macIdx].pattern, fg, bg);
+		recessQuad(nearC, farC, u, v, d, count, fg);
+		if (stipple)
+			_gfx->setStippleData(nullptr);
+		return;
+	}
+
+	_gfx->setStippleData(kStippleGray);
+	recessQuad(nearC, farC, u, v, d, count, 0);
+	_gfx->setStippleData(nullptr);
+}
+
 // Draw a line on a wall face using normalized (u,v) coordinates
 void ColonyEngine::wallLine(const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color) {
 	float p1[3], p2[3];
 	wallPoint(corners, u1, v1, p1);
 	wallPoint(corners, u2, v2, p2);
-	// We assume this is only called when lit (handled in drawWallFeatures3D)
 	_gfx->draw3DLine(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], color);
 }
 
@@ -254,7 +375,8 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 
 	const bool macMode = isMacRenderMode();
 	const bool macColors = isMacColorMode();
-	const uint32 fillColor = macColors ? packMacColor(_macColors[8 + _level - 1].bg) : 0;
+	const bool lit = (_corePower[_coreIndex] > 0);
+	const uint32 fillColor = macColors && lit ? packMacColor(_macColors[8 + _level - 1].bg) : 0;
 	const uint32 lineColor = macColors ? (uint32)0xFF000000 : 0;
 
 	auto drawFilledCharPolygon = [&](const float *u, const float *v, int count) {
@@ -355,8 +477,8 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 
 	if (macMode) {
 		const uint32 wallFill = macColors
-			? packMacColor(_macColors[8 + _level - 1].fg)
-			: (uint32)255;
+			? packMacColor(lit ? _macColors[8 + _level - 1].fg : _macColors[6].bg)
+			: (lit ? 255u : 0u);
 		_gfx->setWireframe(true, wallFill);
 	}
 }
@@ -396,9 +518,15 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	const bool macMode = isMacRenderMode();
 	const bool macColors = isMacColorMode();
 
-	// Helper lambda: draw a filled hole polygon with Mac color or B&W fallback
+	// Helper lambda: draw a filled hole polygon with the platform material.
 	auto drawHolePoly = [&](const float *u, const float *v, int cnt, int macIdx) {
 		if (macColors) {
+			if (!lit) {
+				_gfx->setWireframe(true, 0);
+				wallPolygon(corners, u, v, cnt, 0);
+				return;
+			}
+
 			uint32 fg = packMacColor(_macColors[macIdx].fg);
 			uint32 bg = packMacColor(_macColors[macIdx].bg);
 			int pat = _macColors[macIdx].pattern;
@@ -410,7 +538,12 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 			_gfx->setStippleData(kStippleGray);
 			wallPolygon(corners, u, v, cnt, 0);
 			_gfx->setStippleData(nullptr);
+		} else if (!_wireframe) {
+			const uint32 outline = setupDOSMaterial(_gfx, kColorLtGray, _level);
+			wallPolygon(corners, u, v, cnt, outline);
+			_gfx->setStippleData(nullptr);
 		} else {
+			_gfx->setWireframe(true);
 			wallPolygon(corners, u, v, cnt, holeColor);
 		}
 	};
@@ -438,6 +571,10 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 		float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 		if (macMode) {
 			drawHolePoly(u, v, 4, 31); // c_hotplate
+		} else if (!_wireframe) {
+			const uint32 outline = setupDOSMaterial(_gfx, kColorTele, _level);
+			wallPolygon(corners, u, v, 4, outline);
+			_gfx->setStippleData(nullptr);
 		} else {
 			// DOS non-polyfill: X pattern (two diagonals)
 			wallLine(corners, 0.0f, 0.0f, 1.0f, 1.0f, holeColor);
@@ -448,39 +585,40 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	default:
 		break;
 	}
+
+	_gfx->setStippleData(nullptr);
+	const uint32 wallFill = macColors
+		? packMacColor(lit ? _macColors[8 + _level - 1].fg : _macColors[6].bg)
+		: (lit ? (macMode ? 255u : 7u) : 0u);
+	_gfx->setWireframe(true, wallFill);
 }
 
 float stairStepHeight(const float *vf, const float *vc, int d, int s) {
 	return vf[d] + (s + 1) / 8.0f * (vc[d] - vf[d]);
 }
 
-void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
-	const uint8 *map = mapFeatureAt(cellX, cellY, direction);
-	if (!map || map[0] == kWallFeatureNone)
-		return;
-
+bool ColonyEngine::isWallFeatureFacingCamera(int cellX, int cellY, int direction) const {
 	// Backface culling: only draw features for the side facing the camera.
 	// This prevents backside decorations (like Level 2 lines) from bleeding through.
-	// We use non-inclusive comparisons so features remain visible while standing on the boundary.
+	// Keep features visible while standing on the boundary.
 	switch (direction) {
 	case kDirNorth:
-		if (_me.yloc > (cellY + 1) * 256)
-			return;
-		break;
+		return _me.yloc <= (cellY + 1) * 256;
 	case kDirSouth:
-		if (_me.yloc < cellY * 256)
-			return;
-		break;
+		return _me.yloc >= cellY * 256;
 	case kDirWest:
-		if (_me.xloc < cellX * 256)
-			return;
-		break;
+		return _me.xloc >= cellX * 256;
 	case kDirEast:
-		if (_me.xloc > (cellX + 1) * 256)
-			return;
-		break;
-	default: break;
+		return _me.xloc <= (cellX + 1) * 256;
+	default:
+		return true;
 	}
+}
+
+void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
+	const uint8 *map = mapFeatureAt(cellX, cellY, direction);
+	if (!map || map[0] == kWallFeatureNone || !isWallFeatureFacingCamera(cellX, cellY, direction))
+		return;
 
 	float corners[4][3];
 	getWallFace3D(cellX, cellY, direction, corners);
@@ -491,11 +629,18 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		? packMacColor(lit ? _macColors[8 + _level - 1].fg : _macColors[6].bg)
 		: (lit ? (macMode ? 255u : 7u) : 0u);
 
-	// Wall faces are already filled with level-specific color (c_char0+level-1.fg)
-	// by the wall grid in renderCorridor3D(). Features are drawn on top.
+	// Wall faces are already filled by the wall grid in renderCorridor3D().
+	// Features are drawn on top, including silhouettes when the power is off.
 
 	// Helper lambda: Mac color fill for a wall feature polygon
 	auto macFillPoly = [&](const float *u, const float *v, int cnt, int macIdx) {
+		// Mac SuperPoly() fills features with black when the power is off.
+		if (!lit) {
+			_gfx->setWireframe(true, 0);
+			wallPolygon(corners, u, v, cnt, 0);
+			return;
+		}
+
 		uint32 fg = packMacColor(_macColors[macIdx].fg);
 		uint32 bg = packMacColor(_macColors[macIdx].bg);
 		const byte *stipple = setupMacPattern(_gfx, _macColors[macIdx].pattern, fg, bg);
@@ -504,9 +649,38 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			_gfx->setStippleData(nullptr);
 	};
 
+	// DOS SuperPoly(): material fill followed by its LINEFILLCOLOR frame.
+	auto dosFillPoly = [&](const float *u, const float *v, int cnt, int colorIdx) {
+		const uint32 outline = setupDOSMaterial(_gfx, colorIdx, _level);
+		wallPolygon(corners, u, v, cnt, outline);
+		_gfx->setStippleData(nullptr);
+	};
+
+	auto dosFillRecess = [&](const float nearC[4][3], const float farC[4][3],
+			const float *u, const float *v, const float *d, int cnt, int colorIdx) {
+		const uint32 outline = setupDOSMaterial(_gfx, colorIdx, _level);
+		recessQuad(nearC, farC, u, v, d, cnt, outline);
+		_gfx->setStippleData(nullptr);
+	};
+
+	auto fillStairwellSides = [&](const float farC[4][3], float nearD, float farD, float bottomV, float topV) {
+		if (!macMode && _wireframe)
+			return;
+		const float sideV[4] = {topV, bottomV, bottomV, topV};
+		const float sideD[4] = {nearD, nearD, farD, farD};
+		const float leftU[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+		const float rightU[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+		_gfx->setStippleData(nullptr);
+		_gfx->setWireframe(false);
+		recessQuad(corners, farC, leftU, sideV, sideD, 4, wallFeatureFill);
+		recessQuad(corners, farC, rightU, sideV, sideD, 4, wallFeatureFill);
+		_gfx->setWireframe(true, wallFeatureFill);
+	};
+
 	switch (map[0]) {
 	case kWallFeatureDoor: {
-		const uint32 doorColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
+		const uint32 doorColor = macColors ? (uint32)0xFF000000 :
+			(macMode ? 0u : (_wireframe ? 8u : 0u));
 		bool shipLevel = (_level == 1 || _level == 5 || _level == 6);
 
 		if (shipLevel) {
@@ -529,15 +703,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					wallPolygon(corners, uSs, vSs, 8, 0);
 				}
 			} else if (!_wireframe) {
-				if (map[1] != 0) {
-					const byte *stipple = setupMacPattern(_gfx, kPatternLtGray, 0, 15);
-					wallPolygon(corners, uSs, vSs, 8, 0);
-					if (stipple)
-						_gfx->setStippleData(nullptr);
-				} else {
-					_gfx->setWireframe(true, 0);
-					wallPolygon(corners, uSs, vSs, 8, 0);
-				}
+				dosFillPoly(uSs, vSs, 8, map[1] != 0 ? kColorSilver : kColorBlack);
 			} else {
 				_gfx->setWireframe(true);
 				wallPolygon(corners, uSs, vSs, 8, 8);
@@ -555,10 +721,10 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		} else {
 			const float xl = 0.25f, xr = 0.75f;
 			const float yb = 0.0f, yt = 0.875f;
+			float ud[4] = {xl, xr, xr, xl};
+			float vd[4] = {yb, yb, yt, yt};
 
 			if (macMode) {
-				float ud[4] = {xl, xr, xr, xl};
-				float vd[4] = {yb, yb, yt, yt};
 				if (map[1] != 0) {
 					if (macColors) {
 						macFillPoly(ud, vd, 4, 16); // c_door
@@ -573,6 +739,16 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					wallPolygon(corners, ud, vd, 4, 0);
 					_gfx->setWireframe(true, 255);
 				}
+			} else if (!_wireframe) {
+				dosFillPoly(ud, vd, 4, map[1] != 0 ? kColorLtRed : kColorBlack);
+				if (map[1] == 0) {
+					float farC[4][3];
+					getWallRecess3D(corners, farC);
+					const float floorU[4] = {xl, xl, xr, xr};
+					const float floorV[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+					const float floorD[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+					dosFillRecess(corners, farC, floorU, floorV, floorD, 4, kColorWhite);
+				}
 			}
 
 			wallLine(corners, xl, yb, xl, yt, doorColor);
@@ -581,21 +757,22 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			wallLine(corners, xr, yb, xl, yb, doorColor);
 
 			if (map[1] != 0) {
-				wallLine(corners, 0.3125f, 0.4375f, 0.6875f, 0.4375f, doorColor);
+				const uint32 detailColor = macMode ? doorColor : 8u;
+				wallLine(corners, 0.3125f, 0.4375f, 0.6875f, 0.4375f, detailColor);
 			}
 		}
 		break;
 	}
 	case kWallFeatureWindow: {
-		const uint32 winColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
+		const uint32 winColor = macColors ? (uint32)0xFF000000 : 0;
 		float xl = 0.25f, xr = 0.75f;
 		float yb = 0.25f, yt = 0.75f;
 		float xc = 0.5f, yc = 0.5f;
+		float uw[4] = {xl, xr, xr, xl};
+		float vw[4] = {yb, yb, yt, yt};
 
 		// Mac: fill window pane
 		if (macMode) {
-			float uw[4] = {xl, xr, xr, xl};
-			float vw[4] = {yb, yb, yt, yt};
 			if (macColors) {
 				macFillPoly(uw, vw, 4, 17); // c_window
 			} else {
@@ -603,6 +780,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 				wallPolygon(corners, uw, vw, 4, 0);
 				_gfx->setStippleData(nullptr);
 			}
+		} else if (!_wireframe) {
+			dosFillPoly(uw, vw, 4, kColorSilver);
 		}
 
 		wallLine(corners, xl, yb, xl, yt, winColor);
@@ -649,130 +828,195 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureUpStairs: {
-		// DOS: draw_up_stairs  staircase ascending into the wall with perspective
+		// wallftrs.c draw_up_stairs(): a well one cell deep, so it recedes for real.
 		const uint32 col = macColors ? (uint32)0xFF000000 : 0; // vBLACK
+		float farC[4][3];
+		getWallRecess3D(corners, farC);
+		clipToWallFace(corners);
 
-		// Mac: fill entire wall face (c_upstairs)
-		if (isMacRenderMode()) {
-			float uf[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-			float vf2[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-			if (macColors) {
-				macFillPoly(uf, vf2, 4, 19); // c_upstairs1
-			} else {
-				_gfx->setStippleData(kStippleGray);
-				wallPolygon(corners, uf, vf2, 4, 0);
-				_gfx->setStippleData(nullptr);
-			}
-		}
-
-		// Perspective convergence: back of passage at ~1/3 width (1 cell deep)
-		float ul[7], ur[7], vf[7], vc[7];
+		float dep[7];
+		float hgt[7];
 		for (int i = 0; i < 7; i++) {
-			float f = (i + 1) / 8.0f;
-			float inset = f * (1.0f / 3.0f);
-			ul[i] = inset;
-			ur[i] = 1.0f - inset;
-			vf[i] = inset;        // floor rises toward center
-			vc[i] = 1.0f - inset; // ceiling drops toward center
-		}
-		// Back of passage (full depth)
-		float bi = 1.0f / 3.0f; // back inset
-		float bu = bi, bur = 1.0f - bi, bvc = 1.0f - bi;
-
-		// 1. Side wall verticals at back of passage
-		wallLine(corners, bu, bvc, bu, 0.5f, col);
-		wallLine(corners, bur, 0.5f, bur, bvc, col);
-
-		// 2. Back wall landing (depth 6 to full depth)
-		wallLine(corners, ul[6], stairStepHeight(vf, vc, 6, 6), bu, bvc, col);
-		wallLine(corners, bu, bvc, bur, bvc, col);
-		wallLine(corners, bur, bvc, ur[6], stairStepHeight(vf, vc, 6, 6), col);
-		wallLine(corners, ur[6], stairStepHeight(vf, vc, 6, 6), ul[6], stairStepHeight(vf, vc, 6, 6), col);
-
-		// 3. First step tread (floor from wall face to depth 0)
-		wallLine(corners, 0.0f, 0.0f, ul[0], vf[0], col);
-		wallLine(corners, ul[0], vf[0], ur[0], vf[0], col);
-		wallLine(corners, ur[0], vf[0], 1.0f, 0.0f, col);
-		wallLine(corners, 1.0f, 0.0f, 0.0f, 0.0f, col);
-
-		// 4. First step riser (at depth 0)
-		wallLine(corners, ul[0], stairStepHeight(vf, vc, 0, 0), ul[0], vf[0], col);
-		wallLine(corners, ur[0], vf[0], ur[0], stairStepHeight(vf, vc, 0, 0), col);
-		wallLine(corners, ur[0], stairStepHeight(vf, vc, 0, 0), ul[0], stairStepHeight(vf, vc, 0, 0), col);
-
-		// 5. Step treads (i=3..0: depth i to depth i+1)
-		for (int i = 3; i >= 0; i--) {
-			wallLine(corners, ul[i], stairStepHeight(vf, vc, i, i), ul[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
-			wallLine(corners, ul[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
-			wallLine(corners, ur[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i], stairStepHeight(vf, vc, i, i), col);
-			wallLine(corners, ur[i], stairStepHeight(vf, vc, i, i), ul[i], stairStepHeight(vf, vc, i, i), col);
+			dep[i] = (float)(i + 1) / 8.0f;
+			hgt[i] = (float)(i + 1) / 8.0f;
 		}
 
-		// 6. Step risers (i=5..0: vertical face at depth i+1)
-		for (int i = 5; i >= 0; i--) {
-			wallLine(corners, ul[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), ul[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
-			wallLine(corners, ul[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
-			wallLine(corners, ur[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), col);
-			wallLine(corners, ur[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), ul[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), col);
+		// The original ColorWall() hid the corridor behind the entire opening.
+		// A recessed staircase also needs opaque sides to enclose the well.
+		fillStairwellSides(farC, 0.0f, 1.0f, 0.0f, 1.0f);
+
+		// Back of the well.
+		if (isMacRenderMode()) {
+			const float uw[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			const float vw[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float dw[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			macFillRecess(corners, farC, uw, vw, dw, 4, 19, macColors); // c_upstairs1
+
+			// Treads c_upstairs1, risers c_upstairs2, back to front.
+			for (int i = 6; i >= 0; i--) {
+				const float lowV = (i > 0) ? hgt[i - 1] : 0.0f;
+				const float backD = (i > 0) ? dep[i - 1] : 0.0f;
+				const float uq[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+				const float vRiser[4] = {hgt[i], lowV, lowV, hgt[i]};
+				const float dRiser[4] = {dep[i], dep[i], dep[i], dep[i]};
+				macFillRecess(corners, farC, uq, vRiser, dRiser, 4, 20, macColors);
+
+				const float vTread[4] = {lowV, lowV, lowV, lowV};
+				const float dTread[4] = {backD, dep[i], dep[i], backD};
+				macFillRecess(corners, farC, uq, vTread, dTread, 4, 19, macColors);
+			}
+
+			const float ub[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float vb[4] = {hgt[6], hgt[6], hgt[6], hgt[6]};
+			const float db[4] = {dep[6], 1.0f, 1.0f, dep[6]};
+			macFillRecess(corners, farC, ub, vb, db, 4, 19, macColors);
+		} else if (!_wireframe) {
+			const float uw[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			const float vw[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float dw[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			dosFillRecess(corners, farC, uw, vw, dw, 4, kColorGray);
+
+			for (int i = 6; i >= 0; i--) {
+				const float lowV = (i > 0) ? hgt[i - 1] : 0.0f;
+				const float backD = (i > 0) ? dep[i - 1] : 0.0f;
+				const float uq[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+				const float vRiser[4] = {hgt[i], lowV, lowV, hgt[i]};
+				const float dRiser[4] = {dep[i], dep[i], dep[i], dep[i]};
+				dosFillRecess(corners, farC, uq, vRiser, dRiser, 4, kColorGray);
+
+				const float vTread[4] = {lowV, lowV, lowV, lowV};
+				const float dTread[4] = {backD, dep[i], dep[i], backD};
+				dosFillRecess(corners, farC, uq, vTread, dTread, 4, kColorLtGray);
+			}
+
+			const float ub[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float vb[4] = {hgt[6], hgt[6], hgt[6], hgt[6]};
+			const float db[4] = {dep[6], 1.0f, 1.0f, dep[6]};
+			dosFillRecess(corners, farC, ub, vb, db, 4, kColorLtGray);
 		}
 
-		// 7. Handrails: from center of wall edges up to near-ceiling at mid-depth
-		wallLine(corners, 0.0f, 0.5f, ul[3], vc[0], col);
-		wallLine(corners, 1.0f, 0.5f, ur[3], vc[0], col);
+		// Back landing and far mouth
+		recessLine(corners, farC, 0.0f, hgt[6], dep[6], 0.0f, hgt[6], 1.0f, col);
+		recessLine(corners, farC, 0.0f, hgt[6], 1.0f, 1.0f, hgt[6], 1.0f, col);
+		recessLine(corners, farC, 1.0f, hgt[6], 1.0f, 1.0f, hgt[6], dep[6], col);
+		recessLine(corners, farC, 0.0f, hgt[6], 1.0f, 0.0f, 1.0f, 1.0f, col);
+		recessLine(corners, farC, 1.0f, hgt[6], 1.0f, 1.0f, 1.0f, 1.0f, col);
+
+		// Treads and risers
+		for (int i = 6; i >= 0; i--) {
+			const float lowV = (i > 0) ? hgt[i - 1] : 0.0f;
+			const float backD = (i > 0) ? dep[i - 1] : 0.0f;
+			recessLine(corners, farC, 0.0f, lowV, backD, 0.0f, lowV, dep[i], col);
+			recessLine(corners, farC, 1.0f, lowV, backD, 1.0f, lowV, dep[i], col);
+			recessLine(corners, farC, 0.0f, lowV, dep[i], 1.0f, lowV, dep[i], col);
+			recessLine(corners, farC, 0.0f, lowV, dep[i], 0.0f, hgt[i], dep[i], col);
+			recessLine(corners, farC, 1.0f, lowV, dep[i], 1.0f, hgt[i], dep[i], col);
+			recessLine(corners, farC, 0.0f, hgt[i], dep[i], 1.0f, hgt[i], dep[i], col);
+		}
+
+		// Handrails
+		recessLine(corners, farC, 0.0f, 0.5f, 0.0f, 0.0f, 1.0f, dep[3], col);
+		recessLine(corners, farC, 1.0f, 0.5f, 0.0f, 1.0f, 1.0f, dep[3], col);
+		_gfx->clearFeatureClipX();
 		break;
 	}
 	case kWallFeatureDnStairs: {
-		// DOS: draw_dn_stairs  staircase descending into the wall with perspective
+		// A full storey drop over one cell projects through the corridor floor
+		// when viewed from above. Use a shallower render-only drop so the same
+		// tread/riser construction as the up stairs remains visible in the well.
 		const uint32 col = macColors ? (uint32)0xFF000000 : 0; // vBLACK
+		float farC[4][3];
+		getWallRecess3D(corners, farC);
+		clipToWallFace(corners);
 
-		// Mac: fill entire wall face (c_dnstairs)
-		if (isMacRenderMode()) {
-			float uf[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-			float vf2[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-			if (macColors) {
-				macFillPoly(uf, vf2, 4, 21); // c_dnstairs
-			} else {
-				_gfx->setStippleData(kStippleGray);
-				wallPolygon(corners, uf, vf2, 4, 0);
-				_gfx->setStippleData(nullptr);
-			}
-		}
-
-		float ul[7], ur[7], vf[7], vc[7];
+		float dep[7];
+		float hgt[7];
 		for (int i = 0; i < 7; i++) {
-			float f = (i + 1) / 8.0f;
-			float inset = f * (1.0f / 3.0f);
-			ul[i] = inset;
-			ur[i] = 1.0f - inset;
-			vf[i] = inset;
-			vc[i] = 1.0f - inset;
+			dep[i] = (float)(i + 1) / 8.0f;
+			hgt[i] = -(float)(i + 1) / 32.0f;
 		}
-		float bi = 1.0f / 3.0f;
-		float bu = bi, bur = 1.0f - bi;
 
-		// 1. Ceiling: front ceiling slopes down to mid-depth
-		wallLine(corners, 0.0f, 1.0f, ul[3], vc[3], col);
-		wallLine(corners, ul[3], vc[3], ur[3], vc[3], col);
-		wallLine(corners, ur[3], vc[3], 1.0f, 1.0f, col);
+		// Enclose the well above the floor, then extend its sides down to each
+		// tread. Leave the panels unframed so their shared edges stay invisible.
+		fillStairwellSides(farC, 0.0f, 1.0f, 0.0f, 1.0f);
+		for (int i = 1; i <= 7; i++) {
+			const float nearD = dep[i - 1];
+			const float farD = (i < 7) ? dep[i] : 1.0f;
+			fillStairwellSides(farC, nearD, farD, hgt[i - 1], 0.0f);
+		}
 
-		// 2. Slant: from mid-depth ceiling down to center at back
-		wallLine(corners, ul[3], vc[3], bu, 0.5f, col);
-		wallLine(corners, bu, 0.5f, bur, 0.5f, col);
-		wallLine(corners, bur, 0.5f, ur[3], vc[3], col);
+		if (isMacRenderMode()) {
+			const float uw[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			const float vw[4] = {hgt[6], hgt[6], 1.0f, 1.0f};
+			const float dw[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			macFillRecess(corners, farC, uw, vw, dw, 4, 21, macColors); // c_dnstairs
 
-		// 3. Side wall verticals: from center at back down to floor level
-		wallLine(corners, bu, 0.5f, bu, vf[0], col);
-		wallLine(corners, bur, 0.5f, bur, vf[0], col);
+			// Match the up-stair materials: dark risers and lighter treads.
+			for (int i = 6; i >= 0; i--) {
+				const float nearV = (i > 0) ? hgt[i - 1] : 0.0f;
+				const float nearD = (i > 0) ? dep[i - 1] : 0.0f;
+				const float uq[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+				const float vRiser[4] = {nearV, hgt[i], hgt[i], nearV};
+				const float dRiser[4] = {dep[i], dep[i], dep[i], dep[i]};
+				macFillRecess(corners, farC, uq, vRiser, dRiser, 4, 20, macColors);
 
-		// 4. First step (floor from wall face to depth 0)
-		wallLine(corners, 0.0f, 0.0f, ul[0], vf[0], col);
-		wallLine(corners, ul[0], vf[0], ur[0], vf[0], col);
-		wallLine(corners, ur[0], vf[0], 1.0f, 0.0f, col);
-		wallLine(corners, 1.0f, 0.0f, 0.0f, 0.0f, col);
+				const float vTread[4] = {nearV, nearV, nearV, nearV};
+				const float dTread[4] = {nearD, dep[i], dep[i], nearD};
+				macFillRecess(corners, farC, uq, vTread, dTread, 4, 19, macColors);
+			}
 
-		// 5. Handrails: from center of wall edges down to floor at mid-depth
-		wallLine(corners, 0.0f, 0.5f, ul[3], vf[3], col);
-		wallLine(corners, 1.0f, 0.5f, ur[3], vf[3], col);
+			const float ub[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float vb[4] = {hgt[6], hgt[6], hgt[6], hgt[6]};
+			const float db[4] = {dep[6], 1.0f, 1.0f, dep[6]};
+			macFillRecess(corners, farC, ub, vb, db, 4, 19, macColors);
+		} else if (!_wireframe) {
+			const float uw[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			const float vw[4] = {hgt[6], hgt[6], 1.0f, 1.0f};
+			const float dw[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			dosFillRecess(corners, farC, uw, vw, dw, 4, kColorGray);
+
+			for (int i = 6; i >= 0; i--) {
+				const float nearV = (i > 0) ? hgt[i - 1] : 0.0f;
+				const float nearD = (i > 0) ? dep[i - 1] : 0.0f;
+				const float uq[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+				const float vRiser[4] = {nearV, hgt[i], hgt[i], nearV};
+				const float dRiser[4] = {dep[i], dep[i], dep[i], dep[i]};
+				dosFillRecess(corners, farC, uq, vRiser, dRiser, 4, kColorGray);
+
+				const float vTread[4] = {nearV, nearV, nearV, nearV};
+				const float dTread[4] = {nearD, dep[i], dep[i], nearD};
+				dosFillRecess(corners, farC, uq, vTread, dTread, 4, kColorLtGray);
+			}
+
+			const float ub[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float vb[4] = {hgt[6], hgt[6], hgt[6], hgt[6]};
+			const float db[4] = {dep[6], 1.0f, 1.0f, dep[6]};
+			dosFillRecess(corners, farC, ub, vb, db, 4, kColorLtGray);
+		}
+
+		// Lower landing and closed far mouth.
+		recessLine(corners, farC, 0.0f, hgt[6], dep[6], 0.0f, hgt[6], 1.0f, col);
+		recessLine(corners, farC, 0.0f, hgt[6], 1.0f, 1.0f, hgt[6], 1.0f, col);
+		recessLine(corners, farC, 1.0f, hgt[6], 1.0f, 1.0f, hgt[6], dep[6], col);
+		recessLine(corners, farC, 0.0f, hgt[6], 1.0f, 0.0f, 1.0f, 1.0f, col);
+		recessLine(corners, farC, 1.0f, hgt[6], 1.0f, 1.0f, 1.0f, 1.0f, col);
+
+		// Treads and risers.
+		for (int i = 6; i >= 0; i--) {
+			const float nearV = (i > 0) ? hgt[i - 1] : 0.0f;
+			const float nearD = (i > 0) ? dep[i - 1] : 0.0f;
+			recessLine(corners, farC, 0.0f, nearV, nearD, 0.0f, nearV, dep[i], col);
+			recessLine(corners, farC, 1.0f, nearV, nearD, 1.0f, nearV, dep[i], col);
+			recessLine(corners, farC, 0.0f, nearV, dep[i], 1.0f, nearV, dep[i], col);
+			recessLine(corners, farC, 0.0f, nearV, dep[i], 0.0f, hgt[i], dep[i], col);
+			recessLine(corners, farC, 1.0f, nearV, dep[i], 1.0f, hgt[i], dep[i], col);
+			recessLine(corners, farC, 0.0f, hgt[i], dep[i], 1.0f, hgt[i], dep[i], col);
+		}
+
+		// Handrails
+		recessLine(corners, farC, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, dep[3], col);
+		recessLine(corners, farC, 1.0f, 0.5f, 0.0f, 1.0f, 0.0f, dep[3], col);
+		_gfx->clearFeatureClipX();
 		break;
 	}
 	case kWallFeatureChar:
@@ -805,11 +1049,11 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		const uint32 elevColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
 		float xl = 0.2f, xr = 0.8f;
 		float yb = 0.1f, yt = 0.9f;
+		float ue[4] = {xl, xr, xr, xl};
+		float ve[4] = {yb, yb, yt, yt};
 
 		// Mac: fill elevator door
 		if (macMode) {
-			float ue[4] = {xl, xr, xr, xl};
-			float ve[4] = {yb, yb, yt, yt};
 			if (macColors) {
 				macFillPoly(ue, ve, 4, 23); // c_elevator
 			} else {
@@ -817,6 +1061,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 				wallPolygon(corners, ue, ve, 4, 0);
 				_gfx->setStippleData(nullptr);
 			}
+		} else if (!_wireframe) {
+			dosFillPoly(ue, ve, 4, kColorGray);
 		}
 
 		wallLine(corners, xl, yb, xl, yt, elevColor);
@@ -838,8 +1084,11 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 				wallPolygon(corners, uT, vT, 6, 0);
 				_gfx->setStippleData(nullptr);
 			}
+		} else if (!_wireframe) {
+			dosFillPoly(uT, vT, 6, kColorBlack);
 		} else {
-			wallPolygon(corners, uT, vT, 6, 0); // vBLACK outline
+			_gfx->setWireframe(true);
+			wallPolygon(corners, uT, vT, 6, 8); // vDKGRAY outline
 		}
 		break;
 	}
@@ -855,11 +1104,15 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 
 		if (map[1] == 0) {
 			// Original drawALOpen: solid black opening on both DOS and Mac.
-			if (macMode || !_wireframe)
+			if (macMode) {
 				_gfx->setWireframe(true, 0);
-			else
+				wallPolygon(corners, u, v, 8, 0);
+			} else if (!_wireframe) {
+				dosFillPoly(u, v, 8, kColorBlack);
+			} else {
 				_gfx->setWireframe(true);
-			wallPolygon(corners, u, v, 8, 0);
+				wallPolygon(corners, u, v, 8, 0);
+			}
 		} else {
 			// Mac: fill airlock when closed
 			if (macMode) {
@@ -871,10 +1124,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					_gfx->setStippleData(nullptr);
 				}
 			} else if (!_wireframe) {
-				const byte *stipple = setupMacPattern(_gfx, kPatternLtGray, 0, 15);
-				wallPolygon(corners, u, v, 8, 0);
-				if (stipple)
-					_gfx->setStippleData(nullptr);
+				dosFillPoly(u, v, 8, kColorLtGray);
 			}
 
 			const uint32 airlockColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
@@ -910,7 +1160,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 						// BLACK: solid black fill
 						_gfx->setWireframe(true, (uint32)0xFF000000);
 						wallPolygon(corners, ub, vb4, 4, 0xFF000000);
-						_gfx->setWireframe(true, packMacColor(_macColors[8 + _level - 1].fg));
+						_gfx->setWireframe(true, wallFeatureFill);
 					} else {
 						macFillPoly(ub, vb4, 4, 26 + val); // c_color0 + val
 					}
@@ -940,12 +1190,47 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					}
 				}
 			}
+		} else if (!_wireframe) {
+			for (int i = 0; i < 4; i++) {
+				const int value = map[i + 1];
+				int material = -1;
+				if (value <= 4) {
+					switch (value) {
+					case 1: material = kColorLtRed;   break;
+					case 2: material = kColorLtBlue;  break;
+					case 3: material = kColorMagenta; break;
+					case 4: material = kColorBlue;    break;
+					default: break; // WHITE leaves the corridor background intact
+					}
+				} else {
+					const int color = (value + _displayCount / 6) % 5;
+					switch (color) {
+					case 1: material = kColorLtRed;   break;
+					case 2: material = kColorMagenta; break;
+					case 3: material = kColorRed;     break;
+					case 4: material = kColorCyan;    break;
+					default: break;
+					}
+				}
+
+				if (material >= 0) {
+					const float vb = (3 - i) / 4.0f;
+					const float vt = (4 - i) / 4.0f;
+					const float ub[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+					const float vb4[4] = {vb, vb, vt, vt};
+					dosFillPoly(ub, vb4, 4, material);
+				}
+			}
+		} else if (map[1] || map[2] || map[3] || map[4]) {
+			_gfx->setWireframe(true);
+			for (int i = 1; i <= 3; i++) {
+				const float v = (float)i / 4.0f;
+				wallLine(corners, 0.0f, v, 1.0f, v, 0);
+			}
 		}
 
-		// EGA / Mac B&W: colored lines at band boundaries.
-		// DOS non-polyfill draws 3 lines; we animate line colors for bands > 4.
-		// Mac color mode uses macFillPoly for band fills instead.
-		if (!macColors) {
+		// Preserve the Mac B&W boundary treatment after its pattern fills.
+		if (macMode && !macColors) {
 			for (int i = 1; i <= 3; i++) {
 				int val = map[i];
 				if (val > 4)
@@ -968,7 +1253,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 }
 
 void ColonyEngine::drawWallFeatures3D() {
-	if (_corePower[_coreIndex] == 0)
+	// The Mac color version draws features as black silhouettes without power.
+	if (!isMacColorMode() && _corePower[_coreIndex] == 0)
 		return;
 
 	for (int y = 0; y < 31; y++) {

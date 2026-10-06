@@ -570,7 +570,6 @@ static void room_110_init() {
 		if (global[player_persona] == PLAYER_IS_PID) {
 
 			if (global[guard_pid_status] == GUARD_NEVER_HEALED) {
-				/* global[no_talk_to_guard] = true; */
 				player.commands_allowed = false;
 				conv_run(CONV_GUARD_PID);
 				conv_export_value(player_has(shifter_ring));
@@ -581,7 +580,6 @@ static void room_110_init() {
 				}
 
 			} else if (global[guard_pid_status] == GUARD_IS_HEALED) {
-				/* global[no_talk_to_guard] = true; */
 				player.commands_allowed = false;
 				conv_run(CONV_GUARD_HEAL);
 			}
@@ -797,7 +795,6 @@ static void handle_animation_guard_pid() {
 
 		case 45:  /* end of running Pid through */
 			global[reset_conv] = 10;
-			/* conv_reset (CONV_GUARD_PID); */
 			if (game.difficulty == EASY_MODE) {
 				text_show(11045);
 			} else {
@@ -840,7 +837,7 @@ static void room_110_get_random_slathan() {
 		local->new_action[1] = CONV14_SIT;
 		local->good_number[1] = true;
 	} else {
-		if (random > RANDOM_SLATHAN_SIT_ALLOWED && random <= RANDOM_SLATHAN_TOSS_ALLOWED) {
+		if (random <= RANDOM_SLATHAN_TOSS_ALLOWED) {
 			if (local->last_action[1] != CONV14_ROCK_TOSS && local->last_action[1] != CONV14_TOSS_AGAIN) {
 				local->new_action[1] = CONV14_ROCK_TOSS;
 			} else {
@@ -955,17 +952,17 @@ static void room_110_soptus_noone_talking() {
 		local->new_action[2] = CONV9_STAND_FACE_IN;
 		local->good_number[2] = true;
 	} else {
-		if (random > RANDOM_SOPTUS_STAND_FACE_IN && random <= RANDOM_SOPTUS_SHOW_FACE_HIGH) {
+		if (random <= RANDOM_SOPTUS_SHOW_FACE_HIGH) {
 			local->new_action[2] = CONV9_STAND_SHOW_FACE;
 			local->good_number[2] = true;
 		} else {
-			if (random > RANDOM_SOPTUS_SHOW_FACE_HIGH && random <= RANDOM_SOPTUS_REACH_HIGH) {
+			if (random <= RANDOM_SOPTUS_REACH_HIGH) {
 				if (local->last_action[2] != CONV9_REACH) {
 					local->new_action[2] = CONV9_REACH;
 					local->good_number[2] = true;
 				}
 			} else {
-				if (random > RANDOM_SOPTUS_REACH_HIGH && random <= RANDOM_SOPTUS_PEER_HIGH) {
+				if (random <= RANDOM_SOPTUS_PEER_HIGH) {
 					if (local->last_action[2] != CONV9_PEER) {
 						local->new_action[2] = CONV9_PEER;
 						local->good_number[2] = true;
@@ -1025,12 +1022,12 @@ static void room_110_merchant_random_moves() {
 	if (random <= RANDOM_MERCHANT_STAND) {
 		local->new_action[3] = CONV6_STAND;
 	} else {
-		if (random > RANDOM_MERCHANT_STAND && random <= RANDOM_MERCHANT_BEND_OVER) {
+		if (random <= RANDOM_MERCHANT_BEND_OVER) {
 			if (local->last_action[3] != CONV6_BEND_OVER) {
 				local->new_action[3] = CONV6_BEND_OVER;
 			}
 		} else {
-			if (random > RANDOM_MERCHANT_BEND_OVER && random <= RANDOM_MERCHANT_CLEAN_COUNTER_1) {
+			if (random <= RANDOM_MERCHANT_CLEAN_COUNTER_1) {
 				local->new_action[3] = CONV6_CLEAN_COUNTER_1;
 			} else {
 				if (random > RANDOM_MERCHANT_REACH && random <= RANDOM_MERCHANT_CLEAN_COUNTER_2) {
@@ -1776,15 +1773,12 @@ static void room_110_daemon() {
 }
 
 static void handle_conv_guard_king() {
-	int you_trig_flag = false;
-
 	if (kernel.trigger == ROOM_110_YOU_TALK) {
 		local->guard_king_action = CONV7_TALK;
 	}
 
-	if (!you_trig_flag) {
-		conv_you_trigger(ROOM_110_YOU_TALK);
-	} /* if you_trig_flag == true, then a you trigger is called from above, not here. */
+	/* !you_trig_flag */
+	conv_you_trigger(ROOM_110_YOU_TALK);
 
 	local->guard_king_talk_count = 0;
 }

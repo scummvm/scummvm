@@ -51,40 +51,37 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(s, fontFilename, kGameTypeNancy12);
 	readFilename(s, flagsFilename, kGameTypeNancy12);
 
-	// Nancy16 went back to the pre-Nancy14 field order, and dropped both vertical offsets
+	// Nancy16 went back to the pre-Nancy14 field order, and dropped both vertical
+	// offsets and the ad scene
 	s.syncAsUint16LE(firstScene.sceneID, kGameTypeNancy16);
 	s.syncAsUint16LE(firstScene.frameID, kGameTypeNancy16);
 	s.syncAsUint16LE(startTimeHours, kGameTypeNancy16);
 	s.syncAsUint16LE(startTimeMinutes, kGameTypeNancy16);
-	s.skip(1, kGameTypeNancy16);	// Unknown
-	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy16);
-	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy16);
-	s.skip(2, kGameTypeNancy16);	// Unknown
+	s.skip(7, kGameTypeNancy16);	// End of day fields, disabled in the game data
 
-	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
-	s.syncAsUint16LE(firstScene.sceneID, kGameTypeVampire, kGameTypeNancy13);
+	s.syncAsUint16LE(firstScene.sceneID, kGameTypeVampire, kGameTypeNancy15);
 	s.skip(0xC, kGameTypeVampire, kGameTypeVampire); // Palette name + unknown 2 bytes
 	s.syncAsUint16LE(firstScene.frameID, kGameTypeVampire, kGameTypeNancy15);
-	s.syncAsUint16LE(firstScene.sceneID, kGameTypeNancy14, kGameTypeNancy15);
-	s.skip(2, kGameTypeNancy14, kGameTypeNancy15); // Unknown
 	s.syncAsUint16LE(firstScene.verticalOffset, kGameTypeVampire, kGameTypeNancy15);
 
-	s.syncAsUint16LE(startTimeHours, kGameTypeVampire, kGameTypeNancy13);
-	s.syncAsUint16LE(startTimeMinutes, kGameTypeVampire, kGameTypeNancy13);
+	s.syncAsUint16LE(startTimeHours, kGameTypeVampire, kGameTypeNancy15);
+	s.syncAsUint16LE(startTimeMinutes, kGameTypeVampire, kGameTypeNancy15);
 
-	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
+	s.syncAsUint16LE(lateNightHour, kGameTypeNancy11, kGameTypeNancy13);
+	s.syncAsSint16LE(lateNightFlag, kGameTypeNancy11, kGameTypeNancy13);
 
-	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
-	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy7, kGameTypeNancy13);
+	s.syncAsByte(dayValueIndex, kGameTypeNancy14, kGameTypeNancy15);
+	s.syncAsSint16LE(endOfDayFlag, kGameTypeNancy14, kGameTypeNancy15);
+	s.syncAsUint16LE(endOfDayHour, kGameTypeNancy14, kGameTypeNancy15);
+	s.syncAsUint16LE(wakeUpHour, kGameTypeNancy14, kGameTypeNancy15);
+
+	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy7, kGameTypeNancy15);
 	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy7, kGameTypeNancy15);
-	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy14, kGameTypeNancy15);
-	s.skip(2, kGameTypeNancy14, kGameTypeNancy15);	// Unknown
 	s.syncAsUint16LE(adScene.verticalOffset, kGameTypeNancy7, kGameTypeNancy15);
 
 	s.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
 
 	// Nancy15 added the studio URL, preceded by a few unknown values
-	s.skip(4, kGameTypeNancy15, kGameTypeNancy15);	// Unknown
 	s.skip(2, kGameTypeNancy15);					// Unknown
 	s.skip(256, kGameTypeNancy15);					// Studio URL
 
@@ -98,7 +95,6 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		s.skip(1);
 	}
 
-	s.skip(4, kGameTypeNancy11, kGameTypeNancy14);	// Unknown
 
 	s.skip(8, kGameTypeVampire, kGameTypeVampire);
 	readRect(s, extraButtonHotspot, kGameTypeVampire, kGameTypeVampire);
@@ -144,6 +140,14 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.syncAsByte(overrideMovementTimeDeltas);
 	s.syncAsSint16LE(slowMovementTimeDelta);
 	s.syncAsSint16LE(fastMovementTimeDelta);
+
+	s.skip(4, kGameTypeNancy9, kGameTypeNancy15); // Unknown
+	if (s.getVersion() >= kGameTypeNancy9 && s.getVersion() <= kGameTypeNancy15) {
+		timerDurations.resize(10);
+		for (uint i = 0; i < timerDurations.size(); ++i) {
+			s.syncAsUint16LE(timerDurations[i]);
+		}
+	}
 }
 
 VIEW::VIEW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
@@ -157,6 +161,11 @@ PCAL::PCAL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		readNancy15(*chunkStream);
+		return;
+	}
+
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
@@ -259,6 +268,39 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 			item.cantText = item.cantTexts[0]; // Default text is the first one
 			item.cantSound.name = item.cantSounds[0].name;
 		}
+	}
+}
+
+// Nancy15 cut the inventory chunk down: the per-item "can't" sounds and captions
+// moved into the per-character PUIV bank, the item count is now stored in the
+// chunk itself, and the highlighted icon rect is no longer written out - every
+// item's highlighted icon sits at the same offset from its normal one.
+void INV::readNancy15(Common::SeekableReadStream &stream) {
+	captionAutoClearTime = stream.readUint16LE();
+	readFilename(stream, inventoryBoxIconsImageName);
+
+	int32 highlightOffsetX = stream.readSint32LE();
+	int32 highlightOffsetY = stream.readSint32LE();
+
+	uint16 numItems = stream.readUint16LE();
+	itemDescriptions.resize(numItems);
+
+	char textBuf[49];
+
+	for (uint i = 0; i < numItems; ++i) {
+		ItemDescription &item = itemDescriptions[i];
+
+		stream.read(textBuf, 48);
+		textBuf[48] = '\0';
+		item.name = textBuf;
+
+		item.keepItem = (byte)stream.readUint16LE();
+		item.sceneID = stream.readUint16LE();
+		item.sceneSoundFlag = stream.readUint16LE();
+
+		readRect(stream, item.sourceRect);
+		item.highlightedSourceRect = item.sourceRect;
+		item.highlightedSourceRect.translate(highlightOffsetX, highlightOffsetY);
 	}
 }
 
@@ -432,14 +474,21 @@ CRED::CRED(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
 	readFilename(*chunkStream, imageName);
 
-	textNames.resize(isVampire ? 7 : 1);
-	for (Common::Path &str : textNames) {
-		readFilename(*chunkStream, str);
-	}
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		// The credits text is a key into the AUTOTEXT chunk instead of an image
+		readFilename(*chunkStream, textKey);
+		chunkStream->skip(0x10);
+		readRect(*chunkStream, textScreenPosition);
+	} else {
+		textNames.resize(isVampire ? 7 : 1);
+		for (Common::Path &str : textNames) {
+			readFilename(*chunkStream, str);
+		}
 
-	chunkStream->skip(0x20);
-	readRect(*chunkStream, textScreenPosition);
-	chunkStream->skip(0x10);
+		chunkStream->skip(0x20);
+		readRect(*chunkStream, textScreenPosition);
+		chunkStream->skip(0x10);
+	}
 
 	updateTime = chunkStream->readUint16LE();
 	pixelsToScroll = chunkStream->readUint16LE();
@@ -479,11 +528,39 @@ SET::SET(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	}
 
 	readRectArray(*chunkStream, _scrollbarBounds, 3);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		// Nancy15 added a button to the setup screen. Nothing in the chunk says
+		// how many there are, so take the count from the space left over once
+		// everything that follows them is accounted for: the Done button's
+		// highlight (16), three scrollbar sources (48), the scrollbars' centre
+		// positions (18) and three menu sound descriptions (141).
+		static const int32 kBytesAfterButtons = 16 + 48 + 18 + 141;
+		static const int32 kBytesPerButton = 2 * 16;	// one dest and one source
+
+		// The extra button brings a second highlight source with it
+		const int32 remaining = (int32)chunkStream->size() - (int32)chunkStream->pos() - kBytesAfterButtons - 16;
+		if (remaining >= kBytesPerButton) {
+			numButtons = remaining / kBytesPerButton;
+
+			if (remaining % kBytesPerButton > 1) {
+				warning("SET chunk has %d bytes left over after %u buttons, the setup screen may be misread",
+					remaining % kBytesPerButton, numButtons);
+			}
+		} else {
+			warning("Unexpected SET chunk size %d, the setup screen will be misread", (int)chunkStream->size());
+		}
+	}
+
 	readRectArray(*chunkStream, _buttonDests, numButtons);
 	readRectArray(*chunkStream, _buttonDownSrcs, numButtons);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy2) {
 		readRect(*chunkStream, _doneButtonHighlightSrc);
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		readRect(*chunkStream, _extraButtonHighlightSrc);
 	}
 
 	readRectArray(*chunkStream, _scrollbarSrcs, 3);
@@ -586,7 +663,8 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 		readRectArray(*chunkStream, _textboxBounds, 9);
 		readRect(*chunkStream, _inputTextboxBounds);
 
-		chunkStream->skip(25); // prefixes and suffixes for filenames
+		// Prefixes and suffixes for filenames. Nancy15 widened the last one from 5 to 32 bytes
+		chunkStream->skip(s.getVersion() <= kGameTypeNancy14 ? 25 : 52);
 
 		_mainFontID = chunkStream->readSint16LE();
 		_highlightFontID = chunkStream->readSint16LE();
@@ -964,6 +1042,22 @@ UIBW::UIBW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	}
 }
 
+// Shared by the UICL chunk and ChangeCellPhoneInfo (AR 130).
+void readContact(Common::SeekableReadStream &stream, UICL::Contact &c) {
+	c.visibility = stream.readUint16LE();
+	stream.read(c.dialPattern, sizeof(c.dialPattern));
+
+	char nameBuf[21];
+	stream.read(nameBuf, 20);
+	nameBuf[20] = 0;
+	c.name = nameBuf;
+
+	c.sceneID = stream.readUint16LE();
+	c.frameID = stream.readUint16LE();
+	c.flag.label = stream.readSint16LE();
+	c.flag.flag = (byte)stream.readUint16LE();
+}
+
 UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readUIPopupHeader(*chunkStream, header);
 
@@ -1179,30 +1273,20 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	const uint16 entries = MIN<uint16>(contactCount, (uint16)maxEntries);
 	contacts.resize(entries);
 	for (uint i = 0; i < entries; ++i) {
-		Contact &c = contacts[i];
-
-		chunkStream->read(c.unknownPrefix, sizeof(c.unknownPrefix));
-
-		char nameBuf[21];
-		chunkStream->read(nameBuf, 20);
-		nameBuf[20] = '\0';
-		c.name = nameBuf;
-
-		chunkStream->read(c.unknownSuffix, sizeof(c.unknownSuffix));
+		readContact(*chunkStream, contacts[i]);
 	}
 
 	if (isNancy13) {
-		// Trailing captured-picture slot table, added in Nancy 13. These are the
-		// game's built-in photo slots; runtime captures are persisted separately
-		// (CellPhonePictureData), so this table is parsed but currently unused.
-		// TODO: identify PictureRecord::unknown (6 bytes, identical across slots).
-		const uint16 pictureCount = chunkStream->readUint16LE();
-		pictures.resize(pictureCount);
-		for (uint i = 0; i < pictureCount; ++i) {
-			PictureRecord &p = pictures[i];
-			p.id = chunkStream->readUint16LE();
-			readRect(*chunkStream, p.rect);
-			chunkStream->read(p.unknown, sizeof(p.unknown));
+		// Trailing table of photographable subjects, added in Nancy 13.
+		const uint16 subjectCount = chunkStream->readUint16LE();
+		cameraSubjects.resize(subjectCount);
+		for (uint i = 0; i < subjectCount; ++i) {
+			CameraSubject &s = cameraSubjects[i];
+			s.sceneID = chunkStream->readSint16LE();
+			readRect(*chunkStream, s.coords);
+			s.captureFlag = chunkStream->readSint16LE();
+			s.sendFlag = chunkStream->readSint16LE();
+			s.recipientIndex = chunkStream->readSint16LE();
 		}
 	}
 }
@@ -1245,11 +1329,11 @@ UIIV::UIIV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	if (g_nancy->getGameType() >= kGameTypeNancy13)
 		readRect(*chunkStream, slotsHotspot);
 
-	// Two byte flags. The first controls where items added while the popup is
-	// open land in the inventory order (see appendItemsWhileOpen); the second
-	// is unused here.
+	// Two byte flags: where items added while the popup is open land in the
+	// inventory order (see appendItemsWhileOpen), and whether picking up an item
+	// closes the popup.
 	appendItemsWhileOpen = chunkStream->readByte();
-	chunkStream->skip(1);
+	closeOnPickup = chunkStream->readByte();
 
 	for (uint i = 0; i < kNumFilters; ++i) {
 		readUIButtonSlot(*chunkStream, filters[i]);
@@ -1313,13 +1397,20 @@ EVNT::EVNT(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 UIRC::UIRC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	while (chunkStream->size() - chunkStream->pos() >= (int64)kItemRecordSize) {
+	// Nancy 14 added the maximum value field, growing each record by 2 bytes
+	const bool hasMaxValue = g_nancy->getGameType() >= kGameTypeNancy14;
+	const uint recordSize = hasMaxValue ? 259 : 257;
+
+	while (chunkStream->size() - chunkStream->pos() >= (int64)recordSize) {
 		ItemRecord rec;
-		rec.id = chunkStream->readUint16LE();
+		rec.startingValue = chunkStream->readUint16LE();
+		if (hasMaxValue) {
+			rec.maxValue = chunkStream->readUint16LE();
+		}
 		readFilename(*chunkStream, rec.overlayName);
 		readRect(*chunkStream, rec.rect);
-		rec.unknown1 = chunkStream->readSint16LE();
-		rec.unknown2 = chunkStream->readSint16LE();
+		rec.fontID = chunkStream->readSint16LE();
+		rec.numDecimals = chunkStream->readSint16LE();
 		rec.soundChannel = chunkStream->readSint16LE();
 		rec.soundVolume = chunkStream->readSint16LE();
 		for (uint i = 0; i < kNumSounds; ++i) {
@@ -1327,6 +1418,37 @@ UIRC::UIRC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		}
 		items.push_back(rec);
 	}
+}
+
+Common::String formatUIResourceValue(const UIRC::ItemRecord &item, int32 value) {
+	// Nancy 12 counts cents and shows a dollar amount, Nancy 14 counts whole
+	// euros, and Nancy 15 is back to dollars. 0x80 is the euro sign in the
+	// games' extended ASCII character set.
+	const char currencySymbol = g_nancy->getGameType() == kGameTypeNancy14 ? '\x80' : '$';
+
+	// The value is simply printed, then split so that its last numDecimals
+	// digits become the fraction; an amount below one unit is zero-padded to
+	// that many digits and printed without a leading zero (".05", not "0.05").
+	const uint numDecimals = MAX<int16>(item.numDecimals, 0);
+	Common::String digits = Common::String::format("%d", value);
+	while (digits.size() < numDecimals) {
+		digits = "0" + digits;
+	}
+
+	const uint split = digits.size() - numDecimals;
+	Common::String ret(currencySymbol);
+	ret += Common::String(digits.c_str(), split);
+
+	if (numDecimals > 0) {
+		ret += "." + Common::String(digits.c_str() + split);
+	}
+
+	return ret;
+}
+
+bool hasMoneyResource() {
+	const GameType gameType = g_nancy->getGameType();
+	return gameType == kGameTypeNancy12 || gameType == kGameTypeNancy14 || gameType == kGameTypeNancy15;
 }
 
 MMIX::MMIX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
@@ -1382,13 +1504,13 @@ LDSN::LDSN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(*chunkStream, backgroundImageName);
 	readFilename(*chunkStream, overlayImageName);
 
-	// The remainder is a run of button/selection rects (16 bytes each),
-	// followed by a short trailer whose fields aren't fully understood yet.
-	while (chunkStream->pos() + 16 <= chunkStream->size()) {
-		Common::Rect rect;
-		readRect(*chunkStream, rect);
-		rects.push_back(rect);
-	}
+	readRectArray(*chunkStream, buttonDownSrcs, kNumButtons);
+	readRectArray(*chunkStream, buttonHighlightSrcs, kNumButtons);
+	readRectArray(*chunkStream, buttonDests, kNumButtons);
+	readRectArray(*chunkStream, designRowDests, kNumDesignRows);
+
+	fontID = chunkStream->readSint16LE();
+	highlightFontID = chunkStream->readSint16LE();
 }
 
 PUIH::PUIH(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {

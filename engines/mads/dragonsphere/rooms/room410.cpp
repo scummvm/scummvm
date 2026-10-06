@@ -154,7 +154,7 @@ static void room_410_init() {
 	global[perform_displacements] = true;
 	global[move_direction_409] = false;
 
-	if (previous_room == 409 || previous_room != KERNEL_RESTORING_GAME) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = PLAYER_X_FROM_409;
 		player.y = PLAYER_Y_FROM_409;
 		player.facing = FACING_NORTHEAST;

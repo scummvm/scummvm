@@ -536,7 +536,7 @@ void room_206_init() {
 		player_walk(PANEL_X, PANEL_Y, FACING_EAST);
 		player_walk_trigger(ROOM_206_FROM_308);
 
-	} else if ((previous_room == 205) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x      = PLAYER_X_FROM_205;
 		player.y      = PLAYER_Y_FROM_205;
 		player.facing = FACING_NORTH;

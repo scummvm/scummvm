@@ -3080,7 +3080,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 	assert(pVar != nullptr);
 	int nCurTime = pVar->getNumValue();
 
-	// If less then 5 turns have elapsed, then we're still in the driving stage...
+	// If less than 5 turns have elapsed, then we're still in the driving stage...
 	if ((teamListItem._nDispatchTime + kDrivingTime) >= nCurTime) {
 		bDone = true;
 		bTimeElapsed = false;

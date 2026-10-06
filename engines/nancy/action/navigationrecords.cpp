@@ -20,9 +20,11 @@
  */
 
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/action/navigationrecords.h"
+#include "engines/nancy/action/soundrecords.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -286,6 +288,101 @@ void HotMultiframeMultiSceneCursorTypeSceneChange::execute() {
 
 		NancySceneState.changeScene(_defaultScene);
 		_isDone = true;
+		break;
+	}
+}
+
+void HotMultiframeInvTypeSceneChange::ItemUse::readData(Common::SeekableReadStream &stream) {
+	itemID = stream.readSint16LE();
+	loseItem = stream.readByte();
+	readMultiNameSound(stream, sound, ccText);
+	sceneID = stream.readUint16LE();
+
+	uint16 numFlags = stream.readUint16LE();
+	flags.resize(numFlags);
+	for (FlagDescription &flag : flags) {
+		flag.label = stream.readSint16LE();
+		flag.flag = (byte)stream.readSint16LE();
+	}
+}
+
+void HotMultiframeInvTypeSceneChange::readData(Common::SeekableReadStream &stream) {
+	uint16 numItems = stream.readUint16LE();
+	_itemUses.resize(numItems);
+	for (ItemUse &use : _itemUses) {
+		use.readData(stream);
+	}
+
+	// The fallback block has the same layout; its item id and lose/return byte
+	// are present in the data, but the engine never looks at them
+	_defaultItemUse.readData(stream);
+
+	uint16 numHotspots = stream.readUint16LE();
+	_hotspots.resize(numHotspots);
+	for (HotspotDescription &hotspot : _hotspots) {
+		hotspot.readData(stream);
+	}
+}
+
+void HotMultiframeInvTypeSceneChange::execute() {
+	switch (_state) {
+	case kBegin:
+		_activeUse = nullptr;
+		_state = kRun;
+		// fall through
+	case kRun:
+		_hasHotspot = false;
+		for (const HotspotDescription &hotspot : _hotspots) {
+			if (hotspot.frameID == NancySceneState.getSceneInfo().frameID) {
+				_hasHotspot = true;
+				_hotspot = hotspot.coords;
+			}
+		}
+
+		break;
+	case kActionTrigger:
+		if (!_activeUse) {
+			for (const ItemUse &use : _itemUses) {
+				if (use.itemID == NancySceneState.getHeldItem()) {
+					_activeUse = &use;
+					break;
+				}
+			}
+
+			if (_activeUse) {
+				if (_activeUse->loseItem) {
+					NancySceneState.setHeldItem(-1);
+				} else {
+					// Puts the item back in the inventory, which also empties the cursor
+					NancySceneState.addItemToInventory(_activeUse->itemID);
+				}
+			} else {
+				_activeUse = &_defaultItemUse;
+			}
+
+			g_nancy->_sound->loadSound(_activeUse->sound);
+			g_nancy->_sound->playSound(_activeUse->sound);
+			showSubtitle(_activeUse->ccText);
+
+			for (const FlagDescription &flag : _activeUse->flags) {
+				NancySceneState.setEventFlag(flag);
+			}
+
+			break;
+		}
+
+		// The scene change waits for the sound to finish playing
+		if (!g_nancy->_sound->isSoundPlaying(_activeUse->sound)) {
+			if (_activeUse->sceneID != kNoScene) {
+				SceneChangeDescription sceneChange;
+				sceneChange.sceneID = _activeUse->sceneID;
+				sceneChange.continueSceneSound = kContinueSceneSound;
+				NancySceneState.changeScene(sceneChange);
+			}
+
+			_isDone = true;
+		}
+
 		break;
 	}
 }

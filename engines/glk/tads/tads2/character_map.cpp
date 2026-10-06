@@ -63,11 +63,11 @@ void cmap_init_default(void)
 	size_t i;
 
 	/* initialize the input table */
-	for (i = 0 ; i < sizeof(G_cmap_input)/sizeof(G_cmap_input[0]) ; ++i)
+	for (i = 0 ; i < ARRAYSIZE(G_cmap_input); ++i)
 		G_cmap_input[i] = (unsigned char)i;
 
 	/* initialize the output table */
-	for (i = 0 ; i < sizeof(G_cmap_output)/sizeof(G_cmap_output[0]) ; ++i)
+	for (i = 0 ; i < ARRAYSIZE(G_cmap_output); ++i)
 		G_cmap_output[i] = (unsigned char)i;
 
 	/* we have a null ID */

@@ -1362,7 +1362,7 @@ int ASound3::command60() {
 
 /*-----------------------------------------------------------------------*/
 
-const ASound4::CommandPtr ASound4::_commandList[61] = {
+const ASound4::CommandPtr ASound4::_commandList[60] = {
 	&ASound4::command0, &ASound4::command1, &ASound4::command2, &ASound4::command3,
 	&ASound4::command4, &ASound4::command5, &ASound4::command6, &ASound4::command7,
 	&ASound4::command8, &ASound4::nullCommand, &ASound4::command10, &ASound4::nullCommand,
@@ -1377,8 +1377,7 @@ const ASound4::CommandPtr ASound4::_commandList[61] = {
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
 	&ASound4::command52, &ASound4::command53, &ASound4::command54, &ASound4::command55,
-	&ASound4::command56, &ASound4::command57, &ASound4::command58, &ASound4::command59,
-	&ASound4::command60
+	&ASound4::command56, &ASound4::command57, &ASound4::command58, &ASound4::command59
 };
 
 ASound4::ASound4(Audio::Mixer *mixer) : ASound(mixer, "asound.004", 0x14F0, 0x2930) {
@@ -1389,7 +1388,7 @@ ASound4::ASound4(Audio::Mixer *mixer) : ASound(mixer, "asound.004", 0x14F0, 0x29
 }
 
 int ASound4::command(int commandId, int param) {
-	if (commandId > 60)
+	if (commandId > 59)
 		return 0;
 
 	_commandParam = param;
@@ -1597,12 +1596,6 @@ int ASound4::command59() {
 	return 0;
 }
 
-int ASound4::command60() {
-	playSound(0x28FC);
-
-	return 0;
-}
-
 void ASound4::method1() {
 	byte *pData = loadData(0x2180);
 	if (!isSoundActive(pData)) {
@@ -1637,7 +1630,7 @@ const ASound5::CommandPtr ASound5::_commandList[42] = {
 	&ASound5::command40, &ASound5::command41
 };
 
-ASound5::ASound5(Audio::Mixer *mixer) : ASound(mixer, "asound.005", 0x15E0, 0x2200) {
+ASound5::ASound5(Audio::Mixer *mixer) : ASound(mixer, "asound.005", 0x1440, 0x2200) {
 	// Load sound samples
 	auto samplesStream = getDataStream(0x144);
 	for (int i = 0; i < 164; ++i)

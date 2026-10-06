@@ -217,7 +217,7 @@ void PlayerActor::manaUpdate() {
 		else if (*baseMana[i] >= 40) levelBump = 20;
 		else levelBump = 10;
 
-		// is their current mana less then their maximum
+		// is their current mana less than their maximum
 		if (*effectiveMana[i] < *baseMana[i]) {
 			diff = *effectiveMana[i];
 

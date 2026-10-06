@@ -56,7 +56,7 @@ static void handleRexDialogs(int quote) {
 	kernel_message_purge();
 
 	char *curQuote = quote_string(kernel.quotes, quote);
-	if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
+	if (g_engine->getMessageTextWidth(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		quote_split_string(curQuote, subQuote1, subQuote2);
 
@@ -78,7 +78,7 @@ static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 
 	int maxWidth = 0;
 	for (int i = 0; i < quoteNum; i++) {
-		maxWidth = MAX(maxWidth, font_string_width(kernel_message_font, quote_string(kernel.quotes, curQuoteId), -1));
+		maxWidth = MAX(maxWidth, g_engine->getMessageTextWidth(kernel_message_font, quote_string(kernel.quotes, curQuoteId), -1));
 		curQuoteId++;
 	}
 
@@ -117,68 +117,68 @@ static void handleDialog() {
 		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		player.commands_allowed = true;
 	} else {
-		if (player2.words[0] < 0x19C)
+		if (player2.words[0] < words_grass)
 			local._dialog1.write(player2.words[0], false);
 
 		switch (player2.words[0]) {
-		case 0x191:
+		case words_wear:
 			handleInternDialog(0x19E, 2, INDEFINITE_TIMEOUT);
 			local._dialog1.write(0x192, true);
 			break;
 
-		case 0x192:
+		case words_weather_station:
 			handleInternDialog(0x1A0, 5, INDEFINITE_TIMEOUT);
 			local._dialog1.write(0x193, true);
 			break;
 
-		case 0x193:
+		case words_weather_vane:
 			handleInternDialog(0x1A5, 4, INDEFINITE_TIMEOUT);
 			local._dialog1.write(0x194, true);
 			break;
 
-		case 0x194:
+		case words_weight_machine:
 			handleInternDialog(0x1A9, 6, INDEFINITE_TIMEOUT);
 			local._dialog1.write(0x195, true);
 			local._dialog1.write(0x196, true);
 			local._dialog1.write(0x19D, false);
 			break;
 
-		case 0x195:
+		case words_western_cliff_face:
 			handleInternDialog(0x1AF, 7, INDEFINITE_TIMEOUT);
 			if (!local._dialog1.read(0x196))
 				local._dialog1.write(0x197, true);
 			break;
 
-		case 0x196:
+		case words_wheel:
 			handleInternDialog(0x1B6, 5, INDEFINITE_TIMEOUT);
 			if (!local._dialog1.read(0x195))
 				local._dialog1.write(0x197, true);
 			break;
 
-		case 0x197:
+		case words_window:
 			handleInternDialog(0x1BB, 5, INDEFINITE_TIMEOUT);
 			break;
 
-		case 0x198:
+		case words_witchdoctor_hut:
 			handleInternDialog(0x1C0, 5, INDEFINITE_TIMEOUT);
 			local._dialog1.write(0x19A, true);
 			break;
 
-		case 0x199:
+		case words_workbench:
 			handleInternDialog(0x1C5, 3, INDEFINITE_TIMEOUT);
 			break;
 
-		case 0x19A:
+		case words_write_on:
 			handleInternDialog(0x1C8, 5, INDEFINITE_TIMEOUT);
 			local._dialog1.write(0x19B, true);
 			break;
 
-		case 0x19B:
+		case words_yellow_birdy:
 			handleInternDialog(0x1CD, 3, INDEFINITE_TIMEOUT);
 			break;
 
-		case 0x19C:
-		case 0x19D:
+		case words_grass:
+		case words_bouncing_reptile:
 			kernel_seq_delete(g_sequence_ids[2]);
 			g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 8, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[2], 1);
@@ -188,7 +188,7 @@ static void handleDialog() {
 
 			local._dialogFl = false;
 			handleInternDialog(0x1D0, 1, 120);
-			if (local._dialog1.read(0) || (player2.words[0] == 0x19D)) {
+			if (local._dialog1.read(0) || (player2.words[0] == words_bouncing_reptile)) {
 				local._explosionFl = true;
 				local._internCounter = 3420;
 			}
@@ -198,7 +198,7 @@ static void handleDialog() {
 			break;
 		}
 
-		if (player2.words[0] < 0x19C) {
+		if (player2.words[0] < words_grass) {
 			local._dialog1.start();
 			player.commands_allowed = true;
 		}
@@ -412,7 +412,7 @@ static void room_318_daemon() {
 	}
 
 	uint32 tmpFrame = timer_read();
-	long diffFrame = tmpFrame - local._lastFrameCounter;
+	int32 diffFrame = tmpFrame - local._lastFrameCounter;
 	local._lastFrameCounter = tmpFrame;
 
 	if ((local._animMode == 2) && !local._internVisibleFl && player.commands_allowed) {

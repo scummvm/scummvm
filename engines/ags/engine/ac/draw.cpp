@@ -609,8 +609,8 @@ void on_roomcamera_changed(Camera *cam) {
 	if (_G(drawstate).FullFrameRedraw || (_G(displayed_room) < 0))
 		return;
 	if (cam->HasChangedSize()) {
-		auto viewrefs = cam->GetLinkedViewports();
-		for (auto vr : viewrefs) {
+		const auto &viewrefs = cam->GetLinkedViewports();
+		for (const auto &vr : viewrefs) {
 			PViewport vp = vr.lock();
 			if (vp)
 				sync_roomview(vp.get());

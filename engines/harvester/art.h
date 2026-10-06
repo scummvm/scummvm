@@ -50,7 +50,7 @@ struct AbmFrame : IndexedBitmap {
 class Art {
 public:
 	bool load(ResourceManager &resources);
-	bool loadQuickTipsResources(ResourceManager &resources);
+	bool loadQuickTipsResources(ResourceManager &resources, bool useTextboxPanel);
 	void drawWaitFrame(Graphics::Screen &screen) const;
 
 	const byte *getWaitPalette() const { return _waitPalette; }
@@ -58,6 +58,7 @@ public:
 	const IndexedBitmap &getInventoryBitmap() const { return _inventoryBitmap; }
 	const IndexedBitmap &getLogoBitmap() const { return _logoBitmap; }
 	const IndexedBitmap &getTipsBitmap() const { return _tipsBitmap; }
+	const IndexedBitmap *getQuickTipsTextboxBitmap() const;
 	const Common::Array<IndexedBitmap> &getAmmoIcons() const { return _ammoIcons; }
 	const IndexedBitmap *getTextboxBitmap(uint index) const {
 		return index < _textboxes.size() ? &_textboxes[index] : nullptr;

@@ -68,6 +68,7 @@ public:
 	bool load();
 	Common::SeekableReadStream *openResource(Container container, uint32 type,
 		uint16 id) const;
+	Common::String getApplicationVersion() const;
 	Common::SeekableReadStream *open(const char *filename) override;
 	bool exists(const char *filename) override;
 	bool allowsFallback(const char *filename) const override;
@@ -84,6 +85,8 @@ public:
 	}
 	const Graphics::Font *getDialogFont();
 	const Graphics::Font *getInterfaceFont();
+	const Graphics::Font *getGameFont();
+	const Graphics::Font *getAboutFont(int size, bool bold);
 	const byte *getNativeInterfacePalette() const { return _nativeInterfacePalette; }
 
 	static ResourceID mapResource(const Common::String &filename);
@@ -93,7 +96,7 @@ private:
 	Graphics::MacFontManager *_fontManager = nullptr;
 	Graphics::ManagedSurface _nativeInterface;
 	Graphics::ManagedSurface _logicalInterface;
-	byte _nativeInterfacePalette[16 * 3] = {};
+	byte _nativeInterfacePalette[10 * 3] = {};
 	int _cursorID = 0;
 	int _waitCursorFrame = 0;
 	uint32 _nextCursorTime = 0;

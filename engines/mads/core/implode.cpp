@@ -771,9 +771,6 @@ static void imp_fabrice(ImpState *s) {
 		if (s->qlen > s->zlen)
 			s->qlen = s->zlen;
 
-		int save_di = di;
-		int save_si = si;
-
 		// Decide encoding type.
 		int qlen = (int)(int16_t)s->qlen;  // treat as signed for comparison
 		int qoff = (int)s->qoff;
@@ -856,14 +853,11 @@ static void imp_fabrice(ImpState *s) {
 			s->norms = 0;
 		}
 
-		// Restore DI and SI, then advance through the input by Qlen characters,
-		// maintaining the hash dictionary.
+		// Advance through the input by Qlen characters, maintaining the hash
+		// dictionary. di/si are unchanged since the top of the loop.
 		//
 		// Note: on the FIRST iteration we skip Link (jump to UnLink directly)
 		// because the current di was already linked by Match().
-		di = save_di;
-		si = save_si;
-
 		int qlen_advance = (int)(int16_t)s->qlen;
 		for (int k = 0; k < qlen_advance; k++) {
 			if (k > 0) {

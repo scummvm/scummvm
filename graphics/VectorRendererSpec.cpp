@@ -1256,8 +1256,8 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 	bool useOriginal = _clippingArea.contains(Common::Rect(x, y, x + w + 1, y + h + 1));
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
-		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
-		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
+		&& x + w + Base::_shadowOffset < Base::_activeSurface->w
+		&& y + h + Base::_shadowOffset < Base::_activeSurface->h
 		&& h > (Base::_shadowOffset + 1) * 2) {
 		if (useOriginal) {
 			drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset, Base::_shadowIntensity);
@@ -3744,9 +3744,9 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset, uint32 
 	uint8 expFactor = 3;
 	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
 
-	// These constants ensure a border of 2px on the left and of each rounded square
-	Common::Rect shadowRect(w + offset + 2, h + offset + 1);
-	shadowRect.translate((x1 > 2) ? x1 - 2 : x1, y1);
+	// The shadow is cast down and to the right, by 'offset' pixels on both sides
+	Common::Rect shadowRect(w + offset, h + offset);
+	shadowRect.translate(x1, y1);
 
 	// The rounded rectangle drawn on top of this shadow is guaranteed
 	// to occlude entirely the following rect with a non-transparent color.
@@ -3843,9 +3843,9 @@ drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset, uin
 	uint8 expFactor = 3;
 	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
 
-	// These constants ensure a border of 2px on the left and of each rounded square
-	Common::Rect shadowRect(w + offset + 2, h + offset + 1);
-	shadowRect.translate((x1 > 2) ? x1 - 2 : x1, y1);
+	// The shadow is cast down and to the right, by 'offset' pixels on both sides
+	Common::Rect shadowRect(w + offset, h + offset);
+	shadowRect.translate(x1, y1);
 
 	// The rounded rectangle drawn on top of this shadow is guaranteed
 	// to occlude entirely the following rect with a non-transparent color.

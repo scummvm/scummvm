@@ -50,26 +50,26 @@ int mapEyeOverlayColorToMacColor(int colorIdx, int level) {
 	}
 }
 
-uint8 mapEyeOverlayColorToDOSFill(int colorIdx, int level) {
+uint32 setupDOSEyeOverlayMaterial(Renderer *gfx, int colorIdx, int level) {
 	switch (colorIdx) {
 	case kColorBlack:
 	case kColorPupil:
+		setupDOSFill(gfx, 0, 0, 1); // solid vBLACK
 		return 0;
-	case kColorEyeball:
-		return 15;
-	case kColorIris:
-	case kColorEyeIris:
-	case kColorMiniEyeIris:
 	case kColorDroneEye:
 	case kColorSoldierEye:
 	case kColorQueenEye:
-		return 1;
+		// QUEEN.C draweyes(): vGREEN over vYELLOW with pattern 4 on
+		// level 7; otherwise vGREEN over vINTWHITE with pattern 3.
+		setupDOSFill(gfx, 2, level == 7 ? 14 : 15, level == 7 ? 4 : 3);
+		return 2;
+	case kColorIris:
+	case kColorEyeIris:
+	case kColorMiniEyeIris:
 	default:
-		if (colorIdx >= 0 && colorIdx <= 15)
-			return (uint8)colorIdx;
-		if (colorIdx == kColorQueenBody && level == 7)
-			return 15;
-		return 7;
+		// EYE.C/PYRAMID.C: vBLUE over vINTWHITE with pattern 3.
+		setupDOSFill(gfx, 1, 15, 3);
+		return 1;
 	}
 }
 
@@ -114,12 +114,11 @@ bool projectCorridorPointRaw(const Common::Rect &screenR, uint8 look, int8 lookY
 	if (eyeZ >= -1.0f)
 		return false;
 
-	const float focal = (screenR.height() * 0.5f) / tanf(75.0f * (float)M_PI / 360.0f);
 	const float centerX = screenR.left + screenR.width() * 0.5f;
 	const float centerY = screenR.top + screenR.height() * 0.5f;
 
-	screenX = (int)roundf(centerX + (eyeX * focal / -eyeZ));
-	screenY = (int)roundf(centerY - (eyeY * focal / -eyeZ));
+	screenX = (int)roundf(centerX + (eyeX * kProjectionFocalLength / -eyeZ));
+	screenY = (int)roundf(centerY - (eyeY * kProjectionFocalLength / -eyeZ));
 	return true;
 }
 
@@ -226,9 +225,10 @@ const int kScreenPts[8][3] = {
 	{-16, 64, 0}, {16, 64, 0}, {16, -64, 0}, {-16, -64, 0},
 	{-16, 64, 288}, {16, 64, 288}, {16, -64, 288}, {-16, -64, 288}
 };
+// SCREEN.H: the monolith, 32x128x288 = 1:4:9, four sides in c_monolith and no caps.
 const int kScreenSurf[4][8] = {
-	{kColorBlack, 4, 0, 3, 7, 4, 0, 0}, {kColorBlack, 4, 3, 2, 6, 7, 0, 0},
-	{kColorBlack, 4, 1, 0, 4, 5, 0, 0}, {kColorBlack, 4, 2, 1, 5, 6, 0, 0}
+	{kColorMonolith, 4, 0, 3, 7, 4, 0, 0}, {kColorMonolith, 4, 3, 2, 6, 7, 0, 0},
+	{kColorMonolith, 4, 1, 0, 4, 5, 0, 0}, {kColorMonolith, 4, 2, 1, 5, 6, 0, 0}
 };
 const int kTableTopPts[4][3] = {
 	{-128, 128, 100}, {128, 128, 100}, {128, -128, 100}, {-128, -128, 100}
@@ -1140,7 +1140,6 @@ const int kSnoopHeadSurf[3][8] = {
 };
 
 const Colony::ColonyEngine::PrismPartDef kSnoopAbdomenDef = {4, kSnoopAbdomenPts, 2, kSnoopAbdomenSurf};
-const Colony::ColonyEngine::PrismPartDef kSnoopHeadDef = {4, kSnoopHeadPts, 3, kSnoopHeadSurf};
 
 int wrapAngle256(int angle) {
 	angle %= 256;
@@ -1266,8 +1265,10 @@ EnemyEyePair buildEnemyEyePair(const Common::Rect &screenR, const Colony::Thing 
 	eyes.left = obj;
 	eyes.right = obj;
 
-	const int32 s1 = sint[obj.where.ang] >> 1;
-	const int32 c1 = cost[obj.where.ang] >> 1;
+	// +32 for the table phase, as in the prism rotation the irises follow.
+	const uint8 eyeAng = obj.where.ang + 32;
+	const int32 s1 = sint[eyeAng] >> 1;
+	const int32 c1 = cost[eyeAng] >> 1;
 	const int32 s2 = s1 >> 1;
 	const int32 c2 = c1 >> 1;
 	const int32 eyeBaseX = obj.where.xloc + c1;
@@ -1316,7 +1317,8 @@ void ColonyEngine::drawStaticObjects() {
 	_insight = _weapons > 0 && hasAimedRobotTarget();
 }
 
-void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride, bool forceVisible) {
+void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool useLook,
+		int colorOverride, bool forceVisible, bool dosFill) {
 	if (def.pointCount < 4 || def.surfaceCount < 1)
 		return;
 
@@ -1392,6 +1394,8 @@ void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool u
 		pz[i] = centerZ + ca * axisHZ + sa * axisVZ;
 	}
 
+	pullTowardCamera(px, py, pz, kSegments);
+
 	if (isMacColorMode()) {
 		const int macColorIdx = mapEyeOverlayColorToMacColor(fillColorIdx, _level);
 		int pattern = _macColors[macColorIdx].pattern;
@@ -1408,21 +1412,25 @@ void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool u
 		_gfx->draw3DPolygon(px, py, pz, kSegments, line);
 		if (stipple)
 			_gfx->setStippleData(nullptr);
-	} else if (lit) {
-		if (isMacRenderMode()) {
-			int pattern = mapEyeOverlayColorToMacPattern(fillColorIdx);
-			if (pattern == kPatternClear)
-				return;
-			if (!_wireframe)
-				_gfx->setWireframe(true, pattern == kPatternBlack ? 0 : 255);
-			_gfx->setStippleData(kMacStippleData[pattern]);
-			_gfx->draw3DPolygon(px, py, pz, kSegments, 0);
+	} else if (!isMacRenderMode()) {
+		const uint32 outline = setupDOSEyeOverlayMaterial(_gfx, fillColorIdx, _level);
+		if (!dosFill) {
 			_gfx->setStippleData(nullptr);
-		} else {
-			if (!_wireframe)
-				_gfx->setWireframe(true, mapEyeOverlayColorToDOSFill(fillColorIdx, _level));
-			_gfx->draw3DPolygon(px, py, pz, kSegments, 0);
+			_gfx->setWireframe(true);
 		}
+		_gfx->draw3DPolygon(px, py, pz, kSegments, outline);
+		_gfx->setStippleData(nullptr);
+		if (_wireframe)
+			_gfx->setWireframe(true);
+	} else if (lit) {
+		int pattern = mapEyeOverlayColorToMacPattern(fillColorIdx);
+		if (pattern == kPatternClear)
+			return;
+		if (!_wireframe)
+			_gfx->setWireframe(true, pattern == kPatternBlack ? 0 : 255);
+		_gfx->setStippleData(kMacStippleData[pattern]);
+		_gfx->draw3DPolygon(px, py, pz, kSegments, 0);
+		_gfx->setStippleData(nullptr);
 	} else {
 		if (!_wireframe)
 			_gfx->setWireframe(true, 0);
@@ -1435,17 +1443,109 @@ void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool u
 	thing.where.zmx = MAX(thing.where.zmx, bottom);
 }
 
+void ColonyEngine::drawDOSEyeSlit3D(Thing &thing, const PrismPartDef &irisDef, bool useLook) {
+	if (irisDef.pointCount < 4)
+		return;
+
+	const uint8 ang = (useLook ? thing.where.look : thing.where.ang) + 32;
+	const int32 rotCos = _cost[ang];
+	const int32 rotSin = _sint[ang];
+	float eye[4][3];
+	for (int i = 0; i < 4; i++) {
+		const int32 rx = ((int32)irisDef.points[i][0] * rotCos -
+			(int32)irisDef.points[i][1] * rotSin) >> 7;
+		const int32 ry = ((int32)irisDef.points[i][0] * rotSin +
+			(int32)irisDef.points[i][1] * rotCos) >> 7;
+		eye[i][0] = (float)(rx + thing.where.xloc);
+		eye[i][1] = (float)(ry + thing.where.yloc);
+		eye[i][2] = (float)(irisDef.points[i][2] - 160);
+	}
+
+	float center[3];
+	float halfWidth[3];
+	float halfHeight[3];
+	for (int axis = 0; axis < 3; axis++) {
+		center[axis] = (eye[0][axis] + eye[1][axis] + eye[2][axis] + eye[3][axis]) * 0.25f;
+		// QUEEN.C uses an iris-width/8 pen and leaves 1/16 of the iris
+		// height clear at each end of the vertical slit.
+		halfWidth[axis] = (eye[1][axis] - eye[3][axis]) / 16.0f;
+		halfHeight[axis] = (eye[2][axis] - eye[0][axis]) * (7.0f / 16.0f);
+	}
+
+	float px[4];
+	float py[4];
+	float pz[4];
+	const float widthSign[4] = {-1.0f, 1.0f, 1.0f, -1.0f};
+	const float heightSign[4] = {-1.0f, -1.0f, 1.0f, 1.0f};
+	for (int i = 0; i < 4; i++) {
+		px[i] = center[0] + widthSign[i] * halfWidth[0] + heightSign[i] * halfHeight[0];
+		py[i] = center[1] + widthSign[i] * halfWidth[1] + heightSign[i] * halfHeight[1];
+		pz[i] = center[2] + widthSign[i] * halfWidth[2] + heightSign[i] * halfHeight[2];
+	}
+
+	pullTowardCamera(px, py, pz, 4);
+	setupDOSFill(_gfx, 0, 0, 1);
+	_gfx->draw3DPolygon(px, py, pz, 4, 0);
+	_gfx->setStippleData(nullptr);
+	if (_wireframe)
+		_gfx->setWireframe(true);
+}
+
 void ColonyEngine::drawEyeOverlays3D(Thing &thing, const PrismPartDef &irisDef, int irisColorOverride,
-		const PrismPartDef &pupilDef, int pupilColorOverride, bool useLook) {
+		const PrismPartDef &pupilDef, int pupilColorOverride, bool useLook, bool dosFill) {
 	if (!isProjectedPrismSurfaceVisible(_screenR, thing, irisDef, useLook, 0,
 			_me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost)) {
 		return;
 	}
 
-	// Original Mac eye rendering uses the iris quad as the single visibility
-	// gate, then draws both iris and pupil unconditionally.
-	drawPrismOval3D(thing, irisDef, useLook, irisColorOverride, true);
-	drawPrismOval3D(thing, pupilDef, useLook, pupilColorOverride, true);
+	// The original uses the iris quad as the single visibility gate, then draws
+	// both overlays unconditionally.
+	drawPrismOval3D(thing, irisDef, useLook, irisColorOverride, true, dosFill);
+
+	const int irisColor = irisColorOverride >= 0 ? irisColorOverride : irisDef.surfaces[0][0];
+	const bool dosEnemyEye = !isMacRenderMode() &&
+		(irisColor == kColorQueenEye || irisColor == kColorDroneEye || irisColor == kColorSoldierEye);
+	if (dosEnemyEye && _level == 7) {
+		drawDOSEyeSlit3D(thing, irisDef, useLook);
+	} else {
+		const int pupilColor = isMacRenderMode() ? pupilColorOverride : kColorPupil;
+		drawPrismOval3D(thing, pupilDef, useLook, pupilColor, true, dosFill);
+	}
+}
+
+// draweyes() of Queen/Drone/Soldier. Writes off: a turned eye leaves the iris
+// quad behind the camera-facing ball, which would then clip it.
+void ColonyEngine::drawEnemyEye3D(Thing &obj, Thing &eye, int eyeballColor, int irisColor, int pupilColor) {
+	bool dosFill = true;
+	if (!isMacRenderMode()) {
+		const uint8 eyeAng = obj.where.ang + 32;
+		const int32 eyeBaseX = obj.where.xloc + (_cost[eyeAng] >> 1);
+		const int32 eyeBaseY = obj.where.yloc + (_sint[eyeAng] >> 1);
+		const int64 dx = eyeBaseX - _me.xloc;
+		const int64 dy = eyeBaseY - _me.yloc;
+		dosFill = dx * dx + dy * dy > 64 * 64;
+	}
+
+	_gfx->setDepthState(true, false);
+	const int ballColor = isMacRenderMode() ? eyeballColor : kColorRed;
+	const int ballOutline = isMacRenderMode() ? kColorBlack : kColorIntWhite;
+	draw3DSphere(eye, 0, 0, 130, 0, 0, 155, ballColor, ballOutline, true, dosFill);
+	drawEyeOverlays3D(eye, kQIrisDef, irisColor, kQPupilDef, pupilColor, true, dosFill);
+	_gfx->setDepthState(true, true);
+	mergeObjectBounds(obj.where, eye.where);
+}
+
+// Shared draweye() of Pyramid/UPyramid/Cube. A depth-range bias shifts by a
+// fraction of the distance, so up close a tip punched through the eye; pull the
+// eye past the body's bounding radius instead.
+void ColonyEngine::drawBodyEye3D(Thing &obj, int eyeballColor, int pupilColor, float pull) {
+	_eyeDepthPull = pull;
+	_gfx->setDepthState(true, false);
+	const int ballColor = isMacRenderMode() ? eyeballColor : kColorEye;
+	draw3DSphere(obj, 0, 0, 175, 0, 0, 200, ballColor, kColorBlack, true);
+	drawEyeOverlays3D(obj, kPIrisDef, -1, kPPupilDef, pupilColor, false);
+	_gfx->setDepthState(true, true);
+	_eyeDepthPull = 0.0f;
 }
 
 int interpolatedRobotPoint(int from, int to, float progress) {
@@ -1559,7 +1659,10 @@ void ColonyEngine::drawInterpolatedGrowEye(Thing &obj, int fromStage, int toStag
 
 	const int z0 = interpolatedRobotPoint(sphereZ[fromStage][0], sphereZ[toStage][0], progress);
 	const int z1 = interpolatedRobotPoint(sphereZ[fromStage][1], sphereZ[toStage][1], progress);
-	draw3DSphere(obj, 0, 0, z0, 0, 0, z1, eyeballColor, kColorBlack, true);
+	_gfx->setDepthState(true, false);
+	const int ballColor = isMacRenderMode() ? eyeballColor : kColorEye;
+	const int ballOutline = isMacRenderMode() ? kColorBlack : kColorEye;
+	draw3DSphere(obj, 0, 0, z0, 0, 0, z1, ballColor, ballOutline, true);
 
 	const PrismPartDef &fromIris = growEyeIrisDefForStage(fromStage);
 	const PrismPartDef &toIris = growEyeIrisDefForStage(toStage);
@@ -1578,6 +1681,7 @@ void ColonyEngine::drawInterpolatedGrowEye(Thing &obj, int fromStage, int toStag
 	const PrismPartDef pupilDef = {4, pupilPoints, fromPupil.surfaceCount, fromPupil.surfaces};
 	const int irisColor = (toStage == 3 && progress >= 0.5f) ? kColorMiniEyeIris : -1;
 	drawEyeOverlays3D(obj, irisDef, irisColor, pupilDef, pupilColor, false);
+	_gfx->setDepthState(true, true);
 }
 
 bool ColonyEngine::drawInterpolatedGrowRobot(Thing &obj, int eyeballColor, int pupilColor) {
@@ -1621,6 +1725,8 @@ bool ColonyEngine::drawInterpolatedGrowRobot(Thing &obj, int eyeballColor, int p
 bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	const int eyeballColor = (_level == 1 || _level == 7) ? kColorPupil : kColorEyeball;
 	const int pupilColor = (_level == 1 || _level == 7) ? kColorEyeball : kColorPupil;
+	const int standaloneBallColor = isMacRenderMode() ? eyeballColor : kColorEye;
+	const int standaloneBallOutline = isMacRenderMode() ? kColorBlack : kColorEye;
 
 	switch (obj.type) {
 	case kObjConsole:
@@ -1661,7 +1767,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kObjDrawer:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002f, 1.0f);
-			draw3DPrism(obj, kDrawerParts[i], false, -1, true, false);
+			draw3DPrism(obj, kDrawerParts[i], false, -1, true, i == 1);
 		}
 		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
@@ -1692,7 +1798,10 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		const PrismPartDef *parts = (obj.type == kObjBBed) ? kBBedParts : kBedParts;
 		for (int i = 0; i < 3; i++) {
 			_gfx->setDepthRange((2 - i) * 0.002f, 1.0f);
-			draw3DPrism(obj, parts[i], false, -1, true, false);
+			// MakeBed/MakeBBed draw the headboard (part 0) with DrawPrism(...,1).
+			// It is a single flat quad, so plain back-face culling would drop it
+			// whenever the bed is approached from its non-clockwise side.
+			draw3DPrism(obj, parts[i], false, -1, true, i == 0);
 		}
 		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
@@ -1900,29 +2009,25 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			(obj.where.yloc - _me.yloc) * (obj.where.yloc - _me.yloc) <= 64 * 64) {
 			break;
 		}
-		draw3DSphere(obj, 0, 0, 100, 0, 0, 200, eyeballColor, kColorBlack, true);
+		// Writes off, as in drawEnemyEye3D().
+		_gfx->setDepthState(true, false);
+		draw3DSphere(obj, 0, 0, 100, 0, 0, 200,
+			standaloneBallColor, standaloneBallOutline, true);
 		drawEyeOverlays3D(obj, kEyeIrisDef, -1, kEyePupilDef, pupilColor, false);
+		_gfx->setDepthState(true, true);
 		break;
 	case kRobPyramid:
 		_gfx->setDepthRange(0.030f, 1.0f);
 		draw3DPrism(obj, kPShadowDef, false, -1, true, false);
 		_gfx->setDepthRange(0.020f, 1.0f);
 		draw3DPrism(obj, kPyramidBodyDef, false, -1, true, false);
-		_gfx->setDepthRange(0.004f, 1.0f);
-		_gfx->setDepthState(true, false);
 		_gfx->setDepthRange(0.0f, 1.0f);
-		draw3DSphere(obj, 0, 0, 175, 0, 0, 200, eyeballColor, kColorBlack, true);
-		drawEyeOverlays3D(obj, kPIrisDef, -1, kPPupilDef, pupilColor, false);
-		_gfx->setDepthState(true, true);
-		_gfx->setDepthRange(0.0f, 1.0f);
+		drawBodyEye3D(obj, eyeballColor, pupilColor, 106.0f);
 		break;
 	case kRobCube:
 		// DOS CUBE.C: body + draweye() (same shared eye as Pyramid/UPyramid)
 		draw3DPrism(obj, kCubeBodyDef, false, -1, true, false);
-		_gfx->setDepthState(true, false);
-		draw3DSphere(obj, 0, 0, 175, 0, 0, 200, eyeballColor, kColorBlack, true);
-		drawEyeOverlays3D(obj, kPIrisDef, -1, kPPupilDef, pupilColor, false);
-		_gfx->setDepthState(true, true);
+		drawBodyEye3D(obj, eyeballColor, pupilColor, 106.0f);
 		break;
 	case kRobUPyramid:
 		// DOS UPYRAMID.C: draweye() drawn first, then shadow, then body.
@@ -1931,19 +2036,18 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		draw3DPrism(obj, kUPShadowDef, false, -1, true, false);
 		_gfx->setDepthRange(0.020f, 1.0f);
 		draw3DPrism(obj, kUPyramidBodyDef, false, -1, true, false);
-		_gfx->setDepthRange(0.004f, 1.0f);
-		_gfx->setDepthState(true, false);
 		_gfx->setDepthRange(0.0f, 1.0f);
-		draw3DSphere(obj, 0, 0, 175, 0, 0, 200, eyeballColor, kColorBlack, true);
-		drawEyeOverlays3D(obj, kPIrisDef, -1, kPPupilDef, pupilColor, false);
-		_gfx->setDepthState(true, true);
-		_gfx->setDepthRange(0.0f, 1.0f);
+		// No pull: this eye sits in the top face and the near rim should clip it.
+		drawBodyEye3D(obj, eyeballColor, pupilColor, 0.0f);
 		break;
 	case kRobFEye:
 		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
 			break;
-		draw3DSphere(obj, 0, 0, 0, 0, 0, 100, eyeballColor, kColorBlack, true);
+		_gfx->setDepthState(true, false);
+		draw3DSphere(obj, 0, 0, 0, 0, 0, 100,
+			standaloneBallColor, standaloneBallOutline, true);
 		drawEyeOverlays3D(obj, kFEyeIrisDef, -1, kFEyePupilDef, pupilColor, false);
+		_gfx->setDepthState(true, true);
 		break;
 	case kRobFPyramid:
 		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
@@ -1963,8 +2067,11 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kRobSEye:
 		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
 			break;
-		draw3DSphere(obj, 0, 0, 0, 0, 0, 50, eyeballColor, kColorBlack, true);
+		_gfx->setDepthState(true, false);
+		draw3DSphere(obj, 0, 0, 0, 0, 0, 50,
+			standaloneBallColor, standaloneBallOutline, true);
 		drawEyeOverlays3D(obj, kSEyeIrisDef, -1, kSEyePupilDef, pupilColor, false);
+		_gfx->setDepthState(true, true);
 		break;
 	case kRobSPyramid:
 		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
@@ -1984,8 +2091,11 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kRobMEye:
 		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
 			break;
-		draw3DSphere(obj, 0, 0, 0, 0, 0, 25, eyeballColor, kColorBlack, true);
+		_gfx->setDepthState(true, false);
+		draw3DSphere(obj, 0, 0, 0, 0, 0, 25,
+			standaloneBallColor, standaloneBallOutline, true);
 		drawEyeOverlays3D(obj, kMEyeIrisDef, kColorMiniEyeIris, kMEyePupilDef, pupilColor, false);
+		_gfx->setDepthState(true, true);
 		break;
 	case kRobMPyramid:
 		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
@@ -2017,9 +2127,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			};
 
 			auto drawEye = [&](Thing &eye) {
-				draw3DSphere(eye, 0, 0, 130, 0, 0, 155, enemyEyeballColor, kColorBlack, true);
-				drawEyeOverlays3D(eye, kQIrisDef, kColorQueenEye, kQPupilDef, pupilColor, true);
-				mergeObjectBounds(obj.where, eye.where);
+				drawEnemyEye3D(obj, eye, enemyEyeballColor, kColorQueenEye, pupilColor);
 			};
 			auto drawWingEye = [&](Thing &eye, const PrismPartDef &wing) {
 				setNextDepthRange();
@@ -2077,9 +2185,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			};
 			auto drawEye = [&](Thing &eye) {
 				setNextDepthRange();
-				draw3DSphere(eye, 0, 0, 130, 0, 0, 155, enemyEyeballColor, kColorBlack, true);
-				drawEyeOverlays3D(eye, kQIrisDef, kColorDroneEye, kQPupilDef, pupilColor, true);
-				mergeObjectBounds(obj.where, eye.where);
+				drawEnemyEye3D(obj, eye, enemyEyeballColor, kColorDroneEye, pupilColor);
 			};
 
 			const int body = droneBodyOrder(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
@@ -2099,8 +2205,9 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			int leftPincerPts[4][3];
 			int rightPincerPts[4][3];
 			const int lookAmount = (obj.where.lookx < 0) ? -obj.where.lookx : obj.where.lookx;
-			const int leftLook = wrapAngle256(-lookAmount - 32);
-			const int rightLook = wrapAngle256(lookAmount - 32);
+			// DRONE.C's -32 is the phase-shifted table's, not an angle.
+			const int leftLook = wrapAngle256(-lookAmount);
+			const int rightLook = wrapAngle256(lookAmount);
 
 			for (int i = 0; i < 4; ++i) {
 				rotatePoint(leftLook, kDLLPincerPts[i], leftPincerPts[i], _cost, _sint);
@@ -2128,9 +2235,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			};
 			auto drawEye = [&](Thing &eye) {
 				setNextDepthRange();
-				draw3DSphere(eye, 0, 0, 130, 0, 0, 155, enemyEyeballColor, kColorBlack, true);
-				drawEyeOverlays3D(eye, kQIrisDef, kColorSoldierEye, kQPupilDef, pupilColor, true);
-				mergeObjectBounds(obj.where, eye.where);
+				drawEnemyEye3D(obj, eye, enemyEyeballColor, kColorSoldierEye, pupilColor);
 			};
 			auto drawPincers = [&]() {
 				if (leftPincerDepth < rightPincerDepth) {
@@ -2171,10 +2276,16 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			_gfx->setDepthRange(0.0f, 1.0f);
 		}
 		break;
-	case kRobSnoop:
+	case kRobSnoop: {
+		// think.c raises and drops the snout tip as the snoop sniffs.
+		int headPts[4][3];
+		memcpy(headPts, kSnoopHeadPts, sizeof(headPts));
+		headPts[1][2] = _snoopSnoutZ;
+		const PrismPartDef headDef = {4, headPts, 3, kSnoopHeadSurf};
 		draw3DPrism(obj, kSnoopAbdomenDef, false, -1, true, false);
-		draw3DPrism(obj, kSnoopHeadDef, false, -1, true, false);
+		draw3DPrism(obj, headDef, false, -1, true, false);
 		break;
+	}
 	default:
 		return false;
 	}

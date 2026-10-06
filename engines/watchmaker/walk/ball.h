@@ -41,22 +41,22 @@ struct SPhys {
 	t3dF32 Ts = 0.0f;                                           // tempo trascorso dall'ultimo impatto
 	t3dF32 Tb = 0.0f;                                           // tempo di carica del braccio
 
-	t3dV3F Fb;                                                  // forza braccio
-	t3dV3F Vb;                                                  // velocita' braccio
-	t3dV3F Fv;                                                  // forza del vento
-	t3dV3F V0;                                                  // velocita' iniziale palla
-	t3dV3F S0;                                                  // posizione iniziale palla
+	t3dV3F Fb = {};                                             // forza braccio
+	t3dV3F Vb = {};                                             // velocita' braccio
+	t3dV3F Fv = {};                                             // forza del vento
+	t3dV3F V0 = {};                                             // velocita' iniziale palla
+	t3dV3F S0 = {};                                             // posizione iniziale palla
 
-	t3dV3F St;                                                  // posizione attuale
-	t3dV3F Vt;                                                  // velocita' attuale
-	t3dV3F At;                                                  // accelerazione attuale
+	t3dV3F St= {};                                              // posizione attuale
+	t3dV3F Vt= {};                                              // velocita' attuale
+	t3dV3F At = {};                                             // accelerazione attuale
 	t3dF32 MVt = 0.0f;                                          // modulo della velocita' attuale
 	t3dF32 MAt = 0.0f;                                          // modulo dell'accelerazione attuale
 
-	uint8 InAir;                                                // Se e' in volo
-	t3dV3F Angle;                                               // Angolazione colpo
+	uint8 InAir = 0u;                                           // Se e' in volo
+	t3dV3F Angle = {};                                          // Angolazione colpo
 	t3dF32 TimeLeft = 0.0f;                                     // Tempo Riamente
-	SD3DTriangle ViewCone;                              // Cono visivo
+	SD3DTriangle ViewCone = {};                                 // Cono visivo
 };
 
 void InitPhys(struct SPhys *p);

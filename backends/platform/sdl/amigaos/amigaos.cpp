@@ -82,7 +82,7 @@ void OSystem_AmigaOS::initBackend() {
 	if (ConfMan.hasKey("opengl_implementation")) {
 		Common::String implem = ConfMan.get("opengl_implementation");
 		if (implem == "gl") {
-			force = 1;;
+			force = 1;
 		} else if (implem == "gles2") {
 			force = 2;
 		}

@@ -257,13 +257,11 @@ void display_inventory() {
 		if (object_id <= 15) {
 			switch (object_id) {
 			case 0:
+			case 2: case 3: case 6: case 7: case 9: case 11: case 12:
 				var_22 = (room_id == 521) ? 0 : -1;
 				break;
 			case 1: case 10: case 15:
 				var_22 = (room_id == 308) ? 0 : -1;
-				break;
-			case 2: case 3: case 6: case 7: case 9: case 11: case 12:
-				var_22 = (room_id == 521) ? 0 : -1;
 				break;
 			case 4: case 14:
 				var_22 = (room_id == 307 || room_id == 322 || room_id == 308 ||
@@ -318,7 +316,7 @@ void display_inventory() {
 			}
 		}
 
-		if (object_id == -1 || itemNum == -1 || var_22 != 0) {
+		if (object_id == -1 || var_22 != 0) {
 			var_E = 0;
 			continue;
 		}

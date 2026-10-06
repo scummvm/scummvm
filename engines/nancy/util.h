@@ -31,6 +31,8 @@
 
 namespace Nancy {
 
+struct CapturedPicture;
+
 void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect);
 void readRect(Common::Serializer &stream, Common::Rect &inRect, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 void readRectArray(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num, uint totalNum = 0);
@@ -69,12 +71,38 @@ Common::String resolveSubtitleText(const Common::String &keyOrText, const Common
 // AUTOTEXT key, falling back to the literal text when the key is not present in the table.
 Common::String readSubtitleText(Common::SeekableReadStream &stream);
 
+// One of the 23-byte hotspot records the Nancy 13 and 14 puzzle records end with.
+struct ExitHotspot {
+	Common::Rect hotspot;
+	uint16 cursorType = 0;
+	SceneChangeDescription scene;
+	FlagDescription flag;
+};
+
+// Reads the count-prefixed array of those records. Most puzzles describe a single
+// give-up hotspot, but a record may carry several. The field after the scene id is
+// an event-flag label, NOT a frame id, so an exit always lands on the first frame.
+// Leaves continueSceneSound alone, as the puzzles differ on it.
+void readExitHotspots(Common::SeekableReadStream &stream, Common::Array<ExitHotspot> &hotspots);
+
+// Reads the same array but keeps only the first record.
+void readExitHotspot(Common::SeekableReadStream &stream, Common::Rect &hotspot, uint16 &cursorType,
+					SceneChangeDescription &scene, FlagDescription &flag);
+
 // Shows `text` as a single line in the game textbox, replacing its current contents.
 // Does nothing when `text` is empty or when the player has subtitles disabled. A
 // non-negative `overrideFontID` selects a font other than the textbox default. When
 // `forceRedraw` is true, the textbox is redrawn immediately instead of on the next
 // render pass.
 void showSubtitle(const Common::String &text, bool forceRedraw = false, int overrideFontID = -1);
+
+// Maps a screen-space rect onto the live viewport's (scrolled) background, clipped
+// to it. An empty rect means the whole visible viewport.
+Common::Rect viewportScreenToBackground(const Common::Rect &screenRegion);
+
+// Grabs a background-space region of the live viewport into `picture`, converted to
+// BGRA32 so it can be redisplayed and saved. Used by both cameras.
+bool captureViewportPicture(const Common::Rect &backgroundRegion, CapturedPicture &picture);
 
 void readUIButton(Common::SeekableReadStream &stream, UIButtonRecord &dst);
 void readUISlider(Common::SeekableReadStream &stream, UISliderRecord &dst);

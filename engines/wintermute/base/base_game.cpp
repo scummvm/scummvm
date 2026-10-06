@@ -292,7 +292,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_accessTTSKeypress = true;
 	_accessKeyboardEnabled = true;//false;
 	_accessKeyboardCursorSkip = true;
-	_accessKeyboardPause = false;
+	_accessKeyboardPause = true;//false;
 
 	_accessGlobalPaused = false;
 	_accessShieldWin = nullptr;
@@ -3241,7 +3241,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// AccTTSEnabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccTTSEnabled") == 0) {
-		_scValue->setBool(_accessTTSEnabled);
+		//_scValue->setBool(_accessTTSEnabled);
 		return _scValue;
 	}
 
@@ -3249,7 +3249,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// AccTTSTalk
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccTTSTalk") == 0) {
-		_scValue->setBool(_accessTTSTalk);
+		//_scValue->setBool(_accessTTSTalk);
 		return _scValue;
 	}
 
@@ -3257,7 +3257,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// AccTTSCaptions
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccTTSCaptions") == 0) {
-		_scValue->setBool(_accessTTSCaptions);
+		//_scValue->setBool(_accessTTSCaptions);
 		return _scValue;
 	}
 
@@ -3265,7 +3265,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// AccTTSKeypress
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccTTSKeypress") == 0) {
-		_scValue->setBool(_accessTTSKeypress);
+		//_scValue->setBool(_accessTTSKeypress);
 		return _scValue;
 	}
 
@@ -3273,7 +3273,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// AccKeyboardEnabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccKeyboardEnabled") == 0) {
-		_scValue->setBool(_accessKeyboardEnabled);
+		//_scValue->setBool(_accessKeyboardEnabled);
 		return _scValue;
 	}
 
@@ -3281,7 +3281,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// AccKeyboardCursorSkip
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccKeyboardCursorSkip") == 0) {
-		_scValue->setBool(_accessKeyboardCursorSkip);
+		//_scValue->setBool(_accessKeyboardCursorSkip);
 		return _scValue;
 	}
 
@@ -3289,7 +3289,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// AccKeyboardPause
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccKeyboardPause") == 0) {
-		_scValue->setBool(_accessKeyboardPause);
+		//_scValue->setBool(_accessKeyboardPause);
 		return _scValue;
 	}
 
@@ -4863,13 +4863,13 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	// initialise to defaults
 	if (!persistMgr->getIsSaving()) {
 		_quitting = false;
-		_accessTTSEnabled = false;
+		_accessTTSEnabled = ConfMan.getBool("tts_enabled");;
 		_accessTTSTalk = true;
 		_accessTTSCaptions = true;
 		_accessTTSKeypress = true;
-		_accessKeyboardEnabled = false;
+		_accessKeyboardEnabled = true;//false;
 		_accessKeyboardCursorSkip = true;
-		_accessKeyboardPause = false;
+		_accessKeyboardPause = true;//false;
 		_accessGlobalPaused = false;
 	}
 
@@ -4946,12 +4946,12 @@ bool BaseGame::handleKeypress(Common::Event *event, bool printable) {
 		return true;
 	}
 
-	if (handleAccessKey(event, printable)) {
+	_keyboardState->readKey(event);
+	_keyboardState->handleKeyPress(event);
+
+	if (handleAccessKey(event, _keyboardState->isCurrentPrintable())) {
 		return true;
 	}
-
-	_keyboardState->handleKeyPress(event);
-	_keyboardState->readKey(event);
 
 	if (_focusedWindow) {
 		if (!_game->_focusedWindow->handleKeypress(event, _keyboardState->isCurrentPrintable())) {
@@ -4995,7 +4995,7 @@ bool BaseGame::handleAccessKey(Common::Event *event, bool printable) {
 		}
 	}
 	if (printable && _accessKeyboardPause) {
-		if (event->kbd.keycode == Common::KEYCODE_SPACE &&
+		if (event->kbd.keycode == Common::KEYCODE_p &&
 		   (event->kbd.flags & Common::KBD_CTRL)) {
 			_accessGlobalPaused = !_accessGlobalPaused;
 			if (_accessGlobalPaused) {
@@ -5028,7 +5028,7 @@ bool BaseGame::accessPause() {
 	UIText *sta = new UIText(_game);
 	sta->_parent = _accessShieldWin;
 	_accessShieldWin->_widgets.add(sta);
-	sta->setText(_stringTable->expandStatic("/SYSENG0040/Game paused. Press Ctrl+Space to resume."));
+	sta->setText(_stringTable->expandStatic("/SYSENG0040/Game paused. Press Ctrl+p to resume."));
 	sta->_sharedFonts = true;
 	sta->_font = _systemFont;
 	sta->sizeToFit();

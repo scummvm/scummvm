@@ -135,8 +135,8 @@ public:
 	 */
 	static const Graphics::PixelFormat getRGBAPixelFormat();
 
-	/** Grab a screenshot of the currently active viewport as defined by setViewport */
-	virtual Graphics::Surface *getViewportScreenshot() const = 0;
+	/** Grab a scaled screenshot of the currently active viewport as defined by setViewport */
+	virtual Graphics::Surface *getViewportScreenshot(uint w, uint h) const = 0;
 
 	virtual void set3DMode() = 0;
 	virtual bool computeLightsEnabled() = 0;
@@ -153,8 +153,6 @@ public:
 	static const int32 kGameViewportWidth = 640;
 
 protected:
-	static void flipVertical(Graphics::Surface *s);
-
 	Common::Rect _screenViewport;
 	bool         _computeLights;
 };

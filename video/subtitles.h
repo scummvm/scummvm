@@ -103,6 +103,7 @@ public:
 protected:
 	bool recalculateBoundingBox() const;
 	void renderSubtitle() const;
+	virtual void drawSubtitleText(const Graphics::Font &font, const Common::U32String &text, int x, int y, int width) const;
 	void translateBBox(int16 dx, int16 dy) const { _realBBox.translate(dx, dy); }
 	virtual void updateSubtitleOverlay() const;
 	virtual bool shouldShowSubtitle() const { return true; }

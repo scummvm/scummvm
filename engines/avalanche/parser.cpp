@@ -1676,8 +1676,54 @@ void Parser::giveGeidaTheLute() {
 	// She plays it.
 	_vm->_dialogs->displayScrollChain('Q', 64);
 
+	// Golden Slumbers cutscene
+	_vm->_graphics->saveScreen();
+
+	for (int gd = 0; gd <= 320; gd += 32) {
+		_vm->_graphics->drawFilledRectangle(Common::Rect(320 - gd, 100 - gd / 2, 320 + gd, 100 + gd / 2), kColorLightblue);
+		_vm->_graphics->refreshScreen();
+		g_system->delayMillis(15);
+	}
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorLightblue);
+	_vm->_graphics->refreshScreen();
+
+	static const char *const lullabyLines[] = {
+		"Golden slumbers kiss your eyes",
+		"Smiles awake you when you rise",
+		"Sleep, pretty Baron, do not cry",
+		"And I will sing a lullaby.",
+		"",
+		"Care you know not, therefore sleep",
+		"While I o'er you watch do keep;",
+		"Sleep now, du Lustie, do not cry",
+		"And I will leave the castle. Bye!"
+	};
+
+	int curY = 20;
+	for (int i = 0; i < 9; i++) {
+		if (lullabyLines[i][0] != '\0') {
+			_vm->_graphics->drawNormalText(lullabyLines[i], _vm->_font, 8, 80, curY, kColorWhite);
+			_vm->_graphics->refreshScreen();
+			g_system->delayMillis(1200);
+		} else {
+			g_system->delayMillis(600);
+		}
+		curY += 15;
+	}
+
+	g_system->delayMillis(1500);
+
+	for (int gd = 320; gd >= 0; gd -= 32) {
+		_vm->_graphics->restoreScreen();
+		_vm->_graphics->drawFilledRectangle(Common::Rect(320 - gd, 100 - gd / 2, 320 + gd, 100 + gd / 2), kColorLightblue);
+		_vm->_graphics->refreshScreen();
+		g_system->delayMillis(15);
+	}
+
+	_vm->minorRedraw();
+	_vm->_graphics->refreshScreen();
+
 	_vm->_timer->addTimer(1, Timer::kProcGiveLuteToGeida, Timer::kReasonGeidaSings);
-	//_vm->_enid->backToBootstrap(4); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
 }
 
 void Parser::playHarp() {
@@ -2304,7 +2350,7 @@ void Parser::doThat() {
 				temp.toUppercase();
 				int pwdId = _vm->_passwordNum + kFirstPassword;
 				for (uint j = 0; j < _vocabulary[pwdId]._word.size(); j++) {
-					if (_vocabulary[pwdId]._word[j] != temp[j])
+					if (_vocabulary[pwdId]._word[j] != ((j < temp.size()) ? temp[j] : '\0'))
 						ok = false;
 				}
 			}

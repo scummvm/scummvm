@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_CUTTINGPUZZLE_H
 #define NANCY_ACTION_CUTTINGPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -41,9 +41,9 @@ namespace Action {
 //
 // The puzzle is solved when grooveDepths[i] == correctGrooves[i] for all i.
 //
-class CuttingPuzzle : public RenderActionRecord {
+class CuttingPuzzle : public PuzzleRecord {
 public:
-	CuttingPuzzle() : RenderActionRecord(7) {}
+	CuttingPuzzle() : PuzzleRecord(7) {}
 	virtual ~CuttingPuzzle() {}
 
 	void init() override;
@@ -105,16 +105,10 @@ protected:
 	SoundDescription _depthSound;     // data+0x46f  depth adjust sound
 	SoundDescription _cutSound;       // data+0x4a0  groove-cutting sound
 
-	SceneChangeWithFlag _puzzleSolvedScene;    // data+0x4d1 (25 bytes)
-	uint16 _doneSoundDelaySecs = 0;        // data+0x4ea  wait before playing done sound (seconds)
-	SoundDescription _doneSound;           // data+0x4ec
-
 	byte  _itemCheckByte = 0;              // data+0x51d  0=no check, nonzero=require inventory item
 	int16 _itemID        = -1;             // data+0x51e
 
 	SceneChangeDescription _missingGogglesScene;    // data+0x520  (20 bytes + 2-byte skip = 22 bytes total)
-	SceneChangeWithFlag    _cancelScene;   // data+0x536  (25 bytes)
-	Common::Rect _exitHotspot;
 
 	// ---- runtime state ----
 

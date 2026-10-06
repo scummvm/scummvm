@@ -180,9 +180,9 @@ void WhaleSurvivorPuzzle::readData(Common::SeekableReadStream &stream) {
 	_sound5.readNormal(stream);       // 0x9ea (unused/silence)
 
 	// Scenes and remaining sounds
-	_winScene.readData(stream);       // 0xa1b  (25 bytes)
+	_solveScene.readData(stream);       // 0xa1b  (25 bytes)
 	stream.skip(1);                // 0xa34  padding byte
-	_winSound.readNormal(stream);     // 0xa35
+	_solveSound.readNormal(stream);     // 0xa35
 	_lossScene.readData(stream);      // 0xa66  (25 bytes)
 	stream.skip(1);                // 0xa7f  padding byte
 	_gameOverSound.readNormal(stream); // 0xa80
@@ -392,6 +392,7 @@ void WhaleSurvivorPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 
@@ -411,10 +412,7 @@ void WhaleSurvivorPuzzle::execute() {
 
 		case kRoundWon:
 			// Play win sound once, then start the countdown
-			if (_winSound.name != "NO SOUND") {
-				g_nancy->_sound->loadSound(_winSound);
-				g_nancy->_sound->playSound(_winSound);
-			}
+			playSolveSound();
 			_countdownEndMs = nowMs + _tryAgainDelayMs;
 			_executeWin     = true;
 			_gameState      = kCountdown;
@@ -459,12 +457,12 @@ void WhaleSurvivorPuzzle::execute() {
 		g_nancy->_sound->stopSound(_eatSound);
 		g_nancy->_sound->stopSound(_hurtSound);
 		g_nancy->_sound->stopSound(_breatheSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		g_nancy->_sound->stopSound(_tryAgainSound);
 		g_nancy->_sound->stopSound(_gameOverSound);
 
 		if (_executeWin)
-			_winScene.execute();
+			_solveScene.execute();
 		else
 			_lossScene.execute();
 

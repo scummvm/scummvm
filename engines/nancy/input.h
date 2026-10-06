@@ -53,16 +53,23 @@ struct NancyInput {
 		kMoveFastModifier		= 1 << 10,
 		kOpenMainMenu			= 1 << 11,
 		kRaycastMap				= 1 << 12,
+		kMouseWheelUp			= 1 << 13,
+		kMouseWheelDown			= 1 << 14,
 
 		kLeftMouseButton		= kLeftMouseButtonDown | kLeftMouseButtonHeld | kLeftMouseButtonUp,
-		kRightMouseButton		= kRightMouseButtonDown | kRightMouseButtonHeld | kRightMouseButtonUp
+		kRightMouseButton		= kRightMouseButtonDown | kRightMouseButtonHeld | kRightMouseButtonUp,
+		kMouseWheel				= kMouseWheelUp | kMouseWheelDown
 	};
 
 	Common::Point mousePos;
 	uint16 input;
 	Common::Array<Common::KeyState> otherKbdInput;
 
-	void eatMouseInput() { mousePos.x = -1; input &= ~(kLeftMouseButton | kRightMouseButton); }
+	void eatMouseInput() { mousePos.x = -1; input &= ~(kLeftMouseButton | kRightMouseButton | kMouseWheel); }
+
+	// Consumes just the wheel input, leaving the mouse position and buttons alone,
+	// so a widget that scrolls can still keep updating its hover state
+	void eatMouseWheelInput() { input &= ~kMouseWheel; }
 };
 
 // This class handles collecting events and translating them to a NancyInput object,

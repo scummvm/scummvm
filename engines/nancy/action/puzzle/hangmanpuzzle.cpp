@@ -20,12 +20,14 @@
  */
 
 #include "common/random.h"
+#include "common/system.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 #include "engines/nancy/puzzledata.h"
 
@@ -39,7 +41,7 @@ namespace Action {
 void HangmanPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _puzzleImageName);		// 0x3d
 	readFilename(stream, _lettersImageName);	// 0x41
-	_field45 = stream.readSint16LE();			// 0x45
+	_hoverCursorType = stream.readUint16LE();	// 0x45
 
 	int16 numWords = stream.readSint16LE();
 	_words.resize(numWords);
@@ -67,17 +69,17 @@ void HangmanPuzzle::readData(Common::SeekableReadStream &stream) {
 		readFilename(stream, tile.name);
 	}
 
-	_fieldCE = stream.readSint16LE();	// 0xce
-	_fieldD0 = stream.readSint32LE();	// 0xd0
-	_fieldD4 = stream.readSint16LE();	// 0xd4
+	_letterSoundChannel = stream.readSint16LE();	// 0xce
+	_letterSoundLoops = stream.readSint32LE();		// 0xd0
+	_letterSoundVolume = stream.readSint16LE();		// 0xd4
 
-	for (uint i = 0; i < 3; ++i) {		// 0x12c/0x182/0x1d8
-		_sounds[i].readData(stream);
-	}
+	_correctSound.readData(stream);	// 0x12c
+	_wrongSound.readData(stream);	// 0x182
+	_revealSound.readData(stream);	// 0x1d8
 
-	readFilename(stream, _soundName);	// 0x236
+	readFilename(stream, _targetSequence);	// 0x236
 
-	SceneOutcome *outcomes[] = { &_winScene, &_winScene2, &_loseScene };
+	SceneOutcome *outcomes[] = { &_sequenceScene, &_winScene, &_loseScene };
 	for (SceneOutcome *outcome : outcomes) {
 		outcome->sceneID = stream.readSint16LE();
 		outcome->frameID = stream.readSint16LE();
@@ -89,24 +91,7 @@ void HangmanPuzzle::readData(Common::SeekableReadStream &stream) {
 	// Trailing count-prefixed array of 23-byte give-up hotspots
 	// {Rect, uint16 cursorType, uint16 sceneID, int16 flagLabel, byte flagValue}.
 	// The exit always jumps to the scene's first frame.
-	int16 numExitZones = stream.readSint16LE();
-	for (int16 i = 0; i < numExitZones; ++i) {
-		Common::Rect r;
-		readRect(stream, r);
-		uint16 cursorType = stream.readUint16LE();
-		uint16 sceneID = stream.readUint16LE();
-		int16 flagLabel = stream.readSint16LE();
-		byte flagValue = stream.readByte();
-
-		if (i == 0) {
-			_exitHotspot = r;
-			_exitCursorType = cursorType;
-			_exitScene.sceneID = sceneID;
-			_exitScene.frameID = 0;
-			_exitFlag.label = flagLabel;
-			_exitFlag.flag = flagValue;
-		}
-	}
+	readExitHotspot(stream);
 }
 
 HangmanData *HangmanPuzzle::getPuzzleData() const {
@@ -173,9 +158,11 @@ void HangmanPuzzle::init() {
 	_revealed.resize(_word.size(), false);
 	_wrongCount = 0;
 	_hoverTile = -1;
-	_solved = false;
 	_lost = false;
-	_outcomeApplied = false;
+	_sequenceComplete = false;
+	_pendingFeedback = nullptr;
+	_outcome = nullptr;
+	_outcomeSoundStarted = false;
 
 	redraw();
 }
@@ -201,23 +188,6 @@ Common::Rect HangmanPuzzle::glyphForLetter(char letter) const {
 	return Common::Rect();
 }
 
-// Blits srcRect from src at destPos, clipping srcRect to the source image so an
-// out-of-bounds sprite rect (or an image that failed to load) can't read past
-// the surface.
-void HangmanPuzzle::safeBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, const Common::Point &destPos) {
-	if (src.w == 0 || src.h == 0 || srcRect.isEmpty()) {
-		return;
-	}
-
-	Common::Rect clipped = srcRect.findIntersectingRect(Common::Rect(src.w, src.h));
-	if (clipped.isEmpty()) {
-		return;
-	}
-
-	Common::Point dst(destPos.x + (clipped.left - srcRect.left), destPos.y + (clipped.top - srcRect.top));
-	_drawSurface.blitFrom(src, clipped, dst);
-}
-
 void HangmanPuzzle::redraw() {
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
@@ -228,21 +198,21 @@ void HangmanPuzzle::redraw() {
 	// the puzzle sheet) onto the tile's alphabet position (1st tile rect).
 	for (const LetterTile &tile : _letters) {
 		if (tile.used) {
-			safeBlit(_puzzleImage, tile.hoverRect, Common::Point(tile.idleRect.left, tile.idleRect.top));
+			_drawSurface.blitFrom(_puzzleImage, tile.hoverRect, Common::Point(tile.idleRect.left, tile.idleRect.top));
 		}
 	}
 
 	// Guessed-letters row: each played letter's glyph (from the letters sheet)
 	// at its slot in the row.
 	for (uint i = 0; i < _guessed.size() && i < _guessedRowRects.size(); ++i) {
-		safeBlit(_lettersImage, glyphForLetter(_guessed[i]),
+		_drawSurface.blitFrom(_lettersImage, glyphForLetter(_guessed[i]),
 			Common::Point(_guessedRowRects[i].left, _guessedRowRects[i].top));
 	}
 
-	// Revealed word letters in their blanks.
+	// Revealed word letters in their blanks; after losing, the whole word.
 	for (uint i = 0; i < _revealed.size() && i < _letterSlotRects.size(); ++i) {
-		if (_revealed[i]) {
-			safeBlit(_lettersImage, glyphForLetter(_word[i]),
+		if (_revealed[i] || _lost) {
+			_drawSurface.blitFrom(_lettersImage, glyphForLetter(_word[i]),
 				Common::Point(_letterSlotRects[i].left, _letterSlotRects[i].top));
 		}
 	}
@@ -250,7 +220,7 @@ void HangmanPuzzle::redraw() {
 	// The hang figure: the current cumulative stage sprite (from the sheet's
 	// stage strip) drawn at the board position.
 	if (_wrongCount > 0 && _wrongCount <= (int)_hangPieceRects.size()) {
-		safeBlit(_puzzleImage, _hangPieceRects[_wrongCount - 1],
+		_drawSurface.blitFrom(_puzzleImage, _hangPieceRects[_wrongCount - 1],
 			Common::Point(_boardRect.left, _boardRect.top));
 	}
 
@@ -263,6 +233,13 @@ void HangmanPuzzle::commitGuess(uint tileIndex) {
 		return;
 	}
 	tile.used = true;
+
+	RandomSoundBlock letterSound;
+	letterSound.names.push_back(tile.name);
+	letterSound.channel = _letterSoundChannel;
+	letterSound.numLoops = _letterSoundLoops;
+	letterSound.volume = _letterSoundVolume;
+	playSoundBlock(letterSound);
 
 	char c = tile.letter;
 	_guessed.push_back(c);
@@ -279,6 +256,30 @@ void HangmanPuzzle::commitGuess(uint tileIndex) {
 		++_wrongCount;
 	}
 
+	// The correct/wrong reaction follows the letter a second later
+	_pendingFeedback = correct ? &_correctSound : &_wrongSound;
+	_feedbackTime = g_system->getMillis() + 1000;
+
+	redraw();
+}
+
+void HangmanPuzzle::updateFeedback() {
+	if (_pendingFeedback && g_system->getMillis() >= _feedbackTime) {
+		playSoundBlock(*_pendingFeedback);
+		_pendingFeedback = nullptr;
+	} else if (!_targetSequence.empty() && _guessed.size() == _targetSequence.size()) {
+		_sequenceComplete = true;
+	}
+}
+
+void HangmanPuzzle::checkOutcome() {
+	bool sequenceMatched = _sequenceComplete;
+	for (uint i = 0; sequenceMatched && i < _guessed.size(); ++i) {
+		if (i >= _targetSequence.size() || _guessed[i] != _targetSequence[i]) {
+			sequenceMatched = false;
+		}
+	}
+
 	bool allRevealed = !_revealed.empty();
 	for (uint i = 0; i < _revealed.size(); ++i) {
 		if (!_revealed[i]) {
@@ -287,32 +288,34 @@ void HangmanPuzzle::commitGuess(uint tileIndex) {
 		}
 	}
 
-	if (allRevealed) {
-		_solved = true;
-	} else if (_wrongCount >= (int)_hangPieceRects.size()) {
+	if (_wrongCount >= (int)_hangPieceRects.size() && !_lost) {
 		_lost = true;
+		playSoundBlock(_revealSound);
+		_revealEndTime = g_system->getMillis() + 2000;
+		redraw();
 	}
 
-	redraw();
-}
+	// A completed word beats the target sequence, which beats a completed hang figure
+	if (allRevealed) {
+		_outcome = &_winScene;
+	} else if (sequenceMatched) {
+		_outcome = &_sequenceScene;
+	} else if (_lost) {
+		_outcome = &_loseScene;
+	}
 
-void HangmanPuzzle::applyOutcome(const SceneOutcome &outcome) {
-	SceneChangeDescription desc;
-	desc.sceneID = outcome.sceneID;
-	desc.frameID = outcome.frameID;
-	NancySceneState.changeScene(desc);
-	NancySceneState.setEventFlag(outcome.flag);
+	if (_outcome) {
+		_state = kActionTrigger;
+	}
 }
 
 void HangmanPuzzle::handleInput(NancyInput &input) {
-	if (_state != kRun || _solved || _lost) {
+	if (_state != kRun) {
 		return;
 	}
 
 	// Give-up hotspot: leave the puzzle.
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_exitRequested = true;
 		}
@@ -322,8 +325,7 @@ void HangmanPuzzle::handleInput(NancyInput &input) {
 
 	int tile = tileAtCursor(input.mousePos);
 	if (tile >= 0 && !_letters[tile].used) {
-		// Clickable-hotspot cursor for puzzles (the blue pointing hand).
-		g_nancy->_cursor->setCursorType(CursorManager::kPuzzleArrow);
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_hoverCursorType, true);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			commitGuess((uint)tile);
 		}
@@ -340,16 +342,35 @@ void HangmanPuzzle::execute() {
 		break;
 	case kRun:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 			break;
 		}
-		if ((_solved || _lost) && !_outcomeApplied) {
-			_outcomeApplied = true;
-			applyOutcome(_solved ? _winScene : _loseScene);
-		}
+		updateFeedback();
+		checkOutcome();
 		break;
-	default:
+	case kActionTrigger:
+		if (_lost && g_system->getMillis() < _revealEndTime) {
+			break;
+		}
+
+		// The outcome's line plays out before the scene changes
+		if (!_outcomeSoundStarted) {
+			playSoundBlock(_outcome->sound);
+			_outcomeSoundStarted = true;
+			break;
+		}
+		if (!_outcome->sound.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)_outcome->sound.channel)) {
+			break;
+		}
+
+		{
+			SceneChangeDescription desc;
+			desc.sceneID = _outcome->sceneID;
+			desc.frameID = _outcome->frameID;
+			NancySceneState.changeScene(desc);
+			NancySceneState.setEventFlag(_outcome->flag);
+		}
+		finishExecution();
 		break;
 	}
 }

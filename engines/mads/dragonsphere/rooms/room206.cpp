@@ -478,7 +478,7 @@ static void room_206_init() {
 		local->lady_action    = FREEZE;
 		local->anim_2_running = true;
 
-		if (previous_room == 205 || previous_room != KERNEL_RESTORING_GAME) {
+		if (previous_room != KERNEL_RESTORING_GAME) {
 			player.x      = PLAYER_X_FROM_205;
 			player.y      = PLAYER_Y_FROM_205;
 			player.facing = FACING_NORTHEAST;
@@ -696,7 +696,7 @@ static void room_206_parser() {
 
 	if (player_said_1(shack)) {
 		if ((inter_point_x < 182) ||
-		   (inter_point_x > 166 && inter_point_y < 54)) {
+		   (inter_point_y < 54)) {
 			text_show(20618);
 			goto handled;
 		}

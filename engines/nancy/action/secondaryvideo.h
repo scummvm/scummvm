@@ -90,7 +90,9 @@ public:
 		return g_nancy->getGameType() >= kGameTypeNancy10 ? CursorManager::kHotspotTalk : CursorManager::kHotspot;
 	}
 
-	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Scene %d, file %s", _sceneChange.sceneID, _filename.baseName().c_str());
+	}
 
 protected:
 	Common::String getRecordTypeName() const override { return "PlaySecondaryVideo"; }

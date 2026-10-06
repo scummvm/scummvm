@@ -21,6 +21,7 @@
 
 #include "harvester/cft_font.h"
 
+#include "common/algorithm.h"
 #include "common/endian.h"
 #include "graphics/surface.h"
 
@@ -35,6 +36,62 @@ static const uint32 kCftSpaceWidthOffset = 0x442;
 static const uint32 kCftGlyphCount = 256;
 
 } // End of anonymous namespace
+
+void wrapCftTextByCharacterCount(const Graphics::Font &font, const Common::String &text,
+		int width, Common::Array<Common::String> &lines) {
+	lines.clear();
+	if (text.empty())
+		return;
+
+	Common::String wrappedText;
+	for (uint i = 0; i < text.size(); ++i) {
+		if (text[i] != '\r')
+			wrappedText += text[i];
+	}
+
+	const int wrapCharsPerLine = width / MAX<int>(1, font.getCharWidth(' ') - 1);
+	if (wrapCharsPerLine <= 0) {
+		lines.push_back(Common::move(wrappedText));
+		return;
+	}
+
+	uint lineStart = 0;
+	while (lineStart < wrappedText.size()) {
+		uint lineEnd = lineStart;
+		while (lineEnd < wrappedText.size() && wrappedText[lineEnd] != '\n')
+			++lineEnd;
+
+		if (lineEnd - lineStart > (uint)wrapCharsPerLine) {
+			uint breakPos = MIN<uint>(lineStart + (uint)wrapCharsPerLine, lineEnd - 1);
+			while (breakPos > lineStart && wrappedText[breakPos] != ' ')
+				--breakPos;
+
+			if (breakPos > lineStart && wrappedText[breakPos] == ' ') {
+				wrappedText.setChar('\n', breakPos);
+				while (breakPos + 1 < wrappedText.size() && wrappedText[breakPos + 1] == ' ')
+					wrappedText.deleteChar(breakPos + 1);
+				lineStart = breakPos + 1;
+				continue;
+			}
+		}
+
+		lineStart = lineEnd + 1;
+	}
+
+	Common::String line;
+	for (uint i = 0; i < wrappedText.size(); ++i) {
+		if (wrappedText[i] == '\n') {
+			lines.push_back(Common::move(line));
+			line.clear();
+			continue;
+		}
+
+		line += wrappedText[i];
+	}
+
+	if (!line.empty() || lines.empty())
+		lines.push_back(Common::move(line));
+}
 
 HarvesterCftFont::HarvesterCftFont(const CftFontResource &resource) : _resource(resource) {
 	if (_resource.header.size() < kCftWidthTableOffset + kCftGlyphCount * 2 || _resource.atlasWidth == 0 || _resource.atlasHeight == 0)

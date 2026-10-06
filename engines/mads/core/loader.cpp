@@ -23,21 +23,16 @@
 #include "common/compression/dcl.h"
 #include "common/memstream.h"
 #include "mads/core/loader.h"
-#include "mads/core/general.h"
-#include "mads/core/pack.h"
-#include "mads/core/ems.h"
-#include "mads/core/xms.h"
-#include "mads/core/himem.h"
 #include "mads/core/env.h"
-#include "mads/core/fileio.h"
+#include "mads/core/general.h"
 #include "mads/core/error.h"
+#include "mads/core/fileio.h"
+#include "mads/core/mem.h"
+#include "mads/core/pack.h"
 #include "mads/core/popup.h"
 #include "mads/core/timer.h"
-#include "mads/core/pack.h"
 
 namespace MADS {
-
-int loader_ems_search_disabled = false;
 
 char loader_last[14] = "";
 
@@ -77,59 +72,32 @@ LoaderReadStream::~LoaderReadStream() {
 
 int loader_open(LoadHandle handle, const char *filename, const char *options, int flags) {
 	int error_flag = true;
-	int found_himem = -1;
 	int reading;
 	int count;
-	int search_himem;
 
 	strncpy(loader_last, filename, 13);
 
-	search_himem = flags;
 	handle->open = false;
 
 	reading = strchr(options, 'r') != NULL;
 
-	if (reading && search_himem && !loader_ems_search_disabled) {
-		found_himem = himem_resident(filename);
-	}
+	handle->mode = LOADER_DISK;
+	handle->handle = env_open(filename, options);
+	if (handle->handle == NULL) goto done;
 
-	if (found_himem >= 0) {
-		handle->mode = (byte)((himem_directory_entry->memory_type == MEM_EMS) ? LOADER_EMS : LOADER_XMS);
-		handle->xms_handle = himem_directory_entry->xms_handle;
-		handle->xms_offset = 0;
-		handle->ems_handle = found_himem;
-		handle->ems_page_marker = -1;
-		handle->ems_page_offset = EMS_PAGE_SIZE;
-		handle->decompress_size = himem_directory_entry->size;
-		handle->pack.num_records = himem_directory_entry->num_packets;
-		handle->pack_list_marker = 0;
-		handle->reading = true;
+	handle->reading = reading;
+	handle->pack_list_marker = 0;
 
+	if (reading) {
+		if (!handle->pack.load(handle->handle))
+			goto done;
+
+		handle->decompress_size = 0;
 		for (count = 0; count < (int)handle->pack.num_records; count++) {
-			handle->pack.strategy[count].type = PACK_NONE;
-			handle->pack.strategy[count].size = himem_directory_entry->packet_size[count];
-			handle->pack.strategy[count].compressed_size = himem_directory_entry->packet_size[count];
+			handle->decompress_size += handle->pack.strategy[count].size;
 		}
 	} else {
-		handle->mode = LOADER_DISK;
-		handle->ems_handle = -1;
-		handle->handle = env_open(filename, options);
-		if (handle->handle == NULL) goto done;
-
-		handle->reading = reading;
-		handle->pack_list_marker = 0;
-
-		if (reading) {
-			if (!handle->pack.load(handle->handle))
-				goto done;
-
-			handle->decompress_size = 0;
-			for (count = 0; count < (int)handle->pack.num_records; count++) {
-				handle->decompress_size += handle->pack.strategy[count].size;
-			}
-		} else {
-			error("Open for writing not supported in ScummVM");
-		}
+		error("Open for writing not supported in ScummVM");
 	}
 
 	handle->open = true;
@@ -137,12 +105,6 @@ int loader_open(LoadHandle handle, const char *filename, const char *options, in
 	error_flag = false;
 
 done:
-
-	if (error_flag && !found_himem) {
-		if (handle->handle != NULL)
-			delete handle->handle;
-	}
-
 	return error_flag;
 }
 
@@ -154,17 +116,11 @@ int loader_close(LoadHandle handle) {
 	int error_flag = false;
 
 	if (handle->open) {
-		if ((handle->mode == LOADER_EMS) || (handle->mode == LOADER_XMS)) {
-			handle->ems_page_marker = -1;
-			handle->ems_page_offset = EMS_PAGE_SIZE;
-			handle->xms_offset = 0;
-		} else {
-			if (!handle->reading) {
-				error("loader_close for writing not supported in ScummVM");
-			}
-
-			delete handle->handle;
+		if (!handle->reading) {
+			error("loader_close for writing not supported in ScummVM");
 		}
+
+		delete handle->handle;
 	}
 	handle->open = false;
 
@@ -188,57 +144,38 @@ long loader_read(void *target, long record_size, long record_count, LoadHandle h
 
 	marker = handle->pack_list_marker++;
 
-	if (handle->mode == LOADER_EMS) {
-		result = 0;
-		if (ems_copy_it_down(handle->ems_handle,
-			&handle->ems_page_marker,
-			&handle->ems_page_offset,
-			(byte *)target,
-			total_size)) goto done;
-		result = total_size;
-	} else if (handle->mode == LOADER_XMS) {
-		result = 0;
+	result = 0;
+	pack_strategy = handle->pack.strategy[marker].type;
+	compressed_size = handle->pack.strategy[marker].compressed_size;
+	packing_flag = (pack_strategy != PACK_NONE) ? PACK_EXPLODE : PACK_RAW_COPY;
 
-		if (xms_copy(total_size,
-			handle->xms_handle, (XMS)handle->xms_offset,
-			MEM_CONV, target)) goto done;
+	if (packing_flag == PACK_EXPLODE) {
+		decompress_buffer = (byte *)mem_get(compressed_size);
+		if (decompress_buffer != NULL) {
+			if (!fileio_fread_f(decompress_buffer, compressed_size, 1, handle->handle)) goto done;
 
-		result = total_size;
-		handle->xms_offset += total_size;
-	} else {
-		result = 0;
-		pack_strategy = handle->pack.strategy[marker].type;
-		compressed_size = handle->pack.strategy[marker].compressed_size;
-		packing_flag = (pack_strategy != PACK_NONE) ? PACK_EXPLODE : PACK_RAW_COPY;
-
-		if (packing_flag == PACK_EXPLODE) {
-			decompress_buffer = (byte *)mem_get(compressed_size);
-			if (decompress_buffer != NULL) {
-				if (!fileio_fread_f(decompress_buffer, compressed_size, 1, handle->handle)) goto done;
-
-				if (pack_strategy == PACK_DCL) {
-					Common::MemoryReadStream stream(decompress_buffer, compressed_size);
-					result = Common::decompressDCL(&stream, (byte *)target,
-						compressed_size, total_size) ? total_size : 0;
-				} else {
-					result = pack_data(packing_flag, total_size,
-						FROM_MEMORY, decompress_buffer,
-						TO_MEMORY, target);
-				}
-				already_unpacked = true;
+			if (pack_strategy == PACK_DCL) {
+				Common::MemoryReadStream stream(decompress_buffer, compressed_size);
+				result = Common::decompressDCL(&stream, (byte *)target,
+					compressed_size, total_size) ? total_size : 0;
+			} else {
+				result = pack_data(packing_flag, total_size,
+					FROM_MEMORY, decompress_buffer,
+					TO_MEMORY, target);
 			}
+			already_unpacked = true;
 		}
+	}
 
-		if (!already_unpacked) {
-			file_position = handle->handle->pos();
+	if (!already_unpacked) {
+		file_position = handle->handle->pos();
 
-			result = pack_data(packing_flag, total_size,
-				FROM_DISK, handle->handle,
-				TO_MEMORY, target);
+		result = pack_data(packing_flag, total_size,
+			FROM_DISK, handle->handle,
+			TO_MEMORY, target);
 
-			if (packing_flag == PACK_EXPLODE)
-				handle->handle->seek(file_position + compressed_size);
-		}
+		if (packing_flag == PACK_EXPLODE)
+			handle->handle->seek(file_position + compressed_size);
 	}
 
 done:

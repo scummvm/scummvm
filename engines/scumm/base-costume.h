@@ -182,7 +182,8 @@ protected:
 	void skipCelLines(ByleRLEData &compData, int num);
 
 private:
-	// helper function to be called from paintCelByleRLECommon
+	// helper functions to be called from paintCelByleRLECommon
+	virtual void clipBoundsRect(Common::Rect &boundsRect) {}
 	virtual void markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) {}
 };
 

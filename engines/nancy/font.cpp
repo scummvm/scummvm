@@ -74,10 +74,12 @@ void Font::read(Common::SeekableReadStream &stream) {
 	_slashOffset						= stream.readUint16LE();
 
 	if (g_nancy->getGameLanguage() == Common::RU_RUS && g_nancy->getGameType() >= kGameTypeNancy5 && g_nancy->getGameType() != kGameTypeNancy6) {
-		// Only extract the lowercase/uppercase offsets, since the letters are in order in the FONT data
-		_cyrillicLowercaseOffset 		= stream.readUint16LE();
-		stream.skip(72);
+		// Only extract the uppercase offset, since the letters are in order in the FONT data,
+		// with lowercase directly following uppercase. The first offset can't be used for
+		// lowercase letters: in nancy8 it still points to a Latin glyph
+		stream.skip(74);
 		_cyrillicUppercaseOffset 		= stream.readUint16LE();
+		_cyrillicLowercaseOffset 		= _cyrillicUppercaseOffset + 32;
 		stream.skip(2);
 
 		numCharacters = 179;
@@ -123,6 +125,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 
 		if (g_nancy->getGameType() >= kGameTypeNancy10) {
 			// Nancy10 added even more characters to its fonts
+			_underscoreOffset				= stream.readUint16LE();
 			if (g_nancy->getGameLanguage() == Common::FR_FRA) {
 				_oeLigatureOffset			= stream.readUint16LE();
 				_iWithDiaeresisOffset		= stream.readUint16LE();
@@ -130,7 +133,6 @@ void Font::read(Common::SeekableReadStream &stream) {
 				_uppercaseAWithDotOffset	= stream.readUint16LE();
 				_aWithDotOffset				= stream.readUint16LE();
 			}
-			_underscoreOffset				= stream.readUint16LE();
 			_hashOffset						= stream.readUint16LE();
 			_dollarOffset					= stream.readUint16LE();
 			_lessThanOffset					= stream.readUint16LE();
@@ -140,6 +142,14 @@ void Font::read(Common::SeekableReadStream &stream) {
 			_euroOffset						= stream.readUint16LE();
 
 			numCharacters = 115;
+		}
+
+		if (g_nancy->getGameType() >= kGameTypeNancy15) {
+			// Nancy15 added two more characters. Their glyphs are only present in a few of the fonts
+			_caretOffset					= stream.readUint16LE();
+			_atSignOffset					= stream.readUint16LE();
+
+			numCharacters = 117;
 		}
 	}
 
@@ -379,10 +389,18 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			case '\xef':
 				offset = _iWithDiaeresisOffset;
 				break;
-			// TODO: _uppercaseAWithDotOffset
-			// TODO: _aWithDotOffset
-			// TODO: _euroOffset
-			// TODO: _oeLigatureOffset
+			case '\x80':
+				offset = _euroOffset;
+				break;
+			case '\xc5':
+				offset = _uppercaseAWithDotOffset;
+				break;
+			case '\xe5':
+				offset = _aWithDotOffset;
+				break;
+			case '\x9c':
+				offset = _oeLigatureOffset;
+				break;
 			default:
 				offset = -1;
 				break;
@@ -472,6 +490,13 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			break;
 		case '}':
 			offset = _rightCurlyBracketOffset;
+			break;
+		// ASCII punctuation whose glyphs were added in nancy15
+		case '^':
+			offset = _caretOffset;
+			break;
+		case '@':
+			offset = _atSignOffset;
 			break;
 		default:
 			offset = -1;

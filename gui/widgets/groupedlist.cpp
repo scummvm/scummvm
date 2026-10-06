@@ -281,8 +281,10 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 
 void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (button == 1 || button == 2) {
-		if (_isMouseDown && button == 1 && _isDragging)
+		if (_isMouseDown && button == 1 && _isDragging) {
 			_fluidScroller->startFling();
+			registerTickleWidget(this);
+		}
 
 		if (_isMouseDown && !_isDragging && !_wasAnimating) {
 			int newSelectedItem = findItem(x, y);
@@ -364,6 +366,7 @@ void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {
 		return;
 
 	_fluidScroller->handleMouseWheel(direction);
+	registerTickleWidget(this);
 }
 
 void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

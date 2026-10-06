@@ -23,7 +23,6 @@
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
-#include "ultima/shared/std/containers.h"
 #include "common/system.h"
 #include "common/list.h"
 #include "common/textconsole.h"

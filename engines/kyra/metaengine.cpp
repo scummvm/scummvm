@@ -193,6 +193,30 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_EOB_AUTOMAP,
+		{
+			_s("Automap (ScummVM feature)"),
+			_s("Enable the in-game automap overlay (toggle in-game with Tab)"),
+			"automap",
+			true,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_EOB_AUTOMAP_SEGA,	// same as GAMEOPTION_EOB_AUTOMAP, but with disabled default, since the Sega CD version already has a regular automap
+		{
+			_s("Automap (ScummVM feature)"),
+			_s("Enable the in-game automap overlay (toggle in-game with Tab)"),
+			"automap",
+			false,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

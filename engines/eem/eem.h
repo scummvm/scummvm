@@ -38,6 +38,8 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 
+#include "graphics/paletteman.h"
+
 #include "eem/animation.h"
 #include "eem/font.h"
 #include "eem/mystery.h"
@@ -45,11 +47,26 @@
 
 namespace EEM {
 
+class TravisScrollBar;
+
 class AudioPlayer;
 class MusicPlayer;
 
 /// VGA palette size in bytes (256 colours × RGB)
 const uint kPalSize = 768;
+
+// Keep game colors uncorrected for fades and color matching. Apply the Mac
+// monitor gamma curve only when sending a palette to the backend.
+class MacPaletteManager : public PaletteManager {
+public:
+	void setPalette(const byte *colors, uint start, uint num) override;
+	void grabPalette(byte *colors, uint start, uint num) const override;
+
+private:
+	byte _colors[kPalSize] = {};
+};
+
+PaletteManager *getPaletteManager();
 
 void fadeCurrentPaletteToBlack(uint delayMs = 8);
 void fadePaletteFromBlack(const byte *target, uint delayMs = 8);
@@ -98,10 +115,11 @@ enum ScreenId {
 /// Distribution variant from `ADGameDescription::extra` (set by
 /// `gameDescriptions[]` in `detection.cpp`).
 enum Variant {
-	kVariantCD       = 0,
-	kVariantFloppy   = 1,
-	kVariantLondonCD = 2,
-	kVariantMac      = 3,
+	kVariantCD        = 0,
+	kVariantFloppy    = 1,
+	kVariantLondonCD  = 2,
+	kVariantMacFloppy = 3,
+	kVariantMacCD     = 4,
 };
 
 /// `_Partner @ 29be:7918`. Selected at the partner-pick screen
@@ -121,22 +139,27 @@ constexpr Common::Rect kPdaPartnerFootMapRect   (Common::Point( 7, 177), 50, 23)
 constexpr Common::Rect kPdaPartnerHeadHintRect  (Common::Point( 5,  80), 39, 30);
 
 class EEMEngine : public Engine {
+	friend class Debugger;
+
 public:
 	EEMEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~EEMEngine() override;
 
 	Common::Error run() override;
+	PaletteManager *getPaletteManager();
 
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
 	Variant getVariant() const { return _variant; }
 	bool isFloppy() const { return _variant == kVariantFloppy || isDemo(); }
 	bool isLondon() const { return _variant == kVariantLondonCD; }
+	bool isMacCD() const { return _variant == kVariantMacCD; }
 	// London (game) and Macintosh (platform) are orthogonal -- the London CD
 	// shipped for both DOS and Mac -- so derive Mac-ness from the platform
 	// rather than the single-valued `_variant` (which can only hold one of
 	// them at a time). This lets EEM2 Mac be both London and Macintosh.
 	bool isMacintosh() const { return getPlatform() == Common::kPlatformMacintosh; }
+	bool isMacTalkie() const { return isMacCD() || (isMacintosh() && isLondon()); }
 	bool isDemo() const {
 		return _gameDescription && (_gameDescription->flags & ADGF_DEMO);
 	}
@@ -194,8 +217,7 @@ public:
 	const EEMFont &getFont() const { return _font; }
 	uint8       getPartnerIndex() const { return _partner; }
 
-	/// Interactive-region cursor. DOS/EEM1 uses a red-outline pointer; Mac
-	/// London uses the original Color QuickDraw arrow.
+	/// Highlight interactive regions; Mac London retains its native colours.
 	void setInteractiveMouseCursor(bool active);
 
 	/// Interactive cursor over searchable hotspots.
@@ -207,11 +229,12 @@ public:
 	void setSiteHotspotCursorId(int cursorId);
 
 	/// `_DisplayClue @ 2404:05e6`. 
-	void displayClue(const byte *clueBlock);
+	void displayClue(const byte *clueBlock, uint maxEntries = 32);
 
 	/// EEM2/London `_DoPuzzle @ 2542:1482`. A clue entry can gate the rest of
 	/// itself behind a "check the manual / a real map" puzzle
 	bool doPuzzle(uint puzzleId);
+	bool doMacLondonPuzzle(Common::SeekableReadStream &stream);
 
 	void displayFloppyHotspotDialog(uint siteNum, uint hotIdx);
 
@@ -295,6 +318,7 @@ public:
 
 private:
 	void applyStartupTestOverrides();
+	bool areYouSureMac();
 	bool areMysteriesSolved(uint lo, uint hi) const;
 
 	/// True if *any* mystery in the inclusive 1-based range [lo, hi] is
@@ -316,7 +340,7 @@ private:
 	void screenDriver();
 
 	/// Re-render helpers for the corresponding `doX()` modal screens.
-	void drawNotebookFrame(int &page);
+	void drawNotebookFrame(int &page, TravisScrollBar *scrollBar = nullptr);
 
 	/// Resolve a single NoteIndex entry to displayable notebook text.
 	/// Handles the CD (4-byte) vs floppy (7-byte) entry strides.
@@ -343,6 +367,7 @@ private:
 		int pageBreaksCap;
 		int *numPages;
 		int *page;
+		TravisScrollBar *scrollBar = nullptr;
 	};
 
 	/// One NoteIndex entry as displayable accuse-screen text.
@@ -360,6 +385,7 @@ private:
 	void floppyKDHint(uint kdSlot, const byte *kdIdx,
 					  const byte *bufBase, uint32 mysSize);
 	void displayScrapbookExtra(uint mysteryNum);
+	void displayMacPracticeScrapbook();
 	void accuseDrawGallery(int highlighted,
 						   Common::Array<Common::Rect> &rects,
 						   Common::Array<int> &suspects, uint8 num,
@@ -496,6 +522,7 @@ private:
 
 	bool waitIntroDelay(uint32 maxMs);
 	void runMacStartup();
+	void playMacCDIntro();
 	void showMacEAKidsLogo();
 	void showMacStillLogo(uint picId, uint palId, uint holdMs,
 						  bool playThunder);
@@ -505,11 +532,13 @@ private:
 	/// Start London mystery 0 after a freshly-created detective chooses a partner.
 	bool startLondonTrainingMystery();
 	void showLondonEAKidsLogo();
-	void showLondonLogo(uint picId, uint palId, uint holdMs,
-						bool playThunder = false);
+	void showStillPicture(uint picId, uint palId, uint holdMs,
+						  bool playThunder = false, bool holdLastFrame = false);
 	void showLondonCharSelect();
 	void playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 								 bool haveBriefingBg);
+	void playMacLondonInitCluesAnim(uint16 caseType, const Picture &bg,
+									bool haveBriefingBg);
 	void playCdFloppyInitCluesAnim(uint16 caseType, bool floppy,
 								   const Picture &bg, bool haveBriefingBg);
 
@@ -575,6 +604,7 @@ public:
 	/// `_StartTravelMusic @ 20a2:0595`. Picks `MUS%05d.XMI` from
 	/// `_mystery._siteNumber % 5`, one-shot.
 	void startTravelMusic();
+	void finishTravelMusic(bool skipped);
 
 	/// `_IsMIDIPlaying` spin + `_StopMIDI` cleanup in `_DoSiteLoop`.
 	void waitForMusicDone(uint32 maxMs = 60000);
@@ -593,6 +623,7 @@ public:
 	/// EEM2 `_DoTravel @ 1717:0622` transition music. The matrix entry
 	/// (1..3) chooses one of three short one-shot MUS tracks at random.
 	void startLondonTravelMusic(uint8 travelKind);
+	bool playMacLondonTravelAnimation(uint8 travelKind);
 private:
 	static int scaleCoord(int value, int target, int source) {
 		const bool negative = value < 0;
@@ -612,6 +643,8 @@ private:
 	/// `_PlayerRecord.SolvedMysteries[55]`. 0=unsolved, 1=solved, 2=first-try.
 	uint8 _mysteriesSolved[55] = {};
 	uint8 _chainStage = 1;
+	// Applied on case selection to preserve the current case's difficulty.
+	uint8 _pendingBookUnlock = 0;
 
 	bool _voiceOn = true;
 	bool _musicOn = true;
@@ -630,8 +663,10 @@ private:
 	Mystery    _mystery;         ///< M<n>.BIN
 	EEMFont    _font;            ///< FONT.FNT (8 px)
 	EEMFont    _dialogFont;      ///< Mac 14pt FONT used inside speech balloons.
+	EEMFont    _newspaperFont;
 
 	Common::Array<byte> _sitePals; ///< 40 × 768 bytes, 6-bit VGA.
+	MacPaletteManager _macPaletteManager;
 
 	uint16 _lastScreen;  ///< `_LastScreen @ 2d5d:3f24`.
 	uint16 _nextScreen;  ///< `_NextScreen @ 2d5d:3f26`.

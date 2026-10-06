@@ -67,7 +67,15 @@ enum HOPKINSAction {
 	kActionInventory,
 	kActionSave,
 	kActionLoad,
-	kActionOptions
+	kActionOptions,
+	kActionBaseForward,
+	kActionBaseBackward,
+	kActionBaseTurnLeft,
+	kActionBaseTurnRight,
+	kActionBaseFire,
+	kActionBaseUse,
+	kActionBaseToggleTextures,
+	kActionBaseMenu
 };
 
 enum HopkinsDebugChannels {
@@ -82,11 +90,15 @@ enum HopkinsDebugChannels {
 #define MKTAG24(a0,a1,a2) ((uint32)((a2) | (a1) << 8 | ((a0) << 16)))
 
 struct HopkinsGameDescription;
+class BaseGame;
 
 class HopkinsEngine : public Engine {
 private:
+	friend class BaseGame;
+
 	const HopkinsGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	bool _inBaseGame;
 
 	void initializeSystem();
 

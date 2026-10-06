@@ -2122,6 +2122,8 @@ bool Room603::takePole() {
 				player_set_commands_allowed(false);
 				_ttShould = _val5 ? 12 : 7;
 				_ripAction = series_load("RIP MED REACH 1HAND POS2");
+				setGlobals1(_ripAction, 1, 15, 15, 15);
+				sendWSMessage_110000(2);
 				return true;
 			}
 			break;

@@ -28,7 +28,6 @@
 #include "mads/core/mem.h"
 #include "mads/core/pack.h"
 #include "mads/core/color.h"
-#include "mads/core/ems.h"
 #include "mads/core/env.h"
 #include "mads/core/room.h"
 #include "mads/core/pal.h"
@@ -36,7 +35,6 @@
 #include "mads/core/matte.h"
 #include "mads/core/mcga.h"
 #include "mads/core/screen.h"
-#include "mads/core/xms.h"
 #include "mads/core/error.h"
 
 namespace MADS {
@@ -84,7 +82,6 @@ int tile_load(const char *base, int tile_type, TileResource *tile_resource,
 	int color_handle = -1;
 	int x_size;
 	int pan;
-	int memory_mode;
 	int already_unpacked = false;
 	char resource_name[80];
 	char map_name[80];
@@ -92,7 +89,6 @@ int tile_load(const char *base, int tile_type, TileResource *tile_resource,
 	long map_size;
 	long top_of_file = 0;
 	long base_position;
-	long my_offset;
 	long compressed_size;
 	byte *decompress_buffer = NULL;
 	Tile *tile = NULL;
@@ -176,11 +172,7 @@ int tile_load(const char *base, int tile_type, TileResource *tile_resource,
 		goto done;
 	}
 
-	memory_mode = load_handle.mode;
-
-	if (memory_mode == LOADER_DISK) {
-		top_of_file = load_handle.handle->pos();
-	}
+	top_of_file = load_handle.handle->pos();
 
 	// Read tile resource header record
 	{
@@ -380,74 +372,51 @@ int tile_load(const char *base, int tile_type, TileResource *tile_resource,
 	}
 
 	// Get current (base) position in file
-	if (memory_mode == LOADER_DISK) {
-		base_position = load_handle.handle->pos();
-	} else {
-		base_position = 0;
-		for (count = 0; count < (int)load_handle.pack.num_records; count++) {
-			base_position += load_handle.pack.strategy[count].size;
-		}
-	}
+	base_position = load_handle.handle->pos();
 
 	// Load tile data into memory
 	for (count = 0; count < tile_resource->num_tiles; count++) {
-		switch (memory_mode) {
-		case LOADER_XMS:
-			my_offset = base_position + (tile_resource->chunk_size * count);
-			if (!xms_copy(tile_resource->chunk_size,
-				load_handle.xms_handle,
-				(XMS)(my_offset),
-				MEM_CONV, tile_buffer.data)) {
-				tile_load_error = 18;
-				goto done;
-			}
-			break;
+		// Set to appropriate file position
+		if (count < (tile_resource->num_tiles - 1)) {
+			compressed_size = tile[count + 1].file_offset - tile[count].file_offset;
+		} else {
+			compressed_size = (env_get_file_size(load_handle.handle) - PACK_OVERHEAD) - (tile[count].file_offset + (base_position - top_of_file));
+		}
 
-		case LOADER_DISK:
-		default:
-			// Set to appropriate file position
-			if (count < (tile_resource->num_tiles - 1)) {
-				compressed_size = tile[count + 1].file_offset - tile[count].file_offset;
-			} else {
-				compressed_size = (env_get_file_size(load_handle.handle) - PACK_OVERHEAD) - (tile[count].file_offset + (base_position - top_of_file));
-			}
+		fileio_setpos(load_handle.handle, base_position + tile[count].file_offset);
+		pack_strategy = tile_resource->compression;
+		packing_flag = (pack_strategy != PACK_NONE) ? PACK_EXPLODE : PACK_RAW_COPY;
 
-			fileio_setpos(load_handle.handle, base_position + tile[count].file_offset);
-			pack_strategy = tile_resource->compression;
-			packing_flag = (pack_strategy != PACK_NONE) ? PACK_EXPLODE : PACK_RAW_COPY;
-
-			// Unpack the tile data
-			if (packing_flag == PACK_EXPLODE) {
-				decompress_buffer = (byte *)mem_get_name(compressed_size, "$tilpack");
-				if (decompress_buffer != NULL) {
-					if (!fileio_fread_f(decompress_buffer, compressed_size, 1, load_handle.handle)) {
-						tile_load_error = 50;
-						goto done;
-					}
-
-					if (pack_data(packing_flag, tile_resource->chunk_size,
-						FROM_MEMORY, decompress_buffer,
-						TO_MEMORY, tile_buffer.data) != (long)tile_resource->chunk_size) {
-						tile_load_error = 51;
-						goto done;
-					}
-
-					already_unpacked = true;
-
-					mem_free(decompress_buffer);
-					decompress_buffer = NULL;
-				}
-			}
-
-			if (!already_unpacked) {
-				if (pack_data(packing_flag, tile_resource->chunk_size,
-					FROM_DISK, load_handle.handle,
-					TO_MEMORY, tile_buffer.data) != (long)tile_resource->chunk_size) {
-					tile_load_error = 19;
+		// Unpack the tile data
+		if (packing_flag == PACK_EXPLODE) {
+			decompress_buffer = (byte *)mem_get_name(compressed_size, "$tilpack");
+			if (decompress_buffer != NULL) {
+				if (!fileio_fread_f(decompress_buffer, compressed_size, 1, load_handle.handle)) {
+					tile_load_error = 50;
 					goto done;
 				}
+
+				if (pack_data(packing_flag, tile_resource->chunk_size,
+					FROM_MEMORY, decompress_buffer,
+					TO_MEMORY, tile_buffer.data) != (long)tile_resource->chunk_size) {
+					tile_load_error = 51;
+					goto done;
+				}
+
+				already_unpacked = true;
+
+				mem_free(decompress_buffer);
+				decompress_buffer = NULL;
 			}
-			break;
+		}
+
+		if (!already_unpacked) {
+			if (pack_data(packing_flag, tile_resource->chunk_size,
+				FROM_DISK, load_handle.handle,
+				TO_MEMORY, tile_buffer.data) != (long)tile_resource->chunk_size) {
+				tile_load_error = 19;
+				goto done;
+			}
 		}
 
 		// Translate color information for background pictures

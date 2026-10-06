@@ -38,6 +38,9 @@ YM2149Atari::~YM2149Atari() {
 	for (int r = 0; r < 14; r++) {
 		Giaccess(_savedRegs[r], r | 0x80);
 	}
+
+	// mix only the connection matrix to the ouput
+	Soundcmd(ADDERIN, MATIN);
 }
 
 bool YM2149Atari::init() {

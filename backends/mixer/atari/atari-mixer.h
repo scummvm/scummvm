@@ -45,13 +45,15 @@ public:
 private:
 	int _outputRate = 0;
 	int _outputChannels = 0;
-	int _samples = 0;
-	uint8 *_samplesBuf = nullptr;
-
-	byte *_atariSampleBuffer = nullptr;
-	byte *_atariPhysicalSampleBuffer = nullptr;
-	byte *_atariLogicalSampleBuffer = nullptr;
+	bool _emulated16bitMono = false;
 	bool _downsample = false;
+
+	int _samples = 0;
+	int _sampleBufferSize = 0;
+	byte *_sampleBuffer = nullptr;
+
+	int _atariSampleBufferSize = 0;
+	byte *_atariSampleBuffer = nullptr;
 };
 
 #endif

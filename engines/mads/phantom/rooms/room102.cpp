@@ -112,14 +112,14 @@ void room_102_init() {
 		seq[fx_door]  = kernel_seq_stamp(ss[fx_door], false, 4);
 		kernel_seq_depth(seq[fx_door], 14);
 
-	} else if ((previous_room == 103) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x              = PLAYER_X_FROM_103;
 		player.y              = PLAYER_Y_FROM_103;
 		player.facing         = FACING_WEST;
 		local->anim_0_running = true;
 		local->animation[0]   = kernel_run_animation(kernel_name('d', 1), ROOM_102_DOOR_CLOSES);
 
-	} else if (previous_room == KERNEL_RESTORING_GAME) {
+	} else {
 		seq[fx_door]  = kernel_seq_stamp(ss[fx_door], false, 4);
 		kernel_seq_depth(seq[fx_door], 14);
 	}

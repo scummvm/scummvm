@@ -2615,6 +2615,37 @@ static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 
 // ===========================================================================
 
+// WORKAROUND
+// The Hoyle1 demo gets stuck waiting for a sound to stop in ScummVM because the
+//  User script skips calling kGetEvent. ScummVM updates SCI0 music cues from
+//  kGetEvent based on the assumption that it's a frequently called function.
+//
+// We work around this by disabling the code in User:doit that skips kGetEvent.
+//  This doesn't have any noticeable affect on this short demo. The game scrips
+//  already disable the player and prevent input.
+//
+// Applies to: PC Demo
+// Responsible method: User:doit
+static const uint16 hoyle1SignatureDemoEvents[] = {
+	SIG_MAGICDWORD,
+	0x80, SIG_UINT16(0x0302),          // lag 0302 [ demo flag ]
+	0x30,                              // bnt
+	SIG_END
+};
+
+static const uint16 hoyle1PatchDemoEvents[] = {
+	0x34, PATCH_UINT16(0x0000),       // ldi 0000
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry hoyle1Signatures[] = {
+	{  true,   996, "demo events",                                 1, hoyle1SignatureDemoEvents,        hoyle1PatchDemoEvents },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+
 // During Bridge, Declarer_Second_NT:think performs a bitwise or against an
 //  object due to a script typo. This operation is supposed to be against
 //  (bridgeHand:highCard):rank but instead it's against bridgeHand:highCard.
@@ -2947,7 +2978,7 @@ static const uint16 hoyle5PatchDisableGame[] = {
 	PATCH_END
 };
 
-// Hoyle School House Math is similar to the Children's Collection and Bridge
+// Hoyle School House is similar to the Children's Collection and Bridge
 //  versions above, where the individual card games were launched externally
 //  by passing a config file to the interpreter. The menus for this game are
 //  present, although they are still using Hoyle4 graphics, but they are missing
@@ -27038,6 +27069,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 	case GID_FREDDYPHARKAS:
 		signatureTable = freddypharkasSignatures;
 		break;
+	case GID_HOYLE1:
+		signatureTable = hoyle1Signatures;
+		break;
 	case GID_HOYLE4:
 		signatureTable = hoyle4Signatures;
 		break;
@@ -27245,7 +27279,7 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				break;
 			case GID_HOYLE5:
 				if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 21))) {
-					// Hoyle school house math
+					// Hoyle school house
 					enablePatch(signatureTable, "disable sierra logo");
 					enablePatch(signatureTable, "disable main menu buttons");
 					enablePatch(signatureTable, "disable Euchre and Bridge");

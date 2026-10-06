@@ -96,6 +96,7 @@ backends/keymapper/hardware-input.cpp
 backends/keymapper/remap-widget.cpp
 backends/keymapper/virtual-mouse.cpp
 backends/midi/windows.cpp
+backends/midi/android.cpp
 backends/networking/sdl_net/handlers/createdirectoryhandler.cpp
 backends/networking/sdl_net/handlers/downloadfilehandler.cpp
 backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp

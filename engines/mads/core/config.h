@@ -89,6 +89,7 @@ struct ConfigFile {
 	bool speech_version_installed;	/* Version with speech installed */
 	bool show_speech_boxes;			/* Show text during speech   */
 	bool original_save_load;		/* Original vs ScummVM dialogs */
+	int animview_minimum_black_ticks;
 
 	int misc2;
 	int misc3;

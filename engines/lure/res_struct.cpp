@@ -147,7 +147,7 @@ bool RoomExitData::insideRect(int16 xp, int16 yp) {
 RoomExitData *RoomExitList::checkExits(int16 xp, int16 yp) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
-		RoomExitData *rec = (*i).get();
+		RoomExitData *rec = i->get();
 		if (rec->insideRect(xp, yp)) {
 			return rec;
 		}
@@ -624,7 +624,7 @@ HotspotActionList::HotspotActionList(uint16 id, byte *data) {
 HotspotActionList *HotspotActionSet::getActions(uint16 recordId) {
 	HotspotActionSet::iterator i;
 	for (i = begin(); i != end(); ++i) {
-		HotspotActionList *list = (*i).get();
+		HotspotActionList *list = i->get();
 		if (list->recordId == recordId) return list;
 	}
 
@@ -690,7 +690,7 @@ TalkEntryData *TalkData::getResponse(int index) {
 		++i;
 	}
 
-	return (*i).get();
+	return i->get();
 }
 
 // The following class acts as a container for all the NPC conversations
@@ -901,9 +901,9 @@ CharacterScheduleEntry *CharacterScheduleEntry::next() {
 	if (_parent) {
 		CharacterScheduleSet::iterator i;
 		for (i = _parent->begin(); i != _parent->end(); ++i) {
-			if ((*i).get() == this) {
+			if (i->get() == this) {
 				++i;
-				CharacterScheduleEntry *result = (i == _parent->end()) ? nullptr : (*i).get();
+				CharacterScheduleEntry *result = (i == _parent->end()) ? nullptr : i->get();
 				return result;
 			}
 		}
@@ -950,7 +950,7 @@ CharacterScheduleEntry *CharacterScheduleList::getEntry(uint16 id, CharacterSche
 
 		if (i == end())
 			error("Invalid index %d specified for support data set", id >> 8);
-		currentSet = (*i).get();
+		currentSet = i->get();
 	}
 
 	// Get the indexed instruction in the specified set
@@ -963,7 +963,7 @@ CharacterScheduleEntry *CharacterScheduleList::getEntry(uint16 id, CharacterSche
 	if (i == currentSet->end())
 		error("Invalid index %d specified within support data set", id & 0x3ff);
 
-	return (*i).get();
+	return i->get();
 }
 
 uint16 CharacterScheduleSet::getId(CharacterScheduleEntry *rec) {
@@ -973,7 +973,7 @@ uint16 CharacterScheduleSet::getId(CharacterScheduleEntry *rec) {
 
 	iterator i;
 	for (i = begin(); i != end(); ++i, ++result)
-		if ((*i).get() == rec) break;
+		if (i->get() == rec) break;
 	if (i == end())
 		error("Parent child relationship missing in character schedule set");
 	return result;
@@ -1003,7 +1003,7 @@ RandomActionSet::~RandomActionSet() {
 RandomActionSet *RandomActionList::getRoom(uint16 roomNumber) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
-		RandomActionSet *v = (*i).get();
+		RandomActionSet *v = i->get();
 		if (v->roomNumber() == roomNumber)
 			return v;
 	}
@@ -1482,7 +1482,7 @@ void CurrentActionStack::copyFrom(CurrentActionStack &stack) {
 	ActionsList::iterator i;
 
 	for (i = stack._actions.begin(); i != stack._actions.end(); ++i) {
-		CurrentActionEntry *rec = (*i).get();
+		CurrentActionEntry *rec = i->get();
 		_actions.push_back(ActionsList::value_type(new CurrentActionEntry(rec)));
 	}
 }

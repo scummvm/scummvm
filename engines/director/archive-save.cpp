@@ -411,7 +411,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 						res->children.push_back(child);
 					}
 
-					for (auto child : res->children) {
+					for (const auto &child : res->children) {
 						_keyData[child.tag][res->index].push_back(child.index);
 						_keyTableUsedCount += 1;
 						_keyTableEntryCount += 1;
@@ -420,7 +420,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 					debugC(5, kDebugSaving, "RIFXArchive::rebuildResources(): new 'CASt' resource added");
 				} else {
 					// The castId is not new, overwrite the key data of the previous cast
-					for (auto child : res->children) {
+					for (const auto &child : res->children) {
 						// Remove the data of the previous (removed) 'CASt'
 						int8 count = _keyData[child.tag][res->index].size();
 						_keyData[child.tag][res->index].clear();
@@ -430,7 +430,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 					res->children = jt._value->_children;
 
-					for (auto child : res->children) {
+					for (const auto &child : res->children) {
 						_keyData[child.tag][res->index].push_back(child.index);
 						_keyTableUsedCount += 1;
 						_keyTableEntryCount += 1;

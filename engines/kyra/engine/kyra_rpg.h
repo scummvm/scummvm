@@ -62,12 +62,14 @@ struct OpenDoorState {
 };
 
 struct LevelTempData {
-	uint8 *wallsXorData;
-	uint16 *flags;
-	void *monsters;
-	void *flyingObjects;
-	void *wallsOfForce;
+	const uint8 *wallsXorData;
+	const uint16 *flags;
+	const void *monsters;
+	const void *flyingObjects;
+	const void *wallsOfForce;
 	uint8 monsterDifficulty;
+	// ScummVM extra feature for EOBI/II
+	const void *automapExploreState;
 };
 
 struct EoBFlyingObject {
@@ -517,15 +519,18 @@ protected:
 	void generateTempData();
 	virtual void restoreBlockTempData(int levelIndex);
 	void releaseTempData();
-	virtual void *generateMonsterTempData(LevelTempData *tmp) = 0;
+	virtual const void *generateMonsterTempData(uint8 &monsterDifficulty) const = 0;
 	virtual void restoreMonsterTempData(LevelTempData *tmp) = 0;
 	virtual void releaseMonsterTempData(LevelTempData *tmp) = 0;
 	void restoreFlyingObjectTempData(LevelTempData *tmp);
-	void *generateFlyingObjectTempData(LevelTempData *tmp);
+	const void *generateFlyingObjectTempData() const;
 	void releaseFlyingObjectTempData(LevelTempData *tmp);
-	virtual void *generateWallOfForceTempData(LevelTempData *tmp) { return 0; }
+	virtual const void *generateWallOfForceTempData() const { return nullptr; }
 	virtual void restoreWallOfForceTempData(LevelTempData *tmp) {}
 	virtual void releaseWallOfForceTempData(LevelTempData *tmp) {}
+	virtual const void *generateAutoMapTempData() { return nullptr; }
+	virtual void restoreAutoMapTempData(LevelTempData *tmp) {}
+	virtual void releaseAutoMapTempData(LevelTempData *tmp) {}
 
 	LevelTempData *_lvlTempData[29];
 	const int _numFlyingObjects;

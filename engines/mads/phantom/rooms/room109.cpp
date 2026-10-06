@@ -111,7 +111,7 @@ void room_109_init() {
 		kernel_seq_depth(seq[fx_top_door], 14);
 		local->on_floor = 3;
 
-	} else if ((previous_room == 110) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x      = PLAYER_X_FROM_110;
 		player.y      = PLAYER_Y_FROM_110;
 		player.facing = FACING_EAST;
@@ -124,7 +124,7 @@ void room_109_init() {
 		kernel_seq_depth(seq[fx_middle_door], 14);
 		local->on_floor = 2;
 
-	} else if (previous_room == KERNEL_RESTORING_GAME) {
+	} else {
 		if (local->on_floor == 2) {
 			camera_jump_to(0, MIDDLE_FLOOR);
 			kernel_room_scale(311, 95, 286, 78);

@@ -22,7 +22,8 @@
 #ifndef NANCY_ACTION_SORTPUZZLE_H
 #define NANCY_ACTION_SORTPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -33,9 +34,9 @@ namespace Action {
 // (pre-shuffle) layout. Tiles are sorted per type, color and size, which is
 // visible in the back of each gem when picked up.
 // Called from scene 2036 in Nancy10.
-class SortPuzzle : public RenderActionRecord {
+class SortPuzzle : public PuzzleRecord {
 public:
-	SortPuzzle() : RenderActionRecord(7) {}
+	SortPuzzle() : PuzzleRecord(7) {}
 	virtual ~SortPuzzle() {}
 
 	void init() override;
@@ -113,14 +114,6 @@ protected:
 	SoundDescription _pickupSound;
 	SoundDescription _dropSound;
 
-	SceneChangeDescription _winScene;
-	FlagDescription        _winFlag;
-	SoundDescription       _winSound;
-	SceneChangeDescription _cancelScene;
-	FlagDescription        _cancelFlag;
-
-	Common::Rect _exitHotspot;
-
 	// Runtime state
 
 	enum SubState {
@@ -140,7 +133,7 @@ protected:
 	bool _hasHeld   = false;
 	bool _isSolved  = false;
 
-	Common::Point _heldDrawPos;
+	Misc::MouseFollowObject _heldObject;
 
 	Graphics::ManagedSurface _boardImage;
 	Graphics::ManagedSurface _cursorImage;
@@ -148,6 +141,7 @@ protected:
 	void initState();
 	void persistState();
 	void redraw();
+	void holdCell(const Cell &cell, bool hasHeld, NancyInput &input);
 	void checkSolved();
 	bool cellsMatch(const Cell &cur, const Cell &sol) const;
 	Common::Rect cellRect(int row, int col) const;

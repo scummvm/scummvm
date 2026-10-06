@@ -60,6 +60,7 @@ protected:
 	void handleGameUpdateScreen(const byte *src, int srcPitch, int width, int height) override;
 
 private:
+	void markLogicalEndOfStream();
 	void ra1HandleGost(int32 subSize, Common::SeekableReadStream &b);
 	void ra1HandleDeltaPalette(int32 subSize, Common::SeekableReadStream &b);
 	void ra1HandleFade(int32 subSize, Common::SeekableReadStream &b);
@@ -84,7 +85,7 @@ private:
 	int32 _ra1CleanFrameSize;
 	bool _ra1HasCleanFrame;
 
-	// Interactive movies present a 312x192 viewport inside a black frame.
+	// Movies present a 312x192 viewport inside a black frame.
 	byte *_ra1PresentationBuffer;
 	int32 _ra1PresentationBufferSize;
 

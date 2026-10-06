@@ -1,0 +1,1171 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/cursor.h"
+#include "engines/nancy/graphics.h"
+#include "engines/nancy/input.h"
+#include "engines/nancy/resource.h"
+#include "engines/nancy/sound.h"
+#include "engines/nancy/util.h"
+
+#include "engines/nancy/enginedata.h"
+#include "engines/nancy/state/scene.h"
+
+#include "engines/nancy/action/puzzle/buildpuzzle.h"
+
+namespace Nancy {
+namespace Action {
+
+// Reads one of the puzzle's grouped sound blocks into a plain SoundDescription,
+// keeping only the first of the random alternatives.
+static void readSoundBlock(Common::SeekableReadStream &stream, SoundDescription &out) {
+	RandomSoundBlock block;
+	block.readData(stream);
+
+	out.name = block.names.empty() ? "NO SOUND" : block.names[0];
+	out.channelID = block.channel;
+	out.numLoops = block.numLoops;
+	out.volume = block.volume;
+}
+
+void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+	readFilename(stream, _altImageName);
+
+	_trayImageMode = stream.readByte();
+	_saveState = stream.readByte();
+	_resumeFlag = stream.readSint16LE();
+	_requiredPlaced = stream.readUint16LE();
+	_usePlacedGate = stream.readByte();
+	_stateItemID = stream.readUint16LE();
+	readRect(stream, _submitSrcRect);
+	readRect(stream, _submitHotspot);
+	readSoundBlock(stream, _submitSound);
+	readRect(stream, _startOverSrcRect);
+	readRect(stream, _startOverHotspot);
+	readSoundBlock(stream, _startOverSound);
+	readRect(stream, _doneSrcRect);
+	readRect(stream, _doneDestRect);
+
+	readFilename(stream, _anim1Name);
+	readRect(stream, _anim1Rect);
+	readFilename(stream, _anim2Name);
+	readRect(stream, _anim2Rect);
+	_pieceCursorType = stream.readSint16LE();
+	_heldPieceCursorType = stream.readSint16LE();
+	stream.skip(3);							// 0xe4: a third cursor type and a flag
+
+	uint16 numZones = stream.readUint16LE();
+	_zones.resize(numZones);
+	for (uint i = 0; i < numZones; ++i) {
+		Zone &zone = _zones[i];
+		readRect(stream, zone.hotspot);
+		zone.capacity = stream.readUint16LE();
+		stream.skip(1);
+		zone.fill = (ZoneFill)stream.readByte();
+		zone.marksPlaced = stream.readByte();
+
+		uint16 numIngredients = stream.readUint16LE();
+		zone.ingredients.resize(numIngredients);
+		for (uint j = 0; j < numIngredients; ++j) {
+			Ingredient &ingredient = zone.ingredients[j];
+			ingredient.pieceID = stream.readSint16LE();
+			ingredient.quantity = stream.readByte();
+			ingredient.mode = stream.readByte();
+		}
+	}
+
+	uint16 numHolds = stream.readUint16LE();
+	_holds.resize(numHolds);
+	for (uint i = 0; i < numHolds; ++i) {
+		HoldSlot &hold = _holds[i];
+		readRect(stream, hold.srcRect);
+		readRect(stream, hold.destRect);
+		readRect(stream, hold.fillSrcRect1);
+		readRect(stream, hold.fillSrcRect2);
+		hold.amount = stream.readByte();
+	}
+
+	// Only present when the puzzle has hold slots.
+	if (numHolds > 0)
+		readSoundBlock(stream, _holdSound);
+
+	uint16 numPieces = stream.readUint16LE();
+	_pieces.resize(numPieces);
+	for (uint i = 0; i < numPieces; ++i) {
+		Piece &piece = _pieces[i];
+		readRect(stream, piece.srcRect);
+		readRect(stream, piece.destRect);
+		readRect(stream, piece.dragSrcRect);
+		readRect(stream, piece.placedSrcRect);
+		readRect(stream, piece.closeupSrcRect);
+		readRect(stream, piece.closeupDestRect);
+		readRect(stream, piece.placedDestRect);
+
+		piece.kind = stream.readByte();
+		if (piece.kind == 3)
+			readFilename(stream, piece.imageName);
+		else
+			piece.zoneID = stream.readSint16LE();
+
+		piece.itemID = stream.readSint16LE();
+
+		// The list names the scoops this piece can be taken with, and the last
+		// entry picks which of a scoop's two full images to show while carrying it.
+		int16 numValues = stream.readSint16LE();
+		if (numValues > 0) {
+			piece.holds.resize(numValues - 1);
+			for (int16 j = 0; j < numValues - 1; ++j) {
+				piece.holds[j] = stream.readSint16LE();
+			}
+
+			piece.fillVariant = stream.readSint16LE();
+		}
+	}
+
+	_counterItemID = stream.readByte();
+	if (_counterItemID != 255) {
+		for (uint i = 0; i < kNumDigits; ++i)
+			readRect(stream, _digitSrcRects[i]);
+
+		_counterPos.x = (int16)stream.readSint32LE();
+		_counterPos.y = (int16)stream.readSint32LE();
+		_counterSpacing = stream.readSint32LE();
+	}
+
+	readSoundBlock(stream, _pickupSound);
+	readSoundBlock(stream, _dropSound);
+	readSoundBlock(stream, _notebookSound);
+	readSoundBlock(stream, _putDownSound);
+
+	_wrongIngredientFlag = stream.readSint16LE();
+	_solvedFlag = stream.readSint16LE();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
+
+	SoundDescription unused;
+	readSoundBlock(stream, unused);
+
+	_failScene.sceneID = stream.readUint16LE();
+	_failScene.frameID = stream.readUint16LE();
+	_failScene.continueSceneSound = kContinueSceneSound;
+	_failFlag.label = stream.readSint16LE();
+	_failFlag.flag = stream.readByte();
+
+	readSoundBlock(stream, unused);
+
+	// The count-prefixed 23-byte hotspot records shared by the later puzzles.
+	readExitHotspots(stream, _exitHotspots);
+	for (uint i = 0; i < _exitHotspots.size(); ++i) {
+		_exitHotspots[i].scene.continueSceneSound = kContinueSceneSound;
+	}
+}
+
+void BuildPuzzle::setFlagOnChange(int16 label, bool value, int8 &last) {
+	if (label == -1 || last == (int8)value) {
+		return;
+	}
+
+	last = (int8)value;
+	NancySceneState.setEventFlag(label, value ? g_nancy->_true : g_nancy->_false);
+}
+
+void BuildPuzzle::setPieceCursor(bool isHeld) {
+	int16 cursorType = isHeld && _heldPieceCursorType != 0 ? _heldPieceCursorType : _pieceCursorType;
+
+	if (cursorType != 0) {
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, true);
+	} else {
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+	}
+}
+
+void BuildPuzzle::init() {
+	BuildPuzzleData *data = (BuildPuzzleData *)NancySceneState.getPuzzleData(BuildPuzzleData::getTag());
+	assert(data);
+
+	uint16 sceneID = NancySceneState.getSceneInfo().sceneID;
+	// Several scenes share this puzzle and the one saved board, so the board is
+	// only picked up by the scene it was saved for. Any other scene starts over
+	// and drops the board, so a later resume can't load another puzzle's pieces.
+	bool resume = data->sceneID == sceneID && _resumeFlag != -1 &&
+					NancySceneState.getEventFlag(_resumeFlag, g_nancy->_true);
+
+	if (!resume) {
+		data->sceneID = sceneID;
+		data->placedCount = 0;
+		data->solved = false;
+		data->wrongIngredient = false;
+		data->pieces.clear();
+		data->zones.clear();
+	}
+
+	const uint32 transColor = g_nancy->_graphics->getTransColor();
+
+	g_nancy->_resource->loadImage(_imageName, _image);
+	_image.setTransparentColor(transColor);
+
+	// A puzzle without a second image draws everything from the first one.
+	g_nancy->_resource->loadImage(_altImageName.empty() ? _imageName : _altImageName, _altImage);
+	_altImage.setTransparentColor(transColor);
+
+	_numDefined = _pieces.size();
+
+	// Every piece but a kind 1 is copied when it is dropped, so the array needs
+	// room for as many copies as the recipes can ask for. It is grown once, here,
+	// because the pieces are render objects and must not move afterwards.
+	uint numSpare = 0;
+	for (uint i = 0; i < _zones.size(); ++i) {
+		for (uint j = 0; j < _zones[i].ingredients.size(); ++j) {
+			numSpare += _zones[i].ingredients[j].quantity;
+		}
+	}
+
+	_pieces.resize(_numDefined + numSpare);
+
+	for (uint i = 0; i < _zones.size(); ++i) {
+		_zones[i].counts.resize(_zones[i].ingredients.size());
+	}
+
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		Piece &piece = _pieces[i];
+
+		// A piece's art defaults down the chain when a rect is left empty.
+		if (piece.dragSrcRect.isEmpty()) {
+			piece.dragSrcRect = piece.srcRect;
+		}
+
+		if (piece.placedSrcRect.isEmpty()) {
+			piece.placedSrcRect = piece.dragSrcRect;
+		}
+
+		piece.inUse = (i < _numDefined);
+		piece.sourceID = (int16)i;
+		piece.liveRect = piece.destRect;
+		piece.setZOrder(_z + (uint16)i + 1);
+		updatePieceRender((int16)i);
+	}
+
+	for (uint i = 0; i < _holds.size(); ++i) {
+		HoldSlot &hold = _holds[i];
+		if (hold.srcRect.isEmpty()) {
+			continue;
+		}
+
+		hold._drawSurface.create(_altImage, hold.srcRect);
+		hold.setTransparent(true);
+		hold.moveTo(hold.destRect);
+		hold.setZOrder(_z + (uint16)i + 1);
+		hold.setVisible(true);
+	}
+
+	_cursorItem.setTransparent(true);
+	_cursorItem.setVisible(false);
+
+	_buttonPress.setTransparent(true);
+	_buttonPress.setVisible(false);
+
+	if (!_doneSrcRect.isEmpty()) {
+		_doneOverlay._drawSurface.create(_altImage, _doneSrcRect);
+		_doneOverlay.setTransparent(true);
+		_doneOverlay.moveTo(_doneDestRect);
+		// Above the pieces in the zones, below a close-up
+		_doneOverlay.setZOrder(_z + (uint16)_pieces.size() + 1);
+	}
+
+	_doneOverlay.setVisible(false);
+	_counter.setTransparent(true);
+	_counter.setVisible(false);
+
+	if (resume) {
+		restoreState(*data);
+	} else {
+		// Starting over clears everything the puzzle wrote.
+		for (uint i = 0; i < _numDefined; ++i) {
+			setItemValue(_pieces[i].itemID, 0);
+		}
+
+		setPlacedCount(0);
+		setFlagOnChange(_solvedFlag, false, _lastSolvedFlag);
+		setFlagOnChange(_wrongIngredientFlag, false, _lastWrongFlag);
+	}
+
+	_isInitialized = true;
+	updateDoneOverlay();
+	updateCounter();
+}
+
+void BuildPuzzle::registerGraphics() {
+	if (!_isInitialized) {
+		return;
+	}
+
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		_pieces[i].registerGraphics();
+	}
+
+	for (uint i = 0; i < _holds.size(); ++i) {
+		_holds[i].registerGraphics();
+	}
+
+	_cursorItem.registerGraphics();
+	_buttonPress.registerGraphics();
+	_doneOverlay.registerGraphics();
+	_counter.registerGraphics();
+}
+
+byte BuildPuzzle::carriedAmount() const {
+	return _activeHold != -1 ? MAX<byte>(_holds[_activeHold].amount, 1) : 1;
+}
+
+void BuildPuzzle::updateCursorItem(const Common::Point &mouseVP) {
+	// A scoop stays on the cursor while an ingredient is picked up with it, so
+	// the scoop's own art wins over the ingredient's.
+	const Common::Rect *src = nullptr;
+
+	if (_activeHold != -1) {
+		const HoldSlot &hold = _holds[_activeHold];
+
+		// A scoop carrying an ingredient shows itself full.
+		if (_heldPiece != -1) {
+			src = _pieces[_heldPiece].fillVariant == 0 ? &hold.fillSrcRect1 : &hold.fillSrcRect2;
+		}
+
+		if (!src || src->isEmpty()) {
+			src = &hold.srcRect;
+		}
+	} else if (_heldPiece != -1) {
+		src = &_pieces[_heldPiece].dragSrcRect;
+	}
+
+	if (!src || src->isEmpty()) {
+		_cursorItem.setVisible(false);
+		return;
+	}
+
+	int width = src->width();
+	int height = src->height();
+	Common::Rect dest((int16)(mouseVP.x - width / 2), (int16)(mouseVP.y - height / 2),
+						(int16)(mouseVP.x - width / 2 + width), (int16)(mouseVP.y - height / 2 + height));
+
+	_cursorItem._drawSurface.create(_altImage, *src);
+	_cursorItem.setTransparent(true);
+	_cursorItem.moveTo(dest);
+	_cursorItem.setVisible(true);
+}
+
+void BuildPuzzle::updatePieceRender(int16 pieceIdx) {
+	Piece &piece = _pieces[pieceIdx];
+
+	if (!piece.inUse || piece.liveRect.isEmpty()) {
+		piece.setVisible(false);
+		return;
+	}
+
+	// Each of the three states has its own art, and only a piece resting at home
+	// is drawn from the image the puzzle selects; the other two always come from
+	// the alt one.
+	// A carried piece lives on the cursor instead of on the board.
+	if (pieceIdx == _heldPiece) {
+		piece.setVisible(false);
+		return;
+	}
+
+	bool isPlaced = piece.assignedZone != -1;
+
+	const Common::Rect *src = &piece.srcRect;
+	Graphics::ManagedSurface *surf = _trayImageMode == 1 ? &_image : &_altImage;
+
+	if (isPlaced) {
+		src = &piece.placedSrcRect;
+		surf = &_altImage;
+	}
+
+	if (src->isEmpty()) {
+		piece.setVisible(false);
+		return;
+	}
+
+	piece._drawSurface.create(*surf, *src);
+	piece.setTransparent(true);
+	piece.moveTo(piece.liveRect);
+	piece.setVisible(true);
+}
+
+int16 BuildPuzzle::clonePiece(int16 pieceIdx) {
+	for (uint i = _numDefined; i < _pieces.size(); ++i) {
+		if (_pieces[i].inUse) {
+			continue;
+		}
+
+		Piece &clone = _pieces[i];
+		const Piece &original = _pieces[pieceIdx];
+
+		clone.srcRect = original.srcRect;
+		clone.destRect = original.destRect;
+		clone.dragSrcRect = original.dragSrcRect;
+		clone.placedSrcRect = original.placedSrcRect;
+		clone.closeupSrcRect = original.closeupSrcRect;
+		clone.closeupDestRect = original.closeupDestRect;
+		clone.placedDestRect = original.placedDestRect;
+		clone.kind = original.kind;
+		clone.zoneID = original.zoneID;
+		clone.itemID = original.itemID;
+		clone.holds = original.holds;
+		clone.fillVariant = original.fillVariant;
+		clone.liveRect = original.liveRect;
+		clone.sourceID = original.sourceID;
+		clone.assignedZone = -1;
+		clone.inUse = true;
+
+		return (int16)i;
+	}
+
+	return -1;
+}
+
+void BuildPuzzle::adjustZone(int16 zoneIdx, int16 pieceID, int8 delta) {
+	Zone &zone = _zones[zoneIdx];
+
+	for (uint i = 0; i < zone.ingredients.size(); ++i) {
+		if (zone.ingredients[i].pieceID != pieceID) {
+			continue;
+		}
+
+		zone.counts[i] = (byte)(zone.counts[i] + delta);
+		zone.numHeld += delta;
+		return;
+	}
+
+	// Nothing in the recipe wanted this piece.
+	zone.numWrong += delta;
+	zone.numHeld += delta;
+
+	int16 totalWrong = 0;
+	for (uint i = 0; i < _zones.size(); ++i) {
+		totalWrong += _zones[i].numWrong;
+	}
+
+	setFlagOnChange(_wrongIngredientFlag, totalWrong > 0, _lastWrongFlag);
+}
+
+bool BuildPuzzle::checkSolved() const {
+	for (uint i = 0; i < _zones.size(); ++i) {
+		const Zone &zone = _zones[i];
+
+		if (zone.numWrong != 0) {
+			return false;
+		}
+
+		for (uint j = 0; j < zone.ingredients.size(); ++j) {
+			const Ingredient &ingredient = zone.ingredients[j];
+
+			if (ingredient.mode == 2) {
+				if (zone.counts[j] < ingredient.quantity) {
+					return false;
+				}
+			} else if (ingredient.mode == 0) {
+				if (zone.counts[j] != ingredient.quantity) {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+void BuildPuzzle::openCloseup(int16 pieceIdx) {
+	_closeupPiece = pieceIdx;
+
+	Piece &piece = _pieces[pieceIdx];
+	Common::Rect dest = piece.closeupDestRect;
+
+	// An empty destination means the close-up is centered in the viewport.
+	if (dest.isEmpty()) {
+		const VIEW *viewData = GetEngineData(VIEW);
+		if (viewData) {
+			int width = piece.closeupSrcRect.width();
+			int height = piece.closeupSrcRect.height();
+			int left = (viewData->screenPosition.width() - width) / 2;
+			int top = (viewData->screenPosition.height() - height) / 2;
+			dest = Common::Rect((int16)left, (int16)top, (int16)(left + width), (int16)(top + height));
+		}
+	}
+
+	// A piece carrying its own filename keeps its close-up art in that image.
+	Graphics::ManagedSurface *surf = _trayImageMode == 1 ? &_image : &_altImage;
+	if (!piece.imageName.empty()) {
+		if (_pieceImageName != Common::Path(piece.imageName)) {
+			_pieceImageName = Common::Path(piece.imageName);
+			g_nancy->_resource->loadImage(_pieceImageName, _pieceImage);
+			_pieceImage.setTransparentColor(g_nancy->_graphics->getTransColor());
+		}
+
+		surf = &_pieceImage;
+	}
+
+	piece._drawSurface.create(*surf, piece.closeupSrcRect);
+	piece.setTransparent(true);
+	piece.moveTo(dest);
+	piece.setVisible(true);
+	_pieces[pieceIdx].setZOrder((uint16)(_z + _pieces.size() + 2));
+
+	_closeupDest = dest;
+	updateCounter();
+}
+
+void BuildPuzzle::closeCloseup() {
+	if (_closeupPiece == -1) {
+		return;
+	}
+
+	int16 pieceIdx = _closeupPiece;
+	_closeupPiece = -1;
+	_pieces[pieceIdx].setZOrder((uint16)(_z + pieceIdx + 1));
+	updatePieceRender(pieceIdx);
+	updateCounter();
+}
+
+void BuildPuzzle::pickUpPiece(int16 pieceIdx) {
+	Piece &piece = _pieces[pieceIdx];
+
+	// Taking a piece back out of a zone undoes its contribution. A copy only
+	// exists while it is in a zone, so it goes away rather than onto the cursor.
+	if (piece.assignedZone != -1) {
+		adjustZone(piece.assignedZone, piece.sourceID, -1);
+		addItemValue(piece.itemID, -1);
+		setPlacedCount(_placedCount - 1);
+		piece.assignedZone = -1;
+		updateDoneOverlay();
+
+		if (pieceIdx >= (int16)_numDefined) {
+			piece.inUse = false;
+			piece.setVisible(false);
+			return;
+		}
+	}
+
+	_heldPiece = pieceIdx;
+	_pieces[pieceIdx].setZOrder((uint16)(_z + _pieces.size() + 1));
+
+	g_nancy->_sound->loadSound(_pickupSound);
+	g_nancy->_sound->playSound(_pickupSound);
+	updatePieceRender(pieceIdx);
+}
+
+void BuildPuzzle::returnPiece(int16 pieceIdx) {
+	Piece &piece = _pieces[pieceIdx];
+	piece.liveRect = piece.destRect;
+	piece.assignedZone = -1;
+	_heldPiece = -1;
+	_pieces[pieceIdx].setZOrder((uint16)(_z + pieceIdx + 1));
+	updatePieceRender(pieceIdx);
+}
+
+void BuildPuzzle::placePiece(int16 pieceIdx, int16 zoneIdx, const Common::Point &dropPos) {
+	Zone &zone = _zones[zoneIdx];
+	int16 placedIdx = pieceIdx;
+
+	// A zone with a fill mode shows what went into it, so it needs something to
+	// keep: the piece itself when its kind is consumed, otherwise a copy, which
+	// leaves the original on the shelf to be used again.
+	if (zone.fill != kFillAbsorb) {
+		if (_pieces[pieceIdx].kind != kConsumedKind) {
+			placedIdx = clonePiece(pieceIdx);
+			returnPiece(pieceIdx);
+
+			if (placedIdx == -1) {
+				return;
+			}
+		}
+
+		_pieces[placedIdx].assignedZone = zoneIdx;
+		_pieces[placedIdx].locked = zone.marksPlaced != 0;
+	}
+
+	Piece &piece = _pieces[placedIdx];
+	int width = piece.placedSrcRect.width();
+	int height = piece.placedSrcRect.height();
+
+	if (!piece.placedDestRect.isEmpty()) {
+		// The piece names its own spot, whatever the zone would have done.
+		piece.liveRect = piece.placedDestRect;
+	} else {
+		switch (zone.fill) {
+		case kFillCentered: {
+			int left = dropPos.x - width / 2;
+			int top = dropPos.y - height / 2;
+			piece.liveRect = Common::Rect((int16)left, (int16)top,
+											(int16)(left + width), (int16)(top + height));
+			break;
+		}
+		case kFillTopLeft:
+			// Left aligned to the zone, sitting on its bottom edge.
+			piece.liveRect = Common::Rect(zone.hotspot.left, (int16)(zone.hotspot.bottom - height),
+											(int16)(zone.hotspot.left + width), zone.hotspot.bottom);
+			break;
+		default:
+			// Absorbed: a consumed piece is gone, anything else goes back home.
+			piece.liveRect = piece.kind == kConsumedKind ? Common::Rect() : piece.destRect;
+			break;
+		}
+	}
+
+	adjustZone(zoneIdx, piece.sourceID, (int8)carriedAmount());
+	addItemValue(piece.itemID, carriedAmount());
+
+	g_nancy->_sound->loadSound(_dropSound);
+	g_nancy->_sound->playSound(_dropSound);
+
+	_heldPiece = -1;
+	_pieces[placedIdx].setZOrder((uint16)(_z + placedIdx + 1));
+	updatePieceRender(placedIdx);
+
+	setPlacedCount(_placedCount + 1);
+	updateDoneOverlay();
+
+	bool solved = checkSolved();
+	setFlagOnChange(_solvedFlag, solved, _lastSolvedFlag);
+
+	if (_saveState) {
+		saveState();
+	}
+
+	// Without the gate the puzzle waits to be handed in, so a wrong mix can be
+	// thrown away first.
+	if (!_usePlacedGate) {
+		return;
+	}
+
+	if (solved && _placedCount >= (int16)_requiredPlaced) {
+		_isSolved = true;
+		_state = kActionTrigger;
+	} else if (!solved && _placedCount > (int16)_requiredPlaced) {
+		_isFailed = true;
+		_state = kActionTrigger;
+	}
+}
+
+void BuildPuzzle::setPlacedCount(int16 count) {
+	_placedCount = MAX<int16>(0, count);
+
+	if (_stateItemID != 255) {
+		TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+		if (table) {
+			table->setSingleValue(_stateItemID, _placedCount);
+		}
+	}
+}
+
+void BuildPuzzle::setItemValue(int16 itemID, int16 value) {
+	if (itemID < 0 || itemID == 255) {
+		return;
+	}
+
+	TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	if (table) {
+		table->setValue(itemID, value);
+	}
+}
+
+void BuildPuzzle::addItemValue(int16 itemID, int16 delta) {
+	if (itemID < 0 || itemID == 255) {
+		return;
+	}
+
+	TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	if (!table) {
+		return;
+	}
+
+	// An unset value counts as zero.
+	int16 value = table->getValue(itemID);
+	if (value == kNoTableValue) {
+		value = 0;
+	}
+
+	table->setValue(itemID, value + delta);
+}
+
+void BuildPuzzle::pressButton(HeldButton button) {
+	const Common::Rect &src = button == kSubmitButton ? _submitSrcRect : _startOverSrcRect;
+	const Common::Rect &dest = button == kSubmitButton ? _submitHotspot : _startOverHotspot;
+	SoundDescription &sound = button == kSubmitButton ? _submitSound : _startOverSound;
+
+	// Both buttons draw their pressed art out of the main image.
+	if (!src.isEmpty()) {
+		_buttonPress._drawSurface.create(_image, src);
+		_buttonPress.setTransparent(true);
+		_buttonPress.moveTo(dest);
+		_buttonPress.setVisible(true);
+	}
+
+	g_nancy->_sound->loadSound(sound);
+	g_nancy->_sound->playSound(sound);
+
+	_heldButton = button;
+	// Submit holds a little longer than the button that clears the board.
+	_buttonTimerEnd = g_system->getMillis() + (button == kSubmitButton ? 500 : 300);
+}
+
+void BuildPuzzle::takeOutcome() {
+	if (checkSolved()) {
+		if (_solveScene._sceneChange.sceneID != kNoScene) {
+			_isSolved = true;
+			_state = kActionTrigger;
+		}
+	} else if (_failScene.sceneID != kNoScene) {
+		_isFailed = true;
+		_state = kActionTrigger;
+	}
+}
+
+void BuildPuzzle::resetPuzzle() {
+	for (uint i = 0; i < _zones.size(); ++i) {
+		Zone &zone = _zones[i];
+		zone.numWrong = 0;
+		zone.numHeld = 0;
+		for (uint j = 0; j < zone.counts.size(); ++j) {
+			zone.counts[j] = 0;
+		}
+	}
+
+	for (uint i = 0; i < _holds.size(); ++i) {
+		_holds[i].setVisible(!_holds[i].srcRect.isEmpty());
+	}
+
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		Piece &piece = _pieces[i];
+		piece.assignedZone = -1;
+		piece.locked = false;
+
+		// The copies made while filling the zones go away again.
+		if (i >= _numDefined) {
+			piece.inUse = false;
+			piece.setVisible(false);
+			continue;
+		}
+
+		piece.liveRect = piece.destRect;
+		setItemValue(piece.itemID, 0);
+		updatePieceRender((int16)i);
+	}
+
+	_heldPiece = -1;
+	_closeupPiece = -1;
+	_activeHold = -1;
+	setPlacedCount(0);
+	updateDoneOverlay();
+
+	setFlagOnChange(_solvedFlag, false, _lastSolvedFlag);
+	setFlagOnChange(_wrongIngredientFlag, false, _lastWrongFlag);
+}
+
+void BuildPuzzle::updateCounter() {
+	if (_counterItemID == 255 || !_isInitialized) {
+		return;
+	}
+
+	_counter.setVisible(_closeupPiece == -1 || !_closeupDest.contains(_counterPos));
+
+	TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	int16 value = table ? table->getValue(_counterItemID) : 0;
+	if (value == kNoTableValue || value < 0) {
+		value = 0;
+	}
+
+	if (value == _shownCounterValue) {
+		return;
+	}
+
+	_shownCounterValue = value;
+	Common::String digits = Common::String::format("%d", value);
+
+	// The digits hang from the counter position, each the spacing past the last.
+	int16 width = 0;
+	int16 height = 0;
+	for (uint i = 0; i < digits.size(); ++i) {
+		const Common::Rect &src = _digitSrcRects[digits[i] - '0'];
+		if (i > 0) {
+			width += (int16)_counterSpacing;
+		}
+
+		width += src.width();
+		height = MAX<int16>(height, src.height());
+	}
+
+	const uint32 transColor = g_nancy->_graphics->getTransColor();
+	_counter._drawSurface.create(width, height, _image.format);
+	_counter._drawSurface.clear(transColor);
+	_counter._drawSurface.setTransparentColor(transColor);
+
+	int16 x = 0;
+	for (uint i = 0; i < digits.size(); ++i) {
+		const Common::Rect &src = _digitSrcRects[digits[i] - '0'];
+		_counter._drawSurface.blitFrom(_image, src, Common::Point(x, 0));
+		x += src.width() + (int16)_counterSpacing;
+	}
+
+	_counter.moveTo(Common::Rect(_counterPos.x, _counterPos.y, _counterPos.x + width, _counterPos.y + height));
+	_counter.setNeedsRedraw(true);
+}
+
+void BuildPuzzle::updateDoneOverlay() {
+	if (_doneSrcRect.isEmpty()) {
+		return;
+	}
+
+	bool allFull = true;
+	for (uint i = 0; i < _zones.size(); ++i) {
+		if (_zones[i].numHeld < (int16)_zones[i].capacity) {
+			allFull = false;
+			break;
+		}
+	}
+
+	_doneOverlay.setVisible(allFull);
+}
+
+void BuildPuzzle::saveState() {
+	BuildPuzzleData *data = (BuildPuzzleData *)NancySceneState.getPuzzleData(BuildPuzzleData::getTag());
+	assert(data);
+
+	data->placedCount = _placedCount;
+	data->solved = _solvedFlag != -1 && NancySceneState.getEventFlag(_solvedFlag, g_nancy->_true);
+	data->wrongIngredient = _wrongIngredientFlag != -1 &&
+							NancySceneState.getEventFlag(_wrongIngredientFlag, g_nancy->_true);
+
+	data->pieces.clear();
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		const Piece &piece = _pieces[i];
+		if (!piece.inUse) {
+			continue;
+		}
+
+		data->pieces.push_back(piece.sourceID);
+		data->pieces.push_back(piece.assignedZone);
+		data->pieces.push_back(piece.liveRect.left);
+		data->pieces.push_back(piece.liveRect.top);
+		data->pieces.push_back(piece.liveRect.right);
+		data->pieces.push_back(piece.liveRect.bottom);
+	}
+
+	data->zones.clear();
+	for (uint i = 0; i < _zones.size(); ++i) {
+		const Zone &zone = _zones[i];
+		data->zones.push_back(zone.numWrong);
+		for (uint j = 0; j < zone.counts.size(); ++j) {
+			data->zones.push_back(zone.counts[j]);
+		}
+	}
+}
+
+void BuildPuzzle::restoreState(const BuildPuzzleData &data) {
+	for (uint i = 0; i + 5 < data.pieces.size(); i += 6) {
+		int16 sourceID = data.pieces[i];
+		if (sourceID < 0 || sourceID >= (int16)_numDefined) {
+			continue;
+		}
+
+		// The pieces from the record come first, in order; anything after them
+		// is a copy of one of them.
+		int16 pieceIdx = (int16)(i / 6);
+		if (pieceIdx >= (int16)_numDefined) {
+			pieceIdx = clonePiece(sourceID);
+			if (pieceIdx == -1) {
+				break;
+			}
+		}
+
+		Piece &piece = _pieces[pieceIdx];
+		piece.assignedZone = data.pieces[i + 1];
+		piece.locked = piece.assignedZone >= 0 && piece.assignedZone < (int16)_zones.size() &&
+						_zones[piece.assignedZone].marksPlaced != 0;
+		piece.liveRect = Common::Rect(data.pieces[i + 2], data.pieces[i + 3], data.pieces[i + 4], data.pieces[i + 5]);
+		updatePieceRender(pieceIdx);
+	}
+
+	uint pos = 0;
+	for (uint i = 0; i < _zones.size() && pos < data.zones.size(); ++i) {
+		Zone &zone = _zones[i];
+		zone.numWrong = data.zones[pos++];
+		zone.numHeld = zone.numWrong;
+
+		for (uint j = 0; j < zone.counts.size() && pos < data.zones.size(); ++j) {
+			zone.counts[j] = (byte)data.zones[pos++];
+			zone.numHeld += zone.counts[j];
+		}
+	}
+
+	_placedCount = data.placedCount;
+	setFlagOnChange(_solvedFlag, data.solved, _lastSolvedFlag);
+	setFlagOnChange(_wrongIngredientFlag, data.wrongIngredient, _lastWrongFlag);
+}
+
+void BuildPuzzle::execute() {
+	switch (_state) {
+	case kBegin:
+		init();
+		registerGraphics();
+		_state = kRun;
+		break;
+	case kRun:
+		updateCounter();
+
+		if (_heldButton != kNoButton && g_system->getMillis() >= _buttonTimerEnd) {
+			HeldButton button = _heldButton;
+			_heldButton = kNoButton;
+			_buttonPress.setVisible(false);
+
+			if (button == kSubmitButton) {
+				takeOutcome();
+			} else {
+				resetPuzzle();
+			}
+		}
+		break;
+	case kActionTrigger:
+		if (_isSolved) {
+			_solveScene.execute();
+		} else if (_isFailed) {
+			NancySceneState.setEventFlag(_failFlag);
+			NancySceneState.changeScene(_failScene);
+		} else if (_takenExit >= 0) {
+			NancySceneState.setEventFlag(_exitHotspots[_takenExit].flag);
+			NancySceneState.changeScene(_exitHotspots[_takenExit].scene);
+		}
+
+		finishExecution();
+		break;
+	}
+}
+
+void BuildPuzzle::handleInput(NancyInput &input) {
+	if (_state != kRun || _isSolved) {
+		return;
+	}
+
+	const VIEW *viewData = GetEngineData(VIEW);
+	if (!viewData || !viewData->screenPosition.contains(input.mousePos)) {
+		return;
+	}
+
+	if (_heldButton != kNoButton) {
+		return;
+	}
+
+	Common::Point mouseVP(input.mousePos.x - viewData->screenPosition.left,
+							input.mousePos.y - viewData->screenPosition.top);
+	bool clicked = (input.input & NancyInput::kLeftMouseButtonUp) != 0;
+
+	updateCursorItem(mouseVP);
+
+	// The buttons sit above the board, and submitting needs enough pieces placed.
+	if (!_startOverHotspot.isEmpty() && _startOverHotspot.contains(mouseVP)) {
+		setPieceCursor(false);
+
+		if (clicked) {
+			pressButton(kStartOverButton);
+		}
+
+		return;
+	}
+
+	if (!_submitHotspot.isEmpty() && _submitHotspot.contains(mouseVP) &&
+			_placedCount >= (int16)_requiredPlaced) {
+		setPieceCursor(false);
+
+		if (clicked) {
+			pressButton(kSubmitButton);
+		}
+
+		return;
+	}
+
+	// A close-up covers the board; clicking it takes the piece, except for a
+	// piece that is only ever there to be looked at.
+	if (_closeupPiece != -1) {
+		setPieceCursor(false);
+
+		if (clicked) {
+			int16 pieceIdx = _closeupPiece;
+			closeCloseup();
+
+			if (_pieces[pieceIdx].kind != 3) {
+				pickUpPiece(pieceIdx);
+			}
+		}
+
+		return;
+	}
+
+	// Carrying an ingredient: release it over a zone, or anywhere else to send
+	// it home.
+	if (_heldPiece != -1) {
+		setPieceCursor(true);
+
+		if (clicked) {
+			// Stacked zones overlap, so the release only says whether the drop is
+			// over them at all; which one it lands in is the first with room, so a
+			// glass fills from the bottom rather than leaving a gap under a layer.
+			int16 target = -1;
+			int16 over = -1;
+
+			for (uint i = 0; i < _zones.size(); ++i) {
+				const Piece &held = _pieces[_heldPiece];
+
+				// A piece can be restricted to a single zone.
+				if (held.zoneID != -1 && held.zoneID != (int16)i) {
+					continue;
+				}
+
+				if (over == -1 && _zones[i].hotspot.contains(mouseVP)) {
+					over = (int16)i;
+				}
+
+				if (target == -1 && (_zones[i].capacity == 0 || _zones[i].numHeld < _zones[i].capacity)) {
+					target = (int16)i;
+				}
+			}
+
+			if (over == -1) {
+				target = -1;
+			} else if (target == -1) {
+				target = over;
+			}
+
+			if (target != -1) {
+				placePiece(_heldPiece, target, mouseVP);
+
+				// The scoop is emptied by the drop and goes back to its place.
+				if (_activeHold != -1) {
+					_holds[_activeHold].setVisible(true);
+					_activeHold = -1;
+				}
+			} else {
+				returnPiece(_heldPiece);
+			}
+
+			updateCursorItem(mouseVP);
+		}
+
+		return;
+	}
+
+	// Topmost piece under the cursor.
+	int16 hovered = -1;
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		const Piece &piece = _pieces[i];
+		if (!piece.inUse || piece.locked || !piece.liveRect.contains(mouseVP)) {
+			continue;
+		}
+
+		if (hovered == -1 || piece.getZOrder() > _pieces[hovered].getZOrder()) {
+			hovered = (int16)i;
+		}
+	}
+
+	if (hovered != -1) {
+		const Piece &piece = _pieces[hovered];
+
+		// An ingredient that has no art of its own is scooped rather than carried,
+		// and a piece that names its scoops can only be taken with one of those.
+		bool needsScoop = piece.dragSrcRect.isEmpty() || !piece.holds.empty();
+		bool scoopFits = _activeHold != -1 &&
+							(piece.holds.empty() ||
+							Common::find(piece.holds.begin(), piece.holds.end(), _activeHold) != piece.holds.end());
+
+		if (!piece.closeupSrcRect.isEmpty() || !needsScoop || scoopFits) {
+			setPieceCursor(false);
+
+			if (clicked) {
+				if (!piece.closeupSrcRect.isEmpty()) {
+					openCloseup(hovered);
+				} else {
+					pickUpPiece(hovered);
+					updateCursorItem(mouseVP);
+				}
+			}
+
+			return;
+		}
+	}
+
+	// The scoops themselves: one click takes it, another puts it back.
+	for (uint i = 0; i < _holds.size(); ++i) {
+		if (!_holds[i].destRect.contains(mouseVP)) {
+			continue;
+		}
+
+		setPieceCursor(false);
+
+		if (clicked) {
+			if (_activeHold == (int16)i) {
+				_holds[i].setVisible(true);
+				_activeHold = -1;
+			} else {
+				if (_activeHold != -1) {
+					_holds[_activeHold].setVisible(true);
+				}
+
+				_activeHold = (int16)i;
+				_holds[i].setVisible(false);
+			}
+
+			g_nancy->_sound->loadSound(_pickupSound);
+			g_nancy->_sound->playSound(_pickupSound);
+			updateCursorItem(mouseVP);
+		}
+
+		return;
+	}
+
+	for (uint i = 0; i < _exitHotspots.size(); ++i) {
+		const ExitHotspot &exit = _exitHotspots[i];
+		if (exit.hotspot.isEmpty() ||
+				!NancySceneState.getViewport().convertViewportToScreen(exit.hotspot).contains(input.mousePos)) {
+			continue;
+		}
+
+		if (exit.cursorType != 0) {
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)exit.cursorType, true, true);
+		} else {
+			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+		}
+
+		if (clicked) {
+			_takenExit = (int16)i;
+			_state = kActionTrigger;
+		}
+
+		return;
+	}
+}
+
+} // End of namespace Action
+} // End of namespace Nancy

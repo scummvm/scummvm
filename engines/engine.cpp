@@ -218,10 +218,6 @@ Engine::Engine(OSystem *syst)
 Engine::~Engine() {
 	_mixer->stopAll();
 
-	// Flush any pending remaining events
-	Common::Event evt;
-	while (g_system->getEventManager()->pollEvent(evt)) {}
-
 	delete _debugger;
 	delete _mainMenuDialog;
 	g_engine = NULL;
@@ -235,7 +231,7 @@ void Engine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath, 0, 4);
 }
 
-bool Engine::enhancementEnabled(int32 cls) {
+bool Engine::enhancementEnabled(int32 cls) const {
 	return _activeEnhancements & cls;
 }
 
@@ -829,7 +825,13 @@ void Engine::openMainMenuDialog() {
 	if (hasVKeyb)
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
+#ifdef ENABLE_EVENTRECORDER
+	g_eventRec.setRecordModalDialog(true);
+#endif
 	runDialog(*_mainMenuDialog);
+#ifdef ENABLE_EVENTRECORDER
+	g_eventRec.setRecordModalDialog(false);
+#endif
 
 	if (hasVKeyb)
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);

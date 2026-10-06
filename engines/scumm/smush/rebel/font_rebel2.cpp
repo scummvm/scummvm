@@ -547,12 +547,20 @@ void Rebel2NutRenderer::loadRebel2SpriteFromData(const byte *data, int32 dataSiz
 						memcpy(_codec23Lookup, frame.data, sizeof(_codec23Lookup));
 					}
 
+					// Codec 45 setup frames have no drawable dimensions.
+					if (frame.codec == 45 && ((int16)frame.width < 0 || (int16)frame.height < 0)) {
+						frame.width = 0;
+						frame.height = 0;
+					}
+
 					const uint64 pixels = (uint64)frame.width * frame.height;
 					if (pixels == 0) {
 						frame.width = 0;
 						frame.height = 0;
-						frame.data = nullptr;
-						frame.dataSize = 0;
+						if (frame.codec != 45) {
+							frame.data = nullptr;
+							frame.dataSize = 0;
+						}
 					} else if (pixels > kRebel2MaxSpritePixels || decodedLength + pixels > kRebel2MaxDecodedSpriteBytes) {
 						warning("Rebel2NutRenderer::loadRebel2SpriteFromData: invalid sprite dimensions %ux%u at frame %d",
 							frame.width, frame.height, frameCount);
@@ -595,6 +603,12 @@ void Rebel2NutRenderer::loadRebel2SpriteFromData(const byte *data, int32 dataSiz
 		_chars[i].width = frame.width;
 		_chars[i].height = frame.height;
 		_chars[i].transparency = kDefaultTransparentColor;
+
+		if (frame.codec == 45 && frame.data) {
+			const byte *maskData;
+			int maskSize;
+			smushPrepareRA2BlurData(frame.data, frame.dataSize, _codec45Palette, _codec45Lookup, maskData, maskSize);
+		}
 
 		if (frame.width == 0 || frame.height == 0 || frame.data == nullptr)
 			continue;

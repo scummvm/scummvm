@@ -26,8 +26,6 @@
 #include "mads/core/mouse.h"
 #include "mads/core/screen.h"
 #include "mads/core/echo.h"
-#include "mads/core/ems.h"
-#include "mads/core/himem.h"
 #include "mads/core/env.h"
 #include "mads/core/screen.h"
 #include "mads/core/timer.h"
@@ -180,7 +178,6 @@ static void error_explode(const char *error_buf, const char *module_buf,
 
 	timer_remove();
 	keys_remove();
-	himem_shutdown();
 
 	mouse_init(false, 3);
 	screen_dominant_mode(text_mode);

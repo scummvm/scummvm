@@ -95,11 +95,12 @@ void TypingQuizPuzzle::readData(Common::SeekableReadStream &stream) {
 	_wrongSound.readNormal(stream);            // 0x497
 	_escapeSound.readNormal(stream);           // 0x4c8
 
-	_winScene.readData(stream);                // 0x4f9 (20 bytes)
-	_winScene.continueSceneSound = stream.readUint16LE(); // 0x50d
-	_winFlag = stream.readSint16LE();          // 0x50f
+	_solveScene._sceneChange.readData(stream);   // 0x4f9 (20 bytes)
+	_solveScene._sceneChange.continueSceneSound = stream.readUint16LE(); // 0x50d
+	_solveScene._flag.label = stream.readSint16LE(); // 0x50f
+	_solveScene._flag.flag = g_nancy->_true;
 
-	_winSound.readNormal(stream);              // 0x511
+	_solveSound.readNormal(stream);              // 0x511
 
 	_defaultScene.readData(stream);            // 0x542 (20 bytes)
 	_defaultScene.continueSceneSound = stream.readUint16LE(); // 0x556
@@ -380,8 +381,7 @@ void TypingQuizPuzzle::redraw() {
 
 void TypingQuizPuzzle::triggerSceneChange() {
 	if (_reachedTarget) {
-		NancySceneState.setEventFlag(_winFlag, g_nancy->_true);
-		NancySceneState.changeScene(_winScene);
+		_solveScene.execute();
 	} else {
 		if (_reachedThreshold && _flagThreshold != -1)
 			NancySceneState.setEventFlag(_flagThreshold, g_nancy->_true);
@@ -396,6 +396,7 @@ void TypingQuizPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 	case kRun: {
@@ -412,10 +413,7 @@ void TypingQuizPuzzle::execute() {
 		case kEvaluate:
 			if (_score >= (int)_effectiveTarget) {
 				_reachedTarget = true;
-				if (_winSound.name != "NO SOUND") {
-					g_nancy->_sound->loadSound(_winSound);
-					g_nancy->_sound->playSound(_winSound);
-				}
+				playSolveSound();
 			} else {
 				_reachedTarget    = false;
 				_reachedThreshold = _score >= (int)_scoreThreshold;
@@ -440,7 +438,7 @@ void TypingQuizPuzzle::execute() {
 		g_nancy->_sound->stopSound(_popSound);
 		g_nancy->_sound->stopSound(_wrongSound);
 		g_nancy->_sound->stopSound(_escapeSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 
 		triggerSceneChange();
 		finishExecution();

@@ -843,9 +843,8 @@ int EoBCoreEngine::getNextMonsterPos(EoBMonsterInPlay *m, int block) {
 			if (d == 9)
 				return -1;
 
-			int v = _monsterCloseAttUnkTable[d];
+			int v = (d > 11) ? 0 : _monsterCloseAttUnkTable[d];
 			if (v != -1)
-				//////
 				m->dir = 0;
 			return v;
 		}

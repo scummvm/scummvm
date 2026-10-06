@@ -61,6 +61,7 @@ private:
 	bool loadTOC();
 	int ioctl(int command, void *arg) const;
 	bool startPlayback(int track, int startFrame, int duration);
+	void routeADC(bool enable);
 
 	Drive _drives[kMaxDrives];
 	int _numDrives;
@@ -71,6 +72,8 @@ private:
 	const char *_log2phys;
 
 	Common::Array<cdrom_tocentry> _tocEntries;  // Includes the leadout as the final entry
+
+	bool _adcRouted;  // True while the ADC is added to the output for us
 
 	int _cdTrack;
 	int _cdNumLoops;

@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 class CompatHelpers {
@@ -562,6 +563,32 @@ class CompatHelpers {
 		private static class IntentCompatOld {
 			public static <T extends android.os.Parcelable> T getParcelableExtra(Intent i, String extra, Class<T> ignoredClazz) {
 				return i.getParcelableExtra(extra);
+			}
+		}
+	}
+
+	static class LocaleCompat {
+		public static Locale buildLocale(String language) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+				return LocaleCompatLollipop.buildLocale(language);
+			} else {
+				return LocaleCompatOld.buildLocale(language);
+			}
+		}
+
+		@RequiresApi(api = android.os.Build.VERSION_CODES.LOLLIPOP)
+		private static class LocaleCompatLollipop {
+			public static Locale buildLocale(String language) {
+				Locale.Builder builder = new Locale.Builder();
+				builder.setLanguage(language);
+				return builder.build();
+			}
+		}
+
+		@SuppressWarnings({"deprecation", "RedundantSuppression"})
+		private static class LocaleCompatOld {
+			public static Locale buildLocale(String language) {
+				return new Locale(language);
 			}
 		}
 	}

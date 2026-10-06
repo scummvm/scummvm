@@ -24,33 +24,22 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/action/actionzone.h"
 
 namespace Nancy {
 namespace Action {
 
-// Pachinko / pinball ball-drop puzzle, new in Nancy13 (AR 175.
+// Pachinko / pinball ball-drop puzzle, new in Nancy13 (AR 175).
 //
-// The player clicks a spring launcher (a fixed hotspot on the right of the board) to
-// fire a ball leftward across a pin field. The ball falls under gravity and bounces off
-// pins and bumper zones (restitution ~0.85) until it settles into one of two catch
-// "machines": the Miner (a win) or the Yeti (a loss). Each machine then plays its own
-// result animation (MUS_PachinkoWinANIM for the Miner) before the puzzle finishes.
-//
-// The chunk is a 167-byte header, a random "plink" sound block, two machine sub-objects
-// (each: an ANIM sprite strip + a slide "mover" + three sound blocks + a 55-byte blob
-// whose leading filename is the result movie), a pin-rect array, a polymorphic Nancy13
-// ActionZone array (the bumpers/walls/overlays), and the give-up exit hotspot. The parse
-// is byte-exact (verified to consume the whole chunk).
-//
-// The physics uses a polar-coordinate integrator: velocity as speed + heading, gravity
-// added in cartesian, per-frame heading recomputed with atan2, sub-stepped rectangle
-// collision with restitution. Per-ball deceleration is not in the chunk, so it is
-// approximated (see kDrag).
-class PachinkoPuzzle : public RenderActionRecord {
+// The player clicks a spring launcher on the right of the board to fire a ball leftward
+// across a pin field. The ball falls under gravity, bouncing off the pins and the bumper
+// zones, until it drops into one of four holes. Each hole feeds one of two climbers racing
+// up the mountain to the pot: the Miner (a win) or the Yeti (a loss). The first to reach
+// the pot plays its result animation, then exits through its own scene and event flag.
+class PachinkoPuzzle : public PuzzleRecord {
 public:
-	PachinkoPuzzle() : RenderActionRecord(7) {}
+	PachinkoPuzzle() : PuzzleRecord(7) {}
 	virtual ~PachinkoPuzzle() {}
 
 	void init() override;
@@ -64,21 +53,22 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "PachinkoPuzzle"; }
 
-	// One of the two mountain climbers (Miner/Gold Digger = win, Yeti = lose). Each is an
-	// animated sprite that climbs from its start anchor (bottom of the mountain) up to its
-	// end anchor (the pot at the top) as balls fall into its holes.
+	// One of the two mountain climbers (Miner = win, Yeti = lose). An animated sprite that
+	// climbs from the bottom of the mountain up to the pot as balls fall into its holes.
 	struct Machine {
-		Common::Path imageName;					// the ANIM_OVL sprite strip
+		Common::Path imageName;					// the sprite strip
 		int32 animRate = 0;						// frames per second
 		Common::Array<Common::Rect> frames;		// sprite-strip source rects
-		Common::Rect moverStart;				// climb-path bottom anchor (2x2 point rect)
+		Common::Rect moverStart;				// climb-path bottom anchor
 		Common::Rect moverEnd;					// climb-path top anchor (the pot)
 		int32 moverSpeed = 0;					// climb steps gained per ball caught
-		RandomSoundBlock winchSound;			// [snd1] the winch-up cue
-		RandomSoundBlock resultSound;			// [snd2] the win/lose voice cue (MinerWin*/PachinkoLose*)
-		RandomSoundBlock fastSound;				// [snd3] the fast-winch cue
-		Common::Path movieName;					// result animation (blob[0], "" == none)
+		RandomSoundBlock winchSound;			// the winch-up cue
+		RandomSoundBlock resultSound;			// the win/lose voice cue
+		RandomSoundBlock fastSound;				// the fast-winch cue
+		Common::Path movieName;					// result animation ("" == none)
 		Common::Rect movieDest;					// where the result animation is drawn
+		SceneChangeDescription resultScene;		// where the puzzle exits when this climber wins
+		FlagDescription resultFlag;				// the event flag it sets on the way out
 
 		Graphics::ManagedSurface image;
 		uint frame = 0;							// current animation frame
@@ -86,8 +76,7 @@ protected:
 		int climbSteps = 0;						// accumulated climb (moverSpeed per catch)
 	};
 
-	// A single launched ball. Physics run in viewport space; the heading is stored as a
-	// scalar speed plus a heading angle in radians.
+	// A single launched ball, moving in viewport space.
 	struct Ball {
 		double x = 0.0;
 		double y = 0.0;
@@ -98,11 +87,11 @@ protected:
 	};
 
 	// One of the four holes on the panel. A ball that drops in advances its climber and
-	// briefly lights the hole (a sprite from the "lit" overlay).
+	// briefly lights the hole.
 	struct Hole {
 		Common::Rect rect;
 		Machine *climber = nullptr;
-		RandomSoundBlock sound;			// the bell cue (PinballBell_*)
+		RandomSoundBlock sound;			// the bell cue
 		Common::Rect litSrc;			// lit-hole sprite source (in _litImage)
 		Common::Rect litDest;			// where it is drawn
 		uint32 litUntil = 0;			// keep it lit until this time
@@ -119,13 +108,10 @@ protected:
 	bool collidePins(Ball &ball) const;
 	int catchInHole(const Ball &ball) const;	// hole index the ball fell into, or -1
 	void advanceMachine(Machine &m, uint32 now);
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
-	void setDataCursor(uint16 cursorType) const;
 
-	// -- File data (167-byte header, in stream order) --
-	Common::Path _imageName;				// 0x00 - board overlay (MUS_PachinkoPUZ02_OVL)
+	// -- File data --
 
-	Common::Rect _ballSrc;					// ball sprite source in the overlay
+	Common::Rect _ballSrc;					// ball sprite source
 	Common::Rect _ballEntry;				// top-right entry chute (where balls appear)
 	int32 _velMin = 0;						// launch-speed floor
 	int32 _velMax = 0;						// launch-speed ceiling
@@ -141,20 +127,14 @@ protected:
 	int32 _spawnWindowMin = 0;
 	int32 _spawnWindowMax = 0;				// spawn window (ms)
 
-	RandomSoundBlock _plinkSounds;			// random ball-launch cues (LeverPull*)
+	RandomSoundBlock _plinkSounds;			// random ball-launch cues
 
 	Machine _winMachine;					// the Miner
 	Machine _loseMachine;					// the Yeti
 
 	Common::Array<Common::Rect> _pins;		// static pin collision rects
-	Common::Array<ActionZone> _zones;		// bumpers / walls / overlays (Nancy13 layout)
+	Common::Array<ActionZone> _zones;		// bumpers / walls / overlays
 	Common::Array<Hole> _holes;				// the four catch holes (built from _zones)
-
-	// The give-up / exit hotspot (the base trailer's 23-byte record).
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;			// set on give-up
 
 	// -- Runtime state --
 	enum State {
@@ -168,15 +148,13 @@ protected:
 	Common::Array<Ball> _balls;
 	bool _spawnPending = false;				// a launcher click awaiting a spawn
 	uint32 _spawnClickTime = 0;
-	Machine *_activeMachine = nullptr;		// the machine that caught the ball
-	bool _solved = false;
+	Machine *_activeMachine = nullptr;		// the climber that reached the pot
 	bool _exitRequested = false;
 	uint32 _lastUpdate = 0;
 	uint32 _resultTime = 0;
 	SoundDescription _resultSoundDesc;
 
 	Common::Path _litImageName;				// "lit" board overlay (hole highlights)
-	Graphics::ManagedSurface _image;		// board overlay
 	Graphics::ManagedSurface _ballImage;	// ball sprite sheet
 	Graphics::ManagedSurface _litImage;		// lit-hole sprites
 	MoviePlayer _resultMovie;

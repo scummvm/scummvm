@@ -41,6 +41,7 @@
 #include "director/window.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
+#include "director/castmember/digitalvideo.h"
 #include "director/castmember/palette.h"
 #include "director/castmember/text.h"
 #include "director/castmember/transition.h"
@@ -270,6 +271,8 @@ static const BuiltinProto builtins[] = {
 	{ "trackStartTime",	LB::b_trackStartTime,1,1, 500, FBLTIN },	//				D5 f
 	{ "trackStopTime",	LB::b_trackStopTime,1, 1, 500, FBLTIN },	//				D5 f
 	{ "trackType",		LB::b_trackType,	1, 1, 500, FBLTIN },	//				D5 f
+	{ "trackEnabled",	LB::b_trackEnabled,	2, 2, 500, FBLTIN },	//				D5 f
+	{ "setTrackEnabled",LB::b_setTrackEnabled,	3, 3, 500, CBLTIN },	//				D5 f
 
 	// Save session
 	{ "beginRecording", LB::b_beginRecording,0, 1, 500, CBLTIN },	//				D5 c
@@ -3299,14 +3302,7 @@ void LB::b_puppetSprite(int nargs) {
 			int spriteId = sprite.asInt();
 			Sprite *target = sc->getSpriteById(spriteId);
 			bool val = (bool)state.asInt();
-			bool refresh = (!val) && (target->_puppet);
 			target->_puppet = val;
-			if (refresh) {
-				// puppetSprite set to FALSE, copy back sprite data from frame cache
-				Channel *chan = sc->getChannelById(spriteId);
-				chan->setClean(sc->_currentFrame->_sprites[spriteId]);
-				chan->setDirty();
-			}
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");
 		}
@@ -3817,7 +3813,15 @@ void LB::b_intersect(int nargs) {
 	Common::Rect rect1(r1.u.farr->arr[0].asInt(), r1.u.farr->arr[1].asInt(), r1.u.farr->arr[2].asInt(), r1.u.farr->arr[3].asInt());
 	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 
-	d = rect1.intersects(rect2);
+	// Return the overlapping area as a rect (rect(0,0,0,0) if none).
+	Common::Rect inter = rect1.findIntersectingRect(rect2);
+
+	d.type = RECT;
+	d.u.farr = new FArray;
+	d.u.farr->arr.push_back(Datum((int)inter.left));
+	d.u.farr->arr.push_back(Datum((int)inter.top));
+	d.u.farr->arr.push_back(Datum((int)inter.right));
+	d.u.farr->arr.push_back(Datum((int)inter.bottom));
 
 	g_lingo->push(d);
 }
@@ -3855,8 +3859,15 @@ void LB::b_inside(int nargs) {
 	Datum d;
 	Datum r2 = g_lingo->pop();
 	Datum p1 = g_lingo->pop();
-	TYPECHECK(r2, RECT);
-	TYPECHECK(p1, POINT);
+
+	// A sprite reference can be void before its init handler runs, giving a void
+	// rect; return FALSE rather than aborting the builtin with no value.
+	if (p1.type != POINT || r2.type != RECT) {
+		warning("LB::b_inside(): expected a point and a rect, got %s and %s", p1.type2str(), r2.type2str());
+		d = 0;
+		g_lingo->push(d);
+		return;
+	}
 
 	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 	Common::Point point1(p1.u.farr->arr[0].asInt(), p1.u.farr->arr[1].asInt());
@@ -4381,6 +4392,47 @@ void LB::b_trackType(int nargs) {
 	Datum result("video");
 	result.type = SYMBOL;
 	g_lingo->push(result);
+}
+
+void LB::b_trackEnabled(int nargs) {
+	Datum whichTrack = g_lingo->pop();
+	Datum whichSprite = g_lingo->pop();
+	TYPECHECK(whichSprite, SPRITEREF);
+
+	Score *score = g_director->getCurrentMovie()->getScore();
+	Sprite *sprite = score->getSpriteById(whichSprite.u.i);
+	if (!sprite) {
+		g_lingo->push(0);
+		g_lingo->lingoError("b_trackEnabled: invalid sprite reference received");
+		return;
+	}
+	if (!sprite->_cast || (sprite->_cast->_type != kCastDigitalVideo)) {
+		g_lingo->push(0);
+		g_lingo->lingoError("b_trackEnabled: non-digital-video sprite reference received");
+		return;
+	}
+
+	g_lingo->push(((DigitalVideoCastMember *)(sprite->_cast))->getTrackEnabled(whichTrack.asInt()));
+}
+
+void LB::b_setTrackEnabled(int nargs) {
+	Datum trueOrFalse = g_lingo->pop();
+	Datum whichTrack = g_lingo->pop();
+	Datum whichSprite = g_lingo->pop();
+	TYPECHECK(whichSprite, SPRITEREF);
+
+	Score *score = g_director->getCurrentMovie()->getScore();
+	Sprite *sprite = score->getSpriteById(whichSprite.u.i);
+	if (!sprite) {
+		g_lingo->lingoError("b_setTrackEnabled: invalid sprite reference received");
+		return;
+	}
+	if (!sprite->_cast || (sprite->_cast->_type != kCastDigitalVideo)) {
+		g_lingo->lingoError("b_setTrackEnabled: non-digital-video sprite reference received");
+		return;
+	}
+
+	((DigitalVideoCastMember *)(sprite->_cast))->setTrackEnabled(whichTrack.asInt(), trueOrFalse.asInt());
 }
 
 void LB::b_scummvmassert(int nargs) {

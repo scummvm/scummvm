@@ -83,7 +83,7 @@ void room_114_init() {
 
 	/* ========================= Previous Rooms ===================== */
 
-	if ((previous_room == 105) || (previous_room != KERNEL_RESTORING_GAME)) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x      = PLAYER_X_FROM_105;
 		player.y      = PLAYER_Y_FROM_105;
 		player.facing = FACING_WEST;

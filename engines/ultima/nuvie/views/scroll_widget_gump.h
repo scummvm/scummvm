@@ -26,7 +26,6 @@
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/fonts/font.h"
-#include "ultima/shared/std/containers.h"
 #include "common/str.h"
 
 namespace Ultima {

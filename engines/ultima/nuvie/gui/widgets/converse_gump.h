@@ -24,7 +24,6 @@
 
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
-#include "ultima/shared/std/containers.h"
 #include "common/str.h"
 
 namespace Ultima {

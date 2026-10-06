@@ -26,6 +26,8 @@
 
 namespace MADS {
 
+static const int TIMER_TICKS_PER_SECOND = 60;
+
 extern long *timer_address;         /* "Default" timer count address */
 extern word timer_rate;                 /* Current timer ticks/sec       */
 extern int  timer_service_active;       /* Flag if timer service active  */
@@ -45,7 +47,7 @@ extern long timer_dos_low;
 
 
 /**
- * Reads system clock, returns number of ticks since startup (1 tick = 54.9ms)
+ * Reads the system clock in TIMER_TICKS_PER_SECOND ticks per second.
  */
 extern long timer_read();
 inline long timer_read_dos() {

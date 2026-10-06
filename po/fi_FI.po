@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-07-30 23:22+0000\n"
+"PO-Revision-Date: 2026-09-16 15:22+0000\n"
 "Last-Translator: Linus Väinämö Virtanen <linus.virtanen@protonmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6557,7 +6557,7 @@ msgstr "Käytä 'korkealaatuista' OGG-musiikkia"
 
 #: engines/access/metaengine.cpp:83
 msgid "Use the OGG audio from the re-release instead of original MIDI tracks"
-msgstr ""
+msgstr "Käytä uudelleenjulkaisun OGG-ääntä alkuperäisten MIDI-raitojen sijasta"
 
 #: engines/access/metaengine.cpp:236 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
@@ -7082,7 +7082,7 @@ msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja"
 
 #: engines/agos/dialogs.cpp:94
 msgid "Toggle between the system cursor and the default cursor."
-msgstr ""
+msgstr "Vaihda järjestelmän kohdistimen ja oletuskohdistimen välillä."
 
 #: engines/agos/dialogs.cpp:107 engines/sci/detection_options.h:261
 msgid "MIDI mode:"
@@ -8030,6 +8030,9 @@ msgid ""
 "This option allows the game to play at a slightly extended resolution. This "
 "is what the Mac and CDi versions are supposed to play like."
 msgstr ""
+"Tämä vaihtoehto mahdollistaa pelin pelaamisen hieman laajennetulla "
+"resoluutiolla. Tämä mahdollistaa pelikokemuksen, joka Mac- ja CDi-versioille "
+"on tarkoitettukin."
 
 #: engines/buried/buried.cpp:598
 msgid "Are you sure you want to quit?"
@@ -8532,11 +8535,11 @@ msgstr "Laukaise ase"
 
 #: engines/colony/savegame.cpp:291
 msgid "Saving is only available in first-person view."
-msgstr ""
+msgstr "Tallentaminen on käytettävissä vain ensipersoonan näkymässä."
 
 #: engines/colony/savegame.cpp:300
 msgid "Loading is only available in first-person view."
-msgstr ""
+msgstr "Lataaminen on käytettävissä vain ensipersoonan näkymässä."
 
 #: engines/crab/input/input.cpp:119
 msgid "Talk / Interact"
@@ -8681,6 +8684,10 @@ msgid ""
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
+"Määrittää, käyttääkö peli vain CD-version ääniefektejä, CD-julkaisun "
+"efektejä, jossa siis ylimääräinen efektilevyke, vaiko ainoastaan pelkän "
+"korppulevykkeen ääniefektistöä. Efektit ovat käytettävissä vain, jos "
+"käytetään korppuversion musiikkeja."
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
@@ -8792,6 +8799,8 @@ msgstr "Inventaario/ÄO Pistenäyttö päälle/pois"
 #: engines/dm/metaengine.cpp:90
 msgid "Select dialog choice (only works if there is a single choice)"
 msgstr ""
+"Valitse keskusteluikkunan valinta (toimii vain mikäli tarjolla on ainoastaan "
+"yksi vaihtoehto)"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:97
@@ -8989,17 +8998,19 @@ msgstr "Korosta esineitä"
 
 #: engines/eem/metaengine.cpp:39
 msgid "Hide the boxes that highlight searchable clue locations."
-msgstr ""
+msgstr "Piilota laatikot, jotka korostavat haettavia vihjesijainteja."
 
 #: engines/eem/metaengine.cpp:49
 msgid "Better fit for dialog balloons"
-msgstr ""
+msgstr "Sopivampi äänen tekstikuplille"
 
 #: engines/eem/metaengine.cpp:50
 msgid ""
 "Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
 "original size."
 msgstr ""
+"Valitse pienempi puhekuplan grafiikka, kun sen sisältävä teksti ei vaadi "
+"alkuperäistä kokoa."
 
 #: engines/eem/metaengine.cpp:61
 #, fuzzy

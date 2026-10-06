@@ -79,7 +79,6 @@ void room_304_init() {
 
 		kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 
-		/* viewing_at_y = ((video_y - display_y) >> 1); */
 
 		if (previous_room == 305) {
 			ss[fx_chan_tilt] = kernel_load_series(kernel_name('f', 0), false);
@@ -143,7 +142,6 @@ static void process_conversation_23() {
 
 	case conv023_die_b_b:
 		local->phantom_action = CONV23_PHANTOM_FIGHT;
-		/* conv_hold (); */
 		break;
 
 	case conv023_okay_abc:
@@ -409,6 +407,7 @@ static void handle_animation_raoul_fight() {
 
 		switch (local->raoul_fight_frame) {
 		case 22:  /* almost end of climbing down rope */
+		case 45:
 			conv_release();
 			break;
 
@@ -432,10 +431,6 @@ static void handle_animation_raoul_fight() {
 
 		case 28:
 			local->raoul_fight_action = CONV23_RAOUL_TALK;
-			break;
-
-		case 45:
-			conv_release();
 			break;
 
 		case 46:  /* end of jumping down to second level and talk 1 */

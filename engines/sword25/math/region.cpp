@@ -287,9 +287,9 @@ bool Region::isLineOfSight(const Vertex &a, const Vertex &b) const {
 
 	// The line must be within the contour polygon, and outside of any hole polygons
 	Common::Array<Polygon>::const_iterator iter = _polygons.begin();
-	if (!(*iter).isLineInterior(a, b)) return false;
+	if (!iter->isLineInterior(a, b)) return false;
 	for (iter++; iter != _polygons.end(); iter++)
-		if (!(*iter).isLineExterior(a, b)) return false;
+		if (!iter->isLineExterior(a, b)) return false;
 
 	return true;
 }

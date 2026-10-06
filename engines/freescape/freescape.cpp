@@ -29,7 +29,7 @@
 #include "math/utils.h"
 
 #include "freescape/freescape.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 #include "freescape/objects/sensor.h"
 #include "freescape/sweepAABB.h"
 #include "freescape/doodle.h"
@@ -258,6 +258,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	// close-up detail. Other games need a smaller value to avoid clipping of nearby objects
 	_nearClipPlane = (isDriller() || isDark()) ? 2 : 0.5;
 	_farClipPlane = 8192 + 1802; // Added some extra distance to avoid flickering
+	_fieldOfView = 75.0f;
+	_viewAspectRatio = isCastle() ? 1.6f : 2.18f;
 
 	// These depends on the specific game
 	_playerHeight = 0;
@@ -721,8 +723,8 @@ void FreescapeEngine::drawFrame() {
 		return;
 	}
 
-	const float fov = 75.0f;
-	float aspectRatio = isCastle() ? 1.6 : 2.18;
+	const float fov = _fieldOfView;
+	float aspectRatio = _viewAspectRatio;
 
 	Math::Vector3d renderPosition = getCameraRenderPosition();
 
@@ -747,7 +749,8 @@ void FreescapeEngine::drawFrame() {
 
 	drawBackground();
 	if (_avoidRenderingFrames == 0) { // Avoid rendering inside objects
-		_currentArea->draw(_gfx, _ticks / 10, renderPosition, _cameraFront, false, fov, aspectRatio, _nearClipPlane, farClipPlane);
+		if (_currentArea->hasDrawableObjects())
+			_currentArea->draw(_gfx, _ticks / 10, renderPosition, _cameraFront, _roll, false, fov, aspectRatio, _nearClipPlane, farClipPlane);
 		if (_gameStateControl == kFreescapeGameStatePlaying &&
 		    _currentArea->hasActiveGroups() && _ticks % 50 == 0) {
 			executeMovementConditions();
@@ -787,8 +790,8 @@ void FreescapeEngine::drawFrame() {
 }
 
 void FreescapeEngine::drawFrameStereo(int farClipPlane) {
-	const float fov = 75.0f;
-	float aspectRatio = isCastle() ? 1.6 : 2.18;
+	const float fov = _fieldOfView;
+	float aspectRatio = _viewAspectRatio;
 
 	Math::Vector3d renderPosition = getCameraRenderPosition();
 
@@ -820,8 +823,8 @@ void FreescapeEngine::drawFrameStereo(int farClipPlane) {
 	_gfx->positionCamera(renderPosition, renderPosition + _cameraFront, _roll);
 
 	drawBackground();
-	if (_avoidRenderingFrames == 0)
-		_currentArea->drawDepthLayer(_gfx, _ticks / 10, renderPosition, _cameraFront, false, Area::kRenderDepthBackground, stereoForegroundDistance, fov, aspectRatio, _nearClipPlane, farClipPlane);
+	if (_avoidRenderingFrames == 0 && _currentArea->hasDrawableObjects())
+		_currentArea->drawDepthLayer(_gfx, _ticks / 10, renderPosition, _cameraFront, _roll, false, Area::kRenderDepthBackground, stereoForegroundDistance, fov, aspectRatio, _nearClipPlane, farClipPlane);
 
 	for (int pass = 0; pass < 2; pass++) {
 		_gfx->setStereoEye(pass == 0 ? Renderer::kStereoEyeLeft : Renderer::kStereoEyeRight);
@@ -830,8 +833,8 @@ void FreescapeEngine::drawFrameStereo(int farClipPlane) {
 
 		_gfx->clearDepthBuffer();
 
-		if (_avoidRenderingFrames == 0) // Avoid rendering inside objects
-			_currentArea->drawDepthLayer(_gfx, _ticks / 10, renderPosition, _cameraFront, false, Area::kRenderDepthForeground, stereoForegroundDistance, fov, aspectRatio, _nearClipPlane, farClipPlane);
+		if (_avoidRenderingFrames == 0 && _currentArea->hasDrawableObjects()) // Avoid rendering inside objects
+			_currentArea->drawDepthLayer(_gfx, _ticks / 10, renderPosition, _cameraFront, _roll, false, Area::kRenderDepthForeground, stereoForegroundDistance, fov, aspectRatio, _nearClipPlane, farClipPlane);
 
 		if (_underFireFrames > 0) {
 			for (auto &it : _sensors) {
@@ -937,6 +940,9 @@ void FreescapeEngine::processInput() {
 			else if (event.customType != 0xde00)
 				continue;
 		}
+
+		if (handleInput(event))
+			continue;
 
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
@@ -1231,6 +1237,7 @@ Common::Error FreescapeEngine::run() {
 
 		checkSensors();
 		checkIfPlayerWasCrushed();
+		updateScripts();
 		drawFrame();
 
 		if (_shootingFrames == 0) {

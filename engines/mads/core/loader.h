@@ -30,20 +30,13 @@
 namespace MADS {
 
 #define LOADER_DISK     0       /* File being read from disk */
-#define LOADER_EMS      1       /* File being read from ems  */
-#define LOADER_XMS      2       /* File being read from xms  */
 
 
 struct Load {
 	int open;                   /* Open status (true = open)             */
 	int reading;                /* Read/Write status (true = reading)    */
-	byte mode;                  /* Access mode (LOADER_EMS/LOADER_DISK)  */
+	byte mode;                  /* Access mode (LOADER_DISK)             */
 	Common::SeekableReadStream *handle; /* File handle (if LOADER_DISK)          */
-	int ems_handle;             /* EMS handle  (if LOADER_EMS)           */
-	int xms_handle;             /* XMS handle  (if LOADER_XMS)           */
-	long xms_offset;            /* XMS offset  (if LOADER_XMS)           */
-	int ems_page_marker;        /* Current EMS logical page #            */
-	int ems_page_offset;        /* Current EMS logical page offset       */
 	long decompress_size;       /* Decompressed size of file             */
 	int pack_list_marker;       /* Packing list marker                   */
 	PackList pack;              /* Packing list                          */
@@ -79,7 +72,6 @@ public:
 	}
 };
 
-extern int  loader_ems_search_disabled;
 extern char loader_last[14];
 
 extern int loader_open(LoadHandle handle, const char *filename, const char *options, int flags);

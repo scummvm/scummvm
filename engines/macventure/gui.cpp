@@ -34,6 +34,7 @@
 #include "image/bmp.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactextwindow.h"
+#include "gui/gui-manager.h"
 
 #include "macventure/gui.h"
 #include "macventure/dialog.h"
@@ -125,6 +126,9 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_graphics = nullptr;
 	_diplomaImage = nullptr;
 	_diplomaWindow = nullptr;
+	_diplomaFontId = Graphics::kMacFontSystem;
+	_diplomaFontSize = 12;
+	_diplomaNameBounds = Common::Rect();
 
 	_lassoStart = Common::Point(0, 0);
 	_lassoEnd = Common::Point(0, 0);
@@ -605,6 +609,20 @@ void Gui::loadDiploma() {
 	_dialog = new Dialog(this, _resourceManager, kDialogBoxDiplomaID);
 	DialogElement *quitButton = _dialog->getElement("Quit");
 	quitButton->setAction(kDAQuit);
+	DialogElement *printButton = _dialog->getElement("Print");
+	printButton->setAction(kDAPrintDiploma);
+
+	_diplomaName.clear();
+	Common::SeekableReadStream *geometry = _resourceManager->getResource(MKTAG('G', 'N', 'R', 'L'), kDiplomaGeometryID);
+	if (geometry) {
+		_diplomaFontId = geometry->readUint16BE();
+		_diplomaFontSize = geometry->readUint16BE();
+		_diplomaNameBounds.top = geometry->readUint16BE();
+		_diplomaNameBounds.left = geometry->readUint16BE();
+		_diplomaNameBounds.bottom = geometry->readUint16BE();
+		_diplomaNameBounds.right = geometry->readUint16BE();
+		delete geometry;
+	}
 
 	// Image
 	if (!_diplomaImage) {
@@ -802,6 +820,18 @@ void Gui::drawDiplomaWindow() {
 		0,
 		0,
 		kBlitDirect);
+
+	if (!_diplomaNameBounds.isEmpty()) {
+		const Graphics::Font *font = _wm._fontMan->getFont(Graphics::MacFont(_diplomaFontId, _diplomaFontSize));
+		font->drawString(
+			_diplomaWindow->getWindowSurface(),
+			_diplomaName,
+			_diplomaNameBounds.left,
+			_diplomaNameBounds.top,
+			_diplomaNameBounds.width(),
+			kColorBlack,
+			Graphics::kTextAlignCenter);
+	}
 
 	findWindow(kDiplomaWindow)->setDirty(true);
 }
@@ -1137,6 +1167,15 @@ void Gui::printText(const Common::String &text) {
 	_outConsoleWindow->scrollToBottom();
 }
 
+void Gui::scrollConsoleToRow(uint row) {
+	int lineHeight = _outConsoleWindow->getLineHeight(0) + _outConsoleWindow->getLineSpacing();
+	if (lineHeight <= 0) {
+		_outConsoleWindow->scrollToBottom();
+		return;
+	}
+	_outConsoleWindow->scrollTo(row * lineHeight);
+}
+
 uint Gui::getConsoleRowCount() {
 	return _outConsoleWindow->getRowCount();
 }
@@ -1173,9 +1212,6 @@ void Gui::closeDialog() {
 }
 
 void Gui::getTextFromUser(Common::String &title) {
-	if (_dialog) {
-		delete _dialog;
-	}
 	showPrebuiltDialog(kSpeakDialog, title);
 }
 
@@ -1331,12 +1367,12 @@ WindowReference Gui::findObjWindow(ObjID objID) {
 void Gui::checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref, bool shiftPressed, bool isDoubleClick) {
 	ObjID child = 0;
 	for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
-		if (canBeSelected((*it).obj, clickRect, ref)) {
-			child = (*it).obj;
+		if (canBeSelected(it->obj, clickRect, ref)) {
+			child = it->obj;
 		}
 	}
 	if (child != 0 || data.refcon == kMainGameWindow) {
-		if (!isDoubleClick)
+		if (!isDoubleClick && !shiftPressed)
 			selectDraggable(child, ref, pos);
 		_engine->handleObjectSelect(child, ref, shiftPressed, isDoubleClick);
 		bringToFront(ref);
@@ -1424,8 +1460,8 @@ void Gui::handleDragRelease(bool shiftPressed, bool isDoubleClick) {
 			Common::Rect clickRect = calculateClickRect(_cursor->getPos() + data.scrollPos, win->getInnerDimensions());
 
 			for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
-				if (canBeSelected((*it).obj, clickRect, destinationWindow)) {
-					child = (*it).obj;
+				if (canBeSelected(it->obj, clickRect, destinationWindow)) {
+					child = it->obj;
 				}
 			}
 
@@ -1697,6 +1733,10 @@ bool Gui::processEvent(Common::Event &event) {
 		return true;
 	}
 
+	if (event.type == Common::EVENT_KEYDOWN && _diplomaWindow && processDiplomaKey(event)) {
+		return true;
+	}
+
 	if (event.type == Common::EVENT_MOUSEMOVE) {
 		if (_draggedObjects.size() && _draggedObjects[0].id != 0) {
 			moveDraggedObjects(event.mouse);
@@ -1839,6 +1879,42 @@ bool MacVenture::Gui::processDiplomaEvents(WindowClick click, Common::Event &eve
 	return getWindowData(kDiplomaWindow).visible;
 }
 
+void Gui::printDiploma() {
+	if (!_diplomaWindow)
+		return;
+
+	Graphics::ManagedSurface diploma;
+	diploma.copyFrom(*_diplomaWindow->getWindowSurface());
+	diploma.setPalette(_wm.getPalette(), 0, _wm.getPaletteSize());
+
+	g_gui.printImage(diploma);
+
+	markRedraw();
+}
+
+bool Gui::processDiplomaKey(Common::Event &event) {
+	if (_diplomaNameBounds.isEmpty())
+		return false;
+
+	if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+		if (_diplomaName.empty())
+			return false;
+		_diplomaName.deleteLastChar();
+		return true;
+	}
+
+	if (event.kbd.ascii < 0x20 || event.kbd.ascii > 0x7f)
+		return false;
+
+	const Graphics::Font *font = _wm._fontMan->getFont(Graphics::MacFont(_diplomaFontId, _diplomaFontSize));
+	Common::String candidate = _diplomaName + (char)event.kbd.ascii;
+	if (font->getStringWidth(candidate) > _diplomaNameBounds.width())
+		return true;
+
+	_diplomaName = candidate;
+	return true;
+}
+
 bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common::Event &event) {
 	if (click == kBorderCloseButton) {
 		if (event.type == Common::EVENT_LBUTTONUP) {
@@ -1858,8 +1934,10 @@ bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common:
 		WindowData &data = findWindowData((WindowReference)ref);
 
 		if (click == kBorderInner && !_draggedObjects.size()) {
-			_engine->unselectAll();
-			_engine->getSelectedObjects().clear();
+			if (!(g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT)) {
+				_engine->unselectAll();
+				_engine->getSelectedObjects().clear();
+			}
 
 			_lassoStart = event.mouse;
 			_lassoEnd = _lassoStart;
@@ -1936,7 +2014,7 @@ void Gui::select(Common::Point cursorPosition, bool shiftPressed, bool isDoubleC
 	WindowData &data = findWindowData((WindowReference)ref);
 
 	Common::Rect clickRect = calculateClickRect(cursorPosition + data.scrollPos, win->getInnerDimensions());
-	checkSelect(data, cursorPosition, clickRect, (WindowReference)ref, isDoubleClick, shiftPressed);
+	checkSelect(data, cursorPosition, clickRect, (WindowReference)ref, shiftPressed, isDoubleClick);
 }
 
 void Gui::handleSingleClick() {

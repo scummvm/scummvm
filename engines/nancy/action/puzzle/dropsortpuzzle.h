@@ -24,7 +24,8 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -38,9 +39,9 @@ namespace Action {
 // it; three mistakes lose. Win once all candies are dispensed and the
 // belt is empty. The scene ships several copies as a difficulty ramp
 // (faster belt, shorter dispense interval).
-class DropSortPuzzle : public RenderActionRecord {
+class DropSortPuzzle : public PuzzleRecord {
 public:
-	DropSortPuzzle() : RenderActionRecord(7) {}
+	DropSortPuzzle() : PuzzleRecord(7) {}
 	virtual ~DropSortPuzzle() {}
 
 	void init() override;
@@ -73,18 +74,16 @@ protected:
 	Common::Rect itemDestAt(const Common::Point &pos, int16 type) const;
 	int itemAtCursor(const Common::Point &mousePos) const;	// belt item under the cursor, or -1
 	int binAtCursor(const Common::Point &mousePos) const;	// bin under the cursor, or -1
-	Common::Point cursorToViewport(const Common::Point &mousePos) const;
 
 	// Drops a candy into a bin: correct-bin sound if accepted, else a mistake (for an
 	// enabled bin). Also handles candies falling off the belt into the reject bin.
 	void applyDrop(int binIndex, int16 type);
+	void carryItem(int16 type, NancyInput &input);
 
 	void redraw();
 	void drawCounter();
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 
 	// -- File data --
-	Common::Path _imageName;			// 0x00 - overlay sprite sheet (candies, strikes)
 	Common::Path _hoseMovieName;		// 0x21 - hose (dispenser) animation
 	Common::Rect _hoseRect;				// 0x42
 	uint32 _dispenseFrame = 0;			// 0x52 - unused in this port
@@ -116,18 +115,11 @@ protected:
 	RandomSoundBlock _dropSound;		// candy dropped in the correct bin
 	RandomSoundBlock _hornSound;		// candy dropped in the wrong bin (a strike)
 
-	SceneChangeDescription _winScene;
-	FlagDescription _winFlag;
 	RandomSoundBlock _winSound;
 
 	SceneChangeDescription _loseScene;
 	FlagDescription _loseFlag;
 	RandomSoundBlock _loseSound;
-
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;			// set on give-up
 
 	// -- Runtime state --
 	Common::Array<BeltItem> _items;		// candies currently on the belt, oldest first
@@ -137,7 +129,7 @@ protected:
 	int _rejectBin = -1;				// bin at the end of the belt (unsorted candies land here)
 
 	int16 _carriedType = kNoItem;
-	Common::Point _dragPos;
+	Misc::MouseFollowObject _carriedObject;
 
 	int _strikes = 0;
 	bool _solved = false;
@@ -151,7 +143,6 @@ protected:
 	MoviePlayer _conveyorMovie;
 	MoviePlayer _hoseMovie;
 
-	Graphics::ManagedSurface _image;
 };
 
 } // End of namespace Action

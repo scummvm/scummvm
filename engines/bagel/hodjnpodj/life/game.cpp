@@ -131,10 +131,10 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	* game art work.                                                    *
 	********************************************************************/
 	pDibDoc = new CDibDoc();
-	bAssertCheck = (*pDibDoc).OpenDocument(SPLASHSPEC);
+	bAssertCheck = pDibDoc->OpenDocument(SPLASHSPEC);
 	ASSERT(bAssertCheck);
 
-	pGamePalette = (*pDibDoc).DetachPalette();
+	pGamePalette = pDibDoc->DetachPalette();
 	ASSERT(pGamePalette);
 	delete pDibDoc;
 
@@ -239,30 +239,30 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	                   EVOLVE_BUTTON_HEIGHT + EVOLVE_BUTTON_OFFSET_Y);
 	pEvolveButton = new CColorButton();
 	if (pEvolveButton != nullptr) {
-		(void)(*pEvolveButton).Create("Evolve", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
+		(void)pEvolveButton->Create("Evolve", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
 		                        EvolveRect, this, IDC_EVOLVE);
-		(*pEvolveButton).SetPalette(pGamePalette);
+		pEvolveButton->SetPalette(pGamePalette);
 	}
 
 	/***********************************
 	* Initialize Sprite Scroll Button. *
 	***********************************/
 	pScrollSprite = new CSprite;
-	(*pScrollSprite).SharePalette(pGamePalette);
-	bAssertCheck = (*pScrollSprite).LoadSprite(pDC, SCROLL_BUTTON);
+	pScrollSprite->SharePalette(pGamePalette);
+	bAssertCheck = pScrollSprite->LoadSprite(pDC, SCROLL_BUTTON);
 	ASSERT(bAssertCheck);
-	(*pScrollSprite).SetMasked(true);
-	(*pScrollSprite).SetMobile(true);
+	pScrollSprite->SetMasked(true);
+	pScrollSprite->SetMobile(true);
 
 	/******************************
 	* Initialize Sprite Calendar  *
 	******************************/
 	pCalendarSprite = new CSprite;
-	(*pCalendarSprite).SharePalette(pGamePalette);
-	bAssertCheck = (*pCalendarSprite).LoadSprite(pDC, CALENDAR_BMP);
+	pCalendarSprite->SharePalette(pGamePalette);
+	bAssertCheck = pCalendarSprite->LoadSprite(pDC, CALENDAR_BMP);
 	ASSERT(bAssertCheck);
-	(*pCalendarSprite).SetMasked(true);
-	(*pCalendarSprite).SetMobile(false);
+	pCalendarSprite->SetMasked(true);
+	pCalendarSprite->SetMobile(false);
 
 	ReleaseDC(pDC);
 
@@ -416,13 +416,13 @@ void CMainWindow::NewGame() {
 	        row,
 	        col;
 
-	if ((*m_cLife).m_bIsEvolving == true) {      // Evolve timer on?
+	if (m_cLife->m_bIsEvolving == true) {      // Evolve timer on?
 		KillTimer(EVOLVE_TIMER_ID);             // yes - turn it off.
-		(*m_cLife).m_bIsEvolving = false;
+		m_cLife->m_bIsEvolving = false;
 	} // end if
 
 	pDC = GetDC();
-	(*m_cLife).NewGame(pDC);
+	m_cLife->NewGame(pDC);
 
 	if (bPrePlaceColonies) {                                     // want ten colonies preplaced?
 		// Randomly place 10 of their villages for them!
@@ -435,7 +435,7 @@ void CMainWindow::NewGame() {
 			col = (point.x - BOARD_START_COL) / (BOARD_SPACING_TIMES_TWO + CURLY_X);
 
 			if (!m_cLife->pColony->islife(row, col)) {                // life at this cell already?
-				(*m_cLife).change_board(
+				m_cLife->change_board(
 				    0,                                  // nFlags is not used by change_board
 				    point,
 				    pDC,
@@ -479,7 +479,7 @@ void CMainWindow::NewGame() {
  *
  ****************************************************************/
 void CMainWindow::GamePause() {
-	if ((*m_cLife).m_bIsEvolving == true) {      // Evolve timer on?
+	if (m_cLife->m_bIsEvolving == true) {      // Evolve timer on?
 		KillTimer(EVOLVE_TIMER_ID);             // yes - turn it off.
 	} // end if
 }
@@ -510,7 +510,7 @@ void CMainWindow::GamePause() {
  *
  ****************************************************************/
 void CMainWindow::GameResume() {
-	if ((*m_cLife).m_bIsEvolving == true) {
+	if (m_cLife->m_bIsEvolving == true) {
 		RefreshStats();
 		SetTimer(EVOLVE_TIMER_ID, EVOLVE_INTERVAL, nullptr);
 	}
@@ -553,7 +553,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		GamePause();
 
 		pDC = GetDC();
-		bAssertCheck = (*pScrollSprite).EraseSprite(pDC);
+		bAssertCheck = pScrollSprite->EraseSprite(pDC);
 		ReleaseDC(pDC);
 		ASSERT(bAssertCheck);
 
@@ -601,7 +601,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		// show the command scroll
 		pDC = GetDC();
-		bAssertCheck = (*pScrollSprite).PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
+		bAssertCheck = pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
 		ReleaseDC(pDC);
 		ASSERT(bAssertCheck);
 		GameResume();
@@ -612,23 +612,23 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		//}
 
 	} else if (wParam == IDC_EVOLVE) {                           // Evolve button was clicked
-		if ((*m_cLife).m_bIsEvolving == true) {                  // currently evolving?
+		if (m_cLife->m_bIsEvolving == true) {                  // currently evolving?
 			if (m_lpGameStruct->bPlayingMetagame == false) {     // playing meta game?
-				(*m_cLife).m_bIsEvolving = false;               // no - can turn evolve off, then
+				m_cLife->m_bIsEvolving = false;               // no - can turn evolve off, then
 				KillTimer(EVOLVE_TIMER_ID);
 				SetDlgItemText(IDC_EVOLVE, "Evolve");            // so give them the Suspend option
 			}
 		} else {
-			(*m_cLife).m_bIsEvolving = true;                    // no - turn it on
+			m_cLife->m_bIsEvolving = true;                    // no - turn it on
 			nCountDown = nSpeed * MONTHS;
 			if (m_lpGameStruct->bPlayingMetagame == false) {     // not playing metagame
 				SetDlgItemText(IDC_EVOLVE, "Suspend");       // so give them the Suspend option
 			} else {                                            // Only works once in metagame,
-				(*pEvolveButton).EnableWindow(false);            //...so disable evolve button
+				pEvolveButton->EnableWindow(false);            //...so disable evolve button
 			}
 
 			pDC = GetDC();                                      // Update visual calendars
-			(*m_cLife).ResetMonths(pDC);
+			m_cLife->ResetMonths(pDC);
 			ReleaseDC(pDC);
 
 			RefreshStats();
@@ -757,7 +757,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC     *pDC;
 	CRect   cTestRect;
 
-	cTestRect = (*pScrollSprite).GetRect();
+	cTestRect = pScrollSprite->GetRect();
 
 	if (cTestRect.PtInRect(point) == true) {
 		SendMessage(WM_COMMAND, IDC_COMMAND, BN_CLICKED);
@@ -768,7 +768,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		NewGame();          // no - new game ok
 	} else {
 		pDC = GetDC();
-		(*m_cLife).change_board(
+		m_cLife->change_board(
 		    nFlags,
 		    point,
 		    pDC,
@@ -809,7 +809,7 @@ void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 	CRect   cTestRect;
 	CDC     *pDC;
 
-	cTestRect = (*pScrollSprite).GetRect();
+	cTestRect = pScrollSprite->GetRect();
 
 	if (cTestRect.PtInRect(point)) {
 		SendMessage(WM_COMMAND, IDC_COMMAND, BN_CLICKED);
@@ -819,7 +819,7 @@ void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 		NewGame();
 	} else {
 		pDC = GetDC();
-		(*m_cLife).change_board(
+		m_cLife->change_board(
 		    nFlags,
 		    point,
 		    pDC,
@@ -865,7 +865,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 		if (
 		    !nLifeCounter &&
 		    bIsInfiniteLife != true &&
-		    !(*m_cLife).ColonyPlaced() &&
+		    !m_cLife->ColonyPlaced() &&
 		    m_lpGameStruct->bPlayingMetagame == false
 		) {
 			KillTimer(EVOLVE_TIMER_ID);
@@ -883,7 +883,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 			    "No villages left."
 			);
 
-			(*m_cLife).m_bIsEvolving = false;
+			m_cLife->m_bIsEvolving = false;
 
 			if (m_lpGameStruct->bSoundEffectsEnabled != false) {
 				sndPlaySound(nullptr, SND_SYNC);
@@ -895,7 +895,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 
 		// Have we evolved proper number of turns or
 		//  is evolution infinite?
-		if ((*m_cLife).m_nYears != nTurnCounter ||
+		if (m_cLife->m_nYears != nTurnCounter ||
 		        bIsInfiniteTurns) {
 			// No - evolve again
 			//  has timer run down to zero?
@@ -904,7 +904,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 				KillTimer(EVOLVE_TIMER_ID);
 				pDC = GetDC();
 
-				(*m_cLife).evolution(pDC);
+				m_cLife->evolution(pDC);
 
 				// Restart timer and display it
 				nCountDown = nSpeed * MONTHS;
@@ -925,14 +925,14 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 
 				// Update visual calendar
 				pDC = GetDC();
-				(*m_cLife).DisplayMonth(nCountDown, pDC);
+				m_cLife->DisplayMonth(nCountDown, pDC);
 				ReleaseDC(pDC);
 			}
 		} else {  // Yes -- shut this thing down
 			KillTimer(EVOLVE_TIMER_ID);
-			(*m_cLife).m_bIsEvolving = false;
+			m_cLife->m_bIsEvolving = false;
 			char buf[64];
-			Common::sprintf_s(buf, "Score:  %ld", (long)(*m_cLife).m_dScore);
+			Common::sprintf_s(buf, "Score:  %ld", (long)m_cLife->m_dScore);
 			if (m_lpGameStruct->bSoundEffectsEnabled != false)
 				sndPlaySound(WAV_GAMEOVER, SND_SYNC);   // When first starts up so
 			//  that u get to see the screen
@@ -944,7 +944,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 			);
 
 			if (m_lpGameStruct->bPlayingMetagame != false) {
-				m_lpGameStruct->lScore = (long)(*m_cLife).m_dScore;
+				m_lpGameStruct->lScore = (long)m_cLife->m_dScore;
 				PostMessage(WM_CLOSE, 0, 0);
 			} else {
 				PostMessage(WM_COMMAND, IDC_OPTIONS_NEWGAME, BN_CLICKED);
@@ -1094,7 +1094,7 @@ void CMainWindow::SplashScreen() {
 		rcDIB.top = rcDIB.left = 0;
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;
-		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+		PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 		if (pScrollSprite != nullptr)
 			pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
 		if (pCalendarSprite != nullptr)
@@ -1103,10 +1103,10 @@ void CMainWindow::SplashScreen() {
 
 	pSprite = CSprite::GetSpriteChain();
 	while (pSprite) {
-		(*pSprite).ClearBackground();
-		bCheck = (*pSprite).RefreshSprite(pDC);
+		pSprite->ClearBackground();
+		bCheck = pSprite->RefreshSprite(pDC);
 		ASSERT(bCheck);
-		pSprite = (*pSprite).GetNextSprite();
+		pSprite = pSprite->GetNextSprite();
 	}
 
 	// Refresh visual calendar
@@ -1165,11 +1165,11 @@ void CMainWindow::DisplayStats() {
 	                  CURRENT_RIGHT_COL,
 	                  CURRENT_RIGHT_ROW);
 
-	if (((*m_cLife).pColonyPlaced = new CText()) != nullptr) {
+	if ((m_cLife->pColonyPlaced = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pColonyPlaced->SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
-		Common::sprintf_s(buf, "Current Villages: %d", (*m_cLife).ColonyPlaced());
+		Common::sprintf_s(buf, "Current Villages: %d", m_cLife->ColonyPlaced());
 		bAssertCheck = m_cLife->pColonyPlaced->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
@@ -1180,11 +1180,11 @@ void CMainWindow::DisplayStats() {
 	                  SCORE_RIGHT_COL,
 	                  SCORE_RIGHT_ROW);
 
-	if (((*m_cLife).pScore = new CText()) != nullptr) {
+	if ((m_cLife->pScore = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pScore->SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
-		Common::sprintf_s(buf, "Score: %.1f", (*m_cLife).m_dScore);
+		Common::sprintf_s(buf, "Score: %.1f", m_cLife->m_dScore);
 		bAssertCheck = m_cLife->pScore->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
@@ -1195,11 +1195,11 @@ void CMainWindow::DisplayStats() {
 	                  ROUND_RIGHT_COL,
 	                  ROUND_RIGHT_ROW);
 
-	if (((*m_cLife).pYears = new CText()) != nullptr) {
+	if ((m_cLife->pYears = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pYears->SetupText(pDC, pGamePalette, &statsRect);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
-		Common::sprintf_s(buf, "%d", (*m_cLife).m_nYears);
+		Common::sprintf_s(buf, "%d", m_cLife->m_nYears);
 		bAssertCheck = m_cLife->pYears->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
@@ -1209,7 +1209,7 @@ void CMainWindow::DisplayStats() {
 	                  ROUND_TEXT1_RIGHT_COL,
 	                  ROUND_TEXT1_RIGHT_ROW);
 
-	if (((*m_cLife).pYearsText1 = new CText()) != nullptr) {
+	if ((m_cLife->pYearsText1 = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pYearsText1->SetupText(pDC, pGamePalette, &statsRect);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
@@ -1223,7 +1223,7 @@ void CMainWindow::DisplayStats() {
 	                  ROUND_TEXT2_RIGHT_COL,
 	                  ROUND_TEXT2_RIGHT_ROW);
 
-	if (((*m_cLife).pYearsText2 = new CText()) != nullptr) {
+	if ((m_cLife->pYearsText2 = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pYearsText2->SetupText(pDC, pGamePalette, &statsRect);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
@@ -1238,7 +1238,7 @@ void CMainWindow::DisplayStats() {
 	                  VILLAGE_RIGHT_COL,
 	                  VILLAGE_RIGHT_ROW);
 
-	if (((*m_cLife).pColonyStat = new CText()) != nullptr) {
+	if ((m_cLife->pColonyStat = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pColonyStat->SetupText(pDC, pGamePalette, &statsRect);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
@@ -1252,7 +1252,7 @@ void CMainWindow::DisplayStats() {
 	                  VILLAGE_TEXT1_RIGHT_COL,
 	                  VILLAGE_TEXT1_RIGHT_ROW);
 
-	if (((*m_cLife).pColonyStatText1 = new CText()) != nullptr) {
+	if ((m_cLife->pColonyStatText1 = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pColonyStatText1->SetupText(pDC, pGamePalette, &statsRect);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
@@ -1262,7 +1262,7 @@ void CMainWindow::DisplayStats() {
 	}
 
 	// Update visual calendar
-	(*m_cLife).DisplayMonth(nCountDown, pDC);
+	m_cLife->DisplayMonth(nCountDown, pDC);
 
 	ReleaseDC(pDC);
 }
@@ -1301,18 +1301,18 @@ void CMainWindow::RefreshStats() {
 	pDC = GetDC();
 
 	// Colony placed count box
-	Common::sprintf_s(buf, "Current Villages: %d", (*m_cLife).ColonyPlaced());
+	Common::sprintf_s(buf, "Current Villages: %d", m_cLife->ColonyPlaced());
 	bAssertCheck = m_cLife->pColonyPlaced->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 	ASSERT(bAssertCheck);   // paint the text
 
 	// Score box
-	Common::sprintf_s(buf, "Score: %.1f", (*m_cLife).m_dScore);
+	Common::sprintf_s(buf, "Score: %.1f", m_cLife->m_dScore);
 	bAssertCheck = m_cLife->pScore->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 	ASSERT(bAssertCheck);   // paint the text
 
 	// Round box
 	if (bIsInfiniteTurns != true) {
-		Common::sprintf_s(buf, "%d", (*m_cLife).m_nYears);
+		Common::sprintf_s(buf, "%d", m_cLife->m_nYears);
 
 		bAssertCheck = m_cLife->pYears->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
@@ -1360,7 +1360,7 @@ void CMainWindow::RefreshStats() {
 
 
 	// Update visual calendar
-	(*m_cLife).DisplayMonth(nCountDown, pDC);
+	m_cLife->DisplayMonth(nCountDown, pDC);
 
 	ReleaseDC(pDC);
 }

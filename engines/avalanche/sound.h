@@ -43,6 +43,8 @@ public:
 	void blip();
 	void syncVolume();
 	void stopSound();
+	void playMod(const Common::Path &filename);
+	void stopMod();
 
 private:
 	AvalancheEngine *_vm;

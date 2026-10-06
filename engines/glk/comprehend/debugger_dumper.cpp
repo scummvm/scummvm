@@ -395,12 +395,12 @@ void DebuggerDumper::dumpState() {
 	      _game->_variables[VAR_INVENTORY_LIMIT]);
 
 	print("Flags:\n");
-	for (uint i = 0; i < ARRAY_SIZE(_game->_flags); i++)
+	for (uint i = 0; i < ARRAYSIZE(_game->_flags); i++)
 		print("  [%.2x]: %d\n", i, _game->_flags[i]);
 	print("\n");
 
 	print("Variables:\n");
-	for (uint i = 0; i < ARRAY_SIZE(_game->_variables); i++)
+	for (uint i = 0; i < ARRAYSIZE(_game->_variables); i++)
 		print("  [%.2x]: %5d (0x%.4x)\n",
 		      i, _game->_variables[i],
 		      _game->_variables[i]);

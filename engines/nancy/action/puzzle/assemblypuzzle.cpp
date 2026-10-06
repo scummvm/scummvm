@@ -34,8 +34,7 @@ namespace Nancy {
 namespace Action {
 
 void AssemblyPuzzle::init() {
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		Piece &piece = _pieces[i];
@@ -44,7 +43,7 @@ void AssemblyPuzzle::init() {
 		piece.setVisible(true);
 		piece.setTransparent(true);
 		piece.moveTo(piece.placed ? piece.destRects[piece.curRotation] : piece.startRect);
-		piece.setZ(_z + i + _pieces.size());
+		piece.setZOrder(_z + i + _pieces.size());
 	}
 
 	rotateBase(true);
@@ -106,7 +105,7 @@ void AssemblyPuzzle::readData(Common::SeekableReadStream &stream) {
 		assembleTextLine(buf, _wrongPieceTexts[i], 200);
 	}
 
-	_solveScene.readData(stream);
+	_solveScene.readData(stream); // has 9999 in nancy6, so the puzzle doesn't auto-exit
 	_solveSound.readNormal(stream);
 	stream.read(buf, 200);
 	assembleTextLine(buf, _solveText, 200);
@@ -123,6 +122,7 @@ void AssemblyPuzzle::execute() {
 
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_rotateSound);
 		g_nancy->_sound->loadSound(_pickUpSound);
@@ -135,8 +135,7 @@ void AssemblyPuzzle::execute() {
 			return;
 		}
 
-		g_nancy->_sound->loadSound(_solveSound);
-		g_nancy->_sound->playSound(_solveSound);
+		playSolveSound();
 		showSubtitle(_solveText);
 		NancySceneState.setEventFlag(_solveScene._flag);
 		_completed = true;
@@ -144,7 +143,7 @@ void AssemblyPuzzle::execute() {
 		_state = kActionTrigger;
 		break;
 	case kActionTrigger:
-		if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+		if (isSolveSoundPlaying()) {
 			return;
 		}
 
@@ -160,13 +159,11 @@ void AssemblyPuzzle::execute() {
 }
 
 void AssemblyPuzzle::handleInput(NancyInput &input) {
-	if (_state == kActionTrigger && _completed && g_nancy->_sound->isSoundPlaying(_solveSound)) {
+	if (_state == kActionTrigger && _completed && isSolveSoundPlaying()) {
 		return;
 	}
 
-	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (_pickedUpPiece == -1 && hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 			_completed = false;
@@ -222,13 +219,11 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 					for (uint j = 1; j < _pieces.size(); ++j) {
 						Piece &piece = _pieces[j];
 						if (!piece.placed && piece.getZOrder() > _pieces[i].getZOrder()) {
-							piece.setZ(piece.getZOrder() - 1);
-							piece.registerGraphics();
+							piece.setZOrder(piece.getZOrder() - 1);
 						}
 					}
 
-					_pieces[i].setZ(_z + _pieces.size() * 2);
-					_pieces[i].registerGraphics();
+					_pieces[i].setZOrder(_z + _pieces.size() * 2);
 				} else {
 					// Clicked the dest of the picked up piece, or an already placed one; simply put it down
 					_pickedUpPiece = -1;
@@ -319,8 +314,7 @@ void AssemblyPuzzle::rotateBase(bool ccw) {
 				base = 1;
 			}
 
-			piece.setZ(_z + base + 4 * (piece.layer - 1));
-			piece.registerGraphics();
+			piece.setZOrder(_z + base + 4 * (piece.layer - 1));
 
 			piece.moveTo(piece.destRects[piece.curRotation]);
 			piece._drawSurface.create(_image, piece.srcRects[piece.curRotation]);

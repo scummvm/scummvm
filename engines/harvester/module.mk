@@ -3,6 +3,7 @@ MODULE := engines/harvester
 MODULE_OBJS = \
 	art.o \
 	cft_font.o \
+	cheats.o \
 	console.o \
 	dialogue.o \
 	flow.o \

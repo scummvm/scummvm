@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_SEWINGMACHINEPUZZLE_H
 #define NANCY_ACTION_SEWINGMACHINEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/navigationrecords.h"
 #include "engines/nancy/action/actionzone.h"
@@ -36,9 +36,9 @@ namespace Action {
 // the end cross-dissolves to the trigger zone's win scene.
 // TODO: the needle spot comes from the scene's needle-overlay rect, not from this
 // record's own data.
-class SewingMachinePuzzle : public RenderActionRecord {
+class SewingMachinePuzzle : public PuzzleRecord {
 public:
-	SewingMachinePuzzle() : RenderActionRecord(7) {}
+	SewingMachinePuzzle() : PuzzleRecord(7) {}
 	virtual ~SewingMachinePuzzle() {}
 
 	void init() override;
@@ -54,8 +54,6 @@ protected:
 
 	// Sorts the ActionZone array into its gameplay roles.
 	void classifyZones();
-	// Plays one entry of a random-sound block (needle/stitch cues).
-	void playSoundBlock(const RandomSoundBlock &block);
 	// Draws the visible part of the cloth strip plus the stitches sewn so far.
 	void drawCloth();
 
@@ -71,9 +69,6 @@ protected:
 	// Tests the needle against the seam mask; leaving the marked corridor plays a
 	// mistake line and sets the zone's flag (edge-triggered, once per excursion).
 	void checkSeam();
-
-	// Background image ("BED_Sewing_OVL").
-	Common::Path _imageName;
 
 	// 87-byte PuzzleBase header blob: image name + two cloth regions + a direction
 	// vector + an extent vector (its magnitude = the seam length) + three params
@@ -115,7 +110,6 @@ protected:
 	bool _hasSeamMask = false;
 	bool _offSeam = false;				// the needle was off the seam last check
 
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _seamMask;
 };
 

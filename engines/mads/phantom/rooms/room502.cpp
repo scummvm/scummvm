@@ -575,7 +575,7 @@ void room_502_init() {
 
 	/* ========================= Previous Rooms ================== */
 
-	if ((previous_room == 501) || (previous_room != KERNEL_RESTORING_GAME)) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 
 		if (!player.been_here_before) {
 
@@ -689,6 +689,7 @@ void room_502_parser() {
 		break;
 
 	case ROOM_502_ROW_1 + 1:
+	case ROOM_502_ROW_2 + 1:
 		temp = seq[fx_pusher];
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_SERIES, temp);
 		player.walker_visible = true;
@@ -709,15 +710,6 @@ void room_502_parser() {
 		goto handled;
 		break;
 
-	case ROOM_502_ROW_2 + 1:
-		temp = seq[fx_pusher];
-		kernel_synch(KERNEL_PLAYER, 0, KERNEL_SERIES, temp);
-		player.walker_visible = true;
-		player.commands_allowed = true;
-		kernel_timing_trigger(5, ROOM_502_ROW_3 + 2);
-		goto handled;
-		break;
-
 	case ROOM_502_ROW_3:
 		player.commands_allowed = false;
 		player.walker_visible = false;
@@ -731,6 +723,7 @@ void room_502_parser() {
 		break;
 
 	case ROOM_502_ROW_3 + 1:
+	case ROOM_502_ROW_4 + 1:
 		temp = seq[fx_pusher];
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_SERIES, temp);
 		player.walker_visible = true;
@@ -753,14 +746,6 @@ void room_502_parser() {
 		kernel_seq_range(seq[fx_pusher], 1, 4);
 		kernel_seq_trigger(seq[fx_pusher], KERNEL_TRIGGER_EXPIRE, 0, ROOM_502_ROW_4 + 1);
 		kernel_seq_trigger(seq[fx_pusher], KERNEL_TRIGGER_SPRITE, 4, ROOM_502_ANIMATE_PANELS);
-		goto handled;
-		break;
-
-	case ROOM_502_ROW_4 + 1:
-		temp = seq[fx_pusher];
-		kernel_synch(KERNEL_PLAYER, 0, KERNEL_SERIES, temp);
-		player.walker_visible = true;
-		kernel_timing_trigger(5, ROOM_502_ROW_3 + 2);
 		goto handled;
 		break;
 
@@ -1042,7 +1027,6 @@ static void animate_fire_bursts() {
 			kernel_seq_range(seq[fx_fire_1], 1, 10);
 			kernel_seq_trigger(seq[fx_fire_1],
 				KERNEL_TRIGGER_EXPIRE, 0, ROOM_502_FIRE_BURST_1 + 1);
-			/* local->fire_1_on = true; */
 		}
 		break;
 
@@ -1057,7 +1041,6 @@ static void animate_fire_bursts() {
 			kernel_seq_range(seq[fx_fire_2], 1, 10);
 			kernel_seq_trigger(seq[fx_fire_2],
 				KERNEL_TRIGGER_EXPIRE, 0, ROOM_502_FIRE_BURST_2 + 1);
-			/* local->fire_2_on = true; */
 		}
 		break;
 
@@ -1072,7 +1055,6 @@ static void animate_fire_bursts() {
 			kernel_seq_range(seq[fx_fire_3], 1, 10);
 			kernel_seq_trigger(seq[fx_fire_3],
 				KERNEL_TRIGGER_EXPIRE, 0, ROOM_502_FIRE_BURST_3 + 1);
-			/* local->fire_3_on = true; */
 		}
 		break;
 
@@ -1087,7 +1069,6 @@ static void animate_fire_bursts() {
 			kernel_seq_range(seq[fx_fire_4], 1, 10);
 			kernel_seq_trigger(seq[fx_fire_4],
 				KERNEL_TRIGGER_EXPIRE, 0, ROOM_502_FIRE_BURST_4 + 1);
-			/* local->fire_4_on = true; */
 		}
 		break;
 

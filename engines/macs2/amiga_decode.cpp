@@ -50,7 +50,7 @@ bool parseAmigaMxoo(const byte *mxoo, uint32 mxooSize, AmigaMxooInfo &out) {
 	if (READ_BE_UINT16(body + 0x0C) != 0x0101)
 		return false;
 
-	for (uint i = 0; i < 21; i++)
+	for (uint i = 0; i < ARRAYSIZE(out.slotOffsets); i++)
 		out.slotOffsets[i] = READ_BE_UINT32(body + 0x0E + i * 4);
 	out.extraOffset = READ_BE_UINT32(body + 0x62);
 	return true;
@@ -71,8 +71,6 @@ bool inspectAmigaAnimSlot(const byte *mxoo, uint32 mxooSize, uint32 bodyRelative
 	out.repeatCounter = READ_BE_UINT16(p + 4);
 	out.loopStart = READ_BE_UINT16(p + 6);
 
-	// Sequence length follows the same pattern as the DOS blob: headerHint is often
-	// the frame count; sequence payload is max(hint - 2, 0) bytes, padded to even.
 	const uint16 seqBytes = (out.headerHint >= 2) ? (uint16)(out.headerHint - 2) : 0;
 	const uint16 seqPadded = (seqBytes + 1) & ~1;
 	const uint32 metaOff = absOff + 8 + seqPadded;
@@ -114,16 +112,12 @@ bool decodeAmigaPlanarFrame(const byte *planar, uint16 width, uint16 height, uin
 	outPixels.resize((uint32)width * height);
 	Common::fill(outPixels.begin(), outPixels.end(), 0);
 
-	// Anim slots store 6 bitplanes; colors use planes 0..4 (indices 0..31).
-	// Plane 5 is not applied as a sprite mask here - doing so clears almost all
-	// opaque pixels in the demo's character anims. Color 0 remains transparent
-	// for the existing DOS draw path.
 	for (uint16 y = 0; y < height; y++) {
 		for (uint16 x = 0; x < width; x++) {
 			byte color = 0;
 			const uint32 bitIndex = (uint32)x & 7;
 			const uint32 byteInRow = (uint32)x >> 3;
-			for (uint16 plane = 0; plane < 5; plane++) {
+			for (uint16 plane = 0; plane < kPlanes; plane++) {
 				const byte *planeRow = frameBase + plane * planeBytes + (uint32)y * rowBytes;
 				if (planeRow[byteInRow] & (0x80 >> bitIndex))
 					color |= (byte)(1 << plane);
@@ -143,11 +137,7 @@ bool convertAmigaAnimSlotToDosBlob(const byte *mxoo, uint32 mxooSize, uint32 bod
 
 	const byte *planar = mxoo + info.pixelOffset;
 
-	// DOS AnimBlobView layout (LE):
-	//   +0x00 unknown, +0x02 seqPos, +0x04 repeat, +0x06 loopStart, +0x08 delay,
-	//   +0x0A seqLenMinusOne; sequence at +0x0C (N bytes);
-	//   frames at +0x0B + (N+1) = +0x0C + N: uint16 frameCount, then per-frame records
-	// Frame: ox,oy,unk,w,h (LE) + chunky pixels
+	// DOS AnimBlobView layout
 	Common::Array<byte> sequence;
 	for (uint16 i = 0; i < info.frameCount; i++)
 		sequence.push_back((byte)(10 + i));
@@ -209,8 +199,6 @@ bool extractAmigaStringBlock(const byte *mxoo, uint32 mxooSize, Common::Array<by
 	AmigaMxooInfo info;
 	if (!parseAmigaMxoo(mxoo, mxooSize, info))
 		return false;
-	// String section: u16BE pad, u16BE size, then length-prefixed plaintext entries.
-	// Script string offsets are relative to the entries (after the 4-byte header).
 	if (info.stringOffset + 4 > mxooSize)
 		return false;
 	const uint16 size = READ_BE_UINT16(mxoo + info.stringOffset + 2);
@@ -283,8 +271,6 @@ bool convertAmigaSimpleSpriteToDosBlob(const byte *mxoo, uint32 mxooSize, Common
 		}
 	}
 
-	// seqLenMinusOne=0 -> sequenceLength=1 -> frame data at 0x0C:
-	// uint16 frameCount, then ox,oy,unk,w,h + pixels.
 	const uint32 total = 0x0C + 2 + 10 + (uint32)width * height;
 	outBlob.resize(total);
 	byte *dst = outBlob.data();
@@ -311,8 +297,6 @@ bool convertAmigaPortraitAtlasToDosBlob(const byte *mxoo, uint32 mxooSize, uint3
 		return false;
 
 	const uint32 absExtra = 12 + bodyRelativeExtraOffset;
-	// animateDialoguePortrait @ 0022f79c: copy 14400 bytes; blit D3=D4=D6=0x50,
-	// D5=0xF0. drawSprite plane loop uses 6 separated planes -> 30*80*6=14400.
 	// Atlas is 240x80 (3x80x80 frames). Color from planes 0..4.
 	const uint16 atlasW = 240;
 	const uint16 atlasH = 80;
@@ -334,12 +318,12 @@ bool convertAmigaPortraitAtlasToDosBlob(const byte *mxoo, uint32 mxooSize, uint3
 			byte color = 0;
 			const uint32 bitIndex = (uint32)x & 7;
 			const uint32 byteInRow = (uint32)x >> 3;
-			for (uint16 plane = 0; plane < 5; plane++) {
+			for (uint16 plane = 0; plane < kPlanes; plane++) {
 				const byte *planeRow = src + plane * planeBytes + (uint32)y * rowBytes;
 				if (planeRow[byteInRow] & (0x80 >> bitIndex))
 					color |= (byte)(1 << plane);
 			}
-			atlas[(uint32)y * atlasW + x] = color;
+			atlas[(uint32)y * atlasW + x] = remapAmigaCopperIndexToStableUi(color);
 		}
 	}
 
@@ -374,12 +358,6 @@ bool convertAmigaPortraitAtlasToDosBlob(const byte *mxoo, uint32 mxooSize, uint3
 				   atlas.data() + (uint32)y * atlasW + (uint32)f * frameW,
 				   frameW);
 		}
-		// Keep Amiga COLOR indices 0..31. Demo portraits (OO_*) use only the
-		// copper high bank COLOR17..31 (chrome / skin / navy cap) - the same
-		// registers animateDialoguePortrait blits into on hardware. Remapping
-		// into a private 0xD0 bank drifted from live copper and caused the
-		// Freunde-dialogue palette mismatch vs FS-UAE.
-		// Color 0 stays transparent (drawSprite skips 0).
 		off += frameBytes;
 	}
 	return true;
@@ -387,7 +365,7 @@ bool convertAmigaPortraitAtlasToDosBlob(const byte *mxoo, uint32 mxooSize, uint3
 
 static bool decompressPp20ToBuffer(const byte *src, uint32 srcLen, Common::Array<byte> &out) {
 	out.clear();
-	if (!src || srcLen < 12 || READ_BE_UINT32(src) != MKTAG('P', 'P', '2', '0'))
+	if (!src)
 		return false;
 
 	uint32 outLen = 0;
@@ -402,26 +380,64 @@ static bool decompressPp20ToBuffer(const byte *src, uint32 srcLen, Common::Array
 	return true;
 }
 
+byte remapAmigaCopperIndexToStableUi(byte color) {
+	if (color == 0)
+		return 0;
+
+	const bool ehb = color >= kAmigaColorRegisterCount;
+	const byte base = ehb ? (byte)(color - kAmigaColorRegisterCount) : color;
+	byte ui;
+	if (base >= 17 && base <= 31)
+		ui = (byte)(0xF0 + (base - 16));
+	else if (base < 16)
+		ui = (byte)(0xF0 + base);
+	else
+		ui = base;
+
+	if (!ehb)
+		return ui;
+	if (ui < 0xF0)
+		return (byte)(kAmigaColorRegisterCount + base);
+	return (byte)(0xE0 + (ui - 0xF0));
+}
+
+void amiga12ToVga6(uint16 rgb, byte &r6, byte &g6, byte &b6) {
+	const byte r4 = (rgb >> 8) & 0xF;
+	const byte g4 = (rgb >> 4) & 0xF;
+	const byte b4 = rgb & 0xF;
+	r6 = (byte)((r4 * 63) / 15);
+	g6 = (byte)((g4 * 63) / 15);
+	b6 = (byte)((b4 * 63) / 15);
+}
+
+void amiga12ToRgb8(uint16 rgb, byte &r, byte &g, byte &b) {
+	const byte r4 = (rgb >> 8) & 0xF;
+	const byte g4 = (rgb >> 4) & 0xF;
+	const byte b4 = rgb & 0xF;
+	r = (byte)(r4 * 17);
+	g = (byte)(g4 * 17);
+	b = (byte)(b4 * 17);
+}
+
 bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 									Common::Array<byte> &outPixels,
-									byte outPaletteRgb[768],
-									uint &outColorCount) {
+									Graphics::Palette &outPalette,
+									uint &outColorCount,
+									Common::Array<byte> &outLineCopperPal) {
 	outPixels.clear();
+	outLineCopperPal.clear();
 	outColorCount = 0;
-	if (outPaletteRgb) {
-		for (uint i = 0; i < 768; i++)
-			outPaletteRgb[i] = 0;
-	}
-	if (!mxmm || mxmmSize < 14 || !outPaletteRgb)
+	outPalette = Graphics::Palette(Graphics::PALETTE_COUNT);
+	if (!mxmm || mxmmSize < kAmigaMxmmMinSize)
 		return false;
 	if (READ_BE_UINT32(mxmm) != MKTAG('M', 'X', 'M', 'M'))
 		return false;
 
-	const uint32 chunk0Size = READ_BE_UINT32(mxmm + 10);
-	if (chunk0Size == 0 || 14 + chunk0Size > mxmmSize)
+	const uint32 chunk0Size = READ_BE_UINT32(mxmm + kAmigaMxmmHeaderSize);
+	if (chunk0Size == 0 || kAmigaMxmmMinSize + chunk0Size > mxmmSize)
 		return false;
 
-	const byte *chunk0 = mxmm + 14;
+	const byte *chunk0 = mxmm + kAmigaMxmmMinSize;
 	Common::Array<byte> screen;
 	if (READ_BE_UINT32(chunk0) == MKTAG('P', 'P', '2', '0')) {
 		if (!decompressPp20ToBuffer(chunk0, chunk0Size, screen))
@@ -455,64 +471,48 @@ bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 	}
 
 	const byte *copper = screen.data() + kAmigaSceneCopperOffset;
-	uint16 base16[16];
-	for (uint i = 0; i < 16; i++)
+	uint16 base16[kAmigaSceneCopperColorCount];
+	for (uint i = 0; i < ARRAYSIZE(base16); i++)
 		base16[i] = READ_BE_UINT16(copper + i * 2);
-	const byte *lineColors = copper + 0x20; // 200 x 16 x u16BE
-
-	auto amiga12ToRgb8 = [](uint16 rgb, byte &r, byte &g, byte &b) {
-		const byte r4 = (rgb >> 8) & 0xF;
-		const byte g4 = (rgb >> 4) & 0xF;
-		const byte b4 = rgb & 0xF;
-		r = (byte)(r4 * 17);
-		g = (byte)(g4 * 17);
-		b = (byte)(b4 * 17);
-	};
-
-	auto buildPal32 = [&](uint16 y, byte pal32[32][3]) {
+	const byte *lineColors = copper + kAmigaSceneCopperBaseBytes;
+	auto buildPal32 = [&](uint16 y, byte pal32[kAmigaColorRegisterCount][3]) {
 		amiga12ToRgb8(base16[0], pal32[0][0], pal32[0][1], pal32[0][2]);
-		for (uint i = 0; i < 16; i++) {
-			const uint16 c = READ_BE_UINT16(lineColors + (uint32)y * 32 + i * 2);
+		for (uint i = 0; i < kAmigaSceneCopperColorCount; i++) {
+			const uint16 c = READ_BE_UINT16(lineColors + (uint32)y * kAmigaSceneCopperLineBytes + i * 2);
 			amiga12ToRgb8(c, pal32[1 + i][0], pal32[1 + i][1], pal32[1 + i][2]);
 		}
-		for (uint i = 1; i < 16; i++)
-			amiga12ToRgb8(base16[i], pal32[16 + i][0], pal32[16 + i][1], pal32[16 + i][2]);
+		for (uint i = 1; i < kAmigaSceneCopperColorCount; i++)
+			amiga12ToRgb8(base16[i], pal32[kAmigaSceneCopperColorCount + i][0], pal32[kAmigaSceneCopperColorCount + i][1], pal32[kAmigaSceneCopperColorCount + i][2]);
 	};
 
 	// Reserve 0..31 for Amiga COLOR registers (sprites) and 32..63 for EHB.
-	byte staticPal[32][3];
+	byte staticPal[kAmigaColorRegisterCount][3];
 	buildPal32(0, staticPal);
-	for (uint i = 0; i < 32; i++) {
-		outPaletteRgb[i * 3 + 0] = staticPal[i][0];
-		outPaletteRgb[i * 3 + 1] = staticPal[i][1];
-		outPaletteRgb[i * 3 + 2] = staticPal[i][2];
-	}
-	for (uint i = 0; i < 32; i++) {
-		outPaletteRgb[(32 + i) * 3 + 0] = (byte)(staticPal[i][0] / 2);
-		outPaletteRgb[(32 + i) * 3 + 1] = (byte)(staticPal[i][1] / 2);
-		outPaletteRgb[(32 + i) * 3 + 2] = (byte)(staticPal[i][2] / 2);
-	}
-	outColorCount = 64;
+	for (uint i = 0; i < kAmigaColorRegisterCount; i++)
+		outPalette.set(i, staticPal[i][0], staticPal[i][1], staticPal[i][2]);
+	for (uint i = 0; i < kAmigaColorRegisterCount; i++)
+		outPalette.set(kAmigaColorRegisterCount + i, (byte)(staticPal[i][0] / 2), (byte)(staticPal[i][1] / 2), (byte)(staticPal[i][2] / 2));
+	outColorCount = kAmigaEhbPaletteCount;
 
 	Common::HashMap<uint32, byte> colorToIndex;
-	for (uint i = 0; i < 64; i++) {
-		const uint32 key = ((uint32)outPaletteRgb[i * 3 + 0] << 16) |
-						   ((uint32)outPaletteRgb[i * 3 + 1] << 8) |
-						   outPaletteRgb[i * 3 + 2];
+	for (uint i = 0; i < kAmigaEhbPaletteCount; i++) {
+		byte r, g, b;
+		outPalette.get(i, r, g, b);
+		const uint32 key = ((uint32)r << 16) | ((uint32)g << 8) | b;
 		if (!colorToIndex.contains(key))
 			colorToIndex[key] = (byte)i;
 	}
 
 	outPixels.resize((uint)kAmigaSceneWidth * kAmigaSceneHeight);
 	for (uint16 y = 0; y < kAmigaSceneHeight; y++) {
-		byte pal32[32][3];
+		byte pal32[kAmigaColorRegisterCount][3];
 		buildPal32(y, pal32);
 
 		for (uint16 x = 0; x < kAmigaSceneWidth; x++) {
 			byte idx = planarIndex[(uint32)y * kAmigaSceneWidth + x];
 			byte r, g, b;
-			if (idx >= 32) {
-				const byte base = (byte)(idx - 32);
+			if (idx >= kAmigaColorRegisterCount) {
+				const byte base = (byte)(idx - kAmigaColorRegisterCount);
 				r = (byte)(pal32[base][0] / 2);
 				g = (byte)(pal32[base][1] / 2);
 				b = (byte)(pal32[base][2] / 2);
@@ -526,44 +526,101 @@ bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 			byte outIdx;
 			if (colorToIndex.contains(key)) {
 				outIdx = colorToIndex[key];
-			} else if (outColorCount < 256) {
+			} else if (outColorCount < 0xE0) {
 				outIdx = (byte)outColorCount;
 				colorToIndex[key] = outIdx;
-				outPaletteRgb[outIdx * 3 + 0] = r;
-				outPaletteRgb[outIdx * 3 + 1] = g;
-				outPaletteRgb[outIdx * 3 + 2] = b;
+				outPalette.set(outIdx, r, g, b);
 				outColorCount++;
 			} else {
-				outIdx = idx < 64 ? idx : (byte)(idx & 31);
+				outIdx = idx < kAmigaEhbPaletteCount ? idx : (byte)(idx & (kAmigaColorRegisterCount - 1));
 			}
 			outPixels[(uint32)y * kAmigaSceneWidth + x] = outIdx;
+		}
+	}
+
+	auto internRgb = [&](byte r, byte g, byte b, byte fallback) -> byte {
+		const uint32 key = ((uint32)r << 16) | ((uint32)g << 8) | b;
+		if (colorToIndex.contains(key))
+			return colorToIndex[key];
+		if (outColorCount < 0xE0) {
+			const byte outIdx = (byte)outColorCount;
+			colorToIndex[key] = outIdx;
+			outPalette.set(outIdx, r, g, b);
+			outColorCount++;
+			return outIdx;
+		}
+		return fallback;
+	};
+
+	outLineCopperPal.resize((uint)kAmigaSceneHeight * kAmigaEhbPaletteCount);
+	for (uint16 y = 0; y < kAmigaSceneHeight; y++) {
+		byte pal32[kAmigaColorRegisterCount][3];
+		buildPal32(y, pal32);
+		for (uint c = 0; c < kAmigaColorRegisterCount; c++) {
+			outLineCopperPal[(uint32)y * kAmigaEhbPaletteCount + c] =
+				internRgb(pal32[c][0], pal32[c][1], pal32[c][2], (byte)c);
+			outLineCopperPal[(uint32)y * kAmigaEhbPaletteCount + kAmigaColorRegisterCount + c] =
+				internRgb((byte)(pal32[c][0] / 2), (byte)(pal32[c][1] / 2), (byte)(pal32[c][2] / 2),
+						  (byte)(kAmigaColorRegisterCount + c));
 		}
 	}
 
 	return outColorCount > 0;
 }
 
-static bool amigaMxmmIterChunks(const byte *mxmm, uint32 mxmmSize, uint32 &outTrailerOff,
-								Common::Array<const byte *> *outChunkPtrs,
-								Common::Array<uint32> *outChunkSizes) {
-	outTrailerOff = 0;
-	if (!mxmm || mxmmSize < 14 || READ_BE_UINT32(mxmm) != MKTAG('M', 'X', 'M', 'M'))
+// load_scene_mxmm sequential slots after the 10-byte MXMM header.
+enum AmigaMxmmSlot {
+	kAmigaMxmmSlotBg = 0,
+	kAmigaMxmmSlotMap0 = 1,
+	kAmigaMxmmSlotMap1 = 2,
+	kAmigaMxmmSlotMap2 = 3,
+	kAmigaMxmmSlotMxaa = 4,
+	kAmigaMxmmSlotCount = 5
+};
+
+struct AmigaMxmmLayout {
+	const byte *slot[kAmigaMxmmSlotCount];
+	uint32 slotSize[kAmigaMxmmSlotCount];
+	const byte *script;
+	uint32 scriptSize;
+	const byte *extra;
+	uint32 extraSize;
+	uint32 tableOff;
+};
+
+static bool amigaMxmmReadSizedBlob(const byte *mxmm, uint32 mxmmSize, uint32 &pos,
+								   const byte *&outPtr, uint32 &outSize) {
+	outPtr = nullptr;
+	outSize = 0;
+	if (pos + 4 > mxmmSize)
+		return false;
+	const int32 sz = (int32)READ_BE_UINT32(mxmm + pos);
+	pos += 4;
+	if (sz < 1)
+		return true;
+	if (pos + (uint32)sz > mxmmSize)
+		return false;
+	outPtr = mxmm + pos;
+	outSize = (uint32)sz;
+	pos += (uint32)sz;
+	return true;
+}
+
+static bool parseAmigaMxmmLayout(const byte *mxmm, uint32 mxmmSize, AmigaMxmmLayout &out) {
+	out = AmigaMxmmLayout();
+	if (!mxmm || mxmmSize < kAmigaMxmmMinSize || READ_BE_UINT32(mxmm) != MKTAG('M', 'X', 'M', 'M'))
 		return false;
 
-	uint32 pos = 10;
-	while (pos + 4 <= mxmmSize) {
-		const uint32 chunkSize = READ_BE_UINT32(mxmm + pos);
-		if (chunkSize == 0)
-			break;
-		if (pos + 4 + chunkSize > mxmmSize)
-			break;
-		if (outChunkPtrs && outChunkSizes) {
-			outChunkPtrs->push_back(mxmm + pos + 4);
-			outChunkSizes->push_back(chunkSize);
-		}
-		pos += 4 + chunkSize;
+	uint32 pos = kAmigaMxmmHeaderSize;
+	for (int i = 0; i < kAmigaMxmmSlotCount; i++) {
+		if (!amigaMxmmReadSizedBlob(mxmm, mxmmSize, pos, out.slot[i], out.slotSize[i]))
+			return false;
 	}
-	outTrailerOff = pos;
+	if (!amigaMxmmReadSizedBlob(mxmm, mxmmSize, pos, out.script, out.scriptSize))
+		return false;
+	if (!amigaMxmmReadSizedBlob(mxmm, mxmmSize, pos, out.extra, out.extraSize))
+		return false;
+	out.tableOff = pos;
 	return true;
 }
 
@@ -578,40 +635,39 @@ static bool decompressAmigaChunkToBuffer(const byte *chunk, uint32 chunkSize, Co
 	return true;
 }
 
-/**
- * Advance past MXMM size-prefixed chunks and the trailer script / optional extra
- * blob so pos sits at the pathfinding table preamble (native load_scene_mxmm
- * after bindLoadedScriptBlobToSlot @ 00221d90).
- */
+static bool amigaMxmmDecodeLengthPrefixedBlob(const byte *payload, uint32 payloadSize,
+											 Common::Array<byte> &out) {
+	out.clear();
+	if (!payload || payloadSize == 0)
+		return true;
+
+	Common::Array<byte> blob;
+	if (payloadSize >= 4 && READ_BE_UINT32(payload) == MKTAG('P', 'P', '2', '0')) {
+		if (!decompressPp20ToBuffer(payload, payloadSize, blob))
+			return false;
+	} else {
+		blob.resize(payloadSize);
+		memcpy(blob.data(), payload, payloadSize);
+	}
+	if (blob.size() < 4)
+		return false;
+
+	const uint32 innerLen = READ_BE_UINT32(blob.data());
+	if (innerLen == 0)
+		return true;
+	if (4 + innerLen > blob.size())
+		return false;
+	out.resize(innerLen);
+	memcpy(out.data(), blob.data() + 4, innerLen);
+	return true;
+}
+
 static bool amigaMxmmSeekSceneTables(const byte *mxmm, uint32 mxmmSize, uint32 &outPos) {
 	outPos = 0;
-	uint32 pos = 0;
-	if (!amigaMxmmIterChunks(mxmm, mxmmSize, pos, nullptr, nullptr))
+	AmigaMxmmLayout layout;
+	if (!parseAmigaMxmmLayout(mxmm, mxmmSize, layout))
 		return false;
-
-	// Empty MXAA (and any other leading zero size words) before the script payload.
-	while (pos + 4 <= mxmmSize && READ_BE_UINT32(mxmm + pos) == 0)
-		pos += 4;
-	if (pos + 4 > mxmmSize)
-		return false;
-
-	const uint32 scriptPayloadSize = READ_BE_UINT32(mxmm + pos);
-	pos += 4;
-	if (scriptPayloadSize == 0 || pos + scriptPayloadSize > mxmmSize)
-		return false;
-	pos += scriptPayloadSize;
-
-	if (pos + 4 > mxmmSize)
-		return false;
-	const uint32 extraSize = READ_BE_UINT32(mxmm + pos);
-	pos += 4;
-	if (extraSize > 0) {
-		if (pos + extraSize > mxmmSize)
-			return false;
-		pos += extraSize;
-	}
-
-	outPos = pos;
+	outPos = layout.tableOff;
 	return true;
 }
 
@@ -621,77 +677,14 @@ bool extractAmigaMxmmSceneScript(const byte *mxmm, uint32 mxmmSize,
 	outScript.clear();
 	outStrings.clear();
 
-	uint32 trailerOff = 0;
-	if (!amigaMxmmIterChunks(mxmm, mxmmSize, trailerOff, nullptr, nullptr))
+	AmigaMxmmLayout layout;
+	if (!parseAmigaMxmmLayout(mxmm, mxmmSize, layout))
 		return false;
-	if (trailerOff >= mxmmSize)
+	if (!amigaMxmmDecodeLengthPrefixedBlob(layout.script, layout.scriptSize, outScript))
 		return false;
-
-	const byte *trailer = mxmm + trailerOff;
-	uint32 trailerSize = mxmmSize - trailerOff;
-	uint32 pos = 0;
-
-	// Skip leading empty u32 markers (optional trailing chunk sizes of 0).
-	while (pos + 8 <= trailerSize && READ_BE_UINT32(trailer + pos) == 0)
-		pos += 4;
-
-	if (pos + 8 > trailerSize)
+	if (layout.extraSize != 0 &&
+		!amigaMxmmDecodeLengthPrefixedBlob(layout.extra, layout.extraSize, outStrings))
 		return false;
-
-	// Native reads one size-prefixed payload; the first u32 inside is often an
-	// inner bytecode length (e.g. 690) with the remaining bytes as script body.
-	const uint32 scriptPayloadSize = READ_BE_UINT32(trailer + pos);
-	pos += 4;
-	if (scriptPayloadSize == 0 || pos + scriptPayloadSize > trailerSize)
-		return false;
-
-	const byte *payload = trailer + pos;
-	pos += scriptPayloadSize;
-
-	uint32 scriptSize = scriptPayloadSize;
-	const byte *script = payload;
-	if (scriptPayloadSize >= 6) {
-		const uint32 innerLen = READ_BE_UINT32(payload);
-		if (innerLen >= 2 && innerLen + 4 <= scriptPayloadSize &&
-			(innerLen + 4 == scriptPayloadSize || innerLen + 4 + 1 == scriptPayloadSize)) {
-			script = payload + 4;
-			scriptSize = innerLen;
-		}
-	}
-
-	// Accept empty/tiny stubs (e.g. single 0x18) and real scene scripts.
-	if (scriptSize >= 2) {
-		const byte op = script[0];
-		const byte len = script[1];
-		if (len > 32 || (uint32)2 + len > scriptSize)
-			return false;
-		if (op != 0x04 && op != 0x05 && op != 0x01 && op != 0x0F && op != 0x0C && op != 0x18 && op != 0x07)
-			return false;
-	}
-
-	outScript.resize(scriptSize);
-	memcpy(outScript.data(), script, scriptSize);
-
-	// Optional extra blob: outer u32 size, payload often starts with an inner
-	// u32 string-bytes length (Ghidra load_scene_mxmm stage 0x19).
-	if (pos + 4 <= trailerSize) {
-		const uint32 extraSize = READ_BE_UINT32(trailer + pos);
-		if (extraSize > 0 && pos + 4 + extraSize <= trailerSize) {
-			const byte *extra = trailer + pos + 4;
-			uint32 stringBytes = extraSize;
-			const byte *stringData = extra;
-			if (extraSize >= 4) {
-				const uint32 inner = READ_BE_UINT32(extra);
-				if (inner > 0 && inner + 4 <= extraSize) {
-					stringData = extra + 4;
-					stringBytes = inner;
-				}
-			}
-			outStrings.resize(stringBytes);
-			memcpy(outStrings.data(), stringData, stringBytes);
-		}
-	}
-
 	return !outScript.empty();
 }
 
@@ -699,11 +692,9 @@ static bool amigaMxmmGetTrailerTableBase(const byte *mxmm, uint32 mxmmSize, uint
 	outPos = 0;
 	if (!amigaMxmmSeekSceneTables(mxmm, mxmmSize, outPos))
 		return false;
-	// Native @ 00221d90: skip u16, then 0xA2 pathfinding, skip u16, 0x22 hotspot, 0xA walk.
-	const uint32 kTableBytes = 2 + 0xA2 + 2 + 0x22 + 10;
-	if (outPos + kTableBytes > mxmmSize)
+	if (outPos + kAmigaMxmmTrailerTablesSize > mxmmSize)
 		return false;
-	outPos += 2; // preamble u16
+	outPos += kAmigaMxmmTrailerPreambleSize;
 	return true;
 }
 
@@ -719,23 +710,20 @@ bool extractAmigaMxmmScenePathfinding(const byte *mxmm, uint32 mxmmSize,
 
 	const byte *table = mxmm + pos;
 	outNumPoints = READ_BE_UINT16(table);
-	if (outNumPoints > 16)
-		outNumPoints = 16;
+	if (outNumPoints > kAmigaMxmmPathfindingNodeCount)
+		outNumPoints = kAmigaMxmmPathfindingNodeCount;
 
-	outNodes.resize(16);
-	for (uint i = 0; i < 16; i++) {
-		const byte *node = table + 2 + i * 10;
+	outNodes.resize(kAmigaMxmmPathfindingNodeCount);
+	for (uint i = 0; i < kAmigaMxmmPathfindingNodeCount; i++) {
+		const byte *node = table + kAmigaMxmmWordSize + i * kAmigaMxmmPathfindingNodeSize;
 		AmigaPathfindingNode &dst = outNodes[i];
-		dst.x = READ_BE_UINT16(node + 0);
-		dst.y = READ_BE_UINT16(node + 2);
-		dst.adjacent[0] = node[4];
-		dst.adjacent[1] = node[5];
-		dst.adjacent[2] = node[6];
-		dst.adjacent[3] = node[7];
-		// DOS/Amiga: last word is connection count (not padding). BE on Amiga.
-		dst.numConnections = READ_BE_UINT16(node + 8);
-		if (dst.numConnections > 4)
-			dst.numConnections = 4;
+		dst.x = READ_BE_UINT16(node + kAmigaMxmmPathfindingNodeXOffset);
+		dst.y = READ_BE_UINT16(node + kAmigaMxmmPathfindingNodeYOffset);
+		for (uint a = 0; a < kAmigaMxmmPathfindingMaxAdj; a++)
+			dst.adjacent[a] = node[kAmigaMxmmPathfindingNodeAdjOffset + a];
+		dst.numConnections = READ_BE_UINT16(node + kAmigaMxmmPathfindingNodeConnOffset);
+		if (dst.numConnections > kAmigaMxmmPathfindingMaxAdj)
+			dst.numConnections = kAmigaMxmmPathfindingMaxAdj;
 	}
 	return true;
 }
@@ -756,14 +744,13 @@ bool extractAmigaMxmmSceneWalkParams(const byte *mxmm, uint32 mxmmSize,
 	if (!amigaMxmmGetTrailerTableBase(mxmm, mxmmSize, pos))
 		return false;
 
-	// Skip pathfinding (0xA2) + preamble u16 + hotspot (0x22).
-	pos += 0xA2 + 2 + 0x22;
+	pos += kAmigaMxmmPathfindingToWalkOffset;
 
-	outWalkDepthThresholdY = READ_BE_UINT16(mxmm + pos + 0);
-	outWalkDepthScaleFactor = READ_BE_UINT16(mxmm + pos + 2);
-	outWalkBaseSpeedPct = READ_BE_UINT16(mxmm + pos + 4);
-	outScenePaletteMode = READ_BE_UINT16(mxmm + pos + 6);
-	outPaletteDarkenPercent = READ_BE_UINT16(mxmm + pos + 8);
+	outWalkDepthThresholdY = READ_BE_UINT16(mxmm + pos + kAmigaMxmmWalkDepthThresholdYOffset);
+	outWalkDepthScaleFactor = READ_BE_UINT16(mxmm + pos + kAmigaMxmmWalkDepthScaleFactorOffset);
+	outWalkBaseSpeedPct = READ_BE_UINT16(mxmm + pos + kAmigaMxmmWalkBaseSpeedPctOffset);
+	outScenePaletteMode = READ_BE_UINT16(mxmm + pos + kAmigaMxmmWalkScenePaletteModeOffset);
+	outPaletteDarkenPercent = READ_BE_UINT16(mxmm + pos + kAmigaMxmmWalkPaletteDarkenPercentOffset);
 	return true;
 }
 
@@ -775,46 +762,27 @@ bool extractAmigaMxmmSceneMaps(const byte *mxmm, uint32 mxmmSize,
 	outDepth.clear();
 	outShadow.clear();
 
-	uint32 trailerOff = 0;
-	Common::Array<const byte *> chunkPtrs;
-	Common::Array<uint32> chunkSizes;
-	if (!amigaMxmmIterChunks(mxmm, mxmmSize, trailerOff, &chunkPtrs, &chunkSizes))
-		return false;
-	if (chunkPtrs.size() < 2)
+	AmigaMxmmLayout layout;
+	if (!parseAmigaMxmmLayout(mxmm, mxmmSize, layout))
 		return false;
 
 	const uint32 kMapBytes = (uint32)kAmigaSceneWidth * kAmigaSceneHeight; // 64000
-	Common::Array<byte> maps[3];
-	uint mapCount = 0;
-
-	// Chunk0 is the planar screen; subsequent 64000-byte buffers are maps.
-	for (uint i = 1; i < chunkPtrs.size() && mapCount < 3; i++) {
+	auto decodeMap = [&](int slot, Common::Array<byte> &dest) -> bool {
+		if (layout.slotSize[slot] == 0)
+			return false;
 		Common::Array<byte> decoded;
-		if (!decompressAmigaChunkToBuffer(chunkPtrs[i], chunkSizes[i], decoded))
-			continue;
+		if (!decompressAmigaChunkToBuffer(layout.slot[slot], layout.slotSize[slot], decoded))
+			return false;
 		if (decoded.size() != kMapBytes)
-			continue;
-		maps[mapCount++] = Common::move(decoded);
-	}
+			return false;
+		dest = Common::move(decoded);
+		return true;
+	};
 
-	if (mapCount == 0)
-		return false;
-
-	// Native load_scene_mxmm order (NOT DOS MCS order):
-	//   Map0 -> depth / draw mask (g_pSceneMap0Buffer; buildDepthMaskFromMap0)
-	//   Map1 -> walkability (g_pSceneMap1Buffer; getWalkabilityAt)
-	//   Map2 -> MXCC hotspot RLE (not a 64000 surface; see extractAmigaMxmmMxccHotspotMap)
-	// DOS MCS is depth, pathfinding, shadow, hotspot. Swapping Map0/Map1 into
-	// ScummVM's pathfinding slot made MM_0004 treat the depth mask as walk
-	// blockers (255 walls), so off-screen walkTo cancelled and waitForWalk
-	// completed early. Map1 on that demo is all zeros (= open, like DOS scene 5).
-	if (mapCount >= 1)
-		outDepth = Common::move(maps[0]);
-	if (mapCount >= 2)
-		outPathfinding = Common::move(maps[1]);
-	if (mapCount >= 3)
-		outShadow = Common::move(maps[2]);
-	return true;
+	const bool gotDepth = decodeMap(kAmigaMxmmSlotMap0, outDepth);
+	const bool gotPath = decodeMap(kAmigaMxmmSlotMap1, outPathfinding);
+	// Map2 is MXCC, not a 64000 shadow surface.
+	return gotDepth || gotPath;
 }
 
 bool extractAmigaMxmmSceneHotspotColors(const byte *mxmm, uint32 mxmmSize,
@@ -827,19 +795,16 @@ bool extractAmigaMxmmSceneHotspotColors(const byte *mxmm, uint32 mxmmSize,
 	if (!amigaMxmmGetTrailerTableBase(mxmm, mxmmSize, pos))
 		return false;
 
-	// Skip pathfinding (0xA2) + preamble u16 before hotspot table.
-	pos += 0xA2 + 2;
-	if (pos + 0x22 > mxmmSize)
+	pos += kAmigaMxmmPathfindingToHotspotOffset;
+	if (pos + kAmigaMxmmHotspotTableSize > mxmmSize)
 		return false;
 
 	outNumHotspots = READ_BE_UINT16(mxmm + pos);
-	if (outNumHotspots > 16)
-		outNumHotspots = 16;
+	if (outNumHotspots > kAmigaMxmmPathfindingNodeCount)
+		outNumHotspots = kAmigaMxmmPathfindingNodeCount;
 
-	// Same 0x20 byte layout as DOS (f9 00 fe 00 ...). On LE hosts, memcpy into
-	// uint16 yields color in the low byte - matches getHotspotAtPoint.
-	outColorTable.resize(0x20 / sizeof(uint16));
-	memcpy(outColorTable.data(), mxmm + pos + 2, 0x20);
+	outColorTable.resize(kAmigaMxmmHotspotColorBytes / sizeof(uint16));
+	memcpy(outColorTable.data(), mxmm + pos + kAmigaMxmmWordSize, kAmigaMxmmHotspotColorBytes);
 	return true;
 }
 
@@ -847,59 +812,44 @@ bool extractAmigaMxmmMxccHotspotMap(const byte *mxmm, uint32 mxmmSize,
 									Common::Array<byte> &outHotspotMap) {
 	outHotspotMap.clear();
 
-	uint32 trailerOff = 0;
-	Common::Array<const byte *> chunkPtrs;
-	Common::Array<uint32> chunkSizes;
-	if (!amigaMxmmIterChunks(mxmm, mxmmSize, trailerOff, &chunkPtrs, &chunkSizes))
+	AmigaMxmmLayout layout;
+	if (!parseAmigaMxmmLayout(mxmm, mxmmSize, layout))
 		return false;
 
-	const byte *mxcc = nullptr;
-	uint32 mxccSize = 0;
-	for (uint i = 0; i < chunkPtrs.size(); i++) {
-		if (chunkSizes[i] >= 0x19A + 320 &&
-			READ_BE_UINT32(chunkPtrs[i]) == MKTAG('M', 'X', 'C', 'C')) {
-			mxcc = chunkPtrs[i];
-			mxccSize = chunkSizes[i];
-			break;
-		}
-	}
-	if (!mxcc)
+	const byte *mxcc = layout.slot[kAmigaMxmmSlotMap2];
+	const uint32 mxccSize = layout.slotSize[kAmigaMxmmSlotMap2];
+	if (!mxcc || mxccSize < kAmigaMxccRowDataOffset + kAmigaSceneWidth ||
+		READ_BE_UINT32(mxcc) != MKTAG('M', 'X', 'C', 'C'))
 		return false;
 
-	// Header: MXCC + ver u16BE + pad u16BE + payloadSize u16BE (Ghidra Map2).
-	if (READ_BE_UINT16(mxcc + 4) != 1)
+	if (READ_BE_UINT16(mxcc + kAmigaMxccVersionOffset) != 1)
 		return false;
 
-	const byte marker = mxcc[5];
-	const uint32 kRowTableOff = 0x0A;
-	const uint32 kRowDataBase = 0x19A;
-	const uint kRows = 200;
-	const uint kWidth = 320;
-	if (kRowTableOff + kRows * 2 > mxccSize || kRowDataBase > mxccSize)
+	const byte marker = mxcc[kAmigaMxccMarkerOffset];
+	if (kAmigaMxccRowDataOffset > mxccSize)
 		return false;
 
-	outHotspotMap.resize(kWidth * kRows);
+	outHotspotMap.resize((uint)kAmigaSceneWidth * kAmigaSceneHeight);
 	Common::fill(outHotspotMap.begin(), outHotspotMap.end(), 0);
 
-	for (uint y = 0; y < kRows; y++) {
-		// decodeMxccRunLengthAt: y==0 uses offset 0; else BE word at +0x0A+(y-1)*2.
+	for (uint y = 0; y < kAmigaSceneHeight; y++) {
 		uint32 rowOff = 0;
 		if (y > 0)
-			rowOff = READ_BE_UINT16(mxcc + kRowTableOff + (y - 1) * 2);
+			rowOff = READ_BE_UINT16(mxcc + kAmigaMxccRowTableOffset + (y - 1) * 2);
 
-		uint32 p = kRowDataBase + rowOff;
+		uint32 p = kAmigaMxccRowDataOffset + rowOff;
 		uint x = 0;
-		while (x < kWidth && p < mxccSize) {
+		while (x < kAmigaSceneWidth && p < mxccSize) {
 			const byte b = mxcc[p++];
 			if (b == marker) {
 				if (p + 1 >= mxccSize)
 					break;
 				const byte color = mxcc[p++];
 				const byte run = mxcc[p++];
-				for (uint r = 0; r < run && x < kWidth; r++)
-					outHotspotMap[y * kWidth + x++] = color;
+				for (uint r = 0; r < run && x < kAmigaSceneWidth; r++)
+					outHotspotMap[y * kAmigaSceneWidth + x++] = color;
 			} else {
-				outHotspotMap[y * kWidth + x++] = b;
+				outHotspotMap[y * kAmigaSceneWidth + x++] = b;
 			}
 		}
 	}
@@ -907,16 +857,13 @@ bool extractAmigaMxmmMxccHotspotMap(const byte *mxmm, uint32 mxmmSize,
 }
 
 bool amigaMxmmHasMxaaOverlay(const byte *mxmm, uint32 mxmmSize) {
-	uint32 pos = 0;
-	if (!amigaMxmmIterChunks(mxmm, mxmmSize, pos, nullptr, nullptr))
+	AmigaMxmmLayout layout;
+	if (!parseAmigaMxmmLayout(mxmm, mxmmSize, layout))
 		return false;
-	// Native: immediately after Map2 comes the MXAA size word (0 = absent).
-	if (pos + 4 > mxmmSize)
+	if (layout.slotSize[kAmigaMxmmSlotMxaa] == 0)
 		return false;
-	const uint32 mxaaSize = READ_BE_UINT32(mxmm + pos);
-	if (mxaaSize == 0 || pos + 4 + mxaaSize > mxmmSize)
-		return false;
-	const byte *blob = mxmm + pos + 4;
+	const byte *blob = layout.slot[kAmigaMxmmSlotMxaa];
+	const uint32 mxaaSize = layout.slotSize[kAmigaMxmmSlotMxaa];
 	if (mxaaSize >= 4 && READ_BE_UINT32(blob) == MKTAG('M', 'X', 'A', 'A'))
 		return true;
 	if (mxaaSize >= 4 && READ_BE_UINT32(blob) == MKTAG('P', 'P', '2', '0')) {
@@ -941,14 +888,14 @@ bool decodeAmigaMxffFont(const byte *mxff, uint32 mxffSize, Common::Array<AmigaM
 	const uint16 atlasRows = READ_BE_UINT16(mxff + 8);
 	const uint16 atlasWidthPixels = READ_BE_UINT16(mxff + 0xA);
 	const uint16 planes = READ_BE_UINT16(mxff + 0xC);
-	if (blitHeight == 0 || atlasRows == 0 || atlasWidthPixels < 8 || planes != 6)
+	if (blitHeight == 0 || atlasRows == 0 || atlasWidthPixels < 8 || planes != kAmigaScenePlanes)
 		return false;
 
 	const uint32 rowBytes = (uint32)(atlasWidthPixels >> 3);
 	if (rowBytes == 0)
 		return false;
 	const uint32 planeBytes = rowBytes * atlasRows;
-	const uint32 atlasBytes = planeBytes * 6;
+	const uint32 atlasBytes = planeBytes * kAmigaScenePlanes;
 	const uint32 atlasOff = 0x10A;
 	if (atlasOff + atlasBytes > mxffSize)
 		return false;
@@ -957,14 +904,13 @@ bool decodeAmigaMxffFont(const byte *mxff, uint32 mxffSize, Common::Array<AmigaM
 	const byte *widths = mxff + 0x8C;
 	const byte *atlas = mxff + atlasOff;
 	const uint16 glyphHeight = MIN(blitHeight, atlasRows);
-	const uint16 cellWidth = 16; // drawText: glyphIndex * (height>>3) byte offset -> 16px cells
+	const uint16 cellWidth = 16;
 
-	// chars 0x20..0x20+0x7D (0x7E entries)
 	for (uint i = 0; i < 0x7E; i++) {
 		const byte ascii = (byte)(0x20 + i);
 		const byte glyphIndex = charmap[i];
 		const byte advance = widths[i];
-		// 0x4E in the map is unused/empty (Ghidra charmap filler).
+		// 0x4E in the map is unused/empty
 		if (glyphIndex == 0x4E || advance == 0)
 			continue;
 
@@ -985,7 +931,7 @@ bool decodeAmigaMxffFont(const byte *mxff, uint32 mxffSize, Common::Array<AmigaM
 				byte color = 0;
 				const uint32 bit = absX & 7;
 				const uint32 byteInRow = absX >> 3;
-				for (uint16 plane = 0; plane < 6; plane++) {
+				for (uint16 plane = 0; plane < kAmigaScenePlanes; plane++) {
 					const byte *planeRow = atlas + plane * planeBytes + (uint32)y * rowBytes;
 					if (planeRow[byteInRow] & (0x80 >> bit))
 						color |= (byte)(1 << plane);
@@ -1007,13 +953,10 @@ bool extractAmigaMxosPcm(const byte *mxos, uint32 mxosSize, Common::Array<byte> 
 	if (READ_BE_UINT32(mxos) != MKTAG('M', 'X', 'O', 'S'))
 		return false;
 
-	// Demo MXOS: word at +0x10 is the byte offset of the first sample block.
 	const uint16 sampleOff = READ_BE_UINT16(mxos + 0x10);
 	if (sampleOff < 0x14 || sampleOff >= mxosSize)
 		return false;
 
-	// Optional Paula period near the sample header (word after offset on several demos).
-	// period 0 -> keep 8000 Hz. NTSC color clock / period ~= Paula playback rate.
 	if ((uint32)sampleOff + 4 <= mxosSize) {
 		const uint16 period = READ_BE_UINT16(mxos + 0x12);
 		if (period >= 0x50 && period <= 0x400) {
@@ -1028,7 +971,6 @@ bool extractAmigaMxosPcm(const byte *mxos, uint32 mxosSize, Common::Array<byte> 
 		return false;
 
 	outPcm.resize(pcmBytes);
-	// Paula samples are signed 8-bit; MacsAudioStream expects unsigned (value-128)*256.
 	for (uint32 i = 0; i < pcmBytes; i++)
 		outPcm[i] = (byte)((int8)mxos[sampleOff + i] + 128);
 

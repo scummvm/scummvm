@@ -60,6 +60,10 @@ Common::String HarvesterEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+Common::Language HarvesterEngine::getLanguage() const {
+	return _gameDescription->language;
+}
+
 bool HarvesterEngine::isDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
@@ -347,7 +351,11 @@ Common::Error HarvesterEngine::run() {
 	if (!_media->loadText())
 		return Common::kReadingFailed;
 
-	if (!_media->loadQuickTipsResources())
+	Flow flow(*this);
+	if (!flow.load())
+		return Common::kReadingFailed;
+
+	if (!_media->loadQuickTipsResources(flow._menuTextConfig.hasQuickTipsHeader()))
 		return Common::kReadingFailed;
 
 	// If a savegame was selected from the launcher, load it
@@ -355,13 +363,7 @@ Common::Error HarvesterEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	Flow flow(*this);
 	_activeFlow = &flow;
-	if (!flow.load()) {
-		_activeFlow = nullptr;
-		return Common::kReadingFailed;
-	}
-
 	const Common::Error error = flow.run();
 	_activeFlow = nullptr;
 	return error;

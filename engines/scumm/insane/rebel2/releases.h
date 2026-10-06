@@ -1,0 +1,103 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef SCUMM_INSANE_REBEL2_RELEASES_H
+#define SCUMM_INSANE_REBEL2_RELEASES_H
+
+#include "common/scummsys.h"
+
+namespace Scumm {
+
+struct Rebel2DifficultyParams {
+	int16 laserDelay;
+	int16 snapDistance;
+	int16 missDamage;
+	int16 dodgeDamage;
+	int16 shotDamage;
+	int16 specialDamage;
+	int16 shotAccuracy;
+	int16 hitPoints;
+	int16 dodgePoints;
+	int16 timePoints;
+	int16 levelPoints;
+	int16 specialPoints;
+	int16 flags;
+	int16 rollRate;
+	int16 liftRate;
+	int16 slideRate;
+	int16 driftRate;
+};
+
+struct Rebel2DifficultyOverride {
+	byte levelType;
+	Rebel2DifficultyParams difficulty[6];
+};
+
+struct Rebel2AccuracyOverride {
+	byte chapter;
+	int16 low;
+	int16 high;
+};
+
+struct Rebel2DemoVideo {
+	const char *filename;
+	int16 flags;
+};
+
+struct Rebel2Release {
+	enum { kNumLevels = 15, kFinale = 16 };
+
+	const char *variant;
+	const char *container;
+	const char *strings;
+	// Null-terminated playlist for non-interactive demos.
+	const Rebel2DemoVideo *nonInteractiveVideos;
+	const char *completionVideo;
+	// Chapter numbers in playback order; unused entries are zero.
+	byte levels[kNumLevels];
+	bool ending;
+	bool unlockAvailableLevels;
+	// The chapter-6 demos start at the attack on the reactor.
+	bool skipMiningFacilityAttack;
+	// Some demos omit the shield-attack resources entirely.
+	bool canRestoreMiningFacilityAttack;
+	bool advanceCompletionPasswords;
+	const Rebel2DifficultyOverride *difficultyOverrides;
+	uint difficultyOverrideCount;
+	// Optional chapter-completion thresholds, terminated by chapter zero.
+	const Rebel2AccuracyOverride *accuracyOverrides;
+	// Optional null-terminated list replacing the retail movie fonts.
+	const char *const *fontFiles;
+
+	bool isChapterAvailable(int chapter) const;
+	int getNextChapter(int chapter) const;
+	int getCompletionPasswordChapter(int chapter) const;
+	const Rebel2DifficultyParams *getDifficultyOverride(int difficulty, int levelType) const;
+	const Rebel2AccuracyOverride *getAccuracyOverride(int chapter) const;
+	int getFontCount() const;
+	const char *getFontFile(int font, bool highRes) const;
+};
+
+Rebel2Release getRebel2Release(const char *variant, bool restoredContent = false);
+
+} // End of namespace Scumm
+
+#endif

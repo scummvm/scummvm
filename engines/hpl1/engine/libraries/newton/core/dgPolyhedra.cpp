@@ -1502,7 +1502,7 @@ dgInt32 dgPolyhedra::TriangleList(dgUnsigned32 outputBuffer[], dgInt32 maxSize__
 		vertexIndex.Insert(edge, edge->m_incidentVertex);
 	}
 	count = 0;
-	cacheMiss = 0;;
+	cacheMiss = 0;
 
 	mark = IncLRU();
 	while (vertexIndex.GetCount()) {
@@ -1513,7 +1513,7 @@ dgInt32 dgPolyhedra::TriangleList(dgUnsigned32 outputBuffer[], dgInt32 maxSize__
 			for (iter.Begin(); iter;) {
 				node = iter.GetNode();
 				iter ++;
-				ptr = node->GetInfo();;
+				ptr = node->GetInfo();
 				edge = ptr;
 
 				do {

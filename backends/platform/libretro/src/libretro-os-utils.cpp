@@ -32,6 +32,10 @@
 #include "backends/platform/libretro/include/libretro-options-widget.h"
 #include "backends/platform/libretro/include/libretro-fs.h"
 
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 void OSystem_libretro::getTimeAndDate(TimeDate &t, bool skipRecord) const {
 	uint32 curTime = (uint32)(cpu_features_get_time_usec() / 1000000);
 
@@ -117,6 +121,18 @@ bool OSystem_libretro::parseGameName(const Common::String &gameName, Common::Str
 	return false;
 }
 
+bool OSystem_libretro::openUrl(const Common::String &url) {
+#ifdef EMSCRIPTEN
+	// Called on the emu thread; window.open() only exists on the main thread.
+	static char s_url[2048];
+	Common::strlcpy(s_url, url.c_str(), sizeof(s_url));
+	MAIN_THREAD_ASYNC_EM_ASM({ window.open(UTF8ToString($0), "_blank"); }, s_url);
+	return true;
+#else
+	return false;
+#endif
+}
+
 int OSystem_libretro::testGame(const char *filedata, bool autodetect) {
 	Common::String game_id;
 	Common::String engine_id;
@@ -136,6 +152,8 @@ int OSystem_libretro::testGame(const char *filedata, bool autodetect) {
 		if (!detectionResults.listRecognizedGames().empty()) {
 			res = TEST_GAME_OK_ID_AUTODETECTED;
 		}
+		if (detectionResults.foundUnknownGames())
+			logMessage(LogMessageType::kWarning, detectionResults.generateUnknownGameReport(false, 80).encode().c_str());
 
 	} else {
 
@@ -172,6 +190,7 @@ bool OSystem_libretro::checkPathSetting(const char *setting, Common::String cons
 		setPath = Common::Path::fromConfig(ConfMan.get(setting)).toString();
 	if (setPath.empty() || !(isDirectory ? LibRetroFilesystemNode(setPath).isDirectory() : LibRetroFilesystemNode(setPath).exists()))
 		ConfMan.removeKey(setting, Common::ConfigManager::kApplicationDomain);
+
 	if (! ConfMan.hasKey(setting))
 		if (defaultPath.empty())
 			return false;
@@ -190,7 +209,7 @@ void OSystem_libretro::setLibretroDir(const char *path, Common::String &var) {
 
 void OSystem_libretro::applyBackendSettings() {
 	/* ScummVM paths checks at startup and on settings applied */
-	Common::String s_homeDir(LibRetroFilesystemNode::getHomeDir());
+	Common::String s_homeDir(LibRetroFilesystemNode::getDefaultDir());
 	Common::String s_themeDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR);
 	Common::String s_extraDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
 	Common::String s_soundfontPath(s_extraDir + "/" + DEFAULT_SOUNDFONT_FILENAME);
@@ -201,8 +220,6 @@ void OSystem_libretro::applyBackendSettings() {
 		s_extraDir.clear();
 	if (! LibRetroFilesystemNode(s_soundfontPath).exists())
 		s_soundfontPath.clear();
-	if (s_homeDir.empty() || ! LibRetroFilesystemNode(s_homeDir).isDirectory())
-		s_homeDir = s_systemDir;
 
 	//Register default paths
 	if (! s_homeDir.empty()) {
@@ -218,16 +235,27 @@ void OSystem_libretro::applyBackendSettings() {
 
 	//Check current path settings
 	if (!checkPathSetting("savepath", s_saveDir)) {
-		ConfMan.setAndFlush("savepath", s_homeDir);
-		retro_osd_notification("ScummVM save folder not found.");
+		ConfMan.setAndFlush("savepath", s_systemDir);
+		retro_osd_notification("ScummVM save folder not found.", RETRO_LOG_WARN);
 	}
 	if (!checkPathSetting("themepath", s_themeDir))
-		retro_osd_notification("ScummVM theme folder not found.");
+		retro_osd_notification("ScummVM theme folder not found.", RETRO_LOG_WARN);
 	if (!checkPathSetting("extrapath", s_extraDir))
-		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
+		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.", RETRO_LOG_WARN);
 	checkPathSetting("soundfont", s_soundfontPath, false);
-	checkPathSetting("browser_lastpath", s_homeDir);
-	checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_homeDir : s_playlistDir);
+	{
+		Common::String lastPath;
+		if (ConfMan.hasKey("browser_lastpath"))
+			lastPath = Common::Path::fromConfig(ConfMan.get("browser_lastpath")).toString();
+
+		if (lastPath.empty() || !LibRetroFilesystemNode::isBrowserLastPathCompatible(lastPath)) {
+			if (s_homeDir.empty())
+				ConfMan.removeKey("browser_lastpath", Common::ConfigManager::kApplicationDomain);
+			else
+				ConfMan.setPath("browser_lastpath", Common::Path::fromConfig(s_homeDir));
+		}
+	}
+	checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_systemDir : s_playlistDir);
 	checkPathSetting("iconspath", "");
 }
 
@@ -267,6 +295,36 @@ static const char *const helpTabs[] = {
 	    "\n"
 	    "Operation status will be shown in the same dialog, while details will be given in frontend logs."
 	),
+
+#ifdef ANDROID
+	_s("Android storage"),
+	"",
+	_s(
+	    "## Android storage access\n"
+	    "On Android modern versions apps can only access folders that have been explicitly authorized by the user through the system file picker (Storage Access Framework, SAF).\n"
+	    "\n"
+	    "The core can browse both the standard local filesystem and the folders authorized through the frontend (e.g. RetroArch). The starting location of the file browser is controlled by the **Browsing mode** core option.\n"
+	    "\n"
+	    "## Browsing mode\n"
+	    "This core option is available in the frontend core options (e.g. RetroArch 'Quick Menu > Core Options > System').\n"
+	    "\n"
+	    "  - **Authorized storage**: the file browser starts from a virtual root listing only the folders authorized through the frontend. This is the default on Android.\n"
+	    "\n"
+	    "  - **Local filesystem**: the file browser starts from the standard local path.\n"
+	    "\n"
+	    "## Authorizing folders\n"
+	    "  - Open the frontend file browser (e.g. in RetroArch, 'Load Content') and use the option to open/add a folder; the system file picker will appear.\n"
+	    "\n"
+	    "  - Grant access to the folder(s) that contain your games and exit the file browser (no need to actually select any content at this time). The authorization is persistent across reboots.\n"
+	    "\n"
+	    "  - Start the core; the authorized folders will be listed by the ScummVM file browser when **Browsing mode** is set to 'Authorized storage'.\n"
+	    "\n"
+	    "## Notes\n"
+	    "  - The authorized folder list is read when the core starts. If you authorize new folders while the core is running, restart (reload) the core to make them available.\n"
+	    "\n"
+	    "  - If **Browsing mode** is set to 'Authorized storage' but no folders have been authorized, the core falls back to the local filesystem and shows a notification.\n"
+	),
+#endif
 
 	0 // End of list
 };

@@ -140,6 +140,10 @@ private:
 	int16 _rightCurlyBracketOffset			= -1;
 	int16 _euroOffset						= -1;
 
+	// Two more characters, introduced in nancy15
+	int16 _caretOffset						= -1;
+	int16 _atSignOffset						= -1;
+
 	// Specific offsets in French variant of nancy12
 	int16 _uppercaseCWithCedillaOffset		= -1;
 	int16 _uWithCircumflexOffset			= -1;

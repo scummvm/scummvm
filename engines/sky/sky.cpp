@@ -101,6 +101,8 @@ SkyEngine::SkyEngine(OSystem *syst)
 	_skyDisk    = nullptr;
 	_skyControl = nullptr;
 	_skyCompact = nullptr;
+
+	_curScreen = 0xFFFF;
 }
 
 SkyEngine::~SkyEngine() {
@@ -243,10 +245,15 @@ Common::Error SkyEngine::go() {
 	uint32 delayCount = _system->getMillis();
 	while (!shouldQuit()) {
 		_skySound->checkFxQueue();
-		if (SkyEngine::isIbass())
+		if (SkyEngine::isIbass()) {
+			if (_curScreen != Logic::_scriptVariables[SCREEN]) {
+				_curScreen = Logic::_scriptVariables[SCREEN];
+				setSeenScreen(_curScreen);
+			}
 			_skyMouse->mouseEngineIBASS();
-		else
+		} else {
 			_skyMouse->mouseEngine();
+		}
 		handleKey();
 		if (_systemVars->paused) {
 			do {
@@ -604,6 +611,59 @@ bool SkyEngine::isIbass() {
 	if (ConfMan.get("gameid") == "ibass")
 		return true;
 	return false;
+}
+
+int SkyEngine::giveCurrentScreen() {
+	return Logic::_scriptVariables[SCREEN];
+}
+
+uint32 SkyEngine::giveScriptVar(uint32 s) {
+	return Logic::_scriptVariables[s];
+}
+
+void SkyEngine::setSeenScreen(int screen) {
+	if (screen >= TOTAL_SCREENS) {
+		debug(1, "setSeenScreen: illegal screen %d", screen);
+		return;
+	}
+	SkyEngine::_systemVars->_seenScreen[screen] = true;
+}
+
+bool SkyEngine::hasSeenScreen(int screen) {
+	if (screen >= TOTAL_SCREENS) {
+		debug(1, "hasSeenScreen: illegal screen %d", screen);
+		return false;
+	}
+	return SkyEngine::_systemVars->_seenScreen[screen];
+}
+
+void SkyEngine::setHintAnswerSeen(int answer) {
+	if (answer >= TOTAL_HINT_ANSWERS) {
+		debug(1, "setHintAnswerSeen: illegal answer %d", answer);
+		return;
+	}
+	SkyEngine::_systemVars->_answerSeen[answer] = true;
+}
+
+bool SkyEngine::isHintAnswerSeen(int answer) {
+	if (answer >= TOTAL_HINT_ANSWERS) {
+		debug(1, "isHintAnswerSeen: illegal answer %d", answer);
+		return false;
+	}
+	return SkyEngine::_systemVars->_answerSeen[answer];
+}
+
+Common::String SkyEngine::lookUpAscii(int line) {
+	line -= 1000;
+	if (line < 0 || line >= (int)kUkAsciiCount) {
+		debug(1, "lookUpAscii: illegal line %d", line);
+		return Common::U32String("???");
+	}
+	return Common::U32String(ukAscii[line]);
+}
+
+Common::String SkyEngine::giveButton(const Common::String &button) {
+	return button;
 }
 
 } // End of namespace Sky

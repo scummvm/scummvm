@@ -150,9 +150,6 @@ static void handle_anim_top_slime() {
 				break;
 
 			case 17: /* end of heal */
-				top_slime_reset_frame = 26;
-				break;
-
 			case 27: /* end of invislbe */
 				top_slime_reset_frame = 26;
 				break;
@@ -321,7 +318,7 @@ static void room_205_init() {
 		player_walk(WALK_2_X, WALK_2_Y, 5);
 		player_walk_trigger(ROOM_205_WALK);
 
-	} else if (previous_room == 203 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x      = PLAYER_X_FROM_203;
 		player.y      = PLAYER_Y_FROM_203;
 		player.facing = FACING_NORTHEAST;

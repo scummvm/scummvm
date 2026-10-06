@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/file.h"
+#include "common/md5.h"
 #include "common/util.h"
 #include "mads/phantom/sound/rsound_phantom.h"
 
@@ -53,6 +55,7 @@ int RSound1::command(int commandId, int param) {
 	case 34: return command34();
 	case 35: return command35();
 	case 36: return command36();
+	case 37: return command37();
 	case 38: return command38();
 	case 39: return command39();
 	case 64: return command64();
@@ -69,14 +72,13 @@ int RSound1::command(int commandId, int param) {
 	case 75: return command75();
 	case 76: return command76();
 	default:
-		// TODO: command 37 not yet implemented - disassembly not yet
-		// provided. There is no command 17 (see the class comment).
+		// There is no command 17 (see the class comment).
 		return 0;
 	}
 }
 
 void RSound1::checkRandomAmbianceTrigger() {
-	// Matches sub_1222E exactly. CONFIRMED: the only code that ever arms
+	// CONFIRMED: the only code that ever arms
 	// this (setting _randomAmbianceTriggerFlag to 0xFF) is itself
 	// unreachable/dead code, so in practice this check always fails and
 	// command16() never fires via this path - only command37's clear
@@ -652,7 +654,7 @@ int RSound3::command(int commandId, int param) {
 
 int RSound3::command4() {
 	// Confirmed: TWO chained isSoundActive() gates (unlike RSound1/
-	// RSound2's single 0x3D98 gate), then a tail (sub_10832) that
+	// RSound2's single 0x3D98 gate), then a tail that
 	// resets only channels 5-9 (indices 4-8) - narrower than the
 	// shared resetChannels4to9()'s 4-9 (indices 3-8) - so it can't
 	// reuse resetAndGmResetUpperChannels() and calls resetChannelRange()
@@ -671,7 +673,7 @@ int RSound3::command4() {
 
 int RSound3::command5() {
 	// Same two-gate shape as command4() above, but the plain
-	// enableUpperChannels() tail (loc_10955, shared with command1()).
+	// enableUpperChannels() tail (shared with command1()).
 	if (isSoundActive(loadData(0x2AA6)))
 		return 0;
 	if (isSoundActive(loadData(0x1E30)))
@@ -875,6 +877,18 @@ const RSound4::CommandPtr RSound4::_commandList[72] = {
 RSound4::RSound4(Audio::Mixer *mixer) : RSound(mixer, "rsound.ph4", 0x2A40, 0xE00, 0xEC) {
 }
 
+bool RSound4::callFunction(uint16 targetOffset) {
+	if (targetOffset != 0x229c)
+		return false;
+
+	const uint tableOffset = 0x0984 + (getRandomNumber() & 0x0f) * 2;
+	const byte *source = loadData(tableOffset);
+	byte *destination = loadData(0x0666);
+	destination[0] = source[0];
+	destination[1] = source[1];
+	return true;
+}
+
 int RSound4::command(int commandId, int param) {
 	if (commandId < 0 || commandId >= ARRAYSIZE(_commandList))
 		return 0;
@@ -886,8 +900,8 @@ int RSound4::command(int commandId, int param) {
 
 int RSound4::command4() {
 	// Confirmed: NO isSoundActive() gate in this driver, unlike every
-	// other driver seen so far - matches sub_107FC + sendGmReset(9)
-	// unconditionally.
+	// other driver seen so far - unconditionally resets channels 5-8,
+	// then calls sendGmReset(9).
 	_isDisabled = true;
 	resetChannelRange(5, 8);
 	_isDisabled = false;
@@ -896,14 +910,14 @@ int RSound4::command4() {
 }
 
 int RSound4::command5() {
-	// Confirmed: sub_10838 (_fadeCheckPeriod = 1) + channels 5-8 -
+	// Confirmed: _fadeCheckPeriod = 1 + channels 5-8 -
 	// identical to the shared enableUpperChannels(), no gate at all.
 	enableUpperChannels();
 	return 0;
 }
 
 int RSound4::command16() {
-	// sub_101E7 ("isSoundPlaying") confirmed functionally identical to
+	// The disassembly's "isSoundPlaying" helper is confirmed functionally identical to
 	// RSound::isSoundActive() - same channel 1-8 scan, same
 	// _activeCount && _soundData==pData test, same pop-return-address
 	// early-exit trick.
@@ -1298,7 +1312,7 @@ int RSound9::command(int commandId, int param) {
 }
 
 int RSound9::command4() {
-	// sub_1082B: resets channels 7,8,9 (0-based indices 6-8) - a fourth
+	// Resets channels 7,8,9 (0-based indices 6-8) - a fourth
 	// distinct range for this reset tail (RSound1/2: 4-9, RSound3: 5-9,
 	// RSound4/5: 6-9). No isSoundActive() gate, matching RSound4/5.
 	_isDisabled = true;
@@ -1452,8 +1466,8 @@ int RSound9::command69() {
 }
 
 int RSound9::command70() {
-	// Shares a fallthrough tail with command71 (loc_12439 in the
-	// disassembly): writes a variant byte into the sound data at 0x299B
+	// Shares a fallthrough tail with command71: writes a variant byte
+	// into the sound data at 0x299B
 	// before playing 0x2998 - twice, matching the disassembly's call +
 	// tail-jmp pair exactly.
 	*loadData(0x299B) = 80;
@@ -1467,6 +1481,159 @@ int RSound9::command71() {
 	playSoundChannels5To8(0x2998);
 	playSoundChannels5To8(0x2998);
 	return 0;
+}
+
+namespace {
+
+enum {
+	kDemoFileSize = 35413,
+	kDemoDataOffset = 0x2cd0,
+	kDemoInitializedDataSize = 0x5d85,
+	kDemoDeclaredDataSize = 0x5f60,
+	kDemoSysExOffset = 0x00e2
+};
+
+const char *const kDemoFilename = "rsound.pha";
+const char *const kDemoFirst8192Md5 = "8fca9087bfe5897dd8079d0513eed377";
+
+} // namespace
+
+RSoundDemo::RSoundDemo(Audio::Mixer *mixer, const Common::Path &filename,
+					   int dataOffset, int dataSize, int sysExOffset) :
+		RSound(mixer, filename, dataOffset, dataSize, sysExOffset) {
+}
+
+int RSoundDemo::dispatchCommonCommand(int commandId) {
+	switch (commandId) {
+	case 0: return command0();
+	case 1: return command1();
+	case 2: return command2();
+	case 3: return command3();
+	case 4: return command4();
+	case 5: return command5();
+	case 6: return command6();
+	case 7: return command7();
+	case 8: return command8();
+	default: return 0;
+	}
+}
+
+int RSoundDemo::command4() {
+	// PHA's command 4 has no retail-style sound-active guard.
+	resetAndGmResetUpperChannels();
+	return 0;
+}
+
+int RSoundDemo::command5() {
+	// PHA's command 5 enters the shared upper-channel enable tail directly.
+	enableUpperChannels();
+	return 0;
+}
+
+RSoundDemoPHA::RSoundDemoPHA(Audio::Mixer *mixer) :
+		RSoundDemo(mixer, kDemoFilename, kDemoDataOffset,
+				   kDemoDeclaredDataSize, kDemoSysExOffset) {
+	// The MZ file omits the zero-initialized tail declared by the overlay
+	// descriptor. Supply it explicitly rather than depending on container
+	// growth semantics in the common file loader.
+	for (uint offset = kDemoInitializedDataSize; offset < kDemoDeclaredDataSize; ++offset)
+		_soundData[offset] = 0;
+}
+
+bool RSoundDemoPHA::validate(Common::String *reason) {
+	Common::File file;
+	if (!file.open(kDemoFilename)) {
+		if (reason)
+			*reason = "file is missing";
+		return false;
+	}
+	if (file.size() != kDemoFileSize) {
+		if (reason)
+			*reason = "file size does not match";
+		return false;
+	}
+	if (kDemoDataOffset + kDemoInitializedDataSize != file.size()) {
+		if (reason)
+			*reason = "declared data segment is inconsistent";
+		return false;
+	}
+
+	file.seek(0);
+	if (Common::computeStreamMD5AsString(file, 8192) != kDemoFirst8192Md5) {
+		if (reason)
+			*reason = "first-8192-byte signature does not match";
+		return false;
+	}
+	return true;
+}
+
+int RSoundDemoPHA::command(int commandId, int param) {
+	Common::StackLock lock(_driverMutex);
+	_commandParam = param;
+	_frameCounter = 0;
+
+	if (commandId >= 0 && commandId <= 8)
+		return dispatchCommonCommand(commandId);
+	if (commandId < 9 || commandId > 27)
+		return 0;
+
+	// Each presentation handler calls command 1 and then invokes the native
+	// channels-1-to-8 allocator once for every root in its row.
+	static const uint16 roots[19][8] = {
+		{0x0602, 0x0745, 0x0793, 0x086f, 0x0911, 0x09b3, 0x0a01, 0x0a89},
+		{0x01e0, 0x023a, 0x0282, 0x0554},
+		{0x0560, 0x0583, 0x05a4, 0x05c0, 0x05e1},
+		{0x1c20, 0x1e77, 0x1f88, 0x20a7, 0x2198, 0x225a},
+		{0x135c, 0x1494, 0x154e, 0x15fa, 0x1683},
+		{0x2f0e, 0x2fc8, 0x3080, 0x3331},
+		{0x338c, 0x355c, 0x3821, 0x39ab, 0x3b6d, 0x3e6c, 0x3f14},
+		{0x2340, 0x25fd, 0x27f1, 0x2a29, 0x2bb3, 0x2d21},
+		{0x3f6e, 0x3fcd, 0x40b0, 0x40f5, 0x4115},
+		{0x4136, 0x418c, 0x41f1},
+		{0x4248, 0x42cb, 0x434e, 0x43be, 0x4446, 0x44e2, 0x4514},
+		{0x455e, 0x45e5, 0x461d, 0x4671},
+		{0x46dc, 0x477d, 0x4845, 0x48f7, 0x493b, 0x4983, 0x49a9},
+		{0x0aea, 0x0b38, 0x0c38, 0x0cb6, 0x0d0e, 0x0f61, 0x1272},
+		{0x17b2, 0x17e6, 0x1807, 0x1828, 0x1880, 0x18db, 0x1916},
+		{0x1942, 0x1973, 0x199f, 0x19d3, 0x1a07, 0x1a2d},
+		{0x1a62, 0x1a9e, 0x1afd, 0x1b40, 0x1ba5, 0x1bde},
+		{0x49d0, 0x4ac2, 0x4b35, 0x4bea},
+		{0x4c94, 0x4e00, 0x4f0d, 0x4fb2}
+	};
+
+	command1();
+	const uint16 *commandRoots = roots[commandId - 9];
+	for (uint index = 0; index < ARRAYSIZE(roots[0]) && commandRoots[index]; ++index)
+		playSoundAny(commandRoots[index]);
+	return 0;
+}
+
+void RSoundDemoPHA::writeRandomizedPair(uint16 firstLowOffset,
+		uint16 secondLowOffset, uint16 firstHighOffset, uint16 secondHighOffset,
+		byte firstLow, byte secondLow, byte firstHigh, byte secondHigh) {
+	if ((getRandomNumber() >> 8) <= 0x80) {
+		SWAP(firstLow, secondLow);
+		SWAP(firstHigh, secondHigh);
+	}
+	*loadData(firstLowOffset) = firstLow;
+	*loadData(secondLowOffset) = secondLow;
+	*loadData(firstHighOffset) = firstHigh;
+	*loadData(secondHighOffset) = secondHigh;
+}
+
+bool RSoundDemoPHA::callFunction(uint16 targetOffset) {
+	switch (targetOffset) {
+	case 0x240e:
+		writeRandomizedPair(0x3fd5, 0x404a, 0x3fd7, 0x404c,
+							0x14, 0x03, 0x32, 0x64);
+		return true;
+	case 0x243b:
+		writeRandomizedPair(0x3ffb, 0x4065, 0x3ffd, 0x4067,
+							0x0d, 0x0b, 0x4b, 0x5a);
+		return true;
+	default:
+		return false;
+	}
 }
 
 } // namespace Sound

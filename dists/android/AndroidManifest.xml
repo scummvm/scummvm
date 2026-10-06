@@ -46,6 +46,12 @@
 		android:glEsVersion="0x00020000"
 		android:required="true" />
 
+	<queries>
+		<intent>
+			<action android:name="android.intent.action.TTS_SERVICE" />
+		</intent>
+	</queries>
+
 	<supports-screens
 		android:largeScreens="true"
 		android:normalScreens="true"

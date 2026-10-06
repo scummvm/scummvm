@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_TANGRAMPUZZLE_H
 #define NANCY_ACTION_TANGRAMPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
@@ -31,9 +31,9 @@ namespace Action {
 // Handles a specific type of puzzle where clicking an object rotates it,
 // as well as several other objects linked to it. Examples are the sun/moon
 // and staircase spindle puzzles in nancy3
-class TangramPuzzle : public RenderActionRecord {
+class TangramPuzzle : public PuzzleRecord {
 public:
-	TangramPuzzle() : RenderActionRecord(7) {}
+	TangramPuzzle() : PuzzleRecord(7) {}
 	virtual ~TangramPuzzle();
 
 	void init() override;
@@ -90,12 +90,6 @@ protected:
 	SoundDescription _pickUpSound;
 	SoundDescription _putDownSound;
 	SoundDescription _rotateSound;
-
-	SceneChangeWithFlag _solveScene;
-	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 
 	Graphics::ManagedSurface _tileImage;
 	Graphics::ManagedSurface _maskImage;

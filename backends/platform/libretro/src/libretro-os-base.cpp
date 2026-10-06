@@ -71,6 +71,15 @@ void OSystem_libretro::initBackend() {
 	if (! ConfMan.hasKey("libretro_hooks_clear"))
 		ConfMan.set("libretro_hooks_clear", 0);
 
+	delete _timerManager;
+	_timerManager = nullptr;
+	delete _mixer;
+	_mixer = nullptr;
+	delete _savefileManager;
+	_savefileManager = nullptr;
+	delete _eventManager;
+	_eventManager = nullptr;
+
 	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
 
@@ -103,6 +112,14 @@ void OSystem_libretro::engineInit() {
 
 Audio::Mixer *OSystem_libretro::getMixer() {
 	return _mixer;
+}
+
+bool OSystem_libretro::hasFeature(Feature f) {
+#ifdef EMSCRIPTEN
+	if (f == kFeatureOpenUrl)
+		return true;
+#endif
+	return ModularGraphicsBackend::hasFeature(f);
 }
 
 void OSystem_libretro::refreshRetroSettings() {

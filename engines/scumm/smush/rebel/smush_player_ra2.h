@@ -30,8 +30,10 @@ class SmushPlayerRebel2 : public SmushPlayer {
 public:
 	SmushPlayerRebel2(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane);
 	~SmushPlayerRebel2() override;
+	void unpause() override;
 	bool ra2PromoteCurrentFrameToHiRes(int scrollX, int scrollY);
 	bool ra2PromoteHandler7PerspectiveToHiRes(int perspectiveX, int perspectiveY, int viewShift);
+	bool isPlayingLoadBuffer() const { return _loadContinuationStream != nullptr; }
 
 protected:
 	void initGamePlayerFields() override;
@@ -68,6 +70,7 @@ protected:
 
 private:
 	void handleLoad(int32 subSize, Common::SeekableReadStream &b);
+	void ra2StartLoadPlayback();
 	void ra2HandleTextResource(const char *str, int fontId, int color,
 							   int pos_x, int pos_y, int left, int top,
 							   int width, int height, TextStyleFlags flg);
@@ -94,12 +97,18 @@ private:
 	int32 _loadReadOffset;
 	int16 _lastLoadChunkIdx;
 	int16 _loadStreamId;
+	bool _loadPlaybackPending;
+	Common::SeekableReadStream *_loadContinuationStream;
+	uint32 _loadContinuationSize;
+	int32 _loadContinuationFrameCount;
 	int _ra2FrameSourceSkipX;
 	int _ra2FrameSourceSkipY;
 	int _ra2FrameObjectOriginalWidth;
 	int _ra2FrameObjectOriginalHeight;
 	int _ra2FrameObjectSurfaceWidth;
 	int _ra2FrameObjectSurfaceHeight;
+	int _ra2SpecialBufferWidth;
+	int _ra2SpecialBufferHeight;
 	int _ra2DeltaBlocksWidth;
 	int _ra2DeltaBlocksHeight;
 	int _ra2DeltaGlyphsWidth;

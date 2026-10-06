@@ -191,9 +191,9 @@ static sc_int npc_random_adjacent_roomgroup_member(sc_gameref_t game, sc_int roo
 	vt_key[1].string = "EightPointCompass";
 	eightpointcompass = prop_get_boolean(bundle, "B<-ss", vt_key);
 	if (eightpointcompass)
-		length = sizeof(DIRNAMES_8) / sizeof(DIRNAMES_8[0]) - 1;
+		length = ARRAYSIZE(DIRNAMES_8) - 1;
 	else
-		length = sizeof(DIRNAMES_4) / sizeof(DIRNAMES_4[0]) - 1;
+		length = ARRAYSIZE(DIRNAMES_4) - 1;
 
 	/* Poll adjacent rooms. */
 	vt_key[0].string = "Rooms";

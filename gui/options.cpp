@@ -487,7 +487,9 @@ void OptionsDialog::build() {
 		_midiPopUp->setSelected(0);
 
 	if (_oplPopUp) {
-		OPL::Config::DriverId id = MAX<OPL::Config::DriverId>(OPL::Config::parse(ConfMan.get("opl_driver", _domain)), 0);
+		OPL::Config::DriverId id = OPL::Config::parse(ConfMan.get("opl_driver", _domain));
+		if (id < 0)
+			id = OPL::Config::parse("auto");
 		_oplPopUp->setSelectedTag(id);
 	}
 

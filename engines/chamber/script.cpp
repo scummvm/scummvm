@@ -116,7 +116,7 @@ uint16 CMD_TRAP(void) {
 }
 
 uint16 SCR_TRAP(void) {
-	warning("SCR TRAP 0x%02X @ 0x%lX", *script_ptr, script_ptr - templ_data);
+	warning("SCR TRAP 0x%02X @ 0x%X", *script_ptr, (uint32)(script_ptr - templ_data));
 	promptWait();
 	for (;;) ;
 	return 0;

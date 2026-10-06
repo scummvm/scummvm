@@ -598,7 +598,7 @@ bool GameFeatures::audioVolumeSyncUsesGlobals() const {
 	case GID_TORIN:
 		return true;
 	case GID_HOYLE5:
-		// Hoyle school house math does not use a volume global
+		// Hoyle school house does not use a volume global
 		return !g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 21));
 	default:
 		return false;

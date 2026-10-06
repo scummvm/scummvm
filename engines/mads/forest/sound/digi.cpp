@@ -106,8 +106,11 @@ void DigiPlayer::setInitialVolume(int vol) {
 	_initialVolume = (vol < 0 || vol > 100) ? MAX_DIGI_VOLUME : vol * 327;
 }
 
-void DigiPlayer::setVolume(int slot, int vol) {
-	_mixer->setChannelVolume(_channels[slot]._soundHandle, (vol == MAX_DIGI_VOLUME) ? 255 : vol * 255 / 327);
+void DigiPlayer::setVolume(int vol, int slot) {
+	assert(slot >= 1 && slot <= MAX_DIGI_CHANNELS);
+	const byte volume = (vol < 0 || vol > 100) ? Audio::Mixer::kMaxChannelVolume :
+		vol * Audio::Mixer::kMaxChannelVolume / 100;
+	_mixer->setChannelVolume(_channels[slot - 1]._soundHandle, volume);
 }
 
 void digi_play_build_ii(char thing, int num, int slot) {

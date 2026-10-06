@@ -217,6 +217,12 @@ void SmushPlayerRebel1::initGameVideoState() {
 }
 
 void SmushPlayerRebel1::releaseGameVideoState() {
+	// Walker routes use a logical stream end at their terminal GAME counter.
+	// Retain the same state if a route instead reaches physical EOF.
+	if (_endOfFile && _insane &&
+			static_cast<InsaneRebel1 *>(_insane)->shouldPreserveWalkerRouteVideoState())
+		return;
+
 	free(_storedFobjData);
 	_storedFobjData = nullptr;
 	_storedFobjDataSize = 0;
@@ -270,23 +276,13 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 		if (_insane) {
 			InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 			if (rebel1->isInteractiveVideoActive()) {
-				const uint16 gameOp = rebel1->getActiveGameOpcode();
-				const bool fullWidthStoredPatch = (_storedFobjWidth == _vm->_screenWidth);
-				const bool projectedCockpitPatch = (gameOp == 0x0B &&
-					((rebel1->getCurrentLevel() == 4 && rebel1->getLevelGameplayPhase() == 2) ||
-						rebel1->getCurrentLevel() == 7));
-				// Most interactive patches follow the viewport directly; selected
-				// cockpit patches need projected center placement to keep indicators aligned.
-				if (fullWidthStoredPatch || (gameOp == 0x0B && !projectedCockpitPatch) ||
-						gameOp == 0x19 || gameOp == 0x1A) {
-					left += _ra1ViewportOffsetX;
-					top += _ra1ViewportOffsetY;
-				} else {
-					ra1ApplyCenteredFetchPlacement(rebel1, _storedFobjWidth, _storedFobjHeight, left, top);
-					// Convert projected presentation-space placement into the cropped buffer.
-					left += _ra1ViewportOffsetX;
-					top += _ra1ViewportOffsetY;
-				}
+				// DOS routes every FTCH through FUN_28D0A. It sets flag 0x0800
+				// before DispatchFobjCodec, applying quarter-projected placement to
+				// the stored patch regardless of the active GAME opcode or its size.
+				ra1ApplyCenteredFetchPlacement(rebel1, _storedFobjWidth, _storedFobjHeight, left, top);
+				// Convert fixed presentation-space placement into our cropped buffer.
+				left += _ra1ViewportOffsetX;
+				top += _ra1ViewportOffsetY;
 			}
 		}
 
@@ -530,6 +526,17 @@ bool SmushPlayerRebel1::handleGameAnimHeader(byte *headerContent) {
 
 void SmushPlayerRebel1::handleGameParseNextFrame() {
 	processDispatches(_smushAudioSampleRate / _speed);
+
+	// The DOS walker loop changes/replays its route without closing the logical
+	// SMUSH stream. Its files request a stop on GAME counter 2629, before physical
+	// EOF. Route this RA1-only continuation through the normal EOF exit, which
+	// leaves audio tracks alive; releaseGameVideoState() retains the STOR object.
+	if (_insane && static_cast<InsaneRebel1 *>(_insane)->shouldPreserveWalkerRouteOnStop())
+		markLogicalEndOfStream();
+}
+
+void SmushPlayerRebel1::markLogicalEndOfStream() {
+	_endOfFile = true;
 }
 
 bool SmushPlayerRebel1::handleGameFrameBufferSelect(int codec, int width, int height) {
@@ -1106,8 +1113,7 @@ void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, in
 		height = MIN(height, _ra1FadeFrameHeight);
 	}
 
-	if (!_insane || !static_cast<InsaneRebel1 *>(_insane)->isInteractiveVideoActive() ||
-			_vm->_screenWidth != kRA1PresentationScreenWidth ||
+	if (_vm->_screenWidth != kRA1PresentationScreenWidth ||
 			_vm->_screenHeight != kRA1PresentationScreenHeight) {
 		SmushPlayer::handleGameUpdateScreen(src, srcPitch, width, height);
 		ra1RememberDisplayedFrame(_ra1FadeFrame, _ra1FadeFrameSize,
@@ -1117,15 +1123,17 @@ void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, in
 		return;
 	}
 
-	int ra1ViewX = _ra1ViewportOffsetX;
-	int ra1ViewY = _ra1ViewportOffsetY;
+	const bool interactive = _insane && static_cast<InsaneRebel1 *>(_insane)->isInteractiveVideoActive();
+	const int ra1ViewX = interactive ? _ra1ViewportOffsetX : 0;
+	const int ra1ViewY = interactive ? _ra1ViewportOffsetY : 0;
 
 	const byte *sourceBase = useFadeFrame ? src : _dst;
 	const int sourcePitch = useFadeFrame ? srcPitch : _width;
 	const int sourceWidth = useFadeFrame ? width : _width;
 	const int sourceHeight = useFadeFrame ? height : _height;
-	const int srcX = useFadeFrame ? 0 : CLIP(_scrollX + ra1ViewX + kRA1PresentationBorder, 0, sourceWidth - 1);
-	const int srcY = useFadeFrame ? 0 : CLIP(_scrollY + ra1ViewY + kRA1PresentationBorder, 0, sourceHeight - 1);
+	// Retained FADE frames already use screen coordinates, including the border.
+	const int srcX = CLIP((useFadeFrame ? 0 : _scrollX + ra1ViewX) + kRA1PresentationBorder, 0, sourceWidth - 1);
+	const int srcY = CLIP((useFadeFrame ? 0 : _scrollY + ra1ViewY) + kRA1PresentationBorder, 0, sourceHeight - 1);
 
 	int frameWidth = MIN<int>(sourceWidth - srcX, kRA1PresentationWidth);
 	int frameHeight = MIN<int>(sourceHeight - srcY, kRA1PresentationHeight);
@@ -1142,7 +1150,8 @@ void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, in
 	}
 	memset(_ra1PresentationBuffer, 0, presentationSize);
 
-	// Interactive gameplay draws a 312x192 viewport inside a black 320x200 frame.
+	// RA1 presents a 312x192 viewport inside a black 320x200 frame, including
+	// cinematics. The four-pixel inset keeps scenery outside cockpit overlays hidden.
 	const byte *dst = sourceBase + srcY * sourcePitch + srcX;
 	byte *presentationDst = _ra1PresentationBuffer +
 		kRA1PresentationBorder * kRA1PresentationScreenWidth + kRA1PresentationBorder;

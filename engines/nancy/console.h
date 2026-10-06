@@ -58,16 +58,22 @@ private:
 	bool Cmd_listActionRecords(int argc, const char **argv);
 	bool Cmd_actionRecordExport(int argc, const char **argv);
 	bool Cmd_scanForActionRecordType(int argc, const char **argv);
+	bool Cmd_listIncludes(int argc, const char **argv);
+	bool Cmd_findInclude(int argc, const char **argv);
 	bool Cmd_getEventFlags(int argc, const char **argv);
 	bool Cmd_setEventFlags(int argc, const char **argv);
 	bool Cmd_getInventory(int argc, const char **argv);
 	bool Cmd_setInventory(int argc, const char **argv);
+	bool Cmd_getMoney(int argc, const char **argv);
+	bool Cmd_setMoney(int argc, const char **argv);
 	bool Cmd_getPlayerTime(int argc, const char **argv);
 	bool Cmd_setPlayerTime(int argc, const char **argv);
 	bool Cmd_getDifficulty(int argc, const char **argv);
 	bool Cmd_setDifficulty(int argc, const char **argv);
 	bool Cmd_soundInfo(int argc, const char **argv);
 	bool Cmd_showHotspots(int argc, const char **argv);
+
+	void printInventoryItem(uint itemID);
 
 	void printActionRecord(const Action::ActionRecord *record, bool noDependencies = false);
 	void recursePrintDependencies(const Action::DependencyRecord &record);

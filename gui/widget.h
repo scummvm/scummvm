@@ -40,26 +40,17 @@ namespace GUI {
 class ScrollContainerWidget;
 
 enum {
-	WIDGET_ENABLED		= 1 <<  0,
-	WIDGET_INVISIBLE	= 1 <<  1,
-	WIDGET_HILITED		= 1 <<  2,
-	WIDGET_BORDER		= 1 <<  3,
-	WIDGET_PRESSED		= 1 <<	4,
-	//WIDGET_INV_BORDER	= 1 <<  4,
-	WIDGET_CLEARBG		= 1 <<  5,
-	WIDGET_WANT_TICKLE	= 1 <<  7,
-	WIDGET_TRACK_MOUSE	= 1 <<  8,
-	// Retain focus on mouse up. By default widgets lose focus on mouseup,
-	// but some widgets might want to retain it - widgets where you enter
-	// text, for instance
-	WIDGET_RETAIN_FOCUS	= 1 <<  9,
-	// Usually widgets would lock mouse input when the user pressed the
-	// left mouse button till the user releases it.
-	// The PopUpWidget for example does not want this behavior, since the
-	// mouse down will open up a new dialog which silently eats the mouse
-	// up event for its own purposes.
-	WIDGET_IGNORE_DRAG	= 1 << 10,
-	WIDGET_DYN_TOOLTIP  = 1 << 11, // Widgets updates tooltip by coordinates
+	WIDGET_ENABLED          = 1 <<  0,
+	WIDGET_INVISIBLE        = 1 <<  1,
+	WIDGET_HILITED          = 1 <<  2,
+	WIDGET_PRESSED          = 1 <<  3,
+	WIDGET_CLEARBG          = 1 <<  4,
+	WIDGET_WANT_TICKLE      = 1 <<  5,
+	WIDGET_TRACK_MOUSE      = 1 <<  6,
+	/* Used by containers which need to receive
+	 * mouse events in place of their children */
+	WIDGET_HOOK_DRAG        = 1 <<  7,
+	WIDGET_DYN_TOOLTIP      = 1 <<  8, // Widgets updates tooltip by coordinates
 };
 
 enum {
@@ -95,6 +86,13 @@ enum {
 	kPicButtonStatePressed = 3,
 
 	kPicButtonStateMax = 3
+};
+
+enum {
+	kDragHookStateCancel = -2,
+	kDragHookStateMouseUp = -1,
+	kDragHookStateMouseMoved = 0,
+	kDragHookStateMouseDown = 1,
 };
 
 /* Widget */
@@ -148,7 +146,12 @@ public:
 	virtual bool handleKeyDown(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual bool handleKeyUp(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual void handleOtherEvent(const Common::Event &evt) {}
+	virtual void handleTooltipUpdate(int x, int y) {}
 	virtual void handleTickle() {}
+	virtual bool handleDragHook(Widget *origTarget, int state, int x, int y, int button) { return false; }
+
+	virtual void cancelDrag() {}
+	virtual void cancelTickle() {}
 
 	/** Mark the widget and its children as dirty so they are redrawn on the next screen update */
 	virtual void markAsDirty();
@@ -162,8 +165,6 @@ public:
 
 	uint32 getType() const { return _type; }
 
-	// Check if the widget or its children contain a visible scrollbar
-	virtual bool hasVisibleScrollBar() const;
 	void setFlags(int flags);
 	void clearFlags(int flags);
 	int getFlags() const		{ return _flags; }
@@ -199,6 +200,10 @@ protected:
 	virtual Widget *findWidget(int x, int y) { return this; }
 
 	void releaseFocus() override { assert(_boss); _boss->releaseFocus(); }
+
+	// Tickles are handled in Dialog
+	void registerTickleWidget(Widget *widget) override { assert(_boss); _boss->registerTickleWidget(widget); }
+	void unregisterTickleWidget(Widget *widget) override { assert(_boss); _boss->unregisterTickleWidget(widget); }
 
 	// By default, delegate unhandled commands to the boss
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override { assert(_boss); _boss->handleCommand(sender, cmd, data); }

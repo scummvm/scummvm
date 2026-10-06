@@ -149,7 +149,9 @@ MODULE_OBJS += \
 	insane/insane_iact.o \
 	insane/rebel/rebel_audio.o \
 	insane/rebel/rebel_gamepad.o \
+	insane/rebel/rebel_touch.o \
 	insane/rebel1/rebel.o \
+	insane/rebel1/releases.o \
 	insane/rebel1/audio.o \
 	insane/rebel1/iact.o \
 	insane/rebel1/levels.o \
@@ -158,9 +160,11 @@ MODULE_OBJS += \
 	insane/rebel1/runlevels.o \
 	insane/rebel1/saveload.o \
 	insane/rebel2/rebel.o \
+	insane/rebel2/releases.o \
 	insane/rebel2/audio.o \
 	insane/rebel2/iact.o \
 	insane/rebel2/levels.o \
+	insane/rebel2/mac_archive.o \
 	insane/rebel2/menu.o \
 	insane/rebel2/render.o \
 	insane/rebel2/runlevels.o \

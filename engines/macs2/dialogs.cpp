@@ -50,10 +50,12 @@ Macs2OptionsWidget::Macs2OptionsWidget(GuiObject *boss, const Common::String &na
 		_("Fix original bugs"),
 		_("Fixes bugs which were present in the original release, and noticeable graphical/audio glitches."),
 		kEnhancementGroup1Cmd);
+#endif
 	GUI::CheckboxWidget *enh2 = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".enhancementGroup2",
 		_("Audio-visual improvements"),
-		_("Makes adjustments not related to bugs for certain audio and graphics elements (e.g. version consistency changes)."),
+		_("Optional generated dialogue speech (SPEECH/*.wav) and other audio/visual polish."),
 		kEnhancementGroup2Cmd);
+#if 0
 	GUI::CheckboxWidget *enh3 = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".enhancementGroup3",
 		_("Restored content"),
 		_("Restores dialogs, graphics, and audio elements which were originally cut in the original release."),
@@ -66,7 +68,9 @@ Macs2OptionsWidget::Macs2OptionsWidget(GuiObject *boss, const Common::String &na
 
 #if 0
 	_enhancementsCheckboxes.push_back(enh1);
+#endif
 	_enhancementsCheckboxes.push_back(enh2);
+#if 0
 	_enhancementsCheckboxes.push_back(enh3);
 #endif
 	_enhancementsCheckboxes.push_back(enh4);

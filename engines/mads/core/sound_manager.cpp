@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "mads/core/sound_manager.h"
 
 namespace Audio {
@@ -32,7 +33,14 @@ class Mixer;
 
 namespace MADS {
 
-SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag) : _mixer(mixer), _soundFlag(soundFlag) {
+const uint32 SoundManager::UPDATE_DELTA = 1000000 / 60;
+
+SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag,
+		bool supportsGeneralMidi) : _mixer(mixer), _soundFlag(soundFlag) {
+	_updateDeltaRemainder = 0;
+	_driverCallbackDelta = 0;
+	_midiDriver = nullptr;
+
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
 	MusicType musicType = MidiDriver::getMusicType(dev);
 	if ((musicType == MT_GM || musicType == MT_GS) && ConfMan.getBool("native_mt32"))
@@ -40,6 +48,10 @@ SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag) : _mixer(mixer)
 	switch (musicType) {
 	case MT_MT32:
 		_driverType = SOUND_MT32;
+		break;
+	case MT_GM:
+	case MT_GS:
+		_driverType = supportsGeneralMidi ? SOUND_GM : SOUND_ADLIB;
 		break;
 	case MT_PCSPK:
 		_driverType = SOUND_PCSPEAKER;
@@ -51,9 +63,21 @@ SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag) : _mixer(mixer)
 }
 
 SoundManager::~SoundManager() {
-	if (_driver) {
+	if (_driver != nullptr) {
 		_driver->stop();
+	}
+	if (_midiDriver != nullptr) {
+		_midiDriver->setTimerCallback(nullptr, nullptr);
+		_midiDriver->close();
+	}
+
+	if (_driver != nullptr) {
 		delete _driver;
+		_driver = nullptr;
+	}
+	if (_midiDriver != nullptr) {
+		delete _midiDriver;
+		_midiDriver = nullptr;
 	}
 }
 
@@ -63,15 +87,23 @@ void SoundManager::init(int sectionNumber) {
 	// Load the correct driver for the section
 	removeDriver();
 	loadDriver(sectionNumber);
+	if (!_driver) {
+		warning("No MADS sound driver is available for section %d",
+			sectionNumber);
+		return;
+	}
 
 	// Set volume for newly loaded driver
 	_driver->setVolume(_masterVolume);
 }
 
+bool SoundManager::isDriverActive() {
+	return _driver && _soundFlag && _driver->command(8, 0) != 0;
+}
+
 void SoundManager::closeDriver() {
 	if (_driver) {
 		command(0);
-		setEnabled(false);
 		stop();
 
 		removeDriver();
@@ -83,11 +115,6 @@ void SoundManager::removeDriver() {
 	_driver = nullptr;
 }
 
-void SoundManager::setEnabled(bool flag) {
-	_pollSoundEnabled = flag;
-	_soundPollFlag = false;
-}
-
 void SoundManager::pauseNewCommands() {
 	_newSoundsPaused = true;
 }
@@ -96,8 +123,8 @@ void SoundManager::startQueuedCommands() {
 	_newSoundsPaused = false;
 
 	while (!_queuedCommands.empty()) {
-		int commandId = _queuedCommands.pop();
-		command(commandId);
+		const QueuedCommand queuedCommand = _queuedCommands.pop();
+		command(queuedCommand._commandId, queuedCommand._param);
 	}
 }
 
@@ -110,14 +137,16 @@ void SoundManager::setVolume(int volume) {
 
 int SoundManager::command(int commandId, int param) {
 	if (_newSoundsPaused) {
-		if (_queuedCommands.size() < 8)
-			_queuedCommands.push(commandId);
+		if (_queuedCommands.size() < 8) {
+			QueuedCommand queuedCommand = { commandId, param };
+			_queuedCommands.push(queuedCommand);
+		}
 		return _queuedCommands.size() - 1;
 	} else if (_driver) {
 		// Note: I don't know any way to identify music commands versus sfx
 		// commands, so if sfx is mute, then so is music
 		if (_soundFlag)
-			_driver->command(commandId, param);
+			return _driver->command(commandId, param);
 	}
 
 	return 0;
@@ -131,6 +160,32 @@ void SoundManager::stop() {
 void SoundManager::noise() {
 	if (_driver)
 		_driver->noise();
+}
+
+void SoundManager::onTimer() {
+	// The frequency of the callbacks is dependent on the underlying driver
+	// implementation and might not be 60Hz. Adjust to make sure poll() is called
+	// with the correct frequency.
+	/*
+	_updateDeltaRemainder += _driverCallbackDelta;
+	while (_updateDeltaRemainder >= UPDATE_DELTA) {
+		if (_driver)
+			_driver->poll();
+		_updateDeltaRemainder -= UPDATE_DELTA;
+	}
+	*/
+
+	uint32 serviceTicks = _hostTimer.advance(_driverCallbackDelta, 1000000);
+	while (serviceTicks--) {
+		// RSOUND export 4 is a return stub in every audited overlay.
+		if (_driver && _hostTimer.pollDue())
+			_driver->poll();
+	}
+}
+
+void SoundManager::timerCallback(void *data) {
+	SoundManager *soundManager = (SoundManager *)data;
+	soundManager->onTimer();
 }
 
 //====================================================================

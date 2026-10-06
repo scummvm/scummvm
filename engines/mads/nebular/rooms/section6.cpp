@@ -25,6 +25,7 @@
 #include "mads/core/kernel.h"
 #include "mads/core/pal.h"
 #include "mads/core/player.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/rooms/section6.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/global.h"
@@ -61,8 +62,10 @@ void section_6_walker() {
 	if (oldName != Common::String(player.series_name))
 		player.walker_must_reload = true;
 
-	pal_change_color(16, 10, 63, 63);
-	pal_change_color(17, 10, 45, 45);
+	if (!setMacintoshMessageColors(30, 63, 63, 10, 63, 63)) {
+		pal_change_color(16, 10, 63, 63);
+		pal_change_color(17, 10, 45, 45);
+	}
 }
 
 void section_6_interface() {

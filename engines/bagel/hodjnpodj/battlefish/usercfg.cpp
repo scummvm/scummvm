@@ -93,18 +93,18 @@ bool CUserCfgDlg::OnInitDialog() {
 	}
 
 	if ((m_pOKButton = new CColorButton) != nullptr) {       // build a color QUIT button to let us exit
-		(*m_pOKButton).SetPalette(m_pPalette);            // set the palette to use
-		(*m_pOKButton).SetControl(IDOK, this);            // tie to the dialog control
+		m_pOKButton->SetPalette(m_pPalette);            // set the palette to use
+		m_pOKButton->SetControl(IDOK, this);            // tie to the dialog control
 	}
 
 	if ((m_pCancelButton = new CColorButton) != nullptr) {   // build a color QUIT button to let us exit
-		(*m_pCancelButton).SetPalette(m_pPalette);        // set the palette to use
-		(*m_pCancelButton).SetControl(IDCANCEL, this);    // tie to the dialog control
+		m_pCancelButton->SetPalette(m_pPalette);        // set the palette to use
+		m_pCancelButton->SetControl(IDCANCEL, this);    // tie to the dialog control
 	}
 
 	if ((m_pDefaultsButton = new CColorButton) != nullptr) { // build a color QUIT button to let us exit
-		(*m_pDefaultsButton).SetPalette(m_pPalette);      // set the palette to use
-		(*m_pDefaultsButton).SetControl(ID_RESET, this);  // tie to the dialog control
+		m_pDefaultsButton->SetPalette(m_pPalette);      // set the palette to use
+		m_pDefaultsButton->SetControl(ID_RESET, this);  // tie to the dialog control
 	}
 
 	if ((m_pUserButton = new CRadioButton) != nullptr) {

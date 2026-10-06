@@ -778,7 +778,7 @@ static int tokgetlin(tokcxdef *ctx, int dopound)
 				 len && t_isspace(*p) ; --len, ++p) ;
 
 			/* find and process the directive */
-			for (dirp = dir, i = sizeof(dir)/sizeof(dir[0]) ; i ; --i, ++dirp)
+			for (dirp = dir, i = ARRAYSIZE(dir); i ; --i, ++dirp)
 			{
 				/* compare this directive; if it wins, call its function */
 				if (len >= dirp->len && !memcmp(p, dirp->nm, (size_t)dirp->len)

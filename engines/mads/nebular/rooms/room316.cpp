@@ -22,10 +22,12 @@
 #include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
 #include "mads/nebular/rooms/section3.h"
+#include "mads/nebular/sound/mac_sound.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -295,7 +297,9 @@ static void room_316_init() {
 		player.facing = FACING_SOUTH;
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		g_engine->_soundManager->command(44, 0);
+		if (!Sound::commandMacintoshSound(Sound::kMacSoundPlay, 3044,
+				0, 0, 0, true))
+			g_engine->_soundManager->command(44, 0);
 		int spriteIdx = (global[kSexOfRex] == REX_MALE) ? 1 : 2;
 		g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[spriteIdx], false, 6, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[1], 2);
@@ -305,6 +309,7 @@ static void room_316_init() {
 		player.y = 126;
 	}
 
+	setMacintoshMessageColors(63, 63, 0, 63, 63, 0);
 	section_3_music();
 	kernel.quotes = quote_load(253, 0);
 }
@@ -488,6 +493,7 @@ static void room_316_parser() {
 	else
 		return;
 
+	setMacintoshMessageColors(63, 63, 0, 63, 63, 0);
 	player.command_ready = false;
 }
 

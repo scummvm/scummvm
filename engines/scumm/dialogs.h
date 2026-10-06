@@ -267,6 +267,9 @@ private:
 		kSmoothScrollCmd = 'SMSC'
 	};
 
+#ifdef USE_SID_AUDIO
+	GUI::CheckboxWidget *_c64SidTypeCheckbox = nullptr;
+#endif
 	GUI::CheckboxWidget *_smoothScrollCheckbox = nullptr;
 	GUI::CheckboxWidget *_semiSmoothScrollCheckbox = nullptr;
 

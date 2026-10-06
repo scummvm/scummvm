@@ -22,8 +22,6 @@
 #ifndef NUVIE_CORE_GAME_CLOCK_H
 #define NUVIE_CORE_GAME_CLOCK_H
 
-#include "ultima/shared/std/containers.h"
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 
 namespace Ultima {

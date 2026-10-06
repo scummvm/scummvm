@@ -1144,10 +1144,10 @@ static void do_looping_sounds() {
 		kernel_timing_trigger(1, 107);  // PLAY_MORE_TRICKLE
 		break;
 
-	case 305:
-		// do bird crowd
+	case 210: // rush MORE_RUSH_RUSH
+	case 305: // do bird crowd
 		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
-		kernel_timing_trigger(1, 109);  // DO_CROWD
+		kernel_timing_trigger(1, 109);
 		break;
 
 	case 306:
@@ -1163,6 +1163,7 @@ static void do_looping_sounds() {
 		break;
 
 	case 401:
+	case 405:
 		// do dragon noise
 		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 106);  // DRAGON_NOISE
@@ -1179,26 +1180,10 @@ static void do_looping_sounds() {
 		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 110);  // DRAGON_NOISE
 		break;
-
-	case 405:
-		// do dragon noise
-		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
-		kernel_timing_trigger(1, 106);  // DRAGON_NOISE
-		break;
-
-	case 210:
-		// rush MORE_RUSH_RUSH
-		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
-		kernel_timing_trigger(1, 109);  // MORE_RUSH_RUSH
-		break;
-
 	}
 }
 
 void global_game_main_loop() {
-	//static char temp_buf_2[20];
-	//static char temp_buf_3[20];
-	//static char temp_buf_4[20];
 	int yy;
 	long dif;
 

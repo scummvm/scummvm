@@ -430,7 +430,7 @@ void MD5Check::init() {
 	_initted = true;
 	_files = new Common::Array<MD5Sum>();
 
-	#define MD5SUM(filename, sums) _files->push_back(MD5Sum(filename, sums, sizeof(sums) / sizeof(const char *)));
+	#define MD5SUM(filename, sums) _files->push_back(MD5Sum(filename, sums, ARRAYSIZE(sums)));
 
 	if (g_grim->getGameType() == GType_GRIM) {
 		if (g_grim->getGameFlags() & ADGF_DEMO) {

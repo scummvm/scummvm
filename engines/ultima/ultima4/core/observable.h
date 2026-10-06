@@ -23,7 +23,7 @@
 #define ULTIMA4_CORE_OBSERVABLE_H
 
 #include "ultima/ultima4/core/observer.h"
-#include "ultima/shared/std/containers.h"
+#include "common/array.h"
 
 namespace Ultima {
 namespace Ultima4 {

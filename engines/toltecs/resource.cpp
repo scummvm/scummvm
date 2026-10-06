@@ -102,7 +102,7 @@ Resource *ResourceCache::load(uint resIndex) {
 	ResourceMap::iterator item = _cache.find(resIndex);
 	if (item != _cache.end()) {
 		debug(1, "ResourceCache::load(%d) From cache", resIndex);
-		return (*item)._value;
+		return item->_value;
 	} else {
 		debug(1, "ResourceCache::load(%d) From disk", resIndex);
 
