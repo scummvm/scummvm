@@ -1724,7 +1724,7 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 		}
 		horizontalDirection = 0;
 	}
-	int depthDirection = horizontalDirection == 0 && !playerState.moveTargetZReached
+	int depthDirection = !playerState.moveTargetZReached
 		? resolveMoveTargetDepthDirection(playerState, regionFacing)
 		: 0;
 	if (depthDirection != 0 && isDepthDirectionBlockedByHistory(playerState, depthDirection)) {
@@ -1763,6 +1763,7 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 		const int horizontalStep = computeRoomPlayerHorizontalStep(state, playerState.z);
 		candidateCenterX = clampPlayerCenterXToNativeBounds(
 			playerState, playerState.centerX + horizontalDirection * horizontalStep);
+		candidateZ = clampRoomDepth(state, playerState.z - depthDirection);
 	} else if (depthDirection != 0) {
 		const int verticalStep = computeRoomPlayerVerticalScreenStep();
 		const float depthStep = computeRoomPlayerDepthStep(state);
