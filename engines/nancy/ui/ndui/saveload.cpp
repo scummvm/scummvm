@@ -105,6 +105,34 @@ uint Manager::fillSaveList(const Common::String &listName) {
 	return numSaves;
 }
 
+// A name that is in use gets saved over; a new one gets the first free slot
+void Manager::requestSave(const Common::String &name) {
+	int slot = findSaveSlot(name);
+	for (int i = 1; slot == -1 && i < g_nancy->getMetaEngine()->getMaximumSaveSlot(); ++i) {
+		if (i != g_nancy->getAutosaveSlot() && !g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), i).isValid()) {
+			slot = i;
+		}
+	}
+
+	if (slot != -1) {
+		_request.type = kRequestSave;
+		_request.slot = slot;
+		_request.name = name;
+	} else {
+		warning("No free save slot for %s", name.c_str());
+	}
+}
+
+void Manager::requestLoad(const Common::String &name) {
+	int slot = findSaveSlot(name);
+	if (slot != -1) {
+		_request.type = kRequestLoad;
+		_request.slot = slot;
+	} else {
+		warning("There is no saved game named %s", name.c_str());
+	}
+}
+
 int Manager::findSaveSlot(const Common::String &name) const {
 	SaveStateList saves = g_nancy->getMetaEngine()->listSaves(ConfMan.getActiveDomainName().c_str());
 	for (const SaveStateDescriptor &save : saves) {
@@ -269,22 +297,7 @@ void Manager::onSaverAction(const Action &action) {
 		takeAction(kActionHide, "SaveDialog", 0.0);
 		takeAction(kActionSetText, "SaveList", Common::String());
 
-		// A name that is in use gets saved over; a new one gets the first free slot
-		int slot = findSaveSlot(_typedSaveName);
-		for (int i = 1; slot == -1 && i < g_nancy->getMetaEngine()->getMaximumSaveSlot(); ++i) {
-			if (i != g_nancy->getAutosaveSlot() && !g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), i).isValid()) {
-				slot = i;
-			}
-		}
-
-		if (slot != -1) {
-			_request.type = kRequestSave;
-			_request.slot = slot;
-			_request.name = _typedSaveName;
-		} else {
-			warning("No free save slot for %s", _typedSaveName.c_str());
-		}
-
+		requestSave(_typedSaveName);
 		_lastSaveName = _typedSaveName;
 		_typedSaveName.clear();
 		break;

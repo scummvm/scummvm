@@ -1686,6 +1686,24 @@ void ClearSavedData::execute() {
 	_isDone = true;
 }
 
+void SaveNamedGame::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _name);
+}
+
+void SaveNamedGame::execute() {
+	NancySceneState.getNDUI()->requestSave(_name);
+	_isDone = true;
+}
+
+void LoadNamedGame::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _name);
+}
+
+void LoadNamedGame::execute() {
+	NancySceneState.getNDUI()->requestLoad(_name);
+	_isDone = true;
+}
+
 void Rain::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 

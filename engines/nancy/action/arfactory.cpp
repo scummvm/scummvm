@@ -473,9 +473,15 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 113:
 		return new DifficultyLevel();
 	case 114:
-		return new RotatingLockPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
+			return new RotatingLockPuzzle();
+		else
+			return new SaveNamedGame();
 	case 115:
-		return new LeverPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
+			return new LeverPuzzle();
+		else
+			return new LoadNamedGame();
 	case 116:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new Telephone(Telephone::kTelephone);

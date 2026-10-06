@@ -822,6 +822,31 @@ protected:
 	Common::String _name;
 };
 
+// Nancy18. Saves the game under a name, replacing the save that has it. The
+// scenes make their own second chance saves with it.
+class SaveNamedGame : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "SaveNamedGame"; }
+
+	Common::String _name;
+};
+
+// Nancy18. Loads the game that was saved under a name
+class LoadNamedGame : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "LoadNamedGame"; }
+
+	Common::String _name;
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 

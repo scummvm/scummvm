@@ -92,6 +92,10 @@ public:
 
 	Request takeRequest();
 
+	// Nancy18 scenes save and load games by name, which is how it does second chances
+	void requestSave(const Common::String &name);
+	void requestLoad(const Common::String &name);
+
 	// Goes on with the quit or load that was put off to ask whether to save first
 	void runPendingAction();
 
