@@ -1452,22 +1452,31 @@ void AddPhoneEntry::execute() {
 	_isDone = true;
 }
 
-// The numbers of a collection record take up the rest of its data. The original
-// also has collections of flags and of names, which no scene makes use of.
-static void readCollectionValues(Common::SeekableReadStream &stream, Common::Array<double> &values) {
+// The items of a collection record take up the rest of its data, and are either
+// numbers or names. The original also has collections of flags, which no scene
+// makes use of.
+static void readCollectionValues(Common::SeekableReadStream &stream, CollectionData::Values &values) {
+	const uint kNumberSize = 8;
+	const uint kNameSize = 33;
+
 	const uint16 numValues = stream.readUint16LE();
 	if (!numValues) {
 		return;
 	}
 
-	if ((stream.size() - stream.pos()) / numValues != 8) {
+	const uint itemSize = (stream.size() - stream.pos()) / numValues;
+	if (itemSize == kNumberSize) {
+		values.numbers.resize(numValues);
+		for (double &value : values.numbers) {
+			value = stream.readDoubleLE();
+		}
+	} else if (itemSize == kNameSize) {
+		values.names.resize(numValues);
+		for (Common::String &name : values.names) {
+			readFilename(stream, name);
+		}
+	} else {
 		warning("Unsupported collection item type");
-		return;
-	}
-
-	values.resize(numValues);
-	for (double &value : values) {
-		value = stream.readDoubleLE();
 	}
 }
 
@@ -1509,11 +1518,16 @@ void CollectionEdit::execute() {
 
 	if (data->collections.contains(_name)) {
 		CollectionData::Collection &collection = data->collections[_name];
-		collection.values.push_back(_values);
+		collection.values.numbers.push_back(_values.numbers);
+		collection.values.names.push_back(_values.names);
 
 		// The oldest values make room for the new ones
-		while (collection.values.size() > collection.maxSize) {
-			collection.values.remove_at(0);
+		while (collection.values.numbers.size() > collection.maxSize) {
+			collection.values.numbers.remove_at(0);
+		}
+
+		while (collection.values.names.size() > collection.maxSize) {
+			collection.values.names.remove_at(0);
 		}
 	} else {
 		warning("%s: tried to add but collection does not exist", _name.c_str());
@@ -1539,36 +1553,45 @@ void CollectionCheck::readData(Common::SeekableReadStream &stream) {
 	}
 }
 
-bool CollectionCheck::check(const Common::Array<double> &collection) const {
-	switch (_checkType) {
-	case kContainsAll: {
-		Common::Array<double> remaining = collection;
-		for (double value : _values) {
-			bool found = false;
-			for (uint i = 0; i < remaining.size() && !found; ++i) {
-				if (remaining[i] == value) {
-					remaining.remove_at(i);
-					found = true;
-				}
-			}
-
-			if (!found) {
-				return false;
+template<typename T>
+static bool containsAllValues(const Common::Array<T> &collection, const Common::Array<T> &values) {
+	Common::Array<T> remaining = collection;
+	for (const T &value : values) {
+		bool found = false;
+		for (uint i = 0; i < remaining.size() && !found; ++i) {
+			if (remaining[i] == value) {
+				remaining.remove_at(i);
+				found = true;
 			}
 		}
 
-		return true;
+		if (!found) {
+			return false;
+		}
 	}
-	case kIsEqual:
-		return collection == _values;
-	case kFollowsPattern:
-		for (uint i = 0; i < collection.size(); ++i) {
-			if (_values.empty() || collection[i] != _values[i % _values.size()]) {
-				return false;
-			}
-		}
 
-		return true;
+	return true;
+}
+
+template<typename T>
+static bool followsValuePattern(const Common::Array<T> &collection, const Common::Array<T> &values) {
+	for (uint i = 0; i < collection.size(); ++i) {
+		if (values.empty() || collection[i] != values[i % values.size()]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool CollectionCheck::check(const CollectionData::Values &collection) const {
+	switch (_checkType) {
+	case kContainsAll:
+		return containsAllValues(collection.numbers, _values.numbers) && containsAllValues(collection.names, _values.names);
+	case kIsEqual:
+		return collection.numbers == _values.numbers && collection.names == _values.names;
+	case kFollowsPattern:
+		return followsValuePattern(collection.numbers, _values.numbers) && followsValuePattern(collection.names, _values.names);
 	default:
 		return false;
 	}
@@ -1578,12 +1601,13 @@ void CollectionCheck::execute() {
 	auto *data = (CollectionData *)NancySceneState.getPuzzleData(CollectionData::getTag());
 
 	if (data->collections.contains(_name)) {
-		const Common::Array<double> &collection = data->collections[_name].values;
+		const CollectionData::Values &collection = data->collections[_name].values;
 
 		if (_checkType == kSize) {
-			if (_size < (int32)collection.size()) {
+			const int32 collectionSize = collection.numbers.size() + collection.names.size();
+			if (_size < collectionSize) {
 				NancySceneState.setEventFlag(_flags[0]);
-			} else if (_size == (int32)collection.size()) {
+			} else if (_size == collectionSize) {
 				NancySceneState.setEventFlag(_flags[1]);
 			} else {
 				NancySceneState.setEventFlag(_flags[2]);

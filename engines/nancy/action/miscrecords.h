@@ -681,8 +681,8 @@ protected:
 	Common::Array<Choice> _choices;
 };
 
-// Nancy17. A collection is a named list of numbers, which keeps the most recent
-// ones once it is full. Scenes use them for combinations, e.g. to add every
+// Nancy17. A collection is a named list of numbers (or of names, from Nancy18 on),
+// which keeps the most recent ones once it is full. Scenes use them for combinations, e.g. to add every
 // button the player presses and check the last few against the solution.
 class CollectionControl : public ActionRecord {
 public:
@@ -710,7 +710,7 @@ protected:
 	Common::String getRecordTypeName() const override { return "CollectionEdit"; }
 
 	Common::String _name;
-	Common::Array<double> _values;
+	CollectionData::Values _values;
 };
 
 // Nancy17. Compares a collection against a list of numbers or a size, and sets
@@ -730,7 +730,7 @@ protected:
 
 	Common::String getRecordTypeName() const override { return "CollectionCheck"; }
 
-	bool check(const Common::Array<double> &collection) const;
+	bool check(const CollectionData::Values &collection) const;
 
 	byte _checkType = kContainsAll;
 	Common::String _name;
@@ -739,7 +739,7 @@ protected:
 	// smaller collection
 	FlagDescription _flags[3];
 	int32 _size = 0;
-	Common::Array<double> _values;
+	CollectionData::Values _values;
 };
 
 // Nancy17. Adds a contact to the cell phone of the character being played

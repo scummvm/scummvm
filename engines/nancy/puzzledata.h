@@ -22,6 +22,7 @@
 #include "common/serializer.h"
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/str-array.h"
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/enginedata.h"
@@ -651,11 +652,18 @@ struct StreamData : public PuzzleData {
 };
 
 // Nancy17. Named lists of numbers that the scenes fill and check, e.g. the
-// buttons the player pressed so far
+// buttons the player pressed so far. Nancy18 also has lists of names.
 struct CollectionData : public PuzzleData {
+	struct Values {
+		Common::Array<double> numbers;
+		Common::StringArray names;
+
+		void clear() { numbers.clear(); names.clear(); }
+	};
+
 	struct Collection {
 		uint32 maxSize = 0;
-		Common::Array<double> values;
+		Values values;
 	};
 
 	static constexpr uint32 getTag() { return MKTAG('C', 'O', 'L', 'L'); }

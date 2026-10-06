@@ -906,6 +906,25 @@ void StreamData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+static void syncCollection(Common::Serializer &ser, CollectionData::Collection &collection) {
+	ser.syncAsUint32LE(collection.maxSize);
+
+	uint16 numNumbers = collection.values.numbers.size();
+	ser.syncAsUint16LE(numNumbers);
+	collection.values.numbers.resize(numNumbers);
+	ser.syncArray(collection.values.numbers.data(), numNumbers, Common::Serializer::DoubleLE);
+
+	// Collections of names were added in Nancy18
+	if (g_nancy->getGameType() >= kGameTypeNancy18) {
+		uint16 numNames = collection.values.names.size();
+		ser.syncAsUint16LE(numNames);
+		collection.values.names.resize(numNames);
+		for (Common::String &name : collection.values.names) {
+			ser.syncString(name);
+		}
+	}
+}
+
 void CollectionData::synchronize(Common::Serializer &ser) {
 	uint16 numCollections = collections.size();
 	ser.syncAsUint16LE(numCollections);
@@ -914,25 +933,14 @@ void CollectionData::synchronize(Common::Serializer &ser) {
 		for (auto &entry : collections) {
 			Common::String name = entry._key;
 			ser.syncString(name);
-			ser.syncAsUint32LE(entry._value.maxSize);
-
-			uint16 numValues = entry._value.values.size();
-			ser.syncAsUint16LE(numValues);
-			ser.syncArray(entry._value.values.data(), numValues, Common::Serializer::DoubleLE);
+			syncCollection(ser, entry._value);
 		}
 	} else {
 		collections.clear();
 		for (uint i = 0; i < numCollections; ++i) {
 			Common::String name;
 			ser.syncString(name);
-
-			Collection &collection = collections[name];
-			ser.syncAsUint32LE(collection.maxSize);
-
-			uint16 numValues = 0;
-			ser.syncAsUint16LE(numValues);
-			collection.values.resize(numValues);
-			ser.syncArray(collection.values.data(), numValues, Common::Serializer::DoubleLE);
+			syncCollection(ser, collections[name]);
 		}
 	}
 }
