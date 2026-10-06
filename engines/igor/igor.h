@@ -694,6 +694,63 @@ private:
 	void PART_23_HELPER_8(int frame);
 	void PART_23();
 
+		// college corridor sharon michael
+	void PART_24_EXEC_ACTION(int action);
+	void PART_24_ACTION_102();
+	void PART_24_ACTION_104();
+	void PART_24_ACTION_105();
+	void PART_24_ACTION_107();
+	void PART_24_UPDATE_ROOM_BACKGROUND();
+	void PART_24_HELPER_1(int num);
+	void PART_24_HELPER_2(int frame);
+	void PART_24_HELPER_3(int frame);
+	void PART_24_HELPER_4();
+	void PART_24_HELPER_5();
+	void PART_24_HELPER_7();
+	void PART_24_HELPER_8();
+	void PART_24_HELPER_9();
+	void PART_24();
+
+
+	// college corridor announcement board
+	void PART_25_EXEC_ACTION(int action);
+	void PART_25_ACTION_105();
+	void PART_25_ACTION_107();
+	void PART_25_ACTION_108();
+	void PART_25_HELPER_1(int num);
+	void PART_25_HELPER_2();
+	void PART_25_HELPER_3();
+	void PART_25_HELPER_4();
+	void PART_25_HELPER_5();
+	void PART_25_HELPER_7();
+	void PART_25();
+
+	// college corridor miss barrymore
+	void PART_26_EXEC_ACTION(int action);
+	void PART_26_ACTION_103();
+	void PART_26_ACTION_104();
+	void PART_26_ACTION_107();
+	void PART_26_UPDATE_ROOM_BACKGROUND();
+	void PART_26_HELPER_1(int num);
+	void PART_26_HELPER_2();
+	void PART_26_HELPER_3();
+	void PART_26_HELPER_4();
+	void PART_26_HELPER_5();
+	void PART_26_HELPER_7(int frame);
+	void PART_26();
+
+	// college lockers
+	void PART_27_EXEC_ACTION(int action);
+	void PART_27_ACTION_106();
+	void PART_27_ACTION_107();
+	void PART_27_ACTION_108();
+	void PART_27_ACTION_110();
+	void PART_27_HELPER_1(int num);
+	void PART_27_HELPER_2();
+	void PART_27_HELPER_3();
+	void PART_27_HELPER_4();
+	void PART_27_HELPER_5();
+	void PART_27();
 
 	// college corridor caroline
 	void PART_28_EXEC_ACTION(int action);

@@ -33,6 +33,7 @@ MODULE_OBJS = \
 	part_19.o \
 	part_21.o \
 	part_23.o \
+	part_24.o \
 	part_28.o \
 	part_30.o \
 	part_34.o \
