@@ -40,19 +40,21 @@ void IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND() {
 		setPaletteRange(185, 191);
 	}
 	if (compareGameTick(1)) {
-		switch (getRandomNumber(19)) {
-		case 0:
-			playSound(18, 1);
-			break;
-		case 3:
-			playSound(21, 1);
-			break;
-		case 9:
-			playSound(22, 1);
-			break;
-		case 17:
-			playSound(23, 1);
-			break;
+		if (getRandomNumber(14) == 0) {
+			switch (getRandomNumber(3)) {
+			case 0:
+				playSound(21, 1);
+				break;
+			case 1:
+				playSound(22, 1);
+				break;
+			case 2:
+				playSound(23, 1);
+				break;
+			case 3:
+				playSound(18, 1);
+				break;
+			}
 		}
 	}
 }
@@ -161,7 +163,8 @@ void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
 			_roomObjectAreasTable[2].object = 0;
 			_roomObjectAreasTable[15].object = 0;
 			_roomObjectAreasTable[18].object = 0;
-			_roomObjectAreasTable[3].object = 0;
+			// the camera becomes a hotspot once the photographer is gone
+			_roomObjectAreasTable[3].object = 4;
 			_roomObjectAreasTable[13].area = 3;
 			_roomObjectAreasTable[15].area = 3;
 			_roomObjectAreasTable[17].area = 3;
@@ -180,17 +183,19 @@ void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
 
 void IgorEngine::PART_06_ACTION_105() {
 	_gameTicks = 0;
-	for (int i = 0; i <= 3; ++i) {
+	int i = 0;
+	do {
 		if (compareGameTick(1)) {
 			const int offset = 22568;
 			for (int j = 0; j <= 48; ++j) {
 				const uint8 *src = _animFramesBuffer + 0x81AE + i * 1715 + j * 35;
 				memcpy(_screenVGA + 320 * j + offset, src, 35);
 			}
+			++i;
 		}
 		PART_06_UPDATE_ROOM_BACKGROUND();
 		waitForTimer();
-	}
+	} while (i != 3);
 	addObjectToInventory(36, 71);
 	_objectsState[62] = 0;
 	PART_06_HELPER_6_setPhotographerState(255);
@@ -226,12 +231,12 @@ void IgorEngine::PART_06_ACTION_108_giveRocketToPhotographer() {
 			const uint8 *src = _animFramesBuffer + 0xA763 + READ_LE_UINT16(_animFramesBuffer + 0xDB95 + i * 2) - 1;
 			decodeAnimFrame(src, _screenVGA, true);
 			++i;
+			if (i == 8) {
+				stopSound();
+				playSound(19, 1);
+			}
 		}
 		PART_06_UPDATE_ROOM_BACKGROUND();
-		if (i == 7) {
-			stopSound();
-			playSound(19, 1);
-		}
 		waitForTimer();
 	} while (i != 28);
 	removeObjectFromInventory(61);
@@ -249,6 +254,7 @@ void IgorEngine::PART_06_ACTION_102_scrollLeft() {
 	int xPos = 323;
 	int yPos = 0;
 	int i = 1;
+	_gameTicks = 15 & ~(kTimerTicksCount - 1);
 	do {
 		if (compareGameTick(1, 16)) {
 			for (int y = 0; y <= 143; ++y) {
@@ -384,6 +390,9 @@ void IgorEngine::PART_06() {
 		waitForTimer();
 	}
 	leavePartLoop();
+	if (_currentPart == 255 && !_gameStateLoaded) {
+		fadeOut(768);
+	}
 }
 
 } // End of namespace Igor

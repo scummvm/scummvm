@@ -174,6 +174,7 @@ void IgorEngine::PART_05() {
 		if (_currentPart == 50) {
 			debug("Entering PART_05_HELPER_6");
 			memcpy(_screenVGA, _screenLayer1, 46080);
+			_currentAction.verb = kVerbWalk;
 			fadeIn(624);
 			PART_05_HELPER_6_walkIgorToScene();
 		}
@@ -199,6 +200,7 @@ void IgorEngine::PART_05() {
 }
 
 void IgorEngine::PART_05_ACTION_103_pickPaper() {
+	_gameTicks = 0;
 	int i = 0;
 	do {
 		if (compareGameTick(1)) {
@@ -226,6 +228,7 @@ void IgorEngine::PART_05_ACTION_102_scrollRight() {
 	int xPos = 220;
 	int yPos = 0;
 	int i = 1;
+	_gameTicks = 15 & ~(kTimerTicksCount - 1);
 	do {
 		if (compareGameTick(1, 16)) {
 			for (int y = 0; y <= 143; ++y) {
@@ -288,19 +291,21 @@ void IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND() {
 		setPaletteRange(185, 191);
 	}
 	if (compareGameTick(1)) {
-		switch (getRandomNumber(199)) {
-		case 0:
-			playSound(18, 1);
-			break;
-		case 3:
-			playSound(21, 1);
-			break;
-		case 9:
-			playSound(22, 1);
-			break;
-		case 17:
-			playSound(23, 1);
-			break;
+		if (getRandomNumber(14) == 0) {
+			switch (getRandomNumber(3)) {
+			case 0:
+				playSound(21, 1);
+				break;
+			case 1:
+				playSound(22, 1);
+				break;
+			case 2:
+				playSound(23, 1);
+				break;
+			case 3:
+				playSound(18, 1);
+				break;
+			}
 		}
 	}
 	if (_game.flags & kFlagFloppy) {
