@@ -439,8 +439,8 @@ protected:
 
 	/**
 	 * Shared tail of command1() (falls through into it after command3())
-	 * and command5() (jumps straight into it, ungated, in every driver
-	 * confirmed so far): enables channels 5,6,7,8.
+	 * and the drivers that use the standard command5(): enables channels
+	 * 5,6,7,8.
 	 */
 	void enableUpperChannels();
 
@@ -451,16 +451,9 @@ protected:
 	void resetAndGmResetUpperChannels();
 
 	/**
-	 * PURE VIRTUAL, unlike command1-3/6-8. Confirmed (from RSound1 AND
-	 * RSound2, independently) that every driver's command4/command5 are
-	 * gated by isSoundActive() on a driver-specific data offset before
-	 * calling resetAndGmResetUpperChannels()/enableUpperChannels() above
-	 * - a per-driver detail that must not live in the shared base.
-	 * Deliberately NO default implementation, so a new driver subclass
-	 * can't compile without explicitly providing its own gate - silently
-	 * falling back to an ungated version would be wrong (and was, in an
-	 * earlier version of this port, until RSound1/RSound2 confirmed the
-	 * gate is universal even though its offset isn't).
+	 * Pure virtual, unlike command1-3/6-8. The command4 reset range and
+	 * command4/command5 sound-active guards vary by driver, so each driver
+	 * must provide its native form explicitly.
 	 */
 	virtual int command4() = 0;
 	virtual int command5() = 0;

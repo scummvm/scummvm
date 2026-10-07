@@ -442,22 +442,11 @@ int RSound2::command(int commandId, int param) {
 }
 
 int RSound2::command4() {
-	// Confirmed: same isSoundActive(0x3D98)-gated shape as RSound1's
-	// command4(), though this driver has no equivalent to RSound1's
-	// command39 (its own bucket structure stops at 35, then jumps to
-	// 64+), so this offset can't be "reused ambient-piece target" here -
-	// just a coincidentally identical offset NUMBER, not assumed to hold
-	// the same data.
-	if (isSoundActive(loadData(0x3D98)))
-		return 0;
 	resetAndGmResetUpperChannels();
 	return 0;
 }
 
 int RSound2::command5() {
-	// Confirmed: same isSoundActive(0x3D98) gate as command4() above.
-	if (isSoundActive(loadData(0x3D98)))
-		return 0;
 	enableUpperChannels();
 	return 0;
 }
@@ -653,8 +642,7 @@ int RSound3::command(int commandId, int param) {
 }
 
 int RSound3::command4() {
-	// Confirmed: TWO chained isSoundActive() gates (unlike RSound1/
-	// RSound2's single 0x3D98 gate), then a tail that
+	// Confirmed: two chained isSoundActive() gates, then a tail that
 	// resets only channels 5-9 (indices 4-8) - narrower than the
 	// shared resetChannels4to9()'s 4-9 (indices 3-8) - so it can't
 	// reuse resetAndGmResetUpperChannels() and calls resetChannelRange()
@@ -899,9 +887,7 @@ int RSound4::command(int commandId, int param) {
 }
 
 int RSound4::command4() {
-	// Confirmed: NO isSoundActive() gate in this driver, unlike every
-	// other driver seen so far - unconditionally resets channels 5-8,
-	// then calls sendGmReset(9).
+	// Unconditionally resets channels 6-9, then calls sendGmReset(9).
 	_isDisabled = true;
 	resetChannelRange(5, 8);
 	_isDisabled = false;
