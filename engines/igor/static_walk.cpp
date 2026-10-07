@@ -24,26 +24,24 @@
 namespace Igor {
 
 const RoomDataOffsets IgorEngine::PART_00_ROOM_DATA_OFFSETS = {
-	{ 45, 3, 6, 2 },       // cseg206:29BB-29EF
-	{ 79, 96 },            // cseg206:2FF8-301F,3191-31B5
-	{ 103, 347, 3503, 247, 323, 88 }, // cseg206:2DCA-2E69
+	{ 45, 3, 6, 2 },
+	{ 79, 96 },
+	{ 103, 347, 3503, 247, 323, 88 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_01_ROOM_DATA_OFFSETS = {
-	{ 0, 0, 0, 0 }, // cseg200 has no area-transition table
-	{ 4, 15 }, // cseg200:0EBA-0EF5 (walk points), 1067,1672 (facing)
-	{ 19, 103, 3155, 209, 179, 82 }, // cseg200:1E43-1F88
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } // cseg200 has no room-specific dialogue matrix
+	{ 0, 0, 0, 0 }, // no area-transition table
+	{ 4, 15 },
+	{ 19, 103, 3155, 209, 179, 82 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } // no room-specific dialogue matrix
 };
 
 const RoomDataOffsets IgorEngine::PART_02_ROOM_DATA_OFFSETS = {
-	{ 125, 5, 20, 4 }, // cseg203:323B-324D; five-area transition table
-	{ 259, 280 }, // cseg203:385E-3884,39F9
-	// use matrix 565: cseg203:4A89; object2 map 473: cseg203:4A43;
-	// object1 map 549: cseg203:4A6D; row size 0x60: cseg203:4A74.
+	{ 125, 5, 20, 4 }, // five-area transition table
+	{ 259, 280 },
 	{ 289, 565, 4193, 473, 549, 96 },
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } // cseg203 has no room-specific dialogue matrix
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } // no room-specific dialogue matrix
 };
 
 const uint8 IgorEngine::_walkWidthScaleTable[] = {
@@ -225,18 +223,18 @@ const RoomDataOffsets IgorEngine::PART_06_ROOM_DATA_OFFSETS = {
 	{ 87, 259, 3135, 151, 227, 80 },
 	{
 		135, 30, 5158, 100, 60,
-		240,   // cseg181:0F2F-0F41
-		15458, // cseg181:0771-0783
-		15518, // cseg181:0FCE-0FEF
-		35     // cseg181:11CB; (0x3CE6 - 15518) / 2 - 1
+		240,
+		15458,
+		15518,
+		35
 	}
 };
 
 const RoomDataOffsets IgorEngine::PART_07_ROOM_DATA_OFFSETS = {
-	{ 80, 4, 12, 3 }, // cseg197:194E-199C; DAT+80, 4 records, 12-byte source, 3-byte destination
-	{ 151, 168 }, // cseg197:1F87-1FCF and cseg197:2124-213D
-	{ 175, 419, 3575, 319, 395, 88 }, // cseg197:2E4C-2F19 and cseg197:2F23-2F62
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } // cseg197 has no room-specific question/reply matrix
+	{ 80, 4, 12, 3 }, // DAT+80, 4 records, 12-byte source, 3-byte destination
+	{ 151, 168 },
+	{ 175, 419, 3575, 319, 395, 88 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } // no room-specific question/reply matrix
 };
 
 const RoomDataOffsets IgorEngine::PART_08_ROOM_DATA_OFFSETS = {
@@ -255,7 +253,7 @@ const RoomDataOffsets IgorEngine::PART_08_ROOM_DATA_OFFSETS = {
 };
 
 const RoomDataOffsets IgorEngine::PART_09_ROOM_DATA_OFFSETS = {
-	{ 80, 4, 12, 3 }, // cseg190:1FA1-1FD4; transition table at DAT+80, four areas, strides 12 and 3
+	{ 80, 4, 12, 3 }, // transition table at DAT+80, four areas, strides 12 and 3
 	{ 149, 162 },
 	{ 167, 375, 3391, 271, 347, 84 },
 	{ 378, 29, 5237, 46, 120, 480, 10029, 10087, 46 }
@@ -269,16 +267,16 @@ const RoomDataOffsets IgorEngine::PART_04_ROOM_DATA_OFFSETS = {
 };
 
 const RoomDataOffsets IgorEngine::PART_10_ROOM_DATA_OFFSETS = {
-	{ 45, 3, 6, 2 },       // cseg175:17F9-1829: DAT+45, 3 records, 6-byte source, 2-byte destination
-	{ 77, 90 },            // cseg175:1E22-1E68 and cseg175:1FBB-1FD3
-	{ 95, 303, 3319, 199, 275, 84 }, // cseg175:1C41-1CA7, 1CE9-1D4F, 2C8B-2DEA
+	{ 45, 3, 6, 2 }, // DAT+45, 3 records, 6-byte source, 2-byte destination
+	{ 77, 90 },
+	{ 95, 303, 3319, 199, 275, 84 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_11_ROOM_DATA_OFFSETS = {
-	{ 0, 0, 0, 0 }, // cseg176 routes walks through the room mask; no area matrix
-	{ 35, 52 }, // cseg176:1EE5-1F15, 207C
-	{ 59, 309, 3255, 203, 279, 82 }, // cseg176:2CBC-2CE5 (action); +60 is its walk behavior at 1E7B,2026,2061
+	{ 20, 2, 2, 1 }, // DAT+20, 2 areas, 2-byte source stride, 1-byte destination stride
+	{ 35, 52 },
+	{ 59, 309, 3255, 203, 279, 82 }, // +60 is the object's walk behavior
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
@@ -288,10 +286,10 @@ const RoomDataOffsets IgorEngine::PART_12_ROOM_DATA_OFFSETS = {
 	{ 87, 259, 3135, 151, 227, 80 },
 	{
 		-85, 15, 2478, 25, 30,
-		60,   // cseg172:09C5-09D6
-		5230, // cseg172:043B-0452
-		5260, // cseg172:0A59-0A82
-		25    // cseg172:0A4A-0A92
+		60,
+		5230,
+		5260,
+		25
 	}
 };
 
@@ -405,13 +403,13 @@ const RoomDataOffsets IgorEngine::PART_30_ROOM_DATA_OFFSETS = {
 	{ 75, 84 },
 	{ 87, 259, 3135, 151, 227, 80 },
 	{
-		-90,  // cseg110:018E-019E; first question at blob+115
+		-90, // first question at blob+115
 		9,
-		1489, // cseg110:018E-019E; first reply at blob+1591
+		1489, // first reply at blob+1591
 		11,
 		30,
-		90,   // seg111:0ECD+90; reply 4 starts at +94 (cseg111 dialogue matrix)
-		2711, // cseg110:018E-019E; derived from the packed-tail layout
+		90, // reply 4 starts at +94
+		2711, // derived from the packed-tail layout
 		2729,
 		11
 	}
