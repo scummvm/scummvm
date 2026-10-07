@@ -460,8 +460,10 @@ void RippedLetterPuzzle::copyPieceToPickedUp(const uint pos) {
 }
 
 Common::Rect RippedLetterPuzzle::getPieceHotspot(const Common::Rect &hotspot, const Common::Rect &screenRect) const {
-	// An empty hotspot means the whole piece is interactive
-	Common::Rect ret = hotspot.height() ? hotspot : Common::Rect(screenRect.width(), screenRect.height());
+	// In Nancy14 and up, an empty hotspot means the whole piece is interactive.
+	// Earlier games use empty hotspots to disable an action (e.g. the rotation
+	// in nancy6 scene 2154, where pieces can only be swapped)
+	const bool wholePiece = g_nancy->getGameType() >= kGameTypeNancy14 && !hotspot.height();
 	ret.translate(screenRect.left, screenRect.top);
 	return ret;
 }
