@@ -26,6 +26,8 @@
 
 namespace Harvester {
 
+class EntityManager;
+
 struct RoomMovementInputState {
 	bool moveLeft = false;
 	bool moveRight = false;
@@ -37,6 +39,8 @@ struct RoomMovementInputState {
 // Entity pointers remain owned by EntityManager.
 class RoomSession {
 public:
+	RoomSession(HarvesterEngine &engine, RoomSceneResources &scene, EntityManager *entityManager);
+
 	RoomPlayerState &getPlayerState() { return _playerState; }
 	RoomIdleAnimationState &getIdleState() { return _idleState; }
 	RoomMovementInputState &getMovementInput() { return _movementInput; }
@@ -47,8 +51,17 @@ public:
 	bool isPlayerCombatLocked() const;
 	bool cancelPlayerAttackAnimation();
 	void stopPlayerRegionInteraction();
+	void syncCurrentRoomRuntimeState();
+	void captureCurrentSaveState();
+	void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
+		bool includeCurrentRoomTimers = false);
 
 private:
+	bool isTimerMaterializedInCurrentRoom(const Common::String &timerName) const;
+
+	HarvesterEngine &_engine;
+	RoomSceneResources &_scene;
+	EntityManager *_entityManager;
 	RoomPlayerState _playerState;
 	RoomIdleAnimationState _idleState;
 	RoomMovementInputState _movementInput;
