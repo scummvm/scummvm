@@ -1235,6 +1235,9 @@ static void room_203_daemon() {
 		break;
 
 	case 26:
+		// The retail executable also indexes aa[] with these display-animation
+		// handles here (and in case 55 below). It looks like a handle-space
+		// mix-up, but preserve the native behavior rather than guessing at a fix.
 		kernel_reset_animation(local->_9e, 0);
 		kernel_synch(KERNEL_ANIM, aa[local->_9e], KERNEL_NOW, 0);
 		global[g133] = 1;

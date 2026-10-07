@@ -93,6 +93,9 @@ static void room_220_anim1() {
 		aa[1] = kernel_run_animation("*RM220Y12", 0);
 		aainfo[1]._active = -1;
 		scratch._92 = 55;
+		// Retail also synchronizes the just-aborted Y11 slot to Y12 here. The
+		// old slot no longer has an active animation, so this looks redundant,
+		// but keep the native clock update for parity.
 		kernel_synch(KERNEL_ANIM, aa[0], KERNEL_ANIM, aa[1]);
 	} else if (f < 121) {
 		if (f == 52) {

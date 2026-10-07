@@ -201,6 +201,8 @@ static void room_510_anim2() {
 		} else if (scratch._8e == 91) {
 			scratch._8e = 132;
 			digi_play_build(510, 'r', 1, 1);
+		// The retail executable checks for 133 here even though the preceding
+		// transition stores 132. Preserve the apparently unreachable branch.
 		} else if (scratch._8e == 133) {
 			scratch._8e = -1;
 		}

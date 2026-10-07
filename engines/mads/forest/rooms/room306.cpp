@@ -809,6 +809,9 @@ static void room_306_daemon() {
 		break;
 
 	case 101:
+		// Retail also uses scratch.x94 as an aa[] index here, although this
+		// room never assigns it locally. Preserve the original behavior rather
+		// than guessing at the intended animation slot.
 		kernel_abort_animation(aa[scratch.x94]);
 		aainfo[scratch.x94]._active = 0;
 		kernel_reset_animation(scratch.x9c, 1);

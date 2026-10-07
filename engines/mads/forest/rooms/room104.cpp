@@ -463,6 +463,8 @@ static void room_104_anim2() {
 			stop_speech_on_run_animation = false;
 			aa[8] = kernel_run_animation(kernel_name('T', 2), 0);
 			aainfo[8]._active = -1;
+			// Retail also synchronizes the just-aborted T1 slot to T2. Although
+			// this looks redundant after aborting T1, preserve the native call.
 			kernel_synch(KERNEL_ANIM, aa[7], KERNEL_ANIM, aa[8]);
 			break;
 		}

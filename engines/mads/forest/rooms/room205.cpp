@@ -314,6 +314,9 @@ static void room_205_daemon() {
 		kernel_reset_animation(local->_9c, 0);
 		global[g133] = 1;
 		global[g143] = 1;
+		// Retail decrements only a temporary copy of scratch._90 here and never
+		// stores the result back. There is intentionally no scratch._90-- in the
+		// port.
 		break;
 
 	case 28:

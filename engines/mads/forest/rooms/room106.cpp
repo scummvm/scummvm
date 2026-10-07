@@ -779,6 +779,8 @@ static void room_106_parser() {
 	if (player_parse(words_pick_up, words_flowers, 0) || player_parse(words_click_on, words_moss, 0)) {
 		player.commands_allowed = false;
 		global[g135] = -1;
+		// Retail stores 3 here too, even though trigger 24 dispatches on
+		// scratch._a2. Preserve the apparently unused state write for parity.
 		scratch._8c = 3;
 		player.command_ready = 0;
 		return;

@@ -500,6 +500,8 @@ static void room_101_anim8() {
 		stop_speech_on_run_animation = false;
 		aa[9] = kernel_run_animation(kernel_name('I', 2), 0);
 		aainfo[9]._active = -1;
+		// Retail also synchronizes I2 to the just-aborted I1 animation. Keep
+		// the old master handle here rather than replacing it with KERNEL_NOW.
 		kernel_synch(KERNEL_ANIM, aa[9], KERNEL_ANIM, aa[8]);
 	}
 	kernel_timing_trigger(1, 113);
