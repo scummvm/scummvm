@@ -4034,7 +4034,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					needsRedraw = true;
 					break;
 				}
-				if (hoverState.region && playerState.entity) {
+				// select one target in reverse render order; a selected object prevents exit-region selection.
+				if (hoverState.region && !hoverState.object && playerState.entity) {
 					if (isFastExitClick &&
 						hoverState.region->startEnabled &&
 						roomAllowsImmediateExitClick(scene.state.roomName)) {
