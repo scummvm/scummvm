@@ -74,10 +74,8 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		PART_27_ACTION_110();
 		break;
 	case 111:
-		ADD_DIALOGUE_TEXT(222, 1, kNoSpeechSound);
-		ADD_DIALOGUE_TEXT(223, 2, kNoSpeechSound);
-		ADD_DIALOGUE_TEXT(225, 4, kNoSpeechSound);
-		SET_DIALOGUE_TEXT(1, 3);
+		ADD_DIALOGUE_TEXT(218, 2, 1174);
+		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 112: // look at plaque
