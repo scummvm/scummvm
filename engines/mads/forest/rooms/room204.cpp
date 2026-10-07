@@ -139,7 +139,7 @@ static void room_204_init() {
 		kernel_seq_loc(seq[0], 293, 87);
 		kernel_seq_scale(seq[0], 54);
 	} else {
-		kernel_flip_hotspot(words_vine_weed, true);
+		kernel_flip_hotspot(words_vine_weed, false);
 	}
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
@@ -519,7 +519,7 @@ trigger_103:
 	kernel_reset_animation(local->_9a, 1);
 	kernel_synch(3, local->_9a, 4, 0);
 	global[g133] = 0;
-	kernel_flip_hotspot(words_vine_weed, true);
+	kernel_flip_hotspot(words_vine_weed, false);
 	inter_move_object(vine_weed, PLAYER);
 	global[play_background_sounds] = -1;
 	player.commands_allowed = true;
