@@ -1772,7 +1772,7 @@ static void room_203_parser() {
 			player.walker_visible = false;
 			scratch._a2 = kernel_run_animation_talk('b', 7, 0);
 			extra_change_animation(scratch._a2, player.x, player.y, player.scale, player.depth);
-			scratch._b4 = -1;
+			scratch._b2 = -1;
 			kernel_synch(KERNEL_ANIM, scratch._a2, KERNEL_PLAYER, 0);
 			digi_play_build_ii('b', 1, 1);
 			scratch._a4 = 30;
