@@ -336,8 +336,7 @@ void IgorEngine::handleRoomInput() {
 			_talkSpeechCounter = -1;
 		}
 		_inputVars[kInputSkipDialogue] = 0;
-		// The click that dismissed the dialogue must not survive into the room
-		// handler: handleRoomInput()
+		// The click that dismissed the dialogue must not survive into the room handler
 		_inputVars[kInputClick] = 0;
 	}
 	if (_rightButtonSelecting && _inputVars[kInputRightRelease]) {

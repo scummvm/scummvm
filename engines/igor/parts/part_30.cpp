@@ -61,7 +61,7 @@ void IgorEngine::PART_30_ACTION_102_goUpstairs() {
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	_roomObjectAreasTable[_screenLayer2[24170]].area = 0;
+	_roomObjectAreasTable[_screenLayer2[24170]].area = 2;
 	--_walkDataLastIndex;
 	buildWalkPath(108, 75, 170, 75);
 	_walkDataCurrentIndex = 1;
