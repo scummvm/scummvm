@@ -155,7 +155,7 @@ void IgorEngine::PART_12_ACTION_104() {
 		}
 	}
 	src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA440) - 1;
-	decodeAnimFrame(src, _screenVGA);
+	decodeAnimFrame(src, _screenLayer1);
 	PART_12_HELPER_1(255);
 }
 
@@ -177,7 +177,8 @@ void IgorEngine::PART_12_ACTION_105() {
 	for (int i = 1; i <= 9; ++i) {
 		const int offset = 30149;
 		for (int j = 0; j <= 48; ++j) {
-			const uint8 *src = _animFramesBuffer + animOffset + PART_12_DATA_ANIM_1[i] * 1715 + j * 35 + 0xF94C;
+			// the original offset is a 16-bit value and wraps within the segment
+			const uint8 *src = _animFramesBuffer + ((animOffset + PART_12_DATA_ANIM_1[i] * 1715 + j * 35 + 0xF94C) & 0xFFFF);
 			memcpy(_screenVGA + j * 320 + offset, src, 35);
 		}
 		waitForTimer(30);
@@ -224,7 +225,7 @@ void IgorEngine::PART_12_ACTION_105() {
 			}
 		}
 		if (compareGameTick(2, 32)) {
-			_gameState.unk10 = getRandomNumber(2) + 7;
+			_gameState.unk10 = getRandomNumber(1) + 7;
 			const uint8 *src = _animFramesBuffer + 0x761 + READ_LE_UINT16(_animFramesBuffer + 0x1107 + _gameState.unk10 * 2) - 1;
 			decodeAnimFrame(src, _screenVGA, true);
 		}
@@ -288,8 +289,8 @@ void IgorEngine::PART_12_ACTION_108() {
 }
 
 void IgorEngine::PART_12_UPDATE_ROOM_BACKGROUND() {
-	if (compareGameTick(1) && getRandomNumber(15) == 0) {
-		switch (getRandomNumber(4)) {
+	if (compareGameTick(1) && getRandomNumber(14) == 0) {
+		switch (getRandomNumber(3)) {
 		case 0:
 			playSound(21, 1);
 			break;
@@ -312,7 +313,7 @@ void IgorEngine::PART_12_UPDATE_DIALOGUE_CHURCHMAN(int action) {
 		PART_12_HELPER_8();
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_12_HELPER_10(6 + getRandomNumber(6));
+		PART_12_HELPER_10(6 + getRandomNumber(5));
 		break;
 	case kUpdateDialogueAnimStanding:
 		PART_12_HELPER_8();

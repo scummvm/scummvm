@@ -46,6 +46,13 @@ void IgorEngine::playMusic(int num) {
 
 void IgorEngine::playSound(int num, int type) {
 
+	// A zero speech number means the line has no recorded speech
+	if (type == 0 && num == 0) {
+		if (_mixer->isSoundHandleActive(_speechHandle)) {
+			_mixer->stopHandle(_speechHandle);
+		}
+		return;
+	}
 	--num;
 	int soundOffset = -1;
 	Audio::Mixer::SoundType soundType;

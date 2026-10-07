@@ -193,8 +193,8 @@ void IgorEngine::PART_09_SECRETARY_GESTURE() {
 }
 
 void IgorEngine::PART_09_UPDATE_ROOM_BACKGROUND() {
-	if (_objectsState[35] == 0 && compareGameTick(61) && getRandomNumber(2) == 0)
-		PART_09_DRAW_SECRETARY_FRAME(getRandomNumber(3), false);
+	if (_objectsState[35] == 0 && compareGameTick(61) && getRandomNumber(1) == 0)
+		PART_09_DRAW_SECRETARY_FRAME(getRandomNumber(2), false);
 }
 
 void IgorEngine::PART_09_EXEC_ACTION(int action) {

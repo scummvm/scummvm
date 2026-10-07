@@ -27,7 +27,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 	case 1:
 		break;
 	case 2: {
-		int num, rnd = getRandomNumber(100);
+		int num, rnd = getRandomNumber(99);
 		if (rnd < 34) {
 			num = 11;
 		} else if (rnd < 69) {
@@ -72,7 +72,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 9: {
-			int num = 16 + getRandomNumber(2);
+			int num = 16 + getRandomNumber(1);
 			ADD_DIALOGUE_TEXT(num, 1, num);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
@@ -89,7 +89,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 12: {
-			int num = 20 + getRandomNumber(2);
+			int num = 20 + getRandomNumber(1);
 			ADD_DIALOGUE_TEXT(num, 1, num);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
@@ -116,7 +116,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 17: {
-			int num = 26 + getRandomNumber(2);
+			int num = 26 + getRandomNumber(1);
 			ADD_DIALOGUE_TEXT(num, 1, num);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();
@@ -138,7 +138,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 21: {
-			int num = 1 + getRandomNumber(3);
+			int num = 1 + getRandomNumber(2);
 			ADD_DIALOGUE_TEXT(num, 1, num);
 			SET_DIALOGUE_TEXT(1, 1);
 			startIgorDialogue();

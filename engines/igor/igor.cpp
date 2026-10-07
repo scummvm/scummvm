@@ -323,7 +323,7 @@ void IgorEngine::handleRoomLight() {
 	} else if (_gameState.updateLight) {
 		updateRoomLight(0);
 		_gameState.updateLight = 0;
-	} else if (getRandomNumber(10) == 0) {
+	} else if (getRandomNumber(9) == 0) {
 		updateRoomLight(1);
 		_gameState.updateLight = true;
 	}
