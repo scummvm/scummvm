@@ -464,6 +464,7 @@ Common::Rect RippedLetterPuzzle::getPieceHotspot(const Common::Rect &hotspot, co
 	// Earlier games use empty hotspots to disable an action (e.g. the rotation
 	// in nancy6 scene 2154, where pieces can only be swapped)
 	const bool wholePiece = g_nancy->getGameType() >= kGameTypeNancy14 && !hotspot.height();
+	Common::Rect ret = wholePiece ? Common::Rect(screenRect.width(), screenRect.height()) : hotspot;
 	ret.translate(screenRect.left, screenRect.top);
 	return ret;
 }
