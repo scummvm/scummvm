@@ -289,6 +289,7 @@ void IgorEngine::PART_08_ACTION_103_TALK_TO_DEAN() {
 		startCutsceneDialogue(78, 75, 26, 58, 0);
 		waitForEndOfCutsceneDialogue(78, 75, 26, 58, 0);
 		_updateDialogue = 0;
+		PART_08_APPLY_OBJECT_STATE(255);
 		return;
 	}
 

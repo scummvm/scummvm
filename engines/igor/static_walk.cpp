@@ -248,9 +248,9 @@ const RoomDataOffsets IgorEngine::PART_08_ROOM_DATA_OFFSETS = {
 		5188, 100,
 		90,
 		270,
-		15488, // cseg195:4B98-4BC0
-		15548, // cseg195:51AE-51D4
-		30
+		15488,
+		15548,
+		100
 	}
 };
 
