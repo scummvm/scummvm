@@ -590,6 +590,9 @@ public:
 	/** Implementing classes should enable or disable all active widgets */
 	virtual void setEnabled(bool e) {}
 
+	/** Recompute height from visible children on reflow, allowing shrinkage. */
+	void setContentSized(bool enabled) { _contentSized = enabled; }
+
 	void setParentDialog(Dialog *parentDialog) { _parentDialog = parentDialog; }
 	virtual void setDomain(const Common::String &domain) { _domain = domain; }
 
@@ -617,6 +620,7 @@ protected:
 	const Common::String _dialogLayout;
 
 	Dialog *_parentDialog;
+	bool _contentSized;
 };
 
 ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x=0, int y=0, int w=0, int h=0, bool scale = false);
