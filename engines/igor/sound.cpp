@@ -46,8 +46,8 @@ void IgorEngine::playMusic(int num) {
 
 void IgorEngine::playSound(int num, int type) {
 
-	// A zero speech number means the line has no recorded speech
-	if (type == 0 && num == 0) {
+	// A zero or "no speech" number means the line has no recorded speech
+	if (type == 0 && (num == 0 || num == kNoSpeechSound)) {
 		if (_mixer->isSoundHandleActive(_speechHandle)) {
 			_mixer->stopHandle(_speechHandle);
 		}
@@ -71,7 +71,7 @@ void IgorEngine::playSound(int num, int type) {
             debugC(9, kDebugEngine, "stopping previous handle");
 			_mixer->stopHandle(_speechHandle);
 		}
-		if ((_game.flags & kFlagTalkie) == 0 || num == kNoSpeechSound) {
+		if ((_game.flags & kFlagTalkie) == 0) {
 			return;
 		}
 		num += 101;
