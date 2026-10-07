@@ -167,8 +167,23 @@ void IgorEngine::PART_09_ACTION_101_openFileCabinet() {
 	waitForEndOfIgorDialogue();
 }
 
+void IgorEngine::PART_09_DRAW_SECRETARY_MOUTH(int frame) {
+	for (int y = 0; y <= 12; ++y) {
+		const uint8 *src = _animFramesBuffer + 0xD38 + frame * 0xA9 + y * 13;
+		memcpy(_screenVGA + 0x783A + y * 320, src, 13);
+		memcpy(_screenLayer1 + 0x783A + y * 320, src, 13);
+	}
+}
+
 void IgorEngine::PART_09_UPDATE_DIALOGUE_SECRETARY(int action) {
-	PART_09_DRAW_SECRETARY_FRAME(action == kUpdateDialogueAnimMiddleOfSentence ? getRandomNumber(1) + 2 : 1, false);
+	switch (action) {
+	case kUpdateDialogueAnimEndOfSentence:
+		PART_09_DRAW_SECRETARY_MOUTH(0);
+		break;
+	case kUpdateDialogueAnimMiddleOfSentence:
+		PART_09_DRAW_SECRETARY_MOUTH(getRandomNumber(2));
+		break;
+	}
 }
 
 void IgorEngine::PART_09_SECRETARY_GESTURE() {
@@ -180,7 +195,7 @@ void IgorEngine::PART_09_SECRETARY_GESTURE() {
 		waitForTimer(31);
 	}
 	for (int step = 0; step < 32; ++step) {
-		const int frame = getRandomNumber(4) + 4;
+		const int frame = getRandomNumber(3) + 4;
 		for (int y = 0; y <= 46; ++y)
 			memcpy(_screenVGA + 0x7815 + y * 320, _animFramesBuffer + 0x578 + frame * 0x9BB + y * 53, 53);
 		waitForTimer(16);
@@ -209,10 +224,17 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 103: // talk to secretary
-		loadDialogueData(DLG_AdministrationSecretaryRoom);
-		_updateDialogue = &IgorEngine::PART_09_UPDATE_DIALOGUE_SECRETARY;
-		handleDialogue(63, 59, 0, 90, 65);
-		_updateDialogue = 0;
+		{
+			// the blocking dialogue loops never run the room's idle animation, which
+			// would otherwise fight the secretary's talking frames
+			const UpdateRoomBackgroundProc updateRoomBackground = _updateRoomBackground;
+			_updateRoomBackground = 0;
+			loadDialogueData(DLG_AdministrationSecretaryRoom);
+			_updateDialogue = &IgorEngine::PART_09_UPDATE_DIALOGUE_SECRETARY;
+			handleDialogue(63, 59, 0, 90, 65);
+			_updateDialogue = 0;
+			_updateRoomBackground = updateRoomBackground;
+		}
 		PART_09_APPLY_OBJECT_STATE(255);
 		break;
 	case 104: // look at secretary
