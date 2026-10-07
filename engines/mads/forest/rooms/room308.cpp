@@ -1360,9 +1360,9 @@ void room_308_preload() {
 	room_parser_code_pointer     = room_308_parser;
 	room_daemon_code_pointer     = room_308_daemon;
 
+	global[g016] = -1;
 	global_section_walker();
 	global_section_interface();
-	player.walker_must_reload = true;
 }
 
 } // namespace Rooms
