@@ -117,6 +117,8 @@ void Widget::draw() {
 
 		// Now perform the actual widget draw
 		drawWidget();
+		if (_flags & WIDGET_INVALID_FRAME)
+			g_gui.theme()->drawInvalidFrame(Common::Rect(_x, _y, _x + _w, _y + _h));
 
 		_x = oldX;
 		_y = oldY;
@@ -174,6 +176,18 @@ bool Widget::containsWidgetInChain(Widget *w, Widget *search) {
 		w = w->_next;
 	}
 	return false;
+}
+
+void Widget::setInvalidMark(bool show) {
+	if (((_flags & WIDGET_INVALID_FRAME) != 0) == show)
+		return;
+	if (show)
+		setFlags(WIDGET_INVALID_FRAME);
+	else
+		clearFlags(WIDGET_INVALID_FRAME);
+	markAsDirty();
+	// Optional theme indications may extend beyond the control's background.
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void Widget::setEnabled(bool e) {

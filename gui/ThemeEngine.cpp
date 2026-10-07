@@ -184,6 +184,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 
 	{kDDCaret,                      "caret",        kDrawLayerForeground,  kDDNone},
 	{kDDSeparator,                  "separator",    kDrawLayerBackground,   kDDNone},
+	{kDDInvalidFrame,               "invalid_frame", kDrawLayerForeground,  kDDNone},
 };
 
 /**********************************************************
@@ -760,7 +761,8 @@ void ThemeEngine::loadTheme(const Common::String &themeId) {
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
 		if (_widgets[i] == nullptr) {
-			warning("Missing data asset: '%s' in theme '%s", kDrawDataDefaults[i].name, themeId.c_str());
+			if (i != kDDInvalidFrame)
+				warning("Missing data asset: '%s' in theme '%s", kDrawDataDefaults[i].name, themeId.c_str());
 		} else {
 			_widgets[i]->calcBackgroundOffset();
 			_widgets[i]->_restoreOffset = _widgets[i]->_restoreEndOffset = 0;
@@ -1551,6 +1553,34 @@ void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 	}
 	font->drawChar(&_screen, ch, charArea.left, charArea.top, rgbColor);
 	addDirtyRect(charArea);
+}
+
+void ThemeEngine::drawInvalidFrame(const Common::Rect &r) {
+	if (_layerToDraw != kDrawLayerForeground || _clip.isEmpty())
+		return;
+	if (_widgets[kDDInvalidFrame]) {
+		drawDD(kDDInvalidFrame, r);
+		return;
+	}
+	const int thickness = MIN(MIN(r.width(), r.height()) / 2,
+		MAX(1, getFontHeight() / 10));
+	if (thickness <= 0)
+		return;
+	const uint32 color = _screen.format.RGBToColor(220, 32, 32);
+	Common::Rect edges[] = {
+		Common::Rect(r.left, r.top, r.right, r.top + thickness),
+		Common::Rect(r.left, r.bottom - thickness, r.right, r.bottom),
+		Common::Rect(r.left, r.top, r.left + thickness, r.bottom),
+		Common::Rect(r.right - thickness, r.top, r.right, r.bottom)
+	};
+	for (uint i = 0; i < ARRAYSIZE(edges); ++i) {
+		edges[i].clip(_clip);
+		edges[i].clip(_screen.w, _screen.h);
+		if (!edges[i].isEmpty()) {
+			_screen.fillRect(edges[i], color);
+			addDirtyRect(edges[i]);
+		}
+	}
 }
 
 void ThemeEngine::drawFoldIndicator(const Common::Rect &r, bool expanded) {

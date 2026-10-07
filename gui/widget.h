@@ -51,6 +51,7 @@ enum {
 	 * mouse events in place of their children */
 	WIDGET_HOOK_DRAG        = 1 <<  7,
 	WIDGET_DYN_TOOLTIP      = 1 <<  8, // Widgets updates tooltip by coordinates
+	WIDGET_INVALID_FRAME    = 1 <<  9, // Draw a frame to indicate a validation error
 };
 
 enum {
@@ -164,6 +165,9 @@ public:
 	virtual bool wantsFocus() { return false; }
 
 	uint32 getType() const { return _type; }
+
+	/** Show or hide a validation mark without changing interaction state. */
+	void setInvalidMark(bool show);
 
 	void setFlags(int flags);
 	void clearFlags(int flags);
