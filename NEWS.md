@@ -4,6 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2026.4.0 (2026-10-XX)
 
  New games:
+   - Added support for the ReelMagic release of Return to Zork.
    - Added support for Mortadelo y Filemón: Una Aventura de Cine Edición Original.
    - Added support for Mortadelo y Filemón: Dos vaqueros chapuceros.
    - Added support for Mortadelo y Filemón: Terror, Espanto y Pavor.
@@ -501,6 +502,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Russian version support to lure.dat.
 
  MADE:
+   - Added support for the ReelMagic release of Return to Zork.
    - Added Text-to-Speech support.
 
  MM:
