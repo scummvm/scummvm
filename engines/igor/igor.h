@@ -159,7 +159,7 @@ struct GameStateData {
 	uint8 dialogueChoiceStart;
 	uint8 dialogueChoiceCount;
 	// byte[2]
-	uint8 nextMusicCounter;
+	uint8 shouldShowCutsceneCounter;
 	bool jumpToNextMusic;
 	uint8 configSoundEnabled;
 	uint8 talkSpeed;
@@ -468,6 +468,13 @@ private:
 	void UPDATE_OBJECT_STATE(int num);
 	void PART_UPDATE_FIGURES_ON_PAPER(int delay);
 
+	void PART_MEANWHILE();
+
+	void PART_MARGARET_ROOM_CUTSCENE_HELPER_1();
+	void PART_MARGARET_ROOM_CUTSCENE_HELPER_2(int frame);
+	void PART_MARGARET_ROOM_CUTSCENE_UPDATE_DIALOGUE_MARGARET(int action);
+	void PART_MARGARET_ROOM_CUTSCENE();
+
 	void animateIgorTalking(int frame);
 	void fixIgorDialogueTextPosition(int num, int count, int *x, int *y);
 	void startIgorDialogue();
@@ -620,6 +627,37 @@ private:
 	void PART_12_HELPER_10(int frame);
 	void PART_12();
 
+	// inside church
+	void PART_13_EXEC_ACTION(int action);
+	void PART_13_ACTION_101_103();
+	void PART_13_ACTION_104();
+	void PART_13_HELPER_1(int num);
+	void PART_13_HELPER_2();
+	void PART_13_HELPER_3();
+	void PART_13();
+
+	// church puzzle
+	void PART_14_EXEC_ACTION(int action);
+	void PART_14_UPDATE_ROOM_BACKGROUND_ACTION_108();
+	void PART_14_ACTION_101();
+	void PART_14_ACTION_103();
+	void PART_14_ACTION_105();
+	void PART_14_ACTION_106();
+	void PART_14_ACTION_108();
+	void PART_14_HELPER_1(int num);
+	void PART_14_HELPER_2();
+	void PART_14_HELPER_3();
+	void PART_14_HELPER_4();
+	void PART_14_HELPER_6();
+	void PART_14_HELPER_7(int frame);
+	void PART_14_HELPER_8(int start, int end);
+	void PART_14_HELPER_9();
+	void PART_14_HELPER_10();
+	void PART_14_PUSH_STONE(int screenOffset, int w, int h, int animOffset);
+	void PART_14();
+	void loadResourceData__ROOM_ChurchPuzzle();
+	void loadResourceData__ANIM_ChurchPuzzle();
+
 	// tobias office
 	void PART_15_EXEC_ACTION(int action);
 	void PART_15_ACTION_101();
@@ -639,6 +677,20 @@ private:
 	void PART_15_HELPER_9(int frame);
 	void PART_15_HELPER_10(int frame);
 	void PART_15();
+
+	// laboratory
+	void PART_16_EXEC_ACTION(int action);
+	void PART_16_ACTION_101();
+	void PART_16_UPDATE_DIALOGUE_MARGARET_HARRISON(int action);
+	void PART_16_UPDATE_DIALOGUE_MARGARET(int action);
+	void PART_16_HELPER_1(int num);
+	void PART_16_HELPER_2();
+	void PART_16_HELPER_3();
+	void PART_16_HELPER_5();
+	void PART_16_HELPER_6(int frame);
+	void PART_16();
+	void loadResourceData__ROOM_Laboratory();
+	void loadResourceData__ANIM_Laboratory();
 
 	// outside college
 	void PART_17_EXEC_ACTION(int action);

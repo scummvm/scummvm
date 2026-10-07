@@ -673,7 +673,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	s.syncAsByte(_gameState.dialogueChoiceStart);
 	s.syncAsByte(_gameState.dialogueChoiceCount);
 	s.skip(2);
-	s.syncAsByte(_gameState.nextMusicCounter);
+	s.syncAsByte(_gameState.shouldShowCutsceneCounter);
 	{
 		byte v = _gameState.jumpToNextMusic ? 1 : 0;
 		s.syncAsByte(v);

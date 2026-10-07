@@ -28,7 +28,10 @@ MODULE_OBJS = \
 	parts/part_10.o \
 	parts/part_11.o \
 	parts/part_12.o \
+	parts/part_13.o \
+	parts/part_14.o \
 	parts/part_15.o \
+	parts/part_16.o \
 	parts/part_17.o \
 	parts/part_18.o \
 	parts/part_19.o \
@@ -46,6 +49,7 @@ MODULE_OBJS = \
 	parts/part_35.o \
 	parts/part_36.o \
 	parts/part_37.o \
+	parts/part_margaret.o \
 	text.o \
 	part_main.o \
 	sound.o

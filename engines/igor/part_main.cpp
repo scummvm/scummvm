@@ -580,8 +580,20 @@ void IgorEngine::PART_MAIN() {
 		case 122:
 			PART_12(); // outside church
 			break;
+		case 130:
+		case 131:
+			PART_13();
+			break;
+		case 140:
+		case 141:
+		case 142:
+			PART_14();
+			break;
 		case 150:
 			PART_15();
+			break;
+		case 160:
+			PART_16();
 			break;
 		case 170:
 		case 171:
@@ -685,6 +697,39 @@ void IgorEngine::PART_MAIN() {
 			error("PART_MAIN() Unhandled part %d", _currentPart);
 			break;
 		}
+		if (_currentPart >= 10) {
+			if (_currentPart <= 24 || _currentPart == 51) {
+				continue;
+			}
+			if (_currentPart == 60 || _currentPart == 102 || _currentPart == 110) {
+				continue;
+			}
+		}
+		if (_currentPart == 340 || _currentPart == 351 || _currentPart == 750) {
+			continue;
+		}
+		if (_currentPart == 122 || _currentPart == 255) {
+			continue;
+		}
+		// skip if we havent given the note to margaret yet
+		if (_objectsState[110] < 1 || _objectsState[110] > 7) {
+			continue;
+		}
+		debugC(9, kDebugEngine, "Checking meanwhile with part: %d, should show cutscene counter %d", _currentPart, _gameState.shouldShowCutsceneCounter);
+		if (_gameState.shouldShowCutsceneCounter != 5) {
+			++_gameState.shouldShowCutsceneCounter;
+		} else {
+			if (_gameState.musicNum != 11) {
+				// _previousMusic = _gameState.musicNum;
+				playMusic(11);
+			}
+			PART_MEANWHILE();
+			PART_MARGARET_ROOM_CUTSCENE();
+		// 	if (_previousMusic != 11) {
+		// 		playMusic(_previousMusic);
+		// 	}
+			_gameState.shouldShowCutsceneCounter = 0;
+		}
 	} while (_currentPart != kInvalidPart && !_eventQuitGame);
 }
 
@@ -714,6 +759,25 @@ void IgorEngine::PART_UPDATE_FIGURES_ON_PAPER(int delay) {
 	}
 	free(framesData);
 	free(framesOffsets);
+}
+
+void IgorEngine::PART_MEANWHILE() {
+	hideCursor();
+	memset(_currentPalette, 0, 768);
+	setPaletteRange(208, 255);
+	loadData(IMG_Meanwhile, _screenVGA);
+	_paletteBuffer[3] = 63;
+	_paletteBuffer[4] = 32;
+	_paletteBuffer[5] = 0;
+	_paletteBuffer[6] = 44;
+	_paletteBuffer[7] = 12;
+	_paletteBuffer[8] = 0;
+	fadeIn(9);
+	for (int i = 0; i <= 5 && !_inputVars[kInputEscape]; ++i) {
+		waitForTimer(250);
+	}
+	_inputVars[kInputEscape] = 0;
+	fadeOut(9);
 }
 
 } // End of namespace Igor
