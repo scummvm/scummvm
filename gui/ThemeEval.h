@@ -40,7 +40,15 @@ class ThemeEval {
 	typedef Common::HashMap<Common::String, ThemeLayout *> LayoutsMap;
 
 public:
-	ThemeEval() : _scaleFactor(1.0f) {
+	struct WidgetMetrics {
+		int editTextPaddingLeft;
+		int editTextPaddingRight;
+		int popUpPaddingLeft;
+		int popUpPaddingRight;
+		int popUpHeight;
+	};
+
+	ThemeEval() : _scaleFactor(1.0f), _widgetMetricsValid(false) {
 		buildBuiltinVars();
 	}
 
@@ -71,7 +79,13 @@ public:
 
 	void setScaleFactor(float s) { _scaleFactor = s; }
 
-	void setVar(const Common::String &name, int val) { _vars[name] = val; }
+	void setVar(const Common::String &name, int val) {
+		_vars[name] = val;
+		_widgetMetricsValid = false;
+	}
+
+	/** Current control chrome, also available before widget reflow. */
+	const WidgetMetrics &getWidgetMetrics();
 
 	bool hasVar(const Common::String &name) { return _vars.contains(name) || _builtin.contains(name); }
 
@@ -120,6 +134,8 @@ private:
 	Common::String _curDialog;
 
 	float _scaleFactor;
+	WidgetMetrics _widgetMetrics;
+	bool _widgetMetricsValid;
 };
 
 } // End of namespace GUI
