@@ -636,15 +636,17 @@ static void room_307_daemon() {
 			kernel_abort_animation(scratch._9c);
 			scratch._9a = -1;
 			scratch._9c = -1;
+			// Retail uses scratch._9c as the synchronization master below even
+			// after setting it to -1. Use NOW to avoid indexing kernel_anim[-1].
 			if (player_has(lily_pad)) {
 				aa[8] = kernel_run_animation(kernel_name('R', 4), 111);
 				aainfo[8]._active = -1;
 				scratch._92 = 32;
-				kernel_synch(KERNEL_ANIM, aa[8], KERNEL_ANIM, scratch._9c);
+				kernel_synch(KERNEL_ANIM, aa[8], KERNEL_NOW, 0);
 			} else {
 				aa[9] = kernel_run_animation(kernel_name('R', 3), 111);
 				aainfo[9]._active = -1;
-				kernel_synch(KERNEL_ANIM, aa[9], KERNEL_ANIM, scratch._9c);
+				kernel_synch(KERNEL_ANIM, aa[9], KERNEL_NOW, 0);
 			}
 		} else if (scratch._a2 == 3) {
 			aa[2] = kernel_run_animation(kernel_name('R', 2), 0);
