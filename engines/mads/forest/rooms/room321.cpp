@@ -182,6 +182,57 @@ static void room_321_init() {
 	room_321_init1();
 }
 
+static void room_321_prepare_pickup_animation() {
+	kernel_abort_animation(aa[8]);
+	aainfo[8]._active = 0;
+	kernel_abort_animation(aa[7]);
+	aainfo[7]._active = 0;
+
+	if (global[g071] != 0) {
+		kernel_abort_animation(aa[5]);
+		aainfo[5]._active = 0;
+
+		ss[1] = kernel_load_series(kernel_name('p', 5), 0);
+		ss[2] = kernel_load_series(kernel_name('h', 9), 0);
+
+		seq[1] = kernel_seq_stamp(ss[1], false, -1);
+		kernel_seq_depth(seq[1], 15);
+		kernel_seq_loc(seq[1], 230, 105);
+		kernel_seq_scale(seq[1], 83);
+
+		seq[2] = kernel_seq_stamp(ss[2], false, -1);
+		kernel_seq_depth(seq[2], 14);
+		kernel_seq_loc(seq[2], 230, 105);
+		kernel_seq_scale(seq[2], 100);
+	}
+
+	ss[3] = kernel_load_series(kernel_name('z', 9), 0);
+	seq[3] = kernel_seq_stamp(ss[3], false, -1);
+	kernel_seq_depth(seq[3], 7);
+	kernel_seq_loc(seq[3], 292, 32);
+	kernel_seq_scale(seq[3], 45);
+}
+
+static void room_321_finish_pickup_animation() {
+	kernel_seq_delete(seq[3]);
+	matte_deallocate_series(ss[3], -1);
+
+	if (global[g071] != 0) {
+		kernel_seq_delete(seq[2]);
+		kernel_seq_delete(seq[1]);
+		matte_deallocate_series(ss[2], -1);
+		matte_deallocate_series(ss[1], -1);
+
+		aa[5] = kernel_run_animation(kernel_name('H', 1), 104);
+		aainfo[5]._active = -1;
+	}
+
+	aa[7] = kernel_run_animation(kernel_name('L', 3), 104);
+	aainfo[7]._active = -1;
+	aa[8] = kernel_run_animation(kernel_name('L', 2), 104);
+	aainfo[8]._active = -1;
+}
+
 static void room_321_anim1() {
 	int16 cur = kernel_anim[aa[0]].frame;
 	if (cur != aainfo[0]._frame)
@@ -633,10 +684,10 @@ static void room_321_daemon() {
 			global[g143] = 1;
 		} else if (t == 5) {
 			if (scratch._a6 == 1) {
-				room_321_anim1();
+				room_321_prepare_pickup_animation();
 				aa[3] = kernel_run_animation(kernel_name('P', 1), 103);
 			} else if (scratch._a6 == 2) {
-				room_321_anim1();
+				room_321_prepare_pickup_animation();
 				aa[3] = kernel_run_animation(kernel_name('P', 2), 103);
 			} else {
 				break;
@@ -707,7 +758,7 @@ static void room_321_daemon() {
 			kernel_reset_animation(scratch._9a, 1);
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
-			room_321_anim2();
+			room_321_finish_pickup_animation();
 			kernel_flip_hotspot(words_reeds, false);
 			inter_move_object(6, PLAYER);
 			global[play_background_sounds] = -1;
@@ -722,7 +773,7 @@ static void room_321_daemon() {
 			kernel_reset_animation(scratch._9a, 1);
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
-			room_321_anim2();
+			room_321_finish_pickup_animation();
 			kernel_flip_hotspot(words_pebbles, false);
 			if (!player_has(pebbles))
 				inter_move_object(pebbles, PLAYER);
