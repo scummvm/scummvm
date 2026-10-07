@@ -647,6 +647,12 @@ void IgorEngine::PART_MAIN() {
 		case 351:
 			PART_35(); // Park, right panel
 			break;
+		case 360:
+			PART_36();
+			break;
+		case 370:
+			PART_37();
+			break;
 		case 850: // Intro cutscene
 			// Clear the entire screen buffer before starting the intro cutscene
 			memset(_screenVGA, 0, 64000);

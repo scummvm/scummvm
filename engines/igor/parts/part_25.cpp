@@ -55,14 +55,7 @@ void IgorEngine::PART_25_EXEC_ACTION(int action) {
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 104:
-		ADD_DIALOGUE_TEXT(212, 1, kNoSpeechSound);
-		ADD_DIALOGUE_TEXT(213, 1, kNoSpeechSound);
-		ADD_DIALOGUE_TEXT(214, 1, kNoSpeechSound);
-		ADD_DIALOGUE_TEXT(215, 1, kNoSpeechSound);
-		ADD_DIALOGUE_TEXT(216, 2, kNoSpeechSound);
-		SET_DIALOGUE_TEXT(1, 5);
-		startIgorDialogue();
+	case 104: // walk to board: nothing happens on arrival
 		break;
 	case 105:
 		PART_25_ACTION_105();

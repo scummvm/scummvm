@@ -43,6 +43,8 @@ MODULE_OBJS = \
 	parts/part_33.o \
 	parts/part_34.o \
 	parts/part_35.o \
+	parts/part_36.o \
+	parts/part_37.o \
 	text.o \
 	part_main.o \
 	sound.o
