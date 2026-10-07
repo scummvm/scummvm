@@ -24,7 +24,7 @@
 
 namespace Igor {
 
-Console::Console() : GUI::Debugger() {
+	Console::Console() : GUI::Debugger() {
 	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
 	registerCmd("paint_walk",     WRAP_METHOD(Console, Cmd_paintWalk));
 	registerCmd("paint_hotspots", WRAP_METHOD(Console, Cmd_paintHotspots));
@@ -35,6 +35,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("fast_mode",     WRAP_METHOD(Console, Cmd_fastMode));
 	registerCmd("room",     WRAP_METHOD(Console, Cmd_changePart));
 	registerCmd("give", WRAP_METHOD(Console, Cmd_addObjectToInventory));
+	registerCmd("action", WRAP_METHOD(Console, Cmd_executeAction));
 }
 
 Console::~Console() {
@@ -135,6 +136,23 @@ bool Console::Cmd_addObjectToInventory(int argc, const char **argv) {
 
 	debugPrintf("Added object %d to the inventory\n", object);
 	return true;
+}
+
+bool Console::Cmd_executeAction(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <action code>\n", argv[0]);
+		return true;
+	}
+
+	const int action = atoi(argv[1]);
+	if (action < 0 || action > 199) {
+		debugPrintf("Invalid action code '%s' (valid range 0-199)\n", argv[1]);
+		return true;
+	}
+
+	g_engine->debugExecuteAction(action);
+	debugPrintf("Executed action %d\n", action);
+	return false;
 }
 
 } // End of namespace Igor

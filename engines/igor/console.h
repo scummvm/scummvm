@@ -39,6 +39,7 @@ private:
 	bool Cmd_fastMode(int argc, const char **argv);
 	bool Cmd_changePart(int argc, const char **argv);
 	bool Cmd_addObjectToInventory(int argc, const char **argv);
+	bool Cmd_executeAction(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

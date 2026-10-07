@@ -1045,6 +1045,7 @@ public:
 	int debugGetFastMode() const { return _fastMode; }
 	void debugChangePart(int state);
 	bool debugAddObjectToInventory(int object);
+	void debugExecuteAction(int action) { executeAction(action); }
 
 	/**
 	 * Uses a serializer to allow implementing savegame
