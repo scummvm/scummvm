@@ -202,6 +202,14 @@ static void room_402_init() {
 }
 
 static void room_402_anim5() {
+	scratch._9e = 0;
+	room_spots[3].cursor_number = 1;
+	room_spots[4].cursor_number = 1;
+	room_spots[7].cursor_number = 1;
+	room_spots[8].cursor_number = 1;
+	room_spots[9].cursor_number = 1;
+	room_spots[10].cursor_number = 1;
+	room_spots[11].cursor_number = 1;
 }
 
 static void room_402_anim_case7() {
