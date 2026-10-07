@@ -358,10 +358,10 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		}
 		break;
 	case 62:
-		_inventoryImages[_inventoryInfo[52] - 1] = 0;
+		_inventoryInfo[_inventoryInfo[52] - 1] = 0;
 		_inventoryInfo[52] = 0;
 		packInventory();
-		_inventoryImages[_inventoryInfo[59] - 1] = 0;
+		_inventoryInfo[_inventoryInfo[59] - 1] = 0;
 		_inventoryInfo[59] = 0;
 		packInventory();
 		_objectsState[1] = 1;
@@ -375,10 +375,10 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		ADD_DIALOGUE_TEXT(170, 1, 94);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
-		_inventoryImages[_inventoryInfo[68] - 1] = 0;
+		_inventoryInfo[_inventoryInfo[68] - 1] = 0;
 		_inventoryInfo[68] = 0;
 		packInventory();
-		_inventoryImages[_inventoryInfo[69] - 1] = 0;
+		_inventoryInfo[_inventoryInfo[69] - 1] = 0;
 		_inventoryInfo[69] = 0;
 		packInventory();
 		_objectsState[6] = 1;
