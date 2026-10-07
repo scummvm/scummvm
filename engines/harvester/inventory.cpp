@@ -23,7 +23,6 @@
 
 #include "common/algorithm.h"
 #include "common/debug.h"
-#include "common/endian.h"
 #include "graphics/blit.h"
 #include "graphics/font.h"
 #include "graphics/screen.h"
@@ -173,15 +172,7 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 		return false;
 
 	bitmap = IndexedBitmap();
-	bitmap.width = READ_LE_UINT32(data.data());
-	bitmap.height = READ_LE_UINT32(data.data() + 4);
-	const uint32 pixelCount = bitmap.width * bitmap.height;
-	if (bitmap.width == 0 || bitmap.height == 0 || data.size() < 12 + pixelCount)
-		return false;
-
-	bitmap.pixels.resize(pixelCount);
-	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
-	return true;
+	return decodeBitmap(data, bitmap);
 }
 
 static bool resolveInventoryCombatLoadoutId(const Common::String &objectName, int &loadoutId) {

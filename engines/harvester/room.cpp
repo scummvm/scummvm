@@ -22,7 +22,6 @@
 #include "harvester/room.h"
 
 #include "common/algorithm.h"
-#include "common/endian.h"
 #include "common/events.h"
 #include "common/ptr.h"
 #include "common/system.h"
@@ -171,15 +170,7 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 		return false;
 
 	bitmap = IndexedBitmap();
-	bitmap.width = READ_LE_UINT32(data.data());
-	bitmap.height = READ_LE_UINT32(data.data() + 4);
-	const uint32 pixelCount = bitmap.width * bitmap.height;
-	if (bitmap.width == 0 || bitmap.height == 0 || data.size() < 12 + pixelCount)
-		return false;
-
-	bitmap.pixels.resize(pixelCount);
-	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
-	return true;
+	return decodeBitmap(data, bitmap);
 }
 
 static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *palette) {

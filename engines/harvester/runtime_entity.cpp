@@ -25,7 +25,6 @@
 
 #include "common/algorithm.h"
 #include "common/debug.h"
-#include "common/endian.h"
 #include "common/system.h"
 #include "graphics/blit.h"
 #include "graphics/screen.h"
@@ -106,38 +105,6 @@ static void blitAnimationFrame(Graphics::Screen &screen, const Common::Array<Abm
 		screen.format.bytesPerPixel, kTransparentPaletteIndex);
 }
 
-static bool decodeAnimationFrame(const byte *source, uint32 sourceSize, bool compressed, Common::Array<byte> &dest) {
-	if (!compressed) {
-		if (sourceSize < dest.size())
-			return false;
-
-		memcpy(dest.data(), source, dest.size());
-		return true;
-	}
-
-	uint32 srcOffset = 0;
-	uint32 dstOffset = 0;
-	while (srcOffset < sourceSize && dstOffset < dest.size()) {
-		const byte control = source[srcOffset++];
-		if ((control & 0x80) == 0) {
-			const uint32 literalCount = MIN<uint32>(control,
-				MIN<uint32>(sourceSize - srcOffset, dest.size() - dstOffset));
-			memcpy(dest.data() + dstOffset, source + srcOffset, literalCount);
-			srcOffset += literalCount;
-			dstOffset += literalCount;
-		} else {
-			if (srcOffset >= sourceSize)
-				return false;
-
-			const uint32 repeatCount = MIN<uint32>(control & 0x7f, dest.size() - dstOffset);
-			memset(dest.data() + dstOffset, source[srcOffset++], repeatCount);
-			dstOffset += repeatCount;
-		}
-	}
-
-	return dstOffset == dest.size();
-}
-
 } // End of anonymous namespace
 
 uint32 getRuntimeClockTicks() {
@@ -166,16 +133,10 @@ bool Entity::loadBitmapResource(ResourceManager &resources, const Common::String
 	}
 
 	AbmFrame frame;
-	frame.width = READ_LE_UINT32(data.data());
-	frame.height = READ_LE_UINT32(data.data() + 4);
-	const uint32 pixelCount = frame.width * frame.height;
-	if (frame.width == 0 || frame.height == 0 || data.size() < 12 + pixelCount) {
+	if (!decodeBitmap(data, frame)) {
 		warning("Harvester: invalid runtime bitmap '%s'", path.c_str());
 		return false;
 	}
-
-	frame.pixels.resize(pixelCount);
-	memcpy(frame.pixels.data(), data.data() + 12, pixelCount);
 
 	_frames.clear();
 	_frames.push_back(Common::move(frame));
@@ -201,36 +162,9 @@ bool Entity::loadAbmResource(ResourceManager &resources, const Common::String &p
 		return false;
 	}
 
-	const uint32 frameCount = READ_LE_UINT32(data.data());
-	uint32 offset = 8;
-	_frames.resize(frameCount);
-
-	for (uint32 i = 0; i < frameCount; ++i) {
-		if (data.size() < offset + 25) {
-			warning("Harvester: short runtime ABM header in '%s'", path.c_str());
-			return false;
-		}
-
-		AbmFrame &frame = _frames[i];
-		frame.xOffset = (int32)READ_LE_UINT32(data.data() + offset);
-		frame.yOffset = (int32)READ_LE_UINT32(data.data() + offset + 4);
-		frame.width = READ_LE_UINT32(data.data() + offset + 8);
-		frame.height = READ_LE_UINT32(data.data() + offset + 12);
-		const bool compressed = data[offset + 16] != 0;
-		const uint32 sourceSize = READ_LE_UINT32(data.data() + offset + 17);
-		const uint32 pixelCount = frame.width * frame.height;
-		const uint32 payloadOffset = offset + 25;
-
-		if (frame.width == 0 || frame.height == 0 || data.size() < payloadOffset + sourceSize) {
-			warning("Harvester: invalid runtime ABM frame %u in '%s'", i, path.c_str());
-			return false;
-		}
-
-		frame.pixels.resize(pixelCount);
-		if (!decodeAnimationFrame(data.data() + payloadOffset, sourceSize, compressed, frame.pixels))
-			return false;
-
-		offset = payloadOffset + sourceSize;
+	if (!decodeAbm(data, _frames)) {
+		warning("Harvester: unable to decode runtime entity animation '%s'", path.c_str());
+		return false;
 	}
 
 	_resourcePath = path;

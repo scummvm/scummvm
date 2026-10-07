@@ -2,6 +2,7 @@ MODULE := engines/harvester
 
 MODULE_OBJS = \
 	art.o \
+	bitmap.o \
 	cft_font.o \
 	cheats.o \
 	console.o \

@@ -26,7 +26,6 @@
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/endian.h"
 #include "common/events.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
@@ -726,15 +725,7 @@ bool loadBitmapResource(ResourceManager &resources, const Common::String &path, 
 		return false;
 
 	bitmap = IndexedBitmap();
-	bitmap.width = READ_LE_UINT32(data.data());
-	bitmap.height = READ_LE_UINT32(data.data() + 4);
-	const uint32 pixelCount = bitmap.width * bitmap.height;
-	if (bitmap.width == 0 || bitmap.height == 0 || data.size() < 12 + pixelCount)
-		return false;
-
-	bitmap.pixels.resize(pixelCount);
-	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
-	return true;
+	return decodeBitmap(data, bitmap);
 }
 
 static void logSceneObjectSelection(const char *decision, const char *source, const ObjectRecord &object,
