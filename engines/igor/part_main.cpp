@@ -612,6 +612,10 @@ void IgorEngine::PART_MAIN() {
 		case 212:
 			PART_21(); //college corridor margaret
 			break;
+		case 220:
+		case 221:
+			PART_22(); // church bell tower
+			break;
 		case 230:
 		case 231:
 		case 232:

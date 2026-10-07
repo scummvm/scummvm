@@ -293,11 +293,11 @@ void IgorEngine::PART_14_HELPER_2() {
 		wd->dxPos = 0;
 		wd->yPosChanged = 1;
 		wd->dyPos = 3;
-		wd->scaleHeight = 32;
+		wd->scaleHeight = 50;
 		moveIgor(wd->posNum, wd->frameNum);
 		waitForTimer(15);
 	}
-	_walkDataLastIndex = 1;
+	_walkDataLastIndex = 0;
 	_walkDataCurrentIndex = 1;
 	buildWalkPath(182, 143, 162, 138);
 	_walkData[_walkDataLastIndex].frameNum = 0;

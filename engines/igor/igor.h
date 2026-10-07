@@ -765,6 +765,16 @@ private:
 	void PART_21_HELPER_11(int frame);
 	void PART_21();
 
+	// church bell tower
+	void PART_22_EXEC_ACTION(int action);
+	void PART_22_ACTION_101();
+	void PART_22_ACTION_102();
+	void PART_22_APPLY_OBJECT_STATE(int num);
+	void PART_22_IGOR_STEP(int facing, int step);
+	void PART_22_SCROLL_STEP(int step);
+	void PART_22_ENTER();
+	void PART_22();
+
 	// college corridor lucas
 	void PART_23_EXEC_ACTION(int action);
 	void PART_23_ACTION_105_enterLadiesRoom();
