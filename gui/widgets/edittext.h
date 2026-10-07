@@ -43,6 +43,9 @@ public:
 
 	void setEditString(const Common::U32String &str) override;
 
+	/** Also send finishCmd after ordinary focus-loss cleanup. Default: false. */
+	void setFinishOnFocusLoss(bool enabled) { _finishOnFocusLoss = enabled; }
+
 	bool wantsFocus() override { return true; }
 
 	void reflowLayout() override;
@@ -59,6 +62,7 @@ protected:
 	Common::Rect getEditRect() const override;
 
 	uint32 _finishCmd;
+	bool _finishOnFocusLoss;
 };
 
 } // End of namespace GUI

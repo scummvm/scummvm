@@ -33,6 +33,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, bool
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
+	_finishOnFocusLoss = false;
 
 	_leftPadding = _rightPadding = 0;
 
@@ -49,6 +50,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, const Common::String &name, cons
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
+	_finishOnFocusLoss = false;
 
 	_leftPadding = _rightPadding = 0;
 	_shiftPressed = _isDragging = false;
@@ -154,15 +156,19 @@ void EditTextWidget::lostFocusWidget() {
 	clearSelection();
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	if (_finishOnFocusLoss)
+		sendCommand(_finishCmd, 0);
 }
 
 void EditTextWidget::startEditMode() {
 }
 
 void EditTextWidget::endEditMode() {
+	const bool finishesOnFocusLoss = _finishOnFocusLoss && _hasFocus;
 	releaseFocus();
 
-	sendCommand(_finishCmd, 0);
+	if (!finishesOnFocusLoss)
+		sendCommand(_finishCmd, 0);
 }
 
 void EditTextWidget::abortEditMode() {
