@@ -19,6 +19,7 @@ MODULE_OBJS = \
 	resources.o \
 	room_combat.o \
 	room_interaction.o \
+	room_session.o \
 	room.o \
 	runtime_entity.o \
 	saveload.o \

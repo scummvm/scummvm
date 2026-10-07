@@ -44,6 +44,7 @@
 #include "harvester/player.h"
 #include "harvester/room_combat.h"
 #include "harvester/room_interaction.h"
+#include "harvester/room_session.h"
 #include "harvester/room_support.h"
 
 namespace Harvester {
@@ -450,7 +451,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		flow.executeStartupAudioCommands(scene.state.audioCommands);
 		if (!scene.state.musicPath.empty())
 			(void)_engine.playMusic(scene.state.musicPath);
-		RoomPlayerState playerState;
+		RoomSession session;
+		debugC(1, kDebugRoom, "Harvester: created room session room='%s'", scene.state.roomName.c_str());
+		RoomPlayerState &playerState = session.getPlayerState();
 		playerState.entity = entityManager ? entityManager->findSceneEntityByName("PLAYER") : nullptr;
 		playerState.centerX = scene.state.playerSpawnX;
 		playerState.bottomY = scene.state.playerSpawnY;
@@ -483,12 +486,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		ResolvedText combatLoadoutStatusText;
 		uint32 combatLoadoutStatusHideTick = 0;
 		bool closeInventoryAfterCombatLoadoutStatus = false;
-		bool moveLeft = false;
-		bool moveRight = false;
-		bool moveUp = false;
-		bool moveDown = false;
+		bool &moveLeft = session.getMovementInput().moveLeft;
+		bool &moveRight = session.getMovementInput().moveRight;
+		bool &moveUp = session.getMovementInput().moveUp;
+		bool &moveDown = session.getMovementInput().moveDown;
 		bool attackModifierHeld = false;
-		Common::String pendingRegionName;
+		Common::String &pendingRegionName = session.getPendingRegionName();
 		Common::String pendingRoomChange;
 		bool pendingRoomChangeIsRoomName = false;
 		bool pendingRoomChangeUsesSavedRoomState = false;
@@ -496,7 +499,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		const bool canExitCloseupToParent = flow._roomLoopDepth > 1;
 		uint32 lastLeftButtonReleaseTick = 0;
 		uint32 nextKeyboardAttackAllowedTick = 0;
-		RoomIdleAnimationState idleState;
+		RoomIdleAnimationState &idleState = session.getIdleState();
 		bool needsRedraw = true;
 		Common::String carriedRoomItemName;
 		Common::String carriedRoomItemLabel;
@@ -542,40 +545,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			Entity *entity = entityManager->detachSceneEntityByName(entityName);
 			delete entity;
 		};
-		auto resetIdleState = [&]() {
-			idleState = RoomIdleAnimationState();
-			idleState.activityTick = Player::getRuntimeClockTicks();
-			idleState.resetTick = idleState.activityTick;
-			Player::updateIdleTrigger(idleState);
-		};
-		auto notePlayerActivity = [&]() {
-			idleState.activityTick = Player::getRuntimeClockTicks();
-			Player::updateIdleTrigger(idleState);
-		};
-		auto isPlayerCombatLocked = [&]() {
-			return playerState.attackActive || playerState.hitActive || playerState.deathActive;
-		};
-		auto cancelPlayerAttackAnimation = [&]() {
-			if (!playerState.attackActive)
-				return false;
 
-			playerState.attackActive = false;
-			playerState.attackFirstFrame = -1;
-			playerState.attackLastFrame = -1;
-			playerState.attackContactFrame = -1;
-			if (!playerState.entity)
-				return false;
-			playerState.attackSoundPlayed = false;
-			playerState.attackSoundPlaybackFrame = -1;
-			playerState.attackContactResolved = false;
-			playerState.attackTargetName.clear();
-			playerState.attackTargetClassId = -1;
-			const int resumeFacing = playerState.attackResumeFacing >= 0
-				? playerState.attackResumeFacing
-				: (playerState.facing >= 0 ? playerState.facing : 0);
-			playerState.attackResumeFacing = -1;
-			return Player::setIdleAnimation(playerState, resumeFacing);
-		};
 		auto syncCurrentRoomRuntimeState = [&]() {
 			Script *script = _engine.getScript();
 			if (!script)
@@ -1361,21 +1331,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			captureCurrentSaveState();
 			return _inventory.refresh();
 		};
-		resetIdleState();
-		auto stopPlayerRegionInteraction = [&]() {
-			moveLeft = false;
-			moveRight = false;
-			moveUp = false;
-			moveDown = false;
-			pendingRegionName.clear();
-			(void)cancelPlayerAttackAnimation();
-			playerState.hasMoveTarget = false;
-			playerState.turnActive = false;
-			playerState.turnTargetFacing = -1;
-			if (playerState.entity && playerState.facing >= 0)
-				(void)Player::setIdleAnimation(playerState, playerState.facing);
-			Player::syncAnimationPlacement(playerState);
-		};
+		session.resetIdleState();
+
 		auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
 			Common::Array<AudioCommand> entryAudioCommands = scene.state.audioCommands;
 			RoomSetupState refreshedState;
@@ -1438,7 +1395,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			monsterCombatStates.clear();
 			monsterCombatStates.resize(scene.state.roomMonsters.size());
 			pendingRegionName.clear();
-			resetIdleState();
+			session.resetIdleState();
 			flow.resetCursorAnimationSequence();
 			captureCurrentSaveState();
 			return _inventory.refresh();
@@ -1501,7 +1458,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			moveUp = false;
 			moveDown = false;
 			pendingRegionName.clear();
-			(void)cancelPlayerAttackAnimation();
+			(void)session.cancelPlayerAttackAnimation();
 			playerState.hasMoveTarget = false;
 			playerState.turnActive = false;
 			playerState.turnTargetFacing = -1;
@@ -1732,7 +1689,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				hasScreenRect ? screenRect.left : 0, hasScreenRect ? screenRect.top : 0,
 				hasScreenRect ? screenRect.right : 0, hasScreenRect ? screenRect.bottom : 0,
 				(double)depthScale);
-			resetIdleState();
+			session.resetIdleState();
 			captureCurrentSaveState();
 		};
 		auto runModalShowText = [&](const ResolvedText &modalText) -> Common::Error {
@@ -1856,12 +1813,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		typedef decltype(applyLightingCommand) ApplyLightingCommandFn;
 		typedef decltype(applyPlayerGotoXZ) ApplyPlayerGotoXZFn;
 		typedef decltype(runModalShowText) RunModalShowTextFn;
-		typedef decltype(resetIdleState) ResetIdleStateFn;
-		typedef decltype(stopPlayerRegionInteraction) StopPlayerRegionInteractionFn;
 		typedef decltype(startPlayerDefeatSequence) StartPlayerDefeatSequenceFn;
 
 		struct RoomInteractionCallbacksImpl : RoomInteractionCallbacks {
 			RoomInteractionCallbacksImpl(
+					RoomSession &session_,
 					RefreshCurrentSceneFn &refreshCurrentSceneFn_,
 					ApplyCurrentRoomRuntimeMutationsInPlaceFn &applyCurrentRoomRuntimeMutationsInPlaceFn_,
 					SyncGlobalTimerEntitiesFn &syncGlobalTimerEntitiesFn_,
@@ -1871,10 +1827,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					ApplyLightingCommandFn &applyLightingCommandFn_,
 					ApplyPlayerGotoXZFn &applyPlayerGotoXZFn_,
 					RunModalShowTextFn &runModalShowTextFn_,
-					ResetIdleStateFn &resetIdleStateFn_,
-					StopPlayerRegionInteractionFn &stopPlayerRegionInteractionFn_,
 					StartPlayerDefeatSequenceFn &startPlayerDefeatSequenceFn_)
-				: refreshCurrentSceneFn(refreshCurrentSceneFn_),
+				: session(session_), refreshCurrentSceneFn(refreshCurrentSceneFn_),
 				  applyCurrentRoomRuntimeMutationsInPlaceFn(applyCurrentRoomRuntimeMutationsInPlaceFn_),
 				  syncGlobalTimerEntitiesFn(syncGlobalTimerEntitiesFn_),
 				  captureDialogueBackdropFn(captureDialogueBackdropFn_),
@@ -1883,8 +1837,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				  applyLightingCommandFn(applyLightingCommandFn_),
 				  applyPlayerGotoXZFn(applyPlayerGotoXZFn_),
 				  runModalShowTextFn(runModalShowTextFn_),
-				  resetIdleStateFn(resetIdleStateFn_),
-				  stopPlayerRegionInteractionFn(stopPlayerRegionInteractionFn_),
 				  startPlayerDefeatSequenceFn(startPlayerDefeatSequenceFn_) {
 			}
 
@@ -1925,11 +1877,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			void resetIdleState() override {
-				resetIdleStateFn();
+				session.resetIdleState();
 			}
 
 			void stopPlayerRegionInteraction() override {
-				stopPlayerRegionInteractionFn();
+				session.stopPlayerRegionInteraction();
 			}
 
 			void startPlayerDefeatSequence(const char *reason, const Common::String &sourceName,
@@ -1937,6 +1889,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				startPlayerDefeatSequenceFn(reason, sourceName, damageType);
 			}
 
+			RoomSession &session;
 			RefreshCurrentSceneFn &refreshCurrentSceneFn;
 			ApplyCurrentRoomRuntimeMutationsInPlaceFn &applyCurrentRoomRuntimeMutationsInPlaceFn;
 			SyncGlobalTimerEntitiesFn &syncGlobalTimerEntitiesFn;
@@ -1946,15 +1899,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			ApplyLightingCommandFn &applyLightingCommandFn;
 			ApplyPlayerGotoXZFn &applyPlayerGotoXZFn;
 			RunModalShowTextFn &runModalShowTextFn;
-			ResetIdleStateFn &resetIdleStateFn;
-			StopPlayerRegionInteractionFn &stopPlayerRegionInteractionFn;
 			StartPlayerDefeatSequenceFn &startPlayerDefeatSequenceFn;
 		};
 		RoomInteractionCallbacksImpl interactionCallbacks(
+			session,
 			refreshCurrentScene, applyCurrentRoomRuntimeMutationsInPlace,
 			syncGlobalTimerEntities, captureDialogueBackdrop, showCdChangePrompt,
 			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
-			resetIdleState, stopPlayerRegionInteraction, startPlayerDefeatSequence);
+			startPlayerDefeatSequence);
 		RoomInteractionProcessor interactionProcessor(
 			_engine, flow, scene, playerState, pendingRegionName, pendingRoomChange,
 			pendingRoomChangeIsRoomName, pendingRoomChangeUsesSavedRoomState,
@@ -2008,7 +1960,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			flow.resetCursorAnimationSequence();
-			resetIdleState();
+			session.resetIdleState();
 		}
 		ScopedDeferredLiveNpcDeathTransitions deferredLiveNpcDeathTransitions(
 			_engine.getScript());
@@ -2272,7 +2224,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (!flow.hasPendingMainMenuReturn() &&
 				_engine.getScript() &&
 				_engine.getScript()->getPlayerCurrentHitPoints() <= 0) {
-			stopPlayerRegionInteraction();
+			session.stopPlayerRegionInteraction();
 			startPlayerDefeatSequence("combat_interaction", Common::String(), 1);
 		}
 
@@ -3059,12 +3011,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 							playerState.entity->setVisible(true);
 							if (playerHitPointsAfter > 0 &&
 									Player::startHitAnimation(_engine, playerState, combatState.attackFirstFrame)) {
-								notePlayerActivity();
+								session.notePlayerActivity();
 							}
 						}
 						if (changed && playerHitPointsAfter <= 0) {
 							playerAlive = false;
-							stopPlayerRegionInteraction();
+							session.stopPlayerRegionInteraction();
 							startPlayerDefeatSequence(
 								"combat_monster_hit", monster.monsterName, monster.damageType);
 							return Common::kNoError;
@@ -3468,7 +3420,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return Common::kNoError;
 		}
 
-		stopPlayerRegionInteraction();
+		session.stopPlayerRegionInteraction();
 		return runRegionInteraction(*region);
 	};
 	auto tryActivatePassiveRegion = [&]() -> Common::Error {
@@ -3483,7 +3435,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (!doesPlayerFacingMatchRegion(playerState.facing, region))
 				continue;
 
-			stopPlayerRegionInteraction();
+			session.stopPlayerRegionInteraction();
 			return runRegionInteraction(region);
 		}
 
@@ -3578,7 +3530,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			const bool activeCarry = inventorySelectionActive || roomCarryActive;
 			const bool inventoryPanelContainsMouse = _inventory.isOpen() && inventoryPanelBounds.contains(_mousePos);
 			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting ||
-				isPlayerCombatLocked() ||
+				session.isPlayerCombatLocked() ||
 				(_inventory.isOpen() && (inventoryPanelContainsMouse || !inventorySelectionActive));
 			RoomHoverState hoverState = suppressHover
 				? RoomHoverState()
@@ -3638,7 +3590,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (Entity *cursor = entityManager ? entityManager->getCursorEntity() : nullptr) {
 				cursor->setAnimationSequence(
 					(showingInspectText || idleState.active || idleState.exiting ||
-						isPlayerCombatLocked() ||
+						session.isPlayerCombatLocked() ||
 						_inventory.isOpen() || activeCarry)
 						? 7
 						: hoverState.cursorSequence);
@@ -3704,13 +3656,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				needsRedraw = true;
 				break;
 			case Common::EVENT_RBUTTONDOWN: {
-				notePlayerActivity();
+				session.notePlayerActivity();
 				if (idleState.active || idleState.exiting) {
 					if (Player::requestIdleAnimationExit(scene.state, playerState, idleState))
 						needsRedraw = true;
 					break;
 				}
-				if (isPlayerCombatLocked())
+				if (session.isPlayerCombatLocked())
 					break;
 				pendingRegionName.clear();
 				if (_inventory.isOpen()) {
@@ -3824,7 +3776,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					break;
 				}
 				Script *script = _engine.getScript();
-				if (!showingInspectText && !isPlayerCombatLocked() && script && playerState.entity &&
+				if (!showingInspectText && !session.isPlayerCombatLocked() && script && playerState.entity &&
 						script->getPlayerCurrentHitPoints() > 0 && !script->isPlayerControlPaused()) {
 					playerState.hasMoveTarget = false;
 					playerState.turnActive = false;
@@ -3863,7 +3815,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				const bool isFastExitClick =
 					lastLeftButtonReleaseTick != 0 &&
 					now - lastLeftButtonReleaseTick < kRoomExitFastClickWindowTicks;
-				notePlayerActivity();
+				session.notePlayerActivity();
 				if (idleState.active || idleState.exiting) {
 					if (Player::requestIdleAnimationExit(scene.state, playerState, idleState))
 						needsRedraw = true;
@@ -3879,7 +3831,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					}
 					break;
 				}
-				if (isPlayerCombatLocked())
+				if (session.isPlayerCombatLocked())
 					break;
 
 				const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
@@ -4030,7 +3982,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					if (isFastExitClick &&
 						hoverState.region->startEnabled &&
 						roomAllowsImmediateExitClick(scene.state.roomName)) {
-						stopPlayerRegionInteraction();
+						session.stopPlayerRegionInteraction();
 						Common::Error interactionError = runRegionInteraction(*hoverState.region);
 						if (interactionError.getCode() != Common::kNoError)
 							return interactionError;
@@ -4164,7 +4116,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					break;
 				}
 
-				notePlayerActivity();
+				session.notePlayerActivity();
 				if (event.kbd.hasFlags(Common::KBD_CTRL))
 					attackModifierHeld = true;
 				if (idleState.active || idleState.exiting) {
@@ -4233,7 +4185,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						break;
 					}
 				}
-				if (isPlayerCombatLocked())
+				if (session.isPlayerCombatLocked())
 					break;
 
 				if (event.kbd.keycode == Common::KEYCODE_LCTRL ||
@@ -4258,7 +4210,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					needsRedraw = true;
 					break;
 				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					if (cancelPlayerAttackAnimation())
+					if (session.cancelPlayerAttackAnimation())
 						needsRedraw = true;
 					if (!stowCarriedRoomItemToInventory())
 						return Common::kReadingFailed;
@@ -4284,7 +4236,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					if (menuError.getCode() != Common::kNoError)
 						return menuError;
 					flow.resetCursorAnimationSequence();
-					resetIdleState();
+					session.resetIdleState();
 					needsRedraw = true;
 					break;
 				}
@@ -4330,7 +4282,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				playerState.hasMoveTarget || playerState.turnActive ||
 				playerState.attackActive || playerState.hitActive)) {
 			attackModifierHeld = false;
-			stopPlayerRegionInteraction();
+			session.stopPlayerRegionInteraction();
 		}
 
 		// Native run_harvester_main_loop checks player/region overlap before
@@ -4338,7 +4290,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		// reaches a narrow exit: the actor update may otherwise satisfy the X
 		// target and replace that frame with a narrower idle frame first.
 		Common::Error pendingRegionError =
-			isPlayerCombatLocked()
+			session.isPlayerCombatLocked()
 				? Common::kNoError
 				: tryActivatePendingRegion();
 		if (pendingRegionError.getCode() != Common::kNoError)
@@ -4350,7 +4302,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				return Common::kReadingFailed;
 			break;
 		}
-		if (!isPlayerCombatLocked()) {
+		if (!session.isPlayerCombatLocked()) {
 			pendingRegionError = tryActivatePassiveRegion();
 			if (pendingRegionError.getCode() != Common::kNoError)
 				return pendingRegionError;
@@ -4399,7 +4351,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (Player::startKeyboardAttackAnimation(
 						scene.state, playerState, moveLeft, moveRight, moveUp, moveDown)) {
 					nextKeyboardAttackAllowedTick = now + kNativeKeyboardAttackRepeatTicks;
-					notePlayerActivity();
+					session.notePlayerActivity();
 					debugC(1, kDebugCombat,
 						"Harvester: combat player keyboard attack start loadout=%d weapon='%s' damage=%d damage_type='%s' target_class='%s' target='%s' input=(L=%d R=%d U=%d D=%d) facing=%d",
 						playerState.combatLoadout,
@@ -4429,12 +4381,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				? pendingRegion->desiredFacing : -1;
 			if (Player::stepKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, moveLeft, moveRight, moveUp, moveDown)) {
-				notePlayerActivity();
+				session.notePlayerActivity();
 				needsRedraw = true;
 			} else if (Player::stepMoveTarget(
 					_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, regionFacing)) {
-				notePlayerActivity();
+				session.notePlayerActivity();
 				needsRedraw = true;
 			}
 
