@@ -178,13 +178,23 @@ void IgorEngine::moveIgor(int pos, int frame) {
 			_gameState.colorLum = colorLum;
 		}
 	}
+	// Igor's sprite can extend past the right edge of the last room row; the
+	// pixels read there are outside the room and never drawn
+	const int layerSize = 320 * 144;
+	auto layer1At = [&](int offset) -> uint8 { return offset < layerSize ? _screenLayer1[offset] : 0; };
+	auto layer2At = [&](int offset) -> uint8 { return offset < layerSize ? _screenLayer2[offset] : 0; };
+	auto copyLayer1 = [&](uint8 *dst, int offset, int size) {
+		for (int n = 0; n < size; ++n) {
+			dst[n] = layer1At(offset + n);
+		}
+	};
 	uint16 screenIgorDrawOffset = _walkDataDrawOffset;
 	uint16 igorScaledWidth = _walkDxPos + _walkClipWidth;
 	uint16 igorScaledHeight = _walkScaleWidth + _walkDyPos; // cseg229:4B48-4B4F
 	uint16 igorBodyScanLine = 0;
 	if (_walkYPosChanged != 0) {
 		for (int i = 1; i <= _walkDyPos; ++i) {
-			memcpy(_igorTempFrames + igorBodyScanLine * 50, _screenLayer1 + _walkDataDrawOffset, igorScaledWidth);
+			copyLayer1(_igorTempFrames + igorBodyScanLine * 50, _walkDataDrawOffset, igorScaledWidth);
 			_walkDataDrawOffset += 320;
 			++igorBodyScanLine;
 		}
@@ -193,7 +203,7 @@ void IgorEngine::moveIgor(int pos, int frame) {
 		for (int yOffset = 0; yOffset < _walkScaleWidth; ++yOffset) {
 			assert(_walkDxPos > 0);
 			assert(igorBodyScanLine * 50 + _walkDxPos <= 3000);
-			memcpy(_igorTempFrames + igorBodyScanLine * 50, _screenLayer1 + _walkDataDrawOffset, _walkDxPos);
+			copyLayer1(_igorTempFrames + igorBodyScanLine * 50, _walkDataDrawOffset, _walkDxPos);
 			int xOffset = _walkClipSkipX - 1;
 			for (int i = 0; i < _walkClipWidth; ++i) {
 				int offset = lookupScale(xOffset, yOffset, _walkHeightScale);
@@ -201,10 +211,10 @@ void IgorEngine::moveIgor(int pos, int frame) {
 				uint8 color = _facingIgorFrames[pos - 1][offset];
 				if (color != 0) {
 					assert(_walkDataDrawOffset + _walkDxPos + i >= 0);
-					int index = _screenLayer2[_walkDataDrawOffset + _walkDxPos + i];
+					int index = layer2At(_walkDataDrawOffset + _walkDxPos + i);
 					int yPos = _roomObjectAreasTable[index].y1Lum;
 					if (wd->y <= yPos) {
-						_igorTempFrames[igorBodyScanLine * 50 + i + _walkDxPos] = _screenLayer1[_walkDataDrawOffset + _walkDxPos + i];
+						_igorTempFrames[igorBodyScanLine * 50 + i + _walkDxPos] = layer1At(_walkDataDrawOffset + _walkDxPos + i);
 					} else {
 						if (_gameState.enableLight == 1 && wd->y <= _roomObjectAreasTable[index].y2Lum) {
 							color -= _roomObjectAreasTable[index].deltaLum;
@@ -212,7 +222,7 @@ void IgorEngine::moveIgor(int pos, int frame) {
 						_igorTempFrames[igorBodyScanLine * 50 + i + _walkDxPos] = color;
 					}
 				} else {
-					_igorTempFrames[igorBodyScanLine * 50 + i + _walkDxPos] = _screenLayer1[_walkDataDrawOffset + _walkDxPos + i];
+					_igorTempFrames[igorBodyScanLine * 50 + i + _walkDxPos] = layer1At(_walkDataDrawOffset + _walkDxPos + i);
 				}
 				++xOffset;
 			}
@@ -228,10 +238,10 @@ void IgorEngine::moveIgor(int pos, int frame) {
 				uint8 color = _facingIgorFrames[pos - 1][offset];
 				if (color != 0) {
 					assert(_walkDataDrawOffset + i >= 0);
-					int index = _screenLayer2[_walkDataDrawOffset + i];
+					int index = layer2At(_walkDataDrawOffset + i);
 					int yPos = _roomObjectAreasTable[index].y1Lum;
 					if (wd->y <= yPos) {
-						_igorTempFrames[igorBodyScanLine * 50 + i] = _screenLayer1[_walkDataDrawOffset + i];
+						_igorTempFrames[igorBodyScanLine * 50 + i] = layer1At(_walkDataDrawOffset + i);
 					} else {
 						if (_gameState.enableLight == 1 && wd->y <= _roomObjectAreasTable[index].y2Lum) {
 							color -= _roomObjectAreasTable[index].deltaLum;
@@ -239,26 +249,29 @@ void IgorEngine::moveIgor(int pos, int frame) {
 						_igorTempFrames[igorBodyScanLine * 50 + i] = color;
 					}
 				} else {
-					_igorTempFrames[igorBodyScanLine * 50 + i] = _screenLayer1[_walkDataDrawOffset + i];
+					_igorTempFrames[igorBodyScanLine * 50 + i] = layer1At(_walkDataDrawOffset + i);
 				}
 				++xOffset;
 			}
-			const uint8 *src = _screenLayer1 + _walkDataDrawOffset + _walkClipWidth;
-			memcpy(_igorTempFrames + igorBodyScanLine * 50 + _walkClipWidth, src, _walkDxPos);
+			copyLayer1(_igorTempFrames + igorBodyScanLine * 50 + _walkClipWidth, _walkDataDrawOffset + _walkClipWidth, _walkDxPos);
 			_walkDataDrawOffset += 320;
 			++igorBodyScanLine;
 		}
 	}
 	if (_walkYPosChanged == 0) {
 		for (int i = 1; i <= _walkDyPos; ++i) {
-			memcpy(_igorTempFrames + igorBodyScanLine * 50, _screenLayer1 + _walkDataDrawOffset, igorScaledWidth);
+			copyLayer1(_igorTempFrames + igorBodyScanLine * 50, _walkDataDrawOffset, igorScaledWidth);
 			_walkDataDrawOffset += 320;
 			++igorBodyScanLine;
 		}
 	}
 	for (igorBodyScanLine = 0; igorBodyScanLine < igorScaledHeight; ++igorBodyScanLine) {
-		assert(screenIgorDrawOffset + igorScaledWidth <= 320 * 200);
-		memcpy(_screenVGA + screenIgorDrawOffset, _igorTempFrames + igorBodyScanLine * 50, igorScaledWidth);
+		// Pixels wrapping past the last room row would land in the panel area and
+		// come from unrelated memory, so never draw them.
+		if (screenIgorDrawOffset < 320 * 144) {
+			const int len = MIN<int>(igorScaledWidth, 320 * 144 - screenIgorDrawOffset);
+			memcpy(_screenVGA + screenIgorDrawOffset, _igorTempFrames + igorBodyScanLine * 50, len);
+		}
 		screenIgorDrawOffset += 320;
 	}
 }
