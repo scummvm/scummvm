@@ -38,8 +38,8 @@ void IgorEngine::playMusic(int num) {
 		// play only if the requested track is not already playing
 		if(_gameState.musicNum != num) {
 			_gameState.musicNum = num;
-			g_system->getAudioCDManager()->stop();
-			g_system->getAudioCDManager()->play(num, -1, 0, 0);
+			// g_system->getAudioCDManager()->stop();
+			// g_system->getAudioCDManager()->play(num, -1, 0, 0);
 		}
 	}
 }

@@ -413,6 +413,7 @@ private:
 
 	uint8 _objectsState[112];
 	bool _part07FirstVisitDone;
+	uint8 _parkLadyIdleStep;
 	uint8 _inventoryImages[36];
 	uint8 _inventoryInfo[74];
 	char _verbPrepositions[3][7];
@@ -801,12 +802,30 @@ private:
 	void PART_30();
 
 	// park
+	void PARK_DRAW_LADY_FRAME(uint8 *dst, int frame);
+	void PARK_DRAW_LAURA_FRAME(int frame);
+	void PARK_PICK_UP_ANIMATION(int screenOffset, int framesOffset);
+	void PARK_UPDATE_AMBIENT_SOUND();
+	void PARK_UPDATE_DIALOGUE_LADY(int action);
+	void PARK_UPDATE_DIALOGUE_LAURA(int action);
+	void PARK_QUEUE_REPLY_TEXT(int reply, int count, int sound, int &textIndex);
+	void PARK_WAIT_FOR_IGOR_DIALOGUE();
+	void PARK_WAIT_FOR_LADY_DIALOGUE();
+	void PARK_WAIT_FOR_LAURA_DIALOGUE();
 	void PART_34();
 	void PART_34_EXEC_ACTION(int action);
+	void PART_34_ACTION_103_TAKE();
+	void PART_34_ACTION_105_TALK();
+	void PART_34_ACTION_108_OLD_LADY();
 	void PART_34_ACTION_109_SCROLL_RIGHT();
 	void PART_34_APPLY_OBJECT_STATE(int num);
+	void PART_34_LADY_IDLE(int step);
+	void PART_34_LAURA_CONVERSATION();
+	void PART_34_OLD_LADY_CONVERSATION();
+	void PART_34_UPDATE_ROOM_BACKGROUND();
 	void PART_35();
 	void PART_35_EXEC_ACTION(int action);
+	void PART_35_ACTION_102_TAKE();
 	void PART_35_ACTION_106_EXIT_TO_MAP();
 	void PART_35_ACTION_107_SCROLL_LEFT();
 	void PART_35_APPLY_OBJECT_STATE(int num);

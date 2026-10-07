@@ -7,6 +7,7 @@
  */
 
 #include "igor/igor.h"
+#include "igor/statics.h"
 
 namespace Igor {
 
@@ -21,8 +22,7 @@ void IgorEngine::PART_35_EXEC_ACTION(int action) {
 		PART_35_APPLY_OBJECT_STATE(3);
 		break;
 	case 102:
-		// TODO: transcribe the inventory acquisition sequence from cseg100:0102-01F9.
-		warning("PART_35_EXEC_ACTION action 102 unimplemented");
+		PART_35_ACTION_102_TAKE();
 		break;
 	case 103:
 		ADD_DIALOGUE_TEXT(203, 1, 612);
@@ -51,11 +51,23 @@ void IgorEngine::PART_35_EXEC_ACTION(int action) {
 	}
 }
 
+void IgorEngine::PART_35_ACTION_102_TAKE() {
+	if (_inventoryInfo[62] != 0) {
+		ADD_DIALOGUE_TEXT(206, 1, 615);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		return;
+	}
+	PARK_PICK_UP_ANIMATION(16339, kParkFrames);
+	addObjectToInventory(27, 62);
+	PART_35_APPLY_OBJECT_STATE(255);
+}
+
 void IgorEngine::PART_35_ACTION_107_SCROLL_LEFT() {
 	int xPos = 183;
 	const int yPos = 124;
 	int step = 1;
-	_gameTicks = 8; // original counter 15 normalized to 8-tick engine units; cseg100:021A-0230
+	_gameTicks = 8; // original counter 15 normalized to 8-tick engine units
 	do {
 		if (compareGameTick(1, 16)) {
 			for (int y = 0; y <= 143; ++y) {
@@ -65,7 +77,7 @@ void IgorEngine::PART_35_ACTION_107_SCROLL_LEFT() {
 						_animFramesBuffer + y * 160 + 160 - step * 8, step * 8);
 			}
 			if (step < 5) {
-				xPos -= _walkScaleTable[0x8F9 + _walkCurrentFrame]; // s3:4637; cseg100:02D1-02E5
+				xPos -= _walkScaleTable[0x8F9 + _walkCurrentFrame];
 				WalkData::setNextFrame(kFacingPositionLeft, _walkCurrentFrame);
 			} else {
 				_walkCurrentFrame = 0;
@@ -94,7 +106,7 @@ void IgorEngine::PART_35_ACTION_107_SCROLL_LEFT() {
 
 void IgorEngine::PART_35_ACTION_106_EXIT_TO_MAP() {
 	--_walkDataLastIndex;
-	const uint8 area = _screenLayer2[10879]; // (319, 33); cseg100:0440-0455
+	const uint8 area = _screenLayer2[10879]; // (319, 33)
 	_roomObjectAreasTable[area].area = 1;
 	buildWalkPath(242, 111, 319, 33);
 	_roomObjectAreasTable[area].area = 0;
@@ -106,24 +118,31 @@ void IgorEngine::PART_35_ACTION_106_EXIT_TO_MAP() {
 
 void IgorEngine::PART_35_APPLY_OBJECT_STATE(int num) {
 	if (num == 3 || num == 255) {
-		_roomObjectAreasTable[7].object = (_objectsState[82] == 0) ? 1 : 2; // s3:0xDC7A; cseg100:0634-0653
+		_roomObjectAreasTable[7].object = (_objectsState[82] == 0) ? 1 : 2;
 	}
 }
 
 void IgorEngine::PART_35() {
 	_gameState.enableLight = 1;
-	loadActionData(DAT_ParkRight); // resource 100
-	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park); // left panel; cseg106:0002-06A1
+	loadActionData(DAT_ParkRight);
+	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park); // left panel
 	static const int frames[] = { FRM_Park1, FRM_Park2, FRM_Park3, FRM_Park4, 0 };
-	loadAnimData(frames, 0x5A00);
+	loadAnimData(frames, kParkFrames);
+	if (_objectsState[80] == 0 && _objectsState[73] == 1) {
+		PARK_DRAW_LADY_FRAME(_screenLayer1, 1);
+	}
 	for (int y = 0; y <= 143; ++y) {
 		memcpy(_animFramesBuffer + y * 160, _screenLayer1 + y * 320, 160);
 	}
 	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight,
-			TXT_ParkRight); // active right panel; cseg100:1714-1739; cseg104:0002-0D20
+			TXT_ParkRight); // active right panel
+	// The pick up frames replace the start of FRM_Park1, whose frames are not drawn on this panel
+	static const int pickUpFrames[] = { FRM_ParkRight1, 0 };
+	loadAnimData(pickUpFrames, kParkFrames);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_35_EXEC_ACTION);
+	_updateRoomBackground = &IgorEngine::PARK_UPDATE_AMBIENT_SOUND;
 	_roomDataOffsets = PART_35_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 281, 143); // rightmost walkable column is 281
 	PART_35_APPLY_OBJECT_STATE(255);
@@ -148,7 +167,7 @@ void IgorEngine::PART_35() {
 			wd->dyPos = 0;
 			wd->scaleHeight = 34;
 			_walkDataLastIndex = 0;
-			const uint8 area = _screenLayer2[10879]; // (319, 33); cseg100:04CF-04E4
+			const uint8 area = _screenLayer2[10879]; // (319, 33)
 			_roomObjectAreasTable[area].area = 1;
 			buildWalkPath(319, 33, 242, 111);
 			_roomObjectAreasTable[area].area = 0;

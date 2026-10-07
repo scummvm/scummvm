@@ -34,6 +34,16 @@ const uint32 kPart10_11_Frm3 = 0xC5E2; // cseg177:0097
 const uint32 kPart10_11_Frm4 = 0xC786; // cseg177:00CA
 const uint32 kPart10_11_Frm5 = 0xC8AE; // cseg177:00FD
 
+// Layout of the animation buffer while the park is loaded: FRM_Park1..4 follow each other
+// from kParkFrames on, and the frames of Laura's entrance replace them while she is on screen.
+const uint32 kParkFrames = 0x5A00;        // FRM_Park1: sparse frames, the old lady and Igor
+const uint32 kParkFrameTable = 0x76A8;    // FRM_Park2: frame offset table, relative to kParkFrames
+const uint32 kParkPickUpFrames = 0xD0E6;  // FRM_Park3: three raw 27x49 frames of the pick up animation
+const uint32 kParkIdleFrames = 0xE067;    // FRM_Park4: five raw 18x35 frames of the old lady's idle animation
+const uint32 kParkLauraFrames = 0x5A00;   // FRM_ParkLaura1: sparse frames
+const uint32 kParkLauraFrameTable = 0x9EAE; // FRM_ParkLaura2: frame offset table, relative to kParkLauraFrames
+const uint32 kParkLauraPalette = 0xF920;  // FRM_ParkLaura3: 16 colors for Laura's sprites
+
 } // End of namespace Igor
 
 #endif // IGOR_STATICS_H

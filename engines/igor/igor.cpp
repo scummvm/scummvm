@@ -154,6 +154,7 @@ void IgorEngine::restart() {
 
 	memset(_objectsState, 0, sizeof(_objectsState));
 	_part07FirstVisitDone = false; // cseg197:0795-0845; original global s3:0xED2E
+	_parkLadyIdleStep = 1;
 	memcpy(_inventoryImages, INVENTORY_IMG_INIT, 36);
 	memset(_inventoryInfo, 0, sizeof(_inventoryInfo));
 	memset(_verbPrepositions, 0, sizeof(_verbPrepositions));

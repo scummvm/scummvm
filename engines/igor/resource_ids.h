@@ -582,4 +582,13 @@
 
 #define DLG_AdministrationSecretaryRoom 984
 
+// Park conversation with the old lady (cseg94:2498), Laura's entrance and conversation (cseg102:0D22,
+// cseg103:0002).
+#define DLG_ParkLady 985 // cseg94:2E6A; IGOR.EXE:0x390A6A, 0x062D bytes
+#define DLG_ParkLaura 986 // cseg102:1E97; IGOR.EXE:0x3D3597, 0x0B54 bytes
+#define FRM_ParkLaura1 987 // cseg103:00A5; IGOR.EXE:0x3D58A5, 0x9EAE bytes
+#define FRM_ParkLaura2 988 // cseg103:9F53; IGOR.EXE:0x3DF753, 0x0072 bytes
+#define FRM_ParkLaura3 989 // cseg103:9FC5; IGOR.EXE:0x3DF7C5, 0x0030 bytes
+#define FRM_ParkRight1 990 // cseg49:29B6; IGOR.EXE:0x2053B6, 0x0F81 bytes
+
 #endif // IGOR_RESOURCE_IDS
