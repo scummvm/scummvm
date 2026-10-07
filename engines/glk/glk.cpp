@@ -74,7 +74,6 @@ GlkEngine::~GlkEngine() {
 void GlkEngine::initialize() {
 	createConfiguration();
 	_conf->load();
-	//_conf->flush();
 
 	initGraphicsMode();
 	createDebugger();
@@ -89,9 +88,6 @@ void GlkEngine::initialize() {
 	_sounds = new Sounds();
 	_streams = new Streams();
 	_windows = new Windows(_screen);
-
-	if (_conf->_windowColorOverride || _conf->_windowColor != _conf->parseColor("ffffff"))
-		Windows::_overrideBgSet = true;
 
 	// Setup mixer
 	syncSoundSettings();

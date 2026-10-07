@@ -39,7 +39,6 @@ bool Windows::_overrideBgSet;
 bool Windows::_forceRedraw;
 bool Windows::_claimSelect;
 bool Windows::_moreFocus;
-bool Windows::_gotBgColor;
 uint Windows::_overrideFgVal;
 uint Windows::_overrideBgVal;
 uint Windows::_zcolor_fg;
@@ -59,7 +58,6 @@ Windows::Windows(Graphics::Screen *screen) : _screen(screen), _windowList(nullpt
 	_forceRedraw = true;
 	_claimSelect = false;
 	_moreFocus = false;
-	_gotBgColor = false;
 	_overrideFgVal = 0;
 	_overrideBgVal = 0;
 	_zcolor_fg = _zcolor_bg = 0;
@@ -420,14 +418,8 @@ void Windows::redraw() {
 	_claimSelect = false;
 
 	if (_forceRedraw) {
-		// When no colour has yet been provided by the game and the user hasn't overridden anything, 
-		// skip the initial fill to prevent the screen from showing white when _windowColor is 
-		// still the default white value. The first setZColors() call will set _gotBgColor and trigger
-		// a redraw with the correct colour.
-		if (Windows::_overrideBgSet || g_conf->_windowColorOverride || Windows::_gotBgColor) {
-			repaint(Rect(0, 0, g_conf->_imageW, g_conf->_imageH));
-			g_vm->_screen->fill(g_conf->_windowColor);
-		}
+		repaint(Rect(0, 0, g_conf->_imageW, g_conf->_imageH));
+		g_vm->_screen->fill(g_conf->_windowColor);
 	}
 
 	if (_rootWin)
