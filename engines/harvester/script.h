@@ -434,6 +434,19 @@ public:
 	bool setRuntimeTimerEnabled(const Common::String &timerName, bool enabled);
 
 private:
+	struct CommandExecutionContext {
+		const char *label;
+		const Common::String &name;
+		const Common::String &roomName;
+		bool allowTransitions;
+	};
+
+	enum CommandOutputPolicy {
+		kCommandOutputsInteraction,
+		// Suppress destination rooms, death movies and main-menu requests.
+		kCommandOutputsRoomExit
+	};
+
 	bool loadConfig(ResourceManager &resources);
 	void decode();
 	void parseTownRecords(ResourceManager &resources);
@@ -459,22 +472,8 @@ private:
 	const TimerRecord *findRuntimeTimer(const Common::String &timerName) const;
 	bool buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord *entrance,
 		ResourceManager &resources, RoomSetupState &state) const;
-	void executeCommandChain(const Common::String &initialTag, const char *contextLabel,
-		const Common::String &contextName, const Common::String &contextRoomName,
-		bool allowTransitions, Common::String *musicPath,
-		Common::Array<AudioCommand> *audioCommands, Common::String *nextRoomName,
-		StartupRoomTransitionKind *roomTransition,
-		Common::String *cutscenePath, Common::String *deathFlicPath, bool *requestMainMenu,
-		bool *requestDemoEnding,
-		int *cdChangeDisc,
-		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
-		Common::String *continuationTag, ResolvedText *modalText,
-		StartupLightingCommand *lightingCommand, Common::String *moveEntityToPlayerZName,
-		bool *requestPlayerGotoXZ, bool *requestPlayerGotoZ,
-		int *playerGotoX, int *playerGotoZ,
-		bool *requestPlayerDeath, int *playerDeathDamageType,
-		bool *mutatedRuntimeState, bool *visualRuntimeStateChanged,
-		Common::Array<TimerRecord> *previousTimerRecords, bool *requestCloseupExit);
+	void executeCommandChain(const Common::String &initialTag, const CommandExecutionContext &context,
+		CommandOutputPolicy outputPolicy, InteractionResult &result);
 	bool probePickupBlockingCommandChain(const Common::String &initialTag,
 		const Common::String &contextName, InteractionResult &result, uint recursionDepth) const;
 	bool hasActionableCommandChain(const Common::String &initialTag) const;
