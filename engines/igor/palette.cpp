@@ -101,7 +101,8 @@ void IgorEngine::fadeIn(int count) {
 void IgorEngine::fadeOut(int count) {
 	debugC(9, kDebugScreen, "fadeOutPalette(%d)", count);
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
-	memcpy(_paletteBuffer, _currentPalette, 768);
+	// only the faded range is saved; the rest of the buffer is left untouched
+	memcpy(_paletteBuffer, _currentPalette, count);
 	int m = 0;
 	do {
 		for (int i = 0; i < count; ++i) {

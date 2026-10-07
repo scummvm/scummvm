@@ -149,7 +149,7 @@ void IgorEngine::PART_19_HELPER_1(int num) {
 	}
 }
 
-void IgorEngine::PART_19_HELPER_2() { // sub_137_07AD
+void IgorEngine::PART_19_HELPER_2_slugCutscene() { // sub_137_07AD
 	int talkSpeed = _gameState.talkSpeed;
 	_gameState.talkSpeed = 5;
 	memcpy(_screenLayer2, _screenVGA, 46080);
@@ -180,6 +180,7 @@ void IgorEngine::PART_19_HELPER_2() { // sub_137_07AD
 	_updateRoomBackground = 0;
 	while (_gameState.counter[1] != 35) {
 		PART_19_UPDATE_BACKGROUND_HELPER_9();
+		waitForTimer();
 	}
 	for (int i = 47; i <= 48; ++i) {
 		src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + i * 2) - 1;
@@ -274,17 +275,16 @@ void IgorEngine::PART_19() {
 	_roomDataOffsets = PART_19_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	if (_currentPart == 191) {
-		PART_19_HELPER_2();
-	} else {
-		SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_19_EXEC_ACTION);
-		PART_19_HELPER_1(255);
+		// cutscene only: it fades out by itself and returns to the caller
+		PART_19_HELPER_2_slugCutscene();
+		return;
 	}
+	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_19_EXEC_ACTION);
+	PART_19_HELPER_1(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
-	if(_currentPart != 191) {
-		PART_19_HELPER_3();
-	}
+	PART_19_HELPER_3();
 	if (_objectsState[59] == 0) {
 		PART_19_HELPER_4();
 	} else {
@@ -294,7 +294,9 @@ void IgorEngine::PART_19() {
 		}
 		leavePartLoop();
 	}
-	fadeOut(624);
+	if(_currentPart != 191) {
+		fadeOut(624);
+	}
 }
 
 } // namespace Igor

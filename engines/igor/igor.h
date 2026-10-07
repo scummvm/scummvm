@@ -732,7 +732,7 @@ private:
 	void PART_19_UPDATE_DIALOGUE_WOMEN(int action);
 	void PART_19_UPDATE_BACKGROUND_HELPER_9();
 	void PART_19_HELPER_1(int num);
-	void PART_19_HELPER_2();
+	void PART_19_HELPER_2_slugCutscene();
 	void PART_19_HELPER_3();
 	void PART_19_HELPER_4();
 	void PART_19_HELPER_7(int frame);

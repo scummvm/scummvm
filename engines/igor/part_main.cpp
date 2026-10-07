@@ -781,6 +781,7 @@ void IgorEngine::lookAtPapyrus(bool reveal) {
 		WalkData *wd = &_walkData[_walkDataLastIndex - 1];
 		int _walkDataCurrentPosX2 = wd->x;
 		int _walkDataCurrentPosY2 = wd->y;
+		int _walkDataCurrentWScale = wd->scaleWidth;
 		wd->x = 160;
 		wd->y = 130;
 		wd->scaleWidth = 50;
