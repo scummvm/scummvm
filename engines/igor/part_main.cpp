@@ -580,6 +580,9 @@ void IgorEngine::PART_MAIN() {
 		case 122:
 			PART_12(); // outside church
 			break;
+		case 150:
+			PART_15();
+			break;
 		case 170:
 		case 171:
 			PART_17(); // College entrance
