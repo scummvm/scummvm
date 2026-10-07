@@ -446,7 +446,8 @@ static void room_501_daemon() {
 		kernel_reset_animation(scratch._9c, 0);
 		global[g133] = 1;
 		global[g143] = 1;
-		scratch._90--;
+		// The retail executable decrements a temporary copy of scratch._90 here,
+		// but never stores it back. Preserve that no-op behavior.
 		break;
 
 	case 27:
