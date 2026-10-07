@@ -1399,6 +1399,7 @@ static void room_203_daemon() {
 			global[g133] = 0;
 			global[g143] = 0;
 
+			kernel_flip_hotspot(words_moss, false);
 			kernel_flip_hotspot(words_room_210, true);
 			seq[1] = kernel_seq_stamp(ss[1], false, -1);
 			kernel_seq_depth(seq[1], 15);
