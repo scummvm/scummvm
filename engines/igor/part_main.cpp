@@ -630,6 +630,16 @@ void IgorEngine::PART_MAIN() {
 		case 303:
 			PART_30(); // college stairs first floor
 			break;
+		case 310:
+		case 311:
+		case 312:
+		case 313:
+			PART_31();
+			break;
+		case 330:
+		case 331:
+			PART_33();
+			break;
 		case 340:
 			PART_34(); // Park, left panel
 			break;

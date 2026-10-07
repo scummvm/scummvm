@@ -801,6 +801,46 @@ private:
 	void PART_30_HELPER_9_setLauraFrame(int frame);
 	void PART_30();
 
+	// college corridor stairs second floor
+	void PART_31_EXEC_ACTION(int action);
+	void PART_31_ACTION_102();
+	void PART_31_ACTION_103();
+	void PART_31_ACTION_106();
+	void PART_31_ACTION_110();
+	void PART_31_UPDATE_ROOM_BACKGROUND();
+	void PART_31_HELPER_1(int num);
+	void PART_31_HELPER_2(int frame);
+	void PART_31_HELPER_3();
+	void PART_31_HELPER_4();
+	void PART_31_HELPER_5();
+	void PART_31_HELPER_6();
+	void PART_31_HELPER_9();
+	void PART_31();
+
+	// library
+	void PART_33_EXEC_ACTION(int action);
+	void PART_33_ACTION_109();
+	void PART_33_ACTION_111();
+	void PART_33_ACTION_113();
+	void PART_33_ACTION_114();
+	void PART_33_ACTION_115();
+	void PART_33_UPDATE_DIALOGUE_HARRISON_1(int action);
+	void PART_33_UPDATE_DIALOGUE_HARRISON_2(int action);
+	void PART_33_UPDATE_DIALOGUE_HARRISON_3(int action);
+	void PART_33_HANDLE_DIALOGUE_HARRISON();
+	void PART_33_UPDATE_ROOM_BACKGROUND();
+	void PART_33_HELPER_1(int num);
+	void PART_33_HELPER_2();
+	void PART_33_HELPER_3();
+	void PART_33_HELPER_4(int frame);
+	void PART_33_HELPER_5(int frame);
+	void PART_33_HELPER_7();
+	void PART_33_HELPER_8(int frame);
+	void PART_33_HELPER_9();
+	void PART_33();
+	void loadResourceData__ROOM_Library();
+	void loadResourceData__ANIM_Library();
+
 	// park
 	void PARK_DRAW_LADY_FRAME(uint8 *dst, int frame);
 	void PARK_DRAW_LAURA_FRAME(int frame);

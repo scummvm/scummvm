@@ -39,6 +39,8 @@ MODULE_OBJS = \
 	parts/part_27.o \
 	parts/part_28.o \
 	parts/part_30.o \
+	parts/part_31.o \
+	parts/part_33.o \
 	parts/part_34.o \
 	parts/part_35.o \
 	text.o \
