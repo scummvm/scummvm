@@ -36,7 +36,7 @@ void IgorEngine::PART_14_EXEC_ACTION(int action) {
 		PART_14_ACTION_101();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(201, 1);
+		ADD_DIALOGUE_TEXT(201, 1, 860);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -44,7 +44,7 @@ void IgorEngine::PART_14_EXEC_ACTION(int action) {
 		PART_14_ACTION_103();
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(202, 1);
+		ADD_DIALOGUE_TEXT(202, 1, 861);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -55,7 +55,7 @@ void IgorEngine::PART_14_EXEC_ACTION(int action) {
 		PART_14_ACTION_106();
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(203, 1);
+		ADD_DIALOGUE_TEXT(203, 1, 862);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -177,7 +177,7 @@ void IgorEngine::PART_14_ACTION_106() {
 void IgorEngine::PART_14_ACTION_108() {
 	_gameState.unkF = false;
 	_updateRoomBackground = &IgorEngine::PART_14_UPDATE_ROOM_BACKGROUND_ACTION_108;
-	ADD_DIALOGUE_TEXT(226, 1);
+	ADD_DIALOGUE_TEXT(226, 1, 880);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
@@ -191,7 +191,7 @@ void IgorEngine::PART_14_ACTION_108() {
 	playSound(33, 1);
 	PART_14_HELPER_8(4, 24);
 	stopSound();
-	ADD_DIALOGUE_TEXT(205, 1);
+	ADD_DIALOGUE_TEXT(205, 1, 864);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(221, 85, 12, 33, 63);
 	waitForEndOfCutsceneDialogue(221, 85, 12, 33, 63);
@@ -201,22 +201,22 @@ void IgorEngine::PART_14_ACTION_108() {
 	wd->x = 250;
 	wd->y = 138;
 	wd->posNum = 4;
-	ADD_DIALOGUE_TEXT(206, 1);
-	ADD_DIALOGUE_TEXT(207, 1);
+	ADD_DIALOGUE_TEXT(206, 1, 865);
+	ADD_DIALOGUE_TEXT(207, 1, 866);
 	SET_DIALOGUE_TEXT(1, 2);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(208, 2);
+	ADD_DIALOGUE_TEXT(208, 2, 867);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(221, 85, 12, 33, 63);
 	waitForEndOfCutsceneDialogue(221, 85, 12, 33, 63);
-	ADD_DIALOGUE_TEXT(210, 1);
+	ADD_DIALOGUE_TEXT(210, 1, 868);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(211, 2);
-	ADD_DIALOGUE_TEXT(213, 3);
-	ADD_DIALOGUE_TEXT(216, 1);
+	ADD_DIALOGUE_TEXT(211, 2, 869);
+	ADD_DIALOGUE_TEXT(213, 3, 870);
+	ADD_DIALOGUE_TEXT(216, 1, 871);
 	SET_DIALOGUE_TEXT(1, 3);
 	startCutsceneDialogue(221, 85, 12, 33, 63);
 	waitForEndOfCutsceneDialogue(221, 85, 12, 33, 63);
@@ -226,13 +226,13 @@ void IgorEngine::PART_14_ACTION_108() {
 		waitForTimer(60);
 	}
 	addObjectToInventory(28, 63);
-	ADD_DIALOGUE_TEXT(217, 1);
-	ADD_DIALOGUE_TEXT(218, 1);
-	ADD_DIALOGUE_TEXT(219, 1);
+	ADD_DIALOGUE_TEXT(217, 1, 872);
+	ADD_DIALOGUE_TEXT(218, 1, 873);
+	ADD_DIALOGUE_TEXT(219, 1, 874);
 	SET_DIALOGUE_TEXT(1, 3);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(220, 2);
+	ADD_DIALOGUE_TEXT(220, 2, 875);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(221, 85, 12, 33, 63);
 	waitForEndOfCutsceneDialogue(221, 85, 12, 33, 63);
@@ -242,10 +242,10 @@ void IgorEngine::PART_14_ACTION_108() {
 	playSound(33, 1);
 	PART_14_HELPER_8(36, 60);
 	stopSound();
-	ADD_DIALOGUE_TEXT(222, 1);
-	ADD_DIALOGUE_TEXT(223, 1);
-	ADD_DIALOGUE_TEXT(224, 1);
-	ADD_DIALOGUE_TEXT(225, 1);
+	ADD_DIALOGUE_TEXT(222, 1, 876);
+	ADD_DIALOGUE_TEXT(223, 1, 877);
+	ADD_DIALOGUE_TEXT(224, 1, 878);
+	ADD_DIALOGUE_TEXT(225, 1, 879);
 	SET_DIALOGUE_TEXT(1, 4);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
@@ -509,7 +509,7 @@ void IgorEngine::PART_14_HELPER_9() {
 				} else {
 					_currentPart = 145;
 					_gameState.counter[4] = 0;
-					ADD_DIALOGUE_TEXT(204, 1);
+					ADD_DIALOGUE_TEXT(204, 1, 863);
 					SET_DIALOGUE_TEXT(1, 1);
 					playSound(35, 1);
 					waitForTimer(255);

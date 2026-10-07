@@ -31,7 +31,7 @@ void IgorEngine::PART_13_EXEC_ACTION(int action) {
 		PART_13_ACTION_101_103();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(201, 2);
+		ADD_DIALOGUE_TEXT(201, 2, 858);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -73,7 +73,7 @@ void IgorEngine::PART_13_ACTION_101_103() {
 		waitForTimer(30);
 	}
 	_walkDataLastIndex = 1;
-	ADD_DIALOGUE_TEXT(203, 1);
+	ADD_DIALOGUE_TEXT(203, 1, 859);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();

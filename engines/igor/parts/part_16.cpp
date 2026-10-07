@@ -33,7 +33,7 @@ void IgorEngine::PART_16_EXEC_ACTION(int action) {
 		PART_16_ACTION_101();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(208, 2);
+		ADD_DIALOGUE_TEXT(208, 2, 730);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -48,13 +48,13 @@ void IgorEngine::PART_16_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_16_ACTION_101() {
 	if (_objectsState[52] == 1) {
-		ADD_DIALOGUE_TEXT(207, 1);
+		ADD_DIALOGUE_TEXT(207, 1, 729);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		return;
 	}
-	ADD_DIALOGUE_TEXT(201, 1);
-	ADD_DIALOGUE_TEXT(202, 2);
+	ADD_DIALOGUE_TEXT(201, 1, 726);
+	ADD_DIALOGUE_TEXT(202, 2, 727);
 	SET_DIALOGUE_TEXT(1, 2);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
@@ -71,7 +71,7 @@ void IgorEngine::PART_16_ACTION_101() {
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
-	ADD_DIALOGUE_TEXT(204, 3);
+	ADD_DIALOGUE_TEXT(204, 3, 728);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 }
@@ -122,10 +122,10 @@ void IgorEngine::PART_16_HELPER_2() {
 
 void IgorEngine::PART_16_HELPER_3() {
 	memset(_screenVGA + 46080, 0, 17920);
-	ADD_DIALOGUE_TEXT(210, 1);
-	ADD_DIALOGUE_TEXT(211, 1);
-	ADD_DIALOGUE_TEXT(212, 1);
-	ADD_DIALOGUE_TEXT(213, 2);
+	ADD_DIALOGUE_TEXT(210, 1, 731);
+	ADD_DIALOGUE_TEXT(211, 1, 732);
+	ADD_DIALOGUE_TEXT(212, 1, 733);
+	ADD_DIALOGUE_TEXT(213, 2, 734);
 	SET_DIALOGUE_TEXT(1, 4);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
@@ -173,9 +173,9 @@ void IgorEngine::PART_16_HELPER_3() {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + i * 2) - 1, _screenVGA, true);
 		waitForTimer(25);
 	}
-	ADD_DIALOGUE_TEXT(215, 1);
-	ADD_DIALOGUE_TEXT(216, 1);
-	ADD_DIALOGUE_TEXT(217, 1);
+	ADD_DIALOGUE_TEXT(215, 1, 735);
+	ADD_DIALOGUE_TEXT(216, 1, 736);
+	ADD_DIALOGUE_TEXT(217, 1, 737);
 	SET_DIALOGUE_TEXT(1, 3);
 	startCutsceneDialogue(175, 78, 0, 58, 40);
 	VAR_CURRENT_TALKING_ACTOR = 0;
@@ -186,7 +186,7 @@ void IgorEngine::PART_16_HELPER_3() {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + i * 2) - 1, _screenVGA, true);
 		waitForTimer(35);
 	}
-	ADD_DIALOGUE_TEXT(218, 2);
+	ADD_DIALOGUE_TEXT(218, 2, 738);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(88, 69, 63, 32, 0);
 	_updateDialogue = &IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET;
@@ -196,15 +196,15 @@ void IgorEngine::PART_16_HELPER_3() {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + i * 2) - 1, _screenVGA, true);
 		waitForTimer(35);
 	}
-	ADD_DIALOGUE_TEXT(220, 1);
-	ADD_DIALOGUE_TEXT(221, 1);
+	ADD_DIALOGUE_TEXT(220, 1, 739);
+	ADD_DIALOGUE_TEXT(221, 1, 740);
 	SET_DIALOGUE_TEXT(1, 2);
 	startCutsceneDialogue(175, 78, 0, 58, 40);
 	VAR_CURRENT_TALKING_ACTOR = 1;
 	_updateDialogue = &IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET_HARRISON;
 	waitForEndOfCutsceneDialogue(175, 78, 0, 58, 40);
 	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(222, 2);
+	ADD_DIALOGUE_TEXT(222, 2, 741);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(88, 69, 63, 32, 0);
 	_updateDialogue = &IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET;
