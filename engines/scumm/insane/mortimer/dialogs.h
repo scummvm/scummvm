@@ -22,18 +22,22 @@
 #define SCUMM_INSANE_MORTIMER_DIALOGS_H
 
 #include "gui/dialog.h"
+#include "engines/savestate.h"
 
 namespace GUI {
 class PopUpWidget;
+class EditTextWidget;
 }
 
 namespace Scumm {
 
 class MortimerDifficultyDialog : public GUI::Dialog {
 public:
-	MortimerDifficultyDialog(bool isDemo, uint flightDifficulty, uint riddleDifficulty);
+	MortimerDifficultyDialog(bool isDemo, uint flightDifficulty, uint riddleDifficulty, bool girl = false, bool newPilot = false);
 	uint flightDifficulty() const;
 	uint riddleDifficulty() const;
+	bool girl() const;
+	Common::String pilotName() const;
 	void reflowLayout() override;
 
 protected:
@@ -41,6 +45,22 @@ protected:
 
 private:
 	GUI::PopUpWidget *_flight, *_riddle;
+	GUI::PopUpWidget *_character;
+	GUI::EditTextWidget *_pilotName;
+};
+
+class MortimerPilotDialog : public GUI::Dialog {
+public:
+	enum { kNewPilot = 100 };
+	explicit MortimerPilotDialog(const SaveStateList &pilots);
+	int selectedPilot() const;
+	void reflowLayout() override;
+
+protected:
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
+private:
+	GUI::PopUpWidget *_pilot;
 };
 
 } // End of namespace Scumm

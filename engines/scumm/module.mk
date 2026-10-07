@@ -147,6 +147,7 @@ MODULE_OBJS += \
 	insane/insane_enemy.o \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
+	insane/saveload.o \
 	insane/mortimer/campaign.o \
 	insane/mortimer/castle.o \
 	insane/mortimer/dialogs.o \
@@ -154,6 +155,7 @@ MODULE_OBJS += \
 	insane/mortimer/interview.o \
 	insane/mortimer/movie.o \
 	insane/mortimer/mortimer.o \
+	insane/mortimer/saveload.o \
 	insane/mortimer/text.o \
 	insane/rebel/rebel_audio.o \
 	insane/rebel/rebel_gamepad.o \

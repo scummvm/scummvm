@@ -23,61 +23,15 @@
 #include "common/stream.h"
 #include "common/endian.h"
 
-#include "graphics/thumbnail.h"
-
 #include "scumm/scumm.h"
 #include "scumm/scumm_v7.h"
+#include "scumm/insane/saveload.h"
 #include "scumm/insane/rebel1/rebel.h"
 
 namespace Scumm {
 
 const uint32 kRA1SaveTag = MKTAG('R', 'A', '1', 'S');
 const uint32 kRA1SaveVersion = 1;
-const uint32 kRA1ScummSaveVersion = 124;
-
-struct Rebel1SavegameHeader {
-	uint32 type;
-	uint32 size;
-	uint32 version;
-	char name[32];
-};
-
-bool writeRebel1SavegameHeader(Common::WriteStream *out, const Common::String &desc) {
-	Rebel1SavegameHeader hdr;
-	hdr.type = MKTAG('S', 'C', 'V', 'M');
-	hdr.size = 0;
-	hdr.version = kRA1ScummSaveVersion;
-	memset(hdr.name, 0, sizeof(hdr.name));
-	Common::strlcpy(hdr.name, desc.c_str(), sizeof(hdr.name));
-
-	out->writeUint32BE(hdr.type);
-	out->writeUint32LE(hdr.size);
-	out->writeUint32LE(hdr.version);
-	out->write(hdr.name, sizeof(hdr.name));
-	return !out->err();
-}
-
-bool readRebel1SavegameHeader(Common::SeekableReadStream *in, Common::String *desc, uint32 *version) {
-	Rebel1SavegameHeader hdr;
-	hdr.type = in->readUint32BE();
-	hdr.size = in->readUint32LE();
-	hdr.version = in->readUint32LE();
-	in->read(hdr.name, sizeof(hdr.name));
-	if (in->err() || hdr.type != MKTAG('S', 'C', 'V', 'M'))
-		return false;
-
-	if (hdr.version > 0xFFFFFF)
-		hdr.version = SWAP_BYTES_32(hdr.version);
-	if (hdr.version < VER(52) || hdr.version > kRA1ScummSaveVersion)
-		return false;
-
-	hdr.name[sizeof(hdr.name) - 1] = 0;
-	if (desc)
-		*desc = hdr.name;
-	if (version)
-		*version = hdr.version;
-	return true;
-}
 
 int InsaneRebel1::getCurrentSaveLevel() const {
 	return CLIP<int>(_resumeLevel, 1, kNumLevels);
@@ -93,9 +47,10 @@ Common::Error InsaneRebel1::writeSaveState(int slot, const Common::String &desc,
 	if (!out)
 		return Common::kWritingFailed;
 
-	writeRebel1SavegameHeader(out, desc);
-	Graphics::saveThumbnail(*out);
-	_vm->saveInfos(out);
+	if (!writeInsaneSavegameHeader(out, desc, _vm->getTotalPlayTime())) {
+		delete out;
+		return Common::kWritingFailed;
+	}
 
 	out->writeUint32BE(kRA1SaveTag);
 	out->writeUint32LE(kRA1SaveVersion);
@@ -126,27 +81,13 @@ bool InsaneRebel1::readSaveState(int slot, SaveState &state, Common::String *des
 	if (!in)
 		return false;
 
-	uint32 headerVersion = 0;
-	if (!readRebel1SavegameHeader(in.get(), desc, &headerVersion)) {
+	SaveStateMetaInfos infos;
+	if (!readInsaneSavegameHeader(in.get(), desc, infos)) {
 		warning("RA1: invalid save header in '%s'", filename.c_str());
 		return false;
 	}
 
-	if (headerVersion >= VER(52) && !Graphics::skipThumbnail(*in)) {
-		warning("RA1: save thumbnail could not be skipped in '%s'", filename.c_str());
-		return false;
-	}
-
-	if (headerVersion >= VER(56)) {
-		SaveStateMetaInfos infos;
-		if (!_vm->loadInfos(in.get(), &infos)) {
-			warning("RA1: save info section could not be found in '%s'", filename.c_str());
-			return false;
-		}
-		_vm->setTotalPlayTime(infos.playtime * 1000);
-	} else {
-		_vm->setTotalPlayTime();
-	}
+	_vm->setTotalPlayTime(infos.playtime * 1000);
 
 	if (in->readUint32BE() != kRA1SaveTag) {
 		warning("RA1: missing RA1 save data in '%s'", filename.c_str());

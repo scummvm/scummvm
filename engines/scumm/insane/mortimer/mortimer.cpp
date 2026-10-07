@@ -115,6 +115,7 @@ Common::KeymapArray MortimerEngine::initKeymaps() {
 
 MortimerEngine::MortimerEngine(OSystem *system, bool isDemo) : Engine(system), _isDemo(isDemo),
 	_restoredContent(isDemo && ConfMan.getBool("mortimer_restored_content")), _flightDifficulty(0), _riddleDifficulty(0),
+	_pilotSlot(-1), _checkpoint(0), _girl(false), _pilotLoadRequested(false),
 	_random("mortimer-flight"), _flight(isDemo, _restoredContent), _interview(isDemo),
 	_viewport(24, 20, 616, 360), _mouse(320, 240), _view(44, 60), _aim(320, 190), _shotWeapon(MortimerFlight::kRevitascope),
 	_crashStage(kNoCrash), _nextFrameTime(0), _pauseTime(0), _introIndex(-1), _loadedRegion(-1), _creditedRescues(0),
@@ -132,16 +133,18 @@ MortimerEngine::~MortimerEngine() {
 }
 
 bool MortimerEngine::hasFeature(EngineFeature feature) const {
-	return feature == kSupportsReturnToLauncher;
+	return feature == kSupportsReturnToLauncher || (!_isDemo && feature == kSupportsLoadingDuringRuntime);
 }
 
 bool MortimerEngine::selectDifficulty() {
 	if (_isDemo && !_restoredContent)
 		return true;
-	MortimerDifficultyDialog dialog(_isDemo, _flightDifficulty, _riddleDifficulty);
+	MortimerDifficultyDialog dialog(_isDemo, _flightDifficulty, _riddleDifficulty, _girl);
 	if (runDialog(dialog) != 1 || shouldQuit())
 		return false;
 	setDifficulty(dialog.flightDifficulty(), dialog.riddleDifficulty());
+	_girl = dialog.girl();
+	_intro.context().girl = _flight.context().girl = _girl;
 	return true;
 }
 
@@ -401,14 +404,14 @@ bool MortimerEngine::enterCampaignScene() {
 		_castleActive = true;
 		_viewport = Common::Rect(8, 104, 632, 448);
 		_castle.setProgrammer(_programmer);
-		if (!_castle.start(scene.id, _flightDifficulty, _riddleDifficulty, _intro.context().girl)) {
+		if (!_castle.start(scene.id, _flightDifficulty, _riddleDifficulty, _girl)) {
 			_loadError = _castle.errorMessage();
 			return false;
 		}
 		return processCastle();
 	}
 	_movieHandles.clear();
-	const Common::String name = _campaign.movieName(_intro.context().girl);
+	const Common::String name = _campaign.movieName(_girl);
 	Common::File file;
 	if (!file.open(Common::Path(name))) {
 		_loadError = Common::String::format("Missing %s", name.c_str());
@@ -544,9 +547,7 @@ bool MortimerEngine::finishCrash() {
 		_needsRepair = false;
 		// Easy flight keeps rescues and stones even after a full repair.
 		if (_flightDifficulty != 0) {
-			const bool girl = _flight.context().girl;
 			_flight.clearProgress();
-			_flight.context().girl = girl;
 			_carriedStones = _completedSpecies = _creditedRescues = 0;
 			_interview.resetAttempts();
 		}
@@ -696,6 +697,8 @@ bool MortimerEngine::nextScene(bool skip) {
 }
 
 bool MortimerEngine::processInterview() {
+	if (!_isDemo && _interview.solved())
+		saveCheckpoint(_loadedRegion + 1);
 	if (_interview.wantsFlight()) {
 		_carriedStones = _interview.stones();
 		_completedSpecies = _interview.species();
@@ -767,6 +770,8 @@ bool MortimerEngine::processCastle() {
 		_loadError = _castle.errorMessage();
 		return false;
 	}
+	if (_castle.solved())
+		saveCheckpoint(5);
 	if (_castle.finished()) {
 		stopSounds();
 		_castleActive = false;
@@ -1097,13 +1102,23 @@ Common::Error MortimerEngine::run() {
 	_screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	_screen.fillRect(Common::Rect(640, 480), 10);
 	syncSoundSettings();
-	if (!selectDifficulty())
+	if (!_isDemo && ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0) {
+		const Common::Error result = loadGameState(ConfMan.getInt("save_slot"));
+		if (result.getCode() != Common::kNoError)
+			return result;
+	} else if (!_isDemo && boot < 0) {
+		if (!selectPilot())
+			return Common::kNoError;
+	} else if (!selectDifficulty()) {
 		return Common::kNoError;
+	}
 	const bool oldCursor = CursorMan.showMouse(false);
 	PauseToken pause;
 	bool exit;
 	// 1000 opens the hidden interview; other values select original scene IDs.
-	if (boot == kBootProgrammer) {
+	if (_pilotLoadRequested) {
+		exit = !startPilot();
+	} else if (boot == kBootProgrammer) {
 		_programmer = true;
 		exit = !loadRegion(0);
 		if (!exit) {
@@ -1130,6 +1145,12 @@ Common::Error MortimerEngine::run() {
 		exit = !(loadIntro(boot >= 19 && boot <= 23 ? boot - 19 : 0) && startMovie());
 	}
 	while (!shouldQuit() && !exit) {
+		if (_pilotLoadRequested) {
+			if (pause.isActive())
+				pause.clear();
+			if (!startPilot())
+				break;
+		}
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			if (event.type == Common::EVENT_KEYDOWN) {
@@ -1210,9 +1231,13 @@ Common::Error MortimerEngine::run() {
 					break;
 				}
 			}
+			if (_pilotLoadRequested)
+				break;
 		}
 		if (exit)
 			break;
+		if (_pilotLoadRequested)
+			continue;
 		if (!isPaused() && !_finished && int32(_system->getMillis() - _nextFrameTime) >= 0) {
 			_nextFrameTime += 1000 / currentMovie().frameRate();
 			if (!updateScene())
@@ -1224,8 +1249,14 @@ Common::Error MortimerEngine::run() {
 		draw();
 		if (_finished) {
 			GUI::MessageDialog dialog(_("Play again?"), _("Restart"), _("Quit"));
-			if (dialog.runModal() != GUI::kMessageOK || !selectDifficulty() || !restart(true))
+			if (runDialog(dialog) != GUI::kMessageOK)
 				break;
+			if (_isDemo) {
+				if (!selectDifficulty() || !restart(true))
+					break;
+			} else if (!selectPilot()) {
+				break;
+			}
 		}
 		_system->delayMillis(10);
 	}
@@ -1233,7 +1264,7 @@ Common::Error MortimerEngine::run() {
 	CursorMan.showMouse(oldCursor);
 	if (!_loadError.empty())
 		warning("Mortimer: %s", _loadError.c_str());
-	return _loadError.empty() ? Common::kNoError : Common::Error(Common::kReadingFailed, _loadError);
+	return _loadError.empty() ? savePilot() : Common::Error(Common::kReadingFailed, _loadError);
 }
 
 void MortimerEngine::drawSprite(const MortimerSprite &sprite, int x, int y, bool centered, const Common::Rect *bounds) {

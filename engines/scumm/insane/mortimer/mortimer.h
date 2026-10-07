@@ -42,6 +42,10 @@ public:
 	~MortimerEngine() override;
 	Common::Error run() override;
 	bool hasFeature(EngineFeature feature) const override;
+	Common::String getSaveStateName(int slot) const override;
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	static Common::KeymapArray initKeymaps();
 
 protected:
@@ -53,6 +57,10 @@ private:
 	bool loadResources();
 	bool selectDifficulty();
 	void setDifficulty(uint flight, uint riddle);
+	bool selectPilot();
+	bool startPilot();
+	Common::Error savePilot();
+	void saveCheckpoint(uint checkpoint);
 	uint introCount() const;
 	bool loadIntro(uint index);
 	bool loadFlight(uint segment);
@@ -103,6 +111,10 @@ private:
 
 	const bool _isDemo, _restoredContent;
 	uint _flightDifficulty, _riddleDifficulty;
+	Common::String _pilotName;
+	int _pilotSlot;
+	uint _checkpoint;
+	bool _girl, _pilotLoadRequested;
 	Common::RandomSource _random;
 	MortimerCutscene _intro;
 	MortimerFlight _flight;

@@ -41,7 +41,9 @@ void MortimerFlight::clearProgress() {
 	_rescuedCount = _rescuedSpecies = 0;
 	_weapon = kRevitascope;
 	memset(_hitTargets, 0, sizeof(_hitTargets));
+	const bool girl = context().girl;
 	context() = MortimerMovieContext();
+	context().girl = girl;
 }
 
 void MortimerFlight::clearHostiles() {

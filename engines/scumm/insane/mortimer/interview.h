@@ -60,6 +60,7 @@ public:
 	bool movieDoubled() const;
 	bool wantsFlight() const { return _stage == kFlyAway; }
 	bool finished() const { return _stage == kFinished; }
+	bool solved() const { return _stage == kCorrect || _stage == kOpenGate || _stage == kFinished; }
 	bool restartsRegion() const { return _restartRegion; }
 	int sceneId() const;
 	int riddleId() const { return _answer * 10 + _textDifficulty; }

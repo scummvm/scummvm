@@ -49,6 +49,7 @@ public:
 	bool choosing() const { return _choosing; }
 	bool paused() const { return _choosing || _stage == kIdle || _holdFrames; }
 	bool finished() const { return _stage == kFinished; }
+	bool solved() const { return _stage == kCorrect || _stage == kFinished; }
 	bool hasSpeech() const { return _nextVoice < _voices.size(); }
 	bool forceSubtitles() const { return _stage == kSong; }
 	uint damage() const { return _damage; }

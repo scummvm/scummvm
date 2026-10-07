@@ -24,13 +24,26 @@
 #include "common/util.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "gui/message.h"
+#include "gui/widgets/edittext.h"
 #include "gui/widgets/popup.h"
 
 namespace Scumm {
 
-MortimerDifficultyDialog::MortimerDifficultyDialog(bool isDemo, uint flightDifficulty, uint riddleDifficulty)
-	: GUI::Dialog("MortimerDifficultyDialog") {
-	new GUI::StaticTextWidget(this, _name + ".Title", _("Select difficulty"));
+MortimerDifficultyDialog::MortimerDifficultyDialog(bool isDemo, uint flightDifficulty, uint riddleDifficulty, bool girl, bool newPilot)
+	: GUI::Dialog("MortimerDifficultyDialog"), _character(nullptr), _pilotName(nullptr) {
+	new GUI::StaticTextWidget(this, _name + ".Title", newPilot ? _("New pilot") : _("Select difficulty"));
+	if (newPilot) {
+		new GUI::StaticTextWidget(this, _name + ".NameLabel", _("Pilot name:"));
+		_pilotName = new GUI::EditTextWidget(this, _name + ".Name", Common::U32String());
+	}
+	if (!isDemo) {
+		new GUI::StaticTextWidget(this, _name + ".CharacterLabel", _("Character:"));
+		_character = new GUI::PopUpWidget(this, _name + ".Character");
+		_character->appendEntry(_("Sid"), 0);
+		_character->appendEntry(_("Sally"), 1);
+		_character->setSelectedTag(girl ? 1 : 0);
+	}
 	new GUI::StaticTextWidget(this, _name + ".FlightLabel", _("Flight difficulty:"));
 	new GUI::StaticTextWidget(this, _name + ".RiddleLabel", _("Riddle difficulty:"));
 	_flight = new GUI::PopUpWidget(this, _name + ".Flight", _("Choose how difficult flying and recovering from crashes should be."));
@@ -60,6 +73,16 @@ uint MortimerDifficultyDialog::riddleDifficulty() const {
 	return _riddle->getSelectedTag();
 }
 
+bool MortimerDifficultyDialog::girl() const {
+	return _character && _character->getSelectedTag() == 1;
+}
+
+Common::String MortimerDifficultyDialog::pilotName() const {
+	Common::String name = _pilotName ? _pilotName->getEditString().encode() : Common::String();
+	name.trim();
+	return name;
+}
+
 void MortimerDifficultyDialog::reflowLayout() {
 	GUI::ThemeEval &layouts = *g_gui.xmlEval();
 	const int lineHeight = layouts.getVar("Globals.Line.Height");
@@ -67,8 +90,12 @@ void MortimerDifficultyDialog::reflowLayout() {
 	layouts.addDialog(_name, "screen_center")
 		.addLayout(GUI::ThemeLayout::kLayoutVertical, 8)
 			.addPadding(8, 8, 8, 8)
-			.addWidget("Title", "", width, lineHeight, Graphics::kTextAlignCenter)
-			.addWidget("FlightLabel", "", -1, lineHeight)
+			.addWidget("Title", "", width, lineHeight, Graphics::kTextAlignCenter);
+	if (_pilotName)
+		layouts.addWidget("NameLabel", "", -1, lineHeight).addWidget("Name", "EditTextWidget");
+	if (_character)
+		layouts.addWidget("CharacterLabel", "", -1, lineHeight).addWidget("Character", "PopUp");
+	layouts.addWidget("FlightLabel", "", -1, lineHeight)
 			.addWidget("Flight", "PopUp")
 			.addWidget("RiddleLabel", "", -1, lineHeight)
 			.addWidget("Riddle", "PopUp")
@@ -84,6 +111,57 @@ void MortimerDifficultyDialog::reflowLayout() {
 }
 
 void MortimerDifficultyDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	if (cmd == GUI::kOKCmd) {
+		if (_pilotName && (pilotName().empty() || pilotName().size() > 31)) {
+			GUI::MessageDialog message(pilotName().empty() ? _("Please enter a pilot name.") : _("Please enter a shorter pilot name."));
+			message.runModal();
+			return;
+		}
+		setResult(1);
+		close();
+	} else {
+		GUI::Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+MortimerPilotDialog::MortimerPilotDialog(const SaveStateList &pilots) : GUI::Dialog("MortimerPilotDialog") {
+	new GUI::StaticTextWidget(this, _name + ".Title", _("Select pilot"));
+	new GUI::StaticTextWidget(this, _name + ".Hint", _("Progress is saved after each riddle is solved."));
+	_pilot = new GUI::PopUpWidget(this, _name + ".Pilot");
+	_pilot->appendEntry(_("New pilot"), kNewPilot);
+	for (uint i = 0; i < pilots.size(); ++i)
+		_pilot->appendEntry(pilots[i].getDescription(), pilots[i].getSaveSlot());
+	_pilot->setSelected(pilots.empty() ? 0 : 1);
+	new GUI::ButtonWidget(this, _name + ".Cancel", _("~C~ancel"), Common::U32String(), GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, _name + ".Start", _("Start"), Common::U32String(), GUI::kOKCmd, Common::ASCII_RETURN);
+}
+
+int MortimerPilotDialog::selectedPilot() const {
+	return _pilot->getSelectedTag();
+}
+
+void MortimerPilotDialog::reflowLayout() {
+	GUI::ThemeEval &layouts = *g_gui.xmlEval();
+	const int lineHeight = layouts.getVar("Globals.Line.Height");
+	const int width = 280 * g_gui.getScaleFactor();
+	layouts.addDialog(_name, "screen_center")
+		.addLayout(GUI::ThemeLayout::kLayoutVertical, 8)
+			.addPadding(8, 8, 8, 8)
+			.addWidget("Title", "", width, lineHeight, Graphics::kTextAlignCenter)
+			.addWidget("Pilot", "PopUp")
+			.addWidget("Hint", "", -1, lineHeight, Graphics::kTextAlignCenter)
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 8, GUI::ThemeLayout::kItemAlignEnd)
+				.addPadding(0, 0, 0, 0)
+				.addSpace()
+				.addWidget("Cancel", "Button")
+				.addWidget("Start", "Button")
+			.closeLayout()
+		.closeLayout()
+	.closeDialog();
+	GUI::Dialog::reflowLayout();
+}
+
+void MortimerPilotDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd == GUI::kOKCmd) {
 		setResult(1);
 		close();
