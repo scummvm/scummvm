@@ -2507,7 +2507,7 @@ bool Flow::waitForPaletteFadeTick(uint32 startTick, Common::Error &result) {
 			return true;
 		g_system->delayMillis(1);
 	}
-	debugC(3, kDebugScene,
+	debugC(4, kDebugScene,
 		"Harvester: palette fade step tick=%u->%u interval=%u",
 		startTick, getRuntimeClockTicks(), kPaletteFadeIntervalTicks);
 	return false;
