@@ -447,6 +447,9 @@ uint GlkAPI::glk_get_buffer_stream(strid_t str, char *buf, uint len) {
 }
 
 void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
+	if (style >= style_NUMSTYLES)
+		return;
+
 	WindowStyle *styles;
 	bool p, b, i;
 
@@ -518,6 +521,9 @@ void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 }
 
 void GlkAPI::glk_stylehint_clear(uint wintype, uint style, uint hint) {
+	if (style >= style_NUMSTYLES)
+		return;
+
 	WindowStyle *styles;
 	const WindowStyle *defaults;
 
