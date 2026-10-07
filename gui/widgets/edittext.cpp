@@ -34,6 +34,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, bool
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
 	_finishOnFocusLoss = false;
+	_minContentWidth = -1;
 
 	_leftPadding = _rightPadding = 0;
 
@@ -51,12 +52,23 @@ EditTextWidget::EditTextWidget(GuiObject *boss, const Common::String &name, cons
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
 	_finishOnFocusLoss = false;
+	_minContentWidth = -1;
 
 	_leftPadding = _rightPadding = 0;
 	_shiftPressed = _isDragging = false;
 
 	setEditString(text);
 	setFontStyle(font);
+}
+
+void EditTextWidget::getMinSize(int &minWidth, int &minHeight) {
+	minWidth = minHeight = -1;
+	if (_minContentWidth < 0)
+		return;
+	minWidth = _minContentWidth +
+		g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Left", 0) +
+		g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Right", 0) + 3;
+	minHeight = g_gui.getFontHeight(_font) + 3;
 }
 
 void EditTextWidget::setEditString(const Common::U32String &str) {
