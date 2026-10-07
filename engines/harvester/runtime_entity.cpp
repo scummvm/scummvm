@@ -455,8 +455,8 @@ bool Entity::tickVisualState(uint32 now) {
 	_nextAnimationTick = now + _animationTickInterval;
 	_animationAdvancedLastTick = true;
 
-	if (_classId == kRuntimeEntityClassPlayer) {
-		debugC(3, kDebugPlayer,
+	if (_classId == kRuntimeEntityClassPlayer && previousFrameIndex != _currentFrame) {
+		debugC(4, kDebugPlayer,
 			"Harvester: player animation advance frame=%d->%d range=%d..%d rate=%d tick=%u interval=%u next_tick=%u",
 			previousFrameIndex, _currentFrame, _firstFrame, _lastFrame,
 			_animationRate, now, _animationTickInterval, _nextAnimationTick);
@@ -468,7 +468,7 @@ bool Entity::tickVisualState(uint32 now) {
 		const bool loopReset = _looping && !_pingPong &&
 			((!wasPlayingBackwards && previousFrameIndex == _lastFrame && _currentFrame == _firstFrame) ||
 			 (wasPlayingBackwards && previousFrameIndex == _firstFrame && _currentFrame == _lastFrame));
-		debugC(3, kDebugPlayer,
+		debugC(4, kDebugPlayer,
 			"Harvester: npc animation advance npc='%s' frame=%d->%d range=%d..%d loop_reset=%d backwards=%d->%d rate=%d interval=%u entity=(%d,%d,z=%.2f) previous=(size=%ux%u offset=%d,%d draw=%d,%d) current=(size=%ux%u offset=%d,%d draw=%d,%d)",
 			_name.c_str(),
 			previousFrameIndex, _currentFrame, _firstFrame, _lastFrame,
