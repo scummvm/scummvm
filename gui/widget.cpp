@@ -1077,7 +1077,7 @@ OptionsContainerWidget::OptionsContainerWidget(GuiObject *boss, const Common::St
 		Widget(boss, name),
 		_domain(domain),
 		_dialogLayout(dialogLayout),
-		_parentDialog(nullptr) {
+		_parentDialog(nullptr), _contentSized(false) {
 }
 
 OptionsContainerWidget::~OptionsContainerWidget() {
@@ -1096,11 +1096,13 @@ void OptionsContainerWidget::reflowLayout() {
 
 	Widget *w = _firstWidget;
 	int16 minY = getAbsY();
-	int maxY = minY + _h;
+	int maxY = minY + (_contentSized ? 0 : _h);
 	while (w) {
 		w->reflowLayout();
-		minY = MIN(minY, w->getAbsY());
-		maxY = MAX(maxY, w->getAbsY() + w->getHeight());
+		if (!_contentSized)
+			minY = MIN(minY, w->getAbsY());
+		if (!_contentSized || w->isVisible())
+			maxY = MAX(maxY, w->getAbsY() + w->getHeight());
 		w = w->next();
 	}
 	_h = maxY - minY;
