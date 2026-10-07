@@ -130,7 +130,6 @@ static void main_cold_data_init() {
 	game.difficulty = g_engine->isDemo() ? 0 : -1;
 
 	Common::strcpy_s(config_file_name, "config.dra");
-	Common::strcpy_s(save_game_key, "drag");
 	Common::strcpy_s(restart_game_key, "dragon");
 
 	Common::strcpy_s(player.series_name, "RAL");

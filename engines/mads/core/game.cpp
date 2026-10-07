@@ -107,7 +107,6 @@ void (*debugger_update)() = NULL;     /* Debugger update routine */
 int selected_intro = false;
 long correction_clock;
 
-char save_game_key[8];
 char restart_game_key[40];
 char save_game_buf[20];
 
@@ -414,9 +413,8 @@ static void game_fix_save_name() {
 }
 
 void game_save_name(int id) {
-	Common::strcpy_s(save_game_buf, save_game_key);
-	env_catint(save_game_buf, id, 3);
-	game_fix_save_name();
+	Common::String name = g_engine->getSaveStateName(id);
+	Common::strcpy_s(save_game_buf, name.c_str());
 }
 
 static void game_player_status() {
@@ -2627,7 +2625,6 @@ void init_game() {
 	debugger_update = NULL;
 	selected_intro = false;
 	correction_clock = 0;
-	memset(save_game_key, 0, sizeof(save_game_key));
 	memset(restart_game_key, 0, sizeof(restart_game_key));
 	memset(save_game_buf, 0, sizeof(save_game_buf));
 	last_keypressed = -1;

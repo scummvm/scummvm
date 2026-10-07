@@ -224,7 +224,6 @@ static void main_cold_data_init() {
 	game_emergency_save = global_emergency_save;
 
 	Common::strcpy_s(config_file_name, "config.rex");
-	Common::strcpy_s(save_game_key, "rex");
 	Common::strcpy_s(restart_game_key, "rex");
 
 	*player.series_name = '\0';
