@@ -127,6 +127,7 @@ enum DrawData {
 
 	kDDCaret,
 	kDDSeparator,
+	kDDInvalidFrame,
 	kDrawDataMAX,
 	kDDNone = -1
 };
@@ -508,6 +509,9 @@ public:
 	              const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, FontColor color = kFontColorNormal, TextInversionState inverted = ThemeEngine::kTextInversionNone);
+
+	/** Optional theme indication, with a built-in frame when undefined. */
+	void drawInvalidFrame(const Common::Rect &r);
 
 	void drawFoldIndicator(const Common::Rect &r, bool expanded);
 

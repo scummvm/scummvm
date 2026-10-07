@@ -51,6 +51,7 @@ enum {
 	 * mouse events in place of their children */
 	WIDGET_HOOK_DRAG        = 1 <<  7,
 	WIDGET_DYN_TOOLTIP      = 1 <<  8, // Widgets updates tooltip by coordinates
+	WIDGET_INVALID          = 1 <<  9, // Independent, opt-in validation indication
 };
 
 enum {
@@ -164,6 +165,9 @@ public:
 	virtual bool wantsFocus() { return false; }
 
 	uint32 getType() const { return _type; }
+
+	/** Present a validation error without changing interaction state. */
+	void setInvalid(bool invalid);
 
 	void setFlags(int flags);
 	void clearFlags(int flags);
