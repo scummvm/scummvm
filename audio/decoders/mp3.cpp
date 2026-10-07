@@ -25,6 +25,7 @@
 
 #include "common/debug.h"
 #include "common/mutex.h"
+#include "common/memstream.h"
 #include "common/ptr.h"
 #include "common/queue.h"
 #include "common/stream.h"
@@ -465,14 +466,21 @@ int PacketizedMP3Stream::readBuffer(int16 *buffer, const int numSamples) {
 	while (samples < numSamples) {
 		// Empty? Bail out for now, and mark the stream as ended
 		if (_queue.empty()) {
-			// EOS state is only valid once a packet has been received at least
-			// once
-			if (_state == MP3_STATE_READY)
+			if (_finished && _state == MP3_STATE_READY) {
+				_allowEndPadding = true;
+				// The encoded packets may be gone while libmad still holds
+				// compressed data or PCM. Drain it before reporting EOF.
+				const byte dummy = 0;
+				Common::MemoryReadStream empty(&dummy, 0);
+				samples += fillBuffer(empty, buffer + samples, numSamples - samples);
+			} else if (_state == MP3_STATE_READY) {
 				_state = MP3_STATE_EOS;
+			}
 			return samples;
 		}
 
 		Common::SeekableReadStream *packet = _queue.front();
+		_allowEndPadding = _finished && _queue.size() == 1;
 
 		if (_state == MP3_STATE_INIT) {
 			// Initialize everything
@@ -502,7 +510,7 @@ int PacketizedMP3Stream::readBuffer(int16 *buffer, const int numSamples) {
 
 bool PacketizedMP3Stream::endOfData() const {
 	Common::StackLock lock(_mutex);
-	return BaseMP3Stream::endOfData();
+	return (_finished && _state == MP3_STATE_INIT && _queue.empty()) || BaseMP3Stream::endOfData();
 }
 
 bool PacketizedMP3Stream::endOfStream() const {
@@ -532,6 +540,11 @@ void PacketizedMP3Stream::queuePacket(Common::SeekableReadStream *packet) {
 void PacketizedMP3Stream::finish() {
 	Common::StackLock lock(_mutex);
 	_finished = true;
+	_allowEndPadding = _queue.empty();
+
+	// An underrun can leave decoded data behind the temporary EOS state.
+	if (_state == MP3_STATE_EOS && !_endPaddingAdded)
+		_state = MP3_STATE_READY;
 }
 
 

@@ -98,6 +98,12 @@ public:
 			TS_ASSERT_EQUALS(readSamples(*linear), 32U * 1152);
 			delete linear;
 		}
+		Audio::PacketizedAudioStream *packets = Audio::makePacketizedMP3Stream(1, 44100);
+		packets->queuePacket(new Common::MemoryReadStream(&data[0], data.size()));
+		packets->finish();
+		TS_ASSERT_EQUALS(readSamples(*packets), 32U * 1152);
+		TS_ASSERT(packets->endOfStream());
+		delete packets;
 	}
 
 	void testTruncatedFinalFrame() {
@@ -109,6 +115,43 @@ public:
 			TS_ASSERT_EQUALS(readSamples(*stream), 1152U);
 			delete stream;
 		}
+	}
+
+	void testPacketizedDrainAtDifferentPacketSizes() {
+		const uint sizes[] = { 512, 2048, 8192, 32768 };
+		Common::Array<byte> data = silentFrames(32);
+		for (uint i = 0; i < ARRAYSIZE(sizes); ++i) {
+			Audio::PacketizedAudioStream *stream = Audio::makePacketizedMP3Stream(1, 44100);
+			for (uint pos = 0; pos < data.size(); pos += sizes[i])
+				stream->queuePacket(new Common::MemoryReadStream(&data[pos], MIN(sizes[i], data.size() - pos)));
+			stream->finish();
+			TS_ASSERT_EQUALS(readSamples(*stream), 32U * 1152);
+			TS_ASSERT(stream->endOfStream());
+			delete stream;
+		}
+	}
+
+	void testFinishAfterUnderrun() {
+		Common::Array<byte> data = silentFrames(32);
+		Audio::PacketizedAudioStream *stream = Audio::makePacketizedMP3Stream(1, 44100);
+		stream->queuePacket(new Common::MemoryReadStream(&data[0], data.size()));
+		uint samples = readSamples(*stream);
+		TS_ASSERT(!stream->endOfStream());
+		stream->finish();
+		samples += readSamples(*stream);
+		TS_ASSERT_EQUALS(samples, 32U * 1152);
+		TS_ASSERT(stream->endOfStream());
+		delete stream;
+	}
+
+	void testEmptyFinishedStream() {
+		Audio::PacketizedAudioStream *stream = Audio::makePacketizedMP3Stream(1, 44100);
+		stream->finish();
+		TS_ASSERT(stream->endOfData());
+		TS_ASSERT(stream->endOfStream());
+		int16 sample = 123;
+		TS_ASSERT_EQUALS(stream->readBuffer(&sample, 1), 0);
+		delete stream;
 	}
 
 	void testZeroReadWithoutEOF() {
@@ -123,6 +166,33 @@ public:
 				delete stream;
 			}
 		}
+	}
+
+	void testStereoPacketizedAt48kHz() {
+		Common::Array<byte> data = silentFrames(32, true);
+		Audio::PacketizedAudioStream *stream = Audio::makePacketizedMP3Stream(2, 48000);
+		for (uint pos = 0; pos < data.size(); pos += 2048)
+			stream->queuePacket(new Common::MemoryReadStream(&data[pos], MIN<uint>(2048, data.size() - pos)));
+		stream->finish();
+		TS_ASSERT_EQUALS(readSamples(*stream), 32U * 1152 * 2);
+		TS_ASSERT(stream->endOfStream());
+		delete stream;
+	}
+
+	void testNewPacketAfterUnderrun() {
+		Common::Array<byte> data = silentFrames(32);
+		Audio::PacketizedAudioStream *stream = Audio::makePacketizedMP3Stream(1, 44100);
+		const uint split = 16 * 417 + 3;
+		stream->queuePacket(new Common::MemoryReadStream(&data[0], split));
+		uint samples = readSamples(*stream);
+		TS_ASSERT(!stream->endOfStream());
+		stream->queuePacket(new Common::MemoryReadStream(&data[split], data.size() - split));
+		TS_ASSERT(!stream->endOfData());
+		stream->finish();
+		samples += readSamples(*stream);
+		TS_ASSERT_EQUALS(samples, 32U * 1152);
+		TS_ASSERT(stream->endOfStream());
+		delete stream;
 	}
 
 private:
