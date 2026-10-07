@@ -62,9 +62,7 @@ private:
 
 	int command16();
 
-	// Overrides confirming the isSoundActive(0x3D98) gate the base
-	// class's pure-virtual command4()/command5() require - see
-	// RSound::command4/5.
+	// Both commands use the section-1-specific isSoundActive(0x3D98) gate.
 	int command4() override;
 	int command5() override;
 
@@ -132,10 +130,7 @@ private:
 	typedef int (RSound2:: *CommandPtr)();
 	static const CommandPtr _commandList[74];
 
-	// Overrides confirming the isSoundActive(0x3D98) gate the base
-	// class's pure-virtual command4()/command5() require - see
-	// RSound::command4/5. Same offset NUMBER as RSound1's, but not
-	// assumed to be the same underlying data.
+	// Both commands use the standard ungated reset/enable tails.
 	int command4() override;
 	int command5() override;
 
@@ -189,10 +184,10 @@ public:
  * save/restore wrap that RSound::command0() has, but with no
  * observable behavioral difference, so no override is needed there.
  *
- * command4()/command5() are also a genuinely different shape from
- * RSound1/RSound2: both gate on TWO chained isSoundActive() checks
- * (0x2AA6 then 0x1E30, each an independent early-out per the
- * pop-return-address mechanic) rather than one, and command4()'s tail
+ * command4()/command5() are also driver-specific: both gate on two
+ * chained isSoundActive() checks (0x2AA6 then 0x1E30, each an
+ * independent early-out per the pop-return-address mechanic), while
+ * RSound1 has one guard and RSound2 has none. command4()'s tail
  * resets only channels 5-9 (indices 4-8) - NOT channels
  * 4-9 (indices 3-8) like the shared resetAndGmResetUpperChannels() -
  * so it can't reuse that helper and calls resetChannelRange()
@@ -258,9 +253,9 @@ public:
  * has a genuine, separate rsound_command3 entry matching the base
  * class's command3() exactly.
  *
- * command4() is a genuinely new shape: unlike every driver confirmed so
- * far, it has NO isSoundActive() gate at all - it unconditionally resets
- * channels 6-9 (0-based indices 5-8, confirmed via explicit
+ * Like RSound2, command4() has no isSoundActive() gate. It uses a
+ * different reset range, unconditionally resetting channels 6-9
+ * (0-based indices 5-8, confirmed via explicit
  * Channel._activeCount/_volumeFadeStep-labeled writes) via
  * resetChannelRange(), then sends a full sendGmReset(9). A third distinct
  * channel range for this reset (RSound1/RSound2 used 4-9, RSound3 used
