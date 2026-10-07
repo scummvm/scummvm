@@ -309,7 +309,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 54:
-		// EXEC_MAIN_ACTION_54();
+		lookAtPapyrus(false);
 		break;
 	case 55:
 		ADD_DIALOGUE_TEXT(159, 1, 83);
@@ -753,6 +753,61 @@ void IgorEngine::moveScreenUp(int offset) {
 	}
 }
 
+// Shows the papyrus full screen. With reveal set (dryer) the figures appear
+// slowly and are remembered as seen; otherwise Igor comments on what is shown.
+void IgorEngine::lookAtPapyrus(bool reveal) {
+	memcpy(_paletteBuffer, _currentPalette, 624);
+	fadeOut(624);
+	// reserve for entire screen + palette, to save current screen
+	uint8 *tmp = (uint8 *)malloc(64000 + 768);
+	if (tmp) {
+		memcpy(tmp, _screenVGA, 64000);
+		memcpy(tmp + 64000, _paletteBuffer, 768);
+	}
+	// load image and palette
+	loadData(IMG_RomanNumbersPaper, _screenVGA);
+	loadData(PAL_RomanNumbersPaper, _paletteBuffer);
+	if (reveal) {
+		fadeIn(624);
+		PART_UPDATE_FIGURES_ON_PAPER(60);
+		_objectsState[2] = 1;
+		waitForTimer(255);
+	} else {
+		// the figures are only shown from the second viewing on
+		if (_objectsState[2] == 1) {
+			PART_UPDATE_FIGURES_ON_PAPER(0);
+		}
+		fadeIn(624);
+		WalkData *wd = &_walkData[_walkDataLastIndex - 1];
+		int _walkDataCurrentPosX2 = wd->x;
+		int _walkDataCurrentPosY2 = wd->y;
+		wd->x = 160;
+		wd->y = 130;
+		wd->scaleWidth = 50;
+		if (_objectsState[2] == 0) {
+			ADD_DIALOGUE_TEXT(99, 1, 68);
+		} else {
+			ADD_DIALOGUE_TEXT(100, 2, 69);
+		}
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		waitForEndOfIgorDialogue(false);
+		wd->x = _walkDataCurrentPosX2;
+		wd->y = _walkDataCurrentPosY2;
+		wd->scaleWidth = _walkDataCurrentWScale;
+	}
+	fadeOut(624);
+
+	// restore previous screen and palette
+	if (tmp) {
+		memcpy(_screenVGA, tmp, 64000);
+		memcpy(_paletteBuffer, tmp + 64000, 768);
+		free(tmp);
+	}
+	fadeIn(624);
+}
+
+// loads and displays the figures on the paper
 void IgorEngine::PART_UPDATE_FIGURES_ON_PAPER(int delay) {
 	uint8 *framesData = loadData(FRM_NumbersPaper1);
 	uint8 *framesOffsets = loadData(FRM_NumbersPaper2);

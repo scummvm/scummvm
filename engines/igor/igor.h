@@ -478,7 +478,7 @@ private:
 	void animateIgorTalking(int frame);
 	void fixIgorDialogueTextPosition(int num, int count, int *x, int *y);
 	void startIgorDialogue();
-	void waitForEndOfIgorDialogue();
+	void waitForEndOfIgorDialogue(bool animateHead = true);
 	void fixDialogueTextPosition(int num, int count, int *x, int *y);
 	void startCutsceneDialogue(int x, int y, int r, int g, int b);
 	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
@@ -488,6 +488,7 @@ private:
 
 	void PART_MAIN();
 	void moveScreenUp(int offset);
+	void lookAtPapyrus(bool reveal);
 	void EXEC_MAIN_ACTION(int action);
 
 	// map
@@ -734,7 +735,6 @@ private:
 	void PART_19_HELPER_2();
 	void PART_19_HELPER_3();
 	void PART_19_HELPER_4();
-	void PART_19_HELPER_5();
 	void PART_19_HELPER_7(int frame);
 	void PART_19();
 

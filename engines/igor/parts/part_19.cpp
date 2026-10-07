@@ -112,7 +112,7 @@ void IgorEngine::PART_19_ACTION_109() { // sub_137_0421
 	}
 	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x35E) - 1, _screenVGA, true);
 	playSound(45, 1);
-	PART_19_HELPER_5();
+	lookAtPapyrus(true);
 	PART_19_HELPER_1(255);
 	stopSound();
 	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x360) - 1, _screenVGA, true);
@@ -258,26 +258,6 @@ void IgorEngine::PART_19_HELPER_4() { // sub_137_0D7B
 	_gameState.igorMoving = true;
 	waitForIgorMove();
 	_currentPart = 232;
-}
-
-void IgorEngine::PART_19_HELPER_5() {
-	fadeOut(624);
-	uint8 *tmp = (uint8 *)malloc(64000 + 768);
-	if (tmp) {
-		memcpy(tmp, _screenVGA, 64000);
-		memcpy(tmp + 64000, _paletteBuffer, 768);
-	}
-	loadData(IMG_RomanNumbersPaper, _screenVGA);
-	loadData(PAL_RomanNumbersPaper, _paletteBuffer);
-	fadeIn(624);
-	PART_UPDATE_FIGURES_ON_PAPER(60);
-	_objectsState[2] = 1;
-	waitForTimer(255);
-	if (tmp) {
-		memcpy(_screenVGA, tmp, 64000);
-		memcpy(_paletteBuffer, tmp + 64000, 768);
-		free(tmp);
-	}
 }
 
 void IgorEngine::PART_19_HELPER_7(int frame) {

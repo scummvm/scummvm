@@ -358,7 +358,7 @@ void IgorEngine::startIgorDialogue() {
 	_inputVars[kInputSkipDialogue] = 0;
 }
 
-void IgorEngine::waitForEndOfIgorDialogue() {
+void IgorEngine::waitForEndOfIgorDialogue(bool animateHead) {
 	do {
 		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
 			stopDialogueSpeech();
@@ -373,7 +373,9 @@ void IgorEngine::waitForEndOfIgorDialogue() {
 		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
 			if (_talkSpeechCounter > 2) {
 				if (_talkDelay == _talkDelayCounter) {
-					animateIgorTalking(0);
+					if (animateHead) {
+						animateIgorTalking(0);
+					}
 					memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
 					if (_dialogueTextsCount == 0) {
 						stopDialogueSpeech();
@@ -392,7 +394,9 @@ void IgorEngine::waitForEndOfIgorDialogue() {
 						}
 					}
 				} else {
-					animateIgorTalking(getRandomNumber(5));
+					if (animateHead) {
+						animateIgorTalking(getRandomNumber(5));
+					}
 					++_talkDelayCounter;
 				}
 			} else {
