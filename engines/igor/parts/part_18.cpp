@@ -182,9 +182,7 @@ void IgorEngine::PART_18() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
-	if(_currentPart == 190) {
-		PART_18_HELPER_2_walkIn();
-	}
+	PART_18_HELPER_2_walkIn();
 	enterPartLoop();
 	while (_currentPart == 180) {
 		runPartLoop();

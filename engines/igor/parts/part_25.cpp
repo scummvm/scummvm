@@ -113,12 +113,12 @@ void IgorEngine::PART_25_ACTION_107() {
 		const int offset = 21881;
 		for (int j = 0; j <= 55; ++j) {
 			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 1736 + j * 31 + 0x290, 31);
-			if (i == 2) {
-				playSound(13, 1);
-			}
-			if (i == 1) {
-				waitForTimer(100);
-			}
+		}
+		if (i == 2) {
+			playSound(13, 1);
+		}
+		if (i == 1) {
+			waitForTimer(100);
 		}
 	}
 	_objectsState[68] = 1;
@@ -134,12 +134,12 @@ void IgorEngine::PART_25_ACTION_108() {
 		const int offset = 21881;
 		for (int j = 0; j <= 55; ++j) {
 			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 1736 + j * 31 + 0x290, 31);
-			if (i == 4) {
-				playSound(14, 1);
-			}
-			if (i == 3) {
-				waitForTimer(100);
-			}
+		}
+		if (i == 4) {
+			playSound(14, 1);
+		}
+		if (i == 3) {
+			waitForTimer(100);
 		}
 	}
 	_objectsState[68] = 0;
