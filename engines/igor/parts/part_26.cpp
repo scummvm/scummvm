@@ -99,7 +99,7 @@ void IgorEngine::PART_26_ACTION_103() {
 		}
 	}
 	_objectsState[69] = 1;
-	PART_25_HELPER_1(1);
+	PART_26_HELPER_1(1);
 }
 
 void IgorEngine::PART_26_ACTION_104() {
@@ -111,16 +111,15 @@ void IgorEngine::PART_26_ACTION_104() {
 		const int offset = 19870;
 		for (int j = 0; j <= 65; ++j) {
 			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 2706 + j * 41 + 0x16C0, 41);
-			if (i == 4) {
-				playSound(14, 1);
-			}
-			if (i == 3) {
-				waitForTimer(100);
-			}
+		}
+		if (i == 4) {
+			playSound(14, 1);
+		} else if (i == 3) {
+			waitForTimer(100);
 		}
 	}
 	_objectsState[69] = 0;
-	PART_25_HELPER_1(1);
+	PART_26_HELPER_1(1);
 }
 
 void IgorEngine::PART_26_ACTION_107() {

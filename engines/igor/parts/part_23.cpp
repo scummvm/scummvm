@@ -23,7 +23,7 @@
 
 namespace Igor {
 
-static const uint8 PART_23_ANIM_DATA_1[4] = { 0, 4, 1, 11 };
+static const uint8 PART_23_ANIM_DATA_1[3] = { 0, 4, 1 };
 
 void IgorEngine::PART_23_EXEC_ACTION(int action) {
 	switch (action) {
@@ -95,35 +95,43 @@ void IgorEngine::PART_23_ACTION_105_enterLadiesRoom() {
 void IgorEngine::PART_23_ACTION_107_openDoor() {
 	if (_objectsState[66] == 1) {
 		EXEC_MAIN_ACTION(11);
-	} else {
-		const int offset = 23901;
-		for (int i = 2; i <= 3; ++i) {
-			for (int j = 0; j <= 53; ++j) {
-				memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 1620 + j * 30 + 0x895, 30);
-			}
-		}
-		playSound(13, 1);
-		waitForTimer(100);
-		_objectsState[66] = 1;
-		PART_23_HELPER_1(1);
+		return;
 	}
+	const int offset = 23901;
+	for (int i = 2; i <= 3; ++i) {
+		for (int j = 0; j <= 53; ++j) {
+			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 1620 + j * 30 + 0x895, 30);
+		}
+		if (i == 3) {
+			playSound(13, 1);
+		}
+		if (i < 3) {
+			waitForTimer(100);
+		}
+	}
+	_objectsState[66] = 1;
+	PART_23_HELPER_1(1);
 }
 
 void IgorEngine::PART_23_ACTION_108_closeDoor() {
 	if (_objectsState[66] == 0) {
 		EXEC_MAIN_ACTION(14);
-	} else {
-		const int offset = 23901;
-		for (int i = 2; i <= 3; ++i) {
-			for (int j = 0; j <= 53; ++j) {
-				memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + PART_23_ANIM_DATA_1[i] * 1620 + j * 30 + 0x895, 30);
-			}
-		}
-		playSound(14, 1);
-		waitForTimer(100);
-		_objectsState[66] = 0;
-		PART_23_HELPER_1(1);
+		return;
 	}
+	const int offset = 23901;
+	for (int i = 1; i <= 2; ++i) {
+		for (int j = 0; j <= 53; ++j) {
+			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + PART_23_ANIM_DATA_1[i] * 1620 + j * 30 + 0x895, 30);
+		}
+		if (i == 2) {
+			playSound(14, 1);
+		}
+		if (i < 2) {
+			waitForTimer(100);
+		}
+	}
+	_objectsState[66] = 0;
+	PART_23_HELPER_1(1);
 }
 
 void IgorEngine::PART_23_UPDATE_ROOM_BACKGROUND() {
