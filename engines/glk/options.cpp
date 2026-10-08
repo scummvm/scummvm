@@ -35,6 +35,7 @@ GlkOptionsState::GlkOptionsState(InterpreterType interpreterType,
 		_storedPreferences = *stored;
 	_draftPreferences = _storedPreferences;
 	_applicationPreferences = *ConfMan.getDomain(Common::ConfigManager::kApplicationDomain);
+	_storedApplication = _applicationPreferences;
 }
 
 GlkPreferences GlkOptionsState::preferences(bool inherited) const {
@@ -174,12 +175,19 @@ static bool applyPreferenceDelta(const Common::ConfigManager::Domain &stored,
 	return changed;
 }
 
+bool GlkOptionsState::hasGlobalChanges() const {
+	return applyPreferenceDelta(_storedApplication, _applicationPreferences, nullptr);
+}
+
 bool GlkOptionsState::apply() {
 	Common::ConfigManager::Domain *target = ConfMan.getDomain(_domain);
 	if (!target || !ConfMan.hasGameDomain(_domain))
 		return false;
 	bool changed = applyPreferenceDelta(_storedPreferences, _draftPreferences, target);
+	changed = applyPreferenceDelta(_storedApplication, _applicationPreferences,
+		ConfMan.getDomain(Common::ConfigManager::kApplicationDomain)) || changed;
 	_storedPreferences = _draftPreferences;
+	_storedApplication = _applicationPreferences;
 	_editedPreferences.clear();
 	return changed;
 }
@@ -205,6 +213,82 @@ static bool setStyleColorPreference(Common::ConfigManager::Domain &domain,
 	domain.setVal(marker, "true");
 	if (!domain.contains(otherMarker))
 		domain.setVal(otherMarker, otherEnabled ? "true" : "false");
+	return true;
+}
+
+bool GlkOptionsState::stageGlobalPreferences(Common::String &invalidKey) {
+	Common::ConfigManager::Domain application(_applicationPreferences);
+	invalidKey.clear();
+	for (Common::ConfigManager::Domain::const_iterator it = _draftPreferences.begin();
+			it != _draftPreferences.end(); ++it) {
+		const GlkOptionContract *contract = findGlkOptionContract(it->_key);
+		if (!contract || Common::String(contract->key).hasSuffix("*") ||
+				it->_key == "windowcolor_override" || it->_key == "bordercolor_override")
+			continue;
+		if (!GlkPreferences::isValidStoredValue(it->_key, it->_value)) {
+			invalidKey = it->_key;
+			return false;
+		}
+		if (!application.contains(it->_key) ||
+				!GlkPreferences::equal(it->_key, it->_value, application.getVal(it->_key)))
+			application.setVal(it->_key, it->_value);
+	}
+	for (int grid = 0; grid < 2; ++grid) {
+		for (int style = 0; style < style_NUMSTYLES; ++style) {
+			const Common::String fontKey = Common::String::format("%cfont_%d", grid ? 'g' : 't', style);
+			FACES font;
+			if (_draftPreferences.contains(fontKey)) {
+				const Common::String value = _draftPreferences.getVal(fontKey);
+				if (!GlkPreferences::parseFont(value, font) || (grid && font >= PROPR)) {
+					invalidKey = fontKey;
+					return false;
+				}
+				if (!application.contains(fontKey) || !GlkPreferences::equal(fontKey, value, application.getVal(fontKey)))
+					application.setVal(fontKey, value);
+			}
+			const Common::String key = Common::String::format("%ccolor_%d", grid ? 'g' : 't', style);
+			for (int property = 0; property < 2; ++property) {
+				const bool foreground = property == 0;
+				const Common::String marker = key + (foreground ? "_fg_override" : "_bg_override");
+				bool enabled = true;
+				if (_draftPreferences.contains(marker) &&
+						!GlkPreferences::parseBool(_draftPreferences.getVal(marker), enabled)) {
+					invalidKey = marker;
+					return false;
+				}
+				if (!_draftPreferences.contains(key) || !enabled)
+					continue;
+				const Common::String pair = _draftPreferences.getVal(key);
+				Common::String color;
+				if (pair.size() != 13 || pair[6] != ',' ||
+						!parseColor(pair.substr(foreground ? 0 : 7, 6), color)) {
+					invalidKey = key;
+					return false;
+				}
+				const GlkPreferences global(nullptr, false, &application);
+				Common::String current;
+				if (global.styleColor(grid, style, foreground, current) == kGlkInterpreterDefault || current != color)
+					setStyleColorPreference(application, key, foreground, pair.substr(foreground ? 0 : 7, 6));
+			}
+		}
+	}
+	_applicationPreferences = application;
+	// Only edited properties may stop pinning this target to their old values.
+	const Common::ConfigManager::Domain edits(_editedPreferences);
+	for (Common::ConfigManager::Domain::const_iterator it = edits.begin(); it != edits.end(); ++it) {
+		if (!it->_key.hasSuffix("_override"))
+			commitString(it->_key, it->_value);
+	}
+	for (int grid = 0; grid < 2; ++grid) {
+		for (int style = 0; style < style_NUMSTYLES; ++style) {
+			for (int property = 0; property < 2; ++property) {
+				const Common::String marker = Common::String::format("%ccolor_%d_%s_override",
+					grid ? 'g' : 't', style, property == 0 ? "fg" : "bg");
+				if (edits.contains(marker))
+					commitStyleColor(grid, style, property == 0, edits.getVal(marker));
+			}
+		}
+	}
 	return true;
 }
 

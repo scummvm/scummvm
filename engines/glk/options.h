@@ -47,6 +47,7 @@ private:
 	Common::ConfigManager::Domain _storedPreferences;
 	Common::ConfigManager::Domain _draftPreferences;
 	Common::ConfigManager::Domain _applicationPreferences;
+	Common::ConfigManager::Domain _storedApplication;
 	Common::ConfigManager::Domain _editedPreferences;
 	Conf _defaults;
 	Conf _resolved;
@@ -73,6 +74,8 @@ public:
 	bool getBool(const Common::String &key, bool fallback) const;
 	FACES getFont(const Common::String &key, FACES fallback) const;
 	bool apply();
+	bool stageGlobalPreferences(Common::String &invalidKey);
+	bool hasGlobalChanges() const;
 
 	Common::String getStyleForeground(bool grid, int style) const;
 	Common::String getStyleBackground(bool grid, int style) const;
