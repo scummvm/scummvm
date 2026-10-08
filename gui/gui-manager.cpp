@@ -119,6 +119,13 @@ void GuiManager::initIconsSet() {
 #endif
 }
 
+void GuiManager::clearIconsSet() {
+	Common::StackLock lock(_iconsMutex);
+
+	_iconsSet.clear();
+	_iconsSetChanged = true;
+}
+
 void GuiManager::computeScaleFactor() {
 	const Common::Rect safeArea = g_system->getSafeOverlayArea();
 	const uint16 w = safeArea.width();
