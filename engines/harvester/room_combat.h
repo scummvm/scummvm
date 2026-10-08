@@ -116,6 +116,24 @@ struct RoomNpcCombatState {
 	int deathDamageType = 0;
 };
 
+class RoomCombat {
+public:
+	Common::Array<RoomMonsterCombatState> &getMonsterCombatStates() { return _monsterCombatStates; }
+	Common::Array<RoomNpcCombatState> &getNpcCombatStates() { return _npcCombatStates; }
+
+	void initializeCombatStates(const RoomSetupState &state);
+	void resizeCombatStates(const RoomSetupState &state);
+	// Keep prepared state separate until scene-entity mutations succeed.
+	Common::Array<RoomMonsterCombatState> prepareMonsterCombatStatesForSceneChange(
+		const Common::Array<MonsterRecord> &previousMonsters, const Common::Array<MonsterRecord> &updatedMonsters) const;
+	void commitMonsterCombatStatesForSceneChange(Common::Array<RoomMonsterCombatState> &&states);
+	void resetForSceneRefresh(const RoomSetupState &state);
+
+private:
+	Common::Array<RoomMonsterCombatState> _monsterCombatStates;
+	Common::Array<RoomNpcCombatState> _npcCombatStates;
+};
+
 struct RoomHitEffectState {
 	Common::String entityName;
 	Common::String followTargetName;
@@ -174,6 +192,7 @@ struct ScopedDeferredLiveNpcDeathTransitions {
 	Script *_script;
 };
 
+bool sameMonsterEntityState(const MonsterRecord &lhs, const MonsterRecord &rhs);
 bool shouldRetainNpcDeathEntityInCurrentRoom(const NpcRecord &npc);
 bool isRetainedCurrentRoomNpcDeathRecord(const NpcRecord &npc);
 bool resolveCombatLoadoutHudInfo(int loadout, CombatLoadoutHudInfo &info);

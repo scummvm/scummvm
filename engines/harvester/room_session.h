@@ -48,7 +48,7 @@ public:
 		InventorySystem &inventory);
 
 	RoomPlayerState &getPlayerState() { return _playerState; }
-	Common::Array<RoomMonsterCombatState> &getMonsterCombatStates() { return _monsterCombatStates; }
+	RoomCombat &getCombat() { return _combat; }
 	RoomSceneRuntime &getSceneRuntime() { return _sceneRuntime; }
 	RoomCombatEffects &getCombatEffects() { return _combatEffects; }
 	RoomIdleAnimationState &getIdleState() { return _idleState; }
@@ -73,7 +73,7 @@ private:
 	InventorySystem &_inventory;
 	RoomSceneRuntime _sceneRuntime;
 	RoomPlayerState _playerState;
-	Common::Array<RoomMonsterCombatState> _monsterCombatStates;
+	RoomCombat _combat;
 	RoomCombatEffects _combatEffects;
 	RoomIdleAnimationState _idleState;
 	RoomMovementInputState _movementInput;

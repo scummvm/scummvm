@@ -488,6 +488,65 @@ int resolveMonsterAttackContactFrameOffset(const MonsterRecord &monster) {
 		: kDefaultMonsterAttackContactFrameOffset;
 }
 
+bool sameMonsterEntityState(const MonsterRecord &lhs, const MonsterRecord &rhs) {
+	return lhs.posX == rhs.posX &&
+		lhs.posY == rhs.posY &&
+		lhs.posZ == rhs.posZ &&
+		lhs.facing == rhs.facing &&
+		lhs.active == rhs.active &&
+		lhs.visible == rhs.visible &&
+		lhs.runtimeSpawned == rhs.runtimeSpawned &&
+		lhs.runtimeState == rhs.runtimeState &&
+		lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
+}
+
+void RoomCombat::initializeCombatStates(const RoomSetupState &state) {
+	_monsterCombatStates.resize(state.roomMonsters.size());
+	_npcCombatStates.resize(state.roomNpcs.size());
+	debugC(1, kDebugCombat, "Harvester: initialized room combat states monsters=%u npcs=%u",
+		_monsterCombatStates.size(), _npcCombatStates.size());
+}
+
+void RoomCombat::resizeCombatStates(const RoomSetupState &state) {
+	if (_npcCombatStates.size() != state.roomNpcs.size())
+		_npcCombatStates.resize(state.roomNpcs.size());
+	if (_monsterCombatStates.size() != state.roomMonsters.size())
+		_monsterCombatStates.resize(state.roomMonsters.size());
+}
+
+Common::Array<RoomMonsterCombatState> RoomCombat::prepareMonsterCombatStatesForSceneChange(
+		const Common::Array<MonsterRecord> &previousMonsters, const Common::Array<MonsterRecord> &updatedMonsters) const {
+	Common::Array<RoomMonsterCombatState> updatedMonsterCombatStates;
+	updatedMonsterCombatStates.resize(updatedMonsters.size());
+	for (uint i = 0; i < updatedMonsters.size(); ++i) {
+		const MonsterRecord &updatedMonster = updatedMonsters[i];
+		for (uint j = 0; j < previousMonsters.size() &&
+				j < _monsterCombatStates.size(); ++j) {
+			const MonsterRecord &previousMonster = previousMonsters[j];
+			if (!previousMonster.monsterName.equalsIgnoreCase(updatedMonster.monsterName))
+				continue;
+			if (sameMonsterEntityState(previousMonster, updatedMonster))
+				updatedMonsterCombatStates[i] = _monsterCombatStates[j];
+			break;
+		}
+	}
+
+	return updatedMonsterCombatStates;
+}
+
+void RoomCombat::commitMonsterCombatStatesForSceneChange(Common::Array<RoomMonsterCombatState> &&states) {
+	_monsterCombatStates = Common::move(states);
+	debugC(2, kDebugCombat, "Harvester: committed room monster combat states count=%u", _monsterCombatStates.size());
+}
+
+void RoomCombat::resetForSceneRefresh(const RoomSetupState &state) {
+	// NPC death state survives refresh and is resized by index at the next combat update.
+	_monsterCombatStates.clear();
+	_monsterCombatStates.resize(state.roomMonsters.size());
+	debugC(2, kDebugCombat, "Harvester: reset room monster combat states count=%u retained_npcs=%u",
+		_monsterCombatStates.size(), _npcCombatStates.size());
+}
+
 void clearRoomMonsterCombatState(RoomMonsterCombatState &combatState) {
 	combatState = RoomMonsterCombatState();
 }

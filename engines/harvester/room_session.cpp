@@ -95,18 +95,6 @@ static bool isQueuedLiveNpcDeathMutation(const NpcRecord &lhs, const NpcRecord &
 		lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
 }
 
-static bool sameMonsterEntityState(const MonsterRecord &lhs, const MonsterRecord &rhs) {
-	return lhs.posX == rhs.posX &&
-		lhs.posY == rhs.posY &&
-		lhs.posZ == rhs.posZ &&
-		lhs.facing == rhs.facing &&
-		lhs.active == rhs.active &&
-		lhs.visible == rhs.visible &&
-		lhs.runtimeSpawned == rhs.runtimeSpawned &&
-		lhs.runtimeState == rhs.runtimeState &&
-		lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
-}
-
 static bool sameSceneObjectState(const ObjectRecord &lhs, const ObjectRecord &rhs) {
 	return lhs.currentX == rhs.currentX &&
 		lhs.currentY == rhs.currentY &&
@@ -230,20 +218,8 @@ bool RoomSession::applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteSt
 	RoomSceneResources updatedScene;
 	if (!_sceneRuntime.loadSceneResources(updatedState, updatedScene))
 		return false;
-	Common::Array<RoomMonsterCombatState> updatedMonsterCombatStates;
-	updatedMonsterCombatStates.resize(updatedState.roomMonsters.size());
-	for (uint i = 0; i < updatedState.roomMonsters.size(); ++i) {
-		const MonsterRecord &updatedMonster = updatedState.roomMonsters[i];
-		for (uint j = 0; j < _scene.state.roomMonsters.size() &&
-				j < _monsterCombatStates.size(); ++j) {
-			const MonsterRecord &previousMonster = _scene.state.roomMonsters[j];
-			if (!previousMonster.monsterName.equalsIgnoreCase(updatedMonster.monsterName))
-				continue;
-			if (sameMonsterEntityState(previousMonster, updatedMonster))
-				updatedMonsterCombatStates[i] = _monsterCombatStates[j];
-			break;
-		}
-	}
+	Common::Array<RoomMonsterCombatState> updatedMonsterCombatStates =
+		_combat.prepareMonsterCombatStatesForSceneChange(_scene.state.roomMonsters, updatedState.roomMonsters);
 
 	for (const ObjectRecord &object : _scene.sceneObjects) {
 		if (!findSceneObjectByName(updatedScene.sceneObjects, object.objectName))
@@ -444,7 +420,7 @@ bool RoomSession::applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteSt
 	}
 
 	_scene.state = updatedState;
-	_monsterCombatStates = Common::move(updatedMonsterCombatStates);
+	_combat.commitMonsterCombatStatesForSceneChange(Common::move(updatedMonsterCombatStates));
 	_scene.sceneObjects = updatedScene.sceneObjects;
 	_scene.sceneAnimations = updatedScene.sceneAnimations;
 	_scene.sceneRegions = updatedScene.sceneRegions;
@@ -525,8 +501,7 @@ bool RoomSession::refreshCurrentScene(bool preservePlayerPlacement) {
 	_playerState.hitKnockbackDecayStep = 0;
 	_playerState.combatLoadout =
 		_engine.getScript() ? _engine.getScript()->getPlayerCombatLoadout() : 0;
-	_monsterCombatStates.clear();
-	_monsterCombatStates.resize(_scene.state.roomMonsters.size());
+	_combat.resetForSceneRefresh(_scene.state);
 	_pendingRegionName.clear();
 	resetIdleState();
 	_flow.resetCursorAnimationSequence();

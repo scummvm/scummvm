@@ -432,10 +432,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			_engine.getScript() ? _engine.getScript()->getPlayerCombatLoadout() : 0;
 		playerState.turnActive = false;
 		playerState.turnTargetFacing = -1;
-		Common::Array<RoomMonsterCombatState> &monsterCombatStates = session.getMonsterCombatStates();
-		monsterCombatStates.resize(scene.state.roomMonsters.size());
-		Common::Array<RoomNpcCombatState> npcCombatStates;
-		npcCombatStates.resize(scene.state.roomNpcs.size());
+		RoomCombat &combat = session.getCombat();
+		combat.initializeCombatStates(scene.state);
+		Common::Array<RoomMonsterCombatState> &monsterCombatStates = combat.getMonsterCombatStates();
+		Common::Array<RoomNpcCombatState> &npcCombatStates = combat.getNpcCombatStates();
 		RoomSceneRuntime &sceneRuntime = session.getSceneRuntime();
 		RoomCombatEffects &combatEffects = session.getCombatEffects();
 		ResolvedText inspectText;
@@ -1925,10 +1925,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			scene.state.roomZVelocityStep > 0.0f ? scene.state.roomZVelocityStep : 1.0f));
 		bool playerAlive = script.getPlayerCurrentHitPoints() > 0;
 
-		if (npcCombatStates.size() != scene.state.roomNpcs.size())
-			npcCombatStates.resize(scene.state.roomNpcs.size());
-		if (monsterCombatStates.size() != scene.state.roomMonsters.size())
-			monsterCombatStates.resize(scene.state.roomMonsters.size());
+		combat.resizeCombatStates(scene.state);
 
 		for (uint i = 0; i < scene.state.roomNpcs.size(); ++i) {
 			NpcRecord &npc = scene.state.roomNpcs[i];
