@@ -38,14 +38,35 @@ namespace Hopkins {
 
 namespace {
 
-static const int kMapButtonLeft = 244;
-static const int kMapButtonTop = 182;
-static const int kMapButtonRight = 279;
-static const int kMapButtonBottom = 197;
-static const int kAutoplayButtonLeft = 282;
-static const int kAutoplayButtonTop = 182;
-static const int kAutoplayButtonRight = 317;
-static const int kAutoplayButtonBottom = 197;
+struct EnhancementControlDefinition {
+	WBASEEnhancementControl control;
+	int left;
+	int top;
+	int right;
+	int bottom;
+};
+
+static const EnhancementControlDefinition kEnhancementControls[] = {
+	{ kWBASEEnhancementControlForward,         2, 182,  26, 198 },
+	{ kWBASEEnhancementControlBackward,       28, 182,  52, 198 },
+	{ kWBASEEnhancementControlTurnLeft,       54, 182,  78, 198 },
+	{ kWBASEEnhancementControlTurnRight,      80, 182, 104, 198 },
+	{ kWBASEEnhancementControlFire,          110, 182, 146, 198 },
+	{ kWBASEEnhancementControlExit,          150, 182, 186, 198 },
+	{ kWBASEEnhancementControlEscape,        192, 182, 228, 198 },
+	{ kWBASEEnhancementControlNavigationMap, 244, 182, 280, 198 },
+	{ kWBASEEnhancementControlAutoplay,      282, 182, 318, 198 }
+};
+
+static const uint16 kTurnLeftGlyphRows[10] = {
+	0x040, 0x080, 0x100, 0x3ff, 0x101,
+	0x081, 0x041, 0x001, 0x001, 0x001
+};
+
+static const uint16 kTryExitGlyphRows[11] = {
+	0x1fc0, 0x1040, 0x1048, 0x1044, 0x1002, 0x13ff,
+	0x1002, 0x1044, 0x1048, 0x1040, 0x1fc0
+};
 
 static byte nearestPaletteColor(const byte *palette, int red, int green, int blue) {
 	int bestDistance = 0x7fffffff;
@@ -67,6 +88,17 @@ static byte nearestPaletteColor(const byte *palette, int red, int green, int blu
 static void drawPixel(byte *framebuffer, int x, int y, byte color) {
 	if (x >= 0 && x < kBaseFrameWidth && y >= 0 && y < kBaseFrameHeight)
 		framebuffer[y * kBaseFrameWidth + x] = color;
+}
+
+static void drawGlyphMask(byte *framebuffer, const uint16 *rows, int width, int height,
+		int x, int y, byte color, bool mirrorX) {
+	for (int row = 0; row < height; ++row) {
+		for (int column = 0; column < width; ++column) {
+			const int sourceColumn = mirrorX ? width - 1 - column : column;
+			if (rows[row] & (1U << (width - 1 - sourceColumn)))
+				drawPixel(framebuffer, x + column, y + row, color);
+		}
+	}
 }
 
 static void drawLine(byte *framebuffer, int x0, int y0, int x1, int y1, byte color) {
@@ -153,6 +185,56 @@ static void drawAutoplayButtonGlyph(byte *framebuffer, int left, int top, byte c
 	fillRect(framebuffer, lockX - 1, lockY + 3, lockX + 5, lockY + 8, color);
 }
 
+static void drawDirectionButtonGlyph(byte *framebuffer, const EnhancementControlDefinition &definition,
+		WBASEEnhancementControl control, byte color) {
+	const int centerX = (definition.left + definition.right - 1) / 2;
+	const int centerY = (definition.top + definition.bottom - 1) / 2;
+	if (control == kWBASEEnhancementControlForward || control == kWBASEEnhancementControlBackward) {
+		const int direction = control == kWBASEEnhancementControlForward ? -1 : 1;
+		drawLine(framebuffer, centerX, centerY - direction * 4,
+				centerX, centerY + direction * 4, color);
+		drawLine(framebuffer, centerX, centerY + direction * 4,
+				centerX - 3, centerY + direction, color);
+		drawLine(framebuffer, centerX, centerY + direction * 4,
+				centerX + 3, centerY + direction, color);
+		return;
+	}
+
+	drawGlyphMask(framebuffer, kTurnLeftGlyphRows, 10, 10,
+			definition.left + 7, definition.top + 3, color,
+			control == kWBASEEnhancementControlTurnRight);
+}
+
+static void drawFireButtonGlyph(byte *framebuffer, const EnhancementControlDefinition &definition,
+		byte color) {
+	const int centerX = (definition.left + definition.right - 1) / 2;
+	const int centerY = (definition.top + definition.bottom - 1) / 2;
+	drawLine(framebuffer, centerX - 5, centerY, centerX + 5, centerY, color);
+	drawLine(framebuffer, centerX, centerY - 5, centerX, centerY + 5, color);
+	drawLine(framebuffer, centerX - 3, centerY - 3, centerX + 3, centerY + 3, color);
+	drawLine(framebuffer, centerX - 3, centerY + 3, centerX + 3, centerY - 3, color);
+}
+
+static void drawExitButtonGlyph(Graphics::Surface &surface, byte *framebuffer,
+		const EnhancementControlDefinition &definition, const Graphics::Font &font, byte color) {
+	const Common::String label("Try");
+	const int gap = 2;
+	const int glyphWidth = 13;
+	const int glyphHeight = 11;
+	const int buttonWidth = definition.right - definition.left;
+	const int buttonHeight = definition.bottom - definition.top;
+	const int textWidth = font.getStringWidth(label);
+	const int groupWidth = textWidth + gap + glyphWidth;
+	const int groupLeft = definition.left + (buttonWidth - groupWidth) / 2;
+	const int textTop = definition.top + (buttonHeight - font.getFontHeight()) / 2;
+	const int glyphLeft = groupLeft + textWidth + gap;
+	const int glyphTop = definition.top + (buttonHeight - glyphHeight) / 2;
+
+	font.drawString(&surface, label, groupLeft, textTop, textWidth, color);
+	drawGlyphMask(framebuffer, kTryExitGlyphRows, glyphWidth, glyphHeight,
+			glyphLeft, glyphTop, color, false);
+}
+
 static void drawPlayerArrow(const BaseData &data, byte *framebuffer, int centerX, int centerY,
 		int angle, byte fillColor, byte outlineColor) {
 	const int32 directionX = data.cosQ16(angle);
@@ -210,7 +292,8 @@ static void drawGuardMarker(byte *framebuffer, int centerX, int centerY, byte co
 }
 
 static void drawOpaqueLegend(const BaseData &data, byte *framebuffer, byte backgroundColor,
-		byte textColor, byte playerColor, byte exitColor, byte guardColor, byte doorColor) {
+		byte textColor, byte playerColor, byte exitColor, byte guardColor, byte doorColor,
+		bool forcedAutoplay) {
 	Graphics::Surface surface;
 	surface.init(kBaseFrameWidth, kBaseFrameHeight, kBaseFrameWidth, framebuffer,
 			Graphics::PixelFormat::createFormatCLUT8());
@@ -239,9 +322,9 @@ static void drawOpaqueLegend(const BaseData &data, byte *framebuffer, byte backg
 		font->drawString(&surface, WBASEEnhancementsAutoplay::destinationMapLabel(index),
 				243, 51 + index * 15, 75, textColor);
 	}
-	font->drawString(&surface, _("A: autoplay"), 226, 151, 92, textColor,
-			Graphics::kTextAlignCenter);
-	font->drawString(&surface, _("M/Esc: close map"), 76, 183, 160, textColor,
+	const Common::String footer = forcedAutoplay ? _("M: close  A: autoplay  Esc: menu") :
+			_("M/Esc: close  A: autoplay");
+	font->drawString(&surface, footer, 0, 169, kBaseFrameWidth, textColor,
 			Graphics::kTextAlignCenter);
 }
 
@@ -299,7 +382,7 @@ static void drawMapMarkers(const BaseData &data, const BaseEngine &engine, byte 
 }
 
 static void renderNavigationMapOpaque(const BaseData &data, const BaseEngine &engine,
-		byte *framebuffer, const NavigationMapColors &colors) {
+		byte *framebuffer, const NavigationMapColors &colors, bool forcedAutoplay) {
 	Common::fill(framebuffer, framebuffer + kBaseFrameWidth * kBaseFrameHeight, colors.background);
 
 	static const int kMapScale = 2;
@@ -322,7 +405,7 @@ static void renderNavigationMapOpaque(const BaseData &data, const BaseEngine &en
 
 	drawMapMarkers(data, engine, framebuffer, kMapScale, mapLeft, mapTop, colors);
 	drawOpaqueLegend(data, framebuffer, colors.background, colors.highlight, colors.player,
-			colors.exit, colors.guard, colors.door);
+			colors.exit, colors.guard, colors.door, forcedAutoplay);
 }
 
 } // End of anonymous namespace
@@ -337,23 +420,35 @@ void WBASEEnhancements::renderNavigationMap(const BaseData &data, const BaseEngi
 		return;
 
 	const NavigationMapColors colors = navigationMapColors(data);
-	renderNavigationMapOpaque(data, engine, framebuffer, colors);
+	renderNavigationMapOpaque(data, engine, framebuffer, colors, _forcedAutoplay);
 }
 
 WBASEEnhancementControl WBASEEnhancements::controlAtPoint(int x, int y) const {
 	if (!controlsEnabled())
 		return kWBASEEnhancementControlNone;
-	if (x >= kMapButtonLeft && x <= kMapButtonRight &&
-			y >= kMapButtonTop && y <= kMapButtonBottom)
-		return kWBASEEnhancementControlNavigationMap;
-	if (x >= kAutoplayButtonLeft && x <= kAutoplayButtonRight &&
-			y >= kAutoplayButtonTop && y <= kAutoplayButtonBottom)
-		return kWBASEEnhancementControlAutoplay;
+	for (uint i = 0; i < ARRAYSIZE(kEnhancementControls); ++i) {
+		const EnhancementControlDefinition &definition = kEnhancementControls[i];
+		if (x >= definition.left && x < definition.right &&
+				y >= definition.top && y < definition.bottom)
+			return definition.control;
+	}
 	return kWBASEEnhancementControlNone;
 }
 
+bool WBASEEnhancements::controlEnabled(WBASEEnhancementControl control,
+		WBASEEnhancementPanel panel) const {
+	if (!controlsEnabled() || control == kWBASEEnhancementControlNone)
+		return false;
+	if (control == kWBASEEnhancementControlNavigationMap ||
+			control == kWBASEEnhancementControlAutoplay ||
+			control == kWBASEEnhancementControlEscape)
+		return true;
+	return panel == kWBASEEnhancementPanelNone && !_forcedAutoplay;
+}
+
 void WBASEEnhancements::renderControls(const BaseData &data, WBASEEnhancementPanel panel,
-		WBASEEnhancementControl hoveredControl, bool autoplayActive, byte *framebuffer) const {
+		WBASEEnhancementControl hoveredControl, uint32 pressedControls,
+		bool autoplayActive, byte *framebuffer) const {
 	if (!controlsEnabled() || !framebuffer)
 		return;
 
@@ -368,30 +463,63 @@ void WBASEEnhancements::renderControls(const BaseData &data, WBASEEnhancementPan
 	const byte background = nearestPaletteColor(palette, 0, 0, 0);
 	const byte idle = nearestPaletteColor(palette, 105, 105, 105);
 	const byte hover = nearestPaletteColor(palette, 255, 255, 255);
+	const byte pressed = nearestPaletteColor(palette, 255, 140, 0);
+	const byte disabled = nearestPaletteColor(palette, 55, 55, 55);
 	const byte mapActive = nearestPaletteColor(palette, 0, 220, 255);
 	const byte chooserActive = nearestPaletteColor(palette, 255, 220, 0);
 	const byte autoplayRunning = nearestPaletteColor(palette, 40, 255, 60);
 
-	const byte mapColor = panel == kWBASEEnhancementPanelNavigationMap ? mapActive : idle;
-	const byte autoplayColor = panel == kWBASEEnhancementPanelAutoplay ? chooserActive :
-			(autoplayActive ? autoplayRunning : idle);
-	const byte mapBorder = hoveredControl == kWBASEEnhancementControlNavigationMap ? hover : mapColor;
-	const byte autoplayBorder = hoveredControl == kWBASEEnhancementControlAutoplay ? hover : autoplayColor;
+	for (uint i = 0; i < ARRAYSIZE(kEnhancementControls); ++i) {
+		const EnhancementControlDefinition &definition = kEnhancementControls[i];
+		const bool enabled = controlEnabled(definition.control, panel);
+		byte color = enabled ? idle : disabled;
+		if (definition.control == kWBASEEnhancementControlNavigationMap &&
+				panel == kWBASEEnhancementPanelNavigationMap)
+			color = mapActive;
+		else if (definition.control == kWBASEEnhancementControlAutoplay)
+			color = panel == kWBASEEnhancementPanelAutoplay ? chooserActive :
+					(autoplayActive ? autoplayRunning : color);
+		if (enabled && (pressedControls & (1U << definition.control)))
+			color = pressed;
+		const byte border = enabled && hoveredControl == definition.control ? hover : color;
 
-	fillRect(framebuffer, kMapButtonLeft, kMapButtonTop, kMapButtonRight, kMapButtonBottom, background);
-	drawFrame(framebuffer, kMapButtonLeft, kMapButtonTop, kMapButtonRight, kMapButtonBottom, mapBorder);
-	drawMapButtonGlyph(framebuffer, kMapButtonLeft, kMapButtonTop, mapColor);
-	font->drawString(&surface, Common::String("M"), kMapButtonLeft + 22, kMapButtonTop + 4, 9, mapColor,
-			Graphics::kTextAlignCenter);
-
-	fillRect(framebuffer, kAutoplayButtonLeft, kAutoplayButtonTop,
-			kAutoplayButtonRight, kAutoplayButtonBottom, background);
-	drawFrame(framebuffer, kAutoplayButtonLeft, kAutoplayButtonTop,
-			kAutoplayButtonRight, kAutoplayButtonBottom, autoplayBorder);
-	drawAutoplayButtonGlyph(framebuffer, kAutoplayButtonLeft, kAutoplayButtonTop,
-			autoplayColor, _forcedAutoplay);
-	font->drawString(&surface, Common::String("A"), kAutoplayButtonLeft + 15, kAutoplayButtonTop + 4, 9,
-			autoplayColor, Graphics::kTextAlignCenter);
+		fillRect(framebuffer, definition.left, definition.top,
+				definition.right - 1, definition.bottom - 1, background);
+		drawFrame(framebuffer, definition.left, definition.top,
+				definition.right - 1, definition.bottom - 1, border);
+		switch (definition.control) {
+		case kWBASEEnhancementControlForward:
+		case kWBASEEnhancementControlBackward:
+		case kWBASEEnhancementControlTurnLeft:
+		case kWBASEEnhancementControlTurnRight:
+			drawDirectionButtonGlyph(framebuffer, definition, definition.control, color);
+			break;
+		case kWBASEEnhancementControlFire:
+			drawFireButtonGlyph(framebuffer, definition, color);
+			break;
+		case kWBASEEnhancementControlExit:
+			drawExitButtonGlyph(surface, framebuffer, definition, *font, color);
+			break;
+		case kWBASEEnhancementControlEscape:
+			font->drawString(&surface, Common::String("Esc"), definition.left + 2,
+					definition.top + 4, definition.right - definition.left - 4, color,
+					Graphics::kTextAlignCenter);
+			break;
+		case kWBASEEnhancementControlNavigationMap:
+			drawMapButtonGlyph(framebuffer, definition.left, definition.top, color);
+			font->drawString(&surface, Common::String("M"), definition.left + 22,
+					definition.top + 4, 9, color, Graphics::kTextAlignCenter);
+			break;
+		case kWBASEEnhancementControlAutoplay:
+			drawAutoplayButtonGlyph(framebuffer, definition.left, definition.top,
+					color, _forcedAutoplay);
+			font->drawString(&surface, Common::String("A"), definition.left + 15,
+					definition.top + 4, 9, color, Graphics::kTextAlignCenter);
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 } // End of namespace Hopkins

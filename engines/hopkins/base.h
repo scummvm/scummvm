@@ -83,8 +83,19 @@ private:
 	enum PendingGameplayRequestType {
 		kPendingGameplayExit
 	};
+	enum PendingGameplayRequestSource {
+		kPendingGameplayMapped,
+		kPendingGameplayPointer
+	};
+	enum PointerCapture {
+		kPointerCaptureNone,
+		kPointerCaptureIgnored,
+		kPointerCaptureControl,
+		kPointerCaptureChooser
+	};
 	struct PendingGameplayRequest {
 		PendingGameplayRequestType type;
+		PendingGameplayRequestSource source;
 		uint32 generation;
 	};
 
@@ -100,10 +111,15 @@ private:
 	void releaseEnhancementCursor();
 	void updateEnhancementCursor();
 	void resetEnhancementSession();
+	void clearLogicalGameplayInput();
 	void clearGameplayInput(bool disarm);
 	BaseInputState consumeGameplayInput();
 	void setMappedGameplayAction(uint32 action, bool pressed);
-	void queueGameplayRequest(PendingGameplayRequestType type);
+	void setPointerGameplayAction(uint32 action, bool pressed, bool cancelPulse = false);
+	void cancelAutoplayForManualInput();
+	void queueGameplayRequest(PendingGameplayRequestType type,
+			PendingGameplayRequestSource source = kPendingGameplayMapped);
+	void cancelPointerGameplayRequests();
 	bool updateEnhancementActionState(uint32 action, bool pressed);
 	void updateEnhancementInputArming(uint32 now);
 	void updateOverlayInputState();
@@ -112,7 +128,10 @@ private:
 	void closeNavigationMap();
 	void startSelectedAutoplay();
 	void updateEnhancementPointer(int x, int y);
-	bool handleEnhancementControlClick(int x, int y);
+	void beginPointerControl(WBASEEnhancementControl control);
+	void releasePointerCapture();
+	void updatePointerCapture(WBASEEnhancementControl control);
+	uint32 pressedEnhancementControls() const;
 	bool enhancementPanelVisible() const;
 	void pollInput();
 	void handleAction(uint32 action, bool pressed);
@@ -131,6 +150,8 @@ private:
 	Common::Array<byte> _framebuffer;
 	uint32 _wbaseMappedInputHolds;
 	uint32 _wbaseMappedInputPulses;
+	uint32 _wbasePointerInputHolds;
+	uint32 _wbasePointerInputPulses;
 	Common::Queue<PendingGameplayRequest> _wbasePendingGameplayRequests;
 	uint32 _wbaseInputGeneration;
 	bool _wbaseTextureTogglePending;
@@ -157,6 +178,9 @@ private:
 	bool _wbaseEnhancementCursorPushed;
 	bool _wbaseEnhancementCursorVisible;
 	bool _wbaseOverlayVisible;
+	bool _wbasePointerButtonDown;
+	PointerCapture _wbasePointerCapture;
+	WBASEEnhancementControl _wbasePointerCapturedControl;
 	bool _quitRequested;
 };
 
