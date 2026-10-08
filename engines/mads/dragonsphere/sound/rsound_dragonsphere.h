@@ -335,7 +335,7 @@ public:
  *     instead of Channel::enable().
  *   - Channel 6 (the boundary between the "lower" 1-5,9 group and
  *     "upper" 6,7,8 group) is conditionally included/excluded based on
- *     isSoundActive(loadData(0x1F4F)) in command1/command3, and based on
+ *     isSoundActive(0x1F4F) in command1/command3, and based on
  *     a direct _activeCount/_soundData check against the same offset in
  *     resetChannels6to8(). resetChannels1to5() here also always resets
  *     channel 6 in addition to 1-5,9 (seven channels total) - one more
