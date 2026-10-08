@@ -290,6 +290,7 @@ void IgorEngine::PART_24_HELPER_9() {
 }
 
 void IgorEngine::PART_24() {
+	playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeCorridorSharonMichael, IMG_CollegeCorridorSharonMichael, BOX_CollegeCorridorSharonMichael, MSK_CollegeCorridorSharonMichael, TXT_CollegeCorridorSharonMichael);
 	static const int anm[] = { FRM_CollegeCorridorSharonMichael1, FRM_CollegeCorridorSharonMichael2, FRM_CollegeCorridorSharonMichael3, FRM_CollegeCorridorSharonMichael4, 0 };

@@ -136,6 +136,7 @@ void IgorEngine::PART_35_APPLY_OBJECT_STATE(int num) {
 }
 
 void IgorEngine::PART_35() {
+	playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_ParkRight);
 	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park); // left panel

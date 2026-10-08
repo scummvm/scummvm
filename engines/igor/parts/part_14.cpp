@@ -347,7 +347,6 @@ void IgorEngine::PART_14_HELPER_3() {
 }
 
 void IgorEngine::PART_14_HELPER_4() {
-	playMusic(4);
 	PART_14_HELPER_1(255);
 	for (int i = 192 * 3; i <= 207 * 3; ++i) {
 		if (_paletteBuffer[i] > 5) {
@@ -555,6 +554,7 @@ void IgorEngine::PART_14_PUSH_STONE(int screenOffset, int w, int h, int animOffs
 }
 
 void IgorEngine::PART_14() {
+	playMusic(3);
 	_gameState.enableLight = 1;
 	loadResourceData__ROOM_ChurchPuzzle();
 	loadResourceData__ANIM_ChurchPuzzle();

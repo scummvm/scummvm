@@ -127,6 +127,7 @@ void IgorEngine::PART_05_HELPER_6_walkIgorToScene() {
 }
 
 void IgorEngine::PART_05() {
+	playMusic(10);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
 	SET_PAL_240_48_1();

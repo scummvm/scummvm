@@ -49,6 +49,7 @@ void IgorEngine::PART_MARGARET_ROOM_CUTSCENE_UPDATE_DIALOGUE_MARGARET(int action
 }
 
 void IgorEngine::PART_MARGARET_ROOM_CUTSCENE() {
+	playMusic(8);
 	_gameState.enableLight = 1;
 	VAR_MARGARET_ROOM_ANIM_COUNTER = _objectsState[110] + 1;
 	if (VAR_MARGARET_ROOM_ANIM_COUNTER == 9) {

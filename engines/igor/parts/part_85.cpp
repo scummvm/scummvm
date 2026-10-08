@@ -46,7 +46,7 @@ void IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action) {
 void IgorEngine::PART_85() {
 	if(_game.flags & kFlagFloppy) {
 		playMusic(2);
-	} else playMusic(11);
+	} else playMusic(10);
 	// loads part5 room into memory
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
 	// copies current screenLayer1 into screenLayer2 to hold a copy

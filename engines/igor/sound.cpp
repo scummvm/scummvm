@@ -29,18 +29,21 @@ namespace Igor {
 void IgorEngine::playMusic(int num) {
     debugC(9, kDebugEngine, "playMusic() %d", num);
 	if (_game.flags & kFlagFloppy) {
-		static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
-		assert(num < ARRAYSIZE(cmf) && cmf[num] != 0);
-		_gameState.musicNum = num;
-		_gameState.musicSequenceIndex = 1;
-		// startMusic(cmf[num]);
+		// play only if the requested track is not already playing
+		if (_gameState.musicNum != num) {
+			_gameState.musicNum = num;
+			_gameState.musicSequenceIndex = 1;
+			// TODO: the track number -> CMF file mapping is not known yet
+			// startMusic(...);
+		}
 	} else {
 		// play only if the requested track is not already playing
 		if(_gameState.musicNum != num) {
 			_gameState.musicNum = num;
 			_gameState.musicSequenceIndex = 1;
-			// g_system->getAudioCDManager()->stop();
-			// g_system->getAudioCDManager()->play(num, -1, 0, 0);
+			g_system->getAudioCDManager()->stop();
+			// the first CD track is the data track: music number N is CD track N + 1
+			g_system->getAudioCDManager()->play(num + 1, -1, 0, 0);
 		}
 	}
 }

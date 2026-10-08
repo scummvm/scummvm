@@ -141,6 +141,7 @@ void IgorEngine::PART_36_HELPER_4(int frame) {
 }
 
 void IgorEngine::PART_36() {
+	playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_ChemistryClassroom, IMG_ChemistryClassroom, BOX_ChemistryClassroom, MSK_ChemistryClassroom, TXT_ChemistryClassroom);
 	static const int anm[] = { FRM_ChemistryClassroom1, FRM_ChemistryClassroom2, 0 };

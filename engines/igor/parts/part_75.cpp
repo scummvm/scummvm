@@ -49,6 +49,7 @@ void IgorEngine::PART_75_HELPER_1(int frame) {
 }
 
 void IgorEngine::PART_75() {
+	playMusic(8);
 	PART_MEANWHILE();
 	_gameState.enableLight = 1;
 	// this cutscene draws its dialogue text with the last palette entry and index 0 for

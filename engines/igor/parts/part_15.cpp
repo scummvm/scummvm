@@ -475,6 +475,7 @@ void IgorEngine::PART_15_HELPER_9(int frame) {
 }
 
 void IgorEngine::PART_15() {
+	playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_TobiasOffice, IMG_TobiasOffice, BOX_TobiasOffice, MSK_TobiasOffice, TXT_TobiasOffice);
 	static const int anm[] = { ANM_TobiasOffice1, AOF_TobiasOffice1, ANM_TobiasOffice2, AOF_TobiasOffice2, 0 };

@@ -267,6 +267,7 @@ void IgorEngine::PART_19_HELPER_7(int frame) {
 }
 
 void IgorEngine::PART_19() {
+	playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_WomenToilets, IMG_WomenToilets, BOX_WomenToilets, MSK_WomenToilets, TXT_WomenToilets);
 	static const int anm[] = { FRM_WomenToilets1, FRM_WomenToilets2, FRM_WomenToilets3, FRM_WomenToilets4, FRM_WomenToilets5, 0 };

@@ -519,6 +519,7 @@ void IgorEngine::PART_34_UPDATE_ROOM_BACKGROUND() {
 }
 
 void IgorEngine::PART_34() {
+	playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_ParkLeft);
 	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight, TXT_ParkRight);

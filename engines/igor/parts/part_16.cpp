@@ -153,6 +153,7 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 		waitForTimer(15);
 	}
 	fadeOut(768);
+	playMusic(8);
 	_currentPart = 331;
 	PART_33();
 	memset(_currentPalette, 0, 768);
@@ -234,7 +235,6 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
 	_objectsState[53] = 1;
 	_objectsState[65] = 3;
-	playMusic(3);
 	_currentPart = 261;
 }
 
@@ -260,6 +260,7 @@ void IgorEngine::PART_16_HELPER_6(int frame) {
 }
 
 void IgorEngine::PART_16() {
+	playMusic(2);
 	_gameState.enableLight = 1;
 	loadResourceData__ROOM_Laboratory();
 	loadResourceData__ANIM_Laboratory();

@@ -255,6 +255,7 @@ void IgorEngine::PART_27_HELPER_5() {
 }
 
 void IgorEngine::PART_27() {
+	playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_CollegeLockers, IMG_CollegeLockers, BOX_CollegeLockers, MSK_CollegeLockers, TXT_CollegeLockers);
 	static const int anm[] = { FRM_CollegeLockers1, FRM_CollegeLockers2, FRM_CollegeLockers3, 0 };

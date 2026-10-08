@@ -64,13 +64,11 @@ void IgorEngine::PART_04_CLEAR_OBJECT_STATE_84(int num) {
 void IgorEngine::PART_04() {
 	if (_objectsState[106] == 1) {
 		_currentPart = 730;
-		playMusic(1);
 		return;
 	}
 	if (_objectsState[107] == 1) {
 		_objectsState[107] = 0;
 		_currentPart = 750;
-		playMusic(1);
 		return;
 	}
 	_gameState.enableLight = 1;
@@ -81,9 +79,7 @@ void IgorEngine::PART_04() {
 	PART_04_CLEAR_OBJECT_STATE_84(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
-	if (_gameState.musicNum != 2) {
-		playMusic(2);
-	}
+	playMusic(1);
 	if (!restoreRoomAfterLoad(false)) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);

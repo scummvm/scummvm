@@ -343,7 +343,6 @@ void IgorEngine::PART_33_HELPER_1(int num) {
 }
 
 void IgorEngine::PART_33_HELPER_2() {
-	playMusic(11);
 	memcpy(_screenLayer2, _screenVGA, 46080);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x5255) - 1, _screenVGA, true);
@@ -454,6 +453,9 @@ void IgorEngine::PART_33_HELPER_9() {
 }
 
 void IgorEngine::PART_33() {
+	if (_currentPart != 331) {
+		playMusic(2);
+	}
 	_gameState.enableLight = 1;
 	_gameState.unk10 = 1;
 	loadResourceData__ROOM_Library();

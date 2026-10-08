@@ -25,6 +25,10 @@ namespace Igor {
 void IgorEngine::PART_90() {
 	const char *str;
 
+	if (_currentPart == 900) {
+		playMusic(14);
+	}
+
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
 	switch (_currentPart) {

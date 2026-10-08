@@ -177,6 +177,7 @@ void IgorEngine::PART_10_ACTION_108_scrollLeft() {
 }
 
 void IgorEngine::PART_10() {
+	playMusic(1);
 	_gameState.enableLight = 1;
 
 	loadActionData(DAT_Decanato);

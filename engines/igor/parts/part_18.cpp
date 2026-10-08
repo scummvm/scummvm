@@ -171,6 +171,7 @@ void IgorEngine::PART_18_HELPER_2_walkIn() {
 }
 
 void IgorEngine::PART_18() {
+	playMusic(2);
 	_gameState.enableLight = 1;
 	loadResourceData__ROOM_MenToilets();
 	loadResourceData__ANIM_MenToilets();

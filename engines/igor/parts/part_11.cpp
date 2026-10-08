@@ -214,6 +214,7 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_11() {
+	playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_DecanatoPart11);
 	loadRoomData(PAL_DecanatoRight, IMG_DecanatoRight, BOX_DecanatoRight, MSK_DecanatoRight, TXT_DecanatoRight);

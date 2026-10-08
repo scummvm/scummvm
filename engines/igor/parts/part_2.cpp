@@ -361,6 +361,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_02() {
+	playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_StudentDormitoryAttic);
 	loadRoomData(PAL_StudentDormitoryAttic, IMG_StudentDormitoryAttic, BOX_StudentDormitoryAttic, MSK_StudentDormitoryAttic, TXT_StudentDormitoryAttic);

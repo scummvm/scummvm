@@ -413,7 +413,6 @@ void IgorEngine::PART_17_HELPER_5_changeZindexOfPath(int lum) {
 }
 
 void IgorEngine::PART_17_HELPER_6_walkFromCollege() {
-	playMusic(2);
 	PART_17_HELPER_1(255);
 	fadeIn(768);
 	_walkData[0].setPos(274, 68, 4, 1);
@@ -505,6 +504,7 @@ void IgorEngine::PART_17_HELPER_11_PhillipToIgor(int frame) {
 }
 
 void IgorEngine::PART_17() {
+	playMusic(1);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_OutsideCollege, IMG_OutsideCollege, BOX_OutsideCollege, MSK_OutsideCollege, TXT_OutsideCollege);
 	static const int anm[] = { FRM_OutsideCollege1, FRM_OutsideCollege2, FRM_OutsideCollege3, FRM_OutsideCollege4, FRM_OutsideCollege5, 0 };

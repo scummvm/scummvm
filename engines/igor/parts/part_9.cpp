@@ -319,6 +319,7 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_09() {
+	playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_AdministrationSecretaryRoom);
 	loadRoomData(PAL_AdministrationSecretaryRoom, IMG_AdministrationSecretaryRoom,BOX_AdministrationSecretaryRoom, MSK_AdministrationSecretaryRoom, TXT_AdministrationSecretaryRoom);

@@ -223,6 +223,7 @@ void IgorEngine::PART_07_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_07() {
+	playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_AdministrationCorridor);
 	loadRoomData(PAL_AdministrationCorridor, IMG_AdministrationCorridor,

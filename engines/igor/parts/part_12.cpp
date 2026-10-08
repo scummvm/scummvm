@@ -461,7 +461,6 @@ void IgorEngine::PART_12_HELPER_5() {
 }
 
 void IgorEngine::PART_12_HELPER_6() {
-	playMusic(2);
 	PART_12_HELPER_1(255);
 	_walkData[0].setPos(75, 89, 2, 0);
 	_walkData[0].setDefaultScale();
@@ -510,6 +509,9 @@ void IgorEngine::PART_12_HELPER_10(int frame) {
 }
 
 void IgorEngine::PART_12() {
+	if (_currentPart != 122) {
+		playMusic(1);
+	}
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_OutsideChurch, IMG_OutsideChurch, BOX_OutsideChurch, MSK_OutsideChurch, TXT_OutsideChurch);
 	static const int anm[] = { FRM_OutsideChurch1, FRM_OutsideChurch2, FRM_OutsideChurch3, FRM_OutsideChurch4, FRM_OutsideChurch5, FRM_OutsideChurch6, FRM_OutsideChurch7, FRM_OutsideChurch8, FRM_OutsideChurch9, FRM_OutsideChurch10, FRM_OutsideChurch11, FRM_OutsideChurch12, 0 };

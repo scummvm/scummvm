@@ -178,7 +178,6 @@ void IgorEngine::PART_13_HELPER_2() {
 }
 
 void IgorEngine::PART_13_HELPER_3() {
-	playMusic(4);
 	PART_13_HELPER_1(255);
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
@@ -205,6 +204,7 @@ void IgorEngine::PART_13_HELPER_3() {
 }
 
 void IgorEngine::PART_13() {
+	playMusic(3);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_InsideChurch, IMG_InsideChurch, BOX_InsideChurch, MSK_InsideChurch, TXT_InsideChurch);
 	loadActionData(DAT_InsideChurch);

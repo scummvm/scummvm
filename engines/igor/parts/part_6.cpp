@@ -314,6 +314,7 @@ void IgorEngine::PART_06_HELPER_15(int frame) {
 }
 
 void IgorEngine::PART_06() {
+	playMusic(10);
 	debug("Entering PART_06");
 	_gameState.enableLight = 1;
 

@@ -247,6 +247,7 @@ void IgorEngine::PART_26_HELPER_7(int frame) {
 }
 
 void IgorEngine::PART_26() {
+	playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_CollegeCorridorMissBarrymore, IMG_CollegeCorridorMissBarrymore, BOX_CollegeCorridorMissBarrymore, MSK_CollegeCorridorMissBarrymore, TXT_CollegeCorridorMissBarrymore);
 	static const int anm[] = { FRM_CollegeCorridorMissBarrymore1, FRM_CollegeCorridorMissBarrymore2, FRM_CollegeCorridorMissBarrymore3, 0 };

@@ -169,6 +169,7 @@ void IgorEngine::PART_22_ENTER() {
 }
 
 void IgorEngine::PART_22() {
+	playMusic(3);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_BellChurch, IMG_BellChurch, BOX_BellChurch, MSK_BellChurch, TXT_BellChurch);
 	SET_PAL_240_48_1();
