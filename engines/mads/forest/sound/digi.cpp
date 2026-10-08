@@ -46,7 +46,9 @@ DigiPlayer::DigiPlayer(Audio::Mixer *mixer) : _mixer(mixer) {
 }
 
 void DigiPlayer::play(const char *name, int slot) {
-	stop(slot);
+	// Stop any previous sound on the channel without firing any end trigger
+	stopChannel(slot, false);
+
 	DigiChannel &c = _channels[slot - 1];
 	Audio::AudioStream *audioStream;
 	Common::SeekableReadStream *src;
@@ -89,6 +91,10 @@ void DigiPlayer::play(const char *name, int slot) {
 }
 
 void DigiPlayer::stop(int slot) {
+	stopChannel(slot, true);
+}
+
+void DigiPlayer::stopChannel(int slot, bool signalEnd) {
 	assert(slot >= 1 && slot <= MAX_DIGI_CHANNELS);
 	DigiChannel &c = _channels[slot - 1];
 
@@ -96,7 +102,7 @@ void DigiPlayer::stop(int slot) {
 		_mixer->stopHandle(c._soundHandle);
 		c._isPlaying = false;
 
-		if (c._endTrigger) {
+		if (signalEnd && c._endTrigger) {
 			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			kernel_timing_trigger(1, c._triggerId);
 		}

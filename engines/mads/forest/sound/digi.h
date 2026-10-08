@@ -43,6 +43,8 @@ private:
 	DigiChannel _channels[MAX_DIGI_CHANNELS];
 	int _initialVolume = MAX_DIGI_VOLUME;
 
+	void stopChannel(int slot, bool signalEnd);
+
 public:
 	DigiPlayer(Audio::Mixer *mixer);
 
