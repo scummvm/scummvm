@@ -676,6 +676,7 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 		}
 
 #if defined(USE_IMGUI)
+		/* SDL 1.2 uses the generic event observer instead. */
 		ImGui_ImplSDL3_ProcessEvent(&ev);
 		ImGuiIO &io = ImGui::GetIO();
 		bool mouseEvent = ev.type == SDL_EVENT_MOUSE_MOTION || ev.type == SDL_EVENT_MOUSE_BUTTON_DOWN ||
