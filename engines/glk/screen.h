@@ -64,7 +64,6 @@ public:
 	 * Return the name for a given font Id
 	 */
 	static Common::String getFontName(FACES font);
-	static FACES getFontId(const Common::String &name);
 
 	/**
 	 * Load one bundled GLK font for an independently owned user.

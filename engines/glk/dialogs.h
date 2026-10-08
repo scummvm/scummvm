@@ -24,6 +24,7 @@
 
 #include "glk/glk.h"
 
+#include "common/array.h"
 #include "common/str.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
@@ -34,16 +35,23 @@ class PopUpWidget;
 class StaticTextWidget;
 class EditTextWidget;
 class CheckboxWidget;
-class SliderWidget;
+class ButtonWidget;
+class TabWidget;
 } // namespace GUI
 
 namespace Glk {
 
 class GlkEngine;
+class GlkOptionsState;
+class GlkColorSwatchWidget;
 
 class GlkOptionsWidget : public GUI::OptionsContainerWidget {
 
 	enum {
+		kOptionEditedCmd = 'GOED',
+		kStyleEditedCmd = 'GSED',
+		kInterpreterDefaultsCmd = 'GRID',
+		kSaveGlobalCmd = 'GGLB',
 		kTColorChangedCmd = 'TCLR',
 		kGColorChangedCmd = 'GCLR',
 		kWColorChangedCmd = 'WCLR',
@@ -58,42 +66,111 @@ class GlkOptionsWidget : public GUI::OptionsContainerWidget {
 		kCHexChangedCmd = 'CHEX',
 		kLHexChangedCmd = 'LHEX',
 		kMHexChangedCmd = 'MHEX',
-		kMonoSizeCmd = 'MSZC',
-		kPropSizeCmd = 'PSZC'
+		kRestoreDefaultsCmd = 'GRST',
+		kStyleSelectionCmd = 'GSSL',
+		kLayoutDependencyCmd = 'GLDP',
+		kPreviewCmd = 'GLKP',
+		kPreviewSettingsCmd = 'GPLD',
+		kResetStyleFontCmd = 'GRSF',
+		kResetStyleForegroundCmd = 'GRSG',
+		kResetStyleBackgroundCmd = 'GRSB',
+		kStyleForegroundHexCmd = 'GSFG',
+		kStyleBackgroundHexCmd = 'GSBG'
 	};
 
 public:
-	GlkOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+	GlkOptionsWidget(GuiObject *boss, const Common::String &name,
+		const Common::String &domain, InterpreterType interpreterType);
 	~GlkOptionsWidget() override;
 
 	// OptionsContainerWidget API
 	void load() override;
 	bool save() override;
+	bool validate() override;
+	bool handleOptionsKeyDown(Common::KeyState state) override;
+	void setHostContext(HostContext context) override;
+	void setDomain(const Common::String &domain) override;
 
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
-	void reflowLayout() override;
 
 private:
+	friend class GlkOptionsPageLayout;
+	friend class GlkOptionsTabWidget;
+
+	GlkOptionsState *_settings;
+	const Conf *_conf;
+	GUI::GuiObject *_currentBoss;
+	GUI::TabWidget *_tabs;
+	GUI::ButtonWidget *_preview;
+	GUI::ButtonWidget *_restoreDefaults;
+	GUI::ButtonWidget *_interpreterDefaults;
+	GUI::ButtonWidget *_saveGlobal;
+	HostContext _hostContext;
+	bool _loading;
+	Common::ConfigManager::Domain _editedControls;
+	Common::Array<GUI::StaticTextWidget *> _optionLabels;
+	GUI::StaticTextWidget *createOptionLabel(const Common::String &name,
+		const Common::U32String &text, const Common::U32String &tooltip,
+		GUI::ThemeEngine::FontStyle font = GUI::ThemeEngine::kFontStyleBold);
+	GUI::StaticTextWidget *findOptionLabel(const Common::String &name) const;
+	struct ControlBinding {
+		Common::String key;
+		GUI::Widget *widget;
+		ControlBinding(const char *name, GUI::Widget *control) : key(name), widget(control) {}
+	};
+	enum ColorTarget {
+		kNormalProseForeground,
+		kNormalGridForeground,
+		kWindowBackground,
+		kDividerColor,
+		kCaretColor,
+		kLinkColor,
+		kMoreColor,
+		kColorTargetCount
+	};
+	struct ColorBinding {
+		ColorTarget target;
+		const char *prefix;
+		const char *key;
+		const char *legacyOverride;
+		GUI::PopUpWidget *popup;
+		GUI::EditTextWidget *hex;
+		GlkColorSwatchWidget *swatch;
+		uint32 popupCommand, hexCommand;
+		bool isNormalForeground() const {
+			return target == kNormalProseForeground || target == kNormalGridForeground;
+		}
+		bool allowsDefault() const { return !isNormalForeground(); }
+	};
+	// Widgets remain owned by their GUI containers.
+	ColorBinding _colors[kColorTargetCount];
+	void createColorBinding(ColorTarget target, const char *prefix,
+		const char *key, const char *legacyOverride, const Common::U32String &label,
+		const Common::U32String &tooltip, uint32 popupCommand, uint32 hexCommand);
+	void loadColor(const ColorBinding &color);
+	Common::Array<ControlBinding> _controls;
+	Common::ConfigManager::Domain _loadedControls;
+	void rememberControls();
+	void rememberControl(GUI::Widget *widget);
+	void refreshControl(GUI::Widget *widget);
+	void refreshControlValue(GUI::Widget *widget);
+	void updateActionState();
+	void focusControl(GUI::Widget *widget);
+	bool selectPage(int page, bool userRequested);
+	void reflowAfterPageChange(bool userRequested);
+	bool invalidControl(GUI::Widget *widget, bool reportError);
+	bool controlChanged(GUI::Widget *widget) const;
+	bool synchronizeDraft(bool reportError, GUI::Widget *only = nullptr);
+	bool synchronizePending(GlkOptionsState &pending, bool reportError, GUI::Widget *only);
+	bool synchronizeStyleEditor(GlkOptionsState &pending, bool reportError, GUI::Widget *only = nullptr);
+	void loadStyleEditor(GUI::Widget *only = nullptr);
+	void updateLayoutDependencies();
+	void updatePreviewAvailability();
 	// OptionsContainerWidget API
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
-	GUI::PopUpWidget *_tfontPopUps[style_NUMSTYLES];
-	GUI::PopUpWidget *_gfontPopUps[style_NUMSTYLES];
-	GUI::PopUpWidget *_tcolorPopUps[style_NUMSTYLES];
-	GUI::PopUpWidget *_gcolorPopUps[style_NUMSTYLES];
-	GUI::PopUpWidget *_wcolorPopUps[style_NUMSTYLES];
-	GUI::PopUpWidget *_bcolorPopUps[style_NUMSTYLES];
-	GUI::PopUpWidget *_ccolorPopUps[style_NUMSTYLES];
-	GUI::PopUpWidget *_lcolorPopUps[style_NUMSTYLES];
-	GUI::PopUpWidget *_mcolorPopUps[style_NUMSTYLES];
-	GUI::EditTextWidget *_manualTColorHexInput;
-	GUI::EditTextWidget *_manualGColorHexInput;
-	GUI::EditTextWidget *_manualWColorHexInput;
-	GUI::EditTextWidget *_manualBColorHexInput;
+	GUI::PopUpWidget *_tfontPopUp;
 	GUI::EditTextWidget *_wborderx;
 	GUI::EditTextWidget *_wbordery;
-	GUI::EditTextWidget *_manualCColorHexInput;
-	GUI::EditTextWidget *_manualLColorHexInput;
-	GUI::EditTextWidget *_manualMColorHexInput;
 	GUI::PopUpWidget *_linkStyle;
 	GUI::PopUpWidget *_caretShape;
 	GUI::EditTextWidget *_morePrompt;
@@ -117,23 +194,22 @@ private:
 	GUI::EditTextWidget *_tmarginy;
 	GUI::EditTextWidget *_leading;
 	GUI::EditTextWidget *_baseline;
-	GUI::SliderWidget *_monosize;
-	GUI::SliderWidget *_propsize;
-    GUI::StaticTextWidget *_monosizeVal;
-    GUI::StaticTextWidget *_propsizeVal;
+	GUI::EditTextWidget *_monosize;
+	GUI::EditTextWidget *_propsize;
 	GUI::PopUpWidget *_morealign;
 	GUI::PopUpWidget *_morefont;
-	GUI::StaticTextWidget *_fontHeadinglbl;
-	GUI::StaticTextWidget *_colorHeadinglbl;
-	GUI::StaticTextWidget *_borderHeadinglbl;
-	GUI::StaticTextWidget *_wmarginHeadinglbl;
-	GUI::StaticTextWidget *_tmarginHeadinglbl;
-	GUI::StaticTextWidget *_wpaddingHeadinglbl;
-	GUI::StaticTextWidget *_moreHeadinglbl;
-	GUI::StaticTextWidget *_typographyHeadinglbl;
-	GUI::StaticTextWidget *_userExperiencelbl;
-
-	void layoutHeadings();
+	GUI::PopUpWidget *_styleWindow;
+	GUI::PopUpWidget *_styleName;
+	GUI::PopUpWidget *_styleFont;
+	GUI::EditTextWidget *_styleForeground;
+	GUI::EditTextWidget *_styleBackground;
+	GlkColorSwatchWidget *_styleForegroundSwatch;
+	GlkColorSwatchWidget *_styleBackgroundSwatch;
+	GUI::ButtonWidget *_resetStyleFont;
+	GUI::ButtonWidget *_resetStyleForeground;
+	GUI::ButtonWidget *_resetStyleBackground;
+	bool _loadedStyleGrid;
+	int _loadedStyle;
 };
 } // namespace Glk
 

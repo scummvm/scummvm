@@ -79,7 +79,6 @@ Conf::Conf(InterpreterType interpType, bool installGlobal,
 		_wBorderX(0), _wBorderY(0), _tMarginX(7), _tMarginY(7), _gamma(1.0),
 		_borderColor(0), _borderSave(0),
 		_windowColor(parseColor(WHITE)), _windowSave(parseColor(WHITE)),
-		_windowColorOverride(false), _borderColorOverride(false),
 		_sound(true), _speak(false), _speakInput(false), _styleHint(1),
 		_scrollBg(parseColor(SCROLL_BG)), _scrollFg(parseColor(SCROLL_FG)),
 		_scrollWidth(0), _safeClicks(false) {

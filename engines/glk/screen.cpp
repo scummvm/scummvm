@@ -140,18 +140,6 @@ const Graphics::Font *Screen::loadFontFromArchive(FACES face,
 	return font;
 }
 
-FACES Screen::getFontId(const Common::String &name) {
-	if (name == "monor") return MONOR;
-	if (name == "monob") return MONOB;
-	if (name == "monoi") return MONOI;
-	if (name == "monoz") return MONOZ;
-	if (name == "propr") return PROPR;
-	if (name == "propb") return PROPB;
-	if (name == "propi") return PROPI;
-	if (name == "propz") return PROPZ;
-	return MONOR;
-}
-
 Common::String Screen::getFontName(FACES font) {
 	if (font == MONOR) return "monor";
 	if (font == MONOB) return "monob";
