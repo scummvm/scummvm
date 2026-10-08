@@ -204,7 +204,7 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 	loadActionData(DAT_DeanPepperOffice);
 	loadRoomData(PAL_DeanPepperOffice, IMG_DeanPepperOffice, BOX_DeanPepperOffice, MSK_DeanPepperOffice, TXT_DeanPepperOffice);
 	_roomDataOffsets = PART_08_ROOM_DATA_OFFSETS;
-	setRoomWalkBounds(0, 0, 319, 143);
+	setRoomClickFix(143, -1, 281, false); // cseg100:0657
 	PART_08_APPLY_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	SET_PAL_240_48_1();
@@ -501,7 +501,7 @@ void IgorEngine::PART_08() {
 	loadAnimData(anim);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_08_EXEC_ACTION);
 	_roomDataOffsets = PART_08_ROOM_DATA_OFFSETS;
-	setRoomWalkBounds(0, 0, 319, 143);
+	setRoomClickFix(143, -1, 281, false); // cseg100:0657
 	PART_08_APPLY_OBJECT_STATE(255);
 
 	memcpy(_screenVGA, _screenLayer1, 46080);
