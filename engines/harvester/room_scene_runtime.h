@@ -33,6 +33,9 @@ public:
 	RoomSceneRuntime(RoomSetupState &state, Script *script, ResourceManager *resources, EntityManager *entityManager);
 
 	bool loadSceneResources(const RoomSetupState &state, RoomSceneResources &scene) const;
+	void syncCurrentRoomRuntimeState(const Common::Array<RegionRecord> &sceneRegions);
+	void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
+		bool includeCurrentRoomTimers = false);
 	// Initial population skips failed spawns; in-place callers handle null actor results.
 	void populateRoomRegions();
 	void populateRoomObjects(const Common::Array<ObjectRecord> &drawableObjects);
@@ -50,6 +53,7 @@ public:
 	Entity *spawnSceneMonsterEntityFromRecord(const RoomSetupState &roomState, const MonsterRecord &monster);
 
 private:
+	bool isTimerMaterializedInCurrentRoom(const Common::String &timerName) const;
 	bool isInteractiveSceneHotspot(const ObjectRecord &object) const;
 	RuntimeEntityClass resolveSceneObjectClassLocal(const ObjectRecord &object, const Entity *entity) const;
 	static Common::Rect getSceneRegionBounds(const RegionRecord &region);

@@ -75,6 +75,108 @@ bool RoomSceneRuntime::loadSceneResources(const RoomSetupState &state, RoomScene
 	return _resources && loadRoomSceneResources(state, *_resources, scene);
 }
 
+void RoomSceneRuntime::syncCurrentRoomRuntimeState(const Common::Array<RegionRecord> &sceneRegions) {
+	Script *script = _script;
+	if (!script)
+		return;
+
+	debugC(3, kDebugRoom, "Harvester: syncing room runtime state room='%s' entities=%d",
+		_state.roomName.c_str(), _entityManager != nullptr);
+
+	for (const RegionRecord &baseRegion : script->getRegions()) {
+		if (!baseRegion.roomName.equalsIgnoreCase(_state.roomName))
+			continue;
+
+		const bool enabled =
+			findSceneRegionByName(sceneRegions, baseRegion.regionName) != nullptr;
+		(void)script->setRuntimeRegionEnabled(baseRegion.regionName, enabled);
+	}
+
+	if (_entityManager) {
+		for (AnimRecord &anim : _state.roomAnimations) {
+			Entity *entity = _entityManager->findSceneEntityByName(anim.animName);
+			if (!entity)
+				continue;
+			(void)script->syncRuntimeAnimState(anim.animName,
+				entity->isAnimationEnabled(), anim.visible, entity->getCurrentFrame());
+		}
+	}
+	for (const MonsterRecord &monster : _state.roomMonsters)
+		(void)script->syncRuntimeMonsterRecord(monster);
+	if (!_entityManager)
+		return;
+
+	for (const TimerRecord &baseTimer : script->getTimers()) {
+		Entity *entity = _entityManager->findSceneEntityByName(baseTimer.timerName);
+		if (!entity || entity->getClassId() != kRuntimeEntityClassTimer)
+			continue;
+
+		const TimerRecord *runtimeTimer = script->findRuntimeTimerRecord(baseTimer.timerName);
+		TimerRecord timer = runtimeTimer ? *runtimeTimer : baseTimer;
+		timer.currentValue = entity->getTimerCurrentValue();
+		timer.enabled = entity->isTimerEnabled();
+		timer.looping = entity->isTimerLooping();
+		timer.global = entity->isTimerGlobal();
+		(void)script->syncRuntimeTimerRecord(timer);
+	}
+}
+
+bool RoomSceneRuntime::isTimerMaterializedInCurrentRoom(const Common::String &timerName) const {
+	for (const TimerRecord &timer : _state.roomTimers) {
+		if (timer.timerName.equalsIgnoreCase(timerName))
+			return true;
+	}
+
+	return false;
+}
+
+void RoomSceneRuntime::syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
+		bool includeCurrentRoomTimers) {
+	Script *script = _script;
+	if (!script || !_entityManager || previousTimerRecords.empty())
+		return;
+
+	for (const TimerRecord &previousTimer : previousTimerRecords) {
+		const TimerRecord *runtimeTimer =
+			script->findRuntimeTimerRecord(previousTimer.timerName);
+		if (!runtimeTimer || !runtimeTimer->global ||
+				(!includeCurrentRoomTimers &&
+					isTimerMaterializedInCurrentRoom(runtimeTimer->timerName))) {
+			continue;
+		}
+
+		Entity *entity = _entityManager->findSceneEntityByName(runtimeTimer->timerName);
+		if (entity && entity->getClassId() != kRuntimeEntityClassTimer)
+			continue;
+
+		if (!entity) {
+			(void)script->syncRuntimeTimerRecord(previousTimer);
+			debugC(1, kDebugRoom,
+				"Harvester: global timer mutation ignored current_room='%s' timer='%s' owner_room='%s' reason='missing live timer entity'",
+				_state.roomName.c_str(), previousTimer.timerName.c_str(),
+				previousTimer.arg1.c_str());
+			continue;
+		}
+
+		if (entity->getTimerInitialValue() == runtimeTimer->initialValue &&
+				entity->isTimerEnabled() == runtimeTimer->enabled &&
+				entity->isTimerLooping() == runtimeTimer->looping &&
+				entity->isTimerGlobal() == runtimeTimer->global) {
+			continue;
+		}
+
+		_entityManager->configureSceneTimerEntity(*entity,
+			runtimeTimer->initialValue, runtimeTimer->currentValue,
+			runtimeTimer->enabled, runtimeTimer->looping, runtimeTimer->global);
+		debugC(1, kDebugRoom,
+			"Harvester: global timer synced current_room='%s' timer='%s' owner_room='%s' current=%d initial=%d enabled=%d loop=%d",
+			_state.roomName.c_str(), runtimeTimer->timerName.c_str(),
+			runtimeTimer->arg1.c_str(), runtimeTimer->currentValue,
+			runtimeTimer->initialValue, runtimeTimer->enabled,
+			runtimeTimer->looping);
+	}
+}
+
 void RoomSceneRuntime::removeSceneEntityByName(const Common::String &entityName) {
 	if (!_entityManager)
 		return;

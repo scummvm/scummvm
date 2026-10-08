@@ -691,7 +691,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					(void)_engine.playMusic(exitInteraction.musicPath);
 				flow.executeStartupAudioCommands(exitInteraction.audioCommands);
 				if (exitInteraction.mutatedRuntimeState)
-					session.syncGlobalTimerEntities(exitInteraction.previousTimerRecords, true);
+					sceneRuntime.syncGlobalTimerEntities(exitInteraction.previousTimerRecords, true);
 
 				if (!exitInteraction.cutscenePath.empty()) {
 					FstPlayer fstPlayer(_engine);
@@ -950,7 +950,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords) override {
-				session.syncGlobalTimerEntities(previousTimerRecords);
+				session.getSceneRuntime().syncGlobalTimerEntities(previousTimerRecords);
 			}
 
 			bool captureDialogueBackdrop(IndexedBitmap &dialogueBackdrop) override {
@@ -1018,7 +1018,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			// Native room_setup applies entry-time state changes before the first visible room frame.
 			if (roomEntryInteraction.mutatedRuntimeState) {
-				session.syncGlobalTimerEntities(roomEntryInteraction.previousTimerRecords);
+				sceneRuntime.syncGlobalTimerEntities(roomEntryInteraction.previousTimerRecords);
 				if (!session.applyCurrentRoomRuntimeMutationsInPlace(false) &&
 						!session.refreshCurrentScene(true)) {
 					return Common::kReadingFailed;
@@ -3522,7 +3522,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (entityManager) {
 			Common::Array<Common::String> expiredTimerNames;
 			if (entityManager->takeExpiredTimerNames(expiredTimerNames)) {
-				session.syncCurrentRoomRuntimeState();
+				sceneRuntime.syncCurrentRoomRuntimeState(scene.sceneRegions);
 				for (const Common::String &timerName : expiredTimerNames) {
 					InteractionResult timerInteraction;
 					if (!_engine.getScript()->executeTimerAction(

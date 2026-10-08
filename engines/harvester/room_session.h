@@ -60,16 +60,12 @@ public:
 	bool isPlayerCombatLocked() const;
 	bool cancelPlayerAttackAnimation();
 	void stopPlayerRegionInteraction();
-	void syncCurrentRoomRuntimeState();
+	void syncPlayerPlacement();
 	void captureCurrentSaveState();
 	bool applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState);
 	bool refreshCurrentScene(bool preservePlayerPlacement);
-	void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
-		bool includeCurrentRoomTimers = false);
 
 private:
-	bool isTimerMaterializedInCurrentRoom(const Common::String &timerName) const;
-
 	HarvesterEngine &_engine;
 	Flow &_flow;
 	RoomSceneResources &_scene;
