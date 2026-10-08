@@ -28,18 +28,18 @@ namespace Ultima3 {
 constexpr byte TILE_WATER = 0;
 constexpr byte TILE_MOUNTAINS = 4;
 constexpr byte TILE_SHIP_WATER = 12;
-constexpr byte TILE_FIRE = 0x20;
-constexpr byte TILE_FORCE_FIELD = 0x21;
-constexpr byte TILE_WHIRLPOOL = 0x22;
+constexpr byte TILE_FORCE_FIELD = 0x20;
+constexpr byte TILE_LAVA = 0x21;
+constexpr byte TILE_MOON_GATE = 0x22;
 constexpr byte TILE_SHALLOWS = 0x3E;
 constexpr byte FIRST_BLOCKING_TILE = 12;
 
 // Bits of a character's marks and cards that protect against terrain
-constexpr byte MARK_FIRE = 0x10;
-constexpr byte MARK_FORCE = 0x20;
+constexpr byte MARK_FORCE = 0x10;
+constexpr byte MARK_FIRE = 0x20;
 
-constexpr int FIRE_DAMAGE = 99;
-constexpr int FORCE_FIELD_DAMAGE = 50;
+constexpr int FORCE_FIELD_DAMAGE = 99;
+constexpr int LAVA_DAMAGE = 50;
 
 bool OverworldLogic::isShipBlockedByWind(Direction dir) const {
 	if (_G(savegame)._transport != TRANSPORT_SHIP)
@@ -55,32 +55,32 @@ bool OverworldLogic::isTerrainBlocked(byte tile) {
 		return tile != TILE_WATER && tile != TILE_SHIP_WATER;
 
 	switch (tile) {
-	case TILE_FIRE:
-		// The whole party needs the Mark of Fire to cross it. Otherwise the
-		// first without it is burnt, and the fire can't be crossed
+	case TILE_FORCE_FIELD:
+		// The whole party needs the Mark of Force to cross it. Otherwise the
+		// first without it is hurt, and the field can't be crossed
 		_G(effects).flashViewport();
 		for (int slot = 0; slot < save._partySize; ++slot) {
-			if (!(save.partyMember(slot)._marksAndCards & MARK_FIRE)) {
-				damageCharacter(slot, FIRE_DAMAGE);
+			if (!(save.partyMember(slot)._marksAndCards & MARK_FORCE)) {
+				damageCharacter(slot, FORCE_FIELD_DAMAGE);
 				_G(effects).flashSlot(slot);
 				return true;
 			}
 		}
 		return false;
 
-	case TILE_FORCE_FIELD:
-		// Anyone without the Mark of Force is hurt, but it can be crossed
+	case TILE_LAVA:
+		// Anyone without the Mark of Fire is burnt, but it can be crossed
 		for (int slot = 0; slot < save._partySize; ++slot) {
 			Data::RosterEntry &e = save.partyMember(slot);
 
-			if (e.isAlive() && !(e._marksAndCards & MARK_FORCE)) {
-				damageCharacter(slot, FORCE_FIELD_DAMAGE);
+			if (e.isAlive() && !(e._marksAndCards & MARK_FIRE)) {
+				damageCharacter(slot, LAVA_DAMAGE);
 				_G(effects).flashSlot(slot);
 			}
 		}
 		return false;
 
-	case TILE_WHIRLPOOL:
+	case TILE_MOON_GATE:
 	case TILE_SHALLOWS:
 		return false;
 
