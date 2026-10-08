@@ -886,6 +886,9 @@ struct EVNT : public EngineData {
 	// always follow the ids: Nancy13 and up list some flags twice or out of order,
 	// and Nancy16 starts with the inventory items, which have ids of their own.
 	Common::Array<Common::String> eventFlagNames;
+
+	// Nancy16: the names of the inventory items, indexed by item id
+	Common::Array<Common::String> itemNames;
 };
 
 // UI overlay element table. Introduced in Nancy 12. Each record describes one UI

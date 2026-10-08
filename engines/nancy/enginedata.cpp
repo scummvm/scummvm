@@ -1410,6 +1410,7 @@ EVNT::EVNT(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	Common::Array<Common::String> names(numRecords);
 	Common::Array<uint16> ids(numRecords);
 	uint numFlags = 0;
+	uint numItems = 0;
 
 	for (uint16 i = 0; i < numRecords; ++i) {
 		readFilename(*chunkStream, names[i]);
@@ -1417,14 +1418,19 @@ EVNT::EVNT(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 		if (ids[i] >= kFirstEventFlag) {
 			numFlags = MAX<uint>(numFlags, ids[i] - kFirstEventFlag + 1);
+		} else {
+			numItems = MAX<uint>(numItems, ids[i] + 1);
 		}
 	}
 
 	eventFlagNames.resize(numFlags);
+	itemNames.resize(numItems);
 
 	for (uint16 i = 0; i < numRecords; ++i) {
 		if (ids[i] >= kFirstEventFlag) {
 			eventFlagNames[ids[i] - kFirstEventFlag] = names[i];
+		} else {
+			itemNames[ids[i]] = names[i];
 		}
 	}
 }
