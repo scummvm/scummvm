@@ -351,6 +351,7 @@ private:
 	bool _eventQuitGame;
 	bool _gameStateLoaded;
 	GameStateData _gameState;
+	uint8 _mazeLocation;
 	uint32 _nextTimer;
 
 	// Speed multiplier, 1 = original timing. Divides the millisecond
@@ -967,6 +968,18 @@ private:
 	void PART_37_HELPER_2();
 	void PART_37();
 
+	// maze entrance
+	void PART_67_EXEC_ACTION(int action);
+	void PART_67_ACTION_101_goToChurch();
+	void PART_67_ACTION_102_goRight();
+	void PART_67_DRAW_FLAME(int frame);
+	void PART_67_FLICKER();
+	void PART_67_UPDATE_FLICKER();
+	void PART_67_ENTER_FROM_CHURCH_PUZZLE();
+	void PART_67_ENTER_FROM_RIGHT();
+	void PART_67_UPDATE_ROOM_BACKGROUND();
+	void PART_67();
+
 	void PART_85();
 	void PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
 	void PART_85_HELPER_2_SCROLL_RIGHT();
@@ -1028,7 +1041,9 @@ private:
 	void buildWalkPathAreaDownDirection(int srcX, int srcY, int dstX, int dstY);
 	void buildWalkPathAreaRightDirection(int srcX, int srcY, int dstX, int dstY);
 	void buildWalkPathAreaLeftDirection(int srcX, int srcY, int dstX, int dstY);
-	void waitForIgorMove();
+	typedef void (IgorEngine::*IgorMoveTick)();
+	// tick: room effect that runs on every iteration while Igor walks (rooms with their own wait loop)
+	void waitForIgorMove(IgorMoveTick tick = 0);
 
 	void moveIgor(int pos, int frame);
 
@@ -1196,6 +1211,7 @@ protected:
 	static const RoomDataOffsets PART_35_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_36_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_37_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_67_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
 	static const uint8 _inventoryOffsetTable[];
 	static const uint8 _inventoryActionsTable[];

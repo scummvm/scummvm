@@ -1055,7 +1055,7 @@ void IgorEngine::buildWalkPathAreaLeftDirection(int srcX, int srcY, int dstX, in
 	}
 }
 
-void IgorEngine::waitForIgorMove() {
+void IgorEngine::waitForIgorMove(IgorMoveTick tick) {
 	_gameTicks = 0;
 	do {
 		if (compareGameTick(1, 16)) {
@@ -1068,9 +1068,9 @@ void IgorEngine::waitForIgorMove() {
 				++_walkDataCurrentIndex;
 			}
 		}
-		// if (_updateRoomBackground) {
-		// 	(this->*_updateRoomBackground)();
-		// }
+		if (tick) {
+			(this->*tick)();
+		}
 		waitForTimer();
 	} while (_gameState.igorMoving);
 }
@@ -1107,6 +1107,29 @@ void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
 }
 
 void IgorEngine::fixWalkPosition(int *x, int *y) {
+	if (getPart() == 67) {
+		// The click is clamped to the walk bounds, then the picture is scanned for the first
+		// walkable row strictly below it (the scan starts one row down, whatever the row is) and,
+		// if none is found down to the last row, upwards from the last row.
+		int xPos = CLIP<int>(*x, _roomWalkBounds.x1, _roomWalkBounds.x2);
+		int yPos = MIN(*y, _roomWalkBounds.y2);
+		do {
+			if (yPos < 143) {
+				++yPos;
+			}
+			if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area > 0) {
+				break;
+			}
+		} while (yPos != 143);
+		if (yPos == 143) {
+			do {
+				--yPos;
+			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > 0);
+		}
+		*x = xPos;
+		*y = yPos;
+		return;
+	}
 	int xPos = *x;
 	int edgeMinY = _roomWalkBounds.y1;
 	if (xPos < _roomWalkBounds.x1) {

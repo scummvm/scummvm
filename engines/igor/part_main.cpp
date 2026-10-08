@@ -672,6 +672,10 @@ void IgorEngine::PART_MAIN() {
 		case 370:
 			PART_37();
 			break;
+		case 670:
+		case 671:
+			PART_67(); // maze entrance
+			break;
 		case 850: // Intro cutscene
 			// Clear the entire screen buffer before starting the intro cutscene
 			memset(_screenVGA, 0, 64000);

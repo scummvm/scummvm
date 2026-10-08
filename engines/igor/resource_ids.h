@@ -590,5 +590,12 @@
 #define FRM_ParkLaura2 988 // cseg103:9F53; IGOR.EXE:0x3DF753, 0x0072 bytes
 #define FRM_ParkLaura3 989 // cseg103:9FC5; IGOR.EXE:0x3DF7C5, 0x0030 bytes
 #define FRM_ParkRight1 990 // cseg49:29B6; IGOR.EXE:0x2053B6, 0x0F81 bytes
+#define DAT_MazeEntrance 991 // cseg62:279B; IGOR.EXE:0x28509B, 0x15F1 bytes
+#define FRM_MazeEntrance1 992 // cseg94:0070; IGOR.EXE:0x38DC70, 0x17AD bytes
+#define TXT_MazeEntrance 993 // cseg86:06B3; IGOR.EXE:0x34A8B3, 0x04FF bytes
+#define IMG_MazeEntrance 994 // cseg86:0BB2; IGOR.EXE:0x34ADB2, 0xB400 bytes
+#define PAL_MazeEntrance 995 // cseg86:BFB2; IGOR.EXE:0x3561B2, 0x0240 bytes
+#define MSK_MazeEntrance 996 // cseg86:C222; IGOR.EXE:0x356422, 0x075C bytes
+#define BOX_MazeEntrance 997 // cseg86:C97E; IGOR.EXE:0x356B7E, 0x0500 bytes
 
 #endif // IGOR_RESOURCE_IDS

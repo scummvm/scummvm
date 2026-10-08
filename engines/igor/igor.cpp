@@ -120,6 +120,7 @@ void IgorEngine::restart() {
 	_gameStateLoaded = false;
 
 	memset(&_gameState, 0, sizeof(_gameState));
+	_mazeLocation = 0;
 	_nextTimer = 0;
 	_fastMode = 1;
 	_language = 0;
