@@ -43,6 +43,7 @@
 #include "harvester/palette_utils.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
+#include "harvester/room_scene_runtime.h"
 #include "harvester/art.h"
 #include "harvester/monster.h"
 #include "harvester/player.h"
@@ -98,8 +99,6 @@ static const char *const kDemoIntroductionText =
 static const float kTownMapNightPaletteBrightness = 0.6f;
 // Native keeps WAIT_BM visible while room construction runs; fast local loads need a short floor.
 static const uint32 kTransitionWaitFrameMinMs = 120;
-static const int kRoomNpcAmbientLastFrame = 0x3b;
-static const float kNativeNpcMonsterZExtent = 5.0f;
 static const int kTownMapEdgeThreshold = 9;
 static const int kTownMapCursorHitExtent = 5;
 
@@ -740,41 +739,6 @@ static void logSceneObjectSelection(const char *decision, const char *source, co
 		object.currentX, object.currentY, object.currentZ,
 		hotspotBounds.left, hotspotBounds.top, hotspotBounds.right, hotspotBounds.bottom,
 		object.actionTag.c_str(), detail.c_str());
-}
-
-static bool isBackgroundSceneObject(const RoomSetupState &state,
-		const ObjectRecord &object, const Entity &entity) {
-	if (!state.backgroundObjectName.empty() &&
-			object.objectName.equalsIgnoreCase(state.backgroundObjectName)) {
-		return true;
-	}
-
-	return object.initialX == 0 && object.initialY == 0 &&
-		entity.getBoundsWidth() == 640 && entity.getBoundsHeight() == 480;
-}
-
-static bool isInteractiveSceneHotspot(const ObjectRecord &object, Script *script) {
-	if (object.operatable || !object.actionTag.empty())
-		return true;
-	if (!script)
-		return false;
-	if (script->isPickupObject(object))
-		return true;
-
-	ResolvedText inspectText;
-	return script->resolveObjectInspectText(object, inspectText);
-}
-
-static int resolveSceneObjectClass(const RoomSetupState &state,
-		const ObjectRecord &object, const Entity *entity, Script *script) {
-	if (entity)
-		return isBackgroundSceneObject(state, object, *entity)
-			? kRuntimeEntityClassBackground
-			: kRuntimeEntityClassObject;
-
-	return isInteractiveSceneHotspot(object, script)
-		? kRuntimeEntityClassRectHotspot
-		: kRuntimeEntityClassDisabledHotspot;
 }
 
 static bool shouldQueueSceneObject(const ObjectRecord &object) {
@@ -2144,35 +2108,10 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 	if (!entityManager)
 		return false;
 
+	RoomSceneRuntime sceneRuntime(state, _engine.getScript(), _engine.getResources(), entityManager);
 	Entity *preservedPlayer = entityManager->detachSceneEntityByName(kPlayerActorEntityName);
 	entityManager->clearSceneEntities(true);
-	for (const RegionRecord &region : state.roomRegions) {
-		const Common::Rect regionBounds = getRegionBounds(region);
-		if (regionBounds.isEmpty())
-			continue;
-
-		Entity *entity = entityManager->spawnSceneHotspotEntity(
-			region.regionName, regionBounds, (float)region.minZ);
-		if (!entity) {
-			debugC(1, kDebugRoom,
-				"Harvester: scene region skipped room='%s' region='%s' bounds=(%d,%d)-(%d,%d) z=[%d,%d]",
-				state.roomName.c_str(), region.regionName.c_str(),
-				regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
-				region.minZ, region.maxZ);
-			continue;
-		}
-
-		entity->setClassId(kRuntimeEntityClassRectHotspot19);
-		entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
-		entity->setZExtent((float)MAX(0, region.maxZ - region.minZ));
-		if (!region.cursorEnabled)
-			entity->setHitTestMode(kRuntimeEntityHitTestNone);
-		debugC(1, kDebugRoom,
-			"Harvester: scene region spawned room='%s' region='%s' class=0x%x bounds=(%d,%d)-(%d,%d) z=[%d,%d] facing=%d cursor=%d action='%s'",
-			state.roomName.c_str(), region.regionName.c_str(), entity->getClassId(),
-			regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
-			region.minZ, region.maxZ, region.desiredFacing, region.cursorEnabled, region.actionTag.c_str());
-	}
+	sceneRuntime.populateRoomRegions();
 	for (const TimerRecord &timer : state.roomTimers) {
 		Entity *existingTimer = entityManager->findSceneEntityByName(timer.timerName);
 		if (existingTimer && existingTimer->getClassId() == kRuntimeEntityClassTimer) {
@@ -2196,44 +2135,7 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 			state.roomName.c_str(), timer.timerName.c_str(), timer.currentValue, timer.initialValue,
 			timer.enabled, timer.looping, timer.global);
 	}
-	for (const ObjectRecord &object : drawableObjects) {
-		Entity *entity = nullptr;
-		const Common::String spritePath = resolveSceneObjectSpritePath(object);
-		const Common::Rect hotspotBounds = getRoomObjectHotspotBounds(object);
-		if (!spritePath.empty() && spritePath.hasSuffixIgnoreCase(".BM")) {
-			entity = entityManager->spawnSceneBitmapEntity(object.objectName, spritePath,
-				Common::Point(object.currentX, object.currentY), (float)object.currentZ);
-		} else {
-			if (!hotspotBounds.isEmpty())
-				entity = entityManager->spawnSceneHotspotEntity(object.objectName, hotspotBounds, (float)object.currentZ);
-		}
-
-		if (!entity) {
-			debugC(1, kDebugRoom,
-				"Harvester: scene entity skipped room='%s' object='%s' resolved='%s' bounds=(%d,%d)-(%d,%d) reason='%s'",
-				state.roomName.c_str(), object.objectName.c_str(), spritePath.c_str(),
-				hotspotBounds.left, hotspotBounds.top, hotspotBounds.right, hotspotBounds.bottom,
-				spritePath.empty() || !spritePath.hasSuffixIgnoreCase(".BM")
-					? "no_bitmap_and_no_hotspot_bounds"
-					: "spawn_failed");
-			debug(1, "Harvester: unable to spawn room object entity '%s' from '%s'",
-				object.objectName.c_str(), spritePath.c_str());
-			continue;
-		}
-
-		entity->setClassId(resolveSceneObjectClass(
-			state, object, entity->hasFrames() ? entity : nullptr, _engine.getScript()));
-		entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
-		entity->setZExtent((float)object.zExtent);
-		const Common::Rect entityRect = entity->getScreenRect();
-		debugC(1, kDebugRoom,
-			"Harvester: scene entity spawned room='%s' object='%s' type='%s' class=0x%x pos=(%d,%d,z=%.2f) rect=(%d,%d)-(%d,%d) sprite='%s' action='%s' operatable=%d ident='%s'",
-			state.roomName.c_str(), object.objectName.c_str(),
-			entity->hasFrames() ? "bitmap" : "hotspot", entity->getClassId(),
-			entity->getX(), entity->getY(), (double)entity->getZ(),
-			entityRect.left, entityRect.top, entityRect.right, entityRect.bottom,
-			spritePath.c_str(), object.actionTag.c_str(), object.operatable, object.identTextKey.c_str());
-	}
+	sceneRuntime.populateRoomObjects(drawableObjects);
 	for (const AnimRecord &anim : drawableAnimations) {
 		const bool displayVisible = shouldDisplaySceneAnimation(anim);
 		if (!entityManager->spawnSceneAnimationEntity(anim.animName, anim.resourcePath,
@@ -2243,76 +2145,8 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 				anim.animName.c_str(), anim.resourcePath.c_str());
 		}
 	}
-	for (const NpcRecord &npc : state.roomNpcs) {
-		Entity *entity = entityManager->spawnSceneActorEntity(npc.npcName,
-			npc.modelPath, Common::Point(npc.posX, npc.posY), (float)npc.posZ, 0);
-		if (!entity) {
-			debug(1, "Harvester: unable to spawn room npc entity '%s' from '%s'",
-				npc.npcName.c_str(), npc.modelPath.c_str());
-			continue;
-		}
-
-		entity->setClassId(kRuntimeEntityClassNpc);
-		entity->setZExtent(kNativeNpcMonsterZExtent);
-		const bool isCorpse = !npc.active &&
-			npc.runtimeSpawned &&
-			npc.deathDamageType != 0 &&
-			npc.runtimeState >= 0;
-		entity->setHitTestMode(isCorpse ? kRuntimeEntityHitTestNone : kRuntimeEntityHitTestOpaquePixels);
-		// Native spawn positions frame 0 before selecting ambient or corpse frame banks.
-		if (!applyRoomActorPlacementInternal(state, *entity,
-				npc.posX, npc.posY, (float)npc.posZ, nullptr, false)) {
-			debug(1, "Harvester: unable to apply room npc placement for '%s'",
-				npc.npcName.c_str());
-		}
-		if (isCorpse) {
-			const int corpseFrame = MIN(entity->getLastFrame(), npc.runtimeState);
-			entity->setAnimationFrameRange(corpseFrame, corpseFrame, false);
-			entity->setAnimationRate(0);
-			entity->setCurrentFrame(corpseFrame);
-			entity->setAnimationEnabled(false);
-		} else {
-			// Native spawn_npc_entity_from_record seeds the passive room-NPC loop as frames 0..0x3b.
-			entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
-			if (npc.frameDelay > 0)
-				entity->setAnimationRate(npc.frameDelay);
-		}
-		entityManager->reinsertSceneEntity(entity);
-		debugC(1, kDebugRoom,
-			"Harvester: scene npc spawned room='%s' npc='%s' class=0x%x pos=(%d,%d,z=%.2f) frame_delay=%d model='%s' active=%d visible=%d",
-			state.roomName.c_str(), npc.npcName.c_str(), entity->getClassId(),
-			entity->getX(), entity->getY(), (double)entity->getZ(),
-			npc.frameDelay, npc.modelPath.c_str(), npc.active, npc.visible);
-	}
-	for (const MonsterRecord &monster : state.roomMonsters) {
-		Entity *entity = entityManager->spawnSceneActorEntity(monster.monsterName,
-			monster.modelPath, Common::Point(monster.posX, monster.posY), (float)monster.posZ,
-			Monster::resolveFacingFrame(monster.facing));
-		if (!entity) {
-			debug(1, "Harvester: unable to spawn room monster entity '%s' from '%s'",
-				monster.monsterName.c_str(), monster.modelPath.c_str());
-			continue;
-		}
-
-		entity->setClassId(kRuntimeEntityClassMonster);
-		entity->setZExtent(kNativeNpcMonsterZExtent);
-		entity->setHitTestMode(kRuntimeEntityHitTestNone);
-		entity->setVisible(monster.visible);
-		// Native restores a saved monster corpse frame before set_entity_screen_position().
-		Monster::applyAnimation(*entity, monster);
-		if (!applyRoomActorPlacement(state, *entity, monster.posX, monster.posY, (float)monster.posZ)) {
-			debug(1, "Harvester: unable to apply room monster placement for '%s'",
-				monster.monsterName.c_str());
-		}
-		entityManager->reinsertSceneEntity(entity);
-		debugC(1, kDebugRoom,
-			"Harvester: scene monster spawned room='%s' monster='%s' class=0x%x pos=(%d,%d,z=%.2f) facing=%d hp=%d/%d damage=%d engage=%d damage_type='%s' model='%s' active=%d visible=%d",
-			state.roomName.c_str(), monster.monsterName.c_str(), entity->getClassId(),
-			entity->getX(), entity->getY(), (double)entity->getZ(), monster.facing,
-			monster.currentHitPoints, monster.initialHitPoints,
-			monster.damageAmount, monster.engageDistance, Player::describeCombatDamageType(monster.damageType),
-			monster.modelPath.c_str(), monster.active, monster.visible);
-	}
+	sceneRuntime.populateRoomNpcs();
+	sceneRuntime.populateRoomMonsters();
 	if (state.hasEntrance) {
 		const int playerFrame = Player::resolveFacingFrame(state.playerFacing);
 		Script *script = _engine.getScript();

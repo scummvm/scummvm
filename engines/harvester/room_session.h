@@ -23,6 +23,7 @@
 #define HARVESTER_ROOM_SESSION_H
 
 #include "harvester/room_combat.h"
+#include "harvester/room_scene_runtime.h"
 #include "harvester/room_support.h"
 #include "harvester/runtime_entity.h"
 
@@ -48,6 +49,7 @@ public:
 
 	RoomPlayerState &getPlayerState() { return _playerState; }
 	Common::Array<RoomMonsterCombatState> &getMonsterCombatStates() { return _monsterCombatStates; }
+	RoomSceneRuntime &getSceneRuntime() { return _sceneRuntime; }
 	RoomCombatEffects &getCombatEffects() { return _combatEffects; }
 	RoomIdleAnimationState &getIdleState() { return _idleState; }
 	RoomMovementInputState &getMovementInput() { return _movementInput; }
@@ -65,22 +67,7 @@ public:
 	void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
 		bool includeCurrentRoomTimers = false);
 
-	void removeSceneEntityByName(const Common::String &entityName);
-	static Common::Rect getSceneObjectBounds(const ObjectRecord &object);
-	static Common::String resolveSceneObjectSpritePathLocal(const ObjectRecord &object);
-	void spawnSceneObjectEntityFromRecord(const ObjectRecord &object);
-	void spawnSceneRegionEntityFromRecord(const RegionRecord &region);
-	static bool shouldSpawnRoomNpcEntity(const NpcRecord &npc);
-	static bool shouldSpawnRoomMonsterEntity(const MonsterRecord &monster);
-	Entity *spawnSceneNpcEntityFromRecord(const NpcRecord &npc);
-	Entity *spawnSceneMonsterEntityFromRecord(const RoomSetupState &roomState, const MonsterRecord &monster);
-
 private:
-	bool isInteractiveSceneHotspot(const ObjectRecord &object) const;
-	RuntimeEntityClass resolveSceneObjectClassLocal(const ObjectRecord &object, const Entity *entity) const;
-	static Common::Rect getSceneRegionBounds(const RegionRecord &region);
-	static bool applyRoomNpcPlacement(Entity &entity, const NpcRecord &npc);
-
 	bool isTimerMaterializedInCurrentRoom(const Common::String &timerName) const;
 
 	HarvesterEngine &_engine;
@@ -88,6 +75,7 @@ private:
 	RoomSceneResources &_scene;
 	EntityManager *_entityManager;
 	InventorySystem &_inventory;
+	RoomSceneRuntime _sceneRuntime;
 	RoomPlayerState _playerState;
 	Common::Array<RoomMonsterCombatState> _monsterCombatStates;
 	RoomCombatEffects _combatEffects;

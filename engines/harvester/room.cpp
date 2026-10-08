@@ -436,6 +436,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		monsterCombatStates.resize(scene.state.roomMonsters.size());
 		Common::Array<RoomNpcCombatState> npcCombatStates;
 		npcCombatStates.resize(scene.state.roomNpcs.size());
+		RoomSceneRuntime &sceneRuntime = session.getSceneRuntime();
 		RoomCombatEffects &combatEffects = session.getCombatEffects();
 		ResolvedText inspectText;
 		Common::String currentInteractionPromptText;
@@ -1373,7 +1374,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			npcEntity->setHitTestMode(kRuntimeEntityHitTestNone);
 			npcEntity->setVisible(true);
 		} else {
-			session.removeSceneEntityByName(npc.npcName);
+			sceneRuntime.removeSceneEntityByName(npc.npcName);
 		}
 		npc.active = false;
 		npc.visible = false;
@@ -2274,7 +2275,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		script->addRuntimeObjectToInventory(object.objectName);
 		const Common::String inventoryOwner(kInventoryOwnerName);
 		hideSceneObject(object.objectName, &inventoryOwner);
-		session.removeSceneEntityByName(object.objectName);
+		sceneRuntime.removeSceneEntityByName(object.objectName);
 
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnDirectInventoryTransfer(object)) {
@@ -2320,7 +2321,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 		script->setRuntimeObjectVisible(object.currentOwnerOrRoom, object.objectName, false);
 		hideSceneObject(object.objectName, nullptr);
-		session.removeSceneEntityByName(object.objectName);
+		sceneRuntime.removeSceneEntityByName(object.objectName);
 
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnCarryStart(object)) {
