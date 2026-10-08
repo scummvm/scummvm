@@ -63,6 +63,8 @@ public:
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
+	/** True for a release that is only a reel of movies, with no game data. */
+	bool isMovieReel() const;
 
 	// We need random numbers
 	Common::RandomSource *_rnd;
@@ -75,13 +77,15 @@ public:
 
 	bool _showHotspots;
 
-	void pollEvents();
+	// Pump events after waiting delayMs. Callers with something to do sooner,
+	// like feeding a playing movie, pass a shorter wait
+	void pollEvents(uint32 delayMs = 10);
 
 	void hideMouse();
 	void showMouse();
 	void getMousePosition(int16 *x, int16 *y);
 	void setMousePosition(int16 x, int16 y);
-	bool isMouseButtonDown();
+	bool isMouseButtonDown(uint32 delayMs = 10);
 
 private:
 	int _mouseButton;
