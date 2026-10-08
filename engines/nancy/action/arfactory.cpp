@@ -104,6 +104,7 @@
 #include "engines/nancy/action/puzzle/safedialpuzzle.h"
 #include "engines/nancy/action/puzzle/scalepuzzle.h"
 #include "engines/nancy/action/puzzle/setplayerclock.h"
+#include "engines/nancy/action/puzzle/sequencelockpuzzle.h"
 #include "engines/nancy/action/puzzle/sewingmachinepuzzle.h"
 #include "engines/nancy/action/puzzle/shovelmeasurepuzzle.h"
 #include "engines/nancy/action/puzzle/skeeballpuzzle.h"
@@ -763,7 +764,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new AnalogClock();
 	case 197:
 		return new AutotextScroll();	// Used for the end credits
-	case 190:	// MemoryPuzzle, moved from 238, unused in Nancy16
+	case 190:	// Nancy18
+		return new SequenceLockPuzzle();
 	case 191:	// BeadPuzzle, moved from 243, unused in Nancy16
 		return nullptr;
 	case 198:
