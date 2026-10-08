@@ -560,6 +560,8 @@ BaseInputState BaseGame::consumeGameplayInput() {
 		const PendingGameplayRequest request = _wbasePendingGameplayRequests.pop();
 		if (request.type == kPendingGameplayExit)
 			input.exitRequested = true;
+		else if (request.type == kPendingGameplayContext)
+			input.contextRequested = true;
 	}
 	return input;
 }
@@ -946,8 +948,13 @@ void BaseGame::pollInput() {
 			}
 			if (control != kWBASEEnhancementControlNone)
 				beginPointerControl(control);
-			else
+			else if (mouse.y < kBaseViewHeight && !_wbaseEnhancements.forcedAutoplayEnabled()) {
+				cancelAutoplayForManualInput();
+				_wbasePointerCapture = kPointerCaptureWorld;
+				queueGameplayRequest(kPendingGameplayContext, kPendingGameplayPointer);
+			} else {
 				_wbasePointerCapture = kPointerCaptureIgnored;
+			}
 			break;
 		}
 		case Common::EVENT_LBUTTONUP:

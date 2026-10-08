@@ -81,7 +81,8 @@ private:
 
 	class SessionGuard;
 	enum PendingGameplayRequestType {
-		kPendingGameplayExit
+		kPendingGameplayExit,
+		kPendingGameplayContext
 	};
 	enum PendingGameplayRequestSource {
 		kPendingGameplayMapped,
@@ -91,7 +92,8 @@ private:
 		kPointerCaptureNone,
 		kPointerCaptureIgnored,
 		kPointerCaptureControl,
-		kPointerCaptureChooser
+		kPointerCaptureChooser,
+		kPointerCaptureWorld
 	};
 	struct PendingGameplayRequest {
 		PendingGameplayRequestType type;
