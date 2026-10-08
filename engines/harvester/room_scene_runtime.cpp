@@ -682,6 +682,16 @@ Entity *RoomSceneRuntime::spawnSceneMonsterEntityFromRecord(const RoomSetupState
 	return entity;
 }
 
+void RoomSceneRuntime::restoreRoomMonsterAnimations() {
+	if (_entityManager) {
+		for (const MonsterRecord &monster : _state.roomMonsters) {
+			Entity *entity = _entityManager->findSceneEntityByName(monster.monsterName);
+			if (entity)
+				Monster::applyAnimation(*entity, monster);
+		}
+	}
+}
+
 void RoomSceneRuntime::populateRoomRegions() {
 	if (!_entityManager)
 		return;

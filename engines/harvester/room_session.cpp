@@ -25,7 +25,6 @@
 #include "harvester/flow.h"
 #include "harvester/harvester.h"
 #include "harvester/inventory.h"
-#include "harvester/monster.h"
 #include "harvester/player.h"
 #include "harvester/room_combat.h"
 #include "harvester/runtime_entity.h"
@@ -170,48 +169,8 @@ bool RoomSession::refreshCurrentScene(bool preservePlayerPlacement) {
 	_combatEffects.clearHitEffects();
 	if (!_flow.populateRoomSceneEntities(_scene.state, _scene.sceneObjects, _scene.sceneAnimations))
 		return false;
-	if (_entityManager) {
-		for (const MonsterRecord &monster : _scene.state.roomMonsters) {
-			Entity *entity = _entityManager->findSceneEntityByName(monster.monsterName);
-			if (entity)
-				Monster::applyAnimation(*entity, monster);
-		}
-	}
-
-	_playerState.entity = _entityManager ? _entityManager->findSceneEntityByName("PLAYER") : nullptr;
-	if (_playerState.entity) {
-		if (!preservePlayerPlacement || _playerState.facing < 0) {
-			_playerState.centerX = _scene.state.playerSpawnX;
-			_playerState.bottomY = _scene.state.playerSpawnY;
-			_playerState.z = (float)_scene.state.playerSpawnZ;
-			_playerState.facing = _scene.state.playerFacing;
-		}
-
-		const int facing = _playerState.facing >= 0 ? _playerState.facing : _scene.state.playerFacing;
-		(void)Player::setIdleAnimation(_playerState, facing);
-		(void)applyRoomActorPlacement(_scene.state, *_playerState.entity,
-			_playerState.centerX, _playerState.bottomY, _playerState.z);
-	}
-
-	_playerState.hasMoveTarget = false;
-	_playerState.turnActive = false;
-	_playerState.turnTargetFacing = -1;
-	_playerState.attackActive = false;
-	_playerState.attackFirstFrame = -1;
-	_playerState.attackLastFrame = -1;
-	_playerState.attackContactFrame = -1;
-	_playerState.attackResumeFacing = -1;
-	_playerState.attackSoundPlayed = false;
-	_playerState.attackSoundPlaybackFrame = -1;
-	_playerState.attackContactResolved = false;
-	_playerState.attackTargetName.clear();
-	_playerState.attackTargetClassId = -1;
-	_playerState.hitActive = false;
-	_playerState.hitFirstFrame = -1;
-	_playerState.hitLastFrame = -1;
-	_playerState.hitResumeFacing = -1;
-	_playerState.hitKnockbackRemainingX = 0;
-	_playerState.hitKnockbackDecayStep = 0;
+	_sceneRuntime.restoreRoomMonsterAnimations();
+	Player::rebindAfterSceneRefresh(_scene.state, _playerState, _entityManager, preservePlayerPlacement);
 	_playerState.combatLoadout =
 		_engine.getScript() ? _engine.getScript()->getPlayerCombatLoadout() : 0;
 	_combat.resetForSceneRefresh(_scene.state);

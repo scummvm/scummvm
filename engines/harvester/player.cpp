@@ -1114,6 +1114,47 @@ static bool finishPlayerIdleAnimation(const RoomSetupState &state, RoomPlayerSta
 
 } // End of anonymous namespace
 
+void Player::rebindAfterSceneRefresh(const RoomSetupState &state, RoomPlayerState &playerState,
+		EntityManager *entityManager, bool preservePlayerPlacement) {
+	playerState.entity = entityManager ? entityManager->findSceneEntityByName("PLAYER") : nullptr;
+	if (playerState.entity) {
+		if (!preservePlayerPlacement || playerState.facing < 0) {
+			playerState.centerX = state.playerSpawnX;
+			playerState.bottomY = state.playerSpawnY;
+			playerState.z = (float)state.playerSpawnZ;
+			playerState.facing = state.playerFacing;
+		}
+
+		const int facing = playerState.facing >= 0 ? playerState.facing : state.playerFacing;
+		(void)setIdleAnimation(playerState, facing);
+		(void)applyRoomActorPlacement(state, *playerState.entity,
+			playerState.centerX, playerState.bottomY, playerState.z);
+	}
+
+	// Death state survives a scene refresh.
+	playerState.hasMoveTarget = false;
+	playerState.turnActive = false;
+	playerState.turnTargetFacing = -1;
+	playerState.attackActive = false;
+	playerState.attackFirstFrame = -1;
+	playerState.attackLastFrame = -1;
+	playerState.attackContactFrame = -1;
+	playerState.attackResumeFacing = -1;
+	playerState.attackSoundPlayed = false;
+	playerState.attackSoundPlaybackFrame = -1;
+	playerState.attackContactResolved = false;
+	playerState.attackTargetName.clear();
+	playerState.attackTargetClassId = -1;
+	playerState.hitActive = false;
+	playerState.hitFirstFrame = -1;
+	playerState.hitLastFrame = -1;
+	playerState.hitResumeFacing = -1;
+	playerState.hitKnockbackRemainingX = 0;
+	playerState.hitKnockbackDecayStep = 0;
+	debugC(2, kDebugPlayer, "Harvester: rebound player after scene refresh room='%s' entity=%d preserve_placement=%d",
+		state.roomName.c_str(), playerState.entity != nullptr, preservePlayerPlacement);
+}
+
 void Player::syncAnimationPlacement(RoomPlayerState &playerState) {
 	if (!playerState.entity)
 		return;

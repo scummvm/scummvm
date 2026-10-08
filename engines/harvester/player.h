@@ -26,8 +26,12 @@
 
 namespace Harvester {
 
+class EntityManager;
+
 class Player {
 public:
+	static void rebindAfterSceneRefresh(const RoomSetupState &state, RoomPlayerState &playerState,
+		EntityManager *entityManager, bool preservePlayerPlacement);
 	static void syncAnimationPlacement(RoomPlayerState &playerState);
 	static float computeDepthScale(const RoomSetupState &state, float z);
 	static int resolveFacingFrame(int facing);

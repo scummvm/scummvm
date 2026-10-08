@@ -42,6 +42,7 @@ public:
 	void populateRoomObjects(const Common::Array<ObjectRecord> &drawableObjects);
 	void populateRoomNpcs();
 	void populateRoomMonsters();
+	void restoreRoomMonsterAnimations();
 
 	void removeSceneEntityByName(const Common::String &entityName);
 	static Common::Rect getSceneObjectBounds(const ObjectRecord &object);
