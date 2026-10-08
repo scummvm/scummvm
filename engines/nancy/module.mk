@@ -20,6 +20,7 @@ MODULE_OBJS = \
   action/physicalobject.o \
   action/puzzlerecord.o \
   action/secondarymovie.o \
+  action/typewritertext.o \
   action/secondaryvideo.o \
   action/wolfcommands.o \
   action/puzzle/adjustpuzzle.o \

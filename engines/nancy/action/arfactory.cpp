@@ -33,6 +33,7 @@
 #include "engines/nancy/action/overlay.h"
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/secondarymovie.h"
+#include "engines/nancy/action/typewritertext.h"
 #include "engines/nancy/action/wolfcommands.h"
 
 #include "engines/nancy/action/puzzle/adjustpuzzle.h"
@@ -816,7 +817,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new GoldbergPuzzle();
 	case 209:
-		return new TurningPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
+			return new TurningPuzzle();
+		else
+			return new TypewriterText();
 	case 210:
 		return new SafeDialPuzzle();
 	case 211:
