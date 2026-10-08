@@ -195,7 +195,12 @@ GUI::OptionsContainerWidget *GlkMetaEngine::buildEngineOptionsWidget(GUI::GuiObj
 	if (target.empty())
 		return nullptr;
 
-	return new Glk::GlkOptionsWidget(boss, name, target);
+	Glk::InterpreterType interpreterType = Glk::INTERPRETER_GLULX;
+	const Common::String gameId = ConfMan.get("gameid", target);
+	GlkMetaEngineDetection detector;
+	detector.findInterpreterType(gameId.c_str(), interpreterType);
+
+	return new Glk::GlkOptionsWidget(boss, name, target, interpreterType);
 }
 
 const ExtraGuiOptions GlkMetaEngine::getExtraGuiOptions(const Common::String &) const {
