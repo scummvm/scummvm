@@ -830,16 +830,11 @@ void View1::renderStringWithFontTo(uint16 x, uint16 y, const Common::String &s, 
 		widestGlyph = MAX(widestGlyph, glyphs[i]._width);
 	}
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
-		bool found = false;
-		for (uint i = 0; i < numGlyphs; i++) {
-			if (glyphs[i]._ascii == *iter) {
-				drawSprite(currentX, y, glyphs[i], surf, false);
-				currentX += glyphs[i]._width + 1;
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
+		GlyphData glyph;
+		if (g_engine->_text.findGlyph(*iter, glyph, glyphs, numGlyphs)) {
+			drawSprite(currentX, y, glyph, surf, false);
+			currentX += glyph._width + 1;
+		} else {
 			currentX += widestGlyph;
 		}
 	}
