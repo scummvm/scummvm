@@ -41,7 +41,7 @@ static const DMADGameDescription gameDescriptions[] = {
 		{"dm", "Amiga v2.0 English",
 			AD_ENTRY2s("graphics.dat",	"c2205f6225bde728417de29394f97d55", 411960,
 					   "Dungeon.dat",	"43a213da8eda413541dd12f90ce202f6", 25006),
-			Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
+			Common::EN_ANY, Common::kPlatformAmiga, ADGF_TESTING, GUIO1(GUIO_NOMIDI)
 		},
 	    kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAmiga,
 		{ kDMSaveTargetDM21, kDMSaveTargetEndOfList },
@@ -52,7 +52,7 @@ static const DMADGameDescription gameDescriptions[] = {
 		{"dm", "MS DOS v3.4 English",
 			AD_ENTRY2s("graphics.dat",	"c0cee1d0f9ee9946f955999a66b54eb5", 363417,
 					   "Dungeon.dat",	"ebfc4019b67e66da41a20224c8a3f0c3", 33357),
-	    	Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI),
+	    	Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO1(GUIO_NOMIDI),
 	    },
 	    kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformPC,
 	    { kDMSaveTargetDM21, kDMSaveTargetEndOfList},
@@ -63,7 +63,7 @@ static const DMADGameDescription gameDescriptions[] = {
 		{"dm", "Atari v??? English",
 			AD_ENTRY2s("graphics.dat",	"6ffff2a17e2df0effa9a12fb4b1bf6b6", 271911,
 					   "Dungeon.dat",	"be9468b460515741babec9a70501e2e9", 33286),
-	    	Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI),
+	    	Common::EN_ANY, Common::kPlatformAtariST, ADGF_UNSTABLE, GUIO1(GUIO_NOMIDI),
 	    },
 	    kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAtariSt,
 	    { kDMSaveTargetDM21, kDMSaveTargetEndOfList},
