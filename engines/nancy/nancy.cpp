@@ -772,7 +772,7 @@ void NancyEngine::bootGameEngine() {
 		// game data instead of relying on the hardcoded value
 		auto *evnt = (const EVNT *)getEngineData("EVNT");
 		if (evnt) {
-			_staticData.numEventFlags = (uint16)(kNumGenericEventFlags + evnt->eventFlagNames.size());
+			_staticData.numEventFlags = (uint16)(kNumGenericEventFlags + evnt->numRecords);
 		}
 	}
 

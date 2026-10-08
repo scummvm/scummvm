@@ -863,6 +863,14 @@ struct EVNT : public EngineData {
 
 	static const uint kEventRecordSize = 35;
 
+	// The first flag listed in the chunk; the lower ids are the engine's own flags
+	static const uint16 kFirstEventFlag = 2000;
+
+	uint16 numRecords = 0;
+
+	// Indexed by flag id, counting from kFirstEventFlag, since the records don't
+	// always follow the ids: Nancy13 and up list some flags twice or out of order,
+	// and Nancy16 starts with the inventory items, which have ids of their own.
 	Common::Array<Common::String> eventFlagNames;
 };
 
