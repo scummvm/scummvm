@@ -22,12 +22,14 @@
 #ifndef HARVESTER_ROOM_SESSION_H
 #define HARVESTER_ROOM_SESSION_H
 
+#include "harvester/room_combat.h"
 #include "harvester/room_support.h"
 #include "harvester/runtime_entity.h"
 
 namespace Harvester {
 
 class EntityManager;
+class InventorySystem;
 
 struct RoomMovementInputState {
 	bool moveLeft = false;
@@ -40,9 +42,11 @@ struct RoomMovementInputState {
 // Entity pointers remain owned by EntityManager.
 class RoomSession {
 public:
-	RoomSession(HarvesterEngine &engine, RoomSceneResources &scene, EntityManager *entityManager);
+	RoomSession(HarvesterEngine &engine, RoomSceneResources &scene, EntityManager *entityManager,
+		InventorySystem &inventory);
 
 	RoomPlayerState &getPlayerState() { return _playerState; }
+	Common::Array<RoomMonsterCombatState> &getMonsterCombatStates() { return _monsterCombatStates; }
 	RoomIdleAnimationState &getIdleState() { return _idleState; }
 	RoomMovementInputState &getMovementInput() { return _movementInput; }
 	Common::String &getPendingRegionName() { return _pendingRegionName; }
@@ -54,6 +58,7 @@ public:
 	void stopPlayerRegionInteraction();
 	void syncCurrentRoomRuntimeState();
 	void captureCurrentSaveState();
+	bool applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState);
 	void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
 		bool includeCurrentRoomTimers = false);
 
@@ -78,7 +83,9 @@ private:
 	HarvesterEngine &_engine;
 	RoomSceneResources &_scene;
 	EntityManager *_entityManager;
+	InventorySystem &_inventory;
 	RoomPlayerState _playerState;
+	Common::Array<RoomMonsterCombatState> _monsterCombatStates;
 	RoomIdleAnimationState _idleState;
 	RoomMovementInputState _movementInput;
 	Common::String _pendingRegionName;

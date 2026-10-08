@@ -23,6 +23,7 @@
 
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
+#include "harvester/inventory.h"
 #include "harvester/monster.h"
 #include "harvester/player.h"
 #include "harvester/room_combat.h"
@@ -32,8 +33,113 @@ namespace Harvester {
 
 static const char *const kInventoryOwnerName = "INVENTORY";
 
-RoomSession::RoomSession(HarvesterEngine &engine, RoomSceneResources &scene, EntityManager *entityManager)
-	: _engine(engine), _scene(scene), _entityManager(entityManager) {
+static bool sameRect(const Common::Rect &lhs, const Common::Rect &rhs) {
+	return lhs.left == rhs.left && lhs.top == rhs.top &&
+		lhs.right == rhs.right && lhs.bottom == rhs.bottom;
+}
+
+static const AnimRecord *findRoomAnimByNameConst(const Common::Array<AnimRecord> &anims, const Common::String &animName) {
+	for (const AnimRecord &anim : anims) {
+		if (anim.animName.equalsIgnoreCase(animName))
+			return &anim;
+	}
+	return nullptr;
+}
+
+static const NpcRecord *findRoomNpcByNameConst(const Common::Array<NpcRecord> &npcs, const Common::String &npcName) {
+	for (const NpcRecord &npc : npcs) {
+		if (npc.npcName.equalsIgnoreCase(npcName))
+			return &npc;
+	}
+	return nullptr;
+}
+
+static const MonsterRecord *findRoomMonsterByNameConst(const Common::Array<MonsterRecord> &monsters, const Common::String &monsterName) {
+	for (const MonsterRecord &monster : monsters) {
+		if (monster.monsterName.equalsIgnoreCase(monsterName))
+			return &monster;
+	}
+	return nullptr;
+}
+
+static bool sameNpcEntityState(const NpcRecord &lhs, const NpcRecord &rhs) {
+	return lhs.posX == rhs.posX &&
+		lhs.posY == rhs.posY &&
+		lhs.posZ == rhs.posZ &&
+		lhs.frameDelay == rhs.frameDelay &&
+		lhs.active == rhs.active &&
+		lhs.visible == rhs.visible &&
+		lhs.runtimeSpawned == rhs.runtimeSpawned &&
+		lhs.runtimeState == rhs.runtimeState &&
+		lhs.deathDamageType == rhs.deathDamageType &&
+		lhs.deathOrMonsterfyFlag == rhs.deathOrMonsterfyFlag &&
+		lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
+}
+
+static bool isQueuedLiveNpcDeathMutation(const NpcRecord &lhs, const NpcRecord &rhs) {
+	return lhs.posX == rhs.posX &&
+		lhs.posY == rhs.posY &&
+		lhs.posZ == rhs.posZ &&
+		lhs.frameDelay == rhs.frameDelay &&
+		lhs.active &&
+		rhs.active &&
+		lhs.visible &&
+		rhs.visible &&
+		!lhs.runtimeSpawned &&
+		!rhs.runtimeSpawned &&
+		lhs.runtimeState < 0 &&
+		rhs.runtimeState < 0 &&
+		!lhs.deathOrMonsterfyFlag &&
+		!rhs.deathOrMonsterfyFlag &&
+		lhs.deathDamageType == 0 &&
+		rhs.deathDamageType != 0 &&
+		lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
+}
+
+static bool sameMonsterEntityState(const MonsterRecord &lhs, const MonsterRecord &rhs) {
+	return lhs.posX == rhs.posX &&
+		lhs.posY == rhs.posY &&
+		lhs.posZ == rhs.posZ &&
+		lhs.facing == rhs.facing &&
+		lhs.active == rhs.active &&
+		lhs.visible == rhs.visible &&
+		lhs.runtimeSpawned == rhs.runtimeSpawned &&
+		lhs.runtimeState == rhs.runtimeState &&
+		lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
+}
+
+static bool sameSceneObjectState(const ObjectRecord &lhs, const ObjectRecord &rhs) {
+	return lhs.currentX == rhs.currentX &&
+		lhs.currentY == rhs.currentY &&
+		lhs.currentZ == rhs.currentZ &&
+		lhs.zExtent == rhs.zExtent &&
+		lhs.operatable == rhs.operatable &&
+		lhs.visible == rhs.visible &&
+		lhs.runtimeVisible == rhs.runtimeVisible &&
+		lhs.actionTag.equalsIgnoreCase(rhs.actionTag) &&
+		lhs.identTextKey.equalsIgnoreCase(rhs.identTextKey) &&
+		lhs.interactionLabel.equalsIgnoreCase(rhs.interactionLabel) &&
+		lhs.currentOwnerOrRoom.equalsIgnoreCase(rhs.currentOwnerOrRoom) &&
+		RoomSession::resolveSceneObjectSpritePathLocal(lhs).equalsIgnoreCase(RoomSession::resolveSceneObjectSpritePathLocal(rhs)) &&
+		sameRect(RoomSession::getSceneObjectBounds(lhs), RoomSession::getSceneObjectBounds(rhs));
+}
+
+static bool sameSceneRegionState(const RegionRecord &lhs, const RegionRecord &rhs) {
+	return lhs.left == rhs.left &&
+		lhs.top == rhs.top &&
+		lhs.right == rhs.right &&
+		lhs.bottom == rhs.bottom &&
+		lhs.minZ == rhs.minZ &&
+		lhs.maxZ == rhs.maxZ &&
+		lhs.startEnabled == rhs.startEnabled &&
+		lhs.cursorEnabled == rhs.cursorEnabled &&
+		lhs.desiredFacing == rhs.desiredFacing &&
+		lhs.actionTag.equalsIgnoreCase(rhs.actionTag);
+}
+
+RoomSession::RoomSession(HarvesterEngine &engine, RoomSceneResources &scene, EntityManager *entityManager,
+		InventorySystem &inventory)
+	: _engine(engine), _scene(scene), _entityManager(entityManager), _inventory(inventory) {
 }
 
 void RoomSession::resetIdleState() {
@@ -390,6 +496,263 @@ Entity *RoomSession::spawnSceneMonsterEntityFromRecord(const RoomSetupState &roo
 	}
 	_entityManager->reinsertSceneEntity(entity);
 	return entity;
+}
+
+bool RoomSession::applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState) {
+	Script *script = _engine.getScript();
+	ResourceManager *resources = _engine.getResources();
+	if (!script || !resources)
+		return false;
+
+	byte previousPalette[256 * 3];
+	memcpy(previousPalette, _scene.palette, sizeof(previousPalette));
+	const float previousPaletteBrightness = _scene.targetPaletteBrightness;
+	Common::Array<AudioCommand> entryAudioCommands = _scene.state.audioCommands;
+	debugC(2, kDebugRoom, "Harvester: reconciling room runtime mutations room='%s' preserve_palette=%d",
+		_scene.state.roomName.c_str(), preservePaletteState);
+	RoomSetupState updatedState;
+	if (!script->materializeRoomState(
+			_scene.state.entranceName, _scene.state.roomName, updatedState, *resources)) {
+		return false;
+	}
+	updatedState.audioCommands = Common::move(entryAudioCommands);
+
+	RoomSceneResources updatedScene;
+	if (!loadRoomSceneResources(updatedState, *resources, updatedScene))
+		return false;
+	Common::Array<RoomMonsterCombatState> updatedMonsterCombatStates;
+	updatedMonsterCombatStates.resize(updatedState.roomMonsters.size());
+	for (uint i = 0; i < updatedState.roomMonsters.size(); ++i) {
+		const MonsterRecord &updatedMonster = updatedState.roomMonsters[i];
+		for (uint j = 0; j < _scene.state.roomMonsters.size() &&
+				j < _monsterCombatStates.size(); ++j) {
+			const MonsterRecord &previousMonster = _scene.state.roomMonsters[j];
+			if (!previousMonster.monsterName.equalsIgnoreCase(updatedMonster.monsterName))
+				continue;
+			if (sameMonsterEntityState(previousMonster, updatedMonster))
+				updatedMonsterCombatStates[i] = _monsterCombatStates[j];
+			break;
+		}
+	}
+
+	for (const ObjectRecord &object : _scene.sceneObjects) {
+		if (!findSceneObjectByName(updatedScene.sceneObjects, object.objectName))
+			removeSceneEntityByName(object.objectName);
+	}
+	for (const ObjectRecord &object : updatedScene.sceneObjects) {
+		const ObjectRecord *previous = findSceneObjectByName(_scene.sceneObjects, object.objectName);
+		const bool changed = !previous || !sameSceneObjectState(*previous, object);
+		if (!changed)
+			continue;
+
+		removeSceneEntityByName(object.objectName);
+		spawnSceneObjectEntityFromRecord(object);
+	}
+
+	for (const RegionRecord &region : _scene.sceneRegions) {
+		if (!findSceneRegionByName(updatedScene.sceneRegions, region.regionName))
+			removeSceneEntityByName(region.regionName);
+	}
+	for (const RegionRecord &region : updatedScene.sceneRegions) {
+		const RegionRecord *previous =
+			findSceneRegionByName(_scene.sceneRegions, region.regionName);
+		const bool changed = !previous || !sameSceneRegionState(*previous, region);
+		if (!changed)
+			continue;
+
+		removeSceneEntityByName(region.regionName);
+		spawnSceneRegionEntityFromRecord(region);
+	}
+
+	for (const TimerRecord &timer : _scene.state.roomTimers) {
+		bool found = false;
+		for (const TimerRecord &updatedTimer : updatedState.roomTimers) {
+			if (updatedTimer.timerName.equalsIgnoreCase(timer.timerName)) {
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			removeSceneEntityByName(timer.timerName);
+	}
+	for (const TimerRecord &timer : updatedState.roomTimers) {
+		const TimerRecord *previous = nullptr;
+		for (const TimerRecord &candidate : _scene.state.roomTimers) {
+			if (candidate.timerName.equalsIgnoreCase(timer.timerName)) {
+				previous = &candidate;
+				break;
+			}
+		}
+		const bool changed = !previous ||
+			previous->initialValue != timer.initialValue ||
+			previous->currentValue != timer.currentValue ||
+			previous->enabled != timer.enabled ||
+			previous->looping != timer.looping ||
+			previous->global != timer.global;
+		if (!changed)
+			continue;
+
+		removeSceneEntityByName(timer.timerName);
+		if (_entityManager) {
+			(void)_entityManager->spawnSceneTimerEntity(
+				timer.timerName, timer.initialValue, timer.currentValue,
+				timer.enabled, timer.looping, timer.global);
+		}
+	}
+
+	for (AnimRecord &anim : updatedState.roomAnimations) {
+		const AnimRecord *previous =
+			findRoomAnimByNameConst(_scene.state.roomAnimations, anim.animName);
+		const bool wasDisplayed = previous && shouldDisplaySceneAnimation(*previous);
+		const bool isDisplayed = shouldDisplaySceneAnimation(anim);
+		const bool becameVisible = !wasDisplayed && isDisplayed;
+		if (becameVisible)
+			anim.runtimeState = 0;
+
+		Entity *entity = _entityManager
+			? _entityManager->findSceneEntityByName(anim.animName)
+			: nullptr;
+		if (!isDisplayed) {
+			removeSceneEntityByName(anim.animName);
+			continue;
+		}
+
+		const bool needsRespawn = !entity || !previous ||
+			!previous->resourcePath.equalsIgnoreCase(anim.resourcePath) ||
+			previous->x != anim.x ||
+			previous->y != anim.y ||
+			previous->z != anim.z ||
+			previous->frameDelay != anim.frameDelay ||
+			previous->looping != anim.looping ||
+			previous->pingPong != anim.pingPong ||
+			previous->backward != anim.backward;
+		if (needsRespawn) {
+			removeSceneEntityByName(anim.animName);
+			if (_entityManager) {
+				entity = _entityManager->spawnSceneAnimationEntity(
+					anim.animName, anim.resourcePath, Common::Point(anim.x, anim.y),
+					(float)anim.z, anim.frameDelay, anim.active, isDisplayed, anim.looping,
+					anim.backward, anim.pingPong, anim.runtimeState);
+			}
+		} else if (entity) {
+			const float renderZ =
+				(float)anim.z - floorf(MAX<float>(entity->getZExtent(), 0.0f) * 0.5f);
+			const bool zChanged = entity->getZ() != renderZ;
+			entity->setPosition(anim.x, anim.y, renderZ);
+			entity->setLooping(anim.looping);
+			entity->setPingPong(anim.pingPong);
+			entity->setPlayBackwards(anim.backward);
+			entity->setAnimationRate(anim.frameDelay);
+			entity->setVisible(isDisplayed);
+			if (anim.active && anim.runtimeState >= 0 && !entity->isAnimationEnabled())
+				entity->setCurrentFrame(anim.runtimeState);
+			entity->setAnimationEnabled(anim.active);
+			if (zChanged)
+				_entityManager->reinsertSceneEntity(entity);
+		}
+	}
+
+	for (const AnimRecord &anim : _scene.state.roomAnimations) {
+		if (!findRoomAnimByNameConst(updatedState.roomAnimations, anim.animName))
+			removeSceneEntityByName(anim.animName);
+	}
+
+	for (const NpcRecord &npc : _scene.state.roomNpcs) {
+		const NpcRecord *updatedNpc =
+			findRoomNpcByNameConst(updatedState.roomNpcs, npc.npcName);
+		const bool keepCurrentRoomDeathEntity =
+			!updatedNpc &&
+			isRetainedCurrentRoomNpcDeathRecord(npc) &&
+			_entityManager &&
+			_entityManager->findSceneEntityByName(npc.npcName);
+		const bool keepEntity =
+			updatedNpc &&
+			shouldSpawnRoomNpcEntity(*updatedNpc) &&
+			(sameNpcEntityState(npc, *updatedNpc) ||
+				isQueuedLiveNpcDeathMutation(npc, *updatedNpc));
+		if (keepCurrentRoomDeathEntity) {
+			debugC(1, kDebugCombat,
+				"Harvester: retained current-room npc death entity npc='%s' damage_type=%d frame=%d",
+				npc.npcName.c_str(), npc.deathDamageType, npc.runtimeState);
+			continue;
+		}
+		if (!keepEntity)
+			removeSceneEntityByName(npc.npcName);
+	}
+	for (const NpcRecord &npc : updatedState.roomNpcs) {
+		if (!shouldSpawnRoomNpcEntity(npc))
+			continue;
+
+		Entity *entity = _entityManager
+			? _entityManager->findSceneEntityByName(npc.npcName)
+			: nullptr;
+		const NpcRecord *previousNpc =
+			findRoomNpcByNameConst(_scene.state.roomNpcs, npc.npcName);
+		const bool keepQueuedDeathEntity =
+			entity &&
+			previousNpc &&
+			isQueuedLiveNpcDeathMutation(*previousNpc, npc);
+		if (keepQueuedDeathEntity)
+			continue;
+		const bool needsRespawn =
+			!entity || !previousNpc || !sameNpcEntityState(*previousNpc, npc);
+		if (!needsRespawn)
+			continue;
+
+		removeSceneEntityByName(npc.npcName);
+		if (!spawnSceneNpcEntityFromRecord(npc))
+			return false;
+	}
+
+	for (const MonsterRecord &monster : _scene.state.roomMonsters) {
+		const MonsterRecord *updatedMonster =
+			findRoomMonsterByNameConst(updatedState.roomMonsters, monster.monsterName);
+		const bool keepEntity =
+			updatedMonster &&
+			shouldSpawnRoomMonsterEntity(*updatedMonster) &&
+			sameMonsterEntityState(monster, *updatedMonster);
+		if (!keepEntity)
+			removeSceneEntityByName(monster.monsterName);
+	}
+	for (const MonsterRecord &monster : updatedState.roomMonsters) {
+		if (!shouldSpawnRoomMonsterEntity(monster))
+			continue;
+
+		Entity *entity = _entityManager
+			? _entityManager->findSceneEntityByName(monster.monsterName)
+			: nullptr;
+		const MonsterRecord *previousMonster =
+			findRoomMonsterByNameConst(_scene.state.roomMonsters, monster.monsterName);
+		const bool needsRespawn =
+			!entity || !previousMonster || !sameMonsterEntityState(*previousMonster, monster);
+		if (!needsRespawn)
+			continue;
+
+		removeSceneEntityByName(monster.monsterName);
+		if (!spawnSceneMonsterEntityFromRecord(updatedState, monster))
+			return false;
+	}
+
+	_scene.state = updatedState;
+	_monsterCombatStates = Common::move(updatedMonsterCombatStates);
+	_scene.sceneObjects = updatedScene.sceneObjects;
+	_scene.sceneAnimations = updatedScene.sceneAnimations;
+	_scene.sceneRegions = updatedScene.sceneRegions;
+	const int playerCombatLoadout = script->getPlayerCombatLoadout();
+	if (_playerState.entity && _playerState.combatLoadout != playerCombatLoadout &&
+			!Player::syncCombatLoadoutVisual(
+				_engine, updatedState, _playerState, playerCombatLoadout)) {
+		return false;
+	}
+	if (preservePaletteState) {
+		memcpy(_scene.palette, previousPalette, sizeof(_scene.palette));
+		_scene.targetPaletteBrightness = previousPaletteBrightness;
+	} else {
+		memcpy(_scene.palette, updatedScene.palette, sizeof(_scene.palette));
+		_scene.targetPaletteBrightness = updatedScene.targetPaletteBrightness;
+	}
+	captureCurrentSaveState();
+	return _inventory.refresh();
 }
 
 } // End of namespace Harvester

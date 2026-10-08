@@ -451,7 +451,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		flow.executeStartupAudioCommands(scene.state.audioCommands);
 		if (!scene.state.musicPath.empty())
 			(void)_engine.playMusic(scene.state.musicPath);
-		RoomSession session(_engine, scene, entityManager);
+		RoomSession session(_engine, scene, entityManager, _inventory);
 		debugC(1, kDebugRoom, "Harvester: created room session room='%s'", scene.state.roomName.c_str());
 		RoomPlayerState &playerState = session.getPlayerState();
 		playerState.entity = entityManager ? entityManager->findSceneEntityByName("PLAYER") : nullptr;
@@ -463,7 +463,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			_engine.getScript() ? _engine.getScript()->getPlayerCombatLoadout() : 0;
 		playerState.turnActive = false;
 		playerState.turnTargetFacing = -1;
-		Common::Array<RoomMonsterCombatState> monsterCombatStates;
+		Common::Array<RoomMonsterCombatState> &monsterCombatStates = session.getMonsterCombatStates();
 		monsterCombatStates.resize(scene.state.roomMonsters.size());
 		Common::Array<RoomNpcCombatState> npcCombatStates;
 		npcCombatStates.resize(scene.state.roomNpcs.size());
@@ -537,107 +537,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			sceneObject->runtimeVisible = false;
 			if (ownerOrRoom)
 				sceneObject->currentOwnerOrRoom = *ownerOrRoom;
-		};
-
-		auto sameRect = [](const Common::Rect &lhs, const Common::Rect &rhs) {
-			return lhs.left == rhs.left && lhs.top == rhs.top &&
-				lhs.right == rhs.right && lhs.bottom == rhs.bottom;
-		};
-
-		auto findRoomAnimByNameConst = [](const Common::Array<AnimRecord> &anims,
-				const Common::String &animName) -> const AnimRecord * {
-			for (const AnimRecord &anim : anims) {
-				if (anim.animName.equalsIgnoreCase(animName))
-					return &anim;
-			}
-			return nullptr;
-		};
-		auto findRoomNpcByNameConst = [](const Common::Array<NpcRecord> &npcs,
-				const Common::String &npcName) -> const NpcRecord * {
-			for (const NpcRecord &npc : npcs) {
-				if (npc.npcName.equalsIgnoreCase(npcName))
-					return &npc;
-			}
-			return nullptr;
-		};
-		auto findRoomMonsterByNameConst = [](const Common::Array<MonsterRecord> &monsters,
-				const Common::String &monsterName) -> const MonsterRecord * {
-			for (const MonsterRecord &monster : monsters) {
-				if (monster.monsterName.equalsIgnoreCase(monsterName))
-					return &monster;
-			}
-			return nullptr;
-		};
-
-		auto sameNpcEntityState = [&](const NpcRecord &lhs, const NpcRecord &rhs) {
-			return lhs.posX == rhs.posX &&
-				lhs.posY == rhs.posY &&
-				lhs.posZ == rhs.posZ &&
-				lhs.frameDelay == rhs.frameDelay &&
-				lhs.active == rhs.active &&
-				lhs.visible == rhs.visible &&
-				lhs.runtimeSpawned == rhs.runtimeSpawned &&
-				lhs.runtimeState == rhs.runtimeState &&
-				lhs.deathDamageType == rhs.deathDamageType &&
-				lhs.deathOrMonsterfyFlag == rhs.deathOrMonsterfyFlag &&
-				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
-		};
-		auto isQueuedLiveNpcDeathMutation = [&](const NpcRecord &lhs, const NpcRecord &rhs) {
-			return lhs.posX == rhs.posX &&
-				lhs.posY == rhs.posY &&
-				lhs.posZ == rhs.posZ &&
-				lhs.frameDelay == rhs.frameDelay &&
-				lhs.active &&
-				rhs.active &&
-				lhs.visible &&
-				rhs.visible &&
-				!lhs.runtimeSpawned &&
-				!rhs.runtimeSpawned &&
-				lhs.runtimeState < 0 &&
-				rhs.runtimeState < 0 &&
-				!lhs.deathOrMonsterfyFlag &&
-				!rhs.deathOrMonsterfyFlag &&
-				lhs.deathDamageType == 0 &&
-				rhs.deathDamageType != 0 &&
-				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
-		};
-		auto sameMonsterEntityState = [&](const MonsterRecord &lhs, const MonsterRecord &rhs) {
-			return lhs.posX == rhs.posX &&
-				lhs.posY == rhs.posY &&
-				lhs.posZ == rhs.posZ &&
-				lhs.facing == rhs.facing &&
-				lhs.active == rhs.active &&
-				lhs.visible == rhs.visible &&
-				lhs.runtimeSpawned == rhs.runtimeSpawned &&
-				lhs.runtimeState == rhs.runtimeState &&
-				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
-		};
-		auto sameSceneObjectState = [&](const ObjectRecord &lhs, const ObjectRecord &rhs) {
-			return lhs.currentX == rhs.currentX &&
-				lhs.currentY == rhs.currentY &&
-				lhs.currentZ == rhs.currentZ &&
-				lhs.zExtent == rhs.zExtent &&
-				lhs.operatable == rhs.operatable &&
-				lhs.visible == rhs.visible &&
-				lhs.runtimeVisible == rhs.runtimeVisible &&
-				lhs.actionTag.equalsIgnoreCase(rhs.actionTag) &&
-				lhs.identTextKey.equalsIgnoreCase(rhs.identTextKey) &&
-				lhs.interactionLabel.equalsIgnoreCase(rhs.interactionLabel) &&
-				lhs.currentOwnerOrRoom.equalsIgnoreCase(rhs.currentOwnerOrRoom) &&
-				session.resolveSceneObjectSpritePathLocal(lhs).equalsIgnoreCase(session.resolveSceneObjectSpritePathLocal(rhs)) &&
-				sameRect(session.getSceneObjectBounds(lhs), session.getSceneObjectBounds(rhs));
-		};
-		auto sameSceneRegionState = [&](const RegionRecord &lhs, const RegionRecord &rhs) {
-			return lhs.left == rhs.left &&
-				lhs.top == rhs.top &&
-				lhs.right == rhs.right &&
-				lhs.bottom == rhs.bottom &&
-				lhs.minZ == rhs.minZ &&
-				lhs.maxZ == rhs.maxZ &&
-				lhs.startEnabled == rhs.startEnabled &&
-				lhs.cursorEnabled == rhs.cursorEnabled &&
-				lhs.desiredFacing == rhs.desiredFacing &&
-				lhs.actionTag.equalsIgnoreCase(rhs.actionTag);
 		};
 
 		auto resolveHitEffectAnchor = [&](const Entity &targetEntity,
@@ -795,260 +694,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return removedAny;
 		};
 
-		auto applyCurrentRoomRuntimeMutationsInPlace = [&](bool preservePaletteState) {
-			Script *script = _engine.getScript();
-			ResourceManager *resources = _engine.getResources();
-			if (!script || !resources)
-				return false;
-
-			byte previousPalette[256 * 3];
-			memcpy(previousPalette, scene.palette, sizeof(previousPalette));
-			const float previousPaletteBrightness = scene.targetPaletteBrightness;
-			Common::Array<AudioCommand> entryAudioCommands = scene.state.audioCommands;
-			RoomSetupState updatedState;
-			if (!script->materializeRoomState(
-					scene.state.entranceName, scene.state.roomName, updatedState, *resources)) {
-				return false;
-			}
-			updatedState.audioCommands = Common::move(entryAudioCommands);
-
-			RoomSceneResources updatedScene;
-			if (!loadRoomSceneResources(updatedState, *resources, updatedScene))
-				return false;
-			Common::Array<RoomMonsterCombatState> updatedMonsterCombatStates;
-			updatedMonsterCombatStates.resize(updatedState.roomMonsters.size());
-			for (uint i = 0; i < updatedState.roomMonsters.size(); ++i) {
-				const MonsterRecord &updatedMonster = updatedState.roomMonsters[i];
-				for (uint j = 0; j < scene.state.roomMonsters.size() &&
-						j < monsterCombatStates.size(); ++j) {
-					const MonsterRecord &previousMonster = scene.state.roomMonsters[j];
-					if (!previousMonster.monsterName.equalsIgnoreCase(updatedMonster.monsterName))
-						continue;
-					if (sameMonsterEntityState(previousMonster, updatedMonster))
-						updatedMonsterCombatStates[i] = monsterCombatStates[j];
-					break;
-				}
-			}
-
-			for (const ObjectRecord &object : scene.sceneObjects) {
-				if (!findSceneObjectByName(updatedScene.sceneObjects, object.objectName))
-					session.removeSceneEntityByName(object.objectName);
-			}
-			for (const ObjectRecord &object : updatedScene.sceneObjects) {
-				const ObjectRecord *previous = findSceneObjectByName(scene.sceneObjects, object.objectName);
-				const bool changed = !previous || !sameSceneObjectState(*previous, object);
-				if (!changed)
-					continue;
-
-				session.removeSceneEntityByName(object.objectName);
-				session.spawnSceneObjectEntityFromRecord(object);
-			}
-
-			for (const RegionRecord &region : scene.sceneRegions) {
-				if (!findSceneRegionByName(updatedScene.sceneRegions, region.regionName))
-					session.removeSceneEntityByName(region.regionName);
-			}
-			for (const RegionRecord &region : updatedScene.sceneRegions) {
-				const RegionRecord *previous =
-					findSceneRegionByName(scene.sceneRegions, region.regionName);
-				const bool changed = !previous || !sameSceneRegionState(*previous, region);
-				if (!changed)
-					continue;
-
-				session.removeSceneEntityByName(region.regionName);
-				session.spawnSceneRegionEntityFromRecord(region);
-			}
-
-			for (const TimerRecord &timer : scene.state.roomTimers) {
-				bool found = false;
-				for (const TimerRecord &updatedTimer : updatedState.roomTimers) {
-					if (updatedTimer.timerName.equalsIgnoreCase(timer.timerName)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found)
-					session.removeSceneEntityByName(timer.timerName);
-			}
-			for (const TimerRecord &timer : updatedState.roomTimers) {
-				const TimerRecord *previous = nullptr;
-				for (const TimerRecord &candidate : scene.state.roomTimers) {
-					if (candidate.timerName.equalsIgnoreCase(timer.timerName)) {
-						previous = &candidate;
-						break;
-					}
-				}
-				const bool changed = !previous ||
-					previous->initialValue != timer.initialValue ||
-					previous->currentValue != timer.currentValue ||
-					previous->enabled != timer.enabled ||
-					previous->looping != timer.looping ||
-					previous->global != timer.global;
-				if (!changed)
-					continue;
-
-				session.removeSceneEntityByName(timer.timerName);
-				if (entityManager) {
-					(void)entityManager->spawnSceneTimerEntity(
-						timer.timerName, timer.initialValue, timer.currentValue,
-						timer.enabled, timer.looping, timer.global);
-				}
-			}
-
-			for (AnimRecord &anim : updatedState.roomAnimations) {
-				const AnimRecord *previous =
-					findRoomAnimByNameConst(scene.state.roomAnimations, anim.animName);
-				const bool wasDisplayed = previous && shouldDisplaySceneAnimation(*previous);
-				const bool isDisplayed = shouldDisplaySceneAnimation(anim);
-				const bool becameVisible = !wasDisplayed && isDisplayed;
-				if (becameVisible)
-					anim.runtimeState = 0;
-
-				Entity *entity = entityManager
-					? entityManager->findSceneEntityByName(anim.animName)
-					: nullptr;
-				if (!isDisplayed) {
-					session.removeSceneEntityByName(anim.animName);
-					continue;
-				}
-
-				const bool needsRespawn = !entity || !previous ||
-					!previous->resourcePath.equalsIgnoreCase(anim.resourcePath) ||
-					previous->x != anim.x ||
-					previous->y != anim.y ||
-					previous->z != anim.z ||
-					previous->frameDelay != anim.frameDelay ||
-					previous->looping != anim.looping ||
-					previous->pingPong != anim.pingPong ||
-					previous->backward != anim.backward;
-				if (needsRespawn) {
-					session.removeSceneEntityByName(anim.animName);
-					if (entityManager) {
-						entity = entityManager->spawnSceneAnimationEntity(
-							anim.animName, anim.resourcePath, Common::Point(anim.x, anim.y),
-							(float)anim.z, anim.frameDelay, anim.active, isDisplayed, anim.looping,
-							anim.backward, anim.pingPong, anim.runtimeState);
-					}
-				} else if (entity) {
-					const float renderZ =
-						(float)anim.z - floorf(MAX<float>(entity->getZExtent(), 0.0f) * 0.5f);
-					const bool zChanged = entity->getZ() != renderZ;
-					entity->setPosition(anim.x, anim.y, renderZ);
-					entity->setLooping(anim.looping);
-					entity->setPingPong(anim.pingPong);
-					entity->setPlayBackwards(anim.backward);
-					entity->setAnimationRate(anim.frameDelay);
-					entity->setVisible(isDisplayed);
-					if (anim.active && anim.runtimeState >= 0 && !entity->isAnimationEnabled())
-						entity->setCurrentFrame(anim.runtimeState);
-					entity->setAnimationEnabled(anim.active);
-					if (zChanged)
-						entityManager->reinsertSceneEntity(entity);
-				}
-			}
-
-			for (const AnimRecord &anim : scene.state.roomAnimations) {
-				if (!findRoomAnimByNameConst(updatedState.roomAnimations, anim.animName))
-					session.removeSceneEntityByName(anim.animName);
-			}
-
-			for (const NpcRecord &npc : scene.state.roomNpcs) {
-				const NpcRecord *updatedNpc =
-					findRoomNpcByNameConst(updatedState.roomNpcs, npc.npcName);
-				const bool keepCurrentRoomDeathEntity =
-					!updatedNpc &&
-					isRetainedCurrentRoomNpcDeathRecord(npc) &&
-					entityManager &&
-					entityManager->findSceneEntityByName(npc.npcName);
-				const bool keepEntity =
-					updatedNpc &&
-					session.shouldSpawnRoomNpcEntity(*updatedNpc) &&
-					(sameNpcEntityState(npc, *updatedNpc) ||
-						isQueuedLiveNpcDeathMutation(npc, *updatedNpc));
-				if (keepCurrentRoomDeathEntity) {
-					debugC(1, kDebugCombat,
-						"Harvester: retained current-room npc death entity npc='%s' damage_type=%d frame=%d",
-						npc.npcName.c_str(), npc.deathDamageType, npc.runtimeState);
-					continue;
-				}
-				if (!keepEntity)
-					session.removeSceneEntityByName(npc.npcName);
-			}
-			for (const NpcRecord &npc : updatedState.roomNpcs) {
-				if (!session.shouldSpawnRoomNpcEntity(npc))
-					continue;
-
-				Entity *entity = entityManager
-					? entityManager->findSceneEntityByName(npc.npcName)
-					: nullptr;
-				const NpcRecord *previousNpc =
-					findRoomNpcByNameConst(scene.state.roomNpcs, npc.npcName);
-				const bool keepQueuedDeathEntity =
-					entity &&
-					previousNpc &&
-					isQueuedLiveNpcDeathMutation(*previousNpc, npc);
-				if (keepQueuedDeathEntity)
-					continue;
-				const bool needsRespawn =
-					!entity || !previousNpc || !sameNpcEntityState(*previousNpc, npc);
-				if (!needsRespawn)
-					continue;
-
-				session.removeSceneEntityByName(npc.npcName);
-				if (!session.spawnSceneNpcEntityFromRecord(npc))
-					return false;
-			}
-
-			for (const MonsterRecord &monster : scene.state.roomMonsters) {
-				const MonsterRecord *updatedMonster =
-					findRoomMonsterByNameConst(updatedState.roomMonsters, monster.monsterName);
-				const bool keepEntity =
-					updatedMonster &&
-					session.shouldSpawnRoomMonsterEntity(*updatedMonster) &&
-					sameMonsterEntityState(monster, *updatedMonster);
-				if (!keepEntity)
-					session.removeSceneEntityByName(monster.monsterName);
-			}
-			for (const MonsterRecord &monster : updatedState.roomMonsters) {
-				if (!session.shouldSpawnRoomMonsterEntity(monster))
-					continue;
-
-				Entity *entity = entityManager
-					? entityManager->findSceneEntityByName(monster.monsterName)
-					: nullptr;
-				const MonsterRecord *previousMonster =
-					findRoomMonsterByNameConst(scene.state.roomMonsters, monster.monsterName);
-				const bool needsRespawn =
-					!entity || !previousMonster || !sameMonsterEntityState(*previousMonster, monster);
-				if (!needsRespawn)
-					continue;
-
-				session.removeSceneEntityByName(monster.monsterName);
-				if (!session.spawnSceneMonsterEntityFromRecord(updatedState, monster))
-					return false;
-			}
-
-			scene.state = updatedState;
-			monsterCombatStates = Common::move(updatedMonsterCombatStates);
-			scene.sceneObjects = updatedScene.sceneObjects;
-			scene.sceneAnimations = updatedScene.sceneAnimations;
-			scene.sceneRegions = updatedScene.sceneRegions;
-			const int playerCombatLoadout = script->getPlayerCombatLoadout();
-			if (playerState.entity && playerState.combatLoadout != playerCombatLoadout &&
-					!Player::syncCombatLoadoutVisual(
-						_engine, updatedState, playerState, playerCombatLoadout)) {
-				return false;
-			}
-			if (preservePaletteState) {
-				memcpy(scene.palette, previousPalette, sizeof(scene.palette));
-				scene.targetPaletteBrightness = previousPaletteBrightness;
-			} else {
-				memcpy(scene.palette, updatedScene.palette, sizeof(scene.palette));
-				scene.targetPaletteBrightness = updatedScene.targetPaletteBrightness;
-			}
-			session.captureCurrentSaveState();
-			return _inventory.refresh();
-		};
 		session.resetIdleState();
 
 		auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
@@ -1163,7 +808,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (clearCarryState)
 				clearCarriedRoomItem();
 
-			if (!applyCurrentRoomRuntimeMutationsInPlace(true) && !refreshCurrentScene(true))
+			if (!session.applyCurrentRoomRuntimeMutationsInPlace(true) && !refreshCurrentScene(true))
 				return Common::kReadingFailed;
 			if (!_inventory.refresh())
 				return Common::kReadingFailed;
@@ -1523,7 +1168,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					: 0);
 		};
 		typedef decltype(refreshCurrentScene) RefreshCurrentSceneFn;
-		typedef decltype(applyCurrentRoomRuntimeMutationsInPlace) ApplyCurrentRoomRuntimeMutationsInPlaceFn;
 		typedef decltype(captureDialogueBackdrop) CaptureDialogueBackdropFn;
 		typedef decltype(showCdChangePrompt) ShowCdChangePromptFn;
 		typedef decltype(runRoomExitCommands) RunRoomExitCommandsFn;
@@ -1536,7 +1180,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			RoomInteractionCallbacksImpl(
 					RoomSession &session_,
 					RefreshCurrentSceneFn &refreshCurrentSceneFn_,
-					ApplyCurrentRoomRuntimeMutationsInPlaceFn &applyCurrentRoomRuntimeMutationsInPlaceFn_,
 					CaptureDialogueBackdropFn &captureDialogueBackdropFn_,
 					ShowCdChangePromptFn &showCdChangePromptFn_,
 					RunRoomExitCommandsFn &runRoomExitCommandsFn_,
@@ -1545,7 +1188,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					RunModalShowTextFn &runModalShowTextFn_,
 					StartPlayerDefeatSequenceFn &startPlayerDefeatSequenceFn_)
 				: session(session_), refreshCurrentSceneFn(refreshCurrentSceneFn_),
-				  applyCurrentRoomRuntimeMutationsInPlaceFn(applyCurrentRoomRuntimeMutationsInPlaceFn_),
 				  captureDialogueBackdropFn(captureDialogueBackdropFn_),
 				  showCdChangePromptFn(showCdChangePromptFn_),
 				  runRoomExitCommandsFn(runRoomExitCommandsFn_),
@@ -1560,7 +1202,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			bool applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState) override {
-				return applyCurrentRoomRuntimeMutationsInPlaceFn(preservePaletteState);
+				return session.applyCurrentRoomRuntimeMutationsInPlace(preservePaletteState);
 			}
 
 			void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords) override {
@@ -1606,7 +1248,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			RoomSession &session;
 			RefreshCurrentSceneFn &refreshCurrentSceneFn;
-			ApplyCurrentRoomRuntimeMutationsInPlaceFn &applyCurrentRoomRuntimeMutationsInPlaceFn;
 			CaptureDialogueBackdropFn &captureDialogueBackdropFn;
 			ShowCdChangePromptFn &showCdChangePromptFn;
 			RunRoomExitCommandsFn &runRoomExitCommandsFn;
@@ -1617,7 +1258,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		};
 		RoomInteractionCallbacksImpl interactionCallbacks(
 			session,
-			refreshCurrentScene, applyCurrentRoomRuntimeMutationsInPlace,
+			refreshCurrentScene,
 			captureDialogueBackdrop, showCdChangePrompt,
 			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
 			startPlayerDefeatSequence);
@@ -1636,7 +1277,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			// Native room_setup applies entry-time state changes before the first visible room frame.
 			if (roomEntryInteraction.mutatedRuntimeState) {
 				session.syncGlobalTimerEntities(roomEntryInteraction.previousTimerRecords);
-				if (!applyCurrentRoomRuntimeMutationsInPlace(false) &&
+				if (!session.applyCurrentRoomRuntimeMutationsInPlace(false) &&
 						!refreshCurrentScene(true)) {
 					return Common::kReadingFailed;
 				}
