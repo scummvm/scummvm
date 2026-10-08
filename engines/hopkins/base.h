@@ -30,6 +30,7 @@
 #include "hopkins/base_enhancements_autoplay.h"
 
 #include "common/array.h"
+#include "common/queue.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -79,6 +80,13 @@ private:
 	};
 
 	class SessionGuard;
+	enum PendingGameplayRequestType {
+		kPendingGameplayExit
+	};
+	struct PendingGameplayRequest {
+		PendingGameplayRequestType type;
+		uint32 generation;
+	};
 
 	static const BaseEntryPoint *entryPoints(uint &count);
 	static const BaseEntryPoint *findEntryPoint(int entryId);
@@ -92,8 +100,13 @@ private:
 	void releaseEnhancementCursor();
 	void updateEnhancementCursor();
 	void resetEnhancementSession();
-	void updateEnhancementActionState(uint32 action, bool pressed);
+	void clearGameplayInput(bool disarm);
+	BaseInputState consumeGameplayInput();
+	void setMappedGameplayAction(uint32 action, bool pressed);
+	void queueGameplayRequest(PendingGameplayRequestType type);
+	bool updateEnhancementActionState(uint32 action, bool pressed);
 	void updateEnhancementInputArming(uint32 now);
+	void updateOverlayInputState();
 	void setEnhancementPanel(WBASEEnhancementPanel panel);
 	void openAutoplayMenu();
 	void closeNavigationMap();
@@ -116,7 +129,11 @@ private:
 	BaseEngine *_engine;
 	BaseRenderer *_renderer;
 	Common::Array<byte> _framebuffer;
-	BaseInputState _input;
+	uint32 _wbaseMappedInputHolds;
+	uint32 _wbaseMappedInputPulses;
+	Common::Queue<PendingGameplayRequest> _wbasePendingGameplayRequests;
+	uint32 _wbaseInputGeneration;
+	bool _wbaseTextureTogglePending;
 	const BaseEntryPoint *_entry;
 	int _result;
 	bool _audioLoaded[6];
@@ -139,6 +156,7 @@ private:
 	bool _wbaseAutoplayMenuInputArmed;
 	bool _wbaseEnhancementCursorPushed;
 	bool _wbaseEnhancementCursorVisible;
+	bool _wbaseOverlayVisible;
 	bool _quitRequested;
 };
 

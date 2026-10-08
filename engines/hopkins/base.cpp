@@ -143,7 +143,9 @@ private:
 };
 
 BaseGame::BaseGame(HopkinsEngine *vm) :
-		_vm(vm), _wbaseEnhancements(vm->getTargetName()), _engine(nullptr), _renderer(nullptr), _entry(nullptr), _result(-1),
+		_vm(vm), _wbaseEnhancements(vm->getTargetName()), _engine(nullptr), _renderer(nullptr),
+		_wbaseMappedInputHolds(0), _wbaseMappedInputPulses(0), _wbaseInputGeneration(0),
+		_wbaseTextureTogglePending(false), _entry(nullptr), _result(-1),
 		_keymapsSwitched(false), _defaultKeymapWasEnabled(false),
 		_shortcutKeymapWasEnabled(false), _baseKeymapWasEnabled(false), _wbaseEnhancementsKeymapWasEnabled(false),
 		_inputSuspended(false), _mainMenuRequested(false),
@@ -153,7 +155,7 @@ BaseGame::BaseGame(HopkinsEngine *vm) :
 		_wbaseForcedAutoplayPromptIssued(false), _wbaseEnhancementHoveredControl(kWBASEEnhancementControlNone),
 		_wbaseEnhancementInputArmed(false), _wbaseAutoplayMenuInputArmed(false),
 		_wbaseEnhancementCursorPushed(false), _wbaseEnhancementCursorVisible(false),
-		_quitRequested(false) {
+		_wbaseOverlayVisible(false), _quitRequested(false) {
 	_framebuffer.resize(kBaseFrameWidth * kBaseFrameHeight);
 	Common::fill(_audioLoaded, _audioLoaded + ARRAYSIZE(_audioLoaded), false);
 }
@@ -265,8 +267,9 @@ BaseRunResult BaseGame::run(int entryId) {
 		bool advanced = false;
 		while (accumulator >= 1000 && _result == -1) {
 			accumulator -= 1000;
+			BaseInputState gameplayInput;
 			BaseInputState autoplayInput;
-			BaseInputState *tickInput = &_input;
+			BaseInputState *tickInput = &gameplayInput;
 			if (_wbaseEnhancementsAutoplay.active()) {
 				const int forcedRoom = _wbaseEnhancementsAutoplay.update(*_engine, autoplayInput);
 				if (forcedRoom >= 94 && forcedRoom <= 99) {
@@ -281,6 +284,8 @@ BaseRunResult BaseGame::run(int entryId) {
 				tickInput = &autoplayInput;
 			} else if (_wbaseEnhancements.forcedAutoplayEnabled()) {
 				tickInput = &autoplayInput;
+			} else {
+				gameplayInput = consumeGameplayInput();
 			}
 			const int tickResult = _engine->tick(*tickInput);
 			processSoundEvents();
@@ -492,30 +497,90 @@ void BaseGame::updateEnhancementCursor() {
 }
 
 void BaseGame::resetEnhancementSession() {
-	_input = BaseInputState();
+	clearGameplayInput(true);
 	_wbaseEnhancementPanel = kWBASEEnhancementPanelNone;
-	_wbaseEnhancementHeldActions = 0;
 	_wbaseAutoplayMenuOpenedAt = 0;
 	_wbaseForcedAutoplayPromptTicks = _wbaseEnhancements.forcedAutoplayEnabled() ? kForcedAutoplayPromptTicks : 0;
 	_wbaseForcedAutoplayPromptIssued = false;
 	_wbaseEnhancementHoveredControl = kWBASEEnhancementControlNone;
 	_wbaseEnhancementInputArmed = !_wbaseEnhancements.controlsEnabled();
 	_wbaseAutoplayMenuInputArmed = false;
+	_wbaseOverlayVisible = g_system->isOverlayVisible();
 	_wbaseEnhancementsAutoplay.reset();
 }
 
-void BaseGame::updateEnhancementActionState(uint32 action, bool pressed) {
+void BaseGame::clearGameplayInput(bool disarm) {
+	_wbaseMappedInputHolds = 0;
+	_wbaseMappedInputPulses = 0;
+	_wbaseTextureTogglePending = false;
+	_wbasePendingGameplayRequests.clear();
+	++_wbaseInputGeneration;
+	if (_wbaseInputGeneration == 0)
+		++_wbaseInputGeneration;
+	if (disarm) {
+		_wbaseEnhancementHeldActions = 0;
+		_wbaseEnhancementInputArmed = !_wbaseEnhancements.controlsEnabled();
+		_wbaseAutoplayMenuInputArmed = false;
+	}
+}
+
+BaseInputState BaseGame::consumeGameplayInput() {
+	const uint32 active = _wbaseMappedInputHolds | _wbaseMappedInputPulses;
+	BaseInputState input;
+	input.forward = (active & enhancementActionMask(kActionBaseForward)) != 0;
+	input.backward = (active & enhancementActionMask(kActionBaseBackward)) != 0;
+	input.turnLeft = (active & enhancementActionMask(kActionBaseTurnLeft)) != 0;
+	input.turnRight = (active & enhancementActionMask(kActionBaseTurnRight)) != 0;
+	input.fire = (active & enhancementActionMask(kActionBaseFire)) != 0;
+	input.toggleTextures = _wbaseTextureTogglePending;
+	_wbaseMappedInputPulses = 0;
+	_wbaseTextureTogglePending = false;
+
+	while (!_wbasePendingGameplayRequests.empty() &&
+			_wbasePendingGameplayRequests.front().generation != _wbaseInputGeneration)
+		_wbasePendingGameplayRequests.pop();
+	if (!_wbasePendingGameplayRequests.empty()) {
+		const PendingGameplayRequest request = _wbasePendingGameplayRequests.pop();
+		if (request.type == kPendingGameplayExit)
+			input.exitRequested = true;
+	}
+	return input;
+}
+
+void BaseGame::setMappedGameplayAction(uint32 action, bool pressed) {
+	if (action < kActionBaseForward || action > kActionBaseFire)
+		return;
+	const uint32 mask = enhancementActionMask(action);
+	if (pressed) {
+		if (_wbaseEnhancements.controlsEnabled() && !(_wbaseMappedInputHolds & mask))
+			_wbaseMappedInputPulses |= mask;
+		_wbaseMappedInputHolds |= mask;
+	} else {
+		_wbaseMappedInputHolds &= ~mask;
+	}
+}
+
+void BaseGame::queueGameplayRequest(PendingGameplayRequestType type) {
+	PendingGameplayRequest request;
+	request.type = type;
+	request.generation = _wbaseInputGeneration;
+	_wbasePendingGameplayRequests.push(request);
+}
+
+bool BaseGame::updateEnhancementActionState(uint32 action, bool pressed) {
 	const uint32 mask = enhancementActionMask(action);
 	if (!mask)
-		return;
+		return true;
+	const bool wasPressed = (_wbaseEnhancementHeldActions & mask) != 0;
 	if (pressed)
 		_wbaseEnhancementHeldActions |= mask;
 	else
 		_wbaseEnhancementHeldActions &= ~mask;
+	return wasPressed != pressed;
 }
 
 void BaseGame::updateEnhancementInputArming(uint32 now) {
-	if (_inputSuspended)
+	if (_inputSuspended || _wbaseOverlayVisible)
 		return;
 	const bool mouseReleased = !(g_system->getEventManager()->getButtonState() & Common::EventManager::LBUTTON);
 	if (!_wbaseEnhancementInputArmed && !_wbaseEnhancementHeldActions && mouseReleased) {
@@ -531,9 +596,18 @@ void BaseGame::updateEnhancementInputArming(uint32 now) {
 	}
 }
 
+void BaseGame::updateOverlayInputState() {
+	const bool overlayVisible = g_system->isOverlayVisible();
+	if (overlayVisible == _wbaseOverlayVisible)
+		return;
+	_wbaseOverlayVisible = overlayVisible;
+	clearGameplayInput(true);
+	_timingResetRequested = true;
+}
+
 void BaseGame::setEnhancementPanel(WBASEEnhancementPanel panel) {
 	_wbaseEnhancementPanel = panel;
-	_input = BaseInputState();
+	clearGameplayInput(false);
 	_timingResetRequested = true;
 	_wbaseEnhancementsAutoplay.clearMenuPointer();
 	_wbaseAutoplayMenuInputArmed = false;
@@ -605,39 +679,41 @@ bool BaseGame::enhancementPanelVisible() const {
 }
 
 void BaseGame::pollInput() {
+	updateOverlayInputState();
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
-			_input = BaseInputState();
+			clearGameplayInput(true);
 			_quitRequested = true;
 			break;
 		case Common::EVENT_MAINMENU:
 			_mainMenuRequested = true;
 			break;
 		case Common::EVENT_SCREEN_CHANGED:
-			_input = BaseInputState();
+			clearGameplayInput(true);
 			_presentationRefreshRequested = true;
 			_timingResetRequested = true;
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START: {
-			updateEnhancementActionState(event.customType, true);
-			if (_wbaseEnhancementInputArmed)
-				handleAction(event.customType, true);
-			else
-				debug(2, "Hopkins WBASE suppressed entry-boundary action %u", event.customType);
+			const bool changed = updateEnhancementActionState(event.customType, true);
+			if (changed) {
+				if (_wbaseEnhancementInputArmed)
+					handleAction(event.customType, true);
+				else
+					debug(2, "Hopkins WBASE suppressed entry-boundary action %u", event.customType);
+			}
 			break;
 		}
-		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			updateEnhancementActionState(event.customType, false);
-			if (_wbaseEnhancementInputArmed)
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END: {
+			const bool changed = updateEnhancementActionState(event.customType, false);
+			if (_wbaseEnhancementInputArmed && changed)
 				handleAction(event.customType, false);
 			break;
+		}
 		case Common::EVENT_FOCUS_LOST:
-			_input = BaseInputState();
-			_wbaseEnhancementHeldActions = 0;
-			_wbaseAutoplayMenuInputArmed = false;
+			clearGameplayInput(true);
 			_inputSuspended = true;
 			_timingResetRequested = true;
 			break;
@@ -646,8 +722,7 @@ void BaseGame::pollInput() {
 			_timingResetRequested = true;
 			break;
 		case Common::EVENT_INPUT_CHANGED:
-			_input = BaseInputState();
-			_wbaseEnhancementHeldActions = 0;
+			clearGameplayInput(true);
 			_timingResetRequested = true;
 			break;
 		case Common::EVENT_KEYDOWN:
@@ -685,6 +760,7 @@ void BaseGame::pollInput() {
 			break;
 		}
 	}
+	updateOverlayInputState();
 	updateEnhancementInputArming(g_system->getMillis());
 	updateEnhancementCursor();
 
@@ -731,7 +807,7 @@ void BaseGame::handleAction(uint32 action, bool pressed) {
 		default:
 			return;
 		}
-		_input = BaseInputState();
+		clearGameplayInput(false);
 		_timingResetRequested = true;
 		renderFrame();
 		return;
@@ -785,7 +861,7 @@ void BaseGame::handleAction(uint32 action, bool pressed) {
 		case kActionBaseFire:
 		case kActionBaseUse:
 			_wbaseEnhancementsAutoplay.cancel();
-			_input = BaseInputState();
+			clearGameplayInput(false);
 			break;
 		default:
 			break;
@@ -794,27 +870,19 @@ void BaseGame::handleAction(uint32 action, bool pressed) {
 
 	switch (action) {
 	case kActionBaseForward:
-		_input.forward = pressed;
-		break;
 	case kActionBaseBackward:
-		_input.backward = pressed;
-		break;
 	case kActionBaseTurnLeft:
-		_input.turnLeft = pressed;
-		break;
 	case kActionBaseTurnRight:
-		_input.turnRight = pressed;
-		break;
 	case kActionBaseFire:
-		_input.fire = pressed;
+		setMappedGameplayAction(action, pressed);
 		break;
 	case kActionBaseUse:
 		if (pressed)
-			_input.exitRequested = true;
+			queueGameplayRequest(kPendingGameplayExit);
 		break;
 	case kActionBaseToggleTextures:
 		if (pressed)
-			_input.toggleTextures = true;
+			_wbaseTextureTogglePending = true;
 		break;
 	case kActionBaseMenu:
 		if (pressed)
@@ -835,13 +903,15 @@ void BaseGame::handleAction(uint32 action, bool pressed) {
 
 void BaseGame::openMainMenu() {
 	_mainMenuRequested = false;
-	_input = BaseInputState();
+	clearGameplayInput(true);
 	_inputSuspended = true;
 	_vm->openMainMenuDialog();
 	// A modal menu may consume the KEYUP for the key that opened it. Purge
 	// keyboard events before resuming so WBASE cannot inherit a stuck action.
 	g_system->getEventManager()->purgeKeyboardEvents();
 	_inputSuspended = false;
+	_wbaseOverlayVisible = g_system->isOverlayVisible();
+	clearGameplayInput(true);
 	_timingResetRequested = true;
 
 	if (_vm->shouldQuit())
