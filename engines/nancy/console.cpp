@@ -600,12 +600,15 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 				dep.milliseconds);
 			break;
 		case DependencyType::kElapsedPlayerTime:
-			debugPrintf("kPlayerTime, player time %s %i hours, %i minutes, %i seconds, %i milliseconds",
-				dep.condition == 0 ? "at or after" : (dep.condition == 1 ? "at or before" : (dep.condition == 2 ? "equals" : "between")),
-				dep.hours,
-				dep.minutes,
-				dep.seconds,
-				dep.milliseconds);
+			if (dep.condition == 3) {
+				// A range keeps its end in the seconds and milliseconds fields
+				debugPrintf("kPlayerTime, player time between %i:%02i and %i:%02i",
+					dep.hours, dep.minutes, dep.seconds, dep.milliseconds);
+			} else {
+				debugPrintf("kPlayerTime, player time %s %i:%02i",
+					dep.condition == 0 ? "at or after" : (dep.condition == 1 ? "at or before" : "equals"),
+					dep.hours, dep.minutes);
+			}
 			break;
 		case DependencyType::kSceneCount:
 			debugPrintf("kSceneCount, scene ID %i, hit count %s %i",
@@ -629,9 +632,24 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 			if (g_nancy->getGameType() >= kGameTypeNancy14) {
 				// Repurposed as a value-table test in Nancy14
 				static const char *const comparisons[] = { "==", ">", ">=", "<", "<=" };
-				debugPrintf("kValueTest, value %u %s %i", dep.label,
-					dep.condition < ARRAYSIZE(comparisons) ? comparisons[dep.condition] : "?",
-					dep.milliseconds);
+				const char *comparison = dep.condition < ARRAYSIZE(comparisons) ? comparisons[dep.condition] : "?";
+				const TableData *table = State::Scene::hasInstance() ?
+					(const TableData *)NancySceneState.getPuzzleData(TableData::getTag()) : nullptr;
+
+				if (g_nancy->getGameType() >= kGameTypeNancy16 && table) {
+					// Nancy16 compares against another value when the hours field is 1; values
+					// are indexed with a byte, and the last one is the day. Show what they hold.
+					if (dep.hours == 1) {
+						debugPrintf("kValueTest, value %u (now %i) %s value %u (now %i)", (byte)dep.label,
+							table->getValueOrZero((byte)dep.label), comparison,
+							(byte)dep.milliseconds, table->getValueOrZero((byte)dep.milliseconds));
+					} else {
+						debugPrintf("kValueTest, value %u (now %i) %s %i", (byte)dep.label,
+							table->getValueOrZero((byte)dep.label), comparison, dep.milliseconds);
+					}
+				} else {
+					debugPrintf("kValueTest, value %u %s %i", dep.label, comparison, dep.milliseconds);
+				}
 			} else {
 				debugPrintf("kTimerLessThanDependencyTime");
 			}
