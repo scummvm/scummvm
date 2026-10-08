@@ -61,13 +61,15 @@ WindowStyleStatic G_STYLES[style_NUMSTYLES] = {
 
 Conf *g_conf;
 
-Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true),
+Conf::Conf(InterpreterType interpType, bool installGlobal,
+		const Graphics::PixelFormat &format) : _interpType(interpType),
+		_installedGlobal(installGlobal), _preferences(nullptr), _graphics(true),
 #ifndef USE_HIGHRES
 		_width(320), _height(200),
 #else
 		_width(640), _height(400),
 #endif
-		_screenFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+		_screenFormat(format),
 #ifndef USE_HIGHRES
 		_rows(12), _cols(30),
 #else
@@ -77,11 +79,12 @@ Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true
 		_wBorderX(0), _wBorderY(0), _tMarginX(7), _tMarginY(7), _gamma(1.0),
 		_borderColor(0), _borderSave(0),
 		_windowColor(parseColor(WHITE)), _windowSave(parseColor(WHITE)),
-		_windowColorOverride(false),
+		_windowColorOverride(false), _borderColorOverride(false),
 		_sound(true), _speak(false), _speakInput(false), _styleHint(1),
 		_scrollBg(parseColor(SCROLL_BG)), _scrollFg(parseColor(SCROLL_FG)),
 		_scrollWidth(0), _safeClicks(false) {
-	g_conf = this;
+	if (_installedGlobal)
+		g_conf = this;
 	_imageW = _width;
 	_imageH = _height;
 
@@ -155,21 +158,14 @@ void Conf::synchronize() {
 	syncAsInt("leading", _propInfo._leading);
 	syncAsInt("baseline", _propInfo._baseLine);
 
-	if (_isLoading) {
-		if (exists("minrows"))
-			_rows = MAX(_rows, ConfMan.getInt("minrows"));
-		if (exists("maxrows"))
-			_rows = MIN(_rows, ConfMan.getInt("maxrows"));
-		if (exists("mincols"))
-			_cols = MAX(_cols, ConfMan.getInt("mincols"));
-		if (exists("maxcols"))
-			_cols = MIN(_cols, ConfMan.getInt("maxcols"));
-	} else {
-		ConfMan.setInt("minrows", 0);
-		ConfMan.setInt("maxrows", 999);
-		ConfMan.setInt("mincols", 0);
-		ConfMan.setInt("maxcols", 999);
-	}
+	if (exists("minrows"))
+		_rows = MAX(_rows, getInt("minrows"));
+	if (exists("maxrows"))
+		_rows = MIN(_rows, getInt("maxrows"));
+	if (exists("mincols"))
+		_cols = MAX(_cols, getInt("mincols"));
+	if (exists("maxcols"))
+		_cols = MIN(_cols, getInt("maxcols"));
 
 	syncAsInt("lockrows", _lockRows);
 	syncAsInt("lockcols", _lockCols);
@@ -193,29 +189,13 @@ void Conf::synchronize() {
 
 	syncAsColor("bordercolor", _borderColor);
 	syncAsColor("bordercolor", _borderSave);
-	syncAsBool("bordercolor_override", _borderColorOverride);
-
-	if (_isLoading && !_borderColorOverride && _borderColor != parseColor(WHITE))
-		_borderColorOverride = true;
-
-	if (_borderColorOverride)
-		Windows::_overrideBgSet = true;
-
-	syncAsBool("windowcolor_override", _windowColorOverride);
 	syncAsColor("windowcolor", _windowColor);
 	syncAsColor("windowcolor", _windowSave);
-
-	// if we read a colour but no explicit override flag was present, pretend the user meant to force that colour.
-	if (_isLoading && !_windowColorOverride && _windowColor != parseColor(WHITE))
-		_windowColorOverride = true;
-
-	if (_windowColorOverride)
-		Windows::_overrideBgSet = true;
 
 	syncAsColor("caretcolor", _propInfo._caretColor);
 	syncAsInt("caretshape", _propInfo._caretShape);
 	syncAsInt("linkstyle", _propInfo._linkStyle);
-	if (_isLoading) {
+	{
 		_propInfo._caretSave = _propInfo._caretColor;
 
 		_monoInfo._caretColor = _propInfo._caretColor;
@@ -241,62 +221,36 @@ void Conf::synchronize() {
 	syncAsInt("stylehint", _styleHint);
 	syncAsBool("safeclicks", _safeClicks);
 
-	const char *const TG_COLOR[2] = { "tcolor_%d", "gcolor_%d" };
-	for (int tg = 0; tg < 2; ++tg) {
-		WindowStyle *pStyles = (tg == 0) ? _tStyles : _gStyles;
-		for (int style = 0; style <= 10; ++style) {
-			Common::String key = Common::String::format(TG_COLOR[tg], style);
-			if (_isLoading) {
-				if (exists(key)) {
-					Common::String line = ConfMan.get(key);
-					if (line.find(',') == 6) {
-						pStyles[style].fg = parseColor(Common::String(line.c_str(), 6));
-						pStyles[style].bg = parseColor(Common::String(line.c_str() + 7));
-					}
-				}
-			} else {
-				Common::String line = Common::String::format("%s,%s",
-					encodeColor(pStyles[style].fg).c_str(),
-					encodeColor(pStyles[style].bg).c_str()
-				);
-				ConfMan.set(key, line);
+	for (int grid = 0; grid < 2; ++grid) {
+		WindowStyle *styles = grid ? _gStyles : _tStyles;
+		for (int style = 0; style < style_NUMSTYLES; ++style) {
+			Common::String color;
+			if (_preferences->styleColor(grid, style, true, color) != kGlkInterpreterDefault) {
+				styles[style].fg = parseColor(color);
 			}
-		}
-	}
-
-	const char *const TG_FONT[2] = { "tfont_%d", "gfont_%d" };
-	for (int tg = 0; tg < 2; ++tg) {
-		WindowStyle *pStyles = (tg == 0) ? _tStyles : _gStyles;
-		for (int style = 0; style <= 10; ++style) {
-			Common::String key = Common::String::format(TG_FONT[tg], style);
-			if (_isLoading) {
-				if (exists(key)) {
-					FACES font = Screen::getFontId(ConfMan.get(key));
-					pStyles[style].font = font;
-				}
-			} else {
-				FACES font = pStyles[style].font;
-				ConfMan.set(key, Screen::getFontName(font));
+			if (_preferences->styleColor(grid, style, false, color) != kGlkInterpreterDefault) {
+				styles[style].bg = parseColor(color);
+			}
+			const Common::String key = Common::String::format("%cfont_%d", grid ? 'g' : 't', style);
+			FACES font = styles[style].font;
+			if (exists(key) && GlkPreferences::parseFont(getString(key), font)) {
+				styles[style].font = font;
 			}
 		}
 	}
 }
 
-void Conf::load() {
-	_isLoading = true;
-	synchronize();
+void Conf::load(const Common::String &domain) {
+	GlkPreferences preferences(domain.empty() ? ConfMan.getActiveDomain() : ConfMan.getDomain(domain), domain.empty());
+	load(preferences);
+}
 
+void Conf::load(const GlkPreferences &preferences) {
+	_preferences = &preferences;
+	synchronize();
+	_preferences = nullptr;
 	Common::copy(_tStyles, _tStyles + style_NUMSTYLES, _tStylesDefault);
 	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
-}
-
-void Conf::flush() {
-	// Default settings are only saved if they're not already present
-	if (!exists("width") || !exists("height")) {
-		_isLoading = false;
-		synchronize();
-		ConfMan.flushToDisk();
-	}
 }
 
 uint Conf::parseColor(const Common::String &str) {
@@ -323,10 +277,24 @@ uint Conf::parseColor(const Common::String &str) {
 	return 0;
 }
 
-Common::String Conf::encodeColor(uint color) {
+Common::String Conf::encodeColor(uint color) const {
 	byte r, g, b;
 	_screenFormat.colorToRGB(color, r, g, b);
 	return Common::String::format("%.2x%.2x%.2x", (int)r, (int)g, (int)b);
+}
+
+bool Conf::exists(const Common::String &key) const {
+	return _preferences->source(key) != kGlkInterpreterDefault;
+}
+
+Common::String Conf::getString(const Common::String &key) const {
+	return _preferences->get(key);
+}
+
+int Conf::getInt(const Common::String &key) const {
+	int value = 0;
+	GlkPreferences::parseInteger(getString(key), value);
+	return value;
 }
 
 uint Conf::parseColor(const byte *rgb) {
@@ -342,57 +310,50 @@ uint Conf::parseColor(const uint32 rgb) {
 }
 
 void Conf::syncAsString(const Common::String &name, Common::String &val) {
-	if (_isLoading && exists(name))
-		val = ConfMan.get(name);
-	else if (!_isLoading)
-		ConfMan.set(name, val);
+	if (exists(name))
+		val = getString(name);
 }
 
 void Conf::syncAsInt(const Common::String &name, int &val) {
-	if (_isLoading && exists(name))
-		val = ConfMan.getInt(name);
-	else if (!_isLoading)
-		ConfMan.setInt(name, val);
+	if (exists(name)) {
+		bool boolean;
+		if (GlkPreferences::parseBool(getString(name), boolean))
+			val = boolean;
+		else
+			GlkPreferences::parseInteger(getString(name), val);
+	}
 }
 
 void Conf::syncAsInt(const Common::String &name, uint &val) {
-	if (_isLoading && exists(name))
-		val = ConfMan.getInt(name);
-	else if (!_isLoading)
-		ConfMan.setInt(name, val);
+	int parsed = 0;
+	if (exists(name) && GlkPreferences::parseInteger(getString(name), parsed) && parsed >= 0)
+		val = parsed;
 }
 
 void Conf::syncAsDouble(const Common::String &name, double &val) {
-	if (_isLoading && exists(name))
-		val = atof(ConfMan.get(name).c_str());
-	else if (!_isLoading)
-		ConfMan.set(name, Common::String::format("%f", (float)val).c_str());
+	if (exists(name))
+		GlkPreferences::parseFloat(getString(name), 0.0, 32767.0, val);
 }
 
 void Conf::syncAsBool(const Common::String &name, bool &val) {
-	if (_isLoading && exists(name))
-		val = ConfMan.getBool(name);
-	else if (!_isLoading)
-		ConfMan.setBool(name, val);
+	if (exists(name))
+		GlkPreferences::parseBool(getString(name), val);
 }
 
 void Conf::syncAsColor(const Common::String &name, uint &val) {
-	if (_isLoading && exists(name))
-		val = parseColor(ConfMan.get(name));
-	else if (!_isLoading)
-		ConfMan.set(name, encodeColor(val));
+	Common::String normalized;
+	if (exists(name) && GlkPreferences::parseColor(getString(name), normalized))
+		val = parseColor(normalized);
 }
 
 void Conf::syncAsFont(const Common::String &name, FACES &val) {
-	if (_isLoading && exists(name))
-		val = Screen::getFontId(ConfMan.get(name));
-	else if (!_isLoading)
-		ConfMan.set(name, Screen::getFontName(val));
+	if (exists(name))
+		GlkPreferences::parseFont(getString(name), val);
 }
 
 Conf::~Conf() {
-    if (g_conf == this)
-        g_conf = nullptr;
+	if (_installedGlobal && g_conf == this)
+		g_conf = nullptr;
 }
 
 } // End of namespace Glk
