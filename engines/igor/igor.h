@@ -796,8 +796,8 @@ private:
 	void PART_16_UPDATE_DIALOGUE_MARGARET(int action);
 	void PART_16_HELPER_1(int num);
 	void PART_16_HELPER_2();
-	void PART_16_HELPER_3();
-	void PART_16_HELPER_5();
+	void PART_16_HELPER_3_photoCutscene();
+	void PART_16_HELPER_5_displayPhoto();
 	void PART_16_HELPER_6(int frame);
 	void PART_16();
 	void loadResourceData__ROOM_Laboratory();

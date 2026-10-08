@@ -120,7 +120,7 @@ void IgorEngine::PART_16_HELPER_2() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_16_HELPER_3() {
+void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 	memset(_screenVGA + 46080, 0, 17920);
 	ADD_DIALOGUE_TEXT(210, 1, 731);
 	ADD_DIALOGUE_TEXT(211, 1, 732);
@@ -222,26 +222,30 @@ void IgorEngine::PART_16_HELPER_3() {
 		waitForTimer(15);
 	}
 	playSound(27, 1);
-	PART_16_HELPER_5();
+	PART_16_HELPER_5_displayPhoto();
 	for (int i = 1; i <= 3; ++i) {
 		waitForTimer(255);
 	}
 	PART_16_HELPER_1(255);
-	addObjectToInventory(19, 54);
+	// Data-only inventory update: the panel is redrawn later together with the verbs
+	++_inventoryInfo[73];
+	_inventoryInfo[_inventoryInfo[73] - 1] = 19;
+	_inventoryInfo[54] = _inventoryInfo[73];
+	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
 	_objectsState[53] = 1;
 	_objectsState[65] = 3;
 	playMusic(3);
 	_currentPart = 261;
 }
 
-void IgorEngine::PART_16_HELPER_5() {
+void IgorEngine::PART_16_HELPER_5_displayPhoto() {
 	memset(&_currentPalette[3], 63, 621);
 	setPaletteRange(1, 207);
 	loadData(IMG_PhotoHarrisonMargaret, _screenVGA);
 	loadData(PAL_PhotoHarrisonMargaret, _paletteBuffer);
 	for (int m = 1; m <= 63; ++m) {
-		for (int i = 3; i <= 207 * 3; ++i) {
-			if (_paletteBuffer[i] <= m && _paletteBuffer[i] >= _currentPalette[i]) {
+		for (int i = 3; i <= 207 * 3 + 2; ++i) {
+			if (_paletteBuffer[i] <= m && _currentPalette[i] > _paletteBuffer[i]) {
 				--_currentPalette[i];
 			}
 		}
@@ -269,7 +273,7 @@ void IgorEngine::PART_16() {
 	fadeIn(768);
 	PART_16_HELPER_2();
 	if (_objectsState[65] == 2 && _inventoryInfo[71] != 0 && _objectsState[76] == 1) {
-		PART_16_HELPER_3();
+		PART_16_HELPER_3_photoCutscene();
 	}
 	enterPartLoop();
 	while (_currentPart == 160) {
