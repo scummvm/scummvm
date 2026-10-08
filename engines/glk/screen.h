@@ -61,14 +61,19 @@ protected:
 	virtual void loadFonts(Common::Archive *archive);
 public:
 	/**
-	 * Return the font Id for a given name
-	 */
-	static FACES getFontId(const Common::String &name);
-
-	/**
 	 * Return the name for a given font Id
 	 */
 	static Common::String getFontName(FACES font);
+	static FACES getFontId(const Common::String &name);
+
+	/**
+	 * Load one bundled GLK font for an independently owned user.
+	 */
+	static Common::Archive *openFontArchive(const Common::Archive *resources = nullptr);
+	static void measureFont(FontInfo &info, const Graphics::Font &font,
+		const Graphics::Font &fixedFont, int lineSeparation);
+	static const Graphics::Font *loadFontFromArchive(FACES face,
+		Common::Archive *archive, double size);
 public:
 	/**
 	 * Constructor
