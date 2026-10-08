@@ -211,6 +211,104 @@ struct RoomDataOffsets {
 	} action;
 	DialogueDataOffsets dlg;
 };
+
+// The click fix of a room that clamps the clicked position: y is limited, x is limited to [xMin, xMax]
+// (-1: no limit), then the first walkable row below is looked for (and above if scanUp).
+struct RoomClickFix {
+	int yMax;
+	int xMin;
+	int xMax;
+	bool scanUp;
+	bool enabled;
+};
+
+// The maze: a grid of locations, each with the location to the north, east, south and west (0: none)
+// and the shape of the room that shows it (the part of the room is 50 + shape).
+struct MazeNode {
+	uint8 neighbors[4];
+	uint8 shape;
+};
+
+enum MazeDirection {
+	kMazeNorth,
+	kMazeEast,
+	kMazeSouth,
+	kMazeWest
+};
+
+enum MazeEntryKind {
+	kMazeEntryWalk,     // Igor appears at (x, y) and walks to (destX, destY)
+	kMazeEntryStairs    // Igor walks into the picture at x, scaling down
+};
+
+struct MazeEntry {
+	uint16 state;
+	uint8 kind;
+	int16 x, y;
+	uint8 facing;
+	int16 destX, destY;
+};
+
+enum MazeActionKind {
+	kMazeActionExit,        // walk (x1, y1) -> (x2, y2), then to the neighbour location
+	kMazeActionStairsExit,  // walk out of the picture at x, scaling up, then to the neighbour location
+	kMazeActionExitFixed,   // walk, then to a fixed location and state
+	kMazeActionDialogue
+};
+
+struct MazeDialogueLine {
+	uint16 text;
+	uint8 count;
+	uint16 sound;
+};
+
+struct MazeAction {
+	uint8 code;
+	uint8 kind;
+	int16 x1, y1, x2, y2;
+	uint8 dir;
+	int16 stairsX;
+	int16 location;     // -1: unchanged
+	int16 state;
+	int8 objectState;   // -1: none
+	int8 objectStateValue;
+	const MazeDialogueLine *lines;
+	uint8 numLines;
+	uint8 dialogueStart;
+	uint8 dialogueCount;
+};
+
+enum MazeFlameMode {
+	kMazeFlameNone,
+	kMazeFlameFixed,        // one flame at a fixed position, color 1 shows the first frame
+	kMazeFlameFirstFrame,   // color 1 shows the first frame
+	kMazeFlameLayer1        // color 1 shows the next pixel of the room
+};
+
+struct MazeFlame {
+	int16 x, y;
+};
+
+struct MazeRoom {
+	uint8 part;
+	int dat, txt, img, pal, msk, box;
+	int8 music;             // -1: depends on the location
+	uint8 darkness;
+	uint8 flameMode;
+	uint8 numFlames;
+	MazeFlame flames[2];
+	uint8 flameFrames[2];   // frames drawn when the room starts
+	uint8 secondFlameFrame; // the frame the second flame counts as having at the start
+	bool saveLocation;      // the room ends when the location changes
+	const RoomDataOffsets *offsets;
+	int giveObjectSize;     // stride of the give matrix when it is not the one of the use matrix
+	RoomClickFix clickFix;
+	const MazeEntry *entries;
+	uint8 numEntries;
+	const MazeAction *actions;
+	uint8 numActions;
+	const char *objectName3;
+};
 enum {
 	kUpdateDialogueAnimEndOfSentence = 1,
 	kUpdateDialogueAnimMiddleOfSentence,
@@ -352,6 +450,9 @@ private:
 	bool _gameStateLoaded;
 	GameStateData _gameState;
 	uint8 _mazeLocation;
+	uint8 _mazeSavedLocation;
+	const MazeRoom *_mazeRoom;
+	int _mazeFlameFrame[2];
 	uint32 _nextTimer;
 
 	// Speed multiplier, 1 = original timing. Divides the millisecond
@@ -428,6 +529,9 @@ private:
 	uint8 *_igorTempFrames;
 
 	RoomWalkBounds _roomWalkBounds;
+	RoomClickFix _roomClickFix;
+	// stride of the give matrix of the room when it differs from the use matrix (0: same)
+	int _roomGiveObjectSize;
 	RoomDataOffsets _roomDataOffsets;
 	UpdateDialogueProc _updateDialogue;
 	// palette indices used to draw cutscene dialogue text and its outline
@@ -971,17 +1075,22 @@ private:
 	void PART_37_HELPER_2();
 	void PART_37();
 
-	// maze entrance
-	void PART_67_EXEC_ACTION(int action);
-	void PART_67_ACTION_101_goToChurch();
-	void PART_67_ACTION_102_goRight();
-	void PART_67_DRAW_FLAME(int frame);
-	void PART_67_FLICKER();
-	void PART_67_UPDATE_FLICKER();
-	void PART_67_ENTER_FROM_CHURCH_PUZZLE();
-	void PART_67_ENTER_FROM_RIGHT();
-	void PART_67_UPDATE_ROOM_BACKGROUND();
-	void PART_67();
+	// maze
+	static const MazeNode MAZE_NODES[108];
+	static const MazeRoom *getMazeRoom(int part);
+	void PART_MAZE();
+	void PART_MAZE_EXEC_ACTION(int action);
+	void PART_MAZE_UPDATE_ROOM_BACKGROUND();
+	void maybeUpdateFlicker();
+	void mazeFlicker();
+	void mazeDrawFlameFrame(int x, int y, int frame);
+	void MAZE_ENTER_WALK(const MazeEntry &entry);
+	void enterFromStairs(const MazeEntry &entry);
+	void mazeWalkToExit(const MazeAction &action);
+	void mazeExitThroughStairs(const MazeAction &action);
+	void mazeGoToNeighbor(int dir);
+	int MAZE_MUSIC_TRACK() const;
+	void setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp);
 
 
 	// philip vodka cutscene
@@ -1220,7 +1329,6 @@ protected:
 	static const RoomDataOffsets PART_35_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_36_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_37_ROOM_DATA_OFFSETS;
-	static const RoomDataOffsets PART_67_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
 	static const uint8 _inventoryOffsetTable[];
 	static const uint8 _inventoryActionsTable[];

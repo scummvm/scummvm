@@ -42,6 +42,14 @@ void IgorEngine::setRoomWalkBounds(int x1, int y1, int x2, int y2,
 	_roomWalkBounds.x2MinY = x2MinY < 0 ? y1 : x2MinY;
 }
 
+void IgorEngine::setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp) {
+	_roomClickFix.yMax = yMax;
+	_roomClickFix.xMin = xMin;
+	_roomClickFix.xMax = xMax;
+	_roomClickFix.scanUp = scanUp;
+	_roomClickFix.enabled = true;
+}
+
 void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
 	if (srcX != dstX || srcY != dstY) {
 		_walkData[0] = _walkData[_walkDataLastIndex];
@@ -1107,12 +1115,18 @@ void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
 }
 
 void IgorEngine::fixWalkPosition(int *x, int *y) {
-	if (getPart() == 67) {
-		// The click is clamped to the walk bounds, then the picture is scanned for the first
-		// walkable row strictly below it (the scan starts one row down, whatever the row is) and,
-		// if none is found down to the last row, upwards from the last row.
-		int xPos = CLIP<int>(*x, _roomWalkBounds.x1, _roomWalkBounds.x2);
-		int yPos = MIN(*y, _roomWalkBounds.y2);
+	if (_roomClickFix.enabled) {
+		// The click is clamped, then the picture is scanned for the first walkable row strictly below it (the
+		// scan starts one row down, whatever the row is) and, if none is found down to the last row and the
+		// room says so, upwards from the last row.
+		int xPos = *x;
+		if (_roomClickFix.xMax >= 0) {
+			xPos = MIN(xPos, _roomClickFix.xMax);
+		}
+		if (_roomClickFix.xMin >= 0) {
+			xPos = MAX(xPos, _roomClickFix.xMin);
+		}
+		int yPos = MIN(*y, _roomClickFix.yMax);
 		do {
 			if (yPos < 143) {
 				++yPos;
@@ -1121,7 +1135,7 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 				break;
 			}
 		} while (yPos != 143);
-		if (yPos == 143) {
+		if (_roomClickFix.scanUp && yPos == 143) {
 			do {
 				--yPos;
 			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > 0);

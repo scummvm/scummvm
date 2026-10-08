@@ -121,6 +121,10 @@ void IgorEngine::restart() {
 
 	memset(&_gameState, 0, sizeof(_gameState));
 	_mazeLocation = 0;
+	_mazeSavedLocation = 0;
+	_mazeRoom = 0;
+	memset(&_roomClickFix, 0, sizeof(_roomClickFix));
+	_roomGiveObjectSize = 0;
 	_nextTimer = 0;
 	_fastMode = 1;
 	_language = 0;
@@ -265,6 +269,8 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
 }
 
 void IgorEngine::leavePartLoop() {
+	_roomClickFix.enabled = false;
+	_roomGiveObjectSize = 0;
 	hideCursor();
 	SET_EXEC_ACTION_FUNC(1, 0);
 	_updateRoomBackground = 0;
@@ -620,7 +626,9 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 
 	// 4. Part/state
 	s.syncAsSint16LE(_currentPart);
-	s.skip(8);
+	// the location in the maze is kept in the padding
+	s.syncAsByte(_mazeLocation);
+	s.skip(7);
 
 	// 5. Action state
 	s.syncAsByte(_actionCode);

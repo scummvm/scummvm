@@ -672,9 +672,43 @@ void IgorEngine::PART_MAIN() {
 		case 370:
 			PART_37();
 			break;
+		case 510:
+		case 521:
+		case 532:
+		case 543:
+		case 550:
+		case 551:
+		case 560:
+		case 562:
+		case 570:
+		case 573:
+		case 581:
+		case 582:
+		case 591:
+		case 593:
+		case 602:
+		case 603:
+		case 610:
+		case 611:
+		case 612:
+		case 621:
+		case 622:
+		case 623:
+		case 630:
+		case 632:
+		case 633:
+		case 640:
+		case 641:
+		case 643:
+		case 650:
+		case 651:
+		case 652:
+		case 653:
+		case 660:
+		case 663:
 		case 670:
 		case 671:
-			PART_67(); // maze entrance
+			PART_MAZE(); // maze, 670 and 671 are the entrance
 			break;
 		case 750:
 			PART_75(); // philip vodka cutscene

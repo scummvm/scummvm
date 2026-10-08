@@ -512,7 +512,9 @@ void IgorEngine::handleRoomInput() {
 	int pairVerbOffset = 0;
 	if (_currentAction.verbType != 0) {
 		pairActionOffset = _roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38] * 2;
-		pairActionOffset += _roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38] * _roomDataOffsets.action.objectSize;
+		const int objectSize = (_currentAction.verbType == 2 && _roomGiveObjectSize != 0) ?
+				_roomGiveObjectSize : _roomDataOffsets.action.objectSize;
+		pairActionOffset += _roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38] * objectSize;
 		pairVerbOffset = _currentAction.verbType == 1 ? _roomDataOffsets.action.useVerb : _roomDataOffsets.action.giveVerb;
 		_actionCode = _roomActionsTable[pairVerbOffset + pairActionOffset];
 	}
