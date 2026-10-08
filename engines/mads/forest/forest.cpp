@@ -20,7 +20,6 @@
  */
 
 #include "engines/util.h"
-#include "mads/console.h"
 #include "mads/core/attr.h"
 #include "mads/core/conv.h"
 #include "mads/core/env.h"
@@ -38,6 +37,7 @@
 #include "mads/core/sound.h"
 #include "mads/core/text.h"
 #include "mads/forest/forest.h"
+#include "mads/forest/console.h"
 #include "mads/forest/extra.h"
 #include "mads/forest/global.h"
 #include "mads/forest/inventory.h"
