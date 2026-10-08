@@ -391,7 +391,14 @@ void Scene::setPlayerTime(Time time, byte relative) {
 			return;
 		}
 
+		uint16 day = _timers.playerTime.getDays();
 		_timers.playerTime += time;
+
+		// Moving the clock past midnight starts the next day, like the clock getting
+		// there on its own, e.g. when the alarm clock wakes Nancy up in the morning
+		if (g_nancy->getGameType() >= kGameTypeNancy16 && _timers.playerTime.getDays() != day) {
+			advanceDayValue();
+		}
 	} else if (bootSummary->endOfDayFlag != kEvNoEvent) {
 		// Absolute, the clock only holds the time of the current day
 		_timers.playerTime = time;
