@@ -628,7 +628,9 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_currentPart);
 	// the location in the maze is kept in the padding
 	s.syncAsByte(_mazeLocation);
-	s.skip(7);
+	// whether Igor has already read the notice board in room 7 is also kept in the padding
+	s.syncAsByte(_part07FirstVisitDone);
+	s.skip(6);
 
 	// 5. Action state
 	s.syncAsByte(_actionCode);
