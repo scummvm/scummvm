@@ -90,6 +90,7 @@ private:
 	void switchKeymaps(bool entering);
 	void initializeEnhancementCursor();
 	void releaseEnhancementCursor();
+	void updateEnhancementCursor();
 	void resetEnhancementSession();
 	void updateEnhancementActionState(uint32 action, bool pressed);
 	void updateEnhancementInputArming(uint32 now);
@@ -137,6 +138,7 @@ private:
 	bool _wbaseEnhancementInputArmed;
 	bool _wbaseAutoplayMenuInputArmed;
 	bool _wbaseEnhancementCursorPushed;
+	bool _wbaseEnhancementCursorVisible;
 	bool _quitRequested;
 };
 

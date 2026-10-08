@@ -58,11 +58,17 @@ static uint32 enhancementActionMask(uint32 action) {
 }
 
 // WBASE renders a 320x200 frame through the original Hopkins 640x480
-// presentation: 2x pixels with 30-pixel top and bottom borders. Backend mouse
-// events remain in that 640x480 coordinate space, so menu hit testing must undo
-// the presentation transform.
-static Common::Point presentationToWBASEPoint(const Common::Point &point) {
-	return Common::Point(point.x / 2, (point.y - 30) / 2);
+// presentation. Backend mouse events already use that virtual coordinate
+// space, so only the presentation offset and scale need to be removed.
+static bool presentationToWBASEPoint(const Common::Point &point, Common::Point &result) {
+	if (point.x < 0 || point.x >= 640 || point.y < 30 || point.y >= 430)
+		return false;
+	result = Common::Point(point.x / 2, (point.y - 30) / 2);
+	return true;
+}
+
+static bool autoplayMenuContainsPoint(const Common::Point &point) {
+	return point.x >= 42 && point.x <= 277 && point.y >= 25 && point.y <= 180;
 }
 
 static const char *const kBaseSounds[] = {
@@ -146,7 +152,7 @@ BaseGame::BaseGame(HopkinsEngine *vm) :
 		_wbaseAutoplayMenuOpenedAt(0), _wbaseForcedAutoplayPromptTicks(0),
 		_wbaseForcedAutoplayPromptIssued(false), _wbaseEnhancementHoveredControl(kWBASEEnhancementControlNone),
 		_wbaseEnhancementInputArmed(false), _wbaseAutoplayMenuInputArmed(false),
-		_wbaseEnhancementCursorPushed(false),
+		_wbaseEnhancementCursorPushed(false), _wbaseEnhancementCursorVisible(false),
 		_quitRequested(false) {
 	_framebuffer.resize(kBaseFrameWidth * kBaseFrameHeight);
 	Common::fill(_audioLoaded, _audioLoaded + ARRAYSIZE(_audioLoaded), false);
@@ -240,8 +246,11 @@ BaseRunResult BaseGame::run(int entryId) {
 			previousTime = now;
 			accumulator = 0;
 			if (_wbaseEnhancementPanel == kWBASEEnhancementPanelAutoplay && _wbaseAutoplayMenuInputArmed) {
-				const Common::Point mouse = presentationToWBASEPoint(g_system->getEventManager()->getMousePos());
-				_wbaseEnhancementsAutoplay.updateMenuPointer(mouse.x, mouse.y);
+				Common::Point mouse;
+				if (presentationToWBASEPoint(g_system->getEventManager()->getMousePos(), mouse))
+					_wbaseEnhancementsAutoplay.updateMenuPointer(mouse.x, mouse.y);
+				else
+					_wbaseEnhancementsAutoplay.clearMenuPointer();
 			}
 			if (enhancementPanelVisible() && !_inputSuspended)
 				renderFrame();
@@ -442,10 +451,12 @@ void BaseGame::initializeEnhancementCursor() {
 	if (!_wbaseEnhancements.controlsEnabled() || _wbaseEnhancementCursorPushed)
 		return;
 	CursorMan.setDefaultArrowCursor(true);
-	CursorMan.showMouse(true);
-	if (_vm->_events)
-		_vm->_events->_mouseFl = true;
 	_wbaseEnhancementCursorPushed = true;
+	_wbaseEnhancementCursorVisible = false;
+	CursorMan.showMouse(false);
+	if (_vm->_events)
+		_vm->_events->_mouseFl = false;
+	updateEnhancementCursor();
 }
 
 void BaseGame::releaseEnhancementCursor() {
@@ -457,6 +468,27 @@ void BaseGame::releaseEnhancementCursor() {
 	if (_vm->_events)
 		_vm->_events->_mouseFl = false;
 	_wbaseEnhancementCursorPushed = false;
+	_wbaseEnhancementCursorVisible = false;
+}
+
+void BaseGame::updateEnhancementCursor() {
+	if (!_wbaseEnhancementCursorPushed || g_system->isOverlayVisible())
+		return;
+
+	Common::Point mouse;
+	bool visible = false;
+	if (!_inputSuspended && presentationToWBASEPoint(g_system->getEventManager()->getMousePos(), mouse)) {
+		visible = mouse.y >= kBaseViewHeight;
+		if (_wbaseEnhancementPanel == kWBASEEnhancementPanelAutoplay)
+			visible = visible || autoplayMenuContainsPoint(mouse);
+	}
+
+	if (visible != _wbaseEnhancementCursorVisible) {
+		CursorMan.showMouse(visible);
+		_wbaseEnhancementCursorVisible = visible;
+	}
+	if (_vm->_events)
+		_vm->_events->_mouseFl = visible;
 }
 
 void BaseGame::resetEnhancementSession() {
@@ -628,12 +660,17 @@ void BaseGame::pollInput() {
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			if (_wbaseEnhancementInputArmed && _wbaseEnhancements.controlsEnabled()) {
-				const Common::Point mouse = presentationToWBASEPoint(event.mouse);
-				updateEnhancementPointer(mouse.x, mouse.y);
+				Common::Point mouse;
+				if (presentationToWBASEPoint(event.mouse, mouse))
+					updateEnhancementPointer(mouse.x, mouse.y);
+				else
+					updateEnhancementPointer(-1, -1);
 			}
 			break;
 		case Common::EVENT_LBUTTONDOWN: {
-			const Common::Point mouse = presentationToWBASEPoint(event.mouse);
+			Common::Point mouse;
+			if (!presentationToWBASEPoint(event.mouse, mouse))
+				break;
 			if (_wbaseEnhancementInputArmed && handleEnhancementControlClick(mouse.x, mouse.y))
 				break;
 			if (_wbaseEnhancementInputArmed && _wbaseAutoplayMenuInputArmed &&
@@ -649,6 +686,7 @@ void BaseGame::pollInput() {
 		}
 	}
 	updateEnhancementInputArming(g_system->getMillis());
+	updateEnhancementCursor();
 
 	if (_mainMenuRequested && _result == -1 && !_quitRequested && !_vm->shouldQuit())
 		openMainMenu();
@@ -848,6 +886,7 @@ void BaseGame::renderFrame() {
 			_wbaseEnhancementHoveredControl, _wbaseEnhancementsAutoplay.active(), _framebuffer.begin());
 	Common::copy(_framebuffer.begin(), _framebuffer.end(), _vm->_graphicsMan->_frontBuffer);
 	_vm->_graphicsMan->addDirtyRect(0, 0, kBaseFrameWidth, kBaseFrameHeight);
+	updateEnhancementCursor();
 	_vm->_graphicsMan->updateScreen();
 }
 
