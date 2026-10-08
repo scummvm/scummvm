@@ -70,7 +70,7 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 				"Middle Sewers",
 				"Lower Sewers",
 				"Dwarven Ruins I",
-				"Dwarven Camp",
+				"Dwarven Ruins II",
 				"Dwarven Ruins III",
 				"Upper Drow",
 				"Drow Outcasts",
@@ -104,6 +104,7 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 		},
 		{
 			{	// EOB I special markers
+				"Dwarven Camp",
 				"",
 				""
 			},
@@ -145,7 +146,7 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 				"Kanalisation II",
 				"Kanalisation III",
 				"Zwergenruinen I",
-				"Zwergencamp",
+				"Zwergenruinen II",
 				"Zwergenruinen III",
 				"Dunkelelfen I",
 				"Dunkelelfen II",
@@ -179,6 +180,7 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 		},
 		{
 			{	// EOB I special markers
+				"Zwergencamp",
 				"",
 				""
 			},
@@ -191,8 +193,11 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 	}
 };
 
-// These are manual map entries for certain location that deserve a marker.
-// Currently, we use them for level exits that would otherwise have no map entry.
+// These are manual map entries for certain locations that deserve a marker.
+const Automap_EoB::SpecialMarkers Automap_EoB::_specialMarkersEOB1[] = {
+	{	05,		0x14F,		kColorSpecial1 },	//  Dwarven Camp
+};
+
 const Automap_EoB::SpecialMarkers Automap_EoB::_specialMarkersEOB2[] = {
 	{	04,		0x14F,		kColorSpecial7 },	//  Temple Darkmoon
 	{	04,		0x211,		kColorSpecial2 },	//  Hidden Stairway
@@ -228,10 +233,8 @@ Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const 
 	_levelNames = _stringTable[langIndex].levelNames[gameIndex];
 	_specialMarkerStrings = _stringTable[langIndex].specialMarkerStrings[gameIndex];
 
-	if (gameID == GI_EOB2) {
-		_specialMarkers = _specialMarkersEOB2;
-		_numSpecialMarkers = ARRAYSIZE(_specialMarkersEOB2);
-	}
+	_specialMarkers = (gameID == GI_EOB2) ? _specialMarkersEOB2 : _specialMarkersEOB1;
+	_numSpecialMarkers = (gameID == GI_EOB2) ? ARRAYSIZE(_specialMarkersEOB2) : ARRAYSIZE(_specialMarkersEOB1);
 
 	const uint8 teleporter = gameID == GI_EOB1 ? 52 : 44;
 	const uint8 illusion1 = gameID == GI_EOB1 ? 67 : 46;
@@ -964,7 +967,7 @@ void Automap_EoB::createIcons(bool lowResTarget) {
 			for (int i = 0; i < 360; i += 45) {
 				for (int ii = -10; ii < 10; ++ii) {
 					float a = (float)((360 + i + ii) % 360) * M_PI / 180.0f;
-					surf.drawLine(size2half + size2half * cosf(a), size2half + size2half * sinf(a), size2half + (size2half / 3) * cosf(a), size2half + (size2half / 3) * sinf(a), colTable[kColorPartyFrame0]);
+					surf.drawLine(size2half + size2half * cosf(a), size2half + size2half * sinf(a), size2half + (size2half / 3) * cosf(a), size2half + (size2half / 3) * sinf(a), colTable[kColorSpecial1]);
 				}
 			}
 			break;

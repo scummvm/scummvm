@@ -174,6 +174,7 @@ private:
 	const char *const *_levelNames;
 	const int _numLevelNames;
 
+	static const SpecialMarkers _specialMarkersEOB1[];
 	static const SpecialMarkers _specialMarkersEOB2[];
 	const SpecialMarkers *_specialMarkers;
 	const char *const *_specialMarkerStrings;
