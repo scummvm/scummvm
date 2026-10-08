@@ -67,7 +67,7 @@ const Common::Point kQuestionOrigins[] = {{122, 191}, {120, 234}, {124, 278}};
 MortimerInterview::MortimerInterview(bool isDemo) : _random("mortimer"), _isDemo(isDemo),
 	_region(0), _difficulty(0), _textDifficulty(0), _tried(0), _stage(kIdle), _effect(kNoEffect),
 	_answer(-1), _previousAnswer(-1), _selected(-1), _question(0), _guess(-1), _lastAction(46), _textScroll(0), _guesses(3),
-	_species(0), _stones(0), _frame(0), _switchFrame(6), _payment(0),
+	_species(0), _stones(0), _frame(0), _switchFrame(6), _payment(0), _bonusStones(0),
 	_moviePending(false), _riddleView(false), _solving(false), _help(false), _helpExplained(false), _restartRegion(false), _programmer(false) {
 	memset(_palette, 0, sizeof(_palette));
 	memset(_gatePalette, 0, sizeof(_gatePalette));
@@ -206,7 +206,7 @@ void MortimerInterview::start(uint species, uint stones, int scene) {
 	if (_isDemo || _answer < 0)
 		_guesses = _isDemo ? 3 : mortimerGuessAllowance(_difficulty);
 	_restartRegion = false;
-	_frame = _payment = 0;
+	_frame = _payment = _bonusStones = 0;
 	_switchFrame = 6;
 	_selected = -1;
 	_question = _textScroll = 0;
@@ -341,7 +341,7 @@ void MortimerInterview::selectAnimal(int animal) {
 }
 
 void MortimerInterview::click(const Common::Point &point) {
-	if (fullScreen() || _stage == kPay || _stage == kGuess || _stage == kCorrect || _stage == kWrong || _stage == kSolve || _stage == kNoStones || _stage == kCost || _stage == kNoAnimals)
+	if (fullScreen() || _stage == kPay || _stage == kBonus || _stage == kGuess || _stage == kCorrect || _stage == kWrong || _stage == kSolve || _stage == kNoStones || _stage == kCost || _stage == kNoAnimals)
 		return;
 	int action = hitControl(point);
 	if (action < 0)
@@ -428,6 +428,12 @@ MortimerInterview::Effect MortimerInterview::takeEffect() {
 	return result;
 }
 
+uint MortimerInterview::takeBonusStones() {
+	const uint result = _bonusStones;
+	_bonusStones = 0;
+	return result;
+}
+
 void MortimerInterview::update() {
 	++_frame;
 	if (_switchFrame < 6)
@@ -438,6 +444,19 @@ void MortimerInterview::update() {
 		_effect = kPayoutEffect;
 		if (!_payment)
 			enter(kGuess);
+	}
+	if (_stage == kBonus && (_frame % 3) == 0) {
+		if (_stones) {
+			const uint count = MIN(3U, _stones);
+			_stones -= count;
+			_bonusStones += count;
+			_effect = kPayoutEffect;
+			_payment = 15;
+		} else if (_payment > 3) {
+			_payment -= 3;
+		} else {
+			enter(kOpenGate);
+		}
 	}
 }
 
@@ -460,7 +479,11 @@ void MortimerInterview::movieFinished() {
 		}
 		break;
 	case kGuess: enter(_guess == _answer ? kCorrect : kWrong); break;
-	case kCorrect: enter(kOpenGate); break;
+	case kCorrect:
+		enter(_isDemo ? kOpenGate : kBonus);
+		_frame = 0;
+		_payment = 15;
+		break;
 	case kWrong:
 		if (!_guesses) {
 			_restartRegion = !_isDemo;
@@ -479,7 +502,7 @@ void MortimerInterview::movieFinished() {
 void MortimerInterview::skip() {
 	if (playingMovie())
 		movieFinished();
-	else if (_stage != kPay)
+	else if (_stage != kPay && _stage != kBonus)
 		enter(kFlyAway);
 }
 
@@ -538,7 +561,7 @@ void MortimerInterview::draw(Graphics::Surface &screen, const MortimerMovie &mov
 
 void MortimerInterview::drawCursor(Graphics::Surface &screen, const Common::Point &point) const {
 	if (!fullScreen()) {
-		if (_stage == kPay)
+		if (_stage == kPay || (_stage == kBonus && _stones))
 			_panel[19 + _frame % 2].draw(screen, 508, 451);
 		const int cursor = (_help ? 2 : 0) + (hitControl(point) < 0 ? 1 : 0);
 		_cursor[cursor].draw(screen, point.x, point.y);

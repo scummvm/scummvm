@@ -45,6 +45,8 @@ class MortimerSubtitles {
 public:
 	bool load(const char *textPath, const char *fontPath, const char *infoFontPath);
 	bool loadText(Common::SeekableReadStream &stream);
+	Common::String text(uint16 id) const;
+	void drawScore(Graphics::Surface &screen, uint32 score) const;
 	void draw(Graphics::Surface &screen, const Common::Array<MortimerMovie::Caption> &captions, bool enabled,
 		const MortimerMovieContext *context = nullptr) const;
 
@@ -59,6 +61,8 @@ private:
 	MortimerFont _font, _infoFont;
 	Common::HashMap<uint16, Entry> _entries;
 };
+
+void drawMortimerMessage(Graphics::Surface &screen, const MortimerFont &font, const Common::String &text, byte color);
 
 } // End of namespace Scumm
 

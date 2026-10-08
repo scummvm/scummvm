@@ -156,6 +156,7 @@ MODULE_OBJS += \
 	insane/mortimer/movie.o \
 	insane/mortimer/mortimer.o \
 	insane/mortimer/saveload.o \
+	insane/mortimer/scores.o \
 	insane/mortimer/text.o \
 	insane/rebel/rebel_audio.o \
 	insane/rebel/rebel_gamepad.o \

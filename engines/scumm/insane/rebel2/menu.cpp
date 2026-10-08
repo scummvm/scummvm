@@ -39,6 +39,7 @@
 
 #include "scumm/insane/rebel2/rebel.h"
 #include "scumm/insane/rebel2/shared.h"
+#include "scumm/insane/highscores.h"
 
 namespace Scumm {
 
@@ -1447,10 +1448,7 @@ void InsaneRebel2::insertRanking(const char *name, int32 score, int32 rating,
 	if (score == 0)
 		return;
 
-	int insertPos = 0;
-	while (insertPos < _numRankings && score <= _rankings[insertPos].score) {
-		insertPos++;
-	}
+	int insertPos = findHighScorePosition(_rankings, _numRankings, score);
 	if (insertPos > kMaxRankings - 1)
 		return;
 
@@ -1467,19 +1465,14 @@ void InsaneRebel2::insertRanking(const char *name, int32 score, int32 rating,
 		}
 	}
 
-	int lastIdx = MIN(_numRankings, kMaxRankings - 1);
-	for (int i = lastIdx; i > insertPos; i--)
-		_rankings[i] = _rankings[i - 1];
-
-	RankingEntry &r = _rankings[insertPos];
+	RankingEntry r = {};
 	Common::strlcpy(r.name, name, sizeof(r.name));
 	r.score = score;
 	r.rating = rating;
 	r.difficulty = difficulty;
 	r.chapter = chapter;
 
-	if (_numRankings < kMaxRankings)
-		_numRankings++;
+	_numRankings = insertHighScoreEntry(_rankings, _numRankings, kMaxRankings, insertPos, r);
 }
 
 void InsaneRebel2::showTopPilots() {

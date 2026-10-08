@@ -34,7 +34,7 @@
 namespace Scumm {
 
 const uint32 kMortimerPilotMagic = MKTAG('M', 'O', 'R', 'P');
-const uint16 kMortimerPilotVersion = 1;
+const uint16 kMortimerPilotVersion = 2;
 
 Common::String MortimerEngine::getSaveStateName(int slot) const {
 	return getMetaEngine()->getSavegameFile(slot, _targetName.c_str());
@@ -64,6 +64,8 @@ Common::Error MortimerEngine::savePilot() {
 	out->writeByte(_checkpoint);
 	out->writeByte(ConfMan.getBool("subtitles"));
 	out->writeByte(_controllerMode);
+	// A quit during the glowstone payout must not save uncompleted-region points.
+	out->writeUint32LE(_checkpointScore);
 	out->finalize();
 	return out->err() ? Common::kWritingFailed : Common::kNoError;
 }
@@ -80,13 +82,16 @@ Common::Error MortimerEngine::loadGameState(int slot) {
 	const byte girl = in->readByte();
 	const byte flight = in->readByte(), riddle = in->readByte(), checkpoint = in->readByte();
 	const byte subtitles = in->readByte(), controller = in->readByte();
+	const uint32 score = in->readUint32LE();
 	if (in->err() || in->eos() || name.empty() || girl > 1 || flight > 2 || riddle > 2 ||
 		checkpoint > 5 || subtitles > 1 || controller > 1)
 		return Common::kReadingFailed;
 
 	_pilotName = name;
 	_pilotSlot = slot;
+	_viewingHighScores = false;
 	_checkpoint = checkpoint;
+	_score = _checkpointScore = score;
 	_girl = girl;
 	_controllerMode = controller;
 	ConfMan.setBool("subtitles", subtitles);
@@ -98,9 +103,10 @@ Common::Error MortimerEngine::loadGameState(int slot) {
 }
 
 void MortimerEngine::saveCheckpoint(uint checkpoint) {
-	if (_isDemo || _pilotSlot < 0 || checkpoint <= _checkpoint)
+	if (_isDemo || checkpoint <= _checkpoint)
 		return;
 	_checkpoint = checkpoint;
+	_checkpointScore = _score;
 	if (savePilot().getCode() != Common::kNoError) {
 		GUI::MessageDialog message(_("Could not save your pilot. Progress will be saved again when you finish another riddle or quit."));
 		runDialog(message);
@@ -111,7 +117,14 @@ bool MortimerEngine::selectPilot() {
 	while (!shouldQuit()) {
 		const SaveStateList pilots = getMetaEngine()->listSaves(_targetName.c_str());
 		MortimerPilotDialog dialog(pilots);
-		if (runDialog(dialog) != 1 || shouldQuit())
+		const int choice = runDialog(dialog);
+		if (shouldQuit())
+			return false;
+		if (choice == MortimerPilotDialog::kViewHighScores) {
+			_viewingHighScores = _pilotLoadRequested = true;
+			return true;
+		}
+		if (choice != MortimerPilotDialog::kStartPilot)
 			return false;
 		if (dialog.selectedPilot() != MortimerPilotDialog::kNewPilot) {
 			const Common::Error result = loadGameState(dialog.selectedPilot());
@@ -134,7 +147,9 @@ bool MortimerEngine::selectPilot() {
 			continue;
 		_pilotName = options.pilotName();
 		_pilotSlot = slot;
+		_viewingHighScores = false;
 		_checkpoint = 0;
+		_score = _checkpointScore = 0;
 		_girl = options.girl();
 		_controllerMode = false;
 		setDifficulty(options.flightDifficulty(), options.riddleDifficulty());
@@ -154,6 +169,10 @@ bool MortimerEngine::selectPilot() {
 
 bool MortimerEngine::startPilot() {
 	_pilotLoadRequested = false;
+	_score = _checkpointScore;
+	_highScoreEligible = false;
+	if (_viewingHighScores)
+		return _campaign.start(39) && enterCampaignScene();
 	stopSounds();
 	_loadError.clear();
 	_loadedRegion = -1;

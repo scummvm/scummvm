@@ -60,7 +60,10 @@ public:
 	bool movieDoubled() const;
 	bool wantsFlight() const { return _stage == kFlyAway; }
 	bool finished() const { return _stage == kFinished; }
-	bool solved() const { return _stage == kCorrect || _stage == kOpenGate || _stage == kFinished; }
+	bool solved() const { return _stage == kCorrect || _stage == kBonus || _stage == kOpenGate || _stage == kFinished; }
+	bool payingBonus() const { return _stage == kBonus; }
+	bool bonusFinished() const { return _stage == kOpenGate || _stage == kFinished; }
+	uint takeBonusStones();
 	bool restartsRegion() const { return _restartRegion; }
 	int sceneId() const;
 	int riddleId() const { return _answer * 10 + _textDifficulty; }
@@ -76,7 +79,7 @@ public:
 private:
 	enum Stage {
 		kGate, kSong, kPopup, kIdle, kAnswer, kRiddle, kSolve,
-		kNoStones, kPay, kGuess, kCorrect, kWrong, kOpenGate,
+		kNoStones, kPay, kGuess, kCorrect, kBonus, kWrong, kOpenGate,
 		kEnding, kHelp, kFlyAway, kFinished, kCost, kNoAnimals, kTried
 	};
 
@@ -98,7 +101,7 @@ private:
 	Stage _stage;
 	Effect _effect;
 	int _answer, _previousAnswer, _selected, _question, _guess, _lastAction, _textScroll, _guesses;
-	uint _species, _stones, _frame, _switchFrame, _payment;
+	uint _species, _stones, _frame, _switchFrame, _payment, _bonusStones;
 	bool _moviePending, _riddleView, _solving, _help, _helpExplained, _restartRegion, _programmer;
 };
 

@@ -30,6 +30,8 @@
 
 namespace Scumm {
 
+const uint32 kMortimerHighScoresCmd = 'MHSC';
+
 MortimerDifficultyDialog::MortimerDifficultyDialog(bool isDemo, uint flightDifficulty, uint riddleDifficulty, bool girl, bool newPilot)
 	: GUI::Dialog("MortimerDifficultyDialog"), _character(nullptr), _pilotName(nullptr) {
 	new GUI::StaticTextWidget(this, _name + ".Title", newPilot ? _("New pilot") : _("Select difficulty"));
@@ -132,6 +134,7 @@ MortimerPilotDialog::MortimerPilotDialog(const SaveStateList &pilots) : GUI::Dia
 	for (uint i = 0; i < pilots.size(); ++i)
 		_pilot->appendEntry(pilots[i].getDescription(), pilots[i].getSaveSlot());
 	_pilot->setSelected(pilots.empty() ? 0 : 1);
+	new GUI::ButtonWidget(this, _name + ".HighScores", _("High Scores"), Common::U32String(), kMortimerHighScoresCmd);
 	new GUI::ButtonWidget(this, _name + ".Cancel", _("~C~ancel"), Common::U32String(), GUI::kCloseCmd);
 	new GUI::ButtonWidget(this, _name + ".Start", _("Start"), Common::U32String(), GUI::kOKCmd, Common::ASCII_RETURN);
 }
@@ -150,6 +153,7 @@ void MortimerPilotDialog::reflowLayout() {
 			.addWidget("Title", "", width, lineHeight, Graphics::kTextAlignCenter)
 			.addWidget("Pilot", "PopUp")
 			.addWidget("Hint", "", -1, lineHeight, Graphics::kTextAlignCenter)
+			.addWidget("HighScores", "Button")
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 8, GUI::ThemeLayout::kItemAlignEnd)
 				.addPadding(0, 0, 0, 0)
 				.addSpace()
@@ -162,8 +166,8 @@ void MortimerPilotDialog::reflowLayout() {
 }
 
 void MortimerPilotDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	if (cmd == GUI::kOKCmd) {
-		setResult(1);
+	if (cmd == GUI::kOKCmd || cmd == kMortimerHighScoresCmd) {
+		setResult(cmd == GUI::kOKCmd ? kStartPilot : kViewHighScores);
 		close();
 	} else {
 		GUI::Dialog::handleCommand(sender, cmd, data);

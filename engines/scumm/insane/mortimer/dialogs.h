@@ -51,7 +51,7 @@ private:
 
 class MortimerPilotDialog : public GUI::Dialog {
 public:
-	enum { kNewPilot = 100 };
+	enum { kStartPilot = 1, kViewHighScores = 2, kNewPilot = 100 };
 	explicit MortimerPilotDialog(const SaveStateList &pilots);
 	int selectedPilot() const;
 	void reflowLayout() override;

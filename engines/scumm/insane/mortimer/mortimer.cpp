@@ -23,6 +23,7 @@
 
 #include "audio/audiostream.h"
 #include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
@@ -115,7 +116,8 @@ Common::KeymapArray MortimerEngine::initKeymaps() {
 
 MortimerEngine::MortimerEngine(OSystem *system, bool isDemo) : Engine(system), _isDemo(isDemo),
 	_restoredContent(isDemo && ConfMan.getBool("mortimer_restored_content")), _flightDifficulty(0), _riddleDifficulty(0),
-	_pilotSlot(-1), _checkpoint(0), _girl(false), _pilotLoadRequested(false),
+	_pilotSlot(-1), _checkpoint(0), _score(0), _checkpointScore(0), _girl(false), _pilotLoadRequested(false),
+	_highScoresActive(false), _highScoreEligible(false), _viewingHighScores(false),
 	_random("mortimer-flight"), _flight(isDemo, _restoredContent), _interview(isDemo),
 	_viewport(24, 20, 616, 360), _mouse(320, 240), _view(44, 60), _aim(320, 190), _shotWeapon(MortimerFlight::kRevitascope),
 	_crashStage(kNoCrash), _nextFrameTime(0), _pauseTime(0), _introIndex(-1), _loadedRegion(-1), _creditedRescues(0),
@@ -372,6 +374,10 @@ void MortimerEngine::updateMovieContext() {
 
 bool MortimerEngine::enterCampaignScene() {
 	stopSounds();
+	if (_highScoresActive) {
+		setScoreNameInput(false);
+		_highScoresActive = false;
+	}
 	const MortimerCampaign::Scene &scene = _campaign.scene();
 	_interviewActive = false;
 	_castleActive = false;
@@ -423,7 +429,34 @@ bool MortimerEngine::enterCampaignScene() {
 	}
 	_introIndex = scene.id;
 	_movieHandles.resize(_intro.sounds().size());
+	if (scene.kind == MortimerCampaign::kCredits) {
+		if (!_highScores.load(*_saveFileMan, _targetName + ".hsf")) {
+			_loadError = "Missing or invalid Mortimer high-score resources";
+			return false;
+		}
+		_highScores.start(_score, _highScoreEligible);
+		_highScoreEligible = false;
+		_highScoresActive = true;
+		setScoreNameInput(_highScores.enteringName());
+	}
 	return startMovie();
+}
+
+void MortimerEngine::setScoreNameInput(bool enabled) {
+	_eventMan->getKeymapper()->setGameKeymapState("mortimer", !enabled);
+	if (_system->hasFeature(OSystem::kFeatureVirtualKeyboard))
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, enabled);
+}
+
+bool MortimerEngine::finishHighScores() {
+	setScoreNameInput(false);
+	_highScoresActive = false;
+	if (_viewingHighScores) {
+		_finished = true;
+		return true;
+	}
+	_nextFrameTime = _system->getMillis() + 1000 / currentMovie().frameRate();
+	return loadSubtitles("RESOURCE/DATA/CREDITS.TRS");
 }
 
 void MortimerEngine::playSound(const MortimerSound &sound, Audio::SoundHandle &handle, Audio::Mixer::SoundType type, uint64 skipFrames) {
@@ -577,7 +610,10 @@ bool MortimerEngine::restart(bool all) {
 	_shockFrame = _crashCount = 0;
 	if (!_isDemo) {
 		_finished = false;
+		_score = _checkpointScore;
 		if (all) {
+			_score = _checkpointScore = _checkpoint = 0;
+			_highScoreEligible = false;
 			_loadedRegion = -1;
 			_campaign.start();
 			return enterCampaignScene();
@@ -697,8 +733,15 @@ bool MortimerEngine::nextScene(bool skip) {
 }
 
 bool MortimerEngine::processInterview() {
-	if (!_isDemo && _interview.solved())
-		saveCheckpoint(_loadedRegion + 1);
+	const uint bonusStones = _interview.takeBonusStones();
+	if (!_isDemo && _interview.solved() && (int)_checkpoint <= _loadedRegion) {
+		const MortimerScoring &scoring = mortimerScoring(_flightDifficulty, _riddleDifficulty);
+		if (!_score)
+			_score = scoring.initial;
+		_score += bonusStones * scoring.stone;
+		if (_interview.bonusFinished())
+			saveCheckpoint(_loadedRegion + 1);
+	}
 	if (_interview.wantsFlight()) {
 		_carriedStones = _interview.stones();
 		_completedSpecies = _interview.species();
@@ -770,8 +813,11 @@ bool MortimerEngine::processCastle() {
 		_loadError = _castle.errorMessage();
 		return false;
 	}
-	if (_castle.solved())
+	if (_castle.solved() && _checkpoint < 5) {
+		_score += mortimerScoring(_flightDifficulty, _riddleDifficulty).castle;
 		saveCheckpoint(5);
+		_highScoreEligible = true;
+	}
 	if (_castle.finished()) {
 		stopSounds();
 		_castleActive = false;
@@ -842,6 +888,8 @@ bool MortimerEngine::updateCastle() {
 }
 
 bool MortimerEngine::updateScene() {
+	if (_highScoresActive)
+		return true;
 	if (_castleActive)
 		return updateCastle();
 	if (_interviewActive) {
@@ -1153,6 +1201,23 @@ Common::Error MortimerEngine::run() {
 		}
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
+			if (_highScoresActive && !isPaused()) {
+				if (_highScores.enteringName()) {
+					if (event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat && _highScores.handleKey(event.kbd)) {
+						if (_highScores.save(*_saveFileMan, _targetName + ".hsf")) {
+							setScoreNameInput(false);
+						} else {
+							GUI::MessageDialog message(_("Could not save the high scores. Please try again."));
+							runDialog(message);
+						}
+					}
+				} else if ((event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat) ||
+					event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN ||
+					event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+					exit = !finishHighScores();
+				}
+				continue;
+			}
 			if (event.type == Common::EVENT_KEYDOWN) {
 				if (event.kbdRepeat)
 					continue;
@@ -1248,9 +1313,12 @@ Common::Error MortimerEngine::run() {
 		}
 		draw();
 		if (_finished) {
-			GUI::MessageDialog dialog(_("Play again?"), _("Restart"), _("Quit"));
-			if (runDialog(dialog) != GUI::kMessageOK)
-				break;
+			if (!_viewingHighScores) {
+				GUI::MessageDialog dialog(_("Play again?"), _("Restart"), _("Quit"));
+				if (runDialog(dialog) != GUI::kMessageOK)
+					break;
+			}
+			_viewingHighScores = false;
 			if (_isDemo) {
 				if (!selectDifficulty() || !restart(true))
 					break;
@@ -1261,6 +1329,8 @@ Common::Error MortimerEngine::run() {
 		_system->delayMillis(10);
 	}
 	stopSounds();
+	if (_highScoresActive)
+		setScoreNameInput(false);
 	CursorMan.showMouse(oldCursor);
 	if (!_loadError.empty())
 		warning("Mortimer: %s", _loadError.c_str());
@@ -1395,9 +1465,14 @@ void MortimerEngine::draw() {
 		if (_castleActive)
 			_castle.drawOverlay(_screen, _mouse, Common::Point(), _soundState.variable(1));
 	}
-	if (!_isDemo)
+	if (_highScoresActive) {
+		_highScores.draw(_screen, _system->getMillis());
+	} else if (!_isDemo) {
 		_subtitles.draw(_screen, currentMovie().captions(), ConfMan.getBool("subtitles") ||
 			(_interviewActive && _interview.forceSubtitles()) || (_castleActive && _castle.forceSubtitles()), &_intro.context());
+		if (_interviewActive && _interview.payingBonus())
+			_subtitles.drawScore(_screen, _score);
+	}
 	if (isPaused()) {
 		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 		_screen.fillRect(Common::Rect(90, 142, 550, 182), 10);

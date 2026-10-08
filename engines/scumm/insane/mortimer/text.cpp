@@ -124,6 +124,34 @@ bool MortimerSubtitles::loadText(Common::SeekableReadStream &stream) {
 	return !stream.err() && !_entries.empty();
 }
 
+Common::String MortimerSubtitles::text(uint16 id) const {
+	const auto found = _entries.find(id);
+	return found == _entries.end() ? Common::String() : found->_value.text;
+}
+
+void drawMortimerMessage(Graphics::Surface &screen, const MortimerFont &font, const Common::String &text, byte color) {
+	Common::Array<Common::String> lines;
+	const int width = font.wordWrapText(text, screen.w - 40, lines, 0, Graphics::kWordWrapOnExplicitNewLines);
+	const int lineHeight = font.getFontHeight() + 1;
+	const int height = lines.size() * font.getFontHeight() + 1;
+	const int x = (screen.w - width) / 2, y = (screen.h - height) / 2;
+	Common::Rect box(x - 10, y - 10, x + width + 10, y + height + 10);
+	screen.fillRect(box, 251);
+	for (int i = 0; i < 3; ++i) {
+		screen.hLine(box.left, box.top, box.right - 1, 250);
+		screen.vLine(box.left, box.top, box.bottom - 1, 250);
+		screen.hLine(box.left, box.bottom - 1, box.right - 1, 252);
+		screen.vLine(box.right - 1, box.top, box.bottom - 1, 252);
+		box.grow(-1);
+	}
+	for (uint i = 0; i < lines.size(); ++i)
+		font.drawString(&screen, lines[i], x, y + i * lineHeight, width, color, Graphics::kTextAlignCenter, 0, false);
+}
+
+void MortimerSubtitles::drawScore(Graphics::Surface &screen, uint32 score) const {
+	drawMortimerMessage(screen, _infoFont, Common::String::format(text(3).c_str(), (long)score), 231);
+}
+
 void MortimerSubtitles::draw(Graphics::Surface &screen, const Common::Array<MortimerMovie::Caption> &captions, bool enabled,
 		const MortimerMovieContext *context) const {
 	for (uint i = 0; i < captions.size(); ++i) {

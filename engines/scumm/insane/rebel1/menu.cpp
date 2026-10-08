@@ -31,6 +31,7 @@
 #include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/insane/rebel1/rebel.h"
+#include "scumm/insane/highscores.h"
 
 namespace Scumm {
 
@@ -1301,18 +1302,15 @@ int InsaneRebel1::runPasscodeEntryDialog() {
 }
 
 bool InsaneRebel1::runHighScoreNameEntry() {
-	int slot = 0;
-	while (slot < kHighScoreCount && _highScores[slot].score >= _score)
-		slot++;
+	const int slot = findHighScorePosition(_highScores, kHighScoreCount, _score);
 	if (slot >= kHighScoreCount)
 		return false;
 
-	for (int i = kHighScoreCount - 1; i > slot; i--)
-		_highScores[i] = _highScores[i - 1];
-
-	_highScores[slot].score = _score;
-	_highScores[slot].difficulty = _difficulty;
-	Common::strlcpy(_highScores[slot].name, "<", sizeof(_highScores[slot].name));
+	HighScoreEntry entry = {};
+	entry.score = _score;
+	entry.difficulty = _difficulty;
+	Common::strlcpy(entry.name, "<", sizeof(entry.name));
+	insertHighScoreEntry(_highScores, kHighScoreCount, kHighScoreCount, slot, entry);
 	_highScoreEntryIndex = slot;
 
 	beginTextEntry(false);

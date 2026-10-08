@@ -30,6 +30,7 @@
 #include "scumm/insane/mortimer/interview.h"
 #include "scumm/insane/mortimer/campaign.h"
 #include "scumm/insane/mortimer/castle.h"
+#include "scumm/insane/mortimer/scores.h"
 #include "scumm/smush/saud_stream.h"
 
 namespace Scumm {
@@ -61,6 +62,8 @@ private:
 	bool startPilot();
 	Common::Error savePilot();
 	void saveCheckpoint(uint checkpoint);
+	void setScoreNameInput(bool enabled);
+	bool finishHighScores();
 	uint introCount() const;
 	bool loadIntro(uint index);
 	bool loadFlight(uint segment);
@@ -114,7 +117,10 @@ private:
 	Common::String _pilotName;
 	int _pilotSlot;
 	uint _checkpoint;
+	uint32 _score, _checkpointScore;
 	bool _girl, _pilotLoadRequested;
+	bool _highScoresActive, _highScoreEligible, _viewingHighScores;
+	MortimerHighScores _highScores;
 	Common::RandomSource _random;
 	MortimerCutscene _intro;
 	MortimerFlight _flight;
