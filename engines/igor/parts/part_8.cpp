@@ -200,6 +200,8 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 	}
 	waitForTimer(255);
 	fadeOut(624);
+	_objectsState[27] = 0;
+	_objectsState[35] = 1;
 
 	loadActionData(DAT_DeanPepperOffice);
 	loadRoomData(PAL_DeanPepperOffice, IMG_DeanPepperOffice, BOX_DeanPepperOffice, MSK_DeanPepperOffice, TXT_DeanPepperOffice);
