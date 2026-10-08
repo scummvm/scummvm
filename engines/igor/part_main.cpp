@@ -249,7 +249,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 43:
-		// EXEC_MAIN_ACTION_43();
+		EXEC_MAIN_ACTION_43_lookAtPhoto();
 		break;
 	case 44:
 		ADD_DIALOGUE_TEXT(156, 1, 80);
@@ -426,6 +426,41 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		warning("EXEC_MAIN_ACTION() Unhandled action %d", action);
 		break;
 	}
+}
+
+void IgorEngine::EXEC_MAIN_ACTION_43_lookAtPhoto() {
+	memcpy(_paletteBuffer, _currentPalette, 624);
+	fadeOut(624);
+	uint8 *tmp = (uint8 *)malloc(64000 + 768);
+	if (tmp) {
+		memcpy(tmp, _screenVGA, 64000);
+		memcpy(tmp + 64000, _paletteBuffer, 768);
+	}
+	loadData(IMG_PhotoHarrisonMargaret, _screenVGA);
+	loadData(PAL_PhotoHarrisonMargaret, _paletteBuffer);
+	fadeIn(624);
+	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
+	int _walkDataCurrentPosX2 = wd->x;
+	int _walkDataCurrentPosY2 = wd->y;
+	int _walkDataCurrentWScale = wd->scaleWidth;
+	wd->x = 160;
+	wd->y = 130;
+	wd->scaleWidth = 50;
+	ADD_DIALOGUE_TEXT(83, 2, 59);
+	SET_DIALOGUE_TEXT(1, 1);
+	startIgorDialogue();
+	waitForEndOfIgorDialogue();
+	_currentAction.object1Num = 0;
+	wd->x = _walkDataCurrentPosX2;
+	wd->y = _walkDataCurrentPosY2;
+	wd->scaleWidth = _walkDataCurrentWScale;
+	fadeOut(624);
+	if (tmp) {
+		memcpy(_screenVGA, tmp, 64000);
+		memcpy(_paletteBuffer, tmp + 64000, 768);
+		free(tmp);
+	}
+	fadeIn(624);
 }
 
 void IgorEngine::SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p) {

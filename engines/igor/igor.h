@@ -598,6 +598,8 @@ private:
 	void moveScreenUp(int offset);
 	void lookAtPapyrus(bool reveal);
 	void EXEC_MAIN_ACTION(int action);
+	void EXEC_MAIN_ACTION_38();
+	void EXEC_MAIN_ACTION_43_lookAtPhoto();
 
 	// map
 	void PART_04_EXEC_ACTION(int action);
