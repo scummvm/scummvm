@@ -58,7 +58,9 @@ void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
 		int dstArea = _roomObjectAreasTable[_screenLayer2[dstY * 320 + dstX]].area;
 		debugC(9, kDebugWalk, "srcArea = %d dstArea = %d", srcArea, dstArea);
 		int currentArea = srcArea;
-		for (int i = 1; dstArea != currentArea; ++i) {
+		// Area 0 means the point is outside any walk area: there is no route
+		// through the area table, so walk straight to the destination
+		for (int i = 1; srcArea >= 1 && dstArea >= 1 && dstArea != currentArea; ++i) {
 			const int boxOffset = srcArea * _roomDataOffsets.area.boxSrcSize + dstArea * _roomDataOffsets.area.boxDstSize;
 			int nextArea = _roomActionsTable[boxOffset + i + _roomDataOffsets.area.box];
 			debugC(9, kDebugWalk, "nextArea %d (%d,%d,%d)", nextArea, _roomDataOffsets.area.box, _roomDataOffsets.area.boxSrcSize, _roomDataOffsets.area.boxDstSize);

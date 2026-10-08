@@ -43,7 +43,7 @@ void IgorEngine::PART_MARGARET_ROOM_CUTSCENE_UPDATE_DIALOGUE_MARGARET(int action
 		PART_MARGARET_ROOM_CUTSCENE_HELPER_2(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_MARGARET_ROOM_CUTSCENE_HELPER_2(getRandomNumber(5) + 1);
+		PART_MARGARET_ROOM_CUTSCENE_HELPER_2(getRandomNumber(4) + 1);
 		break;
 	}
 }
