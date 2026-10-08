@@ -50,6 +50,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for The Fool's Errand.
    - Added support for Harvester.
    - Added support for Lord Avalot d'Argent.
+   - Added support for Dungeon Master.
 
  General:
    - Optimised mixing and rate converters, for better performance.
