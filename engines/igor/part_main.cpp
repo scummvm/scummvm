@@ -676,6 +676,9 @@ void IgorEngine::PART_MAIN() {
 		case 671:
 			PART_67(); // maze entrance
 			break;
+		case 750:
+			PART_75(); // philip vodka cutscene
+			break;
 		case 850: // Intro cutscene
 			// Clear the entire screen buffer before starting the intro cutscene
 			memset(_screenVGA, 0, 64000);

@@ -980,6 +980,12 @@ private:
 	void PART_67_UPDATE_ROOM_BACKGROUND();
 	void PART_67();
 
+
+	// philip vodka cutscene
+	void PART_75_UPDATE_DIALOGUE_PHILIP(int action);
+	void PART_75_HELPER_1(int frame);
+	void PART_75();
+
 	void PART_85();
 	void PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
 	void PART_85_HELPER_2_SCROLL_RIGHT();
