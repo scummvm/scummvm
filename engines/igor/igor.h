@@ -1161,7 +1161,7 @@ private:
 	void buildWalkPathAreaLeftDirection(int srcX, int srcY, int dstX, int dstY);
 	typedef void (IgorEngine::*IgorMoveTick)();
 	// tick: room effect that runs on every iteration while Igor walks (rooms with their own wait loop)
-	void waitForIgorMove(IgorMoveTick tick = 0);
+	bool waitForIgorMove(IgorMoveTick tick = 0, bool escapeSkips = false, bool forceSkip = false);
 
 	void moveIgor(int pos, int frame);
 

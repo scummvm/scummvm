@@ -1033,11 +1033,11 @@ void IgorEngine::buildWalkPathAreaLeftDirection(int srcX, int srcY, int dstX, in
 		}
 		wd = &_walkData[_walkDataLastIndex];
 		wd->setPos(dstX, dstY, 4, _walkCurrentFrame);
-		scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+		scale = _walkYScaleRoom[(_walkXScaleRoom[dstX] - 1) * 144 + dstY];
 		xScale = _walkWidthScaleTable[scale - 1];
 		wd->setScale(scale, scale);
 		wd->yPosChanged = 1;
-		wd->dyPos = curY - dstY;
+		wd->dyPos = dstY - curY;
 		int x = xScale - xScale / 2 + dstX - 1;
 		if (x > 319) {
 			wd->clipSkipX = 1;
@@ -1063,8 +1063,9 @@ void IgorEngine::buildWalkPathAreaLeftDirection(int srcX, int srcY, int dstX, in
 	}
 }
 
-void IgorEngine::waitForIgorMove(IgorMoveTick tick) {
+bool IgorEngine::waitForIgorMove(IgorMoveTick tick, bool escapeSkips, bool forceSkip) {
 	_gameTicks = 0;
+	bool skipped = false;
 	do {
 		if (compareGameTick(1, 16)) {
 			if (_walkDataCurrentIndex > _walkDataLastIndex) {
@@ -1079,8 +1080,26 @@ void IgorEngine::waitForIgorMove(IgorMoveTick tick) {
 		if (tick) {
 			(this->*tick)();
 		}
+		if (escapeSkips && ((_inputVars[kInputEscape] && !_eventQuitGame) || forceSkip)) {
+			// Escape draws the remaining walk frames at once, without waiting for the timer.
+			// Once pressed, the walks that follow in the same sequence are skipped the same way.
+			_inputVars[kInputEscape] = 0;
+			skipped = true;
+			while (_gameState.igorMoving && _walkDataCurrentIndex <= _walkDataLastIndex) {
+				moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
+				++_walkDataCurrentIndex;
+				// The original draws straight to the screen, so the walk stays visible, only faster.
+				// TODO: the exact pace depends on the original's drawing cost and is not derived.
+				waitForTimer(1);
+			}
+			_inputVars[kInputEscape] = 0;
+			_gameState.igorMoving = false;
+			_walkDataLastIndex = _walkDataCurrentIndex;
+			break;
+		}
 		waitForTimer();
 	} while (_gameState.igorMoving);
+	return skipped;
 }
 
 void IgorEngine::handleRoomIgorWalk() {

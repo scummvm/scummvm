@@ -144,6 +144,7 @@ void IgorEngine::PART_17_ACTION_103_talkPhilipJimmy() {
 }
 
 void IgorEngine::PART_17_ACTION_105() {
+	bool escaped = false;
 	_roomObjectAreasTable[5].area = 1;
 	_roomObjectAreasTable[10].area = 2;
 	_roomObjectAreasTable[11].area = 2;
@@ -157,7 +158,7 @@ void IgorEngine::PART_17_ACTION_105() {
 	_walkDataCurrentIndex = 1;
 	_walkData[_walkDataLastIndex].frameNum = 1;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
+	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
 	PART_17_HELPER_5_changeZindexOfPath(143);
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[44836]].area = 4;
@@ -168,7 +169,7 @@ void IgorEngine::PART_17_ACTION_105() {
 	for (int i = _walkDataCurrentIndex; i <= _walkDataLastIndex; ++i) {
 		_walkData[i].posNum = kFacingPositionBack;
 	}
-	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
+	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
 	for (int i = 17; i <= 85; ++i) {
 		_walkYScaleRoom[i] = ((i - 13) / 4) + 5;
 	}
@@ -187,7 +188,7 @@ void IgorEngine::PART_17_ACTION_105() {
 	_roomObjectAreasTable[_screenLayer2[36865]].area = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
+	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
 	_currentPart = 40;
 }
 
@@ -330,6 +331,7 @@ void IgorEngine::PART_17_HELPER_1(int num) {
 }
 
 void IgorEngine::PART_17_HELPER_2_walkFromMap() {
+	bool escaped = false;
 	for (int i = 17; i <= 85; ++i) {
 		_walkYScaleRoom[i] = ((i - 13) / 4) + 5;
 	}
@@ -352,7 +354,7 @@ void IgorEngine::PART_17_HELPER_2_walkFromMap() {
 	_roomObjectAreasTable[_screenLayer2[36865]].area = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
+	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
 	for (int i = 17; i <= 135; ++i) {
 		_walkYScaleRoom[i] = 50;
 	}
@@ -370,7 +372,7 @@ void IgorEngine::PART_17_HELPER_2_walkFromMap() {
 	for (int i = _walkDataCurrentIndex; i <= _walkDataLastIndex; ++i) {
 		_walkData[i].posNum = kFacingPositionFront;
 	}
-	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
+	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
 	PART_17_HELPER_5_changeZindexOfPath(0);
 
 	--_walkDataLastIndex;
@@ -378,7 +380,7 @@ void IgorEngine::PART_17_HELPER_2_walkFromMap() {
 	_walkDataCurrentIndex = 2;
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
+	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
 	_roomObjectAreasTable[5].area = 0;
 	_roomObjectAreasTable[10].area = 0;
 	_roomObjectAreasTable[11].area = 0;
