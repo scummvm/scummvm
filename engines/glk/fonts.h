@@ -29,7 +29,6 @@ namespace Glk {
 
 enum FACES { MONOR, MONOB, MONOI, MONOZ, PROPR, PROPB, PROPI, PROPZ, CUSTOM, CUSTOM2 };
 enum TYPES { MONOF, PROPF };
-enum STYLES { FONTR, FONTB, FONTI, FONTZ };
 
 /**
  * Font configuration info
