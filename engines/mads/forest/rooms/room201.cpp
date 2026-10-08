@@ -293,6 +293,10 @@ static void room_201_anim4() {
 
 	switch (scratch._a4) {
 	case 28:
+		// WORKAROUND: Avoid race condition looking at herbs. Bug #17284
+		kernel_reset_animation(aa[4], 4);
+		aainfo[4]._frame = 4;
+
 		kernel_timing_trigger(30, 28);
 		aainfo[4]._val3 = 10;
 		scratch._a4 = 29;
