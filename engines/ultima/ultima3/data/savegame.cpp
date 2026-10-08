@@ -67,6 +67,13 @@ void Savegame::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_posY);
 	s.syncBytes(_moveCount, sizeof(_moveCount));
 	s.syncAsByte(_mapLoaded);
+
+	if (s.getVersion() >= 2) {
+		s.syncAsByte(_allWeapons);
+		s.syncAsByte(_allArmour);
+		s.syncAsByte(_plusTwoWeapons);
+		s.syncAsByte(_plusTwoArmour);
+	}
 }
 
 void Savegame::formParty() {

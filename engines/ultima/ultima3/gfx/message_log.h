@@ -62,6 +62,11 @@ public:
 	void putChar(char ch);
 
 	/**
+	 * Takes back the last characters added to the bottom line
+	 */
+	void backspace(int count);
+
+	/**
 	 * Draws the window, with the cursor arrow shown if waiting for input
 	 */
 	void draw(Graphics::Views::GfxSurface &s, bool showCursor) const;

@@ -95,6 +95,9 @@ public:
 	Gfx::ScreenEffects _effects;
 	byte _windDirection = 0;
 
+	// Toggled in the game by the Volume command
+	bool _soundEnabled = true;
+
 	// Set when a loaded game should continue in the world rather than start it
 	bool _resumeGame = false;
 

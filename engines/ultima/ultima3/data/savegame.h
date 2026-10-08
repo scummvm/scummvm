@@ -43,6 +43,13 @@ struct Savegame {
 	byte _posY = 0;
 	byte _moveCount[4] = {};
 
+	// Set once the party has seen the more powerful gear offered in the
+	// shops, making it available for readying and wearing
+	bool _allWeapons = false;
+	bool _allArmour = false;
+	bool _plusTwoWeapons = false;
+	bool _plusTwoArmour = false;
+
 	// Set once the world map has been loaded, which the map in a save then replaces
 	bool _mapLoaded = false;
 

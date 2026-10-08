@@ -86,7 +86,7 @@ bool Ultima3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
-	s.syncVersion(1);
+	s.syncVersion(2);
 
 	_savegame.synchronize(s);
 	if (_savegame._mapLoaded)
@@ -104,7 +104,7 @@ Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
 }
 
 void Ultima3Engine::queueTone(int divisor, uint32 lengthMs) {
-	if (!_pcSpeakerReady)
+	if (!_pcSpeakerReady || !_soundEnabled)
 		return;
 
 	float freq = divisor > 0 ? 1193182.0f / divisor : 0.0f;
@@ -112,7 +112,7 @@ void Ultima3Engine::queueTone(int divisor, uint32 lengthMs) {
 }
 
 void Ultima3Engine::queueSilence(uint32 lengthMs) {
-	if (!_pcSpeakerReady)
+	if (!_pcSpeakerReady || !_soundEnabled)
 		return;
 
 	_pcSpeaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0.0f, lengthMs * 1000);

@@ -48,22 +48,20 @@ private:
 	void doMove(Direction dir, const char *label);
 	void doPass();
 	void doInvalid();
-
-	/**
-	 * Carries out what happens once a command has taken a turn
-	 */
-	void endTurn();
+	void doBoard();
+	void doExitVehicle();
 
 protected:
 	void drawViewport(GfxSurface &s) override;
 	void idleTimeout() override;
+	void endTurn() override;
+	bool handleCommand(const KeypressMessage &msg) override;
 
 public:
 	OverworldMap() : Game("OverworldMap") {}
 	~OverworldMap() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Views

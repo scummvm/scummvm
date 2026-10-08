@@ -21,6 +21,7 @@
 
 #include "ultima/ultima3/views/overworld_map.h"
 #include "ultima/ultima3/views/menu_input.h"
+#include "ultima/ultima3/views/interactions/look.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -146,42 +147,76 @@ void OverworldMap::idleTimeout() {
 	doPass();
 }
 
-bool OverworldMap::msgKeypress(const KeypressMessage &msg) {
-	if (isModifierKey(msg.keycode))
-		return true;
-	if (Game::msgKeypress(msg))
-		return true;
-
-	if (_gameOver) {
-		replaceView("Title", true);
-		return true;
+void OverworldMap::doBoard() {
+	const char *text = _logic.board();
+	if (text) {
+		_G(messages).print(text);
+		endTurn();
+	} else {
+		_G(messages).print("Board");
+		commandFailed("<-What?\n");
 	}
+}
 
+void OverworldMap::doExitVehicle() {
+	_G(messages).print("X-it ");
+
+	switch (_logic.exitVehicle()) {
+	case OverworldLogic::EXIT_DONE:
+		_G(messages).print("Craft\n");
+		endTurn();
+		break;
+	case OverworldLogic::EXIT_NOT_HERE:
+		commandFailed("Not Here!\n", 0xFF);
+		break;
+	default:
+		commandFailed("<-What?\n");
+		break;
+	}
+}
+
+bool OverworldMap::handleCommand(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP8:
 		doMove(DIR_NORTH, "North\n");
-		break;
+		return true;
 	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_KP2:
 		doMove(DIR_SOUTH, "South\n");
-		break;
+		return true;
 	case Common::KEYCODE_RIGHT:
 	case Common::KEYCODE_KP6:
 		doMove(DIR_EAST, "East\n");
-		break;
+		return true;
 	case Common::KEYCODE_LEFT:
 	case Common::KEYCODE_KP4:
 		doMove(DIR_WEST, "West\n");
-		break;
+		return true;
 	case Common::KEYCODE_SPACE:
 		doPass();
-		break;
+		return true;
 	default:
-		doInvalid();
 		break;
 	}
 
+	switch (commandKey(msg)) {
+	case 'B':
+		doBoard();
+		return true;
+	case 'X':
+		doExitVehicle();
+		return true;
+	case 'L':
+		_G(messages).print("Look-");
+		startInteraction(new Interactions::Look());
+		return true;
+	default:
+		break;
+	}
+
+	if (!Game::handleCommand(msg))
+		doInvalid();
 	return true;
 }
 

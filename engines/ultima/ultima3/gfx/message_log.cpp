@@ -57,6 +57,11 @@ void MessageLog::putChar(char ch) {
 	++_column;
 }
 
+void MessageLog::backspace(int count) {
+	_column = MAX(0, _column - count);
+	_lines[LOG_LINES - 1].erase(_column);
+}
+
 void MessageLog::print(const char *text) {
 	for (; *text; ++text) {
 		if (*text == '\n') {

@@ -178,6 +178,11 @@ MODULE_OBJS += \
 	ultima3/views/disperse_party.o \
 	ultima3/views/form_party.o \
 	ultima3/views/game.o \
+	ultima3/views/interactions/equip.o \
+	ultima3/views/interactions/exchange.o \
+	ultima3/views/interactions/interaction.o \
+	ultima3/views/interactions/look.o \
+	ultima3/views/interactions/ztats.o \
 	ultima3/views/journey_onward.o \
 	ultima3/views/logo_screen.o \
 	ultima3/views/main_menu.o \

@@ -20,6 +20,10 @@
  */
 
 #include "ultima/ultima3/views/game.h"
+#include "ultima/ultima3/views/menu_input.h"
+#include "ultima/ultima3/views/interactions/equip.h"
+#include "ultima/ultima3/views/interactions/exchange.h"
+#include "ultima/ultima3/views/interactions/ztats.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -42,6 +46,8 @@ void Game::startGame() {
 	_gameOver = false;
 	_idleFrames = 0;
 	_windCounter = 1;
+	_interaction.reset();
+	_G(soundEnabled) = true;
 	_G(messages).clear();
 	_G(effects) = Gfx::ScreenEffects();
 	updateWind();
@@ -94,11 +100,83 @@ void Game::timeout() {
 	_G(effects).tick();
 	updateWind();
 
-	if (!_gameOver && ++_idleFrames >= IDLE_FRAMES)
+	if (!_gameOver && !_interaction && ++_idleFrames >= IDLE_FRAMES)
 		idleTimeout();
 
 	redraw();
 	delayFrames(1);
+}
+
+void Game::startInteraction(Interactions::Interaction *interaction) {
+	_interaction.reset(interaction);
+	redraw();
+}
+
+void Game::commandFailed(const char *text, byte sound) {
+	_G(messages).print(text);
+	g_engine->playSoundEffect(sound);
+	endTurn();
+}
+
+bool Game::handleCommand(const KeypressMessage &msg) {
+	switch (commandKey(msg)) {
+	case 'Z':
+		_G(messages).print("Ztats for # ");
+		startInteraction(new Interactions::Ztats());
+		return true;
+
+	case 'M':
+		_G(messages).print("Modify order!\nPlayer: ");
+		startInteraction(new Interactions::Exchange());
+		return true;
+
+	case 'R':
+		_G(messages).print("Ready for # ");
+		startInteraction(new Interactions::Equip(true));
+		return true;
+
+	case 'W':
+		_G(messages).print("Wear for # ");
+		startInteraction(new Interactions::Equip(false));
+		return true;
+
+	case 'V':
+		_G(soundEnabled) = !_G(soundEnabled);
+		_G(messages).print("Volume ");
+		_G(messages).print(_G(soundEnabled) ? "On!\n" : "Off!\n");
+		endTurn();
+		return true;
+
+	default:
+		return false;
+	}
+}
+
+bool Game::msgKeypress(const KeypressMessage &msg) {
+	if (isModifierKey(msg.keycode))
+		return true;
+
+	if (_gameOver) {
+		_G(soundEnabled) = true;
+		replaceView("Title", true);
+		return true;
+	}
+
+	_idleFrames = 0;
+
+	if (_interaction) {
+		if (_interaction->keypress(msg)) {
+			_interaction.reset();
+			endTurn();
+		} else {
+			redraw();
+		}
+
+		return true;
+	}
+
+	handleCommand(msg);
+	return true;
 }
 
 void Game::invertRect(GfxSurface &s, const Common::Rect &r) {
@@ -184,6 +262,9 @@ void Game::draw() {
 	if (fx._slot >= 0)
 		invertRect(s, Common::Rect(PANEL_COL * 8, (fx._slot * PANEL_SLOT_ROWS + 1) * 8, 39 * 8,
 			(fx._slot * PANEL_SLOT_ROWS + 4) * 8));
+	if (fx._highlight >= 0)
+		invertRect(s, Common::Rect(31 * 8, fx._highlight * PANEL_SLOT_ROWS * 8, 32 * 8,
+			(fx._highlight * PANEL_SLOT_ROWS + 1) * 8));
 }
 
 } // namespace Views

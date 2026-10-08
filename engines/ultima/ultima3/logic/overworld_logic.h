@@ -49,11 +49,28 @@ private:
 	bool isTerrainBlocked(byte tile);
 
 public:
+	enum ExitResult {
+		EXIT_NOT_RIDING,
+		EXIT_NOT_HERE,
+		EXIT_DONE
+	};
+
 	/**
 	 * Moves the party a step in a direction, if they can
 	 * @returns		True if they moved
 	 */
 	bool move(Direction dir);
+
+	/**
+	 * Mounts a horse or boards a ship that the party is standing on
+	 * @returns		What to say about it, or null if there's nothing to board
+	 */
+	const char *board();
+
+	/**
+	 * Gets off a horse or ship, leaving it behind
+	 */
+	ExitResult exitVehicle();
 };
 
 } // namespace Ultima3

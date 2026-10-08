@@ -40,6 +40,12 @@ constexpr int GLYPH_UP_ARROW = 0x1E;
 bool isModifierKey(Common::KeyCode key);
 
 /**
+ * Returns the upper case letter or other character typed, or zero for keys
+ * that don't give one
+ */
+char commandKey(const KeypressMessage &msg);
+
+/**
  * A menu prompt. Pressing one of the option keys only echoes the matching
  * word; it then has to be confirmed with Enter, or taken back with
  * Backspace or Left. Anything else is rejected with a beep.
@@ -68,6 +74,13 @@ public:
 	 */
 	bool hasChoice() const {
 		return _choice >= 0;
+	}
+
+	/**
+	 * Returns the number of the option currently echoed
+	 */
+	int index() const {
+		return _choice;
 	}
 
 	/**

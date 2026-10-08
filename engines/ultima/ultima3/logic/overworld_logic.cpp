@@ -38,6 +38,13 @@ constexpr byte FIRST_BLOCKING_TILE = 12;
 constexpr byte MARK_FORCE = 0x10;
 constexpr byte MARK_FIRE = 0x20;
 
+// Map cells the party's mounts are left in, and the highest cell they can
+// be left on, which is the ground they can travel over
+constexpr byte CELL_WATER = 0;
+constexpr byte CELL_GRASS = 4;
+constexpr byte CELL_HORSE = TRANSPORT_HORSE * 4;
+constexpr byte CELL_SHIP = TRANSPORT_SHIP * 4;
+
 constexpr int FORCE_FIELD_DAMAGE = 99;
 constexpr int LAVA_DAMAGE = 50;
 
@@ -102,6 +109,39 @@ bool OverworldLogic::move(Direction dir) {
 	save._posX = (save._posX + dx) & (Data::MAP_SIZE - 1);
 	save._posY = (save._posY + dy) & (Data::MAP_SIZE - 1);
 	return true;
+}
+
+const char *OverworldLogic::board() {
+	Data::Savegame &save = _G(savegame);
+	if (save._transport != TRANSPORT_ON_FOOT)
+		return nullptr;
+
+	byte cell = _G(map).cell(save._posX, save._posY);
+	if (cell == CELL_HORSE) {
+		_G(map).setCell(save._posX, save._posY, CELL_GRASS);
+		save._transport = TRANSPORT_HORSE;
+		return "Mount Horse!\n";
+	}
+	if (cell == CELL_SHIP) {
+		_G(map).setCell(save._posX, save._posY, CELL_WATER);
+		save._transport = TRANSPORT_SHIP;
+		return "Board Frigate!\n";
+	}
+
+	return nullptr;
+}
+
+OverworldLogic::ExitResult OverworldLogic::exitVehicle() {
+	Data::Savegame &save = _G(savegame);
+	if (save._transport == TRANSPORT_ON_FOOT)
+		return EXIT_NOT_RIDING;
+
+	if (_G(map).cell(save._posX, save._posY) > CELL_GRASS)
+		return EXIT_NOT_HERE;
+
+	_G(map).setCell(save._posX, save._posY, save._transport * 4);
+	save._transport = TRANSPORT_ON_FOOT;
+	return EXIT_DONE;
 }
 
 } // namespace Ultima3

@@ -45,6 +45,11 @@ bool isModifierKey(Common::KeyCode key) {
 	}
 }
 
+char commandKey(const KeypressMessage &msg) {
+	char c = (msg.ascii > 0 && msg.ascii < 0x80) ? msg.ascii : 0;
+	return (c >= 'a' && c <= 'z') ? c - ('a' - 'A') : c;
+}
+
 static bool isEnterKey(Common::KeyCode key) {
 	return key == Common::KEYCODE_RETURN || key == Common::KEYCODE_KP_ENTER;
 }

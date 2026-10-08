@@ -60,6 +60,28 @@ const char *const ARMOUR_NAMES[ARMOUR_COUNT] = {
 	"Skin", "Cloth", "Leather", "Chain", "Plate", "+2 Chain", "+2 Plate", "Exotic"
 };
 
+const char *const NAMES[NAME_COUNT] = {
+	"Water", "Grass", "Brush", "Forest", "Mountains", "Dungeon", "Towne",
+	"Castle", "Floor", "Chest", "Horse", "Frigate", "Whirlpool", "Serpent",
+	"Man-O-War", "Pirate", "Merchant", "Jester", "Guard", "Lord British",
+	"Fighter", "Cleric", "Wizard", "Thief", "Orc", "Skeleton", "Giant",
+	"Daemon", "Pincher", "Dragon", "Balron", "Exodus", "Force Field", "Lava",
+	"Moon Gate", "Wall", "Void", "Wall", "A", "B", "C", "D", "E", "F", "G", "H",
+	"I", "U", "Y", "L", "M", "N", "O", "P", "W", "R", "S", "T", "Snake",
+	"Snake", "Magic", "Fire", "Shrine", "Ranger", "Hand", "Dagger", "Mace",
+	"Sling", "Axe", "Bow", "Sword", "2-H-Swd", "+2 Axe", "+2 Bow", "+2 Swd",
+	"Gloves", "+4 Axe", "+4 Bow", "+4 Swd", "Exotic", "Skin", "Cloth",
+	"Leather", "Chain", "Plate", "+2 Chain", "+2 Plate", "Exotic", "Repond",
+	"Mittar", "Lorum", "Dor Acron", "Sur Acron", "Fulgar", "Dag Acron",
+	"Mentar", "Dag Lorum", "Fal Divi", "Noxum", "Decorp", "Altair",
+	"Dag Mentar", "Necorp", "", "Pontori", "Appar Unem", "Sanctu", "Luminae",
+	"Rec Su", "Rec Du", "Lib Rec", "Alcort", "Sequitu", "Sominae",
+	"Sanctu Mani", "Vieda", "Excuun", "Surmandum", "Zxkuqyb", "Anju Sermani",
+	"Brigand", "Cutpurse", "Goblin", "Troll", "Ghoul", "Zombie", "Golem",
+	"Titan", "Gargoyle", "Mane", "Snatch", "Bradle", "Griffon", "Wyvern",
+	"Orcus", "Devil"
+};
+
 int lookupIndex(char key, const char *keys, int count) {
 	for (int i = 0; i < count; ++i) {
 		if (keys[i] == key)

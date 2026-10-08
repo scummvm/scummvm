@@ -42,6 +42,7 @@ constexpr int CLASS_COUNT = 11;
 constexpr int STATUS_COUNT = 4;
 constexpr int WEAPON_COUNT = 16;
 constexpr int ARMOUR_COUNT = 8;
+constexpr int NAME_COUNT = 136;
 
 extern const char SEX_KEYS[];
 extern const char RACE_KEYS[];
@@ -53,6 +54,10 @@ extern const char *const CLASS_NAMES[CLASS_COUNT];
 extern const char *const STATUS_NAMES[STATUS_COUNT];
 extern const char *const WEAPON_NAMES[WEAPON_COUNT];
 extern const char *const ARMOUR_NAMES[ARMOUR_COUNT];
+
+// The game's table of terrain, creature, equipment and spell names, which
+// are referred to by a number starting at 1
+extern const char *const NAMES[NAME_COUNT];
 
 /**
  * Returns the index of a key within the first count entries of a key list.

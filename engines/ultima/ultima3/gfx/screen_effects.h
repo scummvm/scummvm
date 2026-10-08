@@ -35,6 +35,9 @@ constexpr int FLASH_FRAMES = 3;
 struct ScreenEffects {
 	int _slot = -1;
 	bool _viewport = false;
+
+	// A party member's number kept inverted while their details are shown
+	int _highlight = -1;
 	int _frames = 0;
 
 	void flashSlot(int slot) {

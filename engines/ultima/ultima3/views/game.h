@@ -22,7 +22,9 @@
 #ifndef ULTIMA3_VIEWS_GAME_H
 #define ULTIMA3_VIEWS_GAME_H
 
+#include "common/ptr.h"
 #include "ultima/shared/engine/view.h"
+#include "ultima/ultima3/views/interactions/interaction.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -42,6 +44,7 @@ class Game : public Shared::View {
 private:
 	int _idleFrames = 0;
 	int _windCounter = 1;
+	Common::ScopedPtr<Interactions::Interaction> _interaction;
 
 	void drawFrame(GfxSurface &s);
 	void drawPartyStatus(GfxSurface &s);
@@ -67,6 +70,29 @@ protected:
 	virtual void idleTimeout() = 0;
 
 	/**
+	 * Carries out what happens once a command has taken a turn
+	 */
+	virtual void endTurn() = 0;
+
+	/**
+	 * Carries out the command for a key press, if it's one that works the
+	 * same wherever the party is
+	 * @returns		True if the key was a command
+	 */
+	virtual bool handleCommand(const KeypressMessage &msg);
+
+	/**
+	 * Takes over the keyboard to finish a command that needs further input
+	 */
+	void startInteraction(Interactions::Interaction *interaction);
+
+	/**
+	 * Prints the error shown for a command that can't be used right now,
+	 * and ends the turn
+	 */
+	void commandFailed(const char *text, byte sound = 0xFE);
+
+	/**
 	 * Resets the state for a new game
 	 */
 	void startGame();
@@ -87,6 +113,7 @@ public:
 	~Game() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	void timeout() override;
 };
