@@ -177,6 +177,8 @@ void IgorEngine::restart() {
 	_currentCursor = 0;
 	_dialogueCursorOn = true;
 	_updateDialogue = 0;
+	_talkColorIndex = kTalkColor;
+	_talkShadowIndex = kTalkShadowColor;
 	_updateRoomBackground = 0;
 
 	_resourceEntriesCount = 0;

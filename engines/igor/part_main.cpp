@@ -832,6 +832,8 @@ void IgorEngine::PART_MEANWHILE() {
 	hideCursor();
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(208, 255);
+	// clears the verbs and inventory panels area
+	memset(_screenVGA + 46080, 0, 17920);
 	loadData(IMG_Meanwhile, _screenVGA);
 	_paletteBuffer[3] = 63;
 	_paletteBuffer[4] = 32;

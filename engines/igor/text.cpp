@@ -184,10 +184,10 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 		;
 		int textX = talkX - textLineWidth / 2;
 		int textY = i * 10;
-		_font.drawString(_screenTextLayer, textLine, textX, textY, kTalkColor, kTalkShadowColor, kTalkShadowColor);
+		_font.drawString(_screenTextLayer, textLine, textX, textY, _talkColorIndex, _talkShadowIndex, _talkShadowIndex);
 	}
-	setPaletteColor(kTalkColor, r, g, b);
-	setPaletteColor(kTalkShadowColor, 0, 0, 0);
+	setPaletteColor(_talkColorIndex, r, g, b);
+	setPaletteColor(_talkShadowIndex, 0, 0, 0);
 	// Only update the VGA screen buffer if not in spech-only mode
 	if (_gameState.talkMode != kTalkModeSpeechOnly) {
 		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
@@ -336,10 +336,10 @@ void IgorEngine::startIgorDialogue() {
 		int textLineWidth = _font.getStringWidth(textLine);
 		int textX = talkX - textLineWidth / 2;
 		int textY = i * 10;
-		_font.drawString(_screenTextLayer, textLine, textX, textY, kTalkColor, kTalkShadowColor, kTalkShadowColor);
+		_font.drawString(_screenTextLayer, textLine, textX, textY, _talkColorIndex, _talkShadowIndex, _talkShadowIndex);
 	}
-	setPaletteColor(kTalkColor, _dialogueColor[0], _dialogueColor[1], _dialogueColor[2]);
-	setPaletteColor(kTalkShadowColor, 0, 0, 0);
+	setPaletteColor(_talkColorIndex, _dialogueColor[0], _dialogueColor[1], _dialogueColor[2]);
+	setPaletteColor(_talkShadowIndex, 0, 0, 0);
 	if (_gameState.talkMode != kTalkModeSpeechOnly) {
 		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
 	}

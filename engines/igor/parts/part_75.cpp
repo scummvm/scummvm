@@ -51,6 +51,10 @@ void IgorEngine::PART_75_HELPER_1(int frame) {
 void IgorEngine::PART_75() {
 	PART_MEANWHILE();
 	_gameState.enableLight = 1;
+	// this cutscene draws its dialogue text with the last palette entry and index 0 for
+	// the outline, since Philip's sprites use the entries the regular text would recolor
+	_talkColorIndex = 255;
+	_talkShadowIndex = 0;
 	loadRoomData(PAL_PhilipRoom, IMG_PhilipRoom, BOX_PhilipRoom, MSK_PhilipRoom, TXT_PhilipRoom);
 	static const int anm[] = { ANM_PhilipVodka, AOF_PhilipVodka, 0 };
 	loadAnimData(anm);
@@ -100,7 +104,6 @@ void IgorEngine::PART_75() {
 	ADD_DIALOGUE_TEXT(210, 1);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(187, 82, 63, 63, 0);
-	waitForEndOfCutsceneDialogue(187, 82, 63, 63, 0);
 	for (int i = 1; i <= 40; ++i) {
 		PART_75_HELPER_1(getRandomNumber(3) + 37);
 		waitForTimer(30);
@@ -108,6 +111,8 @@ void IgorEngine::PART_75() {
 	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
 	_gameState.dialogueTextRunning = false;
 	_updateDialogue = 0;
+	_talkColorIndex = kTalkColor;
+	_talkShadowIndex = kTalkShadowColor;
 	_currentPart = 122;
 	fadeOut(768);
 }

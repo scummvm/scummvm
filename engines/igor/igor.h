@@ -430,6 +430,9 @@ private:
 	RoomWalkBounds _roomWalkBounds;
 	RoomDataOffsets _roomDataOffsets;
 	UpdateDialogueProc _updateDialogue;
+	// palette indices used to draw cutscene dialogue text and its outline
+	uint8 _talkColorIndex;
+	uint8 _talkShadowIndex;
 	UpdateRoomBackgroundProc _updateRoomBackground;
 	int _demoActionsCounter;
 	int _gameTicks;

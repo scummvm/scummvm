@@ -323,7 +323,7 @@ void IgorEngine::decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText
 				len = 256 - len;
 				if (preserveText) {
 					for (int i = pos; i < pos + len; ++i) {
-						if (dst[i] != kTalkColor && dst[i] != kTalkShadowColor) {
+						if (dst[i] != _talkColorIndex && dst[i] != _talkShadowIndex) {
 							dst[i] = color;
 						}
 					}
@@ -334,7 +334,7 @@ void IgorEngine::decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText
 			} else {
 				if (preserveText) {
 					for (int i = pos; i < pos + len; ++i) {
-						if (dst[i] != kTalkColor && dst[i] != kTalkShadowColor) {
+						if (dst[i] != _talkColorIndex && dst[i] != _talkShadowIndex) {
 							dst[i] = src[i - pos];
 						}
 					}
