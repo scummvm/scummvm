@@ -43,7 +43,14 @@ enum WBASEEnhancementPanel {
 enum WBASEEnhancementControl {
 	kWBASEEnhancementControlNone,
 	kWBASEEnhancementControlNavigationMap,
-	kWBASEEnhancementControlAutoplay
+	kWBASEEnhancementControlAutoplay,
+	kWBASEEnhancementControlForward,
+	kWBASEEnhancementControlBackward,
+	kWBASEEnhancementControlTurnLeft,
+	kWBASEEnhancementControlTurnRight,
+	kWBASEEnhancementControlFire,
+	kWBASEEnhancementControlExit,
+	kWBASEEnhancementControlEscape
 };
 
 class WBASEEnhancements {
@@ -56,8 +63,10 @@ public:
 	bool navigationMapEnabled() const { return controlsEnabled(); }
 	void renderNavigationMap(const BaseData &data, const BaseEngine &engine, byte *framebuffer) const;
 	WBASEEnhancementControl controlAtPoint(int x, int y) const;
+	bool controlEnabled(WBASEEnhancementControl control, WBASEEnhancementPanel panel) const;
 	void renderControls(const BaseData &data, WBASEEnhancementPanel panel,
-			WBASEEnhancementControl hoveredControl, bool autoplayActive, byte *framebuffer) const;
+			WBASEEnhancementControl hoveredControl, uint32 pressedControls,
+			bool autoplayActive, byte *framebuffer) const;
 
 private:
 	bool _enabled;
