@@ -486,7 +486,7 @@
 // Walk line used for scroll
 #define WLK_DecanatoLeft 910
 #define WLK_DecanatoRight 911
-#define DAT_DecanatoPart11 912 // cseg176:286F-2882; IGOR.EXE:0x68049B, size 0x1841
+#define DAT_DecanatoPart11 912
 
 // CD-only intro card shown by state 850. All three resources are contiguous in
 // NE segment 209 immediately after the intro code.
@@ -494,108 +494,191 @@
 #define IMG_IgorIntroLogo 914 // cseg209:1E34; IGOR.EXE:0x7C1434, 320x122
 #define PAL_IgorIntroLogo 915 // cseg209:B6B4; IGOR.EXE:0x7CACB4, 768 bytes
 
-// Administration corridor used by PART_07 states 70-72. These CD resources live in
-// NE segments 197-199 and were absent from the historical TBL catalog.
-#define DAT_AdministrationCorridor 916 // cseg197:3732; IGOR.EXE:0x748B32, 0x1A59 bytes
-#define ANM_AdministrationCorridor 917 // cseg198:00D6; IGOR.EXE:0x74C8D6, 0x2B4D bytes
-#define TXT_AdministrationCorridor 918 // cseg199:06A2; IGOR.EXE:0x74FBA2, 0x5EE bytes
-#define IMG_AdministrationCorridor 919 // cseg199:0C90; IGOR.EXE:0x750190, 0xB400 bytes
-#define PAL_AdministrationCorridor 920 // cseg199:C090; IGOR.EXE:0x75B590, 0x270 bytes
-#define MSK_AdministrationCorridor 921 // cseg199:C300; IGOR.EXE:0x75B800, 0x954 bytes
-#define BOX_AdministrationCorridor 922 // cseg199:CC54; IGOR.EXE:0x75C154, 0x500 bytes
+#define DAT_AdministrationCorridor 916
+#define ANM_AdministrationCorridor 917
+#define TXT_AdministrationCorridor 918
+#define IMG_AdministrationCorridor 919
+#define PAL_AdministrationCorridor 920
+#define MSK_AdministrationCorridor 921
+#define BOX_AdministrationCorridor 922
 
-// Hamburger pickup animation loaded over ANM+0xB400 in PART_10.
-#define ANM_DecanatoHamburger 932 // cseg134:21AF-21ED; IGOR.EXE:0x4EFCEE, 0x1386 bytes
+#define ANM_DecanatoHamburger 932
 
-// Right park panel. The historical catalog only exposed cseg106's left panel;
-// these resources are cseg104's independently loaded room data.
-#define TXT_ParkRight 933 // cseg104:01AB-0244; IGOR.EXE:0x3DFFA2, 0x488 bytes
-#define IMG_ParkRight 934 // cseg104:006B-0095; IGOR.EXE:0x3E042A, 0xB400 bytes
-#define PAL_ParkRight 935 // cseg104:0010-0039; IGOR.EXE:0x3EB82A, 0x270 bytes
-#define MSK_ParkRight 936 // cseg104:00D7-01A8; IGOR.EXE:0x3EBA9A, 0xF84 bytes
-#define BOX_ParkRight 937 // cseg104:009A-00C3; IGOR.EXE:0x3ECA1E, 0x500 bytes
+#define TXT_ParkRight 933
+#define IMG_ParkRight 934
+#define PAL_ParkRight 935
+#define MSK_ParkRight 936
+#define BOX_ParkRight 937
 
-// Dean Peeper's conversation data block from NE segment 194.
 #define DLG_DeanPepperOffice 938
 
-// Student dormitory animation blocks copied contiguously by cseg207:0002-0239.
-#define ANM_StudentDormitoryRoom1 939 // cseg207:023B; IGOR.EXE:0x7A843B, 0x1200 bytes
-#define ANM_StudentDormitoryRoom2 940 // cseg207:143B; IGOR.EXE:0x7A963B, 0x0478 bytes
-#define ANM_StudentDormitoryRoom3 941 // cseg207:18B3; IGOR.EXE:0x7A9AB3, 0x1BC0 bytes
-#define ANM_StudentDormitoryRoom4 942 // cseg207:3473; IGOR.EXE:0x7AB673, 0x0D90 bytes
-#define ANM_StudentDormitoryRoom5 943 // cseg207:4203; IGOR.EXE:0x7AC403, 0x0CA2 bytes
-#define ANM_StudentDormitoryRoom6 944 // cseg207:4EA5; IGOR.EXE:0x7AD0A5, 0x0120 bytes
-#define ANM_StudentDormitoryRoom7 945 // cseg207:4FC5; IGOR.EXE:0x7AD1C5, 0x0BB8 bytes
-#define ANM_StudentDormitoryRoom8 946 // cseg207:5B7D; IGOR.EXE:0x7ADD7D, 0x0CE4 bytes
-#define ANM_StudentDormitoryRoom9 947 // cseg207:6861; IGOR.EXE:0x7AEA61, 0x15E0 bytes
-#define ANM_StudentDormitoryRoom10 948 // cseg207:7E41; IGOR.EXE:0x7B0041, 0x080A bytes
-#define ANM_StudentDormitoryRoom11 949 // cseg207:864B; IGOR.EXE:0x7B084B, 0x080A bytes
+#define ANM_StudentDormitoryRoom1 939
+#define ANM_StudentDormitoryRoom2 940
+#define ANM_StudentDormitoryRoom3 941
+#define ANM_StudentDormitoryRoom4 942
+#define ANM_StudentDormitoryRoom5 943
+#define ANM_StudentDormitoryRoom6 944
+#define ANM_StudentDormitoryRoom7 945
+#define ANM_StudentDormitoryRoom8 946
+#define ANM_StudentDormitoryRoom9 947
+#define ANM_StudentDormitoryRoom10 948
+#define ANM_StudentDormitoryRoom11 949
 
-// Outside Igor's dormitory window (PART_01), from NE segments 200-202.
-#define DAT_OutsideStudentDormitory 950 // cseg200:278F; IGOR.EXE:0x75EF8F, 0x17DD bytes
-#define TXT_OutsideStudentDormitory 951 // cseg202:06AD; IGOR.EXE:0x76F9AD, 0x0549 bytes
-#define IMG_OutsideStudentDormitory 952 // cseg202:0BF6; IGOR.EXE:0x76FEF6, 0xB400 bytes
-#define PAL_OutsideStudentDormitory 953 // cseg202:BFF6; IGOR.EXE:0x77B2F6, 0x0270 bytes
-#define MSK_OutsideStudentDormitory 954 // cseg202:C266; IGOR.EXE:0x77B566, 0x05F4 bytes
-#define BOX_OutsideStudentDormitory 955 // cseg202:C85A; IGOR.EXE:0x77BB5A, 0x0500 bytes
-#define ANM_OutsideStudentDormitory1 956 // cseg201:01A1; IGOR.EXE:0x7627A1, 0x00D8 bytes
-#define ANM_OutsideStudentDormitory2 957 // cseg201:0279; IGOR.EXE:0x762879, 0x0E1C bytes
-#define ANM_OutsideStudentDormitory3 958 // cseg201:1095; IGOR.EXE:0x763695, 0x07B0 bytes
-#define ANM_OutsideStudentDormitory4 959 // cseg201:1845; IGOR.EXE:0x763E45, 0x01B5 bytes
-#define ANM_OutsideStudentDormitory5 960 // cseg201:19FA; IGOR.EXE:0x763FFA, 0x00D0 bytes
-#define ANM_OutsideStudentDormitory6 961 // cseg201:1ACA; IGOR.EXE:0x7640CA, 0x8E80 bytes
-#define ANM_OutsideStudentDormitory7 962 // cseg201:A94A; IGOR.EXE:0x76CF4A, 0x0050 bytes
-#define ANM_OutsideStudentDormitory8 963 // cseg201:A99A; IGOR.EXE:0x76CF9A, 0x2210 bytes
 
-// Dormitory attic/crawlspace (PART_02), from NE segments 203-205.
-#define DAT_StudentDormitoryAttic 964 // cseg203:52D7; IGOR.EXE:0x7814D7, 0x1EA3 bytes
-#define TXT_StudentDormitoryAttic 965 // cseg205:06A2; IGOR.EXE:0x7926A2, 0x0744 bytes
-#define IMG_StudentDormitoryAttic 966 // cseg205:0DE6; IGOR.EXE:0x792DE6, 0xB400 bytes
-#define PAL_StudentDormitoryAttic 967 // cseg205:C1E6; IGOR.EXE:0x79E1E6, 0x0270 bytes
-#define MSK_StudentDormitoryAttic 968 // cseg205:C456; IGOR.EXE:0x79E456, 0x11C1 bytes
-#define BOX_StudentDormitoryAttic 969 // cseg205:D617; IGOR.EXE:0x79F617, 0x0500 bytes
-#define ANM_StudentDormitoryAttic1 970 // cseg204:02D3; IGOR.EXE:0x7860D3, 0x02BC bytes
-#define ANM_StudentDormitoryAttic2 971 // cseg204:058F; IGOR.EXE:0x78638F, 0x00DC bytes
-#define ANM_StudentDormitoryAttic3 972 // cseg204:066B; IGOR.EXE:0x78646B, 0x0028 bytes
-#define ANM_StudentDormitoryAttic4 973 // cseg204:0693; IGOR.EXE:0x786493, 0x153F bytes
-#define ANM_StudentDormitoryAttic5 974 // cseg204:1BD2; IGOR.EXE:0x7879D2, 0x153F bytes
-#define ANM_StudentDormitoryAttic6 975 // cseg204:3111; IGOR.EXE:0x788F11, 0x057C bytes
-#define ANM_StudentDormitoryAttic7 976 // cseg204:368D; IGOR.EXE:0x78948D, 0x0E10 bytes
-#define ANM_StudentDormitoryAttic8 977 // cseg204:449D; IGOR.EXE:0x78A29D, 0x1308 bytes
-#define ANM_StudentDormitoryAttic9 978 // cseg204:57A5; IGOR.EXE:0x78B5A5, 0x080A bytes
-#define ANM_StudentDormitoryAttic10 979 // cseg204:5FAF; IGOR.EXE:0x78BDAF, 0x0CE4 bytes
-#define ANM_StudentDormitoryAttic11 980 // cseg204:6C93; IGOR.EXE:0x78CA93, 0x160B bytes
-#define ANM_StudentDormitoryAttic12 981 // cseg204:829E; IGOR.EXE:0x78E09E, 0x0240 bytes
-#define ANM_StudentDormitoryAttic13 982 // cseg204:84DE; IGOR.EXE:0x78E2DE, 0x327D bytes
-#define ANM_StudentDormitoryAttic14 983 // cseg204:B75B; IGOR.EXE:0x79155B, 0x0960 bytes
+#define DAT_OutsideStudentDormitory 950
+#define TXT_OutsideStudentDormitory 951
+#define IMG_OutsideStudentDormitory 952
+#define PAL_OutsideStudentDormitory 953
+#define MSK_OutsideStudentDormitory 954
+#define BOX_OutsideStudentDormitory 955
+#define ANM_OutsideStudentDormitory1 956
+#define ANM_OutsideStudentDormitory2 957
+#define ANM_OutsideStudentDormitory3 958
+#define ANM_OutsideStudentDormitory4 959
+#define ANM_OutsideStudentDormitory5 960
+#define ANM_OutsideStudentDormitory6 961
+#define ANM_OutsideStudentDormitory7 962
+#define ANM_OutsideStudentDormitory8 963
 
-// Administration secretary-room animation blocks copied by cseg192:0002-01D4.
-#define ANM_AdministrationSecretaryRoom1 923 // cseg192:01D5; IGOR.EXE:0x7057D5, 0xD38 bytes
-#define ANM_AdministrationSecretaryRoom2 924 // cseg192:0F0D; IGOR.EXE:0x70650D, 0x1FB bytes
-#define ANM_AdministrationSecretaryRoom3 925 // cseg192:1108; IGOR.EXE:0x706708, 0x4DD8 bytes
-#define ANM_AdministrationSecretaryRoom4 926 // cseg192:5EE0; IGOR.EXE:0x70B4E0, 0x930 bytes
-#define ANM_AdministrationSecretaryRoom5 927 // cseg192:6810; IGOR.EXE:0x70BE10, 0x7D0 bytes
-#define ANM_AdministrationSecretaryRoom6 928 // cseg192:6FE0; IGOR.EXE:0x70C5E0, 0x18E4 bytes
-#define ANM_AdministrationSecretaryRoom7 929 // cseg192:88C4; IGOR.EXE:0x70DEC4, 0x14B4 bytes
-#define ANM_AdministrationSecretaryRoom8 930 // cseg192:9D78; IGOR.EXE:0x70F378, 0x870 bytes
-#define ANM_AdministrationSecretaryRoom9 931 // cseg192:A5E8; IGOR.EXE:0x70FBE8, 0x399D bytes
+#define DAT_StudentDormitoryAttic 964
+#define TXT_StudentDormitoryAttic 965
+#define IMG_StudentDormitoryAttic 966
+#define PAL_StudentDormitoryAttic 967
+#define MSK_StudentDormitoryAttic 968
+#define BOX_StudentDormitoryAttic 969
+#define ANM_StudentDormitoryAttic1 970
+#define ANM_StudentDormitoryAttic2 971
+#define ANM_StudentDormitoryAttic3 972
+#define ANM_StudentDormitoryAttic4 973
+#define ANM_StudentDormitoryAttic5 974
+#define ANM_StudentDormitoryAttic6 975
+#define ANM_StudentDormitoryAttic7 976
+#define ANM_StudentDormitoryAttic8 977
+#define ANM_StudentDormitoryAttic9 978
+#define ANM_StudentDormitoryAttic10 979
+#define ANM_StudentDormitoryAttic11 980
+#define ANM_StudentDormitoryAttic12 981
+#define ANM_StudentDormitoryAttic13 982
+#define ANM_StudentDormitoryAttic14 983
+
+#define ANM_AdministrationSecretaryRoom1 923
+#define ANM_AdministrationSecretaryRoom2 924
+#define ANM_AdministrationSecretaryRoom3 925
+#define ANM_AdministrationSecretaryRoom4 926
+#define ANM_AdministrationSecretaryRoom5 927
+#define ANM_AdministrationSecretaryRoom6 928
+#define ANM_AdministrationSecretaryRoom7 929
+#define ANM_AdministrationSecretaryRoom8 930
+#define ANM_AdministrationSecretaryRoom9 931
 
 #define DLG_AdministrationSecretaryRoom 984
 
-// Park conversation with the old lady (cseg94:2498), Laura's entrance and conversation (cseg102:0D22,
-// cseg103:0002).
-#define DLG_ParkLady 985 // cseg94:2E6A; IGOR.EXE:0x390A6A, 0x062D bytes
-#define DLG_ParkLaura 986 // cseg102:1E97; IGOR.EXE:0x3D3597, 0x0B54 bytes
-#define FRM_ParkLaura1 987 // cseg103:00A5; IGOR.EXE:0x3D58A5, 0x9EAE bytes
-#define FRM_ParkLaura2 988 // cseg103:9F53; IGOR.EXE:0x3DF753, 0x0072 bytes
-#define FRM_ParkLaura3 989 // cseg103:9FC5; IGOR.EXE:0x3DF7C5, 0x0030 bytes
-#define FRM_ParkRight1 990 // cseg49:29B6; IGOR.EXE:0x2053B6, 0x0F81 bytes
-#define DAT_MazeEntrance 991 // cseg62:279B; IGOR.EXE:0x28509B, 0x15F1 bytes
-#define FRM_MazeEntrance1 992 // cseg94:0070; IGOR.EXE:0x38DC70, 0x17AD bytes
-#define TXT_MazeEntrance 993 // cseg86:06B3; IGOR.EXE:0x34A8B3, 0x04FF bytes
-#define IMG_MazeEntrance 994 // cseg86:0BB2; IGOR.EXE:0x34ADB2, 0xB400 bytes
-#define PAL_MazeEntrance 995 // cseg86:BFB2; IGOR.EXE:0x3561B2, 0x0240 bytes
-#define MSK_MazeEntrance 996 // cseg86:C222; IGOR.EXE:0x356422, 0x075C bytes
-#define BOX_MazeEntrance 997 // cseg86:C97E; IGOR.EXE:0x356B7E, 0x0500 bytes
+#define DLG_ParkLady 985
+#define DLG_ParkLaura 986
+#define FRM_ParkLaura1 987
+#define FRM_ParkLaura2 988
+#define FRM_ParkLaura3 989
+#define FRM_ParkRight1 990
+#define DAT_MazeEntrance 991
+#define FRM_MazeEntrance1 992
+#define TXT_MazeEntrance 993
+#define IMG_MazeEntrance 994
+#define PAL_MazeEntrance 995
+#define MSK_MazeEntrance 996
+#define BOX_MazeEntrance 997
+
+// MAZE ROOMS BEGIN
+#define DAT_Maze51 998
+#define TXT_Maze51 999
+#define IMG_Maze51 1000
+#define PAL_Maze51 1001
+#define MSK_Maze51 1002
+#define BOX_Maze51 1003
+#define DAT_Maze52 1004
+#define TXT_Maze52 1005
+#define IMG_Maze52 1006
+#define PAL_Maze52 1007
+#define MSK_Maze52 1008
+#define BOX_Maze52 1009
+#define DAT_Maze53 1010
+#define TXT_Maze53 1011
+#define IMG_Maze53 1012
+#define PAL_Maze53 1013
+#define MSK_Maze53 1014
+#define BOX_Maze53 1015
+#define DAT_Maze54 1016
+#define TXT_Maze54 1017
+#define IMG_Maze54 1018
+#define PAL_Maze54 1019
+#define MSK_Maze54 1020
+#define BOX_Maze54 1021
+#define DAT_Maze55 1022
+#define DAT_Maze56 1023
+#define TXT_Maze56 1024
+#define IMG_Maze56 1025
+#define PAL_Maze56 1026
+#define MSK_Maze56 1027
+#define BOX_Maze56 1028
+#define DAT_Maze57 1029
+#define TXT_Maze57 1030
+#define IMG_Maze57 1031
+#define PAL_Maze57 1032
+#define MSK_Maze57 1033
+#define BOX_Maze57 1034
+#define DAT_Maze58 1035
+#define TXT_Maze58 1036
+#define IMG_Maze58 1037
+#define PAL_Maze58 1038
+#define MSK_Maze58 1039
+#define BOX_Maze58 1040
+#define DAT_Maze59 1041
+#define TXT_Maze59 1042
+#define IMG_Maze59 1043
+#define PAL_Maze59 1044
+#define MSK_Maze59 1045
+#define BOX_Maze59 1046
+#define DAT_Maze60 1047
+#define TXT_Maze60 1048
+#define IMG_Maze60 1049
+#define PAL_Maze60 1050
+#define MSK_Maze60 1051
+#define BOX_Maze60 1052
+#define DAT_Maze61 1053
+#define TXT_Maze61 1054
+#define IMG_Maze61 1055
+#define PAL_Maze61 1056
+#define MSK_Maze61 1057
+#define BOX_Maze61 1058
+#define DAT_Maze62 1059
+#define TXT_Maze62 1060
+#define IMG_Maze62 1061
+#define PAL_Maze62 1062
+#define MSK_Maze62 1063
+#define BOX_Maze62 1064
+#define DAT_Maze63 1065
+#define TXT_Maze63 1066
+#define IMG_Maze63 1067
+#define PAL_Maze63 1068
+#define MSK_Maze63 1069
+#define BOX_Maze63 1070
+#define DAT_Maze64 1071
+#define TXT_Maze64 1072
+#define IMG_Maze64 1073
+#define PAL_Maze64 1074
+#define MSK_Maze64 1075
+#define BOX_Maze64 1076
+#define DAT_Maze65 1077
+#define TXT_Maze65 1078
+#define IMG_Maze65 1079
+#define PAL_Maze65 1080
+#define MSK_Maze65 1081
+#define BOX_Maze65 1082
+#define DAT_Maze66 1083
+#define TXT_Maze66 1084
+#define IMG_Maze66 1085
+#define PAL_Maze66 1086
+#define MSK_Maze66 1087
+#define BOX_Maze66 1088
+// MAZE ROOMS END
 
 #endif // IGOR_RESOURCE_IDS
