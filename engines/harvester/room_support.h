@@ -127,6 +127,7 @@ struct RoomIdleAnimationState {
 	bool exiting = false;
 };
 
+bool sameMonsterEntityState(const MonsterRecord &lhs, const MonsterRecord &rhs);
 bool applyRoomActorPlacement(const RoomSetupState &state, Entity &entity,
 	int centerX, int bottomY, float z, const Common::String *entranceName = nullptr);
 void logScenePaletteSummary(const char *label, const RoomSceneResources &scene, float brightness);

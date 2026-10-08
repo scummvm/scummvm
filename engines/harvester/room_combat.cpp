@@ -488,18 +488,6 @@ int resolveMonsterAttackContactFrameOffset(const MonsterRecord &monster) {
 		: kDefaultMonsterAttackContactFrameOffset;
 }
 
-bool sameMonsterEntityState(const MonsterRecord &lhs, const MonsterRecord &rhs) {
-	return lhs.posX == rhs.posX &&
-		lhs.posY == rhs.posY &&
-		lhs.posZ == rhs.posZ &&
-		lhs.facing == rhs.facing &&
-		lhs.active == rhs.active &&
-		lhs.visible == rhs.visible &&
-		lhs.runtimeSpawned == rhs.runtimeSpawned &&
-		lhs.runtimeState == rhs.runtimeState &&
-		lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
-}
-
 void RoomCombat::initializeCombatStates(const RoomSetupState &state) {
 	_monsterCombatStates.resize(state.roomMonsters.size());
 	_npcCombatStates.resize(state.roomNpcs.size());

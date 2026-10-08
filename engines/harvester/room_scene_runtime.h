@@ -33,10 +33,11 @@ public:
 	RoomSceneRuntime(RoomSetupState &state, Script *script, ResourceManager *resources, EntityManager *entityManager);
 
 	bool loadSceneResources(const RoomSetupState &state, RoomSceneResources &scene) const;
+	bool reconcileSceneEntitiesInPlace(const RoomSceneResources &previousScene,
+		RoomSetupState &updatedState, const RoomSceneResources &updatedScene);
 	void syncCurrentRoomRuntimeState(const Common::Array<RegionRecord> &sceneRegions);
 	void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
 		bool includeCurrentRoomTimers = false);
-	// Initial population skips failed spawns; in-place callers handle null actor results.
 	void populateRoomRegions();
 	void populateRoomObjects(const Common::Array<ObjectRecord> &drawableObjects);
 	void populateRoomNpcs();

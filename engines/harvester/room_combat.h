@@ -192,7 +192,6 @@ struct ScopedDeferredLiveNpcDeathTransitions {
 	Script *_script;
 };
 
-bool sameMonsterEntityState(const MonsterRecord &lhs, const MonsterRecord &rhs);
 bool shouldRetainNpcDeathEntityInCurrentRoom(const NpcRecord &npc);
 bool isRetainedCurrentRoomNpcDeathRecord(const NpcRecord &npc);
 bool resolveCombatLoadoutHudInfo(int loadout, CombatLoadoutHudInfo &info);
