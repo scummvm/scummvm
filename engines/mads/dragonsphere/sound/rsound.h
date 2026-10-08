@@ -441,8 +441,8 @@ protected:
 	 */
 	Channel *playSoundData(byte *pData, int startingChannel, int freeScanEnd, int fallbackScanEnd);
 
-	/** Checks whether the given block of data is already loaded into a channel (channels 1-8 only, matching the disassembly). */
-	bool isSoundActive(byte *pData);
+	/** Checks whether a native sound identity is active on channels 1-8. */
+	bool isSoundActive(uint16 dataOffset);
 
 	int getRandomNumber();
 
