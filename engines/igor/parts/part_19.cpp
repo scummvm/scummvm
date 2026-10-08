@@ -90,8 +90,8 @@ void IgorEngine::PART_19_ACTION_107() { // sub_137_02C7
 		const int offset = 27110;
 		for (int j = 0; j <= 48; ++j) {
 			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 1372 + j * 28 - 506, 28);
-			waitForTimer(120);
 		}
+		waitForTimer(120);
 	}
 	addObjectToInventory(12, 47);
 	_objectsState[58] = 1;
