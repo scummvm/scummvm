@@ -140,7 +140,8 @@ static bool sameSceneRegionState(const RegionRecord &lhs, const RegionRecord &rh
 
 RoomSession::RoomSession(HarvesterEngine &engine, Flow &flow, RoomSceneResources &scene, EntityManager *entityManager,
 		InventorySystem &inventory)
-	: _engine(engine), _flow(flow), _scene(scene), _entityManager(entityManager), _inventory(inventory) {
+	: _engine(engine), _flow(flow), _scene(scene), _entityManager(entityManager), _inventory(inventory),
+	  _combatEffects(entityManager) {
 }
 
 void RoomSession::resetIdleState() {
@@ -769,8 +770,7 @@ bool RoomSession::refreshCurrentScene(bool preservePlayerPlacement) {
 	refreshedState.audioCommands = Common::move(entryAudioCommands);
 	if (!loadRoomSceneResources(refreshedState, *_engine.getResources(), _scene))
 		return false;
-	_hitEffectStates.clear();
-	_nextCombatEffectId = 0;
+	_combatEffects.clearHitEffects();
 	if (!_flow.populateRoomSceneEntities(_scene.state, _scene.sceneObjects, _scene.sceneAnimations))
 		return false;
 	if (_entityManager) {

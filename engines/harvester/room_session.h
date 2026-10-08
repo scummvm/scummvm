@@ -48,8 +48,7 @@ public:
 
 	RoomPlayerState &getPlayerState() { return _playerState; }
 	Common::Array<RoomMonsterCombatState> &getMonsterCombatStates() { return _monsterCombatStates; }
-	Common::Array<RoomHitEffectState> &getHitEffectStates() { return _hitEffectStates; }
-	uint &getNextCombatEffectId() { return _nextCombatEffectId; }
+	RoomCombatEffects &getCombatEffects() { return _combatEffects; }
 	RoomIdleAnimationState &getIdleState() { return _idleState; }
 	RoomMovementInputState &getMovementInput() { return _movementInput; }
 	Common::String &getPendingRegionName() { return _pendingRegionName; }
@@ -91,8 +90,7 @@ private:
 	InventorySystem &_inventory;
 	RoomPlayerState _playerState;
 	Common::Array<RoomMonsterCombatState> _monsterCombatStates;
-	Common::Array<RoomHitEffectState> _hitEffectStates;
-	uint _nextCombatEffectId = 0;
+	RoomCombatEffects _combatEffects;
 	RoomIdleAnimationState _idleState;
 	RoomMovementInputState _movementInput;
 	Common::String _pendingRegionName;

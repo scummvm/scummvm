@@ -27,6 +27,7 @@
 namespace Harvester {
 
 class Entity;
+class EntityManager;
 class HarvesterEngine;
 
 extern const int kRoomMonsterAnimationRate;
@@ -128,6 +129,29 @@ struct RoomCombatDamagePopupState {
 	Common::Point anchorPoint;
 	uint32 startTick = 0;
 	int damageAmount = 0;
+};
+
+class RoomCombatEffects {
+public:
+	explicit RoomCombatEffects(EntityManager *entityManager);
+
+	void clearHitEffects();
+	bool hasDamagePopups() const { return !_damagePopupStates.empty(); }
+	bool spawnCombatHitEffect(Entity &sourceEntity, const Common::String &followTargetName);
+	void spawnCombatDamagePopup(Entity &targetEntity, const Common::String &followTargetName, int damageAmount);
+	bool syncCombatHitEffects();
+	void drawCombatDamagePopups(Graphics::Screen &screen, bool combatDebugEnabled);
+	bool pruneCombatHitEffects();
+	bool pruneCombatDamagePopups();
+
+private:
+	static void resolveHitEffectAnchor(const Entity &targetEntity, Common::Point &anchorPoint, float &renderZ);
+	static void resolveCombatDamagePopupAnchor(const Entity &targetEntity, Common::Point &anchorPoint);
+
+	EntityManager *_entityManager;
+	Common::Array<RoomHitEffectState> _hitEffectStates;
+	Common::Array<RoomCombatDamagePopupState> _damagePopupStates;
+	uint _nextCombatEffectId = 0;
 };
 
 struct CombatLoadoutHudInfo {

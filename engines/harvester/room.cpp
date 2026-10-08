@@ -276,37 +276,6 @@ static void drawCombatLoadoutResourceIcons(Graphics::Screen &screen, const Art &
 			kNativeCombatResourceIconsY);
 }
 
-static byte findNearestPaletteColor(const byte *palette, byte red, byte green, byte blue) {
-	if (!palette)
-		return 0;
-
-	byte bestIndex = 0;
-	uint32 bestDistance = 0xffffffffu;
-	for (int i = 0; i < 256; ++i) {
-		const int paletteOffset = i * 3;
-		const int dr = (int)palette[paletteOffset] - red;
-		const int dg = (int)palette[paletteOffset + 1] - green;
-		const int db = (int)palette[paletteOffset + 2] - blue;
-		const uint32 distance = (uint32)(dr * dr + dg * dg + db * db);
-		if (distance < bestDistance) {
-			bestDistance = distance;
-			bestIndex = (byte)i;
-		}
-	}
-
-	return bestIndex;
-}
-
-static void drawShadowedRoomText(Graphics::Screen &screen, const Graphics::Font &font,
-		const Common::String &text, int x, int y, byte textColor, byte shadowColor) {
-	if (text.empty())
-		return;
-
-	const int width = font.getStringWidth(text);
-	font.drawString(&screen, text, x + 1, y + 1, width, shadowColor);
-	font.drawString(&screen, text, x, y, width, textColor);
-}
-
 static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
 	byte scaledPalette[256 * 3];
 	const float gammaBrightness = g_engine ? g_engine->getGammaBrightnessScale() : 1.0f;
@@ -467,9 +436,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		monsterCombatStates.resize(scene.state.roomMonsters.size());
 		Common::Array<RoomNpcCombatState> npcCombatStates;
 		npcCombatStates.resize(scene.state.roomNpcs.size());
-		Common::Array<RoomHitEffectState> &hitEffectStates = session.getHitEffectStates();
-		Common::Array<RoomCombatDamagePopupState> damagePopupStates;
-		uint &nextCombatEffectId = session.getNextCombatEffectId();
+		RoomCombatEffects &combatEffects = session.getCombatEffects();
 		ResolvedText inspectText;
 		Common::String currentInteractionPromptText;
 		bool showingInspectText = false;
@@ -537,161 +504,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			sceneObject->runtimeVisible = false;
 			if (ownerOrRoom)
 				sceneObject->currentOwnerOrRoom = *ownerOrRoom;
-		};
-
-		auto resolveHitEffectAnchor = [&](const Entity &targetEntity,
-				Common::Point &anchorPoint, float &renderZ) {
-			const Common::Rect targetRect = targetEntity.getScreenRect();
-			anchorPoint.x = targetRect.left + targetRect.width() / 2;
-			anchorPoint.y = targetRect.top + targetRect.height() / 3;
-			renderZ = targetEntity.getZ() - kNativeHitEffectRenderZBias;
-		};
-		auto resolveCombatDamagePopupAnchor = [&](const Entity &targetEntity,
-				Common::Point &anchorPoint) {
-			const Common::Rect targetRect = targetEntity.getScreenRect();
-			anchorPoint.x = targetRect.left + targetRect.width() / 2;
-			anchorPoint.y = targetRect.top - kCombatDebugDamagePopupVerticalGap;
-		};
-		auto spawnCombatHitEffect = [&](Entity &sourceEntity,
-				const Common::String &followTargetName) {
-			if (!entityManager)
-				return false;
-
-			RoomHitEffectState effectState;
-			effectState.entityName = Common::String::format("__combat_blood_%u", nextCombatEffectId++);
-			effectState.followTargetName = followTargetName;
-			resolveHitEffectAnchor(sourceEntity, effectState.anchorPoint, effectState.renderZ);
-
-			Entity *effectEntity = entityManager->spawnSceneAnimationEntity(
-				effectState.entityName, kNativeHitEffectResourcePath, effectState.anchorPoint,
-				effectState.renderZ, kNativeHitEffectAnimationRate, true, true, false,
-				false, false, 0);
-			if (!effectEntity)
-				return false;
-
-			hitEffectStates.push_back(Common::move(effectState));
-			return true;
-		};
-		auto spawnCombatDamagePopup = [&](Entity &targetEntity,
-				const Common::String &followTargetName, int damageAmount) {
-			if (damageAmount <= 0)
-				return;
-
-			RoomCombatDamagePopupState popupState;
-			popupState.followTargetName = followTargetName;
-			popupState.startTick = Player::getRuntimeClockTicks();
-			popupState.damageAmount = damageAmount;
-			resolveCombatDamagePopupAnchor(targetEntity, popupState.anchorPoint);
-			damagePopupStates.push_back(Common::move(popupState));
-		};
-		auto syncCombatHitEffects = [&]() {
-			if (!entityManager)
-				return false;
-
-			bool changed = false;
-			for (RoomHitEffectState &effectState : hitEffectStates) {
-				Entity *effectEntity = entityManager->findSceneEntityByName(effectState.entityName);
-				if (!effectEntity)
-					continue;
-
-				if (!effectState.followTargetName.empty()) {
-					Entity *targetEntity =
-						entityManager->findSceneEntityByName(effectState.followTargetName);
-					if (targetEntity && targetEntity->isVisible()) {
-						resolveHitEffectAnchor(*targetEntity, effectState.anchorPoint, effectState.renderZ);
-					}
-				}
-
-				if (effectEntity->getX() != effectState.anchorPoint.x ||
-						effectEntity->getY() != effectState.anchorPoint.y ||
-						fabsf(effectEntity->getZ() - effectState.renderZ) > 0.0001f) {
-					effectEntity->setPosition(
-						effectState.anchorPoint.x, effectState.anchorPoint.y, effectState.renderZ);
-					entityManager->reinsertSceneEntity(effectEntity);
-					changed = true;
-				}
-			}
-
-			return changed;
-		};
-		auto drawCombatDamagePopups = [&](Graphics::Screen &screen) {
-			if (!_engine.isCombatDebugEnabled() || damagePopupStates.empty())
-				return;
-
-			const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-			if (!font)
-				return;
-
-			byte displayPalette[256 * 3];
-			screen.getPalette(displayPalette);
-			const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
-			const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
-			const uint32 now = Player::getRuntimeClockTicks();
-			for (RoomCombatDamagePopupState &popupState : damagePopupStates) {
-				if (entityManager && !popupState.followTargetName.empty()) {
-					Entity *targetEntity =
-						entityManager->findSceneEntityByName(popupState.followTargetName);
-					if (targetEntity && targetEntity->isVisible())
-						resolveCombatDamagePopupAnchor(*targetEntity, popupState.anchorPoint);
-				}
-
-				const uint32 elapsed = now - popupState.startTick;
-				const uint32 clampedElapsed = MIN<uint32>(elapsed, kCombatDebugDamagePopupDurationMs);
-				const int rise = (int)(
-					clampedElapsed * (uint32)kCombatDebugDamagePopupRisePixels /
-					kCombatDebugDamagePopupDurationMs);
-				const Common::String popupText = Common::String::format("+%d", popupState.damageAmount);
-				const int textWidth = font->getStringWidth(popupText);
-				const int drawX = CLIP<int>(popupState.anchorPoint.x - textWidth / 2,
-					0, MAX(0, screen.w - textWidth));
-				const int drawY = CLIP<int>(
-					popupState.anchorPoint.y - font->getFontHeight() - rise,
-					0, MAX(0, screen.h - font->getFontHeight()));
-				drawShadowedRoomText(screen, *font, popupText, drawX, drawY, white, black);
-			}
-		};
-		auto pruneCombatHitEffects = [&]() {
-			bool removedAny = false;
-			for (uint i = 0; i < hitEffectStates.size();) {
-				const Common::String effectName = hitEffectStates[i].entityName;
-				Entity *effectEntity = entityManager
-					? entityManager->findSceneEntityByName(effectName)
-					: nullptr;
-				if (!effectEntity) {
-					hitEffectStates.remove_at(i);
-					continue;
-				}
-
-				const bool finished =
-					!effectEntity->isAnimationEnabled() &&
-					effectEntity->getCurrentFrame() == effectEntity->getLastFrame();
-				if (finished && hitEffectStates[i].finished) {
-					session.removeSceneEntityByName(effectName);
-					hitEffectStates.remove_at(i);
-					removedAny = true;
-					continue;
-				}
-
-				hitEffectStates[i].finished = finished;
-				++i;
-			}
-
-			return removedAny;
-		};
-		auto pruneCombatDamagePopups = [&]() {
-			const uint32 now = Player::getRuntimeClockTicks();
-			bool removedAny = false;
-			for (uint i = 0; i < damagePopupStates.size();) {
-				if (now - damagePopupStates[i].startTick < kCombatDebugDamagePopupDurationMs) {
-					++i;
-					continue;
-				}
-
-				damagePopupStates.remove_at(i);
-				removedAny = true;
-			}
-
-			return removedAny;
 		};
 
 		session.resetIdleState();
@@ -1680,7 +1492,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		const int damageLanded = monster->currentHitPoints;
 		monster->currentHitPoints = 0;
 		if (damageLanded > 0)
-			spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
+			combatEffects.spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
 
 		if (playerState.attackTargetClassId == kRuntimeEntityClassMonster &&
 				playerState.attackTargetName.equalsIgnoreCase(monster->monsterName)) {
@@ -1875,7 +1687,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		};
 		auto startMonsterHitReaction = [&](MonsterRecord &monster, Entity &monsterEntity,
 				RoomMonsterCombatState *combatState, int attackerAttackFirstFrame) {
-			if (spawnCombatHitEffect(monsterEntity, monster.monsterName))
+			if (combatEffects.spawnCombatHitEffect(monsterEntity, monster.monsterName))
 				needsRedraw = true;
 
 			if (!combatState) {
@@ -1982,7 +1794,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				return Common::kNoError;
 			if (runtimeChanged && npcEntity) {
 				const Common::String followTargetName = npc->monsterfyTargetName;
-				if (spawnCombatHitEffect(*npcEntity, followTargetName))
+				if (combatEffects.spawnCombatHitEffect(*npcEntity, followTargetName))
 					needsRedraw = true;
 			}
 			if (runtimeChanged && combatState && npcEntity &&
@@ -2040,7 +1852,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				Player::describeCombatLoadout(playerState.combatLoadout), damageAmount,
 				Player::describeCombatDamageType(damageType), hitPointsBefore, monster->currentHitPoints);
 			if (damageLanded > 0) {
-				spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
+				combatEffects.spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
 				startMonsterHitReaction(*monster, *monsterEntity, combatState, playerState.attackFirstFrame);
 			}
 			if (monster->currentHitPoints > 0) {
@@ -2283,7 +2095,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 							playerHitPointsBefore, playerHitPointsAfter, changed,
 							damageDisabled ? 1 : 0);
 						if (damageLanded > 0 && playerState.entity) {
-							spawnCombatDamagePopup(*playerState.entity, playerState.entity->getName(), damageLanded);
+							combatEffects.spawnCombatDamagePopup(*playerState.entity, playerState.entity->getName(), damageLanded);
 							if (idleState.entity) {
 								idleState.entity->setVisible(false);
 								idleState.entity->setAnimationRate(0);
@@ -2881,7 +2693,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
-			drawCombatDamagePopups(*activeScreen);
+			combatEffects.drawCombatDamagePopups(*activeScreen, _engine.isCombatDebugEnabled());
 			if (_engine.getScript() && playerState.entity) {
 				drawCombatLoadoutResourceIcons(*activeScreen, *art, *_engine.getScript(),
 					_engine.getScript()->getPlayerCombatLoadout());
@@ -3687,7 +3499,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		combatError = updateRoomMonsterCombat();
 		if (combatError.getCode() != Common::kNoError)
 			return combatError;
-		if (syncCombatHitEffects())
+		if (combatEffects.syncCombatHitEffects())
 			needsRedraw = true;
 		if (flow.hasPendingMainMenuReturn())
 			return Common::kNoError;
@@ -3702,9 +3514,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		}
 		if (flow.hasPendingMainMenuReturn())
 			return Common::kNoError;
-		if (pruneCombatHitEffects())
+		if (combatEffects.pruneCombatHitEffects())
 			needsRedraw = true;
-		if (pruneCombatDamagePopups())
+		if (combatEffects.pruneCombatDamagePopups())
 			needsRedraw = true;
 		if (entityManager) {
 			Common::Array<Common::String> expiredTimerNames;
@@ -3732,7 +3544,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		}
 		if (Player::updateIdleAnimation(scene.state, playerState, idleState))
 			needsRedraw = true;
-		if (_engine.isCombatDebugEnabled() && !damagePopupStates.empty())
+		if (_engine.isCombatDebugEnabled() && combatEffects.hasDamagePopups())
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();
