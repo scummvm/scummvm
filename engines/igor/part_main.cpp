@@ -707,6 +707,10 @@ void IgorEngine::PART_MAIN() {
 		case 370:
 			PART_37();
 			break;
+		case 500:
+		case 501:
+			PART_50(); // outside the maze
+			break;
 		case 510:
 		case 521:
 		case 532:

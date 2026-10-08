@@ -679,6 +679,12 @@
 #define PAL_Maze66 1086
 #define MSK_Maze66 1087
 #define BOX_Maze66 1088
+#define DAT_OutsideMaze 1089
+#define TXT_OutsideMaze 1090
+#define IMG_OutsideMaze 1091
+#define PAL_OutsideMaze 1092
+#define MSK_OutsideMaze 1093
+#define BOX_OutsideMaze 1094
 // MAZE ROOMS END
 
 #endif // IGOR_RESOURCE_IDS

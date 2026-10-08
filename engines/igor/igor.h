@@ -1077,6 +1077,14 @@ private:
 	void PART_37_HELPER_2();
 	void PART_37();
 
+	// outside the maze
+	void PART_50_EXEC_ACTION(int action);
+	void PART_50_ACTION_101_enterMaze();
+	void PART_50_ENTER_FROM_DOOR();
+	void PART_50_ENTER_FROM_HILL();
+	void PART_50_UPDATE_ROOM_BACKGROUND();
+	void PART_50();
+
 	// maze
 	static const MazeNode MAZE_NODES[108];
 	static const MazeRoom *getMazeRoom(int part);
@@ -1331,6 +1339,7 @@ protected:
 	static const RoomDataOffsets PART_35_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_36_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_37_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_50_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
 	static const uint8 _inventoryOffsetTable[];
 	static const uint8 _inventoryActionsTable[];

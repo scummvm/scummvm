@@ -196,7 +196,7 @@ void IgorEngine::enterFromStairs(const MazeEntry &entry) {
 			WalkData::setNextFrame(wd->posNum, _walkCurrentFrame);
 			wd->clipSkipX = 1;
 			wd->clipWidth = 30;
-			wd->scaleWidth = 23 + i * 2;
+			wd->scaleWidth = 23 + i * 3;
 			wd->xPosChanged = 1;
 			wd->dxPos = 0;
 			wd->yPosChanged = 1;
@@ -241,7 +241,7 @@ void IgorEngine::mazeExitThroughStairs(const MazeAction &action) {
 			WalkData::setNextFrame(wd->posNum, _walkCurrentFrame);
 			wd->clipSkipX = 1;
 			wd->clipWidth = 30;
-			wd->scaleWidth = 23 + (i - 1) * 2;
+			wd->scaleWidth = 23 + (i - 1) * 3;
 			wd->xPosChanged = 1;
 			wd->dxPos = 0;
 			wd->yPosChanged = 1;

@@ -50,6 +50,7 @@ MODULE_OBJS = \
 	parts/part_35.o \
 	parts/part_36.o \
 	parts/part_37.o \
+	parts/part_50.o \
 	parts/part_75.o \
 	parts/part_maze.o \
 	parts/part_maze_data.o \
