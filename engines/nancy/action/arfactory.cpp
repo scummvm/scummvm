@@ -721,10 +721,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return nullptr;
 	case 181:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new PaintPuzzle();
-		else
-			return nullptr;
+		return new PaintPuzzle();
 	case 182:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new DecoderPuzzle();

@@ -36,7 +36,74 @@
 namespace Nancy {
 namespace Action {
 
+void PaintPuzzle::readDataNancy18(Common::SeekableReadStream &stream) {
+	_hasRegionSprites = true;
+
+	stream.skip(33);	// Name of the puzzle
+	readFilename(stream, _imageName);
+	readFilename(stream, _objectsImageName);
+	_heldCursorType = stream.readSint16LE();
+	_hoverCursorType = stream.readSint16LE();
+	_offset.x = stream.readSint32LE();
+	_offset.y = stream.readSint32LE();
+	readExclusiveRect(stream, _canvasRect);
+	_unpaintedCountIndex = stream.readSint16LE();
+	_correctCountIndex = stream.readSint16LE();
+
+	_colors.resize(MAX<int16>(stream.readSint16LE(), 0));
+	for (PaintColor &color : _colors) {
+		// The sprite of a color gets multiplied by it
+		stream.skip(1);
+		color.r = stream.readByte();
+		color.g = stream.readByte();
+		color.b = stream.readByte();
+		readExclusiveRect(stream, color.swatchRect);
+		readExclusiveRect(stream, color.fillRect);
+		readExclusiveRect(stream, color.objectRect);
+		color.flagLabel = stream.readSint16LE();
+	}
+
+	// Set for a puzzle that is still being laid out, which has no colors yet
+	const bool hasNoRegionColors = stream.readByte();
+
+	_regions.resize(stream.readUint16LE());
+	for (PaintRegion &region : _regions) {
+		readExclusiveRect(stream, region.rect);
+
+		// Colors are counted from 0 here, and -1 is a region without a color,
+		// which some regions have to stay
+		if (!hasNoRegionColors) {
+			int16 currentColor = stream.readSint16LE();
+			int16 targetColor = stream.readSint16LE();
+			region.currentColor = currentColor < 0 ? -1 : currentColor + 1;
+			region.targetColor = targetColor < 0 ? -1 : targetColor + 1;
+		}
+	}
+
+	_unorderedSolution = stream.readByte();
+	_paintOnce = stream.readByte();
+	stream.skip(1);	// Input outside the canvas rect
+
+	_sounds[0].readData(stream);
+	_sounds[1].readData(stream);
+
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
+
+	_solveSoundBlock.readData(stream);
+
+	readExitHotspots(stream, _exitHotspots);
+}
+
 void PaintPuzzle::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy18) {
+		readDataNancy18(stream);
+		return;
+	}
+
 	const bool isNancy15 = g_nancy->getGameType() >= kGameTypeNancy15;
 
 	readFilename(stream, _imageName);		// 0x3d
@@ -127,7 +194,33 @@ void PaintPuzzle::init() {
 	_solveHandled = false;
 	_takenExit = -1;
 
+	updateRegionCounts();
 	redraw();
+}
+
+void PaintPuzzle::updateRegionCounts() {
+	TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	if (!table) {
+		return;
+	}
+
+	int16 numUnpainted = 0;
+	int16 numCorrect = 0;
+	for (const PaintRegion &region : _regions) {
+		if (region.currentColor == region.targetColor) {
+			++numCorrect;
+		} else if (region.currentColor <= 0) {
+			++numUnpainted;
+		}
+	}
+
+	if (_unpaintedCountIndex != kNoTableValueIndex) {
+		table->setSingleValue(_unpaintedCountIndex, numUnpainted);
+	}
+
+	if (_correctCountIndex != kNoTableValueIndex) {
+		table->setSingleValue(_correctCountIndex, numCorrect);
+	}
 }
 
 int PaintPuzzle::colorSwatchAtCursor(const Common::Point &mousePos) const {
@@ -165,6 +258,11 @@ int PaintPuzzle::regionAtCursor(const Common::Point &mousePos) const {
 		if (!screenRect.contains(mousePos)) {
 			continue;
 		}
+
+		if (_hasRegionSprites) {
+			return (int)i;
+		}
+
 		// Hit-test the region's actual shape, not just its bounding rect, so
 		// overlapping bounding boxes don't register clicks for the wrong region.
 		if (shapeAlpha(_regionImages[i], mousePos.x - screenRect.left, mousePos.y - screenRect.top) != 0) {
@@ -179,6 +277,11 @@ void PaintPuzzle::drawRegion(uint regionIndex) {
 	const PaintRegion &region = _regions[regionIndex];
 	int c = region.currentColor - 1;
 	if (c < 0 || c >= (int)_colors.size() || regionIndex >= _regionImages.size()) {
+		return;
+	}
+
+	if (_hasRegionSprites) {
+		drawSprite(_objectsImage, _colors[c].fillRect, Common::Point(region.rect.left, region.rect.top), &_colors[c]);
 		return;
 	}
 
@@ -207,11 +310,14 @@ void PaintPuzzle::drawRegion(uint regionIndex) {
 
 // Draws a sprite from img, skipping transparent pixels and compositing
 // anti-aliased edges over what is already drawn.
-void PaintPuzzle::drawSprite(const Graphics::ManagedSurface &img, const Common::Rect &src, const Common::Point &dest) {
+void PaintPuzzle::drawSprite(const Graphics::ManagedSurface &img, const Common::Rect &src, const Common::Point &dest, const PaintColor *tint) {
 	if (img.w == 0 || src.isEmpty()) {
 		return;
 	}
 
+	// Up to Nancy15 the images also have a color that stands for transparent.
+	// The later ones only have their alpha channel, and black is a color like any other.
+	const bool hasColorKey = g_nancy->getGameType() <= kGameTypeNancy15;
 	byte tr, tg, tb;
 	g_nancy->_graphics->getInputPixelFormat().colorToRGB(g_nancy->_graphics->getTransColor(), tr, tg, tb);
 
@@ -229,8 +335,14 @@ void PaintPuzzle::drawSprite(const Graphics::ManagedSurface &img, const Common::
 
 			byte a, r, g, b;
 			img.format.colorToARGB(img.getPixel(src.left + x, src.top + y), a, r, g, b);
-			if (a == 0 || (r == tr && g == tg && b == tb)) {
+			if (a == 0 || (hasColorKey && r == tr && g == tg && b == tb)) {
 				continue;
+			}
+
+			if (tint) {
+				r = r * tint->r / 255;
+				g = g * tint->g / 255;
+				b = b * tint->b / 255;
 			}
 
 			blendPixel(_drawSurface, dx, dy, a, r, g, b);
@@ -257,8 +369,8 @@ void PaintPuzzle::drawBrush() {
 
 	// The sprite is centered on the cursor, then shifted by the offset.
 	const Common::Rect &src = _colors[_heldColor].fillRect;
-	drawSprite(_image, src, Common::Point(_brushPos.x - src.width() / 2 - _offset.x,
-		_brushPos.y - src.height() / 2 - _offset.y));
+	drawSprite(_hasRegionSprites ? _objectsImage : _image, src, Common::Point(_brushPos.x - src.width() / 2 - _offset.x,
+		_brushPos.y - src.height() / 2 - _offset.y), _hasRegionSprites ? &_colors[_heldColor] : nullptr);
 }
 
 void PaintPuzzle::redraw() {
@@ -333,6 +445,7 @@ void PaintPuzzle::paintRegion(uint regionIndex, int colorIndex) {
 	_regions[regionIndex].currentColor = (int16)(colorIndex + 1);
 	playSoundBlock(_sounds[1]);
 	updateColorFlags();
+	updateRegionCounts();
 	if (isSolved()) {
 		_solved = true;
 	}
@@ -358,7 +471,12 @@ void PaintPuzzle::handleInput(NancyInput &input) {
 			redraw();
 		}
 
-		g_nancy->_cursor->setCursorType(CursorManager::kNancy13Blank, true, false);
+		if (_heldCursorType == -1) {
+			g_nancy->_cursor->setCursorType(CursorManager::kNancy13Blank, true, false);
+		} else {
+			// Nancy18 keeps a cursor next to the sprite, lit up over a region that can be painted
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_heldCursorType, true, regionAtCursor(input.mousePos) >= 0);
+		}
 	}
 
 	// Exit hotspots: leave the puzzle. In Nancy15 they only work with empty hands,

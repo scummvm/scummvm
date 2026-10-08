@@ -35,8 +35,13 @@ namespace Action {
 // its target color. A filled region is its shape recolored to the chosen color.
 // Nancy15 adds per-color objects (paint jars) drawn at the swatches, per-color
 // event flags, order-independent solutions and single-paint regions.
+// Nancy18 uses it for a mosaic of gems: a region is a plain rectangle that gets
+// the sprite of its color, and the number of correct and of empty regions is
+// kept in the value table.
 class PaintPuzzle : public PuzzleRecord {
 public:
+	static const int16 kNoTableValueIndex = -4;
+
 	PaintPuzzle() : PuzzleRecord(7) {}
 	virtual ~PaintPuzzle() {}
 
@@ -86,16 +91,20 @@ protected:
 	void paintRegion(uint regionIndex, int colorIndex);
 	void dropColor();
 	void drawRegion(uint regionIndex);
-	void drawSprite(const Graphics::ManagedSurface &img, const Common::Rect &src, const Common::Point &dest);
+	void drawSprite(const Graphics::ManagedSurface &img, const Common::Rect &src, const Common::Point &dest, const PaintColor *tint = nullptr);
 	void drawObjects();
 	void drawBrush();
 	void updateColorFlags();
 	void redraw();
 	bool isSolved() const;
 
+	void readDataNancy18(Common::SeekableReadStream &stream);
+	void updateRegionCounts();
+
 	// -- File data --
 	Common::Path _objectsImageName;
 	uint16 _hoverCursorType = 0;	// 0x5e - raw Nancy14 cursor type, shown over a color swatch
+	int16 _heldCursorType = -1;		// Nancy18, shown while a color is held
 	Common::Point _offset;			// 0x60 (two int32) - brush sprite offset from the cursor
 	Common::Rect _canvasRect;		// 0x68
 
@@ -104,6 +113,12 @@ protected:
 
 	bool _unorderedSolution = false;	// Region targets may be matched in any order
 	bool _paintOnce = false;			// A painted region can't be repainted
+	bool _hasRegionSprites = false;		// Nancy18: regions show the sprite of their color
+
+	// Nancy18: value table entries that get the number of unpainted regions,
+	// and of regions with the right color
+	int16 _unpaintedCountIndex = kNoTableValueIndex;
+	int16 _correctCountIndex = kNoTableValueIndex;
 
 	RandomSoundBlock _sounds[2];	// 0xa4/0xfa
 
