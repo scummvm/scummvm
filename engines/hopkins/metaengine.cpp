@@ -69,7 +69,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_WBASE_ENHANCEMENTS,
 		{
-			_s("WBASE enhancements"),
+			_s("Underwater base shooter enhancements"),
 			_s("Enable navigation map and autoplay options for Windows base shooter"),
 			kWBASEEnhancementsConfigKey,
 			false,
@@ -80,7 +80,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_WBASE_FORCED_AUTOPLAY,
 		{
-			_s("WBASE Forced Autoplay"),
+			_s("Underwater base shooter Forced Autoplay"),
 			_s("Require an autoplay destination in Windows base shooter"),
 			kWBASEForcedAutoplayConfigKey,
 			false,

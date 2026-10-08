@@ -193,13 +193,27 @@ int BaseEngine::tick(BaseInputState &input) {
 
 	updateTurn(input);
 	updatePlayer(input);
-	updateWeapon(input);
 
 	int exitResult = -1;
-	if (input.exitRequested) {
+	bool exitSoundQueued = false;
+	BaseInputState weaponInput = input;
+	if (input.contextRequested) {
 		exitResult = tryExit();
-		input.exitRequested = false;
+		input.contextRequested = false;
 		if (exitResult >= 94 && exitResult <= 99)
+			exitSoundQueued = true;
+		else
+			weaponInput.fire = true;
+	}
+	updateWeapon(weaponInput);
+	if (exitSoundQueued)
+		_soundEvents.push_back(kBaseSoundDoorOrExit);
+
+	if (input.exitRequested) {
+		if (exitResult < 0)
+			exitResult = tryExit();
+		input.exitRequested = false;
+		if (exitResult >= 94 && exitResult <= 99 && !exitSoundQueued)
 			_soundEvents.push_back(kBaseSoundDoorOrExit);
 	}
 

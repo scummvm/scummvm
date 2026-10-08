@@ -39,10 +39,12 @@ struct BaseInputState {
 	bool turnRight;
 	bool fire;
 	bool exitRequested;
+	bool contextRequested;
 	bool toggleTextures;
 
 	BaseInputState() : forward(false), backward(false), turnLeft(false),
-		turnRight(false), fire(false), exitRequested(false), toggleTextures(false) {}
+		turnRight(false), fire(false), exitRequested(false), contextRequested(false),
+		toggleTextures(false) {}
 };
 
 enum BaseSoundEvent {
