@@ -22,6 +22,7 @@
 #include "harvester/room_session.h"
 
 #include "harvester/detection.h"
+#include "harvester/flow.h"
 #include "harvester/harvester.h"
 #include "harvester/inventory.h"
 #include "harvester/monster.h"
@@ -137,9 +138,9 @@ static bool sameSceneRegionState(const RegionRecord &lhs, const RegionRecord &rh
 		lhs.actionTag.equalsIgnoreCase(rhs.actionTag);
 }
 
-RoomSession::RoomSession(HarvesterEngine &engine, RoomSceneResources &scene, EntityManager *entityManager,
+RoomSession::RoomSession(HarvesterEngine &engine, Flow &flow, RoomSceneResources &scene, EntityManager *entityManager,
 		InventorySystem &inventory)
-	: _engine(engine), _scene(scene), _entityManager(entityManager), _inventory(inventory) {
+	: _engine(engine), _flow(flow), _scene(scene), _entityManager(entityManager), _inventory(inventory) {
 }
 
 void RoomSession::resetIdleState() {
@@ -751,6 +752,76 @@ bool RoomSession::applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteSt
 		memcpy(_scene.palette, updatedScene.palette, sizeof(_scene.palette));
 		_scene.targetPaletteBrightness = updatedScene.targetPaletteBrightness;
 	}
+	captureCurrentSaveState();
+	return _inventory.refresh();
+}
+
+bool RoomSession::refreshCurrentScene(bool preservePlayerPlacement) {
+	debugC(2, kDebugRoom, "Harvester: refreshing room scene room='%s' preserve_player_placement=%d",
+		_scene.state.roomName.c_str(), preservePlayerPlacement);
+	Common::Array<AudioCommand> entryAudioCommands = _scene.state.audioCommands;
+	RoomSetupState refreshedState;
+	if (!_engine.getScript()->materializeRoomState(
+			_scene.state.entranceName, _scene.state.roomName, refreshedState, *_engine.getResources())) {
+		return false;
+	}
+
+	refreshedState.audioCommands = Common::move(entryAudioCommands);
+	if (!loadRoomSceneResources(refreshedState, *_engine.getResources(), _scene))
+		return false;
+	_hitEffectStates.clear();
+	_nextCombatEffectId = 0;
+	if (!_flow.populateRoomSceneEntities(_scene.state, _scene.sceneObjects, _scene.sceneAnimations))
+		return false;
+	if (_entityManager) {
+		for (const MonsterRecord &monster : _scene.state.roomMonsters) {
+			Entity *entity = _entityManager->findSceneEntityByName(monster.monsterName);
+			if (entity)
+				Monster::applyAnimation(*entity, monster);
+		}
+	}
+
+	_playerState.entity = _entityManager ? _entityManager->findSceneEntityByName("PLAYER") : nullptr;
+	if (_playerState.entity) {
+		if (!preservePlayerPlacement || _playerState.facing < 0) {
+			_playerState.centerX = _scene.state.playerSpawnX;
+			_playerState.bottomY = _scene.state.playerSpawnY;
+			_playerState.z = (float)_scene.state.playerSpawnZ;
+			_playerState.facing = _scene.state.playerFacing;
+		}
+
+		const int facing = _playerState.facing >= 0 ? _playerState.facing : _scene.state.playerFacing;
+		(void)Player::setIdleAnimation(_playerState, facing);
+		(void)applyRoomActorPlacement(_scene.state, *_playerState.entity,
+			_playerState.centerX, _playerState.bottomY, _playerState.z);
+	}
+
+	_playerState.hasMoveTarget = false;
+	_playerState.turnActive = false;
+	_playerState.turnTargetFacing = -1;
+	_playerState.attackActive = false;
+	_playerState.attackFirstFrame = -1;
+	_playerState.attackLastFrame = -1;
+	_playerState.attackContactFrame = -1;
+	_playerState.attackResumeFacing = -1;
+	_playerState.attackSoundPlayed = false;
+	_playerState.attackSoundPlaybackFrame = -1;
+	_playerState.attackContactResolved = false;
+	_playerState.attackTargetName.clear();
+	_playerState.attackTargetClassId = -1;
+	_playerState.hitActive = false;
+	_playerState.hitFirstFrame = -1;
+	_playerState.hitLastFrame = -1;
+	_playerState.hitResumeFacing = -1;
+	_playerState.hitKnockbackRemainingX = 0;
+	_playerState.hitKnockbackDecayStep = 0;
+	_playerState.combatLoadout =
+		_engine.getScript() ? _engine.getScript()->getPlayerCombatLoadout() : 0;
+	_monsterCombatStates.clear();
+	_monsterCombatStates.resize(_scene.state.roomMonsters.size());
+	_pendingRegionName.clear();
+	resetIdleState();
+	_flow.resetCursorAnimationSequence();
 	captureCurrentSaveState();
 	return _inventory.refresh();
 }

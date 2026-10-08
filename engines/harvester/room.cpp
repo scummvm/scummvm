@@ -451,7 +451,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		flow.executeStartupAudioCommands(scene.state.audioCommands);
 		if (!scene.state.musicPath.empty())
 			(void)_engine.playMusic(scene.state.musicPath);
-		RoomSession session(_engine, scene, entityManager, _inventory);
+		RoomSession session(_engine, flow, scene, entityManager, _inventory);
 		debugC(1, kDebugRoom, "Harvester: created room session room='%s'", scene.state.roomName.c_str());
 		RoomPlayerState &playerState = session.getPlayerState();
 		playerState.entity = entityManager ? entityManager->findSceneEntityByName("PLAYER") : nullptr;
@@ -467,9 +467,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		monsterCombatStates.resize(scene.state.roomMonsters.size());
 		Common::Array<RoomNpcCombatState> npcCombatStates;
 		npcCombatStates.resize(scene.state.roomNpcs.size());
-		Common::Array<RoomHitEffectState> hitEffectStates;
+		Common::Array<RoomHitEffectState> &hitEffectStates = session.getHitEffectStates();
 		Common::Array<RoomCombatDamagePopupState> damagePopupStates;
-		uint nextCombatEffectId = 0;
+		uint &nextCombatEffectId = session.getNextCombatEffectId();
 		ResolvedText inspectText;
 		Common::String currentInteractionPromptText;
 		bool showingInspectText = false;
@@ -696,73 +696,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 		session.resetIdleState();
 
-		auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
-			Common::Array<AudioCommand> entryAudioCommands = scene.state.audioCommands;
-			RoomSetupState refreshedState;
-			if (!_engine.getScript()->materializeRoomState(
-					scene.state.entranceName, scene.state.roomName, refreshedState, *_engine.getResources())) {
-				return false;
-			}
-
-			refreshedState.audioCommands = Common::move(entryAudioCommands);
-			if (!loadRoomSceneResources(refreshedState, *_engine.getResources(), scene))
-				return false;
-			hitEffectStates.clear();
-			nextCombatEffectId = 0;
-			if (!flow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
-				return false;
-			if (entityManager) {
-				for (const MonsterRecord &monster : scene.state.roomMonsters) {
-					Entity *entity = entityManager->findSceneEntityByName(monster.monsterName);
-					if (entity)
-						Monster::applyAnimation(*entity, monster);
-				}
-			}
-
-			playerState.entity = entityManager ? entityManager->findSceneEntityByName("PLAYER") : nullptr;
-			if (playerState.entity) {
-				if (!preservePlayerPlacement || playerState.facing < 0) {
-					playerState.centerX = scene.state.playerSpawnX;
-					playerState.bottomY = scene.state.playerSpawnY;
-					playerState.z = (float)scene.state.playerSpawnZ;
-					playerState.facing = scene.state.playerFacing;
-				}
-
-				const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
-				(void)Player::setIdleAnimation(playerState, facing);
-				(void)applyRoomActorPlacement(scene.state, *playerState.entity,
-					playerState.centerX, playerState.bottomY, playerState.z);
-			}
-
-			playerState.hasMoveTarget = false;
-			playerState.turnActive = false;
-			playerState.turnTargetFacing = -1;
-			playerState.attackActive = false;
-			playerState.attackFirstFrame = -1;
-			playerState.attackLastFrame = -1;
-			playerState.attackContactFrame = -1;
-			playerState.attackResumeFacing = -1;
-			playerState.attackSoundPlayed = false;
-			playerState.attackSoundPlaybackFrame = -1;
-			playerState.attackContactResolved = false;
-			playerState.attackTargetName.clear();
-			playerState.attackTargetClassId = -1;
-			playerState.hitActive = false;
-			playerState.hitFirstFrame = -1;
-			playerState.hitLastFrame = -1;
-			playerState.hitResumeFacing = -1;
-			playerState.hitKnockbackRemainingX = 0;
-			playerState.hitKnockbackDecayStep = 0;
-			playerState.combatLoadout =
-				_engine.getScript() ? _engine.getScript()->getPlayerCombatLoadout() : 0;
-			monsterCombatStates.clear();
-			monsterCombatStates.resize(scene.state.roomMonsters.size());
-			pendingRegionName.clear();
-			session.resetIdleState();
-			flow.resetCursorAnimationSequence();
-			session.captureCurrentSaveState();
-			return _inventory.refresh();
-		};
 		auto syncAnimatedRoomActorPlacement = [&]() {
 			Player::syncAnimationPlacement(playerState);
 			if (!entityManager)
@@ -808,7 +741,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (clearCarryState)
 				clearCarriedRoomItem();
 
-			if (!session.applyCurrentRoomRuntimeMutationsInPlace(true) && !refreshCurrentScene(true))
+			if (!session.applyCurrentRoomRuntimeMutationsInPlace(true) && !session.refreshCurrentScene(true))
 				return Common::kReadingFailed;
 			if (!_inventory.refresh())
 				return Common::kReadingFailed;
@@ -1167,7 +1100,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					? _engine.getScript()->getPlayerCurrentHitPoints()
 					: 0);
 		};
-		typedef decltype(refreshCurrentScene) RefreshCurrentSceneFn;
 		typedef decltype(captureDialogueBackdrop) CaptureDialogueBackdropFn;
 		typedef decltype(showCdChangePrompt) ShowCdChangePromptFn;
 		typedef decltype(runRoomExitCommands) RunRoomExitCommandsFn;
@@ -1179,7 +1111,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		struct RoomInteractionCallbacksImpl : RoomInteractionCallbacks {
 			RoomInteractionCallbacksImpl(
 					RoomSession &session_,
-					RefreshCurrentSceneFn &refreshCurrentSceneFn_,
 					CaptureDialogueBackdropFn &captureDialogueBackdropFn_,
 					ShowCdChangePromptFn &showCdChangePromptFn_,
 					RunRoomExitCommandsFn &runRoomExitCommandsFn_,
@@ -1187,7 +1118,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					ApplyPlayerGotoXZFn &applyPlayerGotoXZFn_,
 					RunModalShowTextFn &runModalShowTextFn_,
 					StartPlayerDefeatSequenceFn &startPlayerDefeatSequenceFn_)
-				: session(session_), refreshCurrentSceneFn(refreshCurrentSceneFn_),
+				: session(session_),
 				  captureDialogueBackdropFn(captureDialogueBackdropFn_),
 				  showCdChangePromptFn(showCdChangePromptFn_),
 				  runRoomExitCommandsFn(runRoomExitCommandsFn_),
@@ -1198,7 +1129,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			bool refreshCurrentScene(bool preservePlayerPlacement) override {
-				return refreshCurrentSceneFn(preservePlayerPlacement);
+				return session.refreshCurrentScene(preservePlayerPlacement);
 			}
 
 			bool applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState) override {
@@ -1247,7 +1178,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			RoomSession &session;
-			RefreshCurrentSceneFn &refreshCurrentSceneFn;
 			CaptureDialogueBackdropFn &captureDialogueBackdropFn;
 			ShowCdChangePromptFn &showCdChangePromptFn;
 			RunRoomExitCommandsFn &runRoomExitCommandsFn;
@@ -1258,7 +1188,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		};
 		RoomInteractionCallbacksImpl interactionCallbacks(
 			session,
-			refreshCurrentScene,
 			captureDialogueBackdrop, showCdChangePrompt,
 			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
 			startPlayerDefeatSequence);
@@ -1278,7 +1207,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (roomEntryInteraction.mutatedRuntimeState) {
 				session.syncGlobalTimerEntities(roomEntryInteraction.previousTimerRecords);
 				if (!session.applyCurrentRoomRuntimeMutationsInPlace(false) &&
-						!refreshCurrentScene(true)) {
+						!session.refreshCurrentScene(true)) {
 					return Common::kReadingFailed;
 				}
 				roomEntryInteraction.mutatedRuntimeState = false;

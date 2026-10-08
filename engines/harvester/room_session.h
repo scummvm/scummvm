@@ -29,6 +29,7 @@
 namespace Harvester {
 
 class EntityManager;
+class Flow;
 class InventorySystem;
 
 struct RoomMovementInputState {
@@ -42,11 +43,13 @@ struct RoomMovementInputState {
 // Entity pointers remain owned by EntityManager.
 class RoomSession {
 public:
-	RoomSession(HarvesterEngine &engine, RoomSceneResources &scene, EntityManager *entityManager,
+	RoomSession(HarvesterEngine &engine, Flow &flow, RoomSceneResources &scene, EntityManager *entityManager,
 		InventorySystem &inventory);
 
 	RoomPlayerState &getPlayerState() { return _playerState; }
 	Common::Array<RoomMonsterCombatState> &getMonsterCombatStates() { return _monsterCombatStates; }
+	Common::Array<RoomHitEffectState> &getHitEffectStates() { return _hitEffectStates; }
+	uint &getNextCombatEffectId() { return _nextCombatEffectId; }
 	RoomIdleAnimationState &getIdleState() { return _idleState; }
 	RoomMovementInputState &getMovementInput() { return _movementInput; }
 	Common::String &getPendingRegionName() { return _pendingRegionName; }
@@ -59,6 +62,7 @@ public:
 	void syncCurrentRoomRuntimeState();
 	void captureCurrentSaveState();
 	bool applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState);
+	bool refreshCurrentScene(bool preservePlayerPlacement);
 	void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
 		bool includeCurrentRoomTimers = false);
 
@@ -81,11 +85,14 @@ private:
 	bool isTimerMaterializedInCurrentRoom(const Common::String &timerName) const;
 
 	HarvesterEngine &_engine;
+	Flow &_flow;
 	RoomSceneResources &_scene;
 	EntityManager *_entityManager;
 	InventorySystem &_inventory;
 	RoomPlayerState _playerState;
 	Common::Array<RoomMonsterCombatState> _monsterCombatStates;
+	Common::Array<RoomHitEffectState> _hitEffectStates;
+	uint _nextCombatEffectId = 0;
 	RoomIdleAnimationState _idleState;
 	RoomMovementInputState _movementInput;
 	Common::String _pendingRegionName;
