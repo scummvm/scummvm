@@ -51,6 +51,7 @@
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/booksortpuzzle.h"
 #include "engines/nancy/action/puzzle/cardgamepuzzle.h"
+#include "engines/nancy/action/puzzle/chesschatpuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/cookingpuzzle.h"
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
@@ -746,6 +747,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new FoxGeesePuzzle();
 	case 187:	// Nancy17
 		return new DialSequencePuzzle();
+	case 188: // Nancy18
+		return new ChessChatPuzzle();
 	case 189:
 		return new QuizPuzzle();		// Moved from 231
 	case 192:
@@ -760,7 +763,6 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new AnalogClock();
 	case 197:
 		return new AutotextScroll();	// Used for the end credits
-	case 188:	// Empty in Nancy16, added for completeness
 	case 190:	// MemoryPuzzle, moved from 238, unused in Nancy16
 	case 191:	// BeadPuzzle, moved from 243, unused in Nancy16
 		return nullptr;

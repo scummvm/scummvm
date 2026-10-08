@@ -38,6 +38,7 @@ MODULE_OBJS = \
   action/puzzle/bombpuzzle.o \
   action/puzzle/booksortpuzzle.o \
   action/puzzle/cardgamepuzzle.o \
+  action/puzzle/chesschatpuzzle.o \
   action/puzzle/collisionpuzzle.o \
   action/puzzle/cookingpuzzle.o \
   action/puzzle/cubepuzzle.o \
