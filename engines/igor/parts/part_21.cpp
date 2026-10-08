@@ -108,7 +108,10 @@ void IgorEngine::PART_21_ACTION_102() {
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(76, 87, 63, 32, 0);
 	_updateDialogue = &IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_2;
+	// The cutscene dialogue wait does not run Margaret's idle animation
+	_updateRoomBackground = 0;
 	waitForEndOfCutsceneDialogue(76, 87, 63, 32, 0);
+	_updateRoomBackground = &IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND;
 	_updateDialogue = 0;
 	PART_21_HANDLE_DIALOGUE_MARGARET();
 	PART_21_HELPER_1(255);
@@ -176,7 +179,9 @@ void IgorEngine::PART_21_ACTION_111() {
 	ADD_DIALOGUE_TEXT(209, 1, 1185);
 	SET_DIALOGUE_TEXT(1, 2);
 	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	// Igor's talking head is not animated here; the writing frames take its place
+	waitForEndOfIgorDialogue(false);
+	IN_ACTION_111 = false;
 	const int offset = 28183;
 	for (int i = 0; i <= 49; ++i) {
 		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + 0xCBE1 + i * 26, 26);
@@ -193,7 +198,6 @@ void IgorEngine::PART_21_ACTION_111() {
 		PART_21_UPDATE_ROOM_BACKGROUND();
 		waitForTimer();
 	} while (k != 10);
-	IN_ACTION_111 = false;
 	removeObjectFromInventory(56);
 	_objectsState[65] = 1;
 	PART_21_HELPER_1(255);
@@ -404,7 +408,9 @@ void IgorEngine::PART_21_HELPER_10() {
 	SET_DIALOGUE_TEXT(1, 5);
 	startCutsceneDialogue(76, 87, 63, 32, 0);
 	_updateDialogue = &IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_3;
+	_updateRoomBackground = 0;
 	waitForEndOfCutsceneDialogue(76, 87, 63, 32, 0);
+	_updateRoomBackground = &IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND;
 	_updateDialogue = 0;
 	ADD_DIALOGUE_TEXT(219, 1, 1192);
 	ADD_DIALOGUE_TEXT(220, 1, 1193);
@@ -412,7 +418,9 @@ void IgorEngine::PART_21_HELPER_10() {
 	SET_DIALOGUE_TEXT(1, 3);
 	startCutsceneDialogue(76, 87, 63, 32, 0);
 	_updateDialogue = &IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_3;
+	_updateRoomBackground = 0;
 	waitForEndOfCutsceneDialogue(76, 87, 63, 32, 0);
+	_updateRoomBackground = &IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND;
 	_updateDialogue = 0;
 	_objectsState[65] = 2;
 	drawVerbsPanel();
