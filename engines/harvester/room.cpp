@@ -538,111 +538,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (ownerOrRoom)
 				sceneObject->currentOwnerOrRoom = *ownerOrRoom;
 		};
-		auto removeSceneEntityByName = [&](const Common::String &entityName) {
-			if (!entityManager)
-				return;
 
-			Entity *entity = entityManager->detachSceneEntityByName(entityName);
-			delete entity;
-		};
-
-		auto getSceneObjectBounds = [&](const ObjectRecord &object) {
-			if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
-				return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
-			return Common::Rect();
-		};
-		auto resolveSceneObjectSpritePathLocal = [&](const ObjectRecord &object) {
-			const bool atInitialPlacement = object.currentX == object.initialX &&
-				object.currentY == object.initialY &&
-				object.currentOwnerOrRoom.equalsIgnoreCase(object.initialOwnerOrRoom);
-			if (!object.altSpritePath.empty() &&
-					(!atInitialPlacement || object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)))
-				return object.altSpritePath;
-			return object.spritePath;
-		};
-		auto isInteractiveSceneHotspot = [&](const ObjectRecord &object) {
-			if (object.operatable || !object.actionTag.empty())
-				return true;
-
-			Script *script = _engine.getScript();
-			if (!script)
-				return false;
-			if (script->isPickupObject(object))
-				return true;
-
-			ResolvedText inspectText;
-			return script->resolveObjectInspectText(object, inspectText);
-		};
-		auto resolveSceneObjectClassLocal = [&](const ObjectRecord &object,
-				const Entity *entity) {
-			if (entity) {
-				return ((!scene.state.backgroundObjectName.empty() &&
-						object.objectName.equalsIgnoreCase(scene.state.backgroundObjectName)) ||
-					(object.initialX == 0 && object.initialY == 0 &&
-						entity->getBoundsWidth() == 640 && entity->getBoundsHeight() == 480))
-					? kRuntimeEntityClassBackground
-					: kRuntimeEntityClassObject;
-			}
-
-			return isInteractiveSceneHotspot(object)
-				? kRuntimeEntityClassRectHotspot
-				: kRuntimeEntityClassDisabledHotspot;
-		};
 		auto sameRect = [](const Common::Rect &lhs, const Common::Rect &rhs) {
 			return lhs.left == rhs.left && lhs.top == rhs.top &&
 				lhs.right == rhs.right && lhs.bottom == rhs.bottom;
 		};
-		auto spawnSceneObjectEntityFromRecord = [&](const ObjectRecord &object) {
-			if (!entityManager)
-				return;
 
-			const Common::String spritePath = resolveSceneObjectSpritePathLocal(object);
-			const Common::Rect hotspotBounds = getSceneObjectBounds(object);
-			Entity *entity = nullptr;
-			if (!spritePath.empty() && spritePath.hasSuffixIgnoreCase(".BM")) {
-				entity = entityManager->spawnSceneBitmapEntity(object.objectName, spritePath,
-					Common::Point(object.currentX, object.currentY), (float)object.currentZ);
-			} else if (!hotspotBounds.isEmpty()) {
-				entity = entityManager->spawnSceneHotspotEntity(object.objectName, hotspotBounds,
-					(float)object.currentZ);
-			}
-			if (!entity)
-				return;
-
-			entity->setClassId(resolveSceneObjectClassLocal(
-				object, entity->hasFrames() ? entity : nullptr));
-			entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
-			entity->setZExtent((float)object.zExtent);
-		};
-		auto getSceneRegionBounds = [](const RegionRecord &region) {
-			if (region.right > region.left && region.bottom > region.top)
-				return Common::Rect(region.left, region.top, region.right + 1, region.bottom + 1);
-			return Common::Rect();
-		};
-		auto spawnSceneRegionEntityFromRecord = [&](const RegionRecord &region) {
-			if (!entityManager)
-				return;
-
-			const Common::Rect bounds = getSceneRegionBounds(region);
-			if (bounds.isEmpty())
-				return;
-
-			Entity *entity = entityManager->spawnSceneHotspotEntity(
-				region.regionName, bounds, (float)region.minZ);
-			if (!entity)
-				return;
-
-			entity->setClassId(kRuntimeEntityClassRectHotspot19);
-			entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
-			entity->setZExtent((float)MAX(0, region.maxZ - region.minZ));
-			if (!region.cursorEnabled)
-				entity->setHitTestMode(kRuntimeEntityHitTestNone);
-			debugC(1, kDebugRoom,
-				"Harvester: scene region spawned room='%s' region='%s' class=0x%x bounds=(%d,%d)-(%d,%d) z=[%d,%d] facing=%d cursor=%d action='%s'",
-				region.roomName.c_str(), region.regionName.c_str(), entity->getClassId(),
-				bounds.left, bounds.top, bounds.right, bounds.bottom,
-				region.minZ, region.maxZ, region.desiredFacing, region.cursorEnabled, region.actionTag.c_str());
-		};
 		auto findRoomAnimByNameConst = [](const Common::Array<AnimRecord> &anims,
 				const Common::String &animName) -> const AnimRecord * {
 			for (const AnimRecord &anim : anims) {
@@ -667,12 +568,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 			return nullptr;
 		};
-		auto shouldSpawnRoomNpcEntity = [](const NpcRecord &npc) {
-			return npc.visible && !npc.deathOrMonsterfyFlag;
-		};
-		auto shouldSpawnRoomMonsterEntity = [](const MonsterRecord &monster) {
-			return monster.visible;
-		};
+
 		auto sameNpcEntityState = [&](const NpcRecord &lhs, const NpcRecord &rhs) {
 			return lhs.posX == rhs.posX &&
 				lhs.posY == rhs.posY &&
@@ -728,8 +624,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				lhs.identTextKey.equalsIgnoreCase(rhs.identTextKey) &&
 				lhs.interactionLabel.equalsIgnoreCase(rhs.interactionLabel) &&
 				lhs.currentOwnerOrRoom.equalsIgnoreCase(rhs.currentOwnerOrRoom) &&
-				resolveSceneObjectSpritePathLocal(lhs).equalsIgnoreCase(resolveSceneObjectSpritePathLocal(rhs)) &&
-				sameRect(getSceneObjectBounds(lhs), getSceneObjectBounds(rhs));
+				session.resolveSceneObjectSpritePathLocal(lhs).equalsIgnoreCase(session.resolveSceneObjectSpritePathLocal(rhs)) &&
+				sameRect(session.getSceneObjectBounds(lhs), session.getSceneObjectBounds(rhs));
 		};
 		auto sameSceneRegionState = [&](const RegionRecord &lhs, const RegionRecord &rhs) {
 			return lhs.left == rhs.left &&
@@ -743,79 +639,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				lhs.desiredFacing == rhs.desiredFacing &&
 				lhs.actionTag.equalsIgnoreCase(rhs.actionTag);
 		};
-		auto applyRoomNpcPlacement = [&](Entity &entity, const NpcRecord &npc) {
-			int width = 0;
-			int height = 0;
-			int xOffset = 0;
-			int yOffset = 0;
-			if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
-				return false;
 
-			const float renderZ =
-				(float)npc.posZ - floorf(MAX<float>(entity.getZExtent(), 0.0f) * 0.5f);
-			entity.setAnchorMode(kRuntimeEntityAnchorTopLeft);
-			entity.setPosition(npc.posX - xOffset - width / 2, npc.posY - height - yOffset, renderZ);
-			return true;
-		};
-		auto spawnSceneNpcEntityFromRecord = [&](const NpcRecord &npc) -> Entity * {
-			const bool shouldSpawnNpc = shouldSpawnRoomNpcEntity(npc);
-			const bool preservedCorpse = !npc.active &&
-				npc.runtimeSpawned &&
-				npc.deathDamageType != 0 &&
-				npc.runtimeState >= 0;
-			if (!entityManager || !shouldSpawnNpc)
-				return nullptr;
-
-			Entity *entity = entityManager->spawnSceneActorEntity(
-				npc.npcName, npc.modelPath, Common::Point(npc.posX, npc.posY), (float)npc.posZ, 0);
-			if (!entity)
-				return nullptr;
-
-			entity->setClassId(kRuntimeEntityClassNpc);
-			entity->setZExtent(kNativeNpcMonsterZExtent);
-			entity->setHitTestMode(preservedCorpse ? kRuntimeEntityHitTestNone : kRuntimeEntityHitTestOpaquePixels);
-			entity->setVisible(true);
-			if (!applyRoomNpcPlacement(*entity, npc)) {
-				removeSceneEntityByName(npc.npcName);
-				return nullptr;
-			}
-			if (preservedCorpse) {
-				const int corpseFrame = MIN(entity->getLastFrame(), npc.runtimeState);
-				entity->setAnimationFrameRange(corpseFrame, corpseFrame, false);
-				entity->setAnimationRate(0);
-				entity->setCurrentFrame(corpseFrame);
-				entity->setAnimationEnabled(false);
-			} else {
-				entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
-				entity->setAnimationRate(npc.frameDelay > 0 ? npc.frameDelay : 0);
-			}
-			entityManager->reinsertSceneEntity(entity);
-			return entity;
-		};
-		auto spawnSceneMonsterEntityFromRecord = [&](const RoomSetupState &roomState,
-				const MonsterRecord &monster) -> Entity * {
-			if (!entityManager || !shouldSpawnRoomMonsterEntity(monster))
-				return nullptr;
-
-			Entity *entity = entityManager->spawnSceneActorEntity(
-				monster.monsterName, monster.modelPath,
-				Common::Point(monster.posX, monster.posY), (float)monster.posZ,
-				Monster::resolveFacingFrame(monster.facing));
-			if (!entity)
-				return nullptr;
-
-			entity->setClassId(kRuntimeEntityClassMonster);
-			entity->setZExtent(kNativeNpcMonsterZExtent);
-			entity->setHitTestMode(kRuntimeEntityHitTestNone);
-			entity->setVisible(monster.visible);
-			Monster::applyAnimation(*entity, monster);
-			if (!applyRoomActorPlacement(roomState, *entity, monster.posX, monster.posY, (float)monster.posZ)) {
-				removeSceneEntityByName(monster.monsterName);
-				return nullptr;
-			}
-			entityManager->reinsertSceneEntity(entity);
-			return entity;
-		};
 		auto resolveHitEffectAnchor = [&](const Entity &targetEntity,
 				Common::Point &anchorPoint, float &renderZ) {
 			const Common::Rect targetRect = targetEntity.getScreenRect();
@@ -943,7 +767,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					!effectEntity->isAnimationEnabled() &&
 					effectEntity->getCurrentFrame() == effectEntity->getLastFrame();
 				if (finished && hitEffectStates[i].finished) {
-					removeSceneEntityByName(effectName);
+					session.removeSceneEntityByName(effectName);
 					hitEffectStates.remove_at(i);
 					removedAny = true;
 					continue;
@@ -1008,7 +832,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			for (const ObjectRecord &object : scene.sceneObjects) {
 				if (!findSceneObjectByName(updatedScene.sceneObjects, object.objectName))
-					removeSceneEntityByName(object.objectName);
+					session.removeSceneEntityByName(object.objectName);
 			}
 			for (const ObjectRecord &object : updatedScene.sceneObjects) {
 				const ObjectRecord *previous = findSceneObjectByName(scene.sceneObjects, object.objectName);
@@ -1016,13 +840,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (!changed)
 					continue;
 
-				removeSceneEntityByName(object.objectName);
-				spawnSceneObjectEntityFromRecord(object);
+				session.removeSceneEntityByName(object.objectName);
+				session.spawnSceneObjectEntityFromRecord(object);
 			}
 
 			for (const RegionRecord &region : scene.sceneRegions) {
 				if (!findSceneRegionByName(updatedScene.sceneRegions, region.regionName))
-					removeSceneEntityByName(region.regionName);
+					session.removeSceneEntityByName(region.regionName);
 			}
 			for (const RegionRecord &region : updatedScene.sceneRegions) {
 				const RegionRecord *previous =
@@ -1031,8 +855,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (!changed)
 					continue;
 
-				removeSceneEntityByName(region.regionName);
-				spawnSceneRegionEntityFromRecord(region);
+				session.removeSceneEntityByName(region.regionName);
+				session.spawnSceneRegionEntityFromRecord(region);
 			}
 
 			for (const TimerRecord &timer : scene.state.roomTimers) {
@@ -1044,7 +868,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					}
 				}
 				if (!found)
-					removeSceneEntityByName(timer.timerName);
+					session.removeSceneEntityByName(timer.timerName);
 			}
 			for (const TimerRecord &timer : updatedState.roomTimers) {
 				const TimerRecord *previous = nullptr;
@@ -1063,7 +887,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (!changed)
 					continue;
 
-				removeSceneEntityByName(timer.timerName);
+				session.removeSceneEntityByName(timer.timerName);
 				if (entityManager) {
 					(void)entityManager->spawnSceneTimerEntity(
 						timer.timerName, timer.initialValue, timer.currentValue,
@@ -1084,7 +908,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					? entityManager->findSceneEntityByName(anim.animName)
 					: nullptr;
 				if (!isDisplayed) {
-					removeSceneEntityByName(anim.animName);
+					session.removeSceneEntityByName(anim.animName);
 					continue;
 				}
 
@@ -1098,7 +922,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					previous->pingPong != anim.pingPong ||
 					previous->backward != anim.backward;
 				if (needsRespawn) {
-					removeSceneEntityByName(anim.animName);
+					session.removeSceneEntityByName(anim.animName);
 					if (entityManager) {
 						entity = entityManager->spawnSceneAnimationEntity(
 							anim.animName, anim.resourcePath, Common::Point(anim.x, anim.y),
@@ -1125,7 +949,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			for (const AnimRecord &anim : scene.state.roomAnimations) {
 				if (!findRoomAnimByNameConst(updatedState.roomAnimations, anim.animName))
-					removeSceneEntityByName(anim.animName);
+					session.removeSceneEntityByName(anim.animName);
 			}
 
 			for (const NpcRecord &npc : scene.state.roomNpcs) {
@@ -1138,7 +962,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					entityManager->findSceneEntityByName(npc.npcName);
 				const bool keepEntity =
 					updatedNpc &&
-					shouldSpawnRoomNpcEntity(*updatedNpc) &&
+					session.shouldSpawnRoomNpcEntity(*updatedNpc) &&
 					(sameNpcEntityState(npc, *updatedNpc) ||
 						isQueuedLiveNpcDeathMutation(npc, *updatedNpc));
 				if (keepCurrentRoomDeathEntity) {
@@ -1148,10 +972,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					continue;
 				}
 				if (!keepEntity)
-					removeSceneEntityByName(npc.npcName);
+					session.removeSceneEntityByName(npc.npcName);
 			}
 			for (const NpcRecord &npc : updatedState.roomNpcs) {
-				if (!shouldSpawnRoomNpcEntity(npc))
+				if (!session.shouldSpawnRoomNpcEntity(npc))
 					continue;
 
 				Entity *entity = entityManager
@@ -1170,8 +994,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (!needsRespawn)
 					continue;
 
-				removeSceneEntityByName(npc.npcName);
-				if (!spawnSceneNpcEntityFromRecord(npc))
+				session.removeSceneEntityByName(npc.npcName);
+				if (!session.spawnSceneNpcEntityFromRecord(npc))
 					return false;
 			}
 
@@ -1180,13 +1004,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					findRoomMonsterByNameConst(updatedState.roomMonsters, monster.monsterName);
 				const bool keepEntity =
 					updatedMonster &&
-					shouldSpawnRoomMonsterEntity(*updatedMonster) &&
+					session.shouldSpawnRoomMonsterEntity(*updatedMonster) &&
 					sameMonsterEntityState(monster, *updatedMonster);
 				if (!keepEntity)
-					removeSceneEntityByName(monster.monsterName);
+					session.removeSceneEntityByName(monster.monsterName);
 			}
 			for (const MonsterRecord &monster : updatedState.roomMonsters) {
-				if (!shouldSpawnRoomMonsterEntity(monster))
+				if (!session.shouldSpawnRoomMonsterEntity(monster))
 					continue;
 
 				Entity *entity = entityManager
@@ -1199,8 +1023,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (!needsRespawn)
 					continue;
 
-				removeSceneEntityByName(monster.monsterName);
-				if (!spawnSceneMonsterEntityFromRecord(updatedState, monster))
+				session.removeSceneEntityByName(monster.monsterName);
+				if (!session.spawnSceneMonsterEntityFromRecord(updatedState, monster))
 					return false;
 			}
 
@@ -2167,7 +1991,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			npcEntity->setHitTestMode(kRuntimeEntityHitTestNone);
 			npcEntity->setVisible(true);
 		} else {
-			removeSceneEntityByName(npc.npcName);
+			session.removeSceneEntityByName(npc.npcName);
 		}
 		npc.active = false;
 		npc.visible = false;
@@ -3068,7 +2892,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		script->addRuntimeObjectToInventory(object.objectName);
 		const Common::String inventoryOwner(kInventoryOwnerName);
 		hideSceneObject(object.objectName, &inventoryOwner);
-		removeSceneEntityByName(object.objectName);
+		session.removeSceneEntityByName(object.objectName);
 
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnDirectInventoryTransfer(object)) {
@@ -3114,7 +2938,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 		script->setRuntimeObjectVisible(object.currentOwnerOrRoom, object.objectName, false);
 		hideSceneObject(object.objectName, nullptr);
-		removeSceneEntityByName(object.objectName);
+		session.removeSceneEntityByName(object.objectName);
 
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnCarryStart(object)) {
