@@ -47,7 +47,8 @@ const GlkDetectionEntry* ZCodeMetaEngine::getDetectionEntries() {
 			entry->_md5,
 			entry->_filesize,
 			entry->_language,
-			Common::kPlatformUnknown
+			Common::kPlatformUnknown,
+			entry->_unofficial
 		};
 		entries.push_back(detection);
 	}
@@ -57,7 +58,8 @@ const GlkDetectionEntry* ZCodeMetaEngine::getDetectionEntries() {
 					   nullptr,
 					   0,
 					   Common::UNK_LANG,
-					   Common::kPlatformUnknown});
+					   Common::kPlatformUnknown,
+					   false});
 
 	return entries.data();
 }
