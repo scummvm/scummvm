@@ -504,13 +504,13 @@ ys = sprite->ys;
 								if (mirror == 1) {
 									int rem = attr_col & 1;
 									byte_off = attr_col / 2;
-									bit_off = (-(rem)+attr_start);
+									bit_off = rem + attr_start;
 									if (bit_off > 1) {
 										byte_off++; bit_off &= 1;
 									}
 								} else {
 									byte_off = -(attr_col / 2);
-									bit_off = attr_col + attr_start; /* Note: attr_start set at row start for mirror */
+									bit_off = attr_start - (attr_col & 1);
 									if (bit_off < 0) {
 										byte_off--; bit_off += 2;
 									}
@@ -677,13 +677,13 @@ pixel_RLE:
 									if (mirror == 1) {
 										int rem = attr_col & 1;
 										byte_off = attr_col / 2;
-										bit_off = (-rem) + attr_start;
+										bit_off = rem + attr_start;
 										if (bit_off > 1) {
 											byte_off++; bit_off &= 1;
 										}
 									} else {
 										byte_off = -(attr_col / 2);
-										bit_off = attr_col + attr_start;
+										bit_off = attr_start - (attr_col & 1);
 										if (bit_off < 0) {
 											byte_off--; bit_off += 2;
 										}
@@ -848,13 +848,13 @@ pixel_IRLE:
 									if (mirror == 1) {
 										int rem = attr_col & 1;
 										byte_off = attr_col / 2;
-										bit_off = (-rem) + attr_start;
+										bit_off = rem + attr_start;
 										if (bit_off > 1) {
 											byte_off++; bit_off &= 1;
 										}
 									} else {
 										byte_off = -(attr_col / 2);
-										bit_off = attr_col + attr_start;
+										bit_off = attr_start - (attr_col & 1);
 										if (bit_off < 0) {
 											byte_off--; bit_off += 2;
 										}
@@ -989,13 +989,13 @@ pixel_IRLE_run_next:
 								if (mirror == 1) {
 									int rem = attr_col & 1;
 									byte_off = attr_col / 2;
-									bit_off = (-rem) + attr_start;
+									bit_off = rem + attr_start;
 									if (bit_off > 1) {
 										byte_off++; bit_off &= 1;
 									}
 								} else {
 									byte_off = -(attr_col / 2);
-									bit_off = attr_col + attr_start;
+									bit_off = attr_start - (attr_col & 1);
 									if (bit_off < 0) {
 										byte_off--; bit_off += 2;
 									}
