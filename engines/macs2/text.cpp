@@ -55,7 +55,7 @@ bool Text::findGlyph(char c, GlyphData &out) const {
 }
 
 int Text::measureString(const Common::String &s) const {
-	int sum = 0;
+	int width = 0;
 	GlyphData currentGlyph;
 	uint16 widestGlyph = 0;
 	for (auto current = s.begin(); current != s.end(); current++) {
@@ -65,13 +65,13 @@ int Text::measureString(const Common::String &s) const {
 	}
 
 	for (auto current = s.begin(); current != s.end(); current++) {
-		if (!findGlyph(*current, currentGlyph)) {
-			sum += widestGlyph;
+		if (findGlyph(*current, currentGlyph)) {
+			width += currentGlyph._width + 1;
 		} else {
-			sum += currentGlyph._width + 1;
+			width += widestGlyph;
 		}
 	}
-	return sum;
+	return width;
 }
 
 int Text::measureString(const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs) const {
@@ -80,10 +80,10 @@ int Text::measureString(const Common::String &s, const GlyphData *glyphs, uint16
 	for (uint i = 0; i < numGlyphs; i++) {
 		widestGlyph = MAX(widestGlyph, glyphs[i]._width);
 	}
-	for (auto iter = s.begin(); iter != s.end(); iter++) {
-		GlyphData glyph;
-		if (findGlyph(*iter, glyph, glyphs, numGlyphs)) {
-			width += glyph._width + 1;
+	for (auto current = s.begin(); current != s.end(); current++) {
+		GlyphData currentGlyph;
+		if (findGlyph(*current, currentGlyph, glyphs, numGlyphs)) {
+			width += currentGlyph._width + 1;
 		} else {
 			width += widestGlyph;
 		}
