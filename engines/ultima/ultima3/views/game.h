@@ -75,6 +75,18 @@ protected:
 	virtual void endTurn() = 0;
 
 	/**
+	 * Called every frame, for anything the view has going on
+	 */
+	virtual void processFrame() {}
+
+	/**
+	 * Returns true if the view is waiting for a command, rather than busy
+	 */
+	virtual bool isWaiting() const {
+		return true;
+	}
+
+	/**
 	 * Carries out the command for a key press, if it's one that works the
 	 * same wherever the party is
 	 * @returns		True if the key was a command

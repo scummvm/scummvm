@@ -36,6 +36,7 @@
 #include "ultima/ultima3/gfx/message_log.h"
 #include "ultima/ultima3/gfx/screen_effects.h"
 #include "ultima/ultima3/gfx/shapes.h"
+#include "ultima/ultima3/logic/combat_logic.h"
 
 namespace Audio {
 class PCSpeaker;
@@ -91,6 +92,7 @@ public:
 	Data::Savegame _savegame;
 	Data::Map _map;
 	Data::Map _worldMap;
+	CombatLogic _combat;
 	Gfx::Shapes _shapes;
 	Gfx::MessageLog _messages;
 	Gfx::ScreenEffects _effects;

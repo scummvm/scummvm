@@ -54,11 +54,6 @@ private:
 	bool canMoveTo(int index, int x, int y) const;
 
 	/**
-	 * Returns the creature standing at a position, or -1
-	 */
-	int creatureAt(int x, int y) const;
-
-	/**
 	 * Moves a creature to a position, leaving behind what it was standing on
 	 */
 	void moveTo(int index, int x, int y);
@@ -71,6 +66,11 @@ private:
 public:
 	// How many turns remain of time being held still
 	int _negateTimeTurns = 0;
+
+	/**
+	 * Returns the creature standing at a position, or -1
+	 */
+	int creatureAt(int x, int y) const;
 
 	/**
 	 * Lets each creature take a turn, and may add a new monster to the world

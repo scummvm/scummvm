@@ -59,6 +59,17 @@ extern const char *const ARMOUR_NAMES[ARMOUR_COUNT];
 // are referred to by a number starting at 1
 extern const char *const NAMES[NAME_COUNT];
 
+// The most hit points each kind of monster starts out with, and the
+// experience it gives (in BCD) when killed, found from the low four bits of
+// its tile number
+extern const byte MONSTER_HIT_POINTS[16];
+extern const byte MONSTER_EXPERIENCE[16];
+
+/**
+ * Returns the tile showing a party member of a class in a fight
+ */
+byte fightingTile(char classKey);
+
 /**
  * Returns the index of a key within the first count entries of a key list.
  * As in the original, a key that isn't present maps to the last entry.

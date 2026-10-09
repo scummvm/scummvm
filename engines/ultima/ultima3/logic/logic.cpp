@@ -25,6 +25,9 @@
 namespace Ultima {
 namespace Ultima3 {
 
+int Logic::_healCounter = 9;
+int Logic::_upkeepCounter = 4;
+
 constexpr int HUNGER_STEP = 10;
 constexpr int STARVATION_DAMAGE = 5;
 
@@ -33,9 +36,9 @@ static int maxMagicPoints(byte attribute) {
 	return Data::fromBcd(attribute) / 2;
 }
 
-void Logic::incrementMoveCounter() {
+void Logic::incrementMoveCounter(int amount) {
 	Data::Savegame &save = _G(savegame);
-	int carry = save._partySize;
+	int carry = (amount < 0) ? save._partySize : amount;
 
 	for (int i = 0; i < 4 && carry; ++i) {
 		int total = Data::fromBcd(save._moveCount[i]) + carry;

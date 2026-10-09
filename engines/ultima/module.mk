@@ -163,6 +163,7 @@ MODULE_OBJS += \
 	ultima3/ultima3.o \
 	ultima3/console.o \
 	ultima3/metaengine.o \
+	ultima3/data/arena.o \
 	ultima3/data/data.o \
 	ultima3/data/map.o \
 	ultima3/data/roster.o \
@@ -171,14 +172,17 @@ MODULE_OBJS += \
 	ultima3/gfx/message_log.o \
 	ultima3/gfx/pic_decoder.o \
 	ultima3/gfx/shapes.o \
+	ultima3/logic/combat_logic.o \
 	ultima3/logic/creature_logic.o \
 	ultima3/logic/location_logic.o \
 	ultima3/logic/logic.o \
 	ultima3/views/character_details.o \
+	ultima3/views/combat_map.o \
 	ultima3/views/create_character.o \
 	ultima3/views/disperse_party.o \
 	ultima3/views/form_party.o \
 	ultima3/views/game.o \
+	ultima3/views/interactions/combat_attack.o \
 	ultima3/views/interactions/equip.o \
 	ultima3/views/interactions/exchange.o \
 	ultima3/views/interactions/interaction.o \

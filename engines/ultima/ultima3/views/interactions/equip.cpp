@@ -37,6 +37,14 @@ constexpr char ESCAPE_KEY = 0x1B;
 constexpr char EXOTIC_WEAPON = 'P';
 constexpr char EXOTIC_ARMOUR = 'H';
 
+Equip::Equip(bool weapons, int slot) : _weapons(weapons), _slot(slot) {
+	if (slot >= 0) {
+		_choosing = false;
+		_G(messages).print(_weapons ? "Weapon:\n" : "Armour:\n");
+		startMenu();
+	}
+}
+
 void Equip::startMenu() {
 	const Data::Savegame &save = _G(savegame);
 	int letters;
@@ -61,7 +69,7 @@ void Equip::startMenu() {
 }
 
 void Equip::equip(char letter) {
-	Data::RosterEntry &e = _G(savegame).partyMember(_chooser.slot());
+	Data::RosterEntry &e = _G(savegame).partyMember(_slot);
 
 	const char *classPos = strchr(CLASS_ORDER, e._class);
 	int classNum = (classPos && *classPos) ? classPos - CLASS_ORDER : 0;
@@ -99,7 +107,8 @@ bool Equip::keypress(const KeypressMessage &msg) {
 		if (result == PlayerChooser::CANCELLED)
 			return true;
 
-		if (!_G(savegame).partyMember(_chooser.slot()).isAlive()) {
+		_slot = _chooser.slot();
+		if (!_G(savegame).partyMember(_slot).isAlive()) {
 			_G(messages).print("Incapacitated!\n");
 			g_engine->playSoundEffect(0xFF);
 			return true;

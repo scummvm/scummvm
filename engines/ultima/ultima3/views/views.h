@@ -24,6 +24,7 @@
 
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima3/views/character_details.h"
+#include "ultima/ultima3/views/combat_map.h"
 #include "ultima/ultima3/views/create_character.h"
 #include "ultima/ultima3/views/disperse_party.h"
 #include "ultima/ultima3/views/form_party.h"
@@ -42,6 +43,7 @@ namespace Views {
 
 struct Views {
 	CharacterDetails _characterDetails;
+	CombatMap _combatMap;
 	CreateCharacter _createCharacter;
 	DisperseParty _disperseParty;
 	FormParty _formParty;

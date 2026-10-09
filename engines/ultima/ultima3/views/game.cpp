@@ -99,8 +99,9 @@ void Game::timeout() {
 	_G(shapes).animate();
 	_G(effects).tick();
 	updateWind();
+	processFrame();
 
-	if (!_gameOver && !_interaction && ++_idleFrames >= IDLE_FRAMES)
+	if (!_gameOver && !_interaction && isWaiting() && ++_idleFrames >= IDLE_FRAMES)
 		idleTimeout();
 
 	redraw();

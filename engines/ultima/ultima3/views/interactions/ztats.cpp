@@ -34,6 +34,18 @@ static const char *const MARK_NAMES[8] = {
 	"Card of Death", "Card of Moons", "Card of Sol", "Card of Love"
 };
 
+Ztats::Ztats(int slot) {
+	if (slot >= 0)
+		begin(slot);
+}
+
+void Ztats::begin(int slot) {
+	_showing = true;
+	_G(effects)._highlight = slot;
+	buildPages(_G(savegame).partyMember(slot));
+	_G(messages).print(_pages[0].c_str());
+}
+
 Ztats::~Ztats() {
 	_G(effects)._highlight = -1;
 }
@@ -97,10 +109,7 @@ bool Ztats::keypress(const KeypressMessage &msg) {
 		if (result == PlayerChooser::CANCELLED)
 			return true;
 
-		_showing = true;
-		_G(effects)._highlight = _chooser.slot();
-		buildPages(_G(savegame).partyMember(_chooser.slot()));
-		_G(messages).print(_pages[0].c_str());
+		begin(_chooser.slot());
 		return false;
 	}
 

@@ -44,6 +44,16 @@ private:
 	// Set while a step is being taken, as opposed to some other command
 	bool _moved = false;
 
+	// Set when a fight has just begun, and when one has finished and the
+	// turn it interrupted needs completing
+	bool _fightStarted = false;
+	bool _fightOver = false;
+
+	/**
+	 * Starts a fight with a creature
+	 */
+	void startFight(int creature);
+
 	/**
 	 * Fills in the tile numbers for the viewport, with the party's transport
 	 * in the middle and hidden tiles blanked out
@@ -55,12 +65,14 @@ private:
 	void doInvalid();
 	void doBoard();
 	void doEnter();
+	void doAttack();
 	void doExitVehicle();
 
 protected:
 	void drawViewport(GfxSurface &s) override;
 	void idleTimeout() override;
 	void endTurn() override;
+	void processFrame() override;
 	bool handleCommand(const KeypressMessage &msg) override;
 
 public:
@@ -68,6 +80,11 @@ public:
 	~LocationMap() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+
+	/**
+	 * Has the party attack whatever is in a direction
+	 */
+	void attackDirection(Direction dir);
 };
 
 } // namespace Views

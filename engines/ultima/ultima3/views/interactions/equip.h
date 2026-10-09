@@ -38,6 +38,7 @@ private:
 	bool _weapons;
 	PlayerChooser _chooser;
 	bool _choosing = true;
+	int _slot = -1;
 	MenuChoice _menu;
 	char _keys[20];
 	const char *_words[19];
@@ -56,8 +57,9 @@ public:
 	/**
 	 * Constructor
 	 * @param weapons	True for weapons, false for armour
+	 * @param slot		The party member, or -1 to ask who
 	 */
-	Equip(bool weapons) : _weapons(weapons) {}
+	Equip(bool weapons, int slot = -1);
 
 	bool keypress(const KeypressMessage &msg) override;
 };

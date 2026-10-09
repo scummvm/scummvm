@@ -121,7 +121,19 @@ void LocationMap::drawViewport(GfxSurface &s) {
 	s.addDirtyRect(Common::Rect(8, 8, 8 + VIEWPORT_TILES * Gfx::SHAPE_SIZE, 8 + VIEWPORT_TILES * Gfx::SHAPE_SIZE));
 }
 
+void LocationMap::startFight(int creature) {
+	_G(combat).begin(creature);
+	_fightOver = true;
+	addView("CombatMap");
+}
+
 void LocationMap::endTurn() {
+	// A fight begun by the party's own command carries on the turn when it's over
+	if (_fightStarted) {
+		_fightStarted = false;
+		return;
+	}
+
 	_logic.incrementMoveCounter();
 
 	if (_logic.isAtExit()) {
@@ -132,11 +144,73 @@ void LocationMap::endTurn() {
 	_logic.processPartyTurnEffects(_G(savegame)._location == Data::LOCATION_SOSARIA);
 
 	// A creature reaching the party starts a fight
-	_creatures.update(_moved);
+	int creature = _creatures.update(_moved);
 	_moved = false;
+	if (creature >= 0) {
+		startFight(creature);
+		return;
+	}
 
 	if (!checkPartyWipedOut())
 		startPrompt();
+}
+
+void LocationMap::processFrame() {
+	if (_fightOver) {
+		_fightOver = false;
+		endTurn();
+	}
+}
+
+void LocationMap::attackDirection(Direction dir) {
+	const Data::Savegame &save = _G(savegame);
+	int x = save._posX, y = save._posY;
+
+	switch (dir) {
+	case DIR_NORTH: --y; break;
+	case DIR_SOUTH: ++y; break;
+	case DIR_EAST: ++x; break;
+	default: --x; break;
+	}
+
+	int creature = _creatures.creatureAt(x & (Data::MAP_SIZE - 1), y & (Data::MAP_SIZE - 1));
+	if (creature >= 0) {
+		_fightStarted = true;
+		startFight(creature);
+	} else {
+		_G(messages).print("Not Here!\n");
+		g_engine->playSoundEffect(0xFF);
+	}
+}
+
+namespace {
+
+// Asks which way the party attacks on the map
+class MapAttack : public Interactions::Interaction {
+private:
+	LocationMap *_map;
+	Interactions::DirectionChooser _chooser;
+
+public:
+	MapAttack(LocationMap *map) : _map(map) {}
+
+	bool keypress(const KeypressMessage &msg) override {
+		Interactions::DirectionChooser::Result result = _chooser.handleKey(msg);
+		if (result == Interactions::DirectionChooser::PENDING)
+			return false;
+
+		if (result == Interactions::DirectionChooser::CHOSEN)
+			_map->attackDirection(_chooser.direction());
+
+		return true;
+	}
+};
+
+} // End of anonymous namespace
+
+void LocationMap::doAttack() {
+	_G(messages).print("Attack-");
+	startInteraction(new MapAttack(this));
 }
 
 void LocationMap::doMove(Direction dir, const char *label) {
@@ -241,6 +315,9 @@ bool LocationMap::handleCommand(const KeypressMessage &msg) {
 		return true;
 	case 'E':
 		doEnter();
+		return true;
+	case 'A':
+		doAttack();
 		return true;
 	case 'L':
 		_G(messages).print("Look-");

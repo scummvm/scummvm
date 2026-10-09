@@ -42,8 +42,9 @@ enum Direction {
  */
 class Logic {
 private:
-	int _healCounter = 9;
-	int _upkeepCounter = 4;
+	// Shared by every kind of location, so the upkeep carries on unbroken
+	static int _healCounter;
+	static int _upkeepCounter;
 
 	/**
 	 * Gives a character a magic point
@@ -60,8 +61,9 @@ public:
 
 	/**
 	 * Counts a turn taken by the party
+	 * @param amount	How many moves to add, defaulting to one per party member
 	 */
-	void incrementMoveCounter();
+	void incrementMoveCounter(int amount = -1);
 
 	/**
 	 * Applies the effects of a turn passing on the party: magic point

@@ -49,7 +49,17 @@ private:
 
 	void finish();
 
+	/**
+	 * Starts showing a party member's details
+	 */
+	void begin(int slot);
+
 public:
+	/**
+	 * Constructor
+	 * @param slot		The party member, or -1 to ask who
+	 */
+	Ztats(int slot = -1);
 	~Ztats() override;
 
 	bool keypress(const KeypressMessage &msg) override;
