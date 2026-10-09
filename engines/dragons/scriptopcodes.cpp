@@ -462,6 +462,7 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 
 	if (!ini->actor->_actorResource || ini->actor->_actorResource->_id != (uint32)ini->actorResourceId) {
 		ini->actor->_actorResource = _vm->_actorManager->getActorResource(ini->actorResourceId);
+		ini->actor->_resourceID = (int16)ini->actorResourceId;
 	}
 
 	ini->actor->updateSequence(sequenceId);
