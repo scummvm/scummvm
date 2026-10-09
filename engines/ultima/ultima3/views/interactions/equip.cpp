@@ -65,7 +65,7 @@ void Equip::startMenu() {
 	}
 
 	_keys[2 + letters] = '\0';
-	_menu.setup(_keys, _words, 2 + letters, 0, 0);
+	_menu.setup(_keys, _words, 2 + letters);
 }
 
 void Equip::equip(char letter) {
@@ -98,8 +98,6 @@ void Equip::equip(char letter) {
 }
 
 bool Equip::keypress(const KeypressMessage &msg) {
-	Common::String word;
-
 	if (_choosing) {
 		PlayerChooser::Result result = _chooser.handleKey(msg);
 		if (result == PlayerChooser::PENDING)
@@ -120,18 +118,7 @@ bool Equip::keypress(const KeypressMessage &msg) {
 		return false;
 	}
 
-	bool hadChoice = _menu.hasChoice();
-	if (hadChoice)
-		word = _words[_menu.index()];
-
-	bool confirmed = _menu.handleKey(msg);
-
-	if (!hadChoice && _menu.hasChoice())
-		_G(messages).print(_words[_menu.index()]);
-	else if (hadChoice && !_menu.hasChoice())
-		_G(messages).backspace(word.size());
-
-	if (!confirmed)
+	if (!_menu.handleKey(msg))
 		return false;
 
 	char letter = _menu.key();

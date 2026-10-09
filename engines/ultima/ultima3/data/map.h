@@ -94,6 +94,12 @@ public:
 	}
 
 	/**
+	 * Returns one of the pieces of text kept with a town, which are what its
+	 * people and signs say, or null if there isn't one
+	 */
+	const char *text(int index) const;
+
+	/**
 	 * Returns the number of the tile graphic in a cell
 	 */
 	byte tile(int x, int y) const {

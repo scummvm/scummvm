@@ -23,7 +23,7 @@
 #define ULTIMA3_VIEWS_INTERACTIONS_EQUIP_H
 
 #include "ultima/ultima3/views/interactions/interaction.h"
-#include "ultima/ultima3/views/menu_input.h"
+#include "ultima/ultima3/views/interactions/log_input.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -39,7 +39,7 @@ private:
 	PlayerChooser _chooser;
 	bool _choosing = true;
 	int _slot = -1;
-	MenuChoice _menu;
+	LogMenu _menu;
 	char _keys[20];
 	const char *_words[19];
 

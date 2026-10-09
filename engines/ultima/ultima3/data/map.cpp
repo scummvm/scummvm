@@ -41,6 +41,19 @@ void Map::load(const char *filename) {
 		error("Could not load %s", filename);
 }
 
+const char *Map::text(int index) const {
+	int pos = index * 2;
+	if (index < 0 || pos + 1 >= TEXT_SIZE)
+		return nullptr;
+
+	// The strings are found by offsets listed at the start
+	int offset = _text[pos] | (_text[pos + 1] << 8);
+	if (offset >= TEXT_SIZE || !memchr(_text + offset, 0, TEXT_SIZE - offset))
+		return nullptr;
+
+	return (const char *)_text + offset;
+}
+
 void Map::synchronize(Common::Serializer &s) {
 	// Earlier saves only held the cells
 	if (s.getVersion() < 3)

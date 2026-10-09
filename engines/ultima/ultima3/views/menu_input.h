@@ -77,6 +77,13 @@ public:
 	}
 
 	/**
+	 * Returns the word of the option currently echoed
+	 */
+	const char *word() const {
+		return _words[_choice];
+	}
+
+	/**
 	 * Returns the number of the option currently echoed
 	 */
 	int index() const {

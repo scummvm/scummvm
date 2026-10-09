@@ -24,6 +24,7 @@
 #include "ultima/ultima3/views/interactions/get_chest.h"
 #include "ultima/ultima3/views/interactions/look.h"
 #include "ultima/ultima3/views/interactions/steal_chest.h"
+#include "ultima/ultima3/views/interactions/transact.h"
 #include "ultima/ultima3/views/interactions/unlock_door.h"
 #include "ultima/ultima3/ultima3.h"
 
@@ -329,6 +330,10 @@ bool LocationMap::handleCommand(const KeypressMessage &msg) {
 	case 'S':
 		_G(messages).print("Steal Chest!\nPlayer? ");
 		startInteraction(new Interactions::StealChest());
+		return true;
+	case 'T':
+		_G(messages).print("Who will\nTransact? ");
+		startInteraction(new Interactions::Transact());
 		return true;
 	case 'U':
 		_G(messages).print("Unlock-");
