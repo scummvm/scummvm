@@ -51,6 +51,7 @@ MODULE_OBJS = \
 	parts/part_37.o \
 	parts/part_50.o \
 	parts/part_68.o \
+	parts/part_69.o \
 	parts/part_70.o \
 	parts/part_71.o \
 	parts/part_72.o \

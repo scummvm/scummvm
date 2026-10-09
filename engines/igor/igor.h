@@ -527,6 +527,10 @@ private:
 	bool _part07FirstVisitDone;
 	// scratch of the room loops: the current ambient frame (a star in part 72, the screen in part 68)
 	uint8 _roomAmbientIndex;
+	// the two fireflies of room 69: the current frame of each and the steps of the first one since the second one started
+	uint8 _part69FireflyFrameA;
+	uint8 _part69FireflyFrameB;
+	uint16 _part69FireflyStepCount;
 	uint8 _part68QuestionCounter;
 	uint8 _part68LastDialogueCode;
 	bool _part68NpcPresent;
@@ -1118,6 +1122,17 @@ private:
 	void PART_50_UPDATE_ROOM_BACKGROUND();
 	void PART_50();
 
+	void PART_69_EXEC_ACTION(int action);
+	void PART_69_APPLY_OBJECT_STATE();
+	void PART_69_DRAW_FIREFLY_A(int frame);
+	void PART_69_DRAW_FIREFLY_B(int frame);
+	void PART_69_ANIMATE_FIREFLIES();
+	void PART_69_ACTION_107_watch();
+	void PART_69_FINALE(int num, int sound);
+	void PART_69_ENTER_FROM_RIGHT();
+	void PART_69_UPDATE_ROOM_BACKGROUND();
+	void PART_69();
+
 	void PART_70_EXEC_ACTION(int action);
 	void PART_70_DRAW_OBJECT_STATE();
 	void PART_70_UPDATE_ROOM_BACKGROUND();
@@ -1469,6 +1484,7 @@ protected:
 	static const RoomDataOffsets PART_37_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_50_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_68_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_69_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_70_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_71_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_72_ROOM_DATA_OFFSETS;

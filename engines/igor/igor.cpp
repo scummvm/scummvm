@@ -162,6 +162,9 @@ void IgorEngine::restart() {
 	_part07FirstVisitDone = false; // cseg197:0795-0845; original global s3:0xED2E
 	_roomAmbientIndex = 0;
 	_part68QuestionCounter = 1;
+	_part69FireflyFrameA = 0;
+	_part69FireflyFrameB = 0;
+	_part69FireflyStepCount = 0;
 	_part68LastDialogueCode = 0;
 	_part68NpcPresent = false;
 	_parkLadyIdleStep = 1;
