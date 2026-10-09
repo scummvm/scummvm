@@ -95,7 +95,7 @@ Creating the ISO image
 
         .. dropdown:: Example
 
-            In the example below the CD is the last disk listed as ``CD_partition_scheme``, and the identifier for the HFS partition is ``disk5s1s2``.
+            In the example below the CD is the last disk listed as ``CD_partition_scheme``, and the identifier for the HFS partition is ``disk3s1s2``.
 
             .. code-block::
 
@@ -126,7 +126,7 @@ Creating the ISO image
                    0:        CD_partition_scheme                        *783.5 MB   disk3
                    1:     Apple_partition_scheme                         682.2 MB   disk3s1
                    2:        Apple_partition_map                         1.0 KB     disk3s1s1
-                   3:                  Apple_HFS disque 1                681.6 MB   disk5s1s2
+                   3:                  Apple_HFS disque 1                681.6 MB   disk3s1s2
                 iMac:~ ego$ sudo umount /dev/disk3s1s2
                 Password:
                 iMac:~ ego$ sudo dd if=/dev/disk3s1s2 of=/Users/ego/BS1-fr.iso
@@ -316,5 +316,3 @@ There are other ways to access HFS and HFS+ media on Windows, macOS, and Linux. 
            3. Mount the HFS volume by running ``hmount /dev/fd0``
            4. List the files and directories on the HFS media using ``hls``, change the working directory on the HFS media using ``hcd`` and copy files using ``hcopy``. The ``hcopy`` command takes options to indicate if the files should be converted to macbinary (``-m``) or copied as a raw file (``-r``). For example ``hcopy -m "PP Disk 1:PP Data:JMP PP Resources" "pegasus/JMP PP Resources"``.
            5. Unmount the HFS media with ``humount /dev/fd0``
-
-
