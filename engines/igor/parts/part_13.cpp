@@ -23,23 +23,22 @@
 
 namespace Igor {
 
-
 void IgorEngine::PART_13_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_13_EXEC_ACTION %d", action);
 	switch (action) {
-	case 101:
-		PART_13_ACTION_101_103();
+	case 101: // go to platform
+		PART_13_ACTION_101_103_goToPlatform();
 		break;
-	case 102:
+	case 102: // look at stained glass
 		igorSay(201, 2, 858);
 		break;
-	case 103:
-		PART_13_ACTION_101_103();
+	case 103: // look at platform
+		PART_13_ACTION_101_103_goToPlatform();
 		break;
 	case 104:
-		PART_13_ACTION_104();
+		PART_13_ACTION_104_exitChurch();
 		break;
-	case 105:
+	case 105: // go to church puzzle
 		_currentPart = 140;
 		break;
 	default:
@@ -48,7 +47,7 @@ void IgorEngine::PART_13_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_13_ACTION_101_103() {
+void IgorEngine::PART_13_ACTION_101_103_goToPlatform() {
 	waitForTimer(255);
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
@@ -127,7 +126,7 @@ void IgorEngine::PART_13_ACTION_101_103() {
 	} while (_gameState.igorMoving);
 }
 
-void IgorEngine::PART_13_ACTION_104() {
+void IgorEngine::PART_13_ACTION_104_exitChurch() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	for (int i = 9; i >= 0; --i) {
@@ -150,10 +149,10 @@ void IgorEngine::PART_13_ACTION_104() {
 	_currentPart = 121;
 }
 
-void IgorEngine::PART_13_HELPER_1(int num) {
+void IgorEngine::PART_13_HELPER_OBJECT_STATE(int num) {
 }
 
-void IgorEngine::PART_13_HELPER_2() {
+void IgorEngine::PART_13_HELPER_2_enterFromRight() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(314, 127, 4, 0);
 	wd->clipSkipX = 1;
@@ -172,8 +171,8 @@ void IgorEngine::PART_13_HELPER_2() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_13_HELPER_3() {
-	PART_13_HELPER_1(255);
+void IgorEngine::PART_13_HELPER_3_enterFromBelow() {
+	PART_13_HELPER_OBJECT_STATE(255);
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	for (int i = 0; i <= 9; ++i) {
@@ -206,14 +205,14 @@ void IgorEngine::PART_13() {
 	_roomDataOffsets = PART_13_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(92, 0, 288, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_13_EXEC_ACTION);
-	PART_13_HELPER_1(255);
+	PART_13_HELPER_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
 	if (_currentPart == 130) {
-		PART_13_HELPER_3();
+		PART_13_HELPER_3_enterFromBelow();
 	} else {
-		PART_13_HELPER_2();
+		PART_13_HELPER_2_enterFromRight();
 	}
 	enterPartLoop();
 	while (_currentPart >= 130 && _currentPart <= 131) {

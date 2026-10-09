@@ -777,31 +777,31 @@ private:
 
 	// inside church
 	void PART_13_EXEC_ACTION(int action);
-	void PART_13_ACTION_101_103();
-	void PART_13_ACTION_104();
-	void PART_13_HELPER_1(int num);
-	void PART_13_HELPER_2();
-	void PART_13_HELPER_3();
+	void PART_13_ACTION_101_103_goToPlatform();
+	void PART_13_ACTION_104_exitChurch();
+	void PART_13_HELPER_OBJECT_STATE(int num);
+	void PART_13_HELPER_2_enterFromRight();
+	void PART_13_HELPER_3_enterFromBelow();
 	void PART_13();
 
 	// church puzzle
 	void PART_14_EXEC_ACTION(int action);
 	void PART_14_UPDATE_ROOM_BACKGROUND_ACTION_108();
-	void PART_14_ACTION_101();
-	void PART_14_ACTION_103();
-	void PART_14_ACTION_105();
-	void PART_14_ACTION_106();
-	void PART_14_ACTION_108();
-	void PART_14_HELPER_1(int num);
-	void PART_14_HELPER_2();
-	void PART_14_HELPER_3();
-	void PART_14_HELPER_4();
-	void PART_14_HELPER_6();
-	void PART_14_HELPER_7(int frame);
-	void PART_14_HELPER_8(int start, int end);
-	void PART_14_HELPER_9();
-	void PART_14_HELPER_10();
-	void PART_14_PUSH_STONE(int screenOffset, int w, int h, int animOffset);
+	void PART_14_ACTION_101_goToChurchBell();
+	void PART_14_ACTION_103_lookAtPuzzle();
+	void PART_14_ACTION_105_goBackToChurch();
+	void PART_14_ACTION_106_enterMaze();
+	void PART_14_ACTION_108_useMatchesOnCandles();
+	void PART_14_HELPER_1_OBJECT_STATE(int num);
+	void PART_14_HELPER_2_enterFromChurch();
+	void PART_14_HELPER_3_enterFromChurchBell();
+	void PART_14_HELPER_4_enterFromMaze();
+	void PART_14_HELPER_6_drawEntrance();
+	void PART_14_HELPER_7_candleFlicker(int frame);
+	void PART_14_HELPER_8_brotherReveal(int start, int end);
+	void PART_14_HELPER_9_showPuzzle();
+	void PART_14_HELPER_10_loadChurchMosaicData();
+	void PART_14_pushStone(int screenOffset, int w, int h, int animOffset);
 	void PART_14();
 	void loadResourceData__ROOM_ChurchPuzzle();
 	void loadResourceData__ANIM_ChurchPuzzle();
