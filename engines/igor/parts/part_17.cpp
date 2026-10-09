@@ -40,7 +40,7 @@ void IgorEngine::PART_17_EXEC_ACTION(int action) {
 		igorSay(220, 3, 646);
 		break;
 	case 105:
-		PART_17_ACTION_105();
+		PART_17_ACTION_105_leaveThroughPath();
 		break;
 	case 106: // exchange files
 		PART_17_ACTION_106_swapFolders();
@@ -100,7 +100,7 @@ void IgorEngine::PART_17_ACTION_103_talkPhilipJimmy() {
 	cutsceneSayWithCallback(135, 33, 63, 63, 0, 215 + randomDialogue, 1, 641 + randomDialogue, &IgorEngine::PART_17_UPDATE_DIALOGUE_Philip);
 
 	PART_17_HANDLE_DIALOGUE_PHILIP();
-	PART_17_HELPER_1(255);
+	PART_17_HELPER_1_OBJECT_STATE(255);
 	PART_17_HELPER_8_PhillipToJimmyAnimFrame(0);
 
 	--_walkDataLastIndex;
@@ -117,7 +117,7 @@ void IgorEngine::PART_17_ACTION_103_talkPhilipJimmy() {
 	}
 }
 
-void IgorEngine::PART_17_ACTION_105() {
+void IgorEngine::PART_17_ACTION_105_leaveThroughPath() {
 	bool escaped = false;
 	_roomObjectAreasTable[5].area = 1;
 	_roomObjectAreasTable[10].area = 2;
@@ -194,7 +194,7 @@ void IgorEngine::PART_17_ACTION_106_swapFolders() {
 
 	_objectsState[55] = 1;
 	_objectsState[3] = 1;
-	PART_17_HELPER_1(255);
+	PART_17_HELPER_1_OBJECT_STATE(255);
 	UPDATE_OBJECT_STATE(4);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
@@ -274,13 +274,13 @@ void IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND() {
 	}
 }
 
-void IgorEngine::PART_17_HELPER_1(int num) {
+void IgorEngine::PART_17_HELPER_1_OBJECT_STATE(int num) {
 	// Enable or disable phillip and jimmy animation
 	if (num == 1 || num == 255) {
 		if (_objectsState[54] == 0) {
 			_gameState.unkF = false;
 		} else {
-			PART_17_HELPER_3(0);
+			PART_17_HELPER_3_disableArea(0);
 			_gameState.unkF = true;
 		}
 	}
@@ -293,7 +293,7 @@ void IgorEngine::PART_17_HELPER_1(int num) {
 	if (num == 3 || num == 255) {
 		if (_objectsState[56] == 1) {
 			_gameState.unkF = false;
-			PART_17_HELPER_3(6);
+			PART_17_HELPER_3_disableArea(6);
 		}
 	}
 }
@@ -359,7 +359,7 @@ void IgorEngine::PART_17_HELPER_2_walkFromMap() {
 	_roomObjectAreasTable[28].area = 0;
 }
 
-void IgorEngine::PART_17_HELPER_3(int lum) {
+void IgorEngine::PART_17_HELPER_3_disableArea(int lum) {
 	_roomObjectAreasTable[18].area = lum;
 	_roomObjectAreasTable[19].area = lum;
 	_roomObjectAreasTable[20].area = lum;
@@ -379,7 +379,7 @@ void IgorEngine::PART_17_HELPER_5_changeZindexOfPath(int lum) {
 }
 
 void IgorEngine::PART_17_HELPER_6_walkFromCollege() {
-	PART_17_HELPER_1(255);
+	PART_17_HELPER_1_OBJECT_STATE(255);
 	fadeIn(768);
 	_walkData[0].setPos(274, 68, 4, 1);
 	_walkData[0].setDefaultScale();
@@ -466,14 +466,14 @@ void IgorEngine::PART_17() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_17_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND;
 
-	PART_17_HELPER_1(255);
+	PART_17_HELPER_1_OBJECT_STATE(255);
 
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 
 	if (_objectsState[56] == 1) {
 		_gameState.unkF = false;
-		PART_17_HELPER_3(6);
+		PART_17_HELPER_3_disableArea(6);
 		_roomObjectAreasTable[14].object = 0;
 		_roomObjectAreasTable[15].object = 0;
 		_roomObjectAreasTable[19].object = 0;

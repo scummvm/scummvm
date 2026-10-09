@@ -539,7 +539,7 @@ private:
 	uint8 _inventoryInfo[74];
 	char _verbPrepositions[3][7];
 	char _roomObjectNames[20][MAX_OBJECT_NAME_LENGTH];
-	char _globalObjectNames[35][MAX_OBJECT_NAME_LENGTH];
+	char _globalObjectNames[37][MAX_OBJECT_NAME_LENGTH];
 	char _verbsName[9][MAX_VERB_NAME_LENGTH];
 
 	uint8 _currentPalette[768];
@@ -828,14 +828,14 @@ private:
 
 	// laboratory
 	void PART_16_EXEC_ACTION(int action);
-	void PART_16_ACTION_101();
+	void PART_16_ACTION_101_pickUpFlask();
 	void PART_16_UPDATE_DIALOGUE_MARGARET_HARRISON(int action);
 	void PART_16_UPDATE_DIALOGUE_MARGARET(int action);
-	void PART_16_HELPER_1(int num);
-	void PART_16_HELPER_2();
+	void PART_16_HELPER_1_OBJECT_STATE(int num);
+	void PART_16_HELPER_2_enterScene();
 	void PART_16_HELPER_3_photoCutscene();
 	void PART_16_HELPER_5_displayPhoto();
-	void PART_16_HELPER_6(int frame);
+	void PART_16_HELPER_6_drawTalkingFrame(int frame);
 	void PART_16();
 	void loadResourceData__ROOM_Laboratory();
 	void loadResourceData__ANIM_Laboratory();
@@ -844,15 +844,15 @@ private:
 	void PART_17_EXEC_ACTION(int action);
 	void PART_17_ACTION_101_walkIn();
 	void PART_17_ACTION_103_talkPhilipJimmy();
-	void PART_17_ACTION_105();
+	void PART_17_ACTION_105_leaveThroughPath();
 	void PART_17_ACTION_106_swapFolders();
 	void PART_17_HANDLE_DIALOGUE_PHILIP();
 	void PART_17_UPDATE_DIALOGUE_Jimmy(int action);
 	void PART_17_UPDATE_DIALOGUE_Philip(int action);
 	void PART_17_UPDATE_ROOM_BACKGROUND();
-	void PART_17_HELPER_1(int num);
+	void PART_17_HELPER_1_OBJECT_STATE(int num);
 	void PART_17_HELPER_2_walkFromMap();
-	void PART_17_HELPER_3(int lum);
+	void PART_17_HELPER_3_disableArea(int lum);
 	void PART_17_HELPER_4_paintFirsFrameOfPhilipAndJimmy();
 	void PART_17_HELPER_5_changeZindexOfPath(int lum);
 	void PART_17_HELPER_6_walkFromCollege();
@@ -865,8 +865,8 @@ private:
 	// men toilets
 	void PART_18_EXEC_ACTION(int action);
 	void PART_18_ACTION_109_useSlugOnGrating();
-	void PART_18_ACTION_111();
-	void PART_18_HELPER_1(int num);
+	void PART_18_ACTION_111_useBottleOnTap();
+	void PART_18_HELPER_1_OBJECT_STATE(int num);
 	void PART_18_HELPER_2_walkIn();
 	void PART_18();
 	void loadResourceData__ROOM_MenToilets();
@@ -874,15 +874,15 @@ private:
 
 	// women toilets
 	void PART_19_EXEC_ACTION(int action);
-	void PART_19_ACTION_107();
-	void PART_19_ACTION_109();
+	void PART_19_ACTION_107_lookAtSink();
+	void PART_19_ACTION_109_usePapyrusOnDryer();
 	void PART_19_UPDATE_DIALOGUE_WOMEN(int action);
 	void PART_19_UPDATE_BACKGROUND_HELPER_9();
-	void PART_19_HELPER_1(int num);
+	void PART_19_HELPER_1_OBJECT_STATE(int num);
 	void PART_19_HELPER_2_slugCutscene();
-	void PART_19_HELPER_3();
-	void PART_19_HELPER_4();
-	void PART_19_HELPER_7(int frame);
+	void PART_19_HELPER_3_walkIn();
+	void PART_19_HELPER_4_enterAndLeave();
+	void PART_19_HELPER_7_drawTalkingFrame(int frame);
 	void PART_19();
 
 	// college corridor margaret
@@ -899,10 +899,10 @@ private:
 	void PART_21_UPDATE_DIALOGUE_MARGARET_2(int action);
 	void PART_21_UPDATE_DIALOGUE_MARGARET_3(int action);
 	void PART_21_HANDLE_DIALOGUE_MARGARET();
-	void PART_21_HELPER_1(int num);
-	void PART_21_HELPER_2();
-	void PART_21_HELPER_3();
-	void PART_21_HELPER_4();
+	void PART_21_HELPER_1_OBJECT_STATE(int num);
+	void PART_21_HELPER_2_enterFromLeft();
+	void PART_21_HELPER_3_enterFromRight();
+	void PART_21_HELPER_4_enterFromPhysicsClass();
 	void PART_21_HELPER_5();
 	void PART_21_HELPER_6(int frame);
 	void PART_21_HELPER_7();

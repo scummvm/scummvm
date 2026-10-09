@@ -56,7 +56,7 @@ void IgorEngine::PART_18_EXEC_ACTION(int action) {
 		_currentPart = 252;
 		break;
 	case 111:
-		PART_18_ACTION_111();
+		PART_18_ACTION_111_useBottleOnTap();
 		break;
 	default:
 		error("PART_18_EXEC_ACTION unhandled action %d", action);
@@ -84,7 +84,7 @@ void IgorEngine::PART_18_ACTION_109_useSlugOnGrating() {
 	_roomDataOffsets = PART_18_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_18_EXEC_ACTION);
-	PART_18_HELPER_1(255);
+	PART_18_HELPER_1_OBJECT_STATE(255);
 	// paints bottom of screen black
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
@@ -95,7 +95,7 @@ void IgorEngine::PART_18_ACTION_109_useSlugOnGrating() {
 	igorSay(215, 1, 908);
 }
 
-void IgorEngine::PART_18_ACTION_111() {
+void IgorEngine::PART_18_ACTION_111_useBottleOnTap() {
 	if (_objectsState[0] == 0) {
 		igorSay(211, 1, 905);
 		return;
@@ -116,7 +116,7 @@ void IgorEngine::PART_18_ACTION_111() {
 	UPDATE_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_18_HELPER_1(int num) {
+void IgorEngine::PART_18_HELPER_1_OBJECT_STATE(int num) {
 }
 
 void IgorEngine::PART_18_HELPER_2_walkIn() {
@@ -146,7 +146,7 @@ void IgorEngine::PART_18() {
 	_roomDataOffsets = PART_18_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_18_EXEC_ACTION);
-	PART_18_HELPER_1(255);
+	PART_18_HELPER_1_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);

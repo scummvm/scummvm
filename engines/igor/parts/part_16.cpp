@@ -29,13 +29,13 @@ static int VAR_CURRENT_TALKING_ACTOR;
 void IgorEngine::PART_16_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_16_EXEC_ACTION %d", action);
 	switch (action) {
-	case 101:
-		PART_16_ACTION_101();
+	case 101: // pick up things
+		PART_16_ACTION_101_pickUpFlask();
 		break;
-	case 102:
+	case 102: // look at things
 		igorSay(208, 2, 730);
 		break;
-	case 103:
+	case 103: // exit
 		_currentPart = 261;
 		break;
 	default:
@@ -44,7 +44,7 @@ void IgorEngine::PART_16_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_16_ACTION_101() {
+void IgorEngine::PART_16_ACTION_101_pickUpFlask() {
 	if (_objectsState[52] == 1) {
 		igorSay(207, 1, 729);
 		return;
@@ -66,10 +66,10 @@ void IgorEngine::PART_16_ACTION_101() {
 void IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET_HARRISON(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_16_HELPER_6((VAR_CURRENT_TALKING_ACTOR == 0) ? 34 : 48);
+		PART_16_HELPER_6_drawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 34 : 48);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_16_HELPER_6((VAR_CURRENT_TALKING_ACTOR == 0) ? getRandomNumber(4) + 30 : getRandomNumber(4) + 44);
+		PART_16_HELPER_6_drawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? getRandomNumber(4) + 30 : getRandomNumber(4) + 44);
 		break;
 	}
 }
@@ -77,18 +77,18 @@ void IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET_HARRISON(int action) {
 void IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_16_HELPER_6(49);
+		PART_16_HELPER_6_drawTalkingFrame(49);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_16_HELPER_6(getRandomNumber(3) + 49);
+		PART_16_HELPER_6_drawTalkingFrame(getRandomNumber(3) + 49);
 		break;
 	}
 }
 
-void IgorEngine::PART_16_HELPER_1(int num) {
+void IgorEngine::PART_16_HELPER_1_OBJECT_STATE(int num) {
 }
 
-void IgorEngine::PART_16_HELPER_2() {
+void IgorEngine::PART_16_HELPER_2_enterScene() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(0, 135, 2, 0);
 	wd->clipSkipX = 1;
@@ -148,7 +148,7 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 	loadResourceData__ROOM_Laboratory();
 	loadResourceData__ANIM_Laboratory();
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	PART_16_HELPER_1(255);
+	PART_16_HELPER_1_OBJECT_STATE(255);
 	fadeIn(768);
 	waitForTimer(255);
 	for (int i = 1; i <= 29; ++i) {
@@ -185,7 +185,7 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 	for (int i = 1; i <= 3; ++i) {
 		waitForTimer(255);
 	}
-	PART_16_HELPER_1(255);
+	PART_16_HELPER_1_OBJECT_STATE(255);
 	// Data-only inventory update: the panel is redrawn later together with the verbs
 	++_inventoryInfo[73];
 	_inventoryInfo[_inventoryInfo[73] - 1] = 19;
@@ -212,7 +212,7 @@ void IgorEngine::PART_16_HELPER_5_displayPhoto() {
 	}
 }
 
-void IgorEngine::PART_16_HELPER_6(int frame) {
+void IgorEngine::PART_16_HELPER_6_drawTalkingFrame(int frame) {
 	const uint8 *src = _animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + frame * 2) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
 }
@@ -226,11 +226,11 @@ void IgorEngine::PART_16() {
 	_roomDataOffsets = PART_16_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 248, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_16_EXEC_ACTION);
-	PART_16_HELPER_1(255);
+	PART_16_HELPER_1_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
-	PART_16_HELPER_2();
+	PART_16_HELPER_2_enterScene();
 	if (_objectsState[65] == 2 && _inventoryInfo[71] != 0 && _objectsState[76] == 1) {
 		PART_16_HELPER_3_photoCutscene();
 	}

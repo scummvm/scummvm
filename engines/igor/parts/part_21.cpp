@@ -95,7 +95,7 @@ void IgorEngine::PART_21_ACTION_102() {
 	_updateRoomBackground = &IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND;
 	_updateDialogue = 0;
 	PART_21_HANDLE_DIALOGUE_MARGARET();
-	PART_21_HELPER_1(255);
+	PART_21_HELPER_1_OBJECT_STATE(255);
 }
 
 void IgorEngine::PART_21_ACTION_107() {
@@ -113,7 +113,7 @@ void IgorEngine::PART_21_ACTION_107() {
 		}
 	}
 	_objectsState[64] = 1;
-	PART_21_HELPER_1(1);
+	PART_21_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_21_ACTION_108() {
@@ -130,7 +130,7 @@ void IgorEngine::PART_21_ACTION_108() {
 		}
 	}
 	_objectsState[64] = 0;
-	PART_21_HELPER_1(1);
+	PART_21_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_21_ACTION_110() {
@@ -166,7 +166,7 @@ void IgorEngine::PART_21_ACTION_111() {
 	} while (k != 10);
 	removeObjectFromInventory(56);
 	_objectsState[65] = 1;
-	PART_21_HELPER_1(255);
+	PART_21_HELPER_1_OBJECT_STATE(255);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
@@ -231,7 +231,7 @@ void IgorEngine::PART_21_HANDLE_DIALOGUE_MARGARET() {
 	_updateDialogue = 0;
 }
 
-void IgorEngine::PART_21_HELPER_1(int num) {
+void IgorEngine::PART_21_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[64] == 0) {
 			PART_21_HELPER_7();
@@ -252,7 +252,7 @@ void IgorEngine::PART_21_HELPER_1(int num) {
 	}
 }
 
-void IgorEngine::PART_21_HELPER_2() {
+void IgorEngine::PART_21_HELPER_2_enterFromLeft() {
 	_walkData[0].setPos(0, 141, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 15;
@@ -265,7 +265,7 @@ void IgorEngine::PART_21_HELPER_2() {
 	PART_21_HELPER_5();
 }
 
-void IgorEngine::PART_21_HELPER_3() {
+void IgorEngine::PART_21_HELPER_3_enterFromRight() {
 	_walkData[0].setPos(319, 133, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -277,7 +277,7 @@ void IgorEngine::PART_21_HELPER_3() {
 	PART_21_HELPER_5();
 }
 
-void IgorEngine::PART_21_HELPER_4() {
+void IgorEngine::PART_21_HELPER_4_enterFromPhysicsClass() {
 	_walkData[0].setPos(119, 108, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 0;
@@ -372,7 +372,7 @@ void IgorEngine::PART_21_HELPER_10() {
 	drawVerbsPanel();
 	_currentAction.verb = kVerbWalk;
 	drawInventory(_inventoryInfo[72], 0);
-	PART_21_HELPER_1(255);
+	PART_21_HELPER_1_OBJECT_STATE(255);
 	_objectsState[110] = 1;
 }
 
@@ -422,18 +422,18 @@ void IgorEngine::PART_21() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_21_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND;
-	PART_21_HELPER_1(255);
+	PART_21_HELPER_1_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (!restoreRoomAfterLoad()) {
 		_gameState.unk10 = 1;
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 210) {
-			PART_21_HELPER_2();
+			PART_21_HELPER_2_enterFromLeft();
 		} else if (_currentPart == 211) {
-			PART_21_HELPER_3();
+			PART_21_HELPER_3_enterFromRight();
 		} else if (_currentPart == 212) {
-			PART_21_HELPER_4();
+			PART_21_HELPER_4_enterFromPhysicsClass();
 		}
 	}
 	enterPartLoop();

@@ -45,13 +45,13 @@ void IgorEngine::PART_19_EXEC_ACTION(int action) {
 		_currentPart = 232;
 		break;
 	case 107:
-		PART_19_ACTION_107();
+		PART_19_ACTION_107_lookAtSink();
 		break;
 	case 108:
 		igorSay(208, 1, 916);
 		break;
 	case 109:
-		PART_19_ACTION_109();
+		PART_19_ACTION_109_usePapyrusOnDryer();
 		break;
 	default:
 		error("PART_19_EXEC_ACTION unhandled action %d", action);
@@ -59,7 +59,7 @@ void IgorEngine::PART_19_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_19_ACTION_107() { // sub_137_02C7
+void IgorEngine::PART_19_ACTION_107_lookAtSink() {
 	if (_objectsState[58] == 1) {
 		igorSay(211, 1, 919);
 		return;
@@ -74,10 +74,10 @@ void IgorEngine::PART_19_ACTION_107() { // sub_137_02C7
 	}
 	addObjectToInventory(12, 47);
 	_objectsState[58] = 1;
-	PART_19_HELPER_1(255);
+	PART_19_HELPER_1_OBJECT_STATE(255);
 }
 
-void IgorEngine::PART_19_ACTION_109() { // sub_137_0421
+void IgorEngine::PART_19_ACTION_109_usePapyrusOnDryer() {
 	if (_objectsState[2] == 1) {
 		igorSay(210, 1, 918);
 		return;
@@ -90,7 +90,7 @@ void IgorEngine::PART_19_ACTION_109() { // sub_137_0421
 	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x35E) - 1, _screenVGA, true);
 	playSound(45, 1);
 	lookAtPapyrus(true);
-	PART_19_HELPER_1(255);
+	PART_19_HELPER_1_OBJECT_STATE(255);
 	stopSound();
 	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x360) - 1, _screenVGA, true);
 	igorSayAndWait(209, 1, 917);
@@ -99,10 +99,10 @@ void IgorEngine::PART_19_ACTION_109() { // sub_137_0421
 void IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_19_HELPER_7((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 : 40);
+		PART_19_HELPER_7_drawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 : 40);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_19_HELPER_7((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 + getRandomNumber(4) : 40 + getRandomNumber(4));
+		PART_19_HELPER_7_drawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 + getRandomNumber(4) : 40 + getRandomNumber(4));
 		break;
 	}
 }
@@ -115,7 +115,7 @@ void IgorEngine::PART_19_UPDATE_BACKGROUND_HELPER_9() {
 	}
 }
 
-void IgorEngine::PART_19_HELPER_1(int num) {
+void IgorEngine::PART_19_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 2 || num == 255) {
 		if (_objectsState[59] == 0) {
 			decodeAnimFrame(_animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x4051) - 1, _screenLayer1, true);
@@ -179,7 +179,7 @@ void IgorEngine::PART_19_HELPER_2_slugCutscene() { // sub_137_07AD
 	_gameState.talkSpeed = talkSpeed;
 }
 
-void IgorEngine::PART_19_HELPER_3() {
+void IgorEngine::PART_19_HELPER_3_walkIn() {
 	_walkData[0].setPos(319, 142, 1, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 1;
@@ -192,7 +192,7 @@ void IgorEngine::PART_19_HELPER_3() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_19_HELPER_4() { // sub_137_0D7B
+void IgorEngine::PART_19_HELPER_4_enterAndLeave() {
 	decodeAnimFrame(_animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x40AB) - 1, _screenVGA, true);
 	waitForTimer(60);
 	igorSayAndWait(225, 1, 927);
@@ -204,7 +204,7 @@ void IgorEngine::PART_19_HELPER_4() { // sub_137_0D7B
 	_currentPart = 232;
 }
 
-void IgorEngine::PART_19_HELPER_7(int frame) {
+void IgorEngine::PART_19_HELPER_7_drawTalkingFrame(int frame) {
 	const uint8 *src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + frame * 2) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
 }
@@ -224,13 +224,13 @@ void IgorEngine::PART_19() {
 		return;
 	}
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_19_EXEC_ACTION);
-	PART_19_HELPER_1(255);
+	PART_19_HELPER_1_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
-	PART_19_HELPER_3();
+	PART_19_HELPER_3_walkIn();
 	if (_objectsState[59] == 0) {
-		PART_19_HELPER_4();
+		PART_19_HELPER_4_enterAndLeave();
 	} else {
 		enterPartLoop();
 		while (_currentPart == 190) {
