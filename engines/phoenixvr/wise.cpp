@@ -181,7 +181,7 @@ class WiseArchive : public Common::Archive {
 	};
 
 	template<typename Callback>
-	static long patternFind(const Common::Array<byte> &data, byte initial, ssize_t patternSize, const Callback &func) {
+	static long patternFind(const Common::Array<byte> &data, byte initial, uint patternSize, const Callback &func) {
 		if (data.size() < patternSize)
 			return -1;
 		auto *start = data.data();
