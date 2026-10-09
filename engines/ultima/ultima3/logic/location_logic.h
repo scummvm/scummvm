@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA3_LOGIC_OVERWORLD_LOGIC_H
-#define ULTIMA3_LOGIC_OVERWORLD_LOGIC_H
+#ifndef ULTIMA3_LOGIC_LOCATION_LOGIC_H
+#define ULTIMA3_LOGIC_LOCATION_LOGIC_H
 
 #include "ultima/ultima3/logic/logic.h"
 
@@ -32,9 +32,9 @@ constexpr byte TRANSPORT_SHIP = 0x0B;
 constexpr byte TRANSPORT_ON_FOOT = 0x3F;
 
 /**
- * Rules for travelling around the world map
+ * Rules for moving the party around a map
  */
-class OverworldLogic : public Logic {
+class LocationLogic : public Logic {
 private:
 	/**
 	 * Returns true if a ship can't sail in a direction because the wind is

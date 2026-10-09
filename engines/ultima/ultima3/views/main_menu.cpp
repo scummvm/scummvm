@@ -67,7 +67,7 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 			if (_G(savegame)._partySize == 0 || !_G(savegame).hasLivingPartyMember()) {
 				addView("JourneyOnward");
 			} else {
-				replaceView("OverworldMap", true);
+				replaceView("LocationMap", true);
 				return true;
 			}
 			break;

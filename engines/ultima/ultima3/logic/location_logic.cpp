@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/ultima3/logic/overworld_logic.h"
+#include "ultima/ultima3/logic/location_logic.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -48,14 +48,14 @@ constexpr byte CELL_SHIP = TRANSPORT_SHIP * 4;
 constexpr int FORCE_FIELD_DAMAGE = 99;
 constexpr int LAVA_DAMAGE = 50;
 
-bool OverworldLogic::isShipBlockedByWind(Direction dir) const {
+bool LocationLogic::isShipBlockedByWind(Direction dir) const {
 	if (_G(savegame)._transport != TRANSPORT_SHIP)
 		return false;
 
 	return _G(windDirection) == 0 || _G(windDirection) == (byte)dir;
 }
 
-bool OverworldLogic::isTerrainBlocked(byte tile) {
+bool LocationLogic::isTerrainBlocked(byte tile) {
 	Data::Savegame &save = _G(savegame);
 
 	if (save._transport == TRANSPORT_SHIP)
@@ -96,7 +96,7 @@ bool OverworldLogic::isTerrainBlocked(byte tile) {
 	}
 }
 
-bool OverworldLogic::move(Direction dir) {
+bool LocationLogic::move(Direction dir) {
 	Data::Savegame &save = _G(savegame);
 	int dx = (dir == DIR_EAST) ? 1 : (dir == DIR_WEST) ? -1 : 0;
 	int dy = (dir == DIR_SOUTH) ? 1 : (dir == DIR_NORTH) ? -1 : 0;
@@ -111,7 +111,7 @@ bool OverworldLogic::move(Direction dir) {
 	return true;
 }
 
-const char *OverworldLogic::board() {
+const char *LocationLogic::board() {
 	Data::Savegame &save = _G(savegame);
 	if (save._transport != TRANSPORT_ON_FOOT)
 		return nullptr;
@@ -131,7 +131,7 @@ const char *OverworldLogic::board() {
 	return nullptr;
 }
 
-OverworldLogic::ExitResult OverworldLogic::exitVehicle() {
+LocationLogic::ExitResult LocationLogic::exitVehicle() {
 	Data::Savegame &save = _G(savegame);
 	if (save._transport == TRANSPORT_ON_FOOT)
 		return EXIT_NOT_RIDING;

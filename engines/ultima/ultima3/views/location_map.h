@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef ULTIMA3_VIEWS_OVERWORLD_MAP_H
-#define ULTIMA3_VIEWS_OVERWORLD_MAP_H
+#ifndef ULTIMA3_VIEWS_LOCATION_MAP_H
+#define ULTIMA3_VIEWS_LOCATION_MAP_H
 
-#include "ultima/ultima3/logic/overworld_logic.h"
+#include "ultima/ultima3/logic/location_logic.h"
 #include "ultima/ultima3/views/game.h"
 
 namespace Ultima {
@@ -35,9 +35,9 @@ constexpr int VIEWPORT_TILES = 11;
  * The world map, seen as an 11x11 area of tiles centred on the party.
  * Forests and mountains hide whatever is behind them
  */
-class OverworldMap : public Game {
+class LocationMap : public Game {
 private:
-	OverworldLogic _logic;
+	LocationLogic _logic;
 
 	/**
 	 * Fills in the tile numbers for the viewport, with the party's transport
@@ -58,8 +58,8 @@ protected:
 	bool handleCommand(const KeypressMessage &msg) override;
 
 public:
-	OverworldMap() : Game("OverworldMap") {}
-	~OverworldMap() override {}
+	LocationMap() : Game("LocationMap") {}
+	~LocationMap() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
 };

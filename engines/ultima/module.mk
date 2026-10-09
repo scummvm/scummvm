@@ -171,8 +171,8 @@ MODULE_OBJS += \
 	ultima3/gfx/message_log.o \
 	ultima3/gfx/pic_decoder.o \
 	ultima3/gfx/shapes.o \
+	ultima3/logic/location_logic.o \
 	ultima3/logic/logic.o \
-	ultima3/logic/overworld_logic.o \
 	ultima3/views/character_details.o \
 	ultima3/views/create_character.o \
 	ultima3/views/disperse_party.o \
@@ -184,10 +184,10 @@ MODULE_OBJS += \
 	ultima3/views/interactions/look.o \
 	ultima3/views/interactions/ztats.o \
 	ultima3/views/journey_onward.o \
+	ultima3/views/location_map.o \
 	ultima3/views/logo_screen.o \
 	ultima3/views/main_menu.o \
 	ultima3/views/menu_input.o \
-	ultima3/views/overworld_map.o \
 	ultima3/views/party_menu.o \
 	ultima3/views/register.o \
 	ultima3/views/terminate_character.o \

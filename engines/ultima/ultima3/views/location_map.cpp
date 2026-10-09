@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/ultima3/views/overworld_map.h"
+#include "ultima/ultima3/views/location_map.h"
 #include "ultima/ultima3/views/menu_input.h"
 #include "ultima/ultima3/views/interactions/look.h"
 #include "ultima/ultima3/ultima3.h"
@@ -47,7 +47,7 @@ static int stepToCentre(int pos) {
 	return pos < centre ? 1 : (pos > centre ? -1 : 0);
 }
 
-bool OverworldMap::msgFocus(const FocusMessage &msg) {
+bool LocationMap::msgFocus(const FocusMessage &msg) {
 	// The game starts when arriving from the main menu, or continues on from a load
 	bool fromMenu = msg._priorView && msg._priorView->getName() == "MainMenu";
 	if (fromMenu || _G(resumeGame)) {
@@ -66,7 +66,7 @@ bool OverworldMap::msgFocus(const FocusMessage &msg) {
 	return Game::msgFocus(msg);
 }
 
-void OverworldMap::buildViewport(byte *tiles) const {
+void LocationMap::buildViewport(byte *tiles) const {
 	const Data::Savegame &save = _G(savegame);
 	const int half = VIEWPORT_TILES / 2;
 
@@ -100,7 +100,7 @@ void OverworldMap::buildViewport(byte *tiles) const {
 	}
 }
 
-void OverworldMap::drawViewport(GfxSurface &s) {
+void LocationMap::drawViewport(GfxSurface &s) {
 	byte tiles[VIEWPORT_CELLS];
 	buildViewport(tiles);
 
@@ -113,7 +113,7 @@ void OverworldMap::drawViewport(GfxSurface &s) {
 	s.addDirtyRect(Common::Rect(8, 8, 8 + VIEWPORT_TILES * Gfx::SHAPE_SIZE, 8 + VIEWPORT_TILES * Gfx::SHAPE_SIZE));
 }
 
-void OverworldMap::endTurn() {
+void LocationMap::endTurn() {
 	_logic.incrementMoveCounter();
 	_logic.processPartyTurnEffects(true);
 
@@ -121,7 +121,7 @@ void OverworldMap::endTurn() {
 		startPrompt();
 }
 
-void OverworldMap::doMove(Direction dir, const char *label) {
+void LocationMap::doMove(Direction dir, const char *label) {
 	_G(messages).print(label);
 
 	if (!_logic.move(dir)) {
@@ -132,22 +132,22 @@ void OverworldMap::doMove(Direction dir, const char *label) {
 	endTurn();
 }
 
-void OverworldMap::doPass() {
+void LocationMap::doPass() {
 	_G(messages).print("Pass\n");
 	endTurn();
 }
 
-void OverworldMap::doInvalid() {
+void LocationMap::doInvalid() {
 	_G(messages).print("<-What?\n");
 	g_engine->playSoundEffect(0xFE);
 	endTurn();
 }
 
-void OverworldMap::idleTimeout() {
+void LocationMap::idleTimeout() {
 	doPass();
 }
 
-void OverworldMap::doBoard() {
+void LocationMap::doBoard() {
 	const char *text = _logic.board();
 	if (text) {
 		_G(messages).print(text);
@@ -158,15 +158,15 @@ void OverworldMap::doBoard() {
 	}
 }
 
-void OverworldMap::doExitVehicle() {
+void LocationMap::doExitVehicle() {
 	_G(messages).print("X-it ");
 
 	switch (_logic.exitVehicle()) {
-	case OverworldLogic::EXIT_DONE:
+	case LocationLogic::EXIT_DONE:
 		_G(messages).print("Craft\n");
 		endTurn();
 		break;
-	case OverworldLogic::EXIT_NOT_HERE:
+	case LocationLogic::EXIT_NOT_HERE:
 		commandFailed("Not Here!\n", 0xFF);
 		break;
 	default:
@@ -175,7 +175,7 @@ void OverworldMap::doExitVehicle() {
 	}
 }
 
-bool OverworldMap::handleCommand(const KeypressMessage &msg) {
+bool LocationMap::handleCommand(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP8:

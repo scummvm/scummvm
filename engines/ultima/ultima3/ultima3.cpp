@@ -97,7 +97,7 @@ Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
 		// otherwise return to where the party can be organized
 		_resumeGame = _savegame._mapLoaded && _savegame._partySize > 0 &&
 			_savegame.hasLivingPartyMember();
-		replaceView(_resumeGame ? "OverworldMap" : "LogoScreen", true);
+		replaceView(_resumeGame ? "LocationMap" : "LogoScreen", true);
 	}
 
 	return Common::kNoError;
