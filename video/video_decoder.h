@@ -245,6 +245,12 @@ public:
 	bool endOfVideo() const;
 
 	/**
+	 * Find out if all video tracks have finished, independently of audio.
+	 * This lets callers retain the final picture while audio finishes.
+	 */
+	bool endOfVideoTracks() const;
+
+	/**
 	 * Returns the current frame number of the video.
 	 * @return the last frame decoded by the video
 	 */
@@ -968,14 +974,6 @@ protected:
 	 * @return A valid track pointer on success, 0 otherwise
 	 */
 	const Track *getTrack(uint track) const;
-
-	/**
-	 * Find out if all video tracks have finished
-	 *
-	 * This is useful if one wants to figure out if they need to buffer all
-	 * remaining audio in a file.
-	 */
-	bool endOfVideoTracks() const;
 
 	/**
 	 * Set _nextVideoTrack to the video track with the lowest start time for the next frame.

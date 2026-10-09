@@ -193,6 +193,29 @@ public:
 
 	void setMouseCursor(const Graphics::Cursor *cursor);
 	void setDefaultMouseCursor();
+	void setMouseCursor(const Graphics::Surface &surface, int hotspotX, int hotspotY);
+
+	/**
+	 * Pushes the work screen to the backend. For the ReelMagic release the
+	 * screen is a true colour one and the MPEG picture is mixed in underneath.
+	 */
+	void presentWorkScreen();
+
+	/** Recompose the displayed artwork over the current MPEG picture. */
+	void refreshVideo();
+
+	int getOutputWidth() const;
+	int getOutputHeight() const;
+	int screenToGameX(int x) const { return x / _graphicsScale; }
+	int screenToGameY(int y) const { return y / _graphicsScale; }
+	int gameToScreenX(int x) const { return x * _graphicsScale; }
+	int gameToScreenY(int y) const { return y * _graphicsScale; }
+
+	/**
+	 * Set the MPEG picture which the ReelMagic release mixes underneath the
+	 * paletted graphics.
+	 */
+	void setVideoLayer(const Graphics::Surface *videoLayer) { _videoLayer = videoLayer; }
 
 protected:
 	MadeEngine *_vm;
@@ -218,6 +241,28 @@ protected:
 	int _visualEffectNum;
 
 	Graphics::Surface *_backgroundScreen, *_workScreen, *_screenMask;
+
+	// The ReelMagic release runs on a true colour screen so that the MPEG
+	// picture can be mixed in under the paletted graphics; the palette is then
+	// applied here rather than by the backend.
+	bool _trueColor;
+	int _graphicsScale;
+	byte _outputPalette[256 * 3];
+	uint32 _outputColors[256];	// _outputPalette in the screen format
+	Graphics::Surface *_outputScreen;
+	const Graphics::Surface *_videoLayer;
+	// What the screen effects draw on. They expect to reach the visible screen
+	// as 8 bit paletted pixels, which a true colour backend cannot give them, so
+	// they get this mirror of the graphics layer instead and it is converted on
+	// the way out.
+	Graphics::Surface *_fxScreen;
+
+	/**
+	 * Converts a rect of 8 bit graphics into the true colour output screen,
+	 * mixing the MPEG picture in where the graphics are transparent, and hands
+	 * the result to the backend. @p src points at the top left of the rect.
+	 */
+	void blitTrueColorRect(const byte *src, int srcPitch, int x, int y, int w, int h);
 	ClipInfo _clipArea, _backgroundScreenDrawCtx, _workScreenDrawCtx, _maskDrawCtx;
 
 	ClipInfo _excludeClipArea[4];

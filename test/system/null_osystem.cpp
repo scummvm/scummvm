@@ -4,12 +4,21 @@
 #define NULL_DRIVER_USE_FOR_TEST 1
 #include "null_osystem.h"
 #include "../backends/platform/null/null.cpp"
+#include "backends/graphics/null/null-graphics.h"
 #ifdef USE_CLOUD
 #undef USE_CLOUD
 #endif
 #include "../backends/saves/savefile.cpp"
 
 //#define DISPLAY_ERROR_MESSAGES
+
+class TestSystem : public OSystem_NULL {
+public:
+	TestSystem(bool silenceLogs) : OSystem_NULL(silenceLogs) {
+		_graphicsManager = new NullGraphicsManager();
+		_graphicsManager->initSize(320, 200);
+	}
+};
 
 void Common::install_null_g_system() {
 #ifdef DISPLAY_ERROR_MESSAGES
@@ -18,7 +27,7 @@ void Common::install_null_g_system() {
 	const bool silenceLogs = true;
 #endif
 
-	g_system = OSystem_NULL_create(silenceLogs);
+	g_system = new TestSystem(silenceLogs);
 	g_system->initBackend();
 }
 
