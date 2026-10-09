@@ -54,18 +54,19 @@ void IgorEngine::PART_04_EXEC_ACTION(int action) {
 		break;
 	}
 }
-void IgorEngine::PART_04_CLEAR_OBJECT_STATE_84(int num) {
-	_objectsState[84] = 0;
-}
+
 
 /**
  * MAP
  * */
 void IgorEngine::PART_04() {
-	if (_objectsState[106] == 1) {
+
+	if (_objectsState[106] == 1) { // newspaper cutscene
 		_currentPart = 730;
 		return;
 	}
+
+	// if philip has drunk the chemical, trigger the cutscene
 	if (_objectsState[107] == 1) {
 		_objectsState[107] = 0;
 		_currentPart = 750;
@@ -76,7 +77,9 @@ void IgorEngine::PART_04() {
 	loadActionData(DAT_Map);
 	_roomDataOffsets = PART_04_ROOM_DATA_OFFSETS;
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_04_EXEC_ACTION);
-	PART_04_CLEAR_OBJECT_STATE_84(255);
+
+	// closes Philips locker
+	_objectsState[84] = 0;
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	playMusic(1);
@@ -99,11 +102,14 @@ void IgorEngine::PART_04() {
 		if (compareGameTick(4, 8)) {
 			handleRoomInventoryScroll();
 		}
+		// palette animation for the water
 		scrollPalette(200, 207);
 		setPaletteRange(200, 207);
+
 		if (compareGameTick(1)) {
 			handleIgorIdleAnimation();
 		}
+
 		scrollPalette(184, 199);
 		setPaletteRange(184, 199);
 		waitForTimer();

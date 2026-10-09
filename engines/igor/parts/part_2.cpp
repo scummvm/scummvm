@@ -10,10 +10,6 @@
 
 namespace Igor {
 
-void IgorEngine::PART_02_START_DIALOGUE(int text, int count, int sound) {
-	igorSay(text, count, sound);
-}
-
 void IgorEngine::PART_02_SEARCH_TRUNK() {
 	for (int frame = 0; frame <= 2; ++frame) {
 		animateLitAnimFrames(0x3C0 + frame * 0x715, 0, 0, 0x715, 37, 49, 0x608C, 0, -1, 0);
@@ -39,12 +35,10 @@ void IgorEngine::PART_02_DRAW_FUSE_SPARK(int frame) {
 }
 
 void IgorEngine::PART_02_UPDATE_FUSE() {
-	// The DOS loop chooses a new spark every eight timer units. The engine's
-	// regular update step is exactly kTimerTicksCount (8) units.
-	PART_02_DRAW_FUSE_SPARK(getRandomNumber(3)); // DOS random(4);
+	PART_02_DRAW_FUSE_SPARK(getRandomNumber(3));
 }
 
-void IgorEngine::PART_02_WALK_WITH_FUSE(int srcX, int srcY, int dstX, int dstY) {
+void IgorEngine::PART_02_WALK_WHILE_FUSE_BURNS(int srcX, int srcY, int dstX, int dstY) {
 	--_walkDataLastIndex;
 	buildWalkPath(srcX, srcY, dstX, dstY);
 	_walkDataCurrentIndex = 1;
@@ -101,7 +95,7 @@ void IgorEngine::PART_02_APPLY_OBJECT_STATE(int num) {
 		}
 	}
 	if (num == 6 || num == 255) {
-		if (_objectsState[21] == 0)
+		if (_objectsState[21] == 0) // changes action on hammer after using it the first time
 			_roomObjectAreasTable[14].object = _objectsState[20] == 1 ? 8 : (_objectsState[19] == 1 ? 7 : (_objectsState[18] == 1 ? 6 : 0));
 	}
 	if ((num == 8 || num == 255) && _objectsState[23] == 1) {
@@ -118,7 +112,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101: // open trunk
 		if (_objectsState[16] == 1) {
-			PART_02_START_DIALOGUE(201, 1, 108);
+			igorSay(201, 1, 108);
 			break;
 		}
 		animateLitAnimFrames(0x18FF, 1, 2, 0x715, 37, 49, 0x608C, 127, 1, 7);
@@ -127,7 +121,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		break;
 	case 102: // close trunk
 		if (_objectsState[16] == 0) {
-			PART_02_START_DIALOGUE(201, 1, 108);
+			igorSay(201, 1, 108);
 			break;
 		}
 		playSound(8, 1);
@@ -148,16 +142,15 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		_objectsState[21] = 0;
 		PART_02_APPLY_OBJECT_STATE(5);
 		PART_02_APPLY_OBJECT_STATE(6);
-		PART_02_START_DIALOGUE(217, 1, 121);
+		igorSay(217, 1, 121);
 		break;
 	}
 	case 104: { // use the pick on the crack; cseg203:0838-0A2C
-		if (_objectsState[23] == 1) { // s3:0x0853; cseg203:0846-0851
-			EXEC_MAIN_ACTION(2); // s3:0x5944 = cseg222:2A76
+		if (_objectsState[23] == 1) {
+			EXEC_MAIN_ACTION(2);
 			break;
 		}
-		// The selector bytes at dseg231:0x024A-0x025E alternate frames
-		// 0/1 and finish on frame 2 (indexed from s3:0x0249).
+
 		for (int step = 1; step <= 21; ++step) {
 			const int frame = step == 21 ? 2 : ((step + 1) & 1);
 			animateLitAnimFrames(0x41CA + frame * 0x658, 0, 0, 0x658,
@@ -166,43 +159,43 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 				playSound(10, 1);
 			waitForTimer(63);
 		}
-		_objectsState[19] = 1; // s3:0x084F; cseg203:09EB
-		_objectsState[20] = 0; // s3:0x0850; cseg203:09F0
+		_objectsState[19] = 1;
+		_objectsState[20] = 0;
 		PART_02_APPLY_OBJECT_STATE(4);
 		PART_02_APPLY_OBJECT_STATE(5);
 		PART_02_APPLY_OBJECT_STATE(6);
-		PART_02_START_DIALOGUE(218, 1, 122);
+		igorSay(218, 1, 122);
 		break;
 	}
 	case 105: // look at nail
-		PART_02_START_DIALOGUE(209, 1, 115);
+		igorSay(209, 1, 115);
 		_objectsState[22] = 1;
 		break;
-	case 106: // look in trunk; cseg203:0A87-0D70
-		if (_objectsState[16] == 0) { // s3:0x084C; cseg203:0A91-0AB9
-			PART_02_START_DIALOGUE(201, 1, 108);
+	case 106: // look in trunk
+		if (_objectsState[16] == 0) {
+			igorSay(201, 1, 108);
 			break;
 		}
-		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] == 0) { // s3:0x0906/0907
-			if (_objectsState[22] == 0) { // s3:0x0852; cseg203:0AD0-0B0A
-				PART_02_START_DIALOGUE(202, 2, 109);
+		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] == 0) {
+			if (_objectsState[22] == 0) {
+				igorSay(202, 2, 109);
 			} else {
 				PART_02_SEARCH_TRUNK();
-				PART_02_START_DIALOGUE(204, 1, 111);
-				addObjectToInventory(9, 44); // s3:0x0906; cseg203:0B35-0B6F
+				igorSay(204, 1, 111);
+				addObjectToInventory(9, 44);
 				PART_02_APPLY_OBJECT_STATE(255);
 			}
 			break;
 		}
 		if (_inventoryInfo[44] != 0 && _inventoryInfo[45] == 0) {
-			if (_objectsState[20] == 0) { // s3:0x0850
-				PART_02_START_DIALOGUE(202, 2, 109);
+			if (_objectsState[20] == 0) {
+				igorSay(202, 2, 109);
 			} else {
 				PART_02_SEARCH_TRUNK();
-				PART_02_START_DIALOGUE(205, 1, 112);
-				removeObjectFromInventory(44); // s3:0x0906; cseg203:0BFD-0C17
+				igorSay(205, 1, 112);
+				removeObjectFromInventory(44);
 				playSound(63, 1);
-				addObjectToInventory(10, 45); // s3:0x0907; cseg203:0C1C-0C60
+				addObjectToInventory(10, 45);
 				PART_02_APPLY_OBJECT_STATE(255);
 			}
 			break;
@@ -211,17 +204,16 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 				_inventoryInfo[46] == 0 && _objectsState[23] == 0 &&
 				_objectsState[19] != 0) {
 			PART_02_SEARCH_TRUNK();
-			PART_02_START_DIALOGUE(206, 1, 113);
-			addObjectToInventory(11, 46); // s3:0x0908; cseg203:0D01-0D3B
-			PART_02_APPLY_OBJECT_STATE(255);
+			igorSay(206, 1, 113);
+			addObjectToInventory(11, 46);
 		} else if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 &&
 				_inventoryInfo[46] == 0 && _objectsState[23] == 0) {
-			PART_02_START_DIALOGUE(202, 2, 109);
+			igorSay(202, 2, 109);
 		} else {
-			PART_02_START_DIALOGUE(207, 2, 114);
+			igorSay(207, 2, 114);
 		}
 		break;
-	case 107: // take butterfly net; cseg203:0D71-0F3E
+	case 107: // take butterfly net
 		animateLitAnimFrames(0x54D2, 0, 1, 0x405, 21, 49, 0x5A6D, 127, -1, 0);
 		waitForTimer(127);
 		addObjectToInventory(7, 42);
@@ -229,19 +221,19 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		PART_02_APPLY_OBJECT_STATE(2);
 		break;
 	case 108: // Look at old junk
-		PART_02_START_DIALOGUE(210, 1, 116);
+		igorSay(210, 1, 116);
 		break;
 	case 109: // look at portrait
 		igorSay({ { 225, 4, 128 }, { 229, 1, 129 } });
 		break;
 	case 110: // look at hole
-		PART_02_START_DIALOGUE(213, 1, 118);
+		igorSay(213, 1, 118);
 		break;
-	case 111:
-		PART_02_START_DIALOGUE(214, 2, 119);
+	case 111: // look at big crack
+		igorSay(214, 2, 119);
 		break;
 	case 112:
-		PART_02_START_DIALOGUE(216, 1, 120);
+		igorSay(216, 1, 120);
 		break;
 	case 113: // place dynamite in the crack
 		animateLitAnimFrames(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
@@ -253,17 +245,17 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		PART_02_APPLY_OBJECT_STATE(255);
 		break;
 	case 114:
-		PART_02_START_DIALOGUE(219, 1, 123);
+		igorSay(219, 1, 123);
 		break;
 	case 115:
-		PART_02_START_DIALOGUE(217, 1, 121);
+		igorSay(217, 1, 121);
 		break;
 	case 116:
-		PART_02_START_DIALOGUE(218, 1, 122);
+		igorSay(218, 1, 122);
 		break;
 	case 118: // exit through window
 		if (_objectsState[24] == 1) {
-			PART_02_START_DIALOGUE(220, 1, 124);
+			igorSay(220, 1, 124);
 		} else {
 			_objectsState[24] = 1;
 			_currentPart = 11;
@@ -278,10 +270,10 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		_currentPart = 30;
 		break;
 	case 121: // look at shelf / take matches
-		if (_objectsState[25] == 1) { // s3:0x0855; cseg203:0F49
-			PART_02_START_DIALOGUE(230, 1, 130);
+		if (_objectsState[25] == 1) {
+			igorSay(230, 1, 130);
 		} else {
-			PART_02_START_DIALOGUE(211, 2, 117);
+			igorSay(211, 2, 117);
 			addObjectToInventory(8, 43);
 			_objectsState[25] = 1;
 		}
@@ -290,63 +282,66 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		if (_objectsState[23] == 0) {
 			EXEC_MAIN_ACTION(2);
 		} else {
-			memset(_screenVGA + 0xB400, 0, 0x4BFF);
-			playSound(68, 1);
-			animateLitAnimFrames(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
-			waitForTimer(127);
-
-
-			PART_02_START_DIALOGUE(221, 1, 125);
-			if (_gameState.talkMode == kTalkModeTextOnly)
-				playSound(11, 1);
-			_updateRoomBackground = &IgorEngine::PART_02_UPDATE_FUSE;
-			waitForEndOfIgorDialogue();
-			_updateRoomBackground = 0;
-
-			memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 320 * 72, _dialogueDirtyRectSize);
-			if (_gameState.talkMode != kTalkModeTextOnly)
-				playSound(11, 1);
-
-			PART_02_WALK_WITH_FUSE(211, 120, 0, 143);
-			for (int elapsed = 0; elapsed < 255; elapsed += kTimerTicksCount) {
-				PART_02_UPDATE_FUSE();
-				waitForTimer();
-			}
-			copyArea(_screenVGA, 0x5996, 320, _screenLayer1 + 0x5996, 320, 12, 12);
-			stopSound();
-			waitForTimer(5 * 255);
-
-			PART_02_START_DIALOGUE(222, 2, 126);
-			waitForEndOfIgorDialogue();
-			waitForTimer(2 * 255);
-			stopDialogueSpeech();
-
-			_gameState.dialogueTextRunning = false;
-
-			// Return from the left edge to the dynamite wall.
-			--_walkDataLastIndex;
-			buildWalkPath(0, 143, 211, 120);
-			_walkDataCurrentIndex = 1;
-			_walkData[_walkDataLastIndex].frameNum = 0;
-			_gameState.igorMoving = true;
-			waitForIgorMove();
-
-			_objectsState[18] = 1;
-			_objectsState[19] = 0;
-			_objectsState[23] = 0;
-			_objectsState[11] = 1;
-			PART_02_APPLY_OBJECT_STATE(3);
-			PART_02_APPLY_OBJECT_STATE(4);
-			PART_02_APPLY_OBJECT_STATE(5);
-			memset(_currentPalette + 240 * 3, 0, 16 * 3);
-			setPaletteRange(240, 255);
-			_currentPart = 12;
+			lightUpDynamite();
 		}
 		break;
 	default:
 		warning("PART_02_EXEC_ACTION unhandled action %d", action);
 		break;
 	}
+}
+
+void IgorEngine::lightUpDynamite() {
+	memset(_screenVGA + 0xB400, 0, 0x4BFF);
+	playSound(68, 1);
+	animateLitAnimFrames(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
+	waitForTimer(127);
+
+	igorSay(221, 1, 125);
+	if (_gameState.talkMode == kTalkModeTextOnly)
+		playSound(11, 1);
+	_updateRoomBackground = &IgorEngine::PART_02_UPDATE_FUSE;
+	waitForEndOfIgorDialogue();
+	_updateRoomBackground = 0;
+
+	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 320 * 72, _dialogueDirtyRectSize);
+	if (_gameState.talkMode != kTalkModeTextOnly)
+		playSound(11, 1);
+
+	PART_02_WALK_WHILE_FUSE_BURNS(211, 120, 0, 143);
+	for (int elapsed = 0; elapsed < 255; elapsed += kTimerTicksCount) {
+		PART_02_UPDATE_FUSE();
+		waitForTimer();
+	}
+	copyArea(_screenVGA, 0x5996, 320, _screenLayer1 + 0x5996, 320, 12, 12);
+	stopSound();
+	waitForTimer(5 * 255);
+
+	igorSay(222, 2, 126);
+	waitForEndOfIgorDialogue();
+	waitForTimer(2 * 255);
+	stopDialogueSpeech();
+
+	_gameState.dialogueTextRunning = false;
+
+	// Return from the left edge to the dynamite wall.
+	--_walkDataLastIndex;
+	buildWalkPath(0, 143, 211, 120);
+	_walkDataCurrentIndex = 1;
+	_walkData[_walkDataLastIndex].frameNum = 0;
+	_gameState.igorMoving = true;
+	waitForIgorMove();
+
+	_objectsState[18] = 1;
+	_objectsState[19] = 0;
+	_objectsState[23] = 0;
+	_objectsState[11] = 1;
+	PART_02_APPLY_OBJECT_STATE(3);
+	PART_02_APPLY_OBJECT_STATE(4);
+	PART_02_APPLY_OBJECT_STATE(5);
+	memset(_currentPalette + 240 * 3, 0, 16 * 3);
+	setPaletteRange(240, 255);
+	_currentPart = 12;
 }
 
 void IgorEngine::PART_02() {
@@ -375,9 +370,8 @@ void IgorEngine::PART_02() {
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		switch (_currentPart) {
-		case 20:
+		case 20:  // Igor climbs through the window on the first attic entrance.
 			fadeIn(768);
-			// Igor climbs through the window on the first attic entrance.
 			animateLitAnimFrames(0x69C0, 0, 2, 0x759, 33, 57, 0x4B26, 31, -1, 0);
 			waitForTimer(31);
 			_walkData[0].setPos(57, 117, kFacingPositionRight, 0);
@@ -386,18 +380,12 @@ void IgorEngine::PART_02() {
 			fadeIn(768);
 			_walkData[0].setPos(300, 136, kFacingPositionLeft, 0);
 			break;
-		case 22:
-			// restores the live palette from the saved one
-			// before the walk setup below, the same copy state 11 happens
-			// Without it the part-1 fadeOut leaves the attic black.
+		case 22: // back after pigeons cutscene
 			memcpy(_currentPalette, _paletteBuffer, 768);
 			updatePalette(768);
 			_walkData[0].setPos(49, 118, kFacingPositionBack, 0);
 			break;
-		case 23:
-			// State 12 fades the outside scene to black before returning here.
-			// The original state-23 entrance clears the text/UI area and restores
-			// the attic palette before drawing its post-explosion frame.
+		case 23: // back after outdoor explosion scene
 			memset(_screenVGA + 0xB400, 0, 0x4600);
 			memcpy(_currentPalette, _paletteBuffer, 768);
 			drawAnimRect(0x6C3B, 0x820B + 0 * 0xA19, 47, 55, false, kBlendLitSprite);
@@ -418,14 +406,14 @@ void IgorEngine::PART_02() {
 				else
 					waitForTimer(127);
 			}
-			PART_02_START_DIALOGUE(224, 1, 127);
+			igorSay(224, 1, 127);
 
 			// Rebuild the panels erased above.
 			drawVerbsPanel();
 			drawInventory(_inventoryInfo[72], 0);
 			_walkData[0].setPos(215, 134, kFacingPositionRight, 0);
 			break;
-		case 24:
+		case 24: // From igor's room
 			_walkData[0].setPos(211, 120, kFacingPositionFront, 0);
 			fadeIn(768);
 			break;

@@ -416,7 +416,7 @@ void IgorEngine::PART_14_HELPER_9() {
 		}
 		if (_inputVars[kInputClick]) {
 			_inputVars[kInputClick] = 0;
-			_dialogueEnded = area == 0;
+			_dialogueEnded = area != 0;
 			if (area == 9) {
 				_currentPart = 146;
 			}
@@ -450,25 +450,27 @@ void IgorEngine::PART_14_HELPER_9() {
 					PART_14_PUSH_STONE(31889, 27, 38, 0x2687);
 					break;
 				}
-			}
-			stopSound();
-			drawActionSentence("Push stone", 253);
-			showCursor();
-			_dialogueEnded = false;
-			++_gameState.counter[4];
-			if (_objectsState[2] == 0 || PART_14_ANIM_DATA_1[_gameState.counter[4]] != area) {
-				_currentPart = 0;
-			}
-			if (_gameState.counter[4] == 5) {
-				if (_currentPart == 145) {
-					_dialogueEnded = true;
-				} else {
-					_currentPart = 145;
-					_gameState.counter[4] = 0;
-					playSound(35, 1);
-					waitForTimer(255);
-					stopSound();
-					igorSayAndWait(204, 1, 863);
+				stopSound();
+				drawActionSentence(getString(STR_PushStone), 253);
+				showCursor();
+				_dialogueEnded = false;
+				++_gameState.counter[4];
+				if (_objectsState[2] == 0 || PART_14_ANIM_DATA_1[_gameState.counter[4]] != area) {
+					_currentPart = 0;
+				}
+				if (_gameState.counter[4] == 5) {
+					if (_currentPart == 145) {
+						_dialogueEnded = true;
+					} else {
+						_currentPart = 145;
+						_gameState.counter[4] = 0;
+						playSound(35, 1);
+						waitForTimer(255);
+						stopSound();
+						// The mosaic screen has no Igor sprite, so his head is not animated.
+						igorSay(204, 1, 863);
+						waitForEndOfIgorDialogue(false);
+					}
 				}
 			}
 		}
@@ -477,7 +479,10 @@ void IgorEngine::PART_14_HELPER_9() {
 			_currentPart = 146;
 			_dialogueEnded = true;
 		}
-	} while (_currentPart >= 145 && _currentPart <= 146 && !_dialogueEnded);
+		// The original reads mouse/keyboard state updated by interrupts; here
+		// input is only gathered while waiting for the timer.
+		waitForTimer();
+	} while (!_eventQuitGame && !(_currentPart >= 145 && _currentPart <= 146 && _dialogueEnded));
 	drawActionSentence("", 253);
 	hideCursor();
 	if (_currentPart == 145) {
@@ -498,11 +503,13 @@ void IgorEngine::PART_14_HELPER_10() {
 
 void IgorEngine::PART_14_PUSH_STONE(int screenOffset, int w, int h, int animOffset) {
 	for (int i = 0; i <= h; ++i) {
-		memcpy(_screenTempLayer + i * 100, _screenVGA + i * 320 + animOffset, w);
-		memcpy(_screenVGA + i * 320 + screenOffset, _animFramesBuffer + i * w, w);
+		memcpy(_screenTempLayer + i * 100, _screenVGA + i * 320 + screenOffset, w);
+		memcpy(_screenVGA + i * 320 + screenOffset, _animFramesBuffer + animOffset + i * w, w);
 	}
 	waitForTimer(127);
-	copyArea(_screenVGA, screenOffset, 320, _screenTempLayer, 100, 28, h + 1);
+	for (int i = 0; i <= h; ++i) {
+		memcpy(_screenVGA + i * 320 + screenOffset, _screenTempLayer + i * 100, w);
+	}
 }
 
 void IgorEngine::PART_14() {
@@ -542,9 +549,9 @@ void IgorEngine::loadResourceData__ROOM_ChurchPuzzle() {
 void IgorEngine::loadResourceData__ANIM_ChurchPuzzle() {
 	static const int anm1[] = { FRM_ChurchPuzzle1, FRM_ChurchPuzzle2, FRM_ChurchPuzzle3, FRM_ChurchPuzzle4, 0 };
 	loadAnimData(anm1, 0);
-	static const int anm2[] = { FRM_ChurchPuzzle5, FRM_ChurchPuzzle6, FRM_ChurchPuzzle7, FRM_ChurchPuzzle8, FRM_ChurchPuzzle9, FRM_ChurchPuzzle10, FRM_ChurchPuzzle11, FRM_ChurchPuzzle12, 0 };
+	static const int anm2[] = { FRM_ChurchPuzzle5, FRM_ChurchPuzzle6, FRM_ChurchPuzzle7, FRM_ChurchPuzzle8, FRM_ChurchPuzzle9, FRM_ChurchPuzzle10, FRM_ChurchPuzzle11, 0 };
 	loadAnimData(anm2, 0x1D8F);
-	static const int anm3[] = { FRM_ChurchPuzzle13, FRM_ChurchPuzzle14, 0 };
+	static const int anm3[] = { FRM_ChurchPuzzle12, FRM_ChurchPuzzle13, FRM_ChurchPuzzle14, 0 };
 	loadAnimData(anm3, 0xCCE6);
 }
 

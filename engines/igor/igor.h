@@ -630,31 +630,34 @@ private:
 
 	// map
 	void PART_04_EXEC_ACTION(int action);
-	void PART_04_CLEAR_OBJECT_STATE_84(int num);
 	void PART_04();
+
+	// Igors room
 	void PART_00();
 	void PART_00_EXEC_ACTION(int action);
 	void PART_00_APPLY_OBJECT_STATE(int num);
 	void PART_00_ENTRY_ANIMATION();
 	void PART_00_WALK_IN_FROM_CLOSET();
 	void PART_00_ENTER_FROM_BELOW();
+	// Rooftop
 	void PART_01();
 	void PART_01_EXEC_ACTION(int action);
 	void PART_01_CLOSE_WINDOW();
 	void PART_01_STATE_11_BLIT_blitIgor();
-	void PART_01_STATE_11_BLIT_00A5();
+	void PART_01_STATE_11_BLIT_blitRoof();
 	void PART_01_STATE_11_BLIT_drawIgorsEyes(int frame);
 	void PART_01_STATE_11_DRAW_drawPigeons(int index);
 	void PART_01_STATE_11_pigeonsCutscene();
 	void PART_01_STATE_12_explosion();
+	// junk room
 	void PART_02();
 	void PART_02_EXEC_ACTION(int action);
+	void lightUpDynamite();
 	void PART_02_APPLY_OBJECT_STATE(int num);
-	void PART_02_START_DIALOGUE(int text, int count, int sound);
 	void PART_02_SEARCH_TRUNK();
 	void PART_02_DRAW_FUSE_SPARK(int frame);
 	void PART_02_UPDATE_FUSE();
-	void PART_02_WALK_WITH_FUSE(int srcX, int srcY, int dstX, int dstY);
+	void PART_02_WALK_WHILE_FUSE_BURNS(int srcX, int srcY, int dstX, int dstY);
 
 	// spring bridge
 	void PART_05_HELPER_4_drawPaperOrNot(int num);

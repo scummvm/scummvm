@@ -32,7 +32,7 @@ void IgorEngine::PART_01_STATE_11_BLIT_blitIgor() {
 	drawAnimRect(0x5476, 0x1859, 16, 13);
 }
 
-void IgorEngine::PART_01_STATE_11_BLIT_00A5() {
+void IgorEngine::PART_01_STATE_11_BLIT_blitRoof() {
 	drawAnimRect(0x118F, 0xA7F9, 0xDA, 40);
 }
 
@@ -51,7 +51,7 @@ void IgorEngine::PART_01_STATE_11_DRAW_drawPigeons(int index) {
 // animation loop before handing over to state 22.
 void IgorEngine::PART_01_STATE_11_pigeonsCutscene() {
 	PART_01_STATE_11_BLIT_blitIgor();
-	PART_01_STATE_11_BLIT_00A5();
+	PART_01_STATE_11_BLIT_blitRoof();
 
 	memcpy(_currentPalette, _paletteBuffer, 768);
 	updatePalette(768);
@@ -85,6 +85,9 @@ void IgorEngine::PART_01_STATE_11_pigeonsCutscene() {
 	_currentPart = 22;
 }
 
+/**
+ * Just a screen shaking effect
+ */
 void IgorEngine::PART_01_STATE_12_explosion() {
 	int shakeY = 0;
 	int elapsed = 0;

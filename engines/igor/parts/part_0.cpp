@@ -26,14 +26,14 @@ namespace Igor {
 void IgorEngine::PART_00_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		const bool open = _objectsState[8] != 0;
-		const int src = open ? 0x4CFA : 0x4C6A;
+		const int src = open ? 0x4CFA : 0x4C6A; // open or closed bedside table depending on the flag
 		copyArea(_screenLayer1, 0x8EBD, 320, _animFramesBuffer + src, 16, 16, 9);
 		_roomActionsTable[74] = open ? 7 : 6;
 		_roomObjectAreasTable[13].object = open ? (_objectsState[9] == 0 ? 3 : 2) : 2;
 	}
 	if (num == 3 || num == 255) {
-		const bool open = _objectsState[10] != 0; // s3:0846; cseg206:1AFF-1B42
-		const int src = open ? 0x3900 : 0x3238;
+		const bool open = _objectsState[10] != 0;
+		const int src = open ? 0x3900 : 0x3238; // open or closed door frame depending on the flag
 		copyArea(_screenLayer1, 0x5572, 320, _animFramesBuffer + src, 31, 31, 56);
 		_roomActionsTable[76] = open ? 7 : 6;
 		_roomObjectAreasTable[3].object = (_objectsState[11] == 0) ? 4 : 5;
@@ -41,7 +41,7 @@ void IgorEngine::PART_00_APPLY_OBJECT_STATE(int num) {
 	if (num == 6 || num == 255) {
 
 		const int state = _objectsState[13];
-		const int src = state == 1 ? 0x143C : 0x1200;
+		const int src = state == 1 ? 0x143C : 0x1200; // open or closed window depending on the flag
 		copyArea(_screenLayer1, 0x6DB7, 320, _animFramesBuffer + src, 26, 26, 22);
 		_roomActionsTable[79] = state == 1 ? 7 : (state == 2 ? 6 : 4);
 	}
@@ -189,6 +189,7 @@ void IgorEngine::PART_00_ENTRY_ANIMATION() {
 	waitForTimer(62);
 	if (_objectsState[10] == 0) {
 		drawAnimRect(0x5572, 0x3900, 31, 56);
+		// leave closet open
 		_objectsState[10] = 1;
 		PART_00_APPLY_OBJECT_STATE(3);
 		playSound(3, 1);
@@ -265,9 +266,11 @@ void IgorEngine::PART_00() {
 	};
 	loadAnimData(animFrames);
 	_roomDataOffsets = PART_00_ROOM_DATA_OFFSETS;
+
 	// clamps clicks to x 41..253 and y <= 143; clicks past the
 	// horizontal edges also clamp to y >= 141/138
 	setRoomWalkBounds(41, 0, 253, 143, 141, 138);
+
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_00_EXEC_ACTION);
 	PART_00_APPLY_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
