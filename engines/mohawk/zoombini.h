@@ -489,7 +489,7 @@ public:
 	 * Return the integer animation tick used for logic and authored animation deadlines.
 	 * The counter follows the selected tick rate, independently of the target presentation rate.
 	 * Individual features advance their sprite poses only when their own deadlines become due.
-	 * @param timeMs Backend clock time in milliseconds (10^-3 seconds).
+	 * @param timeMs Animation-clock time in milliseconds (10^-3 seconds).
 	 * @see Mohawk::MohawkEngine_Zoombini::doFrame()
 	 */
 	uint32 getAnimationFrameCounter(uint32 timeMs) const;
@@ -498,8 +498,8 @@ public:
 	 * One logic tick equals 1000 units; these units are neither milliseconds nor sprite-pose indices.
 	 * Unlike the integer tick counter, this time continues to advance between logic ticks.
 	 * One unit equals 1/1000 of one tick, or 1/60000 seconds.
-	 * @param timeMs Backend clock time in milliseconds (10^-3 seconds).
-	 * @return Fractional animation time in thousandths of one logic tick, a 1/60000 seconds per unit.
+	 * @param timeMs Animation-clock time in milliseconds (10^-3 seconds).
+	 * @return Fractional animation time in thousandths of one logic tick, or 1/60000 seconds per unit.
 	 */
 	uint64 getAnimationFrameTime(uint32 timeMs) const;
 	/** Return whether position interpolation is enabled with the accurate animation clock. */
@@ -575,7 +575,7 @@ private:
 	MohawkMetaEngine_Zoombini::TickRate _tickRate = MohawkMetaEngine_Zoombini::TickRate::kAccurate60FPS;
 	/** Whether color-blind palette and UI adjustments are enabled. */
 	bool _colorBlindMode = false;
-	/** Millisecond epoch used to make animation time monotonic across frame calls. */
+	/** Animation-clock epoch used to make animation time monotonic across frame calls. */
 	uint32 _animationClockEpochTimeMs = 0;
 	/** Integer animation-tick epoch paired with @ref _animationClockEpochTimeMs. */
 	uint32 _animationClockEpochFrame = 0;

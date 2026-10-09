@@ -143,7 +143,7 @@ void ZoombiniPuzzlePizza::setDifficultyParams() {
 void ZoombiniPuzzlePizza::initStates() {
 	// Apply per-level constants
 	setDifficultyParams();
-	_lastActivityFrame = _vm->getAnimationFrameCounter(_vm->_system->getMillis());
+	_lastTrollIdleFrame = _vm->getAnimationFrameCounter(_vm->getTotalPlayTime());
 	_trollFeatureCompletedThisFrame = false;
 	_orderFeatureCompletionPending[TrollOrderLine::kArno00] = false;
 	_orderFeatureCompletionPending[TrollOrderLine::kWilla01] = false;
@@ -463,7 +463,7 @@ bool ZoombiniPuzzlePizza::debugDoBuiltinDebugCommand(int argc, const char **argv
 
 	const BuiltinDebugAction action = parseBuiltinDebugAction(argv[2]);
 	if (action == BuiltinDebugAction::kInvalid) {
-		_lastActivityFrame = _vm->getAnimationFrameCounter(_vm->_system->getMillis());
+		_lastTrollIdleFrame = _vm->getAnimationFrameCounter(_vm->getTotalPlayTime());
 		output = Common::String::format("Unknown Pizza built-in debug action '%s'.\n", argv[2]);
 		output += debugGetBuiltinDebugCommandHelp();
 		return true;
@@ -496,7 +496,7 @@ ZoombiniPuzzlePizza::BuiltinDebugAction ZoombiniPuzzlePizza::parseBuiltinDebugAc
 }
 
 bool ZoombiniPuzzlePizza::runBuiltinDebugAction(BuiltinDebugAction action, Common::String &output) {
-	_lastActivityFrame = _vm->getAnimationFrameCounter(_vm->_system->getMillis());
+	_lastTrollIdleFrame = _vm->getAnimationFrameCounter(_vm->getTotalPlayTime());
 
 	if (action == BuiltinDebugAction::kToppings) {
 		output = debugGetAnswer();
@@ -1174,8 +1174,8 @@ void ZoombiniPuzzlePizza::onPostRenderFrame() {
 	}
 
 	const uint32 now = getCurrentFrameCounter();
-	if (3600 < now - _lastActivityFrame) {
-		_lastActivityFrame = now;
+	if (3600 < now - _lastTrollIdleFrame) {
+		_lastTrollIdleFrame = now;
 		if (!orderFeatureCompletedThisFrame && !_vm->hasDialogOpened())
 			runOrderFeatureAmbientIdleDriver();
 	}
@@ -1549,7 +1549,7 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 // Handle a mouse-button press.
 // ---------------------------------------------------------------------------
 ZmbEventHandleResult ZoombiniPuzzlePizza::onLButtonDown(const Common::Point &absPos, const Common::Point &relPos) {
-	_lastActivityFrame = _vm->getAnimationFrameCounter(_vm->_system->getMillis());
+	_lastTrollIdleFrame = _vm->getAnimationFrameCounter(_vm->getTotalPlayTime());
 	finishDisposalResultOnInput();
 
 	// Let base class handle Go/Map/Help buttons
@@ -1601,7 +1601,7 @@ ZmbEventHandleResult ZoombiniPuzzlePizza::onLButtonDown(const Common::Point &abs
 }
 
 ZmbEventHandleResult ZoombiniPuzzlePizza::onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) {
-	_lastActivityFrame = _vm->getAnimationFrameCounter(_vm->_system->getMillis());
+	_lastTrollIdleFrame = _vm->getAnimationFrameCounter(_vm->getTotalPlayTime());
 	return ZoombiniInteractive::onKeyDown(kbd, kbdRepeat);
 }
 
@@ -1782,7 +1782,7 @@ ZoombiniPuzzlePizza::SubmittedMealClassification ZoombiniPuzzlePizza::classifySu
 // for an exact match.
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzlePizza::serveNextTopping(TrollOrderLine orderLine) {
-	_lastActivityFrame = getCurrentFrameCounter();
+	_lastTrollIdleFrame = getCurrentFrameCounter();
 	const int16 orderLineIndex = static_cast<int16>(orderLine);
 
 	if (_trollOrderStates[orderLine] == TrollOrderState::kAccepted03)
@@ -3102,7 +3102,7 @@ bool ZoombiniPuzzlePizza::pumpLoadWait(uint32 durationMs, bool allowSkip) {
 			}
 		}
 
-		uint32 now = _vm->_system->getMillis();
+		uint32 now = _vm->getTotalPlayTime();
 		uint32 currentFrame = _vm->getAnimationFrameCounter(now);
 		if (!_vm->_gfx->isMouseCursorEyeAnimationActive())
 			_vm->_gfx->startMouseCursorEyeAnimation();
