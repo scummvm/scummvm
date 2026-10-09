@@ -909,6 +909,17 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy13
 	},
+	{ // MD5 by BacchusEmperor from bug #17316
+		{
+			"nancy13", nullptr,
+			AD_ENTRY1s("ciftree.dat", "7d79b72e58d942f2fce00e90fb9b5dc3", 72327850),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy13
+	},
 	{ // MD5 by bluegr
 		{
 			"nancy14", nullptr,
@@ -920,11 +931,33 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy14
 	},
+	{ // MD5 by BacchusEmperor from bug #17317
+		{
+			"nancy14", nullptr,
+			AD_ENTRY1s("ciftree.dat", "e0743aa7285852d10e95ca2480260e59", 48288815),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy14
+	},
 	{ // MD5 by bluegr
 		{
 			"nancy15", nullptr,
 			AD_ENTRY1s("ciftree.dat", "9c5af8a00225a528fe03f52d3664740d", 38659635),
 			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy15
+	},
+	{ // MD5 by BacchusEmperor from bug #17318
+		{
+			"nancy15", nullptr,
+			AD_ENTRY1s("ciftree.dat", "981b1d2c25be2de48cd09d42329acd1f", 90838797),
+			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_TESTING | ADGF_DROPPLATFORM,
 			NANCY8_GUIOPTIONS
