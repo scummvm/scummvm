@@ -172,6 +172,7 @@ MODULE_OBJS += \
 	ultima3/gfx/message_log.o \
 	ultima3/gfx/pic_decoder.o \
 	ultima3/gfx/shapes.o \
+	ultima3/logic/chest_logic.o \
 	ultima3/logic/combat_logic.o \
 	ultima3/logic/creature_logic.o \
 	ultima3/logic/location_logic.o \
@@ -185,8 +186,11 @@ MODULE_OBJS += \
 	ultima3/views/interactions/combat_attack.o \
 	ultima3/views/interactions/equip.o \
 	ultima3/views/interactions/exchange.o \
+	ultima3/views/interactions/get_chest.o \
 	ultima3/views/interactions/interaction.o \
 	ultima3/views/interactions/look.o \
+	ultima3/views/interactions/steal_chest.o \
+	ultima3/views/interactions/unlock_door.o \
 	ultima3/views/interactions/ztats.o \
 	ultima3/views/journey_onward.o \
 	ultima3/views/location_map.o \

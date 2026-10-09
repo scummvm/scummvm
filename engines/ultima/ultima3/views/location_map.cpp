@@ -21,7 +21,10 @@
 
 #include "ultima/ultima3/views/location_map.h"
 #include "ultima/ultima3/views/menu_input.h"
+#include "ultima/ultima3/views/interactions/get_chest.h"
 #include "ultima/ultima3/views/interactions/look.h"
+#include "ultima/ultima3/views/interactions/steal_chest.h"
+#include "ultima/ultima3/views/interactions/unlock_door.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -318,6 +321,18 @@ bool LocationMap::handleCommand(const KeypressMessage &msg) {
 		return true;
 	case 'A':
 		doAttack();
+		return true;
+	case 'G':
+		_G(messages).print("Get Chest!\nPlr to search-");
+		startInteraction(new Interactions::GetChest());
+		return true;
+	case 'S':
+		_G(messages).print("Steal Chest!\nPlayer? ");
+		startInteraction(new Interactions::StealChest());
+		return true;
+	case 'U':
+		_G(messages).print("Unlock-");
+		startInteraction(new Interactions::UnlockDoor());
 		return true;
 	case 'L':
 		_G(messages).print("Look-");
