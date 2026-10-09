@@ -134,7 +134,7 @@ public:
 	/** Select one authored Mirror Machine F1 help prompt after the fidget reset. */
 	void initHelpPrompt() override;
 	/** Advance custom crystal timers before rendering. */
-	void onEveryFrame() override;
+	void onPreTickFrame() override;
 	/** Process rendered animation events, comparison state, and idle behavior. */
 	void onPostRenderFrame() override;
 	/** Process mirror, runner, and answer animation callbacks. */
@@ -148,6 +148,10 @@ public:
 	ZmbEventHandleResult onMouseMove(const Common::Point &absPos, const Common::Point &relPos) override;
 
 protected:
+	/** Preview the rejection cart's own SCRB translation after its riding Snoid is no longer visible. */
+	bool getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const override;
+	/** Interpolate minecart bodies and wheels together, following the riding Snoid when assigned. */
+	bool getShapeInterpolationGroup(ZmbFeature *feature, const ZmbHotspot &hotspot, uint32 &key, uint32 &leader) const override;
 	/** Mirror Machine actions accepted by the built-in debug console and keyboard dispatcher. */
 	enum class BuiltinDebugAction {
 		kInvalid,
@@ -206,6 +210,10 @@ protected:
 	ZmbEventHandleResult onDebugKeyDown(const Common::KeyState &kbd) override;
 
 private:
+	/** Return the assigned Snoid's registration identity while it is present and visible, or zero. */
+	uint32 getMinecartInterpolationLeader(const ZmbFeature *feature) const;
+	/** Return the single authored cart-body root only when the frame contains cart bodies and wheels exclusively. */
+	static const ZmbHotspot *getMinecartBodyRoot(const Common::Array<ZmbHotspot> &hotspots);
 	/** Parse one console-facing Mirror Machine action name. */
 	static BuiltinDebugAction parseBuiltinDebugAction(const Common::String &action);
 	/** Run one typed Mirror Machine built-in debug action. */
@@ -216,6 +224,18 @@ private:
 	static void applyDebugFilterTraits(ZmbTrait &traits, const ZmbSmokeRunnerState &filter);
 	/** Advance the six-filter diagnostic permutation. */
 	static bool advanceDebugFilterPermutation(int16 values[6]);
+	/** One-based minecart body and wheel shape indices in page tBMP 11000. */
+	enum ShapeIdx : uint16 {
+		/** First minecart body pose. */
+		kResShape11000_MinecartBodyFirst67 = 67,
+		/** Last pose in the main minecart body range. */
+		kResShape11000_MinecartBodyLast73 = 73,
+		/** Last wheel pose in the combined minecart shape range. */
+		kResShape11000_MinecartWheelLast77 = 77,
+		/** Alternate minecart body pose outside the main range. */
+		kResShape11000_MinecartBodyAlternate88 = 88,
+	};
+
 	/** Page-local Mirror Machine crystal, runner, and animation resources. */
 	enum PageResourceId : int16 {
 		kResBackground5000 = 5000,

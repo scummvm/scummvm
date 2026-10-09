@@ -785,7 +785,7 @@ Common::Point ZoombiniPuzzleBridge::findRejectReturnPosition(ZmbSnoid *snoid) {
 // ---------------------------------------------------------------------------
 ZmbSnoid *ZoombiniPuzzleBridge::findIdlePackSnoid(uint16 preferredId) {
 	// A zero @p preferredId returns immediately.
-	// @ref ZoombiniPuzzleBridge::onEveryFrame() uses this sentinel for skip mode, where no Snoid may be selected.
+	// @ref ZoombiniPuzzleBridge::onPreTickFrame() uses this sentinel for skip mode, where no Snoid may be selected.
 	if (preferredId == 0)
 		return nullptr;
 

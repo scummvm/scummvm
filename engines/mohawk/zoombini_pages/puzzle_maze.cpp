@@ -5298,6 +5298,89 @@ ZmbRenderResult ZoombiniPuzzleMaze::renderGridCells(ZmbFeature *feature) {
 	return ZmbRenderResult::kRendered;
 }
 
+uint32 ZoombiniPuzzleMaze::getLauncherPresentationGroup(int16 shapeIdx) {
+	// Select bubble layers only, so mechanical launcher parts never inherit the rider's translation.
+	if ((kResShape9000_LauncherSideBubbleFirst25 <= shapeIdx && shapeIdx <= kResShape9000_LauncherSideBubbleLast37) ||
+		(kResShape9000_LauncherFrontBubbleFirst39 <= shapeIdx && shapeIdx <= kResShape9000_LauncherFrontBubbleLast48) ||
+		shapeIdx == kResShape9000_LauncherBubbleFinal216)
+		return 2;
+	return 0;
+}
+
+bool ZoombiniPuzzleMaze::getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const {
+	// Apply Maze's event allowance only to grid runners; other Snoids use the common preview.
+	const ZmbSnoid *snoid = dynamic_cast<const ZmbSnoid *>(feature);
+	if (!snoid || findRunnerBySnoidId(snoid->getId()) < 0)
+		return ZoombiniPage::getNextInterpolationMove(feature, delta, startFrame, durationFrames);
+
+	bool allowNextFrameEvent = false;
+	const ZmbDecodedScriptFrame *next = snoid->getDecodedScriptFrame(snoid->getLastFrameIdx() + 1);
+	if (next && next->eventCode) {
+		// Reservation and arrival markers preserve the authored root; grid callbacks stay on animation ticks.
+		switch (static_cast<int16>(next->eventCode) - 1) {
+		case kGridEntityEventCode020_CollisionReservePhase0:
+		case kGridEntityEventCode030_CollisionReservePhase1:
+		case kGridEntityEventCode040_CollisionReservePhase2:
+		case kGridEntityEventCode050_CollisionReservePhase3:
+		case kGridEntityEventCode021_CollisionAdvancePhase0:
+		case kGridEntityEventCode031_CollisionAdvancePhase1:
+		case kGridEntityEventCode041_CollisionAdvancePhase2:
+		case kGridEntityEventCode051_CollisionAdvancePhase3:
+		case kGridEntityEventCode061_CollisionAdvancePhase4:
+			allowNextFrameEvent = true;
+			break;
+		default:
+			break;
+		}
+	}
+	return snoid->getPresentationMove(delta, startFrame, durationFrames, allowNextFrameEvent);
+}
+
+bool ZoombiniPuzzleMaze::getShapeInterpolationGroup(ZmbFeature *feature, const ZmbHotspot &hotspot,
+													uint32 &key, uint32 &leader) const {
+	// Group bubbles and overlays with their live Snoid, leaving ordinary maze-cell shapes fixed.
+	if (feature->getResource() == ZmbResource(ZmbResource::kPage, kResBitmapShape10000_Cell)) {
+		for (int16 i = 0; i < _runnerCount; i++) {
+			const MazeRunnerState &runner = _runnerStates[i];
+			if (feature != runner.bubbleFeature && feature != runner.overlayFeature)
+				continue;
+			const ZmbSnoid *snoid = getSnoid(_runnerSnoidIds[i]);
+			if (!snoid || !snoid->isRenderActivated())
+				return false;
+			key = 1;
+			leader = snoid->getRegistrationIndex();
+			return true;
+		}
+		return false;
+	}
+	if (feature->getResource() != ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Path))
+		return false;
+	// Match launcher and shadow features to their seat before selecting a bubble layer.
+	int16 seatIdx = -1;
+	for (int16 i = 0; i < 14; i++) {
+		if (feature == _launcherFeatures[i] || feature == _launcherShadowFeatures[i]) {
+			seatIdx = i;
+			break;
+		}
+	}
+	if (seatIdx < 0)
+		return false;
+	key = getLauncherPresentationGroup(hotspot._shapeIdx);
+	if (key != 2)
+		return false;
+	// Use the seat's current Snoid as leader, excluding missing or hidden riders.
+	const int16 runnerIdx = _launcherRunnerIndices[seatIdx];
+	if (0 <= runnerIdx && runnerIdx < _runnerCount) {
+		const ZmbSnoid *snoid = getSnoid(_runnerSnoidIds[runnerIdx]);
+		if (snoid && snoid->isRenderActivated()) {
+			leader = snoid->getRegistrationIndex();
+			return true;
+		}
+	}
+	// Independent launcher parts have no verified next body translation and stay at their authored positions.
+	return false;
+}
+
 void ZoombiniPuzzleMaze::adjustBubbleHotspotPosition(ZmbFeature *feature,
 													 ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots) {
 	(void)feature;
@@ -6782,7 +6865,7 @@ bool ZoombiniPuzzleMaze::handleCollisionOverlayEvent(ZmbFeature *feature, int16 
 // Per-frame processing
 // =================================================================
 
-void ZoombiniPuzzleMaze::onEveryFrame() {
+void ZoombiniPuzzleMaze::onPreTickFrame() {
 	if (_pageLoadedZmbCount <= 0 || _isUpdating)
 		return;
 	PuzzleUpdateGuard updateGuard(_isUpdating);

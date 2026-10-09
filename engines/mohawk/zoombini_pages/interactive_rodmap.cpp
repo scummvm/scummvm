@@ -624,8 +624,8 @@ void ZoombiniInteractiveRodMap::patchPageShape1000_preRenderShape(ZmbFeature *fe
 	Common::HashMap<uint16, uint16> pageShapeIdMap;
 
 	// Hide the page icon if the page was never visited
-	pageShapeIdMap[kResShapePicker16] = ZmbHotspot::kShapeNone; // Always show the picker icon
-	for (uint16 i = kResShapeBridge01; i <= kResShapeTown15; i++) {
+	pageShapeIdMap[kResShape1000_Picker16] = ZmbHotspot::kShapeNone; // Always show the picker icon
+	for (uint16 i = kResShape1000_Bridge01; i <= kResShape1000_Town15; i++) {
 		uint16 shapeId = ZmbHotspot::kShapeNone;
 		if (0 < _pageNodeLevelMap[i])
 			shapeId = i;
@@ -645,7 +645,7 @@ void ZoombiniInteractiveRodMap::patchPageShape1000_preRenderShape(ZmbFeature *fe
 		// The classic and retail route layouts use different hover frames for resting page icons.
 		if (_vm->usesClassicEurpoeLayout()) {
 			switch (shapeId) {
-			case kResShapePicker16:
+			case kResShape1000_Picker16:
 				pageShapeIdMap[shapeId] = 109;
 				break;
 			default:
@@ -654,13 +654,13 @@ void ZoombiniInteractiveRodMap::patchPageShape1000_preRenderShape(ZmbFeature *fe
 			}
 		} else {
 			switch (shapeId) {
-			case kResShapePicker16:
+			case kResShape1000_Picker16:
 				if (!_vm->_state->inPracticeMode())
 					pageShapeIdMap[shapeId] = 109;
 				break;
-			case kResShapeBcOne04:
-			case kResShapeBcTwo11:
-			case kResShapeTown15:
+			case kResShape1000_BcOne04:
+			case kResShape1000_BcTwo11:
+			case kResShape1000_Town15:
 				if (!_vm->_state->inPracticeMode())
 					pageShapeIdMap[shapeId] += 93;
 				break;
@@ -780,13 +780,13 @@ void ZoombiniInteractiveRodMap::patchRouteShape1001_preRenderShape(ZmbFeature *f
 		return;
 	}
 
-	const uint32 routeHotspotCount = kResShapeRouteMontDespairP3_32 - kResShapeRouteBigBadHungryP0_17 + 1;
+	const uint32 routeHotspotCount = kResShape1000_RouteMontDespairP3_32 - kResShape1000_RouteBigBadHungryP0_17 + 1;
 	if (hotspots.size() < routeHotspotCount) {
 		error("rodmap: route SCRB frame has %u hotspots, expected at least %u", hotspots.size(), routeHotspotCount);
 		return;
 	}
 	for (uint32 hotspotOffset = 0; hotspotOffset < routeHotspotCount; hotspotOffset++) {
-		const uint16 hotspotIdx = static_cast<uint16>(kResShapeRouteBigBadHungryP0_17 + hotspotOffset);
+		const uint16 hotspotIdx = static_cast<uint16>(kResShape1000_RouteBigBadHungryP0_17 + hotspotOffset);
 		ZmbHotspot &hs = hotspots[hotspotOffset];
 
 		// Hide route segments that have not been discovered.
@@ -1300,10 +1300,10 @@ void ZoombiniInteractiveRodMap::textRouteNames_postRender(ZmbFeature *feature) {
 
 	ZoombiniGraphics::ScreenKind screenKind = ZoombiniGraphics::kShapeScreen;
 	const uint16 firstPuzzleShape[] = {
-		kResShapeBridge01,
-		kResShapeFerry05,
-		kResShapeFleens08,
-		kResShapeCaves12,
+		kResShape1000_Bridge01,
+		kResShape1000_Ferry05,
+		kResShape1000_Fleens08,
+		kResShape1000_Caves12,
 	};
 
 	for (uint32 shapeIdx = static_cast<uint32>(ZmbRouteId::kBigBadHungry); shapeIdx <= static_cast<uint32>(ZmbRouteId::kMontDespair); shapeIdx++) {
@@ -1333,7 +1333,7 @@ void ZoombiniInteractiveRodMap::textRouteNames_postRender(ZmbFeature *feature) {
 
 void ZoombiniInteractiveRodMap::buildPageRouteLevelMap() {
 	uint16 pageLevelValues[17] = {};
-	for (uint16 shapeId = kResShapeBridge01; shapeId <= kResShapePicker16; shapeId++)
+	for (uint16 shapeId = kResShape1000_Bridge01; shapeId <= kResShape1000_Picker16; shapeId++)
 		_pageNodeLevelMap[shapeId] = 0;
 
 	if (_vm->_state->inPracticeMode()) {
@@ -1411,13 +1411,13 @@ void ZoombiniInteractiveRodMap::buildPageRouteLevelMap() {
 		14,
 		15,
 	};
-	for (uint16 shapeId = kResShapeRouteBigBadHungryP0_17; shapeId <= kResShapeRouteMontDespairP3_32; shapeId++)
-		_pageRouteLevelMap[shapeId] = pageLevelValues[vertexValueIndex[shapeId - kResShapeRouteBigBadHungryP0_17]];
+	for (uint16 shapeId = kResShape1000_RouteBigBadHungryP0_17; shapeId <= kResShape1000_RouteMontDespairP3_32; shapeId++)
+		_pageRouteLevelMap[shapeId] = pageLevelValues[vertexValueIndex[shapeId - kResShape1000_RouteBigBadHungryP0_17]];
 
-	for (uint16 shapeId = kResShapeBridge01; shapeId <= kResShapeNet10; shapeId++)
+	for (uint16 shapeId = kResShape1000_Bridge01; shapeId <= kResShape1000_Net10; shapeId++)
 		_pageNodeLevelMap[shapeId] = pageLevelValues[shapeId];
-	_pageNodeLevelMap[kResShapeBcTwo11] = pageLevelValues[11] != 0 || pageLevelValues[16] != 0;
-	for (uint16 shapeId = kResShapeCaves12; shapeId <= kResShapeTown15; shapeId++)
+	_pageNodeLevelMap[kResShape1000_BcTwo11] = pageLevelValues[11] != 0 || pageLevelValues[16] != 0;
+	for (uint16 shapeId = kResShape1000_Caves12; shapeId <= kResShape1000_Town15; shapeId++)
 		_pageNodeLevelMap[shapeId] = pageLevelValues[shapeId];
 }
 

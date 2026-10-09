@@ -47,18 +47,18 @@ ZoombiniShelterBasecampOne::ZoombiniShelterBasecampOne(MohawkEngine_Zoombini *vm
 							  kResBitmapShape2100_Buttons, true, _pedestalPoints,
 							  ZmbResource(ZmbResource::kPage, kResSound2000_StorageScrolling),
 							  ZmbResource(ZmbResource::kPage, kResSound2001_StorageScrollEnd)) {
-	_scrollButtonStateMap[kStorageScrollButton01_LeftMaximum] = ContinuousButtonState(0, 4, kShape2100_ScrollLeftFourNormal_07, kShape2100_ScrollLeftFourPressed_08);
-	_scrollButtonStateMap[kStorageScrollButton02_LeftOne] = ContinuousButtonState(1, 5, kShape2100_ScrollLeftOneNormal_09, kShape2100_ScrollLeftOnePressed_10);
-	_scrollButtonStateMap[kStorageScrollButton03_RightOne] = ContinuousButtonState(2, 6, kShape2100_ScrollRightOneNormal_11, kShape2100_ScrollRightOnePressed_12);
-	_scrollButtonStateMap[kStorageScrollButton04_RightMaximum] = ContinuousButtonState(3, 7, kShape2100_ScrollRightFourNormal_13, kShape2100_ScrollRightFourPressed_14);
+	_scrollButtonStateMap[kStorageScrollButton01_LeftMaximum] = ContinuousButtonState(0, 4, kResShape2100_ScrollLeftFourNormal07, kResShape2100_ScrollLeftFourPressed08);
+	_scrollButtonStateMap[kStorageScrollButton02_LeftOne] = ContinuousButtonState(1, 5, kResShape2100_ScrollLeftOneNormal09, kResShape2100_ScrollLeftOnePressed10);
+	_scrollButtonStateMap[kStorageScrollButton03_RightOne] = ContinuousButtonState(2, 6, kResShape2100_ScrollRightOneNormal11, kResShape2100_ScrollRightOnePressed12);
+	_scrollButtonStateMap[kStorageScrollButton04_RightMaximum] = ContinuousButtonState(3, 7, kResShape2100_ScrollRightFourNormal13, kResShape2100_ScrollRightFourPressed14);
 
 	// Z1-20U/TLC v2.0 release only: storage scroll buttons gain yellow-outline
 	// hover bitmap states in addition to the page-local cursor arrows.
 	if (_vm->isVersionFamilyTlcV2()) {
-		_scrollButtonStateMap[kStorageScrollButton01_LeftMaximum].setHoverState(kShape2100_ScrollLeftFourHover_20);
-		_scrollButtonStateMap[kStorageScrollButton02_LeftOne].setHoverState(kShape2100_ScrollLeftOneHover_21);
-		_scrollButtonStateMap[kStorageScrollButton03_RightOne].setHoverState(kShape2100_ScrollRightOneHover_22);
-		_scrollButtonStateMap[kStorageScrollButton04_RightMaximum].setHoverState(kShape2100_ScrollRightFourHover_23);
+		_scrollButtonStateMap[kStorageScrollButton01_LeftMaximum].setHoverState(kResShape2100_ScrollLeftFourHover20);
+		_scrollButtonStateMap[kStorageScrollButton02_LeftOne].setHoverState(kResShape2100_ScrollLeftOneHover21);
+		_scrollButtonStateMap[kStorageScrollButton03_RightOne].setHoverState(kResShape2100_ScrollRightOneHover22);
+		_scrollButtonStateMap[kStorageScrollButton04_RightMaximum].setHoverState(kResShape2100_ScrollRightFourHover23);
 	}
 
 	_scrollButtonRectMap[kStorageScrollButton01_LeftMaximum] = _scrollLeftFourButtonRect;
@@ -123,9 +123,9 @@ void ZoombiniShelterBasecampOne::loadFeatures() {
 	}
 
 	// Configure the controls before registering their shared callback runner.
-	setGoButton(_goRouteUpButtonRect, kShape2100_GoRouteUpButtonDisabled_15, kShape2100_GoRouteUpButtonNormal_01, kShape2100_GoRouteUpButtonPressed_02);
-	setSecondGoButton(_goRouteDownButtonRect, kShape2100_GoRouteDownButtonDisabled_16, kShape2100_GoRouteDownButtonNormal_03, kShape2100_GoRouteDownButtonPressed_04);
-	setMapButton(_mapButtonClickRect, kShape2100_MapNormal_05, kShape2100_MapPressed_06);
+	setGoButton(_goRouteUpButtonRect, kResShape2100_GoRouteUpButtonDisabled15, kResShape2100_GoRouteUpButtonNormal01, kResShape2100_GoRouteUpButtonPressed02);
+	setSecondGoButton(_goRouteDownButtonRect, kResShape2100_GoRouteDownButtonDisabled16, kResShape2100_GoRouteDownButtonNormal03, kResShape2100_GoRouteDownButtonPressed04);
+	setMapButton(_mapButtonClickRect, kResShape2100_MapNormal05, kResShape2100_MapPressed06);
 	setHelpButton(_helpButtonClickRect);
 	buildEmbeddedControlHotspots(kResBitmapShape2100_Buttons, _controlGoMapBaseHotspots, _controlHelpBaseHotspots);
 
@@ -139,14 +139,14 @@ void ZoombiniShelterBasecampOne::loadFeatures() {
 		hooksScroll.setMouseMoveFunc(&ZoombiniShelterBasecampOne::scroll_mouseMove);
 
 		Common::Array<ZmbHotspot> scrollHotspots;
-		scrollHotspots.push_back(ZmbHotspot(0, kShape2100_ScrollLeftFourNormal_07, 0, _scrollLeftFourButtonRect));
-		scrollHotspots.push_back(ZmbHotspot(1, kShape2100_ScrollLeftOneNormal_09, 0, _scrollLeftOneButtonRect));
-		scrollHotspots.push_back(ZmbHotspot(2, kShape2100_ScrollRightOneNormal_11, 0, _scrollRightOneButtonRect));
-		scrollHotspots.push_back(ZmbHotspot(3, kShape2100_ScrollRightFourNormal_13, 0, _scrollRightFourButtonRect));
-		scrollHotspots.push_back(ZmbHotspot(4, kShape2100_ScrollLeftFourPressed_08, 0, _scrollLeftFourButtonRect));
-		scrollHotspots.push_back(ZmbHotspot(5, kShape2100_ScrollLeftOnePressed_10, 0, _scrollLeftOneButtonRect));
-		scrollHotspots.push_back(ZmbHotspot(6, kShape2100_ScrollRightOnePressed_12, 0, _scrollRightOneButtonRect));
-		scrollHotspots.push_back(ZmbHotspot(7, kShape2100_ScrollRightFourPressed_14, 0, _scrollRightFourButtonRect));
+		scrollHotspots.push_back(ZmbHotspot(0, kResShape2100_ScrollLeftFourNormal07, 0, _scrollLeftFourButtonRect));
+		scrollHotspots.push_back(ZmbHotspot(1, kResShape2100_ScrollLeftOneNormal09, 0, _scrollLeftOneButtonRect));
+		scrollHotspots.push_back(ZmbHotspot(2, kResShape2100_ScrollRightOneNormal11, 0, _scrollRightOneButtonRect));
+		scrollHotspots.push_back(ZmbHotspot(3, kResShape2100_ScrollRightFourNormal13, 0, _scrollRightFourButtonRect));
+		scrollHotspots.push_back(ZmbHotspot(4, kResShape2100_ScrollLeftFourPressed08, 0, _scrollLeftFourButtonRect));
+		scrollHotspots.push_back(ZmbHotspot(5, kResShape2100_ScrollLeftOnePressed10, 0, _scrollLeftOneButtonRect));
+		scrollHotspots.push_back(ZmbHotspot(6, kResShape2100_ScrollRightOnePressed12, 0, _scrollRightOneButtonRect));
+		scrollHotspots.push_back(ZmbHotspot(7, kResShape2100_ScrollRightFourPressed14, 0, _scrollRightFourButtonRect));
 
 		// FLAG_00001000_TOPMOST | FLAG_00008000_LOOP_ANIM.
 		// LOOP_ANIM checked first -> loopAnimList (rendered behind sorted features).
@@ -380,7 +380,7 @@ ZmbRenderResult ZoombiniShelterBasecampOne::storage_render(ZmbFeature *feature) 
 	// Draw only the honeycomb background here (behind snoids).
 	// @ref ZoombiniShelterBasecampOne::storage_postRender() draws the lattice overlay and border over the snoids.
 	// The complete order is honeycomb, snoids, lattice, then border.
-	uint16 matrixShapeId = _storageScrollAnimating ? kShapeStorage01_Honeycomb : kShapeStorage03_Honeycomb;
+	uint16 matrixShapeId = _storageScrollAnimating ? kResShape2000_StorageHoneycomb01 : kResShape2000_StorageHoneycomb03;
 	ZmbResource storageBitmap = ZmbResource(ZmbResource::kPage, kResBitmapShape2000_Storage);
 	_vm->_gfx->drawShape(screenKind, storageBitmap, matrixShapeId, Common::Point(53, 6));
 	return ZmbRenderResult::kRendered;
@@ -396,10 +396,10 @@ void ZoombiniShelterBasecampOne::storage_postRender(ZmbFeature *feature) {
 
 	// Lattice overlay (drawn on top of snoids) and border (drawn last)
 	ZmbResource storageBitmap = ZmbResource(ZmbResource::kPage, kResBitmapShape2000_Storage);
-	uint16 latticeShapeId = _storageScrollAnimating ? kShapeStorage02_Lattice : kShapeStorage04_Lattice;
+	uint16 latticeShapeId = _storageScrollAnimating ? kResShape2000_StorageLattice02 : kResShape2000_StorageLattice04;
 	uint16 latticePosY = _storageScrollAnimating ? 9 : 12;
 	_vm->_gfx->drawShape(screenKind, storageBitmap, latticeShapeId, Common::Point(53, latticePosY));
-	_vm->_gfx->drawShape(screenKind, storageBitmap, kShapeStorage05_Border, Common::Point(31, 0));
+	_vm->_gfx->drawShape(screenKind, storageBitmap, kResShape2000_StorageBorder05, Common::Point(31, 0));
 }
 
 void ZoombiniShelterBasecampOne::scroll_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots) {
@@ -532,16 +532,16 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::scroll_mouseMove(ZmbFeature *fe
 		// The button is being hovered. Set corresponding bitmap as a cursor.
 		switch (buttonIdx) {
 		case kStorageScrollButton01_LeftMaximum:
-			cursorShapeIdx = kShape9000_ArrowLeftMax_01;
+			cursorShapeIdx = kResShape9000_ArrowLeftMax01;
 			break;
 		case kStorageScrollButton02_LeftOne:
-			cursorShapeIdx = kShape9000_ArrowLeft_02;
+			cursorShapeIdx = kResShape9000_ArrowLeft02;
 			break;
 		case kStorageScrollButton03_RightOne:
-			cursorShapeIdx = kShape9000_ArrowRight_03;
+			cursorShapeIdx = kResShape9000_ArrowRight03;
 			break;
 		case kStorageScrollButton04_RightMaximum:
-			cursorShapeIdx = kShape9000_ArrowRightMax_04;
+			cursorShapeIdx = kResShape9000_ArrowRightMax04;
 			break;
 		default:
 			error("basecamp1: scroll_mouseMove: invalid buttonIdx %u", buttonIdx);

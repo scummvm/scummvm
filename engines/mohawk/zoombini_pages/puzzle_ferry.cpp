@@ -280,7 +280,7 @@ void ZoombiniPuzzleFerry::onGoButtonActivated() {
 }
 
 void ZoombiniPuzzleFerry::updateDepartureState() {
-	// The raft controller advances the state in onEveryFrame() and onFeatureAnimEvent().
+	// Raft state advances in @ref Mohawk::ZoombiniPuzzleFerry::onPreTickFrame() and @ref Mohawk::ZoombiniPuzzleFerry::onFeatureAnimEvent().
 }
 
 void ZoombiniPuzzleFerry::debugPrepareForDeparture() {
@@ -945,7 +945,7 @@ void ZoombiniPuzzleFerry::handleRejectWalkSetup() {
 // ---------------------------------------------------------------------------
 // Update the Ferry puzzle once per animation frame.
 // ---------------------------------------------------------------------------
-void ZoombiniPuzzleFerry::onEveryFrame() {
+void ZoombiniPuzzleFerry::onPreTickFrame() {
 	if (!_pageActive)
 		return;
 	if (_departureState == ZmbDepartureState::kCompleted) {

@@ -297,24 +297,82 @@ public:
 	 */
 	virtual void close();
 	/**
-	 * Called in every ScummVM render frames.
-	 * Handles @ref ZoombiniPage::onEveryFrame() and @ref ZoombiniPage::onAnimFrame().
+	 * Run a full page update, including controllers and normal rendering.
+	 * Invoke @ref Mohawk::ZoombiniPage::onPreTickFrame(), then @ref Mohawk::ZoombiniPage::onAnimFrame() when the animation tick changes or a redraw is forced.
+	 * Drawing writes pixels immediately and, when interpolation is enabled, captures commands for subsequent presentation frames.
+	 *
+	 * Frame hooks called by @ref Mohawk::MohawkEngine_Zoombini::doFrame():
+	 * @verbatim
+	 * doFrame()
+	 * |-- Normal page update
+	 * |   |-- onFrame()
+	 * |   |   |-- onPreTickFrame()             [before the animation-tick check]
+	 * |   |   `-- onAnimFrame()               [new animation tick or forced redraw]
+	 * |   `-- onInterpolationFrame(frameTime) [when position interpolation is active]
+	 * |-- Between logic ticks (position interpolation active)
+	 * |   `-- onInterpolationFrame(frameTime) [skip onFrame() and its hooks]
+	 * `-- Modal dialog frame
+	 *     |-- underlying page: onModalFrame()
+	 *     `-- dialog page: onFrame()          [same update hooks; no interpolation]
+	 * @endverbatim
+	 *
+	 * Examples assume normal gameplay at 60TPS.
+	 * Each row is one loop; present flushes the compositor and updates the backend screen.
+	 * Times show ideal slots from the clock epoch; backend deadlines round up to whole milliseconds.
+	 * @verbatim
+	 * 1. 60TPS, no interpolation (retain the elapsed-time frame budget)
+	 *    tick n:     onFrame[onPreTickFrame -> onAnimFrame] -> present -> wait
+	 *    tick n:     onFrame[onPreTickFrame] -> present -> wait       (if the loop repeats within the same tick)
+	 *    tick n + 1: onFrame[onPreTickFrame -> onAnimFrame] -> present -> wait
+	 *
+	 * 2. 60FPS, with interpolation (wait for the next 60FPS slot)
+	 *     0.0ms, tick n:     onFrame[onPreTickFrame -> onAnimFrame] -> onInterpolationFrame -> present -> wait
+	 *    16.7ms, tick n + 1: onFrame[onPreTickFrame -> onAnimFrame] -> onInterpolationFrame -> present -> wait
+	 *    33.3ms, tick n + 2: onFrame[onPreTickFrame -> onAnimFrame] -> onInterpolationFrame -> present -> wait
+	 *
+	 * 3. 120FPS, with interpolation (wait for the next 120FPS slot)
+	 *     0.0ms, tick n:     onFrame[onPreTickFrame -> onAnimFrame] -> onInterpolationFrame -> present -> wait
+	 *     8.3ms, tick n:     onInterpolationFrame -> present -> wait      (no page or animation update)
+	 *    16.7ms, tick n + 1: onFrame[onPreTickFrame -> onAnimFrame] -> onInterpolationFrame -> present -> wait
+	 *    25.0ms, tick n + 1: onInterpolationFrame -> present -> wait      (no page or animation update)
+	 *    33.3ms, tick n + 2: onFrame[onPreTickFrame -> onAnimFrame] -> onInterpolationFrame -> present -> wait
+	 * @endverbatim
+	 *
+	 * At 60FPS, positions still interpolate between poses held for several ticks.
+	 * Delays can skip slots; tick changes select the execution path.
+	 *
+	 * @ref Mohawk::ZoombiniPage::onInterpolationFrame() runs outside this function, after a normal update or alone between logic ticks.
+	 * Modal frames call @ref Mohawk::ZoombiniPage::onModalFrame() on the underlying page while the dialog receives the normal update.
 	 */
 	void onFrame();
+	/**
+	 * Apply position interpolation to captured drawing commands within each feature's movement interval.
+	 *
+	 * A sprite pose can last several animation ticks; translate that unchanged pose toward its known next body position.
+	 * For example, a six-tick move of 12 pixels has a 2-pixel offset after one elapsed tick, while still displaying the same pose.
+	 * Run after normal page updates and between logic ticks when position interpolation is enabled.
+	 *
+	 * Preserve sprite selection, logical coordinates, and gameplay state without invoking page, feature, or script callbacks.
+	 * Replay overlapping fixed drawing too, with zero translation, to preserve the captured drawing order.
+	 *
+	 * @param frameTime Current presentation frame's backend clock time in milliseconds, converted to fractional animation ticks.
+	 * @see Mohawk::MohawkEngine_Zoombini::doFrame()
+	 */
+	void onInterpolationFrame(uint32 frameTime);
 	/** Advance the limited page-owned work retained while a modal dialog owns rendering and input. */
 	virtual void onModalFrame();
 	/**
-	 * Called in every ScummVM render frames.
-	 *
-	 * Can reach over 60FPS when the game is running fast,
-	 * so only use for non-animated logic that needs to be updated as fast as possible,
-	 * e.g. mouse cursor movement.
+	 * Update page controllers and UI during @ref Mohawk::ZoombiniPage::onFrame(), before its animation-tick gate.
+	 * Intermediate position-interpolation frames call @ref Mohawk::ZoombiniPage::onInterpolationFrame() without invoking this hook.
+	 * Timed gameplay and animation work must use animation ticks independently of the target rendering frame rate.
 	 */
-	virtual void onEveryFrame() {};
+	virtual void onPreTickFrame() {};
 	/**
-	 * Called in every Zoombini animation frames, aka ticks (60TPS).
-	 *
-	 * Game logic tied to animation frames (e.g. ambient sound driver) should be updated and executed here.
+	 * Update tick-driven page work and run the normal feature render pass.
+	 * Called when the integer animation tick changes, or when a forced redraw requires another pass at the same tick.
+	 * Feature timers decide whether to select a new sprite pose; entering this hook alone does not advance every animation.
+	 * Timed gameplay, such as ambient sound scheduling, uses this tick counter rather than the presentation frame count.
+	 * Additional presentation frames invoke @ref Mohawk::ZoombiniPage::onInterpolationFrame() without invoking this hook.
 	 */
 	virtual void onAnimFrame();
 
@@ -528,6 +586,17 @@ public:
 	void attachSubFeature(ZmbFeature *subFeature);
 
 	uint32 getCurrentFrameCounter() const { return _currentFrameCounter; }
+	/**
+	 * Read the actual animation interval used for position interpolation without running callbacks.
+	 * Ordinary runners use their local timer; synchronized runners use their group's runtime owner.
+	 * For example, a Smoke rejection Snoid follows the minecart runner's deadline even if their intervals differ.
+	 * @param feature Runner whose next body translation will be displayed.
+	 * @param[out] startFrame Animation tick at which the active interval started.
+	 * @param[out] durationFrames Animation ticks in the interval ending at the next scheduled update.
+	 * @return True when the current tick lies in a known interval.
+	 * Unscheduled timers, out-of-phase peers, and alternating timing groups cannot supply that interval.
+	 */
+	bool getInterpolationFrameTiming(const ZmbFeature *feature, uint32 &startFrame, uint32 &durationFrames) const;
 	/**
 	 * Collect feature runners currently registered in the page render loop.
 	 * Chain-head objects are deliberately excluded because they only own
@@ -1159,6 +1228,28 @@ public:
 	}
 
 protected:
+	/**
+	 * Read the next deterministic body translation without advancing the feature's controller.
+	 * The default queries @ref Mohawk::ZmbSnoid; pages may opt in other runners with a stable body root and known frame deadline.
+	 * @param feature Feature whose authored pose is prepared, such as a walking Snoid or an opted-in Fleen runner.
+	 * @param[out] delta Translation to the next body root; (12, 0) moves the held pose 12 pixels to the right before the next pose.
+	 * @param[out] startFrame Animation tick at which the current root became active, independent of the target rendering frame rate.
+	 * @param[out] durationFrames Animation ticks until the next pose; a Fleen's six-tick interval returns 6.
+	 * @return True when the current pose can move toward the next root without predicting controller side effects.
+	 */
+	virtual bool getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const;
+	/**
+	 * Select page-owned shapes that share a carrier's deterministic position interpolation.
+	 * The default leaves ordinary shapes fixed.
+	 *
+	 * @param feature Feature owning the shape, such as a minecart runner or the Postman's meal overlay.
+	 * @param hotspot Transformed shape to select; Smoke includes cart bodies and wheels while leaving effects fixed.
+	 * @param[out] key Nonzero group key local to the feature; Smoke uses 1 for both cart body and wheel drawing commands.
+	 * @param[out] leader Nonzero carrier registration index, not a logical Snoid ID.
+	 * For example, Smoke's cart and Maze's bubble use their riding Snoid's registration index to share its interpolated offset.
+	 * @return True when the shape belongs to a selected group with an assigned carrier; a missing carrier stays at its authored position.
+	 */
+	virtual bool getShapeInterpolationGroup(ZmbFeature *feature, const ZmbHotspot &hotspot, uint32 &key, uint32 &leader) const;
 	/** Whether the page is currently active and accepting input. */
 	bool _pageActive = false;
 
@@ -1685,6 +1776,73 @@ protected:
 private:
 	/** Restore the threshold on release or page teardown, including an already-disabled value. */
 	void restoreSnoidDragFidgets();
+
+	/** One body-root translation segment measured in animation ticks, which may span several presentation frames. */
+	struct PresentationMotion {
+		/** Translation from the segment's initial offset to its endpoint. */
+		Common::Point _delta;
+		/** Offset from the frozen root at the start of this segment. */
+		Common::Point _initialOffset;
+		/** Last displayed offset, retained to restore the previous drawing footprint. */
+		Common::Point _presentedOffset;
+		/** Integer animation tick at which this movement segment starts. */
+		uint32 _startFrame = 0;
+		/** Segment duration in animation ticks, not pose changes; zero holds the initial offset. */
+		uint32 _durationFrames = 0;
+	};
+	/** Frozen drawing and deterministic next translation for one registered feature. */
+	struct PresentationRunner : PresentationMotion {
+		/** Explicitly selected body drawing within a feature that also contains fixed shapes. */
+		struct Group {
+			/** Nonzero motion group key local to the owning feature. */
+			uint32 _key = 0;
+			/** Nonzero registration index of the carrier whose translation is shared. */
+			uint32 _leader = 0;
+			/** Last displayed offset, retained to restore the previous drawing footprint. */
+			Common::Point _presentedOffset;
+			/** Untranslated union of this group's drawing coverage. */
+			Common::Rect _bounds;
+		};
+		/** Frozen drawing commands in authored order. */
+		Common::Array<ZoombiniGraphics::DrawCommand> _commands;
+		/** Selected motion groups within this feature's drawing. */
+		Common::Array<Group> _groups;
+		/** Registration identity captured from the owning feature. */
+		uint32 _registrationIndex = 0;
+		/** Untranslated union of all captured drawing coverage. */
+		Common::Rect _bounds;
+		/** Captured visual clip, used when the feature has an active constraint. */
+		Common::Rect _constraint;
+		/** Whether the captured visual clip is active. */
+		bool _hasConstraint = false;
+	};
+	/** Feature drawing snapshots in render order from the last normal feature render pass, even if no sprite pose changed. */
+	Common::Array<PresentationRunner> _presentationRunners;
+	/** Frozen commands drawn before the feature render pass. */
+	Common::Array<ZoombiniGraphics::DrawCommand> _presentationBefore;
+	/** Frozen commands drawn after the feature render pass. */
+	Common::Array<ZoombiniGraphics::DrawCommand> _presentationAfter;
+	/** Commands collected outside the feature pass for its prefix or suffix. */
+	Common::Array<ZoombiniGraphics::DrawCommand> _presentationOutside;
+	/** Whether @ref Mohawk::ZoombiniPage::onFrame() is collecting drawing commands during the normal page update. */
+	bool _isCapturingPresentationFrame = false;
+	/** Prepare the deterministic next translation; features without a known move stay fixed. */
+	void preparePresentationRunner(PresentationRunner &pRunner, ZmbFeature *feature);
+	/** Group tagged drawing commands by their assigned carrier. */
+	void preparePresentationGroups(PresentationRunner &pRunner);
+	/**
+	 * Return the group's interpolated offset from its assigned carrier.
+	 * A missing carrier produces a zero offset.
+	 * @param frameTime Fractional animation time in thousandths of one logic tick, not backend milliseconds.
+	 */
+	static Common::Point getPresentationGroupOffset(const PresentationRunner::Group &group, const Common::Array<PresentationRunner> &runners, uint64 frameTime);
+	/** Return the last displayed offset from the command's motion group or feature root. */
+	static Common::Point getPresentationCommandOffset(const PresentationRunner &pRunner, const ZoombiniGraphics::DrawCommand &drawCmd);
+	/**
+	 * Quantize a translation segment's current offset to the game's integer pixel grid.
+	 * @param frameTime Fractional animation time in thousandths of one logic tick, not backend milliseconds.
+	 */
+	static Common::Point getPresentationOffset(const PresentationMotion &motion, uint64 frameTime);
 
 	/** Partition a feature into render/event buckets from its flags. */
 	static void categorizeFeature(ZmbFeature *feature, Common::Array<ZmbFeature *> &loopAnimList, Common::Array<ZmbFeature *> &overlayList, Common::Array<ZmbFeature *> &normalList, Common::Array<ZmbFeature *> &entityList);

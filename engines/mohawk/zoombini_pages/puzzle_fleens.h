@@ -154,6 +154,8 @@ public:
 		Common::Point renderAnchor;
 		/** Offset from the active SCRS anchor to @ref renderAnchor. */
 		Common::Point scriptAnchorOffset;
+		/** Current custom SCRS, used to exclude stationary idle poses from position interpolation. */
+		uint16 scrsResourceId = 0;
 		/** ID of the Zoombini paired with this Fleen. */
 		uint16 pairedSnoidId = 0;
 		/** Feature used to render and receive events for this creature. */
@@ -229,6 +231,8 @@ protected:
 	static constexpr const char *kBuiltinDebugActionLevel = "level";
 	/** Advance Fleen movement and coupled escape state machines after rendering. */
 	void onPostRenderFrame() override;
+	/** Move the current Fleen pose toward the next SCRS body root until its page-owned frame deadline. */
+	bool getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const override;
 	/** Begin departure after all target Fleens have escaped. */
 	void onGoButtonActivated() override;
 	/** Keep the Fleen walk and sound gates in control of the departure state machine. */
@@ -511,6 +515,8 @@ private:
 	const FleenCreature *findFleenBySnoid(uint16 snoidId) const;
 	/** Find the Fleen that owns a feature runner. */
 	FleenCreature *findFleenByFeature(const ZmbFeature *feature);
+	/** Find the const Fleen that owns a feature runner. */
+	const FleenCreature *findFleenByFeature(const ZmbFeature *feature) const;
 	/** Count active Snoids currently loaded on the page. */
 	int16 countLoadedSnoids() const;
 	/** Prepare Fleen hotspots before custom rendering. */

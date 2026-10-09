@@ -1149,7 +1149,7 @@ void ZoombiniPuzzlePizza::createLevel4RejectExamples(int16 dominantOrderToppingA
 // ---------------------------------------------------------------------------
 // Update hover feedback on every host frame.
 // ---------------------------------------------------------------------------
-void ZoombiniPuzzlePizza::onEveryFrame() {
+void ZoombiniPuzzlePizza::onPreTickFrame() {
 	if (_isUpdating || !_pageActive)
 		return;
 	PuzzleUpdateGuard updateGuard(_isUpdating);
@@ -1344,7 +1344,7 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 			case kPhasePostIntroAmbient:
 				// The post-intro ambient completion starts draw-on-reg ready SCRB 7067 or 7068.
 				// Slot 40 reports the SCRB completion.
-				// @ref ZoombiniPuzzlePizza::onEveryFrame() then enables the next submission through the ready-flash poll.
+				// @ref ZoombiniPuzzlePizza::onPreTickFrame() then enables the next submission through the ready-flash poll.
 				// The first post-intro order reaction follows the road detour.
 				// Every later Postman takes a straight path.
 				_arnoPhase = kPhaseNone;
@@ -1532,7 +1532,7 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 	// --- Produce-button ready flash ---
 	// Re-enable @ref ZoombiniPuzzlePizza::_produceSubmissionEnabled when the ready-flash SCRB 7067 or 7068 finishes.
 	// If the delivery callback requested a slot advance, pick the next deliverer.
-	// @ref ZoombiniPuzzlePizza::onEveryFrame() polls the same runner; whichever path fires first resets the phase.
+	// @ref ZoombiniPuzzlePizza::onPreTickFrame() polls the same runner; whichever path fires first resets the phase.
 	if (feature == _produceButtonFeature) {
 		if (eventCode == kAnimEventM1_End && _produceButtonPhase == kPhaseSpawnAnswer) {
 			_produceButtonPhase = kPhaseNone;
@@ -3363,6 +3363,21 @@ byte ZoombiniPuzzlePizza::getToppingRunnerMask(const ZmbFeature *feature) const 
 	}
 
 	return packToppingBitmask();
+}
+
+bool ZoombiniPuzzlePizza::getShapeInterpolationGroup(ZmbFeature *feature, const ZmbHotspot &hotspot, uint32 &key, uint32 &leader) const {
+	(void)hotspot;
+	// Only delivered meals follow the visible Postman; exaggerated Troll poses lack stable body roots and would slide.
+	if (feature != _toppingOverlayFeature || _overlayPhase != kPhaseToppingDelivery || !_postmanSnoid || !_postmanSnoid->isRenderActivated())
+		return false;
+	// Require a scripted delivery pose before sharing the Postman's deterministic translation.
+	const SnoidAnimState state = _postmanSnoid->getAnimState();
+	if (state != kSnoidAnimState008_ScriptReject && state != kSnoidAnimState009_ScriptNormal)
+		return false;
+	// One feature-local group keeps every meal layer on the Postman's interpolated offset.
+	key = 1;
+	leader = _postmanSnoid->getRegistrationIndex();
+	return true;
 }
 
 // ---------------------------------------------------------------------------

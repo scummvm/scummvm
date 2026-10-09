@@ -235,6 +235,8 @@ public:
 	const ZoombiniPage::ScriptSoundPriorityRanges &getScriptSoundPriorityRanges() const override;
 
 protected:
+	/** Interpolate visible child poses and normal Toad/Crab hops from their next deterministic body root. */
+	bool getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const override;
 	/** Begin departure after the required toads cross the pond. */
 	void onGoButtonActivated() override;
 	/** Restore hidden pack runners before the shared departure writer runs. */
@@ -250,7 +252,7 @@ protected:
 	/** Return the finite swap-wand budget details for diagnostics. */
 	Common::String debugGetChanceDetails() const override;
 	/** Advance render-owned swap, hover, and control state before materialization. */
-	void onEveryFrame() override;
+	void onPreTickFrame() override;
 	/** Advance grid movement, toad hops, crabs, and child runners after rendering. */
 	void onPostRenderFrame() override;
 	/** Process per-runner toad, crab, and child animation callbacks. */
@@ -565,6 +567,16 @@ private:
 
 	/** Crab pre-render shape hook: shell pattern overlay + 8-phase movement. */
 	void crabPreRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
+
+	/**
+	 * Calculate a normal grid hop's body root before per-shape REGS correction without changing walker state.
+	 * Actual materialization and next-pose queries use the same phase-local coordinate rules.
+	 * @param state Walker providing the stored hop endpoints resolved before the midpoint pose.
+	 * @param phase SCRB frame index, e.g. phase two selects the hop midpoint.
+	 * @param authoredRoot SCRB hotspot position including the feature's POS_DELTA translation.
+	 * @return Body root retaining the authored arc coordinates outside the rewritten axes.
+	 */
+	static Common::Point getGridHopRoot(const ZmbLillyGridWalker &state, int32 phase, const Common::Point &authoredRoot);
 
 	// --- Helpers ---
 

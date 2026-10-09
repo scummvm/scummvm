@@ -177,53 +177,51 @@ protected:
 		kResSoundRange6099_EasterEggRangeLast = 6099,
 	};
 
-	// -----------------------------------------------------------------------
-	// Shape indices within SHPL 8000 (storage) and SHPL 9000 (buttons)
-	// -----------------------------------------------------------------------
-	enum ShapeId : uint16 {
+	/** One-based shape indices for Basecamp Two storage, page controls and scroll cursors. */
+	enum ShapeIdx : uint16 {
 		// SHPL 8000 -- storage panel
-		kShape8000_StorageAnim_Honeycomb = 1,
-		kShape8000_StorageAnim_Lattice = 2,
-		kShape8000_StorageStill_Honeycomb = 3,
-		kShape8000_StorageStill_Lattice = 4,
-		kShape8000_StorageBorder = 5,
+		kResShape8000_StorageAnimHoneycomb01 = 1,
+		kResShape8000_StorageAnimLattice02 = 2,
+		kResShape8000_StorageStillHoneycomb03 = 3,
+		kResShape8000_StorageStillLattice04 = 4,
+		kResShape8000_StorageBorder05 = 5,
 
 		// SHPL 9000 -- individually stored button images.
-		kShape9000_GoEnabled_01 = 1,
-		kShape9000_GoPressed_02 = 2,
+		kResShape9000_GoEnabled01 = 1,
+		kResShape9000_GoPressed02 = 2,
 		// Index 3 is unused by the loop.
-		kShape9000_MapNormal_05 = 5,
-		kShape9000_MapPressed_06 = 6,
+		kResShape9000_MapNormal05 = 5,
+		kResShape9000_MapPressed06 = 6,
 		// Indices 7-14: scroll arrows with two normal and two pressed shapes per direction.
-		kShape9000_ScrollLMaxNormal_07 = 7,
-		kShape9000_ScrollLMaxPressed_08 = 8,
-		kShape9000_ScrollLOneNormal_09 = 9,
-		kShape9000_ScrollLOnePressed_10 = 10,
-		kShape9000_ScrollROneNormal_11 = 11,
-		kShape9000_ScrollROnePressed_12 = 12,
-		kShape9000_ScrollRMaxNormal_13 = 13,
-		kShape9000_ScrollRMaxPressed_14 = 14,
-		kShape9000_GoDisabled_15 = 15,
+		kResShape9000_ScrollLMaxNormal07 = 7,
+		kResShape9000_ScrollLMaxPressed08 = 8,
+		kResShape9000_ScrollLOneNormal09 = 9,
+		kResShape9000_ScrollLOnePressed10 = 10,
+		kResShape9000_ScrollROneNormal11 = 11,
+		kResShape9000_ScrollROnePressed12 = 12,
+		kResShape9000_ScrollRMaxNormal13 = 13,
+		kResShape9000_ScrollRMaxPressed14 = 14,
+		kResShape9000_GoDisabled15 = 15,
 		// Z1-20U/TLC v2.0 release only: page-local hover shapes.
-		kShape9000_GoHover_17 = 17,
-		kShape9000_MapHover_19 = 19,
-		kShape9000_ScrollLMaxHover_20 = 20,
-		kShape9000_ScrollLOneHover_21 = 21,
-		kShape9000_ScrollROneHover_22 = 22,
-		kShape9000_ScrollRMaxHover_23 = 23,
+		kResShape9000_GoHover17 = 17,
+		kResShape9000_MapHover19 = 19,
+		kResShape9000_ScrollLMaxHover20 = 20,
+		kResShape9000_ScrollLOneHover21 = 21,
+		kResShape9000_ScrollROneHover22 = 22,
+		kResShape9000_ScrollRMaxHover23 = 23,
 		// Help/Save button (slot 3): uses shape 24 via the SCRB shape-table path rather than an individual tBMP.
 		// Resources 9000-9022 cover the page-local Go, Map, and scroll shapes.
 		// No tBMP 9023 or 9024 resources exist.
 		// The SCRB runner renders the help button automatically.
 		// These constants are kept for documentation only.
-		kShape9000_HelpNormal_24 = 24,
-		kShape9000_HelpPressed_25 = 25,
+		kResShape9000_HelpNormal24 = 24,
+		kResShape9000_HelpPressed25 = 25,
 
 		// tBMP 10000 -- storage scroll cursors.
-		kShape10000_ArrowLeftMax_01 = 1,
-		kShape10000_ArrowLeft_02 = 2,
-		kShape10000_ArrowRight_03 = 3,
-		kShape10000_ArrowRightMax_04 = 4,
+		kResShape10000_ArrowLeftMax01 = 1,
+		kResShape10000_ArrowLeft02 = 2,
+		kResShape10000_ArrowRight03 = 3,
+		kResShape10000_ArrowRightMax04 = 4,
 	};
 
 	/** Fixed indices for the Basecamp2 decorative animation runners. */

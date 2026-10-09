@@ -1325,7 +1325,7 @@ void ZoombiniPuzzleCaves::handleWrongPlacement(ZmbSnoid *snoid, int16 droppedSea
 
 	_acceptedSnoidCount += 1;
 	_snoidDragEnabled = false;
-	// Trigger @ref ZoombiniPuzzleCaves::setupDoorAnimation() from @ref ZoombiniPuzzleCaves::onEveryFrame().
+	// Trigger @ref ZoombiniPuzzleCaves::setupDoorAnimation() from @ref ZoombiniPuzzleCaves::onPreTickFrame().
 	_wrongSeatTransferPending = true;
 
 	if (_acceptedSnoidCount == 1) {
@@ -1445,7 +1445,7 @@ void ZoombiniPuzzleCaves::onAnimFrame() {
 	ZoombiniInteractive::onAnimFrame();
 }
 
-void ZoombiniPuzzleCaves::onEveryFrame() {
+void ZoombiniPuzzleCaves::onPreTickFrame() {
 	if (_isUpdating || !_pageActive)
 		return;
 	PuzzleUpdateGuard updateGuard(_isUpdating);

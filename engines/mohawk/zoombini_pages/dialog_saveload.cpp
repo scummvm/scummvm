@@ -117,7 +117,7 @@ void ZoombiniDialogSaveLoad::loadFeatures() {
 										  hooksLongButtons);
 }
 
-void ZoombiniDialogSaveLoad::onEveryFrame() {
+void ZoombiniDialogSaveLoad::onPreTickFrame() {
 	if (_mode != kSaveMode)
 		return;
 

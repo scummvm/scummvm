@@ -86,6 +86,23 @@ public:
 	};
 	/** Select the animation tick timing. */
 	static constexpr const char *kOptionTickRate = "tick_rate";
+	/** Enable position interpolation for Zoombinis and their selected moving companions. */
+	static constexpr const char *kOptionPosInterpolation = "position_interpolation";
+	/** Requested presentation frequency in Hz, independent of animation tick timing. */
+	static constexpr const char *kOptionTargetFrameRate = "target_frame_rate";
+	/** Persisted presentation frequencies, all integer multiples of the 60 Hz animation clock. */
+	enum class TargetFrameRate : uint32 {
+		/** Present once per animation tick. */
+		k60FPS = 60,
+		/** Present twice per animation tick. */
+		k120FPS = 120,
+		/** Present three times per animation tick. */
+		k180FPS = 180,
+		/** Present four times per animation tick. */
+		k240FPS = 240,
+	};
+	/** Return a supported presentation frequency, or 60 Hz for an unknown stored value. */
+	static TargetFrameRate normalizeTargetFrameRate(int rate);
 	/** Enable the enhanced keyboard shortcut set. */
 	constexpr static const char *kOptionEnhancedKbdShortcuts = "enhanced_kbd_shortcuts";
 	/** Show current remapped shortcuts in the in-game Options dialog. */
