@@ -159,6 +159,10 @@ void IgorEngine::restart() {
 
 	memset(_objectsState, 0, sizeof(_objectsState));
 	_part07FirstVisitDone = false; // cseg197:0795-0845; original global s3:0xED2E
+	_roomAmbientIndex = 0;
+	_part68QuestionCounter = 1;
+	_part68LastDialogueCode = 0;
+	_part68NpcPresent = false;
 	_parkLadyIdleStep = 1;
 	memcpy(_inventoryImages, INVENTORY_IMG_INIT, 36);
 	memset(_inventoryInfo, 0, sizeof(_inventoryInfo));

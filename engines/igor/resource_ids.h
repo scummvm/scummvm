@@ -705,4 +705,14 @@
 #define MSK_Part72 1107
 #define BOX_Part72 1108
 
+// States 680 / 681 (PART_68)
+#define DAT_Part68 1109
+#define DLG_Part68 1110
+#define ANM_Part68 1111
+#define TXT_Part68 1112
+#define IMG_Part68 1113
+#define PAL_Part68 1114
+#define MSK_Part68 1115
+#define BOX_Part68 1116
+
 #endif // IGOR_RESOURCE_IDS

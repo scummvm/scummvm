@@ -661,6 +661,10 @@ void IgorEngine::PART_MAIN() {
 		case 671:
 			PART_MAZE(); // maze, 670 and 671 are the entrance
 			break;
+		case 680:
+		case 681:
+			PART_68();
+			break;
 		case 700:
 			PART_70();
 			break;

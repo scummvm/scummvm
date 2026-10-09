@@ -524,7 +524,11 @@ private:
 
 	uint8 _objectsState[112];
 	bool _part07FirstVisitDone;
-	uint8 _part72StarIndex;
+	// scratch of the room loops: the current ambient frame (a star in part 72, the screen in part 68)
+	uint8 _roomAmbientIndex;
+	uint8 _part68QuestionCounter;
+	uint8 _part68LastDialogueCode;
+	bool _part68NpcPresent;
 	uint8 _parkLadyIdleStep;
 	uint8 _inventoryImages[36];
 	uint8 _inventoryInfo[74];
@@ -1117,6 +1121,31 @@ private:
 	void PART_70_UPDATE_ROOM_BACKGROUND();
 	void PART_70();
 
+	void PART_68_EXEC_ACTION(int action);
+	void PART_68_LOAD_ROOM();
+	void PART_68_APPLY_OBJECT_STATE(int num);
+	void PART_68_DRAW_NPC(int frame);
+	void PART_68_DRAW_AMBIENT(int frame);
+	void PART_68_DRAW_OBJECT(int frame);
+	void PART_68_DRAW_POSE(int frame);
+	void PART_68_UPDATE_AMBIENT();
+	void PART_68_UPDATE_ROOM_BACKGROUND();
+	void PART_68_UPDATE_ROOM_BACKGROUND_TALK();
+	void PART_68_UPDATE_DIALOGUE_NPC(int action);
+	void PART_68_NPC_SAY(const Common::Array<DialogueText> &lines);
+	void PART_68_NPC_SAY_REPLIES(const int *replies, const int *sounds, int count);
+	void PART_68_ENTER_FROM_RIGHT();
+	void PART_68_ENTER_FROM_LEFT();
+	void PART_68_ENTER_INSIDE();
+	void PART_68_ACTION_102_takeObject();
+	void PART_68_ACTION_104_talk();
+	void PART_68_ACTION_106();
+	void PART_68_ACTION_108_giveObject();
+	void PART_68_CONVERSATION();
+	void PART_68_DIALOGUE_CODE(int code);
+	void PART_68_NPC_LEAVES();
+	void PART_68();
+
 	void PART_72_EXEC_ACTION(int action);
 	void PART_72_APPLY_OBJECT_STATE();
 	void PART_72_ACTION_102_takeObject();
@@ -1392,6 +1421,7 @@ protected:
 	static const RoomDataOffsets PART_36_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_37_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_50_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_68_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_70_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_72_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];

@@ -159,7 +159,7 @@ void IgorEngine::PART_72_ENTER_FROM_LEFT() {
  * The current star is lit and, from time to time, another one is chosen and put out.
  */
 void IgorEngine::PART_72_UPDATE_STAR() {
-	int pos = kPart72StarOffsets[_part72StarIndex - 1];
+	int pos = kPart72StarOffsets[_roomAmbientIndex - 1];
 	if (!PART_72_IS_PROTECTED_COLOR(_screenVGA[pos])) {
 		_screenVGA[pos] = 0xB3;
 	}
@@ -169,8 +169,8 @@ void IgorEngine::PART_72_UPDATE_STAR() {
 	if (getRandomNumber(4) != 0) {
 		return;
 	}
-	_part72StarIndex = getRandomNumber(4) + 1;
-	pos = kPart72StarOffsets[_part72StarIndex - 1];
+	_roomAmbientIndex = getRandomNumber(4) + 1;
+	pos = kPart72StarOffsets[_roomAmbientIndex - 1];
 	if (!PART_72_IS_PROTECTED_COLOR(_screenVGA[pos])) {
 		_screenVGA[pos] = _screenLayer1[pos];
 	}
@@ -200,7 +200,7 @@ void IgorEngine::PART_72_UPDATE_ROOM_BACKGROUND() {
 void IgorEngine::PART_72() {
 	playMusic(4);
 	_gameState.enableLight = 2;
-	_part72StarIndex = 1;
+	_roomAmbientIndex = 1;
 	loadActionData(DAT_Part72);
 	loadRoomData(PAL_Part72, IMG_Part72, BOX_Part72, MSK_Part72, TXT_Part72);
 	SET_PAL_240_48_1();
