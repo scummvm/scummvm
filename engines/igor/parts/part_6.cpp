@@ -73,9 +73,7 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
 		//Look at water
-		ADD_DIALOGUE_TEXT(201, 2, 480);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 2, 480);
 		break;
 	case 102:
 		PART_06_ACTION_102_scrollLeft();
@@ -84,17 +82,13 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 		PART_06_ACTION_103_talkToPhotographer();
 		break;
 	case 104: // look at photographer
-		ADD_DIALOGUE_TEXT(203, 1, 481);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 1, 481);
 		break;
 	case 105:
 		PART_06_ACTION_105();
 		break;
 	case 106: // Look at camera
-		ADD_DIALOGUE_TEXT(204, 1, 482);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(204, 1, 482);
 		break;
 	case 107:
 		PART_06_ACTION_107_giveAnythingToPhotographer();
@@ -109,15 +103,9 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_06_ACTION_103_talkToPhotographer() {
-	ADD_DIALOGUE_TEXT(215, 1, 489);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(215, 1, 489);
 	PART_06_HELPER_8_animatePhotographer(0);
-	ADD_DIALOGUE_TEXT(216, 1, 490);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(170, 69, 55, 37, 63);
-	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
+	cutsceneSay(170, 69, 55, 37, 63, 216, 1, 490);
 	PART_06_HANDLE_DIALOGUE_PHOTOGRAPHER();
 	PART_06_HELPER_6_setPhotographerState(255);
 }
@@ -203,27 +191,14 @@ void IgorEngine::PART_06_ACTION_105() {
 
 void IgorEngine::PART_06_ACTION_107_giveAnythingToPhotographer() {
 	PART_06_HELPER_8_animatePhotographer(0);
-	ADD_DIALOGUE_TEXT(205, 1, 483);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(206, 2, 484);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(170, 69, 55, 37, 63);
-	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
+	igorSayAndWait(205, 1, 483);
+	cutsceneSay(170, 69, 55, 37, 63, 206, 2, 484);
 }
 
 void IgorEngine::PART_06_ACTION_108_giveRocketToPhotographer() {
 	PART_06_HELPER_8_animatePhotographer(0);
-	ADD_DIALOGUE_TEXT(208, 2, 485);
-	ADD_DIALOGUE_TEXT(210, 2, 486);
-	SET_DIALOGUE_TEXT(1, 2);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(212, 1, 487);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(170, 69, 55, 37, 63);
-	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
+	igorSayAndWait({ { 208, 2, 485 }, { 210, 2, 486 } });
+	cutsceneSay(170, 69, 55, 37, 63, 212, 1, 487);
 	int i = 7;
 	_gameTicks = 0;
 	do {
@@ -243,9 +218,7 @@ void IgorEngine::PART_06_ACTION_108_giveRocketToPhotographer() {
 	_objectsState[61] = 0;
 	PART_06_HELPER_6_setPhotographerState(255);
 	_gameState.unkF = false;
-	ADD_DIALOGUE_TEXT(213, 2, 488);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
+	igorSay(213, 2, 488);
 }
 
 void IgorEngine::PART_06_ACTION_102_scrollLeft() {

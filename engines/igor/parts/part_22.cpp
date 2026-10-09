@@ -49,10 +49,7 @@ void IgorEngine::PART_22_EXEC_ACTION(int action) {
  */
 void IgorEngine::PART_22_ACTION_101() {
 	if (_objectsState[78] == 1 && _inventoryInfo[64] == 0) {
-		ADD_DIALOGUE_TEXT(203, 2, 855);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(203, 2, 855);
 		for (int i = 0; i < 3; ++i) {
 			// each frame is drawn as is, over Igor too
 			const uint8 *frame = _animFramesBuffer + kPart22PickUpFrames +
@@ -64,15 +61,10 @@ void IgorEngine::PART_22_ACTION_101() {
 		}
 		addObjectToInventory(29, 64);
 		PART_22_APPLY_OBJECT_STATE(255);
-		ADD_DIALOGUE_TEXT(205, 1, 856);
-		ADD_DIALOGUE_TEXT(206, 1, 857);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 205, 1, 856 }, { 206, 1, 857 } });
 		_objectsState[105] = 1;
 	} else {
-		ADD_DIALOGUE_TEXT(201, 2, 854);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 2, 854);
 	}
 }
 

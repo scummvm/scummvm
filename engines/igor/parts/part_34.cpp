@@ -178,14 +178,10 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 	_updateRoomBackground = &IgorEngine::PARK_UPDATE_AMBIENT_SOUND;
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(201, 2, 562);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 2, 562);
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(203, 2, 563);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 2, 563);
 		_objectsState[82] = 1;
 		PART_34_APPLY_OBJECT_STATE(3);
 		break;
@@ -193,22 +189,16 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 		PART_34_ACTION_103_TAKE();
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(205, 1, 564);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 1, 564);
 		break;
 	case 105:
 		PART_34_ACTION_105_TALK();
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(206, 2, 565);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 2, 565);
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(208, 2, 566);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(208, 2, 566);
 		break;
 	case 108:
 		PART_34_ACTION_108_OLD_LADY();
@@ -225,9 +215,7 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_34_ACTION_103_TAKE() {
 	if (_inventoryInfo[62] != 0) {
-		ADD_DIALOGUE_TEXT(210, 1, 567);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(210, 1, 567);
 		return;
 	}
 	PARK_PICK_UP_ANIMATION(16499, kParkPickUpFrames);
@@ -248,19 +236,14 @@ void IgorEngine::PART_34_ACTION_105_TALK() {
  */
 void IgorEngine::PART_34_ACTION_108_OLD_LADY() {
 	PARK_DRAW_LADY_FRAME(_screenVGA, 1);
-	ADD_DIALOGUE_TEXT(211, 2, 568);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
+	igorSay(211, 2, 568);
 	PARK_WAIT_FOR_IGOR_DIALOGUE();
 	for (int frame = 12; frame <= 13; ++frame) {
 		PARK_DRAW_LADY_FRAME(_screenVGA, frame);
 		waitForTimer(45);
 	}
 	if (_objectsState[1] == 0) {
-		ADD_DIALOGUE_TEXT(213, 1, 569);
-		ADD_DIALOGUE_TEXT(216, 1, 570);
-		SET_DIALOGUE_TEXT(1, 2);
-		startCutsceneDialogue(121, 58, 63, 23, 0);
+		cutsceneSayStart(121, 58, 63, 23, 0, { { 213, 1, 569 }, { 216, 1, 570 } });
 		PARK_WAIT_FOR_LADY_DIALOGUE();
 		for (int frame = 14; frame >= 12; --frame) {
 			PARK_DRAW_LADY_FRAME(_screenVGA, frame);
@@ -271,10 +254,7 @@ void IgorEngine::PART_34_ACTION_108_OLD_LADY() {
 		return;
 	}
 
-	ADD_DIALOGUE_TEXT(217, 1, 571);
-	ADD_DIALOGUE_TEXT(218, 1, 572);
-	SET_DIALOGUE_TEXT(1, 2);
-	startCutsceneDialogue(121, 58, 63, 23, 0);
+	cutsceneSayStart(121, 58, 63, 23, 0, { { 217, 1, 571 }, { 218, 1, 572 } });
 	PARK_WAIT_FOR_LADY_DIALOGUE();
 	_parkLadyIdleStep = 1;
 	for (uint i = 0; i < ARRAYSIZE(kOldLadyPetFrames); ++i) {
@@ -282,12 +262,7 @@ void IgorEngine::PART_34_ACTION_108_OLD_LADY() {
 		waitForTimer(45);
 	}
 	removeObjectFromInventory(59);
-	ADD_DIALOGUE_TEXT(219, 2, 573);
-	ADD_DIALOGUE_TEXT(221, 2, 574);
-	ADD_DIALOGUE_TEXT(223, 1, 575);
-	ADD_DIALOGUE_TEXT(224, 2, 576);
-	SET_DIALOGUE_TEXT(1, 4);
-	startCutsceneDialogue(121, 58, 63, 23, 0);
+	cutsceneSayStart(121, 58, 63, 23, 0, { { 219, 2, 573 }, { 221, 2, 574 }, { 223, 1, 575 }, { 224, 2, 576 } });
 	PARK_WAIT_FOR_LADY_DIALOGUE();
 	for (uint i = 0; i < ARRAYSIZE(kOldLadyBagFrames); ++i) {
 		PARK_DRAW_LADY_FRAME(_screenVGA, kOldLadyBagFrames[i]);
@@ -297,18 +272,11 @@ void IgorEngine::PART_34_ACTION_108_OLD_LADY() {
 		waitForTimer();
 	}
 	addObjectToInventory(26, 61);
-	ADD_DIALOGUE_TEXT(226, 1, 577);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
+	igorSay(226, 1, 577);
 	PARK_WAIT_FOR_IGOR_DIALOGUE();
-	ADD_DIALOGUE_TEXT(227, 2, 578);
-	ADD_DIALOGUE_TEXT(229, 1, 579);
-	SET_DIALOGUE_TEXT(1, 2);
-	startCutsceneDialogue(121, 58, 63, 23, 0);
+	cutsceneSayStart(121, 58, 63, 23, 0, { { 227, 2, 578 }, { 229, 1, 579 } });
 	PARK_WAIT_FOR_LADY_DIALOGUE();
-	ADD_DIALOGUE_TEXT(230, 1, 580);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
+	igorSay(230, 1, 580);
 	PARK_WAIT_FOR_IGOR_DIALOGUE();
 	for (int frame = 18; frame <= 31; ++frame) {
 		PARK_DRAW_LADY_FRAME(_screenVGA, frame);

@@ -54,10 +54,7 @@ void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 void IgorEngine::drawDoor(bool open) {
 	if ((_objectsState[26] != 0) == open) {
 		const int text = open ? 19 : 23;
-		ADD_DIALOGUE_TEXT(text, 1, text);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(text, 1, text);
 		return;
 	}
 
@@ -184,12 +181,7 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 	memcpy(_screenLayer1, _screenVGA, 46080);
 	fadeIn(624);
 
-	ADD_DIALOGUE_TEXT(226, 1, 254);
-	SET_DIALOGUE_TEXT(1, 1);
-	_updateDialogue = &IgorEngine::PART_08_UPDATE_DIALOGUE_SECRETARY;
-	startCutsceneDialogue(65, 70, 0, 59, 63);
-	waitForEndOfCutsceneDialogue(65, 70, 0, 59, 63);
-	_updateDialogue = 0;
+	cutsceneSayWithCallback(65, 70, 0, 59, 63, { { 226, 1, 254 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_SECRETARY);
 
 	for (int frame = 5; frame <= 19; ++frame) {
 		drawSecretaryTalkingFrame(frame);
@@ -234,9 +226,7 @@ void IgorEngine::PART_08_DEAN_DRINKS() {
 	_gameState.talkMode = kTalkModeTextOnly;
 	waitForTimer(255);
 
-	ADD_DIALOGUE_TEXT(229, 1, 0);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(78, 75, 26, 58, 0);
+	cutsceneSayStart(78, 75, 26, 58, 0, 229, 1, 0);
 	playSound(61, 1);
 
 	for (int step = 1; step <= 20; ++step) {
@@ -249,9 +239,7 @@ void IgorEngine::PART_08_DEAN_DRINKS() {
 		if (step == 10) {
 			memcpy(_screenVGA + _dialogueDirtyRectY,
 					_screenTextLayer + 320 * 72, _dialogueDirtyRectSize);
-			ADD_DIALOGUE_TEXT(230, 1, 0);
-			SET_DIALOGUE_TEXT(1, 1);
-			startCutsceneDialogue(78, 75, 26, 58, 0);
+			cutsceneSayStart(78, 75, 26, 58, 0, 230, 1, 0);
 		}
 	}
 
@@ -275,22 +263,13 @@ void IgorEngine::PART_08_HANDLE_DIALOGUE_DEAN() {
 
 void IgorEngine::PART_08_ACTION_103_TALK_TO_DEAN() {
 	if (_objectsState[29] == 1) {
-		ADD_DIALOGUE_TEXT(223, 1, 169);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(223, 1, 169);
 		return;
 	}
 
 	if (_objectsState[26] == 1) { // door open
 		drawDean();
-		ADD_DIALOGUE_TEXT(220, 1, 166);
-		ADD_DIALOGUE_TEXT(221, 1, 167);
-		SET_DIALOGUE_TEXT(1, 2);
-		_updateDialogue = &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN;
-		startCutsceneDialogue(78, 75, 26, 58, 0);
-		waitForEndOfCutsceneDialogue(78, 75, 26, 58, 0);
-		_updateDialogue = 0;
+		cutsceneSayWithCallback(78, 75, 26, 58, 0, { { 220, 1, 166 }, { 221, 1, 167 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN);
 		PART_08_APPLY_OBJECT_STATE(255);
 		return;
 	}
@@ -302,25 +281,16 @@ void IgorEngine::PART_08_ACTION_103_TALK_TO_DEAN() {
 void IgorEngine::giveBottleToDean() {
 
 	if (_objectsState[29] == 1) {
-		ADD_DIALOGUE_TEXT(227, 1, 172);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(227, 1, 172);
 		return;
 	}
 	if (_objectsState[0] == 1) {
-		ADD_DIALOGUE_TEXT(226, 1, 171);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(226, 1, 171);
 		return;
 	}
 
 	drawDean();
-	ADD_DIALOGUE_TEXT(210, 2, 158);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(210, 2, 158);
 
 	static const uint8 deanFrames[] = { 1, 2, 3, 0 };
 	static const uint8 igorFrames[] = { 0, 1, 2, 3 };
@@ -351,15 +321,7 @@ void IgorEngine::giveBottleToDean() {
 		drawInventory(_inventoryInfo[72], 0);
 	}
 
-	ADD_DIALOGUE_TEXT(216, 1, 162);
-	ADD_DIALOGUE_TEXT(217, 1, 163);
-	ADD_DIALOGUE_TEXT(218, 1, 164);
-	ADD_DIALOGUE_TEXT(219, 1, 165);
-	SET_DIALOGUE_TEXT(1, 4);
-	_updateDialogue = &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN;
-	startCutsceneDialogue(78, 75, 26, 58, 0);
-	waitForEndOfCutsceneDialogue(78, 75, 26, 58, 0);
-	_updateDialogue = 0;
+	cutsceneSayWithCallback(78, 75, 26, 58, 0, { { 216, 1, 162 }, { 217, 1, 163 }, { 218, 1, 164 }, { 219, 1, 165 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN);
 	_objectsState[30] = _objectsState[0] < 2 ? 1 : 2;
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(63, 1);
@@ -402,10 +364,7 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		}
 		break;
 	case 102: // Look at window
-		ADD_DIALOGUE_TEXT(202, 1, 153);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(202, 1, 153);
 		break;
 	case 104: // Look at dean
 		if (_objectsState[29] == 1)
@@ -417,22 +376,13 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 107: // look at intercom
-		ADD_DIALOGUE_TEXT(205, 2, 155);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(205, 2, 155);
 		break;
 	case 110: // look at bookcase
-		ADD_DIALOGUE_TEXT(207, 2, 156);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(207, 2, 156);
 		break;
 	case 111: // look at door
-		ADD_DIALOGUE_TEXT(209, 1, 157);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(209, 1, 157);
 		break;
 	case 105:
 		PART_08_ACTION_105();
@@ -442,30 +392,18 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		break;
 	case 108:
 		if (_objectsState[29] == 0) {
-			ADD_DIALOGUE_TEXT(212, 1, 159);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
-			waitForEndOfIgorDialogue();
+			igorSayAndWait(212, 1, 159);
 		} else if (_objectsState[32] == 1) {
-			ADD_DIALOGUE_TEXT(224, 2, 170);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
-			waitForEndOfIgorDialogue();
+			igorSayAndWait(224, 2, 170);
 		} else {
 			PART_08_ACTION_108_deanCallsSecretary();
 		}
 		break;
 	case 109:
 		if (_objectsState[29] == 0) {
-			ADD_DIALOGUE_TEXT(213, 2, 160);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
-			waitForEndOfIgorDialogue();
+			igorSayAndWait(213, 2, 160);
 		} else if (_objectsState[28] == 1) {
-			ADD_DIALOGUE_TEXT(215, 1, 161);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
-			waitForEndOfIgorDialogue();
+			igorSayAndWait(215, 1, 161);
 		} else {
 			PART_08_ACTION_109();
 		}

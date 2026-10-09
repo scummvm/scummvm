@@ -27,32 +27,19 @@ static int VAR_CURRENT_TALKING_ACTOR;
 void IgorEngine::PART_19_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(201, 1, 909);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 909);
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(202, 1, 910);
-		SET_DIALOGUE_TEXT(1, 1);
-		startCutsceneDialogue(99, 54, 43, 63, 0);
-		waitForEndOfCutsceneDialogue(99, 54, 43, 63, 0);
+		cutsceneSay(99, 54, 43, 63, 0, 202, 1, 910);
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(203, 1, 911);
-		SET_DIALOGUE_TEXT(1, 1);
-		startCutsceneDialogue(132, 55, 63, 42, 0);
-		waitForEndOfCutsceneDialogue(132, 55, 63, 42, 0);
+		cutsceneSay(132, 55, 63, 42, 0, 203, 1, 911);
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(204, 1, 912);
-		SET_DIALOGUE_TEXT(1, 1);
-		startCutsceneDialogue(167, 56, 0, 42, 42);
-		waitForEndOfCutsceneDialogue(167, 56, 0, 42, 42);
+		cutsceneSay(167, 56, 0, 42, 42, 204, 1, 912);
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(205, 1, 913);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 1, 913);
 		break;
 	case 106:
 		_currentPart = 232;
@@ -61,9 +48,7 @@ void IgorEngine::PART_19_EXEC_ACTION(int action) {
 		PART_19_ACTION_107();
 		break;
 	case 108:
-		ADD_DIALOGUE_TEXT(208, 1, 916);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(208, 1, 916);
 		break;
 	case 109:
 		PART_19_ACTION_109();
@@ -76,16 +61,10 @@ void IgorEngine::PART_19_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_19_ACTION_107() { // sub_137_02C7
 	if (_objectsState[58] == 1) {
-		ADD_DIALOGUE_TEXT(211, 1, 919);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(211, 1, 919);
 		return;
 	}
-	ADD_DIALOGUE_TEXT(206, 1, 914);
-	ADD_DIALOGUE_TEXT(207, 1, 915);
-	SET_DIALOGUE_TEXT(1, 2);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait({ { 206, 1, 914 }, { 207, 1, 915 } });
 	for (int i = 1; i <= 2; ++i) {
 		const int offset = 27110;
 		for (int j = 0; j <= 48; ++j) {
@@ -100,9 +79,7 @@ void IgorEngine::PART_19_ACTION_107() { // sub_137_02C7
 
 void IgorEngine::PART_19_ACTION_109() { // sub_137_0421
 	if (_objectsState[2] == 1) {
-		ADD_DIALOGUE_TEXT(210, 1, 918);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(210, 1, 918);
 		return;
 	}
 	for (int i = 1; i <= 4; ++i) {
@@ -116,10 +93,7 @@ void IgorEngine::PART_19_ACTION_109() { // sub_137_0421
 	PART_19_HELPER_1(255);
 	stopSound();
 	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x360) - 1, _screenVGA, true);
-	ADD_DIALOGUE_TEXT(209, 1, 917);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(209, 1, 917);
 }
 
 void IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN(int action) {
@@ -158,21 +132,13 @@ void IgorEngine::PART_19_HELPER_2_slugCutscene() { // sub_137_07AD
 	decodeAnimFrame(src, _screenVGA, true);
 	memcpy(_screenLayer1, _screenVGA, 46080);
 	fadeIn(624);
-	ADD_DIALOGUE_TEXT(212, 3, 920);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(243, 92, 63, 23, 33);
 	VAR_CURRENT_TALKING_ACTOR = 0;
-	_updateDialogue = &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN;
-	waitForEndOfCutsceneDialogue(243, 92, 63, 23, 33);
-	_updateDialogue = 0;
+	cutsceneSayWithCallback(243, 92, 63, 23, 33, 212, 3, 920, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
 	for (int i = 2; i <= 9; ++i) {
 		src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + i * 2) - 1;
 		waitForTimer(60);
 	}
-	ADD_DIALOGUE_TEXT(215, 1, 921);
-	ADD_DIALOGUE_TEXT(216, 2, 922);
-	SET_DIALOGUE_TEXT(1, 2);
-	startCutsceneDialogue(227, 91, 0, 63, 63);
+	cutsceneSayStart(227, 91, 0, 63, 63, { { 215, 1, 921 }, { 216, 2, 922 } });
 	_gameState.counter[1] = 10;
 	VAR_CURRENT_TALKING_ACTOR = 1;
 	_updateRoomBackground = &IgorEngine::PART_19_UPDATE_BACKGROUND_HELPER_9;
@@ -200,34 +166,14 @@ void IgorEngine::PART_19_HELPER_2_slugCutscene() { // sub_137_07AD
 	src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x40B5) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
 	waitForTimer(30);
-	ADD_DIALOGUE_TEXT(218, 1, 923);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(243, 92, 63, 23, 33);
 	VAR_CURRENT_TALKING_ACTOR = 0;
-	_updateDialogue = &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN;
-	waitForEndOfCutsceneDialogue(243, 92, 63, 23, 33);
-	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(219, 2, 924);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(227, 91, 0, 63, 63);
+	cutsceneSayWithCallback(243, 92, 63, 23, 33, 218, 1, 923, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
 	VAR_CURRENT_TALKING_ACTOR = 1;
-	_updateDialogue = &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN;
-	waitForEndOfCutsceneDialogue(227, 91, 0, 63, 63);
-	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(221, 2, 925);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(243, 92, 63, 23, 33);
+	cutsceneSayWithCallback(227, 91, 0, 63, 63, 219, 2, 924, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
 	VAR_CURRENT_TALKING_ACTOR = 0;
-	_updateDialogue = &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN;
-	waitForEndOfCutsceneDialogue(243, 92, 63, 23, 33);
-	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(223, 2, 926);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(227, 91, 0, 63, 63);
+	cutsceneSayWithCallback(243, 92, 63, 23, 33, 221, 2, 925, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
 	VAR_CURRENT_TALKING_ACTOR = 1;
-	_updateDialogue = &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN;
-	waitForEndOfCutsceneDialogue(227, 91, 0, 63, 63);
-	_updateDialogue = 0;
+	cutsceneSayWithCallback(227, 91, 0, 63, 63, 223, 2, 926, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
 	_objectsState[59] = 1;
 	fadeOut(624);
 	_gameState.talkSpeed = talkSpeed;
@@ -249,10 +195,7 @@ void IgorEngine::PART_19_HELPER_3() {
 void IgorEngine::PART_19_HELPER_4() { // sub_137_0D7B
 	decodeAnimFrame(_animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x40AB) - 1, _screenVGA, true);
 	waitForTimer(60);
-	ADD_DIALOGUE_TEXT(225, 1, 927);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(225, 1, 927);
 	--_walkDataLastIndex;
 	buildWalkPath(295, 142, 319, 142);
 	_walkDataCurrentIndex = 1;

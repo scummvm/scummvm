@@ -141,32 +141,19 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(29, 1, 29);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(29, 1, 29);
 		break;
 	case 103: // look at pipe
-		ADD_DIALOGUE_TEXT(_objectsState[40] == 0 ? 203 : 204, 1, _objectsState[40] == 0 ? 617 : 618);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(_objectsState[40] == 0 ? 203 : 204, 1, _objectsState[40] == 0 ? 617 : 618);
 		break;
 	case 104: // look at snail
-		ADD_DIALOGUE_TEXT(205, 1, 619);
-		ADD_DIALOGUE_TEXT(206, 1, 620);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait({ { 205, 1, 619 }, { 206, 1, 620 } });
 		break;
 	case 105:
 		PART_11_ACTION_105();
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(73, 1, 50);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(73, 1, 50);
 		break;
 	case 107:
 		PART_11_ACTION_107();
@@ -175,37 +162,22 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		PART_11_ACTION_108_scrollRight();
 		break;
 	case 109: // Look at hole
-		ADD_DIALOGUE_TEXT(207, 1, 621);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(207, 1, 621);
 		break;
 	case 110: // Look at butterfly net
-		ADD_DIALOGUE_TEXT(_objectsState[42] == 1 ? 208 : 209, 1, _objectsState[42] == 1 ? 622 : 623);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(_objectsState[42] == 1 ? 208 : 209, 1, _objectsState[42] == 1 ? 622 : 623);
 		break;
 	case 111: // look at glass shards
-		ADD_DIALOGUE_TEXT(210, 1, 624);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(210, 1, 624);
 		break;
 	case 112:
 		PART_11_ACTION_112();
 		break;
 	case 113:
-		ADD_DIALOGUE_TEXT(211, 1, 625);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(211, 1, 625);
 		break;
 	case 114:
-		ADD_DIALOGUE_TEXT(29, 1, 29);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(29, 1, 29);
 		break;
 	default:
 		warning("PART_11_EXEC_ACTION unhandled action %d", action);

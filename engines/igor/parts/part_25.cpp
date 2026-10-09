@@ -31,29 +31,18 @@ void IgorEngine::PART_25_EXEC_ACTION(int action) {
 	case 102:
 		switch (getRandomNumber(2) + 1) {
 		case 1:
-			ADD_DIALOGUE_TEXT(204, 2, 1273);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(204, 2, 1273);
 			break;
 		case 2:
-			ADD_DIALOGUE_TEXT(207, 1, 1274);
-			ADD_DIALOGUE_TEXT(208, 1, 1275);
-			ADD_DIALOGUE_TEXT(209, 1, 1276);
-			SET_DIALOGUE_TEXT(1, 3);
-			startIgorDialogue();
+			igorSay({ { 207, 1, 1274 }, { 208, 1, 1275 }, { 209, 1, 1276 } });
 			break;
 		case 3:
-			ADD_DIALOGUE_TEXT(210, 1, 1277);
-			ADD_DIALOGUE_TEXT(211, 1, 1278);
-			SET_DIALOGUE_TEXT(1, 2);
-			startIgorDialogue();
+			igorSay({ { 210, 1, 1277 }, { 211, 1, 1278 } });
 			break;
 		}
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(201, 1, 1271);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 1271);
 		break;
 	case 104: // walk to board: nothing happens on arrival
 		break;
@@ -61,9 +50,7 @@ void IgorEngine::PART_25_EXEC_ACTION(int action) {
 		PART_25_ACTION_105();
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(203, 1, 1272);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 1, 1272);
 		break;
 	case 107:
 		PART_25_ACTION_107();

@@ -31,17 +31,13 @@ void IgorEngine::PART_17_EXEC_ACTION(int action) {
 		PART_17_ACTION_101_walkIn();
 		break;
 	case 102: // look at door
-		ADD_DIALOGUE_TEXT(225, 1, 648);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(225, 1, 648);
 		break;
 	case 103: // talk to philip and jimmy
 		PART_17_ACTION_103_talkPhilipJimmy();
 		break;
 	case 104: // look at file
-		ADD_DIALOGUE_TEXT(220, 3, 646);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(220, 3, 646);
 		break;
 	case 105:
 		PART_17_ACTION_105();
@@ -77,50 +73,31 @@ void IgorEngine::PART_17_ACTION_103_talkPhilipJimmy() {
 	PART_17_HELPER_8_PhillipToJimmyAnimFrame(0);
 
 	if (_gameState.counter[4] == 1) {
-		ADD_DIALOGUE_TEXT(201, 2, 633);
+		cutsceneSayWithCallback(156, 32, 35, 38, 47, 201, 2, 633, &IgorEngine::PART_17_UPDATE_DIALOGUE_Jimmy);
 	} else if (_gameState.counter[4] == 2) {
-		ADD_DIALOGUE_TEXT(206, 2, 636);
+		cutsceneSayWithCallback(156, 32, 35, 38, 47, 206, 2, 636, &IgorEngine::PART_17_UPDATE_DIALOGUE_Jimmy);
 	} else if (_gameState.counter[4] == 3) {
-		ADD_DIALOGUE_TEXT(210, 2, 638);
+		cutsceneSayWithCallback(156, 32, 35, 38, 47, 210, 2, 638, &IgorEngine::PART_17_UPDATE_DIALOGUE_Jimmy);
 	}
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(156, 32, 35, 38, 47);
-	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_Jimmy;
-	waitForEndOfCutsceneDialogue(156, 32, 35, 38, 47);
-	_updateDialogue = 0;
 
+	VAR_CURRENT_TALKING_ACTOR = 0;
 	if (_gameState.counter[4] == 1) {
 		debug("PART_17_ACTION_103_talkPhilipJimmy: counter[4] == 1");
-		ADD_DIALOGUE_TEXT(203, 1, 634);
-		ADD_DIALOGUE_TEXT(204, 2, 635);
-		SET_DIALOGUE_TEXT(1, 2);
+		cutsceneSayWithCallback(135, 33, 63, 63, 0, { { 203, 1, 634 }, { 204, 2, 635 } }, &IgorEngine::PART_17_UPDATE_DIALOGUE_Philip);
 	} else if (_gameState.counter[4] == 2) {
 		debug("PART_17_ACTION_103_talkPhilipJimmy: counter[4] == 2");
-		ADD_DIALOGUE_TEXT(208, 2, 637);
-		SET_DIALOGUE_TEXT(1, 1);
+		cutsceneSayWithCallback(135, 33, 63, 63, 0, 208, 2, 637, &IgorEngine::PART_17_UPDATE_DIALOGUE_Philip);
 	} else if (_gameState.counter[4] == 3) {
 		debug("PART_17_ACTION_103_talkPhilipJimmy: counter[4] == 3");
-		ADD_DIALOGUE_TEXT(212, 2, 639);
-		ADD_DIALOGUE_TEXT(214, 1, 640);
-		SET_DIALOGUE_TEXT(1, 2);
+		cutsceneSayWithCallback(135, 33, 63, 63, 0, { { 212, 2, 639 }, { 214, 1, 640 } }, &IgorEngine::PART_17_UPDATE_DIALOGUE_Philip);
 	}
-	startCutsceneDialogue(135, 33, 63, 63, 0);
-	VAR_CURRENT_TALKING_ACTOR = 0;
-	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_Philip;
-	waitForEndOfCutsceneDialogue(135, 33, 63, 63, 0);
-	_updateDialogue = 0;
 
 	PART_17_HELPER_11_PhillipToIgor(0);
 
 	waitForTimer(255);
 	const int randomDialogue = getRandomNumber(3);
-	ADD_DIALOGUE_TEXT(215 + randomDialogue, 1, 641 + randomDialogue);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(135, 33, 63, 63, 0);
 	VAR_CURRENT_TALKING_ACTOR = 1;
-	_updateDialogue = &IgorEngine::PART_17_UPDATE_DIALOGUE_Philip;
-	waitForEndOfCutsceneDialogue(135, 33, 63, 63, 0);
-	_updateDialogue = 0;
+	cutsceneSayWithCallback(135, 33, 63, 63, 0, 215 + randomDialogue, 1, 641 + randomDialogue, &IgorEngine::PART_17_UPDATE_DIALOGUE_Philip);
 
 	PART_17_HANDLE_DIALOGUE_PHILIP();
 	PART_17_HELPER_1(255);
@@ -132,10 +109,7 @@ void IgorEngine::PART_17_ACTION_103_talkPhilipJimmy() {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_gameState.igorMoving = true;
 	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
-	ADD_DIALOGUE_TEXT(219, 1, 645);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(219, 1, 645);
 	if (_gameState.counter[4] == 3) {
 		_gameState.counter[4] = 1;
 	} else {
@@ -195,9 +169,7 @@ void IgorEngine::PART_17_ACTION_105() {
 void IgorEngine::PART_17_ACTION_106_swapFolders() {
 	// folder already exchanged
 	if (_objectsState[55] == 1) {
-		ADD_DIALOGUE_TEXT(226, 1, 649);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(226, 1, 649);
 		return;
 	}
 	playSound(24, 1);

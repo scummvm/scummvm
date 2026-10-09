@@ -36,17 +36,13 @@ void IgorEngine::PART_14_EXEC_ACTION(int action) {
 		PART_14_ACTION_101();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(201, 1, 860);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 860);
 		break;
 	case 103:
 		PART_14_ACTION_103();
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(202, 1, 861);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(202, 1, 861);
 		break;
 	case 105:
 		PART_14_ACTION_105();
@@ -55,9 +51,7 @@ void IgorEngine::PART_14_EXEC_ACTION(int action) {
 		PART_14_ACTION_106();
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(203, 1, 862);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 1, 862);
 		break;
 	case 108:
 		PART_14_ACTION_108();
@@ -177,10 +171,7 @@ void IgorEngine::PART_14_ACTION_106() {
 void IgorEngine::PART_14_ACTION_108() {
 	_gameState.unkF = false;
 	_updateRoomBackground = &IgorEngine::PART_14_UPDATE_ROOM_BACKGROUND_ACTION_108;
-	ADD_DIALOGUE_TEXT(226, 1, 880);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(226, 1, 880);
 	removeObjectFromInventory(43);
 	for (int i = 1; i <= 3; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x2AAA + READ_LE_UINT16(_animFramesBuffer + 0x940C + i * 2) - 1;
@@ -191,64 +182,32 @@ void IgorEngine::PART_14_ACTION_108() {
 	playSound(33, 1);
 	PART_14_HELPER_8(4, 24);
 	stopSound();
-	ADD_DIALOGUE_TEXT(205, 1, 864);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(221, 85, 12, 33, 63);
-	waitForEndOfCutsceneDialogue(221, 85, 12, 33, 63);
+	cutsceneSay(221, 85, 12, 33, 63, 205, 1, 864);
 	PART_14_HELPER_8(25, 26);
 	PART_14_HELPER_8(60, 60);
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
 	wd->x = 250;
 	wd->y = 138;
 	wd->posNum = 4;
-	ADD_DIALOGUE_TEXT(206, 1, 865);
-	ADD_DIALOGUE_TEXT(207, 1, 866);
-	SET_DIALOGUE_TEXT(1, 2);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(208, 2, 867);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(221, 85, 12, 33, 63);
-	waitForEndOfCutsceneDialogue(221, 85, 12, 33, 63);
-	ADD_DIALOGUE_TEXT(210, 1, 868);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(211, 2, 869);
-	ADD_DIALOGUE_TEXT(213, 3, 870);
-	ADD_DIALOGUE_TEXT(216, 1, 871);
-	SET_DIALOGUE_TEXT(1, 3);
-	startCutsceneDialogue(221, 85, 12, 33, 63);
-	waitForEndOfCutsceneDialogue(221, 85, 12, 33, 63);
+	igorSayAndWait({ { 206, 1, 865 }, { 207, 1, 866 } });
+	cutsceneSay(221, 85, 12, 33, 63, 208, 2, 867);
+	igorSayAndWait(210, 1, 868);
+	cutsceneSay(221, 85, 12, 33, 63, { { 211, 2, 869 }, { 213, 3, 870 }, { 216, 1, 871 } });
 	for (int i = 33; i <= 35; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x2AAA + READ_LE_UINT16(_animFramesBuffer + 0x940C + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA, true);
 		waitForTimer(60);
 	}
 	addObjectToInventory(28, 63);
-	ADD_DIALOGUE_TEXT(217, 1, 872);
-	ADD_DIALOGUE_TEXT(218, 1, 873);
-	ADD_DIALOGUE_TEXT(219, 1, 874);
-	SET_DIALOGUE_TEXT(1, 3);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(220, 2, 875);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(221, 85, 12, 33, 63);
-	waitForEndOfCutsceneDialogue(221, 85, 12, 33, 63);
+	igorSayAndWait({ { 217, 1, 872 }, { 218, 1, 873 }, { 219, 1, 874 } });
+	cutsceneSay(221, 85, 12, 33, 63, 220, 2, 875);
 	PART_14_HELPER_7(0);
 	_gameState.unkF = false;
 	_screenVGA[32865] = _screenLayer1[32865];
 	playSound(33, 1);
 	PART_14_HELPER_8(36, 60);
 	stopSound();
-	ADD_DIALOGUE_TEXT(222, 1, 876);
-	ADD_DIALOGUE_TEXT(223, 1, 877);
-	ADD_DIALOGUE_TEXT(224, 1, 878);
-	ADD_DIALOGUE_TEXT(225, 1, 879);
-	SET_DIALOGUE_TEXT(1, 4);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait({ { 222, 1, 876 }, { 223, 1, 877 }, { 224, 1, 878 }, { 225, 1, 879 } });
 	PART_14_HELPER_1(255);
 	_updateRoomBackground = 0;
 }
@@ -508,13 +467,10 @@ void IgorEngine::PART_14_HELPER_9() {
 				} else {
 					_currentPart = 145;
 					_gameState.counter[4] = 0;
-					ADD_DIALOGUE_TEXT(204, 1, 863);
-					SET_DIALOGUE_TEXT(1, 1);
 					playSound(35, 1);
 					waitForTimer(255);
 					stopSound();
-					startIgorDialogue();
-					waitForEndOfIgorDialogue();
+					igorSayAndWait(204, 1, 863);
 				}
 			}
 		}

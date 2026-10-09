@@ -53,10 +53,7 @@ void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
 void IgorEngine::PART_10_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101: // look at plaque
-		ADD_DIALOGUE_TEXT(201, 1, 626);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(201, 1, 626);
 		break;
 	case 102: //enter door
 		_roomObjectAreasTable[7].deltaLum = 3;
@@ -71,31 +68,19 @@ void IgorEngine::PART_10_EXEC_ACTION(int action) {
 		_currentPart = 70;
 		break;
 	case 103: //look at door
-		ADD_DIALOGUE_TEXT(202, 1, 627);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(202, 1, 627);
 		break;
 	case 104: // pick burger
 		PART_10_ACTION_104_pickHamburger();
 		break;
 	case 105: // use anything with paperbin
-		ADD_DIALOGUE_TEXT(206, 1, 630);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(206, 1, 630);
 		break;
 	case 106: // walk at zebra crossing
-		ADD_DIALOGUE_TEXT(208, 1, 632);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(208, 1, 632);
 		break;
 	case 107: // look at zebra crossing
-		ADD_DIALOGUE_TEXT(207, 1, 631);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(207, 1, 631);
 		break;
 	case 108:
 		PART_10_ACTION_108_scrollLeft();
@@ -111,17 +96,11 @@ void IgorEngine::PART_10_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_10_ACTION_104_pickHamburger() {
 	if (_objectsState[38] == 1) { // already picked hamburger
-		ADD_DIALOGUE_TEXT(205, 1, 629);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(205, 1, 629);
 		return;
 	}
 
-	ADD_DIALOGUE_TEXT(203, 2, 628);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(203, 2, 628);
 
 	static const uint8 frameSelectors[] = { 0, 1, 0, 2 };
 	for (int frame = 0; frame < 4; ++frame) {

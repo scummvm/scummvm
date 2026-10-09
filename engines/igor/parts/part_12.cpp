@@ -33,9 +33,7 @@ void IgorEngine::PART_12_EXEC_ACTION(int action) {
 		PART_12_ACTION_101();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(201, 1, 789);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 789);
 		break;
 	case 103:
 		if (_objectsState[44] == 0) {
@@ -53,14 +51,10 @@ void IgorEngine::PART_12_EXEC_ACTION(int action) {
 		PART_12_ACTION_105();
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(207, 2, 793);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(207, 2, 793);
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(206, 1, 792);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 1, 792);
 		break;
 	case 108:
 		PART_12_ACTION_108();
@@ -396,14 +390,7 @@ void IgorEngine::PART_12_HELPER_4() {
 			waitForTimer(30);
 		}
 	}
-	ADD_DIALOGUE_TEXT(212, 2, 796);
-	ADD_DIALOGUE_TEXT(214, 1, 797);
-	ADD_DIALOGUE_TEXT(215, 1, 798);
-	SET_DIALOGUE_TEXT(1, 3);
-	_updateDialogue = &IgorEngine::PART_12_UPDATE_DIALOGUE_CHURCHMAN;
-	startCutsceneDialogue(95, 55, 51, 28, 63);
-	waitForEndOfCutsceneDialogue(95, 55, 51, 28, 63);
-	_updateDialogue = 0;
+	cutsceneSayWithCallback(95, 55, 51, 28, 63, { { 212, 2, 796 }, { 214, 1, 797 }, { 215, 1, 798 } }, &IgorEngine::PART_12_UPDATE_DIALOGUE_CHURCHMAN);
 	for (int i = 12; i <= 29; ++i){
 		const uint8 *src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA43E + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA, true);

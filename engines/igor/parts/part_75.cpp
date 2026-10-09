@@ -66,45 +66,30 @@ void IgorEngine::PART_75() {
 	memset(_currentPalette, 0, 768);
 	fadeIn(768);
 	_gameState.igorMoving = false;
-	ADD_DIALOGUE_TEXT(201, 1, 1156);
-	ADD_DIALOGUE_TEXT(202, 2, 1157);
-	ADD_DIALOGUE_TEXT(204, 1, 1158);
-	SET_DIALOGUE_TEXT(1, 3);
-	startCutsceneDialogue(187, 82, 63, 63, 0);
-	waitForEndOfCutsceneDialogue(187, 82, 63, 63, 0);
+	cutsceneSay(187, 82, 63, 63, 0, { { 201, 1, 1156 }, { 202, 2, 1157 }, { 204, 1, 1158 } });
 	for (int i = 1; i <= 17; ++i) {
 		PART_75_HELPER_1(PART_75_ANIM_DATA_1[i]);
 		waitForTimer(30);
 	}
-	ADD_DIALOGUE_TEXT(205, 1, 1159);
-	ADD_DIALOGUE_TEXT(206, 1, 1160);
-	SET_DIALOGUE_TEXT(1, 2);
-	startCutsceneDialogue(187, 82, 63, 63, 0);
-	waitForEndOfCutsceneDialogue(187, 82, 63, 63, 0);
+	cutsceneSay(187, 82, 63, 63, 0, { { 205, 1, 1159 }, { 206, 1, 1160 } });
 	for (int i = 17; i <= 30; ++i) {
 		PART_75_HELPER_1(i);
 		waitForTimer(15);
 	}
-	ADD_DIALOGUE_TEXT(208, 1);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(187, 82, 63, 63, 0);
+	cutsceneSayStart(187, 82, 63, 63, 0, 208, 1);
 	playSound(62, 1);
 	for (int i = 1; i <= 36; ++i) {
 		PART_75_HELPER_1(PART_75_ANIM_DATA_2[i]);
 		waitForTimer(15);
 	}
 	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
-	ADD_DIALOGUE_TEXT(209, 1);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(187, 82, 63, 63, 0);
+	cutsceneSayStart(187, 82, 63, 63, 0, 209, 1);
 	PART_75_HELPER_1(35);
 	waitForTimer(255);
 	PART_75_HELPER_1(36);
 	waitForTimer(140);
 	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
-	ADD_DIALOGUE_TEXT(210, 1);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(187, 82, 63, 63, 0);
+	cutsceneSayStart(187, 82, 63, 63, 0, 210, 1);
 	for (int i = 1; i <= 40; ++i) {
 		PART_75_HELPER_1(getRandomNumber(3) + 37);
 		waitForTimer(30);

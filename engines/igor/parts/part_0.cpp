@@ -106,17 +106,13 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		}
 		break;
 	case 103: // look at window
-		ADD_DIALOGUE_TEXT(201, 3, 95);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 3, 95);
 		break;
 	case 104: // go to window
 		if (_objectsState[13] != 1)
 			break;
 		if (_objectsState[15] != 0) {
-			ADD_DIALOGUE_TEXT(212, 1, 101);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(212, 1, 101);
 			break;
 		}
 		PART_00_animateRaw(0x4D8A, 0, 1, 0x5DC, 30, 50, 0x6B2C, 62, -1, 0);
@@ -125,9 +121,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		_currentPart = 10;
 		break;
 	case 105: // look at bed
-		ADD_DIALOGUE_TEXT(204, 1, 96);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(204, 1, 96);
 		break;
 	case 106: // open bedside table
 		if (_objectsState[8] == 0) {
@@ -176,14 +170,10 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		}
 		break;
 	case 112: // look at closet
-		ADD_DIALOGUE_TEXT(206, 1, 98);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 1, 98);
 		break;
 	case 113: // look at hole
-		ADD_DIALOGUE_TEXT(207, 2, 99);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(207, 2, 99);
 		break;
 	case 114: // go through hole
 		if (_objectsState[10] == 0)
@@ -192,9 +182,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		_currentPart = 24;
 		break;
 	case 115: // look at records
-		ADD_DIALOGUE_TEXT(209, 3, 100);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(209, 3, 100);
 		break;
 	case 116: // take records
 		if (_objectsState[12] == 0) {
@@ -203,9 +191,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 			_objectsState[12] = 1;
 			PART_00_APPLY_OBJECT_STATE(255);
 		} else {
-			ADD_DIALOGUE_TEXT(213, 2, 102);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(213, 2, 102);
 		}
 		break;
 	case 117: // exit to map
@@ -232,10 +218,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		_currentPart = 40;
 		break;
 	case 118: // use bed
-		ADD_DIALOGUE_TEXT(219, 1, 106);
-		ADD_DIALOGUE_TEXT(220, 1, 107);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 219, 1, 106 }, { 220, 1, 107 } });
 		break;
 	default:
 		error("PART_00_EXEC_ACTION unhandled action %d", action);
@@ -274,9 +257,7 @@ void IgorEngine::PART_00_WALK_IN_FROM_CLOSET() {
 	_gameState.igorMoving = true;
 	waitForIgorMove();
 	if (_objectsState[14] == 0) {
-		ADD_DIALOGUE_TEXT(215, 2, 103);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(215, 2, 103);
 		_objectsState[14] = 1;
 	} else {
 		PART_00_ENTER_FROM_BELOW();

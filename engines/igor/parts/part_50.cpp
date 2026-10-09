@@ -37,9 +37,7 @@ void IgorEngine::PART_50_EXEC_ACTION(int action) {
 		PART_50_ACTION_101_enterMaze();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(201, 1, 1083);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 1083);
 		break;
 	case 103:
 		_objectsState[90] = 0;

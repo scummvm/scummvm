@@ -147,12 +147,7 @@ void IgorEngine::PART_09_ACTION_101_openFileCabinet() {
 			waitForTimer(i >= 3 && i <= 14 ? 31 : 61);
 		}
 		_walkData[_walkDataLastIndex - 1].posNum = kFacingPositionFront;
-		ADD_DIALOGUE_TEXT(221, 1, 249);
-		ADD_DIALOGUE_TEXT(222, 1, 250);
-		ADD_DIALOGUE_TEXT(223, 1, 251);
-		SET_DIALOGUE_TEXT(1, 3);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait({ { 221, 1, 249 }, { 222, 1, 250 }, { 223, 1, 251 } });
 		for (int frame = 7; frame >= 6; --frame) {
 			for (int y = 0; y <= 48; ++y)
 				memcpy(_screenVGA + 0x7595 + y * 320, _animFramesBuffer + 0x9BD8 + frame * 0x83B + y * 43, 43);
@@ -218,10 +213,7 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		PART_09_ACTION_101_openFileCabinet();
 		break;
 	case 102: // look at file cabinet
-		ADD_DIALOGUE_TEXT(201, 2, 234);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(201, 2, 234);
 		break;
 	case 103: // talk to secretary
 		{
@@ -238,17 +230,11 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		PART_09_APPLY_OBJECT_STATE(255);
 		break;
 	case 104: // look at secretary
-		ADD_DIALOGUE_TEXT(203, 2, 235);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(203, 2, 235);
 		break;
 	case 105: { // look at closet
 		const int text = _objectsState[34] == 0 ? 205 : (_objectsState[36] == 0 ? 218 : 219);
-		ADD_DIALOGUE_TEXT(text, _objectsState[34] == 0 ? 2 : 1, _objectsState[34] == 0 ? 236 : text + 28);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(text, _objectsState[34] == 0 ? 2 : 1, _objectsState[34] == 0 ? 236 : text + 28);
 		break;
 	}
 	case 106:
@@ -258,33 +244,20 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		if (_objectsState[34] == 0) {
 			executeAction(13);
 		} else {
-			ADD_DIALOGUE_TEXT(217, 1, 245);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
-			waitForEndOfIgorDialogue();
+			igorSayAndWait(217, 1, 245);
 		}
 		break;
 	case 108: // look at intercom
-		ADD_DIALOGUE_TEXT(207, 1, 237);
-		ADD_DIALOGUE_TEXT(208, 1, 238);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait({ { 207, 1, 237 }, { 208, 1, 238 } });
 		break;
 	case 109:
-		ADD_DIALOGUE_TEXT(_objectsState[35] == 0 ? 216 : 224, 1, _objectsState[35] == 0 ? 244 : 252);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(_objectsState[35] == 0 ? 216 : 224, 1, _objectsState[35] == 0 ? 244 : 252);
 		break;
 	case 110:
 		PART_09_ACTION_110();
 		break;
 	case 112: // look at door
-		ADD_DIALOGUE_TEXT(211, 1, 240);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(211, 1, 240);
 		break;
 	case 113: // open door
 		PART_09_ANIMATE_DOOR(true);

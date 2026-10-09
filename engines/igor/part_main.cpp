@@ -37,230 +37,144 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		} else {
 			num = 14;
 		}
-		ADD_DIALOGUE_TEXT(num, 1, num);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(num, 1, num);
 	} break;
 	case 3:
-		ADD_DIALOGUE_TEXT(15, 1, 15);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(15, 1, 15);
 		break;
 	case 4:
-		ADD_DIALOGUE_TEXT(10, 1, 10);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(10, 1, 10);
 		break;
 	case 5:
-		ADD_DIALOGUE_TEXT(9, 1, 9);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(9, 1, 9);
 		break;
 	case 6:
-		ADD_DIALOGUE_TEXT(8, 1, 8);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(8, 1, 8);
 		break;
 	case 7:
-		ADD_DIALOGUE_TEXT(6, 1, 6);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(6, 1, 6);
 		break;
 	case 8:
-		ADD_DIALOGUE_TEXT(7, 1, 7);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(7, 1, 7);
 		break;
 	case 9: {
 			int num = 16 + getRandomNumber(1);
-			ADD_DIALOGUE_TEXT(num, 1, num);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(num, 1, num);
 		}
 		break;
 	case 10:
-		ADD_DIALOGUE_TEXT(18, 1, 18);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(18, 1, 18);
 		break;
 	case 11:
-		ADD_DIALOGUE_TEXT(19, 1, 19);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(19, 1, 19);
 		break;
 	case 12: {
 			int num = 20 + getRandomNumber(1);
-			ADD_DIALOGUE_TEXT(num, 1, num);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(num, 1, num);
 		}
 		break;
 	case 13:
-		ADD_DIALOGUE_TEXT(22, 1, 22);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(22, 1, 22);
 		break;
 	case 14:
-		ADD_DIALOGUE_TEXT(23, 1, 23);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(23, 1, 23);
 		break;
 	case 15:
-		ADD_DIALOGUE_TEXT(24, 1, 24);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(24, 1, 24);
 		break;
 	case 16:
-		ADD_DIALOGUE_TEXT(25, 1, 25);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(25, 1, 25);
 		break;
 	case 17: {
 			int num = 26 + getRandomNumber(1);
-			ADD_DIALOGUE_TEXT(num, 1, num);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(num, 1, num);
 		}
 		break;
 	case 18:
-		ADD_DIALOGUE_TEXT(28, 1, 28);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(28, 1, 28);
 		break;
 	case 19:
-		ADD_DIALOGUE_TEXT(4, 1, 4);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(4, 1, 4);
 		break;
 	case 20:
-		ADD_DIALOGUE_TEXT(5, 1, 5);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(5, 1, 5);
 		break;
 	case 21: {
 			int num = 1 + getRandomNumber(2);
-			ADD_DIALOGUE_TEXT(num, 1, num);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(num, 1, num);
 		}
 		break;
 	case 22:
-		ADD_DIALOGUE_TEXT(51, 1, 32);
-		ADD_DIALOGUE_TEXT(52, 1, 33);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 51, 1, 32 }, { 52, 1, 33 } });
 		break;
 	case 23:
-		ADD_DIALOGUE_TEXT(53, 1, 34);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(53, 1, 34);
 		break;
 	case 24:
-		ADD_DIALOGUE_TEXT(54, 1, 35);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(54, 1, 35);
 		break;
 	case 25:
-		ADD_DIALOGUE_TEXT(55, 3, 36);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(55, 3, 36);
 		break;
 	case 26:
-		ADD_DIALOGUE_TEXT(58, 1, 37);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(58, 1, 37);
 		break;
 	case 27:
-		ADD_DIALOGUE_TEXT(59, 2, 38);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(59, 2, 38);
 		break;
 	case 28:
-		ADD_DIALOGUE_TEXT(61, 1, 39);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(61, 1, 39);
 		break;
 	case 29:
-		ADD_DIALOGUE_TEXT(62, 1, 40);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(62, 1, 40);
 		break;
 	case 30:
-		ADD_DIALOGUE_TEXT(64, 1, 42);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(64, 1, 42);
 		break;
 	case 31:
-		ADD_DIALOGUE_TEXT(63, 1, 41);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(63, 1, 41);
 		break;
 	case 32:
-		ADD_DIALOGUE_TEXT(65, 1, 43);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(65, 1, 43);
 		break;
 	case 33:
-		ADD_DIALOGUE_TEXT(66, 1, 44);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(66, 1, 44);
 		break;
 	case 34:
-		ADD_DIALOGUE_TEXT(30, 1, 30);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(30, 1, 30);
 		break;
 	case 35:
-		ADD_DIALOGUE_TEXT(29, 1, 29);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(29, 1, 29);
 		break;
 	case 36:
-		ADD_DIALOGUE_TEXT(67, 2, 45);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(67, 2, 45);
 		break;
 	case 37:
-		ADD_DIALOGUE_TEXT(69, 1, 46);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(69, 1, 46);
 		break;
 	case 38:
 		// EXEC_MAIN_ACTION_38();
 		break;
 	case 39:
-		ADD_DIALOGUE_TEXT(70, 1, 47);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(70, 1, 47);
 		break;
 	case 40:
-		ADD_DIALOGUE_TEXT(71, 1, 48);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(71, 1, 48);
 		break;
 	case 41:
-		ADD_DIALOGUE_TEXT(72, 1, 49);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(72, 1, 49);
 		break;
 	case 42:
-		ADD_DIALOGUE_TEXT(73, 1, 50);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(73, 1, 50);
 		break;
 	case 43:
 		EXEC_MAIN_ACTION_43_lookAtPhoto();
 		break;
 	case 44:
-		ADD_DIALOGUE_TEXT(156, 1, 80);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(156, 1, 80);
 		break;
 	case 45:
-		ADD_DIALOGUE_TEXT(92, 1, 64);
-		ADD_DIALOGUE_TEXT(93, 3, 65);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 92, 1, 64 }, { 93, 3, 65 } });
 		break;
 	case 46: // look at folder
 		if (_objectsState[3] == 0) {
@@ -273,20 +187,13 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 48:
-		ADD_DIALOGUE_TEXT(77 + _objectsState[0], 1, 53 + _objectsState[0]);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(77 + _objectsState[0], 1, 53 + _objectsState[0]);
 		break;
 	case 50:
 		if (_objectsState[1] == 0) {
-			ADD_DIALOGUE_TEXT(80, 1, 56);
-			ADD_DIALOGUE_TEXT(81, 1, 57);
-			SET_DIALOGUE_TEXT(1, 2);
-			startIgorDialogue();
+			igorSay({ { 80, 1, 56 }, { 81, 1, 57 } });
 		} else {
-			ADD_DIALOGUE_TEXT(82, 1, 58);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(82, 1, 58);
 		}
 		break;
 	case 51:
@@ -299,61 +206,38 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 52:
-		ADD_DIALOGUE_TEXT(89, 2, 63);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(89, 2, 63);
 		break;
 	case 53:
-		ADD_DIALOGUE_TEXT(88, 1, 62);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(88, 1, 62);
 		break;
 	case 54:
 		lookAtPapyrus(false);
 		break;
 	case 55:
-		ADD_DIALOGUE_TEXT(159, 1, 83);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(159, 1, 83);
 		break;
 	case 56:
-		ADD_DIALOGUE_TEXT(160, 1, 84);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(160, 1, 84);
 		break;
 	case 57:
-		ADD_DIALOGUE_TEXT(31, 1, 31);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(31, 1, 31);
 		break;
 	case 58:
-		ADD_DIALOGUE_TEXT(140, 1, 70);
-		ADD_DIALOGUE_TEXT(141, 1, 71);
-		ADD_DIALOGUE_TEXT(142, 1, 72);
-		ADD_DIALOGUE_TEXT(143, 1, 73);
-		SET_DIALOGUE_TEXT(1, 4);
-		startIgorDialogue();
+		igorSay({ { 140, 1, 70 }, { 141, 1, 71 }, { 142, 1, 72 }, { 143, 1, 73 } });
 		_objectsState[4] = 2;
 		break;
 	case 59:
-		ADD_DIALOGUE_TEXT(97, 2, 67);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(97, 2, 67);
 		break;
 	case 60:
-		ADD_DIALOGUE_TEXT(161, 1, 85);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(161, 1, 85);
 		break;
 	case 61:
 		if (_inventoryInfo[51] != 0) {
-			ADD_DIALOGUE_TEXT(76, 1, 52);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(76, 1, 52);
 		} else {
-			ADD_DIALOGUE_TEXT(74, 2, 51);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(74, 2, 51);
 			addObjectToInventory(16, 51);
 		}
 		break;
@@ -367,14 +251,10 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		_objectsState[1] = 1;
 		UPDATE_OBJECT_STATE(2);
 		addObjectToInventory(24, 59);
-		ADD_DIALOGUE_TEXT(169, 1, 93);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(169, 1, 93);
 		break;
 	case 63:
-		ADD_DIALOGUE_TEXT(170, 1, 94);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(170, 1, 94);
 		_inventoryInfo[_inventoryInfo[68] - 1] = 0;
 		_inventoryInfo[68] = 0;
 		packInventory();
@@ -397,29 +277,19 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 65:
-		ADD_DIALOGUE_TEXT(165, 1, 89);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(165, 1, 89);
 		break;
 	case 66:
-		ADD_DIALOGUE_TEXT(166, 1, 90);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(166, 1, 90);
 		break;
 	case 67:
-		ADD_DIALOGUE_TEXT(167, 1, 91);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(167, 1, 91);
 		break;
 	case 68:
-		ADD_DIALOGUE_TEXT(168, 1, 92);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(168, 1, 92);
 		break;
 	case 69:
-		ADD_DIALOGUE_TEXT(96, 1, 66);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(96, 1, 66);
 		break;
 
 	default:
@@ -446,10 +316,7 @@ void IgorEngine::EXEC_MAIN_ACTION_43_lookAtPhoto() {
 	wd->x = 160;
 	wd->y = 130;
 	wd->scaleWidth = 50;
-	ADD_DIALOGUE_TEXT(83, 2, 59);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(83, 2, 59);
 	_currentAction.object1Num = 0;
 	wd->x = _walkDataCurrentPosX2;
 	wd->y = _walkDataCurrentPosY2;

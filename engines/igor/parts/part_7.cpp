@@ -35,10 +35,7 @@ void IgorEngine::PART_07_openCloseDoor(int door, bool open) {
 	const int stateIndex = door == 1 ? 26 : 27;
 	if ((_objectsState[stateIndex] != 0) == open) {
 		const int text = open ? 19 : 23;
-		ADD_DIALOGUE_TEXT(text, 1, text);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(text, 1, text);
 		return;
 	}
 
@@ -98,11 +95,7 @@ void IgorEngine::PART_07_ENTER_FROM_OUTSIDE() {
 		_walkDataCurrentIndex = 1;
 		_gameState.igorMoving = true;
 		waitForIgorMove();
-		ADD_DIALOGUE_TEXT(206, 2, 144);
-		ADD_DIALOGUE_TEXT(208, 4, 145);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait({ { 206, 2, 144 }, { 208, 4, 145 } });
 		_part07FirstVisitDone = true;
 	} else {
 		buildWalkPath(109, 143, 129, 138);
@@ -128,16 +121,10 @@ void IgorEngine::PART_07_EXIT_TO_OUTSIDE() {
 void IgorEngine::PART_07_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101: // Look at dean's plaque
-		ADD_DIALOGUE_TEXT(201, 1, 140);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(201, 1, 140);
 		break;
 	case 102: // Look at dean's door
-		ADD_DIALOGUE_TEXT(202, 2, 141);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(202, 2, 141);
 		break;
 	case 103:
 		PART_07_openCloseDoor(1, true);
@@ -152,40 +139,23 @@ void IgorEngine::PART_07_EXEC_ACTION(int action) {
 		PART_07_openCloseDoor(2, false);
 		break;
 	case 107: // Secretary's plaque
-		ADD_DIALOGUE_TEXT(204, 1, 142);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(204, 1, 142);
 		break;
 	case 108: // Look at messageboard
 		switch (getRandomNumber(2)) {
 		case 0:
-			ADD_DIALOGUE_TEXT(205, 1, 143);
-			ADD_DIALOGUE_TEXT(206, 2, 144);
-			ADD_DIALOGUE_TEXT(208, 4, 145);
-			SET_DIALOGUE_TEXT(1, 3);
+			igorSayAndWait({ { 205, 1, 143 }, { 206, 2, 144 }, { 208, 4, 145 } });
 			break;
 		case 1:
-			ADD_DIALOGUE_TEXT(213, 2, 147);
-			SET_DIALOGUE_TEXT(1, 1);
+			igorSayAndWait(213, 2, 147);
 			break;
 		case 2:
-			ADD_DIALOGUE_TEXT(215, 1, 148);
-			ADD_DIALOGUE_TEXT(216, 1, 149);
-			ADD_DIALOGUE_TEXT(217, 1, 150);
-			ADD_DIALOGUE_TEXT(218, 1, 151);
-			ADD_DIALOGUE_TEXT(219, 1, 152);
-			SET_DIALOGUE_TEXT(1, 5);
+			igorSayAndWait({ { 215, 1, 148 }, { 216, 1, 149 }, { 217, 1, 150 }, { 218, 1, 151 }, { 219, 1, 152 } });
 			break;
 		}
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
 		break;
 	case 109: // Look at stairs
-		ADD_DIALOGUE_TEXT(212, 1, 146);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(212, 1, 146);
 		break;
 	case 110:
 		PART_07_EXIT_TO_OUTSIDE();

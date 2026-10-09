@@ -26,47 +26,28 @@ namespace Igor {
 void IgorEngine::PART_18_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101: // look at grating
-		ADD_DIALOGUE_TEXT(201, 1, 896);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 896);
 		break;
 	case 102: // look at door
-		ADD_DIALOGUE_TEXT(202, 1, 897);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(202, 1, 897);
 		break;
 	case 103: // use left-most door
-		ADD_DIALOGUE_TEXT(205, 1, 899);
-		SET_DIALOGUE_TEXT(1, 1);
-		startCutsceneDialogue(99, 54, 43, 63, 0);
-		waitForEndOfCutsceneDialogue(99, 54, 43, 63, 0);
+		cutsceneSay(99, 54, 43, 63, 0, 205, 1, 899);
 		break;
 	case 104: // use middle door
-		ADD_DIALOGUE_TEXT(206, 1, 900);
-		SET_DIALOGUE_TEXT(1, 1);
-		startCutsceneDialogue(132, 55, 63, 42, 0);
-		waitForEndOfCutsceneDialogue(132, 55, 63, 42, 0);
+		cutsceneSay(132, 55, 63, 42, 0, 206, 1, 900);
 		break;
 	case 105: // use right-most door
-		ADD_DIALOGUE_TEXT(207, 1, 901);
-		SET_DIALOGUE_TEXT(1, 1);
-		startCutsceneDialogue(167, 56, 0, 42, 42);
-		waitForEndOfCutsceneDialogue(167, 56, 0, 42, 42);
+		cutsceneSay(167, 56, 0, 42, 42, 207, 1, 901);
 		break;
 	case 106: // look at dryer
-		ADD_DIALOGUE_TEXT(208, 1, 902);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(208, 1, 902);
 		break;
 	case 107: // look at tap
-		ADD_DIALOGUE_TEXT(209, 1, 903);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(209, 1, 903);
 		break;
 	case 108: // use tap
-		ADD_DIALOGUE_TEXT(210, 1, 904);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(210, 1, 904);
 		break;
 	case 109: // use slug on grating
 		PART_18_ACTION_109_useSlugOnGrating();
@@ -113,22 +94,16 @@ void IgorEngine::PART_18_ACTION_109_useSlugOnGrating() {
 	removeObjectFromInventory(53);
 	fadeIn(768);
 	_currentPart = part;
-	ADD_DIALOGUE_TEXT(215, 1, 908);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
+	igorSay(215, 1, 908);
 }
 
 void IgorEngine::PART_18_ACTION_111() {
 	if (_objectsState[0] == 0) {
-		ADD_DIALOGUE_TEXT(211, 1, 905);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(211, 1, 905);
 		return;
 	}
 	if (_objectsState[0] == 2) {
-		ADD_DIALOGUE_TEXT(212, 1, 906);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(212, 1, 906);
 		return;
 	}
 	const int offset = 26798;
@@ -142,9 +117,7 @@ void IgorEngine::PART_18_ACTION_111() {
 	for (int i = 0; i <= 28; ++i) {
 		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + i * 28 + 0xBDE, 28);
 	}
-	ADD_DIALOGUE_TEXT(213, 2, 907);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
+	igorSay(213, 2, 907);
 	_objectsState[0] = 2;
 	UPDATE_OBJECT_STATE(1);
 }

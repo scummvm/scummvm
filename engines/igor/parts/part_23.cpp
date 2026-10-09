@@ -31,17 +31,13 @@ void IgorEngine::PART_23_EXEC_ACTION(int action) {
 		_currentPart = 280;
 		break;
 	case 102: // look at portrait
-		ADD_DIALOGUE_TEXT(201, 2, 1217);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 2, 1217);
 		break;
 	case 105:
 		PART_23_ACTION_105_enterLadiesRoom();
 		break;
 	case 106: // look at door
-		ADD_DIALOGUE_TEXT(205, 1, 1220);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 1, 1220);
 		break;
 	case 107: // open door
 		PART_23_ACTION_107_openDoor();
@@ -53,26 +49,16 @@ void IgorEngine::PART_23_EXEC_ACTION(int action) {
 		_currentPart = 300;
 		break;
 	case 110: // Look at Lucas
-		ADD_DIALOGUE_TEXT(203, 1, 1218);
-		ADD_DIALOGUE_TEXT(204, 1, 1219);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 203, 1, 1218 }, { 204, 1, 1219 } });
 		break;
 	case 111:
-		ADD_DIALOGUE_TEXT(208, 2, 1222);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(208, 2, 1222);
 		break;
 	case 112:
-		ADD_DIALOGUE_TEXT(210, 1, 1223);
-		ADD_DIALOGUE_TEXT(211, 1, 1224);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 210, 1, 1223 }, { 211, 1, 1224 } });
 		break;
 	case 113:
-		ADD_DIALOGUE_TEXT(212, 1, 1225);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(212, 1, 1225);
 		break;
 	default:
 		error("PART_23_EXEC_ACTION unhandled action %d", action);
@@ -207,9 +193,7 @@ void IgorEngine::PART_23_HELPER_4_walkFromDoor() {
 		playSound(14, 1);
 		_objectsState[66] = 0;
 		PART_23_HELPER_1(1);
-		ADD_DIALOGUE_TEXT(206, 2, 1221);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 2, 1221);
 	}
 }
 

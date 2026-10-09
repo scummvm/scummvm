@@ -11,9 +11,7 @@
 namespace Igor {
 
 void IgorEngine::PART_02_START_DIALOGUE(int text, int count, int sound) {
-	ADD_DIALOGUE_TEXT(text, count, sound);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
+	igorSay(text, count, sound);
 }
 
 void IgorEngine::PART_02_SEARCH_TRUNK() {
@@ -238,10 +236,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		PART_02_START_DIALOGUE(210, 1, 116);
 		break;
 	case 109: // look at portrait
-		ADD_DIALOGUE_TEXT(225, 4, 128);
-		ADD_DIALOGUE_TEXT(229, 1, 129);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 225, 4, 128 }, { 229, 1, 129 } });
 		break;
 	case 110: // look at hole
 		PART_02_START_DIALOGUE(213, 1, 118);

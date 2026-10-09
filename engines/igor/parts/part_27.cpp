@@ -30,31 +30,21 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		break;
 	case 102: // look at lockers
 		if (_objectsState[85] == 0) {
-			ADD_DIALOGUE_TEXT(216, 2, 1173);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(216, 2, 1173);
 			_objectsState[85] = 1;
 			PART_27_HELPER_1(255);
 		} else {
-			ADD_DIALOGUE_TEXT(201, 1, 1162);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(201, 1, 1162);
 		}
 		break;
 	case 103: // open lockers
-		ADD_DIALOGUE_TEXT(203, 1, 1163);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 1, 1163);
 		break;
 	case 104: // close lockers
-		ADD_DIALOGUE_TEXT(204, 1, 1164);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(204, 1, 1164);
 		break;
 	case 105: // look at philips locker
-		ADD_DIALOGUE_TEXT(205, 1, 1165);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 1, 1165);
 		break;
 	case 106:
 		PART_27_ACTION_106_openPhilipLocker();
@@ -66,22 +56,16 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		PART_27_ACTION_108();
 		break;
 	case 109:
-		ADD_DIALOGUE_TEXT(215, 1, 1172);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(215, 1, 1172);
 		break;
 	case 110:
 		PART_27_ACTION_110();
 		break;
 	case 111:
-		ADD_DIALOGUE_TEXT(218, 2, 1174);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(218, 2, 1174);
 		break;
 	case 112: // look at plaque
-		ADD_DIALOGUE_TEXT(221, 1, 1176);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(221, 1, 1176);
 		break;
 	case 113: // go to library
 		_currentPart = 150;
@@ -98,16 +82,11 @@ void IgorEngine::PART_27_ACTION_106_openPhilipLocker() {
 		return;
 	}
 	if (_objectsState[5] == 0) {
-		ADD_DIALOGUE_TEXT(206, 1, 1166);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 1, 1166);
 		return;
 	}
 	if (_objectsState[5] == 1) {
-		ADD_DIALOGUE_TEXT(209, 3, 1169);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
+		igorSayAndWait(209, 3, 1169);
 		_objectsState[5] = 2;
 	}
 	const int offset = 21810;
@@ -147,15 +126,10 @@ void IgorEngine::PART_27_ACTION_107() {
 
 void IgorEngine::PART_27_ACTION_108() {
 	if (_inventoryInfo[58] > 0 || _objectsState[42] == 2) {
-		ADD_DIALOGUE_TEXT(208, 1, 1168);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(208, 1, 1168);
 		return;
 	}
-	ADD_DIALOGUE_TEXT(207, 1, 1167);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(207, 1, 1167);
 	const int offset = 25012;
 	for (int i = 1; i <= 2; ++i) {
 		for (int j = 0; j <= 29; ++j) {
@@ -173,11 +147,7 @@ void IgorEngine::PART_27_ACTION_108() {
 }
 
 void IgorEngine::PART_27_ACTION_110() {
-	ADD_DIALOGUE_TEXT(212, 1, 1170);
-	ADD_DIALOGUE_TEXT(213, 2, 1171);
-	SET_DIALOGUE_TEXT(1, 2);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait({ { 212, 1, 1170 }, { 213, 2, 1171 } });
 	const int offset = 25012;
 	for (int i = 1; i <= 2; ++i) {
 		for (int j = 0; j <= 48; ++j) {

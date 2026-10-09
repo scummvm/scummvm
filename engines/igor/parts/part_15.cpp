@@ -40,69 +40,43 @@ void IgorEngine::PART_15_EXEC_ACTION(int action) {
 		PART_15_ACTION_101();
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(204, 1, 324);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(204, 1, 324);
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(205, 2, 325);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 2, 325);
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(207, 1, 326);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(207, 1, 326);
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(205, 2, 325);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 2, 325);
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(205, 2, 325);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 2, 325);
 		break;
 	case 107:
 		PART_15_ACTION_107();
 		break;
 	case 108:
-		ADD_DIALOGUE_TEXT(208, 1, 327);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(208, 1, 327);
 		break;
 	case 109:
-		ADD_DIALOGUE_TEXT(201, 1, 322);
-		ADD_DIALOGUE_TEXT(202, 2, 323);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 201, 1, 322 }, { 202, 2, 323 } });
 		break;
 	case 110:
-		ADD_DIALOGUE_TEXT(234, 1, 345);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(234, 1, 345);
 		break;
 	case 111:
-		ADD_DIALOGUE_TEXT(235, 1, 346);
-		ADD_DIALOGUE_TEXT(236, 1, 347);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 235, 1, 346 }, { 236, 1, 347 } });
 		break;
 	case 112:
-		ADD_DIALOGUE_TEXT(237, 2, 348);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(237, 2, 348);
 		break;
 	case 113:
-		ADD_DIALOGUE_TEXT(239, 1, 349);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(239, 1, 349);
 		break;
 	case 114:
-		ADD_DIALOGUE_TEXT(240, 1, 350);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(240, 1, 350);
 		break;
 	case 115:
 		PART_15_ACTION_115();
@@ -147,27 +121,10 @@ void IgorEngine::PART_15_ACTION_115() {
 		} while (_gameState.counter[3] != 0);
 	}
 	PART_15_HELPER_7(6);
-	ADD_DIALOGUE_TEXT(209, 1, 328);
-	ADD_DIALOGUE_TEXT(210, 1, 329);
-	SET_DIALOGUE_TEXT(1, 2);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(212, 1, 331);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
-	waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(213, 1, 332);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(214, 1, 333);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
-	waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = 0;
+	igorSayAndWait({ { 209, 1, 328 }, { 210, 1, 329 } });
+	cutsceneSayWithCallback(133, 67, 0, 63, 19, 212, 1, 331, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
+	igorSayAndWait(213, 1, 332);
+	cutsceneSayWithCallback(133, 67, 0, 63, 19, 214, 1, 333, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
 	for (int i = 1; i <= 11; ++i) {
 		PART_15_HELPER_9(PART_15_ANIM_DATA_3[i]);
 		waitForTimer(60);
@@ -195,34 +152,13 @@ void IgorEngine::PART_15_ACTION_115() {
 	removeObjectFromInventory(70);
 	_objectsState[46] = 1;
 	if (_objectsState[47] == 0) {
-		ADD_DIALOGUE_TEXT(221, 2, 338);
-		SET_DIALOGUE_TEXT(1, 1);
-		startCutsceneDialogue(133, 67, 0, 63, 19);
-		_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
-		waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
-		_updateDialogue = 0;
+		cutsceneSayWithCallback(133, 67, 0, 63, 19, 221, 2, 338, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
 		return;
 	}
-	ADD_DIALOGUE_TEXT(226, 2, 341);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
-	waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(228, 1, 342);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(229, 1, 343);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
-	waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(230, 1, 344);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	cutsceneSayWithCallback(133, 67, 0, 63, 19, 226, 2, 341, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
+	igorSayAndWait(228, 1, 342);
+	cutsceneSayWithCallback(133, 67, 0, 63, 19, 229, 1, 343, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
+	igorSayAndWait(230, 1, 344);
 	_currentPart = 780;
 }
 
@@ -234,27 +170,10 @@ void IgorEngine::PART_15_ACTION_116() {
 		} while (_gameState.counter[3] != 0);
 	}
 	PART_15_HELPER_7(6);
-	ADD_DIALOGUE_TEXT(209, 1, 328);
-	ADD_DIALOGUE_TEXT(211, 1, 330);
-	SET_DIALOGUE_TEXT(1, 2);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(212, 1, 331);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
-	waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(213, 1, 332);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(214, 1, 333);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
-	waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = 0;
+	igorSayAndWait({ { 209, 1, 328 }, { 211, 1, 330 } });
+	cutsceneSayWithCallback(133, 67, 0, 63, 19, 212, 1, 331, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
+	igorSayAndWait(213, 1, 332);
+	cutsceneSayWithCallback(133, 67, 0, 63, 19, 214, 1, 333, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
 	for (int i = 1; i <= 11; ++i) {
 		PART_15_HELPER_9(PART_15_ANIM_DATA_5[i]);
 		waitForTimer(60);
@@ -282,34 +201,13 @@ void IgorEngine::PART_15_ACTION_116() {
 	removeObjectFromInventory(60);
 	_objectsState[47] = 1;
 	if (_objectsState[46] == 0) {
-		ADD_DIALOGUE_TEXT(224, 2, 340);
-		SET_DIALOGUE_TEXT(1, 1);
-		startCutsceneDialogue(133, 67, 0, 63, 19);
-		_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
-		waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
-		_updateDialogue = 0;
+		cutsceneSayWithCallback(133, 67, 0, 63, 19, 224, 2, 340, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
 		return;
 	}
-	ADD_DIALOGUE_TEXT(226, 2, 341);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
-	waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(228, 1, 342);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(229, 1, 343);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
-	waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
-	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(230, 1, 344);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	cutsceneSayWithCallback(133, 67, 0, 63, 19, 226, 2, 341, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
+	igorSayAndWait(228, 1, 342);
+	cutsceneSayWithCallback(133, 67, 0, 63, 19, 229, 1, 343, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
+	igorSayAndWait(230, 1, 344);
 	_currentPart = 780;
 }
 

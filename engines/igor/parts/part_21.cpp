@@ -37,24 +37,16 @@ void IgorEngine::PART_21_EXEC_ACTION(int action) {
 		PART_21_ACTION_102();
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(201, 1, 1177);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 1177);
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(202, 1, 1178);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(202, 1, 1178);
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(203, 1, 1179);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 1, 1179);
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(204, 1, 1180);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(204, 1, 1180);
 		break;
 	case 107:
 		PART_21_ACTION_107();
@@ -63,9 +55,7 @@ void IgorEngine::PART_21_EXEC_ACTION(int action) {
 		PART_21_ACTION_108();
 		break;
 	case 109:
-		ADD_DIALOGUE_TEXT(205, 1, 1181);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 1, 1181);
 		break;
 	case 110:
 		PART_21_ACTION_110();
@@ -74,9 +64,7 @@ void IgorEngine::PART_21_EXEC_ACTION(int action) {
 		PART_21_ACTION_111();
 		break;
 	case 112:
-		ADD_DIALOGUE_TEXT(222, 1, 1195);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(222, 1, 1195);
 		break;
 	case 113:
 		PART_21_ACTION_113();
@@ -100,13 +88,8 @@ void IgorEngine::PART_21_ACTION_101() {
 
 void IgorEngine::PART_21_ACTION_102() {
 	PART_21_HELPER_6(1);
-	ADD_DIALOGUE_TEXT(226, 1, 1197);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(227, 1, 1198);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(76, 87, 63, 32, 0);
+	igorSayAndWait(226, 1, 1197);
+	cutsceneSayStart(76, 87, 63, 32, 0, 227, 1, 1198);
 	_updateDialogue = &IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_2;
 	// The cutscene dialogue wait does not run Margaret's idle animation
 	_updateRoomBackground = 0;
@@ -169,16 +152,11 @@ void IgorEngine::PART_21_ACTION_110() {
 
 void IgorEngine::PART_21_ACTION_111() {
 	if (_inventoryInfo[65] == 0) {
-		ADD_DIALOGUE_TEXT(223, 2, 1196);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(223, 2, 1196);
 		return;
 	}
 	IN_ACTION_111 = true;
-	ADD_DIALOGUE_TEXT(208, 1, 1184);
-	ADD_DIALOGUE_TEXT(209, 1, 1185);
-	SET_DIALOGUE_TEXT(1, 2);
-	startIgorDialogue();
+	igorSay({ { 208, 1, 1184 }, { 209, 1, 1185 } });
 	// Igor's talking head is not animated here; the writing frames take its place
 	waitForEndOfIgorDialogue(false);
 	IN_ACTION_111 = false;
@@ -204,9 +182,7 @@ void IgorEngine::PART_21_ACTION_111() {
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
-	ADD_DIALOGUE_TEXT(210, 2, 1186);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
+	igorSay(210, 2, 1186);
 }
 
 void IgorEngine::PART_21_ACTION_113() {
@@ -400,23 +376,13 @@ void IgorEngine::PART_21_HELPER_10() {
 			waitForTimer(100);
 		}
 	}
-	ADD_DIALOGUE_TEXT(212, 1, 1187);
-	ADD_DIALOGUE_TEXT(213, 1, 1188);
-	ADD_DIALOGUE_TEXT(214, 1, 1189);
-	ADD_DIALOGUE_TEXT(215, 2, 1190);
-	ADD_DIALOGUE_TEXT(217, 2, 1191);
-	SET_DIALOGUE_TEXT(1, 5);
-	startCutsceneDialogue(76, 87, 63, 32, 0);
+	cutsceneSayStart(76, 87, 63, 32, 0, { { 212, 1, 1187 }, { 213, 1, 1188 }, { 214, 1, 1189 }, { 215, 2, 1190 }, { 217, 2, 1191 } });
 	_updateDialogue = &IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_3;
 	_updateRoomBackground = 0;
 	waitForEndOfCutsceneDialogue(76, 87, 63, 32, 0);
 	_updateRoomBackground = &IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND;
 	_updateDialogue = 0;
-	ADD_DIALOGUE_TEXT(219, 1, 1192);
-	ADD_DIALOGUE_TEXT(220, 1, 1193);
-	ADD_DIALOGUE_TEXT(221, 1, 1194);
-	SET_DIALOGUE_TEXT(1, 3);
-	startCutsceneDialogue(76, 87, 63, 32, 0);
+	cutsceneSayStart(76, 87, 63, 32, 0, { { 219, 1, 1192 }, { 220, 1, 1193 }, { 221, 1, 1194 } });
 	_updateDialogue = &IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_3;
 	_updateRoomBackground = 0;
 	waitForEndOfCutsceneDialogue(76, 87, 63, 32, 0);

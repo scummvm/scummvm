@@ -27,42 +27,28 @@ namespace Igor {
 void IgorEngine::PART_36_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(201, 1, 655);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 655);
 		break;
 	case 102:
 		PART_36_ACTION_102();
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(202, 1, 656);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(202, 1, 656);
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(203, 1, 657);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 1, 657);
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(204, 2, 658);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(204, 2, 658);
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(209, 1, 661);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(209, 1, 661);
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(206, 2, 659);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 2, 659);
 		break;
 	case 108:
-		ADD_DIALOGUE_TEXT(208, 1, 660);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(208, 1, 660);
 		break;
 	case 109:
 		_currentPart = 242;

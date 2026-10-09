@@ -28,9 +28,7 @@ void IgorEngine::PART_35_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_35_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(201, 2, 611);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 2, 611);
 		_objectsState[82] = 1;
 		PART_35_APPLY_OBJECT_STATE(3);
 		break;
@@ -38,19 +36,13 @@ void IgorEngine::PART_35_EXEC_ACTION(int action) {
 		PART_35_ACTION_102_TAKE();
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(203, 1, 612);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 1, 612);
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(204, 1, 613);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(204, 1, 613);
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(205, 1, 614);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 1, 614);
 		break;
 	case 106:
 		PART_35_ACTION_106_EXIT_TO_MAP();
@@ -66,9 +58,7 @@ void IgorEngine::PART_35_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_35_ACTION_102_TAKE() {
 	if (_inventoryInfo[62] != 0) {
-		ADD_DIALOGUE_TEXT(206, 1, 615);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 1, 615);
 		return;
 	}
 	PARK_PICK_UP_ANIMATION(16339, kParkFrames);

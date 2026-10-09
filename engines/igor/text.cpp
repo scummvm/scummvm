@@ -208,6 +208,68 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 	_inputVars[kInputSkipDialogue] = 0;
 }
 
+void IgorEngine::queueDialogueLines(const Common::Array<DialogueText> &lines) {
+	for (uint i = 0; i < lines.size(); ++i)
+		ADD_DIALOGUE_TEXT(lines[i].num, lines[i].count, lines[i].sound);
+	SET_DIALOGUE_TEXT(1, lines.size());
+}
+
+void IgorEngine::igorSay(const Common::Array<DialogueText> &lines) {
+	queueDialogueLines(lines);
+	startIgorDialogue();
+}
+
+void IgorEngine::igorSay(int num, int count, int sound) {
+	igorSay({ { num, count, sound } });
+}
+
+void IgorEngine::igorSayAndWait(const Common::Array<DialogueText> &lines) {
+	igorSay(lines);
+	waitForEndOfIgorDialogue();
+}
+
+void IgorEngine::igorSayAndWait(int num, int count, int sound) {
+	igorSayAndWait({ { num, count, sound } });
+}
+
+void IgorEngine::cutsceneSayStart(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines) {
+	queueDialogueLines(lines);
+	startCutsceneDialogue(x, y, r, g, b);
+}
+
+void IgorEngine::cutsceneSayStart(int x, int y, int r, int g, int b, int num, int count, int sound) {
+	cutsceneSayStart(x, y, r, g, b, { { num, count, sound } });
+}
+
+void IgorEngine::cutsceneSay(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines) {
+	cutsceneSayStart(x, y, r, g, b, lines);
+	waitForEndOfCutsceneDialogue(x, y, r, g, b);
+}
+
+void IgorEngine::cutsceneSay(int x, int y, int r, int g, int b, int num, int count, int sound) {
+	cutsceneSay(x, y, r, g, b, { { num, count, sound } });
+}
+
+void IgorEngine::cutsceneSayStartWithCallback(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines, UpdateDialogueProc update) {
+	queueDialogueLines(lines);
+	_updateDialogue = update;
+	startCutsceneDialogue(x, y, r, g, b);
+}
+
+void IgorEngine::cutsceneSayStartWithCallback(int x, int y, int r, int g, int b, int num, int count, int sound, UpdateDialogueProc update) {
+	cutsceneSayStartWithCallback(x, y, r, g, b, { { num, count, sound } }, update);
+}
+
+void IgorEngine::cutsceneSayWithCallback(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines, UpdateDialogueProc update) {
+	cutsceneSayStartWithCallback(x, y, r, g, b, lines, update);
+	waitForEndOfCutsceneDialogue(x, y, r, g, b);
+	_updateDialogue = nullptr;
+}
+
+void IgorEngine::cutsceneSayWithCallback(int x, int y, int r, int g, int b, int num, int count, int sound, UpdateDialogueProc update) {
+	cutsceneSayWithCallback(x, y, r, g, b, { { num, count, sound } }, update);
+}
+
 /**
  * Loop for character talking
  */

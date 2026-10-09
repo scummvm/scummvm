@@ -43,68 +43,44 @@ void IgorEngine::PART_31_EXEC_ACTION(int action) {
 		if (_objectsState[72] == 0) {
 			EXEC_MAIN_ACTION(14);
 		} else {
-			ADD_DIALOGUE_TEXT(205, 1, 885);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(205, 1, 885);
 		}
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(201, 1, 881);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 881);
 		break;
 	case 106:
 		PART_31_ACTION_106();
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(203, 1, 883);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 1, 883);
 		break;
 	case 108:
 		_currentPart = 240;
 		break;
 	case 109:
-		ADD_DIALOGUE_TEXT(204, 1, 884);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(204, 1, 884);
 		break;
 	case 110:
 		PART_31_ACTION_110();
 		break;
 	case 111:
-		ADD_DIALOGUE_TEXT(206, 2, 886);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 2, 886);
 		break;
 	case 112:
-		ADD_DIALOGUE_TEXT(208, 1, 887);
-		ADD_DIALOGUE_TEXT(209, 2, 888);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 208, 1, 887 }, { 209, 2, 888 } });
 		break;
 	case 113:
-		ADD_DIALOGUE_TEXT(211, 1, 889);
-		ADD_DIALOGUE_TEXT(212, 1, 890);
-		ADD_DIALOGUE_TEXT(213, 1, 891);
-		SET_DIALOGUE_TEXT(1, 3);
-		startIgorDialogue();
+		igorSay({ { 211, 1, 889 }, { 212, 1, 890 }, { 213, 1, 891 } });
 		break;
 	case 114:
-		ADD_DIALOGUE_TEXT(214, 1, 892);
-		ADD_DIALOGUE_TEXT(215, 1, 893);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 214, 1, 892 }, { 215, 1, 893 } });
 		break;
 	case 115:
-		ADD_DIALOGUE_TEXT(220, 3, 895);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(220, 3, 895);
 		break;
 	case 116:
-		ADD_DIALOGUE_TEXT(218, 2, 894);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(218, 2, 894);
 		break;
 	default:
 		error("PART_31_EXEC_ACTION unhandled action %d", action);
@@ -149,9 +125,7 @@ void IgorEngine::PART_31_ACTION_103() {
 			waitForTimer(30);
 		}
 	}
-	ADD_DIALOGUE_TEXT(202, 1, 882);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
+	igorSay(202, 1, 882);
 }
 
 void IgorEngine::PART_31_ACTION_106() {

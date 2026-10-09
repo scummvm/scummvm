@@ -27,9 +27,7 @@ namespace Igor {
 	switch (action) {
 	case 101: {
 		// Look at water
-		ADD_DIALOGUE_TEXT(201, 2, 478);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 2, 478);
 		break;
 	}
 	case 102:
@@ -41,9 +39,7 @@ namespace Igor {
 		break;
 	case 104:
 		// Look at photographer
-		ADD_DIALOGUE_TEXT(203, 2, 479);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 2, 479);
 		break;
 	case 105:
 		// go to map

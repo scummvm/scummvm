@@ -591,6 +591,31 @@ private:
 	void startCutsceneDialogue(int x, int y, int r, int g, int b);
 	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
 
+	// One-call dialogue helpers. Each queues the given lines as consecutive pages and starts them.
+	// Use these for every new room instead of ADD_DIALOGUE_TEXT/SET_DIALOGUE_TEXT/start* sequences.
+	//   igorSay                         Igor speaks, returns once the first page has started
+	//   igorSayAndWait                  Igor speaks, returns once all pages are finished
+	//   cutsceneSayStart                text at (x, y) in color (r, g, b), returns once the first page has started
+	//   cutsceneSay                     same, but returns once all pages are finished
+	//   cutsceneSayStartWithCallback    like cutsceneSayStart, but first installs a talk-animation callback
+	//                                   (see _updateDialogue); it stays installed for the caller to clear
+	//   cutsceneSayWithCallback         like cutsceneSay, but installs the callback first and clears it afterwards
+	void igorSay(const Common::Array<DialogueText> &lines);
+	void igorSay(int num, int count = 1, int sound = kNoSpeechSound);
+	void igorSayAndWait(const Common::Array<DialogueText> &lines);
+	void igorSayAndWait(int num, int count = 1, int sound = kNoSpeechSound);
+	void cutsceneSayStart(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines);
+	void cutsceneSayStart(int x, int y, int r, int g, int b, int num, int count = 1, int sound = kNoSpeechSound);
+	void cutsceneSay(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines);
+	void cutsceneSay(int x, int y, int r, int g, int b, int num, int count = 1, int sound = kNoSpeechSound);
+	void cutsceneSayStartWithCallback(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines, UpdateDialogueProc update);
+	void cutsceneSayStartWithCallback(int x, int y, int r, int g, int b, int num, int count, int sound, UpdateDialogueProc update);
+	void cutsceneSayWithCallback(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines, UpdateDialogueProc update);
+	void cutsceneSayWithCallback(int x, int y, int r, int g, int b, int num, int count, int sound, UpdateDialogueProc update);
+
+	// Building block of the helpers above, do not call from rooms
+	void queueDialogueLines(const Common::Array<DialogueText> &lines);
+
 	bool isDialogueSpeechPlaying() const;
 	void stopDialogueSpeech();
 
@@ -1017,7 +1042,7 @@ private:
 	void PART_33_UPDATE_DIALOGUE_HARRISON_1(int action);
 	void PART_33_UPDATE_DIALOGUE_HARRISON_2(int action);
 	void PART_33_UPDATE_DIALOGUE_HARRISON_3(int action);
-	void PART_33_HARRISON_SPEAKS();
+	void PART_33_HARRISON_SPEAKS(const Common::Array<DialogueText> &lines);
 	void PART_33_HANDLE_DIALOGUE_HARRISON();
 	void PART_33_UPDATE_ROOM_BACKGROUND();
 	void PART_33_HELPER_1(int num);

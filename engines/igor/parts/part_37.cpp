@@ -33,24 +33,16 @@ void IgorEngine::PART_37_EXEC_ACTION(int action) {
 		PART_37_ACTION_102();
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(203, 2, 664);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 2, 664);
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(205, 1, 665);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 1, 665);
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(207, 1, 667);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(207, 1, 667);
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(206, 1, 666);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 1, 666);
 		break;
 	default:
 		error("PART_37_EXEC_ACTION unhandled action %d", action);
@@ -60,15 +52,10 @@ void IgorEngine::PART_37_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_37_ACTION_102() {
 	if (_objectsState[89] == 1) {
-		ADD_DIALOGUE_TEXT(202, 1, 663);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(202, 1, 663);
 		return;
 	}
-	ADD_DIALOGUE_TEXT(201, 1, 662);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(201, 1, 662);
 	for (int i = 1; i >= 0; --i) {
 		int offset = 16423;
 		for (int j = 0; j <= 49; ++j) {

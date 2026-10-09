@@ -26,11 +26,7 @@ void IgorEngine::PART_01_CLOSE_WINDOW() {
 		}
 	}
 
-	ADD_DIALOGUE_TEXT(203, 1, 132);
-	ADD_DIALOGUE_TEXT(204, 1, 133);
-	SET_DIALOGUE_TEXT(1, 2);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait({ { 203, 1, 132 }, { 204, 1, 133 } });
 }
 
 void IgorEngine::PART_01_STATE_11_BLIT_blitIgor() {
@@ -112,9 +108,7 @@ void IgorEngine::PART_01_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_01_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101: // walk past pigeon
-		ADD_DIALOGUE_TEXT(201, 2, 131);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 2, 131);
 		break;
 	case 102:
 		// draws two 24x41 roof-crossing frames at screen
@@ -127,34 +121,22 @@ void IgorEngine::PART_01_EXEC_ACTION(int action) {
 		_currentPart = 20;
 		break;
 	case 103: // look at pigeon
-		ADD_DIALOGUE_TEXT(205, 1, 134);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 1, 134);
 		break;
 	case 104: // look at closed window
-		ADD_DIALOGUE_TEXT(206, 2, 135);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 2, 135);
 		break;
 	case 105: // look at other window
-		ADD_DIALOGUE_TEXT(208, 1, 136);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(208, 1, 136);
 		break;
 	case 106: // close other window
-		ADD_DIALOGUE_TEXT(209, 1, 137);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(209, 1, 137);
 		break;
 	case 107: // open window
-		ADD_DIALOGUE_TEXT(210, 1, 138);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(210, 1, 138);
 		break;
 	case 108: // pick up pigeon
-		ADD_DIALOGUE_TEXT(211, 2, 139);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(211, 2, 139);
 		break;
 	default:
 		warning("PART_01_EXEC_ACTION unhandled action %d", action);

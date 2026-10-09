@@ -30,41 +30,26 @@ void IgorEngine::PART_28_EXEC_ACTION(int action) {
 		_currentPart = 230;
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(201, 1, 1226);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 1226);
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(202, 1, 1227);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(202, 1, 1227);
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(203, 1, 1228);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 1, 1228);
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(204, 1, 1229);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(204, 1, 1229);
 		break;
 	case 106:
 		if (_objectsState[111] == 0) {
-			ADD_DIALOGUE_TEXT(205, 1, 1230);
-			ADD_DIALOGUE_TEXT(206, 1, 1231);
-			SET_DIALOGUE_TEXT(1, 2);
-			startIgorDialogue();
+			igorSay({ { 205, 1, 1230 }, { 206, 1, 1231 } });
 		} else {
-			ADD_DIALOGUE_TEXT(234, 1, 1253);
-			SET_DIALOGUE_TEXT(1, 1);
-			startIgorDialogue();
+			igorSay(234, 1, 1253);
 		}
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(237, 1, 1256);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(237, 1, 1256);
 		break;
 	case 108:
 		PART_28_ACTION_108();
@@ -73,30 +58,20 @@ void IgorEngine::PART_28_EXEC_ACTION(int action) {
 		PART_28_ACTION_109();
 		break;
 	case 110:
-		ADD_DIALOGUE_TEXT(228, 1, 1248);
-		ADD_DIALOGUE_TEXT(229, 1, 1249);
-		SET_DIALOGUE_TEXT(1, 2);
-		startIgorDialogue();
+		igorSay({ { 228, 1, 1248 }, { 229, 1, 1249 } });
 		break;
 	case 111:
 		if (_objectsState[3] == 0) {
-			ADD_DIALOGUE_TEXT(226, 1, 1246);
-			SET_DIALOGUE_TEXT(1, 1);
+			igorSay(226, 1, 1246);
 		} else {
-			ADD_DIALOGUE_TEXT(227, 1, 1247);
-			SET_DIALOGUE_TEXT(1, 1);
+			igorSay(227, 1, 1247);
 		}
-		startIgorDialogue();
 		break;
 	case 112:
-		ADD_DIALOGUE_TEXT(235, 1, 1254);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(235, 1, 1254);
 		break;
 	case 113:
-		ADD_DIALOGUE_TEXT(236, 1, 1255);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(236, 1, 1255);
 		break;
 	default:
 		error("PART_28_EXEC_ACTION unhandled action %d", action);
@@ -106,17 +81,8 @@ void IgorEngine::PART_28_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_28_ACTION_108() {
 	if (_objectsState[111] == 1) {
-		ADD_DIALOGUE_TEXT(218, 1, 1241);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
-		ADD_DIALOGUE_TEXT(211, 1, 1235);
-		ADD_DIALOGUE_TEXT(212, 1, 1236);
-		ADD_DIALOGUE_TEXT(213, 2, 1237);
-		ADD_DIALOGUE_TEXT(215, 1, 1238);
-		ADD_DIALOGUE_TEXT(216, 1, 1239);
-		SET_DIALOGUE_TEXT(1, 5);
-		startCutsceneDialogue(182, 81, 63, 17, 17);
+		igorSayAndWait(218, 1, 1241);
+		cutsceneSayStart(182, 81, 63, 17, 17, { { 211, 1, 1235 }, { 212, 1, 1236 }, { 213, 2, 1237 }, { 215, 1, 1238 }, { 216, 1, 1239 } });
 		_updateDialogue = &IgorEngine::PART_28_UPDATE_DIALOGUE_CAROLINE;
 		waitForEndOfCutsceneDialogue(182, 81, 63, 17, 17);
 		ADD_DIALOGUE_TEXT(217, 1, 1240);
@@ -131,32 +97,19 @@ void IgorEngine::PART_28_ACTION_108() {
 		_walkData[_walkDataLastIndex].posNum = 3;
 		_gameState.igorMoving = true;
 		waitForIgorMove();
-		ADD_DIALOGUE_TEXT(222, 2, 1244);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(222, 2, 1244);
 		return;
 	}
 	if (_objectsState[87] < 2) {
-		ADD_DIALOGUE_TEXT(207, 1, 1232);
-		SET_DIALOGUE_TEXT(1, 1);
+		igorSayAndWait(207, 1, 1232);
 	} else {
-		ADD_DIALOGUE_TEXT(218, 1, 1241);
-		SET_DIALOGUE_TEXT(1, 1);
+		igorSayAndWait(218, 1, 1241);
 	}
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
 	if (_objectsState[87] < 2) {
-		ADD_DIALOGUE_TEXT(208, 1, 1233);
-		SET_DIALOGUE_TEXT(1, 1);
+		cutsceneSayWithCallback(182, 81, 63, 17, 17, 208, 1, 1233, &IgorEngine::PART_28_UPDATE_DIALOGUE_CAROLINE);
 	} else {
-		ADD_DIALOGUE_TEXT(219, 2, 1242);
-		ADD_DIALOGUE_TEXT(221, 1, 1243);
-		SET_DIALOGUE_TEXT(1, 2);
+		cutsceneSayWithCallback(182, 81, 63, 17, 17, { { 219, 2, 1242 }, { 221, 1, 1243 } }, &IgorEngine::PART_28_UPDATE_DIALOGUE_CAROLINE);
 	}
-	startCutsceneDialogue(182, 81, 63, 17, 17);
-	_updateDialogue = &IgorEngine::PART_28_UPDATE_DIALOGUE_CAROLINE;
-	waitForEndOfCutsceneDialogue(182, 81, 63, 17, 17);
-	_updateDialogue = 0;
 }
 
 void IgorEngine::PART_28_ACTION_109() {
@@ -172,9 +125,7 @@ void IgorEngine::PART_28_ACTION_109() {
 	addObjectToInventory(22, 57);
 	_objectsState[87] = 1;
 	PART_28_HELPER_1(255);
-	ADD_DIALOGUE_TEXT(230, 1, 1250);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
+	igorSay(230, 1, 1250);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
@@ -291,26 +242,16 @@ void IgorEngine::PART_28_HELPER_6() {
 	_walkData[_walkDataLastIndex].posNum = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	ADD_DIALOGUE_TEXT(209, 2, 1234);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(209, 2, 1234);
 	waitForTimer(255);
-	ADD_DIALOGUE_TEXT(231, 1, 1251);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(231, 1, 1251);
 	--_walkDataLastIndex;
 	buildWalkPath(214, 130, 214, 140);
 	_walkDataCurrentIndex = 1;
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	ADD_DIALOGUE_TEXT(224, 2, 1245);
-	ADD_DIALOGUE_TEXT(232, 2, 1252);
-	SET_DIALOGUE_TEXT(1, 2);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait({ { 224, 2, 1245 }, { 232, 2, 1252 } });
 }
 
 void IgorEngine::PART_28_HELPER_8(int frame) {

@@ -31,60 +31,40 @@ static const uint8 PART_33_ANIM_DATA_5[5] = { 0, 6, 7, 8, 1 };
 void IgorEngine::PART_33_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(201, 1, 396);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 396);
 		break;
 	case 102:
-		ADD_DIALOGUE_TEXT(202, 1, 397);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(202, 1, 397);
 		break;
 	case 103:
-		ADD_DIALOGUE_TEXT(203, 1, 398);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(203, 1, 398);
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(204, 1, 399);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(204, 1, 399);
 		break;
 	case 105:
-		ADD_DIALOGUE_TEXT(205, 1, 400);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(205, 1, 400);
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(206, 1, 401);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(206, 1, 401);
 		break;
 	case 107:
-		ADD_DIALOGUE_TEXT(207, 1, 402);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(207, 1, 402);
 		break;
 	case 108:
-		ADD_DIALOGUE_TEXT(208, 1, 403);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(208, 1, 403);
 		break;
 	case 109:
 		PART_33_ACTION_109();
 		break;
 	case 110:
-		ADD_DIALOGUE_TEXT(209, 1, 404);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(209, 1, 404);
 		break;
 	case 111:
 		PART_33_ACTION_111();
 		break;
 	case 112:
-		ADD_DIALOGUE_TEXT(213, 2, 407);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(213, 2, 407);
 		break;
 	case 113:
 		PART_33_ACTION_113();
@@ -103,15 +83,11 @@ void IgorEngine::PART_33_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_33_ACTION_109() {
 	if (_objectsState[4] == 0) {
-		ADD_DIALOGUE_TEXT(201, 1, 396);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(201, 1, 396);
 		return;
 	}
 	if (_objectsState[74] == 1) {
-		ADD_DIALOGUE_TEXT(222, 1, 413);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		igorSay(222, 1, 413);
 		return;
 	}
 	for (int i = 1; i <= 3; ++i) {
@@ -123,25 +99,15 @@ void IgorEngine::PART_33_ACTION_109() {
 	addObjectToInventory(31, 66);
 	_objectsState[74] = 1;
 	PART_33_HELPER_1(255);
-	ADD_DIALOGUE_TEXT(210, 1, 405);
-	ADD_DIALOGUE_TEXT(211, 2, 406);
-	SET_DIALOGUE_TEXT(1, 2);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait({ { 210, 1, 405 }, { 211, 2, 406 } });
 }
 
 void IgorEngine::PART_33_ACTION_111() {
 	if (_objectsState[75] == 1) {
 		PART_33_HELPER_9();
 		PART_33_HELPER_1(255);
-		ADD_DIALOGUE_TEXT(201, 1, 447);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue();
-		ADD_DIALOGUE_TEXT(202, 2, 448);
-		ADD_DIALOGUE_TEXT(204, 2, 449);
-		SET_DIALOGUE_TEXT(1, 2);
-		PART_33_HARRISON_SPEAKS();
+		igorSayAndWait(201, 1, 447);
+		PART_33_HARRISON_SPEAKS({ { 202, 2, 448 }, { 204, 2, 449 } });
 		loadResourceData__ROOM_Library();
 		PART_33_HELPER_1(255);
 	} else {
@@ -177,13 +143,8 @@ void IgorEngine::PART_33_ACTION_114() {
 	for (int i = 0; i <= 28; ++i) {
 		memcpy(_screenVGA + i * 320 + 26279, _animFramesBuffer + i * 63 + 0x5827, 62);
 	}
-	ADD_DIALOGUE_TEXT(223, 1, 414);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(224, 1, 415);
-	SET_DIALOGUE_TEXT(1, 1);
-	PART_33_HARRISON_SPEAKS();
+	igorSayAndWait(223, 1, 414);
+	PART_33_HARRISON_SPEAKS({ { 224, 1, 415 } });
 	for (int i = 2; i <= 5; ++i) {
 		for (int j = 0; j <= 28; ++j) {
 			memcpy(_screenVGA + j * 320 + 26279, _animFramesBuffer + i * 1827 + j * 63 + 0x5104, 62);
@@ -191,27 +152,14 @@ void IgorEngine::PART_33_ACTION_114() {
 		waitForTimer(60);
 	}
 	removeObjectFromInventory(54);
-	ADD_DIALOGUE_TEXT(225, 1, 416);
-	SET_DIALOGUE_TEXT(1, 1);
-	PART_33_HARRISON_SPEAKS();
+	PART_33_HARRISON_SPEAKS({ { 225, 1, 416 } });
 	for (int i = 0; i <= 28; ++i) {
 		memcpy(_screenVGA + i * 320 + 26279, _animFramesBuffer + i * 63 + 0x5827, 62);
 	}
-	ADD_DIALOGUE_TEXT(226, 1, 417);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(227, 1, 418);
-	SET_DIALOGUE_TEXT(1, 1);
-	PART_33_HARRISON_SPEAKS();
-	ADD_DIALOGUE_TEXT(228, 1, 419);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(229, 2, 420);
-	ADD_DIALOGUE_TEXT(231, 2, 421);
-	SET_DIALOGUE_TEXT(1, 2);
-	PART_33_HARRISON_SPEAKS();
+	igorSayAndWait(226, 1, 417);
+	PART_33_HARRISON_SPEAKS({ { 227, 1, 418 } });
+	igorSayAndWait(228, 1, 419);
+	PART_33_HARRISON_SPEAKS({ { 229, 2, 420 }, { 231, 2, 421 } });
 	for (int i = 1; i <= 4; ++i) {
 		for (int j = 0; j <= 28; ++j) {
 			memcpy(_screenVGA + j * 320 + 26279, _animFramesBuffer + PART_33_ANIM_DATA_5[i] * 1827 + j * 63 + 0x5104, 62);
@@ -220,9 +168,7 @@ void IgorEngine::PART_33_ACTION_114() {
 	}
 	addObjectToInventory(35, 70);
 	PART_33_HELPER_1(255);
-	ADD_DIALOGUE_TEXT(233, 2, 422);
-	SET_DIALOGUE_TEXT(1, 1);
-	PART_33_HARRISON_SPEAKS();
+	PART_33_HARRISON_SPEAKS({ { 233, 2, 422 } });
 	_objectsState[75] = 1;
 }
 
@@ -232,10 +178,7 @@ void IgorEngine::PART_33_ACTION_115() {
 		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + i * 63 + 0x5827, 62);
 	}
 	waitForTimer(60);
-	ADD_DIALOGUE_TEXT(215, 2, 408);
-	SET_DIALOGUE_TEXT(1, 1);
-	startIgorDialogue();
-	waitForEndOfIgorDialogue();
+	igorSayAndWait(215, 2, 408);
 	for (int i = 2; i <= 5; ++i) {
 		for (int j = 0; j <= 28; ++j) {
 			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 1827 + j * 63 + 0x5104, 62);
@@ -247,15 +190,11 @@ void IgorEngine::PART_33_ACTION_115() {
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
-	ADD_DIALOGUE_TEXT(217, 2, 409);
-	SET_DIALOGUE_TEXT(1, 1);
-	PART_33_HARRISON_SPEAKS();
+	PART_33_HARRISON_SPEAKS({ { 217, 2, 409 } });
 	for (int i = 0; i <= 28; ++i) {
 		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + i * 63 + 0x5827, 62);
 	}
-	ADD_DIALOGUE_TEXT(219, 1, 410);
-	SET_DIALOGUE_TEXT(1, 1);
-	PART_33_HARRISON_SPEAKS();
+	PART_33_HARRISON_SPEAKS({ { 219, 1, 410 } });
 	for (int i = 0; i <= 28; ++i) {
 		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + i * 63 + 0x5827, 62);
 	}
@@ -264,13 +203,10 @@ void IgorEngine::PART_33_ACTION_115() {
 
 // The room's idle animation of Harrison is only driven by the room loop; the
 // blocking dialogue loops never run it, otherwise it fights the talking frames.
-void IgorEngine::PART_33_HARRISON_SPEAKS() {
+void IgorEngine::PART_33_HARRISON_SPEAKS(const Common::Array<DialogueText> &lines) {
 	const UpdateRoomBackgroundProc updateRoomBackground = _updateRoomBackground;
 	_updateRoomBackground = 0;
-	_updateDialogue = &IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_2;
-	startCutsceneDialogue(47, 82, 0, 58, 40);
-	waitForEndOfCutsceneDialogue(47, 82, 0, 58, 40);
-	_updateDialogue = 0;
+	cutsceneSayWithCallback(47, 82, 0, 58, 40, lines, &IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_2);
 	_updateRoomBackground = updateRoomBackground;
 }
 
@@ -348,13 +284,7 @@ void IgorEngine::PART_33_HELPER_2() {
 	decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x5255) - 1, _screenVGA, true);
 	memcpy(_screenLayer1, _screenVGA, 46080);
 	fadeIn(624);
-	ADD_DIALOGUE_TEXT(220, 1, 411);
-	ADD_DIALOGUE_TEXT(221, 1, 412);
-	SET_DIALOGUE_TEXT(1, 2);
-	_updateDialogue = &IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_1;
-	startCutsceneDialogue(92, 79, 0, 58, 40);
-	waitForEndOfCutsceneDialogue(92, 79, 0, 58, 40);
-	_updateDialogue = 0;
+	cutsceneSayWithCallback(92, 79, 0, 58, 40, { { 220, 1, 411 }, { 221, 1, 412 } }, &IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_1);
 	for (int i = 6; i <= 25; ++i) {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x5253 + i * 2) - 1, _screenVGA, true);
 		waitForTimer(30);
