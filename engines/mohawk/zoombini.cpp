@@ -662,9 +662,22 @@ void MohawkEngine_Zoombini::askSaveBeforeQuit() {
 }
 
 void MohawkEngine_Zoombini::doFrame() {
-	// Update background running things
+	// The integer animation clock gates logic work; the presentation rate only sets display opportunities.
 	uint32 frameStartTime = _system->getMillis();
 	bool isDialogOpened = !_dialogPageStack.empty();
+	const bool interpolate = !isDialogOpened && _activePage && !_activePage->isClosed() && isPosInterpolationEnabled() && !_gfx->isFading() &&
+							 !_builtinDebug._stepMode && !_builtinDebug._runnerBackdropMode && !_activePage->isBuiltinDebugInputWaitActive();
+	const uint32 logicFrame = getAnimationFrameCounter(frameStartTime);
+	const uint32 presentationRate = interpolate ? getTargetFrameRate() : kAnimateFrameRate;
+	if (interpolate && _lastPresentationLogicFrame == logicFrame) {
+		// Between logic ticks, reuse frozen drawing commands and update selected positions without advancing controllers or events.
+		_activePage->onInterpolationFrame(frameStartTime);
+		_gfx->flushScreens();
+		_system->updateScreen();
+		delayPresentationFrame(presentationRate);
+		return;
+	}
+	_lastPresentationLogicFrame = interpolate ? logicFrame : UINT32_MAX;
 
 	_sound->updateSoundQueue();
 
@@ -704,9 +717,9 @@ void MohawkEngine_Zoombini::doFrame() {
 	if (page->isBuiltinDebugInputWaitActive()) {
 		_gfx->flushScreens();
 		_system->updateScreen();
-		const uint32 waitElapsed = _system->getMillis() - frameStartTime;
-		if (waitElapsed < kTargetFrameTimeMs)
-			_system->delayMillis(kTargetFrameTimeMs - waitElapsed);
+		// Pace the wait loop on the exact 60 Hz epoch grid with integer arithmetic.
+		const uint32 elapsed = _system->getMillis() - _animationClockEpochTimeMs;
+		_system->delayMillis(getPresentationDelay(elapsed, kAnimateFrameRate));
 		return;
 	}
 
@@ -728,6 +741,10 @@ void MohawkEngine_Zoombini::doFrame() {
 	// Dialog-owned animation and audio continue through the selected page below.
 	// Page frame update
 	page->onFrame();
+	// Logic ticks can fall between sprite-pose changes, so this frame also needs the current interpolated position.
+	// Normal drawing has already written pixels and captured commands before this display-only adjustment.
+	if (interpolate && page == _activePage && _dialogPageStack.empty())
+		page->onInterpolationFrame(frameStartTime);
 
 	// Copy any changed compositor regions before the backend presents this frame.
 	_gfx->flushScreens();
@@ -762,9 +779,14 @@ void MohawkEngine_Zoombini::doFrame() {
 	}
 
 	// Cut down on CPU usage
-	uint32 loopElapsed = _system->getMillis() - frameStartTime;
-	if (loopElapsed < kTargetFrameTimeMs)
-		_system->delayMillis(kTargetFrameTimeMs - loopElapsed);
+	// Preserve the original frame budget when position interpolation is disabled.
+	if (interpolate) {
+		delayPresentationFrame(presentationRate);
+		return;
+	}
+	// Pace the main loop on the exact 60Hz epoch grid with integer arithmetic.
+	const uint32 elapsed = _system->getMillis() - _animationClockEpochTimeMs;
+	_system->delayMillis(getPresentationDelay(elapsed, kAnimateFrameRate));
 }
 
 void MohawkEngine_Zoombini::delayRunningFrames(uint32 ms) {
@@ -845,12 +867,26 @@ void MohawkEngine_Zoombini::applyGameSettings() {
 		_animationClockEpochTimeMs = now;
 		_animationClockEpochFrame = currentFrame;
 		_tickRate = tickRate;
+		_lastPresentationLogicFrame = UINT32_MAX;
 		if (tickRate == MohawkMetaEngine_Zoombini::TickRate::kAccurate60FPS)
 			debug(1, "engine: using exact 60fps animation clock");
 		else
 			debug(1, "engine: using %u ms integer animation tick", kOriginalAnimateFrameTimeMs);
 
 		needsRedraw = true;
+	}
+
+	const bool interpolationWasEnabled = isPosInterpolationEnabled();
+	const bool posInterpolation = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionPosInterpolation);
+	const MohawkMetaEngine_Zoombini::TargetFrameRate targetFrameRate =
+		MohawkMetaEngine_Zoombini::normalizeTargetFrameRate(ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionTargetFrameRate));
+	if (_posInterpolation != posInterpolation || _targetFrameRate != targetFrameRate) {
+		_posInterpolation = posInterpolation;
+		_targetFrameRate = targetFrameRate;
+		_lastPresentationLogicFrame = UINT32_MAX;
+		// Inactive interpolation options must not force an extra animation render pass.
+		if (interpolationWasEnabled || isPosInterpolationEnabled())
+			needsRedraw = true;
 	}
 
 	const bool colorBlindMode = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionColorBlindMode);
@@ -1109,6 +1145,31 @@ uint32 MohawkEngine_Zoombini::getAnimationFrameCounter(uint32 timeMs) const {
 		return _animationClockEpochFrame + elapsed / kOriginalAnimateFrameTimeMs;
 		break;
 	}
+}
+
+uint64 MohawkEngine_Zoombini::getAnimationFrameTime(uint32 timeMs) const {
+	// Keep the fraction discarded by the integer tick counter: 1000 units per logic tick, or 60 units per elapsed millisecond.
+	const uint32 elapsed = timeMs - _animationClockEpochTimeMs;
+	return static_cast<uint64>(_animationClockEpochFrame) * kAnimationClockTimeBaseMs + static_cast<uint64>(elapsed) * kAnimateFrameRate;
+}
+
+bool MohawkEngine_Zoombini::isPosInterpolationEnabled() const {
+	return _posInterpolation && _tickRate == MohawkMetaEngine_Zoombini::TickRate::kAccurate60FPS;
+}
+
+uint32 MohawkEngine_Zoombini::getTargetFrameRate() const {
+	return isPosInterpolationEnabled() ? static_cast<uint32>(_targetFrameRate) : kAnimateFrameRate;
+}
+
+void MohawkEngine_Zoombini::delayPresentationFrame(uint32 rate) {
+	const uint32 elapsed = _system->getMillis() - _animationClockEpochTimeMs;
+	_system->delayMillis(getPresentationDelay(elapsed, rate));
+}
+
+uint32 MohawkEngine_Zoombini::getPresentationDelay(uint32 elapsed, uint32 rate) {
+	const uint64 nextSlot = static_cast<uint64>(elapsed) * rate / kAnimationClockTimeBaseMs + 1;
+	const uint64 deadline = (nextSlot * kAnimationClockTimeBaseMs + rate - 1) / rate;
+	return static_cast<uint32>(deadline - elapsed);
 }
 
 MohawkArchive *MohawkEngine_Zoombini::loadSystemArchive() {

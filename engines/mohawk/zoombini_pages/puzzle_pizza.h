@@ -67,7 +67,7 @@ public:
 	/** Activate the puzzle and handle specific activation logic. */
 	void activatePage() override;
 	/** Advance topping, question, delivery, and reaction state. */
-	void onEveryFrame() override;
+	void onPreTickFrame() override;
 	/** Advance Pizza state after the current render and before shared ambient audio. */
 	void onPostRenderFrame() override;
 	/** Process postman, question, topping, and delivery callbacks. */
@@ -81,6 +81,8 @@ public:
 	ZmbEventHandleResult onMouseMove(const Common::Point &absPos, const Common::Point &relPos) override;
 
 protected:
+	/** Interpolate the carried meal overlay with the Postman's position during delivery. */
+	bool getShapeInterpolationGroup(ZmbFeature *feature, const ZmbHotspot &hotspot, uint32 &key, uint32 &leader) const override;
 	/** Pizza Pass actions accepted by the built-in debug console and keyboard dispatcher. */
 	enum class BuiltinDebugAction {
 		kInvalid,
@@ -741,7 +743,7 @@ private:
 	ZmbFeature *_pendingSettledToppingRunner = nullptr;
 
 	// -----------------------------------------------------------------------
-	// @ref ZoombiniPuzzlePizza::onEveryFrame() polls these deliverer-walk and delivery-chain watchers.
+	// @ref ZoombiniPuzzlePizza::onPreTickFrame() polls these deliverer-walk and delivery-chain watchers.
 	// Each slot tracks the liveness of one hotspot group.
 	// -----------------------------------------------------------------------
 	/** Whether the surviving deliverer is walking back to the machine seat. */

@@ -1028,7 +1028,6 @@ void ZoombiniPuzzleSlides::initGridByDifficulty() {
 		if (_cellGrid[i * kFieldsPerCell + 1] == kCellOccupied)
 			_cellGrid[i * kFieldsPerCell + 1] = kCellConnector;
 	}
-
 }
 
 // =============================================================================
@@ -1083,7 +1082,6 @@ void ZoombiniPuzzleSlides::buildHexAdjacencyTable() {
 		setLinkIfValid(adjMask, base, kAdjEast, 7, eastCell);
 		setLinkIfValid(adjMask, base, kAdjNorthEast, 8, neCell);
 	}
-
 }
 
 // =============================================================================
@@ -1164,14 +1162,13 @@ void ZoombiniPuzzleSlides::generateTraitPairings() {
 			SWAP(traits[traitIdx], traits[0]);
 		}
 	}
-
 }
 
 // =============================================================================
 // Per-Frame Update
 // =============================================================================
 
-void ZoombiniPuzzleSlides::onEveryFrame() {
+void ZoombiniPuzzleSlides::onPreTickFrame() {
 	// The v1.x releases defer the entrance sound until the page fade has completed.
 	updateEntranceSound();
 

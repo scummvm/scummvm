@@ -1396,7 +1396,7 @@ bool ZoombiniPuzzleLilly::isSwapWandAtPoint(const Common::Point &pos) const {
 // Process all puzzle queues once per frame.
 // =================================================================
 
-void ZoombiniPuzzleLilly::onEveryFrame() {
+void ZoombiniPuzzleLilly::onPreTickFrame() {
 	if (!_pageActive)
 		return;
 
@@ -3197,6 +3197,82 @@ ZmbRenderResult ZoombiniPuzzleLilly::renderCellAnimB(ZmbFeature *feature) {
 // Pre-render shape hooks
 // =================================================================
 
+bool ZoombiniPuzzleLilly::getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const {
+	// Look up Child, Toad or Crab state; other features keep the common Snoid preview.
+	int16 runnerIdx = -1;
+	for (int16 slot = 0; slot < kMaxRunners; slot++) {
+		if (_runnerFeatures[slot] == feature) {
+			runnerIdx = slot;
+			break;
+		}
+	}
+	if (runnerIdx < 0)
+		return ZoombiniPage::getNextInterpolationMove(feature, delta, startFrame, durationFrames);
+	// Keep first-pose holds fixed and use the SCRB scheduler's actual next-pose interval.
+	if (!feature->getNextScrbFrameTiming(startFrame, durationFrames))
+		return false;
+
+	const ZmbLillyGridWalker &state = _runnerStates[runnerIdx];
+	const int16 scrbId = feature->getScrbId();
+	const int32 phase = feature->getLastFrameIdx();
+	if (state.runnerKind == ZmbLillyGridWalker::kRunnerToad) {
+		// Restrict Toads to prepared cell hops; return, turn and exit scripts contain independent water effects.
+		if (scrbId < kResScrb10001_StepDirection0 || kResScrb10004_StepLast < scrbId || state.lastAnimPhase != phase)
+			return false;
+	} else if (state.runnerKind == ZmbLillyGridWalker::kRunnerCrab) {
+		// Restrict Crabs to prepared cell hops, excluding entry and exit effects.
+		if ((scrbId != kResScrb10071_CrabDirection0 && scrbId != kResScrb10073_CrabDirection2 &&
+			 scrbId != kResScrb10075_CrabDirection3 && scrbId != kResScrb10077_CrabDirection1) ||
+			state.lastAnimPhase != phase)
+			return false;
+	} else if (state.runnerKind != ZmbLillyGridWalker::kRunnerChild) {
+		return false;
+	}
+
+	const ZmbDecodedScriptFrame *current = feature->getDecodedScriptFrame(phase);
+	const ZmbDecodedScriptFrame *next = feature->getDecodedScriptFrame(phase + 1);
+	if (!current || !next || current->hotspots.empty() || next->hotspots.empty() ||
+		current->hotspots[0]._shapeIdx <= 0 || next->hotspots[0]._shapeIdx <= 0)
+		return false;
+	// Keep Child handoffs and visibility changes on their authored event ticks.
+	if (state.runnerKind == ZmbLillyGridWalker::kRunnerChild && next->eventCode)
+		return false;
+
+	// Use authored body roots before pose-dependent bitmap registration offsets.
+	const Common::Point posDelta = feature->getPosDelta();
+	Common::Point currentRoot = current->hotspots[0].getPos() + posDelta;
+	Common::Point nextRoot = next->hotspots[0].getPos() + posDelta;
+	if (state.runnerKind != ZmbLillyGridWalker::kRunnerChild) {
+		// Read hop coordinates without changing cell occupancy, movement queues or dwell deadlines.
+		currentRoot = getGridHopRoot(state, phase, currentRoot);
+		nextRoot = getGridHopRoot(state, phase + 1, nextRoot);
+	}
+	delta = nextRoot - currentRoot;
+	return delta != Common::Point(0, 0);
+}
+
+Common::Point ZoombiniPuzzleLilly::getGridHopRoot(const ZmbLillyGridWalker &state, int32 phase, const Common::Point &authoredRoot) {
+	// Mirror the renderer's root corrections without advancing grid-walker state.
+	Common::Point root = authoredRoot;
+	if (state.runnerKind == ZmbLillyGridWalker::kRunnerToad) {
+		if (phase == 2) {
+			if (state.direction == ZmbLillyGridWalker::kDirectionUp || state.direction == ZmbLillyGridWalker::kDirectionDown)
+				root.y = state.moveStartY + (state.moveTargetY - state.moveStartY) / 2;
+			else
+				root.x = state.moveStartX + (state.moveTargetX - state.moveStartX) / 2;
+		} else if (3 <= phase && phase <= 6) {
+			// Keep the authored Y arc while fixing every layer's X at the destination.
+			root.x = state.moveTargetX;
+		}
+	} else if (state.runnerKind == ZmbLillyGridWalker::kRunnerCrab) {
+		if (phase == 2)
+			root = Common::Point(state.moveStartX + (state.moveTargetX - state.moveStartX) / 2, state.moveStartY + (state.moveTargetY - state.moveStartY) / 2);
+		else if (6 <= phase)
+			root = Common::Point(state.moveTargetX, state.moveTargetY);
+	}
+	return root;
+}
+
 void ZoombiniPuzzleLilly::childPreRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots) {
 	(void)hsGroup;
 
@@ -3294,33 +3370,15 @@ void ZoombiniPuzzleLilly::toadPreRenderShape(ZmbFeature *feature, ZmbHotspotGrou
 		const int32 phase = feature->getLastFrameIdx();
 		rs.lastAnimPhase = phase;
 
-		if (phase == 2) {
-			// SCRB group 1 ends at FE0C and dispatches event 11, which only
-			// advances the logical cell and computes the destination. Group 2
-			// ends at FF0D and dispatches event 12; that is the first group
-			// whose materialized hotspots are rewritten to the half-way point.
-			for (uint32 hotspotIdx = 0; hotspotIdx < hotspots.size(); hotspotIdx++) {
-				if (hotspots[hotspotIdx]._shapeIdx == ZmbHotspot::kShapeNone)
-					continue;
-				if (rs.direction == ZmbLillyGridWalker::kDirectionUp ||
-					rs.direction == ZmbLillyGridWalker::kDirectionDown) {
-					hotspots[hotspotIdx]._y =
-						rs.moveStartY + (rs.moveTargetY - rs.moveStartY) / 2;
-				} else {
-					hotspots[hotspotIdx]._x =
-						rs.moveStartX + (rs.moveTargetX - rs.moveStartX) / 2;
-				}
-			}
-		} else if (3 <= phase && phase <= 6) {
-			// Group 3 dispatches event 13 and groups 4-6 dispatch event 14.
-			// Both write destination X for every direction. Vertical movement
-			// keeps the authored Y arc; writing destination Y here detached the
-			// tattoo/body composite.
-			for (uint32 hotspotIdx = 0; hotspotIdx < hotspots.size(); hotspotIdx++) {
-				if (hotspots[hotspotIdx]._shapeIdx == ZmbHotspot::kShapeNone)
-					continue;
-				hotspots[hotspotIdx]._x = rs.moveTargetX;
-			}
+		// Event 11 resolves the destination at phase one; event 12 rewrites the travel axis at phase two.
+		// Events 13/14 fix destination X at phases three through six and preserve the authored Y arc.
+		for (uint32 hotspotIdx = 0; hotspotIdx < hotspots.size(); hotspotIdx++) {
+			ZmbHotspot &hotspot = hotspots[hotspotIdx];
+			if (hotspot._shapeIdx == ZmbHotspot::kShapeNone)
+				continue;
+			const Common::Point root = getGridHopRoot(rs, phase, hotspot.getPos());
+			hotspot._x = root.x;
+			hotspot._y = root.y;
 		}
 	}
 }
@@ -3434,12 +3492,7 @@ void ZoombiniPuzzleLilly::crabPreRenderShape(ZmbFeature *feature, ZmbHotspotGrou
 		return;
 	}
 
-	Common::Point renderBase(hotspots[0]._x, hotspots[0]._y);
-	if (phase == 2) {
-		renderBase = Common::Point(rs.moveStartX + (rs.moveTargetX - rs.moveStartX) / 2, rs.moveStartY + (rs.moveTargetY - rs.moveStartY) / 2);
-	} else if (6 <= phase) {
-		renderBase = Common::Point(rs.moveTargetX, rs.moveTargetY);
-	}
+	const Common::Point renderBase = getGridHopRoot(rs, phase, hotspots[0].getPos());
 
 	for (uint32 hotspotIdx = 0; hotspotIdx < hotspots.size(); hotspotIdx++) {
 		ZmbHotspot &hotspot = hotspots[hotspotIdx];

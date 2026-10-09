@@ -991,12 +991,29 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 									 _c("Enhancements", "zoombini-options"), Common::U32String(), GUI::ThemeEngine::kFontStyleBold);
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
-	const Common::U32String tickRateTooltip = _("Selects exact 60FPS timing (16.67ms per tick) or the original's 17ms integer tick.");
+	const Common::U32String tickRateTooltip = _("Selects exact 60TPS (16.67ms per tick) or the original's 17ms tick.");
 	_tickRateLabel = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.TickRateLabel", _("Tick rate:"), tickRateTooltip);
 	_tickRateLabel->setAlign(Graphics::TextAlign::kTextAlignEnd);
-	_tickRatePopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.TickRate", tickRateTooltip);
-	_tickRatePopUp->appendEntry(_("Accurate 60FPS - 16.67ms"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TickRate::kAccurate60FPS));
-	_tickRatePopUp->appendEntry(_("Original 58.82FPS - 17ms"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TickRate::kOriginal17ms));
+	_tickRatePopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.TickRate", tickRateTooltip, kTickRateChangedCmd);
+	_tickRatePopUp->setTarget(this);
+	_tickRatePopUp->appendEntry(_("Accurate 60TPS - 16.67ms"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TickRate::kAccurate60FPS));
+	_tickRatePopUp->appendEntry(_("Original 58.82TPS - 17ms"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TickRate::kOriginal17ms));
+
+	const Common::U32String interpolationTooltip = _("Interpolates positions of Zoombinis and related objects at the target frame rate. "
+													 "Requires accurate 60TPS timing; sprite animations keep their original speed.");
+	_posInterpolationCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.PosInterpolation",
+														_("Enable position interpolation (Experimental)"), interpolationTooltip, kPosInterpolationChangedCmd);
+	_posInterpolationCheckbox->setTarget(this);
+
+	const Common::U32String targetFrameRateTooltip = _("Selects target presentation frame rate when position interpolation is enabled.");
+	_targetFrameRateLabel = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.TargetFrameRateLabel",
+													  _("Target frame rate:"), targetFrameRateTooltip);
+	_targetFrameRateLabel->setAlign(Graphics::TextAlign::kTextAlignEnd);
+	_targetFrameRatePopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.TargetFrameRate", targetFrameRateTooltip);
+	_targetFrameRatePopUp->appendEntry(_("60FPS"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TargetFrameRate::k60FPS));
+	_targetFrameRatePopUp->appendEntry(_("120FPS"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TargetFrameRate::k120FPS));
+	_targetFrameRatePopUp->appendEntry(_("180FPS"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TargetFrameRate::k180FPS));
+	_targetFrameRatePopUp->appendEntry(_("240FPS"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TargetFrameRate::k240FPS));
 
 	_enhancedKbdShortcutsCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.EnhancedKbdShortcuts",
 															_("Enable enhanced keyboard shortcuts"),
@@ -1077,6 +1094,7 @@ void ZoombiniOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::
 	static constexpr int kOptionLabelPadding = 4;
 	const GUI::StaticTextWidget *const optionLabels[] = {
 		_tickRateLabel,
+		_targetFrameRateLabel,
 		_paletteFilterLabel,
 		_prngAlgorithmLabel,
 		_midiSoundtrackLabel,
@@ -1121,6 +1139,12 @@ void ZoombiniOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::
 		.addPadding(0, 0, 0, 0)
 		.addWidget("TickRateLabel", "", optionLabelWidth, optionLabelHeight)
 		.addWidget("TickRate", "PopUp")
+		.closeLayout()
+		.addWidget("PosInterpolation", "Checkbox")
+		.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+		.addPadding(0, 0, 0, 0)
+		.addWidget("TargetFrameRateLabel", "", optionLabelWidth, optionLabelHeight)
+		.addWidget("TargetFrameRate", "PopUp")
 		.closeLayout()
 		.addWidget("EnhancedKbdShortcuts", "Checkbox")
 		.addWidget("ShowRemappedOptionDialogShortcuts", "Checkbox")
@@ -1172,6 +1196,9 @@ void ZoombiniOptionsWidget::resetToDefaults() {
 	if (_fixCavesL4MidiSilentBugCheckbox)
 		_fixCavesL4MidiSilentBugCheckbox->setState(true);
 	_tickRatePopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::TickRate::kAccurate60FPS));
+	_posInterpolationCheckbox->setState(false);
+	_targetFrameRatePopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::TargetFrameRate::k60FPS));
+	updatePosInterpolationEnabled();
 	_enhancedKbdShortcutsCheckbox->setState(true);
 	_showRemappedOptionDialogShortcutsCheckbox->setState(true);
 	_paletteFilterPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::PaletteFilter::kBrightenPalette));
@@ -1194,6 +1221,11 @@ void ZoombiniOptionsWidget::load() {
 	if (_fixCavesL4MidiSilentBugCheckbox)
 		_fixCavesL4MidiSilentBugCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixCavesL4MidiSilentBug, _domain));
 	_tickRatePopUp->setSelectedTag(ConfMan.getInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionTickRate, _domain));
+	_posInterpolationCheckbox->setState(ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionPosInterpolation, _domain));
+	const MohawkMetaEngine_Zoombini::TargetFrameRate targetFrameRate =
+		MohawkMetaEngine_Zoombini::normalizeTargetFrameRate(ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionTargetFrameRate, _domain));
+	_targetFrameRatePopUp->setSelectedTag(static_cast<uint32>(targetFrameRate));
+	updatePosInterpolationEnabled();
 	_enhancedKbdShortcutsCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionEnhancedKbdShortcuts, _domain));
 	_showRemappedOptionDialogShortcutsCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionShowRemappedOptionDialogShortcuts, _domain));
 	_paletteFilterPopUp->setSelectedTag(ConfMan.getInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionPaletteFilter, _domain));
@@ -1210,6 +1242,7 @@ void ZoombiniOptionsWidget::load() {
 
 bool ZoombiniOptionsWidget::save() {
 	const MohawkMetaEngine_Zoombini::TickRate tickRate = static_cast<MohawkMetaEngine_Zoombini::TickRate>(_tickRatePopUp->getSelectedTag());
+	const MohawkMetaEngine_Zoombini::TargetFrameRate targetFrameRate = static_cast<MohawkMetaEngine_Zoombini::TargetFrameRate>(_targetFrameRatePopUp->getSelectedTag());
 	const MohawkMetaEngine_Zoombini::PaletteFilter paletteFilter = static_cast<MohawkMetaEngine_Zoombini::PaletteFilter>(_paletteFilterPopUp->getSelectedTag());
 	const MohawkMetaEngine_Zoombini::PrngAlgorithm prngAlgorithm = static_cast<MohawkMetaEngine_Zoombini::PrngAlgorithm>(_prngAlgorithmPopUp->getSelectedTag());
 	ConfMan.setBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixAudioPops, _audioPopFixCheckbox->getState(), _domain);
@@ -1219,6 +1252,8 @@ bool ZoombiniOptionsWidget::save() {
 	if (_fixCavesL4MidiSilentBugCheckbox)
 		ConfMan.setBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixCavesL4MidiSilentBug, _fixCavesL4MidiSilentBugCheckbox->getState(), _domain);
 	ConfMan.setInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionTickRate, static_cast<int>(tickRate), _domain);
+	ConfMan.setBool(MohawkMetaEngine_Zoombini::kOptionPosInterpolation, _posInterpolationCheckbox->getState(), _domain);
+	ConfMan.setInt(MohawkMetaEngine_Zoombini::kOptionTargetFrameRate, static_cast<int>(targetFrameRate), _domain);
 	ConfMan.setBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionEnhancedKbdShortcuts, _enhancedKbdShortcutsCheckbox->getState(), _domain);
 	ConfMan.setBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionShowRemappedOptionDialogShortcuts,
 					_showRemappedOptionDialogShortcutsCheckbox->getState(), _domain);
@@ -1238,8 +1273,21 @@ bool ZoombiniOptionsWidget::save() {
 	return true;
 }
 
+void ZoombiniOptionsWidget::updatePosInterpolationEnabled() {
+	const bool enabled = _tickRatePopUp->getSelectedTag() == static_cast<uint32>(MohawkMetaEngine_Zoombini::TickRate::kAccurate60FPS);
+	_posInterpolationCheckbox->setEnabled(enabled);
+
+	const bool targetEnabled = enabled && _posInterpolationCheckbox->getState();
+	_targetFrameRateLabel->setEnabled(targetEnabled);
+	_targetFrameRatePopUp->setEnabled(targetEnabled);
+}
+
 void ZoombiniOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
+	case kTickRateChangedCmd:
+	case kPosInterpolationChangedCmd:
+		updatePosInterpolationEnabled();
+		break;
 	case kImportSavesCmd:
 		ZoombiniSaveTransfer::importFromOriginalFolder(_domain);
 		break;

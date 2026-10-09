@@ -71,7 +71,7 @@ public:
 	/** Prepare Caves-specific dirty coverage before the 60 TPS render pass. */
 	void onAnimFrame() override;
 	/** Advance entrance, seat, and rejection animations. */
-	void onEveryFrame() override;
+	void onPreTickFrame() override;
 	/** Advance the authored Lion's Lair controller after rendering. */
 	void onPostRenderFrame() override;
 	/** Process door, glyph, and entrance animation callbacks. */

@@ -129,7 +129,7 @@ void ZoombiniTransitionLogo::loadFeatures() {
 	}
 }
 
-void ZoombiniTransitionLogo::onEveryFrame() {
+void ZoombiniTransitionLogo::onPreTickFrame() {
 	if (_vm->isVersionFamilyTlcV2()) {
 #if defined(USE_BINK) && defined(USE_RGB_COLOR)
 		if (!_binkDecoder || _binkDecoder->endOfVideo()) {
