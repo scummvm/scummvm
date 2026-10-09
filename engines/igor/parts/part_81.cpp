@@ -335,11 +335,7 @@ void IgorEngine::PART_81_ACTION_109() {
 
 	// the object that Igor brought is given
 	if (_inventoryInfo[kPart81InventoryState] != 0) {
-		_inventoryInfo[_inventoryInfo[kPart81InventoryState] - 1] = 0;
-		_inventoryInfo[kPart81InventoryState] = 0;
-		packInventory();
-		if (_inventoryInfo[72] > _inventoryInfo[73])
-			_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+		removeInventoryEntry(kPart81InventoryState);
 	}
 	PART_81_NPC_SAY({ { 210, 1, 954 }, { 211, 1, 955 } });
 	PART_81_IGOR_SAY(212, 1, 956);

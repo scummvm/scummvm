@@ -271,11 +271,7 @@ void IgorEngine::giveBottleToDean() {
 
 
 	if (_inventoryInfo[58] != 0) {
-		_inventoryInfo[_inventoryInfo[58] - 1] = 0;
-		_inventoryInfo[58] = 0;
-		packInventory();
-		if (_inventoryInfo[72] > _inventoryInfo[73])
-			_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+		removeInventoryEntry(58);
 		drawInventory(_inventoryInfo[72], 0);
 	}
 

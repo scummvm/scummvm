@@ -753,17 +753,17 @@ private:
 
 	// outside church
 	void PART_12_EXEC_ACTION(int action);
-	void PART_12_ACTION_101();
-	void PART_12_ACTION_104();
-	void PART_12_ACTION_105();
-	void PART_12_ACTION_108();
+	void PART_12_ACTION_goToPath();
+	void PART_12_ACTION_104_tryEnterChurch();
+	void PART_12_ACTION_105_useResinWithStone();
+	void PART_12_ACTION_108_enterChurch();
 	void PART_12_UPDATE_ROOM_BACKGROUND();
-	void PART_12_UPDATE_DIALOGUE_CHURCHMAN(int action);
-	void PART_12_HANDLE_DIALOGUE_CHURCHMAN();
-	void PART_12_HELPER_1(int num);
+	void PART_12_UPDATE_DIALOGUE_PRIEST(int action);
+	void PART_12_HANDLE_DIALOGUE_PRIEST();
+	void PART_12_OBJECT_STATE(int num);
 	void PART_12_HELPER_2();
-	void PART_12_HELPER_3();
-	void PART_12_HELPER_4();
+	void PART_12_HELPER_3_paintOverLizard();
+	void PART_12_HELPER_4_exorcismCutscene();
 	void PART_12_HELPER_5();
 	void PART_12_HELPER_6();
 	void PART_12_HELPER_8();
@@ -1266,6 +1266,7 @@ private:
 	void scrollInventory();
 	void drawInventory(int start, int mode);
 	void addObjectToInventory(int object, int index);
+	void removeInventoryEntry(int index);
 	void removeObjectFromInventory(int index);
 	int getObjectFromInventory(int x) const;
 

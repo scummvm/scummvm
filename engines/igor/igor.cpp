@@ -378,13 +378,17 @@ bool IgorEngine::debugAddObjectToInventory(int object) {
 	return true;
 }
 
-void IgorEngine::removeObjectFromInventory(int index) {
+void IgorEngine::removeInventoryEntry(int index) {
 	_inventoryInfo[_inventoryInfo[index] - 1] = 0;
 	_inventoryInfo[index] = 0;
 	packInventory();
 	if (_inventoryInfo[72] > _inventoryInfo[73]) {
 		_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
 	}
+}
+
+void IgorEngine::removeObjectFromInventory(int index) {
+	removeInventoryEntry(index);
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(63, 1);
 }

@@ -324,11 +324,7 @@ void IgorEngine::PART_68_ACTION_108_giveObject() {
 	waitForTimer(30);
 	drawAnimRect(kPart68GiveOffset, kPart68GiveFramesOffset, kPart68GiveWidth, kPart68GiveHeight);
 	if (_inventoryInfo[kPart68GiveInventoryIndex] != 0) {
-		_inventoryInfo[_inventoryInfo[kPart68GiveInventoryIndex] - 1] = 0;
-		_inventoryInfo[kPart68GiveInventoryIndex] = 0;
-		packInventory();
-		if (_inventoryInfo[72] > _inventoryInfo[73])
-			_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+		removeInventoryEntry(kPart68GiveInventoryIndex);
 		drawInventory(_inventoryInfo[72], 0);
 	}
 	playSound(63, 1);
