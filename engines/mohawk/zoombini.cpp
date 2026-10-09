@@ -339,7 +339,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 
 void MohawkEngine_Zoombini::resetFidgetActivity() {
 	// Activity restarts both idle timers without ending an active fidget suppression.
-	_lastActivityFrame = getAnimationFrameCounter(_system->getMillis());
+	_lastActivityFrame = getAnimationFrameCounter(getTotalPlayTime());
 	_lastFidgetIntervalFrame = _lastActivityFrame;
 	if (_fidgetThreshold)
 		_fidgetThreshold = 64;
@@ -348,7 +348,7 @@ void MohawkEngine_Zoombini::resetFidgetActivity() {
 uint32 MohawkEngine_Zoombini::getActivityIdleFrames() const {
 	if (hasDialogOpened())
 		return 0;
-	return getAnimationFrameCounter(_system->getMillis()) - _lastActivityFrame;
+	return getAnimationFrameCounter(getTotalPlayTime()) - _lastActivityFrame;
 }
 
 void MohawkEngine_Zoombini::setArrivalTurnDirection(ArrivalTurnDirection dir) {
@@ -663,7 +663,7 @@ void MohawkEngine_Zoombini::askSaveBeforeQuit() {
 
 void MohawkEngine_Zoombini::doFrame() {
 	// The integer animation clock gates logic work; the presentation rate only sets display opportunities.
-	uint32 frameStartTime = _system->getMillis();
+	uint32 frameStartTime = getTotalPlayTime();
 	bool isDialogOpened = !_dialogPageStack.empty();
 	const bool interpolate = !isDialogOpened && _activePage && !_activePage->isClosed() && isPosInterpolationEnabled() && !_gfx->isFading() &&
 							 !_builtinDebug._stepMode && !_builtinDebug._runnerBackdropMode && !_activePage->isBuiltinDebugInputWaitActive();
@@ -718,7 +718,7 @@ void MohawkEngine_Zoombini::doFrame() {
 		_gfx->flushScreens();
 		_system->updateScreen();
 		// Pace the wait loop on the exact 60 Hz epoch grid with integer arithmetic.
-		const uint32 elapsed = _system->getMillis() - _animationClockEpochTimeMs;
+		const uint32 elapsed = getTotalPlayTime() - _animationClockEpochTimeMs;
 		_system->delayMillis(getPresentationDelay(elapsed, kAnimateFrameRate));
 		return;
 	}
@@ -785,7 +785,7 @@ void MohawkEngine_Zoombini::doFrame() {
 		return;
 	}
 	// Pace the main loop on the exact 60Hz epoch grid with integer arithmetic.
-	const uint32 elapsed = _system->getMillis() - _animationClockEpochTimeMs;
+	const uint32 elapsed = getTotalPlayTime() - _animationClockEpochTimeMs;
 	_system->delayMillis(getPresentationDelay(elapsed, kAnimateFrameRate));
 }
 
@@ -862,7 +862,7 @@ void MohawkEngine_Zoombini::applyGameSettings() {
 	const int tickRateVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionTickRate);
 	const MohawkMetaEngine_Zoombini::TickRate tickRate = static_cast<MohawkMetaEngine_Zoombini::TickRate>(tickRateVal);
 	if (_tickRate != tickRate) {
-		const uint32 now = _system->getMillis();
+		const uint32 now = getTotalPlayTime();
 		const uint32 currentFrame = getAnimationFrameCounter(now);
 		_animationClockEpochTimeMs = now;
 		_animationClockEpochFrame = currentFrame;
@@ -1162,7 +1162,7 @@ uint32 MohawkEngine_Zoombini::getTargetFrameRate() const {
 }
 
 void MohawkEngine_Zoombini::delayPresentationFrame(uint32 rate) {
-	const uint32 elapsed = _system->getMillis() - _animationClockEpochTimeMs;
+	const uint32 elapsed = getTotalPlayTime() - _animationClockEpochTimeMs;
 	_system->delayMillis(getPresentationDelay(elapsed, rate));
 }
 
@@ -1250,7 +1250,7 @@ void MohawkEngine_Zoombini::loadNextPage() {
 		_pageLoadingCursorStopFrame = 0;
 		// Advance the persistent busy-cursor schedule at the page boundary before
 		// synchronous archive and page initialization begins.
-		const uint32 currentFrame = getAnimationFrameCounter(_system->getMillis());
+		const uint32 currentFrame = getAnimationFrameCounter(getTotalPlayTime());
 		_gfx->runMouseCursorEyeAnimationFrame(currentFrame);
 		// Present the black loading boundary with the pose selected by that tick.
 		_system->updateScreen();
@@ -1371,7 +1371,7 @@ void MohawkEngine_Zoombini::loadNextPage() {
 	}
 	page->onFadeIn();
 	if (replacingPage && isVersionFamilyTlcV2()) {
-		uint32 currentFrame = getAnimationFrameCounter(_system->getMillis());
+		uint32 currentFrame = getAnimationFrameCounter(getTotalPlayTime());
 		_pageLoadingCursorStopFrame = currentFrame + kTlcV2BusyCursorStopDelay;
 	} else if (replacingPage && !_gfx->isFading()) {
 		_gfx->stopMouseCursorEyeAnimation();

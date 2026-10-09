@@ -36,7 +36,7 @@
 namespace Mohawk {
 
 ZoombiniPage::ZoombiniPage(MohawkEngine_Zoombini *vm, ZoombiniPageCategory pageCategory, ZoombiniPageType pageType) : _vm(vm), _pageCategory(pageCategory), _pageType(pageType) {
-	_pageStartFrameTime = _vm->_system->getMillis();
+	_pageStartFrameTime = _vm->getTotalPlayTime();
 	_pageStartFrameCounter = _vm->getAnimationFrameCounter(_pageStartFrameTime);
 	_currentFrameTime = _pageStartFrameTime;
 	_currentFrameCounter = _pageStartFrameCounter;
@@ -155,7 +155,7 @@ void ZoombiniPage::onFrame() {
 	if (_isClosed)
 		return;
 
-	_currentFrameTime = _vm->_system->getMillis();
+	_currentFrameTime = _vm->getTotalPlayTime();
 	_currentFrameCounter = _vm->getAnimationFrameCounter(_currentFrameTime);
 
 	_presentationOutside.clear();
@@ -196,7 +196,7 @@ void ZoombiniPage::onModalFrame() {
 	if (_isClosed)
 		return;
 
-	_currentFrameTime = _vm->_system->getMillis();
+	_currentFrameTime = _vm->getTotalPlayTime();
 	_currentFrameCounter = _vm->getAnimationFrameCounter(_currentFrameTime);
 }
 
@@ -441,7 +441,7 @@ ZmbEventHandleResult ZoombiniPage::handleLButtonUp(const Common::Point &absPos, 
 		// unless rendering stalled during the current frame.
 		// Compare elapsed frame ticks with the persisted threshold (30 frames, or about 0.5 seconds, by default).
 		if (_vm->_state->getEnableAutoStickyMouse()) {
-			const uint32 nowFrameCounter = _vm->getAnimationFrameCounter(_vm->_system->getMillis());
+			const uint32 nowFrameCounter = _vm->getAnimationFrameCounter(_vm->getTotalPlayTime());
 			const uint32 framesSinceRender =
 				(_lastFrameCounter < nowFrameCounter) ? (nowFrameCounter - _lastFrameCounter) : 0;
 			if (framesSinceRender < _vm->_state->getAutoStickyThreshold())
