@@ -37,39 +37,39 @@ static const uint8 PART_15_ANIM_DATA_5[12] = { 0, 0, 1, 1, 1, 2, 1, 1, 1, 2, 1, 
 void IgorEngine::PART_15_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		PART_15_ACTION_101();
+		PART_15_ACTION_101_leaveRoom();
 		break;
-	case 102:
+	case 102: // look at door
 		igorSay(204, 1, 324);
 		break;
-	case 103:
+	case 103: // take clock
 		igorSay(205, 2, 325);
 		break;
-	case 104:
+	case 104: // look at clock
 		igorSay(207, 1, 326);
 		break;
-	case 105:
+	case 105: // open clock
 		igorSay(205, 2, 325);
 		break;
-	case 106:
+	case 106: // close clock
 		igorSay(205, 2, 325);
 		break;
 	case 107:
-		PART_15_ACTION_107();
+		PART_15_ACTION_107_talkToTobias();
 		break;
-	case 108:
+	case 108: // Take tobias
 		igorSay(208, 1, 327);
 		break;
-	case 109:
+	case 109: // look at Tobias
 		igorSay({ { 201, 1, 322 }, { 202, 2, 323 } });
 		break;
-	case 110:
+	case 110: // use Tobias
 		igorSay(234, 1, 345);
 		break;
-	case 111:
+	case 111: // take keys
 		igorSay({ { 235, 1, 346 }, { 236, 1, 347 } });
 		break;
-	case 112:
+	case 112: // look at keys
 		igorSay(237, 2, 348);
 		break;
 	case 113:
@@ -79,10 +79,10 @@ void IgorEngine::PART_15_EXEC_ACTION(int action) {
 		igorSay(240, 1, 350);
 		break;
 	case 115:
-		PART_15_ACTION_115();
+		PART_15_ACTION_115_giveProjectToTobias();
 		break;
 	case 116:
-		PART_15_ACTION_116();
+		PART_15_ACTION_116_giveMoneyToTobias();
 		break;
 	default:
 		error("PART_15_EXEC_ACTION unhandled action %d", action);
@@ -90,7 +90,7 @@ void IgorEngine::PART_15_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_15_ACTION_101() {
+void IgorEngine::PART_15_ACTION_101_leaveRoom() {
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[34560]].area = 1;
 	buildWalkPathSimple(34, 108, 0, 108);
@@ -102,34 +102,24 @@ void IgorEngine::PART_15_ACTION_101() {
 	_currentPart = 271;
 }
 
-void IgorEngine::PART_15_ACTION_107() {
-	if (_gameState.counter[3] == 1) {
-		do {
-			PART_15_HELPER_3();
-			waitForTimer();
-		} while (_gameState.counter[3] != 0);
-	}
-	PART_15_HELPER_7(6);
+void IgorEngine::PART_15_ACTION_107_talkToTobias() {
+	PART_15_waitForCuckooClock();
+	PART_15_HELPER_7_drawIgorAndTobiasScene(6);
 	PART_15_HANDLE_DIALOGUE_TOBIAS();
 }
 
-void IgorEngine::PART_15_ACTION_115() {
-	if (_gameState.counter[3] == 1) {
-		do {
-			PART_15_HELPER_3();
-			waitForTimer();
-		} while (_gameState.counter[3] != 0);
-	}
-	PART_15_HELPER_7(6);
+void IgorEngine::PART_15_ACTION_115_giveProjectToTobias() {
+	PART_15_waitForCuckooClock();
+	PART_15_HELPER_7_drawIgorAndTobiasScene(6);
 	igorSayAndWait({ { 209, 1, 328 }, { 210, 1, 329 } });
 	cutsceneSayWithCallback(133, 67, 0, 63, 19, 212, 1, 331, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
 	igorSayAndWait(213, 1, 332);
 	cutsceneSayWithCallback(133, 67, 0, 63, 19, 214, 1, 333, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
 	for (int i = 1; i <= 11; ++i) {
-		PART_15_HELPER_9(PART_15_ANIM_DATA_3[i]);
+		PART_15_PART_15_HELPER_9_drawTobiasIdleFrame(PART_15_ANIM_DATA_3[i]);
 		waitForTimer(60);
 	}
-	PART_15_HELPER_7(6);
+	PART_15_HELPER_7_drawIgorAndTobiasScene(6);
 	if (_objectsState[37] == 0) {
 		ADD_DIALOGUE_TEXT(215, 2, 334);
 		ADD_DIALOGUE_TEXT(217, 1, 335);
@@ -146,7 +136,7 @@ void IgorEngine::PART_15_ACTION_115() {
 		return;
 	}
 	for (int i = 1; i <= 7; ++i) {
-		PART_15_HELPER_7(PART_15_ANIM_DATA_2[i]);
+		PART_15_HELPER_7_drawIgorAndTobiasScene(PART_15_ANIM_DATA_2[i]);
 		waitForTimer(40);
 	}
 	removeObjectFromInventory(70);
@@ -162,23 +152,18 @@ void IgorEngine::PART_15_ACTION_115() {
 	_currentPart = 780;
 }
 
-void IgorEngine::PART_15_ACTION_116() {
-	if (_gameState.counter[3] == 1) {
-		do {
-			PART_15_HELPER_3();
-			waitForTimer();
-		} while (_gameState.counter[3] != 0);
-	}
-	PART_15_HELPER_7(6);
+void IgorEngine::PART_15_ACTION_116_giveMoneyToTobias() {
+	PART_15_waitForCuckooClock();
+	PART_15_HELPER_7_drawIgorAndTobiasScene(6);
 	igorSayAndWait({ { 209, 1, 328 }, { 211, 1, 330 } });
 	cutsceneSayWithCallback(133, 67, 0, 63, 19, 212, 1, 331, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
 	igorSayAndWait(213, 1, 332);
 	cutsceneSayWithCallback(133, 67, 0, 63, 19, 214, 1, 333, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
 	for (int i = 1; i <= 11; ++i) {
-		PART_15_HELPER_9(PART_15_ANIM_DATA_5[i]);
+		PART_15_PART_15_HELPER_9_drawTobiasIdleFrame(PART_15_ANIM_DATA_5[i]);
 		waitForTimer(60);
 	}
-	PART_15_HELPER_7(6);
+	PART_15_HELPER_7_drawIgorAndTobiasScene(6);
 	if (_objectsState[37] == 0) {
 		ADD_DIALOGUE_TEXT(215, 2, 334);
 		ADD_DIALOGUE_TEXT(217, 1, 335);
@@ -195,7 +180,7 @@ void IgorEngine::PART_15_ACTION_116() {
 		return;
 	}
 	for (int i = 1; i <= 7; ++i) {
-		PART_15_HELPER_7(PART_15_ANIM_DATA_4[i]);
+		PART_15_HELPER_7_drawIgorAndTobiasScene(PART_15_ANIM_DATA_4[i]);
 		waitForTimer(40);
 	}
 	removeObjectFromInventory(60);
@@ -212,25 +197,25 @@ void IgorEngine::PART_15_ACTION_116() {
 }
 
 void IgorEngine::PART_15_UPDATE_ROOM_BACKGROUND() {
-	PART_15_HELPER_5();
-	if (_gameTicks == 38 || _gameTicks == 60) {
+	PART_15_HELPER_5_animateTobiasIdle();
+	if (compareGameTick(38) || compareGameTick(60)) {
 		if (_objectsState[48] != 1 && getRandomNumber(199) == 0 && _gameState.counter[3] == 0) {
 			_gameState.counter[3] = 1;
 		}
 	}
-	PART_15_HELPER_3();
+	PART_15_HELPER_3_updateCuckooClock();
 }
 
 void IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_15_HELPER_8(0);
+		PART_15_HELPER_8_drawTobiasTalking(0);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_15_HELPER_8(getRandomNumber(4));
+		PART_15_HELPER_8_drawTobiasTalking(getRandomNumber(4));
 		break;
 	case kUpdateDialogueAnimStanding:
-		PART_15_HELPER_8(0);
+		PART_15_HELPER_8_drawTobiasTalking(0);
 		break;
 	}
 }
@@ -242,10 +227,10 @@ void IgorEngine::PART_15_HANDLE_DIALOGUE_TOBIAS() {
 	_updateDialogue = 0;
 }
 
-void IgorEngine::PART_15_HELPER_1(int num) {
+void IgorEngine::PART_15_HELPER_1_OBJECT_STATE(int num) {
 }
 
-void IgorEngine::PART_15_HELPER_2() {
+void IgorEngine::PART_15_HELPER_2_walkIn() {
 	_walkData[0].setPos(0, 108, 2, 0);
 	_walkData[0].clipSkipX = 1;
 	_walkData[0].clipWidth = 15;
@@ -265,7 +250,7 @@ void IgorEngine::PART_15_HELPER_2() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_15_HELPER_3() {
+void IgorEngine::PART_15_HELPER_3_updateCuckooClock() {
 	if (compareGameTick(38) || compareGameTick(60)) {
 		if (_objectsState[48] != 1 && _gameState.counter[3] == 1) {
 			if (_gameState.unk11 == 0) {
@@ -273,7 +258,7 @@ void IgorEngine::PART_15_HELPER_3() {
 				_objectsState[49] = 1;
 				_gameState.counter[3] = 0;
 			} else {
-				PART_15_HELPER_6(_gameState.unk11);
+				PART_15_HELPER_6_drawCuckooFrame(_gameState.unk11);
 			}
 			if (_gameState.unk11 == 7) {
 				_objectsState[49] = 2;
@@ -301,10 +286,19 @@ void IgorEngine::PART_15_HELPER_3() {
 	}
 }
 
-void IgorEngine::PART_15_HELPER_5() {
+void IgorEngine::PART_15_waitForCuckooClock() {
+	if (_gameState.counter[3] == 1) {
+		do {
+			PART_15_HELPER_3_updateCuckooClock();
+			waitForTimer();
+		} while (_gameState.counter[3] != 0);
+	}
+}
+
+void IgorEngine::PART_15_HELPER_5_animateTobiasIdle() {
 	if (compareGameTick(7) || compareGameTick(29) || compareGameTick(61)) {
 		if (_gameState.unk10 >= 3) {
-			PART_15_HELPER_9(PART_15_ANIM_DATA_1[_gameState.unk10]);
+			PART_15_PART_15_HELPER_9_drawTobiasIdleFrame(PART_15_ANIM_DATA_1[_gameState.unk10]);
 			++_gameState.unk10;
 			if (_gameState.unk10 == 8) {
 				_gameState.unk10 = 1;
@@ -313,7 +307,7 @@ void IgorEngine::PART_15_HELPER_5() {
 	}
 	if (compareGameTick(5)) {
 		if (_gameState.unk10 >= 1 && _gameState.unk10 <= 2) {
-			PART_15_HELPER_9(_gameState.unk10);
+			PART_15_PART_15_HELPER_9_drawTobiasIdleFrame(_gameState.unk10);
 			if (_gameState.unk10 == 1 && getRandomNumber(9) == 0) {
 				_gameState.unk10 = 2;
 			} else {
@@ -326,7 +320,7 @@ void IgorEngine::PART_15_HELPER_5() {
 	}
 }
 
-void IgorEngine::PART_15_HELPER_6(int frame) {
+void IgorEngine::PART_15_HELPER_6_drawCuckooFrame(int frame) {
 	_roomCursorOn = false;
 	for (int i = 0; i <= 17; ++i) {
 		for (int j = 0; j <= 52; ++j) {
@@ -349,17 +343,17 @@ void IgorEngine::PART_15_HELPER_6(int frame) {
 	}
 }
 
-void IgorEngine::PART_15_HELPER_7(int frame) {
+void IgorEngine::PART_15_HELPER_7_drawIgorAndTobiasScene(int frame) {
 	int offset = 20887;
 	drawAnimRect(offset, 0x49A + frame * 2124, 59, 36);
 }
 
-void IgorEngine::PART_15_HELPER_8(int frame) {
+void IgorEngine::PART_15_HELPER_8_drawTobiasTalking(int frame) {
 	int offset = 22847;
 	drawAnimRect(offset, 0x958 + frame * 182, 14, 13);
 }
 
-void IgorEngine::PART_15_HELPER_9(int frame) {
+void IgorEngine::PART_15_PART_15_HELPER_9_drawTobiasIdleFrame(int frame) {
 	int offset = 22835;
 	drawAnimRect(offset, frame * 598, 26, 23);
 }
@@ -375,7 +369,7 @@ void IgorEngine::PART_15() {
 	setRoomWalkBounds(28, 0, 96, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_15_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_15_UPDATE_ROOM_BACKGROUND;
-	PART_15_HELPER_1(255);
+	PART_15_HELPER_1_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
@@ -383,7 +377,7 @@ void IgorEngine::PART_15() {
 	_gameState.unk11 = 2;
 	_gameState.counter[3] = 0;
 	_gameState.counter[4] = 0;
-	PART_15_HELPER_2();
+	PART_15_HELPER_2_walkIn();
 	enterPartLoop();
 	while (_currentPart == 150) {
 		runPartLoop();

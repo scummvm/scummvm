@@ -808,22 +808,22 @@ private:
 
 	// tobias office
 	void PART_15_EXEC_ACTION(int action);
-	void PART_15_ACTION_101();
-	void PART_15_ACTION_107();
-	void PART_15_ACTION_115();
-	void PART_15_ACTION_116();
+	void PART_15_ACTION_101_leaveRoom();
+	void PART_15_ACTION_107_talkToTobias();
+	void PART_15_ACTION_115_giveProjectToTobias();
+	void PART_15_ACTION_116_giveMoneyToTobias();
 	void PART_15_UPDATE_ROOM_BACKGROUND();
 	void PART_15_UPDATE_DIALOGUE_TOBIAS(int action);
 	void PART_15_HANDLE_DIALOGUE_TOBIAS();
-	void PART_15_HELPER_1(int num);
-	void PART_15_HELPER_2();
-	void PART_15_HELPER_3();
-	void PART_15_HELPER_5();
-	void PART_15_HELPER_6(int frame);
-	void PART_15_HELPER_7(int frame);
-	void PART_15_HELPER_8(int frame);
-	void PART_15_HELPER_9(int frame);
-	void PART_15_HELPER_10(int frame);
+	void PART_15_HELPER_1_OBJECT_STATE(int num);
+	void PART_15_HELPER_2_walkIn();
+	void PART_15_HELPER_3_updateCuckooClock();
+	void PART_15_waitForCuckooClock();
+	void PART_15_HELPER_5_animateTobiasIdle();
+	void PART_15_HELPER_6_drawCuckooFrame(int frame);
+	void PART_15_HELPER_7_drawIgorAndTobiasScene(int frame);
+	void PART_15_HELPER_8_drawTobiasTalking(int frame);
+	void PART_15_PART_15_HELPER_9_drawTobiasIdleFrame(int frame);
 	void PART_15();
 
 	// laboratory
