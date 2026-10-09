@@ -32,6 +32,7 @@ void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
 	// halves of the room
 
 	if ((num == 2 || num == 255) && _objectsState[41] == 1) {
+		//draw shards
 		copyArea(_screenLayer1, 0x7DA1, 320, _animFramesBuffer + 0xC786, 37, 37, 8);
 	}
 

@@ -81,8 +81,8 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 	case 104: // look at photographer
 		igorSay(203, 1, 481);
 		break;
-	case 105:
-		PART_06_ACTION_105();
+	case 105: // pick camera
+		PART_06_ACTION_105_pickCamera();
 		break;
 	case 106: // Look at camera
 		igorSay(204, 1, 482);
@@ -144,7 +144,7 @@ void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
 			_roomObjectAreasTable[17].area = 0;
 			_roomObjectAreasTable[18].area = 0;
 		} else {
-			PART_06_HELPER_12();
+			PART_06_HELPER_12_drawBackgroundOverPhotographer();
 			_roomObjectAreasTable[2].object = 0;
 			_roomObjectAreasTable[15].object = 0;
 			_roomObjectAreasTable[18].object = 0;
@@ -166,7 +166,7 @@ void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
 	}
 }
 
-void IgorEngine::PART_06_ACTION_105() {
+void IgorEngine::PART_06_ACTION_105_pickCamera() {
 	_gameTicks = 0;
 	int i = 0;
 	do {
@@ -193,6 +193,7 @@ void IgorEngine::PART_06_ACTION_107_giveAnythingToPhotographer() {
 }
 
 void IgorEngine::PART_06_ACTION_108_giveRocketToPhotographer() {
+	// first frame of photographer
 	PART_06_HELPER_8_animatePhotographer(0);
 	igorSayAndWait({ { 208, 2, 485 }, { 210, 2, 486 } });
 	cutsceneSay(170, 69, 55, 37, 63, 212, 1, 487);
@@ -211,6 +212,7 @@ void IgorEngine::PART_06_ACTION_108_giveRocketToPhotographer() {
 		PART_06_UPDATE_ROOM_BACKGROUND();
 		waitForTimer();
 	} while (i != 28);
+	// removes rocket
 	removeObjectFromInventory(61);
 	_objectsState[61] = 0;
 	PART_06_HELPER_6_setPhotographerState(255);
@@ -267,15 +269,10 @@ void IgorEngine::PART_06_ACTION_102_scrollLeft() {
 	_currentPart = 51;
 }
 
-void IgorEngine::PART_06_HELPER_12() {
+void IgorEngine::PART_06_HELPER_12_drawBackgroundOverPhotographer() {
 
 	const int offset = 23521;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xDEA7, 23, 23, 49);
-}
-
-void IgorEngine::PART_06_HELPER_15(int frame) {
-	const uint8 *src = _animFramesBuffer + 0xA763 + READ_LE_UINT16(_animFramesBuffer + 0xDB95 + frame * 2) - 1;
-	decodeAnimFrame(src, _screenVGA, true);
 }
 
 void IgorEngine::PART_06() {
@@ -288,14 +285,14 @@ void IgorEngine::PART_06() {
 	// loads from offset 32256
 	loadAnimData(anm1, 0x7E00);
 	if (_objectsState[60] == 0) {
-		PART_05_06_DRAW_PAPER(0);
+		PART_05_06_drawPaperFrame(0);
 	}
 	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll
 	// then it loads the actual current scene, SpringRock
 	copyArea(_animFramesBuffer, 0, 224, _screenLayer1, 320, 224, 144);
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
+
 	SET_PAL_240_48_1();
-	// the room palette resource is longer than the palette the room really uses, restore the inventory colors
 	SET_PAL_208_96_1();
 
 	static const int anm2[] = {FRM_SpringRock1, FRM_SpringRock2, 0};

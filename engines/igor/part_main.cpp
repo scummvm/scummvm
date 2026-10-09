@@ -153,7 +153,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		igorSay(69, 1, 46);
 		break;
 	case 38:
-		// EXEC_MAIN_ACTION_38();
+		EXEC_MAIN_ACTION_38_lookAtNewspaper();
 		break;
 	case 39:
 		igorSay(70, 1, 47);
@@ -296,6 +296,51 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		warning("EXEC_MAIN_ACTION() Unhandled action %d", action);
 		break;
 	}
+}
+
+void IgorEngine::EXEC_MAIN_ACTION_38_lookAtNewspaper() {
+	memcpy(_paletteBuffer, _currentPalette, 624);
+	fadeOut(624);
+	uint8 *tmp = (uint8 *)malloc(64000 + 768);
+	if (tmp) {
+		memcpy(tmp, _screenVGA, 64000);
+		memcpy(tmp + 64000, _paletteBuffer, 768);
+	}
+	loadData(IMG_NewsPaper, _screenVGA);
+	loadData(PAL_NewsPaper, _paletteBuffer);
+	fadeIn(624);
+	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
+	int _walkDataCurrentPosX2 = wd->x;
+	int _walkDataCurrentPosY2 = wd->y;
+	int _walkDataCurrentWScale = wd->scaleWidth;
+	wd->x = 80;
+	wd->y = 130;
+	wd->scaleWidth = 50;
+	ADD_DIALOGUE_TEXT(144, 1, 74);
+	ADD_DIALOGUE_TEXT(145, 3, 75);
+	ADD_DIALOGUE_TEXT(148, 2, 76);
+	ADD_DIALOGUE_TEXT(150, 2, 77);
+	SET_DIALOGUE_TEXT(1, 4);
+	startIgorDialogue();
+	waitForEndOfIgorDialogue(false);
+	wd->x = 240;
+	wd->y = 130;
+	ADD_DIALOGUE_TEXT(152, 1, 78);
+	ADD_DIALOGUE_TEXT(153, 3, 79);
+	SET_DIALOGUE_TEXT(1, 2);
+	startIgorDialogue();
+	waitForEndOfIgorDialogue(false);
+	wd->x = _walkDataCurrentPosX2;
+	wd->y = _walkDataCurrentPosY2;
+	wd->scaleWidth = _walkDataCurrentWScale;
+	fadeOut(624);
+	if (tmp) {
+		memcpy(_screenVGA, tmp, 64000);
+		memcpy(_paletteBuffer, tmp + 64000, 768);
+		free(tmp);
+	}
+	fadeIn(624);
+	_objectsState[2] = 1;
 }
 
 void IgorEngine::EXEC_MAIN_ACTION_43_lookAtPhoto() {

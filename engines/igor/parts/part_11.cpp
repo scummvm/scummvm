@@ -33,7 +33,7 @@ void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 		_roomObjectAreasTable[13].object = _objectsState[40] == 0 ? 4 : 3;
 
 	if (num == 2 || num == 255) {
-		if (_objectsState[41] == 1) {
+		if (_objectsState[41] == 1) { //glass shards
 			// make area selectable
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].object = 7;

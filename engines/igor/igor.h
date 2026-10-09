@@ -625,7 +625,7 @@ private:
 	void moveScreenUp(int offset);
 	void lookAtPapyrus(bool reveal);
 	void EXEC_MAIN_ACTION(int action);
-	void EXEC_MAIN_ACTION_38();
+	void EXEC_MAIN_ACTION_38_lookAtNewspaper();
 	void EXEC_MAIN_ACTION_43_lookAtPhoto();
 
 	// map
@@ -662,7 +662,7 @@ private:
 	// spring bridge
 	void PART_05_HELPER_4_drawPaperOrNot(int num);
 	void PART_05_HELPER_6_walkIgorToScene();
-	void PART_05_06_DRAW_PAPER(int frame);
+	void PART_05_06_drawPaperFrame(int frame);
 	void PART_05_06_SAVE_PHOTOGRAPHER_BACKGROUND();
 	void PART_05_06_DRAW_PHOTOGRAPHER();
 	void PART_05_06_DRAW_CAMERA(int frame);
@@ -681,35 +681,34 @@ private:
 	void PART_06_HANDLE_DIALOGUE_PHOTOGRAPHER();
 	void PART_06_UPDATE_DIALOGUE_PHOTOGRAPHER(int action);
 	void PART_06_HELPER_7_decodePhotographerTalkingFrame(int frame);
-	void PART_06_ACTION_105();
+	void PART_06_ACTION_105_pickCamera();
 	void PART_06_ACTION_107_giveAnythingToPhotographer();
 	void PART_06_ACTION_108_giveRocketToPhotographer();
 	void PART_06_ACTION_102_scrollLeft();
 	void PART_06_HELPER_6_setPhotographerState(int num);
 	void PART_06_HELPER_8_animatePhotographer(int frame);
-	void PART_06_HELPER_12();
-	void PART_06_HELPER_15(int frame);
+	void PART_06_HELPER_12_drawBackgroundOverPhotographer();
 
 	void PART_07();
 	void PART_07_EXEC_ACTION(int action);
 	void PART_07_DRAW_DOOR_STATE(int num);
 	void PART_07_openCloseDoor(int door, bool open);
 	void PART_07_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, int dyPos);
-	void PART_07_ENTER_FROM_OUTSIDE();
-	void PART_07_EXIT_TO_OUTSIDE();
+	void PART_07_enterFromOutside();
+	void PART_07_exitToOutside();
 
 	// Dean's office
 	void PART_08();
 	void PART_08_EXEC_ACTION(int action);
 	void PART_08_APPLY_OBJECT_STATE(int num);
 	void drawDoor(bool open);
-	void PART_08_ACTION_105();
+	void PART_08_ACTION_pickNewspaper();
 	void PART_08_ACTION_108_deanCallsSecretary();
-	void PART_08_ACTION_109();
-	void PART_08_ACTION_103_TALK_TO_DEAN();
+	void PART_08_ACTION_pickBook();
+	void PART_08_ACTION_103_talkToDean();
 	void giveBottleToDean();
-	void PART_08_DEAN_PASSES_OUT();
-	void PART_08_DEAN_DRINKS();
+	void PART_08_deanDrinksBottle();
+	void PART_08_deanPassesOut();
 	void PART_08_HANDLE_DIALOGUE_DEAN();
 	void drawDean();
 	void drawDeanTalkingFrame(int frame);

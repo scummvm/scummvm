@@ -55,11 +55,11 @@ void IgorEngine::PART_05_HELPER_4_drawPaperOrNot(int num) {
 
 	if (_objectsState[60] == 0) {
 		// paper not taken, paint "frame 0"
-		PART_05_06_DRAW_PAPER(0);
+		PART_05_06_drawPaperFrame(0);
 		return;
 	}
 	// paper taken, paint "frame 1"
-	PART_05_06_DRAW_PAPER(1);
+	PART_05_06_drawPaperFrame(1);
 	// disable object
 	_roomObjectAreasTable[24].object = 0;
 	for (int i = 27; i <= 29; ++i) {
@@ -67,7 +67,7 @@ void IgorEngine::PART_05_HELPER_4_drawPaperOrNot(int num) {
 	}
 }
 
-void IgorEngine::PART_05_06_DRAW_PAPER(int frame) {
+void IgorEngine::PART_05_06_drawPaperFrame(int frame) {
 
 	const int offset = 41926;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x7E00 + frame * 12, 4, 4, 3);
@@ -84,8 +84,6 @@ void IgorEngine::PART_05_06_DRAW_PHOTOGRAPHER() {
 }
 
 void IgorEngine::PART_05_06_DRAW_TRIPOD(bool drawToScreen) {
-	// Layer-1 blit: cseg182:047C-04CB; the active-pane copy is
-	// cseg180:03E9-0462.
 	const int offset = 28668;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x7E54, 23, 23, 33);
 	if (drawToScreen)
@@ -93,7 +91,6 @@ void IgorEngine::PART_05_06_DRAW_TRIPOD(bool drawToScreen) {
 }
 
 void IgorEngine::PART_05_06_DRAW_CAMERA(int frame) {
-	// cseg180:038B-03E6; duplicated at cseg182:041E-0479.
 	const int offset = 26756;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x7E00 + frame * 42, 7, 7, 6);
 }
