@@ -733,8 +733,8 @@ private:
 	int16 _lostDelivererCount = 0;
 	/** Whether the ready-flash completion must select the next deliverer. */
 	bool _nextDelivererRequired = false;
-	/** Absolute frame of the last Pizza click, key, or order-serving activity. */
-	uint32 _lastActivityFrame = 0;
+	/** Absolute frame of the last activity gating the troll order-feature ambient idle driver. */
+	uint32 _lastTrollIdleFrame = 0;
 	/** Whether an order runner completed during the current render pass. */
 	bool _trollFeatureCompletedThisFrame = false;
 	/** Order runner completions keyed by troll order line, awaiting the page controller after rendering. */

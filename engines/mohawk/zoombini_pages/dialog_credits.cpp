@@ -125,7 +125,7 @@ void ZoombiniDialogCredits::drawTlcEndLogos(int32 elapsedFrames, int32 baseLineI
 }
 
 void ZoombiniDialogCredits::loadFeatures() {
-	_pageStartFrameTime = _vm->_system->getMillis();
+	_pageStartFrameTime = _vm->getTotalPlayTime();
 	_pageStartFrameCounter = _vm->getAnimationFrameCounter(_pageStartFrameTime);
 	_lastCreditScrollFrameCounter = _pageStartFrameCounter;
 	_creditScrollElapsedFrames = 0;
