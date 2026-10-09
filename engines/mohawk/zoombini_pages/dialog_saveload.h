@@ -59,7 +59,7 @@ public:
 	/** Load save-entry rows, buttons, and text-box features. */
 	void loadFeatures() override;
 	/** Advance save-entry animations and delayed actions. */
-	void onEveryFrame() override;
+	void onPreTickFrame() override;
 	/** Update or cancel the uncommitted IME composition shown in the save-name field. */
 	ZmbEventHandleResult onImeComposition(const Common::ImeComposition &composition) override;
 	/** Enable native IME composition only for the save-name variant. */

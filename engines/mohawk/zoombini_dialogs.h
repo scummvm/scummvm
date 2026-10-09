@@ -210,15 +210,18 @@ public:
 	void load() override;
 	/** Save control values and return whether the operation succeeded. */
 	bool save() override;
-	/** Handle save import, export, and management commands. */
+	/** Handle option dialog commands. */
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
+	/** Widget command identifiers handled by @ref Mohawk::ZoombiniOptionsWidget::handleCommand(). */
 	enum {
 		kImportSavesCmd = 'zImp',
 		kExportSavesCmd = 'zExp',
 		kManageSavesCmd = 'zMgm',
-		kResetOptionsCmd = 'zRst'
+		kResetOptionsCmd = 'zRst',
+		kTickRateChangedCmd = 'zTck',
+		kPosInterpolationChangedCmd = 'zInt',
 	};
 
 	// OptionsContainerWidget API
@@ -226,6 +229,8 @@ private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	/** Set all option controls to their registered default values. */
 	void resetToDefaults();
+	/** Enable interpolation with the accurate clock, and target controls when interpolation is checked. */
+	void updatePosInterpolationEnabled();
 
 	// True for Broderbund v1.x releases; false for the TLC v2.0 rebuild. Gates
 	// the v1.x-only MIDI settings, which are meaningless for v2.0 (no MIDI).
@@ -252,6 +257,12 @@ private:
 	GUI::StaticTextWidget *_tickRateLabel = nullptr;
 	/** Animation tick-rate selection control. */
 	GUI::PopUpWidget *_tickRatePopUp;
+	/** Position interpolation toggle, disabled with the original animation clock. */
+	GUI::CheckboxWidget *_posInterpolationCheckbox = nullptr;
+	/** Label for the target presentation frequency. */
+	GUI::StaticTextWidget *_targetFrameRateLabel = nullptr;
+	/** Target presentation frequency selector. */
+	GUI::PopUpWidget *_targetFrameRatePopUp = nullptr;
 	/** Enhanced keyboard shortcut option control. */
 	GUI::CheckboxWidget *_enhancedKbdShortcutsCheckbox;
 	/** Remapped OptionDialog shortcut display option control. */

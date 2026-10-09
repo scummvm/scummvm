@@ -251,20 +251,18 @@ protected:
 		kResSoundRange3003_BGM = 3003,
 	};
 
-	// -----------------------------------------------------------------------
-	// Shape indices within TOWN cursor/button resources
-	// -----------------------------------------------------------------------
-	enum ShapeId : uint16 {
+	/** One-based shape indices for Town hover cursors and exit-gate scroll buttons. */
+	enum ShapeIdx : uint16 {
 		// Hover cursor shapes.
-		kShape2000_ArrowLeft_01 = 1,
-		kShape2000_ArrowRight_02 = 2,
-		kShape2000_Magnifier_03 = 3,
+		kResShape2000_ArrowLeft01 = 1,
+		kResShape2000_ArrowRight02 = 2,
+		kResShape2000_Magnifier03 = 3,
 
 		// Exit gate scroll buttons.
-		kShape1100_ExitGateLeftNormal_05 = 5,
-		kShape1100_ExitGateLeftPressed_06 = 6,
-		kShape1000_ExitGateRightNormal_24 = 24,
-		kShape1000_ExitGateRightPressed_25 = 25,
+		kResShape1100_ExitGateLeftNormal05 = 5,
+		kResShape1100_ExitGateLeftPressed06 = 6,
+		kResShape1000_ExitGateRightNormal24 = 24,
+		kResShape1000_ExitGateRightPressed25 = 25,
 	};
 
 	/** Whether all 625 Zoombinis have been stored in town. */

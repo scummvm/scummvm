@@ -86,7 +86,7 @@ public:
 	/** Select the fixed Stone Rise F1 replay prompt after grid construction. */
 	void initHelpPrompt() override;
 	/** Advance grid matching, animations, and queue state. */
-	void onEveryFrame() override;
+	void onPreTickFrame() override;
 	/** Select celebration only after Snoid animation and arrival callbacks have run. */
 	void onPostRenderFrame() override;
 	/** Process cell and travel animation callbacks. */

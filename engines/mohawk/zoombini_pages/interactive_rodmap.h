@@ -203,46 +203,51 @@ protected:
 		kResScrbMenuButtonHover1007 = 1007,
 	};
 
-	enum ShapeId : uint16 {
-		kResShapeBridge01 = 1,
-		kResShapeTunnels02 = 2,
-		kResShapePizza03 = 3,
-		kResShapeBcOne04 = 4,
-		kResShapeFerry05 = 5,
-		kResShapeLilly06 = 6,
-		kResShapeSlides07 = 7,
-		kResShapeFleens08 = 8,
-		kResShapeHotel09 = 9,
-		kResShapeNet10 = 10,
-		kResShapeBcTwo11 = 11,
-		kResShapeCaves12 = 12,
-		kResShapeSmoke13 = 13,
-		kResShapeMaze14 = 14,
-		kResShapeTown15 = 15,
-		kResShapePicker16 = 16,
+	/** One-based shape indices in page tBMP 1000. */
+	enum ShapeIdx : uint16 {
+		kResShape1000_Bridge01 = 1,
+		kResShape1000_Tunnels02 = 2,
+		kResShape1000_Pizza03 = 3,
+		kResShape1000_BcOne04 = 4,
+		kResShape1000_Ferry05 = 5,
+		kResShape1000_Lilly06 = 6,
+		kResShape1000_Slides07 = 7,
+		kResShape1000_Fleens08 = 8,
+		kResShape1000_Hotel09 = 9,
+		kResShape1000_Net10 = 10,
+		kResShape1000_BcTwo11 = 11,
+		kResShape1000_Caves12 = 12,
+		kResShape1000_Smoke13 = 13,
+		kResShape1000_Maze14 = 14,
+		kResShape1000_Town15 = 15,
+		kResShape1000_Picker16 = 16,
 
-		kResShapeRouteBigBadHungryP0_17 = 17,
-		kResShapeRouteBigBadHungryP1_18 = 18,
-		kResShapeRouteBigBadHungryP2_19 = 19,
-		kResShapeRouteBigBadHungryP3_20 = 20,
-		kResShapeRouteWhosBayouP0_21 = 21,
-		kResShapeRouteWhosBayouP1_22 = 22,
-		kResShapeRouteWhosBayouP2_23 = 23,
-		kResShapeRouteWhosBayouP3_24 = 24,
-		kResShapeRouteDeepDarkForestP0_25 = 25,
-		kResShapeRouteDeepDarkForestP1_26 = 26,
-		kResShapeRouteDeepDarkForestP2_27 = 27,
-		kResShapeRouteDeepDarkForestP3_28 = 28,
-		kResShapeRouteMontDespairP0_29 = 29,
-		kResShapeRouteMontDespairP1_30 = 30,
-		kResShapeRouteMontDespairP2_31 = 31,
-		kResShapeRouteMontDespairP3_32 = 32,
+		kResShape1000_RouteBigBadHungryP0_17 = 17,
+		kResShape1000_RouteBigBadHungryP1_18 = 18,
+		kResShape1000_RouteBigBadHungryP2_19 = 19,
+		kResShape1000_RouteBigBadHungryP3_20 = 20,
+		kResShape1000_RouteWhosBayouP0_21 = 21,
+		kResShape1000_RouteWhosBayouP1_22 = 22,
+		kResShape1000_RouteWhosBayouP2_23 = 23,
+		kResShape1000_RouteWhosBayouP3_24 = 24,
+		kResShape1000_RouteDeepDarkForestP0_25 = 25,
+		kResShape1000_RouteDeepDarkForestP1_26 = 26,
+		kResShape1000_RouteDeepDarkForestP2_27 = 27,
+		kResShape1000_RouteDeepDarkForestP3_28 = 28,
+		kResShape1000_RouteMontDespairP0_29 = 29,
+		kResShape1000_RouteMontDespairP1_30 = 30,
+		kResShape1000_RouteMontDespairP2_31 = 31,
+		kResShape1000_RouteMontDespairP3_32 = 32,
 
-		kShapeOptionButtonPressed = 92,
-		kShapeOptionButtonNormal = 93,
+		/** Pressed options button. */
+		kResShape1000_OptionButtonPressed92 = 92,
+		/** Normal options button. */
+		kResShape1000_OptionButtonNormal93 = 93,
 
-		kShapeComboBoxRedCircle111 = 111,
-		kShapeComboBoxOutline112 = 112,
+		/** Red selection marker for a combo box. */
+		kResShape1000_ComboBoxRedCircle111 = 111,
+		/** Combo box outline. */
+		kResShape1000_ComboBoxOutline112 = 112,
 	};
 
 	/** Page type whose map icon is currently highlighted. */
@@ -338,22 +343,22 @@ protected:
 	};
 	/** Shape IDs corresponding to the sixteen page-icon positions. */
 	static constexpr uint16 _pageClickShapes[16] = {
-		kResShapePicker16,
-		kResShapeBridge01,
-		kResShapeTunnels02,
-		kResShapePizza03,
-		kResShapeBcOne04,
-		kResShapeFerry05,
-		kResShapeLilly06,
-		kResShapeSlides07,
-		kResShapeFleens08,
-		kResShapeHotel09,
-		kResShapeNet10,
-		kResShapeBcTwo11,
-		kResShapeCaves12,
-		kResShapeSmoke13,
-		kResShapeMaze14,
-		kResShapeTown15,
+		kResShape1000_Picker16,
+		kResShape1000_Bridge01,
+		kResShape1000_Tunnels02,
+		kResShape1000_Pizza03,
+		kResShape1000_BcOne04,
+		kResShape1000_Ferry05,
+		kResShape1000_Lilly06,
+		kResShape1000_Slides07,
+		kResShape1000_Fleens08,
+		kResShape1000_Hotel09,
+		kResShape1000_Net10,
+		kResShape1000_BcTwo11,
+		kResShape1000_Caves12,
+		kResShape1000_Smoke13,
+		kResShape1000_Maze14,
+		kResShape1000_Town15,
 	};
 
 	/** Hit rectangles for the journey/practice mode selector. */
@@ -375,7 +380,7 @@ protected:
 	/** Button sound resource used by the route-map option control. */
 	ZmbResource soundResId = ZmbResource(ZmbResource::kSystem, kSysResSound0999_ButtonSFX);
 	/** Pressed and normal visual state for the option button. */
-	ButtonState _optionButtonState = ButtonState(soundResId, 0, 0, kShapeOptionButtonNormal, kShapeOptionButtonPressed);
+	ButtonState _optionButtonState = ButtonState(soundResId, 0, 0, kResShape1000_OptionButtonNormal93, kResShape1000_OptionButtonPressed92);
 	/** Feature that renders and handles the page icons. */
 	ZmbFeature *_pageIconFeature = nullptr;
 	/** Feature that renders the route segments. */

@@ -149,7 +149,7 @@ public:
 
 	/**
 	 * Registration-point offsets for SCRS-script-rendered snoid shapes
-	 * (tBMP 3100 / 0xC1C in ZOOMBINI.MHK).
+	 * (tBMP 3100 in ZOOMBINI.MHK).
 	 * Loaded once at startup from REGS 102+103 in ZOOMBINI.MHK.
 	 * Used by Snoids in @ref kSnoidAnimState009_ScriptNormal.
 	 * This table pairs with shape archive tBMP 3100 instead of the tBMP 3000 idle and layered-animation pool.
@@ -157,22 +157,15 @@ public:
 	 */
 	ZmbShapeOffsetRegs *_snoidScriptShapeRegs = nullptr;
 
-	/** Nominal animation tick rate used by page state machines. */
+	/** Nominal logic tick rate; individual sprite poses can span several ticks. */
 	static constexpr uint32 kAnimateFrameRate = 60;
 	/** Millisecond base used to convert elapsed time into animation ticks. */
 	static constexpr uint32 kAnimationClockTimeBaseMs = 1000;
 	/**
 	 * The original engine uses a 17 ms integer tick to avoid floating-point math on 486SX systems.
-	 * ScummVM defaults to the intended exact 60 FPS interval and exposes the integer interval as an option.
+	 * ScummVM defaults to an exact 60FPS logic clock and exposes the integer interval as an option.
 	 */
 	static constexpr uint32 kOriginalAnimateFrameTimeMs = 17;
-	/**
-	 * Maximum presentation-loop rate, currently matched to the authored animation clock.
-	 * A future high-refresh presentation mode may separate this from @ref kAnimateFrameRate.
-	 */
-	static constexpr uint32 kTargetFrameRate = kAnimateFrameRate;
-	/** Duration of one renderer update at @ref kTargetFrameRate. */
-	static constexpr double kTargetFrameTimeMs = 1000.0 / kTargetFrameRate;
 	/**
 	 * Double-click time threshold in frame count.
 	 * Default double-click time is 500 ms, following Windows default.
@@ -197,7 +190,18 @@ public:
 	/** v2.x animation-clock delay before restoring the default cursor after a page load. */
 	static constexpr uint32 kTlcV2BusyCursorStopDelay = 3;
 
-	/** Advance shared services, dispatch input, render the active page, and commit transitions. */
+	/**
+	 * Run one presentation frame and, when due, the normal page update.
+	 *
+	 * Animation frames are integer logic ticks from @ref Mohawk::MohawkEngine_Zoombini::getAnimationFrameCounter().
+	 * Gameplay and animation timers use this clock at 60Hz, or once per 17ms in original tick-rate mode.
+	 * Sprite poses can span several ticks; six ticks per pose gives ten pose changes per second at 60Hz.
+	 *
+	 * Presentation frames compose and display the screen, targeting 60/120/180/240FPS with position interpolation.
+	 * Between logic ticks, replay captured drawing at interpolated positions without running callbacks or advancing poses and gameplay.
+	 * Logic-tick frames also interpolate after normal rendering, since the current pose can still be partway through its movement.
+	 * Original 17ms tick-rate mode disables position interpolation.
+	 */
 	void doFrame();
 	/** Delay for a bounded interval while continuing normal engine frame processing. */
 	void delayRunningFrames(uint32 ms);
@@ -481,8 +485,27 @@ public:
 	bool isColorBlindModeEnabled() const { return _colorBlindMode; }
 	/** Latch the initial per-level Maze layout selectors once for this engine session. */
 	void updateMazeLayoutVariants();
-	/** Convert elapsed milliseconds to the engine's monotonic animation frame. */
+	/**
+	 * Return the integer animation tick used for logic and authored animation deadlines.
+	 * The counter follows the selected tick rate, independently of the target presentation rate.
+	 * Individual features advance their sprite poses only when their own deadlines become due.
+	 * @param timeMs Backend clock time in milliseconds (10^-3 seconds).
+	 * @see Mohawk::MohawkEngine_Zoombini::doFrame()
+	 */
 	uint32 getAnimationFrameCounter(uint32 timeMs) const;
+	/**
+	 * Return fractional animation time for position interpolation on the accurate 60 Hz logic clock.
+	 * One logic tick equals 1000 units; these units are neither milliseconds nor sprite-pose indices.
+	 * Unlike the integer tick counter, this time continues to advance between logic ticks.
+	 * One unit equals 1/1000 of one tick, or 1/60000 seconds.
+	 * @param timeMs Backend clock time in milliseconds (10^-3 seconds).
+	 * @return Fractional animation time in thousandths of one logic tick, a 1/60000 seconds per unit.
+	 */
+	uint64 getAnimationFrameTime(uint32 timeMs) const;
+	/** Return whether position interpolation is enabled with the accurate animation clock. */
+	bool isPosInterpolationEnabled() const;
+	/** Effective presentation frequency in Hz; without interpolation it is limited to 60 Hz. */
+	uint32 getTargetFrameRate() const;
 
 	/** State of the deferred quit prompt and finalization sequence. */
 	enum QuitEventState {
@@ -554,8 +577,18 @@ private:
 	bool _colorBlindMode = false;
 	/** Millisecond epoch used to make animation time monotonic across frame calls. */
 	uint32 _animationClockEpochTimeMs = 0;
-	/** Animation-frame epoch paired with @ref _animationClockEpochTimeMs. */
+	/** Integer animation-tick epoch paired with @ref _animationClockEpochTimeMs. */
 	uint32 _animationClockEpochFrame = 0;
+	/** Requested position interpolation state, sampled from the engine settings. */
+	bool _posInterpolation = false;
+	/** Requested presentation frequency, an integer multiple of the animation clock. */
+	MohawkMetaEngine_Zoombini::TargetFrameRate _targetFrameRate = MohawkMetaEngine_Zoombini::TargetFrameRate::k60FPS;
+	/** Last integer logic tick processed by the presentation loop, not a sprite-pose index. */
+	uint32 _lastPresentationLogicFrame = UINT32_MAX;
+	/** Sleep until the next presentation deadline; the supported rates also align with 60 Hz logic deadlines. */
+	void delayPresentationFrame(uint32 rate);
+	/** Return the wait to the next rational deadline without accumulating rounded intervals. */
+	static uint32 getPresentationDelay(uint32 elapsed, uint32 rate);
 	/** v2.x animation frame after which the post-load busy cursor returns to default. */
 	uint32 _pageLoadingCursorStopFrame = 0;
 	/** Whether the demo's one-time startup logo reveal is still pending. */

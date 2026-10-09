@@ -48,7 +48,7 @@ public:
 	/** Load the text and logo features used by the credits screen. */
 	void loadFeatures() override;
 	/** Advance the scroll and redraw the visible credit lines. */
-	void onEveryFrame() override;
+	void onPreTickFrame() override;
 
 protected:
 	/** Shape used for the TLC Bink logo. */

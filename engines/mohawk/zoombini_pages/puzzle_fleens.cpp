@@ -429,6 +429,7 @@ void ZoombiniPuzzleFleens::loadFleenCreatureScrs(FleenCreature &creature, int16 
 		error("fleens: required SCRS %u is malformed", scrsResId);
 		return;
 	}
+	creature.scrsResourceId = scrsResId;
 	creature.feature->invalidateRenderedClickRect();
 	creature.traitLayout = decodedScrs->traitLayout;
 	creature.nextScrsFrameIdx = 0;
@@ -567,6 +568,38 @@ ZoombiniPuzzleFleens::FleenCreature *ZoombiniPuzzleFleens::findFleenByFeature(co
 			return &_fleenCreatures[i];
 	}
 	return nullptr;
+}
+
+const ZoombiniPuzzleFleens::FleenCreature *ZoombiniPuzzleFleens::findFleenByFeature(const ZmbFeature *feature) const {
+	for (int16 i = 0; i < _activeFleenCount; i++) {
+		if (_fleenCreatures[i].feature == feature)
+			return &_fleenCreatures[i];
+	}
+	return nullptr;
+}
+
+bool ZoombiniPuzzleFleens::getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const {
+	// Use each Fleen's SCRS trajectory, leaving ordinary Snoids to the common preview.
+	const FleenCreature *creature = findFleenByFeature(feature);
+	if (!creature)
+		return ZoombiniPage::getNextInterpolationMove(feature, delta, startFrame, durationFrames);
+	// Require a moving script and the next sequential pose, preserving initial holds and idle animation.
+	if (!creature->active || !creature->animating || !feature->isRenderActivated() || !feature->getFrameInterval() ||
+		creature->scrsResourceId <= kResScrs4002_FleenAnimation || creature->nextScrsFrameIdx != feature->getLastFrameIdx() + 1)
+		return false;
+
+	const ZmbDecodedScriptFrame *current = feature->getDecodedScriptFrame(feature->getLastFrameIdx());
+	const ZmbDecodedScriptFrame *next = feature->getDecodedScriptFrame(creature->nextScrsFrameIdx);
+	// Skip empty or event frames that could change facing, visibility or runner links.
+	if (!current || !next || current->hotspots.empty() || next->hotspots.empty() ||
+		current->hotspots[0]._shapeIdx <= 0 || next->hotspots[0]._shapeIdx <= 0 || next->eventCode)
+		return false;
+	// All trait layers share the root delta; registration offsets remain attached to the held pose.
+	delta = next->hotspots[0].getPos() - current->hotspots[0].getPos();
+	// Use the creature's own SCRS deadline rather than the generic feature timer.
+	durationFrames = feature->getFrameInterval();
+	startFrame = creature->nextTickFrame - durationFrames;
+	return delta != Common::Point();
 }
 
 byte &ZoombiniPuzzleFleens::FleenTrait::operator[](ZmbTrait::TraitKind kind) {

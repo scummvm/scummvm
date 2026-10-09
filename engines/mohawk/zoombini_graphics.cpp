@@ -394,8 +394,21 @@ void ZoombiniGraphics::recordDirtyRect(ScreenKind screenKind, const Common::Rect
 	}
 
 	if (screenKind == kShapeScreen) {
-		_isScreenDirty = true;
-		mergeRectIntoRegion(_screenDirtyRects, clipped);
+		if (_isPresentationDraw && _isRenderClipActive) {
+			// Position interpolation path
+			for (const Common::Rect &clip : _renderClipRects) {
+				Common::Rect damage = clipped;
+				damage.clip(clip);
+				if (!damage.isEmpty()) {
+					_isScreenDirty = true;
+					mergeRectIntoRegion(_screenDirtyRects, damage);
+				}
+			}
+		} else {
+			// Non-interpolating path
+			_isScreenDirty = true;
+			mergeRectIntoRegion(_screenDirtyRects, clipped);
+		}
 	}
 
 	// A back-port write changes the pixels which must be restored into the persistent shape port on the next render.
@@ -566,6 +579,95 @@ Common::Rect ZoombiniGraphics::drawShape(ScreenKind screenKind, ZmbResource imgR
 	return drawSubImage(screenKind, imgResource, hotspot->getSubImageId(), hotspot->getPos(), clearBeforeRender, effectiveRemap);
 }
 
+Common::Rect ZoombiniGraphics::submitDrawCommand(ScreenKind screenKind, DrawCommand &drawCmd) {
+	const bool retain = _presentationCapture && screenKind == kShapeScreen;
+	if (retain && drawCmd._image && drawCmd._image->getSurface()) {
+		// Freeze the input before drawing in case the source pixels share storage with the destination.
+		Graphics::Surface *copy = new Graphics::Surface();
+		copy->copyFrom(*drawCmd._image->getSurface());
+		drawCmd._imageCopy.reset(new MohawkSurface(copy));
+	}
+	const Common::Rect drawnRect = executeDrawCommand(screenKind, drawCmd, Common::Point());
+	if (retain) {
+		if (drawCmd._kind == DrawCommand::Kind::kText)
+			drawCmd._coverage = drawnRect;
+		if (drawCmd._imageCopy)
+			drawCmd._image = drawCmd._imageCopy.get();
+		drawCmd._motionKey = _presentationMotionKey;
+		drawCmd._motionLeader = _presentationMotionLeader;
+		_presentationCapture->push_back(drawCmd);
+	}
+	return drawnRect;
+}
+
+Common::Rect ZoombiniGraphics::executeDrawCommand(ScreenKind screenKind, const DrawCommand &drawCmd, const Common::Point &offset) {
+	Common::Rect bounds = drawCmd._bounds;
+	bounds.translate(offset.x, offset.y);
+	switch (drawCmd._kind) {
+	case DrawCommand::Kind::kImage:
+		return blitImageSectionToScreen(screenKind, drawCmd._image, drawCmd._source, bounds, drawCmd._clear, drawCmd._paletteRemap);
+	case DrawCommand::Kind::kFill:
+		fillRectToScreen(screenKind, bounds, drawCmd._color);
+		break;
+	case DrawCommand::Kind::kText:
+		return drawTextToScreen(screenKind, drawCmd._text, bounds, drawCmd._textConf);
+	case DrawCommand::Kind::kLine:
+	case DrawCommand::Kind::kThickLine:
+		drawLineToScreen(screenKind, drawCmd, offset);
+		break;
+	}
+	return bounds;
+}
+
+void ZoombiniGraphics::replayDrawCommand(const DrawCommand &drawCmd, const Common::Point &offset) {
+	_isPresentationDraw = true;
+	executeDrawCommand(kShapeScreen, drawCmd, offset);
+	_isPresentationDraw = false;
+}
+
+void ZoombiniGraphics::drawLineToScreen(ScreenKind screenKind, const DrawCommand &drawCmd, const Common::Point &offset) {
+	if (_isRenderClipActive && !_hasRenderClipRect)
+		return;
+	Common::Rect bounds = drawCmd._bounds;
+	bounds.translate(offset.x, offset.y);
+	const Common::Point start = drawCmd._start + offset;
+	const Common::Point end = drawCmd._end + offset;
+	Graphics::Surface *screen = getScreen(screenKind);
+	if (!_isPresentationDraw) {
+		recordDirtyRect(screenKind, bounds);
+		if (drawCmd._kind == DrawCommand::Kind::kLine)
+			screen->drawLine(start.x, start.y, end.x, end.y, drawCmd._color);
+		else
+			screen->drawThickLine(start.x, start.y, end.x, end.y, drawCmd._penX, drawCmd._penY, drawCmd._color);
+		return;
+	}
+	// Replay clips a local line mask so dirty-region boundaries do not change the line's rasterization.
+	bounds.clip(_screenRect);
+	if (bounds.isEmpty())
+		return;
+	Graphics::Surface line;
+	line.create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
+	line.fillRect(line.getRect(), 0);
+	const Common::Point localStart = start - Common::Point(bounds.left, bounds.top);
+	const Common::Point localEnd = end - Common::Point(bounds.left, bounds.top);
+	if (drawCmd._kind == DrawCommand::Kind::kLine)
+		line.drawLine(localStart.x, localStart.y, localEnd.x, localEnd.y, 1);
+	else
+		line.drawThickLine(localStart.x, localStart.y, localEnd.x, localEnd.y, drawCmd._penX, drawCmd._penY, 1);
+	for (const Common::Rect &clip : _renderClipRects) {
+		Common::Rect rect = bounds;
+		rect.clip(clip);
+		for (int y = rect.top; y < rect.bottom; y++) {
+			for (int x = rect.left; x < rect.right; x++) {
+				if (*static_cast<const byte *>(line.getBasePtr(x - bounds.left, y - bounds.top)))
+					screen->fillRect(Common::Rect(x, y, x + 1, y + 1), drawCmd._color);
+			}
+		}
+	}
+	recordDirtyRect(screenKind, bounds);
+	line.free();
+}
+
 Common::Rect ZoombiniGraphics::drawSubImage(ScreenKind screenKind, ZmbResource imgResource, uint16 subImage, const Common::Point &destPos, bool clearBeforeRender, PaletteRemapMode remapColorAssistPalette) {
 	if (subImage == UINT16_MAX) { // -1 check
 		error("gfx: sub-image index cannot be -1 for %s", imgResource.toString().c_str());
@@ -583,7 +685,7 @@ Common::Rect ZoombiniGraphics::drawSubImage(ScreenKind screenKind, ZmbResource i
 	}
 
 	// Bail out early if the sprite is entirely off-screen.
-	if (destPos.x <= -1 * surface->w || destPos.y <= -1 * surface->h || kScreenWidth <= destPos.x || kScreenHeight <= destPos.y)
+	if (!_presentationCapture && (destPos.x <= -1 * surface->w || destPos.y <= -1 * surface->h || kScreenWidth <= destPos.x || kScreenHeight <= destPos.y))
 		return Common::Rect();
 
 	Common::Rect srcRect = surface->getRect();
@@ -620,6 +722,19 @@ Common::Rect ZoombiniGraphics::drawSubImage(ScreenKind screenKind, ZmbResource i
 }
 
 Common::Rect ZoombiniGraphics::drawImageSectionToScreen(ScreenKind screenKind, MohawkSurface *mhkSurface, const Common::Rect &srcRect, const Common::Rect &dstRect, bool clearBeforeRender, PaletteRemapMode remapColorAssistPalette) {
+	if (!_presentationCapture || screenKind != kShapeScreen)
+		return blitImageSectionToScreen(screenKind, mhkSurface, srcRect, dstRect, clearBeforeRender, remapColorAssistPalette);
+
+	DrawCommand drawCmd;
+	drawCmd._image = mhkSurface;
+	drawCmd._source = srcRect;
+	drawCmd._bounds = dstRect;
+	drawCmd._clear = clearBeforeRender;
+	drawCmd._paletteRemap = remapColorAssistPalette;
+	return submitDrawCommand(screenKind, drawCmd);
+}
+
+Common::Rect ZoombiniGraphics::blitImageSectionToScreen(ScreenKind screenKind, MohawkSurface *mhkSurface, const Common::Rect &srcRect, const Common::Rect &dstRect, bool clearBeforeRender, PaletteRemapMode remapColorAssistPalette) {
 	if (!mhkSurface) {
 		error("gfx: source bitmap is missing");
 		return Common::Rect();
@@ -785,25 +900,49 @@ void ZoombiniGraphics::fillColorAssistPaletteRemapTable(Common::Array<uint32> &p
 }
 
 void ZoombiniGraphics::drawLine(ScreenKind screenKind, const Common::Point &start, const Common::Point &end, uint32 color) {
-	if (_isRenderClipActive && !_hasRenderClipRect)
-		return;
+	if (!_presentationCapture || screenKind != kShapeScreen) {
+		if (_isRenderClipActive && !_hasRenderClipRect)
+			return;
 
-	Graphics::Surface *screen = getScreen(screenKind);
-	Common::Rect dirtyRect(MIN(start.x, end.x), MIN(start.y, end.y),
-						   MAX(start.x, end.x) + 1, MAX(start.y, end.y) + 1);
-	recordDirtyRect(screenKind, dirtyRect);
-	screen->drawLine(start.x, start.y, end.x, end.y, color);
+		Graphics::Surface *screen = getScreen(screenKind);
+		Common::Rect dirtyRect(MIN(start.x, end.x), MIN(start.y, end.y), MAX(start.x, end.x) + 1, MAX(start.y, end.y) + 1);
+		recordDirtyRect(screenKind, dirtyRect);
+		screen->drawLine(start.x, start.y, end.x, end.y, color);
+		return;
+	}
+
+	DrawCommand drawCmd;
+	drawCmd._kind = DrawCommand::Kind::kLine;
+	drawCmd._start = start;
+	drawCmd._end = end;
+	drawCmd._color = color;
+	drawCmd._bounds = Common::Rect(MIN(start.x, end.x), MIN(start.y, end.y), MAX(start.x, end.x) + 1, MAX(start.y, end.y) + 1);
+	submitDrawCommand(screenKind, drawCmd);
 }
 
 void ZoombiniGraphics::drawThickLine(ScreenKind screenKind, const Common::Point &start, const Common::Point &end, int penX, int penY, uint32 color) {
-	if (_isRenderClipActive && !_hasRenderClipRect)
-		return;
+	if (!_presentationCapture || screenKind != kShapeScreen) {
+		if (_isRenderClipActive && !_hasRenderClipRect)
+			return;
 
-	Graphics::Surface *screen = getScreen(screenKind);
-	Common::Rect dirtyRect(MIN(start.x, end.x) - penX, MIN(start.y, end.y) - penY,
-						   MAX(start.x, end.x) + penX + 1, MAX(start.y, end.y) + penY + 1);
-	recordDirtyRect(screenKind, dirtyRect);
-	screen->drawThickLine(start.x, start.y, end.x, end.y, penX, penY, color);
+		Graphics::Surface *screen = getScreen(screenKind);
+		Common::Rect dirtyRect(MIN(start.x, end.x) - penX, MIN(start.y, end.y) - penY,
+							   MAX(start.x, end.x) + penX + 1, MAX(start.y, end.y) + penY + 1);
+		recordDirtyRect(screenKind, dirtyRect);
+		screen->drawThickLine(start.x, start.y, end.x, end.y, penX, penY, color);
+		return;
+	}
+
+	DrawCommand drawCmd;
+	drawCmd._kind = DrawCommand::Kind::kThickLine;
+	drawCmd._start = start;
+	drawCmd._end = end;
+	drawCmd._color = color;
+	drawCmd._penX = penX;
+	drawCmd._penY = penY;
+	drawCmd._bounds = Common::Rect(MIN(start.x, end.x) - penX, MIN(start.y, end.y) - penY,
+								   MAX(start.x, end.x) + penX + 1, MAX(start.y, end.y) + penY + 1);
+	submitDrawCommand(screenKind, drawCmd);
 }
 
 void ZoombiniGraphics::clearArea(ScreenKind screenKind, ZmbDrawRecord *record) {
@@ -831,6 +970,19 @@ void ZoombiniGraphics::fillArea(ScreenKind screenKind, ZmbResource imgResource, 
 }
 
 void ZoombiniGraphics::fillArea(ScreenKind screenKind, const Common::Rect &rect, uint32 color) {
+	if (!_presentationCapture || screenKind != kShapeScreen) {
+		fillRectToScreen(screenKind, rect, color);
+		return;
+	}
+
+	DrawCommand drawCmd;
+	drawCmd._kind = DrawCommand::Kind::kFill;
+	drawCmd._bounds = rect;
+	drawCmd._color = color;
+	submitDrawCommand(screenKind, drawCmd);
+}
+
+void ZoombiniGraphics::fillRectToScreen(ScreenKind screenKind, const Common::Rect &rect, uint32 color) {
 	Graphics::Surface *screen = getScreen(screenKind);
 
 	recordDirtyRect(screenKind, rect);
@@ -868,10 +1020,24 @@ void ZoombiniGraphics::drawText(ScreenKind screenKind, const Common::U32String &
 }
 
 void ZoombiniGraphics::drawText(ScreenKind screenKind, const Common::U32String &text, const Common::Rect &destRect, const TextConf &tc) {
+	if (!_presentationCapture || screenKind != kShapeScreen) {
+		drawTextToScreen(screenKind, text, destRect, tc);
+		return;
+	}
+
+	DrawCommand drawCmd;
+	drawCmd._kind = DrawCommand::Kind::kText;
+	drawCmd._bounds = destRect;
+	drawCmd._text = text;
+	drawCmd._textConf = tc;
+	submitDrawCommand(screenKind, drawCmd);
+}
+
+Common::Rect ZoombiniGraphics::drawTextToScreen(ScreenKind screenKind, const Common::U32String &text, const Common::Rect &destRect, const TextConf &tc) {
 	const Graphics::Font *font = _vm->_text->getFont(tc._fontUsage);
 	if (!font) {
 		error("gfx: cannot open fontfile of kind %u", static_cast<uint32>(tc._fontUsage));
-		return;
+		return Common::Rect();
 	}
 	const bool useAntialiasing = _vm->_text->fontUsesAntialiasing(tc._fontUsage);
 
@@ -944,6 +1110,9 @@ void ZoombiniGraphics::drawText(ScreenKind screenKind, const Common::U32String &
 
 	recordDirtyRect(screenKind, drawRect);
 	drawTextLines(screenKind, font, lines, drawRect, tc._textPalette, tc._hAlign, useAntialiasing, fillBackgroundPalette);
+	if (tc._outlineEffect)
+		drawRect.grow(1);
+	return drawRect;
 }
 
 int ZoombiniGraphics::getTextWidth(const Common::U32String &text, const TextConf &tc) {
@@ -1147,7 +1316,7 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 					screenBBox.translate(destRect.left, destRect.top);
 					screenBBox.clip(destRect);
 					screenBBox.clip(_screenRect);
-					fillArea(screenKind, screenBBox, fillBackgroundColor);
+					fillRectToScreen(screenKind, screenBBox, fillBackgroundColor);
 					break;
 				}
 #endif
@@ -1255,10 +1424,12 @@ bool ZoombiniGraphics::applyFadeEffect(uint32 currentTime) {
 		currentTime = _vm->_system->getMillis();
 		fe._startTime = currentTime;
 	}
-	uint32 steps = fe._duration / MohawkEngine_Zoombini::kTargetFrameTimeMs;
+	// Count fade steps with integer arithmetic: one step per 1/60 second, matching the animation clock.
+	const uint32 steps = static_cast<uint32>((static_cast<uint64>(fe._duration) * MohawkEngine_Zoombini::kAnimateFrameRate) / MohawkEngine_Zoombini::kAnimationClockTimeBaseMs);
 	uint32 elapsedTime = currentTime - fe._startTime;
 	if (elapsedTime <= fe._duration) { // Effect in progress
-		uint32 stepIdx = MIN<uint32>(elapsedTime / MohawkEngine_Zoombini::kTargetFrameTimeMs, steps);
+		const uint32 elapsedSteps = static_cast<uint32>((static_cast<uint64>(elapsedTime) * MohawkEngine_Zoombini::kAnimateFrameRate) / MohawkEngine_Zoombini::kAnimationClockTimeBaseMs);
+		uint32 stepIdx = MIN<uint32>(elapsedSteps, steps);
 		switch (fe._type) {
 		case kFadeIn:
 			dimPalette(stepIdx, steps);
