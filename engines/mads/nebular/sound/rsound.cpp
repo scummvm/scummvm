@@ -31,6 +31,7 @@ namespace Sound {
 
 void Channel::loadData(byte *soundData, byte source) {
 	_pitchSlideStepSize = 0;
+	_volumeFadeStepSize = 0;
 	_panningSweepStepSize = 0;
 	_innerLoopCounter = 0;
 	_outerLoopCounter = 0;
@@ -713,7 +714,7 @@ void RSound::Channel_processTick(Channel *channel) {
 	// Process effects
 
 	// Volume fade
-	if (channel->_volumeFadeStepSize > 0 && --channel->_volumeFadeCounter == 0) {
+	if (channel->_volumeFadeStepSize != 0 && --channel->_volumeFadeCounter == 0) {
 		channel->_volumeFadeCounter = channel->_volumeFadeSpeed;
 		int newVolume = channel->_volume + channel->_volumeFadeStepSize;
 		if (newVolume < 0 || newVolume > 0x7F) {
