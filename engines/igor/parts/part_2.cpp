@@ -16,7 +16,7 @@ void IgorEngine::PART_02_START_DIALOGUE(int text, int count, int sound) {
 
 void IgorEngine::PART_02_SEARCH_TRUNK() {
 	for (int frame = 0; frame <= 2; ++frame) {
-		PART_00_animateRaw(0x3C0 + frame * 0x715, 0, 0, 0x715, 37, 49, 0x608C, 0, -1, 0);
+		animateLitAnimFrames(0x3C0 + frame * 0x715, 0, 0, 0x715, 37, 49, 0x608C, 0, -1, 0);
 		if (frame > 0)
 			waitForTimer(127);
 	}
@@ -71,8 +71,7 @@ void IgorEngine::PART_02_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		// redraws the closed/open trunk into the persistent room background.
 		const int srcOffset = _objectsState[16] == 0 ? 0x2E3E : 0x30FC;
-		for (int y = 0; y < 18; ++y)
-			memcpy(_screenLayer1 + 0x748A + y * 320, _animFramesBuffer + srcOffset + y * 39, 39);
+		copyArea(_screenLayer1, 0x748A, 320, _animFramesBuffer + srcOffset, 39, 39, 18);
 		_roomActionsTable[252] = _objectsState[16] == 0 ? 6 : 4;
 	}
 	if ((num == 2 || num == 255) && _objectsState[17] == 1) {
@@ -81,8 +80,7 @@ void IgorEngine::PART_02_APPLY_OBJECT_STATE(int num) {
 	}
 	if (num == 3 || num == 255) {
 		if (_objectsState[18] == 1) {
-			for (int y = 0; y < 50; ++y)
-				memcpy(_screenLayer1 + 0x50D6 + y * 320, _animFramesBuffer + y * 14, 14);
+			copyArea(_screenLayer1, 0x50D6, 320, _animFramesBuffer, 14, 14, 50);
 		}
 		_roomObjectAreasTable[9].object = _objectsState[18] == 0 ? 0 : 6;
 	}
@@ -90,8 +88,7 @@ void IgorEngine::PART_02_APPLY_OBJECT_STATE(int num) {
 		if (_objectsState[19] == 0) {
 			_roomObjectAreasTable[12].object = _objectsState[18] == 1 ? 6 : 0;
 		} else {
-			for (int y = 0; y < 22; ++y)
-				memcpy(_screenLayer1 + 0x5357 + y * 320,_animFramesBuffer + 0x2BC + y * 10, 10);
+			copyArea(_screenLayer1, 0x5357, 320, _animFramesBuffer + 0x2BC, 10, 10, 22);
 			_roomObjectAreasTable[12].object = 7;
 		}
 	}
@@ -99,8 +96,7 @@ void IgorEngine::PART_02_APPLY_OBJECT_STATE(int num) {
 		if (_objectsState[20] == 0) {
 			_roomObjectAreasTable[13].object = _objectsState[19] == 1 ? 7 : (_objectsState[18] == 1 ? 6 : 0);
 		} else {
-			for (int y = 0; y < 10; ++y)
-				memcpy(_screenLayer1 + 0x599B + y * 320, _animFramesBuffer + 0x398 + y * 4, 4);
+			copyArea(_screenLayer1, 0x599B, 320, _animFramesBuffer + 0x398, 4, 4, 10);
 			_roomObjectAreasTable[13].object = 8;
 		}
 	}
@@ -125,7 +121,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			PART_02_START_DIALOGUE(201, 1, 108);
 			break;
 		}
-		PART_00_animateRaw(0x18FF, 1, 2, 0x715, 37, 49, 0x608C, 127, 1, 7);
+		animateLitAnimFrames(0x18FF, 1, 2, 0x715, 37, 49, 0x608C, 127, 1, 7);
 		_objectsState[16] = 1;
 		PART_02_APPLY_OBJECT_STATE(1);
 		break;
@@ -135,14 +131,14 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			break;
 		}
 		playSound(8, 1);
-		PART_00_animateRaw(0x18FF, 1, 0, 0x715, 37, 49, 0x608C, 127, -1, 0);
+		animateLitAnimFrames(0x18FF, 1, 0, 0x715, 37, 49, 0x608C, 127, -1, 0);
 		_objectsState[16] = 0;
 		PART_02_APPLY_OBJECT_STATE(1);
 		break;
 	case 103: { // hammer the nail
 		for (int step = 1; step <= 21; ++step) {
 			const int frame = step == 21 ? 2 : ((step + 1) & 1);
-			PART_00_animateRaw(0x33BA + frame * 0x4B0, 0, 0, 0x4B0,
+			animateLitAnimFrames(0x33BA + frame * 0x4B0, 0, 0, 0x4B0,
 					24, 50, 0x5989, 0, -1, 0);
 			if ((step & 1) != 0 && step < 21)
 				playSound(9, 1);
@@ -164,7 +160,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		// 0/1 and finish on frame 2 (indexed from s3:0x0249).
 		for (int step = 1; step <= 21; ++step) {
 			const int frame = step == 21 ? 2 : ((step + 1) & 1);
-			PART_00_animateRaw(0x41CA + frame * 0x658, 0, 0, 0x658,
+			animateLitAnimFrames(0x41CA + frame * 0x658, 0, 0, 0x658,
 					29, 56, 0x5349, 0, -1, 0);
 			if ((step & 1) != 0 && step < 21)
 				playSound(10, 1);
@@ -226,7 +222,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		}
 		break;
 	case 107: // take butterfly net; cseg203:0D71-0F3E
-		PART_00_animateRaw(0x54D2, 0, 1, 0x405, 21, 49, 0x5A6D, 127, -1, 0);
+		animateLitAnimFrames(0x54D2, 0, 1, 0x405, 21, 49, 0x5A6D, 127, -1, 0);
 		waitForTimer(127);
 		addObjectToInventory(7, 42);
 		_objectsState[17] = 1;
@@ -248,7 +244,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		PART_02_START_DIALOGUE(216, 1, 120);
 		break;
 	case 113: // place dynamite in the crack
-		PART_00_animateRaw(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
+		animateLitAnimFrames(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
 		waitForTimer(127);
 		_objectsState[23] = 1;
 		PART_02_APPLY_OBJECT_STATE(8);
@@ -274,7 +270,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		}
 		break;
 	case 119:
-		PART_00_animateRaw(0xB488, 0, 1, 0x4B0, 24, 50, 0x5988, 64, -1, 0);
+		animateLitAnimFrames(0xB488, 0, 1, 0x4B0, 24, 50, 0x5988, 64, -1, 0);
 		waitForTimer(64);
 		_currentPart = 1;
 		break;
@@ -296,7 +292,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		} else {
 			memset(_screenVGA + 0xB400, 0, 0x4BFF);
 			playSound(68, 1);
-			PART_00_animateRaw(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
+			animateLitAnimFrames(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
 			waitForTimer(127);
 
 
@@ -316,9 +312,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 				PART_02_UPDATE_FUSE();
 				waitForTimer();
 			}
-			for (int y = 0; y < 12; ++y) {
-				memcpy(_screenVGA + 0x5996 + y * 320, _screenLayer1 + 0x5996 + y * 320, 12);
-			}
+			copyArea(_screenVGA, 0x5996, 320, _screenLayer1 + 0x5996, 320, 12, 12);
 			stopSound();
 			waitForTimer(5 * 255);
 
@@ -384,7 +378,7 @@ void IgorEngine::PART_02() {
 		case 20:
 			fadeIn(768);
 			// Igor climbs through the window on the first attic entrance.
-			PART_00_animateRaw(0x69C0, 0, 2, 0x759, 33, 57, 0x4B26, 31, -1, 0);
+			animateLitAnimFrames(0x69C0, 0, 2, 0x759, 33, 57, 0x4B26, 31, -1, 0);
 			waitForTimer(31);
 			_walkData[0].setPos(57, 117, kFacingPositionRight, 0);
 			break;
@@ -406,7 +400,7 @@ void IgorEngine::PART_02() {
 			// the attic palette before drawing its post-explosion frame.
 			memset(_screenVGA + 0xB400, 0, 0x4600);
 			memcpy(_currentPalette, _paletteBuffer, 768);
-			part_00_drawRawFrame(0x820B, 0, 0xA19, 47, 55, 0x6C3B);
+			drawAnimRect(0x6C3B, 0x820B + 0 * 0xA19, 47, 55, false, kBlendLitSprite);
 			updatePalette(768);
 
 			// Igor lies stunned, stands up, and shakes his head.
@@ -416,7 +410,7 @@ void IgorEngine::PART_02() {
 			};
 			for (uint i = 0; i < ARRAYSIZE(postExplosionFrames); ++i) {
 				const int frame = postExplosionFrames[i];
-				part_00_drawRawFrame(0x820B, frame, 0xA19, 47, 55, 0x6C3B);
+				drawAnimRect(0x6C3B, 0x820B + frame * 0xA19, 47, 55, false, kBlendLitSprite);
 				if (frame == 0)
 					waitForTimer(2 * 255);
 				else if (frame == 1 || frame == 2)

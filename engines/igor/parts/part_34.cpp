@@ -76,10 +76,7 @@ void IgorEngine::PARK_DRAW_LAURA_FRAME(int frame) {
  */
 void IgorEngine::PARK_PICK_UP_ANIMATION(int screenOffset, int framesOffset) {
 	for (uint i = 0; i < ARRAYSIZE(kPickUpFrames); ++i) {
-		for (int row = 1; row <= 48; ++row) {
-			memcpy(_screenVGA + screenOffset + row * 320,
-					_animFramesBuffer + framesOffset + kPickUpFrames[i] * 1323 + row * 27, 27);
-		}
+		drawAnimRect(screenOffset + 320, framesOffset + kPickUpFrames[i] * 1323 + 27, 27, 48);
 		waitForTimer(30);
 	}
 }
@@ -407,10 +404,8 @@ void IgorEngine::PART_34_ACTION_109_SCROLL_RIGHT() {
 	_gameTicks = 8; // original counter 15 normalized to 8-tick engine units
 	do {
 		if (compareGameTick(1, 16)) {
-			for (int y = 0; y <= 143; ++y) {
-				memcpy(_screenLayer2 + y * 320, _screenLayer1 + y * 320 + step * 8, 320 - step * 8);
-				memcpy(_screenLayer2 + y * 320 + 320 - step * 8, _animFramesBuffer + y * 160, step * 8);
-			}
+			copyArea(_screenLayer2, 0, 320, _screenLayer1 + step * 8, 320, 320 - step * 8, 144);
+			copyArea(_screenLayer2, 320 - step * 8, 320, _animFramesBuffer, 160, step * 8, 144);
 			if (step < 15) {
 				xPos += _walkScaleTable[0x8F9 + _walkCurrentFrame];
 				WalkData::setNextFrame(kFacingPositionRight, _walkCurrentFrame);
@@ -460,22 +455,7 @@ void IgorEngine::PART_34_APPLY_OBJECT_STATE(int num) {
  * of the dialogue text are kept on the screen.
  */
 void IgorEngine::PART_34_LADY_IDLE(int step) {
-	const uint8 *frame = _animFramesBuffer + kParkIdleFrames + kOldLadyIdleFrames[step - 1] * 630;
-	uint8 buffer[35 * 18];
-	for (int y = 0; y < 35; ++y) {
-		for (int x = 0; x < 18; ++x) {
-			const uint8 color = _screenVGA[(73 + y) * 320 + 112 + x];
-			if ((color >= 0xC0 && color <= 0xCF) || color == 0xF0 || color == 0xF1) {
-				buffer[y * 18 + x] = color;
-			} else {
-				buffer[y * 18 + x] = frame[y * 18 + x];
-			}
-		}
-	}
-	for (int y = 0; y < 35; ++y) {
-		memcpy(_screenVGA + (73 + y) * 320 + 112, buffer + y * 18, 18);
-		memcpy(_screenLayer1 + (73 + y) * 320 + 112, frame + y * 18, 18);
-	}
+	drawAnimRect(73 * 320 + 112, kParkIdleFrames + kOldLadyIdleFrames[step - 1] * 630, 18, 35, true, kBlendBehindIgorAndText);
 }
 
 void IgorEngine::PART_34_UPDATE_ROOM_BACKGROUND() {
@@ -491,9 +471,7 @@ void IgorEngine::PART_34() {
 	_gameState.enableLight = 1;
 	loadActionData(DAT_ParkLeft);
 	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight, TXT_ParkRight);
-	for (int y = 0; y <= 143; ++y) {
-		memcpy(_animFramesBuffer + y * 160, _screenLayer1 + y * 320 + 160, 160);
-	}
+	copyArea(_animFramesBuffer, 0, 160, _screenLayer1 + 160, 320, 160, 144);
 	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park); // active left panel;
 	static const int frames[] = { FRM_Park1, FRM_Park2, FRM_Park3, FRM_Park4, 0 };
 	loadAnimData(frames, kParkFrames);

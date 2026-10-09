@@ -339,10 +339,8 @@ void IgorEngine::PART_15_HELPER_6(int frame) {
 		}
 	}
 	int offset = 7378;
-	for (int i = 0; i <= 17; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _screenTempLayer + i * 100, 53);
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + 0x4B8C + frame * 954 + i * 53, 53);
-	}
+	copyArea(_screenVGA, offset, 320, _screenTempLayer, 100, 53, 18);
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x4B8C + frame * 954, 53, 53, 18);
 	if (_gameState.dialogueTextRunning) {
 		memcpy(_screenTextLayer + 23040, _screenLayer1 + _dialogueDirtyRectY, _dialogueDirtyRectSize);
 	}
@@ -353,23 +351,17 @@ void IgorEngine::PART_15_HELPER_6(int frame) {
 
 void IgorEngine::PART_15_HELPER_7(int frame) {
 	int offset = 20887;
-	for (int i = 0; i <= 35; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + 0x49A + frame * 2124 + i * 59, 59);
-	}
+	drawAnimRect(offset, 0x49A + frame * 2124, 59, 36);
 }
 
 void IgorEngine::PART_15_HELPER_8(int frame) {
 	int offset = 22847;
-	for (int i = 0; i <= 12; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + 0x958 + frame * 182 + i * 14, 14);
-	}
+	drawAnimRect(offset, 0x958 + frame * 182, 14, 13);
 }
 
 void IgorEngine::PART_15_HELPER_9(int frame) {
 	int offset = 22835;
-	for (int i = 0; i <= 22; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + frame * 598 + i * 26, 26);
-	}
+	drawAnimRect(offset, frame * 598, 26, 23);
 }
 
 void IgorEngine::PART_15() {

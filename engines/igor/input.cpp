@@ -177,29 +177,6 @@ void IgorEngine::hideCursor() {
 	CursorMan.showMouse(_roomCursorOn);
 }
 
-void IgorEngine::drawVerbsPanel() {
-	memcpy(_screenVGA + 320 * 156, _verbsPanelBuffer, 320 * 12);
-}
-
-void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
-	uint8 verbBitmap[44 * 12];
-	if (verb >= 2 && verb <= 8) {
-		verb -= 2;
-		for (int i = 0; i <= 11; ++i) {
-			for (int j = 0; j <= 43; ++j) {
-				uint8 color = _verbsPanelBuffer[i * 320 + verb * 46 + j];
-				if (highlight && color != 0) {
-					color += 8;
-				}
-				verbBitmap[i * 44 + j] = color;
-			}
-		}
-		for (int i = 0; i <= 11; ++i) {
-			memcpy(_screenVGA + 320 * 156 + verb * 46 + i * 320, verbBitmap + i * 44, 44);
-		}
-	}
-}
-
 /**
  * Action to select a verb with moving the right mouse button clicked
  */

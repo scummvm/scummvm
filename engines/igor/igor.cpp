@@ -289,7 +289,7 @@ void IgorEngine::runPartLoop() {
 		handleRoomInventoryScroll();
 	}
 	if (compareGameTick(1)) {
-		handleRoomLight();
+		handleIgorIdleAnimation();
 	}
 	if (_updateRoomBackground) {
 		(this->*_updateRoomBackground)();
@@ -326,179 +326,21 @@ void IgorEngine::handleRoomDialogue() {
 }
 
 
-void IgorEngine::handleRoomLight() {
+void IgorEngine::handleIgorIdleAnimation() {
 	if (_gameState.dialogueTextRunning || _gameState.igorMoving) {
 		_gameState.updateLight = false;
 	} else if (_gameState.updateLight) {
-		updateRoomLight(0);
+		updateIgorIdleAnimation(0);
 		_gameState.updateLight = 0;
 	} else if (getRandomNumber(9) == 0) {
-		updateRoomLight(1);
+		updateIgorIdleAnimation(1);
 		_gameState.updateLight = true;
-	}
-}
-
-void IgorEngine::updateRoomLight(int fl) {
-	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
-	if (wd->scaleHeight != 50 || _gameState.dialogueTextRunning) {
-		return;
-	}
-	int offset = 320 * (wd->y + 1 - wd->scaleWidth);
-	int x = wd->x - _walkWidthScaleTable[wd->scaleHeight - 1] / 2;
-	if (x <= 0) {
-		return;
-	}
-	offset += x;
-	RoomObjectArea *roa;
-	int color = (fl == 0) ? 196 : 195;
-	switch (wd->posNum) {
-	case 2:
-		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1298]];
-		if (wd->y > roa->y1Lum) {
-			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
-				color -= roa->deltaLum;
-			}
-			_screenVGA[offset + 1298] = color;
-		}
-		break;
-	case 3:
-		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1293]];
-		if (wd->y > roa->y1Lum) {
-			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
-				color -= roa->deltaLum;
-			}
-			_screenVGA[offset + 1293] = color;
-		}
-		color = (fl == 0) ? 196 : 195;
-		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1296]];
-		if (wd->y > roa->y1Lum) {
-			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
-				color -= roa->deltaLum;
-			}
-			_screenVGA[offset + 1296] = color;
-		}
-		break;
-	case 4:
-		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1291]];
-		if (wd->y > roa->y1Lum) {
-			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
-				color -= roa->deltaLum;
-			}
-			_screenVGA[offset + 1291] = color;
-		}
-		break;
 	}
 }
 
 void IgorEngine::handleRoomInventoryScroll() {
 	if (_scrollInventory) {
 		scrollInventory();
-	}
-}
-
-void IgorEngine::scrollInventory() {
-	if (_scrollInventoryStartY == _scrollInventoryEndY) {
-		memcpy(_screenVGA + 54400, _inventoryPanelBuffer + (_scrollInventoryStartY - 1) * 320, 9600);
-		_scrollInventory = false;
-	} else {
-		int offset = 54420;
-		for (int y = _scrollInventoryStartY; y < _scrollInventoryStartY + 29; ++y) {
-			memcpy(_screenVGA + offset, _inventoryPanelBuffer + 320 * y - 300, 280);
-			offset += 320;
-		}
-		_scrollInventoryStartY += _scrollInventoryDy;
-	}
-}
-
-void IgorEngine::drawInventory(int start, int mode) {
-	loadData(IMG_InventoryPanel, _inventoryPanelBuffer);
-	loadData(IMG_Objects, _inventoryImagesBuffer);
-	int y, i;
-	int end = start + 7; // seven slots
-	int x = 1;
-	// Paint inventory icons
-	for (y = start; y != end; ++y) {
-		if (_inventoryInfo[y - 1] == 0) {
-			for (i = 1; i <= 30; ++i) {
-				memset(_inventoryPanelBuffer + x * 40 - 20 + (i - 1) * 320, 0, 40);
-			}
-		} else {
-			for (i = 1; i <= 30; ++i) {
-				int img = _inventoryInfo[y - 1];
-				assert(img >= 1);
-				memcpy(_inventoryPanelBuffer + x * 40 - 20 + i * 320 - 321, _inventoryImagesBuffer + (i - 1) * 40 + (_inventoryImages[img - 1] - 1) * 1200, 40);
-			}
-		}
-		++x;
-	}
-	// Hide arrows
-	if (_inventoryInfo[72] == 1) {
-		// 'hide' scroll up
-		for (y = 5; y <= 11; ++y) {
-			for (x = 4; x <= 12; ++x) {
-				uint8 *p = _inventoryPanelBuffer + y * 320 + x - 321;
-				if (*p == 0xF2) {
-					*p = 0xF3;
-					p = _inventoryPanelBuffer + y * 320 + x + 305 - 321;
-					*p = 0xF3;
-				}
-			}
-		}
-	}
-	if (_inventoryInfo[73] <= _inventoryInfo[72] + 6 || _inventoryInfo[72] >= _inventoryInfo[73] - 6) {
-		// 'hide' scroll down
-		for (y = 19; y <= 25; ++y) {
-			for (x = 4; x <= 12; ++x) {
-				uint8 *p = _inventoryPanelBuffer + y * 320 + x - 321;
-				if (*p == 0xF2) {
-					*p = 0xF3;
-					p = _inventoryPanelBuffer + y * 320 + x + 305 - 321;
-					*p = 0xF3;
-				}
-			}
-		}
-	}
-	switch (mode) {
-	case 0: // normal inventory rendering
-		memcpy(_screenVGA + 54400, _inventoryPanelBuffer, 9600);
-		_scrollInventory = false;
-		break;
-	case 1: // animation scrolling up
-		for (y = 0; y <= 11; ++y) {
-			for (x = 0; x <= 14; ++x) {
-				uint8 *p = _screenVGA + x + y * 320 + 59520;
-				if ((*p & 0x80) != 0) {
-					*p += 8;
-					p = _screenVGA + x + y * 320 + 59825;
-					*p += 8;
-				}
-			}
-		}
-		memmove(_inventoryPanelBuffer + 9600, _inventoryPanelBuffer, 9600);
-		memcpy(_inventoryPanelBuffer, _screenVGA + 54400, 9600);
-		_scrollInventoryStartY = 7;
-		_scrollInventoryEndY = 31;
-		_scrollInventoryDy = 6;
-		_scrollInventory = true;
-		break;
-	case 2: // animation scrolling down
-		for (y = 0; y <= 11; ++y) {
-			for (x = 0; x <= 14; ++x) {
-				uint8 *p = _screenVGA + x + y * 320 + 55040;
-				if ((*p & 0x80) != 0) {
-					*p += 8;
-					p = _screenVGA + x + y * 320 + 55345;
-					*p += 8;
-				}
-			}
-		}
-		memmove(_inventoryPanelBuffer + 9600, _inventoryPanelBuffer, 9600);
-		memcpy(_inventoryPanelBuffer + 9600, _screenVGA + 54400, 9600);
-		_scrollInventoryStartY = 25;
-		_scrollInventoryEndY = 1;
-		_scrollInventoryDy = -6;
-		_scrollInventory = true;
-		break;
 	}
 }
 

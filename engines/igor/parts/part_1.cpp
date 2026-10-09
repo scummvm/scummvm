@@ -13,15 +13,14 @@ namespace Igor {
 void IgorEngine::PART_01_CLOSE_WINDOW() {
 	static const uint8 windowFrames[] = { 0, 1, 2, 1 };
 	for (int i = 0; i < 4; ++i) {
-		part_00_drawRawFrame(216, windowFrames[i], 1204, 28, 43, 0x5919);
+		drawAnimRect(0x5919, 216 + windowFrames[i] * 1204, 28, 43, false, kBlendLitSprite);
 		if (i == 0)
 			playSound(2, 1);
 		if (i != 3) {
 			// ANM offset 0 contains four 9x6 frames.
 			const int backgroundFrame = getRandomNumber(3);
 			const uint8 *src = _animFramesBuffer + backgroundFrame * 54;
-			for (int y = 0; y < 6; ++y)
-				memcpy(_screenVGA + 0x8EA4 + y * 320, src + y * 9, 9);
+			copyArea(_screenVGA, 0x8EA4, 320, src, 9, 9, 6);
 			waitForTimer(94);
 		}
 	}
@@ -30,20 +29,16 @@ void IgorEngine::PART_01_CLOSE_WINDOW() {
 }
 
 void IgorEngine::PART_01_STATE_11_BLIT_blitIgor() {
-	for (int i = 0; i < 13; ++i)
-		memcpy(_screenVGA + 0x5476 + i * 320, _animFramesBuffer + 0x1859 + i * 16, 16);
+	drawAnimRect(0x5476, 0x1859, 16, 13);
 }
 
 void IgorEngine::PART_01_STATE_11_BLIT_00A5() {
-	for (int i = 0; i < 40; ++i)
-		memcpy(_screenVGA + 0x118F + i * 320, _animFramesBuffer + 0xA7F9 + i * 0xDA, 0xDA);
+	drawAnimRect(0x118F, 0xA7F9, 0xDA, 40);
 }
 
 //
 void IgorEngine::PART_01_STATE_11_BLIT_drawIgorsEyes(int frame) {
-	for (int i = 0; i < 4; ++i)
-		memcpy(_screenVGA + 0x55BB + i * 320,
-				_animFramesBuffer + 0xA7A9 + frame * 20 + i * 5, 5);
+	drawAnimRect(0x55BB, 0xA7A9 + frame * 20, 5, 4);
 }
 
 //
@@ -115,7 +110,7 @@ void IgorEngine::PART_01_EXEC_ACTION(int action) {
 		// waiting for the video update after each one, then
 		// changes to part 20.
 		for (int frame = 0; frame <= 1; ++frame) {
-			part_00_drawRawFrame(0x0EF4, frame, 0x3D8, 24, 41, 0x51F4);
+			drawAnimRect(0x51F4, 0x0EF4 + frame * 0x3D8, 24, 41, false, kBlendLitSprite);
 			waitForTimer(); // video-update wait
 		}
 		_currentPart = 20;

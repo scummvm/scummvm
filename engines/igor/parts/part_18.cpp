@@ -67,9 +67,7 @@ void IgorEngine::PART_18_EXEC_ACTION(int action) {
 void IgorEngine::PART_18_ACTION_109_useSlugOnGrating() {
 	const int offset = 29480;
 	for (int i = 1; i <= 2; ++i) {
-		for (int j = 1; j <= 48; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + (i - 1) * 1519 + j * 31, 31);
-		}
+		drawAnimRect(offset + 320, (i - 1) * 1519 + 31, 31, 48);
 		waitForTimer(120);
 	}
 	int part = _currentPart;
@@ -107,16 +105,12 @@ void IgorEngine::PART_18_ACTION_111() {
 		return;
 	}
 	const int offset = 26798;
-	for (int i = 0; i <= 28; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + i * 28 + 0xF0A, 28);
-	}
+	drawAnimRect(offset, 0xF0A, 28, 29);
 	playSound(47, 1);
 	for (int i = 1; i <= 2; ++i) {
 		waitForTimer(200);
 	}
-	for (int i = 0; i <= 28; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + i * 28 + 0xBDE, 28);
-	}
+	drawAnimRect(offset, 0xBDE, 28, 29);
 	igorSay(213, 2, 907);
 	_objectsState[0] = 2;
 	UPDATE_OBJECT_STATE(1);

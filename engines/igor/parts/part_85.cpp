@@ -253,10 +253,8 @@ void IgorEngine::PART_85_HELPER_2_SCROLL_RIGHT() {
 	int x = 1;
 	do {
 		if (compareGameTick(0, 16)) {
-			for (int y = 0; y <= 143; ++y) {
-				memcpy(_screenTextLayer + y * 320, _screenLayer1 + y * 320 + x * 8, 320 - x * 8);
-				memcpy(_screenTextLayer + y * 320 + 320 - x * 8, _screenLayer2 + y * 320 + 96, x * 8);
-			}
+			copyArea(_screenTextLayer, 0, 320, _screenLayer1 + x * 8, 320, 320 - x * 8, 144);
+			copyArea(_screenTextLayer, 320 - x * 8, 320, _screenLayer2 + 96, 320, x * 8, 144);
 			memcpy(_screenVGA, _screenTextLayer, 46080);
 			++x;
 		}
@@ -295,24 +293,6 @@ void IgorEngine::PART_85_HELPER_6_animateIgorHead(int frame) {
 	// Animate Igor's head by copying the relevant area from the screen and overlaying the head frame.
 	copyArea(_screenVGA, offset, 320, _screenLayer2 + offset, 320, 14, 8);
 	copyArea(_screenVGA, offset, 320, _igorHeadFrames + (_walkCurrentPos - 1) * 924 + frame * 154, 14, 14, 8, true);
-}
-
-
-void IgorEngine::copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent) {
-	uint8 *p = dst + dstOffset;
-	for (int y = 0; y < h; ++y) {
-		if (transparent) {
-			for (int x = 0; x < w; ++x) {
-				if (src[x] != 0) {
-					p[x] = src[x];
-				}
-			}
-		} else {
-			memcpy(p, src, w);
-		}
-		p += dstPitch;
-		src += srcPitch;
-	}
 }
 
 } // End of namespace Igor

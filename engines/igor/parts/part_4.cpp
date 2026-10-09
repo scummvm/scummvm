@@ -102,7 +102,7 @@ void IgorEngine::PART_04() {
 		scrollPalette(200, 207);
 		setPaletteRange(200, 207);
 		if (compareGameTick(1)) {
-			handleRoomLight();
+			handleIgorIdleAnimation();
 		}
 		scrollPalette(184, 199);
 		setPaletteRange(184, 199);

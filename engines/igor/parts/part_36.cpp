@@ -80,9 +80,7 @@ void IgorEngine::PART_36_ACTION_102() {
 				}
 			}
 		}
-		for (int j = 0; j <= 48; ++j) {
-			memcpy(_screenVGA + j * 320 + 23750, _screenTempLayer + j * 100, 34);
-		}
+		copyArea(_screenVGA, 23750, 320, _screenTempLayer, 100, 34, 49);
 		waitForTimer(45);
 	}
 	addObjectToInventory(30, 65);

@@ -19,14 +19,12 @@ void IgorEngine::PART_07_DRAW_DOOR_STATE(int num) {
 	_roomActionsTable[297] = 109;
 	if (num == 1 || num == 255) {
 		const uint32 srcOffset = _objectsState[26] == 0 ? kDoor1Closed : kDoor1Open;
-		for (int y = 0; y <= 52; ++y)
-			memcpy(_screenLayer1 + 0x4DB8 + y * 320, _animFramesBuffer + srcOffset + y * 12, 12);
+		copyArea(_screenLayer1, 0x4DB8, 320, _animFramesBuffer + srcOffset, 12, 12, 53);
 		_roomActionsTable[146] = _objectsState[26] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
 		const uint32 srcOffset = _objectsState[27] == 0 ? kDoor2Closed : kDoor2Open;
-		for (int y = 0; y <= 51; ++y)
-			memcpy(_screenLayer1 + 0x4E1A + y * 320, _animFramesBuffer + srcOffset + y * 12, 12);
+		copyArea(_screenLayer1, 0x4E1A, 320, _animFramesBuffer + srcOffset, 12, 12, 52);
 		_roomActionsTable[147] = _objectsState[27] == 0 ? 6 : 7;
 	}
 }
@@ -43,11 +41,9 @@ void IgorEngine::PART_07_openCloseDoor(int door, bool open) {
 	const int step = open ? 1 : -1;
 	for (int frame = 1;; frame += step) {
 		if (door == 1) {
-			for (int y = 0; y <= 52; ++y)
-				memcpy(_screenVGA + 0x4DB8 + y * 320, _animFramesBuffer + frame * 0x636 + y * 30, 30);
+			drawAnimRect(0x4DB8, frame * 0x636, 30, 53);
 		} else {
-			for (int y = 0; y <= 54; ++y)
-				memcpy(_screenVGA + 0x4E0F + y * 320, _animFramesBuffer + 0x12A2 + frame * 0x4F1 + y * 23, 23);
+			drawAnimRect(0x4E0F, 0x12A2 + frame * 0x4F1, 23, 55);
 		}
 		if ((open && frame == 2) || (!open && frame == 1))
 			playSound(open ? 13 : 14, 1);

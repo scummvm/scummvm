@@ -91,9 +91,7 @@ void IgorEngine::PART_27_ACTION_106_openPhilipLocker() {
 	}
 	const int offset = 21810;
 	for (int i = 2; i <= 3; ++i) {
-		for (int j = 0; j <= 48; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + 0x3A0 + i * 1568 + j * 32, 32);
-		}
+		drawAnimRect(offset, 0x3A0 + i * 1568, 32, 49);
 		if (i == 3) {
 			playSound(3, 1);
 		}
@@ -112,9 +110,7 @@ void IgorEngine::PART_27_ACTION_107() {
 	}
 	const int offset = 21810;
 	for (int i = 2; i >= 1; --i) {
-		for (int j = 0; j <= 48; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + 0x3A0 + i * 1568 + j * 32, 32);
-		}
+		drawAnimRect(offset, 0x3A0 + i * 1568, 32, 49);
 		if (i == 2) {
 			playSound(14, 1);
 			waitForTimer(100);
@@ -132,9 +128,7 @@ void IgorEngine::PART_27_ACTION_108() {
 	igorSayAndWait(207, 1, 1167);
 	const int offset = 25012;
 	for (int i = 1; i <= 2; ++i) {
-		for (int j = 0; j <= 29; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 630 + j * 21 + 0x19AA, 21);
-		}
+		drawAnimRect(offset, i * 630 + 0x19AA, 21, 30);
 		if (i == 1) {
 			waitForTimer(100);
 		}
@@ -150,9 +144,7 @@ void IgorEngine::PART_27_ACTION_110() {
 	igorSayAndWait({ { 212, 1, 1170 }, { 213, 2, 1171 } });
 	const int offset = 25012;
 	for (int i = 1; i <= 2; ++i) {
-		for (int j = 0; j <= 48; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + 0x19AA + i * 630 + j * 21, 21);
-		}
+		drawAnimRect(offset, 0x19AA + i * 630, 21, 49);
 		if (i == 1) {
 			waitForTimer(100);
 		}
@@ -201,16 +193,12 @@ void IgorEngine::PART_27_HELPER_2() {
 
 void IgorEngine::PART_27_HELPER_3() {
 	const int offset = 21816;
-	for (int i = 0; i <= 47; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + i * 26, 26);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer, 26, 26, 48);
 }
 
 void IgorEngine::PART_27_HELPER_4() {
 	const int offset = 21816;
-	for (int i = 0; i <= 47; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + i * 26 + 0x4E0, 26);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x4E0, 26, 26, 48);
 }
 
 void IgorEngine::PART_27_HELPER_5() {

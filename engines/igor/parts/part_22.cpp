@@ -54,9 +54,7 @@ void IgorEngine::PART_22_ACTION_101() {
 			// each frame is drawn as is, over Igor too
 			const uint8 *frame = _animFramesBuffer + kPart22PickUpFrames +
 					(PART_22_PICK_UP_FRAMES[i] - 1) * kPart22PickUpFrameSize;
-			for (int y = 0; y <= 29; ++y) {
-				memcpy(_screenVGA + y * 320 + 24141, frame + y * 35, 35);
-			}
+			copyArea(_screenVGA, 24141, 320, frame, 35, 35, 30);
 			waitForTimer(60);
 		}
 		addObjectToInventory(29, 64);

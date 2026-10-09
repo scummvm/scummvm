@@ -58,9 +58,7 @@ void IgorEngine::PART_37_ACTION_102() {
 	igorSayAndWait(201, 1, 662);
 	for (int i = 1; i >= 0; --i) {
 		int offset = 16423;
-		for (int j = 0; j <= 49; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 1550 + j * 31, 31);
-		}
+		drawAnimRect(offset, i * 1550, 31, 50);
 		waitForTimer(60);
 	}
 	addObjectToInventory(32, 67);

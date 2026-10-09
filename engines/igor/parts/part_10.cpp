@@ -32,20 +32,14 @@ void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
 	// halves of the room
 
 	if ((num == 2 || num == 255) && _objectsState[41] == 1) {
-		for (int y = 0; y <= 7; ++y)
-			memcpy(_screenLayer1 + 0x7DA1 + y * 320,
-					_animFramesBuffer + 0xC786 + y * 37, 37);
+		copyArea(_screenLayer1, 0x7DA1, 320, _animFramesBuffer + 0xC786, 37, 37, 8);
 	}
 
 	if (num == 3 || num == 255) {
 		if (_objectsState[42] == 1) {
-			for (int y = 0; y <= 14; ++y)
-				memcpy(_screenLayer1 + 0x4E32 + y * 320,
-						_animFramesBuffer + 0xC5E2 + y * 14, 14);
+			copyArea(_screenLayer1, 0x4E32, 320, _animFramesBuffer + 0xC5E2, 14, 14, 15);
 		} else if (_objectsState[42] == 2) {
-			for (int y = 0; y <= 14; ++y)
-				memcpy(_screenLayer1 + 0x4E32 + y * 320,
-						_animFramesBuffer + 0xC6B4 + y * 14, 14);
+			copyArea(_screenLayer1, 0x4E32, 320, _animFramesBuffer + 0xC6B4, 14, 14, 15);
 		}
 	}
 }
@@ -104,11 +98,7 @@ void IgorEngine::PART_10_ACTION_104_pickHamburger() {
 
 	static const uint8 frameSelectors[] = { 0, 1, 0, 2 };
 	for (int frame = 0; frame < 4; ++frame) {
-		for (int y = 0; y < 49; ++y) {
-			memcpy(_screenVGA + 0x595F + y * 320,
-					_animFramesBuffer + kPart10_11_Frm1 + frameSelectors[frame] * 0x682 + y * 34,
-					34);
-		}
+		drawAnimRect(0x595F, kPart10_11_Frm1 + frameSelectors[frame] * 0x682, 34, 49);
 		waitForTimer(31);
 	}
 
@@ -123,10 +113,8 @@ void IgorEngine::PART_10_ACTION_108_scrollLeft() {
 	int i = 1;
 	do {
 		if (compareGameTick(1, 16)) {
-			for (int y = 0; y <= 143; ++y) {
-				memcpy(_screenLayer2 + y * 320 + i * 8, _screenLayer1 + y * 320, 320 - i * 8);
-				memcpy(_screenLayer2 + y * 320, _animFramesBuffer + kPart10PanelLeft + y * 320 + 320 - i * 8, i * 8);
-			}
+			copyArea(_screenLayer2, i * 8, 320, _screenLayer1, 320, 320 - i * 8, 144);
+			copyArea(_screenLayer2, 0, 320, _animFramesBuffer + kPart10PanelLeft + 320 - i * 8, 320, i * 8, 144);
 			if (i < 9) {
 				xPos -= _walkScaleTable[0x8F9 + _walkCurrentFrame];
 				assert(xPos >= 260);

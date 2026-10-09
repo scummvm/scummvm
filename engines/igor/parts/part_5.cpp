@@ -70,44 +70,32 @@ void IgorEngine::PART_05_HELPER_4_drawPaperOrNot(int num) {
 void IgorEngine::PART_05_06_DRAW_PAPER(int frame) {
 
 	const int offset = 41926;
-	for (int i = 0; i <= 2; ++i) {
-		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 12 + i * 4;
-		memcpy(_screenLayer1 + i * 320 + offset, src, 4);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x7E00 + frame * 12, 4, 4, 3);
 }
 
 void IgorEngine::PART_05_06_SAVE_PHOTOGRAPHER_BACKGROUND() {
 	const int offset = 23521;
-	for (int i = 0; i <= 48; ++i) {
-		memcpy(_animFramesBuffer + 0xDEA8 + i * 23 - 1, _screenLayer1 + i * 320 + offset, 23);
-	}
+	copyArea(_animFramesBuffer, 0xDEA8 - 1, 23, _screenLayer1 + offset, 320, 23, 49);
 }
 
 void IgorEngine::PART_05_06_DRAW_PHOTOGRAPHER() {
 	const int offset = 23521;
-	for (int i = 0; i <= 48; ++i)
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + 0x95C7 + i * 23, 23);
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x95C7, 23, 23, 49);
 }
 
 void IgorEngine::PART_05_06_DRAW_TRIPOD(bool drawToScreen) {
 	// Layer-1 blit: cseg182:047C-04CB; the active-pane copy is
 	// cseg180:03E9-0462.
 	const int offset = 28668;
-	for (int i = 0; i <= 32; ++i) {
-		const uint8 *src = _animFramesBuffer + 0x7E54 + i * 23;
-		memcpy(_screenLayer1 + i * 320 + offset, src, 23);
-		if (drawToScreen)
-			memcpy(_screenVGA + i * 320 + offset, src, 23);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x7E54, 23, 23, 33);
+	if (drawToScreen)
+		drawAnimRect(offset, 0x7E54, 23, 33);
 }
 
 void IgorEngine::PART_05_06_DRAW_CAMERA(int frame) {
 	// cseg180:038B-03E6; duplicated at cseg182:041E-0479.
 	const int offset = 26756;
-	for (int i = 0; i <= 5; ++i) {
-		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 42 + i * 7;
-		memcpy(_screenLayer1 + i * 320 + offset, src, 7);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x7E00 + frame * 42, 7, 7, 6);
 }
 
 void IgorEngine::PART_05_HELPER_6_walkIgorToScene() {
@@ -150,9 +138,7 @@ void IgorEngine::PART_05() {
 
 	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll
 	// then it loads the actual current scene, SpringBridge
-	for (int i = 0; i <= 143; ++i) {
-		memcpy(_animFramesBuffer + i * 224, _screenLayer1 + i * 320 + 96, 224);
-	}
+	copyArea(_animFramesBuffer, 0, 224, _screenLayer1 + 96, 320, 224, 144);
 
 	loadRoomData(PAL_SpringBridge, IMG_SpringBridge, BOX_SpringBridge, MSK_SpringBridge, TXT_SpringBridge);
 	static const int anm1[] = {FRM_SpringBridge1, FRM_SpringBridge2, 0};
@@ -204,10 +190,7 @@ void IgorEngine::PART_05_ACTION_103_pickPaper() {
 	do {
 		if (compareGameTick(1)) {
 			const int offset = 27526;
-			for (int j = 0; j <= 48; ++j) {
-				const uint8 *src = _animFramesBuffer + 0x7E18 + i * 1470 + j * 30;
-				memcpy(_screenVGA + j * 320 + offset, src, 30);
-			}
+			drawAnimRect(offset, 0x7E18 + i * 1470, 30, 49);
 			++i;
 		}
 		PART_05_UPDATE_ROOM_BACKGROUND();
@@ -230,10 +213,8 @@ void IgorEngine::PART_05_ACTION_102_scrollRight() {
 	_gameTicks = 15 & ~(kTimerTicksCount - 1);
 	do {
 		if (compareGameTick(1, 16)) {
-			for (int y = 0; y <= 143; ++y) {
-				memcpy(_screenLayer2 + y * 320, _screenLayer1 + y * 320 + i * 8, 320 - i * 8);
-				memcpy(_screenLayer2 + y * 320 + 320 - i * 8, _animFramesBuffer + y * 224, i * 8);
-			}
+			copyArea(_screenLayer2, 0, 320, _screenLayer1 + i * 8, 320, 320 - i * 8, 144);
+			copyArea(_screenLayer2, 320 - i * 8, 320, _animFramesBuffer, 224, i * 8, 144);
 			if (i < 15) {
 				xPos += _walkScaleTable[0x8F9 + _walkCurrentFrame];
 				assert(xPos >= 205);

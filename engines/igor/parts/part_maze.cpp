@@ -76,9 +76,7 @@ void IgorEngine::mazeDrawFlameFrame(int x, int y, int frame) {
 			tmp[j * kMazeFlameWidth + i] = color;
 		}
 	}
-	for (int j = 0; j < kMazeFlameHeight; ++j) {
-		memcpy(_screenVGA + screenOffset + j * 320, tmp + j * kMazeFlameWidth, kMazeFlameWidth);
-	}
+	copyArea(_screenVGA, screenOffset, 320, tmp, kMazeFlameWidth, kMazeFlameWidth, kMazeFlameHeight);
 }
 
 /**

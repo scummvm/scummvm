@@ -413,10 +413,19 @@ struct WalkData {
 	}
 };
 
+enum AnimBlend {
+		kBlendCopy,
+		kBlendLitSprite,
+		kBlendBehindIgor,
+		kBlendBehindIgorAndText
+};
+
 class IgorEngine : public Engine {
 public:
 	typedef void (IgorEngine::*ExecuteActionProc)(int action);
 	typedef void (IgorEngine::*UpdateRoomBackgroundProc)();
+
+
 	typedef void (IgorEngine::*UpdateDialogueProc)(int action);
 
 private:
@@ -555,7 +564,12 @@ private:
 	void setupDefaultPalette();
 
 	void readTableFile();
+
+
 	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent = false);
+	void drawAnimRect(int dstOffset, int animOffset, int w, int h, bool alsoBackground = false, AnimBlend blend = kBlendCopy);
+	void animateLitAnimFrames(int srcOffset, int firstFrame, int lastFrame, int frameSize, int width, int height, int dstOffset, int delay, int soundFrame, int sound);
+	void updateIgorIdleAnimation(int fl);
 
 
 	void loadDialogueData(int dlg);
@@ -573,32 +587,13 @@ private:
 	void SET_DIALOGUE_TEXT(int start, int count);
 	void SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p);
 
-	void UPDATE_OBJECT_STATE(int num);
-	void PART_UPDATE_FIGURES_ON_PAPER(int delay);
-
-	void PART_MEANWHILE();
-
-	void PART_MARGARET_ROOM_CUTSCENE_HELPER_1();
-	void PART_MARGARET_ROOM_CUTSCENE_HELPER_2(int frame);
-	void PART_MARGARET_ROOM_CUTSCENE_UPDATE_DIALOGUE_MARGARET(int action);
-	void PART_MARGARET_ROOM_CUTSCENE();
-
-	void animateIgorTalking(int frame);
-	void fixIgorDialogueTextPosition(int num, int count, int *x, int *y);
-	void startIgorDialogue();
-	void waitForEndOfIgorDialogue(bool animateHead = true);
-	void fixDialogueTextPosition(int num, int count, int *x, int *y);
-	void startCutsceneDialogue(int x, int y, int r, int g, int b);
-	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
 
 	// One-call dialogue helpers. Each queues the given lines as consecutive pages and starts them.
-	// Use these for every new room instead of ADD_DIALOGUE_TEXT/SET_DIALOGUE_TEXT/start* sequences.
 	//   igorSay                         Igor speaks, returns once the first page has started
 	//   igorSayAndWait                  Igor speaks, returns once all pages are finished
 	//   cutsceneSayStart                text at (x, y) in color (r, g, b), returns once the first page has started
 	//   cutsceneSay                     same, but returns once all pages are finished
-	//   cutsceneSayStartWithCallback    like cutsceneSayStart, but first installs a talk-animation callback
-	//                                   (see _updateDialogue); it stays installed for the caller to clear
+	//   cutsceneSayStartWithCallback    like cutsceneSayStart, but first installs a talk-animation callback (see _updateDialogue); it stays installed for the caller to clear
 	//   cutsceneSayWithCallback         like cutsceneSay, but installs the callback first and clears it afterwards
 	void igorSay(const Common::Array<DialogueText> &lines);
 	void igorSay(int num, int count = 1, int sound = kNoSpeechSound);
@@ -613,8 +608,14 @@ private:
 	void cutsceneSayWithCallback(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines, UpdateDialogueProc update);
 	void cutsceneSayWithCallback(int x, int y, int r, int g, int b, int num, int count, int sound, UpdateDialogueProc update);
 
-	// Building block of the helpers above, do not call from rooms
 	void queueDialogueLines(const Common::Array<DialogueText> &lines);
+	void animateIgorTalking(int frame);
+	void fixIgorDialogueTextPosition(int num, int count, int *x, int *y);
+	void startIgorDialogue();
+	void waitForEndOfIgorDialogue(bool animateHead = true);
+	void fixDialogueTextPosition(int num, int count, int *x, int *y);
+	void startCutsceneDialogue(int x, int y, int r, int g, int b);
+	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
 
 	bool isDialogueSpeechPlaying() const;
 	void stopDialogueSpeech();
@@ -633,8 +634,6 @@ private:
 	void PART_00();
 	void PART_00_EXEC_ACTION(int action);
 	void PART_00_APPLY_OBJECT_STATE(int num);
-	void part_00_drawRawFrame(int srcOffset, int frame, int frameSize, int width, int height, int dstOffset);
-	void PART_00_animateRaw(int srcOffset, int firstFrame, int lastFrame, int frameSize, int width, int height, int dstOffset, int delay, int soundFrame, int sound);
 	void PART_00_ENTRY_ANIMATION();
 	void PART_00_WALK_IN_FROM_CLOSET();
 	void PART_00_ENTER_FROM_BELOW();
@@ -695,7 +694,7 @@ private:
 	void PART_07_ENTER_FROM_OUTSIDE();
 	void PART_07_EXIT_TO_OUTSIDE();
 
-
+	// Dean's office
 	void PART_08();
 	void PART_08_EXEC_ACTION(int action);
 	void PART_08_APPLY_OBJECT_STATE(int num);
@@ -1127,12 +1126,23 @@ private:
 	int MAZE_MUSIC_TRACK() const;
 	void setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp);
 
+	void UPDATE_OBJECT_STATE(int num);
+	void PART_UPDATE_FIGURES_ON_PAPER(int delay);
+
+	void PART_MEANWHILE();
+
+	// Margaret cutscenes
+	void PART_MARGARET_ROOM_CUTSCENE_HELPER_1();
+	void PART_MARGARET_ROOM_CUTSCENE_HELPER_2(int frame);
+	void PART_MARGARET_ROOM_CUTSCENE_UPDATE_DIALOGUE_MARGARET(int action);
+	void PART_MARGARET_ROOM_CUTSCENE();
 
 	// philip vodka cutscene
 	void PART_75_UPDATE_DIALOGUE_PHILIP(int action);
 	void PART_75_HELPER_1(int frame);
 	void PART_75();
 
+	// Intro
 	void PART_85();
 	void PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
 	void PART_85_HELPER_2_SCROLL_RIGHT();
@@ -1142,6 +1152,7 @@ private:
 
 	void PART_85_HELPER_6_animateIgorHead(int frame);
 
+	// Splash screens
 	void PART_90();
 
 	void handleRoomInput();
@@ -1176,9 +1187,8 @@ private:
 
 	void handleRoomDialogue();
 
-	void handleRoomLight();
+	void handleIgorIdleAnimation();
 
-	void updateRoomLight(int fl);
 
 	void getClosestAreaTrianglePoint(int dstArea, int srcArea, int *dstY, int *dstX, int srcY, int srcX);
 	void getClosestAreaTrianglePoint2(int dstArea, int srcArea, int *dstY, int *dstX, int srcY1, int srcX1, int srcY2, int srcX2);

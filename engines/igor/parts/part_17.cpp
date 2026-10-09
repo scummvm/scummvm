@@ -182,15 +182,11 @@ void IgorEngine::PART_17_ACTION_106_swapFolders() {
 	const int offset = 0x311F;
 
 	for (int j = 0; j <= 8; ++j) { // frames 0..8; cseg141:0A7E-0AEC
-		for (int i = 0; i <= 27; ++i) {
-			memcpy(_screenVGA + offset + i * 320, _animFramesBuffer + 0x1E6E + i * 40 +  j * 1120, 40);
-		}
+		drawAnimRect(offset, 0x1E6E + j * 1120, 40, 28);
 		waitForTimer(30);
 	}
 
-	for (int i = 0; i <= 27; ++i) {
-		memcpy(_screenVGA + offset + i * 320, _animFramesBuffer + 0x1E6E + i * 40, 40);
-	}
+	drawAnimRect(offset, 0x1E6E, 40, 28);
 
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 	g_engine->_screen->updateScreen();
@@ -371,10 +367,8 @@ void IgorEngine::PART_17_HELPER_3(int lum) {
 
 void IgorEngine::PART_17_HELPER_4_paintFirsFrameOfPhilipAndJimmy() {
 	int offset = 11642;
-	for (int i = 0; i <= 48; ++i) {
-		memcpy(_screenLayer1 + offset +  i * 320, _animFramesBuffer + i * 44, 44);
-		memcpy(_screenVGA + offset +  i * 320, _animFramesBuffer + i * 44, 44);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer, 44, 44, 49);
+	drawAnimRect(offset, 0, 44, 49);
 }
 
 void IgorEngine::PART_17_HELPER_5_changeZindexOfPath(int lum) {
@@ -432,29 +426,12 @@ void IgorEngine::PART_17_HELPER_8_PhillipToJimmyAnimFrame(int num) {
 		}
 	}
 	int offset = 11650;
-	for (int i = 0; i <= 8; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _screenTempLayer + i * 100, 11);
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + num * 99 + i * 11 + 0x1967, 11);
-	}
+	copyArea(_screenVGA, offset, 320, _screenTempLayer, 100, 11, 9);
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + num * 99 + 0x1967, 11, 11, 9);
 }
 
 void IgorEngine::PART_17_HELPER_9_JimmyTalkingAnimFrame(int num) {
-	for (int i = 0; i <= 26; ++i) {
-		for (int j = 0; j <= 22; ++j) {
-			int offset = (36 + i) * 320 + 143 + j;
-			uint8 color = _screenVGA[offset];
-			if ((color >= 0xC0 && color <= 0xCF) || (color >= 0xF0 && color <= 0xF1)) {
-				_screenTempLayer[i * 100 + j] = _screenVGA[offset];
-			} else {
-				_screenTempLayer[i * 100 + j] = _animFramesBuffer[num * 621 + i * 23 + j + 0x86C];
-			}
-		}
-	}
-	int offset = 11663;
-	for (int i = 0; i <= 26; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _screenTempLayer + i * 100, 23);
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + num * 621 + i * 23 + 0x86C, 23);
-	}
+	drawAnimRect(11663, num * 621 + 0x86C, 23, 27, true, kBlendBehindIgorAndText);
 }
 
 void IgorEngine::PART_17_HELPER_11_PhillipToIgor(int frame) {

@@ -14,8 +14,7 @@ namespace Igor {
 void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		const uint32 srcOffset = _objectsState[26] == 0 ? 0 : 0x4C8;
-		for (int y = 0; y <= 50; ++y)
-			memcpy(_screenLayer1 + 0x572C + y * 320, _animFramesBuffer + srcOffset + y * 24, 24);
+		copyArea(_screenLayer1, 0x572C, 320, _animFramesBuffer + srcOffset, 24, 24, 51);
 		_roomActionsTable[150] = _objectsState[26] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
@@ -42,11 +41,7 @@ void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 			width = 31;
 			_roomObjectAreasTable[8].object = _objectsState[31] == 0 ? 3 : 0;
 		}
-		for (int y = 0; y < rows; ++y) {
-			const uint8 *src = _animFramesBuffer + srcOffset + y * width;
-			memcpy(_screenVGA + dstOffset + y * 320, src, width);
-			memcpy(_screenLayer1 + dstOffset + y * 320, src, width);
-		}
+		drawAnimRect(dstOffset, srcOffset, width, rows, true);
 		_roomActionsTable[146] = 4;
 	}
 }
@@ -61,9 +56,7 @@ void IgorEngine::drawDoor(bool open) {
 	const int lastFrame = open ? 2 : 0;
 	const int step = open ? 1 : -1;
 	for (int frame = 1;; frame += step) {
-		for (int y = 0; y <= 52; ++y)
-			memcpy(_screenVGA + 0x5729 + y * 320,
-					_animFramesBuffer + 0x3DA6 + frame * 0x597 + y * 27, 27);
+		drawAnimRect(0x5729, 0x3DA6 + frame * 0x597, 27, 53);
 		if ((open && frame == 2) || (!open && frame == 1))
 			playSound(open ? 13 : 14, 1);
 		if (frame == lastFrame)
@@ -75,19 +68,11 @@ void IgorEngine::drawDoor(bool open) {
 }
 
 void IgorEngine::drawDean() {
-	for (int y = 0; y <= 25; ++y) {
-		const uint8 *src = _animFramesBuffer + 0x23FE + y * 34;
-		memcpy(_screenVGA + 0x6BC3 + y * 320, src, 34);
-		memcpy(_screenLayer1 + 0x6BC3 + y * 320, src, 34);
-	}
+	drawAnimRect(0x6BC3, 0x23FE, 34, 26, true);
 }
 
 void IgorEngine::drawDeanTalkingFrame(int frame) {
-	for (int y = 0; y <= 21; ++y) {
-		const uint8 *src = _animFramesBuffer + 0x4E6B + frame * 0x226 + y * 25;
-		memcpy(_screenVGA + 0x6BC6 + y * 320, src, 25);
-		memcpy(_screenLayer1 + 0x6BC6 + y * 320, src, 25);
-	}
+	drawAnimRect(0x6BC6, 0x4E6B + frame * 0x226, 25, 22, true);
 }
 
 void IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN(int action) {
@@ -104,10 +89,7 @@ void IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN(int action) {
 
 void IgorEngine::PART_08_ACTION_105() {
 	for (int frame = 0; frame <= 1; ++frame) {
-		for (int y = 0; y <= 48; ++y) {
-			const uint8 *src = _animFramesBuffer + 0x125E + frame * 0x55C + y * 28;
-			memcpy(_screenVGA + 0x66E3 + y * 320, src, 28);
-		}
+		drawAnimRect(0x66E3, 0x125E + frame * 0x55C, 28, 49);
 		if (frame == 0)
 			waitForTimer(127);
 	}
@@ -118,22 +100,7 @@ void IgorEngine::PART_08_ACTION_105() {
 
 void IgorEngine::PART_08_ACTION_109() {
 	for (int frame = 0; frame <= 1; ++frame) {
-		for (int y = 0; y <= 48; ++y) {
-			for (int x = 0; x <= 22; ++x) {
-				const int dstOffset = 0x4F77 + y * 320 + x;
-				uint8 color = _animFramesBuffer[2448 + frame * 1127 + y * 23 + x];
-				if (color >= 0xC0 && color <= 0xCF) {
-					const RoomObjectArea &area = _roomObjectAreasTable[_screenLayer2[dstOffset]];
-					if (area.y1Lum > 0)
-						color = _screenLayer1[dstOffset];
-					else if (area.y2Lum > 0)
-						color -= area.deltaLum;
-				}
-				_screenTempLayer[y * 100 + x] = color;
-			}
-		}
-		for (int y = 0; y <= 48; ++y)
-			memcpy(_screenVGA + 0x4F77 + y * 320, _screenTempLayer + y * 100, 23);
+		drawAnimRect(0x4F77, 2448 + frame * 1127, 23, 49, false, kBlendLitSprite);
 		if (frame == 0)
 			waitForTimer(127);
 	}
@@ -166,8 +133,7 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 	playSound(60, 1);
 
 	for (int frame = 0; frame <= 1; ++frame) {
-		for (int y = 0; y <= 48; ++y)
-			memcpy(_screenVGA + 0x6D1E + y * 320, _animFramesBuffer + actionFrameOffset - 1 + frame * 0x58D + y * 29, 29);
+		drawAnimRect(0x6D1E, actionFrameOffset - 1 + frame * 0x58D, 29, 49);
 		if (frame == 0)
 			waitForTimer(127);
 	}
@@ -231,9 +197,7 @@ void IgorEngine::PART_08_DEAN_DRINKS() {
 
 	for (int step = 1; step <= 20; ++step) {
 		const int frame = getRandomNumber(5);
-		for (int y = 0; y <= 28; ++y)
-			memcpy(_screenVGA + 0x6806 + y * 320,
-					_animFramesBuffer + 0x8489 + frame * 0x2D5 + y * 25, 25);
+		drawAnimRect(0x6806, 0x8489 + frame * 0x2D5, 25, 29);
 		waitForTimer(61);
 
 		if (step == 10) {
@@ -247,9 +211,7 @@ void IgorEngine::PART_08_DEAN_DRINKS() {
 			_screenTextLayer + 320 * 72, _dialogueDirtyRectSize);
 	_gameState.dialogueTextRunning = false;
 	playSound(15, 1);
-	for (int y = 0; y <= 28; ++y)
-		memcpy(_screenVGA + 0x6806 + y * 320,
-				_animFramesBuffer + 0x9587 + y * 25, 25);
+	drawAnimRect(0x6806, 0x9587, 25, 29);
 	waitForTimer(255);
 	_gameState.talkMode = savedTalkMode;
 }
@@ -297,16 +259,10 @@ void IgorEngine::giveBottleToDean() {
 
 	for (int step = 0; step < 4; ++step) {
 		if (deanFrames[step] != 0) {
-			for (int y = 0; y <= 48; ++y) {
-				const uint8 *src = _animFramesBuffer + 0x5755 + deanFrames[step] * 0x620 + y * 32;
-				memcpy(_screenVGA + 0x6463 + y * 320, src, 32);
-			}
+			drawAnimRect(0x6463, 0x5755 + deanFrames[step] * 0x620, 32, 49);
 		}
 		if (igorFrames[step] != 0) {
-			for (int y = 0; y <= 24; ++y) {
-				const uint8 *src = _animFramesBuffer + 0x6D7D + igorFrames[step] * 0x258 + y * 24;
-				memcpy(_screenVGA + 0x6D06 + y * 320, src, 24);
-			}
+			drawAnimRect(0x6D06, 0x6D7D + igorFrames[step] * 0x258, 24, 25);
 		}
 		waitForTimer(41);
 	}

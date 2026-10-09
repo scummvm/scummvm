@@ -118,9 +118,7 @@ void IgorEngine::PART_31_ACTION_103() {
 	playSound(49, 1);
 	const int offset = 20250;
 	for (int i = 1; i <= 9; ++i) {
-		for (int j = 0; j <= 57; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + PART_31_ANIM_DATA_1[i] * 1856 + j * 32 + 0x384, 32);
-		}
+		drawAnimRect(offset, PART_31_ANIM_DATA_1[i] * 1856 + 0x384, 32, 58);
 		if (i < 9) {
 			waitForTimer(30);
 		}
@@ -164,9 +162,7 @@ void IgorEngine::PART_31_ACTION_110() {
 	}
 	const int offset = 20250;
 	for (int i = 1; i <= 9; ++i) {
-		for (int j = 0; j <= 57; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + PART_31_ANIM_DATA_2[i] * 1856 + j * 32 + 0x384, 32);
-		}
+		drawAnimRect(offset, PART_31_ANIM_DATA_2[i] * 1856 + 0x384, 32, 58);
 		if (i == 9) {
 			playSound(13, 1);
 		} else if (i < 8) {
@@ -368,9 +364,7 @@ void IgorEngine::PART_31_HELPER_6() {
 
 void IgorEngine::PART_31_HELPER_9() {
 	const int offset = 20256;
-	for (int i = 0; i <= 52; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + i * 26 + 0x562, 26);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x562, 26, 26, 53);
 }
 
 void IgorEngine::PART_31() {

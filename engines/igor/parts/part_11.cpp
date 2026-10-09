@@ -60,8 +60,7 @@ void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 
 void IgorEngine::PART_11_ACTION_105() {
 	for (int frame = 0; frame <= 1; ++frame) {
-		for (int y = 0; y <= 48; ++y)
-			memcpy(_screenVGA + 0x6167 + y * 320, _animFramesBuffer + kPart10_11_Frm1 + frame * 0x405 + y * 21, 21);
+		drawAnimRect(0x6167, kPart10_11_Frm1 + frame * 0x405, 21, 49);
 		waitForTimer(127);
 	}
 	addObjectToInventory(18, 53);
@@ -71,8 +70,7 @@ void IgorEngine::PART_11_ACTION_105() {
 
 void IgorEngine::PART_11_ACTION_107() {
 	for (int frame = 0; frame <= 2; ++frame) {
-		for (int y = 0; y <= 27; ++y)
-			memcpy(_screenVGA + 0x47E3 + y * 320, _animFramesBuffer + kPart10_11_Frm5 + frame * 0x348 + y * 30, 30);
+		drawAnimRect(0x47E3, kPart10_11_Frm5 + frame * 0x348, 30, 28);
 		waitForTimer(61);
 	}
 	removeObjectFromInventory(42);
@@ -87,10 +85,8 @@ void IgorEngine::PART_11_ACTION_108_scrollRight() {
 	int i = 1;
 	do {
 		if (compareGameTick(1, 16)) {
-			for (int y = 0; y <= 143; ++y) {
-				memcpy(_screenLayer2 + y * 320, _screenLayer1 + y * 320 + i * 8, 320 - i * 8);
-				memcpy(_screenLayer2 + y * 320 + 320 - i * 8, _animFramesBuffer + kPart11PanelRight + y * 320, i * 8);
-			}
+			copyArea(_screenLayer2, 0, 320, _screenLayer1 + i * 8, 320, 320 - i * 8, 144);
+			copyArea(_screenLayer2, 320 - i * 8, 320, _animFramesBuffer + kPart11PanelRight, 320, i * 8, 144);
 			if (i < 9) {
 				xPos += _walkScaleTable[0x8F9 + _walkCurrentFrame];
 				assert(xPos >= 260);
@@ -121,8 +117,7 @@ void IgorEngine::PART_11_ACTION_108_scrollRight() {
 
 void IgorEngine::PART_11_ACTION_112() {
 	for (int frame = 0; frame <= 2; ++frame) {
-		for (int y = 0; y <= 27; ++y)
-			memcpy(_screenVGA + 0x47E3 + y * 320, _animFramesBuffer + kPart10_11_Frm2 + frame * 0x348 + y * 30, 30);
+		drawAnimRect(0x47E3, kPart10_11_Frm2 + frame * 0x348, 30, 28);
 		waitForTimer(61);
 	}
 	addObjectToInventory(23, 58);

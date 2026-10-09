@@ -352,9 +352,7 @@ void IgorEngine::PART_14_HELPER_4() {
 
 void IgorEngine::PART_14_HELPER_6() {
 	const int offset = 18382;
-	for (int i = 0; i <= 65; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + 0xD5BA + i * 44, 44);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xD5BA, 44, 44, 66);
 }
 
 void IgorEngine::PART_14_HELPER_7(int frame) {
@@ -504,9 +502,7 @@ void IgorEngine::PART_14_PUSH_STONE(int screenOffset, int w, int h, int animOffs
 		memcpy(_screenVGA + i * 320 + screenOffset, _animFramesBuffer + i * w, w);
 	}
 	waitForTimer(127);
-	for (int i = 0; i <= h; ++i) {
-		memcpy(_screenVGA + i * 320 + screenOffset, _screenTempLayer + i * 100, 28);
-	}
+	copyArea(_screenVGA, screenOffset, 320, _screenTempLayer, 100, 28, h + 1);
 }
 
 void IgorEngine::PART_14() {

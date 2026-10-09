@@ -61,10 +61,7 @@ void IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND() {
 
 void IgorEngine::PART_06_HELPER_8_animatePhotographer(int frame) {
 	const int offset = 23521;
-	for (int i = 0; i <= 48; ++i) {
-		const uint8 *src = _animFramesBuffer + 0x95C7 + i * 23 + frame * 1127;
-		memcpy(_screenVGA + i * 320 + offset, src, 23);
-	}
+	drawAnimRect(offset, 0x95C7 + frame * 1127, 23, 49);
 }
 
 
@@ -230,10 +227,8 @@ void IgorEngine::PART_06_ACTION_102_scrollLeft() {
 	_gameTicks = 15 & ~(kTimerTicksCount - 1);
 	do {
 		if (compareGameTick(1, 16)) {
-			for (int y = 0; y <= 143; ++y) {
-				memcpy(_screenLayer2 + y * 320 + i * 8, _screenLayer1 + y * 320, 320 - i * 8);
-				memcpy(_screenLayer2 + y * 320, _animFramesBuffer + y * 224 + 224 - i * 8, i * 8);
-			}
+			copyArea(_screenLayer2, i * 8, 320, _screenLayer1, 320, 320 - i * 8, 144);
+			copyArea(_screenLayer2, 0, 320, _animFramesBuffer + 224 - i * 8, 224, i * 8, 144);
 			if (i < 15) {
 				xPos -= _walkScaleTable[0x8F9 + _walkCurrentFrame];
 				assert(xPos >= 205);
@@ -275,10 +270,7 @@ void IgorEngine::PART_06_ACTION_102_scrollLeft() {
 void IgorEngine::PART_06_HELPER_12() {
 
 	const int offset = 23521;
-	for (int i = 0; i <= 48; ++i) {
-		const uint8 *src = _animFramesBuffer + 0xDEA7 + i * 23;
-		memcpy(_screenLayer1 + i * 320 + offset, src, 23);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xDEA7, 23, 23, 49);
 }
 
 void IgorEngine::PART_06_HELPER_15(int frame) {
@@ -300,9 +292,7 @@ void IgorEngine::PART_06() {
 	}
 	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll
 	// then it loads the actual current scene, SpringRock
-	for (int i = 0; i <= 143; ++i) {
-		memcpy(_animFramesBuffer + i * 224, _screenLayer1 + i * 320, 224);
-	}
+	copyArea(_animFramesBuffer, 0, 224, _screenLayer1, 320, 224, 144);
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
 	SET_PAL_240_48_1();
 	// the room palette resource is longer than the palette the room really uses, restore the inventory colors
@@ -355,7 +345,7 @@ void IgorEngine::PART_06() {
 			handleRoomInventoryScroll();
 		}
 		if (compareGameTick(1)) {
-			handleRoomLight();
+			handleIgorIdleAnimation();
 		}
 		PART_06_UPDATE_ROOM_BACKGROUND();
 

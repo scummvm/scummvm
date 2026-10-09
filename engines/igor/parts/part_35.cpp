@@ -73,12 +73,8 @@ void IgorEngine::PART_35_ACTION_107_SCROLL_LEFT() {
 	_gameTicks = 8; // original counter 15 normalized to 8-tick engine units
 	do {
 		if (compareGameTick(1, 16)) {
-			for (int y = 0; y <= 143; ++y) {
-				memcpy(_screenLayer2 + y * 320 + step * 8,
-						_screenLayer1 + y * 320, 320 - step * 8);
-				memcpy(_screenLayer2 + y * 320,
-						_animFramesBuffer + y * 160 + 160 - step * 8, step * 8);
-			}
+			copyArea(_screenLayer2, step * 8, 320, _screenLayer1, 320, 320 - step * 8, 144);
+			copyArea(_screenLayer2, 0, 320, _animFramesBuffer + 160 - step * 8, 160, step * 8, 144);
 			if (step < 5) {
 				xPos -= _walkScaleTable[0x8F9 + _walkCurrentFrame];
 				WalkData::setNextFrame(kFacingPositionLeft, _walkCurrentFrame);
@@ -135,9 +131,7 @@ void IgorEngine::PART_35() {
 	if (_objectsState[80] == 0 && _objectsState[73] == 1) {
 		PARK_DRAW_LADY_FRAME(_screenLayer1, 1);
 	}
-	for (int y = 0; y <= 143; ++y) {
-		memcpy(_animFramesBuffer + y * 160, _screenLayer1 + y * 320, 160);
-	}
+	copyArea(_animFramesBuffer, 0, 160, _screenLayer1, 320, 160, 144);
 	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight,
 			TXT_ParkRight); // active right panel
 	// The pick up frames replace the start of FRM_Park1, whose frames are not drawn on this panel

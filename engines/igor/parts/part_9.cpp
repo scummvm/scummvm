@@ -11,25 +11,18 @@
 namespace Igor {
 
 void IgorEngine::PART_09_DRAW_SECRETARY_FRAME(int frame, bool background) {
-	for (int y = 0; y <= 46; ++y) {
-		const uint8 *src = _animFramesBuffer + frame * 0x34E + y * 18;
-		memcpy(_screenVGA + 0x7839 + y * 320, src, 18);
-		if (background)
-			memcpy(_screenLayer1 + 0x7839 + y * 320, src, 18);
-	}
+	drawAnimRect(0x7839, frame * 0x34E, 18, 47, background);
 }
 
 void IgorEngine::PART_09_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		const uint32 srcOffset = _objectsState[27] == 0 ? 0x5D0B : 0x61A3;
-		for (int y = 0; y <= 48; ++y)
-			memcpy(_screenLayer1 + 0x46C2 + y * 320, _animFramesBuffer + srcOffset + y * 24, 24);
+		copyArea(_screenLayer1, 0x46C2, 320, _animFramesBuffer + srcOffset, 24, 24, 49);
 		_roomActionsTable[150] = _objectsState[27] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
 		const uint32 srcOffset = _objectsState[34] == 0 ? 0x663B : 0x6A23;
-		for (int y = 0; y <= 49; ++y)
-			memcpy(_screenLayer1 + 0x48E6 + y * 320, _animFramesBuffer + srcOffset + y * 20, 20);
+		copyArea(_screenLayer1, 0x48E6, 320, _animFramesBuffer + srcOffset, 20, 20, 50);
 		_roomObjectAreasTable[4].object = (_objectsState[34] == 0 || _objectsState[36] != 0) ? 3 : 5;
 	}
 	if (num == 3 || num == 255) {
@@ -62,9 +55,7 @@ void IgorEngine::PART_09_ANIMATE_DOOR(bool open) {
 
 	for (int i = 0; i < 2; ++i) {
 		const int frame = open ? openFrames[i] : i + 1;
-		for (int y = 0; y <= 52; ++y)
-			memcpy(_screenVGA + 0x46C2 + y * 320,
-					_animFramesBuffer + 0x86EF + frame * 0x52D + y * 25, 25);
+		drawAnimRect(0x46C2, 0x86EF + frame * 0x52D, 25, 53);
 		if (i == 1)
 			playSound(open ? 13 : 14, 1);
 		waitForTimer(127);
@@ -74,8 +65,7 @@ void IgorEngine::PART_09_ANIMATE_DOOR(bool open) {
 }
 
 void IgorEngine::PART_09_DRAW_DRAWER_FRAME(int frame) {
-	for (int y = 0; y <= 58; ++y)
-		memcpy(_screenVGA + 0x48E6 + y * 320, _animFramesBuffer + 0x6E0B + frame * 0x639 + y * 27, 27);
+	drawAnimRect(0x48E6, 0x6E0B + frame * 0x639, 27, 59);
 }
 
 void IgorEngine::PART_09_ACTION_106(bool search) {
@@ -111,22 +101,7 @@ void IgorEngine::PART_09_ACTION_106(bool search) {
 
 void IgorEngine::PART_09_ACTION_110() {
 	for (int frame = 1; frame >= 0; --frame) {
-		for (int y = 0; y <= 39; ++y) {
-			for (int x = 0; x <= 26; ++x) {
-				const int dst = 0x48E6 + y * 320 + x;
-				uint8 color = _animFramesBuffer[0x9BA3 + frame * 0x438 + y * 27 + x];
-				if (color >= 0xC0 && color <= 0xCF) {
-					const RoomObjectArea &area = _roomObjectAreasTable[_screenLayer2[dst]];
-					if (area.y1Lum > 0)
-						color = _screenLayer1[dst];
-					else if (area.y2Lum > 0)
-						color -= area.deltaLum;
-				}
-				_screenTempLayer[y * 100 + x] = color;
-			}
-		}
-		for (int y = 0; y <= 39; ++y)
-			memcpy(_screenVGA + 0x48E6 + y * 320, _screenTempLayer + y * 100, 27);
+		drawAnimRect(0x48E6, 0x9BA3 + frame * 0x438, 27, 40, false, kBlendLitSprite);
 		waitForTimer(127);
 	}
 	addObjectToInventory(14, 49);
@@ -142,15 +117,13 @@ void IgorEngine::PART_09_ACTION_101_openFileCabinet() {
 	} else {
 		static const uint8 frames[] = { 1, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 2, 1, 6 };
 		for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
-			for (int y = 0; y <= 48; ++y)
-				memcpy(_screenVGA + 0x7595 + y * 320, _animFramesBuffer + 0x9BD8 + frames[i] * 0x83B + y * 43, 43);
+			drawAnimRect(0x7595, 0x9BD8 + frames[i] * 0x83B, 43, 49);
 			waitForTimer(i >= 3 && i <= 14 ? 31 : 61);
 		}
 		_walkData[_walkDataLastIndex - 1].posNum = kFacingPositionFront;
 		igorSayAndWait({ { 221, 1, 249 }, { 222, 1, 250 }, { 223, 1, 251 } });
 		for (int frame = 7; frame >= 6; --frame) {
-			for (int y = 0; y <= 48; ++y)
-				memcpy(_screenVGA + 0x7595 + y * 320, _animFramesBuffer + 0x9BD8 + frame * 0x83B + y * 43, 43);
+			drawAnimRect(0x7595, 0x9BD8 + frame * 0x83B, 43, 49);
 			if (frame == 7)
 				waitForTimer(255);
 		}
@@ -163,11 +136,7 @@ void IgorEngine::PART_09_ACTION_101_openFileCabinet() {
 }
 
 void IgorEngine::PART_09_DRAW_SECRETARY_MOUTH(int frame) {
-	for (int y = 0; y <= 12; ++y) {
-		const uint8 *src = _animFramesBuffer + 0xD38 + frame * 0xA9 + y * 13;
-		memcpy(_screenVGA + 0x783A + y * 320, src, 13);
-		memcpy(_screenLayer1 + 0x783A + y * 320, src, 13);
-	}
+	drawAnimRect(0x783A, 0xD38 + frame * 0xA9, 13, 13, true);
 }
 
 void IgorEngine::PART_09_UPDATE_DIALOGUE_SECRETARY(int action) {
@@ -185,19 +154,16 @@ void IgorEngine::PART_09_SECRETARY_GESTURE() {
 	static const uint8 beginFrames[] = { 1, 2, 3, 4 };
 	static const uint8 endFrames[] = { 3, 2, 1, 8 };
 	for (uint step = 0; step < ARRAYSIZE(beginFrames); ++step) {
-		for (int y = 0; y <= 46; ++y)
-			memcpy(_screenVGA + 0x7815 + y * 320, _animFramesBuffer + 0x578 + beginFrames[step] * 0x9BB + y * 53, 53);
+		drawAnimRect(0x7815, 0x578 + beginFrames[step] * 0x9BB, 53, 47);
 		waitForTimer(31);
 	}
 	for (int step = 0; step < 32; ++step) {
 		const int frame = getRandomNumber(3) + 4;
-		for (int y = 0; y <= 46; ++y)
-			memcpy(_screenVGA + 0x7815 + y * 320, _animFramesBuffer + 0x578 + frame * 0x9BB + y * 53, 53);
+		drawAnimRect(0x7815, 0x578 + frame * 0x9BB, 53, 47);
 		waitForTimer(16);
 	}
 	for (uint step = 0; step < ARRAYSIZE(endFrames); ++step) {
-		for (int y = 0; y <= 46; ++y)
-			memcpy(_screenVGA + 0x7815 + y * 320, _animFramesBuffer + 0x578 + endFrames[step] * 0x9BB + y * 53, 53);
+		drawAnimRect(0x7815, 0x578 + endFrames[step] * 0x9BB, 53, 47);
 		waitForTimer(31);
 	}
 }

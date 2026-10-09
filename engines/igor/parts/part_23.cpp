@@ -85,9 +85,7 @@ void IgorEngine::PART_23_ACTION_107_openDoor() {
 	}
 	const int offset = 23901;
 	for (int i = 2; i <= 3; ++i) {
-		for (int j = 0; j <= 53; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 1620 + j * 30 + 0x895, 30);
-		}
+		drawAnimRect(offset, i * 1620 + 0x895, 30, 54);
 		if (i == 3) {
 			playSound(13, 1);
 		}
@@ -106,9 +104,7 @@ void IgorEngine::PART_23_ACTION_108_closeDoor() {
 	}
 	const int offset = 23901;
 	for (int i = 1; i <= 2; ++i) {
-		for (int j = 0; j <= 53; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + PART_23_ANIM_DATA_1[i] * 1620 + j * 30 + 0x895, 30);
-		}
+		drawAnimRect(offset, PART_23_ANIM_DATA_1[i] * 1620 + 0x895, 30, 54);
 		if (i == 2) {
 			playSound(14, 1);
 		}
@@ -153,16 +149,12 @@ void IgorEngine::PART_23_HELPER_1(int num) {
 
 void IgorEngine::PART_23_HELPER_2(int frame) {
 	const int offset = 23907;
-	for (int i = 0; i <= 53; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + (frame - 1) * 1296 + i * 24, 24);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + (frame - 1) * 1296, 24, 24, 54);
 }
 
 void IgorEngine::PART_23_HELPER_3() {
 	const int offset = 25763;
-	for (int i = 0; i <= 48; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + i * 25 + 0xA20, 25);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xA20, 25, 25, 49);
 }
 
 void IgorEngine::PART_23_HELPER_4_walkFromDoor() {
@@ -177,19 +169,7 @@ void IgorEngine::PART_23_HELPER_4_walkFromDoor() {
 	_gameState.igorMoving = true;
 	waitForIgorMove();
 	if (_objectsState[59] == 0) {
-		for (int i = 0; i <= 53; ++i) {
-			for (int j = 0; j <= 23; ++j) {
-				uint8 color = _screenVGA[(i + 74) * 320 + j + 227];
-				if (color >= 0xC0 && color <= 0xCF) {
-					_screenTempLayer[i * 100 + j] = color;
-				} else {
-					_screenTempLayer[i * 100 + j] = _animFramesBuffer[i * 24 + j];
-				}
-			}
-		}
-		for (int i = 0; i <= 53; ++i) {
-			memcpy(_screenVGA + i * 320 + 23907, _screenTempLayer + i * 100, 24);
-		}
+		drawAnimRect(23907, 0, 24, 54, false, kBlendBehindIgor);
 		playSound(14, 1);
 		_objectsState[66] = 0;
 		PART_23_HELPER_1(1);
@@ -236,10 +216,8 @@ void IgorEngine::PART_23_HELPER_7(int frame) {
 		}
 	}
 	int offset = 25762;
-	for (int i = 0; i <= 18; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _screenTempLayer + i * 100, 15);
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + frame * 285 + i * 15 + 0x271C, 15);
-	}
+	copyArea(_screenVGA, offset, 320, _screenTempLayer, 100, 15, 19);
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + frame * 285 + 0x271C, 15, 15, 19);
 	if (_dialogueCursorOn) {
 		_roomCursorOn = true;
 	}

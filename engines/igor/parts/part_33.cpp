@@ -140,30 +140,22 @@ void IgorEngine::PART_33_ACTION_113() {
 }
 
 void IgorEngine::PART_33_ACTION_114() {
-	for (int i = 0; i <= 28; ++i) {
-		memcpy(_screenVGA + i * 320 + 26279, _animFramesBuffer + i * 63 + 0x5827, 62);
-	}
+	copyArea(_screenVGA, 26279, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
 	igorSayAndWait(223, 1, 414);
 	PART_33_HARRISON_SPEAKS({ { 224, 1, 415 } });
 	for (int i = 2; i <= 5; ++i) {
-		for (int j = 0; j <= 28; ++j) {
-			memcpy(_screenVGA + j * 320 + 26279, _animFramesBuffer + i * 1827 + j * 63 + 0x5104, 62);
-		}
+		copyArea(_screenVGA, 26279, 320, _animFramesBuffer + i * 1827 + 0x5104, 63, 62, 29);
 		waitForTimer(60);
 	}
 	removeObjectFromInventory(54);
 	PART_33_HARRISON_SPEAKS({ { 225, 1, 416 } });
-	for (int i = 0; i <= 28; ++i) {
-		memcpy(_screenVGA + i * 320 + 26279, _animFramesBuffer + i * 63 + 0x5827, 62);
-	}
+	copyArea(_screenVGA, 26279, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
 	igorSayAndWait(226, 1, 417);
 	PART_33_HARRISON_SPEAKS({ { 227, 1, 418 } });
 	igorSayAndWait(228, 1, 419);
 	PART_33_HARRISON_SPEAKS({ { 229, 2, 420 }, { 231, 2, 421 } });
 	for (int i = 1; i <= 4; ++i) {
-		for (int j = 0; j <= 28; ++j) {
-			memcpy(_screenVGA + j * 320 + 26279, _animFramesBuffer + PART_33_ANIM_DATA_5[i] * 1827 + j * 63 + 0x5104, 62);
-		}
+		copyArea(_screenVGA, 26279, 320, _animFramesBuffer + PART_33_ANIM_DATA_5[i] * 1827 + 0x5104, 63, 62, 29);
 		waitForTimer(60);
 	}
 	addObjectToInventory(35, 70);
@@ -174,15 +166,11 @@ void IgorEngine::PART_33_ACTION_114() {
 
 void IgorEngine::PART_33_ACTION_115() {
 	const int offset = 26279;
-	for (int i = 0; i <= 28; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + i * 63 + 0x5827, 62);
-	}
+	copyArea(_screenVGA, offset, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
 	waitForTimer(60);
 	igorSayAndWait(215, 2, 408);
 	for (int i = 2; i <= 5; ++i) {
-		for (int j = 0; j <= 28; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 1827 + j * 63 + 0x5104, 62);
-		}
+		copyArea(_screenVGA, offset, 320, _animFramesBuffer + i * 1827 + 0x5104, 63, 62, 29);
 		waitForTimer(60);
 	}
 	removeObjectFromInventory(67);
@@ -191,13 +179,9 @@ void IgorEngine::PART_33_ACTION_115() {
 		++_demoActionsCounter;
 	}
 	PART_33_HARRISON_SPEAKS({ { 217, 2, 409 } });
-	for (int i = 0; i <= 28; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + i * 63 + 0x5827, 62);
-	}
+	copyArea(_screenVGA, offset, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
 	PART_33_HARRISON_SPEAKS({ { 219, 1, 410 } });
-	for (int i = 0; i <= 28; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + i * 63 + 0x5827, 62);
-	}
+	copyArea(_screenVGA, offset, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
 	_objectsState[76] = 1;
 }
 
@@ -294,9 +278,7 @@ void IgorEngine::PART_33_HELPER_2() {
 
 void IgorEngine::PART_33_HELPER_3() {
 	const int offset = 29479;
-	for (int i = 0; i <= 14; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + 0x5287 + i * 16, 16);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x5287, 16, 16, 15);
 }
 
 void IgorEngine::PART_33_HELPER_4(int frame) {

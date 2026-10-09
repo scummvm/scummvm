@@ -78,9 +78,7 @@ void IgorEngine::PART_21_EXEC_ACTION(int action) {
 void IgorEngine::PART_21_ACTION_101() {
 	if (_objectsState[65] == 1) {
 		const int offset = 29440;
-		for (int i = 0; i <= 50; ++i) {
-			memcpy(_screenVGA + i * 320 + offset, _screenLayer1 + i * 320 + offset, 20);
-		}
+		copyArea(_screenVGA, offset, 320, _screenLayer1 + offset, 320, 20, 51);
 		PART_21_HELPER_10();
 	}
 	_currentPart = 303;
@@ -107,9 +105,7 @@ void IgorEngine::PART_21_ACTION_107() {
 	}
 	for (int i = 2; i <= 3; ++i) {
 		const int offset = 21902;
-		for (int j = 0; j <= 53; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + (i - 1) * 1782 + j * 33, 33);
-		}
+		drawAnimRect(offset, (i - 1) * 1782, 33, 54);
 		if (i == 3) {
 			playSound(13, 1);
 		} else {
@@ -127,9 +123,7 @@ void IgorEngine::PART_21_ACTION_108() {
 	}
 	for (int i = 2; i >= 1; --i) {
 		const int offset = 21902;
-		for (int j = 0; j <= 53; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + (i - 1) * 1782 + j * 33, 33);
-		}
+		drawAnimRect(offset, (i - 1) * 1782, 33, 54);
 		if (i == 2) {
 			playSound(14, 1);
 			waitForTimer(100);
@@ -142,9 +136,7 @@ void IgorEngine::PART_21_ACTION_108() {
 void IgorEngine::PART_21_ACTION_110() {
 	if (_objectsState[65] == 1) {
 		const int offset = 27180;
-		for (int i = 0; i <= 50; ++i) {
-			memcpy(_screenVGA + i * 320 + offset, _screenLayer1 + i * 320 + offset, 20);
-		}
+		copyArea(_screenVGA, offset, 320, _screenLayer1 + offset, 320, 20, 51);
 		PART_21_HELPER_10();
 	}
 	_currentPart = 270;
@@ -161,16 +153,12 @@ void IgorEngine::PART_21_ACTION_111() {
 	waitForEndOfIgorDialogue(false);
 	IN_ACTION_111 = false;
 	const int offset = 28183;
-	for (int i = 0; i <= 49; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + 0xCBE1 + i * 26, 26);
-	}
+	drawAnimRect(offset, 0xCBE1, 26, 50);
 	waitForTimer(100);
 	int k = 1;
 	do {
 		if (compareGameTick(3, 24)) {
-			for (int j = 0; j <= 49; ++j) {
-				memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + 0xBCA5 + PART_21_ANIM_DATA_2[k] * 1300 + j * 26, 26);
-			}
+			drawAnimRect(offset, 0xBCA5 + PART_21_ANIM_DATA_2[k] * 1300, 26, 50);
 			++k;
 		}
 		PART_21_UPDATE_ROOM_BACKGROUND();
@@ -336,10 +324,8 @@ void IgorEngine::PART_21_HELPER_6(int frame) {
 		}
 	}
 	int offset = 28520;
-	for (int i = 0; i <= 42; ++i) {
-		memcpy(_screenVGA + i * 320 + offset, _screenTempLayer + i * 100, 49);
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + frame * 2107 + i * 49 + 0xCA7, 49);
-	}
+	copyArea(_screenVGA, offset, 320, _screenTempLayer, 100, 49, 43);
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + frame * 2107 + 0xCA7, 49, 49, 43);
 	if (_dialogueCursorOn) {
 		_roomCursorOn = true;
 	}
@@ -347,23 +333,17 @@ void IgorEngine::PART_21_HELPER_6(int frame) {
 
 void IgorEngine::PART_21_HELPER_7() {
 	const int offset = 21901;
-	for (int i = 0; i <= 53; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + i * 33 + 0xE031, 33);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xE031, 33, 33, 54);
 }
 
 void IgorEngine::PART_21_HELPER_8() {
 	const int offset = 21901;
-	for (int i = 0; i <= 53; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + i * 33 + 0xE727, 33);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xE727, 33, 33, 54);
 }
 
 void IgorEngine::PART_21_HELPER_9() {
 	const int offset = 28520;
-	for (int i = 0; i <= 42; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + i * 49 + 0x14E2, 49);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x14E2, 49, 49, 43);
 }
 
 void IgorEngine::PART_21_HELPER_10() {
@@ -398,18 +378,14 @@ void IgorEngine::PART_21_HELPER_10() {
 
 void IgorEngine::PART_21_HELPER_11(int frame) {
 	const int offset = 28520;
-	for (int i = 0; i <= 42; ++i) {
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + frame * 2107 + i * 49 + 0xCA7, 49);
-	}
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + frame * 2107 + 0xCA7, 49, 49, 43);
 }
 
 void IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND() {
 	if (IN_ACTION_111 && compareGameTick(3, 24)) {
 		const int offset = 28183;
 		int i = getRandomNumber(1) + 1;
-		for (int j = 0; j <= 49; ++j) {
-			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + 0xBCA5 + i * 1300 + j * 26, 26);
-		}
+		drawAnimRect(offset, 0xBCA5 + i * 1300, 26, 50);
 		++i;
 	}
 	if (compareGameTick(61) && _objectsState[65] <= 1) {

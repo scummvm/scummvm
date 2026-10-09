@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	palette.o \
 	font.o \
 	room.o \
+	graphics.o \
 	resource.o \
 	input.o \
 	static_walk.o \
