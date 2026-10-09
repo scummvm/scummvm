@@ -1546,6 +1546,7 @@ static void game_system_maintenance() {
  * Calls, in proper order, all daemon code for this framing round.
  */
 static void game_daemon_code() {
+	kernel_animations_begin_daemon();
 	kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 
 	game_exec_function(room_daemon_code_pointer);
@@ -1815,8 +1816,11 @@ static void game_main_loop() {
 	// Update any active graphics sequences
 	kernel_seq_update_all();
 
-	// Update any active animations
-	kernel_process_all_animations();
+	// Phantom and Dragonsphere scripts use daemon-observed frames for holds and handoffs.
+	// Preserve each newly exposed frame until that daemon can observe it.
+	// Otherwise, update any active animations as before.
+	kernel_process_all_animations(g_engine->getGameID() == GType_Phantom ||
+		g_engine->getGameID() == GType_Dragonsphere);
 
 	// Special mouse cursor update mode
 	if (kernel.mouse_cursor_point) {
