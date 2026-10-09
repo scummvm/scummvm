@@ -723,14 +723,14 @@ private:
 	void PART_09_EXEC_ACTION(int action);
 	void PART_09_APPLY_OBJECT_STATE(int num);
 	void PART_09_ANIMATE_DOOR(bool open);
-	void PART_09_DRAW_SECRETARY_FRAME(int frame, bool background);
-	void PART_09_DRAW_DRAWER_FRAME(int frame);
+	void PART_09_drawSecretaryFrame(int frame, bool background);
+	void PART_09_DRAW_openClosetFrame(int frame);
 	void PART_09_ACTION_101_openFileCabinet();
-	void PART_09_ACTION_106(bool search);
-	void PART_09_ACTION_110();
+	void PART_09_ACTION_106_openCloset(bool search);
+	void PART_09_ACTION_110_pickCostumeFromCloset();
 	void PART_09_UPDATE_DIALOGUE_SECRETARY(int action);
 	void PART_09_DRAW_SECRETARY_MOUTH(int frame);
-	void PART_09_SECRETARY_GESTURE();
+	void PART_09_secretarySearchesFile();
 	void PART_09_UPDATE_ROOM_BACKGROUND();
 
 	// Decanato right
@@ -743,10 +743,10 @@ private:
 	// Decanato left
 	void PART_11();
 	void PART_11_EXEC_ACTION(int action);
-	void PART_11_ACTION_105();
+	void PART_11_ACTION_105_pickSlug();
 	void PART_11_ACTION_107();
 	void PART_11_ACTION_108_scrollRight();
-	void PART_11_ACTION_112();
+	void PART_11_ACTION_112_pickBottle();
 	void PART_11_APPLY_OBJECT_STATE(int num);
 
 	// outside church

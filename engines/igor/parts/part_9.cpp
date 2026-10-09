@@ -10,7 +10,7 @@
 
 namespace Igor {
 
-void IgorEngine::PART_09_DRAW_SECRETARY_FRAME(int frame, bool background) {
+void IgorEngine::PART_09_drawSecretaryFrame(int frame, bool background) {
 	drawAnimRect(0x7839, frame * 0x34E, 18, 47, background);
 }
 
@@ -27,7 +27,7 @@ void IgorEngine::PART_09_APPLY_OBJECT_STATE(int num) {
 	}
 	if (num == 3 || num == 255) {
 		if (_objectsState[35] == 0) {
-			PART_09_DRAW_SECRETARY_FRAME(1, true);
+			PART_09_drawSecretaryFrame(1, true);
 			_roomObjectAreasTable[6].object = 2;
 			_roomObjectAreasTable[15].object = 2;
 			_roomObjectAreasTable[15].area = 0;
@@ -64,29 +64,29 @@ void IgorEngine::PART_09_ANIMATE_DOOR(bool open) {
 	PART_09_APPLY_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_09_DRAW_DRAWER_FRAME(int frame) {
+void IgorEngine::PART_09_DRAW_openClosetFrame(int frame) {
 	drawAnimRect(0x48E6, 0x6E0B + frame * 0x639, 27, 59);
 }
 
-void IgorEngine::PART_09_ACTION_106(bool search) {
-	if (_objectsState[35] == 0) {
+void IgorEngine::PART_09_ACTION_106_openCloset(bool hairpin) {
+	if (_objectsState[35] == 0) { // if secretary present, she will prevent searching the closet
 		ADD_DIALOGUE_TEXT(214, 2, 243);
 	} else if (_objectsState[34] == 1) {
 		executeAction(10);
 		return;
-	} else if (search) {
+	} else if (hairpin) {
 		static const uint8 frames[] = { 1, 2, 1, 2, 1, 2, 3 };
 		for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
-			PART_09_DRAW_DRAWER_FRAME(frames[i]);
+			PART_09_DRAW_openClosetFrame(frames[i]);
 			waitForTimer(61);
 		}
 		_objectsState[34] = 1;
 		PART_09_APPLY_OBJECT_STATE(2);
 		ADD_DIALOGUE_TEXT(212, 1, 241);
-	} else {
+	} else { // igor tries to open
 		static const uint8 frames[] = { 1, 2, 1, 2, 1, 2, 1, 2, 0 };
 		for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
-			PART_09_DRAW_DRAWER_FRAME(frames[i]);
+			PART_09_DRAW_openClosetFrame(frames[i]);
 			if (i == 0)
 				playSound(49, 1);
 			if (i + 1 < ARRAYSIZE(frames))
@@ -99,7 +99,7 @@ void IgorEngine::PART_09_ACTION_106(bool search) {
 	waitForEndOfIgorDialogue();
 }
 
-void IgorEngine::PART_09_ACTION_110() {
+void IgorEngine::PART_09_ACTION_110_pickCostumeFromCloset() {
 	for (int frame = 1; frame >= 0; --frame) {
 		drawAnimRect(0x48E6, 0x9BA3 + frame * 0x438, 27, 40, false, kBlendLitSprite);
 		waitForTimer(127);
@@ -150,7 +150,7 @@ void IgorEngine::PART_09_UPDATE_DIALOGUE_SECRETARY(int action) {
 	}
 }
 
-void IgorEngine::PART_09_SECRETARY_GESTURE() {
+void IgorEngine::PART_09_secretarySearchesFile() {
 	static const uint8 beginFrames[] = { 1, 2, 3, 4 };
 	static const uint8 endFrames[] = { 3, 2, 1, 8 };
 	for (uint step = 0; step < ARRAYSIZE(beginFrames); ++step) {
@@ -170,7 +170,7 @@ void IgorEngine::PART_09_SECRETARY_GESTURE() {
 
 void IgorEngine::PART_09_UPDATE_ROOM_BACKGROUND() {
 	if (_objectsState[35] == 0 && compareGameTick(61) && getRandomNumber(1) == 0)
-		PART_09_DRAW_SECRETARY_FRAME(getRandomNumber(2), false);
+		PART_09_drawSecretaryFrame(getRandomNumber(2), false);
 }
 
 void IgorEngine::PART_09_EXEC_ACTION(int action) {
@@ -204,9 +204,9 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		break;
 	}
 	case 106:
-		PART_09_ACTION_106(false);
+		PART_09_ACTION_106_openCloset(false);
 		break;
-	case 107:
+	case 107: // close closet
 		if (_objectsState[34] == 0) {
 			executeAction(13);
 		} else {
@@ -216,11 +216,11 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 	case 108: // look at intercom
 		igorSayAndWait({ { 207, 1, 237 }, { 208, 1, 238 } });
 		break;
-	case 109:
+	case 109: //user intercom
 		igorSayAndWait(_objectsState[35] == 0 ? 216 : 224, 1, _objectsState[35] == 0 ? 244 : 252);
 		break;
 	case 110:
-		PART_09_ACTION_110();
+		PART_09_ACTION_110_pickCostumeFromCloset();
 		break;
 	case 112: // look at door
 		igorSayAndWait(211, 1, 240);
@@ -231,10 +231,10 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 	case 114: // close door
 		PART_09_ANIMATE_DOOR(false);
 		break;
-	case 115:
-		PART_09_ACTION_106(true);
+	case 115: // use hairpin
+		PART_09_ACTION_106_openCloset(true);
 		break;
-	case 116:
+	case 116: //leave
 		if (_objectsState[27] != 0) {
 			WalkData *wd = &_walkData[0];
 			wd->setPos(207, 106, kFacingPositionBack, 1);
@@ -261,7 +261,9 @@ void IgorEngine::PART_09() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_AdministrationSecretaryRoom);
-	loadRoomData(PAL_AdministrationSecretaryRoom, IMG_AdministrationSecretaryRoom,BOX_AdministrationSecretaryRoom, MSK_AdministrationSecretaryRoom, TXT_AdministrationSecretaryRoom);
+	loadRoomData(PAL_AdministrationSecretaryRoom, IMG_AdministrationSecretaryRoom,
+		BOX_AdministrationSecretaryRoom, MSK_AdministrationSecretaryRoom,
+		TXT_AdministrationSecretaryRoom);
 	static const int anim[] = {
 		ANM_AdministrationSecretaryRoom1, ANM_AdministrationSecretaryRoom2,
 		ANM_AdministrationSecretaryRoom3, ANM_AdministrationSecretaryRoom4,

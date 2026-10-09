@@ -20,13 +20,8 @@ MODULE_OBJS = \
 	parts/part_2.o \
 	parts/part_4.o \
 	parts/part_5.o \
-	parts/part_85.o \
-	parts/part_90.o \
 	parts/part_6.o \
 	parts/part_7.o \
-	parts/part_68.o \
-	parts/part_70.o \
-	parts/part_72.o \
 	parts/part_8.o \
 	parts/part_9.o \
 	parts/part_10.o \
@@ -55,9 +50,14 @@ MODULE_OBJS = \
 	parts/part_36.o \
 	parts/part_37.o \
 	parts/part_50.o \
+	parts/part_68.o \
+	parts/part_70.o \
+	parts/part_72.o \
 	parts/part_74.o \
 	parts/part_75.o \
 	parts/part_81.o \
+	parts/part_85.o \
+	parts/part_90.o \
 	parts/part_maze.o \
 	parts/part_maze_data.o \
 	parts/part_margaret.o \

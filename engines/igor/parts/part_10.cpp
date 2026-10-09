@@ -37,9 +37,10 @@ void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
 	}
 
 	if (num == 3 || num == 255) {
+		// draw butterfly net with or without bottle
 		if (_objectsState[42] == 1) {
 			copyArea(_screenLayer1, 0x4E32, 320, _animFramesBuffer + 0xC5E2, 14, 14, 15);
-		} else if (_objectsState[42] == 2) {
+		} else if (_objectsState[42] == 2) { // w/ bottle
 			copyArea(_screenLayer1, 0x4E32, 320, _animFramesBuffer + 0xC6B4, 14, 14, 15);
 		}
 	}
@@ -167,7 +168,6 @@ void IgorEngine::PART_10() {
 	// active. The original load order is unconditional.
 	memcpy(_animFramesBuffer + kPart10PanelLeft, _screenLayer1, 46080);
 
-
 	loadRoomData(PAL_DecanatoRight, IMG_DecanatoRight, BOX_DecanatoRight, MSK_DecanatoRight, TXT_DecanatoRight);
 	static const int hamburgerAnimation[] = { ANM_DecanatoHamburger, 0 };
 	loadAnimData(hamburgerAnimation, kPart10_11_Frm1);
@@ -178,10 +178,6 @@ void IgorEngine::PART_10() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_10_EXEC_ACTION);
 	_roomDataOffsets = PART_10_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-
-	// A normal entry presents the freshly loaded right panel. On state 102
-	// handoff, the original jumps directly to the walk-index setup instead,
-	// preserving the completed pan (including Igor) already in screen VGA.
 
 	if (_currentPart != 102 && !_gameStateLoaded) {
 		memcpy(_screenVGA, _screenLayer1, 46080);

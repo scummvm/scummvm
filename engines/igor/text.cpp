@@ -557,7 +557,7 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 			if (code == 4)
 				_gameState.dialogueData[120] = 0;
 			if (code == 98 || code == 101) {
-				PART_09_SECRETARY_GESTURE();
+				PART_09_secretarySearchesFile();
 				dialogueReplyToQuestion(x, y, r, g, b, code);
 			}
 		}

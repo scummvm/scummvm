@@ -176,7 +176,8 @@ void IgorEngine::moveIgor(int pos, int frame) {
 		int8 colorLum = _roomObjectAreasTable[_screenLayer2[_walkDataCurrentPosY2 * 320 + _walkDataCurrentPosX2]].y2Lum;
 		if (_gameState.colorLum != colorLum) {
 			for (int color = 192 * 3; color <= 207 * 3; ++color) {
-				int c = _paletteBuffer[color] + colorLum;
+				// Igor's colors come from his own palette, not from the (possibly darkened) palette of the room
+				int c = _igorPalette[color - 192 * 3] + colorLum;
 				if (c < 1) {
 					c = 0;
 				} else if (c > 62) {

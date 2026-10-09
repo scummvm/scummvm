@@ -81,6 +81,8 @@ static const int kPart81StepTicks = 16;
 
 void IgorEngine::PART_81_LOAD_ROOM() {
 	loadRoomData(PAL_Part81, IMG_Part81, BOX_Part81, MSK_Part81, TXT_Part81);
+	// the colors of Igor
+	memcpy(_paletteBuffer + 192 * 3, _igorPalette, 48);
 	SET_PAL_240_48_1();
 }
 

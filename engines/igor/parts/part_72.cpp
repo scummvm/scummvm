@@ -203,6 +203,8 @@ void IgorEngine::PART_72() {
 	_roomAmbientIndex = 1;
 	loadActionData(DAT_Part72);
 	loadRoomData(PAL_Part72, IMG_Part72, BOX_Part72, MSK_Part72, TXT_Part72);
+	// the colors of Igor
+	memcpy(_paletteBuffer + 192 * 3, _igorPalette, 48);
 	SET_PAL_240_48_1();
 	static const int anim[] = { ANM_Part72, 0 };
 	loadAnimData(anim);

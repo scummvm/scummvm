@@ -58,7 +58,7 @@ void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_11_ACTION_105() {
+void IgorEngine::PART_11_ACTION_105_pickSlug() {
 	for (int frame = 0; frame <= 1; ++frame) {
 		drawAnimRect(0x6167, kPart10_11_Frm1 + frame * 0x405, 21, 49);
 		waitForTimer(127);
@@ -115,7 +115,7 @@ void IgorEngine::PART_11_ACTION_108_scrollRight() {
 	_currentPart = 102;
 }
 
-void IgorEngine::PART_11_ACTION_112() {
+void IgorEngine::PART_11_ACTION_112_pickBottle() {
 	for (int frame = 0; frame <= 2; ++frame) {
 		drawAnimRect(0x47E3, kPart10_11_Frm2 + frame * 0x348, 30, 28);
 		waitForTimer(61);
@@ -135,19 +135,19 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
-	case 102:
+	case 102: // close window
 		igorSayAndWait(29, 1, 29);
 		break;
 	case 103: // look at pipe
 		igorSayAndWait(_objectsState[40] == 0 ? 203 : 204, 1, _objectsState[40] == 0 ? 617 : 618);
 		break;
-	case 104: // look at snail
+	case 104: // talk to slug
 		igorSayAndWait({ { 205, 1, 619 }, { 206, 1, 620 } });
 		break;
 	case 105:
-		PART_11_ACTION_105();
+		PART_11_ACTION_105_pickSlug();
 		break;
-	case 106:
+	case 106: // look at slug
 		igorSayAndWait(73, 1, 50);
 		break;
 	case 107:
@@ -166,7 +166,7 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		igorSayAndWait(210, 1, 624);
 		break;
 	case 112:
-		PART_11_ACTION_112();
+		PART_11_ACTION_112_pickBottle();
 		break;
 	case 113:
 		igorSayAndWait(211, 1, 625);
