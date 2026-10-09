@@ -53,7 +53,7 @@ public:
 	/** Load the logo feature used by the video transition. */
 	void loadFeatures() override;
 	/** Update video decoding and the startup reveal presentation. */
-	void onEveryFrame() override;
+	void onPreTickFrame() override;
 	/** Update the page when the video produces an animation frame. */
 	void onAnimFrame() override;
 

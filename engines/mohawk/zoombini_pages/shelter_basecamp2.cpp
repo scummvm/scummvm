@@ -106,8 +106,8 @@ void ZoombiniShelterBasecampTwo::loadFeatures() {
 	registerScrbImageGroup(ZmbResource(ZmbResource::kPage, kResBitmapShape7000_Pedestal), kResScrb7000_Pedestal, kPedestalCount);
 
 	// Configure all navigation controls before registering their shared runner.
-	setGoButton(_goButtonClickRect, kShape9000_GoDisabled_15, kShape9000_GoEnabled_01, kShape9000_GoPressed_02);
-	setMapButton(_mapButtonClickRect, kShape9000_MapNormal_05, kShape9000_MapPressed_06);
+	setGoButton(_goButtonClickRect, kResShape9000_GoDisabled15, kResShape9000_GoEnabled01, kResShape9000_GoPressed02);
+	setMapButton(_mapButtonClickRect, kResShape9000_MapNormal05, kResShape9000_MapPressed06);
 	setHelpButton(_helpButtonClickRect);
 	buildEmbeddedControlHotspots(kResBitmapShape9000_Buttons, _controlGoMapBaseHotspots, _controlHelpBaseHotspots, true);
 
@@ -316,13 +316,13 @@ void ZoombiniShelterBasecampTwo::storage_postRender(ZmbFeature *feature) {
 	uint16 honeycombShape, latticeShape;
 	int16 latticeOffX, latticeOffY;
 	if (_storageScrollAnimating) {
-		honeycombShape = kShape8000_StorageAnim_Honeycomb;
-		latticeShape = kShape8000_StorageAnim_Lattice;
+		honeycombShape = kResShape8000_StorageAnimHoneycomb01;
+		latticeShape = kResShape8000_StorageAnimLattice02;
 		latticeOffX = -1 + 141; // 140
 		latticeOffY = -3 + 28;  // 25
 	} else {
-		honeycombShape = kShape8000_StorageStill_Honeycomb;
-		latticeShape = kShape8000_StorageStill_Lattice;
+		honeycombShape = kResShape8000_StorageStillHoneycomb03;
+		latticeShape = kResShape8000_StorageStillLattice04;
 		latticeOffX = 141;
 		latticeOffY = 28;
 	}
@@ -342,7 +342,7 @@ void ZoombiniShelterBasecampTwo::storage_postRender(ZmbFeature *feature) {
 	_vm->_gfx->drawImage(screenKind, kResBitmapShape8000_Storage + latticeShape - 1, Common::Point(latticeOffX, latticeOffY));
 
 	// 4) Draw border (outermost frame)
-	_vm->_gfx->drawImage(screenKind, kResBitmapShape8000_Storage + kShape8000_StorageBorder - 1, Common::Point(101, 0));
+	_vm->_gfx->drawImage(screenKind, kResBitmapShape8000_Storage + kResShape8000_StorageBorder05 - 1, Common::Point(101, 0));
 }
 
 void ZoombiniShelterBasecampTwo::buttons_postRender(ZmbFeature *feature) {
@@ -399,7 +399,7 @@ void ZoombiniShelterBasecampTwo::updateScrollButtonCursor(const Common::Point &a
 	uint16 cursorShapeIdx = ZmbHotspot::kShapeNone;
 	for (uint buttonIdx = 0; buttonIdx < ARRAYSIZE(_scrollButtonRects); buttonIdx++) {
 		if (_scrollButtonRects[buttonIdx].contains(absPos)) {
-			cursorShapeIdx = kShape10000_ArrowLeftMax_01 + buttonIdx;
+			cursorShapeIdx = kResShape10000_ArrowLeftMax01 + buttonIdx;
 			break;
 		}
 	}
@@ -653,11 +653,11 @@ void ZoombiniShelterBasecampTwo::renderScrollButtons() {
 	for (int scrollIdx = 0; scrollIdx < kStorageScrollButtonCount; scrollIdx++) {
 		uint16 shapeIdx;
 		if (_vm->isVersionFamilyTlcV2() && _scrollButtonHovered[scrollIdx])
-			shapeIdx = static_cast<uint16>(kShape9000_ScrollLMaxHover_20 + scrollIdx);
+			shapeIdx = static_cast<uint16>(kResShape9000_ScrollLMaxHover20 + scrollIdx);
 		else if (_heldStorageScrollDirection == getBasecampStorageScrollDirection(scrollIdx))
-			shapeIdx = static_cast<uint16>(kShape9000_ScrollLMaxPressed_08 + 2 * scrollIdx);
+			shapeIdx = static_cast<uint16>(kResShape9000_ScrollLMaxPressed08 + 2 * scrollIdx);
 		else
-			shapeIdx = static_cast<uint16>(kShape9000_ScrollLMaxNormal_07 + 2 * scrollIdx);
+			shapeIdx = static_cast<uint16>(kResShape9000_ScrollLMaxNormal07 + 2 * scrollIdx);
 
 		_vm->_gfx->drawImage(ZoombiniGraphics::kShapeScreen, kResBitmapShape9000_Buttons + shapeIdx - 1, kButtonPos[scrollIdx]);
 	}

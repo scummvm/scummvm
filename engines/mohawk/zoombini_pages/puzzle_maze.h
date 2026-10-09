@@ -114,6 +114,10 @@ public:
 	void initHelpPrompt() override;
 
 protected:
+	/** Interpolate traversal roots across grid notification markers without dispatching their events early. */
+	bool getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const override;
+	/** Select bubbles that share their riding Snoid's deterministic translation. */
+	bool getShapeInterpolationGroup(ZmbFeature *feature, const ZmbHotspot &hotspot, uint32 &key, uint32 &leader) const override;
 	/** Move surviving runners to the accepted exit side for debug Go handling. */
 	void debugPrepareForDeparture() override;
 	/** Describe the generated maze rule for diagnostics. */
@@ -126,7 +130,7 @@ protected:
 	 */
 	void onSnoidWalkCompleted(ZmbSnoid *snoid) override;
 	/** Update pre-render control state. */
-	void onEveryFrame() override;
+	void onPreTickFrame() override;
 	/** Process rendered callbacks, traversal queues, and celebrations. */
 	void onPostRenderFrame() override;
 	/** Return the sound priority used by maze SCRB playback. */
@@ -139,6 +143,36 @@ protected:
 	const Common::Rect &getDragConstraintRect() const override;
 
 private:
+	/** One-based moving launcher shape indices in page tBMP 9000. */
+	enum ShapeIdx : uint16 {
+		/** First side-view bubble emitted by a launcher. */
+		kResShape9000_LauncherSideBubbleFirst25 = 25,
+		/** Last side-view bubble pose. */
+		kResShape9000_LauncherSideBubbleLast37 = 37,
+		/** First front-view bubble emitted by a launcher. */
+		kResShape9000_LauncherFrontBubbleFirst39 = 39,
+		/** Last front-view bubble pose. */
+		kResShape9000_LauncherFrontBubbleLast48 = 48,
+		/** First front-view launcher hoop pose. */
+		kResShape9000_LauncherFrontHoopFirst54 = 54,
+		/** Rear rim of the front-view launcher hoop. */
+		kResShape9000_LauncherFrontHoopLast65 = 65,
+		/** First side-view launcher hoop pose. */
+		kResShape9000_LauncherSideHoopFirst66 = 66,
+		/** Last side-view launcher hoop pose. */
+		kResShape9000_LauncherSideHoopLast77 = 77,
+		/** First reverse-view launcher hoop pose. */
+		kResShape9000_LauncherReverseHoopFirst110 = 110,
+		/** Last reverse-view launcher hoop pose. */
+		kResShape9000_LauncherReverseHoopLast124 = 124,
+		/** Resting side-view launcher hoop. */
+		kResShape9000_LauncherRestingHoop215 = 215,
+		/** Final emitted bubble pose shared by the launcher views. */
+		kResShape9000_LauncherBubbleFinal216 = 216,
+	};
+	/** Return the emitted-bubble motion key, or zero for independent launcher parts and effects. */
+	static uint32 getLauncherPresentationGroup(int16 shapeIdx);
+
 	/** Authored four-way movement directions used by Maze arrows and launchers. */
 	enum MazeDirection : int16 {
 		/** One column toward the left. */

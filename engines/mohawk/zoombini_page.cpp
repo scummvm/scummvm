@@ -158,7 +158,11 @@ void ZoombiniPage::onFrame() {
 	_currentFrameTime = _vm->_system->getMillis();
 	_currentFrameCounter = _vm->getAnimationFrameCounter(_currentFrameTime);
 
-	onEveryFrame();
+	_presentationOutside.clear();
+	_isCapturingPresentationFrame = true;
+	if (_vm->isPosInterpolationEnabled())
+		_vm->_gfx->setPresentationCapture(&_presentationOutside);
+	onPreTickFrame();
 
 	if (_currentFrameCounter != _lastFrameCounter || _doForceRedraw) {
 		if (_builtinDebugTextRestorePending) {
@@ -168,12 +172,20 @@ void ZoombiniPage::onFrame() {
 		do {
 			_forceRedrawPending |= _doForceRedraw;
 			_doForceRedraw = false;
+			if (_vm->isPosInterpolationEnabled())
+				_vm->_gfx->setPresentationCapture(&_presentationOutside);
 			onAnimFrame();
+			_vm->_gfx->setPresentationCapture(nullptr);
+			if (!_presentationOutside.empty())
+				_presentationAfter = _presentationOutside;
+			_presentationOutside.clear();
 		} while (_doForceRedraw);
 
 		_lastFrameTime = _currentFrameTime;
 		_lastFrameCounter = _currentFrameCounter;
 	}
+	_vm->_gfx->setPresentationCapture(nullptr);
+	_isCapturingPresentationFrame = false;
 
 	// Holding still is activity too; neither idle timer may accumulate during the drag.
 	if (_snoidDragFidgetsSuppressed)
@@ -186,6 +198,202 @@ void ZoombiniPage::onModalFrame() {
 
 	_currentFrameTime = _vm->_system->getMillis();
 	_currentFrameCounter = _vm->getAnimationFrameCounter(_currentFrameTime);
+}
+
+Common::Point ZoombiniPage::getPresentationOffset(const PresentationMotion &motion, uint64 frameTime) {
+	if (!motion._durationFrames)
+		return motion._initialOffset;
+	const int64 start = static_cast<int64>(motion._startFrame) * 1000;
+	const int64 duration = static_cast<int64>(motion._durationFrames) * 1000;
+	const int64 now = static_cast<int64>(frameTime);
+	const int64 elapsed = start < now ? MIN(now - start, duration) : 0;
+	return motion._initialOffset + Common::Point(static_cast<int16>(motion._delta.x * elapsed / duration), static_cast<int16>(motion._delta.y * elapsed / duration));
+}
+
+void ZoombiniPage::preparePresentationRunner(PresentationRunner &pRunner, ZmbFeature *feature) {
+	pRunner._registrationIndex = feature->getRegistrationIndex();
+	// Position interpolation keeps the authored pose unchanged until the feature's next pose deadline, which can be several logic ticks away.
+	// Snoids and opted-in page runners supply their next deterministic body translation; selected companions can share that offset.
+	// Snoid walking has small position and pose changes, so the intermediate positions look natural.
+	// Puzzle actors can change pose and bitmap placement abruptly, so those coordinates need not describe body translation.
+	// Interpolating observed positions would delay the root behind the current pose and cause sliding or jitter.
+	// Require a stable body root and a known next-frame deadline; there is no observed-position fallback.
+	const ZmbSnoid *snoid = dynamic_cast<const ZmbSnoid *>(feature);
+	if (snoid && snoid->hasPreparedRenderHotspots())
+		pRunner._initialOffset = snoid->getPointLoc() - snoid->getPreparedPointLoc();
+	if (!getNextInterpolationMove(feature, pRunner._delta, pRunner._startFrame, pRunner._durationFrames)) {
+		pRunner._delta = Common::Point();
+		pRunner._durationFrames = 0;
+	}
+}
+
+bool ZoombiniPage::getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const {
+	const ZmbSnoid *snoid = dynamic_cast<const ZmbSnoid *>(feature);
+	return snoid && snoid->getPresentationMove(delta, startFrame, durationFrames);
+}
+
+bool ZoombiniPage::getInterpolationFrameTiming(const ZmbFeature *feature, uint32 &startFrame, uint32 &durationFrames) const {
+	if (!feature || !feature->isRenderActivated())
+		return false;
+
+	const ZmbFeature *timerOwner = feature;
+	for (const FeatureTimingGroup &group : _featureTimingGroups) {
+		if (Common::find(group._members.begin(), group._members.end(), feature) == group._members.end())
+			continue;
+		// Alternating peers advance on separate animation ticks through a two-phase handoff.
+		// The owner's timer alone cannot describe both intervals, so keep their poses fixed.
+		if (group._alternatePhases || !group._runtimeOwner || !feature->hasSharedFrameTiming())
+			return false;
+		timerOwner = group._runtimeOwner;
+		break;
+	}
+
+	if (!timerOwner->getAnimationFrameTiming(startFrame, durationFrames))
+		return false;
+	if (timerOwner != feature) {
+		uint32 memberStartFrame = 0, memberDurationFrames = 0;
+		// A peer reached before its owner can consume the previous pass's cached decision.
+		// Interpolate only when both timers were scheduled on the same animation tick.
+		if (!feature->getAnimationFrameTiming(memberStartFrame, memberDurationFrames) || memberStartFrame != startFrame)
+			return false;
+	}
+	// Capture only a scheduled future update after the animation pass has finished.
+	// A reset or expired deadline must not be replaced with a peer's independent timer.
+	return startFrame <= _currentFrameCounter && _currentFrameCounter < startFrame + durationFrames;
+}
+
+bool ZoombiniPage::getShapeInterpolationGroup(ZmbFeature *feature, const ZmbHotspot &hotspot, uint32 &key, uint32 &leader) const {
+	(void)feature;
+	(void)hotspot;
+	(void)key;
+	(void)leader;
+	return false;
+}
+
+void ZoombiniPage::preparePresentationGroups(PresentationRunner &pRunner) {
+	for (const ZoombiniGraphics::DrawCommand &drawCmd : pRunner._commands) {
+		if (!drawCmd._motionKey)
+			continue;
+		PresentationRunner::Group *group = nullptr;
+		for (PresentationRunner::Group &candidate : pRunner._groups) {
+			if (candidate._key == drawCmd._motionKey) {
+				group = &candidate;
+				break;
+			}
+		}
+		if (!group) {
+			pRunner._groups.push_back(PresentationRunner::Group());
+			group = &pRunner._groups.back();
+			group->_key = drawCmd._motionKey;
+			group->_leader = drawCmd._motionLeader;
+		}
+		const Common::Rect bounds = drawCmd.getCoverage();
+		if (group->_bounds.isEmpty())
+			group->_bounds = bounds;
+		else if (!bounds.isEmpty())
+			group->_bounds.extend(bounds);
+	}
+}
+
+Common::Point ZoombiniPage::getPresentationGroupOffset(const PresentationRunner::Group &group, const Common::Array<PresentationRunner> &runners, uint64 frameTime) {
+	if (group._leader) {
+		for (const PresentationRunner &pRunner : runners) {
+			if (pRunner._registrationIndex == group._leader && !pRunner._commands.empty())
+				return getPresentationOffset(pRunner, frameTime);
+		}
+	}
+	return Common::Point();
+}
+
+Common::Point ZoombiniPage::getPresentationCommandOffset(const PresentationRunner &pRunner, const ZoombiniGraphics::DrawCommand &drawCmd) {
+	if (drawCmd._motionKey) {
+		for (const PresentationRunner::Group &group : pRunner._groups) {
+			if (group._key == drawCmd._motionKey)
+				return group._presentedOffset;
+		}
+	}
+	return pRunner._presentedOffset;
+}
+
+void ZoombiniPage::onInterpolationFrame(uint32 frameTime) {
+	// Move frozen drawing between logic ticks without advancing poses or gameplay.
+	if (_isClosed || !_vm->isPosInterpolationEnabled() || _vm->_gfx->isFading() ||
+		_vm->_builtinDebug._stepMode || _vm->_builtinDebug._runnerBackdropMode || _builtinDebugInputWaitActive)
+		return;
+
+	// Pass 1 updates runner and group offsets from the fractional animation time and collects dirty rects.
+	const uint64 animationFrameTime = _vm->getAnimationFrameTime(frameTime);
+	Common::Array<Common::Rect> dirtyRects;
+	for (PresentationRunner &pRunner : _presentationRunners) {
+		for (PresentationRunner::Group &group : pRunner._groups) {
+			const Common::Point offset = getPresentationGroupOffset(group, _presentationRunners, animationFrameTime);
+			if (offset == group._presentedOffset || group._bounds.isEmpty())
+				continue;
+			Common::Rect oldBounds = group._bounds;
+			oldBounds.translate(group._presentedOffset.x, group._presentedOffset.y);
+			Common::Rect newBounds = group._bounds;
+			newBounds.translate(offset.x, offset.y);
+			// Restrict both footprints to the runner's allowed region and the screen.
+			if (pRunner._hasConstraint) {
+				oldBounds.clip(pRunner._constraint);
+				newBounds.clip(pRunner._constraint);
+			}
+			oldBounds.clip(_vm->_gfx->getScreenRect());
+			newBounds.clip(_vm->_gfx->getScreenRect());
+			if (!oldBounds.isEmpty())
+				dirtyRects.push_back(oldBounds);
+			if (!newBounds.isEmpty())
+				dirtyRects.push_back(newBounds);
+			group._presentedOffset = offset;
+		}
+		const Common::Point offset = getPresentationOffset(pRunner, animationFrameTime);
+		if (offset == pRunner._presentedOffset || pRunner._bounds.isEmpty())
+			continue;
+		Common::Rect oldBounds = pRunner._bounds;
+		oldBounds.translate(pRunner._presentedOffset.x, pRunner._presentedOffset.y);
+		Common::Rect newBounds = pRunner._bounds;
+		newBounds.translate(offset.x, offset.y);
+		// Restrict both footprints to the runner's allowed region and the screen.
+		if (pRunner._hasConstraint) {
+			oldBounds.clip(pRunner._constraint);
+			newBounds.clip(pRunner._constraint);
+		}
+		oldBounds.clip(_vm->_gfx->getScreenRect());
+		newBounds.clip(_vm->_gfx->getScreenRect());
+		if (!oldBounds.isEmpty())
+			dirtyRects.push_back(oldBounds);
+		if (!newBounds.isEmpty())
+			dirtyRects.push_back(newBounds);
+		pRunner._presentedOffset = offset;
+	}
+	if (dirtyRects.empty())
+		return;
+
+	// Pass 2 restores the background under those rects and replays captured commands at the stored offsets.
+	for (const Common::Rect &rect : dirtyRects)
+		_vm->_gfx->copyBackToShapeScreen(rect);
+	_vm->_gfx->setRenderClipRects(dirtyRects);
+	for (const ZoombiniGraphics::DrawCommand &drawCmd : _presentationBefore)
+		_vm->_gfx->replayDrawCommand(drawCmd, Common::Point());
+	for (const PresentationRunner &pRunner : _presentationRunners) {
+		Common::Array<Common::Rect> clips;
+		for (Common::Rect rect : dirtyRects) {
+			// Replay only inside the runner's allowed region.
+			if (pRunner._hasConstraint)
+				rect.clip(pRunner._constraint);
+			if (!rect.isEmpty())
+				clips.push_back(rect);
+		}
+		_vm->_gfx->setRenderClipRects(clips);
+		for (uint32 i = 0; i < pRunner._commands.size(); i++) {
+			const Common::Point offset = getPresentationCommandOffset(pRunner, pRunner._commands[i]);
+			_vm->_gfx->replayDrawCommand(pRunner._commands[i], offset);
+		}
+	}
+	_vm->_gfx->setRenderClipRects(dirtyRects);
+	for (const ZoombiniGraphics::DrawCommand &drawCmd : _presentationAfter)
+		_vm->_gfx->replayDrawCommand(drawCmd, Common::Point());
+	_vm->_gfx->clearRenderClipRect();
 }
 
 void ZoombiniPage::openArchive(const Common::String &mhkName) {
@@ -1087,9 +1295,8 @@ void ZoombiniPage::buildSortedRenderList(Common::Array<ZmbFeature *> &outList) {
 }
 
 void ZoombiniPage::buildSortedEventList(Common::Array<ZmbFeature *> &outList) {
-	// Event dispatch needs ALL features (including OVERLAY) for correct
-	// hit-testing.  We skip the OVERLAY cache here and build the list
-	// from scratch, treating OVERLAY features as normal.
+	// Event dispatch needs ALL features (including OVERLAY) for correct hit-testing.
+	// We skip the OVERLAY cache here and build the list from scratch, treating OVERLAY features as normal.
 	Common::Array<ZmbFeature *> loopAnimList, normalList, entityList;
 
 	for (ZmbFeature *f : _scrbFeatures) {
@@ -1114,7 +1321,7 @@ void ZoombiniPage::buildSortedEventList(Common::Array<ZmbFeature *> &outList) {
 
 bool ZoombiniPage::addDirtyRect(const Common::Rect &rect) {
 	Common::Rect clipped = rect;
-	clipped.clip(Common::Rect(0, 0, 640, 480));
+	clipped.clip(_vm->_gfx->getScreenRect());
 	if (clipped.isEmpty())
 		return false;
 
@@ -1349,7 +1556,7 @@ void ZoombiniPage::addExternalDirtyRect(const Common::Rect &rect) {
 		return;
 
 	Common::Rect clipped = rect;
-	clipped.clip(Common::Rect(0, 0, 640, 480));
+	clipped.clip(_vm->_gfx->getScreenRect());
 	if (clipped.isEmpty())
 		return;
 
@@ -1425,6 +1632,8 @@ void ZoombiniPage::prepareSnoidVisualCoverage(ZmbSnoid *snoid, bool cacheFrame) 
 	snoid->clearPreparedVisualRects();
 	if (!snoid->isRenderActivated())
 		return;
+	if (cacheFrame)
+		snoid->setPreparedPointLoc(snoid->getPointLoc());
 
 	// Hotel event 15 activates the post-render clip after the current frame is materialized.
 	// Apply its clickRect intersection on the next Snoid frame.
@@ -1611,8 +1820,7 @@ void ZoombiniPage::renderFeatures() {
 	//   3. Z-sort features
 	//   4. Restore background ONLY in dirty region
 	//   5. Set render clip to dirty region rects
-	//   6. For each Z-sorted feature: merge NEW visual coverage if dirty,
-	//      draw
+	//   6. For each Z-sorted feature: merge NEW visual coverage if dirty, draw
 	//   7. Release render clip region
 	//
 	// The render clip is a union of dirty rectangles, not their bounding box.
@@ -1624,6 +1832,33 @@ void ZoombiniPage::renderFeatures() {
 			return;
 		builtinDebug._stepAdvanceRequested = false;
 	}
+
+	// Restore footprints displaced by interpolation before replacing the authored render snapshot.
+	// It is a no-op when interpolation is disabled or nothing was moved.
+	for (const PresentationRunner &pRunner : _presentationRunners) {
+		for (const PresentationRunner::Group &group : pRunner._groups) {
+			if (group._presentedOffset != Common::Point()) {
+				Common::Rect bounds = group._bounds;
+				bounds.translate(group._presentedOffset.x, group._presentedOffset.y);
+				addDirtyRect(bounds);
+				addDirtyRect(group._bounds);
+			}
+		}
+		if (pRunner._presentedOffset != Common::Point()) {
+			Common::Rect bounds = pRunner._bounds;
+			bounds.translate(pRunner._presentedOffset.x, pRunner._presentedOffset.y);
+			addDirtyRect(bounds);
+			addDirtyRect(pRunner._bounds);
+		}
+	}
+	_presentationRunners.clear();
+	// Capture drawing commands into presentation runners when interpolation is enabled.
+	// Later frames replay them at interpolated offsets without running page logic again.
+	const bool capturePresentation = _vm->isPosInterpolationEnabled();
+	_vm->_gfx->setPresentationCapture(nullptr);
+	if (!_presentationOutside.empty())
+		_presentationBefore = _presentationOutside;
+	_presentationOutside.clear();
 
 	// Page compatibility mode, feature-level opt-ins, and ownerless explicit
 	// candidates can each activate render-pass arbitration.
@@ -1643,7 +1878,7 @@ void ZoombiniPage::renderFeatures() {
 
 	// Step 3: Force redraw: entire screen is dirty (initial frame, page change, etc.)
 	if (_forceRedrawPending) {
-		addDirtyRect(Common::Rect(0, 0, 640, 480));
+		addDirtyRect(_vm->_gfx->getScreenRect());
 		_forceRedrawPending = false;
 	}
 
@@ -1739,6 +1974,14 @@ void ZoombiniPage::renderFeatures() {
 	// Clearing the clip would let dirty features paint outside the dirty region onto the persistent shapeScreen,
 	// causing dialog remnants and Z-ordering corruption.
 	for (ZmbFeature *feature : renderList) {
+		if (capturePresentation) {
+			_presentationRunners.push_back(PresentationRunner());
+			PresentationRunner &pRunner = _presentationRunners.back();
+			pRunner._hasConstraint = feature->hasVisualRectConstraint();
+			if (pRunner._hasConstraint)
+				pRunner._constraint = feature->getVisualRectConstraint();
+			_vm->_gfx->setPresentationCapture(&pRunner._commands);
+		}
 		const bool featureNeedsRedraw = feature->needsRedraw();
 		const bool hasPreparedVisualCoverage =
 			feature->usesDefaultRenderFunc() && feature->hasPreparedVisualRects();
@@ -1775,6 +2018,19 @@ void ZoombiniPage::renderFeatures() {
 											!feature->usesDefaultRenderFunc() && !feature->hasVisualRectConstraint();
 		_vm->_gfx->beginDirtyRectTracking(expandTrackedDirtyClip);
 		ZmbRenderResult renderResult = feature->onPostRender(this);
+		_vm->_gfx->setPresentationCapture(nullptr);
+		if (capturePresentation) {
+			PresentationRunner &pRunner = _presentationRunners.back();
+			for (const ZoombiniGraphics::DrawCommand &drawCmd : pRunner._commands) {
+				Common::Rect bounds = drawCmd.getCoverage();
+				if (pRunner._bounds.isEmpty())
+					pRunner._bounds = bounds;
+				else if (!bounds.isEmpty())
+					pRunner._bounds.extend(bounds);
+			}
+			preparePresentationRunner(pRunner, feature);
+			preparePresentationGroups(pRunner);
+		}
 		Common::Rect drawnRect = _vm->_gfx->endDirtyRectTracking();
 		if (feature->hasVisualRectConstraint())
 			_vm->_gfx->setRenderClipRects(savedRenderClipRects);
@@ -1809,6 +2065,8 @@ void ZoombiniPage::renderFeatures() {
 	// Anything reported after this point belongs to the next pass, which is what lets
 	// out-of-pass damage survive long enough to be restored. See Step 1 above.
 	_dirtyRects.clear();
+	if (capturePresentation && _isCapturingPresentationFrame)
+		_vm->_gfx->setPresentationCapture(&_presentationOutside);
 }
 
 static void drawBuiltinHollowRect(ZoombiniGraphics *gfx, const Common::Rect &rect, uint32 color) {
@@ -2400,6 +2658,7 @@ ZmbRenderResult ZoombiniPage::blitShapes(ZmbFeature *feature, ZoombiniGraphics::
 	int32 frameIdx = feature->getLastFrameIdx();
 
 	ZoombiniGraphics::ScreenKind screenKind = ZoombiniGraphics::kShapeScreen;
+	const bool capturePresentation = _vm->_gfx->isPresentationCaptureActive();
 
 	if (feature->hasPreparedRenderHotspots()) {
 		const Common::Array<ZmbPreparedRenderHotspot> &preparedHotspots = feature->getPreparedRenderHotspots();
@@ -2413,7 +2672,12 @@ ZmbRenderResult ZoombiniPage::blitShapes(ZmbFeature *feature, ZoombiniGraphics::
 			ZoombiniGraphics::PaletteRemapMode shapeRemap = remapColorAssistPalette;
 			if (shapeRemap == ZoombiniGraphics::kPaletteRemapNone)
 				shapeRemap = getColorAssistPaletteRemap(feature, hs, preparedHotspots[i]._resource);
+			uint32 motionKey = 0, motionLeader = 0;
+			if (capturePresentation && getShapeInterpolationGroup(feature, hs, motionKey, motionLeader))
+				_vm->_gfx->setPresentationMotion(motionKey, motionLeader);
 			Common::Rect drawnRect = _vm->_gfx->drawShape(screenKind, preparedHotspots[i]._resource, &hs, clearBeforeRender, shapeRemap);
+			if (capturePresentation)
+				_vm->_gfx->clearPresentationMotion();
 			drawnRect = feature->constrainVisualRect(drawnRect);
 			if (drawnRect.isEmpty())
 				continue;
@@ -2502,7 +2766,12 @@ ZmbRenderResult ZoombiniPage::blitShapes(ZmbFeature *feature, ZoombiniGraphics::
 		ZoombiniGraphics::PaletteRemapMode shapeRemap = remapColorAssistPalette;
 		if (shapeRemap == ZoombiniGraphics::kPaletteRemapNone)
 			shapeRemap = getColorAssistPaletteRemap(feature, hs, shapeRes);
+		uint32 motionKey = 0, motionLeader = 0;
+		if (capturePresentation && getShapeInterpolationGroup(feature, hs, motionKey, motionLeader))
+			_vm->_gfx->setPresentationMotion(motionKey, motionLeader);
 		Common::Rect drawnRect = _vm->_gfx->drawShape(screenKind, shapeRes, &hs, clearBeforeRender, shapeRemap);
+		if (capturePresentation)
+			_vm->_gfx->clearPresentationMotion();
 		drawnRect = feature->constrainVisualRect(drawnRect);
 		if (drawnRect.isEmpty())
 			continue;
@@ -2597,6 +2866,12 @@ Common::Rect ZoombiniPage::renderStoredSnoid(ZoombiniGraphics::ScreenKind screen
 }
 
 void ZoombiniPage::clear() {
+	_presentationRunners.clear();
+	_isCapturingPresentationFrame = false;
+	_vm->_gfx->setPresentationCapture(nullptr);
+	_presentationBefore.clear();
+	_presentationAfter.clear();
+	_presentationOutside.clear();
 	_featureTimingGroups.clear();
 	_scrbImageResources.clear();
 	clearSubFeatures();

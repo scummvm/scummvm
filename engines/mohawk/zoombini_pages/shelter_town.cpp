@@ -457,7 +457,7 @@ void ZoombiniShelterTown::loadFeatures() {
 	loadShapeOffsetRegs(ZmbResource::kPage, kResRegs6000_ClockHands);
 
 	// Configure Town controls before their original page-owned runner is registered.
-	setMapButton(_mapButtonRect, kShape1100_ExitGateLeftNormal_05, kShape1100_ExitGateLeftPressed_06);
+	setMapButton(_mapButtonRect, kResShape1100_ExitGateLeftNormal05, kResShape1100_ExitGateLeftPressed06);
 	setHelpButton(_helpButtonRect);
 	buildEmbeddedControlHotspots(kResBitmapShape1100, _controlGoMapBaseHotspots, _controlHelpBaseHotspots);
 
@@ -1289,11 +1289,11 @@ ZmbEventHandleResult ZoombiniShelterTown::onMouseMove(const Common::Point &absPo
 		if (!_mapButtonRect.contains(absPos) && isTownScrollViewportPoint(absPos)) {
 			// State 3 = memorial, state 2 = right scroll, state 1 = left scroll.
 			if (0 <= memorialSlotHit) {
-				cursorShapeIdx = kShape2000_Magnifier_03;
+				cursorShapeIdx = kResShape2000_Magnifier03;
 			} else if (ZoombiniGraphics::kScreenWidth - kScrollableCursorAreaWidth < absPos.x) {
-				cursorShapeIdx = kShape2000_ArrowRight_02;
+				cursorShapeIdx = kResShape2000_ArrowRight02;
 			} else if (absPos.x < kScrollableCursorAreaWidth) {
-				cursorShapeIdx = kShape2000_ArrowLeft_01;
+				cursorShapeIdx = kResShape2000_ArrowLeft01;
 			}
 		}
 	}
@@ -1455,7 +1455,6 @@ void ZoombiniShelterTown::showMemorialCard(int16 slotIdx) {
 										   ZmbFeature::FLAG_00001000_TOPMOST | ZmbFeature::FLAG_00004000_NO_DIRTY_MERGE,
 										   hooks);
 	setBackgroundRunnerRenderEnabled(false);
-
 }
 
 void ZoombiniShelterTown::hideMemorialCard() {

@@ -38,6 +38,18 @@ const char *const Mohawk::MohawkMetaEngine_Zoombini::kActionNewGame = "NEWGAME";
 const char *const Mohawk::MohawkMetaEngine_Zoombini::kActionRemoveSave = "DELSAVE";
 const char *const Mohawk::MohawkMetaEngine_Zoombini::kActionQuit = "QUIT";
 
+Mohawk::MohawkMetaEngine_Zoombini::TargetFrameRate Mohawk::MohawkMetaEngine_Zoombini::normalizeTargetFrameRate(int rate) {
+	switch (rate) {
+	case static_cast<int>(TargetFrameRate::k60FPS):
+	case static_cast<int>(TargetFrameRate::k120FPS):
+	case static_cast<int>(TargetFrameRate::k180FPS):
+	case static_cast<int>(TargetFrameRate::k240FPS):
+		return static_cast<TargetFrameRate>(rate);
+	default:
+		return TargetFrameRate::k60FPS;
+	}
+}
+
 void Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings() {
 	// Bug fixes.
 	ConfMan.registerDefault(kOptionFixAudioPops, true);
@@ -46,6 +58,8 @@ void Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings() {
 	ConfMan.registerDefault(kOptionFixCavesL4MidiSilentBug, true);
 	// Gameplay improvements.
 	ConfMan.registerDefault(kOptionTickRate, static_cast<int>(TickRate::kAccurate60FPS));
+	ConfMan.registerDefault(kOptionPosInterpolation, false);
+	ConfMan.registerDefault(kOptionTargetFrameRate, static_cast<int>(TargetFrameRate::k60FPS));
 	ConfMan.registerDefault(kOptionEnhancedKbdShortcuts, true);
 	ConfMan.registerDefault(kOptionShowRemappedOptionDialogShortcuts, true);
 	// Gameplay tuning.

@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/noncopyable.h"
+#include "common/ptr.h"
 #include "common/stack.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -71,6 +72,9 @@ public:
 		kBackScreen,
 		kShapeScreen,
 	};
+
+	/** Return the bounds of the active game screen. */
+	const Common::Rect &getScreenRect() const { return _screenRect; }
 
 	/**
 	 * Return the raw surface for the requested screen.
@@ -513,6 +517,93 @@ public:
 		 */
 		bool _wordWrap = false;
 	};
+
+	/**
+	 * Drawing inputs executed immediately and optionally retained for position interpolation.
+	 * While interpolation capture is active, normal rendering and @ref Mohawk::ZoombiniPage::onInterpolationFrame() use the same command executor.
+	 * Without capture, normal drawing calls the pixel routines directly without constructing a command.
+	 * A normal page update writes pixels before returning, so callbacks can immediately read or copy the result.
+	 * Subsequent presentation frames reuse these inputs with position offsets while waiting for the next logic tick or sprite pose.
+	 * Retained commands own frozen image pixels; replay never advances animation or invokes feature or script callbacks.
+	 * Fixed objects are also recorded so dirty-region redraws preserve the drawing order of overlapping objects.
+	 */
+	struct DrawCommand {
+		/**
+		 * Drawing operation shared by normal rendering and position-interpolation replay.
+		 * The owning page supplies interpolation eligibility and position offsets.
+		 */
+		enum class Kind : uint8 {
+			/** Copy an image section. */
+			kImage = 0,
+			/** Fill a rectangle. */
+			kFill = 1,
+			/** Draw a single-pixel line. */
+			kLine = 2,
+			/** Draw a line with explicit pen dimensions. */
+			kThickLine = 3,
+			/** Draw text with its captured formatting. */
+			kText = 4,
+		};
+		/** Drawing operation selected for immediate execution or replay. */
+		Kind _kind = Kind::kImage;
+		/** Borrowed image for immediate drawing, or the owned frozen image for replay. */
+		MohawkSurface *_image = nullptr;
+		/** Frozen image pixels owned only when this command is retained for replay. */
+		Common::SharedPtr<MohawkSurface> _imageCopy;
+		/** Source rectangle within the image. */
+		Common::Rect _source;
+		/** Authored destination rectangle before presentation translation and clipping. */
+		Common::Rect _bounds;
+		/** Optional painted bounds, including text outlines, overriding the destination bounds. */
+		Common::Rect _coverage;
+		/** Feature-local motion group key, or zero to use the feature's root offset. */
+		uint32 _motionKey = 0;
+		/** Carrier registration index for a selected group, or zero for ungrouped drawing. */
+		uint32 _motionLeader = 0;
+		/** Authored line start in page coordinates. */
+		Common::Point _start;
+		/** Authored line end in page coordinates. */
+		Common::Point _end;
+		/** Pixel color used by fill and line commands. */
+		uint32 _color = 0;
+		/** Horizontal pen size for thick lines. */
+		int _penX = 0;
+		/** Vertical pen size for thick lines. */
+		int _penY = 0;
+		/** Whether image drawing first clears its destination to the transparent key. */
+		bool _clear = false;
+		/** Palette remap selected by the authored image draw. */
+		PaletteRemapMode _paletteRemap = kPaletteRemapNone;
+		/** Frozen text content for text commands. */
+		Common::U32String _text;
+		/** Frozen text formatting and palette configuration. */
+		TextConf _textConf;
+		/** Return painted coverage when available, otherwise the destination bounds. */
+		Common::Rect getCoverage() const { return _coverage.isEmpty() ? _bounds : _coverage; }
+	};
+	/**
+	 * Record complete drawing inputs for intermediate position-interpolation frames before dirty clipping, including custom renderers.
+	 * @param commands Destination owned by the caller, or nullptr to stop capture.
+	 */
+	void setPresentationCapture(Common::Array<DrawCommand> *commands) { _presentationCapture = commands; }
+	/** Return whether drawing inputs are currently being recorded for position interpolation. */
+	bool isPresentationCaptureActive() const { return _presentationCapture != nullptr; }
+	/**
+	 * Group subsequent drawing to share a carrier's deterministic translation.
+	 * @param key Nonzero group key local to the feature being captured.
+	 * @param leader Nonzero registration index of the carrier whose interpolated offset is shared.
+	 */
+	void setPresentationMotion(uint32 key, uint32 leader) {
+		_presentationMotionKey = key;
+		_presentationMotionLeader = leader;
+	}
+	/** Stop assigning subsequent drawing to an explicit motion group. */
+	void clearPresentationMotion() {
+		_presentationMotionKey = 0;
+		_presentationMotionLeader = 0;
+	}
+	/** Replay a frozen drawing command with the position-interpolation offset within the active render clip. */
+	void replayDrawCommand(const DrawCommand &drawCmd, const Common::Point &offset);
 	/** Draw a localized text key with default text configuration. */
 	void drawText(ScreenKind screenKind, uint32 textKey, const Common::Rect &destRect);
 	/** Draw a localized text key with explicit text configuration. */
@@ -649,7 +740,7 @@ private:
 	/** Pixel format of the active game screen. */
 	Graphics::PixelFormat _pixelFormat;
 	/** 640x480 rectangle of the active game screen. */
-	Common::Rect _screenRect;
+	const Common::Rect _screenRect;
 
 	/** Persistent back buffer containing the composed page image. */
 	Graphics::Surface *_backScreen = nullptr;
@@ -676,6 +767,26 @@ private:
 	Common::Rect _trackedDirtyBounds;
 	/** Whether draw operations are currently accumulating dirty bounds. */
 	bool _isDirtyRectTracking = false;
+	/** Preserve logical draw bounds while limiting presentation damage to the active clip. */
+	bool _isPresentationDraw = false;
+	/** Caller-owned destination for authored draw capture, or nullptr when capture is inactive. */
+	Common::Array<DrawCommand> *_presentationCapture = nullptr;
+	/** Motion group assigned to subsequent captured commands, or zero for the feature root. */
+	uint32 _presentationMotionKey = 0;
+	/** Carrier registration index assigned to subsequent commands, or zero for ungrouped drawing. */
+	uint32 _presentationMotionLeader = 0;
+	/** Draw immediately, then retain complete inputs and motion metadata when capture is active. */
+	Common::Rect submitDrawCommand(ScreenKind screenKind, DrawCommand &drawCmd);
+	/** Execute drawing inputs without recording another command or invoking page callbacks. */
+	Common::Rect executeDrawCommand(ScreenKind screenKind, const DrawCommand &drawCmd, const Common::Point &offset);
+	/** Copy image pixels and return logical coverage before dirty-region clipping. */
+	Common::Rect blitImageSectionToScreen(ScreenKind screenKind, MohawkSurface *image, const Common::Rect &source, const Common::Rect &bounds, bool clearBeforeRender, PaletteRemapMode paletteRemap);
+	/** Execute line drawing, retaining the authored path and clipped position-interpolation path. */
+	void drawLineToScreen(ScreenKind screenKind, const DrawCommand &drawCmd, const Common::Point &offset);
+	/** Fill pixels through the active render clip without recording another command. */
+	void fillRectToScreen(ScreenKind screenKind, const Common::Rect &rect, uint32 color);
+	/** Draw text and return its complete painted coverage, including outlines. */
+	Common::Rect drawTextToScreen(ScreenKind screenKind, const Common::U32String &text, const Common::Rect &destRect, const TextConf &tc);
 	/** Whether the current dirty-tracking pass has recorded any bounds. */
 	bool _hasTrackedDirtyBounds = false;
 	/** Whether tracked dirty bounds must expand the active render clip. */

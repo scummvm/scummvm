@@ -56,7 +56,7 @@ void ZoombiniDialogCredits::open() {
 		_vm->_sound->pauseActiveMusicSoundsForDialog();
 }
 
-void ZoombiniDialogCredits::onEveryFrame() {
+void ZoombiniDialogCredits::onPreTickFrame() {
 	if (_totalCreditLines == 0)
 		return;
 

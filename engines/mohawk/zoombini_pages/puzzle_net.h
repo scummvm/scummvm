@@ -117,6 +117,14 @@ private:
 		/** The rightmost column uses the right sort variants. */
 		kRight02 = 2
 	};
+	/** One-based intact and rotating stone body shape indices in page tBMP 8000. */
+	enum ShapeIdx : uint16 {
+		/** First intact stone body shape. */
+		kResShape8000_StoneBodyFirst09 = 9,
+		/** Last rotating stone body pose. */
+		kResShape8000_StoneBodyLast16 = 16,
+	};
+
 	/** Resource IDs owned by the Mudball Wall page. */
 	/** Page-local backgrounds, columns, slots, and animations are grouped here. */
 	enum PageResourceId : int16 {

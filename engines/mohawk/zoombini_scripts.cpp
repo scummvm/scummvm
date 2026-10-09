@@ -554,6 +554,7 @@ void ZmbFeature::loadScrbData(const ZmbScriptDecoder::DecodedScrb *decodedScrb, 
 	// It detects a new SCRB loaded during the end callback.
 	// This avoids a stale @ref ZmbFeature::markAnimEndCallbackFired().
 	_scrbLoadGeneration += 1;
+	_presentationLeader = 0;
 	const bool retainPreparedVisualRects = hasPreparedVisualRects();
 	Common::Array<Common::Rect> retainedPreparedVisualRects;
 	if (retainPreparedVisualRects)
@@ -619,6 +620,7 @@ bool ZmbFeature::setDecodedScrs(const ZmbScriptDecoder::DecodedScrs *decodedScrs
 	if (!decodedScrs)
 		return false;
 
+	_presentationLeader = 0;
 	clear();
 	_lastFrameIdx = 0;
 	_frameIdxMax = 0;
@@ -864,6 +866,26 @@ int32 ZmbFeature::defaultSelectRenderFrame(uint32 currentFrameCounter) {
 		}
 	}
 	return _lastFrameIdx;
+}
+
+bool ZmbFeature::getNextScrbFrameTiming(uint32 &startFrame, uint32 &durationFrames) const {
+	if (!isRenderActivated() || !isAnimateActivated() || _skipFirstAdvance || _hasSharedFrameTimingResult ||
+		hasFlag(ZmbFeature::FLAG_02000000_RANDOM_FRAME) || !_frameInterval || _nextRenderFrame < _frameInterval ||
+		_lastFrameIdx < 0 || _frameIdxMax <= _lastFrameIdx)
+		return false;
+
+	startFrame = _nextRenderFrame - _frameInterval;
+	durationFrames = _frameInterval;
+	return true;
+}
+
+bool ZmbFeature::getAnimationFrameTiming(uint32 &startFrame, uint32 &durationFrames) const {
+	if (!isRenderActivated() || !isAnimateActivated() || !_frameInterval || _nextRenderFrame < _frameInterval)
+		return false;
+
+	startFrame = _nextRenderFrame - _frameInterval;
+	durationFrames = _frameInterval;
+	return true;
 }
 
 Common::Point ZmbFeature::getPosDelta() const {
@@ -2062,6 +2084,45 @@ int ZmbSnoid::computeWalkDirBucket(int16 dx, int16 dy) {
 	if (slope < 1409)
 		return 3;
 	return 4;
+}
+
+bool ZmbSnoid::getAnimationFrameTiming(uint32 &startFrame, uint32 &durationFrames) const {
+	if (!isRenderActivated() || hasDeferredAnimationStart() || !getFrameInterval() || _nextAnimFrame < getFrameInterval())
+		return false;
+
+	startFrame = _nextAnimFrame - getFrameInterval();
+	durationFrames = getFrameInterval();
+	return true;
+}
+
+bool ZmbSnoid::getPresentationMove(Common::Point &delta, uint32 &startFrame, uint32 &durationFrames, bool allowNextFrameEvent) const {
+	if (!isRenderActivated() || hasDeferredAnimationStart())
+		return false;
+	const ZoombiniPage *page = _vm->getCurrentPage();
+	if (!page || !page->getInterpolationFrameTiming(this, startFrame, durationFrames))
+		return false;
+	if (_animState == kSnoidAnimState008_ScriptReject || _animState == kSnoidAnimState009_ScriptNormal) {
+		if (_scrsJustStarted)
+			return false;
+		const ZmbDecodedScriptFrame *next = getDecodedScriptFrame(getLastFrameIdx() + 1);
+		if (!next || (!allowNextFrameEvent && next->eventCode) || next->hotspots.empty() || next->hotspots[0]._shapeIdx <= 0)
+			return false;
+		delta = _scrsRenderOffset + next->hotspots[0].getPos() - getPointLoc();
+		return delta != Common::Point();
+	}
+	if (_animState != kSnoidAnimState112_Path)
+		return false;
+
+	const Common::Point pos = getPointLoc();
+	const int16 dx = _pathSubTarget.x - pos.x;
+	const int16 dy = _pathSubTarget.y - pos.y;
+	delta.x = MIN<int16>(ABS(dx), ABS(_animSpeedX));
+	delta.y = MIN<int16>(ABS(dy), ABS(_animSpeedY));
+	if (dx < 0)
+		delta.x = -delta.x;
+	if (dy < 0)
+		delta.y = -delta.y;
+	return delta.x != 0 || delta.y != 0;
 }
 
 void ZmbSnoid::updateWalkHotspots(ZoombiniPage *page, int dirBucket, int phase) {

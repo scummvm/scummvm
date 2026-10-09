@@ -71,7 +71,7 @@ public:
 	Audio::Mixer::SoundType getFeatureSoundType(const ZmbFeature *feature, ZmbResource resource) const override;
 
 	/** Advance raft movement, reactions, and pending walk-ins. */
-	void onEveryFrame() override;
+	void onPreTickFrame() override;
 	/** Process Captain reactions, reject callbacks, and idle scheduling after rendering. */
 	void onPostRenderFrame() override;
 	/** Start a seat drag or handle ferry controls. */

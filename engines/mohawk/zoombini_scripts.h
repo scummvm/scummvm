@@ -898,8 +898,18 @@ public:
 	void setLastFrameIdx(int32 frameIdx) { _lastFrameIdx = frameIdx; }
 	/** Consume the loaded-SCRB frame-zero hold after synchronous materialization. */
 	void clearFirstFrameAdvanceHold() { _skipFirstAdvance = false; }
+	/** Return whether a replacement SCRB must retain its first pose before advancing. */
+	bool hasFirstFrameAdvanceHold() const { return _skipFirstAdvance; }
 	/** Select the next standard SCRB frame using the page frame counter. */
 	int32 defaultSelectRenderFrame(uint32 currentFrameCounter);
+	/**
+	 * Read the scheduled interval before the next sequential SCRB frame without advancing playback.
+	 * A newly loaded frame-zero hold, random playback, or shared timing cannot supply this interval.
+	 * @param[out] startFrame Animation tick at which the current pose was scheduled.
+	 * @param[out] durationFrames Animation ticks until its next frame, e.g. seven for a Lilly Toad hop pose.
+	 * @return True when the standard scheduler will advance to the next declared frame.
+	 */
+	bool getNextScrbFrameTiming(uint32 &startFrame, uint32 &durationFrames) const;
 	uint32 getFrameInterval() const { return _frameInterval; }
 	void setFrameInterval(uint32 interval) { _frameInterval = interval; }
 	Common::Point getPointLoc() const { return _pointLoc; }
@@ -961,19 +971,34 @@ public:
 	void collectPreparedVisualRects(Common::Array<Common::Rect> &rects) const {
 		rects.push_back(_preparedVisualRects);
 	}
+	/** Store a transformed visual frame and advance its generation, preserving its sampled logical position. */
 	void setPreparedRenderHotspots(const Common::Array<ZmbPreparedRenderHotspot> &hotspots) {
+		if (!_preparedPointLocValid)
+			setPreparedPointLoc(_pointLoc);
 		_preparedRenderHotspots = hotspots;
 		_preparedRenderFrameValid = true;
 		_preparedRenderGeneration += 1;
 	}
+	/** Return the frozen transformed hotspots for the current authored pose. */
 	const Common::Array<ZmbPreparedRenderHotspot> &getPreparedRenderHotspots() const {
 		return _preparedRenderHotspots;
 	}
+	/** Return whether a visual frame was prepared, including an explicitly empty frame. */
 	bool hasPreparedRenderHotspots() const { return _preparedRenderFrameValid; }
+	/** Return the generation advanced whenever the prepared visual frame is replaced. */
 	uint32 getPreparedRenderGeneration() const { return _preparedRenderGeneration; }
+	/** Sample the logical position while preparing the frozen pose. */
+	void setPreparedPointLoc(const Common::Point &point) {
+		_preparedPointLoc = point;
+		_preparedPointLocValid = true;
+	}
+	/** Return the logical position sampled with the prepared pose. */
+	Common::Point getPreparedPointLoc() const { return _preparedPointLoc; }
+	/** Discard the prepared pose and invalidate its sampled logical position. */
 	void clearPreparedRenderHotspots() {
 		_preparedRenderHotspots.clear();
 		_preparedRenderFrameValid = false;
+		_preparedPointLocValid = false;
 	}
 	/** True only when the complete post-render path is the predictable default shape blit. */
 	bool usesDefaultRenderFunc() const {
@@ -1082,10 +1107,26 @@ public:
 	 * Snoids advance through @ref ZmbSnoid::onSnoidAnimTick() and do not consume this state.
 	 */
 	bool isFrameTimingReady() const { return _frameTimingReady; }
+	/**
+	 * Return whether a shared timing group assigned a result for this animation render pass.
+	 * This reports the presence of a group decision, not whether the runner is due to advance.
+	 * Both an advance decision and a hold decision return true here.
+	 * Use @ref Mohawk::ZmbFeature::getFrameTimingResult() to read the actual decision.
+	 */
+	bool hasSharedFrameTiming() const { return _hasSharedFrameTimingResult; }
+	/**
+	 * Read this runner's local timer interval without advancing animation or resolving shared timing.
+	 * @param[out] startFrame Animation tick at which the timer interval started.
+	 * @param[out] durationFrames Animation ticks in the interval ending at the next local timer evaluation.
+	 * @return True when an active timer has scheduled an interval.
+	 * @note A grouped peer's local timer does not determine its actual next update.
+	 * Position interpolation must use @ref Mohawk::ZoombiniPage::getInterpolationFrameTiming() instead.
+	 */
+	virtual bool getAnimationFrameTiming(uint32 &startFrame, uint32 &durationFrames) const;
 	virtual bool isAnimationTimerDue(uint32 currentFrameCounter) const {
 		return _nextRenderFrame <= currentFrameCounter;
 	}
-	/** Store the timing result shared by a feature timing group. */
+	/** Store an advance or hold decision and mark the shared result present for this pass. */
 	void setSharedFrameTimingResult(bool ready) {
 		_hasSharedFrameTimingResult = true;
 		_sharedFrameTimingResult = ready;
@@ -1128,7 +1169,16 @@ public:
 	const Common::Rect &getSortRect() const { return _sortRect; }
 	void setSortRect(const Common::Rect &rect) { _sortRect = rect; }
 
+	/** Return the stable page registration identity used by render ordering and motion companions. */
 	uint32 getRegistrationIndex() const { return _registrationIndex; }
+	/**
+	 * Assign a carrier's registration identity without retaining a feature pointer.
+	 * @param leader Carrier to follow, or nullptr to leave selected companion shapes at their authored positions.
+	 */
+	void setPresentationLeader(const ZmbFeature *leader) { _presentationLeader = leader ? leader->getRegistrationIndex() : 0; }
+	/** Return the carrier registration index, or zero when no carrier is assigned. */
+	uint32 getPresentationLeader() const { return _presentationLeader; }
+	/** Assign this feature's stable page registration identity. */
 	void setRegistrationIndex(uint32 registrationIdx) { _registrationIndex = registrationIdx; }
 
 	/**
@@ -1244,6 +1294,10 @@ private:
 	bool _preparedRenderFrameValid = false;
 	/** Generation number incremented whenever prepared hotspots are replaced. */
 	uint32 _preparedRenderGeneration = 0;
+	/** Logical feature position sampled with the prepared pose. */
+	Common::Point _preparedPointLoc;
+	/** Whether the logical position has been sampled for the prepared pose. */
+	bool _preparedPointLocValid = false;
 
 	/** Optional clip applied to visual and hit-test coverage. */
 	Common::Rect _visualRectConstraint;
@@ -1270,6 +1324,8 @@ private:
 	uint32 _flags = 0;
 	/** Stable registration order used by rendering and event sorting. */
 	uint32 _registrationIndex = 0;
+	/** Carrier registration index for position interpolation, or zero when no carrier is assigned. */
+	uint32 _presentationLeader = 0;
 	/** Image resource used by this feature's shapes. */
 	ZmbResource _imgResource;
 	/**
@@ -1316,9 +1372,9 @@ private:
 	 * Set by @ref ZmbFeature::defaultSelectRenderFrame() and checked by @ref ZoombiniPage::preRenderFeature().
 	 */
 	bool _frameTimingReady = true;
-	/** Shared hotspot-slot timing decision prepared by @ref ZoombiniPage. */
+	/** Whether @ref Mohawk::ZoombiniPage assigned a shared result in this pass, including a hold decision. */
 	bool _hasSharedFrameTimingResult = false;
-	/** Shared frame-deadline result prepared by the page. */
+	/** Actual shared decision: true advances animation, false holds the current pose. */
 	bool _sharedFrameTimingResult = false;
 
 	// [*] Z-sort rect: bounding box of all shapes drawn in the previous frame.
@@ -1614,6 +1670,18 @@ public:
 	int16 getAnimSpeedX() const { return _animSpeedX; }
 	/** Return the vertical walk speed per animation tick. */
 	int16 getAnimSpeedY() const { return _animSpeedY; }
+	/**
+	 * Preview a deterministic position step without advancing routing, pose, or callbacks.
+	 * Shared timing uses the runtime owner's interval, e.g. the minecart runner during Smoke rejection.
+	 * Initial SCRS frame holds remain fixed; next-frame events require explicit page verification.
+	 * @param[out] delta Next body-root translation in page pixels.
+	 * @param[out] startFrame Animation tick at which the translation interval begins.
+	 * @param[out] durationFrames Animation ticks in the interval ending at the actual next update, including shared timing.
+	 * @param allowNextFrameEvent Allow a page-verified next-frame event that leaves the authored body root deterministic.
+	 * For example, Maze's grid reservation markers do not alter the root; their callbacks still run only on animation ticks.
+	 * @return True when a deterministic, nonzero step is available.
+	 */
+	bool getPresentationMove(Common::Point &delta, uint32 &startFrame, uint32 &durationFrames, bool allowNextFrameEvent = false) const;
 	/** Set both components of the walk speed. */
 	void setAnimSpeed(int16 speedX, int16 speedY) {
 		_animSpeedX = speedX;
@@ -1657,6 +1725,8 @@ public:
 	bool isAnimationTimerDue(uint32 currentFrameCounter) const override {
 		return _nextAnimFrame <= currentFrameCounter;
 	}
+	/** Read the Snoid's local animation timer, leaving deferred starts fixed. */
+	bool getAnimationFrameTiming(uint32 &startFrame, uint32 &durationFrames) const override;
 
 	/**
 	 * Override the trait layout.

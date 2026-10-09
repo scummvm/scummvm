@@ -812,6 +812,82 @@ void ZoombiniPuzzleSmoke::loadZoombinisFromPack() {
 // Helper methods
 // =========================================================================
 
+uint32 ZoombiniPuzzleSmoke::getMinecartInterpolationLeader(const ZmbFeature *feature) const {
+	// Validate the stored carrier against Snoids still present and rendering on this page.
+	const uint32 leader = feature->getPresentationLeader();
+	if (leader) {
+		for (const ZmbSnoid *snoid : _snoidMap) {
+			if (snoid->getRegistrationIndex() == leader && snoid->isRenderActivated())
+				return leader;
+		}
+	}
+	return 0;
+}
+
+const ZmbHotspot *ZoombiniPuzzleSmoke::getMinecartBodyRoot(const Common::Array<ZmbHotspot> &hotspots) {
+	// One cart body with wheels can share a translation; mixed effects or multiple bodies cannot.
+	const ZmbHotspot *root = nullptr;
+	for (const ZmbHotspot &hotspot : hotspots) {
+		const int16 shape = hotspot._shapeIdx;
+		if (!((kResShape11000_MinecartBodyFirst67 <= shape && shape <= kResShape11000_MinecartWheelLast77) ||
+			  shape == kResShape11000_MinecartBodyAlternate88))
+			return nullptr;
+		if ((kResShape11000_MinecartBodyFirst67 <= shape && shape <= kResShape11000_MinecartBodyLast73) ||
+			shape == kResShape11000_MinecartBodyAlternate88) {
+			if (root)
+				return nullptr;
+			root = &hotspot;
+		}
+	}
+	return root;
+}
+
+bool ZoombiniPuzzleSmoke::getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const {
+	// Preview only riderless rejection carts; occupied carts follow Snoid groups and other features use the common preview.
+	if (feature != _rejectionFeature || getMinecartInterpolationLeader(feature))
+		return ZoombiniPage::getNextInterpolationMove(feature, delta, startFrame, durationFrames);
+	// Preserve the first-pose hold and use the actual pose deadline, including shared timing.
+	if (!feature->isAnimateActivated() || feature->hasFirstFrameAdvanceHold() || !getInterpolationFrameTiming(feature, startFrame, durationFrames))
+		return false;
+
+	// Read authored roots without advancing playback or executing events.
+	const ZmbDecodedScriptFrame *current = feature->getDecodedScriptFrame(feature->getLastFrameIdx());
+	const ZmbDecodedScriptFrame *next = feature->getDecodedScriptFrame(feature->getLastFrameIdx() + 1);
+	if (!current || !next)
+		return false;
+	// Allow placement/relink markers that preserve the root; callbacks stay on animation ticks.
+	if (next->eventCode && next->eventCode - 1 != kMirrorLaneEventCode050_PlaceZoombini && next->eventCode - 1 != kMirrorLaneEventCode051_LinkRunners)
+		return false;
+	// Require cart-only frames with the same body pose to exclude effects and turning transitions.
+	const ZmbHotspot *currentRoot = getMinecartBodyRoot(current->hotspots);
+	const ZmbHotspot *nextRoot = getMinecartBodyRoot(next->hotspots);
+	if (!currentRoot || !nextRoot || currentRoot->_shapeIdx != nextRoot->_shapeIdx)
+		return false;
+	// Use the authored root delta, excluding pose-local bitmap registration offsets.
+	delta = nextRoot->getPos() - currentRoot->getPos();
+	return delta != Common::Point();
+}
+
+bool ZoombiniPuzzleSmoke::getShapeInterpolationGroup(ZmbFeature *feature, const ZmbHotspot &hotspot, uint32 &key, uint32 &leader) const {
+	// Group only Smoke cart bodies and wheels, leaving mirrors and effects at authored positions.
+	if (feature->getResource() != ZmbResource(ZmbResource::kPage, kResBitmapShape11000_Smoke) ||
+		!((kResShape11000_MinecartBodyFirst67 <= hotspot._shapeIdx && hotspot._shapeIdx <= kResShape11000_MinecartWheelLast77) ||
+		  hotspot._shapeIdx == kResShape11000_MinecartBodyAlternate88))
+		return false;
+	// Require a body in the prepared pose before assigning the wheels to its rider.
+	for (const ZmbPreparedRenderHotspot &prepared : feature->getPreparedRenderHotspots()) {
+		const int16 shape = prepared._hotspot._shapeIdx;
+		if ((kResShape11000_MinecartBodyFirst67 <= shape && shape <= kResShape11000_MinecartBodyLast73) || shape == kResShape11000_MinecartBodyAlternate88) {
+			// A feature-local key lets bodies and wheels share the live rider's offset.
+			key = 1;
+			leader = getMinecartInterpolationLeader(feature);
+			// Leave riderless carts ungrouped so their own feature-level preview can apply.
+			return leader != 0;
+		}
+	}
+	return false;
+}
+
 void ZoombiniPuzzleSmoke::playZmbScript(ZmbScrsCompletionMode completionMode, ZmbFeature *dispatchFeature, int16 scrsId, ZmbSnoid *snoid) {
 	// Materialize SCRS frame zero immediately, then join the Snoid to the dispatch
 	// feature's timing group. The first shared gate keeps frame zero without advancing it,
@@ -826,6 +902,8 @@ void ZoombiniPuzzleSmoke::playZmbScript(ZmbScrsCompletionMode completionMode, Zm
 		prepareSnoidVisualCoverage(snoid, true);
 		snoid->setNeedsRedraw(true);
 		joinFeatureTimingGroup(dispatchFeature, snoid);
+		if (dispatchFeature)
+			dispatchFeature->setPresentationLeader(snoid);
 	}
 }
 
@@ -1814,6 +1892,7 @@ void ZoombiniPuzzleSmoke::playRejectedAnimation() {
 		playZmbScript(ZmbScrsCompletionMode::kReturnToIdle, nullptr, _placedZmbCount + kResScrs12020_RejectionBase, zmb);
 		manualLinkAfter(zmb, _rejectionFeature);
 		registerFeatureTimingGroup(_rejectionFeature, zmb);
+		_rejectionFeature->setPresentationLeader(zmb);
 	}
 }
 
@@ -2522,7 +2601,7 @@ void ZoombiniPuzzleSmoke::processAnimDispatchEvent(ZmbFeature *feature, int16 ev
 // Per-frame update
 // =========================================================================
 
-void ZoombiniPuzzleSmoke::onEveryFrame() {
+void ZoombiniPuzzleSmoke::onPreTickFrame() {
 	if (_isUpdating || !_pageActive)
 		return;
 	PuzzleUpdateGuard updateGuard(_isUpdating);
@@ -2695,6 +2774,7 @@ void ZoombiniPuzzleSmoke::onPostRenderFrame() {
 			ZmbSnoid *cliffZmb = _acceptedZmbs[i];
 			if (cliffZmb) {
 				playZmbScript(ZmbScrsCompletionMode::kReturnToIdle, nullptr, i + kResScrs12041_DepartureRiderBase, cliffZmb);
+				colRunner->setPresentationLeader(cliffZmb);
 				departureGroup.push_back(cliffZmb);
 			}
 		}
