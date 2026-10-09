@@ -477,7 +477,7 @@ void ZoombiniGraphics::setMouseCursor(MouseCursorResourceId cursorId) {
 	if (leavingWatchPose) {
 		// The initial watch pose does not own a full animation interval. Once it
 		// leaves, make the following eye pose eligible on the next presentation.
-		_nextMouseCursorEyeAnimationFrame = _vm->getAnimationFrameCounter(_vm->_system->getMillis());
+		_nextMouseCursorEyeAnimationFrame = _vm->getAnimationFrameCounter(_vm->getTotalPlayTime());
 	}
 }
 
@@ -1421,7 +1421,7 @@ bool ZoombiniGraphics::applyFadeEffect(uint32 currentTime) {
 		// A modal dialog can run a nested frame loop after the caller captured
 		// currentTime. Start a newly dequeued effect at its actual first-apply
 		// time so that stale outer-frame time cannot skip part or all of it.
-		currentTime = _vm->_system->getMillis();
+		currentTime = _vm->getTotalPlayTime();
 		fe._startTime = currentTime;
 	}
 	// Count fade steps with integer arithmetic: one step per 1/60 second, matching the animation clock.
