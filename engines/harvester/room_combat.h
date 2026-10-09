@@ -129,7 +129,27 @@ public:
 	void commitMonsterCombatStatesForSceneChange(Common::Array<RoomMonsterCombatState> &&states);
 	void resetForSceneRefresh(const RoomSetupState &state);
 
+	void capturePlayerAttackTargetForKeyboard(RoomSetupState &state, RoomPlayerState &playerState,
+		EntityManager *entityManager, bool attackLeft, bool attackRight, bool attackUp, bool attackDown) const;
+	MonsterRecord *resolveKillTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+		EntityManager *entityManager, const Common::Point &mousePos) const;
+	// The caller clears the captured target before resolving the room hover state.
+	void capturePlayerAttackTarget(RoomSetupState &state, RoomPlayerState &playerState,
+		EntityManager *entityManager, const Common::Point &mousePos, const NpcRecord *hoverNpc) const;
+	void captureOverlappingNpcAttackTarget(RoomSetupState &state, RoomPlayerState &playerState, EntityManager *entityManager) const;
+	NpcRecord *selectNpcAttackContactTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+		EntityManager *entityManager, Entity *&npcEntity) const;
+	MonsterRecord *selectMonsterAttackContactTarget(RoomSetupState &state, RoomPlayerState &playerState,
+		EntityManager *entityManager, Entity *&monsterEntity) const;
+
 private:
+	MonsterRecord *findMonsterTargetAtPoint(RoomSetupState &state, EntityManager *entityManager, const Common::Point &point) const;
+	MonsterRecord *findOverlappingMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState, EntityManager *entityManager) const;
+	NpcRecord *findOverlappingNpcTarget(RoomSetupState &state, const RoomPlayerState &playerState, EntityManager *entityManager) const;
+	bool playerAttackCanReachTarget(RoomSetupState &state, const RoomPlayerState &playerState, Entity *targetEntity, int engageDistance = 0) const;
+	MonsterRecord *findProjectileContactMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+		EntityManager *entityManager) const;
+
 	Common::Array<RoomMonsterCombatState> _monsterCombatStates;
 	Common::Array<RoomNpcCombatState> _npcCombatStates;
 };
@@ -192,6 +212,7 @@ struct ScopedDeferredLiveNpcDeathTransitions {
 	Script *_script;
 };
 
+const char *describeCombatTargetClass(int classId);
 bool shouldRetainNpcDeathEntityInCurrentRoom(const NpcRecord &npc);
 bool isRetainedCurrentRoomNpcDeathRecord(const NpcRecord &npc);
 bool resolveCombatLoadoutHudInfo(int loadout, CombatLoadoutHudInfo &info);

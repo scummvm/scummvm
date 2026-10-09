@@ -62,6 +62,81 @@ const int kNativeDefaultNpcDeathDamageType = 1;
 
 namespace {
 
+static Entity *findSceneRuntimeEntity(EntityManager *entityManager, const Common::String &name) {
+	return entityManager ? entityManager->findSceneEntityByName(name) : nullptr;
+}
+
+static MonsterRecord *findRoomMonsterRecordByName(RoomSetupState &state, const Common::String &name) {
+	for (MonsterRecord &monster : state.roomMonsters) {
+		if (monster.monsterName.equalsIgnoreCase(name))
+			return &monster;
+	}
+	return nullptr;
+}
+
+static NpcRecord *findRoomNpcRecordByName(RoomSetupState &state, const Common::String &name) {
+	for (NpcRecord &npc : state.roomNpcs) {
+		if (npc.npcName.equalsIgnoreCase(name))
+			return &npc;
+	}
+	return nullptr;
+}
+
+static bool isKillableMonster(const MonsterRecord *monster) {
+	return monster && monster->active && monster->visible && monster->currentHitPoints > 0;
+}
+
+static Entity *selectMonsterEntity(EntityManager *entityManager, const MonsterRecord &monster) {
+	Entity *entity = findSceneRuntimeEntity(entityManager, monster.monsterName);
+	return (entity && entity->isVisible()) ? entity : nullptr;
+}
+
+enum NativeAttackSide {
+	kNativeAttackSideNone,
+	kNativeAttackSideLeft,
+	kNativeAttackSideRight
+};
+
+enum NativeAttackBand {
+	kNativeAttackBandMid,
+	kNativeAttackBandUpper,
+	kNativeAttackBandLower
+};
+
+static bool resolveNativePlayerAttackGeometry(int attackFirstFrame, NativeAttackSide &attackSide, NativeAttackBand &attackBand) {
+	attackSide = kNativeAttackSideNone;
+	attackBand = kNativeAttackBandMid;
+
+	switch (attackFirstFrame) {
+	case 0x50:
+		attackSide = kNativeAttackSideLeft;
+		attackBand = kNativeAttackBandUpper;
+		return true;
+	case 0x5a:
+		attackSide = kNativeAttackSideLeft;
+		attackBand = kNativeAttackBandMid;
+		return true;
+	case 0x64:
+		attackSide = kNativeAttackSideLeft;
+		attackBand = kNativeAttackBandLower;
+		return true;
+	case 0x6e:
+		attackSide = kNativeAttackSideRight;
+		attackBand = kNativeAttackBandUpper;
+		return true;
+	case 0x78:
+		attackSide = kNativeAttackSideRight;
+		attackBand = kNativeAttackBandMid;
+		return true;
+	case 0x82:
+		attackSide = kNativeAttackSideRight;
+		attackBand = kNativeAttackBandLower;
+		return true;
+	default:
+		return false;
+	}
+}
+
 static byte findNearestPaletteColor(const byte *palette, byte red, byte green, byte blue) {
 	if (!palette)
 		return 0;
@@ -486,6 +561,391 @@ int resolveMonsterAttackContactFrameOffset(const MonsterRecord &monster) {
 	return monster.monsterName.equalsIgnoreCase("MUCKEY")
 		? kMuckeyAttackContactFrameOffset
 		: kDefaultMonsterAttackContactFrameOffset;
+}
+
+const char *describeCombatTargetClass(int classId) {
+	switch (classId) {
+	case kRuntimeEntityClassNpc:
+		return "npc";
+	case kRuntimeEntityClassMonster:
+		return "monster";
+	case kRuntimeEntityClassPlayer:
+		return "player";
+	default:
+		return "none";
+	}
+}
+
+MonsterRecord *RoomCombat::findMonsterTargetAtPoint(RoomSetupState &state, EntityManager *entityManager, const Common::Point &point) const {
+	MonsterRecord *bestMonster = nullptr;
+	int bestZ = -0x7fffffff;
+	int bestTop = -0x7fffffff;
+	for (MonsterRecord &monster : state.roomMonsters) {
+		if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
+			continue;
+
+		Entity *entity = findSceneRuntimeEntity(entityManager, monster.monsterName);
+		if (!entity || !entity->isVisible())
+			continue;
+
+		const Common::Rect entityRect = entity->getScreenRect();
+		if (!entityRect.contains(point))
+			continue;
+
+		if (!bestMonster || monster.posZ > bestZ ||
+				(monster.posZ == bestZ && entityRect.top > bestTop)) {
+			bestMonster = &monster;
+			bestZ = monster.posZ;
+			bestTop = entityRect.top;
+		}
+	}
+
+	return bestMonster;
+}
+
+MonsterRecord *RoomCombat::findOverlappingMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+		EntityManager *entityManager) const {
+	if (!playerState.entity)
+		return nullptr;
+
+	for (MonsterRecord &monster : state.roomMonsters) {
+		if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
+			continue;
+
+		Entity *entity = findSceneRuntimeEntity(entityManager, monster.monsterName);
+		if (entity && areCombatantsWithinRoomCombatReach(state,
+				*playerState.entity, playerState.z, *entity, (float)monster.posZ, monster.engageDistance))
+			return &monster;
+	}
+
+	return nullptr;
+}
+
+NpcRecord *RoomCombat::findOverlappingNpcTarget(RoomSetupState &state, const RoomPlayerState &playerState, EntityManager *entityManager) const {
+	if (!playerState.entity)
+		return nullptr;
+
+	for (NpcRecord &npc : state.roomNpcs) {
+		if (!npc.visible || npc.deathOrMonsterfyFlag || npc.deathDamageType != 0)
+			continue;
+
+		Entity *entity = findSceneRuntimeEntity(entityManager, npc.npcName);
+		if (entity && areCombatantsWithinRoomCombatReach(state,
+				*playerState.entity, playerState.z, *entity, entity->getZ(), 0))
+			return &npc;
+	}
+
+	return nullptr;
+}
+
+bool RoomCombat::playerAttackCanReachTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+		Entity *targetEntity, int engageDistance) const {
+	if (!playerState.entity || !targetEntity)
+		return false;
+	if (Player::isProjectileCombatLoadout(playerState.combatLoadout))
+		return true;
+
+	return areCombatantsWithinRoomCombatReach(state,
+		*playerState.entity, playerState.z, *targetEntity, targetEntity->getZ(), engageDistance);
+}
+
+MonsterRecord *RoomCombat::findProjectileContactMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+		EntityManager *entityManager) const {
+	if (!playerState.entity)
+		return nullptr;
+
+	NativeAttackSide attackSide = kNativeAttackSideNone;
+	NativeAttackBand attackBand = kNativeAttackBandMid;
+	if (!resolveNativePlayerAttackGeometry(playerState.attackFirstFrame, attackSide, attackBand))
+		return nullptr;
+
+	const Common::Rect playerRect = playerState.entity->getScreenRect();
+	const int playerLeft = playerRect.left;
+	const int playerRight = playerRect.right;
+	const int playerCenterX = playerLeft + playerRect.width() / 2;
+	MonsterRecord *bestMonster = nullptr;
+	Entity *bestEntity = nullptr;
+	int bestLeadingEdge = attackSide == kNativeAttackSideLeft ? -0x7fffffff : 0x7fffffff;
+
+	for (MonsterRecord &monster : state.roomMonsters) {
+		if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
+			continue;
+
+		Entity *entity = findSceneRuntimeEntity(entityManager, monster.monsterName);
+		if (!entity || !entity->isVisible() ||
+				!doRuntimeEntityDepthExtentsOverlap(*playerState.entity, *entity)) {
+			continue;
+		}
+
+		const Common::Rect targetRect = entity->getScreenRect();
+		const int targetLeft = targetRect.left;
+		const int targetCenterX = targetLeft + targetRect.width() / 2;
+		bool matchesDirection = false;
+		if (attackSide == kNativeAttackSideLeft) {
+			if (attackBand == kNativeAttackBandMid)
+				matchesDirection = targetLeft < playerCenterX;
+			else
+				matchesDirection =
+					targetLeft < playerCenterX && targetCenterX > playerLeft - kNativeAttackSideWindow;
+			if (!matchesDirection || targetLeft <= bestLeadingEdge)
+				continue;
+		} else {
+			if (attackBand == kNativeAttackBandMid)
+				matchesDirection = playerCenterX < targetLeft;
+			else
+				matchesDirection =
+					playerCenterX < targetLeft && targetCenterX < playerRight + kNativeAttackSideWindow;
+			if (!matchesDirection || targetLeft >= bestLeadingEdge)
+				continue;
+		}
+
+		bestMonster = &monster;
+		bestEntity = entity;
+		bestLeadingEdge = targetLeft;
+	}
+
+	if (bestMonster && bestEntity) {
+		debugC(1, kDebugCombat,
+			"Harvester: combat player projectile contact fallback target='%s' attack_frame=%d player_rect=(%d,%d)-(%d,%d) target_rect=(%d,%d)-(%d,%d)",
+			bestMonster->monsterName.c_str(), playerState.attackFirstFrame,
+			playerRect.left, playerRect.top, playerRect.right, playerRect.bottom,
+			bestEntity->getScreenRect().left, bestEntity->getScreenRect().top,
+			bestEntity->getScreenRect().right, bestEntity->getScreenRect().bottom);
+	}
+
+	return bestMonster;
+}
+
+void RoomCombat::capturePlayerAttackTargetForKeyboard(RoomSetupState &state, RoomPlayerState &playerState,
+		EntityManager *entityManager, bool attackLeft, bool attackRight, bool attackUp, bool attackDown) const {
+	playerState.attackTargetName.clear();
+	playerState.attackTargetClassId = -1;
+	if (!playerState.entity)
+		return;
+
+	NativeAttackSide attackSide = kNativeAttackSideNone;
+	NativeAttackBand attackBand = kNativeAttackBandMid;
+	if (attackRight) {
+		attackSide = kNativeAttackSideRight;
+		attackBand = kNativeAttackBandMid;
+	} else if (attackLeft) {
+		attackSide = kNativeAttackSideLeft;
+		attackBand = kNativeAttackBandMid;
+	} else if (attackUp) {
+		if (playerState.facing == 2) {
+			attackSide = kNativeAttackSideRight;
+			attackBand = kNativeAttackBandUpper;
+		} else if (playerState.facing == 1) {
+			attackSide = kNativeAttackSideLeft;
+			attackBand = kNativeAttackBandUpper;
+		}
+	} else if (attackDown) {
+		if (playerState.facing == 2) {
+			attackSide = kNativeAttackSideRight;
+			attackBand = kNativeAttackBandLower;
+		} else if (playerState.facing == 1) {
+			attackSide = kNativeAttackSideLeft;
+			attackBand = kNativeAttackBandLower;
+		}
+	}
+	if (attackSide == kNativeAttackSideNone) {
+		debugC(1, kDebugCombat,
+			"Harvester: combat player keyboard target capture class='none' input=(L=%d R=%d U=%d D=%d) facing=%d reason='no native attack family'",
+			attackLeft, attackRight, attackUp, attackDown, playerState.facing);
+		return;
+	}
+
+	const Common::Rect playerRect = playerState.entity->getScreenRect();
+	const int playerLeft = playerRect.left;
+	const int playerRight = playerRect.right;
+	// Keyboard selection uses the cached center; projectile fallback uses the frame rectangle.
+	const int playerCenterX = playerState.centerX;
+	Entity *bestEntity = nullptr;
+	Common::String bestName;
+	int bestClassId = -1;
+	int bestLeadingEdge = attackSide == kNativeAttackSideLeft ? -0x7fffffff : 0x7fffffff;
+
+	auto considerTarget = [&](Entity *targetEntity, const Common::String &targetName, int classId) {
+		if (!targetEntity || !targetEntity->isVisible() ||
+				!doRuntimeEntityDepthExtentsOverlap(*playerState.entity, *targetEntity)) {
+			return;
+		}
+
+		const Common::Rect targetRect = targetEntity->getScreenRect();
+		const int targetLeft = targetRect.left;
+		const int targetCenterX = targetLeft + (targetRect.width() / 2);
+		bool matchesDirection = false;
+		if (attackSide == kNativeAttackSideLeft) {
+			if (attackBand == kNativeAttackBandMid)
+				matchesDirection = targetLeft < playerCenterX;
+			else
+				matchesDirection =
+					targetLeft < playerCenterX && targetCenterX > playerLeft - kNativeAttackSideWindow;
+			if (!matchesDirection || targetLeft <= bestLeadingEdge)
+				return;
+		} else {
+			if (attackBand == kNativeAttackBandMid)
+				matchesDirection = playerCenterX < targetLeft;
+			else
+				matchesDirection =
+					playerCenterX < targetLeft && targetCenterX < playerRight + kNativeAttackSideWindow;
+			if (!matchesDirection || targetLeft >= bestLeadingEdge)
+				return;
+		}
+
+		bestEntity = targetEntity;
+		bestName = targetName;
+		bestClassId = classId;
+		bestLeadingEdge = targetLeft;
+	};
+
+	for (NpcRecord &npc : state.roomNpcs) {
+		if (!npc.visible || npc.deathOrMonsterfyFlag || npc.deathDamageType != 0)
+			continue;
+		considerTarget(findSceneRuntimeEntity(entityManager, npc.npcName), npc.npcName, kRuntimeEntityClassNpc);
+	}
+	for (MonsterRecord &monster : state.roomMonsters) {
+		if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
+			continue;
+		considerTarget(findSceneRuntimeEntity(entityManager, monster.monsterName), monster.monsterName, kRuntimeEntityClassMonster);
+	}
+
+	if (!bestEntity) {
+		debugC(1, kDebugCombat,
+			"Harvester: combat player keyboard target capture class='none' input=(L=%d R=%d U=%d D=%d) facing=%d reason='no directional target'",
+			attackLeft, attackRight, attackUp, attackDown, playerState.facing);
+		return;
+	}
+
+	playerState.attackTargetName = bestName;
+	playerState.attackTargetClassId = bestClassId;
+	debugC(1, kDebugCombat,
+		"Harvester: combat player keyboard target capture class='%s' name='%s' input=(L=%d R=%d U=%d D=%d) facing=%d target_rect=(%d,%d)-(%d,%d)",
+		describeCombatTargetClass(bestClassId), bestName.c_str(),
+		attackLeft, attackRight, attackUp, attackDown, playerState.facing,
+		bestEntity->getScreenRect().left, bestEntity->getScreenRect().top,
+		bestEntity->getScreenRect().right, bestEntity->getScreenRect().bottom);
+}
+
+MonsterRecord *RoomCombat::resolveKillTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+		EntityManager *entityManager, const Common::Point &mousePos) const {
+	if (playerState.attackTargetClassId == kRuntimeEntityClassMonster) {
+		MonsterRecord *monster = findRoomMonsterRecordByName(state, playerState.attackTargetName);
+		if (isKillableMonster(monster) && selectMonsterEntity(entityManager, *monster))
+			return monster;
+	}
+
+	if (MonsterRecord *monster = findMonsterTargetAtPoint(state, entityManager, mousePos)) {
+		if (isKillableMonster(monster) && selectMonsterEntity(entityManager, *monster))
+			return monster;
+	}
+
+	if (playerState.entity) {
+		for (uint i = 0; i < state.roomMonsters.size() && i < _monsterCombatStates.size(); ++i) {
+			MonsterRecord &monster = state.roomMonsters[i];
+			const RoomMonsterCombatState &combatState = _monsterCombatStates[i];
+			if (!combatState.attackActive || !isKillableMonster(&monster) || !selectMonsterEntity(entityManager, monster))
+				continue;
+			if (!combatState.attackTargetName.empty() &&
+					playerState.entity->getName().equalsIgnoreCase(combatState.attackTargetName)) {
+				return &monster;
+			}
+		}
+	}
+
+	if (!playerState.entity)
+		return nullptr;
+
+	const Common::Rect playerRect = playerState.entity->getScreenRect();
+	const int playerCenterX = playerRect.left + playerRect.width() / 2;
+	MonsterRecord *bestMonster = nullptr;
+	int bestScore = 0x7fffffff;
+	for (MonsterRecord &monster : state.roomMonsters) {
+		if (!isKillableMonster(&monster))
+			continue;
+
+		Entity *entity = selectMonsterEntity(entityManager, monster);
+		if (!entity)
+			continue;
+
+		const Common::Rect monsterRect = entity->getScreenRect();
+		const int monsterCenterX = monsterRect.left + monsterRect.width() / 2;
+		const int score = ABS(monsterCenterX - playerCenterX) +
+			ABS(monster.posZ - roundRoomCombatFloat(playerState.z)) * 8;
+		if (!bestMonster || score < bestScore) {
+			bestMonster = &monster;
+			bestScore = score;
+		}
+	}
+
+	return bestMonster;
+}
+
+void RoomCombat::capturePlayerAttackTarget(RoomSetupState &state, RoomPlayerState &playerState,
+		EntityManager *entityManager, const Common::Point &mousePos, const NpcRecord *hoverNpc) const {
+	if (hoverNpc) {
+		playerState.attackTargetName = hoverNpc->npcName;
+		playerState.attackTargetClassId = kRuntimeEntityClassNpc;
+		debugC(1, kDebugCombat,
+			"Harvester: combat player target capture class='npc' name='%s' cursor=(%d,%d)",
+			playerState.attackTargetName.c_str(), mousePos.x, mousePos.y);
+		return;
+	}
+
+	if (MonsterRecord *monster = findMonsterTargetAtPoint(state, entityManager, mousePos)) {
+		playerState.attackTargetName = monster->monsterName;
+		playerState.attackTargetClassId = kRuntimeEntityClassMonster;
+		debugC(1, kDebugCombat,
+			"Harvester: combat player target capture class='monster' name='%s' cursor=(%d,%d)",
+			playerState.attackTargetName.c_str(), mousePos.x, mousePos.y);
+		return;
+	}
+
+	debugC(1, kDebugCombat,
+		"Harvester: combat player target capture class='none' cursor=(%d,%d)",
+		mousePos.x, mousePos.y);
+}
+
+void RoomCombat::captureOverlappingNpcAttackTarget(RoomSetupState &state, RoomPlayerState &playerState, EntityManager *entityManager) const {
+	if (playerState.attackTargetClassId < 0 && !Player::isProjectileCombatLoadout(playerState.combatLoadout)) {
+		if (NpcRecord *fallbackNpc = findOverlappingNpcTarget(state, playerState, entityManager)) {
+			playerState.attackTargetName = fallbackNpc->npcName;
+			playerState.attackTargetClassId = kRuntimeEntityClassNpc;
+		}
+	}
+}
+
+NpcRecord *RoomCombat::selectNpcAttackContactTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+		EntityManager *entityManager, Entity *&npcEntity) const {
+	NpcRecord *npc = findRoomNpcRecordByName(state, playerState.attackTargetName);
+	npcEntity = npc ? findSceneRuntimeEntity(entityManager, npc->npcName) : nullptr;
+	if (!npc || !npcEntity || !playerAttackCanReachTarget(state, playerState, npcEntity))
+		npc = Player::isProjectileCombatLoadout(playerState.combatLoadout) ? nullptr : findOverlappingNpcTarget(state, playerState, entityManager);
+	npcEntity = npc ? findSceneRuntimeEntity(entityManager, npc->npcName) : nullptr;
+	return npc;
+}
+
+MonsterRecord *RoomCombat::selectMonsterAttackContactTarget(RoomSetupState &state, RoomPlayerState &playerState,
+		EntityManager *entityManager, Entity *&monsterEntity) const {
+	MonsterRecord *monster = nullptr;
+	if (playerState.attackTargetClassId == kRuntimeEntityClassMonster)
+		monster = findRoomMonsterRecordByName(state, playerState.attackTargetName);
+	monsterEntity = monster ? findSceneRuntimeEntity(entityManager, monster->monsterName) : nullptr;
+	if (!monster || !monsterEntity || !playerAttackCanReachTarget(state, playerState, monsterEntity, monster->engageDistance)) {
+		if (!Player::isProjectileCombatLoadout(playerState.combatLoadout)) {
+			monster = findOverlappingMonsterTarget(state, playerState, entityManager);
+		} else if (playerState.attackTargetClassId < 0) {
+			monster = findProjectileContactMonsterTarget(state, playerState, entityManager);
+			if (monster) {
+				playerState.attackTargetName = monster->monsterName;
+				playerState.attackTargetClassId = kRuntimeEntityClassMonster;
+			}
+		} else {
+			monster = nullptr;
+		}
+		monsterEntity = monster ? findSceneRuntimeEntity(entityManager, monster->monsterName) : nullptr;
+	}
+	return monster;
 }
 
 void RoomCombat::initializeCombatStates(const RoomSetupState &state) {
