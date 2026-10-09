@@ -209,7 +209,7 @@ void IgorEngine::loadMainTexts() {
 		debugC(9, kDebugResource, "loadMainTexts() _verbPrepositions[%d] '%s'", i, _verbPrepositions[i]);
 	}
 	src = &p[0x2A] + _language * 31;
-	for (int i = 0; i < 35; ++i, src += 31 * 2) {
+	for (int i = 0; i < 37; ++i, src += 31 * 2) {
 		decodeMainString(src, _globalObjectNames[i]);
 		debugC(9, kDebugResource, "loadMainTexts() _globalObjectNames[%d] '%s'", i, _globalObjectNames[i]);
 	}

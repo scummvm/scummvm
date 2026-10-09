@@ -531,6 +531,15 @@ private:
 	uint8 _part69FireflyFrameA;
 	uint8 _part69FireflyFrameB;
 	uint16 _part69FireflyStepCount;
+	uint8 _part32Glyphs[420];
+	uint8 _part32DeclinationDigits[2];
+	uint8 _part32AscensionDigits[3];
+	int _part32DeclinationIndex;
+	int _part32AscensionIndex;
+	int _part32LineRow;
+	int _part32Blink;
+	int _part32Result;
+	bool _part32Done;
 	uint8 _part68QuestionCounter;
 	uint8 _part68LastDialogueCode;
 	bool _part68NpcPresent;
@@ -858,7 +867,6 @@ private:
 	void PART_17_HELPER_6_walkFromCollege();
 	void PART_17_HELPER_8_PhillipToJimmyAnimFrame(int num);
 	void PART_17_HELPER_9_JimmyTalkingAnimFrame(int num);
-	void PART_17_HELPER_10();
 	void PART_17_HELPER_11_PhillipToIgor(int frame);
 	void PART_17();
 
@@ -914,12 +922,12 @@ private:
 
 	// church bell tower
 	void PART_22_EXEC_ACTION(int action);
-	void PART_22_ACTION_101();
-	void PART_22_ACTION_102();
+	void PART_22_ACTION_101_lookAtBell();
+	void PART_22_ACTION_102_leave();
 	void PART_22_APPLY_OBJECT_STATE(int num);
 	void PART_22_IGOR_STEP(int facing, int step);
 	void PART_22_SCROLL_STEP(int step);
-	void PART_22_ENTER();
+	void PART_22_enter();
 	void PART_22();
 
 	// college corridor lucas
@@ -928,14 +936,13 @@ private:
 	void PART_23_ACTION_107_openDoor();
 	void PART_23_ACTION_108_closeDoor();
 	void PART_23_UPDATE_ROOM_BACKGROUND();
-	void PART_23_HELPER_1(int num);
-	void PART_23_HELPER_2(int frame);
-	void PART_23_HELPER_3();
+	void PART_23_HELPER_1_APPLY_OBJECT_STATE(int num);
+	void PART_23_HELPER_2_drawDoor(int frame);
+	void PART_23_HELPER_3_drawLucas();
 	void PART_23_HELPER_4_walkFromDoor();
 	void PART_23_HELPER_5_walkFromLeft();
 	void PART_23_HELPER_6_walkFromRight();
-	void PART_23_HELPER_7(int frame);
-	void PART_23_HELPER_8(int frame);
+	void PART_23_HELPER_7_drawLucasFrame(int frame);
 	void PART_23();
 
 		// college corridor sharon michael
@@ -1043,6 +1050,37 @@ private:
 	void PART_31_HELPER_6();
 	void PART_31_HELPER_9();
 	void PART_31();
+
+	// telescope room
+	void PART_32_EXEC_ACTION(int action);
+	void PART_32_ENTER();
+	void PART_32_ACTION_103_useControls();
+	void PART_32_ACTION_106_walkToControls();
+	void PART_32_CONTROLS();
+	void PART_32_CONTROLS_COPY_COLOR(int dstColor, int srcColor);
+	int PART_32_CONTROLS_KEY_AT_CURSOR() const;
+	void PART_32_CONTROLS_DRAW_DIGIT(int fieldOffset, int index, int key);
+	void PART_32_CONTROLS_ERASE_DIGIT(int fieldOffset, int index);
+	void PART_32_CONTROLS_IDLE(int fieldColor);
+	void PART_32_CONTROLS_EXIT();
+	void PART_32_CONTROLS_SELECT_DECLINATION();
+	void PART_32_CONTROLS_SELECT_ASCENSION();
+	void PART_32_CONTROLS_CONFIRM();
+	int PART_32_CONTROLS_ANIMATE_DECLINATION();
+	int PART_32_CONTROLS_ANIMATE_ASCENSION();
+	void PART_32_LOAD_TOWER();
+	void PART_32_LOAD_FINAL();
+	void PART_32_DRAW_TOWER_FRAME(int frame);
+	void PART_32_UPDATE_DIALOGUE_SPEAKER_A(int action);
+	void PART_32_UPDATE_DIALOGUE_SPEAKER_B(int action);
+	void PART_32_SPEAKER_A_SAYS(const Common::Array<DialogueText> &lines);
+	void PART_32_SPEAKER_B_SAYS(const Common::Array<DialogueText> &lines);
+	void PART_32_SCENE();
+	void PART_32_SCENE_TOWER_CONVERSATION();
+	void PART_32_SCENE_TOWER_EMPTY();
+	void PART_32_SCENE_NOTHING();
+	void PART_32_SCENE_FINAL();
+	void PART_32();
 
 	// library
 	void PART_33_EXEC_ACTION(int action);
@@ -1477,6 +1515,7 @@ protected:
 	static const RoomDataOffsets PART_28_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_30_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_31_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_32_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_33_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_34_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_35_ROOM_DATA_OFFSETS;

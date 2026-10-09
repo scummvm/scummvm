@@ -602,6 +602,9 @@ void IgorEngine::PART_MAIN() {
 		case 313:
 			PART_31();
 			break;
+		case 320:
+			PART_32(); // telescope room
+			break;
 		case 330:
 		case 331:
 			PART_33();

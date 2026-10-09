@@ -33,10 +33,10 @@ static const uint8 PART_22_PICK_UP_FRAMES[3] = { 1, 2, 1 };
 void IgorEngine::PART_22_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		PART_22_ACTION_101();
+		PART_22_ACTION_101_lookAtBell();
 		break;
 	case 102:
-		PART_22_ACTION_102();
+		PART_22_ACTION_102_leave();
 		break;
 	default:
 		error("PART_22_EXEC_ACTION unhandled action %d", action);
@@ -47,7 +47,7 @@ void IgorEngine::PART_22_EXEC_ACTION(int action) {
 /**
  * Takes the object (inventory object 29) from the bell tower.
  */
-void IgorEngine::PART_22_ACTION_101() {
+void IgorEngine::PART_22_ACTION_101_lookAtBell() {
 	if (_objectsState[78] == 1 && _inventoryInfo[64] == 0) {
 		igorSayAndWait(203, 2, 855);
 		for (int i = 0; i < 3; ++i) {
@@ -67,10 +67,9 @@ void IgorEngine::PART_22_ACTION_101() {
 }
 
 /**
- * Igor leaves the tower: he walks away from the viewer, shrinking, and the picture scrolls up to
- * the church.
+ * Igor leaves the tower
  */
-void IgorEngine::PART_22_ACTION_102() {
+void IgorEngine::PART_22_ACTION_102_leave() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	for (int i = 9; i >= 0; --i) {
@@ -124,10 +123,9 @@ void IgorEngine::PART_22_SCROLL_STEP(int step) {
 }
 
 /**
- * The first screen shows the neighbouring picture; the room scrolls in from the top and Igor
- * walks into it.
+ * The first screen shows the church and scrolls up to church bell tower
  */
-void IgorEngine::PART_22_ENTER() {
+void IgorEngine::PART_22_enter() {
 	memcpy(_screenVGA, _screenLayer1 + kPart22PictureRows * 320, 16 * 320);
 	memcpy(_screenVGA + 16 * 320, _animFramesBuffer, kPart22PictureRows * 320);
 	_currentAction.verb = kVerbWalk;
@@ -171,7 +169,7 @@ void IgorEngine::PART_22() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_22_EXEC_ACTION);
 	PART_22_APPLY_OBJECT_STATE(255);
 	if (!restoreRoomAfterLoad()) {
-		PART_22_ENTER();
+		PART_22_enter();
 	}
 	enterPartLoop();
 	while (_currentPart == 220 && !_gameStateLoaded) {

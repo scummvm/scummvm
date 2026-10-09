@@ -750,4 +750,22 @@
 #define MSK_Part69 1143
 #define BOX_Part69 1144
 
+// State 320 (PART_32)
+#define DAT_Part32 1145
+#define TXT_Part32 1146
+#define IMG_Part32 1147
+#define PAL_Part32 1148
+#define MSK_Part32 1149
+#define BOX_Part32 1150
+#define IMG_Part32Lock 1151
+#define PAL_Part32Lock 1152
+#define MSK_Part32Lock 1153
+#define ANM_Part32Digits 1154
+#define ANM_Part32Tower 1155
+#define TXT_Part32Tower 1156
+#define PAL_Part32Tower 1157
+#define IMG_Part32Final 1158
+#define PAL_Part32Final 1159
+#define ANM_Part32Final 1160
+
 #endif // IGOR_RESOURCE_IDS
