@@ -28,6 +28,11 @@ namespace Ultima {
 namespace Ultima3 {
 namespace Data {
 
+constexpr byte LOCATION_SOSARIA = 0;
+constexpr byte LOCATION_DUNGEON = 1;
+constexpr byte LOCATION_TOWN = 2;
+constexpr byte LOCATION_CASTLE = 3;
+
 /**
  * The persistent game state: the roster of up to 20 characters, and which
  * of them (by 1-based roster number) make up the active party.
@@ -41,6 +46,10 @@ struct Savegame {
 	byte _location = 0;
 	byte _posX = 0;
 	byte _posY = 0;
+
+	// Where the party was on the overworld, while they're somewhere else
+	byte _worldX = 0;
+	byte _worldY = 0;
 	byte _moveCount[4] = {};
 
 	// Set once the party has seen the more powerful gear offered in the

@@ -71,6 +71,24 @@ public:
 	 * Gets off a horse or ship, leaving it behind
 	 */
 	ExitResult exitVehicle();
+
+	/**
+	 * Takes the party into the town or castle they're standing at the
+	 * entrance to
+	 * @returns		What to say about it, or null if there's nowhere to enter
+	 */
+	const char *enter();
+
+	/**
+	 * Returns true if the party has reached the edge of a town or castle,
+	 * and so leaves it
+	 */
+	bool isAtExit() const;
+
+	/**
+	 * Takes the party back out onto the world map
+	 */
+	void exitToWorld();
 };
 
 } // namespace Ultima3

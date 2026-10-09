@@ -49,6 +49,7 @@ private:
 	void doPass();
 	void doInvalid();
 	void doBoard();
+	void doEnter();
 	void doExitVehicle();
 
 protected:

@@ -31,6 +31,7 @@ namespace Views {
 constexpr int VIEWPORT_CELLS = VIEWPORT_TILES * VIEWPORT_TILES;
 constexpr int VIEWPORT_CENTER = VIEWPORT_CELLS / 2;
 constexpr byte TILE_HIDDEN = 0x24;
+constexpr byte TILE_GRASS = 1;
 constexpr byte TILE_FOREST = 3;
 constexpr byte TILE_MOUNTAINS = 4;
 constexpr byte TILE_WALL = 0x23;
@@ -70,9 +71,16 @@ void LocationMap::buildViewport(byte *tiles) const {
 	const Data::Savegame &save = _G(savegame);
 	const int half = VIEWPORT_TILES / 2;
 
+	// The world wraps around, whereas beyond the edge of a town is open grass
+	const bool wraps = save._location == Data::LOCATION_SOSARIA;
+
 	for (int row = 0; row < VIEWPORT_TILES; ++row) {
-		for (int col = 0; col < VIEWPORT_TILES; ++col)
-			tiles[row * VIEWPORT_TILES + col] = _G(map).tile(save._posX - half + col, save._posY - half + row);
+		for (int col = 0; col < VIEWPORT_TILES; ++col) {
+			int x = save._posX - half + col, y = save._posY - half + row;
+			bool outside = x < 0 || x >= Data::MAP_SIZE || y < 0 || y >= Data::MAP_SIZE;
+
+			tiles[row * VIEWPORT_TILES + col] = (outside && !wraps) ? TILE_GRASS : _G(map).tile(x, y);
+		}
 	}
 
 	tiles[VIEWPORT_CENTER] = save._transport;
@@ -115,7 +123,13 @@ void LocationMap::drawViewport(GfxSurface &s) {
 
 void LocationMap::endTurn() {
 	_logic.incrementMoveCounter();
-	_logic.processPartyTurnEffects(true);
+
+	if (_logic.isAtExit()) {
+		_G(messages).print("Exit to Sosaria!\nPlease wait...\n");
+		_logic.exitToWorld();
+	}
+
+	_logic.processPartyTurnEffects(_G(savegame)._location == Data::LOCATION_SOSARIA);
 
 	if (!checkPartyWipedOut())
 		startPrompt();
@@ -154,6 +168,19 @@ void LocationMap::doBoard() {
 		endTurn();
 	} else {
 		_G(messages).print("Board");
+		commandFailed("<-What?\n");
+	}
+}
+
+void LocationMap::doEnter() {
+	_G(messages).print("Enter ");
+
+	const char *text = _logic.enter();
+	if (text) {
+		_G(messages).print(text);
+		_G(messages).print("Please wait...\n");
+		endTurn();
+	} else {
 		commandFailed("<-What?\n");
 	}
 }
@@ -206,6 +233,9 @@ bool LocationMap::handleCommand(const KeypressMessage &msg) {
 		return true;
 	case 'X':
 		doExitVehicle();
+		return true;
+	case 'E':
+		doEnter();
 		return true;
 	case 'L':
 		_G(messages).print("Look-");

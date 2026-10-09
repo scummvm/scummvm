@@ -26,7 +26,6 @@ namespace Ultima3 {
 namespace Data {
 
 constexpr byte TRANSPORT_ON_FOOT = 0x3F;
-constexpr byte LOCATION_SOSARIA = 0;
 constexpr byte START_X = 44;
 constexpr byte START_Y = 20;
 
@@ -73,6 +72,11 @@ void Savegame::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_allArmour);
 		s.syncAsByte(_plusTwoWeapons);
 		s.syncAsByte(_plusTwoArmour);
+	}
+
+	if (s.getVersion() >= 3) {
+		s.syncAsByte(_worldX);
+		s.syncAsByte(_worldY);
 	}
 }
 

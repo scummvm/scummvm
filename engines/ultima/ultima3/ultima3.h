@@ -90,6 +90,7 @@ public:
 
 	Data::Savegame _savegame;
 	Data::Map _map;
+	Data::Map _worldMap;
 	Gfx::Shapes _shapes;
 	Gfx::MessageLog _messages;
 	Gfx::ScreenEffects _effects;

@@ -111,6 +111,75 @@ bool LocationLogic::move(Direction dir) {
 	return true;
 }
 
+// The towns, castles and dungeons on the world map, with the entrance of each
+struct Entrance {
+	const char *_filename;
+	byte _x, _y;
+};
+
+static const Entrance ENTRANCES[] = {
+	{ "BRITISH.ULT", 45, 18 }, { "EXODUS.ULT", 10, 53 }, { "LCB.ULT", 46, 19 },
+	{ "MOON.ULT", 6, 13 }, { "YEW.ULT", 34, 16 }, { "MONTOR_E.ULT", 49, 58 },
+	{ "MONTOR_W.ULT", 47, 58 }, { "GREY.ULT", 7, 44 }, { "DAWN.ULT", 37, 53 },
+	{ "DEVIL.ULT", 18, 31 }, { "FAWN.ULT", 30, 2 }, { "DEATH.ULT", 56, 31 }
+};
+
+constexpr byte TILE_TOWN = 6;
+constexpr byte TILE_CASTLE = 7;
+
+// Where the party starts out in each kind of location
+constexpr byte TOWN_START_X = 0x01;
+constexpr byte TOWN_START_Y = 0x20;
+constexpr byte CASTLE_START_X = 0x20;
+constexpr byte CASTLE_START_Y = 0x3E;
+
+const char *LocationLogic::enter() {
+	Data::Savegame &save = _G(savegame);
+	if (save._location != Data::LOCATION_SOSARIA)
+		return nullptr;
+
+	const Entrance *entrance = nullptr;
+	for (uint i = 0; i < ARRAYSIZE(ENTRANCES) && !entrance; ++i) {
+		if (ENTRANCES[i]._x == save._posX && ENTRANCES[i]._y == save._posY)
+			entrance = &ENTRANCES[i];
+	}
+
+	byte tile = _G(map).tile(save._posX, save._posY);
+	if (!entrance || (tile != TILE_TOWN && tile != TILE_CASTLE) || !Data::Map::exists(entrance->_filename))
+		return nullptr;
+
+	_G(worldMap) = _G(map);
+	save._worldX = save._posX;
+	save._worldY = save._posY;
+	_G(map).load(entrance->_filename);
+
+	if (tile == TILE_TOWN) {
+		save._location = Data::LOCATION_TOWN;
+		save._posX = TOWN_START_X;
+		save._posY = TOWN_START_Y;
+		return "Towne!\n";
+	} else {
+		save._location = Data::LOCATION_CASTLE;
+		save._posX = CASTLE_START_X;
+		save._posY = CASTLE_START_Y;
+		return "Castle!\n";
+	}
+}
+
+bool LocationLogic::isAtExit() const {
+	const Data::Savegame &save = _G(savegame);
+	return save._location >= Data::LOCATION_TOWN && (save._posX == 0 || save._posY == 0);
+}
+
+void LocationLogic::exitToWorld() {
+	Data::Savegame &save = _G(savegame);
+
+	_G(map) = _G(worldMap);
+	save._location = Data::LOCATION_SOSARIA;
+	save._posX = save._worldX;
+	save._posY = save._worldY;
+}
+
 const char *LocationLogic::board() {
 	Data::Savegame &save = _G(savegame);
 	if (save._transport != TRANSPORT_ON_FOOT)

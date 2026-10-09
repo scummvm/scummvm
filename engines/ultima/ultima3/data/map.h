@@ -30,18 +30,53 @@ namespace Ultima3 {
 namespace Data {
 
 constexpr int MAP_SIZE = 64;
+constexpr int CREATURE_COUNT = 32;
+
+/**
+ * The creatures wandering a location: the monsters of the overworld or the
+ * people of a town or castle. Their tiles are also placed in the map cells
+ * they stand on, with what's underneath them kept here
+ */
+struct Creatures {
+	byte _tile[CREATURE_COUNT] = {};
+	byte _floor[CREATURE_COUNT] = {};
+	byte _x[CREATURE_COUNT] = {};
+	byte _y[CREATURE_COUNT] = {};
+
+	// The top two bits give how it behaves, and the rest what a person says
+	byte _flags[CREATURE_COUNT] = {};
+};
 
 /**
  * A 64x64 location map, as used by the overworld, towns and castles. Each
- * cell holds a tile number multiplied by 4
+ * cell holds a tile number multiplied by 4. The rest of a location's data,
+ * which includes the things said there, follows it
  */
 class Map {
 private:
+	static const int TEXT_SIZE = 0x180;
+	static const int EXTRA_SIZE = 8;
+
 	byte _cells[MAP_SIZE * MAP_SIZE] = {};
 
+	// The offsets of the things said in a town, followed by the things
+	byte _text[TEXT_SIZE] = {};
+
+	// The whirlpool and moon phases on the overworld
+	byte _extra[EXTRA_SIZE] = {};
+
+	void synchronizeData(Common::Serializer &s);
+
 public:
+	Creatures _creatures;
+
 	/**
-	 * Loads a map from the start of a .ULT file
+	 * Returns true if a location data file exists
+	 */
+	static bool exists(const char *filename);
+
+	/**
+	 * Loads a location from a .ULT file
 	 */
 	void load(const char *filename);
 

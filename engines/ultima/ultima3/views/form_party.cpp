@@ -62,6 +62,10 @@ void FormParty::finish() {
 	if (_G(savegame)._partySize == 0) {
 		fail("(No one there)");
 	} else {
+		// A party that came to grief in a town starts out again on the world map
+		if (_G(savegame)._mapLoaded && _G(savegame)._location != Data::LOCATION_SOSARIA)
+			_G(map) = _G(worldMap);
+
 		_G(savegame).formParty();
 		showMessage("(Formed)", 16, 21);
 	}

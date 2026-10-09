@@ -86,11 +86,16 @@ bool Ultima3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
-	s.syncVersion(2);
+	s.syncVersion(3);
 
 	_savegame.synchronize(s);
-	if (_savegame._mapLoaded)
+	if (_savegame._mapLoaded) {
 		_map.synchronize(s);
+
+		// The world is kept aside while the party is in a town or castle
+		if (_savegame._location != Data::LOCATION_SOSARIA)
+			_worldMap.synchronize(s);
+	}
 
 	if (s.isLoading()) {
 		// Carry on in the world if there's a party able to adventure in it,
