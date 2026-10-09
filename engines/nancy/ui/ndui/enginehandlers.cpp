@@ -491,6 +491,7 @@ void Manager::endConversation() {
 }
 
 void Manager::setCaption(const Common::String &text) {
+	_caption = text;
 	takeAction(kActionSetText, "CCText", text);
 }
 

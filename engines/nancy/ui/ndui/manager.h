@@ -120,6 +120,7 @@ public:
 	// Engine state shown by the UI
 	void update();
 	void setCaption(const Common::String &text);
+	const Common::String &getCaption() const { return _caption; }
 	void updatePlayerTime();
 	void createItemButtons();
 	void clickInventoryItem(int16 itemID) { onInventoryClicked(itemID); }
@@ -185,6 +186,7 @@ private:
 	InvButton *findItemButton(int16 itemID) const;
 
 	Common::Array<Panel *> _panels;
+	Common::String _caption;
 	Common::HashMap<Common::String, Graphics::ManagedSurface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _textures;
 	Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _templates;
 

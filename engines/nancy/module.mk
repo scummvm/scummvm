@@ -102,6 +102,7 @@ MODULE_OBJS = \
   action/puzzle/soundequalizerpuzzle.o \
   action/puzzle/soundmatchpuzzle.o \
   action/puzzle/spigotpuzzle.o \
+  action/puzzle/stakeoutpuzzle.o \
   action/puzzle/stepobjectspuzzle.o \
   action/puzzle/tangrampuzzle.o \
   action/puzzle/telephone.o \
