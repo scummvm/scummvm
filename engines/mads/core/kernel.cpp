@@ -1313,7 +1313,15 @@ void kernel_animation_init() {
 		kernel_anim[count].anim = NULL;
 		kernel_anim[count].cycled = false;
 		kernel_anim[count].repeat = false;
+		kernel_anim[count].awaiting_daemon = false;
 	}
+}
+
+void kernel_animations_begin_daemon() {
+	// Clear before calling room code, not after: an explicit update from that
+	// code may expose another frame that still needs the next daemon pass.
+	for (int count = 0; count < KERNEL_MAX_ANIMATIONS; ++count)
+		kernel_anim[count].awaiting_daemon = false;
 }
 
 int kernel_run_animation(const char *name, int trigger_code) {
@@ -1395,6 +1403,8 @@ int kernel_run_animation(const char *name, int trigger_code) {
 	error_flag = false;
 
 	kernel_anim[found].last_frame = -1;
+	// A new animation may render its initial frame, including during a fade.
+	kernel_anim[found].awaiting_daemon = false;
 
 done:
 	if (error_flag) {
@@ -1496,6 +1506,9 @@ void kernel_reset_animation(int handle, int frame) {
 		kernel_anim[handle].frame = frame;
 		kernel_anim[handle].image = 0;
 		kernel_anim[handle].doomed = false;
+		// A script-selected frame is an explicit transition, not an unobserved
+		// automatic advance. Preserve parser releases and cross-actor handoffs.
+		kernel_anim[handle].awaiting_daemon = false;
 	}
 }
 
@@ -1734,6 +1747,9 @@ static void kernel_process_animation(int handle, int asynchronous) {
 	kernel_anim[handle].frame++;
 
 	if (!asynchronous) {
+		// Screen reconstruction uses the asynchronous path and must not create
+		// or consume a daemon observation for the live animation.
+		kernel_anim[handle].awaiting_daemon = true;
 		if (kernel_anim[handle].frame == kernel_anim[handle].anim->num_frames) {
 			if (kernel_anim[handle].trigger_code) {
 				kernel.trigger = kernel_anim[handle].trigger_code;
@@ -1754,12 +1770,18 @@ done:
 	;
 }
 
-void kernel_process_all_animations() {
+void kernel_process_all_animations(bool require_daemon) {
 	int count;
 	int ok_to_update;
 
 	for (count = 0; count < KERNEL_MAX_ANIMATIONS; count++) {
 		if (kernel_anim[count].anim != NULL) {
+			// Do not cross two automatic frame boundaries without giving the
+			// room its daemon pass. FX may bypass trigger delivery restrictions,
+			// but must not bypass this per-animation observation requirement.
+			if (require_daemon && kernel_anim[count].awaiting_daemon)
+				continue;
+
 			ok_to_update = (kernel.fx || !kernel.trigger ||
 				(kernel_anim[count].frame != kernel_anim[count].anim->num_frames - 1));
 			if (ok_to_update) {
@@ -1841,6 +1863,7 @@ void kernel_abort_animation(int handle) {
 	}
 
 	kernel_anim[handle].doomed = false;
+	kernel_anim[handle].awaiting_daemon = false;
 
 	go_ahead_and_frag_the_palette();
 }

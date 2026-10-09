@@ -243,7 +243,7 @@ struct Animation {
 	int     repeat;                     /* Animation should repeat continuously */
 	int     cycled;                     /* Animation has cycled back to start   */
 	int     sprite_loaded;              /* Current sprite loaded (for streamers)*/
-	byte *buffer[2];                /* Double buffering pointers (streamers)*/
+	byte    *buffer[2];                 /* Double buffering pointers (streamers)*/
 	int     buffer_id;                  /* Double buffering index    (streamers)*/
 	int     messages;                   /* Messages currently active from anim  */
 	int     frame;                      /* Current frame                        */
@@ -261,6 +261,8 @@ struct Animation {
 	int     dynamic_hotspot;            /* Attached dynamic hotspot             */
 
 	int     last_frame;                 /* Most recent frame viewed             */
+
+	bool    awaiting_daemon;            /* Current frame still needs daemon pass*/
 };
 
 
@@ -531,7 +533,17 @@ extern void kernel_abort_animation(int handle);
 extern void kernel_abort_all_animations();
 extern void kernel_doom_all_animations();
 extern void kernel_abort_doomed_animations();
-extern void kernel_process_all_animations();
+
+/**
+ * A daemon pass observes frames that were pending before the pass began.
+ */
+extern void kernel_animations_begin_daemon();
+
+/**
+ * Explicit updates (menus and in-daemon handoffs) retain their old behavior.
+ * Phantom/Dragonsphere game loops require daemon observation between automatic steps.
+ */
+extern void kernel_process_all_animations(bool require_daemon = false);
 extern void kernel_message_init();
 extern int  kernel_message_add(char *text, int x, int y, int color,
 	long time_on_screen, int trigger_code, int flags);
