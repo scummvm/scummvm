@@ -52,6 +52,7 @@ void IgorEngine::copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *
  *   kBlendCopy               plain copy
  *   kBlendLitSprite          sprite pixels with colors 0xC0-0xCF (Igors colors) are replaced by the background pixel or darkened according to the lighting area they land in;
  *                            use it for sprites that move through lit and shaded parts of a room
+ *   kBlendLitSpriteNoShade   same, but sprite pixels are never darkened: they are only replaced by the background pixel in the lit areas
  *   kBlendBehindIgor         the block is drawn behind Igor: screen pixels with colors 0xC0-0xCF are kept
  *   kBlendBehindIgorAndText  same, and screen pixels with the dialogue text colors 0xF0-0xF1 are kept too
  */
@@ -65,12 +66,12 @@ void IgorEngine::drawAnimRect(int dstOffset, int animOffset, int w, int h, bool 
 			for (int x = 0; x < w; ++x) {
 				const int dst = dstOffset + y * 320 + x;
 				uint8 color = src[y * w + x];
-				if (blend == kBlendLitSprite) {
+				if (blend == kBlendLitSprite || blend == kBlendLitSpriteNoShade) {
 					if (color >= 0xC0 && color <= 0xCF) {
 						const RoomObjectArea &area = _roomObjectAreasTable[_screenLayer2[dst]];
 						if (area.y1Lum > 0)
 							color = _screenLayer1[dst];
-						else if (area.y2Lum > 0)
+						else if (blend == kBlendLitSprite && area.y2Lum > 0)
 							color -= area.deltaLum;
 					}
 				} else {

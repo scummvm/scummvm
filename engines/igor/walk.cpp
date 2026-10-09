@@ -42,8 +42,9 @@ void IgorEngine::setRoomWalkBounds(int x1, int y1, int x2, int y2,
 	_roomWalkBounds.x2MinY = x2MinY < 0 ? y1 : x2MinY;
 }
 
-void IgorEngine::setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp) {
+void IgorEngine::setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp, int yBottom) {
 	_roomClickFix.yMax = yMax;
+	_roomClickFixBottom = yBottom;
 	_roomClickFix.xMin = xMin;
 	_roomClickFix.xMax = xMax;
 	_roomClickFix.scanUp = scanUp;
@@ -1217,14 +1218,14 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 		}
 		int yPos = MIN(*y, _roomClickFix.yMax);
 		do {
-			if (yPos < 143) {
+			if (yPos < _roomClickFixBottom) {
 				++yPos;
 			}
 			if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area > 0) {
 				break;
 			}
-		} while (yPos != 143);
-		if (_roomClickFix.scanUp && yPos == 143 && _roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
+		} while (yPos != _roomClickFixBottom);
+		if (_roomClickFix.scanUp && yPos == _roomClickFixBottom && _roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
 			do {
 				--yPos;
 			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > 0);

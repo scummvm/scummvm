@@ -416,6 +416,7 @@ struct WalkData {
 enum AnimBlend {
 		kBlendCopy,
 		kBlendLitSprite,
+		kBlendLitSpriteNoShade,
 		kBlendBehindIgor,
 		kBlendBehindIgorAndText
 };
@@ -544,6 +545,7 @@ private:
 
 	RoomWalkBounds _roomWalkBounds;
 	RoomClickFix _roomClickFix;
+	int _roomClickFixBottom; // the last row the click fix scans
 	// stride of the give matrix of the room when it differs from the use matrix (0: same)
 	int _roomGiveObjectSize;
 	RoomDataOffsets _roomDataOffsets;
@@ -744,7 +746,7 @@ private:
 	void PART_11();
 	void PART_11_EXEC_ACTION(int action);
 	void PART_11_ACTION_105_pickSlug();
-	void PART_11_ACTION_107();
+	void PART_11_ACTION_107_useButterflyNetWithHole();
 	void PART_11_ACTION_108_scrollRight();
 	void PART_11_ACTION_112_pickBottle();
 	void PART_11_APPLY_OBJECT_STATE(int num);
@@ -1179,6 +1181,16 @@ private:
 	void PART_68_NPC_LEAVES();
 	void PART_68();
 
+	void PART_71_EXEC_ACTION(int action);
+	void PART_71_APPLY_OBJECT_STATE(int what);
+	void PART_71_DRAW_OBJECT(int frame);
+	void PART_71_ACTION_102_takeObject();
+	void PART_71_ACTION_103_look();
+	void PART_71_ENTER_FROM_RIGHT();
+	void PART_71_LIGHTNING();
+	void PART_71_UPDATE_ROOM_BACKGROUND();
+	void PART_71();
+
 	void PART_72_EXEC_ACTION(int action);
 	void PART_72_APPLY_OBJECT_STATE();
 	void PART_72_ACTION_102_takeObject();
@@ -1203,7 +1215,7 @@ private:
 	void mazeExitThroughStairs(const MazeAction &action);
 	void mazeGoToNeighbor(int dir);
 	int MAZE_MUSIC_TRACK() const;
-	void setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp);
+	void setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp, int yBottom = 143);
 
 	void UPDATE_OBJECT_STATE(int num);
 	void PART_UPDATE_FIGURES_ON_PAPER(int delay);
@@ -1296,6 +1308,7 @@ private:
 	void scrollPalette(int startColor, int endColor);
 	void setPaletteColor(uint8 index, uint8 r, uint8 g, uint8 b);
 	void setPaletteRange(int startColor, int endColor);
+	void darkenPalette(uint8 *palette, int firstColor, int lastColor, int amount);
 	void updatePalette(int count);
 	void SET_PAL_208_96_1();
 	void SET_PAL_240_48_1();
@@ -1456,6 +1469,7 @@ protected:
 	static const RoomDataOffsets PART_50_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_68_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_70_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_71_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_72_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_81_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];

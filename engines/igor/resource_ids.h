@@ -470,6 +470,7 @@
 #define STR_SharewarePenduloAddress4 446
 #define STR_SharewarePenduloAddress5 447
 #define STR_SharewarePenduloAddress6 448
+#define STR_ShinyThing 449
 
 
 // Decanato panels
@@ -730,5 +731,14 @@
 #define IMG_Part74 1128
 #define TXT_Part74 1129
 #define ANM_Part74 1130
+
+// State 710 (PART_71)
+#define DAT_Part71 1131
+#define ANM_Part71 1132
+#define TXT_Part71 1133
+#define IMG_Part71 1134
+#define PAL_Part71 1135
+#define MSK_Part71 1136
+#define BOX_Part71 1137
 
 #endif // IGOR_RESOURCE_IDS

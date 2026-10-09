@@ -47,13 +47,6 @@ static bool PART_72_IS_PROTECTED_COLOR(uint8 color) {
 	return (color >= 0xC0 && color <= 0xCF) || (color >= 0xF0 && color <= 0xF1);
 }
 
-static void PART_72_DARKEN_PALETTE(uint8 *palette, int firstColor, int lastColor, int amount) {
-	for (int i = firstColor * 3; i < (lastColor + 1) * 3; ++i) {
-		const int value = palette[i] - amount;
-		palette[i] = value < 1 ? 0 : value;
-	}
-}
-
 void IgorEngine::PART_72_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
@@ -216,8 +209,8 @@ void IgorEngine::PART_72() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	// the whole picture is darker than its palette
-	PART_72_DARKEN_PALETTE(_paletteBuffer, 1, 175, 10);
-	PART_72_DARKEN_PALETTE(_paletteBuffer, 192, 207, 15);
+	darkenPalette(_paletteBuffer, 1, 175, 10);
+	darkenPalette(_paletteBuffer, 192, 207, 15);
 
 	for (int i = 0; i < 5; ++i) {
 		const int pos = kPart72StarOffsets[i];

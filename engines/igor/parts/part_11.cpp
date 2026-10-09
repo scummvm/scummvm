@@ -68,7 +68,7 @@ void IgorEngine::PART_11_ACTION_105_pickSlug() {
 	PART_11_APPLY_OBJECT_STATE(255);
 }
 
-void IgorEngine::PART_11_ACTION_107() {
+void IgorEngine::PART_11_ACTION_107_useButterflyNetWithHole() {
 	for (int frame = 0; frame <= 2; ++frame) {
 		drawAnimRect(0x47E3, kPart10_11_Frm5 + frame * 0x348, 30, 28);
 		waitForTimer(61);
@@ -151,7 +151,7 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		igorSayAndWait(73, 1, 50);
 		break;
 	case 107:
-		PART_11_ACTION_107();
+		PART_11_ACTION_107_useButterflyNetWithHole();
 		break;
 	case 108:
 		PART_11_ACTION_108_scrollRight();

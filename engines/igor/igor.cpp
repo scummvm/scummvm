@@ -124,6 +124,7 @@ void IgorEngine::restart() {
 	_mazeSavedLocation = 0;
 	_mazeRoom = 0;
 	memset(&_roomClickFix, 0, sizeof(_roomClickFix));
+	_roomClickFixBottom = 143;
 	_roomGiveObjectSize = 0;
 	_nextTimer = 0;
 	_fastMode = 1;

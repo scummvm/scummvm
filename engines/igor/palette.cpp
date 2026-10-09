@@ -42,6 +42,16 @@ void IgorEngine::scrollPalette(int startColor, int endColor) {
 	memcpy(&_currentPalette[startColor * 3], c, 3);
 }
 
+/**
+ * Lowers the components of the colors firstColor to lastColor of a palette by "amount" (a component never goes below 0).
+ */
+void IgorEngine::darkenPalette(uint8 *palette, int firstColor, int lastColor, int amount) {
+	for (int i = firstColor * 3; i < (lastColor + 1) * 3; ++i) {
+		const int value = palette[i] - amount;
+		palette[i] = value < 1 ? 0 : value;
+	}
+}
+
 void IgorEngine::setPaletteRange(int startColor, int endColor) {
 	// debugC(9, kDebugScreen, "setPaletteRange(%d, %d)", startColor, endColor);
 	assert(endColor - startColor + 1 <= 256);

@@ -668,6 +668,9 @@ void IgorEngine::PART_MAIN() {
 		case 700:
 			PART_70();
 			break;
+		case 710:
+			PART_71();
+			break;
 		case 720:
 		case 721:
 			PART_72();
