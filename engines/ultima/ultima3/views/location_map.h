@@ -22,6 +22,7 @@
 #ifndef ULTIMA3_VIEWS_LOCATION_MAP_H
 #define ULTIMA3_VIEWS_LOCATION_MAP_H
 
+#include "ultima/ultima3/logic/creature_logic.h"
 #include "ultima/ultima3/logic/location_logic.h"
 #include "ultima/ultima3/views/game.h"
 
@@ -38,6 +39,10 @@ constexpr int VIEWPORT_TILES = 11;
 class LocationMap : public Game {
 private:
 	LocationLogic _logic;
+	CreatureLogic _creatures;
+
+	// Set while a step is being taken, as opposed to some other command
+	bool _moved = false;
 
 	/**
 	 * Fills in the tile numbers for the viewport, with the party's transport

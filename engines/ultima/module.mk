@@ -171,6 +171,7 @@ MODULE_OBJS += \
 	ultima3/gfx/message_log.o \
 	ultima3/gfx/pic_decoder.o \
 	ultima3/gfx/shapes.o \
+	ultima3/logic/creature_logic.o \
 	ultima3/logic/location_logic.o \
 	ultima3/logic/logic.o \
 	ultima3/views/character_details.o \

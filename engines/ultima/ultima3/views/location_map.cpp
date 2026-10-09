@@ -131,12 +131,17 @@ void LocationMap::endTurn() {
 
 	_logic.processPartyTurnEffects(_G(savegame)._location == Data::LOCATION_SOSARIA);
 
+	// A creature reaching the party starts a fight
+	_creatures.update(_moved);
+	_moved = false;
+
 	if (!checkPartyWipedOut())
 		startPrompt();
 }
 
 void LocationMap::doMove(Direction dir, const char *label) {
 	_G(messages).print(label);
+	_moved = true;
 
 	if (!_logic.move(dir)) {
 		_G(messages).print("Invalid Move!\n");
