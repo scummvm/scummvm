@@ -89,6 +89,7 @@ MODULE_OBJS = \
   action/puzzle/rotatinglockpuzzle.o \
   action/puzzle/rowmatchpuzzle.o \
   action/puzzle/safedialpuzzle.o \
+  action/puzzle/sentrypuzzle.o \
   action/puzzle/sequencelockpuzzle.o \
   action/puzzle/scalepuzzle.o \
   action/puzzle/setplayerclock.o \

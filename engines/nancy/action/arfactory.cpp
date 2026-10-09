@@ -104,6 +104,7 @@
 #include "engines/nancy/action/puzzle/safedialpuzzle.h"
 #include "engines/nancy/action/puzzle/scalepuzzle.h"
 #include "engines/nancy/action/puzzle/setplayerclock.h"
+#include "engines/nancy/action/puzzle/sentrypuzzle.h"
 #include "engines/nancy/action/puzzle/sequencelockpuzzle.h"
 #include "engines/nancy/action/puzzle/sewingmachinepuzzle.h"
 #include "engines/nancy/action/puzzle/shovelmeasurepuzzle.h"
@@ -655,10 +656,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new SnowmobilePuzzle(SnowmobilePuzzle::kChase);
 	case 168:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
 			return new Set3DSoundListenerPosition();
 		else
-			return nullptr;
+			return new SentryStartPosition();
 	// -- Nancy 13 new/relocated puzzles (types 169-176) --
 	case 169:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
@@ -826,7 +827,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new TypewriterText();
 	case 210:
-		return new SafeDialPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
+			return new SafeDialPuzzle();
+		else
+			return new SentryPuzzle();
 	case 211:
 		return new CollisionPuzzle(CollisionPuzzle::PuzzleType::kCollision);
 	case 212:
