@@ -301,13 +301,13 @@ void IgorEngine::PART_12_UPDATE_ROOM_BACKGROUND() {
 void IgorEngine::PART_12_UPDATE_DIALOGUE_PRIEST(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_12_HELPER_8();
+		PART_12_HELPER_8_drawIdlePriest();
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_12_HELPER_10(6 + getRandomNumber(5));
+		PART_12_HELPER_10_drawPriestTalkingFrame(6 + getRandomNumber(5));
 		break;
 	case kUpdateDialogueAnimStanding:
-		PART_12_HELPER_8();
+		PART_12_HELPER_8_drawIdlePriest();
 		break;
 	}
 }
@@ -337,7 +337,7 @@ void IgorEngine::PART_12_OBJECT_STATE(int num) {
 			_roomActionsTable[186] = 3;
 			_roomActionsTable[188] = 3;
 		} else {
-			PART_12_HELPER_9();
+			PART_12_HELPER_9_drawEntrance();
 			_roomActionsTable[169] = 108;
 			_roomActionsTable[175] = 106;
 			_roomActionsTable[177] = 2;
@@ -408,7 +408,7 @@ void IgorEngine::PART_12_HELPER_4_exorcismCutscene() {
 	_currentPart = 40;
 }
 
-void IgorEngine::PART_12_HELPER_5() {
+void IgorEngine::PART_12_HELPER_5_enterFromPath() {
 	_walkData[0].setPos(196, 64, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 1;
@@ -444,7 +444,7 @@ void IgorEngine::PART_12_HELPER_5() {
 	} while (_gameState.igorMoving || _gameState.unk10 != 11);
 }
 
-void IgorEngine::PART_12_HELPER_6() {
+void IgorEngine::PART_12_HELPER_6_enterFromChurch() {
 	PART_12_OBJECT_STATE(255);
 	_walkData[0].setPos(75, 89, 2, 0);
 	_walkData[0].setDefaultScale();
@@ -480,15 +480,15 @@ void IgorEngine::PART_12_HELPER_6() {
 	} while (_gameState.igorMoving || _gameState.unk10 != 11);
 }
 
-void IgorEngine::PART_12_HELPER_8() {
+void IgorEngine::PART_12_HELPER_8_drawIdlePriest() {
 	decodeAnimFrame(_animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA454) - 1, _screenVGA, true);
 }
 
-void IgorEngine::PART_12_HELPER_9() {
+void IgorEngine::PART_12_HELPER_9_drawEntrance() {
 	decodeAnimFrame(_animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA442) - 1, _screenLayer1, true);
 }
 
-void IgorEngine::PART_12_HELPER_10(int frame) {
+void IgorEngine::PART_12_HELPER_10_drawPriestTalkingFrame(int frame) {
 	decodeAnimFrame(_animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA43E + frame * 2) - 1, _screenVGA, true);
 }
 
@@ -526,10 +526,10 @@ void IgorEngine::PART_12() {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 120) {
-			PART_12_HELPER_5();
+			PART_12_HELPER_5_enterFromPath();
 		}
 		if (_currentPart == 121) {
-			PART_12_HELPER_6();
+			PART_12_HELPER_6_enterFromChurch();
 			if (_objectsState[106] == 1) {
 				ADD_DIALOGUE_TEXT(216, 2, 799); // cseg171:3766-3772
 				ADD_DIALOGUE_TEXT(218, 1, 800); // cseg171:3778-3784

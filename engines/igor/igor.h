@@ -768,11 +768,11 @@ private:
 	void PART_12_HELPER_2();
 	void PART_12_HELPER_3_paintOverLizard();
 	void PART_12_HELPER_4_exorcismCutscene();
-	void PART_12_HELPER_5();
-	void PART_12_HELPER_6();
-	void PART_12_HELPER_8();
-	void PART_12_HELPER_9();
-	void PART_12_HELPER_10(int frame);
+	void PART_12_HELPER_5_enterFromPath();
+	void PART_12_HELPER_6_enterFromChurch();
+	void PART_12_HELPER_8_drawIdlePriest();
+	void PART_12_HELPER_9_drawEntrance();
+	void PART_12_HELPER_10_drawPriestTalkingFrame(int frame);
 	void PART_12();
 
 	// inside church
