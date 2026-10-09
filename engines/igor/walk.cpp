@@ -1185,7 +1185,7 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 				break;
 			}
 		} while (yPos != 143);
-		if (_roomClickFix.scanUp && yPos == 143) {
+		if (_roomClickFix.scanUp && yPos == 143 && _roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
 			do {
 				--yPos;
 			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > 0);

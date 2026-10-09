@@ -619,6 +619,10 @@ void IgorEngine::PART_MAIN() {
 		case 700:
 			PART_70();
 			break;
+		case 720:
+		case 721:
+			PART_72();
+			break;
 		case 750:
 			PART_75(); // philip vodka cutscene
 			break;

@@ -524,6 +524,7 @@ private:
 
 	uint8 _objectsState[112];
 	bool _part07FirstVisitDone;
+	uint8 _part72StarIndex;
 	uint8 _parkLadyIdleStep;
 	uint8 _inventoryImages[36];
 	uint8 _inventoryInfo[74];
@@ -1114,6 +1115,15 @@ private:
 	void PART_70_UPDATE_ROOM_BACKGROUND();
 	void PART_70();
 
+	void PART_72_EXEC_ACTION(int action);
+	void PART_72_APPLY_OBJECT_STATE();
+	void PART_72_ACTION_102_takeObject();
+	void PART_72_ENTER_FROM_RIGHT();
+	void PART_72_ENTER_FROM_LEFT();
+	void PART_72_UPDATE_STAR();
+	void PART_72_UPDATE_ROOM_BACKGROUND();
+	void PART_72();
+
 	// maze
 	static const MazeNode MAZE_NODES[108];
 	static const MazeRoom *getMazeRoom(int part);
@@ -1381,6 +1391,7 @@ protected:
 	static const RoomDataOffsets PART_37_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_50_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_70_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_72_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
 	static const uint8 _inventoryOffsetTable[];
 	static const uint8 _inventoryActionsTable[];
