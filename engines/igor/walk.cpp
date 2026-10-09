@@ -1165,6 +1165,44 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 		*y = yPos;
 		return;
 	}
+	if (getPart() == 81) {
+		// The click is clamped to the floor: on the left part the first walkable row is looked for below it (starting
+		// one row down) and, if there is none, above; on the right part a click above row 93 goes to a fixed
+		// place and any other goes to the first walkable column to the left.
+		int xPos = *x;
+		int yPos = MIN(*y, 143);
+		if (xPos <= 128) {
+			do {
+				if (yPos < 143) {
+					++yPos;
+				}
+				if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area > 0) {
+					break;
+				}
+			} while (yPos != 143);
+			if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
+				// the scan upwards never stops by itself in the original when nothing is walkable
+				do {
+					if (yPos > 0) {
+						--yPos;
+					}
+				} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > 0);
+			}
+		} else if (yPos < 93) {
+			xPos = 128;
+			yPos = 93;
+		} else {
+			// the scan to the left never stops by itself in the original when nothing is walkable
+			do {
+				if (xPos > 0) {
+					--xPos;
+				}
+			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && xPos > 0);
+		}
+		*x = xPos;
+		*y = yPos;
+		return;
+	}
 	if (_roomClickFix.enabled) {
 		// The click is clamped, then the picture is scanned for the first walkable row strictly below it (the
 		// scan starts one row down, whatever the row is) and, if none is found down to the last row and the

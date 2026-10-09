@@ -715,4 +715,20 @@
 #define MSK_Part68 1115
 #define BOX_Part68 1116
 
+// States 810 (PART_81) and the cutscene of state 740 (PART_74)
+#define DAT_Part81 1117
+#define DLG_Part81 1118
+#define ANM_Part81 1119
+#define TXT_Part81 1120
+#define IMG_Part81 1121
+#define PAL_Part81 1122
+#define MSK_Part81 1123
+#define BOX_Part81 1124
+#define ANM_Part81Cutscene 1125
+#define IMG_Part81Strip 1126
+#define PAL_Part74 1127
+#define IMG_Part74 1128
+#define TXT_Part74 1129
+#define ANM_Part74 1130
+
 #endif // IGOR_RESOURCE_IDS

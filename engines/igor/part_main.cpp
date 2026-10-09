@@ -675,6 +675,9 @@ void IgorEngine::PART_MAIN() {
 		case 750:
 			PART_75(); // philip vodka cutscene
 			break;
+		case 810:
+			PART_81();
+			break;
 		case 850: // Intro cutscene
 			// Clear the entire screen buffer before starting the intro cutscene
 			memset(_screenVGA, 0, 64000);

@@ -1121,6 +1121,39 @@ private:
 	void PART_70_UPDATE_ROOM_BACKGROUND();
 	void PART_70();
 
+	void PART_74_CYCLE_COLORS();
+	void PART_74_DRAW_FRAME(int frame);
+	void PART_74_UPDATE_DIALOGUE_FIRST(int action);
+	void PART_74_UPDATE_DIALOGUE_SECOND_A(int action);
+	void PART_74_UPDATE_DIALOGUE_SECOND_B(int action);
+	void PART_74_SAY(int who, const Common::Array<DialogueText> &lines);
+	void PART_74_CUTSCENE();
+
+	void PART_81_EXEC_ACTION(int action);
+	void PART_81_LOAD_ROOM();
+	void PART_81_LOAD_ANIMATION();
+	void PART_81_DRAW_HEAD(int frame);
+	void PART_81_DRAW_STORY_HEAD(int frame);
+	void PART_81_DRAW_FIGURE(int offset);
+	void PART_81_DRAW_END_FRAME(int frame);
+	void PART_81_UPDATE_ROOM_BACKGROUND();
+	void PART_81_UPDATE_DIALOGUE_NPC(int action);
+	void PART_81_NPC_SAY(const Common::Array<DialogueText> &lines);
+	void PART_81_IGOR_SAY(int num, int count, int sound);
+	void PART_81_APPLY_OBJECT_STATE(int num);
+	void PART_81_SCROLL_IN();
+	void PART_81_TRANSITION_IN();
+	void PART_81_TRANSITION_OUT();
+	void PART_81_END_SCENE();
+	void PART_81_ACTION_109();
+	void PART_81_ACTION_110();
+	void PART_81_ACTION_102_talk();
+	void PART_81_DIALOGUE_CODE(int code);
+	void PART_81_CONVERSATION();
+	void PART_81_ENTER();
+	void PART_81();
+
+
 	void PART_68_EXEC_ACTION(int action);
 	void PART_68_LOAD_ROOM();
 	void PART_68_APPLY_OBJECT_STATE(int num);
@@ -1424,6 +1457,7 @@ protected:
 	static const RoomDataOffsets PART_68_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_70_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_72_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_81_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
 	static const uint8 _inventoryOffsetTable[];
 	static const uint8 _inventoryActionsTable[];
