@@ -464,4 +464,11 @@ const RoomDataOffsets IgorEngine::PART_50_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+const RoomDataOffsets IgorEngine::PART_70_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 },
+	{ 3, 12 },
+	{ 15, 187, 3063, 79, 155, 80 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
 } // End of namespace Igor

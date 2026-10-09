@@ -616,6 +616,9 @@ void IgorEngine::PART_MAIN() {
 		case 671:
 			PART_MAZE(); // maze, 670 and 671 are the entrance
 			break;
+		case 700:
+			PART_70();
+			break;
 		case 750:
 			PART_75(); // philip vodka cutscene
 			break;

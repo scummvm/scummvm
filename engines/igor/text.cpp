@@ -478,7 +478,7 @@ void IgorEngine::waitForEndOfIgorDialogue(bool animateHead) {
 }
 
 void IgorEngine::animateIgorTalking(int frame) {
-	if (getPart() == 4) {
+	if (getPart() == 4 || getPart() == 70) {
 		return;
 	}
 	if (getPart() == 85) {

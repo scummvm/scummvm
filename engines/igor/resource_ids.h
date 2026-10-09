@@ -687,4 +687,13 @@
 #define BOX_OutsideMaze 1094
 // MAZE ROOMS END
 
+// State 700 (PART_70)
+#define DAT_Part70 1095
+#define ANM_Part70 1096
+#define TXT_Part70 1097
+#define IMG_Part70 1098
+#define PAL_Part70 1099
+#define MSK_Part70 1100
+#define BOX_Part70 1101
+
 #endif // IGOR_RESOURCE_IDS
