@@ -300,13 +300,14 @@ void IgorEngine::PART_31_HELPER_4_enterFromAstronomyLab() {
 	_roomObjectAreasTable[_screenLayer2[20207]].area = 2;
 	_roomObjectAreasTable[_screenLayer2[33712]].area = 2;
 	buildWalkPath(47, 63, 112, 105);
-	for (int i = 1; i <= _walkDataCurrentIndex; ++i) {
+	for (int i = 1; i <= _walkDataLastIndex; ++i) {
 		_walkData[i].posNum = 2;
 	}
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
+	--_walkDataLastIndex;
 	buildWalkPath(112, 105, 102, 125);
 	_roomObjectAreasTable[_screenLayer2[20207]].area = 0;
 	_roomObjectAreasTable[_screenLayer2[33712]].area = 0;
