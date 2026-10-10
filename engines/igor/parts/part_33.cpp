@@ -93,8 +93,8 @@ void IgorEngine::PART_33_ACTION_109_takeAstronomyBooks() {
 	for (int i = 1; i <= 3; ++i) {
 		for (int j = 0; j <= 48; ++j) {
 			memcpy(_screenVGA + j * 320 + 23448, _animFramesBuffer + 0x467 * (PART_33_ANIM_DATA_4[i] - 1) + j * 23, 23);
-			waitForTimer(120);
 		}
+		waitForTimer(120);
 	}
 	addObjectToInventory(31, 66);
 	_objectsState[74] = 1;
