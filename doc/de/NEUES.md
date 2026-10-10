@@ -49,6 +49,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Der Schatz im Silbersee hinzugefügt.
    - Unterstützung für The Fool's Errand hinzugefügt.
    - Unterstützung für Harvester hinzugefügt.
+   - Unterstützung für Lord Avalot d'Argent hinzugefügt.
+   - Unterstützung für Dungeon Master hinzugefügt.
 
  Allgemein:
    - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
