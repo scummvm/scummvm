@@ -1005,15 +1005,15 @@ private:
 
 	// college corridor caroline
 	void PART_28_EXEC_ACTION(int action);
-	void PART_28_ACTION_108();
-	void PART_28_ACTION_109();
+	void PART_28_ACTION_108_talkCaroline();
+	void PART_28_ACTION_109_takeFolder();
 	void PART_28_UPDATE_DIALOGUE_CAROLINE(int action);
 	void PART_28_UPDATE_ROOM_BACKGROUND();
-	void PART_28_HELPER_1(int num);
-	void PART_28_HELPER_2();
-	void PART_28_HELPER_3();
-	void PART_28_HELPER_5(int frame);
-	void PART_28_HELPER_6();
+	void PART_28_HELPER_1_OBJECT_STATE(int num);
+	void PART_28_HELPER_2_drawCaroline();
+	void PART_28_HELPER_3_enterFromRight();
+	void PART_28_HELPER_5_drawCarolineTalkingFrame(int frame);
+	void PART_28_HELPER_6_enterAndCheckGrades();
 	void PART_28_HELPER_8(int frame);
 	void PART_28();
 
