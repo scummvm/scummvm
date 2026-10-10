@@ -168,6 +168,7 @@ void IgorEngine::PART_35() {
 			_roomObjectAreasTable[area].area = 1;
 			buildWalkPath(319, 33, 242, 111);
 			_roomObjectAreasTable[area].area = 0;
+			_walkData[_walkDataLastIndex].frameNum = 0;
 			_walkDataCurrentIndex = 1;
 			_gameState.igorMoving = true;
 			waitForIgorMove();
