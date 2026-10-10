@@ -21,7 +21,9 @@
 
 #include "ultima/ultima3/views/location_map.h"
 #include "ultima/ultima3/views/menu_input.h"
+#include "ultima/ultima3/views/interactions/cast_spell.h"
 #include "ultima/ultima3/views/interactions/get_chest.h"
+#include "ultima/ultima3/views/interactions/negate_time.h"
 #include "ultima/ultima3/views/interactions/look.h"
 #include "ultima/ultima3/views/interactions/steal_chest.h"
 #include "ultima/ultima3/views/interactions/transact.h"
@@ -330,6 +332,14 @@ bool LocationMap::handleCommand(const KeypressMessage &msg) {
 	case 'S':
 		_G(messages).print("Steal Chest!\nPlayer? ");
 		startInteraction(new Interactions::StealChest());
+		return true;
+	case 'C':
+		_G(messages).print("Cast by whom-");
+		startInteraction(new Interactions::CastSpell());
+		return true;
+	case 'N':
+		_G(messages).print("Negate Time!\nWhose Powd? ");
+		startInteraction(new Interactions::NegateTime());
 		return true;
 	case 'T':
 		_G(messages).print("Who will\nTransact? ");

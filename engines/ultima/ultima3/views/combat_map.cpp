@@ -21,6 +21,7 @@
 
 #include "ultima/ultima3/views/combat_map.h"
 #include "ultima/ultima3/views/menu_input.h"
+#include "ultima/ultima3/views/interactions/cast_spell.h"
 #include "ultima/ultima3/views/interactions/combat_attack.h"
 #include "ultima/ultima3/views/interactions/equip.h"
 #include "ultima/ultima3/views/interactions/ztats.h"
@@ -198,7 +199,7 @@ void CombatMap::doNegateTime() {
 		g_engine->playSoundEffect(0xFE);
 	} else {
 		e._powder = Data::toBcd(Data::fromBcd(e._powder) - 1);
-		_G(combat).holdTime();
+		_G(holdTime) = 10;
 	}
 
 	endTurn();
@@ -251,6 +252,10 @@ bool CombatMap::handleCommand(const KeypressMessage &msg) {
 		return true;
 	case 'N':
 		doNegateTime();
+		return true;
+	case 'C':
+		_G(messages).print("Cast Spell!\n");
+		startInteraction(new Interactions::CastSpell(slot));
 		return true;
 	case 'A':
 		doAttack();

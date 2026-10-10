@@ -78,6 +78,9 @@ void Savegame::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_worldX);
 		s.syncAsByte(_worldY);
 	}
+
+	if (s.getVersion() >= 4)
+		s.syncAsByte(_lightTurns);
 }
 
 void Savegame::formParty() {

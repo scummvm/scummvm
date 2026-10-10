@@ -190,7 +190,8 @@ void CombatLogic::begin(int creature) {
 
 	_savedLocation = save._location;
 	_events.clear();
-	_negateTurns = 0;
+	_G(holdTime) = 0;
+	_slayUsed = false;
 	_combatant = 0;
 
 	_G(messages).print("\n---Conflict!!---\n->");
@@ -235,6 +236,18 @@ void CombatLogic::begin(int creature) {
 	}
 
 	syncShown();
+}
+
+int CombatLogic::negateTurns() const {
+	return _G(holdTime);
+}
+
+void CombatLogic::decrementHold() {
+	--_G(holdTime);
+}
+
+void CombatLogic::endHold() {
+	_G(holdTime) = 0;
 }
 
 bool CombatLogic::allMonstersDead() const {
@@ -625,6 +638,52 @@ void CombatLogic::monstersTurn() {
 
 		monsterTurn(monster);
 	}
+}
+
+void CombatLogic::castProjectile(int slot, int damage, Direction dir) {
+	const int dx = (dir == DIR_EAST) ? 1 : (dir == DIR_WEST) ? -1 : 0;
+	const int dy = (dir == DIR_SOUTH) ? 1 : (dir == DIR_NORTH) ? -1 : 0;
+
+	int monster = shoot(_arena._playerX[slot], _arena._playerY[slot], dx, dy, TILE_SPELL_SHOT);
+	if (monster < 0)
+		return;
+
+	sound(0xF7);
+	damageMonster(slot, monster, (byte)damage);
+}
+
+void CombatLogic::castGroupDamage(int slot, int damage) {
+	for (int monster = 0; monster < ARENA_MONSTERS; ++monster) {
+		if ((rollBelow(255) & 3) == 0 || !_arena._monsterHp[monster])
+			continue;
+
+		overlay(_arena._monsterX[monster], _arena._monsterY[monster], TILE_SPELL_SHOT);
+		sound(0xF7);
+		damageMonster(slot, monster, (byte)damage);
+	}
+}
+
+void CombatLogic::castDrain() {
+	for (int monster = 0; monster < ARENA_MONSTERS; ++monster) {
+		if (!_arena._monsterHp[monster])
+			continue;
+
+		_arena._monsterHp[monster] = 5;
+		overlay(_arena._monsterX[monster], _arena._monsterY[monster], TILE_SPELL_SHOT);
+		sound(0xF7);
+	}
+}
+
+bool CombatLogic::castSlay(int slot, byte monsterClass) {
+	if (_monsterClass != monsterClass || _slayUsed)
+		return false;
+
+	_slayUsed = true;
+	if (rollBelow(255) >= 128)
+		return false;
+
+	castGroupDamage(slot, 0xFF);
+	return true;
 }
 
 } // namespace Ultima3

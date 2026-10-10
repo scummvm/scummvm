@@ -110,6 +110,13 @@ void Game::timeout() {
 
 void Game::startInteraction(Interactions::Interaction *interaction) {
 	_interaction.reset(interaction);
+
+	if (interaction->isFinished()) {
+		_interaction.reset();
+		endTurn();
+		return;
+	}
+
 	redraw();
 }
 

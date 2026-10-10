@@ -180,6 +180,26 @@ void LocationLogic::exitToWorld() {
 	save._posY = save._worldY;
 }
 
+void LocationLogic::teleportRandomly() {
+	Data::Savegame &save = _G(savegame);
+	Graphics::Views::Events *events = Graphics::Views::g_events;
+
+	for (;;) {
+		int x = events->getRandomNumber(Data::MAP_SIZE - 1);
+		int y = events->getRandomNumber(Data::MAP_SIZE - 1);
+		byte cell = _G(map).cell(x, y);
+
+		// Not into whirlpools, lava or force fields. As in the original, the
+		// map cell rather than its tile is what's tested for being passable
+		if (cell == 0x30 || cell == 0x80 || cell == 0x84 || isTerrainBlocked(cell))
+			continue;
+
+		save._posX = x;
+		save._posY = y;
+		return;
+	}
+}
+
 const char *LocationLogic::board() {
 	Data::Savegame &save = _G(savegame);
 	if (save._transport != TRANSPORT_ON_FOOT)

@@ -42,6 +42,13 @@ public:
 	virtual ~Interaction() {}
 
 	/**
+	 * Returns true if the command was over as soon as it was started
+	 */
+	virtual bool isFinished() const {
+		return false;
+	}
+
+	/**
 	 * Handles a keypress
 	 * @returns		True once the command is finished
 	 */

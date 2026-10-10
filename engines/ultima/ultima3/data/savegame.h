@@ -52,6 +52,9 @@ struct Savegame {
 	byte _worldY = 0;
 	byte _moveCount[4] = {};
 
+	// How much longer a light spell or torch lasts
+	byte _lightTurns = 0;
+
 	// Set once the party has seen the more powerful gear offered in the
 	// shops, making it available for readying and wearing
 	bool _allWeapons = false;

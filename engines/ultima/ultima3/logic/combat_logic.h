@@ -63,7 +63,7 @@ private:
 	byte _shown[Data::ARENA_SIZE * Data::ARENA_SIZE] = {};
 
 	Common::Array<CombatEvent> _events;
-	int _negateTurns = 0;
+	bool _slayUsed = false;
 
 	void print(const Common::String &text);
 	void sound(int effect);
@@ -164,21 +164,11 @@ public:
 	/**
 	 * Returns how many turns of time being held still are left
 	 */
-	int negateTurns() const {
-		return _negateTurns;
-	}
+	int negateTurns() const;
 
-	void holdTime() {
-		_negateTurns = 10;
-	}
+	void decrementHold();
 
-	void decrementHold() {
-		--_negateTurns;
-	}
-
-	void endHold() {
-		_negateTurns = 0;
-	}
+	void endHold();
 
 	/**
 	 * Lets a party member step in a direction
@@ -195,6 +185,28 @@ public:
 	 * Lets every monster take its turn
 	 */
 	void monstersTurn();
+
+	/**
+	 * Casts a spell that flies in a direction from a party member, harming
+	 * the first monster it reaches
+	 */
+	void castProjectile(int slot, int damage, Direction dir);
+
+	/**
+	 * Casts a spell that can harm any of the monsters
+	 */
+	void castGroupDamage(int slot, int damage);
+
+	/**
+	 * Casts a spell that leaves every monster with little life
+	 */
+	void castDrain();
+
+	/**
+	 * Casts a spell that only works once a fight, against one kind of monster
+	 * @returns		False if it fails
+	 */
+	bool castSlay(int slot, byte monsterClass);
 };
 
 } // namespace Ultima3

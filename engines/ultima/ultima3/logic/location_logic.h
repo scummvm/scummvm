@@ -62,6 +62,11 @@ public:
 	bool move(Direction dir);
 
 	/**
+	 * Moves the party to a random place on the world map
+	 */
+	void teleportRandomly();
+
+	/**
 	 * Mounts a horse or boards a ship that the party is standing on
 	 * @returns		What to say about it, or null if there's nothing to board
 	 */

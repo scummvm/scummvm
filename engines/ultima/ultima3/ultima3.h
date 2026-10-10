@@ -98,6 +98,9 @@ public:
 	Gfx::ScreenEffects _effects;
 	byte _windDirection = 0;
 
+	// How many more turns time is held still for, by powder or a spell
+	byte _holdTime = 0;
+
 	// Toggled in the game by the Volume command
 	bool _soundEnabled = true;
 

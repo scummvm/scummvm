@@ -131,8 +131,8 @@ int CreatureLogic::update(bool moved) {
 	}
 
 	// Time held still stops everyone
-	if (_negateTimeTurns > 0) {
-		--_negateTimeTurns;
+	if (_G(holdTime) > 0) {
+		--_G(holdTime);
 		return -1;
 	}
 

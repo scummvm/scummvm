@@ -87,7 +87,7 @@ bool Ultima3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
-	s.syncVersion(3);
+	s.syncVersion(4);
 
 	_savegame.synchronize(s);
 	if (_savegame._mapLoaded) {

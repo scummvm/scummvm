@@ -64,9 +64,6 @@ private:
 	void spawnMonster();
 
 public:
-	// How many turns remain of time being held still
-	int _negateTimeTurns = 0;
-
 	/**
 	 * Returns the creature standing at a position, or -1
 	 */

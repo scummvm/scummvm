@@ -183,6 +183,7 @@ MODULE_OBJS += \
 	ultima3/views/disperse_party.o \
 	ultima3/views/form_party.o \
 	ultima3/views/game.o \
+	ultima3/views/interactions/cast_spell.o \
 	ultima3/views/interactions/combat_attack.o \
 	ultima3/views/interactions/equip.o \
 	ultima3/views/interactions/exchange.o \
@@ -190,6 +191,7 @@ MODULE_OBJS += \
 	ultima3/views/interactions/interaction.o \
 	ultima3/views/interactions/log_input.o \
 	ultima3/views/interactions/look.o \
+	ultima3/views/interactions/negate_time.o \
 	ultima3/views/interactions/shops.o \
 	ultima3/views/interactions/steal_chest.o \
 	ultima3/views/interactions/transact.o \
