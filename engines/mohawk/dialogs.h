@@ -159,6 +159,19 @@ private:
 	GUI::CheckboxWidget *_audioPopFixCheckbox;
 };
 
+#ifdef ENABLE_ZOOMBINI
+
+class ZoombiniMenuDialog : public MainMenuDialog {
+public:
+	ZoombiniMenuDialog(Engine *engine);
+	~ZoombiniMenuDialog() override;
+
+	// MainMenuDialog API
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+};
+
+#endif
+
 } // End of namespace Mohawk
 
 #endif

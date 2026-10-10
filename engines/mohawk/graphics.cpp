@@ -99,6 +99,17 @@ MohawkSurface *GraphicsManager::findImage(uint16 id) {
 	return _cache[id];
 }
 
+MohawkSurface *GraphicsManager::findSubImage(uint16 image, uint16 subimage) {
+	if (!_subImageCache.contains(image))
+		_subImageCache[image] = decodeImages(image);
+	Common::Array<MohawkSurface *> &subImages = _subImageCache[image];
+	if (subImages.size() <= subimage) {
+		error("GraphicsManager::findSubImage: subimage %u out of bounds (size %u) for image %u", subimage, subImages.size(), image);
+		subimage = 0;
+	}
+	return subImages[subimage];
+}
+
 Common::Array<MohawkSurface *> GraphicsManager::decodeImages(uint16 id) {
 	error("decodeImages not implemented for this game");
 }
@@ -140,25 +151,25 @@ void GraphicsManager::copyAnimImageSectionToScreen(uint16 image, Common::Rect sr
 }
 
 void GraphicsManager::copyAnimSubImageToScreen(uint16 image, uint16 subimage, int left, int top) {
-	if (!_subImageCache.contains(image))
-		_subImageCache[image] = decodeImages(image);
-	Common::Array<MohawkSurface *> &images = _subImageCache[image];
-
-	Graphics::Surface *surface = images[subimage]->getSurface();
+	MohawkSurface* mhkSurface = findSubImage(image, subimage);
+	Graphics::Surface *surface = mhkSurface->getSurface();
 
 	Common::Rect srcRect(0, 0, surface->w, surface->h);
 	Common::Rect dstRect(left, top, left + surface->w, top + surface->h);
-	copyAnimImageSectionToScreen(images[subimage], srcRect, dstRect);
+	copyAnimImageSectionToScreen(mhkSurface, srcRect, dstRect);
 }
 
 void GraphicsManager::getSubImageSize(uint16 image, uint16 subimage, uint16 &width, uint16 &height) {
-	if (!_subImageCache.contains(image))
-		_subImageCache[image] = decodeImages(image);
-	Common::Array<MohawkSurface *> &images = _subImageCache[image];
-
-	Graphics::Surface *surface = images[subimage]->getSurface();
+	Graphics::Surface *surface = findSubImage(image, subimage)->getSurface();
 	width = surface->w;
 	height = surface->h;
+}
+
+uint32 GraphicsManager::getSubImageCount(uint16 image) {
+	if (!_subImageCache.contains(image))
+		_subImageCache[image] = decodeImages(image);
+	Common::Array<MohawkSurface *> &subImages = _subImageCache[image];
+	return subImages.size();
 }
 
 void GraphicsManager::copyAnimImageSectionToScreen(MohawkSurface *image, Common::Rect srcRect, Common::Rect dstRect) {
