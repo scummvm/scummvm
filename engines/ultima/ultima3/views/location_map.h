@@ -67,7 +67,7 @@ private:
 	/**
 	 * Works out where each blast of fire goes, and starts showing them
 	 */
-	void startBreaths(const Common::Array<CreatureLogic::Breath> &breaths);
+	void startBreaths(const Common::Array<CreatureLogic::Breath> &breaths, bool exodusBolt);
 
 	/**
 	 * Hurts the party if the blast on show has reached them

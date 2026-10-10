@@ -53,6 +53,7 @@ constexpr byte TILE_GRASS = 1;
 constexpr byte TILE_FOREST = 3;
 constexpr byte TILE_MOUNTAINS = 4;
 constexpr byte TILE_WALL = 0x23;
+constexpr byte TILE_FLOOR = 8;
 
 // Tiles that block the view of whatever lies behind them
 static bool blocksView(byte tile) {
@@ -185,12 +186,17 @@ void LocationMap::endTurn() {
 	if (!throughGate && _logic.isOnWhirlpool())
 		_logic.teleportToAmbrosia();
 
+	// The castle of Exodus breaks any holding of time, and lashes out
+	const bool exodus = _logic.isInExodusCastle();
+	if (exodus)
+		_G(holdTime) = 0;
+
 	// A creature reaching the party starts a fight
 	int creature = _creatures.update(_moved);
 	_moved = false;
 
 	_pendingCreature = creature;
-	startBreaths(_creatures.takeBreaths());
+	startBreaths(_creatures.takeBreaths(), exodus);
 	if (_breaths.empty())
 		finishTurn(creature);
 }
@@ -205,13 +211,29 @@ void LocationMap::finishTurn(int creature) {
 		startPrompt();
 }
 
-void LocationMap::startBreaths(const Common::Array<CreatureLogic::Breath> &breaths) {
+void LocationMap::startBreaths(const Common::Array<CreatureLogic::Breath> &breaths, bool exodusBolt) {
 	byte tiles[VIEWPORT_CELLS];
 	buildViewport(tiles);
 
 	const int centre = VIEWPORT_TILES / 2;
 	_breathStep = 0;
 	_breathFrames = 0;
+
+	if (exodusBolt) {
+		// A bolt lands somewhere in view, only doing anything on the party or the floor
+		BreathPath bolt;
+		int x = g_events->getRandomNumber(VIEWPORT_TILES - 1);
+		int y = g_events->getRandomNumber(VIEWPORT_TILES - 1);
+		bolt._hits = x == centre && y == centre;
+
+		if (bolt._hits || tiles[y * VIEWPORT_TILES + x] == TILE_FLOOR) {
+			bolt._tiles.push_back(Common::Point(x, y));
+			_breaths.push_back(bolt);
+
+			if (!bolt._hits)
+				g_engine->playSoundEffect(0xF7);
+		}
+	}
 
 	for (uint i = 0; i < breaths.size(); ++i) {
 		BreathPath path;

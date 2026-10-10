@@ -82,6 +82,11 @@ public:
 	bool isOnMoonGate() const;
 
 	/**
+	 * Returns true if the party is in the castle of Exodus
+	 */
+	bool isInExodusCastle() const;
+
+	/**
 	 * Moves the party from a moon gate to the one the moons lead to
 	 */
 	void teleportThroughMoonGate();

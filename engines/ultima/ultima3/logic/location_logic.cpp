@@ -25,6 +25,7 @@
 namespace Ultima {
 namespace Ultima3 {
 
+constexpr int EXODUS_CASTLE_X = 10;
 constexpr byte TILE_WATER = 0;
 constexpr byte TILE_MOUNTAINS = 4;
 constexpr byte TILE_SHIP_WATER = 12;
@@ -309,6 +310,12 @@ void LocationLogic::teleportThroughMoonGate() {
 	save._posY = GATE_Y[save._moonPhase[1]];
 	_G(effects).flashViewport();
 	g_engine->playSoundEffect(0xFD, 0xC0, 0x20);
+	g_engine->playSoundEffect(0xFD, 0xC0, 0x20);
+}
+
+bool LocationLogic::isInExodusCastle() const {
+	const Data::Savegame &save = _G(savegame);
+	return save._location == Data::LOCATION_CASTLE && save._worldX == EXODUS_CASTLE_X;
 }
 
 bool LocationLogic::isOnWhirlpool() const {
