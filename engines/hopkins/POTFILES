@@ -1,2 +1,4 @@
+engines/hopkins/base_enhancements.cpp
+engines/hopkins/base_enhancements_autoplay.cpp
 engines/hopkins/metaengine.cpp
 
