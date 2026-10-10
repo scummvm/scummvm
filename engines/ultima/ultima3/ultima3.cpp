@@ -87,14 +87,15 @@ bool Ultima3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
-	s.syncVersion(5);
+	s.syncVersion(6);
 
 	_savegame.synchronize(s);
 	if (_savegame._mapLoaded) {
 		_map.synchronize(s);
 
 		// The world is kept aside while the party is in a town or castle
-		if (_savegame._location == Data::LOCATION_TOWN || _savegame._location == Data::LOCATION_CASTLE)
+		if (_savegame._location == Data::LOCATION_TOWN || _savegame._location == Data::LOCATION_CASTLE ||
+				_savegame._location == Data::LOCATION_AMBROSIA)
 			_worldMap.synchronize(s);
 
 		if (_savegame._location == Data::LOCATION_DUNGEON && s.getVersion() >= 5)

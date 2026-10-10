@@ -245,6 +245,156 @@ void LocationLogic::exitToWorld() {
 	save._dungeonLevel = 0;
 }
 
+// Moon gates and whirlpools are shown by particular map cells
+constexpr byte CELL_WHIRLPOOL = 0x30;
+constexpr byte CELL_MOON_GATE = 0x88;
+
+// Where the moon gate is found for each phase of the moon
+static const byte GATE_X[8] = { 0x08, 0x39, 0x0F, 0x24, 0x0F, 0x0C, 0x1F, 0x3A };
+static const byte GATE_Y[8] = { 0x08, 0x2E, 0x1B, 0x3A, 0x1D, 0x37, 0x1F, 0x1F };
+
+// The directions a whirlpool may drift in
+static const int8 WHIRLPOOL_DX[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
+static const int8 WHIRLPOOL_DY[8] = { 1, 1, 0, -1, -1, -1, 0, 1 };
+
+// Where the party wakes up in Ambrosia
+constexpr byte AMBROSIA_START_X = 0x20;
+constexpr byte AMBROSIA_START_Y = 0x36;
+
+// Where a whirlpool turns up after taking the party away
+constexpr byte WHIRLPOOL_RESET_X = 3;
+constexpr int WHIRLPOOL_RESET_Y_RANGE = 0x37;
+constexpr int WHIRLPOOL_RESET_Y_MIN = 7;
+
+static int rollBelow(int limit) {
+	return Graphics::Views::g_events->getRandomNumber(limit - 1);
+}
+
+void LocationLogic::updateMoons() {
+	Data::Savegame &save = _G(savegame);
+	if (save._location != Data::LOCATION_SOSARIA)
+		return;
+
+	const byte oldLeft = save._moonPhase[0], oldRight = save._moonPhase[1];
+
+	// Each moon spends a number of turns in each phase
+	if ((int8)--save._moonCountdown[0] < 0) {
+		save._moonCountdown[0] = 0x0B;
+		save._moonPhase[0] = (save._moonPhase[0] + 1) & 7;
+	}
+	if ((int8)--save._moonCountdown[1] < 0) {
+		save._moonCountdown[1] = 3;
+		save._moonPhase[1] = (save._moonPhase[1] + 1) & 7;
+	}
+
+	// The moon gate follows the left moon, but only moves when the right one changes
+	if (oldRight == save._moonPhase[1])
+		return;
+
+	_G(map).setCell(GATE_X[oldLeft], GATE_Y[oldLeft], CELL_GRASS);
+	_G(map).setCell(GATE_X[save._moonPhase[0]], GATE_Y[save._moonPhase[0]], CELL_MOON_GATE);
+}
+
+bool LocationLogic::isOnMoonGate() const {
+	const Data::Savegame &save = _G(savegame);
+	return _G(map).cell(save._posX, save._posY) == CELL_MOON_GATE;
+}
+
+void LocationLogic::teleportThroughMoonGate() {
+	Data::Savegame &save = _G(savegame);
+
+	// The gate leads to where the right moon points
+	save._posX = GATE_X[save._moonPhase[1]];
+	save._posY = GATE_Y[save._moonPhase[1]];
+	_G(effects).flashViewport();
+	g_engine->playSoundEffect(0xFD);
+}
+
+bool LocationLogic::isOnWhirlpool() const {
+	const Data::Savegame &save = _G(savegame);
+	return _G(map).cell(save._posX, save._posY) == CELL_WHIRLPOOL;
+}
+
+bool LocationLogic::updateWhirlpool() {
+	Data::Savegame &save = _G(savegame);
+	Data::Map &map = _G(map);
+	if (save._location != Data::LOCATION_SOSARIA)
+		return false;
+
+	byte &x = map.extra(0), &y = map.extra(1);
+	byte &dx = map.extra(2), &dy = map.extra(3);
+
+	// Mostly it drifts on in the direction it's going
+	if (rollBelow(8) != 0) {
+		int newX = (x + (int8)dx) & (Data::MAP_SIZE - 1);
+		int newY = (y + (int8)dy) & (Data::MAP_SIZE - 1);
+		byte cell = map.cell(newX, newY);
+
+		if (cell == 0 || cell == CELL_SHIP) {
+			map.setCell(newX, newY, CELL_WHIRLPOOL);
+			map.setCell(x, y, 0);
+			x = newX;
+			y = newY;
+
+			if (x == save._posX && y == save._posY)
+				return true;
+
+			if (cell == CELL_SHIP) {
+				g_engine->playSoundEffect(0xF4);
+				_G(messages).print(" A ship was\n   Destroyed!\n");
+				return false;
+			}
+
+			return false;
+		}
+	}
+
+	// Or else it sets off in a new direction
+	int heading = rollBelow(8);
+	dx = WHIRLPOOL_DX[heading];
+	dy = WHIRLPOOL_DY[heading];
+
+	return x == save._posX && y == save._posY;
+}
+
+void LocationLogic::teleportToAmbrosia() {
+	Data::Savegame &save = _G(savegame);
+
+	_G(messages).print("\nA huge swirling\n --WhirlPool--\n engulfs you\n and your ship\n dragging both\n     to a\n watery grave!");
+	g_engine->playSoundEffect(0xF4);
+
+	if (save._location == Data::LOCATION_AMBROSIA) {
+		// Coming back, the party finds themselves on a ship again
+		_G(messages).print("\n\n\n\n\n All is Dark!\n\n");
+		_G(map) = _G(worldMap);
+		_G(messages).print(" You made it!\n");
+
+		save._location = Data::LOCATION_SOSARIA;
+		save._posX = save._worldX;
+		save._posY = save._worldY;
+		save._transport = TRANSPORT_SHIP;
+		return;
+	}
+
+	// The whirlpool takes the ship, and is found elsewhere afterwards
+	save._worldX = save._posX;
+	save._worldY = save._posY;
+	_G(map).setCell(save._posX, save._posY, 0);
+	_G(map).extra(0) = WHIRLPOOL_RESET_X;
+	_G(map).extra(1) = rollBelow(WHIRLPOOL_RESET_Y_RANGE) + WHIRLPOOL_RESET_Y_MIN;
+	_G(worldMap) = _G(map);
+
+	_G(messages).print("\n\n As the water\n enters  your\nlungs you pass\ninto Darkness!\n\n");
+	_G(map).load("AMBROSIA.ULT");
+
+	save._transport = TRANSPORT_ON_FOOT;
+	save._posX = AMBROSIA_START_X;
+	save._posY = AMBROSIA_START_Y;
+	save._location = Data::LOCATION_AMBROSIA;
+
+	_G(messages).print("\n You awaken on\n the shores of\n a forgotten\nLand.  Your ship\n and crew lost\n  to the sea!\n");
+}
+
 void LocationLogic::teleportRandomly() {
 	Data::Savegame &save = _G(savegame);
 	Graphics::Views::Events *events = Graphics::Views::g_events;

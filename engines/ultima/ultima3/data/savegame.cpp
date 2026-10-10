@@ -86,6 +86,11 @@ void Savegame::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_dungeonLevel);
 		s.syncAsByte(_facing);
 	}
+
+	if (s.getVersion() >= 6) {
+		s.syncBytes(_moonPhase, sizeof(_moonPhase));
+		s.syncBytes(_moonCountdown, sizeof(_moonCountdown));
+	}
 }
 
 constexpr int ORIGINAL_ROSTER_SIZE = ROSTER_COUNT * 0x40;

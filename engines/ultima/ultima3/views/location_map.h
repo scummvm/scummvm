@@ -49,6 +49,9 @@ private:
 	bool _fightStarted = false;
 	bool _fightOver = false;
 
+	// How long since the whirlpool last moved
+	int _whirlpoolFrames = 0;
+
 	/**
 	 * Starts a fight with a creature
 	 */

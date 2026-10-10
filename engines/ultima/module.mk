@@ -191,6 +191,7 @@ MODULE_OBJS += \
 	ultima3/views/interactions/cast_spell.o \
 	ultima3/views/interactions/combat_attack.o \
 	ultima3/views/interactions/dungeon_special.o \
+	ultima3/views/interactions/enter_shrine.o \
 	ultima3/views/interactions/equip.o \
 	ultima3/views/interactions/exchange.o \
 	ultima3/views/interactions/get_chest.o \

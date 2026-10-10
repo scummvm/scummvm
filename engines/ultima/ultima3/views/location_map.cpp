@@ -22,6 +22,7 @@
 #include "ultima/ultima3/views/location_map.h"
 #include "ultima/ultima3/views/menu_input.h"
 #include "ultima/ultima3/views/interactions/cast_spell.h"
+#include "ultima/ultima3/views/interactions/enter_shrine.h"
 #include "ultima/ultima3/views/interactions/get_chest.h"
 #include "ultima/ultima3/views/interactions/hand_equipment.h"
 #include "ultima/ultima3/views/interactions/join_gold.h"
@@ -39,6 +40,8 @@ namespace Ultima {
 namespace Ultima3 {
 namespace Views {
 
+constexpr int WHIRLPOOL_FRAMES = 4;
+constexpr byte CELL_SHRINE = 0xF8;
 constexpr int VIEWPORT_CELLS = VIEWPORT_TILES * VIEWPORT_TILES;
 constexpr int VIEWPORT_CENTER = VIEWPORT_CELLS / 2;
 constexpr byte TILE_HIDDEN = 0x24;
@@ -88,7 +91,7 @@ void LocationMap::buildViewport(byte *tiles) const {
 	const int half = VIEWPORT_TILES / 2;
 
 	// The world wraps around, whereas beyond the edge of a town is open grass
-	const bool wraps = save._location == Data::LOCATION_SOSARIA;
+	const bool wraps = save._location == Data::LOCATION_SOSARIA || save._location == Data::LOCATION_AMBROSIA;
 
 	for (int row = 0; row < VIEWPORT_TILES; ++row) {
 		for (int col = 0; col < VIEWPORT_TILES; ++col) {
@@ -157,6 +160,22 @@ void LocationMap::endTurn() {
 
 	_logic.processPartyTurnEffects(_G(savegame)._location == Data::LOCATION_SOSARIA);
 
+	// Moon gates take the party to where the moons lead, and whirlpools to Ambrosia
+	bool throughGate = _logic.isOnMoonGate();
+	if (throughGate) {
+		_logic.teleportThroughMoonGate();
+		_logic.updateMoons();
+	} else {
+		_logic.updateMoons();
+		if (_logic.isOnMoonGate()) {
+			_logic.teleportThroughMoonGate();
+			throughGate = true;
+		}
+	}
+
+	if (!throughGate && _logic.isOnWhirlpool())
+		_logic.teleportToAmbrosia();
+
 	// A creature reaching the party starts a fight
 	int creature = _creatures.update(_moved);
 	_moved = false;
@@ -173,6 +192,17 @@ void LocationMap::processFrame() {
 	if (_fightOver) {
 		_fightOver = false;
 		endTurn();
+		return;
+	}
+
+	// While waiting for a command, the whirlpool of the sea drifts along
+	if (isWaiting() && !hasInteraction() && !_gameOver && ++_whirlpoolFrames >= WHIRLPOOL_FRAMES) {
+		_whirlpoolFrames = 0;
+
+		if (_logic.updateWhirlpool()) {
+			_logic.teleportToAmbrosia();
+			startPrompt();
+		}
 	}
 }
 
@@ -267,6 +297,14 @@ void LocationMap::doBoard() {
 
 void LocationMap::doEnter() {
 	_G(messages).print("Enter ");
+
+	// The shrines of Ambrosia
+	const Data::Savegame &save = _G(savegame);
+	if (save._location == Data::LOCATION_AMBROSIA && _G(map).cell(save._posX, save._posY) == CELL_SHRINE) {
+		_G(messages).print("shrine!\nWho enters? ");
+		startInteraction(new Interactions::EnterShrine());
+		return;
+	}
 
 	const char *text = _logic.enter();
 	if (text) {

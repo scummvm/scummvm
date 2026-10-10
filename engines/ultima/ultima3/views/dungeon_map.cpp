@@ -84,13 +84,7 @@ void DungeonMap::processFrame() {
 void DungeonMap::drawViewport(GfxSurface &s) {
 	const Data::Savegame &save = _G(savegame);
 
-	if (_G(sceneShown)) {
-		for (int y = 0; y < Data::ARENA_SIZE; ++y) {
-			for (int x = 0; x < Data::ARENA_SIZE; ++x)
-				_G(shapes).drawTile(s, VIEW_LEFT + x * Gfx::SHAPE_SIZE, VIEW_TOP + y * Gfx::SHAPE_SIZE,
-					_G(scene)[y * Data::ARENA_SIZE + x]);
-		}
-	} else if (save._lightTurns > 0) {
+	if (save._lightTurns > 0) {
 		// The view is only redrawn once something has changed it, or the party
 		// has been moved by something other than a command
 		uint32 key = (save._dungeonLevel << 24) | (save._posX << 16) | (save._posY << 8) | save._facing;
@@ -114,6 +108,8 @@ void DungeonMap::drawViewport(GfxSurface &s) {
 void DungeonMap::drawLabels(GfxSurface &s) {
 	const Data::Savegame &save = _G(savegame);
 
+	// The level is written over the middle of the moons' label
+	drawMoons(s);
 	s.writeString(Common::Point(9, 0), Common::String::format("LVL:0%d", save._dungeonLevel + 1));
 	s.writeString(Common::Point(6, 23), Common::String::format("%cHead-%s%c", 0x10,
 		FACING_NAMES[save._facing & 3], 0x11));

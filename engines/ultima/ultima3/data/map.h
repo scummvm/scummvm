@@ -71,6 +71,14 @@ public:
 	Creatures _creatures;
 
 	/**
+	 * Returns one of the bytes held after the creatures, which on the world
+	 * map give where the whirlpool is and the way it is heading
+	 */
+	byte &extra(int index) {
+		return _extra[index];
+	}
+
+	/**
 	 * Returns true if a location data file exists
 	 */
 	static bool exists(const char *filename);

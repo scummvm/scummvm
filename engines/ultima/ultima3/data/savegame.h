@@ -32,6 +32,7 @@ constexpr byte LOCATION_SOSARIA = 0;
 constexpr byte LOCATION_DUNGEON = 1;
 constexpr byte LOCATION_TOWN = 2;
 constexpr byte LOCATION_CASTLE = 3;
+constexpr byte LOCATION_AMBROSIA = 0xFF;
 
 /**
  * The persistent game state: the roster of up to 20 characters, and which
@@ -51,6 +52,11 @@ struct Savegame {
 	byte _worldX = 0;
 	byte _worldY = 0;
 	byte _moveCount[4] = {};
+
+	// The phases of the two moons, from 0 to 7, and how long each has left in
+	// its current phase
+	byte _moonPhase[2] = { 0, 0 };
+	byte _moonCountdown[2] = { 0x0C, 4 };
 
 	// How much longer a light spell or torch lasts
 	byte _lightTurns = 0;

@@ -70,6 +70,18 @@ protected:
 	virtual void drawLabels(GfxSurface &s);
 
 	/**
+	 * Draws the label giving the phases of the moons
+	 */
+	void drawMoons(GfxSurface &s);
+
+	/**
+	 * Returns true if a command is part way through being given
+	 */
+	bool hasInteraction() const {
+		return _interaction.get() != nullptr;
+	}
+
+	/**
 	 * Called when no command has been given for several seconds
 	 */
 	virtual void idleTimeout() = 0;

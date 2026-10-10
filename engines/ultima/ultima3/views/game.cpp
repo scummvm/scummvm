@@ -254,6 +254,14 @@ void Game::drawPartyStatus(GfxSurface &s) {
 
 void Game::drawLabels(GfxSurface &s) {
 	drawWind(s);
+	drawMoons(s);
+}
+
+void Game::drawMoons(GfxSurface &s) {
+	const Data::Savegame &save = _G(savegame);
+
+	s.writeString(Common::Point(8, 0), Common::String::format("%c(%X)(%X)%c", GLYPH_LABEL_START,
+		save._moonPhase[0], save._moonPhase[1], GLYPH_LABEL_END));
 }
 
 void Game::drawWind(GfxSurface &s) {
@@ -273,6 +281,15 @@ void Game::draw() {
 		// A picture of the whole place takes over from the usual view
 		s.fillRect(Common::Rect(8, 8, 184, 184), 0);
 		_G(overview).draw(s);
+	} else if (_G(sceneShown)) {
+		// So does a picture of a place that is being visited
+		for (int y = 0; y < Data::ARENA_SIZE; ++y) {
+			for (int x = 0; x < Data::ARENA_SIZE; ++x)
+				_G(shapes).drawTile(s, 8 + x * Gfx::SHAPE_SIZE, 8 + y * Gfx::SHAPE_SIZE,
+					_G(scene)[y * Data::ARENA_SIZE + x]);
+		}
+
+		s.addDirtyRect(Common::Rect(8, 8, 184, 184));
 	} else {
 		drawViewport(s);
 	}

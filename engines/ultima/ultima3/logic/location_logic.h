@@ -75,6 +75,32 @@ public:
 	void teleportRandomly();
 
 	/**
+	 * Moves the moons on a turn, and the moon gate to where they say
+	 */
+	void updateMoons();
+
+	bool isOnMoonGate() const;
+
+	/**
+	 * Moves the party from a moon gate to the one the moons lead to
+	 */
+	void teleportThroughMoonGate();
+
+	bool isOnWhirlpool() const;
+
+	/**
+	 * Lets the whirlpool of the sea drift on a step
+	 * @returns		True if it has come upon the party
+	 */
+	bool updateWhirlpool();
+
+	/**
+	 * Takes the ship of the party to Ambrosia in a whirlpool, or brings
+	 * them back from there
+	 */
+	void teleportToAmbrosia();
+
+	/**
 	 * Mounts a horse or boards a ship that the party is standing on
 	 * @returns		What to say about it, or null if there's nothing to board
 	 */
