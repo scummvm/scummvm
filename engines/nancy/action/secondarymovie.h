@@ -248,6 +248,7 @@ public:
 	int16 _randomPauseFlag = -1;	// the flag of the sequence that is pausing
 	bool _randomStopRequested = false;
 	bool _randomPaused = false;
+	bool _isHiddenByDependencies = false;	// Nancy18: taken off screen until the dependencies hold again
 
 	// Whether the mouse is over the movie (which drives both the hover-based
 	// sequence chain and the click that opens a character's conversation), and

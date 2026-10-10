@@ -1079,6 +1079,18 @@ void PlaySecondaryMovie::updateGraphics() {
 		return;
 	}
 
+	// A Nancy18 random movie is only there for as long as its dependencies hold,
+	// like Nancy on the dance floor, who is gone once the music stops
+	if (g_nancy->getGameType() >= kGameTypeNancy18 && isRandom() && _state == kRun && !_isDone && !_isActive) {
+		if (!_isHiddenByDependencies) {
+			_isHiddenByDependencies = true;
+			_decoder.pauseVideo(true);
+			setVisible(false);
+		}
+
+		return;
+	}
+
 	if (_isDone || !_isActive) {
 		updateViewportFrame();
 	}
@@ -1204,6 +1216,12 @@ void PlaySecondaryMovie::onPause(bool pause) {
 }
 
 void PlaySecondaryMovie::execute() {
+	if (_isHiddenByDependencies) {
+		_isHiddenByDependencies = false;
+		_decoder.pauseVideo(_randomPaused);
+		setVisible(true);
+	}
+
 	switch (_state) {
 	case kBegin:
 		// WORKAROUND: Skip playing a known broken overlay animation in Nancy14
