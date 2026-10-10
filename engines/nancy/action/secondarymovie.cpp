@@ -161,6 +161,7 @@ CursorManager::CursorType PlaySecondaryMovie::getHoverCursor() const {
 
 void PlaySecondaryMovie::readRandomSequence(Common::Serializer &ser, RandomSequence &seq) {
 	readFilename(ser, seq.name);
+	ser.syncAsSint16LE(seq.pauseFlag, kGameTypeNancy18);
 	ser.syncAsUint16LE(seq.startFrame);
 	ser.syncAsUint16LE(seq.lastFrame);
 	ser.syncAsSint32LE(seq.minPauseMs);
@@ -516,6 +517,11 @@ void PlaySecondaryMovie::playRandomSequence() {
 
 int PlaySecondaryMovie::beginRandomPause(const RandomSequence &seq) {
 	_randomChainState = kRandomPaused;
+
+	_randomPauseFlag = seq.pauseFlag;
+	if (_randomPauseFlag != -1) {
+		NancySceneState.setEventFlag(_randomPauseFlag, g_nancy->_true);
+	}
 
 	// Two of the pause values are sentinels: instead of a duration they hold
 	// the sequence on its last frame until the mouse enters or leaves the
@@ -1267,6 +1273,12 @@ void PlaySecondaryMovie::execute() {
 			if (!randomPauseElapsed()) {
 				break;
 			}
+
+			if (_randomPauseFlag != -1) {
+				NancySceneState.setEventFlag(_randomPauseFlag, g_nancy->_false);
+				_randomPauseFlag = -1;
+			}
+
 			_randomChainState = kRandomPlaying;
 			int picked = g_nancy->getGameType() >= kGameTypeNancy13 ? pickNextSequence() : rollNextSequence();
 			if (picked >= 0) {

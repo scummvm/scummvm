@@ -85,6 +85,7 @@ public:
 	// `name` is both the sequence id and the movie filename.
 	struct RandomSequence {
 		Common::Path name;
+		int16 pauseFlag = -1;	// Nancy18: an event flag that is set for as long as the sequence pauses
 		uint16 startFrame = 0;
 		uint16 lastFrame = 0;
 		int32 minPauseMs = 0;
@@ -244,6 +245,7 @@ public:
 	RandomChainState _randomChainState = kRandomPlaying;
 	RandomPauseMode _randomPauseMode = kPauseTimed;
 	uint32 _randomPauseEndTime = 0;
+	int16 _randomPauseFlag = -1;	// the flag of the sequence that is pausing
 	bool _randomStopRequested = false;
 	bool _randomPaused = false;
 
