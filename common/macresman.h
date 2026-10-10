@@ -398,7 +398,7 @@ private:
 	 */
 	static bool isRawFork(SeekableReadStream &stream);
 
-	void readMap();
+	bool readMap();
 
 	struct ResMap {
 		uint16 resAttr;

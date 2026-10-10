@@ -910,7 +910,15 @@ bool MacResManager::load(SeekableReadStream *stream) {
 
 	_stream = stream;
 
-	readMap();
+	if (!readMap()) {
+		delete[] _resTypes; _resTypes = nullptr;
+		delete[] _resLists; _resLists = nullptr;
+		_stream = nullptr;
+		_resMap.reset();
+		_resForkOffset = -1;
+		_mode = kResForkNone;
+		return false;
+	}
 	return true;
 }
 
@@ -1084,24 +1092,34 @@ uint16 MacResManager::getResID(uint32 typeID, const Common::String &fileName) {
 	return 0;
 }
 
-void MacResManager::readMap() {
+bool MacResManager::readMap() {
+	const uint32 streamSize = _stream->size();
+
+	if (_mapOffset + 28 > streamSize)
+		return false;
+
 	_stream->seek(_mapOffset + 22);
 
 	_resMap.resAttr = _stream->readUint16BE();
 	_resMap.typeOffset = _stream->readUint16BE();
 	_resMap.nameOffset = _stream->readUint16BE();
-	_resMap.numTypes = _stream->readUint16BE();
-	_resMap.numTypes++;
+	const uint16 numTypes = _stream->readUint16BE();
+	if (numTypes == 0xffff)
+		return false;
+	_resMap.numTypes = numTypes + 1;
+
+	if (_stream->err() || _stream->eos())
+		return false;
 
 	_stream->seek(_mapOffset + _resMap.typeOffset + 2);
-	_resTypes = new ResType[_resMap.numTypes];
 
 	debug(8, "numResTypes: %d total size: %u", _resMap.numTypes, unsigned(_stream->size()));
 
 	if (_stream->pos() + _resMap.numTypes * 8 > _stream->size())
-		error("MacResManager::readMap(): incorrect resource map, too big, %d types", _resMap.numTypes);
+		return false;
 
-	int totalItems = 0;
+	_resTypes = new ResType[_resMap.numTypes];
+	uint64 totalItems = 0;
 
 	for (int i = 0; i < _resMap.numTypes; i++) {
 		_resTypes[i].id = _stream->readUint32BE();
@@ -1114,8 +1132,18 @@ void MacResManager::readMap() {
 		debug(8, "resType: <%s> items: %d offset: %d (0x%x)", tag2str(_resTypes[i].id), _resTypes[i].items,  _resTypes[i].offset, _resTypes[i].offset);
 	}
 
-	if (totalItems * 4 > _stream->size())
-		error("MacResManager::readMap(): incorrect resource map, too big, %d total items", totalItems);
+	if (_stream->err() || _stream->eos() || totalItems * 12 > (uint64)_stream->size()) {
+		delete[] _resTypes; _resTypes = nullptr;
+		return false;
+	}
+
+	for (int i = 0; i < _resMap.numTypes; i++) {
+		const uint32 itemListOffset = _resTypes[i].offset + _mapOffset + _resMap.typeOffset;
+		if (itemListOffset > streamSize || itemListOffset + _resTypes[i].items * 12 > streamSize) {
+			delete[] _resTypes; _resTypes = nullptr;
+			return false;
+		}
+	}
 
 	_resLists = new ResPtr[_resMap.numTypes];
 
@@ -1147,6 +1175,8 @@ void MacResManager::readMap() {
 			}
 		}
 	}
+
+	return true;
 }
 
 Path MacResManager::constructAppleDoubleName(const Path &name) {
