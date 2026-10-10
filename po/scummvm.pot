@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-10 07:47+0000\n"
+"POT-Creation-Date: 2026-10-10 13:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -9424,6 +9424,119 @@ msgstr ""
 msgid "Debug"
 msgstr ""
 
+#: engines/hopkins/base_enhancements.cpp:313
+msgid "Player"
+msgstr ""
+
+#. I18N: Exits the game
+#: engines/hopkins/base_enhancements.cpp:314 engines/lab/metaengine.cpp:166
+#: engines/lab/metaengine.cpp:191 engines/sherlock/metaengine.cpp:395
+#: engines/sherlock/metaengine.cpp:494 engines/sherlock/metaengine.cpp:538
+#: engines/sherlock/metaengine.cpp:549 engines/sherlock/metaengine.cpp:601
+#: engines/sherlock/metaengine.cpp:680 engines/supernova/metaengine.cpp:297
+#: engines/supernova/metaengine.cpp:373
+#: engines/ultima/ultima4/metaengine.cpp:54 engines/voyeur/metaengine.cpp:198
+#: engines/voyeur/metaengine.cpp:229 engines/wintermute/keymapper_tables.h:757
+#: engines/wintermute/keymapper_tables.h:1887
+msgid "Exit"
+msgstr ""
+
+#: engines/hopkins/base_enhancements.cpp:315
+msgid "Guard"
+msgstr ""
+
+#: engines/hopkins/base_enhancements.cpp:316
+msgid "Door"
+msgstr ""
+
+#: engines/hopkins/base_enhancements.cpp:317
+msgid "Game paused"
+msgstr ""
+
+#: engines/hopkins/base_enhancements.cpp:325
+msgid "M: close  A: autoplay  Esc: menu"
+msgstr ""
+
+#: engines/hopkins/base_enhancements.cpp:326
+msgid "M/Esc: close  A: autoplay"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:51
+msgid "Exit 1: Containers room"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:51
+msgid "Containers"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:52
+msgid "Exit 2: Turbines room"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:52
+msgid "Turbines"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:53
+msgid "Exit 3: Office"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:53
+msgid "Office"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:54
+msgid "Exit 4: Laboratory"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:54
+msgid "Laboratory"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:55
+msgid "Exit 5: Resurrection room"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:55
+msgid "Resurrection"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:56
+msgid "Exit 6: Dome"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:56
+msgid "Dome"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:656
+msgid "WBASE AUTOPLAY"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:659
+msgid "Fight your way to:"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:671
+msgid "Up/Down: choose"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:673
+msgid "Enter/Space: start"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:676
+msgid "A: resume / M: map"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:676
+msgid "Select a destination"
+msgstr ""
+
+#: engines/hopkins/base_enhancements_autoplay.cpp:677
+msgid "Esc/A: cancel"
+msgstr ""
+
 #: engines/hopkins/metaengine.cpp:48 engines/hopkins/metaengine.cpp:60
 msgid "Gore Mode"
 msgstr ""
@@ -10145,18 +10258,6 @@ msgstr ""
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
 #: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:779
 msgid "Journal keymappings"
-msgstr ""
-
-#. I18N: Exits the game
-#: engines/lab/metaengine.cpp:166 engines/lab/metaengine.cpp:191
-#: engines/sherlock/metaengine.cpp:395 engines/sherlock/metaengine.cpp:494
-#: engines/sherlock/metaengine.cpp:538 engines/sherlock/metaengine.cpp:549
-#: engines/sherlock/metaengine.cpp:601 engines/sherlock/metaengine.cpp:680
-#: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
-#: engines/ultima/ultima4/metaengine.cpp:54 engines/voyeur/metaengine.cpp:198
-#: engines/voyeur/metaengine.cpp:229 engines/wintermute/keymapper_tables.h:757
-#: engines/wintermute/keymapper_tables.h:1887
-msgid "Exit"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:179
