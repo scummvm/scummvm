@@ -172,6 +172,7 @@ MODULE_OBJS += \
 	ultima3/gfx/charset.o \
 	ultima3/gfx/dungeon_view.o \
 	ultima3/gfx/message_log.o \
+	ultima3/gfx/overview.o \
 	ultima3/gfx/pic_decoder.o \
 	ultima3/gfx/shapes.o \
 	ultima3/logic/chest_logic.o \
@@ -201,6 +202,7 @@ MODULE_OBJS += \
 	ultima3/views/interactions/look.o \
 	ultima3/views/interactions/negate_time.o \
 	ultima3/views/interactions/other_command.o \
+	ultima3/views/interactions/peer_gem.o \
 	ultima3/views/interactions/shops.o \
 	ultima3/views/interactions/steal_chest.o \
 	ultima3/views/interactions/transact.o \

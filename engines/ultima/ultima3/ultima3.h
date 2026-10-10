@@ -36,6 +36,7 @@
 #include "ultima/ultima3/data/map.h"
 #include "ultima/ultima3/data/savegame.h"
 #include "ultima/ultima3/gfx/message_log.h"
+#include "ultima/ultima3/gfx/overview.h"
 #include "ultima/ultima3/gfx/screen_effects.h"
 #include "ultima/ultima3/gfx/shapes.h"
 #include "ultima/ultima3/logic/combat_logic.h"
@@ -98,6 +99,7 @@ public:
 	CombatLogic _combat;
 	Gfx::Shapes _shapes;
 	Gfx::MessageLog _messages;
+	Gfx::Overview _overview;
 	Gfx::ScreenEffects _effects;
 	byte _windDirection = 0;
 

@@ -234,6 +234,19 @@ bool CastSpell::perform(Effect effect) {
 		_stage = TARGET;
 		return false;
 
+	case VISION:
+		if (_inCombat)
+			return fail();
+
+		fanfare();
+		if (save._location == Data::LOCATION_DUNGEON)
+			_G(overview).showLevel();
+		else
+			_G(overview).showMap();
+
+		_stage = OVERVIEW;
+		return false;
+
 	case DESCEND:
 	case ASCEND:
 	case RECALL_FLOOR:
@@ -317,10 +330,21 @@ bool CastSpell::applyToPlayer(int target) {
 	}
 }
 
+CastSpell::~CastSpell() {
+	_G(overview).hide();
+}
+
 bool CastSpell::keypress(const KeypressMessage &msg) {
 	Data::Savegame &save = _G(savegame);
 
 	switch (_stage) {
+	case OVERVIEW:
+		if (isModifierKey(msg.keycode))
+			return false;
+
+		_G(overview).hide();
+		return true;
+
 	case CHOOSE_CASTER: {
 		PlayerChooser::Result result = _players.handleKey(msg);
 		if (result == PlayerChooser::PENDING)

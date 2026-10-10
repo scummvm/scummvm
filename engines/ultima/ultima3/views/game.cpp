@@ -99,6 +99,7 @@ void Game::timeout() {
 	_G(shapes).animate();
 	_G(effects).tick();
 	updateWind();
+	_G(overview).tick();
 	processFrame();
 
 	if (!_gameOver && !_interaction && isWaiting() && ++_idleFrames >= IDLE_FRAMES)
@@ -267,7 +268,14 @@ void Game::draw() {
 	drawFrame(s);
 	drawPartyStatus(s);
 	drawLabels(s);
-	drawViewport(s);
+
+	if (_G(overview).isActive()) {
+		// A picture of the whole place takes over from the usual view
+		s.fillRect(Common::Rect(8, 8, 184, 184), 0);
+		_G(overview).draw(s);
+	} else {
+		drawViewport(s);
+	}
 	_G(messages).draw(s, !_gameOver);
 
 	Gfx::ScreenEffects &fx = _G(effects);

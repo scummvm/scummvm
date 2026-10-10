@@ -27,6 +27,7 @@
 #include "ultima/ultima3/views/interactions/hand_equipment.h"
 #include "ultima/ultima3/views/interactions/join_gold.h"
 #include "ultima/ultima3/views/interactions/other_command.h"
+#include "ultima/ultima3/views/interactions/peer_gem.h"
 #include "ultima/ultima3/views/interactions/yell.h"
 #include "ultima/ultima3/views/interactions/ignite_torch.h"
 #include "ultima/ultima3/views/interactions/negate_time.h"
@@ -252,6 +253,10 @@ bool DungeonMap::handleCommand(const KeypressMessage &msg) {
 	case 'G':
 		_G(messages).print("Get Chest!\nPlr to search-");
 		startInteraction(new Interactions::GetChest());
+		return true;
+	case 'P':
+		_G(messages).print("Peer at gem!\nWhose gem? ");
+		startInteraction(new Interactions::PeerGem());
 		return true;
 	case 'H':
 		_G(messages).print("Hand Equipment!\nFrom Player: ");

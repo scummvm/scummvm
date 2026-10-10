@@ -40,7 +40,8 @@ private:
 		CHOOSE_TYPE,
 		CHOOSE_SPELL,
 		DIRECTION,
-		TARGET
+		TARGET,
+		OVERVIEW
 	};
 
 	// The things the spells do
@@ -87,6 +88,7 @@ public:
 	 * @param slot		The party member casting, or -1 to ask who
 	 */
 	CastSpell(int slot = -1);
+	~CastSpell() override;
 
 	bool isFinished() const override {
 		return _finished;
