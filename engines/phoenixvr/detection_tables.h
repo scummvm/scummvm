@@ -180,6 +180,19 @@ const ADGameDescription gameDescriptions[] = {
 	},
 
 	{"lochness",
+		"Retail version",
+		AD_ENTRY5s("script.pak", "a7ee3aae653658f93bba7f237bcf06f3", 1904,
+				   "textes.txt", "5ea7264941b31b5961860c7016537641", 1776,
+                   "cd1/install/Lochness.exe", "b8f52b133294498a14aa1a7f82a3e822", 542883,
+                   "cd2/LEVEL5/N5L07E06W52.TST", "69df780dbdf32a0c89fb8aecadd4d16b", 148,
+				   "N0C00.4Xm", "6b79415bb604218f0de4c5d4e0b5897c", 4791962),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"lochness",
 		"Nival",
 		AD_ENTRY3s("script.pak", "a7ee3aae653658f93bba7f237bcf06f3", 1904,
 				   "textes.txt", "d1546d04243ee63f9ff6c5fc551082e1", 1763,
