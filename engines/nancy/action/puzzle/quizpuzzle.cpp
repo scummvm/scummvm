@@ -626,6 +626,7 @@ void QuizPuzzle::executeNancy9() {
 					saveAnswer(_currentBox);
 					if (_autoCheck && checkAnswerForCurrentBox()) {
 						_internalState = kStartCorrect;
+						_wasCheckedByTyping = true;
 					}
 				}
 
@@ -656,6 +657,7 @@ void QuizPuzzle::executeNancy9() {
 					if (_autoCheck) {
 						if (checkAnswerForCurrentBox()) {
 							_internalState = kStartCorrect;
+							_wasCheckedByTyping = true;
 						} else if (!isNancy15 && text.size() >= box.maxAnswerLength) {
 							_internalState = kStartWrong;
 						}
@@ -701,7 +703,14 @@ void QuizPuzzle::executeNancy9() {
 			showBoxSubtitle(box.correctText, _recordCorrectText);
 		}
 
-		advanceToNextBox();
+		// In Nancy16, an answer that turns out right while it is being typed keeps the
+		// cursor, unless the record holds on to wrong answers: scene 6275 also takes
+		// "Los Angele", and the player has to be able to go on typing
+		if (g_nancy->getGameType() <= kGameTypeNancy15 || !_wasCheckedByTyping || _keepBoxOnWrongAnswer) {
+			advanceToNextBox();
+		}
+
+		_wasCheckedByTyping = false;
 
 		// Nancy 15 does not wait for the feedback sound before carrying on
 		if (isNancy15) {
@@ -937,6 +946,9 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 
 	// The keyboard is read whatever the mouse happens to be over
 	for (auto &key : input.otherKbdInput) {
+		// Enhancement: Shift+Tab goes to the previous box, the way Tab goes to the next
+		_movesToPreviousBox = isNancy15 && key.keycode == Common::KEYCODE_TAB && key.hasFlags(Common::KBD_SHIFT);
+
 		if (key.keycode == Common::KEYCODE_BACKSPACE) {
 			_pendingBackspace = true;
 			_hasNewKey = true;
@@ -1032,8 +1044,10 @@ void QuizPuzzle::drawTextNancy16() {
 }
 
 void QuizPuzzle::advanceToNextBox() {
+	const uint step = _movesToPreviousBox ? _boxes.size() - 1 : 1;
+
 	for (uint n = 0; n < _boxes.size(); ++n) {
-		_currentBox = (_currentBox + 1) % _boxes.size();
+		_currentBox = (_currentBox + step) % _boxes.size();
 		if (_cycleSolvedBoxes || !_boxes[_currentBox].correct)
 			return;
 	}
@@ -1057,9 +1071,12 @@ bool QuizPuzzle::checkAnswerForCurrentBox(bool silent) {
 	if (!input.empty() && input.lastChar() == cursorChar)
 		input.deleteLastChar();
 
+	// Nancy16 can list an empty answer, for a box that may be left empty
+	const bool matchesEmptyAnswers = g_nancy->getGameType() >= kGameTypeNancy16;
+
 	bool correct = false;
 	for (uint j = 0; j < box.answers.size(); ++j) {
-		if (!box.answers[j].empty() && input.equalsIgnoreCase(box.answers[j])) {
+		if ((matchesEmptyAnswers || !box.answers[j].empty()) && input.equalsIgnoreCase(box.answers[j])) {
 			correct = true;
 			break;
 		}
@@ -1127,9 +1144,10 @@ void QuizPuzzle::loadSavedAnswers() {
 				break;
 			}
 		}
-	} else if (g_nancy->getGameType() >= kGameTypeNancy15 &&
+	} else if (g_nancy->getGameType() == kGameTypeNancy15 &&
 			(_restoreFlag == -1 || !NancySceneState.getEventFlag(_restoreFlag, g_nancy->_true))) {
-		// Without the restore flag set the puzzle starts over
+		// Without the restore flag set the puzzle starts over. Nancy16 has no such
+		// flag, and always brings back what was typed.
 		data->boxCorrect.erase(key);
 		data->typedText.erase(key);
 		return;

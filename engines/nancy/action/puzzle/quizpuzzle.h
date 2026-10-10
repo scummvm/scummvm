@@ -137,6 +137,7 @@ private:
 	// ---- Data (Nancy 15) ----
 	int16 _restoreFlag = -1;			// when set, previous answers are restored
 	bool _keepBoxOnWrongAnswer = false;	// don't move on after a wrong answer
+	bool _wasCheckedByTyping = false;	// the box got right through a typed key, not Enter or Tab
 	bool _cycleSolvedBoxes = false;		// cycling also stops on solved boxes
 	uint16 _displaySourceScene = kNoScene;	// see _isDisplayOnly
 	bool _isDisplayOnly = false;		// no cursor character: shows another quiz's answers
@@ -175,6 +176,7 @@ private:
 	bool _hasNewKey = false;
 	bool _pendingReturn = false;
 	bool _pendingBackspace = false;
+	bool _movesToPreviousBox = false;	// the last key was Shift+Tab
 	char _pendingChar = 0;
 
 	Time _nextBlinkTime = 0;
