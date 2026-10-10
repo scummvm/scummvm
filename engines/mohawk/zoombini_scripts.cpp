@@ -664,12 +664,23 @@ bool ZmbFeature::getFrameSoundResource(int32 frameIdx, ZmbResource &resource) co
 }
 
 bool ZmbFeature::playOwnedSound(ZmbResource resource, Audio::Mixer::SoundType soundType) const {
-	// Reuse an already playing SND instead of layering a second instance when another script reaches the same event.
-	if (!_vm->_sound->isSoundPlaying(resource)) {
-		Audio::SoundHandle *handle = _vm->_sound->playSound(resource, soundType);
-		if (handle)
-			_frameSoundHandles[resource._id] = *handle;
-	}
+	// Play this runner's Immediate frame sound on its own mixer handle.
+	//
+	// Each runner keeps at most one active owned sound.
+	// - A cue for a different SND stops this runner's previous sound before starting,
+	//   so back-to-back cues on one runner replace each other instead of piling up.
+	// - A cue for the SND this runner already plays is ignored so the tail is neither restarted nor doubled.
+	// - A cue that only another runner plays is ignored as well so the same SND is not layered twice.
+	//   Only this runner is ever stopped here, so the sounds of other runners keep mixing independently.
+	Common::HashMap<int16, Audio::SoundHandle>::iterator ownIt = _frameSoundHandles.find(resource._id);
+	if (ownIt != _frameSoundHandles.end() && _vm->_mixer->isSoundHandleActive(ownIt->_value))
+		return true;
+	if (_vm->_sound->isSoundPlaying(resource))
+		return true;
+	stopFrameSounds();
+	Audio::SoundHandle *handle = _vm->_sound->playSound(resource, soundType);
+	if (handle)
+		_frameSoundHandles[resource._id] = *handle;
 	return true;
 }
 
