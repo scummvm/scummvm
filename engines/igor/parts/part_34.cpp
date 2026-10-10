@@ -59,7 +59,7 @@ static const uint8 kOldLadyBagFrames[] = { 11, 15, 16, 6, 17, 1 };
 /**
  * Draws a frame of FRM_Park1 (old lady and Igor) preserving the dialogue text colors.
  */
-void IgorEngine::PARK_DRAW_LADY_FRAME(uint8 *dst, int frame) {
+void IgorEngine::PARK_DRAW_drawOldLadyFrame(uint8 *dst, int frame) {
 	decodeAnimFrame(getAnimFrame(kParkFrames, kParkFrameTable, frame), dst, true);
 }
 
@@ -82,7 +82,7 @@ void IgorEngine::PARK_PICK_UP_ANIMATION(int screenOffset, int framesOffset) {
 }
 
 /**
- * Birds chirp from time to time while the park is shown.
+ * Birds chirp.
  */
 void IgorEngine::PARK_UPDATE_AMBIENT_SOUND() {
 	if (compareGameTick(1) && getRandomNumber(14) == 0) {
@@ -107,10 +107,10 @@ void IgorEngine::PARK_UPDATE_DIALOGUE_LADY(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		PARK_DRAW_LADY_FRAME(_screenVGA, 1);
+		PARK_DRAW_drawOldLadyFrame(_screenVGA, 1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PARK_DRAW_LADY_FRAME(_screenVGA, getRandomNumber(4) + 1);
+		PARK_DRAW_drawOldLadyFrame(_screenVGA, getRandomNumber(4) + 1);
 		break;
 	}
 }
@@ -189,7 +189,7 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 		igorSay(205, 1, 564);
 		break;
 	case 105:
-		PART_34_ACTION_105_TALK();
+		PART_34_ACTION_105_talkToOldLady();
 		break;
 	case 106:
 		igorSay(206, 2, 565);
@@ -198,7 +198,7 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 		igorSay(208, 2, 566);
 		break;
 	case 108:
-		PART_34_ACTION_108_OLD_LADY();
+		PART_34_ACTION_108_giveLizardToOldLady();
 		break;
 	case 109:
 		PART_34_ACTION_109_SCROLL_RIGHT();
@@ -220,33 +220,29 @@ void IgorEngine::PART_34_ACTION_103_TAKE() {
 	PART_34_APPLY_OBJECT_STATE(255);
 }
 
-void IgorEngine::PART_34_ACTION_105_TALK() {
+void IgorEngine::PART_34_ACTION_105_talkToOldLady() {
 	PART_34_OLD_LADY_CONVERSATION();
 	PART_34_APPLY_OBJECT_STATE(255);
 	_parkLadyIdleStep = 4;
-	PART_34_LADY_IDLE(4);
+	PART_34_oldLadyIdleAnimationFrame(4);
 }
 
-/**
- * Igor shows the old lady the animal he found. Depending on the animal she either rejects it
- * or recognizes her pet, gives Igor a rocket and leaves, and Laura shows up.
- */
-void IgorEngine::PART_34_ACTION_108_OLD_LADY() {
-	PARK_DRAW_LADY_FRAME(_screenVGA, 1);
+void IgorEngine::PART_34_ACTION_108_giveLizardToOldLady() {
+	PARK_DRAW_drawOldLadyFrame(_screenVGA, 1);
 	igorSay(211, 2, 568);
 	PARK_WAIT_FOR_IGOR_DIALOGUE();
 	for (int frame = 12; frame <= 13; ++frame) {
-		PARK_DRAW_LADY_FRAME(_screenVGA, frame);
+		PARK_DRAW_drawOldLadyFrame(_screenVGA, frame);
 		waitForTimer(45);
 	}
 	if (_objectsState[1] == 0) {
 		cutsceneSayStart(121, 58, 63, 23, 0, { { 213, 1, 569 }, { 216, 1, 570 } });
 		PARK_WAIT_FOR_LADY_DIALOGUE();
 		for (int frame = 14; frame >= 12; --frame) {
-			PARK_DRAW_LADY_FRAME(_screenVGA, frame);
+			PARK_DRAW_drawOldLadyFrame(_screenVGA, frame);
 			waitForTimer(45);
 		}
-		PARK_DRAW_LADY_FRAME(_screenVGA, 17);
+		PARK_DRAW_drawOldLadyFrame(_screenVGA, 17);
 		_parkLadyIdleStep = 1;
 		return;
 	}
@@ -255,14 +251,14 @@ void IgorEngine::PART_34_ACTION_108_OLD_LADY() {
 	PARK_WAIT_FOR_LADY_DIALOGUE();
 	_parkLadyIdleStep = 1;
 	for (uint i = 0; i < ARRAYSIZE(kOldLadyPetFrames); ++i) {
-		PARK_DRAW_LADY_FRAME(_screenVGA, kOldLadyPetFrames[i]);
+		PARK_DRAW_drawOldLadyFrame(_screenVGA, kOldLadyPetFrames[i]);
 		waitForTimer(45);
 	}
 	removeObjectFromInventory(59);
 	cutsceneSayStart(121, 58, 63, 23, 0, { { 219, 2, 573 }, { 221, 2, 574 }, { 223, 1, 575 }, { 224, 2, 576 } });
 	PARK_WAIT_FOR_LADY_DIALOGUE();
 	for (uint i = 0; i < ARRAYSIZE(kOldLadyBagFrames); ++i) {
-		PARK_DRAW_LADY_FRAME(_screenVGA, kOldLadyBagFrames[i]);
+		PARK_DRAW_drawOldLadyFrame(_screenVGA, kOldLadyBagFrames[i]);
 		waitForTimer(30);
 	}
 	while (isDialogueSpeechPlaying() && !_eventQuitGame) {
@@ -276,7 +272,7 @@ void IgorEngine::PART_34_ACTION_108_OLD_LADY() {
 	igorSay(230, 1, 580);
 	PARK_WAIT_FOR_IGOR_DIALOGUE();
 	for (int frame = 18; frame <= 31; ++frame) {
-		PARK_DRAW_LADY_FRAME(_screenVGA, frame);
+		PARK_DRAW_drawOldLadyFrame(_screenVGA, frame);
 		waitForTimer(30);
 	}
 	_objectsState[80] = 1;
@@ -291,10 +287,6 @@ void IgorEngine::PART_34_ACTION_108_OLD_LADY() {
 	PART_34_APPLY_OBJECT_STATE(255);
 }
 
-/**
- * Conversation with the old lady. The first time the lady greets Igor and Igor chooses what to ask,
- * the following times only the greetings are exchanged.
- */
 void IgorEngine::PART_34_OLD_LADY_CONVERSATION() {
 	_roomDataOffsets.dlg = kOldLadyDialogueData;
 	loadDialogueData(DLG_ParkLady);
@@ -440,7 +432,7 @@ void IgorEngine::PART_34_ACTION_109_SCROLL_RIGHT() {
 void IgorEngine::PART_34_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[80] == 0 && _objectsState[73] == 1) {
-			PARK_DRAW_LADY_FRAME(_screenLayer1, 1);
+			PARK_DRAW_drawOldLadyFrame(_screenLayer1, 1);
 		} else {
 			_roomObjectAreasTable[5].object = 0;
 		}
@@ -450,18 +442,14 @@ void IgorEngine::PART_34_APPLY_OBJECT_STATE(int num) {
 	}
 }
 
-/**
- * The old lady idles in her place by shifting between the frames of FRM_Park4. Pixels of Igor and
- * of the dialogue text are kept on the screen.
- */
-void IgorEngine::PART_34_LADY_IDLE(int step) {
+void IgorEngine::PART_34_oldLadyIdleAnimationFrame(int step) {
 	drawAnimRect(73 * 320 + 112, kParkIdleFrames + kOldLadyIdleFrames[step - 1] * 630, 18, 35, true, kBlendBehindIgorAndText);
 }
 
 void IgorEngine::PART_34_UPDATE_ROOM_BACKGROUND() {
 	PARK_UPDATE_AMBIENT_SOUND();
 	if (compareGameTick(61) && _objectsState[80] == 0 && _objectsState[73] == 1 && getRandomNumber(4) == 0) {
-		PART_34_LADY_IDLE(_parkLadyIdleStep);
+		PART_34_oldLadyIdleAnimationFrame(_parkLadyIdleStep);
 		_parkLadyIdleStep = (_parkLadyIdleStep == 6) ? 1 : _parkLadyIdleStep + 1;
 	}
 }

@@ -129,7 +129,7 @@ void IgorEngine::PART_35() {
 	static const int frames[] = { FRM_Park1, FRM_Park2, FRM_Park3, FRM_Park4, 0 };
 	loadAnimData(frames, kParkFrames);
 	if (_objectsState[80] == 0 && _objectsState[73] == 1) {
-		PARK_DRAW_LADY_FRAME(_screenLayer1, 1);
+		PARK_DRAW_drawOldLadyFrame(_screenLayer1, 1);
 	}
 	copyArea(_animFramesBuffer, 0, 160, _screenLayer1, 320, 160, 144);
 	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight,

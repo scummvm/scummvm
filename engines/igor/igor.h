@@ -1086,31 +1086,30 @@ private:
 
 	// library
 	void PART_33_EXEC_ACTION(int action);
-	void PART_33_ACTION_109();
-	void PART_33_ACTION_111();
-	void PART_33_ACTION_113();
-	void PART_33_ACTION_114();
-	void PART_33_ACTION_115();
+	void PART_33_ACTION_109_takeAstronomyBooks();
+	void PART_33_ACTION_111_talkToHarrison();
+	void PART_33_ACTION_113_walkOut();
+	void PART_33_ACTION_114_showPhotoToHarrison();
+	void PART_33_ACTION_115_giveNoteToHarrison();
 	void PART_33_UPDATE_DIALOGUE_HARRISON_1(int action);
 	void PART_33_UPDATE_DIALOGUE_HARRISON_2(int action);
 	void PART_33_UPDATE_DIALOGUE_HARRISON_3(int action);
-	void PART_33_HARRISON_SPEAKS(const Common::Array<DialogueText> &lines);
+	void PART_33_HarrisonSay(const Common::Array<DialogueText> &lines);
 	void PART_33_HANDLE_DIALOGUE_HARRISON();
 	void PART_33_UPDATE_ROOM_BACKGROUND();
-	void PART_33_HELPER_1(int num);
-	void PART_33_HELPER_2();
-	void PART_33_HELPER_3();
-	void PART_33_HELPER_4(int frame);
-	void PART_33_HELPER_5(int frame);
-	void PART_33_HELPER_7();
-	void PART_33_HELPER_8(int frame);
-	void PART_33_HELPER_9();
+	void PART_33_HELPER_1_OBJECTS_STATE(int num);
+	void PART_33_HELPER_2_HarrisonWalksOut();
+	void PART_33_HELPER_3_drawHarrisonFrame();
+	void PART_33_HELPER_4_drawHarrisonBodyFrame(int frame);
+	void PART_33_HELPER_5_drawHarrisonHeadFrame(int frame);
+	void PART_33_HELPER_7_walkIn();
+	void PART_33_HELPER_9_loadExtraTexts();
 	void PART_33();
 	void loadResourceData__ROOM_Library();
 	void loadResourceData__ANIM_Library();
 
 	// park
-	void PARK_DRAW_LADY_FRAME(uint8 *dst, int frame);
+	void PARK_DRAW_drawOldLadyFrame(uint8 *dst, int frame);
 	void PARK_DRAW_LAURA_FRAME(int frame);
 	void PARK_PICK_UP_ANIMATION(int screenOffset, int framesOffset);
 	void PARK_UPDATE_AMBIENT_SOUND();
@@ -1123,11 +1122,11 @@ private:
 	void PART_34();
 	void PART_34_EXEC_ACTION(int action);
 	void PART_34_ACTION_103_TAKE();
-	void PART_34_ACTION_105_TALK();
-	void PART_34_ACTION_108_OLD_LADY();
+	void PART_34_ACTION_105_talkToOldLady();
+	void PART_34_ACTION_108_giveLizardToOldLady();
 	void PART_34_ACTION_109_SCROLL_RIGHT();
 	void PART_34_APPLY_OBJECT_STATE(int num);
-	void PART_34_LADY_IDLE(int step);
+	void PART_34_oldLadyIdleAnimationFrame(int step);
 	void PART_34_LAURA_CONVERSATION();
 	void PART_34_OLD_LADY_CONVERSATION();
 	void PART_34_UPDATE_ROOM_BACKGROUND();
