@@ -608,6 +608,7 @@ private:
 	void playSound(int num, int type);
 	void stopSound();
 	void loadIgorFrames();
+	void loadIgorBeachFrames();
 
 	void ADD_DIALOGUE_TEXT(int num, int count, int sound = kNoSpeechSound);
 	void SET_DIALOGUE_TEXT(int start, int count);
@@ -1630,6 +1631,7 @@ protected:
 	static const uint8 _mouseCursorMask[];
 	static const uint8 _mouseCursorData[];
 	static const uint8 PAL_IGOR_1[];
+	static const uint8 PAL_IGOR_2[];
 	static const uint8 PAL_48_1[];
 	static const uint8 PAL_96_1[];
 };

@@ -134,9 +134,10 @@ void IgorEngine::PART_76_APPLY_OBJECT_STATE() {
 	} else {
 		copyArea(_screenLayer1, kPart76SmallPieceOffset, 320, _animFramesBuffer + kPart76SmallPieceSize,
 				 kPart76SmallPieceWidth, kPart76SmallPieceWidth, kPart76SmallPieceHeight);
+		// once the object was taken its areas stop being selectable
+		_roomObjectAreasTable[11].object = 0;
+		_roomObjectAreasTable[12].object = 0;
 	}
-	_roomObjectAreasTable[11].object = 0;
-	_roomObjectAreasTable[12].object = 0;
 }
 
 /**
@@ -300,7 +301,7 @@ void IgorEngine::PART_76() {
 		PART_MEANWHILE(IMG_Part76Card);
 	}
 	_gameState.enableLight = 2;
-	loadIgorFrames();
+	loadIgorBeachFrames();
 	loadActionData(DAT_Part76);
 	loadRoomData(PAL_Part76, IMG_Part76, BOX_Part76, MSK_Part76, TXT_Part76);
 	SET_PAL_240_48_1();

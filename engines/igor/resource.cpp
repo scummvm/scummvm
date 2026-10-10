@@ -246,6 +246,18 @@ void IgorEngine::loadIgorFrames() {
 	memcpy(_igorPalette, PAL_IGOR_1, 48);
 }
 
+/**
+ * Igor with the other clothes (the plane scenes).
+ */
+void IgorEngine::loadIgorBeachFrames() {
+	loadData(FRM_IgorDirBack2, _facingIgorFrames[0]);
+	loadData(FRM_IgorDirRight2, _facingIgorFrames[1]);
+	loadData(FRM_IgorDirFront2, _facingIgorFrames[2]);
+	loadData(FRM_IgorDirLeft2, _facingIgorFrames[3]);
+	loadData(FRM_IgorHead2, _igorHeadFrames);
+	memcpy(_igorPalette, PAL_IGOR_2, 48);
+}
+
 static int compareResourceEntry(const void *a, const void *b) {
 	int id = *(const int *)a;
 	const ResourceEntry *entry = (const ResourceEntry *)b;

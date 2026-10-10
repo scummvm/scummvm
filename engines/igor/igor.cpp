@@ -567,7 +567,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 
 	if (s.isLoading()) {
 		_gameStateLoaded = true;
-		memcpy(_igorPalette, (_currentPart == 760) ? PAL_IGOR_1 : PAL_IGOR_1, 48);
+		memcpy(_igorPalette, (_currentPart == 760) ? PAL_IGOR_2 : PAL_IGOR_1, 48);
 		UPDATE_OBJECT_STATE(255);
 		playMusic(_gameState.musicNum);
 		_system->warpMouse(_inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos]);
