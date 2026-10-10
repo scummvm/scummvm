@@ -450,6 +450,8 @@ void IgorEngine::PART_12_HELPER_6_enterFromChurch() {
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 1;
 	_walkData[0].clipWidth = 30;
+	_walkDataLastIndex = 0;
+	_walkDataCurrentIndex = 1;
 	_roomObjectAreasTable[_screenLayer2[28555]].area = _roomObjectAreasTable[_screenLayer2[34686]].area;
 	buildWalkPath(75, 89, 126, 108);
 	_roomObjectAreasTable[_screenLayer2[28555]].area = 0;
