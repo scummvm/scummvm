@@ -1285,6 +1285,16 @@ private:
 	void PART_78_INTERJECTION(int which);
 	void PART_78();
 
+	void PART_73_DRAW_PATCH(int frame);
+	void PART_73_UPDATE_DIALOGUE(int action);
+	void PART_73();
+
+	void PART_80_DRAW_PATCH(int frame);
+	void PART_80_UPDATE_DIALOGUE_FIRST(int action);
+	void PART_80_UPDATE_DIALOGUE_SECOND(int action);
+	void PART_80_SAY(int who, const Common::Array<DialogueText> &lines);
+	void PART_80();
+
 	// maze
 	static const MazeNode MAZE_NODES[108];
 	static const MazeRoom *getMazeRoom(int part);

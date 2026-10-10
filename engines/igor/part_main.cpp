@@ -681,6 +681,9 @@ void IgorEngine::PART_MAIN() {
 		case 721:
 			PART_72();
 			break;
+		case 730:
+			PART_73(); // cutscene that plays state 800 at its end
+			break;
 		case 750:
 			PART_75(); // philip vodka cutscene
 			break;

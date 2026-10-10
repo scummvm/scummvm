@@ -788,4 +788,21 @@
 #define IMG_Part78MinutesLater 1175
 #define IMG_Part78NextDay 1176
 
+// State 730 (PART_73)
+#define ANM_Part73 1177
+#define TXT_Part73 1178
+#define IMG_Part73 1179
+#define PAL_Part73 1180
+#define MSK_Part73 1181
+#define BOX_Part73 1182
+#define IMG_Part73Card 1183
+
+// State 800 (PART_80), played inside state 730
+#define ANM_Part80 1184
+#define TXT_Part80 1185
+#define IMG_Part80 1186
+#define PAL_Part80 1187
+#define MSK_Part80 1188
+#define BOX_Part80 1189
+
 #endif // IGOR_RESOURCE_IDS

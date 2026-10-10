@@ -61,7 +61,7 @@ void IgorEngine::PART_04_EXEC_ACTION(int action) {
  * */
 void IgorEngine::PART_04() {
 
-	if (_objectsState[106] == 1) { // newspaper cutscene
+	if (_objectsState[106] == 1) { // police custcene
 		_currentPart = 730;
 		return;
 	}
