@@ -123,7 +123,8 @@ public:
 	const Common::String &getCaption() const { return _caption; }
 	void updatePlayerTime();
 	void createItemButtons();
-	void clickInventoryItem(int16 itemID) { onInventoryClicked(itemID); }
+	// Takes an item out of the inventory, and opens the scene that shows it
+	void viewInventoryItem(int16 itemID);
 
 	// Nancy17 cell phone
 	void createPhoneBook();

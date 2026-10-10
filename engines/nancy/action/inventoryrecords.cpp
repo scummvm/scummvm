@@ -259,9 +259,10 @@ void GoInvViewScene::readData(Common::SeekableReadStream &stream) {
 }
 
 void GoInvViewScene::execute() {
-	if (g_nancy->getGameType() >= kGameTypeNancy17) {
-		// The same as clicking the item in the inventory
-		NancySceneState.getNDUI()->clickInventoryItem(_itemID);
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		// The inventory of the UI has taken over what the item data of the earlier
+		// games said about the items. Every record of Nancy16 adds its item.
+		NancySceneState.getNDUI()->viewInventoryItem(_itemID);
 		_isDone = true;
 		return;
 	}

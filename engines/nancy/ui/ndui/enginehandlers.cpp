@@ -167,8 +167,7 @@ void Manager::onInventoryClicked(int16 itemID) {
 
 	switch (button->getKind()) {
 	case InvButton::kItemView:
-		NancySceneState.viewInventoryItem(itemID);
-		NancySceneState.changeScene(scene);
+		viewInventoryItem(itemID);
 		break;
 	case InvButton::kItemOpenCountedScene:
 	case InvButton::kItemOpenScene:
@@ -179,6 +178,26 @@ void Manager::onInventoryClicked(int16 itemID) {
 		NancySceneState.removeItemFromInventory(itemID, true);
 		break;
 	}
+}
+
+void Manager::viewInventoryItem(int16 itemID) {
+	// Nancy17 does it the same way as for a click on the item
+	if (g_nancy->getGameType() >= kGameTypeNancy17) {
+		onInventoryClicked(itemID);
+		return;
+	}
+
+	InvButton *button = findItemButton(itemID);
+	if (!button || button->getKind() != InvButton::kItemView) {
+		return;
+	}
+
+	SceneChangeDescription scene;
+	scene.sceneID = button->getScene();
+	scene.continueSceneSound = kContinueSceneSound;
+
+	NancySceneState.viewInventoryItem(itemID);
+	NancySceneState.changeScene(scene);
 }
 
 // Nancy17 shows the scene of an item in a stream of its own, on top of the scene
