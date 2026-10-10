@@ -102,6 +102,11 @@ void Game::timeout() {
 	_G(overview).tick();
 	processFrame();
 
+	if (_interaction && _interaction->timeout()) {
+		_interaction.reset();
+		endTurn();
+	}
+
 	if (!_gameOver && !_interaction && isWaiting() && ++_idleFrames >= IDLE_FRAMES)
 		idleTimeout();
 
@@ -294,6 +299,9 @@ void Game::draw() {
 		drawViewport(s);
 	}
 	_G(messages).draw(s, !_gameOver);
+
+	if (_interaction)
+		_interaction->draw(s);
 
 	Gfx::ScreenEffects &fx = _G(effects);
 	if (fx._viewport)

@@ -197,6 +197,7 @@ MODULE_OBJS += \
 	ultima3/views/interactions/get_chest.o \
 	ultima3/views/interactions/hand_equipment.o \
 	ultima3/views/interactions/ignite_torch.o \
+	ultima3/views/interactions/insert_card.o \
 	ultima3/views/interactions/interaction.o \
 	ultima3/views/interactions/log_input.o \
 	ultima3/views/interactions/join_gold.o \

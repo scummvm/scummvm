@@ -53,6 +53,19 @@ public:
 	 * @returns		True once the command is finished
 	 */
 	virtual bool keypress(const KeypressMessage &msg) = 0;
+
+	/**
+	 * Called every frame, for commands that animate
+	 * @returns		True once the command is finished
+	 */
+	virtual bool timeout() {
+		return false;
+	}
+
+	/**
+	 * Draws over the game view
+	 */
+	virtual void draw(GfxSurface &s) {}
 };
 
 /**

@@ -22,7 +22,7 @@
 #ifndef ULTIMA3_VIEWS_INTERACTIONS_OTHER_COMMAND_H
 #define ULTIMA3_VIEWS_INTERACTIONS_OTHER_COMMAND_H
 
-#include "ultima/ultima3/views/interactions/log_input.h"
+#include "ultima/ultima3/views/interactions/insert_card.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -38,13 +38,15 @@ private:
 	enum Stage {
 		CHOOSE_PLAYER,
 		TYPE_COMMAND,
-		DIRECTION
+		DIRECTION,
+		INSERT
 	};
 
 	Stage _stage = CHOOSE_PLAYER;
 	PlayerChooser _players;
 	LogText _text;
 	DirectionChooser _directions;
+	InsertCard _insert;
 
 	void dig();
 	void search();
@@ -53,6 +55,8 @@ private:
 
 public:
 	bool keypress(const KeypressMessage &msg) override;
+	bool timeout() override;
+	void draw(GfxSurface &s) override;
 };
 
 } // namespace Interactions

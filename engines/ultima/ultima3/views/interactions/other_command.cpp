@@ -167,12 +167,19 @@ bool OtherCommand::keypress(const KeypressMessage &msg) {
 			_G(messages).print("Direct? ");
 			_stage = DIRECTION;
 			return false;
+		} else if (word == "INSERT") {
+			_insert.start(_players.slot());
+			_stage = INSERT;
+			return false;
 		} else {
 			noEffect();
 		}
 
 		return true;
 	}
+
+	case INSERT:
+		return _insert.keypress(msg);
 
 	default: {
 		DirectionChooser::Result result = _directions.handleKey(msg);
@@ -184,6 +191,15 @@ bool OtherCommand::keypress(const KeypressMessage &msg) {
 		return bribe(_directions.direction());
 	}
 	}
+}
+
+bool OtherCommand::timeout() {
+	return _stage == INSERT && _insert.timeout();
+}
+
+void OtherCommand::draw(GfxSurface &s) {
+	if (_stage == INSERT)
+		_insert.draw(s);
 }
 
 } // namespace Interactions

@@ -219,6 +219,7 @@ const char *LocationLogic::go(const Entrance &entrance, byte tile) {
 		return "Towne!\n";
 	} else {
 		save._location = Data::LOCATION_CASTLE;
+		_G(exodusProgress) = 0;
 		save._posX = CASTLE_START_X;
 		save._posY = CASTLE_START_Y;
 		return "Castle!\n";

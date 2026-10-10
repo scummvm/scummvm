@@ -106,6 +106,9 @@ public:
 	// How many more turns time is held still for, by powder or a spell
 	byte _holdTime = 0;
 
+	// How many of the four Exodus cards have been put in its machine
+	int _exodusProgress = 0;
+
 	// A full viewport picture shown in place of the dungeon, such as a fountain
 	byte _scene[Data::ARENA_SIZE * Data::ARENA_SIZE] = {};
 	bool _sceneShown = false;
