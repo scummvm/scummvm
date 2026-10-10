@@ -53,7 +53,18 @@ void Manager::takeEngineAction(const Action &action) {
 		_engineTargets[action.target]->onEngineAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_Timer")) {
 		// A control asks to show the value of a timer
-		if (action.type == kActionSetText && (int)action.value == kPlayerClockTimer) {
+		if (action.type == kActionSetText && (int)action.value >= 0) {
+			for (const ValueDisplay &display : _timerDisplays) {
+				if (display.name.equalsIgnoreCase(action.sender)) {
+					return;
+				}
+			}
+
+			ValueDisplay timerDisplay;
+			timerDisplay.index = (int16)action.value;
+			timerDisplay.name = action.sender;
+			_timerDisplays.push_back(timerDisplay);
+		} else if (action.type == kActionSetText && (int)action.value == kPlayerClockTimer) {
 			for (const Common::String &display : _clockDisplays) {
 				if (display.equalsIgnoreCase(action.sender)) {
 					return;
@@ -291,15 +302,22 @@ void Manager::registerValueDisplay(int16 index, const Common::String &display) {
 	_valueDisplays.push_back(valueDisplay);
 }
 
-// Value displays follow the value table
+// Value displays follow the value table, and timer displays what is left of their timer
 void Manager::update() {
 	TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
-	if (!table) {
-		return;
+	if (table) {
+		for (ValueDisplay &display : _valueDisplays) {
+			int16 value = table->getValue(display.index);
+			if (!display.hasShownValue || display.shownValue != value) {
+				display.hasShownValue = true;
+				display.shownValue = value;
+				takeAction(kActionSetValue, display.name, (double)value);
+			}
+		}
 	}
 
-	for (ValueDisplay &display : _valueDisplays) {
-		int16 value = table->getValue(display.index);
+	for (ValueDisplay &display : _timerDisplays) {
+		int16 value = (int16)NancySceneState.getSoftwareTimerPercentLeft(display.index);
 		if (!display.hasShownValue || display.shownValue != value) {
 			display.hasShownValue = true;
 			display.shownValue = value;

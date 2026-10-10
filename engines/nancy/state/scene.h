@@ -215,6 +215,10 @@ public:
 	int32 getSoftwareTimerState(uint16 index) const;
 	uint32 getSoftwareTimerElapsed(uint16 index) const;
 
+	// Nancy16: what is left of a timer until its first trigger, in percent, for the
+	// meters of the UI. -1 when the timer isn't in use, or has nothing to wait for.
+	int32 getSoftwareTimerPercentLeft(uint16 index) const;
+
 	// Nancy 12+ UI resource values (the UIRC boot chunk). Resource 0 is the
 	// coin purse amount in cents. Backed by the lazily-created, saved
 	// UIResourceData puzzle chunk, seeded from UIRC on first use and mutated by

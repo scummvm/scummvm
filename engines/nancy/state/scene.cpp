@@ -2395,6 +2395,31 @@ uint32 Scene::getSoftwareTimerElapsed(uint16 index) const {
 	return ((const TimerData *)_puzzleData.getVal(TimerData::getTag()))->timers[index].currentTimeMs;
 }
 
+int32 Scene::getSoftwareTimerPercentLeft(uint16 index) const {
+	if (index >= TimerData::kNumTimers || !_puzzleData.contains(TimerData::getTag())) {
+		return -1;
+	}
+
+	const TimerData::Timer &timer = ((const TimerData *)_puzzleData.getVal(TimerData::getTag()))->timers[index];
+	if (timer.state == TimerData::Timer::kIdle) {
+		return -1;
+	}
+
+	for (const TimerData::Trigger &trigger : timer.triggers) {
+		if (trigger.type == TimerData::Trigger::kOneShot && trigger.hasFired) {
+			continue;
+		}
+
+		if (trigger.durationMs == 0) {
+			return -1;
+		}
+
+		return (int32)(100.0 - (double)timer.currentTimeMs / trigger.durationMs * 100.0);
+	}
+
+	return -1;
+}
+
 void Scene::fireSoftwareTimer(TimerData::Timer &timer) {
 	timer.hasFired = true;
 

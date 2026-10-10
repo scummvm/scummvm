@@ -202,6 +202,7 @@ private:
 
 	Common::Array<Common::String> _clockDisplays;
 	Common::Array<ValueDisplay> _valueDisplays;
+	Common::Array<ValueDisplay> _timerDisplays;		// meters showing what is left of a timer
 
 	StringMap _journalPages;		// page title -> page panel
 	Common::String _shownJournalPage;
