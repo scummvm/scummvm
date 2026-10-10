@@ -125,6 +125,10 @@ void Dialog::lostFocus() {
 }
 
 void Dialog::setFocusWidget(Widget *widget) {
+	// Remember which widget had the focus, as releaseFocus() clears it and we
+	// want to know afterwards whether the focus actually moved.
+	Widget *previousWidget = _focusedWidget;
+
 	// The focus will change. Tell the old focused widget (if any)
 	// that it lost the focus.
 	releaseFocus();
@@ -132,6 +136,12 @@ void Dialog::setFocusWidget(Widget *widget) {
 	// Tell the new focused widget (if any) that it just gained the focus.
 	if (widget)
 		widget->receivedFocus();
+
+	// Announce the newly focused widget, so that moving the focus by keyboard
+	// is audible. Only do so once the dialog is on screen, to avoid speaking
+	// while it is still being built.
+	if (widget && widget != previousWidget && isVisible())
+		widget->readDescription();
 
 	_focusedWidget = widget;
 }
