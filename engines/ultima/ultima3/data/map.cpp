@@ -35,10 +35,19 @@ void Map::load(const char *filename) {
 	if (!f.open(filename))
 		error("Could not load %s", filename);
 
-	Common::Serializer s(&f, nullptr);
-	synchronizeData(s);
-	if (f.err() || f.eos())
+	if (!load(f))
 		error("Could not load %s", filename);
+}
+
+bool Map::load(Common::SeekableReadStream &src) {
+	Common::Serializer s(&src, nullptr);
+	synchronizeData(s);
+	return !src.err() && !src.eos();
+}
+
+void Map::save(Common::WriteStream &dest) {
+	Common::Serializer s(nullptr, &dest);
+	synchronizeData(s);
 }
 
 const char *Map::text(int index) const {

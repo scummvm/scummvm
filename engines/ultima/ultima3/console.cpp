@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "common/fs.h"
 #include "ultima/ultima3/console.h"
 #include "ultima/ultima3/ultima3.h"
 #include "ultima/ultima3/data/data.h"
@@ -450,35 +451,71 @@ bool Console::cmdInventory(int argc, const char **argv) {
 	return true;
 }
 
+// Where the moons are kept in the world file, after the whirlpool
+constexpr int MOON_PHASES = 4;
+constexpr int MOON_COUNTDOWNS = 6;
+
+// Opens a file of a saved game, from a folder if given or else from the game's own
+static Common::SeekableReadStream *openSaved(const Common::String &folder, const char *name) {
+	if (!folder.empty())
+		return Common::FSNode(Common::Path(folder)).getChild(name).createReadStream();
+
+	Common::File *f = new Common::File();
+	if (!f->open(name)) {
+		delete f;
+		return nullptr;
+	}
+
+	return f;
+}
+
+static Common::WriteStream *createSaved(const Common::String &folder, const char *name) {
+	if (!folder.empty())
+		return Common::FSNode(Common::Path(folder)).getChild(name).createWriteStream();
+
+	Common::DumpFile *f = new Common::DumpFile();
+	if (!f->open(Common::Path(name), true)) {
+		delete f;
+		return nullptr;
+	}
+
+	return f;
+}
+
 bool Console::cmdLoad(int argc, const char **argv) {
-	if (argc != 1 && argc != 3) {
-		debugPrintf("load [<roster file> <party file>]  - imports original DOS save files; "
-			"defaults to ROSTER.ULT and PARTY.ULT\n");
+	if (argc > 2) {
+		debugPrintf("load [<folder>]  - imports the original DOS save files ROSTER.ULT, PARTY.ULT "
+			"and SOSARIA.ULT from a folder, defaulting to the game's own\n");
 		return true;
 	}
 
-	Common::String rosterName = (argc == 3) ? argv[1] : ROSTER_FILE;
-	Common::String partyName = (argc == 3) ? argv[2] : PARTY_FILE;
-
-	Common::File rosterFile, partyFile;
-	if (!rosterFile.open(rosterName.c_str())) {
-		debugPrintf("Could not open %s\n", rosterName.c_str());
-		return true;
-	}
-	if (!partyFile.open(partyName.c_str())) {
-		debugPrintf("Could not open %s\n", partyName.c_str());
+	Common::String folder = (argc == 2) ? argv[1] : "";
+	Common::ScopedPtr<Common::SeekableReadStream> roster(openSaved(folder, ROSTER_FILE));
+	Common::ScopedPtr<Common::SeekableReadStream> party(openSaved(folder, PARTY_FILE));
+	if (!roster || !party) {
+		debugPrintf("Could not open %s and %s\n", ROSTER_FILE, PARTY_FILE);
 		return true;
 	}
 
 	Data::Savegame &sg = _G(savegame);
-	if (!sg.importOriginal(rosterFile, partyFile)) {
-		debugPrintf("%s and %s are too short to be save files\n", rosterName.c_str(), partyName.c_str());
+	if (!sg.importOriginal(*roster, *party)) {
+		debugPrintf("%s and %s are too short to be save files\n", ROSTER_FILE, PARTY_FILE);
 		return true;
 	}
 
-	// The world they were saved in comes with the party
-	if (Common::File::exists(WORLD_FILE)) {
-		_G(map).load(WORLD_FILE);
+	// The world they were saved in comes with the party, including where the moons are
+	Common::ScopedPtr<Common::SeekableReadStream> world(openSaved(folder, WORLD_FILE));
+	if (world) {
+		if (!_G(map).load(*world)) {
+			debugPrintf("%s is too short to be a map\n", WORLD_FILE);
+			return true;
+		}
+
+		for (int i = 0; i < 2; ++i) {
+			sg._moonPhase[i] = _G(map).extra(MOON_PHASES + i);
+			sg._moonCountdown[i] = _G(map).extra(MOON_COUNTDOWNS + i);
+		}
+
 		sg._mapLoaded = true;
 	} else {
 		ensureGame();
@@ -493,9 +530,9 @@ bool Console::cmdLoad(int argc, const char **argv) {
 }
 
 bool Console::cmdSave(int argc, const char **argv) {
-	if (argc != 1 && argc != 3) {
-		debugPrintf("save [<roster file> <party file>]  - exports original DOS save files; "
-			"defaults to ROSTER.ULT and PARTY.ULT\n");
+	if (argc > 2) {
+		debugPrintf("save [<folder>]  - exports the original DOS save files ROSTER.ULT, PARTY.ULT "
+			"and SOSARIA.ULT to a folder, defaulting to the dumps folder\n");
 		return true;
 	}
 
@@ -505,21 +542,26 @@ bool Console::cmdSave(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::String rosterName = (argc == 3) ? argv[1] : ROSTER_FILE;
-	Common::String partyName = (argc == 3) ? argv[2] : PARTY_FILE;
-
-	Common::DumpFile rosterFile, partyFile;
-	if (!rosterFile.open(Common::Path(rosterName), true)) {
-		debugPrintf("Could not create %s\n", rosterName.c_str());
-		return true;
-	}
-	if (!partyFile.open(Common::Path(partyName), true)) {
-		debugPrintf("Could not create %s\n", partyName.c_str());
+	Common::String folder = (argc == 2) ? argv[1] : "";
+	Common::ScopedPtr<Common::WriteStream> roster(createSaved(folder, ROSTER_FILE));
+	Common::ScopedPtr<Common::WriteStream> party(createSaved(folder, PARTY_FILE));
+	Common::ScopedPtr<Common::WriteStream> world(createSaved(folder, WORLD_FILE));
+	if (!roster || !party || !world) {
+		debugPrintf("Could not create the save files\n");
 		return true;
 	}
 
-	sg.exportOriginal(rosterFile, partyFile);
-	debugPrintf("Exported %s and %s\n", rosterName.c_str(), partyName.c_str());
+	sg.exportOriginal(*roster, *party);
+
+	// The world is the one the party came from if they're somewhere else
+	Data::Map map = (sg._location == Data::LOCATION_SOSARIA) ? _G(map) : _G(worldMap);
+	for (int i = 0; i < 2; ++i) {
+		map.extra(MOON_PHASES + i) = sg._moonPhase[i];
+		map.extra(MOON_COUNTDOWNS + i) = sg._moonCountdown[i];
+	}
+	map.save(*world);
+
+	debugPrintf("Exported %s, %s and %s\n", ROSTER_FILE, PARTY_FILE, WORLD_FILE);
 	return true;
 }
 

@@ -88,6 +88,17 @@ public:
 	 */
 	void load(const char *filename);
 
+	/**
+	 * Loads a location from a stream in the form of a .ULT file
+	 * @returns		False if the stream is too short
+	 */
+	bool load(Common::SeekableReadStream &src);
+
+	/**
+	 * Writes a location out in the form of a .ULT file
+	 */
+	void save(Common::WriteStream &dest);
+
 	void synchronize(Common::Serializer &s);
 
 	/**
