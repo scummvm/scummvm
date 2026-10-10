@@ -113,8 +113,14 @@ void FrameBlitDescription::readData(Common::SeekableReadStream &stream, bool lon
 		hasHotspot = stream.readUint16LE();
 	}
 
-	readRect(stream, src);
-	readRect(stream, dest);
+	// The right and bottom edges of a Nancy18 rect are no longer a part of it
+	if (g_nancy->getGameType() >= kGameTypeNancy18) {
+		readExclusiveRect(stream, src);
+		readExclusiveRect(stream, dest);
+	} else {
+		readRect(stream, src);
+		readRect(stream, dest);
+	}
 }
 
 void MultiEventFlagDescription::readData(Common::SeekableReadStream &stream) {
