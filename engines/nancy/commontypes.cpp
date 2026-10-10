@@ -138,8 +138,16 @@ void MultiEventFlagDescription::execute() {
 
 void SecondaryVideoDescription::readData(Common::SeekableReadStream &stream, bool hasTrailingRects) {
 	frameID = stream.readUint16LE();
-	readRect(stream, srcRect);
-	readRect(stream, destRect);
+
+	// The right and bottom edges of a Nancy18 rect are no longer a part of it
+	if (g_nancy->getGameType() >= kGameTypeNancy18) {
+		readExclusiveRect(stream, srcRect);
+		readExclusiveRect(stream, destRect);
+	} else {
+		readRect(stream, srcRect);
+		readRect(stream, destRect);
+	}
+
 	// PlaySecondaryVideo keeps the two trailing rects in every game, while
 	// PlaySecondaryMovie only has them up to Nancy 9 and dropped them afterwards.
 	if (hasTrailingRects || g_nancy->getGameType() <= kGameTypeNancy9) {
