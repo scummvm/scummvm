@@ -1277,7 +1277,10 @@ private:
 	const Common::Array<ZmbDecodedScriptFrame> *_activeDecodedFrames = nullptr;
 	/** Reusable mutable copy of one cached script frame for rendering and callbacks. */
 	mutable ZmbHotspotGroup *_materializedScriptFrame = nullptr;
-	/** Latest mixer handle per immediate SFX resource started by this runner. */
+	/**
+	 * Latest mixer handle per immediate SFX resource started by this runner.
+	 * At most one entry is active at a time because a cue for another SND replaces the previous one.
+	 */
 	mutable Common::HashMap<int16, Audio::SoundHandle> _frameSoundHandles;
 	/** key: shape id, value: ZmbDrawRecord */
 	Common::StableMap<uint32, ZmbDrawRecord *> _drawnRecordMap;
