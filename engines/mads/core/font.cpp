@@ -130,7 +130,7 @@ int font_write(FontPtr font, Buffer *target, const char *out_string,
 	if (strlen(out_string) == 0)
 		return x;
 
-	*(uint32 *)&colors[0] = *(uint32 *)&font_colors[0];
+	memcpy(colors, font_colors, sizeof(colors));
 
 	Common::strcpy_s(temp_buf, out_string);
 
