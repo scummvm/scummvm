@@ -1,4 +1,4 @@
-ScummVM 2026.4.0
+ScummVM 2026.4.1git
 ================
 
 This is a port of ScummVM (https://www.scummvm.org), a program which allows you
@@ -35,7 +35,7 @@ Differences between the versions
 --------------------------------
 
 After talking to Keith we have decided to provide three flavours of ScummVM.
-Please refer to https://docs.scummvm.org/en/v2026.4.0/other_platforms/atari.html
+Please refer to https://docs.scummvm.org/en/v2026.4.1git/other_platforms/atari.html
 for more details (TBD).
 
 Atari Full package
