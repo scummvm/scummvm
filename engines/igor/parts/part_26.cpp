@@ -27,37 +27,37 @@ static const uint8 PART_26_ANIM_DATA_1[12] = { 6, 0, 2, 3, 4, 5, 6, 5, 4, 3, 2, 
 
 void IgorEngine::PART_26_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
+	case 101: // look at plaque
 		igorSay(202, 1, 1279);
 		break;
-	case 102:
+	case 102: // look at door
 		igorSay(203, 1, 1280);
 		break;
 	case 103:
-		PART_26_ACTION_103();
+		PART_26_ACTION_103_openDoor();
 		break;
 	case 104:
-		PART_26_ACTION_104();
+		PART_26_ACTION_104_closeDoor();
 		break;
-	case 105:
+	case 105: // look at picture
 		igorSay(224, 2, 1290);
 		break;
-	case 106:
+	case 106: // go to mens toilets corridor
 		_currentPart = 250;
 		break;
 	case 107:
 		PART_26_ACTION_107();
 		break;
-	case 108:
+	case 108: // talk to miss sullivan
 		igorSay({ { 216, 2, 1284 }, { 218, 1, 1285 } });
 		break;
-	case 109:
+	case 109: // take miss sullivan
 		igorSay(219, 1, 1286);
 		break;
-	case 110:
+	case 110: // look at miss sullivan
 		igorSay({ { 220, 2, 1287 }, { 222, 1, 1288 } });
 		break;
-	case 111:
+	case 111: // use miss sullivan
 		igorSay(223, 1, 1289);
 		break;
 	default:
@@ -66,7 +66,7 @@ void IgorEngine::PART_26_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_26_ACTION_103() {
+void IgorEngine::PART_26_ACTION_103_openDoor() {
 	if (_objectsState[69] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
@@ -81,10 +81,10 @@ void IgorEngine::PART_26_ACTION_103() {
 		}
 	}
 	_objectsState[69] = 1;
-	PART_26_HELPER_1(1);
+	PART_26_HELPER_1_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_26_ACTION_104() {
+void IgorEngine::PART_26_ACTION_104_closeDoor() {
 	if (_objectsState[69] == 0) {
 		EXEC_MAIN_ACTION(14);
 		return;
@@ -99,7 +99,7 @@ void IgorEngine::PART_26_ACTION_104() {
 		}
 	}
 	_objectsState[69] = 0;
-	PART_26_HELPER_1(1);
+	PART_26_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_26_ACTION_107() {
@@ -121,45 +121,45 @@ void IgorEngine::PART_26_UPDATE_ROOM_BACKGROUND() {
 			if (_gameState.unk10 == 11) {
 				_gameState.unk10 = 2;
 			}
-			PART_26_HELPER_7(PART_26_ANIM_DATA_1[_gameState.unk10]);
+			PART_26_HELPER_7_drawMissSullivanFrame(PART_26_ANIM_DATA_1[_gameState.unk10]);
 			if (_gameState.unk10 > 2) {
 				++_gameState.unk10;
 			}
 		} else if (_gameState.unk10 == 1) {
 			_gameState.unk10 = 2;
-			PART_26_HELPER_7(_gameState.unk10);
+			PART_26_HELPER_7_drawMissSullivanFrame(_gameState.unk10);
 		} else if (getRandomNumber(24) == 0) {
 			_gameState.unk10 = 1;
-			PART_26_HELPER_7(_gameState.unk10);
+			PART_26_HELPER_7_drawMissSullivanFrame(_gameState.unk10);
 		} else if (getRandomNumber(29) == 0) {
 			_gameState.unk10 = 3;
 		}
 	}
 }
 
-void IgorEngine::PART_26_HELPER_1(int num) {
+void IgorEngine::PART_26_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[69] == 0) {
-			PART_26_HELPER_2();
+			PART_26_HELPER_2_drawClosedDoor();
 			_roomActionsTable[0x1E] = 6;
 		} else {
-			PART_26_HELPER_3();
+			PART_26_HELPER_3_drawOpenDoor();
 			_roomActionsTable[0x1E] = 7;
 		}
 	}
 }
 
-void IgorEngine::PART_26_HELPER_2() {
+void IgorEngine::PART_26_HELPER_2_drawClosedDoor() {
 	const int offset = 19870;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer, 25, 25, 65);
 }
 
-void IgorEngine::PART_26_HELPER_3() {
+void IgorEngine::PART_26_HELPER_3_drawOpenDoor() {
 	const int offset = 19870;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x659, 25, 25, 65);
 }
 
-void IgorEngine::PART_26_HELPER_4() {
+void IgorEngine::PART_26_HELPER_4_enterFromRight() {
 	_walkData[0].setPos(319, 125, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -171,7 +171,7 @@ void IgorEngine::PART_26_HELPER_4() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_26_HELPER_5() {
+void IgorEngine::PART_26_HELPER_5_enterFromLaboratory() {
 	_walkData[0].setPos(0, 115, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 2;
@@ -192,11 +192,11 @@ void IgorEngine::PART_26_HELPER_5() {
 		_currentAction.verb = kVerbWalk;
 		drawInventory(_inventoryInfo[72], 0);
 		playSound(51, 1);
-		PART_26_HELPER_1(255);
+		PART_26_HELPER_1_OBJECT_STATE(255);
 	}
 }
 
-void IgorEngine::PART_26_HELPER_7(int frame) {
+void IgorEngine::PART_26_HELPER_7_drawMissSullivanFrame(int frame) {
 	_roomCursorOn = false;
 	for (int i = 0; i <= 39; ++i) {
 		for (int j = 0; j <= 21; ++j) {
@@ -229,15 +229,15 @@ void IgorEngine::PART_26() {
 	setRoomWalkBounds(14, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_26_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_26_UPDATE_ROOM_BACKGROUND;
-	PART_26_HELPER_1(255);
+	PART_26_HELPER_1_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	_gameState.unk10 = true;
 	fadeIn(768);
 	if (_currentPart == 260) {
-		PART_26_HELPER_4();
+		PART_26_HELPER_4_enterFromRight();
 	} else {
-		PART_26_HELPER_5();
+		PART_26_HELPER_5_enterFromLaboratory();
 	}
 	enterPartLoop();
 	while (_currentPart >= 260 && _currentPart <= 261) {

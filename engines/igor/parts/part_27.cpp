@@ -32,7 +32,7 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		if (_objectsState[85] == 0) {
 			igorSay(216, 2, 1173);
 			_objectsState[85] = 1;
-			PART_27_HELPER_1(255);
+			PART_27_HELPER_1_OBJECT_STATE(255);
 		} else {
 			igorSay(201, 1, 1162);
 		}
@@ -46,22 +46,22 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 	case 105: // look at philips locker
 		igorSay(205, 1, 1165);
 		break;
-	case 106:
+	case 106: // open Philip's locker
 		PART_27_ACTION_106_openPhilipLocker();
 		break;
 	case 107:
-		PART_27_ACTION_107();
+		PART_27_ACTION_107_closeLocker();
 		break;
 	case 108:
-		PART_27_ACTION_108();
+		PART_27_ACTION_108_openLocker();
 		break;
-	case 109:
+	case 109: // look at bottles
 		igorSay(215, 1, 1172);
 		break;
 	case 110:
-		PART_27_ACTION_110();
+		PART_27_ACTION_110_useFlaskOnLocker();
 		break;
-	case 111:
+	case 111: // look at messageboard
 		igorSay(218, 2, 1174);
 		break;
 	case 112: // look at plaque
@@ -100,10 +100,10 @@ void IgorEngine::PART_27_ACTION_106_openPhilipLocker() {
 		}
 	}
 	_objectsState[84] = 1;
-	PART_27_HELPER_1(1);
+	PART_27_HELPER_1_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_27_ACTION_107() {
+void IgorEngine::PART_27_ACTION_107_closeLocker() {
 	if (_objectsState[84] == 0) {
 		EXEC_MAIN_ACTION(14);
 		return;
@@ -117,10 +117,10 @@ void IgorEngine::PART_27_ACTION_107() {
 		}
 	}
 	_objectsState[84] = 0;
-	PART_27_HELPER_1(1);
+	PART_27_HELPER_1_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_27_ACTION_108() {
+void IgorEngine::PART_27_ACTION_108_openLocker() {
 	if (_inventoryInfo[58] > 0 || _objectsState[42] == 2) {
 		igorSay(208, 1, 1168);
 		return;
@@ -134,13 +134,13 @@ void IgorEngine::PART_27_ACTION_108() {
 		}
 	}
 	addObjectToInventory(23, 58);
-	PART_27_HELPER_1(1);
+	PART_27_HELPER_1_OBJECT_STATE(1);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }
 
-void IgorEngine::PART_27_ACTION_110() {
+void IgorEngine::PART_27_ACTION_110_useFlaskOnLocker() {
 	igorSayAndWait({ { 212, 1, 1170 }, { 213, 2, 1171 } });
 	const int offset = 25012;
 	for (int i = 1; i <= 2; ++i) {
@@ -150,21 +150,21 @@ void IgorEngine::PART_27_ACTION_110() {
 		}
 	}
 	removeObjectFromInventory(55);
-	PART_27_HELPER_1(255);
+	PART_27_HELPER_1_OBJECT_STATE(255);
 	_objectsState[107] = 1;
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }
 
-void IgorEngine::PART_27_HELPER_1(int num) {
+void IgorEngine::PART_27_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[84] == 0) {
-			PART_27_HELPER_3();
+			PART_27_HELPER_3_drawClosedLocker();
 			_roomActionsTable[3] = 6;
 			_roomObjectAreasTable[6].object = 3;
 		} else {
-			PART_27_HELPER_4();
+			PART_27_HELPER_4_drawOpenLocker();
 			_roomActionsTable[3] = 7;
 			_roomObjectAreasTable[6].object = 4;
 		}
@@ -179,7 +179,7 @@ void IgorEngine::PART_27_HELPER_1(int num) {
 	}
 }
 
-void IgorEngine::PART_27_HELPER_2() {
+void IgorEngine::PART_27_HELPER_2_enterFromLeft() {
 	_walkData[0].setPos(0, 132, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -191,17 +191,17 @@ void IgorEngine::PART_27_HELPER_2() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_27_HELPER_3() {
+void IgorEngine::PART_27_HELPER_3_drawClosedLocker() {
 	const int offset = 21816;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer, 26, 26, 48);
 }
 
-void IgorEngine::PART_27_HELPER_4() {
+void IgorEngine::PART_27_HELPER_4_drawOpenLocker() {
 	const int offset = 21816;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x4E0, 26, 26, 48);
 }
 
-void IgorEngine::PART_27_HELPER_5() {
+void IgorEngine::PART_27_HELPER_5_enterFromLibrary() {
 	_walkData[0].setPos(270, 134, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 0;
@@ -222,14 +222,14 @@ void IgorEngine::PART_27() {
 	_roomDataOffsets = PART_27_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_27_EXEC_ACTION);
-	PART_27_HELPER_1(255);
+	PART_27_HELPER_1_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
 	if (_currentPart == 270) {
-		PART_27_HELPER_2();
+		PART_27_HELPER_2_enterFromLeft();
 	} else {
-		PART_27_HELPER_5();
+		PART_27_HELPER_5_enterFromLibrary();
 	}
 	enterPartLoop();
 	while (_currentPart == 270 || _currentPart == 271) {

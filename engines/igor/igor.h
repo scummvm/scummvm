@@ -945,62 +945,62 @@ private:
 	void PART_23_HELPER_7_drawLucasFrame(int frame);
 	void PART_23();
 
-		// college corridor sharon michael
+	// college corridor sharon michael
 	void PART_24_EXEC_ACTION(int action);
 	void PART_24_ACTION_102();
-	void PART_24_ACTION_104();
-	void PART_24_ACTION_105();
-	void PART_24_ACTION_107();
+	void PART_24_ACTION_104_closeDoor();
+	void PART_24_ACTION_105_openDoor();
+	void PART_24_ACTION_107_goToLibrary();
 	void PART_24_UPDATE_ROOM_BACKGROUND();
-	void PART_24_HELPER_1(int num);
-	void PART_24_HELPER_2(int frame);
-	void PART_24_HELPER_3(int frame);
-	void PART_24_HELPER_4();
-	void PART_24_HELPER_5();
-	void PART_24_HELPER_7();
-	void PART_24_HELPER_8();
-	void PART_24_HELPER_9();
+	void PART_24_HELPER_1_OBJECT_STATE(int num);
+	void PART_24_HELPER_2_talkingFrameSharon(int frame);
+	void PART_24_HELPER_3_talkingFrameMichael(int frame);
+	void PART_24_HELPER_4_drawClosedDoor();
+	void PART_24_HELPER_5_drawOpenDoor();
+	void PART_24_HELPER_7_enterFromLeft();
+	void PART_24_HELPER_8_enterFromRight();
+	void PART_24_HELPER_9_enterFromChemistryClass();
 	void PART_24();
 
 
 	// college corridor announcement board
 	void PART_25_EXEC_ACTION(int action);
-	void PART_25_ACTION_105();
-	void PART_25_ACTION_107();
-	void PART_25_ACTION_108();
-	void PART_25_HELPER_1(int num);
-	void PART_25_HELPER_2();
-	void PART_25_HELPER_3();
-	void PART_25_HELPER_4();
-	void PART_25_HELPER_5();
-	void PART_25_HELPER_7();
+	void PART_25_ACTION_105_enterMensToilet();
+	void PART_25_ACTION_107_openDoor();
+	void PART_25_ACTION_108_closeDoor();
+	void PART_25_HELPER_1_OBJECT_STATE(int num);
+	void PART_25_HELPER_2_enterFromLeft();
+	void PART_25_HELPER_3_enterFromRight();
+	void PART_25_HELPER_4_enterFromMensToilet();
+	void PART_25_HELPER_5_drawClosedDoor();
+	void PART_25_HELPER_7_drawOpenDoor();
 	void PART_25();
 
 	// college corridor miss barrymore
 	void PART_26_EXEC_ACTION(int action);
-	void PART_26_ACTION_103();
-	void PART_26_ACTION_104();
+	void PART_26_ACTION_103_openDoor();
+	void PART_26_ACTION_104_closeDoor();
 	void PART_26_ACTION_107();
 	void PART_26_UPDATE_ROOM_BACKGROUND();
-	void PART_26_HELPER_1(int num);
-	void PART_26_HELPER_2();
-	void PART_26_HELPER_3();
-	void PART_26_HELPER_4();
-	void PART_26_HELPER_5();
-	void PART_26_HELPER_7(int frame);
+	void PART_26_HELPER_1_OBJECT_STATE(int num);
+	void PART_26_HELPER_2_drawClosedDoor();
+	void PART_26_HELPER_3_drawOpenDoor();
+	void PART_26_HELPER_4_enterFromRight();
+	void PART_26_HELPER_5_enterFromLaboratory();
+	void PART_26_HELPER_7_drawMissSullivanFrame(int frame);
 	void PART_26();
 
 	// college lockers
 	void PART_27_EXEC_ACTION(int action);
 	void PART_27_ACTION_106_openPhilipLocker();
-	void PART_27_ACTION_107();
-	void PART_27_ACTION_108();
-	void PART_27_ACTION_110();
-	void PART_27_HELPER_1(int num);
-	void PART_27_HELPER_2();
-	void PART_27_HELPER_3();
-	void PART_27_HELPER_4();
-	void PART_27_HELPER_5();
+	void PART_27_ACTION_107_closeLocker();
+	void PART_27_ACTION_108_openLocker();
+	void PART_27_ACTION_110_useFlaskOnLocker();
+	void PART_27_HELPER_1_OBJECT_STATE(int num);
+	void PART_27_HELPER_2_enterFromLeft();
+	void PART_27_HELPER_3_drawClosedLocker();
+	void PART_27_HELPER_4_drawOpenLocker();
+	void PART_27_HELPER_5_enterFromLibrary();
 	void PART_27();
 
 	// college corridor caroline

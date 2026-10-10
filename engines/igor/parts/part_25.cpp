@@ -25,10 +25,10 @@ namespace Igor {
 
 void IgorEngine::PART_25_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
+	case 101: // go to left-side
 		_currentPart = 260;
 		break;
-	case 102:
+	case 102: // look at message board
 		switch (getRandomNumber(2) + 1) {
 		case 1:
 			igorSay(204, 2, 1273);
@@ -41,24 +41,24 @@ void IgorEngine::PART_25_EXEC_ACTION(int action) {
 			break;
 		}
 		break;
-	case 103:
+	case 103: // use message board
 		igorSay(201, 1, 1271);
 		break;
 	case 104: // walk to board: nothing happens on arrival
 		break;
-	case 105:
-		PART_25_ACTION_105();
+	case 105: // enter men's toilet
+		PART_25_ACTION_105_enterMensToilet();
 		break;
-	case 106:
+	case 106: // look at door
 		igorSay(203, 1, 1272);
 		break;
-	case 107:
-		PART_25_ACTION_107();
+	case 107: // open door
+		PART_25_ACTION_107_openDoor();
 		break;
-	case 108:
-		PART_25_ACTION_108();
+	case 108: // close door
+		PART_25_ACTION_108_closeDoor();
 		break;
-	case 109:
+	case 109: // go to corridor
 		_currentPart = 310;
 		break;
 	default:
@@ -67,7 +67,7 @@ void IgorEngine::PART_25_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_25_ACTION_105() {
+void IgorEngine::PART_25_ACTION_105_enterMensToilet() {
 	if (_objectsState[68] != 0) {
 		_roomObjectAreasTable[_screenLayer2[34370]].area = 1;
 		--_walkDataLastIndex;
@@ -79,7 +79,7 @@ void IgorEngine::PART_25_ACTION_105() {
 	}
 }
 
-void IgorEngine::PART_25_ACTION_107() {
+void IgorEngine::PART_25_ACTION_107_openDoor() {
 	if (_objectsState[68] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
@@ -95,10 +95,10 @@ void IgorEngine::PART_25_ACTION_107() {
 		}
 	}
 	_objectsState[68] = 1;
-	PART_25_HELPER_1(1);
+	PART_25_HELPER_1_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_25_ACTION_108() {
+void IgorEngine::PART_25_ACTION_108_closeDoor() {
 	if (_objectsState[68] == 0) {
 		EXEC_MAIN_ACTION(14);
 		return;
@@ -114,22 +114,22 @@ void IgorEngine::PART_25_ACTION_108() {
 		}
 	}
 	_objectsState[68] = 0;
-	PART_25_HELPER_1(1);
+	PART_25_HELPER_1_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_25_HELPER_1(int num) {
-	if (num == 1 || num == 255) {
+void IgorEngine::PART_25_HELPER_1_OBJECT_STATE(int num) {
+	if (num == 1 || num == 255) { // door state
 		if (_objectsState[68] == 0) {
-			PART_25_HELPER_5();
+			PART_25_HELPER_5_drawClosedDoor();
 			_roomActionsTable[31] = 6;
 		} else {
-			PART_25_HELPER_7();
+			PART_25_HELPER_7_drawOpenDoor();
 			_roomActionsTable[31] = 7;
 		}
 	}
 }
 
-void IgorEngine::PART_25_HELPER_2() {
+void IgorEngine::PART_25_HELPER_2_enterFromLeft() {
 	_walkData[0].setPos(0, 130, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 15;
@@ -142,7 +142,7 @@ void IgorEngine::PART_25_HELPER_2() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_25_HELPER_3() {
+void IgorEngine::PART_25_HELPER_3_enterFromRight() {
 	_walkData[0].setPos(319, 138, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -154,7 +154,7 @@ void IgorEngine::PART_25_HELPER_3() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_25_HELPER_4() {
+void IgorEngine::PART_25_HELPER_4_enterFromMensToilet() {
 	_walkData[0].setPos(130, 107, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 0;
@@ -167,12 +167,12 @@ void IgorEngine::PART_25_HELPER_4() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_25_HELPER_5() {
+void IgorEngine::PART_25_HELPER_5_drawClosedDoor() {
 	const int offset = 22208;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer, 23, 23, 52);
 }
 
-void IgorEngine::PART_25_HELPER_7() {
+void IgorEngine::PART_25_HELPER_7_drawOpenDoor() {
 	const int offset = 22208;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x4AC, 23, 23, 52);
 }
@@ -187,16 +187,16 @@ void IgorEngine::PART_25() {
 	_roomDataOffsets = PART_25_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_25_EXEC_ACTION);
-	PART_25_HELPER_1(255);
+	PART_25_HELPER_1_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
 	if (_currentPart == 250) {
-		PART_25_HELPER_2();
+		PART_25_HELPER_2_enterFromLeft();
 	} else if (_currentPart == 251) {
-		PART_25_HELPER_3();
+		PART_25_HELPER_3_enterFromRight();
 	} else if (_currentPart == 252) {
-		PART_25_HELPER_4();
+		PART_25_HELPER_4_enterFromMensToilet();
 	}
 	enterPartLoop();
 	while (_currentPart >= 250 && _currentPart <= 252) {

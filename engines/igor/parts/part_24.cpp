@@ -25,40 +25,40 @@ namespace Igor {
 
 void IgorEngine::PART_24_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
+	case 101: // go to corridor
 		_currentPart = 313;
 		break;
 	case 102:
 		PART_24_ACTION_102();
 		break;
-	case 103:
+	case 103: // look at chemistry door
 		igorSay(201, 1, 1257);
 		break;
 	case 104:
-		PART_24_ACTION_104();
+		PART_24_ACTION_104_closeDoor();
 		break;
 	case 105:
-		PART_24_ACTION_105();
+		PART_24_ACTION_105_openDoor();
 		break;
-	case 106:
+	case 106: // look at chemistry plaque
 		igorSay(202, 1, 1258);
 		break;
 	case 107:
-		PART_24_ACTION_107();
+		PART_24_ACTION_107_goToLibrary();
 		break;
-	case 108:
+	case 108: // look at library plaque
 		igorSay(203, 1, 1259);
 		break;
-	case 109:
+	case 109: // talk to sharon and michael
 		igorSay({ { 204, 1, 1260 }, { 205, 1, 1261 } });
 		break;
-	case 110:
+	case 110:  // take sharon and michael
 		igorSay(206, 2, 1262);
 		break;
-	case 111:
+	case 111: // look at sharon and michael
 		igorSay({ { 208, 2, 1263 }, { 210, 2, 1264 } });
 		break;
-	case 112:
+	case 112: // give an item to sharon and michael
 		igorSay(212, 2, 1265);
 		break;
 	default:
@@ -79,7 +79,7 @@ void IgorEngine::PART_24_ACTION_102() {
 	}
 }
 
-void IgorEngine::PART_24_ACTION_104() {
+void IgorEngine::PART_24_ACTION_104_closeDoor() {
 	if (_objectsState[67] == 1) {
 		executeAction(11);
 		return;
@@ -94,10 +94,10 @@ void IgorEngine::PART_24_ACTION_104() {
 		}
 	}
 	_objectsState[67] = 1;
-	PART_24_HELPER_1(1);
+	PART_24_HELPER_1_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_24_ACTION_105() {
+void IgorEngine::PART_24_ACTION_105_openDoor() {
 	if (_objectsState[67] == 0) {
 		executeAction(14);
 		return;
@@ -112,10 +112,10 @@ void IgorEngine::PART_24_ACTION_105() {
 		}
 	}
 	_objectsState[67] = 0;
-	PART_24_HELPER_1(1);
+	PART_24_HELPER_1_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_24_ACTION_107() {
+void IgorEngine::PART_24_ACTION_107_goToLibrary() {
 	_roomObjectAreasTable[_screenLayer2[38719]].area = 1;
 	--_walkDataLastIndex;
 	buildWalkPathSimple(266, 123, 319, 120);
@@ -131,35 +131,35 @@ void IgorEngine::PART_24_UPDATE_ROOM_BACKGROUND() {
 			_gameState.counter[4] = getRandomNumber(89) + 10;
 			_gameState.unk10 = 0;
 			if (_gameState.unkF) {
-				PART_24_HELPER_3(1);
+				PART_24_HELPER_3_talkingFrameMichael(1);
 			} else {
-				PART_24_HELPER_3(2);
+				PART_24_HELPER_3_talkingFrameMichael(2);
 			}
 			_gameState.unkF = !_gameState.unkF;
 		} else {
 			++_gameState.unk10;
 		}
 		if (_gameState.unkF) {
-			PART_24_HELPER_3(getRandomNumber(5) + 1);
+			PART_24_HELPER_3_talkingFrameMichael(getRandomNumber(5) + 1);
 		} else {
-			PART_24_HELPER_2(getRandomNumber(5) + 1);
+			PART_24_HELPER_2_talkingFrameSharon(getRandomNumber(5) + 1);
 		}
 	}
 }
 
-void IgorEngine::PART_24_HELPER_1(int num) {
-	if (num == 1 || num == 255) {
+void IgorEngine::PART_24_HELPER_1_OBJECT_STATE(int num) {
+	if (num == 1 || num == 255) { // door
 		if (_objectsState[67] == 0) {
-			PART_24_HELPER_4();
+			PART_24_HELPER_4_drawClosedDoor();
 			_roomActionsTable[2] = 6;
 		} else {
-			PART_24_HELPER_5();
+			PART_24_HELPER_5_drawOpenDoor();
 			_roomActionsTable[2] = 7;
 		}
 	}
 }
 
-void IgorEngine::PART_24_HELPER_2(int frame) {
+void IgorEngine::PART_24_HELPER_2_talkingFrameSharon(int frame) {
 	_roomCursorOn = false;
 	for (int i = 0; i <= 48; ++i) {
 		for (int j = 0; j <= 22; ++j) {
@@ -183,7 +183,7 @@ void IgorEngine::PART_24_HELPER_2(int frame) {
 	}
 }
 
-void IgorEngine::PART_24_HELPER_3(int frame) {
+void IgorEngine::PART_24_HELPER_3_talkingFrameMichael(int frame) {
 	_roomCursorOn = false;
 	for (int i = 0; i <= 42; ++i) {
 		for (int j = 0; j <= 21; ++j) {
@@ -207,17 +207,17 @@ void IgorEngine::PART_24_HELPER_3(int frame) {
 	}
 }
 
-void IgorEngine::PART_24_HELPER_4() {
+void IgorEngine::PART_24_HELPER_4_drawClosedDoor() {
 	const int offset = 22785;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer, 33, 33, 55);
 }
 
-void IgorEngine::PART_24_HELPER_5() {
+void IgorEngine::PART_24_HELPER_5_drawOpenDoor() {
 	const int offset = 22785;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x717, 33, 33, 55);
 }
 
-void IgorEngine::PART_24_HELPER_7() {
+void IgorEngine::PART_24_HELPER_7_enterFromLeft() {
 	_walkData[0].setPos(0, 138, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 15;
@@ -230,7 +230,7 @@ void IgorEngine::PART_24_HELPER_7() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_24_HELPER_8() {
+void IgorEngine::PART_24_HELPER_8_enterFromRight() {
 	_walkData[0].setPos(319, 123, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 1;
@@ -245,7 +245,7 @@ void IgorEngine::PART_24_HELPER_8() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_24_HELPER_9() {
+void IgorEngine::PART_24_HELPER_9_enterFromChemistryClass() {
 	_walkData[0].setPos(68, 116, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 1;
@@ -272,16 +272,16 @@ void IgorEngine::PART_24() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_24_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_24_UPDATE_ROOM_BACKGROUND;
-	PART_24_HELPER_1(255);
+	PART_24_HELPER_1_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
 	fadeIn(768);
 	if (_currentPart == 240) {
-		PART_24_HELPER_7();
+		PART_24_HELPER_7_enterFromLeft();
 	} else if (_currentPart == 241) {
-		PART_24_HELPER_8();
+		PART_24_HELPER_8_enterFromRight();
 	} else if (_currentPart == 242) {
-		PART_24_HELPER_9();
+		PART_24_HELPER_9_enterFromChemistryClass();
 	}
 	enterPartLoop();
 	while (_currentPart >= 240 && _currentPart <= 242) {
