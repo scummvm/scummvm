@@ -26,6 +26,9 @@ namespace Ultima {
 namespace Ultima3 {
 
 constexpr int EXODUS_CASTLE_X = 10;
+constexpr int DAWN_X = 37, DAWN_Y = 53;
+constexpr byte CELL_TOWN = 0x18;
+constexpr byte CELL_FOREST = 0x0C;
 constexpr byte TILE_WATER = 0;
 constexpr byte TILE_MOUNTAINS = 4;
 constexpr byte TILE_SHIP_WATER = 12;
@@ -295,6 +298,12 @@ void LocationLogic::updateMoons() {
 
 	_G(map).setCell(GATE_X[oldLeft], GATE_Y[oldLeft], CELL_GRASS);
 	_G(map).setCell(GATE_X[save._moonPhase[0]], GATE_Y[save._moonPhase[0]], CELL_MOON_GATE);
+
+	// The town of Dawn only shows itself when both moons were full, and hides again when both were new
+	if ((oldLeft & oldRight) == 7)
+		_G(map).setCell(DAWN_X, DAWN_Y, CELL_TOWN);
+	else if ((oldLeft | oldRight) == 0)
+		_G(map).setCell(DAWN_X, DAWN_Y, CELL_FOREST);
 }
 
 bool LocationLogic::isOnMoonGate() const {
