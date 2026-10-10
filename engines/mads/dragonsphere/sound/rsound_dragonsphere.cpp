@@ -47,7 +47,7 @@ bool RSound1::callFunction(uint16 targetOffset, Channel &channel) {
 		command32();
 		return true;
 	case 0x2478:
-		if (isSoundActive(loadData(0xC96)))
+		if (isSoundActive(0xC96))
 			return true;
 		if (isMusicChannelsActive())
 			scheduleCallback(MAKE_CALLBACK(RSound1, loadCallback2478));
@@ -110,8 +110,7 @@ int RSound1::command(int commandId, int param) {
 // command16/17/18 trio.
 
 int RSound1::command16() {
-	byte *pData = loadData(0x7BA);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x7BA))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x90);
@@ -142,7 +141,7 @@ int RSound1::loadCallback2478() {
 int RSound1::command17() {
 	// Ungated scheduling (Pattern A): no isMusicChannelsActive() check,
 	// always loads immediately once the isSoundActive() gate passes.
-	if (isSoundActive(loadData(0x2F54)))
+	if (isSoundActive(0x2F54))
 		return 0;
 	command3();
 	resetCallbackTimerEx(0xC0, 0x60);
@@ -212,8 +211,7 @@ int RSound1::command31() {
 // driver's Pattern B idiom.
 
 int RSound1::command32() {
-	byte *pData = loadData(0xA14);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xA14))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xB0);
@@ -234,8 +232,7 @@ int RSound1::loadCommand32() {
 }
 
 int RSound1::command33() {
-	byte *pData = loadData(0xAFC);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xAFC))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xB0);
@@ -260,7 +257,7 @@ int RSound1::command34() {
 	// playSoundChannels1To5() (free-channel search) rather than direct
 	// Channel_loadN targets. Also the only asymmetric timer in this
 	// bucket (counter=0x50, period=5).
-	if (isSoundActive(loadData(0x25F2)))
+	if (isSoundActive(0x25F2))
 		return 0;
 	resetCallbackTimerEx(0x50, 5);
 	command3();
@@ -271,8 +268,7 @@ int RSound1::command34() {
 }
 
 int RSound1::command35() {
-	byte *pData = loadData(0xDDA);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xDDA))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x60);
@@ -292,8 +288,7 @@ int RSound1::loadCommand35() {
 }
 
 int RSound1::command36() {
-	byte *pData = loadData(0xF66);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xF66))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x80);
@@ -313,8 +308,7 @@ int RSound1::loadCommand36() {
 }
 
 int RSound1::command37() {
-	byte *pData = loadData(0x120C);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x120C))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xC0);
@@ -334,8 +328,7 @@ int RSound1::loadCommand37() {
 int RSound1::command38() {
 	// NOTE: channel-load order is 5,3,4,2 - not sequential. Preserved
 	// exactly.
-	byte *pData = loadData(0x12CE);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x12CE))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x60);
@@ -355,8 +348,7 @@ int RSound1::loadCommand38() {
 }
 
 int RSound1::command39() {
-	byte *pData = loadData(0x1622);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x1622))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xB0);
@@ -375,8 +367,7 @@ int RSound1::loadCommand39() {
 }
 
 int RSound1::command40() {
-	byte *pData = loadData(0x172E);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x172E))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xA8);
@@ -399,8 +390,7 @@ int RSound1::loadCommand40() {
 int RSound1::command41() {
 	// NOTE: uses channel 9 in place of channel 3 - confirmed directly
 	// from the disassembly (Channel_load9, not Channel_load3).
-	byte *pData = loadData(0x219E);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x219E))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x90);
@@ -421,8 +411,7 @@ int RSound1::loadCommand41() {
 }
 
 int RSound1::command42() {
-	byte *pData = loadData(0x2400);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x2400))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x90);
@@ -451,7 +440,7 @@ void RSound1::command43_48Tail(byte variant) {
 	// bucket-4 loader) - always proceeds unconditionally once the gate
 	// passes.
 	*loadData(0x2539) = variant;
-	if (isSoundActive(loadData(0x24EC)))
+	if (isSoundActive(0x24EC))
 		return;
 	loadCommand43_48();
 }
@@ -477,8 +466,7 @@ void RSound1::loadCommand43_48() {
 }
 
 int RSound1::command44() {
-	byte *pData = loadData(0x268C);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x268C))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		// Asymmetric timer: counter=0x60, period=0xE0.
@@ -500,8 +488,7 @@ int RSound1::loadCommand44() {
 }
 
 int RSound1::command45() {
-	byte *pData = loadData(0x28F6);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x28F6))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x60);
@@ -522,8 +509,7 @@ int RSound1::loadCommand45() {
 }
 
 int RSound1::command46() {
-	byte *pData = loadData(0x2EC6);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x2EC6))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x90);
@@ -543,8 +529,7 @@ int RSound1::loadCommand46() {
 int RSound1::command47() {
 	// NOTE: channel-load order is 5,3,4,2 - not sequential, same shape
 	// as command38. Preserved exactly.
-	byte *pData = loadData(0x1342);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x1342))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x60);
@@ -809,8 +794,7 @@ int RSound2::command5() {
 /*-----------------------------------------------------------------------*/
 
 int RSound2::command16() {
-	byte *pData = loadData(0xEE0);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xEE0))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x90);
@@ -829,7 +813,7 @@ int RSound2::loadCommand16() {
 
 int RSound2::command17() {
 	// Ungated scheduling (Pattern A), matching RSound1's command17 shape.
-	if (isSoundActive(loadData(0x155C)))
+	if (isSoundActive(0x155C))
 		return 0;
 	command3();
 	resetCallbackTimerEx(192, 96);
@@ -913,8 +897,7 @@ int RSound2::loadCommand32() {
 }
 
 int RSound2::command33() {
-	byte *pData = loadData(0xA54);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xA54))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xB0);
@@ -936,8 +919,7 @@ int RSound2::loadCommand33() {
 }
 
 int RSound2::command34() {
-	byte *pData = loadData(0xE4A);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xE4A))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(96);
@@ -1126,8 +1108,7 @@ int RSound3::command5() {
 int RSound3::command16() {
 	// The native helper scans the active channels for this sequence pointer,
 	// which is equivalent to isSoundActive().
-	byte *pData = loadData(0x7BF);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x7BF))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x90);
@@ -1152,7 +1133,7 @@ int RSound3::loadCommand16() {
 
 int RSound3::command17() {
 	// Ungated scheduling (Pattern A), matching RSound1/2's command17 shape.
-	if (isSoundActive(loadData(0x12CC)))
+	if (isSoundActive(0x12CC))
 		return 0;
 	command3();
 	resetCallbackTimerEx(0xC0, 0x60);
@@ -1219,8 +1200,7 @@ int RSound3::command64() {
 }
 
 int RSound3::command32() {
-	byte *pData = loadData(0xCAE);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xCAE))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xB0);
@@ -1242,8 +1222,7 @@ int RSound3::loadCommand32() {
 }
 
 int RSound3::command33() {
-	byte *pData = loadData(0x102A);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x102A))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xB0);
@@ -1358,7 +1337,7 @@ int RSound4::command1() {
 	// Must call THIS driver's own command3() (not virtual in the base -
 	// see class comment).
 	command3();
-	if (isSoundActive(loadData(0x1F4F)))
+	if (isSoundActive(0x1F4F))
 		return 0;
 	_fadeCheckPeriod = 1; // armFadeCheck
 	disableChannelTo(5, 0xFF); // channel 6 (redundant re-disable if command3's own gate already did it - harmless)
@@ -1384,7 +1363,7 @@ int RSound4::command3() {
 	disableChannelTo(3, 0xFF); // ch4
 	disableChannelTo(4, 0xFF); // ch5
 	disableChannelTo(8, 0xFF); // ch9
-	if (isSoundActive(loadData(0x1F4F)))
+	if (isSoundActive(0x1F4F))
 		return 0;
 	disableChannelTo(5, 0xFF); // ch6 (conditional)
 	return 0;
@@ -1458,7 +1437,7 @@ int RSound4::command16() {
 	if (!isMusicChannelsActive()) {
 		loadCommand16();
 	} else {
-		if (isSoundActive(loadData(0x7C4)))
+		if (isSoundActive(0x7C4))
 			return 0;
 		scheduleCallback(MAKE_CALLBACK(RSound4, loadCommand16));
 	}
@@ -1477,7 +1456,7 @@ int RSound4::loadCommand16() {
 int RSound4::command17() {
 	// Ungated scheduling (Pattern A), matching every other driver's
 	// command17 shape.
-	if (isSoundActive(loadData(0x1E1C)))
+	if (isSoundActive(0x1E1C))
 		return 0;
 	command3();
 	resetCallbackTimerEx(0xC0, 0x60);
@@ -1526,7 +1505,7 @@ int RSound4::command28() {
 int RSound4::command29() {
 	// Reuses 0x1F4F both as the isSoundActive gate and the play target -
 	// confirmed directly from the disassembly.
-	if (isSoundActive(loadData(0x1F4F)))
+	if (isSoundActive(0x1F4F))
 		return 0;
 	playSoundChannels6to8(0x1F4F);
 	return 0;
@@ -1543,8 +1522,7 @@ int RSound4::command31() {
 }
 
 int RSound4::command32() {
-	byte *pData = loadData(0x964);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x964))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xB0);
@@ -1566,8 +1544,7 @@ int RSound4::loadCommand32() {
 }
 
 int RSound4::command33() {
-	byte *pData = loadData(0xE10);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xE10))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xB0);
@@ -1588,8 +1565,7 @@ int RSound4::loadCommand33() {
 }
 
 int RSound4::command35() {
-	byte *pData = loadData(0xFFA);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xFFA))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x60);
@@ -1609,11 +1585,9 @@ int RSound4::loadCommand35() {
 }
 
 int RSound4::command36() {
-	// NOTE: the isSoundActive() gate (0x25F1) doesn't match the first
-	// load offset (0x1950) - same kind of confirmed gate/load mismatch
-	// seen in RSound3's command32/command35.
-	byte *pData = loadData(0x25F1);
-	if (isSoundActive(pData))
+	// The native identity value is outside this overlay's readable data
+	// table. It is compared as an opaque value and never dereferenced.
+	if (isSoundActive(0x25F1))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x80);
@@ -1634,8 +1608,7 @@ int RSound4::loadCommand36() {
 }
 
 int RSound4::command37() {
-	byte *pData = loadData(0x1062);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x1062))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xC0);
@@ -1656,8 +1629,7 @@ int RSound4::loadCommand37() {
 }
 
 int RSound4::command38() {
-	byte *pData = loadData(0x1172);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x1172))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0x60);
@@ -1678,8 +1650,7 @@ int RSound4::loadCommand38() {
 }
 
 int RSound4::command39() {
-	byte *pData = loadData(0x14DE);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x14DE))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xB0);
@@ -1701,8 +1672,7 @@ int RSound4::loadCommand39() {
 }
 
 int RSound4::command40() {
-	byte *pData = loadData(0x7BF);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x7BF))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(0xA8);
@@ -1869,9 +1839,9 @@ int RSound5::command16() {
 	// (0x7DC, 0x7E9) as an OR-gate before proceeding, just in reversed
 	// order.
 	if (_command16Played) {
-		if (isSoundActive(loadData(0x7E9)))
+		if (isSoundActive(0x7E9))
 			return 0;
-		if (isSoundActive(loadData(0x7DC)))
+		if (isSoundActive(0x7DC))
 			return 0;
 		if (!isMusicChannelsActive()) {
 			resetCallbackTimer(192);
@@ -1880,9 +1850,9 @@ int RSound5::command16() {
 			scheduleCallback(MAKE_CALLBACK(RSound5, loadCommand16B));
 	} else {
 		_command16Played = true;
-		if (isSoundActive(loadData(0x7DC)))
+		if (isSoundActive(0x7DC))
 			return 0;
-		if (isSoundActive(loadData(0x7E9)))
+		if (isSoundActive(0x7E9))
 			return 0;
 		if (!isMusicChannelsActive()) {
 			resetCallbackTimer(192);
@@ -1917,8 +1887,8 @@ int RSound5::loadCommand16B() {
 }
 
 void RSound5::dispatchCommand16B() {
-	if (isSoundActive(loadData(0x7E9)) ||
-			isSoundActive(loadData(0x7DC)))
+	if (isSoundActive(0x7E9) ||
+			isSoundActive(0x7DC))
 		return;
 	if (isMusicChannelsActive())
 		scheduleCallback(MAKE_CALLBACK(RSound5, loadCommand16B));
@@ -1931,7 +1901,7 @@ void RSound5::dispatchCommand16B() {
 int RSound5::command17() {
 	// Ungated scheduling (Pattern A), matching every other driver's
 	// command17 shape.
-	if (isSoundActive(loadData(0x1F5A)))
+	if (isSoundActive(0x1F5A))
 		return 0;
 	command3();
 	resetCallbackTimerEx(0xC0, 0x60);
@@ -1980,7 +1950,7 @@ int RSound5::command28() {
 int RSound5::command29() {
 	// Reuses 0x208D both as the isSoundActive gate and the play target,
 	// matching RSound4's command29 exactly.
-	if (isSoundActive(loadData(0x208D)))
+	if (isSoundActive(0x208D))
 		return 0;
 	playSoundChannels6to8(0x208D);
 	return 0;
@@ -2004,8 +1974,7 @@ int RSound5::command31() {
 int RSound5::command32() {
 	// NOTE: calls command1(), not command3(), unlike most other bucket-4
 	// commands in this driver.
-	byte *pData = loadData(0xDCA);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xDCA))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(72);
@@ -2027,8 +1996,7 @@ int RSound5::loadCommand32() {
 }
 
 int RSound5::command33() {
-	byte *pData = loadData(0xFDA);
-	if (isSoundActive(pData))
+	if (isSoundActive(0xFDA))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(96);
@@ -2051,8 +2019,7 @@ int RSound5::loadCommand33() {
 }
 
 int RSound5::command34() {
-	byte *pData = loadData(0x16EA);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x16EA))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(192);
@@ -2075,8 +2042,7 @@ int RSound5::loadCommand34() {
 }
 
 int RSound5::command35() {
-	byte *pData = loadData(0x1B54);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x1B54))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(96);
@@ -2116,8 +2082,7 @@ int RSound5::command37() {
 }
 
 int RSound5::command38() {
-	byte *pData = loadData(0x1CDC);
-	if (isSoundActive(pData))
+	if (isSoundActive(0x1CDC))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(192);
@@ -2228,7 +2193,7 @@ int RSound5::command77() {
 		param = 0;
 	*loadData(0x20D6) = (byte)(param & 0x7F);
 
-	if (isSoundActive(loadData(0x20CB)))
+	if (isSoundActive(0x20CB))
 		return 0;
 	_channels[7].load(loadData(0x20CB));
 	return 0;
@@ -2374,13 +2339,13 @@ int RSound6::command(int commandId, int param) {
 }
 
 int RSound6::command16() {
-	// Three chained isSoundActive gates (an OR: any match early-exits)
-	// before the isMusicChannelsActive() branch.
-	if (isSoundActive(loadData(0x7BA)))
+	// Three chained identity gates precede the music-channel check. The
+	// latter two values are opaque native identities outside the data table.
+	if (isSoundActive(0x7BA))
 		return 0;
-	if (isSoundActive(loadData(0x34C0)))
+	if (isSoundActive(0x34C0))
 		return 0;
-	if (isSoundActive(loadData(0x3636)))
+	if (isSoundActive(0x3636))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(200);
@@ -2402,7 +2367,7 @@ int RSound6::loadCommand16() {
 int RSound6::command17() {
 	// Ungated scheduling (Pattern A), matching every other driver's
 	// command17 shape.
-	if (isSoundActive(loadData(0x1E98)))
+	if (isSoundActive(0x1E98))
 		return 0;
 	command3();
 	resetCallbackTimerEx(0xC0, 0x60);
@@ -2501,7 +2466,7 @@ int RSound6::command33() {
 	// setup or command32's "load channel 4" tail directly,
 	// or - if neither condition holds - falls all the way through into
 	// command32's own body from the top (equivalent to calling it).
-	if (isSoundActive(loadData(0x9FB)))
+	if (isSoundActive(0x9FB))
 		return 0;
 	_command33Flag = 0xFF;
 	if (!_channels[0]._activeCount) {
@@ -2536,7 +2501,7 @@ void RSound6::command34LoadRestOnly() {
 }
 
 int RSound6::command34() {
-	if (isSoundActive(loadData(0xA5C)))
+	if (isSoundActive(0xA5C))
 		return 0;
 	if (_channels[0]._loopStartPtr == loadData(0xA1A) && _channels[0]._activeCount != 0) {
 		command34LoadRestOnly();
@@ -2551,7 +2516,7 @@ int RSound6::command34() {
 }
 
 int RSound6::command35() {
-	if (isSoundActive(loadData(0xA1A)))
+	if (isSoundActive(0xA1A))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(30);
@@ -2569,9 +2534,9 @@ int RSound6::retryCommand35() {
 
 int RSound6::command36() {
 	// Two chained isSoundActive gates (an OR).
-	if (isSoundActive(loadData(0xB60)))
+	if (isSoundActive(0xB60))
 		return 0;
-	if (isSoundActive(loadData(0xCD6)))
+	if (isSoundActive(0xCD6))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(200);
@@ -2591,7 +2556,7 @@ int RSound6::retryCommand36() {
 }
 
 int RSound6::command37() {
-	if (isSoundActive(loadData(0xCD6)))
+	if (isSoundActive(0xCD6))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(200);
@@ -2612,7 +2577,7 @@ int RSound6::retryCommand37() {
 }
 
 int RSound6::command38() {
-	if (isSoundActive(loadData(0xFC0)))
+	if (isSoundActive(0xFC0))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(200);
@@ -2634,7 +2599,7 @@ int RSound6::retryCommand38() {
 }
 
 int RSound6::command39() {
-	if (isSoundActive(loadData(0x13EC)))
+	if (isSoundActive(0x13EC))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(100);
@@ -2656,7 +2621,7 @@ int RSound6::retryCommand39() {
 }
 
 int RSound6::command40() {
-	if (isSoundActive(loadData(0x195A)))
+	if (isSoundActive(0x195A))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(100);
@@ -2678,7 +2643,7 @@ int RSound6::retryCommand40() {
 }
 
 int RSound6::command44() {
-	if (isSoundActive(loadData(0x1F48)))
+	if (isSoundActive(0x1F48))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(48);
@@ -2701,7 +2666,7 @@ int RSound6::loadCommand44() {
 }
 
 int RSound6::command45() {
-	if (isSoundActive(loadData(0x20AA)))
+	if (isSoundActive(0x20AA))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(30);
@@ -2722,7 +2687,7 @@ int RSound6::command64() {
 	// data at offset 0x23D7 (11 bytes into the block about to be played)
 	// before the gated play.
 	*loadData(0x23D7) = (byte)(_commandParam & 0x7F);
-	if (isSoundActive(loadData(0x23CC)))
+	if (isSoundActive(0x23CC))
 		return 0;
 	playSoundChannels7to8(0x23CC);
 	return 0;
@@ -2904,7 +2869,7 @@ int RSound6::command95() {
 }
 
 int RSound6::command96() {
-	if (isSoundActive(loadData(0x26DF)))
+	if (isSoundActive(0x26DF))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(90);
@@ -3336,7 +3301,7 @@ int RSound9::loadCommand52() {
 }
 
 int RSound9::command55() {
-	if (isSoundActive(loadData(0x471A)))
+	if (isSoundActive(0x471A))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(96);
@@ -3358,7 +3323,7 @@ int RSound9::loadCommand55() {
 }
 
 int RSound9::command57() {
-	if (isSoundActive(loadData(0x4B96)))
+	if (isSoundActive(0x4B96))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(48);
@@ -3380,7 +3345,7 @@ int RSound9::loadCommand57() {
 }
 
 int RSound9::command58() {
-	if (isSoundActive(loadData(0x4D94)))
+	if (isSoundActive(0x4D94))
 		return 0;
 	if (!isMusicChannelsActive()) {
 		resetCallbackTimer(144);

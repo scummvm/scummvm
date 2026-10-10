@@ -263,9 +263,14 @@ Channel *RSound::playSoundChannels1To5(int offset) {
 	return playSoundData(loadData(offset), 0, 4, 4);
 }
 
-bool RSound::isSoundActive(byte *pData) {
-	// Matches the disassembly exactly: only channels 1-8 are checked,
-	// channel 9 is never included.
+bool RSound::isSoundActive(uint16 dataOffset) {
+	// Native callers pass an identity value which is not necessarily a
+	// readable address in the loaded data table.
+	if (dataOffset >= _soundData.size())
+		return false;
+
+	byte *pData = &_soundData[dataOffset];
+	// Only channels 1-8 are checked; channel 9 is never included.
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT - 1; ++i) {
 		if (_channels[i]._activeCount && _channels[i]._soundData == pData)
 			return true;
