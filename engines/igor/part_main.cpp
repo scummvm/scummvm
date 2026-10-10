@@ -697,6 +697,10 @@ void IgorEngine::PART_MAIN() {
 		case 780:
 			PART_78(); // cutscene in the lecture hall
 			break;
+		case 790:
+		case 791:
+			PART_79(); // two scenes, shown below a black band
+			break;
 		case 810:
 			PART_81();
 			break;

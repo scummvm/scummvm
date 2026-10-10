@@ -530,6 +530,8 @@ private:
 	// the two fireflies of room 69: the current frame of each and the steps of the first one since the second one started
 	// frames of the band drawn across the picture in state 780 (loaded while the scene lasts)
 	uint8 *_part78BandFrames = nullptr;
+	uint8 _part79EndFrame = 0;
+	uint8 _part79BaseFrame = 0;
 	uint8 _part69FireflyFrameA;
 	uint8 _part69FireflyFrameB;
 	uint16 _part69FireflyStepCount;
@@ -1263,6 +1265,34 @@ private:
 	void PART_76_ACTION_106_finale();
 	void PART_76_ENTRY();
 	void PART_76();
+
+	void PART_79_DRAW_FIGURE(int frame);
+	void PART_79_DRAW_PATCH(int step);
+	void PART_79_CLEAR_PATCH();
+	void PART_79_UPDATE_AMBIENT_790();
+	void PART_79_UPDATE_DIALOGUE_790(int action);
+	void PART_79_SAY_790(const Common::Array<DialogueText> &lines);
+	void PART_79_SLIDE();
+	void PART_79_790();
+	void PART_79_DRAW_GROUP_FRAME(const uint8 *buffer, int table, int base, int frame);
+	void PART_79_DRAW_SCENE(int frame);
+	void PART_79_DRAW_LAYER2_FRAME(int frame);
+	void PART_79_DRAW_LAYER2_FRAME_2(int frame);
+	void PART_79_DRAW_ANIM2_FRAME(const void *group, int frame);
+	void PART_79_ANIMATE_IGOR_HEAD(int frame);
+	void PART_79_UPDATE_DIALOGUE_SPEAKER(int action);
+	void PART_79_UPDATE_DIALOGUE_FIRST_SPEAKER(int action);
+	void PART_79_UPDATE_DIALOGUE_THIRD_SPEAKER(int action);
+	void PART_79_UPDATE_AMBIENT_791();
+	void PART_79_SAY_SPEAKER(int startX, int startY, int x, int y, int r, int g, int b, int endFrame, int baseFrame, const Common::Array<DialogueText> &lines);
+	void PART_79_SAY_FIRST_SPEAKER(int startX, int startY, const Common::Array<DialogueText> &lines);
+	void PART_79_SAY_THIRD_SPEAKER(const Common::Array<DialogueText> &lines);
+	void PART_79_IGOR_SAY(const Common::Array<DialogueText> &lines);
+	void PART_79_SET_IGOR_POS(int x, int y);
+	void PART_79_FADE_COLORS(int first, int last, bool fadeInColors);
+	void PART_79_FADE_IN_PAIR(int firstColor);
+	void PART_79_791();
+	void PART_79();
 
 	void PART_77_EXEC_ACTION(int action);
 	void PART_77_APPLY_OBJECT_STATE();

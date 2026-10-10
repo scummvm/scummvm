@@ -815,4 +815,18 @@
 #define BOX_Part76 1196
 #define IMG_Part76Card 1197
 
+// States 790 / 791 (PART_79)
+#define PAL_Part79 1198
+#define IMG_Part79 1199
+#define TXT_Part79 1200
+#define IMG_Part79Layer2 1201
+#define ANM_Part79 1202
+#define ANM_Part79Frames 1203
+#define IMG_Part79b 1204
+#define TXT_Part79b 1205
+#define ANM_Part79bFrames 1206
+#define ANM_Part79bLayer2 1207
+#define ANM_Part79bScenes 1208
+#define TXT_Part79bMain 1209
+
 #endif // IGOR_RESOURCE_IDS

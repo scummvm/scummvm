@@ -485,6 +485,10 @@ void IgorEngine::animateIgorTalking(int frame) {
 		PART_85_HELPER_6_animateIgorHead(frame);
 		return;
 	}
+	if (getPart() == 79) {
+		PART_79_ANIMATE_IGOR_HEAD(frame);
+		return;
+	}
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
 	int y = (wd->y - wd->scaleWidth + 1) * 320;
 	int delta = wd->x - _walkWidthScaleTable[wd->scaleHeight - 1] / 2;
