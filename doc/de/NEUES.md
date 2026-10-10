@@ -48,6 +48,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für mehr als 140 weitere Wintermute-Spiele hinzugefügt.
    - Unterstützung für Der Schatz im Silbersee hinzugefügt.
    - Unterstützung für The Fool's Errand hinzugefügt.
+   - Unterstützung für Harvester hinzugefügt.
 
  Allgemein:
    - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
@@ -55,6 +56,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler korrigiert, durch den MIDI- und MT-32-Geräte in den Spiel-Optionen
      nicht überschrieben werden konnten
    - Der Nuked-OPL3 AdLib-Emulator wurden durch den Nuked-OPL3-fast-Fork ausgetauscht.
+   - Unterstützung für "verschleierte" InstallShield-Dateien hinzugefügt. Das betrifft
+     hauptsächlich einige Nancy Drew-Spiele, die jetzt auch gespielt werden können, ohne
+	 das Windows-Installationsprogramm vorher ausführen zu müssen.
 
  Asylum:
    - Fehlende oder falsche Schrittegeräusche in einigen Szenen wurden behoben.
