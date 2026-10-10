@@ -71,6 +71,8 @@ Minimum hardware requirements: Atari Falcon with 4 + 32 MB RAM and 68040 CPU.
 
 - Native MIDI output.
 
+- Native OPL2/OPL3 output.
+
 - Native CDDA support.
 
 - Runs also in Hatari and ARAnyM but in case of ARAnyM don't forget to disable
@@ -104,8 +106,9 @@ executable size.
   but still allows playing speech/sfx samples and/or CD audio and/or native
   MIDI music).
 
-- "null" music driver is automatically enabled (i.e. OPL emulation is never
-  used but still allows playing speech/sfx samples and/or CD audio).
+- "None" AdLib emulator is automatically enabled (i.e. OPL emulation is never
+  used but still allows playing speech/sfx samples and/or CD audio and/or
+  native OPL music).
 
 - DOSBox and MAME OPL emulator is disabled => smaller executable size.
 
@@ -372,8 +375,11 @@ MIDI vs. AdLib vs. sampled music
 
 It could seem that sampled music replay must be the most demanding one but on
 the contrary! Always choose a CD version of a game (with *.wav tracks) over any
-other version. With one exception: if you have a native MIDI device able to
-replay the given game's MIDI notes (using the STMIDI plugin).
+other version. With two exceptions: if you have a native MIDI device able to
+replay the given game's MIDI notes (using the STMIDI plugin) or a real OPL chip
+able to replay the given game's AdLib music (using one of the "[nFM]" devices
+in "AdLib emulator", e.g. the NokturnFM2/NokturnFM3 cartridge or Hatari once
+nFM's patch is merged).
 
 MIDI emulation (synthesis) can easily eat as much as 50% of all used CPU time
 (on the CT60 and even if no OPL music is produced at the moment). By default,
@@ -385,11 +391,11 @@ better quality synthesis, otherwise the lowest quality will be used (applies
 for MAME OPL only).
 
 On TT, in most cases it makes sense to use ScummVM only if you own a native
-MIDI synthesiser (like mt32-pi: https://github.com/dwhinham/mt32-pi). MIDI
-emulation is out of the question and downsampling to 8-bit resolution takes a
-good chunk of CPU time which could be utilised elsewhere. However, there are
-games which are fine with sampled music/speech even on a plain TT (e.g. Lands
-of Lore).
+MIDI synthesiser (like mt32-pi: https://github.com/dwhinham/mt32-pi) or a real
+OPL chip (like the NokturnFM cartridge). MIDI/OPL emulation is out of the
+question and downsampling to 8-bit resolution takes a good chunk of CPU time
+which could be utilised elsewhere. However, there are games which are fine with
+sampled music/speech even on a plain TT (e.g. Lands of Lore).
 
 CD music slows everything down
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -506,8 +512,9 @@ Changes to upstream
 -------------------
 
 - This port contains experimental / pending optimisations to audio mixing
-  (https://github.com/scummvm/scummvm/pull/7385). I'll try to get them merged
-  in the next release.
+  (https://github.com/scummvm/scummvm/pull/7599). I'll try to get them merged
+  in the next release. It also contains fake audio thread implementation by
+  Anders Granlund (which more or less depend on the PR).
 
 
 Known issues

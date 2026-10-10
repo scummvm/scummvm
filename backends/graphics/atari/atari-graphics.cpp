@@ -678,6 +678,14 @@ void AtariGraphicsManager::updateScreen() {
 
 		if (s_screenSurf == nullptr) {
 			// BACK_BUFFER2 has been set; guard it from overwriting while presented
+
+			// TODO: this assumes that the video base written in VblHandler() is applied
+			// in the same frame. True for Videl (video counter reloaded at VDB, after VBL)
+			// but not for TT: like ST/E, its Shifter reloads the video counter about three
+			// lines before the VBL (and again on the following line), so FRONT_BUFFER is
+			// still displayed for one more frame while it becomes BACK_BUFFER1, i.e. the
+			// work screen. On TT, the video base can be written here directly instead,
+			// BACK_BUFFER2 is then displayed once a VBL (_frclock) has passed since.
 			Screen *tmp = _screen[kBackBuffer2];
 			_screen[kBackBuffer2] = _screen[kFrontBuffer];
 			_screen[kFrontBuffer] = tmp;
