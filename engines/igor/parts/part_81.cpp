@@ -61,7 +61,7 @@ static const int kPart81StripRows = 0x48;
 
 // The last frames of the animation of the end of the story.
 static const int kPart81EndFramesBase = 0xBAE0;
-static const int kPart81EndFramesTable = 0x808;
+static const int kPart81EndFramesTable = 0x828;
 
 // Flags of the story kept in the objects state.
 static const int kPart81StoryState = 6;

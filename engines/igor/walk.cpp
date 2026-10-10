@@ -143,6 +143,14 @@ void IgorEngine::lookupScale(int curX, int curY, uint8 &scale, uint8 &xScale, ui
 void IgorEngine::moveIgor(int pos, int frame) {
 	assert(_gameState.enableLight == 1 || _gameState.enableLight == 2);
 	debugC(9, kDebugWalk, "moveIgorHelper _walkDataCurrentIndex %d pos %d frame %d", _walkDataCurrentIndex, pos, frame);
+	if (pos < 1 || pos > 4) {
+		// The facing selects one of the four frame sets; any other value (a walk step whose
+		// facing byte came from a room object without a walk target) has no frames to draw.
+		// TODO: the original indexes its table of frame sets without a bounds check, so what
+		// it draws for such a facing is not derived.
+		warning("moveIgor: invalid facing %d, step not drawn", pos);
+		return;
+	}
 	WalkData *wd = &_walkData[_walkDataCurrentIndex];
 	uint8 _walkClipSkipX = wd->clipSkipX;
 	uint8 _walkHeightScale = wd->scaleHeight;
