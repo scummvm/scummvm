@@ -66,6 +66,12 @@ Common::Rect Slider::getThumbBounds() const {
 	return Common::Rect(x, _bounds.top, x + width, _bounds.bottom);
 }
 
+// At either end of the track, half of the thumb sticks out
+Common::Rect Slider::getDrawBounds() const {
+	int overhang = (_elements[1]._src.width() + 1) / 2;
+	return Common::Rect(_bounds.left - overhang, _bounds.top, _bounds.right + overhang, _bounds.bottom);
+}
+
 void Slider::setValue(int value, bool byPlayer) {
 	value = CLIP<int>(value, _min, _max);
 	if (value == _value) {

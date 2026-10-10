@@ -52,6 +52,9 @@ public:
 	// The mouse, in the coordinates of the panel's controls. A control that returns
 	// true from onMouseDown() keeps getting the mouse until the button is released.
 	virtual bool containsPoint(const Common::Point &pos) const { return false; }
+
+	// The area the control draws to, which can reach past its bounds
+	virtual Common::Rect getDrawBounds() const { return _bounds; }
 	virtual void onMouseHover(const Common::Point &pos) {}
 	virtual bool onMouseDown(const Common::Point &pos) { return false; }
 	virtual void onMouseMove(const Common::Point &pos) {}

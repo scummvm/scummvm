@@ -36,6 +36,7 @@ public:
 	void draw(Graphics::ManagedSurface &surface, const Common::Point &offset) const override;
 
 	bool containsPoint(const Common::Point &pos) const override { return _bounds.contains(pos); }
+	Common::Rect getDrawBounds() const override;
 	bool onMouseDown(const Common::Point &pos) override;
 	void onMouseMove(const Common::Point &pos) override;
 	void onMouseUp(const Common::Point &pos) override;

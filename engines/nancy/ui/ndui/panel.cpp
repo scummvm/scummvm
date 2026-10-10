@@ -90,6 +90,19 @@ void Panel::read(Common::SeekableReadStream &stream) {
 
 	Common::Rect screenPosition = _background->_bounds;
 	_background->_bounds.moveTo(0, 0);
+
+	// Controls aren't clipped to a panel that doesn't scroll, and some are placed past
+	// the right or the bottom of its background, like the meters of the hypothermia
+	// dialog, so the panel is as large as it takes to draw them. Panels that arrange
+	// their controls keep their width, since the rows are laid out by it.
+	if (_scrollBarName.empty() && _arrangement == kArrangeNone) {
+		for (const Control *control : _controls) {
+			Common::Rect drawBounds = control->getDrawBounds();
+			screenPosition.right = MAX<int16>(screenPosition.right, screenPosition.left + drawBounds.right);
+			screenPosition.bottom = MAX<int16>(screenPosition.bottom, screenPosition.top + drawBounds.bottom);
+		}
+	}
+
 	moveTo(screenPosition);
 	_drawSurface.create(screenPosition.width(), screenPosition.height(), g_nancy->_graphics->getTransparentPixelFormat());
 
@@ -579,8 +592,14 @@ bool Panel::handleInput(NancyInput &input, bool canHover, bool &isOverControl) {
 		return true;
 	}
 
+	// The panel can be larger than its background, to hold controls that reach past it;
+	// the mouse is only over the panel when it is over the background or one of those
 	bool isInside = canHover && isVisible() && _screenPosition.contains(input.screenMousePos);
 	Control *hovered = (isInside && _enabled) ? getControlAt(pos) : nullptr;
+	if (isInside && !hovered) {
+		Common::Point unscrolledPos(pos.x, pos.y - _scrollOffset);
+		isInside = _background->_bounds.contains(unscrolledPos);
+	}
 
 	for (Control *control : _controls) {
 		if (control->_isMouseOver != (control == hovered)) {
