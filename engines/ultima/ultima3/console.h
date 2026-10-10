@@ -30,6 +30,37 @@ namespace Ultima {
 namespace Ultima3 {
 
 class Console : public GUI::Debugger {
+private:
+	/**
+	 * Works out which party members a command applies to from an optional
+	 * position given as an argument, defaulting to all of them
+	 * @returns		False if the argument isn't a position in the party
+	 */
+	bool getTargets(int argc, const char **argv, int index, int &first, int &last);
+
+	/**
+	 * Makes sure there's a party and a world to be in
+	 */
+	void ensureGame();
+
+	/**
+	 * Switches to the view for wherever the party is now
+	 */
+	void restartGame();
+
+	bool cmdMap(int argc, const char **argv);
+	bool cmdTiles(int argc, const char **argv);
+	bool cmdTeleport(int argc, const char **argv);
+	bool cmdLocations(int argc, const char **argv);
+	bool cmdIntangible(int argc, const char **argv);
+	bool cmdEnemy(int argc, const char **argv);
+	bool cmdHP(int argc, const char **argv);
+	bool cmdFood(int argc, const char **argv);
+	bool cmdGold(int argc, const char **argv);
+	bool cmdInventory(int argc, const char **argv);
+	bool cmdLoad(int argc, const char **argv);
+	bool cmdSave(int argc, const char **argv);
+
 public:
 	Console();
 	~Console() override;

@@ -163,6 +163,8 @@ bool Game::handleCommand(const KeypressMessage &msg) {
 bool Game::msgKeypress(const KeypressMessage &msg) {
 	if (isModifierKey(msg.keycode))
 		return true;
+	if (Shared::View::msgKeypress(msg))
+		return true;
 
 	if (_gameOver) {
 		_G(soundEnabled) = true;

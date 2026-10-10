@@ -39,8 +39,9 @@ private:
 	DungeonLogic _logic;
 	Gfx::DungeonView _view;
 
-	// Whether the picture of the view is up to date
+	// Whether the picture of the view is up to date, and where it was taken from
 	bool _viewValid = false;
+	uint32 _viewKey = 0;
 
 	// Set while the effects of a special square are being dealt with, which
 	// don't count as a turn, and when a fight has ended and the turn is to be completed

@@ -101,10 +101,13 @@ bool LocationLogic::move(Direction dir) {
 	int dx = (dir == DIR_EAST) ? 1 : (dir == DIR_WEST) ? -1 : 0;
 	int dy = (dir == DIR_SOUTH) ? 1 : (dir == DIR_NORTH) ? -1 : 0;
 
-	if (isShipBlockedByWind(dir))
-		return false;
-	if (isTerrainBlocked(_G(map).tile(save._posX + dx, save._posY + dy)))
-		return false;
+	// The debugger can make the party able to go anywhere
+	if (!_G(intangible)) {
+		if (isShipBlockedByWind(dir))
+			return false;
+		if (isTerrainBlocked(_G(map).tile(save._posX + dx, save._posY + dy)))
+			return false;
+	}
 
 	save._posX = (save._posX + dx) & (Data::MAP_SIZE - 1);
 	save._posY = (save._posY + dy) & (Data::MAP_SIZE - 1);
@@ -112,24 +115,30 @@ bool LocationLogic::move(Direction dir) {
 }
 
 // The towns, castles and dungeons on the world map, with the entrance of each
-struct Entrance {
-	const char *_filename;
-	byte _x, _y;
-};
-
-static const Entrance ENTRANCES[] = {
-	{ "BRITISH.ULT", 45, 18 }, { "EXODUS.ULT", 10, 53 }, { "LCB.ULT", 46, 19 },
-	{ "MOON.ULT", 6, 13 }, { "YEW.ULT", 34, 16 }, { "MONTOR_E.ULT", 49, 58 },
-	{ "MONTOR_W.ULT", 47, 58 }, { "GREY.ULT", 7, 44 }, { "DAWN.ULT", 37, 53 },
-	{ "DEVIL.ULT", 18, 31 }, { "FAWN.ULT", 30, 2 }, { "DEATH.ULT", 56, 31 },
-	{ "M.ULT", 19, 57 }, { "FIRE.ULT", 49, 34 }, { "TIME.ULT", 58, 30 },
-	{ "P.ULT", 58, 44 }, { "PERINIAN.ULT", 56, 6 }, { "MINE.ULT", 9, 28 },
-	{ "DARDIN.ULT", 46, 7 }
-};
-
 constexpr byte TILE_TOWN = 6;
 constexpr byte TILE_CASTLE = 7;
 constexpr byte TILE_DUNGEON = 5;
+
+struct Entrance {
+	const char *_filename;
+	byte _x, _y;
+
+	// The kind of place it is, which is the tile shown for it on the world map
+	byte _tile;
+};
+
+static const Entrance ENTRANCES[] = {
+	{ "BRITISH.ULT", 45, 18, TILE_CASTLE }, { "EXODUS.ULT", 10, 53, TILE_CASTLE },
+	{ "LCB.ULT", 46, 19, TILE_TOWN }, { "MOON.ULT", 6, 13, TILE_TOWN },
+	{ "YEW.ULT", 34, 16, TILE_TOWN }, { "MONTOR_E.ULT", 49, 58, TILE_TOWN },
+	{ "MONTOR_W.ULT", 47, 58, TILE_TOWN }, { "GREY.ULT", 7, 44, TILE_TOWN },
+	{ "DAWN.ULT", 37, 53, TILE_TOWN }, { "DEVIL.ULT", 18, 31, TILE_TOWN },
+	{ "FAWN.ULT", 30, 2, TILE_TOWN }, { "DEATH.ULT", 56, 31, TILE_TOWN },
+	{ "M.ULT", 19, 57, TILE_DUNGEON }, { "FIRE.ULT", 49, 34, TILE_DUNGEON },
+	{ "TIME.ULT", 58, 30, TILE_DUNGEON }, { "P.ULT", 58, 44, TILE_DUNGEON },
+	{ "PERINIAN.ULT", 56, 6, TILE_DUNGEON }, { "MINE.ULT", 9, 28, TILE_DUNGEON },
+	{ "DARDIN.ULT", 46, 7, TILE_DUNGEON }
+};
 
 // Where the party starts out in each kind of location
 constexpr byte DUNGEON_START = 1;
@@ -151,8 +160,38 @@ const char *LocationLogic::enter() {
 	}
 
 	byte tile = _G(map).tile(save._posX, save._posY);
-	if (!entrance || (tile != TILE_TOWN && tile != TILE_CASTLE && tile != TILE_DUNGEON) ||
-			!Data::Map::exists(entrance->_filename))
+	if (!entrance || (tile != TILE_TOWN && tile != TILE_CASTLE && tile != TILE_DUNGEON))
+		return nullptr;
+
+	return go(*entrance, tile);
+}
+
+int LocationLogic::entranceCount() {
+	return ARRAYSIZE(ENTRANCES);
+}
+
+const char *LocationLogic::entranceFilename(int index) {
+	return ENTRANCES[index]._filename;
+}
+
+Common::Point LocationLogic::entrancePosition(int index) {
+	return Common::Point(ENTRANCES[index]._x, ENTRANCES[index]._y);
+}
+
+const char *LocationLogic::enterLocation(int index) {
+	Data::Savegame &save = _G(savegame);
+	if (save._location != Data::LOCATION_SOSARIA)
+		return nullptr;
+
+	const Entrance &entrance = ENTRANCES[index];
+	save._posX = entrance._x;
+	save._posY = entrance._y;
+	return go(entrance, entrance._tile);
+}
+
+const char *LocationLogic::go(const Entrance &entrance, byte tile) {
+	Data::Savegame &save = _G(savegame);
+	if (!Data::Map::exists(entrance._filename))
 		return nullptr;
 
 	save._worldX = save._posX;
@@ -160,7 +199,7 @@ const char *LocationLogic::enter() {
 
 	// Dungeons are entered at the top left, facing east
 	if (tile == TILE_DUNGEON) {
-		_G(dungeon).load(entrance->_filename);
+		_G(dungeon).load(entrance._filename);
 		save._location = Data::LOCATION_DUNGEON;
 		save._posX = DUNGEON_START;
 		save._posY = DUNGEON_START;
@@ -171,7 +210,7 @@ const char *LocationLogic::enter() {
 	}
 
 	_G(worldMap) = _G(map);
-	_G(map).load(entrance->_filename);
+	_G(map).load(entrance._filename);
 
 	if (tile == TILE_TOWN) {
 		save._location = Data::LOCATION_TOWN;

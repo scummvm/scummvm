@@ -66,6 +66,13 @@ extern const byte MONSTER_HIT_POINTS[16];
 extern const byte MONSTER_EXPERIENCE[16];
 
 /**
+ * Returns the letter after those of the weapons and armour that a class may
+ * use, apart from the exotic ones which anyone may
+ */
+char weaponLimit(char classKey);
+char armourLimit(char classKey);
+
+/**
  * Returns the tile showing a party member of a class in a fight
  */
 byte fightingTile(char classKey);

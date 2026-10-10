@@ -22,10 +22,13 @@
 #ifndef ULTIMA3_LOGIC_LOCATION_LOGIC_H
 #define ULTIMA3_LOGIC_LOCATION_LOGIC_H
 
+#include "common/rect.h"
 #include "ultima/ultima3/logic/logic.h"
 
 namespace Ultima {
 namespace Ultima3 {
+
+struct Entrance;
 
 constexpr byte TRANSPORT_HORSE = 0x0A;
 constexpr byte TRANSPORT_SHIP = 0x0B;
@@ -36,6 +39,11 @@ constexpr byte TRANSPORT_ON_FOOT = 0x3F;
  */
 class LocationLogic : public Logic {
 private:
+	/**
+	 * Takes the party into a place from its entrance on the world map
+	 */
+	const char *go(const Entrance &entrance, byte tile);
+
 	/**
 	 * Returns true if a ship can't sail in a direction because the wind is
 	 * absent or blowing against it
@@ -83,6 +91,20 @@ public:
 	 * @returns		What to say about it, or null if there's nowhere to enter
 	 */
 	const char *enter();
+
+	/**
+	 * Takes the party into one of the places that have an entrance on the
+	 * world map, wherever they are on it
+	 * @returns		What to say about it, or null if it can't be entered
+	 */
+	const char *enterLocation(int index);
+
+	/**
+	 * Returns details of the places that have an entrance on the world map
+	 */
+	static int entranceCount();
+	static const char *entranceFilename(int index);
+	static Common::Point entrancePosition(int index);
 
 	/**
 	 * Returns true if the party has reached the edge of a town or castle,

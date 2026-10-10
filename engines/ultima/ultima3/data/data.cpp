@@ -89,6 +89,24 @@ const byte MONSTER_EXPERIENCE[16] = {
 	0x01, 0x02, 0x15, 0x20, 0x08, 0x06, 0x10, 0x05, 0x03, 0x04, 0x06, 0x08, 0x10, 0x15, 0x20, 0x05
 };
 
+// Classes in the order the equipment limits are given in
+static const char EQUIPMENT_CLASSES[] = "FCWTPBLIDAR";
+static const char WEAPON_LIMITS[] = "QDCHQQQDDCL";
+static const char ARMOUR_LIMITS[] = "IECDFDCDCCH";
+
+static int equipmentClass(char classKey) {
+	const char *pos = classKey ? strchr(EQUIPMENT_CLASSES, classKey) : nullptr;
+	return pos ? pos - EQUIPMENT_CLASSES : 0;
+}
+
+char weaponLimit(char classKey) {
+	return WEAPON_LIMITS[equipmentClass(classKey)];
+}
+
+char armourLimit(char classKey) {
+	return ARMOUR_LIMITS[equipmentClass(classKey)];
+}
+
 byte fightingTile(char classKey) {
 	static const char CLASSES[] = "FCWTPBLIDA";
 	static const byte TILES[] = { 0x14, 0x15, 0x16, 0x17, 0x14, 0x14, 0x11, 0x16, 0x15, 0x16 };

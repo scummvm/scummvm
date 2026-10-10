@@ -98,6 +98,24 @@ struct Savegame {
 	void synchronize(Common::Serializer &s);
 
 	/**
+	 * Reads the roster and the party from the files the original game keeps
+	 * them in, ROSTER.ULT and PARTY.ULT
+	 * @returns		False if the files are too short
+	 */
+	bool importOriginal(Common::SeekableReadStream &roster, Common::SeekableReadStream &party);
+
+	/**
+	 * Writes the roster and the party in the form the original game uses
+	 */
+	void exportOriginal(Common::WriteStream &roster, Common::WriteStream &party);
+
+	/**
+	 * Fills the roster with four ready made characters, and puts them
+	 * together as the party
+	 */
+	void setupDummyParty();
+
+	/**
 	 * Completes a selected party, placing it at the starting point on foot
 	 */
 	void formParty();

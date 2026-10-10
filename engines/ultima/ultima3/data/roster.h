@@ -107,7 +107,12 @@ struct RosterEntry {
 		return _status == STATUS_GOOD || _status == STATUS_POISONED;
 	}
 
-	void synchronize(Common::Serializer &s);
+	/**
+	 * Saves or loads the record
+	 * @param original		True to use the form it has in the original's files, which
+	 *		has some unused bytes after the name
+	 */
+	void synchronize(Common::Serializer &s, bool original = false);
 };
 
 } // namespace Data

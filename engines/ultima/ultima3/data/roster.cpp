@@ -25,8 +25,11 @@ namespace Ultima {
 namespace Ultima3 {
 namespace Data {
 
-void RosterEntry::synchronize(Common::Serializer &s) {
+void RosterEntry::synchronize(Common::Serializer &s, bool original) {
 	s.syncBytes((byte *)_name, sizeof(_name));
+	if (original)
+		s.skip(4);
+
 	s.syncAsByte(_marksAndCards);
 	s.syncAsByte(_torches);
 	s.syncAsByte(_partyMember);

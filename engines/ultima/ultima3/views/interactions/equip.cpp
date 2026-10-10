@@ -28,11 +28,6 @@ namespace Ultima3 {
 namespace Views {
 namespace Interactions {
 
-// The last weapon and armour letters, plus one, that each class may use
-static const char CLASS_ORDER[] = "FCWTPBLIDAR";
-static const char WEAPON_LIMITS[] = "QDCHQQQDDCL";
-static const char ARMOUR_LIMITS[] = "IECDFDCDCCH";
-
 constexpr char ESCAPE_KEY = 0x1B;
 constexpr char EXOTIC_WEAPON = 'P';
 constexpr char EXOTIC_ARMOUR = 'H';
@@ -71,9 +66,7 @@ void Equip::startMenu() {
 void Equip::equip(char letter) {
 	Data::RosterEntry &e = _G(savegame).partyMember(_slot);
 
-	const char *classPos = strchr(CLASS_ORDER, e._class);
-	int classNum = (classPos && *classPos) ? classPos - CLASS_ORDER : 0;
-	char limit = (_weapons ? WEAPON_LIMITS : ARMOUR_LIMITS)[classNum];
+	char limit = _weapons ? Data::weaponLimit(e._class) : Data::armourLimit(e._class);
 	char exotic = _weapons ? EXOTIC_WEAPON : EXOTIC_ARMOUR;
 
 	if (letter != exotic && letter >= limit) {

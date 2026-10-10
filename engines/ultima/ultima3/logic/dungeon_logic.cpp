@@ -51,7 +51,7 @@ bool DungeonLogic::moveForward() {
 	int y = (save._posY + FACING_DY[save._facing]) & (Data::DUNGEON_SIZE - 1);
 
 	// Only the plainest walls can't be walked through
-	if (_G(dungeon).tile(save._dungeonLevel, x, y) == TILE_BLOCKED)
+	if (!_G(intangible) && _G(dungeon).tile(save._dungeonLevel, x, y) == TILE_BLOCKED)
 		return false;
 
 	save._posX = x;
@@ -65,7 +65,7 @@ bool DungeonLogic::moveBackward() {
 	int x = (save._posX + FACING_DX[behind]) & (Data::DUNGEON_SIZE - 1);
 	int y = (save._posY + FACING_DY[behind]) & (Data::DUNGEON_SIZE - 1);
 
-	if (_G(dungeon).tile(save._dungeonLevel, x, y) & TILE_BLOCKED)
+	if (!_G(intangible) && (_G(dungeon).tile(save._dungeonLevel, x, y) & TILE_BLOCKED))
 		return false;
 
 	save._posX = x;
