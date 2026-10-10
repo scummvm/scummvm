@@ -489,8 +489,8 @@ whether the given game's demands match your setting.
 Btw, you can use the same command line parameter for showing what MIDI mode is
 being used (Roland GS, MT-32, General MIDI), sometimes it is not very obvious.
 
-Unfortunately, currently per-game "output_rate" / "output_channels" is not
-possible but this may change in the future.
+Good news is that "output_rate", "output_channels" and "audio_buffer_size" are
+now possible to set per-game so one can fine-tune every game separately.
 
 Slow GUI
 ~~~~~~~~
