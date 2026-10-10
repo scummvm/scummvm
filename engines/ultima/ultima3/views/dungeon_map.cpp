@@ -24,6 +24,10 @@
 #include "ultima/ultima3/views/interactions/cast_spell.h"
 #include "ultima/ultima3/views/interactions/dungeon_special.h"
 #include "ultima/ultima3/views/interactions/get_chest.h"
+#include "ultima/ultima3/views/interactions/hand_equipment.h"
+#include "ultima/ultima3/views/interactions/join_gold.h"
+#include "ultima/ultima3/views/interactions/other_command.h"
+#include "ultima/ultima3/views/interactions/yell.h"
 #include "ultima/ultima3/views/interactions/ignite_torch.h"
 #include "ultima/ultima3/views/interactions/negate_time.h"
 #include "ultima/ultima3/ultima3.h"
@@ -248,6 +252,22 @@ bool DungeonMap::handleCommand(const KeypressMessage &msg) {
 	case 'G':
 		_G(messages).print("Get Chest!\nPlr to search-");
 		startInteraction(new Interactions::GetChest());
+		return true;
+	case 'H':
+		_G(messages).print("Hand Equipment!\nFrom Player: ");
+		startInteraction(new Interactions::HandEquipment());
+		return true;
+	case 'J':
+		_G(messages).print("Join gold to:");
+		startInteraction(new Interactions::JoinGold());
+		return true;
+	case 'Y':
+		_G(messages).print("Yell, whom? ");
+		startInteraction(new Interactions::Yell());
+		return true;
+	case 'O':
+		_G(messages).print("Other command!\nWhose action? ");
+		startInteraction(new Interactions::OtherCommand());
 		return true;
 	case 'I':
 		_G(messages).print("Ignite a torch\nWhose torch: ");

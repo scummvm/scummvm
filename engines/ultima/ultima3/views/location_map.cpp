@@ -23,6 +23,10 @@
 #include "ultima/ultima3/views/menu_input.h"
 #include "ultima/ultima3/views/interactions/cast_spell.h"
 #include "ultima/ultima3/views/interactions/get_chest.h"
+#include "ultima/ultima3/views/interactions/hand_equipment.h"
+#include "ultima/ultima3/views/interactions/join_gold.h"
+#include "ultima/ultima3/views/interactions/other_command.h"
+#include "ultima/ultima3/views/interactions/yell.h"
 #include "ultima/ultima3/views/interactions/negate_time.h"
 #include "ultima/ultima3/views/interactions/look.h"
 #include "ultima/ultima3/views/interactions/steal_chest.h"
@@ -278,6 +282,27 @@ void LocationMap::doEnter() {
 	}
 }
 
+void LocationMap::doQuitSave() {
+	const Data::Savegame &save = _G(savegame);
+	_G(messages).print("Quit & Save\n");
+
+	if (save._location != Data::LOCATION_SOSARIA) {
+		_G(messages).print("Only on surface!\n");
+		g_engine->playSoundEffect(0xFF);
+		endTurn();
+		return;
+	}
+
+	_G(messages).print(Common::String::format("%02X%02X%02X%02X moves\n", save._moveCount[3],
+		save._moveCount[2], save._moveCount[1], save._moveCount[0]).c_str());
+	_G(messages).print("Please wait...\n");
+
+	// The game carries on afterwards, so this is just a save made from within it
+	redraw();
+	g_engine->saveGameDialog();
+	endTurn();
+}
+
 void LocationMap::doExitVehicle() {
 	_G(messages).print("X-it ");
 
@@ -340,6 +365,25 @@ bool LocationMap::handleCommand(const KeypressMessage &msg) {
 	case 'S':
 		_G(messages).print("Steal Chest!\nPlayer? ");
 		startInteraction(new Interactions::StealChest());
+		return true;
+	case 'H':
+		_G(messages).print("Hand Equipment!\nFrom Player: ");
+		startInteraction(new Interactions::HandEquipment());
+		return true;
+	case 'J':
+		_G(messages).print("Join gold to:");
+		startInteraction(new Interactions::JoinGold());
+		return true;
+	case 'Y':
+		_G(messages).print("Yell, whom? ");
+		startInteraction(new Interactions::Yell());
+		return true;
+	case 'O':
+		_G(messages).print("Other command!\nWhose action? ");
+		startInteraction(new Interactions::OtherCommand());
+		return true;
+	case 'Q':
+		doQuitSave();
 		return true;
 	case 'I':
 		_G(messages).print("Ignite a torch\n");

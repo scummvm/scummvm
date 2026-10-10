@@ -82,6 +82,28 @@ public:
 };
 
 /**
+ * A line of text typed in the message window
+ */
+class LogText {
+private:
+	uint _maxChars = 0;
+	Common::String _text;
+
+public:
+	void setup(uint maxChars);
+
+	/**
+	 * Handles a keypress, returning true once the line has been accepted
+	 */
+	bool handleKey(const KeypressMessage &msg);
+
+	/**
+	 * Returns what was typed, in upper case with any spaces from around it removed
+	 */
+	Common::String word() const;
+};
+
+/**
  * A number typed in the message window, as a couple of digits or as a
  * quantity of up to four. Letters from A to F are taken as digits too
  */

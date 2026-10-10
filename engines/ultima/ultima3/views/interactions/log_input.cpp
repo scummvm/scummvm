@@ -56,6 +56,43 @@ LogYesNo::LogYesNo() {
 
 /*------------------------------------------------------------------------*/
 
+void LogText::setup(uint maxChars) {
+	_maxChars = maxChars;
+	_text.clear();
+}
+
+Common::String LogText::word() const {
+	Common::String result = _text;
+	result.trim();
+	result.toUppercase();
+	return result;
+}
+
+bool LogText::handleKey(const KeypressMessage &msg) {
+	if (isModifierKey(msg.keycode))
+		return false;
+
+	if (msg.keycode == Common::KEYCODE_RETURN || msg.keycode == Common::KEYCODE_KP_ENTER)
+		return true;
+
+	if (msg.keycode == Common::KEYCODE_BACKSPACE || msg.keycode == Common::KEYCODE_LEFT ||
+			msg.keycode == Common::KEYCODE_DELETE) {
+		if (_text.empty()) {
+			g_engine->playSoundEffect(0xFE);
+		} else {
+			_text.deleteLastChar();
+			_G(messages).backspace(1);
+		}
+	} else if (msg.ascii >= 0x20 && msg.ascii < 0x80 && _text.size() < _maxChars) {
+		_text += (char)msg.ascii;
+		_G(messages).putChar((char)msg.ascii);
+	} else {
+		g_engine->playSoundEffect(0xFE);
+	}
+
+	return false;
+}
+
 void LogNumber::setup(int maxDigits, bool rejectLetters) {
 	_maxDigits = maxDigits;
 	_rejectLetters = rejectLetters;

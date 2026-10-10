@@ -65,6 +65,7 @@ private:
 	void doInvalid();
 	void doBoard();
 	void doEnter();
+	void doQuitSave();
 	void doAttack();
 	void doExitVehicle();
 

@@ -193,15 +193,19 @@ MODULE_OBJS += \
 	ultima3/views/interactions/equip.o \
 	ultima3/views/interactions/exchange.o \
 	ultima3/views/interactions/get_chest.o \
+	ultima3/views/interactions/hand_equipment.o \
 	ultima3/views/interactions/ignite_torch.o \
 	ultima3/views/interactions/interaction.o \
 	ultima3/views/interactions/log_input.o \
+	ultima3/views/interactions/join_gold.o \
 	ultima3/views/interactions/look.o \
 	ultima3/views/interactions/negate_time.o \
+	ultima3/views/interactions/other_command.o \
 	ultima3/views/interactions/shops.o \
 	ultima3/views/interactions/steal_chest.o \
 	ultima3/views/interactions/transact.o \
 	ultima3/views/interactions/unlock_door.o \
+	ultima3/views/interactions/yell.o \
 	ultima3/views/interactions/ztats.o \
 	ultima3/views/journey_onward.o \
 	ultima3/views/location_map.o \
