@@ -58,6 +58,7 @@ GmMusic::~GmMusic() {
 }
 
 void GmMusic::setVolume(uint16 param) {
+	Common::StackLock lock(_mutex);
 	_musicVolume = param;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		_channels[cnt]->updateVolume(_musicVolume);
