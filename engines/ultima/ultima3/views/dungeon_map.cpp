@@ -152,6 +152,14 @@ void DungeonMap::endTurn() {
 			addView("CombatMap");
 			return;
 		}
+	} else if (tile == Data::DTILE_SIGN) {
+		// Writing on the wall for this level, which then fades
+		const char *sign = _G(dungeon).sign(save._dungeonLevel);
+		_G(dungeon).setTile(save._dungeonLevel, save._posX, save._posY, 0);
+		_G(messages).print("Misty writing:\n");
+		if (sign)
+			_G(messages).print(sign);
+		_G(messages).print("\n");
 	} else if (tile >= FIRST_SPECIAL && tile <= LAST_SPECIAL) {
 		_special = true;
 		startInteraction(new Interactions::DungeonSpecial(tile));

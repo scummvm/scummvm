@@ -37,6 +37,18 @@ void Dungeon::load(const char *filename) {
 		error("Could not load %s", filename);
 }
 
+const char *Dungeon::sign(int level) const {
+	if (level < 0 || level >= DUNGEON_LEVELS)
+		return nullptr;
+
+	// The strings are found by offsets listed at the start
+	int offset = _signs[level * 2] | (_signs[level * 2 + 1] << 8);
+	if (offset >= SIGNS_SIZE || !memchr(_signs + offset, 0, SIGNS_SIZE - offset))
+		return nullptr;
+
+	return (const char *)_signs + offset;
+}
+
 void Dungeon::synchronize(Common::Serializer &s) {
 	s.syncBytes(_tiles, sizeof(_tiles));
 	s.syncBytes(_signs, sizeof(_signs));

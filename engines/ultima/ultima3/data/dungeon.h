@@ -39,6 +39,7 @@ constexpr byte DTILE_WIND = 3;
 constexpr byte DTILE_TRAP = 4;
 constexpr byte DTILE_MARK = 5;
 constexpr byte DTILE_GREMLINS = 6;
+constexpr byte DTILE_SIGN = 8;
 
 // Flags in the bits above those
 constexpr byte DTILE_LADDER_UP = 0x10;
@@ -75,6 +76,11 @@ public:
 	void setTile(int level, int x, int y, byte value) {
 		_tiles[(level << 8) + ((y & (DUNGEON_SIZE - 1)) << 4) + (x & (DUNGEON_SIZE - 1))] = value;
 	}
+
+	/**
+	 * Returns what the sign on a level says, or null if there isn't one
+	 */
+	const char *sign(int level) const;
 };
 
 } // namespace Data
