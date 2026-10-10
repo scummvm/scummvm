@@ -60,6 +60,7 @@ private:
 	bool cmdInventory(int argc, const char **argv);
 	bool cmdLoad(int argc, const char **argv);
 	bool cmdSave(int argc, const char **argv);
+	bool cmdExodus(int argc, const char **argv);
 
 public:
 	Console();

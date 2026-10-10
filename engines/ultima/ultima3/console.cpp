@@ -49,6 +49,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
 	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
 	registerCmd("save", WRAP_METHOD(Console, cmdSave));
+	registerCmd("exodus", WRAP_METHOD(Console, cmdExodus));
 }
 
 Console::~Console() {
@@ -136,6 +137,37 @@ bool Console::cmdMap(int argc, const char **argv) {
 		debugPrintf("Could not enter %s, which has no data file\n", argv[1]);
 		return true;
 	}
+
+	restartGame();
+	return false;
+}
+
+bool Console::cmdExodus(int argc, const char **argv) {
+	constexpr byte ALL_CARDS = 0x0F;
+	constexpr int START_X = 30, START_Y = 12;
+
+	ensureGame();
+	LocationLogic logic;
+
+	if (_G(savegame)._location != Data::LOCATION_SOSARIA)
+		logic.exitToWorld();
+
+	int index = -1;
+	for (int i = 0; i < LocationLogic::entranceCount() && index < 0; ++i) {
+		if (!strcmp(LocationLogic::entranceFilename(i), "EXODUS.ULT"))
+			index = i;
+	}
+
+	if (index < 0 || !logic.enterLocation(index)) {
+		debugPrintf("Could not enter the castle of Exodus, which has no data file\n");
+		return true;
+	}
+
+	// In front of the machine's first slot, holding all four cards
+	Data::Savegame &sg = _G(savegame);
+	sg._posX = START_X;
+	sg._posY = START_Y;
+	sg.partyMember(0)._marksAndCards |= ALL_CARDS;
 
 	restartGame();
 	return false;
