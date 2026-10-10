@@ -152,30 +152,81 @@ cd "$oldpwd"
 # Sanity
 ###########
 
+# ADGF_TESTING must be removed once it was present in more than this many releases
+testingMaxReleases=2
+
 echo_n "Checking ADGF_TESTING..."
 
-# Filter out known valid declarations
-#
-# as of 2022.03 they are:
-#   engines/advancedDetector.cpp:	else if (desc->flags & ADGF_TESTING)
-#   engines/advancedDetector.h:	ADGF_TESTING         = (1u << 19), ///< Flag to designate not yet officially supported games that are fit for public testing.
-#   engines/ags/detection_tables.h:	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, nullptr, ADGF_TESTING)
+# Flags already present in the release before the last $testingMaxReleases ones must go,
+# e.g. v2026.1.0 or earlier when preparing 2026.4.0.
+# Tags come from the main repository, local ones may be outdated.
+cutoff=`GIT_TERMINAL_PROMPT=0 git -c credential.helper= ls-remote --tags --sort=-v:refname \
+    https://github.com/scummvm/scummvm 'v*' 2>/dev/null | awk -v max=$((testingMaxReleases + 1)) '
+  {
+    tag = substr($2, 11)
+    peeled = (substr(tag, length(tag) - 2) == "^{}")
+    if (peeled)
+      tag = substr(tag, 1, length(tag) - 3)
+  }
+  # Annotated tags are listed twice, the peeled ^{} entry has the commit
+  tag ~ /^v[0-9]+\.[0-9]+\.0$/ && (peeled || !(tag in commit)) {
+    if (!(tag in commit))
+      order[++n] = tag
+    commit[tag] = $1
+  }
+  END { if (n >= max) print order[max], commit[order[max]] }'`
 
-git -P grep ADGF_TESTING | grep -v engines/advancedDetector. | grep -v "engines/ags/detection_tables.h:.DETECTION_ENTRY.ID," | grep -v devtools/release-checks.sh >$TMP
+read cutoffTag cutoffCommit <<< "$cutoff"
 
-num_lines=`cat $TMP | wc -l`
+echo_n "${cutoffTag}..."
 
-if [ "$num_lines" -ne "0" ]; then
-  echo -e "$num_lines entries. ${RED}They must be removed if the flag for the game/demo is present for more than 2 releases:${NC}"
-  cat $TMP
-  echo
+# The date comes from the local clone, which may lack the commit, e.g. when the
+# release was tagged on a release branch that was not fetched. Fetch the tag then
+if ! git cat-file -e "$cutoffCommit" 2>/dev/null; then
+  GIT_TERMINAL_PROMPT=0 git -c credential.helper= fetch -q --no-tags https://github.com/scummvm/scummvm tag "$cutoffTag"
+fi
+
+cutoffDate=`git log -1 --format=%ct "$cutoffCommit" 2>/dev/null`
+
+echo_n "${cutoffDate}..."
+
+if [ -z "$cutoffDate" ]; then
+  echo -e "failed. ${RED}Could not fetch $cutoffTag from https://github.com/scummvm/scummvm${NC}"
 
   failPlus
 else
-  echoOk
-fi
 
-rm -f $TMP
+  for file in `git grep -l ADGF_TESTING | grep -v "^devtools/release-checks.sh$"`
+  do
+    # Filter out known valid declarations
+    #
+    # as of 2026.09 they are:
+    #   engines/advancedDetector.cpp:	else if (desc->flags & ADGF_TESTING)
+    #   engines/advancedDetector.h:	ADGF_TESTING         = (1u << 19), ///< Flag to designate not yet officially supported games that are fit for public testing.
+    #   engines/ags/detection_tables.h:	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, ADGF_TESTING, 0)
+    git blame -w --line-porcelain -- "$file" | awk -v file="$file" -v cutoff="$cutoffDate" '
+      /^[0-9a-f]+ [0-9]+ [0-9]+/ && length($1) == 40 { sha = $1; line = $3 }
+      /^committer-time / { time = $2 }
+      file == "engines/advancedDetector.cpp" && /^\t[ \t]*else if \(desc->flags & ADGF_TESTING\)$/ { next }
+      file == "engines/advancedDetector.h" && /^\t[ \t]*ADGF_TESTING *= *\(1u << 19\),/ { next }
+      file == "engines/ags/detection_tables.h" && /^\t[ \t]*DETECTION_ENTRY\(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, ADGF_TESTING, 0\)$/ { next }
+      /^\t.*ADGF_TESTING/ && time < cutoff { print file ":" line ": " substr(sha, 1, 11) }'
+  done >$TMP
+
+  num_lines=`cat $TMP | wc -l`
+
+  if [ "$num_lines" -ne "0" ]; then
+    echo -e "$num_lines entries. ${RED}They must be removed, the flag was already present in $cutoffTag or earlier:${NC}"
+    cat $TMP
+    echo
+
+    failPlus
+  else
+    echoOk
+  fi
+
+  rm -f $TMP
+fi
 
 echo_n "Checking ideprojects..."
 
