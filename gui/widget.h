@@ -51,6 +51,7 @@ enum {
 	 * mouse events in place of their children */
 	WIDGET_HOOK_DRAG        = 1 <<  7,
 	WIDGET_DYN_TOOLTIP      = 1 <<  8, // Widgets updates tooltip by coordinates
+	WIDGET_INVALID          = 1 <<  9, // Independent, opt-in validation indication
 };
 
 enum {
@@ -164,6 +165,9 @@ public:
 	virtual bool wantsFocus() { return false; }
 
 	uint32 getType() const { return _type; }
+
+	/** Present a validation error without changing interaction state. */
+	void setInvalid(bool invalid);
 
 	void setFlags(int flags);
 	void clearFlags(int flags);
@@ -541,6 +545,11 @@ protected:
 /* OptionsContainerWidget */
 class OptionsContainerWidget : public Widget {
 public:
+	enum HostContext { kLauncherOptions, kInGameOptions };
+
+	/** The containing dialog supplies its context before load(). */
+	virtual void setHostContext(HostContext context) {}
+
 	/**
 	 * @param widgetsBoss  parent widget for the container widget
 	 * @param name         name of the container widget in the layout system
@@ -562,6 +571,16 @@ public:
 	 */
 	virtual bool save() = 0;
 
+	/**
+	 * Validate the current widget state before the containing dialog applies it.
+	 * Implementations should focus the first invalid control before returning
+	 * false.
+	 */
+	virtual bool validate() { return true; }
+
+	/** Optional active-page keyboard routing and cancellation from any page. */
+	virtual bool handleOptionsKeyDown(Common::KeyState state) { return false; }
+
 	/** Implementing classes should return if there are relevant keys set in the configuration domain
 	 *
 	 * @return true if there are relevant keys set in the configuration domain
@@ -571,8 +590,12 @@ public:
 	/** Implementing classes should enable or disable all active widgets */
 	virtual void setEnabled(bool e) {}
 
+	/** Recompute height from visible children on reflow, allowing shrinkage. */
+	void setContentSized(bool enabled) { _contentSized = enabled; }
+
 	void setParentDialog(Dialog *parentDialog) { _parentDialog = parentDialog; }
-	void setDomain(const Common::String &domain) { _domain = domain; }
+	virtual void setDomain(const Common::String &domain) { _domain = domain; }
+
 
 protected:
 	// Widget API
@@ -597,6 +620,7 @@ protected:
 	const Common::String _dialogLayout;
 
 	Dialog *_parentDialog;
+	bool _contentSized;
 };
 
 ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x=0, int y=0, int w=0, int h=0, bool scale = false);

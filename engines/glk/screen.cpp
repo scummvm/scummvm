@@ -29,12 +29,11 @@
 namespace Glk {
 
 
-#define FONTS_VERSION 1.0
 #define FONTS_FILENAME "fonts.dat"
 
 Screen::~Screen() {
-	for (int idx = 0; idx < FONTS_TOTAL; ++idx)
-		delete _fonts[idx];
+	for (uint index = 0; index < _fonts.size(); ++index)
+		delete _fonts[index];
 }
 
 void Screen::initialize() {
@@ -44,16 +43,7 @@ void Screen::initialize() {
 		FontInfo *i = (idx == 0) ? &g_conf->_monoInfo : &g_conf->_propInfo;
 		const Graphics::Font *f = (idx == 0) ? _fonts[0] : _fonts[7];
 
-		// TODO: See if there's any better way for getting the leading and baseline
-		Common::Rect r1 = f->getBoundingBox('o');
-		Common::Rect r2 = f->getBoundingBox('y');
-		double baseLine = (double)r1.bottom;
-		double leading = (double)((idx == 0) ? r2.bottom : r2.bottom + g_conf->_propInfo._lineSeparation);
-
-		i->_leading = static_cast<int>(MAX((double)i->_leading, leading));
-		i->_baseLine = static_cast<int>(MAX((double)i->_baseLine, baseLine));
-		i->_cellW = _fonts[0]->getMaxCharWidth();
-		i->_cellH = i->_leading;
+		measureFont(*i, *f, *_fonts[0], idx == 0 ? 0 : g_conf->_propInfo._lineSeparation);
 	}
 }
 
@@ -66,37 +56,37 @@ void Screen::fillRect(const Rect &box, uint color) {
 		Graphics::Screen::fillRect(box, color);
 }
 
+void Screen::measureFont(FontInfo &info, const Graphics::Font &font,
+		const Graphics::Font &fixedFont, int lineSeparation) {
+	const Common::Rect baseline = font.getBoundingBox('o');
+	const Common::Rect descender = font.getBoundingBox('y');
+	info._leading = MAX(info._leading, descender.bottom + lineSeparation);
+	info._baseLine = MAX(info._baseLine, (int)baseline.bottom);
+	info._cellW = fixedFont.getMaxCharWidth();
+	info._cellH = info._leading;
+}
+
+Common::Archive *Screen::openFontArchive(const Common::Archive *resources) {
+	Common::Archive *archive = resources ?
+		Common::makeZipArchive(resources->createReadStreamForMember(FONTS_FILENAME)) :
+		Common::makeZipArchive(FONTS_FILENAME);
+	if (!archive)
+		return nullptr;
+	Common::File version;
+	char buffer[5] = { 0, 0, 0, 0, 0 };
+	if (!version.open("version.txt", *archive) || version.read(buffer, 4) != 4 ||
+			buffer[1] != '.' || buffer[0] < '1' || (buffer[0] == '1' && atoi(buffer + 2) < 2)) {
+		delete archive;
+		return nullptr;
+	}
+	return archive;
+}
+
 void Screen::loadFonts() {
-	Common::Archive *archive = nullptr;
-
-	if (!Common::File::exists(FONTS_FILENAME) || (archive = Common::makeZipArchive(FONTS_FILENAME)) == nullptr)
-		error("Could not locate %s", FONTS_FILENAME);
-
-	// Open the version.txt file within it to validate the version
-	Common::File f;
-	if (!f.open("version.txt", *archive)) {
-		delete archive;
-		error("Could not get version of fonts data. Possibly malformed");
-	}
-
-	// Validate the version
-	char buffer[5];
-	f.read(buffer, 4);
-	buffer[4] = '\0';
-
-	int major = 0, minor = 0;
-	if (buffer[1] == '.') {
-		major = buffer[0] - '0';
-		minor = atoi(&buffer[2]);
-	}
-
-	if (major < 1 || minor < 2) {
-		delete archive;
-		error("Out of date fonts. Expected at least %s, but got version %d.%d", "1.2", major, minor);
-	}
-
+	Common::Archive *archive = openFontArchive();
+	if (!archive)
+		error("Could not load compatible GLK fonts from %s (version 1.2 or newer required)", FONTS_FILENAME);
 	loadFonts(archive);
-
 	delete archive;
 }
 
@@ -107,6 +97,9 @@ void Screen::loadFonts(Common::Archive *archive) {
 	double monoSize = g_conf->_monoInfo._size;
 	double propSize = g_conf->_propInfo._size;
 
+	for (uint index = 0; index < _fonts.size(); ++index)
+		delete _fonts[index];
+	_fonts.clear();
 	_fonts.resize(FONTS_TOTAL);
 	_fonts[0] = loadFont(MONOR, archive, monoSize, monoAspect, FONTR);
 	_fonts[1] = loadFont(MONOB, archive, monoSize, monoAspect, FONTB);
@@ -120,28 +113,31 @@ void Screen::loadFonts(Common::Archive *archive) {
 }
 
 const Graphics::Font *Screen::loadFont(FACES face, Common::Archive *archive, double size, double aspect, int style) {
+	const Graphics::Font *font = loadFontFromArchive(face, archive, size);
+	if (!font)
+		error("Could not load GLK font %s", getFontName(face).c_str());
+	return font;
+}
+
+const Graphics::Font *Screen::loadFontFromArchive(FACES face,
+		Common::Archive *archive, double size) {
+	if (!archive || face < MONOR || face > PROPZ || !(size >= 1.0 && size <= 32767.0))
+		return nullptr;
 	Common::File *f = new Common::File();
 	const char *const FILENAMES[8] = {
 		"GoMono-Regular.ttf", "GoMono-Bold.ttf", "GoMono-Italic.ttf", "GoMono-Bold-Italic.ttf",
 		"NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-Bold-Italic.ttf"
 	};
 
-	if (!f->open(FILENAMES[face], *archive))
-		error("Could not load %s from fonts file", FILENAMES[face]);
+	if (!f->open(FILENAMES[face], *archive)) {
+		delete f;
+		return nullptr;
+	}
 
-	return Graphics::loadTTFFont(f, DisposeAfterUse::YES, (int)size, Graphics::kTTFSizeModeCharacter);
-}
-
-FACES Screen::getFontId(const Common::String &name) {
-	if (name == "monor") return MONOR;
-	if (name == "monob") return MONOB;
-	if (name == "monoi") return MONOI;
-	if (name == "monoz") return MONOZ;
-	if (name == "propr") return PROPR;
-	if (name == "propb") return PROPB;
-	if (name == "propi") return PROPI;
-	if (name == "propz") return PROPZ;
-	return MONOR;
+	const Graphics::Font *font = Graphics::loadTTFFont(f, DisposeAfterUse::YES, (int)size, Graphics::kTTFSizeModeCharacter);
+	if (!font)
+		delete f;
+	return font;
 }
 
 Common::String Screen::getFontName(FACES font) {

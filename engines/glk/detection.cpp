@@ -155,35 +155,57 @@ PlainGameList GlkMetaEngineDetection::getSupportedGames() const {
 	return list;
 }
 
-#define FIND_GAME(SUBENGINE) \
+#define FIND_GAME(SUBENGINE, TYPE) \
 	Glk::GameDescriptor gd##SUBENGINE = Glk::SUBENGINE::SUBENGINE##MetaEngine::findGame(gameId); \
-	if (gd##SUBENGINE._description) return gd##SUBENGINE
+	if (gd##SUBENGINE._description) { \
+		if (interpreterType) \
+			*interpreterType = TYPE; \
+		return gd##SUBENGINE; \
+	}
 
 const DebugChannelDef *GlkMetaEngineDetection::getDebugChannels() const {
 	return debugFlagList;
 }
 
 PlainGameDescriptor GlkMetaEngineDetection::findGame(const char *gameId) const {
-	FIND_GAME(Adrift);
-	FIND_GAME(AdvSys);
-	FIND_GAME(Alan2);
-	FIND_GAME(AGT);
-	FIND_GAME(Alan3);
-	FIND_GAME(Archetype);
-	FIND_GAME(Comprehend);
-	FIND_GAME(Glulx);
-	FIND_GAME(Hugo);
-	FIND_GAME(JACL);
-	FIND_GAME(Level9);
-	FIND_GAME(Magnetic);
-	FIND_GAME(Quest);
-	FIND_GAME(Scott);
-	FIND_GAME(ZCode);
+	return findGame(gameId, nullptr);
+}
+
+PlainGameDescriptor GlkMetaEngineDetection::findGame(const char *gameId,
+		Glk::InterpreterType *interpreterType) const {
+	FIND_GAME(Adrift, Glk::INTERPRETER_ADRIFT);
+	FIND_GAME(AdvSys, Glk::INTERPRETER_ADVSYS);
+	FIND_GAME(Alan2, Glk::INTERPRETER_ALAN2);
+	FIND_GAME(AGT, Glk::INTERPRETER_AGT);
+	FIND_GAME(Alan3, Glk::INTERPRETER_ALAN3);
+	FIND_GAME(Archetype, Glk::INTERPRETER_ARCHETYPE);
+	FIND_GAME(Comprehend, Glk::INTERPRETER_COMPREHEND);
+	FIND_GAME(Glulx, Glk::INTERPRETER_GLULX);
+	FIND_GAME(Hugo, Glk::INTERPRETER_HUGO);
+	FIND_GAME(JACL, Glk::INTERPRETER_JACL);
+	FIND_GAME(Level9, Glk::INTERPRETER_LEVEL9);
+	FIND_GAME(Magnetic, Glk::INTERPRETER_MAGNETIC);
+	FIND_GAME(Quest, Glk::INTERPRETER_QUEST);
+	FIND_GAME(Scott, Glk::INTERPRETER_SCOTT);
+	FIND_GAME(ZCode, Glk::INTERPRETER_ZCODE);
 #ifndef RELEASE_BUILD
-	FIND_GAME(TADS);
+	Glk::GameDescriptor gdTADS = Glk::TADS::TADSMetaEngine::findGame(gameId);
+	if (gdTADS._description) {
+		if (interpreterType) {
+			*interpreterType = (gdTADS._options & Glk::TADS::OPTION_TADS3) ?
+				Glk::INTERPRETER_TADS3 : Glk::INTERPRETER_TADS2;
+		}
+		return gdTADS;
+	}
 #endif
 
 	return PlainGameDescriptor::empty();
+}
+
+bool GlkMetaEngineDetection::findInterpreterType(const char *gameId,
+		Glk::InterpreterType &interpreterType) const {
+	PlainGameDescriptor game = findGame(gameId, &interpreterType);
+	return game.gameId && *game.gameId;
 }
 
 #undef FIND_GAME

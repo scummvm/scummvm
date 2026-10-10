@@ -117,6 +117,8 @@ void Widget::draw() {
 
 		// Now perform the actual widget draw
 		drawWidget();
+		if (_flags & WIDGET_INVALID)
+			g_gui.theme()->drawInvalidFrame(Common::Rect(_x, _y, _x + _w, _y + _h));
 
 		_x = oldX;
 		_y = oldY;
@@ -174,6 +176,18 @@ bool Widget::containsWidgetInChain(Widget *w, Widget *search) {
 		w = w->_next;
 	}
 	return false;
+}
+
+void Widget::setInvalid(bool invalid) {
+	if (((_flags & WIDGET_INVALID) != 0) == invalid)
+		return;
+	if (invalid)
+		setFlags(WIDGET_INVALID);
+	else
+		clearFlags(WIDGET_INVALID);
+	markAsDirty();
+	// Optional theme indications may extend beyond the control's background.
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void Widget::setEnabled(bool e) {
@@ -1063,7 +1077,7 @@ OptionsContainerWidget::OptionsContainerWidget(GuiObject *boss, const Common::St
 		Widget(boss, name),
 		_domain(domain),
 		_dialogLayout(dialogLayout),
-		_parentDialog(nullptr) {
+		_parentDialog(nullptr), _contentSized(false) {
 }
 
 OptionsContainerWidget::~OptionsContainerWidget() {
@@ -1082,11 +1096,13 @@ void OptionsContainerWidget::reflowLayout() {
 
 	Widget *w = _firstWidget;
 	int16 minY = getAbsY();
-	int maxY = minY + _h;
+	int maxY = minY + (_contentSized ? 0 : _h);
 	while (w) {
 		w->reflowLayout();
-		minY = MIN(minY, w->getAbsY());
-		maxY = MAX(maxY, w->getAbsY() + w->getHeight());
+		if (!_contentSized)
+			minY = MIN(minY, w->getAbsY());
+		if (!_contentSized || w->isVisible())
+			maxY = MAX(maxY, w->getAbsY() + w->getHeight());
 		w = w->next();
 	}
 	_h = maxY - minY;

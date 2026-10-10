@@ -49,6 +49,7 @@ protected:
 	int				_leftPadding;
 	int				_rightPadding;
 	uint32			_cmd;
+	bool _naturalSize;
 
 public:
 	PopUpWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
@@ -74,6 +75,10 @@ public:
 
 	void handleMouseEntered(int button) override	{ if (_selectedItem != -1) read(_entries[_selectedItem].name); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+
+	/** Opt into measuring all entries using the current font and chrome. */
+	void setNaturalSize(bool enabled) { _naturalSize = enabled; }
+	void getMinSize(int &minWidth, int &minHeight) override;
 
 	void reflowLayout() override;
 protected:

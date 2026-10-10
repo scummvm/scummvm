@@ -68,6 +68,12 @@ public:
 	void handleTickle() override;
 	bool handleDragHook(Widget *origTarget, int state, int x, int y, int button) override;
 
+	/** Set a stable, clamped content position without kinetic scrolling. */
+	void setScrollPosition(int position);
+	void ensureVisible(const Widget *widget);
+	int getScrollPosition() const;
+	int getMaximumScrollPosition() const;
+
 	void cancelDrag() override;
 	void cancelTickle() override;
 

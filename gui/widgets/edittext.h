@@ -43,6 +43,13 @@ public:
 
 	void setEditString(const Common::U32String &str) override;
 
+	/** Also send finishCmd after ordinary focus-loss cleanup. Default: false. */
+	void setFinishOnFocusLoss(bool enabled) { _finishOnFocusLoss = enabled; }
+
+	/** Minimum text width in pixels, excluding chrome; -1 disables it. */
+	void setMinContentWidth(int width) { _minContentWidth = width; }
+	void getMinSize(int &minWidth, int &minHeight) override;
+
 	bool wantsFocus() override { return true; }
 
 	void reflowLayout() override;
@@ -59,6 +66,8 @@ protected:
 	Common::Rect getEditRect() const override;
 
 	uint32 _finishCmd;
+	bool _finishOnFocusLoss;
+	int _minContentWidth;
 };
 
 } // End of namespace GUI
