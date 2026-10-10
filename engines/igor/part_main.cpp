@@ -340,7 +340,9 @@ void IgorEngine::EXEC_MAIN_ACTION_38_lookAtNewspaper() {
 		free(tmp);
 	}
 	fadeIn(624);
-	_objectsState[2] = 1;
+	if (_objectsState[4] == 0) {
+		_objectsState[4] = 1;
+	}
 }
 
 void IgorEngine::EXEC_MAIN_ACTION_43_lookAtPhoto() {
