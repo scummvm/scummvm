@@ -131,7 +131,7 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101: // look at window
 		ADD_DIALOGUE_TEXT(201, 2, 616);
-		SET_DIALOGUE_TEXT(1, 2);
+		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
 		break;
