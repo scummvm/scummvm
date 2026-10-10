@@ -199,7 +199,7 @@ bool Temple::serve(int slot) {
 	auto flash = [&]() {
 		_G(effects).flashViewport();
 		_G(effects).flashSlot(slot);
-		g_engine->playSoundEffect(0xFD);
+		g_engine->playSoundEffect(0xFD, 0xC0, 0x80);
 	};
 
 	switch (_service) {

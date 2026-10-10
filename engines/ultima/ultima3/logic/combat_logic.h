@@ -66,7 +66,7 @@ private:
 	bool _slayUsed = false;
 
 	void print(const Common::String &text);
-	void sound(int effect);
+	void sound(int effect, int arg1 = 0, int arg2 = 0);
 	void overlay(int x, int y, int tile);
 	void flashSlot(int slot);
 	void show();

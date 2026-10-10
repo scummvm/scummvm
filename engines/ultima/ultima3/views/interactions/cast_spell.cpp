@@ -99,9 +99,9 @@ bool CastSpell::fail() {
 }
 
 void CastSpell::fanfare() {
-	g_engine->playSoundEffect(0xF5);
+	g_engine->playSoundEffect(0xF5, _spell);
 	_G(effects).flashViewport();
-	g_engine->playSoundEffect(0xFD);
+	g_engine->playSoundEffect(0xFD, (_spell & 0x0F) | 0x60, 0x30);
 }
 
 bool CastSpell::perform(Effect effect) {
@@ -399,6 +399,7 @@ bool CastSpell::keypress(const KeypressMessage &msg) {
 
 		// Spells cost five magic points for each place down the book
 		int spell = key - 'A';
+		_spell = spell;
 		Data::RosterEntry &caster = save.partyMember(_slot);
 		_cost = spell * MP_PER_LEVEL;
 		if (_cost > Data::fromBcd(caster._magicPoints)) {

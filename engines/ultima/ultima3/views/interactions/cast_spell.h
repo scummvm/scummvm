@@ -58,6 +58,7 @@ private:
 	bool _cleric = false;
 	int _slot;
 	int _cost = 0;
+	int _spell = 0;
 	Effect _effect = SLAY_ORCS;
 	int _amount = 0;
 	PlayerChooser _players;

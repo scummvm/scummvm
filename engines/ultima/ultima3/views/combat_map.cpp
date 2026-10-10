@@ -100,7 +100,7 @@ void CombatMap::monstersTurn() {
 
 void CombatMap::victory() {
 	_G(messages).print("****Victory!****\n\n");
-	g_engine->playSoundEffect(0xFD);
+	g_engine->playSoundEffect(0xFD, 0x80, 0x10);
 
 	_G(combat).endHold();
 	_G(effects)._highlight = -1;
@@ -129,7 +129,7 @@ void CombatMap::processFrame() {
 			_G(messages).print(event._text.c_str());
 			break;
 		case CombatEvent::SOUND:
-			g_engine->playSoundEffect(event._arg1);
+			g_engine->playSoundEffect(event._arg1, event._arg2, event._arg3);
 			break;
 		case CombatEvent::OVERLAY:
 			_overlay = true;

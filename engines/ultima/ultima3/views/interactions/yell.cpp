@@ -71,7 +71,7 @@ bool Yell::keypress(const KeypressMessage &msg) {
 	if (_text.word() == "EVOCARE" && (e._marksAndCards & MARK_OF_SNAKE) && atCrossing) {
 		save._posY ^= 3;
 		_G(effects).flashViewport();
-		g_engine->playSoundEffect(0xFD);
+		g_engine->playSoundEffect(0xFD, 0xC0, 0x40);
 	} else {
 		_G(messages).print("No effect!\n");
 	}

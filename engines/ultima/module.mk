@@ -163,6 +163,7 @@ MODULE_OBJS += \
 	ultima3/ultima3.o \
 	ultima3/console.o \
 	ultima3/metaengine.o \
+	ultima3/sound_effects.o \
 	ultima3/data/arena.o \
 	ultima3/data/data.o \
 	ultima3/data/dungeon.o \

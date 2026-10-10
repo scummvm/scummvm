@@ -105,7 +105,7 @@ bool EnterShrine::keypress(const KeypressMessage &msg) {
 	_G(messages).print("\nShazam!\n");
 	_G(effects).flashSlot(_chooser.slot());
 	_G(effects).flashViewport();
-	g_engine->playSoundEffect(0xFD);
+	g_engine->playSoundEffect(0xFD, 0xD8, 0x30);
 	return true;
 }
 

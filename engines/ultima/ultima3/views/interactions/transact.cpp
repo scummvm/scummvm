@@ -59,7 +59,7 @@ void Transact::lordBritish() {
 		e._maxHitPoints = (e._maxHitPoints & 0xFF) | (Data::toBcd(Data::fromBcd(level) + 1) << 8);
 		_G(messages).print("Thou art greater\n\n");
 		_G(effects).flashViewport();
-		g_engine->playSoundEffect(0xFD);
+		g_engine->playSoundEffect(0xFD, 0x80, 0x40);
 	}
 }
 

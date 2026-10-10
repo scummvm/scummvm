@@ -66,8 +66,8 @@ void CombatLogic::print(const Common::String &text) {
 	_events.push_back(CombatEvent(text));
 }
 
-void CombatLogic::sound(int effect) {
-	_events.push_back(CombatEvent(CombatEvent::SOUND, effect));
+void CombatLogic::sound(int effect, int arg1, int arg2) {
+	_events.push_back(CombatEvent(CombatEvent::SOUND, effect, arg1, arg2));
 }
 
 void CombatLogic::overlay(int x, int y, int tile) {
@@ -247,6 +247,10 @@ void CombatLogic::startFight() {
 		_arena.setTile(mx, my, _monsterClass);
 	}
 
+	sound(0xFD, 0xF0, 0x10);
+	sound(0xFD, 0xF0, 0x10);
+	sound(0xFD, 0xF0, 4);
+	sound(0xFD, 0xF0, 0x10);
 	syncShown();
 }
 
@@ -325,7 +329,7 @@ void CombatLogic::playerAttack(int slot, Direction dir) {
 	bool ranged = weapon == 3 || weapon == 5 || weapon == 9 || weapon == 0x0D;
 	int monster = -1;
 
-	sound(0xFD);
+	sound(0xFD, 0xE0 + slot * 8, 6);
 
 	// Close in, a monster has to be right beside the attacker
 	if (!ranged) {

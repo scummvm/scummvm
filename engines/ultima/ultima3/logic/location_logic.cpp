@@ -308,7 +308,7 @@ void LocationLogic::teleportThroughMoonGate() {
 	save._posX = GATE_X[save._moonPhase[1]];
 	save._posY = GATE_Y[save._moonPhase[1]];
 	_G(effects).flashViewport();
-	g_engine->playSoundEffect(0xFD);
+	g_engine->playSoundEffect(0xFD, 0xC0, 0x20);
 }
 
 bool LocationLogic::isOnWhirlpool() const {

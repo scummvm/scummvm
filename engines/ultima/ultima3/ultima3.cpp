@@ -22,11 +22,13 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "engines/util.h"
+#include "audio/decoders/raw.h"
 #include "audio/softsynth/pcspk.h"
 #include "ultima/ultima3/ultima3.h"
 #include "ultima/ultima3/console.h"
 #include "ultima/ultima3/metaengine.h"
 #include "ultima/ultima3/data/data.h"
+#include "ultima/ultima3/sound_effects.h"
 #include "ultima/ultima3/views/views.h"
 #include "ultima/ultima3/gfx/charset.h"
 
@@ -42,6 +44,7 @@ Ultima3Engine::Ultima3Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 }
 
 Ultima3Engine::~Ultima3Engine() {
+	_mixer->stopHandle(_effectHandle);
 	delete _pcSpeaker;
 }
 
@@ -133,7 +136,27 @@ void Ultima3Engine::playErrorBeep() {
 	queueTone(3216, 65);
 }
 
-void Ultima3Engine::playSoundEffect(byte effect) {
+void Ultima3Engine::queueEffect(const Common::Array<byte> &samples) {
+	// Don't let effects pile up behind the action
+	constexpr int MAX_QUEUED = 6;
+
+	if (samples.empty())
+		return;
+
+	if (!_mixer->isSoundHandleActive(_effectHandle)) {
+		_effectStream = Audio::makeQueuingAudioStream(SoundEffects::SAMPLE_RATE, false);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectHandle, _effectStream);
+	}
+
+	if (_effectStream->numQueuedStreams() >= MAX_QUEUED)
+		return;
+
+	byte *data = (byte *)malloc(samples.size());
+	memcpy(data, &samples[0], samples.size());
+	_effectStream->queueBuffer(data, samples.size(), DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+}
+
+void Ultima3Engine::playSoundEffect(byte effect, byte arg1, byte arg2) {
 	switch (effect) {
 	case 0xFE:
 		playErrorBeep();
@@ -143,6 +166,8 @@ void Ultima3Engine::playSoundEffect(byte effect) {
 		queueTone(9040, 60);
 		break;
 	default:
+		if (_soundEnabled)
+			queueEffect(SoundEffects::render(effect, arg1, arg2));
 		break;
 	}
 }

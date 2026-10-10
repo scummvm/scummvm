@@ -28,6 +28,8 @@
 #include "common/ptr.h"
 #include "common/serializer.h"
 #include "common/util.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "engines/engine.h"
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
@@ -68,6 +70,13 @@ protected:
 private:
 	Audio::PCSpeaker *_pcSpeaker = nullptr;
 	bool _pcSpeakerReady = false;
+	Audio::QueuingAudioStream *_effectStream = nullptr;
+	Audio::SoundHandle _effectHandle;
+
+	/**
+	 * Queues up the samples of a sound effect to be played
+	 */
+	void queueEffect(const Common::Array<byte> &samples);
 
 public:
 	/**
@@ -88,9 +97,10 @@ public:
 	void playErrorBeep();
 
 	/**
-	 * Plays one of the game's sound effects, identified by its original number
+	 * Plays one of the game's sound effects, identified by its original
+	 * number. Some effects are varied by values from where they're played
 	 */
-	void playSoundEffect(byte effect);
+	void playSoundEffect(byte effect, byte arg1 = 0, byte arg2 = 0);
 
 	Data::Savegame _savegame;
 	Data::Map _map;
