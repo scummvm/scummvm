@@ -228,16 +228,6 @@ else
   rm -f $TMP
 fi
 
-echo_n "Checking ideprojects..."
-
-if [ -f dists/codeblocks/scummvm.cbp ]; then
-  echoOk
-else
-  echo -e "missing. ${RED}Run 'make ideprojects'${NC}"
-
-  failPlus
-fi
-
 ###########
 # Translations
 ###########
