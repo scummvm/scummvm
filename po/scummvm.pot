@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-05 00:52+0000\n"
+"POT-Creation-Date: 2026-10-10 07:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3654,7 +3654,7 @@ msgstr ""
 #: engines/composer/metaengine.cpp:114 engines/cruise/metaengine.cpp:173
 #: engines/draci/metaengine.cpp:200 engines/fool/metaengine.cpp:137
 #: engines/groovie/metaengine.cpp:205 engines/hdb/metaengine.cpp:207
-#: engines/hopkins/metaengine.cpp:213 engines/hugo/metaengine.cpp:134
+#: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:134
 #: engines/illusions/metaengine.cpp:94 engines/kyra/engine/eobcommon.cpp:377
 #: engines/kyra/engine/lol.cpp:505 engines/lure/metaengine.cpp:177
 #: engines/made/metaengine.cpp:141 engines/mads/metaengine.cpp:270
@@ -3687,7 +3687,7 @@ msgstr ""
 #: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:283
 #: engines/composer/metaengine.cpp:120 engines/cruise/metaengine.cpp:179
 #: engines/draci/metaengine.cpp:206 engines/fool/metaengine.cpp:148
-#: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:219
+#: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:244
 #: engines/hugo/metaengine.cpp:141 engines/illusions/metaengine.cpp:101
 #: engines/kyra/engine/eobcommon.cpp:378 engines/kyra/engine/lol.cpp:506
 #: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:148
@@ -5774,7 +5774,7 @@ msgstr ""
 #: engines/chamber/metaengine.cpp:63 engines/cine/metaengine.cpp:270
 #: engines/cruise/metaengine.cpp:168 engines/dm/metaengine.cpp:70
 #: engines/draci/metaengine.cpp:195 engines/drascula/metaengine.cpp:205
-#: engines/efh/metaengine.cpp:256 engines/hopkins/metaengine.cpp:206
+#: engines/efh/metaengine.cpp:256 engines/hopkins/metaengine.cpp:229
 #: engines/hugo/metaengine.cpp:129 engines/hypno/metaengine.cpp:128
 #: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:136
@@ -6305,7 +6305,7 @@ msgstr ""
 #: engines/cge2/metaengine.cpp:212 engines/chamber/metaengine.cpp:64
 #: engines/cine/metaengine.cpp:271 engines/cruise/metaengine.cpp:169
 #: engines/dm/metaengine.cpp:72 engines/draci/metaengine.cpp:196
-#: engines/drascula/metaengine.cpp:206 engines/hopkins/metaengine.cpp:207
+#: engines/drascula/metaengine.cpp:206 engines/hopkins/metaengine.cpp:230
 #: engines/hugo/metaengine.cpp:130 engines/hypno/metaengine.cpp:225
 #: engines/hypno/metaengine.cpp:324 engines/hypno/metaengine.cpp:372
 #: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
@@ -6362,7 +6362,7 @@ msgid "Turn backward"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/dm/metaengine.cpp:132
-#: engines/hopkins/metaengine.cpp:269 engines/kyra/engine/eobcommon.cpp:383
+#: engines/hopkins/metaengine.cpp:294 engines/kyra/engine/eobcommon.cpp:383
 #: engines/kyra/engine/lol.cpp:517 engines/lab/metaengine.cpp:257
 #: engines/mm/mm1/metaengine.cpp:102 engines/mohawk/riven.cpp:901
 #: engines/pegasus/pegasus.cpp:2740 engines/twine/metaengine.cpp:353
@@ -6377,7 +6377,7 @@ msgid "Turn left"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:234 engines/dm/metaengine.cpp:152
-#: engines/hopkins/metaengine.cpp:275 engines/kyra/engine/eobcommon.cpp:384
+#: engines/hopkins/metaengine.cpp:300 engines/kyra/engine/eobcommon.cpp:384
 #: engines/kyra/engine/lol.cpp:518 engines/lab/metaengine.cpp:271
 #: engines/mm/mm1/metaengine.cpp:103 engines/mohawk/riven.cpp:907
 #: engines/pegasus/pegasus.cpp:2747 engines/twine/metaengine.cpp:346
@@ -6801,7 +6801,7 @@ msgstr ""
 msgid "Escape keymappings"
 msgstr ""
 
-#: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:231
+#: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:256
 #: engines/illusions/metaengine.cpp:147 engines/sherlock/metaengine.cpp:839
 msgid "Open inventory"
 msgstr ""
@@ -7048,7 +7048,7 @@ msgstr ""
 #: engines/freescape/games/dark/dark.cpp:231
 #: engines/freescape/games/driller/driller.cpp:121
 #: engines/freescape/games/eclipse/eclipse.cpp:337
-#: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:165
+#: engines/hopkins/metaengine.cpp:263 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:196
 #: engines/mads/metaengine.cpp:295 engines/mohawk/myst.cpp:583
 #: engines/mohawk/riven.cpp:864 engines/pegasus/pegasus.cpp:2825
@@ -7076,7 +7076,7 @@ msgstr ""
 #: engines/freescape/games/dark/dark.cpp:236
 #: engines/freescape/games/driller/driller.cpp:126
 #: engines/freescape/games/eclipse/eclipse.cpp:342
-#: engines/hopkins/metaengine.cpp:244 engines/made/metaengine.cpp:202
+#: engines/hopkins/metaengine.cpp:269 engines/made/metaengine.cpp:202
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/pegasus/pegasus.cpp:2831
 #: engines/petka/metaengine.cpp:203 engines/prince/metaengine.cpp:249
@@ -7212,7 +7212,7 @@ msgid "Look right"
 msgstr ""
 
 #: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:110
-#: engines/dm/metaengine.cpp:142 engines/hopkins/metaengine.cpp:257
+#: engines/dm/metaengine.cpp:142 engines/hopkins/metaengine.cpp:282
 #: engines/kyra/engine/eobcommon.cpp:379 engines/kyra/engine/lol.cpp:513
 #: engines/mohawk/riven.cpp:881 engines/titanic/metaengine.cpp:336
 #: engines/titanic/metaengine.cpp:378 engines/twine/metaengine.cpp:332
@@ -7300,7 +7300,7 @@ msgstr ""
 msgid "Enable Color Blind Mode by default"
 msgstr ""
 
-#: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
+#: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:250
 #: engines/sword1/metaengine.cpp:283
 msgid "Exit / Skip"
 msgstr ""
@@ -7543,7 +7543,7 @@ msgstr ""
 msgid "Use alternative camera controls"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:117 engines/hopkins/metaengine.cpp:263
+#: engines/colony/metaengine.cpp:117 engines/hopkins/metaengine.cpp:288
 msgid "Move backward"
 msgstr ""
 
@@ -7921,7 +7921,7 @@ msgstr ""
 msgid "Toggle walk speed"
 msgstr ""
 
-#: engines/draci/metaengine.cpp:243 engines/hopkins/metaengine.cpp:302
+#: engines/draci/metaengine.cpp:243 engines/hopkins/metaengine.cpp:327
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
 #: engines/nancy/input.cpp:233
 msgid "Open main menu"
@@ -9163,7 +9163,7 @@ msgid "Failed to delete file."
 msgstr ""
 
 #. I18N: Action in In Cold Blood
-#: engines/got/metaengine.cpp:74 engines/hopkins/metaengine.cpp:281
+#: engines/got/metaengine.cpp:74 engines/hopkins/metaengine.cpp:306
 #: engines/icb/icb.cpp:89 engines/ultima/ultima4/metaengine.cpp:55
 msgid "Fire"
 msgstr ""
@@ -9424,29 +9424,57 @@ msgstr ""
 msgid "Debug"
 msgstr ""
 
-#: engines/hopkins/metaengine.cpp:47 engines/hopkins/metaengine.cpp:59
+#: engines/hopkins/metaengine.cpp:48 engines/hopkins/metaengine.cpp:60
 msgid "Gore Mode"
 msgstr ""
 
-#: engines/hopkins/metaengine.cpp:48 engines/hopkins/metaengine.cpp:60
+#: engines/hopkins/metaengine.cpp:49 engines/hopkins/metaengine.cpp:61
 msgid "Enable Gore Mode when available"
 msgstr ""
 
-#: engines/hopkins/metaengine.cpp:208
+#: engines/hopkins/metaengine.cpp:72
+msgid "Underwater base shooter enhancements"
+msgstr ""
+
+#: engines/hopkins/metaengine.cpp:73
+msgid "Enable navigation map and autoplay options for Windows base shooter"
+msgstr ""
+
+#: engines/hopkins/metaengine.cpp:83
+msgid "Underwater base shooter Forced Autoplay"
+msgstr ""
+
+#: engines/hopkins/metaengine.cpp:84
+msgid "Require an autoplay destination in Windows base shooter"
+msgstr ""
+
+#: engines/hopkins/metaengine.cpp:231
 msgid "Underwater base shooter"
 msgstr ""
 
-#: engines/hopkins/metaengine.cpp:250 engines/tinsel/metaengine.cpp:307
+#: engines/hopkins/metaengine.cpp:233
+msgid "WBASE enhancements"
+msgstr ""
+
+#: engines/hopkins/metaengine.cpp:275 engines/tinsel/metaengine.cpp:307
 #: engines/twine/metaengine.cpp:307
 msgid "Options menu"
 msgstr ""
 
-#: engines/hopkins/metaengine.cpp:288
+#: engines/hopkins/metaengine.cpp:313
 msgid "Exit through base doorway"
 msgstr ""
 
-#: engines/hopkins/metaengine.cpp:294
+#: engines/hopkins/metaengine.cpp:319
 msgid "Toggle floor and ceiling textures"
+msgstr ""
+
+#: engines/hopkins/metaengine.cpp:333
+msgid "WBASE enhancements: open navigation map"
+msgstr ""
+
+#: engines/hopkins/metaengine.cpp:338
+msgid "WBASE enhancements: choose autoplay destination"
 msgstr ""
 
 #: engines/hpl1/metaengine.cpp:76
