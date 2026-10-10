@@ -285,28 +285,29 @@ void IgorEngine::PART_68_ENTER_INSIDE() {
 }
 
 /**
- * The character gives Igor the object; it goes to the inventory.
+ * Before the character has been given his object he only talks (and refuses); afterwards the object in the room
+ * goes to the inventory.
  */
 void IgorEngine::PART_68_ACTION_102_takeObject() {
-	if (_objectsState[kPart68GivenState] != 0) {
+	if (_objectsState[kPart68GivenState] == 0) {
+		PART_68_DRAW_POSE(0);
+		PART_68_DRAW_NPC(kPart68NpcFacing);
+		waitForTimer(30);
+		PART_68_NPC_SAY({ { 202, 1, 1008 }, { 203, 1, 1009 }, { 204, 1, 1010 }, { 205, 1, 1011 } });
+		PART_68_DRAW_POSE(1);
+		waitForTimer(30);
+
+		// Igor turns to the right
+		_walkData[_walkDataLastIndex - 1].posNum = kFacingPositionRight;
+		_walkDataCurrentIndex = _walkDataLastIndex - 1;
+		moveIgor(kFacingPositionRight, 0);
+		_walkDataCurrentIndex = _walkDataLastIndex;
+		igorSayAndWait({ { 206, 1, 1012 }, { 207, 1, 1013 } });
+		PART_68_NPC_SAY({ { 208, 1, 1014 }, { 209, 1, 1015 }, { 210, 1, 1016 }, { 211, 1, 1017 } });
+		PART_68_DRAW_NPC(kPart68NpcFacing);
+		waitForTimer(30);
 		return;
 	}
-	PART_68_DRAW_POSE(0);
-	PART_68_DRAW_NPC(kPart68NpcFacing);
-	waitForTimer(30);
-	PART_68_NPC_SAY({ { 202, 1, 1008 }, { 203, 1, 1009 }, { 204, 1, 1010 }, { 205, 1, 1011 } });
-	PART_68_DRAW_POSE(1);
-	waitForTimer(30);
-
-	// Igor turns to the right
-	_walkData[_walkDataLastIndex - 1].posNum = kFacingPositionRight;
-	_walkDataCurrentIndex = _walkDataLastIndex - 1;
-	moveIgor(kFacingPositionRight, 0);
-	_walkDataCurrentIndex = _walkDataLastIndex;
-	igorSayAndWait({ { 206, 1, 1012 }, { 207, 1, 1013 } });
-	PART_68_NPC_SAY({ { 208, 1, 1014 }, { 209, 1, 1015 }, { 210, 1, 1016 }, { 211, 1, 1017 } });
-	PART_68_DRAW_NPC(kPart68NpcFacing);
-	waitForTimer(30);
 	for (int frame = 0; frame <= 1; ++frame) {
 		PART_68_DRAW_POSE(frame);
 		waitForTimer(120);

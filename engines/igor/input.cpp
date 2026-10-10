@@ -480,7 +480,7 @@ void IgorEngine::handleRoomInput() {
 		}
 		// The original only exposes a room object when this action byte is
 		// non-zero; otherwise hover text is verb-only.
-		if (((_currentPart >= 100 && _currentPart <= 102) || _currentPart == 110) && _actionCode == 0 && _currentAction.object1Type == kObjectTypeRoom) {
+		if (_actionCode == 0 && _currentAction.object1Type == kObjectTypeRoom) {
 			_currentAction.object1Num = 0;
 		}
 	}
