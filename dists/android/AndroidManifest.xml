@@ -82,6 +82,11 @@
 				<category android:name="tv.ouya.intent.category.GAME" />
 				<category android:name="android.intent.category.LEANBACK_LAUNCHER" />
 			</intent-filter>
+			<intent-filter>
+				<!-- for external apps -->
+				<action android:name="android.intent.action.MAIN" />
+				<data android:scheme="scummvm" />
+			</intent-filter>
 		</activity>
 		<activity
 			android:name=".ScummVMActivity"
