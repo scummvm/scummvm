@@ -140,9 +140,6 @@ namespace Nancy {
 namespace Action {
 
 ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableReadStream *recordStream) {
-	// The types returning nullptr in Nancy16 and later were changed there, and their
-	// new data hasn't been analyzed yet. This keeps the readers of the older games from
-	// misparsing it.
 	switch (type) {
 	case 10:
 		if (g_nancy->getGameType() <= kGameTypeNancy9)
@@ -252,8 +249,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new InteractiveVideo();
 		else if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new HotMultiframeMultiSceneChange();	// Moved from 13
-		else if (g_nancy->getGameType() <= kGameTypeNancy16)
-			return nullptr;	// TODO: InvCursorAR
+		else if (g_nancy->getGameType() == kGameTypeNancy16)
+			return nullptr;	// InvCursorAR, unused
 		else
 			return new BeginStream();
 	case 27:	// Nancy10
@@ -504,10 +501,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 118:
 		return new PasswordPuzzle();
 	case 119:	// Nancy7
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new OrderingPuzzle(OrderingPuzzle::kOrdering);
-		else
-			return nullptr;
+		return new OrderingPuzzle(OrderingPuzzle::kOrdering);
 	case 120:
 		return new AddInventoryNoHS();
 	case 121:
@@ -534,11 +528,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new AddSearchLink();
 	case 132:	// Nancy12
 		return new ResourceUse();
-	case 133:	// Nancy14
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new CameraAction();
-		else
-			return nullptr;
+	case 133:	// Nancy14 - only used for that one
+		return new CameraAction();
 	case 134:	// Nancy15
 		// Switches the active player character (Nancy / Frank / Joe), the
 		// dual-protagonist mechanic new to The Creature of Kapu Cave
@@ -606,13 +597,11 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new KeypadPhone();	// Moved from 116
 	case 158:
 		return new PlayRandomSound();
-	case 159:
+	case 159:	// Nancy7
 		if (g_nancy->getGameType() <= kGameTypeNancy13)
 			return new PlaySoundTerse();
-		else if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new LetterGridPuzzle();
 		else
-			return nullptr;
+			return new LetterGridPuzzle();
 	case 160:
 		if (g_nancy->getGameType() <= kGameTypeNancy11)
 			return new HintSystem();
@@ -620,34 +609,20 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new DrivingPuzzle(DrivingPuzzle::kDriving);
 		else
 			return new SnowmobilePuzzle(SnowmobilePuzzle::kDriving);
-	case 161:
+	case 161:	// Nancy11
 		if (g_nancy->getGameType() <= kGameTypeNancy11)
 			return new PlaySoundEventFlagTerse();
-		else if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new MinigolfPuzzle();
 		else
-			return nullptr;
+			return new MinigolfPuzzle();
 	// -- Nancy 12 new puzzles/action records --
 	case 162:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new SewingMachinePuzzle();
-		else
-			return nullptr;
+		return new SewingMachinePuzzle();
 	case 163:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new MirrorLightPuzzle();
-		else
-			return nullptr;
+		return new MirrorLightPuzzle();
 	case 164:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new BoardGamePuzzle();
-		else
-			return nullptr;
+		return new BoardGamePuzzle();
 	case 165:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new MindPuzzle();
-		else
-			return nullptr;
+		return new MindPuzzle();
 	case 166:
 		if (g_nancy->getGameType() <= kGameTypeNancy13)
 			return new OneBuildPuzzle();	// Moved from 234
@@ -665,88 +640,47 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new SentryStartPosition();
 	// -- Nancy 13 new/relocated puzzles (types 169-176) --
 	case 169:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new StepObjectsPuzzle();
-		else
-			return nullptr;
+		return new StepObjectsPuzzle();
 	case 170:
 		if (g_nancy->getGameType() <= kGameTypeNancy12)
 			return new SetPlayerClock();	// Moved to 140 in Nancy12, unused slot in Nancy12
-		else if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new WordFindPuzzle();
 		else
-			return nullptr;
+			return new WordFindPuzzle();
 	case 171:
 		if (g_nancy->getGameType() <= kGameTypeNancy16)
 			return new TurningPuzzle();	// Moved from 209
 		else
 			return new TileCyclePuzzle();
 	case 172:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new BlocksPuzzle();
-		else
-			return nullptr;
+		return new BlocksPuzzle();
 	case 173:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new PegsPuzzle();
-		else
-			return nullptr;
+		return new PegsPuzzle();
 	case 174:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new ScalePuzzle();
-		else
-			return nullptr;
+		return new ScalePuzzle();
 	case 175:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new PachinkoPuzzle();
-		else
-			return nullptr;
+		return new PachinkoPuzzle();
 	case 176:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new DropSortPuzzle();
-		else
-			return nullptr;
+		return new DropSortPuzzle();
 	// -- Nancy14 new puzzles (types 177-182) --
 	case 177:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new HangmanPuzzle();
-		else
-			return nullptr;
+		return new HangmanPuzzle();
 	case 178:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new AdjustPuzzle();
-		else
-			return nullptr;
+		return new AdjustPuzzle();
 	case 179:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new MeterPuzzle();
-		else
-			return nullptr;
+		return new MeterPuzzle();
 	case 180:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new BlockingPuzzle();
-		else
-			return nullptr;
+		return new BlockingPuzzle();
 	case 181:
 		return new PaintPuzzle();
 	case 182:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new DecoderPuzzle();
-		else
-			return nullptr;
+		return new DecoderPuzzle();
 	// -- Nancy15 new puzzles (types 183-185) --
 	case 183:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new MagicBoxPuzzle();
-		else
-			return nullptr;
+		return new MagicBoxPuzzle();
 	case 184:
 		return new EscapeGridPuzzle();
 	case 185:
-		if (g_nancy->getGameType() <= kGameTypeNancy15)
-			return new WeightSortPuzzle();
-		else
-			return nullptr;
+		return new WeightSortPuzzle();
 	// -- Nancy16 new puzzles (types 186-199) --
 	case 186:
 		return new FoxGeesePuzzle();
