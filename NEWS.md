@@ -141,6 +141,11 @@ For a more comprehensive changelog of the latest experimental code, see:
  Voyeur:
    - Match original first person movement with mouse when looking at mansion
 
+ Android port:
+   - Support Android 17.
+   - Add TTS support.
+   - Add external MIDI device support.
+
  Atari port:
    - Added integration with nFM library.
 
