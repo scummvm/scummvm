@@ -45,6 +45,10 @@ static const byte MONSTER_FLOORS[MONSTER_TYPES] = {
 	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x00, 0x04, 0x04, 0x00, 0x00, 0x04, 0x04
 };
 
+constexpr byte DRAGON_TILE = 0x74;
+constexpr byte SHIP_TILE = 0x3C;
+constexpr int VIEW_SIZE = 11;
+
 constexpr byte CELL_WATER = 0;
 constexpr byte CELL_GRASS = 4;
 constexpr byte CELL_BRUSH = 8;
@@ -172,16 +176,43 @@ int CreatureLogic::update(bool moved) {
 			} else if (canMoveTo(i, x, c._y[i])) {
 				y = c._y[i];
 			} else {
+				breathAttack(i);
 				continue;
 			}
 		}
 
-		if (x != save._posX || y != save._posY)
+		if (x != save._posX || y != save._posY) {
 			moveTo(i, x, y);
+			breathAttack(i);
+		}
 	}
 
 	spawnMonster();
 	return -1;
+}
+
+void CreatureLogic::breathAttack(int index) {
+	const Data::Savegame &save = _G(savegame);
+	const Data::Creatures &c = _G(map)._creatures;
+
+	if (c._tile[index] != DRAGON_TILE && c._tile[index] != SHIP_TILE)
+		return;
+	if (randomBelow(255) >= 128)
+		return;
+
+	// Only if it's in view, which puts the party in the middle of it
+	const int centre = VIEW_SIZE / 2;
+	byte x = centre - save._posX + c._x[index];
+	byte y = centre - save._posY + c._y[index];
+	if (x >= VIEW_SIZE || y >= VIEW_SIZE)
+		return;
+
+	Breath breath;
+	breath._x = x;
+	breath._y = y;
+	breath._dx = stepToward(c._x[index], save._posX);
+	breath._dy = stepToward(c._y[index], save._posY);
+	_breaths.push_back(breath);
 }
 
 void CreatureLogic::spawnMonster() {

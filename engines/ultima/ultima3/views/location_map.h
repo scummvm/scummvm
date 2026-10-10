@@ -25,6 +25,7 @@
 #include "ultima/ultima3/logic/creature_logic.h"
 #include "ultima/ultima3/logic/location_logic.h"
 #include "ultima/ultima3/views/game.h"
+#include "common/array.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -52,6 +53,32 @@ private:
 	// How long since the whirlpool last moved
 	int _whirlpoolFrames = 0;
 
+	// The fire breathed at the party during the last turn, shown one after
+	// the other before the turn is over
+	struct BreathPath {
+		Common::Array<Common::Point> _tiles;
+		bool _hits;
+	};
+	Common::Array<BreathPath> _breaths;
+	int _breathStep = 0;
+	int _breathFrames = 0;
+	int _pendingCreature = -1;
+
+	/**
+	 * Works out where each blast of fire goes, and starts showing them
+	 */
+	void startBreaths(const Common::Array<CreatureLogic::Breath> &breaths);
+
+	/**
+	 * Hurts the party if the blast on show has reached them
+	 */
+	void checkBreathHit();
+
+	/**
+	 * Finishes a turn once the creatures are done, with a fight if one has begun
+	 */
+	void finishTurn(int creature);
+
 	/**
 	 * Starts a fight with a creature
 	 */
@@ -78,6 +105,10 @@ protected:
 	void endTurn() override;
 	void processFrame() override;
 	bool handleCommand(const KeypressMessage &msg) override;
+
+	bool isWaiting() const override {
+		return _breaths.empty();
+	}
 
 public:
 	LocationMap() : Game("LocationMap") {}

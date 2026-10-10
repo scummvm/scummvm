@@ -22,6 +22,7 @@
 #ifndef ULTIMA3_LOGIC_CREATURE_LOGIC_H
 #define ULTIMA3_LOGIC_CREATURE_LOGIC_H
 
+#include "common/array.h"
 #include "ultima/ultima3/data/map.h"
 
 namespace Ultima {
@@ -32,7 +33,19 @@ namespace Ultima3 {
  * and the people of the towns and castles
  */
 class CreatureLogic {
+public:
+	/**
+	 * A blast of fire breathed or fired at the party by a dragon or a ship,
+	 * given by where it starts in the 11x11 viewport and how it steps
+	 */
+	struct Breath {
+		int _x, _y;
+		int _dx, _dy;
+	};
+
 private:
+	Common::Array<Breath> _breaths;
+
 	// Alternates when travelling by horse or ship, so that creatures only
 	// get to move on every other step
 	int _stepToggle = 1;
@@ -63,6 +76,11 @@ private:
 	 */
 	void spawnMonster();
 
+	/**
+	 * Gives a dragon or ship a chance to fire at the party
+	 */
+	void breathAttack(int index);
+
 public:
 	/**
 	 * Returns the creature standing at a position, or -1
@@ -77,6 +95,15 @@ public:
 	 *		fight, or -1
 	 */
 	int update(bool moved);
+
+	/**
+	 * Returns the attacks made during the last update, and forgets them
+	 */
+	Common::Array<Breath> takeBreaths() {
+		Common::Array<Breath> result = _breaths;
+		_breaths.clear();
+		return result;
+	}
 };
 
 } // namespace Ultima3

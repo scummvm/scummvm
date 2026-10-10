@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/location_map.h"
+#include "ultima/ultima3/logic/chest_logic.h"
 #include "ultima/ultima3/views/menu_input.h"
 #include "ultima/ultima3/views/interactions/cast_spell.h"
 #include "ultima/ultima3/views/interactions/enter_shrine.h"
@@ -41,6 +42,9 @@ namespace Ultima3 {
 namespace Views {
 
 constexpr int WHIRLPOOL_FRAMES = 4;
+constexpr int BREATH_FRAMES = 2;
+constexpr int BREATH_RANGE = 3;
+constexpr byte TILE_BREATH = 0x3D;
 constexpr byte CELL_SHRINE = 0xF8;
 constexpr int VIEWPORT_CELLS = VIEWPORT_TILES * VIEWPORT_TILES;
 constexpr int VIEWPORT_CENTER = VIEWPORT_CELLS / 2;
@@ -137,6 +141,11 @@ void LocationMap::drawViewport(GfxSurface &s) {
 				tiles[row * VIEWPORT_TILES + col]);
 	}
 
+	if (!_breaths.empty()) {
+		const Common::Point &p = _breaths[0]._tiles[_breathStep];
+		_G(shapes).drawTile(s, 8 + p.x * Gfx::SHAPE_SIZE, 8 + p.y * Gfx::SHAPE_SIZE, TILE_BREATH);
+	}
+
 	s.addDirtyRect(Common::Rect(8, 8, 8 + VIEWPORT_TILES * Gfx::SHAPE_SIZE, 8 + VIEWPORT_TILES * Gfx::SHAPE_SIZE));
 }
 
@@ -179,6 +188,14 @@ void LocationMap::endTurn() {
 	// A creature reaching the party starts a fight
 	int creature = _creatures.update(_moved);
 	_moved = false;
+
+	_pendingCreature = creature;
+	startBreaths(_creatures.takeBreaths());
+	if (_breaths.empty())
+		finishTurn(creature);
+}
+
+void LocationMap::finishTurn(int creature) {
 	if (creature >= 0) {
 		startFight(creature);
 		return;
@@ -188,7 +205,71 @@ void LocationMap::endTurn() {
 		startPrompt();
 }
 
+void LocationMap::startBreaths(const Common::Array<CreatureLogic::Breath> &breaths) {
+	byte tiles[VIEWPORT_CELLS];
+	buildViewport(tiles);
+
+	const int centre = VIEWPORT_TILES / 2;
+	_breathStep = 0;
+	_breathFrames = 0;
+
+	for (uint i = 0; i < breaths.size(); ++i) {
+		BreathPath path;
+		path._hits = false;
+		int x = breaths[i]._x, y = breaths[i]._y;
+
+		// The blast goes a few tiles in, stopping short of anything in the way
+		for (int step = 0; step < BREATH_RANGE; ++step) {
+			y += breaths[i]._dy;
+			x += breaths[i]._dx;
+			if (x < 0 || y < 0 || x >= VIEWPORT_TILES || y >= VIEWPORT_TILES)
+				break;
+
+			byte tile = tiles[y * VIEWPORT_TILES + x];
+			if (tile == TILE_MOUNTAINS || tile == TILE_WALL || tile == TILE_HIDDEN)
+				break;
+
+			path._tiles.push_back(Common::Point(x, y));
+			if (x == centre && y == centre) {
+				path._hits = true;
+				break;
+			}
+		}
+
+		g_engine->playSoundEffect(0xFB);
+		if (!path._tiles.empty())
+			_breaths.push_back(path);
+	}
+
+	if (!_breaths.empty())
+		checkBreathHit();
+}
+
+void LocationMap::checkBreathHit() {
+	if (_breaths[0]._hits && _breathStep == (int)_breaths[0]._tiles.size() - 1)
+		ChestLogic().damageAll(_G(savegame)._dungeonLevel);
+}
+
 void LocationMap::processFrame() {
+	if (!_breaths.empty()) {
+		if (++_breathFrames < BREATH_FRAMES)
+			return;
+		_breathFrames = 0;
+
+		if (++_breathStep == (int)_breaths[0]._tiles.size()) {
+			_breaths.remove_at(0);
+			_breathStep = 0;
+
+			if (_breaths.empty()) {
+				finishTurn(_pendingCreature);
+				return;
+			}
+		}
+
+		checkBreathHit();
+		return;
+	}
+
 	if (_fightOver) {
 		_fightOver = false;
 		endTurn();
@@ -360,6 +441,9 @@ void LocationMap::doExitVehicle() {
 }
 
 bool LocationMap::handleCommand(const KeypressMessage &msg) {
+	if (!_breaths.empty())
+		return true;
+
 	switch (msg.keycode) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP8:
