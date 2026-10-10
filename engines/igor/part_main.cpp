@@ -684,6 +684,13 @@ void IgorEngine::PART_MAIN() {
 		case 750:
 			PART_75(); // philip vodka cutscene
 			break;
+		case 770:
+		case 771:
+			PART_77();
+			break;
+		case 780:
+			PART_78(); // cutscene in the lecture hall
+			break;
 		case 810:
 			PART_81();
 			break;
@@ -836,13 +843,13 @@ void IgorEngine::PART_UPDATE_FIGURES_ON_PAPER(int delay) {
 	free(framesOffsets);
 }
 
-void IgorEngine::PART_MEANWHILE() {
+void IgorEngine::PART_MEANWHILE(int img) {
 	hideCursor();
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(208, 255);
 	// clears the verbs and inventory panels area
 	memset(_screenVGA + 46080, 0, 17920);
-	loadData(IMG_Meanwhile, _screenVGA);
+	loadData(img, _screenVGA);
 	_paletteBuffer[3] = 63;
 	_paletteBuffer[4] = 32;
 	_paletteBuffer[5] = 0;

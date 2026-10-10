@@ -1067,7 +1067,7 @@ void IgorEngine::buildWalkPathAreaLeftDirection(int srcX, int srcY, int dstX, in
 	}
 }
 
-bool IgorEngine::waitForIgorMove(IgorMoveTick tick, bool escapeSkips, bool forceSkip) {
+bool IgorEngine::waitForIgorMove(IgorMoveTick tick, bool escapeSkips, bool forceSkip, int fixedPosNum) {
 	_gameTicks = 0;
 	bool skipped = false;
 	do {
@@ -1077,7 +1077,8 @@ bool IgorEngine::waitForIgorMove(IgorMoveTick tick, bool escapeSkips, bool force
 				_walkDataLastIndex = _walkDataCurrentIndex;
 			}
 			if (_gameState.igorMoving) {
-				moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
+				// some scripted walks draw every step with one fixed facing instead of the facing of the step
+				moveIgor(fixedPosNum >= 0 ? fixedPosNum : _walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
 				++_walkDataCurrentIndex;
 			}
 		}
@@ -1090,7 +1091,7 @@ bool IgorEngine::waitForIgorMove(IgorMoveTick tick, bool escapeSkips, bool force
 			_inputVars[kInputEscape] = 0;
 			skipped = true;
 			while (_gameState.igorMoving && _walkDataCurrentIndex <= _walkDataLastIndex) {
-				moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
+				moveIgor(fixedPosNum >= 0 ? fixedPosNum : _walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
 				++_walkDataCurrentIndex;
 				// The original draws straight to the screen, so the walk stays visible, only faster.
 				// TODO: the exact pace depends on the original's drawing cost and is not derived.

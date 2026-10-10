@@ -528,6 +528,8 @@ private:
 	// scratch of the room loops: the current ambient frame (a star in part 72, the screen in part 68)
 	uint8 _roomAmbientIndex;
 	// the two fireflies of room 69: the current frame of each and the steps of the first one since the second one started
+	// frames of the band drawn across the picture in state 780 (loaded while the scene lasts)
+	uint8 *_part78BandFrames = nullptr;
 	uint8 _part69FireflyFrameA;
 	uint8 _part69FireflyFrameB;
 	uint16 _part69FireflyStepCount;
@@ -1023,7 +1025,7 @@ private:
 	void PART_30_ACTION_104_goDownstairs();
 	void PART_30_UPDATE_DIALOGUE_LAURA(int action);
 	void PART_30_HANDLE_DIALOGUE_LAURA();
-	void PART_30_HELPER_1(int num);
+	void PART_30_HELPER_1_OBJECT_STATE(int num);
 	void PART_30_HELPER_2_walkInFromLeft();
 	void PART_30_HELPER_3_walkInFromUpstairs();
 	void PART_30_HELPER_2_walkInFromOutside();
@@ -1038,17 +1040,17 @@ private:
 	// college corridor stairs second floor
 	void PART_31_EXEC_ACTION(int action);
 	void PART_31_ACTION_102();
-	void PART_31_ACTION_103();
-	void PART_31_ACTION_106();
-	void PART_31_ACTION_110();
+	void PART_31_ACTION_103_openDoor();
+	void PART_31_ACTION_106_goDownstairs();
+	void PART_31_ACTION_110_openDoor2();
 	void PART_31_UPDATE_ROOM_BACKGROUND();
-	void PART_31_HELPER_1(int num);
-	void PART_31_HELPER_2(int frame);
-	void PART_31_HELPER_3();
-	void PART_31_HELPER_4();
-	void PART_31_HELPER_5();
-	void PART_31_HELPER_6();
-	void PART_31_HELPER_9();
+	void PART_31_HELPER_1_OBJECT_STATE(int num);
+	void PART_31_HELPER_2_drawJohnnyFrame(int frame);
+	void PART_31_HELPER_3_enterFromLeft();
+	void PART_31_HELPER_4_enterFromAstronomyLab();
+	void PART_31_HELPER_5_enterFromDownstairs();
+	void PART_31_HELPER_6_enterFromRight();
+	void PART_31_HELPER_9_drawOpenDoor();
 	void PART_31();
 
 	// telescope room
@@ -1253,6 +1255,37 @@ private:
 	void PART_72_UPDATE_ROOM_BACKGROUND();
 	void PART_72();
 
+	void PART_77_EXEC_ACTION(int action);
+	void PART_77_APPLY_OBJECT_STATE();
+	void PART_77_SET_AREAS_LIGHT(int lum);
+	void PART_77_CLEAR_ENTRY_AREAS();
+	void PART_77_SET_Y_SCALE_RAMP();
+	void PART_77_SET_Y_SCALE_UNIFORM();
+	void PART_77_DRAW_FRAME(int frame);
+	void PART_77_UPDATE_DIALOGUE(int action);
+	void PART_77_ACTION_101_exitToStairs();
+	void PART_77_ACTION_105_leave();
+	void PART_77_ACTION_106_cutscene();
+	void PART_77_ENTER_FROM_MAP();
+	void PART_77_ENTER_FROM_STAIRS();
+	void PART_77();
+
+	void PART_78_DRAW_FIGURE(int frame);
+	void PART_78_DRAW_BACKGROUND_FRAME(int frame);
+	void PART_78_DRAW_BAND(int frame);
+	void PART_78_DRAW_PATCH(int frame);
+	void PART_78_UPDATE_DIALOGUE_FIGURE_A(int action);
+	void PART_78_UPDATE_DIALOGUE_FIGURE_B(int action);
+	void PART_78_UPDATE_DIALOGUE_FIGURE_C(int action);
+	void PART_78_UPDATE_DIALOGUE_BAND_A(int action);
+	void PART_78_UPDATE_DIALOGUE_BAND_B(int action);
+	void PART_78_UPDATE_DIALOGUE_PATCH(int action);
+	void PART_78_SAY_START(int speaker, const Common::Array<DialogueText> &lines);
+	void PART_78_WAIT_FOR_LINES(int speaker);
+	void PART_78_SAY(int speaker, const Common::Array<DialogueText> &lines);
+	void PART_78_INTERJECTION(int which);
+	void PART_78();
+
 	// maze
 	static const MazeNode MAZE_NODES[108];
 	static const MazeRoom *getMazeRoom(int part);
@@ -1273,7 +1306,7 @@ private:
 	void UPDATE_OBJECT_STATE(int num);
 	void PART_UPDATE_FIGURES_ON_PAPER(int delay);
 
-	void PART_MEANWHILE();
+	void PART_MEANWHILE(int img = IMG_Meanwhile);
 
 	// Margaret cutscenes
 	void PART_MARGARET_ROOM_CUTSCENE_HELPER_1();
@@ -1351,7 +1384,7 @@ private:
 	void buildWalkPathAreaLeftDirection(int srcX, int srcY, int dstX, int dstY);
 	typedef void (IgorEngine::*IgorMoveTick)();
 	// tick: room effect that runs on every iteration while Igor walks (rooms with their own wait loop)
-	bool waitForIgorMove(IgorMoveTick tick = 0, bool escapeSkips = false, bool forceSkip = false);
+	bool waitForIgorMove(IgorMoveTick tick = 0, bool escapeSkips = false, bool forceSkip = false, int fixedPosNum = -1);
 
 	void moveIgor(int pos, int frame);
 
@@ -1527,6 +1560,7 @@ protected:
 	static const RoomDataOffsets PART_70_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_71_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_72_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_77_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_81_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
 	static const uint8 _inventoryOffsetTable[];

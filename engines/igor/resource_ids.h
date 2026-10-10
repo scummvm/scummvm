@@ -768,4 +768,24 @@
 #define PAL_Part32Final 1159
 #define ANM_Part32Final 1160
 
+// State 770 (PART_77)
+#define DAT_Part77 1161
+#define ANM_Part77 1162
+#define TXT_Part77 1163
+#define IMG_Part77 1164
+#define PAL_Part77 1165
+#define MSK_Part77 1166
+#define BOX_Part77 1167
+
+// State 780 (PART_78)
+#define ANM_Part78 1168
+#define TXT_Part78 1169
+#define IMG_Part78 1170
+#define PAL_Part78 1171
+#define BOX_Part78 1172
+#define IMG_Part78Layer2 1173
+#define ANM_Part78Frames 1174
+#define IMG_Part78MinutesLater 1175
+#define IMG_Part78NextDay 1176
+
 #endif // IGOR_RESOURCE_IDS

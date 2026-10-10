@@ -32,13 +32,13 @@ void IgorEngine::PART_30_EXEC_ACTION(int action) {
 	case 102:
 		PART_30_ACTION_102_goUpstairs();
 		break;
-	case 103:
+	case 103: // look at upward stairs
 		igorSay(201, 1, 450);
 		break;
 	case 104:
 		PART_30_ACTION_104_goDownstairs();
 		break;
-	case 105:
+	case 105: // look at downward stairs
 		igorSay(202, 1, 451);
 		break;
 	case 106:
@@ -112,7 +112,7 @@ void IgorEngine::PART_30_HANDLE_DIALOGUE_LAURA() {
 	_updateDialogue = 0;
 }
 
-void IgorEngine::PART_30_HELPER_1(int num) {
+void IgorEngine::PART_30_HELPER_1_OBJECT_STATE(int num) {
 }
 
 void IgorEngine::PART_30_HELPER_2_walkInFromLeft() {
@@ -227,7 +227,7 @@ void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
 	drawInventory(_inventoryInfo[72], 0);
 	_currentAction.verb = kVerbWalk;
 	_objectsState[73] = 1;
-	PART_30_HELPER_1(255);
+	PART_30_HELPER_1_OBJECT_STATE(255);
 }
 
 void IgorEngine::lauraAndIgorBumpIntoEachOther() {
@@ -276,7 +276,7 @@ void IgorEngine::PART_30() {
 	_roomDataOffsets = PART_30_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_30_EXEC_ACTION);
-	PART_30_HELPER_1(255);
+	PART_30_HELPER_1_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
