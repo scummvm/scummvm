@@ -80,6 +80,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Hopkins:
    - Added the missing underwater base 3D first-person shooter.
+   - Optional quality-of-life HUD for underwater base shooter with map and autopilot.
 
  Kyra:
    - Added support for Korean fan-translation of kyra1 (added in 2026.3.0).
