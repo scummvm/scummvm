@@ -102,7 +102,7 @@ void IgorEngine::PART_31_ACTION_102() {
 	--_walkDataLastIndex;
 	buildWalkPath(112, 105, 47, 63);
 	for (int i = 1; i <= _walkDataLastIndex; ++i) {
-		_walkData[i].posNum = i;
+		_walkData[i].posNum = 4;
 	}
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
