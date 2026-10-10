@@ -805,4 +805,14 @@
 #define MSK_Part80 1188
 #define BOX_Part80 1189
 
+// State 760 (PART_76)
+#define DAT_Part76 1190
+#define ANM_Part76 1191
+#define TXT_Part76 1192
+#define IMG_Part76 1193
+#define PAL_Part76 1194
+#define MSK_Part76 1195
+#define BOX_Part76 1196
+#define IMG_Part76Card 1197
+
 #endif // IGOR_RESOURCE_IDS

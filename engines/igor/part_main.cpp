@@ -687,6 +687,9 @@ void IgorEngine::PART_MAIN() {
 		case 750:
 			PART_75(); // philip vodka cutscene
 			break;
+		case 760:
+			PART_76(); // room reached after the scene of the college garden
+			break;
 		case 770:
 		case 771:
 			PART_77();

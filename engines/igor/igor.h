@@ -1254,6 +1254,16 @@ private:
 	void PART_72_UPDATE_ROOM_BACKGROUND();
 	void PART_72();
 
+	void PART_76_EXEC_ACTION(int action);
+	void PART_76_APPLY_OBJECT_STATE();
+	void PART_76_DRAW_SCENE_FRAME(int frame);
+	void PART_76_DRAW_SEQUENCE_FRAME(int frame);
+	void PART_76_ACTION_103_sequence();
+	void PART_76_ACTION_104_takeObject();
+	void PART_76_ACTION_106_finale();
+	void PART_76_ENTRY();
+	void PART_76();
+
 	void PART_77_EXEC_ACTION(int action);
 	void PART_77_APPLY_OBJECT_STATE();
 	void PART_77_SET_AREAS_LIGHT(int lum);
@@ -1569,6 +1579,7 @@ protected:
 	static const RoomDataOffsets PART_70_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_71_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_72_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_76_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_77_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_81_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
