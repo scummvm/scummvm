@@ -174,24 +174,24 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 	UpdateRoomBackgroundProc roomBackground = _updateRoomBackground;
 	_updateRoomBackground = &IgorEngine::PARK_UPDATE_AMBIENT_SOUND;
 	switch (action) {
-	case 101:
+	case 101: // look at statue
 		igorSay(201, 2, 562);
 		break;
-	case 102:
+	case 102: // look at tree
 		igorSay(203, 2, 563);
 		_objectsState[82] = 1;
 		PART_34_APPLY_OBJECT_STATE(3);
 		break;
 	case 103:
-		PART_34_ACTION_103_TAKE();
+		PART_34_ACTION_103_takeResin();
 		break;
-	case 104:
+	case 104: // look at roses
 		igorSay(205, 1, 564);
 		break;
 	case 105:
 		PART_34_ACTION_105_talkToOldLady();
 		break;
-	case 106:
+	case 106: // look at old lady
 		igorSay(206, 2, 565);
 		break;
 	case 107:
@@ -201,7 +201,7 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 		PART_34_ACTION_108_giveLizardToOldLady();
 		break;
 	case 109:
-		PART_34_ACTION_109_SCROLL_RIGHT();
+		PART_34_ACTION_109_scrollRight();
 		break;
 	default:
 		warning("PART_34_EXEC_ACTION unhandled action %d", action);
@@ -210,7 +210,7 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 	_updateRoomBackground = roomBackground;
 }
 
-void IgorEngine::PART_34_ACTION_103_TAKE() {
+void IgorEngine::PART_34_ACTION_103_takeResin() {
 	if (_inventoryInfo[62] != 0) {
 		igorSay(210, 1, 567);
 		return;
@@ -389,7 +389,7 @@ void IgorEngine::PART_34_LAURA_CONVERSATION() {
 	_roomDataOffsets.dlg = kNoDialogueData;
 }
 
-void IgorEngine::PART_34_ACTION_109_SCROLL_RIGHT() {
+void IgorEngine::PART_34_ACTION_109_scrollRight() {
 	int xPos = 240;
 	const int yPos = 124;
 	int step = 1;

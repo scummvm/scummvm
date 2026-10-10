@@ -890,4 +890,6 @@
 #define STR_CreditsCreadoYProducidoPor 491
 #define STR_CreditsPenduloStudios 492
 
+#define DLG_Part8Intercom 1224
+
 #endif // IGOR_RESOURCE_IDS

@@ -546,7 +546,9 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 			_gameState.dialogueData[6] = 0;
 		}
 		drawDialogueChoices();
-		(this->*_updateDialogue)(kUpdateDialogueAnimStanding);
+		if (_updateDialogue) {
+			(this->*_updateDialogue)(kUpdateDialogueAnimStanding);
+		}
 		_dialogueChoiceSelected = selectDialogue();
 		if (_dialogueChoiceSelected == 0) {
 			break;

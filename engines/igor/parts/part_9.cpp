@@ -135,17 +135,17 @@ void IgorEngine::PART_09_ACTION_101_openFileCabinet() {
 	waitForEndOfIgorDialogue();
 }
 
-void IgorEngine::PART_09_DRAW_SECRETARY_MOUTH(int frame) {
+void IgorEngine::PART_09_DRAW_secretaryTalkingFrame(int frame) {
 	drawAnimRect(0x783A, 0xD38 + frame * 0xA9, 13, 13, true);
 }
 
 void IgorEngine::PART_09_UPDATE_DIALOGUE_SECRETARY(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_09_DRAW_SECRETARY_MOUTH(0);
+		PART_09_DRAW_secretaryTalkingFrame(0);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_09_DRAW_SECRETARY_MOUTH(getRandomNumber(2));
+		PART_09_DRAW_secretaryTalkingFrame(getRandomNumber(2));
 		break;
 	}
 }

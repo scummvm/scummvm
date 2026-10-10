@@ -138,8 +138,13 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 			waitForTimer(127);
 	}
 
+	PART_08_HANDLE_DIALOGUE_INTERCOM();
+
 	_currentPart = 91;
 	fadeOut(768);
+	// the room is saved again as it was left, Igor included
+	uint8 *roomScreen = (uint8 *)malloc(46080);
+	memcpy(roomScreen, _screenVGA, 46080);
 	// loads screen 9
 	loadActionData(DAT_AdministrationSecretaryRoom);
 	loadRoomData(PAL_AdministrationSecretaryRoom, IMG_AdministrationSecretaryRoom, BOX_AdministrationSecretaryRoom, MSK_AdministrationSecretaryRoom, TXT_AdministrationSecretaryRoom);
@@ -168,7 +173,8 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 	_roomDataOffsets = PART_08_ROOM_DATA_OFFSETS;
 	setRoomClickFix(143, -1, 281, false); // cseg100:0657
 	PART_08_APPLY_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	memcpy(_screenVGA, roomScreen, 46080);
+	free(roomScreen);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
 	drawInventory(_inventoryInfo[72], 0);
@@ -223,6 +229,15 @@ void IgorEngine::PART_08_HANDLE_DIALOGUE_DEAN() {
 	_updateDialogue = &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN;
 	handleDialogue(78, 75, 26, 58, 0);
 	_updateDialogue = 0;
+}
+
+void IgorEngine::PART_08_HANDLE_DIALOGUE_INTERCOM() {
+	const RoomDataOffsets savedOffsets = _roomDataOffsets;
+	_roomDataOffsets.dlg = { -174, 2, 257, 0, 30, 0, 459, 459, 0 };
+	loadDialogueData(DLG_Part8Intercom);
+	_updateDialogue = 0;
+	handleDialogue(0, 0, 0, 0, 0);
+	_roomDataOffsets = savedOffsets;
 }
 
 void IgorEngine::PART_08_ACTION_103_talkToDean() {

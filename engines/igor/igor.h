@@ -735,6 +735,7 @@ private:
 	void PART_08_deanDrinksBottle();
 	void PART_08_deanPassesOut();
 	void PART_08_HANDLE_DIALOGUE_DEAN();
+	void PART_08_HANDLE_DIALOGUE_INTERCOM();
 	void drawDean();
 	void drawDeanTalkingFrame(int frame);
 	void PART_08_UPDATE_DIALOGUE_DEAN(int action);
@@ -750,7 +751,7 @@ private:
 	void PART_09_ACTION_106_openCloset(bool search);
 	void PART_09_ACTION_110_pickCostumeFromCloset();
 	void PART_09_UPDATE_DIALOGUE_SECRETARY(int action);
-	void PART_09_DRAW_SECRETARY_MOUTH(int frame);
+	void PART_09_DRAW_secretaryTalkingFrame(int frame);
 	void PART_09_secretarySearchesFile();
 	void PART_09_UPDATE_ROOM_BACKGROUND();
 
@@ -1125,10 +1126,10 @@ private:
 	void PARK_WAIT_FOR_LAURA_DIALOGUE();
 	void PART_34();
 	void PART_34_EXEC_ACTION(int action);
-	void PART_34_ACTION_103_TAKE();
+	void PART_34_ACTION_103_takeResin();
 	void PART_34_ACTION_105_talkToOldLady();
 	void PART_34_ACTION_108_giveLizardToOldLady();
-	void PART_34_ACTION_109_SCROLL_RIGHT();
+	void PART_34_ACTION_109_scrollRight();
 	void PART_34_APPLY_OBJECT_STATE(int num);
 	void PART_34_oldLadyIdleAnimationFrame(int step);
 	void PART_34_LAURA_CONVERSATION();
@@ -1136,9 +1137,9 @@ private:
 	void PART_34_UPDATE_ROOM_BACKGROUND();
 	void PART_35();
 	void PART_35_EXEC_ACTION(int action);
-	void PART_35_ACTION_102_TAKE();
-	void PART_35_ACTION_106_EXIT_TO_MAP();
-	void PART_35_ACTION_107_SCROLL_LEFT();
+	void PART_35_ACTION_102_takeResin();
+	void PART_35_ACTION_106_exitToMap();
+	void PART_35_ACTION_107_scrollLeft();
 	void PART_35_APPLY_OBJECT_STATE(int num);
 
 	// chemistry classroom

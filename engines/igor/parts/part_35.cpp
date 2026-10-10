@@ -27,28 +27,28 @@ namespace Igor {
 void IgorEngine::PART_35_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_35_EXEC_ACTION %d", action);
 	switch (action) {
-	case 101:
+	case 101: // look at tree
 		igorSay(201, 2, 611);
 		_objectsState[82] = 1;
 		PART_35_APPLY_OBJECT_STATE(3);
 		break;
-	case 102:
-		PART_35_ACTION_102_TAKE();
+	case 102: // take resin
+		PART_35_ACTION_102_takeResin();
 		break;
-	case 103:
+	case 103: // look at resin
 		igorSay(203, 1, 612);
 		break;
-	case 104:
+	case 104: // look at roses
 		igorSay(204, 1, 613);
 		break;
-	case 105:
+	case 105: // look at bench
 		igorSay(205, 1, 614);
 		break;
 	case 106:
-		PART_35_ACTION_106_EXIT_TO_MAP();
+		PART_35_ACTION_106_exitToMap();
 		break;
 	case 107:
-		PART_35_ACTION_107_SCROLL_LEFT();
+		PART_35_ACTION_107_scrollLeft();
 		break;
 	default:
 		warning("PART_35_EXEC_ACTION unhandled action %d", action);
@@ -56,7 +56,7 @@ void IgorEngine::PART_35_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_35_ACTION_102_TAKE() {
+void IgorEngine::PART_35_ACTION_102_takeResin() {
 	if (_inventoryInfo[62] != 0) {
 		igorSay(206, 1, 615);
 		return;
@@ -66,7 +66,7 @@ void IgorEngine::PART_35_ACTION_102_TAKE() {
 	PART_35_APPLY_OBJECT_STATE(255);
 }
 
-void IgorEngine::PART_35_ACTION_107_SCROLL_LEFT() {
+void IgorEngine::PART_35_ACTION_107_scrollLeft() {
 	int xPos = 183;
 	const int yPos = 124;
 	int step = 1;
@@ -103,7 +103,7 @@ void IgorEngine::PART_35_ACTION_107_SCROLL_LEFT() {
 	_currentPart = 340;
 }
 
-void IgorEngine::PART_35_ACTION_106_EXIT_TO_MAP() {
+void IgorEngine::PART_35_ACTION_106_exitToMap() {
 	--_walkDataLastIndex;
 	const uint8 area = _screenLayer2[10879]; // (319, 33)
 	_roomObjectAreasTable[area].area = 1;
@@ -116,7 +116,7 @@ void IgorEngine::PART_35_ACTION_106_EXIT_TO_MAP() {
 }
 
 void IgorEngine::PART_35_APPLY_OBJECT_STATE(int num) {
-	if (num == 3 || num == 255) {
+	if (num == 3 || num == 255) {// disable hotspot if resin taken
 		_roomObjectAreasTable[7].object = (_objectsState[82] == 0) ? 1 : 2;
 	}
 }
@@ -132,8 +132,7 @@ void IgorEngine::PART_35() {
 		PARK_DRAW_drawOldLadyFrame(_screenLayer1, 1);
 	}
 	copyArea(_animFramesBuffer, 0, 160, _screenLayer1, 320, 160, 144);
-	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight,
-			TXT_ParkRight); // active right panel
+	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight, TXT_ParkRight); // active right panel
 	// The pick up frames replace the start of FRM_Park1, whose frames are not drawn on this panel
 	static const int pickUpFrames[] = { FRM_ParkRight1, 0 };
 	loadAnimData(pickUpFrames, kParkFrames);
