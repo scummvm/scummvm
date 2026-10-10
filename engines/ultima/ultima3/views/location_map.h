@@ -97,6 +97,7 @@ private:
 	void doEnter();
 	void doQuitSave();
 	void doAttack();
+	void doFire();
 	void doExitVehicle();
 
 protected:
@@ -120,6 +121,11 @@ public:
 	 * Has the party attack whatever is in a direction
 	 */
 	void attackDirection(Direction dir);
+
+	/**
+	 * Fires the ship's cannon in a direction
+	 */
+	void fireCannon(Direction dir);
 };
 
 } // namespace Views

@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/location_map.h"
+#include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/logic/chest_logic.h"
 #include "ultima/ultima3/views/menu_input.h"
 #include "ultima/ultima3/views/interactions/cast_spell.h"
@@ -54,6 +55,8 @@ constexpr byte TILE_FOREST = 3;
 constexpr byte TILE_MOUNTAINS = 4;
 constexpr byte TILE_WALL = 0x23;
 constexpr byte TILE_FLOOR = 8;
+constexpr byte TILE_PIRATE_SHIP = 0x3C;
+constexpr int CANNON_RANGE = 3;
 
 // Tiles that block the view of whatever lies behind them
 static bool blocksView(byte tile) {
@@ -330,24 +333,70 @@ void LocationMap::attackDirection(Direction dir) {
 	}
 }
 
+void LocationMap::fireCannon(Direction dir) {
+	const Data::Savegame &save = _G(savegame);
+	Data::Creatures &c = _G(map)._creatures;
+	const int dx = (dir == DIR_EAST) ? 1 : (dir == DIR_WEST) ? -1 : 0;
+	const int dy = (dir == DIR_SOUTH) ? 1 : (dir == DIR_NORTH) ? -1 : 0;
+	const int centre = VIEWPORT_TILES / 2;
+	auto succeeds = []() {
+		return g_events->getRandomNumber(255) >= 128;
+	};
+
+	g_engine->playSoundEffect(0xFB);
+	BreathPath ball;
+	ball._hits = false;
+
+	// The cannonball flies a few tiles, stopping at the first creature
+	for (int step = 1; step <= CANNON_RANGE; ++step) {
+		ball._tiles.push_back(Common::Point(centre + dx * step, centre + dy * step));
+
+		int x = (save._posX + dx * step) & (Data::MAP_SIZE - 1);
+		int y = (save._posY + dy * step) & (Data::MAP_SIZE - 1);
+		int creature = _creatures.creatureAt(x, y);
+		if (creature < 0)
+			continue;
+
+		g_engine->playSoundEffect(0xF7);
+
+		// Pirate ships are harder to sink
+		byte tile = c._tile[creature];
+		if ((tile != TILE_PIRATE_SHIP || succeeds()) && succeeds()) {
+			_G(messages).print(Data::NAMES[tile >> 2]);
+			_G(messages).print("s\nDestroyed!\n");
+			_G(map).setCell(x, y, c._floor[creature]);
+			c._tile[creature] = 0;
+		}
+
+		break;
+	}
+
+	_breaths.push_back(ball);
+}
+
 namespace {
 
 // Asks which way the party attacks on the map
 class MapAttack : public Interactions::Interaction {
 private:
 	LocationMap *_map;
+	bool _fire;
 	Interactions::DirectionChooser _chooser;
 
 public:
-	MapAttack(LocationMap *map) : _map(map) {}
+	MapAttack(LocationMap *map, bool fire = false) : _map(map), _fire(fire) {}
 
 	bool keypress(const KeypressMessage &msg) override {
 		Interactions::DirectionChooser::Result result = _chooser.handleKey(msg);
 		if (result == Interactions::DirectionChooser::PENDING)
 			return false;
 
-		if (result == Interactions::DirectionChooser::CHOSEN)
-			_map->attackDirection(_chooser.direction());
+		if (result == Interactions::DirectionChooser::CHOSEN) {
+			if (_fire)
+				_map->fireCannon(_chooser.direction());
+			else
+				_map->attackDirection(_chooser.direction());
+		}
 
 		return true;
 	}
@@ -358,6 +407,18 @@ public:
 void LocationMap::doAttack() {
 	_G(messages).print("Attack-");
 	startInteraction(new MapAttack(this));
+}
+
+void LocationMap::doFire() {
+	_G(messages).print("Fire");
+
+	if (_G(savegame)._transport != TRANSPORT_SHIP) {
+		commandFailed("<-What?\n");
+		return;
+	}
+
+	_G(messages).print("\nDirect-");
+	startInteraction(new MapAttack(this, true));
 }
 
 void LocationMap::doMove(Direction dir, const char *label) {
@@ -502,6 +563,17 @@ bool LocationMap::handleCommand(const KeypressMessage &msg) {
 		return true;
 	case 'A':
 		doAttack();
+		return true;
+	case 'F':
+		doFire();
+		return true;
+	case 'K':
+		_G(messages).print("Klimb");
+		commandFailed("<-What?\n");
+		return true;
+	case 'D':
+		_G(messages).print("Descend");
+		commandFailed("<-What?\n");
 		return true;
 	case 'G':
 		_G(messages).print("Get Chest!\nPlr to search-");
