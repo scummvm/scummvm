@@ -52,6 +52,9 @@ public:
 	uint16 maxPanelGlyphHeight = 0;
 	uint16 amigaTextLinePitch = 0;
 
+	void addDialogueFontFallbacks();
+	void addIntroFontFallbacks();
+
 	bool findGlyph(char c, GlyphData &out) const;
 	bool findGlyph(char c, GlyphData &out, const GlyphData *glyphs, uint16 numGlyphs) const;
 

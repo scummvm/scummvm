@@ -230,6 +230,7 @@ void Macs2Engine::loadResourceFileV1() {
 		_text._maxGlyphHeight = MAX(_text._glyphs[i]._height, _text._maxGlyphHeight);
 	}
 	_text._numGlyphs = font1GlyphCount;
+	_text.addDialogueFontFallbacks();
 
 	// Font 2: clean sans-serif font used by save/load panel (scene data offset 0x1044)
 	uint32 font2SizeField = _fileStream->readUint32LE();
@@ -1970,6 +1971,8 @@ bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID)
 		_text._overlayGlyphs[i].readFromMemory(_fileStream);
 		_text.maxOverlayGlyphHeight = MAX(_text.maxOverlayGlyphHeight, _text._overlayGlyphs[i]._height);
 	}
+	if (isV1())
+		_text.addIntroFontFallbacks();
 	_fileStream->seek(oldPos, SEEK_SET);
 	return true;
 }
