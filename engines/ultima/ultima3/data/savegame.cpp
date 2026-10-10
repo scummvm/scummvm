@@ -81,6 +81,11 @@ void Savegame::synchronize(Common::Serializer &s) {
 
 	if (s.getVersion() >= 4)
 		s.syncAsByte(_lightTurns);
+
+	if (s.getVersion() >= 5) {
+		s.syncAsByte(_dungeonLevel);
+		s.syncAsByte(_facing);
+	}
 }
 
 void Savegame::formParty() {
@@ -88,6 +93,8 @@ void Savegame::formParty() {
 	_location = LOCATION_SOSARIA;
 	_posX = START_X;
 	_posY = START_Y;
+	_dungeonLevel = 0;
+	_lightTurns = 0;
 }
 
 } // namespace Data

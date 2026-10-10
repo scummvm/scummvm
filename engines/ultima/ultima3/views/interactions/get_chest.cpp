@@ -21,6 +21,7 @@
 
 #include "ultima/ultima3/views/interactions/get_chest.h"
 #include "ultima/ultima3/logic/chest_logic.h"
+#include "ultima/ultima3/logic/dungeon_logic.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -48,16 +49,26 @@ bool GetChest::keypress(const KeypressMessage &msg) {
 		return true;
 	}
 
-	byte cell = _G(map).cell(save._posX, save._posY);
-	if (cell < FIRST_CHEST_CELL || cell > LAST_CHEST_CELL) {
-		_G(messages).print("Not Here!\n");
-		g_engine->playSoundEffect(0xFF);
-		return true;
-	}
+	if (save._location == Data::LOCATION_DUNGEON) {
+		if (DungeonLogic().tile() != Data::DTILE_CHEST) {
+			_G(messages).print("Not Here!\n");
+			g_engine->playSoundEffect(0xFF);
+			return true;
+		}
 
-	// The chest goes, leaving the ground it was on
-	byte ground = (cell & 3) << 2;
-	_G(map).setCell(save._posX, save._posY, ground ? ground : CELL_FLOOR);
+		_G(dungeon).setTile(save._dungeonLevel, save._posX, save._posY, 0);
+	} else {
+		byte cell = _G(map).cell(save._posX, save._posY);
+		if (cell < FIRST_CHEST_CELL || cell > LAST_CHEST_CELL) {
+			_G(messages).print("Not Here!\n");
+			g_engine->playSoundEffect(0xFF);
+			return true;
+		}
+
+		// The chest goes, leaving the ground it was on
+		byte ground = (cell & 3) << 2;
+		_G(map).setCell(save._posX, save._posY, ground ? ground : CELL_FLOOR);
+	}
 
 	ChestLogic chest;
 	chest.open(slot);

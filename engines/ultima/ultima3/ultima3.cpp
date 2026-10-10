@@ -87,15 +87,18 @@ bool Ultima3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
-	s.syncVersion(4);
+	s.syncVersion(5);
 
 	_savegame.synchronize(s);
 	if (_savegame._mapLoaded) {
 		_map.synchronize(s);
 
 		// The world is kept aside while the party is in a town or castle
-		if (_savegame._location != Data::LOCATION_SOSARIA)
+		if (_savegame._location == Data::LOCATION_TOWN || _savegame._location == Data::LOCATION_CASTLE)
 			_worldMap.synchronize(s);
+
+		if (_savegame._location == Data::LOCATION_DUNGEON && s.getVersion() >= 5)
+			_dungeon.synchronize(s);
 	}
 
 	if (s.isLoading()) {
@@ -103,7 +106,7 @@ Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
 		// otherwise return to where the party can be organized
 		_resumeGame = _savegame._mapLoaded && _savegame._partySize > 0 &&
 			_savegame.hasLivingPartyMember();
-		replaceView(_resumeGame ? "LocationMap" : "LogoScreen", true);
+		replaceView(_resumeGame ? gameViewName() : "LogoScreen", true);
 	}
 
 	return Common::kNoError;

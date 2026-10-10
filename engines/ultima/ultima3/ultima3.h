@@ -31,6 +31,8 @@
 #include "engines/engine.h"
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima3/data/arena.h"
+#include "ultima/ultima3/data/dungeon.h"
 #include "ultima/ultima3/data/map.h"
 #include "ultima/ultima3/data/savegame.h"
 #include "ultima/ultima3/gfx/message_log.h"
@@ -92,6 +94,7 @@ public:
 	Data::Savegame _savegame;
 	Data::Map _map;
 	Data::Map _worldMap;
+	Data::Dungeon _dungeon;
 	CombatLogic _combat;
 	Gfx::Shapes _shapes;
 	Gfx::MessageLog _messages;
@@ -100,6 +103,10 @@ public:
 
 	// How many more turns time is held still for, by powder or a spell
 	byte _holdTime = 0;
+
+	// A full viewport picture shown in place of the dungeon, such as a fountain
+	byte _scene[Data::ARENA_SIZE * Data::ARENA_SIZE] = {};
+	bool _sceneShown = false;
 
 	// Toggled in the game by the Volume command
 	bool _soundEnabled = true;
@@ -150,6 +157,13 @@ public:
 	 * Returns true if any savegames exist
 	 */
 	bool savegamesExist() const;
+
+	/**
+	 * Returns the name of the view for the place the party is in
+	 */
+	const char *gameViewName() const {
+		return _savegame._location == Data::LOCATION_DUNGEON ? "DungeonMap" : "LocationMap";
+	}
 
 	/**
 	 * Returns a font object that GfxSurface instances can use

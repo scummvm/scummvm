@@ -50,7 +50,7 @@ bool ChestLogic::evadesTrap(int slot) {
 	return rollBelow(255) < chance;
 }
 
-void ChestLogic::damageParty() {
+void ChestLogic::damageAll(int level) {
 	Data::Savegame &save = _G(savegame);
 
 	for (int slot = 0; slot < save._partySize; ++slot) {
@@ -61,7 +61,7 @@ void ChestLogic::damageParty() {
 		g_engine->playSoundEffect(0xF7);
 
 		damageCharacter(slot, Data::fromBcd(rollBelow(255) & 0x77));
-		damageCharacter(slot, Data::fromBcd(8));
+		damageCharacter(slot, Data::fromBcd(((level + 1) * 8) & 0xFF));
 	}
 }
 
@@ -150,7 +150,7 @@ void ChestLogic::open(int slot) {
 			}
 		}
 	} else {
-		damageParty();
+		damageAll(save._dungeonLevel);
 	}
 
 	loot(slot);

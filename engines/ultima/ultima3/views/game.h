@@ -65,6 +65,11 @@ protected:
 	virtual void drawViewport(GfxSurface &s) = 0;
 
 	/**
+	 * Draws the labels set in the frame, which are the wind by default
+	 */
+	virtual void drawLabels(GfxSurface &s);
+
+	/**
 	 * Called when no command has been given for several seconds
 	 */
 	virtual void idleTimeout() = 0;

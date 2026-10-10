@@ -121,13 +121,19 @@ static const Entrance ENTRANCES[] = {
 	{ "BRITISH.ULT", 45, 18 }, { "EXODUS.ULT", 10, 53 }, { "LCB.ULT", 46, 19 },
 	{ "MOON.ULT", 6, 13 }, { "YEW.ULT", 34, 16 }, { "MONTOR_E.ULT", 49, 58 },
 	{ "MONTOR_W.ULT", 47, 58 }, { "GREY.ULT", 7, 44 }, { "DAWN.ULT", 37, 53 },
-	{ "DEVIL.ULT", 18, 31 }, { "FAWN.ULT", 30, 2 }, { "DEATH.ULT", 56, 31 }
+	{ "DEVIL.ULT", 18, 31 }, { "FAWN.ULT", 30, 2 }, { "DEATH.ULT", 56, 31 },
+	{ "M.ULT", 19, 57 }, { "FIRE.ULT", 49, 34 }, { "TIME.ULT", 58, 30 },
+	{ "P.ULT", 58, 44 }, { "PERINIAN.ULT", 56, 6 }, { "MINE.ULT", 9, 28 },
+	{ "DARDIN.ULT", 46, 7 }
 };
 
 constexpr byte TILE_TOWN = 6;
 constexpr byte TILE_CASTLE = 7;
+constexpr byte TILE_DUNGEON = 5;
 
 // Where the party starts out in each kind of location
+constexpr byte DUNGEON_START = 1;
+constexpr byte DUNGEON_START_FACING = 1;
 constexpr byte TOWN_START_X = 0x01;
 constexpr byte TOWN_START_Y = 0x20;
 constexpr byte CASTLE_START_X = 0x20;
@@ -145,12 +151,26 @@ const char *LocationLogic::enter() {
 	}
 
 	byte tile = _G(map).tile(save._posX, save._posY);
-	if (!entrance || (tile != TILE_TOWN && tile != TILE_CASTLE) || !Data::Map::exists(entrance->_filename))
+	if (!entrance || (tile != TILE_TOWN && tile != TILE_CASTLE && tile != TILE_DUNGEON) ||
+			!Data::Map::exists(entrance->_filename))
 		return nullptr;
 
-	_G(worldMap) = _G(map);
 	save._worldX = save._posX;
 	save._worldY = save._posY;
+
+	// Dungeons are entered at the top left, facing east
+	if (tile == TILE_DUNGEON) {
+		_G(dungeon).load(entrance->_filename);
+		save._location = Data::LOCATION_DUNGEON;
+		save._posX = DUNGEON_START;
+		save._posY = DUNGEON_START;
+		save._facing = DUNGEON_START_FACING;
+		save._dungeonLevel = 0;
+		save._lightTurns = 0;
+		return "Dungeon!\n";
+	}
+
+	_G(worldMap) = _G(map);
 	_G(map).load(entrance->_filename);
 
 	if (tile == TILE_TOWN) {
@@ -174,10 +194,16 @@ bool LocationLogic::isAtExit() const {
 void LocationLogic::exitToWorld() {
 	Data::Savegame &save = _G(savegame);
 
-	_G(map) = _G(worldMap);
+	_G(messages).print("Exit to Sosaria!\nPlease wait...\n");
+
+	// A dungeon is entered without the world map being put aside
+	if (save._location != Data::LOCATION_DUNGEON)
+		_G(map) = _G(worldMap);
+
 	save._location = Data::LOCATION_SOSARIA;
 	save._posX = save._worldX;
 	save._posY = save._worldY;
+	save._dungeonLevel = 0;
 }
 
 void LocationLogic::teleportRandomly() {

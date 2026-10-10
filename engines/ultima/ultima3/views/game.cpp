@@ -249,6 +249,10 @@ void Game::drawPartyStatus(GfxSurface &s) {
 	}
 }
 
+void Game::drawLabels(GfxSurface &s) {
+	drawWind(s);
+}
+
 void Game::drawWind(GfxSurface &s) {
 	s.writeString(Common::Point(6, 23), Common::String::format("%c%s%c",
 		GLYPH_LABEL_START, WIND_NAMES[_G(windDirection)], GLYPH_LABEL_END));
@@ -260,7 +264,7 @@ void Game::draw() {
 	s.fillRect(Common::Rect(0, 0, 320, 200), 0);
 	drawFrame(s);
 	drawPartyStatus(s);
-	drawWind(s);
+	drawLabels(s);
 	drawViewport(s);
 	_G(messages).draw(s, !_gameOver);
 

@@ -27,6 +27,7 @@
 #include "ultima/ultima3/views/combat_map.h"
 #include "ultima/ultima3/views/create_character.h"
 #include "ultima/ultima3/views/disperse_party.h"
+#include "ultima/ultima3/views/dungeon_map.h"
 #include "ultima/ultima3/views/form_party.h"
 #include "ultima/ultima3/views/journey_onward.h"
 #include "ultima/ultima3/views/location_map.h"
@@ -46,6 +47,7 @@ struct Views {
 	CombatMap _combatMap;
 	CreateCharacter _createCharacter;
 	DisperseParty _disperseParty;
+	DungeonMap _dungeonMap;
 	FormParty _formParty;
 	JourneyOnward _journeyOnward;
 	LocationMap _locationMap;

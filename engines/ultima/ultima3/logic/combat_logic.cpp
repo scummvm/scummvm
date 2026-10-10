@@ -182,6 +182,18 @@ void CombatLogic::begin(int creature) {
 	if (_monsterClass == MONSTER_PIRATE && save._transport != TRANSPORT_SHIP)
 		map.setCell(x, y, CELL_SHIP);
 
+	startFight();
+}
+
+void CombatLogic::beginDungeon(byte monsterClass) {
+	_monsterClass = monsterClass;
+	startFight();
+}
+
+void CombatLogic::startFight() {
+	Data::Savegame &save = _G(savegame);
+	Data::Creatures &c = _G(map)._creatures;
+
 	// Guards turn on the party
 	for (int i = 0; i < Data::CREATURE_COUNT; ++i) {
 		if (c._tile[i] == CELL_GUARD || c._tile[i] == CELL_ROYAL_GUARD)

@@ -37,12 +37,13 @@ private:
 	 */
 	static int rollBelow(int limit);
 
-	/**
-	 * Hurts every member of the party who can still fight
-	 */
-	void damageParty();
-
 public:
+	/**
+	 * Hurts every member of the party who can still fight, more so the
+	 * deeper in a dungeon they are
+	 */
+	void damageAll(int level);
+
 	/**
 	 * Rolls to see whether a party member avoids a trap, which the
 	 * agile classes are better at

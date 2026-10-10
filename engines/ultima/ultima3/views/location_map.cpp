@@ -57,6 +57,11 @@ static int stepToCentre(int pos) {
 bool LocationMap::msgFocus(const FocusMessage &msg) {
 	// The game starts when arriving from the main menu, or continues on from a load
 	bool fromMenu = msg._priorView && msg._priorView->getName() == "MainMenu";
+
+	// Coming up out of a dungeon completes the turn it was left on
+	if (msg._priorView && msg._priorView->getName() == "DungeonMap")
+		_fightOver = true;
+
 	if (fromMenu || _G(resumeGame)) {
 		startGame();
 		_G(shapes).load();
@@ -142,10 +147,8 @@ void LocationMap::endTurn() {
 
 	_logic.incrementMoveCounter();
 
-	if (_logic.isAtExit()) {
-		_G(messages).print("Exit to Sosaria!\nPlease wait...\n");
+	if (_logic.isAtExit())
 		_logic.exitToWorld();
-	}
 
 	_logic.processPartyTurnEffects(_G(savegame)._location == Data::LOCATION_SOSARIA);
 
@@ -264,7 +267,12 @@ void LocationMap::doEnter() {
 	if (text) {
 		_G(messages).print(text);
 		_G(messages).print("Please wait...\n");
-		endTurn();
+
+		// Dungeons are explored in a view of their own, and don't count as a turn
+		if (_G(savegame)._location == Data::LOCATION_DUNGEON)
+			replaceView("DungeonMap");
+		else
+			endTurn();
 	} else {
 		commandFailed("<-What?\n");
 	}
@@ -332,6 +340,10 @@ bool LocationMap::handleCommand(const KeypressMessage &msg) {
 	case 'S':
 		_G(messages).print("Steal Chest!\nPlayer? ");
 		startInteraction(new Interactions::StealChest());
+		return true;
+	case 'I':
+		_G(messages).print("Ignite a torch\n");
+		commandFailed("Not Here!\n", 0xFF);
 		return true;
 	case 'C':
 		_G(messages).print("Cast by whom-");

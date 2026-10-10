@@ -21,6 +21,7 @@
 
 #include "ultima/ultima3/views/interactions/cast_spell.h"
 #include "ultima/ultima3/logic/chest_logic.h"
+#include "ultima/ultima3/logic/dungeon_logic.h"
 #include "ultima/ultima3/logic/location_logic.h"
 #include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/views/menu_input.h"
@@ -178,9 +179,15 @@ bool CastSpell::perform(Effect effect) {
 	case UNLOCK: {
 		fanfare();
 		if (rollBelow(255) & 3) {
-			byte cell = _G(map).cell(save._posX, save._posY);
-
-			if (cell >= FIRST_CHEST_CELL && cell <= LAST_CHEST_CELL) {
+			if (save._location == Data::LOCATION_DUNGEON) {
+				if (DungeonLogic().tile() == Data::DTILE_CHEST) {
+					_G(dungeon).setTile(save._dungeonLevel, save._posX, save._posY, 0);
+					ChestLogic().loot(_slot);
+					return true;
+				}
+			} else if (_G(map).cell(save._posX, save._posY) >= FIRST_CHEST_CELL &&
+					_G(map).cell(save._posX, save._posY) <= LAST_CHEST_CELL) {
+				byte cell = _G(map).cell(save._posX, save._posY);
 				byte ground = (cell & 3) << 2;
 				_G(map).setCell(save._posX, save._posY, ground ? ground : CELL_FLOOR);
 				ChestLogic().loot(_slot);
@@ -227,8 +234,33 @@ bool CastSpell::perform(Effect effect) {
 		_stage = TARGET;
 		return false;
 
+	case DESCEND:
+	case ASCEND:
+	case RECALL_FLOOR:
+	case LEAVE_DUNGEON:
+		if (save._location != Data::LOCATION_DUNGEON)
+			return fail();
+
+		fanfare();
+		if (effect == DESCEND) {
+			if (save._dungeonLevel >= Data::DUNGEON_LEVELS - 1)
+				return fail();
+
+			++save._dungeonLevel;
+			DungeonLogic().teleportRandomly();
+		} else if (effect == ASCEND && save._dungeonLevel > 0) {
+			--save._dungeonLevel;
+			DungeonLogic().teleportRandomly();
+		} else if (effect == RECALL_FLOOR) {
+			DungeonLogic().teleportRandomly();
+		} else {
+			LocationLogic().exitToWorld();
+		}
+
+		return true;
+
 	default:
-		// These need somewhere to be cast that isn't available
+		// The view of the world isn't available yet
 		return fail();
 	}
 

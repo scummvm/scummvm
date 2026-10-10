@@ -93,6 +93,11 @@ private:
 	 */
 	Common::String monsterName(bool heading) const;
 
+	/**
+	 * Gets a fight ready once the kind of monster is known
+	 */
+	void startFight();
+
 	int monsterAt(int x, int y) const;
 	bool canMonsterMoveTo(int x, int y) const;
 
@@ -139,6 +144,12 @@ public:
 	 * Starts a fight with one of the creatures on the current map
 	 */
 	void begin(int creature);
+
+	/**
+	 * Starts a fight with monsters met in a dungeon
+	 * @param monsterClass		The tile number of the monsters
+	 */
+	void beginDungeon(byte monsterClass);
 
 	/**
 	 * Brings what's shown up to date with the fight

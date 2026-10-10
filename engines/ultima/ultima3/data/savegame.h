@@ -55,6 +55,10 @@ struct Savegame {
 	// How much longer a light spell or torch lasts
 	byte _lightTurns = 0;
 
+	// Where in a dungeon the party is, the level and the way they face
+	byte _dungeonLevel = 0;
+	byte _facing = 0;
+
 	// Set once the party has seen the more powerful gear offered in the
 	// shops, making it available for readying and wearing
 	bool _allWeapons = false;
