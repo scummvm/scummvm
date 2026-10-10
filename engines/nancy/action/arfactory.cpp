@@ -56,6 +56,7 @@
 #include "engines/nancy/action/puzzle/cookingpuzzle.h"
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
 #include "engines/nancy/action/puzzle/cuttingpuzzle.h"
+#include "engines/nancy/action/puzzle/dancepuzzle.h"
 #include "engines/nancy/action/puzzle/decoderpuzzle.h"
 #include "engines/nancy/action/puzzle/dialsequencepuzzle.h"
 #include "engines/nancy/action/puzzle/dotconnectpuzzle.h"
@@ -849,7 +850,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new GraphChase();
 	case 214:
-		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kKeypad);
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
+			return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kKeypad);
+		else
+			return new DancePuzzle();
 	case 215:
 		return new MazeChasePuzzle();
 	case 216:

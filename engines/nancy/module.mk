@@ -43,6 +43,7 @@ MODULE_OBJS = \
   action/puzzle/cookingpuzzle.o \
   action/puzzle/cubepuzzle.o \
   action/puzzle/cuttingpuzzle.o \
+  action/puzzle/dancepuzzle.o \
   action/puzzle/decoderpuzzle.o \
   action/puzzle/dialsequencepuzzle.o \
   action/puzzle/dotconnectpuzzle.o \
