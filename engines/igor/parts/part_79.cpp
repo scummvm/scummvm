@@ -590,7 +590,7 @@ void IgorEngine::PART_79_791() {
 	PART_79_FADE_COLORS(kPart79FadeFirstColor, kPart79FadeLastColor, false);
 
 	loadIgorFrames();
-	// TODO: a byte variable that the next state reads is cleared here (not identified yet)
+	_creditsPass = 0;
 	_currentPart = 910;
 }
 

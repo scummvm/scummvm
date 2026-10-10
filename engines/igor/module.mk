@@ -67,6 +67,7 @@ MODULE_OBJS = \
 	parts/part_81.o \
 	parts/part_85.o \
 	parts/part_90.o \
+	parts/part_credits.o \
 	parts/part_maze.o \
 	parts/part_maze_data.o \
 	parts/part_margaret.o \

@@ -458,6 +458,8 @@ private:
 
 	bool _eventQuitGame;
 	bool _gameStateLoaded;
+	// pass of the end credits: 0 for the first one (set when the ending is over), the pages are shown again after it
+	uint8 _creditsPass;
 	GameStateData _gameState;
 	uint8 _mazeLocation;
 	uint8 _mazeSavedLocation;
@@ -1380,6 +1382,10 @@ private:
 
 	// Splash screens
 	void PART_90();
+
+	// End credits
+	void PART_CREDITS();
+	void PART_CREDITS_DRAW_TEXT(int x, int y, uint8 color, bool underline, const char *str);
 
 	void handleRoomInput();
 

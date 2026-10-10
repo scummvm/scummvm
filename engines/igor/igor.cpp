@@ -118,6 +118,7 @@ void IgorEngine::restart() {
 	_screenVGAVOffset = 0;
 	_debugOverlayMode = kOverlayOff;
 	_gameStateLoaded = false;
+	_creditsPass = 0;
 
 	memset(&_gameState, 0, sizeof(_gameState));
 	_mazeLocation = 0;

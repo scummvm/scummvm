@@ -728,6 +728,15 @@ void IgorEngine::PART_MAIN() {
 		case 904:
 			PART_90();
 			break;
+		case 910: // End credits
+		case 920:
+		case 930:
+		case 940:
+		case 950:
+		case 960:
+		case 970:
+			PART_CREDITS();
+			break;
 
 		default:
 			error("PART_MAIN() Unhandled part %d", _currentPart);
