@@ -103,6 +103,7 @@
 #include "engines/nancy/action/puzzle/rowmatchpuzzle.h"
 #include "engines/nancy/action/puzzle/safedialpuzzle.h"
 #include "engines/nancy/action/puzzle/scalepuzzle.h"
+#include "engines/nancy/action/puzzle/scopapuzzle.h"
 #include "engines/nancy/action/puzzle/setplayerclock.h"
 #include "engines/nancy/action/puzzle/sentrypuzzle.h"
 #include "engines/nancy/action/puzzle/stakeoutpuzzle.h"
@@ -833,7 +834,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return new SentryPuzzle();
 	case 211:
-		return new CollisionPuzzle(CollisionPuzzle::PuzzleType::kCollision);
+		if (g_nancy->getGameType() <= kGameTypeNancy17)
+			return new CollisionPuzzle(CollisionPuzzle::PuzzleType::kCollision);
+		else
+			return new ScopaPuzzle();
 	case 212:
 		if (g_nancy->getGameType() <= kGameTypeNancy17)
 			return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kOrderItems);

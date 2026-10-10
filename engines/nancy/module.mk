@@ -92,6 +92,7 @@ MODULE_OBJS = \
   action/puzzle/sentrypuzzle.o \
   action/puzzle/sequencelockpuzzle.o \
   action/puzzle/scalepuzzle.o \
+  action/puzzle/scopapuzzle.o \
   action/puzzle/setplayerclock.o \
   action/puzzle/sewingmachinepuzzle.o \
   action/puzzle/shovelmeasurepuzzle.o \
