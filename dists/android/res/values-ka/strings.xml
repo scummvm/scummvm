@@ -16,6 +16,7 @@
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
   <string name="customkeyboardview_popup_close">მხტუნარას დახურვა</string>
+  <string name="http_service_description">ScummVM-ის ვებსერვერი</string>
   <string name="ini_parsing_error">კონფიგურაციის ფაილის დამუშავება შეუძლებელია</string>
   <string name="shortcut_creator_title">თამაშის გაშვება</string>
   <string name="shortcut_creator_search_game">თამაშის ძებნა</string>

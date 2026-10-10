@@ -20,6 +20,7 @@
   <string name="customkeyboardview_keycode_shift">Skift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
   <string name="customkeyboardview_popup_close">Stäng popup</string>
+  <string name="http_service_description">ScummVM-webbserver</string>
   <string name="ini_parsing_error">Konfigurationsfilen kunde inte tolkas</string>
   <string name="shortcut_creator_title">Kör ett spel</string>
   <string name="shortcut_creator_search_game">Sök efter ett spel</string>

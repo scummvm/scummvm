@@ -20,6 +20,7 @@
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Entrer</string>
   <string name="customkeyboardview_popup_close">Fermer popup</string>
+  <string name="http_service_description">Serveur web ScummVM</string>
   <string name="ini_parsing_error">Le fichier de configuration n\'a pu être analysé</string>
   <string name="shortcut_creator_title">Lancer un jeu</string>
   <string name="shortcut_creator_search_game">Chercher un jeu</string>

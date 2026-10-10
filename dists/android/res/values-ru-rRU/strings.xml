@@ -20,6 +20,7 @@
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Ввод</string>
   <string name="customkeyboardview_popup_close">Закрыть выпадающий список</string>
+  <string name="http_service_description">Веб-сервер ScummVM</string>
   <string name="ini_parsing_error">Файл конфигурации содержит ошибку формата</string>
   <string name="shortcut_creator_title">Запустить игру</string>
   <string name="shortcut_creator_search_game">Искать игру</string>

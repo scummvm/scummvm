@@ -20,6 +20,7 @@
   <string name="customkeyboardview_keycode_shift">Tasto Maiusc</string>
   <string name="customkeyboardview_keycode_enter">Invio</string>
   <string name="customkeyboardview_popup_close">Chiudi popup</string>
+  <string name="http_service_description">Server web di ScummVM</string>
   <string name="ini_parsing_error">Non è stato possibile interpretare il file di configurazione</string>
   <string name="shortcut_creator_title">Avvia un gioco</string>
   <string name="shortcut_creator_search_game">Cerca un gioco</string>

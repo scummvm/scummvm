@@ -20,6 +20,7 @@
   <string name="customkeyboardview_keycode_shift">Majúscules</string>
   <string name="customkeyboardview_keycode_enter">Intro</string>
   <string name="customkeyboardview_popup_close">Tanca la finestra emergent</string>
+  <string name="http_service_description">Servidor web ScummVM</string>
   <string name="ini_parsing_error">No s\'ha pogut analitzar el fitxer de configuració</string>
   <string name="shortcut_creator_title">Executa una partida</string>
   <string name="shortcut_creator_search_game">Cerca una partida</string>
