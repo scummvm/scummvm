@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "ultima/ultima2/gfx/composite.h"
 #include "ultima/ultima2/views/map.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/metaengine.h"
@@ -40,6 +41,26 @@ constexpr int FORCEFIELD_SCROLL_ROWS = 1;
 bool Map::msgFocus(const FocusMessage &msg) {
 	_lastInput = g_system->getMillis();
 	return View::msgFocus(msg);
+}
+
+void Map::finishGraphics(Graphics::Views::GfxSurface &s) {
+	// The sprite goes on first, since composite colors depend on neighbors
+	if (_flashSprite)
+		s.xorBlitFrom(*_flashSprite, _flashPos);
+
+	Gfx::compositeFinish(s);
+}
+
+void Map::flashSprite(const Graphics::ManagedSurface &sprite, const Common::Point &pos) {
+	_flashSprite = &sprite;
+	_flashPos = pos;
+	draw();
+	g_engine->updateScreen();
+	g_engine->pauseMillis(80);
+
+	_flashSprite = nullptr;
+	draw();
+	g_engine->updateScreen();
 }
 
 bool Map::msgAction(const ActionMessage &msg) {

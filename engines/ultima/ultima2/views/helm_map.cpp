@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima2/gfx/composite.h"
 #include "ultima/ultima2/views/helm_map.h"
 #include "ultima/ultima2/data/map.h"
 #include "ultima/ultima2/ultima2.h"
@@ -84,6 +85,8 @@ void HelmMap::draw() {
 		for (int x = 0; x < Data::MAP_WIDTH; ++x)
 			plotIcon(s, x, y, _G(map).tileAt(x, y));
 	}
+
+	Gfx::compositeFinish(s);
 }
 
 bool HelmMap::msgKeypress(const KeypressMessage &msg) {

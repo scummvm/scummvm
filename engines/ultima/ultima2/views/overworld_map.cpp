@@ -74,18 +74,7 @@ bool OverworldMap::msgAttackTile(const Shared::AttackTileMessage &msg) {
 	if (ox < 0 || ox >= VIEWPORT_WIDTH || oy < 0 || oy >= VIEWPORT_HEIGHT)
 		return true;
 
-	Common::Point pt(ox * TILE_WIDTH, oy * TILE_HEIGHT);
-	auto s = getSurface();
-
-	// XOR-flash the hit indicator on, then off again - matches the
-	// original's xorSpriteDrawCenter-twice-with-a-pause-between pattern
-	s.xorBlitFrom(_attackSprite, pt);
-	g_engine->updateScreen();
-	g_engine->pauseMillis(80);
-
-	s.xorBlitFrom(_attackSprite, pt);
-	g_engine->updateScreen();
-
+	flashSprite(_attackSprite, Common::Point(ox * TILE_WIDTH, oy * TILE_HEIGHT));
 	return true;
 }
 
@@ -123,6 +112,8 @@ void OverworldMap::draw() {
 			s.blitFrom(_tiles[tileId], Common::Point(ox * TILE_WIDTH, oy * TILE_HEIGHT));
 		}
 	}
+
+	finishGraphics(s);
 }
 
 } // namespace Views

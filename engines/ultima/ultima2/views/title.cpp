@@ -24,6 +24,7 @@
 #include "graphics/paletteman.h"
 #include "ultima/ultima2/data/data.h"
 #include "ultima/ultima2/views/title.h"
+#include "ultima/ultima2/gfx/composite.h"
 #include "ultima/ultima2/gfx/ega_picture.h"
 #include "ultima/ultima2/gfx/pic_decoder.h"
 #include "ultima/ultima2/ultima2.h"
@@ -43,7 +44,7 @@ Title::Title() : View("Title"), _cursor("Cursor", this) {
 void Title::loadPic(const Common::String &filename) {
 	// The upgrade patch's EGA-family renderers show their own versions
 	Data::RenderMode mode = g_engine->getRenderMode();
-	if (mode != Data::RENDER_CGA) {
+	if (Data::isEgaMode(mode)) {
 		if (!Gfx::loadEgaPicture(filename, mode, _pic))
 			error("Could not load %s", filename.c_str());
 		return;
@@ -56,6 +57,7 @@ void Title::loadPic(const Common::String &filename) {
 
 	_pic.create(320, 200);
 	_pic.blitFrom(*decoder.getSurface());
+	Gfx::compositeFinish(_pic);
 }
 
 bool Title::msgFocus(const FocusMessage &msg) {

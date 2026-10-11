@@ -35,14 +35,6 @@ namespace Gfx {
  * EGA-family renderers show it, into a 320x200 CLUT8 surface whose pixels
  * index EGA_PALETTE16 at EGA_PALETTE_BASE. The name is the picture's
  * original CGA filename, in lower case ("picdra", "picout", ...).
- *
- * As in the patch's ega.drv, three pictures (picdra, picdng, picspa) got
- * full 64,000-byte redraws, one byte per pixel. The rest (picout, pictwn,
- * piccas, picmin) are instead a 20x10 map of game tiles - a 200 byte .idx
- * file of tile codes, same encoding as the map files - drawn with the
- * current theme's own tileset. See docs/enhanced-patch.md §3.9
- *
- * Returns false if the picture's data couldn't be found
  */
 bool loadEgaPicture(const Common::String &name, Data::RenderMode mode,
 	Graphics::ManagedSurface &surf);

@@ -63,7 +63,6 @@ Common::Error Ultima2Engine::run() {
 
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
-	Data::setPalette();
 	_pcSpeakerReady = _pcSpeaker->init();
 
 	// Set the engine's debugger console
@@ -90,6 +89,10 @@ Common::Error Ultima2Engine::run() {
 	int renderMode = ConfMan.getInt("graphics_mode");
 	_renderMode = (renderMode >= 0 && renderMode < Data::RENDER_MODE_COUNT) ?
 		(Data::RenderMode)renderMode : Data::RENDER_CGA;
+
+	// Set the palette now that the engine data is available, since the
+	// composite renderer's colors come from a file in it
+	Data::setPalette();
 
 	// Set up secret map
 	SearchMan.add("Secret", new Data::SecretMapArchive());

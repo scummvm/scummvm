@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "graphics/paletteman.h"
 #include "ultima/ultima2/data/data.h"
+#include "ultima/ultima2/gfx/composite.h"
 #include "ultima/ultima2/gfx/pic_decoder.h"
 #include "ultima/ultima2/views/dungeon_map.h"
 #include "ultima/ultima2/ultima2.h"
@@ -402,22 +403,19 @@ bool DungeonMap::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 bool DungeonMap::msgAttackTile(const Shared::AttackTileMessage &msg) {
-	// Being hit inverts the whole view, briefly
-	for (int i = 0; i < 2; ++i) {
-		auto s = getSurface();
-		for (int y = 0; y < s.h; ++y) {
-			byte *pixels = (byte *)s.getBasePtr(0, y);
-			for (int x = 0; x < s.w; ++x)
-				pixels[x] ^= 3;
-		}
+	// Being hit inverts the whole view, briefly. It's done by redrawing the
+	// view, rather than inverting the screen, since in the composite
+	// renderer the screen doesn't hold the CGA pixels
+	_inverted = true;
+	draw();
+	g_engine->updateScreen();
 
-		s.markAllDirty();
-		g_engine->updateScreen();
+	// Pause briefly after initial inversion
+	g_engine->pauseMillis(80);
 
-		if (i == 0)
-			// Pause briefly after initial inversion
-			g_engine->pauseMillis(80);
-	}
+	_inverted = false;
+	draw();
+	g_engine->updateScreen();
 
 	return true;
 }
@@ -587,6 +585,18 @@ void DungeonMap::draw() {
 
 	if (_showMinimap)
 		drawMinimap(s);
+
+	if (_inverted) {
+		for (int y = 0; y < s.h; ++y) {
+			byte *pixels = (byte *)s.getBasePtr(0, y);
+			for (int x = 0; x < s.w; ++x)
+				pixels[x] ^= 3;
+		}
+
+		s.markAllDirty();
+	}
+
+	Gfx::compositeFinish(s);
 }
 
 } // namespace Views

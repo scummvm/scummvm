@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/archive.h"
+#include "common/ptr.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
 #include "ultima/ultima2/data/data.h"
@@ -35,13 +38,10 @@ const byte CGA_PALETTE1[4 * 3] = {
 };
 
 const char *const RENDER_MODE_NAMES[RENDER_MODE_COUNT] = {
-	"ORIGINAL", "EGA", "EGA (V1.0)", "EGA (WILTSHIRE)", "EGA (C64)"
+	"ORIGINAL", "COMPOSITE", "EGA", "EGA (V1.0)", "EGA (WILTSHIRE)", "EGA (C64)"
 };
 
-// The standard 16-color EGA/VGA palette, confirmed as the one ega.drv
-// relies on (via the BIOS's default mode 13h palette, rather than
-// loading its own - see docs/enhanced-patch.md §3.6) - EGATILES' pixel
-// values are literal indices into this
+// The standard 16-color EGA/VGA palette
 const byte EGA_PALETTE16[EGA_PALETTE_SIZE * 3] = {
 	0x00, 0x00, 0x00, // 0: black
 	0x00, 0x00, 0xaa, // 1: blue
@@ -70,14 +70,34 @@ const byte PLANET_COORDS[PLANET_COUNT + 1][3] = {
 	{ 2, 8, 5 }, { 9, 4, 6 }, { 4, 0, 5 }, { 0, 1, 4 }, { 9, 9, 9 }
 };
 
+// CGACOMP.PAL is a standard VGA palette file: 256 entries of 6-bit R, G, B.
+// The composite decode only ever produces the first 16
+static void loadCompositePalette(Graphics::Palette &palette) {
+	Common::ScopedPtr<Common::SeekableReadStream> f(
+		SearchMan.createReadStreamForMember(Common::Path("cgacomp.pal")));
+	if (!f)
+		return;
+
+	for (int i = 0; i < COMPOSITE_PALETTE_SIZE; ++i) {
+		byte rgb[3];
+		if (f->read(rgb, 3) != 3)
+			return;
+
+		for (int c = 0; c < 3; ++c)
+			rgb[c] = (rgb[c] << 2) | (rgb[c] >> 4);
+		palette.set(rgb, COMPOSITE_PALETTE_BASE + i, 1);
+	}
+}
+
 void setPalette() {
-	Graphics::Palette palette(EGA_PALETTE_BASE + EGA_PALETTE_SIZE);
+	Graphics::Palette palette(COMPOSITE_PALETTE_BASE + COMPOSITE_PALETTE_SIZE);
 	palette.set(CGA_PALETTE1, 0, 4);
 
 	const byte green[3] = { 0x55, 0xff, 0x55 };
 	palette.set(green, PALETTE_PLAYER_MARKER, 1);
 
 	palette.set(EGA_PALETTE16, EGA_PALETTE_BASE, EGA_PALETTE_SIZE);
+	loadCompositePalette(palette);
 	g_system->getPaletteManager()->setPalette(palette);
 }
 

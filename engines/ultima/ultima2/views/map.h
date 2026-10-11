@@ -40,6 +40,10 @@ private:
 	uint32 _lastAnimation = 0;
 	uint32 _lastInput = 0;
 
+	// A sprite currently being flashed over the view, see flashSprite
+	const Graphics::ManagedSurface *_flashSprite = nullptr;
+	Common::Point _flashPos;
+
 protected:
 	/**
 	 * Returns the view's TILE_COUNT tile graphics
@@ -50,6 +54,21 @@ protected:
 	 * Passes the turn if no command has been given for a while
 	 */
 	void checkIdle();
+
+	/**
+	 * Called at the end of draw() by views that draw CGA-indexed tiles:
+	 * adds any sprite being flashed, then applies the composite renderer's
+	 * decode if that's active
+	 */
+	void finishGraphics(Graphics::Views::GfxSurface &s);
+
+	/**
+	 * XOR-flashes a sprite on and then off again over the view, with a
+	 * pause in between, as the original does for hit indicators. It's done
+	 * by redrawing the view, rather than XORing onto the screen, since in
+	 * the composite renderer the screen doesn't hold the CGA pixels
+	 */
+	void flashSprite(const Graphics::ManagedSurface &sprite, const Common::Point &pos);
 
 public:
 	/**

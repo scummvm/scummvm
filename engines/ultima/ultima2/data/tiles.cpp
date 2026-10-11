@@ -55,11 +55,9 @@ static void decodeTileRecord(const byte record[TILE_RECORD_SIZE], SurfaceT &surf
 	}
 }
 
-// EGATILES-format files (see docs/enhanced-patch.md §3.8): 65 headerless
-// 128-byte records (the 64 tiles, same order as TileId, plus the attack
-// sprite as a 65th), 4 bits/pixel, 8 bytes/row x 16 rows, high nibble
-// first. Pixel values are literal EGA_PALETTE16 indices, so they're
-// offset by EGA_PALETTE_BASE to land in that palette's reserved range
+// EGATILES-format file: 65 headerless 128-byte records (the 64 tiles, same order as TileId,
+// plus the attack sprite as a 65th), 4 bits/pixel, 8 bytes/row x 16 rows, high nibble
+// first. Pixel values are literal EGA_PALETTE16 indices, so they're offset by EGA_PALETTE_BASE
 constexpr int EGA_RECORD_SIZE = 128;
 constexpr int EGA_ATTACK_SPRITE_RECORD = 64;
 
@@ -77,9 +75,8 @@ static void decodeEgaTileRecord(const byte record[EGA_RECORD_SIZE], SurfaceT &su
 	}
 }
 
-// The base EGA data files live at the data root; each "theme" is a
-// subfolder holding alternate copies of some of them (confirmed pure data
-// swaps, no code differences - see docs/enhanced-patch.md §3.6)
+// The base EGA data files live at the data root; each "theme" is a subfolder holding
+// alternate copies of some of them
 static const char *egaThemeFolder(RenderMode mode) {
 	switch (mode) {
 	case RENDER_EGA_V1:
@@ -120,7 +117,7 @@ static void loadEgaTiles(Graphics::Surface tiles[TILE_COUNT], RenderMode mode) {
 }
 
 void loadTiles(Graphics::Surface tiles[TILE_COUNT], RenderMode mode) {
-	if (mode != RENDER_CGA) {
+	if (isEgaMode(mode)) {
 		loadEgaTiles(tiles, mode);
 		return;
 	}
@@ -141,7 +138,7 @@ void loadTiles(Graphics::Surface tiles[TILE_COUNT], RenderMode mode) {
 }
 
 void loadAttackSprite(Graphics::ManagedSurface &sprite, RenderMode mode) {
-	if (mode != RENDER_CGA) {
+	if (isEgaMode(mode)) {
 		Common::ScopedPtr<Common::SeekableReadStream> egaFile(openEgaFile(mode, "egatiles"));
 		if (!egaFile)
 			error("Could not open egatiles");

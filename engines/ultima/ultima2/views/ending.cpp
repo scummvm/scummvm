@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "common/system.h"
+#include "ultima/ultima2/gfx/composite.h"
 #include "ultima/ultima2/views/ending.h"
 #include "ultima/ultima2/data/map.h"
 #include "ultima/ultima2/ultima2.h"
@@ -94,6 +95,8 @@ void Ending::draw() {
 			s.blitFrom(_tileGfx[tileId], Common::Point(ox * TILE_WIDTH, oy * TILE_HEIGHT));
 		}
 	}
+
+	Gfx::compositeFinish(s);
 }
 
 bool Ending::tick() {

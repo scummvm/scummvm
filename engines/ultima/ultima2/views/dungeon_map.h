@@ -37,6 +37,7 @@ class DungeonMap : public Map {
 private:
 	byte _monsterSprites[2048] = {};
 	bool _showMinimap = false;
+	bool _inverted = false;
 
 	/**
 	 * Draws a small map of the current level in the top right corner

@@ -54,29 +54,19 @@ constexpr int TILE_WIDTH = 16;
 constexpr int TILE_HEIGHT = 16;
 
 /**
- * Opens one of the EGA-family renderers' data files by name (e.g.
- * "egatiles" or "picdng.ega") the way the upgrade's ega.drv does: the
- * active theme's own copy if it has one, otherwise the base copy at the
- * data root. Returns nullptr if neither exists; the caller owns the stream
+ * Opens one of the EGA-family renderers' data files by name. Returns nullptr
+ * if it doesn't exist; the caller owns the stream
  */
 Common::SeekableReadStream *openEgaFile(RenderMode mode, const Common::String &filename);
 
 /**
- * Decodes the 64 overworld/town tile graphics and (RENDER_CGA only) puts
- * them into CLUT8 surfaces indexed into the 4-color CGA_PALETTE1 (see
- * Gfx::PicDecoder). RENDER_CGA reads them embedded directly in
- * ULTIMAII.EXE, as the original does; the EGA-family modes instead read
- * an EGATILES-format file (see docs/enhanced-patch.md §3.8) and index
- * into EGA_PALETTE16 at EGA_PALETTE_BASE instead
+ * Decodes the 64 overworld/town tile graphics into CLUT8 surfaces
  */
 void loadTiles(Graphics::Surface tiles[TILE_COUNT], RenderMode mode);
 
 /**
  * Decodes the "sprite circle" graphic used to flash a hit indicator over
- * the player's position during combat (xorSpriteDrawCenter in the
- * original), in the same 16x16 CLUT8 format and palette convention as
- * loadTiles above. A ManagedSurface, unlike the plain map tiles, since it
- * needs to be XOR-blitted (see GfxSurface::xorBlitFrom)
+ * the player's position during combat
  */
 void loadAttackSprite(Graphics::ManagedSurface &sprite, RenderMode mode);
 
