@@ -184,6 +184,79 @@ private:
 	RecordGraphic *_canvas = nullptr;
 };
 
+// Shows a part of an image
+class OverlayRecord : public Record {
+public:
+	OverlayRecord(SceneContext &context) : Record(context, "ND.Overlay") {}
+
+	void updateGraphics() override;
+
+protected:
+	void readTable(int tableIndex) override;
+	void onZChanged() override;
+	bool hasTransform() const override { return true; }
+	void onTransformChanged() override { applyRects(); }
+	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
+
+private:
+	void applyRects();
+
+	Graphics::ManagedSurface _image;
+	ScriptRect _source;
+	ScriptRect _dest;
+	bool _hasPicture = false;
+	RecordGraphic _graphic;
+};
+
+// Shows the parts of an image one after the other
+class AnimOverlayRecord : public Record {
+public:
+	AnimOverlayRecord(SceneContext &context) : Record(context, "ND.AnimOvlAR") {}
+
+	void updateGraphics() override;
+
+	void setPaused(bool isPaused) { _isPaused = isPaused; }
+
+protected:
+	void readTable(int tableIndex) override;
+	void runOnce() override;
+	void run(double sceneTime, double elapsedTime) override;
+	void onZChanged() override;
+	bool prepareReset() override;
+	bool hasTransform() const override { return true; }
+	void onTransformChanged() override { applyFrame(); }
+	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
+
+private:
+	// Frames are counted from 1
+	int getFirstFrame() const { return _firstFrame > 0 ? _firstFrame : 1; }
+	int getLastFrame() const { return _lastFrame > 0 ? _lastFrame : (int)_sources.size(); }
+	void setFrame(int frame);
+	void applyFrame();
+	void beginLoop();
+
+	Graphics::ManagedSurface _image;
+	Common::Array<ScriptRect> _sources;
+	ScriptRect _dest;
+	bool _hasPicture = false;
+	RecordGraphic _graphic;
+
+	int _firstFrame = -1;
+	int _lastFrame = -1;
+	int _frame = 1;
+	double _framesPerSecond = 15.0;
+	double _progress = 0.0;	// through the frames, from 0 to 1
+	double _endTime = 0.0;
+
+	int _numLoops = 1;		// 0 loops forever
+	int _numLoopsDone = 0;
+	bool _pausesOnLastFrame = false;
+	bool _isPaused = false;
+	bool _isVisible = true;
+};
+
 } // End of namespace Script
 } // End of namespace Nancy
 

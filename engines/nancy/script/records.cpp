@@ -25,6 +25,7 @@
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
@@ -70,8 +71,12 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 		return new NavLogicRecord(context);
 	case kRecordSummary:
 		return new SummaryRecord(context);
+	case kRecordOverlay:
+		return new OverlayRecord(context);
 	case kRecordOverride:
 		return new OverrideRecord(context);
+	case kRecordAnimOverlay:
+		return new AnimOverlayRecord(context);
 	default:
 		return nullptr;
 	}
@@ -86,6 +91,23 @@ static const int kBackgroundZ = 6;
 void RecordGraphic::setScriptZ(double z, int32 streamZOffset) {
 	const int engineZ = kBackgroundZ + (int)(z - kBackgroundScriptZ) + streamZOffset;
 	setZOrder((uint16)CLIP<int>(engineZ, 0, 0xFFFF));
+}
+
+// Where something that was placed in the viewport ends up once the transform
+// of its record has moved it.
+// TODO: Only the place is taken from the transform. Draw what it rotates and
+// scales as well.
+static Common::Rect getTransformedDest(const ScriptRect &dest, const ScriptMatrix &transform, int width, int height) {
+	// Far enough for anything a script moves around, and safe to add a size to
+	const int kLimit = 16000;
+
+	double x = dest.left;
+	double y = dest.top;
+	transform.transformPoint(x, y);
+
+	const int left = CLIP<int>((int)x, -kLimit, kLimit);
+	const int top = CLIP<int>((int)y, -kLimit, kLimit);
+	return Common::Rect(left, top, left + width, top + height);
 }
 
 static Graphics::ManagedSurface *s_drawTarget = nullptr;
@@ -491,6 +513,311 @@ bool OverrideRecord::setField(const Common::String &key) {
 
 	// Kept with everything else scripts store in the record
 	return false;
+}
+
+// Overlay
+
+void OverlayRecord::readTable(int tableIndex) {
+	lua_State *L = getLua();
+
+	Common::String imageName;
+	if (!readField(L, tableIndex, "ovl", imageName)) {
+		luaL_error(L, "OverlayAR must be created with a ovl parameter");
+	}
+
+	if (!g_nancy->_resource->loadImage(Common::Path(imageName), _image)) {
+		luaL_error(L, "Could not load overlay %s", imageName.c_str());
+	}
+
+	// Both default to the whole image
+	_source = ScriptRect(0, 0, _image.w, _image.h);
+	if (pushField(L, tableIndex, "source")) {
+		_source = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	_dest = _source;
+	if (pushField(L, tableIndex, "onScreen")) {
+		_dest = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	_graphic.init();
+	_graphic.setVisible(false);
+	applyRects();
+	onZChanged();
+	_graphic.registerGraphics();
+}
+
+void OverlayRecord::applyRects() {
+	Common::Rect source = _source.toRect();
+	source.clip(Common::Rect(_image.w, _image.h));
+
+	// A script can leave the picture out until it knows what to show
+	_hasPicture = !source.isEmpty();
+	if (!_hasPicture) {
+		return;
+	}
+
+	_graphic._drawSurface.create(_image, source);
+	_graphic.setTransparent(true);
+	_graphic.moveTo(getTransformedDest(_dest, getTransform(), source.width(), source.height()));
+	_graphic.setNeedsRedraw(true);
+}
+
+void OverlayRecord::onZChanged() {
+	_graphic.setScriptZ(getZ(), getContext().getZOffset());
+}
+
+void OverlayRecord::updateGraphics() {
+	_graphic.setVisible(isActive() && _hasPicture);
+}
+
+bool OverlayRecord::getField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		pushRect(L, _dest);
+	} else if (key == "source") {
+		pushRect(L, _source);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+bool OverlayRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		_dest = checkRect(L, 3);
+	} else if (key == "source") {
+		_source = checkRect(L, 3);
+	} else {
+		return false;
+	}
+
+	applyRects();
+	return true;
+}
+
+// AnimOverlay
+
+void AnimOverlayRecord::readTable(int tableIndex) {
+	lua_State *L = getLua();
+
+	readField(L, tableIndex, "firstFrame", _firstFrame);
+	readField(L, tableIndex, "lastFrame", _lastFrame);
+	readField(L, tableIndex, "fps", _framesPerSecond);
+	readField(L, tableIndex, "pauseOnLastFrame", _pausesOnLastFrame);
+	readField(L, tableIndex, "visible", _isVisible);
+
+	if (!pushField(L, tableIndex, "onScreen")) {
+		luaL_error(L, "AnimOverlays must have a onScreen field");
+	}
+
+	_dest = checkRect(L, -1);
+	lua_pop(L, 1);
+
+	// Either whether to loop forever, or how many times to play
+	if (pushField(L, tableIndex, "loop")) {
+		if (lua_isboolean(L, -1)) {
+			_numLoops = lua_toboolean(L, -1) ? 0 : 1;
+		} else if (lua_isnumber(L, -1)) {
+			_numLoops = (int)lua_tointeger(L, -1);
+		} else {
+			luaL_error(L, "loop must be either a boolean or a number");
+		}
+
+		lua_pop(L, 1);
+	}
+
+	if (!pushField(L, tableIndex, "sources")) {
+		luaL_error(L, "AnimOverlays must have a sources field");
+	}
+
+	luaL_checktype(L, -1, LUA_TTABLE);
+	for (int i = 1; ; ++i) {
+		lua_rawgeti(L, -1, i);
+		if (lua_isnil(L, -1)) {
+			lua_pop(L, 1);
+			break;
+		}
+
+		_sources.push_back(checkRect(L, -1));
+		lua_pop(L, 1);
+	}
+
+	lua_pop(L, 1);
+
+	if (_sources.empty()) {
+		luaL_error(L, "Field sources must be a table with Rects in it");
+	}
+
+	Common::String imageName;
+	if (!readField(L, tableIndex, "ovl", imageName)) {
+		luaL_error(L, "AnimOverlays must have a ovl field");
+	}
+
+	if (!g_nancy->_resource->loadImage(Common::Path(imageName), _image)) {
+		luaL_error(L, "Could not load overlay %s", imageName.c_str());
+	}
+
+	_graphic.init();
+	_graphic.setVisible(false);
+	setFrame(getFirstFrame());
+	onZChanged();
+	_graphic.registerGraphics();
+}
+
+void AnimOverlayRecord::setFrame(int frame) {
+	_frame = CLIP<int>(frame, 1, _sources.size());
+	applyFrame();
+}
+
+void AnimOverlayRecord::applyFrame() {
+	Common::Rect source = _sources[_frame - 1].toRect();
+	source.clip(Common::Rect(_image.w, _image.h));
+
+	_hasPicture = !source.isEmpty();
+	if (!_hasPicture) {
+		return;
+	}
+
+	_graphic._drawSurface.create(_image, source);
+	_graphic.setTransparent(true);
+	_graphic.moveTo(getTransformedDest(_dest, getTransform(), source.width(), source.height()));
+	_graphic.setNeedsRedraw(true);
+}
+
+// Starts over from the first frame
+void AnimOverlayRecord::beginLoop() {
+	_progress = 0.0;
+	setFrame(getFirstFrame());
+
+	const int numSteps = getLastFrame() - getFirstFrame();
+	_endTime = getContext().getTime() + (_framesPerSecond > 0.0 ? numSteps / _framesPerSecond : 0.0);
+}
+
+void AnimOverlayRecord::runOnce() {
+	_numLoopsDone = 0;
+	beginLoop();
+}
+
+void AnimOverlayRecord::run(double sceneTime, double elapsedTime) {
+	if (_isPaused) {
+		return;
+	}
+
+	const int numSteps = getLastFrame() - getFirstFrame();
+	if (numSteps > 0) {
+		_progress = CLIP(_progress + _framesPerSecond * elapsedTime / numSteps, 0.0, 1.0);
+		setFrame(getFirstFrame() + (int)floor(_progress * numSteps));
+	}
+
+	if (_endTime >= sceneTime) {
+		return;
+	}
+
+	++_numLoopsDone;
+	if (_numLoops != 0 && _numLoopsDone >= _numLoops) {
+		if (_pausesOnLastFrame) {
+			_isPaused = true;
+		} else {
+			finish();
+		}
+	} else {
+		beginLoop();
+	}
+}
+
+bool AnimOverlayRecord::prepareReset() {
+	setFrame(getFirstFrame());
+	_isPaused = false;
+	return true;
+}
+
+void AnimOverlayRecord::onZChanged() {
+	_graphic.setScriptZ(getZ(), getContext().getZOffset());
+}
+
+void AnimOverlayRecord::updateGraphics() {
+	_graphic.setVisible(isActive() && _isVisible && _hasPicture);
+}
+
+// anim:Play() and anim:Pause(), for the records that play something
+static int animOverlayPlay(lua_State *L) {
+	AnimOverlayRecord *record = dynamic_cast<AnimOverlayRecord *>(checkRecord(L, 1));
+	if (record) {
+		record->setPaused(false);
+	}
+
+	return 0;
+}
+
+static int animOverlayPause(lua_State *L) {
+	AnimOverlayRecord *record = dynamic_cast<AnimOverlayRecord *>(checkRecord(L, 1));
+	if (record) {
+		record->setPaused(true);
+	}
+
+	return 0;
+}
+
+bool AnimOverlayRecord::getField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		pushRect(L, _dest);
+	} else if (key == "Play") {
+		lua_pushcfunction(L, animOverlayPlay);
+	} else if (key == "Pause") {
+		lua_pushcfunction(L, animOverlayPause);
+	} else if (key == "paused") {
+		lua_pushboolean(L, _isPaused);
+	} else if (key == "pauseOnLastFrame") {
+		lua_pushboolean(L, _pausesOnLastFrame);
+	} else if (key == "visible") {
+		lua_pushboolean(L, _isVisible);
+	} else if (key == "frame") {
+		lua_pushinteger(L, _frame);
+	} else if (key == "endTime") {
+		lua_pushnumber(L, _endTime);
+	} else if (key == "firstFrame") {
+		lua_pushinteger(L, getFirstFrame());
+	} else if (key == "lastFrame") {
+		lua_pushinteger(L, getLastFrame());
+	} else if (key == "frames") {
+		lua_pushinteger(L, _sources.size());
+	} else if (key == "fps") {
+		lua_pushnumber(L, _framesPerSecond);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+bool AnimOverlayRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		_dest = checkRect(L, 3);
+		applyFrame();
+	} else if (key == "pauseOnLastFrame") {
+		_pausesOnLastFrame = lua_toboolean(L, 3) != 0;
+	} else if (key == "visible") {
+		_isVisible = lua_toboolean(L, 3) != 0;
+	} else if (key == "frame") {
+		setFrame(luaL_checkint(L, 3));
+	} else if (key == "fps") {
+		_framesPerSecond = luaL_checknumber(L, 3);
+	} else {
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Script
