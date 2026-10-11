@@ -51,6 +51,19 @@ const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	// KQ6 CD - high-resolution graphics with the low-resolution graphics at exactly double size
+	{
+		GAMEOPTION_HIRES_UNIFORM_PIXELS,
+		{
+			_s("Keep all pixels the same size (portraits appear larger)"),
+			_s("Show low-resolution graphics and text at exactly double size, instead of stretching them unevenly. High-resolution portraits cover slightly more of the scene, and scenes look slightly shorter than in the original release"),
+			"hires_uniform_pixels",
+			false,
+			0,
+			0
+		}
+	},
+
 	{
 		GAMEOPTION_ENABLE_BLACK_LINED_VIDEO,
 		{
