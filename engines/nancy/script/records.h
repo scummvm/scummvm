@@ -26,6 +26,7 @@
 #include "common/rect.h"
 
 #include "engines/nancy/commontypes.h"
+#include "engines/nancy/movieplayer.h"
 #include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/script/record.h"
@@ -283,6 +284,44 @@ private:
 	SoundDescription _sound;
 	bool _isPlaying = false;
 	bool _wasPreempted = false;
+	double _endTime = 0.0;
+};
+
+// Plays a movie in the viewport
+// TODO: Handle the source, volume, loop and modColor fields.
+class MovieRecord : public Record {
+public:
+	MovieRecord(SceneContext &context) : Record(context, "ND.Movie") {}
+
+	void updateGraphics() override;
+
+	void setPaused(bool isPaused) { _isPaused = isPaused; }
+
+protected:
+	void readTable(int tableIndex) override;
+	void runOnce() override;
+	void run(double sceneTime, double elapsedTime) override;
+	void onZChanged() override;
+	bool prepareReset() override;
+	bool hasTransform() const override { return true; }
+	void onTransformChanged() override { applyPosition(); }
+	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
+
+private:
+	void drawFrame();
+	void applyPosition();
+
+	Common::String _name;
+	MoviePlayer _player;
+	RecordGraphic _graphic;
+	ScriptRect _dest;
+
+	int _firstFrame = 0;
+	int _lastFrame = 0;
+	bool _pausesOnLastFrame = false;
+	bool _isPaused = false;
+	bool _isVisible = true;
 	double _endTime = 0.0;
 };
 

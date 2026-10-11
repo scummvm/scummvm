@@ -75,6 +75,8 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 		return new SummaryRecord(context);
 	case kRecordOverlay:
 		return new OverlayRecord(context);
+	case kRecordMovie:
+		return new MovieRecord(context);
 	case kRecordSound:
 		return new SoundRecord(context);
 	case kRecordOverride:
@@ -897,6 +899,160 @@ bool SoundRecord::getField(const Common::String &key) {
 		lua_pushnumber(L, _endTime);
 	} else if (key == "preempted") {
 		lua_pushboolean(L, _wasPreempted);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+// Movie
+
+void MovieRecord::readTable(int tableIndex) {
+	lua_State *L = getLua();
+
+	if (!readField(L, tableIndex, "movie", _name)) {
+		luaL_error(L, "MovieAR must be created with a movie parameter");
+	}
+
+	if (!pushField(L, tableIndex, "onScreen")) {
+		luaL_error(L, "MovieAR must be created with an 'onScreen' parameter");
+	}
+
+	_dest = checkRect(L, -1);
+	lua_pop(L, 1);
+
+	if (!_player.loadFile(Common::Path(_name))) {
+		luaL_error(L, "Could not load movie %s", _name.c_str());
+	}
+
+	_firstFrame = 0;
+	_lastFrame = _player.getFrameCount() - 1;
+	readField(L, tableIndex, "firstFrame", _firstFrame);
+	readField(L, tableIndex, "lastFrame", _lastFrame);
+	readField(L, tableIndex, "pauseOnLastFrame", _pausesOnLastFrame);
+	readField(L, tableIndex, "visible", _isVisible);
+
+	_graphic.init();
+	_graphic._drawSurface.create(_player.getWidth(), _player.getHeight(), g_nancy->_graphics->getScreenPixelFormat());
+	_graphic.setVisible(false);
+	applyPosition();
+	onZChanged();
+	_graphic.registerGraphics();
+
+	_player.goToFrame(_firstFrame);
+	drawFrame();
+}
+
+void MovieRecord::applyPosition() {
+	_graphic.moveTo(getTransformedDest(_dest, getTransform(), _player.getWidth(), _player.getHeight()));
+}
+
+void MovieRecord::drawFrame() {
+	// A frame with see-through parts would let the one before it show
+	_graphic._drawSurface.clear(0);
+	_player.drawFrame(_graphic._drawSurface, Common::Point(0, 0));
+	_graphic.setNeedsRedraw(true);
+}
+
+void MovieRecord::runOnce() {
+	_player.playRange(_firstFrame, _lastFrame);
+	drawFrame();
+}
+
+void MovieRecord::run(double sceneTime, double elapsedTime) {
+	if (!_isPaused && _player.update()) {
+		drawFrame();
+	}
+
+	if (!_player.isRangePlaying() && !_pausesOnLastFrame) {
+		_endTime = sceneTime;
+		finish();
+	}
+}
+
+bool MovieRecord::prepareReset() {
+	_endTime = 0.0;
+	_isPaused = false;
+	_player.goToFrame(_firstFrame);
+	drawFrame();
+	return true;
+}
+
+void MovieRecord::onZChanged() {
+	_graphic.setScriptZ(getZ(), getContext().getZOffset());
+}
+
+void MovieRecord::updateGraphics() {
+	_graphic.setVisible(isActive() && _isVisible);
+}
+
+// movie:Play() and movie:Pause()
+static int moviePlay(lua_State *L) {
+	MovieRecord *record = dynamic_cast<MovieRecord *>(checkRecord(L, 1));
+	if (record) {
+		record->setPaused(false);
+	}
+
+	return 0;
+}
+
+static int moviePause(lua_State *L) {
+	MovieRecord *record = dynamic_cast<MovieRecord *>(checkRecord(L, 1));
+	if (record) {
+		record->setPaused(true);
+	}
+
+	return 0;
+}
+
+bool MovieRecord::getField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "movie") {
+		lua_pushstring(L, _name.c_str());
+	} else if (key == "onScreen") {
+		pushRect(L, _dest);
+	} else if (key == "Play") {
+		lua_pushcfunction(L, moviePlay);
+	} else if (key == "Pause") {
+		lua_pushcfunction(L, moviePause);
+	} else if (key == "paused") {
+		lua_pushboolean(L, _isPaused || !_player.isRangePlaying());
+	} else if (key == "pauseOnLastFrame") {
+		lua_pushboolean(L, _pausesOnLastFrame);
+	} else if (key == "visible") {
+		lua_pushboolean(L, _isVisible);
+	} else if (key == "frame") {
+		lua_pushinteger(L, _player.getCurrentFrame());
+	} else if (key == "endTime") {
+		lua_pushnumber(L, _endTime);
+	} else if (key == "firstFrame") {
+		lua_pushinteger(L, _firstFrame);
+	} else if (key == "lastFrame") {
+		lua_pushinteger(L, _lastFrame);
+	} else if (key == "frames") {
+		lua_pushinteger(L, _player.getFrameCount());
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+bool MovieRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		_dest = checkRect(L, 3);
+		applyPosition();
+	} else if (key == "pauseOnLastFrame") {
+		_pausesOnLastFrame = lua_toboolean(L, 3) != 0;
+	} else if (key == "visible") {
+		_isVisible = lua_toboolean(L, 3) != 0;
+	} else if (key == "frame") {
+		_player.goToFrame(luaL_checkint(L, 3));
+		drawFrame();
 	} else {
 		return false;
 	}
