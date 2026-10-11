@@ -574,6 +574,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 		return res;
 	}
 
+	public static class Reloader {
+		public native static boolean reload();
+	};
+
 	static {
 //		// For grabbing with gdb...
 //		final boolean sleep_for_debugger = false;
@@ -584,6 +588,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 //			}
 //		}
 
-		System.loadLibrary("scummvm");
+		// The loader will load the real libscummvm.so and resolve the Reloader native
+		// This will allow us to reset ScummVM global variables
+		System.loadLibrary("loader");
 	}
 }

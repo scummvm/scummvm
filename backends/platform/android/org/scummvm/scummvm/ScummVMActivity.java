@@ -1190,6 +1190,10 @@ public class ScummVMActivity extends Activity {
 		// but on older versions it could return RGB_565 which could be more efficient for the GPU
 		main_surface_holder.setFormat(getDisplayPixelFormat());
 
+		if (!ScummVM.Reloader.reload()) {
+			throw new RuntimeException("Can't reload ScummVM");
+		}
+
 		_scummvm = new MyScummVM(main_surface_holder, new MyScummVMDestroyedCallback() {
 		                                                        @Override
 		                                                        public void handle(int exitResult) {
