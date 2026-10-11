@@ -4770,10 +4770,13 @@ void Support::characterChangeRoom(Hotspot &h, uint16 roomNumber,
 		newY = (newY - h.heightCopy()) & 0xfff8;
 
 		if (checkForIntersectingCharacter(h, newX, newY, roomNumber)) {
-			// Character is blocked, so add a handler for handling it
+			// Character is blocked, so add a handler for handling it, unless one is already active
 			uint16 dataId = res.getCharOffset(0);
 			CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
-			h.currentActions().addFront(DISPATCH_ACTION, entry, h.roomNumber());
+			CurrentActionStack &actions = h.currentActions();
+			if (actions.isEmpty() || !actions.top().hasSupportData() ||
+				(actions.top().supportData().parent() != entry->parent()))
+				actions.addFront(DISPATCH_ACTION, entry, h.roomNumber());
 		} else {
 			// Handle character room change
 			h.setRoomNumber(roomNumber);
