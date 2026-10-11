@@ -329,15 +329,8 @@ void IgorEngine::PART_MAZE() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	// the whole room is darker than its palette
-	for (int color = 1; color <= 207; ++color) {
-		if (color > 183 && color < 192) {
-			continue;
-		}
-		for (int i = 0; i < 3; ++i) {
-			const int value = _paletteBuffer[color * 3 + i] - room->darkness;
-			_paletteBuffer[color * 3 + i] = value < 1 ? 0 : value;
-		}
-	}
+	darkenPalette(_paletteBuffer, 1, 183, room->darkness);
+	darkenPalette(_paletteBuffer, 192, 207, room->darkness);
 
 	// draws the first frames of the flames
 	for (int i = 0; i < room->numFlames; ++i) {

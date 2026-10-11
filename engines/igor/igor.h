@@ -1252,11 +1252,13 @@ private:
 	void PART_72_EXEC_ACTION(int action);
 	void PART_72_APPLY_OBJECT_STATE();
 	void PART_72_ACTION_102_takeObject();
-	void PART_72_ENTER_FROM_RIGHT();
-	void PART_72_ENTER_FROM_LEFT();
+	void PART_72_enterFromMap();
+	void PART_72_enterFromSwamp();
 	void PART_72_UPDATE_STAR();
 	void PART_72_UPDATE_ROOM_BACKGROUND();
 	void PART_72();
+
+	void paintEyes();
 
 	void PART_76_EXEC_ACTION(int action);
 	void PART_76_APPLY_OBJECT_STATE();
