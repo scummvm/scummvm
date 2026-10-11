@@ -147,6 +147,8 @@ void AndroidMixerManagerImpl::initStream() {
 		->setChannelCount(oboe::ChannelCount::Stereo)
 		->setFormatConversionAllowed(true)
 		->setFormat(oboe::AudioFormat::I16)
+		->setUsage(oboe::Usage::Game)
+		->setContentType(oboe::ContentType::Movie)
 		->setDataCallback(this);
 
 	if (_mixer) {
