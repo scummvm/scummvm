@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/main_menu.h"
+#include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -55,6 +56,8 @@ void MainMenu::draw() {
 	s.writeString(Common::Point(13, 19), "Journey Onward");
 
 	_choice.draw(s, true);
+
+	Gfx::compositeFinish(s);
 }
 
 bool MainMenu::msgKeypress(const KeypressMessage &msg) {

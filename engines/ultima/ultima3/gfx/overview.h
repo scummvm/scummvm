@@ -54,6 +54,11 @@ private:
 
 	void plot(int x, int y, int value);
 
+	/**
+	 * Builds the picture of the current map in the colors of the upgrade's renderers
+	 */
+	void showEnhancedMap();
+
 public:
 	/**
 	 * Builds the picture of the current map

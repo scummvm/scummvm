@@ -22,6 +22,8 @@
 #include "common/stream.h"
 #include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/gfx/pic_decoder.h"
+#include "ultima/ultima3/gfx/pixels.h"
+#include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -38,6 +40,16 @@ bool PicDecoder::loadStream(Common::SeekableReadStream &stream) {
 	Common::Array<byte> data;
 	data.resize(stream.size());
 	stream.read(&data[0], stream.size());
+
+	if (_G(renderMode) == Data::RENDER_EGA) {
+		if (data.size() >= 320 * 200 / 2)
+			unpack4bpp(&data[0], output_buffer, 320 * 200);
+		return data.size() >= 320 * 200 / 2;
+	} else if (_G(renderMode) == Data::RENDER_VGA) {
+		if (data.size() >= 320 * 200)
+			memcpy(output_buffer, &data[0], 320 * 200);
+		return data.size() >= 320 * 200;
+	}
 
 	for (int y = 0; y < 200; ++y) {
 		int bank = y & 1;

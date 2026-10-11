@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/character_details.h"
+#include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/ultima3.h"
 
@@ -82,6 +83,8 @@ void CharacterDetails::draw() {
 
 	if (_state != ENTRY)
 		drawSpacePrompt(s);
+
+	Gfx::compositeFinish(s);
 }
 
 bool CharacterDetails::msgKeypress(const KeypressMessage &msg) {

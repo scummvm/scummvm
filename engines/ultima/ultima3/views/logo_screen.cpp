@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "ultima/ultima3/views/logo_screen.h"
+#include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/views/menu_input.h"
 #include "ultima/ultima3/ultima3.h"
 
@@ -88,6 +89,8 @@ void LogoScreen::draw() {
 	s.addDirtyRect(Common::Rect(8, 88, 312, 184));
 
 	drawSpacePrompt(s);
+
+	Gfx::compositeFinish(s);
 }
 
 void LogoScreen::timeout() {

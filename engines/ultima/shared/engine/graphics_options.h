@@ -22,6 +22,7 @@
 #ifndef ULTIMA_SHARED_ENGINE_GRAPHICS_OPTIONS_H
 #define ULTIMA_SHARED_ENGINE_GRAPHICS_OPTIONS_H
 
+#include "engines/metaengine.h"
 #include "gui/widget.h"
 
 namespace GUI {
@@ -43,13 +44,16 @@ constexpr const char *GRAPHICS_MODE_KEY = "graphics_mode";
  * given the (untranslated, marked with _s) labels of the game's modes, in
  * the order of the game's own mode enum - the selected entry's index is what
  * gets stored under GRAPHICS_MODE_KEY, for the game to read when it starts
- * or when it's told the game options have changed
+ * or when it's told the game options have changed. Any of the game's other
+ * options that are checkboxes can be shown below it
  */
 class GraphicsOptionsWidget : public GUI::OptionsContainerWidget {
 private:
 	const char *const *_modes;
 	int _modeCount;
 	GUI::PopUpWidget *_modePopUp;
+	ExtraGuiOptions _options;
+	Common::Array<GUI::CheckboxWidget *> _checkboxes;
 
 protected:
 	// OptionsContainerWidget API
@@ -57,8 +61,16 @@ protected:
 		const Common::String &overlayedLayout) const override;
 
 public:
+	/**
+	 * Constructor
+	 * @param modes				The labels of the modes
+	 * @param modeCount			How many modes there are
+	 * @param options			The game's other options to show
+	 * @param onTitleScreen		True if the mode can be changed from the game's title screen
+	 */
 	GraphicsOptionsWidget(GUI::GuiObject *boss, const Common::String &name,
-		const Common::String &domain, const char *const *modes, int modeCount);
+		const Common::String &domain, const char *const *modes, int modeCount,
+		const ExtraGuiOptions &options = ExtraGuiOptions(), bool onTitleScreen = true);
 	~GraphicsOptionsWidget() override {
 	}
 

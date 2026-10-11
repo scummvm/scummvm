@@ -21,34 +21,61 @@
 
 #include "common/file.h"
 #include "ultima/ultima3/gfx/charset.h"
+#include "ultima/ultima3/gfx/pixels.h"
+#include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
 namespace Ultima3 {
 namespace Gfx {
 
-byte CharSet::_data[CHARSET_GLYPHS * CHARSET_GLYPH_BYTES];
+constexpr int CGA_GLYPH_BYTES = 16;
+
+byte CharSet::_data[CHARSET_GLYPHS * CHARSET_GLYPH_PIXELS];
 
 void CharSet::load() {
 	Common::File f;
-	if (!f.open("CHARSET.ULT") || f.read(_data, sizeof(_data)) != sizeof(_data))
-		error("Could not load CHARSET.ULT");
+
+	switch (_G(renderMode)) {
+	case Data::RENDER_EGA: {
+		byte data[CHARSET_GLYPHS * CHARSET_GLYPH_PIXELS / 2];
+		if (!f.open("charset.ega") || f.read(data, sizeof(data)) != sizeof(data))
+			error("Could not load charset.ega");
+
+		unpack4bpp(data, _data, sizeof(_data));
+		break;
+	}
+
+	case Data::RENDER_VGA:
+		if (!f.open("charset.vga") || f.read(_data, sizeof(_data)) != sizeof(_data))
+			error("Could not load charset.vga");
+		break;
+
+	default: {
+		byte data[CHARSET_GLYPHS * CGA_GLYPH_BYTES];
+		if (!f.open("CHARSET.ULT") || f.read(data, sizeof(data)) != sizeof(data))
+			error("Could not load CHARSET.ULT");
+
+		// The first 8 bytes of a glyph hold the even scanlines and the next 8 the odd
+		// ones, 2 bytes (8 pixels) per scanline
+		for (int chr = 0; chr < CHARSET_GLYPHS; ++chr) {
+			const byte *glyph = &data[chr * CGA_GLYPH_BYTES];
+
+			for (int y = 0; y < 8; ++y)
+				unpack2bpp(glyph + (y & 1) * 8 + (y >> 1) * 2, &_data[chr * CHARSET_GLYPH_PIXELS + y * 8], 8);
+		}
+		break;
+	}
+	}
 }
 
 void CharSet::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	if (chr >= CHARSET_GLYPHS)
 		return;
 
-	// The first 8 bytes hold the even scanlines and the next 8 the odd ones,
-	// 2 bytes (8 pixels) per scanline
-	const byte *glyph = &_data[chr * CHARSET_GLYPH_BYTES];
+	const byte *glyph = &_data[chr * CHARSET_GLYPH_PIXELS];
 
-	for (int yp = 0; yp < 8; ++yp) {
-		const byte *line = glyph + (yp & 1) * 8 + (yp >> 1) * 2;
-		byte *destP = (byte *)dst->getBasePtr(x, y + yp);
-
-		for (int xp = 0; xp < 8; ++xp, ++destP)
-			*destP = (line[xp >> 2] >> (6 - (xp & 3) * 2)) & 3;
-	}
+	for (int yp = 0; yp < 8; ++yp)
+		memcpy(dst->getBasePtr(x, y + yp), glyph + yp * 8, 8);
 }
 
 } // namespace Gfx

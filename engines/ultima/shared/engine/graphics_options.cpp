@@ -29,19 +29,28 @@ namespace Ultima {
 namespace Shared {
 
 GraphicsOptionsWidget::GraphicsOptionsWidget(GUI::GuiObject *boss, const Common::String &name,
-		const Common::String &domain, const char *const *modes, int modeCount) :
+		const Common::String &domain, const char *const *modes, int modeCount,
+		const ExtraGuiOptions &options, bool onTitleScreen) :
 		GUI::OptionsContainerWidget(boss, name, "UltimaGraphicsOptionsDialog", domain),
-		_modes(modes), _modeCount(modeCount) {
+		_modes(modes), _modeCount(modeCount), _options(options) {
+	const Common::U32String tooltip = onTitleScreen ?
+		_("Which of the game's renderers to use. This can also be changed from the game's title screen.") :
+		_("Which of the game's renderers to use.");
+
 	GUI::StaticTextWidget *label = new GUI::StaticTextWidget(widgetsBoss(),
-		_dialogLayout + ".graphics_mode_desc", _("Graphics mode:"),
-		_("Which of the game's renderers to use. This can also be changed from the game's title screen."));
+		_dialogLayout + ".graphics_mode_desc", _("Graphics mode:"), tooltip);
 	label->setAlign(Graphics::kTextAlignLeft);
 
-	_modePopUp = new GUI::PopUpWidget(widgetsBoss(), _dialogLayout + ".graphics_mode",
-		_("Which of the game's renderers to use. This can also be changed from the game's title screen."));
+	_modePopUp = new GUI::PopUpWidget(widgetsBoss(), _dialogLayout + ".graphics_mode", tooltip);
 
 	for (int i = 0; i < _modeCount; ++i)
 		_modePopUp->appendEntry(_(_modes[i]), i);
+
+	for (uint i = 0; i < _options.size(); ++i) {
+		_checkboxes.push_back(new GUI::CheckboxWidget(widgetsBoss(),
+			_dialogLayout + Common::String::format(".customOption%dCheckbox", i + 1),
+			_(_options[i].label), _(_options[i].tooltip)));
+	}
 }
 
 void GraphicsOptionsWidget::load() {
@@ -53,10 +62,22 @@ void GraphicsOptionsWidget::load() {
 		mode = 0;
 
 	_modePopUp->setSelectedTag(mode);
+
+	// The options that are checkboxes start from what the game says unless set
+	for (uint i = 0; i < _options.size(); ++i) {
+		bool isChecked = _options[i].defaultState;
+		if (ConfMan.hasKey(_options[i].configOption, _domain))
+			isChecked = ConfMan.getBool(_options[i].configOption, _domain);
+		_checkboxes[i]->setState(isChecked);
+	}
 }
 
 bool GraphicsOptionsWidget::save() {
 	ConfMan.setInt(GRAPHICS_MODE_KEY, _modePopUp->getSelectedTag(), _domain);
+
+	for (uint i = 0; i < _options.size(); ++i)
+		ConfMan.setBool(_options[i].configOption, _checkboxes[i]->getState(), _domain);
+
 	return true;
 }
 
@@ -67,6 +88,9 @@ void GraphicsOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::
 	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(16, 0, 0, 0);
 		layouts.addWidget("graphics_mode_desc", "OptionsLabel");
 		layouts.addWidget("graphics_mode", "PopUp");
+
+		for (uint i = 0; i < _options.size(); ++i)
+			layouts.addWidget(Common::String::format("customOption%dCheckbox", i + 1), "Checkbox");
 	layouts.closeLayout().closeDialog();
 }
 

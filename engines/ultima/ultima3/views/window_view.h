@@ -43,7 +43,7 @@ protected:
 	static void clearWindow(GfxSurface &s);
 
 	/**
-	 * Draws the magenta window border
+	 * Draws the window border, which is magenta in the original
 	 */
 	static void drawBorder(GfxSurface &s);
 

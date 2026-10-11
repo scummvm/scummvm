@@ -31,11 +31,13 @@ namespace Ultima3 {
 namespace Gfx {
 
 /**
- * Decodes Ultima III's raw "*.IBM" full-screen title art: a literal
- * 16384-byte dump of the CGA mode 4 (320x200, 4-color, palette 1)
- * framebuffer segment -- two interleaved 8192-byte banks (even scanlines
- * in the first, odd in the second), 2 bits/pixel, 4 pixels per byte,
- * MSB-first.
+ * Decodes Ultima III's raw full-screen title art. The original "*.IBM" files
+ * are a literal 16384-byte dump of the CGA mode 4 (320x200, 4-color,
+ * palette 1) framebuffer segment -- two interleaved 8192-byte banks (even
+ * scanlines in the first, odd in the second), 2 bits/pixel, 4 pixels per
+ * byte, MSB-first. The upgrade's "*.EGA" and "*.VGA" files are the 320x200
+ * pixels in order, at 4 and 8 bits per pixel. Which is read depends on the
+ * renderer in use.
  */
 class PicDecoder : public Image::ImageDecoder {
 private:

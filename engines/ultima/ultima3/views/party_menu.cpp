@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/party_menu.h"
+#include "ultima/ultima3/gfx/composite.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -57,6 +58,8 @@ void PartyMenu::draw() {
 	s.writeString(Common::Point(15, 21), "Main Menu");
 
 	_choice.draw(s, true);
+
+	Gfx::compositeFinish(s);
 }
 
 bool PartyMenu::msgKeypress(const KeypressMessage &msg) {

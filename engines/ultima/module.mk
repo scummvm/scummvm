@@ -173,7 +173,9 @@ MODULE_OBJS += \
 	ultima3/data/roster.o \
 	ultima3/data/savegame.o \
 	ultima3/gfx/charset.o \
+	ultima3/gfx/composite.o \
 	ultima3/gfx/dungeon_view.o \
+	ultima3/gfx/frame.o \
 	ultima3/gfx/message_log.o \
 	ultima3/gfx/overview.o \
 	ultima3/gfx/pic_decoder.o \

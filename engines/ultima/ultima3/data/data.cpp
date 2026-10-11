@@ -19,7 +19,10 @@
  *
  */
 
+#include "common/file.h"
 #include "common/system.h"
+#include "common/translation.h"
+#include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "ultima/ultima3/data/data.h"
 
@@ -34,9 +37,64 @@ const byte CGA_PALETTE1[4 * 3] = {
 	0xff, 0xff, 0xff  // 3: white
 };
 
-void setCGAPalette() {
-	Graphics::Palette palette(4);
-	palette.set(CGA_PALETTE1, 0, 4);
+const char *const RENDER_MODE_LABELS[RENDER_MODE_COUNT] = {
+	_s("Original (CGA)"), _s("Composite monitor (CGA)"), _s("EGA (16 colors)"), _s("VGA (256 colors)")
+};
+
+// The standard 16-color EGA/VGA palette
+static const byte EGA_PALETTE16[16 * 3] = {
+	0x00, 0x00, 0x00, // 0: black
+	0x00, 0x00, 0xaa, // 1: blue
+	0x00, 0xaa, 0x00, // 2: green
+	0x00, 0xaa, 0xaa, // 3: cyan
+	0xaa, 0x00, 0x00, // 4: red
+	0xaa, 0x00, 0xaa, // 5: magenta
+	0xaa, 0x55, 0x00, // 6: brown
+	0xaa, 0xaa, 0xaa, // 7: light gray
+	0x55, 0x55, 0x55, // 8: dark gray
+	0x55, 0x55, 0xff, // 9: light blue
+	0x55, 0xff, 0x55, // 10: light green
+	0x55, 0xff, 0xff, // 11: light cyan
+	0xff, 0x55, 0x55, // 12: light red
+	0xff, 0x55, 0xff, // 13: light magenta
+	0xff, 0xff, 0x55, // 14: yellow
+	0xff, 0xff, 0xff  // 15: white
+};
+
+// Reads a VGA palette file, whose entries are 6-bit R, G, B, into a palette
+static void loadPaletteFile(Graphics::Palette &palette, const char *filename, int base, int count) {
+	Common::File f;
+	if (!f.open(filename))
+		error("Could not load %s", filename);
+
+	for (int i = 0; i < count; ++i) {
+		byte rgb[3];
+		if (f.read(rgb, 3) != 3)
+			error("%s is too short", filename);
+
+		for (int c = 0; c < 3; ++c)
+			rgb[c] = (rgb[c] << 2) | (rgb[c] >> 4);
+		palette.set(rgb, base + i, 1);
+	}
+}
+
+void setPalette(RenderMode mode) {
+	Graphics::Palette palette(256);
+
+	switch (mode) {
+	case RENDER_EGA:
+		palette.set(EGA_PALETTE16, 0, 16);
+		break;
+	case RENDER_VGA:
+		loadPaletteFile(palette, "u3vga.pal", 0, 256);
+		break;
+	default:
+		palette.set(CGA_PALETTE1, 0, 4);
+		if (mode == RENDER_CGA_COMPOSITE)
+			loadPaletteFile(palette, "cgacomp.pal", COMPOSITE_PALETTE_BASE, COMPOSITE_PALETTE_SIZE);
+		break;
+	}
+
 	g_system->getPaletteManager()->setPalette(palette);
 }
 

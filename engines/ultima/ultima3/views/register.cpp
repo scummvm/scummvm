@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/register.h"
+#include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -54,6 +55,8 @@ void Register::draw() {
 	}
 
 	drawSpacePrompt(s);
+
+	Gfx::compositeFinish(s);
 }
 
 bool Register::msgKeypress(const KeypressMessage &msg) {

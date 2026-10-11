@@ -96,8 +96,9 @@ void DungeonMap::drawViewport(GfxSurface &s) {
 
 		for (int y = VIEW_TOP; y < VIEW_TOP + VIEW_SIZE; ++y) {
 			for (int x = VIEW_LEFT; x < VIEW_LEFT + VIEW_SIZE; ++x) {
-				if (_view.isLit(x, y))
-					s.setPixel(x, y, 3);
+				byte color = _view.color(x, y);
+				if (color)
+					s.setPixel(x, y, color);
 			}
 		}
 	}

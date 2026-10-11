@@ -30,15 +30,16 @@ namespace Ultima3 {
 namespace Gfx {
 
 constexpr int CHARSET_GLYPHS = 128;
-constexpr int CHARSET_GLYPH_BYTES = 16;
+constexpr int CHARSET_GLYPH_PIXELS = 8 * 8;
 
 /**
- * The game's CGA font from CHARSET.ULT: 128 glyphs of 8x8 pixels at 2 bits
- * per pixel, so each glyph carries its own colors.
+ * The game's font from CHARSET.ULT: 128 glyphs of 8x8 pixels at 2 bits per
+ * pixel, or from the upgrade's EGA or VGA files, depending on the renderer.
+ * Each glyph carries its own colors, and is kept a byte per pixel.
  */
 class CharSet : public Graphics::Font {
 private:
-	static byte _data[CHARSET_GLYPHS * CHARSET_GLYPH_BYTES];
+	static byte _data[CHARSET_GLYPHS * CHARSET_GLYPH_PIXELS];
 
 public:
 	static void load();

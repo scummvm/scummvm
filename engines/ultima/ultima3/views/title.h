@@ -106,6 +106,7 @@ private:
 	// One 92x16px flag-flutter frame (drawAnimationFrameRow), plus its
 	// 4px erase margins on each side
 	void drawFlagFrame(int bxParam, int axParam);
+	void drawEnhancedFlagFrame(int bxParam, int axParam);
 
 	// One step of the NAME.DAT signature reveal; returns false once the
 	// terminator is hit

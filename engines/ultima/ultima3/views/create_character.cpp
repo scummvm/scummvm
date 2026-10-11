@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "ultima/ultima3/views/create_character.h"
+#include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/ultima3.h"
 
@@ -106,6 +107,8 @@ void CreateCharacter::draw() {
 
 	if (_state == MESSAGE || _state == FINISHED)
 		drawSpacePrompt(s);
+
+	Gfx::compositeFinish(s);
 }
 
 bool CreateCharacter::acceptAttribute(int value) {

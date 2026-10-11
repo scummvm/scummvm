@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "ultima/ultima3/gfx/dungeon_view.h"
+#include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -164,21 +165,39 @@ constexpr int LADDER_PLACES = 21;
 constexpr int MIDDLE = 0x40;
 constexpr int DOOR_CUTOUT = 0x20;
 
+// The colors drawn in the upgrade's renderers, all of which are white in the original
+constexpr byte COLOR_ORIGINAL = 3;
+constexpr byte COLOR_WALL = 6;
+constexpr byte COLOR_DOOR = 7;
+constexpr byte COLOR_CHEST = 0x0E;
+constexpr byte COLOR_LADDER = 0x0F;
+
+// Faces up to this number are walls, with the doors and so on after
+constexpr int LAST_WALL_FACE = 0x20;
+
+static bool isEnhanced() {
+	return Data::isEnhancedMode(_G(renderMode));
+}
+
 void DungeonView::plot(int x, int y) {
 	x = (byte)(x + OFFSET);
 	y = (byte)(y + OFFSET);
 
 	if (y < HEIGHT)
-		_pixels[y * WIDTH + x] = 3;
+		_pixels[y * WIDTH + x] |= isEnhanced() ? COLOR_LADDER : COLOR_ORIGINAL;
 }
 
-void DungeonView::column(int x, int top, int bottom, bool erase) {
+void DungeonView::column(int x, int top, int bottom, bool erase, byte color) {
 	x = (byte)(x + OFFSET);
 	int height = (byte)(bottom - top);
 
 	// Hatched walls are made of columns of pixels, which this fills in or clears
-	for (int y = (byte)top + OFFSET; height > 0 && y < HEIGHT; ++y, --height)
-		_pixels[y * WIDTH + x] = erase ? 0 : 3;
+	for (int y = (byte)top + OFFSET; height > 0 && y < HEIGHT; ++y, --height) {
+		if (erase)
+			_pixels[y * WIDTH + x] = 0;
+		else
+			_pixels[y * WIDTH + x] |= color;
+	}
 }
 
 void DungeonView::line(int x0, int y0, int x1, int y1) {
@@ -244,8 +263,15 @@ void DungeonView::drawWall(int face) {
 		}
 	};
 
+	// The color depends on what's being drawn, and the sides of doors are a column wider
+	const bool enhanced = isEnhanced();
+	const byte color = !enhanced ? COLOR_ORIGINAL : (face <= LAST_WALL_FACE ? COLOR_WALL : COLOR_DOOR);
+	const bool wide = enhanced && face > LAST_WALL_FACE;
+
 	for (;;) {
-		column(x, top, bottom, erase);
+		column(x, top, bottom, erase, color);
+		if (wide)
+			column(x + 1, top, bottom, erase, color);
 		if (--columns == 0)
 			break;
 
@@ -292,7 +318,7 @@ void DungeonView::drawChest(int place) {
 
 	int x = rec[0];
 	do {
-		column(x, rec[2], rec[3], false);
+		column(x, rec[2], rec[3], false, isEnhanced() ? COLOR_CHEST : COLOR_ORIGINAL);
 		++x;
 	} while (x < rec[1]);
 }

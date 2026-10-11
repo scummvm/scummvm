@@ -30,7 +30,8 @@ namespace Gfx {
 
 /**
  * The first person view down the corridors of a dungeon: the walls, doors,
- * ladders and chests in sight drawn as white lines
+ * ladders and chests in sight drawn as lines, which are all white in the
+ * original and have colors in the upgrade's EGA and VGA renderers
  */
 class DungeonView {
 private:
@@ -51,7 +52,7 @@ private:
 
 	void plot(int x, int y);
 	void line(int x0, int y0, int x1, int y1);
-	void column(int x, int top, int bottom, bool erase);
+	void column(int x, int top, int bottom, bool erase, byte color);
 	void drawWall(int face);
 	void drawLadder(bool down, int place);
 	void drawChest(int place);
@@ -78,11 +79,11 @@ public:
 	void draw(const Data::Dungeon &dungeon, int level, int x, int y, int facing);
 
 	/**
-	 * Returns true if a pixel of the picture, whose position is that on the
-	 * screen, is lit
+	 * Returns the color of a pixel of the picture, whose position is that on
+	 * the screen, which is zero if it's not lit
 	 */
-	bool isLit(int x, int y) const {
-		return _pixels[y * WIDTH + x] != 0;
+	byte color(int x, int y) const {
+		return _pixels[y * WIDTH + x];
 	}
 };
 

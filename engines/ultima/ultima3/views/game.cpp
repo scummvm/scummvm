@@ -20,6 +20,8 @@
  */
 
 #include "ultima/ultima3/views/game.h"
+#include "ultima/ultima3/gfx/composite.h"
+#include "ultima/ultima3/gfx/frame.h"
 #include "ultima/ultima3/views/menu_input.h"
 #include "ultima/ultima3/views/interactions/equip.h"
 #include "ultima/ultima3/views/interactions/exchange.h"
@@ -196,20 +198,28 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Game::invertRect(GfxSurface &s, const Common::Rect &r) {
+	const byte mask = Data::invertMask(_G(renderMode));
+
 	for (int y = r.top; y < r.bottom; ++y) {
 		byte *p = (byte *)s.getBasePtr(r.left, y);
 
 		for (int x = r.left; x < r.right; ++x, ++p)
-			*p ^= 3;
+			*p ^= mask;
 	}
 }
 
 void Game::drawFrame(GfxSurface &s) {
-	// Alternating black and magenta pixels, filling whole 8x8 cells
+	if (_G(renderMode) == Data::RENDER_VGA) {
+		Gfx::drawGameFrame(s);
+		return;
+	}
+
+	// Alternating black and magenta pixels, or solid light blue in EGA, filling whole 8x8 cells
+	const bool ega = _G(renderMode) == Data::RENDER_EGA;
 	auto cell = [&](int col, int row) {
 		for (int y = 0; y < 8; ++y)
 			for (int x = 0; x < 8; ++x)
-				s.setPixel(col * 8 + x, row * 8 + y, (x & 1) ? 2 : 0);
+				s.setPixel(col * 8 + x, row * 8 + y, ega ? Data::EGA_FRAME_COLOR : ((x & 1) ? 2 : 0));
 	};
 
 	for (int row = 0; row < 24; ++row) {
@@ -312,6 +322,8 @@ void Game::draw() {
 	if (fx._highlight >= 0)
 		invertRect(s, Common::Rect(31 * 8, fx._highlight * PANEL_SLOT_ROWS * 8, 32 * 8,
 			(fx._highlight * PANEL_SLOT_ROWS + 1) * 8));
+
+	Gfx::compositeFinish(s);
 }
 
 } // namespace Views

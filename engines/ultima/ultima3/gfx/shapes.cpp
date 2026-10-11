@@ -22,12 +22,15 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "ultima/ultima3/gfx/shapes.h"
+#include "ultima/ultima3/gfx/pixels.h"
+#include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
 namespace Ultima3 {
 namespace Gfx {
 
 constexpr int BYTES_PER_LINE = 4;
+constexpr int SHAPE_BYTES = 64;
 
 // Tiles scrolled one pixel at a time, and how many ticks pass between each
 static const int SCROLL_TILES[4] = { 0, 33, 32, 34 };
@@ -42,14 +45,49 @@ static const byte FLICKER_PERIODS[3] = { 4, 3, 2 };
 // alternates: tiles 16-30 with 64-78, and tile 12 with 79
 constexpr byte SWAP_PERIOD = 10;
 
+// The tile of the moon gate, whose rings of color are cycled in VGA
+constexpr int GATE_TILE = 34;
+constexpr int GATE_RINGS = 5;
+
+// In VGA the flickering only affects the middle of a scanline
+constexpr int VGA_FLICKER_START = 4;
+constexpr int VGA_FLICKER_WIDTH = 8;
+
 static int lineOffset(int line) {
 	return (line & 1) * (SHAPE_BYTES / 2) + (line >> 1) * BYTES_PER_LINE;
 }
 
 void Shapes::load() {
 	Common::File f;
-	if (!f.open("SHAPES.ULT") || f.read(_data, sizeof(_data)) != sizeof(_data))
-		error("Could not load SHAPES.ULT");
+
+	switch (_G(renderMode)) {
+	case Data::RENDER_EGA: {
+		byte data[SHAPE_COUNT * SHAPE_PIXELS / 2];
+		if (!f.open("shapes.ega") || f.read(data, sizeof(data)) != sizeof(data))
+			error("Could not load shapes.ega");
+
+		unpack4bpp(data, _pixels, sizeof(_pixels));
+		break;
+	}
+
+	case Data::RENDER_VGA:
+		if (!f.open("shapes.vga") || f.read(_pixels, sizeof(_pixels)) != sizeof(_pixels))
+			error("Could not load shapes.vga");
+		break;
+
+	default: {
+		byte data[SHAPE_COUNT * SHAPE_BYTES];
+		if (!f.open("SHAPES.ULT") || f.read(data, sizeof(data)) != sizeof(data))
+			error("Could not load SHAPES.ULT");
+
+		for (int index = 0; index < SHAPE_COUNT; ++index) {
+			for (int line = 0; line < SHAPE_SIZE; ++line)
+				unpack2bpp(&data[index * SHAPE_BYTES + lineOffset(line)],
+					tile(index) + line * SHAPE_SIZE, SHAPE_SIZE);
+		}
+		break;
+	}
+	}
 
 	for (int i = 0; i < 4; ++i)
 		_scrollCounters[i] = SCROLL_PERIODS[i];
@@ -60,37 +98,69 @@ void Shapes::load() {
 
 void Shapes::scrollTile(int index) {
 	byte *t = tile(index);
-	byte carry[BYTES_PER_LINE];
-	memcpy(carry, t + lineOffset(15), BYTES_PER_LINE);
+	byte carry[SHAPE_SIZE];
+	memcpy(carry, t + (SHAPE_SIZE - 1) * SHAPE_SIZE, SHAPE_SIZE);
 
 	for (int line = 0; line < SHAPE_SIZE; ++line) {
-		byte old[BYTES_PER_LINE];
-		byte *dest = t + lineOffset(line);
+		byte old[SHAPE_SIZE];
+		byte *dest = t + line * SHAPE_SIZE;
 
-		memcpy(old, dest, BYTES_PER_LINE);
-		memcpy(dest, carry, BYTES_PER_LINE);
-		memcpy(carry, old, BYTES_PER_LINE);
+		memcpy(old, dest, SHAPE_SIZE);
+		memcpy(dest, carry, SHAPE_SIZE);
+		memcpy(carry, old, SHAPE_SIZE);
+	}
+}
+
+void Shapes::cycleRings(int index) {
+	byte *t = tile(index);
+
+	// Each ring is an arch, with the outer one starting at the top left. They
+	// each take the color of the ring outside them
+	byte color = t[1 * SHAPE_SIZE + 3];
+
+	for (int ring = GATE_RINGS - 1; ring >= 0; --ring) {
+		int x = 3 + ring;
+		byte next = t[14 * SHAPE_SIZE + x];
+		int width = 2 * (GATE_RINGS - 1 - ring) + 1;
+		int rows = 13 - ring;
+		int pos = 14 * SHAPE_SIZE + x;
+
+		for (int i = 0; i < rows; ++i, pos -= SHAPE_SIZE) {
+			t[pos] = color;
+			t[pos + width] = color;
+		}
+		for (int i = 0; i <= width; ++i)
+			t[pos + i] = color;
+
+		color = next;
 	}
 }
 
 void Shapes::swapLines(int index, int line1, int line2) {
 	byte *t = tile(index);
-	byte temp[BYTES_PER_LINE];
+	int start = 0, width = SHAPE_SIZE;
 
-	memcpy(temp, t + lineOffset(line1), BYTES_PER_LINE);
-	memcpy(t + lineOffset(line1), t + lineOffset(line2), BYTES_PER_LINE);
-	memcpy(t + lineOffset(line2), temp, BYTES_PER_LINE);
+	if (_G(renderMode) == Data::RENDER_VGA) {
+		start = VGA_FLICKER_START;
+		width = VGA_FLICKER_WIDTH;
+	}
+
+	for (int i = 0; i < width; ++i)
+		SWAP(t[line1 * SHAPE_SIZE + start + i], t[line2 * SHAPE_SIZE + start + i]);
 }
 
 void Shapes::swapTiles(int index1, int index2, int count) {
-	for (int i = 0; i < count * SHAPE_BYTES; ++i)
-		SWAP(_data[index1 * SHAPE_BYTES + i], _data[index2 * SHAPE_BYTES + i]);
+	for (int i = 0; i < count * SHAPE_PIXELS; ++i)
+		SWAP(_pixels[index1 * SHAPE_PIXELS + i], _pixels[index2 * SHAPE_PIXELS + i]);
 }
 
 void Shapes::animate() {
 	for (int i = 0; i < 4; ++i) {
 		if (--_scrollCounters[i] == 0) {
-			scrollTile(SCROLL_TILES[i]);
+			if (SCROLL_TILES[i] == GATE_TILE && _G(renderMode) == Data::RENDER_VGA)
+				cycleRings(GATE_TILE);
+			else
+				scrollTile(SCROLL_TILES[i]);
 			_scrollCounters[i] = SCROLL_PERIODS[i];
 		}
 	}
@@ -113,17 +183,10 @@ void Shapes::drawTile(Graphics::ManagedSurface &dest, int x, int y, int index) c
 	if (index < 0 || index >= SHAPE_COUNT)
 		return;
 
-	const byte *t = &_data[index * SHAPE_BYTES];
+	const byte *t = &_pixels[index * SHAPE_PIXELS];
 
-	for (int line = 0; line < SHAPE_SIZE; ++line) {
-		const byte *src = t + lineOffset(line);
-		byte *destP = (byte *)dest.getBasePtr(x, y + line);
-
-		for (int b = 0; b < BYTES_PER_LINE; ++b) {
-			for (int p = 0; p < 4; ++p)
-				*destP++ = (src[b] >> (6 - p * 2)) & 3;
-		}
-	}
+	for (int line = 0; line < SHAPE_SIZE; ++line)
+		memcpy(dest.getBasePtr(x, y + line), t + line * SHAPE_SIZE, SHAPE_SIZE);
 }
 
 } // namespace Gfx

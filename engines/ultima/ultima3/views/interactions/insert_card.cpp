@@ -188,12 +188,13 @@ bool InsertCard::timeout() {
 
 void InsertCard::draw(GfxSurface &s) {
 	if (_stage == SHATTER) {
+		const byte mask = Data::invertMask(_G(renderMode));
 		for (int y = VIEWPORT_LEFT; y < VIEWPORT_RIGHT; ++y) {
 			byte *p = (byte *)s.getBasePtr(VIEWPORT_LEFT, y);
 
 			for (int x = VIEWPORT_LEFT; x < VIEWPORT_RIGHT; ++x, ++p) {
 				if ((x & 1) ? _invertOdd : _invertEven)
-					*p ^= 3;
+					*p ^= mask;
 			}
 		}
 

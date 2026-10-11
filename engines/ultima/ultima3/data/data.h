@@ -28,11 +28,48 @@ namespace Ultima {
 namespace Ultima3 {
 namespace Data {
 
-// Ultima III renders everything (title screens, tiles, in-game text) in a
-// single CGA 4-color palette
+// The original CGA 4-color palette, used by the original and composite modes
 extern const byte CGA_PALETTE1[4 * 3];
 
-void setCGAPalette();
+// The renderers from the Ultima III Upgrade patch
+enum RenderMode {
+	RENDER_CGA = 0, RENDER_CGA_COMPOSITE = 1, RENDER_EGA = 2, RENDER_VGA = 3,
+	RENDER_MODE_COUNT = 4
+};
+
+// Descriptions of the modes for the launcher's graphics mode drop-down, in
+// the same order. Marked for translation, but not translated
+extern const char *const RENDER_MODE_LABELS[RENDER_MODE_COUNT];
+
+// EGA and VGA draw everything from the upgrade's coloured graphics files
+inline bool isEnhancedMode(RenderMode mode) {
+	return mode == RENDER_EGA || mode == RENDER_VGA;
+}
+
+// The composite renderer's 16 artifact colors, loaded from CGACOMP.PAL, are
+// kept clear of the CGA colors. Gfx::compositeDecode maps each decoded CGA
+// pixel to one of these
+constexpr int COMPOSITE_PALETTE_BASE = 32;
+constexpr int COMPOSITE_PALETTE_SIZE = 16;
+
+// The colors the game draws with, which differ between the modes
+inline byte whiteColor(RenderMode mode) {
+	return isEnhancedMode(mode) ? 15 : 3;
+}
+
+// The color of the frame around the screens in the EGA renderer, which is made of solid cells
+constexpr byte EGA_FRAME_COLOR = 9;
+
+// What the pixels flipped to show something inverted are XORed with
+inline byte invertMask(RenderMode mode) {
+	return isEnhancedMode(mode) ? 0x0F : 3;
+}
+
+/**
+ * Sets the screen palette for a mode, which is the CGA colors, the EGA colors
+ * or the VGA palette file
+ */
+void setPalette(RenderMode mode);
 
 // The letters a character's sex, race and class are stored as, with the
 // names shown for each

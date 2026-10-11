@@ -225,6 +225,12 @@ GUI::OptionsContainerWidget *UltimaMetaEngine::buildEngineOptionsWidget(GUI::Gui
 		return new Ultima::Shared::GraphicsOptionsWidget(boss, name, target,
 			Ultima::Ultima2::Data::RENDER_MODE_LABELS, Ultima::Ultima2::Data::RENDER_MODE_COUNT);
 #endif
+#ifdef ENABLE_ULTIMA3
+	if (getGameId(target) == "ultima3")
+		return new Ultima::Shared::GraphicsOptionsWidget(boss, name, target,
+			Ultima::Ultima3::Data::RENDER_MODE_LABELS, Ultima::Ultima3::Data::RENDER_MODE_COUNT,
+			getExtraGuiOptions(target), false);
+#endif
 
 	return AdvancedMetaEngine::buildEngineOptionsWidget(boss, name, target);
 }

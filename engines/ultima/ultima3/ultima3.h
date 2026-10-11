@@ -34,6 +34,7 @@
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima3/data/arena.h"
+#include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/data/dungeon.h"
 #include "ultima/ultima3/data/map.h"
 #include "ultima/ultima3/data/savegame.h"
@@ -59,6 +60,7 @@ private:
 protected:
 	// Engine APIs
 	Common::Error run() override;
+	void applyGameSettings() override;
 
 	/**
 	 * Returns true if the game should quit
@@ -127,6 +129,9 @@ public:
 	// the monster generation and food rates
 	bool _moreMonsters = false;
 	bool _lessHunger = false;
+
+	// Which of the upgrade's renderers is in use
+	Data::RenderMode _renderMode = Data::RENDER_CGA;
 
 	// Toggled in the game by the Volume command
 	bool _soundEnabled = true;

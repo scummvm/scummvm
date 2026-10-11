@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/disperse_party.h"
+#include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -47,6 +48,8 @@ void DisperseParty::draw() {
 		s.writeString(Common::Point(15, 20), "(No Party)");
 
 	drawSpacePrompt(s);
+
+	Gfx::compositeFinish(s);
 }
 
 bool DisperseParty::msgKeypress(const KeypressMessage &msg) {

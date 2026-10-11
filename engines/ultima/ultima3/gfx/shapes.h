@@ -30,16 +30,18 @@ namespace Gfx {
 
 constexpr int SHAPE_COUNT = 80;
 constexpr int SHAPE_SIZE = 16;
-constexpr int SHAPE_BYTES = 64;
+constexpr int SHAPE_PIXELS = SHAPE_SIZE * SHAPE_SIZE;
 
 /**
- * The map tile graphics from SHAPES.ULT: 80 tiles of 16x16 pixels at 2 bits
- * per pixel. Each tile holds its even scanlines first, then its odd ones.
- * The animated tiles are changed in place as the animation ticks.
+ * The map tile graphics: 80 tiles of 16x16 pixels, from SHAPES.ULT, which
+ * has 2 bits per pixel with each tile holding its even scanlines first and
+ * then its odd ones, or from the upgrade's EGA or VGA files, depending on
+ * the renderer. They're kept a byte per pixel. The animated tiles are
+ * changed in place as the animation ticks.
  */
 class Shapes {
 private:
-	byte _data[SHAPE_COUNT * SHAPE_BYTES] = {};
+	byte _pixels[SHAPE_COUNT * SHAPE_PIXELS] = {};
 
 	// Ticks left before each animation step is next applied
 	byte _scrollCounters[4];
@@ -47,13 +49,18 @@ private:
 	byte _swapCounter;
 
 	byte *tile(int index) {
-		return &_data[index * SHAPE_BYTES];
+		return &_pixels[index * SHAPE_PIXELS];
 	}
 
 	/**
 	 * Moves every scanline of a tile down one pixel, wrapping the last to the top
 	 */
 	void scrollTile(int index);
+
+	/**
+	 * Passes the colors of the rings of the moon gate inwards by one ring
+	 */
+	void cycleRings(int index);
 
 	/**
 	 * Swaps two scanlines of a tile

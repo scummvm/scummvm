@@ -34,17 +34,71 @@ constexpr char GLYPH_PARTY = '*';
 static const int FLICKER_X[4] = { 0, 1, 1, 0 };
 static const int FLICKER_Y[4] = { 0, 1, 0, 1 };
 
+// The colors the upgrade's renderers give the terrain: for the cells that are
+// told apart, the pair of EGA colors the pixels of the first row take and the
+// VGA color
+struct TerrainColor {
+	byte _cell;
+	byte _ega;
+	byte _vga;
+};
+
+static const TerrainColor TERRAIN_COLORS[] = {
+	{ 0x00, 0x11, 0x01 }, { 0x04, 0x02, 0x22 }, { 0x08, 0x22, 0x42 }, { 0x0C, 0x2A, 0x62 },
+	{ 0x10, 0x66, 0x16 }, { 0x20, 0x04, 0x44 }, { 0x80, 0xEE, 0x68 }, { 0x84, 0x44, 0x74 },
+	{ 0x8C, 0xFF, 0x0F }
+};
+constexpr byte OTHER_EGA = 0x77;
+constexpr byte OTHER_VGA = 0x77;
+
+// What the party's square is flipped by to make it flash, which is the same
+// in both the pixels it's made of
+constexpr byte MARKER_EGA = 0x0C;
+constexpr byte MARKER_VGA = 0xCC;
+
 void Overview::plot(int x, int y, int value) {
 	_pixels[y * MAP_SIZE * 2 + x] ^= value;
+}
+
+void Overview::showEnhancedMap() {
+	const bool ega = _G(renderMode) == Data::RENDER_EGA;
+
+	for (int y = 0; y < MAP_SIZE; ++y) {
+		for (int x = 0; x < MAP_SIZE; ++x) {
+			byte cell = _G(map).cell(x, y);
+			byte egaColor = OTHER_EGA, vgaColor = OTHER_VGA;
+
+			for (const TerrainColor &t : TERRAIN_COLORS) {
+				if (t._cell == cell) {
+					egaColor = t._ega;
+					vgaColor = t._vga;
+					break;
+				}
+			}
+
+			// In EGA the pair of colors is swapped on the second row to make a dither
+			byte *top = &_pixels[y * 2 * MAP_SIZE * 2 + x * 2];
+			byte *bottom = top + MAP_SIZE * 2;
+			if (ega) {
+				top[0] = bottom[1] = egaColor >> 4;
+				top[1] = bottom[0] = egaColor & 0x0F;
+			} else {
+				top[0] = top[1] = bottom[0] = bottom[1] = vgaColor;
+			}
+		}
+	}
 }
 
 void Overview::showMap() {
 	const Data::Savegame &save = _G(savegame);
 	memset(_pixels, 0, sizeof(_pixels));
 
+	if (Data::isEnhancedMode(_G(renderMode)))
+		showEnhancedMap();
+
 	// Each square of the map becomes a block of four pixels with a shape
 	// depending on what's in it
-	for (int y = 0; y < MAP_SIZE; ++y) {
+	for (int y = 0; y < MAP_SIZE && !Data::isEnhancedMode(_G(renderMode)); ++y) {
 		for (int x = 0; x < MAP_SIZE; ++x) {
 			byte cell = _G(map).cell(x, y);
 			int px = x * 2, py = y * 2;
@@ -130,14 +184,22 @@ void Overview::tick() {
 
 void Overview::draw(Graphics::Views::GfxSurface &s) const {
 	if (_type == WORLD) {
+		const bool enhanced = Data::isEnhancedMode(_G(renderMode));
+
 		for (int y = 0; y < MAP_SIZE * 2; ++y) {
 			for (int x = 0; x < MAP_SIZE * 2; ++x) {
 				int value = _pixels[y * MAP_SIZE * 2 + x];
 
-				// The flickering shows up as the opposite of what's there
-				for (int i = 0; i < 4; ++i) {
-					if (_lit[i] && x == _partyX * 2 + FLICKER_X[i] && y == _partyY * 2 + FLICKER_Y[i])
-						value ^= 3;
+				if (enhanced) {
+					// The party's whole square flashes
+					if (((_step / (STEPS_PER_FLICKER * 2)) & 1) && x / 2 == _partyX && y / 2 == _partyY)
+						value ^= (_G(renderMode) == Data::RENDER_EGA) ? MARKER_EGA : MARKER_VGA;
+				} else {
+					// The flickering shows up as the opposite of what's there
+					for (int i = 0; i < 4; ++i) {
+						if (_lit[i] && x == _partyX * 2 + FLICKER_X[i] && y == _partyY * 2 + FLICKER_Y[i])
+							value ^= 3;
+					}
 				}
 
 				if (value)

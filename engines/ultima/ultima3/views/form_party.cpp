@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/form_party.h"
+#include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -89,6 +90,8 @@ void FormParty::draw() {
 		s.writeString(Common::Point(_messageCol, _messageRow), _message);
 		drawSpacePrompt(s);
 	}
+
+	Gfx::compositeFinish(s);
 }
 
 bool FormParty::msgKeypress(const KeypressMessage &msg) {

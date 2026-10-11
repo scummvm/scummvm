@@ -21,7 +21,9 @@
 
 #include "common/file.h"
 #include "ultima/ultima3/views/title.h"
+#include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/gfx/pic_decoder.h"
+#include "ultima/ultima3/gfx/pixels.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -46,6 +48,12 @@ static const int8 FLAG_STEP[3]       = { 1, -1, 1 };
 static const int FLAG_AL_LIMIT[3]    = { 4, -1, 4 }; // -1 stands for the 0FFh byte-wrap sentinel
 static const byte FLAG_BL_LIMIT[3]   = { 0x31, 0x2B, 0x34 };
 static const byte FLAG_INITIAL_AL[3] = { 0, 3, 0 };
+
+// The waving flag picture, and the color of the signature that is drawn in
+// the upgrade's renderers
+constexpr int FLAG_WIDTH = 92;
+constexpr int FLAG_HEIGHT = 16;
+constexpr byte PATH_COLOR_ENHANCED = 0x0B;
 
 constexpr int WAIT_FRAMES_PER_UNIT = 5; // ~waitFrames(1)'s real-hardware duration, approximated
 
@@ -72,12 +80,14 @@ void Title::loadRaw(Common::Array<byte> &data, const Common::String &filename) {
 }
 
 bool Title::msgFocus(const FocusMessage &msg) {
-	loadPic(_portrait, "EXOD.IBM");
+	// The upgrade's renderers have their own versions of the pictures
+	const bool ega = _G(renderMode) == Data::RENDER_EGA, vga = _G(renderMode) == Data::RENDER_VGA;
+	loadPic(_portrait, ega ? "exod.ega" : (vga ? "exod.vga" : "EXOD.IBM"));
 	loadRaw(_nameData, "NAME.DAT");
-	loadRaw(_animateData, "ANIMATE.DAT");
+	loadRaw(_animateData, ega ? "animate.ega" : (vga ? "animate.vga" : "ANIMATE.DAT"));
 
 	_canvas.create(320, 200);
-	loadPic(_canvas, "BLANK.IBM");
+	loadPic(_canvas, ega ? "blank.ega" : (vga ? "blank.vga" : "BLANK.IBM"));
 
 	_phase = PH_BOX1_SPARKLE;
 	_sparklePass = 0;
@@ -97,7 +107,9 @@ bool Title::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 void Title::draw() {
-	getSurface().blitFrom(_canvas);
+	auto s = getSurface();
+	s.blitFrom(_canvas);
+	Gfx::compositeFinish(s);
 }
 
 void Title::drawBox(const TitleBox &box, bool sparkle, int threshold) {
@@ -130,6 +142,11 @@ void Title::drawBox(const TitleBox &box, bool sparkle, int threshold) {
 }
 
 void Title::drawFlagFrame(int bxParam, int axParam) {
+	if (Data::isEnhancedMode(_G(renderMode))) {
+		drawEnhancedFlagFrame(bxParam, axParam);
+		return;
+	}
+
 	int px = ((bxParam * 2 + 20) / 4) * 4;
 	uint32 srcOffset = (uint32)axParam * 1472 + (uint32)(bxParam & 1) * 736;
 	const byte *src = &_animateData[srcOffset];
@@ -154,6 +171,37 @@ void Title::drawFlagFrame(int bxParam, int axParam) {
 	redraw();
 }
 
+void Title::drawEnhancedFlagFrame(int bxParam, int axParam) {
+	// A frame is made of four copies of the picture, each moved a pixel across,
+	// of which the one for where it's drawn is used
+	const bool ega = _G(renderMode) == Data::RENDER_EGA;
+	const int rowBytes = ega ? FLAG_WIDTH / 2 : FLAG_WIDTH;
+	const int copyBytes = FLAG_HEIGHT * rowBytes;
+	int px = bxParam * 2 + 20;
+
+	const byte *src = &_animateData[axParam * 4 * copyBytes + (px & 3) * copyBytes];
+
+	for (int row = 0; row < FLAG_HEIGHT; ++row) {
+		int y = 168 + row;
+		const byte *rowData = src + row * rowBytes;
+		byte pixels[FLAG_WIDTH];
+
+		if (ega)
+			Gfx::unpack4bpp(rowData, pixels, FLAG_WIDTH);
+		else
+			memcpy(pixels, rowData, FLAG_WIDTH);
+
+		for (int dx = -2; dx < 0; ++dx)
+			_canvas.setPixel(px + dx, y, 0);
+		for (int x = 0; x < FLAG_WIDTH; ++x)
+			_canvas.setPixel(px + x, y, pixels[x]);
+		for (int dx = 0; dx < 2; ++dx)
+			_canvas.setPixel(px + FLAG_WIDTH + dx, y, 0);
+	}
+
+	redraw();
+}
+
 bool Title::stepPixelPath() {
 	if (_pixelPathPos + 1 >= _nameData.size())
 		return false;
@@ -165,8 +213,9 @@ bool Title::stepPixelPath() {
 	_pixelPathPos += 2;
 
 	int x = lengthByte + 20, y = 0xC0 - rowByte;
-	_canvas.setPixel(x, y, 3);
-	_canvas.setPixel(x + 1, y, 3);
+	byte color = Data::isEnhancedMode(_G(renderMode)) ? PATH_COLOR_ENHANCED : 3;
+	_canvas.setPixel(x, y, color);
+	_canvas.setPixel(x + 1, y, color);
 
 	redraw();
 	return true;

@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/journey_onward.h"
+#include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -36,6 +37,8 @@ void JourneyOnward::draw() {
 		s.writeString(Common::Point(9, 21), "(No Active Players)");
 
 	drawSpacePrompt(s);
+
+	Gfx::compositeFinish(s);
 }
 
 bool JourneyOnward::msgKeypress(const KeypressMessage &msg) {

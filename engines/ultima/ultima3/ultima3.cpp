@@ -20,23 +20,33 @@
  */
 
 #include "common/config-manager.h"
+#include "common/engine_data.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "engines/util.h"
 #include "audio/decoders/raw.h"
 #include "audio/softsynth/pcspk.h"
+#include "ultima/shared/engine/graphics_options.h"
 #include "ultima/ultima3/ultima3.h"
 #include "ultima/ultima3/console.h"
 #include "ultima/ultima3/metaengine.h"
-#include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/sound_effects.h"
-#include "ultima/ultima3/views/views.h"
+#include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/gfx/charset.h"
+#include "ultima/ultima3/gfx/shapes.h"
+#include "ultima/ultima3/views/views.h"
 
 namespace Ultima {
 namespace Ultima3 {
 
 Ultima3Engine *g_engine;
+
+// The renderer stored in the configuration, falling back to the original CGA
+// graphics if it's missing or stale
+static Data::RenderMode configuredRenderMode() {
+	int mode = ConfMan.getInt(Shared::GRAPHICS_MODE_KEY);
+	return (mode >= 0 && mode < Data::RENDER_MODE_COUNT) ? (Data::RenderMode)mode : Data::RENDER_CGA;
+}
 
 Ultima3Engine::Ultima3Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), Shared::Events("ultima3"), _gameDescription(gameDesc) {
@@ -44,6 +54,7 @@ Ultima3Engine::Ultima3Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 	_pcSpeaker = new Audio::PCSpeaker();
 	_moreMonsters = ConfMan.getBool("more_monsters");
 	_lessHunger = ConfMan.getBool("less_hunger");
+	_renderMode = configuredRenderMode();
 }
 
 Ultima3Engine::~Ultima3Engine() {
@@ -64,7 +75,17 @@ Common::Error Ultima3Engine::run() {
 
 	// Initialize 320x200 graphics mode
 	initGraphics(320, 200);
-	Data::setCGAPalette();
+
+	// Initialise engine data for the game, which has the graphics for the
+	// upgrade's renderers
+	Common::U32String errMsg;
+	if (!Common::load_engine_data("ultima.dat", "ultima3", 1, 0, errMsg)) {
+		GUIErrorMessage(errMsg);
+		return Common::kNoError;
+	}
+
+	// Set the palette and fonts of the renderer in use
+	Data::setPalette(_renderMode);
 	Gfx::CharSet::load();
 	_pcSpeakerReady = _pcSpeaker->init();
 
@@ -77,6 +98,24 @@ Common::Error Ultima3Engine::run() {
 	(void)views;		// Suppress any warnings of unused local
 
 	return Common::kNoError;
+}
+
+void Ultima3Engine::applyGameSettings() {
+	_moreMonsters = ConfMan.getBool("more_monsters");
+	_lessHunger = ConfMan.getBool("less_hunger");
+
+	// The renderer can be changed from the game options dialog
+	Data::RenderMode mode = configuredRenderMode();
+	if (mode == _renderMode)
+		return;
+
+	_renderMode = mode;
+	Data::setPalette(_renderMode);
+	Gfx::CharSet::load();
+	_shapes.load();
+
+	if (focusedView())
+		focusedView()->redraw();
 }
 
 bool Ultima3Engine::canSaveGameStateCurrently(Common::U32String *msg) {

@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/terminate_character.h"
+#include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -54,6 +55,8 @@ void TerminateCharacter::draw() {
 		s.writeString(Common::Point(_messageCol, _messageRow), _message);
 		drawSpacePrompt(s);
 	}
+
+	Gfx::compositeFinish(s);
 }
 
 bool TerminateCharacter::msgKeypress(const KeypressMessage &msg) {
