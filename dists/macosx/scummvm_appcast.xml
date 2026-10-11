@@ -6,20 +6,20 @@
 		<description>Most recent changes with links to updates.</description>
 		<language>en</language>
 		<item>
-			<title>Version 2026.3.0</title>
+			<title>Version 2026.4.0</title>
 			<sparkle:releaseNotesLink>
-				https://downloads.scummvm.org/frs/scummvm/2026.3.0/ReleaseNotes.html
+				https://downloads.scummvm.org/frs/scummvm/2026.4.0/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
-			<pubDate>Sat, 20 Jun 2026 18:00:00 +0000</pubDate>
-			<enclosure url="https://downloads.scummvm.org/frs/scummvm/2026.3.0/scummvm-2026.3.0-macosx.dmg"
-						sparkle:version="2026.3.0" length="163659840" type="application/octet-stream"
-						sparkle:edSignature="GfJ7GMDYIaM/xmYiYskI6pUqY0H1BPSVQhffoOiFrHe9kBimX+7VaR9FNcJw1+wEILB1IIfZVV7YzJN38l8PDg=="
-						sparkle:dsaSignature="MC0CFHyP5EI+gE/RRNJ1dKB6H+7YKgZEAhUAjsVQqFvAPovx2YGkEkztEUM9eJU="/>
+			<pubDate>Sun, 11 Oct 2026 18:00:00 +0000</pubDate>
+			<enclosure url="https://downloads.scummvm.org/frs/scummvm/2026.4.0/scummvm-2026.4.0-macosx.dmg"
+						sparkle:version="2026.4.0" length="169279053" type="application/octet-stream"
+						sparkle:edSignature="UtRKUyVCwbdSRQ0UM2UaJ+nnN2y/ePE864/tf7R5BfIVEHwQrooASn3D3Wv9XG49D8qYCvnwZDXP1BlWewM9BQ=="
+						sparkle:dsaSignature="MC4CFQDJOQvt1tTz2iJqq9vID+hT3leTPwIVAJKOwui0JC0Ne8swj9oe5ZHdtMT5"/>
 
 			<enclosure sparkle:os="windows"
-						url="https://downloads.scummvm.org/frs/scummvm/2026.3.0/scummvm-2026.3.0-win32.exe"
-						sparkle:version="2026.3.0" length="135554503" type="application/octet-stream"
-						sparkle:dsaSignature="MCwCFAH9n2yGgANWfWPDkygkfcif8AXVAhQvujCO6pmFN8BNTAEi5vZoeTLfVQ=="/>
+						url="https://downloads.scummvm.org/frs/scummvm/2026.4.0/scummvm-2026.4.0-win32.exe"
+						sparkle:version="2026.4.0" length="139966330" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFAc9vaWoDNfE1fZIlmMg5vx2ZhyzAhUA0nlSs/h0aXsu6UBU0zIgn7eMe2I="/>
 		</item>
 	</channel>
 </rss>
