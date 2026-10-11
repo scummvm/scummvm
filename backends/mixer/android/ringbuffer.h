@@ -181,6 +181,26 @@ public:
 	}
 
 	/*
+	 * Make the buffer empty.
+	 *
+	 * Called from the producer side.
+	 * NO consume MUST be ongoing.
+	 */
+	void flush() {
+		size_t write = _write.load(std::memory_order_relaxed);
+		size_t read = _read.load(std::memory_order_acquire);
+		assert(_pending_write == write);
+
+		// This check may succeed while the other thread is consuming
+		// This is an imperfect failsafe
+		assert(_pending_read == read);
+
+		_last.store(read, std::memory_order_relaxed);
+		_pending_write = read;
+		_write.store(read, std::memory_order_release);
+	}
+
+	/*
 	 * Try to consume at most n elements.
 	 * If there is less than n elements (or if the buffer is not contiguous), adjusts n to the real count.
 	 * If there is no element available, returns nullptr.

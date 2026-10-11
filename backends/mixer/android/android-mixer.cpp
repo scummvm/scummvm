@@ -438,7 +438,7 @@ void *AndroidMixerManagerImpl::audioThreadFunc(void *arg) {
 
 #ifdef OBOE_DEBUG
 		if (n > 0) {
-			LOGD("Requested mix of %zu frames and got %zu%s - Buffer size: %d / %d", req, n, silence ? " S" : "", stream->getBufferSizeInFrames(), stream->getBufferCapacityInFrames());
+			LOGD("Requested mix of %zu frames and got %zu%s - Buffer size: %d / %d - Status: %zu + %zu", req, n, silence ? " S" : "", stream->getBufferSizeInFrames(), stream->getBufferCapacityInFrames(), this_->_underflows.load(std::memory_order_acquire), silence_count);
 		}
 #endif
 
@@ -449,6 +449,9 @@ void *AndroidMixerManagerImpl::audioThreadFunc(void *arg) {
 				LOGD("Silence %zu+%zu: pausing audio stream", underflows, silence_count);
 				stream->pause();
 				stream->requestFlush();
+				// also flush our internal buffer full of silence
+				// we can call flush as we are paused and flushing (onAudioReady is not called)
+				this_->_buffer->flush();
 			}
 		}
 
