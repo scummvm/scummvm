@@ -67,8 +67,6 @@ UnknownGameDialog::UnknownGameDialog(const DetectedGame &detectedGame) :
 	// Use a ScrollContainer for the report in case we have a lot of lines.
 	_textContainer = new ScrollContainerWidget(this, "UnknownGameDialog.TextContainer", "");
 	_textContainer->setTarget(this);
-
-	rebuild();
 }
 
 void UnknownGameDialog::handleMouseWheel(int x, int y, int direction) {
