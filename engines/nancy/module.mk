@@ -187,7 +187,8 @@ ifdef ENABLE_NANCY_V4
 MODULE_OBJS += \
   script/api.o \
   script/luabind.o \
-  script/luastate.o
+  script/luastate.o \
+  script/types.o
 endif
 
 # This module can be built as a plugin

@@ -21,12 +21,13 @@
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/types.h"
 
 namespace Nancy {
 namespace Script {
 
-// The objects the scripts use get added here
 void registerAPI(lua_State *L) {
+	registerTypes(L);
 }
 
 } // End of namespace Script
