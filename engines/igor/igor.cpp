@@ -66,7 +66,7 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
 
 
-		_currentPart = 850;
+		_currentPart = kStartupPart;
 
 		// _currentPart = 171;
 		// _currentPart = 62;

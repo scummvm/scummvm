@@ -1384,6 +1384,7 @@ private:
 
 	// Splash screens
 	void PART_90();
+	void PART_90_FADE_PALETTE(bool fadeInColors);
 
 	// End credits
 	void PART_CREDITS();
@@ -1471,7 +1472,7 @@ private:
 	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; } // { return ((_gameTicks + add) % mod) == 0; }
 	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); }                          // { return _gameTicks == eq; }
 
-	void waitForTimer(int ticks = -1);
+	void waitForTimer(int ticks = -1, bool presentScreen = true, uint32 deadline = 0);
 
 	ResourceEntry *findData(int num);
 	uint8 *loadData(int num, uint8 *dst = 0, int *size = 0);

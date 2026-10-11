@@ -29,19 +29,21 @@ namespace Igor {
 
 static const uint8 kSentenceColorIndex[] = {0xFD, 0xFB, 0xF1};
 
-void IgorEngine::waitForTimer(int ticks) {
+void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 
-	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
+	if (presentScreen) {
+		_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 
-	if (_debugOverlayMode != kOverlayOff) {
-		debugApplyOverlay();
+		if (_debugOverlayMode != kOverlayOff) {
+			debugApplyOverlay();
+		}
+
+		_system->updateScreen();
 	}
-
-	_system->updateScreen();
 
 	// wait till next timer if no param is passed, ticks if not
 	// _fastMode divides the wall-clock deadlines
-	uint32 endTicks = (ticks == -1) ? _nextTimer : _system->getMillis() + ticks * 1000 / kTickDelay / _fastMode;
+	uint32 endTicks = deadline ? deadline : ((ticks == -1) ? _nextTimer : _system->getMillis() + ticks * 1000 / kTickDelay / _fastMode);
 	do {
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
@@ -151,6 +153,7 @@ void IgorEngine::waitForTimer(int ticks) {
 		_gameTicks = 0;
 	}
 }
+
 
 void IgorEngine::setCursor(int num) {
 	uint8 cursor[11 * 11];
