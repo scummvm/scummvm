@@ -87,6 +87,40 @@ uint32 NEResources::getResourceTableOffset() {
 	if (_exe->readUint16BE() != 0x4E45)
 		return kInvalidAddress;
 
+	// Reading automatic segment index
+	if (!_exe->seek(offsetSegmentEXE + 0x0e))
+		return kInvalidAddress;
+	_autoSegmentIndex = _exe->readUint16LE();
+
+	// number of NE segments
+	if (!_exe->seek(offsetSegmentEXE + 0x001c))
+		return kInvalidAddress;
+	auto numSegments = _exe->readUint16LE();
+
+	// segment table offset
+	if (!_exe->seek(offsetSegmentEXE + 0x0022))
+		return kInvalidAddress;
+	auto segmentTableOffset = _exe->readUint16LE();
+
+	// segment address alignment (page size)
+	if (!_exe->seek(offsetSegmentEXE + 0x0032))
+		return kInvalidAddress;
+	auto segmentAddrShift = _exe->readUint16LE();
+
+	if (!_exe->seek(offsetSegmentEXE + segmentTableOffset))
+		return kInvalidAddress;
+	_segments.reserve(numSegments);
+	for (unsigned idx = 0; idx != numSegments; ++idx) {
+		uint32 segmentOffset = _exe->readUint16LE();
+		segmentOffset <<= segmentAddrShift;
+		uint32 segmentSize = _exe->readUint16LE();
+		if (segmentSize == 0)
+			segmentSize = 0x10000;
+		auto segmentFlags = _exe->readUint16LE();
+		_exe->skip(2);
+		_segments.push_back(NESegment{segmentOffset, segmentSize, segmentFlags});
+	}
+
 	if (!_exe->seek(offsetSegmentEXE + 36))
 		return kInvalidAddress;
 

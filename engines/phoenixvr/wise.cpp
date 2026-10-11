@@ -25,6 +25,7 @@
 #include "common/compression/deflate.h"
 #include "common/crc.h"
 #include "common/debug.h"
+#include "common/formats/winexe_ne.h"
 #include "common/hashmap.h"
 #include "common/list.h"
 #include "common/memstream.h"
@@ -33,55 +34,6 @@
 
 namespace PhoenixVR {
 namespace {
-struct NE {
-	struct Segment {
-		uint32 offset;
-		uint32 size;
-		uint16 flags;
-		bool automatic() const {
-			return flags & 1;
-		}
-	};
-
-	Common::Array<Segment> segments;
-	uint16 autoSegment;
-
-	NE(Common::SeekableReadStream &stream) {
-		auto magic = stream.readUint16LE();
-		if (magic != 0x5a4d)
-			error("Not an MZ executable");
-		stream.seek(0x3c);
-		auto neOffset = stream.readUint32LE();
-		stream.seek(neOffset);
-		magic = stream.readUint16LE();
-		if (magic != 0x454e)
-			error("Not an NE executable");
-		stream.seek(neOffset + 0x000e);
-		autoSegment = stream.readUint16LE();
-		debug("auto segment: %u", autoSegment);
-		stream.seek(neOffset + 0x001c);
-		auto numSegments = stream.readUint16LE();
-		stream.seek(neOffset + 0x0022);
-		auto segmentTableOffset = stream.readUint16LE();
-		stream.seek(neOffset + 0x0032);
-		auto segmentAddrShift = stream.readUint16LE();
-		stream.seek(neOffset + segmentTableOffset);
-		segments.reserve(numSegments);
-		for (unsigned idx = 0; idx != numSegments; ++idx) {
-			uint32 segmentOffset = stream.readUint16LE();
-			segmentOffset <<= segmentAddrShift;
-			uint32 segmentSize = stream.readUint16LE();
-			if (segmentSize == 0)
-				segmentSize = 0x10000;
-			auto segmentFlags = stream.readUint16LE();
-			auto segmentAlloc = stream.readUint16LE();
-			if (idx + 1 == autoSegment && (segmentFlags & 1) == 0)
-				error("automatic segment must have flag 1");
-			debug("NE: segment %u: offset: %04x, size: %u, flags: %04x, alloc: %u", idx, segmentOffset, segmentSize, segmentFlags, segmentAlloc);
-			segments.push_back(Segment{segmentOffset, segmentSize, segmentFlags});
-		}
-	}
-};
 
 class WiseArchive : public Common::Archive {
 	Common::ScopedPtr<Common::SeekableReadStream> stream;
@@ -198,17 +150,35 @@ class WiseArchive : public Common::Archive {
 	}
 
 public:
-	WiseArchive(Common::SeekableReadStream *s) : stream(s) {
-		NE ne(*s);
+	WiseArchive(Common::SeekableReadStream *s) : stream(s) {}
+
+	static WiseArchive *load(Common::SeekableReadStream *s) {
+		Common::ScopedPtr<Common::SeekableReadStream> stream(s);
+		Common::NEResources ne;
+		if (!ne.loadFromEXE(s, DisposeAfterUse::NO)) {
+			debug("WISE: failed to load NE EXE");
+			return nullptr;
+		}
+
+		auto &segments = ne.getSegments();
+		auto autoSegmentIndex = ne.getAutomaticSegmentIndex();
+		if (autoSegmentIndex == 0) {
+			debug("WISE: NE: no auto segment index");
+			return nullptr;
+		}
+		auto &autoSegment = segments[autoSegmentIndex - 1];
+
 		long overlayOffset = -1;
-		for (auto &seg : ne.segments) {
-			if (seg.automatic())
+		for (auto &seg : segments) {
+			if (seg.flags & Common::NESegment::kFlagSingleData)
 				continue;
 
 			stream->seek(seg.offset);
 			Common::Array<byte> data(seg.size);
-			if (stream->read(data.data(), data.size()) != data.size())
-				error("NE segment: short read");
+			if (stream->read(data.data(), data.size()) != data.size()) {
+				debug("WISE: NE segment: short read");
+				return nullptr;
+			}
 
 			if (overlayOffset < 0) {
 				overlayOffset = patternFind(data, 0xa1, 30, [&](const byte *src) -> bool {
@@ -232,9 +202,10 @@ public:
 				if (overlayOffset >= 0) {
 					auto low = READ_LE_UINT16(data.data() + overlayOffset + 1);
 					auto high = READ_LE_UINT16(data.data() + overlayOffset + 5);
-					if (low + 2 != high)
-						error("non-contiguous overlay pointer");
-					auto &autoSegment = ne.segments[ne.autoSegment - 1];
+					if (low + 2 != high) {
+						debug("WISE: non-contiguous overlay pointer");
+						return nullptr;
+					}
 					stream->seek(autoSegment.offset + low);
 					overlayOffset = stream->readUint32LE();
 					debug("found overlay at %08lx", overlayOffset);
@@ -242,8 +213,10 @@ public:
 				}
 			}
 		}
-		if (overlayOffset < 0)
-			error("can't find overlay offset");
+		if (overlayOffset < 0) {
+			debug("WISE: overlay offset wasn't found");
+			return nullptr;
+		}
 
 		stream->seek(overlayOffset);
 		Common::Array<uint> header(16);
@@ -253,29 +226,47 @@ public:
 		auto &flags = header[0];
 		auto &advertisedEOF = header[15];
 		debug("flags: %08x, eof: %08x", flags, advertisedEOF);
-		if (advertisedEOF != stream->size())
-			error("invalid overlay header - EOF does not match stream size");
+		if (advertisedEOF != stream->size()) {
+			debug("WISE: invalid overlay header - EOF does not match stream size");
+			return nullptr;
+		}
 
 		debug("script %u/%u", header[7], header[6]);
 		Script script;
 		script.script = inflate(*stream, header[7]);
-		if (script.script.size() != header[6])
-			error("script uncompressed size does not match header");
+		if (script.script.size() != header[6]) {
+			debug("WISE: script uncompressed size does not match header");
+			return nullptr;
+		}
 
 		debug("packed dll at %08x, size: %u", (uint32)stream->pos(), header[8]);
 		Common::Array<byte> dllData;
 		dllData = inflate(*stream, header[8]);
 
 		Common::MemoryReadStream dllStream(dllData.data(), dllData.size());
-		NE dll(dllStream);
-		for (auto &seg : dll.segments) {
-			if (seg.automatic())
+		Common::NEResources dll;
+		if (!dll.loadFromEXE(&dllStream, DisposeAfterUse::NO)) {
+			debug("WISE: can't load NE overlay DLL");
+			return nullptr;
+		}
+		auto dllAutoSegmentIndex = dll.getAutomaticSegmentIndex();
+		if (dllAutoSegmentIndex == 0) {
+			debug("WISE: DLL: no auto segment index");
+			return nullptr;
+		}
+		auto &dllSegments = dll.getSegments();
+		auto &dllAutoSegment = dllSegments[dllAutoSegmentIndex - 1];
+
+		for (auto &seg : dllSegments) {
+			if (seg.flags & Common::NESegment::kFlagSingleData)
 				continue;
 
 			dllStream.seek(seg.offset);
 			Common::Array<byte> data(seg.size);
-			if (dllStream.read(data.data(), data.size()) != data.size())
-				error("NE segment: short read");
+			if (dllStream.read(data.data(), data.size()) != data.size()) {
+				debug("WISE: NE segment: short read");
+				return nullptr;
+			}
 
 			auto instructionTables = patternFind(data, 0x8a, 26, [&](const byte *src) -> bool {
 				return src[0] == 0x8a &&
@@ -306,12 +297,11 @@ public:
 				assert(stringsOffset + script.numStrings.size() <= data.size());
 				assert(localizedStringsOffset + script.numLocalized.size() <= data.size());
 				assert(numBytesOffset + script.numBytes.size() <= data.size());
-				auto &autoSegment = dll.segments[dll.autoSegment - 1];
-				dllStream.seek(autoSegment.offset + stringsOffset);
+				dllStream.seek(dllAutoSegment.offset + stringsOffset);
 				dllStream.read(script.numStrings.data(), script.numStrings.size());
-				dllStream.seek(autoSegment.offset + localizedStringsOffset);
+				dllStream.seek(dllAutoSegment.offset + localizedStringsOffset);
 				dllStream.read(script.numLocalized.data(), script.numLocalized.size());
-				dllStream.seek(autoSegment.offset + numBytesOffset);
+				dllStream.seek(dllAutoSegment.offset + numBytesOffset);
 				dllStream.read(script.numBytes.data(), script.numBytes.size());
 				break;
 			}
@@ -338,11 +328,14 @@ public:
 		if (header[13])
 			skipStream(header[13]);
 
-		baseStreamsOffset = stream->pos();
-		debug("base stream offset: %08x", (uint32)baseStreamsOffset);
+		uint32 offset = stream->pos();
+		debug("base stream offset: %08x", offset);
+		Common::ScopedPtr<WiseArchive> wise(new WiseArchive(stream.release()));
+		wise->baseStreamsOffset = offset;
 		for (auto entry : script.parse()) {
-			_entries.setVal(Common::move(entry.path), {entry.begin, entry.end});
+			wise->_entries.setVal(Common::move(entry.path), {entry.begin, entry.end});
 		}
+		return wise.release();
 	}
 
 	char getPathSeparator() const override {
@@ -384,6 +377,6 @@ public:
 } // namespace
 
 Common::Archive *createWISEArchive(Common::SeekableReadStream *stream) {
-	return new WiseArchive(stream);
+	return WiseArchive::load(stream);
 }
 } // namespace PhoenixVR

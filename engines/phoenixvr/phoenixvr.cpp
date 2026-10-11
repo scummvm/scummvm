@@ -347,7 +347,11 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 #if 0
 	Common::ScopedPtr<Common::File> file(new Common::File);
 	if (file->open("install.exe")) {
-		SearchMan.add("install.exe", createWISEArchive(file.release()), 0, true);
+		auto *wiseArch = createWISEArchive(file.release());
+		if (wiseArch)
+			SearchMan.add("install.exe", wiseArch, 0, true);
+		else
+			debug("found install.exe, but it's not WISE archive");
 	}
 #endif
 }

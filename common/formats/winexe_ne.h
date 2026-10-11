@@ -41,6 +41,18 @@ template<class T>
 class Array;
 class SeekableReadStream;
 
+// NE executable segment
+struct NESegment {
+	static constexpr uint16 kFlagSingleData = 1;
+	static constexpr uint16 kFlagMultipleData = 2;
+	static constexpr uint16 kFlagLinkError = 0x2000u;
+	static constexpr uint16 kFlagLibModule = 0x8000u;
+
+	uint32 offset;
+	uint32 size;
+	uint16 flags;
+};
+
 /**
  * A class able to load resources from a Windows New Executable, such
  * as cursors, bitmaps, and sounds.
@@ -72,6 +84,12 @@ public:
 	/** Get a string from a string resource. */
 	String loadString(uint32 stringID) override;
 
+	/** Get all NE segments */
+	const Array<NESegment> &getSegments() const { return _segments; }
+
+	/* Index of NE automatic segment */
+	uint32 getAutomaticSegmentIndex() const { return _autoSegmentIndex; }
+
 protected:
 	VersionInfo *parseVersionInfo(SeekableReadStream *stream) override;
 
@@ -92,6 +110,9 @@ private:
 
 	SeekableReadStream *_exe; ///< Current file.
 	DisposeAfterUse::Flag _disposeFileHandle;
+
+	uint32 _autoSegmentIndex = 0;
+	Array<NESegment> _segments;
 
 	/** All resources. */
 	List<Resource> _resources;
