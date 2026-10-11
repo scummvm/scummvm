@@ -493,7 +493,7 @@ void TileScene::drawLayer(IndexedFrame &frame, const Common::Array<TileCell> &la
 	int layerWidth = columnCount * kTileSize;
 	int layerHeight = rowCount * kTileSize;
 	for (int y = startY; y < endY; ++y) {
-		int sourceY = mod(y - verticalOffset, layerHeight);
+		int sourceY = mod(y + verticalOffset, layerHeight);
 		int cellY = sourceY / kTileSize;
 		int pixelY = sourceY % kTileSize;
 		int lineHorizontalOffset = lineHorizontalOffsets.isEmpty()
