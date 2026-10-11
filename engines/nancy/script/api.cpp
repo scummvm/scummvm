@@ -21,6 +21,7 @@
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/mathtypes.h"
 #include "engines/nancy/script/types.h"
 
 namespace Nancy {
@@ -28,6 +29,7 @@ namespace Script {
 
 void registerAPI(lua_State *L) {
 	registerTypes(L);
+	registerMathTypes(L);
 }
 
 } // End of namespace Script
