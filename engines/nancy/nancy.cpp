@@ -42,6 +42,10 @@
 
 #include "engines/nancy/action/conversation.h"
 
+#ifdef ENABLE_NANCY_V4
+#include "engines/nancy/script/api.h"
+#endif
+
 #include "engines/nancy/state/logo.h"
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/state/help.h"
@@ -282,6 +286,32 @@ bool NancyEngine::setPlayerCharacter(uint characterIndex) {
 		_resource->setCifTreePriority(treeName, basePriority + 1);
 	}
 
+#ifdef ENABLE_NANCY_V4
+	if (getGameType() >= kGameTypeNancy19) {
+		// The character's own data is a script, which only names a few files
+		ScriptBootData *boot = (ScriptBootData *)_engineData.getValOrDefault("ScriptBootData", nullptr);
+		assert(boot);
+
+		Script::BootTables tables;
+		tables.boot = boot;
+		tables.playerIndex = characterIndex;
+
+		const Common::String scriptName = treeName + "_boot";
+		if (!Script::runBootScript(scriptName.c_str(), tables)) {
+			error("Failed to load boot script for player character %s", treeName.c_str());
+		}
+
+		if (characterIndex < boot->players.size() && !boot->players[characterIndex].autotextName.empty()) {
+			addAutotext(boot->players[characterIndex].autotextName);
+		}
+
+		_playerCharacter = characterIndex;
+		_playerCharacterTree = treeName;
+
+		return true;
+	}
+#endif
+
 	// The UI description chunks live in the character's own boot IFF, e.g.
 	// PUI_CRE_NANCY_DEFAULT_BOOT (PUI_ICE_NANCY_DEFAULT_BOOT in Nancy16)
 	IFF *iff = _resource->loadIFF(Common::Path(treeName + "_boot"));
@@ -341,6 +371,16 @@ bool NancyEngine::setPlayerCharacter(uint characterIndex) {
 
 void NancyEngine::addAutotext(const Common::Path &name) {
 	CVTX *autotext = (CVTX *)_engineData.getValOrDefault("AUTOTEXT", nullptr);
+
+#ifdef ENABLE_NANCY_V4
+	if (autotext && getGameType() >= kGameTypeNancy19) {
+		Script::BootTables tables;
+		tables.texts = autotext;
+		Script::runBootScript(name.toString().c_str(), tables);
+		return;
+	}
+#endif
+
 	IFF *iff = _resource->loadIFF(name);
 	if (!autotext || !iff) {
 		delete iff;
@@ -651,6 +691,13 @@ void NancyEngine::bootGameEngine() {
 	// Setup mixer
 	syncSoundSettings();
 
+#ifdef ENABLE_NANCY_V4
+	if (getGameType() >= kGameTypeNancy19) {
+		bootScriptedGameEngine();
+		return;
+	}
+#endif
+
 	IFF *iff = _resource->loadIFF("boot");
 	if (!iff)
 		error("Failed to load boot script");
@@ -854,6 +901,95 @@ void NancyEngine::bootGameEngine() {
 	#undef LOAD_BOOT
 }
 
+#ifdef ENABLE_NANCY_V4
+static void runRequiredBootScript(const char *name, const Script::BootTables &tables) {
+	if (!Script::runBootScript(name, tables)) {
+		error("Failed to load boot script %s", name);
+	}
+}
+
+void NancyEngine::bootScriptedGameEngine() {
+	// Nancy19 has no boot IFF. What its chunks used to hold is spread over a
+	// handful of Lua scripts, which fill the same tables.
+	EVNT *flags = new EVNT();
+	INVD *inventory = new INVD();
+	ENVS *environments = new ENVS();
+	PCUI *players = new PCUI();
+	VIEW *viewport = new VIEW();
+	CVTX *autotext = new CVTX();
+	CVTX *convo = new CVTX();
+	BSUM *bootSummary = new BSUM();
+	ScriptBootData *boot = new ScriptBootData();
+
+	_engineData.setVal("EVNT", flags);
+	_engineData.setVal("INVD", inventory);
+	_engineData.setVal("ENVS", environments);
+	_engineData.setVal("PCUI", players);
+	_engineData.setVal("VIEW", viewport);
+	_engineData.setVal("AUTOTEXT", autotext);
+	_engineData.setVal("CONVO", convo);
+	_engineData.setVal("BSUM", bootSummary);
+	_engineData.setVal("ScriptBootData", boot);
+
+	// The order matters: the cursors of the inventory go by item
+	Script::BootTables fontTables;
+	fontTables.boot = boot;
+	runRequiredBootScript("Font", fontTables);
+
+	Script::BootTables flagTables;
+	flagTables.flags = flags;
+	runRequiredBootScript("Flags", flagTables);
+
+	Script::BootTables inventoryTables;
+	inventoryTables.inventory = inventory;
+	inventoryTables.boot = boot;
+	runRequiredBootScript("Inventory", inventoryTables);
+	runRequiredBootScript("Cursors", inventoryTables);
+
+	Script::BootTables textTables;
+	textTables.texts = autotext;
+	runRequiredBootScript("Autotext", textTables);
+
+	textTables.texts = convo;
+	runRequiredBootScript("Convo", textTables);
+
+	Script::BootTables bootTables;
+	bootTables.boot = boot;
+	bootTables.players = players;
+	bootTables.environments = environments;
+	bootTables.viewport = viewport;
+	runRequiredBootScript("Boot", bootTables);
+
+	_staticData.numItems = inventory->items.size();
+	_staticData.numEventFlags = (uint16)(kNumGenericEventFlags + flags->numRecords);
+
+	// Saved games get matched against the name of the game
+	Common::strlcpy((char *)bootSummary->header, boot->saveFolderName.c_str(), sizeof(bootSummary->header));
+	bootSummary->firstScene.sceneID = 0;
+
+	// The clock of the game runs a little faster than a real one
+	if (boot->playerTimeScale > 0.0) {
+		bootSummary->playerTimeMinuteLength = (uint16)(60000.0 / boot->playerTimeScale);
+	}
+
+	_cursor->init(*boot);
+
+	_graphics->init();
+	_graphics->loadSystemFonts(*boot);
+
+	_sound->initSoundChannels();
+
+	uint startCharacter = 0;
+	for (uint i = 0; i < players->characters.size(); ++i) {
+		if (players->characters[i].name.equalsIgnoreCase(players->startCharacterName)) {
+			startCharacter = i;
+		}
+	}
+
+	setPlayerCharacter(startCharacter);
+}
+#endif
+
 State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 	switch (state) {
 	case NancyState::kLogo:
@@ -1043,6 +1179,18 @@ void NancyEngine::populateStaticData() {
 	sci.speechChannels = { 12, 13, 30 };
 	sci.musicChannels = { 0, 1, 2, 3, 19, 26, 27, 29 };
 	sci.sfxChannels = { 4, 5, 6, 7, 8, 9, 10, 11, 17, 18, 20, 21, 22, 23, 24, 25, 31 };
+
+	if (getGameType() >= kGameTypeNancy19) {
+		// The scripts of Nancy19 call the channels by name, and number them by
+		// kind: six for music, eight for ambience, ten for effects and six for
+		// voices. No channel belongs to a scene anymore; the scripts stop what
+		// they don't want to keep.
+		sci.numChannels = 30;
+		sci.numSceneSpecificChannels = 0;
+		sci.musicChannels = { 0, 1, 2, 3, 4, 5 };
+		sci.sfxChannels = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 };
+		sci.speechChannels = { 24, 25, 26, 27, 28, 29 };
+	}
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {

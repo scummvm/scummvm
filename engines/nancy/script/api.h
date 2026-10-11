@@ -22,13 +22,49 @@
 #ifndef NANCY_SCRIPT_API_H
 #define NANCY_SCRIPT_API_H
 
+#include "common/scummsys.h"
+#include "common/str.h"
+
 struct lua_State;
 
 namespace Nancy {
+
+struct CVTX;
+struct ENVS;
+struct EVNT;
+struct INVD;
+struct PCUI;
+struct VIEW;
+struct ScriptBootData;
+
 namespace Script {
 
 // Puts everything scripts can use into a new state
 void registerAPI(lua_State *L);
+
+// The tables the boot scripts fill. A script can only fill the ones that are set
+// while it runs.
+struct BootTables {
+	EVNT *flags = nullptr;
+	INVD *inventory = nullptr;
+	ENVS *environments = nullptr;
+	PCUI *players = nullptr;
+	VIEW *viewport = nullptr;
+	CVTX *texts = nullptr;
+	ScriptBootData *boot = nullptr;
+	int playerIndex = -1;	// the character whose own boot script is running
+};
+
+// Runs one of the boot scripts. Returns false when there is no such script.
+bool runBootScript(const char *name, const BootTables &tables);
+
+void registerBootAPI(lua_State *L);
+
+// Inventory items are handed to scripts by name ("Inventory.INV_Board") as objects
+// of their own, which hold the id of the item
+void registerInventoryAPI(lua_State *L);
+void pushInventoryItem(lua_State *L, int16 itemID);
+int16 checkInventoryItem(lua_State *L, int index);
 
 } // End of namespace Script
 } // End of namespace Nancy

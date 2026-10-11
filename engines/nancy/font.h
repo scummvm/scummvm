@@ -48,6 +48,7 @@ public:
 	// The color passed when drawing is then a font color ID. Every font also
 	// comes in bold, which gets "_Bold" added to its name.
 	void readSystemFont(Common::SeekableReadStream &stream, bool bold);
+	void setSystemFont(const Common::String &name, const Common::String &faceName, int32 height, int32 weight);
 	const Common::String &getName() const { return _description; }
 	// Nancy16+: the substitute font, for drawing with an explicit color instead of a color ID
 	const Graphics::Font *getSystemFont() const { return _systemFont.get(); }

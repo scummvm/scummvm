@@ -32,6 +32,7 @@ namespace Nancy {
 
 class IFF;
 class RenderObject;
+struct ScriptBootData;
 
 // Packed 0xAARRGGBB colors, independent of the byte order in memory
 extern const Graphics::PixelFormat kARGBFormat;
@@ -76,6 +77,7 @@ public:
 
 	void loadFonts(Common::SeekableReadStream *chunkStream);
 	void loadSystemFonts(const IFF &fontIFF);
+	void loadSystemFonts(const ScriptBootData &boot);	// Nancy19+
 
 	void addObject(RenderObject *object);
 	void removeObject(RenderObject *object);

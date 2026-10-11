@@ -181,16 +181,23 @@ void Font::read(Common::SeekableReadStream &stream) {
 void Font::readSystemFont(Common::SeekableReadStream &stream, bool bold) {
 	const int32 kBoldExtraWeight = 300;
 
+	Common::String name;
 	Common::String faceName;
-	readFilename(stream, _description);
+	readFilename(stream, name);
 	readFilename(stream, faceName);
 	int32 height = stream.readSint32LE();
 	int32 weight = stream.readSint32LE();
 
 	if (bold) {
-		_description += "_Bold";
+		name += "_Bold";
 		weight += kBoldExtraWeight;
 	}
+
+	setSystemFont(name, faceName, height, weight);
+}
+
+void Font::setSystemFont(const Common::String &name, const Common::String &faceName, int32 height, int32 weight) {
+	_description = name;
 
 	// None of the Windows fonts the game asks for (Tahoma, Arial, Lucida Handwriting)
 	// ship with ScummVM, so they all get replaced with the same sans-serif font

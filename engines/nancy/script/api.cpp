@@ -19,6 +19,9 @@
  *
  */
 
+#include "engines/nancy/enginedata.h"
+#include "engines/nancy/nancy.h"
+
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/mathtypes.h"
@@ -27,9 +30,53 @@
 namespace Nancy {
 namespace Script {
 
+static const char *const kInventoryType = "ND.Inventory";
+static const char *const kInventoryItemType = "ND.InventoryItem";
+
+void pushInventoryItem(lua_State *L, int16 itemID) {
+	pushValue(L, kInventoryItemType, itemID);
+}
+
+int16 checkInventoryItem(lua_State *L, int index) {
+	return *(int16 *)checkUserData(L, index, kInventoryItemType);
+}
+
+// Inventory.<name of an item>
+static int inventoryIndex(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+
+	const INVD *inventory = GetEngineData(INVD);
+	if (inventory) {
+		for (const INVD::Item &item : inventory->items) {
+			if (item.name.equalsIgnoreCase(name)) {
+				pushInventoryItem(L, item.id);
+				return 1;
+			}
+		}
+	}
+
+	return luaL_error(L, "There is no inventory item %s", name);
+}
+
+void registerInventoryAPI(lua_State *L) {
+	static const luaL_Reg kInventoryFunctions[] = {
+		{ "__index", inventoryIndex },
+		{ nullptr, nullptr }
+	};
+
+	static const luaL_Reg kInventoryItemFunctions[] = {
+		{ nullptr, nullptr }
+	};
+
+	registerType(L, kInventoryItemType, kInventoryItemFunctions);
+	registerGlobal(L, "Inventory", kInventoryType, kInventoryFunctions);
+}
+
 void registerAPI(lua_State *L) {
 	registerTypes(L);
 	registerMathTypes(L);
+	registerBootAPI(L);
+	registerInventoryAPI(L);
 }
 
 } // End of namespace Script

@@ -188,6 +188,9 @@ private:
 	};
 
 	void bootGameEngine();
+#ifdef ENABLE_NANCY_V4
+	void bootScriptedGameEngine();	// Nancy19+
+#endif
 
 	State::State *getStateObject(NancyState::NancyState state) const;
 	void destroyState(NancyState::NancyState state) const;

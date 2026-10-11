@@ -27,6 +27,8 @@
 
 #include "graphics/managed_surface.h"
 
+#include "engines/nancy/enginedata.h"
+
 namespace Nancy {
 
 class CursorManager {
@@ -141,6 +143,14 @@ public:
 
 	void init(Common::SeekableReadStream *chunkStream);
 
+	// Nancy19 and up describe their cursors in a boot script, and call them by name.
+	// A script picks one by passing the place of the name in the list as the type.
+	void init(const ScriptBootData &boot);
+	int getCursorTypeByName(const Common::String &name) const;
+
+	// The cursors of the items come after the others, one for every item
+	uint getItemCursorType(int16 itemID) const { return _numCursorTypes + itemID; }
+
 	// Change the current cursor ID. Does not change the graphic.
 	// When setFromScript is set, type is a raw Nancy 10+ system cursor type
 	// index resolved to its flat slot; hotspotVariant then picks the hotspot
@@ -173,6 +183,9 @@ private:
 	// Nancy13 slot table.
 	uint resolveNancy13CursorID(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant);
 
+	uint resolveScriptedCursorID(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant);
+	void addScriptedCursors(const Common::Array<ScriptBootData::Cursor> &cursors);
+
 	struct Cursor {
 		Common::Rect bounds;
 		Common::Point hotspot;
@@ -180,6 +193,11 @@ private:
 
 	// CURS data
 	Common::Array<Cursor> _cursors;
+
+	// Nancy19+
+	Common::Array<Common::String> _cursorNames;
+	Common::Array<bool> _cursorOverridesItem;
+	uint _defaultCursorType = 0;
 
 	Common::Rect _primaryVideoInactiveZone;
 	Common::Point _primaryVideoInitialPos;

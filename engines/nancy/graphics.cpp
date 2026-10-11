@@ -431,6 +431,46 @@ void GraphicsManager::loadSystemFonts(const IFF &fontIFF) {
 	}
 }
 
+void GraphicsManager::loadSystemFonts(const ScriptBootData &boot) {
+	const int32 kNormalWeight = 400;
+	const int32 kBoldWeight = 700;
+
+	for (const ScriptBootData::SystemFont &font : boot.fonts) {
+		if (font.id < 0) {
+			continue;
+		}
+
+		if ((uint)font.id >= _fonts.size()) {
+			_fonts.resize(font.id + 1);
+		}
+
+		_fonts[font.id].setSystemFont(font.name, font.faceName, font.height, font.isBold ? kBoldWeight : kNormalWeight);
+	}
+
+	// Every font also comes in bold, after the ones with a number of their own
+	for (const ScriptBootData::SystemFont &font : boot.fonts) {
+		_fonts.resize(_fonts.size() + 1);
+		_fonts.back().setSystemFont(font.name + "_Bold", font.faceName, font.height, kBoldWeight);
+	}
+
+	for (const ScriptBootData::FontColor &color : boot.fontColors) {
+		if (color.id < 0) {
+			continue;
+		}
+
+		if ((uint)color.id >= _fontColors.size()) {
+			_fontColors.resize(color.id + 1);
+		}
+
+		FontColor &fontColor = _fontColors[color.id];
+		fontColor.colors[kFontColorNormal] = color.normal;
+		fontColor.colors[kFontColorFocus] = color.normal;
+		fontColor.colors[kFontColorDisabled] = color.disabled;
+		fontColor.colors[kFontColorMouseOver] = color.mouseOver;
+		fontColor.colors[kFontColorPressed] = color.pressed;
+	}
+}
+
 const Font *GraphicsManager::getFont(const Common::String &name) const {
 	int id = getFontID(name);
 	return id >= 0 ? &_fonts[id] : nullptr;

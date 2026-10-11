@@ -33,12 +33,14 @@ namespace Nancy {
 // Data types corresponding to chunks found inside BOOT
 
 struct EngineData {
+	EngineData() {}
 	EngineData(Common::SeekableReadStream *chunkStream);
 	virtual ~EngineData() {}
 };
 
 // Boot summary. Contains data for the UI, game clock, starting a new game.
 struct BSUM : public EngineData {
+	BSUM() {}
 	BSUM(Common::SeekableReadStream *chunkStream);
 
 	byte header[90] = {};
@@ -55,8 +57,8 @@ struct BSUM : public EngineData {
 
 	// Game start section
 	SceneChangeDescription firstScene;
-	uint16 startTimeHours;
-	uint16 startTimeMinutes;
+	uint16 startTimeHours = 0;
+	uint16 startTimeMinutes = 0;
 
 	// Nancy11-13: on the day after the game starts, once the clock reaches
 	// lateNightHour, lateNightFlag gets raised
@@ -95,19 +97,19 @@ struct BSUM : public EngineData {
 	byte gTrans = 0;
 	byte bTrans = 0;
 
-	uint16 horizontalEdgesSize;
-	uint16 verticalEdgesSize;
+	uint16 horizontalEdgesSize = 0;
+	uint16 verticalEdgesSize = 0;
 
 	// Nancy16 switched to system fonts, and no longer stores a count here
 	uint16 numFonts = 0;
 
-	uint16 playerTimeMinuteLength;
-	uint16 buttonPressTimeDelay;
+	uint16 playerTimeMinuteLength = 0;
+	uint16 buttonPressTimeDelay = 0;
 	uint16 dayStartMinutes = 0;
 	uint16 dayEndMinutes = 0;
-	byte overrideMovementTimeDeltas;
-	uint16 slowMovementTimeDelta;
-	uint16 fastMovementTimeDelta;
+	byte overrideMovementTimeDeltas = 0;
+	uint16 slowMovementTimeDelta = 0;
+	uint16 fastMovementTimeDelta = 0;
 
 	// Nancy9-11: timer dependencies with a seconds value of kTimerDurationIndexBase
 	// or above take their seconds from this table instead. Nancy12+ timer
@@ -117,6 +119,7 @@ struct BSUM : public EngineData {
 
 // Contains rects defining the in-game viewport
 struct VIEW : public EngineData {
+	VIEW() {}
 	VIEW(Common::SeekableReadStream *chunkStream);
 
 	Common::Rect screenPosition;
@@ -517,6 +520,7 @@ struct LogoScreen : public EngineData {
 // NOT found inside BOOT; these are stored in their own cifs, the names of which
 // can be found inside BSUM. Introduced in nancy6.
 struct CVTX : public EngineData {
+	CVTX() {}
 	CVTX(Common::SeekableReadStream *chunkStream);
 
 	Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> texts;
@@ -873,6 +877,7 @@ struct UINB : public EngineData {
 // Event flags table. Introduced in Nancy 12, and replaces the event flag names
 // that were hardcoded in the executable. Each record is a name followed by an id.
 struct EVNT : public EngineData {
+	EVNT() {}
 	EVNT(Common::SeekableReadStream *chunkStream);
 
 	static const uint kEventRecordSize = 35;
@@ -951,6 +956,7 @@ struct ENVS : public EngineData {
 		Common::Array<Common::String> musicNames;
 	};
 
+	ENVS() {}
 	ENVS(Common::SeekableReadStream *chunkStream);
 
 	Common::Array<Environment> environments;
@@ -965,9 +971,11 @@ struct INVD : public EngineData {
 		int32 kind = 0;				// what clicking the item does
 		Common::Path sceneName;		// e.g. "s6200", for the kinds that open a scene
 		int16 valueIndex = 0;
+		Common::String valueName;	// Nancy19+ names the value instead
 		Common::Rect sourceRect;
 	};
 
+	INVD() {}
 	INVD(Common::SeekableReadStream *chunkStream);
 
 	Common::Array<Item> items;
@@ -993,6 +1001,7 @@ struct PCUI : public EngineData {
 		uint16 id = 0;
 	};
 
+	PCUI() {}
 	PCUI(Common::SeekableReadStream *chunkStream);
 
 	byte flag = 0;
@@ -1078,6 +1087,82 @@ struct PUIV : public EngineData {
 	uint16 volume = 0;			// shared volume (inferred)
 	Common::Array<SoundGroup> soundGroups;
 };
+
+// Nancy19 and up keep their data in Lua scripts instead of chunks. The boot
+// scripts fill the tables that came from the chunks of Nancy17 and Nancy18
+// (EVNT, INVD, ENVS, PCUI, VIEW and the texts); this holds everything else
+// they describe.
+struct ScriptBootData : public EngineData {
+	enum CursorVariant { kCursorRegular = 0, kCursorHot = 1, kNumCursorVariants = 2 };
+
+	struct Cursor {
+		Common::String name;	// the name of the item, for the cursors of the inventory
+		Common::Rect sources[kNumCursorVariants];
+		Common::Point hotspots[kNumCursorVariants];
+		bool overridesItem = false;	// shown even while an item is held
+	};
+
+	struct SystemFont {
+		int id = 0;
+		Common::String name;
+		Common::String faceName;
+		int height = 0;
+		bool isBold = false;
+		bool isScaled = false;	// follows the font scale of the options
+	};
+
+	struct FontColor {
+		int id = 0;
+		uint32 normal = 0;
+		uint32 disabled = 0;
+		uint32 mouseOver = 0;
+		uint32 pressed = 0;
+	};
+
+	// What the boot script in a player character's own tree holds
+	struct Player {
+		Common::Path becomeSceneName;	// run when the character starts being played
+		Common::Path leaveSceneName;
+		Common::Path autotextName;
+		Common::Array<Common::String> taskDoneSounds;
+		Common::Array<Common::String> taskUndoneSounds;
+	};
+
+	ScriptBootData() {}
+
+	Common::String windowName;
+	Common::String saveFolderName;
+	double playerTimeScale = 1.0;
+	int diagnosticFontID = 0;
+
+	Common::String cheatSavePrefix;
+	Common::String saveExtension;
+	Common::String defaultSaveName;
+	Common::String savePromptFlag;
+	bool savePromptFlagState = false;
+
+	Common::Rect leftNodeHotspot;	// in the viewport
+	Common::Rect rightNodeHotspot;
+	Common::Rect uturnNodeHotspot;
+
+	Common::Path cursorImageName;
+	Common::String defaultCursorName;
+	Common::String rightNodeCursorName;
+	Common::String leftNodeCursorName;
+	Common::String uturnNodeCursorName;
+	Common::Array<Cursor> cursors;
+
+	Common::Path itemCursorImageName;
+	Common::Array<Cursor> itemCursors;
+
+	Common::Path inventoryImageName;
+
+	Common::Array<SystemFont> fonts;
+	Common::Array<FontColor> fontColors;
+
+	Common::Array<Player> players;	// in the order of PCUI::characters
+};
+
 } // End of namespace Nancy
 
 #endif // NANCY_ENGINEDATA_H
