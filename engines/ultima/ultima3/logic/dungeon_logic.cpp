@@ -32,6 +32,11 @@ constexpr byte TILE_NO_TURNING = 0xA0;
 constexpr byte FIRST_MONSTER = 0x18;
 constexpr int LAST_MONSTER_KIND = 6;
 
+// The range the roll for a fight is taken from before adding the level, and how much more it has
+// with the gameplay fixes, which makes fights likelier
+constexpr int ENCOUNTER_RANGE = 0x82;
+constexpr int ENCOUNTER_RANGE_FIXED = 2;
+
 // How far a step in each direction goes
 static const int FACING_DX[4] = { 0, 1, 0, -1 };
 static const int FACING_DY[4] = { -1, 0, 1, 0 };
@@ -113,7 +118,7 @@ int DungeonLogic::rollEncounter() {
 		return -1;
 
 	// The deeper the party goes the likelier and fiercer the monsters
-	if (rollBelow(0x82 + save._dungeonLevel) < 0x80)
+	if (rollBelow(ENCOUNTER_RANGE + (_G(moreMonsters) ? ENCOUNTER_RANGE_FIXED : 0) + save._dungeonLevel) < 0x80)
 		return -1;
 
 	int kind = MIN(rollBelow(save._dungeonLevel + 2), LAST_MONSTER_KIND);

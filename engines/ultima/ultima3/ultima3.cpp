@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "engines/util.h"
@@ -41,6 +42,8 @@ Ultima3Engine::Ultima3Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		Engine(syst), Shared::Events("ultima3"), _gameDescription(gameDesc) {
 	g_engine = this;
 	_pcSpeaker = new Audio::PCSpeaker();
+	_moreMonsters = ConfMan.getBool("more_monsters");
+	_lessHunger = ConfMan.getBool("less_hunger");
 }
 
 Ultima3Engine::~Ultima3Engine() {

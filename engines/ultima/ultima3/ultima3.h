@@ -123,6 +123,11 @@ public:
 	byte _scene[Data::ARENA_SIZE * Data::ARENA_SIZE] = {};
 	bool _sceneShown = false;
 
+	// Set by the game options that bring in the Ultima III Upgrade's changes to
+	// the monster generation and food rates
+	bool _moreMonsters = false;
+	bool _lessHunger = false;
+
 	// Toggled in the game by the Volume command
 	bool _soundEnabled = true;
 

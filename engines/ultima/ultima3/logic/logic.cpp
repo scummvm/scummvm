@@ -29,6 +29,7 @@ int Logic::_healCounter = 9;
 int Logic::_upkeepCounter = 4;
 
 constexpr int HUNGER_STEP = 10;
+constexpr int HUNGER_STEP_FIXED = 5;
 constexpr int STARVATION_DAMAGE = 5;
 
 // Magic points regenerate up to half of the attribute they depend on
@@ -56,7 +57,7 @@ void Logic::applyHunger(int slot) {
 	Data::RosterEntry &e = _G(savegame).partyMember(slot);
 
 	// Food only drops by one every few turns, tracked in a hidden counter
-	int counter = Data::fromBcd(e._foodSubCounter) - HUNGER_STEP;
+	int counter = Data::fromBcd(e._foodSubCounter) - (_G(lessHunger) ? HUNGER_STEP_FIXED : HUNGER_STEP);
 	int borrow = 0;
 	if (counter < 0) {
 		counter += 100;

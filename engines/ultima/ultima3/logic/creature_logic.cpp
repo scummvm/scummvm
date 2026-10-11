@@ -45,6 +45,9 @@ static const byte MONSTER_FLOORS[MONSTER_TYPES] = {
 	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x00, 0x04, 0x04, 0x00, 0x00, 0x04, 0x04
 };
 
+// The range the roll for a new monster is taken from, of which the top part spawns one
+constexpr int SPAWN_RANGE = 0x87;
+constexpr int SPAWN_RANGE_FIXED = 0x8F;
 constexpr byte DRAGON_TILE = 0x74;
 constexpr byte SHIP_TILE = 0x3C;
 constexpr int VIEW_SIZE = 11;
@@ -220,7 +223,7 @@ void CreatureLogic::spawnMonster() {
 	Data::Creatures &c = map._creatures;
 	const Data::Savegame &save = _G(savegame);
 
-	if (save._location != Data::LOCATION_SOSARIA || randomBelow(0x87) < 0x80)
+	if (save._location != Data::LOCATION_SOSARIA || randomBelow(_G(moreMonsters) ? SPAWN_RANGE_FIXED : SPAWN_RANGE) < 0x80)
 		return;
 
 	int slot = 0;

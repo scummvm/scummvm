@@ -175,6 +175,28 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_ULTIMA3_MORE_MONSTERS,
+		{
+			_s("Increase monster generation"),
+			_s("Doubles the rate monsters and ships appear in the world, and increases it in dungeons, as in the Ultima III Upgrade"),
+			"more_monsters",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_ULTIMA3_LESS_HUNGER,
+		{
+			_s("Halve food consumption"),
+			_s("The party eats food at half the original rate, as in the Ultima III Upgrade"),
+			"less_hunger",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_ALWAYS_CHRISTMAS,
 		{
 			_s("Always enable Christmas easter-egg"),
