@@ -31,7 +31,7 @@ static const uint8 kSentenceColorIndex[] = {0xFD, 0xFB, 0xF1};
 
 void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 
-	if (presentScreen) {
+	if (presentScreen && !_eventQuitGame) {
 		_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 
 		if (_debugOverlayMode != kOverlayOff) {
@@ -47,12 +47,13 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 	uint32 endTicks = deadline ? deadline : ((ticks == -1) ? _nextTimer : _system->getMillis() + ticks * 1000 / kTickDelay / _fastMode);
 	do {
 		Common::Event ev;
-		while (_eventMan->pollEvent(ev)) {
+		while (!_eventQuitGame && _eventMan->pollEvent(ev)) {
 			switch (ev.type) {
 			case Common::EVENT_QUIT:
 				_inputVars[kInputEscape] = 1;
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
+				cancelDialogue();
 				break;
 			case Common::EVENT_KEYDOWN:
 				if (ev.kbd.keycode == Common::KEYCODE_f && (ev.kbd.flags & Common::KBD_CTRL)) {
@@ -113,6 +114,10 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 				break;
 			}
 		}
+		// Keep advancing game ticks so scripted animation loops can finish,
+		// but do not wait or present another frame during shutdown.
+		if (_eventQuitGame)
+			break;
 		if (_rightButtonSelecting && !(_eventMan->getButtonState() & Common::EventManager::RBUTTON)) {
 			_inputVars[kInputRightRelease] = 1;
 		}
@@ -133,7 +138,7 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 	_gameTicks += kTimerTicksCount;
 
 	// Update cursor mask
-	if ((_gameTicks & 31) == 0) {
+	if ((_gameTicks & 31) == 0 && !_eventQuitGame) {
 		setCursor(_currentCursor);
 		_currentCursor = (_currentCursor + 1) & 3;
 	}
