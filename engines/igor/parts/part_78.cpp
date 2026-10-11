@@ -209,7 +209,7 @@ void IgorEngine::PART_78_INTERJECTION(int which) {
 void IgorEngine::PART_78() {
 	playMusic(11);
 	// the card with the time that has passed
-	PART_MEANWHILE(IMG_Part78MinutesLater);
+	PART_meanwhile(IMG_Part78MinutesLater);
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
 	memset(_screenVGA + 46080, 0, 17920);
@@ -302,7 +302,7 @@ void IgorEngine::PART_78() {
 	_objectsState[111] = 1;
 	playMusic(2);
 	// the card with the time that has passed
-	PART_MEANWHILE(IMG_Part78NextDay);
+	PART_meanwhile(IMG_Part78NextDay);
 	_currentPart = 281;
 }
 

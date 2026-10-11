@@ -22,45 +22,40 @@
 
 namespace Igor {
 
-// A character stands on the right of the room. His head is a 33x43 picture drawn at (263,88); the frames follow
-// the first part of the animation resource.
-static const int kPart68NpcOffset = 88 * 320 + 263;
-static const int kPart68NpcWidth = 33;
-static const int kPart68NpcHeight = 43;
-static const int kPart68NpcFramesOffset = 2516;
-static const int kPart68NpcFrameSize = kPart68NpcWidth * kPart68NpcHeight;
-static const int kPart68NpcStanding = 4;
-static const int kPart68NpcFacing = 3;
+static const int kPart68NBorisOffset = 88 * 320 + 263;
+static const int kPart68BorisWidth = 33;
+static const int kPart68BorisHeight = 43;
+static const int kPart68BorisFramesOffset = 2516;
+static const int kPart68BorisFrameSize = kPart68BorisWidth * kPart68BorisHeight;
+static const int kPart68BorisStanding = 4;
+static const int kPart68BorisFacing = 3;
 
-// A small picture (39x14, four frames) at (39,31) blinks from time to time.
-static const int kPart68AmbientOffset = 31 * 320 + 39;
-static const int kPart68AmbientWidth = 39;
-static const int kPart68AmbientHeight = 14;
-static const int kPart68AmbientFramesOffset = 0x3BB7;
 
-// The object in the room (9x12, two frames) at (179,92).
-static const int kPart68ObjectOffset = 92 * 320 + 179;
-static const int kPart68ObjectWidth = 9;
-static const int kPart68ObjectHeight = 12;
+static const int kPart68OwlsEyesOffset = 31 * 320 + 39;
+static const int kPart68OwlsEyesWidth = 39;
+static const int kPart68OwlsEyesHeight = 14;
+static const int kPart68OwlsEyesFramesOffset = 0x3BB7;
 
-// The picture of the exchange (23x50, two frames) at (170,83).
+static const int kPart68VaseOffset = 92 * 320 + 179;
+static const int kPart68VaseWidth = 9;
+static const int kPart68VaseHeight = 12;
+
+// The picture of the exchange
 static const int kPart68PoseOffset = 83 * 320 + 170;
 static const int kPart68PoseWidth = 23;
 static const int kPart68PoseHeight = 50;
 static const int kPart68PoseFramesOffset = 0xD8;
 
-// The picture of the object that is given (52x30, four frames) at (244,86).
-static const int kPart68GiveOffset = 86 * 320 + 244;
+static const int kPart68GiveAnimOffset = 86 * 320 + 244;
 static const int kPart68GiveWidth = 52;
 static const int kPart68GiveHeight = 30;
 static const int kPart68GiveFramesOffset = 0x443F;
 static const int kPart68GiveFrameSize = kPart68GiveWidth * kPart68GiveHeight;
 
-// Sprites played when the character leaves: frame table at offset 0x140E of the block starting at 0x5C9F.
 static const int kPart68LeaveBase = 0x5C9F;
 static const int kPart68LeaveTable = 0x140E;
 
-// Where the character's lines are shown.
+// Where Boris' lines are shown.
 static const int kPart68TextX = 282;
 static const int kPart68TextY = 85;
 static const int kPart68TextR = 63;
@@ -73,7 +68,7 @@ static const int kPart68VaseTaken = 91;
 static const int kPart68UndertakerLeft = 92;
 static const int kPart68RecordsGiven = 93;
 static const int kPart68BorisIntroduced = 94;
-static const int kPart68FlagState = 104;
+static const int kPart68MessageSent = 104;
 
 // Inventory objects.
 static const int kVaseInventoryNumber = 34;
@@ -88,18 +83,18 @@ void IgorEngine::PART_68_LOAD_ROOM() {
 }
 
 void IgorEngine::PART_68_drawUndertaker(int frame) {
-	drawAnimRect(kPart68NpcOffset, kPart68NpcFramesOffset + frame * kPart68NpcFrameSize, kPart68NpcWidth, kPart68NpcHeight,
+	drawAnimRect(kPart68NBorisOffset, kPart68BorisFramesOffset + frame * kPart68BorisFrameSize, kPart68BorisWidth, kPart68BorisHeight,
 				 true, kBlendBehindIgorAndText);
 }
 
 void IgorEngine::PART_68_DRAW_AMBIENT(int frame) {
-	drawAnimRect(kPart68AmbientOffset, kPart68AmbientFramesOffset + frame * kPart68AmbientWidth * kPart68AmbientHeight,
-				 kPart68AmbientWidth, kPart68AmbientHeight);
+	drawAnimRect(kPart68OwlsEyesOffset, kPart68OwlsEyesFramesOffset + frame * kPart68OwlsEyesWidth * kPart68OwlsEyesHeight,
+				 kPart68OwlsEyesWidth, kPart68OwlsEyesHeight);
 }
 
 void IgorEngine::PART_68_drawVase(int frame) {
-	copyArea(_screenLayer1, kPart68ObjectOffset, 320, _animFramesBuffer + frame * kPart68ObjectWidth * kPart68ObjectHeight,
-			 kPart68ObjectWidth, kPart68ObjectWidth, kPart68ObjectHeight);
+	copyArea(_screenLayer1, kPart68VaseOffset, 320, _animFramesBuffer + frame * kPart68VaseWidth * kPart68VaseHeight,
+			 kPart68VaseWidth, kPart68VaseWidth, kPart68VaseHeight);
 }
 
 void IgorEngine::PART_68_drawPose(int frame) {
@@ -181,10 +176,10 @@ void IgorEngine::PART_68_BorisSayReplies(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		PART_68_drawUndertaker(kPart68NpcStanding);
+		PART_68_drawUndertaker(kPart68BorisStanding);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_68_drawUndertaker(kPart68NpcStanding + getRandomNumber(4));
+		PART_68_drawUndertaker(kPart68BorisStanding + getRandomNumber(4));
 		break;
 	}
 }
@@ -272,7 +267,7 @@ void IgorEngine::PART_68_ACTION_102_takeVase() {
 	// will only let us take the vase if the records have been given to him
 	if (_objectsState[kPart68RecordsGiven] == 0) {
 		PART_68_drawPose(0);
-		PART_68_drawUndertaker(kPart68NpcFacing);
+		PART_68_drawUndertaker(kPart68BorisFacing);
 		waitForTimer(30);
 		PART_68_sayBoris({ { 202, 1, 1008 }, { 203, 1, 1009 }, { 204, 1, 1010 }, { 205, 1, 1011 } });
 		PART_68_drawPose(1);
@@ -285,7 +280,7 @@ void IgorEngine::PART_68_ACTION_102_takeVase() {
 		_walkDataCurrentIndex = _walkDataLastIndex;
 		igorSayAndWait({ { 206, 1, 1012 }, { 207, 1, 1013 } });
 		PART_68_sayBoris({ { 208, 1, 1014 }, { 209, 1, 1015 }, { 210, 1, 1016 }, { 211, 1, 1017 } });
-		PART_68_drawUndertaker(kPart68NpcFacing);
+		PART_68_drawUndertaker(kPart68BorisFacing);
 		waitForTimer(30);
 		return;
 	}
@@ -302,9 +297,9 @@ void IgorEngine::PART_68_ACTION_102_takeVase() {
  * Igor gives the object to the character.
  */
 void IgorEngine::PART_68_ACTION_108_giveRecordsToBoris() {
-	PART_68_drawUndertaker(kPart68NpcFacing);
+	PART_68_drawUndertaker(kPart68BorisFacing);
 	waitForTimer(30);
-	drawAnimRect(kPart68GiveOffset, kPart68GiveFramesOffset, kPart68GiveWidth, kPart68GiveHeight);
+	drawAnimRect(kPart68GiveAnimOffset, kPart68GiveFramesOffset, kPart68GiveWidth, kPart68GiveHeight);
 	if (_inventoryInfo[kPart68GiveInventoryIndex] != 0) {
 		removeInventoryEntry(kPart68GiveInventoryIndex);
 		drawInventory(_inventoryInfo[72], 0);
@@ -313,11 +308,11 @@ void IgorEngine::PART_68_ACTION_108_giveRecordsToBoris() {
 	igorSayAndWait(214, 1, 1019);
 	PART_68_sayBoris({ { 215, 1, 1020 }, { 216, 1, 1021 }, { 217, 1, 1022 }, { 218, 1, 1023 } });
 	for (int frame = 1; frame <= 3; ++frame) {
-		drawAnimRect(kPart68GiveOffset, kPart68GiveFramesOffset + frame * kPart68GiveFrameSize, kPart68GiveWidth, kPart68GiveHeight);
+		drawAnimRect(kPart68GiveAnimOffset, kPart68GiveFramesOffset + frame * kPart68GiveFrameSize, kPart68GiveWidth, kPart68GiveHeight);
 		waitForTimer(40);
 	}
 	PART_68_sayBoris({ { 219, 1, 1024 }, { 220, 1, 1025 }, { 221, 1, 1026 }, { 222, 1, 1027 } });
-	PART_68_drawUndertaker(kPart68NpcFacing);
+	PART_68_drawUndertaker(kPart68BorisFacing);
 	waitForTimer(30);
 	_objectsState[kPart68RecordsGiven] = 1;
 	PART_68_APPLY_OBJECT_STATE(255);
@@ -329,7 +324,7 @@ void IgorEngine::PART_68_ACTION_108_giveRecordsToBoris() {
 void IgorEngine::PART_68_chooseRandomNames(int code) {
 	uint8 *data = _gameState.dialogueData;
 	if (code == 10) {
-		const int entries = _objectsState[kPart68FlagState] == 1 ? 4 : 5;
+		const int entries = _objectsState[kPart68MessageSent] == 1 ? 4 : 5;
 		for (int i = 1; i <= entries; ++i) {
 			data[27 + 6 * i] = _part68QuestionCounter;
 			++_part68QuestionCounter;
@@ -337,7 +332,7 @@ void IgorEngine::PART_68_chooseRandomNames(int code) {
 				_part68QuestionCounter = 1;
 			}
 		}
-		if (_objectsState[kPart68FlagState] == 1) {
+		if (_objectsState[kPart68MessageSent] == 1) {
 			data[57] = 20;
 			data[58] = 55;
 			data[56] = 0;
@@ -368,7 +363,7 @@ void IgorEngine::PART_68_CONVERSATION() {
 	_updateDialogue = &IgorEngine::PART_68_BorisSayReplies;
 	loadDialogueData(DLG_Part68);
 	_part68QuestionCounter = 1;
-	PART_68_drawUndertaker(kPart68NpcStanding);
+	PART_68_drawUndertaker(kPart68BorisStanding);
 
 	memset(_screenVGA + 46080, 0, 17920);
 	_gameState.dialogueStarted = true;
@@ -391,7 +386,7 @@ void IgorEngine::PART_68_CONVERSATION() {
 	bool done = false;
 	do {
 		drawDialogueChoices();
-		PART_68_drawUndertaker(kPart68NpcStanding);
+		PART_68_drawUndertaker(kPart68BorisStanding);
 		const int choice = selectDialogue();
 		if (choice == 0) {
 			break;

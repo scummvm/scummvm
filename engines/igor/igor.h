@@ -1165,55 +1165,7 @@ private:
 	void PART_50_UPDATE_ROOM_BACKGROUND();
 	void PART_50();
 
-	void PART_69_EXEC_ACTION(int action);
-	void PART_69_APPLY_OBJECT_STATE();
-	void PART_69_DRAW_FIREFLY_A(int frame);
-	void PART_69_DRAW_FIREFLY_B(int frame);
-	void PART_69_ANIMATE_FIREFLIES();
-	void PART_69_ACTION_107_watch();
-	void PART_69_FINALE(int num, int sound);
-	void PART_69_ENTER_FROM_RIGHT();
-	void PART_69_UPDATE_ROOM_BACKGROUND();
-	void PART_69();
-
-	void PART_70_EXEC_ACTION(int action);
-	void PART_70_DRAW_OBJECT_STATE();
-	void PART_70_UPDATE_ROOM_BACKGROUND();
-	void PART_70();
-
-	void PART_74_CYCLE_COLORS();
-	void PART_74_DRAW_FRAME(int frame);
-	void PART_74_UPDATE_DIALOGUE_FIRST(int action);
-	void PART_74_UPDATE_DIALOGUE_SECOND_A(int action);
-	void PART_74_UPDATE_DIALOGUE_SECOND_B(int action);
-	void PART_74_SAY(int who, const Common::Array<DialogueText> &lines);
-	void PART_74_CUTSCENE();
-
-	void PART_81_EXEC_ACTION(int action);
-	void PART_81_LOAD_ROOM();
-	void PART_81_LOAD_ANIMATION();
-	void PART_81_DRAW_HEAD(int frame);
-	void PART_81_DRAW_STORY_HEAD(int frame);
-	void PART_81_DRAW_FIGURE(int offset);
-	void PART_81_DRAW_END_FRAME(int frame);
-	void PART_81_UPDATE_ROOM_BACKGROUND();
-	void PART_81_UPDATE_DIALOGUE_NPC(int action);
-	void PART_81_NPC_SAY(const Common::Array<DialogueText> &lines);
-	void PART_81_IGOR_SAY(int num, int count, int sound);
-	void PART_81_APPLY_OBJECT_STATE(int num);
-	void PART_81_SCROLL_IN();
-	void PART_81_TRANSITION_IN();
-	void PART_81_TRANSITION_OUT();
-	void PART_81_END_SCENE();
-	void PART_81_ACTION_109();
-	void PART_81_ACTION_110();
-	void PART_81_ACTION_102_talk();
-	void PART_81_DIALOGUE_CODE(int code);
-	void PART_81_CONVERSATION();
-	void PART_81_ENTER();
-	void PART_81();
-
-
+	// cemetery entrance
 	void PART_68_EXEC_ACTION(int action);
 	void PART_68_LOAD_ROOM();
 	void PART_68_APPLY_OBJECT_STATE(int num);
@@ -1239,6 +1191,24 @@ private:
 	void PART_68_BorisLeaves();
 	void PART_68();
 
+	// swamp
+	void PART_69_EXEC_ACTION(int action);
+	void PART_69_APPLY_OBJECT_STATE();
+	void PART_69_DRAW_FIREFLY_A(int frame);
+	void PART_69_DRAW_FIREFLY_B(int frame);
+	void PART_69_ANIMATE_FIREFLIES();
+	void PART_69_ACTION_107_watch();
+	void PART_69_FINALE(int num, int sound);
+	void PART_69_ENTER_FROM_RIGHT();
+	void PART_69_UPDATE_ROOM_BACKGROUND();
+	void PART_69();
+
+	// map of second area
+	void PART_70_EXEC_ACTION(int action);
+	void PART_70_DRAW_OBJECT_STATE();
+	void PART_70_UPDATE_ROOM_BACKGROUND();
+	void PART_70();
+
 	void PART_71_EXEC_ACTION(int action);
 	void PART_71_APPLY_OBJECT_STATE(int what);
 	void PART_71_DRAW_OBJECT(int frame);
@@ -1251,52 +1221,40 @@ private:
 
 	void PART_72_EXEC_ACTION(int action);
 	void PART_72_APPLY_OBJECT_STATE();
-	void PART_72_ACTION_102_takeObject();
+	void PART_72_ACTION_102_takeFlower();
 	void PART_72_enterFromMap();
 	void PART_72_enterFromSwamp();
-	void PART_72_UPDATE_STAR();
+	void PART_72_updateBlinkingEyes();
 	void PART_72_UPDATE_ROOM_BACKGROUND();
 	void PART_72();
+	void PART_72_paintBlinkingEyes();
 
-	void paintEyes();
+	void PART_73_drawPoliceman(int frame);
+	void PART_73_UPDATE_DIALOGUE(int action);
+	void PART_73_CUTSCENE();
+
+	void PART_74_CYCLE_COLORS();
+	void PART_74_drawCharacterFrame(int frame);
+	void PART_74_UPDATE_DIALOGUE_Sailor(int action);
+	void PART_74_UPDATE_DIALOGUE_CaptainA(int action);
+	void PART_74_UPDATE_DIALOGUE_CaptainB(int action);
+	void PART_74_SAY(int who, const Common::Array<DialogueText> &lines);
+	void PART_74_CUTSCENE();
+
+	// philip vodka cutscene
+	void PART_75_UPDATE_DIALOGUE_PHILIP(int action);
+	void PART_75_HELPER_drawPhilipFrame(int frame);
+	void PART_75();
 
 	void PART_76_EXEC_ACTION(int action);
 	void PART_76_APPLY_OBJECT_STATE();
-	void PART_76_DRAW_SCENE_FRAME(int frame);
-	void PART_76_DRAW_SEQUENCE_FRAME(int frame);
-	void PART_76_ACTION_103_sequence();
-	void PART_76_ACTION_104_takeObject();
-	void PART_76_ACTION_106_finale();
+	void PART_76_drawParachuteFrame(int frame);
+	void PART_76_drawOpenDoorFrame(int frame);
+	void PART_76_ACTION_103_openDoor();
+	void PART_76_ACTION_104_takeParachute();
+	void PART_76_ACTION_106_useParachute();
 	void PART_76_ENTRY();
 	void PART_76();
-
-	void PART_79_DRAW_FIGURE(int frame);
-	void PART_79_DRAW_PATCH(int step);
-	void PART_79_CLEAR_PATCH();
-	void PART_79_UPDATE_AMBIENT_790();
-	void PART_79_UPDATE_DIALOGUE_790(int action);
-	void PART_79_SAY_790(const Common::Array<DialogueText> &lines);
-	void PART_79_SLIDE();
-	void PART_79_790();
-	void PART_79_DRAW_GROUP_FRAME(const uint8 *buffer, int table, int base, int frame);
-	void PART_79_DRAW_SCENE(int frame);
-	void PART_79_DRAW_LAYER2_FRAME(int frame);
-	void PART_79_DRAW_LAYER2_FRAME_2(int frame);
-	void PART_79_DRAW_ANIM2_FRAME(const void *group, int frame);
-	void PART_79_ANIMATE_IGOR_HEAD(int frame);
-	void PART_79_UPDATE_DIALOGUE_SPEAKER(int action);
-	void PART_79_UPDATE_DIALOGUE_FIRST_SPEAKER(int action);
-	void PART_79_UPDATE_DIALOGUE_THIRD_SPEAKER(int action);
-	void PART_79_UPDATE_AMBIENT_791();
-	void PART_79_SAY_SPEAKER(int startX, int startY, int x, int y, int r, int g, int b, int endFrame, int baseFrame, const Common::Array<DialogueText> &lines);
-	void PART_79_SAY_FIRST_SPEAKER(int startX, int startY, const Common::Array<DialogueText> &lines);
-	void PART_79_SAY_THIRD_SPEAKER(const Common::Array<DialogueText> &lines);
-	void PART_79_IGOR_SAY(const Common::Array<DialogueText> &lines);
-	void PART_79_SET_IGOR_POS(int x, int y);
-	void PART_79_FADE_COLORS(int first, int last, bool fadeInColors);
-	void PART_79_FADE_IN_PAIR(int firstColor);
-	void PART_79_791();
-	void PART_79();
 
 	void PART_77_EXEC_ACTION(int action);
 	void PART_77_APPLY_OBJECT_STATE();
@@ -1329,15 +1287,63 @@ private:
 	void PART_78_INTERJECTION(int which);
 	void PART_78();
 
-	void PART_73_DRAW_PATCH(int frame);
-	void PART_73_UPDATE_DIALOGUE(int action);
-	void PART_73();
+	void PART_79_DRAW_FIGURE(int frame);
+	void PART_79_DRAW_PATCH(int step);
+	void PART_79_CLEAR_PATCH();
+	void PART_79_UPDATE_AMBIENT_790();
+	void PART_79_UPDATE_DIALOGUE_790(int action);
+	void PART_79_SAY_790(const Common::Array<DialogueText> &lines);
+	void PART_79_SLIDE();
+	void PART_79_790();
+	void PART_79_DRAW_GROUP_FRAME(const uint8 *buffer, int table, int base, int frame);
+	void PART_79_DRAW_SCENE(int frame);
+	void PART_79_DRAW_LAYER2_FRAME(int frame);
+	void PART_79_DRAW_LAYER2_FRAME_2(int frame);
+	void PART_79_DRAW_ANIM2_FRAME(const void *group, int frame);
+	void PART_79_ANIMATE_IGOR_HEAD(int frame);
+	void PART_79_UPDATE_DIALOGUE_SPEAKER(int action);
+	void PART_79_UPDATE_DIALOGUE_FIRST_SPEAKER(int action);
+	void PART_79_UPDATE_DIALOGUE_THIRD_SPEAKER(int action);
+	void PART_79_UPDATE_AMBIENT_791();
+	void PART_79_SAY_SPEAKER(int startX, int startY, int x, int y, int r, int g, int b, int endFrame, int baseFrame, const Common::Array<DialogueText> &lines);
+	void PART_79_SAY_FIRST_SPEAKER(int startX, int startY, const Common::Array<DialogueText> &lines);
+	void PART_79_SAY_THIRD_SPEAKER(const Common::Array<DialogueText> &lines);
+	void PART_79_IGOR_SAY(const Common::Array<DialogueText> &lines);
+	void PART_79_SET_IGOR_POS(int x, int y);
+	void PART_79_FADE_COLORS(int first, int last, bool fadeInColors);
+	void PART_79_FADE_IN_PAIR(int firstColor);
+	void PART_79_791();
+	void PART_79();
 
 	void PART_80_DRAW_PATCH(int frame);
 	void PART_80_UPDATE_DIALOGUE_FIRST(int action);
 	void PART_80_UPDATE_DIALOGUE_SECOND(int action);
 	void PART_80_SAY(int who, const Common::Array<DialogueText> &lines);
 	void PART_80();
+
+	void PART_81_EXEC_ACTION(int action);
+	void PART_81_LOAD_ROOM();
+	void PART_81_LOAD_ANIMATION();
+	void PART_81_DRAW_HEAD(int frame);
+	void PART_81_DRAW_STORY_HEAD(int frame);
+	void PART_81_DRAW_FIGURE(int offset);
+	void PART_81_DRAW_END_FRAME(int frame);
+	void PART_81_UPDATE_ROOM_BACKGROUND();
+	void PART_81_UPDATE_DIALOGUE_NPC(int action);
+	void PART_81_NPC_SAY(const Common::Array<DialogueText> &lines);
+	void PART_81_IGOR_SAY(int num, int count, int sound);
+	void PART_81_APPLY_OBJECT_STATE(int num);
+	void PART_81_SCROLL_IN();
+	void PART_81_TRANSITION_IN();
+	void PART_81_TRANSITION_OUT();
+	void PART_81_END_SCENE();
+	void PART_81_ACTION_109();
+	void PART_81_ACTION_110();
+	void PART_81_ACTION_102_talk();
+	void PART_81_DIALOGUE_CODE(int code);
+	void PART_81_CONVERSATION();
+	void PART_81_ENTER();
+	void PART_81();
 
 	// maze
 	static const MazeNode MAZE_NODES[108];
@@ -1359,18 +1365,13 @@ private:
 	void UPDATE_OBJECT_STATE(int num);
 	void PART_UPDATE_FIGURES_ON_PAPER(int delay);
 
-	void PART_MEANWHILE(int img = IMG_Meanwhile);
+	void PART_meanwhile(int img = IMG_Meanwhile);
 
 	// Margaret cutscenes
 	void PART_MARGARET_ROOM_CUTSCENE_HELPER_1();
 	void PART_MARGARET_ROOM_CUTSCENE_HELPER_2(int frame);
 	void PART_MARGARET_ROOM_CUTSCENE_UPDATE_DIALOGUE_MARGARET(int action);
 	void PART_MARGARET_ROOM_CUTSCENE();
-
-	// philip vodka cutscene
-	void PART_75_UPDATE_DIALOGUE_PHILIP(int action);
-	void PART_75_HELPER_1(int frame);
-	void PART_75();
 
 	// Intro
 	void PART_85();
