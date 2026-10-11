@@ -212,6 +212,7 @@ static void drawButtonsBar(uint8 *dst, const uint8 *src) {
 }
 
 void IgorEngine::handleOptionsMenu() {
+	PauseToken pauseToken = pauseEngine();
 	hideCursor();
 	memcpy(_paletteBuffer, _currentPalette, 768);
 	memset(_screenVGA + 144 * 320, 0, 11 * 320);
