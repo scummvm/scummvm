@@ -136,6 +136,7 @@ void IgorEngine::PART_19_HELPER_2_slugCutscene() { // sub_137_07AD
 	cutsceneSayWithCallback(243, 92, 63, 23, 33, 212, 3, 920, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
 	for (int i = 2; i <= 9; ++i) {
 		src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + i * 2) - 1;
+		decodeAnimFrame(src, _screenVGA, true);
 		waitForTimer(60);
 	}
 	cutsceneSayStart(227, 91, 0, 63, 63, { { 215, 1, 921 }, { 216, 2, 922 } });
