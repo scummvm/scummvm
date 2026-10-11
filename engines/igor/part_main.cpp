@@ -797,7 +797,7 @@ void IgorEngine::moveScreenUp(int offset) {
 }
 
 // Shows the papyrus full screen. With reveal set (dryer) the figures appear
-// slowly and are remembered as seen; otherwise Igor comments on what is shown.
+// slowly and are remembered as seen
 void IgorEngine::lookAtPapyrus(bool reveal) {
 	memcpy(_paletteBuffer, _currentPalette, 624);
 	fadeOut(624);
@@ -816,7 +816,7 @@ void IgorEngine::lookAtPapyrus(bool reveal) {
 		_objectsState[2] = 1;
 		waitForTimer(255);
 	} else {
-		// the figures are only shown from the second viewing on
+
 		if (_objectsState[2] == 1) {
 			PART_UPDATE_FIGURES_ON_PAPER(0);
 		}
@@ -836,6 +836,14 @@ void IgorEngine::lookAtPapyrus(bool reveal) {
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		waitForEndOfIgorDialogue(false);
+		// the paper stays on screen until another click (left or right)
+		_inputVars[kInputClick] = 0;
+		_inputVars[kInputRightClick] = 0;
+		while (!_inputVars[kInputClick] && !_inputVars[kInputRightClick] && !_eventQuitGame) {
+			waitForTimer(1);
+		}
+		_inputVars[kInputClick] = 0;
+		_inputVars[kInputRightClick] = 0;
 		wd->x = _walkDataCurrentPosX2;
 		wd->y = _walkDataCurrentPosY2;
 		wd->scaleWidth = _walkDataCurrentWScale;
