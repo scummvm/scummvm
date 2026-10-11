@@ -7428,6 +7428,30 @@ static const uint16 kq6CDPatchAudioTextSupport3[] = {
 	PATCH_END
 };
 
+// In hires mode, the inventory moves its icon bar 10 hires pixels down to fill
+//  the window after it gets stretched from 200 to 440 lines. When the
+//  "Keep all pixels the same size" option is enabled, the window is
+//  only doubled, so the icons end up drawn over the bottom of the window frame.
+//  We remove the extra offset in that mode.
+// Applies to at least: PC-CD
+// Patched method: KqInv::drawInvWindow
+static const uint16 kq6SignatureInventoryUniformPixels[] = {
+	0x85, 0x48,                         // lat temp[48] (hires mode)
+	0x31, 0x07,                         // bnt [skip offset]
+	SIG_MAGICDWORD,
+	0x8d, 0x12,                         // lst temp[12] (button top)
+	0x35, 0x0a,                         // ldi 0a (10 hires pixels down)
+	0x02,                               // add
+	0xa5, 0x12,                         // sat temp[12]
+	SIG_END
+};
+
+static const uint16 kq6PatchInventoryUniformPixels[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x35, 0x00,                         // ldi 00
+	PATCH_END
+};
+
 // Additional patch specifically for King's Quest 6
 //  Fixes text-window size for hires portraits mode
 //   Otherwise at least at the end some text-windows will be way too small
@@ -7783,6 +7807,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	{  true,   907, "fix hair detection for ribbon's look msg",       1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
 	{  true,   907, "talking inventory workaround",                   4, kq6SignatureTalkingInventory,             kq6PatchTalkingInventory },
+	{ false,   907, "hires inventory with uniform pixels",            1, kq6SignatureInventoryUniformPixels,       kq6PatchInventoryUniformPixels },
 	{  true,   924, "CD/Mac: fix truncated messages",                 1, kq6SignatureTruncatedMessagesFix,         kq6PatchTruncatedMessagesFix },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,               sciNarratorLockupPatch },
 	{  true,   950, "fix Feature event handling",                     1, kq6SignatureFeatureEventHandling,         kq6PatchFeatureEventHandling },
@@ -27331,6 +27356,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				if (g_sci->isCD()) {
 					// Enables Dual mode patches (audio + subtitles at the same time) for King's Quest 6
 					enablePatch(signatureTable, "CD: audio + text support");
+				}
+				if (ConfMan.hasKey("hires_uniform_pixels") && ConfMan.getBool("hires_uniform_pixels")) {
+					enablePatch(signatureTable, "hires inventory with uniform pixels");
 				}
 				if (_isMacSci11) {
 					// Enables Mac-only patch to work around missing pic
