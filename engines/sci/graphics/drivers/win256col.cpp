@@ -176,6 +176,9 @@ void WindowsGfx256ColorsDriver::copyRectToScreen(const byte *src, int srcX, int 
 	if (_flags & kMovieMode) {
 		destX = (_screenW >> 1) - (w & ~1) * _hScaleMult / 2;
 		destY = (_screenH >> 1) - (h & ~1) * _vScaleMult2 / 2;
+		// Keep the movie out of the area above the picture (the top 20 rows), since the scripts won't redraw that area afterwards
+		if (_uniformPixels)
+			destY = MAX<int>(0, MIN<int>(destY + 10, _screenH - (h & ~1) * _vScaleMult2));
 	}
 
 	src += (srcY * pitch + srcX * _srcPixelSize);
