@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	lua_persist.o \
 	lua_persistence_util.o \
 	lua_unpersist.o \
+	lundump.o \
 	lvm.o \
 	lzio.o \
 	scummvm_file.o
