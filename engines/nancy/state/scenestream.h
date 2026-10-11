@@ -42,6 +42,10 @@ namespace UI {
 class Viewport;
 }
 
+namespace Script {
+class SceneContext;
+}
+
 namespace State {
 
 // What a stream gets started with
@@ -97,7 +101,13 @@ public:
 
 private:
 	bool loadScene();
+#ifdef ENABLE_NANCY_V4
+	bool loadScriptedScene();	// Nancy19+
+#endif
+	void beginScene();
+	void loadBackground(const Common::Path &videoFile);
 	void clearScene();
+	void processRecords();
 
 	Common::String _name;
 	StreamFlags _flags;
@@ -107,6 +117,11 @@ private:
 	SceneChangeDescription _sceneInfo;
 	Action::ActionManager _actionManager;
 	UI::Viewport *_background = nullptr;
+
+#ifdef ENABLE_NANCY_V4
+	// Nancy19: the script of the scene, which takes the place of the action records
+	Script::SceneContext *_scriptScene = nullptr;
+#endif
 
 	// Every stream has generic event flags of its own
 	Common::Array<byte> _genericFlags;

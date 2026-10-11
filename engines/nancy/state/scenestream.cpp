@@ -32,6 +32,11 @@
 
 #include "engines/nancy/ui/viewport.h"
 
+#ifdef ENABLE_NANCY_V4
+#include "engines/nancy/script/records.h"
+#include "engines/nancy/script/scenecontext.h"
+#endif
+
 namespace Nancy {
 namespace State {
 
@@ -63,13 +68,13 @@ bool SceneStream::update() {
 		return false;
 	}
 
-	_actionManager.processActionRecords();
+	processRecords();
 
 	if (_hasNextScene && !_isEnded) {
 		_hasNextScene = false;
 
 		if (loadScene()) {
-			_actionManager.processActionRecords();
+			processRecords();
 		} else if (_sceneName.empty()) {
 			// There was nothing to run in the first place
 			_isEnded = true;
@@ -79,10 +84,30 @@ bool SceneStream::update() {
 	return !_isEnded;
 }
 
-void SceneStream::handleInput(NancyInput &input) {
-	if (!_isEnded) {
-		_actionManager.handleInput(input);
+void SceneStream::processRecords() {
+#ifdef ENABLE_NANCY_V4
+	if (_scriptScene) {
+		_scriptScene->run(NancySceneState.getFrameSeconds());
+		return;
 	}
+#endif
+
+	_actionManager.processActionRecords();
+}
+
+void SceneStream::handleInput(NancyInput &input) {
+	if (_isEnded) {
+		return;
+	}
+
+#ifdef ENABLE_NANCY_V4
+	if (_scriptScene) {
+		_scriptScene->handleInput(input);
+		return;
+	}
+#endif
+
+	_actionManager.handleInput(input);
 }
 
 void SceneStream::changeScene(const Common::String &sceneName, uint16 frameID) {
@@ -116,25 +141,31 @@ byte SceneStream::getEventFlag(int16 index) const {
 	return g_nancy->_false;
 }
 
-bool SceneStream::loadScene() {
-	IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path(_nextSceneName));
-	if (!sceneIFF) {
-		warning("Stream %s: missing scene file %s", _name.c_str(), _nextSceneName.c_str());
+#ifdef ENABLE_NANCY_V4
+// Nancy19 scenes are Lua scripts, which make their own records
+bool SceneStream::loadScriptedScene() {
+	Script::SceneContext *scriptScene = new Script::SceneContext(_name, _nextSceneName, _nextFrameID, _zOffset);
+	if (!scriptScene->load()) {
+		warning("Stream %s: could not load scene %s", _name.c_str(), _nextSceneName.c_str());
+		delete scriptScene;
 		return false;
 	}
 
-	Common::SeekableReadStream *summaryChunk = sceneIFF->getChunkStream("TSUM");
-	if (!summaryChunk) {
-		warning("Stream %s: scene file %s has no summary", _name.c_str(), _nextSceneName.c_str());
-		delete sceneIFF;
-		return false;
+	beginScene();
+	_scriptScene = scriptScene;
+
+	Script::SummaryRecord *summary = _scriptScene->getSummary();
+	if (!summary->getBackgroundName().empty()) {
+		loadBackground(Common::Path(summary->getBackgroundName()));
 	}
 
-	Common::Path videoFile;
-	summaryChunk->skip(0x32);	// Description
-	readFilename(*summaryChunk, videoFile);
-	delete summaryChunk;
+	summary->setBackground(_background);
+	return true;
+}
+#endif
 
+// Takes the stream from the scene it was running to the one it asked for
+void SceneStream::beginScene() {
 	// The streams that were started for the outgoing scene end with it
 	const bool hadScene = !_sceneName.empty();
 	clearScene();
@@ -161,13 +192,45 @@ bool SceneStream::loadScene() {
 	}
 
 	debugC(0, kDebugScene, "Stream %s: loading scene %s, frame %u", _name.c_str(), _sceneName.c_str(), _nextFrameID);
+}
+
+void SceneStream::loadBackground(const Common::Path &videoFile) {
+	_background = new UI::Viewport();
+	_background->init();
+	_background->setZOrder(_background->getZOrder() + _zOffset);
+	_background->loadVideo(videoFile, _sceneInfo.frameID, 0, kPanNone, kLargeVideoFormat);
+	_background->registerGraphics();
+}
+
+bool SceneStream::loadScene() {
+#ifdef ENABLE_NANCY_V4
+	if (g_nancy->getGameType() >= kGameTypeNancy19) {
+		return loadScriptedScene();
+	}
+#endif
+
+	IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path(_nextSceneName));
+	if (!sceneIFF) {
+		warning("Stream %s: missing scene file %s", _name.c_str(), _nextSceneName.c_str());
+		return false;
+	}
+
+	Common::SeekableReadStream *summaryChunk = sceneIFF->getChunkStream("TSUM");
+	if (!summaryChunk) {
+		warning("Stream %s: scene file %s has no summary", _name.c_str(), _nextSceneName.c_str());
+		delete sceneIFF;
+		return false;
+	}
+
+	Common::Path videoFile;
+	summaryChunk->skip(0x32);	// Description
+	readFilename(*summaryChunk, videoFile);
+	delete summaryChunk;
+
+	beginScene();
 
 	if (!videoFile.empty() && !videoFile.equalsIgnoreCase("NO_BG")) {
-		_background = new UI::Viewport();
-		_background->init();
-		_background->setZOrder(_background->getZOrder() + _zOffset);
-		_background->loadVideo(videoFile, _sceneInfo.frameID, 0, kPanNone, kLargeVideoFormat);
-		_background->registerGraphics();
+		loadBackground(videoFile);
 	}
 
 	Common::SeekableReadStream *actionRecordChunk = nullptr;
@@ -194,6 +257,11 @@ void SceneStream::clearScene() {
 
 	_actionManager._records.clear();
 	_actionManager.clearActionRecords();
+
+#ifdef ENABLE_NANCY_V4
+	delete _scriptScene;
+	_scriptScene = nullptr;
+#endif
 
 	delete _background;
 	_background = nullptr;
@@ -297,7 +365,7 @@ Common::String SceneStreamManager::getSceneName(const Common::String &name) cons
 
 void SceneStreamManager::process() {
 	if (_streams.empty()) {
-		NancySceneState.getMainActionManager().processActionRecords();
+		NancySceneState.processMainStream();
 		return;
 	}
 
@@ -305,7 +373,7 @@ void SceneStreamManager::process() {
 	const Common::Array<SceneStream *> streams = _streams;
 	for (SceneStream *stream : streams) {
 		if (!stream) {
-			NancySceneState.getMainActionManager().processActionRecords();
+			NancySceneState.processMainStream();
 			continue;
 		}
 

@@ -49,6 +49,10 @@
 #include "engines/nancy/misc/specialeffect.h"
 #include "engines/nancy/misc/viewportfader.h"
 #include "engines/nancy/ui/ndui/manager.h"
+#ifdef ENABLE_NANCY_V4
+#include "engines/nancy/script/records.h"
+#include "engines/nancy/script/scenecontext.h"
+#endif
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
@@ -161,6 +165,11 @@ Scene::~Scene() {
 	// The records, which go away after this, can't reach the UI anymore
 	delete _ndui;
 	_ndui = nullptr;
+
+#ifdef ENABLE_NANCY_V4
+	delete _scriptScene;
+	_scriptScene = nullptr;
+#endif
 
 	_streams.clear();
 	clearPuzzleData();
@@ -1303,7 +1312,7 @@ void Scene::registerGraphics() {
 	} else if (g_nancy->getGameType() <= kGameTypeNancy9) {
 		_textbox.registerGraphics();
 		_inventoryBox.registerGraphics();
-	} else {
+	} else if (g_nancy->getGameType() <= kGameTypeNancy15) {
 		_textbox.registerGraphics();
 		_inventoryPopup.registerGraphics();
 		_notebookPopup.registerGraphics();
@@ -1488,6 +1497,12 @@ void Scene::setPlayerCharacterDesign(uint characterIndex, const Common::String &
 bool Scene::applyPlayerCharacter(uint characterIndex) {
 	if (g_nancy->getGameType() < kGameTypeNancy15 || !g_nancy->playerCharacterNeedsReload(characterIndex)) {
 		return false;
+	}
+
+	// Nancy19 has its UI made by scripts, and the scripts a character takes over
+	// and leaves with belong to it
+	if (g_nancy->getGameType() >= kGameTypeNancy19) {
+		return g_nancy->setPlayerCharacter(characterIndex);
 	}
 
 	// The open popups describe the outgoing character, so get them off the
@@ -1983,6 +1998,13 @@ void Scene::load(bool fromSaveFile) {
 		_specialEffects.front().onSceneChange();
 	}
 
+#ifdef ENABLE_NANCY_V4
+	if (g_nancy->getGameType() >= kGameTypeNancy19) {
+		loadScriptedScene(fromSaveFile);
+		return;
+	}
+#endif
+
 	// Scene IDs are prefixed with S inside the cif tree; e.g 100 -> S100
 	Common::Path sceneName(Common::String::format("S%u", _sceneState.nextScene.sceneID));
 	IFF *sceneIFF = g_nancy->_resource->loadIFF(sceneName);
@@ -2130,6 +2152,83 @@ void Scene::load(bool fromSaveFile) {
 	_state = kStartSound;
 }
 
+#ifdef ENABLE_NANCY_V4
+// Nancy19 scenes are Lua scripts. A script makes the records of its scene when
+// it is run, the first of which names the background.
+void Scene::loadScriptedScene(bool fromSaveFile) {
+	const Common::String sceneName = Common::String::format("s%u", _sceneState.nextScene.sceneID);
+
+	Script::SceneContext *scriptScene = new Script::SceneContext("MainStream", sceneName, _sceneState.nextScene.frameID, 0);
+	if (!scriptScene->load()) {
+		// A scene that can't be loaded leaves the player where they are
+		warning("Failed to load scene %s", sceneName.c_str());
+		delete scriptScene;
+
+		if (!_scriptScene) {
+			error("There is no scene to go back to");
+		}
+
+		_state = kRun;
+		return;
+	}
+
+	clearSceneData();
+
+	delete _scriptScene;
+	_scriptScene = scriptScene;
+
+	_streams.onMainSceneChange();
+	g_nancy->_graphics->suppressNextDraw();
+
+	debugC(0, kDebugScene, "Loading new scene %s, frame %i", sceneName.c_str(), _sceneState.nextScene.frameID);
+
+	_sceneState.currentScene = _sceneState.nextScene;
+
+	Script::SummaryRecord *summary = _scriptScene->getSummary();
+	_sceneState.summary.description = sceneName;
+	_sceneState.summary.videoFile = Common::Path(summary->getBackgroundName());
+	_sceneState.summary.sound.name = summary->getEnvironment();
+	_sceneState.summary.panningType = kPanNone;
+
+	const bool hasBackground = !summary->getBackgroundName().empty();
+	_viewport.setVisible(hasBackground);
+
+	if (hasBackground) {
+		_viewport.loadVideo(_sceneState.summary.videoFile, _sceneState.currentScene.frameID, 0, kPanNone, kLargeVideoFormat);
+	}
+
+	// Turning around in a scene is up to its summary
+	_viewport.disableEdges(kLeft | kRight | kUp | kDown);
+	summary->setBackground(hasBackground ? &_viewport : nullptr);
+
+	_timers.sceneTime = 0;
+	g_nancy->_sound->clearListenerPositionOverride();
+
+	if (!fromSaveFile) {
+		_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
+	}
+
+	if (_ndui) {
+		_ndui->onSceneChange(_sceneState.currentScene.sceneID);
+	}
+
+	_streams.changeEnvironment(summary->getEnvironment());
+
+	_state = kStartSound;
+}
+#endif
+
+void Scene::processMainStream() {
+#ifdef ENABLE_NANCY_V4
+	if (_scriptScene) {
+		_scriptScene->run(_frameSeconds);
+		return;
+	}
+#endif
+
+	_actionManager.processActionRecords();
+}
+
 void Scene::run() {
 	if (_gameStateRequested != NancyState::kNone) {
 		g_nancy->setState(_gameStateRequested);
@@ -2146,6 +2245,7 @@ void Scene::run() {
 	}
 
 	_timers.sceneTime += deltaTime;
+	_frameSeconds = (uint32)deltaTime / 1000.0;
 
 	// Advance the Nancy 11+ software timers before processing action records,
 	// so any flags they fire this frame are visible to record dependencies
@@ -2547,7 +2647,7 @@ void Scene::handleInput() {
 			_activeConversation->skipLine();
 		} else if (_activeMovie) {
 			_hasSkippedMovie = _activeMovie->skip();
-		} else if (!_ndui) {
+		} else if (g_nancy->getGameType() <= kGameTypeNancy15) {
 			// Nancy16 has no main menu state
 			g_nancy->setState(NancyState::kMainMenu);
 			return;
@@ -2562,7 +2662,7 @@ void Scene::handleInput() {
 	// a conversation response.
 	if (_ndui) {
 		_ndui->handleInput(input);
-	} else if (g_nancy->getGameType() >= kGameTypeNancy10) {
+	} else if (g_nancy->getGameType() >= kGameTypeNancy10 && g_nancy->getGameType() <= kGameTypeNancy15) {
 		// Confine the cursor to whichever popup is open so the player
 		// can't drag it into the underlying scene UI.
 		const Common::Rect confine = activePopupConfinement();
@@ -2579,7 +2679,7 @@ void Scene::handleInput() {
 		_cellPhonePopup.handleInput(input);
 	}
 
-	if (!_ndui) {
+	if (g_nancy->getGameType() <= kGameTypeNancy15) {
 		_textbox.handleInput(input);
 	}
 
@@ -2640,7 +2740,15 @@ void Scene::handleInput() {
 	}
 
 	if (!cameraActive && !isInputCaptured) {
-		_actionManager.handleInput(input);
+#ifdef ENABLE_NANCY_V4
+		if (_scriptScene) {
+			_scriptScene->handleInput(input);
+		} else
+#endif
+		{
+			_actionManager.handleInput(input);
+		}
+
 		_streams.handleInput(input, false);
 	}
 
@@ -2763,7 +2871,10 @@ void Scene::initStaticData() {
 			_streams.clear();
 		}
 
-		initUI();
+		// The UI of Nancy19 is made by the scripts of a stream of its own
+		if (g_nancy->getGameType() <= kGameTypeNancy18) {
+			initUI();
+		}
 
 		// The popups of the earlier games go unused, and must never count as open
 		_inventoryPopup.setVisible(false);

@@ -187,9 +187,13 @@ ifdef ENABLE_NANCY_V4
 MODULE_OBJS += \
   script/api.o \
   script/bootapi.o \
+  script/gameapi.o \
   script/luabind.o \
   script/luastate.o \
   script/mathtypes.o \
+  script/record.o \
+  script/records.o \
+  script/scenecontext.o \
   script/types.o
 endif
 

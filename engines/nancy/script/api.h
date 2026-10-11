@@ -22,6 +22,7 @@
 #ifndef NANCY_SCRIPT_API_H
 #define NANCY_SCRIPT_API_H
 
+#include "common/keyboard.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -65,6 +66,23 @@ void registerBootAPI(lua_State *L);
 void registerInventoryAPI(lua_State *L);
 void pushInventoryItem(lua_State *L, int16 itemID);
 int16 checkInventoryItem(lua_State *L, int index);
+
+// The objects scripts reach the state of the game through: Flags, VarTable,
+// Player, Scene, Sound, Cursor...
+void registerGameAPI(lua_State *L);
+
+// Flags go by name. Both return false when there is no flag of that name.
+bool setFlagByName(const Common::String &name, bool value);
+bool getFlagByName(const Common::String &name, bool &value);
+
+// Reads a cursor a script picked with "Cursor.<name>", "Cursor.<name>.hot"...
+// Returns false when the value is something else.
+bool testCursor(lua_State *L, int index, uint &cursorType, bool &isHot);
+void pushCursor(lua_State *L, uint cursorType, bool isHot);
+
+// Keys, as picked with "Key.<name>"
+void pushKey(lua_State *L, Common::KeyCode key);
+Common::KeyCode checkKey(lua_State *L, int index);
 
 } // End of namespace Script
 } // End of namespace Nancy

@@ -1,0 +1,293 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/textconsole.h"
+
+#include "engines/nancy/commontypes.h"
+#include "engines/nancy/cursor.h"
+#include "engines/nancy/input.h"
+#include "engines/nancy/nancy.h"
+
+#include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/luastate.h"
+#include "engines/nancy/script/record.h"
+#include "engines/nancy/script/records.h"
+#include "engines/nancy/script/scenecontext.h"
+
+#include "engines/nancy/state/scene.h"
+
+#include "engines/nancy/ui/viewport.h"
+
+namespace Nancy {
+namespace Script {
+
+SceneContext::SceneContext(const Common::String &streamName, const Common::String &sceneName, uint frame, int32 zOffset) :
+		_streamName(streamName),
+		_sceneName(sceneName),
+		_frame(frame),
+		_zOffset(zOffset) {
+	_lua = new LuaState(this);
+}
+
+SceneContext::~SceneContext() {
+	for (Record *record : _records) {
+		delete record;
+	}
+
+	for (Record *record : _newRecords) {
+		delete record;
+	}
+
+	delete _lua;
+}
+
+lua_State *SceneContext::getLua() const {
+	return _lua->get();
+}
+
+bool SceneContext::load() {
+	if (!_lua->runScript(_sceneName)) {
+		return false;
+	}
+
+	// Nothing can be made before there is a summary. A scene can go on to make
+	// more of them, and so can the scripts it includes; the last one that names
+	// a background is the one that shows.
+	_summary = _newRecords.empty() ? nullptr : dynamic_cast<SummaryRecord *>(_newRecords[0]);
+	for (Record *record : _newRecords) {
+		SummaryRecord *summary = dynamic_cast<SummaryRecord *>(record);
+		if (_summary && summary && !summary->getBackgroundName().empty()) {
+			_summary = summary;
+		}
+	}
+
+	if (!_summary) {
+		warning("Scene %s: No summary AR specified", _sceneName.c_str());
+		return false;
+	}
+
+	return true;
+}
+
+bool SceneContext::include(const Common::String &name) {
+	return _lua->runScript(name);
+}
+
+// The functions set on the "Scene" object are kept in a table of the registry
+void SceneContext::pushSceneFunctions() {
+	lua_State *L = getLua();
+
+	lua_pushlightuserdata(L, this);
+	lua_rawget(L, LUA_REGISTRYINDEX);
+	if (lua_istable(L, -1)) {
+		return;
+	}
+
+	lua_pop(L, 1);
+	lua_newtable(L);
+	lua_pushlightuserdata(L, this);
+	lua_pushvalue(L, -2);
+	lua_rawset(L, LUA_REGISTRYINDEX);
+}
+
+void SceneContext::setSceneFunction(const char *name) {
+	lua_State *L = getLua();
+
+	pushSceneFunctions();
+	lua_insert(L, -2);
+	lua_setfield(L, -2, name);
+	lua_pop(L, 1);
+}
+
+bool SceneContext::callSceneFunction(const char *name, int numArgs) {
+	lua_State *L = getLua();
+
+	pushSceneFunctions();
+	lua_getfield(L, -1, name);
+	lua_remove(L, -2);
+
+	if (!lua_isfunction(L, -1)) {
+		lua_pop(L, numArgs + 1);
+		return false;
+	}
+
+	if (numArgs > 0) {
+		lua_insert(L, -1 - numArgs);
+	}
+
+	const Common::String what = Common::String::format("Error during Scene %s", name);
+	LuaState::call(L, numArgs, 0, what.c_str());
+	return true;
+}
+
+void SceneContext::run(double elapsedTime) {
+	lua_State *L = getLua();
+
+	_time += elapsedTime;
+
+	// The records made since the last frame join in
+	_records.push_back(_newRecords);
+	_newRecords.clear();
+
+	if (!_hasRunOnce) {
+		_hasRunOnce = true;
+		callSceneFunction("RunOnce", 0);
+	}
+
+	// A scene that has a function for it runs that in place of its records
+	lua_pushnumber(L, _time);
+	lua_pushnumber(L, elapsedTime);
+	if (!callSceneFunction("Run", 2)) {
+		for (Record *record : _records) {
+			record->update(_time, elapsedTime);
+		}
+	}
+
+	for (Record *record : _records) {
+		record->updateGraphics();
+	}
+}
+
+bool SceneContext::getViewportMouse(const NancyInput &input, ScriptPoint &point) {
+	const UI::Viewport &viewport = NancySceneState.getViewport();
+	const Common::Rect screenPosition = viewport.getScreenPosition();
+
+	const Common::Rect local = viewport.convertScreenToViewport(
+		Common::Rect(input.mousePos.x, input.mousePos.y, input.mousePos.x + 1, input.mousePos.y + 1));
+	point.x = local.left;
+	point.y = local.top;
+
+	return screenPosition.contains(input.mousePos);
+}
+
+// Everything the player does goes to the records made last first, which leaves
+// the turning around in the background for when nothing else takes a click.
+// Only clicks and keys can be taken; the rest goes to every record.
+void SceneContext::sendMouseEvent(int event, const ScriptPoint &point, bool inViewport) {
+	const bool canBeTaken = event == kEventLeftClick || event == kEventRightClick;
+
+	for (int i = (int)_records.size() - 1; i >= 0; --i) {
+		if (_records[i]->sendMouseEvent((RecordEvent)event, point, inViewport) && canBeTaken) {
+			return;
+		}
+	}
+}
+
+void SceneContext::sendKeyEvent(int event, Common::KeyCode key) {
+	for (int i = (int)_records.size() - 1; i >= 0; --i) {
+		if (_records[i]->sendKeyEvent((RecordEvent)event, key) && event == kEventKey) {
+			return;
+		}
+	}
+}
+
+struct MoveKey {
+	uint16 input;
+	Common::KeyCode key;
+};
+
+// The arrow keys are bound to moving around, and arrive as that
+static const MoveKey kMoveKeys[] = {
+	{ NancyInput::kMoveLeft, Common::KEYCODE_LEFT },
+	{ NancyInput::kMoveRight, Common::KEYCODE_RIGHT },
+	{ NancyInput::kMoveUp, Common::KEYCODE_UP },
+	{ NancyInput::kMoveDown, Common::KEYCODE_DOWN }
+};
+
+void SceneContext::handleInput(NancyInput &input) {
+	ScriptPoint point;
+	const bool inViewport = getViewportMouse(input, point);
+
+	for (int i = (int)_records.size() - 1; i >= 0; --i) {
+		_records[i]->sendMouseMove(point, inViewport);
+	}
+
+	for (int i = (int)_records.size() - 1; i >= 0; --i) {
+		uint cursorType = 0;
+		bool isHot = false;
+		if (_records[i]->sendChangeCursor(point, inViewport, cursorType, isHot)) {
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, isHot);
+			break;
+		}
+	}
+
+	if (input.input & NancyInput::kLeftMouseButtonDown) {
+		sendMouseEvent(kEventLeftDown, point, inViewport);
+	}
+
+	if (input.input & NancyInput::kLeftMouseButtonUp) {
+		sendMouseEvent(kEventLeftUp, point, inViewport);
+		sendMouseEvent(kEventLeftClick, point, inViewport);
+	}
+
+	if (input.input & NancyInput::kRightMouseButtonDown) {
+		sendMouseEvent(kEventRightDown, point, inViewport);
+	}
+
+	if (input.input & NancyInput::kRightMouseButtonUp) {
+		sendMouseEvent(kEventRightUp, point, inViewport);
+		sendMouseEvent(kEventRightClick, point, inViewport);
+	}
+
+	// The keys that went down last frame have no release of their own
+	for (Common::KeyCode key : _pressedKeys) {
+		sendKeyEvent(kEventKeyUp, key);
+	}
+
+	_pressedKeys.clear();
+
+	for (const MoveKey &moveKey : kMoveKeys) {
+		const bool isHeld = (input.input & moveKey.input) != 0;
+		const bool wasHeld = (_heldMoveKeys & moveKey.input) != 0;
+
+		if (isHeld && !wasHeld) {
+			sendKeyEvent(kEventKeyDown, moveKey.key);
+		} else if (!isHeld && wasHeld) {
+			sendKeyEvent(kEventKeyUp, moveKey.key);
+		}
+	}
+
+	_heldMoveKeys = input.input;
+
+	for (const Common::KeyState &key : input.otherKbdInput) {
+		sendKeyEvent(kEventKeyDown, key.keycode);
+		sendKeyEvent(kEventKey, key.keycode);
+		_pressedKeys.push_back(key.keycode);
+	}
+}
+
+void SceneContext::changeScene(const Common::String &streamName, const Common::String &sceneName, uint16 frame) {
+	State::SceneStreamManager &streams = NancySceneState.getStreams();
+
+	// The scenes of the main stream go by number
+	if (sceneName.size() > 1 && tolower(sceneName[0]) == 's' && Common::isDigit(sceneName[1])) {
+		SceneChangeDescription scene;
+		scene.sceneID = (uint16)atoi(sceneName.c_str() + 1);
+		scene.frameID = frame;
+		scene.continueSceneSound = kContinueSceneSound;
+		streams.changeScene(streamName, scene);
+	} else {
+		streams.changeScene(streamName, sceneName, frame);
+	}
+}
+
+} // End of namespace Script
+} // End of namespace Nancy

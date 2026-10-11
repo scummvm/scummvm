@@ -58,6 +58,10 @@ class ConversationSound;
 class PlaySecondaryMovie;
 }
 
+namespace Script {
+class SceneContext;
+}
+
 namespace Misc {
 class Lightning;
 class SpecialEffect;
@@ -290,6 +294,11 @@ public:
 	Action::ActionManager &getActionManager() { return _streams.getRunning() ? _streams.getRunning()->getActionManager() : _actionManager; }
 	Action::ActionManager &getMainActionManager() { return _actionManager; }
 
+	// Runs a frame of what the scene of the main stream is made of: its action
+	// records, or the records of its script in Nancy19 and up
+	void processMainStream();
+	double getFrameSeconds() const { return _frameSeconds; }
+
 	SceneChangeDescription &getSceneInfo() { return _streams.getRunning() ? _streams.getRunning()->getSceneInfo() : _sceneState.currentScene; }
 	const SceneChangeDescription &getMainSceneInfo() const { return _sceneState.currentScene; }
 	SceneChangeDescription &getNextSceneInfo() { return _sceneState.nextScene; }
@@ -350,6 +359,9 @@ public:
 private:
 	void init();
 	void load(bool fromSaveFile = false);
+#ifdef ENABLE_NANCY_V4
+	void loadScriptedScene(bool fromSaveFile);	// Nancy19+
+#endif
 	void run();
 	void handleInput();
 
@@ -494,6 +506,12 @@ private:
 
 	// Nancy17: the scenes running next to this one
 	SceneStreamManager _streams;
+
+#ifdef ENABLE_NANCY_V4
+	// Nancy19: the script of the scene, which takes the place of the action records
+	Script::SceneContext *_scriptScene = nullptr;
+#endif
+	double _frameSeconds = 0.0;	// how long the last frame took
 	Action::PlaySecondaryMovie *_activeMovie;
 	Action::ConversationSound *_activeConversation;
 

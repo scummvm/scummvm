@@ -978,6 +978,26 @@ void SavedStateData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void ScriptValueData::synchronize(Common::Serializer &ser) {
+	uint16 numValues = values.size();
+	ser.syncAsUint16LE(numValues);
+
+	Common::Array<Common::String> names;
+	if (ser.isSaving()) {
+		for (auto &entry : values) {
+			names.push_back(entry._key);
+		}
+	} else {
+		values.clear();
+		names.resize(numValues);
+	}
+
+	for (Common::String &name : names) {
+		ser.syncString(name);
+		ser.syncAsSint32LE(values[name]);
+	}
+}
+
 void PhoneBookData::synchronize(Common::Serializer &ser) {
 	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
 		uint16 numEntries = entries[i].size();
@@ -999,6 +1019,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new PhoneBookData();
 	case SavedStateData::getTag():
 		return new SavedStateData();
+	case ScriptValueData::getTag():
+		return new ScriptValueData();
 	case StreamData::getTag():
 		return new StreamData();
 	case BuildBoardData::getTag():
