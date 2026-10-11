@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima3/views/game.h"
+#include "ultima/ultima3/gfx/charset.h"
 #include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/gfx/frame.h"
 #include "ultima/ultima3/views/menu_input.h"
@@ -275,8 +276,18 @@ void Game::drawLabels(GfxSurface &s) {
 void Game::drawMoons(GfxSurface &s) {
 	const Data::Savegame &save = _G(savegame);
 
-	s.writeString(Common::Point(8, 0), Common::String::format("%c(%X)(%X)%c", GLYPH_LABEL_START,
-		save._moonPhase[0], save._moonPhase[1], GLYPH_LABEL_END));
+	if (!g_engine->_moonIcons) {
+		s.writeString(Common::Point(8, 0), Common::String::format("%c(%X)(%X)%c", GLYPH_LABEL_START,
+			save._moonPhase[0], save._moonPhase[1], GLYPH_LABEL_END));
+		return;
+	}
+
+	// The phases are pictures rather than digits, which are past the text characters
+	s.writeString(Common::Point(8, 0), Common::String::format("%c(", GLYPH_LABEL_START));
+	s.writeChar(Gfx::CharSet::moonIcon(save._moonPhase[0]));
+	s.writeString(")(");
+	s.writeChar(Gfx::CharSet::moonIcon(save._moonPhase[1]));
+	s.writeString(Common::String::format(")%c", GLYPH_LABEL_END));
 }
 
 void Game::drawWind(GfxSurface &s) {

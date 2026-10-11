@@ -306,6 +306,27 @@ void LocationLogic::updateMoons() {
 		_G(map).setCell(DAWN_X, DAWN_Y, CELL_FOREST);
 }
 
+void LocationLogic::setMoonPhases(byte left, byte right) {
+	Data::Savegame &save = _G(savegame);
+	save._moonPhase[0] = left & 7;
+	save._moonPhase[1] = right & 7;
+
+	// The world map is only there to change when it is where the party is
+	if (save._location != Data::LOCATION_SOSARIA)
+		return;
+
+	for (int i = 0; i < 8; ++i) {
+		if (_G(map).cell(GATE_X[i], GATE_Y[i]) == CELL_MOON_GATE)
+			_G(map).setCell(GATE_X[i], GATE_Y[i], CELL_GRASS);
+	}
+	_G(map).setCell(GATE_X[save._moonPhase[0]], GATE_Y[save._moonPhase[0]], CELL_MOON_GATE);
+
+	if ((save._moonPhase[0] & save._moonPhase[1]) == 7)
+		_G(map).setCell(DAWN_X, DAWN_Y, CELL_TOWN);
+	else if ((save._moonPhase[0] | save._moonPhase[1]) == 0)
+		_G(map).setCell(DAWN_X, DAWN_Y, CELL_FOREST);
+}
+
 bool LocationLogic::isOnMoonGate() const {
 	const Data::Savegame &save = _G(savegame);
 	return _G(map).cell(save._posX, save._posY) == CELL_MOON_GATE;

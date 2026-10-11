@@ -54,6 +54,7 @@ Ultima3Engine::Ultima3Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 	_pcSpeaker = new Audio::PCSpeaker();
 	_moreMonsters = ConfMan.getBool("more_monsters");
 	_lessHunger = ConfMan.getBool("less_hunger");
+	_moonIcons = ConfMan.getBool("moon_icons");
 	_renderMode = configuredRenderMode();
 }
 
@@ -103,6 +104,7 @@ Common::Error Ultima3Engine::run() {
 void Ultima3Engine::applyGameSettings() {
 	_moreMonsters = ConfMan.getBool("more_monsters");
 	_lessHunger = ConfMan.getBool("less_hunger");
+	_moonIcons = ConfMan.getBool("moon_icons");
 
 	// The renderer can be changed from the game options dialog
 	Data::RenderMode mode = configuredRenderMode();

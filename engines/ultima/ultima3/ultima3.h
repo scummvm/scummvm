@@ -129,6 +129,7 @@ public:
 	// the monster generation and food rates
 	bool _moreMonsters = false;
 	bool _lessHunger = false;
+	bool _moonIcons = true;
 
 	// Which of the upgrade's renderers is in use
 	Data::RenderMode _renderMode = Data::RENDER_CGA;

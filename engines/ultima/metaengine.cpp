@@ -197,6 +197,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_ULTIMA3_MOON_ICONS,
+		{
+			_s("Show moon phase icons"),
+			_s("Shows the phases of the moons as pictures rather than numbers, as in the Ultima III Upgrade"),
+			"moon_icons",
+			true,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_ALWAYS_CHRISTMAS,
 		{
 			_s("Always enable Christmas easter-egg"),

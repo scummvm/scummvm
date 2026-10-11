@@ -79,6 +79,11 @@ public:
 	 */
 	void updateMoons();
 
+	/**
+	 * Puts the moons in the given phases, and the moon gate and Dawn where they say
+	 */
+	void setMoonPhases(byte left, byte right);
+
 	bool isOnMoonGate() const;
 
 	/**

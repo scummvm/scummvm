@@ -61,6 +61,7 @@ private:
 	bool cmdLoad(int argc, const char **argv);
 	bool cmdSave(int argc, const char **argv);
 	bool cmdExodus(int argc, const char **argv);
+	bool cmdMoon(int argc, const char **argv);
 
 public:
 	Console();

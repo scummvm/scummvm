@@ -32,40 +32,63 @@ constexpr int CGA_GLYPH_BYTES = 16;
 
 byte CharSet::_data[CHARSET_GLYPHS * CHARSET_GLYPH_PIXELS];
 
-void CharSet::load() {
+// Reads a file of a number of glyphs into the pixels given
+static void loadGlyphs(const char *filename, byte *dest, int count) {
 	Common::File f;
 
 	switch (_G(renderMode)) {
 	case Data::RENDER_EGA: {
 		byte data[CHARSET_GLYPHS * CHARSET_GLYPH_PIXELS / 2];
-		if (!f.open("charset.ega") || f.read(data, sizeof(data)) != sizeof(data))
-			error("Could not load charset.ega");
+		if (!f.open(filename) || f.read(data, count * CHARSET_GLYPH_PIXELS / 2) != (uint)(count * CHARSET_GLYPH_PIXELS / 2))
+			error("Could not load %s", filename);
 
-		unpack4bpp(data, _data, sizeof(_data));
+		unpack4bpp(data, dest, count * CHARSET_GLYPH_PIXELS);
 		break;
 	}
 
 	case Data::RENDER_VGA:
-		if (!f.open("charset.vga") || f.read(_data, sizeof(_data)) != sizeof(_data))
-			error("Could not load charset.vga");
+		if (!f.open(filename) || f.read(dest, count * CHARSET_GLYPH_PIXELS) != (uint)(count * CHARSET_GLYPH_PIXELS))
+			error("Could not load %s", filename);
 		break;
 
 	default: {
 		byte data[CHARSET_GLYPHS * CGA_GLYPH_BYTES];
-		if (!f.open("CHARSET.ULT") || f.read(data, sizeof(data)) != sizeof(data))
-			error("Could not load CHARSET.ULT");
+		if (!f.open(filename) || f.read(data, count * CGA_GLYPH_BYTES) != (uint)(count * CGA_GLYPH_BYTES))
+			error("Could not load %s", filename);
 
 		// The first 8 bytes of a glyph hold the even scanlines and the next 8 the odd
 		// ones, 2 bytes (8 pixels) per scanline
-		for (int chr = 0; chr < CHARSET_GLYPHS; ++chr) {
+		for (int chr = 0; chr < count; ++chr) {
 			const byte *glyph = &data[chr * CGA_GLYPH_BYTES];
 
 			for (int y = 0; y < 8; ++y)
-				unpack2bpp(glyph + (y & 1) * 8 + (y >> 1) * 2, &_data[chr * CHARSET_GLYPH_PIXELS + y * 8], 8);
+				unpack2bpp(glyph + (y & 1) * 8 + (y >> 1) * 2, &dest[chr * CHARSET_GLYPH_PIXELS + y * 8], 8);
 		}
 		break;
 	}
 	}
+}
+
+void CharSet::load() {
+	const char *charset, *moons;
+
+	switch (_G(renderMode)) {
+	case Data::RENDER_EGA:
+		charset = "charset.ega";
+		moons = "moons.ega";
+		break;
+	case Data::RENDER_VGA:
+		charset = "charset.vga";
+		moons = "moons.vga";
+		break;
+	default:
+		charset = "CHARSET.ULT";
+		moons = "moons.ult";
+		break;
+	}
+
+	loadGlyphs(charset, _data, CHARSET_TEXT_GLYPHS);
+	loadGlyphs(moons, &_data[CHARSET_TEXT_GLYPHS * CHARSET_GLYPH_PIXELS], CHARSET_MOON_GLYPHS);
 }
 
 void CharSet::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {

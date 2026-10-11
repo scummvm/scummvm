@@ -51,6 +51,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
 	registerCmd("save", WRAP_METHOD(Console, cmdSave));
 	registerCmd("exodus", WRAP_METHOD(Console, cmdExodus));
+	registerCmd("moon", WRAP_METHOD(Console, cmdMoon));
 }
 
 Console::~Console() {
@@ -172,6 +173,37 @@ bool Console::cmdExodus(int argc, const char **argv) {
 
 	restartGame();
 	return false;
+}
+
+bool Console::cmdMoon(int argc, const char **argv) {
+	if (argc > 3) {
+		debugPrintf("moon [<left phase 0-7> [<right phase 0-7>]]\n");
+		return true;
+	}
+
+	ensureGame();
+	Data::Savegame &sg = _G(savegame);
+
+	// Without any phase both moons move on to the next, otherwise only those given change
+	int phases[2] = { sg._moonPhase[0], sg._moonPhase[1] };
+	if (argc == 1) {
+		++phases[0];
+		++phases[1];
+	}
+
+	for (int i = 0; i < argc - 1; ++i) {
+		phases[i] = atoi(argv[i + 1]);
+		if (phases[i] < 0 || phases[i] > 7) {
+			debugPrintf("Moon phases must be between 0 and 7\n");
+			return true;
+		}
+	}
+
+	LocationLogic().setMoonPhases(phases[0], phases[1]);
+
+	g_engine->focusedView()->redraw();
+	debugPrintf("Moon phases are now %d and %d\n", sg._moonPhase[0], sg._moonPhase[1]);
+	return true;
 }
 
 bool Console::cmdTiles(int argc, const char **argv) {

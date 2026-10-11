@@ -29,13 +29,16 @@ namespace Ultima {
 namespace Ultima3 {
 namespace Gfx {
 
-constexpr int CHARSET_GLYPHS = 128;
+constexpr int CHARSET_TEXT_GLYPHS = 128;
+constexpr int CHARSET_MOON_GLYPHS = 8;
+constexpr int CHARSET_GLYPHS = CHARSET_TEXT_GLYPHS + CHARSET_MOON_GLYPHS;
 constexpr int CHARSET_GLYPH_PIXELS = 8 * 8;
 
 /**
  * The game's font from CHARSET.ULT: 128 glyphs of 8x8 pixels at 2 bits per
  * pixel, or from the upgrade's EGA or VGA files, depending on the renderer.
- * Each glyph carries its own colors, and is kept a byte per pixel.
+ * Each glyph carries its own colors, and is kept a byte per pixel. The moon
+ * icons of the upgrade follow the text characters.
  */
 class CharSet : public Graphics::Font {
 private:
@@ -43,6 +46,13 @@ private:
 
 public:
 	static void load();
+
+	/**
+	 * Returns the character that is drawn as the icon for a phase of a moon
+	 */
+	static uint32 moonIcon(byte phase) {
+		return CHARSET_TEXT_GLYPHS + ((phase - 1) & (CHARSET_MOON_GLYPHS - 1));
+	}
 
 public:
 	/**
