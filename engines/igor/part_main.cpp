@@ -744,11 +744,15 @@ void IgorEngine::PART_MAIN() {
 			error("PART_MAIN() Unhandled part %d", _currentPart);
 			break;
 		}
-		if (_currentPart >= 10) {
-			if (_currentPart <= 24 || _currentPart == 51) {
+		// These scheduler exclusions compare only the low byte of the state.
+		// Margaret cutscenes trigger between room changes, but scrollable
+		// areas are omitted so it doesnt trigger after a scroll
+		const uint8 stateLowByte = static_cast<uint8>(_currentPart);
+		if (stateLowByte >= 10) {
+			if (stateLowByte <= 24 || stateLowByte == 51) {
 				continue;
 			}
-			if (_currentPart == 60 || _currentPart == 102 || _currentPart == 110) {
+			if (stateLowByte == 60 || stateLowByte == 102 || stateLowByte == 110) {
 				continue;
 			}
 		}
