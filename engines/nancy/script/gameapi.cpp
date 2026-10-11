@@ -26,6 +26,7 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/puzzledata.h"
+#include "engines/nancy/sound.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
@@ -410,6 +411,133 @@ static const luaL_Reg kDrawFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+// SoundChannel.<name> and Sound
+
+static const char *const kSoundChannelType = "ND.SoundChannel";
+
+enum SoundChannelID {
+	kChannelFirstMusic		= 0,	// Theme
+	kChannelFirstAmbient	= 6,
+	kChannelFirstFX			= 14,
+	kChannelFirstVoice		= 24,
+	kNumSoundChannels		= 30,
+
+	// These stand for every channel of a kind
+	kChannelAll				= 0x21,
+	kChannelAllMusic		= 0x22,
+	kChannelAllFX			= 0x23,
+	kChannelAllAmbient		= 0x24,
+	kChannelAllVoice		= 0x25
+};
+
+struct SoundChannelName {
+	const char *name;
+	uint16 channel;
+};
+
+static const SoundChannelName kSoundChannelNames[] = {
+	{ "Theme", 0 }, { "Music1", 1 }, { "Music2", 2 }, { "Music3", 3 }, { "UIMusic", 4 }, { "EngineMusic", 5 },
+	{ "Ambient1", 6 }, { "Ambient2", 7 }, { "Ambient3", 8 }, { "Ambient4", 9 },
+	{ "Ambient5", 10 }, { "Ambient6", 11 }, { "Ambient7", 12 }, { "Ambient8", 13 },
+	{ "FX1", 14 }, { "FX2", 15 }, { "FX3", 16 }, { "FX4", 17 }, { "FX5", 18 }, { "FX6", 19 }, { "FX7", 20 }, { "FX8", 21 },
+	{ "UIFX", 22 }, { "EngineFX", 23 },
+	{ "NPCVoice", 24 }, { "PlayerVoice", 25 }, { "Voice1", 26 }, { "Voice2", 27 }, { "UIVoice", 28 }, { "EngineVoice", 29 },
+	{ "All", kChannelAll }, { "AllMusic", kChannelAllMusic }, { "AllFX", kChannelAllFX },
+	{ "AllAmbient", kChannelAllAmbient }, { "AllVoice", kChannelAllVoice }
+};
+
+void pushSoundChannel(lua_State *L, uint16 channel) {
+	pushValue(L, kSoundChannelType, channel);
+}
+
+uint16 checkSoundChannel(lua_State *L, int index) {
+	return *(const uint16 *)checkUserData(L, index, kSoundChannelType);
+}
+
+static int soundChannelIndex(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+
+	for (const SoundChannelName &channel : kSoundChannelNames) {
+		if (scumm_stricmp(channel.name, name) == 0) {
+			pushSoundChannel(L, channel.channel);
+			return 1;
+		}
+	}
+
+	lua_pushnil(L);
+	return 1;
+}
+
+// The channels a channel object stands for
+static void getChannelRange(uint16 channel, uint16 &first, uint16 &last) {
+	switch (channel) {
+	case kChannelAll:
+		first = 0;
+		last = kNumSoundChannels - 1;
+		break;
+	case kChannelAllMusic:
+		first = kChannelFirstMusic;
+		last = kChannelFirstAmbient - 1;
+		break;
+	case kChannelAllAmbient:
+		first = kChannelFirstAmbient;
+		last = kChannelFirstFX - 1;
+		break;
+	case kChannelAllFX:
+		first = kChannelFirstFX;
+		last = kChannelFirstVoice - 1;
+		break;
+	case kChannelAllVoice:
+		first = kChannelFirstVoice;
+		last = kNumSoundChannels - 1;
+		break;
+	default:
+		first = last = channel;
+		break;
+	}
+}
+
+// Sound:Stop(channel)
+static int soundStop(lua_State *L) {
+	uint16 first, last;
+	getChannelRange(checkSoundChannel(L, 2), first, last);
+
+	for (uint16 channel = first; channel <= last; ++channel) {
+		g_nancy->_sound->stopSound(channel);
+	}
+
+	return 0;
+}
+
+// Sound:SetVolume(channel, volume), with the volume going from 0 to 1
+static int soundSetVolume(lua_State *L) {
+	uint16 first, last;
+	getChannelRange(checkSoundChannel(L, 2), first, last);
+	const uint16 volume = (uint16)CLIP<int>((int)(luaL_checknumber(L, 3) * 100.0), 0, 100);
+
+	for (uint16 channel = first; channel <= last; ++channel) {
+		g_nancy->_sound->setVolume(channel, volume);
+	}
+
+	return 0;
+}
+
+static const luaL_Reg kSoundChannelHelperFunctions[] = {
+	{ "__index", soundChannelIndex },
+	{ nullptr, nullptr }
+};
+
+static const luaL_Reg kSoundChannelFunctions[] = {
+	{ nullptr, nullptr }
+};
+
+static const luaL_Reg kSoundFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "Stop", soundStop },
+	{ "SetVolume", soundSetVolume },
+	{ nullptr, nullptr }
+};
+
 // Scene, which is the scene the script belongs to
 
 static SceneContext *checkContext(lua_State *L) {
@@ -696,6 +824,10 @@ void registerGameAPI(lua_State *L) {
 
 	registerType(L, kCursorIndexType, kCursorIndexFunctions);
 	registerGlobal(L, "Cursor", "ND.Cursor", kCursorFunctions);
+
+	registerType(L, kSoundChannelType, kSoundChannelFunctions);
+	registerGlobal(L, "SoundChannel", "ND.SoundHelper", kSoundChannelHelperFunctions);
+	registerGlobal(L, "Sound", "ND.Sound", kSoundFunctions);
 
 	registerGlobal(L, "Scene", "ND.Scene", kSceneFunctions);
 	registerGlobal(L, "Player", "ND.CurPlayer", kPlayerFunctions);

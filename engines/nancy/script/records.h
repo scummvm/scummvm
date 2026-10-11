@@ -262,6 +262,30 @@ private:
 	bool _isVisible = true;
 };
 
+// Plays a sound, picked at random when it has several
+class SoundRecord : public Record {
+public:
+	SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") {}
+
+protected:
+	void readTable(int tableIndex) override;
+	void runOnce() override;
+	void run(double sceneTime, double elapsedTime) override;
+	bool prepareReset() override;
+	bool getField(const Common::String &key) override;
+
+private:
+	Common::Array<Common::String> _names;
+	uint16 _channel = 14;
+	double _volume = 1.0;
+	bool _isLooping = false;
+
+	SoundDescription _sound;
+	bool _isPlaying = false;
+	bool _wasPreempted = false;
+	double _endTime = 0.0;
+};
+
 } // End of namespace Script
 } // End of namespace Nancy
 

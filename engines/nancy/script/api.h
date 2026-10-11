@@ -84,6 +84,10 @@ void pushCursor(lua_State *L, uint cursorType, bool isHot);
 void pushKey(lua_State *L, Common::KeyCode key);
 Common::KeyCode checkKey(lua_State *L, int index);
 
+// Sound channels, as picked with "SoundChannel.<name>"
+void pushSoundChannel(lua_State *L, uint16 channel);
+uint16 checkSoundChannel(lua_State *L, int index);
+
 } // End of namespace Script
 } // End of namespace Nancy
 

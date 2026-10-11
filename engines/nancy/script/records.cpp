@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/random.h"
 #include "common/textconsole.h"
 
 #include "engines/nancy/cursor.h"
@@ -26,6 +27,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/sound.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
@@ -73,6 +75,8 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 		return new SummaryRecord(context);
 	case kRecordOverlay:
 		return new OverlayRecord(context);
+	case kRecordSound:
+		return new SoundRecord(context);
 	case kRecordOverride:
 		return new OverrideRecord(context);
 	case kRecordAnimOverlay:
@@ -814,6 +818,85 @@ bool AnimOverlayRecord::setField(const Common::String &key) {
 		setFrame(luaL_checkint(L, 3));
 	} else if (key == "fps") {
 		_framesPerSecond = luaL_checknumber(L, 3);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+// Sound
+
+void SoundRecord::readTable(int tableIndex) {
+	lua_State *L = getLua();
+
+	if (pushField(L, tableIndex, "channel")) {
+		_channel = checkSoundChannel(L, -1);
+		lua_pop(L, 1);
+	}
+
+	readField(L, tableIndex, "volume", _volume);
+	readField(L, tableIndex, "loop", _isLooping);
+
+	if (pushField(L, tableIndex, "sounds")) {
+		readStringList(L, -1, _names);
+		lua_pop(L, 1);
+	}
+
+	if (_names.empty()) {
+		luaL_error(L, "sounds must have one or more fields in its table");
+	}
+}
+
+void SoundRecord::runOnce() {
+	_sound = SoundDescription();
+	_sound.name = _names[g_nancy->_randomSource->getRandomNumber(_names.size() - 1)];
+	_sound.channelID = _channel;
+	_sound.numLoops = _isLooping ? 0 : 1;
+	_sound.volume = (uint16)CLIP<int>((int)(_volume * 100.0), 0, 100);
+
+	g_nancy->_sound->loadSound(_sound);
+	g_nancy->_sound->playSound(_sound);
+
+	_isPlaying = g_nancy->_sound->isSoundPlaying(_sound);
+	_wasPreempted = false;
+
+	// The record is done once the sound has played through, whether it loops or not
+	const double length = _isPlaying ? g_nancy->_sound->getLength(_sound).msecs() / 1000.0 : 0.0;
+	_endTime = getContext().getTime() + length;
+}
+
+void SoundRecord::run(double sceneTime, double elapsedTime) {
+	// Something else taking over the channel ends the record early
+	if (_isPlaying && !_isLooping && !g_nancy->_sound->isSoundPlaying(_sound) && sceneTime < _endTime) {
+		_wasPreempted = true;
+	}
+
+	if (_endTime <= sceneTime || _wasPreempted) {
+		finish();
+	}
+}
+
+bool SoundRecord::prepareReset() {
+	_endTime = 0.0;
+	_wasPreempted = false;
+	_isPlaying = false;
+	return true;
+}
+
+bool SoundRecord::getField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "channel") {
+		pushSoundChannel(L, _channel);
+	} else if (key == "volume") {
+		lua_pushnumber(L, _volume);
+	} else if (key == "loop") {
+		lua_pushboolean(L, _isLooping);
+	} else if (key == "endTime") {
+		lua_pushnumber(L, _endTime);
+	} else if (key == "preempted") {
+		lua_pushboolean(L, _wasPreempted);
 	} else {
 		return false;
 	}
