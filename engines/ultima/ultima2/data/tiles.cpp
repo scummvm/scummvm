@@ -139,13 +139,13 @@ void loadTiles(Graphics::Surface tiles[TILE_COUNT], RenderMode mode) {
 
 void loadAttackSprite(Graphics::ManagedSurface &sprite, RenderMode mode) {
 	if (isEgaMode(mode)) {
-		Common::ScopedPtr<Common::SeekableReadStream> egaFile(openEgaFile(mode, "egatiles"));
-		if (!egaFile)
+		Common::File egaFile;
+		if (!egaFile.open("egatiles"))
 			error("Could not open egatiles");
 
-		egaFile->seek(EGA_ATTACK_SPRITE_RECORD * EGA_RECORD_SIZE);
+		egaFile.seek(EGA_ATTACK_SPRITE_RECORD * EGA_RECORD_SIZE);
 		byte record[EGA_RECORD_SIZE];
-		if (egaFile->read(record, EGA_RECORD_SIZE) != (uint32)EGA_RECORD_SIZE)
+		if (egaFile.read(record, EGA_RECORD_SIZE) != (uint32)EGA_RECORD_SIZE)
 			error("Could not read attack sprite from egatiles");
 
 		decodeEgaTileRecord(record, sprite);

@@ -19,9 +19,7 @@
  *
  */
 
-#include "common/archive.h"
-#include "common/ptr.h"
-#include "common/stream.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "graphics/paletteman.h"
@@ -79,14 +77,13 @@ const byte PLANET_COORDS[PLANET_COUNT + 1][3] = {
 // CGACOMP.PAL is a standard VGA palette file: 256 entries of 6-bit R, G, B.
 // The composite decode only ever produces the first 16
 static void loadCompositePalette(Graphics::Palette &palette) {
-	Common::ScopedPtr<Common::SeekableReadStream> f(
-		SearchMan.createReadStreamForMember(Common::Path("cgacomp.pal")));
-	if (!f)
+	Common::File f;
+	if (!f.open("cgacomp.pal"))
 		return;
 
 	for (int i = 0; i < COMPOSITE_PALETTE_SIZE; ++i) {
 		byte rgb[3];
-		if (f->read(rgb, 3) != 3)
+		if (f.read(rgb, 3) != 3)
 			return;
 
 		for (int c = 0; c < 3; ++c)
