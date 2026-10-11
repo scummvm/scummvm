@@ -63,7 +63,6 @@ enum {
 	kTimerTicksCount = 8,
 	kFastModeFactor = 4,
 	kFastModeMaxFactor = 16,
-	kQuickSaveSlot = 100,
 	kMaxSaveStates = 10,
 	kNoSpeechSound = 999
 };
@@ -1218,26 +1217,26 @@ private:
 	void PART_68_EXEC_ACTION(int action);
 	void PART_68_LOAD_ROOM();
 	void PART_68_APPLY_OBJECT_STATE(int num);
-	void PART_68_DRAW_NPC(int frame);
+	void PART_68_drawUndertaker(int frame);
 	void PART_68_DRAW_AMBIENT(int frame);
-	void PART_68_DRAW_OBJECT(int frame);
-	void PART_68_DRAW_POSE(int frame);
-	void PART_68_UPDATE_AMBIENT();
+	void PART_68_drawVase(int frame);
+	void PART_68_drawPose(int frame);
+	void PART_68_updateOwlsEyes();
 	void PART_68_UPDATE_ROOM_BACKGROUND();
 	void PART_68_UPDATE_ROOM_BACKGROUND_TALK();
-	void PART_68_UPDATE_DIALOGUE_NPC(int action);
-	void PART_68_NPC_SAY(const Common::Array<DialogueText> &lines);
-	void PART_68_NPC_SAY_REPLIES(const int *replies, const int *sounds, int count);
+	void PART_68_BorisSayReplies(int action);
+	void PART_68_sayBoris(const Common::Array<DialogueText> &lines);
+	void PART_68_BorisSayReplies(const int *replies, const int *sounds, int count);
 	void PART_68_enterFromRight();
 	void PART_68_enterFromLeft();
-	void PART_68_ENTER_INSIDE();
-	void PART_68_ACTION_102_takeObject();
-	void PART_68_ACTION_104_talk();
-	void PART_68_ACTION_106();
-	void PART_68_ACTION_108_giveObject();
+	void PART_68_enterFromCemetery();
+	void PART_68_ACTION_102_takeVase();
+	void PART_68_ACTION_104_talkToBoris();
+	void PART_68_ACTION_106_enterCemetery();
+	void PART_68_ACTION_108_giveRecordsToBoris();
 	void PART_68_CONVERSATION();
-	void PART_68_DIALOGUE_CODE(int code);
-	void PART_68_NPC_LEAVES();
+	void PART_68_chooseRandomNames(int code);
+	void PART_68_BorisLeaves();
 	void PART_68();
 
 	void PART_71_EXEC_ACTION(int action);
@@ -1499,10 +1498,6 @@ private:
 public:
 	Graphics::Screen *_screen = nullptr;
 
-	void handleOptionsMenu_paintSave();
-	bool handleOptionsMenu_handleKeyDownSave(int key);
-	void handleOptionsMenu_paintLoad();
-	bool handleOptionsMenu_handleKeyDownLoad(int key);
 	void handleOptionsMenu_paintQuit();
 	bool handleOptionsMenu_handleKeyDownQuit(int key);
 	void handleOptionsMenu_paintCtrl();

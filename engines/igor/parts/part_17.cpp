@@ -486,6 +486,10 @@ void IgorEngine::PART_17() {
 		_roomObjectAreasTable[19].object = 0;
 	}
 
+	if (_gameStateLoaded) {
+		// Restore the path depth before drawing Igor at his saved position.
+		PART_17_HELPER_5_changeZindexOfPath(0);
+	}
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		if (_currentPart == 170) {
