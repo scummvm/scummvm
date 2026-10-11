@@ -26,28 +26,28 @@ namespace Igor {
 
 void IgorEngine::PART_36_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
+	case 101: // look at desk
 		igorSay(201, 1, 655);
 		break;
 	case 102:
-		PART_36_ACTION_102();
+		PART_36_ACTION_102_takePen();
 		break;
-	case 103:
+	case 103: // look at pen
 		igorSay(202, 1, 656);
 		break;
-	case 104:
+	case 104: // look at portrait
 		igorSay(203, 1, 657);
 		break;
-	case 105:
+	case 105: // look at blackboard
 		igorSay(204, 2, 658);
 		break;
-	case 106:
+	case 106: // use blackboard
 		igorSay(209, 1, 661);
 		break;
-	case 107:
+	case 107: // look at closet
 		igorSay(206, 2, 659);
 		break;
-	case 108:
+	case 108: // open closet
 		igorSay(208, 1, 660);
 		break;
 	case 109:
@@ -59,7 +59,7 @@ void IgorEngine::PART_36_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_36_ACTION_102() {
+void IgorEngine::PART_36_ACTION_102_takePen() {
 	for (int i = 1; i >= 0; --i) {
 		for (int j = 0; j <= 48; ++j) {
 			for (int k = 0; k <= 33; ++k) {
@@ -85,25 +85,25 @@ void IgorEngine::PART_36_ACTION_102() {
 	}
 	addObjectToInventory(30, 65);
 	_objectsState[88] = 1;
-	PART_36_HELPER_1(255);
+	PART_36_HELPER_1_OBJECT_STATE(255);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }
 
-void IgorEngine::PART_36_HELPER_1(int num) {
+void IgorEngine::PART_36_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[88] == 0) {
-			PART_36_HELPER_4(1);
+			PART_36_HELPER_4_drawPen(1);
 		} else {
-			PART_36_HELPER_4(0);
+			PART_36_HELPER_4_drawPen(0);
 			_roomObjectAreasTable[6].object = 1;
 			_roomObjectAreasTable[7].object = 1;
 		}
 	}
 }
 
-void IgorEngine::PART_36_HELPER_2() {
+void IgorEngine::PART_36_HELPER_2_walkIn() {
 	_walkData[0].setPos(319, 143, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -116,7 +116,7 @@ void IgorEngine::PART_36_HELPER_2() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_36_HELPER_4(int frame) {
+void IgorEngine::PART_36_HELPER_4_drawPen(int frame) {
 	if (frame == 0) {
 		memcpy(_screenLayer1 + 31430, _animFramesBuffer, 7);
 	} else if (frame == 1) {
@@ -134,17 +134,20 @@ void IgorEngine::PART_36() {
 	_roomDataOffsets = PART_36_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(90, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_36_EXEC_ACTION);
-	PART_36_HELPER_1(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	PART_36_HELPER_2();
-	enterPartLoop();
-	while (_currentPart == 360) {
+	PART_36_HELPER_1_OBJECT_STATE(255);
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		PART_36_HELPER_2_walkIn();
+		enterPartLoop();
+	}
+	while (_currentPart == 360 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 

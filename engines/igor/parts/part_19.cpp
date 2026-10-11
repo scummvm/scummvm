@@ -226,20 +226,24 @@ void IgorEngine::PART_19() {
 	}
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_19_EXEC_ACTION);
 	PART_19_HELPER_1_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	PART_19_HELPER_3_walkIn();
-	if (_objectsState[59] == 0) {
-		PART_19_HELPER_4_enterAndLeave();
-	} else {
-		enterPartLoop();
-		while (_currentPart == 190) {
-			runPartLoop();
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		PART_19_HELPER_3_walkIn();
+		if (_objectsState[59] == 0) {
+			PART_19_HELPER_4_enterAndLeave();
+			if (!_gameStateLoaded && _currentPart != 191)
+				fadeOut(624);
+			return;
 		}
-		leavePartLoop();
+		enterPartLoop();
 	}
-	if(_currentPart != 191) {
+	while (_currentPart == 190 && !_gameStateLoaded) {
+		runPartLoop();
+	}
+	leavePartLoop();
+	if (_currentPart != 191 && !_gameStateLoaded) {
 		fadeOut(624);
 	}
 }

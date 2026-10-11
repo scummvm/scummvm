@@ -206,20 +206,23 @@ void IgorEngine::PART_13() {
 	setRoomWalkBounds(92, 0, 288, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_13_EXEC_ACTION);
 	PART_13_HELPER_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	if (_currentPart == 130) {
-		PART_13_HELPER_3_enterFromBelow();
-	} else {
-		PART_13_HELPER_2_enterFromRight();
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		if (_currentPart == 130) {
+			PART_13_HELPER_3_enterFromBelow();
+		} else {
+			PART_13_HELPER_2_enterFromRight();
+		}
+		enterPartLoop();
 	}
-	enterPartLoop();
-	while (_currentPart >= 130 && _currentPart <= 131) {
+	while (_currentPart >= 130 && _currentPart <= 131 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // End of namespace Igor

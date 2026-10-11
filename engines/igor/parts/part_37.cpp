@@ -26,22 +26,22 @@ namespace Igor {
 
 void IgorEngine::PART_37_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
+	case 101: // exit
 		_currentPart = 212;
 		break;
 	case 102:
-		PART_37_ACTION_102();
+		PART_37_ACTION_102_lookAtPaperBinTakePaper();
 		break;
-	case 103:
+	case 103: // look at blackboard
 		igorSay(203, 2, 664);
 		break;
-	case 104:
+	case 104: // look at desk
 		igorSay(205, 1, 665);
 		break;
-	case 105:
+	case 105: // use blackboard
 		igorSay(207, 1, 667);
 		break;
-	case 106:
+	case 106: // use paper bin
 		igorSay(206, 1, 666);
 		break;
 	default:
@@ -50,7 +50,7 @@ void IgorEngine::PART_37_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_37_ACTION_102() {
+void IgorEngine::PART_37_ACTION_102_lookAtPaperBinTakePaper() {
 	if (_objectsState[89] == 1) {
 		igorSay(202, 1, 663);
 		return;
@@ -63,16 +63,16 @@ void IgorEngine::PART_37_ACTION_102() {
 	}
 	addObjectToInventory(32, 67);
 	_objectsState[89] = 1;
-	PART_37_HELPER_1(255);
+	PART_37_HELPER_1_OBJECT_STATE(255);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }
 
-void IgorEngine::PART_37_HELPER_1(int num) {
+void IgorEngine::PART_37_HELPER_1_OBJECT_STATE(int num) {
 }
 
-void IgorEngine::PART_37_HELPER_2() {
+void IgorEngine::PART_37_HELPER_2_walkIn() {
 	_walkData[0].setPos(0, 143, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 16;
@@ -96,17 +96,20 @@ void IgorEngine::PART_37() {
 	_roomDataOffsets = PART_37_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 228, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_37_EXEC_ACTION);
-	PART_37_HELPER_1(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	PART_37_HELPER_2();
-	enterPartLoop();
-	while (_currentPart == 370) {
+	PART_37_HELPER_1_OBJECT_STATE(255);
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		PART_37_HELPER_2_walkIn();
+		enterPartLoop();
+	}
+	while (_currentPart == 370 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // End of namespace Igor

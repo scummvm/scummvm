@@ -269,11 +269,21 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
 			_walkDataCurrentIndex = _walkDataLastIndex - 1;
 		WalkData *wd = &_walkData[_walkDataCurrentIndex];
 		moveIgor(wd->posNum, wd->frameNum);
-		_walkDataCurrentIndex = _walkDataLastIndex;
+		if (!_gameState.igorMoving)
+			_walkDataCurrentIndex = _walkDataLastIndex;
 	}
-	drawInventory(_inventoryInfo[72], 0);
-	fadeIn(768);
+	if (!_gameState.dialogueStarted) {
+		memset(_screenVGA + 46080, 0, 17920);
+		SET_PAL_208_96_1();
+		SET_PAL_240_48_1();
+		drawVerbsPanel();
+		redrawVerb(_currentAction.verb, true);
+		drawInventory(_inventoryInfo[72], 0);
+	}
+	if (!_gameState.dialogueTextRunning)
+		showCursor();
 	_gameStateLoaded = false;
+	fadeIn(768);
 	return true;
 }
 
@@ -288,6 +298,8 @@ void IgorEngine::leavePartLoop() {
 
 void IgorEngine::runPartLoop() {
 	handleRoomInput();
+	if (_gameStateLoaded)
+		return;
 	if (compareGameTick(1, 16)) {
 		handleRoomIgorWalk();
 	}
@@ -566,6 +578,8 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	}
 
 	if (s.isLoading()) {
+		// Fade the outgoing screen before any loaded room redraws its pixels.
+		fadeOut(768);
 		_gameStateLoaded = true;
 		memcpy(_igorPalette, (_currentPart == 760) ? PAL_IGOR_2 : PAL_IGOR_1, 48);
 		UPDATE_OBJECT_STATE(255);

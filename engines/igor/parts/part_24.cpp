@@ -273,22 +273,25 @@ void IgorEngine::PART_24() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_24_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_24_UPDATE_ROOM_BACKGROUND;
 	PART_24_HELPER_1_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	if (_currentPart == 240) {
-		PART_24_HELPER_7_enterFromLeft();
-	} else if (_currentPart == 241) {
-		PART_24_HELPER_8_enterFromRight();
-	} else if (_currentPart == 242) {
-		PART_24_HELPER_9_enterFromChemistryClass();
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		if (_currentPart == 240) {
+			PART_24_HELPER_7_enterFromLeft();
+		} else if (_currentPart == 241) {
+			PART_24_HELPER_8_enterFromRight();
+		} else if (_currentPart == 242) {
+			PART_24_HELPER_9_enterFromChemistryClass();
+		}
+		enterPartLoop();
 	}
-	enterPartLoop();
-	while (_currentPart >= 240 && _currentPart <= 242) {
+	while (_currentPart >= 240 && _currentPart <= 242 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // End of namespace Igor

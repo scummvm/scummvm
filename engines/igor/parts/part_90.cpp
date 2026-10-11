@@ -119,7 +119,8 @@ void IgorEngine::PART_90() {
 		}
 	}
 	if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart) {
-		fadeOut(768);
+		if (!_gameStateLoaded)
+			fadeOut(768);
 		SET_PAL_208_96_1();
 		SET_PAL_240_48_1();
 		return;

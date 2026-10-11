@@ -36,7 +36,7 @@ void IgorEngine::PART_50_EXEC_ACTION(int action) {
 	case 101:
 		PART_50_ACTION_101_enterMaze();
 		break;
-	case 102:
+	case 102: // look at maze door
 		igorSay(201, 1, 1083);
 		break;
 	case 103:
@@ -49,9 +49,6 @@ void IgorEngine::PART_50_EXEC_ACTION(int action) {
 	}
 }
 
-/**
- * Igor walks to the door and goes into the maze, through its last room.
- */
 void IgorEngine::PART_50_ACTION_101_enterMaze() {
 	_roomObjectAreasTable[_screenLayer2[kPart50DoorY * 320 + kPart50DoorX]].area = kPart50DoorArea;
 	--_walkDataLastIndex;
@@ -64,10 +61,7 @@ void IgorEngine::PART_50_ACTION_101_enterMaze() {
 	_objectsState[71] = 1;
 }
 
-/**
- * Igor comes out of the door, on the right, and walks to the left.
- */
-void IgorEngine::PART_50_ENTER_FROM_DOOR() {
+void IgorEngine::PART_50_enterFromDoor() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(kPart50DoorX, kPart50DoorY, kFacingPositionLeft, 0);
 	wd->setDefaultScale();
@@ -82,10 +76,7 @@ void IgorEngine::PART_50_ENTER_FROM_DOOR() {
 	waitForIgorMove();
 }
 
-/**
- * Igor comes from the far top left, tiny, and walks down the hill to the right.
- */
-void IgorEngine::PART_50_ENTER_FROM_HILL() {
+void IgorEngine::PART_50_enterFromHill() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(45, 22, kFacingPositionFront, 0);
 	wd->clipSkipX = 1;
@@ -137,9 +128,9 @@ void IgorEngine::PART_50() {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 500) {
-			PART_50_ENTER_FROM_DOOR();
+			PART_50_enterFromDoor();
 		} else {
-			PART_50_ENTER_FROM_HILL();
+			PART_50_enterFromHill();
 		}
 	}
 	enterPartLoop();

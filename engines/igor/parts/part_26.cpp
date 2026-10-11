@@ -230,21 +230,24 @@ void IgorEngine::PART_26() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_26_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_26_UPDATE_ROOM_BACKGROUND;
 	PART_26_HELPER_1_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	_gameState.unk10 = true;
-	fadeIn(768);
-	if (_currentPart == 260) {
-		PART_26_HELPER_4_enterFromRight();
-	} else {
-		PART_26_HELPER_5_enterFromLaboratory();
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		_gameState.unk10 = true;
+		fadeIn(768);
+		if (_currentPart == 260) {
+			PART_26_HELPER_4_enterFromRight();
+		} else {
+			PART_26_HELPER_5_enterFromLaboratory();
+		}
+		enterPartLoop();
 	}
-	enterPartLoop();
-	while (_currentPart >= 260 && _currentPart <= 261) {
+	while (_currentPart >= 260 && _currentPart <= 261 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 

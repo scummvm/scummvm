@@ -147,16 +147,19 @@ void IgorEngine::PART_18() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_18_EXEC_ACTION);
 	PART_18_HELPER_1_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	PART_18_HELPER_2_walkIn();
-	enterPartLoop();
-	while (_currentPart == 180) {
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		PART_18_HELPER_2_walkIn();
+		enterPartLoop();
+	}
+	while (_currentPart == 180 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 void IgorEngine::loadResourceData__ROOM_MenToilets() {

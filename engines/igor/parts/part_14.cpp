@@ -525,24 +525,27 @@ void IgorEngine::PART_14() {
 	setRoomWalkBounds(0, 0, 256, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_14_EXEC_ACTION);
 	PART_14_HELPER_1_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	if (_currentPart == 140) {
-		PART_14_HELPER_2_enterFromChurch();
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		if (_currentPart == 140) {
+			PART_14_HELPER_2_enterFromChurch();
+		}
+		if (_currentPart == 141) {
+			PART_14_HELPER_3_enterFromChurchBell();
+		}
+		if (_currentPart == 142) {
+			PART_14_HELPER_4_enterFromMaze();
+		}
+		enterPartLoop();
 	}
-	if (_currentPart == 141) {
-		PART_14_HELPER_3_enterFromChurchBell();
-	}
-	if (_currentPart == 142) {
-		PART_14_HELPER_4_enterFromMaze();
-	}
-	enterPartLoop();
-	while (_currentPart >= 140 && _currentPart <= 142) {
+	while (_currentPart >= 140 && _currentPart <= 142 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 void IgorEngine::loadResourceData__ROOM_ChurchPuzzle() {

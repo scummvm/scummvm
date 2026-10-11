@@ -223,20 +223,23 @@ void IgorEngine::PART_27() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_27_EXEC_ACTION);
 	PART_27_HELPER_1_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	if (_currentPart == 270) {
-		PART_27_HELPER_2_enterFromLeft();
-	} else {
-		PART_27_HELPER_5_enterFromLibrary();
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		if (_currentPart == 270) {
+			PART_27_HELPER_2_enterFromLeft();
+		} else {
+			PART_27_HELPER_5_enterFromLibrary();
+		}
+		enterPartLoop();
 	}
-	enterPartLoop();
-	while (_currentPart == 270 || _currentPart == 271) {
+	while ((_currentPart == 270 || _currentPart == 271) && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // End of namespace Igor
