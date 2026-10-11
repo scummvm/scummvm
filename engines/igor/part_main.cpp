@@ -502,6 +502,7 @@ void IgorEngine::PART_MAIN() {
 			break;
 		case 60:       // arrive through scroll
 		case 61:       // arrive from intro
+		case 62:
 			PART_06(); // SpringRock
 			break;
 		case 70:       // enter from outside the administration corridor
@@ -513,6 +514,7 @@ void IgorEngine::PART_MAIN() {
 			PART_08(); // Dean Pepper office
 			break;
 		case 90:
+		case 91:
 			PART_09(); // Administration secretary room
 			break;
 
@@ -684,7 +686,10 @@ void IgorEngine::PART_MAIN() {
 			PART_72();
 			break;
 		case 730:
-			PART_73(); // cutscene that plays state 800 at its end
+			PART_73(); // Cutscene followed by PART_80
+			break;
+		case 740:
+			PART_74_CUTSCENE();
 			break;
 		case 750:
 			PART_75(); // philip vodka cutscene
@@ -702,6 +707,9 @@ void IgorEngine::PART_MAIN() {
 		case 790:
 		case 791:
 			PART_79(); // two scenes, shown below a black band
+			break;
+		case 800:
+			PART_80();
 			break;
 		case 810:
 			PART_81();

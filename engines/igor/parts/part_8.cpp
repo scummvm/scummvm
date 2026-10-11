@@ -145,27 +145,7 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 	// the room is saved again as it was left, Igor included
 	uint8 *roomScreen = (uint8 *)malloc(46080);
 	memcpy(roomScreen, _screenVGA, 46080);
-	// loads screen 9
-	loadActionData(DAT_AdministrationSecretaryRoom);
-	loadRoomData(PAL_AdministrationSecretaryRoom, IMG_AdministrationSecretaryRoom, BOX_AdministrationSecretaryRoom, MSK_AdministrationSecretaryRoom, TXT_AdministrationSecretaryRoom);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	drawSecretaryTalkingFrame(1);
-	memcpy(_screenLayer1, _screenVGA, 46080);
-	fadeIn(624);
-
-	cutsceneSayWithCallback(65, 70, 0, 59, 63, { { 226, 1, 254 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_SECRETARY);
-
-	for (int frame = 5; frame <= 19; ++frame) {
-		drawSecretaryTalkingFrame(frame);
-		if (frame < 19)
-			waitForTimer(31);
-		else
-			playSound(14, 1);
-	}
-	waitForTimer(255);
-	fadeOut(624);
-	_objectsState[27] = 0;
-	_objectsState[35] = 1;
+	PART_09();
 
 	// back to room 8
 	loadActionData(DAT_DeanPepperOffice);
