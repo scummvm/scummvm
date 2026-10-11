@@ -4492,6 +4492,12 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "9f4de2a53ef396cc70786a1dc0ab191d", 828351641,
 					"local.dcp", "a78f5353c6539b4ff9c39223202ba8d0", 433003083), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_9),
 
+	// Stroke of Fate: Operation Bunker (Russian/Akella)
+	// TRAC report #17207
+	WME_WINENTRY("sof2", "",
+		WME_ENTRY2s("data.dcp", "e7829b8b88d49226f406bcd40279ab52", 807112101,
+					"local.dcp", "a78f5353c6539b4ff9c39223202ba8d0", 433003083), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_9),
+
 	// Shadow of Nebula (Steam: Early Access Game, Mar 2016) (English)
 	WME_WINENTRY("shadowofnebula", "",
 		WME_ENTRY1s("data.dcp", "fd3631791e66885427ccdb6063752a6d", 1402609157), Common::EN_ANY, ADGF_DEMO, WME_1_9_3),
