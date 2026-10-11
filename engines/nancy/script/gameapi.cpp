@@ -339,6 +339,7 @@ static const luaL_Reg kKeyFunctions[] = {
 };
 
 // Game
+// TODO: Game.time
 
 // The two levels the game can be played at
 static const uint kDifficultyJunior = 0;
@@ -382,6 +383,7 @@ static const luaL_Reg kGameFunctions[] = {
 };
 
 // Draw, for the "Render" functions of the records
+// TODO: Draw:Tri
 
 // Draw:Rect(rect, color)
 static int drawRect(lua_State *L) {
@@ -567,6 +569,7 @@ static const luaL_Reg kSceneFunctions[] = {
 };
 
 // Player, who is the character being played unless a function is told otherwise
+// TODO: AddTask, LoadTaskFlag, AddJournalEntry and AddCellPhoneNumber
 
 // The number of a character, or -1 when there is none of that name
 static int findCharacter(const char *name) {
@@ -680,6 +683,7 @@ static const luaL_Reg kLogFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+// TODO: The Autotext, Streams, Generics and UIMgr objects, and Log:WriteAll
 void registerGameAPI(lua_State *L) {
 	registerGlobal(L, "Flags", "ND.Flags", kFlagsFunctions);
 	registerGlobal(L, "VarTable", "ND.VarTable", kVarTableFunctions);

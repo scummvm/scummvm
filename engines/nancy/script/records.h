@@ -82,6 +82,7 @@ protected:
 // The first record of every scene, which names the area the scene belongs to
 // and its background. A background with more than one frame is a node the
 // player can turn around in.
+// TODO: Handle the loopTheme and modColor fields.
 class SummaryRecord : public Record {
 public:
 	SummaryRecord(SceneContext &context) : Record(context, "ND.Summary") {}
@@ -162,6 +163,8 @@ private:
 };
 
 // A record that only does what the functions a script gave it do
+// TODO: Call RenderAttachment, OnSave, OnLoad and ReceiveMessage, and handle
+// messagingName and Send.
 class OverrideRecord : public Record {
 public:
 	OverrideRecord(SceneContext &context) : Record(context, "ND.OverrideAR") {}
@@ -185,6 +188,7 @@ private:
 };
 
 // Shows a part of an image
+// TODO: Handle the modColor field.
 class OverlayRecord : public Record {
 public:
 	OverlayRecord(SceneContext &context) : Record(context, "ND.Overlay") {}
@@ -210,6 +214,7 @@ private:
 };
 
 // Shows the parts of an image one after the other
+// TODO: Handle the modColor field.
 class AnimOverlayRecord : public Record {
 public:
 	AnimOverlayRecord(SceneContext &context) : Record(context, "ND.AnimOvlAR") {}

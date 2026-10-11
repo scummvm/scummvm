@@ -78,6 +78,7 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 	case kRecordAnimOverlay:
 		return new AnimOverlayRecord(context);
 	default:
+		// TODO: The Text and Particle records
 		return nullptr;
 	}
 }

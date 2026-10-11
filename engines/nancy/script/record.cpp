@@ -262,6 +262,7 @@ int Record::setScriptField() {
 }
 
 // The functions scripts can give a record for what the player does
+// TODO: OnMouseScroll
 static const char *const kEventFunctionNames[kNumRecordEvents] = {
 	"OnLeftClick", "OnRightClick", "OnLeftDown", "OnLeftUp", "OnRightDown", "OnRightUp",
 	"OnKeyDown", "OnKey", "OnKeyUp"
