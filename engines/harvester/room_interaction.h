@@ -61,6 +61,7 @@ public:
 		bool &pendingRoomChangeUsesSavedRoomState, SaveRoomState &pendingRoomChangeSavedRoomState,
 		bool canExitCloseupToParent, RoomInteractionCallbacks &callbacks);
 
+	Common::Error handleCombatInteraction(const InteractionResult &interaction, bool &needsRedraw);
 	Common::Error handleInteractionResult(const InteractionResult &interaction,
 		bool &didTransition, const Common::String &usedItemName, bool interruptPlayerMovement = true);
 	Common::Error runScriptedDialogue(const Common::String &npcName, const Common::String &usedItemName,

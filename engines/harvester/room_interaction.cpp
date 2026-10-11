@@ -50,6 +50,23 @@ RoomInteractionProcessor::RoomInteractionProcessor(HarvesterEngine &engine, Flow
 	  _canExitCloseupToParent(canExitCloseupToParent), _callbacks(callbacks) {
 }
 
+Common::Error RoomInteractionProcessor::handleCombatInteraction(const InteractionResult &interaction, bool &needsRedraw) {
+	bool didTransition = false;
+	Common::Error interactionError =
+		handleInteractionResult(interaction, didTransition, Common::String());
+	if (interactionError.getCode() != Common::kNoError)
+		return interactionError;
+	if (!_flow.hasPendingMainMenuReturn() &&
+			_engine.getScript() &&
+			_engine.getScript()->getPlayerCurrentHitPoints() <= 0) {
+		_callbacks.stopPlayerRegionInteraction();
+		_callbacks.startPlayerDefeatSequence("combat_interaction", Common::String(), 1);
+	}
+
+	needsRedraw = true;
+	return Common::kNoError;
+}
+
 Common::Error RoomInteractionProcessor::handleInteractionResult(const InteractionResult &interaction,
 		bool &didTransition, const Common::String &usedItemName, bool interruptPlayerMovement) {
 	didTransition = false;

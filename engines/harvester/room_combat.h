@@ -22,6 +22,7 @@
 #ifndef HARVESTER_ROOM_COMBAT_H
 #define HARVESTER_ROOM_COMBAT_H
 
+#include "common/error.h"
 #include "harvester/room_support.h"
 
 namespace Harvester {
@@ -29,6 +30,9 @@ namespace Harvester {
 class Entity;
 class EntityManager;
 class HarvesterEngine;
+class RoomCombatEffects;
+class RoomInteractionProcessor;
+class RoomSceneRuntime;
 
 extern const int kRoomMonsterAnimationRate;
 extern const int kNativeMonsterAttackAnimationRate;
@@ -142,7 +146,23 @@ public:
 	MonsterRecord *selectMonsterAttackContactTarget(RoomSetupState &state, RoomPlayerState &playerState,
 		EntityManager *entityManager, Entity *&monsterEntity) const;
 
+	bool queueInnerSanctumHerrillDeathAfterMuck(HarvesterEngine &engine, RoomSetupState &state, const MonsterRecord &monster) const;
+	bool beginNpcDeathTransition(HarvesterEngine &engine,
+		NpcRecord &npc, Entity &npcEntity, RoomNpcCombatState &combatState, int deathDamageType, bool &needsRedraw) const;
+	Common::Error finalizeNpcDeathTransition(HarvesterEngine &engine,
+		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime, NpcRecord &npc, RoomNpcCombatState &combatState,
+		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) const;
+	Common::Error resolvePlayerAttackContact(HarvesterEngine &engine,
+		RoomSetupState &state, RoomPlayerState &playerState,
+		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime,
+		RoomCombatEffects &combatEffects,
+		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
+
 private:
+	void startMonsterHitReaction(HarvesterEngine &engine,
+		RoomCombatEffects &combatEffects, MonsterRecord &monster, Entity &monsterEntity, RoomMonsterCombatState *combatState,
+		int attackerAttackFirstFrame, bool &needsRedraw) const;
+
 	MonsterRecord *findMonsterTargetAtPoint(RoomSetupState &state, EntityManager *entityManager, const Common::Point &point) const;
 	MonsterRecord *findOverlappingMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState, EntityManager *entityManager) const;
 	NpcRecord *findOverlappingNpcTarget(RoomSetupState &state, const RoomPlayerState &playerState, EntityManager *entityManager) const;

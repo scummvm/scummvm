@@ -1061,22 +1061,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		}
 		ScopedDeferredLiveNpcDeathTransitions deferredLiveNpcDeathTransitions(
 			_engine.getScript());
-		auto findRoomNpcRecordByName = [&](const Common::String &npcName) -> NpcRecord * {
-			for (NpcRecord &npc : scene.state.roomNpcs) {
-				if (npc.npcName.equalsIgnoreCase(npcName))
-					return &npc;
-			}
 
-			return nullptr;
-		};
-		auto findRoomNpcIndexByName = [&](const Common::String &npcName) -> int {
-			for (uint i = 0; i < scene.state.roomNpcs.size(); ++i) {
-				if (scene.state.roomNpcs[i].npcName.equalsIgnoreCase(npcName))
-					return (int)i;
-			}
-
-			return -1;
-		};
 		auto findRoomMonsterIndexByName = [&](const Common::String &monsterName) -> int {
 			for (uint i = 0; i < scene.state.roomMonsters.size(); ++i) {
 				if (scene.state.roomMonsters[i].monsterName.equalsIgnoreCase(monsterName))
@@ -1088,131 +1073,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		auto findSceneRuntimeEntity = [&](const Common::String &entityName) -> Entity * {
 			return entityManager ? entityManager->findSceneEntityByName(entityName) : nullptr;
 		};
-		auto queueInnerSanctumHerrillDeathAfterMuck = [&](const MonsterRecord &monster) {
-			if (!monster.roomName.equalsIgnoreCase(kInnerSanctumRoomName) ||
-					!monster.monsterName.equalsIgnoreCase(kMuckeyMonsterName) ||
-					!monster.onDeathActionTag.equalsIgnoreCase(kActivateInnerSanctumDoorActionTag)) {
-				return false;
-			}
 
-			Script *script = _engine.getScript();
-			NpcRecord *herrill = findRoomNpcRecordByName(kHerrillLogNpcName);
-			if (!script || !herrill || !herrill->visible ||
-					herrill->deathOrMonsterfyFlag || herrill->deathDamageType != 0) {
-				return false;
-			}
-
-			// Native update_actor_runtime_state has a hard-coded HERRILL_LOG removal path
-			// while the Inner Sanctum Muckey combat state is active; queue the ordinary
-			// live NPC death so the room's timer delay can play Herrill's death bank.
-			if (!script->queueRuntimeNpcDeathOrMonsterfy(
-					kHerrillLogNpcName, kNativeDefaultNpcDeathDamageType)) {
-				return false;
-			}
-
-			herrill->deathDamageType = kNativeDefaultNpcDeathDamageType;
-			debugC(1, kDebugCombat,
-				"Harvester: queued Inner Sanctum Herrill death after monster='%s'",
-				monster.monsterName.c_str());
-			return true;
-		};
-
-	auto handleCombatInteraction = [&](const InteractionResult &interaction) -> Common::Error {
-		bool didTransition = false;
-		Common::Error interactionError =
-			interactionProcessor.handleInteractionResult(interaction, didTransition, Common::String());
-		if (interactionError.getCode() != Common::kNoError)
-			return interactionError;
-		if (!flow.hasPendingMainMenuReturn() &&
-				_engine.getScript() &&
-				_engine.getScript()->getPlayerCurrentHitPoints() <= 0) {
-			session.stopPlayerRegionInteraction();
-			startPlayerDefeatSequence("combat_interaction", Common::String(), 1);
-		}
-
-		needsRedraw = true;
-		return Common::kNoError;
-	};
-	auto beginNpcDeathTransition = [&](NpcRecord &npc, Entity &npcEntity,
-			RoomNpcCombatState &combatState, int deathDamageType) {
-		RoomDeathAnimationRange deathRange;
-		if (!resolveNpcDeathAnimationRange(npcEntity, !npc.monsterfyTargetName.empty(),
-				deathDamageType, _engine.isGoreEnabled(), deathRange))
-			return false;
-
-		combatState.deathActive = true;
-		combatState.deathFirstFrame = deathRange.firstFrame;
-		combatState.deathLastFrame = deathRange.lastFrame;
-		combatState.deathDamageType = deathDamageType;
-		npc.deathDamageType = deathDamageType;
-		npcEntity.setAnimationFrameRange(deathRange.firstFrame, deathRange.lastFrame, false);
-		npcEntity.setAnimationRate(npc.frameDelay > 0 ? npc.frameDelay : 0);
-		npcEntity.setAnimationEnabled(true);
-		npcEntity.setCurrentFrame(deathRange.firstFrame);
-		if (!npc.audioPath.empty())
-			(void)_engine.playSound(npc.audioPath);
-		debugC(1, kDebugCombat,
-			"Harvester: combat npc death start target='%s' damage_type=%d frames=%d..%d monsterfy='%s' on_death='%s'",
-			npc.npcName.c_str(), deathDamageType, deathRange.firstFrame, deathRange.lastFrame,
-			npc.monsterfyTargetName.c_str(), npc.onDeathActionTag.c_str());
-		needsRedraw = true;
-		return true;
-	};
-	auto finalizeNpcDeathTransition = [&](NpcRecord &npc,
-			RoomNpcCombatState &combatState) -> Common::Error {
-		Script *script = _engine.getScript();
-		Entity *npcEntity = findSceneRuntimeEntity(npc.npcName);
-		// Native state 0x35 leaves non-monsterfied NPCs as a dead state-0x38 actor
-		// in the current room, while the NpcRecord death flag suppresses later setup.
-		const bool retainDeathEntity =
-			shouldRetainNpcDeathEntityInCurrentRoom(npc) &&
-			combatState.deathLastFrame >= 0 &&
-			npcEntity;
-		const int monsterfyPosZ = (!npc.monsterfyTargetName.empty() && npcEntity)
-			? roundRoomCombatFloat(npcEntity->getZ())
-			: Script::kNoMonsterfyPosZOverride;
-		if (retainDeathEntity) {
-			npcEntity->setAnimationRate(0);
-			npcEntity->setAnimationFrameRange(combatState.deathLastFrame, combatState.deathLastFrame, false);
-			npcEntity->setCurrentFrame(combatState.deathLastFrame);
-			npcEntity->setAnimationEnabled(false);
-			npcEntity->setHitTestMode(kRuntimeEntityHitTestNone);
-			npcEntity->setVisible(true);
-		} else {
-			sceneRuntime.removeSceneEntityByName(npc.npcName);
-		}
-		npc.active = false;
-		npc.visible = false;
-		npc.savedVisible = false;
-		npc.runtimeSpawned = retainDeathEntity;
-		npc.runtimeState = retainDeathEntity ? combatState.deathLastFrame : -1;
-		npc.deathOrMonsterfyFlag = true;
-		if (combatState.deathDamageType != 0)
-			npc.deathDamageType = combatState.deathDamageType;
-		const bool runtimeChanged = script
-			? script->finalizeRuntimeNpcDeathOrMonsterfy(
-				npc.npcName, npc.deathDamageType, false, -1, monsterfyPosZ)
-			: false;
-		debugC(1, kDebugCombat,
-			"Harvester: combat npc death complete target='%s' damage_type=%d last_frame=%d preserve_runtime_actor=%d monsterfy='%s' on_death='%s'",
-			npc.npcName.c_str(), combatState.deathDamageType, combatState.deathLastFrame,
-			retainDeathEntity, npc.monsterfyTargetName.c_str(), npc.onDeathActionTag.c_str());
-		clearRoomNpcCombatState(combatState);
-
-		InteractionResult interaction;
-		interaction.mutatedRuntimeState = runtimeChanged;
-		interaction.visualRuntimeStateChanged = runtimeChanged;
-		if (script && !npc.onDeathActionTag.empty()) {
-			InteractionResult deathInteraction;
-			if (script->executeActionTag(npc.onDeathActionTag, deathInteraction, true, npc.roomName)) {
-				interaction = Common::move(deathInteraction);
-				interaction.mutatedRuntimeState = true;
-				interaction.visualRuntimeStateChanged = true;
-			}
-		}
-
-		return handleCombatInteraction(interaction);
-	};
 	auto killDebugActiveMonster = [&]() -> Common::Error {
 		if (!_engine.isCombatDebugEnabled())
 			return Common::kNoError;
@@ -1291,7 +1152,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 		}
 
-		return handleCombatInteraction(interaction);
+		return interactionProcessor.handleCombatInteraction(interaction, needsRedraw);
 	};
 	auto capturePlayerAttackTarget = [&]() {
 		playerState.attackTargetName.clear();
@@ -1303,209 +1164,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		combat.capturePlayerAttackTarget(scene.state, playerState, entityManager, _mousePos, hoverState.npc);
 	};
 
-		auto startMonsterHitReaction = [&](MonsterRecord &monster, Entity &monsterEntity,
-				RoomMonsterCombatState *combatState, int attackerAttackFirstFrame) {
-			if (combatEffects.spawnCombatHitEffect(monsterEntity, monster.monsterName))
-				needsRedraw = true;
-
-			if (!combatState) {
-				(void)playRandomRoomAttackSound(_engine,
-					monster.hitSound1, monster.hitSound2, monster.hitSound3);
-				return;
-			}
-
-			RoomHitAnimationRange range;
-			if (!resolveRoomMonsterHitAnimationRange(monsterEntity, attackerAttackFirstFrame, range)) {
-				(void)playRandomRoomAttackSound(_engine,
-					monster.hitSound1, monster.hitSound2, monster.hitSound3);
-				debugC(1, kDebugCombat,
-					"Harvester: combat monster hit reaction skipped target='%s' attack_frame=%d reason='no native hit bank'",
-					monster.monsterName.c_str(), attackerAttackFirstFrame);
-				return;
-			}
-
-			clearRoomMonsterAttackState(*combatState);
-			clearRoomMonsterHitState(*combatState);
-			combatState->hitActive = true;
-			combatState->hitFirstFrame = range.firstFrame;
-			combatState->hitLastFrame = range.lastFrame;
-			combatState->hitResumeFacing = range.resumeFacing;
-			combatState->hitKnockbackRemainingX = range.knockbackX;
-			combatState->hitKnockbackDecayStep = kNativeCombatHitKnockbackDecayStep;
-			combatState->hitSoundPlayed =
-				monster.hitSound1.empty() && monster.hitSound2.empty() && monster.hitSound3.empty();
-			combatState->nextMovementTick = 0;
-			monster.facing = range.resumeFacing;
-			monsterEntity.setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
-			monsterEntity.setAnimationRate(kNativeMonsterHitAnimationRate);
-			monsterEntity.setAnimationEnabled(true);
-			monsterEntity.setCurrentFrame(range.firstFrame);
-			if (!combatState->hitSoundPlayed && monster.hitSoundTriggerFrame <= 0) {
-				(void)playRandomRoomAttackSound(_engine,
-					monster.hitSound1, monster.hitSound2, monster.hitSound3);
-				combatState->hitSoundPlayed = true;
-			}
-			debugC(1, kDebugCombat,
-				"Harvester: combat monster hit reaction target='%s' attack_frame=%d frames=%d..%d resume_facing=%d knockback=%d rate=%d",
-				monster.monsterName.c_str(), attackerAttackFirstFrame, range.firstFrame, range.lastFrame,
-				range.resumeFacing, range.knockbackX, kNativeMonsterHitAnimationRate);
-			needsRedraw = true;
-		};
-		auto resolvePlayerAttackContact = [&]() -> Common::Error {
-		if (!playerState.attackActive || playerState.attackContactResolved || !playerState.entity ||
-				playerState.attackContactFrame < 0 ||
-				playerState.entity->getCurrentFrame() < playerState.attackContactFrame) {
-			return Common::kNoError;
-		}
-
-		playerState.attackContactResolved = true;
-		const int damageType = Player::resolveCombatLoadoutDamageType(playerState.combatLoadout);
-		const int damageAmount = Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout);
-		debugC(1, kDebugCombat,
-			"Harvester: combat player attack contact frame=%d loadout=%d weapon='%s' damage=%d damage_type='%s' target_class='%s' target='%s'",
-			playerState.entity->getCurrentFrame(), playerState.combatLoadout,
-			Player::describeCombatLoadout(playerState.combatLoadout), damageAmount,
-			Player::describeCombatDamageType(damageType),
-			describeCombatTargetClass(playerState.attackTargetClassId), playerState.attackTargetName.c_str());
-		Script *script = _engine.getScript();
-		if (!script)
-			return Common::kNoError;
-
-		combat.captureOverlappingNpcAttackTarget(scene.state, playerState, entityManager);
-		if (playerState.attackTargetClassId == kRuntimeEntityClassNpc) {
-			Entity *npcEntity = nullptr;
-			NpcRecord *npc = combat.selectNpcAttackContactTarget(scene.state, playerState, entityManager, npcEntity);
-			if (!npc) {
-				debugC(1, kDebugCombat,
-					"Harvester: combat player attack missed class='npc' target='%s' reason='no reachable npc'",
-					playerState.attackTargetName.c_str());
-				return Common::kNoError;
-			}
-
-			const bool runtimeChanged =
-				script->queueRuntimeNpcDeathOrMonsterfy(npc->npcName, damageType);
-			const bool jimmyFlagChanged = npc->npcName.equalsIgnoreCase("JIMMY")
-				? script->setRuntimeFlagValue("JIMMY_ATTACKED", true)
-				: false;
-			const int npcIndex = findRoomNpcIndexByName(npc->npcName);
-			RoomNpcCombatState *combatState =
-				npcIndex >= 0 && npcIndex < (int)npcCombatStates.size()
-					? &npcCombatStates[(uint)npcIndex]
-					: nullptr;
-			if (runtimeChanged) {
-				npc->deathDamageType = damageType;
-				if (combatState)
-					clearRoomNpcCombatState(*combatState);
-			}
-			debugC(1, kDebugCombat,
-				"Harvester: combat player npc hit target='%s' damage_type=%d runtime_changed=%d jimmy_flag=%d",
-				npc->npcName.c_str(), damageType, runtimeChanged, jimmyFlagChanged);
-			if (!runtimeChanged && !jimmyFlagChanged)
-				return Common::kNoError;
-			if (runtimeChanged && npcEntity) {
-				const Common::String followTargetName = npc->monsterfyTargetName;
-				if (combatEffects.spawnCombatHitEffect(*npcEntity, followTargetName))
-					needsRedraw = true;
-			}
-			if (runtimeChanged && combatState && npcEntity &&
-					beginNpcDeathTransition(*npc, *npcEntity, *combatState, damageType))
-				return Common::kNoError;
-			if (runtimeChanged) {
-				debugC(1, kDebugCombat,
-					"Harvester: combat npc defeated target='%s' damage_type=%d on_death='%s' fallback='no death bank'",
-					npc->npcName.c_str(), damageType, npc->onDeathActionTag.c_str());
-				RoomNpcCombatState fallbackState;
-				fallbackState.deathDamageType = damageType;
-				return finalizeNpcDeathTransition(*npc, combatState ? *combatState : fallbackState);
-			}
-
-			return Common::kNoError;
-		}
-
-		Entity *monsterEntity = nullptr;
-		MonsterRecord *monster = combat.selectMonsterAttackContactTarget(scene.state, playerState, entityManager, monsterEntity);
-		if (!monster || !monsterEntity) {
-			debugC(1, kDebugCombat,
-				"Harvester: combat player attack missed class='monster' target='%s' reason='no reachable monster'",
-				playerState.attackTargetName.c_str());
-			return Common::kNoError;
-		}
-
-			const int hitPointsBefore = monster->currentHitPoints;
-			monster->currentHitPoints = MAX(0,
-				monster->currentHitPoints - damageAmount);
-			const int damageLanded = hitPointsBefore - monster->currentHitPoints;
-			const int monsterIndex = findRoomMonsterIndexByName(monster->monsterName);
-			RoomMonsterCombatState *combatState =
-				monsterIndex >= 0 && monsterIndex < (int)monsterCombatStates.size()
-					? &monsterCombatStates[(uint)monsterIndex]
-					: nullptr;
-			debugC(1, kDebugCombat,
-				"Harvester: combat player monster hit target='%s' loadout=%d weapon='%s' damage=%d damage_type='%s' hp=%d->%d reachable=1",
-				monster->monsterName.c_str(), playerState.combatLoadout,
-				Player::describeCombatLoadout(playerState.combatLoadout), damageAmount,
-				Player::describeCombatDamageType(damageType), hitPointsBefore, monster->currentHitPoints);
-			if (damageLanded > 0) {
-				combatEffects.spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
-				startMonsterHitReaction(*monster, *monsterEntity, combatState, playerState.attackFirstFrame);
-			}
-			if (monster->currentHitPoints > 0) {
-				(void)script->syncRuntimeMonsterRecord(*monster);
-				needsRedraw = true;
-				return Common::kNoError;
-			}
-			if (combatState)
-				clearRoomMonsterCombatState(*combatState);
-		(void)script->syncRuntimeMonsterRecord(*monster);
-
-		RoomDeathAnimationRange deathRange;
-		if (combatState && resolveMonsterDeathAnimationRange(*monsterEntity, monster->facing,
-				damageType, _engine.isGoreEnabled(), deathRange)) {
-			combatState->deathActive = true;
-			combatState->deathFirstFrame = deathRange.firstFrame;
-			combatState->deathLastFrame = deathRange.lastFrame;
-			combatState->deathDamageType = damageType;
-			combatState->nextMovementTick = 0;
-			monsterEntity->setAnimationFrameRange(deathRange.firstFrame, deathRange.lastFrame, false);
-			monsterEntity->setAnimationRate(kRoomMonsterAnimationRate);
-			monsterEntity->setAnimationEnabled(true);
-			monsterEntity->setCurrentFrame(deathRange.firstFrame);
-			if (!monster->deathSound.empty())
-				(void)_engine.playSound(monster->deathSound);
-			debugC(1, kDebugCombat,
-				"Harvester: combat monster death start target='%s' damage_type=%d frames=%d..%d gore=%d on_death='%s'",
-				monster->monsterName.c_str(), damageType,
-				deathRange.firstFrame, deathRange.lastFrame,
-				_engine.isGoreEnabled(), monster->onDeathActionTag.c_str());
-			needsRedraw = true;
-			return Common::kNoError;
-		}
-
-		monster->active = false;
-		monster->visible = false;
-		const bool herrillDeathQueued = queueInnerSanctumHerrillDeathAfterMuck(*monster);
-		debugC(1, kDebugCombat,
-			"Harvester: combat monster defeated target='%s' on_death='%s' fallback='no death bank'",
-			monster->monsterName.c_str(), monster->onDeathActionTag.c_str());
-		InteractionResult interaction;
-		interaction.mutatedRuntimeState = true;
-		interaction.visualRuntimeStateChanged = true;
-		if (!monster->onDeathActionTag.empty()) {
-			InteractionResult deathInteraction;
-			if (script->executeActionTag(
-					monster->onDeathActionTag, deathInteraction, true, monster->roomName)) {
-				interaction = Common::move(deathInteraction);
-				interaction.mutatedRuntimeState = true;
-				interaction.visualRuntimeStateChanged = true;
-			}
-		}
-		if (herrillDeathQueued) {
-			interaction.mutatedRuntimeState = true;
-			interaction.visualRuntimeStateChanged = true;
-		}
-
-		return handleCombatInteraction(interaction);
-	};
 	auto updateRoomMonsterCombat = [&]() -> Common::Error {
 		if (!entityManager)
 			return Common::kNoError;
@@ -1529,7 +1187,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				continue;
 			}
 			if (!combatState.deathActive && npc.active && npc.deathDamageType != 0) {
-				if (beginNpcDeathTransition(npc, *entity, combatState, npc.deathDamageType))
+				if (combat.beginNpcDeathTransition(_engine, npc, *entity, combatState, npc.deathDamageType, needsRedraw))
 					continue;
 
 				debugC(1, kDebugCombat,
@@ -1537,7 +1195,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					npc.npcName.c_str(), npc.deathDamageType, npc.onDeathActionTag.c_str());
 				combatState.deathDamageType = npc.deathDamageType;
 				combatState.deathLastFrame = entity->getCurrentFrame();
-				return finalizeNpcDeathTransition(npc, combatState);
+				return combat.finalizeNpcDeathTransition(_engine, entityManager, sceneRuntime, npc, combatState, interactionProcessor, needsRedraw);
 			}
 			if (!combatState.deathActive)
 				continue;
@@ -1548,7 +1206,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			entity->setAnimationFrameRange(combatState.deathLastFrame, combatState.deathLastFrame, false);
 			entity->setCurrentFrame(combatState.deathLastFrame);
 			entity->setAnimationEnabled(false);
-			return finalizeNpcDeathTransition(npc, combatState);
+			return combat.finalizeNpcDeathTransition(_engine, entityManager, sceneRuntime, npc, combatState, interactionProcessor, needsRedraw);
 		}
 
 		for (uint i = 0; i < scene.state.roomMonsters.size(); ++i) {
@@ -1577,7 +1235,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						monster.runtimeState,
 						monster.onDeathActionTag.c_str());
 					clearRoomMonsterCombatState(combatState);
-					const bool herrillDeathQueued = queueInnerSanctumHerrillDeathAfterMuck(monster);
+					const bool herrillDeathQueued = combat.queueInnerSanctumHerrillDeathAfterMuck(_engine, scene.state, monster);
 
 					InteractionResult interaction;
 					interaction.mutatedRuntimeState = true;
@@ -1596,7 +1254,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						interaction.visualRuntimeStateChanged = true;
 					}
 
-					return handleCombatInteraction(interaction);
+					return interactionProcessor.handleCombatInteraction(interaction, needsRedraw);
 				}
 				continue;
 			}
@@ -3010,7 +2668,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 		Common::Error combatError = Common::kNoError;
 		if (!playerControlPaused) {
-			combatError = resolvePlayerAttackContact();
+			combatError = combat.resolvePlayerAttackContact(_engine, scene.state, playerState, entityManager,
+					sceneRuntime, combatEffects, interactionProcessor, needsRedraw);
 			if (combatError.getCode() != Common::kNoError)
 				return combatError;
 			if (flow.hasPendingMainMenuReturn())
