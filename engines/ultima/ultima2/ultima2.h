@@ -162,6 +162,12 @@ public:
 	void setRenderMode(Data::RenderMode mode);
 
 	/**
+	 * Called when the in-game options dialog may have changed settings, such
+	 * as the graphics mode
+	 */
+	void applyGameSettings() override;
+
+	/**
 	 * Pause for a given number of milliseconds
 	 */
 	void pauseMillis(uint32 millis);

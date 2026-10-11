@@ -27,6 +27,7 @@
 #include "common/str-array.h"
 #include "common/memstream.h"
 #include "common/translation.h"
+#include "ultima/shared/engine/graphics_options.h"
 #ifdef ENABLE_AKALABETH
 #include "ultima/ultima0/ultima0.h"
 #include "ultima/ultima0/metaengine.h"
@@ -193,6 +194,17 @@ const char *UltimaMetaEngine::getName() const {
 
 const ADExtraGuiOptionsMap *UltimaMetaEngine::getAdvancedExtraGuiOptions() const {
 	return optionsList;
+}
+
+GUI::OptionsContainerWidget *UltimaMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss,
+		const Common::String &name, const Common::String &target) const {
+#ifdef ENABLE_ULTIMA2
+	if (getGameId(target) == "ultima2")
+		return new Ultima::Shared::GraphicsOptionsWidget(boss, name, target,
+			Ultima::Ultima2::Data::RENDER_MODE_LABELS, Ultima::Ultima2::Data::RENDER_MODE_COUNT);
+#endif
+
+	return AdvancedMetaEngine::buildEngineOptionsWidget(boss, name, target);
 }
 
 Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Ultima::UltimaGameDescription *gd) const {

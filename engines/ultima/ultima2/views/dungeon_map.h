@@ -67,6 +67,7 @@ public:
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgAttackTile(const Shared::AttackTileMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };

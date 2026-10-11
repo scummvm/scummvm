@@ -25,6 +25,7 @@
 #include "common/savefile.h"
 #include "engines/util.h"
 #include "audio/softsynth/pcspk.h"
+#include "ultima/shared/engine/graphics_options.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/console.h"
 #include "ultima/ultima2/metaengine.h"
@@ -58,6 +59,14 @@ Common::String Ultima2Engine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
 
+// The graphics renderer mode stored in the configuration, falling back
+// to the original CGA look if it's missing or stale
+static Data::RenderMode configuredRenderMode() {
+	int mode = ConfMan.getInt(Shared::GRAPHICS_MODE_KEY);
+	return (mode >= 0 && mode < Data::RENDER_MODE_COUNT) ?
+		(Data::RenderMode)mode : Data::RENDER_CGA;
+}
+
 Common::Error Ultima2Engine::run() {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 
@@ -81,14 +90,8 @@ Common::Error Ultima2Engine::run() {
 		return Common::kNoError;
 	}
 
-	// Restore the player's preferred renderer, falling back to the
-	// original CGA look if the stored value is missing or stale. Uses
-	// its own key rather than the generic "render_mode" - that one's
-	// already a reserved, string-valued ScummVM-wide GUI setting (the
-	// "Render mode:" dropdown, see gui/options.cpp), not an engine-local int
-	int renderMode = ConfMan.getInt("graphics_mode");
-	_renderMode = (renderMode >= 0 && renderMode < Data::RENDER_MODE_COUNT) ?
-		(Data::RenderMode)renderMode : Data::RENDER_CGA;
+	// Restore the player's preferred renderer
+	_renderMode = configuredRenderMode();
 
 	// Set the palette now that the engine data is available, since the
 	// composite renderer's colors come from a file in it
@@ -246,12 +249,17 @@ void Ultima2Engine::playFX(Data::SoundEffect fx) {
 	}
 }
 
+void Ultima2Engine::applyGameSettings() {
+	// The graphics mode can be changed from the in-game options dialog
+	setRenderMode(configuredRenderMode());
+}
+
 void Ultima2Engine::setRenderMode(Data::RenderMode mode) {
 	if (mode == _renderMode)
 		return;
 
 	_renderMode = mode;
-	ConfMan.setInt("graphics_mode", (int)mode);
+	ConfMan.setInt(Shared::GRAPHICS_MODE_KEY, (int)mode);
 	ConfMan.flushToDisk();
 	Data::setPalette();
 

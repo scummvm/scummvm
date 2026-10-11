@@ -420,6 +420,14 @@ bool DungeonMap::msgAttackTile(const Shared::AttackTileMessage &msg) {
 	return true;
 }
 
+bool DungeonMap::msgGame(const GameMessage &msg) {
+	// Whether the corridor is decoded to composite colors depends on the
+	// graphics mode, but there are no tiles to reload
+	if (msg._name == "RELOAD_TILES")
+		redraw();
+	return false;
+}
+
 bool DungeonMap::msgKeypress(const KeypressMessage &msg) {
 	// Secret debugging aid: minmap toggle
 	if (msg.keycode == Common::KEYCODE_BACKQUOTE || msg.keycode == Common::KEYCODE_TILDE) {

@@ -43,6 +43,10 @@ enum RenderMode {
 };
 extern const char *const RENDER_MODE_NAMES[RENDER_MODE_COUNT];
 
+// Descriptions of the modes for the launcher's graphics mode drop-down, in
+// the same order. Marked for translation, but not translated
+extern const char *const RENDER_MODE_LABELS[RENDER_MODE_COUNT];
+
 inline bool isEgaMode(RenderMode mode) {
 	return mode >= RENDER_EGA && mode < RENDER_MODE_COUNT;
 }

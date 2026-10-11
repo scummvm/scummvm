@@ -23,6 +23,7 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/paletteman.h"
 #include "ultima/ultima2/data/data.h"
 
@@ -39,6 +40,11 @@ const byte CGA_PALETTE1[4 * 3] = {
 
 const char *const RENDER_MODE_NAMES[RENDER_MODE_COUNT] = {
 	"ORIGINAL", "COMPOSITE", "EGA", "EGA (V1.0)", "EGA (WILTSHIRE)", "EGA (C64)"
+};
+
+const char *const RENDER_MODE_LABELS[RENDER_MODE_COUNT] = {
+	_s("Original (CGA)"), _s("Composite monitor (CGA)"), _s("Standard EGA"),
+	_s("Classic EGA (v1.0)"), _s("Alternate EGA (Wiltshire Dragon)"), _s("Commodore 64")
 };
 
 // The standard 16-color EGA/VGA palette

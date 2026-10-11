@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	shared/conf/xml_node.o \
 	shared/conf/xml_tree.o \
 	shared/engine/events.o \
+	shared/engine/graphics_options.o \
 	shared/engine/messages.o \
 	shared/gfx/gfx_surface.o \
 	shared/gfx/view.o \

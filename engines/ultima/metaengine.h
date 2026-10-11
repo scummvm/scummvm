@@ -37,6 +37,14 @@ public:
 	const char *getName() const override;
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
+	/**
+	 * Returns the options widget for the game. Most use the standard
+	 * checkboxes from getAdvancedExtraGuiOptions, but games with alternate
+	 * renderers have a drop-down for picking the graphics mode
+	 */
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss,
+		const Common::String &name, const Common::String &target) const override;
+
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Ultima::UltimaGameDescription *desc) const override;
 	int getMaximumSaveSlot() const override;
 
