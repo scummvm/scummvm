@@ -770,15 +770,9 @@ void IgorEngine::PART_MAIN() {
 		if (_gameState.shouldShowCutsceneCounter != 5) {
 			++_gameState.shouldShowCutsceneCounter;
 		} else {
-			if (_gameState.musicNum != 11) {
-				// _previousMusic = _gameState.musicNum;
-				playMusic(11);
-			}
+			playMusic(8);
 			PART_MEANWHILE();
 			PART_MARGARET_ROOM_CUTSCENE();
-		// 	if (_previousMusic != 11) {
-		// 		playMusic(_previousMusic);
-		// 	}
 			_gameState.shouldShowCutsceneCounter = 0;
 		}
 	} while (_currentPart != kInvalidPart && !_eventQuitGame);
@@ -890,10 +884,9 @@ void IgorEngine::PART_MEANWHILE(int img) {
 	_paletteBuffer[7] = 12;
 	_paletteBuffer[8] = 0;
 	fadeIn(9);
-	for (int i = 0; i <= 5 && !_inputVars[kInputEscape]; ++i) {
+	for (int i = 0; i < 5; ++i) {
 		waitForTimer(250);
 	}
-	_inputVars[kInputEscape] = 0;
 	fadeOut(9);
 }
 
