@@ -150,6 +150,13 @@ bool WindowsGfx256ColorsDriver::initScreen(const Graphics::PixelFormat *format) 
 	if (!UpscaledGfxDriver::initScreen(format))
 		return false;
 
+	// The hires graphics have square pixels, so a 640x400 screen must not get corrected to 4:3
+	if (_uniformPixels && g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
+		g_system->endGFXTransaction();
+	}
+
 	_renderLine = _smallWindow ? &smallWindowRenderLine : &largeWindowRenderLine;
 	_renderLine2 = _smallWindow ? &renderLineDummy : &hiresRenderLine;
 
