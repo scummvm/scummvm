@@ -4,6 +4,23 @@
 ** See Copyright Notice in lua.h
 */
 
+// ScummVM changes to the stock loader:
+//
+// The stock loader only accepts chunks made on a machine like the one it runs
+// on: it compares the header of a chunk with one built for the host, and then
+// reads integers, sizes, numbers and instructions as raw memory. Games ship
+// chunks compiled for the machine they were released on (32-bit, little
+// endian), which have to load on every platform ScummVM runs on.
+//
+// So LoadHeader() takes the byte order and the sizes of int and size_t from the
+// header of the chunk, and everything is read one value at a time through
+// LoadUnsigned(), which puts the bytes together in that order. Instructions
+// have to be 4 bytes, and numbers 8-byte IEEE doubles.
+//
+// Chunks can only be loaded; ldump.c is not part of ScummVM, so luaU_dump()
+// has no implementation and lua_dump() fails. luaU_header(), which made the
+// header of the host for the comparison and for ldump.c, is gone as well.
+
 #include <string.h>
 
 #define lundump_c
@@ -25,6 +42,9 @@ typedef struct {
  ZIO* Z;
  Mbuffer* b;
  const char* name;
+ int littleEndian;				/* ScummVM: the format of the chunk */
+ int sizeInt;
+ int sizeSizeT;
 } LoadState;
 
 #ifdef LUAC_TRUST_BINARIES
@@ -59,25 +79,38 @@ static int LoadChar(LoadState* S)
  return x;
 }
 
+/* ScummVM: reads an unsigned integer of the given size, in the byte order of the chunk */
+static uint64 LoadUnsigned(LoadState* S, int size)
+{
+ lu_byte b[8];
+ uint64 x=0;
+ int i;
+ LoadBlock(S,b,size);
+ for (i=0; i<size; i++)
+  x|=((uint64)b[i])<<(8*(S->littleEndian ? i : size-1-i));
+ return x;
+}
+
 static int LoadInt(LoadState* S)
 {
- int x;
- LoadVar(S,x);
- IF (x<0, "bad integer");
- return x;
+ uint64 x=LoadUnsigned(S,S->sizeInt);
+ IF (x>(uint64)MAX_INT, "bad integer");
+ return (int)x;
 }
 
 static lua_Number LoadNumber(LoadState* S)
 {
- lua_Number x;
- LoadVar(S,x);
- return x;
+ uint64 bits=LoadUnsigned(S,8);
+ double x;
+ memcpy(&x,&bits,sizeof(x));
+ return (lua_Number)x;
 }
 
 static TString* LoadString(LoadState* S)
 {
- size_t size;
- LoadVar(S,size);
+ uint64 size64=LoadUnsigned(S,S->sizeSizeT);
+ size_t size=(size_t)size64;
+ IF (size64>(uint64)MAX_SIZET, "bad size");
  if (size==0)
   return NULL;
  else
@@ -90,10 +123,11 @@ static TString* LoadString(LoadState* S)
 
 static void LoadCode(LoadState* S, Proto* f)
 {
+ int i;
  int n=LoadInt(S);
  f->code=luaM_newvector(S->L,n,Instruction);
  f->sizecode=n;
- LoadVector(S,f->code,n,sizeof(Instruction));
+ for (i=0; i<n; i++) f->code[i]=(Instruction)LoadUnsigned(S,4);
 }
 
 static Proto* LoadFunction(LoadState* S, TString* p);
@@ -141,7 +175,7 @@ static void LoadDebug(LoadState* S, Proto* f)
  n=LoadInt(S);
  f->lineinfo=luaM_newvector(S->L,n,int);
  f->sizelineinfo=n;
- LoadVector(S,f->lineinfo,n,sizeof(int));
+ for (i=0; i<n; i++) f->lineinfo[i]=LoadInt(S);
  n=LoadInt(S);
  f->locvars=luaM_newvector(S->L,n,LocVar);
  f->sizelocvars=n;
@@ -180,11 +214,18 @@ static Proto* LoadFunction(LoadState* S, TString* p)
 
 static void LoadHeader(LoadState* S)
 {
- char h[LUAC_HEADERSIZE];
- char s[LUAC_HEADERSIZE];
- luaU_header(h);
+ /* ScummVM: the chunk says how it was written, instead of having to match the host */
+ lu_byte s[LUAC_HEADERSIZE];
  LoadBlock(S,s,LUAC_HEADERSIZE);
- IF (memcmp(h,s,LUAC_HEADERSIZE)!=0, "bad header");
+ IF (memcmp(s,LUA_SIGNATURE,sizeof(LUA_SIGNATURE)-1)!=0, "bad header");
+ IF (s[4]!=LUAC_VERSION || s[5]!=LUAC_FORMAT, "bad header");
+ S->littleEndian=s[6];
+ S->sizeInt=s[7];
+ S->sizeSizeT=s[8];
+ IF (S->sizeInt!=4, "unsupported integer size");
+ IF (S->sizeSizeT!=4 && S->sizeSizeT!=8, "unsupported size_t size");
+ IF (s[9]!=4, "unsupported instruction size");
+ IF (s[10]!=8 || s[11]!=0 || sizeof(lua_Number)!=8, "unsupported number format");
 }
 
 /*
@@ -204,22 +245,4 @@ Proto* luaU_undump (lua_State* L, ZIO* Z, Mbuffer* buff, const char* name)
  S.b=buff;
  LoadHeader(&S);
  return LoadFunction(&S,luaS_newliteral(L,"=?"));
-}
-
-/*
-* make header
-*/
-void luaU_header (char* h)
-{
- int x=1;
- memcpy(h,LUA_SIGNATURE,sizeof(LUA_SIGNATURE)-1);
- h+=sizeof(LUA_SIGNATURE)-1;
- *h++=(char)LUAC_VERSION;
- *h++=(char)LUAC_FORMAT;
- *h++=(char)*(char*)&x;				/* endianness */
- *h++=(char)sizeof(int);
- *h++=(char)sizeof(size_t);
- *h++=(char)sizeof(Instruction);
- *h++=(char)sizeof(lua_Number);
- *h++=(char)(((lua_Number)0.5)==0);		/* is lua_Number integral? */
 }
