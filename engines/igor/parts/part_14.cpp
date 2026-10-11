@@ -101,6 +101,7 @@ void IgorEngine::PART_14_ACTION_103_lookAtPuzzle() {
 			waitForTimer(60);
 		}
 		stopSound();
+		igorSay(227, 1, 1292);
 		_objectsState[50] = 1;
 	}
 	PART_14_HELPER_1_OBJECT_STATE(255);
