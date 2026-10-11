@@ -27,7 +27,7 @@ namespace Igor {
 static const int kPart72ObjectOffset = 84 * 320 + 133;
 static const int kPart72ObjectWidth = 9;
 static const int kPart72ObjectHeight = 5;
-static const int kPart72ObjectStateIndex = 102;
+static const int kPart72FlowerTaken = 102;
 static const int kPart72TakeFramesOffset = 2 * kPart72ObjectWidth * kPart72ObjectHeight;
 static const int kPart72TakeWidth = 35;
 static const int kPart72TakeHeight = 49;
@@ -38,30 +38,30 @@ static const int kPart72TakeOffset = 42 * 320 + 133;
 static const int kPart72ObjectAreas[5] = { 42, 44, 50, 56, 61 };
 
 // Screen positions of the five stars, each one drawn as two pixels two columns apart.
-static const int kPart72StarOffsets[5] = { 0x2C06, 0x135B, 0x0FC5, 0x23E7, 0x254D };
+static const int kPart72EyeOffsets[5] = { 0x2C06, 0x135B, 0x0FC5, 0x23E7, 0x254D };
 
-static const int kPart72InventoryObject = 33;
-static const int kPart72InventoryIndex = 68;
+static const int kPart72FlowerObjectNumber = 33;
+static const int kPart72FlowerObjectIndex = 68;
 
-static bool PART_72_IS_PROTECTED_COLOR(uint8 color) {
+static bool PART_72_shouldBlink(uint8 color) {
 	return (color >= 0xC0 && color <= 0xCF) || (color >= 0xF0 && color <= 0xF1);
 }
 
 void IgorEngine::PART_72_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
+	case 101: // go to swamp
 		_currentPart = 690;
 		break;
 	case 102:
-		PART_72_ACTION_102_takeObject();
+		PART_72_ACTION_102_takeFlower();
 		break;
-	case 103:
+	case 103: // look at flower
 		igorSay(202, 1, 1094);
 		break;
-	case 104:
+	case 104: // look at birds
 		igorSay(203, 1, 1095);
 		break;
-	case 105:
+	case 105: // look at eyes
 		igorSay(204, 1, 1096);
 		break;
 	case 106:
@@ -74,11 +74,9 @@ void IgorEngine::PART_72_EXEC_ACTION(int action) {
 	}
 }
 
-/**
- * Draws the object into the room picture while it is there. Once it is taken its places are not objects anymore.
- */
+
 void IgorEngine::PART_72_APPLY_OBJECT_STATE() {
-	const int taken = _objectsState[kPart72ObjectStateIndex] == 0 ? 0 : 1;
+	const int taken = _objectsState[kPart72FlowerTaken] == 0 ? 0 : 1;
 	copyArea(_screenLayer1, kPart72ObjectOffset, 320, _animFramesBuffer + taken * kPart72ObjectWidth * kPart72ObjectHeight,
 			 kPart72ObjectWidth, kPart72ObjectWidth, kPart72ObjectHeight);
 	if (taken) {
@@ -88,25 +86,18 @@ void IgorEngine::PART_72_APPLY_OBJECT_STATE() {
 	}
 }
 
-/**
- * Igor takes the object: three frames of the animation are drawn over the screen, then the object goes to the
- * inventory.
- */
-void IgorEngine::PART_72_ACTION_102_takeObject() {
+void IgorEngine::PART_72_ACTION_102_takeFlower() {
 	for (int i = 0; i < 3; ++i) {
 		const uint8 *frame = _animFramesBuffer + kPart72TakeFramesOffset + i * kPart72TakeFrameSize;
 		copyArea(_screenVGA, kPart72TakeOffset, 320, frame, kPart72TakeWidth, kPart72TakeWidth, kPart72TakeHeight);
 		waitForTimer(90);
 	}
-	addObjectToInventory(kPart72InventoryObject, kPart72InventoryIndex);
-	_objectsState[kPart72ObjectStateIndex] = 1;
+	addObjectToInventory(kPart72FlowerObjectNumber, kPart72FlowerObjectIndex);
+	_objectsState[kPart72FlowerTaken] = 1;
 	PART_72_APPLY_OBJECT_STATE();
 	igorSay(201, 1, 1093);
 }
 
-/**
- * Igor comes from the right edge, walking to the left.
- */
 void IgorEngine::PART_72_enterFromMap() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(319, 68, kFacingPositionLeft, 0);
@@ -126,9 +117,6 @@ void IgorEngine::PART_72_enterFromMap() {
 	waitForIgorMove();
 }
 
-/**
- * Igor comes from the left edge, walking to the right.
- */
 void IgorEngine::PART_72_enterFromSwamp() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(0, 119, kFacingPositionRight, 0);
@@ -149,25 +137,25 @@ void IgorEngine::PART_72_enterFromSwamp() {
 }
 
 /**
- * The current star is lit and, from time to time, another one is chosen and put out.
+ * Eyes in the background blink from time to time
  */
-void IgorEngine::PART_72_UPDATE_STAR() {
-	int pos = kPart72StarOffsets[_roomAmbientIndex - 1];
-	if (!PART_72_IS_PROTECTED_COLOR(_screenVGA[pos])) {
+void IgorEngine::PART_72_updateBlinkingEyes() {
+	int pos = kPart72EyeOffsets[_roomAmbientIndex - 1];
+	if (!PART_72_shouldBlink(_screenVGA[pos])) {
 		_screenVGA[pos] = 0xB3;
 	}
-	if (!PART_72_IS_PROTECTED_COLOR(_screenVGA[pos])) {
+	if (!PART_72_shouldBlink(_screenVGA[pos])) {
 		_screenVGA[pos + 2] = 0xB3;
 	}
 	if (getRandomNumber(4) != 0) {
 		return;
 	}
 	_roomAmbientIndex = getRandomNumber(4) + 1;
-	pos = kPart72StarOffsets[_roomAmbientIndex - 1];
-	if (!PART_72_IS_PROTECTED_COLOR(_screenVGA[pos])) {
+	pos = kPart72EyeOffsets[_roomAmbientIndex - 1];
+	if (!PART_72_shouldBlink(_screenVGA[pos])) {
 		_screenVGA[pos] = _screenLayer1[pos];
 	}
-	if (!PART_72_IS_PROTECTED_COLOR(_screenVGA[pos])) {
+	if (!PART_72_shouldBlink(_screenVGA[pos])) {
 		_screenVGA[pos + 2] = _screenLayer1[pos + 2];
 	}
 }
@@ -186,7 +174,7 @@ void IgorEngine::PART_72_UPDATE_ROOM_BACKGROUND() {
 		}
 	}
 	if (compareGameTick(0x3D)) {
-		PART_72_UPDATE_STAR();
+		PART_72_updateBlinkingEyes();
 	}
 }
 
@@ -212,7 +200,7 @@ void IgorEngine::PART_72() {
 	darkenPalette(_paletteBuffer, 1, 175, 10);
 	darkenPalette(_paletteBuffer, 192, 207, 15);
 
-	paintEyes();
+	paintBlinkingEyes();
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
@@ -234,9 +222,9 @@ void IgorEngine::PART_72() {
 		fadeOut(624);
 }
 
-void IgorEngine::paintEyes() {
+void IgorEngine::paintBlinkingEyes() {
 	for (int i = 0; i < 5; ++i) {
-		const int pos = kPart72StarOffsets[i];
+		const int pos = kPart72EyeOffsets[i];
 		_screenVGA[pos] = 0xB3;
 		_screenVGA[pos + 2] = 0xB3;
 	}
