@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-10 16:05+0000\n"
+"POT-Creation-Date: 2026-10-11 18:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2885,22 +2885,22 @@ msgstr ""
 msgid "Report game"
 msgstr ""
 
-#: gui/unknown-game-dialog.cpp:100
+#: gui/unknown-game-dialog.cpp:98
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
 
-#: gui/unknown-game-dialog.cpp:105
+#: gui/unknown-game-dialog.cpp:103
 msgid "You can also directly report your game to the Bug Tracker."
 msgstr ""
 
-#: gui/unknown-game-dialog.cpp:155
+#: gui/unknown-game-dialog.cpp:153
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
 
-#: gui/unknown-game-dialog.cpp:157
+#: gui/unknown-game-dialog.cpp:155
 msgid "Copying the game information to the clipboard has failed!"
 msgstr ""
 
