@@ -152,6 +152,12 @@ Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 	}
 #endif
 
+#ifndef ENABLE_NANCY_V4
+	if (gd && gd->gameType >= Nancy::kGameTypeNancy19) {
+		return Common::Error(Common::kUnsupportedGameidError, _s("Support for Nancy Drew 19 and newer is not compiled in"));
+	}
+#endif
+
 	if (gd) {
 		*engine = Nancy::NancyEngine::create(gd->gameType, syst, gd);
 	}

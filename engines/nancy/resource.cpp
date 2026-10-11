@@ -275,6 +275,21 @@ IFF *ResourceManager::loadIFF(const Common::Path &name) {
 	return nullptr;
 }
 
+Common::SeekableReadStream *ResourceManager::loadScript(const Common::Path &name) {
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name.append(".lua"));
+	if (stream) {
+		return stream;
+	}
+
+	stream = SearchMan.createReadStreamForMember(name.append(".cif"));
+	if (stream) {
+		CifFile cifFile(stream, name); // cifFile takes ownership of the current stream
+		return cifFile.createReadStream();
+	}
+
+	return SearchMan.createReadStreamForMember(Common::Path(name));
+}
+
 bool ResourceManager::readCifTree(const Common::String &name, const Common::String &ext, int priority) {
 	// Nancy15+ asks for a player character's tree again on every switch back
 	// to that character, so make sure each tree is only ever added once

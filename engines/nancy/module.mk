@@ -182,6 +182,14 @@ MODULE_OBJS = \
   util.o \
   video.o
 
+# Nancy19 and newer, whose scenes are Lua scripts
+ifdef ENABLE_NANCY_V4
+MODULE_OBJS += \
+  script/api.o \
+  script/luabind.o \
+  script/luastate.o
+endif
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_NANCY), DYNAMIC_PLUGIN)
 PLUGIN := 1
