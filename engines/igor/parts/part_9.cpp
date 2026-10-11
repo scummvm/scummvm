@@ -264,6 +264,28 @@ void IgorEngine::PART_09() {
 	loadRoomData(PAL_AdministrationSecretaryRoom, IMG_AdministrationSecretaryRoom,
 		BOX_AdministrationSecretaryRoom, MSK_AdministrationSecretaryRoom,
 		TXT_AdministrationSecretaryRoom);
+	if (_currentPart == 91) {
+		// This sequence uses the animation frames retained from the dean's room.
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		drawSecretaryTalkingFrame(1);
+		memcpy(_screenLayer1, _screenVGA, 46080);
+		fadeIn(624);
+
+		cutsceneSayWithCallback(65, 70, 0, 59, 63, { { 226, 1, 254 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_SECRETARY);
+
+		for (int frame = 5; frame <= 19; ++frame) {
+			drawSecretaryTalkingFrame(frame);
+			if (frame < 19)
+				waitForTimer(31);
+			else
+				playSound(14, 1);
+		}
+		waitForTimer(255);
+		fadeOut(624);
+		_objectsState[27] = 0;
+		_objectsState[35] = 1;
+		return;
+	}
 	static const int anim[] = {
 		ANM_AdministrationSecretaryRoom1, ANM_AdministrationSecretaryRoom2,
 		ANM_AdministrationSecretaryRoom3, ANM_AdministrationSecretaryRoom4,
