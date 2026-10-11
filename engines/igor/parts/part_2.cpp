@@ -178,7 +178,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		}
 		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] == 0) {
 			if (_objectsState[22] == 0) {
-				igorSay(202, 2, 109);
+				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 			} else {
 				PART_02_SEARCH_TRUNK();
 				igorSay(204, 1, 111);
@@ -189,7 +189,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		}
 		if (_inventoryInfo[44] != 0 && _inventoryInfo[45] == 0) {
 			if (_objectsState[20] == 0) {
-				igorSay(202, 2, 109);
+				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 			} else {
 				PART_02_SEARCH_TRUNK();
 				igorSay(205, 1, 112);
@@ -208,7 +208,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			addObjectToInventory(11, 46);
 		} else if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 &&
 				_inventoryInfo[46] == 0 && _objectsState[23] == 0) {
-			igorSay(202, 2, 109);
+			igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 		} else {
 			igorSay(207, 2, 114);
 		}
