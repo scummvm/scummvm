@@ -22,14 +22,13 @@
 
 namespace Igor {
 
-// The object that changes with the story is a 55x39 picture in the top right corner of the room; the
-// animation resource holds its two versions one after the other.
-static const int kPart70ObjectOffset = 6 * 320 + 265;
-static const int kPart70ObjectWidth = 55;
-static const int kPart70ObjectHeight = 39;
-static const int kPart70ObjectStateIndex = 104;
 
-// Where Igor goes to from each of the four exits of the room.
+static const int kPart70BoatOffset = 6 * 320 + 265;
+static const int kPart70BoatWidth = 55;
+static const int kPart70BoatHeight = 39;
+
+static const int kPart70MessageSent = 104;
+
 static const int kPart70ExitStates[4] = { 501, 720, 680, 810 };
 
 void IgorEngine::PART_70_EXEC_ACTION(int action) {
@@ -47,17 +46,17 @@ void IgorEngine::PART_70_EXEC_ACTION(int action) {
 }
 
 /**
- * Draws the version of the object that matches the story into the room picture.
+ * Draws the boat if we havent sent the message yet
  */
 void IgorEngine::PART_70_DRAW_OBJECT_STATE() {
-	const int frameSize = kPart70ObjectWidth * kPart70ObjectHeight;
-	const int frame = _objectsState[kPart70ObjectStateIndex] == 0 ? 0 : 1;
-	copyArea(_screenLayer1, kPart70ObjectOffset, 320, _animFramesBuffer + frame * frameSize, kPart70ObjectWidth,
-			 kPart70ObjectWidth, kPart70ObjectHeight);
+	const int frameSize = kPart70BoatWidth * kPart70BoatHeight;
+	const int frame = _objectsState[kPart70MessageSent] == 0 ? 0 : 1;
+	copyArea(_screenLayer1, kPart70BoatOffset, 320, _animFramesBuffer + frame * frameSize, kPart70BoatWidth,
+			 kPart70BoatWidth, kPart70BoatHeight);
 }
 
 /**
- * The colors 192 to 207 rotate by one step every half cycle of the room.
+ * The colors 192 to 207 rotate for the water animation.
  */
 void IgorEngine::PART_70_UPDATE_ROOM_BACKGROUND() {
 	if (compareGameTick(3, 32)) {
@@ -81,7 +80,7 @@ void IgorEngine::PART_70() {
 	PART_70_DRAW_OBJECT_STATE();
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
-	// Igor is not shown in this room
+	// Igor is not shown in the map
 	if (!restoreRoomAfterLoad(false)) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
@@ -96,7 +95,7 @@ void IgorEngine::PART_70() {
 	while (_currentPart == 700 && !_gameStateLoaded) {
 		runPartLoop();
 	}
-	// the rotated colors are kept
+
 	memcpy(_paletteBuffer, _currentPalette, 624);
 	leavePartLoop();
 	if (!_gameStateLoaded)

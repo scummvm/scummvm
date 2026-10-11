@@ -686,7 +686,7 @@ void IgorEngine::PART_MAIN() {
 			PART_72();
 			break;
 		case 730:
-			PART_73(); // Cutscene followed by PART_80
+			PART_73_CUTSCENE(); // Cutscene followed by PART_80
 			break;
 		case 740:
 			PART_74_CUTSCENE();
@@ -779,7 +779,7 @@ void IgorEngine::PART_MAIN() {
 			++_gameState.shouldShowCutsceneCounter;
 		} else {
 			playMusic(8);
-			PART_MEANWHILE();
+			PART_meanwhile();
 			PART_MARGARET_ROOM_CUTSCENE();
 			_gameState.shouldShowCutsceneCounter = 0;
 		}
@@ -878,7 +878,7 @@ void IgorEngine::PART_UPDATE_FIGURES_ON_PAPER(int delay) {
 	free(framesOffsets);
 }
 
-void IgorEngine::PART_MEANWHILE(int img) {
+void IgorEngine::PART_meanwhile(int img) {
 	hideCursor();
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(208, 255);

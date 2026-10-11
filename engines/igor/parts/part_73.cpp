@@ -22,37 +22,32 @@
 
 namespace Igor {
 
-// A 26x52 area of the picture is redrawn from the animation resource, whose frames are 26x53 each.
-static const int kPart73PatchOffset = 55 * 320 + 157;
-static const int kPart73PatchWidth = 26;
-static const int kPart73PatchHeight = 52;
-static const int kPart73PatchFrameSize = 26 * 53;
+static const int kPart73PolicemanOffset = 55 * 320 + 157;
+static const int kPart73PolicemanWidth = 26;
+static const int kPart73PolicemanHeight = 52;
+static const int kPart73PolicemanFrameSize = 26 * 53;
 
-// Where the lines of the person of the picture are shown.
-static const int kPart73TextX = 170;
-static const int kPart73TextY = 50;
-
-// The object that goes to the end of the inventory while the scene lasts.
+// Great dosicua
 static const int kPart73InventoryObject = 25;
 static const int kPart73InventoryIndex = 60;
 
-void IgorEngine::PART_73_DRAW_PATCH(int frame) {
-	copyArea(_screenVGA, kPart73PatchOffset, 320, _animFramesBuffer + (frame - 1) * kPart73PatchFrameSize + kPart73PatchWidth,
-			 kPart73PatchWidth, kPart73PatchWidth, kPart73PatchHeight);
+void IgorEngine::PART_73_drawPoliceman(int frame) {
+	copyArea(_screenVGA, kPart73PolicemanOffset, 320, _animFramesBuffer + (frame - 1) * kPart73PolicemanFrameSize + kPart73PolicemanWidth,
+			 kPart73PolicemanWidth, kPart73PolicemanWidth, kPart73PolicemanHeight);
 }
 
 void IgorEngine::PART_73_UPDATE_DIALOGUE(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_73_DRAW_PATCH(1);
+		PART_73_drawPoliceman(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_73_DRAW_PATCH(getRandomNumber(4) + 1);
+		PART_73_drawPoliceman(getRandomNumber(4) + 1);
 		break;
 	}
 }
 
-void IgorEngine::PART_73() {
+void IgorEngine::PART_73_CUTSCENE() {
 	playMusic(8);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_Part73, IMG_Part73, BOX_Part73, MSK_Part73, TXT_Part73);
@@ -62,7 +57,7 @@ void IgorEngine::PART_73() {
 	loadAnimData(anim);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	memset(_screenVGA + 46080, 0, 17920);
-	PART_73_DRAW_PATCH(1);
+	PART_73_drawPoliceman(1);
 	WalkData *wd = &_walkData[0];
 	wd->setPos(195, 107, 4, 0);
 	wd->clipSkipX = 1;
@@ -79,10 +74,9 @@ void IgorEngine::PART_73() {
 	fadeIn(768);
 	_gameState.igorMoving = false;
 
-	cutsceneSayWithCallback(kPart73TextX, kPart73TextY, 63, 14, 19, { { 201, 2, 928 } }, &IgorEngine::PART_73_UPDATE_DIALOGUE);
+	cutsceneSayWithCallback(170, 50, 63, 14, 19, { { 201, 2, 928 } }, &IgorEngine::PART_73_UPDATE_DIALOGUE);
 	igorSayAndWait({ { 203, 1, 929 }, { 204, 2, 930 } });
-	cutsceneSayWithCallback(kPart73TextX, kPart73TextY, 63, 14, 19, { { 206, 2, 931 }, { 208, 2, 932 } },
-							&IgorEngine::PART_73_UPDATE_DIALOGUE);
+	cutsceneSayWithCallback(170, 50, 63, 14, 19, { { 206, 2, 931 }, { 208, 2, 932 } }, &IgorEngine::PART_73_UPDATE_DIALOGUE);
 	igorSayAndWait({ { 210, 1, 933 }, { 211, 1, 934 } });
 
 	--_walkDataLastIndex;
@@ -93,7 +87,7 @@ void IgorEngine::PART_73() {
 
 	_objectsState[7] = 1;
 	UPDATE_OBJECT_STATE(8);
-	// the object is taken out of the inventory and put at its end
+	// removes the great dosicua
 	removeInventoryEntry(kPart73InventoryIndex);
 	++_inventoryInfo[73];
 	_inventoryInfo[_inventoryInfo[73] - 1] = kPart73InventoryObject;
@@ -102,7 +96,8 @@ void IgorEngine::PART_73() {
 	fadeOut(624);
 
 	// the card with the time that has passed
-	PART_MEANWHILE(IMG_Part73Card);
+	PART_meanwhile(IMG_Part73Card);
+	// loads part80 now
 	PART_80();
 
 	setupDefaultPalette();

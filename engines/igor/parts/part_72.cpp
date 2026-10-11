@@ -22,13 +22,12 @@
 
 namespace Igor {
 
-// The object that can be taken is drawn in the room picture as a 9x5 patch; the animation resource starts with
-// its two versions and then holds the three frames of the taking animation.
-static const int kPart72ObjectOffset = 84 * 320 + 133;
-static const int kPart72ObjectWidth = 9;
-static const int kPart72ObjectHeight = 5;
+
+static const int kPart72FlowerOffset = 84 * 320 + 133;
+static const int kPart72FlowerWidth = 9;
+static const int kPart72FlowerHeight = 5;
 static const int kPart72FlowerTaken = 102;
-static const int kPart72TakeFramesOffset = 2 * kPart72ObjectWidth * kPart72ObjectHeight;
+static const int kPart72TakeFramesOffset = 2 * kPart72FlowerWidth * kPart72FlowerHeight;
 static const int kPart72TakeWidth = 35;
 static const int kPart72TakeHeight = 49;
 static const int kPart72TakeFrameSize = kPart72TakeWidth * kPart72TakeHeight;
@@ -37,7 +36,7 @@ static const int kPart72TakeOffset = 42 * 320 + 133;
 // The areas that show the object while it is there.
 static const int kPart72ObjectAreas[5] = { 42, 44, 50, 56, 61 };
 
-// Screen positions of the five stars, each one drawn as two pixels two columns apart.
+// Screen positions of the five blinking eyes, each one drawn as two pixels two columns apart.
 static const int kPart72EyeOffsets[5] = { 0x2C06, 0x135B, 0x0FC5, 0x23E7, 0x254D };
 
 static const int kPart72FlowerObjectNumber = 33;
@@ -77,8 +76,8 @@ void IgorEngine::PART_72_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_72_APPLY_OBJECT_STATE() {
 	const int taken = _objectsState[kPart72FlowerTaken] == 0 ? 0 : 1;
-	copyArea(_screenLayer1, kPart72ObjectOffset, 320, _animFramesBuffer + taken * kPart72ObjectWidth * kPart72ObjectHeight,
-			 kPart72ObjectWidth, kPart72ObjectWidth, kPart72ObjectHeight);
+	copyArea(_screenLayer1, kPart72FlowerOffset, 320, _animFramesBuffer + taken * kPart72FlowerWidth * kPart72FlowerHeight,
+			 kPart72FlowerWidth, kPart72FlowerWidth, kPart72FlowerHeight);
 	if (taken) {
 		for (int i = 0; i < 5; ++i) {
 			_roomObjectAreasTable[kPart72ObjectAreas[i]].object = 0;
@@ -200,7 +199,7 @@ void IgorEngine::PART_72() {
 	darkenPalette(_paletteBuffer, 1, 175, 10);
 	darkenPalette(_paletteBuffer, 192, 207, 15);
 
-	paintBlinkingEyes();
+	PART_72_paintBlinkingEyes();
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
@@ -222,7 +221,7 @@ void IgorEngine::PART_72() {
 		fadeOut(624);
 }
 
-void IgorEngine::paintBlinkingEyes() {
+void IgorEngine::PART_72_paintBlinkingEyes() {
 	for (int i = 0; i < 5; ++i) {
 		const int pos = kPart72EyeOffsets[i];
 		_screenVGA[pos] = 0xB3;

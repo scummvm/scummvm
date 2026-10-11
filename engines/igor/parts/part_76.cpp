@@ -22,57 +22,47 @@
 
 namespace Igor {
 
-// The animation resource: two 7x6 pieces and two 68x54 pieces of the room picture first, then the sprite strips and
-// the full screen frames, each group followed by the table of its frame offsets.
-static const int kPart76SmallPieceWidth = 7;
-static const int kPart76SmallPieceHeight = 6;
-static const int kPart76SmallPieceSize = kPart76SmallPieceWidth * kPart76SmallPieceHeight;
-static const int kPart76SmallPieceOffset = 83 * 320 + 300;
+static const int kPart76ParachuteWidth = 7;
+static const int kPart76ParachuteHeight = 6;
+static const int kPart76ParachuteSize = kPart76ParachuteWidth * kPart76ParachuteHeight;
+static const int kPart76ParachuteOffset = 83 * 320 + 300;
 
-static const int kPart76BigPieceWidth = 68;
-static const int kPart76BigPieceHeight = 54;
-static const int kPart76BigPieceSize = kPart76BigPieceWidth * kPart76BigPieceHeight;
-static const int kPart76BigPieceFirst = 0x54;
-static const int kPart76BigPieceOffset = 27 * 320 + 188;
+static const int kPart76PlaneDoorWidth = 68;
+static const int kPart76PlaneDoorHeight = 54;
+static const int kPart76PlaneDoorSize = kPart76PlaneDoorWidth * kPart76PlaneDoorHeight;
+static const int kPart76PlaneDoorFirst = 0x54;
+static const int kPart76PlaneDoorOffset = 27 * 320 + 188;
 
-// Frames of the first sequence: the group starts at 0x2902 and its table of offsets follows the frames.
-static const int kPart76SequenceBase = 0x2902;
-static const int kPart76SequenceTable = 0x1753;
+static const int kPart76OpenDoorAnimBase = 0x2902;
+static const int kPart76OpenDoorAnimTable = 0x1753;
 
-// Frames of the full screen scenes: the group starts at 0x4067 and its table of offsets follows the frames.
-static const int kPart76SceneBase = 0x4067;
-static const int kPart76SceneTable = 0x3ABB;
+static const int kPart76ParachuteAnimBase = 0x4067;
+static const int kPart76ParachuteAnimTable = 0x3ABB;
 
-// A 17x16 sprite drawn at (289,81), three frames of 272 bytes.
-static const int kPart76LampOffset = 81 * 320 + 289;
-static const int kPart76LampWidth = 17;
-static const int kPart76LampHeight = 16;
-static const int kPart76LampFrames = 0x1BF4;
-static const int kPart76LampFrameSize = kPart76LampWidth * kPart76LampHeight;
+static const int kPart76TakeParachuteOffset = 81 * 320 + 289;
+static const int kPart76TakeParachuteWidth = 17;
+static const int kPart76TakeParachuteHeight = 16;
+static const int kPart76TakeParachuteFrames = 0x1BF4;
+static const int kPart76TakeParachuteFrameSize = kPart76TakeParachuteWidth * kPart76TakeParachuteHeight;
 
-// A 23x49 sprite drawn at (285,71), frames of 1127 bytes.
 static const int kPart76SpriteOffset = 71 * 320 + 285;
 static const int kPart76SpriteWidth = 23;
 static const int kPart76SpriteHeight = 49;
 static const int kPart76SpriteFrames = 0x1BCD;
 static const int kPart76SpriteFrameSize = kPart76SpriteWidth * kPart76SpriteHeight;
 
-// Order in which the frames of the first sequence are shown before the closing frames 4 to 9.
-static const uint8 kPart76SequenceFrames[5] = { 1, 2, 3, 2, 3 };
+static const uint8 kPart76DoorFrames[5] = { 1, 2, 3, 2, 3 };
 
-// Order of the sprite frames of the third action.
 static const uint8 kPart76SpriteOrder[3] = { 1, 2, 1 };
 
-// Order of the frames of the last part of the third action.
-static const uint8 kPart76EndFrames[20] = { 18, 19, 20, 21, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 24, 25, 26, 27 };
+static const uint8 kPart76ParachuteFrames[20] = { 18, 19, 20, 21, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 24, 25, 26, 27 };
 
 // Point where Igor stops at the end of the walk of the scene and the one he reaches later.
 static const int kPart76WalkEndX = 295;
 static const int kPart76WalkEndY = 119;
 
-// Object of the inventory that action 104 puts into it, and the position where the inventory keeps its index.
-static const int kPart76InventoryObject = 3;
-static const int kPart76InventoryObjectIndex = 38;
+static const int kPart76ParachuteInvNumber = 3;
+static const int kPart76ParachuteInventoryIndex = 38;
 
 void IgorEngine::PART_76_EXEC_ACTION(int action) {
 	if (action != 103) {
@@ -80,28 +70,28 @@ void IgorEngine::PART_76_EXEC_ACTION(int action) {
 		playMusic(12);
 	}
 	switch (action) {
-	case 101:
+	case 101: // look at door
 		igorSay(201, 1, 700);
 		break;
-	case 102:
+	case 102: // look at lever
 		igorSay(202, 1, 701);
 		break;
 	case 103:
-		PART_76_ACTION_103_sequence();
+		PART_76_ACTION_103_openDoor();
 		break;
 	case 104:
-		PART_76_ACTION_104_takeObject();
+		PART_76_ACTION_104_takeParachute();
 		break;
-	case 105:
+	case 105:  // look at parachute
 		igorSay(207, 2, 705);
 		break;
 	case 106:
-		PART_76_ACTION_106_finale();
+		PART_76_ACTION_106_useParachute();
 		break;
-	case 107:
+	case 107: // look at crate
 		igorSay(224, 1, 719);
 		break;
-	case 108:
+	case 108: // look at crates
 		igorSay(225, 1, 720);
 		break;
 	default:
@@ -116,54 +106,45 @@ void IgorEngine::PART_76_EXEC_ACTION(int action) {
  */
 void IgorEngine::PART_76_APPLY_OBJECT_STATE() {
 	if (_objectsState[108] == 0) {
-		copyArea(_screenLayer1, kPart76BigPieceOffset, 320, _animFramesBuffer + kPart76BigPieceFirst, kPart76BigPieceWidth,
-				 kPart76BigPieceWidth, kPart76BigPieceHeight);
+		copyArea(_screenLayer1, kPart76PlaneDoorOffset, 320, _animFramesBuffer + kPart76PlaneDoorFirst, kPart76PlaneDoorWidth,
+				 kPart76PlaneDoorWidth, kPart76PlaneDoorHeight);
 		_roomActionsTable[79] = 9;
 		_roomActionsTable[81] = 14;
 	} else {
-		copyArea(_screenLayer1, kPart76BigPieceOffset, 320,
-				 _animFramesBuffer + kPart76BigPieceFirst + kPart76BigPieceSize, kPart76BigPieceWidth, kPart76BigPieceWidth,
-				 kPart76BigPieceHeight);
+		copyArea(_screenLayer1, kPart76PlaneDoorOffset, 320,
+				 _animFramesBuffer + kPart76PlaneDoorFirst + kPart76PlaneDoorSize, kPart76PlaneDoorWidth, kPart76PlaneDoorWidth,
+				 kPart76PlaneDoorHeight);
 		_roomObjectAreasTable[10].object = 1;
 		_roomActionsTable[79] = 11;
 		_roomActionsTable[81] = 12;
 	}
 	if (_objectsState[109] == 0) {
-		copyArea(_screenLayer1, kPart76SmallPieceOffset, 320, _animFramesBuffer, kPart76SmallPieceWidth,
-				 kPart76SmallPieceWidth, kPart76SmallPieceHeight);
+		copyArea(_screenLayer1, kPart76ParachuteOffset, 320, _animFramesBuffer, kPart76ParachuteWidth,
+				 kPart76ParachuteWidth, kPart76ParachuteHeight);
 	} else {
-		copyArea(_screenLayer1, kPart76SmallPieceOffset, 320, _animFramesBuffer + kPart76SmallPieceSize,
-				 kPart76SmallPieceWidth, kPart76SmallPieceWidth, kPart76SmallPieceHeight);
+		copyArea(_screenLayer1, kPart76ParachuteOffset, 320, _animFramesBuffer + kPart76ParachuteSize,
+				 kPart76ParachuteWidth, kPart76ParachuteWidth, kPart76ParachuteHeight);
 		// once the object was taken its areas stop being selectable
 		_roomObjectAreasTable[11].object = 0;
 		_roomObjectAreasTable[12].object = 0;
 	}
 }
 
-/**
- * Frame n of the full screen scenes, drawn on the screen.
- */
-void IgorEngine::PART_76_DRAW_SCENE_FRAME(int frame) {
-	decodeAnimFrame(getAnimFrame(kPart76SceneBase, kPart76SceneTable, frame), _screenVGA);
+void IgorEngine::PART_76_drawParachuteFrame(int frame) {
+	decodeAnimFrame(getAnimFrame(kPart76ParachuteAnimBase, kPart76ParachuteAnimTable, frame), _screenVGA);
 }
 
-/**
- * Frame n of the first sequence, drawn on the screen.
- */
-void IgorEngine::PART_76_DRAW_SEQUENCE_FRAME(int frame) {
-	decodeAnimFrame(getAnimFrame(kPart76SequenceBase, kPart76SequenceTable, frame), _screenVGA);
+void IgorEngine::PART_76_drawOpenDoorFrame(int frame) {
+	decodeAnimFrame(getAnimFrame(kPart76OpenDoorAnimBase, kPart76OpenDoorAnimTable, frame), _screenVGA);
 }
 
-/**
- * Frames 1 to 5 and then 4 to 9 are drawn on the screen, then the object changes its state.
- */
-void IgorEngine::PART_76_ACTION_103_sequence() {
+void IgorEngine::PART_76_ACTION_103_openDoor() {
 	for (int i = 0; i < 5; ++i) {
-		PART_76_DRAW_SEQUENCE_FRAME(kPart76SequenceFrames[i]);
+		PART_76_drawOpenDoorFrame(kPart76DoorFrames[i]);
 		waitForTimer(51);
 	}
 	for (int frame = 4; frame <= 9; ++frame) {
-		PART_76_DRAW_SEQUENCE_FRAME(frame);
+		PART_76_drawOpenDoorFrame(frame);
 		waitForTimer(31);
 	}
 	igorSay(206, 1, 704);
@@ -174,12 +155,12 @@ void IgorEngine::PART_76_ACTION_103_sequence() {
 /**
  * Three frames of a sprite are drawn on the screen, then object 3 goes into the inventory.
  */
-void IgorEngine::PART_76_ACTION_104_takeObject() {
+void IgorEngine::PART_76_ACTION_104_takeParachute() {
 	for (int frame = 1; frame <= 3; ++frame) {
-		drawAnimRect(kPart76LampOffset, kPart76LampFrames + frame * kPart76LampFrameSize, kPart76LampWidth, kPart76LampHeight);
+		drawAnimRect(kPart76TakeParachuteOffset, kPart76TakeParachuteFrames + frame * kPart76TakeParachuteFrameSize, kPart76TakeParachuteWidth, kPart76TakeParachuteHeight);
 		waitForTimer(91);
 	}
-	addObjectToInventory(kPart76InventoryObject, kPart76InventoryObjectIndex);
+	addObjectToInventory(kPart76ParachuteInvNumber, kPart76ParachuteInventoryIndex);
 	_objectsState[109] = 1;
 	PART_76_APPLY_OBJECT_STATE();
 	igorSay({ { 203, 1, 702 }, { 204, 2, 703 } });
@@ -190,7 +171,7 @@ void IgorEngine::PART_76_ACTION_104_takeObject() {
  * where he is, talks, walks to the right of the picture, the sprite is drawn, he talks again and walks to (190, 85);
  * the full screen frames follow and the story goes on in state 790.
  */
-void IgorEngine::PART_76_ACTION_106_finale() {
+void IgorEngine::PART_76_ACTION_106_useParachute() {
 	if (_objectsState[108] == 0) {
 		igorSay(209, 1, 706);
 		return;
@@ -233,10 +214,10 @@ void IgorEngine::PART_76_ACTION_106_finale() {
 
 	igorSay({ { 216, 1, 711 }, { 217, 1, 712 }, { 218, 1, 713 }, { 219, 1, 714 } });
 	waitForEndOfIgorDialogue();
-	PART_76_DRAW_SCENE_FRAME(11);
+	PART_76_drawParachuteFrame(11);
 	waitForTimer(255);
 	for (int frame = 12; frame <= 17; ++frame) {
-		PART_76_DRAW_SCENE_FRAME(frame);
+		PART_76_drawParachuteFrame(frame);
 		if (frame < 17) {
 			waitForTimer(3);
 		}
@@ -244,7 +225,7 @@ void IgorEngine::PART_76_ACTION_106_finale() {
 	igorSay({ { 220, 1, 715 }, { 221, 1, 716 }, { 222, 1, 717 }, { 223, 1, 718 } });
 	waitForEndOfIgorDialogue();
 	for (int i = 0; i < 20; ++i) {
-		PART_76_DRAW_SCENE_FRAME(kPart76EndFrames[i]);
+		PART_76_drawParachuteFrame(kPart76ParachuteFrames[i]);
 		waitForTimer(31);
 	}
 	// the colors 240 to 255 are black on the screen
@@ -298,7 +279,7 @@ void IgorEngine::PART_76() {
 	playMusic(12);
 	if (!_gameStateLoaded) {
 		// the card that opens the part
-		PART_MEANWHILE(IMG_Part76Card);
+		PART_meanwhile(IMG_Part76Card);
 	}
 	_gameState.enableLight = 2;
 	loadIgorBeachFrames();
