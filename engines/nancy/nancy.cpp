@@ -475,13 +475,6 @@ void NancyEngine::addDeferredLoader(Common::SharedPtr<DeferredLoader> &loaderPtr
 }
 
 Common::Error NancyEngine::run() {
-#ifndef USE_PNG
-	// Nancy18 stores its images as PNG files
-	if (getGameType() >= kGameTypeNancy18) {
-		return Common::Error(Common::kUnknownError, _s("This game requires PNG support, which is not compiled in"));
-	}
-#endif
-
 	setDebugger(new NancyConsole());
 
 	// Set the default number of saves for earlier games

@@ -146,6 +146,12 @@ bool NancyMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, const Nancy::NancyGameDescription *gd) const {
+#ifndef ENABLE_NANCY_V3A
+	if (gd && gd->gameType == Nancy::kGameTypeNancy18) {
+		return Common::Error(Common::kUnsupportedGameidError, _s("Support for Nancy Drew 18 is not compiled in"));
+	}
+#endif
+
 	if (gd) {
 		*engine = Nancy::NancyEngine::create(gd->gameType, syst, gd);
 	}

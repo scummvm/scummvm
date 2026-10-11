@@ -1,3 +1,4 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
-add_engine nancy "Nancy Drew" yes "" "" "16bit highres vorbis bink"
+add_engine nancy "Nancy Drew" yes "nancy_v3a" "The Vampire Diaries, Nancy Drew 1-17" "16bit highres vorbis bink"
+add_engine nancy_v3a "Nancy Drew 18" yes "" "" "png"
