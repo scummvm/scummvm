@@ -221,7 +221,7 @@ void IgorEngine::PART_68_NPC_SAY_REPLIES(const int *replies, const int *sounds, 
 /**
  * Igor comes from the right edge and walks to the left.
  */
-void IgorEngine::PART_68_ENTER_FROM_RIGHT() {
+void IgorEngine::PART_68_enterFromRight() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(319, 143, kFacingPositionLeft, 0);
 	wd->clipSkipX = 1;
@@ -243,7 +243,7 @@ void IgorEngine::PART_68_ENTER_FROM_RIGHT() {
 /**
  * Igor comes from the left edge and walks to the right.
  */
-void IgorEngine::PART_68_ENTER_FROM_LEFT() {
+void IgorEngine::PART_68_enterFromLeft() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(0, 143, kFacingPositionRight, 0);
 	wd->clipSkipX = 16;
@@ -539,9 +539,9 @@ void IgorEngine::PART_68() {
 		fadeIn(768);
 		if (_currentPart == 680) {
 			if (_objectsState[kPart68SideState] == 0) {
-				PART_68_ENTER_FROM_RIGHT();
+				PART_68_enterFromRight();
 			} else {
-				PART_68_ENTER_FROM_LEFT();
+				PART_68_enterFromLeft();
 			}
 		} else {
 			PART_68_ENTER_INSIDE();

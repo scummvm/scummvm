@@ -603,7 +603,7 @@ private:
 	const char *getString(int id) const;
 
 	void startMusic(int cmf);
-	void playMusic(int num);
+	void playMusic(int num, bool restart = false);
 	void updateMusic();
 	void playSound(int num, int type);
 	void stopSound();
@@ -1228,8 +1228,8 @@ private:
 	void PART_68_UPDATE_DIALOGUE_NPC(int action);
 	void PART_68_NPC_SAY(const Common::Array<DialogueText> &lines);
 	void PART_68_NPC_SAY_REPLIES(const int *replies, const int *sounds, int count);
-	void PART_68_ENTER_FROM_RIGHT();
-	void PART_68_ENTER_FROM_LEFT();
+	void PART_68_enterFromRight();
+	void PART_68_enterFromLeft();
 	void PART_68_ENTER_INSIDE();
 	void PART_68_ACTION_102_takeObject();
 	void PART_68_ACTION_104_talk();
