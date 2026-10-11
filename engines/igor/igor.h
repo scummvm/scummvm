@@ -1145,25 +1145,24 @@ private:
 
 	// chemistry classroom
 	void PART_36_EXEC_ACTION(int action);
-	void PART_36_ACTION_102();
-	void PART_36_HELPER_1(int num);
-	void PART_36_HELPER_2();
-	void PART_36_HELPER_4(int frame);
-	void PART_36_HELPER_5(int *x, int *y);
+	void PART_36_ACTION_102_takePen();
+	void PART_36_HELPER_1_OBJECT_STATE(int num);
+	void PART_36_HELPER_2_walkIn();
+	void PART_36_HELPER_4_drawPen(int frame);
 	void PART_36();
 
 	// physics classroom
 	void PART_37_EXEC_ACTION(int action);
-	void PART_37_ACTION_102();
-	void PART_37_HELPER_1(int num);
-	void PART_37_HELPER_2();
+	void PART_37_ACTION_102_lookAtPaperBinTakePaper();
+	void PART_37_HELPER_1_OBJECT_STATE(int num);
+	void PART_37_HELPER_2_walkIn();
 	void PART_37();
 
 	// outside the maze
 	void PART_50_EXEC_ACTION(int action);
 	void PART_50_ACTION_101_enterMaze();
-	void PART_50_ENTER_FROM_DOOR();
-	void PART_50_ENTER_FROM_HILL();
+	void PART_50_enterFromDoor();
+	void PART_50_enterFromHill();
 	void PART_50_UPDATE_ROOM_BACKGROUND();
 	void PART_50();
 

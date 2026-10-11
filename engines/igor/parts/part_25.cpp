@@ -188,22 +188,25 @@ void IgorEngine::PART_25() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_25_EXEC_ACTION);
 	PART_25_HELPER_1_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	if (_currentPart == 250) {
-		PART_25_HELPER_2_enterFromLeft();
-	} else if (_currentPart == 251) {
-		PART_25_HELPER_3_enterFromRight();
-	} else if (_currentPart == 252) {
-		PART_25_HELPER_4_enterFromMensToilet();
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		if (_currentPart == 250) {
+			PART_25_HELPER_2_enterFromLeft();
+		} else if (_currentPart == 251) {
+			PART_25_HELPER_3_enterFromRight();
+		} else if (_currentPart == 252) {
+			PART_25_HELPER_4_enterFromMensToilet();
+		}
+		enterPartLoop();
 	}
-	enterPartLoop();
-	while (_currentPart >= 250 && _currentPart <= 252) {
+	while (_currentPart >= 250 && _currentPart <= 252 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 

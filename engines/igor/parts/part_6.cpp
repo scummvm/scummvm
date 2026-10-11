@@ -326,12 +326,14 @@ void IgorEngine::PART_06() {
 		_gameState.unkF = (_objectsState[61] == 1);
 		_walkDataLastIndex = 1;
 		_walkDataCurrentIndex = 1;
+		enterPartLoop();
 	}
-	enterPartLoop();
 
 	while (_currentPart >= 60 && _currentPart <= 61 && !_gameStateLoaded) {
 		setRoomWalkBounds(0, 0, _objectsState[61] == 0 ? 234 : 142, 143);
 		handleRoomInput();
+		if (_gameStateLoaded)
+			break;
 		if (compareGameTick(1, 16)) {
 			handleRoomIgorWalk();
 		}

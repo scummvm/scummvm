@@ -227,19 +227,22 @@ void IgorEngine::PART_16() {
 	setRoomWalkBounds(0, 0, 248, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_16_EXEC_ACTION);
 	PART_16_HELPER_1_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	PART_16_HELPER_2_enterScene();
-	if (_objectsState[65] == 2 && _inventoryInfo[71] != 0 && _objectsState[76] == 1) {
-		PART_16_HELPER_3_photoCutscene();
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		PART_16_HELPER_2_enterScene();
+		if (_objectsState[65] == 2 && _inventoryInfo[71] != 0 && _objectsState[76] == 1) {
+			PART_16_HELPER_3_photoCutscene();
+		}
+		enterPartLoop();
 	}
-	enterPartLoop();
-	while (_currentPart == 160) {
+	while (_currentPart == 160 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 void IgorEngine::loadResourceData__ROOM_Laboratory() {

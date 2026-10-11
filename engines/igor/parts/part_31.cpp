@@ -378,26 +378,29 @@ void IgorEngine::PART_31() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_31_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_31_UPDATE_ROOM_BACKGROUND;
 	PART_31_HELPER_1_OBJECT_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	_gameState.unk10 = 4;
-	PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
-	fadeIn(768);
-	if (_currentPart == 310) {
-		PART_31_HELPER_3_enterFromLeft();
-	} else if (_currentPart == 311) {
-		PART_31_HELPER_4_enterFromAstronomyLab();
-	} else if (_currentPart == 312) {
-		PART_31_HELPER_5_enterFromDownstairs();
-	} else if (_currentPart == 313) {
-		PART_31_HELPER_6_enterFromRight();
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		_gameState.unk10 = 4;
+		PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+		fadeIn(768);
+		if (_currentPart == 310) {
+			PART_31_HELPER_3_enterFromLeft();
+		} else if (_currentPart == 311) {
+			PART_31_HELPER_4_enterFromAstronomyLab();
+		} else if (_currentPart == 312) {
+			PART_31_HELPER_5_enterFromDownstairs();
+		} else if (_currentPart == 313) {
+			PART_31_HELPER_6_enterFromRight();
+		}
+		enterPartLoop();
 	}
-	enterPartLoop();
-	while (_currentPart >= 310 && _currentPart <= 313) {
+	while (_currentPart >= 310 && _currentPart <= 313 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	fadeOut(624);
+	if (!_gameStateLoaded)
+		fadeOut(624);
 }
 
 } // End of namespace Igor

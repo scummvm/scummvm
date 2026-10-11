@@ -160,9 +160,9 @@ void IgorEngine::PART_05() {
 			fadeIn(624);
 			PART_05_HELPER_6_walkIgorToScene();
 		}
+		enterPartLoop();
 	}
 
-	enterPartLoop();
 	while (_currentPart >= 50 && _currentPart <= 52 && !_gameStateLoaded) {
 		runPartLoop();
 	}

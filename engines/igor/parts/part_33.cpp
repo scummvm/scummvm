@@ -363,20 +363,24 @@ void IgorEngine::PART_33() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_33_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_33_UPDATE_ROOM_BACKGROUND;
 	PART_33_HELPER_1_OBJECTS_STATE(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	_currentAction.verb = kVerbWalk;
-	fadeIn(768);
-	PART_33_HELPER_7_walkIn();
-	enterPartLoop();
-	while (_currentPart == 330) {
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		PART_33_HELPER_7_walkIn();
+		enterPartLoop();
+	}
+	while (_currentPart == 330 && !_gameStateLoaded) {
 		runPartLoop();
 	}
 	leavePartLoop();
-	if (_objectsState[75] == 1) {
-		// harrison leaves
-		_objectsState[75] = 2;
+	if (!_gameStateLoaded) {
+		if (_objectsState[75] == 1) {
+			// harrison leaves
+			_objectsState[75] = 2;
+		}
+		fadeOut(624);
 	}
-	fadeOut(624);
 	_updateRoomBackground = 0;
 }
 
