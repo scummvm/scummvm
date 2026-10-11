@@ -35,6 +35,7 @@ public:
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getRealCoords(Common::Point &pos) const override;
+	uint16 getHiResBoxHeight(uint16 height) const override;
 	void setColorMap(const byte *colorMap) override { _colorMap = colorMap; }
 	void setFlags(uint32 flags) override;
 	void clearFlags(uint32 flags) override;
@@ -218,6 +219,12 @@ Common::Point WindowsGfx256ColorsDriver::getRealCoords(Common::Point &pos) const
 	if (_uniformPixels)
 		return UpscaledGfxDriver::getRealCoords(pos);
 	return Common::Point(pos.x * _hScaleMult, pos.y * _vScaleMult2 + (pos.y + 4) / 5);
+}
+
+uint16 WindowsGfx256ColorsDriver::getHiResBoxHeight(uint16 height) const {
+	// The hires graphics are made for the 11/5 vertical stretch, so they need
+	// about 10% more lowres rows here (rounding up)
+	return _uniformPixels ? (height * 11 + 9) / 10 : height;
 }
 
 void WindowsGfx256ColorsDriver::setFlags(uint32 flags) {
