@@ -79,6 +79,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "barbrapunzel",		"Barbie as Rapunzel: A Creative Adventure" },
 	{ "barbswanlake",		"Barbie of Swan Lake: The Enchanted Forest" },
 	{ "barminski",			"Bar-Min-Ski: Consumer Product" },
+	{ "barrowhillcurse",	"Barrow Hill: Curse of the Ancient Circle" },
 	{ "bbbighelpers",		"Little Bears Make Big Helpers: Life's Little Lessons with the Berenstain Bears" },
 	{ "bearfamily",			"A Bear Family Adventure" },
 	{ "beautyorbeast",		"Beauty or the Beast" },
@@ -10939,6 +10940,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 									  "Files/ba-01_A01.dxr", "d:cb38821091082aeb097e88551b791e05", 9946435, 1010),
 	WINGAME2("babarcoins", "",		  "Start.exe",			 "t:0c40cc1af54fd3c0d06bf5e79bc7075a", 2659300,
 									  "FILES/ba-01_A01.dxr", "d:cb38821091082aeb097e88551b791e05", 9946435, 1010),
+
+	// The sequel (Barrow Hill: The Dark Path) is supported by the Wintermute engine
+	WINGAME1f("barrowhillcurse", "", "Barrow Hill.exe",  "t:419b0b9b1da989ae820d5587c2fc7809", 4077044, 1000, GF_TRUECOLOR),
 
 	WINGAME1_l("bidule4", "", "BAB4.exe", "t:4ff5d572c2555b49d231015883183900", 2689236, Common::FR_FRA, 1010),
 
