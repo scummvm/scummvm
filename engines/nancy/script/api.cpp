@@ -76,6 +76,7 @@ void registerInventoryAPI(lua_State *L) {
 void registerAPI(lua_State *L) {
 	registerTypes(L);
 	registerMathTypes(L);
+	registerRefAPI(L);
 	registerBootAPI(L);
 	registerInventoryAPI(L);
 	registerGameAPI(L);

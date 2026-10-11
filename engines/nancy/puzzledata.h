@@ -691,6 +691,15 @@ struct ScriptValueData : public PuzzleData {
 	Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> values;
 };
 
+// Nancy19. What the scripts ask to have kept under a name: a number, a text,
+// or a table of those, already packed into bytes
+struct ScriptSavedData : public PuzzleData {
+	static constexpr uint32 getTag() { return MKTAG('S', 'C', 'S', 'D'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> values;
+};
+
 // Nancy17. The contacts in the cell phone of every player character
 struct PhoneBookData : public PuzzleData {
 	struct Entry {

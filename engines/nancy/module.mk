@@ -193,6 +193,7 @@ MODULE_OBJS += \
   script/mathtypes.o \
   script/record.o \
   script/records.o \
+  script/ref.o \
   script/scenecontext.o \
   script/types.o
 endif

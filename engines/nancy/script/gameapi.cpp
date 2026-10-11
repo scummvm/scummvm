@@ -38,6 +38,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/ndui/manager.h"
+
 namespace Nancy {
 namespace Script {
 
@@ -408,6 +410,202 @@ static int drawRect(lua_State *L) {
 static const luaL_Reg kDrawFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Rect", drawRect },
+	{ nullptr, nullptr }
+};
+
+// Save and Load, which keep what a script hands them in the saved game
+
+enum SavedValueTag {
+	kSavedNil		= 0,
+	kSavedFalse		= 1,
+	kSavedTrue		= 2,
+	kSavedNumber	= 3,
+	kSavedString	= 4,
+	kSavedTable		= 5
+};
+
+static void writeSavedUint32(Common::Array<byte> &out, uint32 value) {
+	for (int i = 0; i < 4; ++i) {
+		out.push_back((byte)(value >> (8 * i)));
+	}
+}
+
+// Packs the value at a stack index. Returns false for what can't be kept.
+static bool writeSavedValue(lua_State *L, int index, Common::Array<byte> &out, int depth) {
+	index = absoluteIndex(L, index);
+
+	switch (lua_type(L, index)) {
+	case LUA_TNIL:
+		out.push_back(kSavedNil);
+		return true;
+	case LUA_TBOOLEAN:
+		out.push_back(lua_toboolean(L, index) ? kSavedTrue : kSavedFalse);
+		return true;
+	case LUA_TNUMBER: {
+		const double number = lua_tonumber(L, index);
+		uint64 bits;
+		memcpy(&bits, &number, sizeof(bits));
+
+		out.push_back(kSavedNumber);
+		writeSavedUint32(out, (uint32)bits);
+		writeSavedUint32(out, (uint32)(bits >> 32));
+		return true;
+	}
+	case LUA_TSTRING: {
+		size_t length;
+		const char *text = lua_tolstring(L, index, &length);
+
+		out.push_back(kSavedString);
+		writeSavedUint32(out, (uint32)length);
+		for (size_t i = 0; i < length; ++i) {
+			out.push_back((byte)text[i]);
+		}
+
+		return true;
+	}
+	case LUA_TTABLE: {
+		// Tables that hold themselves would never end
+		if (depth > 16) {
+			return false;
+		}
+
+		Common::Array<byte> pairs;
+		uint32 numPairs = 0;
+		bool isValid = true;
+
+		lua_pushnil(L);
+		while (lua_next(L, index)) {
+			// Copies the key, so reading a number as a string can't confuse lua_next
+			lua_pushvalue(L, -2);
+			isValid = isValid && writeSavedValue(L, -1, pairs, depth + 1) && writeSavedValue(L, -2, pairs, depth + 1);
+			lua_pop(L, 2);
+			++numPairs;
+		}
+
+		if (!isValid) {
+			return false;
+		}
+
+		out.push_back(kSavedTable);
+		writeSavedUint32(out, numPairs);
+		out.push_back(pairs);
+		return true;
+	}
+	default:
+		return false;
+	}
+}
+
+static uint32 readSavedUint32(const Common::Array<byte> &in, uint &pos) {
+	uint32 value = 0;
+	for (int i = 0; i < 4 && pos < in.size(); ++i) {
+		value |= (uint32)in[pos++] << (8 * i);
+	}
+
+	return value;
+}
+
+// Pushes the value packed at a position
+static void readSavedValue(lua_State *L, const Common::Array<byte> &in, uint &pos) {
+	const byte tag = pos < in.size() ? in[pos++] : (byte)kSavedNil;
+
+	switch (tag) {
+	case kSavedFalse:
+		lua_pushboolean(L, false);
+		break;
+	case kSavedTrue:
+		lua_pushboolean(L, true);
+		break;
+	case kSavedNumber: {
+		uint64 bits = readSavedUint32(in, pos);
+		bits |= (uint64)readSavedUint32(in, pos) << 32;
+
+		double number;
+		memcpy(&number, &bits, sizeof(number));
+		lua_pushnumber(L, number);
+		break;
+	}
+	case kSavedString: {
+		const uint32 length = MIN<uint32>(readSavedUint32(in, pos), in.size() - pos);
+		lua_pushlstring(L, (const char *)in.data() + pos, length);
+		pos += length;
+		break;
+	}
+	case kSavedTable: {
+		const uint32 numPairs = readSavedUint32(in, pos);
+		lua_newtable(L);
+		luaL_checkstack(L, 4, "saved data is nested too deeply");
+
+		for (uint32 i = 0; i < numPairs && pos < in.size(); ++i) {
+			readSavedValue(L, in, pos);
+			readSavedValue(L, in, pos);
+			if (lua_isnil(L, -2)) {
+				lua_pop(L, 2);
+			} else {
+				lua_rawset(L, -3);
+			}
+		}
+
+		break;
+	}
+	default:
+		lua_pushnil(L);
+		break;
+	}
+}
+
+// Save:Data(name, value)
+static int saveData(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+	luaL_checkany(L, 3);
+
+	Common::Array<byte> packed;
+	if (!writeSavedValue(L, 3, packed, 0)) {
+		return luaL_error(L, "Save:Data can only save tables, numbers, booleans, strings and nils");
+	}
+
+	ScriptSavedData *saved = (ScriptSavedData *)NancySceneState.getPuzzleData(ScriptSavedData::getTag());
+	saved->values.setVal(name, packed);
+	return 0;
+}
+
+// Load:Data(name), which gives nil for a name nothing was saved under
+static int loadData(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+
+	ScriptSavedData *saved = (ScriptSavedData *)NancySceneState.getPuzzleData(ScriptSavedData::getTag());
+	if (!saved->values.contains(name)) {
+		lua_pushnil(L);
+		return 1;
+	}
+
+	uint pos = 0;
+	readSavedValue(L, saved->values[name], pos);
+	return 1;
+}
+
+// Save:Game(name), which saves the game under a name of the scripts' choosing
+static int saveGame(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	if (ui) {
+		ui->requestSave(name);
+	}
+
+	return 0;
+}
+
+static const luaL_Reg kSaveFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "Data", saveData },
+	{ "Game", saveGame },
+	{ nullptr, nullptr }
+};
+
+static const luaL_Reg kLoadFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "Data", loadData },
 	{ nullptr, nullptr }
 };
 
@@ -838,6 +1036,8 @@ void registerGameAPI(lua_State *L) {
 
 	registerGlobal(L, "Game", "ND.Game", kGameFunctions);
 	registerGlobal(L, "Draw", "ND.Draw", kDrawFunctions);
+	registerGlobal(L, "Save", "ND.Save", kSaveFunctions);
+	registerGlobal(L, "Load", "ND.Load", kLoadFunctions);
 	registerGlobal(L, "Log", "ND.Log", kLogFunctions);
 }
 
