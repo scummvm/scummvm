@@ -43,8 +43,18 @@ class Serializer;
  *
  * Status of this engine:
  * The Vampire Diaries and all Nancy Drew games up to and including
- * Nancy Drew: Danger on Deception Island are fully completable.
+ * Nancy Drew: The Creature of Kapu Cave are fully completable.
  * Every other game is untested but definitely unplayable.
+ *
+ * The engine has the following major versions:
+ * - v1: TVD, Nancy1-9
+ * - v2: Nancy10-11 (revamped interface)
+ * - v2a: Nancy12 (moved hardcoded dialog logic)
+ * - v2b: Nancy13-14 (32bpp graphics, scene include scripts)
+ * - v2c: Nancy15 (multiple characters and UI interfaces)
+ * - v3: Nancy16-17 (revamped interface)
+ * - v3a: Nancy18 (PNG graphics)
+ * - v4: Nancy19 and newer (Lua scripting)
  *
  * Games using this engine:
  *	- The Vampire Diaries (1996)
