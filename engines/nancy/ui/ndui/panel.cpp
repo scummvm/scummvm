@@ -56,21 +56,10 @@ Panel::~Panel() {
 }
 
 void Panel::read(Common::SeekableReadStream &stream) {
-	stream.skip(33); // version
+	readHeader(stream);
 
-	_initialState = stream.readSint32LE();
-	_arrangement = (Arrangement)stream.readSint32LE();
-	stream.skip(4);
-	_spacing.x = stream.readSint32LE();
-	_spacing.y = stream.readSint32LE();
-	readExclusiveRect(stream, _margins);
-	_backgroundColor = stream.readUint32BE();
-	stream.skip(g_nancy->getGameType() >= kGameTypeNancy17 ? 2 : 1);
-
-	// The background is a static that also gives the panel its name, position and events
-	_background = new Static(this);
 	if (stream.readSint32LE() == kControlStatic) {
-		_background->read(stream);
+		readBackground(stream);
 	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy17 && stream.readSint32LE() == kControlTooltip) {
@@ -84,27 +73,29 @@ void Panel::read(Common::SeekableReadStream &stream) {
 	}
 
 	if (_kind == kObjectScrollPanel || _kind == kObjectInvPanel) {
-		readFilename(stream, _scrollBarName);
-		_scrollStep = MAX<int32>(stream.readSint32LE(), 1);
+		readScrolling(stream);
 	}
 
-	Common::Rect screenPosition = _background->_bounds;
-	_background->_bounds.moveTo(0, 0);
+	place();
+}
 
-	// Controls aren't clipped to a panel that doesn't scroll, and some are placed past
-	// the right or the bottom of its background, like the meters of the hypothermia
-	// dialog, so the panel is as large as it takes to draw them. Panels that arrange
-	// their controls keep their width, since the rows are laid out by it.
-	if (_scrollBarName.empty() && _arrangement == kArrangeNone) {
-		for (const Control *control : _controls) {
-			Common::Rect drawBounds = control->getDrawBounds();
-			screenPosition.right = MAX<int16>(screenPosition.right, screenPosition.left + drawBounds.right);
-			screenPosition.bottom = MAX<int16>(screenPosition.bottom, screenPosition.top + drawBounds.bottom);
-		}
-	}
+void Panel::readHeader(Common::SeekableReadStream &stream) {
+	stream.skip(33); // version
 
-	moveTo(screenPosition);
-	_drawSurface.create(screenPosition.width(), screenPosition.height(), g_nancy->_graphics->getTransparentPixelFormat());
+	_initialState = stream.readSint32LE();
+	_arrangement = (Arrangement)stream.readSint32LE();
+	stream.skip(4);
+	_spacing.x = stream.readSint32LE();
+	_spacing.y = stream.readSint32LE();
+	readExclusiveRect(stream, _margins);
+	_backgroundColor = stream.readUint32BE();
+	stream.skip(g_nancy->getGameType() >= kGameTypeNancy17 ? 2 : 1);
+
+	// The background is a static that also gives the panel its name, position and events
+	_background = new Static(this);
+
+	// Nothing gets drawn until the panel has a place on the screen
+	setVisible(false);
 
 	switch (_initialState) {
 	case kStartVisible:
@@ -117,9 +108,50 @@ void Panel::read(Common::SeekableReadStream &stream) {
 	default:
 		break;
 	}
+}
+
+void Panel::readScrolling(Common::SeekableReadStream &stream) {
+	readFilename(stream, _scrollBarName);
+	_scrollStep = MAX<int32>(stream.readSint32LE(), 1);
+}
+
+void Panel::readBackground(Common::SeekableReadStream &stream) {
+	_background->read(stream);
+}
+
+void Panel::place() {
+	Common::Rect screenPosition = _background->_bounds;
+	_background->_bounds.moveTo(0, 0);
+
+	moveTo(screenPosition);
+	_drawSurface.create(screenPosition.width(), screenPosition.height(), g_nancy->_graphics->getTransparentPixelFormat());
 
 	setVisible(_showCount > 0);
+	growToControls();
 	arrangeControls();
+}
+
+// Controls aren't clipped to a panel that doesn't scroll, and some are placed past
+// the right or the bottom of its background, like the meters of the hypothermia
+// dialog, so the panel is as large as it takes to draw them. Panels that arrange
+// their controls keep their width, since the rows are laid out by it.
+void Panel::growToControls() {
+	if (!_scrollBarName.empty() || _arrangement != kArrangeNone) {
+		return;
+	}
+
+	Common::Rect screenPosition = _screenPosition;
+	for (const Control *control : _controls) {
+		Common::Rect drawBounds = control->getDrawBounds();
+		screenPosition.right = MAX<int16>(screenPosition.right, screenPosition.left + drawBounds.right);
+		screenPosition.bottom = MAX<int16>(screenPosition.bottom, screenPosition.top + drawBounds.bottom);
+	}
+
+	if (screenPosition != _screenPosition) {
+		moveTo(screenPosition);
+		_drawSurface.create(screenPosition.width(), screenPosition.height(), g_nancy->_graphics->getTransparentPixelFormat());
+		_isDirty = true;
+	}
 }
 
 void Panel::readControl(Common::SeekableReadStream &stream) {

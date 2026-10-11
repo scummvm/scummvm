@@ -55,6 +55,17 @@ public:
 
 	void read(Common::SeekableReadStream &stream);
 
+	// Nancy19 panels are put together by a script, a part at a time: the header
+	// when the panel is made, then its background, which gives it a place on the
+	// screen, and then each of its controls
+	void readHeader(Common::SeekableReadStream &stream);
+	void readScrolling(Common::SeekableReadStream &stream);
+	void readBackground(Common::SeekableReadStream &stream);
+	void place();
+
+	// A panel without controls to arrange is as large as it takes to draw them all
+	void growToControls();
+
 	// Nancy17 keeps the items apart from the panel that shows them, which comes
 	// with nothing but a template for their buttons
 	void addItemButtons(const Common::Array<byte> &buttonTemplate);
