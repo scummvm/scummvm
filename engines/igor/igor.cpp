@@ -583,7 +583,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 		_gameStateLoaded = true;
 		memcpy(_igorPalette, (_currentPart == 760) ? PAL_IGOR_2 : PAL_IGOR_1, 48);
 		UPDATE_OBJECT_STATE(255);
-		playMusic(_gameState.musicNum);
+		playMusic(_gameState.musicNum, true);
 		_system->warpMouse(_inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos]);
 		if (_currentPart < 900) {
 			showCursor();

@@ -1101,9 +1101,6 @@ bool IgorEngine::waitForIgorMove(IgorMoveTick tick, bool escapeSkips, bool force
 			while (_gameState.igorMoving && _walkDataCurrentIndex <= _walkDataLastIndex) {
 				moveIgor(fixedPosNum >= 0 ? fixedPosNum : _walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
 				++_walkDataCurrentIndex;
-				// The original draws straight to the screen, so the walk stays visible, only faster.
-				// TODO: the exact pace depends on the original's drawing cost and is not derived.
-				waitForTimer(1);
 			}
 			_inputVars[kInputEscape] = 0;
 			_gameState.igorMoving = false;
