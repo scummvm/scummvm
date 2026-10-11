@@ -112,7 +112,7 @@ void IgorEngine::PART_27_ACTION_107_closeLocker() {
 	for (int i = 2; i >= 1; --i) {
 		drawAnimRect(offset, 0x3A0 + i * 1568, 32, 49);
 		if (i == 2) {
-			playSound(14, 1);
+			playSound(4, 1);
 			waitForTimer(100);
 		}
 	}
