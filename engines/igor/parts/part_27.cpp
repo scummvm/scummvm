@@ -144,7 +144,7 @@ void IgorEngine::PART_27_ACTION_110_useFlaskOnLocker() {
 	igorSayAndWait({ { 212, 1, 1170 }, { 213, 2, 1171 } });
 	const int offset = 25012;
 	for (int i = 1; i <= 2; ++i) {
-		drawAnimRect(offset, 0x19AA + i * 630, 21, 49);
+		drawAnimRect(offset, 0x19AA + i * 630, 21, 30);
 		if (i == 1) {
 			waitForTimer(100);
 		}
