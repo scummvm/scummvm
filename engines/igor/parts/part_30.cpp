@@ -208,6 +208,8 @@ void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
 	// real dialogue
 
 	PART_30_HANDLE_DIALOGUE_LAURA();
+	if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart)
+		return;
     // "Nunca me habian descrito tan bien"
 	igorSayAndWait(207, 1, 456);
     // at least you're funny

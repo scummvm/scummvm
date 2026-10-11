@@ -642,6 +642,14 @@ int IgorEngine::selectDialogue() {
 	int hoveredChoice = 0;
 	bool end = false;
 	do {
+		if (_inputVars[kInputOptions]) {
+			_inputVars[kInputOptions] = 0;
+			handleOptionsMenu();
+			if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart)
+				return -1;
+			drawDialogueChoices();
+			hoveredChoice = 0;
+		}
 		int currentChoice = (_inputVars[kInputCursorYPos] - 134) / 11;
 		if (currentChoice < 0) {
 			currentChoice = 0;

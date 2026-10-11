@@ -71,14 +71,14 @@ static const Page pages[] = {
 	{
 		{ "Salvar", "Elige una posición donde salvar" },
 		{ 50, 75 },
-		&IgorEngine::handleOptionsMenu_paintSave,
-		&IgorEngine::handleOptionsMenu_handleKeyDownSave
+		0,
+		0
 	},
 	{
 		{ "Cargar", "Elige el juego que quieres cargar" },
 		{ 95, 93 },
-		&IgorEngine::handleOptionsMenu_paintLoad,
-		&IgorEngine::handleOptionsMenu_handleKeyDownLoad
+		0,
+		0
 	},
 	{
 		{ "Salir", "Salir" },
@@ -100,22 +100,6 @@ static const Page pages[] = {
 	}
 };
 
-
-void IgorEngine::handleOptionsMenu_paintSave() {
-	_font.drawString(_screenTextLayer, "Not available in shareware version", 60, 70 - 16, 0xF6, -1, 0);
-}
-
-bool IgorEngine::handleOptionsMenu_handleKeyDownSave(int key) {
-	return true;
-}
-
-void IgorEngine::handleOptionsMenu_paintLoad() {
-	_font.drawString(_screenTextLayer, "Not available in shareware version", 60, 70 - 16, 0xF6, -1, 0);
-}
-
-bool IgorEngine::handleOptionsMenu_handleKeyDownLoad(int key) {
-	return true;
-}
 
 void IgorEngine::handleOptionsMenu_paintQuit() {
 	_font.drawString(_screenTextLayer, "Are you sure?", 120, 64 - 15, 0xF6, -1, 0);
@@ -214,8 +198,23 @@ static void drawButtonsBar(uint8 *dst, const uint8 *src) {
 void IgorEngine::handleOptionsMenu() {
 	PauseToken pauseToken = pauseEngine();
 	hideCursor();
-	memcpy(_paletteBuffer, _currentPalette, 768);
-	memset(_screenVGA + 144 * 320, 0, 11 * 320);
+	// End the room's spoken line before reusing its text backing store.
+	if (_gameState.dialogueTextRunning) {
+		if (_currentPart != 40 && _currentPart != 700)
+			animateIgorTalking(0);
+		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+		stopDialogueSpeech();
+		_gameState.dialogueTextRunning = false;
+		_currentAction.verbType = 0;
+		_currentAction.object2Num = 0;
+		_currentAction.object2Type = 0;
+	}
+	// Keep the reserved UI colors: dialogue changes the displayed palette only.
+	memcpy(_paletteBuffer, _currentPalette, 208 * 3);
+	memcpy(_currentPalette + 208 * 3, _paletteBuffer + 208 * 3, 48 * 3);
+	setPaletteRange(208, 255);
+	if (!_gameState.dialogueStarted)
+		memset(_screenVGA + 144 * 320, 0, 11 * 320);
 	_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, 200);
 	for (int m = 3; m < 22; m += 3) {
 		for (int i = 1 * 3; i <= 245 * 3; ++i) {
@@ -276,7 +275,12 @@ void IgorEngine::handleOptionsMenu() {
 						menuLoop = false;
 						break;
 					case Common::KEYCODE_RETURN:
-						if (currentPage == kPagePlay) {
+						if (currentPage == kPageSave) {
+							saveGameDialog();
+						} else if (currentPage == kPageLoad) {
+							if (loadGameDialog())
+								return;
+						} else if (currentPage == kPagePlay) {
 							menuLoop = false;
 						} else {
 							memcpy(buttonsBarBackup, _screenTextLayer + 3 * 320, 320 * 12);
@@ -318,6 +322,13 @@ void IgorEngine::handleOptionsMenu() {
 		_system->updateScreen();
 	}
 
+	_inputVars[kInputClick] = 0;
+	_inputVars[kInputRightClick] = 0;
+	_inputVars[kInputSkipDialogue] = 0;
+	_inputVars[kInputOptions] = 0;
+	_inputVars[kInputPause] = 0;
+	_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, 200);
+	setPaletteColor(255, 63, 63, 63);
 	for (int m = 21; m >= 3; m -= 3) {
 		for (int i = 1 * 3; i <= 245 * 3; ++i) {
 			if (_paletteBuffer[i] >= m) {
@@ -328,6 +339,9 @@ void IgorEngine::handleOptionsMenu() {
 		_system->updateScreen();
 		_system->delayMillis(1000 / 60);
 	}
+	memcpy(_currentPalette, _paletteBuffer, 768);
+	updatePalette(768);
+	_system->updateScreen();
 	showCursor();
 }
 
