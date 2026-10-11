@@ -186,33 +186,6 @@ void IgorEngine::PART_31_UPDATE_ROOM_BACKGROUND() {
 	}
 	if (xPos < 160 && compareGameTick(3, 8)) {
 		if (pos == 2) {
-			if (_gameState.igorMoving) {
-				if (_gameState.unk10 == 1 || _gameState.unk10 == 2) {
-					_gameState.unk10 = 3;
-					PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
-					return;
-				} else if (_gameState.unk10 == 3) {
-					_gameState.unk10 = 4;
-					PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
-					return;
-				} else if (_gameState.unk10 == 4) {
-					if (getRandomNumber(29) == 0) {
-						_gameState.unk10 = 5;
-						PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
-						_gameState.counter[4] = 0;
-						return;
-					}
-				} else if (_gameState.unk10 == 5) {
-					if (_gameState.counter[4] == 20) {
-						_gameState.unk10 = 4;
-						PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
-						return;
-					} else {
-						++_gameState.counter[4];
-					}
-				}
-			}
-		} else {
 			if (_gameState.unk10 == 4 || _gameState.unk10 == 5) {
 				_gameState.unk10 = 3;
 				PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
@@ -222,6 +195,31 @@ void IgorEngine::PART_31_UPDATE_ROOM_BACKGROUND() {
 				_gameState.unk10 = 2;
 				PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
 				return;
+			}
+		} else if (!_gameState.igorMoving) {
+			if (_gameState.unk10 == 1 || _gameState.unk10 == 2) {
+				_gameState.unk10 = 3;
+				PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+				return;
+			} else if (_gameState.unk10 == 3) {
+				_gameState.unk10 = 4;
+				PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+				return;
+			} else if (_gameState.unk10 == 4) {
+				if (getRandomNumber(29) == 0) {
+					_gameState.unk10 = 5;
+					PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+					_gameState.counter[4] = 0;
+					return;
+				}
+			} else if (_gameState.unk10 == 5) {
+				if (_gameState.counter[4] == 20) {
+					_gameState.unk10 = 4;
+					PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+					return;
+				} else {
+					++_gameState.counter[4];
+				}
 			}
 		}
 	}
