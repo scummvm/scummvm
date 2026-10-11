@@ -119,10 +119,7 @@ void IgorEngine::PART_50() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	// the whole room is darker than its palette
-	for (int i = 3; i <= 207 * 3 + 2; ++i) {
-		const int value = _paletteBuffer[i] - kPart50PaletteDarkness;
-		_paletteBuffer[i] = value < 1 ? 0 : value;
-	}
+	darkenPalette(_paletteBuffer, 1, 207, kPart50PaletteDarkness);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;

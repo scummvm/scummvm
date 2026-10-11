@@ -539,10 +539,7 @@ void IgorEngine::PART_81() {
 	PART_81_APPLY_OBJECT_STATE(255);
 
 	// the colors that change are darker than their palette
-	for (int i = 192 * 3; i < 208 * 3; ++i) {
-		const int value = _paletteBuffer[i] - 20;
-		_paletteBuffer[i] = value < 1 ? 0 : value;
-	}
+	darkenPalette(_paletteBuffer, 192, 207, 20);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	if (!restoreRoomAfterLoad()) {

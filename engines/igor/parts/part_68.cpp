@@ -511,10 +511,7 @@ void IgorEngine::PART_68() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	// the colors that change are darker than their palette
-	for (int i = 192 * 3; i < 208 * 3; ++i) {
-		const int value = _paletteBuffer[i] - 10;
-		_paletteBuffer[i] = value < 1 ? 0 : value;
-	}
+	darkenPalette(_paletteBuffer, 192, 207, 10);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;

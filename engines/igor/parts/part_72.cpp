@@ -107,7 +107,7 @@ void IgorEngine::PART_72_ACTION_102_takeObject() {
 /**
  * Igor comes from the right edge, walking to the left.
  */
-void IgorEngine::PART_72_ENTER_FROM_RIGHT() {
+void IgorEngine::PART_72_enterFromMap() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(319, 68, kFacingPositionLeft, 0);
 	wd->clipSkipX = 1;
@@ -129,7 +129,7 @@ void IgorEngine::PART_72_ENTER_FROM_RIGHT() {
 /**
  * Igor comes from the left edge, walking to the right.
  */
-void IgorEngine::PART_72_ENTER_FROM_LEFT() {
+void IgorEngine::PART_72_enterFromSwamp() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(0, 119, kFacingPositionRight, 0);
 	wd->clipSkipX = 15;
@@ -208,23 +208,19 @@ void IgorEngine::PART_72() {
 	PART_72_APPLY_OBJECT_STATE();
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
-	// the whole picture is darker than its palette
+	// Darken the room colors by 10 and Igor's colors by 15.
 	darkenPalette(_paletteBuffer, 1, 175, 10);
 	darkenPalette(_paletteBuffer, 192, 207, 15);
 
-	for (int i = 0; i < 5; ++i) {
-		const int pos = kPart72StarOffsets[i];
-		_screenVGA[pos] = 0xB3;
-		_screenVGA[pos + 2] = 0xB3;
-	}
+	paintEyes();
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 720) {
-			PART_72_ENTER_FROM_RIGHT();
+			PART_72_enterFromMap();
 		} else {
-			PART_72_ENTER_FROM_LEFT();
+			PART_72_enterFromSwamp();
 		}
 	}
 	enterPartLoop();
@@ -236,6 +232,14 @@ void IgorEngine::PART_72() {
 	leavePartLoop();
 	if (!_gameStateLoaded)
 		fadeOut(624);
+}
+
+void IgorEngine::paintEyes() {
+	for (int i = 0; i < 5; ++i) {
+		const int pos = kPart72StarOffsets[i];
+		_screenVGA[pos] = 0xB3;
+		_screenVGA[pos + 2] = 0xB3;
+	}
 }
 
 } // End of namespace Igor
