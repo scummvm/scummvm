@@ -148,6 +148,8 @@ void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
  * Paints the text on the screen buffer
  */
 void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
+	if (_eventQuitGame)
+		return;
 	debugC(9, kDebugEngine, "startCutsceneDialogue() pos %d,%d color %d,%d,%d", x, y, r, g, b);
 	if (_dialogueTextsCount <= 0 || _dialogueTextsStart < 0 || _dialogueTextsStart >= MAX_DIALOGUE_TEXTS) {
 		warning("startCutsceneDialogue() invalid playback range start %d count %d",	_dialogueTextsStart, _dialogueTextsCount);
@@ -278,6 +280,10 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 	       _gameState.dialogueTextRunning, _dialogueTextsStart, _dialogueTextsCount,
 	       _talkSpeechCounter, _talkDelayCounter, _talkDelay);
 	do {
+		if (_eventQuitGame) {
+			cancelDialogue();
+			return;
+		}
 		// stop speech if skip dialogue hit
 		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
 			stopDialogueSpeech();
@@ -330,8 +336,8 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 		if (_updateRoomBackground) {
 			(this->*_updateRoomBackground)();
 		}
-		// Escape only aborts dialogue during the intro cutscene (or on quit).
-		if (_inputVars[kInputEscape] && (_currentPart == 850 || _eventQuitGame)) {
+		// Escape only aborts dialogue during the intro cutscene.
+		if (_inputVars[kInputEscape] && _currentPart == 850) {
 			warning("waitForEndOfCutsceneDialogue() early exit with text active %d start %d count %d speechCounter %d delay %d/%d",
 			        _gameState.dialogueTextRunning, _dialogueTextsStart, _dialogueTextsCount,
 			        _talkSpeechCounter, _talkDelayCounter, _talkDelay);
@@ -359,7 +365,19 @@ void IgorEngine::stopDialogueSpeech() {
 	}
 }
 
+void IgorEngine::cancelDialogue() {
+	if (_gameState.dialogueTextRunning) {
+		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 320 * 72, _dialogueDirtyRectSize);
+	}
+	stopDialogueSpeech();
+	_gameState.dialogueTextRunning = false;
+	_dialogueTextsCount = 0;
+	_inputVars[kInputSkipDialogue] = 0;
+}
+
 void IgorEngine::startIgorDialogue() {
+	if (_eventQuitGame)
+		return;
 	debugC(9, kDebugEngine, "startIgorDialogue()");
 	if (_dialogueTextsCount <= 0 || _dialogueTextsStart < 0 || _dialogueTextsStart >= MAX_DIALOGUE_TEXTS) {
 		warning("startIgorDialogue() invalid playback range start %d count %d", _dialogueTextsStart, _dialogueTextsCount);
@@ -422,6 +440,10 @@ void IgorEngine::startIgorDialogue() {
 
 void IgorEngine::waitForEndOfIgorDialogue(bool animateHead) {
 	do {
+		if (_eventQuitGame) {
+			cancelDialogue();
+			return;
+		}
 		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
 			stopDialogueSpeech();
 			_talkDelayCounter = _talkDelay;
@@ -471,7 +493,7 @@ void IgorEngine::waitForEndOfIgorDialogue(bool animateHead) {
 		if (_updateRoomBackground) {
 			(this->*_updateRoomBackground)();
 		}
-		if (_inputVars[kInputEscape] && (_currentPart == 850 || _eventQuitGame))
+		if (_inputVars[kInputEscape] && _currentPart == 850)
 			return;
 		waitForTimer();
 	} while (_gameState.dialogueTextRunning);

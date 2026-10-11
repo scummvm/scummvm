@@ -645,6 +645,7 @@ private:
 
 	bool isDialogueSpeechPlaying() const;
 	void stopDialogueSpeech();
+	void cancelDialogue();
 
 	void PART_MAIN();
 	void moveScreenUp(int offset);
