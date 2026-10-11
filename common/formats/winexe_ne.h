@@ -22,9 +22,9 @@
 #ifndef COMMON_WINEXE_NE_H
 #define COMMON_WINEXE_NE_H
 
+#include "common/formats/winexe.h"
 #include "common/list.h"
 #include "common/str.h"
-#include "common/formats/winexe.h"
 
 namespace Common {
 
@@ -37,7 +37,8 @@ namespace Common {
  * @{
  */
 
-template<class T> class Array;
+template<class T>
+class Array;
 class SeekableReadStream;
 
 /**
@@ -50,6 +51,8 @@ class NEResources : public WinResources {
 public:
 	NEResources();
 	~NEResources();
+
+	static constexpr uint32 kInvalidAddress = 0xFFFFFFFF;
 
 	/** Clear all information. */
 	void clear() override;
@@ -87,7 +90,7 @@ private:
 		uint16 usage;
 	};
 
-	SeekableReadStream *_exe;        ///< Current file.
+	SeekableReadStream *_exe; ///< Current file.
 	DisposeAfterUse::Flag _disposeFileHandle;
 
 	/** All resources. */
