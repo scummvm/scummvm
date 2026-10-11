@@ -305,6 +305,16 @@ void PlaySound::execute() {
 			break;
 		}
 
+		// Nancy16 asks for the scene change as soon as the sound has started. Waiting for
+		// the next pass wouldn't do: the flags set above can be among the record's own
+		// dependencies (scene 2343, where Nancy first meets the wolf), and the record
+		// then never runs again.
+		if (g_nancy->getGameType() >= kGameTypeNancy16 && _changeSceneImmediately) {
+			_state = kActionTrigger;
+			execute();
+			break;
+		}
+
 		_state = kRun;
 		break;
 	case kRun:
