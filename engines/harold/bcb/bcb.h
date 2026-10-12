@@ -153,6 +153,8 @@ private:
 	void drawSceneChoiceButtons(int sceneChoiceUiSetToShowId, bool present = true, int pressedButtonIndex = -1);
 	void handleSceneChoiceClick(const Common::Point &mousePosition);
 	void handleSceneChoiceSelection(int buttonIndex);
+	bool handleComputerClick(const Common::Point &mousePosition);
+	bool handleComputerKey(Common::KeyCode keycode);
 	void applyPendingClockTickDelta();
 	void notifyGameClockTicksChanged();
 	void drawClockAndChipIndicator(bool present = true);
@@ -245,6 +247,7 @@ private:
 	bool _computerDetailNextVariantEnabled = false;
 	Common::Array<int> _computerActiveChoiceIds;
 	Common::Array<Common::Rect> _computerActiveChoiceRects;
+	Common::Rect _computerSelectionXorRect;
 	Common::U32String _timedCaptionText;
 	Common::String _timedCaptionTextSjis;
 	Common::Rect _activeCaptionBackingRect;

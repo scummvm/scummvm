@@ -327,4 +327,97 @@ bool BCBEngine::showComputerDetailScreen(int compositeIndex) {
 	return true;
 }
 
+bool BCBEngine::handleComputerClick(const Common::Point &mousePosition) {
+	if (_currentDisplayState == 4 && _computerControlsActive) {
+		const ButtonControlRecord &cancelButton = kComputerPrimaryButtonTable[1];
+		if (Common::Rect(cancelButton.x, cancelButton.y, cancelButton.x + cancelButton.width, cancelButton.y + cancelButton.height).contains(mousePosition)) {
+			drawComputerButtonPressed(cancelButton, 0xf8, 0x2d0);
+			playUiSound();
+			_computerControlsActive = false;
+			_computerActiveChoiceIds.clear();
+			_computerActiveChoiceRects.clear();
+			stateDword(kStateSelectedSceneChoiceValue) = 0xff;
+			processGameStateDispatcher(true);
+			return true;
+		}
+
+		for (uint groupIndex = 0; groupIndex < ARRAYSIZE(kComputerChoiceGroupHitRects); ++groupIndex) {
+			if (!kComputerChoiceGroupHitRects[groupIndex].contains(mousePosition))
+				continue;
+
+			if (_computerChoiceGroupIndex != (int)groupIndex) {
+				playUiSound();
+				_computerChoiceGroupIndex = groupIndex;
+				drawComputerChoiceGroupControls();
+				g_system->updateScreen();
+			}
+			return true;
+		}
+
+		for (uint i = 0; i < _computerActiveChoiceRects.size(); ++i) {
+			if (!_computerActiveChoiceRects[i].contains(mousePosition))
+				continue;
+
+			playUiSound();
+			_computerSelectionXorRect = _computerActiveChoiceRects[i];
+			processXorRectangleBorderAnimation(true, _computerSelectionXorRect, Common::Rect(kComputerCompositeTransitionLeft, kComputerCompositeTransitionTop, kComputerCompositeTransitionRight, kComputerCompositeTransitionBottom));
+			_computerControlsActive = false;
+			stateDword(kStateSelectedSceneChoiceValue) = _computerActiveChoiceIds[i] - 700;
+			_computerActiveChoiceIds.clear();
+			_computerActiveChoiceRects.clear();
+			processGameStateDispatcher(true);
+			return true;
+		}
+	}
+
+	if (_currentDisplayState == 5 && _computerDetailControlsActive) {
+		const ButtonControlRecord &continueButton = kComputerDetailButtonTable[1];
+		if (Common::Rect(continueButton.x, continueButton.y, continueButton.x + continueButton.width, continueButton.y + continueButton.height).contains(mousePosition)) {
+			drawComputerButtonPressed(continueButton, 0x149, 0x2b8);
+			playUiSound();
+			if (!_computerSelectionXorRect.isEmpty())
+				processXorRectangleBorderAnimation(false, _computerSelectionXorRect, Common::Rect(kComputerCompositeTransitionLeft, kComputerCompositeTransitionTop, kComputerCompositeTransitionRight, kComputerCompositeTransitionBottom));
+			_computerDetailControlsActive = false;
+			processGameStateDispatcher(true);
+			return true;
+		}
+
+		const ButtonControlRecord &nextButton = kComputerDetailButtonTable[2];
+		if (_computerDetailNextVariantEnabled &&
+				Common::Rect(nextButton.x, nextButton.y, nextButton.x + nextButton.width, nextButton.y + nextButton.height).contains(mousePosition)) {
+			drawComputerButtonPressed(nextButton, _computerDetailVariantIndex >= 0 ? 0x188 : 0x228, 0x2a0);
+			playUiSound();
+			if (_computerDetailVariantIndex < 0) {
+				_computerDetailVariantIndex = 0;
+			} else {
+				++_computerDetailVariantIndex;
+			}
+			showComputerDetailScreen(stateDword(kStateSelectedSceneChoiceValue));
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool BCBEngine::handleComputerKey(Common::KeyCode keycode) {
+	if (_currentDisplayState == 4 && _computerControlsActive && keycode == Common::KEYCODE_ESCAPE) {
+		const ButtonControlRecord &cancelButton = kComputerPrimaryButtonTable[1];
+		return handleComputerClick(Common::Point(cancelButton.x + 1, cancelButton.y + 1));
+	}
+
+	if (_currentDisplayState == 5 && _computerDetailControlsActive) {
+		if (keycode == Common::KEYCODE_ESCAPE) {
+			const ButtonControlRecord &continueButton = kComputerDetailButtonTable[1];
+			return handleComputerClick(Common::Point(continueButton.x + 1, continueButton.y + 1));
+		}
+
+		if (keycode == Common::KEYCODE_SPACE && _computerDetailNextVariantEnabled) {
+			const ButtonControlRecord &nextButton = kComputerDetailButtonTable[2];
+			return handleComputerClick(Common::Point(nextButton.x + 1, nextButton.y + 1));
+		}
+	}
+
+	return false;
+}
 } // End of namespace BCB
