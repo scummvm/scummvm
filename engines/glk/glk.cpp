@@ -34,12 +34,15 @@
 #include "glk/debugger.h"
 #include "glk/events.h"
 #include "glk/picture.h"
+#include "glk/preferences.h"
 #include "glk/screen.h"
 #include "glk/selection.h"
 #include "glk/sound.h"
 #include "glk/speech.h"
 #include "glk/streams.h"
 #include "glk/windows.h"
+#include "glk/window_text_buffer.h"
+#include "glk/window_text_grid.h"
 
 namespace Glk {
 
@@ -272,6 +275,22 @@ void GlkEngine::syncSoundSettings() {
 	int volume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 
+#ifdef USE_TTS
+	// The game menu restores its speech state before calling this hook.
+	if (_conf && _windows) {
+		GlkPreferences preferences(ConfMan.getDomain(_targetName), true);
+		_conf->_speak = _conf->_speakInput = false;
+		GlkPreferences::parseBool(preferences.get("speak"), _conf->_speak);
+		GlkPreferences::parseBool(preferences.get("speak_input"), _conf->_speakInput);
+		for (Windows::iterator it = _windows->begin(); it != _windows->end(); ++it) {
+			Window *window = *it;
+			if (window->_type == wintype_TextBuffer)
+				static_cast<TextBufferWindow *>(window)->setSpeechEnabled(_conf->_speak);
+			else if (window->_type == wintype_TextGrid)
+				static_cast<TextGridWindow *>(window)->setSpeechEnabled(_conf->_speak);
+		}
+	}
+#endif
 	SpeechManager::syncSoundSettings();
 }
 
