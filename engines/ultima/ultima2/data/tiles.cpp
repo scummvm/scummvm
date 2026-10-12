@@ -165,6 +165,56 @@ void loadAttackSprite(Graphics::ManagedSurface &sprite, RenderMode mode) {
 	decodeTileRecord(record, sprite);
 }
 
+// The colors the driver starts with, kept if a theme has no EGACOLOR of its own
+static const byte DEFAULT_EGA_COLORS[EGA_COLORS_SIZE] = {
+	0x0F, 0x02, 0x04, 0x0C, 0x09, 0x00, 0x00, 0x00, 0x0B, 0x0D, 0x0F, 0x0D, 0x0C, 0x0C, 0x09, 0x0F,
+	0x0F, 0x09, 0x0C, 0x0E, 0x01, 0x03, 0x02, 0x0A, 0x08, 0x0E, 0x04, 0x0B, 0x0D, 0x07, 0x0F, 0x08
+};
+
+const byte *egaColors(RenderMode mode) {
+	static byte colors[EGA_COLORS_SIZE];
+	static RenderMode loadedMode = RENDER_MODE_COUNT;
+
+	if (mode != loadedMode) {
+		loadedMode = mode;
+		memcpy(colors, DEFAULT_EGA_COLORS, EGA_COLORS_SIZE);
+
+		Common::ScopedPtr<Common::SeekableReadStream> f(openEgaFile(mode, "egacolor"));
+		if (f)
+			f->read(colors, EGA_COLORS_SIZE);
+	}
+
+	return colors;
+}
+
+int egaIconCategory(TileId tile) {
+	// Individual terrain types get a category of their own, and the rest by range
+	switch (tile) {
+	case TILE_WATER:
+		return 0;
+	case TILE_SWAMP:
+		return 1;
+	case TILE_GRASS:
+		return 2;
+	case TILE_FOREST:
+		return 3;
+	case TILE_MOUNTAIN:
+		return 4;
+	case TILE_FORCEFIELD:
+		return 5;
+	case TILE_ROAD:
+		return 6;
+	case TILE_MOONGATE:
+		return 7;
+	default:
+		break;
+	}
+
+	if (tile <= TILE_SIGNPOST)
+		return 8;
+	return (tile <= TILE_TITHE_ALTAR || tile > TILE_COUNTER_END_LEFT) ? 9 : 10;
+}
+
 void scrollTileRows(Graphics::Surface &tile, int rows) {
 	byte copy[TILE_WIDTH * TILE_HEIGHT];
 	byte *pixels = (byte *)tile.getPixels();

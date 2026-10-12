@@ -50,6 +50,17 @@ void HelmMap::plotIcon(Graphics::Views::GfxSurface &s, int cellX, int cellY, Dat
 	const byte (*points)[2];
 	int count;
 
+	if (Data::isEgaMode(g_engine->getRenderMode())) {
+		// The EGA renderers fill each cell's block with a color for its terrain, water included
+		byte color = Data::egaColors(g_engine->getRenderMode())[Data::EGA_ICON_COLORS + Data::egaIconCategory(tile)];
+		int bx = cellX * 4 + VIEW_OFFSET, by = cellY * 2 + VIEW_OFFSET;
+		for (int y = 0; y < 2; ++y) {
+			for (int x = 0; x < 4; ++x)
+				s.setPixel(bx + x, by + y, Data::EGA_PALETTE_BASE + color);
+		}
+		return;
+	}
+
 	if (tile == Data::TILE_WATER) {
 		return;
 	} else if (tile == Data::TILE_MOUNTAIN || (tile >= Data::TILE_WALL && tile <= Data::TILE_COUNTER_END_LEFT)) {

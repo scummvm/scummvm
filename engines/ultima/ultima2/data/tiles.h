@@ -71,6 +71,22 @@ void loadTiles(Graphics::Surface tiles[TILE_COUNT], RenderMode mode);
 void loadAttackSprite(Graphics::ManagedSurface &sprite, RenderMode mode);
 
 /**
+ * The EGA renderers' color tables, from the theme's EGACOLOR file or the driver's built-in
+ * defaults if it has none. The first 8 entries give the color of a dungeon monster's blocks by
+ * its facing/type, and the 11 from EGA_ICON_COLORS are the helm map's colors by terrain category
+ */
+constexpr int EGA_COLORS_SIZE = 32;
+constexpr int EGA_MONSTER_COLORS = 0;
+constexpr int EGA_ICON_COLORS = 20;
+constexpr int EGA_ICON_CATEGORIES = 11;
+const byte *egaColors(RenderMode mode);
+
+/**
+ * Returns which of the helm map's EGA_ICON_CATEGORIES color a tile is drawn with
+ */
+int egaIconCategory(TileId tile);
+
+/**
  * Scrolls a tile's rows upwards with wraparound, which is how the water and
  * forcefield tiles animate
  */

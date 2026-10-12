@@ -142,18 +142,19 @@ const byte SPRITE_BAND_OFFSETS[MAX_DEPTH] = { 0, 0, 0x80, 0xC0, 0xE0, 0xF0, 0xF8
 class Painter {
 private:
 	Graphics::Views::GfxSurface &_s;
+	byte _color;
 
 	void plot(byte x, byte y) {
 		int px = x + VIEW_OFFSET, py = y + VIEW_OFFSET;
 		if (px < 320 && py < 160)
-			_s.setPixel(px, py, COLOR_LINE);
+			_s.setPixel(px, py, _color);
 	}
 
 public:
 	byte _x1 = 0, _y1 = 0, _x2 = 0, _y2 = 0;
 	int _depth = 0;
 
-	Painter(Graphics::Views::GfxSurface &s) : _s(s) {
+	Painter(Graphics::Views::GfxSurface &s, byte color) : _s(s), _color(color) {
 	}
 
 	/**
@@ -507,7 +508,8 @@ int DungeonMap::drawCorridor(Graphics::Views::GfxSurface &s) {
 		ry = y + fy;
 	}
 
-	Painter p(s);
+	Painter p(s, Data::isEgaMode(g_engine->getRenderMode()) ?
+		Data::EGA_PALETTE_BASE + 15 : COLOR_LINE);
 	p._depth = 0;
 	p.frontWall();
 
@@ -567,15 +569,23 @@ void DungeonMap::drawMonster(Graphics::Views::GfxSurface &s, const byte *monster
 
 		// Only the nearest monster in view is drawn
 		int offset = (d == 1) ? monsters[d] * 256 : SPRITE_BAND_OFFSETS[d];
+		Data::RenderMode mode = g_engine->getRenderMode();
+		bool ega = Data::isEgaMode(mode);
+
 		while (offset + 1 < (int)sizeof(_monsterSprites) && _monsterSprites[offset] != 0) {
 			int x = (_monsterSprites[offset] + 4) * 4;
 			int y = (_monsterSprites[offset + 1] & 0x1F) * 4 + VIEW_OFFSET;
-			byte pattern = SPRITE_PATTERNS[_monsterSprites[offset + 1] >> 5];
+			byte facing = _monsterSprites[offset + 1] >> 5;
+			byte pattern = SPRITE_PATTERNS[facing];
 			offset += 2;
+
+			// The EGA renderers fill the block with a color for the facing instead of a pattern
+			byte color = ega ? Data::EGA_PALETTE_BASE +
+				Data::egaColors(mode)[Data::EGA_MONSTER_COLORS + facing] : 0;
 
 			for (int row = 0; row < 4; ++row) {
 				for (int col = 0; col < 4; ++col)
-					s.setPixel(x + col, y + row, (pattern >> ((3 - col) * 2)) & 3);
+					s.setPixel(x + col, y + row, ega ? color : (pattern >> ((3 - col) * 2)) & 3);
 			}
 		}
 
@@ -595,10 +605,13 @@ void DungeonMap::draw() {
 		drawMinimap(s);
 
 	if (_inverted) {
+		// Inverts the bits of the color, which for the EGA colors is all four
+		const bool ega = Data::isEgaMode(g_engine->getRenderMode());
+
 		for (int y = 0; y < s.h; ++y) {
 			byte *pixels = (byte *)s.getBasePtr(0, y);
 			for (int x = 0; x < s.w; ++x)
-				pixels[x] ^= 3;
+				pixels[x] = ega ? Data::EGA_PALETTE_BASE + ((pixels[x] ^ 0xF) & 0xF) : pixels[x] ^ 3;
 		}
 
 		s.markAllDirty();
