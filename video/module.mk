@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	psx_decoder.o \
 	qt_decoder.o \
 	qtvr_decoder.o \
+	reelmagic.o \
 	smk_decoder.o \
 	subtitles.o \
 	video_decoder.o
