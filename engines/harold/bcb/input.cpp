@@ -188,12 +188,76 @@ bool BCBEngine::pollEvents(bool handleClicks) {
 			if (handleClicks && !_suppressClickHandling)
 				handleLeftButtonDown(_mousePosition);
 			break;
+		case Common::EVENT_KEYDOWN:
+			if (handleClicks && !_suppressClickHandling) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && handleEscapeAction()) {
+					break;
+				} else if (handleComputerKey(event.kbd.keycode)) {
+					break;
+				} else if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+					handleSkipKey();
+				} else if (_sceneChoiceActive &&
+						   event.kbd.keycode >= Common::KEYCODE_1 &&
+						   event.kbd.keycode <= Common::KEYCODE_9) {
+					handleSceneChoiceKeyboardSelection(event.kbd.keycode - Common::KEYCODE_1 + 1);
+				} else if (_sceneChoiceActive &&
+						   event.kbd.keycode >= Common::KEYCODE_KP1 &&
+						   event.kbd.keycode <= Common::KEYCODE_KP9) {
+					handleSceneChoiceKeyboardSelection(event.kbd.keycode - Common::KEYCODE_KP1 + 1);
+				}
+			}
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (handleClicks && !_suppressClickHandling)
+				handleKeymapperAction(event.customType);
+			break;
 		default:
 			break;
 		}
 	}
 
 	return !shouldQuit();
+}
+
+void BCBEngine::handleKeymapperAction(Common::CustomEventType action) {
+	if (action == kBCBActionInteract) {
+		handleLeftButtonDown(_mousePosition);
+	} else if (action == kBCBActionEscape) {
+		handleEscapeAction();
+	} else if (action == kBCBActionSkip) {
+		handleSkipKey();
+	} else if (action >= kBCBActionChoice1 && action <= kBCBActionChoice9) {
+		handleSceneChoiceKeyboardSelection(action - kBCBActionChoice1 + 1);
+	}
+}
+
+bool BCBEngine::handleEscapeAction() {
+	if (_currentDisplayState == 3) {
+		activateSystemExitButton();
+		return true;
+	}
+
+	return handleComputerKey(Common::KEYCODE_ESCAPE);
+}
+
+void BCBEngine::handleSkipKey() {
+	if (_activeMovieVideo) {
+		if (shouldDrawMovieControlStrip())
+			drawMovieControlStrip(kMovieControlStripSkipPressedSourceX);
+		delayWithEventPolling(160, false);
+		stopActiveMovieAndDispatch();
+		return;
+	}
+
+	if (_currentDisplayState == 10) {
+		transitionFromLogoToTitle();
+		return;
+	}
+
+	if (_currentDisplayState == 6) {
+		playUiSound();
+		completePendingStillImageScreen();
+	}
 }
 
 void BCBEngine::serviceCursorRefresh(bool screenUpdated) {

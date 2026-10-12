@@ -211,6 +211,9 @@ private:
 	void blitScreenWithLineReveal(const Graphics::Surface &surface, bool presentFinalFrame = true);
 	void drawTitleButton(uint buttonIndex, bool pressed);
 	void handleLeftButtonDown(const Common::Point &mousePosition);
+	void handleKeymapperAction(Common::CustomEventType action);
+	bool handleEscapeAction();
+	void handleSkipKey();
 	void handleSceneChoiceKeyboardSelection(int choiceNumber);
 	bool pollEvents();
 	bool pollEvents(bool handleClicks);
