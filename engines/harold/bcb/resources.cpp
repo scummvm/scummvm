@@ -160,4 +160,51 @@ bool BCBEngine::switchActiveMediaDisc(int discNumber) {
 	return true;
 }
 
+void BCBEngine::checkCurrentMediaPathReady() {
+	if (stateDword(kStateClearDisplayBeforeMediaCheckFlag) != 0)
+		clearDisplayAndResetState();
+
+	const int requiredDiscNumber = stateDword(kStateRequiredDiscIndex) + 1;
+	if (requiredDiscNumber == _activeMediaDiscNumber)
+		return;
+
+	if (requiredDiscNumber < 1 || requiredDiscNumber > 5) {
+		warning("BCBEngine::checkCurrentMediaPathReady(): Invalid required media index %d from script state %u",
+				requiredDiscNumber, stateDword(kStateRequiredDiscIndex));
+		_scriptStopFlag = true;
+		return;
+	}
+
+	Common::ArchiveMemberList requiredDiscMembers;
+	if (_discFiles[requiredDiscNumber - 1].listMembers(requiredDiscMembers) == 0) {
+		warning("BCBEngine::checkCurrentMediaPathReady(): Missing installed media directory bcb%d",
+				requiredDiscNumber);
+		debugC(1, kBCBDebugGeneral,
+			   "BCB required media dump: active=bcb%d required=bcb%d scriptRequiredDiscIndex=%u",
+			   _activeMediaDiscNumber, requiredDiscNumber, stateDword(kStateRequiredDiscIndex));
+		_scriptStopFlag = true;
+		return;
+	}
+
+	_currentDisplayState = 0;
+	stopSceneIdleMovie();
+	restoreActiveCaptionBackingRect();
+	freeSceneChoiceBacking();
+	_sceneChoiceActive = false;
+
+	Graphics::Surface blackScreen;
+	blackScreen.create(640, 480, g_system->getScreenFormat());
+	blackScreen.fillRect(Common::Rect(0, 0, 640, 480), blackScreen.format.RGBToColor(0, 0, 0));
+	blitScreenWithLineReveal(blackScreen);
+	blackScreen.free();
+
+	if (!switchActiveMediaDisc(requiredDiscNumber)) {
+		warning("BCBEngine::checkCurrentMediaPathReady(): Failed to switch to installed media directory bcb%d", requiredDiscNumber);
+		_scriptStopFlag = true;
+		return;
+	}
+
+	stateDword(kStateMovieHistoryCount) = 0;
+}
+
 } // End of namespace BCB
