@@ -296,6 +296,9 @@ protected:
 		uint32 getCurChunk() const { return _curChunk; }
 		Common::String &getName() { return _audsHeader.name; }
 		void setCurChunk(uint32 chunk) { _curChunk = chunk; }
+		bool needsAudioOnlyBuffering();
+		void setAllPacketsQueued() { _allPacketsQueued = true; }
+		bool endOfTrack() const override;
 
 		bool isRewindable() const override { return true; }
 		bool rewind() override;
@@ -308,6 +311,8 @@ protected:
 		Audio::AudioStream *_audioStream;
 		Audio::PacketizedAudioStream *_packetStream;
 		uint32 _curChunk;
+		bool _bufferedAudioOnly;
+		bool _allPacketsQueued;
 	};
 
 	struct TrackStatus {
