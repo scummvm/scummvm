@@ -171,6 +171,13 @@ void Record::release() {
 	update(0.0, 0.0);
 }
 
+void Record::limitZ(double z) {
+	if (_z > z) {
+		_z = z;
+		onZChanged();
+	}
+}
+
 void Record::finish() {
 	_isDone = true;
 	callFunction("OnDone");

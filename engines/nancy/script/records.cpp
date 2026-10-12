@@ -143,6 +143,9 @@ void SummaryRecord::readTable(int tableIndex) {
 	if (!readField(L, tableIndex, "bg", _backgroundName)) {
 		luaL_error(L, "No background specified");
 	}
+
+	// The background is behind everything else
+	limitZ(kBackgroundScriptZ);
 }
 
 void SummaryRecord::setBackground(UI::Viewport *background) {

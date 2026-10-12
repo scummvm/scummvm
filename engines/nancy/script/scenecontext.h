@@ -126,6 +126,7 @@ private:
 	LuaState *_lua;
 	Common::Array<Record *> _records;
 	Common::Array<Record *> _newRecords;
+	Common::Array<Record *> _inputOrder;	// the records, in the order the player's input goes to them
 	SummaryRecord *_summary = nullptr;
 	ConvoRecord *_convo = nullptr;
 	Common::Array<ConvoResponse *> _convoResponses;

@@ -101,6 +101,9 @@ public:
 	bool hasStarted() const { return _hasStarted; }
 	double getZ() const { return _z; }
 
+	// Puts the record no closer to the player than the given z
+	void limitZ(double z);
+
 	// Reads or writes one of the fields of the record on behalf of a script.
 	// The key is at stack index 2, and a new value at 3.
 	int getScriptField();

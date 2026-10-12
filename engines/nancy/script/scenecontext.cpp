@@ -207,6 +207,25 @@ void SceneContext::runFrame(double elapsedTime) {
 	_records.push_back(_newRecords);
 	_newRecords.clear();
 
+	// The records run in the order they were made, but what the player does
+	// goes to the ones closest to them first, and among the ones just as close
+	// to the one made last. A z can change at any time.
+	_inputOrder.clear();
+	for (int i = (int)_records.size() - 1; i >= 0; --i) {
+		_inputOrder.push_back(_records[i]);
+	}
+
+	for (uint i = 1; i < _inputOrder.size(); ++i) {
+		Record *record = _inputOrder[i];
+		uint j = i;
+		while (j > 0 && _inputOrder[j - 1]->getZ() < record->getZ()) {
+			_inputOrder[j] = _inputOrder[j - 1];
+			--j;
+		}
+
+		_inputOrder[j] = record;
+	}
+
 	if (!_hasRunOnce) {
 		_hasRunOnce = true;
 		callSceneFunction("RunOnce", 0);
@@ -234,22 +253,23 @@ bool SceneContext::getViewportMouse(const NancyInput &input, ScriptPoint &point)
 	return screenPosition.contains(input.mousePos);
 }
 
-// Everything the player does goes to the records made last first, which leaves
-// the turning around in the background for when nothing else takes a click.
+// Everything the player does goes to the records in their order for input,
+// which leaves the turning around in the background for when nothing else
+// takes a click.
 // Only clicks and keys can be taken; the rest goes to every record.
 void SceneContext::sendMouseEvent(int event, const ScriptPoint &point, bool inViewport) {
 	const bool canBeTaken = event == kEventLeftClick || event == kEventRightClick;
 
-	for (int i = (int)_records.size() - 1; i >= 0; --i) {
-		if (_records[i]->sendMouseEvent((RecordEvent)event, point, inViewport) && canBeTaken) {
+	for (Record *record : _inputOrder) {
+		if (record->sendMouseEvent((RecordEvent)event, point, inViewport) && canBeTaken) {
 			return;
 		}
 	}
 }
 
 void SceneContext::sendKeyEvent(int event, Common::KeyCode key) {
-	for (int i = (int)_records.size() - 1; i >= 0; --i) {
-		if (_records[i]->sendKeyEvent((RecordEvent)event, key) && event == kEventKey) {
+	for (Record *record : _inputOrder) {
+		if (record->sendKeyEvent((RecordEvent)event, key) && event == kEventKey) {
 			return;
 		}
 	}
@@ -272,14 +292,14 @@ void SceneContext::handleInput(NancyInput &input) {
 	ScriptPoint point;
 	const bool inViewport = getViewportMouse(input, point);
 
-	for (int i = (int)_records.size() - 1; i >= 0; --i) {
-		_records[i]->sendMouseMove(point, inViewport);
+	for (Record *record : _inputOrder) {
+		record->sendMouseMove(point, inViewport);
 	}
 
-	for (int i = (int)_records.size() - 1; i >= 0; --i) {
+	for (Record *record : _inputOrder) {
 		uint cursorType = 0;
 		bool isHot = false;
-		if (_records[i]->sendChangeCursor(point, inViewport, cursorType, isHot)) {
+		if (record->sendChangeCursor(point, inViewport, cursorType, isHot)) {
 			g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, isHot);
 			break;
 		}
