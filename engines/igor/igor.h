@@ -844,16 +844,18 @@ private:
 
 	// outside college
 	void PART_17_EXEC_ACTION(int action);
-	void PART_17_ACTION_101_walkIn();
+	void PART_17_ACTION_101_walkIn(bool lateGame = false);
 	void PART_17_ACTION_103_talkPhilipJimmy();
-	void PART_17_ACTION_105_leaveThroughPath();
+	void PART_17_ACTION_105_leaveThroughPath(bool lateGame = false);
 	void PART_17_ACTION_106_swapFolders();
 	void PART_17_HANDLE_DIALOGUE_PHILIP();
 	void PART_17_UPDATE_DIALOGUE_Jimmy(int action);
 	void PART_17_UPDATE_DIALOGUE_Philip(int action);
 	void PART_17_UPDATE_ROOM_BACKGROUND();
 	void PART_17_HELPER_1_OBJECT_STATE(int num);
-	void PART_17_HELPER_2_walkFromMap();
+	void PART_17_HELPER_2_walkFromMap(bool lateGame = false);
+	void PART_17_HELPER_2_setYScaleRamp();
+	void PART_17_HELPER_2_clearEntryAreas();
 	void PART_17_HELPER_3_disableArea(int lum);
 	void PART_17_HELPER_4_paintFirsFrameOfPhilipAndJimmy();
 	void PART_17_HELPER_5_changeZindexOfPath(int lum);
@@ -1244,17 +1246,10 @@ private:
 
 	void PART_77_EXEC_ACTION(int action);
 	void PART_77_APPLY_OBJECT_STATE();
-	void PART_77_SET_AREAS_LIGHT(int lum);
-	void PART_77_CLEAR_ENTRY_AREAS();
-	void PART_77_SET_Y_SCALE_RAMP();
-	void PART_77_SET_Y_SCALE_UNIFORM();
-	void PART_77_DRAW_FRAME(int frame);
+	void PART_77_drawMonkeyFrame(int frame);
 	void PART_77_UPDATE_DIALOGUE(int action);
-	void PART_77_ACTION_101_exitToStairs();
-	void PART_77_ACTION_105_leave();
-	void PART_77_ACTION_106_cutscene();
-	void PART_77_ENTER_FROM_MAP();
-	void PART_77_ENTER_FROM_STAIRS();
+	void PART_77_ACTION_106_monkeyCageCutscene();
+	void PART_77_enterFromCollege();
 	void PART_77();
 
 	void PART_78_DRAW_FIGURE(int frame);

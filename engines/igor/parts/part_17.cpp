@@ -51,21 +51,22 @@ void IgorEngine::PART_17_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_17_ACTION_101_walkIn() {
+void IgorEngine::PART_17_ACTION_101_walkIn(bool lateGame) {
+	const IgorMoveTick tick = lateGame ? 0 : &IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND;
 	_roomObjectAreasTable[_screenLayer2[22034]].area = 8;
 	_roomObjectAreasTable[_screenLayer2[23923]].area = 8;
 	--_walkDataLastIndex;
 	buildWalkPath(243, 77, 243, 74);
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
+	waitForIgorMove(tick);
 	// Added this line compared to the 2009 version to correct the walk path origin.
 	--_walkDataLastIndex;
 
 	buildWalkPath(243, 74, 274, 68);
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
+	waitForIgorMove(tick);
 	_currentPart = 302;
 }
 
@@ -117,7 +118,8 @@ void IgorEngine::PART_17_ACTION_103_talkPhilipJimmy() {
 	}
 }
 
-void IgorEngine::PART_17_ACTION_105_leaveThroughPath() {
+void IgorEngine::PART_17_ACTION_105_leaveThroughPath(bool lateGame) {
+	const IgorMoveTick tick = lateGame ? 0 : &IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND;
 	bool escaped = false;
 	_roomObjectAreasTable[5].area = 1;
 	_roomObjectAreasTable[10].area = 2;
@@ -130,9 +132,9 @@ void IgorEngine::PART_17_ACTION_105_leaveThroughPath() {
 	--_walkDataLastIndex;
 	buildWalkPath(45, 95, 41, 86);
 	_walkDataCurrentIndex = 1;
-	_walkData[_walkDataLastIndex].frameNum = 1;
+	_walkData[_walkDataLastIndex].frameNum = lateGame ? 0 : 1;
 	_gameState.igorMoving = true;
-	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
+	escaped |= waitForIgorMove(tick, true, escaped);
 	PART_17_HELPER_5_changeZindexOfPath(143);
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[44836]].area = 4;
@@ -140,16 +142,13 @@ void IgorEngine::PART_17_ACTION_105_leaveThroughPath() {
 	_roomObjectAreasTable[_screenLayer2[44836]].area = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	for (int i = _walkDataCurrentIndex; i <= _walkDataLastIndex; ++i) {
-		_walkData[i].posNum = kFacingPositionBack;
+	if (!lateGame) {
+		for (int i = _walkDataCurrentIndex; i <= _walkDataLastIndex; ++i) {
+			_walkData[i].posNum = kFacingPositionBack;
+		}
 	}
-	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
-	for (int i = 17; i <= 85; ++i) {
-		_walkYScaleRoom[i] = ((i - 13) / 4) + 5;
-	}
-	for (int i = 86; i <= 135; ++i) {
-		_walkYScaleRoom[i] = 23;
-	}
+	escaped |= waitForIgorMove(tick, true, escaped, lateGame ? kFacingPositionBack : -1);
+	PART_17_HELPER_2_setYScaleRamp();
 	_walkData[0].setPos(65, 115, 1, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 1;
@@ -162,7 +161,7 @@ void IgorEngine::PART_17_ACTION_105_leaveThroughPath() {
 	_roomObjectAreasTable[_screenLayer2[36865]].area = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
+	escaped |= waitForIgorMove(tick, true, escaped);
 	_currentPart = 40;
 }
 
@@ -298,14 +297,10 @@ void IgorEngine::PART_17_HELPER_1_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_17_HELPER_2_walkFromMap() {
+void IgorEngine::PART_17_HELPER_2_walkFromMap(bool lateGame) {
+	const IgorMoveTick tick = lateGame ? 0 : &IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND;
 	bool escaped = false;
-	for (int i = 17; i <= 85; ++i) {
-		_walkYScaleRoom[i] = ((i - 13) / 4) + 5;
-	}
-	for (int i = 86; i <= 135; ++i) {
-		_walkYScaleRoom[i] = 23;
-	}
+	PART_17_HELPER_2_setYScaleRamp();
 	WalkData *wd = &_walkData[0];
 	wd->setPos(21, 17, 3, 0);
 	wd->clipSkipX = 1;
@@ -322,7 +317,7 @@ void IgorEngine::PART_17_HELPER_2_walkFromMap() {
 	_roomObjectAreasTable[_screenLayer2[36865]].area = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
+	escaped |= waitForIgorMove(tick, true, escaped);
 	for (int i = 17; i <= 135; ++i) {
 		_walkYScaleRoom[i] = 50;
 	}
@@ -334,13 +329,17 @@ void IgorEngine::PART_17_HELPER_2_walkFromMap() {
 	_roomObjectAreasTable[_screenLayer2[44836]].area = 4;
 	buildWalkPath(36, 143, 41, 86);
 	_roomObjectAreasTable[_screenLayer2[44836]].area = 0;
-	_walkData[_walkDataLastIndex].frameNum = 0;
+	if (!lateGame) {
+		_walkData[_walkDataLastIndex].frameNum = 0;
+	}
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	for (int i = _walkDataCurrentIndex; i <= _walkDataLastIndex; ++i) {
-		_walkData[i].posNum = kFacingPositionFront;
+	if (!lateGame) {
+		for (int i = _walkDataCurrentIndex; i <= _walkDataLastIndex; ++i) {
+			_walkData[i].posNum = kFacingPositionFront;
+		}
 	}
-	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
+	escaped |= waitForIgorMove(tick, true, escaped, lateGame ? kFacingPositionFront : -1);
 	PART_17_HELPER_5_changeZindexOfPath(0);
 
 	--_walkDataLastIndex;
@@ -348,7 +347,20 @@ void IgorEngine::PART_17_HELPER_2_walkFromMap() {
 	_walkDataCurrentIndex = 2;
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_gameState.igorMoving = true;
-	escaped |= waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND, true, escaped);
+	escaped |= waitForIgorMove(tick, true, escaped);
+	PART_17_HELPER_2_clearEntryAreas();
+}
+
+void IgorEngine::PART_17_HELPER_2_setYScaleRamp() {
+	for (int i = 17; i <= 85; ++i) {
+		_walkYScaleRoom[i] = ((i - 13) / 4) + 5;
+	}
+	for (int i = 86; i <= 135; ++i) {
+		_walkYScaleRoom[i] = 23;
+	}
+}
+
+void IgorEngine::PART_17_HELPER_2_clearEntryAreas() {
 	_roomObjectAreasTable[5].area = 0;
 	_roomObjectAreasTable[10].area = 0;
 	_roomObjectAreasTable[11].area = 0;
@@ -403,14 +415,7 @@ void IgorEngine::PART_17_HELPER_6_walkFromCollege() {
 	_gameState.igorMoving = true;
 	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
 	PART_17_HELPER_5_changeZindexOfPath(0);
-	_roomObjectAreasTable[5].area = 0;
-	_roomObjectAreasTable[10].area = 0;
-	_roomObjectAreasTable[11].area = 0;
-	_roomObjectAreasTable[13].area = 0;
-	_roomObjectAreasTable[16].area = 0;
-	_roomObjectAreasTable[17].area = 0;
-	_roomObjectAreasTable[26].area = 0;
-	_roomObjectAreasTable[28].area = 0;
+	PART_17_HELPER_2_clearEntryAreas();
 }
 
 void IgorEngine::PART_17_HELPER_8_PhillipToJimmyAnimFrame(int num) {
