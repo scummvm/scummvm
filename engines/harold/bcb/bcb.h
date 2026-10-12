@@ -90,7 +90,9 @@ private:
 	void drawSystemSaveLoadSlots(bool present = true);
 	void drawSystemSubmodeButtons(bool present = true);
 	void drawSystemSubmodeButton(uint buttonIndex, bool selected, bool present = true);
+	void drawSystemWaveVolumeIndicator(bool present = true);
 	void syncSystemWaveVolumeFromMixer();
+	void applySystemWaveVolume();
 	bool handleSystemWaveVolumeClick(const Common::Point &mousePosition);
 	bool handleSystemClick(const Common::Point &mousePosition);
 	void activateSystemExitButton();
