@@ -783,6 +783,12 @@ GlkOptionsWidget::GlkOptionsWidget(GuiObject *boss, const Common::String &name,
 		// I18N: This is a setting for enabling text justification
 		_("Justify:"),
 		_justify, "GlkOptionsReading.justify", _("Enable text justification"));
+#ifdef USE_TTS
+	NEW_LABEL_CHECKBOX("GlkOptionsReading.speaklbl", _("Enable Text to Speech"),
+		_speak, "GlkOptionsReading.speak", _("Use TTS to read the text"));
+	NEW_LABEL_CHECKBOX("GlkOptionsReading.speakinputlbl", _("Also read input text"),
+		_speakInput, "GlkOptionsReading.speak_input", _("Use TTS to read the input text"));
+#endif
 
 	_tabs->setActiveTab(pagingTab);
 
@@ -1152,6 +1158,10 @@ void GlkOptionsWidget::loadControls() {
 	_lockcols->setState(_settings->getBool("lockcols", _conf->_lockCols != 0));
 	_lockrows->setState(_settings->getBool("lockrows", _conf->_lockRows != 0));
 	_justify->setState(_settings->getBool("justify", _conf->_propInfo._justify != 0));
+#ifdef USE_TTS
+	_speak->setState(_settings->getBool("speak", false));
+	_speakInput->setState(_settings->getBool("speak_input", false));
+#endif
 	_caps->setState(_settings->getBool("caps", _conf->_propInfo._caps != 0));
 	_graphics->setState(_settings->getBool("graphics", _conf->_graphics));
 
@@ -1347,6 +1357,10 @@ void GlkOptionsWidget::defineLayout(GUI::ThemeEval &layouts,
 	reading.addOptionRow("monosizelbl", "monosize", _monosize,
 		"EditTextWidget");
 	reading.addOptionRow("justifylbl", "justify", _justify, "Checkbox");
+#ifdef USE_TTS
+	reading.addOptionRow("speaklbl", "speak", _speak, "Checkbox");
+	reading.addOptionRow("speakinputlbl", "speak_input", _speakInput, "Checkbox");
+#endif
 	reading.close();
 
 	GlkOptionsPageLayout compatibility(layouts, *this,
@@ -1609,6 +1623,10 @@ void GlkOptionsWidget::rememberControls() {
 		_controls.push_back(ControlBinding("lockcols", _lockcols));
 		_controls.push_back(ControlBinding("lockrows", _lockrows));
 		_controls.push_back(ControlBinding("justify", _justify));
+#ifdef USE_TTS
+		_controls.push_back(ControlBinding("speak", _speak));
+		_controls.push_back(ControlBinding("speak_input", _speakInput));
+#endif
 		_controls.push_back(ControlBinding("caps", _caps));
 		_controls.push_back(ControlBinding("graphics", _graphics));
 		_controls.push_back(ControlBinding("linkstyle", _linkStyle));
@@ -1687,7 +1705,8 @@ bool GlkOptionsWidget::synchronizePending(GlkOptionsState &pending, bool reportE
 		int integer = 0;
 		double number = 0;
 		bool valid = true;
-		switch (contract->type) {
+		// Speech checkboxes use the draft without joining appearance resets.
+		switch (contract ? contract->type : kGlkOptionBoolean) {
 		case kGlkOptionInteger:
 		case kGlkOptionFont:
 			valid = GlkOptionsState::parseInteger(text, contract->minimum, contract->maximum, integer);

@@ -188,6 +188,10 @@ private:
 	GUI::CheckboxWidget *_lockcols;
 	GUI::CheckboxWidget *_lockrows;
 	GUI::CheckboxWidget *_justify;
+#ifdef USE_TTS
+	GUI::CheckboxWidget *_speak;
+	GUI::CheckboxWidget *_speakInput;
+#endif
 	GUI::CheckboxWidget *_caps;
 	GUI::PopUpWidget *_quotes;
 	GUI::PopUpWidget *_dashes;
