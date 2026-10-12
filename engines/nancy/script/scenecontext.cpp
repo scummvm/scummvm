@@ -23,6 +23,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/enginedata.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
 
@@ -193,9 +194,28 @@ void SceneContext::run(double elapsedTime) {
 		}
 	}
 
+	renderAttachment();
+
 	for (Record *record : _records) {
 		record->updateGraphics();
 	}
+}
+
+// What hangs off the cursor is drawn by a function of the scene, which gets
+// handed where the cursor is on the screen
+void SceneContext::renderAttachment() {
+	const VIEW *viewport = GetEngineData(VIEW);
+	assert(viewport);
+
+	ScriptPoint mouse;
+	getViewportMouse(g_nancy->_input->getInput(), mouse);
+
+	ScriptMatrix transform;
+	transform.m[3][0] = mouse.x + viewport->screenPosition.left;
+	transform.m[3][1] = mouse.y + viewport->screenPosition.top;
+
+	pushMatrix(getLua(), transform);
+	callSceneFunction("RenderAttachment", 1);
 }
 
 void SceneContext::runFrame(double elapsedTime) {

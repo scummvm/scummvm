@@ -1192,6 +1192,12 @@ static int viewportIndex(lua_State *L) {
 		assert(viewport);
 		pushRect(L, ScriptRect(0, 0, viewport->screenPosition.width(), viewport->screenPosition.height()));
 		return 1;
+	} else if (key == "location") {
+		// Where the viewport is on the screen
+		const VIEW *viewport = GetEngineData(VIEW);
+		assert(viewport);
+		pushRect(L, ScriptRect(viewport->screenPosition));
+		return 1;
 	}
 
 	lua_pushnil(L);

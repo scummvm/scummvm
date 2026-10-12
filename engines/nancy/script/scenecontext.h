@@ -113,6 +113,7 @@ public:
 private:
 	bool callSceneFunction(const char *name, int numArgs);
 	void runFrame(double elapsedTime);
+	void renderAttachment();
 	bool hasSkippableRecord() const;
 	void pushSceneFunctions();
 	void sendMouseEvent(int event, const ScriptPoint &point, bool inViewport);

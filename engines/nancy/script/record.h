@@ -91,6 +91,10 @@ public:
 	// Makes a record that ran start over. Only some kinds can.
 	bool reset();
 
+	// Draws an active record right away, where its transform puts it on the
+	// screen. Scripts do this for what hangs off the cursor.
+	void render();
+
 	// A record another one keeps for later stays out of the way until it is
 	// released, and then runs right away
 	void hold();
@@ -146,6 +150,7 @@ protected:
 	virtual void onActivation() {}
 	virtual void onDeactivation() {}
 	virtual void onZChanged() {}
+	virtual void renderNow() {}
 
 	// Whether the record can start over, after getting itself ready for it
 	virtual bool prepareReset() { return false; }

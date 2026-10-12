@@ -202,6 +202,7 @@ protected:
 	void onZChanged() override;
 	bool hasTransform() const override { return true; }
 	void onTransformChanged() override { applyRects(); }
+	void renderNow() override;
 	bool getField(const Common::String &key) override;
 	bool setField(const Common::String &key) override;
 
@@ -214,6 +215,11 @@ private:
 	uint32 _modColor = 0xFFFFFFFF;	// what the colors of the picture get multiplied with
 	bool _hasPicture = false;
 	RecordGraphic _graphic;
+
+	// The picture as a script had it drawn by itself, which lasts for a frame
+	RecordGraphic _attachment;
+	bool _hasAttachment = false;
+	bool _isAttachmentDrawn = false;
 };
 
 // Shows the parts of an image one after the other

@@ -706,6 +706,43 @@ void OverlayRecord::onZChanged() {
 
 void OverlayRecord::updateGraphics() {
 	_graphic.setVisible(isActive() && _hasPicture);
+
+	if (_hasAttachment) {
+		_attachment.setVisible(_isAttachmentDrawn);
+		_isAttachmentDrawn = false;
+	}
+}
+
+// What a script draws by itself goes over everything else the scene shows
+static const uint16 kAttachmentZ = 999;
+
+// TODO: The picture is cut off at the edges of the viewport
+void OverlayRecord::renderNow() {
+	Common::Rect source = _source.toRect();
+	source.clip(Common::Rect(_image.w, _image.h));
+	if (source.isEmpty()) {
+		return;
+	}
+
+	if (!_hasAttachment) {
+		_hasAttachment = true;
+		_attachment.init();
+		_attachment.setVisible(false);
+		_attachment.setZOrder(kAttachmentZ);
+		_attachment.registerGraphics();
+	}
+
+	// The transform places the picture on the screen, and the records draw
+	// in the viewport
+	const VIEW *viewport = GetEngineData(VIEW);
+	assert(viewport);
+
+	ScriptMatrix transform = getTransform();
+	transform.m[3][0] -= viewport->screenPosition.left;
+	transform.m[3][1] -= viewport->screenPosition.top;
+
+	placePicture(_attachment, _image, source, _dest, transform, _modColor);
+	_isAttachmentDrawn = true;
 }
 
 bool OverlayRecord::getField(const Common::String &key) {

@@ -171,6 +171,12 @@ void Record::release() {
 	update(0.0, 0.0);
 }
 
+void Record::render() {
+	if (isActive()) {
+		renderNow();
+	}
+}
+
 void Record::limitZ(double z) {
 	if (_z > z) {
 		_z = z;
@@ -407,6 +413,12 @@ static int recordReset(lua_State *L) {
 	return 0;
 }
 
+// ar:Render()
+static int recordRender(lua_State *L) {
+	checkRecord(L, 1)->render();
+	return 0;
+}
+
 // ar:Run(sceneTime, elapsedTime) runs a whole frame of the record
 static int recordRun(lua_State *L) {
 	Record *record = checkRecord(L, 1);
@@ -477,6 +489,7 @@ static const luaL_Reg kRecordFunctions[] = {
 	{ "__eq", recordEquals },
 	{ "Reset", recordReset },
 	{ "Run", recordRun },
+	{ "Render", recordRender },
 	{ "OnMouseMove", recordOnMouseMove },
 	{ "ChangeCursor", recordChangeCursor },
 	{ nullptr, nullptr }
