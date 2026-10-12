@@ -285,6 +285,104 @@ void BCBEngine::drawSystemSubmodeButton(uint buttonIndex, bool selected, bool pr
 		g_system->updateScreen();
 }
 
+void BCBEngine::applySystemWaveVolume() {
+	const int mixerVolume = CLIP<int>((_systemWaveVolume * Audio::Mixer::kMaxMixerVolume + 0x7fff) / 0xffff, 0, Audio::Mixer::kMaxMixerVolume);
+	const int configVolume = CLIP<int>((_systemWaveVolume * Audio::Mixer::kMaxChannelVolume + 0x7fff) / 0xffff, 0, Audio::Mixer::kMaxChannelVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, mixerVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mixerVolume);
+	ConfMan.setInt("music_volume", configVolume);
+	ConfMan.setInt("sfx_volume", configVolume);
+}
+
+void BCBEngine::syncSystemWaveVolumeFromMixer() {
+	const int configMusicVolume = ConfMan.hasKey("music_volume") ? ConfMan.getInt("music_volume") : Audio::Mixer::kMaxChannelVolume;
+	const int configSfxVolume = ConfMan.hasKey("sfx_volume") ? ConfMan.getInt("sfx_volume") : Audio::Mixer::kMaxChannelVolume;
+	const int configVolume = MAX<int>(configMusicVolume, configSfxVolume);
+	if (configVolume >= Audio::Mixer::kMaxChannelVolume) {
+		_systemWaveVolume = 0xffff;
+		return;
+	}
+
+	_systemWaveVolume = CLIP<int>((configVolume * 0xffff + Audio::Mixer::kMaxChannelVolume / 2) / Audio::Mixer::kMaxChannelVolume, 0, 0xffff);
+}
+
+void BCBEngine::drawSystemWaveVolumeIndicator(bool present) {
+	const Graphics::Surface *system = getUiBitmap("16msys.bmp");
+	if (!system)
+		return;
+
+	if (kSystemWaveVolumeIndicatorRect.right <= system->w && kSystemWaveVolumeIndicatorRect.bottom <= system->h) {
+		g_system->copyRectToScreen(system->getBasePtr(kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top),
+								   system->pitch, kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top,
+								   kSystemWaveVolumeIndicatorRect.width(), kSystemWaveVolumeIndicatorRect.height());
+	}
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (screen) {
+		const int fillWidth = (_systemWaveVolume * kSystemWaveVolumeIndicatorRect.width()) / 0xffff;
+		if (fillWidth > 0) {
+			const Common::Rect fillRect(kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top,
+										kSystemWaveVolumeIndicatorRect.left + fillWidth, kSystemWaveVolumeIndicatorRect.bottom);
+			screen->fillRect(fillRect, screen->format.RGBToColor(255, 255, 255));
+		}
+		g_system->unlockScreen();
+	}
+
+	if (present)
+		g_system->updateScreen();
+}
+
+bool BCBEngine::handleSystemWaveVolumeClick(const Common::Point &mousePosition) {
+	if (kSystemWaveVolumeSeekRect.contains(mousePosition)) {
+		const int seekX = CLIP<int>(mousePosition.x - kSystemWaveVolumeIndicatorRect.left, 0, kSystemWaveVolumeIndicatorRect.width());
+		const int volume = CLIP<int>((seekX * 0xffff) / kSystemWaveVolumeIndicatorRect.width(), 0, 0xffff);
+		if (volume != _systemWaveVolume) {
+			_systemWaveVolume = volume;
+			applySystemWaveVolume();
+			drawSystemWaveVolumeIndicator();
+		}
+		ConfMan.flushToDisk();
+		return true;
+	}
+
+	int delta = 0;
+	if (kSystemWaveVolumeUpRect.contains(mousePosition))
+		delta = 0x500;
+	else if (kSystemWaveVolumeDownRect.contains(mousePosition))
+		delta = -0x500;
+	else
+		return false;
+
+	bool done = false;
+	while (!done && !shouldQuit()) {
+		const int volume = CLIP<int>(_systemWaveVolume + delta, 0, 0xffff);
+		if (volume != _systemWaveVolume) {
+			_systemWaveVolume = volume;
+			applySystemWaveVolume();
+			drawSystemWaveVolumeIndicator();
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT) {
+				quitGame();
+				done = true;
+				break;
+			}
+			if (event.type == Common::EVENT_MOUSEMOVE) {
+				_mousePosition = event.mouse;
+			} else if (event.type == Common::EVENT_LBUTTONUP) {
+				_mousePosition = event.mouse;
+				done = true;
+			}
+		}
+		serviceCursorRefresh();
+		g_system->delayMillis(1);
+	}
+	ConfMan.flushToDisk();
+	return true;
+}
+
 bool BCBEngine::handleSystemClick(const Common::Point &mousePosition) {
 	if (_currentDisplayState == 0 && _titleLoadSlotsActive)
 		return handleSaveLoadSlotClick(mousePosition);
@@ -379,20 +477,12 @@ bool BCBEngine::handleSaveLoadSlotClick(const Common::Point &mousePosition) {
 	error("BCB: handleSaveLoadSlotClick is not implemented");
 }
 
-bool BCBEngine::handleSystemWaveVolumeClick(const Common::Point &mousePosition) {
-	error("BCB: handleSystemWaveVolumeClick is not implemented");
-}
-
 void BCBEngine::returnFromSystemMenuToPreviousState() {
 	error("BCB: returnFromSystemMenuToPreviousState is not implemented");
 }
 
 bool BCBEngine::showSystemConfirmationDialog(const Common::U32String &message, bool showCancelButton) {
 	error("BCB: showSystemConfirmationDialog is not implemented");
-}
-
-void BCBEngine::syncSystemWaveVolumeFromMixer() {
-	error("BCB: syncSystemWaveVolumeFromMixer is not implemented");
 }
 
 } // End of namespace BCB
