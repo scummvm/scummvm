@@ -68,7 +68,10 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 			addView("PartyMenu");
 			break;
 		case 'J':
-			if (_G(savegame)._partySize == 0 || !_G(savegame).hasLivingPartyMember()) {
+			if (_G(savegame)._partySize == 0) {
+				// With nobody to journey with, a saved party is the way to carry on
+				g_engine->loadGameDialog();
+			} else if (!_G(savegame).hasLivingPartyMember()) {
 				addView("JourneyOnward");
 			} else {
 				replaceView(g_engine->gameViewName(), true);

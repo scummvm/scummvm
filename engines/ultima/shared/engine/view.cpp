@@ -26,6 +26,9 @@ namespace Ultima {
 namespace Shared {
 
 bool View::msgKeypress(const Graphics::Views::KeypressMessage &msg) {
+	if ((msg.flags & Common::KBD_ALT) && msgHotkey(msg.keycode))
+		return true;
+
 	switch (msg.keycode) {
 	case Common::KEYCODE_F5:
 		g_engine->saveGameDialog();

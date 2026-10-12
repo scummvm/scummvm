@@ -34,6 +34,16 @@ namespace Shared {
  */
 class View : public Graphics::Views::View {
 	ULTIMA_CUSTOM_MESSAGES(Graphics::Views::View)
+protected:
+	/**
+	 * Called for a key pressed with Alt held, which games can give a
+	 * meaning to
+	 * @returns		True if the key was handled
+	 */
+	virtual bool msgHotkey(Common::KeyCode key) {
+		return false;
+	}
+
 public:
 	View(const Common::String &name, Graphics::Views::UIElement *uiParent) : Graphics::Views::View(name, uiParent) {
 	}

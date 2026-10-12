@@ -115,6 +115,15 @@ Common::Error Ultima3Engine::run() {
 	return Common::kNoError;
 }
 
+bool Ultima3Engine::msgKeypress(const Graphics::Views::KeypressMessage &msg) {
+	if ((msg.flags & Common::KBD_ALT) && msg.keycode == Common::KEYCODE_x) {
+		quitGame();
+		return true;
+	}
+
+	return Shared::Events::msgKeypress(msg);
+}
+
 void Ultima3Engine::applyGameSettings() {
 	loadOptions();
 

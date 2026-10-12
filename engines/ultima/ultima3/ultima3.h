@@ -80,6 +80,11 @@ protected:
 		return Engine::shouldQuit();
 	}
 
+	/**
+	 * Handles the upgrade's Alt-X hotkey, which exits from anywhere
+	 */
+	bool msgKeypress(const Graphics::Views::KeypressMessage &msg) override;
+
 private:
 	Audio::PCSpeaker *_pcSpeaker = nullptr;
 	bool _pcSpeakerReady = false;

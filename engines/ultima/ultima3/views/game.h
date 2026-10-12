@@ -103,6 +103,12 @@ protected:
 	virtual byte musicLocation() const;
 
 	/**
+	 * Handles the upgrade's Alt hotkeys: R to restore a saved game and M to go
+	 * back to the title
+	 */
+	bool msgHotkey(Common::KeyCode key) override;
+
+	/**
 	 * Called every frame, for anything the view has going on
 	 */
 	virtual void processFrame() {}
