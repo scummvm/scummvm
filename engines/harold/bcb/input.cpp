@@ -71,10 +71,35 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 		return;
 	}
 
+	if ((_currentDisplayState == 1 || _currentDisplayState == 2) && !_activeMovieVideo) {
+		if (kMovieQueueControlHitRect.contains(mousePosition)) {
+			playUiSound();
+			drawSceneChoiceControlStrip(kMovieControlStripSkipPressedSourceX);
+			delayWithEventPolling(160, false);
+			_previousDisplayStateBeforeSystem = _currentDisplayState;
+			_sceneChoiceActive = false;
+			_mapControlsActive = false;
+			if (_currentDisplayState == 1) {
+				stopSceneIdleMovie();
+				_currentDisplayState = 7;
+			} else {
+				stopMapMoveMovie();
+				drawMapSubmodeMovieBackdrop();
+				_currentDisplayState = 8;
+			}
+			_queuedMoviePlaybackIndex = 0;
+			processQueuedMovieSequence();
+			return;
+		}
+	}
+
 	if (_currentDisplayState == 1 && _sceneChoiceActive) {
 		handleSceneChoiceClick(mousePosition);
 		return;
 	}
+
+	if (handleMapControlClick(mousePosition))
+		return;
 
 	if (_currentDisplayState != 0 || !_titleButtonsActive)
 		return;

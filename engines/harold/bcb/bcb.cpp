@@ -82,6 +82,7 @@ BCBEngine::~BCBEngine() {
 		delete _chipBitmap;
 	}
 	delete _activeMovieVideo;
+	delete _mapMoveVideo;
 	delete _sceneIdleVideo;
 	delete _gameOverVideo;
 	freeSceneChoiceBacking();
@@ -175,6 +176,18 @@ void BCBEngine::mainLoop() {
 					screenUpdated = true;
 				}
 			}
+		}
+
+		if (_mapMoveVideo) {
+			if (_mapMoveVideo->endOfVideo()) {
+				_mapMoveVideo->stop();
+				_mapMoveVideo->rewind();
+				_mapMoveVideo->decodeNextFrame();
+				_mapMoveVideo->start();
+			}
+
+			if (_mapMoveVideo->needsUpdate())
+				_mapMoveVideo->decodeNextFrame();
 		}
 
 		if (_activeMovieVideo) {

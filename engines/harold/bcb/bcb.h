@@ -79,11 +79,15 @@ private:
 	void startSceneIdleMovie();
 	void stopSceneIdleMovie();
 	void restoreTitleScreenRegion(const Common::Rect &rect, bool present = true);
+	bool openMapMoveMovie();
+	void startMapMoveMovie();
+	void stopMapMoveMovie();
 	void resetGameState();
 	bool loadScriptData();
 	bool loadExecutableDataTables();
 	bool loadByteFile(const char *fileName, Common::Array<byte> &data) const;
 	void processGameStateDispatcher(bool runScriptBeforeDispatch);
+	bool dispatchMapMoveControls();
 	void executeCurrentScriptSequence();
 	uint32 executeScriptExpression(uint32 &scriptPc, int &branchTokenSeen);
 	bool pushScriptValue(uint32 value);
@@ -110,9 +114,14 @@ private:
 	void drawMovieControlStrip(int sourceX = 0, bool present = true);
 	void stopActiveMovieAndDispatch();
 	void processQueuedMovieSequence();
+	bool isMapButtonEnabled(uint buttonIndex) const;
+	void drawMapButtonPressed(uint buttonIndex, bool present = true);
 	void composeMapControlsToSurface(Graphics::Surface &surface, const Graphics::Surface &mapArt);
+	void drawMapControls(bool present = true);
+	bool handleMapControlClick(const Common::Point &mousePosition);
 	bool showMainSceneScreen();
 	bool drawMainSceneScreen(bool lineReveal);
+	bool showMapScreen();
 	bool showActiveSceneChoiceControls();
 	void captureSceneChoiceBacking();
 	void restoreSceneChoiceBacking(bool present = true);
@@ -178,6 +187,7 @@ private:
 	Video::AVIDecoder *_menuBackgroundVideo = nullptr;
 	Video::AVIDecoder *_gameOverVideo = nullptr;
 	Video::AVIDecoder *_sceneIdleVideo = nullptr;
+	Video::AVIDecoder *_mapMoveVideo = nullptr;
 	Video::AVIDecoder *_activeMovieVideo = nullptr;
 	Graphics::Surface *_titleBitmap = nullptr;
 	Graphics::Surface *_uiBitmap = nullptr;
