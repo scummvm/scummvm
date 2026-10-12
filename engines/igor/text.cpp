@@ -438,7 +438,7 @@ void IgorEngine::startIgorDialogue() {
 	_inputVars[kInputSkipDialogue] = 0;
 }
 
-void IgorEngine::waitForEndOfIgorDialogue(bool animateHead) {
+void IgorEngine::waitForEndOfIgorDialogue(bool animateHead, bool updateRoomBackground) {
 	do {
 		if (_eventQuitGame) {
 			cancelDialogue();
@@ -490,7 +490,7 @@ void IgorEngine::waitForEndOfIgorDialogue(bool animateHead) {
 				++_talkSpeechCounter;
 			}
 		}
-		if (_updateRoomBackground) {
+		if (updateRoomBackground && _updateRoomBackground) {
 			(this->*_updateRoomBackground)();
 		}
 		if (_inputVars[kInputEscape] && _currentPart == 850)
