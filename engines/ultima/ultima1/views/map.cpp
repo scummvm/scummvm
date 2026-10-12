@@ -44,6 +44,9 @@ bool Map::msgAction(const ActionMessage &msg) {
 }
 
 bool Map::msgKeypress(const KeypressMessage &msg) {
+	if (Dialog::msgKeypress(msg))
+		return true;
+
 	_passStartTime = g_system->getMillis();
 	g_engine->_logic->keypress(msg.keycode);
 	return true;

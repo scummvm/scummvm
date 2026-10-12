@@ -85,9 +85,8 @@ bool Ultima1Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 }
 
 bool Ultima1Engine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return canSaveGameStateCurrently() ||
-		dynamic_cast<Views::Interactions::Dead *>(focusedView()) != nullptr ||
-		dynamic_cast<Views::Interactions::SpaceDead *>(focusedView()) != nullptr;
+	// Allow loading savegames anywhere
+	return true;
 }
 
 Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {

@@ -52,6 +52,9 @@ void MainMenu::draw() {
 }
 
 bool MainMenu::msgKeypress(const KeypressMessage &msg) {
+	if (FullScreenDialog::msgKeypress(msg))
+		return true;
+
 	switch (toupper(msg.ascii)) {
 	case 'A':
 		replaceView("CreateCharacter");
