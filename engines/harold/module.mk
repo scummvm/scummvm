@@ -2,6 +2,7 @@ MODULE := engines/harold
 
 MODULE_OBJS := \
 	bcb/bcb.o \
+	bcb/resources.o \
 	bcb/input.o \
 	metaengine.o
 
