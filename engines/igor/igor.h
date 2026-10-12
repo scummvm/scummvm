@@ -411,6 +411,7 @@ public:
 
 
 	typedef void (IgorEngine::*UpdateDialogueProc)(int action);
+	void syncSoundSettings() override;
 
 private:
 	const IgorGameDescription *_gameDescription;
@@ -422,6 +423,7 @@ private:
 
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _speechHandle;
+	int _optionsControlRow;
 
 	uint8 *_screenVGA;
 	uint8 *_facingIgorFrames[4];
@@ -591,6 +593,8 @@ private:
 	void updateMusic();
 	void playSound(int num, int type);
 	void stopSound();
+	int getTalkMode() const;
+	int prepareDialoguePlayback(const DialogueText &text);
 	void loadIgorFrames();
 	void loadIgorBeachFrames();
 

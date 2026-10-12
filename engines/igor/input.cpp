@@ -306,7 +306,7 @@ void IgorEngine::handleRoomInput() {
 	// dialogue skip
 	if (_inputVars[kInputSkipDialogue] && _gameState.dialogueTextRunning) {
 		_talkDelayCounter = _talkDelay;
-		if (_gameState.talkMode != kTalkModeTextOnly && _talkSpeechCounter > 2) {
+		if (_talkDelay < 0 && _talkSpeechCounter > 2) {
 			stopSound();
 			_talkSpeechCounter = -1;
 		}

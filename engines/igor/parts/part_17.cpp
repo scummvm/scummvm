@@ -173,15 +173,10 @@ void IgorEngine::PART_17_ACTION_106_swapFolders() {
 	}
 	playSound(24, 1);
 
-	// The pair record for action 106 is { 106, 5 }; selector 5 makes the common
-	// input handler walk to object2, the room folder beside Philip and Jimmy,
-	// before dispatching this action. Its walk point is (104, 87). The action
-	// animation itself has the fixed destination 0x311F.
-	// DAT_OutsideCollege use matrix offset 0x68E; cseg141:0A89,0AEE.
 	const int offset = 0x311F;
 
-	for (int j = 0; j <= 8; ++j) { // frames 0..8; cseg141:0A7E-0AEC
-		drawAnimRect(offset, 0x1E6E + j * 1120, 40, 28);
+	for (int frame = 0; frame <= 8; ++frame) {
+		drawAnimRect(offset, 0x1E6E + frame * 1120, 40, 28);
 		waitForTimer(30);
 	}
 
@@ -207,7 +202,7 @@ void IgorEngine::PART_17_ACTION_106_swapFolders() {
 	_gameState.igorMoving = true;
 	waitForIgorMove(&IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND);
 	// Creo q no ha notado nada
-	ADD_DIALOGUE_TEXT(223, 2, 647); // cseg141:0B75-0B81
+	ADD_DIALOGUE_TEXT(223, 2, 647);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 }

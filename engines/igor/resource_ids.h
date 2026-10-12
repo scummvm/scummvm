@@ -491,9 +491,9 @@
 
 // CD-only intro card shown by state 850. All three resources are contiguous in
 // NE segment 209 immediately after the intro code.
-#define FRM_IgorIntroLogo 913 // cseg209:13BE; IGOR.EXE:0x7C09BE, 206x13
-#define IMG_IgorIntroLogo 914 // cseg209:1E34; IGOR.EXE:0x7C1434, 320x122
-#define PAL_IgorIntroLogo 915 // cseg209:B6B4; IGOR.EXE:0x7CACB4, 768 bytes
+#define FRM_IgorIntroLogo 913
+#define IMG_IgorIntroLogo 914
+#define PAL_IgorIntroLogo 915
 
 #define DAT_AdministrationCorridor 916
 #define ANM_AdministrationCorridor 917

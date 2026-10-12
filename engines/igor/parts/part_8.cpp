@@ -151,7 +151,7 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 	loadActionData(DAT_DeanPepperOffice);
 	loadRoomData(PAL_DeanPepperOffice, IMG_DeanPepperOffice, BOX_DeanPepperOffice, MSK_DeanPepperOffice, TXT_DeanPepperOffice);
 	_roomDataOffsets = PART_08_ROOM_DATA_OFFSETS;
-	setRoomClickFix(143, -1, 281, false); // cseg100:0657
+	setRoomClickFix(143, -1, 281, false);
 	PART_08_APPLY_OBJECT_STATE(255);
 	memcpy(_screenVGA, roomScreen, 46080);
 	free(roomScreen);

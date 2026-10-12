@@ -20,7 +20,7 @@ void IgorEngine::PART_02_SEARCH_TRUNK() {
 
 void IgorEngine::PART_02_DRAW_FUSE_SPARK(int frame) {
 	// Four 12x12 spark frames are stored at animation offset 0x7FCB and are
-	// composited over the fuse at screen offset 0x5996. cseg203:1339-1443
+	// composited over the fuse at screen offset 0x5996.
 	const uint8 *src = _animFramesBuffer + 0x7FCB + frame * 0x90;
 	for (int y = 0; y < 12; ++y) {
 		for (int x = 0; x < 12; ++x) {
@@ -145,7 +145,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		igorSay(217, 1, 121);
 		break;
 	}
-	case 104: { // use the pick on the crack; cseg203:0838-0A2C
+	case 104: { // use the pick on the crack;
 		if (_objectsState[23] == 1) {
 			EXEC_MAIN_ACTION(2);
 			break;

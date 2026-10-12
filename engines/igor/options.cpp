@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/config-manager.h"
 #include "common/events.h"
 
 #include "igor/igor.h"
@@ -200,35 +201,61 @@ static void redrawRect(uint8 *dst, int num, bool border) {
 }
 
 void IgorEngine::handleOptionsMenu_paintCtrl() {
-	redrawRect(_screenTextLayer, 1, false);
-	drawOptionsMenuText(kOptionsSoundOff + CLIP<int>(_gameState.configSoundEnabled, 0, 2), 159, 41 - 15, 0xF7);
-
-	redrawRect(_screenTextLayer, 2, false);
-	int speechText = (_game.flags & kFlagTalkie)
-		? kOptionsSpeechOnly + CLIP<int>(_gameState.talkMode, 0, 2)
-		: kOptionsSpeechUnavailable;
-	drawOptionsMenuText(speechText, 159, 63 - 15, 0xF7);
-
-	redrawRect(_screenTextLayer, 3, false);
-	drawOptionsMenuText(kOptionsMusicOn, 159, 85 - 15, 0xF7);
-
-	redrawRect(_screenTextLayer, 4, true);
-	drawOptionsMenuText(kOptionsSpeedVerySlow + CLIP<int>(_gameState.talkSpeed, 1, 7) - 1, 159, 107 - 15, 0xF6);
+	const int talkMode = getTalkMode();
+	const int labels[] = {
+		kOptionsSoundOff + CLIP<int>(_gameState.configSoundEnabled, 0, 2),
+		(_game.flags & kFlagTalkie) ? kOptionsSpeechOnly + talkMode : kOptionsSpeechUnavailable,
+		(ConfMan.getBool("mute") || ConfMan.getBool("music_mute")) ? kOptionsMusicOff : kOptionsMusicOn,
+		talkMode == kTalkModeTextOnly
+			? kOptionsSpeedVerySlow + CLIP<int>(_gameState.talkSpeed, 1, 5) - 1
+			: (talkMode == kTalkModeSpeechOnly ? kOptionsSpeedOff : kOptionsSpeedSpeech)
+	};
+	for (int row = 1; row <= 4; ++row) {
+		redrawRect(_screenTextLayer, row, row == _optionsControlRow);
+		drawOptionsMenuText(labels[row - 1], 159, 22 * row + 4,
+			row == _optionsControlRow ? 0xF6 : 0xFF);
+	}
 }
 
 bool IgorEngine::handleOptionsMenu_handleKeyDownCtrl(int key) {
+	const int firstRow = (_game.flags & kFlagTalkie) ? 1 : 4;
+	const int lastRow = getTalkMode() == kTalkModeTextOnly ? 4 : 3;
 	switch (key) {
 	case Common::KEYCODE_ESCAPE:
 		return true;
-	case Common::KEYCODE_RETURN:
-		if (_gameState.talkSpeed == 5) {
-			_gameState.talkSpeed = 1;
-		} else {
-			++_gameState.talkSpeed;
-		}
-		handleOptionsMenu_paintCtrl();
+	case Common::KEYCODE_UP:
+		_optionsControlRow = MAX(firstRow, _optionsControlRow - 1);
 		break;
+	case Common::KEYCODE_DOWN:
+		_optionsControlRow = MIN(lastRow, _optionsControlRow + 1);
+		break;
+	case Common::KEYCODE_RETURN:
+		switch (_optionsControlRow) {
+		case 1:
+			ConfMan.setBool("sfx_mute", !ConfMan.getBool("sfx_mute"));
+			break;
+		case 2: {
+			const int talkMode = (getTalkMode() + 1) % 3;
+			ConfMan.setBool("speech_mute", talkMode == kTalkModeTextOnly);
+			ConfMan.setBool("subtitles", talkMode != kTalkModeSpeechOnly);
+			_gameState.talkSpeed = talkMode == kTalkModeTextOnly ? 3
+				: (talkMode == kTalkModeSpeechOnly ? 7 : 6);
+			break;
+		}
+		case 3:
+			ConfMan.setBool("music_mute", !ConfMan.getBool("music_mute"));
+			break;
+		case 4:
+			_gameState.talkSpeed = _gameState.talkSpeed == 5 ? 1 : _gameState.talkSpeed + 1;
+			break;
+		}
+		syncSoundSettings();
+		ConfMan.flushToDisk();
+		break;
+	default:
+		return false;
 	}
+	handleOptionsMenu_paintCtrl();
 	return false;
 }
 static void drawButtonsBar(uint8 *dst, const uint8 *src) {
@@ -339,6 +366,8 @@ void IgorEngine::handleOptionsMenu() {
 								memset(_screenTextLayer + (y + 3) * 320 + 44, 0xF8, 232);
 							}
 							drawOptionsMenuText(pages[currentPage].captions[1], pages[currentPage].xPos[1], yPosCaption, 0xFB);
+							if (currentPage == kPageCtrl)
+								_optionsControlRow = (_game.flags & kFlagTalkie) ? 1 : 4;
 							(this->*pages[currentPage].paintProc)();
 							focusOnPage = true;
 						}
