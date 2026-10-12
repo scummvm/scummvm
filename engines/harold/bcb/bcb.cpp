@@ -90,6 +90,10 @@ BCBEngine::~BCBEngine() {
 	delete _sceneIdleVideo;
 	delete _gameOverVideo;
 	freeSceneChoiceBacking();
+	if (_computerDetailBacking) {
+		_computerDetailBacking->free();
+		delete _computerDetailBacking;
+	}
 	delete _sjisFont;
 	delete _captionTextFont;
 	delete _gameOverTextFont;

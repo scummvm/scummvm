@@ -31,8 +31,6 @@
 #include "harold/bcb/script.h"
 #include "harold/bcb/static_data.h"
 
-#include "common/textconsole.h"
-
 namespace BCB {
 
 static const int kComputerCompositeTransitionLeft = 36;
@@ -60,6 +58,15 @@ bool BCBEngine::dispatchComputerMainControls() {
 
 	g_system->updateScreen();
 	return true;
+}
+
+bool BCBEngine::dispatchComputerDetailControls() {
+	_computerDetailVariantIndex = 0;
+	_computerControlsActive = false;
+	_computerDetailControlsActive = true;
+	_computerActiveChoiceIds.clear();
+	_computerActiveChoiceRects.clear();
+	return showComputerDetailScreen(stateDword(kStateSelectedSceneChoiceValue));
 }
 
 bool BCBEngine::showComputerScreen() {
@@ -127,6 +134,16 @@ void BCBEngine::drawComputerButtonPressed(const ButtonControlRecord &button, int
 	}
 }
 
+void BCBEngine::drawComputerDetailButtonNormal(const ButtonControlRecord &button) {
+	if (!_computerDetailBacking)
+		return;
+
+	if (button.x + button.width <= _computerDetailBacking->w && button.y + button.height <= _computerDetailBacking->h) {
+		g_system->copyRectToScreen(_computerDetailBacking->getBasePtr(button.x, button.y), _computerDetailBacking->pitch, button.x, button.y, button.width, button.height);
+		g_system->updateScreen();
+	}
+}
+
 void BCBEngine::drawComputerUnavailableMarker(const ButtonControlRecord &destButton) {
 	const Graphics::Surface *computer = getComputerBitmap();
 	if (!computer)
@@ -138,6 +155,87 @@ void BCBEngine::drawComputerUnavailableMarker(const ButtonControlRecord &destBut
 	const int markerHeight = 0x18;
 	if (markerSourceX + markerWidth <= computer->w && markerSourceY + markerHeight <= computer->h)
 		g_system->copyRectToScreen(computer->getBasePtr(markerSourceX, markerSourceY), computer->pitch, destButton.x + 5, destButton.y + 0x0c, markerWidth, markerHeight);
+}
+
+void BCBEngine::drawXorRectangleBorder(const Common::Rect &rect) {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+
+	const Common::Rect clipped = rect.findIntersectingRect(Common::Rect(0, 0, screen->w, screen->h));
+	if (clipped.width() > 0 && clipped.height() > 0) {
+		const auto invertPixel = [&](int x, int y) {
+			byte *pixel = (byte *)screen->getBasePtr(x, y);
+			switch (screen->format.bytesPerPixel) {
+			case 1:
+				pixel[0] ^= 0xff;
+				break;
+			case 2:
+				WRITE_UINT16(pixel, READ_UINT16(pixel) ^ 0xffff);
+				break;
+			case 3:
+				pixel[0] ^= 0xff;
+				pixel[1] ^= 0xff;
+				pixel[2] ^= 0xff;
+				break;
+			case 4:
+				pixel[0] ^= 0xff;
+				pixel[1] ^= 0xff;
+				pixel[2] ^= 0xff;
+				break;
+			default:
+				break;
+			}
+		};
+
+		for (int x = clipped.left; x < clipped.right; ++x) {
+			invertPixel(x, clipped.top);
+			if (rect.bottom != rect.top && rect.bottom >= 0 && rect.bottom < screen->h)
+				invertPixel(x, rect.bottom);
+		}
+		for (int y = clipped.top; y < clipped.bottom; ++y) {
+			invertPixel(clipped.left, y);
+			if (rect.right != rect.left && rect.right >= 0 && rect.right < screen->w)
+				invertPixel(rect.right, y);
+		}
+	}
+
+	g_system->unlockScreen();
+	g_system->updateScreen();
+}
+
+void BCBEngine::processXorRectangleBorderAnimation(bool expand, const Common::Rect &sourceRect, const Common::Rect &targetRect) {
+	const double base = 0.7;
+	double drawScale = pow(base, 15.0);
+	double eraseScale = drawScale;
+	const double divisor = expand ? base : (1.0 / base);
+	if (!expand) {
+		drawScale = 1.0 - drawScale;
+		eraseScale = drawScale;
+	}
+
+	const auto transitionRect = [&](double scale) {
+		return Common::Rect(
+			sourceRect.left + (int16)(int)((targetRect.left - sourceRect.left) * scale),
+			sourceRect.top + (int16)(int)((targetRect.top - sourceRect.top) * scale),
+			sourceRect.right + (int16)(int)((targetRect.right - sourceRect.right) * scale),
+			sourceRect.bottom + (int16)(int)((targetRect.bottom - sourceRect.bottom) * scale));
+	};
+
+	for (int step = 0; step < 22; ++step) {
+		if (step < 14) {
+			drawScale /= divisor;
+			drawXorRectangleBorder(transitionRect(drawScale));
+		}
+
+		if (step > 7) {
+			eraseScale /= divisor;
+			drawXorRectangleBorder(transitionRect(eraseScale));
+		}
+
+		g_system->delayMillis(20);
+		pollEvents(false);
+	}
 }
 
 void BCBEngine::drawComputerConditionalChoiceControls(const ButtonControlRecord *choiceButtonRecords, int firstStateIndex, int stateCount) {
@@ -184,8 +282,49 @@ void BCBEngine::drawComputerConditionalChoiceControls(const ButtonControlRecord 
 	}
 }
 
-bool BCBEngine::dispatchComputerDetailControls() {
-	error("BCB: dispatchComputerDetailControls is not implemented");
+bool BCBEngine::showComputerDetailScreen(int compositeIndex) {
+	if (compositeIndex < 0 || compositeIndex >= (int)ARRAYSIZE(kComputerDetailBitmapVariantsBySelectedValue))
+		return false;
+
+	const CompositeBitmapVariantSet &variantSet = kComputerDetailBitmapVariantsBySelectedValue[compositeIndex];
+	if (variantSet.pathCount == 0 || _computerDetailVariantIndex < 0 || _computerDetailVariantIndex >= (int)variantSet.pathCount)
+		return false;
+	const int displayedVariantIndex = _computerDetailVariantIndex;
+	const char *const compositePath = variantSet.paths[_computerDetailVariantIndex];
+
+	const Graphics::Surface *computer = getComputerBitmap();
+	if (!computer)
+		return false;
+
+	Graphics::Surface *composite = loadDiscBitmap(compositePath);
+	if (!composite)
+		return false;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (screen) {
+		screen->copyRectToSurface(*computer, 0, 0, Common::Rect(0, 0, MIN<int>(computer->w, 640), MIN<int>(computer->h, 480)));
+		screen->copyRectToSurface(*composite, 0x24, 0x23, Common::Rect(0, 0, MIN<int>(composite->w, 640 - 0x24), MIN<int>(composite->h, 480 - 0x23)));
+		if (_computerDetailBacking) {
+			_computerDetailBacking->free();
+			delete _computerDetailBacking;
+			_computerDetailBacking = nullptr;
+		}
+		_computerDetailBacking = new Graphics::Surface();
+		_computerDetailBacking->copyFrom(*screen);
+		g_system->unlockScreen();
+	}
+
+	composite->free();
+	delete composite;
+
+	_computerDetailNextVariantEnabled = variantSet.pathCount > 1;
+
+	if (_computerDetailNextVariantEnabled && displayedVariantIndex + 1 >= (int)variantSet.pathCount)
+		_computerDetailVariantIndex = -1;
+
+	_currentDisplayState = 5;
+	g_system->updateScreen();
+	return true;
 }
 
 } // End of namespace BCB
