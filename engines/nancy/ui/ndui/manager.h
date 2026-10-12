@@ -102,6 +102,15 @@ public:
 	// Creates every panel in the IFF with the given name, and in the ones it includes
 	void load(const Common::String &name);
 
+	// Nancy19 panels are made by scripts, which fill them in afterwards. They have to
+	// be taken down before the scripts go away, since their controls call into them.
+	Panel *addPanel(byte kind);
+	void clearPanels();
+
+	// The control whose event is being handled by a script
+	const Common::String &getEventSender() const { return _eventSender; }
+	void setEventSender(const Common::String &sender) { _eventSender = sender; }
+
 	void takeAction(const Action &action);
 	void takeAction(int32 type, const Common::String &target, double value);
 	void takeAction(int32 type, const Common::String &target, const Common::String &text);
@@ -138,6 +147,8 @@ public:
 
 	// Displays a value of the value table, until it gets unregistered
 	void registerValueDisplay(int16 index, const Common::String &display);
+	// Nancy19 has the values by name
+	void registerValueDisplay(const Common::String &valueName, const Common::String &display);
 
 	// What scenes and the player changed about the panels and controls, kept in saved games
 	void saveState(Common::Array<UIStateData::Change> &changes) const;
@@ -154,9 +165,10 @@ public:
 private:
 	struct ValueDisplay {
 		int16 index = 0;
+		Common::String valueName;	// Nancy19
 		Common::String name;
 		bool hasShownValue = false;
-		int16 shownValue = 0;
+		int32 shownValue = 0;
 	};
 
 	typedef Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> StringMap;
@@ -187,6 +199,7 @@ private:
 	InvButton *findItemButton(int16 itemID) const;
 
 	Common::Array<Panel *> _panels;
+	Common::String _eventSender;
 	Common::String _caption;
 	Common::HashMap<Common::String, Graphics::ManagedSurface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _textures;
 	Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _templates;

@@ -195,7 +195,8 @@ MODULE_OBJS += \
   script/records.o \
   script/ref.o \
   script/scenecontext.o \
-  script/types.o
+  script/types.o \
+  script/uiapi.o
 endif
 
 # This module can be built as a plugin

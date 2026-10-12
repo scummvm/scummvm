@@ -49,6 +49,7 @@ Panel::Panel(Manager *manager, uint16 z, byte kind) : RenderObject(z), _manager(
 Panel::~Panel() {
 	delete _background;
 	delete _tooltip;
+	delete _objectFactory;
 
 	for (Control *control : _controls) {
 		delete control;
@@ -125,6 +126,7 @@ void Panel::place() {
 
 	moveTo(screenPosition);
 	_drawSurface.create(screenPosition.width(), screenPosition.height(), g_nancy->_graphics->getTransparentPixelFormat());
+	_isPlaced = true;
 
 	setVisible(_showCount > 0);
 	growToControls();
@@ -154,6 +156,22 @@ void Panel::growToControls() {
 	}
 }
 
+bool Panel::createObject(const Common::String &name, const Common::String &templateName) {
+	return _objectFactory && _objectFactory->createObject(name, templateName);
+}
+
+// The script adds a button like any other, which becomes the item's on its way in
+void Panel::addItemButton(const INVD::Item &item) {
+	_kind = kObjectInvPanel;
+	_newItem = &item;
+
+	if (!createObject(item.name, "InvButton")) {
+		warning("Couldn't create the UI button of item %s", item.name.c_str());
+	}
+
+	_newItem = nullptr;
+}
+
 void Panel::readControl(Common::SeekableReadStream &stream) {
 	int32 type = stream.readSint32LE();
 	addNewControl(type, stream);
@@ -163,6 +181,15 @@ Control *Panel::addNewControl(int32 type, Common::SeekableReadStream &stream) {
 	Control *control = nullptr;
 	switch (type) {
 	case kControlButton:
+		if (_newItem) {
+			InvButton *button = new InvButton(this);
+			button->read(stream);
+			button->setItem(*_newItem);
+			button->setVisible(false);
+			addControl(button);
+			return button;
+		}
+
 		control = new Button(this);
 		break;
 	case kControlStatic:
@@ -326,6 +353,11 @@ void Panel::arrangeControls() {
 }
 
 bool Panel::takeAction(const Action &action) {
+	// A panel whose script never got to its background has nothing to act on
+	if (!_isPlaced) {
+		return false;
+	}
+
 	if (!getName().equalsIgnoreCase(action.target)) {
 		for (Control *control : _controls) {
 			if (control->takeAction(action)) {
@@ -407,6 +439,10 @@ void Panel::showItem(int16 itemID, bool show) {
 }
 
 void Panel::saveState(Common::Array<UIStateData::Change> &changes) const {
+	if (!_savesState || !_isPlaced) {
+		return;
+	}
+
 	for (const Control *control : _controls) {
 		addStateChanges(changes, control->getName(), control->getInitialState(), control->isVisible(), control->isEnabled());
 	}
@@ -415,6 +451,10 @@ void Panel::saveState(Common::Array<UIStateData::Change> &changes) const {
 }
 
 void Panel::finishBlending() {
+	if (!_isPlaced) {
+		return;
+	}
+
 	_background->update(kFinishBlendingTime);
 	for (Control *control : _controls) {
 		control->update(kFinishBlendingTime);

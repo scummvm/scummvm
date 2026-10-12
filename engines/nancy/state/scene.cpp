@@ -2871,10 +2871,7 @@ void Scene::initStaticData() {
 			_streams.clear();
 		}
 
-		// The UI of Nancy19 is made by the scripts of a stream of its own
-		if (g_nancy->getGameType() <= kGameTypeNancy18) {
-			initUI();
-		}
+		initUI();
 
 		// The popups of the earlier games go unused, and must never count as open
 		_inventoryPopup.setVisible(false);
@@ -2983,11 +2980,21 @@ void Scene::initStaticData() {
 // task list; the records that fill the last two run again as their conditions allow
 void Scene::initUI() {
 	auto *pcui = GetEngineData(PCUI);
-	auto *puih = GetEngineData(PUIH);
-	assert(pcui && puih);
+	assert(pcui);
 
 	delete _ndui;
 	_ndui = new UI::NDUI::Manager();
+
+	// The UI of Nancy19 is made by the scripts of a stream of its own, which
+	// gets back to the scene once the panels are there
+	if (g_nancy->getGameType() >= kGameTypeNancy19) {
+		_streams.begin("UIStream", pcui->uiName.toString(), 0, StreamFlags());
+		return;
+	}
+
+	auto *puih = GetEngineData(PUIH);
+	assert(puih);
+
 	_ndui->load(pcui->uiName.toString());
 
 	if (g_nancy->getGameType() >= kGameTypeNancy17) {
@@ -3021,6 +3028,23 @@ void Scene::initUI() {
 	_ndui->applyMatteColor();
 	_ndui->registerGraphics();
 }
+
+#ifdef ENABLE_NANCY_V4
+void Scene::onScriptedUILoaded() {
+	_ndui->createItemButtons();
+
+	// The most recent items come first
+	const Common::Array<int16> &order = _inventoryBox.getOrder();
+	for (int i = (int)order.size() - 1; i >= 0; --i) {
+		if (order[i] != -1 && _flags.items[order[i]] == g_nancy->_true) {
+			_ndui->showInventoryItem(order[i], true);
+		}
+	}
+
+	_ndui->restoreState(((UIStateData *)getPuzzleData(UIStateData::getTag()))->changes);
+	_ndui->applyMatteColor();
+}
+#endif
 
 void Scene::loadUIPrepRecords(const Common::Path &name) {
 	IFF *iff = g_nancy->_resource->loadIFF(name);

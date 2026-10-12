@@ -80,6 +80,7 @@ void registerAPI(lua_State *L) {
 	registerBootAPI(L);
 	registerInventoryAPI(L);
 	registerGameAPI(L);
+	registerUIAPI(L);
 	registerRecordAPI(L);
 }
 

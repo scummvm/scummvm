@@ -22,6 +22,7 @@
 #ifndef NANCY_UI_NDUI_PANEL_H
 #define NANCY_UI_NDUI_PANEL_H
 
+#include "engines/nancy/enginedata.h"
 #include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/ui/ndui/common.h"
@@ -62,9 +63,21 @@ public:
 	void readScrolling(Common::SeekableReadStream &stream);
 	void readBackground(Common::SeekableReadStream &stream);
 	void place();
+	bool isPlaced() const { return _isPlaced; }
+	Static *getBackground() const { return _background; }
 
 	// A panel without controls to arrange is as large as it takes to draw them all
 	void growToControls();
+
+	// Nancy19: makes the controls that get created while the game runs. The panel takes it over.
+	void setObjectFactory(ObjectFactory *factory) { delete _objectFactory; _objectFactory = factory; }
+	bool createObject(const Common::String &name, const Common::String &templateName);
+
+	// Nancy19: has the panel's script make the button of an item
+	void addItemButton(const INVD::Item &item);
+
+	// Whether saved games keep what was done to the panel and its controls
+	void setSavesState(bool savesState) { _savesState = savesState; }
 
 	// Nancy17 keeps the items apart from the panel that shows them, which comes
 	// with nothing but a template for their buttons
@@ -125,6 +138,10 @@ private:
 
 	Manager *_manager;
 	byte _kind;
+	bool _isPlaced = false;
+	bool _savesState = true;
+	ObjectFactory *_objectFactory = nullptr;
+	const INVD::Item *_newItem = nullptr;	// the item whose button is being made
 
 	uint32 _backgroundColor = 0;
 	Static *_background = nullptr;

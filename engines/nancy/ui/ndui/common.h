@@ -90,7 +90,7 @@ enum EventType {
 	kEventScrolled		= 15,
 	kEventShow			= 16,	// the panel holding the control was shown
 	kEventHide			= 17,	// the panel holding the control was hidden
-	kEventUpdate		= 18,	// sent every frame while the panel is visible
+	kEventUpdate		= 18,	// sent every frame while the panel is visible; "load" to Nancy19 scripts
 	kEventActionRecord	= 100	// sent by a scene's action record
 };
 
@@ -121,6 +121,23 @@ struct Action {
 	double value = 0;
 	Common::String text;
 	Common::String sender;		// the control that fired the event
+};
+
+// Nancy19 describes its UI with scripts in place of NDUI chunks. A control hands
+// its events to a function of the script that made it, which stands in for the
+// actions bound to them...
+class EventHandler {
+public:
+	virtual ~EventHandler() {}
+	virtual void onEvent(int32 eventType, bool isOwnEvent, double value, const Common::String &text) = 0;
+};
+
+// ...and a function of a panel's script stands in for the templates of the controls
+// that get created while the game runs
+class ObjectFactory {
+public:
+	virtual ~ObjectFactory() {}
+	virtual bool createObject(const Common::String &name, const Common::String &templateName) = 0;
 };
 
 // Adds the actions that bring a panel or control from the state it starts in to the given one

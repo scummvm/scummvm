@@ -38,6 +38,7 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/ndui/common.h"
 #include "engines/nancy/ui/ndui/manager.h"
 
 namespace Nancy {
@@ -976,6 +977,99 @@ static const luaL_Reg kPlayerFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+bool findText(const Common::String &key, Common::String &text) {
+	static const char *const kTableNames[] = { "AUTOTEXT", "CONVO" };
+
+	for (const char *tableName : kTableNames) {
+		const CVTX *table = (const CVTX *)g_nancy->getEngineData(tableName);
+		if (table && table->texts.contains(key)) {
+			text = table->texts[key];
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Message, which has the UI do something to one of its panels or controls
+// TODO: Message:EncodeRect
+
+struct MessageActionName {
+	const char *name;
+	int32 type;
+};
+
+static const MessageActionName kMessageActionNames[] = {
+	{ "show", UI::NDUI::kActionShow },
+	{ "hide", UI::NDUI::kActionHide },
+	{ "toggleHidden", UI::NDUI::kActionToggle },
+	{ "enable", UI::NDUI::kActionEnable },
+	{ "disable", UI::NDUI::kActionDisable },
+	{ "toggleDisabled", UI::NDUI::kActionToggleEnabled },
+	{ "addText", UI::NDUI::kActionAddText },
+	{ "setText", UI::NDUI::kActionSetText },
+	{ "setValue", UI::NDUI::kActionSetValue },
+	{ "getValue", UI::NDUI::kActionQuery },
+	{ "showItem", UI::NDUI::kActionShowItem },
+	{ "hideItem", UI::NDUI::kActionHideItem }
+};
+
+// Message:Send(action, target[, value[, text[, isTextKey]]])
+// The text is the key of an autotext entry, unless it says otherwise
+static int messageSend(lua_State *L) {
+	const char *actionName = luaL_checkstring(L, 2);
+	const char *target = luaL_checkstring(L, 3);
+
+	int32 type = 0;
+	for (const MessageActionName &action : kMessageActionNames) {
+		if (scumm_stricmp(action.name, actionName) == 0) {
+			type = action.type;
+		}
+	}
+
+	if (type == 0) {
+		return luaL_error(L, "Action type '%s' invalid", actionName);
+	}
+
+	UI::NDUI::Action action;
+	action.type = type;
+	action.target = target;
+	action.hasValue = true;
+
+	const int numArgs = lua_gettop(L);
+	if (numArgs > 3) {
+		action.value = luaL_checknumber(L, 4);
+	}
+
+	if (numArgs > 4) {
+		action.text = luaL_checkstring(L, 5);
+	}
+
+	const bool isTextKey = numArgs > 5 ? lua_toboolean(L, 6) : true;
+	if (isTextKey && !action.text.empty()) {
+		const Common::String key = action.text;
+		if (!findText(key, action.text)) {
+			return luaL_error(L, "Autotext reference '%s' invalid", key.c_str());
+		}
+	}
+
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	if (!ui) {
+		return 0;
+	}
+
+	// The targets that answer do so to the control whose event is being handled
+	action.sender = ui->getEventSender();
+	ui->takeAction(action);
+	return 0;
+}
+
+static const luaL_Reg kMessageFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "Send", messageSend },
+	{ nullptr, nullptr }
+};
+
 // Viewport
 
 static int viewportIndex(lua_State *L) {
@@ -1029,6 +1123,7 @@ void registerGameAPI(lua_State *L) {
 
 	registerGlobal(L, "Scene", "ND.Scene", kSceneFunctions);
 	registerGlobal(L, "Player", "ND.CurPlayer", kPlayerFunctions);
+	registerGlobal(L, "Message", "ND.Message", kMessageFunctions);
 	registerGlobal(L, "Viewport", "ND.Viewport", kViewportFunctions);
 
 	registerType(L, kKeyType, kKeyFunctions);

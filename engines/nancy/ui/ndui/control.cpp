@@ -145,6 +145,17 @@ void Control::fitHeightToText() {
 }
 
 void Control::fireEvents(int32 eventType, bool isOwnEvent, double value, const Common::String &text) {
+	if (_eventHandler) {
+		// What the handler sends comes from this control. The handler can go as
+		// far as taking the control down, so nothing of it gets used afterwards.
+		Manager *manager = _panel->getManager();
+		const Common::String previousSender = manager->getEventSender();
+		manager->setEventSender(_name);
+		_eventHandler->onEvent(eventType, isOwnEvent, value, text);
+		manager->setEventSender(previousSender);
+		return;
+	}
+
 	for (const Action &event : _events) {
 		if (event.eventType != eventType && !(isOwnEvent && event.eventType == kEventOwn)) {
 			continue;
@@ -270,7 +281,7 @@ void VarStatic::readExtra(Common::SeekableReadStream &stream) {
 
 bool VarStatic::doAction(const Action &action) {
 	if (action.type == kActionSetValue) {
-		setText(Common::String::format("%0*.*f", (int)_width, (int)_precision, action.value));
+		setText(_prefix + Common::String::format("%0*.*f", (int)_width, (int)_precision, action.value) + _suffix);
 		return true;
 	}
 

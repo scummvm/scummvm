@@ -84,6 +84,13 @@ void pushCursor(lua_State *L, uint cursorType, bool isHot);
 void pushKey(lua_State *L, Common::KeyCode key);
 Common::KeyCode checkKey(lua_State *L, int index);
 
+// The text kept under a key: what a sound says, or a text of the UI.
+// Returns false when there is none.
+bool findText(const Common::String &key, Common::String &text);
+
+// The panels and controls scripts build the UI out of
+void registerUIAPI(lua_State *L);
+
 // The images scripts look colors up in
 void registerRefAPI(lua_State *L);
 

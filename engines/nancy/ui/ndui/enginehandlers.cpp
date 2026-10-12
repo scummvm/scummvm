@@ -82,7 +82,9 @@ void Manager::takeEngineAction(const Action &action) {
 			takeAction(action.value != 0 ? kActionShow : kActionHide, "CCText", action.value);
 		}
 	} else if (action.target.equalsIgnoreCase("Engine_Index")) {
-		if (action.type == kActionSetText) {
+		if (action.type == kActionSetText && g_nancy->getGameType() >= kGameTypeNancy19) {
+			registerValueDisplay(action.text, action.sender);
+		} else if (action.type == kActionSetText) {
 			registerValueDisplay((int16)action.value, action.sender);
 		} else if (action.type == kActionDisable) {
 			for (uint i = 0; i < _valueDisplays.size(); ++i) {
@@ -305,6 +307,19 @@ void Manager::onSceneChange(uint16 sceneID) {
 // Nancy17 makes the buttons of the inventory out of the item table
 void Manager::createItemButtons() {
 	Panel *panel = findPanel("InvDialog");
+
+	// Nancy19 makes them one at a time, with the script of the panel
+	if (panel && g_nancy->getGameType() >= kGameTypeNancy19) {
+		const INVD *items = GetEngineData(INVD);
+		assert(items);
+
+		for (const INVD::Item &item : items->items) {
+			panel->addItemButton(item);
+		}
+
+		return;
+	}
+
 	if (panel && _templates.contains("InvButton")) {
 		panel->addItemButtons(_templates["InvButton"]);
 	}
@@ -321,8 +336,41 @@ void Manager::registerValueDisplay(int16 index, const Common::String &display) {
 	_valueDisplays.push_back(valueDisplay);
 }
 
+// A control keeps asking for its value, and goes on showing the one it asked for last
+void Manager::registerValueDisplay(const Common::String &valueName, const Common::String &display) {
+	for (ValueDisplay &valueDisplay : _valueDisplays) {
+		if (valueDisplay.name.equalsIgnoreCase(display)) {
+			if (!valueDisplay.valueName.equalsIgnoreCase(valueName)) {
+				valueDisplay.valueName = valueName;
+				valueDisplay.hasShownValue = false;
+			}
+
+			return;
+		}
+	}
+
+	ValueDisplay valueDisplay;
+	valueDisplay.valueName = valueName;
+	valueDisplay.name = display;
+	_valueDisplays.push_back(valueDisplay);
+}
+
 // Value displays follow the value table, and timer displays what is left of their timer
 void Manager::update() {
+	if (g_nancy->getGameType() >= kGameTypeNancy19) {
+		ScriptValueData *values = (ScriptValueData *)NancySceneState.getPuzzleData(ScriptValueData::getTag());
+		for (ValueDisplay &display : _valueDisplays) {
+			int32 value = values ? values->values.getValOrDefault(display.valueName, 0) : 0;
+			if (!display.hasShownValue || display.shownValue != value) {
+				display.hasShownValue = true;
+				display.shownValue = value;
+				takeAction(kActionSetValue, display.name, (double)value);
+			}
+		}
+
+		return;
+	}
+
 	TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 	if (table) {
 		for (ValueDisplay &display : _valueDisplays) {

@@ -35,6 +35,7 @@
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/ui/viewport.h"
+#include "engines/nancy/ui/ndui/manager.h"
 
 namespace Nancy {
 namespace Script {
@@ -48,6 +49,11 @@ SceneContext::SceneContext(const Common::String &streamName, const Common::Strin
 }
 
 SceneContext::~SceneContext() {
+	UI::NDUI::Manager *ui = _makesUI ? NancySceneState.getNDUI() : nullptr;
+	if (ui) {
+		ui->clearPanels();
+	}
+
 	for (Record *record : _records) {
 		delete record;
 	}
@@ -82,6 +88,10 @@ bool SceneContext::load() {
 	if (!_summary) {
 		warning("Scene %s: No summary AR specified", _sceneName.c_str());
 		return false;
+	}
+
+	if (_makesUI) {
+		NancySceneState.onScriptedUILoaded();
 	}
 
 	return true;

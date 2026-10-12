@@ -43,8 +43,9 @@ namespace NDUI {
 // Panels are drawn over everything else, in the order they were created
 static const uint16 kFirstPanelZ = 1000;
 
-// The cursor shown while the mouse is over the UI
+// The cursor shown while the mouse is over the UI; Nancy19 has it by name
 static const uint16 kUICursor = 14;
+static const char *const kUICursorName = "Menu";
 
 Manager::~Manager() {
 	for (Panel *panel : _panels) {
@@ -90,6 +91,24 @@ void Manager::load(const Common::String &name) {
 	}
 
 	delete iff;
+}
+
+Panel *Manager::addPanel(byte kind) {
+	Panel *panel = new Panel(this, (uint16)(kFirstPanelZ + _panels.size()), kind);
+	_panels.push_back(panel);
+	return panel;
+}
+
+void Manager::clearPanels() {
+	for (Panel *panel : _panels) {
+		delete panel;
+	}
+
+	_panels.clear();
+	_hoveredControl = nullptr;
+	_hoveredTooltip = nullptr;
+	_tooltipControl = nullptr;
+	_tooltipWindow.setVisible(false);
 }
 
 void Manager::registerGraphics() {
@@ -201,6 +220,16 @@ Manager::Request Manager::takeRequest() {
 
 void Manager::createObject(const Common::String &name, const Common::String &templateName, const Common::String &parentName) {
 	Panel *parent = findPanel(parentName);
+
+	// Nancy19 has the script of the panel make the control
+	if (parent && g_nancy->getGameType() >= kGameTypeNancy19) {
+		if (!parent->createObject(name, templateName)) {
+			warning("Couldn't create UI object %s from %s in %s", name.c_str(), templateName.c_str(), parentName.c_str());
+		}
+
+		return;
+	}
+
 	if (!parent || !_templates.contains(templateName)) {
 		warning("Couldn't create UI object %s from %s in %s", name.c_str(), templateName.c_str(), parentName.c_str());
 		return;
@@ -275,7 +304,12 @@ void Manager::handleInput(NancyInput &input) {
 	updateTooltip(input.screenMousePos);
 
 	if (isOverUI) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)kUICursor, true, isOverControl);
+		int cursor = kUICursor;
+		if (g_nancy->getGameType() >= kGameTypeNancy19) {
+			cursor = MAX(g_nancy->_cursor->getCursorTypeByName(kUICursorName), 0);
+		}
+
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursor, true, isOverControl);
 		input.eatMouseInput();
 	}
 }
@@ -284,6 +318,13 @@ const Graphics::ManagedSurface *Manager::getTexture(const Common::String &name) 
 	Graphics::ManagedSurface *texture = _textures.getValOrDefault(name, nullptr);
 	if (!texture) {
 		texture = new Graphics::ManagedSurface();
+
+		// The textures the engine makes are empty until it does
+		if (name.hasPrefixIgnoreCase("Engine_")) {
+			_textures.setVal(name, texture);
+			return nullptr;
+		}
+
 		if (!g_nancy->_resource->loadImage(Common::Path(name), *texture)) {
 			warning("Couldn't load UI texture %s", name.c_str());
 		}

@@ -79,6 +79,9 @@ public:
 	// The seconds the scene has been running for
 	double getTime() const { return _time; }
 
+	// The panels a scene adds to the UI call into its scripts, so they go when it does
+	void setMakesUI() { _makesUI = true; }
+
 	// Runs another script as a part of this scene
 	bool include(const Common::String &name);
 
@@ -110,6 +113,7 @@ private:
 
 	double _time = 0.0;
 	bool _hasRunOnce = false;
+	bool _makesUI = false;
 
 	// The keys records were told are down
 	uint16 _heldMoveKeys = 0;

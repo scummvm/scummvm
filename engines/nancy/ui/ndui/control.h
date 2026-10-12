@@ -38,9 +38,12 @@ class Panel;
 class Control {
 public:
 	Control(Panel *panel) : _panel(panel) {}
-	virtual ~Control() {}
+	virtual ~Control() { delete _eventHandler; }
 
 	void read(Common::SeekableReadStream &stream);
+
+	// Nancy19: the control's events go to the handler, which the control takes over
+	void setEventHandler(EventHandler *handler) { delete _eventHandler; _eventHandler = handler; }
 
 	// Returns true when the action was meant for this control
 	bool takeAction(const Action &action);
@@ -108,6 +111,7 @@ protected:
 	bool _enabled = true;
 	bool _autoHeight = false;	// controls without a height are as tall as their text
 	Common::Array<Action> _events;
+	EventHandler *_eventHandler = nullptr;
 	Common::Array<Element> _elements;
 };
 
@@ -149,12 +153,17 @@ class VarStatic : public Static {
 public:
 	VarStatic(Panel *panel) : Static(panel) {}
 
+	// Nancy19: the text that goes before and after the number
+	void setAffixes(const Common::String &prefix, const Common::String &suffix) { _prefix = prefix; _suffix = suffix; }
+
 protected:
 	void readExtra(Common::SeekableReadStream &stream) override;
 	bool doAction(const Action &action) override;
 
 	int32 _width = 0;
 	int32 _precision = 0;
+	Common::String _prefix;
+	Common::String _suffix;
 };
 
 } // End of namespace NDUI

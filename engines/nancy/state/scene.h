@@ -319,6 +319,11 @@ public:
 	Misc::ViewportFader *getViewportFader() { return _viewportFader; }
 	UI::NDUI::Manager *getNDUI() { return _ndui; }
 
+#ifdef ENABLE_NANCY_V4
+	// Nancy19: the scripts of the UI stream have made the panels
+	void onScriptedUILoaded();
+#endif
+
 	// Used from nancy2 onwards
 	void specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime);
 	void specialEffect(byte type, uint16 totalTime, uint16 fadeToBlackTime, Common::Rect rect);
