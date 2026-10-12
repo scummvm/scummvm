@@ -81,6 +81,10 @@ BCBEngine::~BCBEngine() {
 		_chipBitmap->free();
 		delete _chipBitmap;
 	}
+	if (_computerBitmap) {
+		_computerBitmap->free();
+		delete _computerBitmap;
+	}
 	delete _activeMovieVideo;
 	delete _mapMoveVideo;
 	delete _sceneIdleVideo;
