@@ -12,6 +12,7 @@ MODULE_OBJS += \
 	bcb/executable_data.o \
 	bcb/input.o \
 	bcb/map.o \
+	bcb/options.o \
 	bcb/resources.o \
 	bcb/saveload.o \
 	bcb/scene.o \
