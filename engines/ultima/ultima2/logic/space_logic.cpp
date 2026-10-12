@@ -92,7 +92,7 @@ bool SpaceLogic::announceOrbit() {
 	const byte *coords = sg._hyperwarpCoords;
 
 	if (coords[0] == 4 && coords[1] == 4 && coords[2] == 4) {
-		writeString("\n\nYOU HIT THE SUN!\n");
+		writeString("\n\nYou hit the Sun!\n");
 		playerDied();
 		return false;
 	}
@@ -101,13 +101,13 @@ bool SpaceLogic::announceOrbit() {
 		if (coords[0] == Data::PLANET_COORDS[world][0] && coords[1] == Data::PLANET_COORDS[world][1] &&
 				coords[2] == Data::PLANET_COORDS[world][2]) {
 			sg._orbitTarget = world;
-			writeString("YOU ARE ORBITING %s.\n", world == PLANET_X ? "X" : Data::PLANET_NAMES[world]);
+			writeString("You are orbiting %s.\n", world == PLANET_X ? "X" : Data::PLANET_NAMES[world]);
 			return true;
 		}
 	}
 
 	sg._orbitTarget = DEEP_SPACE;
-	writeString("YOU ARE IN DEEP SPACE.\n");
+	writeString("You are in deep space.\n");
 	return true;
 }
 
@@ -117,7 +117,7 @@ void SpaceLogic::warpFinished() {
 
 	// The ship strays when the fuel level's low digit is a 3 or 7
 	if ((Data::toBcd(sg._items[Data::ITEM_TRI_LITHIUM] % 100) & 3) == 3) {
-		writeString("SHIP OFF COURSE!\n");
+		writeString("Ship off course!\n");
 		for (int i = 0; i < 3; ++i)
 			sg._hyperwarpCoords[i] = view->nextStarCoord() & 7;
 	}
@@ -129,7 +129,7 @@ void SpaceLogic::warpFinished() {
 		_launching = false;
 
 		if (sg._readiedArmor < SAFE_ARMOR) {
-			writeString("\nYOU HAVE EXPLODED!\n\n");
+			writeString("\nYou have exploded!\n\n");
 			playerDied();
 			return;
 		}
@@ -143,7 +143,7 @@ void SpaceLogic::hyperwarp() {
 	Data::Savegame &sg = _G(savegame);
 
 	if (sg._items[Data::ITEM_TRI_LITHIUM] == 0) {
-		writeString("NO FUEL!\n");
+		writeString("No fuel!\n");
 		prompt();
 		return;
 	}
@@ -151,7 +151,7 @@ void SpaceLogic::hyperwarp() {
 	--sg._items[Data::ITEM_TRI_LITHIUM];
 	static_cast<Views::SpaceMap *>(g_engine->findView("SpaceMap"))->setShip(CENTER_X, CENTER_Y);
 
-	writeString("HYPERWARP TO:\n");
+	writeString("Hyperwarp to:\n");
 	g_engine->addView("HyperwarpTarget");
 }
 
@@ -160,7 +160,7 @@ void SpaceLogic::land() {
 	auto *view = static_cast<Views::SpaceMap *>(g_engine->findView("SpaceMap"));
 
 	view->setShip(CENTER_X, CENTER_Y);
-	writeString("LANDING REQUESTED!\n");
+	writeString("Landing requested!\n");
 	if (!announceOrbit())
 		return;
 
@@ -170,7 +170,7 @@ void SpaceLogic::land() {
 	int era = (world == 0) ? 4 : world;
 	if (world == DEEP_SPACE || !Common::File::exists(Data::mapFilename(era, 0).c_str()) ||
 			!Common::File::exists(Data::monsterFilename(era, 0).c_str())) {
-		writeString("REQUEST DENIED!\n");
+		writeString("Request denied!\n");
 		prompt();
 		return;
 	}
@@ -197,22 +197,22 @@ void SpaceLogic::action(int action) {
 
 	switch (action) {
 	case KEYBIND_LEFT:
-		writeString("LEFT\n");
+		writeString("Left\n");
 		view->setShip(0x20, CENTER_Y);
 		prompt();
 		break;
 	case KEYBIND_RIGHT:
-		writeString("RIGHT\n");
+		writeString("Right\n");
 		view->setShip(0xDF, CENTER_Y);
 		prompt();
 		break;
 	case KEYBIND_UP:
-		writeString("CLIMB\n");
+		writeString("Climb\n");
 		view->setShip(CENTER_X, 0x10);
 		prompt();
 		break;
 	case KEYBIND_DOWN:
-		writeString("DIVE\n");
+		writeString("Dive\n");
 		view->setShip(CENTER_X, 0x6F);
 		prompt();
 		break;

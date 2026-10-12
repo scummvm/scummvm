@@ -31,7 +31,7 @@ WearArmor::WearArmor() : Interaction("WearArmor") {
 }
 
 bool WearArmor::msgFocus(const FocusMessage &msg) {
-	writeString("WEAR ARMOUR:\n1-CLOTH, 2-LEATHER, 3-CHAIN,\n4-PLATE, 5-REFLECT, 6-POWER,\nWHICH? ");
+	writeString("Wear armour:\n1-Cloth, 2-Leather, 3-Chain,\n4-Plate, 5-Reflect, 6-Power,\nWhich? ");
 	return Interaction::msgFocus(msg);
 }
 
@@ -44,17 +44,17 @@ bool WearArmor::msgKeypress(const KeypressMessage &msg) {
 	Data::Savegame &sg = _G(savegame);
 
 	if (armorIdx >= Data::ARMOR_COUNT) {
-		writeString("%d\nNOT OWNED!\n", digit);
+		writeString("%d\nNot owned!\n", digit);
 	} else if (armorIdx != Data::ARMOR_SKIN && sg._armorOwned[armorIdx] == 0) {
-		writeString("%d\n%s NOT OWNED!\n", digit, Data::ARMOR_NAMES[armorIdx]);
+		writeString("%d\n%s Not owned!\n", digit, Data::ARMOR_NAMES[armorIdx]);
 	} else if (armorIdx * 8 >= Data::toBcd(sg._strength)) {
 		// The original compares against the raw packed-BCD strength byte,
 		// not its decimal value, so e.g. leather (index 2) needs strength
 		// 11+ (2*8=16 < BCD 0x11=17), not 17+
-		writeString("%d\n<-THOU ART NOT\nSTRONG ENOUGH TO WEAR!\n", digit);
+		writeString("%d\n<-Thou art not\nstrong enough to wear!\n", digit);
 	} else {
 		sg._readiedArmor = (Data::ArmorType)armorIdx;
-		writeString("%d\n%s READY.\n", digit, Data::ARMOR_NAMES[armorIdx]);
+		writeString("%d\n%s Ready.\n", digit, Data::ARMOR_NAMES[armorIdx]);
 	}
 
 	close();

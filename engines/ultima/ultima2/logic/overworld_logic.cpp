@@ -103,9 +103,9 @@ OverworldLogic::StepResult OverworldLogic::stepOnto(int x, int y) {
 		}
 	} else if (dest == Data::TILE_FORCEFIELD) {
 		if (sg._items[Data::ITEM_RING] != 0) {
-			writeString("RING PROTECTS FROM FIELD!\n");
+			writeString("Ring protects from field!\n");
 		} else {
-			writeString("FIELD CAUSES 1000 DAMAGE!\n");
+			writeString("Field causes 1000 damage!\n");
 			if (!sg.deductHP(1000)) {
 				playerDied();
 				return STEP_DIED;
@@ -114,7 +114,7 @@ OverworldLogic::StepResult OverworldLogic::stepOnto(int x, int y) {
 	}
 
 	if (sg._legParalysisTurns > 0) {
-		writeString("--PARALIZED!\n");
+		writeString("--Paralized!\n");
 		return STEP_PARALYZED;
 	}
 
@@ -155,19 +155,19 @@ bool OverworldLogic::move(Data::Direction dir) {
 	switch (dir) {
 	case Data::DIR_UP:
 		newY = (newY + Data::MAP_HEIGHT - 1) % Data::MAP_HEIGHT;
-		dirName = "NORTH";
+		dirName = "North";
 		break;
 	case Data::DIR_DOWN:
 		newY = (newY + 1) % Data::MAP_HEIGHT;
-		dirName = "SOUTH";
+		dirName = "South";
 		break;
 	case Data::DIR_LEFT:
 		newX = (newX + Data::MAP_WIDTH - 1) % Data::MAP_WIDTH;
-		dirName = "WEST";
+		dirName = "West";
 		break;
 	case Data::DIR_RIGHT:
 		newX = (newX + 1) % Data::MAP_WIDTH;
-		dirName = "EAST";
+		dirName = "East";
 		break;
 	default:
 		return true;
@@ -182,7 +182,7 @@ bool OverworldLogic::move(Data::Direction dir) {
 	case STEP_PARALYZED:
 		return true;
 	case STEP_BLOCKED:
-		writeString("--INVALID MOVE!\n");
+		writeString("--Invalid move!\n");
 		return true;
 	case STEP_MOONGATE:
 		enterMoongate(newX, newY);
@@ -211,7 +211,7 @@ void OverworldLogic::enterMoongate(int x, int y) {
 	// show corrupted terrain if that era's map data turns out to be
 	// missing or truncated; bail out untouched rather than risk the same
 	if (!_G(map).canLoad(era, 0)) {
-		writeString("THE GATE FLICKERS AND FAILS!\n");
+		writeString("The gate flickers and fails!\n");
 		return;
 	}
 
@@ -358,7 +358,7 @@ void OverworldLogic::updateCreatures() {
 				int itemIdx = randByte() & 0xF;
 				if (sg._items[itemIdx] > 0) {
 					--sg._items[itemIdx];
-					writeString("A THIEF STOLE SOMETHING!\n");
+					writeString("A thief stole something!\n");
 				}
 			}
 
@@ -464,10 +464,10 @@ bool OverworldLogic::attack(Data::Direction dir) {
 	Data::Savegame &sg = _G(savegame);
 
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("ATTACK--");
+		writeString("Attack--");
 
 		if (sg._armParalysisTurns > 0) {
-			writeString("PARALIZED!\n");
+			writeString("Paralized!\n");
 			return true;
 		}
 
@@ -494,7 +494,7 @@ bool OverworldLogic::attack(Data::Direction dir) {
 	// Both checks compare against the raw packed-BCD attribute bytes, not
 	// their decimal values, matching the original's own arithmetic
 	if (slot < 0 || (randByte() >> 1) >= Data::toBcd(sg._agility)) {
-		writeString("--MISS\n");
+		writeString("--Miss\n");
 		resumeTurn();
 		return false;
 	}
@@ -524,14 +524,14 @@ bool OverworldLogic::fire(Data::Direction dir) {
 	Data::Savegame &sg = _G(savegame);
 
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("FIRE");
+		writeString("Fire");
 
 		if (sg._mount != Data::TILE_SHIP) {
-			writeString(" WHAT?\n");
+			writeString(" what?\n");
 			return true;
 		}
 
-		writeString(" DIRECT-");
+		writeString(" Direct-");
 		_directionPurpose = DirectionPurpose::FIRE;
 		g_engine->addView("Direction");
 		return false;
@@ -551,7 +551,7 @@ bool OverworldLogic::fire(Data::Direction dir) {
 	int slot = findTargetMonster(tx, ty);
 
 	if (slot < 0) {
-		writeString("--MISS\n");
+		writeString("--Miss\n");
 		return true;
 	}
 
@@ -582,11 +582,11 @@ void OverworldLogic::minaxFlees(int slot) {
 	monsters._mapY[slot] = oldX;
 	monsters._offerFlag[slot] = 0x84;
 
-	writeString("\nSHE'S GONE!!!\n");
+	writeString("\nShe's gone!!!\n");
 }
 
 void OverworldLogic::minaxDeathSequence() {
-	writeString("\n\n     MINAX IS DEAD!!\nALL HER WORKS SHALL DIE!\n");
+	writeString("\n\n     Minax is dead!!\nAll her works shall die!\n");
 
 	// The castle crumbles into rubble before the screen hands off to the
 	// endless victory pan
@@ -602,18 +602,18 @@ void OverworldLogic::minaxDeathSequence() {
 		g_engine->pauseMillis(30);
 	}
 
-	writeString("\nYOU FEEL A STRANGE FORCE!\n");
+	writeString("\nYou feel a strange force!\n");
 	g_engine->addView("Ending");
 }
 
 void OverworldLogic::legParalysisTrap() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("LEGS PARALIZED!\n");
+	writeString("Legs paralized!\n");
 	playFX(Data::SFX_MAGIC);
 	showAttackTile(sg._mapX, sg._mapY);
 
 	if (sg._items[Data::ITEM_BOOTS] != 0 && randByte() >= 0x40) {
-		writeString("SAVED BY MAGICAL BOOTS!\n");
+		writeString("Saved by Magical Boots!\n");
 		return;
 	}
 
@@ -622,12 +622,12 @@ void OverworldLogic::legParalysisTrap() {
 
 void OverworldLogic::armParalysisTrap() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("ARMS PARALIZED!\n");
+	writeString("Arms paralized!\n");
 	playFX(Data::SFX_MAGIC);
 	showAttackTile(sg._mapX, sg._mapY);
 
 	if (sg._items[Data::ITEM_CLOAK] != 0 && randByte() >= 0x40) {
-		writeString("SAVED BY MAGICAL CLOAK\n");
+		writeString("Saved by Magical Cloak\n");
 		return;
 	}
 
@@ -636,19 +636,19 @@ void OverworldLogic::armParalysisTrap() {
 
 void OverworldLogic::magicMissileTrap() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("MAGIC MISSILE!\n");
+	writeString("Magic Missile!\n");
 	playFX(Data::SFX_MAGIC);
 	showAttackTile(sg._mapX, sg._mapY);
 }
 
 void OverworldLogic::sleepTrap() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("SLEEP SPELL!\n");
+	writeString("Sleep Spell!\n");
 	playFX(Data::SFX_MAGIC);
 	showAttackTile(sg._mapX, sg._mapY);
 
 	if (sg._items[Data::ITEM_GREEN_IDOL] != 0 && randByte() >= 0x40) {
-		writeString("SAVED BY IDOL!\n");
+		writeString("Saved by Idol!\n");
 		return;
 	}
 
@@ -657,7 +657,7 @@ void OverworldLogic::sleepTrap() {
 
 bool OverworldLogic::minaxCurseTrap() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("MINAX CRIES: DIE FOOL!\n");
+	writeString("Minax cries: Die fool!\n");
 	showAttackTile(sg._mapX, sg._mapY);
 
 	if (!sg.deductHP(1)) {
@@ -715,7 +715,7 @@ void OverworldLogic::killMonster(int slot) {
 	int expAmt = (randByte() & 3) + 1;
 	sg._gold = MIN(sg._gold + goldAmt, Data::MAX_BCD_WORD);
 	sg._experience = MIN(sg._experience + expAmt, Data::MAX_BCD_WORD);
-	writeString("KILLED--GOLD+%.2d--EXP.+%.2d\n", goldAmt, expAmt);
+	writeString("Killed--Gold+%.2d--Exp.+%.2d\n", goldAmt, expAmt);
 }
 
 void OverworldLogic::enterLocalMap(int mapType) {
@@ -744,53 +744,53 @@ void OverworldLogic::enterDungeon(int mapType) {
 
 bool OverworldLogic::enter() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("ENTER");
+	writeString("Enter");
 
 	if (sg._mapType != 0) {
-		writeString(" WHAT?\n");
+		writeString(" what?\n");
 		return true;
 	}
 
 	// The upgrade lets a horse be ridden into places, but not a vehicle
 	const bool onHorse = sg._mount == Data::TILE_HORSE && g_engine->isEnhanced();
 	if (sg._mount != 0 && !onHorse) {
-		writeString("-ONLY ON FOOT!\n");
+		writeString("-Only on foot!\n");
 		return true;
 	}
 
 	Data::TileId tile = _G(map).tileAt(sg._mapX, sg._mapY);
 	switch (tile) {
 	case Data::TILE_VILLAGE:
-		writeString("-VILLAGE\n");
+		writeString("-Village\n");
 		enterLocalMap(1);
 		return true;
 	case Data::TILE_TOWN:
-		writeString("-TOWN\n");
+		writeString("-Town\n");
 		enterLocalMap(2);
 		return true;
 	case Data::TILE_CASTLE:
-		writeString("-CASTLE\n");
+		writeString("-Castle\n");
 		enterLocalMap(3);
 		return true;
 	case Data::TILE_TOWER:
-		writeString("-TOWER\n");
+		writeString("-Tower\n");
 		enterDungeon(4);
 		return true;
 	case Data::TILE_DUNGEON_ENTRANCE:
-		writeString("-DUNGEON\n");
+		writeString("-Dungeon\n");
 		enterDungeon(5);
 		return true;
 	case Data::TILE_SIGNPOST: {
 		static const char *const ERA_TEXT[5] = {
-			"ANOS: LEGENDS!", "ANOS: 9,000,000 B.C.", "ANOS: 1423 B.C.",
-			"ANOS: 1990 A.D.", "ANOS: 2112 A.D."
+			"Anos: Legends!", "Anos: 9,000,000 B.C.", "Anos: 1423 B.C.",
+			"Anos: 1990 A.D.", "Anos: 2112 A.D."
 		};
 		int era = (sg._mapEra < 5) ? sg._mapEra : 4;
-		writeString("-THE SIGN READS:\n%s\n", ERA_TEXT[era]);
+		writeString("-The sign reads:\n%s\n", ERA_TEXT[era]);
 		return true;
 	}
 	default:
-		writeString(" WHAT?\n");
+		writeString(" what?\n");
 		return true;
 	}
 }

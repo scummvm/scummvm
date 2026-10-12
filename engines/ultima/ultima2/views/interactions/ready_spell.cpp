@@ -31,7 +31,7 @@ ReadySpell::ReadySpell() : Interaction("ReadySpell") {
 }
 
 bool ReadySpell::msgFocus(const FocusMessage &msg) {
-	writeString("MAGIC SPELL READY #");
+	writeString("Magic spell ready #");
 	return Interaction::msgFocus(msg);
 }
 
@@ -41,7 +41,7 @@ bool ReadySpell::msgKeypress(const KeypressMessage &msg) {
 
 	int digit = msg.ascii - '0';
 	_G(savegame)._readiedSpell = (Data::SpellType)digit;
-	writeString("%d\nSPELL READY => %s\n", digit, Data::SPELL_NAMES[digit]);
+	writeString("%d\nSpell ready => %s\n", digit, Data::SPELL_NAMES[digit]);
 
 	close();
 	_G(logic)->resumeTurn();

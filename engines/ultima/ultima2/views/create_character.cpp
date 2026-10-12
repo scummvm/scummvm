@@ -135,19 +135,19 @@ void CreateCharacter::draw() {
 		s.writeString(Common::Point(x, y), text);
 	};
 
-	put(10, 1, Gfx::TEXT_NORMAL, "PLAYER GENERATION :");
+	put(10, 1, Gfx::TEXT_NORMAL, "Player Generation :");
 
-	put(5, 2, Gfx::TEXT_NORMAL, "POINTS LEFT TO DISTRIBUTE : ");
+	put(5, 2, Gfx::TEXT_NORMAL, "Points left to distribute : ");
 	Gfx::setReverseText(s, true);
 	s.writeString(Common::Point(33, 2), Common::String::format("%d", _pointsRemaining));
 	Gfx::setReverseText(s, false);
 
-	put(11, 4, Gfx::TEXT_NORMAL, "STRENGTH.......");
-	put(11, 5, Gfx::TEXT_NORMAL, "AGILITY........");
-	put(11, 6, Gfx::TEXT_NORMAL, "STAMINA........");
-	put(11, 7, Gfx::TEXT_NORMAL, "CHARISMA.......");
-	put(11, 8, Gfx::TEXT_NORMAL, "WISDOM.........");
-	put(11, 9, Gfx::TEXT_NORMAL, "INTELLIGENCE...");
+	put(11, 4, Gfx::TEXT_NORMAL, "Strength.......");
+	put(11, 5, Gfx::TEXT_NORMAL, "Agility........");
+	put(11, 6, Gfx::TEXT_NORMAL, "Stamina........");
+	put(11, 7, Gfx::TEXT_NORMAL, "Charisma.......");
+	put(11, 8, Gfx::TEXT_NORMAL, "Wisdom.........");
+	put(11, 9, Gfx::TEXT_NORMAL, "Intelligence...");
 
 	if (_state > STRENGTH) put(26, 4, Gfx::TEXT_NUMBER, Common::String::format("%d", sg._strength));
 	if (_state > AGILITY) put(26, 5, Gfx::TEXT_NUMBER, Common::String::format("%d", sg._agility));
@@ -165,12 +165,12 @@ void CreateCharacter::draw() {
 	}
 
 	put(16, 11, Gfx::TEXT_NORMAL, "M/F-");
-	put(15, 12, Gfx::TEXT_NORMAL, "RACE-");
-	put(15, 13, Gfx::TEXT_NORMAL, "TYPE-");
-	put(15, 14, Gfx::TEXT_NORMAL, "NAME-");
+	put(15, 12, Gfx::TEXT_NORMAL, "Race-");
+	put(15, 13, Gfx::TEXT_NORMAL, "Type-");
+	put(15, 14, Gfx::TEXT_NORMAL, "Name-");
 
 	if (_state > SEX)
-		put(20, 11, Gfx::TEXT_HEADING, sg._sex == Data::SEX_MALE ? "MALE" : "FEMALE");
+		put(20, 11, Gfx::TEXT_HEADING, sg._sex == Data::SEX_MALE ? "Male" : "Female");
 	if (_state > RACE)
 		put(20, 12, Gfx::TEXT_HEADING, Data::raceName(sg._race));
 	if (_state > CLASS)
@@ -178,13 +178,13 @@ void CreateCharacter::draw() {
 	if (_state >= NAME)
 		put(20, 14, Gfx::TEXT_LIST, _name);
 
-	put(10, 16, Gfx::TEXT_NORMAL, "SATISFACTORY (Y/N)-");
+	put(10, 16, Gfx::TEXT_NORMAL, "Satisfactory (Y/N)-");
 
 	put(8, 18, Gfx::TEXT_NORMAL, "RACES:         TYPES:");
-	put(9, 19, Gfx::TEXT_NORMAL, "1-HUMAN        1-FIGHTER");
-	put(9, 20, Gfx::TEXT_NORMAL, "2-ELF          2-CLERIC");
-	put(9, 21, Gfx::TEXT_NORMAL, "3-DWARF        3-WIZARD");
-	put(9, 22, Gfx::TEXT_NORMAL, "4-HOBBIT       4-THIEF");
+	put(9, 19, Gfx::TEXT_NORMAL, "1-Human        1-Fighter");
+	put(9, 20, Gfx::TEXT_NORMAL, "2-Elf          2-Cleric");
+	put(9, 21, Gfx::TEXT_NORMAL, "3-Dwarf        3-Wizard");
+	put(9, 22, Gfx::TEXT_NORMAL, "4-Hobbit       4-Thief");
 }
 
 bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {

@@ -29,16 +29,16 @@ namespace Views {
 namespace Interactions {
 
 static const char *const CLUES[10] = {
-	"ASK ME NO QUESTIONS,\nI'LL TELL YOU NO LIES.",
-	"THE QUEEN IS THE KING\nAND THE KING IS A SPY.",
-	"THE EVIL MEN DO\nIS A HORRIBLE THING.",
-	"BUT DISPELLING MEANS\nTHAT YOU MUST HAVE THE RING.",
-	"JUST WHERE IT IS,\nI CANNOT SAY.",
-	"BUT I'LL TELL YOU RIGHT NOW,\nTHERE IS NO OTHER WAY.",
-	"I HEAR IN A TOWN\nWHERE THE WATER RUNS FREE.",
-	"THERE IS AN OLD MAN\nLIVING UNDER A TREE.",
-	"HE HAS NOT A NAME\nBUT HE DOES HAVE A CLUE",
-	"MAYHAPS IF YOU FIND HIM,\nHE'LL TELL IT TO YOU!"
+	"Ask me no questions,\nI'll tell you no lies.",
+	"The Queen is the King\nand the King is a spy.",
+	"The evil men do\nis a horrible thing.",
+	"But dispelling means\nthat you must have the Ring.",
+	"Just where it is,\nI cannot say.",
+	"But I'll tell you right now,\nthere is no other way.",
+	"I hear in a town\nwhere the water runs free.",
+	"There is an old man\nliving under a tree.",
+	"He has not a name\nbut he does have a clue",
+	"Mayhaps if you find him,\nhe'll tell it to you!"
 };
 
 ClueSeller::ClueSeller() : Interaction("ClueSeller") {
@@ -46,7 +46,7 @@ ClueSeller::ClueSeller() : Interaction("ClueSeller") {
 
 bool ClueSeller::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
-	writeString("TIME AND TRAVEL MADE ME WISE,\nPRECIOUS GOLD, A CLUE IT BUYS!HOW MUCH WILL YOU PAY *100? ");
+	writeString("Time and travel made me wise,\nPrecious gold, a clue it buys!How much will you pay *100? ");
 
 	return Interaction::msgFocus(msg);
 }

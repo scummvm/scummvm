@@ -29,7 +29,7 @@ namespace Ultima2 {
 namespace Views {
 namespace Interactions {
 
-static const char *const PROMPTS[3] = { "XENO=", " YAKO=", " ZABO=" };
+static const char *const PROMPTS[3] = { "Xeno=", " Yako=", " Zabo=" };
 
 HyperwarpTarget::HyperwarpTarget() : Interaction("HyperwarpTarget") {
 }
@@ -54,7 +54,7 @@ bool HyperwarpTarget::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	close();
-	writeString("\nPREPARE FOR HYPERWARP!\n");
+	writeString("\nPrepare for Hyperwarp!\n");
 
 	auto *logic = dynamic_cast<Logic::SpaceLogic *>(_G(logic).get());
 	if (logic)

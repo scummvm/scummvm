@@ -78,11 +78,11 @@ bool DungeonLogic::move(Data::Direction dir) {
 
 bool DungeonLogic::advance() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("ADVANCE");
+	writeString("Advance");
 
 	byte front = cellAt((byte)(sg._mapX + sg._facingX), (byte)(sg._mapY + sg._facingY));
 	if ((front & 0x0F) != 0 || front == CELL_WALL) {
-		writeString("-BLOCKED!\n");
+		writeString("-Blocked!\n");
 		return true;
 	}
 
@@ -97,25 +97,25 @@ bool DungeonLogic::advance() {
 
 	sg._lightTurns = 0;
 	playFX(Data::SFX_TRAP);
-	writeString("\nARGH! A TRAP!\n");
+	writeString("\nARGH! A trap!\n");
 
 	if (sg._thievesTools == 0) {
 		playerDied();
 		return false;
 	}
 
-	writeString("ESCAPED! BY USE OF TOOLS!\n");
+	writeString("Escaped! By use of tools!\n");
 	--sg._thievesTools;
 	return true;
 }
 
 bool DungeonLogic::retreat() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("RETREAT");
+	writeString("Retreat");
 
 	byte back = cellAt((byte)(sg._mapX - sg._facingX), (byte)(sg._mapY - sg._facingY));
 	if ((back & 0x8F) != 0) {
-		writeString("-BLOCKED!\n");
+		writeString("-Blocked!\n");
 		return true;
 	}
 
@@ -127,7 +127,7 @@ bool DungeonLogic::retreat() {
 
 bool DungeonLogic::turn(bool left) {
 	Data::Savegame &sg = _G(savegame);
-	writeString(left ? "TURN LEFT\n" : "TURN RIGHT\n");
+	writeString(left ? "Turn left\n" : "Turn right\n");
 
 	int8 fx = sg._facingX, fy = sg._facingY;
 	if (left) {
@@ -152,7 +152,7 @@ bool DungeonLogic::turn(bool left) {
 }
 
 void DungeonLogic::printLevel() {
-	writeString("\nTO LEVEL %02d\n", _G(savegame)._dungeonLevel);
+	writeString("\nTo level %02d\n", _G(savegame)._dungeonLevel);
 }
 
 void DungeonLogic::surface() {
@@ -178,10 +178,10 @@ void DungeonLogic::changeLevel(int delta) {
 
 bool DungeonLogic::descend() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("DESCEND");
+	writeString("Descend");
 
 	if ((cellAt(sg._mapX, sg._mapY) & CELL_LADDER_DOWN) == 0) {
-		writeString("-WHAT?\n");
+		writeString("-what?\n");
 		return true;
 	}
 
@@ -192,10 +192,10 @@ bool DungeonLogic::descend() {
 
 bool DungeonLogic::klimb() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("KLIMB");
+	writeString("Klimb");
 
 	if ((cellAt(sg._mapX, sg._mapY) & CELL_LADDER_UP) == 0) {
-		writeString("-WHAT?\n");
+		writeString("-what?\n");
 		return true;
 	}
 
@@ -205,26 +205,26 @@ bool DungeonLogic::klimb() {
 
 bool DungeonLogic::get() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("GET");
+	writeString("Get");
 
 	byte &cell = cellAt(sg._mapX, sg._mapY);
 	if (cell != CELL_CHEST) {
-		writeString(" WHAT?\n");
+		writeString(" What?\n");
 		return true;
 	}
 
-	writeString(" CHEST!\nIT CONTAINS ");
+	writeString(" Chest!\nIt contains ");
 	cell = 0;
 
 	int level = sg._dungeonLevel;
 	if (level == MAX_LEVEL) {
-		writeString("TRI-LITHIUM!\n");
+		writeString("Tri-lithium!\n");
 		sg._items[Data::ITEM_TRI_LITHIUM] = MIN(sg._items[Data::ITEM_TRI_LITHIUM] + 1, Data::MAX_BCD_BYTE);
 		return true;
 	}
 
 	if (randByte() >= 0x40) {
-		writeString("GOLD!\n");
+		writeString("Gold!\n");
 		int amount = ((randByte() & 0x1F) + level * 2) & 0x77;
 		sg._gold = MIN(sg._gold + Data::bcdValue(amount), Data::MAX_BCD_WORD);
 		return true;
@@ -232,7 +232,7 @@ bool DungeonLogic::get() {
 
 	// Even levels hold weapons, odd ones armour
 	if ((level & 1) == 0) {
-		writeString("A  WEAPON");
+		writeString("A  Weapon");
 		int r = randByte() & 7;
 		if (r != 0) {
 			sg._weaponOwned[r] = MIN(sg._weaponOwned[r] + 1, Data::MAX_BCD_BYTE);
@@ -240,7 +240,7 @@ bool DungeonLogic::get() {
 			return true;
 		}
 	} else {
-		writeString(" ARMOUR");
+		writeString(" Armour");
 		int r = randByte() & 3;
 		if (r != 0) {
 			sg._armorOwned[r] = MIN(sg._armorOwned[r] + 1, Data::MAX_BCD_BYTE);
@@ -249,7 +249,7 @@ bool DungeonLogic::get() {
 		}
 	}
 
-	writeString(" EMPTY!\n");
+	writeString(" Empty!\n");
 	return true;
 }
 
@@ -263,11 +263,11 @@ void DungeonLogic::killMonster(int slot) {
 	monsters._glyphTile[slot] = 0;
 
 	int gold = Data::bcdValue((randByte() & 0x17) | 1);
-	writeString("\nKILLED--GOLD+%.2d", gold);
+	writeString("\nKilled--Gold+%.2d", gold);
 	sg._gold = MIN(sg._gold + gold, Data::MAX_BCD_WORD);
 
 	int exp = randByte() & 7;
-	writeString("--EXP.+%.2d\n", exp);
+	writeString("--Exp.+%.2d\n", exp);
 	sg._experience = MIN(sg._experience + exp, Data::MAX_BCD_WORD);
 }
 
@@ -275,11 +275,11 @@ bool DungeonLogic::attack(Data::Direction dir) {
 	Data::Savegame &sg = _G(savegame);
 	Data::MapMonsters &monsters = _G(map)._monsters;
 	playFX(Data::SFX_ATTACK);
-	writeString("ATTACK--");
+	writeString("Attack--");
 
 	byte x = sg._mapX + sg._facingX, y = sg._mapY + sg._facingY;
 	if ((cellAt(x, y) & 7) == 0) {
-		writeString("MISS\n");
+		writeString("Miss\n");
 		return true;
 	}
 
@@ -295,12 +295,12 @@ bool DungeonLogic::attack(Data::Direction dir) {
 	// Both checks compare against the raw packed-BCD attribute bytes, not
 	// their decimal values, matching the original's own arithmetic
 	if (slot < 0 || (randByte() >> 1) >= Data::toBcd(sg._agility)) {
-		writeString("MISS\n");
+		writeString("Miss\n");
 		return true;
 	}
 
 	playFX(Data::SFX_HIT);
-	writeString("HIT!");
+	writeString("Hit!");
 	int dmg = (sg._readiedWeapon * 8 + Data::toBcd(sg._strength)) >> 2;
 	byte &hp = monsters._spellHP[slot];
 
@@ -405,7 +405,7 @@ bool DungeonLogic::castSpell(Data::SpellType spell) {
 	}
 
 	playFX(Data::SFX_FAIL);
-	writeString("-FAILED!\n");
+	writeString("-Failed!\n");
 	return true;
 }
 
@@ -452,13 +452,13 @@ bool DungeonLogic::monsterAttacks(int slot) {
 		switch (monsters._type[slot]) {
 		case 2:
 			if (sg._lightTurns != 0) {
-				writeString("YOUR TORCH IS BLOWN OUT!\n");
+				writeString("Your torch is blown out!\n");
 				sg._lightTurns = 0;
 			}
 			return true;
 
 		case 5:
-			writeString("A GREMLIN STOLE SOME FOOD!\n");
+			writeString("A Gremlin stole some food!\n");
 			if (sg._food < 100) {
 				playerDied();
 				return false;
@@ -467,7 +467,7 @@ bool DungeonLogic::monsterAttacks(int slot) {
 			return true;
 
 		case 7:
-			writeString("YOU FEEL A STRONG MAGIC!\n");
+			writeString("You feel a strong magic!\n");
 			sg._sleepTurns = randByte() & 7;
 			return true;
 
@@ -558,9 +558,9 @@ void DungeonLogic::updateCreatures() {
 	}
 
 	if (sg._lightTurns == 0) {
-		writeString("IT'S DARK!\n");
+		writeString("It's dark!\n");
 	} else if (--sg._lightTurns == 0) {
-		writeString("TORCH BURNED OUT!\n");
+		writeString("Torch Burned out!\n");
 	}
 
 	if (!sg.deductFood(16))

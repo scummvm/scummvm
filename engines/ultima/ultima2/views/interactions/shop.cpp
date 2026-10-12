@@ -47,17 +47,17 @@ bool Shop::msgFocus(const FocusMessage &msg) {
 
 	switch (_kind) {
 	case WEAPON:
-		writeString("  THE WEAPONS SHOPPE:\n1-DA, 2-MA, 3-AX, 4-BO,\n5-SW, 6-GR, 7-LI, 8-PH.\nYOUR INTEREST? ");
+		writeString("  The Weapons Shoppe:\n1-Da, 2-Ma, 3-Ax, 4-Bo,\n5-Sw, 6-Gr, 7-Li, 8-Ph.\nYour interest? ");
 		break;
 	case ARMOR:
-		writeString("     THE ARMOUR SHOPPE:\n1-CLOTH, 2-LEATHER, 3-CHAIN,\n4-PLATE, 5-REFLECT, 6-POWER,\nYOUR INTEREST? ");
+		writeString("     The Armour Shoppe:\n1-Cloth, 2-Leather, 3-Chain,\n4-Plate, 5-Reflect, 6-Power,\nYour interest? ");
 		break;
 	case SPELL_CLERIC:
-		writeString("WELCOME %s%s\n1-LIGHT, 2-L.D., 3-L.U.,\n4-PASS 5-SURFACE, 6-PRAYER.\nYOUR INTEREST? ",
-			sg._sex == Data::SEX_FEMALE ? "SISTER " : "BROTHER ", sg._name);
+		writeString("Welcome %s%s\n1-Light, 2-L.D., 3-L.U.,\n4-Pass 5-Surface, 6-Prayer.\nYour interest? ",
+			sg._sex == Data::SEX_FEMALE ? "Sister " : "Brother ", sg._name);
 		break;
 	case SPELL_WIZARD:
-		writeString("%s MUSERREF OLDUM!\n1-LIGHT, 2-L.D., 3-L.U.,\n4-M.M., 5-BLINK, 6-KILL,\nBIR IKI UC...? ", sg._name);
+		writeString("%s Muserref Oldum!\n1-Light, 2-L.D., 3-L.U.,\n4-M.M., 5-Blink, 6-Kill,\nBir iki uc...? ", sg._name);
 		break;
 	}
 
@@ -78,13 +78,13 @@ void Shop::chooseItem(int digit) {
 		switch (_kind) {
 		case WEAPON:
 		case ARMOR:
-			finish("THANKS FOR COMING BY...");
+			finish("Thanks for coming by...");
 			break;
 		case SPELL_CLERIC:
-			finish("FOLLOW THE LIGHT, FRIEND!");
+			finish("Follow the Light, friend!");
 			break;
 		case SPELL_WIZARD:
-			finish("\nUGURLA OLSUN!");
+			finish("\nUgurla olsun!");
 			break;
 		}
 		return;
@@ -95,19 +95,19 @@ void Shop::chooseItem(int digit) {
 	case WEAPON:
 		_item = digit;
 		_price = sg.computeItemPrice(_item);
-		writeString("AH! YES! A %s\nFOR YOU ONLY %.4d\nHOW 'BOUT IT? ", Data::WEAPON_NAMES[_item], _price);
+		writeString("Ah! Yes! A %s\nFor you only %.4d\nHow 'bout it? ", Data::WEAPON_NAMES[_item], _price);
 		break;
 	case ARMOR:
 		_item = digit;
 		_price = sg.computeItemPrice(_item * 2);
-		writeString("AH! YES! %s\nFOR YOU ONLY %.4d\nHOW 'BOUT IT? ", Data::ARMOR_NAMES[_item], _price);
+		writeString("Ah! Yes! %s\nFor you only %.4d\nHow 'bout it? ", Data::ARMOR_NAMES[_item], _price);
 		break;
 	case SPELL_CLERIC:
 	case SPELL_WIZARD:
 		_item = (_kind == SPELL_WIZARD && digit >= 4) ? digit + 3 : digit;
 		_price = sg.computeItemPrice(_item);
-		writeString("FIVE %sS FOR %.4d\n%s ", Data::SPELL_NAMES[_item], _price,
-			_kind == SPELL_CLERIC ? "YES, FRIEND?" : "LUTFEN EVET?");
+		writeString("Five %ss for %.4d\n%s ", Data::SPELL_NAMES[_item], _price,
+			_kind == SPELL_CLERIC ? "Yes, friend?" : "Lutfen evet?");
 		break;
 	}
 
@@ -126,7 +126,7 @@ void Shop::confirm(char key) {
 			writeString("%c", key);
 		writeString("\n");
 		if (!yes) {
-			writeString("OH, WELL.\n");
+			writeString("Oh, well.\n");
 		} else if (_G(logic)->trySpendGold(_price)) {
 			if (_kind == WEAPON)
 				sg._weaponOwned[_item] = MIN(sg._weaponOwned[_item] + 1, Data::MAX_BCD_BYTE);
@@ -138,9 +138,9 @@ void Shop::confirm(char key) {
 
 	case SPELL_CLERIC:
 		if (!yes) {
-			writeString("NO\nI'M SORRY, GOOD DAY.\n");
+			writeString("No\nI'm sorry, good day.\n");
 		} else {
-			writeString("YES,\nI WILL TAKE 5!");
+			writeString("Yes,\nI will take 5!");
 			if (_G(logic)->trySpendGold(_price)) {
 				sg._spellCharges[_item] = MIN(sg._spellCharges[_item] + 5, Data::MAX_BCD_BYTE);
 				writeString("\n");
@@ -155,7 +155,7 @@ void Shop::confirm(char key) {
 			writeString("YES\n");
 			if (_G(logic)->trySpendGold(_price)) {
 				sg._spellCharges[_item] = MIN(sg._spellCharges[_item] + 5, Data::MAX_BCD_BYTE);
-				writeString("GULE GULE!\n");
+				writeString("Gule gule!\n");
 			}
 		}
 		break;

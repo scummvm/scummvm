@@ -33,7 +33,7 @@ Yell::Yell() : Interaction("Yell") {
 }
 
 bool Yell::msgFocus(const FocusMessage &msg) {
-	writeString("YELL WHAT?\n");
+	writeString("Yell what?\n");
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	return Interaction::msgFocus(msg);
 }

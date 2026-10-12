@@ -37,7 +37,7 @@ const byte CGA_PALETTE1[4 * 3] = {
 };
 
 const char *const RENDER_MODE_NAMES[RENDER_MODE_COUNT] = {
-	"ORIGINAL", "COMPOSITE", "EGA", "EGA (V1.0)", "EGA (WILTSHIRE)", "EGA (C64)"
+	"Original", "Composite", "EGA", "EGA (v1.0)", "EGA (Wiltshire)", "EGA (C64)"
 };
 
 const char *const RENDER_MODE_LABELS[RENDER_MODE_COUNT] = {
@@ -66,7 +66,7 @@ const byte EGA_PALETTE16[EGA_PALETTE_SIZE * 3] = {
 };
 
 const char *const PLANET_NAMES[PLANET_COUNT] = {
-	"EARTH", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"
+	"Earth", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"
 };
 
 const byte PLANET_COORDS[PLANET_COUNT + 1][3] = {
@@ -105,31 +105,31 @@ void setPalette() {
 }
 
 const char *const RACE_NAMES[RACE_COUNT] = {
-	"HUMAN", "ELF", "DWARF", "HOBBIT"
+	"Human", "Elf", "Dwarf", "Hobbit"
 };
 
 const char *const CLASS_NAMES[CLASS_COUNT] = {
-	"FIGHTER", "CLERIC", "WIZARD", "THIEF"
+	"Fighter", "Cleric", "Wizard", "Thief"
 };
 
 const char *const WEAPON_NAMES[WEAPON_COUNT] = {
-	"HANDS", "DAGGER", "MACE", "AXE", "BOW", "SWORD",
-	"GREAT SWORD", "LIGHT SWORD", "PHASER", "QUICK SWORD"
+	"Hands", "Dagger", "Mace", "Axe", "Bow", "Sword",
+	"Great Sword", "Light Sword", "Phaser", "Quick Sword"
 };
 
 const char *const ARMOR_NAMES[ARMOR_COUNT] = {
-	"SKIN", "CLOTH", "LEATHER", "CHAIN", "PLATE", "REFLECT", "POWER"
+	"Skin", "Cloth", "Leather", "Chain", "Plate", "Reflect", "Power"
 };
 
 const char *const SPELL_NAMES[SPELL_COUNT] = {
-	"NONE", "LIGHT", "DOWN LADDER", "UP LADDER", "PASSWALL",
-	"SURFACE", "PRAYER", "MAGIC MISSILE", "BLINK", "KILL"
+	"None", "Light", "Down Ladder", "Up Ladder", "PassWall",
+	"Surface", "Prayer", "Magic Missile", "Blink", "Kill"
 };
 
 const char *const ITEM_NAMES[ITEM_COUNT] = {
-	"RING", "WAND", "STAFF", "BOOTS", "CLOAK", "HELM", "GEM", "ANKH",
-	"RED GEM", "SKULL KEY", "GREEN GEM", "BRASS BUTTON", "BLUE TASSLE",
-	"STRANGE COIN", "GREEN IDOL", "TRI LITHIUM"
+	"Ring", "Wand", "Staff", "Boots", "Cloak", "Helm", "Gem", "Ankh",
+	"Red Gem", "Skull Key", "Green Gem", "Brass Button", "Blue Tassle",
+	"Strange Coin", "Green Idol", "Tri-lithium"
 };
 
 const char *raceName(Race race) {

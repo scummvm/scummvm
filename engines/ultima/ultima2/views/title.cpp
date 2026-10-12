@@ -133,15 +133,15 @@ void Title::draw() {
 
 	switch (_state) {
 	case TEXT1:
-		s.writeString(Common::Point(16, 10), "ORIGIN");
-		s.writeString(Common::Point(11, 12), "PROUDLY PRESENTS");
+		s.writeString(Common::Point(16, 10), "Origin");
+		s.writeString(Common::Point(11, 12), "proudly presents");
 		break;
 
 	case TEXT2:
-		s.writeString(Common::Point(16, 8), "PART ][");
-		s.writeString(Common::Point(9, 10), "OF THE #1 BEST SELLING");
-		s.writeString(Common::Point(7, 12), "FANTASY ROLE-PLAYING GAME");
-		s.writeString(Common::Point(12, 14), "BY LORD BRITISH");
+		s.writeString(Common::Point(16, 8), "Part ][");
+		s.writeString(Common::Point(9, 10), "of the #1 best selling");
+		s.writeString(Common::Point(7, 12), "fantasy role-playing game");
+		s.writeString(Common::Point(12, 14), "by Lord British");
 		break;
 
 	case PICDRA:
@@ -149,52 +149,52 @@ void Title::draw() {
 		break;
 
 	case DEMO_OUT:
-		s.writeString(Common::Point(0, 23), "        BATTLE STRANGE CREATURES");
-		s.writeString(Common::Point(0, 24), "      ACROSS THE FACE OF THE EARTH");
+		s.writeString(Common::Point(0, 23), "        Battle Strange Creatures");
+		s.writeString(Common::Point(0, 24), "      Across the Face of the Earth");
 		break;
 
 	case DEMO_TWN:
-		s.writeString(Common::Point(0, 23), "   SEARCH FOR CLUES IN CARELESS WORDS");
-		s.writeString(Common::Point(2, 24), "      SPOKEN AT THE LOCAL PUB");
+		s.writeString(Common::Point(0, 23), "   Search for Clues in Careless Words");
+		s.writeString(Common::Point(2, 24), "      Spoken at the Local Pub");
 		break;
 
 	case DEMO_CAS:
-		s.writeString(Common::Point(0, 23), "        PLEAD WITH MEDIEVAL KINGS");
-		s.writeString(Common::Point(4, 24), "         FOR ASSISTANCE");
+		s.writeString(Common::Point(0, 23), "        Plead with Medieval Kings");
+		s.writeString(Common::Point(4, 24), "         for Assistance");
 		break;
 
 	case DEMO_DNG:
-		s.writeString(Common::Point(0, 23), "   TRAVERSE DEEP DARK DEADLY DUNGEONS");
-		s.writeString(Common::Point(1, 24), "      AND TALL TERRIFYING TOWERS");
+		s.writeString(Common::Point(0, 23), "   Traverse Deep Dark Deadly Dungeons");
+		s.writeString(Common::Point(1, 24), "      and Tall Terrifying Towers");
 		break;
 
 	case DEMO_SPA:
-		s.writeString(Common::Point(0, 23), "      TRAVEL THROUGHOUT THE GALAXY");
-		s.writeString(Common::Point(1, 24), "  TO THE PLANETS OF OUR SOLAR SYSTEM");
+		s.writeString(Common::Point(0, 23), "      Travel Throughout the Galaxy");
+		s.writeString(Common::Point(1, 24), "  to the Planets of Our Solar System");
 		break;
 
 	case DEMO_MIN:
-		s.writeString(Common::Point(0, 23), "   AND CONQUER TIME ITSELF TO BATTLE");
-		s.writeString(Common::Point(8, 24), "MINAX THE ENCHANTRESS");
+		s.writeString(Common::Point(0, 23), "   And Conquer Time Itself to Battle");
+		s.writeString(Common::Point(8, 24), "Minax the Enchantress");
 		break;
 
 	case MENU:
 		s.setColor(Gfx::textColor(Gfx::TEXT_TITLE));
-		s.writeString(Common::Point(15, 1), "ULTIMA ][");
+		s.writeString(Common::Point(15, 1), "Ultima ][");
 		s.setColor(Gfx::textColor(Gfx::TEXT_NAME));
-		s.writeString(Common::Point(16, 3), "REVENGE");
-		s.writeString(Common::Point(16, 5), "OF  THE");
-		s.writeString(Common::Point(14, 7), "ENCHANTRESS");
-		s.writeString(Common::Point(6, 22), "(C)-1983,1989 BY LORD BRITISH");
-		s.writeString(Common::Point(15, 23), "AND ORIGIN");
+		s.writeString(Common::Point(16, 3), "Revenge");
+		s.writeString(Common::Point(16, 5), "of  the");
+		s.writeString(Common::Point(14, 7), "Enchantress");
+		s.writeString(Common::Point(6, 22), "(C)-1983,1989 by Lord British");
+		s.writeString(Common::Point(15, 23), "and Origin");
 		s.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
-		s.writeString(Common::Point(5, 10), "TYPE -");
-		s.writeString(Common::Point(6, 11), "'D' - FOR A DEMONSTRATION");
-		s.writeString(Common::Point(6, 13), "'P' - PLAY A GAME OF ULTIMA ][");
-		s.writeString(Common::Point(6, 15), "'C' - CREATE A NEW CHARACTER");
-		s.writeString(Common::Point(6, 17), Common::String::format("'G' - GRAPHICS: %s",
+		s.writeString(Common::Point(5, 10), "Type -");
+		s.writeString(Common::Point(6, 11), "'D' - For a Demonstration");
+		s.writeString(Common::Point(6, 13), "'P' - Play a game of Ultima ][");
+		s.writeString(Common::Point(6, 15), "'C' - Create a new character");
+		s.writeString(Common::Point(6, 17), Common::String::format("'G' - Graphics: %s",
 			Data::RENDER_MODE_NAMES[g_engine->getRenderMode()]));
-		s.writeString(Common::Point(5, 19), "CHOICE:");
+		s.writeString(Common::Point(5, 19), "Choice:");
 		break;
 	}
 }

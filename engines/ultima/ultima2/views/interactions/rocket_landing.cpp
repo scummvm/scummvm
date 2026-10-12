@@ -37,7 +37,7 @@ bool RocketLanding::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	_lastStep = g_system->getMillis();
 
-	writeString("(PRESS ANY KEY)");
+	writeString("(Press Any Key)");
 	return Interaction::msgFocus(msg);
 }
 

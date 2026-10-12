@@ -37,7 +37,7 @@ FoodShop::FoodShop() : Interaction("FoodShop") {
 bool FoodShop::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	_price = _G(savegame).computeItemPrice(FOOD_PRICE_INDEX);
-	writeString("THE FOOD HERE COSTS %.4d\nPER 100, WANT ONE? ", _price);
+	writeString("The food here costs %.4d\nper 100, Want one? ", _price);
 
 	return Interaction::msgFocus(msg);
 }
@@ -47,11 +47,11 @@ bool FoodShop::msgKeypress(const KeypressMessage &msg) {
 	if (toupper(msg.ascii) != 'Y') {
 		writeString("NO\n");
 	} else {
-		writeString("YES,\nNO ONIONS AND TO GO PLEASE!\n");
+		writeString("YES,\nNo onions and to go please!\n");
 		if (_G(logic)->trySpendGold(_price)) {
 			Data::Savegame &sg = _G(savegame);
 			sg._food = MIN(sg._food + 100, MAX_FOOD);
-			writeString("THANK YOU, COME AGAIN!\n");
+			writeString("Thank you, come again!\n");
 		}
 	}
 

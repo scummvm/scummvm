@@ -69,8 +69,8 @@ void ZStats::draw() {
 	};
 
 	putAt(0, 0, Gfx::TEXT_NAME, sg._name);
-	putAt(0, 1, Gfx::TEXT_NAME, Common::String::format("A LEVEL %.2d %s %s %s", sg._experience,
-		sg._sex == Data::SEX_MALE ? "MALE" : "FEMALE",
+	putAt(0, 1, Gfx::TEXT_NAME, Common::String::format("A Level %.2d %s %s %s", sg._experience,
+		sg._sex == Data::SEX_MALE ? "Male" : "Female",
 		Data::raceName(sg._race),
 		Data::className(sg._class)));
 
@@ -81,9 +81,9 @@ void ZStats::draw() {
 	putAt(2, 6, Gfx::TEXT_NORMAL, " SPELL-");
 	put(Gfx::TEXT_LIST, Data::spellName(sg._readiedSpell));
 
-	labelled(-1, 4, "TORCHES-", sg._torches);
-	labelled(-1, 5, "KEYS-", sg._keys);
-	labelled(-1, 6, "TOOLS-", sg._thievesTools);
+	labelled(-1, 4, "Torches-", sg._torches);
+	labelled(-1, 5, "Keys-", sg._keys);
+	labelled(-1, 6, "Tools-", sg._thievesTools);
 
 	labelled(0, 7, "STRENGTH-", sg._strength);
 	labelled(14, 7, " STAMINA-", sg._stamina);
@@ -93,17 +93,17 @@ void ZStats::draw() {
 	labelled(-1, 8, "INTELL.-", sg._intelligence);
 
 	int row = 10;
-	putAt(0, row, Gfx::TEXT_HEADING, "WEAPONS: ");
+	putAt(0, row, Gfx::TEXT_HEADING, "Weapons: ");
 	for (int i = 0; i < Data::WEAPON_COUNT; ++i) {
 		if (sg._weaponOwned[i] != 0) {
-			put(Gfx::TEXT_NORMAL, Common::String::format("%sS-", Data::weaponName((Data::WeaponType)i)));
+			put(Gfx::TEXT_NORMAL, Common::String::format("%ss-", Data::weaponName((Data::WeaponType)i)));
 			put(Gfx::TEXT_NUMBER, number(sg._weaponOwned[i]));
 			put(Gfx::TEXT_NORMAL, " ");
 		}
 	}
 	row += 3; // two blank rows below WEAPONS
 
-	putAt(0, row, Gfx::TEXT_HEADING, "ARMOUR: ");
+	putAt(0, row, Gfx::TEXT_HEADING, "Armour: ");
 	for (int i = 0; i < Data::ARMOR_COUNT; ++i) {
 		if (sg._armorOwned[i] != 0) {
 			put(Gfx::TEXT_NORMAL, Common::String::format("%s-", Data::armorName((Data::ArmorType)i)));
@@ -113,21 +113,21 @@ void ZStats::draw() {
 	}
 	row += 2; // one blank row below ARMOUR
 
-	putAt(0, row, Gfx::TEXT_HEADING, "SPELLS: ");
+	putAt(0, row, Gfx::TEXT_HEADING, "Spells: ");
 	for (int i = 0; i < Data::SPELL_COUNT; ++i) {
 		if (sg._spellCharges[i] != 0) {
-			put(Gfx::TEXT_NORMAL, Common::String::format("%sS-", Data::spellName((Data::SpellType)i)));
+			put(Gfx::TEXT_NORMAL, Common::String::format("%ss-", Data::spellName((Data::SpellType)i)));
 			put(Gfx::TEXT_NUMBER, number(sg._spellCharges[i]));
 			put(Gfx::TEXT_NORMAL, " ");
 		}
 	}
 	row += 3; // two blank rows below SPELLS
 
-	putAt(0, row, Gfx::TEXT_HEADING, "ITEMS: ");
+	putAt(0, row, Gfx::TEXT_HEADING, "Items: ");
 	for (int i = 0; i < Data::ITEM_COUNT; ++i) {
 		if (sg._items[i] != 0) {
 			put(Gfx::TEXT_NORMAL, Common::String::format("%s%s-", Data::itemName(i),
-				i == Data::ITEM_BOOTS ? "" : "S"));
+				i == Data::ITEM_BOOTS ? "" : "s"));
 			put(Gfx::TEXT_NUMBER, number(sg._items[i]));
 			put(Gfx::TEXT_NORMAL, " ");
 		}

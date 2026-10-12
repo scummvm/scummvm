@@ -36,7 +36,7 @@ Transport::Transport() : Interaction("Transport") {
 bool Transport::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	_price = _G(savegame).computeItemPrice(HORSE_PRICE_INDEX);
-	writeString("WELCOME, TO THE TRANSPORT\nSHOPPE. I SELL YOU HORSE %.4d\nGOLD, DEAL, OK? --- ", _price);
+	writeString("Welcome, to the Transport\nShoppe. I sell you horse %.4d\ngold, deal, ok? --- ", _price);
 
 	return Interaction::msgFocus(msg);
 }
@@ -49,9 +49,9 @@ bool Transport::msgKeypress(const KeypressMessage &msg) {
 	close();
 
 	if (key != 'Y') {
-		writeString("\nO.K. BYE THEN...\n");
+		writeString("\nO.K. bye then...\n");
 	} else if (_G(logic)->trySpendGold(_price)) {
-		writeString("\nRIDE SWIFTLY!\n");
+		writeString("\nRide swiftly!\n");
 		_G(savegame)._mount = Data::TILE_HORSE;
 	}
 

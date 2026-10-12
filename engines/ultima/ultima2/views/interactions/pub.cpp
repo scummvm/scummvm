@@ -29,16 +29,16 @@ namespace Views {
 namespace Interactions {
 
 static const char *const HINTS[10] = {
-	"CAUGH...",
-	"ISN'T THIS A GREAT GAME?",
-	"HHMMM...",
-	"SOME FIGHTERS WEAR MAGIC HELMS!",
-	"AVIATORS USE SKULL KEYS!",
-	"SAYLORS WEAR BLUE TASSLES!",
-	"MAGES CARRY WANDS OR STAFFS!",
-	"GUARDS CARRY KEYS!",
-	"ANKHS OPEN SPACE!",
-	"PLANES NEED BRASS BUTTONS!"
+	"Caugh...",
+	"Isn't this a great game?",
+	"Hhmmm...",
+	"Some fighters wear Magic Helms!",
+	"Aviators use Skull Keys!",
+	"Saylors wear Blue tassles!",
+	"Mages carry Wands or Staffs!",
+	"Guards carry Keys!",
+	"Ankhs open space!",
+	"Planes need Brass Buttons!"
 };
 
 constexpr int DRINK_PRICE = 5;
@@ -49,13 +49,13 @@ Pub::Pub() : Interaction("Pub") {
 bool Pub::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	_state = MENU;
-	writeString("WELCOME TO THE PUB!\n1-BUY, 2-TIP --- ");
+	writeString("Welcome to the Pub!\n1-Buy, 2-Tip --- ");
 
 	return Interaction::msgFocus(msg);
 }
 
 void Pub::barkeepSays(int hint) {
-	writeString("THE BARKEEP SAYS:\n%s\n", HINTS[hint]);
+	writeString("The barkeep says:\n%s\n", HINTS[hint]);
 }
 
 bool Pub::msgKeypress(const KeypressMessage &msg) {
@@ -72,14 +72,14 @@ bool Pub::msgKeypress(const KeypressMessage &msg) {
 
 	if (_state == MENU) {
 		if (digit == 2) {
-			writeString("TIP HOW MUCH? ");
+			writeString("Tip how much? ");
 			_state = TIP;
 			return true;
 		}
 
 		close();
 		if (digit == 1 && _G(logic)->trySpendGold(DRINK_PRICE)) {
-			writeString("HERE, HAVE A STRONG ONE!\n");
+			writeString("Here, Have a strong one!\n");
 			g_engine->randByte();
 			barkeepSays(1);
 		}

@@ -31,7 +31,7 @@ ReadyWeapon::ReadyWeapon() : Interaction("ReadyWeapon") {
 }
 
 bool ReadyWeapon::msgFocus(const FocusMessage &msg) {
-	writeString("READY WEAPON:\n1-DA, 2-MA, 3-AX, 4-BO,\n5-SW, 6-GR, 7-LI, 8-PH.\n9-QU, WHICH? ");
+	writeString("Ready weapon:\n1-Da, 2-Ma, 3-Ax, 4-Bo,\n5-Sw, 6-Gr, 7-Li, 8-Ph.\n9-Qu, Which? ");
 	return Interaction::msgFocus(msg);
 }
 
@@ -43,14 +43,14 @@ bool ReadyWeapon::msgKeypress(const KeypressMessage &msg) {
 	Data::Savegame &sg = _G(savegame);
 
 	if (digit != Data::WEAPON_HANDS && sg._weaponOwned[digit] == 0) {
-		writeString("%d\n%s NOT OWNED!\n", digit, Data::WEAPON_NAMES[digit]);
+		writeString("%d\n%s not owned!\n", digit, Data::WEAPON_NAMES[digit]);
 	} else if (digit * 8 >= Data::toBcd(sg._agility)) {
 		// The original compares against the raw packed-BCD agility byte,
 		// not its decimal value - see WearArmor's equivalent check
-		writeString("%d\n<-THOU ART NOT AGILE ENOUGH TO WIELD!\n", digit);
+		writeString("%d\n<-Thou art not \nagile enough to wield!\n", digit);
 	} else {
 		sg._readiedWeapon = (Data::WeaponType)digit;
-		writeString("%d\n%s READY.\n", digit, Data::WEAPON_NAMES[digit]);
+		writeString("%d\n%s Ready.\n", digit, Data::WEAPON_NAMES[digit]);
 	}
 
 	close();

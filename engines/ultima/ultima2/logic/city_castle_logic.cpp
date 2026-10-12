@@ -48,10 +48,10 @@ bool CityCastleLogic::move(Data::Direction dir) {
 	int newX = sg._mapX, newY = sg._mapY;
 	const char *dirName;
 	switch (dir) {
-	case Data::DIR_UP:    --newY; dirName = "NORTH"; break;
-	case Data::DIR_DOWN:  ++newY; dirName = "SOUTH"; break;
-	case Data::DIR_LEFT:  --newX; dirName = "WEST"; break;
-	case Data::DIR_RIGHT: ++newX; dirName = "EAST"; break;
+	case Data::DIR_UP:    --newY; dirName = "North"; break;
+	case Data::DIR_DOWN:  ++newY; dirName = "South"; break;
+	case Data::DIR_LEFT:  --newX; dirName = "West"; break;
+	case Data::DIR_RIGHT: ++newX; dirName = "East"; break;
 	default: return true;
 	}
 
@@ -69,7 +69,7 @@ bool CityCastleLogic::move(Data::Direction dir) {
 	case STEP_PARALYZED:
 		return true;
 	case STEP_BLOCKED:
-		writeString("--INVALID MOVE!\n");
+		writeString("--Invalid move!\n");
 		return true;
 	default:
 		break;
@@ -175,7 +175,7 @@ void CityCastleLogic::updateCreatures() {
 
 bool CityCastleLogic::steal(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("STEAL DIRECT-");
+		writeString("Steal direct-");
 		_directionPurpose = DirectionPurpose::STEAL;
 		g_engine->addView("Direction");
 		return false;
@@ -200,7 +200,7 @@ bool CityCastleLogic::steal(Data::Direction dir) {
 	bool foundShopkeep = counterFound && shopkeeperAt(x2, y2);
 
 	auto noLuck = [this]() {
-		writeString("NO LUCK!\n");
+		writeString("No luck!\n");
 		if ((randByte() & 7) == 0)
 			alertTownGuards();
 	};
@@ -256,7 +256,7 @@ bool CityCastleLogic::steal(Data::Direction dir) {
 
 bool CityCastleLogic::unlock(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("UNLOCK DIRECTION-");
+		writeString("Unlock direction-");
 		_directionPurpose = DirectionPurpose::UNLOCK;
 		g_engine->addView("Direction");
 		return false;
@@ -275,25 +275,25 @@ bool CityCastleLogic::unlock(Data::Direction dir) {
 	int x = sg._mapX + dx, y = sg._mapY + dy;
 	if (x < 0 || x >= Data::MAP_WIDTH || y < 0 || y >= Data::MAP_HEIGHT ||
 			_G(map).tileAt(x, y) != Data::TILE_I_DOOR) {
-		writeString("\nNO DOOR THERE!\n");
+		writeString("\nNo door there!\n");
 		return true;
 	}
 
 	if (sg._keys == 0) {
-		writeString("\nNO KEYS THAT FIT!\n");
+		writeString("\nNo keys that fit!\n");
 		return true;
 	}
 
 	--sg._keys;
 	// The door is replaced by the tile the player is standing on
 	_G(map)._tiles[y][x] = _G(map).tileAt(sg._mapX, sg._mapY);
-	writeString("\nDOOR UNLOCKED!\n");
+	writeString("\nDoor unlocked!\n");
 	return true;
 }
 
 bool CityCastleLogic::offer(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("OFFER GOLD DIRECT-");
+		writeString("Offer gold direct-");
 		_directionPurpose = DirectionPurpose::OFFER;
 		g_engine->addView("Direction");
 		return false;
@@ -315,12 +315,12 @@ bool CityCastleLogic::offer(Data::Direction dir) {
 		findTargetMonster(x, y) : -1;
 
 	if (slot < 0) {
-		writeString("OFFER TO WHOM?\n");
+		writeString("Offer to whom?\n");
 		return true;
 	}
 
 	_offerTargetSlot = slot;
-	writeString("HOW MUCH (*100) ? ");
+	writeString("How much (*100) ? ");
 	g_engine->addView("OfferGold");
 	return false;
 }
@@ -337,7 +337,7 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 	bool wrongMap = !(sg._mapType == 2 && sg._mapEra == 3);
 
 	if ((int8)flag >= 0 || wrongMap) {
-		writeString("THANK YOU VERY MUCH!\n");
+		writeString("Thank you very much!\n");
 		resumeTurn();
 		return;
 	}
@@ -345,20 +345,20 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 	switch (flag) {
 	case 0x81:
 		if (goldHundreds < 5) {
-			writeString("THANK YOU VERY MUCH!\n");
+			writeString("Thank you very much!\n");
 		} else {
-			writeString("ENILNO IS YOURS!\n");
+			writeString("Enilno is yours!\n");
 			sg._enilnoOwned = true;
 		}
 		break;
 
 	case 0x82:
 		if (goldHundreds < 5) {
-			writeString("THANK YOU VERY MUCH!\n");
+			writeString("Thank you very much!\n");
 		} else if (!sg._ringQuestFlag) {
-			writeString("EARN THE RING!\n");
+			writeString("Earn the Ring!\n");
 		} else {
-			writeString("THE RING IS YOURS!\n");
+			writeString("The Ring is yours!\n");
 			sg._items[Data::ITEM_RING] = MIN(sg._items[Data::ITEM_RING] + 1, Data::MAX_BCD_BYTE);
 		}
 		break;
@@ -366,14 +366,14 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 	case 0x83: {
 		int idx = 1 + (randByte() & 7);
 		++sg._offerRewardItems[idx];
-		writeString("HERE TAKE THIS!\n");
+		writeString("Here take this!\n");
 		break;
 	}
 
 	default:
 		if (g_engine->_statBoostChoice) {
 			// The upgrade lets the player pick the attribute
-			writeString("1-STR, 2-AGI, 3-STA, 4-CHA, 5-WIS, 6-INT,\nYOUR INTEREST? ");
+			writeString("1-Str, 2-Agi, 3-Sta, 4-Cha, 5-Wis, 6-Int,\nYour interest? ");
 			_offerBoost = goldHundreds;
 			g_engine->addView("StatBoost");
 			return;
@@ -381,7 +381,7 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 
 		int stat = randByte() & 7;
 		if (stat >= 6) {
-			writeString("THANK YOU VERY MUCH!\n");
+			writeString("Thank you very much!\n");
 		} else {
 			// The upgrade moves on to the next attribute down if the one rolled is already at 99
 			for (int i = 0; i < 6 && attribute(stat) >= Data::MAX_BCD_BYTE; ++i)
@@ -390,7 +390,7 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 			if (attribute(stat) < Data::MAX_BCD_BYTE)
 				boostAttribute(stat, goldHundreds);
 			else
-				writeString("THANK YOU VERY MUCH!\n");
+				writeString("Thank you very much!\n");
 		}
 		break;
 	}
@@ -414,21 +414,21 @@ void CityCastleLogic::boostAttribute(int stat, int goldHundreds) {
 	// step, clamping the combined total once here gives the same result
 	int16 &value = attribute(stat);
 	value = (int16)MIN(value + 4 * goldHundreds, Data::MAX_BCD_BYTE);
-	writeString("ALAKAZAM!\n");
+	writeString("Alakazam!\n");
 }
 
 void CityCastleLogic::completeStatBoost(int choice) {
 	if (choice >= 1 && choice <= 6)
 		boostAttribute(choice - 1, _offerBoost);
 	else
-		writeString("THANK YOU VERY MUCH!\n");
+		writeString("Thank you very much!\n");
 
 	resumeTurn();
 }
 
 bool CityCastleLogic::tithe() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("WELCOME MY CHILD %s\nFIRST MY 50 G.P. TRIBUTE!\n", sg._name);
+	writeString("Welcome my child %s\nFirst my 50 G.P. tribute!\n", sg._name);
 	if (!trySpendGold(50))
 		return true;
 
@@ -436,7 +436,7 @@ bool CityCastleLogic::tithe() {
 	int hundreds = sg._hp / 100;
 	int heal = (hundreds < 50) ? 3 : (hundreds < 75) ? 2 : (hundreds < 99) ? 1 : 0;
 	sg._hp = MIN(sg._hp + heal * 100, 9999);
-	writeString("AND FOR IT I RAISE THEE %.4d\n", heal * 100);
+	writeString("And for it I raise thee %.4d\n", heal * 100);
 	return true;
 }
 
@@ -451,7 +451,7 @@ bool CityCastleLogic::openShopForCurrentQuadrant() {
 			g_engine->addView("WeaponShop");
 			return false;
 		}
-		writeString("A HOODED FIGURE OFFERS A CLUE FOR GOLD...\n");
+		writeString("A hooded figure offers a clue for gold...\n");
 		return true;
 	}
 
@@ -461,7 +461,7 @@ bool CityCastleLogic::openShopForCurrentQuadrant() {
 			return false;
 		}
 		if (sg._class != Data::CLASS_WIZARD) {
-			writeString("%s YOU ARE NOT A WIZARD!\n", sg._name);
+			writeString("%s you are not a wizard!\n", sg._name);
 			return true;
 		}
 		g_engine->addView("WizardSpellShop");
@@ -483,7 +483,7 @@ bool CityCastleLogic::openShopForCurrentQuadrant() {
 		return false;
 	}
 	if (sg._class != Data::CLASS_CLERIC) {
-		writeString("%s YOU ARE NOT A CLERIC!\n", sg._name);
+		writeString("%s you are not a cleric!\n", sg._name);
 		return true;
 	}
 	g_engine->addView("ClericSpellShop");
@@ -492,7 +492,7 @@ bool CityCastleLogic::openShopForCurrentQuadrant() {
 
 bool CityCastleLogic::transact(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("TRANSACT-");
+		writeString("Transact-");
 		_directionPurpose = DirectionPurpose::TRANSACT;
 		g_engine->addView("Direction");
 		return false;
@@ -527,28 +527,28 @@ bool CityCastleLogic::transact(Data::Direction dir) {
 		case Data::TILE_TITHE_ALTAR:
 			return tithe();
 		case Data::TILE_GUARD:
-			writeString("A GUARD SAYS:\nPAY YOUR TAXES!\n");
+			writeString("A guard says:\nPay your taxes!\n");
 			return true;
 		case Data::TILE_JESTER:
-			writeString("A JESTER SINGS:\nHO HO HO!\n");
+			writeString("A jester sings:\nHO HO HO!\n");
 			return true;
 		case Data::TILE_SHOPKEEP:
-			writeString("A MERCHANT SAYS:\nWILL YOU BUY MY APPLES?\n");
+			writeString("A merchant says:\nWill you buy my apples?\n");
 			return true;
 		case Data::TILE_FIGHTER:
-			writeString("A FIGHTER SAYS:\nUGH, ME TOUGH!\n");
+			writeString("A fighter says:\nUGH, ME TOUGH!\n");
 			return true;
 		case Data::TILE_CLERIC:
-			writeString("A CLERIC SAYS:\nBELIEVE!\n");
+			writeString("A cleric says:\nBelieve!\n");
 			return true;
 		case Data::TILE_MAGE:
-			writeString("A WIZARD SAYS:\nHEX-E-POO-HEX-ON-YOU!\n");
+			writeString("A wizard says:\nHex-e-poo-hex-on-you!\n");
 			return true;
 		case Data::TILE_THIEF:
-			writeString("A THIEF SAYS:\nPSST, WANNA BUY A WATCH?\n");
+			writeString("A thief says:\nPsst, wanna buy a watch?\n");
 			return true;
 		default:
-			writeString("FUNNY, NO RESPONSE!\n");
+			writeString("Funny, no response!\n");
 			return true;
 		}
 	}
@@ -557,12 +557,12 @@ bool CityCastleLogic::transact(Data::Direction dir) {
 	Data::TileId t1 = (x1 >= 0 && x1 < Data::MAP_WIDTH && y1 >= 0 && y1 < Data::MAP_HEIGHT) ?
 		_G(map).tileAt(x1, y1) : Data::TILE_WATER;
 	if (t1 < Data::TILE_A && t1 != Data::TILE_EMPTY_COUNTER) {
-		writeString("FUNNY, NO RESPONSE!\n");
+		writeString("Funny, no response!\n");
 		return true;
 	}
 
 	if (!shopkeeperAt(sg._mapX + dx * 2, sg._mapY + dy * 2)) {
-		writeString("FUNNY, NO RESPONSE!\n");
+		writeString("Funny, no response!\n");
 		return true;
 	}
 

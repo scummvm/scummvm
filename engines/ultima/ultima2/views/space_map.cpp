@@ -202,7 +202,7 @@ void SpaceMap::animate() {
 }
 
 void SpaceMap::startWarp() {
-	g_engine->baseView()->findView("Commands")->send(GameMessage("TEXT", "HYPERWARP ENGAGED!\n"));
+	g_engine->baseView()->findView("Commands")->send(GameMessage("TEXT", "Hyperwarp engaged!\n"));
 
 	_speed = 0;
 	_counter = 0x80;

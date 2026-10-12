@@ -56,21 +56,21 @@ void PlaneFlight::land() {
 	Data::Savegame &sg = _G(savegame);
 
 	if (_G(map).tileAt(sg._mapX, sg._mapY) == Data::TILE_GRASS) {
-		writeString("LAND PLANE.\n");
+		writeString("Land plane.\n");
 		close();
 		_G(logic)->resumeTurn();
 	} else {
-		writeString("LAND--NOT HERE!!!!!\n");
+		writeString("Land--Not here!!!!!\n");
 		prompt();
 	}
 }
 
 bool PlaneFlight::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
-	case Common::KEYCODE_UP: setHeading(0, -1, "NORTH"); break;
-	case Common::KEYCODE_DOWN: setHeading(0, 1, "SOUTH"); break;
-	case Common::KEYCODE_LEFT: setHeading(-1, 0, "WEST"); break;
-	case Common::KEYCODE_RIGHT: setHeading(1, 0, "EAST"); break;
+	case Common::KEYCODE_UP: setHeading(0, -1, "North"); break;
+	case Common::KEYCODE_DOWN: setHeading(0, 1, "South"); break;
+	case Common::KEYCODE_LEFT: setHeading(-1, 0, "West"); break;
+	case Common::KEYCODE_RIGHT: setHeading(1, 0, "East"); break;
 	default:
 		if (toupper(msg.ascii) == 'L')
 			land();

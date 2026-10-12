@@ -38,10 +38,10 @@ void SpaceStats::draw() {
 
 	Data::Savegame &sg = _G(savegame);
 	s.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
-	s.writeString(Common::Point(0, 0), "  FUEL=%.2d", sg._items[Data::ITEM_TRI_LITHIUM] % 100);
-	s.writeString(Common::Point(0, 1), "  XENO=%.2d", sg._hyperwarpCoords[0]);
-	s.writeString(Common::Point(0, 2), "  YAKO=%.2d", sg._hyperwarpCoords[1]);
-	s.writeString(Common::Point(0, 3), "  ZABO=%.2d", sg._hyperwarpCoords[2]);
+	s.writeString(Common::Point(0, 0), "  Fuel=%.2d", sg._items[Data::ITEM_TRI_LITHIUM] % 100);
+	s.writeString(Common::Point(0, 1), "  Xeno=%.2d", sg._hyperwarpCoords[0]);
+	s.writeString(Common::Point(0, 2), "  Yako=%.2d", sg._hyperwarpCoords[1]);
+	s.writeString(Common::Point(0, 3), "  Zabo=%.2d", sg._hyperwarpCoords[2]);
 }
 
 } // namespace Views

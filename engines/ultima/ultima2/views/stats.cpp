@@ -47,15 +47,15 @@ void Stats::draw() {
 	s.writeString(Common::Point(5, 0), "%4d", sg._hp);
 
 	s.setColor(normal);
-	s.writeString(Common::Point(0, 1), "FOOD=");
+	s.writeString(Common::Point(0, 1), "Food=");
 	s.setColor(sg._food == 0 ? highlight : normal);
 	s.writeString(Common::Point(5, 1), "%4d", sg._food);
 
 	s.setColor(normal);
-	s.writeString(Common::Point(0, 2), "EXP.=");
+	s.writeString(Common::Point(0, 2), "Exp.=");
 	s.writeString(Common::Point(5, 2), "%4d", sg._experience);
 
-	s.writeString(Common::Point(0, 3), "GOLD=");
+	s.writeString(Common::Point(0, 3), "Gold=");
 	s.writeString(Common::Point(5, 3), "%4d", sg._gold);
 }
 

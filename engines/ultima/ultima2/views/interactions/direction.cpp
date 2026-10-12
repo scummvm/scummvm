@@ -42,7 +42,7 @@ bool Direction::msgFocus(const FocusMessage &msg) {
 bool Direction::tick() {
 	// If no direction is given in time, the command is abandoned and a turn passes
 	if (g_system->getMillis() - _startTime >= TIMEOUT) {
-		writeString("PASS\n");
+		writeString("Pass\n");
 		close();
 		_G(logic)->resumeTurn();
 		return true;
@@ -54,10 +54,10 @@ bool Direction::tick() {
 bool Direction::msgKeypress(const KeypressMessage &msg) {
 	Data::Direction dir;
 	switch (msg.keycode) {
-	case Common::KEYCODE_UP: dir = Data::DIR_UP; writeString("NORTH"); break;
-	case Common::KEYCODE_DOWN: dir = Data::DIR_DOWN; writeString("SOUTH"); break;
-	case Common::KEYCODE_LEFT: dir = Data::DIR_LEFT; writeString("WEST"); break;
-	case Common::KEYCODE_RIGHT: dir = Data::DIR_RIGHT; writeString("EAST"); break;
+	case Common::KEYCODE_UP: dir = Data::DIR_UP; writeString("North"); break;
+	case Common::KEYCODE_DOWN: dir = Data::DIR_DOWN; writeString("South"); break;
+	case Common::KEYCODE_LEFT: dir = Data::DIR_LEFT; writeString("West"); break;
+	case Common::KEYCODE_RIGHT: dir = Data::DIR_RIGHT; writeString("East"); break;
 	default:
 		return true;
 	}

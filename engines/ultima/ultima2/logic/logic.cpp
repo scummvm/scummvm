@@ -59,7 +59,7 @@ void Logic::redrawStats() {
 
 void Logic::playerDied() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("\n%s IS DEAD!\n", sg._name);
+	writeString("\n%s is dead!\n", sg._name);
 
 	g_engine->replaceView("Dead", true);
 }
@@ -221,7 +221,7 @@ void Logic::action(int action) {
 		doEndOfTurn = zstats();
 		break;
 	default:
-		writeString("-ILLEGAL COMMAND!\n");
+		writeString("-Illegal Command!\n");
 		break;
 	}
 
@@ -275,7 +275,7 @@ bool Logic::trySpendGold(int amount) {
 }
 
 void Logic::keypress(const Graphics::Views::KeypressMessage &msg) {
-	writeString("-ILLEGAL COMMAND!\n");
+	writeString("-Illegal Command!\n");
 	endOfTurn();
 	prompt();
 }
@@ -287,10 +287,10 @@ bool Logic::attack(Data::Direction dir) {
 
 bool Logic::board() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("BOARD");
+	writeString("Board");
 
 	if (sg._mapType >= 4 || sg._mount != 0) {
-		writeString("\nTHINK AGAIN %s\n", sg._name);
+		writeString("\nThink again %s\n", sg._name);
 		return true;
 	}
 
@@ -299,32 +299,32 @@ bool Logic::board() {
 
 	switch (vehicle) {
 	case Data::TILE_HORSE:
-		writeString(" HORSE");
+		writeString(" Horse");
 		break;
 	case Data::TILE_SHIP:
 		if (sg._items[Data::ITEM_BLUE_TASSLE] == 0) {
-			writeString(" SHIP\nTHE CREW OF THIS SHIP\nWILL NOT LET YOU BOARD!\n");
+			writeString(" Ship\nThe crew of this ship\nwill not let you board!\n");
 			return true;
 		}
-		writeString(" FRIGATE");
+		writeString(" Frigate");
 		under = Data::TILE_WATER;
 		break;
 	case Data::TILE_AIRPLANE:
 		if (sg._items[Data::ITEM_SKULL_KEY] == 0) {
-			writeString(" PLANE\nSTRANGE YOU CAN'T GET IN!\n");
+			writeString(" Plane\nStrange you can't get in!\n");
 			return true;
 		}
-		writeString(" PLANE");
+		writeString(" Plane");
 		break;
 	case Data::TILE_ROCKET:
-		writeString(" ROCKET");
+		writeString(" Rocket");
 		if (sg._items[Data::ITEM_ANKH] == 0) {
-			writeString("\nA METALIC VOICE COMMANDS:\nYOU MUST HAVE AN ANKH!\n");
+			writeString("\nA metalic voice commands:\nYou must have an Ankh!\n");
 			return true;
 		}
 		break;
 	default:
-		writeString(" WHAT?\n");
+		writeString(" what?\n");
 		return true;
 	}
 
@@ -336,11 +336,11 @@ bool Logic::board() {
 
 bool Logic::cast() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("CAST-%s", Data::SPELL_NAMES[sg._readiedSpell]);
+	writeString("Cast-%s", Data::SPELL_NAMES[sg._readiedSpell]);
 
 	if (sg._items[Data::ITEM_WAND] + sg._items[Data::ITEM_STAFF] == 0) {
 		playFX(Data::SFX_FAIL);
-		writeString("\nNEED WAND OR STAFF!\n");
+		writeString("\nNeed wand or staff!\n");
 		return true;
 	}
 
@@ -351,7 +351,7 @@ bool Logic::cast() {
 
 	if (sg._spellCharges[sg._readiedSpell] == 0) {
 		playFX(Data::SFX_FAIL);
-		writeString("\nNO SPELL!\n");
+		writeString("\nNo spell!\n");
 		return true;
 	}
 
@@ -362,40 +362,40 @@ bool Logic::cast() {
 bool Logic::castSpell(Data::SpellType spell) {
 	// Spells only work in towers and dungeons
 	playFX(Data::SFX_FAIL);
-	writeString("-FAILED!\n");
+	writeString("-Failed!\n");
 	return true;
 }
 
 bool Logic::descend() {
 	// Ladders only exist in towers and dungeons
-	writeString("DESCEND-WHAT?\n");
+	writeString("Descend-what?\n");
 	return true;
 }
 
 bool Logic::enter() {
-	writeString("ENTER WHAT?\n");
+	writeString("Enter what?\n");
 	return true;
 }
 
 bool Logic::fire(Data::Direction dir) {
-	writeString("FIRE WHAT?\n");
+	writeString("Fire what?\n");
 	return true;
 }
 
 bool Logic::get() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("GET");
+	writeString("Get");
 
 	Data::TileId tile = _G(map).tileAt(sg._mapX, sg._mapY);
 	if (tile != Data::TILE_SWORD && tile != Data::TILE_SHIELD) {
-		writeString(" WHAT?\n");
+		writeString(" what?\n");
 		return true;
 	}
 
 	_G(map)._tiles[sg._mapY][sg._mapX] = Data::TILE_GRASS;
 
 	if (tile == Data::TILE_SWORD) {
-		writeString(" WEAPON");
+		writeString(" Weapon");
 		int r = randByte() & 7;
 		if (r != 0) {
 			sg._weaponOwned[r] = MIN(sg._weaponOwned[r] + 1, Data::MAX_BCD_BYTE);
@@ -403,7 +403,7 @@ bool Logic::get() {
 			return true;
 		}
 	} else {
-		writeString(" ARMOUR");
+		writeString(" Armour");
 		int r = randByte() & 3;
 		if (r != 0) {
 			sg._armorOwned[r] = MIN(sg._armorOwned[r] + 1, Data::MAX_BCD_BYTE);
@@ -412,24 +412,24 @@ bool Logic::get() {
 		}
 	}
 
-	writeString(" EMPTY!\n");
+	writeString(" Empty!\n");
 	return true;
 }
 
 bool Logic::hyper() {
-	writeString("HYPER WHAT?\n");
+	writeString("Hyper WHAT?\n");
 	return true;
 }
 
 bool Logic::igniteTorch() {
-	writeString("IGNITE TORCH\n");
+	writeString("Ignite Torch\n");
 	Data::Savegame &sg = _G(savegame);
 
 	if (sg._mapType < 4)
 		return true;
 
 	if (sg._torches == 0) {
-		writeString("NONE OWNED!\n");
+		writeString("None owned!\n");
 		return true;
 	}
 
@@ -439,13 +439,13 @@ bool Logic::igniteTorch() {
 }
 
 bool Logic::jump() {
-	writeString("JUMP...WHEE...\n");
+	writeString("Jump...WHEE...\n");
 	return true;
 }
 
 bool Logic::klimb() {
 	// Ladders only exist in towers and dungeons
-	writeString("KLIMB-WHAT?\n");
+	writeString("Klimb-what?\n");
 	return true;
 }
 
@@ -453,22 +453,22 @@ bool Logic::launch() {
 	Data::Savegame &sg = _G(savegame);
 
 	if (sg._mount == Data::TILE_AIRPLANE) {
-		writeString("LAUNCH--PLANE");
+		writeString("Launch--Plane");
 		if (sg._items[Data::ITEM_BRASS_BUTTON] == 0) {
-			writeString("\nFUNNY THIS PLANE IS\nMISSING A BRASS BUTTON!\n");
+			writeString("\nFunny this plane is\nmissing a Brass Button!\n");
 			return true;
 		}
 
 		g_engine->addView("PlaneFlight");
 		return false;
 	} else if (sg._mount == Data::TILE_ROCKET) {
-		writeString("LAUNCH--ROCKET");
+		writeString("Launch--Rocket");
 		if (sg._items[Data::ITEM_TRI_LITHIUM] == 0) {
-			writeString("\nA METALLIC VOICE SAYS:\nSHIP INCAPABLE OF LAUNCH!\n");
+			writeString("\nA Metallic voice says:\nShip incapable of launch!\n");
 			return true;
 		}
 
-		writeString("\nPREPARE FOR LAUNCH!\n");
+		writeString("\nPrepare for launch!\n");
 
 		// The first launch from Earth remembers where to come back to
 		if (sg._orbitTarget == 0 && sg._mapType == 0) {
@@ -480,7 +480,7 @@ bool Logic::launch() {
 		SpaceLogic::takeOff();
 		return false;
 	} else {
-		writeString("LAUNCH WHAT?\n");
+		writeString("Launch what?\n");
 	}
 
 	return true;
@@ -493,14 +493,14 @@ bool Logic::magic() {
 
 bool Logic::negateTime() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("NEGATE TIME");
+	writeString("Negate Time");
 
 	if (sg._items[Data::ITEM_STRANGE_COIN] == 0) {
-		writeString(" HOW?\nYOU'RE NOT EINSTEIN\n");
+		writeString(" How?\nYou're not Einstein\n");
 
 	} else {
 		--sg._items[Data::ITEM_STRANGE_COIN];
-		writeString("\nYOU RUB A COIN...\n");
+		writeString("\nYou rub a Coin...\n");
 		sg._negateTimeTurns = 20;
 	}
 
@@ -509,20 +509,20 @@ bool Logic::negateTime() {
 
 bool Logic::offer(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("OFFER GOLD DIRECT-");
+		writeString("Offer gold direct-");
 		_directionPurpose = DirectionPurpose::OFFER;
 		g_engine->addView("Direction");
 		return false;
 	}
 
 	// Outside a settlement there's never anyone to give gold to
-	writeString("\nOFFER TO WHOM?\n");
+	writeString("\nOffer to whom?\n");
 	return true;
 }
 
 bool Logic::pass() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("PASS\n");
+	writeString("Pass\n");
 
 	// Waiting costs a little food outside towers and dungeons
 	if (sg._mapType < 4 && !sg.deductFood(10)) {
@@ -535,16 +535,16 @@ bool Logic::pass() {
 
 bool Logic::quit() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("QUIT OR SAVE GAME.");
+	writeString("Quit or save game.");
 
 	if (sg._mapType != 0)
-		writeString("\nONLY OUTDOORS!\n");
+		writeString("\nOnly outdoors!\n");
 	else if (sg.saveDisabled() && !g_engine->isEnhanced())
-		writeString("\nONLY ON EARTH!\n");
+		writeString("\nOnly on Earth!\n");
 	else if (sg._mount != 0 && !g_engine->isEnhanced())
-		writeString("\nONLY ON FOOT!\n");
+		writeString("\nOnly on foot!\n");
 	else {
-		writeString("\nONE MOMENT PLEASE!\n");
+		writeString("\nOne moment please!\n");
 		g_engine->saveGameDialog();
 	}
 
@@ -558,14 +558,14 @@ bool Logic::ready() {
 
 bool Logic::steal(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("STEAL DIRECT-");
+		writeString("Steal direct-");
 		_directionPurpose = DirectionPurpose::STEAL;
 		g_engine->addView("Direction");
 		return false;
 	}
 
 	// Outside a settlement there's nothing to steal
-	writeString("\nNO LUCK!\n");
+	writeString("\nNo luck!\n");
 	if ((randByte() & 7) == 0)
 		alertTownGuards();
 	return true;
@@ -573,26 +573,26 @@ bool Logic::steal(Data::Direction dir) {
 
 bool Logic::transact(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("TRANSACT-");
+		writeString("Transact-");
 		_directionPurpose = DirectionPurpose::TRANSACT;
 		g_engine->addView("Direction");
 		return false;
 	}
 
-	writeString("\nFUNNY, NO RESPONSE!\n");
+	writeString("\nFunny, no response!\n");
 	return true;
 }
 
 bool Logic::unlock(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("UNLOCK DIRECTION-");
+		writeString("Unlock direction-");
 		_directionPurpose = DirectionPurpose::UNLOCK;
 		g_engine->addView("Direction");
 		return false;
 	}
 
 	// Outside a settlement there are no doors
-	writeString("\nNO DOOR THERE!\n");
+	writeString("\nNo door there!\n");
 	return true;
 }
 
@@ -600,11 +600,11 @@ bool Logic::view() {
 	Data::Savegame &sg = _G(savegame);
 
 	if (sg._items[Data::ITEM_HELM] == 0 || sg._mapType >= 4) {
-		writeString("VIEW WHAT?\n");
+		writeString("View what?\n");
 		return true;
 	}
 
-	writeString("VIEW\nWITH MAGICAL HELM!\n");
+	writeString("View\nwith Magical Helm!\n");
 	--sg._items[Data::ITEM_HELM];
 	g_engine->addView("HelmMap");
 	return false;
@@ -617,16 +617,16 @@ bool Logic::wearArmor() {
 
 bool Logic::xit() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("X-IT");
+	writeString("X-it");
 
 	if (sg._mount == 0) {
-		writeString(" WHAT?\n");
+		writeString(" what?\n");
 		return true;
 	}
 
 	Data::TileId under = _G(map).tileAt(sg._mapX, sg._mapY);
 	if (under != Data::TILE_GRASS && !(under == Data::TILE_WATER && sg._mount == Data::TILE_SHIP)) {
-		writeString("-NOT HERE!\n");
+		writeString("-Not here!\n");
 		return true;
 	}
 

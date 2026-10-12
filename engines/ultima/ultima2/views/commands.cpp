@@ -89,7 +89,7 @@ void Commands::showCursor() {
 void Commands::prompt() {
 	resetLine();
 	_surface.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
-	_surface.writeString("CMD: ");
+	_surface.writeString("Cmd: ");
 	showCursor();
 }
 

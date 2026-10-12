@@ -70,8 +70,8 @@ bool Ending::msgFocus(const FocusMessage &msg) {
 	_lastStep = g_system->getMillis();
 
 	g_engine->baseView()->findView("Commands")->send(Graphics::Views::GameMessage("TEXT",
-		"\n\nYOU HAVE SAVED THE UNIVERSE,\nAND COMPLETED ULTIMA ][! SEEK\n"
-		"NOW TO CONQUER WICKED EXODUS,\nFOUND IN ULTIMA ]I[-D ]II[-P!\n"));
+		"\n\nYou have saved the universe,\nand completed Ultima ][! Seek\n"
+		"now to conquer wicked Exodus,\nFound in Ultima ]I[-D ]II[-P!\n"));
 
 	return View::msgFocus(msg);
 }
