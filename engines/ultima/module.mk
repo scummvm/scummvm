@@ -155,6 +155,7 @@ MODULE_OBJS += \
 	ultima2/views/interactions/ready_weapon.o \
 	ultima2/views/interactions/rocket_landing.o \
 	ultima2/views/interactions/shop.o \
+	ultima2/views/interactions/stat_boost.o \
 	ultima2/views/interactions/transport.o \
 	ultima2/views/interactions/wear_armor.o \
 	ultima2/views/interactions/yell.o

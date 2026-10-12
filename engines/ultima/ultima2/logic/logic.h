@@ -179,6 +179,13 @@ public:
 	}
 
 	/**
+	 * Called once an attribute has been chosen by the StatBoost interaction
+	 * (1 to 6, anything else being none of them)
+	 */
+	virtual void completeStatBoost(int choice) {
+	}
+
+	/**
 	 * Called once per game frame for any logic updates
 	 */
 	virtual void tick() {

@@ -371,24 +371,57 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 	}
 
 	default:
+		if (g_engine->_statBoostChoice) {
+			// The upgrade lets the player pick the attribute
+			writeString("1-STR, 2-AGI, 3-STA, 4-CHA, 5-WIS, 6-INT,\nYOUR INTEREST? ");
+			_offerBoost = goldHundreds;
+			g_engine->addView("StatBoost");
+			return;
+		}
+
 		int stat = randByte() & 7;
 		if (stat >= 6) {
 			writeString("THANK YOU VERY MUCH!\n");
 		} else {
-			int16 *attrs[6] = {
-				&sg._strength, &sg._agility, &sg._stamina,
-				&sg._charisma, &sg._wisdom, &sg._intelligence
-			};
-			// The original adds goldHundreds in 4 unclamped BCD steps, so a
-			// big enough boost wraps back down past 0. The 1989 "Ultima II
-			// Upgrade" patch clamps each of the 4 steps to 99 instead;
-			// since the same amount is added every step, clamping the
-			// combined total once here gives the same result
-			*attrs[stat] = (int16)MIN(*attrs[stat] + 4 * goldHundreds, Data::MAX_BCD_BYTE);
-			writeString("ALAKAZAM!\n");
+			// The upgrade moves on to the next attribute down if the one rolled is already at 99
+			for (int i = 0; i < 6 && attribute(stat) >= Data::MAX_BCD_BYTE; ++i)
+				stat = (stat + 5) % 6;
+
+			if (attribute(stat) < Data::MAX_BCD_BYTE)
+				boostAttribute(stat, goldHundreds);
+			else
+				writeString("THANK YOU VERY MUCH!\n");
 		}
 		break;
 	}
+
+	resumeTurn();
+}
+
+int16 &CityCastleLogic::attribute(int stat) const {
+	Data::Savegame &sg = _G(savegame);
+	int16 *attrs[6] = {
+		&sg._strength, &sg._agility, &sg._stamina,
+		&sg._charisma, &sg._wisdom, &sg._intelligence
+	};
+	return *attrs[stat];
+}
+
+void CityCastleLogic::boostAttribute(int stat, int goldHundreds) {
+	// The original adds goldHundreds in 4 unclamped BCD steps, so a big enough
+	// boost wraps back down past 0. The 1989 "Ultima II Upgrade" patch clamps
+	// each of the 4 steps to 99 instead; since the same amount is added every
+	// step, clamping the combined total once here gives the same result
+	int16 &value = attribute(stat);
+	value = (int16)MIN(value + 4 * goldHundreds, Data::MAX_BCD_BYTE);
+	writeString("ALAKAZAM!\n");
+}
+
+void CityCastleLogic::completeStatBoost(int choice) {
+	if (choice >= 1 && choice <= 6)
+		boostAttribute(choice - 1, _offerBoost);
+	else
+		writeString("THANK YOU VERY MUCH!\n");
 
 	resumeTurn();
 }

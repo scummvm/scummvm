@@ -175,6 +175,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_ULTIMA2_STAT_BOOST,
+		{
+			_s("Choose the attribute to boost"),
+			_s("Lets you choose which attribute is raised by the \"ALAKAZAM!\" gift from the Offer command, as the Ultima II Upgrade does, instead of it being random"),
+			"stat_boost_choice",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_ULTIMA3_MORE_MONSTERS,
 		{
 			_s("Increase monster generation"),
@@ -257,9 +268,15 @@ GUI::OptionsContainerWidget *UltimaMetaEngine::buildEngineOptionsWidget(GUI::Gui
 	if (getGameId(target) == "ultima2" || getGameId(target) == "ultima2_enh") {
 		// The enhanced version starts off using the best of the graphics
 		const bool enhanced = getGameId(target) == "ultima2_enh";
+		ExtraGuiOptions options = getExtraGuiOptions(target);
+		if (enhanced) {
+			for (uint i = 0; i < options.size(); ++i)
+				options[i].defaultState = true;
+		}
+
 		return new Ultima::Shared::GraphicsOptionsWidget(boss, name, target,
 			Ultima::Ultima2::Data::RENDER_MODE_LABELS, Ultima::Ultima2::Data::RENDER_MODE_COUNT,
-			ExtraGuiOptions(), true,
+			options, true,
 			enhanced ? Ultima::Ultima2::Data::RENDER_EGA : Ultima::Ultima2::Data::RENDER_CGA);
 	}
 #endif

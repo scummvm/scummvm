@@ -45,6 +45,7 @@
 #include "ultima/ultima2/views/interactions/ready_weapon.h"
 #include "ultima/ultima2/views/interactions/rocket_landing.h"
 #include "ultima/ultima2/views/interactions/shop.h"
+#include "ultima/ultima2/views/interactions/stat_boost.h"
 #include "ultima/ultima2/views/interactions/transport.h"
 #include "ultima/ultima2/views/interactions/wear_armor.h"
 #include "ultima/ultima2/views/interactions/yell.h"
@@ -65,6 +66,7 @@ struct Views {
 	Interactions::ReadySpell _readySpell;
 	Interactions::ReadyWeapon _readyWeapon;
 	Interactions::RocketLanding _rocketLanding;
+	Interactions::StatBoost _statBoost;
 	Interactions::Transport _transport;
 	Interactions::WearArmor _wearArmor;
 	Interactions::Yell _yell;

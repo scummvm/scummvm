@@ -42,6 +42,19 @@ private:
 	// interaction resolving and the OfferGold interaction completing
 	int _offerTargetSlot = -1;
 
+	// The hundreds of gold offered, held while the attribute to boost is chosen
+	int _offerBoost = 0;
+
+	/**
+	 * Returns a reference to one of the six attributes, from strength to intelligence
+	 */
+	int16 &attribute(int stat) const;
+
+	/**
+	 * Raises an attribute (0 to 5) for an offer that was worth it
+	 */
+	void boostAttribute(int stat, int goldHundreds);
+
 	/**
 	 * Returns true if a shopkeeper is currently standing at (x,y)
 	 */
@@ -75,6 +88,7 @@ public:
 	bool offer(Data::Direction dir) override;
 	bool transact(Data::Direction dir) override;
 	void completeOffer(int goldHundreds) override;
+	void completeStatBoost(int choice) override;
 };
 
 } // namespace Logic

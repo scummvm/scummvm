@@ -92,6 +92,10 @@ public:
 	Data::MapDungeon _dungeon;
 	Common::SharedPtr<Logic::Logic> _logic;
 
+	// Lets the player choose which attribute the Offer command's gift raises,
+	// as in the Ultima II Upgrade, rather than it being random
+	bool _statBoostChoice = false;
+
 	// Debug flag toggled by the "intangible" console command, allowing
 	// movement through normally impassable terrain
 	bool _intangible = false;
@@ -99,11 +103,21 @@ public:
 private:
 	Data::RenderMode _renderMode = Data::RENDER_CGA;
 
+	/**
+	 * Reads the game options from the configuration
+	 */
+	void loadOptions();
+
 public:
 	Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima2Engine() override;
 
 	uint32 getFeatures() const;
+
+	/**
+	 * Returns true for the version with the Ultima II Upgrade applied
+	 */
+	bool isEnhanced() const;
 
 	/**
 	 * Returns the game Id

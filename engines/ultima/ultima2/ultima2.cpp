@@ -45,6 +45,7 @@ Ultima2Engine::Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		Engine(syst), Shared::Events("ultima2"), _gameDescription(gameDesc) {
 	g_engine = this;
 	_pcSpeaker = new Audio::PCSpeaker();
+	loadOptions();
 }
 
 Ultima2Engine::~Ultima2Engine() {
@@ -53,6 +54,14 @@ Ultima2Engine::~Ultima2Engine() {
 
 uint32 Ultima2Engine::getFeatures() const {
 	return _gameDescription->desc.flags;
+}
+
+bool Ultima2Engine::isEnhanced() const {
+	return (_gameDescription->features & GF_ENHANCED) != 0;
+}
+
+void Ultima2Engine::loadOptions() {
+	_statBoostChoice = Shared::configuredOption("stat_boost_choice", isEnhanced());
 }
 
 Common::String Ultima2Engine::getGameId() const {
@@ -115,7 +124,7 @@ Common::Error Ultima2Engine::run() {
 	}
 
 	// Restore the player's preferred renderer
-	_renderMode = configuredRenderMode((_gameDescription->features & GF_ENHANCED) != 0);
+	_renderMode = configuredRenderMode(isEnhanced());
 
 	// Set the palette now that the engine data is available, since the
 	// composite renderer's colors come from a file in it
@@ -274,8 +283,9 @@ void Ultima2Engine::playFX(Data::SoundEffect fx) {
 }
 
 void Ultima2Engine::applyGameSettings() {
-	// The graphics mode can be changed from the in-game options dialog
-	setRenderMode(configuredRenderMode((_gameDescription->features & GF_ENHANCED) != 0));
+	// The options can be changed from the in-game options dialog
+	loadOptions();
+	setRenderMode(configuredRenderMode(isEnhanced()));
 }
 
 void Ultima2Engine::setRenderMode(Data::RenderMode mode) {
