@@ -27,6 +27,7 @@
 #include "graphics/surface.h"
 #include "harold/bcb/bcb.h"
 #include "harold/bcb/script.h"
+#include "harold/bcb/static_data.h"
 #include "image/bmp.h"
 
 namespace BCB {

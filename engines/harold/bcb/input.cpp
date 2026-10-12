@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "harold/bcb/bcb.h"
 #include "harold/bcb/script.h"
+#include "harold/bcb/static_data.h"
 #include "video/avi_decoder.h"
 
 namespace BCB {
