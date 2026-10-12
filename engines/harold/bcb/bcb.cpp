@@ -66,6 +66,11 @@ Common::Error BCBEngine::run() {
 	g_system->updateScreen();
 	_lastCursorRefreshMillis = g_system->getMillis();
 
+	if (!loadScriptData())
+		return Common::kReadingFailed;
+
+	resetGameState();
+
 	mainLoop();
 	return Common::kNoError;
 }

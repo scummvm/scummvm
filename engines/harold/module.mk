@@ -3,7 +3,9 @@ MODULE := engines/harold
 MODULE_OBJS := \
 	bcb/bcb.o \
 	bcb/resources.o \
+	bcb/scene.o \
 	bcb/input.o \
+	bcb/script.o \
 	bcb/static_data.o \
 	metaengine.o
 
