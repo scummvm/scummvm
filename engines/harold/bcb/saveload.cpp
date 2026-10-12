@@ -383,6 +383,75 @@ bool BCBEngine::handleSystemWaveVolumeClick(const Common::Point &mousePosition) 
 	return true;
 }
 
+bool BCBEngine::readSaveSlotHeader(int slot, int &savedDay, int &savedClockTicks) {
+	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(getSaveStateName(slot));
+	if (!saveFile)
+		return false;
+
+	bool validSave = false;
+	const uint32 magic = saveFile->readUint32BE();
+	if (magic == kSavegameMagic) {
+		const uint16 version = saveFile->readUint16LE();
+		const uint16 stateByteSize = saveFile->readUint16LE();
+		validSave = version == kSavegameVersion && stateByteSize == kNativeGameStateByteSize;
+	} else if (saveFile->size() == kNativeGameStateByteSize) {
+		saveFile->seek(0);
+		validSave = true;
+	}
+
+	if (!validSave) {
+		delete saveFile;
+		return false;
+	}
+
+	saveFile->seek(magic == kSavegameMagic ? 8 + kStateRequiredDiscIndex : kStateRequiredDiscIndex);
+	savedDay = saveFile->readUint32LE();
+	savedClockTicks = saveFile->readUint32LE();
+	validSave = !saveFile->err();
+	delete saveFile;
+	return validSave;
+}
+
+bool BCBEngine::isSaveSlotOccupied(int slot) {
+	int savedDay = 0;
+	int savedClockTicks = 0;
+	return readSaveSlotHeader(slot, savedDay, savedClockTicks);
+}
+
+void BCBEngine::drawSystemSaveLoadSlots(bool present) {
+	const Graphics::Surface *system = getUiBitmap("16msys.bmp");
+	if (!system)
+		return;
+
+	for (int slot = 1; slot <= kManualSaveSlotCount; ++slot) {
+		const ButtonControlRecord &button = kSystemButtonTable[slot];
+		const int sourceY = 480 + (slot - 1) * button.height;
+		if (sourceY + button.height <= system->h)
+			g_system->copyRectToScreen(system->getBasePtr(0, sourceY), system->pitch, button.x, button.y, button.width, button.height);
+
+		int savedDay = 0;
+		int savedClockTicks = 0;
+		Common::U32String slotText;
+		if (readSaveSlotHeader(slot, savedDay, savedClockTicks)) {
+			slotText = formatSystemClockTextForDisplay(_saveSlotOccupiedTextFormatSjis, slot, savedDay, savedClockTicks);
+		} else {
+			slotText = formatSystemTextForDisplay(_saveSlotEmptyTextFormatSjis, slot);
+		}
+
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (screen) {
+			const uint32 textColor = screen->format.RGBToColor(0, 0, 0);
+			const Graphics::Font *font = _ownerDrawUiTextFont ? _ownerDrawUiTextFont : FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+			const int textY = button.y + (button.height - font->getFontHeight()) / 2 - (_gameDescription->desc.language == Common::KO_KOR ? 1 : 0);
+			font->drawString(screen, slotText, button.x, textY, button.width, textColor);
+			g_system->unlockScreen();
+		}
+	}
+
+	if (present)
+		g_system->updateScreen();
+}
+
 bool BCBEngine::handleSystemClick(const Common::Point &mousePosition) {
 	if (_currentDisplayState == 0 && _titleLoadSlotsActive)
 		return handleSaveLoadSlotClick(mousePosition);
@@ -453,8 +522,170 @@ void BCBEngine::activateSystemExitButton() {
 	returnFromSystemMenuToPreviousState();
 }
 
+bool BCBEngine::handleSaveLoadSlotClick(const Common::Point &mousePosition) {
+	if (_systemSaveLoadSlotActionMode != 1 && _systemSaveLoadSlotActionMode != 2)
+		return false;
+
+	for (int slot = 1; slot <= kManualSaveSlotCount; ++slot) {
+		const ButtonControlRecord &button = kSystemButtonTable[slot];
+		const Common::Rect slotRect(button.x, button.y, button.x + button.width, button.y + button.height);
+		if (!slotRect.contains(mousePosition))
+			continue;
+
+		if (_systemSaveLoadSlotActionMode == 1) {
+			int savedDay = 0;
+			int savedClockTicks = 0;
+			Common::U32String message;
+			if (readSaveSlotHeader(slot, savedDay, savedClockTicks)) {
+				message = formatSystemClockTextForDisplay(_saveSlotOverwriteConfirmTextFormatSjis, slot, savedDay, savedClockTicks);
+			} else {
+				message = formatSystemTextForDisplay(_saveSlotEmptyConfirmTextFormatSjis, slot);
+			}
+
+			if (showSystemConfirmationDialog(message, true)) {
+				saveGameState(slot, formatEnglishSaveDescription(stateDword(kStateRequiredDiscIndex), stateDword(kStateGameClockTicks)));
+				drawSystemSaveLoadSlots();
+			}
+			return true;
+		}
+
+		if (_systemSaveLoadSlotActionMode == 2) {
+			int savedDay = 0;
+			int savedClockTicks = 0;
+			if (!readSaveSlotHeader(slot, savedDay, savedClockTicks)) {
+				showSystemConfirmationDialog(decodeExecutableTextForDisplay(_noSaveDataMessageSjis), false);
+				return true;
+			}
+			Common::U32String message = formatSystemClockTextForDisplay(_loadSlotConfirmTextFormatSjis, slot, savedDay, savedClockTicks);
+			if (showSystemConfirmationDialog(message, true)) {
+				_titleLoadSlotsActive = false;
+				loadGameState(slot);
+			}
+			return true;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 void BCBEngine::writeContinueState() {
 	saveGameState(0, formatEnglishSaveDescription(stateDword(kStateRequiredDiscIndex), stateDword(kStateGameClockTicks)), true);
+}
+
+bool BCBEngine::showSystemConfirmationDialog(const Common::U32String &message, bool showCancelButton) {
+	const Graphics::Surface *chip = getUiBitmap("16mchip.bmp");
+	if (!chip)
+		return false;
+
+	const Common::Rect dialogRect(144, 192, 496, 288);
+	const Common::Rect okRect(showCancelButton ? 344 : 420, 254, showCancelButton ? 408 : 484, 278);
+	const Common::Rect cancelRect(420, 254, 484, 278);
+	const int dialogSourceY = 0x50;
+	const int buttonSourceY = 0x32;
+	Graphics::Surface dialogBacking;
+	dialogBacking.create(dialogRect.width(), dialogRect.height(), g_system->getScreenFormat());
+	Graphics::Surface *screenBacking = g_system->lockScreen();
+	if (screenBacking) {
+		dialogBacking.copyRectToSurface(*screenBacking, 0, 0, dialogRect);
+		g_system->unlockScreen();
+	}
+
+	auto drawDialogButton = [&](const Common::Rect &rect, int sourceX, bool present) {
+		if (sourceX + rect.width() <= chip->w && chip->h >= buttonSourceY + rect.height())
+			g_system->copyRectToScreen(chip->getBasePtr(sourceX, buttonSourceY), chip->pitch,
+									   rect.left, rect.top, rect.width(), rect.height());
+		if (present)
+			g_system->updateScreen();
+	};
+
+	if (dialogRect.width() <= chip->w && chip->h >= dialogSourceY + dialogRect.height())
+		g_system->copyRectToScreen(chip->getBasePtr(0, dialogSourceY), chip->pitch, dialogRect.left, dialogRect.top, dialogRect.width(), dialogRect.height());
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (screen) {
+		const Graphics::Font *font = _ownerDrawUiTextFont ? _ownerDrawUiTextFont : FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		const uint32 shadowColor = screen->format.RGBToColor(0, 0, 0);
+		const uint32 textColor = screen->format.RGBToColor(255, 255, 255);
+		const int textYOffset = _gameDescription->desc.language == Common::KO_KOR ? -1 : 0;
+		font->drawString(screen, message, dialogRect.left + 10, dialogRect.top + 20 + textYOffset, 340, shadowColor);
+		font->drawString(screen, message, dialogRect.left + 11, dialogRect.top + 21 + textYOffset, 339, textColor);
+		g_system->unlockScreen();
+	}
+
+	drawDialogButton(okRect, 0x17, false);
+	if (showCancelButton)
+		drawDialogButton(cancelRect, 0x97, false);
+	g_system->updateScreen();
+
+	bool result = false;
+	bool done = false;
+	auto handleDialogClick = [&]() {
+		if (okRect.contains(_mousePosition)) {
+			drawDialogButton(okRect, 0x57, true);
+			delayWithEventPolling(80, false);
+			result = true;
+			done = true;
+		} else if (showCancelButton && cancelRect.contains(_mousePosition)) {
+			drawDialogButton(cancelRect, 0xd7, true);
+			delayWithEventPolling(80, false);
+			done = true;
+		}
+	};
+	while (!done && !shouldQuit()) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT) {
+				quitGame();
+				done = true;
+				break;
+			}
+			if (event.type == Common::EVENT_MOUSEMOVE) {
+				_mousePosition = event.mouse;
+			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+				_mousePosition = event.mouse;
+				handleDialogClick();
+			} else if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_RETURN) {
+					result = true;
+					done = true;
+				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					done = true;
+				}
+			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				if (event.customType == kBCBActionEscape) {
+					done = true;
+				} else if (event.customType == kBCBActionInteract) {
+					handleDialogClick();
+				}
+			}
+		}
+		serviceCursorRefresh();
+		g_system->delayMillis(10);
+	}
+
+	g_system->copyRectToScreen(dialogBacking.getPixels(), dialogBacking.pitch, dialogRect.left, dialogRect.top,
+							   dialogBacking.w, dialogBacking.h);
+	dialogBacking.free();
+	g_system->updateScreen();
+	return result;
+}
+
+void BCBEngine::returnFromSystemMenuToPreviousState() {
+	stopMenuBackgroundMusic();
+	_systemSaveLoadSlotActionMode = 0;
+
+	if (_previousDisplayStateBeforeSystem == 2) {
+		processGameStateDispatcher(false);
+		return;
+	} else {
+		showMainSceneScreen();
+		if (stateDword(kStateSceneChoiceUiSetToShowId) != 0)
+			showActiveSceneChoiceControls();
+	}
+
+	processGameStateDispatcher(false);
 }
 
 Common::U32String BCBEngine::formatSystemTextForDisplay(const Common::String &originalFormat, int slot) const {
@@ -467,22 +698,6 @@ Common::U32String BCBEngine::formatSystemClockTextForDisplay(const Common::Strin
 	const int minute = savedClockTicks % 60;
 	const Common::String formatted = Common::String::format(originalFormat.c_str(), slot, savedDay, hour, minute);
 	return decodeExecutableTextForDisplay(formatted);
-}
-
-void BCBEngine::drawSystemSaveLoadSlots(bool present) {
-	error("BCB: drawSystemSaveLoadSlots is not implemented");
-}
-
-bool BCBEngine::handleSaveLoadSlotClick(const Common::Point &mousePosition) {
-	error("BCB: handleSaveLoadSlotClick is not implemented");
-}
-
-void BCBEngine::returnFromSystemMenuToPreviousState() {
-	error("BCB: returnFromSystemMenuToPreviousState is not implemented");
-}
-
-bool BCBEngine::showSystemConfirmationDialog(const Common::U32String &message, bool showCancelButton) {
-	error("BCB: showSystemConfirmationDialog is not implemented");
 }
 
 } // End of namespace BCB

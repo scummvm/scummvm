@@ -142,6 +142,23 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 			if (loadGameState(0).getCode() != Common::kNoError)
 				_titleButtonsActive = true;
 			break;
+		case 53:
+			_systemButtonsVisible = true;
+			_systemSaveLoadSlotActionMode = 2;
+			_titleLoadSlotsActive = true;
+			drawTitleButton(i, false);
+			drawSystemSaveLoadSlots();
+			break;
+		case 54:
+			if (_titleLoadSlotsActive) {
+				_titleLoadSlotsActive = false;
+				_systemSaveLoadSlotActionMode = 0;
+				restoreTitleScreenRegion(Common::Rect(0, 0, 640, 480));
+			}
+			drawTitleButton(i, false);
+			if (showSystemConfirmationDialog(_titleExitConfirmText, true))
+				quitGame();
+			break;
 		default:
 			drawTitleButton(i, false);
 			break;
