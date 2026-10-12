@@ -751,7 +751,9 @@ bool OverworldLogic::enter() {
 		return true;
 	}
 
-	if (sg._mount != 0) {
+	// The upgrade lets a horse be ridden into places, but not a vehicle
+	const bool onHorse = sg._mount == Data::TILE_HORSE && g_engine->isEnhanced();
+	if (sg._mount != 0 && !onHorse) {
 		writeString("-ONLY ON FOOT!\n");
 		return true;
 	}

@@ -210,9 +210,22 @@ void SpaceMap::startWarp() {
 	_phase = PHASE_WARP_TRAILS;
 }
 
+void SpaceMap::finishWarp() {
+	_phase = PHASE_IDLE;
+	if (auto *logic = dynamic_cast<Logic::SpaceLogic *>(_G(logic).get()))
+		logic->warpFinished();
+}
+
 void SpaceMap::startSpinDown() {
 	seedStars();
-	_phase = PHASE_SPIN_DOWN;
+
+	if (g_engine->isEnhanced()) {
+		// The upgrade skips slowing the ship down, and holds for half as long
+		_counter = 0x20;
+		_phase = PHASE_SPIN_HOLD;
+	} else {
+		_phase = PHASE_SPIN_DOWN;
+	}
 }
 
 bool SpaceMap::tick() {
@@ -238,6 +251,12 @@ bool SpaceMap::tick() {
 
 		case PHASE_WARP_ACCELERATE:
 			if (--_counter == 0) {
+				// The upgrade skips speeding the stars up to warp speed
+				if (g_engine->isEnhanced()) {
+					finishWarp();
+					return true;
+				}
+
 				++_speed;
 				_phase = PHASE_WARP_RUSH;
 			}
@@ -246,9 +265,7 @@ bool SpaceMap::tick() {
 		case PHASE_WARP_RUSH:
 			_speed += 2;
 			if (_speed & 0x80) {
-				_phase = PHASE_IDLE;
-				if (auto *logic = dynamic_cast<Logic::SpaceLogic *>(_G(logic).get()))
-					logic->warpFinished();
+				finishWarp();
 				return true;
 			}
 			break;

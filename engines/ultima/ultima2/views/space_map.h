@@ -74,6 +74,11 @@ private:
 	 */
 	void startWarp();
 
+	/**
+	 * Ends the hyperwarp animation and carries on with the warp
+	 */
+	void finishWarp();
+
 public:
 	SpaceMap();
 	~SpaceMap() override {}

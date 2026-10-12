@@ -539,9 +539,9 @@ bool Logic::quit() {
 
 	if (sg._mapType != 0)
 		writeString("\nONLY OUTDOORS!\n");
-	else if (sg.saveDisabled())
+	else if (sg.saveDisabled() && !g_engine->isEnhanced())
 		writeString("\nONLY ON EARTH!\n");
-	else if (sg._mount != 0)
+	else if (sg._mount != 0 && !g_engine->isEnhanced())
 		writeString("\nONLY ON FOOT!\n");
 	else {
 		writeString("\nONE MOMENT PLEASE!\n");
