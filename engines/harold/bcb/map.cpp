@@ -23,6 +23,7 @@
 #include "common/fs.h"
 #include "common/ustr.h"
 #include "graphics/font.h"
+#include "graphics/screen.h"
 #include "graphics/sjis.h"
 #include "graphics/surface.h"
 #include "video/avi_decoder.h"
@@ -48,7 +49,7 @@ bool BCBEngine::showMapScreen() {
 	delete map;
 	_currentDisplayState = 2;
 	_lastTimerTick = g_system->getMillis();
-	g_system->updateScreen();
+	_screen->update();
 	return true;
 }
 
@@ -106,10 +107,10 @@ void BCBEngine::drawMapButtonPressed(uint buttonIndex, bool present) {
 
 	const ButtonControlRecord &button = kMapButtonTable[buttonIndex];
 	if (0x1c8 + button.width <= map->w && 0x1e0 + button.height <= map->h)
-		g_system->copyRectToScreen(map->getBasePtr(0x1c8, 0x1e0), map->pitch, button.x, button.y, button.width, button.height);
+		_screen->copyRectToSurface(map->getBasePtr(0x1c8, 0x1e0), map->pitch, button.x, button.y, button.width, button.height);
 
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 void BCBEngine::composeMapControlsToSurface(Graphics::Surface &surface, const Graphics::Surface &mapArt) {
@@ -165,14 +166,14 @@ void BCBEngine::drawMapControls(bool present) {
 	if (!map)
 		return;
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen) {
 		composeMapControlsToSurface(*screen, *map);
-		g_system->unlockScreen();
+		_screen->makeAllDirty();
 	}
 
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 bool BCBEngine::handleMapControlClick(const Common::Point &mousePosition) {

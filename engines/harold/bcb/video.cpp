@@ -23,6 +23,7 @@
 #include "audio/decoders/wave.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/screen.h"
 #include "graphics/surface.h"
 #include "harold/bcb/bcb.h"
 #include "harold/bcb/script.h"
@@ -83,21 +84,20 @@ void BCBEngine::drawMapSubmodeMovieBackdrop(bool present) {
 		const Common::Rect sourceRect(kMapSubmodeMovieBackdropSourceX, kMapSubmodeMovieBackdropSourceY,
 									  kMapSubmodeMovieBackdropSourceX + 0x1a4, kMapSubmodeMovieBackdropSourceY + 0x11e);
 		if (sourceRect.right <= map->w && sourceRect.bottom <= map->h)
-			g_system->copyRectToScreen(map->getBasePtr(sourceRect.left, sourceRect.top), map->pitch,
+			_screen->copyRectToSurface(map->getBasePtr(sourceRect.left, sourceRect.top), map->pitch,
 									   kMapSubmodeMovieBackdropRect.left, kMapSubmodeMovieBackdropRect.top,
 									   sourceRect.width(), sourceRect.height());
 	} else {
-		Graphics::Surface *screen = g_system->lockScreen();
+		Graphics::Surface *screen = _screen->surfacePtr();
 		if (!screen)
 			return;
 
 		const uint32 backingColor = screen->format.RGBToColor(0, 0, 0);
-		screen->fillRect(kMapSubmodeMciControlHitRect, backingColor);
-		g_system->unlockScreen();
+		_screen->fillRect(kMapSubmodeMciControlHitRect, backingColor);
 	}
 
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 void BCBEngine::drawMovieControlStrip(int sourceX, bool present) {
@@ -107,9 +107,9 @@ void BCBEngine::drawMovieControlStrip(int sourceX, bool present) {
 	const Graphics::Surface *chip = getUiBitmap("16mchip.bmp");
 	if (chip) {
 		if (sourceX + 0x98 <= chip->w && 0xe0 + 0x30 <= chip->h)
-			g_system->copyRectToScreen(chip->getBasePtr(sourceX, 0xe0), chip->pitch, 0x104, 0x199, 0x98, 0x30);
+			_screen->copyRectToSurface(chip->getBasePtr(sourceX, 0xe0), chip->pitch, 0x104, 0x199, 0x98, 0x30);
 		if (present)
-			g_system->updateScreen();
+			_screen->update();
 	}
 }
 
@@ -117,9 +117,9 @@ void BCBEngine::drawSceneChoiceControlStrip(int sourceX, bool present) {
 	const Graphics::Surface *chip = getUiBitmap("16mchip.bmp");
 	if (chip) {
 		if (sourceX + 0x98 <= chip->w && 0xb0 + 0x30 <= chip->h)
-			g_system->copyRectToScreen(chip->getBasePtr(sourceX, 0xb0), chip->pitch, 0x104, 0x199, 0x98, 0x30);
+			_screen->copyRectToSurface(chip->getBasePtr(sourceX, 0xb0), chip->pitch, 0x104, 0x199, 0x98, 0x30);
 		if (present)
-			g_system->updateScreen();
+			_screen->update();
 	}
 }
 
@@ -140,12 +140,12 @@ void BCBEngine::processQueuedMovieSequence() {
 			applyPendingClockTickDelta();
 			renderClockAndChipToSurface(*map, 0, stateDword(kStateGameClockTicks));
 			composeMapControlsToSurface(*map, *map);
-			g_system->copyRectToScreen(map->getPixels(), map->pitch, 0, 0, MIN<int>(map->w, 640), MIN<int>(map->h, 480));
+			_screen->copyRectToSurface(map->getPixels(), map->pitch, 0, 0, MIN<int>(map->w, 640), MIN<int>(map->h, 480));
 			map->free();
 			delete map;
 		}
 		drawSceneChoiceControlStrip(0, false);
-		g_system->updateScreen();
+		_screen->update();
 	}
 
 	processGameStateDispatcher(false);
@@ -230,6 +230,19 @@ void BCBEngine::startMenuBackgroundMusic() {
 
 	_menuBackgroundVideo->decodeNextFrame();
 	_menuBackgroundVideo->start();
+}
+
+void BCBEngine::updateMenuBackgroundMusic() {
+	if (!_menuBackgroundVideo)
+		return;
+	if (_menuBackgroundVideo->endOfVideo()) {
+		_menuBackgroundVideo->stop();
+		_menuBackgroundVideo->rewind();
+		_menuBackgroundVideo->decodeNextFrame();
+		_menuBackgroundVideo->start();
+	}
+	if (_menuBackgroundVideo->needsUpdate())
+		_menuBackgroundVideo->decodeNextFrame();
 }
 
 void BCBEngine::stopMenuBackgroundMusic() {

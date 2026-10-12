@@ -22,6 +22,7 @@
 #include "common/algorithm.h"
 #include "common/system.h"
 #include "graphics/font.h"
+#include "graphics/screen.h"
 #include "graphics/sjis.h"
 #include "graphics/surface.h"
 #include "harold/bcb/bcb.h"
@@ -180,10 +181,9 @@ void BCBEngine::loadNextTimedCaptionText() {
 
 void BCBEngine::restoreCaptionBackingRect(const Common::Rect &rect) {
 	if (_activeMovieOnBlankScreen) {
-		Graphics::Surface *screen = g_system->lockScreen();
+		Graphics::Surface *screen = _screen->surfacePtr();
 		if (screen) {
-			screen->fillRect(rect, screen->format.RGBToColor(0, 0, 0));
-			g_system->unlockScreen();
+			_screen->fillRect(rect, screen->format.RGBToColor(0, 0, 0));
 		}
 		return;
 	}
@@ -202,14 +202,14 @@ void BCBEngine::restoreCaptionBackingRect(const Common::Rect &rect) {
 			const int sourceX = kMapSubmodeMovieBackdropSourceX + restoreRect.left - kMapSubmodeMovieBackdropRect.left;
 			const int sourceY = kMapSubmodeMovieBackdropSourceY + restoreRect.top - kMapSubmodeMovieBackdropRect.top;
 			if (sourceX >= 0 && sourceY >= 0 && sourceX + restoreRect.width() <= map->w && sourceY + restoreRect.height() <= map->h)
-				g_system->copyRectToScreen(map->getBasePtr(sourceX, sourceY), map->pitch, restoreRect.left, restoreRect.top, restoreRect.width(), restoreRect.height());
+				_screen->copyRectToSurface(map->getBasePtr(sourceX, sourceY), map->pitch, restoreRect.left, restoreRect.top, restoreRect.width(), restoreRect.height());
 		}
 
 		return;
 	}
 
 	if (backing)
-		g_system->copyRectToScreen(backing->getBasePtr(rect.left, rect.top), backing->pitch, rect.left, rect.top, rect.width(), rect.height());
+		_screen->copyRectToSurface(backing->getBasePtr(rect.left, rect.top), backing->pitch, rect.left, rect.top, rect.width(), rect.height());
 }
 
 Common::Rect BCBEngine::getCaptionBackingRect(const Common::String &sjisText, const Common::U32String &unicodeText, const Common::Rect &nativeRect) const {
@@ -246,7 +246,7 @@ void BCBEngine::drawCaptionTextBlock(const Common::String &sjisText, const Commo
 	if (!_captionTextFont && !_sjisFont)
 		return;
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (!screen)
 		return;
 
@@ -292,7 +292,7 @@ void BCBEngine::drawCaptionTextBlock(const Common::String &sjisText, const Commo
 		}
 	}
 
-	g_system->unlockScreen();
+	_screen->addDirtyRect(getCaptionBackingRect(sjisText, unicodeText, rect));
 }
 
 bool BCBEngine::drawTimedVideoTextOverlay() {

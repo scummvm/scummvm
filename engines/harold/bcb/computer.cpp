@@ -23,6 +23,7 @@
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "graphics/screen.h"
 #include "graphics/surface.h"
 
 #include <math.h>
@@ -56,7 +57,7 @@ bool BCBEngine::dispatchComputerMainControls() {
 	drawComputerChoiceGroupControls();
 	drawComputerButton(kComputerPrimaryButtonTable[1], kComputerPrimaryButtonTable[1]);
 
-	g_system->updateScreen();
+	_screen->update();
 	return true;
 }
 
@@ -74,7 +75,7 @@ bool BCBEngine::showComputerScreen() {
 	if (!computer)
 		return false;
 
-	g_system->copyRectToScreen(computer->getPixels(), computer->pitch, 0, 0, MIN<int>(computer->w, 640), MIN<int>(computer->h, 480));
+	_screen->copyRectToSurface(computer->getPixels(), computer->pitch, 0, 0, MIN<int>(computer->w, 640), MIN<int>(computer->h, 480));
 	_currentDisplayState = 4;
 	return true;
 }
@@ -87,20 +88,19 @@ void BCBEngine::drawComputerChoiceGroupControls() {
 	if (!computer)
 		return;
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen) {
 		if (_computerChoiceGroupIndex >= 0 && _computerChoiceGroupIndex <= 2) {
 			const int sourceY = _computerChoiceGroupIndex * 0x16 + 0x2a0;
 			if (sourceY + 0x16 <= computer->h)
-				screen->copyRectToSurface(*computer, 0x3c, 0x43, Common::Rect(0, sourceY, 0xe8, sourceY + 0x16));
+				_screen->copyRectToSurface(*computer, 0x3c, 0x43, Common::Rect(0, sourceY, 0xe8, sourceY + 0x16));
 		}
 
 		for (uint i = 1; i < ARRAYSIZE(kComputerChoiceLayoutSlots); ++i) {
 			const ButtonControlRecord &slot = kComputerChoiceLayoutSlots[i];
 			if (slot.x + slot.width <= computer->w && slot.y + slot.height <= computer->h)
-				screen->copyRectToSurface(*computer, slot.x, slot.y, Common::Rect(slot.x, slot.y, slot.x + slot.width, slot.y + slot.height));
+				_screen->copyRectToSurface(*computer, slot.x, slot.y, Common::Rect(slot.x, slot.y, slot.x + slot.width, slot.y + slot.height));
 		}
-		g_system->unlockScreen();
 	}
 
 	if (_computerChoiceGroupIndex == 0)
@@ -116,11 +116,9 @@ void BCBEngine::drawComputerButton(const ButtonControlRecord &sourceButton, cons
 	if (!computer)
 		return;
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen && sourceButton.x + sourceButton.width <= computer->w && sourceButton.y + sourceButton.height <= computer->h)
-		screen->copyRectToSurface(*computer, destButton.x, destButton.y, Common::Rect(sourceButton.x, sourceButton.y, sourceButton.x + sourceButton.width, sourceButton.y + sourceButton.height));
-	if (screen)
-		g_system->unlockScreen();
+		_screen->copyRectToSurface(*computer, destButton.x, destButton.y, Common::Rect(sourceButton.x, sourceButton.y, sourceButton.x + sourceButton.width, sourceButton.y + sourceButton.height));
 }
 
 void BCBEngine::drawComputerButtonPressed(const ButtonControlRecord &button, int sourceX, int sourceY) {
@@ -129,8 +127,8 @@ void BCBEngine::drawComputerButtonPressed(const ButtonControlRecord &button, int
 		return;
 
 	if (sourceX + button.width <= computer->w && sourceY + button.height <= computer->h) {
-		g_system->copyRectToScreen(computer->getBasePtr(sourceX, sourceY), computer->pitch, button.x, button.y, button.width, button.height);
-		g_system->updateScreen();
+		_screen->copyRectToSurface(computer->getBasePtr(sourceX, sourceY), computer->pitch, button.x, button.y, button.width, button.height);
+		_screen->update();
 	}
 }
 
@@ -139,8 +137,8 @@ void BCBEngine::drawComputerDetailButtonNormal(const ButtonControlRecord &button
 		return;
 
 	if (button.x + button.width <= _computerDetailBacking->w && button.y + button.height <= _computerDetailBacking->h) {
-		g_system->copyRectToScreen(_computerDetailBacking->getBasePtr(button.x, button.y), _computerDetailBacking->pitch, button.x, button.y, button.width, button.height);
-		g_system->updateScreen();
+		_screen->copyRectToSurface(_computerDetailBacking->getBasePtr(button.x, button.y), _computerDetailBacking->pitch, button.x, button.y, button.width, button.height);
+		_screen->update();
 	}
 }
 
@@ -154,11 +152,11 @@ void BCBEngine::drawComputerUnavailableMarker(const ButtonControlRecord &destBut
 	const int markerWidth = 0x36;
 	const int markerHeight = 0x18;
 	if (markerSourceX + markerWidth <= computer->w && markerSourceY + markerHeight <= computer->h)
-		g_system->copyRectToScreen(computer->getBasePtr(markerSourceX, markerSourceY), computer->pitch, destButton.x + 5, destButton.y + 0x0c, markerWidth, markerHeight);
+		_screen->copyRectToSurface(computer->getBasePtr(markerSourceX, markerSourceY), computer->pitch, destButton.x + 5, destButton.y + 0x0c, markerWidth, markerHeight);
 }
 
 void BCBEngine::drawXorRectangleBorder(const Common::Rect &rect) {
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (!screen)
 		return;
 
@@ -200,8 +198,15 @@ void BCBEngine::drawXorRectangleBorder(const Common::Rect &rect) {
 		}
 	}
 
-	g_system->unlockScreen();
-	g_system->updateScreen();
+	if (!clipped.isEmpty()) {
+		_screen->addDirtyRect(Common::Rect(clipped.left, clipped.top, clipped.right, clipped.top + 1));
+		_screen->addDirtyRect(Common::Rect(clipped.left, clipped.top + 1, clipped.left + 1, clipped.bottom));
+		if (rect.bottom != rect.top && rect.bottom >= 0 && rect.bottom < screen->h)
+			_screen->addDirtyRect(Common::Rect(clipped.left, rect.bottom, clipped.right, rect.bottom + 1));
+		if (rect.right != rect.left && rect.right >= 0 && rect.right < screen->w)
+			_screen->addDirtyRect(Common::Rect(rect.right, clipped.top, rect.right + 1, clipped.bottom));
+	}
+	_screen->update();
 }
 
 void BCBEngine::processXorRectangleBorderAnimation(bool expand, const Common::Rect &sourceRect, const Common::Rect &targetRect) {
@@ -243,7 +248,7 @@ void BCBEngine::drawComputerConditionalChoiceControls(const ButtonControlRecord 
 	if (!computer)
 		return;
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	int visibleButtonSlot = 1;
 	for (int i = 0; screen && i < stateCount && visibleButtonSlot < (int)ARRAYSIZE(kComputerChoiceLayoutSlots); ++i) {
 		const int stateIndex = firstStateIndex + i;
@@ -258,15 +263,12 @@ void BCBEngine::drawComputerConditionalChoiceControls(const ButtonControlRecord 
 		const ButtonControlRecord &source = choiceButtonRecords[i];
 		const ButtonControlRecord &dest = kComputerChoiceLayoutSlots[visibleButtonSlot++];
 		if (source.x + source.width <= computer->w && source.y + source.height <= computer->h)
-			screen->copyRectToSurface(*computer, dest.x, dest.y, Common::Rect(source.x, source.y, source.x + source.width, source.y + source.height));
+			_screen->copyRectToSurface(*computer, dest.x, dest.y, Common::Rect(source.x, source.y, source.x + source.width, source.y + source.height));
 		if (directlyAvailable) {
 			_computerActiveChoiceIds.push_back(source.controlId);
 			_computerActiveChoiceRects.push_back(Common::Rect(dest.x, dest.y, dest.x + dest.width, dest.y + dest.height));
 		}
 	}
-	if (screen)
-		g_system->unlockScreen();
-
 	visibleButtonSlot = 1;
 	for (int i = 0; i < stateCount && visibleButtonSlot < (int)ARRAYSIZE(kComputerChoiceLayoutSlots); ++i) {
 		const int stateIndex = firstStateIndex + i;
@@ -300,7 +302,7 @@ bool BCBEngine::showComputerDetailScreen(int compositeIndex) {
 	if (!composite)
 		return false;
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen) {
 		screen->copyRectToSurface(*computer, 0, 0, Common::Rect(0, 0, MIN<int>(computer->w, 640), MIN<int>(computer->h, 480)));
 		screen->copyRectToSurface(*composite, 0x24, 0x23, Common::Rect(0, 0, MIN<int>(composite->w, 640 - 0x24), MIN<int>(composite->h, 480 - 0x23)));
@@ -311,7 +313,7 @@ bool BCBEngine::showComputerDetailScreen(int compositeIndex) {
 		}
 		_computerDetailBacking = new Graphics::Surface();
 		_computerDetailBacking->copyFrom(*screen);
-		g_system->unlockScreen();
+		_screen->makeAllDirty();
 	}
 
 	composite->free();
@@ -323,7 +325,7 @@ bool BCBEngine::showComputerDetailScreen(int compositeIndex) {
 		_computerDetailVariantIndex = -1;
 
 	_currentDisplayState = 5;
-	g_system->updateScreen();
+	_screen->update();
 	return true;
 }
 
@@ -349,7 +351,7 @@ bool BCBEngine::handleComputerClick(const Common::Point &mousePosition) {
 				playUiSound();
 				_computerChoiceGroupIndex = groupIndex;
 				drawComputerChoiceGroupControls();
-				g_system->updateScreen();
+				_screen->update();
 			}
 			return true;
 		}
@@ -384,7 +386,7 @@ bool BCBEngine::handleComputerClick(const Common::Point &mousePosition) {
 
 		const ButtonControlRecord &nextButton = kComputerDetailButtonTable[2];
 		if (_computerDetailNextVariantEnabled &&
-				Common::Rect(nextButton.x, nextButton.y, nextButton.x + nextButton.width, nextButton.y + nextButton.height).contains(mousePosition)) {
+			Common::Rect(nextButton.x, nextButton.y, nextButton.x + nextButton.width, nextButton.y + nextButton.height).contains(mousePosition)) {
 			drawComputerButtonPressed(nextButton, _computerDetailVariantIndex >= 0 ? 0x188 : 0x228, 0x2a0);
 			playUiSound();
 			if (_computerDetailVariantIndex < 0) {
