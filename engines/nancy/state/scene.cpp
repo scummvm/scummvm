@@ -50,6 +50,7 @@
 #include "engines/nancy/misc/viewportfader.h"
 #include "engines/nancy/ui/ndui/manager.h"
 #ifdef ENABLE_NANCY_V4
+#include "engines/nancy/script/api.h"
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/scenecontext.h"
 #endif
@@ -1499,11 +1500,42 @@ bool Scene::applyPlayerCharacter(uint characterIndex) {
 		return false;
 	}
 
-	// Nancy19 has its UI made by scripts, and the scripts a character takes over
-	// and leaves with belong to it
+#ifdef ENABLE_NANCY_V4
+	// Nancy19 keeps the UI its scripts made. The script the outgoing character
+	// took over with ends, the one they leave with runs, and so does the one the
+	// new character takes over with. A UI that isn't there yet starts the last
+	// one itself when it is.
 	if (g_nancy->getGameType() >= kGameTypeNancy19) {
-		return g_nancy->setPlayerCharacter(characterIndex);
+		const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+		assert(boot);
+
+		ScriptBootData::Player outgoing;
+		if (g_nancy->getPlayerCharacter() < boot->players.size()) {
+			outgoing = boot->players[g_nancy->getPlayerCharacter()];
+		}
+
+		if (!g_nancy->setPlayerCharacter(characterIndex)) {
+			return false;
+		}
+
+		if (_isScriptedUIReady) {
+			if (!outgoing.becomeSceneName.empty()) {
+				_streams.end(outgoing.becomeSceneName.toString() + "_Stream");
+			}
+
+			beginPlayerScript(outgoing.leaveSceneName);
+
+			// TODO: Take the journal entries and the tasks of the outgoing character down
+			Script::showPlayerEntries();
+
+			if (characterIndex < boot->players.size()) {
+				beginPlayerScript(boot->players[characterIndex].becomeSceneName);
+			}
+		}
+
+		return true;
 	}
+#endif
 
 	// The open popups describe the outgoing character, so get them off the
 	// screen while the data they were built from is still around
@@ -2992,6 +3024,9 @@ void Scene::initUI() {
 	// The UI of Nancy19 is made by the scripts of a stream of its own, which
 	// gets back to the scene once the panels are there
 	if (g_nancy->getGameType() >= kGameTypeNancy19) {
+#ifdef ENABLE_NANCY_V4
+		_isScriptedUIReady = false;
+#endif
 		_streams.begin("UIStream", pcui->uiName.toString(), 0, StreamFlags());
 		return;
 	}
@@ -3034,8 +3069,19 @@ void Scene::initUI() {
 }
 
 #ifdef ENABLE_NANCY_V4
+void Scene::beginPlayerScript(const Common::Path &sceneName) {
+	if (sceneName.empty()) {
+		return;
+	}
+
+	StreamFlags flags;
+	flags.runsFirst = true;
+	_streams.begin(sceneName.toString() + "_Stream", sceneName.toString(), 0, flags);
+}
+
 void Scene::onScriptedUILoaded() {
 	_ndui->createItemButtons();
+	Script::showPlayerEntries();
 
 	// The most recent items come first
 	const Common::Array<int16> &order = _inventoryBox.getOrder();
@@ -3047,6 +3093,14 @@ void Scene::onScriptedUILoaded() {
 
 	_ndui->restoreState(((UIStateData *)getPuzzleData(UIStateData::getTag()))->changes);
 	_ndui->applyMatteColor();
+
+	// The character being played takes over now that there is a UI to fill
+	_isScriptedUIReady = true;
+
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	if (boot && g_nancy->getPlayerCharacter() < boot->players.size()) {
+		beginPlayerScript(boot->players[g_nancy->getPlayerCharacter()].becomeSceneName);
+	}
 }
 #endif
 

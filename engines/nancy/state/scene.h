@@ -366,6 +366,9 @@ private:
 	void load(bool fromSaveFile = false);
 #ifdef ENABLE_NANCY_V4
 	void loadScriptedScene(bool fromSaveFile);	// Nancy19+
+
+	// Nancy19: starts the script a character takes over or leaves with, as a stream
+	void beginPlayerScript(const Common::Path &sceneName);
 #endif
 	void run();
 	void handleInput();
@@ -515,6 +518,7 @@ private:
 #ifdef ENABLE_NANCY_V4
 	// Nancy19: the script of the scene, which takes the place of the action records
 	Script::SceneContext *_scriptScene = nullptr;
+	bool _isScriptedUIReady = false;
 #endif
 	double _frameSeconds = 0.0;	// how long the last frame took
 	Action::PlaySecondaryMovie *_activeMovie;

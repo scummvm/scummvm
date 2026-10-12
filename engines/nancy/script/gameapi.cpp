@@ -896,7 +896,7 @@ static const luaL_Reg kSceneFunctions[] = {
 };
 
 // Player, who is the character being played unless a function is told otherwise
-// TODO: AddTask, LoadTaskFlag, AddJournalEntry and AddCellPhoneNumber
+// TODO: AddCellPhoneNumber
 
 // The number of a character, or -1 when there is none of that name
 static int findCharacter(const char *name) {
@@ -968,12 +968,124 @@ static int playerRemoveInventoryItem(lua_State *L) {
 	return 0;
 }
 
+// The journal and the task list are filled by scripts, which hand out an entry
+// when its conditions hold. Every entry is handed out once per character; the UI
+// only shows the ones of the character being played.
+
+static ScriptJournalData *getJournalData(uint character) {
+	if (character >= kMaxPlayerCharacters) {
+		return nullptr;
+	}
+
+	return (ScriptJournalData *)NancySceneState.getPuzzleData(ScriptJournalData::getTag());
+}
+
+// Player:AddJournalEntry(heading, text[, character])
+static int playerAddJournalEntry(lua_State *L) {
+	const Common::String heading = luaL_checkstring(L, 2);
+	const Common::String text = luaL_checkstring(L, 3);
+	const uint character = checkCharacter(L, 4);
+
+	ScriptJournalData *data = getJournalData(character);
+	if (!data) {
+		return 0;
+	}
+
+	for (const ScriptJournalData::JournalEntry &entry : data->journalEntries[character]) {
+		if (entry.heading.equalsIgnoreCase(heading) && entry.text.equalsIgnoreCase(text)) {
+			return 0;
+		}
+	}
+
+	ScriptJournalData::JournalEntry entry;
+	entry.heading = heading;
+	entry.text = text;
+	data->journalEntries[character].push_back(entry);
+
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	if (ui && character == g_nancy->getPlayerCharacter()) {
+		ui->addJournalEntry(heading, text);
+	}
+
+	return 0;
+}
+
+// Player:AddTask(text, flag[, character]): the task can be checked off once the flag is set
+static int playerAddTask(lua_State *L) {
+	const Common::String text = luaL_checkstring(L, 2);
+	const Common::String flagName = luaL_checkstring(L, 3);
+	const uint character = checkCharacter(L, 4);
+
+	ScriptJournalData *data = getJournalData(character);
+	if (!data) {
+		return 0;
+	}
+
+	for (const ScriptJournalData::Task &task : data->tasks[character]) {
+		if (task.text.equalsIgnoreCase(text)) {
+			return 0;
+		}
+	}
+
+	ScriptJournalData::Task task;
+	task.text = text;
+	task.flagName = flagName;
+	data->tasks[character].push_back(task);
+
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	if (ui && character == g_nancy->getPlayerCharacter()) {
+		ui->addTasklistEntry(text, findFlag(flagName));
+	}
+
+	return 0;
+}
+
+// Player:LoadTaskFlag(text, flag[, character]): gives a task that has none its flag
+static int playerLoadTaskFlag(lua_State *L) {
+	const Common::String text = luaL_checkstring(L, 2);
+	const Common::String flagName = luaL_checkstring(L, 3);
+	const uint character = checkCharacter(L, 4);
+
+	ScriptJournalData *data = getJournalData(character);
+	if (!data) {
+		return 0;
+	}
+
+	for (ScriptJournalData::Task &task : data->tasks[character]) {
+		if (task.text.equalsIgnoreCase(text) && task.flagName.empty()) {
+			task.flagName = flagName;
+		}
+	}
+
+	return 0;
+}
+
+void showPlayerEntries() {
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	const uint character = g_nancy->getPlayerCharacter();
+	ScriptJournalData *data = getJournalData(character);
+	if (!ui || !data) {
+		return;
+	}
+
+	for (const ScriptJournalData::JournalEntry &entry : data->journalEntries[character]) {
+		ui->addJournalEntry(entry.heading, entry.text);
+	}
+
+	for (const ScriptJournalData::Task &task : data->tasks[character]) {
+		ui->addTasklistEntry(task.text, findFlag(task.flagName));
+	}
+}
+
 static const luaL_Reg kPlayerFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Switch", playerSwitch },
 	{ "HasInventoryItem", playerHasInventoryItem },
 	{ "AddInventoryItem", playerAddInventoryItem },
 	{ "RemoveInventoryItem", playerRemoveInventoryItem },
+	{ "AddJournalEntry", playerAddJournalEntry },
+	{ "AddTask", playerAddTask },
+	{ "LoadTaskFlag", playerLoadTaskFlag },
 	{ nullptr, nullptr }
 };
 

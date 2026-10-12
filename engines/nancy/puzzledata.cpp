@@ -1023,6 +1023,28 @@ void ScriptSavedData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void ScriptJournalData::synchronize(Common::Serializer &ser) {
+	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
+		uint16 numEntries = journalEntries[i].size();
+		ser.syncAsUint16LE(numEntries);
+		journalEntries[i].resize(numEntries);
+
+		for (JournalEntry &entry : journalEntries[i]) {
+			ser.syncString(entry.heading);
+			ser.syncString(entry.text);
+		}
+
+		uint16 numTasks = tasks[i].size();
+		ser.syncAsUint16LE(numTasks);
+		tasks[i].resize(numTasks);
+
+		for (Task &task : tasks[i]) {
+			ser.syncString(task.text);
+			ser.syncString(task.flagName);
+		}
+	}
+}
+
 void PhoneBookData::synchronize(Common::Serializer &ser) {
 	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
 		uint16 numEntries = entries[i].size();
@@ -1048,6 +1070,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new ScriptValueData();
 	case ScriptSavedData::getTag():
 		return new ScriptSavedData();
+	case ScriptJournalData::getTag():
+		return new ScriptJournalData();
 	case StreamData::getTag():
 		return new StreamData();
 	case BuildBoardData::getTag():

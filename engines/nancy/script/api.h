@@ -75,6 +75,10 @@ void registerGameAPI(lua_State *L);
 bool setFlagByName(const Common::String &name, bool value);
 bool getFlagByName(const Common::String &name, bool &value);
 
+// Puts the journal entries and the tasks the character being played was given
+// into the UI, once it has been made
+void showPlayerEntries();
+
 // Reads a cursor a script picked with "Cursor.<name>", "Cursor.<name>.hot"...
 // Returns false when the value is something else.
 bool testCursor(lua_State *L, int index, uint &cursorType, bool &isHot);

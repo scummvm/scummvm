@@ -700,6 +700,27 @@ struct ScriptSavedData : public PuzzleData {
 	Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> values;
 };
 
+// Nancy19. The journal entries and the tasks the scripts gave every player
+// character. A script only hands them out while its conditions hold, so they
+// are kept with the game.
+struct ScriptJournalData : public PuzzleData {
+	struct JournalEntry {
+		Common::String heading;	// the keys of the texts
+		Common::String text;
+	};
+
+	struct Task {
+		Common::String text;
+		Common::String flagName;	// the flag that has to be set to check the task off
+	};
+
+	static constexpr uint32 getTag() { return MKTAG('S', 'C', 'J', 'N'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<JournalEntry> journalEntries[kMaxPlayerCharacters];
+	Common::Array<Task> tasks[kMaxPlayerCharacters];
+};
+
 // Nancy17. The contacts in the cell phone of every player character
 struct PhoneBookData : public PuzzleData {
 	struct Entry {
