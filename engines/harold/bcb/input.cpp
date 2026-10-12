@@ -233,6 +233,11 @@ void BCBEngine::handleKeymapperAction(Common::CustomEventType action) {
 }
 
 bool BCBEngine::handleEscapeAction() {
+	if ((_currentDisplayState == 1 || _currentDisplayState == 2) && !_activeMovieVideo) {
+		handleLeftButtonDown(Common::Point(kSystemMenuControlHitRect.left, kSystemMenuControlHitRect.top));
+		return true;
+	}
+
 	if (_currentDisplayState == 3) {
 		activateSystemExitButton();
 		return true;

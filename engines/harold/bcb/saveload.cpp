@@ -48,7 +48,6 @@ enum {
 
 static const StaticRect kSystemWaveVolumeDownRect = {268, 407, 290, 439};
 static const StaticRect kSystemWaveVolumeUpRect = {444, 407, 466, 439};
-static const StaticRect kSystemWaveVolumeSeekRect = {294, 414, 442, 439};
 static const StaticRect kSystemWaveVolumeIndicatorRect = {294, 425, 442, 449};
 
 static const Common::Point kSystemSubmodeNormalSources[5] = {
@@ -333,7 +332,7 @@ void BCBEngine::drawSystemWaveVolumeIndicator(bool present) {
 }
 
 bool BCBEngine::handleSystemWaveVolumeClick(const Common::Point &mousePosition) {
-	if (kSystemWaveVolumeSeekRect.contains(mousePosition)) {
+	if (kSystemWaveVolumeIndicatorRect.contains(mousePosition)) {
 		const int seekX = CLIP<int>(mousePosition.x - kSystemWaveVolumeIndicatorRect.left, 0, kSystemWaveVolumeIndicatorRect.width());
 		const int volume = CLIP<int>((seekX * 0xffff) / kSystemWaveVolumeIndicatorRect.width(), 0, 0xffff);
 		if (volume != _systemWaveVolume) {
@@ -373,6 +372,8 @@ bool BCBEngine::handleSystemWaveVolumeClick(const Common::Point &mousePosition) 
 				_mousePosition = event.mouse;
 			} else if (event.type == Common::EVENT_LBUTTONUP) {
 				_mousePosition = event.mouse;
+				done = true;
+			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == kBCBActionInteract) {
 				done = true;
 			}
 		}
