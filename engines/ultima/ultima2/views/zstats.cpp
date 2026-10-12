@@ -74,23 +74,23 @@ void ZStats::draw() {
 		Data::raceName(sg._race),
 		Data::className(sg._class)));
 
-	putAt(2, 4, Gfx::TEXT_NORMAL, "WEAPON-");
+	putAt(2, 4, Gfx::TEXT_NORMAL, "Weapon-");
 	put(Gfx::TEXT_LIST, Data::weaponName(sg._readiedWeapon));
-	putAt(2, 5, Gfx::TEXT_NORMAL, "ARMOUR-");
+	putAt(2, 5, Gfx::TEXT_NORMAL, "Armour-");
 	put(Gfx::TEXT_LIST, Data::armorName(sg._readiedArmor));
-	putAt(2, 6, Gfx::TEXT_NORMAL, " SPELL-");
+	putAt(2, 6, Gfx::TEXT_NORMAL, " Spell-");
 	put(Gfx::TEXT_LIST, Data::spellName(sg._readiedSpell));
 
 	labelled(-1, 4, "Torches-", sg._torches);
 	labelled(-1, 5, "Keys-", sg._keys);
 	labelled(-1, 6, "Tools-", sg._thievesTools);
 
-	labelled(0, 7, "STRENGTH-", sg._strength);
-	labelled(14, 7, " STAMINA-", sg._stamina);
-	labelled(-1, 7, " WISDOM-", sg._wisdom);
-	labelled(0, 8, " AGILITY-", sg._agility);
-	labelled(14, 8, "CHARISMA-", sg._charisma);
-	labelled(-1, 8, "INTELL.-", sg._intelligence);
+	labelled(0, 7, "Strength-", sg._strength);
+	labelled(14, 7, " Stamina-", sg._stamina);
+	labelled(-1, 7, " Wisdom-", sg._wisdom);
+	labelled(0, 8, " Agility-", sg._agility);
+	labelled(14, 8, "Charisma-", sg._charisma);
+	labelled(-1, 8, "Intell.-", sg._intelligence);
 
 	int row = 10;
 	putAt(0, row, Gfx::TEXT_HEADING, "Weapons: ");

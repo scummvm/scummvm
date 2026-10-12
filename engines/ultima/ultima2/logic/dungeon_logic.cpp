@@ -97,7 +97,7 @@ bool DungeonLogic::advance() {
 
 	sg._lightTurns = 0;
 	playFX(Data::SFX_TRAP);
-	writeString("\nARGH! A trap!\n");
+	writeString("\nArgh! A trap!\n");
 
 	if (sg._thievesTools == 0) {
 		playerDied();

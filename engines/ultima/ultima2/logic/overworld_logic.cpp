@@ -500,7 +500,7 @@ bool OverworldLogic::attack(Data::Direction dir) {
 	}
 
 	playFX(Data::SFX_HIT);
-	writeString("--HIT!!!\n");
+	writeString("--Hit!!!\n");
 	alertTownGuards(slot);
 
 	int dmg = (sg._readiedWeapon * 8 + Data::toBcd(sg._strength)) >> 2;

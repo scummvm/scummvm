@@ -132,7 +132,7 @@ void Shop::confirm(char key) {
 				sg._weaponOwned[_item] = MIN(sg._weaponOwned[_item] + 1, Data::MAX_BCD_BYTE);
 			else
 				sg._armorOwned[_item] = MIN(sg._armorOwned[_item] + 1, Data::MAX_BCD_BYTE);
-			writeString("SOLD!\n");
+			writeString("Sold!\n");
 		}
 		break;
 
@@ -150,9 +150,9 @@ void Shop::confirm(char key) {
 
 	case SPELL_WIZARD:
 		if (!yes) {
-			writeString("NO!\nUGURLA OLSUN!\n");
+			writeString("No!\nUgurla olsun!\n");
 		} else {
-			writeString("YES\n");
+			writeString("Yes\n");
 			if (_G(logic)->trySpendGold(_price)) {
 				sg._spellCharges[_item] = MIN(sg._spellCharges[_item] + 5, Data::MAX_BCD_BYTE);
 				writeString("Gule gule!\n");

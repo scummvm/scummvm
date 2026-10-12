@@ -180,7 +180,7 @@ void CreateCharacter::draw() {
 
 	put(10, 16, Gfx::TEXT_NORMAL, "Satisfactory (Y/N)-");
 
-	put(8, 18, Gfx::TEXT_NORMAL, "RACES:         TYPES:");
+	put(8, 18, Gfx::TEXT_NORMAL, "Races:         Types:");
 	put(9, 19, Gfx::TEXT_NORMAL, "1-Human        1-Fighter");
 	put(9, 20, Gfx::TEXT_NORMAL, "2-Elf          2-Cleric");
 	put(9, 21, Gfx::TEXT_NORMAL, "3-Dwarf        3-Wizard");

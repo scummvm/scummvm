@@ -45,9 +45,9 @@ bool FoodShop::msgFocus(const FocusMessage &msg) {
 bool FoodShop::msgKeypress(const KeypressMessage &msg) {
 	close();
 	if (toupper(msg.ascii) != 'Y') {
-		writeString("NO\n");
+		writeString("No\n");
 	} else {
-		writeString("YES,\nNo onions and to go please!\n");
+		writeString("Yes,\nNo onions and to go please!\n");
 		if (_G(logic)->trySpendGold(_price)) {
 			Data::Savegame &sg = _G(savegame);
 			sg._food = MIN(sg._food + 100, MAX_FOOD);

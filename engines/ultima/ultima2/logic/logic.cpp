@@ -266,7 +266,7 @@ void Logic::resolveDirection(Data::Direction dir) {
 bool Logic::trySpendGold(int amount) {
 	Data::Savegame &sg = _G(savegame);
 	if (sg._gold < amount) {
-		writeString("YOU DONT HAVE THAT MUCH!\n");
+		writeString("You dont have that much!\n");
 		return false;
 	}
 
@@ -417,7 +417,7 @@ bool Logic::get() {
 }
 
 bool Logic::hyper() {
-	writeString("Hyper WHAT?\n");
+	writeString("Hyper what?\n");
 	return true;
 }
 
@@ -439,7 +439,7 @@ bool Logic::igniteTorch() {
 }
 
 bool Logic::jump() {
-	writeString("Jump...WHEE...\n");
+	writeString("Jump...Whee...\n");
 	return true;
 }
 

@@ -227,7 +227,7 @@ bool CityCastleLogic::steal(Data::Direction dir) {
 	switch (sg._mapType) {
 	case 1: // Village
 		if (sg._mapY < 32 && sg._mapX >= 32) {
-			writeString("STEAL FOOD!\n");
+			writeString("Steal food!\n");
 			sg._food = MIN(sg._food + 100, 9999);
 		} else {
 			noLuck();
@@ -237,11 +237,11 @@ bool CityCastleLogic::steal(Data::Direction dir) {
 		if (sg._mapY >= 32) {
 			noLuck();
 		} else if (sg._mapX >= 32) {
-			writeString("STEAL ARMOUR!\n");
+			writeString("Steal armour!\n");
 			int idx = 1 + (randByte() & 3);
 			sg._armorOwned[idx] = MIN(sg._armorOwned[idx] + 1, Data::MAX_BCD_BYTE);
 		} else {
-			writeString("STEAL WEAPONS!\n");
+			writeString("Steal weapons!\n");
 			int idx = 1 + (randByte() & 7);
 			sg._weaponOwned[idx] = MIN(sg._weaponOwned[idx] + 1, Data::MAX_BCD_BYTE);
 		}
@@ -530,13 +530,13 @@ bool CityCastleLogic::transact(Data::Direction dir) {
 			writeString("A guard says:\nPay your taxes!\n");
 			return true;
 		case Data::TILE_JESTER:
-			writeString("A jester sings:\nHO HO HO!\n");
+			writeString("A jester sings:\nHo ho ho!\n");
 			return true;
 		case Data::TILE_SHOPKEEP:
 			writeString("A merchant says:\nWill you buy my apples?\n");
 			return true;
 		case Data::TILE_FIGHTER:
-			writeString("A fighter says:\nUGH, ME TOUGH!\n");
+			writeString("A fighter says:\nUgh, me tough!\n");
 			return true;
 		case Data::TILE_CLERIC:
 			writeString("A cleric says:\nBelieve!\n");
