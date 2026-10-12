@@ -59,7 +59,7 @@ static const byte LOCATION_POS_Y[LOCATION_COUNT] = {
 // Indexed the same way as LOCATION_POS_X/Y (locationNum - 1) - cities
 // (1-32), castles (33-40), pillars/sign posts (41-47), then dungeons (48-84)
 const char *LOCATION_NAMES[LOCATION_COUNT] = {
-	"Britian", "Moon", "Fawn", "Paws", "Montor", "Yew", "Tune", "Grey",
+	"Britain", "Moon", "Fawn", "Paws", "Montor", "Yew", "Tune", "Grey",
 	"Arnold", "Linda", "Helen", "Owen", "John", "Gerry", "Wolf", "The Snake",
 	"Nassau", "Clear Lagoon", "Stout", "Gauntlet", "Imagination", "Ponder",
 	"Wealth", "Poor", "Gorlab", "Dextron", "Magic", "Wheeler", "Bulldozer",

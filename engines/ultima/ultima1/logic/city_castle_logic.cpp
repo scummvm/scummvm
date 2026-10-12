@@ -526,7 +526,7 @@ void CityCastleLogic::updateBardJester(int entityIndex) {
 			writeString("Iolo the Bard sings:\n");
 			writeString("Ho eyoh he hum!\n");
 		} else {
-			writeString("Gwino the jester sings:\n");
+			writeString("Gwenno the jester sings:\n");
 			writeString("I've got the key!\n");
 		}
 	}
