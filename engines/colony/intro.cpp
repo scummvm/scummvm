@@ -32,6 +32,7 @@
 #include "common/translation.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
+#include "graphics/framelimiter.h"
 #include "graphics/fonts/dosfont.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/macgui/macdialog.h"
@@ -41,10 +42,63 @@
 #include "image/pict.h"
 
 #include "colony/colony.h"
+#include "colony/intro_timing.h"
 #include "colony/renderer.h"
 #include "colony/sound.h"
 
 namespace Colony {
+
+// Execute every animation tick, including XOR drawing, but present only once
+// per batch of elapsed ticks. Slow swaps must not slow the simulation down.
+class IntroAnimation {
+public:
+	IntroAnimation(OSystem *system, Renderer *gfx, uint32 stepDuration)
+		: _system(system), _gfx(gfx), _timing(system->getMillis(), stepDuration),
+		  _frameLimiter(system, 60, false) {}
+
+	void nextStep() {
+		if (!_remainingSteps) {
+			present();
+			waitForNextStep();
+			_frameLimiter.startFrame();
+			// Sample once per batch so even a slow renderer returns to the
+			// presentation loop. Callers still check input between each tick.
+			_remainingSteps = _timing.stepsDue(_system->getMillis());
+		}
+		--_remainingSteps;
+		_timing.advance();
+		_dirty = true;
+	}
+
+	void finish() {
+		present();
+		// Keep the last tick visible for its remaining time, accounting for
+		// the time already spent rendering and waiting for VSync.
+		waitForNextStep();
+	}
+
+private:
+	void waitForNextStep() {
+		uint32 delay;
+		while ((delay = _timing.timeToNextStep(_system->getMillis())) != 0)
+			_system->delayMillis(delay);
+	}
+
+	void present() {
+		if (_dirty) {
+			_frameLimiter.delayBeforeSwap();
+			_gfx->copyToScreen();
+			_dirty = false;
+		}
+	}
+
+	OSystem *_system;
+	Renderer *_gfx;
+	IntroTiming _timing;
+	Graphics::FrameLimiter _frameLimiter;
+	uint32 _remainingSteps = 0;
+	bool _dirty = false;
+};
 
 class ColonyMacDialog : public Graphics::MacDialog {
 public:
@@ -398,24 +452,19 @@ void ColonyEngine::playIntro() {
 		// Original: one InvertRect per Display() loop iteration at ~8fps hardware.
 		// Each inversion toggles the entire screen (black↔white) creating a
 		// ~4Hz strobe effect. We match this with 125ms per inversion.
-		if (!_soundOn) {
-			// No sound: exactly 16 inversions at ~8fps cadence
-			for (int i = 0; i < 16 && !shouldQuit(); i++) {
-				_gfx->clear(i % 2 ? _gfx->black() : _gfx->white());
-				_gfx->copyToScreen();
-				_system->delayMillis(125);
-			}
-		} else {
+		if (_soundOn)
 			_sound->play(Sound::kExplode);
-			int frame = 0;
-			while (!shouldQuit() && _sound->isPlaying()) {
-				_gfx->clear(frame % 2 ? _gfx->black() : _gfx->white());
-				_gfx->copyToScreen();
-				_system->delayMillis(125);
-				frame++;
-			}
-			_sound->stop();
+		const uint32 crashStart = _system->getMillis();
+		Graphics::FrameLimiter crashLimiter(_system, 60, false);
+		while (!shouldQuit() && (_soundOn ? _sound->isPlaying() : _system->getMillis() - crashStart < 16 * 125)) {
+			crashLimiter.startFrame();
+			const uint32 frame = (_system->getMillis() - crashStart) / 125;
+			_gfx->clear(frame % 2 ? _gfx->black() : _gfx->white());
+			crashLimiter.delayBeforeSwap();
+			_gfx->copyToScreen();
 		}
+		if (_soundOn)
+			_sound->stop();
 		_gfx->clear(_gfx->black());
 		_gfx->copyToScreen();
 		delete macFont;
@@ -518,12 +567,13 @@ void ColonyEngine::playIntro() {
 		const uint32 crashFlashDurationMs = 700;
 		const uint32 crashFlashStepMs = 200;
 		const uint32 crashStart = _system->getMillis();
-		int frame = 0;
+		Graphics::FrameLimiter crashLimiter(_system, 60, false);
 		while (!shouldQuit() && _system->getMillis() - crashStart < crashFlashDurationMs) {
+			crashLimiter.startFrame();
+			const uint32 frame = (_system->getMillis() - crashStart) / crashFlashStepMs;
 			_gfx->clear(frame % 2 ? _gfx->black() : _gfx->white());
+			crashLimiter.delayBeforeSwap();
 			_gfx->copyToScreen();
-			_system->delayMillis(crashFlashStepMs);
-			frame++;
 		}
 		_sound->stop();
 		_gfx->clear(_gfx->black());
@@ -612,6 +662,7 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	int inc = macStyle ? 4 : 8;
 	if (macStyle) {
 		// Mac: scroll the text in from below.
+		IntroAnimation scrollIn(_system, _gfx, 16);
 		for (int scrollOff = _height; scrollOff > 0 && !qt; scrollOff -= inc) {
 			if (checkSkipRequested()) {
 				qt = true;
@@ -619,18 +670,18 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 				break;
 			}
 
+			scrollIn.nextStep();
 			_gfx->clear(_gfx->black());
 			for (int i = 0; i < storyLength; i++) {
 				int drawY = ht + lineHeight * i + scrollOff;
 				if (strlen(story[i]) > 0 && drawY >= 0 && drawY < _height)
 					_gfx->drawString(font, story[i], _width / 2, drawY, 200 + i, Graphics::kTextAlignCenter);
 			}
-			_gfx->copyToScreen();
-			_system->delayMillis(16);
 		}
 
 		// Draw final position (scrollOff = 0)
 		if (!qt) {
+			scrollIn.finish();
 			_gfx->clear(_gfx->black());
 			for (int i = 0; i < storyLength; i++) {
 				if (strlen(story[i]) > 0)
@@ -656,6 +707,7 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	// Phase 2: Scroll text off the top of the screen
 	// Original: scrollRect continues moving up, text slides upward
 	if (!qt) {
+		IntroAnimation scrollOut(_system, _gfx, 16);
 		for (int scrollOff = 0; scrollOff > -_height && !qt; scrollOff -= inc) {
 			if (checkSkipRequested()) {
 				qt = true;
@@ -663,15 +715,16 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 				break;
 			}
 
+			scrollOut.nextStep();
 			_gfx->clear(_gfx->black());
 			for (int i = 0; i < storyLength; i++) {
 				int drawY = ht + lineHeight * i + scrollOff;
 				if (strlen(story[i]) > 0 && drawY >= -lineHeight && drawY < _height)
 					_gfx->drawString(font, story[i], _width / 2, drawY, 200 + i, Graphics::kTextAlignCenter);
 			}
-			_gfx->copyToScreen();
-			_system->delayMillis(16);
 		}
+		if (!qt)
+			scrollOut.finish();
 	}
 
 	// DOS stops BeamMe here; Mac lets it continue and waits in playIntro().
@@ -745,6 +798,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 	// Animate: original loops ~200 frames or until Mars sound repeats 2x.
 	// With btn set (About) it streaks on until the user clicks, and unlike the
 	// skip path that click still falls through to the fade-out below.
+	IntroAnimation stars(_system, _gfx, 16);
 	for (int k = 0; btn || k < 120; k++) {
 		if (btn) {
 			if (checkClickRequested())
@@ -754,6 +808,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			return true;
 		}
 
+		stars.nextStep();
 		for (int i = 0; i < NSTARS; i++) {
 			// Erase previous  XOR the same line again to restore underlying pixels
 			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 0xFFFFFFFF);
@@ -781,20 +836,21 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			// Draw new star position
 			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 0xFFFFFFFF);
 		}
-		_gfx->copyToScreen();
-		_system->delayMillis(16);
 	}
+	stars.finish();
 
 	// Fade-out phase: stars fly off without resetting (trails accumulate via XOR)
 	int nstars = 2 * ((MAXSTAR - 0x030) / deltapd);
 	if (nstars > 200)
 		nstars = 200;
+	IntroAnimation departure(_system, _gfx, 8);
 	for (int k = 0; k < nstars; k++) {
 		if (checkSkipRequested()) {
 			_gfx->setXorMode(false);
 			return true;
 		}
 
+		departure.nextStep();
 		for (int i = 0; i < NSTARS; i++) {
 			int d = dist[i];
 			int s = xang[i];
@@ -816,9 +872,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 				_gfx->drawLine(x1, y1, x2, y2, 0xFFFFFFFF);
 			}
 		}
-		_gfx->copyToScreen();
-		_system->delayMillis(8);
 	}
+	departure.finish();
 
 	_gfx->setXorMode(false);
 	return false;
@@ -841,12 +896,17 @@ bool ColonyEngine::makeBlackHole() {
 	for (int i = 1; i < 1024; i++)
 		rtable[i] = (128 * 128) / i;
 
+	IntroAnimation spiral(_system, _gfx, 16);
 	for (int k = 0; k < 17; k += 4) {
 		// Reset color per k-iteration (matches Mac: bcolor = {0,0,0} at start of each k)
 		int colorR = 0, colorG = 0, colorB = 0;
 		int rd = 2048, gd = 1024, bd = 4096;
 
 		for (int i = 1000; i > 32; i -= dec) {
+			if (checkSkipRequested())
+				return true;
+			spiral.nextStep();
+
 			// Mac original subtracts from color channels (wrapping as uint16);
 			// We simulate this as a gradient from dark to bright
 			// Since Mac uses unsigned wrap: 0 - 4096 = 0xF000 = bright.
@@ -881,17 +941,9 @@ bool ColonyEngine::makeBlackHole() {
 
 				_gfx->drawLine(x1, y1, x2, y2, 128);
 			}
-
-			// Update screen every step and add a small delay
-			// to simulate the original 68k rendering speed
-			_gfx->copyToScreen();
-			_system->delayMillis(16);
-
-			if (checkSkipRequested())
-				return true;
 		}
 	}
-	_gfx->copyToScreen();
+	spiral.finish();
 	return false;
 }
 
@@ -965,12 +1017,14 @@ bool ColonyEngine::makePlanet() {
 	_gfx->copyToScreen();
 
 	// Phase 2: rotate the planet in place (25 frames)
+	IntroAnimation rotation(_system, _gfx, 33);
 	for (int frame = 0; frame < 25; frame++) {
 		if (checkSkipRequested()) {
 			_gfx->setXorMode(false);
 			return true;
 		}
 
+		rotation.nextStep();
 		save = 0;
 		for (int j = 0; j < 256; j += PDELTA) {
 			for (int k = start, l = dstart; k < 128; k += PDELTA, l += PDELTA) {
@@ -999,18 +1053,19 @@ bool ColonyEngine::makePlanet() {
 		dstart++;
 		if (dstart == PDELTA)
 			dstart = 0;
-		_gfx->copyToScreen();
-		_system->delayMillis(33);
 	}
+	rotation.finish();
 
 	// Phase 3: planet approaches camera (zoom from dist 800 to 32)
 	starcnt = 0;
+	IntroAnimation approach(_system, _gfx, 16);
 	for (int i = 800; i > 32; i -= 16) {
 		if (checkSkipRequested()) {
 			_gfx->setXorMode(false);
 			return true;
 		}
 
+		approach.nextStep();
 		// Erase stars as planet passes them
 		for (int m = 0; m < 4 && starcnt < STAR_COUNT; m++) {
 			_gfx->setPixel(xstars[starcnt], ystars[starcnt], 0xFFFFFFFF);
@@ -1045,9 +1100,8 @@ bool ColonyEngine::makePlanet() {
 		dstart++;
 		if (dstart == PDELTA)
 			dstart = 0;
-		_gfx->copyToScreen();
-		_system->delayMillis(16);
 	}
+	approach.finish();
 
 	_gfx->setXorMode(false);
 	return false;
@@ -1329,24 +1383,24 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 	_gfx->copyToScreen();
 
 	// Phase 1: Scroll text in from the right to center.
-	// Original steps are one pixel on Mac and 16 on DOS. Double the intro's
-	// distance per frame so it also scrolls twice as fast with VSync enabled.
+	// Original steps are one pixel on Mac and 16 on DOS. The intro moves
+	// twice that distance per tick, independently of the display frame rate.
 	int targetX = (_width - swidth) / 2;
 	const int startX = macStyle ? _width : (_width + 16);
 	const int stepX = (macStyle ? 1 : 16) * (gameOver ? 1 : 2);
 	const int endX = macStyle ? -swidth : (-swidth - 16);
 	const uint32 scrollDelayMs = macStyle ? 8 : (1000 / 60);
 
+	IntroAnimation scrollIn(_system, _gfx, scrollDelayMs);
 	for (int x = startX; x > targetX;) {
+		if (checkSkipRequested())
+			return true;
+		scrollIn.nextStep();
 		x = MAX(targetX, x - stepX);
 		_gfx->fillRect(textBand, 0);
 		_gfx->drawString(font, str, x, centery + 2, textIndex, Graphics::kTextAlignLeft);
-		_gfx->copyToScreen();
-
-		if (checkSkipRequested())
-			return true;
-		_system->delayMillis(scrollDelayMs);
 	}
+	scrollIn.finish();
 
 	// Wait for each cue before the next flash.
 	_sound->stop();
@@ -1382,15 +1436,15 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 	// Original intro.c TimeSquare line 323: PlayMars() restarts the loop.
 	if (macStyle)
 		_sound->play(Sound::kMars, true);
+	IntroAnimation scrollOut(_system, _gfx, scrollDelayMs);
 	for (int x = targetX; x > endX; x -= stepX) {
-		_gfx->fillRect(textBand, 0);
-		_gfx->drawString(font, str, x, centery + 2, textIndex, Graphics::kTextAlignLeft);
-		_gfx->copyToScreen();
-
 		if (checkSkipRequested())
 			return true;
-		_system->delayMillis(scrollDelayMs);
+		scrollOut.nextStep();
+		_gfx->fillRect(textBand, 0);
+		_gfx->drawString(font, str, x, centery + 2, textIndex, Graphics::kTextAlignLeft);
 	}
+	scrollOut.finish();
 
 	return false;
 }
