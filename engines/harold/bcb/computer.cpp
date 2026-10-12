@@ -40,12 +40,152 @@ static const int kComputerCompositeTransitionTop = 36;
 static const int kComputerCompositeTransitionRight = 606;
 static const int kComputerCompositeTransitionBottom = 444;
 
-bool BCBEngine::dispatchComputerDetailControls() {
-	error("BCB: dispatchComputerDetailControls is not implemented");
+const Graphics::Surface *BCBEngine::getComputerBitmap() {
+	if (!_computerBitmap) {
+		_computerBitmap = loadBitmap("256com.bmp");
+	}
+	return _computerBitmap;
 }
 
 bool BCBEngine::dispatchComputerMainControls() {
-	error("BCB: dispatchComputerMainControls is not implemented");
+	if (!showComputerScreen())
+		return false;
+
+	_computerControlsActive = true;
+	_computerDetailControlsActive = false;
+	_computerActiveChoiceIds.clear();
+	_computerActiveChoiceRects.clear();
+	drawComputerChoiceGroupControls();
+	drawComputerButton(kComputerPrimaryButtonTable[1], kComputerPrimaryButtonTable[1]);
+
+	g_system->updateScreen();
+	return true;
+}
+
+bool BCBEngine::showComputerScreen() {
+	const Graphics::Surface *computer = getComputerBitmap();
+	if (!computer)
+		return false;
+
+	g_system->copyRectToScreen(computer->getPixels(), computer->pitch, 0, 0, MIN<int>(computer->w, 640), MIN<int>(computer->h, 480));
+	_currentDisplayState = 4;
+	return true;
+}
+
+void BCBEngine::drawComputerChoiceGroupControls() {
+	_computerActiveChoiceIds.clear();
+	_computerActiveChoiceRects.clear();
+
+	const Graphics::Surface *computer = getComputerBitmap();
+	if (!computer)
+		return;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (screen) {
+		if (_computerChoiceGroupIndex >= 0 && _computerChoiceGroupIndex <= 2) {
+			const int sourceY = _computerChoiceGroupIndex * 0x16 + 0x2a0;
+			if (sourceY + 0x16 <= computer->h)
+				screen->copyRectToSurface(*computer, 0x3c, 0x43, Common::Rect(0, sourceY, 0xe8, sourceY + 0x16));
+		}
+
+		for (uint i = 1; i < ARRAYSIZE(kComputerChoiceLayoutSlots); ++i) {
+			const ButtonControlRecord &slot = kComputerChoiceLayoutSlots[i];
+			if (slot.x + slot.width <= computer->w && slot.y + slot.height <= computer->h)
+				screen->copyRectToSurface(*computer, slot.x, slot.y, Common::Rect(slot.x, slot.y, slot.x + slot.width, slot.y + slot.height));
+		}
+		g_system->unlockScreen();
+	}
+
+	if (_computerChoiceGroupIndex == 0)
+		drawComputerConditionalChoiceControls(kComputerChoiceButtonTable + 21, 21, 6);
+	else if (_computerChoiceGroupIndex == 1)
+		drawComputerConditionalChoiceControls(kComputerChoiceButtonTable, 0, 21);
+	else if (_computerChoiceGroupIndex == 2)
+		drawComputerConditionalChoiceControls(kComputerChoiceButtonTable + 27, 27, 3);
+}
+
+void BCBEngine::drawComputerButton(const ButtonControlRecord &sourceButton, const ButtonControlRecord &destButton) {
+	const Graphics::Surface *computer = getComputerBitmap();
+	if (!computer)
+		return;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (screen && sourceButton.x + sourceButton.width <= computer->w && sourceButton.y + sourceButton.height <= computer->h)
+		screen->copyRectToSurface(*computer, destButton.x, destButton.y, Common::Rect(sourceButton.x, sourceButton.y, sourceButton.x + sourceButton.width, sourceButton.y + sourceButton.height));
+	if (screen)
+		g_system->unlockScreen();
+}
+
+void BCBEngine::drawComputerButtonPressed(const ButtonControlRecord &button, int sourceX, int sourceY) {
+	const Graphics::Surface *computer = getComputerBitmap();
+	if (!computer)
+		return;
+
+	if (sourceX + button.width <= computer->w && sourceY + button.height <= computer->h) {
+		g_system->copyRectToScreen(computer->getBasePtr(sourceX, sourceY), computer->pitch, button.x, button.y, button.width, button.height);
+		g_system->updateScreen();
+	}
+}
+
+void BCBEngine::drawComputerUnavailableMarker(const ButtonControlRecord &destButton) {
+	const Graphics::Surface *computer = getComputerBitmap();
+	if (!computer)
+		return;
+
+	const int markerSourceX = 0x240;
+	const int markerSourceY = 0x260;
+	const int markerWidth = 0x36;
+	const int markerHeight = 0x18;
+	if (markerSourceX + markerWidth <= computer->w && markerSourceY + markerHeight <= computer->h)
+		g_system->copyRectToScreen(computer->getBasePtr(markerSourceX, markerSourceY), computer->pitch, destButton.x + 5, destButton.y + 0x0c, markerWidth, markerHeight);
+}
+
+void BCBEngine::drawComputerConditionalChoiceControls(const ButtonControlRecord *choiceButtonRecords, int firstStateIndex, int stateCount) {
+	const Graphics::Surface *computer = getComputerBitmap();
+	if (!computer)
+		return;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	int visibleButtonSlot = 1;
+	for (int i = 0; screen && i < stateCount && visibleButtonSlot < (int)ARRAYSIZE(kComputerChoiceLayoutSlots); ++i) {
+		const int stateIndex = firstStateIndex + i;
+		const byte dependencyStateIndex = stateIndex >= 0 && stateIndex < (int)ARRAYSIZE(kComputerChoiceDependencyStateIndex) ? kComputerChoiceDependencyStateIndex[stateIndex] : 0;
+		const bool directlyAvailable = stateDword(kStateComputerChoiceStateByIndex + stateIndex * 4) != 0;
+		const bool dependencyOnlyAvailable =
+			dependencyStateIndex != 0 && stateDword(kStateComputerChoiceStateByIndex + dependencyStateIndex * 4) == 1;
+		const bool visible = directlyAvailable || dependencyOnlyAvailable;
+		if (!visible)
+			continue;
+
+		const ButtonControlRecord &source = choiceButtonRecords[i];
+		const ButtonControlRecord &dest = kComputerChoiceLayoutSlots[visibleButtonSlot++];
+		if (source.x + source.width <= computer->w && source.y + source.height <= computer->h)
+			screen->copyRectToSurface(*computer, dest.x, dest.y, Common::Rect(source.x, source.y, source.x + source.width, source.y + source.height));
+		if (directlyAvailable) {
+			_computerActiveChoiceIds.push_back(source.controlId);
+			_computerActiveChoiceRects.push_back(Common::Rect(dest.x, dest.y, dest.x + dest.width, dest.y + dest.height));
+		}
+	}
+	if (screen)
+		g_system->unlockScreen();
+
+	visibleButtonSlot = 1;
+	for (int i = 0; i < stateCount && visibleButtonSlot < (int)ARRAYSIZE(kComputerChoiceLayoutSlots); ++i) {
+		const int stateIndex = firstStateIndex + i;
+		const byte dependencyStateIndex = stateIndex >= 0 && stateIndex < (int)ARRAYSIZE(kComputerChoiceDependencyStateIndex) ? kComputerChoiceDependencyStateIndex[stateIndex] : 0;
+		const bool directlyAvailable = stateDword(kStateComputerChoiceStateByIndex + stateIndex * 4) != 0;
+		const bool dependencyOnlyAvailable =
+			dependencyStateIndex != 0 && stateDword(kStateComputerChoiceStateByIndex + dependencyStateIndex * 4) == 1;
+		if (!directlyAvailable && !dependencyOnlyAvailable)
+			continue;
+		const ButtonControlRecord &dest = kComputerChoiceLayoutSlots[visibleButtonSlot++];
+		if (!directlyAvailable && dependencyOnlyAvailable)
+			drawComputerUnavailableMarker(dest);
+	}
+}
+
+bool BCBEngine::dispatchComputerDetailControls() {
+	error("BCB: dispatchComputerDetailControls is not implemented");
 }
 
 } // End of namespace BCB

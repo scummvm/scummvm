@@ -95,6 +95,13 @@ private:
 	bool dispatchComputerDetailControls();
 	bool dispatchGameOverScreen();
 	bool dispatchEndingStillDisplayState();
+	const Graphics::Surface *getComputerBitmap();
+	bool showComputerScreen();
+	void drawComputerChoiceGroupControls();
+	void drawComputerConditionalChoiceControls(const ButtonControlRecord *choiceButtonRecords, int firstStateIndex, int stateCount);
+	void drawComputerButton(const ButtonControlRecord &sourceButton, const ButtonControlRecord &destButton);
+	void drawComputerButtonPressed(const ButtonControlRecord &button, int sourceX, int sourceY);
+	void drawComputerUnavailableMarker(const ButtonControlRecord &destButton);
 	void checkCurrentMediaPathReady();
 	void clearDisplayAndResetState();
 	void executeCurrentScriptSequence();
@@ -206,6 +213,7 @@ private:
 	Graphics::Surface *_chipBitmap = nullptr;
 	Graphics::Surface *_sceneChoiceBacking = nullptr;
 	Common::Rect _sceneChoiceBackingRect;
+	Graphics::Surface *_computerBitmap = nullptr;
 	Audio::SoundHandle _uiSoundHandle;
 	uint32 _gameState[0x100] = {};
 	uint32 _scriptValueStack[0x100] = {};
@@ -223,8 +231,13 @@ private:
 	int _nextTimedCaptionThreshold = 99999;
 	int _queuedMoviePlaybackIndex = 0;
 	int _previousDisplayStateBeforeSystem = 0;
+	int _computerChoiceGroupIndex = 0;
 	int _sceneChoiceTerminatorButtonIndex = 0;
 	int _sceneChoiceEnabledButtonLimit = 0;
+	bool _computerControlsActive = false;
+	bool _computerDetailControlsActive = false;
+	Common::Array<int> _computerActiveChoiceIds;
+	Common::Array<Common::Rect> _computerActiveChoiceRects;
 	Common::U32String _timedCaptionText;
 	Common::String _timedCaptionTextSjis;
 	Common::Rect _activeCaptionBackingRect;
