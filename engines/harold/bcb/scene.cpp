@@ -190,7 +190,7 @@ void BCBEngine::drawSceneChoiceButtons(int sceneChoiceUiSetToShowId, bool presen
 	const uint32 pressedTextColor = screen->format.RGBToColor(0x8c, 0x3c, 0x05);
 	const Common::Array<Common::U32String> &originalLabels = _sceneChoiceText[sceneChoiceUiSetToShowId];
 	const auto getChoiceLabel = [&](uint choiceIndex) -> Common::U32String {
-		return originalLabels[choiceIndex];
+		return translateTextForDisplay(kTextTranslationSceneChoice, sceneChoiceUiSetToShowId, choiceIndex, originalLabels[choiceIndex]);
 	};
 	const auto drawChoiceLabel = [&](const Common::U32String &label, int buttonIndex) {
 		if (!font)
@@ -236,7 +236,7 @@ void BCBEngine::drawSceneChoiceButtons(int sceneChoiceUiSetToShowId, bool presen
 		stateDword(kStateSceneChoiceExtraButtonFlag) != 0 &&
 		_sceneChoiceTerminatorButtonIndex > 0 &&
 		_sceneChoiceTerminatorButtonIndex < (int)ARRAYSIZE(kSceneChoiceButtonTable)) {
-		drawChoiceLabel(_sceneChoiceMoveText, _sceneChoiceTerminatorButtonIndex);
+		drawChoiceLabel(translateTextForDisplay(kTextTranslationSceneChoiceMove, 0, 0, _sceneChoiceMoveText), _sceneChoiceTerminatorButtonIndex);
 	}
 
 	if (present)

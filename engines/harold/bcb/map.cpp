@@ -135,7 +135,12 @@ void BCBEngine::composeMapControlsToSurface(Graphics::Surface &surface, const Gr
 		const int textX = button.x + 0x14;
 		const int textY = button.y - (_gameDescription->desc.language == Common::KO_KOR ? 5 : 4);
 		const int textWidth = MAX<int>(0, surface.w - textX - 2);
-		if (_gameDescription->desc.language == Common::JA_JPN && _sjisFont) {
+		bool translated = false;
+		const Common::U32String displayText = translateTextForDisplay(kTextTranslationMapButton, i, 0, _mapButtonText[i], &translated);
+		if (translated && _ownerDrawUiTextFont) {
+			_ownerDrawUiTextFont->drawString(&surface, displayText, textX + 1, textY + 1, textWidth, shadowColor, Graphics::kTextAlignLeft);
+			_ownerDrawUiTextFont->drawString(&surface, displayText, textX, textY, textWidth, textColor, Graphics::kTextAlignLeft);
+		} else if (_gameDescription->desc.language == Common::JA_JPN && _sjisFont) {
 			int x = textX + 1;
 			for (const byte *text = reinterpret_cast<const byte *>(_mapButtonTextSjis[i].c_str()); *text;) {
 				const byte firstByte = *text++;

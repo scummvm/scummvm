@@ -164,7 +164,7 @@ bool BCBEngine::dispatchGameOverScreen() {
 		const uint32 white = gameOver->format.RGBToColor(255, 255, 255);
 		const Common::Rect textRect(100, 200, 540, 400);
 		if (_gameOverTextFont) {
-			const Common::U32String &text = _gameOverText[selectedSceneChoiceValue];
+			const Common::U32String text = translateTextForDisplay(kTextTranslationGameOver, selectedSceneChoiceValue, 0, _gameOverText[selectedSceneChoiceValue]);
 			int y = textRect.top - (_gameDescription->desc.language == Common::KO_KOR ? 1 : 0);
 			for (uint lineStart = 0; lineStart < text.size() && y < textRect.bottom;) {
 				uint lineEnd = lineStart;

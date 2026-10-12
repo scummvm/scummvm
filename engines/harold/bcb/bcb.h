@@ -32,6 +32,7 @@
 #include "common/ustr.h"
 #include "engines/engine.h"
 #include "harold/bcb/ui.h"
+#include "harold/bcb/translation.h"
 #include "harold/detection.h"
 
 namespace Graphics {
@@ -227,8 +228,10 @@ private:
 	void delayWithEventPolling(uint32 millis);
 	void delayWithEventPolling(uint32 millis, bool handleClicks);
 	Common::U32String decodeExecutableTextForDisplay(const Common::String &text) const;
-	Common::U32String formatSystemTextForDisplay(const Common::String &originalFormat, int slot) const;
-	Common::U32String formatSystemClockTextForDisplay(const Common::String &originalFormat, int slot, int savedDay, int savedClockTicks) const;
+	Common::U32String translateTextForDisplay(TextTranslationType type, uint primaryId, uint secondaryId, const Common::U32String &originalText, bool *translated = nullptr) const;
+	Common::U32String translateSystemTextForDisplay(const char *key, const Common::U32String &originalText, bool *translated = nullptr) const;
+	Common::U32String formatSystemTextForDisplay(const char *key, const Common::String &originalSjisFormat, int arg1) const;
+	Common::U32String formatSystemClockTextForDisplay(const char *key, const Common::String &originalSjisFormat, int slot, int savedDay, int savedClockTicks) const;
 	void mainLoop();
 
 	const HaroldGameDescription *_gameDescription;
@@ -255,6 +258,8 @@ private:
 	Common::String _saveSlotEmptyConfirmTextFormatSjis;
 	Common::String _noSaveDataMessageSjis;
 	Common::String _returnToTitleConfirmTextSjis;
+	TextTranslationData _textTranslation;
+	bool _selectedTextLanguagePackageAvailable = false;
 	Graphics::FontSJIS *_sjisFont = nullptr;
 	const Graphics::Font *_captionTextFont = nullptr;
 	const Graphics::Font *_gameOverTextFont = nullptr;

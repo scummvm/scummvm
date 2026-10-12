@@ -435,9 +435,9 @@ void BCBEngine::drawSystemSaveLoadSlots(bool present) {
 		int savedClockTicks = 0;
 		Common::U32String slotText;
 		if (readSaveSlotHeader(slot, savedDay, savedClockTicks)) {
-			slotText = formatSystemClockTextForDisplay(_saveSlotOccupiedTextFormatSjis, slot, savedDay, savedClockTicks);
+			slotText = formatSystemClockTextForDisplay("save_slot_occupied", _saveSlotOccupiedTextFormatSjis, slot, savedDay, savedClockTicks);
 		} else {
-			slotText = formatSystemTextForDisplay(_saveSlotEmptyTextFormatSjis, slot);
+			slotText = formatSystemTextForDisplay("save_slot_empty", _saveSlotEmptyTextFormatSjis, slot);
 		}
 
 		Graphics::Surface *screen = _screen->surfacePtr();
@@ -497,7 +497,7 @@ bool BCBEngine::handleSystemClick(const Common::Point &mousePosition) {
 		playUiSound();
 		_systemSaveLoadSlotActionMode = 0;
 		showSystemScreen();
-		if (showSystemConfirmationDialog(decodeExecutableTextForDisplay(_returnToTitleConfirmTextSjis), true)) {
+		if (showSystemConfirmationDialog(translateSystemTextForDisplay("return_to_title_confirm", decodeExecutableTextForDisplay(_returnToTitleConfirmTextSjis)), true)) {
 			stopMenuBackgroundMusic();
 			resetGameState();
 			showTitleScreen();
@@ -539,9 +539,9 @@ bool BCBEngine::handleSaveLoadSlotClick(const Common::Point &mousePosition) {
 			int savedClockTicks = 0;
 			Common::U32String message;
 			if (readSaveSlotHeader(slot, savedDay, savedClockTicks)) {
-				message = formatSystemClockTextForDisplay(_saveSlotOverwriteConfirmTextFormatSjis, slot, savedDay, savedClockTicks);
+				message = formatSystemClockTextForDisplay("save_slot_overwrite_confirm", _saveSlotOverwriteConfirmTextFormatSjis, slot, savedDay, savedClockTicks);
 			} else {
-				message = formatSystemTextForDisplay(_saveSlotEmptyConfirmTextFormatSjis, slot);
+				message = formatSystemTextForDisplay("save_slot_empty_confirm", _saveSlotEmptyConfirmTextFormatSjis, slot);
 			}
 
 			if (showSystemConfirmationDialog(message, true)) {
@@ -555,10 +555,10 @@ bool BCBEngine::handleSaveLoadSlotClick(const Common::Point &mousePosition) {
 			int savedDay = 0;
 			int savedClockTicks = 0;
 			if (!readSaveSlotHeader(slot, savedDay, savedClockTicks)) {
-				showSystemConfirmationDialog(decodeExecutableTextForDisplay(_noSaveDataMessageSjis), false);
+				showSystemConfirmationDialog(translateSystemTextForDisplay("no_save_data", decodeExecutableTextForDisplay(_noSaveDataMessageSjis)), false);
 				return true;
 			}
-			Common::U32String message = formatSystemClockTextForDisplay(_loadSlotConfirmTextFormatSjis, slot, savedDay, savedClockTicks);
+			Common::U32String message = formatSystemClockTextForDisplay("load_slot_confirm", _loadSlotConfirmTextFormatSjis, slot, savedDay, savedClockTicks);
 			if (showSystemConfirmationDialog(message, true)) {
 				_titleLoadSlotsActive = false;
 				loadGameState(slot);
@@ -688,18 +688,6 @@ void BCBEngine::returnFromSystemMenuToPreviousState() {
 	}
 
 	processGameStateDispatcher(false);
-}
-
-Common::U32String BCBEngine::formatSystemTextForDisplay(const Common::String &originalFormat, int slot) const {
-	const Common::String formatted = Common::String::format(originalFormat.c_str(), slot);
-	return decodeExecutableTextForDisplay(formatted);
-}
-
-Common::U32String BCBEngine::formatSystemClockTextForDisplay(const Common::String &originalFormat, int slot, int savedDay, int savedClockTicks) const {
-	const int hour = savedClockTicks / 60;
-	const int minute = savedClockTicks % 60;
-	const Common::String formatted = Common::String::format(originalFormat.c_str(), slot, savedDay, hour, minute);
-	return decodeExecutableTextForDisplay(formatted);
 }
 
 } // End of namespace BCB

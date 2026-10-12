@@ -126,6 +126,12 @@ Common::Error BCBEngine::run() {
 	if (!initializeSearchPaths())
 		return Common::kPathDoesNotExist;
 
+	const Common::String languageCode = ConfMan.get("bcb_text_language");
+	_selectedTextLanguagePackageAvailable = !languageCode.empty() &&
+		loadTranslationPackage(Common::FSNode(ConfMan.getPath("path")), languageCode, _textTranslation);
+	if (!languageCode.empty() && !_selectedTextLanguagePackageAvailable)
+		warning("BCB: Translation package '%s' is unavailable; using original text", languageCode.c_str());
+
 	initGraphics(640, 480, &screenFormat);
 	_screen = new Graphics::Screen(640, 480, g_system->getScreenFormat());
 	CursorMan.lock(false);

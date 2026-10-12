@@ -157,7 +157,7 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 				restoreTitleScreenRegion(Common::Rect(0, 0, 640, 480));
 			}
 			drawTitleButton(i, false);
-			if (showSystemConfirmationDialog(_titleExitConfirmText, true))
+			if (showSystemConfirmationDialog(translateSystemTextForDisplay("title_exit_confirm", _titleExitConfirmText), true))
 				quitGame();
 			break;
 		default:

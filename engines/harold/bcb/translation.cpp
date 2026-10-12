@@ -29,6 +29,7 @@
 #include "common/util.h"
 
 #include "harold/bcb/translation.h"
+#include "harold/bcb/bcb.h"
 
 namespace BCB {
 namespace {
@@ -242,6 +243,72 @@ const char *getTextTranslation(const TextTranslationData &translation, TextTrans
 
 const char *getSystemTextTranslation(const TextTranslationData &translation, const char *key) {
 	return translation.strings.getString(Common::String::format("system.%s", key));
+}
+
+Common::U32String BCBEngine::translateTextForDisplay(TextTranslationType type, uint primaryId, uint secondaryId, const Common::U32String &originalText, bool *translated) const {
+	if (translated)
+		*translated = false;
+
+	if (!_selectedTextLanguagePackageAvailable)
+		return originalText;
+
+	const char *translatedText = getTextTranslation(_textTranslation, type, primaryId, secondaryId);
+	if (!translatedText || !translatedText[0])
+		return originalText;
+
+	if (translated)
+		*translated = true;
+	return Common::U32String(translatedText);
+}
+
+Common::U32String BCBEngine::translateSystemTextForDisplay(const char *key, const Common::U32String &originalText, bool *translated) const {
+	if (translated)
+		*translated = false;
+
+	if (!_selectedTextLanguagePackageAvailable)
+		return originalText;
+
+	const char *translatedText = getSystemTextTranslation(_textTranslation, key);
+	if (!translatedText || !translatedText[0])
+		return originalText;
+
+	if (translated)
+		*translated = true;
+	return Common::U32String(translatedText);
+}
+
+Common::U32String BCBEngine::formatSystemTextForDisplay(const char *key, const Common::String &originalSjisFormat, int arg1) const {
+	const char *translatedFormat = _selectedTextLanguagePackageAvailable ? getSystemTextTranslation(_textTranslation, key) : nullptr;
+	if (translatedFormat && translatedFormat[0]) {
+		const Common::String formatted = Common::String::format(translatedFormat, arg1);
+		return Common::U32String(formatted.c_str());
+	}
+
+	const Common::String formatted = Common::String::format(originalSjisFormat.c_str(), arg1);
+	return decodeExecutableTextForDisplay(formatted);
+}
+
+Common::U32String BCBEngine::formatSystemClockTextForDisplay(const char *key, const Common::String &originalSjisFormat, int slot, int savedDay, int savedClockTicks) const {
+	const char *translatedFormat = _selectedTextLanguagePackageAvailable ? getSystemTextTranslation(_textTranslation, key) : nullptr;
+	if (translatedFormat && translatedFormat[0]) {
+		const int clockTicks = savedClockTicks % (24 * 60);
+		const int hour24 = clockTicks / 60;
+		const int minute = clockTicks % 60;
+		const int hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12;
+		Common::String formatted(translatedFormat);
+		Common::replace(formatted, "{slot}", Common::String::format("%d", slot));
+		Common::replace(formatted, "{day}", Common::String::format("%d", 10 + savedDay));
+		Common::replace(formatted, "{hour24}", Common::String::format("%d", hour24));
+		Common::replace(formatted, "{hour12}", Common::String::format("%d", hour12));
+		Common::replace(formatted, "{min}", Common::String::format("%02d", minute));
+		Common::replace(formatted, "{ampm}", hour24 < 12 ? "AM" : "PM");
+		return Common::U32String(formatted.c_str());
+	}
+
+	const int hour = savedClockTicks / 60;
+	const int minute = savedClockTicks % 60;
+	const Common::String formatted = Common::String::format(originalSjisFormat.c_str(), slot, savedDay, hour, minute);
+	return decodeExecutableTextForDisplay(formatted);
 }
 
 } // End of namespace BCB
