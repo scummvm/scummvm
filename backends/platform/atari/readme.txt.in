@@ -94,7 +94,7 @@ executable size.
 
 - Disabled 040+/SuperVidel code => faster code path for blitting.
 
-- Doesn't support hires (640x480) games => smaller executable size.
+- Doesn't support hires (640x480) games => smaller plugins.
 
 - Overlay is rendered in 16 colours => faster redraw.
 
@@ -153,21 +153,20 @@ toggle.
 "output_rate" in scummvm.ini: sample rate for mixing. Allowed values depend on
 the hardware connected:
 
-  - TT030: 50066, 25033, 12517, 6258 Hz
-  - Falcon030: as TT030 (except 6258) plus 49170, 32780, 24585, 19668, 16390,
-    12292, 9834, 8195 Hz
+  - TT030: 50337, 25169, 12584, 6292 Hz
+  - Falcon030: 49170, 32780, 24585, 19668, 16390, 12292, 9834, 8195 Hz
   - External 22.5792 MHz DSP clock: as Falcon030 plus 44100, 29400, 22050,
     17640, 14700, 11025, 8820, 7350 Hz
   - External 24.576 MHz DSP clock: as Falcon030 plus 48000, 32000, 24000,
     19200, 16000, 12000, 9600, 8000 Hz
 
 The lower the value, the faster the mixing but the worse the quality. The
-default is 22050 Hz in Full and 11025 Hz in Lite (16-bit, stereo), to natively
-support most (DOS/Windows) games that use these frequencies. On TT and Falcon
-systems without an external DSP clock, these frequencies are adjusted to
-19668 Hz and 9834 Hz, respectively. Note that you do not need to enter
-the exact value; it will be rounded automatically to the nearest suitable
-value.
+default is 22050 Hz stereo in Full and 11025 Hz mono in Lite, to natively
+support most (DOS/Windows) games that use these frequencies. On Falcon
+without an external DSP clock, these frequencies are adjusted to 19668 Hz and
+9834 Hz, respectively (25169 Hz and 12584 Hz on TT). Note that you do not need
+to enter the exact value; it will be rounded automatically to the nearest
+suitable value.
 
 "output_channels" in scummvm.ini: mono (1) or stereo (2) mixing. Falcon always
 outputs 16-bit stereo however when set to mono, a fast mono-to-stereo
@@ -175,8 +174,7 @@ conversion takes place (so I encourage everyone to use mono when music playback
 is too demanding).
 
 "audio_buffer_size" in scummvm.ini: number of samples to preload. Default is
-2048 which equals to about 83ms of audio lag and seems to be about right for
-most games on my CT60@66 MHz.
+1024 in Full and 512 in Lite which equals to about 46ms of audio lag.
 
 If you want to play with "audio_buffer_size", the rule of thumb is: (lag in ms)
 = (audio_buffer_size / output_rate) * 1000. But it's totally OK just to double

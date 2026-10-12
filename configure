@@ -3913,7 +3913,6 @@ if test -n "$_host"; then
 			#	append_var LDFLAGS "-s"
 			#fi
 			append_var DEFINES "-DSCUMM_OPTIMISED_CODE"
-			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 
 			# auto -> no
 			if test "$_optimizations" = "yes"; then
