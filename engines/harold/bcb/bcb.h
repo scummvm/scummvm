@@ -98,6 +98,11 @@ private:
 	void loadNextTimedCaptionText();
 	bool readTimedCaptionLine(Common::String &line);
 	const byte *findAllBinRecordData(const Common::String &recordName, uint32 &recordSize) const;
+	bool drawTimedVideoTextOverlay();
+	void restoreActiveCaptionBackingRect();
+	Common::Rect getCaptionBackingRect(const Common::String &sjisText, const Common::U32String &unicodeText, const Common::Rect &nativeRect) const;
+	void drawCaptionTextBlock(const Common::String &sjisText, const Common::U32String &unicodeText, const Common::Rect &rect, uint32 color);
+	void restoreCaptionBackingRect(const Common::Rect &rect);
 	Common::Point getActiveMoviePosition() const;
 	void stopActiveMovieAndDispatch();
 	void processQueuedMovieSequence();
@@ -180,6 +185,7 @@ private:
 	int _sceneChoiceEnabledButtonLimit = 0;
 	Common::U32String _timedCaptionText;
 	Common::String _timedCaptionTextSjis;
+	Common::Rect _activeCaptionBackingRect;
 	uint32 _lastTimerTick = 0;
 	int _lastLoggedGameClockTicks = -1;
 	uint32 _lastCursorRefreshMillis = 0;

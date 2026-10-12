@@ -168,6 +168,8 @@ void BCBEngine::mainLoop() {
 					movieUpdated = true;
 				}
 			}
+			if (drawTimedVideoTextOverlay())
+				movieUpdated = true;
 			if (movieUpdated) {
 				g_system->updateScreen();
 				screenUpdated = true;
