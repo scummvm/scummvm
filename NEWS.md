@@ -1,6 +1,14 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2027.1.0 (2027-01-XX)
+
+ New games:
+   - Added support for Shadowgate.
+   - Added support for Deja Vu: A Nightmare Comes True!!
+   - Added support for Deja Vu II: Lost in Last Vegas.
+   - Added support for Uninvited.
+
 #### 2026.4.0 "Never-slop" (2026-10-10)
 
  New games:
