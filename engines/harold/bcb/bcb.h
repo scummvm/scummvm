@@ -113,11 +113,15 @@ private:
 	void composeMapControlsToSurface(Graphics::Surface &surface, const Graphics::Surface &mapArt);
 	bool showMainSceneScreen();
 	bool drawMainSceneScreen(bool lineReveal);
+	bool showActiveSceneChoiceControls();
 	void captureSceneChoiceBacking();
 	void restoreSceneChoiceBacking(bool present = true);
 	void freeSceneChoiceBacking();
 	void clearSceneChoiceAfterSelection();
 	bool isSceneChoiceButtonVisible(int buttonIndex) const;
+	void drawSceneChoiceButtons(int sceneChoiceUiSetToShowId, bool present = true, int pressedButtonIndex = -1);
+	void handleSceneChoiceClick(const Common::Point &mousePosition);
+	void handleSceneChoiceSelection(int buttonIndex);
 	void applyPendingClockTickDelta();
 	void notifyGameClockTicksChanged();
 	void drawClockAndChipIndicator(bool present = true);
@@ -135,6 +139,7 @@ private:
 	void blitScreenWithLineReveal(const Graphics::Surface &surface, bool presentFinalFrame = true);
 	void drawTitleButton(uint buttonIndex, bool pressed);
 	void handleLeftButtonDown(const Common::Point &mousePosition);
+	void handleSceneChoiceKeyboardSelection(int choiceNumber);
 	bool pollEvents();
 	bool pollEvents(bool handleClicks);
 	void serviceCursorRefresh(bool screenUpdated = false);
