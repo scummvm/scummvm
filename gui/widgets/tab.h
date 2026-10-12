@@ -128,6 +128,12 @@ public:
 	void markAsDirty() override;
 
 protected:
+	/**
+	 * Handle this bar's arrows locally and forward other commands.
+	 * Embedded subclasses call this instead of TabWidget::handleCommand().
+	 */
+	void handleEmbeddedCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
 	/** Approve a user transition before focus or child attachment changes. */
 	virtual bool canChangeTab(int tabID) { return true; }
 	/** Called after an accepted user transition has changed focus and children. */
@@ -145,6 +151,9 @@ protected:
 	virtual void adjustTabs(int value);
 
 	virtual void computeLastVisibleTab(bool adjustFirstIfRoom);
+
+private:
+	void handleArrowCommand(uint32 cmd);
 };
 
 } // End of namespace GUI
