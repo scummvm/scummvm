@@ -38,6 +38,36 @@ namespace BCB {
 static const int kCaptionTextNativeCharacterHeight = 18;
 static const int kOwnerDrawUiTextNativeCharacterHeight = 16;
 
+static Graphics::Font *loadLocalizedCjkFont(Common::Language language, int size, Graphics::TTFSizeMode sizeMode) {
+	if (language == Common::KO_KOR) {
+		Graphics::Font *font = Graphics::loadTTFFontFromArchive("NotoSansKR-Regular.otf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
+		if (font)
+			return font;
+		font = Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
+		if (font)
+			return font;
+		return Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
+	}
+
+	Graphics::Font *font = Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
+	if (font)
+		return font;
+	return Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
+}
+
+static Graphics::Font *loadLocalizedOwnerDrawFont(Common::Language language) {
+	if (language == Common::KO_KOR) {
+		Graphics::Font *font = Graphics::loadTTFFontFromArchive("NotoSansKR-Regular.otf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeNormal);
+		if (font)
+			return font;
+	}
+
+	Graphics::Font *font = Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeNormal);
+	if (font)
+		return font;
+	return Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeNormal);
+}
+
 BCBEngine::BCBEngine(OSystem *syst, const HaroldGameDescription *desc)
 	: Engine(syst), _gameDescription(desc) {
 }
@@ -51,6 +81,10 @@ BCBEngine::~BCBEngine() {
 		_chipBitmap->free();
 		delete _chipBitmap;
 	}
+	delete _sjisFont;
+	delete _captionTextFont;
+	delete _gameOverTextFont;
+	delete _ownerDrawUiTextFont;
 }
 
 Common::Error BCBEngine::run() {
@@ -65,8 +99,17 @@ Common::Error BCBEngine::run() {
 	CursorMan.showMouse(true);
 	g_system->updateScreen();
 	_lastCursorRefreshMillis = g_system->getMillis();
+	_sjisFont = Graphics::FontSJIS::createFont();
+	_captionTextFont = loadLocalizedCjkFont(_gameDescription->desc.language, kCaptionTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
+	_gameOverTextFont = loadLocalizedCjkFont(_gameDescription->desc.language, 20, Graphics::kTTFSizeModeCell);
+	_ownerDrawUiTextFont = loadLocalizedOwnerDrawFont(_gameDescription->desc.language);
+	if (!_sjisFont && !_captionTextFont && !_gameOverTextFont && !_ownerDrawUiTextFont)
+		warning("BCBEngine::run(): No CJK font available; captions and choice text will not render");
 
 	if (!loadScriptData())
+		return Common::kReadingFailed;
+
+	if (!loadExecutableDataTables())
 		return Common::kReadingFailed;
 
 	resetGameState();
