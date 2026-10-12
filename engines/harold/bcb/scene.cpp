@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/screen.h"
 #include "graphics/surface.h"
 #include "harold/bcb/bcb.h"
 #include "harold/bcb/script.h"
@@ -52,14 +53,14 @@ bool BCBEngine::drawMainSceneScreen(bool lineReveal) {
 	if (lineReveal) {
 		blitScreenWithLineReveal(*mainScene, false);
 	} else {
-		g_system->copyRectToScreen(mainScene->getPixels(), mainScene->pitch, 0, 0, MIN<int>(mainScene->w, 640), MIN<int>(mainScene->h, 480));
+		_screen->copyRectToSurface(mainScene->getPixels(), mainScene->pitch, 0, 0, MIN<int>(mainScene->w, 640), MIN<int>(mainScene->h, 480));
 	}
 	mainScene->free();
 	delete mainScene;
 	_currentDisplayState = 1;
 	_sceneIdleMovieTimerTicks = 0;
 	_lastTimerTick = g_system->getMillis();
-	g_system->updateScreen();
+	_screen->update();
 	return true;
 }
 
@@ -86,7 +87,7 @@ bool BCBEngine::showActiveSceneChoiceControls() {
 	const Common::String overlayPath = Common::String::format("bmp/select/16m/sel%03d.bmp", sceneChoiceUiSetToShowId);
 	Graphics::Surface *overlay = loadDiscBitmap(overlayPath.c_str());
 	if (overlay) {
-		g_system->copyRectToScreen(overlay->getPixels(), overlay->pitch, 16, 48, MIN<int>(overlay->w, 400), MIN<int>(overlay->h, 200));
+		_screen->copyRectToSurface(overlay->getPixels(), overlay->pitch, 16, 48, MIN<int>(overlay->w, 400), MIN<int>(overlay->h, 200));
 		overlay->free();
 		delete overlay;
 	}
@@ -112,14 +113,13 @@ void BCBEngine::captureSceneChoiceBacking() {
 			_sceneChoiceBackingRect.extend(rect);
 	}
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (!screen)
 		return;
 
 	_sceneChoiceBacking = new Graphics::Surface();
 	_sceneChoiceBacking->create(_sceneChoiceBackingRect.width(), _sceneChoiceBackingRect.height(), screen->format);
 	_sceneChoiceBacking->copyRectToSurface(*screen, 0, 0, _sceneChoiceBackingRect);
-	g_system->unlockScreen();
 }
 
 void BCBEngine::restoreSceneChoiceBacking(bool present) {
@@ -131,11 +131,11 @@ void BCBEngine::restoreSceneChoiceBacking(bool present) {
 			continue;
 
 		const ButtonControlRecord &button = kSceneChoiceButtonTable[buttonIndex];
-		g_system->copyRectToScreen(_sceneChoiceBacking->getBasePtr(button.x - _sceneChoiceBackingRect.left, button.y - _sceneChoiceBackingRect.top), _sceneChoiceBacking->pitch, button.x, button.y, button.width, button.height);
+		_screen->copyRectToSurface(_sceneChoiceBacking->getBasePtr(button.x - _sceneChoiceBackingRect.left, button.y - _sceneChoiceBackingRect.top), _sceneChoiceBacking->pitch, button.x, button.y, button.width, button.height);
 	}
 
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 void BCBEngine::freeSceneChoiceBacking() {
@@ -148,14 +148,13 @@ void BCBEngine::freeSceneChoiceBacking() {
 }
 
 void BCBEngine::clearSceneChoiceAfterSelection() {
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen) {
-		screen->fillRect(Common::Rect(0x10, 0x30, 0x1a0, 0xf8), screen->format.RGBToColor(0, 0, 0));
-		g_system->unlockScreen();
+		_screen->fillRect(Common::Rect(0x10, 0x30, 0x1a0, 0xf8), screen->format.RGBToColor(0, 0, 0));
 	}
 
 	freeSceneChoiceBacking();
-	g_system->updateScreen();
+	_screen->update();
 }
 
 bool BCBEngine::isSceneChoiceButtonVisible(int buttonIndex) const {
@@ -180,10 +179,10 @@ void BCBEngine::drawSceneChoiceButtons(int sceneChoiceUiSetToShowId, bool presen
 		restoreSceneChoiceBacking(false);
 	} else if (_sceneChoiceBacking && pressedButtonIndex < (int)ARRAYSIZE(kSceneChoiceButtonTable)) {
 		const ButtonControlRecord &button = kSceneChoiceButtonTable[pressedButtonIndex];
-		g_system->copyRectToScreen(_sceneChoiceBacking->getBasePtr(button.x - _sceneChoiceBackingRect.left, button.y - _sceneChoiceBackingRect.top), _sceneChoiceBacking->pitch, button.x, button.y, button.width, button.height);
+		_screen->copyRectToSurface(_sceneChoiceBacking->getBasePtr(button.x - _sceneChoiceBackingRect.left, button.y - _sceneChoiceBackingRect.top), _sceneChoiceBacking->pitch, button.x, button.y, button.width, button.height);
 	}
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (!screen)
 		return;
 
@@ -207,9 +206,8 @@ void BCBEngine::drawSceneChoiceButtons(int sceneChoiceUiSetToShowId, bool presen
 		const int textWidth = button.width - 10;
 		font->drawString(screen, label, textX + 1, textY + 1, textWidth, shadowColor, Graphics::kTextAlignLeft);
 		font->drawString(screen, label, textX, textY, textWidth, textColor, Graphics::kTextAlignLeft);
+		_screen->addDirtyRect(Common::Rect(textX, textY, textX + textWidth + 1, textY + font->getFontHeight() + 1));
 	};
-
-	g_system->unlockScreen();
 
 	const Graphics::Surface *mainScene = getUiBitmap(stateDword(kStateMainSceneNightFlag) != 0 ? "16mmainn.bmp" : "16mmain.bmp");
 	if (mainScene) {
@@ -221,11 +219,11 @@ void BCBEngine::drawSceneChoiceButtons(int sceneChoiceUiSetToShowId, bool presen
 
 			const ButtonControlRecord &button = kSceneChoiceButtonTable[buttonIndex];
 			if (button.width <= mainScene->w && 0x210 + button.height <= mainScene->h)
-				g_system->copyRectToScreen(mainScene->getBasePtr(0, 0x210), mainScene->pitch, button.x, button.y, button.width, button.height);
+				_screen->copyRectToSurface(mainScene->getBasePtr(0, 0x210), mainScene->pitch, button.x, button.y, button.width, button.height);
 		}
 	}
 
-	screen = g_system->lockScreen();
+	screen = _screen->surfacePtr();
 	if (!screen)
 		return;
 
@@ -243,9 +241,8 @@ void BCBEngine::drawSceneChoiceButtons(int sceneChoiceUiSetToShowId, bool presen
 		drawChoiceLabel(_sceneChoiceMoveText, _sceneChoiceTerminatorButtonIndex);
 	}
 
-	g_system->unlockScreen();
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 void BCBEngine::handleSceneChoiceClick(const Common::Point &mousePosition) {
@@ -350,17 +347,17 @@ void BCBEngine::drawAnalogClockAndChip(int baseHourOffset, int gameClockTicks, b
 		clockBacking = getUiBitmap(stateDword(kStateMainSceneNightFlag) != 0 ? "16mmainn.bmp" : "16mmain.bmp");
 	}
 	if (clockBacking) {
-		g_system->copyRectToScreen(clockBacking->getBasePtr(0x25, 0x167), clockBacking->pitch, 0x25, 0x167, 0x60, 0x60);
+		_screen->copyRectToSurface(clockBacking->getBasePtr(0x25, 0x167), clockBacking->pitch, 0x25, 0x167, 0x60, 0x60);
 	}
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen) {
 		renderClockAndChipToSurface(*screen, baseHourOffset, gameClockTicks);
-		g_system->unlockScreen();
+		_screen->addDirtyRect(Common::Rect(0x25, 0x167, 0xe4, 0x1c7));
 	}
 
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 void BCBEngine::handleSceneChoiceKeyboardSelection(int choiceNumber) {

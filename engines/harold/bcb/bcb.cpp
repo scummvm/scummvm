@@ -20,6 +20,7 @@
  */
 
 #include "harold/bcb/bcb.h"
+#include "common/compression/unzip.h"
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -27,6 +28,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
+#include "graphics/screen.h"
 #include "graphics/sjis.h"
 #include "graphics/surface.h"
 #include "harold/bcb/debugger.h"
@@ -36,37 +38,71 @@
 
 namespace BCB {
 
+#ifdef USE_FREETYPE2
 static const int kCaptionTextNativeCharacterHeight = 18;
 static const int kOwnerDrawUiTextNativeCharacterHeight = 16;
 
-static Graphics::Font *loadLocalizedCjkFont(Common::Language language, int size, Graphics::TTFSizeMode sizeMode) {
-	if (language == Common::KO_KOR) {
-		Graphics::Font *font = Graphics::loadTTFFontFromArchive("NotoSansKR-Regular.otf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
-		if (font)
-			return font;
-		font = Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
-		if (font)
-			return font;
-		return Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
-	}
-
-	Graphics::Font *font = Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
-	if (font)
-		return font;
-	return Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
+static Graphics::Font *loadFont(Common::Archive &archive, const char *name, int size, Graphics::TTFSizeMode sizeMode) {
+	Common::SeekableReadStream *stream = archive.createReadStreamForMember(Common::Path(name));
+	if (!stream)
+		return nullptr;
+	Graphics::Font *font = Graphics::loadTTFFont(stream, DisposeAfterUse::YES, size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
+	if (!font)
+		delete stream;
+	return font;
 }
 
-static Graphics::Font *loadLocalizedOwnerDrawFont(Common::Language language) {
+static Graphics::Font *loadLocalizedCjkFont(Common::Archive &archive, Common::Language language, int size, Graphics::TTFSizeMode sizeMode) {
 	if (language == Common::KO_KOR) {
-		Graphics::Font *font = Graphics::loadTTFFontFromArchive("NotoSansKR-Regular.otf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeNormal);
+		Graphics::Font *font = loadFont(archive, "NotoSansKR-Regular.otf", size, sizeMode);
+		if (font)
+			return font;
+		font = loadFont(archive, "NotoSansJP-Regular.otf", size, sizeMode);
+		if (font)
+			return font;
+		return loadFont(archive, "VL-Gothic-Regular.ttf", size, sizeMode);
+	}
+
+	Graphics::Font *font = loadFont(archive, "VL-Gothic-Regular.ttf", size, sizeMode);
+	if (font)
+		return font;
+	return loadFont(archive, "NotoSansJP-Regular.otf", size, sizeMode);
+}
+
+static Graphics::Font *loadLocalizedOwnerDrawFont(Common::Archive &archive, Common::Language language) {
+	if (language == Common::KO_KOR) {
+		Graphics::Font *font = loadFont(archive, "NotoSansKR-Regular.otf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
 		if (font)
 			return font;
 	}
 
-	Graphics::Font *font = Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeNormal);
+	Graphics::Font *font = loadFont(archive, "NotoSansJP-Regular.otf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
 	if (font)
 		return font;
-	return Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeNormal);
+	return loadFont(archive, "VL-Gothic-Regular.ttf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
+}
+#endif
+
+void BCBEngine::loadFonts() {
+#ifdef USE_FREETYPE2
+	Common::SearchSet fonts;
+	const char *archiveNames[] = {"fonts.dat", "fonts-cjk.dat"};
+	for (const char *name : archiveNames) {
+		Common::SeekableReadStream *stream = nullptr;
+		if (ConfMan.hasKey("extrapath")) {
+			Common::FSDirectory directory(ConfMan.getPath("extrapath"));
+			stream = directory.createReadStreamForMember(name);
+		}
+		if (!stream)
+			stream = SearchMan.createReadStreamForMember(name);
+		Common::Archive *archive = Common::makeZipArchive(stream);
+		if (archive)
+			fonts.add(name, archive);
+	}
+	_captionTextFont = loadLocalizedCjkFont(fonts, _gameDescription->desc.language, kCaptionTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
+	_gameOverTextFont = loadLocalizedCjkFont(fonts, _gameDescription->desc.language, 20, Graphics::kTTFSizeModeCell);
+	_ownerDrawUiTextFont = loadLocalizedOwnerDrawFont(fonts, _gameDescription->desc.language);
+#endif
 }
 
 BCBEngine::BCBEngine(OSystem *syst, const HaroldGameDescription *desc)
@@ -74,6 +110,7 @@ BCBEngine::BCBEngine(OSystem *syst, const HaroldGameDescription *desc)
 }
 
 BCBEngine::~BCBEngine() {
+	delete _screen;
 	if (_uiBitmap) {
 		_uiBitmap->free();
 		delete _uiBitmap;
@@ -115,15 +152,14 @@ Common::Error BCBEngine::run() {
 		return Common::kPathDoesNotExist;
 
 	initGraphics(640, 480, &screenFormat);
+	_screen = new Graphics::Screen(640, 480, g_system->getScreenFormat());
 	CursorMan.lock(false);
 	CursorMan.setDefaultArrowCursor();
 	CursorMan.showMouse(true);
-	g_system->updateScreen();
+	_screen->update();
 	_lastCursorRefreshMillis = g_system->getMillis();
 	_sjisFont = Graphics::FontSJIS::createFont();
-	_captionTextFont = loadLocalizedCjkFont(_gameDescription->desc.language, kCaptionTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
-	_gameOverTextFont = loadLocalizedCjkFont(_gameDescription->desc.language, 20, Graphics::kTTFSizeModeCell);
-	_ownerDrawUiTextFont = loadLocalizedOwnerDrawFont(_gameDescription->desc.language);
+	loadFonts();
 	if (!_sjisFont && !_captionTextFont && !_gameOverTextFont && !_ownerDrawUiTextFont)
 		warning("BCBEngine::run(): No CJK font available; captions and choice text will not render");
 
@@ -152,13 +188,13 @@ void BCBEngine::clearDisplayAndResetState() {
 	_sceneChoiceActive = false;
 	_mapControlsActive = false;
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen) {
 		const uint32 black = screen->format.RGBToColor(0, 0, 0);
 		screen->fillRect(Common::Rect(0, 0, 640, 480), black);
-		g_system->unlockScreen();
+		_screen->makeAllDirty();
 	}
-	g_system->updateScreen();
+	_screen->update();
 }
 
 void BCBEngine::processGameStateDispatcher(bool runScriptBeforeDispatch) {
@@ -261,17 +297,7 @@ void BCBEngine::mainLoop() {
 			}
 		}
 
-		if (_menuBackgroundVideo) {
-			if (_menuBackgroundVideo->endOfVideo()) {
-				_menuBackgroundVideo->stop();
-				_menuBackgroundVideo->rewind();
-				_menuBackgroundVideo->decodeNextFrame();
-				_menuBackgroundVideo->start();
-			}
-
-			if (_menuBackgroundVideo->needsUpdate())
-				_menuBackgroundVideo->decodeNextFrame();
-		}
+		updateMenuBackgroundMusic();
 
 		if (_sceneIdleVideo) {
 			if (_sceneIdleVideo->endOfVideo()) {
@@ -284,8 +310,8 @@ void BCBEngine::mainLoop() {
 			if (_sceneIdleVideo->needsUpdate()) {
 				const Graphics::Surface *frame = _sceneIdleVideo->decodeNextFrame();
 				if (frame) {
-					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0x10, 0x30, frame->w, frame->h);
-					g_system->updateScreen();
+					_screen->copyRectToSurface(frame->getPixels(), frame->pitch, 0x10, 0x30, frame->w, frame->h);
+					_screen->update();
 					screenUpdated = true;
 				}
 			}
@@ -316,14 +342,14 @@ void BCBEngine::mainLoop() {
 				const Graphics::Surface *frame = _activeMovieVideo->decodeNextFrame();
 				if (frame) {
 					const Common::Point moviePosition = getActiveMoviePosition();
-					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, moviePosition.x, moviePosition.y, frame->w, frame->h);
+					_screen->copyRectToSurface(frame->getPixels(), frame->pitch, moviePosition.x, moviePosition.y, frame->w, frame->h);
 					movieUpdated = true;
 				}
 			}
 			if (drawTimedVideoTextOverlay())
 				movieUpdated = true;
 			if (movieUpdated) {
-				g_system->updateScreen();
+				_screen->update();
 				screenUpdated = true;
 			}
 

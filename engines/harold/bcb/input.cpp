@@ -21,6 +21,7 @@
 
 #include "common/events.h"
 #include "common/system.h"
+#include "graphics/screen.h"
 #include "harold/bcb/bcb.h"
 #include "harold/bcb/script.h"
 #include "harold/bcb/static_data.h"
@@ -270,7 +271,7 @@ void BCBEngine::serviceCursorRefresh(bool screenUpdated) {
 
 	if (now - _lastCursorRefreshMillis >= kCursorRefreshMillis) {
 		_lastCursorRefreshMillis = now;
-		g_system->updateScreen();
+		_screen->update();
 	}
 }
 
@@ -283,6 +284,7 @@ void BCBEngine::delayWithEventPolling(uint32 millis, bool handleClicks) {
 
 	while (!shouldQuit() && g_system->getMillis() - start < millis) {
 		pollEvents(handleClicks);
+		updateMenuBackgroundMusic();
 		serviceCursorRefresh();
 
 		const uint32 elapsed = g_system->getMillis() - start;

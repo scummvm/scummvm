@@ -31,14 +31,15 @@
 #include "common/str-enc.h"
 #include "common/ustr.h"
 #include "engines/engine.h"
-#include "harold/detection.h"
 #include "harold/bcb/ui.h"
+#include "harold/detection.h"
 
 namespace Graphics {
 class Font;
 class FontSJIS;
+class Screen;
 struct Surface;
-}
+} // namespace Graphics
 
 namespace Video {
 class AVIDecoder;
@@ -83,6 +84,7 @@ public:
 	bool canSaveAutosaveCurrently() override;
 
 private:
+	void loadFonts();
 	bool initializeSearchPaths();
 	bool showInitialLogoScreen();
 	bool showTitleScreen();
@@ -94,6 +96,7 @@ private:
 	void stopActiveMovie();
 	void playUiSound();
 	void startMenuBackgroundMusic();
+	void updateMenuBackgroundMusic();
 	void stopMenuBackgroundMusic();
 	void startGameOverMusic();
 	void stopGameOverMusic();
@@ -229,6 +232,7 @@ private:
 	void mainLoop();
 
 	const HaroldGameDescription *_gameDescription;
+	Graphics::Screen *_screen = nullptr;
 	Common::SearchSet _programFiles;
 	Common::SearchSet _discFiles[5];
 	Common::Array<byte> _scriptData;
@@ -236,7 +240,7 @@ private:
 	Common::Array<byte> _locationTimingData;
 	Common::Array<byte> _allBinData;
 	Common::Array<byte> _timedCaptionRecordData;
-	Common::Array<Common::Array<Common::U32String> > _sceneChoiceText;
+	Common::Array<Common::Array<Common::U32String>> _sceneChoiceText;
 	Common::CodePage _executableTextEncoding = Common::kWindows932;
 	Common::String _sceneChoiceMoveTextSjis;
 	Common::U32String _sceneChoiceMoveText;

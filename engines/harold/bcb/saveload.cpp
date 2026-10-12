@@ -29,6 +29,7 @@
 #include "common/textconsole.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/screen.h"
 #include "graphics/surface.h"
 
 #include "harold/bcb/bcb.h"
@@ -238,13 +239,13 @@ bool BCBEngine::showSystemScreen() {
 									kSystemWaveVolumeIndicatorRect.left + fillWidth, kSystemWaveVolumeIndicatorRect.bottom);
 		system->fillRect(fillRect, system->format.RGBToColor(255, 255, 255));
 	}
-	g_system->copyRectToScreen(system->getPixels(), system->pitch, 0, 0, MIN<int>(system->w, 640), MIN<int>(system->h, 480));
+	_screen->copyRectToSurface(system->getPixels(), system->pitch, 0, 0, MIN<int>(system->w, 640), MIN<int>(system->h, 480));
 	system->free();
 	delete system;
 
 	_currentDisplayState = 3;
 	drawSystemSubmodeButtons(false);
-	g_system->updateScreen();
+	_screen->update();
 	return true;
 }
 
@@ -260,12 +261,12 @@ void BCBEngine::drawSystemSubmodeButtons(bool present) {
 			(_systemSaveLoadSlotActionMode == 2 && i == 2))
 			source = kSystemSubmodeSelectedSources[i];
 		if (source.x + button.width <= system->w && source.y + button.height <= system->h)
-			g_system->copyRectToScreen(system->getBasePtr(source.x, source.y), system->pitch,
+			_screen->copyRectToSurface(system->getBasePtr(source.x, source.y), system->pitch,
 									   button.x, button.y, button.width, button.height);
 	}
 
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 void BCBEngine::drawSystemSubmodeButton(uint buttonIndex, bool selected, bool present) {
@@ -279,10 +280,10 @@ void BCBEngine::drawSystemSubmodeButton(uint buttonIndex, bool selected, bool pr
 	const ButtonControlRecord &button = kSystemSubmodeButtonTable[buttonIndex];
 	const Common::Point source = selected ? kSystemSubmodeSelectedSources[buttonIndex] : kSystemSubmodeNormalSources[buttonIndex];
 	if (source.x + button.width <= system->w && source.y + button.height <= system->h)
-		g_system->copyRectToScreen(system->getBasePtr(source.x, source.y), system->pitch, button.x, button.y, button.width, button.height);
+		_screen->copyRectToSurface(system->getBasePtr(source.x, source.y), system->pitch, button.x, button.y, button.width, button.height);
 
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 void BCBEngine::applySystemWaveVolume() {
@@ -312,24 +313,23 @@ void BCBEngine::drawSystemWaveVolumeIndicator(bool present) {
 		return;
 
 	if (kSystemWaveVolumeIndicatorRect.right <= system->w && kSystemWaveVolumeIndicatorRect.bottom <= system->h) {
-		g_system->copyRectToScreen(system->getBasePtr(kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top),
+		_screen->copyRectToSurface(system->getBasePtr(kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top),
 								   system->pitch, kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top,
 								   kSystemWaveVolumeIndicatorRect.width(), kSystemWaveVolumeIndicatorRect.height());
 	}
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen) {
 		const int fillWidth = (_systemWaveVolume * kSystemWaveVolumeIndicatorRect.width()) / 0xffff;
 		if (fillWidth > 0) {
 			const Common::Rect fillRect(kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top,
 										kSystemWaveVolumeIndicatorRect.left + fillWidth, kSystemWaveVolumeIndicatorRect.bottom);
-			screen->fillRect(fillRect, screen->format.RGBToColor(255, 255, 255));
+			_screen->fillRect(fillRect, screen->format.RGBToColor(255, 255, 255));
 		}
-		g_system->unlockScreen();
 	}
 
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 bool BCBEngine::handleSystemWaveVolumeClick(const Common::Point &mousePosition) {
@@ -377,6 +377,7 @@ bool BCBEngine::handleSystemWaveVolumeClick(const Common::Point &mousePosition) 
 			}
 		}
 		serviceCursorRefresh();
+		updateMenuBackgroundMusic();
 		g_system->delayMillis(1);
 	}
 	ConfMan.flushToDisk();
@@ -427,7 +428,7 @@ void BCBEngine::drawSystemSaveLoadSlots(bool present) {
 		const ButtonControlRecord &button = kSystemButtonTable[slot];
 		const int sourceY = 480 + (slot - 1) * button.height;
 		if (sourceY + button.height <= system->h)
-			g_system->copyRectToScreen(system->getBasePtr(0, sourceY), system->pitch, button.x, button.y, button.width, button.height);
+			_screen->copyRectToSurface(system->getBasePtr(0, sourceY), system->pitch, button.x, button.y, button.width, button.height);
 
 		int savedDay = 0;
 		int savedClockTicks = 0;
@@ -438,18 +439,18 @@ void BCBEngine::drawSystemSaveLoadSlots(bool present) {
 			slotText = formatSystemTextForDisplay(_saveSlotEmptyTextFormatSjis, slot);
 		}
 
-		Graphics::Surface *screen = g_system->lockScreen();
+		Graphics::Surface *screen = _screen->surfacePtr();
 		if (screen) {
 			const uint32 textColor = screen->format.RGBToColor(0, 0, 0);
 			const Graphics::Font *font = _ownerDrawUiTextFont ? _ownerDrawUiTextFont : FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 			const int textY = button.y + (button.height - font->getFontHeight()) / 2 - (_gameDescription->desc.language == Common::KO_KOR ? 1 : 0);
 			font->drawString(screen, slotText, button.x, textY, button.width, textColor);
-			g_system->unlockScreen();
+			_screen->addDirtyRect(Common::Rect(button.x, textY, button.x + button.width, textY + font->getFontHeight()));
 		}
 	}
 
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 bool BCBEngine::handleSystemClick(const Common::Point &mousePosition) {
@@ -586,24 +587,23 @@ bool BCBEngine::showSystemConfirmationDialog(const Common::U32String &message, b
 	const int buttonSourceY = 0x32;
 	Graphics::Surface dialogBacking;
 	dialogBacking.create(dialogRect.width(), dialogRect.height(), g_system->getScreenFormat());
-	Graphics::Surface *screenBacking = g_system->lockScreen();
+	Graphics::Surface *screenBacking = _screen->surfacePtr();
 	if (screenBacking) {
 		dialogBacking.copyRectToSurface(*screenBacking, 0, 0, dialogRect);
-		g_system->unlockScreen();
 	}
 
 	auto drawDialogButton = [&](const Common::Rect &rect, int sourceX, bool present) {
 		if (sourceX + rect.width() <= chip->w && chip->h >= buttonSourceY + rect.height())
-			g_system->copyRectToScreen(chip->getBasePtr(sourceX, buttonSourceY), chip->pitch,
+			_screen->copyRectToSurface(chip->getBasePtr(sourceX, buttonSourceY), chip->pitch,
 									   rect.left, rect.top, rect.width(), rect.height());
 		if (present)
-			g_system->updateScreen();
+			_screen->update();
 	};
 
 	if (dialogRect.width() <= chip->w && chip->h >= dialogSourceY + dialogRect.height())
-		g_system->copyRectToScreen(chip->getBasePtr(0, dialogSourceY), chip->pitch, dialogRect.left, dialogRect.top, dialogRect.width(), dialogRect.height());
+		_screen->copyRectToSurface(chip->getBasePtr(0, dialogSourceY), chip->pitch, dialogRect.left, dialogRect.top, dialogRect.width(), dialogRect.height());
 
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen) {
 		const Graphics::Font *font = _ownerDrawUiTextFont ? _ownerDrawUiTextFont : FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		const uint32 shadowColor = screen->format.RGBToColor(0, 0, 0);
@@ -611,13 +611,13 @@ bool BCBEngine::showSystemConfirmationDialog(const Common::U32String &message, b
 		const int textYOffset = _gameDescription->desc.language == Common::KO_KOR ? -1 : 0;
 		font->drawString(screen, message, dialogRect.left + 10, dialogRect.top + 20 + textYOffset, 340, shadowColor);
 		font->drawString(screen, message, dialogRect.left + 11, dialogRect.top + 21 + textYOffset, 339, textColor);
-		g_system->unlockScreen();
+		_screen->addDirtyRect(dialogRect);
 	}
 
 	drawDialogButton(okRect, 0x17, false);
 	if (showCancelButton)
 		drawDialogButton(cancelRect, 0x97, false);
-	g_system->updateScreen();
+	_screen->update();
 
 	bool result = false;
 	bool done = false;
@@ -662,13 +662,14 @@ bool BCBEngine::showSystemConfirmationDialog(const Common::U32String &message, b
 			}
 		}
 		serviceCursorRefresh();
+		updateMenuBackgroundMusic();
 		g_system->delayMillis(10);
 	}
 
-	g_system->copyRectToScreen(dialogBacking.getPixels(), dialogBacking.pitch, dialogRect.left, dialogRect.top,
+	_screen->copyRectToSurface(dialogBacking.getPixels(), dialogBacking.pitch, dialogRect.left, dialogRect.top,
 							   dialogBacking.w, dialogBacking.h);
 	dialogBacking.free();
-	g_system->updateScreen();
+	_screen->update();
 	return result;
 }
 

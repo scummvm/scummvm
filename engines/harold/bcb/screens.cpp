@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "graphics/font.h"
+#include "graphics/screen.h"
 #include "graphics/surface.h"
 #include "harold/bcb/bcb.h"
 #include "harold/bcb/script.h"
@@ -80,10 +81,10 @@ void BCBEngine::restoreTitleScreenRegion(const Common::Rect &rect, bool present)
 	if (clippedRect.isEmpty())
 		return;
 
-	g_system->copyRectToScreen(_titleBitmap->getBasePtr(clippedRect.left, clippedRect.top), _titleBitmap->pitch,
+	_screen->copyRectToSurface(_titleBitmap->getBasePtr(clippedRect.left, clippedRect.top), _titleBitmap->pitch,
 							   clippedRect.left, clippedRect.top, clippedRect.width(), clippedRect.height());
 	if (present)
-		g_system->updateScreen();
+		_screen->update();
 }
 
 bool BCBEngine::transitionFromLogoToTitle() {
@@ -100,8 +101,8 @@ bool BCBEngine::startNewGameFromTitle() {
 	stopMenuBackgroundMusic();
 	stopGameOverMusic();
 
-	g_system->fillScreen(g_system->getScreenFormat().RGBToColor(0, 0, 0));
-	g_system->updateScreen();
+	_screen->clear(g_system->getScreenFormat().RGBToColor(0, 0, 0));
+	_screen->update();
 
 	stateDword(kStateCurrentScriptSequenceId) = 1;
 	return playNumberedMovie(6, true);
@@ -123,8 +124,8 @@ bool BCBEngine::showPendingStillImageScreen() {
 	if (!still)
 		return false;
 
-	g_system->copyRectToScreen(still->getPixels(), still->pitch, 0, 0, MIN<int>(still->w, 640), MIN<int>(still->h, 480));
-	g_system->updateScreen();
+	_screen->copyRectToSurface(still->getPixels(), still->pitch, 0, 0, MIN<int>(still->w, 640), MIN<int>(still->h, 480));
+	_screen->update();
 	still->free();
 	delete still;
 
@@ -198,7 +199,7 @@ bool BCBEngine::dispatchGameOverScreen() {
 	_currentDisplayState = 9;
 	_gameOverElapsedTimerTicks = 0;
 	_lastTimerTick = g_system->getMillis();
-	g_system->updateScreen();
+	_screen->update();
 	startGameOverMusic();
 	return true;
 }
@@ -219,8 +220,8 @@ void BCBEngine::drawTitleButton(uint buttonIndex, bool pressed) {
 	if (sourceX + button.width > _titleBitmap->w || sourceY + button.height > _titleBitmap->h)
 		return;
 
-	g_system->copyRectToScreen(_titleBitmap->getBasePtr(sourceX, sourceY), _titleBitmap->pitch, button.x, button.y, button.width, button.height);
-	g_system->updateScreen();
+	_screen->copyRectToSurface(_titleBitmap->getBasePtr(sourceX, sourceY), _titleBitmap->pitch, button.x, button.y, button.width, button.height);
+	_screen->update();
 }
 
 void BCBEngine::blitScreenWithLineReveal(const Graphics::Surface &surface, bool presentFinalFrame) {
@@ -244,13 +245,13 @@ void BCBEngine::blitScreenWithLineReveal(const Graphics::Surface &surface, bool 
 			const int topY = revealedSteps * 2;
 			const int bottomY = height - 1 - revealedSteps * 2;
 			if (topY < height)
-				g_system->copyRectToScreen(surface.getBasePtr(0, topY), surface.pitch, 0, topY, width, 1);
+				_screen->copyRectToSurface(surface.getBasePtr(0, topY), surface.pitch, 0, topY, width, 1);
 			if (bottomY != topY && bottomY >= 0)
-				g_system->copyRectToScreen(surface.getBasePtr(0, bottomY), surface.pitch, 0, bottomY, width, 1);
+				_screen->copyRectToSurface(surface.getBasePtr(0, bottomY), surface.pitch, 0, bottomY, width, 1);
 		}
 
 		if (presentFinalFrame || revealedSteps < revealSteps)
-			g_system->updateScreen();
+			_screen->update();
 		pollEvents(false);
 	}
 }
