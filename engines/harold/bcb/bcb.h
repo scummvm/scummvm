@@ -63,6 +63,9 @@ public:
 
 private:
 	bool initializeSearchPaths();
+	bool showInitialLogoScreen();
+	bool showTitleScreen();
+	bool transitionFromLogoToTitle();
 	Common::SeekableReadStream *createMovieReadStream(int movieId) const;
 	bool switchActiveMediaDisc(int discNumber);
 	void playUiSound();
@@ -72,6 +75,7 @@ private:
 	void stopGameOverMusic();
 	void startSceneIdleMovie();
 	void stopSceneIdleMovie();
+	void restoreTitleScreenRegion(const Common::Rect &rect, bool present = true);
 	void resetGameState();
 	bool loadScriptData();
 	bool loadExecutableDataTables();
@@ -95,6 +99,8 @@ private:
 	Common::SeekableReadStream *createDiscReadStream(int discNumber, const char *relativePath) const;
 	Common::SeekableReadStream *createActiveDiscReadStream(const char *relativePath) const;
 	Common::SeekableReadStream *createActiveDiscHighColorReadStream(const char *relativePath) const;
+	void blitScreenWithLineReveal(const Graphics::Surface &surface, bool presentFinalFrame = true);
+	void drawTitleButton(uint buttonIndex, bool pressed);
 	void handleLeftButtonDown(const Common::Point &mousePosition);
 	bool pollEvents();
 	bool pollEvents(bool handleClicks);
@@ -135,6 +141,7 @@ private:
 	Video::AVIDecoder *_gameOverVideo = nullptr;
 	Video::AVIDecoder *_sceneIdleVideo = nullptr;
 	Video::AVIDecoder *_activeMovieVideo = nullptr;
+	Graphics::Surface *_titleBitmap = nullptr;
 	Graphics::Surface *_uiBitmap = nullptr;
 	Common::String _uiBitmapName;
 	Graphics::Surface *_chipBitmap = nullptr;
@@ -144,6 +151,7 @@ private:
 	int _scriptStackDepth = 0;
 	bool _scriptStopFlag = false;
 	int _currentDisplayState = 0;
+	int _initialLogoElapsedTimerTicks = 0;
 	int _pendingStillElapsedTimerTicks = 0;
 	int _gameOverElapsedTimerTicks = 0;
 	int _pendingStillDurationIndex = 0;
@@ -157,11 +165,15 @@ private:
 	int _sceneChoiceTerminatorButtonIndex = 0;
 	int _sceneChoiceEnabledButtonLimit = 0;
 	Common::U32String _timedCaptionText;
+	uint32 _lastTimerTick = 0;
 	int _lastLoggedGameClockTicks = -1;
 	uint32 _lastCursorRefreshMillis = 0;
 	Common::Point _mousePosition;
 	bool _sceneChoiceActive = false;
 	bool _suppressClickHandling = false;
+	bool _titleButtonsActive = false;
+	bool _systemButtonsVisible = false;
+	bool _titleLoadSlotsActive = false;
 };
 
 } // End of namespace BCB

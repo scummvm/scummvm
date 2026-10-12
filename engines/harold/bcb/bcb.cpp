@@ -88,6 +88,10 @@ BCBEngine::~BCBEngine() {
 	delete _captionTextFont;
 	delete _gameOverTextFont;
 	delete _ownerDrawUiTextFont;
+	if (_titleBitmap) {
+		_titleBitmap->free();
+		delete _titleBitmap;
+	}
 	stopMenuBackgroundMusic();
 }
 
@@ -118,6 +122,9 @@ Common::Error BCBEngine::run() {
 
 	resetGameState();
 
+	if (!showInitialLogoScreen())
+		return Common::kReadingFailed;
+
 	mainLoop();
 	return Common::kNoError;
 }
@@ -128,6 +135,16 @@ void BCBEngine::mainLoop() {
 
 		if (!pollEvents())
 			return;
+
+		if (_currentDisplayState == 10) {
+			const uint32 now = g_system->getMillis();
+			while (now - _lastTimerTick >= 50 && _currentDisplayState == 10) {
+				_lastTimerTick += 50;
+				++_initialLogoElapsedTimerTicks;
+				if (_initialLogoElapsedTimerTicks > 0x3c)
+					transitionFromLogoToTitle();
+			}
+		}
 
 		if (_menuBackgroundVideo) {
 			if (_menuBackgroundVideo->endOfVideo()) {
