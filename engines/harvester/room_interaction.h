@@ -48,6 +48,7 @@ public:
 	virtual void applyPlayerGotoXZ(int x, int z) = 0;
 	virtual Common::Error runModalShowText(const ResolvedText &modalText) = 0;
 	virtual void resetIdleState() = 0;
+	virtual void notePlayerActivity() = 0;
 	virtual void stopPlayerRegionInteraction() = 0;
 	virtual void startPlayerDefeatSequence(const char *reason, const Common::String &sourceName,
 		int damageType) = 0;

@@ -27,10 +27,12 @@
 
 namespace Harvester {
 
+class CheatSystem;
 class Entity;
 class EntityManager;
 class HarvesterEngine;
 class RoomCombatEffects;
+class RoomInteractionCallbacks;
 class RoomInteractionProcessor;
 class RoomSceneRuntime;
 
@@ -127,10 +129,7 @@ struct RoomNpcCombatUpdateResult {
 
 class RoomCombat {
 public:
-	Common::Array<RoomMonsterCombatState> &getMonsterCombatStates() { return _monsterCombatStates; }
-
 	void initializeCombatStates(const RoomSetupState &state);
-	void resizeCombatStates(const RoomSetupState &state);
 	// Keep prepared state separate until scene-entity mutations succeed.
 	Common::Array<RoomMonsterCombatState> prepareMonsterCombatStatesForSceneChange(
 		const Common::Array<MonsterRecord> &previousMonsters, const Common::Array<MonsterRecord> &updatedMonsters) const;
@@ -150,11 +149,14 @@ public:
 	MonsterRecord *selectMonsterAttackContactTarget(RoomSetupState &state, RoomPlayerState &playerState,
 		EntityManager *entityManager, Entity *&monsterEntity) const;
 
-	bool queueInnerSanctumHerrillDeathAfterMuck(HarvesterEngine &engine, RoomSetupState &state, const MonsterRecord &monster) const;
-	// Called after resizeCombatStates; NPC finalization ends the entire combat update.
-	RoomNpcCombatUpdateResult updateRoomNpcCombat(HarvesterEngine &engine, RoomSetupState &state,
-		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime,
-		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
+	Common::Error killDebugActiveMonster(HarvesterEngine &engine, RoomSetupState &state,
+		RoomPlayerState &playerState, EntityManager *entityManager, const Common::Point &mousePos,
+		RoomCombatEffects &combatEffects, RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
+
+	Common::Error updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetupState &state,
+		RoomPlayerState &playerState, RoomIdleAnimationState &idleState, EntityManager *entityManager,
+		RoomSceneRuntime &sceneRuntime, RoomCombatEffects &combatEffects, const CheatSystem &cheats,
+		RoomInteractionCallbacks &callbacks, RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
 	Common::Error resolvePlayerAttackContact(HarvesterEngine &engine,
 		RoomSetupState &state, RoomPlayerState &playerState,
 		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime,
@@ -162,6 +164,13 @@ public:
 		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
 
 private:
+	void resizeCombatStates(const RoomSetupState &state);
+	bool queueInnerSanctumHerrillDeathAfterMuck(HarvesterEngine &engine, RoomSetupState &state, const MonsterRecord &monster) const;
+	// Called after resizeCombatStates; NPC finalization ends the entire combat update.
+	RoomNpcCombatUpdateResult updateRoomNpcCombat(HarvesterEngine &engine, RoomSetupState &state,
+		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime,
+		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
+
 	bool beginNpcDeathTransition(HarvesterEngine &engine,
 		NpcRecord &npc, Entity &npcEntity, RoomNpcCombatState &combatState, int deathDamageType, bool &needsRedraw) const;
 	Common::Error finalizeNpcDeathTransition(HarvesterEngine &engine,

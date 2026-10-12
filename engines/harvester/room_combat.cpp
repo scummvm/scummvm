@@ -25,6 +25,7 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/screen.h"
+#include "harvester/cheats.h"
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/player.h"
@@ -1169,6 +1170,412 @@ void RoomCombat::startMonsterHitReaction(HarvesterEngine &engine,
 		monster.monsterName.c_str(), attackerAttackFirstFrame, range.firstFrame, range.lastFrame,
 		range.resumeFacing, range.knockbackX, kNativeMonsterHitAnimationRate);
 	needsRedraw = true;
+}
+
+Common::Error RoomCombat::killDebugActiveMonster(HarvesterEngine &engine, RoomSetupState &state,
+		RoomPlayerState &playerState, EntityManager *entityManager, const Common::Point &mousePos,
+		RoomCombatEffects &combatEffects, RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
+	if (!engine.isCombatDebugEnabled())
+		return Common::kNoError;
+	MonsterRecord *monster = resolveKillTarget(state, playerState, entityManager, mousePos);
+	Entity *monsterEntity = monster ? findSceneRuntimeEntity(entityManager, monster->monsterName) : nullptr;
+	if (!monster || !monsterEntity || !monsterEntity->isVisible()) {
+		debugC(1, kDebugCombat,
+			"Harvester: debug combat kill skipped reason='no active monster' cursor=(%d,%d)",
+			mousePos.x, mousePos.y);
+		return Common::kNoError;
+	}
+
+	Script *script = engine.getScript();
+	if (!script) {
+		debugC(1, kDebugCombat,
+			"Harvester: debug combat kill skipped target='%s' reason='no startup script'",
+			monster->monsterName.c_str());
+		return Common::kNoError;
+	}
+
+	const int debugDamageType = Player::resolveCombatLoadoutDamageType(playerState.combatLoadout);
+	const int damageLanded = monster->currentHitPoints;
+	monster->currentHitPoints = 0;
+	if (damageLanded > 0)
+		combatEffects.spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
+
+	if (playerState.attackTargetClassId == kRuntimeEntityClassMonster &&
+			playerState.attackTargetName.equalsIgnoreCase(monster->monsterName)) {
+		playerState.attackTargetName.clear();
+		playerState.attackTargetClassId = -1;
+	}
+
+	debugC(1, kDebugCombat,
+		"Harvester: debug combat kill target='%s' damage=%d damage_type=%d cursor=(%d,%d)",
+		monster->monsterName.c_str(), damageLanded, debugDamageType, mousePos.x, mousePos.y);
+
+	const int monsterIndex = findRoomMonsterIndexByName(state, monster->monsterName);
+	RoomMonsterCombatState *combatState =
+		monsterIndex >= 0 && monsterIndex < (int)_monsterCombatStates.size()
+			? &_monsterCombatStates[(uint)monsterIndex]
+			: nullptr;
+	if (combatState)
+		clearRoomMonsterCombatState(*combatState);
+	(void)script->syncRuntimeMonsterRecord(*monster);
+
+	RoomDeathAnimationRange deathRange;
+	if (combatState && resolveMonsterDeathAnimationRange(*monsterEntity, monster->facing,
+			debugDamageType, engine.isGoreEnabled(), deathRange)) {
+		combatState->deathActive = true;
+		combatState->deathFirstFrame = deathRange.firstFrame;
+		combatState->deathLastFrame = deathRange.lastFrame;
+		combatState->deathDamageType = debugDamageType;
+		combatState->nextMovementTick = 0;
+		monsterEntity->setAnimationFrameRange(deathRange.firstFrame, deathRange.lastFrame, false);
+		monsterEntity->setAnimationRate(kRoomMonsterAnimationRate);
+		monsterEntity->setAnimationEnabled(true);
+		monsterEntity->setCurrentFrame(deathRange.firstFrame);
+		if (!monster->deathSound.empty())
+			(void)engine.playSound(monster->deathSound);
+		needsRedraw = true;
+		return Common::kNoError;
+	}
+
+	monster->active = false;
+	monster->visible = false;
+	InteractionResult interaction;
+	interaction.mutatedRuntimeState = true;
+	interaction.visualRuntimeStateChanged = true;
+	if (!monster->onDeathActionTag.empty()) {
+		InteractionResult deathInteraction;
+		if (script->executeActionTag(
+				monster->onDeathActionTag, deathInteraction, true, monster->roomName)) {
+			interaction = Common::move(deathInteraction);
+			interaction.mutatedRuntimeState = true;
+			interaction.visualRuntimeStateChanged = true;
+		}
+	}
+
+	return interactionProcessor.handleCombatInteraction(interaction, needsRedraw);
+}
+
+Common::Error RoomCombat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetupState &state,
+		RoomPlayerState &playerState, RoomIdleAnimationState &idleState, EntityManager *entityManager,
+		RoomSceneRuntime &sceneRuntime, RoomCombatEffects &combatEffects, const CheatSystem &cheats,
+		RoomInteractionCallbacks &callbacks, RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
+	if (!entityManager)
+		return Common::kNoError;
+
+	Script &script = *engine.getScript();
+	const uint32 now = Player::getRuntimeClockTicks();
+	const uint32 moveInterval = MAX<uint32>(1, 100U / (uint32)kRoomMonsterAnimationRate);
+	const int horizontalStepBase = 8;
+	const int depthStep = MAX<int>(1, roundRoomCombatFloat(
+		state.roomZVelocityStep > 0.0f ? state.roomZVelocityStep : 1.0f));
+	bool playerAlive = script.getPlayerCurrentHitPoints() > 0;
+
+	resizeCombatStates(state);
+
+	const RoomNpcCombatUpdateResult npcResult = updateRoomNpcCombat(engine, state,
+		entityManager, sceneRuntime, interactionProcessor, needsRedraw);
+	if (npcResult.finalizedDeath)
+		return npcResult.error;
+
+	for (uint i = 0; i < state.roomMonsters.size(); ++i) {
+		MonsterRecord &monster = state.roomMonsters[i];
+		RoomMonsterCombatState &combatState = _monsterCombatStates[i];
+		Entity *entity = findSceneRuntimeEntity(entityManager, monster.monsterName);
+		if (!entity || !monster.visible) {
+			clearRoomMonsterCombatState(combatState);
+			continue;
+		}
+		if (combatState.deathActive) {
+			if (entity->getCurrentFrame() == combatState.deathLastFrame) {
+				combatState.deathActive = false;
+				monster.active = false;
+				monster.visible = true;
+				monster.runtimeSpawned = true;
+				monster.runtimeState = entity->getCurrentFrame();
+				entity->setAnimationRate(0);
+				entity->setAnimationFrameRange(monster.runtimeState, monster.runtimeState, false);
+				entity->setCurrentFrame(monster.runtimeState);
+				entity->setAnimationEnabled(false);
+				(void)script.syncRuntimeMonsterRecord(monster);
+				debugC(1, kDebugCombat,
+					"Harvester: combat monster death complete target='%s' damage_type=%d corpse_frame=%d on_death='%s'",
+					monster.monsterName.c_str(), combatState.deathDamageType,
+					monster.runtimeState,
+					monster.onDeathActionTag.c_str());
+				clearRoomMonsterCombatState(combatState);
+				const bool herrillDeathQueued = queueInnerSanctumHerrillDeathAfterMuck(engine, state, monster);
+
+				InteractionResult interaction;
+				interaction.mutatedRuntimeState = true;
+				interaction.visualRuntimeStateChanged = true;
+				if (!monster.onDeathActionTag.empty()) {
+					InteractionResult deathInteraction;
+					if (script.executeActionTag(
+							monster.onDeathActionTag, deathInteraction, true, monster.roomName)) {
+						interaction = Common::move(deathInteraction);
+						interaction.mutatedRuntimeState = true;
+						interaction.visualRuntimeStateChanged = true;
+					}
+				}
+				if (herrillDeathQueued) {
+					interaction.mutatedRuntimeState = true;
+					interaction.visualRuntimeStateChanged = true;
+				}
+
+				return interactionProcessor.handleCombatInteraction(interaction, needsRedraw);
+			}
+			continue;
+		}
+		if (monster.currentHitPoints <= 0) {
+			clearRoomMonsterCombatState(combatState);
+			continue;
+		}
+
+		if (!monster.active || !playerState.entity || !playerAlive) {
+			clearRoomMonsterCombatState(combatState);
+			needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
+			continue;
+		}
+
+		if (combatState.hitActive) {
+			const int currentFrame = entity->getCurrentFrame();
+			if (!combatState.hitSoundPlayed &&
+					monster.hitSoundTriggerFrame >= 0 &&
+					currentFrame >= combatState.hitFirstFrame + monster.hitSoundTriggerFrame) {
+				(void)playRandomRoomAttackSound(engine,
+					monster.hitSound1, monster.hitSound2, monster.hitSound3);
+				combatState.hitSoundPlayed = true;
+			}
+			if (combatState.hitKnockbackRemainingX != 0) {
+				const int step = MAX(1, ABS(combatState.hitKnockbackDecayStep));
+				const int knockbackStep = combatState.hitKnockbackRemainingX > 0
+					? MIN(combatState.hitKnockbackRemainingX, step)
+					: MAX(combatState.hitKnockbackRemainingX, -step);
+				const int previousX = monster.posX;
+				monster.posX = CLIP<int>(
+					monster.posX + knockbackStep, monster.screenMinXBound, monster.screenMaxXBound);
+				if (monster.posX != previousX) {
+					(void)applyRoomActorPlacement(
+						state, *entity, monster.posX, monster.posY, (float)monster.posZ);
+					(void)script.syncRuntimeMonsterRecord(monster);
+					debugC(1, kDebugCombat,
+						"Harvester: combat monster hit knockback target='%s' from_x=%d to_x=%d remaining=%d",
+						monster.monsterName.c_str(), previousX, monster.posX,
+						combatState.hitKnockbackRemainingX - (monster.posX - previousX));
+					needsRedraw = true;
+					combatState.hitKnockbackRemainingX -= monster.posX - previousX;
+				} else {
+					combatState.hitKnockbackRemainingX = 0;
+				}
+			}
+			if (currentFrame == combatState.hitLastFrame) {
+				clearRoomMonsterHitState(combatState);
+				needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
+			}
+			continue;
+		}
+
+		if (combatState.attackActive) {
+			const int currentFrame = entity->getCurrentFrame();
+			if (!combatState.attackSoundPlayed &&
+					monster.attackSoundTriggerFrame >= 0 &&
+					currentFrame >= combatState.attackFirstFrame + monster.attackSoundTriggerFrame) {
+				(void)playRandomRoomAttackSound(engine,
+					monster.attackSound1, monster.attackSound2, monster.attackSound3);
+				combatState.attackSoundPlayed = true;
+			}
+			if (!combatState.attackContactResolved &&
+					combatState.attackContactFrame >= 0 &&
+					currentFrame >= combatState.attackContactFrame) {
+				combatState.attackContactResolved = true;
+				combatState.attackContactFrame = -1;
+				const bool hasTrackedPlayerTarget =
+					playerState.entity &&
+					!combatState.attackTargetName.empty() &&
+					playerState.entity->getName().equalsIgnoreCase(combatState.attackTargetName);
+				if (!playerAlive || !hasTrackedPlayerTarget) {
+					debugC(1, kDebugCombat,
+						"Harvester: combat monster attack miss monster='%s' frame=%d player_hp=%d reason='no live target'",
+						monster.monsterName.c_str(), currentFrame, script.getPlayerCurrentHitPoints());
+				} else {
+					const int playerHitPointsBefore = script.getPlayerCurrentHitPoints();
+					const bool damageDisabled = cheats.isPlayerDamageDisabled();
+					const bool changed = damageDisabled
+						? false
+						: script.adjustPlayerCurrentHitPoints(-monster.damageAmount);
+					const int playerHitPointsAfter = script.getPlayerCurrentHitPoints();
+					const int damageLanded = playerHitPointsBefore - playerHitPointsAfter;
+					debugC(1, kDebugCombat,
+						"Harvester: combat monster attack hit monster='%s' frame=%d damage=%d damage_type='%s' player_hp=%d->%d changed=%d damage_disabled=%d",
+						monster.monsterName.c_str(), currentFrame, monster.damageAmount,
+						Player::describeCombatDamageType(monster.damageType),
+						playerHitPointsBefore, playerHitPointsAfter, changed,
+						damageDisabled ? 1 : 0);
+					if (damageLanded > 0 && playerState.entity) {
+						combatEffects.spawnCombatDamagePopup(*playerState.entity, playerState.entity->getName(), damageLanded);
+						if (idleState.entity) {
+							idleState.entity->setVisible(false);
+							idleState.entity->setAnimationRate(0);
+						}
+						idleState.active = false;
+						idleState.loopStarted = false;
+						idleState.exiting = false;
+						idleState.restoreFacing = -1;
+						playerState.entity->setVisible(true);
+						if (playerHitPointsAfter > 0 &&
+								Player::startHitAnimation(engine, playerState, combatState.attackFirstFrame)) {
+							callbacks.notePlayerActivity();
+						}
+					}
+					if (changed && playerHitPointsAfter <= 0) {
+						playerAlive = false;
+						callbacks.stopPlayerRegionInteraction();
+						callbacks.startPlayerDefeatSequence(
+							"combat_monster_hit", monster.monsterName, monster.damageType);
+						return Common::kNoError;
+					}
+				}
+				needsRedraw = true;
+			}
+			if (currentFrame == combatState.attackLastFrame) {
+				clearRoomMonsterAttackState(combatState);
+				needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
+			}
+			continue;
+		}
+
+		const bool animationDrivesMovement =
+			entity->isAnimationEnabled() && entity->getAnimationRate() != 0;
+		if (animationDrivesMovement) {
+			combatState.nextMovementTick = 0;
+			if (!combatState.allowInitialPursuitStep && !entity->didAnimationAdvanceLastTick())
+				continue;
+		} else {
+			if (combatState.nextMovementTick != 0 && (int32)(now - combatState.nextMovementTick) < 0)
+				continue;
+			combatState.nextMovementTick = now + moveInterval;
+		}
+		combatState.allowInitialPursuitStep = false;
+
+		const int previousX = monster.posX;
+		const int previousY = monster.posY;
+		const int previousZ = monster.posZ;
+		const Common::Rect playerRect = playerState.entity->getScreenRect();
+		const Common::Rect monsterRect = entity->getScreenRect();
+		const int playerCenterX = playerRect.left + playerRect.width() / 2;
+		const int monsterCenterX = monsterRect.left + monsterRect.width() / 2;
+		const int liveCenterDx = playerCenterX - monsterCenterX;
+		const int absLiveCenterDx = ABS(liveCenterDx);
+		const int playerTargetZ = roundRoomCombatFloat(playerState.z);
+		const float zDelta = playerState.z - (float)monster.posZ;
+		const float absZDelta = zDelta >= 0.0f ? zDelta : -zDelta;
+		const int engageDistance = MAX(0, monster.engageDistance);
+		const int liveWaypointTolerance = roundRoomCombatFloat(
+			Player::computeDepthScale(state,
+				MIN<float>(playerState.z, (float)monster.posZ)) * kNativeMonsterHorizontalWaypointTolerance);
+		bool attemptedMoveX = false;
+		bool attemptedMoveZ = false;
+		if (absZDelta > kNativeMonsterPursuitZTolerance) {
+			attemptedMoveZ = true;
+			monster.posZ = stepTowardsRoomCombatInt(monster.posZ, playerTargetZ, depthStep);
+			monster.posZ = (int)clampRoomDepthForEvent(state, (float)monster.posZ);
+			monster.posY = mapRoomDepthToScreenYForCombat(state, (float)monster.posZ, monster.posY);
+		} else if (absLiveCenterDx > engageDistance) {
+			// Native class-6 pursuit stores a target frame-left X, not a center X.
+			const int desiredFrameLeftX = monsterCenterX < playerCenterX
+				? playerRect.right + engageDistance - monsterRect.width() / 2
+				: playerRect.left - engageDistance + monsterRect.width() / 2;
+			if (ABS(monsterRect.left - desiredFrameLeftX) > liveWaypointTolerance) {
+				attemptedMoveX = true;
+				const int step = MAX<int>(1, roundRoomCombatFloat(
+					Player::computeDepthScale(state, (float)monster.posZ) * (float)horizontalStepBase));
+				const int monsterFrameLeftOffset = monsterRect.left - monster.posX;
+				const int desiredLogicalCenterX = desiredFrameLeftX - monsterFrameLeftOffset;
+				monster.posX = stepTowardsRoomCombatInt(monster.posX, desiredLogicalCenterX, step);
+				monster.posX = CLIP<int>(monster.posX, monster.screenMinXBound, monster.screenMaxXBound);
+			}
+		}
+
+		const bool moved = monster.posX != previousX || monster.posY != previousY || monster.posZ != previousZ;
+		if (moved) {
+			const int movedX = monster.posX - previousX;
+			const int movedY = monster.posY - previousY;
+			if (ABS(movedX) > ABS(movedY))
+				monster.facing = movedX < 0 ? 1 : 2;
+			else if (movedY != 0)
+				monster.facing = movedY < 0 ? 3 : 0;
+			(void)applyRoomActorPlacement(state, *entity, monster.posX, monster.posY, (float)monster.posZ);
+			if (monster.posZ != previousZ)
+				entityManager->reinsertSceneEntity(entity);
+			(void)script.syncRuntimeMonsterRecord(monster);
+			debugC(1, kDebugCombat,
+				"Harvester: combat monster chase move monster='%s' live_center_dx=%d z_delta=%.2f engage=%d waypoint_tol=%d from=(%d,%d,z=%d) to=(%d,%d,z=%d) facing=%d",
+				monster.monsterName.c_str(), liveCenterDx, (double)zDelta, engageDistance, liveWaypointTolerance,
+				previousX, previousY, previousZ, monster.posX, monster.posY, monster.posZ, monster.facing);
+			needsRedraw = true;
+			needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, true) || needsRedraw;
+			continue;
+		}
+
+		if (attemptedMoveX || attemptedMoveZ) {
+			debugC(1, kDebugCombat,
+				"Harvester: combat monster chase stalled monster='%s' live_center_dx=%d z_delta=%.2f engage=%d waypoint_tol=%d pos=(%d,%d,z=%d) attempted_x=%d attempted_z=%d",
+				monster.monsterName.c_str(), liveCenterDx, (double)zDelta, engageDistance, liveWaypointTolerance,
+				monster.posX, monster.posY, monster.posZ, attemptedMoveX, attemptedMoveZ);
+		}
+
+		needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
+		const bool closeEnoughForAttack = isWithinNativeMonsterAttackEntryRange(
+			*entity, (float)monster.posZ, *playerState.entity, playerState.z, engageDistance);
+		// Class-6 monsters store `now + random(99)` when they arm an attack, then
+		// apply a 0x32-tick gate when deciding whether a later strike may start.
+		// A fresh zeroed spawn therefore attacks immediately once it reaches engage range.
+		const uint32 attackCooldownDeadline =
+			combatState.attackCooldownSeedTick + kNativeMonsterAttackCooldownBaseTicks;
+		const bool attackCooldownExpired = combatState.attackCooldownSeedTick == 0 ||
+			(int32)(now - attackCooldownDeadline) > 0;
+		const int closeRangeBypassDistance = MAX(1, engageDistance / 3);
+		if (!closeEnoughForAttack)
+			continue;
+		if (!attackCooldownExpired && absLiveCenterDx > closeRangeBypassDistance)
+			continue;
+
+		RoomAttackAnimationRange range;
+		if (!resolveMonsterAttackAnimationRange(engine, *entity, monsterCenterX, playerCenterX, range)) {
+			debugC(1, kDebugCombat,
+				"Harvester: combat monster attack skipped monster='%s' reason='no native attack bank' target_side=%s",
+				monster.monsterName.c_str(), playerCenterX < monsterCenterX ? "left" : "right");
+			continue;
+		}
+		combatState.attackActive = true;
+		combatState.attackFirstFrame = range.firstFrame;
+		combatState.attackLastFrame = range.lastFrame;
+		combatState.attackContactFrame =
+			range.firstFrame + resolveMonsterAttackContactFrameOffset(monster);
+		combatState.attackResumeFacing = range.resumeFacing;
+		combatState.attackSoundPlayed =
+			monster.attackSound1.empty() && monster.attackSound2.empty() && monster.attackSound3.empty();
+		combatState.attackContactResolved = false;
+		combatState.attackTargetName = playerState.entity->getName();
+		combatState.attackCooldownSeedTick = now + engine.getRandomNumber(99);
+		monster.facing = range.resumeFacing;
+		entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
+		entity->setAnimationRate(kNativeMonsterAttackAnimationRate);
+		entity->setAnimationEnabled(true);
+		entity->setCurrentFrame(range.firstFrame);
+		debugC(2, kDebugCombat,
+			"Harvester: combat monster attack start monster='%s' target='%s'",
+			monster.monsterName.c_str(), combatState.attackTargetName.c_str());
+		debugC(3, kDebugCombat,
+			"Harvester: combat monster attack timing monster='%s' target='%s' frames=%d..%d contact=%d resume_facing=%d live_center_dx=%d z_delta=%.2f engage=%d rate=%d attack_seed_tick=%u close_bypass=%d",
+			monster.monsterName.c_str(), combatState.attackTargetName.c_str(), range.firstFrame, range.lastFrame,
+			combatState.attackContactFrame, range.resumeFacing, liveCenterDx, (double)zDelta,
+			engageDistance, kNativeMonsterAttackAnimationRate, combatState.attackCooldownSeedTick,
+			closeRangeBypassDistance);
+		needsRedraw = true;
+	}
+
+	return Common::kNoError;
 }
 
 Common::Error RoomCombat::resolvePlayerAttackContact(HarvesterEngine &engine,
