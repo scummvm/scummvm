@@ -215,6 +215,9 @@ private:
 	bool handleEscapeAction();
 	void handleSkipKey();
 	void handleSceneChoiceKeyboardSelection(int choiceNumber);
+	bool parseCheatNumber(const Common::String &text, uint32 &value) const;
+	void addCheatTime(int minutes);
+	void jumpToCheatSequence(uint sequenceId);
 	bool pollEvents();
 	bool pollEvents(bool handleClicks);
 	void serviceCursorRefresh(bool screenUpdated = false);

@@ -38,8 +38,62 @@ public:
 	}
 
 	int getMaximumSaveSlot() const override { return 8; }
+	Common::KeymapArray initKeymaps(const char *target) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const BCB::HaroldGameDescription *gd) const override;
 };
+
+Common::KeymapArray HaroldMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace BCB;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "bcb-default", _("Blue Chicago Blues"));
+	Action *act;
+
+	act = new Action("INTERACT", _("Interact"));
+	act->setCustomEngineActionEvent(kBCBActionInteract);
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(kBCBActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIP", _("Skip / Advance"));
+	act->setCustomEngineActionEvent(kBCBActionSkip);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("MOVE_CHOICE", _("Move"));
+	act->setCustomEngineActionEvent(kBCBActionChoice9);
+	act->addDefaultInputMapping("9");
+	act->addDefaultInputMapping("KP9");
+	engineKeyMap->addAction(act);
+
+	static const char *const choiceActionIds[] = {
+		"CHOICE1", "CHOICE2", "CHOICE3", "CHOICE4",
+		"CHOICE5", "CHOICE6", "CHOICE7", "CHOICE8"
+	};
+	static const char *const choiceActionLabels[] = {
+		_s("Choice 1"), _s("Choice 2"), _s("Choice 3"),
+		_s("Choice 4"), _s("Choice 5"), _s("Choice 6"),
+		_s("Choice 7"), _s("Choice 8")
+	};
+
+	for (int choiceIndex = 1; choiceIndex <= 8; ++choiceIndex) {
+		act = new Action(choiceActionIds[choiceIndex - 1], _(choiceActionLabels[choiceIndex - 1]));
+		act->setCustomEngineActionEvent((Common::CustomEventType)(kBCBActionChoice1 + choiceIndex - 1));
+		act->addDefaultInputMapping(Common::String::format("%d", choiceIndex));
+		act->addDefaultInputMapping(Common::String::format("KP%d", choiceIndex));
+		engineKeyMap->addAction(act);
+	}
+
+	return Keymap::arrayOf(engineKeyMap);
+}
 
 Common::Error HaroldMetaEngine::createInstance(OSystem *syst, Engine **engine, const BCB::HaroldGameDescription *gd) const {
 	switch (gd->gameType) {
