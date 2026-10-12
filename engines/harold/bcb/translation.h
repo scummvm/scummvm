@@ -31,7 +31,7 @@ namespace Common {
 class Archive;
 class FSNode;
 class SeekableReadStream;
-}
+} // namespace Common
 
 namespace Graphics {
 struct Surface;
@@ -73,6 +73,9 @@ Common::String makeTextStringKey(TextTranslationType type, uint primaryId, uint 
 void listAvailableTranslationPackages(const Common::FSNode &gameDataDir, Common::Array<TranslationPackageDefinition> &packages);
 bool isTranslationPackageAvailable(const Common::FSNode &gameDataDir, const Common::String &code);
 bool loadTranslationPackage(const Common::FSNode &gameDataDir, const Common::String &code, TextTranslationData &translation);
+void applyTranslatedStillImage(Graphics::Surface &still, int stillIndex, const TextTranslationData &translation);
+void applyTranslatedTitleMenu(Graphics::Surface &title, const TextTranslationData &translation);
+void applyTranslatedComputerButtons(Graphics::Surface &computer, const TextTranslationData &translation);
 
 const char *getTextTranslation(const TextTranslationData &translation, TextTranslationType type, uint primaryId, uint secondaryId);
 const char *getSystemTextTranslation(const TextTranslationData &translation, const char *key);

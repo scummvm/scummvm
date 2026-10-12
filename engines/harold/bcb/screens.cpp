@@ -57,8 +57,11 @@ bool BCBEngine::showTitleScreen() {
 		_titleBitmap = nullptr;
 	}
 
-	if (!_titleBitmap)
+	if (!_titleBitmap) {
 		_titleBitmap = loadBitmap("16mtitle.bmp");
+		if (_titleBitmap && _selectedTextLanguagePackageAvailable)
+			applyTranslatedTitleMenu(*_titleBitmap, _textTranslation);
+	}
 	if (!_titleBitmap)
 		return false;
 
@@ -123,6 +126,9 @@ bool BCBEngine::showPendingStillImageScreen() {
 	Graphics::Surface *still = loadDiscBitmap(kStillImageHighColorPaths[stillIndex]);
 	if (!still)
 		return false;
+
+	if (_gameDescription->desc.language == Common::JA_JPN && _selectedTextLanguagePackageAvailable)
+		applyTranslatedStillImage(*still, stillIndex, _textTranslation);
 
 	_screen->copyRectToSurface(still->getPixels(), still->pitch, 0, 0, MIN<int>(still->w, 640), MIN<int>(still->h, 480));
 	_screen->update();

@@ -40,6 +40,8 @@ static const int kComputerCompositeTransitionBottom = 444;
 const Graphics::Surface *BCBEngine::getComputerBitmap() {
 	if (!_computerBitmap) {
 		_computerBitmap = loadBitmap("256com.bmp");
+		if (_computerBitmap && _selectedTextLanguagePackageAvailable)
+			applyTranslatedComputerButtons(*_computerBitmap, _textTranslation);
 	}
 	return _computerBitmap;
 }
