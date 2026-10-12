@@ -30,6 +30,7 @@
 #include "ultima/ultima2/console.h"
 #include "ultima/ultima2/metaengine.h"
 #include "ultima/ultima2/data/secret_archive.h"
+#include "ultima/ultima2/gfx/text.h"
 #include "ultima/ultima2/logic/space_logic.h"
 #include "ultima/ultima2/views/views.h"
 #include "ultima/ultima2/views/map.h"
@@ -56,12 +57,17 @@ uint32 Ultima2Engine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
 
+Graphics::Font *Ultima2Engine::createFont() const {
+	return new Gfx::TextFont();
+}
+
 bool Ultima2Engine::isEnhanced() const {
 	return (_gameDescription->features & GF_ENHANCED) != 0;
 }
 
 void Ultima2Engine::loadOptions() {
 	_statBoostChoice = Shared::configuredOption("stat_boost_choice", isEnhanced());
+	_mixedCaseText = Shared::configuredOption("mixed_case_text", isEnhanced());
 }
 
 Common::String Ultima2Engine::getGameId() const {

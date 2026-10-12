@@ -122,6 +122,7 @@ MODULE_OBJS += \
 	ultima2/gfx/composite.o \
 	ultima2/gfx/ega_picture.o \
 	ultima2/gfx/pic_decoder.o \
+	ultima2/gfx/text.o \
 	ultima2/gfx/text_cursor.o \
 	ultima2/logic/city_castle_logic.o \
 	ultima2/logic/dungeon_logic.o \

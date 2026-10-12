@@ -27,13 +27,12 @@
 #include "ultima/ultima2/gfx/composite.h"
 #include "ultima/ultima2/gfx/ega_picture.h"
 #include "ultima/ultima2/gfx/pic_decoder.h"
+#include "ultima/ultima2/gfx/text.h"
 #include "ultima/ultima2/ultima2.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
-
-constexpr int COLOR_TEXT = 3; // white, within CGA_PALETTE1
 
 Title::Title() : View("Title"), _cursor("Cursor", this) {
 	// Position the cursor right after "CHOICE:"
@@ -126,13 +125,11 @@ void Title::draw() {
 	auto s = getSurface();
 	bool hasPicture = _state == PICDRA || _state >= DEMO_OUT;
 
-	if (hasPicture) {
+	if (hasPicture)
 		s.blitFrom(_pic);
-		s.setColor(COLOR_TEXT);
-	} else {
+	else
 		s.clear();
-		s.setColor(COLOR_TEXT);
-	}
+	s.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
 
 	switch (_state) {
 	case TEXT1:
@@ -182,12 +179,15 @@ void Title::draw() {
 		break;
 
 	case MENU:
+		s.setColor(Gfx::textColor(Gfx::TEXT_TITLE));
 		s.writeString(Common::Point(15, 1), "ULTIMA ][");
+		s.setColor(Gfx::textColor(Gfx::TEXT_NAME));
 		s.writeString(Common::Point(16, 3), "REVENGE");
 		s.writeString(Common::Point(16, 5), "OF  THE");
 		s.writeString(Common::Point(14, 7), "ENCHANTRESS");
 		s.writeString(Common::Point(6, 22), "(C)-1983,1989 BY LORD BRITISH");
 		s.writeString(Common::Point(15, 23), "AND ORIGIN");
+		s.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
 		s.writeString(Common::Point(5, 10), "TYPE -");
 		s.writeString(Common::Point(6, 11), "'D' - FOR A DEMONSTRATION");
 		s.writeString(Common::Point(6, 13), "'P' - PLAY A GAME OF ULTIMA ][");

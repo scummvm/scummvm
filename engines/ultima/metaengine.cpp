@@ -186,6 +186,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_ULTIMA2_MIXED_CASE,
+		{
+			_s("Mixed case, colored text"),
+			_s("Shows text in mixed case, and in color with the EGA graphics, as the Ultima II Upgrade does, instead of in capitals"),
+			"mixed_case_text",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_ULTIMA3_MORE_MONSTERS,
 		{
 			_s("Increase monster generation"),

@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima2/views/commands.h"
+#include "ultima/ultima2/gfx/text.h"
 #include "ultima/ultima2/ultima2.h"
 #include "graphics/views/rect.h"
 
@@ -41,7 +42,6 @@ void Commands::draw() {
 	_surface.clear();
 	_surface.setTextPos(Common::Point(0, PROMPT_ROW));
 	_surface.setScrollable(true);
-	_surface.setColor(COLOR_TEXT);
 
 	prompt();
 }
@@ -69,6 +69,7 @@ bool Commands::msgGame(const GameMessage &msg) {
 
 void Commands::writeString(const Common::String &msg) {
 	_textCursor.hide();
+	_surface.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
 	_surface.writeString(msg);
 
 	if (msg.contains('\n'))
@@ -87,6 +88,7 @@ void Commands::showCursor() {
 
 void Commands::prompt() {
 	resetLine();
+	_surface.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
 	_surface.writeString("CMD: ");
 	showCursor();
 }

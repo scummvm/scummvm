@@ -20,14 +20,13 @@
  */
 
 #include "ultima/ultima2/views/space_stats.h"
+#include "ultima/ultima2/gfx/text.h"
 #include "ultima/ultima2/ultima2.h"
 #include "graphics/views/rect.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
-
-constexpr int COLOR_TEXT = 3; // white, within the game's 4-color CGA palette
 
 SpaceStats::SpaceStats(UIElement *parent) : Graphics::Views::UIElement("SpaceStats", parent) {
 	setBounds(Graphics::Views::TextRect(30, 20, 39, 23));
@@ -38,7 +37,7 @@ void SpaceStats::draw() {
 	s.clear();
 
 	Data::Savegame &sg = _G(savegame);
-	s.setColor(COLOR_TEXT);
+	s.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
 	s.writeString(Common::Point(0, 0), "  FUEL=%.2d", sg._items[Data::ITEM_TRI_LITHIUM] % 100);
 	s.writeString(Common::Point(0, 1), "  XENO=%.2d", sg._hyperwarpCoords[0]);
 	s.writeString(Common::Point(0, 2), "  YAKO=%.2d", sg._hyperwarpCoords[1]);

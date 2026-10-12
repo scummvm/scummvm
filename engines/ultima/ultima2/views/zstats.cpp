@@ -20,13 +20,12 @@
  */
 
 #include "ultima/ultima2/views/zstats.h"
+#include "ultima/ultima2/gfx/text.h"
 #include "ultima/ultima2/ultima2.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
-
-constexpr int COLOR_TEXT = 3;
 
 ZStats::ZStats() : View("ZStats") {
 	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
@@ -45,64 +44,94 @@ bool ZStats::msgFocus(const FocusMessage &msg) {
 void ZStats::draw() {
 	auto s = getSurface();
 	s.clear();
-	s.setColor(COLOR_TEXT);
 
 	Data::Savegame &sg = _G(savegame);
 
-	s.writeString(Common::Point(0, 0), "%s", sg._name);
-	s.writeString(Common::Point(0, 1), "A LEVEL %.2d %s %s %s", sg._experience,
+	// Write text in one of the colors, at a position or from where the last text ended
+	auto put = [&](Gfx::TextColor color, const Common::String &text) {
+		s.setColor(Gfx::textColor(color));
+		s.writeString(text);
+	};
+	auto putAt = [&](int x, int y, Gfx::TextColor color, const Common::String &text) {
+		s.setTextPos(Common::Point(x, y));
+		put(color, text);
+	};
+	auto number = [](int value) {
+		return Common::String::format("%.2d", value);
+	};
+
+	// A label followed by a number, ending at the right edge when x is negative
+	auto labelled = [&](int x, int y, const Common::String &label, int value) {
+		if (x < 0)
+			x = 38 - (int)(label.size() + 2);
+		putAt(x, y, Gfx::TEXT_NORMAL, label);
+		put(Gfx::TEXT_NUMBER, number(value));
+	};
+
+	putAt(0, 0, Gfx::TEXT_NAME, sg._name);
+	putAt(0, 1, Gfx::TEXT_NAME, Common::String::format("A LEVEL %.2d %s %s %s", sg._experience,
 		sg._sex == Data::SEX_MALE ? "MALE" : "FEMALE",
 		Data::raceName(sg._race),
-		Data::className(sg._class));
+		Data::className(sg._class)));
 
-	s.writeString(Common::Point(2, 4), "WEAPON-%s", Data::weaponName(sg._readiedWeapon));
-	s.writeString(Common::Point(2, 5), "ARMOUR-%s", Data::armorName(sg._readiedArmor));
-	s.writeString(Common::Point(2, 6), " SPELL-%s", Data::spellName(sg._readiedSpell));
+	putAt(2, 4, Gfx::TEXT_NORMAL, "WEAPON-");
+	put(Gfx::TEXT_LIST, Data::weaponName(sg._readiedWeapon));
+	putAt(2, 5, Gfx::TEXT_NORMAL, "ARMOUR-");
+	put(Gfx::TEXT_LIST, Data::armorName(sg._readiedArmor));
+	putAt(2, 6, Gfx::TEXT_NORMAL, " SPELL-");
+	put(Gfx::TEXT_LIST, Data::spellName(sg._readiedSpell));
 
-	s.writeString(Common::Point(38, 4), Common::String::format("TORCHES-%.2d", sg._torches), Graphics::kTextAlignRight);
-	s.writeString(Common::Point(38, 5), Common::String::format("KEYS-%.2d", sg._keys), Graphics::kTextAlignRight);
-	s.writeString(Common::Point(38, 6), Common::String::format("TOOLS-%.2d", sg._thievesTools), Graphics::kTextAlignRight);
+	labelled(-1, 4, "TORCHES-", sg._torches);
+	labelled(-1, 5, "KEYS-", sg._keys);
+	labelled(-1, 6, "TOOLS-", sg._thievesTools);
 
-	s.writeString(Common::Point(0, 7), "STRENGTH-%.2d", sg._strength);
-	s.writeString(Common::Point(14, 7), " STAMINA-%.2d", sg._stamina);
-	s.writeString(Common::Point(38, 7), Common::String::format(" WISDOM-%.2d", sg._wisdom), Graphics::kTextAlignRight);
-	s.writeString(Common::Point(0, 8), " AGILITY-%.2d", sg._agility);
-	s.writeString(Common::Point(14, 8), "CHARISMA-%.2d", sg._charisma);
-	s.writeString(Common::Point(38, 8), Common::String::format("INTELL.-%.2d", sg._intelligence), Graphics::kTextAlignRight);
+	labelled(0, 7, "STRENGTH-", sg._strength);
+	labelled(14, 7, " STAMINA-", sg._stamina);
+	labelled(-1, 7, " WISDOM-", sg._wisdom);
+	labelled(0, 8, " AGILITY-", sg._agility);
+	labelled(14, 8, "CHARISMA-", sg._charisma);
+	labelled(-1, 8, "INTELL.-", sg._intelligence);
 
 	int row = 10;
-	Common::String line = "WEAPONS: ";
+	putAt(0, row, Gfx::TEXT_HEADING, "WEAPONS: ");
 	for (int i = 0; i < Data::WEAPON_COUNT; ++i) {
-		if (sg._weaponOwned[i] != 0)
-			line += Common::String::format("%sS-%.2d ", Data::weaponName((Data::WeaponType)i), sg._weaponOwned[i]);
-	}
-	s.writeString(Common::Point(0, row), line);
-	row += 3; // two blank rows below WEAPONS
-
-	line = "ARMOUR: ";
-	for (int i = 0; i < Data::ARMOR_COUNT; ++i) {
-		if (sg._armorOwned[i] != 0)
-			line += Common::String::format("%s-%.2d ", Data::armorName((Data::ArmorType)i), sg._armorOwned[i]);
-	}
-	s.writeString(Common::Point(0, row), line);
-	row += 2; // one blank row below ARMOUR
-
-	line = "SPELLS: ";
-	for (int i = 0; i < Data::SPELL_COUNT; ++i) {
-		if (sg._spellCharges[i] != 0)
-			line += Common::String::format("%sS-%.2d ", Data::spellName((Data::SpellType)i), sg._spellCharges[i]);
-	}
-	s.writeString(Common::Point(0, row), line);
-	row += 3; // two blank rows below SPELLS
-
-	line = "ITEMS: ";
-	for (int i = 0; i < Data::ITEM_COUNT; ++i) {
-		if (sg._items[i] != 0) {
-			line += Common::String::format("%s%s-%.2d ", Data::itemName(i),
-				i == Data::ITEM_BOOTS ? "" : "S", sg._items[i]);
+		if (sg._weaponOwned[i] != 0) {
+			put(Gfx::TEXT_NORMAL, Common::String::format("%sS-", Data::weaponName((Data::WeaponType)i)));
+			put(Gfx::TEXT_NUMBER, number(sg._weaponOwned[i]));
+			put(Gfx::TEXT_NORMAL, " ");
 		}
 	}
-	s.writeString(Common::Point(0, row), line);
+	row += 3; // two blank rows below WEAPONS
+
+	putAt(0, row, Gfx::TEXT_HEADING, "ARMOUR: ");
+	for (int i = 0; i < Data::ARMOR_COUNT; ++i) {
+		if (sg._armorOwned[i] != 0) {
+			put(Gfx::TEXT_NORMAL, Common::String::format("%s-", Data::armorName((Data::ArmorType)i)));
+			put(Gfx::TEXT_NUMBER, number(sg._armorOwned[i]));
+			put(Gfx::TEXT_NORMAL, " ");
+		}
+	}
+	row += 2; // one blank row below ARMOUR
+
+	putAt(0, row, Gfx::TEXT_HEADING, "SPELLS: ");
+	for (int i = 0; i < Data::SPELL_COUNT; ++i) {
+		if (sg._spellCharges[i] != 0) {
+			put(Gfx::TEXT_NORMAL, Common::String::format("%sS-", Data::spellName((Data::SpellType)i)));
+			put(Gfx::TEXT_NUMBER, number(sg._spellCharges[i]));
+			put(Gfx::TEXT_NORMAL, " ");
+		}
+	}
+	row += 3; // two blank rows below SPELLS
+
+	putAt(0, row, Gfx::TEXT_HEADING, "ITEMS: ");
+	for (int i = 0; i < Data::ITEM_COUNT; ++i) {
+		if (sg._items[i] != 0) {
+			put(Gfx::TEXT_NORMAL, Common::String::format("%s%s-", Data::itemName(i),
+				i == Data::ITEM_BOOTS ? "" : "S"));
+			put(Gfx::TEXT_NUMBER, number(sg._items[i]));
+			put(Gfx::TEXT_NORMAL, " ");
+		}
+	}
 
 	// Show the blinking cursor
 	_textCursor.setPosition(s.getTextPos());

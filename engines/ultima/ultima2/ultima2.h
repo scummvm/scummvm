@@ -96,6 +96,10 @@ public:
 	// as in the Ultima II Upgrade, rather than it being random
 	bool _statBoostChoice = false;
 
+	// Shows text in mixed case, and in color in the EGA modes, as the Ultima II
+	// Upgrade does. When off, all text is in capitals
+	bool _mixedCaseText = false;
+
 	// Debug flag toggled by the "intangible" console command, allowing
 	// movement through normally impassable terrain
 	bool _intangible = false;
@@ -113,6 +117,11 @@ public:
 	~Ultima2Engine() override;
 
 	uint32 getFeatures() const;
+
+	/**
+	 * Returns the font the game's text is drawn with
+	 */
+	Graphics::Font *createFont() const override;
 
 	/**
 	 * Returns true for the version with the Ultima II Upgrade applied

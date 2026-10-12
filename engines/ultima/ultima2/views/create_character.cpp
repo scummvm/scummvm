@@ -20,13 +20,12 @@
  */
 
 #include "ultima/ultima2/views/create_character.h"
+#include "ultima/ultima2/gfx/text.h"
 #include "ultima/ultima2/ultima2.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
-
-constexpr int COLOR_TEXT = 3; // white, within CGA_PALETTE1
 
 constexpr int STARTING_POINTS = 90;
 constexpr int MIN_ATTRIBUTE = 10;
@@ -127,60 +126,65 @@ void CreateCharacter::positionCursor() {
 void CreateCharacter::draw() {
 	auto s = getSurface();
 	s.clear();
-	s.setColor(COLOR_TEXT);
 
 	Data::Savegame &sg = _G(savegame);
 
-	s.writeString(Common::Point(10, 1), "PLAYER GENERATION :");
+	// Writes text at a position in one of the colors
+	auto put = [&](int x, int y, Gfx::TextColor color, const Common::String &text) {
+		s.setColor(Gfx::textColor(color));
+		s.writeString(Common::Point(x, y), text);
+	};
 
-	s.writeString(Common::Point(5, 2), "POINTS LEFT TO DISTRIBUTE : ");
-	s.reverseColor();
-	s.writeString(Common::Point(33, 2), "%d", _pointsRemaining);
-	s.reverseColor();
+	put(10, 1, Gfx::TEXT_NORMAL, "PLAYER GENERATION :");
 
-	s.writeString(Common::Point(11, 4), "STRENGTH.......");
-	s.writeString(Common::Point(11, 5), "AGILITY........");
-	s.writeString(Common::Point(11, 6), "STAMINA........");
-	s.writeString(Common::Point(11, 7), "CHARISMA.......");
-	s.writeString(Common::Point(11, 8), "WISDOM.........");
-	s.writeString(Common::Point(11, 9), "INTELLIGENCE...");
+	put(5, 2, Gfx::TEXT_NORMAL, "POINTS LEFT TO DISTRIBUTE : ");
+	Gfx::setReverseText(s, true);
+	s.writeString(Common::Point(33, 2), Common::String::format("%d", _pointsRemaining));
+	Gfx::setReverseText(s, false);
 
-	if (_state > STRENGTH) s.writeString(Common::Point(26, 4), "%d", sg._strength);
-	if (_state > AGILITY) s.writeString(Common::Point(26, 5), "%d", sg._agility);
-	if (_state > STAMINA) s.writeString(Common::Point(26, 6), "%d", sg._stamina);
-	if (_state > CHARISMA) s.writeString(Common::Point(26, 7), "%d", sg._charisma);
-	if (_state > WISDOM) s.writeString(Common::Point(26, 8), "%d", sg._wisdom);
-	if (_state > INTELLIGENCE) s.writeString(Common::Point(26, 9), "%d", sg._intelligence);
+	put(11, 4, Gfx::TEXT_NORMAL, "STRENGTH.......");
+	put(11, 5, Gfx::TEXT_NORMAL, "AGILITY........");
+	put(11, 6, Gfx::TEXT_NORMAL, "STAMINA........");
+	put(11, 7, Gfx::TEXT_NORMAL, "CHARISMA.......");
+	put(11, 8, Gfx::TEXT_NORMAL, "WISDOM.........");
+	put(11, 9, Gfx::TEXT_NORMAL, "INTELLIGENCE...");
+
+	if (_state > STRENGTH) put(26, 4, Gfx::TEXT_NUMBER, Common::String::format("%d", sg._strength));
+	if (_state > AGILITY) put(26, 5, Gfx::TEXT_NUMBER, Common::String::format("%d", sg._agility));
+	if (_state > STAMINA) put(26, 6, Gfx::TEXT_NUMBER, Common::String::format("%d", sg._stamina));
+	if (_state > CHARISMA) put(26, 7, Gfx::TEXT_NUMBER, Common::String::format("%d", sg._charisma));
+	if (_state > WISDOM) put(26, 8, Gfx::TEXT_NUMBER, Common::String::format("%d", sg._wisdom));
+	if (_state > INTELLIGENCE) put(26, 9, Gfx::TEXT_NUMBER, Common::String::format("%d", sg._intelligence));
 
 	// The digits typed so far for whichever attribute is currently active
 	if (_state <= INTELLIGENCE && _digitCount > 0) {
 		Common::String digits;
 		for (int i = 0; i < _digitCount; ++i)
 			digits += (char)('0' + _digits[i]);
-		s.writeString(Common::Point(26, 4 + (int)_state), digits);
+		put(26, 4 + (int)_state, Gfx::TEXT_NUMBER, digits);
 	}
 
-	s.writeString(Common::Point(16, 11), "M/F-");
-	s.writeString(Common::Point(15, 12), "RACE-");
-	s.writeString(Common::Point(15, 13), "TYPE-");
-	s.writeString(Common::Point(15, 14), "NAME-");
+	put(16, 11, Gfx::TEXT_NORMAL, "M/F-");
+	put(15, 12, Gfx::TEXT_NORMAL, "RACE-");
+	put(15, 13, Gfx::TEXT_NORMAL, "TYPE-");
+	put(15, 14, Gfx::TEXT_NORMAL, "NAME-");
 
 	if (_state > SEX)
-		s.writeString(Common::Point(20, 11), sg._sex == Data::SEX_MALE ? "MALE" : "FEMALE");
+		put(20, 11, Gfx::TEXT_HEADING, sg._sex == Data::SEX_MALE ? "MALE" : "FEMALE");
 	if (_state > RACE)
-		s.writeString(Common::Point(20, 12), Data::raceName(sg._race));
+		put(20, 12, Gfx::TEXT_HEADING, Data::raceName(sg._race));
 	if (_state > CLASS)
-		s.writeString(Common::Point(20, 13), Data::className(sg._class));
+		put(20, 13, Gfx::TEXT_HEADING, Data::className(sg._class));
 	if (_state >= NAME)
-		s.writeString(Common::Point(20, 14), _name);
+		put(20, 14, Gfx::TEXT_LIST, _name);
 
-	s.writeString(Common::Point(10, 16), "SATISFACTORY (Y/N)-");
+	put(10, 16, Gfx::TEXT_NORMAL, "SATISFACTORY (Y/N)-");
 
-	s.writeString(Common::Point(8, 18), "RACES:         TYPES:");
-	s.writeString(Common::Point(9, 19), "1-HUMAN        1-FIGHTER");
-	s.writeString(Common::Point(9, 20), "2-ELF          2-CLERIC");
-	s.writeString(Common::Point(9, 21), "3-DWARF        3-WIZARD");
-	s.writeString(Common::Point(9, 22), "4-HOBBIT       4-THIEF");
+	put(8, 18, Gfx::TEXT_NORMAL, "RACES:         TYPES:");
+	put(9, 19, Gfx::TEXT_NORMAL, "1-HUMAN        1-FIGHTER");
+	put(9, 20, Gfx::TEXT_NORMAL, "2-ELF          2-CLERIC");
+	put(9, 21, Gfx::TEXT_NORMAL, "3-DWARF        3-WIZARD");
+	put(9, 22, Gfx::TEXT_NORMAL, "4-HOBBIT       4-THIEF");
 }
 
 bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {

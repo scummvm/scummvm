@@ -20,14 +20,13 @@
  */
 
 #include "ultima/ultima2/views/stats.h"
+#include "ultima/ultima2/gfx/text.h"
 #include "ultima/ultima2/ultima2.h"
 #include "graphics/views/rect.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
-
-constexpr int COLOR_TEXT = 3; // white, within the game's 4-color CGA palette
 
 Stats::Stats(UIElement *parent) : Graphics::Views::UIElement("Stats", parent) {
 	setBounds(Graphics::Views::TextRect(30, 20, 39, 23));
@@ -38,23 +37,21 @@ void Stats::draw() {
 	auto s = getSurface();
 	s.clear();
 
-	s.setColor(COLOR_TEXT);
+	// A value that's run out is highlighted
+	const byte normal = Gfx::textColor(Gfx::TEXT_NORMAL);
+	const byte highlight = Gfx::textColor(Gfx::TEXT_HIGHLIGHT);
+
+	s.setColor(normal);
 	s.writeString(Common::Point(0, 0), "H.P.=");
-	if (sg._hp == 0)
-		s.reverseColor();
+	s.setColor(sg._hp == 0 ? highlight : normal);
 	s.writeString(Common::Point(5, 0), "%4d", sg._hp);
-	if (sg._hp == 0)
-		s.reverseColor();
 
-	s.setColor(COLOR_TEXT);
+	s.setColor(normal);
 	s.writeString(Common::Point(0, 1), "FOOD=");
-	if (sg._food == 0)
-		s.reverseColor();
+	s.setColor(sg._food == 0 ? highlight : normal);
 	s.writeString(Common::Point(5, 1), "%4d", sg._food);
-	if (sg._food == 0)
-		s.reverseColor();
 
-	s.setColor(COLOR_TEXT);
+	s.setColor(normal);
 	s.writeString(Common::Point(0, 2), "EXP.=");
 	s.writeString(Common::Point(5, 2), "%4d", sg._experience);
 
