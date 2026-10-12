@@ -47,4 +47,12 @@ void BCBEngine::notifyGameClockTicksChanged() {
 	g_system->logMessage(LogMessageType::kInfo, message.c_str());
 }
 
+void BCBEngine::drawClockAndChipIndicator(bool present) {
+	error("BCB: drawClockAndChipIndicator is not implemented");
+}
+
+bool BCBEngine::drawMainSceneScreen(bool lineReveal) {
+	error("BCB: drawMainSceneScreen is not implemented");
+}
+
 } // End of namespace BCB

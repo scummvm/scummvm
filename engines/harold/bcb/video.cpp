@@ -31,6 +31,95 @@
 
 namespace BCB {
 
+bool BCBEngine::playNumberedMovie(int movieId, bool blankScreenMovie) {
+	stopSceneIdleMovie();
+	stopActiveMovie();
+	_sceneChoiceActive = false;
+	_mapControlsActive = false;
+	_activeMovieOnBlankScreen = blankScreenMovie;
+
+	const Common::String movieName = Common::String::format("mov%04d.avi", movieId);
+	Common::SeekableReadStream *stream = createMovieReadStream(movieId);
+	if (!stream) {
+		warning("BCBEngine::playNumberedMovie(): Missing %s", movieName.c_str());
+		stream = createMovieReadStream(0);
+	}
+	if (!stream)
+		return false;
+
+	_activeMovieVideo = new Video::AVIDecoder();
+	_activeMovieVideo->setSoundType(Audio::Mixer::kSFXSoundType);
+	if (!_activeMovieVideo->loadStream(stream)) {
+		delete _activeMovieVideo;
+		_activeMovieVideo = nullptr;
+		return false;
+	}
+
+	_activeMovieVideo->setOutputPixelFormat(g_system->getScreenFormat());
+	_activeMovieVideo->start();
+	_activeMoviePaused = false;
+	_activeMovieDispatchOnFinish = true;
+	return true;
+}
+
+Common::Point BCBEngine::getActiveMoviePosition() const {
+	if (_currentDisplayState == 0)
+		return Common::Point(0x78, 0x64);
+	if (_currentDisplayState == 8)
+		return Common::Point(0x78, 0x38);
+	return Common::Point(0x10, 0x30);
+}
+
+void BCBEngine::stopActiveMovie() {
+	if (!_activeMovieVideo)
+		return;
+
+	_activeMovieVideo->stop();
+	delete _activeMovieVideo;
+	_activeMovieVideo = nullptr;
+	_activeMovieOnBlankScreen = false;
+	_activeMoviePaused = false;
+}
+
+void BCBEngine::stopActiveMovieAndDispatch() {
+	if (!_activeMovieVideo)
+		return;
+
+	const bool dispatchAfterStop = _activeMovieDispatchOnFinish;
+	stopActiveMovie();
+	playUiSound();
+	if (!dispatchAfterStop)
+		return;
+
+	_activeMovieDispatchOnFinish = false;
+	if (_currentDisplayState == 7 || _currentDisplayState == 8) {
+		processQueuedMovieSequence();
+	} else if (_currentDisplayState == 1) {
+		drawMainSceneScreen(false);
+		processGameStateDispatcher(true);
+	} else {
+		if (_currentDisplayState == 2)
+			drawClockAndChipIndicator();
+		processGameStateDispatcher(true);
+	}
+}
+
+bool BCBEngine::processPendingMovieRequest() {
+	const int movieId = stateDword(kStateMovieToPlayId);
+	if (movieId == 0)
+		return false;
+
+	playNumberedMovie(movieId);
+
+	uint32 &movieHistoryCount = stateDword(kStateMovieHistoryCount);
+	stateDword(kStateMovieHistory + MIN<uint32>(movieHistoryCount, 15) * 4) = movieId;
+	if (movieHistoryCount < 15)
+		++movieHistoryCount;
+
+	stateDword(kStateMovieToPlayId) = 0;
+	return true;
+}
+
 void BCBEngine::playUiSound() {
 	Common::SeekableReadStream *stream = createProgramReadStream("se.wav");
 	if (!stream)
@@ -131,6 +220,10 @@ void BCBEngine::stopSceneIdleMovie() {
 	_sceneIdleVideo->stop();
 	delete _sceneIdleVideo;
 	_sceneIdleVideo = nullptr;
+}
+
+void BCBEngine::processQueuedMovieSequence() {
+	error("BCB: processQueuedMovieSequence is not implemented");
 }
 
 } // End of namespace BCB

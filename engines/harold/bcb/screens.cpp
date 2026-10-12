@@ -94,6 +94,19 @@ bool BCBEngine::transitionFromLogoToTitle() {
 	return true;
 }
 
+bool BCBEngine::startNewGameFromTitle() {
+	_titleButtonsActive = false;
+	_systemButtonsVisible = false;
+	stopMenuBackgroundMusic();
+	stopGameOverMusic();
+
+	g_system->fillScreen(g_system->getScreenFormat().RGBToColor(0, 0, 0));
+	g_system->updateScreen();
+
+	stateDword(kStateCurrentScriptSequenceId) = 1;
+	return playNumberedMovie(6, true);
+}
+
 void BCBEngine::drawTitleButton(uint buttonIndex, bool pressed) {
 	if (!_titleBitmap || buttonIndex == 0 || buttonIndex >= ARRAYSIZE(kTitleButtonTable))
 		return;
