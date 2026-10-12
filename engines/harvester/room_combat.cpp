@@ -968,6 +968,47 @@ MonsterRecord *RoomCombat::selectMonsterAttackContactTarget(RoomSetupState &stat
 	return monster;
 }
 
+RoomNpcCombatUpdateResult RoomCombat::updateRoomNpcCombat(HarvesterEngine &engine, RoomSetupState &state,
+		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime,
+		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
+	RoomNpcCombatUpdateResult result;
+	for (uint i = 0; i < state.roomNpcs.size(); ++i) {
+		NpcRecord &npc = state.roomNpcs[i];
+		RoomNpcCombatState &combatState = _npcCombatStates[i];
+		Entity *entity = findSceneRuntimeEntity(entityManager, npc.npcName);
+		if (!entity || !npc.visible || npc.deathOrMonsterfyFlag) {
+			clearRoomNpcCombatState(combatState);
+			continue;
+		}
+		if (!combatState.deathActive && npc.active && npc.deathDamageType != 0) {
+			if (beginNpcDeathTransition(engine, npc, *entity, combatState, npc.deathDamageType, needsRedraw))
+				continue;
+
+			debugC(1, kDebugCombat,
+				"Harvester: room npc death fallback target='%s' damage_type=%d on_death='%s' reason='no death bank'",
+				npc.npcName.c_str(), npc.deathDamageType, npc.onDeathActionTag.c_str());
+			combatState.deathDamageType = npc.deathDamageType;
+			combatState.deathLastFrame = entity->getCurrentFrame();
+			result.finalizedDeath = true;
+			result.error = finalizeNpcDeathTransition(engine, entityManager, sceneRuntime, npc, combatState, interactionProcessor, needsRedraw);
+			return result;
+		}
+		if (!combatState.deathActive)
+			continue;
+		if (entity->getCurrentFrame() != combatState.deathLastFrame)
+			continue;
+
+		entity->setAnimationRate(0);
+		entity->setAnimationFrameRange(combatState.deathLastFrame, combatState.deathLastFrame, false);
+		entity->setCurrentFrame(combatState.deathLastFrame);
+		entity->setAnimationEnabled(false);
+		result.finalizedDeath = true;
+		result.error = finalizeNpcDeathTransition(engine, entityManager, sceneRuntime, npc, combatState, interactionProcessor, needsRedraw);
+		return result;
+	}
+	return result;
+}
+
 bool RoomCombat::queueInnerSanctumHerrillDeathAfterMuck(HarvesterEngine &engine, RoomSetupState &state, const MonsterRecord &monster) const {
 	if (!monster.roomName.equalsIgnoreCase(kInnerSanctumRoomName) ||
 			!monster.monsterName.equalsIgnoreCase(kMuckeyMonsterName) ||

@@ -435,7 +435,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		RoomCombat &combat = session.getCombat();
 		combat.initializeCombatStates(scene.state);
 		Common::Array<RoomMonsterCombatState> &monsterCombatStates = combat.getMonsterCombatStates();
-		Common::Array<RoomNpcCombatState> &npcCombatStates = combat.getNpcCombatStates();
 		RoomSceneRuntime &sceneRuntime = session.getSceneRuntime();
 		RoomCombatEffects &combatEffects = session.getCombatEffects();
 		ResolvedText inspectText;
@@ -1178,36 +1177,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 		combat.resizeCombatStates(scene.state);
 
-		for (uint i = 0; i < scene.state.roomNpcs.size(); ++i) {
-			NpcRecord &npc = scene.state.roomNpcs[i];
-			RoomNpcCombatState &combatState = npcCombatStates[i];
-			Entity *entity = findSceneRuntimeEntity(npc.npcName);
-			if (!entity || !npc.visible || npc.deathOrMonsterfyFlag) {
-				clearRoomNpcCombatState(combatState);
-				continue;
-			}
-			if (!combatState.deathActive && npc.active && npc.deathDamageType != 0) {
-				if (combat.beginNpcDeathTransition(_engine, npc, *entity, combatState, npc.deathDamageType, needsRedraw))
-					continue;
-
-				debugC(1, kDebugCombat,
-					"Harvester: room npc death fallback target='%s' damage_type=%d on_death='%s' reason='no death bank'",
-					npc.npcName.c_str(), npc.deathDamageType, npc.onDeathActionTag.c_str());
-				combatState.deathDamageType = npc.deathDamageType;
-				combatState.deathLastFrame = entity->getCurrentFrame();
-				return combat.finalizeNpcDeathTransition(_engine, entityManager, sceneRuntime, npc, combatState, interactionProcessor, needsRedraw);
-			}
-			if (!combatState.deathActive)
-				continue;
-			if (entity->getCurrentFrame() != combatState.deathLastFrame)
-				continue;
-
-			entity->setAnimationRate(0);
-			entity->setAnimationFrameRange(combatState.deathLastFrame, combatState.deathLastFrame, false);
-			entity->setCurrentFrame(combatState.deathLastFrame);
-			entity->setAnimationEnabled(false);
-			return combat.finalizeNpcDeathTransition(_engine, entityManager, sceneRuntime, npc, combatState, interactionProcessor, needsRedraw);
-		}
+		const RoomNpcCombatUpdateResult npcResult = combat.updateRoomNpcCombat(_engine, scene.state,
+			entityManager, sceneRuntime, interactionProcessor, needsRedraw);
+		if (npcResult.finalizedDeath)
+			return npcResult.error;
 
 		for (uint i = 0; i < scene.state.roomMonsters.size(); ++i) {
 			MonsterRecord &monster = scene.state.roomMonsters[i];
