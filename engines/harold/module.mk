@@ -3,6 +3,7 @@ MODULE := engines/harold
 MODULE_OBJS := \
 	bcb/bcb.o \
 	bcb/resources.o \
+	bcb/video.o \
 	bcb/scene.o \
 	bcb/input.o \
 	bcb/script.o \
