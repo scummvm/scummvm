@@ -545,8 +545,6 @@ void NotebookPopup::layoutText() {
 	}
 
 	HypertextParser::clear();
-	_checkboxRects.clear();
-	_checkboxEntryIndices.clear();
 	_markEntryIndices.clear();
 
 	// Only the Tasklist has clickable checkboxes; record their glyph rects.
@@ -592,6 +590,11 @@ void NotebookPopup::paintVisibleText() {
 							_fullSurface.w, scrollY + visibleH);
 	_drawSurface.blitFrom(_fullSurface, srcSlice,
 							Common::Point(localTextRect.left, localTextRect.top));
+
+	// The checkbox hit areas follow the scroll position, so rebuild them on
+	// every repaint
+	_checkboxRects.clear();
+	_checkboxEntryIndices.clear();
 
 	const UIButtonSlot &activeTab = _uinbData->tabs[_activeTab];
 	const bool tasksTab = activeTab.enabled && activeTab.id != notebookJournalTabId();
