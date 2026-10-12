@@ -75,7 +75,7 @@ static Common::String formatEnglishSaveDescription(int savedDay, int savedClockT
 
 	const Common::String chapterName = discIndex == 0 ? Common::String("Prologue") : Common::String::format("Chapter %d", discIndex);
 	return Common::String::format("%s: November %d, %d:%02d %s",
-								  chapterName.c_str(), dayOfMonth, hour12, minute, period);
+		chapterName.c_str(), dayOfMonth, hour12, minute, period);
 }
 
 static bool isValidBCBSaveSlot(int slot) {
@@ -84,8 +84,8 @@ static bool isValidBCBSaveSlot(int slot) {
 
 bool BCBEngine::hasFeature(EngineFeature f) const {
 	return f == kSupportsLoadingDuringRuntime ||
-		   f == kSupportsSavingDuringRuntime ||
-		   f == kSupportsReturnToLauncher;
+		f == kSupportsSavingDuringRuntime ||
+		f == kSupportsReturnToLauncher;
 }
 
 bool BCBEngine::canLoadGameStateCurrently(Common::U32String *msg) {
@@ -235,7 +235,7 @@ bool BCBEngine::showSystemScreen() {
 	const int fillWidth = (_systemWaveVolume * kSystemWaveVolumeIndicatorRect.width()) / 0xffff;
 	if (fillWidth > 0) {
 		const Common::Rect fillRect(kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top,
-									kSystemWaveVolumeIndicatorRect.left + fillWidth, kSystemWaveVolumeIndicatorRect.bottom);
+			kSystemWaveVolumeIndicatorRect.left + fillWidth, kSystemWaveVolumeIndicatorRect.bottom);
 		system->fillRect(fillRect, system->format.RGBToColor(255, 255, 255));
 	}
 	_screen->copyRectToSurface(system->getPixels(), system->pitch, 0, 0, MIN<int>(system->w, 640), MIN<int>(system->h, 480));
@@ -261,7 +261,7 @@ void BCBEngine::drawSystemSubmodeButtons(bool present) {
 			source = kSystemSubmodeSelectedSources[i];
 		if (source.x + button.width <= system->w && source.y + button.height <= system->h)
 			_screen->copyRectToSurface(system->getBasePtr(source.x, source.y), system->pitch,
-									   button.x, button.y, button.width, button.height);
+				button.x, button.y, button.width, button.height);
 	}
 
 	if (present)
@@ -313,8 +313,8 @@ void BCBEngine::drawSystemWaveVolumeIndicator(bool present) {
 
 	if (kSystemWaveVolumeIndicatorRect.right <= system->w && kSystemWaveVolumeIndicatorRect.bottom <= system->h) {
 		_screen->copyRectToSurface(system->getBasePtr(kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top),
-								   system->pitch, kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top,
-								   kSystemWaveVolumeIndicatorRect.width(), kSystemWaveVolumeIndicatorRect.height());
+			system->pitch, kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top,
+			kSystemWaveVolumeIndicatorRect.width(), kSystemWaveVolumeIndicatorRect.height());
 	}
 
 	Graphics::Surface *screen = _screen->surfacePtr();
@@ -322,7 +322,7 @@ void BCBEngine::drawSystemWaveVolumeIndicator(bool present) {
 		const int fillWidth = (_systemWaveVolume * kSystemWaveVolumeIndicatorRect.width()) / 0xffff;
 		if (fillWidth > 0) {
 			const Common::Rect fillRect(kSystemWaveVolumeIndicatorRect.left, kSystemWaveVolumeIndicatorRect.top,
-										kSystemWaveVolumeIndicatorRect.left + fillWidth, kSystemWaveVolumeIndicatorRect.bottom);
+				kSystemWaveVolumeIndicatorRect.left + fillWidth, kSystemWaveVolumeIndicatorRect.bottom);
 			_screen->fillRect(fillRect, screen->format.RGBToColor(255, 255, 255));
 		}
 	}
@@ -462,17 +462,17 @@ bool BCBEngine::handleSystemClick(const Common::Point &mousePosition) {
 		return false;
 
 	const Common::Rect saveRect(kSystemSubmodeButtonTable[1].x, kSystemSubmodeButtonTable[1].y,
-								kSystemSubmodeButtonTable[1].x + kSystemSubmodeButtonTable[1].width,
-								kSystemSubmodeButtonTable[1].y + kSystemSubmodeButtonTable[1].height);
+		kSystemSubmodeButtonTable[1].x + kSystemSubmodeButtonTable[1].width,
+		kSystemSubmodeButtonTable[1].y + kSystemSubmodeButtonTable[1].height);
 	const Common::Rect loadRect(kSystemSubmodeButtonTable[2].x, kSystemSubmodeButtonTable[2].y,
-								kSystemSubmodeButtonTable[2].x + kSystemSubmodeButtonTable[2].width,
-								kSystemSubmodeButtonTable[2].y + kSystemSubmodeButtonTable[2].height);
+		kSystemSubmodeButtonTable[2].x + kSystemSubmodeButtonTable[2].width,
+		kSystemSubmodeButtonTable[2].y + kSystemSubmodeButtonTable[2].height);
 	const Common::Rect titleRect(kSystemSubmodeButtonTable[3].x, kSystemSubmodeButtonTable[3].y,
-								 kSystemSubmodeButtonTable[3].x + kSystemSubmodeButtonTable[3].width,
-								 kSystemSubmodeButtonTable[3].y + kSystemSubmodeButtonTable[3].height);
+		kSystemSubmodeButtonTable[3].x + kSystemSubmodeButtonTable[3].width,
+		kSystemSubmodeButtonTable[3].y + kSystemSubmodeButtonTable[3].height);
 	const Common::Rect exitRect(kSystemSubmodeButtonTable[4].x, kSystemSubmodeButtonTable[4].y,
-								kSystemSubmodeButtonTable[4].x + kSystemSubmodeButtonTable[4].width,
-								kSystemSubmodeButtonTable[4].y + kSystemSubmodeButtonTable[4].height);
+		kSystemSubmodeButtonTable[4].x + kSystemSubmodeButtonTable[4].width,
+		kSystemSubmodeButtonTable[4].y + kSystemSubmodeButtonTable[4].height);
 
 	if (handleSystemWaveVolumeClick(mousePosition))
 		return true;
@@ -596,7 +596,7 @@ bool BCBEngine::showSystemConfirmationDialog(const Common::U32String &message, b
 	auto drawDialogButton = [&](const Common::Rect &rect, int sourceX, bool present) {
 		if (sourceX + rect.width() <= chip->w && chip->h >= buttonSourceY + rect.height())
 			_screen->copyRectToSurface(chip->getBasePtr(sourceX, buttonSourceY), chip->pitch,
-									   rect.left, rect.top, rect.width(), rect.height());
+				rect.left, rect.top, rect.width(), rect.height());
 		if (present)
 			_screen->update();
 	};
@@ -668,7 +668,7 @@ bool BCBEngine::showSystemConfirmationDialog(const Common::U32String &message, b
 	}
 
 	_screen->copyRectToSurface(dialogBacking.getPixels(), dialogBacking.pitch, dialogRect.left, dialogRect.top,
-							   dialogBacking.w, dialogBacking.h);
+		dialogBacking.w, dialogBacking.h);
 	dialogBacking.free();
 	_screen->update();
 	return result;

@@ -184,7 +184,7 @@ bool layoutPillowGlyphs(FT_Face face, const Common::U32String &text, Common::Arr
 }
 
 bool getPillowTextMaskMetrics(FT_Face face, const Common::Array<PillowGlyphInfo> &glyphs, int strokeWidth,
-							  int &xOffset, int &yOffset, int &xMin, int &yMax, int &maskWidth, int &maskHeight, int loadFlags) {
+	int &xOffset, int &yOffset, int &xMin, int &yMax, int &maskWidth, int &maskHeight, int loadFlags) {
 	int bboxXMin = 0;
 	int bboxXMax = 0;
 	int yMin = 0;
@@ -271,7 +271,7 @@ void renderPillowGlyphBitmapToSurface(Graphics::Surface &surface, const FT_Bitma
 }
 
 bool drawFreeTypeTextPass(Graphics::Surface &surface, FT_Face face, const Common::Array<PillowGlyphInfo> &glyphs,
-						  int x, int y, uint32 color, int strokeWidth, bool strokeOnly) {
+	int x, int y, uint32 color, int strokeWidth, bool strokeOnly) {
 	const int loadFlags = strokeOnly ? FT_LOAD_NO_BITMAP : (FT_LOAD_DEFAULT | FT_LOAD_RENDER);
 	int xOffset = 0;
 	int yOffset = 0;
@@ -336,8 +336,8 @@ bool drawFreeTypeTextPass(Graphics::Surface &surface, FT_Face face, const Common
 }
 
 bool drawFreeTypeTextLine(Graphics::Surface &surface, const Common::String &fontName, int size,
-						  const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
-						  int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth) {
+	const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
+	int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth) {
 	Common::Array<byte> fontData;
 	if (!loadFontDataFromArchives(fontName, fontData))
 		return false;
@@ -418,7 +418,7 @@ static uint8 pillowResampleClip8(int value) {
 }
 
 int precomputePillowCoefficients(int inputSize, float inputStart, float inputEnd, int outputSize,
-								 Common::Array<int> &bounds, Common::Array<int> &coefficients) {
+	Common::Array<int> &bounds, Common::Array<int> &coefficients) {
 	const double scale = (double)(inputEnd - inputStart) / outputSize;
 	const double filterScale = MAX<double>(scale, 1.0);
 	const double support = 2.0 * filterScale;
@@ -513,7 +513,7 @@ Common::Rect findSurfaceAlphaBounds(const Graphics::Surface &surface) {
 }
 
 void findOutputBoundsForSourceBounds(const Common::Array<int> &bounds, int outputSize, const Common::Rect &sourceBounds,
-									 bool horizontal, int &first, int &last) {
+	bool horizontal, int &first, int &last) {
 	first = outputSize;
 	last = 0;
 	const int sourceMin = horizontal ? sourceBounds.left : sourceBounds.top;
@@ -541,11 +541,11 @@ Graphics::Surface *downscaleRgbaLayerBicubicInternal(const Graphics::Surface &so
 	Common::Array<int> horizontalBounds;
 	Common::Array<int> horizontalCoefficients;
 	const int horizontalKernelSize = precomputePillowCoefficients(source.w, 0.0f, (float)source.w, width,
-																  horizontalBounds, horizontalCoefficients);
+		horizontalBounds, horizontalCoefficients);
 	Common::Array<int> verticalBounds;
 	Common::Array<int> verticalCoefficients;
 	const int verticalKernelSize = precomputePillowCoefficients(source.h, 0.0f, (float)source.h, height,
-																verticalBounds, verticalCoefficients);
+		verticalBounds, verticalCoefficients);
 
 	int firstOutX = 0;
 	int lastOutX = 0;
@@ -639,8 +639,8 @@ void alphaCompositeRgbaLayer(Graphics::Surface &target, const Graphics::Surface 
 }
 
 void drawHighQualityTextLine(Graphics::Surface &surface, const Common::String &fontName, int size,
-							 const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
-							 int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth) {
+	const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
+	int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth) {
 #ifdef USE_FREETYPE2
 	drawFreeTypeTextLine(surface, fontName, size, shadowOffsets, text, x, y, textColor, shadowColor, strokeWidth);
 #endif

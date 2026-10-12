@@ -82,11 +82,11 @@ void BCBEngine::drawMapSubmodeMovieBackdrop(bool present) {
 	const Graphics::Surface *map = getUiBitmap("16mmap.bmp");
 	if (map) {
 		const Common::Rect sourceRect(kMapSubmodeMovieBackdropSourceX, kMapSubmodeMovieBackdropSourceY,
-									  kMapSubmodeMovieBackdropSourceX + 0x1a4, kMapSubmodeMovieBackdropSourceY + 0x11e);
+			kMapSubmodeMovieBackdropSourceX + 0x1a4, kMapSubmodeMovieBackdropSourceY + 0x11e);
 		if (sourceRect.right <= map->w && sourceRect.bottom <= map->h)
 			_screen->copyRectToSurface(map->getBasePtr(sourceRect.left, sourceRect.top), map->pitch,
-									   kMapSubmodeMovieBackdropRect.left, kMapSubmodeMovieBackdropRect.top,
-									   sourceRect.width(), sourceRect.height());
+				kMapSubmodeMovieBackdropRect.left, kMapSubmodeMovieBackdropRect.top,
+				sourceRect.width(), sourceRect.height());
 	} else {
 		Graphics::Surface *screen = _screen->surfacePtr();
 		if (!screen)

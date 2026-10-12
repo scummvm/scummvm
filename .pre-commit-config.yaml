@@ -9,6 +9,7 @@ repos:
   rev: v21.1.2
   hooks:
   - id: clang-format
+    exclude: ^engines/harold/(detection_tables\.h|bcb/static_data\.cpp)$
 - repo: local
   hooks:
     - id: check-commit-msg

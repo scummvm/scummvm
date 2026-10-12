@@ -31,8 +31,8 @@
 #include "common/str-enc.h"
 #include "common/ustr.h"
 #include "engines/engine.h"
-#include "harold/bcb/ui.h"
 #include "harold/bcb/translation.h"
+#include "harold/bcb/ui.h"
 #include "harold/detection.h"
 
 namespace Graphics {

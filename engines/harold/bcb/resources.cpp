@@ -170,7 +170,7 @@ void BCBEngine::checkCurrentMediaPathReady() {
 
 	if (requiredDiscNumber < 1 || requiredDiscNumber > 5) {
 		warning("BCBEngine::checkCurrentMediaPathReady(): Invalid required media index %d from script state %u",
-				requiredDiscNumber, stateDword(kStateRequiredDiscIndex));
+			requiredDiscNumber, stateDword(kStateRequiredDiscIndex));
 		_scriptStopFlag = true;
 		return;
 	}
@@ -178,10 +178,10 @@ void BCBEngine::checkCurrentMediaPathReady() {
 	Common::ArchiveMemberList requiredDiscMembers;
 	if (_discFiles[requiredDiscNumber - 1].listMembers(requiredDiscMembers) == 0) {
 		warning("BCBEngine::checkCurrentMediaPathReady(): Missing installed media directory bcb%d",
-				requiredDiscNumber);
+			requiredDiscNumber);
 		debugC(1, kBCBDebugGeneral,
-			   "BCB required media dump: active=bcb%d required=bcb%d scriptRequiredDiscIndex=%u",
-			   _activeMediaDiscNumber, requiredDiscNumber, stateDword(kStateRequiredDiscIndex));
+			"BCB required media dump: active=bcb%d required=bcb%d scriptRequiredDiscIndex=%u",
+			_activeMediaDiscNumber, requiredDiscNumber, stateDword(kStateRequiredDiscIndex));
 		_scriptStopFlag = true;
 		return;
 	}

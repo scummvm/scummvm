@@ -36,7 +36,8 @@ static const DebugChannelDef debugFlagList[] = {
 
 class HaroldMetaEngineDetection : public AdvancedMetaEngineDetection<BCB::HaroldGameDescription> {
 public:
-	HaroldMetaEngineDetection() : AdvancedMetaEngineDetection(BCB::gameDescriptions, haroldGames) {
+	HaroldMetaEngineDetection()
+		: AdvancedMetaEngineDetection(BCB::gameDescriptions, haroldGames) {
 		_guiOptions = GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;

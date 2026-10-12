@@ -33,14 +33,16 @@ const ButtonControlRecord kTitleButtonTable[5] = {
 	{51, 429, 263, 162, 32},
 	{52, 429, 302, 162, 32},
 	{53, 429, 341, 162, 32},
-	{54, 429, 386, 162, 32}};
+	{54, 429, 386, 162, 32}
+};
 
 const ButtonControlRecord kSystemSubmodeButtonTable[5] = {
 	{500, 0, 0, 0, 0},
 	{501, 380, 53, 240, 44},
 	{502, 380, 120, 240, 44},
 	{503, 380, 216, 240, 44},
-	{504, 505, 404, 96, 48}};
+	{504, 505, 404, 96, 48}
+};
 
 const ButtonControlRecord kSystemButtonTable[9] = {
 	{550, 0, 0, 0, 0},
@@ -51,7 +53,8 @@ const ButtonControlRecord kSystemButtonTable[9] = {
 	{555, 41, 174, 288, 32},
 	{556, 41, 206, 288, 32},
 	{557, 41, 238, 288, 32},
-	{558, 41, 270, 288, 32}};
+	{558, 41, 270, 288, 32}
+};
 
 const ButtonControlRecord kSceneChoiceButtonTable[10] = {
 	{100, 0, 0, 0, 0},
@@ -63,7 +66,8 @@ const ButtonControlRecord kSceneChoiceButtonTable[10] = {
 	{106, 432, 278, 192, 40},
 	{107, 432, 324, 192, 40},
 	{108, 432, 370, 192, 40},
-	{109, 432, 416, 192, 40}};
+	{109, 432, 416, 192, 40}
+};
 
 const ButtonControlRecord kMapButtonTable[19] = {
 	{200, 0, 0, 0, 0},
@@ -84,19 +88,23 @@ const ButtonControlRecord kMapButtonTable[19] = {
 	{215, 234, 115, 16, 16},
 	{216, 270, 225, 16, 16},
 	{217, 317, 392, 16, 16},
-	{218, 393, 375, 16, 16}};
+	{218, 393, 375, 16, 16}
+};
 
 const int kMapButtonSecondaryStateIndexTable[19] = {
-	0, 0, 0, 41, 42, 0, 42, 44, 0, 0, 40, 0, 0, 39, 45, 46, 43, 47, 48};
+	0, 0, 0, 41, 42, 0, 42, 44, 0, 0, 40, 0, 0, 39, 45, 46, 43, 47, 48
+};
 
 const ButtonControlRecord kComputerPrimaryButtonTable[2] = {
 	{600, 0, 0, 0, 0},
-	{601, 49, 40, 16, 16}};
+	{601, 49, 40, 16, 16}
+};
 
 const ButtonControlRecord kComputerDetailButtonTable[3] = {
 	{750, 0, 0, 0, 0},
 	{751, 54, 50, 17, 17},
-	{752, 508, 402, 80, 24}};
+	{752, 508, 402, 80, 24}
+};
 
 const ButtonControlRecord kComputerChoiceLayoutSlots[21] = {
 	{0, 0, 0, 0, 0},
@@ -119,7 +127,8 @@ const ButtonControlRecord kComputerChoiceLayoutSlots[21] = {
 	{0, 171, 335, 64, 64},
 	{0, 259, 335, 64, 64},
 	{0, 347, 335, 64, 64},
-	{0, 435, 335, 64, 64}};
+	{0, 435, 335, 64, 64}
+};
 
 const ButtonControlRecord kComputerChoiceButtonTable[30] = {
 	{701, 0, 480, 64, 64},
@@ -151,17 +160,20 @@ const ButtonControlRecord kComputerChoiceButtonTable[30] = {
 	{727, 320, 608, 64, 64},
 	{728, 384, 608, 64, 64},
 	{729, 448, 608, 64, 64},
-	{730, 512, 608, 64, 64}};
+	{730, 512, 608, 64, 64}
+};
 
 const StaticHitRect kComputerChoiceGroupHitRects[3] = {
 	{60, 67, 131, 89},
 	{137, 67, 208, 89},
-	{214, 67, 285, 89}};
+	{214, 67, 285, 89}
+};
 
 const byte kComputerChoiceDependencyStateIndex[30] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 30,
 	31, 32, 33, 34, 0, 0, 0, 0, 35, 0,
-	37, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	37, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
 
 const CompositeBitmapVariantSet kComputerDetailBitmapVariantsBySelectedValue[31] = {
 	{0, {}},
@@ -194,7 +206,8 @@ const CompositeBitmapVariantSet kComputerDetailBitmapVariantsBySelectedValue[31]
 	{1, {"bmp/comp/pcom_27a.bmp"}},
 	{3, {"bmp/comp/pcom_28a.bmp", "bmp/comp/pcom_28b.bmp", "bmp/comp/pcom_28c.bmp"}},
 	{3, {"bmp/comp/pcom_29a.bmp", "bmp/comp/pcom_29b.bmp", "bmp/comp/pcom_29c.bmp"}},
-	{1, {"bmp/comp/pcom_30a.bmp"}}};
+	{1, {"bmp/comp/pcom_30a.bmp"}}
+};
 
 const byte kSceneChoiceValueByButtonIndex[10] = {0, 1, 2, 4, 8, 16, 32, 64, 128, 255};
 
@@ -208,6 +221,7 @@ const char *const kStillImageHighColorPaths[8] = {
 	"bmp/still/16m/pstill_5.bmp",
 	"bmp/still/16m/pbad.bmp",
 	"bmp/still/16m/pgood.bmp",
-	"bmp/still/16m/pstaff.bmp"};
+	"bmp/still/16m/pstaff.bmp"
+};
 
 } // End of namespace BCB

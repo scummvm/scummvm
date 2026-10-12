@@ -27,7 +27,7 @@
 namespace GUI {
 class GuiObject;
 class OptionsContainerWidget;
-}
+} // namespace GUI
 
 namespace BCB {
 GUI::OptionsContainerWidget *createTranslationOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target);

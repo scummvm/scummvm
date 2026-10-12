@@ -28,8 +28,8 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#include "harold/bcb/translation.h"
 #include "harold/bcb/bcb.h"
+#include "harold/bcb/translation.h"
 
 namespace BCB {
 namespace {
@@ -166,7 +166,8 @@ const char *TextStringTable::getString(const Common::String &key) const {
 	return entry == end() ? nullptr : entry->_value.c_str();
 }
 
-TextTranslationData::TextTranslationData() : packageArchive(nullptr) {
+TextTranslationData::TextTranslationData()
+	: packageArchive(nullptr) {
 }
 
 TextTranslationData::~TextTranslationData() {

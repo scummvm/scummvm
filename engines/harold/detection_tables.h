@@ -36,7 +36,8 @@ static const HaroldGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO0()},
+			GUIO0()
+		},
 		kHaroldGameBCB
 	},
 
@@ -54,10 +55,12 @@ static const HaroldGameDescription gameDescriptions[] = {
 			Common::KO_KOR,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO0()},
+			GUIO0()
+		},
 		kHaroldGameBCB
 	},
 
-	{AD_TABLE_END_MARKER, kHaroldGameBCB}};
+	{AD_TABLE_END_MARKER, kHaroldGameBCB}
+};
 
 } // End of namespace BCB

@@ -19,8 +19,8 @@
  *
  */
 
-#include "common/events.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/translation.h"
 
 #include "backends/keymapper/action.h"

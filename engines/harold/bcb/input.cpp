@@ -198,12 +198,12 @@ bool BCBEngine::pollEvents(bool handleClicks) {
 				} else if (event.kbd.keycode == Common::KEYCODE_SPACE) {
 					handleSkipKey();
 				} else if (_sceneChoiceActive &&
-						   event.kbd.keycode >= Common::KEYCODE_1 &&
-						   event.kbd.keycode <= Common::KEYCODE_9) {
+					event.kbd.keycode >= Common::KEYCODE_1 &&
+					event.kbd.keycode <= Common::KEYCODE_9) {
 					handleSceneChoiceKeyboardSelection(event.kbd.keycode - Common::KEYCODE_1 + 1);
 				} else if (_sceneChoiceActive &&
-						   event.kbd.keycode >= Common::KEYCODE_KP1 &&
-						   event.kbd.keycode <= Common::KEYCODE_KP9) {
+					event.kbd.keycode >= Common::KEYCODE_KP1 &&
+					event.kbd.keycode <= Common::KEYCODE_KP9) {
 					handleSceneChoiceKeyboardSelection(event.kbd.keycode - Common::KEYCODE_KP1 + 1);
 				}
 			}

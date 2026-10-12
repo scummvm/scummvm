@@ -19,6 +19,7 @@
  *
  */
 
+#include "harold/bcb/options.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/str-array.h"
@@ -27,7 +28,6 @@
 #include "gui/gui-manager.h"
 #include "gui/widget.h"
 #include "gui/widgets/popup.h"
-#include "harold/bcb/options.h"
 #include "harold/bcb/translation.h"
 
 namespace BCB {
@@ -48,9 +48,9 @@ private:
 	GUI::PopUpWidget *_textLanguagePopUp;
 };
 
-BCBOptionsWidget::BCBOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &domain) :
-	OptionsContainerWidget(boss, name, "BCBGameOptionsDialog", domain),
-	_textLanguagePopUp(nullptr) {
+BCBOptionsWidget::BCBOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &domain)
+	: OptionsContainerWidget(boss, name, "BCBGameOptionsDialog", domain),
+	  _textLanguagePopUp(nullptr) {
 
 	GUI::StaticTextWidget *languageLabel = new GUI::StaticTextWidget(
 		widgetsBoss(),
@@ -112,9 +112,9 @@ void BCBOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Strin
 	const int rowSpacing = lowResGui ? 6 : 10;
 	const int lineHeight = layouts.getVar("Globals.Line.Height");
 	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(leftInset, 0, 0, 0);
-		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal, rowSpacing, GUI::ThemeLayout::kItemAlignCenter).addPadding(0, 0, 0, 0);
-		layouts.addWidget("text_language_desc", "", labelWidth, lineHeight, Graphics::kTextAlignEnd);
-		layouts.addWidget("text_language", "PopUp").closeLayout();
+	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal, rowSpacing, GUI::ThemeLayout::kItemAlignCenter).addPadding(0, 0, 0, 0);
+	layouts.addWidget("text_language_desc", "", labelWidth, lineHeight, Graphics::kTextAlignEnd);
+	layouts.addWidget("text_language", "PopUp").closeLayout();
 	layouts.closeLayout().closeDialog();
 }
 

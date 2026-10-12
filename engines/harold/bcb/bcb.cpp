@@ -81,7 +81,8 @@ void BCBEngine::loadFonts() {
 }
 
 BCBEngine::BCBEngine(OSystem *syst, const HaroldGameDescription *desc)
-	: Engine(syst), _gameDescription(desc) {
+	: Engine(syst),
+	  _gameDescription(desc) {
 }
 
 BCBEngine::~BCBEngine() {

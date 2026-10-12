@@ -122,8 +122,7 @@ static void trimTimedCaptionLine(Common::String &line) {
 	while (start < end) {
 		if (isCaptionEdgeSpace(text[start])) {
 			++start;
-		} else if (start + 1 < end && ((text[start] == 0x81 && text[start + 1] == 0x40) ||
-									   (text[start] == 0xa1 && text[start + 1] == 0xa1))) {
+		} else if (start + 1 < end && ((text[start] == 0x81 && text[start + 1] == 0x40) || (text[start] == 0xa1 && text[start + 1] == 0xa1))) {
 			start += 2;
 		} else {
 			break;
@@ -133,8 +132,7 @@ static void trimTimedCaptionLine(Common::String &line) {
 	while (end > start) {
 		if (isCaptionEdgeSpace(text[end - 1])) {
 			--end;
-		} else if (end >= start + 2 && ((text[end - 2] == 0x81 && text[end - 1] == 0x40) ||
-										(text[end - 2] == 0xa1 && text[end - 1] == 0xa1))) {
+		} else if (end >= start + 2 && ((text[end - 2] == 0x81 && text[end - 1] == 0x40) || (text[end - 2] == 0xa1 && text[end - 1] == 0xa1))) {
 			end -= 2;
 		} else {
 			break;

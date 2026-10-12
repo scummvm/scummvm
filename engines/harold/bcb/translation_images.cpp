@@ -117,8 +117,8 @@ bool parseStillHeadingLine(const char *definition, Common::U32String &text, int 
 }
 
 void drawConfiguredHighQualityTextLines(Graphics::Surface &surface, const TextStringTable &strings, const Common::String &prefix,
-										const char *defaultFont, uint8 defaultTextR, uint8 defaultTextG, uint8 defaultTextB,
-										uint8 defaultShadowR, uint8 defaultShadowG, uint8 defaultShadowB) {
+	const char *defaultFont, uint8 defaultTextR, uint8 defaultTextG, uint8 defaultTextB,
+	uint8 defaultShadowR, uint8 defaultShadowG, uint8 defaultShadowB) {
 	const char *fontName = strings.getString(prefix + "font");
 	if (!fontName || !fontName[0])
 		fontName = defaultFont;
@@ -146,7 +146,7 @@ void drawConfiguredHighQualityTextLines(Graphics::Surface &surface, const TextSt
 
 		const Common::Array<Common::Point> emptyShadowOffsets;
 		drawHighQualityTextLine(layer, fontName, size * scale, (strokeWidth == 0 && !drawShadowWithoutStroke) ? emptyShadowOffsets : scaledShadowOffsets,
-								text, x * scale, y * scale, scaledTextColor, scaledShadowColor, strokeWidth * scale);
+			text, x * scale, y * scale, scaledTextColor, scaledShadowColor, strokeWidth * scale);
 	}
 
 	Graphics::Surface *downscaledLayer = downscaleRgbaLayerBicubic(layer, surface.w, surface.h);

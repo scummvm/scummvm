@@ -85,7 +85,7 @@ void BCBEngine::restoreTitleScreenRegion(const Common::Rect &rect, bool present)
 		return;
 
 	_screen->copyRectToSurface(_titleBitmap->getBasePtr(clippedRect.left, clippedRect.top), _titleBitmap->pitch,
-							   clippedRect.left, clippedRect.top, clippedRect.width(), clippedRect.height());
+		clippedRect.left, clippedRect.top, clippedRect.width(), clippedRect.height());
 	if (present)
 		_screen->update();
 }

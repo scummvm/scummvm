@@ -163,7 +163,7 @@ bool BCBEngine::isSceneChoiceButtonVisible(int buttonIndex) const {
 	const int choiceCount = (sceneChoiceUiSetToShowId >= 0 && sceneChoiceUiSetToShowId < (int)_sceneChoiceText.size()) ? MIN<int>(_sceneChoiceText[sceneChoiceUiSetToShowId].size(), 8) : 0;
 
 	return buttonIndex <= choiceCount ||
-		   (buttonIndex == _sceneChoiceTerminatorButtonIndex && stateDword(kStateSceneChoiceExtraButtonFlag) != 0);
+		(buttonIndex == _sceneChoiceTerminatorButtonIndex && stateDword(kStateSceneChoiceExtraButtonFlag) != 0);
 }
 
 void BCBEngine::drawSceneChoiceButtons(int sceneChoiceUiSetToShowId, bool present, int pressedButtonIndex) {

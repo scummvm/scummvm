@@ -27,7 +27,9 @@
 
 namespace BCB {
 
-Debugger::Debugger(BCBEngine *vm) : GUI::Debugger(), _vm(vm) {
+Debugger::Debugger(BCBEngine *vm)
+	: GUI::Debugger(),
+	  _vm(vm) {
 	registerCmd("time", WRAP_METHOD(Debugger, cmdTime));
 	registerCmd("add_time", WRAP_METHOD(Debugger, cmdAddTime));
 	registerCmd("seq", WRAP_METHOD(Debugger, cmdSequence));
@@ -56,9 +58,9 @@ bool Debugger::cmdTime(int argc, const char **argv) {
 	if (argc > 2) {
 		debugPrintf("Format: time [ticks]\n");
 		debugPrintf("Current: %s, ticks=%u / 0x%04x\n",
-					formatGameClock(_vm->stateDword(kStateGameClockTicks)).c_str(),
-					_vm->stateDword(kStateGameClockTicks),
-					_vm->stateDword(kStateGameClockTicks));
+			formatGameClock(_vm->stateDword(kStateGameClockTicks)).c_str(),
+			_vm->stateDword(kStateGameClockTicks),
+			_vm->stateDword(kStateGameClockTicks));
 		return true;
 	}
 
@@ -76,9 +78,9 @@ bool Debugger::cmdTime(int argc, const char **argv) {
 	}
 
 	debugPrintf("Current: %s, ticks=%u / 0x%04x\n",
-				formatGameClock(_vm->stateDword(kStateGameClockTicks)).c_str(),
-				_vm->stateDword(kStateGameClockTicks),
-				_vm->stateDword(kStateGameClockTicks));
+		formatGameClock(_vm->stateDword(kStateGameClockTicks)).c_str(),
+		_vm->stateDword(kStateGameClockTicks),
+		_vm->stateDword(kStateGameClockTicks));
 	return true;
 }
 
@@ -96,9 +98,9 @@ bool Debugger::cmdAddTime(int argc, const char **argv) {
 
 	_vm->addCheatTime((int)minutes);
 	debugPrintf("Current: %s, ticks=%u / 0x%04x\n",
-				formatGameClock(_vm->stateDword(kStateGameClockTicks)).c_str(),
-				_vm->stateDword(kStateGameClockTicks),
-				_vm->stateDword(kStateGameClockTicks));
+		formatGameClock(_vm->stateDword(kStateGameClockTicks)).c_str(),
+		_vm->stateDword(kStateGameClockTicks),
+		_vm->stateDword(kStateGameClockTicks));
 	return true;
 }
 
@@ -166,7 +168,7 @@ bool Debugger::cmdFlag(int argc, const char **argv) {
 	}
 
 	debugPrintf("secondary[%u] state[0x%04x] = %u / 0x%08x\n",
-				flagIndex, byteOffset, _vm->stateDword(byteOffset), _vm->stateDword(byteOffset));
+		flagIndex, byteOffset, _vm->stateDword(byteOffset), _vm->stateDword(byteOffset));
 	return true;
 }
 
@@ -186,8 +188,8 @@ bool Debugger::cmdChoice(int argc, const char **argv) {
 	}
 
 	debugPrintf("selectedSceneChoiceValue = %u / 0x%02x\n",
-				_vm->stateDword(kStateSelectedSceneChoiceValue),
-				_vm->stateDword(kStateSelectedSceneChoiceValue));
+		_vm->stateDword(kStateSelectedSceneChoiceValue),
+		_vm->stateDword(kStateSelectedSceneChoiceValue));
 	return true;
 }
 
@@ -228,7 +230,7 @@ bool Debugger::cmdClockChip(int argc, const char **argv) {
 	}
 
 	debugPrintf("clock/chip state index = %u (state[0x%04x])\n",
-				_vm->stateDword(kStateRequiredDiscIndex), kStateRequiredDiscIndex);
+		_vm->stateDword(kStateRequiredDiscIndex), kStateRequiredDiscIndex);
 	return true;
 }
 

@@ -35,8 +35,8 @@ struct Surface;
 namespace BCB {
 
 void drawHighQualityTextLine(Graphics::Surface &surface, const Common::String &fontName, int size,
-							 const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
-							 int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth);
+	const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
+	int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth);
 Graphics::Surface *downscaleRgbaLayerBicubic(const Graphics::Surface &source, int width, int height);
 void alphaCompositeRgbaLayer(Graphics::Surface &target, const Graphics::Surface &layer);
 
