@@ -38,6 +38,30 @@ static const int kMovieControlStripSkipPressedSourceX = 0x98;
 static const int kMovieControlStripPausePressedSourceX = 0x130;
 
 void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
+	if (_currentDisplayState == 10) {
+		transitionFromLogoToTitle();
+		return;
+	}
+
+	if (_currentDisplayState != 0 || !_titleButtonsActive)
+		return;
+
+	for (uint i = 1; i < ARRAYSIZE(kTitleButtonTable); ++i) {
+		const ButtonControlRecord &button = kTitleButtonTable[i];
+		const Common::Rect rect(button.x, button.y, button.x + button.width, button.y + button.height);
+		if (!rect.contains(mousePosition))
+			continue;
+
+		drawTitleButton(i, true);
+		delayWithEventPolling(80);
+
+		switch (button.controlId) {
+		default:
+			drawTitleButton(i, false);
+			break;
+		}
+		return;
+	}
 }
 
 bool BCBEngine::pollEvents() {

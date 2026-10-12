@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	bcb/resources.o \
 	bcb/video.o \
 	bcb/scene.o \
+	bcb/screens.o \
 	bcb/input.o \
 	bcb/script.o \
 	bcb/executable_data.o \
