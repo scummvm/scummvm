@@ -334,6 +334,39 @@ static void writeElement(lua_State *L, int tableIndex, HorizontalAlignment defau
 	out.writeByte(0);
 }
 
+void writeTextElement(lua_State *L, int tableIndex, const Common::String &fontName, bool isBold, uint32 color, Common::WriteStream &out) {
+	tableIndex = absoluteIndex(L, tableIndex);
+
+	bool wraps = false;
+	int32 horizontalAlignment = kAlignCenter;
+	int32 verticalAlignment = kAlignTop;
+
+	pushTableField(L, tableIndex, "font");
+	readNamedField(L, -1, "horzAlign", kHorizontalAlignments, ARRAYSIZE(kHorizontalAlignments), horizontalAlignment);
+	readNamedField(L, -1, "vertAlign", kVerticalAlignments, ARRAYSIZE(kVerticalAlignments), verticalAlignment);
+	readField(L, -1, "wrap", wraps);
+	lua_pop(L, 1);
+
+	// Nothing but the text gets drawn
+	writeName(out, Common::String());
+	writeRect(out, ScriptRect());
+	for (uint i = 0; i < 4; ++i) {
+		out.writeUint32BE(kDefaultColor);
+	}
+
+	writeName(out, fontName);
+	out.writeByte(isBold);
+	out.writeSint32LE(horizontalAlignment);
+	out.writeSint32LE(verticalAlignment);
+	out.writeByte(wraps);
+
+	for (uint i = 0; i < 4; ++i) {
+		out.writeUint32BE(color);
+	}
+
+	out.writeByte(0);
+}
+
 // The fields every control has: initialState, name, onScreen, text, tooltipText,
 // and the ones of what it draws
 static void writeControl(lua_State *L, int tableIndex, HorizontalAlignment defaultAlignment, Common::WriteStream &out) {

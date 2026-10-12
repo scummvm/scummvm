@@ -31,6 +31,8 @@
 
 #include "engines/nancy/script/record.h"
 
+#include "engines/nancy/ui/ndui/element.h"
+
 namespace Nancy {
 
 namespace UI {
@@ -289,6 +291,52 @@ private:
 	bool _isPlaying = false;
 	bool _wasPreempted = false;
 	double _endTime = 0.0;
+};
+
+// Shows a text in the viewport, in one of the fonts and font colors of the game.
+// The text is the key of one of the game's texts, unless the record says
+// otherwise. It can be shown a letter at a time, and can move up or down.
+// TODO: Handle the useBackground, bg and frame fields.
+class TextRecord : public Record {
+public:
+	TextRecord(SceneContext &context) : Record(context, "ND.TextAR") {}
+
+	void updateGraphics() override;
+
+	// Shows the next letter of a text that isn't shown at once, along with the
+	// markup in front of it. Returns false when there is nothing left to show.
+	bool revealNext();
+
+protected:
+	void readTable(int tableIndex) override;
+	void run(double sceneTime, double elapsedTime) override;
+	void onZChanged() override;
+	bool prepareReset() override;
+	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
+
+private:
+	void setText(const Common::String &text);
+	void applyDest();
+
+	UI::NDUI::Element _element;
+	RecordGraphic _graphic;
+	bool _isDirty = true;
+
+	ScriptRect _dest;
+	double _yOffset = 0.0;
+	double _yVelocity = 0.0;	// per second
+
+	// What the record goes back to when it starts over
+	ScriptRect _initialDest;
+	double _initialYOffset = 0.0;
+	double _initialYVelocity = 0.0;
+
+	bool _usesAutotext = true;
+	bool _revealsAll = true;
+	Common::String _text;
+	Common::String _shownText;
+	uint _numRevealed = 0;
 };
 
 // Plays a movie in the viewport

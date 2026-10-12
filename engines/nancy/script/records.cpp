@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "common/random.h"
 #include "common/textconsole.h"
 
@@ -91,8 +92,10 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 		return new ConvoRecord(context, true);
 	case kRecordSoundConvo:
 		return new ConvoRecord(context, false);
+	case kRecordText:
+		return new TextRecord(context);
 	default:
-		// TODO: The Text and Particle records
+		// TODO: The Particle record
 		return nullptr;
 	}
 }
@@ -944,6 +947,213 @@ bool SoundRecord::getField(const Common::String &key) {
 		lua_pushnumber(L, _endTime);
 	} else if (key == "preempted") {
 		lua_pushboolean(L, _wasPreempted);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+// Text
+
+// How quickly a text fades in; a lower rate is faster
+static const float kTextBlendRate = 0.7f;
+
+void TextRecord::readTable(int tableIndex) {
+	lua_State *L = getLua();
+
+	if (pushField(L, tableIndex, "onScreen")) {
+		_dest = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	readField(L, tableIndex, "yOffset", _yOffset);
+	readField(L, tableIndex, "yVelocity", _yVelocity);
+	readField(L, tableIndex, "useAutotext", _usesAutotext);
+	readField(L, tableIndex, "revealAll", _revealsAll);
+
+	_initialDest = _dest;
+	_initialYOffset = _yOffset;
+	_initialYVelocity = _yVelocity;
+
+	int fontNumber = 0;
+	int colorNumber = 0;
+	bool isBold = false;
+	readField(L, tableIndex, "fontNum", fontNumber);
+	readField(L, tableIndex, "fontColor", colorNumber);
+	readField(L, tableIndex, "bold", isBold);
+
+	// Fonts and their colors go by number
+	Common::String fontName;
+	uint32 color = 0xFFFFFFFF;
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	if (boot) {
+		for (const ScriptBootData::SystemFont &font : boot->fonts) {
+			if (font.id == fontNumber) {
+				fontName = font.name;
+			}
+		}
+
+		for (const ScriptBootData::FontColor &fontColor : boot->fontColors) {
+			if (fontColor.id == colorNumber) {
+				color = fontColor.normal;
+			}
+		}
+	}
+
+	Common::MemoryWriteStreamDynamic data(DisposeAfterUse::YES);
+	writeTextElement(L, tableIndex, fontName, isBold, color, data);
+	Common::MemoryReadStream stream(data.getData(), data.size());
+	_element.read(stream);
+
+	Common::String text;
+	if (!readField(L, tableIndex, "text", text)) {
+		luaL_error(L, "Text AR requires field %s", "text");
+	}
+
+	setText(text);
+
+	_graphic.init();
+	_graphic.setVisible(false);
+	applyDest();
+	onZChanged();
+	_graphic.registerGraphics();
+}
+
+void TextRecord::applyDest() {
+	const Common::Rect dest = _dest.toRect();
+	_graphic._drawSurface.create(MAX<int>(dest.width(), 1), MAX<int>(dest.height(), 1), g_nancy->_graphics->getTransparentPixelFormat());
+	_graphic.moveTo(dest);
+	_isDirty = true;
+}
+
+void TextRecord::setText(const Common::String &text) {
+	_text = text;
+	if (_usesAutotext && !findText(text, _text)) {
+		_text = "Missing text: " + text;
+	}
+
+	_numRevealed = 0;
+	_shownText = _revealsAll ? _text : Common::String();
+	_isDirty = true;
+}
+
+bool TextRecord::revealNext() {
+	if (_revealsAll || _numRevealed >= _text.size()) {
+		return false;
+	}
+
+	// Markup is never shown in part
+	uint end = _numRevealed;
+	bool isInTag = false;
+	while (end < _text.size()) {
+		if (isInTag) {
+			isInTag = _text[end] != '>';
+		} else if (_text[end] == '<') {
+			isInTag = true;
+		} else {
+			break;
+		}
+
+		++end;
+	}
+
+	end = MIN<uint>(end + 1, _text.size());
+	_shownText += _text.substr(_numRevealed, end - _numRevealed);
+	_numRevealed = end;
+	_isDirty = true;
+	return true;
+}
+
+void TextRecord::run(double sceneTime, double elapsedTime) {
+	if (_element.blend(UI::NDUI::kStateNormal, (float)elapsedTime, kTextBlendRate)) {
+		_isDirty = true;
+	}
+
+	if (_yVelocity == 0.0) {
+		return;
+	}
+
+	_yOffset += _yVelocity * elapsedTime;
+	_isDirty = true;
+
+	// A text that moves is done once it has left its place
+	const Common::Rect dest = _dest.toRect();
+	const int textHeight = _element.measureTextHeight(_shownText, dest.width());
+	if ((_yOffset > textHeight && _yVelocity > 0.0) || (_yOffset < -dest.height() && _yVelocity < 0.0)) {
+		finish();
+	}
+}
+
+void TextRecord::onZChanged() {
+	_graphic.setScriptZ(getZ(), getContext().getZOffset());
+}
+
+void TextRecord::updateGraphics() {
+	_graphic.setVisible(isActive());
+
+	if (_isDirty) {
+		_isDirty = false;
+
+		Common::Rect area(_graphic._drawSurface.w, _graphic._drawSurface.h);
+		area.translate(0, -(int)_yOffset);
+
+		_graphic._drawSurface.clear(0);
+		_element.drawText(_graphic._drawSurface, _shownText, area, false);
+		_graphic.setNeedsRedraw(true);
+	}
+}
+
+bool TextRecord::prepareReset() {
+	_dest = _initialDest;
+	_yOffset = _initialYOffset;
+	_yVelocity = _initialYVelocity;
+	applyDest();
+	return true;
+}
+
+// text:RevealNext()
+static int textRevealNext(lua_State *L) {
+	TextRecord *text = dynamic_cast<TextRecord *>(checkRecord(L, 1));
+	if (!text) {
+		return luaL_typerror(L, 1, "ND.TextAR");
+	}
+
+	lua_pushboolean(L, text->revealNext());
+	return 1;
+}
+
+bool TextRecord::getField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		pushRect(L, _dest);
+	} else if (key == "yOffset") {
+		lua_pushnumber(L, _yOffset);
+	} else if (key == "yVelocity") {
+		lua_pushnumber(L, _yVelocity);
+	} else if (key == "RevealNext") {
+		lua_pushcfunction(L, textRevealNext);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+bool TextRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		_dest = checkRect(L, 3);
+		applyDest();
+	} else if (key == "text") {
+		setText(luaL_checkstring(L, 3));
+	} else if (key == "yOffset") {
+		_yOffset = luaL_checknumber(L, 3);
+		_isDirty = true;
+	} else if (key == "yVelocity") {
+		_yVelocity = luaL_checknumber(L, 3);
 	} else {
 		return false;
 	}

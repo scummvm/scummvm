@@ -28,6 +28,10 @@
 
 struct lua_State;
 
+namespace Common {
+class WriteStream;
+}
+
 namespace Nancy {
 
 struct CVTX;
@@ -94,6 +98,10 @@ bool findText(const Common::String &key, Common::String &text);
 
 // The panels and controls scripts build the UI out of
 void registerUIAPI(lua_State *L);
+
+// Writes out how a text gets drawn, the way an element of an NDUI chunk has it:
+// in a font and a color, and placed as the "font" field of the table at an index says
+void writeTextElement(lua_State *L, int tableIndex, const Common::String &fontName, bool isBold, uint32 color, Common::WriteStream &out);
 
 // The images scripts look colors up in
 void registerRefAPI(lua_State *L);
