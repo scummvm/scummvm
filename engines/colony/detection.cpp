@@ -54,7 +54,7 @@ const ADGameDescription gameDescriptions[] = {
 			"Zounds", "9de09af0a8d62f30d6863ff86c95cc51", 552576),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO2(GUIO_RENDERMACINTOSH, GUIO_RENDEREGA)
 	},
 	{
@@ -65,7 +65,7 @@ const ADGameDescription gameDescriptions[] = {
 			"COL.EXE", "3fa09322759a47d817d2bda36aae9255", 250837),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO2(GUIO_RENDEREGA, GUIO_RENDERMACINTOSH)
 	},
 	AD_TABLE_END_MARKER
