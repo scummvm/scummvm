@@ -47,12 +47,20 @@ void BCBEngine::notifyGameClockTicksChanged() {
 	g_system->logMessage(LogMessageType::kInfo, message.c_str());
 }
 
+void BCBEngine::applyPendingClockTickDelta() {
+	error("BCB: applyPendingClockTickDelta is not implemented");
+}
+
 void BCBEngine::drawClockAndChipIndicator(bool present) {
 	error("BCB: drawClockAndChipIndicator is not implemented");
 }
 
 bool BCBEngine::drawMainSceneScreen(bool lineReveal) {
 	error("BCB: drawMainSceneScreen is not implemented");
+}
+
+void BCBEngine::renderClockAndChipToSurface(Graphics::Surface &surface, int baseHourOffset, int gameClockTicks) {
+	error("BCB: renderClockAndChipToSurface is not implemented");
 }
 
 } // End of namespace BCB
