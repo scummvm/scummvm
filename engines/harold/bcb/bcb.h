@@ -50,6 +50,21 @@ enum {
 	kBCBDebugGeneral = 1
 };
 
+enum BCBAction {
+	kBCBActionInteract,
+	kBCBActionEscape,
+	kBCBActionSkip,
+	kBCBActionChoice1,
+	kBCBActionChoice2,
+	kBCBActionChoice3,
+	kBCBActionChoice4,
+	kBCBActionChoice5,
+	kBCBActionChoice6,
+	kBCBActionChoice7,
+	kBCBActionChoice8,
+	kBCBActionChoice9
+};
+
 class Debugger;
 
 class BCBEngine : public Engine {
@@ -96,6 +111,8 @@ private:
 	bool handleSystemWaveVolumeClick(const Common::Point &mousePosition);
 	bool handleSystemClick(const Common::Point &mousePosition);
 	void activateSystemExitButton();
+	bool readSaveSlotHeader(int slot, int &savedDay, int &savedClockTicks);
+	bool isSaveSlotOccupied(int slot);
 	void writeContinueState();
 	bool showSystemConfirmationDialog(const Common::U32String &message, bool showCancelButton);
 	void returnFromSystemMenuToPreviousState();
