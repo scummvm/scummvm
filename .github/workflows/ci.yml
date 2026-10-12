@@ -44,7 +44,7 @@ jobs:
           dists/emscripten/build.sh make 
   windows:
     name: Windows
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     strategy:
       fail-fast: false
       matrix:
@@ -71,7 +71,7 @@ jobs:
       VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
       VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
       VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/.github/vcpkg-ports
-      GIT_VCPKG_COMMIT: ef7dbf94b9198bc58f45951adcf1f041fcbc5ea0
+      GIT_VCPKG_COMMIT: 9e593bb18ea69cc5095e012465dcd675a822ed0d
     permissions:
       contents: write # For dependencygraph
     steps:
