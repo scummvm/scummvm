@@ -47,7 +47,7 @@ namespace Script {
 //
 // TODO: Tooltips, the textShadow and captureClicks fields, the ways of arranging
 // controls other than left to right and right to left, and the events the controls
-// don't send yet: sliderReleased, listboxItemDblClick, enable, disable, mouseEnter
+// don't send yet: listboxItemDblClick, enable, disable, mouseEnter
 // and mouseLeave.
 
 static const char *const kPanelType = "ND.Panel";
@@ -68,6 +68,7 @@ static const NamedValue kEventNames[] = {
 	{ "checkboxChecked", UI::NDUI::kEventChecked },
 	{ "checkboxUnchecked", UI::NDUI::kEventUnchecked },
 	{ "sliderValueChanged", UI::NDUI::kEventSliderChanged },
+	{ "sliderReleased", UI::NDUI::kEventSliderReleased },
 	{ "editboxString", UI::NDUI::kEventTextEntered },
 	{ "editboxChange", UI::NDUI::kEventTextChanged },
 	{ "listboxSelection", UI::NDUI::kEventListSelected },

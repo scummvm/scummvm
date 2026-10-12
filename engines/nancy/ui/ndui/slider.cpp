@@ -155,6 +155,7 @@ void Slider::onMouseMove(const Common::Point &pos) {
 void Slider::onMouseUp(const Common::Point &pos) {
 	_isPressed = false;
 	sendEvent(kEventSliderChanged);
+	sendEvent(kEventSliderReleased);
 }
 
 bool Slider::doAction(const Action &action) {
@@ -167,7 +168,7 @@ bool Slider::doAction(const Action &action) {
 }
 
 bool Slider::getValue(int32 eventType, double &value, Common::String &text) const {
-	if (eventType != kEventSliderChanged) {
+	if (eventType != kEventSliderChanged && eventType != kEventSliderReleased) {
 		return false;
 	}
 

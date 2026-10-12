@@ -37,6 +37,11 @@ namespace Nancy {
 namespace UI {
 namespace NDUI {
 
+// The Nancy19 channels the UI plays a sound on for the player to hear a new volume with
+static const uint16 kSampleChannelMusic = 4;
+static const uint16 kSampleChannelFX = 22;
+static const uint16 kSampleChannelVoice = 28;
+
 // The timer whose displays show the time of day
 static const int kPlayerClockTimer = -1;
 
@@ -130,11 +135,11 @@ void Manager::takeEngineAction(const Action &action) {
 	} else if (action.target.equalsIgnoreCase("Engine_CellPhone")) {
 		onCellPhoneAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_VoiceVolume")) {
-		onVolumeAction(action, "speech_volume");
+		onVolumeAction(action, "speech_volume", kSampleChannelVoice);
 	} else if (action.target.equalsIgnoreCase("Engine_FXVolume")) {
-		onVolumeAction(action, "sfx_volume");
+		onVolumeAction(action, "sfx_volume", kSampleChannelFX);
 	} else if (action.target.equalsIgnoreCase("Engine_MusicVolume")) {
-		onVolumeAction(action, "music_volume");
+		onVolumeAction(action, "music_volume", kSampleChannelMusic);
 	} else if (action.target.equalsIgnoreCase("Engine_Flags")) {
 		onFlagsAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_Sound")) {

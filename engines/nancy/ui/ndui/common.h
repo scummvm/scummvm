@@ -84,6 +84,7 @@ enum EventType {
 	kEventChecked		= 4,
 	kEventUnchecked		= 5,
 	kEventSliderChanged	= 6,
+	kEventSliderReleased	= 7,
 	kEventTextEntered	= 8,	// the player pressed Enter in an edit box
 	kEventTextChanged	= 9,
 	kEventListSelected	= 11,

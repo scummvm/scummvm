@@ -189,7 +189,7 @@ private:
 	void onGameWindowAction(const Action &action);
 	void onCellPhoneAction(const Action &action);
 	void onItemStreamClicked(const InvButton &button);
-	void onVolumeAction(const Action &action, const char *configKey);
+	void onVolumeAction(const Action &action, const char *configKey, uint16 sampleChannel);
 	void onFlagsAction(const Action &action);
 	void askToSaveFirst(const Action &action);
 	uint fillSaveList(const Common::String &listName);

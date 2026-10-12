@@ -33,6 +33,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/sound.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -345,12 +346,22 @@ void Manager::applyMatteColor() {
 }
 
 // The sliders go from 0 to 100, and have to read back what they set
-void Manager::onVolumeAction(const Action &action, const char *configKey) {
+void Manager::onVolumeAction(const Action &action, const char *configKey, uint16 sampleChannel) {
 	if (action.type == kActionQuery) {
 		takeAction(kActionSetValue, action.sender, (double)((ConfMan.getInt(configKey) * 100 + Audio::Mixer::kMaxMixerVolume / 2) / Audio::Mixer::kMaxMixerVolume));
 	} else if (action.type == kActionSetValue) {
 		ConfMan.setInt(configKey, (int)action.value * Audio::Mixer::kMaxMixerVolume / 100);
 		g_nancy->syncSoundSettings();
+	} else if (action.type == kActionSetText && g_nancy->getGameType() >= kGameTypeNancy19 && !action.text.empty()) {
+		// Nancy19 names a sound to play once a slider is let go of
+		SoundDescription sound;
+		sound.name = action.text;
+		sound.channelID = sampleChannel;
+		sound.numLoops = 1;
+		sound.volume = 100;
+
+		g_nancy->_sound->loadSound(sound);
+		g_nancy->_sound->playSound(sound);
 	}
 }
 
