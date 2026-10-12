@@ -191,7 +191,6 @@ private:
 };
 
 // Shows a part of an image
-// TODO: Handle the modColor field.
 class OverlayRecord : public Record {
 public:
 	OverlayRecord(SceneContext &context) : Record(context, "ND.Overlay") {}
@@ -212,12 +211,12 @@ private:
 	Graphics::ManagedSurface _image;
 	ScriptRect _source;
 	ScriptRect _dest;
+	uint32 _modColor = 0xFFFFFFFF;	// what the colors of the picture get multiplied with
 	bool _hasPicture = false;
 	RecordGraphic _graphic;
 };
 
 // Shows the parts of an image one after the other
-// TODO: Handle the modColor field.
 class AnimOverlayRecord : public Record {
 public:
 	AnimOverlayRecord(SceneContext &context) : Record(context, "ND.AnimOvlAR") {}
@@ -248,6 +247,7 @@ private:
 	Graphics::ManagedSurface _image;
 	Common::Array<ScriptRect> _sources;
 	ScriptRect _dest;
+	uint32 _modColor = 0xFFFFFFFF;
 	bool _hasPicture = false;
 	RecordGraphic _graphic;
 

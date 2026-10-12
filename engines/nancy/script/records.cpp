@@ -113,8 +113,8 @@ void RecordGraphic::setScriptZ(double z, int32 streamZOffset) {
 
 // Where something that was placed in the viewport ends up once the transform
 // of its record has moved it.
-// TODO: Only the place is taken from the transform. Draw what it rotates and
-// scales as well.
+// TODO: Movies only take their place from the transform. Draw what it rotates
+// and scales as well.
 static Common::Rect getTransformedDest(const ScriptRect &dest, const ScriptMatrix &transform, int width, int height) {
 	// Far enough for anything a script moves around, and safe to add a size to
 	const int kLimit = 16000;
@@ -126,6 +126,118 @@ static Common::Rect getTransformedDest(const ScriptRect &dest, const ScriptMatri
 	const int left = CLIP<int>((int)x, -kLimit, kLimit);
 	const int top = CLIP<int>((int)y, -kLimit, kLimit);
 	return Common::Rect(left, top, left + width, top + height);
+}
+
+static const uint32 kNoModColor = 0xFFFFFFFF;
+
+// Shows a part of an image where the transform of its record puts it. A transform
+// that turns or resizes the picture has it drawn anew, into the area its corners
+// end up around, and so does a color the picture gets multiplied with, which
+// can darken it or make it see-through.
+static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image, const Common::Rect &source, const ScriptRect &dest, const ScriptMatrix &transform, uint32 modColor) {
+	// Larger than anything a script shows, and small enough to draw quickly
+	const int kMaxSize = 2048;
+	const int kLimit = 16000;
+
+	const bool isMovedOnly = transform.isTranslation();
+	if (isMovedOnly && modColor == kNoModColor) {
+		graphic._drawSurface.create(image, source);
+		graphic.setTransparent(true);
+		graphic.moveTo(getTransformedDest(dest, transform, source.width(), source.height()));
+		graphic.setNeedsRedraw(true);
+		return;
+	}
+
+	// Points are rows, so the matrix turns (x, y) into (x * a + y * c, x * b + y * d),
+	// and then moves it
+	const double a = transform.m[0][0];
+	const double b = transform.m[0][1];
+	const double c = transform.m[1][0];
+	const double d = transform.m[1][1];
+	const double offsetX = transform.m[3][0];
+	const double offsetY = transform.m[3][1];
+	const double determinant = a * d - b * c;
+
+	Common::Rect area = getTransformedDest(dest, transform, source.width(), source.height());
+	if (!isMovedOnly) {
+		double minX = 0.0;
+		double minY = 0.0;
+		double maxX = 0.0;
+		double maxY = 0.0;
+		for (uint corner = 0; corner < 4; ++corner) {
+			double x = (corner & 1) ? dest.right : dest.left;
+			double y = (corner & 2) ? dest.bottom : dest.top;
+			transform.transformPoint(x, y);
+
+			minX = corner == 0 ? x : MIN(minX, x);
+			maxX = corner == 0 ? x : MAX(maxX, x);
+			minY = corner == 0 ? y : MIN(minY, y);
+			maxY = corner == 0 ? y : MAX(maxY, y);
+		}
+
+		area.left = CLIP<int>((int)floor(minX), -kLimit, kLimit);
+		area.top = CLIP<int>((int)floor(minY), -kLimit, kLimit);
+		area.right = area.left + CLIP<int>((int)ceil(maxX) - area.left, 1, kMaxSize);
+		area.bottom = area.top + CLIP<int>((int)ceil(maxY) - area.top, 1, kMaxSize);
+	}
+
+	// Drawn with an alpha of its own, in place of the color that stands for
+	// see-through in the image
+	Graphics::ManagedSurface &out = graphic._drawSurface;
+	out.create(area.width(), area.height(), g_nancy->_graphics->getTransparentPixelFormat());
+	out.clear(0);
+	graphic.setTransparent(false);
+
+	byte transR, transG, transB;
+	image.format.colorToRGB(g_nancy->_graphics->getTransColor(), transR, transG, transB);
+	const bool hasAlpha = image.format.aBits() != 0;
+
+	const uint modA = modColor >> 24;
+	const uint modR = (modColor >> 16) & 0xFF;
+	const uint modG = (modColor >> 8) & 0xFF;
+	const uint modB = modColor & 0xFF;
+
+	// A picture squashed flat, or one without a size, shows nothing
+	const bool canDraw = isMovedOnly || (fabs(determinant) > 1e-9 && dest.width() != 0 && dest.height() != 0);
+	const double scaleX = dest.width() != 0 ? (double)source.width() / dest.width() : 0.0;
+	const double scaleY = dest.height() != 0 ? (double)source.height() / dest.height() : 0.0;
+
+	for (int y = 0; canDraw && y < out.h; ++y) {
+		for (int x = 0; x < out.w; ++x) {
+			int sourceX = x;
+			int sourceY = y;
+
+			if (!isMovedOnly) {
+				// Back from the viewport to where the pixel is in the picture
+				const double movedX = area.left + x + 0.5 - offsetX;
+				const double movedY = area.top + y + 0.5 - offsetY;
+				const double placedX = (movedX * d - movedY * c) / determinant;
+				const double placedY = (movedY * a - movedX * b) / determinant;
+
+				sourceX = (int)floor((placedX - dest.left) * scaleX);
+				sourceY = (int)floor((placedY - dest.top) * scaleY);
+			}
+
+			if (sourceX < 0 || sourceX >= source.width() || sourceY < 0 || sourceY >= source.height()) {
+				continue;
+			}
+
+			byte alpha, red, green, blue;
+			image.format.colorToARGB(image.getPixel(source.left + sourceX, source.top + sourceY), alpha, red, green, blue);
+			if (red == transR && green == transG && blue == transB) {
+				continue;
+			}
+
+			if (!hasAlpha) {
+				alpha = 0xFF;
+			}
+
+			out.setPixel(x, y, out.format.ARGBToColor(alpha * modA / 255, red * modR / 255, green * modG / 255, blue * modB / 255));
+		}
+	}
+
+	graphic.moveTo(area);
+	graphic.setNeedsRedraw(true);
 }
 
 static Graphics::ManagedSurface *s_drawTarget = nullptr;
@@ -563,6 +675,11 @@ void OverlayRecord::readTable(int tableIndex) {
 		lua_pop(L, 1);
 	}
 
+	if (pushField(L, tableIndex, "modColor")) {
+		_modColor = checkColor(L, -1);
+		lua_pop(L, 1);
+	}
+
 	_graphic.init();
 	_graphic.setVisible(false);
 	applyRects();
@@ -580,10 +697,7 @@ void OverlayRecord::applyRects() {
 		return;
 	}
 
-	_graphic._drawSurface.create(_image, source);
-	_graphic.setTransparent(true);
-	_graphic.moveTo(getTransformedDest(_dest, getTransform(), source.width(), source.height()));
-	_graphic.setNeedsRedraw(true);
+	placePicture(_graphic, _image, source, _dest, getTransform(), _modColor);
 }
 
 void OverlayRecord::onZChanged() {
@@ -601,6 +715,8 @@ bool OverlayRecord::getField(const Common::String &key) {
 		pushRect(L, _dest);
 	} else if (key == "source") {
 		pushRect(L, _source);
+	} else if (key == "modColor") {
+		pushColor(L, _modColor);
 	} else {
 		return false;
 	}
@@ -615,6 +731,8 @@ bool OverlayRecord::setField(const Common::String &key) {
 		_dest = checkRect(L, 3);
 	} else if (key == "source") {
 		_source = checkRect(L, 3);
+	} else if (key == "modColor") {
+		_modColor = checkColor(L, 3);
 	} else {
 		return false;
 	}
@@ -633,6 +751,11 @@ void AnimOverlayRecord::readTable(int tableIndex) {
 	readField(L, tableIndex, "fps", _framesPerSecond);
 	readField(L, tableIndex, "pauseOnLastFrame", _pausesOnLastFrame);
 	readField(L, tableIndex, "visible", _isVisible);
+
+	if (pushField(L, tableIndex, "modColor")) {
+		_modColor = checkColor(L, -1);
+		lua_pop(L, 1);
+	}
 
 	if (!pushField(L, tableIndex, "onScreen")) {
 		luaL_error(L, "AnimOverlays must have a onScreen field");
@@ -706,10 +829,7 @@ void AnimOverlayRecord::applyFrame() {
 		return;
 	}
 
-	_graphic._drawSurface.create(_image, source);
-	_graphic.setTransparent(true);
-	_graphic.moveTo(getTransformedDest(_dest, getTransform(), source.width(), source.height()));
-	_graphic.setNeedsRedraw(true);
+	placePicture(_graphic, _image, source, _dest, getTransform(), _modColor);
 }
 
 // Starts over from the first frame
@@ -825,6 +945,9 @@ bool AnimOverlayRecord::setField(const Common::String &key) {
 
 	if (key == "onScreen") {
 		_dest = checkRect(L, 3);
+		applyFrame();
+	} else if (key == "modColor") {
+		_modColor = checkColor(L, 3);
 		applyFrame();
 	} else if (key == "pauseOnLastFrame") {
 		_pausesOnLastFrame = lua_toboolean(L, 3) != 0;
