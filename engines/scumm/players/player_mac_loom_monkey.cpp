@@ -240,8 +240,14 @@ bool LoomMacSndLoader::parseNextEvent(uint16 chan, uint16 &duration, uint8 &note
 	skip = false;
 	updateInstr = false;
 
-	if (_synth == 4 && chan != 0 && note == 0)
-		note = 1;
+	// This is the original code's tempo glitch workaround. For whatever reason, it was implemented for sampled synth
+	// mode only, although the tempo glitch is present in all synth modes. It is not a good workaround, since it - obviously -
+	// inserts notes of value 1 into the music, which may actually be heard. We have another workaround for the other
+	// synth modes in LoomMonkeyMacSnd::sendSoundCommands(). That one works around the tempo issue without having any
+	// side effects. So I disabled this workaround here and extended the other one to cover the sampled synth mode, too.
+	// 
+	//if (_synth == 4 && chan != 0 && note == 0)
+	//	note = 1;
 
 	return true;
 }
@@ -735,7 +741,9 @@ void LoomMonkeyMacSnd::sendSoundCommands(int timeStamp) {
 					_sdrv->playNote(_musChannels[i], MacLowLevelPCMDriver::kEnqueue, note, duration);
 					// Workaround for tempo glitch in original driver. For the sampled synth in 4 channel mode, there is
 					// some sort of fix in the original (see parseNextEvent()), but that really does not work well for the other cases.
-					if (note == 0 && _curSynthType != 4)
+					// I have disabled that one (since it causes unpleasant noise) and extended this workaround to all synth modes,
+					// since it fixes the issue without having any side effect.
+					if (note == 0 /* && _curSynthType != 4*/)
 						_sdrv->wait(_musChannels[i], MacLowLevelPCMDriver::kEnqueue, duration);
 				}
 				_chanPlaying |= (1 << i);
