@@ -211,6 +211,7 @@ bool BCBEngine::dispatchMapMoveControls() {
 	if (showNewMapScreen)
 		showMapScreen();
 	_currentDisplayState = 2;
+	writeContinueState();
 	if (!showNewMapScreen)
 		drawMapControls();
 	startMapMoveMovie();

@@ -97,6 +97,7 @@ bool BCBEngine::showActiveSceneChoiceControls() {
 	drawSceneChoiceButtons(sceneChoiceUiSetToShowId);
 	_sceneChoiceActive = true;
 	_sceneIdleMovieTimerTicks = 0;
+	writeContinueState();
 	return true;
 }
 

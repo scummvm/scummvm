@@ -126,6 +126,13 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 		case 51:
 			startNewGameFromTitle();
 			break;
+		case 52:
+			drawTitleButton(i, false);
+			_titleButtonsActive = false;
+			_titleLoadSlotsActive = false;
+			if (loadGameState(0).getCode() != Common::kNoError)
+				_titleButtonsActive = true;
+			break;
 		default:
 			drawTitleButton(i, false);
 			break;

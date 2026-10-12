@@ -60,6 +60,12 @@ public:
 	~BCBEngine();
 
 	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveAutosaveCurrently() override;
 
 private:
 	bool initializeSearchPaths();
@@ -79,10 +85,12 @@ private:
 	void startSceneIdleMovie();
 	void stopSceneIdleMovie();
 	void restoreTitleScreenRegion(const Common::Rect &rect, bool present = true);
+	void writeContinueState();
 	bool openMapMoveMovie();
 	void startMapMoveMovie();
 	void stopMapMoveMovie();
 	void resetGameState();
+	void resetTransientRuntimeStateAfterLoad();
 	bool loadScriptData();
 	bool loadExecutableDataTables();
 	bool loadByteFile(const char *fileName, Common::Array<byte> &data) const;
@@ -179,6 +187,8 @@ private:
 	void delayWithEventPolling(uint32 millis);
 	void delayWithEventPolling(uint32 millis, bool handleClicks);
 	Common::U32String decodeExecutableTextForDisplay(const Common::String &text) const;
+	Common::U32String formatSystemTextForDisplay(const Common::String &originalFormat, int slot) const;
+	Common::U32String formatSystemClockTextForDisplay(const Common::String &originalFormat, int slot, int savedDay, int savedClockTicks) const;
 	void mainLoop();
 
 	const HaroldGameDescription *_gameDescription;
@@ -263,6 +273,7 @@ private:
 	bool _suppressClickHandling = false;
 	bool _titleButtonsActive = false;
 	bool _systemButtonsVisible = false;
+	int _systemSaveLoadSlotActionMode = 0;
 	bool _titleLoadSlotsActive = false;
 };
 
