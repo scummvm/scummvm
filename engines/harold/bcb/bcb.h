@@ -111,7 +111,13 @@ private:
 	void stopActiveMovieAndDispatch();
 	void processQueuedMovieSequence();
 	void composeMapControlsToSurface(Graphics::Surface &surface, const Graphics::Surface &mapArt);
+	bool showMainSceneScreen();
 	bool drawMainSceneScreen(bool lineReveal);
+	void captureSceneChoiceBacking();
+	void restoreSceneChoiceBacking(bool present = true);
+	void freeSceneChoiceBacking();
+	void clearSceneChoiceAfterSelection();
+	bool isSceneChoiceButtonVisible(int buttonIndex) const;
 	void applyPendingClockTickDelta();
 	void notifyGameClockTicksChanged();
 	void drawClockAndChipIndicator(bool present = true);
@@ -172,6 +178,8 @@ private:
 	Graphics::Surface *_uiBitmap = nullptr;
 	Common::String _uiBitmapName;
 	Graphics::Surface *_chipBitmap = nullptr;
+	Graphics::Surface *_sceneChoiceBacking = nullptr;
+	Common::Rect _sceneChoiceBackingRect;
 	Audio::SoundHandle _uiSoundHandle;
 	uint32 _gameState[0x100] = {};
 	uint32 _scriptValueStack[0x100] = {};

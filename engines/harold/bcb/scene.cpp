@@ -33,6 +33,103 @@
 
 namespace BCB {
 
+bool BCBEngine::showMainSceneScreen() {
+	_sceneChoiceActive = false;
+	_mapControlsActive = false;
+	freeSceneChoiceBacking();
+	return drawMainSceneScreen(true);
+}
+
+bool BCBEngine::drawMainSceneScreen(bool lineReveal) {
+	const bool mainSceneNightFlag = stateDword(kStateMainSceneNightFlag) != 0;
+	Graphics::Surface *mainScene = loadBitmap(mainSceneNightFlag ? "16mmainn.bmp" : "16mmain.bmp");
+	if (!mainScene)
+		return false;
+
+	applyPendingClockTickDelta();
+	renderClockAndChipToSurface(*mainScene, 0, stateDword(kStateGameClockTicks));
+	if (lineReveal) {
+		blitScreenWithLineReveal(*mainScene, false);
+	} else {
+		g_system->copyRectToScreen(mainScene->getPixels(), mainScene->pitch, 0, 0, MIN<int>(mainScene->w, 640), MIN<int>(mainScene->h, 480));
+	}
+	mainScene->free();
+	delete mainScene;
+	_currentDisplayState = 1;
+	_sceneIdleMovieTimerTicks = 0;
+	_lastTimerTick = g_system->getMillis();
+	g_system->updateScreen();
+	return true;
+}
+
+void BCBEngine::captureSceneChoiceBacking() {
+	freeSceneChoiceBacking();
+	for (uint i = 1; i < ARRAYSIZE(kSceneChoiceButtonTable); ++i) {
+		const ButtonControlRecord &button = kSceneChoiceButtonTable[i];
+		const Common::Rect rect(button.x, button.y, button.x + button.width, button.y + button.height);
+		if (i == 1)
+			_sceneChoiceBackingRect = rect;
+		else
+			_sceneChoiceBackingRect.extend(rect);
+	}
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+
+	_sceneChoiceBacking = new Graphics::Surface();
+	_sceneChoiceBacking->create(_sceneChoiceBackingRect.width(), _sceneChoiceBackingRect.height(), screen->format);
+	_sceneChoiceBacking->copyRectToSurface(*screen, 0, 0, _sceneChoiceBackingRect);
+	g_system->unlockScreen();
+}
+
+void BCBEngine::restoreSceneChoiceBacking(bool present) {
+	if (!_sceneChoiceBacking)
+		return;
+
+	for (int buttonIndex = 1; buttonIndex <= _sceneChoiceEnabledButtonLimit && buttonIndex < (int)ARRAYSIZE(kSceneChoiceButtonTable); ++buttonIndex) {
+		if (!isSceneChoiceButtonVisible(buttonIndex))
+			continue;
+
+		const ButtonControlRecord &button = kSceneChoiceButtonTable[buttonIndex];
+		g_system->copyRectToScreen(_sceneChoiceBacking->getBasePtr(button.x - _sceneChoiceBackingRect.left, button.y - _sceneChoiceBackingRect.top), _sceneChoiceBacking->pitch, button.x, button.y, button.width, button.height);
+	}
+
+	if (present)
+		g_system->updateScreen();
+}
+
+void BCBEngine::freeSceneChoiceBacking() {
+	if (!_sceneChoiceBacking)
+		return;
+
+	_sceneChoiceBacking->free();
+	delete _sceneChoiceBacking;
+	_sceneChoiceBacking = nullptr;
+}
+
+void BCBEngine::clearSceneChoiceAfterSelection() {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (screen) {
+		screen->fillRect(Common::Rect(0x10, 0x30, 0x1a0, 0xf8), screen->format.RGBToColor(0, 0, 0));
+		g_system->unlockScreen();
+	}
+
+	freeSceneChoiceBacking();
+	g_system->updateScreen();
+}
+
+bool BCBEngine::isSceneChoiceButtonVisible(int buttonIndex) const {
+	if (buttonIndex <= 0 || buttonIndex >= (int)ARRAYSIZE(kSceneChoiceButtonTable))
+		return false;
+
+	const int sceneChoiceUiSetToShowId = stateDword(kStateSceneChoiceUiSetToShowId);
+	const int choiceCount = (sceneChoiceUiSetToShowId >= 0 && sceneChoiceUiSetToShowId < (int)_sceneChoiceText.size()) ? MIN<int>(_sceneChoiceText[sceneChoiceUiSetToShowId].size(), 8) : 0;
+
+	return buttonIndex <= choiceCount ||
+		   (buttonIndex == _sceneChoiceTerminatorButtonIndex && stateDword(kStateSceneChoiceExtraButtonFlag) != 0);
+}
+
 void BCBEngine::applyPendingClockTickDelta() {
 	stateDword(kStateGameClockTicks) += _pendingClockTickDelta;
 	_pendingClockTickDelta = 0;
@@ -102,10 +199,6 @@ void BCBEngine::drawAnalogClockAndChip(int baseHourOffset, int gameClockTicks, b
 
 	if (present)
 		g_system->updateScreen();
-}
-
-bool BCBEngine::drawMainSceneScreen(bool lineReveal) {
-	error("BCB: drawMainSceneScreen is not implemented");
 }
 
 } // End of namespace BCB
