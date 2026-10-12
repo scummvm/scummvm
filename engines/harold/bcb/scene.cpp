@@ -34,6 +34,7 @@
 namespace BCB {
 
 bool BCBEngine::showMainSceneScreen() {
+	stopMapMoveMovie();
 	_sceneChoiceActive = false;
 	_mapControlsActive = false;
 	freeSceneChoiceBacking();

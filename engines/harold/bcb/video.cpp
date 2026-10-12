@@ -33,6 +33,7 @@ namespace BCB {
 
 bool BCBEngine::playNumberedMovie(int movieId, bool blankScreenMovie) {
 	stopSceneIdleMovie();
+	stopMapMoveMovie();
 	stopActiveMovie();
 	_sceneChoiceActive = false;
 	_mapControlsActive = false;
