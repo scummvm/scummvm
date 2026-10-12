@@ -322,14 +322,14 @@ void IgorEngine::EXEC_MAIN_ACTION_38_lookAtNewspaper() {
 	ADD_DIALOGUE_TEXT(150, 2, 77);
 	SET_DIALOGUE_TEXT(1, 4);
 	startIgorDialogue();
-	waitForEndOfIgorDialogue(false);
+	waitForEndOfIgorDialogue(false, false);
 	wd->x = 240;
 	wd->y = 130;
 	ADD_DIALOGUE_TEXT(152, 1, 78);
 	ADD_DIALOGUE_TEXT(153, 3, 79);
 	SET_DIALOGUE_TEXT(1, 2);
 	startIgorDialogue();
-	waitForEndOfIgorDialogue(false);
+	waitForEndOfIgorDialogue(false, false);
 	wd->x = _walkDataCurrentPosX2;
 	wd->y = _walkDataCurrentPosY2;
 	wd->scaleWidth = _walkDataCurrentWScale;
@@ -363,7 +363,8 @@ void IgorEngine::EXEC_MAIN_ACTION_43_lookAtPhoto() {
 	wd->x = 160;
 	wd->y = 130;
 	wd->scaleWidth = 50;
-	igorSayAndWait(83, 2, 59);
+	igorSay(83, 2, 59);
+	waitForEndOfIgorDialogue(false, false);
 	_currentAction.object1Num = 0;
 	wd->x = _walkDataCurrentPosX2;
 	wd->y = _walkDataCurrentPosY2;
@@ -841,7 +842,7 @@ void IgorEngine::lookAtPapyrus(bool reveal) {
 		}
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
-		waitForEndOfIgorDialogue(false);
+		waitForEndOfIgorDialogue(false, false);
 		// the paper stays on screen until another click (left or right)
 		_inputVars[kInputClick] = 0;
 		_inputVars[kInputRightClick] = 0;

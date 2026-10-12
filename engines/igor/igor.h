@@ -638,7 +638,7 @@ private:
 	void animateIgorTalking(int frame);
 	void fixIgorDialogueTextPosition(int num, int count, int *x, int *y);
 	void startIgorDialogue();
-	void waitForEndOfIgorDialogue(bool animateHead = true);
+	void waitForEndOfIgorDialogue(bool animateHead = true, bool updateRoomBackground = true);
 	void fixDialogueTextPosition(int num, int count, int *x, int *y);
 	void startCutsceneDialogue(int x, int y, int r, int g, int b);
 	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
