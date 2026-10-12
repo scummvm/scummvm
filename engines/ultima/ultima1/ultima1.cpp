@@ -25,9 +25,11 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "audio/decoders/raw.h"
 #include "graphics/paletteman.h"
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/console.h"
+#include "ultima/ultima1/sound_effects.h"
 #include "ultima/ultima1/views/views.h"
 #include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/metaengine.h"
@@ -44,6 +46,7 @@ Ultima1Engine::Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 
 
 Ultima1Engine::~Ultima1Engine() {
+	_mixer->stopHandle(_effectHandle);
 }
 
 uint32 Ultima1Engine::getFeatures() const {
@@ -109,7 +112,28 @@ bool Ultima1Engine::savegamesExist() const {
 }
 
 void Ultima1Engine::playFX(int num) {
-	warning("TODO: playFX(%d)", num);
+	if (_savegame._soundOn)
+		queueEffect(SoundEffects::render(num));
+}
+
+void Ultima1Engine::queueEffect(const Common::Array<byte> &samples) {
+	// Don't let effects pile up behind the action
+	constexpr int MAX_QUEUED = 6;
+
+	if (samples.empty())
+		return;
+
+	if (!_mixer->isSoundHandleActive(_effectHandle)) {
+		_effectStream = Audio::makeQueuingAudioStream(SoundEffects::SAMPLE_RATE, false);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectHandle, _effectStream);
+	}
+
+	if (_effectStream->numQueuedStreams() >= MAX_QUEUED)
+		return;
+
+	byte *data = (byte *)malloc(samples.size());
+	memcpy(data, &samples[0], samples.size());
+	_effectStream->queueBuffer(data, samples.size(), DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 }
 
 void Ultima1Engine::pauseMillis(uint32 millis) {

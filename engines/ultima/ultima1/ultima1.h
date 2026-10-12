@@ -31,6 +31,8 @@
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/palette.h"
@@ -52,6 +54,13 @@ struct Ultima1GameDescription;
 class Ultima1Engine : public Engine, public Shared::Events {
 private:
 	const Ultima::UltimaGameDescription *_gameDescription;
+	Audio::QueuingAudioStream *_effectStream = nullptr;
+	Audio::SoundHandle _effectHandle;
+
+	/**
+	 * Queues up the samples of a sound effect to be played after any already playing
+	 */
+	void queueEffect(const Common::Array<byte> &samples);
 
 protected:
 	// Engine APIs
@@ -135,7 +144,7 @@ public:
 	bool savegamesExist() const;
 
 	/**
-	 * Play a sound effect
+	 * Plays one of the sound effects (0 to 9), if sound is turned on
 	 */
 	void playFX(int num);
 
