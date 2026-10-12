@@ -241,7 +241,7 @@ bool Ultima4Engine::hasFeature(EngineFeature f) const {
 }
 
 bool Ultima4Engine::isEnhanced() const {
-	return _gameDescription->features & GF_VGA_ENHANCED;
+	return _gameDescription->features & GF_ENHANCED;
 }
 
 Common::Error Ultima4Engine::loadGameStream(Common::SeekableReadStream *stream) {

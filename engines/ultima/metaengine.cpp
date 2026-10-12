@@ -232,15 +232,30 @@ const ADExtraGuiOptionsMap *UltimaMetaEngine::getAdvancedExtraGuiOptions() const
 GUI::OptionsContainerWidget *UltimaMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss,
 		const Common::String &name, const Common::String &target) const {
 #ifdef ENABLE_ULTIMA2
-	if (getGameId(target) == "ultima2")
+	if (getGameId(target) == "ultima2" || getGameId(target) == "ultima2_enh") {
+		// The enhanced version starts off using the best of the graphics
+		const bool enhanced = getGameId(target) == "ultima2_enh";
 		return new Ultima::Shared::GraphicsOptionsWidget(boss, name, target,
-			Ultima::Ultima2::Data::RENDER_MODE_LABELS, Ultima::Ultima2::Data::RENDER_MODE_COUNT);
+			Ultima::Ultima2::Data::RENDER_MODE_LABELS, Ultima::Ultima2::Data::RENDER_MODE_COUNT,
+			ExtraGuiOptions(), true,
+			enhanced ? Ultima::Ultima2::Data::RENDER_EGA : Ultima::Ultima2::Data::RENDER_CGA);
+	}
 #endif
 #ifdef ENABLE_ULTIMA3
-	if (getGameId(target) == "ultima3")
+	if (getGameId(target) == "ultima3" || getGameId(target) == "ultima3_enh") {
+		// The enhanced version starts off with all the options on, and the best graphics
+		const bool enhanced = getGameId(target) == "ultima3_enh";
+		ExtraGuiOptions options = getExtraGuiOptions(target);
+		if (enhanced) {
+			for (uint i = 0; i < options.size(); ++i)
+				options[i].defaultState = true;
+		}
+
 		return new Ultima::Shared::GraphicsOptionsWidget(boss, name, target,
 			Ultima::Ultima3::Data::RENDER_MODE_LABELS, Ultima::Ultima3::Data::RENDER_MODE_COUNT,
-			getExtraGuiOptions(target), false);
+			options, false,
+			enhanced ? Ultima::Ultima3::Data::RENDER_VGA : Ultima::Ultima3::Data::RENDER_CGA);
+	}
 #endif
 
 	return AdvancedMetaEngine::buildEngineOptionsWidget(boss, name, target);
@@ -341,11 +356,11 @@ Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
 		return Ultima::Ultima1::MetaEngine::initKeymaps();
 #endif
 #ifdef ENABLE_ULTIMA2
-	if (gameId == "ultima2")
+	if (gameId == "ultima2" || gameId == "ultima2_enh")
 		return Ultima::Ultima2::MetaEngine::initKeymaps();
 #endif
 #ifdef ENABLE_ULTIMA3
-	if (gameId == "ultima3")
+	if (gameId == "ultima3" || gameId == "ultima3_enh")
 		return Ultima::Ultima3::MetaEngine::initKeymaps();
 #endif
 #ifdef ENABLE_ULTIMA4

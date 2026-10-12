@@ -38,7 +38,7 @@ namespace Ultima {
 #define ENTRY_ULTIMA6_NORMAL(FILENAME, MD5, FILESIZE, LANG, PLATFORM) {{"ultima6", 0, AD_ENTRY1s(FILENAME, MD5, FILESIZE), LANG, PLATFORM, ADGF_NO_FLAGS, GUI_OPTIONS_ULTIMA6}, GAME_ULTIMA6, 0}
 
 // Ultima 6 enhanced mode only
-#define ENTRY_ULTIMA6_ENHANCED(FILENAME, MD5, FILESIZE, LANG, PLATFORM) {{"ultima6_enh", 0, AD_ENTRY1s(FILENAME, MD5, FILESIZE), LANG, PLATFORM, ADGF_NO_FLAGS, GUI_OPTIONS_ULTIMA6}, GAME_ULTIMA6, GF_VGA_ENHANCED}
+#define ENTRY_ULTIMA6_ENHANCED(FILENAME, MD5, FILESIZE, LANG, PLATFORM) {{"ultima6_enh", 0, AD_ENTRY1s(FILENAME, MD5, FILESIZE), LANG, PLATFORM, ADGF_NO_FLAGS, GUI_OPTIONS_ULTIMA6}, GAME_ULTIMA6, GF_ENHANCED}
 
 // Ultima 6 both normal and enhanced mode (this should normally be used)
 #define ENTRY_ULTIMA6(FILENAME, MD5, FILESIZE, LANG, PLATFORM) \
@@ -52,7 +52,9 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 	{ "akalabeth", "Akalabeth: World of Doom" },
 	{ "ultima1", "Ultima I: The First Age of Darkness" },
 	{ "ultima2", "Ultima II: Revenge of the Enchantress" },
+	{ "ultima2_enh", "Ultima II: Revenge of the Enchantress - Enhanced" },
 	{ "ultima3", "Ultima III: Exodus" },
+	{ "ultima3_enh", "Ultima III: Exodus - Enhanced" },
 	{ "ultima4", "Ultima IV: Quest of the Avatar" },
 	{ "ultima4_enh", "Ultima IV: Quest of the Avatar - Enhanced" },
 	{ "ultima6", "Ultima VI: The False Prophet" },
@@ -101,7 +103,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_ULTIMA1
 		},
 		GAME_ULTIMA1,
-		GF_VGA_ENHANCED
+		GF_ENHANCED
 	},
 
 	{
@@ -151,6 +153,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 
 	{
+		// Ultima II - Revenge of the Enchantress - Enhanced
+		{
+			"ultima2_enh",
+			0,
+			AD_ENTRY1s("monsters", "29160ad200758650d8a4a6af2474d075", 2176),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ULTIMA2
+		},
+		GAME_ULTIMA2,
+		GF_ENHANCED
+	},
+
+	{
 		// Ultima III - Exodus
 		{
 			"ultima3",
@@ -166,6 +183,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 
 	{
+		// Ultima III - Exodus - Enhanced
+		{
+			"ultima3_enh",
+			0,
+			AD_ENTRY1s("exod.ibm", "525bbaf8dd45a9bf737852f7719ae864", 16384),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ULTIMA3
+		},
+		GAME_ULTIMA3,
+		GF_ENHANCED
+	},
+
+	{
 		// Ultima IV - Quest of the Avatar
 		{
 			"ultima4",
@@ -192,7 +224,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_ULTIMA4
 		},
 		GAME_ULTIMA4,
-		GF_VGA_ENHANCED
+		GF_ENHANCED
 	},
 
 	{
@@ -222,7 +254,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_ULTIMA4
 		},
 		GAME_ULTIMA4,
-		GF_VGA_ENHANCED
+		GF_ENHANCED
 	},
 
 	// GOG Ultima VI
@@ -689,7 +721,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_MARTIAN_DREAMS
 		},
 		GAME_MARTIAN_DREAMS,
-		GF_VGA_ENHANCED
+		GF_ENHANCED
 	},
 	// Martian Dreams - Enhanced V1.4 VGA - Time saving installation (available on GOG)
 	{
@@ -707,7 +739,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_MARTIAN_DREAMS
 		},
 		GAME_MARTIAN_DREAMS,
-		GF_VGA_ENHANCED
+		GF_ENHANCED
 	},
 
 	// REMARK: SE can have many versions, so the detection is a bit tricky:
@@ -821,7 +853,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
-		GF_VGA_ENHANCED
+		GF_ENHANCED
 	},
 	// The Savage Empire v1.6 VGA - Time saving installation
 	{
@@ -840,7 +872,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
-		GF_VGA_ENHANCED
+		GF_ENHANCED
 	},
 
 	// REMARK: The next 4 versions are unsupported!
@@ -943,7 +975,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
-		GF_VGA_ENHANCED
+		GF_ENHANCED
 	},
 	// The Savage Empire v2.1 VGA - Time saving installation
 	{
@@ -962,7 +994,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
-		GF_VGA_ENHANCED
+		GF_ENHANCED
 	},
 
 	{ AD_TABLE_END_MARKER, (GameId)0, 0 }

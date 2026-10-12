@@ -76,7 +76,7 @@ GameId NuvieEngine::getGameId() const {
 }
 
 bool NuvieEngine::isEnhanced() const {
-	return _gameDescription->features & GF_VGA_ENHANCED;
+	return _gameDescription->features & GF_ENHANCED;
 }
 
 bool NuvieEngine::initialize() {

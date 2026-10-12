@@ -59,12 +59,13 @@ Common::String Ultima2Engine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
 
-// The graphics renderer mode stored in the configuration, falling back
-// to the original CGA look if it's missing or stale
-static Data::RenderMode configuredRenderMode() {
-	int mode = ConfMan.getInt(Shared::GRAPHICS_MODE_KEY);
+// The graphics renderer mode stored in the configuration, falling back to
+// the default for the version of the game if it's missing or stale
+static Data::RenderMode configuredRenderMode(bool enhanced) {
+	const Data::RenderMode defaultMode = enhanced ? Data::RENDER_EGA : Data::RENDER_CGA;
+	int mode = Shared::configuredGraphicsMode(defaultMode);
 	return (mode >= 0 && mode < Data::RENDER_MODE_COUNT) ?
-		(Data::RenderMode)mode : Data::RENDER_CGA;
+		(Data::RenderMode)mode : defaultMode;
 }
 
 Common::Error Ultima2Engine::run() {
@@ -91,7 +92,7 @@ Common::Error Ultima2Engine::run() {
 	}
 
 	// Restore the player's preferred renderer
-	_renderMode = configuredRenderMode();
+	_renderMode = configuredRenderMode((_gameDescription->features & GF_ENHANCED) != 0);
 
 	// Set the palette now that the engine data is available, since the
 	// composite renderer's colors come from a file in it
@@ -251,7 +252,7 @@ void Ultima2Engine::playFX(Data::SoundEffect fx) {
 
 void Ultima2Engine::applyGameSettings() {
 	// The graphics mode can be changed from the in-game options dialog
-	setRenderMode(configuredRenderMode());
+	setRenderMode(configuredRenderMode((_gameDescription->features & GF_ENHANCED) != 0));
 }
 
 void Ultima2Engine::setRenderMode(Data::RenderMode mode) {

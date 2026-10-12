@@ -46,7 +46,7 @@ enum GameId {
 };
 
 enum UltimaGameFeatures {
-	GF_VGA_ENHANCED = 1 << 0
+	GF_ENHANCED = 1 << 0
 };
 
 // Custom game detector flags used by Ultima engines

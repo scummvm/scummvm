@@ -28,11 +28,21 @@
 namespace Ultima {
 namespace Shared {
 
+int configuredGraphicsMode(int defaultMode) {
+	const Common::String domain = ConfMan.getActiveDomainName();
+	return ConfMan.hasKey(GRAPHICS_MODE_KEY, domain) ? ConfMan.getInt(GRAPHICS_MODE_KEY, domain) : defaultMode;
+}
+
+bool configuredOption(const char *key, bool defaultState) {
+	const Common::String domain = ConfMan.getActiveDomainName();
+	return ConfMan.hasKey(key, domain) ? ConfMan.getBool(key, domain) : defaultState;
+}
+
 GraphicsOptionsWidget::GraphicsOptionsWidget(GUI::GuiObject *boss, const Common::String &name,
 		const Common::String &domain, const char *const *modes, int modeCount,
-		const ExtraGuiOptions &options, bool onTitleScreen) :
+		const ExtraGuiOptions &options, bool onTitleScreen, int defaultMode) :
 		GUI::OptionsContainerWidget(boss, name, "UltimaGraphicsOptionsDialog", domain),
-		_modes(modes), _modeCount(modeCount), _options(options) {
+		_modes(modes), _modeCount(modeCount), _options(options), _defaultMode(defaultMode) {
 	const Common::U32String tooltip = onTitleScreen ?
 		_("Which of the game's renderers to use. This can also be changed from the game's title screen.") :
 		_("Which of the game's renderers to use.");
@@ -54,12 +64,12 @@ GraphicsOptionsWidget::GraphicsOptionsWidget(GUI::GuiObject *boss, const Common:
 }
 
 void GraphicsOptionsWidget::load() {
-	// A missing or stale value means the original graphics
-	int mode = 0;
+	// A missing or stale value means the game's default graphics
+	int mode = _defaultMode;
 	if (ConfMan.hasKey(GRAPHICS_MODE_KEY, _domain))
 		mode = ConfMan.getInt(GRAPHICS_MODE_KEY, _domain);
 	if (mode < 0 || mode >= _modeCount)
-		mode = 0;
+		mode = _defaultMode;
 
 	_modePopUp->setSelectedTag(mode);
 

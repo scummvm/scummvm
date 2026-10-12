@@ -57,6 +57,16 @@ class Ultima3Engine : public Engine, public Shared::Events {
 private:
 	const Ultima::UltimaGameDescription *_gameDescription;
 
+	/**
+	 * Returns true for the entry that has the Ultima III Upgrade's changes on by default
+	 */
+	bool isEnhanced() const;
+
+	/**
+	 * Reads the game options
+	 */
+	void loadOptions();
+
 protected:
 	// Engine APIs
 	Common::Error run() override;

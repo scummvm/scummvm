@@ -41,21 +41,32 @@ namespace Ultima3 {
 
 Ultima3Engine *g_engine;
 
-// The renderer stored in the configuration, falling back to the original CGA
-// graphics if it's missing or stale
-static Data::RenderMode configuredRenderMode() {
-	int mode = ConfMan.getInt(Shared::GRAPHICS_MODE_KEY);
-	return (mode >= 0 && mode < Data::RENDER_MODE_COUNT) ? (Data::RenderMode)mode : Data::RENDER_CGA;
+// The renderer stored in the configuration, falling back to the default one
+// for the version of the game if it's missing or stale
+static Data::RenderMode configuredRenderMode(bool enhanced) {
+	const Data::RenderMode defaultMode = enhanced ? Data::RENDER_VGA : Data::RENDER_CGA;
+	int mode = Shared::configuredGraphicsMode(defaultMode);
+	return (mode >= 0 && mode < Data::RENDER_MODE_COUNT) ? (Data::RenderMode)mode : defaultMode;
 }
 
 Ultima3Engine::Ultima3Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), Shared::Events("ultima3"), _gameDescription(gameDesc) {
 	g_engine = this;
 	_pcSpeaker = new Audio::PCSpeaker();
-	_moreMonsters = ConfMan.getBool("more_monsters");
-	_lessHunger = ConfMan.getBool("less_hunger");
-	_moonIcons = ConfMan.getBool("moon_icons");
-	_renderMode = configuredRenderMode();
+	loadOptions();
+	_renderMode = configuredRenderMode(isEnhanced());
+}
+
+bool Ultima3Engine::isEnhanced() const {
+	return (_gameDescription->features & GF_ENHANCED) != 0;
+}
+
+void Ultima3Engine::loadOptions() {
+	const bool enhanced = isEnhanced();
+
+	_moreMonsters = Shared::configuredOption("more_monsters", enhanced);
+	_lessHunger = Shared::configuredOption("less_hunger", enhanced);
+	_moonIcons = Shared::configuredOption("moon_icons", true);
 }
 
 Ultima3Engine::~Ultima3Engine() {
@@ -102,12 +113,10 @@ Common::Error Ultima3Engine::run() {
 }
 
 void Ultima3Engine::applyGameSettings() {
-	_moreMonsters = ConfMan.getBool("more_monsters");
-	_lessHunger = ConfMan.getBool("less_hunger");
-	_moonIcons = ConfMan.getBool("moon_icons");
+	loadOptions();
 
 	// The renderer can be changed from the game options dialog
-	Data::RenderMode mode = configuredRenderMode();
+	Data::RenderMode mode = configuredRenderMode(isEnhanced());
 	if (mode == _renderMode)
 		return;
 

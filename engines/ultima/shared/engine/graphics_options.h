@@ -40,6 +40,18 @@ namespace Shared {
 constexpr const char *GRAPHICS_MODE_KEY = "graphics_mode";
 
 /**
+ * Returns the graphics mode of the game being run, or the given one if it
+ * has never been chosen. Enhanced versions of games default to a better one
+ */
+extern int configuredGraphicsMode(int defaultMode);
+
+/**
+ * Returns a checkbox option of the game being run, or the given state if it
+ * has never been set. Enhanced versions of games default to having them on
+ */
+extern bool configuredOption(const char *key, bool defaultState);
+
+/**
  * Game options widget with a drop-down for picking the graphics mode. It's
  * given the (untranslated, marked with _s) labels of the game's modes, in
  * the order of the game's own mode enum - the selected entry's index is what
@@ -53,6 +65,7 @@ private:
 	int _modeCount;
 	GUI::PopUpWidget *_modePopUp;
 	ExtraGuiOptions _options;
+	int _defaultMode;
 	Common::Array<GUI::CheckboxWidget *> _checkboxes;
 
 protected:
@@ -67,10 +80,12 @@ public:
 	 * @param modeCount			How many modes there are
 	 * @param options			The game's other options to show
 	 * @param onTitleScreen		True if the mode can be changed from the game's title screen
+	 * @param defaultMode		The mode that's selected until one has been chosen
 	 */
 	GraphicsOptionsWidget(GUI::GuiObject *boss, const Common::String &name,
 		const Common::String &domain, const char *const *modes, int modeCount,
-		const ExtraGuiOptions &options = ExtraGuiOptions(), bool onTitleScreen = true);
+		const ExtraGuiOptions &options = ExtraGuiOptions(), bool onTitleScreen = true,
+		int defaultMode = 0);
 	~GraphicsOptionsWidget() override {
 	}
 
