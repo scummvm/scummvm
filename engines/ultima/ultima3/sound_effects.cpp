@@ -37,6 +37,15 @@ constexpr uint32 TICK_HZ = 1193182 / 11;
 constexpr uint32 TOGGLE_CYCLES = 4 + 14;
 constexpr uint32 RANDOM_CYCLES = 1100;
 
+// The timer the upgrade counts the reveal of the title pictures by: the PC's
+// clock divided by 42
+constexpr uint32 SPARKLE_TICK_HZ = 1193182 / 42;
+
+// How long the original takes to deal with a part of a title picture that is
+// drawn, and one that is left out. The speaker is flipped for those drawn
+constexpr uint32 SPARKLE_DRAWN_CYCLES = 150;
+constexpr uint32 SPARKLE_SKIPPED_CYCLES = 120;
+
 constexpr int AMPLITUDE = 0x30;
 
 namespace {
@@ -239,6 +248,30 @@ void swirl(Speaker &s) {
 	}
 }
 
+// Turns when the speaker was flipped into samples
+Common::Array<byte> toSamples(Speaker &s, uint32 rate) {
+	// The speaker is let go of at the end
+	if (s._edges.size() & 1)
+		s._edges.push_back(s._cycles);
+
+	Common::Array<byte> samples;
+	uint32 total = (uint32)(((uint64)s._cycles * SoundEffects::SAMPLE_RATE) / rate) + 1;
+	samples.resize(total);
+
+	uint32 pos = 0;
+	bool high = false;
+	for (uint i = 0; i <= s._edges.size(); ++i) {
+		uint32 end = (i < s._edges.size()) ? (uint32)(((uint64)s._edges[i] * SoundEffects::SAMPLE_RATE) / rate) : total;
+		byte level = high ? 0x80 + AMPLITUDE : 0x80 - AMPLITUDE;
+
+		for (; pos < end && pos < total; ++pos)
+			samples[pos] = level;
+		high = !high;
+	}
+
+	return samples;
+}
+
 } // End of anonymous namespace
 
 Common::Array<byte> SoundEffects::render(byte effect, byte arg1, byte arg2, bool timed) {
@@ -275,31 +308,36 @@ Common::Array<byte> SoundEffects::render(byte effect, byte arg1, byte arg2, bool
 	case 0xF4:
 		swirl(s);
 		break;
+	case TITLE_BURST:
+		noise(s, 0x400, 0);
+		break;
 	default:
 		return Common::Array<byte>();
 	}
 
-	// The speaker is let go of at the end
-	if (s._edges.size() & 1)
-		s._edges.push_back(s._cycles);
+	return toSamples(s, timed ? TICK_HZ : CPU_HZ);
+}
 
-	Common::Array<byte> samples;
-	const uint32 rate = timed ? TICK_HZ : CPU_HZ;
-	uint32 total = (uint32)(((uint64)s._cycles * SAMPLE_RATE) / rate) + 1;
-	samples.resize(total);
+Common::Array<byte> SoundEffects::renderSparkle(const Common::Array<bool> &revealed, bool timed) {
+	Speaker s(timed);
 
-	uint32 pos = 0;
-	bool high = false;
-	for (uint i = 0; i <= s._edges.size(); ++i) {
-		uint32 end = (i < s._edges.size()) ? (uint32)(((uint64)s._edges[i] * SAMPLE_RATE) / rate) : total;
-		byte level = high ? 0x80 + AMPLITUDE : 0x80 - AMPLITUDE;
-
-		for (; pos < end && pos < total; ++pos)
-			samples[pos] = level;
-		high = !high;
+	for (uint i = 0; i < revealed.size(); ++i) {
+		if (timed) {
+			// A tick of the timer for each, with the speaker flipped for those that are drawn
+			if (revealed[i])
+				s.toggle();
+			++s._cycles;
+		} else {
+			if (revealed[i]) {
+				s.run(SPARKLE_DRAWN_CYCLES - TOGGLE_CYCLES);
+				s.toggle();
+			} else {
+				s.run(SPARKLE_SKIPPED_CYCLES);
+			}
+		}
 	}
 
-	return samples;
+	return toSamples(s, timed ? SPARKLE_TICK_HZ : CPU_HZ);
 }
 
 } // namespace Ultima3

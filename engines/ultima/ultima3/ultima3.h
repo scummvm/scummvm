@@ -91,12 +91,12 @@ private:
 	Audio::QueuingAudioStream *_effectStream = nullptr;
 	Audio::SoundHandle _effectHandle;
 
+public:
 	/**
 	 * Queues up the samples of a sound effect to be played
 	 */
 	void queueEffect(const Common::Array<byte> &samples);
 
-public:
 	/**
 	 * Queues a single square-wave note. divisor is the original's PIT
 	 * timer divisor (frequency = ~1193182/divisor), matching how each

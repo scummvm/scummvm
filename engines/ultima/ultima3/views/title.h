@@ -81,6 +81,9 @@ private:
 	// unconditional final full-detail pass
 	int _sparklePass = 0;
 
+	// How many frames the last pass of a sparkle takes, which is how long its buzz lasts
+	int _sparkleFrames = 1;
+
 	// drawAnimatedPixelPath (NAME.DAT) sub-state: byte offset of the next
 	// (length, row) pair
 	uint _pixelPathPos = 0;
@@ -98,6 +101,13 @@ private:
 
 	void loadPic(Graphics::ManagedSurface &surf, const Common::String &filename);
 	void loadRaw(Common::Array<byte> &data, const Common::String &filename);
+
+	// Returns true if the picture is being shown any way other than the original CGA, which
+	// has the upgrade's changes to the title screen
+	bool isUpgraded() const;
+
+	// Makes the buzz for a pass of a sparkle and works out how long it takes
+	void playSparkle(const Common::Array<bool> &revealed);
 
 	// Reveals one word-column (8 px) of `box` per PRNG roll when sparkle is
 	// true (drawSparkleBox's ah=0FFh mode); a plain full copy otherwise

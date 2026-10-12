@@ -24,6 +24,7 @@
 #include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/gfx/pic_decoder.h"
 #include "ultima/ultima3/gfx/pixels.h"
+#include "ultima/ultima3/sound_effects.h"
 #include "ultima/ultima3/ultima3.h"
 
 namespace Ultima {
@@ -36,8 +37,8 @@ namespace Views {
 // i.e. *8, dl=row count)
 static const TitleBox BOX1 = { 8, 8, 28, 264, 77 };
 static const TitleBox BOX4 = { 85, 85, 28, 264, 43 };
-static const TitleBox BOX5 = { 132, 132, 68, 72, 4 };
-static const TitleBox BOX6 = { 146, 146, 20, 40, 32 };
+static const TitleBox BOX5 = { 132, 132, 68, 32, 9 };
+static const TitleBox BOX6 = { 146, 146, 20, 256, 5 };
 static const TitleBox BOX2 = { 168, 168, 116, 88, 16 };
 static const TitleBox BOX3 = { 152, 168, 116, 96, 16 };
 
@@ -55,9 +56,18 @@ constexpr int FLAG_WIDTH = 92;
 constexpr int FLAG_HEIGHT = 16;
 constexpr byte PATH_COLOR_ENHANCED = 0x0B;
 
+constexpr int FRAME_MS = 50;
+
+// How long the upgrade holds the finished picture, which is 16 of its waits of 4 frame limiter
+// ticks of 55ms each, rather than the original's 5 of its slightly shorter waits
+constexpr int UPGRADE_FINAL_WAIT_FRAMES = 70;
 constexpr int WAIT_FRAMES_PER_UNIT = 5; // ~waitFrames(1)'s real-hardware duration, approximated
 
 Title::Title() : View("Title") {
+}
+
+bool Title::isUpgraded() const {
+	return _G(renderMode) != Data::RENDER_CGA;
 }
 
 void Title::loadPic(Graphics::ManagedSurface &surf, const Common::String &filename) {
@@ -114,6 +124,7 @@ void Title::draw() {
 
 void Title::drawBox(const TitleBox &box, bool sparkle, int threshold) {
 	int wordCols = box.width / 8;
+	Common::Array<bool> revealedSteps;
 
 	for (int row = 0; row < box.height; ++row) {
 		for (int col = 0; col < wordCols; ++col) {
@@ -121,13 +132,21 @@ void Title::drawBox(const TitleBox &box, bool sparkle, int threshold) {
 			bool reveal = true;
 
 			if (sparkle) {
-				// The original's additive congruential generator:
-				// al' = (al+0x1D); al'' = al'+ah; ah' = al'
 				byte al = _prngState & 0xFF, ah = _prngState >> 8;
 				byte step1 = al + 0x1D;
-				byte newAl = step1 + ah;
-				_prngState = (step1 << 8) | newAl;
-				reveal = newAl <= threshold;
+
+				if (isUpgraded()) {
+					// The upgrade's, which takes what was the high byte, and adds to the low
+					_prngState = (step1 << 8) | ah;
+					reveal = ah <= threshold;
+				} else {
+					// The original's additive congruential generator:
+					// al' = (al+0x1D); al'' = al'+ah; ah' = al'
+					byte newAl = step1 + ah;
+					_prngState = (step1 << 8) | newAl;
+					reveal = newAl <= threshold;
+				}
+				revealedSteps.push_back(reveal);
 			}
 
 			for (int dx = 0; dx < 8; ++dx) {
@@ -138,7 +157,20 @@ void Title::drawBox(const TitleBox &box, bool sparkle, int threshold) {
 		}
 	}
 
+	if (sparkle)
+		playSparkle(revealedSteps);
+
 	redraw();
+}
+
+void Title::playSparkle(const Common::Array<bool> &revealed) {
+	// The pass takes as long as the buzz does, which is made as each bit is drawn
+	Common::Array<byte> samples = SoundEffects::renderSparkle(revealed, g_engine->_timedSounds);
+	if (g_engine->_soundEnabled)
+		g_engine->queueEffect(samples);
+
+	const int ms = (int)((uint64)samples.size() * 1000 / SoundEffects::SAMPLE_RATE);
+	_sparkleFrames = MAX(1, (ms + FRAME_MS * 4 / 5) / FRAME_MS);
 }
 
 void Title::drawFlagFrame(int bxParam, int axParam) {
@@ -256,13 +288,7 @@ bool Title::tickWait() {
 }
 
 void Title::playSoundBurst() {
-	// The original toggles the PC speaker's raw output bit ~1024 times at a
-	// CPU-speed-dependent rate (no fixed PIT divisor is ever programmed);
-	// approximated here as a short buzzy burst rather than an exact tone
-	for (int i = 0; i < 8; ++i) {
-		g_engine->queueTone(1500, 20);
-		g_engine->queueTone(1800, 20);
-	}
+	g_engine->playSoundEffect(SoundEffects::TITLE_BURST);
 }
 
 void Title::timeout() {
@@ -276,7 +302,7 @@ void Title::timeout() {
 			drawBox(BOX1, true, _sparklePass * 4);
 			++_sparklePass;
 		}
-		delayFrames(1);
+		delayFrames(_phase == PH_BOX1_SPARKLE ? _sparkleFrames : 1);
 		break;
 
 	case PH_BOX1_WAIT:
@@ -296,7 +322,7 @@ void Title::timeout() {
 			drawBox(BOX4, true, _sparklePass * 4);
 			++_sparklePass;
 		}
-		delayFrames(1);
+		delayFrames(_phase == PH_BOX4_SPARKLE ? _sparkleFrames : 1);
 		break;
 
 	case PH_BOX4_WAIT:
@@ -394,7 +420,7 @@ void Title::timeout() {
 	case PH_BOX3:
 		drawBox(BOX3, false, 0);
 		_phase = PH_BOX3_WAIT;
-		_waitCounter = 5 * WAIT_FRAMES_PER_UNIT;
+		_waitCounter = isUpgraded() ? UPGRADE_FINAL_WAIT_FRAMES : 5 * WAIT_FRAMES_PER_UNIT;
 		delayFrames(1);
 		break;
 

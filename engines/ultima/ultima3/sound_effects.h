@@ -36,6 +36,11 @@ public:
 	static constexpr int SAMPLE_RATE = 44100;
 
 	/**
+	 * The effect that is the noise at the end of the title screen's pictures being drawn
+	 */
+	static constexpr byte TITLE_BURST = 0xF3;
+
+	/**
 	 * Works out the sound of an effect as unsigned 8-bit samples
 	 * @param effect	The effect number, from 0xF4 to 0xFD
 	 * @param arg1		The first of the values the effect is varied by
@@ -45,6 +50,15 @@ public:
 	 * @returns			The samples, or nothing if the effect isn't a sound
 	 */
 	static Common::Array<byte> render(byte effect, byte arg1, byte arg2, bool timed = false);
+
+	/**
+	 * Works out the buzz made as a title picture is revealed bit by bit, a
+	 * pass of it at a time
+	 * @param revealed	Whether each bit of the pass was drawn rather than left out
+	 * @param timed		True to make the buzz as the Ultima III Upgrade does
+	 * @returns			The samples, which also give how long the pass takes
+	 */
+	static Common::Array<byte> renderSparkle(const Common::Array<bool> &revealed, bool timed);
 };
 
 } // namespace Ultima3
