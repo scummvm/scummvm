@@ -38,6 +38,16 @@ static const int kMovieControlStripSkipPressedSourceX = 0x98;
 static const int kMovieControlStripPausePressedSourceX = 0x130;
 
 void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
+	const bool activeMovieHit =
+		(_currentDisplayState == 0 && kTitleMciControlHitRect.contains(mousePosition)) ||
+		((_currentDisplayState == 1 || _currentDisplayState == 7) && kMainSceneMciControlHitRect.contains(mousePosition)) ||
+		(_currentDisplayState == 8 && kMapSubmodeMciControlHitRect.contains(mousePosition));
+	if (_activeMovieVideo && activeMovieHit) {
+		delayWithEventPolling(160, false);
+		stopActiveMovieAndDispatch();
+		return;
+	}
+
 	if (_currentDisplayState == 10) {
 		transitionFromLogoToTitle();
 		return;
@@ -56,6 +66,9 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 		delayWithEventPolling(80);
 
 		switch (button.controlId) {
+		case 51:
+			startNewGameFromTitle();
+			break;
 		default:
 			drawTitleButton(i, false);
 			break;

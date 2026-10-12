@@ -158,10 +158,48 @@ void BCBEngine::mainLoop() {
 				_menuBackgroundVideo->decodeNextFrame();
 		}
 
+		if (_activeMovieVideo) {
+			bool movieUpdated = false;
+			if (_activeMovieVideo->needsUpdate()) {
+				const Graphics::Surface *frame = _activeMovieVideo->decodeNextFrame();
+				if (frame) {
+					const Common::Point moviePosition = getActiveMoviePosition();
+					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, moviePosition.x, moviePosition.y, frame->w, frame->h);
+					movieUpdated = true;
+				}
+			}
+			if (movieUpdated) {
+				g_system->updateScreen();
+				screenUpdated = true;
+			}
+
+			if (_activeMovieVideo->endOfVideo()) {
+				const bool dispatchAfterEnd = _activeMovieDispatchOnFinish;
+				stopActiveMovie();
+				if (dispatchAfterEnd) {
+					_activeMovieDispatchOnFinish = false;
+					if (_currentDisplayState == 7 || _currentDisplayState == 8) {
+						processQueuedMovieSequence();
+					} else if (_currentDisplayState == 1) {
+						drawMainSceneScreen(false);
+						processGameStateDispatcher(true);
+					} else {
+						if (_currentDisplayState == 2)
+							drawClockAndChipIndicator();
+						processGameStateDispatcher(true);
+					}
+				}
+			}
+		}
+
 		serviceCursorRefresh(screenUpdated);
 
 		delayWithEventPolling(10);
 	}
+}
+
+void BCBEngine::processGameStateDispatcher(bool runScriptBeforeDispatch) {
+	error("BCB: processGameStateDispatcher is not implemented");
 }
 
 } // End of namespace BCB

@@ -66,8 +66,11 @@ private:
 	bool showInitialLogoScreen();
 	bool showTitleScreen();
 	bool transitionFromLogoToTitle();
+	bool startNewGameFromTitle();
+	bool playNumberedMovie(int movieId, bool blankScreenMovie = false);
 	Common::SeekableReadStream *createMovieReadStream(int movieId) const;
 	bool switchActiveMediaDisc(int discNumber);
+	void stopActiveMovie();
 	void playUiSound();
 	void startMenuBackgroundMusic();
 	void stopMenuBackgroundMusic();
@@ -80,6 +83,7 @@ private:
 	bool loadScriptData();
 	bool loadExecutableDataTables();
 	bool loadByteFile(const char *fileName, Common::Array<byte> &data) const;
+	void processGameStateDispatcher(bool runScriptBeforeDispatch);
 	void executeCurrentScriptSequence();
 	uint32 executeScriptExpression(uint32 &scriptPc, int &branchTokenSeen);
 	bool pushScriptValue(uint32 value);
@@ -89,7 +93,13 @@ private:
 	uint32 &scriptOperandDword(uint32 encodedOperand);
 	uint32 &stateDword(uint byteOffset);
 	uint32 stateDword(uint byteOffset) const;
+	bool processPendingMovieRequest();
+	Common::Point getActiveMoviePosition() const;
+	void stopActiveMovieAndDispatch();
+	void processQueuedMovieSequence();
+	bool drawMainSceneScreen(bool lineReveal);
 	void notifyGameClockTicksChanged();
+	void drawClockAndChipIndicator(bool present = true);
 	Graphics::Surface *loadBitmap(const char *fileName);
 	const Graphics::Surface *getUiBitmap(const char *fileName);
 	Graphics::Surface *loadBitmapFromStream(Common::SeekableReadStream *stream, const char *debugName) const;
@@ -169,7 +179,11 @@ private:
 	int _lastLoggedGameClockTicks = -1;
 	uint32 _lastCursorRefreshMillis = 0;
 	Common::Point _mousePosition;
+	bool _activeMovieDispatchOnFinish = false;
+	bool _activeMovieOnBlankScreen = false;
+	bool _activeMoviePaused = false;
 	bool _sceneChoiceActive = false;
+	bool _mapControlsActive = false;
 	bool _suppressClickHandling = false;
 	bool _titleButtonsActive = false;
 	bool _systemButtonsVisible = false;
