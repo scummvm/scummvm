@@ -84,8 +84,20 @@ private:
 	void stopGameOverMusic();
 	void startSceneIdleMovie();
 	void stopSceneIdleMovie();
+	void enterSystemMenu();
+	bool showSystemScreen();
 	void restoreTitleScreenRegion(const Common::Rect &rect, bool present = true);
+	void drawSystemSaveLoadSlots(bool present = true);
+	void drawSystemSubmodeButtons(bool present = true);
+	void drawSystemSubmodeButton(uint buttonIndex, bool selected, bool present = true);
+	void syncSystemWaveVolumeFromMixer();
+	bool handleSystemWaveVolumeClick(const Common::Point &mousePosition);
+	bool handleSystemClick(const Common::Point &mousePosition);
+	void activateSystemExitButton();
 	void writeContinueState();
+	bool showSystemConfirmationDialog(const Common::U32String &message, bool showCancelButton);
+	void returnFromSystemMenuToPreviousState();
+	bool handleSaveLoadSlotClick(const Common::Point &mousePosition);
 	bool openMapMoveMovie();
 	void startMapMoveMovie();
 	void stopMapMoveMovie();
@@ -274,6 +286,7 @@ private:
 	bool _titleButtonsActive = false;
 	bool _systemButtonsVisible = false;
 	int _systemSaveLoadSlotActionMode = 0;
+	int _systemWaveVolume = 0xffff;
 	bool _titleLoadSlotsActive = false;
 };
 

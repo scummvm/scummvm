@@ -78,6 +78,12 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 	}
 
 	if ((_currentDisplayState == 1 || _currentDisplayState == 2) && !_activeMovieVideo) {
+		if (kSystemMenuControlHitRect.contains(mousePosition)) {
+			drawSceneChoiceControlStrip(kMovieControlStripPausePressedSourceX);
+			enterSystemMenu();
+			return;
+		}
+
 		if (kMovieQueueControlHitRect.contains(mousePosition)) {
 			playUiSound();
 			drawSceneChoiceControlStrip(kMovieControlStripSkipPressedSourceX);
@@ -108,6 +114,9 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 		return;
 
 	if (handleMapControlClick(mousePosition))
+		return;
+
+	if (handleSystemClick(mousePosition))
 		return;
 
 	if (_currentDisplayState != 0 || !_titleButtonsActive)
