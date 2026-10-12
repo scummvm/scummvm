@@ -60,6 +60,7 @@ class PlaySecondaryMovie;
 
 namespace Script {
 class SceneContext;
+struct Message;
 }
 
 namespace Misc {
@@ -322,6 +323,11 @@ public:
 #ifdef ENABLE_NANCY_V4
 	// Nancy19: the scripts of the UI stream have made the panels
 	void onScriptedUILoaded();
+
+	// Nancy19: hands a message a script sent to the scenes it is for, of the main
+	// stream and of the others. Returns false when there is none.
+	bool receiveMessage(const Script::Message &message, bool &wasTaken);
+	bool receiveMainSceneMessage(const Script::Message &message, bool &wasTaken);
 #endif
 
 	// Used from nancy2 onwards

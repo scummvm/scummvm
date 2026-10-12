@@ -104,6 +104,9 @@ public:
 	// something across scenes store it
 	virtual void onSave() {}
 
+	// Whether messages sent to the given name are for this record
+	virtual bool hasMessagingName(const Common::String &name) { return false; }
+
 	bool isActive() const { return _isActive && !_isDone; }
 	bool isDone() const { return _isDone; }
 	bool hasStarted() const { return _hasStarted; }

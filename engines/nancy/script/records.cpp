@@ -544,7 +544,7 @@ bool NavLogicRecord::setField(const Common::String &key) {
 static const char *const kOverrideFunctionNames[] = {
 	"OnReset", "OnActivation", "OnDeactivation", "OnDone", "OnMouseMove", "ChangeCursor",
 	"OnLeftClick", "OnRightClick", "OnMouseScroll", "OnLeftDown", "OnLeftUp", "OnRightDown",
-	"OnRightUp", "OnKey", "Run", "RunOnce", "Render", "OnSave"
+	"OnRightUp", "OnKey", "Run", "RunOnce", "Render", "OnSave", "ReceiveMessage"
 };
 
 static bool isOverrideFunctionName(const Common::String &name) {
@@ -572,6 +572,15 @@ void OverrideRecord::readTable(int tableIndex) {
 
 		lua_pop(L, 1);
 	}
+}
+
+bool OverrideRecord::hasMessagingName(const Common::String &name) {
+	lua_State *L = getLua();
+
+	pushStoredValue("messagingName");
+	const bool isNamed = lua_type(L, -1) == LUA_TSTRING && name.equalsIgnoreCase(lua_tostring(L, -1));
+	lua_pop(L, 1);
+	return isNamed;
 }
 
 void OverrideRecord::onZChanged() {

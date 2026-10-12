@@ -23,6 +23,7 @@
 #define NANCY_SCRIPT_TYPES_H
 
 #include "common/rect.h"
+#include "common/str.h"
 
 struct lua_State;
 
@@ -85,6 +86,15 @@ bool readPoint(lua_State *L, int index, ScriptPoint &point);
 void pushColor(lua_State *L, uint32 argb);
 uint32 *testColor(lua_State *L, int index);
 uint32 checkColor(lua_State *L, int index);
+
+// What a script sends to a scene, or to the records of one that go by a name
+struct Message {
+	Common::String action;
+	Common::String target;
+	Common::String sender;
+	Common::String text;
+	double value = 0;
+};
 
 } // End of namespace Script
 } // End of namespace Nancy

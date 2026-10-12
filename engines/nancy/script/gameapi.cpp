@@ -1128,6 +1128,7 @@ struct MessageActionName {
 };
 
 static const MessageActionName kMessageActionNames[] = {
+	{ "none", UI::NDUI::kActionNone },
 	{ "show", UI::NDUI::kActionShow },
 	{ "hide", UI::NDUI::kActionHide },
 	{ "toggleHidden", UI::NDUI::kActionToggle },
@@ -1142,25 +1143,30 @@ static const MessageActionName kMessageActionNames[] = {
 	{ "hideItem", UI::NDUI::kActionHideItem }
 };
 
+// The stream the scripts of the UI run in
+static const char *const kUIStreamName = "UIStream";
+
 // Message:Send(action, target[, value[, text[, isTextKey]]])
-// The text is the key of an autotext entry, unless it says otherwise
+// The target is a scene, a record that was given a name for it, or a part of
+// the UI. Returns whether a scene or a record took the message.
+// The text is the key of an autotext entry, unless it says otherwise.
 static int messageSend(lua_State *L) {
 	const char *actionName = luaL_checkstring(L, 2);
 	const char *target = luaL_checkstring(L, 3);
 
-	int32 type = 0;
+	const MessageActionName *named = nullptr;
 	for (const MessageActionName &action : kMessageActionNames) {
 		if (scumm_stricmp(action.name, actionName) == 0) {
-			type = action.type;
+			named = &action;
 		}
 	}
 
-	if (type == 0) {
+	if (!named) {
 		return luaL_error(L, "Action type '%s' invalid", actionName);
 	}
 
 	UI::NDUI::Action action;
-	action.type = type;
+	action.type = named->type;
 	action.target = target;
 	action.hasValue = true;
 
@@ -1181,15 +1187,34 @@ static int messageSend(lua_State *L) {
 		}
 	}
 
+	// The targets that answer do so to the control whose event is being handled
 	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
-	if (!ui) {
-		return 0;
+	if (ui) {
+		action.sender = ui->getEventSender();
 	}
 
-	// The targets that answer do so to the control whose event is being handled
-	action.sender = ui->getEventSender();
-	ui->takeAction(action);
-	return 0;
+	// The scripts of a scene send in its name, and the ones of the UI in the
+	// name of that control
+	Message message;
+	message.action = named->name;
+	message.target = action.target;
+	message.text = action.text;
+	message.value = action.value;
+
+	const SceneContext *context = LuaState::getContext(L);
+	if (context && !context->getStreamName().equalsIgnoreCase(kUIStreamName)) {
+		message.sender = context->getSceneName();
+	} else {
+		message.sender = action.sender;
+	}
+
+	bool wasTaken = false;
+	if (!NancySceneState.receiveMessage(message, wasTaken) && ui) {
+		ui->takeAction(action);
+	}
+
+	lua_pushboolean(L, wasTaken);
+	return 1;
 }
 
 static const luaL_Reg kMessageFunctions[] = {

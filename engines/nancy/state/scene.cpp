@@ -3085,6 +3085,19 @@ void Scene::beginPlayerScript(const Common::Path &sceneName) {
 	_streams.begin(sceneName.toString() + "_Stream", sceneName.toString(), 0, flags);
 }
 
+bool Scene::receiveMessage(const Script::Message &message, bool &wasTaken) {
+	if (_streams.isEmpty()) {
+		return receiveMainSceneMessage(message, wasTaken);
+	}
+
+	return _streams.receiveMessage(message, wasTaken);
+}
+
+bool Scene::receiveMainSceneMessage(const Script::Message &message, bool &wasTaken) {
+	wasTaken = false;
+	return _scriptScene && _scriptScene->receiveMessage(message, wasTaken);
+}
+
 void Scene::onScriptedUILoaded() {
 	_ndui->createItemButtons();
 	Script::showPlayerEntries();

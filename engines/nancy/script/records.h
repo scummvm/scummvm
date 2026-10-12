@@ -166,8 +166,7 @@ private:
 };
 
 // A record that only does what the functions a script gave it do
-// TODO: Call RenderAttachment, OnLoad and ReceiveMessage, and handle
-// messagingName and Send.
+// TODO: Call RenderAttachment and OnLoad, and handle Send.
 class OverrideRecord : public Record {
 public:
 	OverrideRecord(SceneContext &context) : Record(context, "ND.OverrideAR") {}
@@ -175,6 +174,7 @@ public:
 
 	void updateGraphics() override;
 	void onSave() override { callFunction("OnSave"); }
+	bool hasMessagingName(const Common::String &name) override;
 
 protected:
 	void readTable(int tableIndex) override;

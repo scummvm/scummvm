@@ -63,6 +63,11 @@ public:
 	// Tells the records that the game is about to be saved
 	void onSave();
 
+	// Hands a message to the scene when it is the one it names, and to the
+	// records that go by that name otherwise, until one of them takes it.
+	// Returns false when the message is for neither.
+	bool receiveMessage(const Message &message, bool &wasTaken);
+
 	lua_State *getLua() const;
 
 	// A new record only joins the scene at the start of the next frame. Until then
@@ -115,6 +120,7 @@ public:
 
 private:
 	bool callSceneFunction(const char *name, int numArgs);
+	void pushMessage(const Message &message);
 	void runFrame(double elapsedTime);
 	void renderAttachment();
 	bool hasSkippableRecord() const;
@@ -124,6 +130,7 @@ private:
 
 	Common::String _streamName;
 	Common::String _sceneName;
+	bool _isEnding = false;
 	uint _frame;
 	int32 _zOffset;
 

@@ -51,6 +51,9 @@ SceneContext::SceneContext(const Common::String &streamName, const Common::Strin
 }
 
 SceneContext::~SceneContext() {
+	// Taking the records down can have the UI send messages
+	_isEnding = true;
+
 	UI::NDUI::Manager *ui = _makesUI ? NancySceneState.getNDUI() : nullptr;
 	if (ui) {
 		ui->clearPanels();
@@ -193,6 +196,72 @@ void SceneContext::onSave() {
 	for (Record *record : records) {
 		record->onSave();
 	}
+}
+
+void SceneContext::pushMessage(const Message &message) {
+	lua_State *L = getLua();
+
+	lua_newtable(L);
+	lua_pushstring(L, message.action.c_str());
+	lua_setfield(L, -2, "action");
+	lua_pushstring(L, message.target.c_str());
+	lua_setfield(L, -2, "victim");
+	lua_pushstring(L, message.sender.c_str());
+	lua_setfield(L, -2, "sender");
+	lua_pushstring(L, message.text.c_str());
+	lua_setfield(L, -2, "text");
+	lua_pushnumber(L, message.value);
+	lua_setfield(L, -2, "value");
+}
+
+// TODO: The "cause" field of a message
+bool SceneContext::receiveMessage(const Message &message, bool &wasTaken) {
+	lua_State *L = getLua();
+	wasTaken = false;
+
+	if (_isEnding) {
+		return false;
+	}
+
+	if (message.target.equalsIgnoreCase(_sceneName)) {
+		pushSceneFunctions();
+		lua_getfield(L, -1, "ReceiveMessage");
+		lua_remove(L, -2);
+
+		if (!lua_isfunction(L, -1)) {
+			lua_pop(L, 1);
+			return true;
+		}
+
+		pushMessage(message);
+		if (LuaState::call(L, 1, 1, "Error during Scene ReceiveMessage")) {
+			wasTaken = lua_toboolean(L, -1) != 0;
+			lua_pop(L, 1);
+		}
+
+		return true;
+	}
+
+	bool hasReceiver = false;
+	const Common::Array<Record *> records = _records;
+	for (Record *record : records) {
+		if (!record->hasMessagingName(message.target)) {
+			continue;
+		}
+
+		hasReceiver = true;
+		pushMessage(message);
+		if (record->callFunction("ReceiveMessage", 1, 1)) {
+			wasTaken = lua_toboolean(L, -1) != 0;
+			lua_pop(L, 1);
+		}
+
+		if (wasTaken) {
+			break;
+		}
+	}
+
+	return hasReceiver;
 }
 
 void SceneContext::run(double elapsedTime) {

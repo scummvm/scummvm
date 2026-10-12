@@ -44,6 +44,7 @@ class Viewport;
 
 namespace Script {
 class SceneContext;
+struct Message;
 }
 
 namespace State {
@@ -85,6 +86,9 @@ public:
 
 	// Nancy19: the scripts of the scene store what they keep in a saved game
 	void onSave();
+
+	// Nancy19: hands a message to the scene. Returns false when it isn't for it.
+	bool receiveMessage(const Script::Message &message, bool &wasTaken);
 
 	void changeScene(const Common::String &sceneName, uint16 frameID);
 	void end() { _isEnded = true; }
@@ -158,6 +162,10 @@ public:
 
 	void onMainSceneChange();
 	void changeEnvironment(const Common::String &newEnvironment);
+
+	// Nancy19: hands a message to the scenes of the streams it is for. Returns
+	// false when there is none.
+	bool receiveMessage(const Script::Message &message, bool &wasTaken);
 
 	// Keeps the streams in the saved game, and starts them again after loading
 	void store();

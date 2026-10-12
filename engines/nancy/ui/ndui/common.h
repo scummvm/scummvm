@@ -97,6 +97,7 @@ enum EventType {
 };
 
 enum ActionType {
+	kActionNone				= 0,	// only means something to the scripts of Nancy19
 	kActionShow				= 1,
 	kActionHide				= 2,
 	kActionToggle			= 3,

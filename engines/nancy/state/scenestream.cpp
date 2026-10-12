@@ -103,6 +103,16 @@ void SceneStream::onSave() {
 #endif
 }
 
+bool SceneStream::receiveMessage(const Script::Message &message, bool &wasTaken) {
+#ifdef ENABLE_NANCY_V4
+	if (_scriptScene) {
+		return _scriptScene->receiveMessage(message, wasTaken);
+	}
+#endif
+
+	return false;
+}
+
 void SceneStream::handleInput(NancyInput &input) {
 	if (_isEnded) {
 		return;
@@ -492,6 +502,29 @@ void SceneStreamManager::changeEnvironment(const Common::String &newEnvironment)
 			begin(env.code + "_Enter_Stream", env.ambientScriptName.toString(), 0, flags);
 		}
 	}
+}
+
+bool SceneStreamManager::receiveMessage(const Script::Message &message, bool &wasTaken) {
+	bool hasReceiver = false;
+	wasTaken = false;
+
+#ifdef ENABLE_NANCY_V4
+	// A scene can end its stream when it gets a message
+	const Common::Array<SceneStream *> streams = _streams;
+	for (SceneStream *stream : streams) {
+		if (wasTaken) {
+			break;
+		}
+
+		if (!stream) {
+			hasReceiver |= NancySceneState.receiveMainSceneMessage(message, wasTaken);
+		} else if (!stream->isEnded()) {
+			hasReceiver |= stream->receiveMessage(message, wasTaken);
+		}
+	}
+#endif
+
+	return hasReceiver;
 }
 
 // Only the scenes of the streams get saved; their records start over
