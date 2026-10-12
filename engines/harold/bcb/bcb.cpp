@@ -81,10 +81,14 @@ BCBEngine::~BCBEngine() {
 		_chipBitmap->free();
 		delete _chipBitmap;
 	}
+	delete _activeMovieVideo;
+	delete _sceneIdleVideo;
+	delete _gameOverVideo;
 	delete _sjisFont;
 	delete _captionTextFont;
 	delete _gameOverTextFont;
 	delete _ownerDrawUiTextFont;
+	stopMenuBackgroundMusic();
 }
 
 Common::Error BCBEngine::run() {
@@ -124,6 +128,18 @@ void BCBEngine::mainLoop() {
 
 		if (!pollEvents())
 			return;
+
+		if (_menuBackgroundVideo) {
+			if (_menuBackgroundVideo->endOfVideo()) {
+				_menuBackgroundVideo->stop();
+				_menuBackgroundVideo->rewind();
+				_menuBackgroundVideo->decodeNextFrame();
+				_menuBackgroundVideo->start();
+			}
+
+			if (_menuBackgroundVideo->needsUpdate())
+				_menuBackgroundVideo->decodeNextFrame();
+		}
 
 		serviceCursorRefresh(screenUpdated);
 
