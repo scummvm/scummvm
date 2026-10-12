@@ -60,6 +60,12 @@ protected:
 		return Engine::shouldQuit();
 	}
 
+	/**
+	 * Handles the upgrade's Alt hotkeys, which work from anywhere: X to exit,
+	 * R to restore a saved game, and M to go back to the title
+	 */
+	bool msgKeypress(const Graphics::Views::KeypressMessage &msg) override;
+
 private:
 	// 6-byte lagged-Fibonacci-style state for randByte(), matching the
 	// original's rand_byte generator

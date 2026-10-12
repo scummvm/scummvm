@@ -59,6 +59,29 @@ Common::String Ultima2Engine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
 
+bool Ultima2Engine::msgKeypress(const Graphics::Views::KeypressMessage &msg) {
+	if (msg.flags & Common::KBD_ALT) {
+		switch (msg.keycode) {
+		case Common::KEYCODE_x:
+			quitGame();
+			return true;
+
+		case Common::KEYCODE_r:
+			loadGameDialog();
+			return true;
+
+		case Common::KEYCODE_m:
+			replaceView("Title", true);
+			return true;
+
+		default:
+			break;
+		}
+	}
+
+	return Shared::Events::msgKeypress(msg);
+}
+
 // The graphics renderer mode stored in the configuration, falling back to
 // the default for the version of the game if it's missing or stale
 static Data::RenderMode configuredRenderMode(bool enhanced) {
