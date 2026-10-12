@@ -126,6 +126,11 @@ public:
 	// Shows or hides what the record draws, once the records of a frame have run
 	virtual void updateGraphics() {}
 
+	// Enhancement: the player can skip what a scene plays. Whether the record is
+	// something that can be skipped, and what it does when the skipping begins.
+	virtual bool isSkippable() const { return false; }
+	virtual void onSkip() {}
+
 protected:
 	lua_State *getLua() const;
 

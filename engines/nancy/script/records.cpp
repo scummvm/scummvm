@@ -859,7 +859,26 @@ void SoundRecord::readTable(int tableIndex) {
 	}
 }
 
+// A sound that is playing while a movie gets skipped is cut short
+void SoundRecord::onSkip() {
+	if (isActive() && hasStarted() && !_isLooping) {
+		g_nancy->_sound->stopSound(_sound);
+		_endTime = 0.0;
+	}
+}
+
 void SoundRecord::runOnce() {
+	// A sound that would start in a movie that is being skipped is over at once,
+	// unless it is one that keeps playing afterwards
+	if (getContext().isSkipping() && !_isLooping) {
+		_sound = SoundDescription();
+		_isPlaying = false;
+		_wasPreempted = false;
+		_caption.clear();
+		_endTime = getContext().getTime();
+		return;
+	}
+
 	_sound = SoundDescription();
 	_sound.name = _names[g_nancy->_randomSource->getRandomNumber(_names.size() - 1)];
 	_sound.channelID = _channel;
@@ -983,7 +1002,33 @@ void MovieRecord::runOnce() {
 	drawFrame();
 }
 
+// A movie that plays through and ends
+bool MovieRecord::isSkippable() const {
+	return isActive() && hasStarted() && !_isPaused && !_pausesOnLastFrame;
+}
+
 void MovieRecord::run(double sceneTime, double elapsedTime) {
+	// A movie that is being skipped moves on by one frame every time it runs
+	if (getContext().isSkipping() && isSkippable()) {
+		const int frame = _player.getCurrentFrame();
+		bool hasEnded = frame == _lastFrame;
+
+		if (!hasEnded && _lastFrame > frame) {
+			hasEnded = _player.decodeNextFrame() == nullptr;
+		} else if (!hasEnded) {
+			_player.goToFrame(frame - 1);
+		}
+
+		if (hasEnded) {
+			_player.goToFrame(_lastFrame);
+			drawFrame();
+			_endTime = sceneTime;
+			finish();
+		}
+
+		return;
+	}
+
 	if (!_isPaused && _player.update()) {
 		drawFrame();
 	}

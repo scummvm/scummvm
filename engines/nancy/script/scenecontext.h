@@ -81,6 +81,12 @@ public:
 	// The seconds the scene has been running for
 	double getTime() const { return _time; }
 
+	// Enhancement: skips the movies that are playing. They are played through
+	// a frame at a time, without their sounds, so that everything the scripts
+	// tie to them still happens. Returns false when there is nothing to skip.
+	bool skipMovies();
+	bool isSkipping() const { return _isSkipping; }
+
 	// The conversation of the scene, once one has begun
 	ConvoRecord *getConvo() const { return _convo; }
 	void setConvo(ConvoRecord *convo) { _convo = convo; }
@@ -106,6 +112,8 @@ public:
 
 private:
 	bool callSceneFunction(const char *name, int numArgs);
+	void runFrame(double elapsedTime);
+	bool hasSkippableRecord() const;
 	void pushSceneFunctions();
 	void sendMouseEvent(int event, const ScriptPoint &point, bool inViewport);
 	void sendKeyEvent(int event, Common::KeyCode key);
@@ -125,6 +133,8 @@ private:
 	double _time = 0.0;
 	bool _hasRunOnce = false;
 	bool _makesUI = false;
+	bool _isSkipping = false;
+	bool _hasChangedScene = false;
 
 	// The keys records were told are down
 	uint16 _heldMoveKeys = 0;

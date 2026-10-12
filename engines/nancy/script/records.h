@@ -268,6 +268,8 @@ class SoundRecord : public Record {
 public:
 	SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") {}
 
+	void onSkip() override;
+
 protected:
 	void readTable(int tableIndex) override;
 	void runOnce() override;
@@ -296,6 +298,7 @@ public:
 	MovieRecord(SceneContext &context) : Record(context, "ND.Movie") {}
 
 	void updateGraphics() override;
+	bool isSkippable() const override;
 
 	void setPaused(bool isPaused) { _isPaused = isPaused; }
 

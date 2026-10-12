@@ -2647,6 +2647,10 @@ void Scene::handleInput() {
 			_activeConversation->skipLine();
 		} else if (_activeMovie) {
 			_hasSkippedMovie = _activeMovie->skip();
+#ifdef ENABLE_NANCY_V4
+		} else if (_scriptScene) {
+			_scriptScene->skipMovies();
+#endif
 		} else if (g_nancy->getGameType() <= kGameTypeNancy15) {
 			// Nancy16 has no main menu state
 			g_nancy->setState(NancyState::kMainMenu);

@@ -153,7 +153,52 @@ bool SceneContext::callSceneFunction(const char *name, int numArgs) {
 	return true;
 }
 
+// The frames a skipped movie moves on by every time the scene runs, and how
+// long each of them counts for
+static const uint kSkipFramesPerRun = 30;
+static const double kSkipFrameSeconds = 1.0 / 15.0;
+
+bool SceneContext::hasSkippableRecord() const {
+	for (const Record *record : _records) {
+		if (record->isSkippable()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SceneContext::skipMovies() {
+	if (_isSkipping || !hasSkippableRecord()) {
+		return false;
+	}
+
+	_isSkipping = true;
+	for (Record *record : _records) {
+		record->onSkip();
+	}
+
+	return true;
+}
+
 void SceneContext::run(double elapsedTime) {
+	runFrame(elapsedTime);
+
+	// The skipping is over with the movies, or with the scene
+	for (uint i = 0; _isSkipping && i < kSkipFramesPerRun; ++i) {
+		if (_hasChangedScene || !hasSkippableRecord()) {
+			_isSkipping = false;
+		} else {
+			runFrame(kSkipFrameSeconds);
+		}
+	}
+
+	for (Record *record : _records) {
+		record->updateGraphics();
+	}
+}
+
+void SceneContext::runFrame(double elapsedTime) {
 	lua_State *L = getLua();
 
 	_time += elapsedTime;
@@ -174,10 +219,6 @@ void SceneContext::run(double elapsedTime) {
 		for (Record *record : _records) {
 			record->update(_time, elapsedTime);
 		}
-	}
-
-	for (Record *record : _records) {
-		record->updateGraphics();
 	}
 }
 
@@ -291,6 +332,8 @@ void SceneContext::handleInput(NancyInput &input) {
 
 void SceneContext::changeScene(const Common::String &streamName, const Common::String &sceneName, uint16 frame) {
 	State::SceneStreamManager &streams = NancySceneState.getStreams();
+
+	_hasChangedScene = true;
 
 	// The scenes of the main stream go by number
 	if (sceneName.size() > 1 && tolower(sceneName[0]) == 's' && Common::isDigit(sceneName[1])) {
