@@ -4,6 +4,8 @@ begin_section("Ultima");
 	add_person("Matthew Jimenez", "OMGPizzaGuy", "");
 
 	add_person("Paul Robson", "", "(Akalabeth)");
+	add_person("", "Voyager Dragon", "(U2 Patch)");
+	add_person("", "Voyager Dragon", "(U3 Patch)");
 	add_person("Daniel c. W&uuml;rl", "dwuerl", "(Nuvie)");
 	add_person("Eric Fry", "yuv422", "(Nuvie)");
 	add_person("Jeremy Newman", "laxdragon", "(Nuvie)");
