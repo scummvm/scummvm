@@ -26,6 +26,40 @@
 
 namespace Igor {
 
+enum {
+	kFlagDemo = 1 << 0,
+	kFlagFloppy = 1 << 1,
+	kFlagTalkie = 1 << 2
+};
+
+enum {
+	kIdEngDemo100,
+	kIdEngDemo110,
+	kIdEngFloppy,
+	kIdSpaFloppy,
+	kIdEngCD,
+	kIdSpaCD
+};
+
+struct IgorGameDescription {
+	ADGameDescription desc;
+	int gameVersion;
+	int gameFlags;
+	const char *ovlFileName;
+	const char *sfxFileName;
+
+	uint32 sizeBuffer() const {
+		return desc.sizeBuffer() + ADDynamicDescription::strSizeBuffer(ovlFileName) +
+			ADDynamicDescription::strSizeBuffer(sfxFileName);
+	}
+
+	void *toBuffer(void *buffer) {
+		buffer = desc.toBuffer(buffer);
+		buffer = ADDynamicDescription::strToBuffer(buffer, ovlFileName);
+		return ADDynamicDescription::strToBuffer(buffer, sfxFileName);
+	}
+};
+
 enum IgorDebugChannels {
 	kDebugGraphics = 1,
 	kDebugPath,
@@ -42,13 +76,13 @@ enum IgorDebugChannels {
 
 extern const PlainGameDescriptor igorGames[];
 
-extern const ADGameDescription gameDescriptions[];
+extern const IgorGameDescription gameDescriptions[];
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
 
 } // End of namespace Igor
 
-class IgorMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+class IgorMetaEngineDetection : public AdvancedMetaEngineDetection<Igor::IgorGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

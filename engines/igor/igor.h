@@ -45,13 +45,6 @@
 
 namespace Igor {
 
-struct IgorGameDescription;
-
-enum {
-	kFlagDemo = 1 << 0,
-	kFlagFloppy = 1 << 1,
-	kFlagTalkie = 1 << 2
-};
 
 enum {
 	kStartupPart = 900,
@@ -339,15 +332,6 @@ enum DebugOverlay {
 	kOverlayDeltaLum
 };
 
-enum {
-	kIdEngDemo100,
-	kIdEngDemo110,
-	kIdEngFloppy,
-	kIdSpaFloppy,
-	kIdEngCD,
-	kIdSpaCD
-};
-
 struct DialogueText {
 	int num;
 	int count;
@@ -429,7 +413,7 @@ public:
 	typedef void (IgorEngine::*UpdateDialogueProc)(int action);
 
 private:
-	const ADGameDescription *_gameDescription;
+	const IgorGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	// MidiPlayer *_midiPlayer;
 
@@ -1511,7 +1495,7 @@ public:
 	bool handleOptionsMenu_handleKeyDownCtrl(int key);
 
 public:
-	IgorEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc);
 	~IgorEngine() override;
 
 	uint32 getFeatures() const;

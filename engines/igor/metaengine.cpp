@@ -52,7 +52,7 @@ const ADExtraGuiOptionsMap *IgorMetaEngine::getAdvancedExtraGuiOptions() const {
 	return Igor::optionsList;
 }
 
-Common::Error IgorMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error IgorMetaEngine::createInstance(OSystem *syst, Engine **engine, const Igor::IgorGameDescription *desc) const {
 	*engine = new Igor::IgorEngine(syst, desc);
 	return Common::kNoError;
 }

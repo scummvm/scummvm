@@ -35,7 +35,7 @@ namespace Igor {
 
 IgorEngine *g_engine;
 
-IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
+IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Engine(syst),
 																		   _gameDescription(gameDesc), _randomSource("Igor") {
 	g_engine = this;
 
@@ -57,21 +57,18 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 	_verbsPanelBuffer = (uint8 *)malloc(3840);
 	_debugOverlayBuffer = (uint8 *)malloc(320 * 144);
 
-	{ // hardcoded now
-		_game.ovlFileName = "igor.exe";
-		_game.sfxFileName = "igor.dat";
-		_game.version = kIdSpaCD;
-		_game.flags = kFlagTalkie;
+	_game.ovlFileName = gameDesc->ovlFileName;
+	_game.sfxFileName = gameDesc->sfxFileName;
+	_game.version = gameDesc->gameVersion;
+	_game.flags = gameDesc->gameFlags;
+	_game.language = gameDesc->desc.language;
 
-		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
+	_currentPart = 850;
+	// _currentPart = kStartupPart;
 
-		_currentPart = 850;
-		// _currentPart = kStartupPart;
-
-		// _currentPart = 171;
-		// _currentPart = 62;
-		// _currentPart = 40;
-	}
+	// _currentPart = 171;
+	// _currentPart = 62;
+	// _currentPart = 40;
 
 	// if (_game.flags & kFlagFloppy) {
 	// 	_midiPlayer = new Midi(this);
@@ -107,11 +104,11 @@ IgorEngine::~IgorEngine() {
 }
 
 uint32 IgorEngine::getFeatures() const {
-	return _gameDescription->flags;
+	return _gameDescription->desc.flags;
 }
 
 Common::String IgorEngine::getGameId() const {
-	return _gameDescription->gameId;
+	return _gameDescription->desc.gameId;
 }
 
 void IgorEngine::restart() {
@@ -229,8 +226,6 @@ Common::Error IgorEngine::run() {
 	loadMainTexts();
 	loadIgorFrames();
 
-	// _gameState.talkMode = kTalkModeTextOnly;
-	// _gameState.talkMode = kTalkModeSpeechOnly;
 	_gameState.talkMode = kTalkModeSpeechAndText;
 	_gameState.talkSpeed = 3;
 	_talkSpeechCounter = 5;

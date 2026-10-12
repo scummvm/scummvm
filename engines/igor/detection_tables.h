@@ -26,22 +26,45 @@ const PlainGameDescriptor igorGames[] = {
 	{ 0, 0 }
 };
 
-const ADGameDescription gameDescriptions[] = {
+const IgorGameDescription gameDescriptions[] = {
 	{
-		"igor",
-		nullptr,
-		AD_ENTRY2s(
-			"IGOR.DAT", "b4ba3ec480ec66a2fa456265ab51f5f6", 61682719,
-			"IGOR.EXE", "70f49859d1defddda140d144e1eb90b1", 9115648
-		),
-
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		{
+			"igor",
+			"CD",
+			AD_ENTRY2s(
+				"IGOR.DAT", "b4ba3ec480ec66a2fa456265ab51f5f6", 61682719,
+				"IGOR.EXE", "70f49859d1defddda140d144e1eb90b1", 9115648
+			),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_CD,
+			GUIO1(GUIO_NONE)
+		},
+		kIdSpaCD,
+		kFlagTalkie,
+		"IGOR.EXE",
+		"IGOR.DAT"
+	},
+	{
+		{
+			"igor",
+			"Floppy",
+			AD_ENTRY2s(
+				"IGOR.DAT", "69eec27e1d2fe2f0612a6fb265385dfb", 11199335,
+				"IGOR.EXE", "91d60ccc00ea19c1bd1b50657a9c598b", 39537
+			),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		kIdSpaFloppy,
+		kFlagFloppy,
+		"IGOR.DAT",
+		"IGOR.FSD"
 	},
 
-	AD_TABLE_END_MARKER
+	{ AD_TABLE_END_MARKER, 0, 0, nullptr, nullptr }
 };
 
 } // End of namespace Igor

@@ -22,13 +22,13 @@
 #ifndef IGOR_METAENGINE_H
 #define IGOR_METAENGINE_H
 
-#include "engines/advancedDetector.h"
+#include "igor/detection.h"
 
-class IgorMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
+class IgorMetaEngine : public AdvancedMetaEngine<Igor::IgorGameDescription> {
 public:
 	const char *getName() const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Igor::IgorGameDescription *desc) const override;
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
