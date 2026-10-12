@@ -190,22 +190,9 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 	}
 	setPaletteColor(_talkColorIndex, r, g, b);
 	setPaletteColor(_talkShadowIndex, 0, 0, 0);
-	// Only update the VGA screen buffer if not in spech-only mode
-	if (_gameState.talkMode != kTalkModeSpeechOnly) {
+	const int talkMode = prepareDialoguePlayback(*dt);
+	if (talkMode != kTalkModeSpeechOnly)
 		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
-	}
-	// If on text mode, the game has a text delay
-	if (_gameState.talkMode == kTalkModeTextOnly) {
-		_talkDelay = (2 * dt->count) * _talkDelays[_gameState.talkSpeed];
-		_talkDelayCounter = 0;
-	} else {
-		_talkDelay = -1;
-		_talkDelayCounter = 0;
-	}
-	if (_gameState.talkMode != kTalkModeTextOnly) {
-		// Play speech
-		playSound(dt->sound, 0);
-	}
 	_gameState.dialogueTextRunning = true;
 	_inputVars[kInputSkipDialogue] = 0;
 }
@@ -291,8 +278,8 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 			_inputVars[kInputSkipDialogue] = 0;
 		}
 		// Speech completion ends the sentence; active speech does not suspend
-		// character animation. See cseg209:0x0802-0x0843.
-		if (_gameState.dialogueTextRunning && _gameState.talkMode != kTalkModeTextOnly && !isDialogueSpeechPlaying()) {
+		// character animation.
+		if (_gameState.dialogueTextRunning && _talkDelay < 0 && !isDialogueSpeechPlaying()) {
 			_talkDelayCounter = _talkDelay;
 		}
 		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
@@ -309,7 +296,7 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 						_gameState.dialogueTextRunning = 0;
 					} else {
 						++_dialogueTextsStart;
-						if (_gameState.talkMode != kTalkModeTextOnly) {
+						if (_talkDelay < 0) {
 							if (_talkSpeechCounter != -1) {
 								_talkSpeechCounter = 0;
 							} else {
@@ -355,8 +342,26 @@ void IgorEngine::fixIgorDialogueTextPosition(int num, int count, int *x, int *y)
 	fixDialogueTextPosition(num, count, x, y);
 }
 
+int IgorEngine::prepareDialoguePlayback(const DialogueText &text) {
+	stopDialogueSpeech();
+	int talkMode = getTalkMode();
+	if (talkMode != kTalkModeTextOnly) {
+		// play speech file
+		playSound(text.sound, 0);
+	}
+	if (!isDialogueSpeechPlaying())
+		talkMode = kTalkModeTextOnly;
+	// Speech modes use speed markers instead of a reading speed. Falling
+	// back to text selects normal speed, as switching to text-only does.
+	const int talkSpeed = (_gameState.talkSpeed >= 1 && _gameState.talkSpeed <= 5)
+		? _gameState.talkSpeed : 3;
+	_talkDelay = talkMode == kTalkModeTextOnly? 2 * text.count * _talkDelays[talkSpeed] : -1;
+	_talkDelayCounter = 0;
+	return talkMode;
+}
+
 bool IgorEngine::isDialogueSpeechPlaying() const {
-	return _gameState.talkMode != kTalkModeTextOnly && _mixer->isSoundHandleActive(_speechHandle);
+	return _mixer->isSoundHandleActive(_speechHandle);
 }
 
 void IgorEngine::stopDialogueSpeech() {
@@ -420,20 +425,9 @@ void IgorEngine::startIgorDialogue() {
 	}
 	setPaletteColor(_talkColorIndex, _dialogueColor[0], _dialogueColor[1], _dialogueColor[2]);
 	setPaletteColor(_talkShadowIndex, 0, 0, 0);
-	if (_gameState.talkMode != kTalkModeSpeechOnly) {
+	const int talkMode = prepareDialoguePlayback(*dt);
+	if (talkMode != kTalkModeSpeechOnly)
 		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
-	}
-	if (_gameState.talkMode == kTalkModeTextOnly) {
-		_talkDelay = (2 * dt->count) * _talkDelays[_gameState.talkSpeed];
-		_talkDelayCounter = 0;
-	} else {
-		_talkDelay = -1;
-		_talkDelayCounter = 0;
-	}
-	if (_gameState.talkMode != kTalkModeTextOnly) {
-		debug("Playing sound for igor dialogue text: %d", dt->sound);
-		playSound(dt->sound, 0);
-	}
 	_gameState.dialogueTextRunning = true;
 	_inputVars[kInputSkipDialogue] = 0;
 }
@@ -450,8 +444,8 @@ void IgorEngine::waitForEndOfIgorDialogue(bool animateHead, bool updateRoomBackg
 			_inputVars[kInputSkipDialogue] = 0;
 		}
 		// Speech completion ends the sentence; active speech does not suspend
-		// Igor's head animation. See cseg209:0x0B3D-0x0B7E.
-		if (_gameState.dialogueTextRunning && _gameState.talkMode != kTalkModeTextOnly && !isDialogueSpeechPlaying()) {
+		// Igor's head animation.
+		if (_gameState.dialogueTextRunning && _talkDelay < 0 && !isDialogueSpeechPlaying()) {
 			_talkDelayCounter = _talkDelay;
 		}
 		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
@@ -466,7 +460,7 @@ void IgorEngine::waitForEndOfIgorDialogue(bool animateHead, bool updateRoomBackg
 						_gameState.dialogueTextRunning = 0;
 					} else {
 						++_dialogueTextsStart;
-						if (_gameState.talkMode != kTalkModeTextOnly) {
+						if (_talkDelay < 0) {
 							if (_talkSpeechCounter != -1) {
 								_talkSpeechCounter = 0;
 							} else {

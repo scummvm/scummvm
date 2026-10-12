@@ -174,7 +174,7 @@ void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
 		}
 		waitForTimer(30);
 	}
-	ADD_DIALOGUE_TEXT(209, 2, 794); // cseg171:0AA0-0ABC
+	ADD_DIALOGUE_TEXT(209, 2, 794);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
@@ -242,7 +242,7 @@ void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
 	addObjectToInventory(24, 59);
 	_objectsState[44] = 1;
 	PART_12_OBJECT_STATE(255);
-	ADD_DIALOGUE_TEXT(211, 1, 795); // cseg171:0EBF-0EDB
+	ADD_DIALOGUE_TEXT(211, 1, 795);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 }
@@ -533,8 +533,8 @@ void IgorEngine::PART_12() {
 		if (_currentPart == 121) {
 			PART_12_HELPER_6_enterFromChurch();
 			if (_objectsState[106] == 1) {
-				ADD_DIALOGUE_TEXT(216, 2, 799); // cseg171:3766-3772
-				ADD_DIALOGUE_TEXT(218, 1, 800); // cseg171:3778-3784
+				ADD_DIALOGUE_TEXT(216, 2, 799);
+				ADD_DIALOGUE_TEXT(218, 1, 800);
 				SET_DIALOGUE_TEXT(1, 2);
 				startIgorDialogue();
 				waitForEndOfIgorDialogue();

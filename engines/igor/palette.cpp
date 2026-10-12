@@ -36,7 +36,7 @@ void IgorEngine::setupDefaultPalette() {
 void IgorEngine::scrollPalette(int startColor, int endColor) {
 	uint8 c[3];
 	// Rotate toward higher indices: save the last color, shift the range right,
-	// and wrap the saved color to the start. cseg182:0016-00A1
+	// and wrap the saved color to the start.
 	memcpy(c, &_currentPalette[endColor * 3], 3);
 	memmove(&_currentPalette[(startColor + 1) * 3], &_currentPalette[startColor * 3], (endColor - startColor) * 3);
 	memcpy(&_currentPalette[startColor * 3], c, 3);

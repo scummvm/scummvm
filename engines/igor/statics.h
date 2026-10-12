@@ -27,7 +27,6 @@
 namespace Igor {
 
 // Shared animation frame buffer offsets for Part 10 & Part 11
-// Ground truth: code/175_2767.asm cseg175:2815, cseg177:0064, cseg177:0097, cseg177:00CA, cseg177:00FD
 const uint32 kPart10_11_Frm1 = 0xB400; // cseg175:2815
 const uint32 kPart10_11_Frm2 = 0xBC0A; // cseg177:0064
 const uint32 kPart10_11_Frm3 = 0xC5E2; // cseg177:0097

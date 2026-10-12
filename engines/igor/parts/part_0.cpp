@@ -110,7 +110,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 	case 109: // take alarm clock
 		if (_objectsState[9] == 0) {
 			animateLitAnimFrames(0x8410, 0, 1, 0x405, 21, 49, 0x693D, 126, -1, 0);
-			addObjectToInventory(6, 41); // s3:0903; cseg206:113C-1176
+			addObjectToInventory(6, 41);
 			_objectsState[9] = 1;
 			PART_00_APPLY_OBJECT_STATE(1);
 		}
@@ -147,7 +147,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 	case 116: // take records
 		if (_objectsState[12] == 0) {
 			animateLitAnimFrames(0x7C06, 0, 1, 0x405, 21, 49, 0x7146, 126, -1, 0);
-			addObjectToInventory(5, 40); // s3:0902; cseg206:0F75-0FAF
+			addObjectToInventory(5, 40);
 			_objectsState[12] = 1;
 			PART_00_APPLY_OBJECT_STATE(255);
 		} else {

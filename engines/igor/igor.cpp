@@ -157,7 +157,7 @@ void IgorEngine::restart() {
 	memset(_dialogueInfo, 0, sizeof(_dialogueInfo));
 
 	memset(_objectsState, 0, sizeof(_objectsState));
-	_part07FirstVisitDone = false; // cseg197:0795-0845; original global s3:0xED2E
+	_part07FirstVisitDone = false;
 	_roomAmbientIndex = 0;
 	_part68QuestionCounter = 1;
 	_part69FireflyFrameA = 0;
@@ -228,6 +228,7 @@ Common::Error IgorEngine::run() {
 
 	_gameState.talkMode = kTalkModeSpeechAndText;
 	_gameState.talkSpeed = 3;
+	syncSoundSettings();
 	_talkSpeechCounter = 5;
 	_eventQuitGame = false;
 
@@ -318,7 +319,7 @@ void IgorEngine::handleRoomDialogue() {
 	if (_gameState.dialogueTextRunning) {
 		// Speech completion ends the sentence, exactly as in the two blocking
 		// dialogue loops. Without this the sentence only ever ends on a click:
-		if (_gameState.talkMode != kTalkModeTextOnly && !isDialogueSpeechPlaying()) {
+		if (_talkDelay < 0 && !isDialogueSpeechPlaying()) {
 			_talkDelayCounter = _talkDelay;
 		}
 		if (_talkDelayCounter == _talkDelay) {
@@ -573,6 +574,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	}
 
 	if (s.isLoading()) {
+		syncSoundSettings();
 		// Fade the outgoing screen before any loaded room redraws its pixels.
 		fadeOut(768);
 		_gameStateLoaded = true;

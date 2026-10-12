@@ -21,10 +21,50 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "backends/audiocd/audiocd.h"
+#include "common/config-manager.h"
 
 #include "igor/igor.h"
 
 namespace Igor {
+
+int IgorEngine::getTalkMode() const {
+	if (!(_game.flags & kFlagTalkie) || ConfMan.getBool("mute") || ConfMan.getBool("speech_mute"))
+		return kTalkModeTextOnly;
+	return CLIP<int>(_gameState.talkMode, kTalkModeSpeechOnly, kTalkModeTextOnly);
+}
+
+void IgorEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+	const bool mute = ConfMan.getBool("mute");
+	const bool musicMute = mute || ConfMan.getBool("music_mute");
+	const bool sfxMute = mute || ConfMan.getBool("sfx_mute");
+	const bool speechMute = mute || ConfMan.getBool("speech_mute") || !(_game.flags & kFlagTalkie);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, musicMute);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, sfxMute);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, speechMute);
+	_system->getAudioCDManager()->setVolume(musicMute ? 0 : Audio::Mixer::kMaxChannelVolume);
+	_gameState.configSoundEnabled = sfxMute ? 0 : 1;
+
+	_gameState.talkMode = speechMute ? kTalkModeTextOnly
+		: (ConfMan.getBool("subtitles") ? kTalkModeSpeechAndText : kTalkModeSpeechOnly);
+
+	if (speechMute && (_gameState.talkSpeed < 1 || _gameState.talkSpeed > 5))
+		_gameState.talkSpeed = 3;
+	if (sfxMute)
+		_mixer->stopHandle(_sfxHandle);
+
+	if (speechMute) {
+		stopDialogueSpeech();
+		// Disabling speech during a sentence reveals its text and starts the
+		// same reading timer used by sentences begun in text-only mode.
+		if (_gameState.dialogueTextRunning && _talkDelay < 0) {
+			_talkDelay = 2 * _dialogueTextsTable[_dialogueTextsStart].count
+				* _talkDelays[CLIP<int>(_gameState.talkSpeed, 1, 5)];
+			_talkDelayCounter = 0;
+			memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
+		}
+	}
+}
 
 void IgorEngine::playMusic(int num, bool restart) {
 	debugC(9, kDebugEngine, "playMusic() %d", num);
@@ -45,6 +85,12 @@ void IgorEngine::playMusic(int num, bool restart) {
 }
 
 void IgorEngine::playSound(int num, int type) {
+	if (type == 1 && (ConfMan.getBool("mute") || ConfMan.getBool("sfx_mute")))
+		return;
+	if (type == 0 && getTalkMode() == kTalkModeTextOnly) {
+		stopDialogueSpeech();
+		return;
+	}
 
 	// A zero or "no speech" number means the line has no recorded speech
 	if (type == 0 && (num == 0 || num == kNoSpeechSound)) {
