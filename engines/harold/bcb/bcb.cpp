@@ -30,6 +30,7 @@
 #include "graphics/sjis.h"
 #include "graphics/surface.h"
 #include "harold/bcb/script.h"
+#include "harold/bcb/static_data.h"
 #include "video/avi_decoder.h"
 
 namespace BCB {

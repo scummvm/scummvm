@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	bcb/bcb.o \
 	bcb/resources.o \
 	bcb/input.o \
+	bcb/static_data.o \
 	metaengine.o
 
 MODULE_DIRS += \
