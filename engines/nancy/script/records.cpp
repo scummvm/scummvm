@@ -259,8 +259,75 @@ void SummaryRecord::readTable(int tableIndex) {
 		luaL_error(L, "No background specified");
 	}
 
+	// Either whether themes keep playing, or the pause between them as well
+	lua_getfield(L, tableIndex, "loopTheme");
+	if (lua_type(L, -1) == LUA_TNUMBER) {
+		_loopsTheme = true;
+		_themePause = ABS(lua_tonumber(L, -1));
+	} else if (!lua_isnil(L, -1)) {
+		_loopsTheme = lua_toboolean(L, -1) != 0;
+	}
+
+	lua_pop(L, 1);
+
 	// The background is behind everything else
 	limitZ(kBackgroundScriptZ);
+}
+
+// The channel and the volume of the themes
+static const uint16 kThemeChannel = 0;
+static const uint16 kThemeVolume = 85;
+
+// Starts one of the themes of the area, unless one is playing
+void SummaryRecord::playTheme() {
+	if (g_nancy->_sound->isSoundPlaying(kThemeChannel)) {
+		return;
+	}
+
+	const ENVS *environments = GetEngineData(ENVS);
+	if (!environments) {
+		return;
+	}
+
+	for (const ENVS::Environment &environment : environments->environments) {
+		if (!environment.code.equalsIgnoreCase(_environment) || environment.musicNames.empty()) {
+			continue;
+		}
+
+		SoundDescription sound;
+		sound.name = environment.musicNames[g_nancy->_randomSource->getRandomNumber(environment.musicNames.size() - 1)];
+		sound.channelID = kThemeChannel;
+		sound.numLoops = 1;
+		sound.volume = kThemeVolume;
+
+		g_nancy->_sound->loadSound(sound);
+		g_nancy->_sound->playSound(sound);
+		return;
+	}
+}
+
+void SummaryRecord::updateTheme(double sceneTime) {
+	// How often the scene looks whether the theme is over
+	static const double kThemeCheckSeconds = 1.0;
+
+	if (!_loopsTheme || sceneTime <= _lastThemeCheck + kThemeCheckSeconds) {
+		return;
+	}
+
+	_lastThemeCheck = sceneTime;
+
+	if (_themeEndTime == 0.0 && !g_nancy->_sound->isSoundPlaying(kThemeChannel)) {
+		_themeEndTime = sceneTime;
+	}
+
+	if (_themeEndTime != 0.0 && _themeEndTime + _themePause <= sceneTime) {
+		_themeEndTime = 0.0;
+		playTheme();
+	}
+}
+
+void SummaryRecord::runOnce() {
+	playTheme();
 }
 
 void SummaryRecord::setBackground(UI::Viewport *background) {
@@ -372,6 +439,7 @@ bool SummaryRecord::onMouseEvent(RecordEvent event, const ScriptPoint &point, bo
 
 void SummaryRecord::run(double sceneTime, double elapsedTime) {
 	_sceneTime = sceneTime;
+	updateTheme(sceneTime);
 
 	if (_numFrames <= 1 || _turn == kNoTurn) {
 		return;

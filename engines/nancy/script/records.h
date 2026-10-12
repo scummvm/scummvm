@@ -85,7 +85,9 @@ protected:
 // The first record of every scene, which names the area the scene belongs to
 // and its background. A background with more than one frame is a node the
 // player can turn around in.
-// TODO: Handle the loopTheme and modColor fields.
+// The area has a set of music themes. One of them starts with the scene when
+// no theme is playing, and a scene can ask for another one once it is over.
+// TODO: Handle the modColor field.
 class SummaryRecord : public Record {
 public:
 	SummaryRecord(SceneContext &context) : Record(context, "ND.Summary") {}
@@ -98,6 +100,7 @@ public:
 
 protected:
 	void readTable(int tableIndex) override;
+	void runOnce() override;
 	void run(double sceneTime, double elapsedTime) override;
 	bool hasTransform() const override { return true; }
 	bool getField(const Common::String &key) override;
@@ -112,9 +115,16 @@ private:
 	// The side of the node the mouse is on
 	Turn getTurnAt(const ScriptPoint &point, bool inViewport) const;
 	void setFrame(uint frame);
+	void playTheme();
+	void updateTheme(double sceneTime);
 
 	Common::String _environment;
 	Common::String _backgroundName;
+
+	bool _loopsTheme = false;
+	double _themePause = 0.0;		// the seconds of silence between two themes
+	double _themeEndTime = 0.0;		// when the theme was found to be over; 0 while one plays
+	double _lastThemeCheck = 0.0;
 
 	UI::Viewport *_background = nullptr;
 	uint _numFrames = 0;
