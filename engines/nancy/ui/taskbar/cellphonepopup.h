@@ -308,6 +308,9 @@ private:
 	bool isBrowserArticle() const;
 	// Move the directory selection by delta, scrolling as needed.
 	void moveDirectorySelection(int delta);
+	// Scroll the e-mail / search list by one row. These lists have no
+	// selection, so the arrows move the list itself.
+	void scrollLinkList(int delta);
 
 	Common::Point mouseToChunkCoords(const Common::Point &mouse) const;
 

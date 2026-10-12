@@ -259,15 +259,29 @@ void CellPhonePopup::addSearchLink(int16 mode, const SearchLink &link) {
 	Common::Array<SearchLink> &list =
 		isSearch ? cellData->active().searchLinks : cellData->active().emailMessages;
 
-	// Skip duplicates (matched by key) so re-running the scene doesn't
-	// pile up the same entries.
+	// An entry whose key is already listed keeps its place, but takes over the
+	// new data: scripts re-add a topic to change the event flag it sets.
+	// A re-added e-mail also counts as unread again.
+	bool replaced = false;
 	for (uint i = 0; i < list.size(); ++i) {
-		if (list[i].key.equalsIgnoreCase(link.key)) {
-			return;
+		if (list[i].key == link.key) {
+			list[i] = link;
+			list[i].read = false;
+			replaced = true;
+			break;
 		}
 	}
 
-	list.push_back(link);
+	if (!replaced) {
+		// New e-mails go to the top of the inbox, new topics to the end of
+		// the search list.
+		if (isSearch) {
+			list.push_back(link);
+		} else {
+			list.insert_at(0, link);
+			list[0].read = false;
+		}
+	}
 
 	if (_isVisible &&
 			((isSearch && _screenState == kWebList) ||
@@ -2112,6 +2126,27 @@ void CellPhonePopup::moveDirectorySelection(int delta) {
 	drawScreenContent();
 }
 
+void CellPhonePopup::scrollLinkList(int delta) {
+	const uint total = currentListEntryCount();
+	const uint totalRows = maxDirectoryRows();
+	const uint titleRows = listTitleRows();
+	const uint pageRows = totalRows > titleRows ? totalRows - titleRows : 0;
+
+	if (delta < 0) {
+		if (_directoryScroll == 0) {
+			return;
+		}
+		--_directoryScroll;
+	} else {
+		if (_directoryScroll + pageRows >= total) {
+			return;
+		}
+		++_directoryScroll;
+	}
+
+	drawScreenContent();
+}
+
 uint CellPhonePopup::directoryRowAt(const Common::Point &chunkMouse) const {
 	const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
 									chunkMouse.y - _screenPosition.top);
@@ -2589,14 +2624,14 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		if (upDst.contains(chunkMouse)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				moveDirectorySelection(-1);
+				scrollLinkList(-1);
 				input.eatMouseInput();
 				return;
 			}
 		} else if (downDst.contains(chunkMouse)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				moveDirectorySelection(+1);
+				scrollLinkList(+1);
 				input.eatMouseInput();
 				return;
 			}
@@ -2648,9 +2683,6 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 				const uint absolute = visible[visIdx];
 				g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
-					// Move the selection indicator to the clicked row, then
-					// act on the entry.
-					_directorySelection = entryRow;
 					SearchLink &e = (*list)[absolute];
 					// Original sets the event flag when an entry is opened;
 					// it does not scene-change from a list click.
