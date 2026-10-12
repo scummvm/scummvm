@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	bcb/screens.o \
 	bcb/input.o \
 	bcb/computer.o \
+	bcb/saveload.o \
 	bcb/map.o \
 	bcb/script.o \
 	bcb/executable_data.o \
