@@ -146,6 +146,33 @@ void BCBEngine::mainLoop() {
 				if (_initialLogoElapsedTimerTicks > 0x3c)
 					transitionFromLogoToTitle();
 			}
+		} else if (_currentDisplayState == 1 && !_activeMovieVideo && !_sceneIdleVideo) {
+			const uint32 now = g_system->getMillis();
+			while (now - _lastTimerTick >= 50 && _currentDisplayState == 1 && !_activeMovieVideo && !_sceneIdleVideo) {
+				_lastTimerTick += 50;
+				++_sceneIdleMovieTimerTicks;
+				if (_sceneIdleMovieTimerTicks > 200)
+					startSceneIdleMovie();
+			}
+		} else if (_currentDisplayState == 6) {
+			const uint32 now = g_system->getMillis();
+			while (now - _lastTimerTick >= 50 && _currentDisplayState == 6) {
+				_lastTimerTick += 50;
+				++_pendingStillElapsedTimerTicks;
+				if (kStillImageDurationTicks[_pendingStillDurationIndex] < _pendingStillElapsedTimerTicks)
+					completePendingStillImageScreen();
+			}
+		} else if (_currentDisplayState == 9) {
+			const uint32 now = g_system->getMillis();
+			while (now - _lastTimerTick >= 50 && _currentDisplayState == 9) {
+				_lastTimerTick += 50;
+				++_gameOverElapsedTimerTicks;
+				if (stateDword(kStateClearDisplayBeforeMediaCheckFlag) != 0 || _gameOverElapsedTimerTicks > 300) {
+					resetGameState();
+					showTitleScreen();
+					startMenuBackgroundMusic();
+				}
+			}
 		}
 
 		if (_menuBackgroundVideo) {
@@ -188,6 +215,13 @@ void BCBEngine::mainLoop() {
 
 			if (_mapMoveVideo->needsUpdate())
 				_mapMoveVideo->decodeNextFrame();
+		}
+
+		if (_gameOverVideo) {
+			if (_gameOverVideo->needsUpdate())
+				_gameOverVideo->decodeNextFrame();
+			if (_gameOverVideo->endOfVideo())
+				stopGameOverMusic();
 		}
 
 		if (_activeMovieVideo) {

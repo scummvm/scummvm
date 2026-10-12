@@ -71,6 +71,12 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 		return;
 	}
 
+	if (_currentDisplayState == 6) {
+		playUiSound();
+		completePendingStillImageScreen();
+		return;
+	}
+
 	if ((_currentDisplayState == 1 || _currentDisplayState == 2) && !_activeMovieVideo) {
 		if (kMovieQueueControlHitRect.contains(mousePosition)) {
 			playUiSound();

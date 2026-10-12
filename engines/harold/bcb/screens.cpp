@@ -107,6 +107,107 @@ bool BCBEngine::startNewGameFromTitle() {
 	return playNumberedMovie(6, true);
 }
 
+bool BCBEngine::showPendingStillImageScreen() {
+	const int stillImageToShowId = stateDword(kStateStillImageToShowId);
+	if (stillImageToShowId == 0)
+		return false;
+
+	const int stillIndex = stillImageToShowId - 0x34;
+	if (stillIndex < 0 || stillIndex >= ARRAYSIZE(kStillImageHighColorPaths)) {
+		warning("BCBEngine::showPendingStillImageScreen(): Unsupported still id %d", stillImageToShowId);
+		stateDword(kStateStillImageToShowId) = 0;
+		return false;
+	}
+
+	Graphics::Surface *still = loadDiscBitmap(kStillImageHighColorPaths[stillIndex]);
+	if (!still)
+		return false;
+
+	g_system->copyRectToScreen(still->getPixels(), still->pitch, 0, 0, MIN<int>(still->w, 640), MIN<int>(still->h, 480));
+	g_system->updateScreen();
+	still->free();
+	delete still;
+
+	_currentDisplayState = 6;
+	_pendingStillElapsedTimerTicks = 0;
+	_lastTimerTick = g_system->getMillis();
+	_pendingStillDurationIndex = stillIndex;
+	stateDword(kStateStillImageToShowId) = 0;
+	return true;
+}
+
+void BCBEngine::completePendingStillImageScreen() {
+	if (_currentDisplayState != 6)
+		return;
+
+	if (stateDword(kStateClearDisplayBeforeMediaCheckFlag) == 0)
+		showMainSceneScreen();
+	processGameStateDispatcher(true);
+}
+
+bool BCBEngine::dispatchGameOverScreen() {
+	stopSceneIdleMovie();
+	stopMapMoveMovie();
+	stopActiveMovie();
+	stopMenuBackgroundMusic();
+	_sceneChoiceActive = false;
+	_mapControlsActive = false;
+	freeSceneChoiceBacking();
+
+	Graphics::Surface *gameOver = loadDiscBitmapFromAnyDisc("bmp/still/16m/pover.bmp");
+	if (!gameOver)
+		return false;
+
+	const uint selectedSceneChoiceValue = stateDword(kStateSelectedSceneChoiceValue);
+	if (selectedSceneChoiceValue < _gameOverText.size() && !_gameOverText[selectedSceneChoiceValue].empty()) {
+		const uint32 white = gameOver->format.RGBToColor(255, 255, 255);
+		const Common::Rect textRect(100, 200, 540, 400);
+		if (_gameOverTextFont) {
+			const Common::U32String &text = _gameOverText[selectedSceneChoiceValue];
+			int y = textRect.top - (_gameDescription->desc.language == Common::KO_KOR ? 1 : 0);
+			for (uint lineStart = 0; lineStart < text.size() && y < textRect.bottom;) {
+				uint lineEnd = lineStart;
+				uint lastFit = lineStart;
+				while (lineEnd < text.size() && text[lineEnd] != U'\n') {
+					++lineEnd;
+					const Common::U32String candidate(text.c_str() + lineStart, lineEnd - lineStart);
+					if (_gameOverTextFont->getStringWidth(candidate) <= textRect.width())
+						lastFit = lineEnd;
+					else
+						break;
+				}
+
+				if (lastFit == lineStart && lineEnd > lineStart)
+					lastFit = lineStart + 1;
+				if (lineEnd < text.size() && text[lineEnd] == U'\n')
+					lastFit = lineEnd;
+
+				_gameOverTextFont->drawString(gameOver, Common::U32String(text.c_str() + lineStart, lastFit - lineStart), textRect.left, y, textRect.width(), white, Graphics::kTextAlignLeft);
+				y += _gameOverTextFont->getFontHeight() + kGameOverTextLineGap;
+				lineStart = lastFit;
+				if (lineStart < text.size() && text[lineStart] == U'\n')
+					++lineStart;
+			}
+		}
+	}
+
+	blitScreenWithLineReveal(*gameOver, false);
+	gameOver->free();
+	delete gameOver;
+
+	_currentDisplayState = 9;
+	_gameOverElapsedTimerTicks = 0;
+	_lastTimerTick = g_system->getMillis();
+	g_system->updateScreen();
+	startGameOverMusic();
+	return true;
+}
+
+bool BCBEngine::dispatchEndingStillDisplayState() {
+	_currentDisplayState = 9;
+	return true;
+}
+
 void BCBEngine::drawTitleButton(uint buttonIndex, bool pressed) {
 	if (!_titleBitmap || buttonIndex == 0 || buttonIndex >= ARRAYSIZE(kTitleButtonTable))
 		return;
