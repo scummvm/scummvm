@@ -152,6 +152,11 @@ public:
 	 * Pause for a given number of milliseconds
 	 */
 	void pauseMillis(uint32 millis);
+
+	/**
+	 * Returns a font object that GfxSurface instances can use
+	 */
+	Graphics::Font *createFont() const override;
 };
 
 extern Ultima1Engine *g_engine;

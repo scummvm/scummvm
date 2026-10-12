@@ -30,6 +30,7 @@
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/console.h"
 #include "ultima/ultima1/sound_effects.h"
+#include "ultima/ultima1/gfx/font.h"
 #include "ultima/ultima1/views/views.h"
 #include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/metaengine.h"
@@ -138,6 +139,10 @@ void Ultima1Engine::queueEffect(const Common::Array<byte> &samples) {
 
 void Ultima1Engine::pauseMillis(uint32 millis) {
 	g_system->delayMillis(millis);
+}
+
+Graphics::Font *Ultima1Engine::createFont() const {
+	return new Gfx::Font();
 }
 
 } // namespace Ultima1

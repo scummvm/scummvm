@@ -58,6 +58,7 @@ MODULE_OBJS += \
 	ultima1/data/savegame.o \
 	ultima1/data/space_map.o \
 	ultima1/data/tiles.o \
+	ultima1/gfx/font.o \
 	ultima1/gfx/pic_decoder.o \
 	ultima1/gfx/text_cursor.o \
 	ultima1/gfx/text_input.o \
