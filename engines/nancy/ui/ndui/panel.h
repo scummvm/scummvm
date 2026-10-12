@@ -64,6 +64,7 @@ public:
 	void readBackground(Common::SeekableReadStream &stream);
 	void place();
 	bool isPlaced() const { return _isPlaced; }
+	bool isScrolling() const { return !_scrollBarName.empty(); }
 	Static *getBackground() const { return _background; }
 
 	// A panel without controls to arrange is as large as it takes to draw them all

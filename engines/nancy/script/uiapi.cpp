@@ -458,6 +458,15 @@ static int panelAddBg(lua_State *L) {
 		return luaL_error(L, "The panel already has a background");
 	}
 
+	// The background of a panel that scrolls only gives it its name and its place.
+	// The task list names the picture of the panel around it there, which
+	// isn't meant to show a second time.
+	luaL_checktype(L, 2, LUA_TTABLE);
+	if (panel->isScrolling()) {
+		lua_pushnil(L);
+		lua_setfield(L, 2, "overlay");
+	}
+
 	Common::MemoryWriteStreamDynamic data(DisposeAfterUse::YES);
 	writeControl(L, 2, kAlignCenter, data);
 
