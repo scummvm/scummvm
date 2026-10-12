@@ -104,6 +104,9 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 		return;
 	}
 
+	if (handleComputerClick(mousePosition))
+		return;
+
 	if (handleMapControlClick(mousePosition))
 		return;
 
