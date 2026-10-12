@@ -115,6 +115,7 @@ private:
 	void applyPendingClockTickDelta();
 	void notifyGameClockTicksChanged();
 	void drawClockAndChipIndicator(bool present = true);
+	void drawAnalogClockAndChip(int baseHourOffset, int gameClockTicks, bool present = true);
 	void renderClockAndChipToSurface(Graphics::Surface &surface, int baseHourOffset, int gameClockTicks);
 	Graphics::Surface *loadBitmap(const char *fileName);
 	const Graphics::Surface *getUiBitmap(const char *fileName);

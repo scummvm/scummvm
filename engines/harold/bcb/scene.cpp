@@ -33,6 +33,12 @@
 
 namespace BCB {
 
+void BCBEngine::applyPendingClockTickDelta() {
+	stateDword(kStateGameClockTicks) += _pendingClockTickDelta;
+	_pendingClockTickDelta = 0;
+	notifyGameClockTicksChanged();
+}
+
 void BCBEngine::notifyGameClockTicksChanged() {
 	const int ticks = stateDword(kStateGameClockTicks);
 	if (_lastLoggedGameClockTicks == ticks)
@@ -47,20 +53,59 @@ void BCBEngine::notifyGameClockTicksChanged() {
 	g_system->logMessage(LogMessageType::kInfo, message.c_str());
 }
 
-void BCBEngine::applyPendingClockTickDelta() {
-	error("BCB: applyPendingClockTickDelta is not implemented");
+void BCBEngine::drawClockAndChipIndicator(bool present) {
+	applyPendingClockTickDelta();
+	drawAnalogClockAndChip(0, stateDword(kStateGameClockTicks), present);
 }
 
-void BCBEngine::drawClockAndChipIndicator(bool present) {
-	error("BCB: drawClockAndChipIndicator is not implemented");
+void BCBEngine::renderClockAndChipToSurface(Graphics::Surface &surface, int baseHourOffset, int gameClockTicks) {
+	static const double kClockDegreesToRadians = 0.017453292519943295769;
+	const int clockTicks = gameClockTicks % 1440;
+	const double hourAngle = (30.0 * (baseHourOffset % 24) + clockTicks / 2.0) * kClockDegreesToRadians;
+	const double minuteAngle = (clockTicks * 6.0) * kClockDegreesToRadians;
+	const int centerX = 0x55;
+	const int centerY = 0x198;
+
+	const uint32 handColor = surface.format.RGBToColor(0x50, 0x50, 0x50);
+	const int hourEndX = centerX + (int)floor(sin(hourAngle) * 25.0 + 0.5);
+	const int hourEndY = centerY - (int)floor(cos(hourAngle) * 25.0 + 0.5);
+	const int minuteEndX = centerX + (int)floor(sin(minuteAngle) * 32.0 + 0.5);
+	const int minuteEndY = centerY - (int)floor(cos(minuteAngle) * 32.0 + 0.5);
+
+	surface.drawThickLine(centerX, centerY, hourEndX, hourEndY, 4, 4, handColor);
+	surface.drawThickLine(centerX, centerY, minuteEndX, minuteEndY, 3, 3, handColor);
+
+	const Graphics::Surface *chip = getUiBitmap("16mchip.bmp");
+	if (chip) {
+		const int sourceX = CLIP<int>(stateDword(kStateRequiredDiscIndex), 0, 4) * 0x58;
+		if (sourceX + 0x58 <= chip->w && 0x32 <= chip->h)
+			surface.copyRectToSurface(*chip, 0x8c, 0x16c, Common::Rect(sourceX, 0, sourceX + 0x58, 0x32));
+	}
+}
+
+void BCBEngine::drawAnalogClockAndChip(int baseHourOffset, int gameClockTicks, bool present) {
+	const Graphics::Surface *clockBacking = nullptr;
+	if (_currentDisplayState == 2 || _currentDisplayState == 8) {
+		clockBacking = getUiBitmap("16mmap.bmp");
+	} else {
+		clockBacking = getUiBitmap(stateDword(kStateMainSceneNightFlag) != 0 ? "16mmainn.bmp" : "16mmain.bmp");
+	}
+	if (clockBacking) {
+		g_system->copyRectToScreen(clockBacking->getBasePtr(0x25, 0x167), clockBacking->pitch, 0x25, 0x167, 0x60, 0x60);
+	}
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (screen) {
+		renderClockAndChipToSurface(*screen, baseHourOffset, gameClockTicks);
+		g_system->unlockScreen();
+	}
+
+	if (present)
+		g_system->updateScreen();
 }
 
 bool BCBEngine::drawMainSceneScreen(bool lineReveal) {
 	error("BCB: drawMainSceneScreen is not implemented");
-}
-
-void BCBEngine::renderClockAndChipToSurface(Graphics::Surface &surface, int baseHourOffset, int gameClockTicks) {
-	error("BCB: renderClockAndChipToSurface is not implemented");
 }
 
 } // End of namespace BCB
