@@ -71,6 +71,8 @@ protected:
 	int _rowHeight = 0;
 	bool _isDragging = false;
 	bool _isScrollBarDragging = false;
+	int _lastClicked = -1;
+	uint32 _lastClickTime = 0;
 };
 
 } // End of namespace NDUI

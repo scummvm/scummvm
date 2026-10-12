@@ -20,6 +20,7 @@
  */
 
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/ui/ndui/listbox.h"
@@ -187,10 +188,18 @@ bool ListBox::onMouseDown(const Common::Point &pos) {
 		return false;
 	}
 
+	// A second click on the same item, shortly after the first
+	static const uint32 kDoubleClickTime = 500;
+
+	const uint32 now = g_nancy->getTotalPlayTime();
+	const bool isDoubleClick = item == _lastClicked && now - _lastClickTime <= kDoubleClickTime;
+	_lastClicked = isDoubleClick ? -1 : item;
+	_lastClickTime = now;
+
 	_selected = item;
 	_isDragging = true;
 	_panel->setDirty();
-	sendEvent(kEventListSelected);
+	sendEvent(isDoubleClick ? kEventListDoubleClicked : kEventListSelected);
 	return true;
 }
 
@@ -265,7 +274,7 @@ bool ListBox::doAction(const Action &action) {
 }
 
 bool ListBox::getValue(int32 eventType, double &value, Common::String &text) const {
-	if (eventType != kEventListSelected) {
+	if (eventType != kEventListSelected && eventType != kEventListDoubleClicked) {
 		return false;
 	}
 

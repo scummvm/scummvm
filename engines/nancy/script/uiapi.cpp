@@ -47,7 +47,7 @@ namespace Script {
 //
 // TODO: The textShadow and captureClicks fields, the ways of arranging controls
 // other than left to right and right to left, and the events the controls don't
-// send yet: listboxItemDblClick, enable, disable, mouseEnter and mouseLeave.
+// send yet: enable, disable, mouseEnter and mouseLeave.
 
 static const char *const kPanelType = "ND.Panel";
 
@@ -70,6 +70,7 @@ static const NamedValue kEventNames[] = {
 	{ "sliderReleased", UI::NDUI::kEventSliderReleased },
 	{ "editboxString", UI::NDUI::kEventTextEntered },
 	{ "editboxChange", UI::NDUI::kEventTextChanged },
+	{ "listboxItemDblClick", UI::NDUI::kEventListDoubleClicked },
 	{ "listboxSelection", UI::NDUI::kEventListSelected },
 	{ "scrollBarValueChanged", UI::NDUI::kEventScrolled },
 	{ "show", UI::NDUI::kEventShow },

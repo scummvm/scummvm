@@ -87,6 +87,7 @@ enum EventType {
 	kEventSliderReleased	= 7,
 	kEventTextEntered	= 8,	// the player pressed Enter in an edit box
 	kEventTextChanged	= 9,
+	kEventListDoubleClicked	= 10,
 	kEventListSelected	= 11,
 	kEventScrolled		= 15,
 	kEventShow			= 16,	// the panel holding the control was shown
