@@ -71,6 +71,11 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 		return;
 	}
 
+	if (_currentDisplayState == 1 && _sceneChoiceActive) {
+		handleSceneChoiceClick(mousePosition);
+		return;
+	}
+
 	if (_currentDisplayState != 0 || !_titleButtonsActive)
 		return;
 
