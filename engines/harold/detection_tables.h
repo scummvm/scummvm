@@ -41,6 +41,7 @@ static const HaroldGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Blue Chicago Blues Korean Windows release.
 		{
 			"bcb",
 			nullptr,

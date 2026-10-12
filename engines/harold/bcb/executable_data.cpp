@@ -150,7 +150,7 @@ static bool readExecutableString(const Common::Array<byte> &executableData, uint
 	if (textEnd == textOffset)
 		return false;
 
-	sjisText = Common::String((const char *)&executableData[textOffset], textEnd - textOffset);
+	sjisText = Common::String(reinterpret_cast<const char *>(&executableData[textOffset]), textEnd - textOffset);
 	return true;
 }
 
@@ -224,7 +224,7 @@ bool BCBEngine::loadExecutableDataTables() {
 			if (textEnd == textOffset)
 				break;
 
-			const char *textStart = (const char *)&executableData[textOffset];
+			const char *textStart = reinterpret_cast<const char *>(&executableData[textOffset]);
 			_sceneChoiceText[setId].push_back(Common::U32String(textStart, textEnd - textOffset, profile.encoding));
 		}
 	}
@@ -255,7 +255,7 @@ bool BCBEngine::loadExecutableDataTables() {
 		if (textEnd == textOffset)
 			continue;
 
-		const char *textStart = (const char *)&executableData[textOffset];
+		const char *textStart = reinterpret_cast<const char *>(&executableData[textOffset]);
 		_mapButtonTextSjis[i] = Common::String(textStart, textEnd - textOffset);
 		_mapButtonText[i] = Common::U32String(textStart, textEnd - textOffset, profile.encoding);
 	}
@@ -280,7 +280,7 @@ bool BCBEngine::loadExecutableDataTables() {
 		if (textEnd == textOffset)
 			continue;
 
-		const char *textStart = (const char *)&executableData[textOffset];
+		const char *textStart = reinterpret_cast<const char *>(&executableData[textOffset]);
 		_gameOverText[i] = Common::U32String(textStart, textEnd - textOffset, profile.encoding);
 	}
 

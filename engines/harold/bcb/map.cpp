@@ -137,7 +137,7 @@ void BCBEngine::composeMapControlsToSurface(Graphics::Surface &surface, const Gr
 		const int textWidth = MAX<int>(0, surface.w - textX - 2);
 		if (_gameDescription->desc.language == Common::JA_JPN && _sjisFont) {
 			int x = textX + 1;
-			for (const byte *text = (const byte *)_mapButtonTextSjis[i].c_str(); *text;) {
+			for (const byte *text = reinterpret_cast<const byte *>(_mapButtonTextSjis[i].c_str()); *text;) {
 				const byte firstByte = *text++;
 				uint16 sjisChar = firstByte;
 				if (((firstByte >= 0x81 && firstByte <= 0x9f) || (firstByte >= 0xe0 && firstByte <= 0xef)) && *text)
@@ -146,7 +146,7 @@ void BCBEngine::composeMapControlsToSurface(Graphics::Surface &surface, const Gr
 				x += _sjisFont->getCharWidth(sjisChar);
 			}
 			x = textX;
-			for (const byte *text = (const byte *)_mapButtonTextSjis[i].c_str(); *text;) {
+			for (const byte *text = reinterpret_cast<const byte *>(_mapButtonTextSjis[i].c_str()); *text;) {
 				const byte firstByte = *text++;
 				uint16 sjisChar = firstByte;
 				if (((firstByte >= 0x81 && firstByte <= 0x9f) || (firstByte >= 0xe0 && firstByte <= 0xef)) && *text)

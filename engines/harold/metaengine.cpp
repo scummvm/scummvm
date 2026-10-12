@@ -46,7 +46,7 @@ Common::KeymapArray HaroldMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace BCB;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "bcb-default", _("Blue Chicago Blues"));
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "bcb-default", _("J.B. Harold: Blue Chicago Blues"));
 	Action *act;
 
 	act = new Action("INTERACT", _("Interact"));
@@ -76,13 +76,11 @@ Common::KeymapArray HaroldMetaEngine::initKeymaps(const char *target) const {
 
 	static const char *const choiceActionIds[] = {
 		"CHOICE1", "CHOICE2", "CHOICE3", "CHOICE4",
-		"CHOICE5", "CHOICE6", "CHOICE7", "CHOICE8"
-	};
+		"CHOICE5", "CHOICE6", "CHOICE7", "CHOICE8"};
 	static const char *const choiceActionLabels[] = {
 		_s("Choice 1"), _s("Choice 2"), _s("Choice 3"),
 		_s("Choice 4"), _s("Choice 5"), _s("Choice 6"),
-		_s("Choice 7"), _s("Choice 8")
-	};
+		_s("Choice 7"), _s("Choice 8")};
 
 	for (int choiceIndex = 1; choiceIndex <= 8; ++choiceIndex) {
 		act = new Action(choiceActionIds[choiceIndex - 1], _(choiceActionLabels[choiceIndex - 1]));

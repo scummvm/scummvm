@@ -163,7 +163,7 @@ void BCBEngine::drawXorRectangleBorder(const Common::Rect &rect) {
 	const Common::Rect clipped = rect.findIntersectingRect(Common::Rect(0, 0, screen->w, screen->h));
 	if (clipped.width() > 0 && clipped.height() > 0) {
 		const auto invertPixel = [&](int x, int y) {
-			byte *pixel = (byte *)screen->getBasePtr(x, y);
+			byte *pixel = static_cast<byte *>(screen->getBasePtr(x, y));
 			switch (screen->format.bytesPerPixel) {
 			case 1:
 				pixel[0] ^= 0xff;
