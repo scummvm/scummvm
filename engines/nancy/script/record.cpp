@@ -160,6 +160,17 @@ void Record::update(double sceneTime, double elapsedTime) {
 	}
 }
 
+void Record::hold() {
+	_isActive = false;
+	_hasActiveFunction = false;
+}
+
+void Record::release() {
+	_isActive = true;
+	_hasActiveFunction = false;
+	update(0.0, 0.0);
+}
+
 void Record::finish() {
 	_isDone = true;
 	callFunction("OnDone");

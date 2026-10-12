@@ -26,6 +26,7 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
 
+#include "engines/nancy/script/convo.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/luastate.h"
 #include "engines/nancy/script/record.h"
@@ -60,6 +61,10 @@ SceneContext::~SceneContext() {
 
 	for (Record *record : _newRecords) {
 		delete record;
+	}
+
+	for (ConvoResponse *response : _convoResponses) {
+		delete response;
 	}
 
 	delete _lua;

@@ -144,6 +144,8 @@ public:
 	void addTasklistEntry(const Common::String &textKey, int16 flag);
 	void startConversation(const Common::String &caption, const Common::Array<Common::String> &responses);
 	void endConversation();
+	// Once the player has picked a response, the others can't be picked anymore
+	void disableOtherResponses(uint pickedResponse);
 
 	// Displays a value of the value table, until it gets unregistered
 	void registerValueDisplay(int16 index, const Common::String &display);

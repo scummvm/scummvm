@@ -558,6 +558,14 @@ void Manager::startConversation(const Common::String &caption, const Common::Arr
 	takeAction(kActionShow, "ConvoDialog", 0.0);
 }
 
+void Manager::disableOtherResponses(uint pickedResponse) {
+	for (uint i = 0; i < _responseNames.size(); ++i) {
+		if (i != pickedResponse) {
+			takeAction(kActionDisable, _responseNames[i], 0.0);
+		}
+	}
+}
+
 void Manager::endConversation() {
 	if (!_isInConversation) {
 		return;

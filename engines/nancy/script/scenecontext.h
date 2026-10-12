@@ -38,6 +38,8 @@ namespace Script {
 
 class LuaState;
 class Record;
+class ConvoRecord;
+struct ConvoResponse;
 class SummaryRecord;
 
 // One scene of a stream in Nancy19 and up, where it takes the place of the action
@@ -79,6 +81,13 @@ public:
 	// The seconds the scene has been running for
 	double getTime() const { return _time; }
 
+	// The conversation of the scene, once one has begun
+	ConvoRecord *getConvo() const { return _convo; }
+	void setConvo(ConvoRecord *convo) { _convo = convo; }
+
+	// Keeps a response the scripts made for as long as the scene lasts
+	void addConvoResponse(ConvoResponse *response) { _convoResponses.push_back(response); }
+
 	// The panels a scene adds to the UI call into its scripts, so they go when it does
 	void setMakesUI() { _makesUI = true; }
 
@@ -110,6 +119,8 @@ private:
 	Common::Array<Record *> _records;
 	Common::Array<Record *> _newRecords;
 	SummaryRecord *_summary = nullptr;
+	ConvoRecord *_convo = nullptr;
+	Common::Array<ConvoResponse *> _convoResponses;
 
 	double _time = 0.0;
 	bool _hasRunOnce = false;

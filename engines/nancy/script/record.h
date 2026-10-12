@@ -91,6 +91,11 @@ public:
 	// Makes a record that ran start over. Only some kinds can.
 	bool reset();
 
+	// A record another one keeps for later stays out of the way until it is
+	// released, and then runs right away
+	void hold();
+	void release();
+
 	bool isActive() const { return _isActive && !_isDone; }
 	bool isDone() const { return _isDone; }
 	bool hasStarted() const { return _hasStarted; }
