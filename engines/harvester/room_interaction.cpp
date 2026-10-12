@@ -30,6 +30,7 @@
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
 #include "harvester/inventory.h"
+#include "harvester/player.h"
 #include "harvester/room_scene_runtime.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
@@ -355,6 +356,110 @@ RoomInteractionProcessor::RoomInteractionProcessor(HarvesterEngine &engine, Flow
 	  _pendingRoomChangeUsesSavedRoomState(pendingRoomChangeUsesSavedRoomState),
 	  _pendingRoomChangeSavedRoomState(pendingRoomChangeSavedRoomState),
 	  _canExitCloseupToParent(canExitCloseupToParent), _callbacks(callbacks) {
+}
+
+void RoomInteractionProcessor::queueRegionInteraction(const RegionRecord &region, const Common::Point &mousePos) {
+	_pendingRegionName = region.regionName;
+	if (!_playerState.entity)
+		return;
+
+	const bool playerOverlapsRegion = doesPlayerOverlapRegion(*_playerState.entity, region);
+	if (_engine.isPathfindingDebugEnabled()) {
+		const Common::Rect playerRect = _playerState.entity->getScreenRect();
+		const Common::Rect regionBounds(region.left, region.top, region.right + 1, region.bottom + 1);
+		debugC(1, kDebugPathfinding,
+			"Harvester: pathfinding region click room='%s' mouse=(%d,%d) region='%s' bounds=(%d,%d)-(%d,%d) z=[%d,%d] start=%d cursor=%d desired_facing=%d player=(%d,%d,z=%.2f) player_rect=(%d,%d)-(%d,%d) overlaps=%d action='%s'",
+			_scene.state.roomName.c_str(), mousePos.x, mousePos.y,
+			region.regionName.c_str(),
+			regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
+			region.minZ, region.maxZ, region.startEnabled, region.cursorEnabled,
+			region.desiredFacing,
+			_playerState.centerX, _playerState.bottomY, (double)_playerState.z,
+			playerRect.left, playerRect.top, playerRect.right, playerRect.bottom,
+			playerOverlapsRegion, region.actionTag.c_str());
+	}
+	if (playerOverlapsRegion && doesPlayerFacingMatchRegion(_playerState.facing, region))
+		return;
+
+	Player::setRegionMoveTarget(_scene.state, _playerState,
+		Player::resolveRegionTargetX(_scene.state, region, _playerState),
+		Player::resolveRegionTargetZ(region));
+	if (_engine.isPathfindingDebugEnabled()) {
+		debugC(1, kDebugPathfinding,
+			"Harvester: pathfinding region target room='%s' region='%s' target=(%d,%d,z=%.2f)",
+			_scene.state.roomName.c_str(), region.regionName.c_str(),
+			_playerState.targetX, _playerState.targetBottomY, (double)_playerState.targetZ);
+	}
+}
+
+Common::Error RoomInteractionProcessor::runRegionInteraction(const RegionRecord &region,
+		InventorySystem &inventory, bool &needsRedraw) {
+	InteractionResult interaction;
+	if (!_engine.getScript()->resolveRegionInteraction(region, interaction, _scene.state.roomName))
+		return Common::kNoError;
+	debugC(2, kDebugRoom,
+		"Harvester: region interaction room='%s' region='%s' action='%s' player=(%d,%d,z=%.2f) next_room='%s'",
+		_scene.state.roomName.c_str(), region.regionName.c_str(), region.actionTag.c_str(),
+		_playerState.centerX, _playerState.bottomY, (double)_playerState.z,
+		interaction.nextRoomName.c_str());
+
+	bool didTransition = false;
+	Common::Error interactionError =
+		handleInteractionResult(interaction, didTransition, Common::String());
+	if (interactionError.getCode() != Common::kNoError)
+		return interactionError;
+	if (_flow.hasPendingMainMenuReturn())
+		return Common::kNoError;
+
+	if (!inventory.refresh())
+		return Common::kReadingFailed;
+	needsRedraw = true;
+	return Common::kNoError;
+}
+
+Common::Error RoomInteractionProcessor::tryActivatePendingRegion(InventorySystem &inventory, bool &needsRedraw) {
+	if (_pendingRegionName.empty() || !_playerState.entity)
+		return Common::kNoError;
+
+	const RegionRecord *region = findSceneRegionByName(_scene.sceneRegions, _pendingRegionName);
+	if (!region || !region->startEnabled) {
+		_pendingRegionName.clear();
+		return Common::kNoError;
+	}
+	if (!doesPlayerOverlapRegion(*_playerState.entity, *region))
+		return Common::kNoError;
+	if (!doesPlayerFacingMatchRegion(_playerState.facing, *region)) {
+		if (!_playerState.hasMoveTarget && !_playerState.turnActive && region->desiredFacing >= 0)
+			(void)Player::startTurnAnimation(_playerState, region->desiredFacing);
+		return Common::kNoError;
+	}
+
+	_callbacks.stopPlayerRegionInteraction();
+	return runRegionInteraction(*region, inventory, needsRedraw);
+}
+
+Common::Error RoomInteractionProcessor::tryActivatePassiveRegion(InventorySystem &inventory, bool &needsRedraw) {
+	if (!_playerState.entity)
+		return Common::kNoError;
+
+	for (const RegionRecord &region : _scene.sceneRegions) {
+		if (!region.startEnabled)
+			continue;
+		if (!doesPlayerOverlapRegion(*_playerState.entity, region))
+			continue;
+		if (!doesPlayerFacingMatchRegion(_playerState.facing, region))
+			continue;
+
+		_callbacks.stopPlayerRegionInteraction();
+		return runRegionInteraction(region, inventory, needsRedraw);
+	}
+
+	return Common::kNoError;
+}
+
+int RoomInteractionProcessor::getPendingRegionFacing() const {
+	const RegionRecord *pendingRegion = findSceneRegionByName(_scene.sceneRegions, _pendingRegionName);
+	return pendingRegion && pendingRegion->startEnabled ? pendingRegion->desiredFacing : -1;
 }
 
 bool RoomInteractionProcessor::hasPendingMainMenuReturn() const {

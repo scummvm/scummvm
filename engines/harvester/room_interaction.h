@@ -102,6 +102,13 @@ public:
 		bool &pendingRoomChangeUsesSavedRoomState, SaveRoomState &pendingRoomChangeSavedRoomState,
 		bool canExitCloseupToParent, RoomInteractionCallbacks &callbacks);
 
+	void queueRegionInteraction(const RegionRecord &region, const Common::Point &mousePos);
+	Common::Error runRegionInteraction(const RegionRecord &region,
+		InventorySystem &inventory, bool &needsRedraw);
+	Common::Error tryActivatePendingRegion(InventorySystem &inventory, bool &needsRedraw);
+	Common::Error tryActivatePassiveRegion(InventorySystem &inventory, bool &needsRedraw);
+	int getPendingRegionFacing() const;
+
 	bool hasPendingMainMenuReturn() const;
 	Common::Error handleCombatInteraction(const InteractionResult &interaction, bool &needsRedraw);
 	Common::Error handleInteractionResult(const InteractionResult &interaction,

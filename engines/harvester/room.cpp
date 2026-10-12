@@ -993,101 +993,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		combat.capturePlayerAttackTarget(scene.state, playerState, entityManager, _mousePos, hoverState.npc);
 	};
 
-	auto queueRegionInteraction = [&](const RegionRecord &region) {
-		pendingRegionName = region.regionName;
-		if (!playerState.entity)
-			return;
-
-		const bool playerOverlapsRegion = doesPlayerOverlapRegion(*playerState.entity, region);
-		if (_engine.isPathfindingDebugEnabled()) {
-			const Common::Rect playerRect = playerState.entity->getScreenRect();
-			const Common::Rect regionBounds(region.left, region.top, region.right + 1, region.bottom + 1);
-			debugC(1, kDebugPathfinding,
-				"Harvester: pathfinding region click room='%s' mouse=(%d,%d) region='%s' bounds=(%d,%d)-(%d,%d) z=[%d,%d] start=%d cursor=%d desired_facing=%d player=(%d,%d,z=%.2f) player_rect=(%d,%d)-(%d,%d) overlaps=%d action='%s'",
-				scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
-				region.regionName.c_str(),
-				regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
-				region.minZ, region.maxZ, region.startEnabled, region.cursorEnabled,
-				region.desiredFacing,
-				playerState.centerX, playerState.bottomY, (double)playerState.z,
-				playerRect.left, playerRect.top, playerRect.right, playerRect.bottom,
-				playerOverlapsRegion, region.actionTag.c_str());
-		}
-		if (playerOverlapsRegion && doesPlayerFacingMatchRegion(playerState.facing, region))
-			return;
-
-		Player::setRegionMoveTarget(scene.state, playerState,
-			Player::resolveRegionTargetX(scene.state, region, playerState),
-			Player::resolveRegionTargetZ(region));
-		if (_engine.isPathfindingDebugEnabled()) {
-			debugC(1, kDebugPathfinding,
-				"Harvester: pathfinding region target room='%s' region='%s' target=(%d,%d,z=%.2f)",
-				scene.state.roomName.c_str(), region.regionName.c_str(),
-				playerState.targetX, playerState.targetBottomY, (double)playerState.targetZ);
-		}
-	};
-	auto runRegionInteraction = [&](const RegionRecord &region) -> Common::Error {
-		InteractionResult interaction;
-		if (!_engine.getScript()->resolveRegionInteraction(region, interaction, scene.state.roomName))
-			return Common::kNoError;
-		debugC(2, kDebugRoom,
-			"Harvester: region interaction room='%s' region='%s' action='%s' player=(%d,%d,z=%.2f) next_room='%s'",
-			scene.state.roomName.c_str(), region.regionName.c_str(), region.actionTag.c_str(),
-			playerState.centerX, playerState.bottomY, (double)playerState.z,
-			interaction.nextRoomName.c_str());
-
-		bool didTransition = false;
-		Common::Error interactionError =
-			interactionProcessor.handleInteractionResult(
-				interaction, didTransition, Common::String());
-		if (interactionError.getCode() != Common::kNoError)
-			return interactionError;
-		if (flow.hasPendingMainMenuReturn())
-			return Common::kNoError;
-
-		if (!_inventory.refresh())
-			return Common::kReadingFailed;
-		needsRedraw = true;
-		return Common::kNoError;
-	};
-	auto tryActivatePendingRegion = [&]() -> Common::Error {
-		if (pendingRegionName.empty() || !playerState.entity)
-			return Common::kNoError;
-
-		const RegionRecord *region = findSceneRegionByName(scene.sceneRegions, pendingRegionName);
-		if (!region || !region->startEnabled) {
-			pendingRegionName.clear();
-			return Common::kNoError;
-		}
-		if (!doesPlayerOverlapRegion(*playerState.entity, *region))
-			return Common::kNoError;
-		if (!doesPlayerFacingMatchRegion(playerState.facing, *region)) {
-			if (!playerState.hasMoveTarget && !playerState.turnActive && region->desiredFacing >= 0)
-				(void)Player::startTurnAnimation(playerState, region->desiredFacing);
-			return Common::kNoError;
-		}
-
-		session.stopPlayerRegionInteraction();
-		return runRegionInteraction(*region);
-	};
-	auto tryActivatePassiveRegion = [&]() -> Common::Error {
-		if (!playerState.entity)
-			return Common::kNoError;
-
-		for (const RegionRecord &region : scene.sceneRegions) {
-			if (!region.startEnabled)
-				continue;
-			if (!doesPlayerOverlapRegion(*playerState.entity, region))
-				continue;
-			if (!doesPlayerFacingMatchRegion(playerState.facing, region))
-				continue;
-
-			session.stopPlayerRegionInteraction();
-			return runRegionInteraction(region);
-		}
-
-		return Common::kNoError;
-	};
 	if (!_inventory.refresh())
 		return Common::kReadingFailed;
 	Graphics::FrameLimiter limiter(g_system, 60);
@@ -1630,7 +1535,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						hoverState.region->startEnabled &&
 						roomAllowsImmediateExitClick(scene.state.roomName)) {
 						session.stopPlayerRegionInteraction();
-						Common::Error interactionError = runRegionInteraction(*hoverState.region);
+						Common::Error interactionError =
+							interactionProcessor.runRegionInteraction(*hoverState.region, _inventory, needsRedraw);
 						if (interactionError.getCode() != Common::kNoError)
 							return interactionError;
 						if (flow.hasPendingMainMenuReturn())
@@ -1638,8 +1544,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						needsRedraw = true;
 						break;
 					}
-					queueRegionInteraction(*hoverState.region);
-					Common::Error interactionError = tryActivatePendingRegion();
+					interactionProcessor.queueRegionInteraction(*hoverState.region, _mousePos);
+					Common::Error interactionError =
+						interactionProcessor.tryActivatePendingRegion(_inventory, needsRedraw);
 					if (interactionError.getCode() != Common::kNoError)
 						return interactionError;
 					needsRedraw = true;
@@ -1926,7 +1833,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		Common::Error pendingRegionError =
 			session.isPlayerCombatLocked()
 				? Common::kNoError
-				: tryActivatePendingRegion();
+				: interactionProcessor.tryActivatePendingRegion(_inventory, needsRedraw);
 		if (pendingRegionError.getCode() != Common::kNoError)
 			return pendingRegionError;
 		if (flow.hasPendingMainMenuReturn())
@@ -1937,7 +1844,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			break;
 		}
 		if (!session.isPlayerCombatLocked()) {
-			pendingRegionError = tryActivatePassiveRegion();
+			pendingRegionError = interactionProcessor.tryActivatePassiveRegion(_inventory, needsRedraw);
 			if (pendingRegionError.getCode() != Common::kNoError)
 				return pendingRegionError;
 			if (flow.hasPendingMainMenuReturn())
@@ -2011,9 +1918,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (playerCanAct &&
 				!playerState.attackActive && !playerState.hitActive &&
 				!keyboardAttackRequested && !idleState.active && !idleState.exiting) {
-			const RegionRecord *pendingRegion = findSceneRegionByName(scene.sceneRegions, pendingRegionName);
-			const int regionFacing = pendingRegion && pendingRegion->startEnabled
-				? pendingRegion->desiredFacing : -1;
+			const int regionFacing = interactionProcessor.getPendingRegionFacing();
 			if (Player::stepKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, moveLeft, moveRight, moveUp, moveDown)) {
 				session.notePlayerActivity();
