@@ -1014,7 +1014,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ciftree.dat", "e1d50b6fc3b72335863a45fdaf6f3da7", 53613856),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSUPPORTED | ADGF_DROPPLATFORM,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 			NANCY8_GUIOPTIONS
 		},
 		kGameTypeNancy19
