@@ -37,6 +37,14 @@ namespace Gfx {
 void compositeDecode(Graphics::ManagedSurface &surf, const Common::Rect &area);
 
 /**
+ * Decodes part of a picture held elsewhere as CGA-indexed pixels, with the
+ * same dimensions as the destination, rather than in the destination itself.
+ * Used by views that change pixels one at a time, so that what's drawn already
+ * isn't lost. The area is widened to take in the pixel pairs it touches
+ */
+void compositeDecodeFrom(const byte *src, Graphics::ManagedSurface &dst, const Common::Rect &area);
+
+/**
  * Called by views of CGA-indexed graphics once they've finished drawing:
  * decodes the area if the composite renderer is the active one, and does
  * nothing otherwise

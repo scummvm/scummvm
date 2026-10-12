@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima2/gfx/composite.h"
 #include "ultima/ultima2/views/space_map.h"
 #include "ultima/ultima2/logic/space_logic.h"
 #include "ultima/ultima2/ultima2.h"
@@ -38,6 +39,14 @@ constexpr int WARP_STEPS_PER_TICK = 2;
 
 SpaceMap::SpaceMap() : View("SpaceMap") {
 	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
+	_staging.resize(320 * 200);
+}
+
+bool SpaceMap::msgGame(const GameMessage &msg) {
+	// The starfield is drawn differently by the composite renderer
+	if (msg._name == "RELOAD_TILES")
+		redraw();
+	return false;
 }
 
 void SpaceMap::seedStars() {
@@ -89,7 +98,15 @@ bool SpaceMap::msgKeypress(const KeypressMessage &msg) {
 }
 
 void SpaceMap::plot(Graphics::Views::GfxSurface &s, int x, int y, int color) {
-	s.setPixel(x + VIEW_OFFSET, y + VIEW_OFFSET, color);
+	int px = x + VIEW_OFFSET, py = y + VIEW_OFFSET;
+	if (px < 0 || px >= s.w || py < 0 || py >= s.h)
+		return;
+
+	_staging[py * s.w + px] = color;
+	if (g_engine->getRenderMode() == Data::RENDER_CGA_COMPOSITE)
+		Gfx::compositeDecodeFrom(&_staging[0], s, Common::Rect(px - 1, py, px + 2, py + 1));
+	else
+		s.setPixel(px, py, color);
 }
 
 void SpaceMap::drawMarker(Graphics::Views::GfxSurface &s, int color) {
@@ -112,6 +129,7 @@ void SpaceMap::setShip(byte x, byte y) {
 void SpaceMap::draw() {
 	auto s = getSurface();
 	s.fillRect(Common::Rect(0, 0, 320, 160), 0);
+	memset(&_staging[0], 0, 320 * 160);
 
 	for (int i = 0; i < STAR_COUNT; ++i)
 		plot(s, _starX[i], _starY[i], COLOR_STAR);

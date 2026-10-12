@@ -22,6 +22,7 @@
 #ifndef ULTIMA2_VIEWS_SPACE_MAP_H
 #define ULTIMA2_VIEWS_SPACE_MAP_H
 
+#include "common/array.h"
 #include "ultima/shared/engine/view.h"
 #include "ultima/ultima2/views/space_stats.h"
 
@@ -54,6 +55,10 @@ private:
 	byte _speed = 0x80;
 	Phase _phase = PHASE_IDLE;
 	int _counter = 0;
+
+	// The CGA colors of the starfield, since the composite renderer
+	// colors a pixel by its neighbors and so can't read them back off the screen
+	Common::Array<byte> _staging;
 
 	void seedStars();
 	void plot(Graphics::Views::GfxSurface &s, int x, int y, int color);
@@ -95,6 +100,7 @@ public:
 	 */
 	byte nextStarCoord();
 
+	bool msgGame(const GameMessage &msg) override;
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;

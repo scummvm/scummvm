@@ -95,6 +95,37 @@ void compositeDecode(Graphics::ManagedSurface &surf, const Common::Rect &area) {
 	surf.markAllDirty();
 }
 
+void compositeDecodeFrom(const byte *src, Graphics::ManagedSurface &dst, const Common::Rect &area) {
+	if (!g_tableReady)
+		buildTable();
+
+	Common::Rect r = area;
+	r.clip(Common::Rect(dst.w, dst.h));
+	if (r.isEmpty())
+		return;
+
+	const int w = dst.w;
+	auto cga = [&](int x, int y) -> int {
+		return src[y * w + x] & 3;
+	};
+
+	for (int y = r.top; y < r.bottom; ++y) {
+		byte *out = (byte *)dst.getBasePtr(0, y);
+
+		// Pairs are aligned to even columns of the whole picture
+		for (int x = r.left & ~1; x < r.right; x += 2) {
+			int p0 = (x > 0) ? cga(x - 1, y) : 0;
+			int p3 = (x + 2 < w) ? cga(x + 2, y) : ((y + 2 < dst.h) ? cga(0, y + 2) : 0);
+			int window = (p0 << 6) | (cga(x, y) << 4) | (cga(x + 1, y) << 2) | p3;
+
+			out[x] = Data::COMPOSITE_PALETTE_BASE + g_leftColor[window];
+			out[x + 1] = Data::COMPOSITE_PALETTE_BASE + g_rightColor[window];
+		}
+	}
+
+	dst.addDirtyRect(Common::Rect(r.left & ~1, r.top, MIN<int>(r.right + 1, w), r.bottom));
+}
+
 void compositeFinish(Graphics::ManagedSurface &surf, const Common::Rect &area) {
 	if (g_engine->getRenderMode() == Data::RENDER_CGA_COMPOSITE)
 		compositeDecode(surf, area);
