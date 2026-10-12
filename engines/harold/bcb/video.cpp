@@ -60,6 +60,7 @@ bool BCBEngine::playNumberedMovie(int movieId, bool blankScreenMovie) {
 	_activeMovieVideo->start();
 	_activeMoviePaused = false;
 	_activeMovieDispatchOnFinish = true;
+	drawMovieControlStrip();
 	return true;
 }
 
@@ -69,6 +70,84 @@ Common::Point BCBEngine::getActiveMoviePosition() const {
 	if (_currentDisplayState == 8)
 		return Common::Point(0x78, 0x38);
 	return Common::Point(0x10, 0x30);
+}
+
+bool BCBEngine::shouldDrawMovieControlStrip() const {
+	return !_activeMovieOnBlankScreen && (_currentDisplayState == 1 || _currentDisplayState == 7 || _currentDisplayState == 8);
+}
+
+void BCBEngine::drawMapSubmodeMovieBackdrop(bool present) {
+	const Graphics::Surface *map = getUiBitmap("16mmap.bmp");
+	if (map) {
+		const Common::Rect sourceRect(kMapSubmodeMovieBackdropSourceX, kMapSubmodeMovieBackdropSourceY,
+									  kMapSubmodeMovieBackdropSourceX + 0x1a4, kMapSubmodeMovieBackdropSourceY + 0x11e);
+		if (sourceRect.right <= map->w && sourceRect.bottom <= map->h)
+			g_system->copyRectToScreen(map->getBasePtr(sourceRect.left, sourceRect.top), map->pitch,
+									   kMapSubmodeMovieBackdropRect.left, kMapSubmodeMovieBackdropRect.top,
+									   sourceRect.width(), sourceRect.height());
+	} else {
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (!screen)
+			return;
+
+		const uint32 backingColor = screen->format.RGBToColor(0, 0, 0);
+		screen->fillRect(kMapSubmodeMciControlHitRect, backingColor);
+		g_system->unlockScreen();
+	}
+
+	if (present)
+		g_system->updateScreen();
+}
+
+void BCBEngine::drawMovieControlStrip(int sourceX, bool present) {
+	if (!shouldDrawMovieControlStrip())
+		return;
+
+	const Graphics::Surface *chip = getUiBitmap("16mchip.bmp");
+	if (chip) {
+		if (sourceX + 0x98 <= chip->w && 0xe0 + 0x30 <= chip->h)
+			g_system->copyRectToScreen(chip->getBasePtr(sourceX, 0xe0), chip->pitch, 0x104, 0x199, 0x98, 0x30);
+		if (present)
+			g_system->updateScreen();
+	}
+}
+
+void BCBEngine::drawSceneChoiceControlStrip(int sourceX, bool present) {
+	const Graphics::Surface *chip = getUiBitmap("16mchip.bmp");
+	if (chip) {
+		if (sourceX + 0x98 <= chip->w && 0xb0 + 0x30 <= chip->h)
+			g_system->copyRectToScreen(chip->getBasePtr(sourceX, 0xb0), chip->pitch, 0x104, 0x199, 0x98, 0x30);
+		if (present)
+			g_system->updateScreen();
+	}
+}
+
+void BCBEngine::processQueuedMovieSequence() {
+	const int movieHistoryCount = stateDword(kStateMovieHistoryCount);
+	if (_queuedMoviePlaybackIndex < movieHistoryCount) {
+		const int movieId = stateDword(kStateMovieHistory + _queuedMoviePlaybackIndex * 4);
+		playNumberedMovie(movieId);
+		++_queuedMoviePlaybackIndex;
+		return;
+	}
+
+	if (_previousDisplayStateBeforeSystem == 1) {
+		drawSceneChoiceControlStrip();
+	} else if (_previousDisplayStateBeforeSystem == 2) {
+		Graphics::Surface *map = loadBitmap("16mmap.bmp");
+		if (map) {
+			applyPendingClockTickDelta();
+			renderClockAndChipToSurface(*map, 0, stateDword(kStateGameClockTicks));
+			composeMapControlsToSurface(*map, *map);
+			g_system->copyRectToScreen(map->getPixels(), map->pitch, 0, 0, MIN<int>(map->w, 640), MIN<int>(map->h, 480));
+			map->free();
+			delete map;
+		}
+		drawSceneChoiceControlStrip(0, false);
+		g_system->updateScreen();
+	}
+
+	processGameStateDispatcher(false);
 }
 
 void BCBEngine::stopActiveMovie() {
@@ -221,10 +300,6 @@ void BCBEngine::stopSceneIdleMovie() {
 	_sceneIdleVideo->stop();
 	delete _sceneIdleVideo;
 	_sceneIdleVideo = nullptr;
-}
-
-void BCBEngine::processQueuedMovieSequence() {
-	error("BCB: processQueuedMovieSequence is not implemented");
 }
 
 } // End of namespace BCB

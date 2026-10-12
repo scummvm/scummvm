@@ -38,11 +38,29 @@ static const int kMovieControlStripSkipPressedSourceX = 0x98;
 static const int kMovieControlStripPausePressedSourceX = 0x130;
 
 void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
+	if (_activeMovieVideo && shouldDrawMovieControlStrip()) {
+		if (kSystemMenuControlHitRect.contains(mousePosition)) {
+			_activeMoviePaused = !_activeMoviePaused;
+			_activeMovieVideo->pauseVideo(_activeMoviePaused);
+			drawMovieControlStrip(_activeMoviePaused ? kMovieControlStripPausePressedSourceX : kMovieControlStripNormalSourceX);
+			return;
+		}
+
+		if (kMovieQueueControlHitRect.contains(mousePosition)) {
+			drawMovieControlStrip(kMovieControlStripSkipPressedSourceX);
+			delayWithEventPolling(160, false);
+			stopActiveMovieAndDispatch();
+			return;
+		}
+	}
+
 	const bool activeMovieHit =
 		(_currentDisplayState == 0 && kTitleMciControlHitRect.contains(mousePosition)) ||
 		((_currentDisplayState == 1 || _currentDisplayState == 7) && kMainSceneMciControlHitRect.contains(mousePosition)) ||
 		(_currentDisplayState == 8 && kMapSubmodeMciControlHitRect.contains(mousePosition));
 	if (_activeMovieVideo && activeMovieHit) {
+		if (shouldDrawMovieControlStrip())
+			drawMovieControlStrip(kMovieControlStripSkipPressedSourceX);
 		delayWithEventPolling(160, false);
 		stopActiveMovieAndDispatch();
 		return;

@@ -104,11 +104,18 @@ private:
 	void drawCaptionTextBlock(const Common::String &sjisText, const Common::U32String &unicodeText, const Common::Rect &rect, uint32 color);
 	void restoreCaptionBackingRect(const Common::Rect &rect);
 	Common::Point getActiveMoviePosition() const;
+	bool shouldDrawMovieControlStrip() const;
+	void drawMapSubmodeMovieBackdrop(bool present = true);
+	void drawSceneChoiceControlStrip(int sourceX = 0, bool present = true);
+	void drawMovieControlStrip(int sourceX = 0, bool present = true);
 	void stopActiveMovieAndDispatch();
 	void processQueuedMovieSequence();
+	void composeMapControlsToSurface(Graphics::Surface &surface, const Graphics::Surface &mapArt);
 	bool drawMainSceneScreen(bool lineReveal);
+	void applyPendingClockTickDelta();
 	void notifyGameClockTicksChanged();
 	void drawClockAndChipIndicator(bool present = true);
+	void renderClockAndChipToSurface(Graphics::Surface &surface, int baseHourOffset, int gameClockTicks);
 	Graphics::Surface *loadBitmap(const char *fileName);
 	const Graphics::Surface *getUiBitmap(const char *fileName);
 	Graphics::Surface *loadBitmapFromStream(Common::SeekableReadStream *stream, const char *debugName) const;
