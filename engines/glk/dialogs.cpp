@@ -215,6 +215,10 @@ public:
 		: GUI::TabWidget(boss, name), _owner(owner) {
 	}
 
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override {
+		handleEmbeddedCommand(sender, cmd, data);
+	}
+
 	GUI::Widget *getActivePageWidgets() const {
 		return _firstWidget;
 	}

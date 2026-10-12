@@ -216,7 +216,19 @@ bool TabWidget::requestActiveTab(int tabID) {
 
 void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	Widget::handleCommand(sender, cmd, data);
+	handleArrowCommand(cmd);
+}
 
+void TabWidget::handleEmbeddedCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	if ((sender == _navLeft && cmd == kCmdLeft) ||
+			(sender == _navRight && cmd == kCmdRight)) {
+		handleArrowCommand(cmd);
+	} else {
+		Widget::handleCommand(sender, cmd, data);
+	}
+}
+
+void TabWidget::handleArrowCommand(uint32 cmd) {
 	switch (cmd) {
 	case kCmdLeft:
 		if (!_navRight->isEnabled()) {
