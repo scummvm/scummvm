@@ -29,12 +29,319 @@
 #include "harvester/flow.h"
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
+#include "harvester/inventory.h"
+#include "harvester/room_scene_runtime.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
 
 namespace Harvester {
 
 const char *const kExitCloseupPendingRoomChange = "__EXIT_CLOSEUP__";
+
+static const char *const kInventoryOwnerName = "INVENTORY";
+
+static Common::String resolveCarriedObjectSpritePath(const ObjectRecord &object) {
+	if (!object.altSpritePath.empty())
+		return object.altSpritePath;
+	return object.spritePath;
+}
+
+static bool shouldDispatchPickupActionOnCarryStart(const ObjectRecord &object) {
+	if (object.actionTag.empty())
+		return false;
+
+	return !object.objectName.equalsIgnoreCase("SANDWICH") &&
+		!object.objectName.equalsIgnoreCase("SANDWICH2") &&
+		!object.objectName.equalsIgnoreCase("SYRINGE");
+}
+
+static bool shouldDispatchPickupActionOnDirectInventoryTransfer(const ObjectRecord &object) {
+	if (object.actionTag.empty())
+		return false;
+
+	return !object.objectName.equalsIgnoreCase("ST_ASPRIN") &&
+		!object.objectName.equalsIgnoreCase("ST_COUGHM") &&
+		!object.objectName.equalsIgnoreCase("ST_VITAMN");
+}
+
+static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 12)
+		return false;
+
+	bitmap = IndexedBitmap();
+	return decodeBitmap(data, bitmap);
+}
+
+RoomItemInteractions::RoomItemInteractions(HarvesterEngine &engine, RoomSceneResources &scene,
+		RoomSceneRuntime &sceneRuntime, InventorySystem &inventory, const Common::String &pendingRoomChange)
+	: _engine(engine), _scene(scene), _sceneRuntime(sceneRuntime), _inventory(inventory),
+	  _pendingRoomChange(pendingRoomChange) {
+}
+
+bool RoomItemInteractions::hasCarriedRoomItem() const {
+	return !_carriedRoomItemName.empty();
+}
+
+void RoomItemInteractions::clearCarriedRoomItem() {
+	_carriedRoomItemName.clear();
+	_carriedRoomItemLabel.clear();
+	_carriedRoomItemBitmap = IndexedBitmap();
+}
+
+void RoomItemInteractions::hideSceneObject(const Common::String &objectName, const Common::String *ownerOrRoom) {
+	ObjectRecord *sceneObject = findSceneObjectByName(_scene.sceneObjects, objectName);
+	if (!sceneObject)
+		return;
+
+	sceneObject->visible = false;
+	sceneObject->runtimeVisible = false;
+	if (ownerOrRoom)
+		sceneObject->currentOwnerOrRoom = *ownerOrRoom;
+}
+
+bool RoomItemInteractions::stowCarriedRoomItemToInventory() {
+	if (!hasCarriedRoomItem())
+		return true;
+
+	_engine.getScript()->addRuntimeObjectToInventory(_carriedRoomItemName);
+	clearCarriedRoomItem();
+	return _inventory.refresh();
+}
+
+bool RoomItemInteractions::shouldCancelDeniedPickup(const InteractionResult &interaction, bool didTransition) const {
+	return !didTransition &&
+		!interaction.mutatedRuntimeState &&
+		!interaction.requestPlayerGotoXZ &&
+		!interaction.requestPlayerGotoZ &&
+		interaction.lightingCommand == kStartupLightingCommandNone &&
+		!interaction.requestMainMenu &&
+		!interaction.requestDemoEnding &&
+		interaction.dialogueNpcName.empty() &&
+		interaction.dialogueContinuationTag.empty() &&
+		interaction.continuationTag.empty() &&
+		interaction.nextRoomName.empty() &&
+		interaction.cutscenePath.empty() &&
+		!interaction.modalText.value.empty();
+}
+
+Common::Error RoomItemInteractions::restoreDeniedPickup(Script &script, const ObjectRecord &savedObject, bool clearCarryState,
+		RoomInteractionCallbacks &callbacks, bool &needsRedraw) {
+	if (!script.syncRuntimeObjectRecord(savedObject))
+		return Common::kReadingFailed;
+	if (clearCarryState)
+		clearCarriedRoomItem();
+
+	if (!callbacks.applyCurrentRoomRuntimeMutationsInPlace(true) && !callbacks.refreshCurrentScene(true))
+		return Common::kReadingFailed;
+	if (!_inventory.refresh())
+		return Common::kReadingFailed;
+	needsRedraw = true;
+	return Common::kNoError;
+}
+
+Common::Error RoomItemInteractions::moveRoomItemDirectlyToInventory(const ObjectRecord &object,
+		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw) {
+	Script *script = _engine.getScript();
+	if (!script)
+		return Common::kReadingFailed;
+
+	const ObjectRecord savedObject = object;
+
+	script->addRuntimeObjectToInventory(object.objectName);
+	const Common::String inventoryOwner(kInventoryOwnerName);
+	hideSceneObject(object.objectName, &inventoryOwner);
+	_sceneRuntime.removeSceneEntityByName(object.objectName);
+
+	bool didTransition = false;
+	if (shouldDispatchPickupActionOnDirectInventoryTransfer(object)) {
+		InteractionResult pickupInteraction;
+		if (script->executeActionTag(
+				object.actionTag, pickupInteraction, true, _scene.state.roomName)) {
+			Common::Error interactionError =
+				interactionProcessor.handleInteractionResult(
+					pickupInteraction, didTransition, Common::String());
+			if (interactionError.getCode() != Common::kNoError)
+				return interactionError;
+			if (interactionProcessor.hasPendingMainMenuReturn())
+				return Common::kNoError;
+			if (shouldCancelDeniedPickup(pickupInteraction, didTransition)) {
+				debugC(1, kDebugRoom,
+					"Harvester: cancelling denied direct pickup object='%s' action='%s' text='%s'",
+					savedObject.objectName.c_str(), savedObject.actionTag.c_str(),
+					pickupInteraction.modalText.value.c_str());
+				return restoreDeniedPickup(*script, savedObject, false, callbacks, needsRedraw);
+			}
+		}
+	}
+
+	if (!_inventory.refresh())
+		return Common::kReadingFailed;
+	needsRedraw = true;
+	return Common::kNoError;
+}
+
+Common::Error RoomItemInteractions::beginRoomItemCarry(const ObjectRecord &object,
+		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw) {
+	Script *script = _engine.getScript();
+	ResourceManager *resources = _engine.getResources();
+	if (!script || !resources)
+		return Common::kReadingFailed;
+
+	const ObjectRecord savedObject = object;
+
+	clearCarriedRoomItem();
+	_carriedRoomItemName = object.objectName;
+	_carriedRoomItemLabel = script->resolveObjectLabel(object);
+	const Common::String spritePath = resolveCarriedObjectSpritePath(object);
+	if (!spritePath.empty())
+		loadBitmapResource(*resources, spritePath, _carriedRoomItemBitmap);
+
+	script->setRuntimeObjectVisible(object.currentOwnerOrRoom, object.objectName, false);
+	hideSceneObject(object.objectName, nullptr);
+	_sceneRuntime.removeSceneEntityByName(object.objectName);
+
+	bool didTransition = false;
+	if (shouldDispatchPickupActionOnCarryStart(object)) {
+		InteractionResult pickupInteraction;
+		if (script->executeActionTag(
+				object.actionTag, pickupInteraction, true, _scene.state.roomName)) {
+			Common::Error interactionError =
+				interactionProcessor.handleInteractionResult(
+					pickupInteraction, didTransition, Common::String());
+			if (interactionError.getCode() != Common::kNoError)
+				return interactionError;
+			if (interactionProcessor.hasPendingMainMenuReturn())
+				return Common::kNoError;
+			if (shouldCancelDeniedPickup(pickupInteraction, didTransition)) {
+				debugC(1, kDebugRoom,
+					"Harvester: cancelling denied carried pickup object='%s' action='%s' text='%s'",
+					savedObject.objectName.c_str(), savedObject.actionTag.c_str(),
+					pickupInteraction.modalText.value.c_str());
+				return restoreDeniedPickup(*script, savedObject, true, callbacks, needsRedraw);
+			}
+			if (!didTransition &&
+					!pickupInteraction.dialogueNpcName.empty() &&
+					!script->isObjectInInventory(savedObject.objectName)) {
+				debugC(1, kDebugRoom,
+					"Harvester: restoring carried pickup after dialogue object='%s' action='%s' npc='%s'",
+					savedObject.objectName.c_str(), savedObject.actionTag.c_str(),
+					pickupInteraction.dialogueNpcName.c_str());
+				return restoreDeniedPickup(*script, savedObject, true, callbacks, needsRedraw);
+			}
+		}
+	}
+
+	if (!_pendingRoomChange.empty()) {
+		if (!stowCarriedRoomItemToInventory())
+			return Common::kReadingFailed;
+		needsRedraw = true;
+		return Common::kNoError;
+	}
+
+	needsRedraw = true;
+	return Common::kNoError;
+}
+
+Common::Error RoomItemInteractions::handleInventoryTargetInteraction(const ObjectRecord &target,
+		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
+	if (!_inventory.hasSelection())
+		return Common::kNoError;
+
+	const Common::String selectedItemName = _inventory.getSelectedItemName();
+	InteractionResult interaction;
+	const bool handled = _engine.getScript()->resolveUseItemInteraction(
+		selectedItemName, target, interaction, _scene.state.roomName);
+	if (!handled) {
+		debugC(1, kDebugInventory,
+			"Harvester: inventory target miss selected='%s' target='%s' owner='%s' action='%s'",
+			selectedItemName.c_str(), target.objectName.c_str(),
+			target.currentOwnerOrRoom.c_str(), target.actionTag.c_str());
+		return Common::kNoError;
+	}
+
+	StartupRoomTransitionKind roomTransition = interaction.roomTransition;
+	if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
+		roomTransition = kStartupRoomTransitionCloseup;
+
+	// Flow shares one inventory system across nested room loops. Clear the held item
+	// before entering a closeup so it is not still carried while the child room loop
+	// is active.
+	if (!interaction.nextRoomName.empty() &&
+			roomTransition != kStartupRoomTransitionChangeRoom)
+		_inventory.clearSelection();
+
+	bool didTransition = false;
+	Common::Error interactionError =
+		interactionProcessor.handleInteractionResult(interaction, didTransition, selectedItemName);
+	if (interactionError.getCode() != Common::kNoError)
+		return interactionError;
+	_inventory.clearSelection();
+	if (interactionProcessor.hasPendingMainMenuReturn())
+		return Common::kNoError;
+	if (!_inventory.refresh())
+		return Common::kReadingFailed;
+
+	needsRedraw = true;
+	return Common::kNoError;
+}
+
+ObjectRecord *RoomItemInteractions::findSelectedInventoryRoomTarget(const Common::Point &point) {
+	if (!_inventory.hasSelection())
+		return nullptr;
+
+	EntityManager *entityManager = _engine.getRuntimeEntities();
+	Script *script = _engine.getScript();
+	if (!entityManager || !script)
+		return nullptr;
+
+	const Common::String selectedItemName = _inventory.getSelectedItemName();
+	ObjectRecord *bestTarget = nullptr;
+	int bestDrawIndex = -1;
+	for (ObjectRecord &candidate : _scene.sceneObjects) {
+		if (candidate.objectName.empty() ||
+				!script->hasUseItemInteraction(selectedItemName, candidate)) {
+			continue;
+		}
+
+		const Entity *entity = entityManager->findSceneEntityByName(candidate.objectName);
+		if (!entity || !entity->hitTest(point))
+			continue;
+		if (entity->getClassId() == kRuntimeEntityClassBackground ||
+				entity->getClassId() == kRuntimeEntityClassPlayer ||
+				entity->getClassId() == kRuntimeEntityClassRectHotspot19) {
+			continue;
+		}
+
+		const int drawIndex = entityManager->findSceneEntityDrawIndexByName(entity->getName());
+		if (drawIndex < 0)
+			continue;
+		if (!bestTarget || drawIndex > bestDrawIndex) {
+			bestTarget = &candidate;
+			bestDrawIndex = drawIndex;
+		}
+	}
+
+	return bestTarget;
+}
+
+Common::Error RoomItemInteractions::handleRoomItemPickup(const ObjectRecord &object, bool playerPresent,
+		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw) {
+	InteractionResult blockedPickupInteraction;
+	if (_engine.getScript()->isPickupBlockedByAction(object, &blockedPickupInteraction)) {
+		bool didTransition = false;
+		Common::Error interactionError = interactionProcessor.handleInteractionResult(
+			blockedPickupInteraction, didTransition, Common::String());
+		if (interactionError.getCode() != Common::kNoError)
+			return interactionError;
+		needsRedraw = true;
+		return Common::kNoError;
+	}
+
+	return playerPresent
+		? beginRoomItemCarry(object, interactionProcessor, callbacks, needsRedraw)
+		: moveRoomItemDirectlyToInventory(object, interactionProcessor, callbacks, needsRedraw);
+}
 
 RoomInteractionProcessor::RoomInteractionProcessor(HarvesterEngine &engine, Flow &flow,
 		RoomSceneResources &scene, RoomPlayerState &playerState,
@@ -48,6 +355,10 @@ RoomInteractionProcessor::RoomInteractionProcessor(HarvesterEngine &engine, Flow
 	  _pendingRoomChangeUsesSavedRoomState(pendingRoomChangeUsesSavedRoomState),
 	  _pendingRoomChangeSavedRoomState(pendingRoomChangeSavedRoomState),
 	  _canExitCloseupToParent(canExitCloseupToParent), _callbacks(callbacks) {
+}
+
+bool RoomInteractionProcessor::hasPendingMainMenuReturn() const {
+	return _flow.hasPendingMainMenuReturn();
 }
 
 Common::Error RoomInteractionProcessor::handleCombatInteraction(const InteractionResult &interaction, bool &needsRedraw) {

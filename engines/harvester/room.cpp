@@ -51,7 +51,6 @@ namespace Harvester {
 
 static const uint32 kRoomExitFastClickWindowTicks = 20;
 static const char *const kPlayerInventoryLabel = "your inventory";
-static const char *const kInventoryOwnerName = "INVENTORY";
 static const byte kTransparentPaletteIndex = 0;
 static const float kNormalPaletteBrightness = 1.0f;
 static const float kDimPaletteBrightness = 0.6f;
@@ -159,12 +158,6 @@ static Common::String resolveStartupNpcLabel(const NpcRecord &npc) {
 	return label;
 }
 
-static Common::String resolveCarriedObjectSpritePath(const ObjectRecord &object) {
-	if (!object.altSpritePath.empty())
-		return object.altSpritePath;
-	return object.spritePath;
-}
-
 static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 12)
@@ -204,24 +197,6 @@ static void renderCdChangePromptScreen(HarvesterEngine &engine, const IndexedBit
 		engine.getRuntimeEntities()->drawCursor(*screen);
 	screen->makeAllDirty();
 	screen->update();
-}
-
-static bool shouldDispatchPickupActionOnCarryStart(const ObjectRecord &object) {
-	if (object.actionTag.empty())
-		return false;
-
-	return !object.objectName.equalsIgnoreCase("SANDWICH") &&
-		!object.objectName.equalsIgnoreCase("SANDWICH2") &&
-		!object.objectName.equalsIgnoreCase("SYRINGE");
-}
-
-static bool shouldDispatchPickupActionOnDirectInventoryTransfer(const ObjectRecord &object) {
-	if (object.actionTag.empty())
-		return false;
-
-	return !object.objectName.equalsIgnoreCase("ST_ASPRIN") &&
-		!object.objectName.equalsIgnoreCase("ST_COUGHM") &&
-		!object.objectName.equalsIgnoreCase("ST_VITAMN");
 }
 
 static void drawRoomPrompt(Graphics::Screen &screen, const Graphics::Font &font,
@@ -467,17 +442,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		uint32 nextKeyboardAttackAllowedTick = 0;
 		RoomIdleAnimationState &idleState = session.getIdleState();
 		bool needsRedraw = true;
-		Common::String carriedRoomItemName;
-		Common::String carriedRoomItemLabel;
-		IndexedBitmap carriedRoomItemBitmap;
-		auto hasCarriedRoomItem = [&]() {
-			return !carriedRoomItemName.empty();
-		};
-		auto clearCarriedRoomItem = [&]() {
-			carriedRoomItemName.clear();
-			carriedRoomItemLabel.clear();
-			carriedRoomItemBitmap = IndexedBitmap();
-		};
+		RoomItemInteractions roomItems(_engine, scene, sceneRuntime, _inventory, pendingRoomChange);
+
 		auto queueCombatLoadoutStatusMessage = [&](const Common::String &message) {
 			if (message.empty()) {
 				const bool hadMessage = !combatLoadoutStatusText.value.empty();
@@ -493,16 +459,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			combatLoadoutStatusHideTick =
 				Player::getRuntimeClockTicks() + kCombatLoadoutStatusDisplayTicks;
 			needsRedraw = true;
-		};
-		auto hideSceneObject = [&](const Common::String &objectName, const Common::String *ownerOrRoom) {
-			ObjectRecord *sceneObject = findSceneObjectByName(scene.sceneObjects, objectName);
-			if (!sceneObject)
-				return;
-
-			sceneObject->visible = false;
-			sceneObject->runtimeVisible = false;
-			if (ownerOrRoom)
-				sceneObject->currentOwnerOrRoom = *ownerOrRoom;
 		};
 
 		session.resetIdleState();
@@ -521,44 +477,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					monster.posX, monster.posY, (float)monster.posZ);
 			}
 		};
-		auto stowCarriedRoomItemToInventory = [&]() {
-			if (!hasCarriedRoomItem())
-				return true;
 
-			_engine.getScript()->addRuntimeObjectToInventory(carriedRoomItemName);
-			clearCarriedRoomItem();
-			return _inventory.refresh();
-		};
-		auto shouldCancelDeniedPickup = [&](const InteractionResult &interaction,
-				bool didTransition) {
-			return !didTransition &&
-				!interaction.mutatedRuntimeState &&
-				!interaction.requestPlayerGotoXZ &&
-				!interaction.requestPlayerGotoZ &&
-				interaction.lightingCommand == kStartupLightingCommandNone &&
-				!interaction.requestMainMenu &&
-				!interaction.requestDemoEnding &&
-				interaction.dialogueNpcName.empty() &&
-				interaction.dialogueContinuationTag.empty() &&
-				interaction.continuationTag.empty() &&
-				interaction.nextRoomName.empty() &&
-				interaction.cutscenePath.empty() &&
-				!interaction.modalText.value.empty();
-		};
-		auto restoreDeniedPickup = [&](Script &script,
-				const ObjectRecord &savedObject, bool clearCarryState) -> Common::Error {
-			if (!script.syncRuntimeObjectRecord(savedObject))
-				return Common::kReadingFailed;
-			if (clearCarryState)
-				clearCarriedRoomItem();
-
-			if (!session.applyCurrentRoomRuntimeMutationsInPlace(true) && !session.refreshCurrentScene(true))
-				return Common::kReadingFailed;
-			if (!_inventory.refresh())
-				return Common::kReadingFailed;
-			needsRedraw = true;
-			return Common::kNoError;
-		};
 		auto openInventoryOverlay = [&]() {
 			moveLeft = false;
 			moveRight = false;
@@ -569,7 +488,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			playerState.hasMoveTarget = false;
 			playerState.turnActive = false;
 			playerState.turnTargetFacing = -1;
-			if (!stowCarriedRoomItemToInventory())
+			if (!roomItems.stowCarriedRoomItemToInventory())
 				return false;
 			return _inventory.open();
 		};
@@ -1074,184 +993,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		combat.capturePlayerAttackTarget(scene.state, playerState, entityManager, _mousePos, hoverState.npc);
 	};
 
-	auto moveRoomItemDirectlyToInventory = [&](const ObjectRecord &object) -> Common::Error {
-		Script *script = _engine.getScript();
-		if (!script)
-			return Common::kReadingFailed;
-
-		const ObjectRecord savedObject = object;
-
-		script->addRuntimeObjectToInventory(object.objectName);
-		const Common::String inventoryOwner(kInventoryOwnerName);
-		hideSceneObject(object.objectName, &inventoryOwner);
-		sceneRuntime.removeSceneEntityByName(object.objectName);
-
-		bool didTransition = false;
-		if (shouldDispatchPickupActionOnDirectInventoryTransfer(object)) {
-			InteractionResult pickupInteraction;
-			if (script->executeActionTag(
-					object.actionTag, pickupInteraction, true, scene.state.roomName)) {
-				Common::Error interactionError =
-					interactionProcessor.handleInteractionResult(
-						pickupInteraction, didTransition, Common::String());
-				if (interactionError.getCode() != Common::kNoError)
-					return interactionError;
-				if (flow.hasPendingMainMenuReturn())
-					return Common::kNoError;
-				if (shouldCancelDeniedPickup(pickupInteraction, didTransition)) {
-					debugC(1, kDebugRoom,
-						"Harvester: cancelling denied direct pickup object='%s' action='%s' text='%s'",
-						savedObject.objectName.c_str(), savedObject.actionTag.c_str(),
-						pickupInteraction.modalText.value.c_str());
-					return restoreDeniedPickup(*script, savedObject, false);
-				}
-			}
-		}
-
-		if (!_inventory.refresh())
-			return Common::kReadingFailed;
-		needsRedraw = true;
-		return Common::kNoError;
-	};
-	auto beginRoomItemCarry = [&](const ObjectRecord &object) -> Common::Error {
-		Script *script = _engine.getScript();
-		ResourceManager *resources = _engine.getResources();
-		if (!script || !resources)
-			return Common::kReadingFailed;
-
-		const ObjectRecord savedObject = object;
-
-		clearCarriedRoomItem();
-		carriedRoomItemName = object.objectName;
-		carriedRoomItemLabel = script->resolveObjectLabel(object);
-		const Common::String spritePath = resolveCarriedObjectSpritePath(object);
-		if (!spritePath.empty())
-			loadBitmapResource(*resources, spritePath, carriedRoomItemBitmap);
-
-		script->setRuntimeObjectVisible(object.currentOwnerOrRoom, object.objectName, false);
-		hideSceneObject(object.objectName, nullptr);
-		sceneRuntime.removeSceneEntityByName(object.objectName);
-
-		bool didTransition = false;
-		if (shouldDispatchPickupActionOnCarryStart(object)) {
-			InteractionResult pickupInteraction;
-			if (script->executeActionTag(
-					object.actionTag, pickupInteraction, true, scene.state.roomName)) {
-				Common::Error interactionError =
-					interactionProcessor.handleInteractionResult(
-						pickupInteraction, didTransition, Common::String());
-				if (interactionError.getCode() != Common::kNoError)
-					return interactionError;
-				if (flow.hasPendingMainMenuReturn())
-					return Common::kNoError;
-				if (shouldCancelDeniedPickup(pickupInteraction, didTransition)) {
-					debugC(1, kDebugRoom,
-						"Harvester: cancelling denied carried pickup object='%s' action='%s' text='%s'",
-						savedObject.objectName.c_str(), savedObject.actionTag.c_str(),
-						pickupInteraction.modalText.value.c_str());
-					return restoreDeniedPickup(*script, savedObject, true);
-				}
-				if (!didTransition &&
-						!pickupInteraction.dialogueNpcName.empty() &&
-						!script->isObjectInInventory(savedObject.objectName)) {
-					debugC(1, kDebugRoom,
-						"Harvester: restoring carried pickup after dialogue object='%s' action='%s' npc='%s'",
-						savedObject.objectName.c_str(), savedObject.actionTag.c_str(),
-						pickupInteraction.dialogueNpcName.c_str());
-					return restoreDeniedPickup(*script, savedObject, true);
-				}
-			}
-		}
-
-		if (!pendingRoomChange.empty()) {
-			if (!stowCarriedRoomItemToInventory())
-				return Common::kReadingFailed;
-			needsRedraw = true;
-			return Common::kNoError;
-		}
-
-		needsRedraw = true;
-		return Common::kNoError;
-	};
-	auto handleInventoryTargetInteraction = [&](const ObjectRecord &target) -> Common::Error {
-		if (!_inventory.hasSelection())
-			return Common::kNoError;
-
-		const Common::String selectedItemName = _inventory.getSelectedItemName();
-		InteractionResult interaction;
-		const bool handled = _engine.getScript()->resolveUseItemInteraction(
-			selectedItemName, target, interaction, scene.state.roomName);
-		if (!handled) {
-			debugC(1, kDebugInventory,
-				"Harvester: inventory target miss selected='%s' target='%s' owner='%s' action='%s'",
-				selectedItemName.c_str(), target.objectName.c_str(),
-				target.currentOwnerOrRoom.c_str(), target.actionTag.c_str());
-			return Common::kNoError;
-		}
-
-		StartupRoomTransitionKind roomTransition = interaction.roomTransition;
-		if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
-			roomTransition = kStartupRoomTransitionCloseup;
-
-		// Flow shares one inventory system across nested room loops. Clear the held item
-		// before entering a closeup so it is not still carried while the child room loop
-		// is active.
-		if (!interaction.nextRoomName.empty() &&
-				roomTransition != kStartupRoomTransitionChangeRoom)
-			_inventory.clearSelection();
-
-		bool didTransition = false;
-		Common::Error interactionError =
-			interactionProcessor.handleInteractionResult(interaction, didTransition, selectedItemName);
-		if (interactionError.getCode() != Common::kNoError)
-			return interactionError;
-		_inventory.clearSelection();
-		if (flow.hasPendingMainMenuReturn())
-			return Common::kNoError;
-		if (!_inventory.refresh())
-			return Common::kReadingFailed;
-
-		needsRedraw = true;
-		return Common::kNoError;
-	};
-	auto findSelectedInventoryRoomTarget = [&](const Common::Point &point) -> ObjectRecord * {
-		if (!_inventory.hasSelection())
-			return nullptr;
-
-		EntityManager *entityManager = _engine.getRuntimeEntities();
-		Script *script = _engine.getScript();
-		if (!entityManager || !script)
-			return nullptr;
-
-		const Common::String selectedItemName = _inventory.getSelectedItemName();
-		ObjectRecord *bestTarget = nullptr;
-		int bestDrawIndex = -1;
-		for (ObjectRecord &candidate : scene.sceneObjects) {
-			if (candidate.objectName.empty() ||
-					!script->hasUseItemInteraction(selectedItemName, candidate)) {
-				continue;
-			}
-
-			const Entity *entity = entityManager->findSceneEntityByName(candidate.objectName);
-			if (!entity || !entity->hitTest(point))
-				continue;
-			if (entity->getClassId() == kRuntimeEntityClassBackground ||
-					entity->getClassId() == kRuntimeEntityClassPlayer ||
-					entity->getClassId() == kRuntimeEntityClassRectHotspot19) {
-				continue;
-			}
-
-			const int drawIndex = entityManager->findSceneEntityDrawIndexByName(entity->getName());
-			if (drawIndex < 0)
-				continue;
-			if (!bestTarget || drawIndex > bestDrawIndex) {
-				bestTarget = &candidate;
-				bestDrawIndex = drawIndex;
-			}
-		}
-
-		return bestTarget;
-	};
 	auto queueRegionInteraction = [&](const RegionRecord &region) {
 		pendingRegionName = region.regionName;
 		if (!playerState.entity)
@@ -1364,7 +1105,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			pendingRoomChangeIsRoomName = false;
 			pendingRoomChangeUsesSavedRoomState = false;
 			pendingRoomChangeSavedRoomState.clear();
-			if (!stowCarriedRoomItemToInventory())
+			if (!roomItems.stowCarriedRoomItemToInventory())
 				return Common::kReadingFailed;
 			break;
 		}
@@ -1377,17 +1118,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				pendingRoomChange = _engine.getPendingLoadedSaveRoomState().roomName;
 				pendingRoomChangeIsRoomName = true;
 			}
-			if (!stowCarriedRoomItemToInventory())
+			if (!roomItems.stowCarriedRoomItemToInventory())
 				return Common::kReadingFailed;
 			break;
 		}
 		if (flow.hasPendingDebugRoomChange()) {
-			if (!stowCarriedRoomItemToInventory())
+			if (!roomItems.stowCarriedRoomItemToInventory())
 				return Common::kReadingFailed;
 			return Common::kNoError;
 		}
 		if (!pendingRoomChange.empty()) {
-			if (!stowCarriedRoomItemToInventory())
+			if (!roomItems.stowCarriedRoomItemToInventory())
 				return Common::kReadingFailed;
 			break;
 		}
@@ -1403,7 +1144,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (flow.hasPendingMainMenuReturn())
 				return Common::kNoError;
 			if (!pendingRoomChange.empty()) {
-				if (!stowCarriedRoomItemToInventory())
+				if (!roomItems.stowCarriedRoomItemToInventory())
 					return Common::kReadingFailed;
 				break;
 			}
@@ -1432,7 +1173,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
 			const bool inventorySelectionActive = _inventory.hasSelection();
-			const bool roomCarryActive = hasCarriedRoomItem();
+			const bool roomCarryActive = roomItems.hasCarriedRoomItem();
 			const bool activeCarry = inventorySelectionActive || roomCarryActive;
 			const bool inventoryPanelContainsMouse = _inventory.isOpen() && inventoryPanelBounds.contains(_mousePos);
 			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting ||
@@ -1443,7 +1184,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
 					scene.sceneRegions, _mousePos, flow._menuTextConfig, &flow._dialogue);
 			if (!suppressHover && inventorySelectionActive && !hoverState.npc) {
-				if (ObjectRecord *selectedTarget = findSelectedInventoryRoomTarget(_mousePos))
+				if (ObjectRecord *selectedTarget = roomItems.findSelectedInventoryRoomTarget(_mousePos))
 					hoverState.object = selectedTarget;
 			}
 			Common::String promptText;
@@ -1476,7 +1217,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					_inventory.setPromptText(promptText);
 				} else {
 					promptText = buildUseItemPrompt(
-						flow._menuTextConfig, carriedRoomItemLabel, targetLabel);
+						flow._menuTextConfig, roomItems.getCarriedRoomItemLabel(), targetLabel);
 				}
 				hoverState.cursorSequence = 7;
 			} else if (_inventory.isOpen()) {
@@ -1515,10 +1256,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 			if (inventorySelectionActive) {
 				_inventory.drawSelectedDragItem(*activeScreen, _mousePos);
-			} else if (roomCarryActive && carriedRoomItemBitmap.isValid()) {
-				const int drawX = _mousePos.x - (int)carriedRoomItemBitmap.width / 2;
-				const int drawY = _mousePos.y - (int)carriedRoomItemBitmap.height / 2;
-				blitBitmap(*activeScreen, carriedRoomItemBitmap, drawX, drawY);
+			} else if (roomCarryActive && roomItems.getCarriedRoomItemBitmap().isValid()) {
+				const int drawX = _mousePos.x - (int)roomItems.getCarriedRoomItemBitmap().width / 2;
+				const int drawY = _mousePos.y - (int)roomItems.getCarriedRoomItemBitmap().height / 2;
+				blitBitmap(*activeScreen, roomItems.getCarriedRoomItemBitmap(), drawX, drawY);
 			}
 
 			if (showingInspectText) {
@@ -1675,8 +1416,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						needsRedraw = true;
 					break;
 				}
-				if (hasCarriedRoomItem()) {
-					if (!stowCarriedRoomItemToInventory())
+				if (roomItems.hasCarriedRoomItem()) {
+					if (!roomItems.stowCarriedRoomItemToInventory())
 						return Common::kReadingFailed;
 					needsRedraw = true;
 					break;
@@ -1773,7 +1514,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 								_inventory.getSelectedItemName().c_str(),
 								inventoryHover->object.objectName.c_str());
 							Common::Error interactionError =
-								handleInventoryTargetInteraction(inventoryHover->object);
+								roomItems.handleInventoryTargetInteraction(inventoryHover->object, interactionProcessor, needsRedraw);
 							if (interactionError.getCode() != Common::kNoError)
 								return interactionError;
 						}
@@ -1796,7 +1537,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					_mousePos, flow._menuTextConfig, &flow._dialogue);
 				ObjectRecord *selectedRoomTarget = nullptr;
 				if (_inventory.hasSelection() && !hoverState.npc)
-					selectedRoomTarget = findSelectedInventoryRoomTarget(_mousePos);
+					selectedRoomTarget = roomItems.findSelectedInventoryRoomTarget(_mousePos);
 				if (selectedRoomTarget &&
 						(!hoverState.object ||
 						 !selectedRoomTarget->objectName.equalsIgnoreCase(hoverState.object->objectName))) {
@@ -1816,10 +1557,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					clickHoverState.npc ? clickHoverState.npc->npcName.c_str() : "",
 					clickHoverState.region ? clickHoverState.region->regionName.c_str() : "",
 					clickHoverState.cursorSequence, clickHoverState.promptText.c_str());
-					if (hasCarriedRoomItem()) {
+					if (roomItems.hasCarriedRoomItem()) {
 					if (clickHoverState.playerEntity && playerState.entity &&
 							clickHoverState.playerEntity == playerState.entity) {
-						if (!stowCarriedRoomItemToInventory())
+						if (!roomItems.stowCarriedRoomItemToInventory())
 							return Common::kReadingFailed;
 						needsRedraw = true;
 					}
@@ -1845,7 +1586,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						: nullptr;
 					if (roomTarget) {
 						Common::Error interactionError =
-							handleInventoryTargetInteraction(*roomTarget);
+							roomItems.handleInventoryTargetInteraction(*roomTarget, interactionProcessor, needsRedraw);
 						if (interactionError.getCode() != Common::kNoError)
 							return interactionError;
 						needsRedraw = true;
@@ -1966,22 +1707,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					break;
 				}
 				if (_engine.getScript()->isPickupObject(*clickedObject)) {
-					InteractionResult blockedPickupInteraction;
-					if (_engine.getScript()->isPickupBlockedByAction(
-							*clickedObject, &blockedPickupInteraction)) {
-						bool didTransition = false;
-						Common::Error interactionError =
-							interactionProcessor.handleInteractionResult(
-								blockedPickupInteraction, didTransition, Common::String());
-						if (interactionError.getCode() != Common::kNoError)
-							return interactionError;
-						needsRedraw = true;
-						break;
-					}
-
-					Common::Error pickupError = playerState.entity
-						? beginRoomItemCarry(*clickedObject)
-						: moveRoomItemDirectlyToInventory(*clickedObject);
+					Common::Error pickupError = roomItems.handleRoomItemPickup(*clickedObject, playerState.entity != nullptr,
+						interactionProcessor, interactionCallbacks, needsRedraw);
 					if (pickupError.getCode() != Common::kNoError)
 						return pickupError;
 					break;
@@ -2119,7 +1846,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					if (session.cancelPlayerAttackAnimation())
 						needsRedraw = true;
-					if (!stowCarriedRoomItemToInventory())
+					if (!roomItems.stowCarriedRoomItemToInventory())
 						return Common::kReadingFailed;
 					moveLeft = false;
 					moveRight = false;
@@ -2150,7 +1877,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 					event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-					if (!stowCarriedRoomItemToInventory())
+					if (!roomItems.stowCarriedRoomItemToInventory())
 						return Common::kReadingFailed;
 					Common::Error exitError = runRoomExitCommands();
 					if (exitError.getCode() != Common::kNoError)
@@ -2176,7 +1903,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 		}
 		if (!pendingRoomChange.empty()) {
-			if (!stowCarriedRoomItemToInventory())
+			if (!roomItems.stowCarriedRoomItemToInventory())
 				return Common::kReadingFailed;
 			break;
 		}
@@ -2205,7 +1932,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (flow.hasPendingMainMenuReturn())
 			return Common::kNoError;
 		if (!pendingRoomChange.empty()) {
-			if (!stowCarriedRoomItemToInventory())
+			if (!roomItems.stowCarriedRoomItemToInventory())
 				return Common::kReadingFailed;
 			break;
 		}
@@ -2216,7 +1943,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (flow.hasPendingMainMenuReturn())
 				return Common::kNoError;
 			if (!pendingRoomChange.empty()) {
-				if (!stowCarriedRoomItemToInventory())
+				if (!roomItems.stowCarriedRoomItemToInventory())
 					return Common::kReadingFailed;
 				break;
 			}
@@ -2237,7 +1964,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (flow.hasPendingMainMenuReturn())
 				return Common::kNoError;
 			if (!pendingRoomChange.empty()) {
-				if (!stowCarriedRoomItemToInventory())
+				if (!roomItems.stowCarriedRoomItemToInventory())
 					return Common::kReadingFailed;
 				break;
 			}
@@ -2317,7 +2044,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (flow.hasPendingMainMenuReturn())
 			return Common::kNoError;
 		if (!pendingRoomChange.empty()) {
-			if (!stowCarriedRoomItemToInventory())
+			if (!roomItems.stowCarriedRoomItemToInventory())
 				return Common::kReadingFailed;
 			break;
 		}

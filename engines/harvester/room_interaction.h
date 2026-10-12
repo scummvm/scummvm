@@ -23,6 +23,7 @@
 #define HARVESTER_ROOM_INTERACTION_H
 
 #include "common/error.h"
+#include "harvester/bitmap.h"
 #include "harvester/room_support.h"
 #include "harvester/saveload.h"
 
@@ -30,6 +31,9 @@ namespace Harvester {
 
 class Flow;
 class HarvesterEngine;
+class InventorySystem;
+class RoomInteractionProcessor;
+class RoomSceneRuntime;
 struct IndexedBitmap;
 
 extern const char *const kExitCloseupPendingRoomChange;
@@ -54,6 +58,42 @@ public:
 		int damageType) = 0;
 };
 
+class RoomItemInteractions {
+public:
+	RoomItemInteractions(HarvesterEngine &engine, RoomSceneResources &scene,
+		RoomSceneRuntime &sceneRuntime, InventorySystem &inventory, const Common::String &pendingRoomChange);
+
+	const Common::String &getCarriedRoomItemLabel() const { return _carriedRoomItemLabel; }
+	const IndexedBitmap &getCarriedRoomItemBitmap() const { return _carriedRoomItemBitmap; }
+	bool hasCarriedRoomItem() const;
+	bool stowCarriedRoomItemToInventory();
+	Common::Error handleInventoryTargetInteraction(const ObjectRecord &target,
+		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
+	ObjectRecord *findSelectedInventoryRoomTarget(const Common::Point &point);
+	Common::Error handleRoomItemPickup(const ObjectRecord &object, bool playerPresent,
+		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw);
+
+private:
+	void clearCarriedRoomItem();
+	void hideSceneObject(const Common::String &objectName, const Common::String *ownerOrRoom);
+	bool shouldCancelDeniedPickup(const InteractionResult &interaction, bool didTransition) const;
+	Common::Error restoreDeniedPickup(Script &script, const ObjectRecord &savedObject, bool clearCarryState,
+		RoomInteractionCallbacks &callbacks, bool &needsRedraw);
+	Common::Error moveRoomItemDirectlyToInventory(const ObjectRecord &object,
+		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw);
+	Common::Error beginRoomItemCarry(const ObjectRecord &object,
+		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw);
+
+	HarvesterEngine &_engine;
+	RoomSceneResources &_scene;
+	RoomSceneRuntime &_sceneRuntime;
+	InventorySystem &_inventory;
+	const Common::String &_pendingRoomChange;
+	Common::String _carriedRoomItemName;
+	Common::String _carriedRoomItemLabel;
+	IndexedBitmap _carriedRoomItemBitmap;
+};
+
 class RoomInteractionProcessor {
 public:
 	RoomInteractionProcessor(HarvesterEngine &engine, Flow &flow, RoomSceneResources &scene,
@@ -62,6 +102,7 @@ public:
 		bool &pendingRoomChangeUsesSavedRoomState, SaveRoomState &pendingRoomChangeSavedRoomState,
 		bool canExitCloseupToParent, RoomInteractionCallbacks &callbacks);
 
+	bool hasPendingMainMenuReturn() const;
 	Common::Error handleCombatInteraction(const InteractionResult &interaction, bool &needsRedraw);
 	Common::Error handleInteractionResult(const InteractionResult &interaction,
 		bool &didTransition, const Common::String &usedItemName, bool interruptPlayerMovement = true);
