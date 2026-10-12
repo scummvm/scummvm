@@ -27,7 +27,7 @@
 #include "harold/detection_tables.h"
 
 static const PlainGameDescriptor haroldGames[] = {
-	{"bcb", "Blue Chicago Blues"},
+	{"bcb", "J.B. Harold: Blue Chicago Blues"},
 	{nullptr, nullptr}};
 
 static const DebugChannelDef debugFlagList[] = {

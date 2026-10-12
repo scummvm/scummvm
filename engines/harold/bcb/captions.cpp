@@ -58,7 +58,7 @@ const byte *BCBEngine::findAllBinRecordData(const Common::String &recordName, ui
 		uint nameLength = 0;
 		while (nameLength < 0x20 && _allBinData[entryOffset + 8 + nameLength] != 0)
 			++nameLength;
-		const Common::String entryName((const char *)&_allBinData[entryOffset + 8], nameLength);
+		const Common::String entryName(reinterpret_cast<const char *>(&_allBinData[entryOffset + 8]), nameLength);
 		if (!recordName.equals(entryName))
 			continue;
 
@@ -115,7 +115,7 @@ static bool isCaptionEdgeSpace(byte c) {
 }
 
 static void trimTimedCaptionLine(Common::String &line) {
-	const byte *text = (const byte *)line.c_str();
+	const byte *text = reinterpret_cast<const byte *>(line.c_str());
 	uint start = 0;
 	uint end = line.size();
 
