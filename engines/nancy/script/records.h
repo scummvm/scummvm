@@ -280,8 +280,10 @@ private:
 	uint16 _channel = 14;
 	double _volume = 1.0;
 	bool _isLooping = false;
+	bool _usesCaption = true;
 
 	SoundDescription _sound;
+	Common::String _caption;	// what the sound says, while it is the one on screen
 	bool _isPlaying = false;
 	bool _wasPreempted = false;
 	double _endTime = 0.0;

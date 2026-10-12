@@ -35,7 +35,10 @@
 #include "engines/nancy/script/scenecontext.h"
 #include "engines/nancy/script/types.h"
 
+#include "engines/nancy/state/scene.h"
+
 #include "engines/nancy/ui/viewport.h"
+#include "engines/nancy/ui/ndui/manager.h"
 
 namespace Nancy {
 namespace Script {
@@ -839,6 +842,7 @@ void SoundRecord::readTable(int tableIndex) {
 
 	readField(L, tableIndex, "volume", _volume);
 	readField(L, tableIndex, "loop", _isLooping);
+	readField(L, tableIndex, "useCC", _usesCaption);
 
 	if (pushField(L, tableIndex, "sounds")) {
 		readStringList(L, -1, _names);
@@ -866,6 +870,13 @@ void SoundRecord::runOnce() {
 	// The record is done once the sound has played through, whether it loops or not
 	const double length = _isPlaying ? g_nancy->_sound->getLength(_sound).msecs() / 1000.0 : 0.0;
 	_endTime = getContext().getTime() + length;
+
+	// What the sound says is kept under its name
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	_caption.clear();
+	if (_isPlaying && _usesCaption && ui && findText(_sound.name, _caption)) {
+		ui->setCaption(_caption);
+	}
 }
 
 void SoundRecord::run(double sceneTime, double elapsedTime) {
@@ -875,6 +886,13 @@ void SoundRecord::run(double sceneTime, double elapsedTime) {
 	}
 
 	if (_endTime <= sceneTime || _wasPreempted) {
+		// The caption goes with the sound, unless another one has replaced it
+		UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+		if (!_caption.empty() && ui && ui->getCaption() == _caption) {
+			ui->setCaption(Common::String());
+		}
+
+		_caption.clear();
 		finish();
 	}
 }
