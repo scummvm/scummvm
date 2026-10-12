@@ -37,6 +37,7 @@ bool BCBEngine::playNumberedMovie(int movieId, bool blankScreenMovie) {
 	_sceneChoiceActive = false;
 	_mapControlsActive = false;
 	_activeMovieOnBlankScreen = blankScreenMovie;
+	loadTimedCaptionRecord(movieId);
 
 	const Common::String movieName = Common::String::format("mov%04d.avi", movieId);
 	Common::SeekableReadStream *stream = createMovieReadStream(movieId);
