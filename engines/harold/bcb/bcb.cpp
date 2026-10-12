@@ -84,6 +84,7 @@ BCBEngine::~BCBEngine() {
 	delete _activeMovieVideo;
 	delete _sceneIdleVideo;
 	delete _gameOverVideo;
+	freeSceneChoiceBacking();
 	delete _sjisFont;
 	delete _captionTextFont;
 	delete _gameOverTextFont;
@@ -156,6 +157,24 @@ void BCBEngine::mainLoop() {
 
 			if (_menuBackgroundVideo->needsUpdate())
 				_menuBackgroundVideo->decodeNextFrame();
+		}
+
+		if (_sceneIdleVideo) {
+			if (_sceneIdleVideo->endOfVideo()) {
+				_sceneIdleVideo->stop();
+				_sceneIdleVideo->rewind();
+				_sceneIdleVideo->decodeNextFrame();
+				_sceneIdleVideo->start();
+			}
+
+			if (_sceneIdleVideo->needsUpdate()) {
+				const Graphics::Surface *frame = _sceneIdleVideo->decodeNextFrame();
+				if (frame) {
+					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0x10, 0x30, frame->w, frame->h);
+					g_system->updateScreen();
+					screenUpdated = true;
+				}
+			}
 		}
 
 		if (_activeMovieVideo) {
