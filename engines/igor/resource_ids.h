@@ -892,4 +892,11 @@
 
 #define DLG_Part8Intercom 1224
 
+#define TXT_OptionsButtons 1225
+#define TXT_OptionsSettings 1226
+#define TXT_OptionsTitle 1227
+#define TXT_OptionsQuit 1228
+#define TXT_OptionsSaveTitle 1229
+#define TXT_OptionsLoadTitle 1230
+
 #endif // IGOR_RESOURCE_IDS

@@ -60,8 +60,41 @@ enum {
 	kPagePlay
 };
 
+enum OptionsMenuText {
+	kOptionsSave = 0,
+	kOptionsLoad,
+	kOptionsQuit,
+	kOptionsCtrl,
+	kOptionsPlay,
+	kOptionsSoundOff,
+	kOptionsSoundOn,
+	kOptionsSoundUnavailable,
+	kOptionsSpeechOnly,
+	kOptionsSpeechAndText,
+	kOptionsTextOnly,
+	kOptionsSpeechUnavailable,
+	kOptionsMusicOff,
+	kOptionsMusicOn,
+	kOptionsMusicUnavailable,
+	kOptionsSpeedVerySlow,
+	kOptionsSpeedSlow,
+	kOptionsSpeedNormal,
+	kOptionsSpeedFast,
+	kOptionsSpeedVeryFast,
+	kOptionsSpeedSpeech,
+	kOptionsSpeedOff,
+	kOptionsCtrlTitle,
+	kOptionsQuitTitle,
+	kOptionsQuitQuestion,
+	kOptionsQuitKeys,
+	kOptionsSaveTitle,
+	kOptionsNoSavedGames,
+	kOptionsLoadTitle,
+	kOptionsTextCount
+};
+
 struct Page {
-	const char *captions[2];
+	int captions[2];
 	int xPos[2];
 	void (IgorEngine::*paintProc)();
 	bool (IgorEngine::*handleKeyDownProc)(int key);
@@ -69,48 +102,85 @@ struct Page {
 
 static const Page pages[] = {
 	{
-		{ "Salvar", "Elige una posición donde salvar" },
-		{ 50, 75 },
+		{ kOptionsSave, kOptionsSaveTitle },
+		{ 67, 159 },
 		0,
 		0
 	},
 	{
-		{ "Cargar", "Elige el juego que quieres cargar" },
-		{ 95, 93 },
+		{ kOptionsLoad, kOptionsLoadTitle },
+		{ 113, 159 },
 		0,
 		0
 	},
 	{
-		{ "Salir", "Salir" },
-		{ 145, 145 },
+		{ kOptionsQuit, kOptionsQuitTitle },
+		{ 159, 159 },
 		&IgorEngine::handleOptionsMenu_paintQuit,
 		&IgorEngine::handleOptionsMenu_handleKeyDownQuit
 	},
 	{
-		{ "Opcion.", "Opciones" },
-		{ 185, 112 },
+		{ kOptionsCtrl, kOptionsCtrlTitle },
+		{ 205, 159 },
 		&IgorEngine::handleOptionsMenu_paintCtrl,
 		&IgorEngine::handleOptionsMenu_handleKeyDownCtrl
 	},
 	{
-		{ "Jugar", 0 },
-		{ 237, 0 },
+		{ kOptionsPlay, -1 },
+		{ 251, 0 },
 		0,
 		0
 	}
 };
 
 
+void IgorEngine::loadOptionsMenuTexts() {
+	if (!_optionsMenuTexts.empty())
+		return;
+
+	const struct {
+		int resource;
+		int count;
+	} groups[] = {
+		{ TXT_OptionsButtons, 5 },
+		{ TXT_OptionsSettings, 17 },
+		{ TXT_OptionsTitle, 1 },
+		{ TXT_OptionsQuit, 3 },
+		{ TXT_OptionsSaveTitle, 1 },
+		{ TXT_OptionsLoadTitle, 2 }
+	};
+	for (uint i = 0; i < ARRAYSIZE(groups); ++i) {
+		int size;
+		uint8 *data = loadData(groups[i].resource, 0, &size);
+		int offset = 0;
+		for (int j = 0; j < groups[i].count; ++j) {
+			if (offset >= size || data[offset] > size - offset - 1)
+				error("Invalid options menu text resource %d", groups[i].resource);
+			int length = data[offset++];
+			_optionsMenuTexts.push_back(Common::String((const char *)data + offset, length));
+			offset += length;
+		}
+		if (offset != size)
+			error("Unexpected data in options menu text resource %d", groups[i].resource);
+		free(data);
+	}
+	assert(_optionsMenuTexts.size() == kOptionsTextCount);
+}
+
+void IgorEngine::drawOptionsMenuText(int text, int x, int y, int color) {
+	const char *str = _optionsMenuTexts[text].c_str();
+	_font.drawString(_screenTextLayer, str, x - _font.getStringWidth(str) / 2, y, color, -1, 0);
+}
+
 void IgorEngine::handleOptionsMenu_paintQuit() {
-	_font.drawString(_screenTextLayer, "Are you sure?", 120, 64 - 15, 0xF6, -1, 0);
-	_font.drawString(_screenTextLayer, "(Y/N)", 143, 76 - 15, 0xF6, -1, 0);
+	drawOptionsMenuText(kOptionsQuitQuestion, 159, 64 - 15, 0xF6);
+	drawOptionsMenuText(kOptionsQuitKeys, 159, 76 - 15, 0xF6);
 }
 
 bool IgorEngine::handleOptionsMenu_handleKeyDownQuit(int key) {
-	if (key == Common::KEYCODE_y) {
+	if (key == Common::KEYCODE_s)
 		_currentPart = kInvalidPart;
-	}
-	return true;
+	return key == Common::KEYCODE_s || key == Common::KEYCODE_n || key == Common::KEYCODE_ESCAPE;
 }
 
 static void redrawRect(uint8 *dst, int num, bool border) {
@@ -130,40 +200,20 @@ static void redrawRect(uint8 *dst, int num, bool border) {
 }
 
 void IgorEngine::handleOptionsMenu_paintCtrl() {
-	static const char *textsStrTable1[] = {
-		"Sound effects OFF",
-		"Sound effects ON",
-		"Sound effects UNAVAILABLE"
-	};
-	static int textsPosTable1[] = { 106, 110, 77 };
-	int i = _gameState.configSoundEnabled;
 	redrawRect(_screenTextLayer, 1, false);
-	_font.drawString(_screenTextLayer, textsStrTable1[i], textsPosTable1[i], 41 - 15, 0xF7, -1, 0);
+	drawOptionsMenuText(kOptionsSoundOff + CLIP<int>(_gameState.configSoundEnabled, 0, 2), 159, 41 - 15, 0xF7);
 
 	redrawRect(_screenTextLayer, 2, false);
-	_font.drawString(_screenTextLayer, "Only TEXT AVAILABLE", 93, 63 - 15, 0xF7, -1, 0);
+	int speechText = (_game.flags & kFlagTalkie)
+		? kOptionsSpeechOnly + CLIP<int>(_gameState.talkMode, 0, 2)
+		: kOptionsSpeechUnavailable;
+	drawOptionsMenuText(speechText, 159, 63 - 15, 0xF7);
 
-	static const char *textsStrTable2[] = {
-		"Music OFF",
-		"Music ON",
-		"Music UNAVAILABLE"
-	};
-	static int textsPosTable2[] = { 129, 133, 100 };
-	i = 1;
 	redrawRect(_screenTextLayer, 3, false);
-	_font.drawString(_screenTextLayer, textsStrTable2[i], textsPosTable2[i], 85 - 15, 0xF7, -1, 0);
+	drawOptionsMenuText(kOptionsMusicOn, 159, 85 - 15, 0xF7);
 
-	static const char *textsStrTable3[] = {
-		"Text speed VERY SLOW",
-		"Text speed SLOW",
-		"Text speed NORMAL",
-		"Text speed FAST",
-		"Text speed VERY FAST"
-	};
-	static int textsPosTable3[] = { 93, 110, 102, 111, 94 };
-	i = _gameState.talkSpeed - 1;
 	redrawRect(_screenTextLayer, 4, true);
-	_font.drawString(_screenTextLayer, textsStrTable3[i], textsPosTable3[i], 107 - 15, 0xF6, -1, 0);
+	drawOptionsMenuText(kOptionsSpeedVerySlow + CLIP<int>(_gameState.talkSpeed, 1, 7) - 1, 159, 107 - 15, 0xF6);
 }
 
 bool IgorEngine::handleOptionsMenu_handleKeyDownCtrl(int key) {
@@ -196,6 +246,7 @@ static void drawButtonsBar(uint8 *dst, const uint8 *src) {
 }
 
 void IgorEngine::handleOptionsMenu() {
+	loadOptionsMenuTexts();
 	PauseToken pauseToken = pauseEngine();
 	hideCursor();
 	// End the room's spoken line before reusing its text backing store.
@@ -243,7 +294,7 @@ void IgorEngine::handleOptionsMenu() {
 
 	const int yPosCaption = 18 - 15;
 	for (int i = 0; i < 5; ++i) {
-		_font.drawString(_screenTextLayer, pages[i].captions[0], pages[i].xPos[0], yPosCaption, 0xF6, -1, 0);
+		drawOptionsMenuText(pages[i].captions[0], pages[i].xPos[0], yPosCaption, 0xF6);
 	}
 	redrawButton(_screenTextLayer, 0, true);
 
@@ -287,7 +338,7 @@ void IgorEngine::handleOptionsMenu() {
 							for (int y = 0; y <= 11; ++y) {
 								memset(_screenTextLayer + (y + 3) * 320 + 44, 0xF8, 232);
 							}
-							_font.drawString(_screenTextLayer, pages[currentPage].captions[1], pages[currentPage].xPos[1], yPosCaption, 0xFB, -1, 0);
+							drawOptionsMenuText(pages[currentPage].captions[1], pages[currentPage].xPos[1], yPosCaption, 0xFB);
 							(this->*pages[currentPage].paintProc)();
 							focusOnPage = true;
 						}

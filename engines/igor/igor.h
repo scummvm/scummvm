@@ -582,6 +582,7 @@ private:
 
 	ResourceEntry *_resourceEntries;
 	Common::Array<StringEntry> _stringEntries;
+	Common::Array<Common::String> _optionsMenuTexts;
 	char _saveStateDescriptions[kMaxSaveStates][100];
 
 	void restart();
@@ -1408,6 +1409,8 @@ private:
 	void formatRightButtonSentence();
 	int getVerbUnderCursor(int x) const { return ((x % 46) < 44) ? (kVerbTalk + x / 46) : 0; }
 	void handleRoomInventoryScroll();
+	void loadOptionsMenuTexts();
+	void drawOptionsMenuText(int text, int x, int y, int color);
 	void handleOptionsMenu();
 	void scrollInventory();
 	void drawInventory(int start, int mode);
