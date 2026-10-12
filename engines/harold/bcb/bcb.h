@@ -88,6 +88,8 @@ private:
 	bool loadByteFile(const char *fileName, Common::Array<byte> &data) const;
 	void processGameStateDispatcher(bool runScriptBeforeDispatch);
 	bool dispatchMapMoveControls();
+	bool dispatchGameOverScreen();
+	bool dispatchEndingStillDisplayState();
 	void executeCurrentScriptSequence();
 	uint32 executeScriptExpression(uint32 &scriptPc, int &branchTokenSeen);
 	bool pushScriptValue(uint32 value);
@@ -119,6 +121,8 @@ private:
 	void composeMapControlsToSurface(Graphics::Surface &surface, const Graphics::Surface &mapArt);
 	void drawMapControls(bool present = true);
 	bool handleMapControlClick(const Common::Point &mousePosition);
+	bool showPendingStillImageScreen();
+	void completePendingStillImageScreen();
 	bool showMainSceneScreen();
 	bool drawMainSceneScreen(bool lineReveal);
 	bool showMapScreen();
