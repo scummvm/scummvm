@@ -211,9 +211,10 @@ if [ "$_libfaad" = true ]; then
   if [[ ! -f "$LIBS_FOLDER/build/lib/libfaad.a" ]]; then
     echo "building faad2-2.8.8"
     cd "$LIBS_FOLDER"
-    wget -nc "https://sourceforge.net/projects/faac/files/faad2-src/faad2-2.8.0/faad2-2.8.8.tar.gz"
-    tar -xf faad2-2.8.8.tar.gz
-    cd "$LIBS_FOLDER/faad2-2.8.8/"
+    wget -nc "https://github.com/FreewareAdvancedAudio/faad2/archive/refs/tags/2_8_8.tar.gz" -O "faad2-2_8_8.tar.gz"
+    tar -xf faad2-2_8_8.tar.gz
+    cd "$LIBS_FOLDER/faad2-2_8_8/"
+    autoreconf -i
     CFLAGS="-fPIC -Oz" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/"
     emmake make -j 5
     emmake make install
