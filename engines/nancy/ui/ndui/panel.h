@@ -76,6 +76,10 @@ public:
 	// Nancy19: has the panel's script make the button of an item
 	void addItemButton(const INVD::Item &item);
 
+	// Nancy19: gives the panel the tooltip that is built into its UI, where the
+	// earlier games describe one with every panel
+	void addBuiltInTooltip();
+
 	// Whether saved games keep what was done to the panel and its controls
 	void setSavesState(bool savesState) { _savesState = savesState; }
 

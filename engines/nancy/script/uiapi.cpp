@@ -45,10 +45,9 @@ namespace Script {
 // A description gets written out the way a chunk has it, and read by the panel
 // or control it is for.
 //
-// TODO: Tooltips, the textShadow and captureClicks fields, the ways of arranging
-// controls other than left to right and right to left, and the events the controls
-// don't send yet: listboxItemDblClick, enable, disable, mouseEnter
-// and mouseLeave.
+// TODO: The textShadow and captureClicks fields, the ways of arranging controls
+// other than left to right and right to left, and the events the controls don't
+// send yet: listboxItemDblClick, enable, disable, mouseEnter and mouseLeave.
 
 static const char *const kPanelType = "ND.Panel";
 
@@ -684,6 +683,8 @@ static int newPanel(lua_State *L, byte kind) {
 	if (kind == UI::NDUI::kObjectScrollPanel) {
 		panel->readScrolling(stream);
 	}
+
+	panel->addBuiltInTooltip();
 
 	bool savesState = true;
 	if (readField(L, 2, "save", savesState)) {

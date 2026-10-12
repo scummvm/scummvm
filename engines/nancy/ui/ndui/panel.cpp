@@ -156,6 +156,81 @@ void Panel::growToControls() {
 	}
 }
 
+static void writeTooltipName(Common::WriteStream &out, const char *name) {
+	char buf[33] = {};
+	Common::strlcpy(buf, name, sizeof(buf));
+	out.write(buf, sizeof(buf));
+}
+
+void Panel::addBuiltInTooltip() {
+	// A tooltip comes up after the mouse has been over a control for a second, and
+	// stays for ten at most. Setting a flag keeps tooltips from showing.
+	static const double kShowAfter = 1.0;
+	static const double kHideAfter = 10.0;
+	static const char *const kFontName = "UIFont";
+	static const char *const kPreventFlagName = "PreventTooltips";
+
+	// TODO: The colors of the original aren't known; these are the usual ones
+	// of a tooltip
+	static const uint32 kBackgroundColor = 0xFFFFFFE1;
+	static const uint32 kTextColor = 0xFF000000;
+
+	// Centered, and on a single line
+	static const int32 kAlignCenter = 2;
+
+	int16 preventFlag = -1;
+	const EVNT *flags = GetEngineData(EVNT);
+	if (flags) {
+		for (uint i = 0; i < flags->eventFlagNames.size(); ++i) {
+			if (flags->eventFlagNames[i].equalsIgnoreCase(kPreventFlagName)) {
+				preventFlag = (int16)(EVNT::kFirstEventFlag + i);
+			}
+		}
+	}
+
+	// Written out the way an NDUI chunk describes a tooltip
+	Common::MemoryWriteStreamDynamic data(DisposeAfterUse::YES);
+	writeTooltipName(data, "");			// version
+	data.writeSint32LE(kStartVisible);
+	writeTooltipName(data, "");			// name
+	for (uint i = 0; i < 4; ++i) {
+		data.writeSint32LE(0);			// bounds
+	}
+
+	writeTooltipName(data, "");			// text
+	writeTooltipName(data, "");			// tooltip
+	data.writeSint16LE(0);				// events
+
+	writeTooltipName(data, "");			// texture
+	for (uint i = 0; i < 4; ++i) {
+		data.writeSint32LE(0);			// part of the texture
+	}
+
+	for (uint i = 0; i < 4; ++i) {
+		data.writeUint32BE(kBackgroundColor);
+	}
+
+	writeTooltipName(data, kFontName);
+	data.writeByte(0);					// bold
+	data.writeSint32LE(kAlignCenter);
+	data.writeSint32LE(kAlignCenter);
+	data.writeByte(0);					// word wrap
+	for (uint i = 0; i < 4; ++i) {
+		data.writeUint32BE(kTextColor);
+	}
+
+	data.writeByte(0);
+
+	data.writeDoubleLE(kShowAfter);
+	data.writeDoubleLE(kHideAfter);
+	data.writeSint16LE(preventFlag);
+
+	Common::MemoryReadStream stream(data.getData(), data.size());
+	delete _tooltip;
+	_tooltip = new Tooltip(this);
+	_tooltip->read(stream);
+}
+
 bool Panel::createObject(const Common::String &name, const Common::String &templateName) {
 	return _objectFactory && _objectFactory->createObject(name, templateName);
 }
