@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	bcb/scene.o \
 	bcb/input.o \
 	bcb/script.o \
+	bcb/executable_data.o \
 	bcb/static_data.o \
 	metaengine.o
 

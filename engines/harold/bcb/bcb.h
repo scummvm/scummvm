@@ -67,6 +67,7 @@ private:
 	bool switchActiveMediaDisc(int discNumber);
 	void resetGameState();
 	bool loadScriptData();
+	bool loadExecutableDataTables();
 	bool loadByteFile(const char *fileName, Common::Array<byte> &data) const;
 	void executeCurrentScriptSequence();
 	uint32 executeScriptExpression(uint32 &scriptPc, int &branchTokenSeen);
@@ -93,6 +94,7 @@ private:
 	void serviceCursorRefresh(bool screenUpdated = false);
 	void delayWithEventPolling(uint32 millis);
 	void delayWithEventPolling(uint32 millis, bool handleClicks);
+	Common::U32String decodeExecutableTextForDisplay(const Common::String &text) const;
 	void mainLoop();
 
 	const HaroldGameDescription *_gameDescription;
@@ -103,6 +105,25 @@ private:
 	Common::Array<byte> _locationTimingData;
 	Common::Array<byte> _allBinData;
 	Common::Array<byte> _timedCaptionRecordData;
+	Common::Array<Common::Array<Common::U32String> > _sceneChoiceText;
+	Common::CodePage _executableTextEncoding = Common::kWindows932;
+	Common::String _sceneChoiceMoveTextSjis;
+	Common::U32String _sceneChoiceMoveText;
+	Common::Array<Common::String> _mapButtonTextSjis;
+	Common::Array<Common::U32String> _mapButtonText;
+	Common::Array<Common::U32String> _gameOverText;
+	Common::U32String _titleExitConfirmText;
+	Common::String _saveSlotOccupiedTextFormatSjis;
+	Common::String _saveSlotEmptyTextFormatSjis;
+	Common::String _loadSlotConfirmTextFormatSjis;
+	Common::String _saveSlotOverwriteConfirmTextFormatSjis;
+	Common::String _saveSlotEmptyConfirmTextFormatSjis;
+	Common::String _noSaveDataMessageSjis;
+	Common::String _returnToTitleConfirmTextSjis;
+	Graphics::FontSJIS *_sjisFont = nullptr;
+	const Graphics::Font *_captionTextFont = nullptr;
+	const Graphics::Font *_gameOverTextFont = nullptr;
+	const Graphics::Font *_ownerDrawUiTextFont = nullptr;
 	Graphics::Surface *_uiBitmap = nullptr;
 	Common::String _uiBitmapName;
 	Graphics::Surface *_chipBitmap = nullptr;
