@@ -94,6 +94,10 @@ private:
 	uint32 &stateDword(uint byteOffset);
 	uint32 stateDword(uint byteOffset) const;
 	bool processPendingMovieRequest();
+	void loadTimedCaptionRecord(int movieId);
+	void loadNextTimedCaptionText();
+	bool readTimedCaptionLine(Common::String &line);
+	const byte *findAllBinRecordData(const Common::String &recordName, uint32 &recordSize) const;
 	Common::Point getActiveMoviePosition() const;
 	void stopActiveMovieAndDispatch();
 	void processQueuedMovieSequence();
@@ -175,6 +179,7 @@ private:
 	int _sceneChoiceTerminatorButtonIndex = 0;
 	int _sceneChoiceEnabledButtonLimit = 0;
 	Common::U32String _timedCaptionText;
+	Common::String _timedCaptionTextSjis;
 	uint32 _lastTimerTick = 0;
 	int _lastLoggedGameClockTicks = -1;
 	uint32 _lastCursorRefreshMillis = 0;

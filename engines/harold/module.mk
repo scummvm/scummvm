@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	bcb/bcb.o \
 	bcb/resources.o \
 	bcb/video.o \
+	bcb/captions.o \
 	bcb/scene.o \
 	bcb/screens.o \
 	bcb/input.o \
