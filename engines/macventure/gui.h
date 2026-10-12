@@ -138,7 +138,7 @@ public:
 	const WindowData& getWindowData(WindowReference reference);
 	Graphics::MacWindow *findWindow(WindowReference reference);
 
-	Graphics::MacWindowManager *getMacWindowManager() { return &_wm; }
+	Graphics::MacWindowManager *getMacWindowManager() { return _wm; }
 	const Graphics::Font& getCurrentFont();
 
 	// Clicks
@@ -198,7 +198,7 @@ private: // Attributes
 	Common::MacResManager *_resourceManager;
 
 	Graphics::ManagedSurface _screen;
-	Graphics::MacWindowManager _wm;
+	Graphics::MacWindowManager *_wm;
 
 	WindowReference _activeWinRef;
 
