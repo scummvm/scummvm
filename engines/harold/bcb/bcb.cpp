@@ -131,6 +131,81 @@ Common::Error BCBEngine::run() {
 	return Common::kNoError;
 }
 
+void BCBEngine::clearDisplayAndResetState() {
+	_currentDisplayState = 0;
+	stateDword(kStateRequiredDiscIndex) = 0;
+	stopSceneIdleMovie();
+	stopMapMoveMovie();
+	restoreActiveCaptionBackingRect();
+	freeSceneChoiceBacking();
+	_sceneChoiceActive = false;
+	_mapControlsActive = false;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (screen) {
+		const uint32 black = screen->format.RGBToColor(0, 0, 0);
+		screen->fillRect(Common::Rect(0, 0, 640, 480), black);
+		g_system->unlockScreen();
+	}
+	g_system->updateScreen();
+}
+
+void BCBEngine::processGameStateDispatcher(bool runScriptBeforeDispatch) {
+	_scriptStopFlag = false;
+
+	while (!shouldQuit() && !_scriptStopFlag) {
+		checkCurrentMediaPathReady();
+		if (showPendingStillImageScreen())
+			return;
+
+		if (processPendingMovieRequest())
+			return;
+
+		if (runScriptBeforeDispatch)
+			executeCurrentScriptSequence();
+
+		if (stateDword(kStateDispatcherControlCode) > 6) {
+			warning("BCBEngine::processGameStateDispatcher(): Invalid dispatcher control code %u", stateDword(kStateDispatcherControlCode));
+			_scriptStopFlag = true;
+			return;
+		}
+
+		if (dispatchGameStateControlCode(stateDword(kStateDispatcherControlCode)))
+			return;
+	}
+}
+
+bool BCBEngine::dispatchGameStateControlCode(uint32 dispatcherControlCode) {
+	switch (dispatcherControlCode) {
+	case 0:
+		return dispatchGameStateNoOp();
+	case 1:
+		return dispatchSceneChoiceControls();
+	case 2:
+		return dispatchMapMoveControls();
+	case 3:
+		return dispatchComputerMainControls();
+	case 4:
+		return dispatchComputerDetailControls();
+	case 5:
+		return dispatchGameOverScreen();
+	case 6:
+		return dispatchEndingStillDisplayState();
+	default:
+		warning("BCBEngine::dispatchGameStateControlCode(): Unhandled dispatcher control code %u", dispatcherControlCode);
+		_scriptStopFlag = true;
+		return true;
+	}
+}
+
+bool BCBEngine::dispatchGameStateNoOp() {
+	return false;
+}
+
+bool BCBEngine::dispatchSceneChoiceControls() {
+	return showActiveSceneChoiceControls();
+}
+
 void BCBEngine::mainLoop() {
 	while (!shouldQuit()) {
 		bool screenUpdated = false;
@@ -264,10 +339,6 @@ void BCBEngine::mainLoop() {
 
 		delayWithEventPolling(10);
 	}
-}
-
-void BCBEngine::processGameStateDispatcher(bool runScriptBeforeDispatch) {
-	error("BCB: processGameStateDispatcher is not implemented");
 }
 
 } // End of namespace BCB

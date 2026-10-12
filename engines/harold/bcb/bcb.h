@@ -87,9 +87,16 @@ private:
 	bool loadExecutableDataTables();
 	bool loadByteFile(const char *fileName, Common::Array<byte> &data) const;
 	void processGameStateDispatcher(bool runScriptBeforeDispatch);
+	bool dispatchGameStateControlCode(uint32 dispatcherControlCode);
+	bool dispatchGameStateNoOp();
+	bool dispatchSceneChoiceControls();
 	bool dispatchMapMoveControls();
+	bool dispatchComputerMainControls();
+	bool dispatchComputerDetailControls();
 	bool dispatchGameOverScreen();
 	bool dispatchEndingStillDisplayState();
+	void checkCurrentMediaPathReady();
+	void clearDisplayAndResetState();
 	void executeCurrentScriptSequence();
 	uint32 executeScriptExpression(uint32 &scriptPc, int &branchTokenSeen);
 	bool pushScriptValue(uint32 value);

@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	bcb/scene.o \
 	bcb/screens.o \
 	bcb/input.o \
+	bcb/computer.o \
 	bcb/map.o \
 	bcb/script.o \
 	bcb/executable_data.o \
