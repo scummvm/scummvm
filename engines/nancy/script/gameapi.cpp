@@ -895,6 +895,22 @@ static const luaL_Reg kSceneFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+// Streams
+// TODO: Streams.environment and Streams.mainName
+
+// Streams:GetScene(stream), which gives no name for a stream that isn't running
+static int streamsGetScene(lua_State *L) {
+	const Common::String streamName = luaL_checkstring(L, 2);
+	lua_pushstring(L, NancySceneState.getStreams().getSceneName(streamName).c_str());
+	return 1;
+}
+
+static const luaL_Reg kStreamsFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "GetScene", streamsGetScene },
+	{ nullptr, nullptr }
+};
+
 // Player, who is the character being played unless a function is told otherwise
 // TODO: AddCellPhoneNumber
 
@@ -1221,7 +1237,7 @@ static const luaL_Reg kLogFunctions[] = {
 	{ nullptr, nullptr }
 };
 
-// TODO: The Autotext, Streams, Generics and UIMgr objects, and Log:WriteAll
+// TODO: The Autotext, Generics and UIMgr objects, and Log:WriteAll
 void registerGameAPI(lua_State *L) {
 	registerGlobal(L, "Flags", "ND.Flags", kFlagsFunctions);
 	registerGlobal(L, "VarTable", "ND.VarTable", kVarTableFunctions);
@@ -1240,6 +1256,7 @@ void registerGameAPI(lua_State *L) {
 	registerGlobal(L, "Sound", "ND.Sound", kSoundFunctions);
 
 	registerGlobal(L, "Scene", "ND.Scene", kSceneFunctions);
+	registerGlobal(L, "Streams", "ND.Streams", kStreamsFunctions);
 	registerGlobal(L, "Player", "ND.CurPlayer", kPlayerFunctions);
 	registerGlobal(L, "Message", "ND.Message", kMessageFunctions);
 	registerGlobal(L, "Viewport", "ND.Viewport", kViewportFunctions);
