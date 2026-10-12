@@ -29,6 +29,7 @@
 #include "graphics/fonts/ttf.h"
 #include "graphics/sjis.h"
 #include "graphics/surface.h"
+#include "harold/bcb/debugger.h"
 #include "harold/bcb/script.h"
 #include "harold/bcb/static_data.h"
 #include "video/avi_decoder.h"
@@ -107,6 +108,8 @@ BCBEngine::~BCBEngine() {
 
 Common::Error BCBEngine::run() {
 	const Graphics::PixelFormat screenFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+
+	setDebugger(new Debugger(this));
 
 	if (!initializeSearchPaths())
 		return Common::kPathDoesNotExist;
