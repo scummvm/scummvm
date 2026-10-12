@@ -42,6 +42,7 @@
 #include "ultima/ultima3/gfx/overview.h"
 #include "ultima/ultima3/gfx/screen_effects.h"
 #include "ultima/ultima3/gfx/shapes.h"
+#include "ultima/ultima3/music.h"
 #include "ultima/ultima3/logic/combat_logic.h"
 
 namespace Audio {
@@ -140,6 +141,9 @@ public:
 	bool _moreMonsters = false;
 	bool _lessHunger = false;
 	bool _moonIcons = true;
+
+	// Plays the Upgrade's MIDI music, if that's been turned on
+	Music _music;
 
 	// Which of the upgrade's renderers is in use
 	Data::RenderMode _renderMode = Data::RENDER_CGA;

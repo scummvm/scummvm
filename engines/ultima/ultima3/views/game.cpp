@@ -23,6 +23,7 @@
 #include "ultima/ultima3/gfx/charset.h"
 #include "ultima/ultima3/gfx/composite.h"
 #include "ultima/ultima3/gfx/frame.h"
+#include "ultima/ultima3/logic/location_logic.h"
 #include "ultima/ultima3/views/menu_input.h"
 #include "ultima/ultima3/views/interactions/equip.h"
 #include "ultima/ultima3/views/interactions/exchange.h"
@@ -94,11 +95,32 @@ void Game::updateWind() {
 
 bool Game::msgFocus(const FocusMessage &msg) {
 	_idleFrames = 0;
+	_G(music).resync();
 	delayFrames(1);
 	return View::msgFocus(msg);
 }
 
+byte Game::musicLocation() const {
+	if (_gameOver || _G(sceneShown))
+		return MUSIC_LOCATION_SCENE;
+	if (_G(overview).isActive() && _G(savegame)._location == Data::LOCATION_DUNGEON)
+		return MUSIC_LOCATION_GEM;
+
+	return _G(savegame)._location;
+}
+
+void Game::updateMusic() {
+	// The music for what was going on before a command is found again once it's over
+	if (_wasInteracting && !_interaction)
+		_G(music).resync();
+	_wasInteracting = _interaction.get() != nullptr;
+
+	_G(music).update();
+	_G(music).autoSelect(musicLocation(), LocationLogic().isInExodusCastle());
+}
+
 void Game::timeout() {
+	updateMusic();
 	_G(shapes).animate();
 	_G(effects).tick();
 	updateWind();

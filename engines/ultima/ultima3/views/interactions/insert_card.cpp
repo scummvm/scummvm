@@ -177,8 +177,10 @@ bool InsertCard::timeout() {
 		_invertEven ^= (step & 1) != 0;
 		_invertOdd ^= (step & 2) != 0;
 
-		if (++_step == ARRAYSIZE(SHATTER_STEPS))
+		if (++_step == ARRAYSIZE(SHATTER_STEPS)) {
 			_stage = TEXT;
+			_G(music).play(SONG_ALIVE);
+		}
 	} else if (_stage == TEXT) {
 		_stage = DONE;
 	}

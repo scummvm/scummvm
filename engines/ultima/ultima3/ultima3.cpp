@@ -30,6 +30,7 @@
 #include "ultima/ultima3/ultima3.h"
 #include "ultima/ultima3/console.h"
 #include "ultima/ultima3/metaengine.h"
+#include "ultima/ultima3/music.h"
 #include "ultima/ultima3/sound_effects.h"
 #include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/gfx/charset.h"
@@ -67,6 +68,8 @@ void Ultima3Engine::loadOptions() {
 	_moreMonsters = Shared::configuredOption("more_monsters", enhanced);
 	_lessHunger = Shared::configuredOption("less_hunger", enhanced);
 	_moonIcons = Shared::configuredOption("moon_icons", true);
+	_music.setEnabled(Shared::configuredOption("midi_music", enhanced));
+	_music.syncVolume();
 }
 
 Ultima3Engine::~Ultima3Engine() {

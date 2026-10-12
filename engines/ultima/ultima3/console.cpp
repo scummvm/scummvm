@@ -52,6 +52,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("save", WRAP_METHOD(Console, cmdSave));
 	registerCmd("exodus", WRAP_METHOD(Console, cmdExodus));
 	registerCmd("moon", WRAP_METHOD(Console, cmdMoon));
+	registerCmd("music", WRAP_METHOD(Console, cmdMusic));
 }
 
 Console::~Console() {
@@ -203,6 +204,23 @@ bool Console::cmdMoon(int argc, const char **argv) {
 
 	g_engine->focusedView()->redraw();
 	debugPrintf("Moon phases are now %d and %d\n", sg._moonPhase[0], sg._moonPhase[1]);
+	return true;
+}
+
+bool Console::cmdMusic(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("music <name>  - plays a song from the sounds folder, such as wander\n");
+		return true;
+	}
+
+	// The extension is added, though it's fine to give it
+	Common::String name(argv[1]);
+	name.toLowercase();
+	if (name.hasSuffix(".xmi"))
+		name = name.substr(0, name.size() - 4);
+
+	if (!_G(music).playFile(name))
+		debugPrintf("Could not play %s.xmi\n", name.c_str());
 	return true;
 }
 

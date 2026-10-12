@@ -37,6 +37,7 @@ MainMenu::MainMenu() : WindowView("MainMenu") {
 
 bool MainMenu::msgFocus(const FocusMessage &msg) {
 	_choice.reset();
+	_G(music).play(SONG_WANDER);
 	return View::msgFocus(msg);
 }
 
@@ -75,6 +76,7 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 			}
 			break;
 		default:
+			_G(music).silence();
 			close();
 			return true;
 		}

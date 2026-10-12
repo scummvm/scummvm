@@ -23,6 +23,7 @@
 #define ULTIMA3_VIEWS_COMBAT_MAP_H
 
 #include "ultima/ultima3/views/game.h"
+#include "ultima/ultima3/music.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -75,6 +76,9 @@ protected:
 	void idleTimeout() override;
 	void endTurn() override;
 	void processFrame() override;
+	byte musicLocation() const override {
+		return MUSIC_LOCATION_COMBAT;
+	}
 	bool isWaiting() const override;
 	bool handleCommand(const KeypressMessage &msg) override;
 

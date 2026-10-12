@@ -62,6 +62,7 @@ private:
 	bool cmdSave(int argc, const char **argv);
 	bool cmdExodus(int argc, const char **argv);
 	bool cmdMoon(int argc, const char **argv);
+	bool cmdMusic(int argc, const char **argv);
 
 public:
 	Console();

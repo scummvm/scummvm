@@ -43,6 +43,7 @@ constexpr int FRAME_COLS = 40;
 class Game : public Shared::View {
 private:
 	int _idleFrames = 0;
+	bool _wasInteracting = false;
 	int _windCounter = 1;
 	Common::ScopedPtr<Interactions::Interaction> _interaction;
 
@@ -55,6 +56,11 @@ private:
 	 * Every so often picks a new wind direction
 	 */
 	void updateWind();
+
+	/**
+	 * Has the music follow where the party is
+	 */
+	void updateMusic();
 
 protected:
 	bool _gameOver = false;
@@ -90,6 +96,11 @@ protected:
 	 * Carries out what happens once a command has taken a turn
 	 */
 	virtual void endTurn() = 0;
+
+	/**
+	 * Returns the kind of place the party is in as far as the music goes
+	 */
+	virtual byte musicLocation() const;
 
 	/**
 	 * Called every frame, for anything the view has going on

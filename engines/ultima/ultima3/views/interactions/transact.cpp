@@ -67,6 +67,7 @@ void Transact::talkTo(int creature) {
 	const Data::Creatures &c = _G(map)._creatures;
 
 	if (c._tile[creature] == CELL_LORD_BRITISH) {
+		_G(music).jingle(SONG_RULEBRIT);
 		lordBritish();
 		return;
 	}
@@ -94,6 +95,7 @@ bool Transact::startShop(int dx, int dy) {
 
 	const int payer = _players.slot();
 	_G(effects)._highlight = payer;
+	_G(music).play(SONG_SHOPPING);
 
 	// Horses are bought facing west, and the rest according to where the shop is
 	if (dx < 0) {

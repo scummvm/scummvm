@@ -266,8 +266,13 @@ bool Temple::serve(int slot) {
 		break;
 	}
 
-	if (restored)
+	if (restored) {
 		spend(TEMPLE_COSTS[_service]);
+
+		// Bringing someone back from the dead is celebrated
+		if (_service >= 2)
+			_G(music).jingle(SONG_ALIVE);
+	}
 
 	return restored;
 }

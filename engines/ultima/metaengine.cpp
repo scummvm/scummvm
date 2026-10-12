@@ -208,6 +208,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_ULTIMA3_MIDI_MUSIC,
+		{
+			_s("Play MIDI music"),
+			_s("Plays the music that the Ultima III Upgrade adds to the game"),
+			"midi_music",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_ALWAYS_CHRISTMAS,
 		{
 			_s("Always enable Christmas easter-egg"),
