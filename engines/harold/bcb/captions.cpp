@@ -178,4 +178,168 @@ void BCBEngine::loadNextTimedCaptionText() {
 	}
 }
 
+void BCBEngine::restoreCaptionBackingRect(const Common::Rect &rect) {
+	if (_activeMovieOnBlankScreen) {
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (screen) {
+			screen->fillRect(rect, screen->format.RGBToColor(0, 0, 0));
+			g_system->unlockScreen();
+		}
+		return;
+	}
+
+	const Graphics::Surface *backing = nullptr;
+	if (_currentDisplayState == 0 && _titleBitmap) {
+		backing = _titleBitmap;
+	} else if (_currentDisplayState == 1 || _currentDisplayState == 7) {
+		backing = getUiBitmap(stateDword(kStateMainSceneNightFlag) != 0 ? "16mmainn.bmp" : "16mmain.bmp");
+	} else if (_currentDisplayState == 8) {
+		Common::Rect restoreRect = rect;
+		restoreRect.clip(kMapSubmodeMovieBackdropRect);
+
+		const Graphics::Surface *map = getUiBitmap("16mmap.bmp");
+		if (map && !restoreRect.isEmpty()) {
+			const int sourceX = kMapSubmodeMovieBackdropSourceX + restoreRect.left - kMapSubmodeMovieBackdropRect.left;
+			const int sourceY = kMapSubmodeMovieBackdropSourceY + restoreRect.top - kMapSubmodeMovieBackdropRect.top;
+			if (sourceX >= 0 && sourceY >= 0 && sourceX + restoreRect.width() <= map->w && sourceY + restoreRect.height() <= map->h)
+				g_system->copyRectToScreen(map->getBasePtr(sourceX, sourceY), map->pitch, restoreRect.left, restoreRect.top, restoreRect.width(), restoreRect.height());
+		}
+
+		return;
+	}
+
+	if (backing)
+		g_system->copyRectToScreen(backing->getBasePtr(rect.left, rect.top), backing->pitch, rect.left, rect.top, rect.width(), rect.height());
+}
+
+Common::Rect BCBEngine::getCaptionBackingRect(const Common::String &sjisText, const Common::U32String &unicodeText, const Common::Rect &nativeRect) const {
+	int lineCount = 1;
+	int fontHeight = nativeRect.height();
+
+	if (_captionTextFont) {
+		lineCount = 0;
+		for (uint i = 0; i <= unicodeText.size(); ++i) {
+			if (i == unicodeText.size() || unicodeText[i] == U'\n')
+				++lineCount;
+		}
+		fontHeight = _captionTextFont->getFontHeight();
+	} else if (_sjisFont) {
+		lineCount = 0;
+		for (uint i = 0; i <= sjisText.size(); ++i) {
+			if (i == sjisText.size() || sjisText[i] == '\n')
+				++lineCount;
+		}
+		fontHeight = _sjisFont->getFontHeight();
+	}
+
+	Common::Rect backingRect = nativeRect;
+	backingRect.bottom = MAX<int>(backingRect.bottom, nativeRect.top + MAX<int>(lineCount, 1) * fontHeight);
+	backingRect.clip(Common::Rect(0, 0, 640, 480));
+	return backingRect;
+}
+
+static Common::U32String makeU32Substring(const Common::U32String &text, uint start, uint end) {
+	return Common::U32String(text.c_str() + start, end - start);
+}
+
+void BCBEngine::drawCaptionTextBlock(const Common::String &sjisText, const Common::U32String &unicodeText, const Common::Rect &rect, uint32 color) {
+	if (!_captionTextFont && !_sjisFont)
+		return;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+
+	if (_captionTextFont) {
+		int y = rect.top;
+		for (uint lineStart = 0; lineStart <= unicodeText.size() && y < rect.bottom;) {
+			uint lineEnd = lineStart;
+			while (lineEnd < unicodeText.size() && unicodeText[lineEnd] != U'\n')
+				++lineEnd;
+
+			_captionTextFont->drawString(screen, makeU32Substring(unicodeText, lineStart, lineEnd), rect.left, y, rect.width(), color, Graphics::kTextAlignCenter);
+			y += _captionTextFont->getFontHeight();
+			lineStart = lineEnd + 1;
+		}
+	} else {
+		int y = rect.top;
+		for (uint lineStart = 0; lineStart <= sjisText.size() && y < rect.bottom;) {
+			uint lineEnd = lineStart;
+			while (lineEnd < sjisText.size() && sjisText[lineEnd] != '\n')
+				++lineEnd;
+
+			Common::Array<uint16> chars;
+			int textWidth = 0;
+			for (uint charOffset = lineStart; charOffset < lineEnd;) {
+				const byte firstByte = (byte)sjisText[charOffset++];
+				uint16 sjisChar = firstByte;
+				if (((firstByte >= 0x81 && firstByte <= 0x9f) || (firstByte >= 0xe0 && firstByte <= 0xef)) && charOffset < lineEnd)
+					sjisChar |= (uint16)((byte)sjisText[charOffset++]) << 8;
+				chars.push_back(sjisChar);
+				textWidth += _sjisFont->getCharWidth(sjisChar);
+			}
+
+			int lineX = rect.left + MAX<int>((rect.width() - textWidth) / 2, 0);
+			for (uint i = 0; i < chars.size(); ++i) {
+				if (lineX >= rect.right)
+					break;
+				_sjisFont->drawChar(*screen, chars[i], lineX, y, color, 0);
+				lineX += _sjisFont->getCharWidth(chars[i]);
+			}
+
+			y += _sjisFont->getFontHeight();
+			lineStart = lineEnd + 1;
+		}
+	}
+
+	g_system->unlockScreen();
+}
+
+bool BCBEngine::drawTimedVideoTextOverlay() {
+	if (!_activeMovieVideo || _nextTimedCaptionThreshold == 99999 || _activeMovieVideo->getCurFrame() < _nextTimedCaptionThreshold)
+		return false;
+
+	const Graphics::PixelFormat format = g_system->getScreenFormat();
+	const uint32 white = format.RGBToColor(255, 255, 255);
+	const uint32 black = format.RGBToColor(0, 0, 0);
+
+	restoreActiveCaptionBackingRect();
+	if (_timedCaptionTextSjis.empty() || _timedCaptionText.empty()) {
+		loadNextTimedCaptionText();
+		return true;
+	}
+
+	if (_currentDisplayState == 0) {
+		_activeCaptionBackingRect = getCaptionBackingRect(_timedCaptionTextSjis, _timedCaptionText, kTitleCaptionBackingRect);
+		drawCaptionTextBlock(_timedCaptionTextSjis, _timedCaptionText, kTitleCaptionTextRect, white);
+	} else if (_currentDisplayState == 1 || _currentDisplayState == 7) {
+		_activeCaptionBackingRect = getCaptionBackingRect(_timedCaptionTextSjis, _timedCaptionText, kMainSceneCaptionTextRect);
+		_activeCaptionBackingRect.extend(getCaptionBackingRect(_timedCaptionTextSjis, _timedCaptionText, kMainSceneCaptionShadowRect));
+		drawCaptionTextBlock(_timedCaptionTextSjis, _timedCaptionText, kMainSceneCaptionShadowRect, black);
+		drawCaptionTextBlock(_timedCaptionTextSjis, _timedCaptionText, kMainSceneCaptionTextRect, white);
+	} else if (_currentDisplayState == 8) {
+		_activeCaptionBackingRect = getCaptionBackingRect(_timedCaptionTextSjis, _timedCaptionText, kMapSubmodeCaptionTextRect);
+		drawCaptionTextBlock(_timedCaptionTextSjis, _timedCaptionText, kMapSubmodeCaptionTextRect, white);
+	}
+
+	loadNextTimedCaptionText();
+	return true;
+}
+
+void BCBEngine::restoreActiveCaptionBackingRect() {
+	if (!_activeCaptionBackingRect.isEmpty()) {
+		restoreCaptionBackingRect(_activeCaptionBackingRect);
+		_activeCaptionBackingRect = Common::Rect();
+		return;
+	}
+
+	if (_currentDisplayState == 0) {
+		restoreCaptionBackingRect(kTitleCaptionBackingRect);
+	} else if (_currentDisplayState == 1 || _currentDisplayState == 7) {
+		restoreCaptionBackingRect(kMainSceneCaptionTextRect);
+	} else if (_currentDisplayState == 8) {
+		restoreCaptionBackingRect(kMapSubmodeCaptionTextRect);
+	}
+}
+
 } // End of namespace BCB
