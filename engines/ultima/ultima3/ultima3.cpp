@@ -68,6 +68,7 @@ void Ultima3Engine::loadOptions() {
 	_moreMonsters = Shared::configuredOption("more_monsters", enhanced);
 	_lessHunger = Shared::configuredOption("less_hunger", enhanced);
 	_moonIcons = Shared::configuredOption("moon_icons", true);
+	_timedSounds = Shared::configuredOption("timed_sounds", enhanced);
 	_music.setEnabled(Shared::configuredOption("midi_music", enhanced));
 	_music.syncVolume();
 }
@@ -197,8 +198,11 @@ void Ultima3Engine::queueSilence(uint32 lengthMs) {
 }
 
 void Ultima3Engine::playErrorBeep() {
-	// ~371Hz for ~65ms, from the original's raw 48-toggle loop at 4.77MHz
-	queueTone(3216, 65);
+	if (_timedSounds)
+		queueTone(0x1630, 120);
+	else
+		// ~371Hz for ~65ms, from the original's raw 48-toggle loop at 4.77MHz
+		queueTone(3216, 65);
 }
 
 void Ultima3Engine::queueEffect(const Common::Array<byte> &samples) {
@@ -227,12 +231,15 @@ void Ultima3Engine::playSoundEffect(byte effect, byte arg1, byte arg2) {
 		playErrorBeep();
 		break;
 	case 0xFF:
-		// ~132Hz for ~60ms, from the original's raw 16-toggle loop at 4.77MHz
-		queueTone(9040, 60);
+		if (_timedSounds)
+			queueTone(0x3E80, 110);
+		else
+			// ~132Hz for ~60ms, from the original's raw 16-toggle loop at 4.77MHz
+			queueTone(9040, 60);
 		break;
 	default:
 		if (_soundEnabled)
-			queueEffect(SoundEffects::render(effect, arg1, arg2));
+			queueEffect(SoundEffects::render(effect, arg1, arg2, _timedSounds));
 		break;
 	}
 }

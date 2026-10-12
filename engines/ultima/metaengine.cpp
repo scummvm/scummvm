@@ -219,6 +219,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_ULTIMA3_TIMED_SOUNDS,
+		{
+			_s("Use Upgrade sound effects"),
+			_s("Plays the sound effects with the timing of the Ultima III Upgrade, which doesn't depend on the speed of the computer"),
+			"timed_sounds",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_ALWAYS_CHRISTMAS,
 		{
 			_s("Always enable Christmas easter-egg"),

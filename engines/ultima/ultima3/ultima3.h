@@ -146,6 +146,7 @@ public:
 	bool _moreMonsters = false;
 	bool _lessHunger = false;
 	bool _moonIcons = true;
+	bool _timedSounds = false;
 
 	// Plays the Upgrade's MIDI music, if that's been turned on
 	Music _music;

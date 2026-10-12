@@ -28,6 +28,10 @@ namespace Ultima3 {
 // The clock of the processor the timing loops were written for
 constexpr uint32 CPU_HZ = 4772727;
 
+// The rate of the timer the upgrade's sound effects count in, which is the
+// PC's 1193182Hz clock divided by 11
+constexpr uint32 TICK_HZ = 1193182 / 11;
+
 // Cost in clock cycles of the code that flips the speaker, and of
 // the pseudo random number routine
 constexpr uint32 TOGGLE_CYCLES = 4 + 14;
@@ -42,15 +46,21 @@ namespace {
  */
 class Speaker {
 public:
+	// The upgrade's version of the effects counts timer ticks, one for each time
+	// around a delay loop, and nothing else takes any time
+	const bool _timed;
 	uint32 _cycles = 0;
 	Common::Array<uint32> _edges;
 
+	Speaker(bool timed) : _timed(timed) {}
+
 	void run(uint32 cycles) {
-		_cycles += cycles;
+		if (!_timed)
+			_cycles += cycles;
 	}
 
 	void toggle() {
-		_cycles += TOGGLE_CYCLES;
+		run(TOGGLE_CYCLES);
 		_edges.push_back(_cycles);
 	}
 
@@ -58,24 +68,24 @@ public:
 	void countByte(int count) {
 		if (count == 0)
 			count = 256;
-		_cycles += 19 * count - 12;
+		_cycles += _timed ? count : 19 * count - 12;
 	}
 
 	// The same, with a word register
 	void countWord(int count) {
 		if (count == 0)
 			count = 65536;
-		_cycles += 18 * count - 10;
+		_cycles += _timed ? count : 18 * count - 10;
 	}
 
 	// The cost of a conditional jump that is taken or isn't
 	void jump(bool taken) {
-		_cycles += taken ? 16 : 4;
+		run(taken ? 16 : 4);
 	}
 
 	// A random number up to a limit, which the original then reduces to fit
 	int getRandomNumber(int limit) {
-		_cycles += RANDOM_CYCLES;
+		run(RANDOM_CYCLES);
 		return Graphics::Views::g_events->getRandomNumber(255) % limit;
 	}
 };
@@ -83,6 +93,10 @@ public:
 // A sweep up and down in the width of the pulses
 void sweep(Speaker &s, byte start, byte repeats) {
 	int high = start, low = 1;
+
+	// The upgrade has a quarter of the repeats, since its delays are longer
+	if (s._timed)
+		repeats >>= 2;
 
 	auto pulses = [&]() {
 		s.run(2);
@@ -133,13 +147,20 @@ void rumble(Speaker &s, byte base) {
 		int length = (s.getRandomNumber(15) + base) & 0xFF;
 		s.run(3);
 
-		do {
-			s.run(4);
-			s.run(17 * 2 + 5);
-			s.run(3);
-			length = (length - 1) & 0xFF;
-			s.jump(length != 0);
-		} while (length != 0);
+		if (s._timed) {
+			// Three ticks each time round
+			s.countByte(length);
+			s.countByte(length);
+			s.countByte(length);
+		} else {
+			do {
+				s.run(4);
+				s.run(17 * 2 + 5);
+				s.run(3);
+				length = (length - 1) & 0xFF;
+				s.jump(length != 0);
+			} while (length != 0);
+		}
 
 		s.toggle();
 		s.run(3);
@@ -152,7 +173,7 @@ void descend(Speaker &s) {
 	for (int low = 0xFB; low > 0; --low) {
 		s.toggle();
 		s.run(2);
-		s.run(19 * (256 - low) - 12);
+		s.countByte(256 - low);
 		s.run(3);
 		s.jump(low > 1);
 	}
@@ -220,8 +241,8 @@ void swirl(Speaker &s) {
 
 } // End of anonymous namespace
 
-Common::Array<byte> SoundEffects::render(byte effect, byte arg1, byte arg2) {
-	Speaker s;
+Common::Array<byte> SoundEffects::render(byte effect, byte arg1, byte arg2, bool timed) {
+	Speaker s(timed);
 
 	switch (effect) {
 	case 0xFD:
@@ -263,13 +284,14 @@ Common::Array<byte> SoundEffects::render(byte effect, byte arg1, byte arg2) {
 		s._edges.push_back(s._cycles);
 
 	Common::Array<byte> samples;
-	uint32 total = (uint32)(((uint64)s._cycles * SAMPLE_RATE) / CPU_HZ) + 1;
+	const uint32 rate = timed ? TICK_HZ : CPU_HZ;
+	uint32 total = (uint32)(((uint64)s._cycles * SAMPLE_RATE) / rate) + 1;
 	samples.resize(total);
 
 	uint32 pos = 0;
 	bool high = false;
 	for (uint i = 0; i <= s._edges.size(); ++i) {
-		uint32 end = (i < s._edges.size()) ? (uint32)(((uint64)s._edges[i] * SAMPLE_RATE) / CPU_HZ) : total;
+		uint32 end = (i < s._edges.size()) ? (uint32)(((uint64)s._edges[i] * SAMPLE_RATE) / rate) : total;
 		byte level = high ? 0x80 + AMPLITUDE : 0x80 - AMPLITUDE;
 
 		for (; pos < end && pos < total; ++pos)

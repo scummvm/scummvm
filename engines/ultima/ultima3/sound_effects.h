@@ -40,9 +40,11 @@ public:
 	 * @param effect	The effect number, from 0xF4 to 0xFD
 	 * @param arg1		The first of the values the effect is varied by
 	 * @param arg2		The second
+	 * @param timed		True to make the effects as the Ultima III Upgrade does, which
+	 *					times them by a timer rather than by how long the processor takes
 	 * @returns			The samples, or nothing if the effect isn't a sound
 	 */
-	static Common::Array<byte> render(byte effect, byte arg1, byte arg2);
+	static Common::Array<byte> render(byte effect, byte arg1, byte arg2, bool timed = false);
 };
 
 } // namespace Ultima3
