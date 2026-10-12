@@ -62,6 +62,18 @@ public:
 	Common::Error run() override;
 
 private:
+	bool initializeSearchPaths();
+	Common::SeekableReadStream *createMovieReadStream(int movieId) const;
+	bool switchActiveMediaDisc(int discNumber);
+	Graphics::Surface *loadBitmap(const char *fileName);
+	const Graphics::Surface *getUiBitmap(const char *fileName);
+	Graphics::Surface *loadBitmapFromStream(Common::SeekableReadStream *stream, const char *debugName) const;
+	Graphics::Surface *loadDiscBitmap(const char *relativePath) const;
+	Graphics::Surface *loadDiscBitmapFromAnyDisc(const char *relativePath) const;
+	Common::SeekableReadStream *createProgramReadStream(const char *relativePath) const;
+	Common::SeekableReadStream *createDiscReadStream(int discNumber, const char *relativePath) const;
+	Common::SeekableReadStream *createActiveDiscReadStream(const char *relativePath) const;
+	Common::SeekableReadStream *createActiveDiscHighColorReadStream(const char *relativePath) const;
 	void handleLeftButtonDown(const Common::Point &mousePosition);
 	bool pollEvents();
 	bool pollEvents(bool handleClicks);
@@ -71,6 +83,12 @@ private:
 	void mainLoop();
 
 	const HaroldGameDescription *_gameDescription;
+	Common::SearchSet _programFiles;
+	Common::SearchSet _discFiles[5];
+	Graphics::Surface *_uiBitmap = nullptr;
+	Common::String _uiBitmapName;
+	Graphics::Surface *_chipBitmap = nullptr;
+	int _activeMediaDiscNumber = 1;
 	uint32 _lastCursorRefreshMillis = 0;
 	Common::Point _mousePosition;
 	bool _suppressClickHandling = false;

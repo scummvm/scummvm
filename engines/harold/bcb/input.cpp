@@ -22,6 +22,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "harold/bcb/bcb.h"
+#include "harold/bcb/script.h"
 #include "video/avi_decoder.h"
 
 namespace BCB {

@@ -29,6 +29,7 @@
 #include "graphics/fonts/ttf.h"
 #include "graphics/sjis.h"
 #include "graphics/surface.h"
+#include "harold/bcb/script.h"
 #include "video/avi_decoder.h"
 
 namespace BCB {
@@ -41,10 +42,21 @@ BCBEngine::BCBEngine(OSystem *syst, const HaroldGameDescription *desc)
 }
 
 BCBEngine::~BCBEngine() {
+	if (_uiBitmap) {
+		_uiBitmap->free();
+		delete _uiBitmap;
+	}
+	if (_chipBitmap) {
+		_chipBitmap->free();
+		delete _chipBitmap;
+	}
 }
 
 Common::Error BCBEngine::run() {
 	const Graphics::PixelFormat screenFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+
+	if (!initializeSearchPaths())
+		return Common::kPathDoesNotExist;
 
 	initGraphics(640, 480, &screenFormat);
 	CursorMan.lock(false);
