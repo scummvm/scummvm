@@ -182,6 +182,19 @@ bool SceneContext::skipMovies() {
 	return true;
 }
 
+// A scene that has a function for it runs that in place of its records
+void SceneContext::onSave() {
+	if (callSceneFunction("OnSave", 0)) {
+		return;
+	}
+
+	// A record can make others, or take some down, while it stores its state
+	const Common::Array<Record *> records = _records;
+	for (Record *record : records) {
+		record->onSave();
+	}
+}
+
 void SceneContext::run(double elapsedTime) {
 	runFrame(elapsedTime);
 

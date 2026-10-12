@@ -60,6 +60,9 @@ public:
 	void run(double elapsedTime);
 	void handleInput(NancyInput &input);
 
+	// Tells the records that the game is about to be saved
+	void onSave();
+
 	lua_State *getLua() const;
 
 	// A new record only joins the scene at the start of the next frame. Until then

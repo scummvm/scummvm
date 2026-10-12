@@ -1630,6 +1630,12 @@ void Scene::synchronize(Common::Serializer &ser) {
 	if (_flags.eventFlags.empty())
 		init();
 
+#ifdef ENABLE_NANCY_V4
+	if (ser.isSaving() && _scriptScene) {
+		_scriptScene->onSave();
+	}
+#endif
+
 	if (ser.isSaving() && !_streams.isEmpty()) {
 		_streams.store();
 	}

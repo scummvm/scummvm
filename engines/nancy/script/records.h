@@ -166,7 +166,7 @@ private:
 };
 
 // A record that only does what the functions a script gave it do
-// TODO: Call RenderAttachment, OnSave, OnLoad and ReceiveMessage, and handle
+// TODO: Call RenderAttachment, OnLoad and ReceiveMessage, and handle
 // messagingName and Send.
 class OverrideRecord : public Record {
 public:
@@ -174,6 +174,7 @@ public:
 	virtual ~OverrideRecord();
 
 	void updateGraphics() override;
+	void onSave() override { callFunction("OnSave"); }
 
 protected:
 	void readTable(int tableIndex) override;

@@ -95,6 +95,14 @@ void SceneStream::processRecords() {
 	_actionManager.processActionRecords();
 }
 
+void SceneStream::onSave() {
+#ifdef ENABLE_NANCY_V4
+	if (_scriptScene) {
+		_scriptScene->onSave();
+	}
+#endif
+}
+
 void SceneStream::handleInput(NancyInput &input) {
 	if (_isEnded) {
 		return;
@@ -499,6 +507,7 @@ void SceneStreamManager::store() {
 				continue;
 			}
 
+			stream->onSave();
 			saved.name = stream->getName();
 			saved.lifetime = stream->getFlags().lifetime;
 			saved.capturesInput = stream->getFlags().capturesInput;

@@ -83,6 +83,9 @@ public:
 	bool update();
 	void handleInput(NancyInput &input);
 
+	// Nancy19: the scripts of the scene store what they keep in a saved game
+	void onSave();
+
 	void changeScene(const Common::String &sceneName, uint16 frameID);
 	void end() { _isEnded = true; }
 	bool isEnded() const { return _isEnded; }

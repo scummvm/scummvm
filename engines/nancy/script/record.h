@@ -100,6 +100,10 @@ public:
 	void hold();
 	void release();
 
+	// The game is about to be saved, which is when the records that keep
+	// something across scenes store it
+	virtual void onSave() {}
+
 	bool isActive() const { return _isActive && !_isDone; }
 	bool isDone() const { return _isDone; }
 	bool hasStarted() const { return _hasStarted; }
