@@ -23,7 +23,6 @@ import logging
 import os
 import re
 import sys
-import struct
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "contrib/pycdlib"))
 
@@ -104,13 +103,14 @@ CCD_MODE1_DATA_OFFSET = 16
 CCD_MODE2_DATA_OFFSET = 24
 BUFFERLEN = 102400
 SIZE_OF_BLOCK = 2048
-DIR_HEAD_TYPE = '>IIIII'
-FILE_ENTRY_TYPE = '>II4sIIIII32sII'
+DIR_HEAD_TYPE = ">IIIII"
+FILE_ENTRY_TYPE = ">II4sIIIII32sII"
 
 class FileSystem(Enum):
     hybrid = "hybrid"
     hfs = "hfs"
     iso9660 = "iso9660"
+    threedo = "3do"
 
 
 class Extension(Enum):
@@ -491,6 +491,13 @@ def extract_prodos_image(image: bytes, destination_dir: Path) -> None:
 def check_fs(iso: str) -> FileSystem:
     disk_formats = []
     f = open(iso, "rb")
+    # 3do 
+    f_size = f.seek(0, 2)
+    blocks = f_size // SIZE_OF_BLOCK
+    for block in range(min(16, blocks)):
+        if checkHeader(f, block, 0):
+            disk_formats.append(FileSystem.threedo)
+            break
 
     # ISO Primary Volume Descriptor
     f.seek(64 * SECTOR_SIZE)
@@ -566,6 +573,7 @@ def convert_ccd_to_iso(img_path: Path, iso_path: Path) -> None:
                 raise ValueError(
                     f"Unsupported sector mode {mode}"
                 )
+            
 SECTOR_SIZES = {
     "AUDIO": 2352, "CDG": 2448, "MODE1_RAW": 2352,
     "MODE1/2048": 2048, "MODE1/2352": 2352, "MODE2_RAW": 2352,
@@ -605,7 +613,7 @@ def parse_cue_sheet(cue_path: Path) -> List[CueTrack]:
             tokens = tokenize(line)
             if not tokens:
                 continue
-                
+
             cmd = tokens[0].upper()
 
             try:
@@ -614,15 +622,15 @@ def parse_cue_sheet(cue_path: Path) -> List[CueTrack]:
                     if len(tokens) < 3:
                         raise IndexError("FILE needs a name and a type")
                     current_file = " ".join(tokens[1:-1])
-                    
+
                 elif cmd == "TRACK":
                     current_track = None
                     track_num = int(tokens[1])
                     track_type = tokens[2].upper()
-                    
+
                     if track_type not in SECTOR_SIZES:
                         logging.warning(f"Line {line_num}: Unknown track type {track_type}, defaulting to 2352.")
-                        
+
                     current_track = CueTrack(
                         number=track_num,
                         type=track_type,
@@ -630,14 +638,15 @@ def parse_cue_sheet(cue_path: Path) -> List[CueTrack]:
                         file=current_file
                     )
                     tracks.append(current_track)
-                    
+
                 elif cmd == "INDEX" and current_track is not None:
                     current_track.indices[int(tokens[1])] = parse_msf(tokens[2])
-                    
+
             except (ValueError, IndexError) as e:
                 logging.warning(f"Line {line_num}: Malformed line '{line}' - {e}")
 
     return tracks      
+
 def convert_cue_to_iso(cue_path: Path, iso_path: Path) -> None:
     """
     Converts a BIN/CUE image into an ISO image for the primary data track,
@@ -651,47 +660,26 @@ def convert_cue_to_iso(cue_path: Path, iso_path: Path) -> None:
     data_track_extracted = False
 
     for i, track in enumerate(tracks):
-            bin_path = cue_path.parent / track.file
-            
-            if not bin_path.exists():
-                logging.warning(f"Associated BIN file not found: {bin_path}")
-                continue
+        bin_path = cue_path.parent / track.file
 
-            start_sector = track.indices.get(1, 0)
+        if not bin_path.exists():
+            logging.warning(f"Associated BIN file not found: {bin_path}")
+            continue
 
-            sector_size = track.sector_size
+        start_sector = track.indices.get(1, 0)
 
-            if i + 1 < len(tracks) and tracks[i+1].file == track.file:
-                next_track = tracks[i+1]
-                end_sector = next_track.indices.get(0, next_track.indices.get(1, start_sector))
-            else:
-                bin_size = os.path.getsize(bin_path)
-                end_sector = bin_size // sector_size
-                
-            total_sectors = end_sector - start_sector
-            if total_sectors <= 0:
-                continue
+        sector_size = track.sector_size
 
-            is_audio = False
-            if "MODE1" in track.type:
-                # If the BIN is already cooked (2048), offset is 0. If raw (2352), offset is 16.
-                data_offset = 16 if sector_size == 2352 else 0
-                payload_size = 2048
-                out_path = iso_path
-            elif "MODE2" in track.type:
-                data_offset = 24 if sector_size == 2352 else 0
-                payload_size = 2048
-                out_path = iso_path
-            elif "AUDIO" in track.type:
-                data_offset = 0
-                payload_size = 2352
-                out_path = iso_path.parent / f"{cue_path.stem}_track_{track.number:02d}.wav"
-                is_audio = True
-            else:
-                logging.warning(f"Skipping unsupported track type: {track.type}")
-                continue
+        if i + 1 < len(tracks) and tracks[i + 1].file == track.file:
+            next_track = tracks[i + 1]
+            end_sector = next_track.indices.get(0, next_track.indices.get(1, start_sector))
+        else:
+            bin_size = os.path.getsize(bin_path)
+            end_sector = bin_size // sector_size
 
-            print(f"Extracting Track {track.number:02d} ({track.type}) -> {out_path.name}")
+        total_sectors = end_sector - start_sector
+        if total_sectors <= 0:
+            continue
 
         is_audio = False
         if "MODE1" in track.type:
@@ -728,17 +716,40 @@ def convert_cue_to_iso(cue_path: Path, iso_path: Path) -> None:
             logging.warning(f"Skipping unsupported track type: {track.type}")
             continue
 
-                src.seek(start_sector * sector_size)
-                
-                for _ in range(total_sectors):
-                    chunk = src.read(sector_size)
+        print(f"Extracting Track {track.number:02d} ({track.type}) -> {out_path.name}")
 
-                    if not chunk or len(chunk) < sector_size:
-                        logging.warning(f"Reached early EOF on track {track.number}.")
-                        break
+        with open(bin_path, "rb") as src, open(out_path, "wb") as dst:
+            if is_audio:
+                data_len = total_sectors * payload_size
+                wav_header = struct.pack(
+                    "<4sI4s4sIHHIIHH4sI",
+                    b"RIFF",
+                    data_len + 36,
+                    b"WAVE",
+                    b"fmt ",
+                    16,
+                    1,
+                    2,
+                    44100,
+                    44100 * 4,
+                    4,
+                    16,
+                    b"data",
+                    data_len,
+                )
+                dst.write(wav_header)
 
-                    payload = chunk[data_offset : data_offset + payload_size]
-                    dst.write(payload)
+            src.seek(start_sector * sector_size)
+
+            for _ in range(total_sectors):
+                chunk = src.read(sector_size)
+
+                if not chunk or len(chunk) < sector_size:
+                    logging.warning(f"Reached early EOF on track {track.number}.")
+                    break
+
+                payload = chunk[data_offset : data_offset + payload_size]
+                dst.write(payload)
 
 def extract_iso(args: argparse.Namespace) -> None:
     temp_iso = None
@@ -802,6 +813,8 @@ def extract_iso(args: argparse.Namespace) -> None:
             extract_volume_iso(args)
         elif args.fs == FileSystem.hfs:
             extract_volume_hfs(args)
+        elif args.fs == FileSystem.threedo:
+            extract3do(args)
         else:
             extract_volume_hybrid(args)
             
@@ -1417,113 +1430,98 @@ def check_pycdlib_version() -> bool:
         doc_get_file_from_iso_fp
     )
 
-def endianswap(x) :
-    value = struct.unpack('>I', x)
+def endianswap(x):
+    value = struct.unpack(">I", x)
     return value[0]
 
 def checkHeader(f, block, offset):
     position = offset + block * SIZE_OF_BLOCK
-
     f.seek(position)
     data = f.read(7)
-    if data != b'\x01ZZZZZ\x01' :
+    if data != b"\x01ZZZZZ\x01":
         return 0
     f.seek(position + 0x28)
     mark = f.read(6)
-    if mark != b"CD-ROM" :
+    if mark != b"CD-ROM":
         return 0
     return 1
 
 def expandDir(f, offset, block, out):
-    while True :
-            
+    while True:
         dirSize = struct.calcsize(DIR_HEAD_TYPE)
         entrySize = struct.calcsize(FILE_ENTRY_TYPE)
         position = offset + block * SIZE_OF_BLOCK
 
         f.seek(position)
         data = f.read(dirSize)
-        if len(data) != dirSize :
+        if len(data) != dirSize:
             print("can't read header")
             break
         DirHead = struct.unpack(DIR_HEAD_TYPE, data)
 
         attr = 0
-        while attr < 256 :
+        while attr < 256:
             data = f.read(entrySize)
-            if len(data) != entrySize :
+            if len(data) != entrySize:
                 print("can't read File entry")
                 break
             File_Entry = struct.unpack(FILE_ENTRY_TYPE, data)
-
             attr = File_Entry[0]
             fileSizeBytes = File_Entry[4]
             numberCopies = File_Entry[9]
             startBlock = File_Entry[10]
-
             rawext = File_Entry[2]
             RawFileName = File_Entry[8]
 
-            FileExt = rawext.split(b'\x00', 1)[0].decode('ascii', errors = 'replace')
-            FileName = os.path.basename(RawFileName.split(b'\x00', 1)[0].decode('ascii', errors='replace'))
+            FileExt = rawext.split(b"\x00", 1)[0].decode("ascii", errors="replace")
+            FileName = os.path.basename(
+                RawFileName.split(b"\x00", 1)[0].decode("ascii", errors="replace")
+            )
 
-            if numberCopies > 0 :
+            if numberCopies > 0:
                 f.seek(numberCopies * 4, 1)
 
             saved_pos = f.tell()
-            if (attr & 255) == 7 :
-                dir_path = os.path.join(out , FileName)
-                os.makedirs(dir_path, exist_ok= True)
+            if (attr & 255) == 7:
+                dir_path = os.path.join(out, FileName)
+                os.makedirs(dir_path, exist_ok=True)
                 expandDir(f, offset, startBlock, dir_path)
 
-            elif (attr & 255) in (2,6) :
-                file_path = os.path.join(out , FileName)
+            elif (attr & 255) in (2, 6):
+                file_path = os.path.join(out, FileName)
                 print(f"Extracting : {file_path}")
-                with open(file_path,'wb') as nf :
-                    f.seek(offset + startBlock*SIZE_OF_BLOCK)
-
+                with open(file_path, "wb") as nf:
+                    f.seek(offset + startBlock * SIZE_OF_BLOCK)
                     totalLen = fileSizeBytes
-                    while totalLen >= BUFFERLEN :
+                    while totalLen >= BUFFERLEN:
                         data = f.read(BUFFERLEN)
                         nf.write(data)
-
                         totalLen = totalLen - BUFFERLEN
-
-                    if totalLen > 0 :
+                    if totalLen > 0:
                         remainder = f.read(totalLen)
-
-                        if len(remainder) == totalLen :
+                        if len(remainder) == totalLen:
                             nf.write(remainder)
-
             f.seek(saved_pos)
-        if (attr & 0xFF000000) == 0x40000000 :
-            block += 2048//SIZE_OF_BLOCK
-        else :
+        if (attr & 0xFF000000) == 0x40000000:
+            block += 2048 // SIZE_OF_BLOCK
+        else:
             break
 
-def extract3do(args: argparse.Namespace) -> None :
-    header_found = False
-    with open(args.src, 'rb') as f :
-        f_size = f.seek(0,2)
+def extract3do(args: argparse.Namespace) -> None:
+    with open(args.src, "rb") as f:
+        f_size = f.seek(0, 2)
         totalBlocks = f_size // SIZE_OF_BLOCK
         offset = 0
-
         for block in range(totalBlocks):
-            if checkHeader(f, block, offset) :
-                header_found = True
+            if checkHeader(f, block, offset):
                 offset = block * SIZE_OF_BLOCK
                 f.seek(offset + 0x64)
                 root = f.read(4)
                 root_block = endianswap(root)
-
                 os.makedirs(args.dir, exist_ok=True)
                 expandDir(f, offset, root_block, args.dir)
                 print("Done")
                 return
-
-        if not header_found :
-            print(f"Error: '{args.src}' is not a valid MODE1/2048 3DO CD-ROM image.")
-            return
 
 def generate_parser() -> argparse.ArgumentParser:
     """
@@ -1612,22 +1610,6 @@ def generate_parser() -> argparse.ArgumentParser:
         nargs="?",
     )
     parser_str.set_defaults(func=encode_string)
-
-    parser_3do = subparsers.add_parser(
-        "3do",
-        help="Dump 3DO images"
-    )
-    parser_3do.add_argument("src", 
-                            metavar="INPUT", 
-                            type=Path, 
-                            help="3DO Disk image"
-    )
-    parser_3do.add_argument("dir",
-                            metavar="OUTPUT",
-                            type=Path,
-                            help="Destination folder"
-    )
-    parser_3do.set_defaults(func=extract3do)
 
     if sys.platform == "darwin":
         parser_macbinary = subparsers.add_parser(
