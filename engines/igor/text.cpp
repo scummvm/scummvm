@@ -81,7 +81,6 @@ const uint8 IgorEngine::_sentenceColorIndex[] = {0xFD, 0xFB, 0xF1};
 
 /**
  * appends one DialogueText{num, count, sound} record to the batch being built.
- * MAX_DIALOGUE_TEXTS = 6
  * Game accumulates texts in _dialogeTextsTable, then displays them during dialogues.
  *
  * each call to ADD_DIALOGUE_TEXT is one screen of dialogue. Each dialogue
@@ -104,9 +103,6 @@ void IgorEngine::SET_DIALOGUE_TEXT(int start, int count) {
 	_dialogueTextsBuildCount = 0;
 	_dialogueTextsStart = start - 1;
 	_dialogueTextsCount = count;
-	// _talkSpeechCounter is the engine-side state used only by the blocking
-	// dialogue loops to pause between pages. A skipped previous dialogue can
-	// leave it at -1
 	_talkSpeechCounter = 3;
 }
 
@@ -114,7 +110,6 @@ void IgorEngine::SET_DIALOGUE_TEXT(int start, int count) {
  * sets the positional state of the text to be displayed
  */
 void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
-	debugC(9, kDebugEngine, "fixDialogueTextPosition() for line %s, count %d, x %d, y %d", _globalDialogueTexts[num], count, *x, *y);
 	int textLineWidth = 0;
 	for (int i = 0; i < count; ++i) {
 		int w = _font.getStringWidth(_globalDialogueTexts[num + i]);

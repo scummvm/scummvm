@@ -63,8 +63,8 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_game.flags = gameDesc->gameFlags;
 	_game.language = gameDesc->desc.language;
 
-	_currentPart = 850;
-	// _currentPart = kStartupPart;
+	// _currentPart = 850;
+	_currentPart = kStartupPart;
 
 	// _currentPart = 171;
 	// _currentPart = 62;
@@ -443,6 +443,10 @@ void IgorEngine::executeAction(int action) {
 
 
 void IgorEngine::handlePause() {
+	// The CD version's pause routine returns without doing anything.
+	if (_game.version == kIdEngCD || _game.version == kIdSpaCD)
+		return;
+
 	drawActionSentence(getString(STR_GamePaused), 0xFB);
 	do {
 		waitForTimer();
