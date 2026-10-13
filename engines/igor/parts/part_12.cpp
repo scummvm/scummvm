@@ -223,6 +223,7 @@ void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
 		waitForTimer();
 	} while (_gameState.igorMoving);
 	decodeAnimFrame(_animFramesBuffer + 0x761 + READ_LE_UINT16(_animFramesBuffer + 0x1117) - 1, _screenVGA, true);
+	// draws the same scene with the church door open or closed
 	if (_objectsState[45] == 0) {
 		for (int i = 1; i <= 15; ++i) {
 			const uint8 *src = _animFramesBuffer + 0x1119 + READ_LE_UINT16(_animFramesBuffer + 0x2532 + PART_12_DATA_ANIM_2[i] * 2) - 1;
@@ -404,6 +405,7 @@ void IgorEngine::PART_12_HELPER_4_exorcismCutscene() {
 	}
 	waitForTimer(255);
 	fadeOut(768);
+	// door open
 	_objectsState[45] = 1;
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);

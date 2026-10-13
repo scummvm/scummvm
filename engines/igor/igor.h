@@ -960,7 +960,7 @@ private:
 
 	// college corridor sharon michael
 	void PART_24_EXEC_ACTION(int action);
-	void PART_24_ACTION_102();
+	void PART_24_ACTION_102_enterChemistryClass();
 	void PART_24_ACTION_104_closeDoor();
 	void PART_24_ACTION_105_openDoor();
 	void PART_24_ACTION_107_goToLibrary();

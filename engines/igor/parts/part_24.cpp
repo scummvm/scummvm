@@ -29,7 +29,7 @@ void IgorEngine::PART_24_EXEC_ACTION(int action) {
 		_currentPart = 313;
 		break;
 	case 102:
-		PART_24_ACTION_102();
+		PART_24_ACTION_102_enterChemistryClass();
 		break;
 	case 103: // look at chemistry door
 		igorSay(201, 1, 1257);
@@ -67,7 +67,7 @@ void IgorEngine::PART_24_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_24_ACTION_102() {
+void IgorEngine::PART_24_ACTION_102_enterChemistryClass() {
 	if (_objectsState[67] != 0) {
 		_roomObjectAreasTable[_screenLayer2[37188]].area = 1;
 		--_walkDataLastIndex;
