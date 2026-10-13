@@ -93,11 +93,11 @@ void RunawayAudio::playMusic(uint16 cue) {
 		Audio::Mixer::kMusicSoundType, _music, 96, true);
 }
 
-uint32 RunawayAudio::playSpeech(uint16 sample) {
+uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
 	// DATAACA3 has independent 6000-entry offset and length tables. Its global
 	// sample IDs include stale offsets for other chapters, so never derive a
 	// length by subtracting adjacent offsets as with the M/S archives.
-	return play("DATAACA3.000", sample, 6000, true, Audio::FLAG_UNSIGNED,
+	return play(global ? "DATAACA0.000" : "DATAACA3.000", sample, 6000, true, Audio::FLAG_UNSIGNED,
 		Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false);
 }
 

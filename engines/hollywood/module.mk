@@ -138,9 +138,12 @@ MODULE_OBJS = \
 	monsters/scenes/playable/playable_scene_actions.o \
 	runaway/audio.o \
 	runaway/engine.o \
+	runaway/font.o \
 	runaway/graphics.o \
 	runaway/intro.o \
-	runaway/scene5030.o
+	runaway/inventory.o \
+	runaway/scene5030.o \
+	runaway/ui.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HOLLYWOOD), DYNAMIC_PLUGIN)

@@ -19,13 +19,10 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/str-enc.h"
 #include "common/util.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
 
 #include "hollywood/debug.h"
 #include "hollywood/runaway/scene5030.h"
@@ -48,20 +45,20 @@ const SceneHotspot kHotspots[] = {
 	{"Spalt", 101, 507, 519, 7},
 	{"Fenster", 406, 383, 520, 0},
 	{"Fenster", 1062, 473, 523, 1},
-	{"Knauf", 942, 407, 528, 0},
+	{"Holzst\xc3\xbc" "ck", 942, 407, 528, 0},
 	{"Fallt\xc3\xbcr", 1215, 542, 530, 7},
-	{"Hemd", 406, 383, 572, 7},
-	{"K\xc3\xbchlbox", 1062, 473, 535, 7},
-	{"Lederst\xc3\xbc" "ck", 1019, 405, 552, 0},
+	{"Stofffetzen", 406, 383, 572, 7},
+	{"K\xc3\xbchltruhe", 1062, 473, 535, 7},
+	{"Fetzen", 1019, 405, 552, 0},
 	{"Stecker", 1215, 542, 554, 7},
 	{"Abfluss", 1215, 542, 557, 7},
 	{"Telefon", 495, 381, 565, 7},
 	{"Regal", 873, 409, 567, 1},
-	{"Eisenstange", 974, 406, 570, 7},
-	{"Brille", 262, 426, 614, 0},
+	{"Brechstange", 974, 406, 570, 7},
+	{"Brillenreste", 262, 426, 614, 0},
 	{"Blasebalg", 262, 426, 576, 7},
-	{"Reinigungsmittel", 609, 379, 577, 1},
-	{"Deckel", 1062, 473, 580, 1},
+	{"Dose", 609, 379, 577, 1},
+	{"K\xc3\xbchltruhendeckel", 1062, 473, 580, 1},
 	{"Abfluss", 1215, 542, 557, 7}
 };
 
@@ -74,7 +71,7 @@ bool RunawayScene5030::load() {
 			_archive.chunkSize(0) != kRoomWidth * kRoomHeight * 2 ||
 			!_archive.readVariableChunk(0, pixels) || !_archive.readVariableChunk(1, packedMask) ||
 			!_archive.readVariableChunk(2, _maps) || _maps.size() != 1536 ||
-			!_text.loadStage("RESOURCE.003", "Runaway shack", 503))
+			!_text.load("RESOURCE.003", "Runaway shack", 503, 0, 0x1135))
 		return false;
 	_background.create(kRoomWidth, kRoomHeight, format);
 	_screen.create(kScreenWidth, kScreenHeight, format);
@@ -101,6 +98,11 @@ bool RunawayScene5030::load() {
 			!_lid.load(_archive, 44, 5) || !_unplug.load(_archive, 40, 59) ||
 			!loadPatch(5, _unplugPatch) || !loadPatch(7, _openLidPatch) || !loadPatch(9, _closedLidPatch))
 		return false;
+	const uint pickupChunks[] = {20, 18, 15, 19, 17};
+	for (uint i = 0; i < ARRAYSIZE(pickupChunks); ++i) {
+		if (!loadPatch(pickupChunks[i], _pickupPatches[i]))
+			return false;
+	}
 	const uint rows = _text._stageLargeRows.size() / 321;
 	_voiceSamples.resize(rows, 0);
 	_cueEnds.resize(rows, 0);
@@ -166,11 +168,13 @@ byte RunawayScene5030::hotspotAt(Common::Point mouse) const {
 	byte id = _maps[256 + _mask[(mouse.y - kRoomTop) * kRoomWidth + mouse.x + _cameraX]];
 	// The initial cooler hides the hatch and its later position. These remaps
 	// correspond to the native room-state updater at 0x438ce0.
+	if (id == 2)
+		id = 1;
 	if (id == 6 || id == 20)
 		id = 8;
 	if (id == 21 || (id == 10 && _unplugged))
 		id = 0;
-	return id < ARRAYSIZE(kHotspots) ? id : 0;
+	return id < ARRAYSIZE(kHotspots) && !_pickedUp[id] ? id : 0;
 }
 
 bool RunawayScene5030::walkable(int x, int y) const {
@@ -244,6 +248,7 @@ void RunawayScene5030::say(uint16 row) {
 	stopSpeech();
 	if (row < 500 || row - 500 >= _voiceSamples.size())
 		return;
+	_globalSpeech = false;
 	_speechRow = row;
 	_speechEnd = MAX<uint16>(row, _cueEnds[row - 500]);
 	showSpeechRow();
@@ -251,8 +256,8 @@ void RunawayScene5030::say(uint16 row) {
 
 void RunawayScene5030::showSpeechRow() {
 	_subtitle = Common::U32String(_text.largeTextRecord(_speechRow), Common::kDos850);
-	const uint16 sample = _voiceSamples[_speechRow - 500];
-	const uint32 duration = sample ? _audio.playSpeech(sample) : 0;
+	const uint16 sample = _globalSpeech ? _speechSample : _voiceSamples[_speechRow - 500];
+	const uint32 duration = sample ? _audio.playSpeech(sample, _globalSpeech) : 0;
 	_subtitleUntil = _now + (duration ? MAX<uint>(1000, duration + 150) : MAX<uint>(3000, _subtitle.size() * 55));
 	debugC(1, kDebugScene, "Runaway demo: dialogue row %u, voice %u, ends at row %u",
 		_speechRow, sample, _speechEnd);
@@ -264,35 +269,147 @@ void RunawayScene5030::stopSpeech() {
 	_subtitle.clear();
 }
 
-void RunawayScene5030::click(Common::Point mouse, bool examine) {
-	if (_action != kNone || mouse.y < kRoomTop || mouse.y >= kRoomTop + kRoomHeight)
+Common::U32String RunawayScene5030::actionCaption(byte id, RunawayVerb verb, byte item) const {
+	Common::U32String name(id < ARRAYSIZE(kHotspots) ? kHotspots[id].name : "");
+	if (id < ARRAYSIZE(kHotspots) && _examined[id]) {
+		if (id == 5 || id == 9 || id == 17)
+			name = _inventory.name(id == 5 ? 8 : id == 9 ? 1 : 3);
+		else if (id == 7)
+			name = Common::U32String("Hemd");
+	}
+	name.toUppercase();
+	if (item) {
+		Common::U32String caption = Common::U32String("BENUTZE ") + _inventory.name(item);
+		if (id)
+			caption += Common::U32String(" MIT ") + name;
+		return caption;
+	}
+	if (!id)
+		return Common::U32String();
+	if (verb == kVerbLook)
+		return Common::U32String(id == 3 || id == 4 ? "SIEH AUS DEM " : "BETRACHTE ") + name;
+	const char *action = "BENUTZE ";
+	if (id == 5 || id == 9 || id == 14 || id == 16 || id == 17)
+		action = "NIMM ";
+	else if (id == 18)
+		action = _lidOpen ? "SCHLIESSE " : "\xc3\x96" "FFNE ";
+	else if (id == 8)
+		action = _lidOpen ? "VERSCHIEBE " : "\xc3\x96" "FFNE ";
+	else if (id == 10)
+		return Common::U32String("ZIEHE DEN STECKER DER K\xc3\x9cHLTRUHE HERAUS");
+	else if (id == 12)
+		action = "BENUTZE DAS ";
+	else if (id == 13)
+		action = "NIMM ETWAS AUS DEM ";
+	else if (id == 1 || id == 3 || id == 4 || id == 6)
+		action = "\xc3\x96" "FFNE ";
+	return Common::U32String(action) + name;
+}
+
+void RunawayScene5030::sayInventory(const RunawayInventory::Reply &reply) {
+	stopSpeech();
+	uint16 row, sample;
+	byte count;
+	if (!_text.getStaticSpeechCue(reply.cue, reply.variation, row, count, sample))
+		return;
+	if (!row || row + MAX<uint>(1, count) > _text._inventoryOwnerLargeRows.size() / 321 ||
+			sample + MAX<uint>(1, count) > 6000)
+		return;
+	_globalSpeech = true;
+	_speechRow = row;
+	_speechEnd = row + MAX<uint>(1, count) - 1;
+	_speechSample = sample;
+	showSpeechRow();
+}
+
+void RunawayScene5030::sayCue(uint16 cue, byte variation) {
+	const SceneSpeechCue speech = _text.stageCue(cue, variation);
+	if (speech.valid())
+		say(speech.textRecordId);
+}
+
+void RunawayScene5030::skipSpeech() {
+	if (!_speechRow)
+		return;
+	_audio.stopSpeech();
+	if (_speechRow < _speechEnd) {
+		++_speechRow;
+		if (_globalSpeech)
+			++_speechSample;
+		showSpeechRow();
+	} else {
+		stopSpeech();
+	}
+}
+
+void RunawayScene5030::cancelWalk() {
+	_path.clear();
+	_pathIndex = 0;
+	_pendingHotspot = _pendingItem = 0;
+	_committedCaption.clear();
+}
+
+void RunawayScene5030::click(Common::Point mouse, RunawayVerb verb, byte item) {
+	if (_action != kNone || speaking() || mouse.y < kRoomTop || mouse.y >= kRoomTop + kRoomHeight)
 		return;
 	const byte id = hotspotAt(mouse);
-	debugC(1, kDebugScene, "Runaway demo: %s click at %d,%d, hotspot %u",
-		examine ? "examine" : "use", mouse.x + _cameraX, mouse.y - kRoomTop, id);
-	if (examine) {
-		if (id == 18)
-			say(_lidOpen ? 581 : 580);
-		else if (id == 8)
-			say(!_lidOpen ? 535 : _unplugged ? 537 : 536);
-		else if (id)
-			say(kHotspots[id].description);
-		return;
-	}
-	stopSpeech();
+	debugC(1, kDebugScene, "Runaway demo: verb %u item %u at %d,%d, hotspot %u",
+		(uint)verb, item, mouse.x + _cameraX, mouse.y - kRoomTop, id);
 	_pendingHotspot = id;
+	_pendingItem = item;
+	_pendingVerb = verb;
+	_committedCaption = actionCaption(id, verb, item);
 	const Common::Point target = id ? Common::Point(kHotspots[id].x, kHotspots[id].y) :
 		Common::Point(mouse.x + _cameraX, mouse.y - kRoomTop);
 	walkTo(target);
 }
 
+void RunawayScene5030::pickUp(byte hotspot, byte item, uint patch) {
+	if (!_inventory.add(item))
+		return;
+	_pickedUp[hotspot] = true;
+	drawPatch(_pickupPatches[patch]);
+	sayInventory(RunawayInventory::Reply(18, 0));
+}
+
+void RunawayScene5030::useItem(byte item, byte hotspot) {
+	_inventory.select(0);
+	// Dispatch the room's item actions separately from its ordinary verbs.
+	// Original rejected actions use the shared, voiced inventory responses.
+	if (item == 1 && hotspot == 3)
+		sayCue(33, 0);
+	else
+		sayInventory(RunawayInventory::Reply(1, 0));
+}
+
 void RunawayScene5030::arrive() {
-	const byte id = _pendingHotspot;
-	_pendingHotspot = 0;
+	const byte id = _pendingHotspot, item = _pendingItem;
+	_pendingHotspot = _pendingItem = 0;
+	_committedCaption.clear();
 	if (!id)
 		return;
 	_facing = kHotspots[id].facing;
-	if (id == 18 || (id == 8 && !_lidOpen)) {
+	if (item) {
+		useItem(item, id);
+	} else if (_pendingVerb == kVerbLook) {
+		_examined[id] = true;
+		if (id == 18)
+			say(_lidOpen ? 581 : 580);
+		else if (id == 8)
+			say(!_lidOpen ? 535 : _unplugged ? 537 : 536);
+		else
+			say(kHotspots[id].description);
+	} else if (id == 5) {
+		pickUp(id, 8, 0);
+	} else if (id == 9) {
+		pickUp(id, 1, 1);
+	} else if (id == 14) {
+		pickUp(id, 2, 2);
+	} else if (id == 16) {
+		pickUp(id, 24, 3);
+	} else if (id == 17) {
+		pickUp(id, 3, 4);
+	} else if (id == 18 || (id == 8 && !_lidOpen)) {
 		startAction(_lidOpen ? kCloseLid : kOpenLid);
 	} else if (id == 10 && !_unplugged) {
 		startAction(kUnplug);
@@ -331,10 +448,18 @@ void RunawayScene5030::finishAction() {
 		(uint)completed, (uint)_lidOpen, (uint)_unplugged);
 }
 
-void RunawayScene5030::update(uint32 now, int scrollDirection) {
+void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	_now = now;
 	const uint elapsed = MIN<uint>(100, now - _lastUpdate);
+	const uint32 pausedTime = now - _lastUpdate;
 	_lastUpdate = now;
+	if (speaking() && !_audio.speechPlaying() && (int32)(now - _subtitleUntil) >= 0)
+		skipSpeech();
+	if (inventoryOpen) {
+		_actionStarted += pausedTime;
+		_walkStarted += pausedTime;
+		return;
+	}
 	if (_action != kNone) {
 		const uint previousStep = _step;
 		_step = (now - _actionStarted) / 80;
@@ -389,17 +514,9 @@ void RunawayScene5030::update(uint32 now, int scrollDirection) {
 	else if (walking || (_action != kNone && _action != kIntro))
 		_cameraX += CLIP<int>(_position.x - kScreenWidth / 2 - _cameraX, -8, 8);
 	setCameraX(_cameraX);
-	if (_speechRow && !_audio.speechPlaying() && (int32)(now - _subtitleUntil) >= 0) {
-		if (_speechRow < _speechEnd) {
-			++_speechRow;
-			showSpeechRow();
-		} else {
-			stopSpeech();
-		}
-	}
 }
 
-void RunawayScene5030::draw(Common::Point mouse) {
+void RunawayScene5030::draw() {
 	_screen.clear();
 	_screen.copyRectToSurface(_background, 0, kRoomTop,
 		Common::Rect(_cameraX, 0, _cameraX + kScreenWidth, kRoomHeight));
@@ -419,24 +536,6 @@ void RunawayScene5030::draw(Common::Point mouse) {
 		_unplug.draw(_screen, frame, _cameraX, kRoomTop);
 	} else {
 		_actor.draw(_screen, _position, _cameraX, kRoomTop, _mask, _maps);
-	}
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	const uint32 white = _screen.format.RGBToColor(255, 255, 255);
-	if (!_subtitle.empty() && (!ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles") || ConfMan.getBool("speech_mute"))) {
-		Common::Array<Common::U32String> lines;
-		font->wordWrapText(_subtitle, kScreenWidth - 100, lines);
-		int y = kRoomTop + kRoomHeight + 12;
-		for (uint i = 0; i < lines.size(); ++i, y += font->getFontHeight() + 2)
-			font->drawString(_screen.surfacePtr(), lines[i], 50, y, kScreenWidth - 100, white, Graphics::kTextAlignCenter);
-	}
-	const byte id = _action == kNone ? hotspotAt(mouse) : 0;
-	if (id) {
-		const Common::U32String name(kHotspots[id].name);
-		const int width = font->getStringWidth(name) + 8;
-		const int x = CLIP<int>(mouse.x - width / 2, 0, kScreenWidth - width);
-		const int y = MAX<int>(kRoomTop, mouse.y - font->getFontHeight() - 14);
-		font->drawString(_screen.surfacePtr(), name, x + 1, y + 1, width, 0, Graphics::kTextAlignCenter);
-		font->drawString(_screen.surfacePtr(), name, x, y, width, white, Graphics::kTextAlignCenter);
 	}
 }
 

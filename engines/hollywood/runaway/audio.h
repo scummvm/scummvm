@@ -32,7 +32,7 @@ public:
 	~RunawayAudio();
 	void playIntroMusic();
 	void playMusic(uint16 cue);
-	uint32 playSpeech(uint16 sample);
+	uint32 playSpeech(uint16 sample, bool global = false);
 	void playEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void stopMusic();
 	void stopSpeech();

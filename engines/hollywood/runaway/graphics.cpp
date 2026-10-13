@@ -30,7 +30,17 @@ namespace Hollywood {
 
 bool RunawayAnimation::load(ChunkArchive &archive, uint chunk, uint frames) {
 	_frames = 0;
-	if (!frames || frames > 1000 || !archive.readVariableChunk(chunk, _data) || _data.size() < frames * 14)
+	return archive.readVariableChunk(chunk, _data) && validate(frames);
+}
+
+bool RunawayAnimation::load(const Common::Array<byte> &data, uint frames) {
+	_data = data;
+	return validate(frames);
+}
+
+bool RunawayAnimation::validate(uint frames) {
+	_frames = 0;
+	if (!frames || frames > 1000 || _data.size() < frames * 14)
 		return false;
 	uint cursor = frames * 14;
 	for (uint frame = 0; frame < frames; ++frame) {
@@ -78,18 +88,23 @@ void RunawayAnimation::draw(Graphics::ManagedSurface &surface, uint frame, int c
 	}
 }
 
-static bool readActorChunk(Common::File &file, uint chunk, Common::Array<byte> &data) {
-	if (!file.seek(10 + chunk * 4))
+static bool readGlobalChunk(Common::File &file, uint chunk, Common::Array<byte> &data) {
+	if (chunk >= 500 || file.size() < 4010 || !file.seek(10 + chunk * 4))
 		return false;
 	const uint32 offset = file.readUint32LE();
 	if (!file.seek(10 + 500 * 4 + chunk * 4))
 		return false;
 	const uint32 size = file.readUint32LE();
-	if (!size || size > 2 * 1024 * 1024 || offset > file.size() || size > file.size() - offset ||
+	if (!size || size > 16 * 1024 * 1024 || offset < 4010 || offset > file.size() || size > file.size() - offset ||
 			!file.seek(offset))
 		return false;
 	data.resize(size);
 	return file.read(data.data(), size) == size;
+}
+
+bool readRunawayGlobalChunk(uint chunk, Common::Array<byte> &data) {
+	Common::File file;
+	return file.open("RESOURCE.000") && readGlobalChunk(file, chunk, data);
 }
 
 bool RunawayActor::load() {
@@ -97,9 +112,9 @@ bool RunawayActor::load() {
 	Common::Array<byte> palette;
 	// Native chapter-five actor loader at 0x40b590 selects entry 44. Entry 45
 	// is the palette, and 46..53 are the eight banks of 19 walking cels.
-	if (!file.open("RESOURCE.000") || !readActorChunk(file, 44, _descriptors) ||
+	if (!file.open("RESOURCE.000") || !readGlobalChunk(file, 44, _descriptors) ||
 			_descriptors.size() != kFacings * kFrames * 32 ||
-			!readActorChunk(file, 45, palette) || palette.size() != 512)
+			!readGlobalChunk(file, 45, palette) || palette.size() != 512)
 		return false;
 	for (uint i = 0; i < 256; ++i)
 		_palette[i] = READ_LE_UINT16(palette.data() + i * 2);
@@ -107,7 +122,7 @@ bool RunawayActor::load() {
 	_opacity.resize(kWidth * kHeight);
 	_shadow.resize(kWidth * kHeight);
 	for (uint facing = 0; facing < kFacings; ++facing) {
-		if (!readActorChunk(file, 46 + facing, _banks[facing]))
+		if (!readGlobalChunk(file, 46 + facing, _banks[facing]))
 			return false;
 		for (uint frame = 0; frame < kFrames; ++frame) {
 			if (!setFrame(facing, frame))

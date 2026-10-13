@@ -35,6 +35,7 @@
 #include "hollywood/runaway/engine.h"
 #include "hollywood/runaway/intro.h"
 #include "hollywood/runaway/scene5030.h"
+#include "hollywood/runaway/ui.h"
 
 namespace Hollywood {
 namespace {
@@ -44,8 +45,10 @@ enum RunawayAction {
 	kScrollRight,
 	kScrollStart,
 	kScrollEnd,
-	kReturnToLauncher,
-	kSkipIntro
+	kCancelAction,
+	kSkip,
+	kToggleInventory,
+	kCycleAction
 };
 
 } // End of anonymous namespace
@@ -82,7 +85,7 @@ Common::Error RunawayEngine::playIntro() {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
 				skip = true;
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
-					(event.customType == kSkipIntro || event.customType == kReturnToLauncher)) {
+					(event.customType == kSkip || event.customType == kCancelAction)) {
 				skip = true;
 			}
 		}
@@ -113,21 +116,44 @@ Common::Error RunawayEngine::run() {
 	if (introResult.getCode() != Common::kNoError || shouldQuit())
 		return introResult;
 
-	RunawayScene5030 scene(_mixer);
-	if (!scene.load())
-		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo room, actor or animation data");
+	RunawayInventory inventory;
+	RunawayScene5030 scene(_mixer, inventory);
+	RunawayUI ui(inventory);
+	if (!scene.load() || !ui.load())
+		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo room, actor or interface data");
 	scene.start(getTotalPlayTime());
-	CursorMan.setDefaultArrowCursor();
 	CursorMan.showMouse(true);
 	_system->warpMouse(RunawayScene5030::kScreenWidth / 2, RunawayScene5030::kRoomTop + RunawayScene5030::kRoomHeight / 2);
 
 	bool leftPressed = false, rightPressed = false;
 	while (!shouldQuit()) {
+		const uint32 now = getTotalPlayTime();
+		Common::Point mouse = _eventMan->getMousePos();
+		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking());
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
-				scene.click(event.mouse, event.type == Common::EVENT_RBUTTONDOWN);
+				ui.update(now, event.mouse, scene.hotspotAt(event.mouse), scene.busy(), scene.speaking());
+				const RunawayUI::Command command = ui.click(event.type == Common::EVENT_RBUTTONDOWN);
+				switch (command.type) {
+				case RunawayUI::Command::kRoom:
+					scene.click(command.mouse, command.verb, command.item);
+					break;
+				case RunawayUI::Command::kExamineItem:
+					scene.sayInventory(inventory.examine(command.target));
+					break;
+				case RunawayUI::Command::kCombine:
+					scene.sayInventory(inventory.combine(command.item, command.target));
+					break;
+				case RunawayUI::Command::kSkipSpeech:
+					scene.skipSpeech();
+					break;
+				default:
+					break;
+				}
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+				mouse = _eventMan->getMousePos();
+				ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking());
 				const bool pressed = event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START;
 				switch (event.customType) {
 				case kScrollLeft:
@@ -137,16 +163,32 @@ Common::Error RunawayEngine::run() {
 					rightPressed = pressed;
 					break;
 				case kScrollStart:
-					if (pressed)
+					if (pressed && !ui.inventoryOpen() && !scene.busy())
 						scene.setCameraX(0);
 					break;
 				case kScrollEnd:
-					if (pressed)
+					if (pressed && !ui.inventoryOpen() && !scene.busy())
 						scene.setCameraX(RunawayScene5030::kRoomWidth - RunawayScene5030::kScreenWidth);
 					break;
-				case kReturnToLauncher:
+				case kCancelAction:
+					if (pressed) {
+						if (scene.speaking())
+							scene.skipSpeech();
+						else if (!ui.cancel() && !scene.busy())
+							scene.cancelWalk();
+					}
+					break;
+				case kToggleInventory:
 					if (pressed)
-						return Common::kNoError;
+						ui.toggleInventory();
+					break;
+				case kCycleAction:
+					if (pressed && ui.click(true).type == RunawayUI::Command::kSkipSpeech)
+						scene.skipSpeech();
+					break;
+				case kSkip:
+					if (pressed)
+						scene.skipSpeech();
 					break;
 				}
 			}
@@ -154,7 +196,7 @@ Common::Error RunawayEngine::run() {
 		if (shouldQuit())
 			break;
 		int direction = (int)rightPressed - (int)leftPressed;
-		const Common::Point mouse = _eventMan->getMousePos();
+		mouse = _eventMan->getMousePos();
 		if (!direction && mouse.y >= RunawayScene5030::kRoomTop && mouse.y < RunawayScene5030::kRoomTop + RunawayScene5030::kRoomHeight) {
 			if (mouse.x < 24)
 				direction = -1;
@@ -163,9 +205,13 @@ Common::Error RunawayEngine::run() {
 		}
 		// The engine clock excludes time spent in ScummVM dialogs, keeping
 		// animation frames and subtitle deadlines in sync with paused audio.
-		scene.update(getTotalPlayTime(), direction);
-		scene.draw(mouse);
-		const Graphics::ManagedSurface &screen = scene.screen();
+		scene.update(now, ui.inventoryOpen() || scene.busy() ? 0 : direction, ui.inventoryOpen());
+		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking());
+		scene.draw();
+		Graphics::ManagedSurface &screen = scene.screen();
+		const bool subtitles = !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles") || ConfMan.getBool("speech_mute");
+		ui.draw(screen, scene.actionCaption(scene.hotspotAt(mouse), ui.verb(), inventory.selected()),
+			scene.committedCaption(), scene.subtitle(), subtitles);
 		_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
 		_system->updateScreen();
 		_system->delayMillis(16);
@@ -178,13 +224,13 @@ Common::Array<Common::Keymap *> RunawayEngine::initKeymaps() {
 	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "runaway", "Runaway: A Road Adventure");
 	keymap->setPartialMatchAllowed(false);
 
-	Action *action = new Action(kStandardActionLeftClick, _("Walk / Use"));
+	Action *action = new Action(kStandardActionLeftClick, _("Perform action"));
 	action->setLeftClickEvent();
 	action->addDefaultInputMapping("MOUSE_LEFT");
 	action->addDefaultInputMapping("JOY_A");
 	keymap->addAction(action);
 
-	action = new Action(kStandardActionRightClick, _("Examine"));
+	action = new Action(kStandardActionRightClick, _("Next action / Cancel"));
 	action->setRightClickEvent();
 	action->addDefaultInputMapping("MOUSE_RIGHT");
 	action->addDefaultInputMapping("JOY_B");
@@ -216,13 +262,24 @@ Common::Array<Common::Keymap *> RunawayEngine::initKeymaps() {
 	action->addDefaultInputMapping("JOY_START");
 	keymap->addAction(action);
 
-	action = new Action("RETURN_TO_LAUNCHER", _("Return to launcher"));
-	action->setCustomEngineActionEvent(kReturnToLauncher);
+	action = new Action("CANCEL_ACTION", _("Cancel action"));
+	action->setCustomEngineActionEvent(kCancelAction);
 	action->addDefaultInputMapping("ESCAPE");
 	keymap->addAction(action);
 
-	action = new Action(kStandardActionSkip, _("Skip intro"));
-	action->setCustomEngineActionEvent(kSkipIntro);
+	action = new Action("INVENTORY", _("Inventory"));
+	action->setCustomEngineActionEvent(kToggleInventory);
+	action->addDefaultInputMapping("i");
+	action->addDefaultInputMapping("JOY_Y");
+	keymap->addAction(action);
+
+	action = new Action("CYCLE_ACTION", _("Next action / Cancel"));
+	action->setCustomEngineActionEvent(kCycleAction);
+	action->addDefaultInputMapping("TAB");
+	keymap->addAction(action);
+
+	action = new Action(kStandardActionSkip, _("Skip intro / Skip line"));
+	action->setCustomEngineActionEvent(kSkip);
 	action->addDefaultInputMapping("SPACE");
 	action->addDefaultInputMapping("RETURN");
 	action->addDefaultInputMapping("JOY_X");

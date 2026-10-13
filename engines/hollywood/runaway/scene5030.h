@@ -26,6 +26,7 @@
 #include "hollywood/resource.h"
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
+#include "hollywood/runaway/inventory.h"
 #include "hollywood/scene_text_store.h"
 
 namespace Hollywood {
@@ -39,23 +40,34 @@ public:
 		kRoomWidth = 1376, kRoomHeight = kRunawayViewportHeight, kRoomTop = kRunawayViewportTop
 	};
 
-	explicit RunawayScene5030(Audio::Mixer *mixer) : _audio(mixer) {}
+	RunawayScene5030(Audio::Mixer *mixer, RunawayInventory &inventory) : _audio(mixer), _inventory(inventory) {}
 	bool load();
 	void start(uint32 now);
-	void click(Common::Point mouse, bool examine);
-	void update(uint32 now, int scrollDirection);
-	void draw(Common::Point mouse);
+	void click(Common::Point mouse, RunawayVerb verb, byte item);
+	void update(uint32 now, int scrollDirection, bool inventoryOpen);
+	void draw();
 	void setCameraX(int x);
-	const Graphics::ManagedSurface &screen() const { return _screen; }
+	Graphics::ManagedSurface &screen() { return _screen; }
+	byte hotspotAt(Common::Point mouse) const;
+	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const;
+	const Common::U32String &committedCaption() const { return _committedCaption; }
+	const Common::U32String &subtitle() const { return _subtitle; }
+	bool busy() const { return _action != kNone; }
+	bool speaking() const { return _speechRow != 0; }
+	void skipSpeech();
+	void cancelWalk();
+	void sayInventory(const RunawayInventory::Reply &reply);
 
 private:
 	enum Action { kNone, kIntro, kOpenLid, kCloseLid, kUnplug };
-	byte hotspotAt(Common::Point mouse) const;
 	bool walkable(int x, int y) const;
 	bool clearPath(Common::Point start, Common::Point end) const;
 	void walkTo(Common::Point target);
 	void arrive();
 	void say(uint16 row);
+	void sayCue(uint16 cue, byte variation);
+	void pickUp(byte hotspot, byte item, uint patch);
+	void useItem(byte item, byte hotspot);
 	void showSpeechRow();
 	void stopSpeech();
 	void startAction(Action action);
@@ -68,8 +80,10 @@ private:
 	SceneTextStore _text;
 	Graphics::ManagedSurface _background, _screen;
 	Common::Array<byte> _mask, _maps, _unplugPatch, _openLidPatch, _closedLidPatch;
+	Common::Array<byte> _pickupPatches[5];
 	Common::Array<uint16> _voiceSamples, _cueEnds;
 	RunawayAudio _audio;
+	RunawayInventory &_inventory;
 	RunawayActor _actor;
 	RunawayAnimation _intro, _lidActor, _lid, _unplug;
 	Common::Point _position = Common::Point(623, 447);
@@ -77,12 +91,19 @@ private:
 	uint _pathIndex = 0;
 	float _x = 623, _y = 447;
 	byte _facing = 3, _pendingHotspot = 0;
+	byte _pendingItem = 0;
+	RunawayVerb _pendingVerb = kVerbWalk;
 	Action _action = kNone;
 	bool _lidOpen = false, _unplugged = false;
+	bool _pickedUp[20] = {};
+	bool _examined[20] = {};
+	bool _globalSpeech = false;
 	uint32 _now = 0, _lastUpdate = 0, _actionStarted = 0, _walkStarted = 0, _subtitleUntil = 0;
 	uint _step = 0;
 	uint16 _speechRow = 0, _speechEnd = 0;
+	uint16 _speechSample = 0;
 	Common::U32String _subtitle;
+	Common::U32String _committedCaption;
 };
 
 } // End of namespace Hollywood

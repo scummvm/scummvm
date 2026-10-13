@@ -30,6 +30,9 @@ namespace Hollywood {
 
 class ChunkArchive;
 
+// RESOURCE.000 has a ten-byte header followed by two 500-entry tables.
+bool readRunawayGlobalChunk(uint chunk, Common::Array<byte> &data);
+
 enum {
 	kRunawayScreenWidth = 1024,
 	kRunawayScreenHeight = 768,
@@ -42,10 +45,12 @@ enum {
 class RunawayAnimation {
 public:
 	bool load(ChunkArchive &archive, uint chunk, uint frames);
+	bool load(const Common::Array<byte> &data, uint frames);
 	void draw(Graphics::ManagedSurface &surface, uint frame, int cameraX, int roomTop) const;
 	uint frameCount() const { return _frames; }
 
 private:
+	bool validate(uint frames);
 	Common::Array<byte> _data;
 	uint _frames = 0;
 };
