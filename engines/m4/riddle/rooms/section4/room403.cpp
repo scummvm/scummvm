@@ -2295,7 +2295,7 @@ void Room403::useJournal() {
 		sketchInJournal(nullptr);
 	} else {
 		if (_G(kernel).trigger == 6)
-			_G(flags)[kGraveyardCartoon] = 1;
+			_G(flags)[kEpitaphCartoon] = 1;
 		sketchInJournal("403r41");
 	}
 }
