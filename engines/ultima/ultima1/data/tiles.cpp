@@ -66,35 +66,35 @@ void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count,
 	delete[] data;
 }
 
-constexpr int SHIP_TILE_WIDTH = SPACE_SHIP_TILE_WIDTH;
 constexpr int SHIP_TILE_HEIGHT = SPACE_SHIP_TILE_HEIGHT;
-constexpr int SHIP_TILE_ROW_BYTES = SHIP_TILE_WIDTH / 8;
-constexpr int SHIP_TILE_BYTES = SHIP_TILE_ROW_BYTES * SHIP_TILE_HEIGHT;
 constexpr int SHIP_TILE_SHIFT_VARIANTS = 8;
-constexpr int SHIP_TILE_SLOT_BYTES = SHIP_TILE_BYTES * SHIP_TILE_SHIFT_VARIANTS;
 constexpr byte SHIP_TILE_MASK_COLOR = 15;
 
-void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int count) {
+void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int width) {
+	const int rowBytes = width / 8;
+	const int tileBytes = rowBytes * SHIP_TILE_HEIGHT;
+	const int slotBytes = tileBytes * SHIP_TILE_SHIFT_VARIANTS;
+
 	Common::File f;
 	if (!f.open(filename))
 		error("Could not open %s", filename);
 
-	byte data[SHIP_TILE_BYTES];
+	byte *data = new byte[tileBytes];
 
 	for (int tileNum = 0; tileNum < count; ++tileNum) {
-		f.seek(tileNum * SHIP_TILE_SLOT_BYTES);
-		if (f.read(data, SHIP_TILE_BYTES) != (uint32)SHIP_TILE_BYTES)
+		f.seek(tileNum * slotBytes);
+		if (f.read(data, tileBytes) != (uint32)tileBytes)
 			error("Unexpected end of %s", filename);
 
 		Graphics::ManagedSurface &tile = tiles[tileNum];
-		tile.create(SHIP_TILE_WIDTH, SHIP_TILE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+		tile.create(width, SHIP_TILE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 		tile.clear(0);
 
 		for (int y = 0; y < SHIP_TILE_HEIGHT; ++y) {
-			const byte *row = &data[y * SHIP_TILE_ROW_BYTES];
+			const byte *row = &data[y * rowBytes];
 			byte *destRow = (byte *)tile.getBasePtr(0, y);
 
-			for (int x = 0; x < SHIP_TILE_WIDTH; ++x) {
+			for (int x = 0; x < width; ++x) {
 				int byteIdx = x / 8;
 				int bitMask = 0x80 >> (x % 8);
 				if (row[byteIdx] & bitMask)
@@ -102,6 +102,8 @@ void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int co
 			}
 		}
 	}
+
+	delete[] data;
 }
 
 } // namespace Data

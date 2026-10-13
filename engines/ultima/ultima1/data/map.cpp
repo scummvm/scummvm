@@ -160,7 +160,8 @@ void Map::init() {
 	loadTiles("egamond.bin", &_mondainTiles[1], MONDAIN_TILES_COUNT, 16);
 	_mondainTiles[20] = _overworldTiles[TILE_PLAYER];
 
-	loadShipTiles("egaspace.bin", _spaceShipTiles, SPACE_SHIP_TILES_COUNT);
+	loadShipTiles("egaspace.bin", _spaceShipTiles, SPACE_SHIP_TILES_COUNT, SPACE_SHIP_TILE_WIDTH);
+	loadShipTiles("egafight.bin", _enemyFighterTiles, SPACE_ENEMY_TILES_COUNT, SPACE_ENEMY_TILE_WIDTH);
 }
 
 void Map::resetMondainMap() {

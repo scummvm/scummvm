@@ -75,6 +75,12 @@ void SpaceCockpit::draw() {
 			s.setPixel(x, y, STAR_COLOR);
 	}
 
+	// The enemy fighter currently being engaged, if any
+	if (_G(cockpitTargetX) != 0) {
+		const Graphics::ManagedSurface &fighter = _G(map).enemyFighterTiles()[_G(cockpitTargetStage)];
+		s.transBlitFrom(fighter, Common::Point(_G(cockpitTargetX), _G(cockpitTargetY)), 0);
+	}
+
 	// The brief laser-bolt flash from a shot just fired, converging on the
 	// crosshair from both bottom corners of the viewport
 	if (_laserFlashTicks > 0) {

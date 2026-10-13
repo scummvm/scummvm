@@ -38,6 +38,11 @@ constexpr int SPACE_SHIP_TILES_COUNT = 12;
 constexpr int SPACE_SHIP_TILE_WIDTH = 32;
 constexpr int SPACE_SHIP_TILE_HEIGHT = 19;
 
+// One cockpit-view enemy fighter glyph per approach stage, growing as it
+// closes in (same height as the ship glyphs, but narrower)
+constexpr int SPACE_ENEMY_TILES_COUNT = 7;
+constexpr int SPACE_ENEMY_TILE_WIDTH = 24;
+
 enum OverworldTileId {
 	TILE_OCEAN = 0,
 	TILE_GRASS = 1,
@@ -127,18 +132,20 @@ enum MondainTileId {
 extern void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int size);
 
 /**
- * Loads the outer-space ship glyph sheet (egaspace.bin) into a
- * caller-supplied array of SPACE_SHIP_TILES_COUNT surfaces, one 32x19
- * 1-bit-per-pixel XOR mask glyph per shipType*4+facing combination
- * (blitShipSpriteXor). Each glyph is followed in the file by 7 more
- * byte-alignment-shifted copies of itself (for the original's hardware
- * byte-aligned blitter) - only the first, unshifted copy is loaded, since a
- * software blit isn't limited to byte-aligned X positions
+ * Loads a sheet of 1-bit-per-pixel mask glyphs, 19 pixels high, into a
+ * caller-supplied array of surfaces - the outer-space ship glyphs
+ * (egaspace.bin, one per shipType*4+facing combination) and the cockpit
+ * enemy fighter glyphs (egafight.bin, one per approach stage). Each glyph
+ * is followed in the file by 7 more byte-alignment-shifted copies of itself
+ * (for the original's hardware byte-aligned blitter) - only the first,
+ * unshifted copy is loaded, since a software blit isn't limited to
+ * byte-aligned X positions
  * @param filename		Filename to load
  * @param tiles			Tiles array to load into
  * @param count			Number of glyphs
+ * @param width			Width of each glyph in pixels, a multiple of 8
  */
-extern void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int count);
+extern void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int width);
 
 } // namespace Data
 } // namespace Ultima1

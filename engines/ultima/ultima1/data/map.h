@@ -118,6 +118,7 @@ private:
 	Graphics::ManagedSurface _cityTiles[CITY_TILES_COUNT];
 	Graphics::ManagedSurface _mondainTiles[MONDAIN_TILES_COUNT + 2];
 	Graphics::ManagedSurface _spaceShipTiles[SPACE_SHIP_TILES_COUNT];
+	Graphics::ManagedSurface _enemyFighterTiles[SPACE_ENEMY_TILES_COUNT];
 
 	/**
 	 * Used to generate the dungeon.
@@ -183,6 +184,13 @@ public:
 	 */
 	const Graphics::ManagedSurface *spaceShipTiles() const {
 		return _spaceShipTiles;
+	}
+
+	/**
+	 * Get the cockpit-view enemy fighter glyphs, indexed by approach stage
+	 */
+	const Graphics::ManagedSurface *enemyFighterTiles() const {
+		return _enemyFighterTiles;
 	}
 
 	/**
