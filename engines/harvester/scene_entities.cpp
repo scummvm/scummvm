@@ -567,7 +567,7 @@ void SceneEntities::spawnSceneObjectEntityFromRecord(const ObjectRecord &object)
 
 Common::Rect SceneEntities::getSceneRegionBounds(const RegionRecord &region) {
 	if (region.right > region.left && region.bottom > region.top)
-		return Common::Rect(region.left, region.top, region.right + 1, region.bottom + 1);
+		return Common::Rect(region.left, region.top, region.right, region.bottom);
 	return Common::Rect();
 }
 

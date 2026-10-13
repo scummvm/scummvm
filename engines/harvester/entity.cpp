@@ -44,12 +44,8 @@ static const uint32 kDosPitInputFrequency = 1193180;
 static const uint32 kDosPitTimerDivisor = 65536;
 static const byte kTransparentPaletteIndex = 0;
 
-static int roundToInt(float value) {
-	return value >= 0.0f ? (int)floorf(value + 0.5f) : (int)ceilf(value - 0.5f);
-}
-
 static int scaleDimension(uint32 value, float scale) {
-	return MAX<int>(roundToInt((float)value * scale), 1);
+	return MAX<int>((int)((float)value * scale), 1);
 }
 
 static void scaleIndexedBitmapNearest(const IndexedBitmap &source, IndexedBitmap &dest,
@@ -359,7 +355,7 @@ void Entity::setDepthScale(float scale) {
 	if (_frames.empty())
 		return;
 
-	const float newScale = scale > 0.0f ? scale : 1.0f;
+	const float newScale = scale >= 0.0f ? scale : 1.0f;
 	if (fabsf(_depthScale - newScale) < 0.0001f)
 		return;
 
@@ -594,9 +590,9 @@ bool Entity::overlapsEntity(const Entity &other) const {
 		return false;
 	}
 
-	const float thisZMax = _z + _zExtent;
-	const float otherZMax = other._z + other._zExtent;
-	if (thisZMax < other._z || otherZMax < _z)
+	const int thisZMax = (int)(_z + _zExtent);
+	const int otherZMax = (int)(other._z + other._zExtent);
+	if (thisZMax < (int)other._z || otherZMax < (int)_z)
 		return false;
 
 	const Common::Rect thisRect = getFrameRect();
@@ -756,7 +752,7 @@ void Entity::scaleCurrentFrame() {
 			scaleDimension(source.height, _depthScale));
 		// Native depth scaling preserves the authored horizontal frame offset.
 		scaled.xOffset = source.xOffset;
-		scaled.yOffset = roundToInt((float)source.yOffset * _depthScale);
+		scaled.yOffset = (int)((float)source.yOffset * _depthScale);
 	}
 	_frameDepthScales[frameIndex] = _depthScale;
 	debugC(3, kDebugPlayer,

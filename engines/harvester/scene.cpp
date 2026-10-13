@@ -813,10 +813,7 @@ InputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 		}
 
 		const PlayerControlState control = preparePlayerControlState();
-		// Native run_harvester_main_loop checks player/region overlap before
-		// update_actor_runtime_state. This is significant when a wide walk frame
-		// reaches a narrow exit: the actor update may otherwise satisfy the X
-		// target and replace that frame with a narrower idle frame first.
+		advanceRuntimeEntities(needsRedraw);
 		Common::Error pendingRegionError =
 			tryActivatePendingRegion(needsRedraw);
 		if (pendingRegionError.getCode() != Common::kNoError)
@@ -841,9 +838,6 @@ InputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 			}
 		}
 
-		// At 60 Hz, consume animation advances before the next screen update so
-		// a walk frame and its movement step are presented together.
-		advanceRuntimeEntities(needsRedraw);
 		Common::Error combatError = Common::kNoError;
 		if (!control.paused) {
 			combatError = resolvePlayerAttackContact(needsRedraw);

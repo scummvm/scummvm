@@ -702,7 +702,7 @@ Common::Rect getRoomObjectHotspotBounds(const ObjectRecord &object) {
 
 static Common::Rect getRegionBounds(const RegionRecord &region) {
 	if (region.right > region.left && region.bottom > region.top)
-		return Common::Rect(region.left, region.top, region.right + 1, region.bottom + 1);
+		return Common::Rect(region.left, region.top, region.right, region.bottom);
 
 	return Common::Rect();
 }
@@ -1103,8 +1103,8 @@ bool doesPlayerOverlapRegion(const Entity &playerEntity, const RegionRecord &reg
 		return false;
 	}
 
-	const float playerMaxZ = playerEntity.getZ() + playerEntity.getZExtent();
-	return playerMaxZ >= (float)region.minZ && (float)region.maxZ >= playerEntity.getZ();
+	const int playerMaxZ = (int)(playerEntity.getZ() + playerEntity.getZExtent());
+	return playerMaxZ >= region.minZ && region.maxZ >= (int)playerEntity.getZ();
 }
 
 RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupState &state,
