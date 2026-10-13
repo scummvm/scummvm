@@ -21,31 +21,14 @@
 
 #include "base/plugins.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
-#include "hollywood/hollywood.h"
-#include "hollywood/detection.h"
+#include "hollywood/monsters/hollywood.h"
+#include "hollywood/monsters/metaengine.h"
 #include "hollywood/runaway/engine.h"
 
 namespace Hollywood {
-
-const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_RESTORED_CONTENT,
-		{
-			_s("Enable restored content"),
-			_s("Play optional content present in the game data but unused by the original release"),
-			"restored_content",
-			true,
-			0,
-			0
-		}
-	},
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
 
 class HollywoodMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
@@ -54,7 +37,7 @@ public:
 	}
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
-		return optionsList;
+		return getMonstersExtraGuiOptions();
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
@@ -81,14 +64,13 @@ bool HollywoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 void HollywoodMetaEngine::registerDefaultSettings(const Common::String &) const {
 	ConfMan.registerDefault("subtitles", true);
-	ConfMan.registerDefault("restored_content", true);
+	registerMonstersDefaultSettings();
 }
 
 void HollywoodMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	if (g_engine && ConfMan.get("gameid") == "hollywood") {
-		HollywoodEngine *engine = (HollywoodEngine *)g_engine;
-		if (engine->copyLastGameplayThumbnail(thumb))
-			return;
+		getMonstersSavegameThumbnail(thumb);
+		return;
 	}
 
 	Graphics::createThumbnail(thumb);

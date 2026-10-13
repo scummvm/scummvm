@@ -26,7 +26,7 @@
 #include "hollywood/resource.h"
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
-#include "hollywood/scenes/scene_text_store.h"
+#include "hollywood/scene_text_store.h"
 
 namespace Hollywood {
 

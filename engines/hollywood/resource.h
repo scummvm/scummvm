@@ -33,7 +33,10 @@ class ManagedSurface;
 
 namespace Hollywood {
 
-class IndexedSurfaceBuffer;
+// Bounded little-endian reads shared by the archive and scene-data decoders.
+uint16 readUint16LE(const Common::Array<byte> &source, uint offset);
+int16 readSint16LE(const Common::Array<byte> &source, uint offset);
+uint32 readUint32LE(const Common::Array<byte> &source, uint offset);
 
 enum {
 	kResourceChunkCount = 40,
@@ -70,8 +73,8 @@ public:
 		const char *debugName);
 	bool readFixedChunk(uint index, Graphics::ManagedSurface &destination, uint fixedSize,
 		const char *debugName);
-	bool readFixedChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize,
-		const char *debugName);
+	bool readFixedChunk(uint index, byte *destination, uint destinationSize,
+		uint fixedSize, const char *debugName);
 	bool readVariableChunk(uint index, Common::Array<byte> &destination);
 	bool readChunkTo(uint index, Common::Array<byte> &destination, uint32 destinationOffset);
 
