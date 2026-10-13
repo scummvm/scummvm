@@ -1357,7 +1357,7 @@ static void renderQuickTipsScreen(HarvesterEngine &engine, const RoomSceneResour
 Flow::Flow(HarvesterEngine &engine)
 	: _engine(engine), _mousePos(320, 200), _dialogue(engine, _mousePos), _inventory(engine),
 	  _menu(engine, _mousePos, _menuItems), _cheats(engine),
-	  _room(engine, _mousePos, _inventory, _cheats) {
+	  _room(engine, _inventory, _cheats) {
 }
 
 bool Flow::load() {

@@ -76,13 +76,13 @@ static void debugLogInventoryClick(const char *buttonLabel, const Common::Point 
 }
 
 RoomInput::RoomInput(HarvesterEngine &engine, Flow &flow, RoomSession &session, RoomSceneResources &scene,
-		EntityManager *entityManager, InventorySystem &inventory, CheatSystem &cheats,
+		InventorySystem &inventory, CheatSystem &cheats,
 		RoomItemInteractions &roomItems, RoomInteractionProcessor &interactionProcessor,
-		RoomInteractionCallbacks &interactionCallbacks, RoomPresentationState &presentationState,
+		RoomPresentationState &presentationState,
 		const Art &art, bool canExitCloseupToParent)
-	: _engine(engine), _flow(flow), _session(session), _scene(scene), _entityManager(entityManager),
+	: _engine(engine), _flow(flow), _session(session), _scene(scene),
 	  _inventory(inventory), _cheats(cheats), _roomItems(roomItems), _interactionProcessor(interactionProcessor),
-	  _interactionCallbacks(interactionCallbacks), _presentationState(presentationState), _art(art),
+	  _presentationState(presentationState), _art(art),
 	  _canExitCloseupToParent(canExitCloseupToParent) {
 }
 
@@ -116,13 +116,12 @@ void RoomInput::queueCombatLoadoutStatusMessage(const Common::String &message, b
 bool RoomInput::openInventoryOverlay() {
 	RoomPlayerState &playerState = _session.getPlayerState();
 	RoomInputState &inputState = _session.getInputState();
-	Common::String &pendingRegionName = _session.getPendingRegionName();
 
 	inputState.moveLeft = false;
 	inputState.moveRight = false;
 	inputState.moveUp = false;
 	inputState.moveDown = false;
-	pendingRegionName.clear();
+	_session.clearPendingRegionInteraction();
 	(void)_session.cancelPlayerAttackAnimation();
 	playerState.hasMoveTarget = false;
 	playerState.turnActive = false;
@@ -141,7 +140,7 @@ void RoomInput::capturePlayerAttackTarget() {
 	const RoomHoverState hoverState = resolveRoomHoverState(
 		_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs, _scene.sceneRegions,
 		_flow._mousePos, _flow._menuTextConfig, &_flow._dialogue);
-	_session.getCombat().capturePlayerAttackTarget(_scene.state, playerState, _entityManager, _flow._mousePos, hoverState.npc);
+	_session.capturePlayerAttackTarget(_flow._mousePos, hoverState.npc);
 }
 
 void RoomInput::handleMouseMove(bool &needsRedraw) {
@@ -160,7 +159,6 @@ void RoomInput::handleMouseMove(bool &needsRedraw) {
 RoomInputResult RoomInput::handleRightButtonDown(bool &needsRedraw) {
 	RoomPlayerState &playerState = _session.getPlayerState();
 	RoomIdleAnimationState &idleState = _session.getIdleState();
-	Common::String &pendingRegionName = _session.getPendingRegionName();
 
 	_session.notePlayerActivity();
 	if (idleState.active || idleState.exiting) {
@@ -170,7 +168,7 @@ RoomInputResult RoomInput::handleRightButtonDown(bool &needsRedraw) {
 	}
 	if (_session.isPlayerCombatLocked())
 		return RoomInputResult();
-	pendingRegionName.clear();
+	_session.clearPendingRegionInteraction();
 	if (_inventory.isOpen()) {
 		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow._mousePos);
 		debugLogInventoryClick("right", _flow._mousePos, inventoryHover);
@@ -324,7 +322,6 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 	RoomPlayerState &playerState = _session.getPlayerState();
 	RoomIdleAnimationState &idleState = _session.getIdleState();
 	RoomInputState &inputState = _session.getInputState();
-	Common::String &pendingRegionName = _session.getPendingRegionName();
 
 	const uint32 now = Player::getRuntimeClockTicks();
 	const bool isFastExitClick =
@@ -474,7 +471,7 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 		return RoomInputResult();
 	}
 	if (hoverState.npc) {
-		pendingRegionName.clear();
+		_session.clearPendingRegionInteraction();
 		inputState.moveLeft = false;
 		inputState.moveRight = false;
 		inputState.moveUp = false;
@@ -519,7 +516,7 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 		? findSceneObjectByName(_scene.sceneObjects, hoverState.object->objectName)
 		: nullptr;
 	if (!clickedObject) {
-		pendingRegionName.clear();
+		_session.clearPendingRegionInteraction();
 		if (hoverState.cursorSequence == 0 && playerState.entity) {
 			if (_engine.isPathfindingDebugEnabled()) {
 				const Common::Rect playerRect = playerState.entity->getScreenRect();
@@ -542,10 +539,10 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 		}
 		return RoomInputResult();
 	}
-	pendingRegionName.clear();
+	_session.clearPendingRegionInteraction();
 	if (clickedObject->objectName.equalsIgnoreCase("EXIT_BM") ||
 		clickedObject->objectName.equalsIgnoreCase("EXIT_HS")) {
-		Common::Error exitError = _interactionCallbacks.runRoomExitCommands();
+		Common::Error exitError = _session.runRoomExitCommands();
 		if (exitError.getCode() != Common::kNoError)
 			return RoomInputResult::leaveRoom(exitError);
 		// Native closeup exits return through room_setup so the parent on-enter command runs.
@@ -578,7 +575,7 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 	}
 	if (_engine.getScript()->isPickupObject(*clickedObject)) {
 		Common::Error pickupError = _roomItems.handleRoomItemPickup(*clickedObject, playerState.entity != nullptr,
-			_interactionProcessor, _interactionCallbacks, needsRedraw);
+			_interactionProcessor, _session, needsRedraw);
 		if (pickupError.getCode() != Common::kNoError)
 			return RoomInputResult::leaveRoom(pickupError);
 		return RoomInputResult();
@@ -613,7 +610,6 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 	RoomPlayerState &playerState = _session.getPlayerState();
 	RoomIdleAnimationState &idleState = _session.getIdleState();
 	RoomInputState &inputState = _session.getInputState();
-	Common::String &pendingRegionName = _session.getPendingRegionName();
 
 	if (_presentationState.showingInspectText) {
 		if (key.keycode == Common::KEYCODE_ESCAPE) {
@@ -701,8 +697,7 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 			key.keycode == Common::KEYCODE_RCTRL) {
 		inputState.attackModifierHeld = true;
 	} else if (key.keycode == Common::KEYCODE_k && _engine.isCombatDebugEnabled()) {
-		Common::Error debugKillError = _session.getCombat().killDebugActiveMonster(_engine, _scene.state, playerState, _entityManager,
-			_flow._mousePos, _session.getCombatEffects(), _interactionProcessor, needsRedraw);
+		Common::Error debugKillError = _session.killDebugActiveMonster(_flow._mousePos, needsRedraw);
 		if (debugKillError.getCode() != Common::kNoError)
 			return RoomInputResult::leaveRoom(debugKillError);
 		return RoomInputResult();
@@ -728,7 +723,7 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 		inputState.moveRight = false;
 		inputState.moveUp = false;
 		inputState.moveDown = false;
-		pendingRegionName.clear();
+		_session.clearPendingRegionInteraction();
 		playerState.hasMoveTarget = false;
 		playerState.turnActive = false;
 		playerState.turnTargetFacing = -1;
@@ -755,7 +750,7 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 		key.keycode == Common::KEYCODE_KP_ENTER) {
 		if (!_roomItems.stowCarriedRoomItemToInventory())
 			return RoomInputResult::leaveRoom(Common::kReadingFailed);
-		Common::Error exitError = _interactionCallbacks.runRoomExitCommands();
+		Common::Error exitError = _session.runRoomExitCommands();
 		if (exitError.getCode() != Common::kNoError)
 			return RoomInputResult::leaveRoom(exitError);
 		return RoomInputResult::leaveRoom(Common::kNoError);

@@ -39,6 +39,15 @@ struct IndexedBitmap;
 struct ResolvedText;
 struct RoomSceneResources;
 
+struct RoomViewResources {
+	const Art *art;
+	const Graphics::Font *promptFont;
+	const Graphics::Font *inspectFont;
+	const Graphics::Font *inventoryTooltipFont;
+	bool useNativePromptFont;
+	bool useNativeInspectFont;
+};
+
 struct RoomPresentationState {
 	ResolvedText inspectText;
 	Common::String currentInteractionPromptText;

@@ -23,7 +23,6 @@
 #define HARVESTER_ROOM_H
 
 #include "common/error.h"
-#include "common/rect.h"
 #include "common/str.h"
 
 namespace Harvester {
@@ -35,14 +34,13 @@ class InventorySystem;
 
 class RoomSystem {
 public:
-	RoomSystem(HarvesterEngine &engine, Common::Point &mousePos, InventorySystem &inventory,
+	RoomSystem(HarvesterEngine &engine, InventorySystem &inventory,
 		CheatSystem &cheats);
 
 	Common::Error runRoomLoop(Flow &flow, const Common::String &targetName, bool targetIsRoomName);
 
 private:
 	HarvesterEngine &_engine;
-	Common::Point &_mousePos;
 	InventorySystem &_inventory;
 	CheatSystem &_cheats;
 };

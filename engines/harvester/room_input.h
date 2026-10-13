@@ -29,11 +29,9 @@ namespace Harvester {
 
 class Art;
 class CheatSystem;
-class EntityManager;
 class Flow;
 class HarvesterEngine;
 class InventorySystem;
-class RoomInteractionCallbacks;
 class RoomInteractionProcessor;
 class RoomItemInteractions;
 class RoomSession;
@@ -68,9 +66,9 @@ struct RoomInputResult {
 class RoomInput {
 public:
 	RoomInput(HarvesterEngine &engine, Flow &flow, RoomSession &session, RoomSceneResources &scene,
-		EntityManager *entityManager, InventorySystem &inventory, CheatSystem &cheats,
+		InventorySystem &inventory, CheatSystem &cheats,
 		RoomItemInteractions &roomItems, RoomInteractionProcessor &interactionProcessor,
-		RoomInteractionCallbacks &interactionCallbacks, RoomPresentationState &presentationState,
+		RoomPresentationState &presentationState,
 		const Art &art, bool canExitCloseupToParent);
 
 	RoomInputResult handleEvent(const Common::Event &event, bool &needsRedraw);
@@ -91,12 +89,10 @@ private:
 	Flow &_flow;
 	RoomSession &_session;
 	RoomSceneResources &_scene;
-	EntityManager *_entityManager;
 	InventorySystem &_inventory;
 	CheatSystem &_cheats;
 	RoomItemInteractions &_roomItems;
 	RoomInteractionProcessor &_interactionProcessor;
-	RoomInteractionCallbacks &_interactionCallbacks;
 	RoomPresentationState &_presentationState;
 	const Art &_art;
 	bool _canExitCloseupToParent;
