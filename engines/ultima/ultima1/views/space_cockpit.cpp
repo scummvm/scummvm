@@ -134,7 +134,7 @@ void SpaceCockpit::alienFireFlash(int x1, int y1, int x2, int y2) {
 	redraw();
 }
 
-constexpr int HYPERJUMP_MAX_SPEED = 8;
+constexpr int HYPERJUMP_MAX_SPEED = Data::SPACE_COCKPIT_MAX_SPEED;
 
 // Frames cruised at each speed, depending on whether the ship started out
 // slow or fast
@@ -146,11 +146,6 @@ constexpr int HYPERJUMP_FAST_SPEED = 4;
 // erases them again
 constexpr int HYPERJUMP_WARP_IN_FRAMES = 201;
 constexpr int HYPERJUMP_WARP_OUT_FRAMES = 200;
-
-// Vertical retraces a cruise frame waits for at each speed, so frames come
-// faster as the ship does. Ticks are 20 a second against 60 retraces
-constexpr int HYPERJUMP_FRAME_DELAY[HYPERJUMP_MAX_SPEED + 1] = { 0, 8, 7, 6, 5, 4, 3, 2, 1 };
-constexpr int HYPERJUMP_VBLANKS_PER_TICK = 3;
 
 // The warp itself runs flat out in the original, so this is chosen to take a
 // few seconds
@@ -280,7 +275,7 @@ void SpaceCockpit::hyperjumpFrame() {
 }
 
 void SpaceCockpit::tickHyperjump() {
-	_hyperjumpBudget += HYPERJUMP_VBLANKS_PER_TICK;
+	_hyperjumpBudget += Data::SPACE_COCKPIT_VBLANKS_PER_TICK;
 	int warpFrames = HYPERJUMP_WARP_FRAMES_PER_TICK;
 
 	while (_hyperjumpState != HYPERJUMP_IDLE) {
@@ -288,7 +283,7 @@ void SpaceCockpit::tickHyperjump() {
 			if (warpFrames-- == 0)
 				break;
 		} else {
-			int delay = HYPERJUMP_FRAME_DELAY[_G(cockpitSpeed)];
+			int delay = Data::SPACE_COCKPIT_FRAME_DELAY[_G(cockpitSpeed)];
 			if (delay > _hyperjumpBudget)
 				break;
 			_hyperjumpBudget -= delay;

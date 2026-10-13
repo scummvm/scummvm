@@ -29,6 +29,8 @@ namespace Data {
 
 const char *SPACE_COCKPIT_DIRECTION_NAMES[5] = { nullptr, "Left", "Right", "Climb", "Dive" };
 
+const int SPACE_COCKPIT_FRAME_DELAY[SPACE_COCKPIT_MAX_SPEED + 1] = { 0, 8, 7, 6, 5, 4, 3, 2, 1 };
+
 const int16 SPACE_FACING_DX[4] = { -1, 1, 0, 0 };
 const int16 SPACE_FACING_DY[4] = { 0, 0, -1, 1 };
 

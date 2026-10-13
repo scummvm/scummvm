@@ -200,6 +200,13 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
+// The highest cockpit flight speed, and how many screen refreshes (60 a
+// second) a cockpit frame waits for at each speed - so frames come faster as
+// the ship does. The engine ticks 20 times a second, 3 refreshes each
+constexpr int SPACE_COCKPIT_MAX_SPEED = 8;
+constexpr int SPACE_COCKPIT_VBLANKS_PER_TICK = 3;
+extern const int SPACE_COCKPIT_FRAME_DELAY[SPACE_COCKPIT_MAX_SPEED + 1];
+
 // The cockpit view's warp starfield holds this many stars
 constexpr int SPACE_STAR_COUNT = 40;
 

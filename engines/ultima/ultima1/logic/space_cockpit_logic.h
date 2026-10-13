@@ -36,9 +36,9 @@ namespace Logic {
  */
 class SpaceCockpitLogic : public SpaceLogic {
 private:
-	// tick() fires ~20/sec; only advance the starfield every few calls so
-	// it doesn't streak by too fast
-	int _tickCounter = 0;
+	// Screen refreshes carried over towards the next cockpit frame - ticks
+	// come faster than the frames, which wait longer at lower speeds
+	int _frameBudget = 0;
 
 	// True while the SpaceCockpit view is animating a hyperjump, which
 	// then drives the starfield itself

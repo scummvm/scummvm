@@ -84,15 +84,25 @@ void SpaceCockpitLogic::tick() {
 	if (_hyperjumping)
 		return;
 
-	// The original advances the starfield every cockpit frame; at 20fps
-	// that's far too fast, so only every 3rd tick
-	if (++_tickCounter < 3)
-		return;
-	_tickCounter = 0;
+	// Each frame waits a number of screen refreshes that shrinks with speed
+	int delay = Data::SPACE_COCKPIT_FRAME_DELAY[CLIP<int>(_G(cockpitSpeed), 0, Data::SPACE_COCKPIT_MAX_SPEED)];
+	_frameBudget += Data::SPACE_COCKPIT_VBLANKS_PER_TICK;
 
-	_G(starfield).advance();
-	tickEncounter();
-	redrawMap();
+	int frames = 1;
+	if (delay) {
+		frames = _frameBudget / delay;
+		_frameBudget %= delay;
+	} else {
+		_frameBudget = 0;
+	}
+
+	for (int i = 0; i < frames; ++i) {
+		_G(starfield).advance();
+		tickEncounter();
+	}
+
+	if (frames)
+		redrawMap();
 }
 
 void SpaceCockpitLogic::tickEncounter() {
