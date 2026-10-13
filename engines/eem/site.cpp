@@ -280,7 +280,7 @@ void cyclePaletteRangeReverse(uint8 start, uint8 end) {
 
 void applyHotspotGlowPalette(bool macCD) {
 	if (macCD) {
-		// Mac CD CODE 2:3d5e, including the searched-hotspot color.
+		// Mac CD CODE 2:3d5e (London CODE 6:419e), including the searched-hotspot color.
 		static const byte kMacGlow[7 * 3] = {
 			0x54, 0xFC, 0xFC, 0x38, 0xDC, 0xE4, 0x20, 0xBC, 0xD0,
 			0x0C, 0x9C, 0xBC, 0x20, 0xBC, 0xD0, 0x38, 0xDC, 0xE4,
@@ -1443,7 +1443,7 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	}
 	_vm->setSitePaletteForSite(sitepic);
 
-	applyHotspotGlowPalette(_vm->isMacCD());
+	applyHotspotGlowPalette(_vm->isMacTalkie());
 
 	renderBackground(siteNum);
 
@@ -2165,7 +2165,7 @@ void SiteScreen::applyColorCycles() {
 	for (uint i = 0; i < _colorCycles.size(); i++) {
 		cyclePaletteRange(_colorCycles[i].start, _colorCycles[i].end);
 	}
-	if (_vm->isMacCD())
+	if (_vm->isMacTalkie())
 		cyclePaletteRange(0xF8, 0xFD);
 	else
 		cyclePaletteRange(0xF9, 0xFE);
@@ -2374,9 +2374,9 @@ void SiteScreen::renderBackground(uint siteNum) {
 	if (!haveScene)
 		haveScene = _vm->getPics().getPicture(sitepic + 1, scene);
 	if (haveScene) {
-		// `_Rect_Move(0, 0, h, ..., 0x42, 0x14, 48000, h, w)`.
-		const int x = _vm->scaleX(0x42);
-		const int y = _vm->scaleY(0x14);
+		// Mac London CODE 7:63e8 uses native coordinates (105, 39).
+		const int x = mac && _vm->isLondon() ? 105 : _vm->scaleX(0x42);
+		const int y = mac && _vm->isLondon() ? 39 : _vm->scaleY(0x14);
 		const int w = MIN<int>(scene.surface.w, _vm->screenWidth() - x);
 		const int h = MIN<int>(scene.surface.h, _vm->screenHeight() - y);
 		if (w > 0 && h > 0) {
@@ -2405,6 +2405,7 @@ byte currentWhitePaletteIndex(byte fallback) {
 }
 
 static void drawMacSiteHotspot(Graphics::Surface *screen, const Common::Rect &rect, bool seen) {
+	// Mac London CODE 6:439c/446a draws 2x2 pixels around the rectangle.
 	byte color = seen ? 0xFE : 0xF8;
 	auto plot = [&](int x, int y) {
 		Common::Rect pixel(x, y, x + 2, y + 2);
@@ -2476,7 +2477,7 @@ void SiteScreen::renderHotspots(uint siteNum) {
 			seen = seenKey < Mystery::kHotSpotsCap &&
 				   _mystery->_hotSpotsSeen[seenKey];
 		}
-		if (_vm->isMacCD()) {
+		if (_vm->isMacTalkie()) {
 			drawMacSiteHotspot(screen, rect, seen);
 			continue;
 		}
