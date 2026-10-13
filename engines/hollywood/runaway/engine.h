@@ -23,6 +23,7 @@
 #define HOLLYWOOD_RUNAWAY_ENGINE_H
 
 #include "common/array.h"
+#include "common/language.h"
 #include "engines/engine.h"
 
 namespace Common {
@@ -35,7 +36,7 @@ namespace Hollywood {
 // has its own RGB565 renderer, scene state and audio formats.
 class RunawayEngine : public Engine {
 public:
-	explicit RunawayEngine(OSystem *syst) : Engine(syst) {}
+	RunawayEngine(OSystem *syst, Common::Language language) : Engine(syst), _language(language) {}
 
 	Common::Error run() override;
 	void initializePath(const Common::FSNode &gamePath) override;
@@ -46,6 +47,7 @@ public:
 
 private:
 	Common::Error playIntro();
+	Common::Language _language;
 };
 
 } // End of namespace Hollywood

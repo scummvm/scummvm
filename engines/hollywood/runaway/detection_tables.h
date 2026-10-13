@@ -35,5 +35,17 @@
 		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO2(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
 	},
+	// French Runaway demo (February 2003 build), also starting in scene 5030.
+	{
+		"runaway",
+		"Demo",
+		AD_ENTRY3s("RESOURCE.E03", "df350293b7dab8f39aead666dcedce72", 41872288,
+			"RESOURCE.003", "c6f4c7e73599d5f43978a377e1881144", 662916,
+			"RESOURCE.000", "16d32881d3f34fdf0da3c03c31f8f1ba", 35512149),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
+	},
 
 #endif // HOLLYWOOD_RUNAWAY_DETECTION_TABLES_H

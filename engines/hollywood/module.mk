@@ -143,6 +143,7 @@ MODULE_OBJS = \
 	runaway/intro.o \
 	runaway/inventory.o \
 	runaway/scene5030.o \
+	runaway/strings.o \
 	runaway/ui.o
 
 # This module can be built as a plugin

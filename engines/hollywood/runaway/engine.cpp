@@ -35,6 +35,7 @@
 #include "hollywood/runaway/engine.h"
 #include "hollywood/runaway/intro.h"
 #include "hollywood/runaway/scene5030.h"
+#include "hollywood/runaway/strings.h"
 #include "hollywood/runaway/ui.h"
 
 namespace Hollywood {
@@ -116,9 +117,10 @@ Common::Error RunawayEngine::run() {
 	if (introResult.getCode() != Common::kNoError || shouldQuit())
 		return introResult;
 
-	RunawayInventory inventory;
-	RunawayScene5030 scene(_mixer, inventory);
-	RunawayUI ui(inventory);
+	const RunawayStrings strings(_language);
+	RunawayInventory inventory(strings);
+	RunawayScene5030 scene(_mixer, inventory, strings);
+	RunawayUI ui(inventory, strings);
 	if (!scene.load() || !ui.load())
 		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo room, actor or interface data");
 	scene.start(getTotalPlayTime());

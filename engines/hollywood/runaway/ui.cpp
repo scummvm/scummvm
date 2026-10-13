@@ -22,6 +22,7 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
+#include "hollywood/runaway/strings.h"
 #include "hollywood/runaway/ui.h"
 
 namespace Hollywood {
@@ -307,15 +308,15 @@ Common::U32String RunawayUI::inventoryCaption() const {
 	const byte selected = _inventory.selected();
 	if (selected) {
 		if (_hovered == selected)
-			return Common::U32String("VERSTAUE ") + _inventory.name(selected);
-		Common::U32String caption = Common::U32String("BENUTZE ") + _inventory.name(selected);
+			return _strings.text(RunawayStrings::kPutAway) + _inventory.name(selected);
+		Common::U32String caption = _strings.text(RunawayStrings::kUse) + _inventory.name(selected);
 		if (_hovered)
-			caption += Common::U32String(" MIT ") + _inventory.name(_hovered);
+			caption += _strings.text(RunawayStrings::kWith) + _inventory.name(_hovered);
 		return caption;
 	}
 	if (!_hovered)
 		return Common::U32String();
-	return Common::U32String(_verb == kVerbLook ? "BETRACHTE " : "NIMM ") + _inventory.name(_hovered);
+	return _strings.text(_verb == kVerbLook ? RunawayStrings::kLook : RunawayStrings::kTake) + _inventory.name(_hovered);
 }
 
 void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
@@ -373,7 +374,7 @@ void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &
 		caption = committedCaption;
 		color = kUIFormat.RGBToColor(255, 223, 206);
 	} else if (!_blocked && !busy()) {
-		caption = overButton() ? Common::U32String(_inventoryOpen ? "WEITERSPIELEN" : "INVENTAR") :
+		caption = overButton() ? _strings.text(_inventoryOpen ? RunawayStrings::kResume : RunawayStrings::kInventory) :
 			_inventoryOpen ? inventoryCaption() : roomCaption;
 	}
 	_font.drawString(screen.surfacePtr(), caption, 20, 684, 984, color, Graphics::kTextAlignCenter);

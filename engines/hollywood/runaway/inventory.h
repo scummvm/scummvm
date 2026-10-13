@@ -27,6 +27,8 @@
 
 namespace Hollywood {
 
+class RunawayStrings;
+
 enum RunawayVerb { kVerbWalk, kVerbLook, kVerbUse };
 
 class RunawayInventory {
@@ -37,6 +39,7 @@ public:
 		byte variation;
 		Reply(uint16 c = 1, byte v = 0) : cue(c), variation(v) {}
 	};
+	explicit RunawayInventory(const RunawayStrings &strings) : _strings(strings) {}
 	bool contains(byte item) const;
 	bool add(byte item);
 	void remove(byte item);
@@ -54,6 +57,7 @@ public:
 	void soilCloth() { _clothState = 2; }
 
 private:
+	const RunawayStrings &_strings;
 	Common::Array<byte> _items;
 	byte _selected = 0, _newItem = 0, _clothState = 0;
 };

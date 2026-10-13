@@ -26,12 +26,12 @@
 
 #include "hollywood/debug.h"
 #include "hollywood/runaway/scene5030.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
 
 struct SceneHotspot {
-	const char *name;
 	int x, y;
 	uint16 description;
 	byte facing;
@@ -40,26 +40,26 @@ struct SceneHotspot {
 // Approach points and facings from the scene initializer at 0x439e40. The
 // hit regions themselves are decoded from E03; these are not bounding boxes.
 const SceneHotspot kHotspots[] = {
-	{"", 0, 0, 0, 0},
-	{"T\xc3\xbcr", 101, 507, 511, 7},
-	{"Spalt", 101, 507, 519, 7},
-	{"Fenster", 406, 383, 520, 0},
-	{"Fenster", 1062, 473, 523, 1},
-	{"Holzst\xc3\xbc" "ck", 942, 407, 528, 0},
-	{"Fallt\xc3\xbcr", 1215, 542, 530, 7},
-	{"Stofffetzen", 406, 383, 572, 7},
-	{"K\xc3\xbchltruhe", 1062, 473, 535, 7},
-	{"Fetzen", 1019, 405, 552, 0},
-	{"Stecker", 1215, 542, 554, 7},
-	{"Abfluss", 1215, 542, 557, 7},
-	{"Telefon", 495, 381, 565, 7},
-	{"Regal", 873, 409, 567, 1},
-	{"Brechstange", 974, 406, 570, 7},
-	{"Brillenreste", 262, 426, 614, 0},
-	{"Blasebalg", 262, 426, 576, 7},
-	{"Dose", 609, 379, 577, 1},
-	{"K\xc3\xbchltruhendeckel", 1062, 473, 580, 1},
-	{"Abfluss", 1215, 542, 557, 7}
+	{0, 0, 0, 0},
+	{101, 507, 511, 7},
+	{101, 507, 519, 7},
+	{406, 383, 520, 0},
+	{1062, 473, 523, 1},
+	{942, 407, 528, 0},
+	{1215, 542, 530, 7},
+	{406, 383, 572, 7},
+	{1062, 473, 535, 7},
+	{1019, 405, 552, 0},
+	{1215, 542, 554, 7},
+	{1215, 542, 557, 7},
+	{495, 381, 565, 7},
+	{873, 409, 567, 1},
+	{974, 406, 570, 7},
+	{262, 426, 614, 0},
+	{262, 426, 576, 7},
+	{609, 379, 577, 1},
+	{1062, 473, 580, 1},
+	{1215, 542, 557, 7}
 };
 
 } // End of anonymous namespace
@@ -270,40 +270,39 @@ void RunawayScene5030::stopSpeech() {
 }
 
 Common::U32String RunawayScene5030::actionCaption(byte id, RunawayVerb verb, byte item) const {
-	Common::U32String name(id < ARRAYSIZE(kHotspots) ? kHotspots[id].name : "");
+	Common::U32String name = _strings.shackHotspotName(id);
 	if (id < ARRAYSIZE(kHotspots) && _examined[id]) {
 		if (id == 5 || id == 9 || id == 17)
 			name = _inventory.name(id == 5 ? 8 : id == 9 ? 1 : 3);
 		else if (id == 7)
-			name = Common::U32String("Hemd");
+			name = _strings.text(RunawayStrings::kShirt);
 	}
-	name.toUppercase();
 	if (item) {
-		Common::U32String caption = Common::U32String("BENUTZE ") + _inventory.name(item);
+		Common::U32String caption = _strings.text(RunawayStrings::kUse) + _inventory.name(item);
 		if (id)
-			caption += Common::U32String(" MIT ") + name;
+			caption += _strings.text(RunawayStrings::kWith) + name;
 		return caption;
 	}
 	if (!id)
 		return Common::U32String();
 	if (verb == kVerbLook)
-		return Common::U32String(id == 3 || id == 4 ? "SIEH AUS DEM " : "BETRACHTE ") + name;
-	const char *action = "BENUTZE ";
+		return _strings.text(id == 3 || id == 4 ? RunawayStrings::kLookThrough : RunawayStrings::kLook) + name;
+	RunawayStrings::TextId action = RunawayStrings::kUse;
 	if (id == 5 || id == 9 || id == 14 || id == 16 || id == 17)
-		action = "NIMM ";
+		action = RunawayStrings::kTake;
 	else if (id == 18)
-		action = _lidOpen ? "SCHLIESSE " : "\xc3\x96" "FFNE ";
+		action = _lidOpen ? RunawayStrings::kClose : RunawayStrings::kOpen;
 	else if (id == 8)
-		action = _lidOpen ? "VERSCHIEBE " : "\xc3\x96" "FFNE ";
+		action = _lidOpen ? RunawayStrings::kMove : RunawayStrings::kOpen;
 	else if (id == 10)
-		return Common::U32String("ZIEHE DEN STECKER DER K\xc3\x9cHLTRUHE HERAUS");
+		return _strings.text(RunawayStrings::kUnplugCooler);
 	else if (id == 12)
-		action = "BENUTZE DAS ";
+		action = RunawayStrings::kUsePhone;
 	else if (id == 13)
-		action = "NIMM ETWAS AUS DEM ";
+		action = RunawayStrings::kTakeFromShelf;
 	else if (id == 1 || id == 3 || id == 4 || id == 6)
-		action = "\xc3\x96" "FFNE ";
-	return Common::U32String(action) + name;
+		action = RunawayStrings::kOpen;
+	return _strings.text(action) + name;
 }
 
 void RunawayScene5030::sayInventory(const RunawayInventory::Reply &reply) {

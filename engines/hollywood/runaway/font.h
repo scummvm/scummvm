@@ -28,7 +28,7 @@
 
 namespace Hollywood {
 
-// RESOURCE.000 stores 150 antialiased glyphs, including their contour masks.
+// RESOURCE.000 stores antialiased glyphs, including their contour masks.
 class RunawayFont : public Graphics::Font {
 public:
 	bool load();
@@ -44,8 +44,9 @@ private:
 		byte top, height, width;
 	};
 	uint glyphIndex(uint32 chr) const;
-	Glyph _glyphs[150];
-	int8 _kerning[150][150];
+	Common::Array<Glyph> _glyphs;
+	Common::Array<int8> _kerning;
+	byte _glyphMap[256];
 	Common::Array<byte> _pixels;
 	Common::U32String _characters;
 };

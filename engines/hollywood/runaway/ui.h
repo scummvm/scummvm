@@ -38,7 +38,8 @@ public:
 		Common::Point mouse;
 		byte item = 0, target = 0;
 	};
-	explicit RunawayUI(RunawayInventory &inventory) : _inventory(inventory), _random("runaway-ui") {}
+	RunawayUI(RunawayInventory &inventory, const RunawayStrings &strings) :
+		_inventory(inventory), _strings(strings), _random("runaway-ui") {}
 	~RunawayUI();
 	bool load();
 	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking);
@@ -65,6 +66,7 @@ private:
 	void drawInventory(Graphics::ManagedSurface &screen);
 
 	RunawayInventory &_inventory;
+	const RunawayStrings &_strings;
 	Common::RandomSource _random;
 	RunawayFont _font;
 	Graphics::ManagedSurface _cursors, _waitCursor, _cursor, _inventoryButton, _returnButton;

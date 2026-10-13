@@ -40,7 +40,8 @@ public:
 		kRoomWidth = 1376, kRoomHeight = kRunawayViewportHeight, kRoomTop = kRunawayViewportTop
 	};
 
-	RunawayScene5030(Audio::Mixer *mixer, RunawayInventory &inventory) : _audio(mixer), _inventory(inventory) {}
+	RunawayScene5030(Audio::Mixer *mixer, RunawayInventory &inventory, const RunawayStrings &strings) :
+		_audio(mixer), _inventory(inventory), _strings(strings) {}
 	bool load();
 	void start(uint32 now);
 	void click(Common::Point mouse, RunawayVerb verb, byte item);
@@ -84,6 +85,7 @@ private:
 	Common::Array<uint16> _voiceSamples, _cueEnds;
 	RunawayAudio _audio;
 	RunawayInventory &_inventory;
+	const RunawayStrings &_strings;
 	RunawayActor _actor;
 	RunawayAnimation _intro, _lidActor, _lid, _unplug;
 	Common::Point _position = Common::Point(623, 447);

@@ -29,7 +29,7 @@
 namespace Hollywood {
 namespace {
 
-// The demo's character table at 0x4641f0 uses DOS 850, with additional
+// The German demo's character table at 0x4641f0 uses DOS 850, with additional
 // punctuation in otherwise unused positions. 254 denotes a space.
 const byte kGlyphMap[256] = {
 	149, 149, 149, 149, 149, 149, 149, 149, 149, 149, 149, 149, 149, 149, 149, 149,
@@ -54,9 +54,11 @@ const byte kGlyphMap[256] = {
 
 bool RunawayFont::load() {
 	Common::Array<byte> metrics;
-	if (!readRunawayGlobalChunk(125, _pixels) || !readRunawayGlobalChunk(126, metrics) || metrics.size() != 750)
+	if (!readRunawayGlobalChunk(125, _pixels) || !readRunawayGlobalChunk(126, metrics) ||
+			(metrics.size() != 150 * 5 && metrics.size() != 156 * 5))
 		return false;
-	for (uint i = 0; i < 150; ++i) {
+	_glyphs.resize(metrics.size() / 5);
+	for (uint i = 0; i < _glyphs.size(); ++i) {
 		const byte *data = metrics.data() + i * 5;
 		Glyph &glyph = _glyphs[i];
 		glyph.offset = READ_LE_UINT16(data);
@@ -67,15 +69,30 @@ bool RunawayFont::load() {
 				glyph.offset + glyph.width * glyph.height > _pixels.size())
 			return false;
 	}
+	memcpy(_glyphMap, kGlyphMap, sizeof(_glyphMap));
+	// The French table at 0x46f1e0 adds circumflex vowels and moves the
+	// missing-character box to 155. Glyphs 153/154 are the CP1252 ligatures.
+	if (_glyphs.size() == 156) {
+		for (uint i = 0; i < ARRAYSIZE(_glyphMap); ++i) {
+			if (_glyphMap[i] == 149)
+				_glyphMap[i] = 155;
+		}
+		_glyphMap[0x83] = 148;
+		_glyphMap[0x88] = 149;
+		_glyphMap[0x8c] = 150;
+		_glyphMap[0x93] = 151;
+		_glyphMap[0x96] = 152;
+	}
 	char bytes[128];
 	for (uint i = 0; i < 128; ++i)
 		bytes[i] = i + 128;
 	_characters = Common::U32String(bytes, 128, Common::kDos850);
 	// Native 0x40ee40 packs adjacent contours, trying up to five pixels
 	// of overlap. Value 17 contributes only to the left glyph's spacing.
-	for (uint left = 0; left < 150; ++left) {
+	_kerning.resize(_glyphs.size() * _glyphs.size());
+	for (uint left = 0; left < _glyphs.size(); ++left) {
 		const Glyph &a = _glyphs[left];
-		for (uint right = 0; right < 150; ++right) {
+		for (uint right = 0; right < _glyphs.size(); ++right) {
 			const Glyph &b = _glyphs[right];
 			int shift = 1;
 			for (; shift < 5; ++shift) {
@@ -100,7 +117,7 @@ bool RunawayFont::load() {
 					break;
 				}
 			}
-			_kerning[left][right] = -shift;
+			_kerning[left * _glyphs.size() + right] = -shift;
 		}
 	}
 	return true;
@@ -114,14 +131,16 @@ uint RunawayFont::glyphIndex(uint32 chr) const {
 	case 0x201e: return 92;
 	case '\'': return 90;
 	case '"': return 81;
+	case 0x0152: return _glyphs.size() == 156 ? 153 : 149;
+	case 0x0153: return _glyphs.size() == 156 ? 154 : 149;
 	}
 	if (chr < 128)
-		return kGlyphMap[chr];
+		return _glyphMap[chr];
 	for (uint i = 0; i < _characters.size(); ++i) {
 		if (_characters[i] == chr)
-			return kGlyphMap[i + 128];
+			return _glyphMap[i + 128];
 	}
-	return 149;
+	return _glyphs.size() - 1;
 }
 
 int RunawayFont::getCharWidth(uint32 chr) const {
@@ -131,7 +150,7 @@ int RunawayFont::getCharWidth(uint32 chr) const {
 
 int RunawayFont::getKerningOffset(uint32 left, uint32 right) const {
 	const uint a = glyphIndex(left), b = glyphIndex(right);
-	return !left || !right || a == 254 || b == 254 ? 0 : _kerning[a][b];
+	return !left || !right || a == 254 || b == 254 ? 0 : _kerning[a * _glyphs.size() + b];
 }
 
 void RunawayFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {

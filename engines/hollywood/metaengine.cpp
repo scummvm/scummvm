@@ -51,7 +51,7 @@ protected:
 
 Common::Error HollywoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (!strcmp(desc->gameId, "runaway"))
-		*engine = new RunawayEngine(syst);
+		*engine = new RunawayEngine(syst, desc->language);
 	else
 		*engine = new HollywoodEngine(syst, desc);
 	return Common::kNoError;

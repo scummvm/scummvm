@@ -21,40 +21,11 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/inventory.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
 
-// German demo labels from 0x44bea0. Pictures and cursor cels stay in RESOURCE.000.
-const char *const kItemNames[] = {
-	"",
-	"LEDERLAPPEN",
-	"BRECHSTANGE",
-	"SPR\303\234HREINIGER",
-	"PACKUNG BUTTER",
-	"SPRENGAUSR\303\234STUNG",
-	"HELM AUS DEM ZWEITEN WELTKRIEG",
-	"SCHRAUBE",
-	"GARDEROBENKNAUF",
-	"TABLETTE",
-	"LIPPENSTIFT",
-	"HAUFEN LIPPENSTIFTE",
-	"SONNEN\303\226L",
-	"WALKIE-TALKIE",
-	"MUNITIONSSTREIFEN",
-	"BASKETBALL",
-	"SATTLERNADEL UND FADEN",
-	"BEHELFS-BOHRER",
-	"SACK GESCH\303\204LTER ERDN\303\234SSE",
-	"GLAS ERDNUSSBUTTER",
-	"SONNENBRILLE",
-	"FUSSRASTE",
-	"HANDSTAUBSAUGER",
-	"PLAN",
-	"BLASEBALG",
-	"EIMER",
-	"SCHL\303\234SSEL",
-};
 const byte kItemCursors[] = {
 	0, 41, 43, 45, 47, 49, 51, 55, 57, 59, 61, 63, 65, 67, 69,
 	75, 79, 81, 83, 85, 87, 91, 93, 95, 103, 105, 111
@@ -97,8 +68,8 @@ void RunawayInventory::remove(byte item) {
 
 Common::U32String RunawayInventory::name(byte item) const {
 	if (item == 1 && _clothState)
-		return Common::U32String(_clothState == 1 ? "PUTZLAPPEN" : "SCHMUTZLAPPEN");
-	return Common::U32String(item <= kItemCount ? kItemNames[item] : "");
+		return _strings.text(_clothState == 1 ? RunawayStrings::kWetCloth : RunawayStrings::kDirtyCloth);
+	return _strings.itemName(item);
 }
 
 uint RunawayInventory::icon(byte item) const {
