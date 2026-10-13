@@ -36,7 +36,7 @@ enum {
 	kPart32ResultNone = 0,
 	kPart32ResultTower = 1,
 	kPart32ResultNothing = 2,
-	kPart32ResultFinal = 3
+	kPart32ResultChick = 3
 };
 
 // The glyphs of the digits are 6x7 pixels, drawn 7 pixels apart.
@@ -79,7 +79,7 @@ static const int kPart32ControlsX = 117;
 static const int kPart32ControlsY = 122;
 
 // The frames of the final scene, in order (1-based index in the table of the data).
-static const uint8 kPart32FinalFrames[13] = { 1, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5 };
+static const uint8 kPart32GirlFrames[13] = { 1, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5 };
 
 // The speakers of the tower scene.
 static const int kPart32SpeakerAX = 147;
@@ -113,10 +113,8 @@ void IgorEngine::PART_32_EXEC_ACTION(int action) {
 	}
 }
 
-/**
- * Igor comes in from the left edge, walking to the right.
- */
-void IgorEngine::PART_32_ENTER() {
+
+void IgorEngine::PART_32_walkIn() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(0, 143, kFacingPositionLeft, 0);
 	wd->clipSkipX = 11;
@@ -135,10 +133,6 @@ void IgorEngine::PART_32_ENTER() {
 	waitForIgorMove();
 }
 
-/**
- * Igor stops where he is, walks to the place in front of the control panel (unless he is already there) and
- * uses it.
- */
 void IgorEngine::PART_32_ACTION_106_walkToControls() {
 	if (_gameState.igorMoving) {
 		_walkDataLastIndex = _walkDataCurrentIndex + 1;
@@ -166,24 +160,26 @@ void IgorEngine::PART_32_ACTION_103_useControls() {
 	fadeOut(624);
 	memcpy(_animFramesBuffer, _screenVGA, 64000);
 	memcpy(_animFramesBuffer + 64000, _paletteBuffer, 768);
-	PART_32_CONTROLS();
-	if (_part32Result >= kPart32ResultTower && _part32Result <= kPart32ResultFinal) {
+	PART_32_controls();
+	if (_part32Result >= kPart32ResultTower && _part32Result <= kPart32ResultChick) {
 		PART_32_SCENE();
 	}
 	loadRoomData(PAL_Part32, IMG_Part32, BOX_Part32, MSK_Part32, TXT_Part32);
 	memcpy(_screenVGA, _animFramesBuffer, 64000);
 	memcpy(_paletteBuffer, _animFramesBuffer + 64000, 768);
 	fadeIn(768);
+
 	if (_part32Result == kPart32ResultTower) {
 		if (_objectsState[kBellTowerConversationSeenStateIndex] == 0 && _objectsState[kAstronomyBookStateIndex] == 2) {
 			igorSay(206, 3, 831);
 			_objectsState[kBellTowerConversationSeenStateIndex] = 1;
 		}
 	}
-	if (_part32Result == kPart32ResultFinal) {
-		if (_objectsState[kFinalCoordinatesSceneSeenStateIndex] == 0) {
+
+	if (_part32Result == kPart32ResultChick) {
+		if (_objectsState[kSeenChickThroughTelescopeStateIndex] == 0) {
 			igorSay({ { 209, 1, 832 }, { 210, 1, 833 } });
-			_objectsState[kFinalCoordinatesSceneSeenStateIndex] = 1;
+			_objectsState[kSeenChickThroughTelescopeStateIndex] = 1;
 		} else {
 			igorSay(211, 1, 834);
 		}
@@ -193,15 +189,10 @@ void IgorEngine::PART_32_ACTION_103_useControls() {
 	}
 }
 
-// The control panel
-
-void IgorEngine::PART_32_CONTROLS_COPY_COLOR(int dstColor, int srcColor) {
+void IgorEngine::PART_32_CONTROLS_copyColor(int dstColor, int srcColor) {
 	memcpy(_currentPalette + dstColor * 3, _currentPalette + srcColor * 3, 3);
 }
 
-/**
- * The button under the cursor; the part of the screen below the picture has none.
- */
 int IgorEngine::PART_32_CONTROLS_KEY_AT_CURSOR() const {
 	const int x = _inputVars[kInputCursorXPos];
 	const int y = _inputVars[kInputCursorYPos];
@@ -211,30 +202,26 @@ int IgorEngine::PART_32_CONTROLS_KEY_AT_CURSOR() const {
 	return _screenLayer2[y * 320 + x];
 }
 
-void IgorEngine::PART_32_CONTROLS_DRAW_DIGIT(int fieldOffset, int index, int key) {
+void IgorEngine::PART_32_drawDigit(int fieldOffset, int index, int key) {
 	copyArea(_screenVGA, fieldOffset + index * kPart32DigitPitch, 320, _part32Glyphs + (key - 1) * kPart32GlyphSize,
 			 kPart32GlyphWidth, kPart32GlyphWidth, kPart32GlyphHeight);
 }
 
-void IgorEngine::PART_32_CONTROLS_ERASE_DIGIT(int fieldOffset, int index) {
+void IgorEngine::PART_32_eraseDigit(int fieldOffset, int index) {
 	for (int row = 0; row < kPart32GlyphHeight; ++row) {
 		memset(_screenVGA + fieldOffset + index * kPart32DigitPitch + row * 320, 0, kPart32GlyphWidth);
 	}
 }
 
-/**
- * What every pass of a selected field does after its click: the escape key leaves the panel, the color that
- * marks the field blinks once in a while and the game waits for the next tick.
- */
-void IgorEngine::PART_32_CONTROLS_IDLE(int fieldColor) {
+void IgorEngine::PART_32_controlsIdle(int fieldColor) {
 	if (_inputVars[kInputEscape]) {
-		PART_32_CONTROLS_EXIT();
+		PART_32_exitControls();
 	}
 	if (compareGameTick(0)) {
 		if (_part32Blink == 1) {
-			PART_32_CONTROLS_COPY_COLOR(fieldColor, kPart32FieldColor);
+			PART_32_CONTROLS_copyColor(fieldColor, kPart32FieldColor);
 		} else if (_part32Blink == 2) {
-			PART_32_CONTROLS_COPY_COLOR(fieldColor, 0);
+			PART_32_CONTROLS_copyColor(fieldColor, 0);
 		}
 		setPaletteRange(fieldColor, fieldColor);
 		_part32Blink = _part32Blink == 1 ? 2 : 1;
@@ -242,21 +229,19 @@ void IgorEngine::PART_32_CONTROLS_IDLE(int fieldColor) {
 	waitForTimer();
 }
 
-void IgorEngine::PART_32_CONTROLS_EXIT() {
+void IgorEngine::PART_32_exitControls() {
 	playSound(getRandomNumber(1) + 0x42, 1);
-	PART_32_CONTROLS_COPY_COLOR(kPart32DeclinationColor, kPart32FieldColor);
-	PART_32_CONTROLS_COPY_COLOR(kPart32AscensionColor, kPart32FieldColor);
+	PART_32_CONTROLS_copyColor(kPart32DeclinationColor, kPart32FieldColor);
+	PART_32_CONTROLS_copyColor(kPart32AscensionColor, kPart32FieldColor);
 	setPaletteRange(kPart32DeclinationColor, kPart32AscensionColor);
 	_part32Done = true;
 }
 
-/**
- * The declination field is selected: the digits typed go to it until the other field or a button is chosen.
- */
-void IgorEngine::PART_32_CONTROLS_SELECT_DECLINATION() {
+
+void IgorEngine::PART_32_CONTROLS_selectDeclination() {
 	playSound(31, 1);
-	PART_32_CONTROLS_COPY_COLOR(kPart32DeclinationColor, kPart32FieldColor);
-	PART_32_CONTROLS_COPY_COLOR(kPart32AscensionColor, kPart32FieldColor);
+	PART_32_CONTROLS_copyColor(kPart32DeclinationColor, kPart32FieldColor);
+	PART_32_CONTROLS_copyColor(kPart32AscensionColor, kPart32FieldColor);
 	setPaletteRange(kPart32AscensionColor, kPart32AscensionColor);
 	_part32Blink = 2;
 	do {
@@ -271,7 +256,7 @@ void IgorEngine::PART_32_CONTROLS_SELECT_DECLINATION() {
 				if (_part32DeclinationIndex == 1 && _part32DeclinationDigits[0] == 9 && key < 10) {
 					continue;
 				}
-				PART_32_CONTROLS_DRAW_DIGIT(kPart32DeclinationDigitsOffset, _part32DeclinationIndex, key);
+				PART_32_drawDigit(kPart32DeclinationDigitsOffset, _part32DeclinationIndex, key);
 				_part32DeclinationDigits[_part32DeclinationIndex] = key % 10;
 				if (_part32DeclinationIndex < 1) {
 					++_part32DeclinationIndex;
@@ -280,26 +265,23 @@ void IgorEngine::PART_32_CONTROLS_SELECT_DECLINATION() {
 				if (_part32DeclinationDigits[_part32DeclinationIndex] == 0xFF && _part32DeclinationIndex > 0) {
 					--_part32DeclinationIndex;
 				}
-				PART_32_CONTROLS_ERASE_DIGIT(kPart32DeclinationDigitsOffset, _part32DeclinationIndex);
+				PART_32_eraseDigit(kPart32DeclinationDigitsOffset, _part32DeclinationIndex);
 				_part32DeclinationDigits[_part32DeclinationIndex] = 0xFF;
 			} else if (key == kPart32KeyAscension) {
-				PART_32_CONTROLS_SELECT_ASCENSION();
+				PART_32_CONTROLS_selectAscension();
 			} else if (key == kPart32KeyConfirm) {
-				PART_32_CONTROLS_CONFIRM();
+				PART_32_CONTROLS_enterCoordinates();
 			} else if (key == kPart32KeyExit) {
-				PART_32_CONTROLS_EXIT();
+				PART_32_exitControls();
 			}
 		}
-		PART_32_CONTROLS_IDLE(kPart32DeclinationColor);
+		PART_32_controlsIdle(kPart32DeclinationColor);
 	} while (!_part32Done);
 }
 
-/**
- * The ascension field is selected.
- */
-void IgorEngine::PART_32_CONTROLS_SELECT_ASCENSION() {
+void IgorEngine::PART_32_CONTROLS_selectAscension() {
 	playSound(31, 1);
-	PART_32_CONTROLS_COPY_COLOR(kPart32DeclinationColor, kPart32FieldColor);
+	PART_32_CONTROLS_copyColor(kPart32DeclinationColor, kPart32FieldColor);
 	setPaletteRange(kPart32DeclinationColor, kPart32DeclinationColor);
 	_part32Blink = 2;
 	do {
@@ -320,7 +302,7 @@ void IgorEngine::PART_32_CONTROLS_SELECT_ASCENSION() {
 				if (_part32AscensionIndex == 2 && _part32AscensionDigits[0] == 3 && _part32AscensionDigits[1] == 6 && key < 10) {
 					continue;
 				}
-				PART_32_CONTROLS_DRAW_DIGIT(kPart32AscensionDigitsOffset, _part32AscensionIndex, key);
+				PART_32_drawDigit(kPart32AscensionDigitsOffset, _part32AscensionIndex, key);
 				_part32AscensionDigits[_part32AscensionIndex] = key % 10;
 				if (_part32AscensionIndex < 2) {
 					++_part32AscensionIndex;
@@ -329,45 +311,39 @@ void IgorEngine::PART_32_CONTROLS_SELECT_ASCENSION() {
 				if (_part32AscensionDigits[_part32AscensionIndex] == 0xFF && _part32AscensionIndex > 0) {
 					--_part32AscensionIndex;
 				}
-				PART_32_CONTROLS_ERASE_DIGIT(kPart32AscensionDigitsOffset, _part32AscensionIndex);
+				PART_32_eraseDigit(kPart32AscensionDigitsOffset, _part32AscensionIndex);
 				_part32AscensionDigits[_part32AscensionIndex] = 0xFF;
 			} else if (key == kPart32KeyDeclination) {
-				PART_32_CONTROLS_SELECT_DECLINATION();
+				PART_32_CONTROLS_selectDeclination();
 			} else if (key == kPart32KeyConfirm) {
-				PART_32_CONTROLS_CONFIRM();
+				PART_32_CONTROLS_enterCoordinates();
 			} else if (key == kPart32KeyExit) {
-				PART_32_CONTROLS_EXIT();
+				PART_32_exitControls();
 			}
 		}
-		PART_32_CONTROLS_IDLE(kPart32AscensionColor);
+		PART_32_controlsIdle(kPart32AscensionColor);
 	} while (!_part32Done);
 }
 
-/**
- * The coordinates are set: the two lines move to them and the scene that belongs to them is chosen.
- */
-void IgorEngine::PART_32_CONTROLS_CONFIRM() {
+void IgorEngine::PART_32_CONTROLS_enterCoordinates() {
 	playSound(getRandomNumber(1) + 0x42, 1);
-	PART_32_CONTROLS_COPY_COLOR(kPart32DeclinationColor, kPart32FieldColor);
-	PART_32_CONTROLS_COPY_COLOR(kPart32AscensionColor, kPart32FieldColor);
+	PART_32_CONTROLS_copyColor(kPart32DeclinationColor, kPart32FieldColor);
+	PART_32_CONTROLS_copyColor(kPart32AscensionColor, kPart32FieldColor);
 	setPaletteRange(kPart32DeclinationColor, kPart32AscensionColor);
-	const int declination = PART_32_CONTROLS_ANIMATE_DECLINATION();
-	const int ascension = PART_32_CONTROLS_ANIMATE_ASCENSION();
+	const int declination = PART_32_CONTROLS_animateDeclination();
+	const int ascension = PART_32_CONTROLS_animateAscension();
 	waitForTimer(100);
 	if (declination == kPart32TowerDeclination && ascension == kPart32TowerAscension) {
 		_part32Result = kPart32ResultTower;
 	} else if (declination == kPart32FinalDeclination && ascension == kPart32FinalAscension) {
-		_part32Result = kPart32ResultFinal;
+		_part32Result = kPart32ResultChick;
 	} else {
 		_part32Result = kPart32ResultNothing;
 	}
 	_part32Done = true;
 }
 
-/**
- * The declination typed (a single digit is the unit) and the horizontal line rising to it, 1 row per step.
- */
-int IgorEngine::PART_32_CONTROLS_ANIMATE_DECLINATION() {
+int IgorEngine::PART_32_CONTROLS_animateDeclination() {
 	playSound(30, 1);
 	uint8 *digits = _part32DeclinationDigits;
 	if (digits[1] == 0xFF) {
@@ -392,11 +368,7 @@ int IgorEngine::PART_32_CONTROLS_ANIMATE_DECLINATION() {
 	return declination;
 }
 
-/**
- * The ascension typed (the last digit is the unit) and the vertical line moving to it, 1 column per step. It is
- * cut at the row of the horizontal line.
- */
-int IgorEngine::PART_32_CONTROLS_ANIMATE_ASCENSION() {
+int IgorEngine::PART_32_CONTROLS_animateAscension() {
 	playSound(30, 1);
 	uint8 *digits = _part32AscensionDigits;
 	if (digits[2] == 0xFF) {
@@ -435,10 +407,9 @@ int IgorEngine::PART_32_CONTROLS_ANIMATE_ASCENSION() {
 }
 
 /**
- * The picture with the digit boxes. Clicking a button of it does what the button says; the escape key and the exit
- * button leave.
+ * The picture with the digit boxes.
  */
-void IgorEngine::PART_32_CONTROLS() {
+void IgorEngine::PART_32_controls() {
 	loadData(PAL_Part32Lock, _paletteBuffer);
 	loadData(IMG_Part32Lock, _screenLayer1);
 	uint8 *mask = loadData(MSK_Part32Lock);
@@ -461,24 +432,24 @@ void IgorEngine::PART_32_CONTROLS() {
 			_inputVars[kInputClick] = 0;
 			switch (PART_32_CONTROLS_KEY_AT_CURSOR()) {
 			case kPart32KeyDeclination:
-				PART_32_CONTROLS_SELECT_DECLINATION();
+				PART_32_CONTROLS_selectDeclination();
 				break;
 			case kPart32KeyAscension:
-				PART_32_CONTROLS_SELECT_ASCENSION();
+				PART_32_CONTROLS_selectAscension();
 				break;
 			case kPart32KeyConfirm:
-				PART_32_CONTROLS_CONFIRM();
+				PART_32_CONTROLS_enterCoordinates();
 				break;
 			case kPart32KeyExit:
-				PART_32_CONTROLS_EXIT();
+				PART_32_exitControls();
 				break;
 			}
 		}
 		if (_inputVars[kInputEscape]) {
-			PART_32_CONTROLS_EXIT();
+			PART_32_exitControls();
 		}
-		PART_32_CONTROLS_COPY_COLOR(kPart32DeclinationColor, kPart32FieldColor);
-		PART_32_CONTROLS_COPY_COLOR(kPart32AscensionColor, kPart32FieldColor);
+		PART_32_CONTROLS_copyColor(kPart32DeclinationColor, kPart32FieldColor);
+		PART_32_CONTROLS_copyColor(kPart32AscensionColor, kPart32FieldColor);
 		setPaletteRange(kPart32DeclinationColor, kPart32AscensionColor);
 		// the original polls the input here without waiting
 		waitForTimer();
@@ -490,10 +461,9 @@ void IgorEngine::PART_32_CONTROLS() {
 // The scenes
 
 /**
- * The tower scenes and the final one have their own pictures and palettes. The tower scenes also have their
- * own texts, which replace the ones of the room until it is loaded again.
+ * The tower scenes and the girl one have their own pictures and palettes.
  */
-void IgorEngine::PART_32_LOAD_TOWER() {
+void IgorEngine::PART_32_loadTowerScene() {
 	loadData(PAL_Part32Tower, _paletteBuffer);
 	// the pictures start 1 byte into the buffer; the table of the offsets of the frames follows them
 	loadData(ANM_Part32Tower, _screenLayer1 + 1);
@@ -502,109 +472,99 @@ void IgorEngine::PART_32_LOAD_TOWER() {
 	free(texts);
 }
 
-void IgorEngine::PART_32_LOAD_FINAL() {
-	loadData(PAL_Part32Final, _paletteBuffer);
-	loadData(IMG_Part32Final, _screenLayer1);
+void IgorEngine::PART_32_loadGirlScene() {
+	loadData(PAL_Part32Girl, _paletteBuffer);
+	loadData(IMG_Part32Girl, _screenLayer1);
 	// the offsets of the frames, and the frames after them
-	loadData(ANM_Part32Final, _screenLayer2);
+	loadData(ANM_Part32Girl, _screenLayer2);
 }
 
-void IgorEngine::PART_32_DRAW_TOWER_FRAME(int frame) {
+void IgorEngine::PART_32_drawTowerConversationFrame(int frame) {
 	const uint8 *src = _screenLayer1 + READ_LE_UINT16(_screenLayer1 + kPart32TowerFramesTable + frame * 2);
 	decodeAnimFrame(src, _screenVGA, true);
 }
 
-/**
- * The man in the tower talks: his mouth is closed when a sentence ends and open in one of 5 ways while it goes on.
- */
-void IgorEngine::PART_32_UPDATE_DIALOGUE_SPEAKER_A(int action) {
+void IgorEngine::PART_32_updateDialogueSpeakerA(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_32_DRAW_TOWER_FRAME(9);
+		PART_32_drawTowerConversationFrame(9);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_32_DRAW_TOWER_FRAME(getRandomNumber(4) + 9);
+		PART_32_drawTowerConversationFrame(getRandomNumber(4) + 9);
 		break;
 	}
 }
 
-/**
- * The other man in the tower talks.
- */
-void IgorEngine::PART_32_UPDATE_DIALOGUE_SPEAKER_B(int action) {
+void IgorEngine::PART_32_updateDialogueSpeakerB(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_32_DRAW_TOWER_FRAME(4);
+		PART_32_drawTowerConversationFrame(4);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_32_DRAW_TOWER_FRAME(getRandomNumber(4) + 4);
+		PART_32_drawTowerConversationFrame(getRandomNumber(4) + 4);
 		break;
 	}
 }
 
-void IgorEngine::PART_32_SPEAKER_A_SAYS(const Common::Array<DialogueText> &lines) {
+void IgorEngine::PART_32_speakerASays(const Common::Array<DialogueText> &lines) {
 	cutsceneSayWithCallback(kPart32SpeakerAX, kPart32SpeakerAY, 63, 59, 0, lines,
-							&IgorEngine::PART_32_UPDATE_DIALOGUE_SPEAKER_A);
+							&IgorEngine::PART_32_updateDialogueSpeakerA);
 }
 
-void IgorEngine::PART_32_SPEAKER_B_SAYS(const Common::Array<DialogueText> &lines) {
+void IgorEngine::PART_32_speakerBSays(const Common::Array<DialogueText> &lines) {
 	cutsceneSayWithCallback(kPart32SpeakerBX, kPart32SpeakerBY, 63, 21, 21, lines,
-							&IgorEngine::PART_32_UPDATE_DIALOGUE_SPEAKER_B);
+							&IgorEngine::PART_32_updateDialogueSpeakerB);
 }
 
 /**
  * The scene of the coordinates that were set.
  */
 void IgorEngine::PART_32_SCENE() {
-	const bool tower = _part32Result != kPart32ResultFinal;
+	const bool tower = _part32Result != kPart32ResultChick;
 	if (tower) {
-		PART_32_LOAD_TOWER();
+		PART_32_loadTowerScene();
 	} else {
-		PART_32_LOAD_FINAL();
+		PART_32_loadGirlScene();
 	}
 	memset(_screenVGA, 0, 46080);
 	switch (_part32Result) {
 	case kPart32ResultTower:
 		if (_objectsState[kBellTowerConversationSeenStateIndex] == 0 && _objectsState[kAstronomyBookStateIndex] == 2) {
-			PART_32_SCENE_TOWER_CONVERSATION();
+			PART_32_sceneTowerConversation();
 		} else {
-			PART_32_SCENE_TOWER_EMPTY();
+			PART_32_sceneTowerEmpty();
 		}
 		break;
 	case kPart32ResultNothing:
-		PART_32_SCENE_NOTHING();
+		PART_32_sceneNothing();
 		break;
-	case kPart32ResultFinal:
-		PART_32_SCENE_FINAL();
+	case kPart32ResultChick:
+		PART_32_sceneGirl();
 		break;
 	}
 	fadeOut(tower ? 624 : 768);
 }
 
-/**
- * The two men in the bell tower talk about the signal hidden in the bell. Seen once.
- */
-void IgorEngine::PART_32_SCENE_TOWER_CONVERSATION() {
-	PART_32_DRAW_TOWER_FRAME(2);
-	PART_32_DRAW_TOWER_FRAME(3);
+
+void IgorEngine::PART_32_sceneTowerConversation() {
+	PART_32_drawTowerConversationFrame(2);
+	PART_32_drawTowerConversationFrame(3);
 	fadeIn(624);
-	PART_32_SPEAKER_A_SAYS({ { 201, 2, 835 } });
-	PART_32_SPEAKER_B_SAYS({ { 203, 1, 836 }, { 204, 1, 837 }, { 205, 1, 838 }, { 206, 2, 839 } });
-	PART_32_SPEAKER_A_SAYS({ { 208, 1, 840 } });
-	PART_32_SPEAKER_B_SAYS({ { 209, 2, 841 }, { 211, 1, 842 } });
-	PART_32_SPEAKER_A_SAYS({ { 212, 1, 843 } });
-	PART_32_SPEAKER_B_SAYS({ { 213, 2, 844 }, { 215, 2, 845 } });
-	PART_32_SPEAKER_A_SAYS({ { 217, 1, 846 } });
-	PART_32_SPEAKER_B_SAYS({ { 218, 1, 847 }, { 219, 2, 848 }, { 221, 1, 849 }, { 222, 2, 850 } });
-	PART_32_SPEAKER_A_SAYS({ { 224, 1, 851 } });
+	PART_32_speakerASays({ { 201, 2, 835 } });
+	PART_32_speakerBSays({ { 203, 1, 836 }, { 204, 1, 837 }, { 205, 1, 838 }, { 206, 2, 839 } });
+	PART_32_speakerASays({ { 208, 1, 840 } });
+	PART_32_speakerBSays({ { 209, 2, 841 }, { 211, 1, 842 } });
+	PART_32_speakerASays({ { 212, 1, 843 } });
+	PART_32_speakerBSays({ { 213, 2, 844 }, { 215, 2, 845 } });
+	PART_32_speakerASays({ { 217, 1, 846 } });
+	PART_32_speakerBSays({ { 218, 1, 847 }, { 219, 2, 848 }, { 221, 1, 849 }, { 222, 2, 850 } });
+	PART_32_speakerASays({ { 224, 1, 851 } });
 	waitForTimer(255);
 }
 
-/**
- * The tower again, with nobody there.
- */
-void IgorEngine::PART_32_SCENE_TOWER_EMPTY() {
-	PART_32_DRAW_TOWER_FRAME(2);
+
+void IgorEngine::PART_32_sceneTowerEmpty() {
+	PART_32_drawTowerConversationFrame(2);
 	fadeIn(624);
 	waitForTimer(255);
 	cutsceneSayStart(160, 70, 63, 63, 63, 227, 1, 853);
@@ -612,11 +572,9 @@ void IgorEngine::PART_32_SCENE_TOWER_EMPTY() {
 	waitForTimer(255);
 }
 
-/**
- * Coordinates without anything special.
- */
-void IgorEngine::PART_32_SCENE_NOTHING() {
-	PART_32_DRAW_TOWER_FRAME(1);
+
+void IgorEngine::PART_32_sceneNothing() {
+	PART_32_drawTowerConversationFrame(1);
 	fadeIn(624);
 	waitForTimer(255);
 	cutsceneSayStart(160, 70, 63, 63, 63, 225, 2, 852);
@@ -625,15 +583,15 @@ void IgorEngine::PART_32_SCENE_NOTHING() {
 }
 
 /**
- * The animation of the last coordinates.
+ * The animation of the girl
  */
-void IgorEngine::PART_32_SCENE_FINAL() {
+void IgorEngine::PART_32_sceneGirl() {
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	fadeIn(768);
-	for (int i = 0; i < ARRAYSIZE(kPart32FinalFrames); ++i) {
-		const int frame = kPart32FinalFrames[i];
+	for (int i = 0; i < ARRAYSIZE(kPart32GirlFrames); ++i) {
+		const int frame = kPart32GirlFrames[i];
 		decodeAnimFrame(_screenLayer2 + READ_LE_UINT16(_screenLayer2 + frame * 2 - 2) + 9, _screenVGA, false);
 		waitForTimer(50);
 	}
@@ -655,7 +613,7 @@ void IgorEngine::PART_32() {
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_32_ENTER();
+		PART_32_walkIn();
 	}
 	enterPartLoop();
 	while (_currentPart == 320 && !_gameStateLoaded) {

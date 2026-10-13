@@ -427,7 +427,7 @@ enum ObjectStateIndex {
 	kHarrisonPhotoStateIndex = 75,
 	kHarrisonNoteShownStateIndex = 76,
 	kBellTowerConversationSeenStateIndex = 78,
-	kFinalCoordinatesSceneSeenStateIndex = 79,
+	kSeenChickThroughTelescopeStateIndex = 79,
 	kLizardGivenStateIndex = 80,
 	kOldLadyConversationSeenStateIndex = 81,
 	kTreeResinDiscoveredStateIndex = 82,
@@ -1206,33 +1206,33 @@ private:
 
 	// telescope room
 	void PART_32_EXEC_ACTION(int action);
-	void PART_32_ENTER();
+	void PART_32_walkIn();
 	void PART_32_ACTION_103_useControls();
 	void PART_32_ACTION_106_walkToControls();
-	void PART_32_CONTROLS();
-	void PART_32_CONTROLS_COPY_COLOR(int dstColor, int srcColor);
+	void PART_32_controls();
+	void PART_32_CONTROLS_copyColor(int dstColor, int srcColor);
 	int PART_32_CONTROLS_KEY_AT_CURSOR() const;
-	void PART_32_CONTROLS_DRAW_DIGIT(int fieldOffset, int index, int key);
-	void PART_32_CONTROLS_ERASE_DIGIT(int fieldOffset, int index);
-	void PART_32_CONTROLS_IDLE(int fieldColor);
-	void PART_32_CONTROLS_EXIT();
-	void PART_32_CONTROLS_SELECT_DECLINATION();
-	void PART_32_CONTROLS_SELECT_ASCENSION();
-	void PART_32_CONTROLS_CONFIRM();
-	int PART_32_CONTROLS_ANIMATE_DECLINATION();
-	int PART_32_CONTROLS_ANIMATE_ASCENSION();
-	void PART_32_LOAD_TOWER();
-	void PART_32_LOAD_FINAL();
-	void PART_32_DRAW_TOWER_FRAME(int frame);
-	void PART_32_UPDATE_DIALOGUE_SPEAKER_A(int action);
-	void PART_32_UPDATE_DIALOGUE_SPEAKER_B(int action);
-	void PART_32_SPEAKER_A_SAYS(const Common::Array<DialogueText> &lines);
-	void PART_32_SPEAKER_B_SAYS(const Common::Array<DialogueText> &lines);
+	void PART_32_drawDigit(int fieldOffset, int index, int key);
+	void PART_32_eraseDigit(int fieldOffset, int index);
+	void PART_32_controlsIdle(int fieldColor);
+	void PART_32_exitControls();
+	void PART_32_CONTROLS_selectDeclination();
+	void PART_32_CONTROLS_selectAscension();
+	void PART_32_CONTROLS_enterCoordinates();
+	int PART_32_CONTROLS_animateDeclination();
+	int PART_32_CONTROLS_animateAscension();
+	void PART_32_loadTowerScene();
+	void PART_32_loadGirlScene();
+	void PART_32_drawTowerConversationFrame(int frame);
+	void PART_32_updateDialogueSpeakerA(int action);
+	void PART_32_updateDialogueSpeakerB(int action);
+	void PART_32_speakerASays(const Common::Array<DialogueText> &lines);
+	void PART_32_speakerBSays(const Common::Array<DialogueText> &lines);
 	void PART_32_SCENE();
-	void PART_32_SCENE_TOWER_CONVERSATION();
-	void PART_32_SCENE_TOWER_EMPTY();
-	void PART_32_SCENE_NOTHING();
-	void PART_32_SCENE_FINAL();
+	void PART_32_sceneTowerConversation();
+	void PART_32_sceneTowerEmpty();
+	void PART_32_sceneNothing();
+	void PART_32_sceneGirl();
 	void PART_32();
 
 	// library

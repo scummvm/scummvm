@@ -765,9 +765,9 @@
 #define ANM_Part32Tower 1155
 #define TXT_Part32Tower 1156
 #define PAL_Part32Tower 1157
-#define IMG_Part32Final 1158
-#define PAL_Part32Final 1159
-#define ANM_Part32Final 1160
+#define IMG_Part32Girl 1158
+#define PAL_Part32Girl 1159
+#define ANM_Part32Girl 1160
 
 // State 770 (PART_77)
 #define DAT_Part77 1161
