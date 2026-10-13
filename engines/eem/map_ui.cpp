@@ -848,6 +848,24 @@ void EEMEngine::doBigMap() {
 	}
 }
 
+bool skipLondonApproachVideo(const Common::Event &ev, bool mac, bool &done) {
+	if (ev.type == Common::EVENT_KEYDOWN) {
+		done = ev.kbd.keycode == Common::KEYCODE_ESCAPE ||
+			ev.kbd.keycode == Common::KEYCODE_RETURN ||
+			ev.kbd.keycode == Common::KEYCODE_KP_ENTER;
+		return true;
+	}
+	if (ev.type == Common::EVENT_LBUTTONDOWN) {
+		const Common::Rect doneRect = mac
+			? Common::Rect(kMacLondonApproachDoneLeft, kMacLondonApproachDoneTop,
+						   kMacLondonApproachDoneRight, kMacLondonApproachDoneBottom)
+			: kLondonApproachButtons[0].rect();
+		done = doneRect.contains(ev.mouse);
+		return true;
+	}
+	return false;
+}
+
 bool EEMEngine::doLondonApproach(uint16 approachId) {
 	if (!isLondon())
 		return false;
@@ -967,6 +985,7 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		g_system->updateScreen();
 	};
 
+	bool done = false;
 	auto playVideo = [&](uint page) {
 		if (mac) {
 			Video::FlicDecoder flic;
@@ -1012,8 +1031,7 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 						if (ev.type == Common::EVENT_QUIT ||
 							ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 							return;
-						if (ev.type == Common::EVENT_LBUTTONDOWN ||
-							ev.type == Common::EVENT_KEYDOWN) {
+						if (skipLondonApproachVideo(ev, mac, done)) {
 							skip = true;
 							break;
 						}
@@ -1066,8 +1084,7 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 						ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 						return;
 					}
-					if (ev.type == Common::EVENT_LBUTTONDOWN ||
-						ev.type == Common::EVENT_KEYDOWN) {
+					if (skipLondonApproachVideo(ev, mac, done)) {
 						skip = true;
 						break;
 					}
@@ -1095,7 +1112,6 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		playVideo(page);
 		drawScreen(page);
 	}
-	bool done = false;
 	uint32 lastShimmer = g_system->getMillis();
 	while (!shouldQuit() && !done) {
 		Common::Event ev;

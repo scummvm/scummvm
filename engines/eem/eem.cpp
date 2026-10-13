@@ -700,9 +700,9 @@ Common::Error EEMEngine::run() {
 		if (!shouldQuit() && !_skipIntro) {
 			if (_audio)
 				_audio->playVoc(Common::Path("THUNDER.VOC"));
-			playAnm(Common::Path("BOLT.ANM"), 120,
-					/* holdLastFrame= */ false, /* fadeIn= */ true);
-			waitForInput(1800);
+			if (playAnm(Common::Path("BOLT.ANM"), 120,
+						/* holdLastFrame= */ false, /* fadeIn= */ true))
+				waitForInput(1800);
 			fadeCurrentPaletteToBlack();
 			if (_audio)
 				_audio->stopVoice();
@@ -718,10 +718,15 @@ Common::Error EEMEngine::run() {
 				fadeCurrentPaletteToBlack();
 			Common::String name = Common::String::format("ANIM%02d.A", i);
 			playAnm(Common::Path(name), 120,
-					/* holdLastFrame= */ false, fadeIn);
+					/* holdLastFrame= */ false, fadeIn,
+					/* setSkipIntroOnEsc= */ true, /* showLastFrameOnSkip= */ true);
 			if (!shouldQuit() && !_skipIntro && i != 20 && _audio) {
 				_audio->spoolSound((uint)(i - 1));
-				_audio->waitForSpoolDone();
+				while (_audio->isSpoolPlaying() && !shouldQuit()) {
+					if (waitIntroDelay(10))
+						break;
+				}
+				_audio->stopSpool();
 			}
 		}
 		if (_audio)
@@ -1184,13 +1189,13 @@ void EEMEngine::playFlc(const Common::Path &path, bool fadeIn,
 		initGraphics(screenWidth(), screenHeight());
 }
 
-void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
+bool EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 						bool holdLastFrame, bool fadeIn,
-						bool setSkipIntroOnEsc) {
+						bool setSkipIntroOnEsc, bool showLastFrameOnSkip) {
 	ANMDecoder anm;
 	if (!anm.open(path)) {
 		warning("playAnm: %s missing", path.toString().c_str());
-		return;
+		return false;
 	}
 
 	byte palette[768];
@@ -1208,6 +1213,7 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 	}
 
 	bool paletteApplied = false;
+	bool aborted = false;
 	while (!shouldQuit()) {
 		const byte *frame = anm.nextFrame();
 		if (!frame)
@@ -1224,7 +1230,6 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 		g_system->updateScreen();
 
 		const uint32 frameStart = g_system->getMillis();
-		bool aborted = false;
 		while (g_system->getMillis() - frameStart < frameDelayMs && !aborted) {
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
@@ -1248,12 +1253,22 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 			g_system->updateScreen();
 			g_system->delayMillis(5);
 		}
-		if (aborted)
+		if (aborted) {
+			if (showLastFrameOnSkip && !shouldQuit() && !_skipIntro) {
+				// Dialogue may be drawn only in the final frame. Decode all
+				// remaining deltas before starting the accompanying speech.
+				while (const byte *nextFrame = anm.nextFrame())
+					frame = nextFrame;
+				g_system->copyRectToScreen(frame, w, 0, 0, w, h);
+				g_system->updateScreen();
+			}
 			break;
+		}
 	}
 
 	if (holdLastFrame && !shouldQuit() && !_skipIntro) {
-		while (!shouldQuit()) {
+		// A skip during playback also dismisses the final-frame wait.
+		while (!aborted && !shouldQuit()) {
 			Common::Event ev;
 			bool clicked = false;
 			while (g_system->getEventManager()->pollEvent(ev)) {
@@ -1282,6 +1297,7 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 		if (_music)
 			_music->stop();
 	}
+	return !aborted && !shouldQuit();
 }
 
 void EEMEngine::blitAt(const Picture &pic, int x, int y) {
@@ -1973,7 +1989,6 @@ void EEMEngine::showMacLondonTitle() {
 }
 
 void EEMEngine::runLondonStartup() {
-	const uint32 kHoldForever = 0xFFFFFFFFu;
 	CursorMan.showMouse(false);
 	_skipIntro = false;
 	debugC(1, kDebugGeneral, "EEM2 (London): opening sequence");
@@ -2031,8 +2046,6 @@ void EEMEngine::runLondonStartup() {
 		if (!shouldQuit() && !_skipIntro)
 			playAnm(Common::Path("WAVE.ANM"), 120, /* holdLastFrame= */ true,
 					/* fadeIn= */ true);
-		if (!shouldQuit() && !_skipIntro)
-			waitForInput(kHoldForever);
 	}
 	if (_music)
 		_music->stop();
