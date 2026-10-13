@@ -87,13 +87,14 @@ Common::Array<Common::Point> getTranslationShadowOffsets(const TextStringTable &
 	return offsets;
 }
 
-bool parseStillHeadingLine(const char *definition, Common::U32String &text, int &x, int &y, int &size, int &strokeWidth) {
+bool parseImageTextLine(const char *definition, Common::U32String &text, int &x, int &y, int &size, int &strokeWidth,
+						uint32 &color, const Graphics::PixelFormat &format) {
 	if (!definition || !definition[0])
 		return false;
 
-	Common::String fields[5];
+	Common::String fields[6];
 	Common::String remaining(definition);
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < 6; ++i) {
 		const uint separator = remaining.findFirstOf(";");
 		if (separator == Common::String::npos) {
 			fields[i] = remaining;
@@ -113,12 +114,15 @@ bool parseStillHeadingLine(const char *definition, Common::U32String &text, int 
 	parseTranslationInt(fields[2].c_str(), y);
 	parseTranslationInt(fields[3].c_str(), size);
 	parseTranslationInt(fields[4].c_str(), strokeWidth);
+	uint r, g, b;
+	if (sscanf(fields[5].c_str(), "%u,%u,%u", &r, &g, &b) == 3)
+		color = format.ARGBToColor(255, MIN(r, 255U), MIN(g, 255U), MIN(b, 255U));
 	return true;
 }
 
 void drawConfiguredHighQualityTextLines(Graphics::Surface &surface, const TextStringTable &strings, const Common::String &prefix,
-	const char *defaultFont, uint8 defaultTextR, uint8 defaultTextG, uint8 defaultTextB,
-	uint8 defaultShadowR, uint8 defaultShadowG, uint8 defaultShadowB) {
+										const char *defaultFont, uint8 defaultTextR, uint8 defaultTextG, uint8 defaultTextB,
+										uint8 defaultShadowR, uint8 defaultShadowG, uint8 defaultShadowB, bool resampleBackground = false) {
 	const char *fontName = strings.getString(prefix + "font");
 	if (!fontName || !fontName[0])
 		fontName = defaultFont;
@@ -129,27 +133,40 @@ void drawConfiguredHighQualityTextLines(Graphics::Surface &surface, const TextSt
 	Graphics::Surface layer;
 	layer.create(surface.w * scale, surface.h * scale, Graphics::PixelFormat::createFormatRGBA32());
 	layer.fillRect(Common::Rect(layer.w, layer.h), 0);
+	if (resampleBackground) {
+		for (int y = 0; y < surface.h; ++y) {
+			for (int x = 0; x < surface.w; ++x) {
+				uint8 r, g, b;
+				surface.format.colorToRGB(surface.getPixel(x, y), r, g, b);
+				layer.fillRect(Common::Rect(x * scale, y * scale, (x + 1) * scale, (y + 1) * scale), layer.format.RGBToColor(r, g, b));
+			}
+		}
+	}
 	const uint32 scaledTextColor = getTranslationColor(strings, prefix + "text_color", layer.format, defaultTextR, defaultTextG, defaultTextB);
 	const uint32 scaledShadowColor = getTranslationColor(strings, prefix + "shadow_color", layer.format, defaultShadowR, defaultShadowG, defaultShadowB);
 	Common::Array<Common::Point> scaledShadowOffsets;
 	for (uint i = 0; i < shadowOffsets.size(); ++i)
 		scaledShadowOffsets.push_back(Common::Point(shadowOffsets[i].x * scale, shadowOffsets[i].y * scale));
 
-	for (int i = 1; i <= 16; ++i) {
+	const int lineCount = CLIP(getTranslationInt(strings, prefix + "line_count", 16), 0, 256);
+	for (int i = 1; i <= lineCount; ++i) {
 		Common::U32String text;
 		int x = 0;
 		int y = 0;
 		int size = 44;
 		int strokeWidth = 0;
-		if (!parseStillHeadingLine(strings.getString(Common::String::format("%sline%d", prefix.c_str(), i)), text, x, y, size, strokeWidth))
+		uint32 textColor = scaledTextColor;
+		if (!parseImageTextLine(strings.getString(Common::String::format("%sline%d", prefix.c_str(), i)), text, x, y, size, strokeWidth, textColor, layer.format))
 			continue;
+		size = CLIP(size, 1, 128);
+		strokeWidth = CLIP(strokeWidth, 0, 16);
 
 		const Common::Array<Common::Point> emptyShadowOffsets;
 		drawHighQualityTextLine(layer, fontName, size * scale, (strokeWidth == 0 && !drawShadowWithoutStroke) ? emptyShadowOffsets : scaledShadowOffsets,
-			text, x * scale, y * scale, scaledTextColor, scaledShadowColor, strokeWidth * scale);
+								text, x * scale, y * scale, textColor, scaledShadowColor, strokeWidth * scale);
 	}
 
-	Graphics::Surface *downscaledLayer = downscaleRgbaLayerBicubic(layer, surface.w, surface.h);
+	Graphics::Surface *downscaledLayer = resampleBackground ? downscaleRgbaLayerLanczos(layer, surface.w, surface.h) : downscaleRgbaLayerBicubic(layer, surface.w, surface.h);
 	layer.free();
 	if (!downscaledLayer)
 		return;
@@ -168,15 +185,15 @@ void drawTranslatedStillHeading(Graphics::Surface &still, int stillIndex, const 
 	drawConfiguredHighQualityTextLines(still, strings, prefix, "LiberationSerif-BoldItalic.ttf", 255, 255, 255, 0, 0, 0);
 }
 
-void applyPatchImage(Graphics::Surface &surface, Common::SeekableReadStream *stream, const char *debugName) {
+bool applyPatchImage(Graphics::Surface &surface, Common::SeekableReadStream *stream, const char *debugName) {
 	Common::ScopedPtr<Common::SeekableReadStream> patchStream(stream);
 	if (!patchStream)
-		return;
+		return false;
 
 	Image::PNGDecoder decoder;
 	if (!decoder.loadStream(*patchStream) || !decoder.getSurface()) {
 		warning("%s: Could not decode translated patch", debugName);
-		return;
+		return false;
 	}
 
 	const Graphics::Surface *patch = decoder.getSurface();
@@ -203,9 +220,29 @@ void applyPatchImage(Graphics::Surface &surface, Common::SeekableReadStream *str
 			surface.setPixel(x, y, surface.format.ARGBToColor(0xff, outR, outG, outB));
 		}
 	}
+	return true;
 }
 
 } // End of anonymous namespace
+
+void applyTranslatedComputerCard(Graphics::Surface &card, const char *path, const TextTranslationData &translation) {
+#ifdef USE_FREETYPE2
+	if (!translation.packageArchive)
+		return;
+	Common::String name = Common::Path(path, '/').getLastComponent().toString();
+	name.toLowercase();
+	const uint dot = name.findLastOf('.');
+	if (dot != Common::String::npos)
+		name = name.substr(0, dot);
+	const Common::String prefix = "computer_cards." + name + ".";
+	const char *patch = translation.strings.getString(prefix + "patch");
+	if (!patch || !translation.strings.getString(prefix + "line1"))
+		return;
+	if (!applyPatchImage(card, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "applyTranslatedComputerCard"))
+		return;
+	drawConfiguredHighQualityTextLines(card, translation.strings, prefix, "LiberationSans-Regular.ttf", 218, 218, 236, 0, 0, 0, true);
+#endif
+}
 
 void applyTranslatedStillImage(Graphics::Surface &still, int stillIndex, const TextTranslationData &translation) {
 	if (translation.packageArchive && stillIndex >= 0 && stillIndex < 5) {

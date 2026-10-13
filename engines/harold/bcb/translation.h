@@ -76,6 +76,7 @@ bool loadTranslationPackage(const Common::FSNode &gameDataDir, const Common::Str
 void applyTranslatedStillImage(Graphics::Surface &still, int stillIndex, const TextTranslationData &translation);
 void applyTranslatedTitleMenu(Graphics::Surface &title, const TextTranslationData &translation);
 void applyTranslatedComputerButtons(Graphics::Surface &computer, const TextTranslationData &translation);
+void applyTranslatedComputerCard(Graphics::Surface &card, const char *path, const TextTranslationData &translation);
 
 const char *getTextTranslation(const TextTranslationData &translation, TextTranslationType type, uint primaryId, uint secondaryId);
 const char *getSystemTextTranslation(const TextTranslationData &translation, const char *key);

@@ -297,6 +297,8 @@ bool BCBEngine::showComputerDetailScreen(int compositeIndex) {
 	Graphics::Surface *composite = loadDiscBitmap(compositePath);
 	if (!composite)
 		return false;
+	if (_gameDescription->desc.language == Common::JA_JPN && _selectedTextLanguagePackageAvailable)
+		applyTranslatedComputerCard(*composite, compositePath, _textTranslation);
 
 	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen) {
