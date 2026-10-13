@@ -596,6 +596,10 @@ static int computePlayerFrameLeftX(const RoomPlayerState &playerState) {
 	return playerState.entity ? playerState.entity->getScreenRect().left : playerState.centerX;
 }
 
+static float computePlayerRenderZ(const RoomPlayerState &playerState) {
+	return playerState.entity ? playerState.entity->getZ() : playerState.z;
+}
+
 static void resetPlayerMoveTargetProgress(RoomPlayerState &playerState) {
 	playerState.moveTargetXReached = false;
 	playerState.moveTargetZReached = false;
@@ -603,7 +607,7 @@ static void resetPlayerMoveTargetProgress(RoomPlayerState &playerState) {
 
 static int resolveMoveTargetHorizontalDirection(const RoomSetupState &state,
 		const RoomPlayerState &playerState, int regionFacing) {
-	const float slack = Player::computeDepthScale(state, playerState.z) *
+	const float slack = Player::computeDepthScale(state, computePlayerRenderZ(playerState)) *
 		kRoomPlayerHorizontalTargetSlackBase;
 	const float frameLeftX = (float)computePlayerFrameLeftX(playerState);
 	if (frameLeftX < (float)playerState.targetX - slack || regionFacing == 2)
@@ -615,9 +619,10 @@ static int resolveMoveTargetHorizontalDirection(const RoomSetupState &state,
 }
 
 static int resolveMoveTargetDepthDirection(const RoomPlayerState &playerState, int regionFacing) {
-	if (playerState.targetZ < playerState.z - kRoomPlayerDepthTargetSlack || regionFacing == 0)
+	const float z = computePlayerRenderZ(playerState);
+	if (playerState.targetZ < z - kRoomPlayerDepthTargetSlack || regionFacing == 0)
 		return 1;
-	if (playerState.z + kRoomPlayerDepthTargetSlack < playerState.targetZ || regionFacing == 3)
+	if (z + kRoomPlayerDepthTargetSlack < playerState.targetZ || regionFacing == 3)
 		return -1;
 
 	return 0;
@@ -682,14 +687,6 @@ static bool consumePlayerMovementTick(RoomPlayerState &playerState) {
 
 	playerState.nextMovementTick = now + interval;
 	return true;
-}
-
-static float stepTowardsFloat(float current, float target, float step) {
-	if (step <= 0.0f || fabsf(target - current) <= kRoomDepthCompareEpsilon)
-		return target;
-	if (current < target)
-		return MIN(current + step, target);
-	return MAX(current - step, target);
 }
 
 static bool shouldIgnoreMovementBlocker(const Entity &entity, const Common::String *ignoredBlockerName) {
@@ -1353,7 +1350,7 @@ int Player::resolveRegionTargetX(const RoomSetupState &state, const RegionRecord
 		targetX -= kRoomRegionTargetXBias;
 
 	const int targetSlack = MAX<int>(1,
-		roundToInt(Player::computeDepthScale(state, playerState.z) *
+		roundToInt(Player::computeDepthScale(state, computePlayerRenderZ(playerState)) *
 			kRoomPlayerHorizontalTargetSlackBase));
 	if (region.desiredFacing == 1)
 		targetX = MIN<int>(targetX, region.right - targetSlack);
@@ -1431,6 +1428,8 @@ bool Player::setIdleAnimation(RoomPlayerState &playerState, int facing) {
 	playerState.facing = facing;
 	playerState.nextMovementTick = 0;
 	playerState.keyboardWalkRequest = -1;
+	playerState.walkHorizontalDirection = 0;
+	playerState.walkDepthDirection = 0;
 	playerState.entity->setAnimationRate(0);
 	playerState.entity->setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
 	playerState.entity->setCurrentFrame(range.idleFrame);
@@ -1742,7 +1741,15 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 	// run_harvester_main_loop (0x6dc70) latches the clicked region facing at
 	// 0xc3f0c. update_actor_runtime_state (0x4d750) uses it to keep the matching
 	// target component active inside the usual X/Z stopping tolerance.
-	updatePlayerMoveTargetProgress(state, playerState, regionFacing);
+	const PlayerAnimationRange range = resolvePlayerAnimationRange(playerState.facing);
+	const int currentFrame = playerState.entity->getCurrentFrame();
+	const bool walking = playerState.entity->getAnimationRate() == kRoomPlayerWalkAnimationRate &&
+		currentFrame >= range.walkFirstFrame && currentFrame <= range.walkLastFrame;
+	// update_actor_runtime_state (0x4d750) evaluates waypoints only at a bank
+	// endpoint. Between endpoints the current walk state retains frame_z_step.
+	const bool updateTarget = !walking || currentFrame == range.walkLastFrame;
+	if (updateTarget)
+		updatePlayerMoveTargetProgress(state, playerState, regionFacing);
 	if (hasPlayerReachedMoveTarget(playerState)) {
 		playerState.hasMoveTarget = false;
 		return setIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
@@ -1750,9 +1757,9 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 
 	const int previousCenterX = playerState.centerX;
 	const int previousBottomY = playerState.bottomY;
-	int horizontalDirection = playerState.moveTargetXReached
-		? 0
-		: resolveMoveTargetHorizontalDirection(state, playerState, regionFacing);
+	int horizontalDirection = updateTarget
+		? (playerState.moveTargetXReached ? 0 : resolveMoveTargetHorizontalDirection(state, playerState, regionFacing))
+		: playerState.walkHorizontalDirection;
 	if (horizontalDirection != 0 && isHorizontalDirectionBlockedByHistory(playerState, horizontalDirection)) {
 		if (engine.isPathfindingDebugEnabled()) {
 			debugC(1, kDebugPathfinding,
@@ -1765,9 +1772,9 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 		}
 		horizontalDirection = 0;
 	}
-	int depthDirection = !playerState.moveTargetZReached
-		? resolveMoveTargetDepthDirection(playerState, regionFacing)
-		: 0;
+	int depthDirection = updateTarget
+		? (playerState.moveTargetZReached ? 0 : resolveMoveTargetDepthDirection(playerState, regionFacing))
+		: playerState.walkDepthDirection;
 	if (depthDirection != 0 && isDepthDirectionBlockedByHistory(playerState, depthDirection)) {
 		if (engine.isPathfindingDebugEnabled()) {
 			debugC(1, kDebugPathfinding,
@@ -1801,7 +1808,7 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 	int candidateBottomY = playerState.bottomY;
 	float candidateZ = playerState.z;
 	if (horizontalDirection != 0) {
-		const int horizontalStep = computeRoomPlayerHorizontalStep(state, playerState.z);
+		const int horizontalStep = computeRoomPlayerHorizontalStep(state, computePlayerRenderZ(playerState));
 		candidateCenterX = clampPlayerCenterXToNativeBounds(
 			playerState, playerState.centerX + horizontalDirection * horizontalStep);
 		candidateZ = clampRoomDepth(state, playerState.z - depthDirection);
@@ -1813,9 +1820,7 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 			: playerState.z <= (float)state.roomMinZ;
 		if (!depthBoundaryReached) {
 			candidateBottomY = playerState.bottomY + depthDirection * verticalStep;
-			candidateZ = regionFacing == 0 || regionFacing == 3
-				? clampRoomDepth(state, playerState.z - depthDirection * depthStep)
-				: stepTowardsFloat(playerState.z, playerState.targetZ, depthStep);
+			candidateZ = clampRoomDepth(state, playerState.z - depthDirection * depthStep);
 		}
 	}
 
@@ -1865,7 +1870,16 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 	}
 
 	const int actualFacing = desiredFacing;
+	playerState.walkHorizontalDirection = horizontalDirection;
+	playerState.walkDepthDirection = depthDirection;
 	(void)setPlayerWalkAnimation(playerState, actualFacing);
+	if (walking && currentFrame == range.walkLastFrame) {
+		playerState.entity->setCurrentFrame(resolvePlayerAnimationRange(actualFacing).walkFirstFrame);
+		debugC(2, kDebugPlayer,
+			"Harvester: player target walk bank restart facing=%d frame=%d render_z=%.2f direction=(%d,%d)",
+			actualFacing, playerState.entity->getCurrentFrame(), (double)computePlayerRenderZ(playerState),
+			horizontalDirection, depthDirection);
+	}
 	syncAnimationPlacement(playerState);
 	refreshPlayerCurrentBlocker(engine, sceneObjects, sceneAnimations, playerState);
 	if (engine.isPathfindingDebugEnabled()) {
@@ -1874,11 +1888,6 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 			state.roomName.c_str(), previousCenterX, previousBottomY,
 			playerState.centerX, playerState.bottomY, (double)playerState.z,
 			actualFacing);
-	}
-	updatePlayerMoveTargetProgress(state, playerState, regionFacing);
-	if (hasPlayerReachedMoveTarget(playerState)) {
-		playerState.hasMoveTarget = false;
-		(void)setIdleAnimation(playerState, actualFacing);
 	}
 	debugC(playerState.hasMoveTarget ? 2 : 1, kDebugPlayer,
 		"Harvester: player move step room='%s' pos=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f) facing=%d frame=%d active=%d moved=%d",
@@ -1929,7 +1938,7 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 	const int previousCenterX = playerState.centerX;
 	const int previousBottomY = playerState.bottomY;
 	const float previousZ = playerState.z;
-	const int horizontalStep = computeRoomPlayerHorizontalStep(state, playerState.z);
+	const int horizontalStep = computeRoomPlayerHorizontalStep(state, computePlayerRenderZ(playerState));
 	const int verticalStep = computeRoomPlayerVerticalScreenStep();
 	const float depthStep = computeRoomPlayerDepthStep(state);
 	int candidateCenterX = clampPlayerCenterXToNativeBounds(
@@ -1985,6 +1994,8 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 
 	const int actualFacing = resolveFacingFromRoomMovement(
 		previousBaseX, previousBaseY, playerState.entity->getX(), playerState.entity->getY());
+	playerState.walkHorizontalDirection = actualFacing == 1 ? -1 : actualFacing == 2 ? 1 : 0;
+	playerState.walkDepthDirection = actualFacing == 3 ? -1 : actualFacing == 0 ? 1 : 0;
 	(void)setPlayerWalkAnimation(playerState, actualFacing);
 	if (keyboardWalking && currentFrame == range.walkLastFrame) {
 		playerState.keyboardWalkRequest = -1;

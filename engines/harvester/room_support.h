@@ -58,11 +58,11 @@ struct RoomPlayerState {
 	int bottomY = 0;
 	float z = 0.0f;
 	int facing = -1;
-	// Mirrors native RenderEntityRuntime.player_combat_loadout_id (+0x11bc).
 	int combatLoadout = 0;
 	uint32 nextMovementTick = 0;
-	// Held input queues the next walk bank; release preserves that request.
 	int keyboardWalkRequest = -1;
+	int walkHorizontalDirection = 0;
+	int walkDepthDirection = 0;
 	bool hasMoveTarget = false;
 	int targetX = 0;
 	int targetBottomY = 0;
@@ -70,9 +70,7 @@ struct RoomPlayerState {
 	bool moveTargetXReached = false;
 	bool moveTargetZReached = false;
 	Common::String currentBlockerName;
-	// Native RenderEntityRuntime keeps these directional blocker-history
-	// pointers at +0x108c..+0x1098 and clears them when no current
-	// opaque blocker overlaps the actor.
+
 	Common::String upwardBlockerHistory;
 	Common::String downwardBlockerHistory;
 	Common::String leftwardBlockerHistory;
@@ -91,8 +89,7 @@ struct RoomPlayerState {
 	bool attackSoundPlayed = false;
 	int attackSoundPlaybackFrame = -1;
 	bool attackContactResolved = false;
-	// Native room combat tracks the live chase/attack focus through
-	// RenderEntityRuntime.combat_target_entity (+0x11a4).
+
 	Common::String attackTargetName;
 	int attackTargetClassId = -1;
 	bool hitActive = false;
