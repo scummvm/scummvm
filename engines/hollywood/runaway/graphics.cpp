@@ -28,6 +28,19 @@
 
 namespace Hollywood {
 
+bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurface &surface) {
+	Common::Array<byte> pixels;
+	if (!readRunawayGlobalChunk(chunk, pixels) || pixels.size() != (uint)(width * height * 2))
+		return false;
+	surface.create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	for (int y = 0; y < height; ++y) {
+		uint16 *out = (uint16 *)surface.getBasePtr(0, y);
+		for (int x = 0; x < width; ++x)
+			out[x] = READ_LE_UINT16(pixels.data() + (y * width + x) * 2);
+	}
+	return true;
+}
+
 bool RunawayAnimation::load(ChunkArchive &archive, uint chunk, uint frames) {
 	_frames = 0;
 	return archive.readVariableChunk(chunk, _data) && validate(frames);

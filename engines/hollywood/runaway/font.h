@@ -31,7 +31,7 @@ namespace Hollywood {
 // RESOURCE.000 stores antialiased glyphs, including their contour masks.
 class RunawayFont : public Graphics::Font {
 public:
-	bool load();
+	bool load(bool menuFont = false);
 	int getFontHeight() const override { return 28; }
 	int getMaxCharWidth() const override { return 28; }
 	int getCharWidth(uint32 chr) const override;

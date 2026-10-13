@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/endian.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
 #include "hollywood/runaway/strings.h"
@@ -55,25 +54,13 @@ RunawayUI::~RunawayUI() {
 		CursorMan.popCursor();
 }
 
-bool RunawayUI::loadSurface(uint chunk, int width, int height, Graphics::ManagedSurface &surface) {
-	Common::Array<byte> pixels;
-	if (!readRunawayGlobalChunk(chunk, pixels) || pixels.size() != (uint)(width * height * 2))
-		return false;
-	surface.create(width, height, kUIFormat);
-	for (int y = 0; y < height; ++y) {
-		uint16 *out = (uint16 *)surface.getBasePtr(0, y);
-		for (int x = 0; x < width; ++x)
-			out[x] = READ_LE_UINT16(pixels.data() + (y * width + x) * 2);
-	}
-	return true;
-}
-
 bool RunawayUI::load() {
 	Common::Array<byte> animation;
-	if (!_font.load() || !loadSurface(114, 904, 540, _cursors) ||
-			!loadSurface(118, 48, 48, _demoLogo) || !loadSurface(121, 80, 42 * 80, _icons) ||
-			!loadSurface(127, 700, 74, _inventoryButton) || !loadSurface(129, 700, 74, _returnButton) ||
-			!loadSurface(131, 1024, 600, _inventoryBackground) || !loadSurface(133, 768, 576, _inventoryTexture) ||
+	if (!_font.load() || !loadRunawaySurface(114, 904, 540, _cursors) ||
+			!loadRunawaySurface(118, 48, 48, _demoLogo) || !loadRunawaySurface(121, 80, 42 * 80, _icons) ||
+			!loadRunawaySurface(127, 700, 74, _inventoryButton) || !loadRunawaySurface(129, 700, 74, _returnButton) ||
+			!loadRunawaySurface(128, 700, 74, _optionsButton) ||
+			!loadRunawaySurface(131, 1024, 600, _inventoryBackground) || !loadRunawaySurface(133, 768, 576, _inventoryTexture) ||
 			!readRunawayGlobalChunk(137, animation) || !_portrait.load(animation, 104) ||
 			!readRunawayGlobalChunk(141, animation) || !_idlePortrait.load(animation, 32))
 		return false;
@@ -106,6 +93,10 @@ byte RunawayUI::itemAt(Common::Point mouse) const {
 
 bool RunawayUI::overButton() const {
 	return Common::Rect(kButtonX, 0, kButtonX + 100, 74).contains(_mouse);
+}
+
+bool RunawayUI::overOptions() const {
+	return Common::Rect(612, 0, 712, 74).contains(_mouse);
 }
 
 bool RunawayUI::inViewport() const {
@@ -199,6 +190,12 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 			_buttonFrame = MIN<uint>(5, _buttonFrame + steps);
 		else
 			_buttonFrame = MAX<int>(0, MIN<int>(5, _buttonFrame) - steps);
+		if (overOptions())
+			_optionsFrame = 6;
+		else if (mouse.y < kRunawayViewportTop)
+			_optionsFrame = MIN<uint>(5, _optionsFrame + steps);
+		else
+			_optionsFrame = MAX<int>(0, MIN<int>(5, _optionsFrame) - steps);
 	}
 	if (_inventoryOpen && now - _portraitTick >= 60) {
 		_portraitTick = now;
@@ -223,6 +220,10 @@ RunawayUI::Command RunawayUI::click(bool right) {
 	Command command;
 	_lastInteraction = _now;
 	_idleStarted = 0;
+	if (!right && overOptions()) {
+		command.type = Command::kOpenMenu;
+		return command;
+	}
 	if (_speaking) {
 		command.type = Command::kSkipSpeech;
 		return command;
@@ -367,6 +368,7 @@ void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &
 		drawInventory(screen);
 	const Graphics::ManagedSurface &button = _inventoryOpen ? _returnButton : _inventoryButton;
 	screen.copyRectToSurface(button, kButtonX, 0, Common::Rect(_buttonFrame * 100, 0, (_buttonFrame + 1) * 100, 74));
+	screen.copyRectToSurface(_optionsButton, 612, 0, Common::Rect(_optionsFrame * 100, 0, (_optionsFrame + 1) * 100, 74));
 	if (_speaking) {
 		if (showSubtitles) {
 			Common::Array<Common::U32String> lines;
@@ -382,7 +384,8 @@ void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &
 			caption = committedCaption;
 			color = kUIFormat.RGBToColor(255, 223, 206);
 		} else if (!_blocked && !busy()) {
-			caption = overButton() ? _strings.text(_inventoryOpen ? RunawayStrings::kResume : RunawayStrings::kInventory) :
+			caption = overOptions() ? _strings.text(RunawayStrings::kOptions) :
+				overButton() ? _strings.text(_inventoryOpen ? RunawayStrings::kResume : RunawayStrings::kInventory) :
 				_inventoryOpen ? inventoryCaption() : roomCaption;
 		}
 		_font.drawString(screen.surfacePtr(), caption, 20, 684, 984, color, Graphics::kTextAlignCenter);

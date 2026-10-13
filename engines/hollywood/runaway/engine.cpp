@@ -34,6 +34,7 @@
 
 #include "hollywood/runaway/engine.h"
 #include "hollywood/runaway/intro.h"
+#include "hollywood/runaway/menu.h"
 #include "hollywood/runaway/scene5030.h"
 #include "hollywood/runaway/strings.h"
 #include "hollywood/runaway/ui.h"
@@ -49,7 +50,8 @@ enum RunawayAction {
 	kCancelAction,
 	kSkip,
 	kToggleInventory,
-	kCycleAction
+	kCycleAction,
+	kPauseMenu
 };
 
 } // End of anonymous namespace
@@ -121,7 +123,8 @@ Common::Error RunawayEngine::run() {
 	RunawayInventory inventory(strings);
 	RunawayScene5030 scene(_mixer, inventory, strings);
 	RunawayUI ui(_mixer, inventory, strings);
-	if (!scene.load() || !ui.load())
+	RunawayMenu menu(strings);
+	if (!scene.load() || !ui.load() || !menu.load())
 		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo room, actor or interface data");
 	scene.start(getTotalPlayTime());
 	CursorMan.showMouse(true);
@@ -132,12 +135,16 @@ Common::Error RunawayEngine::run() {
 		const uint32 now = getTotalPlayTime();
 		Common::Point mouse = _eventMan->getMousePos();
 		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking());
+		bool openMenu = false;
 		Common::Event event;
-		while (_eventMan->pollEvent(event)) {
+		while (!openMenu && _eventMan->pollEvent(event)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
 				ui.update(now, event.mouse, scene.hotspotAt(event.mouse), scene.busy(), scene.speaking());
 				const RunawayUI::Command command = ui.click(event.type == Common::EVENT_RBUTTONDOWN);
 				switch (command.type) {
+				case RunawayUI::Command::kOpenMenu:
+					openMenu = true;
+					break;
 				case RunawayUI::Command::kRoom:
 					scene.click(command.mouse, command.verb, command.item);
 					break;
@@ -158,6 +165,9 @@ Common::Error RunawayEngine::run() {
 				ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking());
 				const bool pressed = event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START;
 				switch (event.customType) {
+				case kPauseMenu:
+					openMenu = pressed;
+					break;
 				case kScrollLeft:
 					leftPressed = pressed;
 					break;
@@ -176,8 +186,8 @@ Common::Error RunawayEngine::run() {
 					if (pressed) {
 						if (scene.speaking())
 							scene.skipSpeech();
-						else if (!ui.cancel() && !scene.busy())
-							scene.cancelWalk();
+						else if (!ui.cancel())
+							openMenu = true;
 					}
 					break;
 				case kToggleInventory:
@@ -197,6 +207,13 @@ Common::Error RunawayEngine::run() {
 		}
 		if (shouldQuit())
 			break;
+		if (openMenu) {
+			pauseMenu(menu, scene.screen());
+			leftPressed = rightPressed = false;
+			// Refresh the engine clock and redraw the room after resuming.
+			// The input which closed the menu must not reach a room action.
+			continue;
+		}
 		int direction = (int)rightPressed - (int)leftPressed;
 		mouse = _eventMan->getMousePos();
 		if (!direction && mouse.y >= RunawayScene5030::kRoomTop && mouse.y < RunawayScene5030::kRoomTop + RunawayScene5030::kRoomHeight) {
@@ -219,6 +236,83 @@ Common::Error RunawayEngine::run() {
 		_system->delayMillis(16);
 	}
 	return Common::kNoError;
+}
+
+void RunawayEngine::pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &screen) {
+	// PauseToken freezes the mixer and excludes menu time from the scene/UI
+	// clocks, including walking, speech deadlines and pickup sound cues.
+	PauseToken pauseToken = pauseEngine();
+	RunawayMenu::Settings settings;
+	settings.music = !ConfMan.getBool("music_mute");
+	settings.subtitles = !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles");
+	settings.volume = MAX(ConfMan.getInt("music_volume"), MAX(ConfMan.getInt("sfx_volume"), ConfMan.getInt("speech_volume")));
+	menu.open(screen, settings);
+	menu.update(_eventMan->getMousePos());
+	bool finished = false, changed = false;
+	while (!shouldQuit() && !finished) {
+		Common::Event event;
+		while (!finished && _eventMan->pollEvent(event)) {
+			RunawayMenu::Command command = RunawayMenu::kNone;
+			if (event.type == Common::EVENT_MOUSEMOVE) {
+				command = menu.update(event.mouse);
+			} else if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
+				menu.update(event.mouse);
+				command = menu.click(event.type == Common::EVENT_RBUTTONDOWN);
+			} else if (event.type == Common::EVENT_LBUTTONUP) {
+				command = menu.update(event.mouse);
+				menu.release();
+			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				switch (event.customType) {
+				case kPauseMenu:
+				case kCancelAction:
+				case kSkip:
+					command = menu.cancel();
+					break;
+				case kScrollLeft:
+					command = menu.adjustVolume(-8);
+					break;
+				case kScrollRight:
+					command = menu.adjustVolume(8);
+					break;
+				default:
+					break;
+				}
+			} else if (event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat) {
+				command = menu.key(event.kbd.ascii);
+			} else if (event.type == Common::EVENT_WHEELUP || event.type == Common::EVENT_WHEELDOWN) {
+				command = menu.adjustVolume(event.type == Common::EVENT_WHEELUP ? 8 : -8);
+			}
+			const RunawayMenu::Settings &current = menu.settings();
+			if (settings.music != current.music || settings.subtitles != current.subtitles || settings.volume != current.volume) {
+				ConfMan.setBool("music_mute", !current.music);
+				ConfMan.setBool("subtitles", current.subtitles);
+				// Preserve independently configured channel volumes unless the
+				// player actually moves the original master-volume control.
+				if (settings.volume != current.volume) {
+					ConfMan.setInt("music_volume", current.volume);
+					ConfMan.setInt("sfx_volume", current.volume);
+					ConfMan.setInt("speech_volume", current.volume);
+				}
+				settings = current;
+				syncSoundSettings();
+				changed = true;
+			}
+			if (command == RunawayMenu::kResume || command == RunawayMenu::kQuit) {
+				if (command == RunawayMenu::kQuit)
+					quitGame();
+				finished = true;
+			}
+		}
+		if (finished || shouldQuit())
+			break;
+		menu.draw(screen);
+		_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+		_system->updateScreen();
+		_system->delayMillis(16);
+	}
+	menu.close();
+	if (changed)
+		ConfMan.flushToDisk();
 }
 
 Common::Array<Common::Keymap *> RunawayEngine::initKeymaps() {
@@ -259,12 +353,12 @@ Common::Array<Common::Keymap *> RunawayEngine::initKeymaps() {
 	keymap->addAction(action);
 
 	action = new Action(kStandardActionOpenMainMenu, _("Game menu"));
-	action->setEvent(EVENT_MAINMENU);
+	action->setCustomEngineActionEvent(kPauseMenu);
 	action->addDefaultInputMapping("F5");
 	action->addDefaultInputMapping("JOY_START");
 	keymap->addAction(action);
 
-	action = new Action("CANCEL_ACTION", _("Cancel action"));
+	action = new Action("CANCEL_ACTION", _("Cancel action / Menu"));
 	action->setCustomEngineActionEvent(kCancelAction);
 	action->addDefaultInputMapping("ESCAPE");
 	keymap->addAction(action);

@@ -375,10 +375,12 @@ void RunawayScene5030::useItem(byte item, byte hotspot) {
 	_inventory.select(0);
 	// Dispatch the room's item actions separately from its ordinary verbs.
 	// Original rejected actions use the shared, voiced inventory responses.
-	if (item == 1 && hotspot == 3)
-		sayCue(33, 0);
-	else
+	if (item == 1 && hotspot == 3) {
+		// The large window is never cleaned; cue 33 belongs to the small one.
+		sayCue(35, 0);
+	} else {
 		sayInventory(RunawayInventory::Reply(1, 0));
+	}
 }
 
 void RunawayScene5030::arrive() {

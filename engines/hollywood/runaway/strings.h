@@ -34,7 +34,11 @@ public:
 	enum TextId {
 		kLook, kTake, kUse, kPutAway, kWith, kInventory, kResume,
 		kOpen, kClose, kMove, kLookThrough, kUsePhone, kTakeFromShelf,
-		kUnplugCooler, kShirt, kWetCloth, kDirtyCloth, kTextCount
+		kUnplugCooler, kShirt, kWetCloth, kDirtyCloth,
+		kOptions, kLoad, kSave, kDelete, kPlay, kQuit, kMusic, kAntialias,
+		kScrolling, kPointerSound, kSubtitles, kOn, kOff, kFast, kSlow,
+		kVolume, kBrightness, kCredits, kSaveSettings, kDefaultSettings,
+		kConfirmQuit, kYes, kNo, kQuitKey, kTextCount
 	};
 	explicit RunawayStrings(Common::Language language) :
 		_languageIndex(language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : 0) {}

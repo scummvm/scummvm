@@ -33,7 +33,7 @@ namespace Hollywood {
 class RunawayUI {
 public:
 	struct Command {
-		enum Type { kNone, kRoom, kExamineItem, kCombine, kSkipSpeech };
+		enum Type { kNone, kRoom, kExamineItem, kCombine, kSkipSpeech, kOpenMenu };
 		Type type = kNone;
 		RunawayVerb verb = kVerbWalk;
 		Common::Point mouse;
@@ -55,10 +55,10 @@ public:
 		const Common::U32String &committedCaption, const Common::U32String &subtitle, bool showSubtitles);
 
 private:
-	bool loadSurface(uint chunk, int width, int height, Graphics::ManagedSurface &surface);
 	Common::Rect itemRect(uint slot) const;
 	byte itemAt(Common::Point mouse) const;
 	bool overButton() const;
+	bool overOptions() const;
 	bool inViewport() const;
 	void setInventoryOpen(bool open);
 	void setVerb(RunawayVerb verb);
@@ -71,12 +71,12 @@ private:
 	const RunawayStrings &_strings;
 	Common::RandomSource _random;
 	RunawayFont _font;
-	Graphics::ManagedSurface _cursors, _demoLogo, _cursor, _inventoryButton, _returnButton;
+	Graphics::ManagedSurface _cursors, _demoLogo, _cursor, _inventoryButton, _returnButton, _optionsButton;
 	Graphics::ManagedSurface _inventoryBackground, _inventoryTexture, _icons;
 	RunawayAnimation _portrait, _idlePortrait;
 	Common::Point _mouse;
 	RunawayVerb _verb = kVerbWalk, _previousVerb = kVerbWalk;
-	byte _hovered = 0, _buttonFrame = 0, _pickupItem = 0;
+	byte _hovered = 0, _buttonFrame = 0, _optionsFrame = 0, _pickupItem = 0;
 	bool _inventoryOpen = false, _enteredInventory = false, _returnAfterPickup = false;
 	bool _pickupSoundPlayed = false;
 	bool _blocked = false, _speaking = false, _cursorPushed = false;

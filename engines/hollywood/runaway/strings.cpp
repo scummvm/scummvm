@@ -43,7 +43,31 @@ const char *const kText[RunawayStrings::kTextCount][3] = {
 	{"ZIEHE DEN STECKER DER K\303\234HLTRUHE HERAUS", "DEBRANCHER CONGELATEUR", "DESENCHUFAR CONGELADOR"},
 	{"HEMD", "CHEMISE", "CAMISA"},
 	{"PUTZLAPPEN", "PEAU DE CHAMOIS HUMIDE", "GAMUZA HUMEDECIDA"},
-	{"SCHMUTZLAPPEN", "PEAU DE CHAMOIS SALE", "GAMUZA MUGRIENTA"}
+	{"SCHMUTZLAPPEN", "PEAU DE CHAMOIS SALE", "GAMUZA MUGRIENTA"},
+	{"OPTIONEN", "OPTIONS", "OPCIONES"},
+	{"LADEN", "CHARGER", "CARGAR"},
+	{"SICHERN", "SAUVEGARDER", "SALVAR"},
+	{"L\303\226SCHEN", "EFFACER", "BORRAR"},
+	{"WEITERSPIELEN", "JOUER", "JUGAR"},
+	{"VERLASSEN", "QUITTER", "SALIR"},
+	{"MUSIK", "Musique", "M\303\272sica"},
+	{"ANTI-ALIASING", "Antialiasing des sprites", "Antidentado Sprite"},
+	{"SCROLLING", "Mode de d\303\251filement", "M\303\251todo Scroll"},
+	{"MAUSZEIGERKLICKEN", "Bruitage des ic\303\264nes", "Sonido puntero rat\303\263n"},
+	{"UNTERTITEL", "Sous-titres", "Subt\303\255tulos"},
+	{"EIN", "OUI", "ON"},
+	{"AUS", "NON", "OFF"},
+	{"SCHNELL", "RAPIDE", "R\303\201PIDO"},
+	{"LANGSAM", "FLUIDE", "LENTO"},
+	{"LAUTST\303\204RKE", "Volume", "Volumen"},
+	{"HELLIGKEIT", "Luminosit\303\251", "Brillo"},
+	{"MITWIRKENDE", "G\303\251n\303\251rique", "Cr\303\251ditos"},
+	{"EINSTELLUNGEN SICHERN", "Sauvegarder la configuration", "Salvar Configuraci\303\263n"},
+	{"VORGABEEINSTELLUNGEN", "Configuration par d\303\251faut", "Configuraci\303\263n Inicial"},
+	{"SIND SIE SICHER?", "CONFIRMER ?", "\302\277EST\303\201S SEGURO?"},
+	{"JA", "OUI", "S\303\215"},
+	{"NEIN", "NON", "NO"},
+	{"V", "Q", "L"}
 };
 
 const char *const kItemNames[][3] = {

@@ -52,9 +52,10 @@ const byte kGlyphMap[256] = {
 
 } // End of anonymous namespace
 
-bool RunawayFont::load() {
+bool RunawayFont::load(bool menuFont) {
 	Common::Array<byte> metrics;
-	if (!readRunawayGlobalChunk(125, _pixels) || !readRunawayGlobalChunk(126, metrics) ||
+	if (!readRunawayGlobalChunk(menuFont ? 148 : 125, _pixels) ||
+			!readRunawayGlobalChunk(menuFont ? 149 : 126, metrics) ||
 			(metrics.size() != 119 * 5 && metrics.size() != 150 * 5 && metrics.size() != 156 * 5))
 		return false;
 	_glyphs.resize(metrics.size() / 5);

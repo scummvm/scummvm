@@ -30,7 +30,13 @@ namespace Common {
 class Keymap;
 }
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace Hollywood {
+
+class RunawayMenu;
 
 // Runaway shares the archive and text formats with Hollywood Monsters, but
 // has its own RGB565 renderer, scene state and audio formats.
@@ -47,6 +53,7 @@ public:
 
 private:
 	Common::Error playIntro();
+	void pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &screen);
 	Common::Language _language;
 };
 
