@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/room_scene_runtime.h"
+#include "harvester/scene_entities.h"
 
 #include "harvester/detection.h"
 #include "harvester/monster.h"
@@ -140,8 +140,8 @@ static bool sameSceneObjectState(const ObjectRecord &lhs, const ObjectRecord &rh
 		lhs.identTextKey.equalsIgnoreCase(rhs.identTextKey) &&
 		lhs.interactionLabel.equalsIgnoreCase(rhs.interactionLabel) &&
 		lhs.currentOwnerOrRoom.equalsIgnoreCase(rhs.currentOwnerOrRoom) &&
-		RoomSceneRuntime::resolveSceneObjectSpritePathLocal(lhs).equalsIgnoreCase(RoomSceneRuntime::resolveSceneObjectSpritePathLocal(rhs)) &&
-		sameRect(RoomSceneRuntime::getSceneObjectBounds(lhs), RoomSceneRuntime::getSceneObjectBounds(rhs));
+		SceneEntities::resolveSceneObjectSpritePathLocal(lhs).equalsIgnoreCase(SceneEntities::resolveSceneObjectSpritePathLocal(rhs)) &&
+		sameRect(SceneEntities::getSceneObjectBounds(lhs), SceneEntities::getSceneObjectBounds(rhs));
 }
 
 static bool sameSceneRegionState(const RegionRecord &lhs, const RegionRecord &rhs) {
@@ -169,18 +169,18 @@ bool sameMonsterEntityState(const MonsterRecord &lhs, const MonsterRecord &rhs) 
 		lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
 }
 
-RoomSceneRuntime::RoomSceneRuntime(RoomSetupState &state, Script *script, ResourceManager *resources, EntityManager *entityManager)
+SceneEntities::SceneEntities(RoomSetupState &state, Script *script, ResourceManager *resources, EntityManager *entityManager)
 	: _state(state), _script(script), _resources(resources), _entityManager(entityManager) {
 	debugC(1, kDebugRoom, "Harvester: created room scene runtime room='%s' entities=%d",
 		_state.roomName.c_str(), _entityManager != nullptr);
 }
 
-bool RoomSceneRuntime::loadSceneResources(const RoomSetupState &state, RoomSceneResources &scene) const {
+bool SceneEntities::loadSceneResources(const RoomSetupState &state, SceneState &scene) const {
 	return _resources && loadRoomSceneResources(state, *_resources, scene);
 }
 
-bool RoomSceneRuntime::reconcileSceneEntitiesInPlace(const RoomSceneResources &previousScene,
-		RoomSetupState &updatedState, const RoomSceneResources &updatedScene) {
+bool SceneEntities::reconcileSceneEntitiesInPlace(const SceneState &previousScene,
+		RoomSetupState &updatedState, const SceneState &updatedScene) {
 	for (const ObjectRecord &object : previousScene.sceneObjects) {
 		if (!findSceneObjectByName(updatedScene.sceneObjects, object.objectName))
 			removeSceneEntityByName(object.objectName);
@@ -388,14 +388,11 @@ bool RoomSceneRuntime::reconcileSceneEntitiesInPlace(const RoomSceneResources &p
 	return true;
 }
 
-void RoomSceneRuntime::syncCurrentRoomRuntimeState(const Common::Array<RegionRecord> &sceneRegions) {
+void SceneEntities::syncCurrentRoomRuntimeState(const Common::Array<RegionRecord> &sceneRegions) {
 	Script *script = _script;
 	if (!script)
 		return;
-
-	debugC(3, kDebugRoom, "Harvester: syncing room runtime state room='%s' entities=%d",
-		_state.roomName.c_str(), _entityManager != nullptr);
-
+	
 	for (const RegionRecord &baseRegion : script->getRegions()) {
 		if (!baseRegion.roomName.equalsIgnoreCase(_state.roomName))
 			continue;
@@ -434,7 +431,7 @@ void RoomSceneRuntime::syncCurrentRoomRuntimeState(const Common::Array<RegionRec
 	}
 }
 
-bool RoomSceneRuntime::isTimerMaterializedInCurrentRoom(const Common::String &timerName) const {
+bool SceneEntities::isTimerMaterializedInCurrentRoom(const Common::String &timerName) const {
 	for (const TimerRecord &timer : _state.roomTimers) {
 		if (timer.timerName.equalsIgnoreCase(timerName))
 			return true;
@@ -443,7 +440,7 @@ bool RoomSceneRuntime::isTimerMaterializedInCurrentRoom(const Common::String &ti
 	return false;
 }
 
-void RoomSceneRuntime::syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
+void SceneEntities::syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
 		bool includeCurrentRoomTimers) {
 	Script *script = _script;
 	if (!script || !_entityManager || previousTimerRecords.empty())
@@ -490,7 +487,7 @@ void RoomSceneRuntime::syncGlobalTimerEntities(const Common::Array<TimerRecord> 
 	}
 }
 
-void RoomSceneRuntime::removeSceneEntityByName(const Common::String &entityName) {
+void SceneEntities::removeSceneEntityByName(const Common::String &entityName) {
 	if (!_entityManager)
 		return;
 
@@ -498,13 +495,13 @@ void RoomSceneRuntime::removeSceneEntityByName(const Common::String &entityName)
 	delete entity;
 }
 
-Common::Rect RoomSceneRuntime::getSceneObjectBounds(const ObjectRecord &object) {
+Common::Rect SceneEntities::getSceneObjectBounds(const ObjectRecord &object) {
 	if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
 		return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
 	return Common::Rect();
 }
 
-Common::String RoomSceneRuntime::resolveSceneObjectSpritePathLocal(const ObjectRecord &object) {
+Common::String SceneEntities::resolveSceneObjectSpritePathLocal(const ObjectRecord &object) {
 	const bool atInitialPlacement = object.currentX == object.initialX &&
 		object.currentY == object.initialY &&
 		object.currentOwnerOrRoom.equalsIgnoreCase(object.initialOwnerOrRoom);
@@ -514,7 +511,7 @@ Common::String RoomSceneRuntime::resolveSceneObjectSpritePathLocal(const ObjectR
 	return object.spritePath;
 }
 
-bool RoomSceneRuntime::isInteractiveSceneHotspot(const ObjectRecord &object) const {
+bool SceneEntities::isInteractiveSceneHotspot(const ObjectRecord &object) const {
 	if (object.operatable || !object.actionTag.empty())
 		return true;
 
@@ -528,7 +525,7 @@ bool RoomSceneRuntime::isInteractiveSceneHotspot(const ObjectRecord &object) con
 	return script->resolveObjectInspectText(object, inspectText);
 }
 
-RuntimeEntityClass RoomSceneRuntime::resolveSceneObjectClassLocal(const ObjectRecord &object, const Entity *entity) const {
+RuntimeEntityClass SceneEntities::resolveSceneObjectClassLocal(const ObjectRecord &object, const Entity *entity) const {
 	if (entity) {
 		return ((!_state.backgroundObjectName.empty() &&
 				object.objectName.equalsIgnoreCase(_state.backgroundObjectName)) ||
@@ -543,7 +540,7 @@ RuntimeEntityClass RoomSceneRuntime::resolveSceneObjectClassLocal(const ObjectRe
 		: kRuntimeEntityClassDisabledHotspot;
 }
 
-void RoomSceneRuntime::spawnSceneObjectEntityFromRecord(const ObjectRecord &object) {
+void SceneEntities::spawnSceneObjectEntityFromRecord(const ObjectRecord &object) {
 	if (!_entityManager)
 		return;
 
@@ -568,13 +565,13 @@ void RoomSceneRuntime::spawnSceneObjectEntityFromRecord(const ObjectRecord &obje
 		object.objectName.c_str(), spritePath.c_str(), entity->getClassId());
 }
 
-Common::Rect RoomSceneRuntime::getSceneRegionBounds(const RegionRecord &region) {
+Common::Rect SceneEntities::getSceneRegionBounds(const RegionRecord &region) {
 	if (region.right > region.left && region.bottom > region.top)
 		return Common::Rect(region.left, region.top, region.right + 1, region.bottom + 1);
 	return Common::Rect();
 }
 
-void RoomSceneRuntime::spawnSceneRegionEntityFromRecord(const RegionRecord &region) {
+void SceneEntities::spawnSceneRegionEntityFromRecord(const RegionRecord &region) {
 	if (!_entityManager)
 		return;
 
@@ -599,15 +596,15 @@ void RoomSceneRuntime::spawnSceneRegionEntityFromRecord(const RegionRecord &regi
 		region.minZ, region.maxZ, region.desiredFacing, region.cursorEnabled, region.actionTag.c_str());
 }
 
-bool RoomSceneRuntime::shouldSpawnRoomNpcEntity(const NpcRecord &npc) {
+bool SceneEntities::shouldSpawnRoomNpcEntity(const NpcRecord &npc) {
 	return npc.visible && !npc.deathOrMonsterfyFlag;
 }
 
-bool RoomSceneRuntime::shouldSpawnRoomMonsterEntity(const MonsterRecord &monster) {
+bool SceneEntities::shouldSpawnRoomMonsterEntity(const MonsterRecord &monster) {
 	return monster.visible;
 }
 
-bool RoomSceneRuntime::applyRoomNpcPlacement(Entity &entity, const NpcRecord &npc) {
+bool SceneEntities::applyRoomNpcPlacement(Entity &entity, const NpcRecord &npc) {
 	int width = 0;
 	int height = 0;
 	int xOffset = 0;
@@ -622,7 +619,7 @@ bool RoomSceneRuntime::applyRoomNpcPlacement(Entity &entity, const NpcRecord &np
 	return true;
 }
 
-Entity *RoomSceneRuntime::spawnSceneNpcEntityFromRecord(const NpcRecord &npc) {
+Entity *SceneEntities::spawnSceneNpcEntityFromRecord(const NpcRecord &npc) {
 	const bool shouldSpawnNpc = shouldSpawnRoomNpcEntity(npc);
 	const bool preservedCorpse = !npc.active &&
 		npc.runtimeSpawned &&
@@ -658,7 +655,7 @@ Entity *RoomSceneRuntime::spawnSceneNpcEntityFromRecord(const NpcRecord &npc) {
 	return entity;
 }
 
-Entity *RoomSceneRuntime::spawnSceneMonsterEntityFromRecord(const RoomSetupState &roomState, const MonsterRecord &monster) {
+Entity *SceneEntities::spawnSceneMonsterEntityFromRecord(const RoomSetupState &roomState, const MonsterRecord &monster) {
 	if (!_entityManager || !shouldSpawnRoomMonsterEntity(monster))
 		return nullptr;
 
@@ -682,7 +679,7 @@ Entity *RoomSceneRuntime::spawnSceneMonsterEntityFromRecord(const RoomSetupState
 	return entity;
 }
 
-void RoomSceneRuntime::restoreRoomMonsterAnimations() {
+void SceneEntities::restoreRoomMonsterAnimations() {
 	if (_entityManager) {
 		for (const MonsterRecord &monster : _state.roomMonsters) {
 			Entity *entity = _entityManager->findSceneEntityByName(monster.monsterName);
@@ -692,7 +689,7 @@ void RoomSceneRuntime::restoreRoomMonsterAnimations() {
 	}
 }
 
-void RoomSceneRuntime::populateRoomRegions() {
+void SceneEntities::populateRoomRegions() {
 	if (!_entityManager)
 		return;
 
@@ -725,7 +722,7 @@ void RoomSceneRuntime::populateRoomRegions() {
 	}
 }
 
-void RoomSceneRuntime::populateRoomObjects(const Common::Array<ObjectRecord> &drawableObjects) {
+void SceneEntities::populateRoomObjects(const Common::Array<ObjectRecord> &drawableObjects) {
 	if (!_entityManager)
 		return;
 
@@ -769,7 +766,7 @@ void RoomSceneRuntime::populateRoomObjects(const Common::Array<ObjectRecord> &dr
 	}
 }
 
-void RoomSceneRuntime::populateRoomNpcs() {
+void SceneEntities::populateRoomNpcs() {
 	if (!_entityManager)
 		return;
 
@@ -815,7 +812,7 @@ void RoomSceneRuntime::populateRoomNpcs() {
 	}
 }
 
-void RoomSceneRuntime::populateRoomMonsters() {
+void SceneEntities::populateRoomMonsters() {
 	if (!_entityManager)
 		return;
 

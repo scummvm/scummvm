@@ -19,14 +19,16 @@
  *
  */
 
-#ifndef HARVESTER_ROOM_SESSION_H
-#define HARVESTER_ROOM_SESSION_H
+#ifndef HARVESTER_SCENE_H
+#define HARVESTER_SCENE_H
 
+#include "common/error.h"
+#include "common/str.h"
 #include "harvester/room_combat.h"
 #include "harvester/room_input.h"
 #include "harvester/room_interaction.h"
 #include "harvester/room_presentation.h"
-#include "harvester/room_scene_runtime.h"
+#include "harvester/scene_entities.h"
 #include "harvester/room_support.h"
 #include "harvester/runtime_entity.h"
 
@@ -36,6 +38,19 @@ class EntityManager;
 class Flow;
 class InventorySystem;
 
+class SceneRunner {
+public:
+	SceneRunner(HarvesterEngine &engine, InventorySystem &inventory,
+		CheatSystem &cheats);
+
+	Common::Error runRoomLoop(Flow &flow, const Common::String &targetName, bool targetIsRoomName);
+
+private:
+	HarvesterEngine &_engine;
+	InventorySystem &_inventory;
+	CheatSystem &_cheats;
+};
+
 struct RoomPendingTransition {
 	Common::String roomName;
 	bool isRoomName = false;
@@ -43,11 +58,9 @@ struct RoomPendingTransition {
 	SaveRoomState savedRoomState;
 };
 
-// Scoped to one runRoomLoop iteration, including time spent in nested closeups.
-// Entity pointers remain owned by EntityManager.
-class RoomSession : public RoomInteractionCallbacks {
+class Scene : public RoomInteractionCallbacks {
 public:
-	RoomSession(HarvesterEngine &engine, Flow &flow, RoomSceneResources &scene, EntityManager *entityManager,
+	Scene(HarvesterEngine &engine, Flow &flow, SceneState &scene, EntityManager *entityManager,
 		InventorySystem &inventory, CheatSystem &cheats, const RoomViewResources &view, bool canExitCloseupToParent);
 
 	RoomPlayerState &getPlayerState() { return _playerState; }
@@ -108,10 +121,10 @@ private:
 
 	HarvesterEngine &_engine;
 	Flow &_flow;
-	RoomSceneResources &_scene;
+	SceneState &_scene;
 	EntityManager *_entityManager;
 	InventorySystem &_inventory;
-	RoomSceneRuntime _sceneRuntime;
+	SceneEntities _sceneRuntime;
 	RoomPlayerState _playerState;
 	RoomCombat _combat;
 	RoomCombatEffects _combatEffects;
@@ -130,4 +143,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_ROOM_SESSION_H
+#endif // HARVESTER_SCENE_H

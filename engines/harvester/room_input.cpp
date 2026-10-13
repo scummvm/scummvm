@@ -32,7 +32,7 @@
 #include "harvester/player.h"
 #include "harvester/room_interaction.h"
 #include "harvester/room_presentation.h"
-#include "harvester/room_session.h"
+#include "harvester/scene.h"
 #include "harvester/room_support.h"
 
 namespace Harvester {
@@ -75,7 +75,7 @@ static void debugLogInventoryClick(const char *buttonLabel, const Common::Point 
 		InventorySystem::isStatusObject(inventoryHover->object));
 }
 
-RoomInput::RoomInput(HarvesterEngine &engine, Flow &flow, RoomSession &session, RoomSceneResources &scene,
+RoomInput::RoomInput(HarvesterEngine &engine, Flow &flow, Scene &session, SceneState &scene,
 		InventorySystem &inventory, CheatSystem &cheats,
 		RoomItemInteractions &roomItems, RoomInteractionProcessor &interactionProcessor,
 		RoomPresentationState &presentationState,

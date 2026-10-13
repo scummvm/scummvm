@@ -30,7 +30,7 @@
 #include "harvester/harvester.h"
 #include "harvester/player.h"
 #include "harvester/room_interaction.h"
-#include "harvester/room_scene_runtime.h"
+#include "harvester/scene_entities.h"
 #include "harvester/runtime_entity.h"
 
 namespace Harvester {
@@ -970,7 +970,7 @@ MonsterRecord *RoomCombat::selectMonsterAttackContactTarget(RoomSetupState &stat
 }
 
 RoomNpcCombatUpdateResult RoomCombat::updateRoomNpcCombat(HarvesterEngine &engine, RoomSetupState &state,
-		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime,
+		EntityManager *entityManager, SceneEntities &sceneRuntime,
 		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
 	RoomNpcCombatUpdateResult result;
 	for (uint i = 0; i < state.roomNpcs.size(); ++i) {
@@ -1066,7 +1066,7 @@ bool RoomCombat::beginNpcDeathTransition(HarvesterEngine &engine,
 }
 
 Common::Error RoomCombat::finalizeNpcDeathTransition(HarvesterEngine &engine,
-		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime, NpcRecord &npc, RoomNpcCombatState &combatState,
+		EntityManager *entityManager, SceneEntities &sceneRuntime, NpcRecord &npc, RoomNpcCombatState &combatState,
 		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) const {
 	Script *script = engine.getScript();
 	Entity *npcEntity = findSceneRuntimeEntity(entityManager, npc.npcName);
@@ -1257,7 +1257,7 @@ Common::Error RoomCombat::killDebugActiveMonster(HarvesterEngine &engine, RoomSe
 
 Common::Error RoomCombat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetupState &state,
 		RoomPlayerState &playerState, RoomIdleAnimationState &idleState, EntityManager *entityManager,
-		RoomSceneRuntime &sceneRuntime, RoomCombatEffects &combatEffects, const CheatSystem &cheats,
+		SceneEntities &sceneRuntime, RoomCombatEffects &combatEffects, const CheatSystem &cheats,
 		RoomInteractionCallbacks &callbacks, RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
 	if (!entityManager)
 		return Common::kNoError;
@@ -1580,7 +1580,7 @@ Common::Error RoomCombat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomS
 
 Common::Error RoomCombat::resolvePlayerAttackContact(HarvesterEngine &engine,
 		RoomSetupState &state, RoomPlayerState &playerState,
-		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime,
+		EntityManager *entityManager, SceneEntities &sceneRuntime,
 		RoomCombatEffects &combatEffects,
 		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
 	if (!playerState.attackActive || playerState.attackContactResolved || !playerState.entity ||

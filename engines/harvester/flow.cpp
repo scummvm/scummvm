@@ -43,7 +43,7 @@
 #include "harvester/palette_utils.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
-#include "harvester/room_scene_runtime.h"
+#include "harvester/scene_entities.h"
 #include "harvester/art.h"
 #include "harvester/monster.h"
 #include "harvester/player.h"
@@ -205,7 +205,7 @@ static void drawRoomDebugLabel(Graphics::Screen &screen, const Graphics::Font &f
 }
 
 static void drawRoomDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
-		const RoomSceneResources &scene) {
+		const SceneState &scene) {
 	if (!engine.isRoomDebugEnabled())
 		return;
 
@@ -254,7 +254,7 @@ static void drawRoomDebugOverlay(HarvesterEngine &engine, Graphics::Screen &scre
 }
 
 static void drawCombatDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
-		const RoomSceneResources &scene) {
+		const SceneState &scene) {
 	if (!engine.isCombatDebugEnabled())
 		return;
 
@@ -348,7 +348,7 @@ static void drawPathfindingBlockerOutline(Graphics::Screen &screen, EntityManage
 }
 
 static void drawPathfindingDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
-		const RoomSceneResources &scene) {
+		const SceneState &scene) {
 	if (!engine.isPathfindingDebugEnabled())
 		return;
 
@@ -384,7 +384,7 @@ static Common::String resolveTimerDebugLabel(const TimerRecord &timer, const Ent
 }
 
 static void drawTimerDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
-		const RoomSceneResources &) {
+		const SceneState &) {
 	if (!engine.isTimerDebugEnabled())
 		return;
 
@@ -574,7 +574,7 @@ static uint32 hashPalette(const byte *palette) {
 	return hash;
 }
 
-void logScenePaletteSummary(const char *label, const RoomSceneResources &scene, float brightness) {
+void logScenePaletteSummary(const char *label, const SceneState &scene, float brightness) {
 	const byte *palette = scene.palette;
 	byte minValue = 0;
 	byte maxValue = 0;
@@ -768,8 +768,8 @@ static void queueSceneObject(const char *source, const ObjectRecord &object,
 	logSceneObjectSelection("queued", source, object);
 }
 
-bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, RoomSceneResources &scene) {
-	scene = RoomSceneResources();
+bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, SceneState &scene) {
+	scene = SceneState();
 	scene.state = state;
 	scene.targetPaletteBrightness = state.paletteBrightness;
 	if (!loadPaletteResource(resources, state.palettePath, scene.palette)) {
@@ -804,7 +804,7 @@ bool shouldRunStartupRoomProbe() {
 		ConfMan.getBool("harvester_debug_probe_startup_room");
 }
 
-void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const RoomSceneResources &scene,
+void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const SceneState &scene,
 		float brightness) {
 	setScaledPalette(screen, scene.palette, brightness);
 	screen.fillRect(screen.getBounds(), 0);
@@ -1201,7 +1201,7 @@ static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Arra
 	return false;
 }
 
-void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scene,
+void logStartupRoomProbe(HarvesterEngine &engine, const SceneState &scene,
 		const Common::String &entranceName, Common::Point &mousePos,
 		const MenuTextConfig &menuTextConfig) {
 	EntityManager *entityManager = engine.getRuntimeEntities();
@@ -1329,7 +1329,7 @@ static Common::String trimAsciiLine(const Common::String &value) {
 	return value.substr(start, end - start);
 }
 
-static bool loadQuickTipsScene(HarvesterEngine &engine, RoomSceneResources &scene) {
+static bool loadQuickTipsScene(HarvesterEngine &engine, SceneState &scene) {
 	RoomSetupState state;
 	// The original startup path enters the START room first and overlays quick tips on top of it.
 	if (!engine.getScript()->resolveRoomSetupState("START", state, *engine.getResources()))
@@ -1338,7 +1338,7 @@ static bool loadQuickTipsScene(HarvesterEngine &engine, RoomSceneResources &scen
 	return loadRoomSceneResources(state, *engine.getResources(), scene);
 }
 
-static void renderQuickTipsScreen(HarvesterEngine &engine, const RoomSceneResources &scene,
+static void renderQuickTipsScreen(HarvesterEngine &engine, const SceneState &scene,
 		const MenuTextConfig &config, const QuickTipsLayout &layout,
 		const Common::String &tipText) {
 	Graphics::Screen *screen = engine.getScreen();
@@ -1510,7 +1510,7 @@ Common::Error Flow::runQuickTips() {
 	if (transitionError.getCode() != Common::kNoError)
 		return transitionError;
 
-	RoomSceneResources scene;
+	SceneState scene;
 	if (!loadQuickTipsScene(_engine, scene))
 		return Common::kReadingFailed;
 
@@ -2142,7 +2142,7 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 	if (!entityManager)
 		return false;
 
-	RoomSceneRuntime sceneRuntime(state, _engine.getScript(), _engine.getResources(), entityManager);
+	SceneEntities sceneRuntime(state, _engine.getScript(), _engine.getResources(), entityManager);
 	Entity *preservedPlayer = entityManager->detachSceneEntityByName(kPlayerActorEntityName);
 	entityManager->clearSceneEntities(true);
 	sceneRuntime.populateRoomRegions();

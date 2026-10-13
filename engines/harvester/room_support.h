@@ -43,7 +43,7 @@ class DialogueSystem;
 struct IndexedBitmap;
 struct MenuTextConfig;
 
-struct RoomSceneResources {
+struct SceneState {
 	RoomSetupState state;
 	byte palette[256 * 3] = { 0 };
 	Common::Array<ObjectRecord> sceneObjects;
@@ -130,13 +130,13 @@ struct RoomIdleAnimationState {
 bool sameMonsterEntityState(const MonsterRecord &lhs, const MonsterRecord &rhs);
 bool applyRoomActorPlacement(const RoomSetupState &state, Entity &entity,
 	int centerX, int bottomY, float z, const Common::String *entranceName = nullptr);
-void logScenePaletteSummary(const char *label, const RoomSceneResources &scene, float brightness);
+void logScenePaletteSummary(const char *label, const SceneState &scene, float brightness);
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap);
 Common::Rect getRoomObjectHotspotBounds(const ObjectRecord &object);
 bool shouldDisplaySceneAnimation(const AnimRecord &anim);
-bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, RoomSceneResources &scene);
+bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, SceneState &scene);
 bool shouldRunStartupRoomProbe();
-void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const RoomSceneResources &scene,
+void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const SceneState &scene,
 	float brightness);
 const ObjectRecord *findSceneObjectByName(const Common::Array<ObjectRecord> &objects,
 	const Common::String &objectName);
@@ -157,7 +157,7 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 	const Common::Array<RegionRecord> &regions,
 	const Common::Point &mousePos, const MenuTextConfig &menuTextConfig,
 	const DialogueSystem *dialogue = nullptr);
-void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scene,
+void logStartupRoomProbe(HarvesterEngine &engine, const SceneState &scene,
 	const Common::String &entranceName, Common::Point &mousePos,
 	const MenuTextConfig &menuTextConfig);
 

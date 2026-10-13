@@ -33,7 +33,7 @@ class Flow;
 class HarvesterEngine;
 class InventorySystem;
 class RoomInteractionProcessor;
-class RoomSceneRuntime;
+class SceneEntities;
 struct IndexedBitmap;
 
 extern const char *const kExitCloseupPendingRoomChange;
@@ -60,8 +60,8 @@ public:
 
 class RoomItemInteractions {
 public:
-	RoomItemInteractions(HarvesterEngine &engine, RoomSceneResources &scene,
-		RoomSceneRuntime &sceneRuntime, InventorySystem &inventory, const Common::String &pendingRoomChange);
+	RoomItemInteractions(HarvesterEngine &engine, SceneState &scene,
+		SceneEntities &sceneRuntime, InventorySystem &inventory, const Common::String &pendingRoomChange);
 
 	const Common::String &getCarriedRoomItemLabel() const { return _carriedRoomItemLabel; }
 	const IndexedBitmap &getCarriedRoomItemBitmap() const { return _carriedRoomItemBitmap; }
@@ -85,8 +85,8 @@ private:
 		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw);
 
 	HarvesterEngine &_engine;
-	RoomSceneResources &_scene;
-	RoomSceneRuntime &_sceneRuntime;
+	SceneState &_scene;
+	SceneEntities &_sceneRuntime;
 	InventorySystem &_inventory;
 	const Common::String &_pendingRoomChange;
 	Common::String _carriedRoomItemName;
@@ -96,7 +96,7 @@ private:
 
 class RoomInteractionProcessor {
 public:
-	RoomInteractionProcessor(HarvesterEngine &engine, Flow &flow, RoomSceneResources &scene,
+	RoomInteractionProcessor(HarvesterEngine &engine, Flow &flow, SceneState &scene,
 		RoomPlayerState &playerState, Common::String &pendingRegionName,
 		Common::String &pendingRoomChange, bool &pendingRoomChangeIsRoomName,
 		bool &pendingRoomChangeUsesSavedRoomState, SaveRoomState &pendingRoomChangeSavedRoomState,
@@ -119,7 +119,7 @@ public:
 private:
 	HarvesterEngine &_engine;
 	Flow &_flow;
-	RoomSceneResources &_scene;
+	SceneState &_scene;
 	RoomPlayerState &_playerState;
 	Common::String &_pendingRegionName;
 	Common::String &_pendingRoomChange;

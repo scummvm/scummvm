@@ -34,7 +34,7 @@ class HarvesterEngine;
 class RoomCombatEffects;
 class RoomInteractionCallbacks;
 class RoomInteractionProcessor;
-class RoomSceneRuntime;
+class SceneEntities;
 
 extern const int kRoomMonsterAnimationRate;
 extern const int kNativeMonsterAttackAnimationRate;
@@ -155,11 +155,11 @@ public:
 
 	Common::Error updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetupState &state,
 		RoomPlayerState &playerState, RoomIdleAnimationState &idleState, EntityManager *entityManager,
-		RoomSceneRuntime &sceneRuntime, RoomCombatEffects &combatEffects, const CheatSystem &cheats,
+		SceneEntities &sceneRuntime, RoomCombatEffects &combatEffects, const CheatSystem &cheats,
 		RoomInteractionCallbacks &callbacks, RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
 	Common::Error resolvePlayerAttackContact(HarvesterEngine &engine,
 		RoomSetupState &state, RoomPlayerState &playerState,
-		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime,
+		EntityManager *entityManager, SceneEntities &sceneRuntime,
 		RoomCombatEffects &combatEffects,
 		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
 
@@ -168,13 +168,13 @@ private:
 	bool queueInnerSanctumHerrillDeathAfterMuck(HarvesterEngine &engine, RoomSetupState &state, const MonsterRecord &monster) const;
 	// Called after resizeCombatStates; NPC finalization ends the entire combat update.
 	RoomNpcCombatUpdateResult updateRoomNpcCombat(HarvesterEngine &engine, RoomSetupState &state,
-		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime,
+		EntityManager *entityManager, SceneEntities &sceneRuntime,
 		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
 
 	bool beginNpcDeathTransition(HarvesterEngine &engine,
 		NpcRecord &npc, Entity &npcEntity, RoomNpcCombatState &combatState, int deathDamageType, bool &needsRedraw) const;
 	Common::Error finalizeNpcDeathTransition(HarvesterEngine &engine,
-		EntityManager *entityManager, RoomSceneRuntime &sceneRuntime, NpcRecord &npc, RoomNpcCombatState &combatState,
+		EntityManager *entityManager, SceneEntities &sceneRuntime, NpcRecord &npc, RoomNpcCombatState &combatState,
 		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) const;
 
 	void startMonsterHitReaction(HarvesterEngine &engine,

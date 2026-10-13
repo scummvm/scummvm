@@ -34,11 +34,11 @@ class HarvesterEngine;
 class InventorySystem;
 class RoomInteractionProcessor;
 class RoomItemInteractions;
-class RoomSession;
+class Scene;
 struct ObjectRecord;
 struct ResolvedText;
 struct RoomPresentationState;
-struct RoomSceneResources;
+struct SceneState;
 
 struct RoomInputState {
 	bool moveLeft = false;
@@ -65,7 +65,7 @@ struct RoomInputResult {
 
 class RoomInput {
 public:
-	RoomInput(HarvesterEngine &engine, Flow &flow, RoomSession &session, RoomSceneResources &scene,
+	RoomInput(HarvesterEngine &engine, Flow &flow, Scene &session, SceneState &scene,
 		InventorySystem &inventory, CheatSystem &cheats,
 		RoomItemInteractions &roomItems, RoomInteractionProcessor &interactionProcessor,
 		RoomPresentationState &presentationState,
@@ -87,8 +87,8 @@ private:
 
 	HarvesterEngine &_engine;
 	Flow &_flow;
-	RoomSession &_session;
-	RoomSceneResources &_scene;
+	Scene &_session;
+	SceneState &_scene;
 	InventorySystem &_inventory;
 	CheatSystem &_cheats;
 	RoomItemInteractions &_roomItems;

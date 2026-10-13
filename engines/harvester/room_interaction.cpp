@@ -31,7 +31,7 @@
 #include "harvester/harvester.h"
 #include "harvester/inventory.h"
 #include "harvester/player.h"
-#include "harvester/room_scene_runtime.h"
+#include "harvester/scene_entities.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
 
@@ -74,8 +74,8 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 	return decodeBitmap(data, bitmap);
 }
 
-RoomItemInteractions::RoomItemInteractions(HarvesterEngine &engine, RoomSceneResources &scene,
-		RoomSceneRuntime &sceneRuntime, InventorySystem &inventory, const Common::String &pendingRoomChange)
+RoomItemInteractions::RoomItemInteractions(HarvesterEngine &engine, SceneState &scene,
+		SceneEntities &sceneRuntime, InventorySystem &inventory, const Common::String &pendingRoomChange)
 	: _engine(engine), _scene(scene), _sceneRuntime(sceneRuntime), _inventory(inventory),
 	  _pendingRoomChange(pendingRoomChange) {
 }
@@ -345,7 +345,7 @@ Common::Error RoomItemInteractions::handleRoomItemPickup(const ObjectRecord &obj
 }
 
 RoomInteractionProcessor::RoomInteractionProcessor(HarvesterEngine &engine, Flow &flow,
-		RoomSceneResources &scene, RoomPlayerState &playerState,
+		SceneState &scene, RoomPlayerState &playerState,
 		Common::String &pendingRegionName, Common::String &pendingRoomChange,
 		bool &pendingRoomChangeIsRoomName, bool &pendingRoomChangeUsesSavedRoomState,
 		SaveRoomState &pendingRoomChangeSavedRoomState, bool canExitCloseupToParent,

@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/room_session.h"
+#include "harvester/scene.h"
 
 #include "common/algorithm.h"
 #include "common/events.h"
@@ -35,6 +35,18 @@
 #include "harvester/player.h"
 #include "harvester/room_combat.h"
 #include "harvester/runtime_entity.h"
+
+#include "common/ptr.h"
+#include "graphics/blit.h"
+#include "graphics/fontman.h"
+#include "harvester/cft_font.h"
+#include "harvester/cheats.h"
+#include "harvester/resources.h"
+#include "harvester/monster.h"
+#include "harvester/room_interaction.h"
+#include "harvester/room_input.h"
+#include "harvester/room_presentation.h"
+#include "harvester/room_support.h"
 
 namespace Harvester {
 
@@ -109,7 +121,7 @@ static void drawCombatLoadoutResourceIcons(Graphics::Screen &screen, const Art &
 			kNativeCombatResourceIconsY);
 }
 
-RoomSession::RoomSession(HarvesterEngine &engine, Flow &flow, RoomSceneResources &scene, EntityManager *entityManager,
+Scene::Scene(HarvesterEngine &engine, Flow &flow, SceneState &scene, EntityManager *entityManager,
 		InventorySystem &inventory, CheatSystem &cheats, const RoomViewResources &view, bool canExitCloseupToParent)
 	: _engine(engine), _flow(flow), _scene(scene), _entityManager(entityManager), _inventory(inventory),
 	  _sceneRuntime(scene.state, engine.getScript(), engine.getResources(), entityManager), _combatEffects(entityManager),
@@ -121,23 +133,23 @@ RoomSession::RoomSession(HarvesterEngine &engine, Flow &flow, RoomSceneResources
 		canExitCloseupToParent, *this) {
 }
 
-void RoomSession::resetIdleState() {
+void Scene::resetIdleState() {
 	_idleState = RoomIdleAnimationState();
 	_idleState.activityTick = Player::getRuntimeClockTicks();
 	_idleState.resetTick = _idleState.activityTick;
 	Player::updateIdleTrigger(_idleState);
 }
 
-void RoomSession::notePlayerActivity() {
+void Scene::notePlayerActivity() {
 	_idleState.activityTick = Player::getRuntimeClockTicks();
 	Player::updateIdleTrigger(_idleState);
 }
 
-bool RoomSession::isPlayerCombatLocked() const {
+bool Scene::isPlayerCombatLocked() const {
 	return _playerState.attackActive || _playerState.hitActive || _playerState.deathActive;
 }
 
-bool RoomSession::cancelPlayerAttackAnimation() {
+bool Scene::cancelPlayerAttackAnimation() {
 	if (!_playerState.attackActive)
 		return false;
 
@@ -159,7 +171,7 @@ bool RoomSession::cancelPlayerAttackAnimation() {
 	return Player::setIdleAnimation(_playerState, resumeFacing);
 }
 
-void RoomSession::stopPlayerRegionInteraction() {
+void Scene::stopPlayerRegionInteraction() {
 	_inputState.moveLeft = false;
 	_inputState.moveRight = false;
 	_inputState.moveUp = false;
@@ -174,11 +186,11 @@ void RoomSession::stopPlayerRegionInteraction() {
 	syncPlayerPlacement();
 }
 
-void RoomSession::syncPlayerPlacement() {
+void Scene::syncPlayerPlacement() {
 	Player::syncAnimationPlacement(_playerState);
 }
 
-void RoomSession::captureCurrentSaveState() {
+void Scene::captureCurrentSaveState() {
 	syncPlayerPlacement();
 	_sceneRuntime.syncCurrentRoomRuntimeState(_scene.sceneRegions);
 	const int facing = _playerState.facing >= 0 ? _playerState.facing : _scene.state.playerFacing;
@@ -187,7 +199,7 @@ void RoomSession::captureCurrentSaveState() {
 		_scene.state.discNumber, _engine.getMusicPath());
 }
 
-bool RoomSession::applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState) {
+bool Scene::applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState) {
 	Script *script = _engine.getScript();
 	ResourceManager *resources = _engine.getResources();
 	if (!script || !resources)
@@ -206,7 +218,7 @@ bool RoomSession::applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteSt
 	}
 	updatedState.audioCommands = Common::move(entryAudioCommands);
 
-	RoomSceneResources updatedScene;
+	SceneState updatedScene;
 	if (!_sceneRuntime.loadSceneResources(updatedState, updatedScene))
 		return false;
 	Common::Array<RoomMonsterCombatState> updatedMonsterCombatStates =
@@ -237,7 +249,7 @@ bool RoomSession::applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteSt
 	return _inventory.refresh();
 }
 
-bool RoomSession::refreshCurrentScene(bool preservePlayerPlacement) {
+bool Scene::refreshCurrentScene(bool preservePlayerPlacement) {
 	debugC(2, kDebugRoom, "Harvester: refreshing room scene room='%s' preserve_player_placement=%d",
 		_scene.state.roomName.c_str(), preservePlayerPlacement);
 	Common::Array<AudioCommand> entryAudioCommands = _scene.state.audioCommands;
@@ -265,7 +277,7 @@ bool RoomSession::refreshCurrentScene(bool preservePlayerPlacement) {
 	return _inventory.refresh();
 }
 
-void RoomSession::initializePlayerState() {
+void Scene::initializePlayerState() {
 	_playerState.entity = _entityManager ? _entityManager->findSceneEntityByName("PLAYER") : nullptr;
 	_playerState.centerX = _scene.state.playerSpawnX;
 	_playerState.bottomY = _scene.state.playerSpawnY;
@@ -278,7 +290,7 @@ void RoomSession::initializePlayerState() {
 	_combat.initializeCombatStates(_scene.state);
 }
 
-void RoomSession::syncAnimatedRoomActorPlacement() {
+void Scene::syncAnimatedRoomActorPlacement() {
 	Player::syncAnimationPlacement(_playerState);
 	if (!_entityManager)
 		return;
@@ -293,7 +305,7 @@ void RoomSession::syncAnimatedRoomActorPlacement() {
 	}
 }
 
-Common::Error RoomSession::runRoomExitCommands() {
+Common::Error Scene::runRoomExitCommands() {
 	InteractionResult exitInteraction;
 	if (!_engine.getScript()->executeRoomExitCommands(_scene.state.roomName, exitInteraction))
 		return Common::kReadingFailed;
@@ -345,7 +357,7 @@ Common::Error RoomSession::runRoomExitCommands() {
 	return Common::kNoError;
 }
 
-void RoomSession::applyPlayerGotoXZ(int x, int z) {
+void Scene::applyPlayerGotoXZ(int x, int z) {
 	_playerState.hasMoveTarget = false;
 	_playerState.turnActive = false;
 	_playerState.turnTargetFacing = -1;
@@ -375,7 +387,7 @@ void RoomSession::applyPlayerGotoXZ(int x, int z) {
 	captureCurrentSaveState();
 }
 
-void RoomSession::requestPlayerGameOver(const char *reason, const Common::String &sourceName) {
+void Scene::requestPlayerGameOver(const char *reason, const Common::String &sourceName) {
 	if (_flow.hasPendingMainMenuReturn())
 		return;
 
@@ -388,7 +400,7 @@ void RoomSession::requestPlayerGameOver(const char *reason, const Common::String
 	_flow.requestGameOverReturn();
 }
 
-void RoomSession::startPlayerDefeatSequence(const char *reason, const Common::String &sourceName, int damageType) {
+void Scene::startPlayerDefeatSequence(const char *reason, const Common::String &sourceName, int damageType) {
 	if (_flow.hasPendingMainMenuReturn() || _playerState.deathActive)
 		return;
 
@@ -422,7 +434,7 @@ void RoomSession::startPlayerDefeatSequence(const char *reason, const Common::St
 			: 0);
 }
 
-RoomInputResult RoomSession::runRoomEntryInteraction(const InteractionResult &roomEntryInteraction) {
+RoomInputResult Scene::runRoomEntryInteraction(const InteractionResult &roomEntryInteraction) {
 	bool didEntryTransition = false;
 	Common::Error entryInteractionError = _interactionProcessor.handleInteractionResult(
 		roomEntryInteraction, didEntryTransition, Common::String());
@@ -433,7 +445,7 @@ RoomInputResult RoomSession::runRoomEntryInteraction(const InteractionResult &ro
 	return RoomInputResult();
 }
 
-void RoomSession::updateRoomInterface(bool &needsRedraw) {
+void Scene::updateRoomInterface(bool &needsRedraw) {
 	captureCurrentSaveState();
 	if (_inventory.isOpen() && _inventory.refreshIfRuntimeStateChanged())
 		needsRedraw = true;
@@ -451,7 +463,7 @@ void RoomSession::updateRoomInterface(bool &needsRedraw) {
 	}
 }
 
-bool RoomSession::drawRoomFrame(bool &needsRedraw) {
+bool Scene::drawRoomFrame(bool &needsRedraw) {
 	if (!needsRedraw)
 		return true;
 
@@ -573,7 +585,7 @@ bool RoomSession::drawRoomFrame(bool &needsRedraw) {
 	return true;
 }
 
-RoomInputResult RoomSession::pollRoomEvents(RoomInput &input, bool &needsRedraw) {
+RoomInputResult Scene::pollRoomEvents(RoomInput &input, bool &needsRedraw) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		const RoomInputResult inputResult = input.handleEvent(event, needsRedraw);
@@ -583,7 +595,7 @@ RoomInputResult RoomSession::pollRoomEvents(RoomInput &input, bool &needsRedraw)
 	return RoomInputResult();
 }
 
-RoomSession::PlayerControlState RoomSession::preparePlayerControlState() {
+Scene::PlayerControlState Scene::preparePlayerControlState() {
 	Script *script = _engine.getScript();
 	const bool playerAlive = script && script->getPlayerCurrentHitPoints() > 0;
 	const bool playerControlPaused = script && script->isPlayerControlPaused();
@@ -602,13 +614,13 @@ RoomSession::PlayerControlState RoomSession::preparePlayerControlState() {
 	return control;
 }
 
-void RoomSession::advanceRuntimeEntities(bool &needsRedraw) {
+void Scene::advanceRuntimeEntities(bool &needsRedraw) {
 	if (_flow.tickRuntimeEntities())
 		needsRedraw = true;
 	syncAnimatedRoomActorPlacement();
 }
 
-void RoomSession::updatePlayerCombatAnimations(bool &needsRedraw) {
+void Scene::updatePlayerCombatAnimations(bool &needsRedraw) {
 	if (Player::updateAttackAnimationState(_engine, _playerState))
 		needsRedraw = true;
 	if (Player::updateHitAnimationState(
@@ -617,7 +629,7 @@ void RoomSession::updatePlayerCombatAnimations(bool &needsRedraw) {
 	}
 }
 
-void RoomSession::updatePlayerControls(const PlayerControlState &control, bool &needsRedraw) {
+void Scene::updatePlayerControls(const PlayerControlState &control, bool &needsRedraw) {
 	const bool keyboardAttackRequested =
 		_inputState.attackModifierHeld && (_inputState.moveLeft || _inputState.moveRight || _inputState.moveUp || _inputState.moveDown);
 	if (control.canAct &&
@@ -678,21 +690,21 @@ void RoomSession::updatePlayerControls(const PlayerControlState &control, bool &
 	}
 }
 
-void RoomSession::updatePlayerDeath(bool &needsRedraw) {
+void Scene::updatePlayerDeath(bool &needsRedraw) {
 	if (Player::updateDeathAnimationState(_playerState)) {
 		requestPlayerGameOver("combat_player_death_complete", Common::String());
 		needsRedraw = true;
 	}
 }
 
-void RoomSession::pruneCombatEffects(bool &needsRedraw) {
+void Scene::pruneCombatEffects(bool &needsRedraw) {
 	if (_combatEffects.pruneCombatHitEffects())
 		needsRedraw = true;
 	if (_combatEffects.pruneCombatDamagePopups())
 		needsRedraw = true;
 }
 
-RoomInputResult RoomSession::dispatchExpiredTimers(bool &needsRedraw) {
+RoomInputResult Scene::dispatchExpiredTimers(bool &needsRedraw) {
 	if (_entityManager) {
 		Common::Array<Common::String> expiredTimerNames;
 		if (_entityManager->takeExpiredTimerNames(expiredTimerNames)) {
@@ -720,7 +732,7 @@ RoomInputResult RoomSession::dispatchExpiredTimers(bool &needsRedraw) {
 	return RoomInputResult();
 }
 
-RoomInputResult RoomSession::runRoomFrames(const Common::String &currentRoomTarget) {
+RoomInputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 	RoomInput input(_engine, _flow, *this, _scene, _inventory, _cheats,
 		_roomItems, _interactionProcessor, _presentationState, *_view.art, _canExitCloseupToParent);
 	bool needsRedraw = true;
@@ -886,61 +898,281 @@ RoomInputResult RoomSession::runRoomFrames(const Common::String &currentRoomTarg
 	return RoomInputResult();
 }
 
-void RoomSession::syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords) {
+void Scene::syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords) {
 	_sceneRuntime.syncGlobalTimerEntities(previousTimerRecords);
 }
 
-bool RoomSession::captureDialogueBackdrop(IndexedBitmap &backdrop) {
+bool Scene::captureDialogueBackdrop(IndexedBitmap &backdrop) {
 	return _presentation.captureDialogueBackdrop(backdrop);
 }
 
-Common::Error RoomSession::showCdChangePrompt(int discNumber) {
+Common::Error Scene::showCdChangePrompt(int discNumber) {
 	return _flow.showCdChangePrompt(discNumber);
 }
 
-Common::Error RoomSession::applyLightingCommand(StartupLightingCommand command) {
+Common::Error Scene::applyLightingCommand(StartupLightingCommand command) {
 	return _presentation.applyLightingCommand(command);
 }
 
-Common::Error RoomSession::runModalShowText(const ResolvedText &text) {
+Common::Error Scene::runModalShowText(const ResolvedText &text) {
 	return _presentation.runModalShowText(text, _flow);
 }
 
-Common::Error RoomSession::tryActivatePendingRegion(bool &needsRedraw) {
+Common::Error Scene::tryActivatePendingRegion(bool &needsRedraw) {
 	return isPlayerCombatLocked() ? Common::kNoError : _interactionProcessor.tryActivatePendingRegion(_inventory, needsRedraw);
 }
 
-Common::Error RoomSession::tryActivatePassiveRegion(bool &needsRedraw) {
+Common::Error Scene::tryActivatePassiveRegion(bool &needsRedraw) {
 	return _interactionProcessor.tryActivatePassiveRegion(_inventory, needsRedraw);
 }
 
-Common::Error RoomSession::resolvePlayerAttackContact(bool &needsRedraw) {
+Common::Error Scene::resolvePlayerAttackContact(bool &needsRedraw) {
 	return _combat.resolvePlayerAttackContact(_engine, _scene.state, _playerState, _entityManager,
 		_sceneRuntime, _combatEffects, _interactionProcessor, needsRedraw);
 }
 
-Common::Error RoomSession::updateRoomMonsterCombat(bool &needsRedraw) {
+Common::Error Scene::updateRoomMonsterCombat(bool &needsRedraw) {
 	return _combat.updateRoomMonsterCombat(_engine, _scene.state, _playerState, _idleState,
 		_entityManager, _sceneRuntime, _combatEffects, _cheats, *this, _interactionProcessor, needsRedraw);
 }
 
-void RoomSession::syncCombatHitEffects(bool &needsRedraw) {
+void Scene::syncCombatHitEffects(bool &needsRedraw) {
 	if (_combatEffects.syncCombatHitEffects())
 		needsRedraw = true;
 }
 
-void RoomSession::updateIdleAnimation(bool &needsRedraw) {
+void Scene::updateIdleAnimation(bool &needsRedraw) {
 	if (Player::updateIdleAnimation(_scene.state, _playerState, _idleState))
 		needsRedraw = true;
 }
 
-void RoomSession::capturePlayerAttackTarget(const Common::Point &mousePos, const NpcRecord *npc) {
+void Scene::capturePlayerAttackTarget(const Common::Point &mousePos, const NpcRecord *npc) {
 	_combat.capturePlayerAttackTarget(_scene.state, _playerState, _entityManager, mousePos, npc);
 }
 
-Common::Error RoomSession::killDebugActiveMonster(const Common::Point &mousePos, bool &needsRedraw) {
+Common::Error Scene::killDebugActiveMonster(const Common::Point &mousePos, bool &needsRedraw) {
 	return _combat.killDebugActiveMonster(_engine, _scene.state, _playerState, _entityManager,
 		mousePos, _combatEffects, _interactionProcessor, needsRedraw);
+}
+
+static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
+	const Text *text = engine.getText();
+	if (!text || !fontName)
+		return nullptr;
+
+	for (const CftFontResource &font : text->getFonts()) {
+		if (font.name.equalsIgnoreCase(fontName))
+			return &font;
+	}
+
+	return nullptr;
+}
+
+SceneRunner::SceneRunner(HarvesterEngine &engine,
+		InventorySystem &inventory, CheatSystem &cheats)
+	: _engine(engine), _inventory(inventory), _cheats(cheats) {
+}
+
+Common::Error SceneRunner::runRoomLoop(Flow &flow, const Common::String &targetName,
+		bool targetIsRoomName) {
+	if (flow.hasPendingMainMenuReturn())
+		return Common::kNoError;
+
+	Common::String currentRoomTarget = targetName;
+	bool currentTargetIsRoomName = targetIsRoomName;
+	bool currentTargetUsesSavedRoomState = false;
+	SaveRoomState currentTargetSavedRoomState;
+	while (!currentRoomTarget.empty()) {
+		RoomSetupState state;
+		bool shouldRunRoomEntryCommands = false;
+		if (_engine.hasPendingLoadedSaveRoomState()) {
+			// Native load destroys live render entities and frees preserved global timers
+			// before room_setup rebuilds the loaded room from restored TIMER records.
+			if (EntityManager *entityManager = _engine.getRuntimeEntities())
+				entityManager->clearSceneEntities(false);
+			flow.resetRoomNpcDialogueState();
+			if (_engine.hasPendingLoadedDialogueStateBlob()) {
+				if (!flow.loadDialogueSaveStateBlob(
+						_engine.getPendingLoadedDialogueStateBlob(),
+						_engine.getPendingLoadedDialogueStateBlobVersion()))
+					return Common::kReadingFailed;
+				_engine.clearPendingLoadedDialogueStateBlob();
+			}
+			if (_engine.getPendingLoadedDisc() > 0 &&
+					!_engine.activateDisc(_engine.getPendingLoadedDisc())) {
+				return Common::kReadingFailed;
+			}
+			const SaveRoomState &loadedState = _engine.getPendingLoadedSaveRoomState();
+			debugC(1, kDebugRoom,
+				"Harvester: applying pending loaded room state entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
+				loadedState.entranceName.c_str(), loadedState.roomName.c_str(),
+				loadedState.playerX, loadedState.playerY, loadedState.playerZ,
+				loadedState.playerFacing, loadedState.musicPath.c_str());
+			if (!_engine.getScript()->materializeRoomState(
+					loadedState.entranceName, loadedState.roomName, state, *_engine.getResources())) {
+				return Common::kReadingFailed;
+			}
+			state.entranceName = loadedState.entranceName;
+			state.playerSpawnX = loadedState.playerX;
+			state.playerSpawnY = loadedState.playerY;
+			state.playerSpawnZ = loadedState.playerZ;
+			state.playerFacing = loadedState.playerFacing;
+			state.musicPath = loadedState.musicPath;
+			currentRoomTarget = !loadedState.entranceName.empty() ? loadedState.entranceName : loadedState.roomName;
+			_engine.clearPendingLoadedSaveRoomState();
+			currentTargetIsRoomName = false;
+			shouldRunRoomEntryCommands = false;
+		} else if ((currentTargetIsRoomName
+				? !_engine.getScript()->resolveRoomSetupStateByRoomName(
+					currentRoomTarget, state, *_engine.getResources())
+				: !_engine.getScript()->resolveRoomSetupState(
+					currentRoomTarget, state, *_engine.getResources()))) {
+			return Common::kReadingFailed;
+		} else {
+			shouldRunRoomEntryCommands = true;
+		}
+		if (shouldRunRoomEntryCommands && currentTargetUsesSavedRoomState &&
+				currentTargetSavedRoomState.valid) {
+			const SaveRoomState &savedState = currentTargetSavedRoomState;
+			state.entranceName = savedState.entranceName;
+			state.playerSpawnX = savedState.playerX;
+			state.playerSpawnY = savedState.playerY;
+			state.playerSpawnZ = savedState.playerZ;
+			state.playerFacing = savedState.playerFacing;
+			if (!savedState.musicPath.empty())
+				state.musicPath = savedState.musicPath;
+			debugC(1, kDebugRoom,
+				"Harvester: applying saved room restart state entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
+				savedState.entranceName.c_str(), savedState.roomName.c_str(),
+				savedState.playerX, savedState.playerY, savedState.playerZ,
+				savedState.playerFacing, savedState.musicPath.c_str());
+		}
+
+		Common::Error transitionError = flow.beginRoomSetupTransition();
+		if (transitionError.getCode() != Common::kNoError)
+			return transitionError;
+
+		SceneState scene;
+		if (!loadRoomSceneResources(state, *_engine.getResources(), scene))
+			return Common::kReadingFailed;
+
+		Graphics::Screen *screen = _engine.getScreen();
+		const Art *art = _engine.getArt();
+		const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		const CftFontResource *promptFontResource = findStartupFontByName(_engine, "MEDFONT1");
+		const CftFontResource *inventoryTooltipFontResource = findStartupFontByName(_engine, "TEXTFONT");
+		Common::ScopedPtr<HarvesterCftFont> promptCftFont;
+		Common::ScopedPtr<HarvesterCftFont> inventoryTooltipCftFont;
+		const Graphics::Font *promptFont = bodyFont;
+		const Graphics::Font *inspectFont = bodyFont;
+		const Graphics::Font *inventoryTooltipFont = bodyFont;
+		bool useNativePromptFont = false;
+		bool useNativeInspectFont = false;
+		if (promptFontResource) {
+			promptCftFont.reset(new HarvesterCftFont(*promptFontResource));
+			if (promptCftFont->isValid()) {
+				promptFont = promptCftFont.get();
+				useNativePromptFont = true;
+			}
+		}
+		if (inventoryTooltipFontResource) {
+			inventoryTooltipCftFont.reset(new HarvesterCftFont(*inventoryTooltipFontResource));
+			if (inventoryTooltipCftFont->isValid()) {
+				inventoryTooltipFont = inventoryTooltipCftFont.get();
+				inspectFont = inventoryTooltipCftFont.get();
+				useNativeInspectFont = true;
+			}
+		}
+		if (!screen || !art || !bodyFont || !promptFont || !inventoryTooltipFont || !inspectFont)
+			return Common::kNoError;
+		EntityManager *entityManager = _engine.getRuntimeEntities();
+
+		if (!flow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
+			return Common::kReadingFailed;
+		if (entityManager) {
+			for (const MonsterRecord &monster : scene.state.roomMonsters) {
+				Entity *entity = entityManager->findSceneEntityByName(monster.monsterName);
+				if (entity)
+					Monster::applyAnimation(*entity, monster);
+			}
+			entityManager->pauseTimerCountdowns();
+		}
+
+		flow.resetCursorAnimationSequence();
+		flow.executeStartupAudioCommands(scene.state.audioCommands);
+		if (!scene.state.musicPath.empty())
+			(void)_engine.playMusic(scene.state.musicPath);
+		const RoomViewResources view = { art, promptFont, inspectFont, inventoryTooltipFont,
+			useNativePromptFont, useNativeInspectFont };
+		Scene session(_engine, flow, scene, entityManager, _inventory, _cheats, view,
+			flow._roomLoopDepth > 1);
+		debugC(1, kDebugRoom, "Harvester: created room session room='%s'", scene.state.roomName.c_str());
+		session.initializePlayerState();
+
+		session.resetIdleState();
+
+		InteractionResult roomEntryInteraction;
+		bool hasPendingRoomEntryInteraction = false;
+		if (shouldRunRoomEntryCommands) {
+			if (!_engine.getScript()->executeRoomEnterCommands(
+					scene.state.roomName, roomEntryInteraction)) {
+				return Common::kReadingFailed;
+			}
+
+			// Native room_setup applies entry-time state changes before the first visible room frame.
+			if (roomEntryInteraction.mutatedRuntimeState) {
+				session.syncGlobalTimerEntities(roomEntryInteraction.previousTimerRecords);
+				if (!session.applyCurrentRoomRuntimeMutationsInPlace(false) &&
+						!session.refreshCurrentScene(true)) {
+					return Common::kReadingFailed;
+				}
+				roomEntryInteraction.mutatedRuntimeState = false;
+				roomEntryInteraction.visualRuntimeStateChanged = false;
+			}
+			hasPendingRoomEntryInteraction = hasRoomEntryInteraction(roomEntryInteraction);
+		}
+
+		transitionError = flow.waitForRoomSetupTransitionHold();
+		if (transitionError.getCode() != Common::kNoError)
+			return transitionError;
+
+		logScenePaletteSummary("room setup stub palette", scene, 0.0f);
+		drawRoomScene(_engine, *screen, scene, 0.0f);
+		screen->makeAllDirty();
+		screen->update();
+
+		logScenePaletteSummary("room setup fade target", scene, scene.targetPaletteBrightness);
+		transitionError = flow.fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
+		if (transitionError.getCode() != Common::kNoError)
+			return transitionError;
+		if (entityManager)
+			entityManager->resumeTimerCountdowns();
+
+		if (shouldRunRoomEntryCommands) {
+			if (hasPendingRoomEntryInteraction) {
+				const RoomInputResult entryResult = session.runRoomEntryInteraction(roomEntryInteraction);
+				if (entryResult.returnFromRoom)
+					return entryResult.error;
+			}
+
+			flow.resetCursorAnimationSequence();
+			session.resetIdleState();
+		}
+		ScopedDeferredLiveNpcDeathTransitions deferredLiveNpcDeathTransitions(
+			_engine.getScript());
+
+		const RoomInputResult frameResult = session.runRoomFrames(currentRoomTarget);
+		if (frameResult.returnFromRoom)
+			return frameResult.error;
+		const RoomPendingTransition &pendingTransition = session.getPendingTransition();
+
+		currentRoomTarget = pendingTransition.roomName;
+		currentTargetIsRoomName = pendingTransition.isRoomName;
+		currentTargetUsesSavedRoomState = pendingTransition.usesSavedRoomState;
+		currentTargetSavedRoomState = pendingTransition.savedRoomState;
+	}
+
+	return Common::kNoError;
 }
 
 } // End of namespace Harvester

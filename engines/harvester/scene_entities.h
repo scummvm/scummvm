@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HARVESTER_ROOM_SCENE_RUNTIME_H
-#define HARVESTER_ROOM_SCENE_RUNTIME_H
+#ifndef HARVESTER_SCENE_ENTITIES_H
+#define HARVESTER_SCENE_ENTITIES_H
 
 #include "harvester/room_support.h"
 #include "harvester/runtime_entity.h"
@@ -28,13 +28,13 @@
 namespace Harvester {
 
 // Borrows the materialized room state; live entities remain owned by EntityManager.
-class RoomSceneRuntime {
+class SceneEntities {
 public:
-	RoomSceneRuntime(RoomSetupState &state, Script *script, ResourceManager *resources, EntityManager *entityManager);
+	SceneEntities(RoomSetupState &state, Script *script, ResourceManager *resources, EntityManager *entityManager);
 
-	bool loadSceneResources(const RoomSetupState &state, RoomSceneResources &scene) const;
-	bool reconcileSceneEntitiesInPlace(const RoomSceneResources &previousScene,
-		RoomSetupState &updatedState, const RoomSceneResources &updatedScene);
+	bool loadSceneResources(const RoomSetupState &state, SceneState &scene) const;
+	bool reconcileSceneEntitiesInPlace(const SceneState &previousScene,
+		RoomSetupState &updatedState, const SceneState &updatedScene);
 	void syncCurrentRoomRuntimeState(const Common::Array<RegionRecord> &sceneRegions);
 	void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords,
 		bool includeCurrentRoomTimers = false);
@@ -69,4 +69,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_ROOM_SCENE_RUNTIME_H
+#endif // HARVESTER_SCENE_ENTITIES_H

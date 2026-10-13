@@ -93,7 +93,7 @@ void RoomPresentation::blitBitmap(Graphics::Screen &screen, const IndexedBitmap 
 		screen.format.bytesPerPixel, kTransparentPaletteIndex);
 }
 
-RoomPresentation::RoomPresentation(HarvesterEngine &engine, RoomSceneResources &scene,
+RoomPresentation::RoomPresentation(HarvesterEngine &engine, SceneState &scene,
 		const Art *art, const Graphics::Font *inspectFont, bool useNativeInspectFont)
 	: _engine(engine), _scene(scene), _art(art), _inspectFont(inspectFont),
 	  _useNativeInspectFont(useNativeInspectFont) {

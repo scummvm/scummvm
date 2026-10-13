@@ -37,7 +37,7 @@ class Flow;
 class HarvesterEngine;
 struct IndexedBitmap;
 struct ResolvedText;
-struct RoomSceneResources;
+struct SceneState;
 
 struct RoomViewResources {
 	const Art *art;
@@ -60,7 +60,7 @@ struct RoomPresentationState {
 
 class RoomPresentation {
 public:
-	RoomPresentation(HarvesterEngine &engine, RoomSceneResources &scene,
+	RoomPresentation(HarvesterEngine &engine, SceneState &scene,
 		const Art *art, const Graphics::Font *inspectFont, bool useNativeInspectFont);
 
 	bool captureDialogueBackdrop(IndexedBitmap &dialogueBackdrop);
@@ -70,7 +70,7 @@ public:
 
 private:
 	HarvesterEngine &_engine;
-	RoomSceneResources &_scene;
+	SceneState &_scene;
 	const Art *_art;
 	const Graphics::Font *_inspectFont;
 	bool _useNativeInspectFont;

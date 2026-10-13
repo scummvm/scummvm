@@ -30,7 +30,7 @@
 #include "harvester/dialogue.h"
 #include "harvester/inventory.h"
 #include "harvester/menu.h"
-#include "harvester/room.h"
+#include "harvester/scene.h"
 #include "harvester/script.h"
 
 namespace Common {
@@ -62,9 +62,9 @@ private:
 	friend class InventorySystem;
 	friend class MenuSystem;
 	friend class RoomInteractionProcessor;
-	friend class RoomSystem;
+	friend class SceneRunner;
 	friend class RoomInput;
-	friend class RoomSession;
+	friend class Scene;
 
 	bool loadQuickTips();
 	bool loadMenuItems();
@@ -128,7 +128,7 @@ private:
 	InventorySystem _inventory;
 	MenuSystem _menu;
 	CheatSystem _cheats;
-	RoomSystem _room;
+	SceneRunner _room;
 	InteractionResult _queuedDialogueInteraction;
 	bool _hasQueuedDialogueInteraction = false;
 	InteractionResult _queuedDebugInteraction;
