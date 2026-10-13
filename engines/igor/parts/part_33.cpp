@@ -91,9 +91,7 @@ void IgorEngine::part33TakeAstronomyBooks() {
 		return;
 	}
 	for (int i = 1; i <= 3; ++i) {
-		for (int j = 0; j <= 48; ++j) {
-			memcpy(_screenVGA + j * 320 + 23448, _animFramesBuffer + 0x467 * (PART_33_ANIM_DATA_4[i] - 1) + j * 23, 23);
-		}
+		drawAnimRect(23448, 0x467 * (PART_33_ANIM_DATA_4[i] - 1), 23, 49);
 		waitForTimer(120);
 	}
 	addObjectToInventory(kInventoryObjectAstronomyBook, 66);

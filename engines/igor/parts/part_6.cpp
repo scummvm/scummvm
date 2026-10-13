@@ -171,11 +171,7 @@ void IgorEngine::part6TakeCamera() {
 	int i = 0;
 	do {
 		if (compareGameTick(1)) {
-			const int offset = 22568;
-			for (int j = 0; j <= 48; ++j) {
-				const uint8 *src = _animFramesBuffer + 0x81AE + i * 1715 + j * 35;
-				memcpy(_screenVGA + 320 * j + offset, src, 35);
-			}
+			drawAnimRect(22568, 0x81AE + i * 1715, 35, 49);
 			++i;
 		}
 		part6UpdateBackground();

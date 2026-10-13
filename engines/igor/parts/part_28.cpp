@@ -202,20 +202,7 @@ void IgorEngine::part28EnterFromRight() {
 
 void IgorEngine::part28DrawCarolineTalkingFrame(int frame) {
 	_roomCursorOn = false;
-	for (int i = 0; i <= 43; ++i) {
-		for (int j = 0; j <= 29; ++j) {
-			int offset = (i + 85) * 320 + j + 174;
-			uint8 color = _screenVGA[offset];
-			if ((color >= 192 && color <= 207) || color == 240 || color == 241) {
-				_screenTempLayer[i * 100 + j] = _screenVGA[offset];
-			} else {
-				_screenTempLayer[i * 100 + j] = _animFramesBuffer[(frame - 1) * 1320 + i * 30 + j];
-			}
-		}
-	}
-	int offset = 27374;
-	copyArea(_screenVGA, offset, 320, _screenTempLayer, 100, 30, 44);
-	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + (frame - 1) * 1320, 30, 30, 44);
+	drawAnimRect(27374, (frame - 1) * 1320, 30, 44, true, kBlendBehindIgorAndText);
 	if (_gameState.dialogueTextRunning) {
 		memcpy(_screenTextLayer + 23040, _screenLayer1 + _dialogueDirtyRectY, _dialogueDirtyRectSize);
 	}

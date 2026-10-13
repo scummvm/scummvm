@@ -61,26 +61,7 @@ void IgorEngine::part36ExecuteAction(int action) {
 
 void IgorEngine::part36TakePen() {
 	for (int i = 1; i >= 0; --i) {
-		for (int j = 0; j <= 48; ++j) {
-			for (int k = 0; k <= 33; ++k) {
-				uint8 color = _animFramesBuffer[14 + i * 1666 + j * 34 + k];
-				int offset = (j + 74) * 320 + k + 70;
-				if (color < 192 || color > 207) {
-					_screenTempLayer[100 * j + k] = color;
-					continue;
-				}
-				RoomObjectArea *roa = &_roomObjectAreasTable[_screenLayer2[offset]];
-				if (roa->y1Lum > 0) {
-					_screenTempLayer[100 * j + k] = _screenLayer1[offset];
-				} else {
-					if (roa->y2Lum > 0) {
-						color -= roa->deltaLum;
-					}
-					_screenTempLayer[100 * j + k] = color;
-				}
-			}
-		}
-		copyArea(_screenVGA, 23750, 320, _screenTempLayer, 100, 34, 49);
+		drawAnimRect(23750, 14 + i * 1666, 34, 49, false, kBlendLitSprite);
 		waitForTimer(45);
 	}
 	addObjectToInventory(kInventoryObjectPen, 65);
