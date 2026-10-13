@@ -314,20 +314,7 @@ void IgorEngine::part21WaitForIgorWalkWithAnimation() {
 
 void IgorEngine::part21DrawMargaretFrameComposited(int frame) {
 	_roomCursorOn = false;
-	for (int i = 0; i <= 42; ++i) {
-		for (int j = 0; j <= 48; ++j) {
-			int offset = (i + 89) * 320 + j + 40;
-			uint8 color = _screenVGA[offset];
-			if ((color >= 192 && color <= 207) || color == 240 || color == 241) {
-				_screenTempLayer[i * 100 + j] = _screenVGA[offset];
-			} else {
-				_screenTempLayer[i * 100 + j] = _animFramesBuffer[frame * 2107 + i * 49 + j + 0xCA7];
-			}
-		}
-	}
-	int offset = 28520;
-	copyArea(_screenVGA, offset, 320, _screenTempLayer, 100, 49, 43);
-	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + frame * 2107 + 0xCA7, 49, 49, 43);
+	drawAnimRect(28520, 0xCA7 + frame * 2107, 49, 43, true, kBlendBehindIgorAndText);
 	if (_dialogueCursorOn) {
 		_roomCursorOn = true;
 	}
