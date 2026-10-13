@@ -100,6 +100,8 @@ void IgorEngine::PART_73_CUTSCENE() {
 	PART_80();
 
 	setupDefaultPalette();
+	SET_PAL_240_48_1();
+	SET_PAL_208_96_1();
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);
 	_currentAction.verb = kVerbWalk;
