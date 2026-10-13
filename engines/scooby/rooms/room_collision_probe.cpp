@@ -100,7 +100,16 @@ bool RoomCollisionProbe::probeStagedCollision(int16 x, int16 y) const {
 		(static_cast<uint16>(x) >> 3) * sizeof(uint16) +
 		(static_cast<uint16>(y) >> 3) * rowByteStride);
 	SDM_ASSERT(_state.ActiveRoomScene, "ProbeStagedCollision requires an active room scene.");
-	uint16 collisionCell = ReadBigEndian16(_state.ActiveRoomScene->CollisionCells, collisionByteOffset);
+
+	// The original has no upper bound check and would read stale bytes after the collision map in the
+	// shared 0xFFE000 workspace. Treat positions beyond the decoded map like negative ones: blocked.
+	const Common::Array<uint8> &collisionCells = _state.ActiveRoomScene->CollisionCells;
+	if (collisionByteOffset < 0 ||
+		static_cast<std::size_t>(collisionByteOffset) + sizeof(uint16) > collisionCells.size()) {
+		return true;
+	}
+
+	uint16 collisionCell = ReadBigEndian16(collisionCells, collisionByteOffset);
 	uint16 descriptorIndex = collisionCell & kCollisionDescriptorShapeIndexMask;
 	if (descriptorIndex == 0) {
 		return false;

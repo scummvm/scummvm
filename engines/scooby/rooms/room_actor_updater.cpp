@@ -1293,8 +1293,18 @@ void RoomActorUpdater::updateActorPriority(int actor) {
 		y * _state.RoomWidthTiles * static_cast<int>(sizeof(int16)) +
 		x * static_cast<int>(sizeof(int16)));
 	SDM_ASSERT(_state.ActiveRoomScene, "UpdateActorPriority requires an active room scene.");
-	int16 collisionCell = static_cast<int16>(
-		ReadBigEndian16(_state.ActiveRoomScene->CollisionCells, byteOffset));
+
+	// The original reads past the decoded collision map into the shared 0xFFE000 workspace when an actor
+	// stands beyond the room's right or bottom edge (for example, while a script walks it off-screen).
+	// Those stale bytes have no authored meaning, so leave the actor's current priority unchanged instead
+	// of indexing outside the managed map.
+	const Common::Array<uint8> &collisionCells = _state.ActiveRoomScene->CollisionCells;
+	if (byteOffset < 0 ||
+		static_cast<std::size_t>(byteOffset) + sizeof(uint16) > collisionCells.size()) {
+		return;
+	}
+
+	int16 collisionCell = static_cast<int16>(ReadBigEndian16(collisionCells, byteOffset));
 	uint8 actorMask = this->actorMask(actor);
 	if (collisionCell < 0) {
 		_state.ActorHighPriorityFlags |= actorMask;

@@ -43,7 +43,7 @@ void WriteUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value)
 }
 } // namespace
 
-void RoomScriptForegroundOverrideExecutor::executeRoomScriptAction07() {
+void RoomScriptForegroundOverrideExecutor::executeRoomScriptAction07() { // maze sequence. maybe
 	// Ghidra 0x000044BA-0x000044C1: preserve the full-byte busy branch. Original interrupts keep publishing
 	// actor tiles during the spin, so each continuation services one callback-aware clocked frame.
 	while (_state.ActorTileUploadPendingFlags != 0) {
