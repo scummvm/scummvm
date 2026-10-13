@@ -23,6 +23,7 @@
 #define HOLLYWOOD_RUNAWAY_UI_H
 
 #include "common/random.h"
+#include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/font.h"
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/inventory.h"
@@ -38,8 +39,8 @@ public:
 		Common::Point mouse;
 		byte item = 0, target = 0;
 	};
-	RunawayUI(RunawayInventory &inventory, const RunawayStrings &strings) :
-		_inventory(inventory), _strings(strings), _random("runaway-ui") {}
+	RunawayUI(Audio::Mixer *mixer, RunawayInventory &inventory, const RunawayStrings &strings) :
+		_audio(mixer), _inventory(inventory), _strings(strings), _random("runaway-ui") {}
 	~RunawayUI();
 	bool load();
 	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking);
@@ -65,17 +66,19 @@ private:
 	Common::U32String inventoryCaption() const;
 	void drawInventory(Graphics::ManagedSurface &screen);
 
+	RunawayAudio _audio;
 	RunawayInventory &_inventory;
 	const RunawayStrings &_strings;
 	Common::RandomSource _random;
 	RunawayFont _font;
-	Graphics::ManagedSurface _cursors, _waitCursor, _cursor, _inventoryButton, _returnButton;
+	Graphics::ManagedSurface _cursors, _demoLogo, _cursor, _inventoryButton, _returnButton;
 	Graphics::ManagedSurface _inventoryBackground, _inventoryTexture, _icons;
 	RunawayAnimation _portrait, _idlePortrait;
 	Common::Point _mouse;
 	RunawayVerb _verb = kVerbWalk, _previousVerb = kVerbWalk;
 	byte _hovered = 0, _buttonFrame = 0, _pickupItem = 0;
 	bool _inventoryOpen = false, _enteredInventory = false, _returnAfterPickup = false;
+	bool _pickupSoundPlayed = false;
 	bool _blocked = false, _speaking = false, _cursorPushed = false;
 	uint32 _now = 0, _buttonTick = 0, _verbStarted = 0, _portraitTick = 0;
 	uint32 _blinkUntil = 0, _idleStarted = 0, _lastInteraction = 0, _pickupStarted = 0;

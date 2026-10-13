@@ -120,7 +120,7 @@ Common::Error RunawayEngine::run() {
 	const RunawayStrings strings(_language);
 	RunawayInventory inventory(strings);
 	RunawayScene5030 scene(_mixer, inventory, strings);
-	RunawayUI ui(inventory, strings);
+	RunawayUI ui(_mixer, inventory, strings);
 	if (!scene.load() || !ui.load())
 		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo room, actor or interface data");
 	scene.start(getTotalPlayTime());

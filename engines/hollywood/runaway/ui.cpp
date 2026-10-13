@@ -71,7 +71,7 @@ bool RunawayUI::loadSurface(uint chunk, int width, int height, Graphics::Managed
 bool RunawayUI::load() {
 	Common::Array<byte> animation;
 	if (!_font.load() || !loadSurface(114, 904, 540, _cursors) ||
-			!loadSurface(118, 48, 48, _waitCursor) || !loadSurface(121, 80, 42 * 80, _icons) ||
+			!loadSurface(118, 48, 48, _demoLogo) || !loadSurface(121, 80, 42 * 80, _icons) ||
 			!loadSurface(127, 700, 74, _inventoryButton) || !loadSurface(129, 700, 74, _returnButton) ||
 			!loadSurface(131, 1024, 600, _inventoryBackground) || !loadSurface(133, 768, 576, _inventoryTexture) ||
 			!readRunawayGlobalChunk(137, animation) || !_portrait.load(animation, 104) ||
@@ -160,6 +160,13 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 		setInventoryOpen(true);
 		_pickupItem = added;
 		_pickupStarted = now;
+		_pickupSoundPlayed = false;
+	}
+	// Native 0x40d390 plays S03 cue 1 when the twelfth pickup frame
+	// reveals the item in its inventory slot.
+	if (_pickupItem && !_pickupSoundPlayed && now - _pickupStarted >= 12 * 60) {
+		_audio.playEffect(1);
+		_pickupSoundPlayed = true;
 	}
 	if (_pickupItem && now - _pickupStarted >= 18 * 60) {
 		_pickupItem = 0;
@@ -263,6 +270,11 @@ RunawayUI::Command RunawayUI::click(bool right) {
 
 void RunawayUI::updateCursor() {
 	const bool waiting = _blocked || _speaking || busy();
+	// Native 0x411990 hides the cursor during actions and dialogue.
+	// RESOURCE.000 chunk 118 is the corner logo, not a busy cursor.
+	CursorMan.showMouse(!waiting);
+	if (waiting)
+		return;
 	const byte item = _inventory.selected();
 	uint tile = _verb;
 	uint shade = 0;
@@ -279,22 +291,19 @@ void RunawayUI::updateCursor() {
 			shade = pulse[(_now / 50) % ARRAYSIZE(pulse)];
 		}
 	}
-	const int key = waiting ? -2 : tile * 10 + shade;
+	const int key = tile * 10 + shade;
 	if (key == _cursorKey)
 		return;
 	_cursorKey = key;
 	const uint16 transparent = *(const uint16 *)_cursors.getPixels();
 	_cursor.fillRect(Common::Rect(0, 0, 60, 60), transparent);
-	const Graphics::ManagedSurface &source = waiting ? _waitCursor : _cursors;
-	const uint16 sourceKey = *(const uint16 *)source.getPixels();
-	const uint width = waiting ? 48 : 60;
-	const uint sx = waiting ? 0 : (tile % 15) * 60;
-	const uint sy = waiting ? 0 : (tile / 15) * 60;
-	for (uint y = 0; y < width; ++y) {
-		const uint16 *src = (const uint16 *)source.getBasePtr(sx, sy + y);
-		uint16 *dst = (uint16 *)_cursor.getBasePtr(waiting ? 6 : 0, y + (waiting ? 6 : 0));
-		for (uint x = 0; x < width; ++x) {
-			if (src[x] == sourceKey)
+	const uint sx = (tile % 15) * 60;
+	const uint sy = (tile / 15) * 60;
+	for (uint y = 0; y < 60; ++y) {
+		const uint16 *src = (const uint16 *)_cursors.getBasePtr(sx, sy + y);
+		uint16 *dst = (uint16 *)_cursor.getBasePtr(0, y);
+		for (uint x = 0; x < 60; ++x) {
+			if (src[x] == transparent)
 				continue;
 			const uint r = (src[x] >> 11) & 31, g = (src[x] >> 5) & 63, b = src[x] & 31;
 			dst[x] = ((r * (31 - shade) / 31) << 11) |
@@ -366,18 +375,20 @@ void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &
 				_font.drawString(screen.surfacePtr(), lines[i], 20, 684 + i * 28, 984,
 					kUIFormat.RGBToColor(255, 223, 206), Graphics::kTextAlignCenter);
 		}
-		return;
+	} else {
+		Common::U32String caption;
+		uint16 color = kUIFormat.RGBToColor(189, 166, 148);
+		if (!_inventoryOpen && !committedCaption.empty()) {
+			caption = committedCaption;
+			color = kUIFormat.RGBToColor(255, 223, 206);
+		} else if (!_blocked && !busy()) {
+			caption = overButton() ? _strings.text(_inventoryOpen ? RunawayStrings::kResume : RunawayStrings::kInventory) :
+				_inventoryOpen ? inventoryCaption() : roomCaption;
+		}
+		_font.drawString(screen.surfacePtr(), caption, 20, 684, 984, color, Graphics::kTextAlignCenter);
 	}
-	Common::U32String caption;
-	uint16 color = kUIFormat.RGBToColor(189, 166, 148);
-	if (!_inventoryOpen && !committedCaption.empty()) {
-		caption = committedCaption;
-		color = kUIFormat.RGBToColor(255, 223, 206);
-	} else if (!_blocked && !busy()) {
-		caption = overButton() ? _strings.text(_inventoryOpen ? RunawayStrings::kResume : RunawayStrings::kInventory) :
-			_inventoryOpen ? inventoryCaption() : roomCaption;
-	}
-	_font.drawString(screen.surfacePtr(), caption, 20, 684, 984, color, Graphics::kTextAlignCenter);
+	// Native 0x4020b0 copies the demo logo to the bottom-right corner.
+	screen.copyRectToSurface(_demoLogo, 976, 720, Common::Rect(0, 0, 48, 48));
 }
 
 } // End of namespace Hollywood
