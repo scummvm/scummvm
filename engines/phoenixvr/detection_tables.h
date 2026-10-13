@@ -602,7 +602,6 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-
 	{"dracula1",
 		"7 Wolf, v1.0",
 		AD_ENTRY3s("script.lst", "78060b78cf403ddb7e22903ba7b269d6", 548,
@@ -740,10 +739,24 @@ const ADGameDescription gameDescriptions[] = {
 
 	{"dracula2",
 		"Russobit-M",
-		AD_ENTRY4s("Install/script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
-				   "Install/Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
-				   "Install/InsertCD.vr", "bd73f26480428507118d9a9b7a047f4a", 53851,
-				   "DataM1/0M1Script.pak", "4079fc2f1a355288482d054c5823bdc3", 92666),
+		AD_ENTRY5s("script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
+				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
+                   "DataM1/Interface.vr", "6edc00c79e0d479a0c2dc5f6f438f222", 82265,
+                   "DataM1/Credit.vr", "95fcba729cbc48faf38bce601f7f65d0", 446465,
+				   "DataM1/0M1Script.pak", "bc3b6a954f42ebf26f2ec7a8bb7c5ba5", 92442),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula2",
+		"Russobit-M, v1.1",
+		AD_ENTRY5s("script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
+				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
+                   "DataM1/Interface.vr", "6edc00c79e0d479a0c2dc5f6f438f222", 82265,
+                   "DataM1/Credit.vr", "95fcba729cbc48faf38bce601f7f65d0", 446465,
+				   "DataM1/0M1Script.pak", "471876a55d87b265c7796f2c818468fc", 92624),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
