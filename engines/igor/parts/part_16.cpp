@@ -192,7 +192,7 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 	_inventoryInfo[54] = _inventoryInfo[73];
 	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
 	_objectsState[53] = 1;
-	_objectsState[65] = 3;
+	_objectsState[kMargaretStateIndex] = kMargaretStatePhotoTaken;
 	_currentPart = 261;
 }
 
@@ -232,7 +232,7 @@ void IgorEngine::PART_16() {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		PART_16_HELPER_2_enterScene();
-		if (_objectsState[65] == 2 && _inventoryInfo[71] != 0 && _objectsState[76] == 1) {
+		if (_objectsState[kMargaretStateIndex] == kMargaretStateReadNote && _inventoryInfo[71] != 0 && _objectsState[76] == 1) {
 			PART_16_HELPER_3_photoCutscene();
 		}
 		enterPartLoop();

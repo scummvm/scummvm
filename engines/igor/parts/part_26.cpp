@@ -184,9 +184,9 @@ void IgorEngine::PART_26_HELPER_5_enterFromLaboratory() {
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	if (_objectsState[65] == 3) {
+	if (_objectsState[kMargaretStateIndex] == kMargaretStatePhotoTaken) {
 		igorSay({ { 212, 1, 1281 }, { 213, 2, 1282 }, { 215, 1, 1283 } });
-		_objectsState[65] = 4;
+		_objectsState[kMargaretStateIndex] = kMargaretStatePhotoSequenceComplete;
 		drawVerbsPanel();
 		redrawVerb(kVerbWalk, true);
 		_currentAction.verb = kVerbWalk;

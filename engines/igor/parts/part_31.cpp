@@ -34,7 +34,7 @@ void IgorEngine::PART_31_EXEC_ACTION(int action) {
 		_currentPart = 251;
 		break;
 	case 102:
-		PART_31_ACTION_102();
+		PART_31_ACTION_102_enterAstronomyLab();
 		break;
 	case 103:
 		PART_31_ACTION_103_openDoor();
@@ -88,7 +88,7 @@ void IgorEngine::PART_31_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_31_ACTION_102() {
+void IgorEngine::PART_31_ACTION_102_enterAstronomyLab() {
 	if (_objectsState[72] == 0) {
 		return;
 	}

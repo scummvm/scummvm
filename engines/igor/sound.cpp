@@ -92,8 +92,8 @@ void IgorEngine::playSound(int num, int type) {
 		return;
 	}
 
-	// A zero or "no speech" number means the line has no recorded speech
-	if (type == 0 && (num == 0 || num == kNoSpeechSound)) {
+	// A zero speech number means the line has no recorded speech.
+	if (type == 0 && num == kNoSpeechSound) {
 		if (_mixer->isSoundHandleActive(_speechHandle)) {
 			_mixer->stopHandle(_speechHandle);
 		}

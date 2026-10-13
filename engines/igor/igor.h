@@ -57,7 +57,7 @@ enum {
 	kFastModeFactor = 4,
 	kFastModeMaxFactor = 16,
 	kMaxSaveStates = 10,
-	kNoSpeechSound = 999
+	kNoSpeechSound = 0
 };
 
 enum {
@@ -311,6 +311,19 @@ enum {
 enum ObjectType {
 	kObjectTypeInventory = 1,
 	kObjectTypeRoom = 2
+};
+
+enum {
+	kPhysicsClassDoorStateIndex = 64,
+	kMargaretStateIndex = 65
+};
+
+enum MargaretState {
+	kMargaretStateInitial = 0,
+	kMargaretStateNoteAltered,
+	kMargaretStateReadNote,
+	kMargaretStatePhotoTaken,
+	kMargaretStatePhotoSequenceComplete
 };
 
 enum Verb {
@@ -895,13 +908,13 @@ private:
 
 	// college corridor margaret
 	void PART_21_EXEC_ACTION(int action);
-	void PART_21_ACTION_101();
-	void PART_21_ACTION_102();
-	void PART_21_ACTION_107();
-	void PART_21_ACTION_108();
-	void PART_21_ACTION_110();
-	void PART_21_ACTION_111();
-	void PART_21_ACTION_113();
+	void PART_21_ACTION_101_leaveLeft();
+	void PART_21_ACTION_102_talkToMargaret();
+	void PART_21_ACTION_107_openPhysicsDoor();
+	void PART_21_ACTION_108_closePhysicsDoor();
+	void PART_21_ACTION_110_leaveRight();
+	void PART_21_ACTION_111_useNoteWithSandwhiches();
+	void PART_21_ACTION_113_enterPhysicsClass();
 	void PART_21_UPDATE_ROOM_BACKGROUND();
 	void PART_21_UPDATE_DIALOGUE_MARGARET_1(int action);
 	void PART_21_UPDATE_DIALOGUE_MARGARET_2(int action);
@@ -911,13 +924,13 @@ private:
 	void PART_21_HELPER_2_enterFromLeft();
 	void PART_21_HELPER_3_enterFromRight();
 	void PART_21_HELPER_4_enterFromPhysicsClass();
-	void PART_21_HELPER_5();
-	void PART_21_HELPER_6(int frame);
-	void PART_21_HELPER_7();
-	void PART_21_HELPER_8();
-	void PART_21_HELPER_9();
-	void PART_21_HELPER_10();
-	void PART_21_HELPER_11(int frame);
+	void PART_21_HELPER_5_waitForIgorWalkWithAnimation();
+	void PART_21_HELPER_6_drawMargaretFrameComposited(int frame);
+	void PART_21_HELPER_7_drawClosedDoor();
+	void PART_21_HELPER_8_drawOpenDoor();
+	void PART_21_HELPER_9_drawMargaret();
+	void PART_21_HELPER_10_MargaretTakesNote();
+	void PART_21_HELPER_11_setMargaretBackgroundFrame(int frame);
 	void PART_21();
 
 	// church bell tower
@@ -1037,7 +1050,7 @@ private:
 
 	// college corridor stairs second floor
 	void PART_31_EXEC_ACTION(int action);
-	void PART_31_ACTION_102();
+	void PART_31_ACTION_102_enterAstronomyLab();
 	void PART_31_ACTION_103_openDoor();
 	void PART_31_ACTION_106_goDownstairs();
 	void PART_31_ACTION_110_openDoor2();
@@ -1189,10 +1202,10 @@ private:
 	void PART_69_APPLY_OBJECT_STATE();
 	void PART_69_DRAW_FIREFLY_A(int frame);
 	void PART_69_DRAW_FIREFLY_B(int frame);
-	void PART_69_ANIMATE_FIREFLIES();
+	void PART_69_animateFireflies();
 	void PART_69_ACTION_107_watch();
 	void PART_69_FINALE(int num, int sound);
-	void PART_69_ENTER_FROM_RIGHT();
+	void PART_69_enterFromRight();
 	void PART_69_UPDATE_ROOM_BACKGROUND();
 	void PART_69();
 
@@ -1207,7 +1220,7 @@ private:
 	void PART_71_DRAW_OBJECT(int frame);
 	void PART_71_ACTION_102_takeObject();
 	void PART_71_ACTION_103_look();
-	void PART_71_ENTER_FROM_RIGHT();
+	void PART_71_enterFromRight();
 	void PART_71_LIGHTNING();
 	void PART_71_UPDATE_ROOM_BACKGROUND();
 	void PART_71();
@@ -1273,32 +1286,32 @@ private:
 	void PART_78_professorWarnings(int which);
 	void PART_78();
 
-	void PART_79_DRAW_FIGURE(int frame);
-	void PART_79_DRAW_PATCH(int step);
-	void PART_79_CLEAR_PATCH();
-	void PART_79_UPDATE_AMBIENT_790();
-	void PART_79_UPDATE_DIALOGUE_790(int action);
-	void PART_79_SAY_790(const Common::Array<DialogueText> &lines);
-	void PART_79_SLIDE();
-	void PART_79_790();
-	void PART_79_DRAW_GROUP_FRAME(const uint8 *buffer, int table, int base, int frame);
-	void PART_79_DRAW_SCENE(int frame);
-	void PART_79_DRAW_LAYER2_FRAME(int frame);
-	void PART_79_DRAW_LAYER2_FRAME_2(int frame);
-	void PART_79_DRAW_ANIM2_FRAME(const void *group, int frame);
-	void PART_79_ANIMATE_IGOR_HEAD(int frame);
+	void PART_79_drawLauraInWater(int frame);
+	void PART_79_drawReflection(int step);
+	void PART_79_clearReflection();
+	void PART_79_updateReflection();
+	void PART_79_updateLauraInWaterDialogue(int action);
+	void PART_79_sayLaura(const Common::Array<DialogueText> &lines);
+	void PART_79_scroll();
+	void PART_79_LauraInWater();
+	void PART_79_drawGroupFrame(const uint8 *buffer, int table, int base, int frame);
+	void PART_79_drawBoomerangScene(int frame);
+	void PART_79_drawKiss(int frame);
+	void PART_79_drawCircularClosingTransition(int frame);
+	void PART_79_drawPhilipSharkScene(const void *group, int frame);
+	void PART_79_animateIgorHead(int frame);
 	void PART_79_UPDATE_DIALOGUE_SPEAKER(int action);
 	void PART_79_UPDATE_DIALOGUE_FIRST_SPEAKER(int action);
 	void PART_79_UPDATE_DIALOGUE_THIRD_SPEAKER(int action);
-	void PART_79_UPDATE_AMBIENT_791();
+	void PART_79_animatePhilipShaking();
 	void PART_79_SAY_SPEAKER(int startX, int startY, int x, int y, int r, int g, int b, int endFrame, int baseFrame, const Common::Array<DialogueText> &lines);
-	void PART_79_SAY_FIRST_SPEAKER(int startX, int startY, const Common::Array<DialogueText> &lines);
-	void PART_79_SAY_THIRD_SPEAKER(const Common::Array<DialogueText> &lines);
-	void PART_79_IGOR_SAY(const Common::Array<DialogueText> &lines);
-	void PART_79_SET_IGOR_POS(int x, int y);
+	void PART_79_sayLaura(int startX, int startY, const Common::Array<DialogueText> &lines);
+	void PART_79_sayPhilip(const Common::Array<DialogueText> &lines);
+	void PART_79_sayIgor(const Common::Array<DialogueText> &lines);
+	void PART_79_setIgorPos(int x, int y);
 	void PART_79_FADE_COLORS(int first, int last, bool fadeInColors);
 	void PART_79_FADE_IN_PAIR(int firstColor);
-	void PART_79_791();
+	void PART_79_beachScene();
 	void PART_79();
 
 	void PART_80_drawFrame(int frame);
@@ -1340,12 +1353,12 @@ private:
 	void maybeUpdateFlicker();
 	void mazeFlicker();
 	void mazeDrawFlameFrame(int x, int y, int frame);
-	void MAZE_ENTER_WALK(const MazeEntry &entry);
+	void MAZE_walkIn(const MazeEntry &entry);
 	void enterFromStairs(const MazeEntry &entry);
 	void mazeWalkToExit(const MazeAction &action);
 	void mazeExitThroughStairs(const MazeAction &action);
 	void mazeGoToNeighbor(int dir);
-	int MAZE_MUSIC_TRACK() const;
+	int MAZE_getMusicTrack() const;
 	void setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp, int yBottom = 143);
 
 	void UPDATE_OBJECT_STATE(int num);
@@ -1354,8 +1367,8 @@ private:
 	void PART_meanwhile(int img = IMG_Meanwhile);
 
 	// Margaret cutscenes
-	void PART_MARGARET_ROOM_CUTSCENE_HELPER_1();
-	void PART_MARGARET_ROOM_CUTSCENE_HELPER_2(int frame);
+	void PART_MARGARET_ROOM_CUTSCENE_drawMargaretBasePose();
+	void PART_MARGARET_ROOM_CUTSCENE_drawMargaretFrame(int frame);
 	void PART_MARGARET_ROOM_CUTSCENE_UPDATE_DIALOGUE_MARGARET(int action);
 	void PART_MARGARET_ROOM_CUTSCENE();
 
