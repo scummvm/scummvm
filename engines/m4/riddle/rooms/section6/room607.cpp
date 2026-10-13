@@ -322,6 +322,8 @@ void Room607::parser() {
 		// No implementation
 	} else if (player_said("right") && right()) {
 		// No implementation
+	} else if (player_said("up") && up()) {
+		// No implementation
 	} else if (player_said("down") && down()) {
 		// No implementation
 	} else {
@@ -363,6 +365,26 @@ bool Room607::right() {
 		adv_kill_digi_between_rooms(false);
 		digi_play_loop("950_s28C", 3, 90);
 		_G(game).setRoom(640);
+		return true;
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool Room607::up() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		disable_player_commands_and_fade_init(1);
+		return true;
+	case 1:
+		digi_stop(1);
+		digi_stop(2);
+		adv_kill_digi_between_rooms(false);
+		digi_play_loop("950_s28C", 3, 90);
+		_G(game).setRoom(645);
 		return true;
 	default:
 		break;
