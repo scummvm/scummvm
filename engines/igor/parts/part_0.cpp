@@ -36,6 +36,7 @@ void IgorEngine::PART_00_APPLY_OBJECT_STATE(int num) {
 		const int src = open ? 0x3900 : 0x3238; // open or closed door frame depending on the flag
 		copyArea(_screenLayer1, 0x5572, 320, _animFramesBuffer + src, 31, 31, 56);
 		_roomActionsTable[76] = open ? 7 : 6;
+		// hole open or not
 		_roomObjectAreasTable[3].object = (_objectsState[11] == 0) ? 4 : 5;
 	}
 	if (num == 6 || num == 255) {

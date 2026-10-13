@@ -186,7 +186,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
-	case 48:
+	case 48: // look at bottle
 		igorSay(77 + _objectsState[0], 1, 53 + _objectsState[0]);
 		break;
 	case 50:
@@ -196,7 +196,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 			igorSay(82, 1, 58);
 		}
 		break;
-	case 51:
+	case 51: // look at great statuette / money
 		if (_objectsState[7] == 0) {
 			ADD_DIALOGUE_TEXT(157, 1, 81);
 		} else {
@@ -223,7 +223,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 	case 57:
 		igorSay(31, 1, 31);
 		break;
-	case 58:
+	case 58: // look at astronomy book
 		igorSay({ { 140, 1, 70 }, { 141, 1, 71 }, { 142, 1, 72 }, { 143, 1, 73 } });
 		_objectsState[4] = 2;
 		break;
@@ -241,7 +241,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 			addObjectToInventory(16, 51);
 		}
 		break;
-	case 62:
+	case 62: // use burger on lizard
 		_inventoryInfo[_inventoryInfo[52] - 1] = 0;
 		_inventoryInfo[52] = 0;
 		packInventory();
@@ -253,7 +253,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		addObjectToInventory(24, 59);
 		igorSay(169, 1, 93);
 		break;
-	case 63:
+	case 63: // use flower on vase
 		igorSay(170, 1, 94);
 		_inventoryInfo[_inventoryInfo[68] - 1] = 0;
 		_inventoryInfo[68] = 0;

@@ -19,6 +19,7 @@
  *
  */
 #include "igor/igor.h"
+#include "common/system.h"
 
 namespace Igor {
 
@@ -42,143 +43,47 @@ void IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action) {
 	}
 }
 
-
-void IgorEngine::PART_85() {
-	if(_game.flags & kFlagFloppy) {
-		playMusic(2);
-	} else playMusic(10);
-	// loads part5 room into memory
-	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
-	// copies current screenLayer1 into screenLayer2 to hold a copy
-	memcpy(_screenLayer2, _screenLayer1, 46080);
-	// loads part6 room into memory, intro starts there
-	loadRoomData(PAL_SpringBridgeIntro, IMG_SpringBridgeIntro, 0, 0, TXT_SpringBridgeIntro);
-	static const int anm[] = { ANM_PhilipLauraIntro, AOF_PhilipLauraIntro, ANM_LauraIntro, AOF_LauraIntro, 0 };
-	loadAnimData(anm);
-	// copies part6 into screen buffer
-	memcpy(_screenVGA, _screenLayer1, 46080);
-
-	_updateDialogue = &IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA;
-	_updateRoomBackground = &IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND;
-	// In the CD version the water sound is embedded in the CD track
-	if(_game.flags & kFlagFloppy) {
-		VAR_WATER_SOUND_PLAYING = true;
-		playSound(17, 1);
-	}
-	fadeIn(768);
-	//decode first frame and paint it
-	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
-
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	//Laura does her hair
-	PART_85_HELPER_1_PLAY_ANIM(0, 0x7481, 2, 7, 32);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-
-	// 3 lines of text
-	ADD_DIALOGUE_TEXT(201, 3, 545);
-	// 1 line in a new screen
-	ADD_DIALOGUE_TEXT(204, 1, 546);
-	SET_DIALOGUE_TEXT(1, 2);
-	startCutsceneDialogue(89, 56, 63, 63, 0);
-
-	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	cutsceneSayStart(113, 59, 63, 0, 38, 205, 3, 547);
-	VAR_CURRENT_TALKING_ACTOR = 1;
-	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	cutsceneSayStart(89, 56, 63, 63, 0, 208, 1, 548);
-	VAR_CURRENT_TALKING_ACTOR = 0;
-	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	cutsceneSayStart(113, 59, 63, 0, 38, { { 209, 2, 549 }, { 211, 1, 550 }, { 212, 1, 551 }, { 213, 1, 552 }, { 214, 1, 553 } });
-	VAR_CURRENT_TALKING_ACTOR = 1;
-	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1_PLAY_ANIM(0, 0x7481, 2, 7, 32);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	cutsceneSayStart(89, 56, 63, 63, 0, { { 215, 1, 554 }, { 216, 2, 555 }, { 218, 1, 556 } });
-	VAR_CURRENT_TALKING_ACTOR = 0;
-	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	cutsceneSayStart(113, 59, 63, 0, 38, { { 219, 2, 557 }, { 221, 2, 558 } });
-	VAR_CURRENT_TALKING_ACTOR = 1;
-	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
-	PART_85_HELPER_1_PLAY_ANIM(0, 0x7481, 2, 7, 32);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1_PLAY_ANIM(0, 0x7481, 18, 37, 20);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_2_SCROLL_RIGHT();
-	VAR_WATER_SOUND_PLAYING = false;
-	stopSound();
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1_PLAY_ANIM(0x74CA, 0xA6C4, 1, 6, 32);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	for (int i = 0; i <= 200 / kTimerTicksCount; ++i) {
-		PART_85_UPDATE_ROOM_BACKGROUND();
-		if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-		waitForTimer();
-	}
-	_walkData[0].x = 251;
-	_walkData[0].y = 125;
-	_walkData[0].scaleWidth = 50;
-	_walkDataLastIndex = 1;
-	_walkCurrentPos = 4;
-	igorSayAndWait(223, 2, 559);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1_PLAY_ANIM(0x74CA, 0xA6C4, 7, 9, 32);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	_walkData[0].x = 250;
-	_walkData[0].y = 119;
-	_walkCurrentPos = 3;
-	igorSayAndWait({ { 225, 2, 560 }, { 227, 3, 561 } });
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1_PLAY_ANIM(0x74CA, 0xA6C4, 10, 24, 16);
-	if (_game.version == kIdSpaCD) {
-		displayLogo(); // cseg209:0x12B5
-	}
-
-PART_85_EXIT:
-	stopSound();
-	_gameState.dialogueTextRunning = false;
-	_inputVars[kInputEscape] = 0;
-	_walkData[0].setPos(155, 121, 4, 0);
-	_walkData[0].setDefaultScale();
-	copyArea(_screenLayer2, 23180, 320, _facingIgorFrames[3], 30, 30, 50, true);
-	memcpy(_screenVGA, _screenLayer2, 46080);
-	// sets all colors after 624 as black
-	memset(_currentPalette + 0x270, 0, 0x8D);
-	setPaletteRange(208, 254);
-	_currentPart = 61;
-	_updateDialogue = 0;
-	_updateRoomBackground = 0;
-}
-
 void IgorEngine::displayLogo() {
 	// The CD executable preserves the last intro frame while it displays a
 	// 320x122 title card, then restores that frame before entering part 61.
-	memcpy(_screenTextLayer, _screenVGA, 46080); // cseg209:0x03EE-0x0400
-	playSound(65, 1); // cseg209:0x041C-0x0420
+	memcpy(_screenTextLayer, _screenVGA, 46080);
+	playSound(65, 1);
 
-	memcpy(_paletteBuffer, _currentPalette, 768); // cseg209:0x0425-0x0432
-	loadData(PAL_IgorIntroLogo, _currentPalette); // cseg209:0x0437-0x0460
-	_currentPalette[765] = 63; // cseg209:0x0465
-	_currentPalette[766] = 63; // cseg209:0x046A
-	_currentPalette[767] = 63; // cseg209:0x046F
+	memcpy(_paletteBuffer, _currentPalette, 768);
+	loadData(PAL_IgorIntroLogo, _currentPalette);
+	memset(_paletteBuffer + 765, 63, 3);
 	uint8 logoColor255[3];
 	memcpy(logoColor255, _currentPalette + 765, 3);
-	memset(_currentPalette + 765, 0, 3); // cseg209:0x0474-0x047D
-	updatePalette(768); // cseg209:0x0474-0x0486
-	loadData(IMG_IgorIntroLogo, _screenVGA); // cseg209:0x048B-0x04B8
+	memset(_currentPalette + 765, 0, 3);
+	updatePalette(768);
+	loadData(IMG_IgorIntroLogo, _screenVGA);
 
-	for (int i = 0; i <= 200 / kTimerTicksCount; ++i) { // cseg209:0x04BD-0x04F2
-		PART_85_UPDATE_ROOM_BACKGROUND();
-		waitForTimer();
-	}
+	// Keep the title and subtitle holds on the same refresh cadence as the fades.
+	const int refreshRate = 70086; // VGA refresh rate in millihertz.
+	auto waitForLogoHold = [this](int timerTicks, int refreshFrames, bool canSkip) {
+		const uint32 start = _system->getMillis();
+		for (int ticks = 0; ticks < timerTicks; ticks += kTimerTicksCount) {
+			PART_85_UPDATE_ROOM_BACKGROUND();
+			if (_eventQuitGame) {
+				return;
+			}
+			if (canSkip && (_inputVars[kInputConfirm] || _inputVars[kInputClick] ||
+					_inputVars[kInputEscape] || _inputVars[kInputRightClick])) {
+				_inputVars[kInputConfirm] = 0;
+				_inputVars[kInputClick] = 0;
+				_inputVars[kInputEscape] = 0;
+				_inputVars[kInputRightClick] = 0;
+				return;
+			}
+			const int elapsedTicks = MIN(ticks + kTimerTicksCount, timerTicks);
+			const uint32 deadline = start + static_cast<uint64>(elapsedTicks) * refreshFrames * 1000000 /
+					(timerTicks * refreshRate * _fastMode);
+			waitForTimer(-1, true, deadline);
+		}
+	};
+	waitForLogoHold(200, 53, false);
 
-	uint8 *subtitle = loadData(FRM_IgorIntroLogo); // cseg209:0x0002
+	uint8 *subtitle = loadData(FRM_IgorIntroLogo);
 	for (int y = 0; y < 13; ++y) {
 		for (int x = 0; x < 206; ++x) {
 			const uint8 color = subtitle[y * 206 + x];
@@ -189,55 +94,55 @@ void IgorEngine::displayLogo() {
 	}
 	free(subtitle);
 
-	// Fade color 255 from black to the logo's white. cseg209:0x04F9-0x05CB
+	// Each palette change becomes visible on the next refresh, without
+	// advancing the logical game ticks.
+	uint32 fadeStart = _system->getMillis();
+	int fadeStep = 0;
+	// Fade color 255 from black to the logo's white.
 	for (int threshold = 63; threshold >= 0; threshold -= 3) {
-		for (int i = 765; i < 768; ++i) { // cseg209:0x0504-0x05B8
+		waitForTimer(0, true, fadeStart + ++fadeStep * 1000000 / refreshRate / _fastMode);
+		for (int i = 765; i < 768; ++i) {
 			if (logoColor255[i - 765] >= threshold) {
 				const int color = _currentPalette[i] + 3;
 				_currentPalette[i] = MIN<int>(color, logoColor255[i - 765]);
 			}
 		}
-		setPaletteRange(255, 255); // cseg209:0x05BB-0x05BF
-		waitForTimer();
+		setPaletteRange(255, 255);
+		waitForTimer(0);
 	}
 
-	// The original counter runs in DOS timer units; waitForTimer() advances by
-	// kTimerTicksCount units. cseg209:0x05CE-0x0635
-	for (int i = 0; i <= 1500 / kTimerTicksCount; ++i) {
-		PART_85_UPDATE_ROOM_BACKGROUND();
-		waitForTimer();
-		if (_inputVars[kInputClick] || _inputVars[kInputEscape] || _inputVars[kInputOptions]) {
-			_inputVars[kInputClick] = 0;
-			_inputVars[kInputEscape] = 0;
-			_inputVars[kInputOptions] = 0;
-			break;
-		}
-	}
+	waitForLogoHold(1500, 398, true);
 
-	memcpy(_screenVGA, _screenTextLayer, 39040); // cseg209:0x0637-0x0649
-	memcpy(_currentPalette, _paletteBuffer, 765); // cseg209:0x064E-0x065B
-	setPaletteRange(0, 255); // cseg209:0x0660-0x0664
+	memcpy(_screenVGA, _screenTextLayer, 39040);
+	memcpy(_currentPalette, _paletteBuffer, 765);
+	setPaletteRange(0, 255);
+	// Restoring the scene palette also consumes one refresh.
+	waitForTimer(0, true, _system->getMillis() + 1000000 / refreshRate / _fastMode);
+	fadeStart = _system->getMillis();
+	fadeStep = 0;
 
 	// Fade the subtitle, which remains below the 122 restored rows and uses
-	// palette color 255. cseg209:0x0669-0x0705
+	// palette color 255.
 	for (int threshold = 0; threshold <= 63; threshold += 3) {
-		for (int i = 765; i < 768; ++i) { // cseg209:0x066E-0x06E6
+		waitForTimer(0, true, fadeStart + ++fadeStep * 1000000 / refreshRate / _fastMode);
+		for (int i = 765; i < 768; ++i) {
 			if (logoColor255[i - 765] >= threshold) {
 				_currentPalette[i] = (_currentPalette[i] < 3) ? 0 : _currentPalette[i] - 3;
 			}
 		}
-		setPaletteRange(255, 255); // cseg209:0x06F0-0x06F4
-		waitForTimer();
+		setPaletteRange(255, 255);
+		waitForTimer(0);
 	}
 
-	memcpy(_screenVGA, _screenTextLayer, 46080); // cseg209:0x0708-0x071A
-	_currentPalette[765] = 63; // cseg209:0x071F
-	_currentPalette[766] = 63; // cseg209:0x0724
-	_currentPalette[767] = 63; // cseg209:0x0729
-	setPaletteRange(255, 255); // cseg209:0x072E-0x0740
+	memcpy(_screenVGA, _screenTextLayer, 46080);
+	_currentPalette[765] = 63;
+	_currentPalette[766] = 63;
+	_currentPalette[767] = 63;
+	setPaletteRange(255, 255);
+	waitForTimer(0);
 }
 
-void IgorEngine::PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay) {
+void IgorEngine::PART_85_HELPER_1_playAnimationFrame(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay) {
 	do {
 		if (compareGameTick(0, delay)) {
 			decodeAnimFrame(_animFramesBuffer + frameOffset2 - 1 + READ_LE_UINT16(_animFramesBuffer + frameOffset1 + firstFrame * 2 - 3), _screenVGA, true);
@@ -249,7 +154,7 @@ void IgorEngine::PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, 
 	} while (firstFrame <= lastFrame);
 }
 
-void IgorEngine::PART_85_HELPER_2_SCROLL_RIGHT() {
+void IgorEngine::PART_85_HELPER_2_scrollRight() {
 	int x = 1;
 	do {
 		if (compareGameTick(0, 16)) {
@@ -293,6 +198,123 @@ void IgorEngine::PART_85_HELPER_6_animateIgorHead(int frame) {
 	// Animate Igor's head by copying the relevant area from the screen and overlaying the head frame.
 	copyArea(_screenVGA, offset, 320, _screenLayer2 + offset, 320, 14, 8);
 	copyArea(_screenVGA, offset, 320, _igorHeadFrames + (_walkCurrentPos - 1) * 924 + frame * 154, 14, 14, 8, true);
+}
+
+// Introduction cutscene
+void IgorEngine::PART_85() {
+	if(_game.flags & kFlagFloppy) {
+		playMusic(2);
+	} else playMusic(10);
+
+	// loads part5 room into memory
+	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
+	// copies current screenLayer1 into screenLayer2 to hold a copy
+	memcpy(_screenLayer2, _screenLayer1, 46080);
+	// loads part6 room into memory, intro starts there
+	loadRoomData(PAL_SpringBridgeIntro, IMG_SpringBridgeIntro, 0, 0, TXT_SpringBridgeIntro);
+	static const int anm[] = { ANM_PhilipLauraIntro, AOF_PhilipLauraIntro, ANM_LauraIntro, AOF_LauraIntro, 0 };
+	loadAnimData(anm);
+	// copies part6 into screen buffer
+	memcpy(_screenVGA, _screenLayer1, 46080);
+
+	_updateDialogue = &IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA;
+	_updateRoomBackground = &IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND;
+
+	// In the CD version the water sound is embedded in the CD track
+	if(_game.flags & kFlagFloppy) {
+		VAR_WATER_SOUND_PLAYING = true;
+		playSound(17, 1);
+	}
+
+	fadeIn(768);
+	//decode first frame and paint it
+	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
+
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// Laura does her hair
+	PART_85_HELPER_1_playAnimationFrame(0, 0x7481, 2, 7, 32);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+
+	// 3 lines of text
+	ADD_DIALOGUE_TEXT(201, 3, 545);
+	// 1 line in a new screen
+	ADD_DIALOGUE_TEXT(204, 1, 546);
+	SET_DIALOGUE_TEXT(1, 2);
+	startCutsceneDialogue(89, 56, 63, 63, 0);
+
+	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	cutsceneSayStart(113, 59, 63, 0, 38, 205, 3, 547);
+	VAR_CURRENT_TALKING_ACTOR = 1;
+	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	cutsceneSayStart(89, 56, 63, 63, 0, 208, 1, 548);
+	VAR_CURRENT_TALKING_ACTOR = 0;
+	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	cutsceneSayStart(113, 59, 63, 0, 38, { { 209, 2, 549 }, { 211, 1, 550 }, { 212, 1, 551 }, { 213, 1, 552 }, { 214, 1, 553 } });
+	VAR_CURRENT_TALKING_ACTOR = 1;
+	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	PART_85_HELPER_1_playAnimationFrame(0, 0x7481, 2, 7, 32);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	cutsceneSayStart(89, 56, 63, 63, 0, { { 215, 1, 554 }, { 216, 2, 555 }, { 218, 1, 556 } });
+	VAR_CURRENT_TALKING_ACTOR = 0;
+	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	cutsceneSayStart(113, 59, 63, 0, 38, { { 219, 2, 557 }, { 221, 2, 558 } });
+	VAR_CURRENT_TALKING_ACTOR = 1;
+	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
+	PART_85_HELPER_1_playAnimationFrame(0, 0x7481, 2, 7, 32);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	PART_85_HELPER_1_playAnimationFrame(0, 0x7481, 18, 37, 20);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	PART_85_HELPER_2_scrollRight();
+	VAR_WATER_SOUND_PLAYING = false;
+	stopSound();
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	PART_85_HELPER_1_playAnimationFrame(0x74CA, 0xA6C4, 1, 6, 32);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	for (int i = 0; i <= 200 / kTimerTicksCount; ++i) {
+		PART_85_UPDATE_ROOM_BACKGROUND();
+		if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+		waitForTimer();
+	}
+	_walkData[0].x = 251;
+	_walkData[0].y = 125;
+	_walkData[0].scaleWidth = 50;
+	_walkDataLastIndex = 1;
+	_walkCurrentPos = 4;
+	igorSayAndWait(223, 2, 559);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	PART_85_HELPER_1_playAnimationFrame(0x74CA, 0xA6C4, 7, 9, 32);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	_walkData[0].x = 250;
+	_walkData[0].y = 119;
+	_walkCurrentPos = 3;
+	igorSayAndWait({ { 225, 2, 560 }, { 227, 3, 561 } });
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	PART_85_HELPER_1_playAnimationFrame(0x74CA, 0xA6C4, 10, 24, 16);
+	if (_game.version == kIdSpaCD) {
+		displayLogo();
+	}
+
+PART_85_EXIT:
+	stopSound();
+	_gameState.dialogueTextRunning = false;
+	_inputVars[kInputEscape] = 0;
+	_walkData[0].setPos(155, 121, 4, 0);
+	_walkData[0].setDefaultScale();
+	copyArea(_screenLayer2, 23180, 320, _facingIgorFrames[3], 30, 30, 50, true);
+	memcpy(_screenVGA, _screenLayer2, 46080);
+	// sets all colors after 624 as black
+	memset(_currentPalette + 0x270, 0, 0x8D);
+	setPaletteRange(208, 254);
+	_currentPart = 61;
+	_updateDialogue = 0;
+	_updateRoomBackground = 0;
 }
 
 } // End of namespace Igor

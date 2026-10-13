@@ -62,10 +62,17 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 					       _fastMode, kTimerTicksCount * 1000 / kTickDelay / _fastMode);
 				} else if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_inputVars[kInputEscape] = 1;
+				} else if (ev.kbd.keycode == Common::KEYCODE_RETURN || ev.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+					_inputVars[kInputConfirm] = 1;
 				} else if (ev.kbd.keycode == Common::KEYCODE_SPACE) {
 					_inputVars[kInputOptions] = 1;
 				} else if (ev.kbd.keycode == Common::KEYCODE_p) {
 					_inputVars[kInputPause] = 1;
+				}
+				break;
+			case Common::EVENT_KEYUP:
+				if (ev.kbd.keycode == Common::KEYCODE_RETURN || ev.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+					_inputVars[kInputConfirm] = 0;
 				}
 				break;
 			case Common::EVENT_MOUSEMOVE:
