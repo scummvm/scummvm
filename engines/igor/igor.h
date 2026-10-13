@@ -647,6 +647,7 @@ private:
 	int _walkToObjectPosX, _walkToObjectPosY;
 
 	int16 _currentPart;
+	bool _canSaveGame = true;
 	const Graphics::Surface *_optionsMenuThumbnail = nullptr;
 	int _talkDelay;
 	int _talkSpeechCounter;
@@ -1682,7 +1683,7 @@ public:
 		return true;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return _canSaveGame;
 	}
 
 	void handlePause();

@@ -202,6 +202,8 @@ void IgorEngine::part85AnimateIgorHead(int frame) {
 
 // Introduction cutscene
 void IgorEngine::part85() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	if(_game.flags & kFlagFloppy) {
 		playMusic(2);
 	} else playMusic(10);
@@ -315,6 +317,7 @@ PART_85_EXIT:
 	_currentPart = 61;
 	_updateDialogue = 0;
 	_updateRoomBackground = 0;
+	_canSaveGame = savingWasAllowed;
 }
 
 } // End of namespace Igor

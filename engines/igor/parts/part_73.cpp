@@ -47,6 +47,8 @@ void IgorEngine::part73UpdateDialogue(int action) {
 }
 
 void IgorEngine::part73Cutscene() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	playMusic(8);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_Part73, IMG_Part73, BOX_Part73, MSK_Part73, TXT_Part73);
@@ -107,6 +109,7 @@ void IgorEngine::part73Cutscene() {
 	_currentAction.verb = kVerbWalk;
 	_objectsState[kStatuetteTaken2StateIndex] = 0;
 	_currentPart = 40;
+	_canSaveGame = savingWasAllowed;
 }
 
 } // End of namespace Igor

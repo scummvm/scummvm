@@ -45,6 +45,8 @@ void IgorEngine::part90FadePalette(bool fadeInColors) {
 }
 
 void IgorEngine::part90() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	static const uint16 holdTicks[] = { 2000, 500, 500, 2500, 2000 };
 	const uint16 duration = holdTicks[_currentPart - 900];
 	const char *str;
@@ -123,16 +125,19 @@ void IgorEngine::part90() {
 			fadeOut(768);
 		SET_PAL_208_96_1();
 		SET_PAL_240_48_1();
+		_canSaveGame = savingWasAllowed;
 		return;
 	}
 	part90FadePalette(false);
 	if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart) {
+		_canSaveGame = savingWasAllowed;
 		return;
 	}
 	++_currentPart;
 	if ((_game.version == kIdSpaCD && _currentPart == 904) || _currentPart == 905) {
 		_currentPart = 850;
 	}
+	_canSaveGame = savingWasAllowed;
 }
 
 } // End of namespace Igor

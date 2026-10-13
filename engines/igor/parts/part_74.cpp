@@ -109,6 +109,8 @@ void IgorEngine::part74Say(int who, const Common::Array<DialogueText> &lines) {
  * Boat scene
  */
 void IgorEngine::part74ShipCutscene() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	UpdateRoomBackgroundProc previousBackground = _updateRoomBackground;
 	playMusic(4);
 	_gameState.enableLight = 1;
@@ -172,6 +174,7 @@ void IgorEngine::part74ShipCutscene() {
 	fadeIn(624);
 	_gameState.enableLight = 2;
 	_updateRoomBackground = previousBackground;
+	_canSaveGame = savingWasAllowed;
 }
 
 } // End of namespace Igor
