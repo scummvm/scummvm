@@ -96,7 +96,7 @@ void IgorEngine::PART_33_ACTION_109_takeAstronomyBooks() {
 		}
 		waitForTimer(120);
 	}
-	addObjectToInventory(31, 66);
+	addObjectToInventory(kInventoryObjectAstronomyBook, 66);
 	_objectsState[kAstronomyBookTakenStateIndex] = 1;
 	PART_33_HELPER_1_OBJECTS_STATE(255);
 	igorSayAndWait({ { 210, 1, 405 }, { 211, 2, 406 } });
@@ -158,7 +158,7 @@ void IgorEngine::PART_33_ACTION_114_showPhotoToHarrison() {
 		copyArea(_screenVGA, 26279, 320, _animFramesBuffer + PART_33_ANIM_DATA_5[i] * 1827 + 0x5104, 63, 62, 29);
 		waitForTimer(60);
 	}
-	addObjectToInventory(35, 70);
+	addObjectToInventory(kInventoryObjectBiologyProject, 70);
 	PART_33_HELPER_1_OBJECTS_STATE(255);
 	PART_33_HarrisonSay({ { 233, 2, 422 } });
 	_objectsState[kHarrisonPhotoStateIndex] = 1;

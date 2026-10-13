@@ -55,7 +55,7 @@ void IgorEngine::PART_16_ACTION_101_pickUpFlask() {
 		drawAnimRect(offset, (i - 1) * 1127, 23, 49);
 		waitForTimer(120);
 	}
-	addObjectToInventory(20, 55);
+	addObjectToInventory(kInventoryObjectFlask, 55);
 	_objectsState[kFlaskTakenStateIndex] = 1;
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
@@ -188,7 +188,7 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 	PART_16_HELPER_1_OBJECT_STATE(255);
 	// Data-only inventory update: the panel is redrawn later together with the verbs
 	++_inventoryInfo[73];
-	_inventoryInfo[_inventoryInfo[73] - 1] = 19;
+	_inventoryInfo[_inventoryInfo[73] - 1] = kInventoryObjectPhoto;
 	_inventoryInfo[54] = _inventoryInfo[73];
 	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
 	_objectsState[kPhotoCutsceneSeenStateIndex] = 1;

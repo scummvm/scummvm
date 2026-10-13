@@ -35,7 +35,6 @@ static const int kPart71StatuetteFrameHeight = 6;
 static const int kPart71StatuetteFramesOffset = kPart71TakeFramesCount * kPart71TakeFrameSize;
 
 static const int kPart71StatuetteNameIndex = 2;
-static const int kPart71StatuetteInventoryNumber = 25;
 static const int kPart71StatuetteInventoryIndex = 60;
 
 // What PART_71_APPLY_OBJECT_STATE refreshes.
@@ -119,7 +118,7 @@ void IgorEngine::PART_71_ACTION_102_takeObject() {
 		drawAnimRect(kPart71TakeOffset, i * kPart71TakeFrameSize, kPart71TakeWidth, kPart71TakeHeight, false, kBlendLitSpriteNoShade);
 		waitForTimer(kPart71TakeFrameDelay);
 	}
-	addObjectToInventory(kPart71StatuetteInventoryNumber, kPart71StatuetteInventoryIndex);
+	addObjectToInventory(kInventoryObjectLizard, kPart71StatuetteInventoryIndex);
 	_objectsState[kStatuetteTakenStateIndex] = 1;
 	PART_71_APPLY_OBJECT_STATE(kPart71ApplyAll);
 	igorSay(204, 3, 996);

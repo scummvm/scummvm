@@ -181,7 +181,7 @@ void IgorEngine::PART_06_ACTION_105_pickCamera() {
 		PART_06_UPDATE_ROOM_BACKGROUND();
 		waitForTimer();
 	} while (i != 3);
-	addObjectToInventory(36, 71);
+	addObjectToInventory(kInventoryObjectCamera, 71);
 	_objectsState[kTripodStateIndex] = 0;
 	PART_06_HELPER_6_setPhotographerState(255);
 }

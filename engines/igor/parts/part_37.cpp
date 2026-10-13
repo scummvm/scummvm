@@ -61,7 +61,7 @@ void IgorEngine::PART_37_ACTION_102_lookAtPaperBinTakePaper() {
 		drawAnimRect(offset, i * 1550, 31, 50);
 		waitForTimer(60);
 	}
-	addObjectToInventory(32, 67);
+	addObjectToInventory(kInventoryObjectLabNote, 67);
 	_objectsState[kPhysicsClassPaperTakenStateIndex] = 1;
 	PART_37_HELPER_1_OBJECT_STATE(255);
 	if (_game.version == kIdEngDemo110) {

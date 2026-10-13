@@ -37,7 +37,6 @@ static const int kPart72ObjectAreas[5] = { 42, 44, 50, 56, 61 };
 // Screen positions of the five blinking eyes, each one drawn as two pixels two columns apart.
 static const int kPart72EyeOffsets[5] = { 0x2C06, 0x135B, 0x0FC5, 0x23E7, 0x254D };
 
-static const int kPart72FlowerObjectNumber = 33;
 static const int kPart72FlowerObjectIndex = 68;
 
 static bool PART_72_shouldBlink(uint8 color) {
@@ -89,7 +88,7 @@ void IgorEngine::PART_72_ACTION_102_takeFlower() {
 		copyArea(_screenVGA, kPart72TakeOffset, 320, frame, kPart72TakeWidth, kPart72TakeWidth, kPart72TakeHeight);
 		waitForTimer(90);
 	}
-	addObjectToInventory(kPart72FlowerObjectNumber, kPart72FlowerObjectIndex);
+	addObjectToInventory(kInventoryObjectFlower, kPart72FlowerObjectIndex);
 	_objectsState[kFlowerTakenStateIndex] = 1;
 	PART_72_APPLY_OBJECT_STATE();
 	igorSay(201, 1, 1093);

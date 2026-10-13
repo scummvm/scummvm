@@ -104,7 +104,7 @@ void IgorEngine::PART_10_ACTION_104_pickHamburger() {
 		waitForTimer(31);
 	}
 
-	addObjectToInventory(17, 52);
+	addObjectToInventory(kInventoryObjectBurger, 52);
 	_objectsState[kHamburgerTakenStateIndex] = 1;
 }
 

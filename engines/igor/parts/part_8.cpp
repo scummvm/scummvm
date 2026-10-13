@@ -99,7 +99,7 @@ void IgorEngine::PART_08_ACTION_pickNewspaper() {
 		if (frame == 0)
 			waitForTimer(127);
 	}
-	addObjectToInventory(15, 50);
+	addObjectToInventory(kInventoryObjectNewspaper, 50);
 	_objectsState[kNewspaperTakenStateIndex] = 1;
 	PART_08_APPLY_OBJECT_STATE(255);
 }
@@ -111,7 +111,7 @@ void IgorEngine::PART_08_ACTION_pickBook() {
 			waitForTimer(127);
 	}
 
-	addObjectToInventory(13, 48);
+	addObjectToInventory(kInventoryObjectDeansBook, 48);
 	PART_08_APPLY_OBJECT_STATE(255);
 	_objectsState[kDeanBookTakenStateIndex] = 1;
 }

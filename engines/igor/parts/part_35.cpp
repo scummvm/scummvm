@@ -62,7 +62,7 @@ void IgorEngine::PART_35_ACTION_102_takeResin() {
 		return;
 	}
 	PARK_PICK_UP_ANIMATION(16339, kParkFrames);
-	addObjectToInventory(27, 62);
+	addObjectToInventory(kInventoryObjectResin, 62);
 	PART_35_APPLY_OBJECT_STATE(255);
 }
 

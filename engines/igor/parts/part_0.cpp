@@ -111,7 +111,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 	case 109: // take alarm clock
 		if (_objectsState[kAlarmClockTakenStateIndex] == 0) {
 			animateLitAnimFrames(0x8410, 0, 1, 0x405, 21, 49, 0x693D, 126, -1, 0);
-			addObjectToInventory(6, 41);
+			addObjectToInventory(kInventoryObjectAlarmClock, 41);
 			_objectsState[kAlarmClockTakenStateIndex] = 1;
 			PART_00_APPLY_OBJECT_STATE(1);
 		}
@@ -148,7 +148,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 	case 116: // take records
 		if (_objectsState[kRecordTakenStateIndex] == 0) {
 			animateLitAnimFrames(0x7C06, 0, 1, 0x405, 21, 49, 0x7146, 126, -1, 0);
-			addObjectToInventory(5, 40);
+			addObjectToInventory(kInventoryObjectRecords, 40);
 			_objectsState[kRecordTakenStateIndex] = 1;
 			PART_00_APPLY_OBJECT_STATE(255);
 		} else {
