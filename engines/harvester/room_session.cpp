@@ -76,10 +76,10 @@ bool RoomSession::cancelPlayerAttackAnimation() {
 }
 
 void RoomSession::stopPlayerRegionInteraction() {
-	_movementInput.moveLeft = false;
-	_movementInput.moveRight = false;
-	_movementInput.moveUp = false;
-	_movementInput.moveDown = false;
+	_inputState.moveLeft = false;
+	_inputState.moveRight = false;
+	_inputState.moveUp = false;
+	_inputState.moveDown = false;
 	_pendingRegionName.clear();
 	(void)cancelPlayerAttackAnimation();
 	_playerState.hasMoveTarget = false;

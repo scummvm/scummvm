@@ -63,6 +63,7 @@ private:
 	friend class MenuSystem;
 	friend class RoomInteractionProcessor;
 	friend class RoomSystem;
+	friend class RoomInput;
 	friend class RoomSession;
 
 	bool loadQuickTips();

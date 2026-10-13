@@ -39,6 +39,16 @@ struct IndexedBitmap;
 struct ResolvedText;
 struct RoomSceneResources;
 
+struct RoomPresentationState {
+	ResolvedText inspectText;
+	Common::String currentInteractionPromptText;
+	bool showingInspectText = false;
+	bool inspectCanDismiss = false;
+	ResolvedText combatLoadoutStatusText;
+	uint32 combatLoadoutStatusHideTick = 0;
+	bool closeInventoryAfterCombatLoadoutStatus = false;
+};
+
 class RoomPresentation {
 public:
 	RoomPresentation(HarvesterEngine &engine, RoomSceneResources &scene,

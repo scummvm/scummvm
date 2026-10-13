@@ -19,6 +19,7 @@ MODULE_OBJS = \
 	resources.o \
 	room_combat.o \
 	room_interaction.o \
+	room_input.o \
 	room_presentation.o \
 	room_scene_runtime.o \
 	room_session.o \

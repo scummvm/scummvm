@@ -23,6 +23,7 @@
 #define HARVESTER_ROOM_SESSION_H
 
 #include "harvester/room_combat.h"
+#include "harvester/room_input.h"
 #include "harvester/room_scene_runtime.h"
 #include "harvester/room_support.h"
 #include "harvester/runtime_entity.h"
@@ -32,13 +33,6 @@ namespace Harvester {
 class EntityManager;
 class Flow;
 class InventorySystem;
-
-struct RoomMovementInputState {
-	bool moveLeft = false;
-	bool moveRight = false;
-	bool moveUp = false;
-	bool moveDown = false;
-};
 
 // Scoped to one runRoomLoop iteration, including time spent in nested closeups.
 // Entity pointers remain owned by EntityManager.
@@ -52,7 +46,7 @@ public:
 	RoomSceneRuntime &getSceneRuntime() { return _sceneRuntime; }
 	RoomCombatEffects &getCombatEffects() { return _combatEffects; }
 	RoomIdleAnimationState &getIdleState() { return _idleState; }
-	RoomMovementInputState &getMovementInput() { return _movementInput; }
+	RoomInputState &getInputState() { return _inputState; }
 	Common::String &getPendingRegionName() { return _pendingRegionName; }
 
 	void resetIdleState();
@@ -76,7 +70,7 @@ private:
 	RoomCombat _combat;
 	RoomCombatEffects _combatEffects;
 	RoomIdleAnimationState _idleState;
-	RoomMovementInputState _movementInput;
+	RoomInputState _inputState;
 	Common::String _pendingRegionName;
 };
 
