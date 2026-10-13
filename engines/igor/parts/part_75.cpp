@@ -49,6 +49,8 @@ void IgorEngine::part75DrawPhilipFrame(int frame) {
 }
 
 void IgorEngine::part75() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	playMusic(8);
 	partMainMeanwhile();
 	_gameState.enableLight = 1;
@@ -99,6 +101,7 @@ void IgorEngine::part75() {
 	_talkShadowIndex = kTalkShadowColor;
 	_currentPart = 122;
 	fadeOut(768);
+	_canSaveGame = savingWasAllowed;
 }
 
 

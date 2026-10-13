@@ -80,6 +80,8 @@ void IgorEngine::part80Say(int who, const Common::Array<DialogueText> &lines) {
  * Larua and Friend discuss the great dosicua recovery.
  */
 void IgorEngine::part80() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	playMusic(8);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_Part80, IMG_Part80, BOX_Part80, MSK_Part80, TXT_Part80);
@@ -122,6 +124,7 @@ void IgorEngine::part80() {
 	}
 	memcpy(_paletteBuffer, _currentPalette, 624);
 	fadeOut(768);
+	_canSaveGame = savingWasAllowed;
 }
 
 } // End of namespace Igor

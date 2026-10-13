@@ -49,6 +49,8 @@ void IgorEngine::partMargaretUpdateDialogue(int action) {
 }
 
 void IgorEngine::partMargaret() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	playMusic(8);
 	_gameState.enableLight = 1;
 	VAR_MARGARET_ROOM_ANIM_COUNTER = _objectsState[kMargaretSceneStateIndex] + 1;
@@ -122,6 +124,7 @@ void IgorEngine::partMargaret() {
 		drawVerbsPanel();
 		drawInventory(_inventoryInfo[72], 0);
 	}
+	_canSaveGame = savingWasAllowed;
 }
 
 } // End of namespace Igor

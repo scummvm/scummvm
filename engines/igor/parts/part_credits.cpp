@@ -170,6 +170,8 @@ void IgorEngine::partCreditsDrawText(int x, int y, uint8 color, bool underline, 
  * pictures), then the logos again.
  */
 void IgorEngine::partCredits() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	const CreditsPage &page = kCreditsPages[(_currentPart - 910) / 10];
 
 	playMusic(kCreditsMusic);
@@ -215,6 +217,7 @@ void IgorEngine::partCredits() {
 		// a game was loaded or the game is quit: the state is not changed
 		fadeOut(768);
 		SET_PAL_208_96_1();
+		_canSaveGame = savingWasAllowed;
 		return;
 	}
 
@@ -225,6 +228,7 @@ void IgorEngine::partCredits() {
 	} else {
 		_currentPart += 10;
 	}
+	_canSaveGame = savingWasAllowed;
 }
 
 } // End of namespace Igor

@@ -199,6 +199,8 @@ void IgorEngine::part78ProfessorWarnings(int which) {
 }
 
 void IgorEngine::part78() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	playMusic(11);
 	partMainMeanwhile(IMG_Part78MinutesLater);
 	memset(_currentPalette, 0, 768);
@@ -295,6 +297,7 @@ void IgorEngine::part78() {
 	// the card with the time that has passed
 	partMainMeanwhile(IMG_Part78NextDay);
 	_currentPart = 281;
+	_canSaveGame = savingWasAllowed;
 }
 
 } // End of namespace Igor

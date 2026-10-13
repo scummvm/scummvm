@@ -554,6 +554,8 @@ void IgorEngine::part79BeachScene() {
 }
 
 void IgorEngine::part79() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	// the picture is shown below a black band
 	if (_currentPart == 790) {
 		memset(_screenVGA, 0, 64000);
@@ -568,6 +570,7 @@ void IgorEngine::part79() {
 		part79BeachScene();
 	}
 	_screenVGAVOffset = 0;
+	_canSaveGame = savingWasAllowed;
 }
 
 } // End of namespace Igor

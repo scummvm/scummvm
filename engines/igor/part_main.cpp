@@ -715,7 +715,9 @@ void IgorEngine::partMain() {
 		case 810:
 			part81();
 			break;
-		case 850: // Intro cutscene
+		case 850: { // Intro cutscene
+			const bool savingWasAllowed = _canSaveGame;
+			_canSaveGame = false;
 			// Clear the entire screen buffer before starting the intro cutscene
 			memset(_screenVGA, 0, 64000);
 			g_engine->_screen->updateScreen();
@@ -731,7 +733,9 @@ void IgorEngine::partMain() {
 			_inputVars[kInputCursorXPos] = 160;
 			_inputVars[kInputCursorYPos] = 72;
 			_system->warpMouse(_inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos]);
+			_canSaveGame = savingWasAllowed;
 			break;
+		}
 		case 900: // Logo slideshow
 		case 901:
 		case 902:
@@ -880,6 +884,8 @@ void IgorEngine::partMainUpdateFiguresOnPaper(int delay) {
 }
 
 void IgorEngine::partMainMeanwhile(int img) {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	hideCursor();
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(208, 255);
@@ -897,6 +903,7 @@ void IgorEngine::partMainMeanwhile(int img) {
 		waitForTimer(250);
 	}
 	fadeOut(9);
+	_canSaveGame = savingWasAllowed;
 }
 
 } // End of namespace Igor
