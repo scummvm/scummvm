@@ -306,12 +306,14 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 			if (pendingDeanDrink != kPart08PendingDeanDrinkNone) {
 				waitForTimer(251);
 				PART_08_deanDrinksBottle();
-				if (_objectsState[kButterflyNetStateIndex] == 1)
+				const bool bottleCaught = _objectsState[kButterflyNetStateIndex] == 1;
+				if (bottleCaught)
 					_objectsState[kButterflyNetStateIndex] = 2;
 				else
 					_objectsState[kGlassShardsPresentStateIndex] = 1;
 				waitForTimer(101);
-				playSound(16, 1);
+				if (!bottleCaught)
+					playSound(16, 1);
 				if (pendingDeanDrink == kPart08PendingDeanDrinkWater) {
 					PART_08_deanPassesOut();
 					_objectsState[kDeanPassedOutStateIndex] = 1;
