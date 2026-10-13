@@ -43,6 +43,7 @@ Game::Game() : Shared::View("Game"), _commands(this), _stats(this) {
 
 void Game::draw() {
 	auto s = getSurface();
+	s.clear();
 	Graphics::Views::UIElement::draw();
 
 	// Vertical divider between the command/message log (left) and the stats panel (right)

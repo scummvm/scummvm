@@ -38,6 +38,7 @@ SpaceGame::SpaceGame() : Shared::View("SpaceGame"), _commands(this), _stats(this
 
 void SpaceGame::draw() {
 	auto s = getSurface();
+	s.clear();
 	Graphics::Views::UIElement::draw();
 
 	// Divider between the command/message log (left) and the stats corner
