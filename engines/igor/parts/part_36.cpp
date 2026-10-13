@@ -83,7 +83,7 @@ void IgorEngine::PART_36_ACTION_102_takePen() {
 		copyArea(_screenVGA, 23750, 320, _screenTempLayer, 100, 34, 49);
 		waitForTimer(45);
 	}
-	addObjectToInventory(30, 65);
+	addObjectToInventory(kInventoryObjectPen, 65);
 	_objectsState[kPenTakenStateIndex] = 1;
 	PART_36_HELPER_1_OBJECT_STATE(255);
 	if (_game.version == kIdEngDemo110) {

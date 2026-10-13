@@ -127,7 +127,7 @@ void IgorEngine::PART_28_ACTION_109_takeFolder() {
 			waitForTimer(45);
 		}
 	}
-	addObjectToInventory(22, 57);
+	addObjectToInventory(kInventoryObjectFolder, 57);
 	_objectsState[kCarolineFolderStateIndex] = 1;
 	PART_28_HELPER_1_OBJECT_STATE(255);
 	igorSay(230, 1, 1250);

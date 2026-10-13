@@ -133,7 +133,7 @@ void IgorEngine::PART_27_ACTION_108_openLocker() {
 			waitForTimer(100);
 		}
 	}
-	addObjectToInventory(23, 58);
+	addObjectToInventory(kInventoryObjectBottle, 58);
 	PART_27_HELPER_1_OBJECT_STATE(1);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;

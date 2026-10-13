@@ -240,7 +240,7 @@ void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
 	drawVerbsPanel();
 	redrawVerb(kVerbWalk, true);
 	_currentAction.verb = kVerbWalk;
-	addObjectToInventory(24, 59);
+	addObjectToInventory(kInventoryObjectMoney, 59);
 	_objectsState[kLizardTakenStateIndex] = 1;
 	PART_12_OBJECT_STATE(255);
 	ADD_DIALOGUE_TEXT(211, 1, 795);

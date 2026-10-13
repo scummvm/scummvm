@@ -63,7 +63,6 @@ static const int kPart68TextG = 50;
 static const int kPart68TextB = 0;
 
 // Inventory objects.
-static const int kVaseInventoryNumber = 34;
 static const int kPart68TakenObjectIndex = 69;
 static const int kPart68GiveInventoryIndex = 40;
 
@@ -280,7 +279,7 @@ void IgorEngine::PART_68_ACTION_102_takeVase() {
 		PART_68_drawPose(frame);
 		waitForTimer(120);
 	}
-	addObjectToInventory(kVaseInventoryNumber, kPart68TakenObjectIndex);
+	addObjectToInventory(kInventoryObjectVase, kPart68TakenObjectIndex);
 	_objectsState[kVaseTakenStateIndex] = 1;
 	PART_68_APPLY_OBJECT_STATE(255);
 }

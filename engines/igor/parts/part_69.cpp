@@ -23,12 +23,12 @@
 namespace Igor {
 
 // The animation resource is made of several blocks, each one a table of frame offsets and the frames it points to:
-// the first and the second firefly of the room, the transformation and the ending.
-static const int kPart69FireflyAFramesBase = 0;
-static const int kPart69FireflyAFramesTable = 0xB138;
+// the swarm, the main firefly, the transformation and the ending.
+static const int kPart69SwarmFramesBase = 0;
+static const int kPart69SwarmFramesTable = 0xB138;
 
-static const int kPart69FireflyBFramesBase = 0xB200;
-static const int kPart69FireflyBFramesTable = 0xBBA;
+static const int kPart69MainFireflyFramesBase = 0xB200;
+static const int kPart69MainFireflyFramesTable = 0xBBA;
 
 static const int kPart69FramesCBase = 0xBE3A;
 static const int kPart69FramesCTable = 0x3FF;
@@ -45,21 +45,20 @@ static const int kPart69PictureHeight = 49;
 static const int kPart69EntryY = 130;
 static const int kPart69EntryDstX = 259;
 
-// The animation of the two fireflies is a sequence of steps (1 to 6). Each step plays the frames of the first firefly from
-// the first to the last frame of the step; every 5 steps of the first firefly the second firefly plays too. The values come
-// from the data segment of the executable (index 0 is not used).
-static const uint8 kPart69StepFirstFireflyFrameA[7] = { 37, 71, 1, 41, 0, 80, 20 };
-static const uint8 kPart69StepLastFireflyFrameA[7] = { 0, 80, 20, 50, 100, 40, 70 };
-static const uint8 kPart69StepNext[7] = { 70, 1, 2, 3, 2, 3, 1 };
-static const uint8 kPart69StepFirstFireflyFrameB[4] = { 1, 41, 1, 21 };
-static const uint8 kPart69StepLastFireflyFrameB[4] = { 0, 64, 20, 40 };
+// The swarm animation is a sequence of steps (1 to 6). Each step plays the swarm frames from
+// the first to the last frame of the step; every 5 swarm steps the main firefly plays too.
+static const uint8 kPart69SwarmStepFirstFrame[7] = { 37, 71, 1, 41, 0, 80, 20 };
+static const uint8 kPart69SwarmStepLastFrame[7] = { 0, 80, 20, 50, 100, 40, 70 };
+static const uint8 kPart69SwarmStepNext[7] = { 70, 1, 2, 3, 2, 3, 1 };
+static const uint8 kPart69MainFireflyStepFirstFrame[4] = { 1, 41, 1, 21 };
+static const uint8 kPart69MainFireflyStepLastFrame[4] = { 0, 64, 20, 40 };
 
-// The areas that answer to the step, and the areas of the second firefly.
-static const uint8 kPart69StepAreas[4] = { 0, 1, 52, 16 };
-static const uint8 kPart69SecondFireflyAreas[4] = { 0, 2, 72, 45 };
+// The areas that answer to the swarm step, and the areas of the main firefly.
+static const uint8 kPart69SwarmStepAreas[4] = { 0, 1, 52, 16 };
+static const uint8 kPart69MainFireflyAreas[4] = { 0, 2, 72, 45 };
 
-static const int kPart69FirstFireflyFrameA = 71;
-static const int kPart69FirstFireflyFrameB = 40;
+static const int kPart69SwarmInitialFrame = 71;
+static const int kPart69MainFireflyInitialFrame = 40;
 static const int kPart69TalkFrameFirst = 0x29;
 static const int kPart69TalkFrameLast = 0x32;
 static const int kPart69TransformFrameLast = 0x16;
@@ -88,7 +87,7 @@ void IgorEngine::PART_69_EXEC_ACTION(int action) {
 		igorSay(210, 1, 1089);
 		break;
 	case 107:
-		PART_69_ACTION_107_watch();
+		PART_69_ACTION_107_useVaseWithFireflies();
 		break;
 	case 108:
 		igorSay(215, 2, 1092);
@@ -107,8 +106,8 @@ void IgorEngine::PART_69_APPLY_OBJECT_STATE() {
 		return;
 	}
 	for (int i = 1; i <= 3; ++i) {
-		_roomObjectAreasTable[kPart69StepAreas[i]].object = 0;
-		_roomObjectAreasTable[kPart69SecondFireflyAreas[i]].object = 5;
+		_roomObjectAreasTable[kPart69SwarmStepAreas[i]].object = 0;
+		_roomObjectAreasTable[kPart69MainFireflyAreas[i]].object = 5;
 	}
 	for (int i = 0; i <= 5; ++i) {
 		if (_roomActionsTable[72 + i] == 1) {
@@ -117,18 +116,14 @@ void IgorEngine::PART_69_APPLY_OBJECT_STATE() {
 	}
 }
 
-void IgorEngine::PART_69_DRAW_FIREFLY_A(int frame) {
-	decodeAnimFrame(getAnimFrame(kPart69FireflyAFramesBase, kPart69FireflyAFramesTable, frame), _screenVGA, true);
+void IgorEngine::PART_69_drawSwarm(int frame) {
+	decodeAnimFrame(getAnimFrame(kPart69SwarmFramesBase, kPart69SwarmFramesTable, frame), _screenVGA, true);
 }
 
-void IgorEngine::PART_69_DRAW_FIREFLY_B(int frame) {
-	decodeAnimFrame(getAnimFrame(kPart69FireflyBFramesBase, kPart69FireflyBFramesTable, frame), _screenVGA, true);
+void IgorEngine::PART_69_drawMainFirefly(int frame) {
+	decodeAnimFrame(getAnimFrame(kPart69MainFireflyFramesBase, kPart69MainFireflyFramesTable, frame), _screenVGA, true);
 }
 
-/**
- * Runs the sequence of the two fireflies, one frame of each every 16 ticks, and sets which places answer to the
- * fireflies.
- */
 void IgorEngine::PART_69_animateFireflies() {
 	if (!compareGameTick(13, 16)) {
 		return;
@@ -140,24 +135,24 @@ void IgorEngine::PART_69_animateFireflies() {
 	uint8 &secondFirefly = _objectsState[kPart69LeaderFireflyPathStateIndex];
 	if (_part69FireflyStepCount == 5) {
 		secondFirefly = sequence;
-		_part69FireflyFrameB = kPart69StepFirstFireflyFrameB[secondFirefly];
+		_part69FireflyFrameB = kPart69MainFireflyStepFirstFrame[secondFirefly];
 		_part69FireflyStepCount = 0;
 	}
 	if (secondFirefly > 0) {
-		PART_69_DRAW_FIREFLY_B(_part69FireflyFrameB);
-		if (kPart69StepLastFireflyFrameB[secondFirefly] == _part69FireflyFrameB) {
+		PART_69_drawMainFirefly(_part69FireflyFrameB);
+		if (kPart69MainFireflyStepLastFrame[secondFirefly] == _part69FireflyFrameB) {
 			secondFirefly = 0;
 			sequence += 3;
 		} else {
 			++_part69FireflyFrameB;
 		}
 	}
-	PART_69_DRAW_FIREFLY_A(_part69FireflyFrameA);
-	if (kPart69StepLastFireflyFrameA[sequence] == _part69FireflyFrameA) {
+	PART_69_drawSwarm(_part69FireflyFrameA);
+	if (kPart69SwarmStepLastFrame[sequence] == _part69FireflyFrameA) {
 		if (sequence > 3) {
-			sequence = kPart69StepNext[sequence];
+			sequence = kPart69SwarmStepNext[sequence];
 		}
-		_part69FireflyFrameA = kPart69StepFirstFireflyFrameA[sequence];
+		_part69FireflyFrameA = kPart69SwarmStepFirstFrame[sequence];
 		++_part69FireflyStepCount;
 	} else {
 		++_part69FireflyFrameA;
@@ -165,27 +160,27 @@ void IgorEngine::PART_69_animateFireflies() {
 
 	if (sequence > 3) {
 		for (int i = 1; i <= 3; ++i) {
-			_roomObjectAreasTable[kPart69StepAreas[i]].object = 0;
+			_roomObjectAreasTable[kPart69SwarmStepAreas[i]].object = 0;
 		}
 	} else {
 		for (int i = 1; i <= 3; ++i) {
-			_roomObjectAreasTable[kPart69StepAreas[i]].object = sequence == i ? 3 : 0;
+			_roomObjectAreasTable[kPart69SwarmStepAreas[i]].object = sequence == i ? 3 : 0;
 		}
 	}
 	if (secondFirefly > 0) {
 		for (int i = 1; i <= 3; ++i) {
-			_roomObjectAreasTable[kPart69SecondFireflyAreas[i]].object = 5;
+			_roomObjectAreasTable[kPart69MainFireflyAreas[i]].object = 5;
 		}
 	} else {
 		for (int i = 1; i <= 3; ++i) {
-			const bool answers = kPart69StepNext[sequence] == i && _objectsState[kPart69LeaderFireflyIdentifiedStateIndex] == 1;
-			_roomObjectAreasTable[kPart69SecondFireflyAreas[i]].object = answers ? 4 : 5;
+			const bool answers = kPart69SwarmStepNext[sequence] == i && _objectsState[kPart69LeaderFireflyIdentifiedStateIndex] == 1;
+			_roomObjectAreasTable[kPart69MainFireflyAreas[i]].object = answers ? 4 : 5;
 		}
 	}
 }
 
 
-void IgorEngine::PART_69_FINALE(int num, int sound) {
+void IgorEngine::PART_69_takeVaseBack(int num, int sound) {
 	for (int frame = kPart69EndingFrameLast; frame <= kPart69EndingFrameLast + 1; ++frame) {
 		decodeAnimFrame(getAnimFrame(kPart69FramesDBase, kPart69FramesDTable, frame), _screenVGA, true);
 		waitForTimer(46);
@@ -193,18 +188,15 @@ void IgorEngine::PART_69_FINALE(int num, int sound) {
 	igorSay(num, 2, sound);
 }
 
-/**
- * Igor watches the fireflies. If the reward has not been given yet nothing happens for a while; otherwise the first
- * firefly transforms and the scene ends.
- */
-void IgorEngine::PART_69_ACTION_107_watch() {
+
+void IgorEngine::PART_69_ACTION_107_useVaseWithFireflies() {
 	drawAnimRect(kPart69PictureOffset, kPart69PictureAnimOffset, kPart69PictureWidth, kPart69PictureHeight);
 	if (_objectsState[kVaseStateIndex] == 0) {
 		for (int i = 0; i < 1000 / kTimerTicksCount && !_eventQuitGame; ++i) {
 			PART_69_animateFireflies();
 			waitForTimer();
 		}
-		PART_69_FINALE(211, 1090);
+		PART_69_takeVaseBack(211, 1090);
 		return;
 	}
 
@@ -216,7 +208,7 @@ void IgorEngine::PART_69_ACTION_107_watch() {
 	uint8 frameC = 1;
 	do {
 		if (compareGameTick(13, 16)) {
-			PART_69_DRAW_FIREFLY_A(_part69FireflyFrameA);
+			PART_69_drawSwarm(_part69FireflyFrameA);
 			_part69FireflyFrameA = _part69FireflyFrameA == kPart69TalkFrameLast ? kPart69TalkFrameFirst : _part69FireflyFrameA + 1;
 			decodeAnimFrame(getAnimFrame(kPart69FramesCBase, kPart69FramesCTable, frameC), _screenVGA, true);
 			if (frameC < kPart69TransformFrameLast) {
@@ -246,7 +238,7 @@ void IgorEngine::PART_69_ACTION_107_watch() {
 	}
 	playSound(51, 1);
 	PART_69_APPLY_OBJECT_STATE();
-	PART_69_FINALE(213, 1091);
+	PART_69_takeVaseBack(213, 1091);
 }
 
 /**
@@ -307,14 +299,14 @@ void IgorEngine::PART_69() {
 	PART_69_APPLY_OBJECT_STATE();
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (_objectsState[kPart69FireflyCapturedStateIndex] == 0) {
-		PART_69_DRAW_FIREFLY_A(kPart69FirstFireflyFrameA);
-		PART_69_DRAW_FIREFLY_B(kPart69FirstFireflyFrameB);
+		PART_69_drawSwarm(kPart69SwarmInitialFrame);
+		PART_69_drawMainFirefly(kPart69MainFireflyInitialFrame);
 	}
 	_part69FireflyStepCount = 0;
 	_part69FireflyFrameB = 0;
 	_objectsState[kPart69SwarmAnimationPhaseStateIndex] = 1;
 	_objectsState[kPart69LeaderFireflyPathStateIndex] = 0;
-	_part69FireflyFrameA = kPart69FirstFireflyFrameA;
+	_part69FireflyFrameA = kPart69SwarmInitialFrame;
 
 	// the whole picture is darker than its palette
 	darkenPalette(_paletteBuffer, 1, 175, 10);

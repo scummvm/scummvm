@@ -57,7 +57,7 @@ void IgorEngine::PART_22_ACTION_101_lookAtBell() {
 			copyArea(_screenVGA, 24141, 320, frame, 35, 35, 30);
 			waitForTimer(60);
 		}
-		addObjectToInventory(29, 64);
+		addObjectToInventory(kInventoryObjectPassword, 64);
 		PART_22_APPLY_OBJECT_STATE(255);
 		igorSay({ { 205, 1, 856 }, { 206, 1, 857 } });
 		_objectsState[kChurchBellMessageSeenStateIndex] = 1;

@@ -61,7 +61,6 @@ static const uint8 kPart76ParachuteFrames[20] = { 18, 19, 20, 21, 22, 23, 22, 23
 static const int kPart76WalkEndX = 295;
 static const int kPart76WalkEndY = 119;
 
-static const int kPart76ParachuteInvNumber = 3;
 static const int kPart76ParachuteInventoryIndex = 38;
 
 void IgorEngine::PART_76_EXEC_ACTION(int action) {
@@ -160,7 +159,7 @@ void IgorEngine::PART_76_ACTION_104_takeParachute() {
 		drawAnimRect(kPart76TakeParachuteOffset, kPart76TakeParachuteFrames + frame * kPart76TakeParachuteFrameSize, kPart76TakeParachuteWidth, kPart76TakeParachuteHeight);
 		waitForTimer(91);
 	}
-	addObjectToInventory(kPart76ParachuteInvNumber, kPart76ParachuteInventoryIndex);
+	addObjectToInventory(kInventoryObjectParachute, kPart76ParachuteInventoryIndex);
 	_objectsState[kParachuteTakenStateIndex] = 1;
 	PART_76_APPLY_OBJECT_STATE();
 	igorSay({ { 203, 1, 702 }, { 204, 2, 703 } });

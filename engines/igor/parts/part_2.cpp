@@ -185,7 +185,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			} else {
 				PART_02_searchTrunk();
 				igorSay(204, 1, 111);
-				addObjectToInventory(9, 44);
+				addObjectToInventory(kInventoryObjectHammer, 44);
 				PART_02_APPLY_OBJECT_STATE(255);
 			}
 			break;
@@ -198,7 +198,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 				igorSay(205, 1, 112);
 				removeObjectFromInventory(44);
 				playSound(63, 1);
-				addObjectToInventory(10, 45);
+				addObjectToInventory(kInventoryObjectPickaxe, 45);
 				PART_02_APPLY_OBJECT_STATE(255);
 			}
 			break;
@@ -206,7 +206,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[kDynamitePlacedStateIndex] == 0 && _objectsState[kAtticLargeCrackPresentStateIndex] != 0) {
 			PART_02_searchTrunk();
 			igorSay(206, 1, 113);
-			addObjectToInventory(11, 46);
+			addObjectToInventory(kInventoryObjectDynamite, 46);
 		} else if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[kDynamitePlacedStateIndex] == 0) {
 			igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 		} else {
@@ -216,7 +216,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 	case 107: // take butterfly net
 		animateLitAnimFrames(0x54D2, 0, 1, 0x405, 21, 49, 0x5A6D, 127, -1, 0);
 		waitForTimer(127);
-		addObjectToInventory(7, 42);
+		addObjectToInventory(kInventoryObjectButterflyNet, 42);
 		_objectsState[kButterflyNetTakenStateIndex] = 1;
 		PART_02_APPLY_OBJECT_STATE(2);
 		break;
@@ -274,7 +274,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			igorSay(230, 1, 130);
 		} else {
 			igorSay(211, 2, 117);
-			addObjectToInventory(8, 43);
+			addObjectToInventory(kInventoryObjectMatches, 43);
 			_objectsState[kMatchesTakenStateIndex] = 1;
 		}
 		break;

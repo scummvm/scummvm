@@ -216,7 +216,7 @@ void IgorEngine::PART_34_ACTION_103_takeResin() {
 		return;
 	}
 	PARK_PICK_UP_ANIMATION(16499, kParkPickUpFrames);
-	addObjectToInventory(27, 62);
+	addObjectToInventory(kInventoryObjectResin, 62);
 	PART_34_APPLY_OBJECT_STATE(255);
 }
 
@@ -264,7 +264,7 @@ void IgorEngine::PART_34_ACTION_108_giveLizardToOldLady() {
 	while (isDialogueSpeechPlaying() && !_eventQuitGame) {
 		waitForTimer();
 	}
-	addObjectToInventory(26, 61);
+	addObjectToInventory(kInventoryObjectRocket, 61);
 	igorSay(226, 1, 577);
 	PARK_WAIT_FOR_IGOR_DIALOGUE();
 	cutsceneSayStart(121, 58, 63, 23, 0, { { 227, 2, 578 }, { 229, 1, 579 } });

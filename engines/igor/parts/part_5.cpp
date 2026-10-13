@@ -193,7 +193,7 @@ void IgorEngine::PART_05_ACTION_103_pickPaper() {
 		PART_05_UPDATE_ROOM_BACKGROUND();
 		waitForTimer();
 	} while (i != 3);
-	addObjectToInventory(21, 56);
+	addObjectToInventory(kInventoryObjectLoveNote, 56);
 	_objectsState[kSpringBridgePaperStateIndex] = 1;
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;

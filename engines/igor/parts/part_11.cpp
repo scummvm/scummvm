@@ -63,7 +63,7 @@ void IgorEngine::PART_11_ACTION_105_pickSlug() {
 		drawAnimRect(0x6167, kPart10_11_Frm1 + frame * 0x405, 21, 49);
 		waitForTimer(127);
 	}
-	addObjectToInventory(18, 53);
+	addObjectToInventory(kInventoryObjectSlug, 53);
 	_objectsState[kSlugTakenStateIndex] = 1;
 	PART_11_APPLY_OBJECT_STATE(255);
 }
@@ -120,7 +120,7 @@ void IgorEngine::PART_11_ACTION_112_pickBottle() {
 		drawAnimRect(0x47E3, kPart10_11_Frm2 + frame * 0x348, 30, 28);
 		waitForTimer(61);
 	}
-	addObjectToInventory(23, 58);
+	addObjectToInventory(kInventoryObjectBottle, 58);
 	_objectsState[kButterflyNetStateIndex] = 1;
 	PART_11_APPLY_OBJECT_STATE(3);
 	_objectsState[kBottleStateIndex] = 1;

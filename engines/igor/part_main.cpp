@@ -238,7 +238,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 			igorSay(76, 1, 52);
 		} else {
 			igorSay(74, 2, 51);
-			addObjectToInventory(16, 51);
+			addObjectToInventory(kInventoryObjectLabKeys, 51);
 		}
 		break;
 	case 62: // use burger on lizard
@@ -250,7 +250,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		packInventory();
 		_objectsState[kLizardFedStateIndex] = 1;
 		UPDATE_OBJECT_STATE(2);
-		addObjectToInventory(24, 59);
+		addObjectToInventory(kInventoryObjectMoney, 59);
 		igorSay(169, 1, 93);
 		break;
 	case 63: // use flower on vase
@@ -263,7 +263,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		packInventory();
 		_objectsState[kVaseStateIndex] = 1;
 		UPDATE_OBJECT_STATE(7);
-		addObjectToInventory(34, 69);
+		addObjectToInventory(kInventoryObjectVase, 69);
 		break;
 	case 64: // look at vase
 		if (_objectsState[kVaseStateIndex] == 0) {
@@ -456,9 +456,9 @@ void IgorEngine::PART_MAIN() {
 		_objectsState[kAtticNailHotspotActiveStateIndex] = 1;
 		_objectsState[kCuckooAnimationControlStateIndex] = 1;
 		memset(_inventoryInfo, 0, 36);
-		_inventoryInfo[0] = 1; // ordering
-		_inventoryInfo[1] = 2;
-		_inventoryInfo[2] = 4;
+		_inventoryInfo[0] = kInventoryObjectBoomerang; // ordering
+		_inventoryInfo[1] = kInventoryObjectWallet;
+		_inventoryInfo[2] = kInventoryObjectTplTickets;
 		_inventoryInfo[36] = 1;
 		_inventoryInfo[37] = 2;
 		_inventoryInfo[39] = 3;

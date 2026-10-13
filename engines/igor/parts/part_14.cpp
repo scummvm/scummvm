@@ -200,7 +200,7 @@ void IgorEngine::PART_14_ACTION_108_useMatchesOnCandles() {
 		decodeAnimFrame(src, _screenVGA, true);
 		waitForTimer(60);
 	}
-	addObjectToInventory(28, 63);
+	addObjectToInventory(kInventoryObjectPapyrus, 63);
 	igorSayAndWait({ { 217, 1, 872 }, { 218, 1, 873 }, { 219, 1, 874 } });
 	cutsceneSay(221, 85, 12, 33, 63, 220, 2, 875);
 	PART_14_HELPER_7_candleFlicker(0);

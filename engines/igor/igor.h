@@ -313,6 +313,46 @@ enum ObjectType {
 	kObjectTypeRoom = 2
 };
 
+// One-based inventory object numbers, separate from object state and inventory lookup indices.
+enum InventoryObjectNumber {
+	kInventoryObjectBoomerang = 1,
+	kInventoryObjectWallet = 2,
+	kInventoryObjectParachute = 3,
+	kInventoryObjectTplTickets = 4,
+	kInventoryObjectRecords = 5,
+	kInventoryObjectAlarmClock = 6,
+	kInventoryObjectButterflyNet = 7,
+	kInventoryObjectMatches = 8,
+	kInventoryObjectHammer = 9,
+	kInventoryObjectPickaxe = 10,
+	kInventoryObjectDynamite = 11,
+	kInventoryObjectHairpin = 12,
+	kInventoryObjectDeansBook = 13,
+	kInventoryObjectMonkeySuit = 14,
+	kInventoryObjectNewspaper = 15,
+	kInventoryObjectLabKeys = 16,
+	kInventoryObjectBurger = 17,
+	kInventoryObjectSlug = 18,
+	kInventoryObjectPhoto = 19,
+	kInventoryObjectFlask = 20,
+	kInventoryObjectLoveNote = 21,
+	kInventoryObjectFolder = 22,
+	kInventoryObjectBottle = 23,
+	kInventoryObjectMoney = 24,
+	kInventoryObjectLizard = 25,
+	kInventoryObjectRocket = 26,
+	kInventoryObjectResin = 27,
+	kInventoryObjectPapyrus = 28,
+	kInventoryObjectPassword = 29,
+	kInventoryObjectPen = 30,
+	kInventoryObjectAstronomyBook = 31,
+	kInventoryObjectLabNote = 32,
+	kInventoryObjectFlower = 33,
+	kInventoryObjectVase = 34,
+	kInventoryObjectBiologyProject = 35,
+	kInventoryObjectCamera = 36
+};
+
 enum ObjectStateIndex {
 	kBottleStateIndex = 0,
 	kLizardFedStateIndex = 1,
@@ -1300,11 +1340,11 @@ private:
 	// swamp
 	void PART_69_EXEC_ACTION(int action);
 	void PART_69_APPLY_OBJECT_STATE();
-	void PART_69_DRAW_FIREFLY_A(int frame);
-	void PART_69_DRAW_FIREFLY_B(int frame);
+	void PART_69_drawSwarm(int frame);
+	void PART_69_drawMainFirefly(int frame);
 	void PART_69_animateFireflies();
-	void PART_69_ACTION_107_watch();
-	void PART_69_FINALE(int num, int sound);
+	void PART_69_ACTION_107_useVaseWithFireflies();
+	void PART_69_takeVaseBack(int num, int sound);
 	void PART_69_enterFromRight();
 	void PART_69_UPDATE_ROOM_BACKGROUND();
 	void PART_69();

@@ -72,7 +72,7 @@ void IgorEngine::PART_19_ACTION_107_lookAtSink() {
 		}
 		waitForTimer(120);
 	}
-	addObjectToInventory(12, 47);
+	addObjectToInventory(kInventoryObjectHairpin, 47);
 	_objectsState[kHairpinTakenStateIndex] = 1;
 	PART_19_HELPER_1_OBJECT_STATE(255);
 }

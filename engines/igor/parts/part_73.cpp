@@ -28,7 +28,6 @@ static const int kPart73PolicemanHeight = 52;
 static const int kPart73PolicemanFrameSize = 26 * 53;
 
 // Great dosicua
-static const int kPart73InventoryObject = 25;
 static const int kPart73InventoryIndex = 60;
 
 void IgorEngine::PART_73_drawPoliceman(int frame) {
@@ -90,7 +89,7 @@ void IgorEngine::PART_73_CUTSCENE() {
 	// removes the great dosicua
 	removeInventoryEntry(kPart73InventoryIndex);
 	++_inventoryInfo[73];
-	_inventoryInfo[_inventoryInfo[73] - 1] = kPart73InventoryObject;
+	_inventoryInfo[_inventoryInfo[73] - 1] = kInventoryObjectLizard;
 	_inventoryInfo[kPart73InventoryIndex] = _inventoryInfo[73];
 	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
 	fadeOut(624);

@@ -104,7 +104,7 @@ void IgorEngine::PART_09_ACTION_110_pickCostumeFromCloset() {
 		drawAnimRect(0x48E6, 0x9BA3 + frame * 0x438, 27, 40, false, kBlendLitSprite);
 		waitForTimer(127);
 	}
-	addObjectToInventory(14, 49);
+	addObjectToInventory(kInventoryObjectMonkeySuit, 49);
 	_objectsState[kSecretaryClosetStateIndex] = 1;
 	PART_09_APPLY_OBJECT_STATE(255);
 }
