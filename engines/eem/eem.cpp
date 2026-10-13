@@ -1125,6 +1125,10 @@ void EEMEngine::playFlc(const Common::Path &path, bool fadeIn,
 	}
 
 	flic.start();
+	// Mac London CODE 6:1f38 advances after nine 60 Hz ticks, regardless
+	// of the FLC header's frame delay (71 ms for KDCDINTR).
+	if (isMacintosh())
+		flic.setRate(Common::Rational(flic.getCurFrameDelay(), 9 * 1000 / 60));
 	bool paletteApplied = false;
 	bool aborted = false;
 	while (!flic.endOfVideo() && !shouldQuit() && !_skipIntro && !aborted) {
