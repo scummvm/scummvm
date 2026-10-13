@@ -33,6 +33,7 @@
 #include "gui/debugger.h"
 
 #include "hollywood/runaway/engine.h"
+#include "hollywood/runaway/intro.h"
 #include "hollywood/runaway/scene5030.h"
 
 namespace Hollywood {
@@ -43,7 +44,8 @@ enum RunawayAction {
 	kScrollRight,
 	kScrollStart,
 	kScrollEnd,
-	kReturnToLauncher
+	kReturnToLauncher,
+	kSkipIntro
 };
 
 } // End of anonymous namespace
@@ -67,13 +69,49 @@ void RunawayEngine::syncSoundSettings() {
 	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute || ConfMan.getBool("sfx_mute"));
 }
 
+Common::Error RunawayEngine::playIntro() {
+	RunawayIntro intro(_mixer);
+	if (!intro.load())
+		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo logo or story card");
+	const bool cursorWasVisible = CursorMan.showMouse(false);
+	intro.start(getTotalPlayTime());
+	while (!shouldQuit() && !intro.finished()) {
+		bool skip = false;
+		Common::Event event;
+		while (_eventMan->pollEvent(event)) {
+			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
+				skip = true;
+			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
+					(event.customType == kSkipIntro || event.customType == kReturnToLauncher)) {
+				skip = true;
+			}
+		}
+		if (shouldQuit())
+			break;
+		const uint32 now = getTotalPlayTime();
+		intro.update(now);
+		if (skip)
+			intro.skip(now);
+		intro.draw();
+		const Graphics::ManagedSurface &screen = intro.screen();
+		_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+		_system->updateScreen();
+		_system->delayMillis(10);
+	}
+	CursorMan.showMouse(cursorWasVisible);
+	return Common::kNoError;
+}
+
 Common::Error RunawayEngine::run() {
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	initGraphics(RunawayScene5030::kScreenWidth, RunawayScene5030::kScreenHeight, &format);
+	initGraphics(kRunawayScreenWidth, kRunawayScreenHeight, &format);
 	if (_system->getScreenFormat() != format)
 		return Common::kUnsupportedColorMode;
 	setDebugger(new GUI::Debugger());
 	syncSoundSettings();
+	const Common::Error introResult = playIntro();
+	if (introResult.getCode() != Common::kNoError || shouldQuit())
+		return introResult;
 
 	RunawayScene5030 scene(_mixer);
 	if (!scene.load())
@@ -181,6 +219,13 @@ Common::Array<Common::Keymap *> RunawayEngine::initKeymaps() {
 	action = new Action("RETURN_TO_LAUNCHER", _("Return to launcher"));
 	action->setCustomEngineActionEvent(kReturnToLauncher);
 	action->addDefaultInputMapping("ESCAPE");
+	keymap->addAction(action);
+
+	action = new Action(kStandardActionSkip, _("Skip intro"));
+	action->setCustomEngineActionEvent(kSkipIntro);
+	action->addDefaultInputMapping("SPACE");
+	action->addDefaultInputMapping("RETURN");
+	action->addDefaultInputMapping("JOY_X");
 	keymap->addAction(action);
 
 	return Keymap::arrayOf(keymap);

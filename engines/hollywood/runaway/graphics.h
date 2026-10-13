@@ -30,6 +30,13 @@ namespace Hollywood {
 
 class ChunkArchive;
 
+enum {
+	kRunawayScreenWidth = 1024,
+	kRunawayScreenHeight = 768,
+	kRunawayViewportHeight = 600,
+	kRunawayViewportTop = (kRunawayScreenHeight - kRunawayViewportHeight) / 2
+};
+
 // Runaway's room animations retain Hollywood's 14-byte descriptors, but use
 // RGB565 spans. Coordinates are absolute room coordinates, including shadows.
 class RunawayAnimation {

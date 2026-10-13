@@ -31,7 +31,7 @@
 namespace Hollywood {
 
 RunawayAudio::~RunawayAudio() {
-	_mixer->stopHandle(_music);
+	stopMusic();
 	stopSpeech();
 	stopEffect();
 }
@@ -81,6 +81,13 @@ uint32 RunawayAudio::play(const char *archive, uint16 cue, uint tableCount, bool
 	return duration;
 }
 
+void RunawayAudio::playIntroMusic() {
+	// The Pendulo logo uses RESOURCE.002 cue 2 on native channel 7, which
+	// has the same 16 kHz stereo PCM format as the room music channels.
+	play("RESOURCE.002", 2, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
+		Audio::Mixer::kMusicSoundType, _music, Audio::Mixer::kMaxChannelVolume, false);
+}
+
 void RunawayAudio::playMusic(uint16 cue) {
 	play("RESOURCE.M03", cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
 		Audio::Mixer::kMusicSoundType, _music, 96, true);
@@ -99,12 +106,20 @@ void RunawayAudio::playEffect(uint16 cue, byte volume) {
 		Audio::Mixer::kSFXSoundType, _effect, volume, false);
 }
 
+void RunawayAudio::stopMusic() {
+	_mixer->stopHandle(_music);
+}
+
 void RunawayAudio::stopSpeech() {
 	_mixer->stopHandle(_speech);
 }
 
 void RunawayAudio::stopEffect() {
 	_mixer->stopHandle(_effect);
+}
+
+bool RunawayAudio::musicPlaying() const {
+	return _mixer->isSoundHandleActive(_music);
 }
 
 bool RunawayAudio::speechPlaying() const {

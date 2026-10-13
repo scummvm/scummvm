@@ -139,6 +139,7 @@ MODULE_OBJS = \
 	runaway/audio.o \
 	runaway/engine.o \
 	runaway/graphics.o \
+	runaway/intro.o \
 	runaway/scene5030.o
 
 # This module can be built as a plugin

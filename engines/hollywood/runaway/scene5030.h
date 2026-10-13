@@ -34,7 +34,10 @@ namespace Hollywood {
 // interactions and audio; RunawayEngine owns the backend and event loop.
 class RunawayScene5030 {
 public:
-	enum { kScreenWidth = 1024, kScreenHeight = 768, kRoomWidth = 1376, kRoomHeight = 600, kRoomTop = 84 };
+	enum {
+		kScreenWidth = kRunawayScreenWidth, kScreenHeight = kRunawayScreenHeight,
+		kRoomWidth = 1376, kRoomHeight = kRunawayViewportHeight, kRoomTop = kRunawayViewportTop
+	};
 
 	explicit RunawayScene5030(Audio::Mixer *mixer) : _audio(mixer) {}
 	bool load();

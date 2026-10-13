@@ -43,6 +43,9 @@ public:
 	void syncSoundSettings() override;
 
 	static Common::Array<Common::Keymap *> initKeymaps();
+
+private:
+	Common::Error playIntro();
 };
 
 } // End of namespace Hollywood

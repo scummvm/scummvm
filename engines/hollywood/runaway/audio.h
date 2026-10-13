@@ -30,11 +30,14 @@ class RunawayAudio {
 public:
 	explicit RunawayAudio(Audio::Mixer *mixer) : _mixer(mixer) {}
 	~RunawayAudio();
+	void playIntroMusic();
 	void playMusic(uint16 cue);
 	uint32 playSpeech(uint16 sample);
 	void playEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume);
+	void stopMusic();
 	void stopSpeech();
 	void stopEffect();
+	bool musicPlaying() const;
 	bool speechPlaying() const;
 
 private:
