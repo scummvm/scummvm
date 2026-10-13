@@ -20,7 +20,6 @@
  */
 
 #include "harold/bcb/bcb.h"
-#include "common/compression/unzip.h"
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -42,66 +41,42 @@ namespace BCB {
 static const int kCaptionTextNativeCharacterHeight = 18;
 static const int kOwnerDrawUiTextNativeCharacterHeight = 16;
 
-static Graphics::Font *loadFont(Common::Archive &archive, const char *name, int size, Graphics::TTFSizeMode sizeMode) {
-	Common::SeekableReadStream *stream = archive.createReadStreamForMember(Common::Path(name));
-	if (!stream)
-		return nullptr;
-	Graphics::Font *font = Graphics::loadTTFFont(stream, DisposeAfterUse::YES, size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
-	if (!font)
-		delete stream;
-	return font;
-}
-
-static Graphics::Font *loadLocalizedCjkFont(Common::Archive &archive, Common::Language language, int size, Graphics::TTFSizeMode sizeMode) {
+static Graphics::Font *loadLocalizedCjkFont(Common::Language language, int size, Graphics::TTFSizeMode sizeMode) {
 	if (language == Common::KO_KOR) {
-		Graphics::Font *font = loadFont(archive, "NotoSansKR-Regular.otf", size, sizeMode);
+		Graphics::Font *font = Graphics::loadTTFFontFromArchive("NotoSansKR-Regular.otf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
 		if (font)
 			return font;
-		font = loadFont(archive, "NotoSansJP-Regular.otf", size, sizeMode);
+		font = Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
 		if (font)
 			return font;
-		return loadFont(archive, "VL-Gothic-Regular.ttf", size, sizeMode);
+		return Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
 	}
 
-	Graphics::Font *font = loadFont(archive, "VL-Gothic-Regular.ttf", size, sizeMode);
+	Graphics::Font *font = Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
 	if (font)
 		return font;
-	return loadFont(archive, "NotoSansJP-Regular.otf", size, sizeMode);
+	return Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", size, sizeMode, 0, 0, Graphics::kTTFRenderModeNormal);
 }
 
-static Graphics::Font *loadLocalizedOwnerDrawFont(Common::Archive &archive, Common::Language language) {
+static Graphics::Font *loadLocalizedOwnerDrawFont(Common::Language language) {
 	if (language == Common::KO_KOR) {
-		Graphics::Font *font = loadFont(archive, "NotoSansKR-Regular.otf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
+		Graphics::Font *font = Graphics::loadTTFFontFromArchive("NotoSansKR-Regular.otf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeNormal);
 		if (font)
 			return font;
 	}
 
-	Graphics::Font *font = loadFont(archive, "NotoSansJP-Regular.otf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
+	Graphics::Font *font = Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeNormal);
 	if (font)
 		return font;
-	return loadFont(archive, "VL-Gothic-Regular.ttf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
+	return Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", kOwnerDrawUiTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeNormal);
 }
 #endif
 
 void BCBEngine::loadFonts() {
 #ifdef USE_FREETYPE2
-	Common::SearchSet fonts;
-	const char *archiveNames[] = {"fonts.dat", "fonts-cjk.dat"};
-	for (const char *name : archiveNames) {
-		Common::SeekableReadStream *stream = nullptr;
-		if (ConfMan.hasKey("extrapath")) {
-			Common::FSDirectory directory(ConfMan.getPath("extrapath"));
-			stream = directory.createReadStreamForMember(name);
-		}
-		if (!stream)
-			stream = SearchMan.createReadStreamForMember(name);
-		Common::Archive *archive = Common::makeZipArchive(stream);
-		if (archive)
-			fonts.add(name, archive);
-	}
-	_captionTextFont = loadLocalizedCjkFont(fonts, _gameDescription->desc.language, kCaptionTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
-	_gameOverTextFont = loadLocalizedCjkFont(fonts, _gameDescription->desc.language, 20, Graphics::kTTFSizeModeCell);
-	_ownerDrawUiTextFont = loadLocalizedOwnerDrawFont(fonts, _gameDescription->desc.language);
+	_captionTextFont = loadLocalizedCjkFont(_gameDescription->desc.language, kCaptionTextNativeCharacterHeight, Graphics::kTTFSizeModeCharacter);
+	_gameOverTextFont = loadLocalizedCjkFont(_gameDescription->desc.language, 20, Graphics::kTTFSizeModeCell);
+	_ownerDrawUiTextFont = loadLocalizedOwnerDrawFont(_gameDescription->desc.language);
 #endif
 }
 

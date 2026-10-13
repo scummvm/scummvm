@@ -30,8 +30,6 @@
 #include "harold/bcb/static_data.h"
 #include "video/avi_decoder.h"
 
-#include <math.h>
-
 namespace BCB {
 
 bool BCBEngine::showMainSceneScreen() {
