@@ -553,12 +553,12 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 	_gameState.dialogueChoiceStart = 1;
 	_gameState.dialogueChoiceCount = 1;
 	_dialogueEnded = false;
-	if (getPart() == 12 && _objectsState[44] == 0) {
+	if (getPart() == 12 && _objectsState[kLizardTakenStateIndex] == 0) {
 		_gameState.dialogueData[6] = 1;
 		dialogueReplyToQuestion(x, y, r, g, b, 40);
 	}
 	do {
-		if (getPart() == 15 && _objectsState[48] == 0) {
+		if (getPart() == 15 && _objectsState[kCuckooClockTriggeredStateIndex] == 0) {
 			_gameState.dialogueData[6] = 0;
 		}
 		drawDialogueChoices();

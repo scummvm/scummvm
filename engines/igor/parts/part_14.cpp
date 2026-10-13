@@ -102,7 +102,7 @@ void IgorEngine::PART_14_ACTION_103_lookAtPuzzle() {
 		}
 		stopSound();
 		igorSay(227, 1, 1292);
-		_objectsState[50] = 1;
+		_objectsState[kSecretPassageEntranceOpenStateIndex] = 1;
 	}
 	PART_14_HELPER_1_OBJECT_STATE(255);
 	_currentPart = 140;
@@ -165,7 +165,7 @@ void IgorEngine::PART_14_ACTION_106_enterMaze() {
 		moveIgor(wd->posNum, wd->frameNum);
 		waitForTimer(15);
 	}
-	_objectsState[71] = 0;
+	_objectsState[kMazeEntryDirectionStateIndex] = 0;
 	_currentPart = 670;
 }
 
@@ -222,7 +222,7 @@ void IgorEngine::PART_14_UPDATE_ROOM_BACKGROUND_ACTION_108() {
 
 void IgorEngine::PART_14_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		if (_objectsState[50] == 1) {
+		if (_objectsState[kSecretPassageEntranceOpenStateIndex] == 1) {
 			PART_14_HELPER_6_drawEntrance();
 			_roomObjectAreasTable[3].object = 5;
 			_roomObjectAreasTable[4].object = 5;
@@ -458,7 +458,7 @@ void IgorEngine::PART_14_HELPER_9_showPuzzle() {
 				showCursor();
 				_dialogueEnded = false;
 				++_gameState.counter[4];
-				if (_objectsState[2] == 0 || PART_14_ANIM_DATA_1[_gameState.counter[4]] != area) {
+				if (_objectsState[kPapyrusFiguresVisibleStateIndex] == 0 || PART_14_ANIM_DATA_1[_gameState.counter[4]] != area) {
 					_currentPart = 0;
 				}
 				if (_gameState.counter[4] == 5) {

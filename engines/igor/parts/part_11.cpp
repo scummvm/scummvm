@@ -30,10 +30,10 @@ void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 	PART_10_11_DRAW_OBJECT_STATE(num);
 
 	if (num == 1 || num == 255)
-		_roomObjectAreasTable[13].object = _objectsState[40] == 0 ? 4 : 3;
+		_roomObjectAreasTable[13].object = _objectsState[kSlugTakenStateIndex] == 0 ? 4 : 3;
 
 	if (num == 2 || num == 255) {
-		if (_objectsState[41] == 1) { //glass shards
+		if (_objectsState[kGlassShardsPresentStateIndex] == 1) { //glass shards
 			// make area selectable
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].object = 7;
@@ -45,13 +45,13 @@ void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 	}
 
 	if (num == 3 || num == 255) {
-		if (_objectsState[42] == 0) {
+		if (_objectsState[kButterflyNetStateIndex] == 0) {
 			for (int area = 7; area <= 8; ++area)
 				_roomObjectAreasTable[area].object = 0;
-		} else if (_objectsState[42] == 1) {
+		} else if (_objectsState[kButterflyNetStateIndex] == 1) {
 			for (int area = 7; area <= 8; ++area)
 				_roomObjectAreasTable[area].object = 6;
-		} else if (_objectsState[42] == 2) {
+		} else if (_objectsState[kButterflyNetStateIndex] == 2) {
 			_roomObjectAreasTable[7].object = 6;
 			_roomObjectAreasTable[8].object = 8;
 		}
@@ -64,7 +64,7 @@ void IgorEngine::PART_11_ACTION_105_pickSlug() {
 		waitForTimer(127);
 	}
 	addObjectToInventory(18, 53);
-	_objectsState[40] = 1;
+	_objectsState[kSlugTakenStateIndex] = 1;
 	PART_11_APPLY_OBJECT_STATE(255);
 }
 
@@ -74,7 +74,7 @@ void IgorEngine::PART_11_ACTION_107_useButterflyNetWithHole() {
 		waitForTimer(61);
 	}
 	removeObjectFromInventory(42);
-	_objectsState[42] = 1;
+	_objectsState[kButterflyNetStateIndex] = 1;
 	PART_11_APPLY_OBJECT_STATE(255);
 }
 
@@ -121,9 +121,9 @@ void IgorEngine::PART_11_ACTION_112_pickBottle() {
 		waitForTimer(61);
 	}
 	addObjectToInventory(23, 58);
-	_objectsState[42] = 1;
+	_objectsState[kButterflyNetStateIndex] = 1;
 	PART_11_APPLY_OBJECT_STATE(3);
-	_objectsState[0] = 1;
+	_objectsState[kBottleStateIndex] = 1;
 	UPDATE_OBJECT_STATE(1);
 }
 
@@ -139,7 +139,7 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		igorSayAndWait(29, 1, 29);
 		break;
 	case 103: // look at pipe
-		igorSayAndWait(_objectsState[40] == 0 ? 203 : 204, 1, _objectsState[40] == 0 ? 617 : 618);
+		igorSayAndWait(_objectsState[kSlugTakenStateIndex] == 0 ? 203 : 204, 1, _objectsState[kSlugTakenStateIndex] == 0 ? 617 : 618);
 		break;
 	case 104: // talk to slug
 		igorSayAndWait({ { 205, 1, 619 }, { 206, 1, 620 } });
@@ -160,7 +160,7 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		igorSayAndWait(207, 1, 621);
 		break;
 	case 110: // Look at butterfly net
-		igorSayAndWait(_objectsState[42] == 1 ? 208 : 209, 1, _objectsState[42] == 1 ? 622 : 623);
+		igorSayAndWait(_objectsState[kButterflyNetStateIndex] == 1 ? 208 : 209, 1, _objectsState[kButterflyNetStateIndex] == 1 ? 622 : 623);
 		break;
 	case 111: // look at glass shards
 		igorSayAndWait(210, 1, 624);

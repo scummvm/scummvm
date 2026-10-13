@@ -31,16 +31,16 @@ void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
 	// These three original blitters are byte-for-byte duplicates in the two
 	// halves of the room
 
-	if ((num == 2 || num == 255) && _objectsState[41] == 1) {
+	if ((num == 2 || num == 255) && _objectsState[kGlassShardsPresentStateIndex] == 1) {
 		//draw shards
 		copyArea(_screenLayer1, 0x7DA1, 320, _animFramesBuffer + 0xC786, 37, 37, 8);
 	}
 
 	if (num == 3 || num == 255) {
 		// draw butterfly net with or without bottle
-		if (_objectsState[42] == 1) {
+		if (_objectsState[kButterflyNetStateIndex] == 1) {
 			copyArea(_screenLayer1, 0x4E32, 320, _animFramesBuffer + 0xC5E2, 14, 14, 15);
-		} else if (_objectsState[42] == 2) { // w/ bottle
+		} else if (_objectsState[kButterflyNetStateIndex] == 2) { // w/ bottle
 			copyArea(_screenLayer1, 0x4E32, 320, _animFramesBuffer + 0xC6B4, 14, 14, 15);
 		}
 	}
@@ -91,7 +91,7 @@ void IgorEngine::PART_10_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_10_ACTION_104_pickHamburger() {
-	if (_objectsState[38] == 1) { // already picked hamburger
+	if (_objectsState[kHamburgerTakenStateIndex] == 1) { // already picked hamburger
 		igorSayAndWait(205, 1, 629);
 		return;
 	}
@@ -105,7 +105,7 @@ void IgorEngine::PART_10_ACTION_104_pickHamburger() {
 	}
 
 	addObjectToInventory(17, 52);
-	_objectsState[38] = 1;
+	_objectsState[kHamburgerTakenStateIndex] = 1;
 }
 
 void IgorEngine::PART_10_ACTION_108_scrollLeft() {

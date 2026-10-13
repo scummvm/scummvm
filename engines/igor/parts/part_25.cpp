@@ -68,7 +68,7 @@ void IgorEngine::PART_25_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_25_ACTION_105_enterMensToilet() {
-	if (_objectsState[68] != 0) {
+	if (_objectsState[kMensRoomDoorStateIndex] != 0) {
 		_roomObjectAreasTable[_screenLayer2[34370]].area = 1;
 		--_walkDataLastIndex;
 		buildWalkPath(133, 123, 130, 107);
@@ -80,7 +80,7 @@ void IgorEngine::PART_25_ACTION_105_enterMensToilet() {
 }
 
 void IgorEngine::PART_25_ACTION_107_openDoor() {
-	if (_objectsState[68] == 1) {
+	if (_objectsState[kMensRoomDoorStateIndex] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
 	}
@@ -94,12 +94,12 @@ void IgorEngine::PART_25_ACTION_107_openDoor() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[68] = 1;
+	_objectsState[kMensRoomDoorStateIndex] = 1;
 	PART_25_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_25_ACTION_108_closeDoor() {
-	if (_objectsState[68] == 0) {
+	if (_objectsState[kMensRoomDoorStateIndex] == 0) {
 		EXEC_MAIN_ACTION(14);
 		return;
 	}
@@ -113,13 +113,13 @@ void IgorEngine::PART_25_ACTION_108_closeDoor() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[68] = 0;
+	_objectsState[kMensRoomDoorStateIndex] = 0;
 	PART_25_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_25_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) { // door state
-		if (_objectsState[68] == 0) {
+		if (_objectsState[kMensRoomDoorStateIndex] == 0) {
 			PART_25_HELPER_5_drawClosedDoor();
 			_roomActionsTable[31] = 6;
 		} else {

@@ -18,19 +18,19 @@ const uint32 kDoor2Open = 0x28DD;
 void IgorEngine::PART_07_DRAW_DOOR_STATE(int num) {
 	_roomActionsTable[297] = 109;
 	if (num == 1 || num == 255) { // draws open or closed door depending on the flag
-		const uint32 srcOffset = _objectsState[26] == 0 ? kDoor1Closed : kDoor1Open;
+		const uint32 srcOffset = _objectsState[kDeanDoorOpenStateIndex] == 0 ? kDoor1Closed : kDoor1Open;
 		copyArea(_screenLayer1, 0x4DB8, 320, _animFramesBuffer + srcOffset, 12, 12, 53);
-		_roomActionsTable[146] = _objectsState[26] == 0 ? 6 : 7;
+		_roomActionsTable[146] = _objectsState[kDeanDoorOpenStateIndex] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
-		const uint32 srcOffset = _objectsState[27] == 0 ? kDoor2Closed : kDoor2Open;
+		const uint32 srcOffset = _objectsState[kSecretaryDoorOpenStateIndex] == 0 ? kDoor2Closed : kDoor2Open;
 		copyArea(_screenLayer1, 0x4E1A, 320, _animFramesBuffer + srcOffset, 12, 12, 52);
-		_roomActionsTable[147] = _objectsState[27] == 0 ? 6 : 7;
+		_roomActionsTable[147] = _objectsState[kSecretaryDoorOpenStateIndex] == 0 ? 6 : 7;
 	}
 }
 
 void IgorEngine::PART_07_openCloseDoor(int door, bool open) {
-	const int stateIndex = door == 1 ? 26 : 27;
+	const int stateIndex = door == 1 ? kDeanDoorOpenStateIndex : kSecretaryDoorOpenStateIndex;
 	if ((_objectsState[stateIndex] != 0) == open) {
 		const int text = open ? 19 : 23;
 		igorSayAndWait(text, 1, text);
@@ -157,7 +157,7 @@ void IgorEngine::PART_07_EXEC_ACTION(int action) {
 		PART_07_exitToOutside();
 		break;
 	case 111: // Go through dean's door
-		if (_objectsState[26] != 0) {
+		if (_objectsState[kDeanDoorOpenStateIndex] != 0) {
 			for (int area = 11; area <= 13; ++area) {
 				_roomObjectAreasTable[area].area = 3;
 			}
@@ -170,7 +170,7 @@ void IgorEngine::PART_07_EXEC_ACTION(int action) {
 		}
 		break;
 	case 112: // Go through secretary's door
-		if (_objectsState[27] != 0) {
+		if (_objectsState[kSecretaryDoorOpenStateIndex] != 0) {
 			WalkData &wd = _walkData[0];
 			wd.setPos(156, 113, kFacingPositionBack, 1);
 			wd.setDefaultScale();

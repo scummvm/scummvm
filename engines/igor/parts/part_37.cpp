@@ -51,7 +51,7 @@ void IgorEngine::PART_37_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_37_ACTION_102_lookAtPaperBinTakePaper() {
-	if (_objectsState[89] == 1) {
+	if (_objectsState[kPhysicsClassPaperTakenStateIndex] == 1) {
 		igorSay(202, 1, 663);
 		return;
 	}
@@ -62,7 +62,7 @@ void IgorEngine::PART_37_ACTION_102_lookAtPaperBinTakePaper() {
 		waitForTimer(60);
 	}
 	addObjectToInventory(32, 67);
-	_objectsState[89] = 1;
+	_objectsState[kPhysicsClassPaperTakenStateIndex] = 1;
 	PART_37_HELPER_1_OBJECT_STATE(255);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;

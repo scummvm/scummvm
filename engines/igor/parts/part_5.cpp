@@ -53,7 +53,7 @@ namespace Igor {
 
 void IgorEngine::PART_05_HELPER_4_drawPaperOrNot(int num) {
 
-	if (_objectsState[60] == 0) {
+	if (_objectsState[kSpringBridgePaperStateIndex] == 0) {
 		// paper not taken, paint "frame 0"
 		PART_05_06_drawPaperFrame(0);
 		return;
@@ -122,14 +122,14 @@ void IgorEngine::PART_05() {
 	loadAnimData(anm4, 0xA763);
 
 	// Draws photographer and objects before copying the screenLayer
-	if (_objectsState[61] != 0) {
+	if (_objectsState[kPhotographerGoneStateIndex] != 0) {
 		PART_05_06_SAVE_PHOTOGRAPHER_BACKGROUND();
 		PART_05_06_DRAW_PHOTOGRAPHER();
 	}
-	if (_objectsState[63] != 0) {
+	if (_objectsState[kCameraStateIndex] != 0) {
 		PART_05_06_DRAW_TRIPOD(false);
 	}
-	if (_objectsState[62] != 0) {
+	if (_objectsState[kTripodStateIndex] != 0) {
 		PART_05_06_DRAW_CAMERA(0);
 	}
 
@@ -173,8 +173,8 @@ void IgorEngine::PART_05() {
 	} else if (_currentPart == 255) {
 		fadeOut(768);
 	} else if (_currentPart != 60) {
-		if (_objectsState[63] == 0) {
-			_objectsState[61] = _objectsState[62] = _objectsState[63] = 1;
+		if (_objectsState[kCameraStateIndex] == 0) {
+			_objectsState[kPhotographerGoneStateIndex] = _objectsState[kTripodStateIndex] = _objectsState[kCameraStateIndex] = 1;
 		}
 		memcpy(_currentPalette, _paletteBuffer, 624);
 		fadeOut(624);
@@ -194,7 +194,7 @@ void IgorEngine::PART_05_ACTION_103_pickPaper() {
 		waitForTimer();
 	} while (i != 3);
 	addObjectToInventory(21, 56);
-	_objectsState[60] = 1;
+	_objectsState[kSpringBridgePaperStateIndex] = 1;
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}

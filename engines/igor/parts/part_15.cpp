@@ -120,7 +120,7 @@ void IgorEngine::PART_15_ACTION_115_giveProjectToTobias() {
 		waitForTimer(60);
 	}
 	PART_15_HELPER_7_drawIgorAndTobiasScene(6);
-	if (_objectsState[37] == 0) {
+	if (_objectsState[kPersonalFileChangedStateIndex] == 0) {
 		ADD_DIALOGUE_TEXT(215, 2, 334);
 		ADD_DIALOGUE_TEXT(217, 1, 335);
 	} else {
@@ -132,7 +132,7 @@ void IgorEngine::PART_15_ACTION_115_giveProjectToTobias() {
 	_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
 	waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
 	_updateDialogue = 0;
-	if (_objectsState[37] == 0) {
+	if (_objectsState[kPersonalFileChangedStateIndex] == 0) {
 		return;
 	}
 	for (int i = 1; i <= 7; ++i) {
@@ -140,8 +140,8 @@ void IgorEngine::PART_15_ACTION_115_giveProjectToTobias() {
 		waitForTimer(40);
 	}
 	removeObjectFromInventory(70);
-	_objectsState[46] = 1;
-	if (_objectsState[47] == 0) {
+	_objectsState[kProjectHandedToTobiasStateIndex] = 1;
+	if (_objectsState[kMoneyHandedToTobiasStateIndex] == 0) {
 		cutsceneSayWithCallback(133, 67, 0, 63, 19, 221, 2, 338, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
 		return;
 	}
@@ -164,7 +164,7 @@ void IgorEngine::PART_15_ACTION_116_giveMoneyToTobias() {
 		waitForTimer(60);
 	}
 	PART_15_HELPER_7_drawIgorAndTobiasScene(6);
-	if (_objectsState[37] == 0) {
+	if (_objectsState[kPersonalFileChangedStateIndex] == 0) {
 		ADD_DIALOGUE_TEXT(215, 2, 334);
 		ADD_DIALOGUE_TEXT(217, 1, 335);
 	} else {
@@ -176,7 +176,7 @@ void IgorEngine::PART_15_ACTION_116_giveMoneyToTobias() {
 	_updateDialogue = &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS;
 	waitForEndOfCutsceneDialogue(133, 67, 0, 63, 19);
 	_updateDialogue = 0;
-	if (_objectsState[37] == 0) {
+	if (_objectsState[kPersonalFileChangedStateIndex] == 0) {
 		return;
 	}
 	for (int i = 1; i <= 7; ++i) {
@@ -184,8 +184,8 @@ void IgorEngine::PART_15_ACTION_116_giveMoneyToTobias() {
 		waitForTimer(40);
 	}
 	removeObjectFromInventory(60);
-	_objectsState[47] = 1;
-	if (_objectsState[46] == 0) {
+	_objectsState[kMoneyHandedToTobiasStateIndex] = 1;
+	if (_objectsState[kProjectHandedToTobiasStateIndex] == 0) {
 		cutsceneSayWithCallback(133, 67, 0, 63, 19, 224, 2, 340, &IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS);
 		return;
 	}
@@ -199,7 +199,7 @@ void IgorEngine::PART_15_ACTION_116_giveMoneyToTobias() {
 void IgorEngine::PART_15_UPDATE_ROOM_BACKGROUND() {
 	PART_15_HELPER_5_animateTobiasIdle();
 	if (compareGameTick(38) || compareGameTick(60)) {
-		if (_objectsState[48] != 1 && getRandomNumber(199) == 0 && _gameState.counter[3] == 0) {
+		if (_objectsState[kCuckooClockTriggeredStateIndex] != 1 && getRandomNumber(199) == 0 && _gameState.counter[3] == 0) {
 			_gameState.counter[3] = 1;
 		}
 	}
@@ -252,18 +252,18 @@ void IgorEngine::PART_15_HELPER_2_walkIn() {
 
 void IgorEngine::PART_15_HELPER_3_updateCuckooClock() {
 	if (compareGameTick(38) || compareGameTick(60)) {
-		if (_objectsState[48] != 1 && _gameState.counter[3] == 1) {
+		if (_objectsState[kCuckooClockTriggeredStateIndex] != 1 && _gameState.counter[3] == 1) {
 			if (_gameState.unk11 == 0) {
-				_objectsState[48] = 1;
-				_objectsState[49] = 1;
+				_objectsState[kCuckooClockTriggeredStateIndex] = 1;
+				_objectsState[kCuckooAnimationControlStateIndex] = 1;
 				_gameState.counter[3] = 0;
 			} else {
 				PART_15_HELPER_6_drawCuckooFrame(_gameState.unk11);
 			}
 			if (_gameState.unk11 == 7) {
-				_objectsState[49] = 2;
+				_objectsState[kCuckooAnimationControlStateIndex] = 2;
 			}
-			if (_objectsState[49] == 2) {
+			if (_objectsState[kCuckooAnimationControlStateIndex] == 2) {
 				if (_gameState.counter[4] == 0) {
 					playSound(54, 1);
 				}
@@ -274,10 +274,10 @@ void IgorEngine::PART_15_HELPER_3_updateCuckooClock() {
 					_gameState.unk11 = 7;
 				}
 				if (_gameState.counter[4] > 15) {
-					_objectsState[49] = 3;
+					_objectsState[kCuckooAnimationControlStateIndex] = 3;
 					_gameState.unk11	= 6;
 				}
-			} else if (_objectsState[49] == 1) {
+			} else if (_objectsState[kCuckooAnimationControlStateIndex] == 1) {
 				++_gameState.unk11;
 			} else {
 				--_gameState.unk11;
@@ -385,8 +385,8 @@ void IgorEngine::PART_15() {
 		runPartLoop();
 	}
 	leavePartLoop();
-	if (_objectsState[48] == 1) {
-		_objectsState[48] = 2;
+	if (_objectsState[kCuckooClockTriggeredStateIndex] == 1) {
+		_objectsState[kCuckooClockTriggeredStateIndex] = 2;
 	}
 	if (!_gameStateLoaded)
 		fadeOut(624);

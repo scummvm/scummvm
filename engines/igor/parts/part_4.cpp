@@ -38,7 +38,7 @@ void IgorEngine::PART_04_EXEC_ACTION(int action) {
 		_currentPart = 100;
 		break;
 	case 105:
-		if (_objectsState[111] == 0) {
+		if (_objectsState[kExamCompletedStateIndex] == 0) {
 			// college entrance
 			_currentPart = 170;
 		} else {
@@ -61,14 +61,14 @@ void IgorEngine::PART_04_EXEC_ACTION(int action) {
  * */
 void IgorEngine::PART_04() {
 
-	if (_objectsState[106] == 1) { // police custcene
+	if (_objectsState[kStatuetteTaken2StateIndex] == 1) { // police custcene
 		_currentPart = 730;
 		return;
 	}
 
 	// if philip has drunk the chemical, trigger the cutscene
-	if (_objectsState[107] == 1) {
-		_objectsState[107] = 0;
+	if (_objectsState[kFlaskLeftInPhillipLockerStateIndex] == 1) {
+		_objectsState[kFlaskLeftInPhillipLockerStateIndex] = 0;
 		_currentPart = 750;
 		return;
 	}
@@ -79,7 +79,7 @@ void IgorEngine::PART_04() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_04_EXEC_ACTION);
 
 	// closes Philips locker
-	_objectsState[84] = 0;
+	_objectsState[kPhillipLockerStateIndex] = 0;
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	playMusic(1);

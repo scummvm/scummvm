@@ -105,7 +105,7 @@ void IgorEngine::PART_76_EXEC_ACTION(int action) {
  * screen) and the actions and objects that go with them.
  */
 void IgorEngine::PART_76_APPLY_OBJECT_STATE() {
-	if (_objectsState[108] == 0) {
+	if (_objectsState[kPlaneDoorOpenStateIndex] == 0) {
 		copyArea(_screenLayer1, kPart76PlaneDoorOffset, 320, _animFramesBuffer + kPart76PlaneDoorFirst, kPart76PlaneDoorWidth,
 				 kPart76PlaneDoorWidth, kPart76PlaneDoorHeight);
 		_roomActionsTable[79] = 9;
@@ -118,7 +118,7 @@ void IgorEngine::PART_76_APPLY_OBJECT_STATE() {
 		_roomActionsTable[79] = 11;
 		_roomActionsTable[81] = 12;
 	}
-	if (_objectsState[109] == 0) {
+	if (_objectsState[kParachuteTakenStateIndex] == 0) {
 		copyArea(_screenLayer1, kPart76ParachuteOffset, 320, _animFramesBuffer, kPart76ParachuteWidth,
 				 kPart76ParachuteWidth, kPart76ParachuteHeight);
 	} else {
@@ -148,7 +148,7 @@ void IgorEngine::PART_76_ACTION_103_openDoor() {
 		waitForTimer(31);
 	}
 	igorSay(206, 1, 704);
-	_objectsState[108] = 1;
+	_objectsState[kPlaneDoorOpenStateIndex] = 1;
 	PART_76_APPLY_OBJECT_STATE();
 }
 
@@ -161,7 +161,7 @@ void IgorEngine::PART_76_ACTION_104_takeParachute() {
 		waitForTimer(91);
 	}
 	addObjectToInventory(kPart76ParachuteInvNumber, kPart76ParachuteInventoryIndex);
-	_objectsState[109] = 1;
+	_objectsState[kParachuteTakenStateIndex] = 1;
 	PART_76_APPLY_OBJECT_STATE();
 	igorSay({ { 203, 1, 702 }, { 204, 2, 703 } });
 }
@@ -172,7 +172,7 @@ void IgorEngine::PART_76_ACTION_104_takeParachute() {
  * the full screen frames follow and the story goes on in state 790.
  */
 void IgorEngine::PART_76_ACTION_106_useParachute() {
-	if (_objectsState[108] == 0) {
+	if (_objectsState[kPlaneDoorOpenStateIndex] == 0) {
 		igorSay(209, 1, 706);
 		return;
 	}

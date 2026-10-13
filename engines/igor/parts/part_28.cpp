@@ -42,7 +42,7 @@ void IgorEngine::PART_28_EXEC_ACTION(int action) {
 		igorSay(204, 1, 1229);
 		break;
 	case 106: // look at message board
-		if (_objectsState[111] == 0) {
+		if (_objectsState[kExamCompletedStateIndex] == 0) {
 			igorSay({ { 205, 1, 1230 }, { 206, 1, 1231 } });
 		} else {
 			igorSay(234, 1, 1253);
@@ -61,7 +61,7 @@ void IgorEngine::PART_28_EXEC_ACTION(int action) {
 		igorSay({ { 228, 1, 1248 }, { 229, 1, 1249 } });
 		break;
 	case 111: // give folder to caroline
-		if (_objectsState[3] == 0) {
+		if (_objectsState[kFolderSwappedStateIndex] == 0) {
 			igorSay(226, 1, 1246);
 		} else {
 			igorSay(227, 1, 1247);
@@ -83,7 +83,7 @@ void IgorEngine::PART_28_EXEC_ACTION(int action) {
 // her own talking loops never run it, otherwise it fights the talking frames.
 void IgorEngine::PART_28_ACTION_108_talkCaroline() {
 	const UpdateRoomBackgroundProc updateRoomBackground = _updateRoomBackground;
-	if (_objectsState[111] == 1) {
+	if (_objectsState[kExamCompletedStateIndex] == 1) {
 		igorSayAndWait(218, 1, 1241);
 		_updateRoomBackground = 0;
 		cutsceneSayStart(182, 81, 63, 17, 17, { { 211, 1, 1235 }, { 212, 1, 1236 }, { 213, 2, 1237 }, { 215, 1, 1238 }, { 216, 1, 1239 } });
@@ -105,13 +105,13 @@ void IgorEngine::PART_28_ACTION_108_talkCaroline() {
 		igorSay(222, 2, 1244);
 		return;
 	}
-	if (_objectsState[87] < 2) {
+	if (_objectsState[kCarolineFolderStateIndex] < 2) {
 		igorSayAndWait(207, 1, 1232);
 	} else {
 		igorSayAndWait(218, 1, 1241);
 	}
 	_updateRoomBackground = 0;
-	if (_objectsState[87] < 2) {
+	if (_objectsState[kCarolineFolderStateIndex] < 2) {
 		cutsceneSayWithCallback(182, 81, 63, 17, 17, 208, 1, 1233, &IgorEngine::PART_28_UPDATE_DIALOGUE_CAROLINE);
 	} else {
 		cutsceneSayWithCallback(182, 81, 63, 17, 17, { { 219, 2, 1242 }, { 221, 1, 1243 } }, &IgorEngine::PART_28_UPDATE_DIALOGUE_CAROLINE);
@@ -128,7 +128,7 @@ void IgorEngine::PART_28_ACTION_109_takeFolder() {
 		}
 	}
 	addObjectToInventory(22, 57);
-	_objectsState[87] = 1;
+	_objectsState[kCarolineFolderStateIndex] = 1;
 	PART_28_HELPER_1_OBJECT_STATE(255);
 	igorSay(230, 1, 1250);
 	if (_game.version == kIdEngDemo110) {
@@ -173,7 +173,7 @@ void IgorEngine::PART_28_UPDATE_ROOM_BACKGROUND() {
 void IgorEngine::PART_28_HELPER_1_OBJECT_STATE(int num) {
 	WRITE_LE_UINT16(_roomActionsTable + 0x56, 42133);
 	if (num == 2 || num == 255) {
-		if (_objectsState[87] == 0) {
+		if (_objectsState[kCarolineFolderStateIndex] == 0) {
 			PART_28_HELPER_8(1);
 		} else {
 			PART_28_HELPER_8(0);
@@ -289,8 +289,8 @@ void IgorEngine::PART_28() {
 	while ((_currentPart == 280 || _currentPart == 281) && !_gameStateLoaded) {
 		runPartLoop();
 	}
-	if (!_gameStateLoaded && _objectsState[87] == 1) {
-		_objectsState[87] = 2;
+	if (!_gameStateLoaded && _objectsState[kCarolineFolderStateIndex] == 1) {
+		_objectsState[kCarolineFolderStateIndex] = 2;
 	}
 	leavePartLoop();
 	if (!_gameStateLoaded)

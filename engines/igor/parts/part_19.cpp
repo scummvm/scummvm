@@ -60,7 +60,7 @@ void IgorEngine::PART_19_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_19_ACTION_107_lookAtSink() {
-	if (_objectsState[58] == 1) {
+	if (_objectsState[kHairpinTakenStateIndex] == 1) {
 		igorSay(211, 1, 919);
 		return;
 	}
@@ -73,12 +73,12 @@ void IgorEngine::PART_19_ACTION_107_lookAtSink() {
 		waitForTimer(120);
 	}
 	addObjectToInventory(12, 47);
-	_objectsState[58] = 1;
+	_objectsState[kHairpinTakenStateIndex] = 1;
 	PART_19_HELPER_1_OBJECT_STATE(255);
 }
 
 void IgorEngine::PART_19_ACTION_109_usePapyrusOnDryer() {
-	if (_objectsState[2] == 1) {
+	if (_objectsState[kPapyrusFiguresVisibleStateIndex] == 1) {
 		igorSay(210, 1, 918);
 		return;
 	}
@@ -117,7 +117,7 @@ void IgorEngine::PART_19_UPDATE_BACKGROUND_HELPER_9() {
 
 void IgorEngine::PART_19_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 2 || num == 255) {
-		if (_objectsState[59] == 0) {
+		if (_objectsState[kToiletGirlsHaveLeftStateIndex] == 0) {
 			decodeAnimFrame(_animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x4051) - 1, _screenLayer1, true);
 		}
 	}
@@ -175,7 +175,7 @@ void IgorEngine::PART_19_HELPER_2_slugCutscene() { // sub_137_07AD
 	cutsceneSayWithCallback(243, 92, 63, 23, 33, 221, 2, 925, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
 	VAR_CURRENT_TALKING_ACTOR = 1;
 	cutsceneSayWithCallback(227, 91, 0, 63, 63, 223, 2, 926, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
-	_objectsState[59] = 1;
+	_objectsState[kToiletGirlsHaveLeftStateIndex] = 1;
 	fadeOut(624);
 	_gameState.talkSpeed = talkSpeed;
 }
@@ -231,7 +231,7 @@ void IgorEngine::PART_19() {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		PART_19_HELPER_3_walkIn();
-		if (_objectsState[59] == 0) {
+		if (_objectsState[kToiletGirlsHaveLeftStateIndex] == 0) {
 			PART_19_HELPER_4_enterAndLeave();
 			if (!_gameStateLoaded && _currentPart != 191)
 				fadeOut(624);

@@ -85,7 +85,7 @@ void IgorEngine::PART_73_CUTSCENE() {
 	_gameState.igorMoving = true;
 	waitForIgorMove();
 
-	_objectsState[7] = 1;
+	_objectsState[kStatueDeliveredStateIndex] = 1;
 	UPDATE_OBJECT_STATE(8);
 	// removes the great dosicua
 	removeInventoryEntry(kPart73InventoryIndex);
@@ -104,7 +104,7 @@ void IgorEngine::PART_73_CUTSCENE() {
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);
 	_currentAction.verb = kVerbWalk;
-	_objectsState[106] = 0;
+	_objectsState[kStatuetteTaken2StateIndex] = 0;
 	_currentPart = 40;
 }
 

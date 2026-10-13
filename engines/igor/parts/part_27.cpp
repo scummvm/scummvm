@@ -29,9 +29,9 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		_currentPart = 211;
 		break;
 	case 102: // look at lockers
-		if (_objectsState[85] == 0) {
+		if (_objectsState[kLockersExaminedStateIndex] == 0) {
 			igorSay(216, 2, 1173);
-			_objectsState[85] = 1;
+			_objectsState[kLockersExaminedStateIndex] = 1;
 			PART_27_HELPER_1_OBJECT_STATE(255);
 		} else {
 			igorSay(201, 1, 1162);
@@ -77,17 +77,17 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_27_ACTION_106_openPhilipLocker() {
-	if (_objectsState[84] == 1) {
+	if (_objectsState[kPhillipLockerStateIndex] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
 	}
-	if (_objectsState[5] == 0) {
+	if (_objectsState[kPhillipLockerCombinationLearnedStateIndex] == 0) {
 		igorSay(206, 1, 1166);
 		return;
 	}
-	if (_objectsState[5] == 1) {
+	if (_objectsState[kPhillipLockerCombinationLearnedStateIndex] == 1) {
 		igorSayAndWait(209, 3, 1169);
-		_objectsState[5] = 2;
+		_objectsState[kPhillipLockerCombinationLearnedStateIndex] = 2;
 	}
 	const int offset = 21810;
 	for (int i = 2; i <= 3; ++i) {
@@ -99,12 +99,12 @@ void IgorEngine::PART_27_ACTION_106_openPhilipLocker() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[84] = 1;
+	_objectsState[kPhillipLockerStateIndex] = 1;
 	PART_27_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_27_ACTION_107_closeLocker() {
-	if (_objectsState[84] == 0) {
+	if (_objectsState[kPhillipLockerStateIndex] == 0) {
 		EXEC_MAIN_ACTION(14);
 		return;
 	}
@@ -116,12 +116,12 @@ void IgorEngine::PART_27_ACTION_107_closeLocker() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[84] = 0;
+	_objectsState[kPhillipLockerStateIndex] = 0;
 	PART_27_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_27_ACTION_108_openLocker() {
-	if (_inventoryInfo[58] > 0 || _objectsState[42] == 2) {
+	if (_inventoryInfo[58] > 0 || _objectsState[kButterflyNetStateIndex] == 2) {
 		igorSay(208, 1, 1168);
 		return;
 	}
@@ -151,7 +151,7 @@ void IgorEngine::PART_27_ACTION_110_useFlaskOnLocker() {
 	}
 	removeObjectFromInventory(55);
 	PART_27_HELPER_1_OBJECT_STATE(255);
-	_objectsState[107] = 1;
+	_objectsState[kFlaskLeftInPhillipLockerStateIndex] = 1;
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
@@ -159,7 +159,7 @@ void IgorEngine::PART_27_ACTION_110_useFlaskOnLocker() {
 
 void IgorEngine::PART_27_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		if (_objectsState[84] == 0) {
+		if (_objectsState[kPhillipLockerStateIndex] == 0) {
 			PART_27_HELPER_3_drawClosedLocker();
 			_roomActionsTable[3] = 6;
 			_roomObjectAreasTable[6].object = 3;
@@ -170,7 +170,7 @@ void IgorEngine::PART_27_HELPER_1_OBJECT_STATE(int num) {
 		}
 	}
 	if (num == 2 || num == 255) {
-		if (_objectsState[85] == 0) {
+		if (_objectsState[kLockersExaminedStateIndex] == 0) {
 			_roomObjectAreasTable[5].object = 2;
 			_roomObjectAreasTable[6].object = 2;
 		} else {

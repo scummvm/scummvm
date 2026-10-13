@@ -82,11 +82,11 @@ void IgorEngine::PART_33_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_33_ACTION_109_takeAstronomyBooks() {
-	if (_objectsState[4] == 0) {
+	if (_objectsState[kAstronomyBookStateIndex] == 0) {
 		igorSay(201, 1, 396);
 		return;
 	}
-	if (_objectsState[74] == 1) {
+	if (_objectsState[kAstronomyBookTakenStateIndex] == 1) {
 		igorSay(222, 1, 413);
 		return;
 	}
@@ -97,13 +97,13 @@ void IgorEngine::PART_33_ACTION_109_takeAstronomyBooks() {
 		waitForTimer(120);
 	}
 	addObjectToInventory(31, 66);
-	_objectsState[74] = 1;
+	_objectsState[kAstronomyBookTakenStateIndex] = 1;
 	PART_33_HELPER_1_OBJECTS_STATE(255);
 	igorSayAndWait({ { 210, 1, 405 }, { 211, 2, 406 } });
 }
 
 void IgorEngine::PART_33_ACTION_111_talkToHarrison() {
-	if (_objectsState[75] == 1) {
+	if (_objectsState[kHarrisonPhotoStateIndex] == 1) {
 		PART_33_HELPER_9_loadExtraTexts();
 		PART_33_HELPER_1_OBJECTS_STATE(255);
 		igorSayAndWait(201, 1, 447);
@@ -161,7 +161,7 @@ void IgorEngine::PART_33_ACTION_114_showPhotoToHarrison() {
 	addObjectToInventory(35, 70);
 	PART_33_HELPER_1_OBJECTS_STATE(255);
 	PART_33_HarrisonSay({ { 233, 2, 422 } });
-	_objectsState[75] = 1;
+	_objectsState[kHarrisonPhotoStateIndex] = 1;
 }
 
 void IgorEngine::PART_33_ACTION_115_giveNoteToHarrison() {
@@ -182,7 +182,7 @@ void IgorEngine::PART_33_ACTION_115_giveNoteToHarrison() {
 	copyArea(_screenVGA, offset, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
 	PART_33_HarrisonSay({ { 219, 1, 410 } });
 	copyArea(_screenVGA, offset, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
-	_objectsState[76] = 1;
+	_objectsState[kHarrisonNoteShownStateIndex] = 1;
 }
 
 // The room's idle animation of Harrison is only driven by the room loop; the
@@ -241,7 +241,7 @@ void IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_3(int action) {
 }
 
 void IgorEngine::PART_33_UPDATE_ROOM_BACKGROUND() {
-	if (compareGameTick(61) && _objectsState[75] != 2) {
+	if (compareGameTick(61) && _objectsState[kHarrisonPhotoStateIndex] != 2) {
 		PART_33_HELPER_5_drawHarrisonHeadFrame(_gameState.unk10);
 		_gameState.unk10 = getRandomNumber(3) + 1;
 		if (_gameState.unk10 >= 1 && _gameState.unk10 <= 2) {
@@ -255,7 +255,7 @@ void IgorEngine::PART_33_UPDATE_ROOM_BACKGROUND() {
 void IgorEngine::PART_33_HELPER_1_OBJECTS_STATE(int num) {
 	if (num == 2 || num == 255) {
 		// is harrison here or not
-		if (_objectsState[75] <= 1) {
+		if (_objectsState[kHarrisonPhotoStateIndex] <= 1) {
 			PART_33_HELPER_3_drawHarrisonFrame();
 		} else {
 			_roomObjectAreasTable[27].object = 0;
@@ -375,9 +375,9 @@ void IgorEngine::PART_33() {
 	}
 	leavePartLoop();
 	if (!_gameStateLoaded) {
-		if (_objectsState[75] == 1) {
+		if (_objectsState[kHarrisonPhotoStateIndex] == 1) {
 			// harrison leaves
-			_objectsState[75] = 2;
+			_objectsState[kHarrisonPhotoStateIndex] = 2;
 		}
 		fadeOut(624);
 	}

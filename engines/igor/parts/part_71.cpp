@@ -34,10 +34,6 @@ static const int kPart71StatuetteFrameWidth = 5;
 static const int kPart71StatuetteFrameHeight = 6;
 static const int kPart71StatuetteFramesOffset = kPart71TakeFramesCount * kPart71TakeFrameSize;
 
-static const int kPart71TakenStateIndex = 100;
-static const int kPart71StatuetteExamined = 101;
-static const int kPart71StatuetteTaken = 106;
-
 static const int kPart71StatuetteNameIndex = 2;
 static const int kPart71StatuetteInventoryNumber = 25;
 static const int kPart71StatuetteInventoryIndex = 60;
@@ -92,10 +88,10 @@ void IgorEngine::PART_71_DRAW_OBJECT(int frame) {
 
 void IgorEngine::PART_71_APPLY_OBJECT_STATE(int what) {
 	if (what == kPart71ApplyPicture || what == kPart71ApplyAll) {
-		PART_71_DRAW_OBJECT(_objectsState[kPart71TakenStateIndex] == 0 ? 0 : 1);
+		PART_71_DRAW_OBJECT(_objectsState[kStatuetteTakenStateIndex] == 0 ? 0 : 1);
 	}
 	if (what == kPart71ApplyName || what == kPart71ApplyAll) {
-		const char *name = getString(_objectsState[kPart71StatuetteExamined] == 0 ? STR_ShinyThing : STR_Statuette);
+		const char *name = getString(_objectsState[kStatuetteExaminedStateIndex] == 0 ? STR_ShinyThing : STR_Statuette);
 		if (name) {
 			Common::strlcpy(_roomObjectNames[kPart71StatuetteNameIndex], name, sizeof(_roomObjectNames[kPart71StatuetteNameIndex]));
 		}
@@ -104,9 +100,9 @@ void IgorEngine::PART_71_APPLY_OBJECT_STATE(int what) {
 
 
 void IgorEngine::PART_71_ACTION_103_look() {
-	if (_objectsState[kPart71StatuetteExamined] == 0) {
+	if (_objectsState[kStatuetteExaminedStateIndex] == 0) {
 		igorSay(220, 2, 1005);
-		_objectsState[kPart71StatuetteExamined] = 1;
+		_objectsState[kStatuetteExaminedStateIndex] = 1;
 		PART_71_APPLY_OBJECT_STATE(kPart71ApplyName);
 	} else {
 		igorSay(222, 2, 1006);
@@ -115,19 +111,19 @@ void IgorEngine::PART_71_ACTION_103_look() {
 
 
 void IgorEngine::PART_71_ACTION_102_takeObject() {
-	if (_objectsState[kPart71StatuetteExamined] == 0) {
+	if (_objectsState[kStatuetteExaminedStateIndex] == 0) {
 		igorSayAndWait(220, 2, 1005);
-		_objectsState[kPart71StatuetteExamined] = 1;
+		_objectsState[kStatuetteExaminedStateIndex] = 1;
 	}
 	for (int i = 0; i < kPart71TakeFramesCount; ++i) {
 		drawAnimRect(kPart71TakeOffset, i * kPart71TakeFrameSize, kPart71TakeWidth, kPart71TakeHeight, false, kBlendLitSpriteNoShade);
 		waitForTimer(kPart71TakeFrameDelay);
 	}
 	addObjectToInventory(kPart71StatuetteInventoryNumber, kPart71StatuetteInventoryIndex);
-	_objectsState[kPart71TakenStateIndex] = 1;
+	_objectsState[kStatuetteTakenStateIndex] = 1;
 	PART_71_APPLY_OBJECT_STATE(kPart71ApplyAll);
 	igorSay(204, 3, 996);
-	_objectsState[kPart71StatuetteTaken] = 1;
+	_objectsState[kStatuetteTaken2StateIndex] = 1;
 }
 
 void IgorEngine::PART_71_enterFromRight() {

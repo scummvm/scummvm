@@ -62,14 +62,6 @@ static const int kPart68TextR = 63;
 static const int kPart68TextG = 50;
 static const int kPart68TextB = 0;
 
-// Flags of the story kept in the objects state.
-static const int kPart68SideState = 90;
-static const int kPart68VaseTaken = 91;
-static const int kPart68UndertakerLeft = 92;
-static const int kPart68RecordsGiven = 93;
-static const int kPart68BorisIntroduced = 94;
-static const int kPart68MessageSent = 104;
-
 // Inventory objects.
 static const int kVaseInventoryNumber = 34;
 static const int kPart68TakenObjectIndex = 69;
@@ -105,7 +97,7 @@ void IgorEngine::PART_68_drawPose(int frame) {
 void IgorEngine::PART_68_APPLY_OBJECT_STATE(int num) {
 	if (num == 3 || num == 255) {
 		// undertaker is still in the room
-		if (_objectsState[kPart68UndertakerLeft] == 0) {
+		if (_objectsState[kUndertakerLeftStateIndex] == 0) {
 			PART_68_drawUndertaker(0);
 			for (int i = 0; i < MAX_ROOM_OBJECT_AREAS; ++i) {
 				if (_roomObjectAreasTable[i].area >= 3 && _roomObjectAreasTable[i].area <= 4) {
@@ -130,7 +122,7 @@ void IgorEngine::PART_68_APPLY_OBJECT_STATE(int num) {
 		}
 	}
 	if (num == 2 || num == 255) {
-		if (_objectsState[kPart68VaseTaken] == 0) {
+		if (_objectsState[kVaseTakenStateIndex] == 0) {
 			PART_68_drawVase(0);
 		} else {
 			PART_68_drawVase(1);
@@ -265,7 +257,7 @@ void IgorEngine::PART_68_enterFromCemetery() {
 
 void IgorEngine::PART_68_ACTION_102_takeVase() {
 	// will only let us take the vase if the records have been given to him
-	if (_objectsState[kPart68RecordsGiven] == 0) {
+	if (_objectsState[kRecordGivenToUndertakerStateIndex] == 0) {
 		PART_68_drawPose(0);
 		PART_68_drawUndertaker(kPart68BorisFacing);
 		waitForTimer(30);
@@ -289,7 +281,7 @@ void IgorEngine::PART_68_ACTION_102_takeVase() {
 		waitForTimer(120);
 	}
 	addObjectToInventory(kVaseInventoryNumber, kPart68TakenObjectIndex);
-	_objectsState[kPart68VaseTaken] = 1;
+	_objectsState[kVaseTakenStateIndex] = 1;
 	PART_68_APPLY_OBJECT_STATE(255);
 }
 
@@ -314,7 +306,7 @@ void IgorEngine::PART_68_ACTION_108_giveRecordsToBoris() {
 	PART_68_sayBoris({ { 219, 1, 1024 }, { 220, 1, 1025 }, { 221, 1, 1026 }, { 222, 1, 1027 } });
 	PART_68_drawUndertaker(kPart68BorisFacing);
 	waitForTimer(30);
-	_objectsState[kPart68RecordsGiven] = 1;
+	_objectsState[kRecordGivenToUndertakerStateIndex] = 1;
 	PART_68_APPLY_OBJECT_STATE(255);
 }
 
@@ -324,7 +316,7 @@ void IgorEngine::PART_68_ACTION_108_giveRecordsToBoris() {
 void IgorEngine::PART_68_chooseRandomNames(int code) {
 	uint8 *data = _gameState.dialogueData;
 	if (code == 10) {
-		const int entries = _objectsState[kPart68MessageSent] == 1 ? 4 : 5;
+		const int entries = _objectsState[kLighthouseMessageSentStateIndex] == 1 ? 4 : 5;
 		for (int i = 1; i <= entries; ++i) {
 			data[27 + 6 * i] = _part68QuestionCounter;
 			++_part68QuestionCounter;
@@ -332,7 +324,7 @@ void IgorEngine::PART_68_chooseRandomNames(int code) {
 				_part68QuestionCounter = 1;
 			}
 		}
-		if (_objectsState[kPart68MessageSent] == 1) {
+		if (_objectsState[kLighthouseMessageSentStateIndex] == 1) {
 			data[57] = 20;
 			data[58] = 55;
 			data[56] = 0;
@@ -370,12 +362,12 @@ void IgorEngine::PART_68_CONVERSATION() {
 	_gameState.dialogueChoiceStart = 1;
 	_gameState.dialogueChoiceCount = 1;
 	// boris says different greeting depending if its the first time or not
-	if (_objectsState[kPart68BorisIntroduced] == 0) {
+	if (_objectsState[kBorisIntroducedStateIndex] == 0) {
 		igorSayAndWait(225, 1, 1029);
 		static const int replies[4] = { 1, 2, 3, 4 };
 		static const int sounds[4] = { 1051, 1052, 1053, 1054 };
 		PART_68_BorisSayReplies(replies, sounds, 4);
-		_objectsState[kPart68BorisIntroduced] = 1;
+		_objectsState[kBorisIntroducedStateIndex] = 1;
 	} else {
 		igorSayAndWait(226, 1, 1030);
 		static const int replies[4] = { 5, 6, 7, 8 };
@@ -429,7 +421,7 @@ void IgorEngine::PART_68_CONVERSATION() {
 		static const int sounds[4] = { 1079, 1080, 1081, 1082 };
 		PART_68_BorisSayReplies(replies, sounds, 4);
 		PART_68_BorisLeaves();
-		_objectsState[kPart68UndertakerLeft] = 2;
+		_objectsState[kUndertakerLeftStateIndex] = 2;
 	}
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
@@ -442,14 +434,14 @@ void IgorEngine::PART_68_CONVERSATION() {
 
 void IgorEngine::PART_68_ACTION_104_talkToBoris() {
 	PART_68_CONVERSATION();
-	if (_objectsState[kPart68UndertakerLeft] == 2) {
-		_objectsState[kPart68UndertakerLeft] = 1;
+	if (_objectsState[kUndertakerLeftStateIndex] == 2) {
+		_objectsState[kUndertakerLeftStateIndex] = 1;
 		PART_68_APPLY_OBJECT_STATE(255);
 	}
 }
 
 void IgorEngine::PART_68_ACTION_106_enterCemetery() {
-	if (_objectsState[kPart68UndertakerLeft] == 0) {
+	if (_objectsState[kUndertakerLeftStateIndex] == 0) {
 		igorSayAndWait(223, 2, 1028);
 		PART_68_ACTION_104_talkToBoris();
 	} else {
@@ -460,7 +452,7 @@ void IgorEngine::PART_68_ACTION_106_enterCemetery() {
 void IgorEngine::PART_68_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101: // exit through either side will cause next entry to be that side
-		_objectsState[kPart68SideState] = 1;
+		_objectsState[kCemeteryEntrySideStateIndex] = 1;
 		_currentPart = 700;
 		break;
 	case 102: // take vase
@@ -482,7 +474,7 @@ void IgorEngine::PART_68_EXEC_ACTION(int action) {
 		PART_68_ACTION_108_giveRecordsToBoris();
 		break;
 	case 109:
-		_objectsState[kPart68SideState] = 0;
+		_objectsState[kCemeteryEntrySideStateIndex] = 0;
 		_currentPart = 700;
 		break;
 	default:
@@ -512,7 +504,7 @@ void IgorEngine::PART_68() {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 680) {
-			if (_objectsState[kPart68SideState] == 0) {
+			if (_objectsState[kCemeteryEntrySideStateIndex] == 0) {
 				PART_68_enterFromRight();
 			} else {
 				PART_68_enterFromLeft();

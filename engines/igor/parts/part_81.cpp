@@ -57,12 +57,6 @@ static const int kPart81StripRows = 0x48;
 static const int kPart81EndFramesBase = 0xBAE0;
 static const int kPart81EndFramesTable = 0x828;
 
-// Flags of the story kept in the objects state.
-static const int kPart81VaseState = 6;
-static const int kPart81SideState = 90;
-static const int kPart81LighthouseMessageSent = 104;
-static const int kPart81HasSeenChurchBellMessageState = 105;
-
 static const int kPart81InventoryIndex = 69;
 
 static const uint8 kPart81FigureFrames[4] = { 1, 2, 3, 1 };
@@ -95,7 +89,7 @@ void IgorEngine::PART_81_drawLighthouseKeeperHead(int frame) {
 
 void IgorEngine::PART_81_UPDATE_ROOM_BACKGROUND() {
 	// if user has seen church bell message, show lighthouse keeper
-	if (compareGameTick(0x3D) && getRandomNumber(1) == 0 && _objectsState[kPart81HasSeenChurchBellMessageState] == 1) {
+	if (compareGameTick(0x3D) && getRandomNumber(1) == 0 && _objectsState[kChurchBellMessageSeenStateIndex] == 1) {
 		PART_81_drawLighthouseKeeperHead(getRandomNumber(2) + 1);
 	}
 }
@@ -134,11 +128,11 @@ void IgorEngine::PART_81_APPLY_OBJECT_STATE(int num) {
 	// change door hotspot to lighthouse keeper and vice-versa
 	uint8 objectNames[16];
 	loadData(TXT_Part81ObjectNames, objectNames);
-	const uint8 *name = objectNames + (_objectsState[kPart81HasSeenChurchBellMessageState] == 1 ? 0 : 8);
+	const uint8 *name = objectNames + (_objectsState[kChurchBellMessageSeenStateIndex] == 1 ? 0 : 8);
 	memcpy(_roomObjectNames[2], name + 1, name[0]);
 	_roomObjectNames[2][name[0]] = '\0';
 	// show lighthouse keeper if the player has seen the church bell message
-	if (_objectsState[kPart81HasSeenChurchBellMessageState] == 1) {
+	if (_objectsState[kChurchBellMessageSeenStateIndex] == 1) {
 		copyArea(_screenLayer1, kPart81HeadOffset, 320, _animFramesBuffer + kPart81HeadRestFrame * kPart81HeadFrameSize + 0x1AE5,
 				 kPart81HeadWidth, kPart81HeadWidth, kPart81HeadHeight);
 		_roomActionsTable[30] = 2;
@@ -305,7 +299,7 @@ void IgorEngine::PART_81_ACTION_110_rejectItem() {
 }
 
 void IgorEngine::PART_81_ACTION_109_giveLampToLighthouseKeeper() {
-	if (_objectsState[kPart81VaseState] <= 1) {
+	if (_objectsState[kVaseStateIndex] <= 1) {
 		PART_81_ACTION_110_rejectItem();
 		return;
 	}
@@ -362,7 +356,7 @@ void IgorEngine::PART_81_ACTION_109_giveLampToLighthouseKeeper() {
 	PART_81_lighthouseKeeperSay({ { 224, 1, 966 }, { 225, 1, 967 }, { 226, 3, 968 } });
 	PART_81_igorSay(229, 1, 969);
 	PART_81_lighthouseKeeperSay({ { 230, 1, 970 } });
-	_objectsState[kPart81LighthouseMessageSent] = 1;
+	_objectsState[kLighthouseMessageSentStateIndex] = 1;
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);
 	PART_81_APPLY_OBJECT_STATE(255);
@@ -441,7 +435,7 @@ void IgorEngine::PART_81_handleDialogue() {
 }
 
 void IgorEngine::PART_81_ACTION_102_talk() {
-	if (_objectsState[kPart81HasSeenChurchBellMessageState] == 1 && _objectsState[kPart81LighthouseMessageSent] == 1) {
+	if (_objectsState[kChurchBellMessageSeenStateIndex] == 1 && _objectsState[kLighthouseMessageSentStateIndex] == 1) {
 		igorSay(234, 1, 974);
 		return;
 	}
@@ -473,14 +467,14 @@ void IgorEngine::PART_81_walkIn() {
 void IgorEngine::PART_81_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		_objectsState[kPart81SideState] = 1;
+		_objectsState[kCemeteryEntrySideStateIndex] = 1;
 		_currentPart = 700;
 		break;
 	case 102: // talk to lighthouse keeper
 		PART_81_ACTION_102_talk();
 		break;
 	case 103: // look at lighthouse keeper
-		if (_objectsState[kPart81HasSeenChurchBellMessageState] == 1) {
+		if (_objectsState[kChurchBellMessageSeenStateIndex] == 1) {
 			igorSay(202, 1, 946);
 		} else {
 			igorSay(201, 1, 945);
@@ -496,7 +490,7 @@ void IgorEngine::PART_81_EXEC_ACTION(int action) {
 		igorSay(204, 1, 948);
 		break;
 	case 108: // look at sea
-		if (_objectsState[kPart81LighthouseMessageSent] == 0) {
+		if (_objectsState[kLighthouseMessageSentStateIndex] == 0) {
 			igorSay({ { 206, 1, 950 }, { 207, 1, 951 } });
 		} else {
 			igorSay(205, 1, 949);
@@ -538,8 +532,8 @@ void IgorEngine::PART_81() {
 	while (_currentPart == 810 && !_gameStateLoaded) {
 		runPartLoop();
 	}
-	if (!_gameStateLoaded && _objectsState[kPart81HasSeenChurchBellMessageState] == 1 && _objectsState[kPart81LighthouseMessageSent] == 1) {
-		_objectsState[kPart81HasSeenChurchBellMessageState] = 0;
+	if (!_gameStateLoaded && _objectsState[kChurchBellMessageSeenStateIndex] == 1 && _objectsState[kLighthouseMessageSentStateIndex] == 1) {
+		_objectsState[kChurchBellMessageSeenStateIndex] = 0;
 	}
 	leavePartLoop();
 	if (!_gameStateLoaded)

@@ -16,17 +16,17 @@ void IgorEngine::PART_09_drawSecretaryFrame(int frame, bool background) {
 
 void IgorEngine::PART_09_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		const uint32 srcOffset = _objectsState[27] == 0 ? 0x5D0B : 0x61A3;
+		const uint32 srcOffset = _objectsState[kSecretaryDoorOpenStateIndex] == 0 ? 0x5D0B : 0x61A3;
 		copyArea(_screenLayer1, 0x46C2, 320, _animFramesBuffer + srcOffset, 24, 24, 49);
-		_roomActionsTable[150] = _objectsState[27] == 0 ? 6 : 7;
+		_roomActionsTable[150] = _objectsState[kSecretaryDoorOpenStateIndex] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
-		const uint32 srcOffset = _objectsState[34] == 0 ? 0x663B : 0x6A23;
+		const uint32 srcOffset = _objectsState[kSecretaryClosetOpenStateIndex] == 0 ? 0x663B : 0x6A23;
 		copyArea(_screenLayer1, 0x48E6, 320, _animFramesBuffer + srcOffset, 20, 20, 50);
-		_roomObjectAreasTable[4].object = (_objectsState[34] == 0 || _objectsState[36] != 0) ? 3 : 5;
+		_roomObjectAreasTable[4].object = (_objectsState[kSecretaryClosetOpenStateIndex] == 0 || _objectsState[kSecretaryClosetStateIndex] != 0) ? 3 : 5;
 	}
 	if (num == 3 || num == 255) {
-		if (_objectsState[35] == 0) {
+		if (_objectsState[kSecretaryDismissedStateIndex] == 0) {
 			PART_09_drawSecretaryFrame(1, true);
 			_roomObjectAreasTable[6].object = 2;
 			_roomObjectAreasTable[15].object = 2;
@@ -46,7 +46,7 @@ void IgorEngine::PART_09_APPLY_OBJECT_STATE(int num) {
 }
 
 void IgorEngine::PART_09_ANIMATE_DOOR(bool open) {
-	if ((_objectsState[27] != 0) == open) {
+	if ((_objectsState[kSecretaryDoorOpenStateIndex] != 0) == open) {
 		executeAction(open ? 11 : 14);
 		return;
 	}
@@ -60,7 +60,7 @@ void IgorEngine::PART_09_ANIMATE_DOOR(bool open) {
 			playSound(open ? 13 : 14, 1);
 		waitForTimer(127);
 	}
-	_objectsState[27] = open ? 1 : 0;
+	_objectsState[kSecretaryDoorOpenStateIndex] = open ? 1 : 0;
 	PART_09_APPLY_OBJECT_STATE(1);
 }
 
@@ -69,9 +69,9 @@ void IgorEngine::PART_09_DRAW_openClosetFrame(int frame) {
 }
 
 void IgorEngine::PART_09_ACTION_106_openCloset(bool hairpin) {
-	if (_objectsState[35] == 0) { // if secretary present, she will prevent searching the closet
+	if (_objectsState[kSecretaryDismissedStateIndex] == 0) { // if secretary present, she will prevent searching the closet
 		ADD_DIALOGUE_TEXT(214, 2, 243);
-	} else if (_objectsState[34] == 1) {
+	} else if (_objectsState[kSecretaryClosetOpenStateIndex] == 1) {
 		executeAction(10);
 		return;
 	} else if (hairpin) {
@@ -80,7 +80,7 @@ void IgorEngine::PART_09_ACTION_106_openCloset(bool hairpin) {
 			PART_09_DRAW_openClosetFrame(frames[i]);
 			waitForTimer(61);
 		}
-		_objectsState[34] = 1;
+		_objectsState[kSecretaryClosetOpenStateIndex] = 1;
 		PART_09_APPLY_OBJECT_STATE(2);
 		ADD_DIALOGUE_TEXT(212, 1, 241);
 	} else { // igor tries to open
@@ -105,14 +105,14 @@ void IgorEngine::PART_09_ACTION_110_pickCostumeFromCloset() {
 		waitForTimer(127);
 	}
 	addObjectToInventory(14, 49);
-	_objectsState[36] = 1;
+	_objectsState[kSecretaryClosetStateIndex] = 1;
 	PART_09_APPLY_OBJECT_STATE(255);
 }
 
 void IgorEngine::PART_09_ACTION_101_openFileCabinet() {
-	if (_objectsState[35] == 0) { // secretary dismissed
+	if (_objectsState[kSecretaryDismissedStateIndex] == 0) { // secretary dismissed
 		ADD_DIALOGUE_TEXT(220, 1, 248);
-	} else if (_objectsState[37] == 1) { // already changed file
+	} else if (_objectsState[kPersonalFileChangedStateIndex] == 1) { // already changed file
 		ADD_DIALOGUE_TEXT(225, 1, 253);
 	} else {
 		static const uint8 frames[] = { 1, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 2, 1, 6 };
@@ -127,7 +127,7 @@ void IgorEngine::PART_09_ACTION_101_openFileCabinet() {
 			if (frame == 7)
 				waitForTimer(255);
 		}
-		_objectsState[37] = 1;
+		_objectsState[kPersonalFileChangedStateIndex] = 1;
 		return;
 	}
 	SET_DIALOGUE_TEXT(1, 1);
@@ -169,7 +169,7 @@ void IgorEngine::PART_09_secretarySearchesFile() {
 }
 
 void IgorEngine::PART_09_UPDATE_ROOM_BACKGROUND() {
-	if (_objectsState[35] == 0 && compareGameTick(61) && getRandomNumber(1) == 0)
+	if (_objectsState[kSecretaryDismissedStateIndex] == 0 && compareGameTick(61) && getRandomNumber(1) == 0)
 		PART_09_drawSecretaryFrame(getRandomNumber(2), false);
 }
 
@@ -199,15 +199,15 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		igorSayAndWait(203, 2, 235);
 		break;
 	case 105: { // look at closet
-		const int text = _objectsState[34] == 0 ? 205 : (_objectsState[36] == 0 ? 218 : 219);
-		igorSayAndWait(text, _objectsState[34] == 0 ? 2 : 1, _objectsState[34] == 0 ? 236 : text + 28);
+		const int text = _objectsState[kSecretaryClosetOpenStateIndex] == 0 ? 205 : (_objectsState[kSecretaryClosetStateIndex] == 0 ? 218 : 219);
+		igorSayAndWait(text, _objectsState[kSecretaryClosetOpenStateIndex] == 0 ? 2 : 1, _objectsState[kSecretaryClosetOpenStateIndex] == 0 ? 236 : text + 28);
 		break;
 	}
 	case 106:
 		PART_09_ACTION_106_openCloset(false);
 		break;
 	case 107: // close closet
-		if (_objectsState[34] == 0) {
+		if (_objectsState[kSecretaryClosetOpenStateIndex] == 0) {
 			executeAction(13);
 		} else {
 			igorSayAndWait(217, 1, 245);
@@ -217,7 +217,7 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		igorSayAndWait({ { 207, 1, 237 }, { 208, 1, 238 } });
 		break;
 	case 109: //user intercom
-		igorSayAndWait(_objectsState[35] == 0 ? 216 : 224, 1, _objectsState[35] == 0 ? 244 : 252);
+		igorSayAndWait(_objectsState[kSecretaryDismissedStateIndex] == 0 ? 216 : 224, 1, _objectsState[kSecretaryDismissedStateIndex] == 0 ? 244 : 252);
 		break;
 	case 110:
 		PART_09_ACTION_110_pickCostumeFromCloset();
@@ -235,7 +235,7 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		PART_09_ACTION_106_openCloset(true);
 		break;
 	case 116: //leave
-		if (_objectsState[27] != 0) {
+		if (_objectsState[kSecretaryDoorOpenStateIndex] != 0) {
 			WalkData *wd = &_walkData[0];
 			wd->setPos(207, 106, kFacingPositionBack, 1);
 			wd->clipSkipX = 1;
@@ -282,8 +282,8 @@ void IgorEngine::PART_09() {
 		}
 		waitForTimer(255);
 		fadeOut(624);
-		_objectsState[27] = 0;
-		_objectsState[35] = 1;
+		_objectsState[kSecretaryDoorOpenStateIndex] = 0;
+		_objectsState[kSecretaryDismissedStateIndex] = 1;
 		return;
 	}
 	static const int anim[] = {

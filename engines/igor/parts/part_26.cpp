@@ -67,7 +67,7 @@ void IgorEngine::PART_26_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_26_ACTION_103_openDoor() {
-	if (_objectsState[69] == 1) {
+	if (_objectsState[kLaboratoryDoorOpenStateIndex] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
 	}
@@ -80,12 +80,12 @@ void IgorEngine::PART_26_ACTION_103_openDoor() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[69] = 1;
+	_objectsState[kLaboratoryDoorOpenStateIndex] = 1;
 	PART_26_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_26_ACTION_104_closeDoor() {
-	if (_objectsState[69] == 0) {
+	if (_objectsState[kLaboratoryDoorOpenStateIndex] == 0) {
 		EXEC_MAIN_ACTION(14);
 		return;
 	}
@@ -98,12 +98,12 @@ void IgorEngine::PART_26_ACTION_104_closeDoor() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[69] = 0;
+	_objectsState[kLaboratoryDoorOpenStateIndex] = 0;
 	PART_26_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_26_ACTION_107() {
-	if (_objectsState[69] != 0) {
+	if (_objectsState[kLaboratoryDoorOpenStateIndex] != 0) {
 		_roomObjectAreasTable[_screenLayer2[36800]].area = 1;
 		--_walkDataLastIndex;
 		buildWalkPath(62, 127, 0, 115);
@@ -139,7 +139,7 @@ void IgorEngine::PART_26_UPDATE_ROOM_BACKGROUND() {
 
 void IgorEngine::PART_26_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		if (_objectsState[69] == 0) {
+		if (_objectsState[kLaboratoryDoorOpenStateIndex] == 0) {
 			PART_26_HELPER_2_drawClosedDoor();
 			_roomActionsTable[0x1E] = 6;
 		} else {

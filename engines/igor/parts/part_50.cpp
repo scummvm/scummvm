@@ -40,7 +40,7 @@ void IgorEngine::PART_50_EXEC_ACTION(int action) {
 		igorSay(201, 1, 1083);
 		break;
 	case 103:
-		_objectsState[90] = 0;
+		_objectsState[kCemeteryEntrySideStateIndex] = 0;
 		_currentPart = 700;
 		break;
 	default:
@@ -58,7 +58,7 @@ void IgorEngine::PART_50_ACTION_101_enterMaze() {
 	_gameState.igorMoving = true;
 	waitForIgorMove();
 	_currentPart = 663;
-	_objectsState[71] = 1;
+	_objectsState[kMazeEntryDirectionStateIndex] = 1;
 }
 
 void IgorEngine::PART_50_enterFromDoor() {

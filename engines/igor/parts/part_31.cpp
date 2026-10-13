@@ -40,7 +40,7 @@ void IgorEngine::PART_31_EXEC_ACTION(int action) {
 		PART_31_ACTION_103_openDoor();
 		break;
 	case 104:
-		if (_objectsState[72] == 0) {
+		if (_objectsState[kAstronomyLabDoorStateIndex] == 0) {
 			EXEC_MAIN_ACTION(14);
 		} else {
 			igorSay(205, 1, 885);
@@ -89,7 +89,7 @@ void IgorEngine::PART_31_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_31_ACTION_102_enterAstronomyLab() {
-	if (_objectsState[72] == 0) {
+	if (_objectsState[kAstronomyLabDoorStateIndex] == 0) {
 		return;
 	}
 	_roomObjectAreasTable[_screenLayer2[33712]].area = 2;
@@ -111,7 +111,7 @@ void IgorEngine::PART_31_ACTION_102_enterAstronomyLab() {
 }
 
 void IgorEngine::PART_31_ACTION_103_openDoor() {
-	if (_objectsState[72] == 1) {
+	if (_objectsState[kAstronomyLabDoorStateIndex] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
 	}
@@ -156,7 +156,7 @@ void IgorEngine::PART_31_ACTION_106_goDownstairs() {
 }
 
 void IgorEngine::PART_31_ACTION_110_openDoor2() {
-	if (_objectsState[72] == 1) {
+	if (_objectsState[kAstronomyLabDoorStateIndex] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
 	}
@@ -171,7 +171,7 @@ void IgorEngine::PART_31_ACTION_110_openDoor2() {
 			waitForTimer(10);
 		}
 	}
-	_objectsState[72] = 1;
+	_objectsState[kAstronomyLabDoorStateIndex] = 1;
 	PART_31_HELPER_1_OBJECT_STATE(1);
 }
 
@@ -246,7 +246,7 @@ void IgorEngine::PART_31_UPDATE_ROOM_BACKGROUND() {
 
 void IgorEngine::PART_31_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		if (_objectsState[72] == 0) {
+		if (_objectsState[kAstronomyLabDoorStateIndex] == 0) {
 			_roomActionsTable[74] = 6;
 		} else {
 			PART_31_HELPER_9_drawOpenDoor();

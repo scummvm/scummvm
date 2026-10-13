@@ -179,7 +179,7 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 		break;
 	case 102: // look at tree
 		igorSay(203, 2, 563);
-		_objectsState[82] = 1;
+		_objectsState[kTreeResinDiscoveredStateIndex] = 1;
 		PART_34_APPLY_OBJECT_STATE(3);
 		break;
 	case 103:
@@ -235,7 +235,7 @@ void IgorEngine::PART_34_ACTION_108_giveLizardToOldLady() {
 		PARK_DRAW_drawOldLadyFrame(_screenVGA, frame);
 		waitForTimer(45);
 	}
-	if (_objectsState[1] == 0) {
+	if (_objectsState[kLizardFedStateIndex] == 0) {
 		cutsceneSayStart(121, 58, 63, 23, 0, { { 213, 1, 569 }, { 216, 1, 570 } });
 		PARK_WAIT_FOR_LADY_DIALOGUE();
 		for (int frame = 14; frame >= 12; --frame) {
@@ -275,7 +275,7 @@ void IgorEngine::PART_34_ACTION_108_giveLizardToOldLady() {
 		PARK_DRAW_drawOldLadyFrame(_screenVGA, frame);
 		waitForTimer(30);
 	}
-	_objectsState[80] = 1;
+	_objectsState[kLizardGivenStateIndex] = 1;
 
 	PART_34_LAURA_CONVERSATION();
 
@@ -290,7 +290,7 @@ void IgorEngine::PART_34_ACTION_108_giveLizardToOldLady() {
 void IgorEngine::PART_34_OLD_LADY_CONVERSATION() {
 	_roomDataOffsets.dlg = kOldLadyDialogueData;
 	loadDialogueData(DLG_ParkLady);
-	if (_objectsState[81] == 0) {
+	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
 		memset(_screenVGA + 46080, 0, 17920);
 	}
 	int textIndex = 250;
@@ -298,7 +298,7 @@ void IgorEngine::PART_34_OLD_LADY_CONVERSATION() {
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(160, 58, 63, 63, 63);
 	PARK_WAIT_FOR_IGOR_DIALOGUE();
-	if (_objectsState[81] == 0) {
+	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
 		textIndex = 250;
 		PARK_QUEUE_REPLY_TEXT(2, 1, 585, textIndex);
 		PARK_QUEUE_REPLY_TEXT(3, 1, 586, textIndex);
@@ -314,12 +314,12 @@ void IgorEngine::PART_34_OLD_LADY_CONVERSATION() {
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(121, 68, 63, 23, 0);
 	PARK_WAIT_FOR_LADY_DIALOGUE();
-	if (_objectsState[81] == 0) {
+	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
 		memset(_screenVGA + 46080, 0, 17920);
 		drawVerbsPanel();
 		drawInventory(_inventoryInfo[72], 0);
 		_currentAction.verb = kVerbWalk;
-		_objectsState[81] = 1;
+		_objectsState[kOldLadyConversationSeenStateIndex] = 1;
 	}
 	_roomDataOffsets.dlg = kNoDialogueData;
 }
@@ -431,14 +431,14 @@ void IgorEngine::PART_34_ACTION_109_scrollRight() {
  */
 void IgorEngine::PART_34_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		if (_objectsState[80] == 0 && _objectsState[73] == 1) {
+		if (_objectsState[kLizardGivenStateIndex] == 0 && _objectsState[kLauraMetAtCollegeStateIndex] == 1) {
 			PARK_DRAW_drawOldLadyFrame(_screenLayer1, 1);
 		} else {
 			_roomObjectAreasTable[5].object = 0;
 		}
 	}
 	if (num == 3 || num == 255) {
-		_roomObjectAreasTable[4].object = (_objectsState[82] == 0) ? 2 : 3;
+		_roomObjectAreasTable[4].object = (_objectsState[kTreeResinDiscoveredStateIndex] == 0) ? 2 : 3;
 	}
 }
 
@@ -448,7 +448,7 @@ void IgorEngine::PART_34_oldLadyIdleAnimationFrame(int step) {
 
 void IgorEngine::PART_34_UPDATE_ROOM_BACKGROUND() {
 	PARK_UPDATE_AMBIENT_SOUND();
-	if (compareGameTick(61) && _objectsState[80] == 0 && _objectsState[73] == 1 && getRandomNumber(4) == 0) {
+	if (compareGameTick(61) && _objectsState[kLizardGivenStateIndex] == 0 && _objectsState[kLauraMetAtCollegeStateIndex] == 1 && getRandomNumber(4) == 0) {
 		PART_34_oldLadyIdleAnimationFrame(_parkLadyIdleStep);
 		_parkLadyIdleStep = (_parkLadyIdleStep == 6) ? 1 : _parkLadyIdleStep + 1;
 	}

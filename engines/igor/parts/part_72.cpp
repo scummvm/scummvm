@@ -22,11 +22,9 @@
 
 namespace Igor {
 
-
 static const int kPart72FlowerOffset = 84 * 320 + 133;
 static const int kPart72FlowerWidth = 9;
 static const int kPart72FlowerHeight = 5;
-static const int kPart72FlowerTaken = 102;
 static const int kPart72TakeFramesOffset = 2 * kPart72FlowerWidth * kPart72FlowerHeight;
 static const int kPart72TakeWidth = 35;
 static const int kPart72TakeHeight = 49;
@@ -64,7 +62,7 @@ void IgorEngine::PART_72_EXEC_ACTION(int action) {
 		igorSay(204, 1, 1096);
 		break;
 	case 106:
-		_objectsState[90] = 0;
+		_objectsState[kCemeteryEntrySideStateIndex] = 0;
 		_currentPart = 700;
 		break;
 	default:
@@ -75,7 +73,7 @@ void IgorEngine::PART_72_EXEC_ACTION(int action) {
 
 
 void IgorEngine::PART_72_APPLY_OBJECT_STATE() {
-	const int taken = _objectsState[kPart72FlowerTaken] == 0 ? 0 : 1;
+	const int taken = _objectsState[kFlowerTakenStateIndex] == 0 ? 0 : 1;
 	copyArea(_screenLayer1, kPart72FlowerOffset, 320, _animFramesBuffer + taken * kPart72FlowerWidth * kPart72FlowerHeight,
 			 kPart72FlowerWidth, kPart72FlowerWidth, kPart72FlowerHeight);
 	if (taken) {
@@ -92,7 +90,7 @@ void IgorEngine::PART_72_ACTION_102_takeFlower() {
 		waitForTimer(90);
 	}
 	addObjectToInventory(kPart72FlowerObjectNumber, kPart72FlowerObjectIndex);
-	_objectsState[kPart72FlowerTaken] = 1;
+	_objectsState[kFlowerTakenStateIndex] = 1;
 	PART_72_APPLY_OBJECT_STATE();
 	igorSay(201, 1, 1093);
 }

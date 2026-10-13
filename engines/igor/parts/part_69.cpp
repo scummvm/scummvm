@@ -45,13 +45,6 @@ static const int kPart69PictureHeight = 49;
 static const int kPart69EntryY = 130;
 static const int kPart69EntryDstX = 259;
 
-// objectsState
-static const int kPart69SceneDoneState = 96;
-static const int kPart69FlagState = 97;
-static const int kPart69SequenceState = 98;
-static const int kPart69SecondFireflyState = 99;
-static const int kPart69VaseState = 6;
-
 // The animation of the two fireflies is a sequence of steps (1 to 6). Each step plays the frames of the first firefly from
 // the first to the last frame of the step; every 5 steps of the first firefly the second firefly plays too. The values come
 // from the data segment of the executable (index 0 is not used).
@@ -83,7 +76,7 @@ void IgorEngine::PART_69_EXEC_ACTION(int action) {
 		break;
 	case 103:
 		igorSay({ { 203, 2, 1085 }, { 205, 1, 1086 } });
-		_objectsState[kPart69FlagState] = 1;
+		_objectsState[kPart69LeaderFireflyIdentifiedStateIndex] = 1;
 		break;
 	case 104:
 		igorSay(206, 2, 1087);
@@ -110,7 +103,7 @@ void IgorEngine::PART_69_EXEC_ACTION(int action) {
  * Once the scene is over the places of the fireflies are not objects anymore.
  */
 void IgorEngine::PART_69_APPLY_OBJECT_STATE() {
-	if (_objectsState[kPart69SceneDoneState] != 1) {
+	if (_objectsState[kPart69FireflyCapturedStateIndex] != 1) {
 		return;
 	}
 	for (int i = 1; i <= 3; ++i) {
@@ -140,11 +133,11 @@ void IgorEngine::PART_69_animateFireflies() {
 	if (!compareGameTick(13, 16)) {
 		return;
 	}
-	if (_objectsState[kPart69SceneDoneState] != 0) {
+	if (_objectsState[kPart69FireflyCapturedStateIndex] != 0) {
 		return;
 	}
-	uint8 &sequence = _objectsState[kPart69SequenceState];
-	uint8 &secondFirefly = _objectsState[kPart69SecondFireflyState];
+	uint8 &sequence = _objectsState[kPart69SwarmAnimationPhaseStateIndex];
+	uint8 &secondFirefly = _objectsState[kPart69LeaderFireflyPathStateIndex];
 	if (_part69FireflyStepCount == 5) {
 		secondFirefly = sequence;
 		_part69FireflyFrameB = kPart69StepFirstFireflyFrameB[secondFirefly];
@@ -185,7 +178,7 @@ void IgorEngine::PART_69_animateFireflies() {
 		}
 	} else {
 		for (int i = 1; i <= 3; ++i) {
-			const bool answers = kPart69StepNext[sequence] == i && _objectsState[kPart69FlagState] == 1;
+			const bool answers = kPart69StepNext[sequence] == i && _objectsState[kPart69LeaderFireflyIdentifiedStateIndex] == 1;
 			_roomObjectAreasTable[kPart69SecondFireflyAreas[i]].object = answers ? 4 : 5;
 		}
 	}
@@ -206,7 +199,7 @@ void IgorEngine::PART_69_FINALE(int num, int sound) {
  */
 void IgorEngine::PART_69_ACTION_107_watch() {
 	drawAnimRect(kPart69PictureOffset, kPart69PictureAnimOffset, kPart69PictureWidth, kPart69PictureHeight);
-	if (_objectsState[kPart69VaseState] == 0) {
+	if (_objectsState[kVaseStateIndex] == 0) {
 		for (int i = 0; i < 1000 / kTimerTicksCount && !_eventQuitGame; ++i) {
 			PART_69_animateFireflies();
 			waitForTimer();
@@ -218,7 +211,7 @@ void IgorEngine::PART_69_ACTION_107_watch() {
 	do {
 		PART_69_animateFireflies();
 		waitForTimer();
-	} while (!(_objectsState[kPart69SequenceState] == 3 && _objectsState[kPart69SecondFireflyState] == 0) && !_eventQuitGame);
+	} while (!(_objectsState[kPart69SwarmAnimationPhaseStateIndex] == 3 && _objectsState[kPart69LeaderFireflyPathStateIndex] == 0) && !_eventQuitGame);
 
 	uint8 frameC = 1;
 	do {
@@ -243,8 +236,8 @@ void IgorEngine::PART_69_ACTION_107_watch() {
 	} while (_part69FireflyFrameA != kPart69EndingFrameLast && !_eventQuitGame);
 
 	waitForTimer(255);
-	_objectsState[kPart69SceneDoneState] = 1;
-	_objectsState[kPart69VaseState] = 2;
+	_objectsState[kPart69FireflyCapturedStateIndex] = 1;
+	_objectsState[kVaseStateIndex] = 2;
 	UPDATE_OBJECT_STATE(7);
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(63, 1);
@@ -313,14 +306,14 @@ void IgorEngine::PART_69() {
 	_updateRoomBackground = &IgorEngine::PART_69_UPDATE_ROOM_BACKGROUND;
 	PART_69_APPLY_OBJECT_STATE();
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	if (_objectsState[kPart69SceneDoneState] == 0) {
+	if (_objectsState[kPart69FireflyCapturedStateIndex] == 0) {
 		PART_69_DRAW_FIREFLY_A(kPart69FirstFireflyFrameA);
 		PART_69_DRAW_FIREFLY_B(kPart69FirstFireflyFrameB);
 	}
 	_part69FireflyStepCount = 0;
 	_part69FireflyFrameB = 0;
-	_objectsState[kPart69SequenceState] = 1;
-	_objectsState[kPart69SecondFireflyState] = 0;
+	_objectsState[kPart69SwarmAnimationPhaseStateIndex] = 1;
+	_objectsState[kPart69LeaderFireflyPathStateIndex] = 0;
 	_part69FireflyFrameA = kPart69FirstFireflyFrameA;
 
 	// the whole picture is darker than its palette

@@ -76,7 +76,7 @@ void IgorEngine::PART_21_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_21_ACTION_101_leaveLeft() {
-	if (_objectsState[65] == 1) {
+	if (_objectsState[kMargaretStateIndex] == 1) {
 		const int offset = 29440;
 		copyArea(_screenVGA, offset, 320, _screenLayer1 + offset, 320, 20, 51);
 		PART_21_HELPER_10_MargaretTakesNote();
@@ -99,7 +99,7 @@ void IgorEngine::PART_21_ACTION_102_talkToMargaret() {
 }
 
 void IgorEngine::PART_21_ACTION_107_openPhysicsDoor() {
-	if (_objectsState[64] == 1) {
+	if (_objectsState[kPhysicsClassDoorStateIndex] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
 	}
@@ -112,12 +112,12 @@ void IgorEngine::PART_21_ACTION_107_openPhysicsDoor() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[64] = 1;
+	_objectsState[kPhysicsClassDoorStateIndex] = 1;
 	PART_21_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_21_ACTION_108_closePhysicsDoor() {
-	if (_objectsState[64] == 0) {
+	if (_objectsState[kPhysicsClassDoorStateIndex] == 0) {
 		EXEC_MAIN_ACTION(14);
 		return;
 	}
@@ -129,12 +129,12 @@ void IgorEngine::PART_21_ACTION_108_closePhysicsDoor() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[64] = 0;
+	_objectsState[kPhysicsClassDoorStateIndex] = 0;
 	PART_21_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_21_ACTION_110_leaveRight() {
-	if (_objectsState[65] == 1) {
+	if (_objectsState[kMargaretStateIndex] == 1) {
 		const int offset = 27180;
 		copyArea(_screenVGA, offset, 320, _screenLayer1 + offset, 320, 20, 51);
 		PART_21_HELPER_10_MargaretTakesNote();
@@ -165,7 +165,7 @@ void IgorEngine::PART_21_ACTION_111_useNoteWithSandwhiches() {
 		waitForTimer();
 	} while (k != 10);
 	removeObjectFromInventory(56);
-	_objectsState[65] = 1;
+	_objectsState[kMargaretStateIndex] = 1;
 	PART_21_HELPER_1_OBJECT_STATE(255);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
@@ -174,14 +174,14 @@ void IgorEngine::PART_21_ACTION_111_useNoteWithSandwhiches() {
 }
 
 void IgorEngine::PART_21_ACTION_113_enterPhysicsClass() {
-	if (_objectsState[64] != 0) {
+	if (_objectsState[kPhysicsClassDoorStateIndex] != 0) {
 		 _roomObjectAreasTable[_screenLayer2[34679]].area = 1;
 		 --_walkDataLastIndex;
 		 buildWalkPathSimple(165, 126, 119, 108);
 		 _walkDataCurrentIndex = 1;
 		 _gameState.igorMoving = true;
 		PART_21_HELPER_5_waitForIgorWalkWithAnimation();
-		if (_objectsState[65] == 1) {
+		if (_objectsState[kMargaretStateIndex] == 1) {
 			PART_21_HELPER_10_MargaretTakesNote();
 		}
 		_currentPart = 370;
@@ -234,7 +234,7 @@ void IgorEngine::PART_21_HANDLE_DIALOGUE_MARGARET() {
 void IgorEngine::PART_21_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		// physics class door
-		if (_objectsState[64] == 0) {
+		if (_objectsState[kPhysicsClassDoorStateIndex] == 0) {
 			PART_21_HELPER_7_drawClosedDoor();
 			_roomActionsTable[4] = 6;
 		} else {
@@ -244,10 +244,10 @@ void IgorEngine::PART_21_HELPER_1_OBJECT_STATE(int num) {
 	}
 	if (num == 2 || num == 255) {
 		// is margaret present?
-		if (_objectsState[65] <= 1) {
+		if (_objectsState[kMargaretStateIndex] <= 1) {
 			PART_21_HELPER_9_drawMargaret();
 		}
-		if (_objectsState[65] == 2 || _objectsState[65] == 4) {
+		if (_objectsState[kMargaretStateIndex] == 2 || _objectsState[kMargaretStateIndex] == 4) {
 			_roomObjectAreasTable[9].object = 0;
 			_roomObjectAreasTable[10].object = 0;
 		}
@@ -370,12 +370,12 @@ void IgorEngine::PART_21_HELPER_10_MargaretTakesNote() {
 	waitForEndOfCutsceneDialogue(76, 87, 63, 32, 0);
 	_updateRoomBackground = &IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND;
 	_updateDialogue = 0;
-	_objectsState[65] = 2;
+	_objectsState[kMargaretStateIndex] = 2;
 	drawVerbsPanel();
 	_currentAction.verb = kVerbWalk;
 	drawInventory(_inventoryInfo[72], 0);
 	PART_21_HELPER_1_OBJECT_STATE(255);
-	_objectsState[110] = 1;
+	_objectsState[kMargaretSceneStateIndex] = 1;
 }
 
 void IgorEngine::PART_21_HELPER_11_setMargaretBackgroundFrame(int frame) {
@@ -390,7 +390,7 @@ void IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND() {
 		drawAnimRect(offset, 0xBCA5 + i * 1300, 26, 50);
 		++i;
 	}
-	if (compareGameTick(61) && _objectsState[65] <= 1) {
+	if (compareGameTick(61) && _objectsState[kMargaretStateIndex] <= 1) {
 		if (_gameState.unk10 > 2) {
 			PART_21_HELPER_6_drawMargaretFrameComposited(_gameState.unk10);
 			++_gameState.unk10;
