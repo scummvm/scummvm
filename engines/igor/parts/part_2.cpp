@@ -10,7 +10,7 @@
 
 namespace Igor {
 
-void IgorEngine::PART_02_SEARCH_TRUNK() {
+void IgorEngine::PART_02_searchTrunk() {
 	for (int frame = 0; frame <= 2; ++frame) {
 		animateLitAnimFrames(0x3C0 + frame * 0x715, 0, 0, 0x715, 37, 49, 0x608C, 0, -1, 0);
 		if (frame > 0)
@@ -18,7 +18,7 @@ void IgorEngine::PART_02_SEARCH_TRUNK() {
 	}
 }
 
-void IgorEngine::PART_02_DRAW_FUSE_SPARK(int frame) {
+void IgorEngine::PART_02_drawFuseSpark(int frame) {
 	// Four 12x12 spark frames are stored at animation offset 0x7FCB and are
 	// composited over the fuse at screen offset 0x5996.
 	const uint8 *src = _animFramesBuffer + 0x7FCB + frame * 0x90;
@@ -34,11 +34,11 @@ void IgorEngine::PART_02_DRAW_FUSE_SPARK(int frame) {
 	}
 }
 
-void IgorEngine::PART_02_UPDATE_FUSE() {
-	PART_02_DRAW_FUSE_SPARK(getRandomNumber(3));
+void IgorEngine::PART_02_updateFuse() {
+	PART_02_drawFuseSpark(getRandomNumber(3));
 }
 
-void IgorEngine::PART_02_WALK_WHILE_FUSE_BURNS(int srcX, int srcY, int dstX, int dstY) {
+void IgorEngine::PART_02_walkWhileFuseBurns(int srcX, int srcY, int dstX, int dstY) {
 	--_walkDataLastIndex;
 	buildWalkPath(srcX, srcY, dstX, dstY);
 	_walkDataCurrentIndex = 1;
@@ -56,7 +56,7 @@ void IgorEngine::PART_02_WALK_WHILE_FUSE_BURNS(int srcX, int srcY, int dstX, int
 				++_walkDataCurrentIndex;
 			}
 		}
-		PART_02_UPDATE_FUSE();
+		PART_02_updateFuse();
 		waitForTimer();
 	} while (_gameState.igorMoving);
 }
@@ -68,10 +68,15 @@ void IgorEngine::PART_02_APPLY_OBJECT_STATE(int num) {
 		copyArea(_screenLayer1, 0x748A, 320, _animFramesBuffer + srcOffset, 39, 39, 18);
 		_roomActionsTable[252] = _objectsState[16] == 0 ? 6 : 4;
 	}
+	// butterfly net
 	if ((num == 2 || num == 255) && _objectsState[17] == 1) {
 		_roomObjectAreasTable[17].object = 4;
 		_roomObjectAreasTable[19].object = 4;
 	}
+	// these handle states of the hole in the wall:
+	// 18 = hole
+	// 19 = big crack
+	// 20 = small crack
 	if (num == 3 || num == 255) {
 		if (_objectsState[18] == 1) {
 			copyArea(_screenLayer1, 0x50D6, 320, _animFramesBuffer, 14, 14, 50);
@@ -132,8 +137,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 	case 103: { // hammer the nail
 		for (int step = 1; step <= 21; ++step) {
 			const int frame = step == 21 ? 2 : ((step + 1) & 1);
-			animateLitAnimFrames(0x33BA + frame * 0x4B0, 0, 0, 0x4B0,
-					24, 50, 0x5989, 0, -1, 0);
+			animateLitAnimFrames(0x33BA + frame * 0x4B0, 0, 0, 0x4B0, 24, 50, 0x5989, 0, -1, 0);
 			if ((step & 1) != 0 && step < 21)
 				playSound(9, 1);
 			waitForTimer(63);
@@ -153,8 +157,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 
 		for (int step = 1; step <= 21; ++step) {
 			const int frame = step == 21 ? 2 : ((step + 1) & 1);
-			animateLitAnimFrames(0x41CA + frame * 0x658, 0, 0, 0x658,
-					29, 56, 0x5349, 0, -1, 0);
+			animateLitAnimFrames(0x41CA + frame * 0x658, 0, 0, 0x658, 29, 56, 0x5349, 0, -1, 0);
 			if ((step & 1) != 0 && step < 21)
 				playSound(10, 1);
 			waitForTimer(63);
@@ -180,7 +183,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			if (_objectsState[22] == 0) {
 				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 			} else {
-				PART_02_SEARCH_TRUNK();
+				PART_02_searchTrunk();
 				igorSay(204, 1, 111);
 				addObjectToInventory(9, 44);
 				PART_02_APPLY_OBJECT_STATE(255);
@@ -191,7 +194,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			if (_objectsState[20] == 0) {
 				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 			} else {
-				PART_02_SEARCH_TRUNK();
+				PART_02_searchTrunk();
 				igorSay(205, 1, 112);
 				removeObjectFromInventory(44);
 				playSound(63, 1);
@@ -200,14 +203,11 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			}
 			break;
 		}
-		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 &&
-				_inventoryInfo[46] == 0 && _objectsState[23] == 0 &&
-				_objectsState[19] != 0) {
-			PART_02_SEARCH_TRUNK();
+		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[23] == 0 && _objectsState[19] != 0) {
+			PART_02_searchTrunk();
 			igorSay(206, 1, 113);
 			addObjectToInventory(11, 46);
-		} else if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 &&
-				_inventoryInfo[46] == 0 && _objectsState[23] == 0) {
+		} else if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[23] == 0) {
 			igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 		} else {
 			igorSay(207, 2, 114);
@@ -282,7 +282,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		if (_objectsState[23] == 0) {
 			EXEC_MAIN_ACTION(2);
 		} else {
-			lightUpDynamite();
+			PART_02_lightUpDynamite();
 		}
 		break;
 	default:
@@ -291,7 +291,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::lightUpDynamite() {
+void IgorEngine::PART_02_lightUpDynamite() {
 	memset(_screenVGA + 0xB400, 0, 0x4BFF);
 	playSound(68, 1);
 	animateLitAnimFrames(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
@@ -300,7 +300,7 @@ void IgorEngine::lightUpDynamite() {
 	igorSay(221, 1, 125);
 	if (_gameState.talkMode == kTalkModeTextOnly)
 		playSound(11, 1);
-	_updateRoomBackground = &IgorEngine::PART_02_UPDATE_FUSE;
+	_updateRoomBackground = &IgorEngine::PART_02_updateFuse;
 	waitForEndOfIgorDialogue();
 	_updateRoomBackground = 0;
 
@@ -308,9 +308,9 @@ void IgorEngine::lightUpDynamite() {
 	if (_gameState.talkMode != kTalkModeTextOnly)
 		playSound(11, 1);
 
-	PART_02_WALK_WHILE_FUSE_BURNS(211, 120, 0, 143);
+	PART_02_walkWhileFuseBurns(211, 120, 0, 143);
 	for (int elapsed = 0; elapsed < 255; elapsed += kTimerTicksCount) {
-		PART_02_UPDATE_FUSE();
+		PART_02_updateFuse();
 		waitForTimer();
 	}
 	copyArea(_screenVGA, 0x5996, 320, _screenLayer1 + 0x5996, 320, 12, 12);

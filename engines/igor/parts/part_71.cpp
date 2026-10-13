@@ -38,7 +38,7 @@ static const int kPart71ObjectPicturesOffset = kPart71TakeFramesCount * kPart71T
 
 static const int kPart71TakenStateIndex = 100;
 static const int kPart71ExaminedStateIndex = 101;
-static const int kPart71TakeDoneStateIndex = 106;
+static const int kPart71StatuetteTaken = 106;
 static const int kPart71ObjectNameIndex = 2;
 
 static const int kPart71InventoryObject = 25;
@@ -139,7 +139,7 @@ void IgorEngine::PART_71_ACTION_102_takeObject() {
 	_objectsState[kPart71TakenStateIndex] = 1;
 	PART_71_APPLY_OBJECT_STATE(kPart71ApplyAll);
 	igorSay(204, 3, 996);
-	_objectsState[kPart71TakeDoneStateIndex] = 1;
+	_objectsState[kPart71StatuetteTaken] = 1;
 }
 
 /**

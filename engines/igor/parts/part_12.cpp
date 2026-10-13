@@ -199,7 +199,7 @@ void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
 	} while (_gameState.unk10 != 8);
 	--_walkDataLastIndex;
 	buildWalkPath(196, 64, 95, 142);
-	PART_12_HELPER_2();
+	PART_12_HELPER_2_disablePathBehindChurch();
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
@@ -356,7 +356,9 @@ void IgorEngine::PART_12_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_12_HELPER_2() {
+// Disables the path behind the church, which shall only be enabled
+// in the cutscene where we pick the lizard
+void IgorEngine::PART_12_HELPER_2_disablePathBehindChurch() {
 	for (int i = 9; i <= 10; ++i) {
 		_roomObjectAreasTable[i].area = 0;
 	}
@@ -549,7 +551,7 @@ void IgorEngine::PART_12() {
 			}
 		}
 	}
-	PART_12_HELPER_2();
+	PART_12_HELPER_2_disablePathBehindChurch();
 	enterPartLoop();
 	while (_currentPart >= 120 && _currentPart <= 122 && !_gameStateLoaded) {
 		runPartLoop();

@@ -95,6 +95,7 @@ enum InputVar {
 	kInputRightRelease,
 	kInputRightMoveLeft,
 	kInputRightMoveRight,
+	kInputConfirm,
 	kInputVarCount
 };
 
@@ -667,12 +668,12 @@ private:
 	// junk room
 	void PART_02();
 	void PART_02_EXEC_ACTION(int action);
-	void lightUpDynamite();
+	void PART_02_lightUpDynamite();
 	void PART_02_APPLY_OBJECT_STATE(int num);
-	void PART_02_SEARCH_TRUNK();
-	void PART_02_DRAW_FUSE_SPARK(int frame);
-	void PART_02_UPDATE_FUSE();
-	void PART_02_WALK_WHILE_FUSE_BURNS(int srcX, int srcY, int dstX, int dstY);
+	void PART_02_searchTrunk();
+	void PART_02_drawFuseSpark(int frame);
+	void PART_02_updateFuse();
+	void PART_02_walkWhileFuseBurns(int srcX, int srcY, int dstX, int dstY);
 
 	// spring bridge
 	void PART_05_HELPER_4_drawPaperOrNot(int num);
@@ -771,7 +772,7 @@ private:
 	void PART_12_UPDATE_DIALOGUE_PRIEST(int action);
 	void PART_12_HANDLE_DIALOGUE_PRIEST();
 	void PART_12_OBJECT_STATE(int num);
-	void PART_12_HELPER_2();
+	void PART_12_HELPER_2_disablePathBehindChurch();
 	void PART_12_HELPER_3_paintOverLizard();
 	void PART_12_HELPER_4_exorcismCutscene();
 	void PART_12_HELPER_5_enterFromPath();
@@ -1360,8 +1361,8 @@ private:
 
 	// Intro
 	void PART_85();
-	void PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
-	void PART_85_HELPER_2_SCROLL_RIGHT();
+	void PART_85_HELPER_1_playAnimationFrame(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
+	void PART_85_HELPER_2_scrollRight();
 	void displayLogo();
 	void PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action);
 	void PART_85_UPDATE_ROOM_BACKGROUND();

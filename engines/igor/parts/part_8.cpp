@@ -10,6 +10,13 @@
 
 namespace Igor {
 
+static const int kPart08PendingDeanDrinkState = 30;
+
+enum Part08PendingDeanDrink {
+	kPart08PendingDeanDrinkNone = 0,
+	kPart08PendingDeanDrinkWhisky = 1,
+	kPart08PendingDeanDrinkWater = 2
+};
 
 void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
@@ -271,7 +278,9 @@ void IgorEngine::giveBottleToDean() {
 	}
 
 	cutsceneSayWithCallback(78, 75, 26, 58, 0, { { 216, 1, 162 }, { 217, 1, 163 }, { 218, 1, 164 }, { 219, 1, 165 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN);
-	_objectsState[30] = _objectsState[0] < 2 ? 1 : 2;
+	const Part08PendingDeanDrink pendingDeanDrink =
+		_objectsState[0] < 2 ? kPart08PendingDeanDrinkWhisky : kPart08PendingDeanDrinkWater;
+	_objectsState[kPart08PendingDeanDrinkState] = pendingDeanDrink;
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(63, 1);
 	PART_08_APPLY_OBJECT_STATE(255);
@@ -294,8 +303,8 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 			_walkDataCurrentIndex = 1;
 			_gameState.igorMoving = true;
 			waitForIgorMove();
-			// if gave bottle to dean
-			if (_objectsState[30] != 0) {
+			uint8 &pendingDeanDrink = _objectsState[kPart08PendingDeanDrinkState];
+			if (pendingDeanDrink != kPart08PendingDeanDrinkNone) {
 				waitForTimer(251);
 				PART_08_deanDrinksBottle();
 				if (_objectsState[42] == 1)
@@ -304,11 +313,11 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 					_objectsState[41] = 1;
 				waitForTimer(101);
 				playSound(16, 1);
-				if (_objectsState[30] == 2) {
+				if (pendingDeanDrink == kPart08PendingDeanDrinkWater) {
 					PART_08_deanPassesOut();
 					_objectsState[29] = 1;
 				}
-				_objectsState[30] = 0;
+				pendingDeanDrink = kPart08PendingDeanDrinkNone;
 			}
 			_currentPart = 71;
 		}
