@@ -368,11 +368,6 @@ bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config) {
 	loadMenuDisplayValue(menu, "keyword", config.dialogueKeywordLabel);
 	for (uint i = 0; i < config.weekdayLabels.size(); ++i)
 		loadMenuDisplayValue(menu, kMenuWeekdays[i].key, config.weekdayLabels[i]);
-	debugC(2, kDebugGeneral,
-		"Harvester: inventory weekdays monday='%s' tuesday='%s' wednesday='%s' thursday='%s' friday='%s' saturday='%s'",
-		config.weekdayLabels[0].c_str(), config.weekdayLabels[1].c_str(),
-		config.weekdayLabels[2].c_str(), config.weekdayLabels[3].c_str(),
-		config.weekdayLabels[4].c_str(), config.weekdayLabels[5].c_str());
 	loadMenuDisplayValue(menu, "Exit", config.quickTipsExitLabel);
 	loadMenuDisplayValue(menu, "next", config.quickTipsNextLabel);
 	loadMenuDisplayValue(menu, "show_tips_on", config.quickTipsOnLabel);
@@ -934,7 +929,7 @@ Common::Error MenuSystem::showCdChangePrompt(int discNumber, ResourceManager &re
 	return Common::kNoError;
 }
 
-Common::Error MenuSystem::runMainMenuStub(Flow &flow) {
+Common::Error MenuSystem::runMainMenu(Flow &flow) {
 	const Art *art = _engine.getArt();
 	if (!art)
 		return Common::kReadingFailed;
@@ -1090,7 +1085,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &flow) {
 			if (_hasMainMenuBackdrop)
 				renderBackdropMenuScreen(_mainMenuBackdrop, _mainMenuBackdropPalette, 1.0f, mainMenuItems, selectedItem);
 			else
-				renderMainMenuStub(mainMenuItems, selectedItem, statusMessage);
+				renderMainMenuScreen(selectedItem, statusMessage, true, mainMenuItems);
 			needsRedraw = false;
 		}
 
@@ -1231,7 +1226,7 @@ void MenuSystem::clearMainMenuBackdrop() {
 	_hasMainMenuBackdrop = false;
 }
 
-Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
+Common::Error MenuSystem::runRoomMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow, bool canSaveGame) {
 	Graphics::FrameLimiter limiter(g_system, 60);
 	Common::Array<Common::String> roomMenuItems;
@@ -2479,11 +2474,6 @@ Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBright
 	}
 
 	return Common::kNoError;
-}
-
-void MenuSystem::renderMainMenuStub(const Common::Array<Common::String> &menuItems, int selectedItem,
-		const Common::String &statusMessage) const {
-	renderMainMenuScreen(selectedItem, statusMessage, true, menuItems);
 }
 
 void MenuSystem::renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,

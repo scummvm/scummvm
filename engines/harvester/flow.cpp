@@ -575,19 +575,8 @@ static uint32 hashPalette(const byte *palette) {
 }
 
 void logScenePaletteSummary(const char *label, const SceneState &scene, float brightness) {
-	const byte *palette = scene.palette;
-	byte minValue = 0;
-	byte maxValue = 0;
-	getPaletteByteRange(palette, minValue, maxValue);
-
-	debugC(1, kDebugRoom,
-		"Harvester: %s room='%s' palette='%s' bytes=%u range=[%u,%u] brightness=%.2f hash=%08x idx0=(%u,%u,%u) idx1=(%u,%u,%u) idx127=(%u,%u,%u) idx255=(%u,%u,%u)",
-		label, scene.state.roomName.c_str(), scene.state.palettePath.c_str(), 256U * 3U, minValue, maxValue,
-		(double)brightness, hashPalette(palette),
-		palette[0], palette[1], palette[2],
-		palette[3], palette[4], palette[5],
-		palette[127 * 3], palette[127 * 3 + 1], palette[127 * 3 + 2],
-		palette[255 * 3], palette[255 * 3 + 1], palette[255 * 3 + 2]);
+	debugC(2, kDebugRoom, "Harvester: %s room='%s' palette='%s' brightness=%.2f",
+		label, scene.state.roomName.c_str(), scene.state.palettePath.c_str(), (double)brightness);
 }
 
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
@@ -684,10 +673,12 @@ static bool loadPaletteResource(ResourceManager &resources, const Common::String
 	byte minValue = 0;
 	byte maxValue = 0;
 	getPaletteByteRange(dest, minValue, maxValue);
-	debugC(1, kDebugRoom,
-		"Harvester: decoded room palette '%s' bytes=%u range=[%u,%u] idx0=(%u,%u,%u) idx255=(%u,%u,%u)",
-		path.c_str(), (uint)data.size(), minValue, maxValue,
+	debugC(3, kDebugRoom,
+		"Harvester: decoded room palette '%s' bytes=%u range=[%u,%u] hash=%08x idx0=(%u,%u,%u) idx1=(%u,%u,%u) idx127=(%u,%u,%u) idx255=(%u,%u,%u)",
+		path.c_str(), (uint)data.size(), minValue, maxValue, hashPalette(dest),
 		dest[0], dest[1], dest[2],
+		dest[3], dest[4], dest[5],
+		dest[127 * 3], dest[127 * 3 + 1], dest[127 * 3 + 2],
 		dest[255 * 3], dest[255 * 3 + 1], dest[255 * 3 + 2]);
 
 	return true;
@@ -731,7 +722,7 @@ static void logSceneObjectSelection(const char *decision, const char *source, co
 		const Common::String &detail = Common::String()) {
 	const Common::Rect hotspotBounds = getRoomObjectHotspotBounds(object);
 	const Common::String resolvedSpritePath = resolveSceneObjectSpritePath(object);
-	debugC(1, kDebugScene,
+	debugC(3, kDebugScene,
 		"Harvester: scene object %s source='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' resolved='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s' detail='%s'",
 		decision, source, object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
 		object.visible, object.runtimeVisible, object.spritePath.c_str(), object.altSpritePath.c_str(),
@@ -789,12 +780,11 @@ bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resour
 	}
 	scene.sceneRegions = state.roomRegions;
 
-	debugC(1, kDebugRoom,
-		"Harvester: loadRoomSceneResources room='%s' palette='%s' background='%s' brightness=%.2f objects=%u activeObjects=%u sceneObjects=%u anims=%u visibleAnims=%u npcs=%u monsters=%u regions=%u",
-		state.roomName.c_str(), state.palettePath.c_str(), state.backgroundPath.c_str(), (double)state.paletteBrightness,
-		(uint)state.roomObjects.size(), (uint)state.activeObjects.size(), (uint)scene.sceneObjects.size(),
-		(uint)state.roomAnimations.size(), (uint)scene.sceneAnimations.size(),
-		(uint)state.roomNpcs.size(), (uint)state.roomMonsters.size(), (uint)scene.sceneRegions.size());
+	debugC(2, kDebugRoom,
+		"Harvester: room scene loaded room='%s' objects=%u anims=%u npcs=%u monsters=%u timers=%u regions=%u",
+		state.roomName.c_str(), (uint)scene.sceneObjects.size(), (uint)scene.sceneAnimations.size(),
+		(uint)state.roomNpcs.size(), (uint)state.roomMonsters.size(),
+		(uint)state.roomTimers.size(), (uint)scene.sceneRegions.size());
 
 	return true;
 }
@@ -1432,7 +1422,7 @@ Common::Error Flow::run() {
 
 	_engine.stopMusic();
 	_engine.stopSound();
-	return runMainMenuStub();
+	return runMainMenu();
 }
 
 bool Flow::loadQuickTips() {
@@ -1743,8 +1733,8 @@ Common::Error Flow::runDemoIntroduction() {
 	return Common::kNoError;
 }
 
-Common::Error Flow::runMainMenuStub() {
-	return _menu.runMainMenuStub(*this);
+Common::Error Flow::runMainMenu() {
+	return _menu.runMainMenu(*this);
 }
 
 Common::Error Flow::showCdChangePrompt(int discNumber) {
@@ -1781,9 +1771,9 @@ Common::Error Flow::showCdChangePrompt(int discNumber) {
 	return Common::kNoError;
 }
 
-Common::Error Flow::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
+Common::Error Flow::runRoomMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, bool canSaveGame) {
-	return _menu.runRoomMenuStub(backdrop, palette, paletteBrightness, *this, canSaveGame);
+	return _menu.runRoomMenu(backdrop, palette, paletteBrightness, *this, canSaveGame);
 }
 
 Common::Error Flow::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,

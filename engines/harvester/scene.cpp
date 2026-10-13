@@ -1130,7 +1130,7 @@ Common::Error SceneRunner::runRoomLoop(Flow &flow, const Common::String &targetN
 		if (transitionError.getCode() != Common::kNoError)
 			return transitionError;
 
-		logScenePaletteSummary("room setup stub palette", scene, 0.0f);
+		logScenePaletteSummary("room setup initial palette", scene, 0.0f);
 		drawRoomScene(_engine, *screen, scene, 0.0f);
 		screen->makeAllDirty();
 		screen->update();

@@ -88,8 +88,8 @@ public:
 	MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
 		const Common::Array<Common::String> &menuItems);
 
-	Common::Error runMainMenuStub(Flow &flow);
-	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
+	Common::Error runMainMenu(Flow &flow);
+	Common::Error runRoomMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow, bool canSaveGame);
 	Common::Error validateParentalPassword(Flow &flow);
 	Common::Error showCdChangePrompt(int discNumber, ResourceManager &resources,
@@ -115,8 +115,6 @@ private:
 		bool &accepted) const;
 	Common::Error showGameOverBackdrop(Flow &flow);
 	void clearMainMenuBackdrop();
-	void renderMainMenuStub(const Common::Array<Common::String> &menuItems, int selectedItem,
-		const Common::String &statusMessage) const;
 	void renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,
 		bool drawCursor, const Common::Array<Common::String> &menuItems) const;
 	void renderBackdropMenuScreen(const IndexedBitmap &backdrop, const byte *palette,

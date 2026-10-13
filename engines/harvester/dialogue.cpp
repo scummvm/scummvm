@@ -384,10 +384,10 @@ static void splitDialogueMenuLine(const Common::String &line, Common::Array<Comm
 static void logDialogueMenuItems(const char *label, int sourceLineIndex,
 		const Common::String &rawLine, const Common::Array<Common::String> &items) {
 	if (sourceLineIndex >= 0) {
-		debugC(1, kDebugDialogue, "Harvester: %s source line 0x%x (%d) raw='%s'",
+		debugC(3, kDebugDialogue, "Harvester: %s source line 0x%x (%d) raw='%s'",
 			label, sourceLineIndex, sourceLineIndex + 1, rawLine.c_str());
 	} else {
-		debugC(1, kDebugDialogue, "Harvester: %s source raw='%s'", label, rawLine.c_str());
+		debugC(3, kDebugDialogue, "Harvester: %s source raw='%s'", label, rawLine.c_str());
 	}
 
 	if (items.empty()) {
@@ -396,7 +396,7 @@ static void logDialogueMenuItems(const char *label, int sourceLineIndex,
 	}
 
 	for (uint i = 0; i < items.size(); ++i)
-		debugC(1, kDebugDialogue, "Harvester: %s item[%u]='%s'", label, i + 1, items[i].c_str());
+		debugC(3, kDebugDialogue, "Harvester: %s item[%u]='%s'", label, i + 1, items[i].c_str());
 }
 
 static Common::String buildDialogueHeadId(const Common::String &speakerId, int headVariant) {

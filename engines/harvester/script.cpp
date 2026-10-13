@@ -1384,7 +1384,7 @@ bool Script::resolveRoomSetupState(const Common::String &entranceName, RoomSetup
 	if (!buildRuntimeRoomState(*room, entrance, resources, state))
 		return false;
 
-	debugC(1, kDebugRoom,
+	debugC(3, kDebugRoom,
 		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u",
 		entranceName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
 		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
@@ -1419,7 +1419,7 @@ bool Script::resolveRoomSetupStateByRoomName(const Common::String &roomName, Roo
 	if (!buildRuntimeRoomState(*room, entrance, resources, state))
 		return false;
 
-	debugC(1, kDebugRoom,
+	debugC(3, kDebugRoom,
 		"Harvester: resolveRoomSetupStateByRoomName('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u",
 		roomName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
 		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
@@ -1502,7 +1502,7 @@ void Script::logRuntimeSaveState(const char *operation) const {
 			}
 		}
 		if (!baseFlag || flag.value != baseFlag->value) {
-			debugC(1, kDebugGeneral,
+			debugC(3, kDebugGeneral,
 				"Harvester: %s runtime flag '%s' value=%d base=%d defined_in_script=%d",
 				operation, flag.name.c_str(), flag.value, baseFlag ? baseFlag->value : 0,
 				baseFlag != nullptr);
@@ -1533,7 +1533,7 @@ void Script::logRuntimeSaveState(const char *operation) const {
 				object.runtimeVisible != defaultRuntimeVisible ||
 				object.visible != defaultVisible ||
 				object.identShown != defaultIdentShown) {
-			debugC(1, kDebugGeneral,
+			debugC(3, kDebugGeneral,
 				"Harvester: %s runtime object '%s' owner='%s' pos=(%d,%d,%d) visible=%d runtimeVisible=%d identShown=%d base_owner='%s' base_pos=(%d,%d,%d) base_visible=%d base_runtimeVisible=%d base_identShown=%d",
 				operation, object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
 				object.currentX, object.currentY, object.currentZ,
@@ -1566,7 +1566,7 @@ void Script::logRuntimeSaveState(const char *operation) const {
 				npc.deathDamageType != defaultDeathDamageType ||
 				npc.runtimeSpawned ||
 				npc.runtimeState != defaultRuntimeState) {
-			debugC(1, kDebugGeneral,
+			debugC(3, kDebugGeneral,
 				"Harvester: %s runtime npc '%s' active=%d visible=%d savedVisible=%d spawned=%d runtimeState=%d deathOrMonsterfy=%d damageType=%d base_active=%d base_visible=%d base_savedVisible=%d base_spawned=%d base_runtimeState=%d base_deathOrMonsterfy=%d base_damageType=%d",
 				operation, npc.npcName.c_str(), npc.active, npc.visible, npc.savedVisible,
 				npc.runtimeSpawned, npc.runtimeState, npc.deathOrMonsterfyFlag, npc.deathDamageType,
@@ -1595,7 +1595,7 @@ void Script::logRuntimeSaveState(const char *operation) const {
 				monster.runtimeState != -1 ||
 				monster.screenMinXBound != defaultScreenMinXBound ||
 				monster.screenMaxXBound != defaultScreenMaxXBound) {
-			debugC(1, kDebugGeneral,
+			debugC(3, kDebugGeneral,
 				"Harvester: %s runtime monster '%s' active=%d visible=%d savedVisible=%d spawned=%d runtimeState=%d hp=%d/%d screen_bounds=[%d,%d] base_active=%d base_visible=%d base_savedVisible=%d base_runtimeState=%d base_hp=%d/%d base_screen_bounds=[%d,%d]",
 				operation, monster.monsterName.c_str(), monster.active, monster.visible,
 				monster.savedVisible, monster.runtimeSpawned, monster.runtimeState,
@@ -1627,7 +1627,7 @@ void Script::logRuntimeSaveState(const char *operation) const {
 				timer.enabled != defaultEnabled ||
 				timer.looping != defaultLooping ||
 				timer.global != defaultGlobal) {
-			debugC(1, kDebugGeneral,
+			debugC(3, kDebugGeneral,
 				"Harvester: %s runtime timer '%s' current=%d initial=%d enabled=%d loop=%d global=%d base_current=%d base_initial=%d base_enabled=%d base_loop=%d base_global=%d",
 				operation, timer.timerName.c_str(), timer.currentValue, timer.initialValue,
 				timer.enabled, timer.looping, timer.global,
@@ -2358,12 +2358,8 @@ bool Script::consumePlayerCombatResourceUnit(int loadout) {
 	if (maxCount <= 0)
 		return true;
 
-	if (getPlayerCombatResourceCount(loadout) < 1) {
-		debugC(1, kDebugGeneral,
-			"Harvester: PLAYER_ATTACK player combat resource loadout=%d('%s') delta=0 count=0->0 max=%d changed=0",
-			loadout, Player::describeCombatLoadout(loadout), maxCount);
+	if (getPlayerCombatResourceCount(loadout) < 1)
 		return false;
-	}
 
 	return adjustPlayerCombatResourceCount(loadout, -1, maxCount, "PLAYER_ATTACK");
 }
@@ -2689,7 +2685,7 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 		: kDefaultPaletteBrightness;
 
 	for (const ObjectRecord &object : state.roomObjects) {
-		debugC(1, kDebugRoom,
+		debugC(3, kDebugRoom,
 			"Harvester: materialized room object room='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s'",
 			state.roomName.c_str(), object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
 			object.visible, object.runtimeVisible, object.spritePath.c_str(), object.altSpritePath.c_str(),
@@ -2697,7 +2693,7 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 			object.currentX, object.currentY, object.boundsX2, object.boundsY2, object.actionTag.c_str());
 	}
 	for (const NpcRecord &npc : state.roomNpcs) {
-		debugC(1, kDebugRoom,
+		debugC(3, kDebugRoom,
 			"Harvester: materialized room npc room='%s' npc='%s' visible=%d active=%d spawned=%d runtimeState=%d damage_type=%d pos=(%d,%d,%d) frame_delay=%d model='%s' on_death='%s' audio='%s'",
 			state.roomName.c_str(), npc.npcName.c_str(), npc.visible, npc.active,
 			npc.runtimeSpawned, npc.runtimeState, npc.deathDamageType,
@@ -2705,7 +2701,7 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 			npc.modelPath.c_str(), npc.onDeathActionTag.c_str(), npc.audioPath.c_str());
 	}
 	for (const MonsterRecord &monster : state.roomMonsters) {
-		debugC(1, kDebugRoom,
+		debugC(3, kDebugRoom,
 			"Harvester: materialized room monster room='%s' monster='%s' visible=%d active=%d spawned=%d runtimeState=%d pos=(%d,%d,%d) facing=%d hp=%d/%d damage=%d engage=%d damage_type='%s' model='%s' on_death='%s'",
 			state.roomName.c_str(), monster.monsterName.c_str(), monster.visible, monster.active,
 			monster.runtimeSpawned, monster.runtimeState,
@@ -2715,13 +2711,13 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 			monster.modelPath.c_str(), monster.onDeathActionTag.c_str());
 	}
 	for (const TimerRecord &timer : state.roomTimers) {
-		debugC(1, kDebugRoom,
+		debugC(3, kDebugRoom,
 			"Harvester: materialized room timer room='%s' timer='%s' current=%d initial=%d enabled=%d loop=%d global=%d",
 			state.roomName.c_str(), timer.timerName.c_str(), timer.currentValue, timer.initialValue,
 			timer.enabled, timer.looping, timer.global);
 	}
 
-	debugC(1, kDebugRoom,
+	debugC(3, kDebugRoom,
 		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u",
 		state.roomName.c_str(), state.entranceName.c_str(), state.playerSpawnX, state.playerSpawnY,
 		state.playerSpawnZ, state.playerFacing, state.palettePath.c_str(), state.backgroundPath.c_str(),
@@ -2783,7 +2779,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const Command
 			break;
 		}
 
-		debugC(1, kDebugScene,
+		debugC(3, kDebugScene,
 			"Harvester: %s '%s' step=%u tag='%s' opcode='%s' args=['%s','%s','%s','%s']",
 			context.label, context.name.c_str(), step, currentTag.c_str(), command->opcodeName.c_str(),
 			command->arg1.c_str(), command->arg2.c_str(), command->arg3.c_str(), command->arg4.c_str());
@@ -2791,7 +2787,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const Command
 		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
 			const FlagRecord *flag = findRuntimeFlag(command->arg1);
 			const bool flagValue = flag && flag->value;
-			debugC(1, kDebugScene, "Harvester: %s '%s' flag '%s' -> %d",
+			debugC(3, kDebugScene, "Harvester: %s '%s' flag '%s' -> %d",
 				context.label, context.name.c_str(), command->arg1.c_str(), flagValue);
 			currentTag = flagValue ? command->arg2 : command->arg3;
 			continue;

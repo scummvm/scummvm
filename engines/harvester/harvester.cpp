@@ -328,7 +328,6 @@ Common::Error HarvesterEngine::run() {
 	// The intro FST files play on the narrower startup movie surface.
 	setDisplayMode(320, 200);
 
-	// Set the engine's debugger console
 	setDebugger(new Console());
 
 	if (shouldSkipIntroMoviesForDebug()) {

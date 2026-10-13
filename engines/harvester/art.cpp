@@ -60,7 +60,7 @@ static void logPaletteSummary(const char *label, const Common::String &path, con
 	byte maxValue = 0;
 	getPaletteByteRange(palette, minValue, maxValue);
 
-	debugC(1, kDebugGeneral,
+	debugC(3, kDebugGeneral,
 		"Harvester: %s '%s' bytes=%u range=[%u,%u] hash=%08x idx0=(%u,%u,%u) idx1=(%u,%u,%u) idx127=(%u,%u,%u) idx255=(%u,%u,%u)",
 		label, path.c_str(), 256U * 3U, minValue, maxValue, hashPalette(palette),
 		palette[0], palette[1], palette[2],

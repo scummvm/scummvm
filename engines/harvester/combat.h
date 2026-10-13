@@ -110,6 +110,7 @@ struct MonsterCombatState {
 	int deathFirstFrame = -1;
 	int deathLastFrame = -1;
 	int deathDamageType = 0;
+	int loggedPursuitStallDirections = 0;
 	bool allowInitialPursuitStep = true;
 	uint32 nextMovementTick = 0;
 	uint32 attackCooldownSeedTick = 0;

@@ -1497,6 +1497,9 @@ Common::Error Combat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetup
 		}
 
 		const bool moved = monster.posX != previousX || monster.posY != previousY || monster.posZ != previousZ;
+		const int stalledDirections = moved ? 0 : ((attemptedMoveX ? 1 : 0) | (attemptedMoveZ ? 2 : 0));
+		const bool stallChanged = combatState.loggedPursuitStallDirections != stalledDirections;
+		combatState.loggedPursuitStallDirections = stalledDirections;
 		if (moved) {
 			const int movedX = monster.posX - previousX;
 			const int movedY = monster.posY - previousY;
@@ -1508,7 +1511,7 @@ Common::Error Combat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetup
 			if (monster.posZ != previousZ)
 				entityManager->reinsertSceneEntity(entity);
 			(void)script.syncRuntimeMonsterRecord(monster);
-			debugC(1, kDebugCombat,
+			debugC(3, kDebugCombat,
 				"Harvester: combat monster chase move monster='%s' live_center_dx=%d z_delta=%.2f engage=%d waypoint_tol=%d from=(%d,%d,z=%d) to=(%d,%d,z=%d) facing=%d",
 				monster.monsterName.c_str(), liveCenterDx, (double)zDelta, engageDistance, liveWaypointTolerance,
 				previousX, previousY, previousZ, monster.posX, monster.posY, monster.posZ, monster.facing);
@@ -1517,8 +1520,8 @@ Common::Error Combat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetup
 			continue;
 		}
 
-		if (attemptedMoveX || attemptedMoveZ) {
-			debugC(1, kDebugCombat,
+		if (stalledDirections != 0 && stallChanged) {
+			debugC(2, kDebugCombat,
 				"Harvester: combat monster chase stalled monster='%s' live_center_dx=%d z_delta=%.2f engage=%d waypoint_tol=%d pos=(%d,%d,z=%d) attempted_x=%d attempted_z=%d",
 				monster.monsterName.c_str(), liveCenterDx, (double)zDelta, engageDistance, liveWaypointTolerance,
 				monster.posX, monster.posY, monster.posZ, attemptedMoveX, attemptedMoveZ);
@@ -1558,6 +1561,7 @@ Common::Error Combat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetup
 		combatState.attackContactResolved = false;
 		combatState.attackTargetName = playerState.entity->getName();
 		combatState.attackCooldownSeedTick = now + engine.getRandomNumber(99);
+		combatState.loggedPursuitStallDirections = 0;
 		monster.facing = range.resumeFacing;
 		entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
 		entity->setAnimationRate(kNativeMonsterAttackAnimationRate);

@@ -52,16 +52,10 @@ public:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 
-	/**
-	 * Returns the game Id
-	 */
 	Common::String getGameId() const;
 	Common::Language getLanguage() const;
 	bool isDemo() const;
 
-	/**
-	 * Gets a random number
-	 */
 	uint32 getRandomNumber(uint maxNum) {
 		return _randomSource.getRandomNumber(maxNum);
 	}
@@ -69,10 +63,6 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
-	/**
-	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
-	 */
 	Common::Error syncGame(Common::Serializer &s);
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
