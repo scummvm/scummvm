@@ -32,7 +32,13 @@ namespace Hollywood {
 
 const PlainGameDescriptor plainGameDescriptors[] = {
 	{"hollywood", "Hollywood Monsters"},
+	{"runaway", "Runaway: A Road Adventure"},
 	{nullptr, nullptr}
+};
+
+const char *const directoryGlobs[] = {
+	"resource",
+	nullptr
 };
 
 const DebugChannelDef debugFlagList[] = {
@@ -44,6 +50,19 @@ const DebugChannelDef debugFlagList[] = {
 };
 
 const ADGameDescription gameDescriptions[] = {
+	// German Runaway demo, starting in the shack (scene 5030).
+	{
+		"runaway",
+		"Demo",
+		AD_ENTRY3s("RESOURCE.E03", "df350293b7dab8f39aead666dcedce72", 41872288,
+			"RESOURCE.003", "6e7e639375a14c5b694879c88a8aeaa6", 444292,
+			"RESOURCE.000", "3ccd0619e1475efd4f1212b92db25843", 38045367),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
+	},
+
 	// Spanish DOS demo.
 	{
 		"hollywood",
@@ -248,6 +267,8 @@ class HollywoodMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDe
 public:
 	HollywoodMetaEngineDetection() : AdvancedMetaEngineDetection(Hollywood::gameDescriptions, plainGameDescriptors) {
 		_flags = kADFlagPreferFallbackDetection;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist,
@@ -275,11 +296,11 @@ public:
 	}
 
 	const char *getEngineName() const override {
-		return "Hollywood Monsters";
+		return "Hollywood Monsters & Runaway";
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Hollywood Monsters (C) 1997 Pendulo Studios";
+		return "Hollywood Monsters and Runaway (C) Pendulo Studios";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {

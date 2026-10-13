@@ -20,6 +20,10 @@ MODULE_OBJS = \
 	metaengine.o \
 	music.o \
 	resource.o \
+	runaway/audio.o \
+	runaway/engine.o \
+	runaway/graphics.o \
+	runaway/scene5030.o \
 	saveload.o \
 	scenes/chapter_intro_scene.o \
 	scenes/presentation_scene.o \

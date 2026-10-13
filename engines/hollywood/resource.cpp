@@ -31,31 +31,35 @@
 namespace Hollywood {
 
 void ResourceChunkTable::clear() {
-	for (int i = 0; i < kResourceChunkCount; ++i) {
+	count = 0;
+	for (int i = 0; i < kMaxResourceChunkCount; ++i) {
 		offsets[i] = 0;
 		sizes[i] = 0;
 	}
 }
 
-bool ResourceChunkTable::load(Common::SeekableReadStream &stream) {
+bool ResourceChunkTable::load(Common::SeekableReadStream &stream, uint chunkCount) {
 	clear();
 
-	if (stream.size() < kResourceChunkCount * 8)
+	if (chunkCount == 0 || chunkCount > kMaxResourceChunkCount || stream.size() < chunkCount * 8)
 		return false;
 
 	if (!stream.seek(0))
 		return false;
-	for (int i = 0; i < kResourceChunkCount; ++i)
+	for (uint i = 0; i < chunkCount; ++i)
 		offsets[i] = stream.readUint32LE();
 
-	for (int i = 0; i < kResourceChunkCount; ++i)
+	for (uint i = 0; i < chunkCount; ++i)
 		sizes[i] = stream.readUint32LE();
 
-	return !stream.err();
+	if (stream.err() || stream.eos())
+		return false;
+	count = chunkCount;
+	return true;
 }
 
 bool ResourceChunkTable::isValidChunk(uint index) const {
-	return index < kResourceChunkCount && sizes[index] != 0;
+	return index < count && sizes[index] != 0;
 }
 
 Common::SeekableReadStream *createResourceChunkReadStream(const Common::Path &fileName, uint index) {
@@ -93,7 +97,7 @@ ChunkArchive::ChunkArchive() :
 	_chunkTable.clear();
 }
 
-bool ChunkArchive::open(const Common::Path &fileName) {
+bool ChunkArchive::open(const Common::Path &fileName, uint chunkCount) {
 	close();
 
 	_fileName = fileName;
@@ -102,7 +106,7 @@ bool ChunkArchive::open(const Common::Path &fileName) {
 		return false;
 	}
 
-	if (!_chunkTable.load(_file)) {
+	if (!_chunkTable.load(_file, chunkCount)) {
 		close();
 		return false;
 	}
@@ -127,7 +131,7 @@ uint32 ChunkArchive::chunkSize(uint index) const {
 
 uint32 ChunkArchive::totalChunkSize(uint firstChunk, uint lastChunk) const {
 	uint32 byteCount = 0;
-	for (uint i = firstChunk; i <= lastChunk && i < kResourceChunkCount; ++i)
+	for (uint i = firstChunk; i <= lastChunk && i < _chunkTable.count; ++i)
 		byteCount += _chunkTable.sizes[i];
 	return byteCount;
 }

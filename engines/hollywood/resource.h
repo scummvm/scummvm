@@ -36,15 +36,17 @@ namespace Hollywood {
 class IndexedSurfaceBuffer;
 
 enum {
-	kResourceChunkCount = 40
+	kResourceChunkCount = 40,
+	kMaxResourceChunkCount = 50
 };
 
 struct ResourceChunkTable {
-	uint32 offsets[kResourceChunkCount];
-	uint32 sizes[kResourceChunkCount];
+	uint32 offsets[kMaxResourceChunkCount];
+	uint32 sizes[kMaxResourceChunkCount];
+	uint count = 0;
 
 	void clear();
-	bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream &stream, uint chunkCount = kResourceChunkCount);
 	bool isValidChunk(uint index) const;
 };
 
@@ -55,7 +57,7 @@ class ChunkArchive {
 public:
 	ChunkArchive();
 
-	bool open(const Common::Path &fileName);
+	bool open(const Common::Path &fileName, uint chunkCount = kResourceChunkCount);
 	void close();
 
 	const Common::Path &fileName() const { return _fileName; }

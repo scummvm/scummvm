@@ -27,6 +27,7 @@
 
 #include "hollywood/hollywood.h"
 #include "hollywood/detection.h"
+#include "hollywood/runaway/engine.h"
 
 namespace Hollywood {
 
@@ -59,13 +60,17 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 	void registerDefaultSettings(const Common::String &target) const override;
+	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 
 protected:
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 Common::Error HollywoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new HollywoodEngine(syst, desc);
+	if (!strcmp(desc->gameId, "runaway"))
+		*engine = new RunawayEngine(syst);
+	else
+		*engine = new HollywoodEngine(syst, desc);
 	return Common::kNoError;
 }
 
@@ -80,13 +85,19 @@ void HollywoodMetaEngine::registerDefaultSettings(const Common::String &) const 
 }
 
 void HollywoodMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
-	if (g_engine) {
+	if (g_engine && ConfMan.get("gameid") == "hollywood") {
 		HollywoodEngine *engine = (HollywoodEngine *)g_engine;
 		if (engine->copyLastGameplayThumbnail(thumb))
 			return;
 	}
 
 	Graphics::createThumbnail(thumb);
+}
+
+Common::Array<Common::Keymap *> HollywoodMetaEngine::initKeymaps(const char *target) const {
+	if (getGameId(target) == "runaway")
+		return RunawayEngine::initKeymaps();
+	return MetaEngine::initKeymaps(target);
 }
 
 } // End of namespace Hollywood
