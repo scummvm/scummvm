@@ -114,7 +114,7 @@ void IgorEngine::playSound(int num, int type) {
 		soundHandle = &_sfxHandle;
 	} else if (type == 0) {
 		if (_mixer->isSoundHandleActive(_speechHandle)) {
-            debugC(9, kDebugEngine, "stopping previous handle");
+			debugC(9, kDebugEngine, "stopping previous handle");
 			_mixer->stopHandle(_speechHandle);
 		}
 		if ((_game.flags & kFlagTalkie) == 0) {

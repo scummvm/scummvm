@@ -23,8 +23,8 @@
 namespace Igor {
 
 void IgorEngine::part4ExecuteAction(int action) {
-    debugC(9, kDebugGame, "part4ExecuteAction %d", action);
-    switch (action) {
+	debugC(9, kDebugGame, "part4ExecuteAction %d", action);
+	switch (action) {
 	case 101: // church
 		_currentPart = 120;
 		break;

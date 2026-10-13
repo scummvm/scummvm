@@ -706,7 +706,7 @@ void IgorEngine::dialogueAskQuestion() {
 		question = 5;
 	}
 	const int num = question - 1;
-	const int sound = _dialogueQuestionSounds[question - 1]; // cseg172:043B-0460, 0B34-0B43
+	const int sound = _dialogueQuestionSounds[question - 1];
 	debugC(9, kDebugEngine, "dialogueAskQuestion() num %d offset %d", num, offset);
 	Common::strlcpy(_globalDialogueTexts[250], _dialogueQuestions[num][0], sizeof(_globalDialogueTexts[250]));
 	Common::strlcpy(_globalDialogueTexts[251], _dialogueQuestions[num][1], sizeof(_globalDialogueTexts[251]));
@@ -754,7 +754,7 @@ void IgorEngine::dialogueReplyToQuestion(int x, int y, int r, int g, int b, int 
 		int num = _gameState.dialogueData[offset] - 1;
 		int len = _gameState.dialogueData[offset + 1];
 		debugC(9, kDebugEngine, "dialogueReplyToQuestion() reply %d %d offset %d", num, len, offset);
-		ADD_DIALOGUE_TEXT(dialogueIndex, len, _dialogueReplySounds[num]); // cseg172:0A59-0A82
+		ADD_DIALOGUE_TEXT(dialogueIndex, len, _dialogueReplySounds[num]);
 		for (int j = 0; j < len; ++j) {
 			Common::strlcpy(_globalDialogueTexts[dialogueIndex], _dialogueReplies[num + j], sizeof(_globalDialogueTexts[dialogueIndex]));
 			++dialogueIndex;
