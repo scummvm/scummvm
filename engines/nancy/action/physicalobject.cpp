@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/random.h"
+
+#include "engines/nancy/nancy.h"
 #include "engines/nancy/action/physicalobject.h"
 
 namespace Nancy {
@@ -31,6 +34,8 @@ static const double kMinSpeed = 0.01;
 static const double kRestSpeed = 30.0;
 // How far an object that bounced is pushed back in
 static const double kBounceDistance = 2.0;
+// A pin sends an object off at a slightly different angle each time
+static const double kPinNormalJitter = 0.0001;
 
 double PhysicalObject::getAngle(double x, double y) {
 	double angle = atan2(-y, x);
@@ -73,6 +78,61 @@ double PhysicalObject::getBoundsNormal(const Common::Rect &rect) const {
 	return -1;
 }
 
+bool PhysicalObject::isClearOfObstacle(const Obstacle &obstacle, const Common::Rect &rect) const {
+	if (obstacle.type == Obstacle::kBlock) {
+		return !rect.intersects(obstacle.rect);
+	}
+
+	double dx = (rect.left + rect.width() * 0.5) - (obstacle.rect.left + obstacle.rect.width() * 0.5);
+	double dy = (rect.top + rect.height() * 0.5) - (obstacle.rect.top + obstacle.rect.height() * 0.5);
+	return sqrt(dx * dx + dy * dy) > rect.width();
+}
+
+bool PhysicalObject::isClearOfObstacles(const Common::Rect &rect) const {
+	if (!_obstacles) {
+		return true;
+	}
+
+	for (const Obstacle &obstacle : *_obstacles) {
+		if (!isClearOfObstacle(obstacle, rect)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+double PhysicalObject::getObstacleNormal(const Common::Rect &rect) const {
+	if (!_obstacles) {
+		return -1;
+	}
+
+	for (const Obstacle &obstacle : *_obstacles) {
+		if (isClearOfObstacle(obstacle, rect)) {
+			continue;
+		}
+
+		const Common::Rect &block = obstacle.rect;
+		if (obstacle.type == Obstacle::kPin) {
+			double dx = (rect.left + rect.width() * 0.5) - (block.left + block.width() * 0.5);
+			double dy = (rect.top + rect.height() * 0.5) - (block.top + block.height() * 0.5);
+			return getAngle(dx, dy) + g_nancy->_randomSource->getRandomNumber(999) * kPinNormalJitter;
+		}
+
+		// Off the side of the block that the rect sticks out of. One coming
+		// down on the block from right above it is let through.
+		if (rect.left <= block.right && block.right < rect.right) {
+			return 0;
+		} else if (block.left <= rect.right && rect.left < block.left) {
+			return M_PI;
+		} else if (rect.top <= block.bottom && block.bottom < rect.bottom) {
+			return 3 * M_PI / 2;
+		}
+	}
+
+	return -1;
+}
+
 void PhysicalObject::setSpeed(double speed) {
 	_speed = speed;
 
@@ -101,7 +161,8 @@ void PhysicalObject::moveTo(double x, double y) {
 }
 
 void PhysicalObject::stopAtBounds(double x, double y) {
-	if (isInsideBounds(getRectAt(x, y))) {
+	Common::Rect rect = getRectAt(x, y);
+	if (isInsideBounds(rect) && isClearOfObstacles(rect)) {
 		_x = x;
 		_y = y;
 	} else {
@@ -111,7 +172,12 @@ void PhysicalObject::stopAtBounds(double x, double y) {
 }
 
 void PhysicalObject::bounceOffBounds(double x, double y) {
-	double normal = getBoundsNormal(getRectAt(x, y));
+	Common::Rect rect = getRectAt(x, y);
+	double normal = getBoundsNormal(rect);
+	if (normal < 0) {
+		normal = getObstacleNormal(rect);
+	}
+
 	if (normal < 0) {
 		_x = x;
 		_y = y;

@@ -22,6 +22,7 @@
 #ifndef NANCY_ACTION_PHYSICALOBJECT_H
 #define NANCY_ACTION_PHYSICALOBJECT_H
 
+#include "common/array.h"
 #include "common/rect.h"
 
 namespace Nancy {
@@ -41,10 +42,23 @@ public:
 		kBounceOffBounds
 	};
 
+	// Something in the way of an object, inside of its bounds
+	struct Obstacle {
+		enum Type {
+			kPin,	// a point the object's middle keeps the object's width away from
+			kBlock	// a rect the object can't overlap
+		};
+
+		Type type = kPin;
+		Common::Rect rect;
+	};
+
 	void setSize(int width, int height) { _width = width; _height = height; }
 	// An empty rect means there are none
 	void setBounds(const Common::Rect &bounds) { _bounds = bounds; }
 	void setBoundsMode(BoundsMode mode) { _boundsMode = mode; }
+	// Shared by the objects of a puzzle, which keeps the list
+	void setObstacles(const Common::Array<Obstacle> *obstacles) { _obstacles = obstacles; }
 
 	// Puts the object there, unless that is outside of its bounds
 	void moveTo(double x, double y);
@@ -76,6 +90,10 @@ private:
 	bool isInsideBounds(const Common::Rect &rect) const;
 	// The way out of the bounds, -1 while the rect is inside of them
 	double getBoundsNormal(const Common::Rect &rect) const;
+	bool isClearOfObstacle(const Obstacle &obstacle, const Common::Rect &rect) const;
+	bool isClearOfObstacles(const Common::Rect &rect) const;
+	// The way off the first obstacle the rect ran into, -1 when there is none
+	double getObstacleNormal(const Common::Rect &rect) const;
 
 	void accelerate(double numTicks);
 	void applyFriction(double numTicks);
@@ -86,6 +104,7 @@ private:
 	int _width = 1;
 	int _height = 1;
 	Common::Rect _bounds;
+	const Common::Array<Obstacle> *_obstacles = nullptr;
 	BoundsMode _boundsMode = kStopAtBounds;
 
 	double _x = 0;
