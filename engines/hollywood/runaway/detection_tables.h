@@ -23,6 +23,18 @@
 #define HOLLYWOOD_RUNAWAY_DETECTION_TABLES_H
 
 // Included in the shared ADGameDescription array in hollywood/detection.cpp.
+	// Spanish chapter-three demo (July 2001 build, Micromania 80).
+	{
+		"runaway",
+		"Demo",
+		AD_ENTRY3s("RESOURCE.E03", "df350293b7dab8f39aead666dcedce72", 41872288,
+			"RESOURCE.003", "b9fb386d4af6ef7cc535ed4089e32aff", 7330982,
+			"RESOURCE.000", "231c7a354e1452246c89d816f8df4833", 34789119),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
+	},
 	// German Runaway demo, starting in the shack (scene 5030).
 	{
 		"runaway",

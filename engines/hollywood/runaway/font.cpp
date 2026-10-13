@@ -55,7 +55,7 @@ const byte kGlyphMap[256] = {
 bool RunawayFont::load() {
 	Common::Array<byte> metrics;
 	if (!readRunawayGlobalChunk(125, _pixels) || !readRunawayGlobalChunk(126, metrics) ||
-			(metrics.size() != 150 * 5 && metrics.size() != 156 * 5))
+			(metrics.size() != 119 * 5 && metrics.size() != 150 * 5 && metrics.size() != 156 * 5))
 		return false;
 	_glyphs.resize(metrics.size() / 5);
 	for (uint i = 0; i < _glyphs.size(); ++i) {
@@ -70,6 +70,15 @@ bool RunawayFont::load() {
 			return false;
 	}
 	memcpy(_glyphMap, kGlyphMap, sizeof(_glyphMap));
+	_missingGlyph = _glyphs.size() == 119 ? 255 : _glyphs.size() - 1;
+	// The Spanish table at 0x4631f0 uses the shared first 119 glyphs and
+	// marks unsupported characters with 255, without a fallback picture.
+	if (_glyphs.size() == 119) {
+		for (uint i = 0; i < ARRAYSIZE(_glyphMap); ++i) {
+			if (_glyphMap[i] >= _glyphs.size() && _glyphMap[i] != 254)
+				_glyphMap[i] = _missingGlyph;
+		}
+	}
 	// The French table at 0x46f1e0 adds circumflex vowels and moves the
 	// missing-character box to 155. Glyphs 153/154 are the CP1252 ligatures.
 	if (_glyphs.size() == 156) {
@@ -131,8 +140,8 @@ uint RunawayFont::glyphIndex(uint32 chr) const {
 	case 0x201e: return 92;
 	case '\'': return 90;
 	case '"': return 81;
-	case 0x0152: return _glyphs.size() == 156 ? 153 : 149;
-	case 0x0153: return _glyphs.size() == 156 ? 154 : 149;
+	case 0x0152: return _glyphs.size() == 156 ? 153 : _missingGlyph;
+	case 0x0153: return _glyphs.size() == 156 ? 154 : _missingGlyph;
 	}
 	if (chr < 128)
 		return _glyphMap[chr];
@@ -140,22 +149,22 @@ uint RunawayFont::glyphIndex(uint32 chr) const {
 		if (_characters[i] == chr)
 			return _glyphMap[i + 128];
 	}
-	return _glyphs.size() - 1;
+	return _missingGlyph;
 }
 
 int RunawayFont::getCharWidth(uint32 chr) const {
 	const uint glyph = glyphIndex(chr);
-	return glyph == 254 ? 8 : _glyphs[glyph].width;
+	return glyph == 254 ? 8 : glyph < _glyphs.size() ? _glyphs[glyph].width : 0;
 }
 
 int RunawayFont::getKerningOffset(uint32 left, uint32 right) const {
 	const uint a = glyphIndex(left), b = glyphIndex(right);
-	return !left || !right || a == 254 || b == 254 ? 0 : _kerning[a * _glyphs.size() + b];
+	return !left || !right || a >= _glyphs.size() || b >= _glyphs.size() ? 0 : _kerning[a * _glyphs.size() + b];
 }
 
 void RunawayFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	const uint index = glyphIndex(chr);
-	if (index == 254 || dst->format.bytesPerPixel != 2)
+	if (index >= _glyphs.size() || dst->format.bytesPerPixel != 2)
 		return;
 	const Glyph &glyph = _glyphs[index];
 	const uint r = (color >> 11) & 31, g = (color >> 5) & 63, b = color & 31;

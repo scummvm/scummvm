@@ -47,6 +47,7 @@ private:
 	Common::Array<Glyph> _glyphs;
 	Common::Array<int8> _kerning;
 	byte _glyphMap[256];
+	byte _missingGlyph = 255;
 	Common::Array<byte> _pixels;
 	Common::U32String _characters;
 };

@@ -36,7 +36,8 @@ public:
 		kOpen, kClose, kMove, kLookThrough, kUsePhone, kTakeFromShelf,
 		kUnplugCooler, kShirt, kWetCloth, kDirtyCloth, kTextCount
 	};
-	explicit RunawayStrings(Common::Language language) : _languageIndex(language == Common::FR_FRA ? 1 : 0) {}
+	explicit RunawayStrings(Common::Language language) :
+		_languageIndex(language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : 0) {}
 	Common::U32String text(TextId id) const;
 	Common::U32String itemName(byte item) const;
 	Common::U32String shackHotspotName(byte hotspot) const;
