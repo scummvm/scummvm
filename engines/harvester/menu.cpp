@@ -146,6 +146,7 @@ static const int kPasswordMaxCharacters = 8;
 static const uint32 kPasswordCursorBlinkMs = 480;
 static const uint32 kPaletteFadeTickMs = 4;
 static const float kPaletteFadeStep = 0.1f;
+static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
 static const float kPaletteBrightnessBlack = 0.0f;
 
 class ScopedSceneTimerPause {
@@ -440,6 +441,22 @@ static void applyMenuPalette(Graphics::Screen &screen, const HarvesterEngine &en
 	byte displayPalette[256 * 3];
 	buildHarvesterDisplayPalette(palette, brightness * engine.getGammaBrightnessScale(), displayPalette);
 	screen.setPalette(displayPalette);
+}
+
+static void renderCdChangePromptScreen(HarvesterEngine &engine, const IndexedBitmap &bitmap,
+		const byte *palette) {
+	Graphics::Screen *screen = engine.getScreen();
+	if (!screen)
+		return;
+
+	applyMenuPalette(*screen, engine, palette, 1.0f);
+	screen->fillRect(screen->getBounds(), 0);
+	if (bitmap.isValid())
+		screen->copyRectToSurface(bitmap.pixels.data(), bitmap.width, 0, 0, bitmap.width, bitmap.height);
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawCursor(*screen);
+	screen->makeAllDirty();
+	screen->update();
 }
 
 static void renderHelpScreen(HarvesterEngine &engine, const IndexedBitmap &bitmap, const byte *palette) {
@@ -843,6 +860,78 @@ void drawQuickTipsPanel(HarvesterEngine &engine, const MenuTextConfig &config,
 MenuSystem::MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
 		const Common::Array<Common::String> &menuItems)
 	: _engine(engine), _mousePos(mousePos), _menuItems(menuItems) {
+}
+
+Common::Error MenuSystem::showCdChangePrompt(int discNumber, ResourceManager &resources,
+		Flow &flow, bool &promptCompleted) {
+	promptCompleted = false;
+	Graphics::Screen *screen = _engine.getScreen();
+	if (!screen)
+		return Common::kReadingFailed;
+
+	const Common::String bitmapPath = Common::String::format("1:/GRAPHIC/OTHER/CD%d.BM", discNumber);
+	IndexedBitmap promptBitmap;
+	byte promptPalette[256 * 3];
+	if (!loadBitmapResource(resources, bitmapPath, promptBitmap) ||
+			!loadPaletteResource(resources, kCdChangePromptPalettePath, promptPalette)) {
+		warning("Harvester: unable to load CD change prompt assets for disc %d", discNumber);
+		return Common::kReadingFailed;
+	}
+
+	debugC(1, kDebugScene, "Harvester: showing CD change prompt for disc %d", discNumber);
+	_engine.stopMusic();
+
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		Common::Error result = Common::kNoError;
+		if (flow.handleSystemEvent(event, result))
+			return result;
+		if (event.type == Common::EVENT_MOUSEMOVE)
+			_mousePos = event.mouse;
+	}
+
+	bool waitingForRelease = false;
+	bool needsRedraw = true;
+	bool activateRequestedDisc = false;
+	Graphics::FrameLimiter limiter(g_system, 60);
+
+	while (!_engine.shouldQuit() && !activateRequestedDisc) {
+		if (needsRedraw) {
+			renderCdChangePromptScreen(_engine, promptBitmap, promptPalette);
+			needsRedraw = false;
+		}
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error result = Common::kNoError;
+			if (flow.handleSystemEvent(event, result))
+				return result;
+
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				_mousePos = event.mouse;
+				needsRedraw = true;
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				waitingForRelease = true;
+				break;
+			case Common::EVENT_LBUTTONUP:
+				if (waitingForRelease)
+					activateRequestedDisc = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		EntityManager *entityManager = _engine.getRuntimeEntities();
+		if (entityManager && entityManager->syncCursorEntityPosition(_mousePos))
+			needsRedraw = true;
+
+		limiter.delayBeforeSwap();
+		limiter.startFrame();
+	}
+	promptCompleted = true;
+	return Common::kNoError;
 }
 
 Common::Error MenuSystem::runMainMenuStub(Flow &flow) {

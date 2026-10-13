@@ -36,6 +36,7 @@ namespace Harvester {
 
 class HarvesterEngine;
 class Flow;
+class ResourceManager;
 
 struct MenuTextConfig {
 	Common::Array<Common::String> optionItems;
@@ -91,6 +92,8 @@ public:
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow, bool canSaveGame);
 	Common::Error validateParentalPassword(Flow &flow);
+	Common::Error showCdChangePrompt(int discNumber, ResourceManager &resources,
+		Flow &flow, bool &promptCompleted);
 
 private:
 	Common::Error runLoadGameMenu(const byte *palette, float paletteBrightness,

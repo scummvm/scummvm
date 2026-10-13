@@ -52,6 +52,8 @@ public:
 	bool buildDialogueSaveStateBlob(Common::Array<byte> &blob, uint32 saveVersion);
 	bool loadDialogueSaveStateBlob(const Common::Array<byte> &blob, uint32 saveVersion);
 	Common::Error run();
+	Common::Error showCdChangePrompt(int discNumber);
+	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
 
 private:
 	friend class HarvesterEngine;
@@ -115,7 +117,6 @@ private:
 	void resetRoomNpcDialogueState();
 	void resetCursorAnimationSequence();
 	bool tickRuntimeEntities();
-	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
 
 	HarvesterEngine &_engine;
 	Common::Array<Common::String> _quickTips;

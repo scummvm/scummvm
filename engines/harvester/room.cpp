@@ -34,7 +34,6 @@
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
-#include "harvester/palette_utils.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
 #include "harvester/art.h"
@@ -44,6 +43,7 @@
 #include "harvester/player.h"
 #include "harvester/room_combat.h"
 #include "harvester/room_interaction.h"
+#include "harvester/room_presentation.h"
 #include "harvester/room_session.h"
 #include "harvester/room_support.h"
 
@@ -51,9 +51,7 @@ namespace Harvester {
 
 static const uint32 kRoomExitFastClickWindowTicks = 20;
 static const char *const kPlayerInventoryLabel = "your inventory";
-static const byte kTransparentPaletteIndex = 0;
-static const float kNormalPaletteBrightness = 1.0f;
-static const float kDimPaletteBrightness = 0.6f;
+
 static const int kNativeInventoryDragCloseLeft = 0x45;
 static const int kNativeInventoryDragCloseTop = 0x4b;
 static const int kNativeInventoryDragCloseRight = 0x239;
@@ -67,7 +65,6 @@ static const uint32 kCombatLoadoutStatusDisplayTicks = 75;
 static const int kNativeCombatResourceIconsX = 10;
 static const int kNativeCombatResourceIconsY = 30;
 static const int kNativeCombatResourceIconSpacing = 15;
-static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 	return !roomName.equalsIgnoreCase("LAVAPIT") &&
@@ -100,41 +97,6 @@ static void debugLogInventoryClick(const char *buttonLabel, const Common::Point 
 		InventorySystem::isStatusObject(inventoryHover->object));
 }
 
-static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
-	if (!bitmap.isValid())
-		return;
-
-	int destX = x;
-	int destY = y;
-	int srcX = 0;
-	int srcY = 0;
-	int width = (int)bitmap.width;
-	int height = (int)bitmap.height;
-
-	if (destX < 0) {
-		srcX = -destX;
-		width += destX;
-		destX = 0;
-	}
-	if (destY < 0) {
-		srcY = -destY;
-		height += destY;
-		destY = 0;
-	}
-	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
-		return;
-
-	width = MIN<int>(width, screen.w - destX);
-	height = MIN<int>(height, screen.h - destY);
-	if (width <= 0 || height <= 0)
-		return;
-
-	const byte *src = bitmap.pixels.data() + srcY * bitmap.width + srcX;
-	byte *dst = (byte *)screen.getBasePtr(destX, destY);
-	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
-		screen.format.bytesPerPixel, kTransparentPaletteIndex);
-}
-
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
 	const Text *text = engine.getText();
 	if (!text || !fontName)
@@ -156,47 +118,6 @@ static Common::String resolveStartupNpcLabel(const NpcRecord &npc) {
 	}
 
 	return label;
-}
-
-static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
-	Common::Array<byte> data;
-	if (!resources.loadFile(path, data) || data.size() < 12)
-		return false;
-
-	bitmap = IndexedBitmap();
-	return decodeBitmap(data, bitmap);
-}
-
-static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *palette) {
-	Common::Array<byte> data;
-	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
-		return false;
-
-	memcpy(palette, data.data(), 256 * 3);
-	return true;
-}
-
-static void applyRoomPalette(Graphics::Screen &screen, const HarvesterEngine &engine,
-		const byte *palette, float brightness) {
-	byte scaledPalette[256 * 3];
-	buildHarvesterDisplayPalette(palette, brightness * engine.getGammaBrightnessScale(), scaledPalette);
-	screen.setPalette(scaledPalette);
-}
-
-static void renderCdChangePromptScreen(HarvesterEngine &engine, const IndexedBitmap &bitmap,
-		const byte *palette) {
-	Graphics::Screen *screen = engine.getScreen();
-	if (!screen)
-		return;
-
-	applyRoomPalette(*screen, engine, palette, 1.0f);
-	screen->fillRect(screen->getBounds(), 0);
-	if (bitmap.isValid())
-		screen->copyRectToSurface(bitmap.pixels.data(), bitmap.width, 0, 0, bitmap.width, bitmap.height);
-	if (engine.getRuntimeEntities())
-		engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
 }
 
 static void drawRoomPrompt(Graphics::Screen &screen, const Graphics::Font &font,
@@ -247,15 +168,8 @@ static void drawCombatLoadoutResourceIcons(Graphics::Screen &screen, const Art &
 
 	const int iconCount = CLIP<int>(script.getPlayerCombatResourceCount(loadout), 0, info.maxVisibleCount);
 	for (int i = 0; i < iconCount; ++i)
-		blitBitmap(screen, icon, kNativeCombatResourceIconsX + i * kNativeCombatResourceIconSpacing,
+		RoomPresentation::blitBitmap(screen, icon, kNativeCombatResourceIconsX + i * kNativeCombatResourceIconSpacing,
 			kNativeCombatResourceIconsY);
-}
-
-static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
-	byte scaledPalette[256 * 3];
-	const float gammaBrightness = g_engine ? g_engine->getGammaBrightnessScale() : 1.0f;
-	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
-	screen.setPalette(scaledPalette);
 }
 
 RoomSystem::RoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
@@ -492,107 +406,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				return false;
 			return _inventory.open();
 		};
-		auto captureDialogueBackdrop = [&](IndexedBitmap &dialogueBackdrop) {
-			Graphics::Screen *activeScreen = getActiveScreen();
-			if (!activeScreen)
-				return false;
 
-			drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
-			return captureScreenBackdrop(*activeScreen, dialogueBackdrop);
-		};
-		auto showCdChangePrompt = [&](int discNumber) -> Common::Error {
-			if (discNumber <= 0)
-				return Common::kNoError;
+		RoomPresentation presentation(_engine, scene, art, inspectFont, useNativeInspectFont);
 
-			ResourceManager *resources = _engine.getResources();
-			if (!resources)
-				return Common::kReadingFailed;
-			const int previousDisc = resources->getCurrentDisc();
-
-			if (_engine.shouldShowCdChangePrompts()) {
-				Graphics::Screen *screen = _engine.getScreen();
-				if (!screen)
-					return Common::kReadingFailed;
-
-				const Common::String bitmapPath = Common::String::format("1:/GRAPHIC/OTHER/CD%d.BM", discNumber);
-				IndexedBitmap promptBitmap;
-				byte promptPalette[256 * 3];
-				if (!loadBitmapResource(*resources, bitmapPath, promptBitmap) ||
-						!loadPaletteResource(*resources, kCdChangePromptPalettePath, promptPalette)) {
-					warning("Harvester: unable to load CD change prompt assets for disc %d", discNumber);
-					return Common::kReadingFailed;
-				}
-
-				debugC(1, kDebugScene, "Harvester: showing CD change prompt for disc %d", discNumber);
-				_engine.stopMusic();
-
-				Common::Event event;
-				while (g_system->getEventManager()->pollEvent(event)) {
-					Common::Error result = Common::kNoError;
-					if (flow.handleSystemEvent(event, result))
-						return result;
-					if (event.type == Common::EVENT_MOUSEMOVE)
-						_mousePos = event.mouse;
-				}
-
-				bool waitingForRelease = false;
-				bool needsRedraw = true;
-				bool activateRequestedDisc = false;
-				Graphics::FrameLimiter limiter(g_system, 60);
-
-				while (!_engine.shouldQuit() && !activateRequestedDisc) {
-					if (needsRedraw) {
-						renderCdChangePromptScreen(_engine, promptBitmap, promptPalette);
-						needsRedraw = false;
-					}
-
-					while (g_system->getEventManager()->pollEvent(event)) {
-						Common::Error result = Common::kNoError;
-						if (flow.handleSystemEvent(event, result))
-							return result;
-
-						switch (event.type) {
-						case Common::EVENT_MOUSEMOVE:
-							_mousePos = event.mouse;
-							needsRedraw = true;
-							break;
-						case Common::EVENT_LBUTTONDOWN:
-							waitingForRelease = true;
-							break;
-						case Common::EVENT_LBUTTONUP:
-							if (waitingForRelease)
-								activateRequestedDisc = true;
-							break;
-						default:
-							break;
-						}
-					}
-
-					EntityManager *entityManager = _engine.getRuntimeEntities();
-					if (entityManager && entityManager->syncCursorEntityPosition(_mousePos))
-						needsRedraw = true;
-
-					limiter.delayBeforeSwap();
-					limiter.startFrame();
-				}
-			}
-
-			if (!_engine.activateDisc(discNumber)) {
-				warning("Harvester: unable to activate disc %d resources", discNumber);
-				return Common::kReadingFailed;
-			}
-			if ((discNumber == 1 || discNumber == 3) &&
-					previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
-				Script *script = _engine.getScript();
-				if (!script || !script->reloadTownWorld(*resources)) {
-					warning("Harvester: unable to reload town script after disc prompt %d -> %d",
-						previousDisc, discNumber);
-					return Common::kReadingFailed;
-				}
-			}
-
-			return Common::kNoError;
-		};
 		auto runRoomExitCommands = [&]() -> Common::Error {
 			InteractionResult exitInteraction;
 			if (!_engine.getScript()->executeRoomExitCommands(scene.state.roomName, exitInteraction))
@@ -600,7 +416,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			for (uint exitStep = 0; exitStep < 128; ++exitStep) {
 				if (exitInteraction.cdChangeDisc > 0) {
-					Common::Error cdPromptError = showCdChangePrompt(exitInteraction.cdChangeDisc);
+					Common::Error cdPromptError = flow.showCdChangePrompt(exitInteraction.cdChangeDisc);
 					if (cdPromptError.getCode() != Common::kNoError)
 						return cdPromptError;
 				}
@@ -644,51 +460,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				scene.state.roomName.c_str());
 			return Common::kNoError;
 		};
-		auto applyLightingCommand = [&](StartupLightingCommand lightingCommand) -> Common::Error {
-			Graphics::Screen *activeScreen = getActiveScreen();
-			if (!activeScreen)
-				return Common::kNoError;
 
-			switch (lightingCommand) {
-			case kStartupLightingCommandNone:
-				return Common::kNoError;
-			case kStartupLightingCommandDim:
-				scene.targetPaletteBrightness = kDimPaletteBrightness;
-				drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
-				setScaledRoomPalette(*activeScreen, scene.palette, scene.targetPaletteBrightness);
-				activeScreen->makeAllDirty();
-				activeScreen->update();
-				return Common::kNoError;
-			case kStartupLightingCommandNormal:
-				if (ResourceManager *resources = _engine.getResources()) {
-					if (!scene.state.palettePath.empty() &&
-							!loadPaletteResource(*resources, scene.state.palettePath, scene.palette)) {
-						warning("Harvester: unable to reload room palette '%s' for CHANGE_LIGHTING NORMAL",
-							scene.state.palettePath.c_str());
-					}
-				}
-				scene.targetPaletteBrightness = kNormalPaletteBrightness;
-				drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
-				setScaledRoomPalette(*activeScreen, scene.palette, scene.targetPaletteBrightness);
-				activeScreen->makeAllDirty();
-				activeScreen->update();
-				return Common::kNoError;
-			case kStartupLightingCommandBlack: {
-				byte blackPalette[256 * 3] = { 0 };
-				activeScreen->fillRect(activeScreen->getBounds(), 0);
-				activeScreen->setPalette(blackPalette);
-				activeScreen->makeAllDirty();
-				activeScreen->update();
-				return Common::kNoError;
-			}
-			case kStartupLightingCommandFadeIn:
-				debugC(1, kDebugRoom,
-					"Harvester: CHANGE_LIGHTING FADE_IN has no direct room-side equivalent yet; preserving control flow");
-				return Common::kNoError;
-			}
-
-			return Common::kNoError;
-		};
 		auto applyPlayerGotoXZ = [&](int x, int z) {
 			playerState.hasMoveTarget = false;
 			playerState.turnActive = false;
@@ -718,72 +490,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			session.resetIdleState();
 			session.captureCurrentSaveState();
 		};
-		auto runModalShowText = [&](const ResolvedText &modalText) -> Common::Error {
-			Graphics::Screen *activeScreen = getActiveScreen();
-			if (!activeScreen || !art || !inspectFont)
-				return Common::kNoError;
-			if (!resolveInspectTextboxBitmap(*art, modalText)) {
-				debug(1, "Harvester: unsupported SHOW_TEXT textbox '%s' text='%s'",
-					modalText.boxName.c_str(), modalText.value.c_str());
-				return Common::kNoError;
-			}
 
-			IndexedBitmap backdrop;
-			if (!captureDialogueBackdrop(backdrop))
-				return Common::kReadingFailed;
-
-			Graphics::FrameLimiter limiter(g_system, 60);
-			bool initialInputReleased = false;
-			bool dismissPressed = false;
-			uint frameCount = 0;
-
-			while (!_engine.shouldQuit()) {
-				Common::Event event;
-				Common::Error result = Common::kNoError;
-				while (g_system->getEventManager()->pollEvent(event)) {
-					if (flow.handleSystemEvent(event, result))
-						return result;
-
-					if (!initialInputReleased) {
-						if (event.type == Common::EVENT_LBUTTONUP ||
-								event.type == Common::EVENT_RBUTTONUP ||
-								event.type == Common::EVENT_KEYUP) {
-							initialInputReleased = true;
-						}
-						continue;
-					}
-
-					if (!dismissPressed) {
-						if (event.type == Common::EVENT_LBUTTONDOWN ||
-								event.type == Common::EVENT_RBUTTONDOWN) {
-							dismissPressed = true;
-						} else if (event.type == Common::EVENT_KEYDOWN) {
-							return Common::kNoError;
-						}
-						continue;
-					}
-
-					if (event.type == Common::EVENT_LBUTTONUP ||
-							event.type == Common::EVENT_RBUTTONUP) {
-						return Common::kNoError;
-					}
-				}
-
-				if (!initialInputReleased && frameCount++ > 0)
-					initialInputReleased = true;
-
-				blitBitmap(*activeScreen, backdrop, 0, 0);
-				setScaledRoomPalette(*activeScreen, scene.palette, scene.targetPaletteBrightness);
-				drawRoomInspectText(*activeScreen, *art, *inspectFont, modalText, useNativeInspectFont);
-				activeScreen->makeAllDirty();
-				activeScreen->update();
-
-				limiter.delayBeforeSwap();
-				limiter.startFrame();
-			}
-
-			return Common::kNoError;
-		};
 		auto requestPlayerGameOver = [&](const char *reason, const Common::String &sourceName) {
 			if (flow.hasPendingMainMenuReturn())
 				return;
@@ -830,31 +537,19 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					? _engine.getScript()->getPlayerCurrentHitPoints()
 					: 0);
 		};
-		typedef decltype(captureDialogueBackdrop) CaptureDialogueBackdropFn;
-		typedef decltype(showCdChangePrompt) ShowCdChangePromptFn;
 		typedef decltype(runRoomExitCommands) RunRoomExitCommandsFn;
-		typedef decltype(applyLightingCommand) ApplyLightingCommandFn;
 		typedef decltype(applyPlayerGotoXZ) ApplyPlayerGotoXZFn;
-		typedef decltype(runModalShowText) RunModalShowTextFn;
 		typedef decltype(startPlayerDefeatSequence) StartPlayerDefeatSequenceFn;
 
 		struct RoomInteractionCallbacksImpl : RoomInteractionCallbacks {
 			RoomInteractionCallbacksImpl(
-					RoomSession &session_,
-					CaptureDialogueBackdropFn &captureDialogueBackdropFn_,
-					ShowCdChangePromptFn &showCdChangePromptFn_,
+					RoomSession &session_, RoomPresentation &presentation_, Flow &flow_,
 					RunRoomExitCommandsFn &runRoomExitCommandsFn_,
-					ApplyLightingCommandFn &applyLightingCommandFn_,
 					ApplyPlayerGotoXZFn &applyPlayerGotoXZFn_,
-					RunModalShowTextFn &runModalShowTextFn_,
 					StartPlayerDefeatSequenceFn &startPlayerDefeatSequenceFn_)
-				: session(session_),
-				  captureDialogueBackdropFn(captureDialogueBackdropFn_),
-				  showCdChangePromptFn(showCdChangePromptFn_),
+				: session(session_), presentation(presentation_), flow(flow_),
 				  runRoomExitCommandsFn(runRoomExitCommandsFn_),
-				  applyLightingCommandFn(applyLightingCommandFn_),
 				  applyPlayerGotoXZFn(applyPlayerGotoXZFn_),
-				  runModalShowTextFn(runModalShowTextFn_),
 				  startPlayerDefeatSequenceFn(startPlayerDefeatSequenceFn_) {
 			}
 
@@ -871,11 +566,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			bool captureDialogueBackdrop(IndexedBitmap &dialogueBackdrop) override {
-				return captureDialogueBackdropFn(dialogueBackdrop);
+				return presentation.captureDialogueBackdrop(dialogueBackdrop);
 			}
 
 			Common::Error showCdChangePrompt(int discNumber) override {
-				return showCdChangePromptFn(discNumber);
+				return flow.showCdChangePrompt(discNumber);
 			}
 
 			Common::Error runRoomExitCommands() override {
@@ -883,7 +578,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			Common::Error applyLightingCommand(StartupLightingCommand lightingCommand) override {
-				return applyLightingCommandFn(lightingCommand);
+				return presentation.applyLightingCommand(lightingCommand);
 			}
 
 			void applyPlayerGotoXZ(int x, int z) override {
@@ -891,7 +586,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			Common::Error runModalShowText(const ResolvedText &modalText) override {
-				return runModalShowTextFn(modalText);
+				return presentation.runModalShowText(modalText, flow);
 			}
 
 			void resetIdleState() override {
@@ -912,18 +607,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			RoomSession &session;
-			CaptureDialogueBackdropFn &captureDialogueBackdropFn;
-			ShowCdChangePromptFn &showCdChangePromptFn;
+			RoomPresentation &presentation;
+			Flow &flow;
 			RunRoomExitCommandsFn &runRoomExitCommandsFn;
-			ApplyLightingCommandFn &applyLightingCommandFn;
 			ApplyPlayerGotoXZFn &applyPlayerGotoXZFn;
-			RunModalShowTextFn &runModalShowTextFn;
 			StartPlayerDefeatSequenceFn &startPlayerDefeatSequenceFn;
 		};
 		RoomInteractionCallbacksImpl interactionCallbacks(
-			session,
-			captureDialogueBackdrop, showCdChangePrompt,
-			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
+			session, presentation, flow, runRoomExitCommands, applyPlayerGotoXZ,
 			startPlayerDefeatSequence);
 		RoomInteractionProcessor interactionProcessor(
 			_engine, flow, scene, playerState, pendingRegionName, pendingRoomChange,
@@ -1164,7 +855,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			} else if (roomCarryActive && roomItems.getCarriedRoomItemBitmap().isValid()) {
 				const int drawX = _mousePos.x - (int)roomItems.getCarriedRoomItemBitmap().width / 2;
 				const int drawY = _mousePos.y - (int)roomItems.getCarriedRoomItemBitmap().height / 2;
-				blitBitmap(*activeScreen, roomItems.getCarriedRoomItemBitmap(), drawX, drawY);
+				RoomPresentation::blitBitmap(*activeScreen, roomItems.getCarriedRoomItemBitmap(), drawX, drawY);
 			}
 
 			if (showingInspectText) {

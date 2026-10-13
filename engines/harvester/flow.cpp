@@ -1747,6 +1747,40 @@ Common::Error Flow::runMainMenuStub() {
 	return _menu.runMainMenuStub(*this);
 }
 
+Common::Error Flow::showCdChangePrompt(int discNumber) {
+	if (discNumber <= 0)
+		return Common::kNoError;
+
+	ResourceManager *resources = _engine.getResources();
+	if (!resources)
+		return Common::kReadingFailed;
+	const int previousDisc = resources->getCurrentDisc();
+
+	if (_engine.shouldShowCdChangePrompts()) {
+		bool promptCompleted = false;
+		Common::Error promptError = _menu.showCdChangePrompt(discNumber, *resources, *this, promptCompleted);
+		// System-event exits can return kNoError without completing the prompt.
+		if (promptError.getCode() != Common::kNoError || !promptCompleted)
+			return promptError;
+	}
+
+	if (!_engine.activateDisc(discNumber)) {
+		warning("Harvester: unable to activate disc %d resources", discNumber);
+		return Common::kReadingFailed;
+	}
+	if ((discNumber == 1 || discNumber == 3) &&
+			previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
+		Script *script = _engine.getScript();
+		if (!script || !script->reloadTownWorld(*resources)) {
+			warning("Harvester: unable to reload town script after disc prompt %d -> %d",
+				previousDisc, discNumber);
+			return Common::kReadingFailed;
+		}
+	}
+
+	return Common::kNoError;
+}
+
 Common::Error Flow::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, bool canSaveGame) {
 	return _menu.runRoomMenuStub(backdrop, palette, paletteBrightness, *this, canSaveGame);
