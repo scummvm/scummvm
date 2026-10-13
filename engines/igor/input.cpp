@@ -142,7 +142,9 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 	if (ticks != -1) {
 		return;
 	}
-	_gameTicks += kTimerTicksCount;
+	// Splash screens advance one tick at a time. Resume the aligned timer
+	// steps used by the animation and room-loop checks.
+	_gameTicks += kTimerTicksCount - _gameTicks % kTimerTicksCount;
 
 	// Update cursor mask
 	if ((_gameTicks & 31) == 0 && !_eventQuitGame) {
