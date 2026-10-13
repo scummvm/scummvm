@@ -149,6 +149,7 @@ private:
 	void drawXorRectangleBorder(const Common::Rect &rect);
 	void processXorRectangleBorderAnimation(bool expand, const Common::Rect &sourceRect, const Common::Rect &targetRect);
 	bool showComputerDetailScreen(int compositeIndex);
+	Graphics::Surface *loadComputerDetailBitmap(const char *path);
 	void checkCurrentMediaPathReady();
 	void clearDisplayAndResetState();
 	void executeCurrentScriptSequence();
@@ -277,6 +278,8 @@ private:
 	Common::Rect _sceneChoiceBackingRect;
 	Graphics::Surface *_computerBitmap = nullptr;
 	Graphics::Surface *_computerDetailBacking = nullptr;
+	struct PreparedComputerCard;
+	PreparedComputerCard *_preparedComputerCard = nullptr;
 	Audio::SoundHandle _uiSoundHandle;
 	uint32 _gameState[0x100] = {};
 	uint32 _scriptValueStack[0x100] = {};
@@ -313,6 +316,8 @@ private:
 	Common::Point _mousePosition;
 	bool _activeMovieDispatchOnFinish = false;
 	bool _activeMovieOnBlankScreen = false;
+	bool _activeMovieCursorHidden = false;
+	bool _activeMovieCursorWasVisible = false;
 	bool _activeMoviePaused = false;
 	bool _sceneChoiceActive = false;
 	bool _mapControlsActive = false;

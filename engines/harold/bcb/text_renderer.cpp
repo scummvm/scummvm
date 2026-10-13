@@ -19,7 +19,9 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+// FreeType includes setjmp declarations in its public headers.
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 
 #include "common/archive.h"
 #include "common/compression/unzip.h"
@@ -31,8 +33,6 @@
 #include "common/util.h"
 #include "graphics/fonts/freetype.h"
 #include "graphics/surface.h"
-
-#include <math.h>
 
 #include "harold/bcb/text_renderer.h"
 
@@ -335,19 +335,13 @@ bool drawFreeTypeTextPass(Graphics::Surface &surface, FT_Face face, const Common
 	return true;
 }
 
-bool drawFreeTypeTextLine(Graphics::Surface &surface, const Common::String &fontName, int size,
+bool drawFreeTypeTextLine(Graphics::Surface &surface, FT_Face face, int size,
 						  const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
 						  int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth) {
-	Common::Array<byte> fontData;
-	if (!loadFontDataFromArchives(fontName, fontData))
+	if (!face)
 		return false;
 
-	FT_Library library = nullptr;
-	if (Graphics::FreeType::Init_FreeType(&library))
-		return false;
-
-	FT_Face face = nullptr;
-	bool ok = !Graphics::FreeType::New_Memory_Face(library, fontData.data(), fontData.size(), 0, &face);
+	bool ok = true;
 	if (ok) {
 		FT_Size_RequestRec request;
 		memset(&request, 0, sizeof(request));
@@ -369,9 +363,6 @@ bool drawFreeTypeTextLine(Graphics::Surface &surface, const Common::String &font
 		ok = drawFreeTypeTextPass(surface, face, glyphs, x, y, textColor, 0, false) && ok;
 	}
 
-	if (face)
-		Graphics::FreeType::Done_Face(face);
-	Graphics::FreeType::Done_FreeType(library);
 	return ok;
 }
 #endif
@@ -385,6 +376,10 @@ void alphaCompositeRgbaLayerInternal(Graphics::Surface &target, const Graphics::
 			layer.format.colorToARGB(layer.getPixel(x, y), srcA, srcR, srcG, srcB);
 			if (srcA == 0)
 				continue;
+			if (srcA == 255) {
+				target.setPixel(x, y, target.format.ARGBToColor(255, srcR, srcG, srcB));
+				continue;
+			}
 
 			uint8 dstA, dstR, dstG, dstB;
 			target.format.colorToARGB(target.getPixel(x, y), dstA, dstR, dstG, dstB);
@@ -491,9 +486,22 @@ static inline void unpremultiplyPillowRgba(uint8 a, uint8 &r, uint8 &g, uint8 &b
 	b = CLIP<int>((255 * b) / a, 0, 255);
 }
 
-Common::Rect findSurfaceAlphaBounds(const Graphics::Surface &surface) {
+Common::Rect findSurfaceAlphaBounds(const Graphics::Surface &surface, bool &opaque) {
 	Common::Rect bounds;
 	bool found = false;
+	opaque = true;
+	for (int y = 0; y < surface.h && opaque; ++y) {
+		const byte *row = static_cast<const byte *>(surface.getBasePtr(0, y));
+		for (int x = 0; x < surface.w; ++x) {
+			if (row[x * 4 + 3] != 255) {
+				opaque = false;
+				break;
+			}
+		}
+	}
+	if (opaque)
+		return Common::Rect(surface.w, surface.h);
+
 	for (int y = 0; y < surface.h; ++y) {
 		const byte *row = (const byte *)surface.getBasePtr(0, y);
 		for (int x = 0; x < surface.w; ++x) {
@@ -539,12 +547,42 @@ void findOutputBoundsForSourceBounds(const Common::Array<int> &bounds, int outpu
 	}
 }
 
+template<bool opaque, bool horizontal>
+void resampleRgbaPixel(const byte *source, int stride, const int *kernel, int count, byte *target) {
+	int sumR = 1 << (kPillowResamplePrecisionBits - 1);
+	int sumG = sumR;
+	int sumB = sumR;
+	int sumA = sumR;
+	for (int i = 0; i < count; ++i, source += stride) {
+		uint8 r = source[0], g = source[1], b = source[2];
+		if (!opaque && horizontal)
+			premultiplyPillowRgba(source[3], r, g, b);
+		const int weight = kernel[i];
+		sumR += r * weight;
+		sumG += g * weight;
+		sumB += b * weight;
+		if (!opaque)
+			sumA += source[3] * weight;
+	}
+	uint8 r = pillowResampleClip8(sumR);
+	uint8 g = pillowResampleClip8(sumG);
+	uint8 b = pillowResampleClip8(sumB);
+	const uint8 a = opaque ? 255 : pillowResampleClip8(sumA);
+	if (!opaque && !horizontal)
+		unpremultiplyPillowRgba(a, r, g, b);
+	target[0] = r;
+	target[1] = g;
+	target[2] = b;
+	target[3] = a;
+}
+
 Graphics::Surface *downscaleRgbaLayerInternal(const Graphics::Surface &source, int width, int height, bool lanczos) {
 	Graphics::Surface *target = new Graphics::Surface();
 	target->create(width, height, source.format);
 	target->fillRect(Common::Rect(width, height), 0);
 
-	const Common::Rect sourceAlphaBounds = findSurfaceAlphaBounds(source);
+	bool opaque;
+	const Common::Rect sourceAlphaBounds = findSurfaceAlphaBounds(source, opaque);
 	if (sourceAlphaBounds.isEmpty())
 		return target;
 
@@ -552,6 +590,18 @@ Graphics::Surface *downscaleRgbaLayerInternal(const Graphics::Surface &source, i
 	Common::Array<int> horizontalCoefficients;
 	const int horizontalKernelSize = precomputePillowCoefficients(source.w, 0.0f, (float)source.w, width, lanczos,
 																  horizontalBounds, horizontalCoefficients);
+	Common::Array<int> horizontalWeightSums;
+	Common::Array<int> runEnds;
+	if (opaque) {
+		runEnds.resize(source.w);
+		horizontalWeightSums.resize(width * (horizontalKernelSize + 1));
+		for (int x = 0; x < width; ++x) {
+			int *sums = &horizontalWeightSums[x * (horizontalKernelSize + 1)];
+			sums[0] = 0;
+			for (int i = 0; i < horizontalKernelSize; ++i)
+				sums[i + 1] = sums[i] + horizontalCoefficients[x * horizontalKernelSize + i];
+		}
+	}
 	Common::Array<int> verticalBounds;
 	Common::Array<int> verticalCoefficients;
 	const int verticalKernelSize = precomputePillowCoefficients(source.h, 0.0f, (float)source.h, height, lanczos,
@@ -572,31 +622,41 @@ Graphics::Surface *downscaleRgbaLayerInternal(const Graphics::Surface &source, i
 	for (int y = sourceAlphaBounds.top; y < sourceAlphaBounds.bottom; ++y) {
 		const byte *sourceRow = (const byte *)source.getBasePtr(0, y);
 		byte *tempRow = (byte *)temp.getBasePtr(0, y);
+		if (y > sourceAlphaBounds.top && !memcmp(sourceRow, sourceRow - source.pitch, source.w * 4)) {
+			memcpy(tempRow, tempRow - temp.pitch, width * 4);
+			continue;
+		}
+		if (opaque) {
+			const uint32 *pixels = reinterpret_cast<const uint32 *>(sourceRow);
+			runEnds[source.w - 1] = source.w;
+			for (int x = source.w - 2; x >= 0; --x)
+				runEnds[x] = pixels[x] == pixels[x + 1] ? runEnds[x + 1] : x + 1;
+		}
 		for (int outX = firstOutX; outX < lastOutX; ++outX) {
 			const int xmin = horizontalBounds[outX * 2 + 0];
 			const int xmax = horizontalBounds[outX * 2 + 1];
 			const int *kernel = &horizontalCoefficients[outX * horizontalKernelSize];
-			int sumA = 1 << (kPillowResamplePrecisionBits - 1);
-			int sumR = 1 << (kPillowResamplePrecisionBits - 1);
-			int sumG = 1 << (kPillowResamplePrecisionBits - 1);
-			int sumB = 1 << (kPillowResamplePrecisionBits - 1);
-			for (int x = 0; x < xmax; ++x) {
-				const byte *sourcePixel = sourceRow + (x + xmin) * 4;
-				uint8 r = sourcePixel[0];
-				uint8 g = sourcePixel[1];
-				uint8 b = sourcePixel[2];
-				const uint8 a = sourcePixel[3];
-				premultiplyPillowRgba(a, r, g, b);
-				sumR += r * kernel[x];
-				sumG += g * kernel[x];
-				sumB += b * kernel[x];
-				sumA += a * kernel[x];
-			}
 			byte *tempPixel = tempRow + outX * 4;
-			tempPixel[0] = pillowResampleClip8(sumR);
-			tempPixel[1] = pillowResampleClip8(sumG);
-			tempPixel[2] = pillowResampleClip8(sumB);
-			tempPixel[3] = pillowResampleClip8(sumA);
+			if (opaque) {
+				const int *sums = &horizontalWeightSums[outX * (horizontalKernelSize + 1)];
+				int sumR = 1 << (kPillowResamplePrecisionBits - 1);
+				int sumG = sumR;
+				int sumB = sumR;
+				for (int x = xmin; x < xmin + xmax;) {
+					const int end = MIN(runEnds[x], xmin + xmax);
+					const int weight = sums[end - xmin] - sums[x - xmin];
+					const byte *pixel = sourceRow + x * 4;
+					sumR += pixel[0] * weight;
+					sumG += pixel[1] * weight;
+					sumB += pixel[2] * weight;
+					x = end;
+				}
+				tempPixel[0] = pillowResampleClip8(sumR);
+				tempPixel[1] = pillowResampleClip8(sumG);
+				tempPixel[2] = pillowResampleClip8(sumB);
+				tempPixel[3] = 255;
+			} else
+				resampleRgbaPixel<false, true>(sourceRow + xmin * 4, 4, kernel, xmax, tempPixel);
 		}
 	}
 
@@ -605,32 +665,13 @@ Graphics::Surface *downscaleRgbaLayerInternal(const Graphics::Surface &source, i
 		const int ymax = verticalBounds[outY * 2 + 1];
 		const int *kernel = &verticalCoefficients[outY * verticalKernelSize];
 		byte *targetRow = (byte *)target->getBasePtr(0, outY);
+		const byte *tempRow = static_cast<const byte *>(temp.getBasePtr(0, ymin));
 		for (int x = firstOutX; x < lastOutX; ++x) {
-			int sumA = 1 << (kPillowResamplePrecisionBits - 1);
-			int sumR = 1 << (kPillowResamplePrecisionBits - 1);
-			int sumG = 1 << (kPillowResamplePrecisionBits - 1);
-			int sumB = 1 << (kPillowResamplePrecisionBits - 1);
-			for (int y = 0; y < ymax; ++y) {
-				const byte *tempPixel = (const byte *)temp.getBasePtr(x, y + ymin);
-				const uint8 r = tempPixel[0];
-				const uint8 g = tempPixel[1];
-				const uint8 b = tempPixel[2];
-				const uint8 a = tempPixel[3];
-				sumR += r * kernel[y];
-				sumG += g * kernel[y];
-				sumB += b * kernel[y];
-				sumA += a * kernel[y];
-			}
-			uint8 a = pillowResampleClip8(sumA);
-			uint8 r = pillowResampleClip8(sumR);
-			uint8 g = pillowResampleClip8(sumG);
-			uint8 b = pillowResampleClip8(sumB);
-			unpremultiplyPillowRgba(a, r, g, b);
 			byte *targetPixel = targetRow + x * 4;
-			targetPixel[0] = r;
-			targetPixel[1] = g;
-			targetPixel[2] = b;
-			targetPixel[3] = a;
+			if (opaque)
+				resampleRgbaPixel<true, false>(tempRow + x * 4, temp.pitch, kernel, ymax, targetPixel);
+			else
+				resampleRgbaPixel<false, false>(tempRow + x * 4, temp.pitch, kernel, ymax, targetPixel);
 		}
 	}
 
@@ -652,11 +693,37 @@ void alphaCompositeRgbaLayer(Graphics::Surface &target, const Graphics::Surface 
 	alphaCompositeRgbaLayerInternal(target, layer);
 }
 
-void drawHighQualityTextLine(Graphics::Surface &surface, const Common::String &fontName, int size,
+struct HighQualityTextRenderer::FontData {
+#ifdef USE_FREETYPE2
+	Common::Array<byte> bytes;
+	FT_Library library = nullptr;
+	FT_Face face = nullptr;
+
+	~FontData() {
+		if (face)
+			Graphics::FreeType::Done_Face(face);
+		if (library)
+			Graphics::FreeType::Done_FreeType(library);
+	}
+#endif
+};
+
+HighQualityTextRenderer::HighQualityTextRenderer(const Common::String &fontName) : _font(new FontData()) {
+#ifdef USE_FREETYPE2
+	if (loadFontDataFromArchives(fontName, _font->bytes) && !Graphics::FreeType::Init_FreeType(&_font->library))
+		Graphics::FreeType::New_Memory_Face(_font->library, _font->bytes.data(), _font->bytes.size(), 0, &_font->face);
+#endif
+}
+
+HighQualityTextRenderer::~HighQualityTextRenderer() {
+	delete _font;
+}
+
+void HighQualityTextRenderer::drawLine(Graphics::Surface &surface, int size,
 							 const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
 							 int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth) {
 #ifdef USE_FREETYPE2
-	drawFreeTypeTextLine(surface, fontName, size, shadowOffsets, text, x, y, textColor, shadowColor, strokeWidth);
+	drawFreeTypeTextLine(surface, _font->face, size, shadowOffsets, text, x, y, textColor, shadowColor, strokeWidth);
 #endif
 }
 

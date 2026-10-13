@@ -39,6 +39,8 @@ struct Surface;
 
 namespace BCB {
 
+class HighQualityTextRenderer;
+
 struct TranslationPackageDefinition {
 	Common::String code;
 	Common::String displayName;
@@ -66,6 +68,7 @@ public:
 	void clear();
 
 	TextStringTable strings;
+	Common::HashMap<Common::String, HighQualityTextRenderer *> imageFonts;
 	Common::Archive *packageArchive;
 };
 

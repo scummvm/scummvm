@@ -23,6 +23,7 @@
 #include "audio/decoders/wave.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/cursorman.h"
 #include "graphics/screen.h"
 #include "graphics/surface.h"
 #include "harold/bcb/bcb.h"
@@ -62,6 +63,10 @@ bool BCBEngine::playNumberedMovie(int movieId, bool blankScreenMovie) {
 	_activeMovieVideo->start();
 	_activeMoviePaused = false;
 	_activeMovieDispatchOnFinish = true;
+	if (blankScreenMovie || _currentDisplayState == 0) {
+		_activeMovieCursorWasVisible = CursorMan.showMouse(false);
+		_activeMovieCursorHidden = true;
+	}
 	drawMovieControlStrip();
 	return true;
 }
@@ -152,6 +157,10 @@ void BCBEngine::processQueuedMovieSequence() {
 }
 
 void BCBEngine::stopActiveMovie() {
+	if (_activeMovieCursorHidden) {
+		CursorMan.showMouse(_activeMovieCursorWasVisible);
+		_activeMovieCursorHidden = false;
+	}
 	if (!_activeMovieVideo)
 		return;
 

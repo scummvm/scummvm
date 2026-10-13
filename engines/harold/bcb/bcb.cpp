@@ -99,7 +99,7 @@ BCBEngine::~BCBEngine() {
 		_computerBitmap->free();
 		delete _computerBitmap;
 	}
-	delete _activeMovieVideo;
+	stopActiveMovie();
 	delete _mapMoveVideo;
 	delete _sceneIdleVideo;
 	delete _gameOverVideo;

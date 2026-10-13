@@ -22,6 +22,7 @@
 #include "common/algorithm.h"
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/ptr.h"
 #include "common/system.h"
 #include "graphics/screen.h"
 #include "graphics/surface.h"
@@ -36,6 +37,12 @@ static const int kComputerCompositeTransitionLeft = 36;
 static const int kComputerCompositeTransitionTop = 36;
 static const int kComputerCompositeTransitionRight = 606;
 static const int kComputerCompositeTransitionBottom = 444;
+
+struct BCBEngine::PreparedComputerCard {
+	const char *path = nullptr;
+	int disc = 0;
+	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> bitmap;
+};
 
 const Graphics::Surface *BCBEngine::getComputerBitmap() {
 	if (!_computerBitmap) {
@@ -280,6 +287,17 @@ void BCBEngine::drawComputerConditionalChoiceControls(const ButtonControlRecord 
 	}
 }
 
+Graphics::Surface *BCBEngine::loadComputerDetailBitmap(const char *path) {
+	if (_preparedComputerCard && _preparedComputerCard->bitmap &&
+		_preparedComputerCard->disc == _activeMediaDiscNumber && !strcmp(_preparedComputerCard->path, path))
+		return _preparedComputerCard->bitmap.release();
+
+	Graphics::Surface *bitmap = loadDiscBitmap(path);
+	if (bitmap && _gameDescription->desc.language == Common::JA_JPN && _selectedTextLanguagePackageAvailable)
+		applyTranslatedComputerCard(*bitmap, path, _textTranslation);
+	return bitmap;
+}
+
 bool BCBEngine::showComputerDetailScreen(int compositeIndex) {
 	if (compositeIndex < 0 || compositeIndex >= (int)ARRAYSIZE(kComputerDetailBitmapVariantsBySelectedValue))
 		return false;
@@ -294,11 +312,19 @@ bool BCBEngine::showComputerDetailScreen(int compositeIndex) {
 	if (!computer)
 		return false;
 
-	Graphics::Surface *composite = loadDiscBitmap(compositePath);
+	Graphics::Surface *composite = loadComputerDetailBitmap(compositePath);
 	if (!composite)
 		return false;
-	if (_gameDescription->desc.language == Common::JA_JPN && _selectedTextLanguagePackageAvailable)
-		applyTranslatedComputerCard(*composite, compositePath, _textTranslation);
+
+	if (_gameDescription->desc.language == Common::JA_JPN && _selectedTextLanguagePackageAvailable && variantSet.pathCount > 1) {
+		const ButtonControlRecord &button = kComputerDetailButtonTable[2];
+		const int sourceX = displayedVariantIndex + 1 < (int)variantSet.pathCount ? 312 : 472;
+		const int x = button.x - 0x24;
+		const int y = button.y - 0x23;
+		if (x + button.width <= composite->w && y + button.height <= composite->h &&
+			sourceX + button.width <= computer->w && 672 + button.height <= computer->h)
+			composite->copyRectToSurface(*computer, x, y, Common::Rect(sourceX, 672, sourceX + button.width, 672 + button.height));
+	}
 
 	Graphics::Surface *screen = _screen->surfacePtr();
 	if (screen) {
@@ -359,13 +385,25 @@ bool BCBEngine::handleComputerClick(const Common::Point &mousePosition) {
 				continue;
 
 			playUiSound();
+			const int compositeIndex = _computerActiveChoiceIds[i] - 700;
+			PreparedComputerCard prepared;
+			if (compositeIndex >= 0 && compositeIndex < (int)ARRAYSIZE(kComputerDetailBitmapVariantsBySelectedValue)) {
+				const CompositeBitmapVariantSet &variants = kComputerDetailBitmapVariantsBySelectedValue[compositeIndex];
+				if (variants.pathCount > 0) {
+					prepared.path = variants.paths[0];
+					prepared.disc = _activeMediaDiscNumber;
+					prepared.bitmap.reset(loadComputerDetailBitmap(prepared.path));
+				}
+			}
+			_preparedComputerCard = &prepared;
 			_computerSelectionXorRect = _computerActiveChoiceRects[i];
 			processXorRectangleBorderAnimation(true, _computerSelectionXorRect, Common::Rect(kComputerCompositeTransitionLeft, kComputerCompositeTransitionTop, kComputerCompositeTransitionRight, kComputerCompositeTransitionBottom));
 			_computerControlsActive = false;
-			stateDword(kStateSelectedSceneChoiceValue) = _computerActiveChoiceIds[i] - 700;
+			stateDword(kStateSelectedSceneChoiceValue) = compositeIndex;
 			_computerActiveChoiceIds.clear();
 			_computerActiveChoiceRects.clear();
 			processGameStateDispatcher(true);
+			_preparedComputerCard = nullptr;
 			return true;
 		}
 	}

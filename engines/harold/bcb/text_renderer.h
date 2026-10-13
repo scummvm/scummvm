@@ -34,9 +34,20 @@ struct Surface;
 
 namespace BCB {
 
-void drawHighQualityTextLine(Graphics::Surface &surface, const Common::String &fontName, int size,
+class HighQualityTextRenderer {
+public:
+	explicit HighQualityTextRenderer(const Common::String &fontName);
+	~HighQualityTextRenderer();
+	void drawLine(Graphics::Surface &surface, int size,
 							 const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
 							 int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth);
+
+private:
+	struct FontData;
+	FontData *_font;
+	HighQualityTextRenderer(const HighQualityTextRenderer &) = delete;
+	HighQualityTextRenderer &operator=(const HighQualityTextRenderer &) = delete;
+};
 Graphics::Surface *downscaleRgbaLayerBicubic(const Graphics::Surface &source, int width, int height);
 Graphics::Surface *downscaleRgbaLayerLanczos(const Graphics::Surface &source, int width, int height);
 void alphaCompositeRgbaLayer(Graphics::Surface &target, const Graphics::Surface &layer);

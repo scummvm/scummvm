@@ -29,6 +29,7 @@
 #include "common/util.h"
 
 #include "harold/bcb/bcb.h"
+#include "harold/bcb/text_renderer.h"
 #include "harold/bcb/translation.h"
 
 namespace BCB {
@@ -175,6 +176,9 @@ TextTranslationData::~TextTranslationData() {
 }
 
 void TextTranslationData::clear() {
+	for (auto &entry : imageFonts)
+		delete entry._value;
+	imageFonts.clear();
 	strings.clear();
 	delete packageArchive;
 	packageArchive = nullptr;
@@ -233,6 +237,10 @@ bool loadTranslationPackage(const Common::FSNode &gameDataDir, const Common::Str
 	if (!translation.strings.load(translation.packageArchive->createReadStreamForMember(Common::Path(getTranslationStringFileName(code), '/')))) {
 		translation.clear();
 		return false;
+	}
+	for (const auto &entry : translation.strings) {
+		if (entry._key.hasSuffix(".font") && !entry._value.empty() && !translation.imageFonts.contains(entry._value))
+			translation.imageFonts[entry._value] = new HighQualityTextRenderer(entry._value);
 	}
 
 	return true;
