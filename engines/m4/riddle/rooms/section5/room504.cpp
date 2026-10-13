@@ -1602,6 +1602,8 @@ void Room504::daemon() {
 		setVines();
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Rope Rising");
+		sendWSMessage_10000(1, _vineMachine2, _leftVineTie, 1, 9, 644,
+			_leftVineTie, 9, 9, 0);
 		sendWSMessage_120000(640);
 		break;
 
