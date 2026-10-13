@@ -731,6 +731,7 @@
 #define IMG_Part74 1128
 #define TXT_Part74 1129
 #define ANM_Part74 1130
+#define TXT_Part81ObjectNames 1231
 
 // State 710 (PART_71)
 #define DAT_Part71 1131

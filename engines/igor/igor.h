@@ -1231,7 +1231,7 @@ private:
 	void PART_74_UPDATE_DIALOGUE_CaptainA(int action);
 	void PART_74_UPDATE_DIALOGUE_CaptainB(int action);
 	void PART_74_SAY(int who, const Common::Array<DialogueText> &lines);
-	void PART_74_CUTSCENE();
+	void PART_74_shipCutscene();
 
 	// philip vodka cutscene
 	void PART_75_UPDATE_DIALOGUE_PHILIP(int action);
@@ -1256,20 +1256,20 @@ private:
 	void PART_77_enterFromCollege();
 	void PART_77();
 
-	void PART_78_DRAW_FIGURE(int frame);
-	void PART_78_DRAW_BACKGROUND_FRAME(int frame);
-	void PART_78_DRAW_BAND(int frame);
-	void PART_78_DRAW_PATCH(int frame);
-	void PART_78_UPDATE_DIALOGUE_FIGURE_A(int action);
-	void PART_78_UPDATE_DIALOGUE_FIGURE_B(int action);
-	void PART_78_UPDATE_DIALOGUE_FIGURE_C(int action);
-	void PART_78_UPDATE_DIALOGUE_BAND_A(int action);
-	void PART_78_UPDATE_DIALOGUE_BAND_B(int action);
-	void PART_78_UPDATE_DIALOGUE_PATCH(int action);
-	void PART_78_SAY_START(int speaker, const Common::Array<DialogueText> &lines);
-	void PART_78_WAIT_FOR_LINES(int speaker);
-	void PART_78_SAY(int speaker, const Common::Array<DialogueText> &lines);
-	void PART_78_INTERJECTION(int which);
+	void PART_78_drawProfessorFrame(int frame);
+	void PART_78_drawAlumniFrame(int frame);
+	void PART_78_drawIgorFrame(int frame);
+	void PART_78_drawPhilipFrame(int frame);
+	void PART_78_updateProfessorDialogueLeft(int action);
+	void PART_78_updateProfessorDialogueFromDesk(int action);
+	void PART_78_updateProfessorDialogueToIgor(int action);
+	void PART_78_updateIgorDialogueLeft(int action);
+	void PART_78_updateIgorDialogueRight(int action);
+	void PART_78_updatePhilipDialogue(int action);
+	void PART_78_sayStart(int speaker, const Common::Array<DialogueText> &lines);
+	void PART_78_waitForLines(int speaker);
+	void PART_78_say(int speaker, const Common::Array<DialogueText> &lines);
+	void PART_78_professorWarnings(int which);
 	void PART_78();
 
 	void PART_79_DRAW_FIGURE(int frame);
@@ -1300,34 +1300,34 @@ private:
 	void PART_79_791();
 	void PART_79();
 
-	void PART_80_DRAW_PATCH(int frame);
-	void PART_80_UPDATE_DIALOGUE_FIRST(int action);
-	void PART_80_UPDATE_DIALOGUE_SECOND(int action);
-	void PART_80_SAY(int who, const Common::Array<DialogueText> &lines);
+	void PART_80_drawFrame(int frame);
+	void PART_80_updateDialogueFriend(int action);
+	void PART_80_updateDialogueLaura(int action);
+	void PART_80_say(int who, const Common::Array<DialogueText> &lines);
 	void PART_80();
 
 	void PART_81_EXEC_ACTION(int action);
-	void PART_81_LOAD_ROOM();
-	void PART_81_LOAD_ANIMATION();
-	void PART_81_DRAW_HEAD(int frame);
-	void PART_81_DRAW_STORY_HEAD(int frame);
-	void PART_81_DRAW_FIGURE(int offset);
-	void PART_81_DRAW_END_FRAME(int frame);
+	void PART_81_loadRoom();
+	void PART_81_loadAnimation();
+	void PART_81_drawLighthouseKeeperHead(int frame);
+	void PART_81_drawLighthouseKeeper(int frame);
+	void PART_81_drawIgor(int offset);
+	void PART_81_drawLighthouseFrame(int frame);
 	void PART_81_UPDATE_ROOM_BACKGROUND();
-	void PART_81_UPDATE_DIALOGUE_NPC(int action);
-	void PART_81_NPC_SAY(const Common::Array<DialogueText> &lines);
-	void PART_81_IGOR_SAY(int num, int count, int sound);
+	void PART_81_updateDialogueLighthouseKeeper(int action);
+	void PART_81_lighthouseKeeperSay(const Common::Array<DialogueText> &lines);
+	void PART_81_igorSay(int num, int count, int sound);
 	void PART_81_APPLY_OBJECT_STATE(int num);
-	void PART_81_SCROLL_IN();
-	void PART_81_TRANSITION_IN();
-	void PART_81_TRANSITION_OUT();
-	void PART_81_END_SCENE();
-	void PART_81_ACTION_109();
-	void PART_81_ACTION_110();
+	void PART_81_scrollIn();
+	void PART_81_transitionScrollUp();
+	void PART_81_transitionScrollDown();
+	void PART_81_lighthouseSendMessage();
+	void PART_81_ACTION_109_giveLampToLighthouseKeeper();
+	void PART_81_ACTION_110_rejectItem();
 	void PART_81_ACTION_102_talk();
 	void PART_81_DIALOGUE_CODE(int code);
-	void PART_81_CONVERSATION();
-	void PART_81_ENTER();
+	void PART_81_handleDialogue();
+	void PART_81_walkIn();
 	void PART_81();
 
 	// maze

@@ -22,63 +22,62 @@
 
 namespace Igor {
 
-// A 50x29 area of the picture is redrawn from the animation resource, whose frames are 50x29 (1450 bytes) each.
+// Laura and friend talking are actually the same screen patch
 static const int kPart80PatchOffset = 62 * 320 + 135;
 static const int kPart80PatchWidth = 50;
 static const int kPart80PatchHeight = 29;
 static const int kPart80PatchFrameSize = 1450;
 
-// Four frames of 28x69 are drawn into the picture at the end of the scene; they start at this offset of the animation
-// resource.
-static const int kPart80ObjectOffset = 68 * 320 + 121;
-static const int kPart80ObjectWidth = 28;
-static const int kPart80ObjectHeight = 69;
-static const int kPart80ObjectFrameSize = 0x78C;
-static const int kPart80ObjectFramesBase = 0x25C4;
+// animation of the girl falling at the end
+static const int kPart80FallingGirlOffset = 68 * 320 + 121;
+static const int kPart80FallingGirlWidth = 28;
+static const int kPart80FallingGirlHeight = 69;
+static const int kPart80FallingGirlFrameSize = 0x78C;
+static const int kPart80FallingGirlFramesBase = 0x25C4;
 
 // Where and in which color each of the two persons talk.
-static const int kPart80FirstX = 149;
-static const int kPart80FirstY = 59;
-static const int kPart80SecondX = 171;
-static const int kPart80SecondY = 60;
+static const int kPart80FriendX = 149;
+static const int kPart80FriendY = 59;
+static const int kPart80LauraX = 171;
+static const int kPart80LauraY = 60;
 
-void IgorEngine::PART_80_DRAW_PATCH(int frame) {
+void IgorEngine::PART_80_drawFrame(int frame) {
 	copyArea(_screenVGA, kPart80PatchOffset, 320, _animFramesBuffer + (frame - 1) * kPart80PatchFrameSize, kPart80PatchWidth,
 			 kPart80PatchWidth, kPart80PatchHeight);
 }
 
-void IgorEngine::PART_80_UPDATE_DIALOGUE_FIRST(int action) {
+void IgorEngine::PART_80_updateDialogueFriend(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_80_DRAW_PATCH(1);
+		PART_80_drawFrame(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_80_DRAW_PATCH(getRandomNumber(3) + 1);
+		PART_80_drawFrame(getRandomNumber(3) + 1);
 		break;
 	}
 }
 
-void IgorEngine::PART_80_UPDATE_DIALOGUE_SECOND(int action) {
+void IgorEngine::PART_80_updateDialogueLaura(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_80_DRAW_PATCH(5);
+		PART_80_drawFrame(5);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_80_DRAW_PATCH(getRandomNumber(3) + 5);
+		PART_80_drawFrame(getRandomNumber(3) + 5);
 		break;
 	}
 }
 
-void IgorEngine::PART_80_SAY(int who, const Common::Array<DialogueText> &lines) {
+void IgorEngine::PART_80_say(int who, const Common::Array<DialogueText> &lines) {
 	if (who == 0) {
-		cutsceneSayWithCallback(kPart80FirstX, kPart80FirstY, 0, 44, 63, lines, &IgorEngine::PART_80_UPDATE_DIALOGUE_FIRST);
+		cutsceneSayWithCallback(kPart80FriendX, kPart80FriendY, 0, 44, 63, lines, &IgorEngine::PART_80_updateDialogueFriend);
 	} else {
-		cutsceneSayWithCallback(kPart80SecondX, kPart80SecondY, 63, 0, 38, lines, &IgorEngine::PART_80_UPDATE_DIALOGUE_SECOND);
+		cutsceneSayWithCallback(kPart80LauraX, kPart80LauraY, 63, 0, 38, lines, &IgorEngine::PART_80_updateDialogueLaura);
 	}
 }
 
 /**
- * Scene of two persons talking, followed by four frames drawn into the picture. It is played at the end of state 730.
+ * Larua and Friend discuss the great dosicua recovery.
  */
 void IgorEngine::PART_80() {
 	playMusic(8);
@@ -91,26 +90,27 @@ void IgorEngine::PART_80() {
 	fadeIn(768);
 	_gameState.igorMoving = false;
 
-	PART_80_SAY(0, { { 201, 2, 1131 } });
-	PART_80_SAY(1, { { 203, 1, 1132 } });
-	PART_80_SAY(0, { { 204, 2, 1133 } });
-	PART_80_SAY(1, { { 206, 1, 1134 } });
-	PART_80_SAY(0, { { 207, 1, 1135 } });
-	PART_80_SAY(1, { { 208, 1, 1136 } });
-	PART_80_SAY(0, { { 209, 1, 1137 } });
-	PART_80_SAY(1, { { 210, 1, 1138 } });
-	PART_80_SAY(0, { { 211, 1, 1139 }, { 212, 1, 1140 } });
-	PART_80_SAY(1, { { 213, 1, 1141 } });
-	PART_80_SAY(0, { { 214, 2, 1142 } });
-	PART_80_SAY(1, { { 216, 1, 1143 }, { 217, 1, 1144 } });
-	PART_80_SAY(0, { { 218, 1, 1145 } });
-	PART_80_SAY(1, { { 219, 1, 1146 }, { 220, 1, 1147 }, { 221, 1, 1148 } });
+	PART_80_say(0, { { 201, 2, 1131 } });
+	PART_80_say(1, { { 203, 1, 1132 } });
+	PART_80_say(0, { { 204, 2, 1133 } });
+	PART_80_say(1, { { 206, 1, 1134 } });
+	PART_80_say(0, { { 207, 1, 1135 } });
+	PART_80_say(1, { { 208, 1, 1136 } });
+	PART_80_say(0, { { 209, 1, 1137 } });
+	PART_80_say(1, { { 210, 1, 1138 } });
+	PART_80_say(0, { { 211, 1, 1139 }, { 212, 1, 1140 } });
+	PART_80_say(1, { { 213, 1, 1141 } });
+	PART_80_say(0, { { 214, 2, 1142 } });
+	PART_80_say(1, { { 216, 1, 1143 }, { 217, 1, 1144 } });
+	PART_80_say(0, { { 218, 1, 1145 } });
+	PART_80_say(1, { { 219, 1, 1146 }, { 220, 1, 1147 }, { 221, 1, 1148 } });
 	waitForTimer(255);
 
+	// left-most friend falls on the floor
 	for (int i = 1; i <= 4; ++i) {
-		copyArea(_screenVGA, kPart80ObjectOffset, 320,
-				 _animFramesBuffer + kPart80ObjectFramesBase + i * kPart80ObjectFrameSize, kPart80ObjectWidth,
-				 kPart80ObjectWidth, kPart80ObjectHeight);
+		copyArea(_screenVGA, kPart80FallingGirlOffset, 320,
+				 _animFramesBuffer + kPart80FallingGirlFramesBase + i * kPart80FallingGirlFrameSize, kPart80FallingGirlWidth,
+				 kPart80FallingGirlWidth, kPart80FallingGirlHeight);
 		if (i < 4) {
 			waitForTimer(21);
 		} else {

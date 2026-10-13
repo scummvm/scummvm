@@ -108,7 +108,7 @@ void IgorEngine::PART_74_SAY(int who, const Common::Array<DialogueText> &lines) 
 /**
  * Boat scene
  */
-void IgorEngine::PART_74_CUTSCENE() {
+void IgorEngine::PART_74_shipCutscene() {
 	UpdateRoomBackgroundProc previousBackground = _updateRoomBackground;
 	playMusic(4);
 	_gameState.enableLight = 1;

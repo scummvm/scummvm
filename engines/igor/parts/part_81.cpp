@@ -22,8 +22,7 @@
 
 namespace Igor {
 
-// A character stands in the middle of the room. His head is a 21x53 picture drawn at (140,28); the animation
-// resource has the frames from 1 on, 1113 bytes each, after a base offset.
+
 static const int kPart81HeadOffset = 28 * 320 + 140;
 static const int kPart81HeadWidth = 21;
 static const int kPart81HeadHeight = 53;
@@ -34,64 +33,59 @@ static const int kPart81HeadStanding = 4;
 // Another picture of the head, drawn into the room picture while it is there.
 static const int kPart81HeadRestFrame = 1;
 
-// A picture (43x62, frames of 2666 bytes) at (116,32).
-static const int kPart81FigureOffset = 32 * 320 + 116;
-static const int kPart81FigureWidth = 43;
-static const int kPart81FigureHeight = 62;
-static const int kPart81FigureFrameSize = kPart81FigureWidth * kPart81FigureHeight;
-static const int kPart81FigureFirst = 0xC4DF;
-static const int kPart81FigureSecond = 0xBA75;
+static const int kPart81IgorOffset = 32 * 320 + 116;
+static const int kPart81IgorWidth = 43;
+static const int kPart81IgorHeight = 62;
+static const int kPart81IgorFrameSize = kPart81IgorWidth * kPart81IgorHeight;
+static const int kPart81IgorHanding = 0xC4DF;
+static const int kPart81IgorStanding = 0xBA75;
 
-// The frames of the head that follow the story: 6 frames of the third block of the animation.
 static const int kPart81StoryFramesBase = 0x4206;
 
-// Where the lines of the character are shown.
+// Where the lines of the lighthouse keeper are shown.
 static const int kPart81TextX = 148;
 static const int kPart81TextY = 31;
 static const int kPart81TextR = 63;
 static const int kPart81TextG = 32;
 static const int kPart81TextB = 0;
 
-// The scenes use a tall picture (130x369) at the start of the second animation and a smaller one (285x72) in the
-// walk mask buffer.
 static const int kPart81TallWidth = 0x82;
 static const int kPart81TallX = 0x6A;
 static const int kPart81StripWidth = 0x11D;
 static const int kPart81StripRows = 0x48;
 
-// The last frames of the animation of the end of the story.
 static const int kPart81EndFramesBase = 0xBAE0;
 static const int kPart81EndFramesTable = 0x828;
 
 // Flags of the story kept in the objects state.
-static const int kPart81StoryState = 6;
+static const int kPart81VaseState = 6;
 static const int kPart81SideState = 90;
-static const int kPart81InventoryState = 69;
-static const int kPart81EventDoneState = 104;
-static const int kPart81BellState = 105;
+static const int kPart81LighthouseMessageSent = 104;
+static const int kPart81HasSeenChurchBellMessageState = 105;
 
-// First picture of each of the steps of the animation of the story.
+static const int kPart81InventoryIndex = 69;
+
 static const uint8 kPart81FigureFrames[4] = { 1, 2, 3, 1 };
-// Frames and times of the end scene (timer ticks).
+
 static const uint8 kPart81EndFrames[10] = { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 };
 static const uint8 kPart81EndHold[10] = { 45, 35, 25, 40, 45, 30, 45, 35, 20, 30 };
 static const uint8 kPart81EndFinalHold[10] = { 25, 30, 20, 40, 25, 35, 40, 42, 20, 25 };
 
 static const int kPart81StepTicks = 16;
 
-void IgorEngine::PART_81_LOAD_ROOM() {
+void IgorEngine::PART_81_loadRoom() {
 	loadRoomData(PAL_Part81, IMG_Part81, BOX_Part81, MSK_Part81, TXT_Part81);
 	// the colors of Igor
 	memcpy(_paletteBuffer + 192 * 3, _igorPalette, 48);
 	SET_PAL_240_48_1();
 }
 
-void IgorEngine::PART_81_LOAD_ANIMATION() {
+void IgorEngine::PART_81_loadAnimation() {
 	static const int anim[] = { ANM_Part81, 0 };
 	loadAnimData(anim);
 }
 
-void IgorEngine::PART_81_DRAW_HEAD(int frame) {
+void IgorEngine::PART_81_drawLighthouseKeeperHead(int frame) {
 	drawAnimRect(kPart81HeadOffset, kPart81HeadFramesBase + frame * kPart81HeadFrameSize, kPart81HeadWidth, kPart81HeadHeight,
 				 true, kBlendBehindIgorAndText);
 	if (_gameState.dialogueTextRunning) {
@@ -100,50 +94,51 @@ void IgorEngine::PART_81_DRAW_HEAD(int frame) {
 }
 
 void IgorEngine::PART_81_UPDATE_ROOM_BACKGROUND() {
-	if (compareGameTick(0x3D) && getRandomNumber(1) == 0 && _objectsState[kPart81BellState] == 1) {
-		PART_81_DRAW_HEAD(getRandomNumber(2) + 1);
+	// if user has seen church bell message, show lighthouse keeper
+	if (compareGameTick(0x3D) && getRandomNumber(1) == 0 && _objectsState[kPart81HasSeenChurchBellMessageState] == 1) {
+		PART_81_drawLighthouseKeeperHead(getRandomNumber(2) + 1);
 	}
 }
 
-void IgorEngine::PART_81_UPDATE_DIALOGUE_NPC(int action) {
+void IgorEngine::PART_81_updateDialogueLighthouseKeeper(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		PART_81_DRAW_HEAD(kPart81HeadStanding);
+		PART_81_drawLighthouseKeeperHead(kPart81HeadStanding);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_81_DRAW_HEAD(getRandomNumber(4) + 5);
+		PART_81_drawLighthouseKeeperHead(getRandomNumber(4) + 5);
 		break;
 	}
 }
 
-/**
- * The character says lines of the room texts. The lines of the room itself do not run meanwhile.
- */
-void IgorEngine::PART_81_NPC_SAY(const Common::Array<DialogueText> &lines) {
+void IgorEngine::PART_81_lighthouseKeeperSay(const Common::Array<DialogueText> &lines) {
 	UpdateRoomBackgroundProc previous = _updateRoomBackground;
 	_updateRoomBackground = 0;
 	cutsceneSayWithCallback(kPart81TextX, kPart81TextY, kPart81TextR, kPart81TextG, kPart81TextB, lines,
-							&IgorEngine::PART_81_UPDATE_DIALOGUE_NPC);
+							&IgorEngine::PART_81_updateDialogueLighthouseKeeper);
 	_updateRoomBackground = previous;
 }
 
-void IgorEngine::PART_81_IGOR_SAY(int num, int count, int sound) {
+void IgorEngine::PART_81_igorSay(int num, int count, int sound) {
 	UpdateRoomBackgroundProc previous = _updateRoomBackground;
 	_updateRoomBackground = 0;
 	igorSayAndWait(num, count, sound);
 	_updateRoomBackground = previous;
 }
 
-/**
- * The picture of the character at rest is part of the room picture while the bell is on; the dialogue and the
- * objects of the room depend on the story.
- */
 void IgorEngine::PART_81_APPLY_OBJECT_STATE(int num) {
 	if (num != 1 && num != 255) {
 		return;
 	}
-	if (_objectsState[kPart81BellState] == 1) {
+	// change door hotspot to lighthouse keeper and vice-versa
+	uint8 objectNames[16];
+	loadData(TXT_Part81ObjectNames, objectNames);
+	const uint8 *name = objectNames + (_objectsState[kPart81HasSeenChurchBellMessageState] == 1 ? 0 : 8);
+	memcpy(_roomObjectNames[2], name + 1, name[0]);
+	_roomObjectNames[2][name[0]] = '\0';
+	// show lighthouse keeper if the player has seen the church bell message
+	if (_objectsState[kPart81HasSeenChurchBellMessageState] == 1) {
 		copyArea(_screenLayer1, kPart81HeadOffset, 320, _animFramesBuffer + kPart81HeadRestFrame * kPart81HeadFrameSize + 0x1AE5,
 				 kPart81HeadWidth, kPart81HeadWidth, kPart81HeadHeight);
 		_roomActionsTable[30] = 2;
@@ -169,9 +164,9 @@ void IgorEngine::PART_81_APPLY_OBJECT_STATE(int num) {
 }
 
 /**
- * The room picture comes in from the left, over the one that was on the screen (a 160 columns picture).
+ * The room picture comes in from the left, over the actual scene (a 160 columns picture).
  */
-void IgorEngine::PART_81_SCROLL_IN() {
+void IgorEngine::PART_81_scrollIn() {
 	uint8 *buffer = _screenTextLayer;
 	for (int step = 20; step >= 0; --step) {
 		const int shift = step * 8;
@@ -189,10 +184,9 @@ void IgorEngine::PART_81_SCROLL_IN() {
 }
 
 /**
- * Transition: the screen moves down while the small picture of the walk mask buffer, then the tall picture of
- * the animation, come in from above.
+ * Transition: for the message cutscene, the scene scrolls up to the top of lighthouse
  */
-void IgorEngine::PART_81_TRANSITION_IN() {
+void IgorEngine::PART_81_transitionScrollUp() {
 	uint8 *buffer = _screenTextLayer;
 	memset(buffer, 0, 46080);
 	for (int i = 1; i <= 9; ++i) {
@@ -228,9 +222,9 @@ void IgorEngine::PART_81_TRANSITION_IN() {
 }
 
 /**
- * The opposite transition: the tall picture goes down, then the small picture and finally the room picture come in.
+ * The opposite transition: from the top of the lighthouse back to the normal scene.
  */
-void IgorEngine::PART_81_TRANSITION_OUT() {
+void IgorEngine::PART_81_transitionScrollDown() {
 	uint8 *buffer = _screenTextLayer;
 	for (int n = 0x2E; n >= 0x12; --n) {
 		int dstRow = 0;
@@ -262,91 +256,84 @@ void IgorEngine::PART_81_TRANSITION_OUT() {
 	}
 }
 
-void IgorEngine::PART_81_DRAW_END_FRAME(int frame) {
+void IgorEngine::PART_81_drawLighthouseFrame(int frame) {
 	decodeAnimFrame(getAnimFrame(kPart81EndFramesBase, kPart81EndFramesTable, frame), _screenVGA, false);
 }
 
-/**
- * The end of the story: the transition, the long picture, the scene of the two characters and back.
- */
-void IgorEngine::PART_81_END_SCENE() {
-	PART_81_TRANSITION_IN();
+void IgorEngine::PART_81_lighthouseSendMessage() {
+	PART_81_transitionScrollUp();
 	for (int i = 0; i < 3; ++i) {
 		waitForTimer(251);
 	}
+	// lighthouse flashes message
 	for (int i = 0; i < 10; ++i) {
-		PART_81_DRAW_END_FRAME(kPart81EndFrames[i]);
+		PART_81_drawLighthouseFrame(kPart81EndFrames[i]);
 		waitForTimer(kPart81EndHold[i]);
 	}
 	waitForTimer(251);
-	PART_74_CUTSCENE();
+	PART_74_shipCutscene();
+	// ship receives message
 	for (int i = 0; i < 10; ++i) {
 		for (int frame = 3; frame <= 8; ++frame) {
-			PART_81_DRAW_END_FRAME(frame);
+			PART_81_drawLighthouseFrame(frame);
 			waitForTimer(10);
 		}
 		waitForTimer(kPart81EndFinalHold[i]);
 	}
-	PART_81_TRANSITION_OUT();
+	PART_81_transitionScrollDown();
 }
 
-void IgorEngine::PART_81_DRAW_STORY_HEAD(int frame) {
+void IgorEngine::PART_81_drawLighthouseKeeper(int frame) {
 	copyArea(_screenVGA, kPart81HeadOffset, 320, _animFramesBuffer + kPart81StoryFramesBase + frame * kPart81HeadFrameSize,
 			 kPart81HeadWidth, kPart81HeadWidth, kPart81HeadHeight);
 }
 
-void IgorEngine::PART_81_DRAW_FIGURE(int offset) {
-	copyArea(_screenVGA, kPart81FigureOffset, 320, _animFramesBuffer + offset, kPart81FigureWidth, kPart81FigureWidth,
-			 kPart81FigureHeight);
+void IgorEngine::PART_81_drawIgor(int offset) {
+	copyArea(_screenVGA, kPart81IgorOffset, 320, _animFramesBuffer + offset, kPart81IgorWidth, kPart81IgorWidth,
+			 kPart81IgorHeight);
 }
 
-/**
- * Looking at the picture on the wall before the story is complete.
- */
-void IgorEngine::PART_81_ACTION_110() {
+void IgorEngine::PART_81_ACTION_110_rejectItem() {
 	for (int frame = 3; frame <= 4; ++frame) {
-		PART_81_DRAW_HEAD(frame);
+		PART_81_drawLighthouseKeeperHead(frame);
 		waitForTimer(31);
 	}
-	PART_81_IGOR_SAY(208, 1, 952);
-	PART_81_DRAW_FIGURE(kPart81FigureFirst);
-	PART_81_NPC_SAY({ { 209, 1, 953 } });
-	PART_81_DRAW_FIGURE(kPart81FigureSecond);
+	PART_81_igorSay(208, 1, 952);
+	PART_81_drawIgor(kPart81IgorHanding);
+	PART_81_lighthouseKeeperSay({ { 209, 1, 953 } });
+	PART_81_drawIgor(kPart81IgorStanding);
 }
 
-/**
- * The story of the room: Igor shows what he has, the two characters talk and the end scene plays.
- */
-void IgorEngine::PART_81_ACTION_109() {
-	if (_objectsState[kPart81StoryState] <= 1) {
-		PART_81_ACTION_110();
+void IgorEngine::PART_81_ACTION_109_giveLampToLighthouseKeeper() {
+	if (_objectsState[kPart81VaseState] <= 1) {
+		PART_81_ACTION_110_rejectItem();
 		return;
 	}
 	memset(_screenVGA + 46080, 0, 17920);
 	for (int frame = 3; frame <= 4; ++frame) {
-		PART_81_DRAW_HEAD(frame);
+		PART_81_drawLighthouseKeeperHead(frame);
 		waitForTimer(31);
 	}
-	PART_81_IGOR_SAY(208, 1, 952);
+	PART_81_igorSay(208, 1, 952);
 	for (int step = 0; step < 4; ++step) {
-		PART_81_DRAW_FIGURE((kPart81FigureFrames[step] - 1) * kPart81FigureFrameSize);
+		PART_81_drawIgor((kPart81FigureFrames[step] - 1) * kPart81IgorFrameSize);
 		waitForTimer(61);
 	}
 
-	// the object that Igor brought is given
-	if (_inventoryInfo[kPart81InventoryState] != 0) {
-		removeInventoryEntry(kPart81InventoryState);
+	// giving the lamp
+	if (_inventoryInfo[kPart81InventoryIndex] != 0) {
+		removeInventoryEntry(kPart81InventoryIndex);
 	}
-	PART_81_NPC_SAY({ { 210, 1, 954 }, { 211, 1, 955 } });
-	PART_81_IGOR_SAY(212, 1, 956);
-	PART_81_NPC_SAY({ { 213, 1, 957 }, { 214, 1, 958 } });
-	PART_81_IGOR_SAY(215, 1, 959);
-	PART_81_NPC_SAY({ { 216, 1, 960 }, { 217, 1, 961 } });
-	PART_81_IGOR_SAY(218, 1, 962);
-	PART_81_NPC_SAY({ { 219, 2, 963 }, { 221, 2, 964 }, { 223, 1, 965 } });
+	PART_81_lighthouseKeeperSay({ { 210, 1, 954 }, { 211, 1, 955 } });
+	PART_81_igorSay(212, 1, 956);
+	PART_81_lighthouseKeeperSay({ { 213, 1, 957 }, { 214, 1, 958 } });
+	PART_81_igorSay(215, 1, 959);
+	PART_81_lighthouseKeeperSay({ { 216, 1, 960 }, { 217, 1, 961 } });
+	PART_81_igorSay(218, 1, 962);
+	PART_81_lighthouseKeeperSay({ { 219, 2, 963 }, { 221, 2, 964 }, { 223, 1, 965 } });
 	playSound(14, 1);
 	for (int frame = 1; frame <= 3; ++frame) {
-		PART_81_DRAW_STORY_HEAD(frame);
+		PART_81_drawLighthouseKeeper(frame);
 		waitForTimer(31);
 	}
 
@@ -355,15 +342,15 @@ void IgorEngine::PART_81_ACTION_109() {
 	loadAnimData(cutsceneAnim);
 	loadData(IMG_Part81Strip, _screenLayer2);
 	memcpy(_screenLayer1, _screenVGA, 46080);
-	PART_81_END_SCENE();
+	PART_81_lighthouseSendMessage();
 
 	// the room again
 	loadActionData(DAT_Part81);
-	PART_81_LOAD_ROOM();
-	PART_81_LOAD_ANIMATION();
+	PART_81_loadRoom();
+	PART_81_loadAnimation();
 	PART_81_APPLY_OBJECT_STATE(255);
 	for (int frame = 4; frame <= 6; ++frame) {
-		PART_81_DRAW_STORY_HEAD(frame);
+		PART_81_drawLighthouseKeeper(frame);
 		if (frame == 6) {
 			playSound(13, 1);
 		}
@@ -372,10 +359,10 @@ void IgorEngine::PART_81_ACTION_109() {
 	while (_mixer->isSoundHandleActive(_sfxHandle) && !_eventQuitGame) {
 		waitForTimer(1);
 	}
-	PART_81_NPC_SAY({ { 224, 1, 966 }, { 225, 1, 967 }, { 226, 3, 968 } });
-	PART_81_IGOR_SAY(229, 1, 969);
-	PART_81_NPC_SAY({ { 230, 1, 970 } });
-	_objectsState[kPart81EventDoneState] = 1;
+	PART_81_lighthouseKeeperSay({ { 224, 1, 966 }, { 225, 1, 967 }, { 226, 3, 968 } });
+	PART_81_igorSay(229, 1, 969);
+	PART_81_lighthouseKeeperSay({ { 230, 1, 970 } });
+	_objectsState[kPart81LighthouseMessageSent] = 1;
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);
 	PART_81_APPLY_OBJECT_STATE(255);
@@ -394,10 +381,10 @@ void IgorEngine::PART_81_DIALOGUE_CODE(int code) {
 	}
 }
 
-void IgorEngine::PART_81_CONVERSATION() {
+void IgorEngine::PART_81_handleDialogue() {
 	UpdateRoomBackgroundProc previousBackground = _updateRoomBackground;
 	_updateRoomBackground = 0;
-	_updateDialogue = &IgorEngine::PART_81_UPDATE_DIALOGUE_NPC;
+	_updateDialogue = &IgorEngine::PART_81_updateDialogueLighthouseKeeper;
 	loadDialogueData(DLG_Part81);
 	_gameState.dialogueStarted = true;
 	_gameState.dialogueChoiceStart = 1;
@@ -406,7 +393,7 @@ void IgorEngine::PART_81_CONVERSATION() {
 	bool done = false;
 	do {
 		drawDialogueChoices();
-		PART_81_DRAW_HEAD(kPart81HeadStanding);
+		PART_81_drawLighthouseKeeperHead(kPart81HeadStanding);
 		const int choice = selectDialogue();
 		if (choice == 0) {
 			break;
@@ -454,17 +441,17 @@ void IgorEngine::PART_81_CONVERSATION() {
 }
 
 void IgorEngine::PART_81_ACTION_102_talk() {
-	if (_objectsState[kPart81BellState] == 1 && _objectsState[kPart81EventDoneState] == 1) {
+	if (_objectsState[kPart81HasSeenChurchBellMessageState] == 1 && _objectsState[kPart81LighthouseMessageSent] == 1) {
 		igorSay(234, 1, 974);
 		return;
 	}
-	PART_81_IGOR_SAY(231, 1, 971);
-	PART_81_NPC_SAY({ { 232, 1, 972 } });
-	PART_81_CONVERSATION();
+	PART_81_igorSay(231, 1, 971);
+	PART_81_lighthouseKeeperSay({ { 232, 1, 972 } });
+	PART_81_handleDialogue();
 	PART_81_APPLY_OBJECT_STATE(255);
 }
 
-void IgorEngine::PART_81_ENTER() {
+void IgorEngine::PART_81_walkIn() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(0, 138, kFacingPositionRight, 0);
 	wd->clipSkipX = 15;
@@ -489,37 +476,37 @@ void IgorEngine::PART_81_EXEC_ACTION(int action) {
 		_objectsState[kPart81SideState] = 1;
 		_currentPart = 700;
 		break;
-	case 102:
+	case 102: // talk to lighthouse keeper
 		PART_81_ACTION_102_talk();
 		break;
-	case 103:
-		if (_objectsState[kPart81BellState] == 1) {
+	case 103: // look at lighthouse keeper
+		if (_objectsState[kPart81HasSeenChurchBellMessageState] == 1) {
 			igorSay(202, 1, 946);
 		} else {
 			igorSay(201, 1, 945);
 		}
 		break;
-	case 104:
+	case 104: // open door
 		igorSay(233, 1, 973);
 		break;
-	case 106:
+	case 106: // look at tree
 		igorSay(203, 1, 947);
 		break;
-	case 107:
+	case 107: // look at lighthouse
 		igorSay(204, 1, 948);
 		break;
-	case 108:
-		if (_objectsState[kPart81EventDoneState] == 0) {
+	case 108: // look at sea
+		if (_objectsState[kPart81LighthouseMessageSent] == 0) {
 			igorSay({ { 206, 1, 950 }, { 207, 1, 951 } });
 		} else {
 			igorSay(205, 1, 949);
 		}
 		break;
 	case 109:
-		PART_81_ACTION_109();
+		PART_81_ACTION_109_giveLampToLighthouseKeeper();
 		break;
 	case 110:
-		PART_81_ACTION_110();
+		PART_81_ACTION_110_rejectItem();
 		break;
 	default:
 		error("PART_81_EXEC_ACTION unhandled action %d", action);
@@ -531,8 +518,8 @@ void IgorEngine::PART_81() {
 	playMusic(4);
 	_gameState.enableLight = 2;
 	loadActionData(DAT_Part81);
-	PART_81_LOAD_ROOM();
-	PART_81_LOAD_ANIMATION();
+	PART_81_loadRoom();
+	PART_81_loadAnimation();
 	_roomDataOffsets = PART_81_ROOM_DATA_OFFSETS;
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_81_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_81_UPDATE_ROOM_BACKGROUND;
@@ -544,15 +531,15 @@ void IgorEngine::PART_81() {
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
-		PART_81_SCROLL_IN();
-		PART_81_ENTER();
+		PART_81_scrollIn();
+		PART_81_walkIn();
 	}
 	enterPartLoop();
 	while (_currentPart == 810 && !_gameStateLoaded) {
 		runPartLoop();
 	}
-	if (!_gameStateLoaded && _objectsState[kPart81BellState] == 1 && _objectsState[kPart81EventDoneState] == 1) {
-		_objectsState[kPart81BellState] = 0;
+	if (!_gameStateLoaded && _objectsState[kPart81HasSeenChurchBellMessageState] == 1 && _objectsState[kPart81LighthouseMessageSent] == 1) {
+		_objectsState[kPart81HasSeenChurchBellMessageState] = 0;
 	}
 	leavePartLoop();
 	if (!_gameStateLoaded)
