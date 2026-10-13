@@ -38,9 +38,14 @@ public:
 	}
 
 	int getMaximumSaveSlot() const override { return 8; }
+	bool hasFeature(MetaEngineFeature f) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const BCB::HaroldGameDescription *gd) const override;
 };
+
+bool HaroldMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return checkExtendedSaves(f);
+}
 
 Common::KeymapArray HaroldMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;

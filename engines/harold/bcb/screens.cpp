@@ -169,7 +169,7 @@ bool BCBEngine::dispatchGameOverScreen() {
 			for (uint lineStart = 0; lineStart < text.size() && y < textRect.bottom;) {
 				uint lineEnd = lineStart;
 				uint lastFit = lineStart;
-				while (lineEnd < text.size() && text[lineEnd] != U'\n') {
+				while (lineEnd < text.size() && text[lineEnd] != '\n') {
 					++lineEnd;
 					const Common::U32String candidate(text.c_str() + lineStart, lineEnd - lineStart);
 					if (_gameOverTextFont->getStringWidth(candidate) <= textRect.width())
@@ -180,13 +180,13 @@ bool BCBEngine::dispatchGameOverScreen() {
 
 				if (lastFit == lineStart && lineEnd > lineStart)
 					lastFit = lineStart + 1;
-				if (lineEnd < text.size() && text[lineEnd] == U'\n')
+				if (lineEnd < text.size() && text[lineEnd] == '\n')
 					lastFit = lineEnd;
 
 				_gameOverTextFont->drawString(gameOver, Common::U32String(text.c_str() + lineStart, lastFit - lineStart), textRect.left, y, textRect.width(), white, Graphics::kTextAlignLeft);
 				y += _gameOverTextFont->getFontHeight() + kGameOverTextLineGap;
 				lineStart = lastFit;
-				if (lineStart < text.size() && text[lineStart] == U'\n')
+				if (lineStart < text.size() && text[lineStart] == '\n')
 					++lineStart;
 			}
 		}

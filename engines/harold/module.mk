@@ -2,19 +2,19 @@ MODULE := engines/harold
 
 MODULE_OBJS := \
 	bcb/bcb.o \
-	bcb/resources.o \
-	bcb/video.o \
 	bcb/captions.o \
-	bcb/scene.o \
-	bcb/screens.o \
-	bcb/input.o \
 	bcb/computer.o \
 	bcb/debugger.o \
-	bcb/saveload.o \
-	bcb/map.o \
-	bcb/script.o \
 	bcb/executable_data.o \
+	bcb/input.o \
+	bcb/map.o \
+	bcb/resources.o \
+	bcb/saveload.o \
+	bcb/scene.o \
+	bcb/screens.o \
+	bcb/script.o \
 	bcb/static_data.o \
+	bcb/video.o \
 	metaengine.o
 
 MODULE_DIRS += \

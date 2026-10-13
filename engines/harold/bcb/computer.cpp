@@ -26,8 +26,6 @@
 #include "graphics/screen.h"
 #include "graphics/surface.h"
 
-#include <math.h>
-
 #include "harold/bcb/bcb.h"
 #include "harold/bcb/script.h"
 #include "harold/bcb/static_data.h"
@@ -172,10 +170,6 @@ void BCBEngine::drawXorRectangleBorder(const Common::Rect &rect) {
 				WRITE_UINT16(pixel, READ_UINT16(pixel) ^ 0xffff);
 				break;
 			case 3:
-				pixel[0] ^= 0xff;
-				pixel[1] ^= 0xff;
-				pixel[2] ^= 0xff;
-				break;
 			case 4:
 				pixel[0] ^= 0xff;
 				pixel[1] ^= 0xff;
