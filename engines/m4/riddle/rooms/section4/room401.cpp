@@ -863,7 +863,7 @@ void Room401::parser() {
 			case -1:
 				player_set_commands_allowed(false);
 				digi_play("401R05", 1, 255, 3);
-				kernel_timing_trigger(1, 230);
+				kernel_timing_trigger(230, 1);
 				break;
 			case 1:
 				player_update_info();
