@@ -26,15 +26,17 @@
 #include "engines/nancy/movieplayer.h"
 #include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/action/actionzone.h"
+#include "engines/nancy/action/physicalobject.h"
 
 namespace Nancy {
 namespace Action {
 
 // Pachinko / pinball ball-drop puzzle, new in Nancy13 (AR 175).
 //
-// The player clicks a spring launcher on the right of the board to fire a ball leftward
-// across a pin field. The ball falls under gravity, bouncing off the pins and the bumper
-// zones, until it drops into one of four holes. Each hole feeds one of two climbers racing
+// The player pulls the lever on the right of the board and lets go of it to fire a ball
+// leftward across a pin field; the longer the pull, the faster the ball. The ball falls
+// under gravity, bouncing off the pins and the frame of the board, until it drops into
+// one of four holes or reaches the bottom. Each hole feeds one of two climbers racing
 // up the mountain to the pot: the Miner (a win) or the Yeti (a loss). The first to reach
 // the pot plays its result animation, then exits through its own scene and event flag.
 class PachinkoPuzzle : public PuzzleRecord {
@@ -78,12 +80,7 @@ protected:
 
 	// A single launched ball, moving in viewport space.
 	struct Ball {
-		double x = 0.0;
-		double y = 0.0;
-		double speed = 0.0;			// px / second
-		double angle = 0.0;			// radians; velocity = (cos a, -sin a) * speed
-		uint frame = 0;
-		bool active = false;
+		PhysicalObject body;
 	};
 
 	// One of the four holes on the panel. A ball that drops in advances its climber and
@@ -100,13 +97,15 @@ protected:
 	void readMachine(Common::SeekableReadStream &stream, Machine &m);
 	void loadMachineImage(Machine &m);
 	void buildHoles();
+	void buildObstacles();
 	Common::Point climberAnchor(const Machine &m) const;
 
 	void redraw();
 	void spawnBall();
-	void stepBall(Ball &ball, double dt);
-	bool collidePins(Ball &ball) const;
-	int catchInHole(const Ball &ball) const;	// hole index the ball fell into, or -1
+	void updateLever();
+	void releaseLever();
+	int catchInHole(const Common::Point &pos) const;	// hole index the ball fell into, or -1
+	bool isInDrain(const Common::Point &pos) const;
 	void advanceMachine(Machine &m, uint32 now);
 
 	// -- File data --
@@ -117,15 +116,16 @@ protected:
 	int32 _velMax = 0;						// launch-speed ceiling
 	int32 _spawnYMin = 0;					// launch-heading (deg) range
 	int32 _spawnYMax = 0;
-	int32 _launchVecLen = 0;				// decorative launch nub length
-	Common::Rect _panelBounds;				// pin-panel bounds (side walls + floor)
+	int32 _gravity = 0;						// downward pull on the balls
+	int32 _friction = 0;					// how fast the balls slow down
+	Common::Rect _panelBounds;				// the frame of the pin panel, which the balls bounce off
 	int16 _eventFlag = 0;					// "in progress" flag id
 	Common::Path _ballImageName;			// the ball sprite sheet
-	Common::Rect _launcherBallSrc;			// ball-in-launcher sprite src
-	Common::Rect _launcherBallDest;			// ball-in-launcher dest
+	Common::Rect _leverSrc;					// the lever, pulled all the way out
+	Common::Rect _leverDest;				// where the lever is when at rest
 	Common::Rect _launcherHotspot;			// the clickable launcher
-	int32 _spawnWindowMin = 0;
-	int32 _spawnWindowMax = 0;				// spawn window (ms)
+	int32 _pullTimeMin = 0;					// shortest pull that launches a ball (ms)
+	int32 _pullTimeMax = 0;					// a pull this long launches at full speed (ms)
 
 	RandomSoundBlock _plinkSounds;			// random ball-launch cues
 
@@ -135,6 +135,7 @@ protected:
 	Common::Array<Common::Rect> _pins;		// static pin collision rects
 	Common::Array<ActionZone> _zones;		// bumpers / walls / overlays
 	Common::Array<Hole> _holes;				// the four catch holes (built from _zones)
+	Common::Array<PhysicalObject::Obstacle> _obstacles;	// the pins and the cups under the holes
 
 	// -- Runtime state --
 	enum State {
@@ -146,8 +147,9 @@ protected:
 	State _pzState = kRunning;
 
 	Common::Array<Ball> _balls;
-	bool _spawnPending = false;				// a launcher click awaiting a spawn
-	uint32 _spawnClickTime = 0;
+	bool _leverPulled = false;				// the mouse button is down on the lever
+	uint32 _leverPullTime = 0;				// when the pull started
+	Common::Rect _leverCurSrc;				// the part of the lever showing right now
 	Machine *_activeMachine = nullptr;		// the climber that reached the pot
 	bool _exitRequested = false;
 	uint32 _lastUpdate = 0;

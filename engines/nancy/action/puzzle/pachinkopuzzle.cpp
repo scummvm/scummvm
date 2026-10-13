@@ -36,36 +36,18 @@ namespace Nancy {
 namespace Action {
 
 // -- Physics constants --
-static const double kGravity = 50.0;			// downward accel (px/s^2)
 static const double kRestitution = 0.85;		// bounce energy retained
-static const double kTwoPi = 6.283185307179586;
 static const double kDeg2Rad = 0.017453292519943295;
 static const double kSpawnParamMax = 0.95;
-static const double kSpawnParamJitter = 0.002;
+static const double kSpawnParamJitter = 0.0005;
 static const double kSpawnYJitter = 0.01;
-static const double kDrag = 12.0;				// px/s per second
-
-// Pins are stored as 1x1 points on a staggered ~30px grid but drawn as small round bumpers,
-// so they collide as circles at the drawn pin + ball radii.
-static const double kPinRadius = 4.0;
-static const double kBallRadius = 5.0;
-static const int kPhysicsSubsteps = 4;			// per frame, to avoid tunnelling the pins
+static const uint32 kMaxTicksPerFrame = 5;		// after a stall, don't catch up all at once
 
 static const uint32 kHoleLitMs = 400;			// how long a hole stays lit after a catch
 
 // A climber reaches the pot once its accumulated steps hit this goal. moverSpeed per catch
 // is 2 (Miner) / 3 (Yeti), so the Yeti climbs faster.
 static const int kClimbGoal = 30;
-
-static double wrapAngle(double a) {
-	while (a < 0.0) {
-		a += kTwoPi;
-	}
-	while (a >= kTwoPi) {
-		a -= kTwoPi;
-	}
-	return a;
-}
 
 void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);			// board overlay
@@ -77,16 +59,16 @@ void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
 	_spawnYMin = stream.readSint32LE();			// launch-heading (deg) range
 	_spawnYMax = stream.readSint32LE();
 	stream.skip(4);
-	_launchVecLen = stream.readSint32LE();
-	stream.skip(4);
-	readRect(stream, _panelBounds);				// pin-panel bounds (walls + floor)
+	_gravity = stream.readSint32LE();
+	_friction = stream.readSint32LE();
+	readRect(stream, _panelBounds);				// the frame of the pin panel
 	_eventFlag = stream.readSint16LE();			// "in progress" flag
 	readFilename(stream, _ballImageName);		// ball sprite sheet
-	readRect(stream, _launcherBallSrc);
-	readRect(stream, _launcherBallDest);
+	readRect(stream, _leverSrc);
+	readRect(stream, _leverDest);
 	readRect(stream, _launcherHotspot);			// the clickable launcher
-	_spawnWindowMin = stream.readSint32LE();
-	_spawnWindowMax = stream.readSint32LE();	// spawn window (ms)
+	_pullTimeMin = stream.readSint32LE();
+	_pullTimeMax = stream.readSint32LE();
 
 	// The random "plink" cues played each time a ball is launched (LeverPull*).
 	_plinkSounds.readData(stream);
@@ -212,6 +194,29 @@ void PachinkoPuzzle::buildHoles() {
 	}
 }
 
+// The balls bounce off the pins and off the cups under the holes.
+void PachinkoPuzzle::buildObstacles() {
+	_obstacles.clear();
+
+	for (const Common::Rect &pin : _pins) {
+		PhysicalObject::Obstacle obstacle;
+		obstacle.type = PhysicalObject::Obstacle::kPin;
+		obstacle.rect = pin;
+		_obstacles.push_back(obstacle);
+	}
+
+	for (const ActionZone &z : _zones) {
+		if (z.type != kZoneBoundary) {
+			continue;
+		}
+
+		PhysicalObject::Obstacle obstacle;
+		obstacle.type = PhysicalObject::Obstacle::kBlock;
+		obstacle.rect = Common::Rect(z.rect.left, z.rect.top, z.rect.right + 1, z.rect.bottom + 1);
+		_obstacles.push_back(obstacle);
+	}
+}
+
 // The climber's current on-screen anchor: the point on its climb path from the bottom
 // (moverStart) to the pot (moverEnd), advanced by how many balls it has caught.
 Common::Point PachinkoPuzzle::climberAnchor(const Machine &m) const {
@@ -237,6 +242,8 @@ void PachinkoPuzzle::init() {
 	loadMachineImage(_loseMachine);
 
 	buildHoles();
+	buildObstacles();
+	releaseLever();
 
 	NancySceneState.setNoHeldItem();
 
@@ -253,18 +260,13 @@ void PachinkoPuzzle::init() {
 }
 
 void PachinkoPuzzle::spawnBall() {
-	uint32 now = g_nancy->getTotalPlayTime();
-	uint32 elapsed = now - _spawnClickTime;
+	uint32 elapsed = g_nancy->getTotalPlayTime() - _leverPullTime;
 
-	// The launch parameter grows across the spawn window, plus a small random jitter.
+	// The longer the lever was pulled the faster the ball, plus a small random jitter.
 	double launchParam = kSpawnParamMax;
-	int span = _spawnWindowMax - _spawnWindowMin;
-	if ((int)elapsed <= _spawnWindowMax && span > 0) {
-		int rel = (int)elapsed - _spawnWindowMin;
-		if (rel < 0) {
-			rel = 0;
-		}
-		launchParam = ((double)rel / (double)span) * kSpawnParamMax;
+	int span = _pullTimeMax - _pullTimeMin;
+	if ((int)elapsed <= _pullTimeMax && span > 0) {
+		launchParam = ((double)((int)elapsed - _pullTimeMin) / (double)span) * kSpawnParamMax;
 	}
 	launchParam += (double)(g_nancy->_randomSource->getRandomNumber(99)) * kSpawnParamJitter;
 
@@ -272,103 +274,61 @@ void PachinkoPuzzle::spawnBall() {
 	double headingDeg = (double)_spawnYMin +
 		(double)(_spawnYMax - _spawnYMin) * (double)(g_nancy->_randomSource->getRandomNumber(99)) * kSpawnYJitter;
 
-	Ball ball;
-	ball.speed = (double)(_velMax - _velMin) * launchParam + (double)_velMin;
-	ball.angle = wrapAngle(headingDeg * kDeg2Rad);
 	// Balls appear at the top-right entry chute and fall left/down through the pins.
-	ball.x = (_ballEntry.left + _ballEntry.right) / 2.0;
-	ball.y = (_ballEntry.top + _ballEntry.bottom) / 2.0;
-	ball.active = true;
+	Ball ball;
+	ball.body.setSize(_ballSrc.width(), _ballSrc.height());
+	ball.body.setBounds(Common::Rect(_panelBounds.left, _panelBounds.top, _panelBounds.right + 1, _panelBounds.bottom + 1));
+	ball.body.setBoundsMode(PhysicalObject::kBounceOffBounds);
+	ball.body.setFriction(_friction);
+	ball.body.setForce(0, _gravity);
+	ball.body.moveTo(_ballEntry.left + _ballEntry.width() * 0.5, _ballEntry.top + _ballEntry.height() * 0.5);
+	ball.body.setObstacles(&_obstacles);
+	ball.body.setSpeed((double)(_velMax - _velMin) * launchParam + (double)_velMin);
+	ball.body.setHeading(headingDeg * kDeg2Rad);
 	_balls.push_back(ball);
 
 	playSoundBlock(_plinkSounds);
 }
 
-// Reflect the ball off any pin it now overlaps. Returns true if a bounce happened.
-bool PachinkoPuzzle::collidePins(Ball &ball) const {
-	const double hitDist = kPinRadius + kBallRadius;
-	for (const Common::Rect &pin : _pins) {
-		double px = (pin.left + pin.right) / 2.0;
-		double py = (pin.top + pin.bottom) / 2.0;
-		double dx = ball.x - px;
-		double dy = ball.y - py;
-		double d2 = dx * dx + dy * dy;
-		if (d2 >= hitDist * hitDist || d2 < 1e-6) {
-			continue;
-		}
-
-		// Reflect about the surface normal and push the ball back out to contact distance.
-		double d = sqrt(d2);
-		double nxn = dx / d;
-		double nyn = dy / d;
-		double vx = cos(ball.angle) * ball.speed;
-		double vy = -sin(ball.angle) * ball.speed;
-		double dot = vx * nxn + vy * nyn;
-		vx -= 2.0 * dot * nxn;
-		vy -= 2.0 * dot * nyn;
-
-		ball.x = px + nxn * hitDist;
-		ball.y = py + nyn * hitDist;
-		ball.speed = sqrt(vx * vx + vy * vy) * kRestitution;
-		ball.angle = wrapAngle(atan2(-vy, vx));
-		return true;
+// At rest only the end of the lever shows; more of it comes out the longer it is pulled.
+void PachinkoPuzzle::updateLever() {
+	if (!_leverPulled) {
+		return;
 	}
-	return false;
+
+	int restTop = _leverSrc.bottom - _leverDest.height();
+	int elapsed = (int)(g_nancy->getTotalPlayTime() - _leverPullTime);
+	int span = _pullTimeMax - _pullTimeMin;
+	if (elapsed > _pullTimeMin && elapsed <= _pullTimeMax && span > 0) {
+		double pulled = (double)(elapsed - _pullTimeMin) / (double)span;
+		_leverCurSrc.top = _leverSrc.top + (int)((1.0 - pulled) * (restTop - _leverSrc.top));
+	}
 }
 
-int PachinkoPuzzle::catchInHole(const Ball &ball) const {
-	Common::Point p((int16)ball.x, (int16)ball.y);
+void PachinkoPuzzle::releaseLever() {
+	_leverPulled = false;
+	_leverCurSrc = _leverSrc;
+	_leverCurSrc.top = _leverSrc.bottom - _leverDest.height();
+}
+
+int PachinkoPuzzle::catchInHole(const Common::Point &pos) const {
 	for (uint i = 0; i < _holes.size(); ++i) {
-		if (_holes[i].rect.contains(p)) {
+		if (_holes[i].rect.contains(pos)) {
 			return (int)i;
 		}
 	}
 	return -1;
 }
 
-void PachinkoPuzzle::stepBall(Ball &ball, double dt) {
-	// Gravity: convert the polar velocity to cartesian, add gravity, convert back.
-	double vx = cos(ball.angle) * ball.speed;
-	double vy = -sin(ball.angle) * ball.speed;
-	vy += kGravity * dt;
-	ball.speed = sqrt(vx * vx + vy * vy);
-	ball.angle = wrapAngle(atan2(-vy, vx));
-
-	// Deceleration (drag).
-	ball.speed -= kDrag * dt;
-	if (ball.speed < 0.0) {
-		ball.speed = 0.0;
-	}
-
-	// Advance in sub-steps so the ball cannot tunnel between the pins.
-	double subDt = dt / kPhysicsSubsteps;
-	for (int s = 0; s < kPhysicsSubsteps; ++s) {
-		ball.x += cos(ball.angle) * ball.speed * subDt;
-		ball.y -= sin(ball.angle) * ball.speed * subDt;
-
-		if (collidePins(ball)) {
-			continue;
-		}
-
-		// The side walls keep the ball in play; the ball enters from the right of the right
-		// wall, so that wall only reflects once the ball is inside.
-		double vx2 = cos(ball.angle) * ball.speed;
-		double vy2 = -sin(ball.angle) * ball.speed;
-		bool reflected = false;
-		if (ball.x < _panelBounds.left + kBallRadius && vx2 < 0.0) {
-			ball.x = _panelBounds.left + kBallRadius;
-			vx2 = -vx2;
-			reflected = true;
-		} else if (ball.x < _panelBounds.right && ball.x > _panelBounds.right - kBallRadius && vx2 > 0.0) {
-			ball.x = _panelBounds.right - kBallRadius;
-			vx2 = -vx2;
-			reflected = true;
-		}
-		if (reflected) {
-			ball.speed = sqrt(vx2 * vx2 + vy2 * vy2) * kRestitution;
-			ball.angle = wrapAngle(atan2(-vy2, vx2));
+// A ball is taken off the board in the zones that have no behavior of their own: the holes
+// and the strip along the bottom of the panel.
+bool PachinkoPuzzle::isInDrain(const Common::Point &pos) const {
+	for (const ActionZone &z : _zones) {
+		if (z.type == kZoneBaseOnly && z.rect.contains(pos)) {
+			return true;
 		}
 	}
+	return false;
 }
 
 void PachinkoPuzzle::advanceMachine(Machine &m, uint32 now) {
@@ -400,15 +360,15 @@ void PachinkoPuzzle::redraw() {
 
 	// The balls in flight.
 	if (!_ballImage.empty() && !_ballSrc.isEmpty()) {
-		int w = _ballSrc.width();
-		int h = _ballSrc.height();
 		for (const Ball &ball : _balls) {
-			if (!ball.active) {
-				continue;
-			}
-			Common::Point pos((int16)ball.x - w / 2, (int16)ball.y - h / 2);
-			_drawSurface.blitFrom(_ballImage, _ballSrc, pos);
+			Common::Rect dest = ball.body.getRect();
+			_drawSurface.blitFrom(_ballImage, _ballSrc, Common::Point(dest.left, dest.top));
 		}
+	}
+
+	// The lever, hanging down from its resting place.
+	if (!_ballImage.empty() && !_leverCurSrc.isEmpty()) {
+		_drawSurface.blitFrom(_ballImage, _leverCurSrc, Common::Point(_leverDest.left, _leverDest.top));
 	}
 
 	// Holes lit by a recent catch.
@@ -437,10 +397,10 @@ void PachinkoPuzzle::execute() {
 		// fall through
 	case kRun: {
 		uint32 now = g_nancy->getTotalPlayTime();
-		double dt = (now - _lastUpdate) / 1000.0;
-		_lastUpdate = now;
-		if (dt > 0.1) {
-			dt = 0.1;	// clamp long stalls
+		uint32 numTicks = (now - _lastUpdate) / PhysicalObject::kTickLength;
+		_lastUpdate += numTicks * PhysicalObject::kTickLength;
+		if (numTicks > kMaxTicksPerFrame) {
+			numTicks = kMaxTicksPerFrame;
 		}
 
 		if (_exitRequested) {
@@ -449,36 +409,35 @@ void PachinkoPuzzle::execute() {
 
 		switch (_pzState) {
 		case kRunning: {
-			if (_spawnPending) {
-				spawnBall();
-				_spawnPending = false;
-			}
+			updateLever();
 
 			advanceMachine(_winMachine, now);
 			advanceMachine(_loseMachine, now);
 
-			for (uint i = 0; i < _balls.size(); ++i) {
+			for (uint i = 0; i < _balls.size();) {
 				Ball &ball = _balls[i];
-				if (!ball.active) {
-					continue;
+				if (numTicks > 0) {
+					ball.body.update(numTicks);
+					if (ball.body.hasHitBounds()) {
+						ball.body.clearHitBounds();
+						ball.body.setSpeed(ball.body.getSpeed() * kRestitution);
+					}
 				}
-				stepBall(ball, dt);
 
-				// A ball that drops in a hole is removed and climbs its machine a step.
-				int hole = catchInHole(ball);
+				// A ball that drops in a hole climbs its machine a step.
+				Common::Point pos((int16)ball.body.getX(), (int16)ball.body.getY());
+				int hole = catchInHole(pos);
 				if (hole >= 0) {
-					ball.active = false;
 					playSoundBlock(_holes[hole].sound);
 					_holes[hole].litUntil = now + kHoleLitMs;
 					Machine *climber = _holes[hole].climber;
 					climber->climbSteps += climber->moverSpeed;
-					continue;
 				}
 
-				// A ball that reaches the floor or leaves the panel is discarded (a miss).
-				if (ball.y > _panelBounds.bottom || ball.x < _panelBounds.left - 32 ||
-						ball.x > _panelBounds.right + 64 || ball.y > _drawSurface.h + 32) {
-					ball.active = false;
+				if (hole >= 0 || isInDrain(pos)) {
+					_balls.remove_at(i);
+				} else {
+					++i;
 				}
 			}
 
@@ -567,15 +526,28 @@ void PachinkoPuzzle::handleInput(NancyInput &input) {
 
 	const bool click = (input.input & NancyInput::kLeftMouseButtonUp) != 0;
 
+	// Letting go of the lever, wherever the mouse is by then, launches a ball.
+	if (_leverPulled && !(input.input & NancyInput::kLeftMouseButtonHeld)) {
+		if ((int)(g_nancy->getTotalPlayTime() - _leverPullTime) >= _pullTimeMin) {
+			spawnBall();
+		}
+		releaseLever();
+		input.eatMouseInput();
+		return;
+	}
+
 	if (!_launcherHotspot.isEmpty() &&
 			NancySceneState.getViewport().convertViewportToScreen(_launcherHotspot).contains(input.mousePos)) {
 		setDataCursor(_exitCursorType, false);
-		if (click) {
-			// One launcher click queues one ball.
-			_spawnPending = true;
-			_spawnClickTime = g_nancy->getTotalPlayTime();
+		if (input.input & NancyInput::kLeftMouseButtonDown) {
+			_leverPulled = true;
+			_leverPullTime = g_nancy->getTotalPlayTime();
 		}
 		input.eatMouseInput();
+		return;
+	}
+
+	if (_leverPulled) {
 		return;
 	}
 
