@@ -740,7 +740,7 @@ void Room504::daemon() {
 	case 521:
 		series_unload(_mzTakesEmerald);
 		_menendezShould = 4;
-		digi_play("504Z15", 1, 255, 522);
+		digi_play("504Z14", 1, 255, 522);
 		break;
 
 	case 522:
