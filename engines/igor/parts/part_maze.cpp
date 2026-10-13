@@ -26,7 +26,6 @@ namespace Igor {
 // The rooms of the maze (parts 51 to 66) are all the same room with different pictures: a corridor with torches
 // and one to four ways out. Room data is in part_maze_data.cpp.
 
-
 static const int kMazeFlameWidth = 19;
 static const int kMazeFlameHeight = 29;
 static const int kMazeFlameFrameSize = kMazeFlameWidth * kMazeFlameHeight;
@@ -37,7 +36,7 @@ static const int kMazeStairsY = 143;
 /**
  * The track depends on the location: the maze is divided in three zones.
  */
-int IgorEngine::MAZE_MUSIC_TRACK() const {
+int IgorEngine::MAZE_getMusicTrack() const {
 	uint8 location = _mazeLocation;
 	while (location > 21) {
 		location -= 21;
@@ -163,7 +162,7 @@ void IgorEngine::PART_MAZE_UPDATE_ROOM_BACKGROUND() {
 /**
  * Igor appears at the entry and walks to its destination.
  */
-void IgorEngine::MAZE_ENTER_WALK(const MazeEntry &entry) {
+void IgorEngine::MAZE_walkIn(const MazeEntry &entry) {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(entry.x, entry.y, entry.facing, 0);
 	wd->setDefaultScale();
@@ -307,7 +306,7 @@ void IgorEngine::PART_MAZE() {
 	assert(room);
 	_mazeRoom = room;
 
-	playMusic(room->music >= 0 ? room->music : MAZE_MUSIC_TRACK());
+	playMusic(room->music >= 0 ? room->music : MAZE_getMusicTrack());
 	_gameState.enableLight = 1;
 	if (room->saveLocation) {
 		_mazeSavedLocation = _mazeLocation;
@@ -346,7 +345,7 @@ void IgorEngine::PART_MAZE() {
 			const MazeEntry &entry = room->entries[i];
 			if (entry.state == _currentPart) {
 				if (entry.kind == kMazeEntryWalk) {
-					MAZE_ENTER_WALK(entry);
+					MAZE_walkIn(entry);
 				} else {
 					enterFromStairs(entry);
 				}
@@ -354,6 +353,7 @@ void IgorEngine::PART_MAZE() {
 		}
 	}
 	enterPartLoop();
+	// run until we leave the maze
 	for (;;) {
 		bool inRoom = false;
 		for (int i = 0; i < room->numEntries; ++i) {

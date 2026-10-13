@@ -26,12 +26,16 @@ namespace Igor {
 // the first and the second firefly of the room, the transformation and the ending.
 static const int kPart69FireflyAFramesBase = 0;
 static const int kPart69FireflyAFramesTable = 0xB138;
+
 static const int kPart69FireflyBFramesBase = 0xB200;
 static const int kPart69FireflyBFramesTable = 0xBBA;
+
 static const int kPart69FramesCBase = 0xBE3A;
 static const int kPart69FramesCTable = 0x3FF;
+
 static const int kPart69FramesDBase = 0xC265;
 static const int kPart69FramesDTable = 0x179C;
+
 static const int kPart69PictureAnimOffset = 0xDA1F;
 static const int kPart69PictureOffset = 69 * 320 + 148;
 static const int kPart69PictureWidth = 27;
@@ -56,6 +60,7 @@ static const uint8 kPart69StepLastFireflyFrameA[7] = { 0, 80, 20, 50, 100, 40, 7
 static const uint8 kPart69StepNext[7] = { 70, 1, 2, 3, 2, 3, 1 };
 static const uint8 kPart69StepFirstFireflyFrameB[4] = { 1, 41, 1, 21 };
 static const uint8 kPart69StepLastFireflyFrameB[4] = { 0, 64, 20, 40 };
+
 // The areas that answer to the step, and the areas of the second firefly.
 static const uint8 kPart69StepAreas[4] = { 0, 1, 52, 16 };
 static const uint8 kPart69SecondFireflyAreas[4] = { 0, 2, 72, 45 };
@@ -131,7 +136,7 @@ void IgorEngine::PART_69_DRAW_FIREFLY_B(int frame) {
  * Runs the sequence of the two fireflies, one frame of each every 16 ticks, and sets which places answer to the
  * fireflies.
  */
-void IgorEngine::PART_69_ANIMATE_FIREFLIES() {
+void IgorEngine::PART_69_animateFireflies() {
 	if (!compareGameTick(13, 16)) {
 		return;
 	}
@@ -186,9 +191,7 @@ void IgorEngine::PART_69_ANIMATE_FIREFLIES() {
 	}
 }
 
-/**
- * The end of the scene: the last frames of the ending and what Igor says.
- */
+
 void IgorEngine::PART_69_FINALE(int num, int sound) {
 	for (int frame = kPart69EndingFrameLast; frame <= kPart69EndingFrameLast + 1; ++frame) {
 		decodeAnimFrame(getAnimFrame(kPart69FramesDBase, kPart69FramesDTable, frame), _screenVGA, true);
@@ -205,7 +208,7 @@ void IgorEngine::PART_69_ACTION_107_watch() {
 	drawAnimRect(kPart69PictureOffset, kPart69PictureAnimOffset, kPart69PictureWidth, kPart69PictureHeight);
 	if (_objectsState[kPart69VaseState] == 0) {
 		for (int i = 0; i < 1000 / kTimerTicksCount && !_eventQuitGame; ++i) {
-			PART_69_ANIMATE_FIREFLIES();
+			PART_69_animateFireflies();
 			waitForTimer();
 		}
 		PART_69_FINALE(211, 1090);
@@ -213,7 +216,7 @@ void IgorEngine::PART_69_ACTION_107_watch() {
 	}
 
 	do {
-		PART_69_ANIMATE_FIREFLIES();
+		PART_69_animateFireflies();
 		waitForTimer();
 	} while (!(_objectsState[kPart69SequenceState] == 3 && _objectsState[kPart69SecondFireflyState] == 0) && !_eventQuitGame);
 
@@ -256,7 +259,7 @@ void IgorEngine::PART_69_ACTION_107_watch() {
 /**
  * Igor comes from the right edge, walking to the left, while the fireflies move.
  */
-void IgorEngine::PART_69_ENTER_FROM_RIGHT() {
+void IgorEngine::PART_69_enterFromRight() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(319, kPart69EntryY, kFacingPositionLeft, 0);
 	wd->clipSkipX = 1;
@@ -272,7 +275,7 @@ void IgorEngine::PART_69_ENTER_FROM_RIGHT() {
 	buildWalkPath(319, kPart69EntryY, kPart69EntryDstX, kPart69EntryY);
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_69_ANIMATE_FIREFLIES);
+	waitForIgorMove(&IgorEngine::PART_69_animateFireflies);
 }
 
 void IgorEngine::PART_69_UPDATE_ROOM_BACKGROUND() {
@@ -291,7 +294,7 @@ void IgorEngine::PART_69_UPDATE_ROOM_BACKGROUND() {
 			}
 		}
 	}
-	PART_69_ANIMATE_FIREFLIES();
+	PART_69_animateFireflies();
 }
 
 void IgorEngine::PART_69() {
@@ -326,7 +329,7 @@ void IgorEngine::PART_69() {
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_69_ENTER_FROM_RIGHT();
+		PART_69_enterFromRight();
 	}
 	enterPartLoop();
 	while (_currentPart == 690 && !_gameStateLoaded) {

@@ -31,10 +31,10 @@ static bool IN_ACTION_111;
 void IgorEngine::PART_21_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101:
-		PART_21_ACTION_101();
+		PART_21_ACTION_101_leaveLeft();
 		break;
 	case 102:
-		PART_21_ACTION_102();
+		PART_21_ACTION_102_talkToMargaret();
 		break;
 	case 103:
 		igorSay(201, 1, 1177);
@@ -49,25 +49,25 @@ void IgorEngine::PART_21_EXEC_ACTION(int action) {
 		igorSay(204, 1, 1180);
 		break;
 	case 107:
-		PART_21_ACTION_107();
+		PART_21_ACTION_107_openPhysicsDoor();
 		break;
 	case 108:
-		PART_21_ACTION_108();
+		PART_21_ACTION_108_closePhysicsDoor();
 		break;
 	case 109:
 		igorSay(205, 1, 1181);
 		break;
 	case 110:
-		PART_21_ACTION_110();
+		PART_21_ACTION_110_leaveRight();
 		break;
 	case 111:
-		PART_21_ACTION_111();
+		PART_21_ACTION_111_useNoteWithSandwhiches();
 		break;
 	case 112:
 		igorSay(222, 1, 1195);
 		break;
 	case 113:
-		PART_21_ACTION_113();
+		PART_21_ACTION_113_enterPhysicsClass();
 		break;
 	default:
 		error("PART_21_EXEC_ACTION unhandled action %d", action);
@@ -75,17 +75,17 @@ void IgorEngine::PART_21_EXEC_ACTION(int action) {
 	}
 }
 
-void IgorEngine::PART_21_ACTION_101() {
+void IgorEngine::PART_21_ACTION_101_leaveLeft() {
 	if (_objectsState[65] == 1) {
 		const int offset = 29440;
 		copyArea(_screenVGA, offset, 320, _screenLayer1 + offset, 320, 20, 51);
-		PART_21_HELPER_10();
+		PART_21_HELPER_10_MargaretTakesNote();
 	}
 	_currentPart = 303;
 }
 
-void IgorEngine::PART_21_ACTION_102() {
-	PART_21_HELPER_6(1);
+void IgorEngine::PART_21_ACTION_102_talkToMargaret() {
+	PART_21_HELPER_6_drawMargaretFrameComposited(1);
 	igorSayAndWait(226, 1, 1197);
 	cutsceneSayStart(76, 87, 63, 32, 0, 227, 1, 1198);
 	_updateDialogue = &IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_2;
@@ -98,7 +98,7 @@ void IgorEngine::PART_21_ACTION_102() {
 	PART_21_HELPER_1_OBJECT_STATE(255);
 }
 
-void IgorEngine::PART_21_ACTION_107() {
+void IgorEngine::PART_21_ACTION_107_openPhysicsDoor() {
 	if (_objectsState[64] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
@@ -116,7 +116,7 @@ void IgorEngine::PART_21_ACTION_107() {
 	PART_21_HELPER_1_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_21_ACTION_108() {
+void IgorEngine::PART_21_ACTION_108_closePhysicsDoor() {
 	if (_objectsState[64] == 0) {
 		EXEC_MAIN_ACTION(14);
 		return;
@@ -133,16 +133,16 @@ void IgorEngine::PART_21_ACTION_108() {
 	PART_21_HELPER_1_OBJECT_STATE(1);
 }
 
-void IgorEngine::PART_21_ACTION_110() {
+void IgorEngine::PART_21_ACTION_110_leaveRight() {
 	if (_objectsState[65] == 1) {
 		const int offset = 27180;
 		copyArea(_screenVGA, offset, 320, _screenLayer1 + offset, 320, 20, 51);
-		PART_21_HELPER_10();
+		PART_21_HELPER_10_MargaretTakesNote();
 	}
 	_currentPart = 270;
 }
 
-void IgorEngine::PART_21_ACTION_111() {
+void IgorEngine::PART_21_ACTION_111_useNoteWithSandwhiches() {
 	if (_inventoryInfo[65] == 0) {
 		igorSay(223, 2, 1196);
 		return;
@@ -173,16 +173,16 @@ void IgorEngine::PART_21_ACTION_111() {
 	igorSay(210, 2, 1186);
 }
 
-void IgorEngine::PART_21_ACTION_113() {
+void IgorEngine::PART_21_ACTION_113_enterPhysicsClass() {
 	if (_objectsState[64] != 0) {
 		 _roomObjectAreasTable[_screenLayer2[34679]].area = 1;
 		 --_walkDataLastIndex;
 		 buildWalkPathSimple(165, 126, 119, 108);
 		 _walkDataCurrentIndex = 1;
 		 _gameState.igorMoving = true;
-		PART_21_HELPER_5();
+		PART_21_HELPER_5_waitForIgorWalkWithAnimation();
 		if (_objectsState[65] == 1) {
-			PART_21_HELPER_10();
+			PART_21_HELPER_10_MargaretTakesNote();
 		}
 		_currentPart = 370;
 	}
@@ -191,13 +191,13 @@ void IgorEngine::PART_21_ACTION_113() {
 void IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_1(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_21_HELPER_11(6);
+		PART_21_HELPER_11_setMargaretBackgroundFrame(6);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_21_HELPER_11(getRandomNumber(4) + 6);
+		PART_21_HELPER_11_setMargaretBackgroundFrame(getRandomNumber(4) + 6);
 		break;
 	case kUpdateDialogueAnimStanding:
-		PART_21_HELPER_11(1);
+		PART_21_HELPER_11_setMargaretBackgroundFrame(1);
 		break;
 	}
 }
@@ -205,10 +205,10 @@ void IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_1(int action) {
 void IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_2(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_21_HELPER_6(6);
+		PART_21_HELPER_6_drawMargaretFrameComposited(6);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_21_HELPER_6(getRandomNumber(4) + 6);
+		PART_21_HELPER_6_drawMargaretFrameComposited(getRandomNumber(4) + 6);
 		break;
 	}
 }
@@ -216,10 +216,10 @@ void IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_2(int action) {
 void IgorEngine::PART_21_UPDATE_DIALOGUE_MARGARET_3(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_21_HELPER_6(15);
+		PART_21_HELPER_6_drawMargaretFrameComposited(15);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_21_HELPER_6(getRandomNumber(4) + 15);
+		PART_21_HELPER_6_drawMargaretFrameComposited(getRandomNumber(4) + 15);
 		break;
 	}
 }
@@ -233,17 +233,19 @@ void IgorEngine::PART_21_HANDLE_DIALOGUE_MARGARET() {
 
 void IgorEngine::PART_21_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
+		// physics class door
 		if (_objectsState[64] == 0) {
-			PART_21_HELPER_7();
+			PART_21_HELPER_7_drawClosedDoor();
 			_roomActionsTable[4] = 6;
 		} else {
-			PART_21_HELPER_8();
+			PART_21_HELPER_8_drawOpenDoor();
 			_roomActionsTable[4] = 7;
 		}
 	}
 	if (num == 2 || num == 255) {
+		// is margaret present?
 		if (_objectsState[65] <= 1) {
-			PART_21_HELPER_9();
+			PART_21_HELPER_9_drawMargaret();
 		}
 		if (_objectsState[65] == 2 || _objectsState[65] == 4) {
 			_roomObjectAreasTable[9].object = 0;
@@ -262,7 +264,7 @@ void IgorEngine::PART_21_HELPER_2_enterFromLeft() {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	PART_21_HELPER_5();
+	PART_21_HELPER_5_waitForIgorWalkWithAnimation();
 }
 
 void IgorEngine::PART_21_HELPER_3_enterFromRight() {
@@ -274,7 +276,7 @@ void IgorEngine::PART_21_HELPER_3_enterFromRight() {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	PART_21_HELPER_5();
+	PART_21_HELPER_5_waitForIgorWalkWithAnimation();
 }
 
 void IgorEngine::PART_21_HELPER_4_enterFromPhysicsClass() {
@@ -287,10 +289,10 @@ void IgorEngine::PART_21_HELPER_4_enterFromPhysicsClass() {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	PART_21_HELPER_5();
+	PART_21_HELPER_5_waitForIgorWalkWithAnimation();
 }
 
-void IgorEngine::PART_21_HELPER_5() {
+void IgorEngine::PART_21_HELPER_5_waitForIgorWalkWithAnimation() {
 	// Same walk loop as waitForIgorMove(), but the room background keeps
 	// animating (Margaret) while Igor walks.
 	_gameTicks = 0;
@@ -310,7 +312,7 @@ void IgorEngine::PART_21_HELPER_5() {
 	} while (_gameState.igorMoving);
 }
 
-void IgorEngine::PART_21_HELPER_6(int frame) {
+void IgorEngine::PART_21_HELPER_6_drawMargaretFrameComposited(int frame) {
 	_roomCursorOn = false;
 	for (int i = 0; i <= 42; ++i) {
 		for (int j = 0; j <= 48; ++j) {
@@ -331,27 +333,27 @@ void IgorEngine::PART_21_HELPER_6(int frame) {
 	}
 }
 
-void IgorEngine::PART_21_HELPER_7() {
+void IgorEngine::PART_21_HELPER_7_drawClosedDoor() {
 	const int offset = 21901;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xE031, 33, 33, 54);
 }
 
-void IgorEngine::PART_21_HELPER_8() {
+void IgorEngine::PART_21_HELPER_8_drawOpenDoor() {
 	const int offset = 21901;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xE727, 33, 33, 54);
 }
 
-void IgorEngine::PART_21_HELPER_9() {
+void IgorEngine::PART_21_HELPER_9_drawMargaret() {
 	const int offset = 28520;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x14E2, 49, 49, 43);
 }
 
-void IgorEngine::PART_21_HELPER_10() {
-	PART_21_HELPER_6(1);
+void IgorEngine::PART_21_HELPER_10_MargaretTakesNote() {
+	PART_21_HELPER_6_drawMargaretFrameComposited(1);
 	memset(_screenVGA + 46080, 0, 17920);
 	waitForTimer(120);
 	for (int i = 1; i <= 6; ++i) {
-		PART_21_HELPER_6(PART_21_ANIM_DATA_1[i]);
+		PART_21_HELPER_6_drawMargaretFrameComposited(PART_21_ANIM_DATA_1[i]);
 		if (i < 6) {
 			waitForTimer(100);
 		}
@@ -376,7 +378,7 @@ void IgorEngine::PART_21_HELPER_10() {
 	_objectsState[110] = 1;
 }
 
-void IgorEngine::PART_21_HELPER_11(int frame) {
+void IgorEngine::PART_21_HELPER_11_setMargaretBackgroundFrame(int frame) {
 	const int offset = 28520;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + frame * 2107 + 0xCA7, 49, 49, 43);
 }
@@ -390,7 +392,7 @@ void IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND() {
 	}
 	if (compareGameTick(61) && _objectsState[65] <= 1) {
 		if (_gameState.unk10 > 2) {
-			PART_21_HELPER_6(_gameState.unk10);
+			PART_21_HELPER_6_drawMargaretFrameComposited(_gameState.unk10);
 			++_gameState.unk10;
 			if (_gameState.unk10 == 6) {
 				++_gameState.counter[4];
@@ -402,7 +404,7 @@ void IgorEngine::PART_21_UPDATE_ROOM_BACKGROUND() {
 				}
 			}
 		} else {
-			PART_21_HELPER_6(_gameState.unk10);
+			PART_21_HELPER_6_drawMargaretFrameComposited(_gameState.unk10);
 			++_gameState.unk10;
 			if (_gameState.unk10 == 3 && getRandomNumber(5) != 0) {
 				_gameState.unk10 = 1;

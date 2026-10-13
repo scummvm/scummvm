@@ -502,7 +502,7 @@ void IgorEngine::animateIgorTalking(int frame) {
 		return;
 	}
 	if (getPart() == 79) {
-		PART_79_ANIMATE_IGOR_HEAD(frame);
+		PART_79_animateIgorHead(frame);
 		return;
 	}
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];

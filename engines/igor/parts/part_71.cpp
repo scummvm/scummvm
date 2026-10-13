@@ -22,8 +22,6 @@
 
 namespace Igor {
 
-// The animation resource starts with the three frames of Igor taking the object (34x50 each, drawn on the screen) and
-// ends with the two versions of the object as it is drawn in the room picture (5x6 each).
 static const int kPart71TakeFramesCount = 3;
 static const int kPart71TakeWidth = 34;
 static const int kPart71TakeHeight = 50;
@@ -31,18 +29,18 @@ static const int kPart71TakeFrameSize = kPart71TakeWidth * kPart71TakeHeight;
 static const int kPart71TakeOffset = 23 * 320 + 101;
 static const int kPart71TakeFrameDelay = 91;
 
-static const int kPart71ObjectOffset = 55 * 320 + 101;
-static const int kPart71ObjectWidth = 5;
-static const int kPart71ObjectHeight = 6;
-static const int kPart71ObjectPicturesOffset = kPart71TakeFramesCount * kPart71TakeFrameSize;
+static const int kPart71StatuetteFrameOffset = 55 * 320 + 101;
+static const int kPart71StatuetteFrameWidth = 5;
+static const int kPart71StatuetteFrameHeight = 6;
+static const int kPart71StatuetteFramesOffset = kPart71TakeFramesCount * kPart71TakeFrameSize;
 
 static const int kPart71TakenStateIndex = 100;
-static const int kPart71ExaminedStateIndex = 101;
+static const int kPart71StatuetteExamined = 101;
 static const int kPart71StatuetteTaken = 106;
-static const int kPart71ObjectNameIndex = 2;
 
-static const int kPart71InventoryObject = 25;
-static const int kPart71InventoryIndex = 60;
+static const int kPart71StatuetteNameIndex = 2;
+static const int kPart71StatuetteInventoryNumber = 25;
+static const int kPart71StatuetteInventoryIndex = 60;
 
 // What PART_71_APPLY_OBJECT_STATE refreshes.
 static const int kPart71ApplyPicture = 1;
@@ -55,25 +53,25 @@ static const int kPart71ThunderSound = 42;
 
 void IgorEngine::PART_71_EXEC_ACTION(int action) {
 	switch (action) {
-	case 101:
+	case 101: // look at John O'Callahan's grave
 		igorSay({ { 201, 1, 993 }, { 202, 1, 994 }, { 203, 1, 995 } });
 		break;
-	case 102:
+	case 102: // take statuette
 		PART_71_ACTION_102_takeObject();
 		break;
-	case 103:
+	case 103: // look at statuette
 		PART_71_ACTION_103_look();
 		break;
-	case 104:
+	case 104: // look at Mary O'hara's grave
 		igorSay({ { 208, 1, 997 }, { 209, 1, 998 }, { 210, 1, 999 } });
 		break;
-	case 105:
+	case 105: // leave
 		_currentPart = 681;
 		break;
-	case 106:
+	case 106: // look at chris mcpherson's grave
 		igorSay({ { 212, 1, 1000 }, { 213, 1, 1001 }, { 214, 1, 1002 } });
 		break;
-	case 107:
+	case 107: // look at pat's grave
 		igorSay({ { 216, 1, 1003 }, { 217, 2, 1004 } });
 		break;
 	default:
@@ -86,66 +84,53 @@ void IgorEngine::PART_71_EXEC_ACTION(int action) {
  * Draws one of the two versions of the object into the room picture.
  */
 void IgorEngine::PART_71_DRAW_OBJECT(int frame) {
-	const int frameSize = kPart71ObjectWidth * kPart71ObjectHeight;
-	copyArea(_screenLayer1, kPart71ObjectOffset, 320, _animFramesBuffer + kPart71ObjectPicturesOffset + frame * frameSize,
-			 kPart71ObjectWidth, kPart71ObjectWidth, kPart71ObjectHeight);
+	const int frameSize = kPart71StatuetteFrameWidth * kPart71StatuetteFrameHeight;
+	copyArea(_screenLayer1, kPart71StatuetteFrameOffset, 320, _animFramesBuffer + kPart71StatuetteFramesOffset + frame * frameSize,
+			 kPart71StatuetteFrameWidth, kPart71StatuetteFrameWidth, kPart71StatuetteFrameHeight);
 }
 
-/**
- * Refreshes what depends on the story: the picture of the object (it is gone once Igor has taken it) and its name
- * (it changes once Igor has examined it).
- */
+
 void IgorEngine::PART_71_APPLY_OBJECT_STATE(int what) {
 	if (what == kPart71ApplyPicture || what == kPart71ApplyAll) {
 		PART_71_DRAW_OBJECT(_objectsState[kPart71TakenStateIndex] == 0 ? 0 : 1);
 	}
 	if (what == kPart71ApplyName || what == kPart71ApplyAll) {
-		const char *name = getString(_objectsState[kPart71ExaminedStateIndex] == 0 ? STR_ShinyThing : STR_Statuette);
-		// TODO: the name of the object before it is examined is only known in Spanish; the other languages keep the
-		// name that comes with the room.
+		const char *name = getString(_objectsState[kPart71StatuetteExamined] == 0 ? STR_ShinyThing : STR_Statuette);
 		if (name) {
-			Common::strlcpy(_roomObjectNames[kPart71ObjectNameIndex], name, sizeof(_roomObjectNames[kPart71ObjectNameIndex]));
+			Common::strlcpy(_roomObjectNames[kPart71StatuetteNameIndex], name, sizeof(_roomObjectNames[kPart71StatuetteNameIndex]));
 		}
 	}
 }
 
-/**
- * Igor examines the object: the first time he describes it and it gets its real name.
- */
+
 void IgorEngine::PART_71_ACTION_103_look() {
-	if (_objectsState[kPart71ExaminedStateIndex] == 0) {
+	if (_objectsState[kPart71StatuetteExamined] == 0) {
 		igorSay(220, 2, 1005);
-		_objectsState[kPart71ExaminedStateIndex] = 1;
+		_objectsState[kPart71StatuetteExamined] = 1;
 		PART_71_APPLY_OBJECT_STATE(kPart71ApplyName);
 	} else {
 		igorSay(222, 2, 1006);
 	}
 }
 
-/**
- * Igor takes the object: three frames of the animation are drawn over the screen, then the object goes to the
- * inventory.
- */
+
 void IgorEngine::PART_71_ACTION_102_takeObject() {
-	if (_objectsState[kPart71ExaminedStateIndex] == 0) {
+	if (_objectsState[kPart71StatuetteExamined] == 0) {
 		igorSayAndWait(220, 2, 1005);
-		_objectsState[kPart71ExaminedStateIndex] = 1;
+		_objectsState[kPart71StatuetteExamined] = 1;
 	}
 	for (int i = 0; i < kPart71TakeFramesCount; ++i) {
 		drawAnimRect(kPart71TakeOffset, i * kPart71TakeFrameSize, kPart71TakeWidth, kPart71TakeHeight, false, kBlendLitSpriteNoShade);
 		waitForTimer(kPart71TakeFrameDelay);
 	}
-	addObjectToInventory(kPart71InventoryObject, kPart71InventoryIndex);
+	addObjectToInventory(kPart71StatuetteInventoryNumber, kPart71StatuetteInventoryIndex);
 	_objectsState[kPart71TakenStateIndex] = 1;
 	PART_71_APPLY_OBJECT_STATE(kPart71ApplyAll);
 	igorSay(204, 3, 996);
 	_objectsState[kPart71StatuetteTaken] = 1;
 }
 
-/**
- * Igor comes from the right edge, walking to the left.
- */
-void IgorEngine::PART_71_ENTER_FROM_RIGHT() {
+void IgorEngine::PART_71_enterFromRight() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(319, 138, kFacingPositionLeft, 0);
 	wd->clipSkipX = 1;
@@ -230,7 +215,7 @@ void IgorEngine::PART_71() {
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_71_ENTER_FROM_RIGHT();
+		PART_71_enterFromRight();
 	}
 	enterPartLoop();
 	while (_currentPart == 710 && !_gameStateLoaded) {
