@@ -757,7 +757,7 @@ void Room204::parser() {
 		}
 	} // player_been_here(205)
 
-	if (gearFl && player_said("MAILLET")) {
+	if (gearFl && player_said("MALLET")) {
 		digi_play("COM102", 1, 255, -1, -1);
 		goto done;
 	}
