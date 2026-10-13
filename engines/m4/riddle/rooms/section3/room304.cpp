@@ -308,7 +308,7 @@ void Room304::parser() {
 		digi_play("304r20", 1);
 	} else if (lookFlag && player_said("light switch")) {
 		digi_play("304r21", 1);
-	} else if (lookFlag && player_said("failing cabinet")) {
+	} else if (takeFlag && player_said("filing cabinet")) {
 		digi_play("304r29", 1);
 	} else if (takeFlag && player_said("flat file")) {
 		digi_play("304r30", 1);
