@@ -73,7 +73,7 @@ public:
 	int getInt(const Common::String &key, int fallback) const;
 	bool getBool(const Common::String &key, bool fallback) const;
 	FACES getFont(const Common::String &key, FACES fallback) const;
-	bool apply();
+	bool apply(bool *appearanceChanged = nullptr);
 	bool stageGlobalPreferences(Common::String &invalidKey);
 	bool hasGlobalChanges() const;
 
