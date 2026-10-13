@@ -21,7 +21,7 @@
 
 #include <math.h>
 
-#include "harvester/runtime_entity.h"
+#include "harvester/entity.h"
 
 #include "common/algorithm.h"
 #include "common/debug.h"
@@ -120,9 +120,9 @@ uint32 getRuntimeClockTicks() {
 }
 
 static bool isRectangleOnlyHitClass(int classId) {
-	return classId == kRuntimeEntityClassRectHotspot ||
-		classId == kRuntimeEntityClassRectHotspot18 ||
-		classId == kRuntimeEntityClassRectHotspot19;
+	return classId == kEntityClassRectHotspot ||
+		classId == kEntityClassRectHotspot18 ||
+		classId == kEntityClassRectHotspot19;
 }
 
 bool Entity::loadBitmapResource(ResourceManager &resources, const Common::String &path) {
@@ -151,7 +151,7 @@ bool Entity::loadBitmapResource(ResourceManager &resources, const Common::String
 	_drawEnabled = true;
 	_depthScale = 1.0f;
 	updateBoundsFromCurrentFrame();
-	_hitTestMode = kRuntimeEntityHitTestOpaquePixels;
+	_hitTestMode = kEntityHitTestOpaquePixels;
 	return true;
 }
 
@@ -178,7 +178,7 @@ bool Entity::loadAbmResource(ResourceManager &resources, const Common::String &p
 	_drawEnabled = true;
 	_depthScale = 1.0f;
 	updateBoundsFromCurrentFrame();
-	_hitTestMode = kRuntimeEntityHitTestOpaquePixels;
+	_hitTestMode = kEntityHitTestOpaquePixels;
 	return true;
 }
 
@@ -194,7 +194,7 @@ void Entity::setPosition(int x, int y, float z) {
 	if (anchorChanged)
 		updateScreenBaseFromCurrentFrame();
 
-	if ((anchorChanged || previousZ != z) && _classId == kRuntimeEntityClassNpc) {
+	if ((anchorChanged || previousZ != z) && _classId == kEntityClassNpc) {
 		int width = 0;
 		int height = 0;
 		int xOffset = 0;
@@ -210,7 +210,7 @@ void Entity::setPosition(int x, int y, float z) {
 	}
 }
 
-void Entity::setAnchorMode(RuntimeEntityAnchorMode anchorMode) {
+void Entity::setAnchorMode(EntityAnchorMode anchorMode) {
 	_anchorMode = anchorMode;
 	updateScreenBaseFromCurrentFrame();
 }
@@ -225,7 +225,7 @@ void Entity::setAnimationRate(int rate) {
 	if (rate != _animationRate) {
 		_nextAnimationTick = 0;
 		_animationRate = rate;
-		if (_classId == kRuntimeEntityClassNpc) {
+		if (_classId == kEntityClassNpc) {
 			debugC(2, kDebugPlayer,
 				"Harvester: npc animation rate npc='%s' rate=%d->%d interval_ticks=%u next_tick=%u",
 				_name.c_str(), previousRate, _animationRate,
@@ -237,7 +237,7 @@ void Entity::setAnimationRate(int rate) {
 void Entity::setAnimationEnabled(bool enabled) {
 	const bool wasEnabled = _animationEnabled;
 	_animationEnabled = enabled && !_frames.empty() && _currentFrame >= 0;
-	if (wasEnabled != _animationEnabled && _classId == kRuntimeEntityClassNpc) {
+	if (wasEnabled != _animationEnabled && _classId == kEntityClassNpc) {
 		debugC(2, kDebugPlayer,
 			"Harvester: npc animation enabled npc='%s' enabled=%d->%d frame=%d range=%d..%d",
 			_name.c_str(), wasEnabled, _animationEnabled,
@@ -276,7 +276,7 @@ void Entity::setAnimationFrameRange(int firstFrame, int lastFrame, bool looping)
 	else
 		updateBoundsFromCurrentFrame();
 
-	if (_classId == kRuntimeEntityClassNpc) {
+	if (_classId == kEntityClassNpc) {
 		debugC(2, kDebugPlayer,
 			"Harvester: npc animation range npc='%s' frames=%d..%d->%d..%d current=%d looping=%d->%d enabled=%d",
 			_name.c_str(), previousFirstFrame, previousLastFrame,
@@ -297,7 +297,7 @@ void Entity::setAnimationSequence(int sequence) {
 	_lastFrame = MIN<int>(_firstFrame + kFramesPerSequence - 1, (int)_frames.size() - 1);
 	advanceAnimationFrame(_firstFrame);
 
-	if (_classId == kRuntimeEntityClassCursor) {
+	if (_classId == kEntityClassCursor) {
 		debugC(1, kDebugCursor,
 			"Harvester: cursor animation sequence=%d frames=%d..%d current=%d",
 			_animationSequence, _firstFrame, _lastFrame, _currentFrame);
@@ -315,7 +315,7 @@ void Entity::configureHotspotBounds(int width, int height) {
 	_drawEnabled = false;
 	_boundsWidth = MAX(width, 1);
 	_boundsHeight = MAX(height, 1);
-	_hitTestMode = kRuntimeEntityHitTestBounds;
+	_hitTestMode = kEntityHitTestBounds;
 	_depthScale = 1.0f;
 	updateScreenBaseFromCurrentFrame();
 }
@@ -389,14 +389,14 @@ bool Entity::tickVisualState(uint32 now) {
 	_nextAnimationTick = now + _animationTickInterval;
 	_animationAdvancedLastTick = true;
 
-	if (_classId == kRuntimeEntityClassPlayer && previousFrameIndex != _currentFrame) {
+	if (_classId == kEntityClassPlayer && previousFrameIndex != _currentFrame) {
 		debugC(4, kDebugPlayer,
 			"Harvester: player animation advance frame=%d->%d range=%d..%d rate=%d tick=%u interval=%u next_tick=%u",
 			previousFrameIndex, _currentFrame, _firstFrame, _lastFrame,
 			_animationRate, now, _animationTickInterval, _nextAnimationTick);
 	}
 
-	if (_classId == kRuntimeEntityClassNpc) {
+	if (_classId == kEntityClassNpc) {
 		const AbmFrame &currentFrame = _frames[(uint)_currentFrame];
 		const Common::Point drawOrigin = getDrawOrigin();
 		const bool loopReset = _looping && !_pingPong &&
@@ -443,12 +443,12 @@ void Entity::configureTimerCountdown(int initialValue, int currentValue,
 	_visible = false;
 	_drawEnabled = false;
 	_animationEnabled = false;
-	_hitTestMode = kRuntimeEntityHitTestNone;
+	_hitTestMode = kEntityHitTestNone;
 	setTimerEnabled(enabled);
 }
 
 void Entity::setTimerEnabled(bool enabled) {
-	if (_classId != kRuntimeEntityClassTimer)
+	if (_classId != kEntityClassTimer)
 		return;
 
 	if (!enabled) {
@@ -471,7 +471,7 @@ void Entity::setTimerEnabled(bool enabled) {
 }
 
 bool Entity::tickTimerState(uint32 now, Common::Array<Common::String> &expiredTimerNames) {
-	if (_classId != kRuntimeEntityClassTimer || !_timerEnabled || _timerPaused)
+	if (_classId != kEntityClassTimer || !_timerEnabled || _timerPaused)
 		return false;
 
 	if (_timerNextFireTick != 0 && (int32)(now - _timerNextFireTick) < 0) {
@@ -496,7 +496,7 @@ bool Entity::tickTimerState(uint32 now, Common::Array<Common::String> &expiredTi
 }
 
 void Entity::pauseTimerCountdown(uint32 now) {
-	if (_classId != kRuntimeEntityClassTimer || !_timerEnabled || _timerPaused)
+	if (_classId != kEntityClassTimer || !_timerEnabled || _timerPaused)
 		return;
 
 	if (_timerNextFireTick != 0 && (int32)(now - _timerNextFireTick) < 0) {
@@ -511,7 +511,7 @@ void Entity::pauseTimerCountdown(uint32 now) {
 }
 
 void Entity::resumeTimerCountdown(uint32 now) {
-	if (_classId != kRuntimeEntityClassTimer || !_timerEnabled || !_timerPaused)
+	if (_classId != kEntityClassTimer || !_timerEnabled || !_timerPaused)
 		return;
 
 	if (_timerNextFireTick != 0)
@@ -525,7 +525,7 @@ void Entity::draw(Graphics::Screen &screen) const {
 		return;
 
 	const Common::Point drawOrigin = getDrawOrigin();
-	if (_classId == kRuntimeEntityClassPlayer) {
+	if (_classId == kEntityClassPlayer) {
 		debugC(4, kDebugPlayer,
 			"Harvester: player animation draw frame=%d pos=(%d,%d,z=%.2f) origin=(%d,%d) tick=%u",
 			_currentFrame, _x, _y, _z, drawOrigin.x, drawOrigin.y, getRuntimeClockTicks());
@@ -568,17 +568,17 @@ bool Entity::isOpaqueAt(const Common::Point &point) const {
 bool Entity::hitTest(const Common::Point &point) const {
 	if (!_visible)
 		return false;
-	if (_classId == kRuntimeEntityClassDisabledHotspot)
+	if (_classId == kEntityClassDisabledHotspot)
 		return false;
-	if (_classId == kRuntimeEntityClassBackground)
+	if (_classId == kEntityClassBackground)
 		return true;
-	if (_hitTestMode == kRuntimeEntityHitTestNone)
+	if (_hitTestMode == kEntityHitTestNone)
 		return false;
 
 	const Common::Rect bounds = getFrameRect();
 	if (!bounds.contains(point))
 		return false;
-	if (_hitTestMode != kRuntimeEntityHitTestOpaquePixels || isRectangleOnlyHitClass(_classId))
+	if (_hitTestMode != kEntityHitTestOpaquePixels || isRectangleOnlyHitClass(_classId))
 		return true;
 
 	return isOpaqueAt(point);
@@ -587,10 +587,10 @@ bool Entity::hitTest(const Common::Point &point) const {
 bool Entity::overlapsEntity(const Entity &other) const {
 	if (this == &other || !_visible || !other._visible)
 		return false;
-	if (_classId == kRuntimeEntityClassCursor || _classId == kRuntimeEntityClassBackground ||
-		_classId == kRuntimeEntityClassRectHotspot || _classId == kRuntimeEntityClassRectHotspot19 ||
-		other._classId == kRuntimeEntityClassCursor || other._classId == kRuntimeEntityClassBackground ||
-		other._classId == kRuntimeEntityClassRectHotspot || other._classId == kRuntimeEntityClassRectHotspot19) {
+	if (_classId == kEntityClassCursor || _classId == kEntityClassBackground ||
+		_classId == kEntityClassRectHotspot || _classId == kEntityClassRectHotspot19 ||
+		other._classId == kEntityClassCursor || other._classId == kEntityClassBackground ||
+		other._classId == kEntityClassRectHotspot || other._classId == kEntityClassRectHotspot19) {
 		return false;
 	}
 
@@ -607,8 +607,8 @@ bool Entity::overlapsEntity(const Entity &other) const {
 	const int bottom = MIN(thisRect.bottom, otherRect.bottom);
 	if (left >= right || top >= bottom)
 		return false;
-	if (_classId == kRuntimeEntityClassDisabledHotspot ||
-			other._classId == kRuntimeEntityClassDisabledHotspot) {
+	if (_classId == kEntityClassDisabledHotspot ||
+			other._classId == kEntityClassDisabledHotspot) {
 		return true;
 	}
 	if (!hasOpaqueFrame() || !other.hasOpaqueFrame())
@@ -668,7 +668,7 @@ void Entity::advanceAnimationFrame(int directive) {
 
 		if (!_looping) {
 			_currentFrame = _firstFrame;
-			if (_classId == kRuntimeEntityClassAnimation)
+			if (_classId == kEntityClassAnimation)
 				_animationEnabled = false;
 			goto done;
 		}
@@ -690,7 +690,7 @@ void Entity::advanceAnimationFrame(int directive) {
 
 		if (!_looping) {
 			_currentFrame = _lastFrame;
-			if (_classId == kRuntimeEntityClassAnimation)
+			if (_classId == kEntityClassAnimation)
 				_animationEnabled = false;
 			goto done;
 		}
@@ -728,7 +728,7 @@ void Entity::updateScreenBaseFromCurrentFrame() {
 	int baseX = _x;
 	int baseY = _y;
 
-	if (_anchorMode == kRuntimeEntityAnchorCentered) {
+	if (_anchorMode == kEntityAnchorCentered) {
 		baseX -= _boundsWidth / 2;
 		baseY -= _boundsHeight / 2;
 	}
@@ -781,7 +781,7 @@ void EntityManager::clearSceneEntities(bool preserveGlobalTimers) {
 	Common::Array<Entity *> preservedEntities;
 	for (Entity *entity : _sceneEntities) {
 		if (preserveGlobalTimers &&
-				entity->getClassId() == kRuntimeEntityClassTimer &&
+				entity->getClassId() == kEntityClassTimer &&
 				entity->isTimerGlobal()) {
 			preservedEntities.push_back(entity);
 			continue;
@@ -831,11 +831,11 @@ Entity *EntityManager::spawnCursorEntity(const Common::Point &position) {
 		return _cursorEntity;
 
 	_cursorEntity = spawnAbmEntityFromResource(kCursorEntityName, kCursorResourcePath,
-		kRuntimeEntityClassCursor, position, kCursorEntityZ, kCursorAnimationRate, true, false);
+		kEntityClassCursor, position, kCursorEntityZ, kCursorAnimationRate, true, false);
 	if (_cursorEntity)
 		_cursorEntity->setAnimationSequence(0);
 	if (_cursorEntity)
-		_cursorEntity->setHitTestMode(kRuntimeEntityHitTestNone);
+		_cursorEntity->setHitTestMode(kEntityHitTestNone);
 	if (_cursorEntity) {
 		const uint32 animationInterval = _cursorEntity->getAnimationRate() == 0 ? 0 :
 			(100U / (uint32)_cursorEntity->getAnimationRate());
@@ -851,7 +851,7 @@ Entity *EntityManager::spawnCursorEntity(const Common::Point &position) {
 
 Entity *EntityManager::spawnSceneBitmapEntity(const Common::String &name,
 		const Common::String &resourcePath, const Common::Point &position, float z) {
-	Entity *entity = spawnBitmapEntityFromResource(name, resourcePath, kRuntimeEntityClassObject,
+	Entity *entity = spawnBitmapEntityFromResource(name, resourcePath, kEntityClassObject,
 		position, z);
 	if (entity)
 		insertSceneEntity(entity);
@@ -862,7 +862,7 @@ Entity *EntityManager::spawnSceneHotspotEntity(const Common::String &name,
 		const Common::Rect &bounds, float z) {
 	Entity *entity = new Entity();
 	entity->setName(name);
-	entity->setClassId(kRuntimeEntityClassObject);
+	entity->setClassId(kEntityClassObject);
 	entity->setPosition(bounds.left, bounds.top, z);
 	entity->configureHotspotBounds(bounds.width(), bounds.height());
 	insertSceneEntity(entity);
@@ -872,7 +872,7 @@ Entity *EntityManager::spawnSceneHotspotEntity(const Common::String &name,
 Entity *EntityManager::spawnSceneAnimationEntity(const Common::String &name,
 		const Common::String &resourcePath, const Common::Point &position, float z, int animationRate,
 		bool active, bool visible, bool looping, bool playBackwards, bool pingPong, int initialFrame) {
-	Entity *entity = spawnAbmEntityFromResource(name, resourcePath, kRuntimeEntityClassAnimation,
+	Entity *entity = spawnAbmEntityFromResource(name, resourcePath, kEntityClassAnimation,
 		position, z, animationRate, looping, pingPong);
 	if (!entity)
 		return nullptr;
@@ -881,12 +881,12 @@ Entity *EntityManager::spawnSceneAnimationEntity(const Common::String &name,
 	// x/y pivot, lower the render-list depth anchor by half z_extent, and then
 	// keep that cached screen base while later frame ABM x/y offsets shift the
 	// final draw rect.
-	entity->setAnchorMode(kRuntimeEntityAnchorCentered);
+	entity->setAnchorMode(kEntityAnchorCentered);
 	entity->setZExtent(3.0f);
 	entity->setPosition(position.x, position.y, z - floorf(MAX<float>(entity->getZExtent(), 0.0f) * 0.5f));
 	entity->setVisible(visible);
 	entity->setPlayBackwards(playBackwards);
-	entity->setHitTestMode(kRuntimeEntityHitTestNone);
+	entity->setHitTestMode(kEntityHitTestNone);
 	int startFrame = playBackwards ? entity->getLastFrame() : 0;
 	if (!playBackwards && initialFrame >= 0)
 		startFrame = CLIP<int>(initialFrame, 0, entity->getLastFrame());
@@ -903,14 +903,14 @@ Entity *EntityManager::spawnSceneAnimationEntity(const Common::String &name,
 
 Entity *EntityManager::spawnSceneActorEntity(const Common::String &name,
 		const Common::String &resourcePath, const Common::Point &position, float z, int initialFrame) {
-	Entity *entity = spawnAbmEntityFromResource(name, resourcePath, kRuntimeEntityClassObject,
+	Entity *entity = spawnAbmEntityFromResource(name, resourcePath, kEntityClassObject,
 		position, z, 0, false, false);
 	if (!entity)
 		return nullptr;
 
-	entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
+	entity->setAnchorMode(kEntityAnchorTopLeft);
 	entity->setZExtent(3.0f);
-	entity->setHitTestMode(kRuntimeEntityHitTestOpaquePixels);
+	entity->setHitTestMode(kEntityHitTestOpaquePixels);
 	entity->setCurrentFrame(initialFrame);
 	debugC(1, kDebugScene,
 		"Harvester: spawned scene actor '%s' resource='%s' frames=0..%d initial_frame=%d animation_rate=%d sequence=%d pos=(%d,%d,z=%.2f)",
@@ -925,7 +925,7 @@ Entity *EntityManager::spawnSceneTimerEntity(const Common::String &name,
 		int initialValue, int currentValue, bool enabled, bool looping, bool global) {
 	Entity *entity = new Entity();
 	entity->setName(name);
-	entity->setClassId(kRuntimeEntityClassTimer);
+	entity->setClassId(kEntityClassTimer);
 	configureSceneTimerEntity(*entity, initialValue, currentValue, enabled, looping, global);
 	insertSceneEntity(entity);
 	return entity;
@@ -982,7 +982,7 @@ bool EntityManager::tickSceneEntities() {
 	bool changed = false;
 
 	for (Entity *entity : _sceneEntities) {
-		if (entity->getClassId() == kRuntimeEntityClassTimer) {
+		if (entity->getClassId() == kEntityClassTimer) {
 			if (_timerPauseDepth == 0)
 				(void)entity->tickTimerState(now, _expiredTimerNames);
 			continue;

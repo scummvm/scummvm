@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HARVESTER_ROOM_INTERACTION_H
-#define HARVESTER_ROOM_INTERACTION_H
+#ifndef HARVESTER_INTERACTION_H
+#define HARVESTER_INTERACTION_H
 
 #include "common/error.h"
 #include "harvester/bitmap.h"
@@ -32,15 +32,15 @@ namespace Harvester {
 class Flow;
 class HarvesterEngine;
 class InventorySystem;
-class RoomInteractionProcessor;
+class Interaction;
 class SceneEntities;
 struct IndexedBitmap;
 
 extern const char *const kExitCloseupPendingRoomChange;
 
-class RoomInteractionCallbacks {
+class InteractionCallbacks {
 public:
-	virtual ~RoomInteractionCallbacks() {}
+	virtual ~InteractionCallbacks() {}
 
 	virtual bool refreshCurrentScene(bool preservePlayerPlacement) = 0;
 	virtual bool applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState) = 0;
@@ -58,9 +58,9 @@ public:
 		int damageType) = 0;
 };
 
-class RoomItemInteractions {
+class ItemInteractions {
 public:
-	RoomItemInteractions(HarvesterEngine &engine, SceneState &scene,
+	ItemInteractions(HarvesterEngine &engine, SceneState &scene,
 		SceneEntities &sceneRuntime, InventorySystem &inventory, const Common::String &pendingRoomChange);
 
 	const Common::String &getCarriedRoomItemLabel() const { return _carriedRoomItemLabel; }
@@ -68,21 +68,21 @@ public:
 	bool hasCarriedRoomItem() const;
 	bool stowCarriedRoomItemToInventory();
 	Common::Error handleInventoryTargetInteraction(const ObjectRecord &target,
-		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
+		Interaction &interactionProcessor, bool &needsRedraw);
 	ObjectRecord *findSelectedInventoryRoomTarget(const Common::Point &point);
 	Common::Error handleRoomItemPickup(const ObjectRecord &object, bool playerPresent,
-		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw);
+		Interaction &interactionProcessor, InteractionCallbacks &callbacks, bool &needsRedraw);
 
 private:
 	void clearCarriedRoomItem();
 	void hideSceneObject(const Common::String &objectName, const Common::String *ownerOrRoom);
 	bool shouldCancelDeniedPickup(const InteractionResult &interaction, bool didTransition) const;
 	Common::Error restoreDeniedPickup(Script &script, const ObjectRecord &savedObject, bool clearCarryState,
-		RoomInteractionCallbacks &callbacks, bool &needsRedraw);
+		InteractionCallbacks &callbacks, bool &needsRedraw);
 	Common::Error moveRoomItemDirectlyToInventory(const ObjectRecord &object,
-		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw);
+		Interaction &interactionProcessor, InteractionCallbacks &callbacks, bool &needsRedraw);
 	Common::Error beginRoomItemCarry(const ObjectRecord &object,
-		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw);
+		Interaction &interactionProcessor, InteractionCallbacks &callbacks, bool &needsRedraw);
 
 	HarvesterEngine &_engine;
 	SceneState &_scene;
@@ -94,13 +94,13 @@ private:
 	IndexedBitmap _carriedRoomItemBitmap;
 };
 
-class RoomInteractionProcessor {
+class Interaction {
 public:
-	RoomInteractionProcessor(HarvesterEngine &engine, Flow &flow, SceneState &scene,
+	Interaction(HarvesterEngine &engine, Flow &flow, SceneState &scene,
 		RoomPlayerState &playerState, Common::String &pendingRegionName,
 		Common::String &pendingRoomChange, bool &pendingRoomChangeIsRoomName,
 		bool &pendingRoomChangeUsesSavedRoomState, SaveRoomState &pendingRoomChangeSavedRoomState,
-		bool canExitCloseupToParent, RoomInteractionCallbacks &callbacks);
+		bool canExitCloseupToParent, InteractionCallbacks &callbacks);
 
 	void queueRegionInteraction(const RegionRecord &region, const Common::Point &mousePos);
 	Common::Error runRegionInteraction(const RegionRecord &region,
@@ -127,11 +127,11 @@ private:
 	bool &_pendingRoomChangeUsesSavedRoomState;
 	SaveRoomState &_pendingRoomChangeSavedRoomState;
 	bool _canExitCloseupToParent;
-	RoomInteractionCallbacks &_callbacks;
+	InteractionCallbacks &_callbacks;
 };
 
 bool hasRoomEntryInteraction(const InteractionResult &interaction);
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_ROOM_INTERACTION_H
+#endif // HARVESTER_INTERACTION_H

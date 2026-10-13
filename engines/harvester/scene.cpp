@@ -33,8 +33,8 @@
 #include "harvester/harvester.h"
 #include "harvester/inventory.h"
 #include "harvester/player.h"
-#include "harvester/room_combat.h"
-#include "harvester/runtime_entity.h"
+#include "harvester/combat.h"
+#include "harvester/entity.h"
 
 #include "common/ptr.h"
 #include "graphics/blit.h"
@@ -43,8 +43,8 @@
 #include "harvester/cheats.h"
 #include "harvester/resources.h"
 #include "harvester/monster.h"
-#include "harvester/room_interaction.h"
-#include "harvester/room_input.h"
+#include "harvester/interaction.h"
+#include "harvester/input.h"
 #include "harvester/room_presentation.h"
 #include "harvester/room_support.h"
 
@@ -221,7 +221,7 @@ bool Scene::applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState) {
 	SceneState updatedScene;
 	if (!_sceneRuntime.loadSceneResources(updatedState, updatedScene))
 		return false;
-	Common::Array<RoomMonsterCombatState> updatedMonsterCombatStates =
+	Common::Array<MonsterCombatState> updatedMonsterCombatStates =
 		_combat.prepareMonsterCombatStatesForSceneChange(_scene.state.roomMonsters, updatedState.roomMonsters);
 
 	if (!_sceneRuntime.reconcileSceneEntitiesInPlace(_scene, updatedState, updatedScene))
@@ -434,15 +434,15 @@ void Scene::startPlayerDefeatSequence(const char *reason, const Common::String &
 			: 0);
 }
 
-RoomInputResult Scene::runRoomEntryInteraction(const InteractionResult &roomEntryInteraction) {
+InputResult Scene::runRoomEntryInteraction(const InteractionResult &roomEntryInteraction) {
 	bool didEntryTransition = false;
 	Common::Error entryInteractionError = _interactionProcessor.handleInteractionResult(
 		roomEntryInteraction, didEntryTransition, Common::String());
 	if (entryInteractionError.getCode() != Common::kNoError)
-		return RoomInputResult::leaveRoom(entryInteractionError);
+		return InputResult::leaveRoom(entryInteractionError);
 	if (_flow.hasPendingMainMenuReturn() || didEntryTransition)
-		return RoomInputResult::leaveRoom(Common::kNoError);
-	return RoomInputResult();
+		return InputResult::leaveRoom(Common::kNoError);
+	return InputResult();
 }
 
 void Scene::updateRoomInterface(bool &needsRedraw) {
@@ -585,14 +585,14 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 	return true;
 }
 
-RoomInputResult Scene::pollRoomEvents(RoomInput &input, bool &needsRedraw) {
+InputResult Scene::pollRoomEvents(Input &input, bool &needsRedraw) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
-		const RoomInputResult inputResult = input.handleEvent(event, needsRedraw);
+		const InputResult inputResult = input.handleEvent(event, needsRedraw);
 		if (inputResult.returnFromRoom)
 			return inputResult;
 	}
-	return RoomInputResult();
+	return InputResult();
 }
 
 Scene::PlayerControlState Scene::preparePlayerControlState() {
@@ -704,7 +704,7 @@ void Scene::pruneCombatEffects(bool &needsRedraw) {
 		needsRedraw = true;
 }
 
-RoomInputResult Scene::dispatchExpiredTimers(bool &needsRedraw) {
+InputResult Scene::dispatchExpiredTimers(bool &needsRedraw) {
 	if (_entityManager) {
 		Common::Array<Common::String> expiredTimerNames;
 		if (_entityManager->takeExpiredTimerNames(expiredTimerNames)) {
@@ -720,25 +720,25 @@ RoomInputResult Scene::dispatchExpiredTimers(bool &needsRedraw) {
 					_interactionProcessor.handleInteractionResult(
 						timerInteraction, didTransition, Common::String(), false);
 				if (interactionError.getCode() != Common::kNoError)
-					return RoomInputResult::leaveRoom(interactionError);
+					return InputResult::leaveRoom(interactionError);
 				if (_flow.hasPendingMainMenuReturn())
-					return RoomInputResult::leaveRoom(Common::kNoError);
+					return InputResult::leaveRoom(Common::kNoError);
 				needsRedraw = true;
 				if (!_pendingTransition.roomName.empty())
 					break;
 			}
 		}
 	}
-	return RoomInputResult();
+	return InputResult();
 }
 
-RoomInputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
-	RoomInput input(_engine, _flow, *this, _scene, _inventory, _cheats,
+InputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
+	Input input(_engine, _flow, *this, _scene, _inventory, _cheats,
 		_roomItems, _interactionProcessor, _presentationState, *_view.art, _canExitCloseupToParent);
 	bool needsRedraw = true;
 
 	if (!_inventory.refresh())
-		return RoomInputResult::leaveRoom(Common::kReadingFailed);
+		return InputResult::leaveRoom(Common::kReadingFailed);
 	Graphics::FrameLimiter limiter(g_system, 60);
 	captureCurrentSaveState();
 
@@ -747,7 +747,7 @@ RoomInputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 
 	while (!_engine.shouldQuit()) {
 		if (_flow.hasPendingMainMenuReturn())
-			return RoomInputResult::leaveRoom(Common::kNoError);
+			return InputResult::leaveRoom(Common::kNoError);
 		if (_flow.takePendingNewGameRestart()) {
 			_flow.prepareForNewGame();
 			_pendingTransition.roomName = "START";
@@ -755,7 +755,7 @@ RoomInputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 			_pendingTransition.usesSavedRoomState = false;
 			_pendingTransition.savedRoomState.clear();
 			if (!_roomItems.stowCarriedRoomItemToInventory())
-				return RoomInputResult::leaveRoom(Common::kReadingFailed);
+				return InputResult::leaveRoom(Common::kReadingFailed);
 			break;
 		}
 		if (_engine.hasPendingLoadedSaveRoomState()) {
@@ -768,17 +768,17 @@ RoomInputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 				_pendingTransition.isRoomName = true;
 			}
 			if (!_roomItems.stowCarriedRoomItemToInventory())
-				return RoomInputResult::leaveRoom(Common::kReadingFailed);
+				return InputResult::leaveRoom(Common::kReadingFailed);
 			break;
 		}
 		if (_flow.hasPendingDebugRoomChange()) {
 			if (!_roomItems.stowCarriedRoomItemToInventory())
-				return RoomInputResult::leaveRoom(Common::kReadingFailed);
-			return RoomInputResult::leaveRoom(Common::kNoError);
+				return InputResult::leaveRoom(Common::kReadingFailed);
+			return InputResult::leaveRoom(Common::kNoError);
 		}
 		if (!_pendingTransition.roomName.empty()) {
 			if (!_roomItems.stowCarriedRoomItemToInventory())
-				return RoomInputResult::leaveRoom(Common::kReadingFailed);
+				return InputResult::leaveRoom(Common::kReadingFailed);
 			break;
 		}
 		InteractionResult queuedDebugInteraction;
@@ -789,26 +789,26 @@ RoomInputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 			Common::Error debugInteractionError = _interactionProcessor.handleInteractionResult(
 				queuedDebugInteraction, didDebugTransition, Common::String());
 			if (debugInteractionError.getCode() != Common::kNoError)
-				return RoomInputResult::leaveRoom(debugInteractionError);
+				return InputResult::leaveRoom(debugInteractionError);
 			if (_flow.hasPendingMainMenuReturn())
-				return RoomInputResult::leaveRoom(Common::kNoError);
+				return InputResult::leaveRoom(Common::kNoError);
 			if (!_pendingTransition.roomName.empty()) {
 				if (!_roomItems.stowCarriedRoomItemToInventory())
-					return RoomInputResult::leaveRoom(Common::kReadingFailed);
+					return InputResult::leaveRoom(Common::kReadingFailed);
 				break;
 			}
 			needsRedraw = true;
 		}
 		updateRoomInterface(needsRedraw);
 		if (!drawRoomFrame(needsRedraw))
-			return RoomInputResult::leaveRoom(Common::kNoError);
+			return InputResult::leaveRoom(Common::kNoError);
 
-		const RoomInputResult inputResult = pollRoomEvents(input, needsRedraw);
+		const InputResult inputResult = pollRoomEvents(input, needsRedraw);
 		if (inputResult.returnFromRoom)
 			return inputResult;
 		if (!_pendingTransition.roomName.empty()) {
 			if (!_roomItems.stowCarriedRoomItemToInventory())
-				return RoomInputResult::leaveRoom(Common::kReadingFailed);
+				return InputResult::leaveRoom(Common::kReadingFailed);
 			break;
 		}
 
@@ -820,23 +820,23 @@ RoomInputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 		Common::Error pendingRegionError =
 			tryActivatePendingRegion(needsRedraw);
 		if (pendingRegionError.getCode() != Common::kNoError)
-			return RoomInputResult::leaveRoom(pendingRegionError);
+			return InputResult::leaveRoom(pendingRegionError);
 		if (_flow.hasPendingMainMenuReturn())
-			return RoomInputResult::leaveRoom(Common::kNoError);
+			return InputResult::leaveRoom(Common::kNoError);
 		if (!_pendingTransition.roomName.empty()) {
 			if (!_roomItems.stowCarriedRoomItemToInventory())
-				return RoomInputResult::leaveRoom(Common::kReadingFailed);
+				return InputResult::leaveRoom(Common::kReadingFailed);
 			break;
 		}
 		if (!isPlayerCombatLocked()) {
 			pendingRegionError = tryActivatePassiveRegion(needsRedraw);
 			if (pendingRegionError.getCode() != Common::kNoError)
-				return RoomInputResult::leaveRoom(pendingRegionError);
+				return InputResult::leaveRoom(pendingRegionError);
 			if (_flow.hasPendingMainMenuReturn())
-				return RoomInputResult::leaveRoom(Common::kNoError);
+				return InputResult::leaveRoom(Common::kNoError);
 			if (!_pendingTransition.roomName.empty()) {
 				if (!_roomItems.stowCarriedRoomItemToInventory())
-					return RoomInputResult::leaveRoom(Common::kReadingFailed);
+					return InputResult::leaveRoom(Common::kReadingFailed);
 				break;
 			}
 		}
@@ -848,12 +848,12 @@ RoomInputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 		if (!control.paused) {
 			combatError = resolvePlayerAttackContact(needsRedraw);
 			if (combatError.getCode() != Common::kNoError)
-				return RoomInputResult::leaveRoom(combatError);
+				return InputResult::leaveRoom(combatError);
 			if (_flow.hasPendingMainMenuReturn())
-				return RoomInputResult::leaveRoom(Common::kNoError);
+				return InputResult::leaveRoom(Common::kNoError);
 			if (!_pendingTransition.roomName.empty()) {
 				if (!_roomItems.stowCarriedRoomItemToInventory())
-					return RoomInputResult::leaveRoom(Common::kReadingFailed);
+					return InputResult::leaveRoom(Common::kReadingFailed);
 				break;
 			}
 			updatePlayerCombatAnimations(needsRedraw);
@@ -861,20 +861,20 @@ RoomInputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 		updatePlayerControls(control, needsRedraw);
 		combatError = updateRoomMonsterCombat(needsRedraw);
 		if (combatError.getCode() != Common::kNoError)
-			return RoomInputResult::leaveRoom(combatError);
+			return InputResult::leaveRoom(combatError);
 		syncCombatHitEffects(needsRedraw);
 		if (_flow.hasPendingMainMenuReturn())
-			return RoomInputResult::leaveRoom(Common::kNoError);
+			return InputResult::leaveRoom(Common::kNoError);
 		if (!_pendingTransition.roomName.empty()) {
 			if (!_roomItems.stowCarriedRoomItemToInventory())
-				return RoomInputResult::leaveRoom(Common::kReadingFailed);
+				return InputResult::leaveRoom(Common::kReadingFailed);
 			break;
 		}
 		updatePlayerDeath(needsRedraw);
 		if (_flow.hasPendingMainMenuReturn())
-			return RoomInputResult::leaveRoom(Common::kNoError);
+			return InputResult::leaveRoom(Common::kNoError);
 		pruneCombatEffects(needsRedraw);
-		const RoomInputResult timerResult = dispatchExpiredTimers(needsRedraw);
+		const InputResult timerResult = dispatchExpiredTimers(needsRedraw);
 		if (timerResult.returnFromRoom)
 			return timerResult;
 		updateIdleAnimation(needsRedraw);
@@ -885,17 +885,17 @@ RoomInputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 		limiter.startFrame();
 	}
 	if (_engine.shouldQuit())
-		return RoomInputResult::leaveRoom(Common::kNoError);
+		return InputResult::leaveRoom(Common::kNoError);
 	if (_flow.hasPendingMainMenuReturn())
-		return RoomInputResult::leaveRoom(Common::kNoError);
+		return InputResult::leaveRoom(Common::kNoError);
 	if (_pendingTransition.roomName.empty())
-		return RoomInputResult::leaveRoom(Common::kNoError);
+		return InputResult::leaveRoom(Common::kNoError);
 	if (_pendingTransition.roomName.equals(kExitCloseupPendingRoomChange)) {
 		_flow.requestCloseupParentRestart();
-		return RoomInputResult::leaveRoom(Common::kNoError);
+		return InputResult::leaveRoom(Common::kNoError);
 	}
 
-	return RoomInputResult();
+	return InputResult();
 }
 
 void Scene::syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords) {
@@ -1150,7 +1150,7 @@ Common::Error SceneRunner::runRoomLoop(Flow &flow, const Common::String &targetN
 
 		if (shouldRunRoomEntryCommands) {
 			if (hasPendingRoomEntryInteraction) {
-				const RoomInputResult entryResult = session.runRoomEntryInteraction(roomEntryInteraction);
+				const InputResult entryResult = session.runRoomEntryInteraction(roomEntryInteraction);
 				if (entryResult.returnFromRoom)
 					return entryResult.error;
 			}
@@ -1161,7 +1161,7 @@ Common::Error SceneRunner::runRoomLoop(Flow &flow, const Common::String &targetN
 		ScopedDeferredLiveNpcDeathTransitions deferredLiveNpcDeathTransitions(
 			_engine.getScript());
 
-		const RoomInputResult frameResult = session.runRoomFrames(currentRoomTarget);
+		const InputResult frameResult = session.runRoomFrames(currentRoomTarget);
 		if (frameResult.returnFromRoom)
 			return frameResult.error;
 		const RoomPendingTransition &pendingTransition = session.getPendingTransition();

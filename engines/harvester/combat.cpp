@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/room_combat.h"
+#include "harvester/combat.h"
 
 #include "common/util.h"
 #include "graphics/font.h"
@@ -29,9 +29,9 @@
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/player.h"
-#include "harvester/room_interaction.h"
+#include "harvester/interaction.h"
 #include "harvester/scene_entities.h"
-#include "harvester/runtime_entity.h"
+#include "harvester/entity.h"
 
 namespace Harvester {
 
@@ -364,21 +364,21 @@ bool runtimeEntityHasDrawableFrameRange(const Entity &entity, int firstFrame, in
 
 bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
 		const Entity &entity, int actorCenterX, int targetCenterX,
-		RoomAttackAnimationRange &range) {
+		AttackAnimationRange &range) {
 	// Native class-6 attackers pick one of the 0x16..0x1b attack states, which map to
 	// the 0x50..0x8b strike banks. The 0x8c..0x9d banks are hit reactions, not attacks.
-	static const RoomAttackAnimationRange kLeftAttackRanges[3] = {
-		RoomAttackAnimationRange(0x64, 0x6d, 1),
-		RoomAttackAnimationRange(0x5a, 0x63, 1),
-		RoomAttackAnimationRange(0x50, 0x59, 1)
+	static const AttackAnimationRange kLeftAttackRanges[3] = {
+		AttackAnimationRange(0x64, 0x6d, 1),
+		AttackAnimationRange(0x5a, 0x63, 1),
+		AttackAnimationRange(0x50, 0x59, 1)
 	};
-	static const RoomAttackAnimationRange kRightAttackRanges[3] = {
-		RoomAttackAnimationRange(0x82, 0x8b, 2),
-		RoomAttackAnimationRange(0x78, 0x81, 2),
-		RoomAttackAnimationRange(0x6e, 0x77, 2)
+	static const AttackAnimationRange kRightAttackRanges[3] = {
+		AttackAnimationRange(0x82, 0x8b, 2),
+		AttackAnimationRange(0x78, 0x81, 2),
+		AttackAnimationRange(0x6e, 0x77, 2)
 	};
 
-	const RoomAttackAnimationRange *candidates =
+	const AttackAnimationRange *candidates =
 		targetCenterX < actorCenterX ? kLeftAttackRanges : kRightAttackRanges;
 	int availableCandidateIndices[3];
 	int availableCandidateCount = 0;
@@ -398,23 +398,23 @@ bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
 }
 
 bool resolveMonsterDeathAnimationRange(const Entity &entity, int facing,
-		int deathDamageType, bool goreEnabled, RoomDeathAnimationRange &range) {
+		int deathDamageType, bool goreEnabled, DeathAnimationRange &range) {
 	const bool preferLeftBank = facing == 1;
-	const RoomDeathAnimationRange rightBludge(0xb0, 0xb9);
-	const RoomDeathAnimationRange leftBludge(0xba, 0xc3);
-	const RoomDeathAnimationRange rightSlash(0x100, 0x109);
-	const RoomDeathAnimationRange leftSlash(0x10a, 0x113);
-	const RoomDeathAnimationRange rightProjectile(0x114, 0x11d);
-	const RoomDeathAnimationRange leftProjectile(0x11e, 0x127);
+	const DeathAnimationRange rightBludge(0xb0, 0xb9);
+	const DeathAnimationRange leftBludge(0xba, 0xc3);
+	const DeathAnimationRange rightSlash(0x100, 0x109);
+	const DeathAnimationRange leftSlash(0x10a, 0x113);
+	const DeathAnimationRange rightProjectile(0x114, 0x11d);
+	const DeathAnimationRange leftProjectile(0x11e, 0x127);
 
-	const RoomDeathAnimationRange primaryBludge = preferLeftBank ? leftBludge : rightBludge;
-	const RoomDeathAnimationRange primarySlash = preferLeftBank ? leftSlash : rightSlash;
-	const RoomDeathAnimationRange primaryProjectile = preferLeftBank ? leftProjectile : rightProjectile;
-	const RoomDeathAnimationRange fallbackBludge = preferLeftBank ? rightBludge : leftBludge;
-	const RoomDeathAnimationRange fallbackSlash = preferLeftBank ? rightSlash : leftSlash;
-	const RoomDeathAnimationRange fallbackProjectile = preferLeftBank ? rightProjectile : leftProjectile;
+	const DeathAnimationRange primaryBludge = preferLeftBank ? leftBludge : rightBludge;
+	const DeathAnimationRange primarySlash = preferLeftBank ? leftSlash : rightSlash;
+	const DeathAnimationRange primaryProjectile = preferLeftBank ? leftProjectile : rightProjectile;
+	const DeathAnimationRange fallbackBludge = preferLeftBank ? rightBludge : leftBludge;
+	const DeathAnimationRange fallbackSlash = preferLeftBank ? rightSlash : leftSlash;
+	const DeathAnimationRange fallbackProjectile = preferLeftBank ? rightProjectile : leftProjectile;
 
-	auto chooseIfAvailable = [&](const RoomDeathAnimationRange &candidate) {
+	auto chooseIfAvailable = [&](const DeathAnimationRange &candidate) {
 		if (!runtimeEntityHasDrawableFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
 			return false;
 		range = candidate;
@@ -437,12 +437,12 @@ bool resolveMonsterDeathAnimationRange(const Entity &entity, int facing,
 }
 
 bool resolveNpcDeathAnimationRange(const Entity &entity, bool hasMonsterfyTarget,
-		int deathDamageType, bool goreEnabled, RoomDeathAnimationRange &range) {
-	const RoomDeathAnimationRange goreBank(0x3c, 0x45);
-	const RoomDeathAnimationRange bludgeBank(0x46, 0x4f);
+		int deathDamageType, bool goreEnabled, DeathAnimationRange &range) {
+	const DeathAnimationRange goreBank(0x3c, 0x45);
+	const DeathAnimationRange bludgeBank(0x46, 0x4f);
 	const bool preferGoreBank = hasMonsterfyTarget || (goreEnabled && deathDamageType != 1);
 
-	auto chooseIfAvailable = [&](const RoomDeathAnimationRange &candidate) {
+	auto chooseIfAvailable = [&](const DeathAnimationRange &candidate) {
 		if (!runtimeEntityHasFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
 			return false;
 		range = candidate;
@@ -528,26 +528,26 @@ bool playRandomRoomAttackSound(HarvesterEngine &engine, const Common::String &so
 }
 
 bool resolveRoomMonsterHitAnimationRange(const Entity &entity,
-		int attackerAttackFirstFrame, RoomHitAnimationRange &range) {
-	RoomHitAnimationRange candidate;
+		int attackerAttackFirstFrame, HitAnimationRange &range) {
+	HitAnimationRange candidate;
 	switch (attackerAttackFirstFrame) {
 	case 0x64:
-		candidate = RoomHitAnimationRange(0x92, 0x94, 2, -kNativeCombatHitKnockbackDistance);
+		candidate = HitAnimationRange(0x92, 0x94, 2, -kNativeCombatHitKnockbackDistance);
 		break;
 	case 0x5a:
-		candidate = RoomHitAnimationRange(0x8f, 0x91, 2, -kNativeCombatHitKnockbackDistance);
+		candidate = HitAnimationRange(0x8f, 0x91, 2, -kNativeCombatHitKnockbackDistance);
 		break;
 	case 0x50:
-		candidate = RoomHitAnimationRange(0x8c, 0x8e, 2, -kNativeCombatHitKnockbackDistance);
+		candidate = HitAnimationRange(0x8c, 0x8e, 2, -kNativeCombatHitKnockbackDistance);
 		break;
 	case 0x82:
-		candidate = RoomHitAnimationRange(0x9b, 0x9d, 1, kNativeCombatHitKnockbackDistance);
+		candidate = HitAnimationRange(0x9b, 0x9d, 1, kNativeCombatHitKnockbackDistance);
 		break;
 	case 0x78:
-		candidate = RoomHitAnimationRange(0x98, 0x9a, 1, kNativeCombatHitKnockbackDistance);
+		candidate = HitAnimationRange(0x98, 0x9a, 1, kNativeCombatHitKnockbackDistance);
 		break;
 	case 0x6e:
-		candidate = RoomHitAnimationRange(0x95, 0x97, 1, kNativeCombatHitKnockbackDistance);
+		candidate = HitAnimationRange(0x95, 0x97, 1, kNativeCombatHitKnockbackDistance);
 		break;
 	default:
 		return false;
@@ -586,18 +586,18 @@ int resolveMonsterAttackContactFrameOffset(const MonsterRecord &monster) {
 
 const char *describeCombatTargetClass(int classId) {
 	switch (classId) {
-	case kRuntimeEntityClassNpc:
+	case kEntityClassNpc:
 		return "npc";
-	case kRuntimeEntityClassMonster:
+	case kEntityClassMonster:
 		return "monster";
-	case kRuntimeEntityClassPlayer:
+	case kEntityClassPlayer:
 		return "player";
 	default:
 		return "none";
 	}
 }
 
-MonsterRecord *RoomCombat::findMonsterTargetAtPoint(RoomSetupState &state, EntityManager *entityManager, const Common::Point &point) const {
+MonsterRecord *Combat::findMonsterTargetAtPoint(RoomSetupState &state, EntityManager *entityManager, const Common::Point &point) const {
 	MonsterRecord *bestMonster = nullptr;
 	int bestZ = -0x7fffffff;
 	int bestTop = -0x7fffffff;
@@ -624,7 +624,7 @@ MonsterRecord *RoomCombat::findMonsterTargetAtPoint(RoomSetupState &state, Entit
 	return bestMonster;
 }
 
-MonsterRecord *RoomCombat::findOverlappingMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+MonsterRecord *Combat::findOverlappingMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState,
 		EntityManager *entityManager) const {
 	if (!playerState.entity)
 		return nullptr;
@@ -642,7 +642,7 @@ MonsterRecord *RoomCombat::findOverlappingMonsterTarget(RoomSetupState &state, c
 	return nullptr;
 }
 
-NpcRecord *RoomCombat::findOverlappingNpcTarget(RoomSetupState &state, const RoomPlayerState &playerState, EntityManager *entityManager) const {
+NpcRecord *Combat::findOverlappingNpcTarget(RoomSetupState &state, const RoomPlayerState &playerState, EntityManager *entityManager) const {
 	if (!playerState.entity)
 		return nullptr;
 
@@ -659,7 +659,7 @@ NpcRecord *RoomCombat::findOverlappingNpcTarget(RoomSetupState &state, const Roo
 	return nullptr;
 }
 
-bool RoomCombat::playerAttackCanReachTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+bool Combat::playerAttackCanReachTarget(RoomSetupState &state, const RoomPlayerState &playerState,
 		Entity *targetEntity, int engageDistance) const {
 	if (!playerState.entity || !targetEntity)
 		return false;
@@ -670,7 +670,7 @@ bool RoomCombat::playerAttackCanReachTarget(RoomSetupState &state, const RoomPla
 		*playerState.entity, playerState.z, *targetEntity, targetEntity->getZ(), engageDistance);
 }
 
-MonsterRecord *RoomCombat::findProjectileContactMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+MonsterRecord *Combat::findProjectileContactMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState,
 		EntityManager *entityManager) const {
 	if (!playerState.entity)
 		return nullptr;
@@ -737,7 +737,7 @@ MonsterRecord *RoomCombat::findProjectileContactMonsterTarget(RoomSetupState &st
 	return bestMonster;
 }
 
-void RoomCombat::capturePlayerAttackTargetForKeyboard(RoomSetupState &state, RoomPlayerState &playerState,
+void Combat::capturePlayerAttackTargetForKeyboard(RoomSetupState &state, RoomPlayerState &playerState,
 		EntityManager *entityManager, bool attackLeft, bool attackRight, bool attackUp, bool attackDown) const {
 	playerState.attackTargetName.clear();
 	playerState.attackTargetClassId = -1;
@@ -823,12 +823,12 @@ void RoomCombat::capturePlayerAttackTargetForKeyboard(RoomSetupState &state, Roo
 	for (NpcRecord &npc : state.roomNpcs) {
 		if (!npc.visible || npc.deathOrMonsterfyFlag || npc.deathDamageType != 0)
 			continue;
-		considerTarget(findSceneRuntimeEntity(entityManager, npc.npcName), npc.npcName, kRuntimeEntityClassNpc);
+		considerTarget(findSceneRuntimeEntity(entityManager, npc.npcName), npc.npcName, kEntityClassNpc);
 	}
 	for (MonsterRecord &monster : state.roomMonsters) {
 		if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
 			continue;
-		considerTarget(findSceneRuntimeEntity(entityManager, monster.monsterName), monster.monsterName, kRuntimeEntityClassMonster);
+		considerTarget(findSceneRuntimeEntity(entityManager, monster.monsterName), monster.monsterName, kEntityClassMonster);
 	}
 
 	if (!bestEntity) {
@@ -848,9 +848,9 @@ void RoomCombat::capturePlayerAttackTargetForKeyboard(RoomSetupState &state, Roo
 		bestEntity->getScreenRect().right, bestEntity->getScreenRect().bottom);
 }
 
-MonsterRecord *RoomCombat::resolveKillTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+MonsterRecord *Combat::resolveKillTarget(RoomSetupState &state, const RoomPlayerState &playerState,
 		EntityManager *entityManager, const Common::Point &mousePos) const {
-	if (playerState.attackTargetClassId == kRuntimeEntityClassMonster) {
+	if (playerState.attackTargetClassId == kEntityClassMonster) {
 		MonsterRecord *monster = findRoomMonsterRecordByName(state, playerState.attackTargetName);
 		if (isKillableMonster(monster) && selectMonsterEntity(entityManager, *monster))
 			return monster;
@@ -864,7 +864,7 @@ MonsterRecord *RoomCombat::resolveKillTarget(RoomSetupState &state, const RoomPl
 	if (playerState.entity) {
 		for (uint i = 0; i < state.roomMonsters.size() && i < _monsterCombatStates.size(); ++i) {
 			MonsterRecord &monster = state.roomMonsters[i];
-			const RoomMonsterCombatState &combatState = _monsterCombatStates[i];
+			const MonsterCombatState &combatState = _monsterCombatStates[i];
 			if (!combatState.attackActive || !isKillableMonster(&monster) || !selectMonsterEntity(entityManager, monster))
 				continue;
 			if (!combatState.attackTargetName.empty() &&
@@ -902,11 +902,11 @@ MonsterRecord *RoomCombat::resolveKillTarget(RoomSetupState &state, const RoomPl
 	return bestMonster;
 }
 
-void RoomCombat::capturePlayerAttackTarget(RoomSetupState &state, RoomPlayerState &playerState,
+void Combat::capturePlayerAttackTarget(RoomSetupState &state, RoomPlayerState &playerState,
 		EntityManager *entityManager, const Common::Point &mousePos, const NpcRecord *hoverNpc) const {
 	if (hoverNpc) {
 		playerState.attackTargetName = hoverNpc->npcName;
-		playerState.attackTargetClassId = kRuntimeEntityClassNpc;
+		playerState.attackTargetClassId = kEntityClassNpc;
 		debugC(1, kDebugCombat,
 			"Harvester: combat player target capture class='npc' name='%s' cursor=(%d,%d)",
 			playerState.attackTargetName.c_str(), mousePos.x, mousePos.y);
@@ -915,7 +915,7 @@ void RoomCombat::capturePlayerAttackTarget(RoomSetupState &state, RoomPlayerStat
 
 	if (MonsterRecord *monster = findMonsterTargetAtPoint(state, entityManager, mousePos)) {
 		playerState.attackTargetName = monster->monsterName;
-		playerState.attackTargetClassId = kRuntimeEntityClassMonster;
+		playerState.attackTargetClassId = kEntityClassMonster;
 		debugC(1, kDebugCombat,
 			"Harvester: combat player target capture class='monster' name='%s' cursor=(%d,%d)",
 			playerState.attackTargetName.c_str(), mousePos.x, mousePos.y);
@@ -927,16 +927,16 @@ void RoomCombat::capturePlayerAttackTarget(RoomSetupState &state, RoomPlayerStat
 		mousePos.x, mousePos.y);
 }
 
-void RoomCombat::captureOverlappingNpcAttackTarget(RoomSetupState &state, RoomPlayerState &playerState, EntityManager *entityManager) const {
+void Combat::captureOverlappingNpcAttackTarget(RoomSetupState &state, RoomPlayerState &playerState, EntityManager *entityManager) const {
 	if (playerState.attackTargetClassId < 0 && !Player::isProjectileCombatLoadout(playerState.combatLoadout)) {
 		if (NpcRecord *fallbackNpc = findOverlappingNpcTarget(state, playerState, entityManager)) {
 			playerState.attackTargetName = fallbackNpc->npcName;
-			playerState.attackTargetClassId = kRuntimeEntityClassNpc;
+			playerState.attackTargetClassId = kEntityClassNpc;
 		}
 	}
 }
 
-NpcRecord *RoomCombat::selectNpcAttackContactTarget(RoomSetupState &state, const RoomPlayerState &playerState,
+NpcRecord *Combat::selectNpcAttackContactTarget(RoomSetupState &state, const RoomPlayerState &playerState,
 		EntityManager *entityManager, Entity *&npcEntity) const {
 	NpcRecord *npc = findRoomNpcRecordByName(state, playerState.attackTargetName);
 	npcEntity = npc ? findSceneRuntimeEntity(entityManager, npc->npcName) : nullptr;
@@ -946,10 +946,10 @@ NpcRecord *RoomCombat::selectNpcAttackContactTarget(RoomSetupState &state, const
 	return npc;
 }
 
-MonsterRecord *RoomCombat::selectMonsterAttackContactTarget(RoomSetupState &state, RoomPlayerState &playerState,
+MonsterRecord *Combat::selectMonsterAttackContactTarget(RoomSetupState &state, RoomPlayerState &playerState,
 		EntityManager *entityManager, Entity *&monsterEntity) const {
 	MonsterRecord *monster = nullptr;
-	if (playerState.attackTargetClassId == kRuntimeEntityClassMonster)
+	if (playerState.attackTargetClassId == kEntityClassMonster)
 		monster = findRoomMonsterRecordByName(state, playerState.attackTargetName);
 	monsterEntity = monster ? findSceneRuntimeEntity(entityManager, monster->monsterName) : nullptr;
 	if (!monster || !monsterEntity || !playerAttackCanReachTarget(state, playerState, monsterEntity, monster->engageDistance)) {
@@ -959,7 +959,7 @@ MonsterRecord *RoomCombat::selectMonsterAttackContactTarget(RoomSetupState &stat
 			monster = findProjectileContactMonsterTarget(state, playerState, entityManager);
 			if (monster) {
 				playerState.attackTargetName = monster->monsterName;
-				playerState.attackTargetClassId = kRuntimeEntityClassMonster;
+				playerState.attackTargetClassId = kEntityClassMonster;
 			}
 		} else {
 			monster = nullptr;
@@ -969,13 +969,13 @@ MonsterRecord *RoomCombat::selectMonsterAttackContactTarget(RoomSetupState &stat
 	return monster;
 }
 
-RoomNpcCombatUpdateResult RoomCombat::updateRoomNpcCombat(HarvesterEngine &engine, RoomSetupState &state,
+NpcCombatUpdateResult Combat::updateRoomNpcCombat(HarvesterEngine &engine, RoomSetupState &state,
 		EntityManager *entityManager, SceneEntities &sceneRuntime,
-		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
-	RoomNpcCombatUpdateResult result;
+		Interaction &interactionProcessor, bool &needsRedraw) {
+	NpcCombatUpdateResult result;
 	for (uint i = 0; i < state.roomNpcs.size(); ++i) {
 		NpcRecord &npc = state.roomNpcs[i];
-		RoomNpcCombatState &combatState = _npcCombatStates[i];
+		NpcCombatState &combatState = _npcCombatStates[i];
 		Entity *entity = findSceneRuntimeEntity(entityManager, npc.npcName);
 		if (!entity || !npc.visible || npc.deathOrMonsterfyFlag) {
 			clearRoomNpcCombatState(combatState);
@@ -1010,7 +1010,7 @@ RoomNpcCombatUpdateResult RoomCombat::updateRoomNpcCombat(HarvesterEngine &engin
 	return result;
 }
 
-bool RoomCombat::queueInnerSanctumHerrillDeathAfterMuck(HarvesterEngine &engine, RoomSetupState &state, const MonsterRecord &monster) const {
+bool Combat::queueInnerSanctumHerrillDeathAfterMuck(HarvesterEngine &engine, RoomSetupState &state, const MonsterRecord &monster) const {
 	if (!monster.roomName.equalsIgnoreCase(kInnerSanctumRoomName) ||
 			!monster.monsterName.equalsIgnoreCase(kMuckeyMonsterName) ||
 			!monster.onDeathActionTag.equalsIgnoreCase(kActivateInnerSanctumDoorActionTag)) {
@@ -1039,9 +1039,9 @@ bool RoomCombat::queueInnerSanctumHerrillDeathAfterMuck(HarvesterEngine &engine,
 	return true;
 }
 
-bool RoomCombat::beginNpcDeathTransition(HarvesterEngine &engine,
-		NpcRecord &npc, Entity &npcEntity, RoomNpcCombatState &combatState, int deathDamageType, bool &needsRedraw) const {
-	RoomDeathAnimationRange deathRange;
+bool Combat::beginNpcDeathTransition(HarvesterEngine &engine,
+		NpcRecord &npc, Entity &npcEntity, NpcCombatState &combatState, int deathDamageType, bool &needsRedraw) const {
+	DeathAnimationRange deathRange;
 	if (!resolveNpcDeathAnimationRange(npcEntity, !npc.monsterfyTargetName.empty(),
 			deathDamageType, engine.isGoreEnabled(), deathRange))
 		return false;
@@ -1065,9 +1065,9 @@ bool RoomCombat::beginNpcDeathTransition(HarvesterEngine &engine,
 	return true;
 }
 
-Common::Error RoomCombat::finalizeNpcDeathTransition(HarvesterEngine &engine,
-		EntityManager *entityManager, SceneEntities &sceneRuntime, NpcRecord &npc, RoomNpcCombatState &combatState,
-		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) const {
+Common::Error Combat::finalizeNpcDeathTransition(HarvesterEngine &engine,
+		EntityManager *entityManager, SceneEntities &sceneRuntime, NpcRecord &npc, NpcCombatState &combatState,
+		Interaction &interactionProcessor, bool &needsRedraw) const {
 	Script *script = engine.getScript();
 	Entity *npcEntity = findSceneRuntimeEntity(entityManager, npc.npcName);
 	// Native state 0x35 leaves non-monsterfied NPCs as a dead state-0x38 actor
@@ -1084,7 +1084,7 @@ Common::Error RoomCombat::finalizeNpcDeathTransition(HarvesterEngine &engine,
 		npcEntity->setAnimationFrameRange(combatState.deathLastFrame, combatState.deathLastFrame, false);
 		npcEntity->setCurrentFrame(combatState.deathLastFrame);
 		npcEntity->setAnimationEnabled(false);
-		npcEntity->setHitTestMode(kRuntimeEntityHitTestNone);
+		npcEntity->setHitTestMode(kEntityHitTestNone);
 		npcEntity->setVisible(true);
 	} else {
 		sceneRuntime.removeSceneEntityByName(npc.npcName);
@@ -1122,8 +1122,8 @@ Common::Error RoomCombat::finalizeNpcDeathTransition(HarvesterEngine &engine,
 	return interactionProcessor.handleCombatInteraction(interaction, needsRedraw);
 }
 
-void RoomCombat::startMonsterHitReaction(HarvesterEngine &engine,
-		RoomCombatEffects &combatEffects, MonsterRecord &monster, Entity &monsterEntity, RoomMonsterCombatState *combatState,
+void Combat::startMonsterHitReaction(HarvesterEngine &engine,
+		CombatEffects &combatEffects, MonsterRecord &monster, Entity &monsterEntity, MonsterCombatState *combatState,
 		int attackerAttackFirstFrame, bool &needsRedraw) const {
 	if (combatEffects.spawnCombatHitEffect(monsterEntity, monster.monsterName))
 		needsRedraw = true;
@@ -1134,7 +1134,7 @@ void RoomCombat::startMonsterHitReaction(HarvesterEngine &engine,
 		return;
 	}
 
-	RoomHitAnimationRange range;
+	HitAnimationRange range;
 	if (!resolveRoomMonsterHitAnimationRange(monsterEntity, attackerAttackFirstFrame, range)) {
 		(void)playRandomRoomAttackSound(engine,
 			monster.hitSound1, monster.hitSound2, monster.hitSound3);
@@ -1172,9 +1172,9 @@ void RoomCombat::startMonsterHitReaction(HarvesterEngine &engine,
 	needsRedraw = true;
 }
 
-Common::Error RoomCombat::killDebugActiveMonster(HarvesterEngine &engine, RoomSetupState &state,
+Common::Error Combat::killDebugActiveMonster(HarvesterEngine &engine, RoomSetupState &state,
 		RoomPlayerState &playerState, EntityManager *entityManager, const Common::Point &mousePos,
-		RoomCombatEffects &combatEffects, RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
+		CombatEffects &combatEffects, Interaction &interactionProcessor, bool &needsRedraw) {
 	if (!engine.isCombatDebugEnabled())
 		return Common::kNoError;
 	MonsterRecord *monster = resolveKillTarget(state, playerState, entityManager, mousePos);
@@ -1200,7 +1200,7 @@ Common::Error RoomCombat::killDebugActiveMonster(HarvesterEngine &engine, RoomSe
 	if (damageLanded > 0)
 		combatEffects.spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
 
-	if (playerState.attackTargetClassId == kRuntimeEntityClassMonster &&
+	if (playerState.attackTargetClassId == kEntityClassMonster &&
 			playerState.attackTargetName.equalsIgnoreCase(monster->monsterName)) {
 		playerState.attackTargetName.clear();
 		playerState.attackTargetClassId = -1;
@@ -1211,7 +1211,7 @@ Common::Error RoomCombat::killDebugActiveMonster(HarvesterEngine &engine, RoomSe
 		monster->monsterName.c_str(), damageLanded, debugDamageType, mousePos.x, mousePos.y);
 
 	const int monsterIndex = findRoomMonsterIndexByName(state, monster->monsterName);
-	RoomMonsterCombatState *combatState =
+	MonsterCombatState *combatState =
 		monsterIndex >= 0 && monsterIndex < (int)_monsterCombatStates.size()
 			? &_monsterCombatStates[(uint)monsterIndex]
 			: nullptr;
@@ -1219,7 +1219,7 @@ Common::Error RoomCombat::killDebugActiveMonster(HarvesterEngine &engine, RoomSe
 		clearRoomMonsterCombatState(*combatState);
 	(void)script->syncRuntimeMonsterRecord(*monster);
 
-	RoomDeathAnimationRange deathRange;
+	DeathAnimationRange deathRange;
 	if (combatState && resolveMonsterDeathAnimationRange(*monsterEntity, monster->facing,
 			debugDamageType, engine.isGoreEnabled(), deathRange)) {
 		combatState->deathActive = true;
@@ -1255,10 +1255,10 @@ Common::Error RoomCombat::killDebugActiveMonster(HarvesterEngine &engine, RoomSe
 	return interactionProcessor.handleCombatInteraction(interaction, needsRedraw);
 }
 
-Common::Error RoomCombat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetupState &state,
+Common::Error Combat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetupState &state,
 		RoomPlayerState &playerState, RoomIdleAnimationState &idleState, EntityManager *entityManager,
-		SceneEntities &sceneRuntime, RoomCombatEffects &combatEffects, const CheatSystem &cheats,
-		RoomInteractionCallbacks &callbacks, RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
+		SceneEntities &sceneRuntime, CombatEffects &combatEffects, const CheatSystem &cheats,
+		InteractionCallbacks &callbacks, Interaction &interactionProcessor, bool &needsRedraw) {
 	if (!entityManager)
 		return Common::kNoError;
 
@@ -1272,14 +1272,14 @@ Common::Error RoomCombat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomS
 
 	resizeCombatStates(state);
 
-	const RoomNpcCombatUpdateResult npcResult = updateRoomNpcCombat(engine, state,
+	const NpcCombatUpdateResult npcResult = updateRoomNpcCombat(engine, state,
 		entityManager, sceneRuntime, interactionProcessor, needsRedraw);
 	if (npcResult.finalizedDeath)
 		return npcResult.error;
 
 	for (uint i = 0; i < state.roomMonsters.size(); ++i) {
 		MonsterRecord &monster = state.roomMonsters[i];
-		RoomMonsterCombatState &combatState = _monsterCombatStates[i];
+		MonsterCombatState &combatState = _monsterCombatStates[i];
 		Entity *entity = findSceneRuntimeEntity(entityManager, monster.monsterName);
 		if (!entity || !monster.visible) {
 			clearRoomMonsterCombatState(combatState);
@@ -1540,7 +1540,7 @@ Common::Error RoomCombat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomS
 		if (!attackCooldownExpired && absLiveCenterDx > closeRangeBypassDistance)
 			continue;
 
-		RoomAttackAnimationRange range;
+		AttackAnimationRange range;
 		if (!resolveMonsterAttackAnimationRange(engine, *entity, monsterCenterX, playerCenterX, range)) {
 			debugC(1, kDebugCombat,
 				"Harvester: combat monster attack skipped monster='%s' reason='no native attack bank' target_side=%s",
@@ -1578,11 +1578,11 @@ Common::Error RoomCombat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomS
 	return Common::kNoError;
 }
 
-Common::Error RoomCombat::resolvePlayerAttackContact(HarvesterEngine &engine,
+Common::Error Combat::resolvePlayerAttackContact(HarvesterEngine &engine,
 		RoomSetupState &state, RoomPlayerState &playerState,
 		EntityManager *entityManager, SceneEntities &sceneRuntime,
-		RoomCombatEffects &combatEffects,
-		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
+		CombatEffects &combatEffects,
+		Interaction &interactionProcessor, bool &needsRedraw) {
 	if (!playerState.attackActive || playerState.attackContactResolved || !playerState.entity ||
 			playerState.attackContactFrame < 0 ||
 			playerState.entity->getCurrentFrame() < playerState.attackContactFrame) {
@@ -1603,7 +1603,7 @@ Common::Error RoomCombat::resolvePlayerAttackContact(HarvesterEngine &engine,
 		return Common::kNoError;
 
 	captureOverlappingNpcAttackTarget(state, playerState, entityManager);
-	if (playerState.attackTargetClassId == kRuntimeEntityClassNpc) {
+	if (playerState.attackTargetClassId == kEntityClassNpc) {
 		Entity *npcEntity = nullptr;
 		NpcRecord *npc = selectNpcAttackContactTarget(state, playerState, entityManager, npcEntity);
 		if (!npc) {
@@ -1619,7 +1619,7 @@ Common::Error RoomCombat::resolvePlayerAttackContact(HarvesterEngine &engine,
 			? script->setRuntimeFlagValue("JIMMY_ATTACKED", true)
 			: false;
 		const int npcIndex = findRoomNpcIndexByName(state, npc->npcName);
-		RoomNpcCombatState *combatState =
+		NpcCombatState *combatState =
 			npcIndex >= 0 && npcIndex < (int)_npcCombatStates.size()
 				? &_npcCombatStates[(uint)npcIndex]
 				: nullptr;
@@ -1645,7 +1645,7 @@ Common::Error RoomCombat::resolvePlayerAttackContact(HarvesterEngine &engine,
 			debugC(1, kDebugCombat,
 				"Harvester: combat npc defeated target='%s' damage_type=%d on_death='%s' fallback='no death bank'",
 				npc->npcName.c_str(), damageType, npc->onDeathActionTag.c_str());
-			RoomNpcCombatState fallbackState;
+			NpcCombatState fallbackState;
 			fallbackState.deathDamageType = damageType;
 			return finalizeNpcDeathTransition(engine, entityManager, sceneRuntime, *npc, combatState ? *combatState : fallbackState, interactionProcessor, needsRedraw);
 		}
@@ -1667,7 +1667,7 @@ Common::Error RoomCombat::resolvePlayerAttackContact(HarvesterEngine &engine,
 		monster->currentHitPoints - damageAmount);
 	const int damageLanded = hitPointsBefore - monster->currentHitPoints;
 	const int monsterIndex = findRoomMonsterIndexByName(state, monster->monsterName);
-	RoomMonsterCombatState *combatState =
+	MonsterCombatState *combatState =
 		monsterIndex >= 0 && monsterIndex < (int)_monsterCombatStates.size()
 			? &_monsterCombatStates[(uint)monsterIndex]
 			: nullptr;
@@ -1689,7 +1689,7 @@ Common::Error RoomCombat::resolvePlayerAttackContact(HarvesterEngine &engine,
 		clearRoomMonsterCombatState(*combatState);
 	(void)script->syncRuntimeMonsterRecord(*monster);
 
-	RoomDeathAnimationRange deathRange;
+	DeathAnimationRange deathRange;
 	if (combatState && resolveMonsterDeathAnimationRange(*monsterEntity, monster->facing,
 			damageType, engine.isGoreEnabled(), deathRange)) {
 		combatState->deathActive = true;
@@ -1738,23 +1738,23 @@ Common::Error RoomCombat::resolvePlayerAttackContact(HarvesterEngine &engine,
 	return interactionProcessor.handleCombatInteraction(interaction, needsRedraw);
 }
 
-void RoomCombat::initializeCombatStates(const RoomSetupState &state) {
+void Combat::initializeCombatStates(const RoomSetupState &state) {
 	_monsterCombatStates.resize(state.roomMonsters.size());
 	_npcCombatStates.resize(state.roomNpcs.size());
 	debugC(1, kDebugCombat, "Harvester: initialized room combat states monsters=%u npcs=%u",
 		_monsterCombatStates.size(), _npcCombatStates.size());
 }
 
-void RoomCombat::resizeCombatStates(const RoomSetupState &state) {
+void Combat::resizeCombatStates(const RoomSetupState &state) {
 	if (_npcCombatStates.size() != state.roomNpcs.size())
 		_npcCombatStates.resize(state.roomNpcs.size());
 	if (_monsterCombatStates.size() != state.roomMonsters.size())
 		_monsterCombatStates.resize(state.roomMonsters.size());
 }
 
-Common::Array<RoomMonsterCombatState> RoomCombat::prepareMonsterCombatStatesForSceneChange(
+Common::Array<MonsterCombatState> Combat::prepareMonsterCombatStatesForSceneChange(
 		const Common::Array<MonsterRecord> &previousMonsters, const Common::Array<MonsterRecord> &updatedMonsters) const {
-	Common::Array<RoomMonsterCombatState> updatedMonsterCombatStates;
+	Common::Array<MonsterCombatState> updatedMonsterCombatStates;
 	updatedMonsterCombatStates.resize(updatedMonsters.size());
 	for (uint i = 0; i < updatedMonsters.size(); ++i) {
 		const MonsterRecord &updatedMonster = updatedMonsters[i];
@@ -1772,12 +1772,12 @@ Common::Array<RoomMonsterCombatState> RoomCombat::prepareMonsterCombatStatesForS
 	return updatedMonsterCombatStates;
 }
 
-void RoomCombat::commitMonsterCombatStatesForSceneChange(Common::Array<RoomMonsterCombatState> &&states) {
+void Combat::commitMonsterCombatStatesForSceneChange(Common::Array<MonsterCombatState> &&states) {
 	_monsterCombatStates = Common::move(states);
 	debugC(2, kDebugCombat, "Harvester: committed room monster combat states count=%u", _monsterCombatStates.size());
 }
 
-void RoomCombat::resetForSceneRefresh(const RoomSetupState &state) {
+void Combat::resetForSceneRefresh(const RoomSetupState &state) {
 	// NPC death state survives refresh and is resized by index at the next combat update.
 	_monsterCombatStates.clear();
 	_monsterCombatStates.resize(state.roomMonsters.size());
@@ -1785,15 +1785,15 @@ void RoomCombat::resetForSceneRefresh(const RoomSetupState &state) {
 		_monsterCombatStates.size(), _npcCombatStates.size());
 }
 
-void clearRoomMonsterCombatState(RoomMonsterCombatState &combatState) {
-	combatState = RoomMonsterCombatState();
+void clearRoomMonsterCombatState(MonsterCombatState &combatState) {
+	combatState = MonsterCombatState();
 }
 
-void clearRoomNpcCombatState(RoomNpcCombatState &combatState) {
-	combatState = RoomNpcCombatState();
+void clearRoomNpcCombatState(NpcCombatState &combatState) {
+	combatState = NpcCombatState();
 }
 
-void clearRoomMonsterAttackState(RoomMonsterCombatState &combatState) {
+void clearRoomMonsterAttackState(MonsterCombatState &combatState) {
 	combatState.attackActive = false;
 	combatState.attackFirstFrame = -1;
 	combatState.attackLastFrame = -1;
@@ -1804,7 +1804,7 @@ void clearRoomMonsterAttackState(RoomMonsterCombatState &combatState) {
 	combatState.attackTargetName.clear();
 }
 
-void clearRoomMonsterHitState(RoomMonsterCombatState &combatState) {
+void clearRoomMonsterHitState(MonsterCombatState &combatState) {
 	combatState.hitActive = false;
 	combatState.hitFirstFrame = -1;
 	combatState.hitLastFrame = -1;
@@ -1814,35 +1814,35 @@ void clearRoomMonsterHitState(RoomMonsterCombatState &combatState) {
 	combatState.hitSoundPlayed = false;
 }
 
-RoomCombatEffects::RoomCombatEffects(EntityManager *entityManager) : _entityManager(entityManager) {
+CombatEffects::CombatEffects(EntityManager *entityManager) : _entityManager(entityManager) {
 	debugC(1, kDebugCombat, "Harvester: created room combat effects entities=%d", _entityManager != nullptr);
 }
 
-void RoomCombatEffects::clearHitEffects() {
+void CombatEffects::clearHitEffects() {
 	debugC(2, kDebugCombat, "Harvester: resetting room blood effects records=%u next_id=%u",
 		(uint)_hitEffectStates.size(), _nextCombatEffectId);
 	_hitEffectStates.clear();
 	_nextCombatEffectId = 0;
 }
 
-void RoomCombatEffects::resolveHitEffectAnchor(const Entity &targetEntity, Common::Point &anchorPoint, float &renderZ) {
+void CombatEffects::resolveHitEffectAnchor(const Entity &targetEntity, Common::Point &anchorPoint, float &renderZ) {
 	const Common::Rect targetRect = targetEntity.getScreenRect();
 	anchorPoint.x = targetRect.left + targetRect.width() / 2;
 	anchorPoint.y = targetRect.top + targetRect.height() / 3;
 	renderZ = targetEntity.getZ() - kNativeHitEffectRenderZBias;
 }
 
-void RoomCombatEffects::resolveCombatDamagePopupAnchor(const Entity &targetEntity, Common::Point &anchorPoint) {
+void CombatEffects::resolveCombatDamagePopupAnchor(const Entity &targetEntity, Common::Point &anchorPoint) {
 	const Common::Rect targetRect = targetEntity.getScreenRect();
 	anchorPoint.x = targetRect.left + targetRect.width() / 2;
 	anchorPoint.y = targetRect.top - kCombatDebugDamagePopupVerticalGap;
 }
 
-bool RoomCombatEffects::spawnCombatHitEffect(Entity &sourceEntity, const Common::String &followTargetName) {
+bool CombatEffects::spawnCombatHitEffect(Entity &sourceEntity, const Common::String &followTargetName) {
 	if (!_entityManager)
 		return false;
 
-	RoomHitEffectState effectState;
+	HitEffectState effectState;
 	effectState.entityName = Common::String::format("__combat_blood_%u", _nextCombatEffectId++);
 	effectState.followTargetName = followTargetName;
 	resolveHitEffectAnchor(sourceEntity, effectState.anchorPoint, effectState.renderZ);
@@ -1861,11 +1861,11 @@ bool RoomCombatEffects::spawnCombatHitEffect(Entity &sourceEntity, const Common:
 	return true;
 }
 
-void RoomCombatEffects::spawnCombatDamagePopup(Entity &targetEntity, const Common::String &followTargetName, int damageAmount) {
+void CombatEffects::spawnCombatDamagePopup(Entity &targetEntity, const Common::String &followTargetName, int damageAmount) {
 	if (damageAmount <= 0)
 		return;
 
-	RoomCombatDamagePopupState popupState;
+	CombatDamagePopupState popupState;
 	popupState.followTargetName = followTargetName;
 	popupState.startTick = Player::getRuntimeClockTicks();
 	popupState.damageAmount = damageAmount;
@@ -1873,12 +1873,12 @@ void RoomCombatEffects::spawnCombatDamagePopup(Entity &targetEntity, const Commo
 	_damagePopupStates.push_back(Common::move(popupState));
 }
 
-bool RoomCombatEffects::syncCombatHitEffects() {
+bool CombatEffects::syncCombatHitEffects() {
 	if (!_entityManager)
 		return false;
 
 	bool changed = false;
-	for (RoomHitEffectState &effectState : _hitEffectStates) {
+	for (HitEffectState &effectState : _hitEffectStates) {
 		Entity *effectEntity = _entityManager->findSceneEntityByName(effectState.entityName);
 		if (!effectEntity)
 			continue;
@@ -1904,7 +1904,7 @@ bool RoomCombatEffects::syncCombatHitEffects() {
 	return changed;
 }
 
-void RoomCombatEffects::drawCombatDamagePopups(Graphics::Screen &screen, bool combatDebugEnabled) {
+void CombatEffects::drawCombatDamagePopups(Graphics::Screen &screen, bool combatDebugEnabled) {
 	if (!combatDebugEnabled || _damagePopupStates.empty())
 		return;
 
@@ -1917,7 +1917,7 @@ void RoomCombatEffects::drawCombatDamagePopups(Graphics::Screen &screen, bool co
 	const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
 	const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
 	const uint32 now = Player::getRuntimeClockTicks();
-	for (RoomCombatDamagePopupState &popupState : _damagePopupStates) {
+	for (CombatDamagePopupState &popupState : _damagePopupStates) {
 		if (_entityManager && !popupState.followTargetName.empty()) {
 			Entity *targetEntity =
 				_entityManager->findSceneEntityByName(popupState.followTargetName);
@@ -1941,7 +1941,7 @@ void RoomCombatEffects::drawCombatDamagePopups(Graphics::Screen &screen, bool co
 	}
 }
 
-bool RoomCombatEffects::pruneCombatHitEffects() {
+bool CombatEffects::pruneCombatHitEffects() {
 	bool removedAny = false;
 	for (uint i = 0; i < _hitEffectStates.size();) {
 		const Common::String effectName = _hitEffectStates[i].entityName;
@@ -1971,7 +1971,7 @@ bool RoomCombatEffects::pruneCombatHitEffects() {
 	return removedAny;
 }
 
-bool RoomCombatEffects::pruneCombatDamagePopups() {
+bool CombatEffects::pruneCombatDamagePopups() {
 	const uint32 now = Player::getRuntimeClockTicks();
 	bool removedAny = false;
 	for (uint i = 0; i < _damagePopupStates.size();) {

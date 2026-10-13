@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HARVESTER_ROOM_INPUT_H
-#define HARVESTER_ROOM_INPUT_H
+#ifndef HARVESTER_INPUT_H
+#define HARVESTER_INPUT_H
 
 #include "common/error.h"
 #include "common/events.h"
@@ -32,15 +32,15 @@ class CheatSystem;
 class Flow;
 class HarvesterEngine;
 class InventorySystem;
-class RoomInteractionProcessor;
-class RoomItemInteractions;
+class Interaction;
+class ItemInteractions;
 class Scene;
 struct ObjectRecord;
 struct ResolvedText;
 struct RoomPresentationState;
 struct SceneState;
 
-struct RoomInputState {
+struct InputState {
 	bool moveLeft = false;
 	bool moveRight = false;
 	bool moveUp = false;
@@ -51,34 +51,34 @@ struct RoomInputState {
 };
 
 // Enter and closeup exits return from runRoomLoop even when the error is kNoError.
-struct RoomInputResult {
+struct InputResult {
 	Common::Error error;
 	bool returnFromRoom = false;
 
-	static RoomInputResult leaveRoom(const Common::Error &error) {
-		RoomInputResult result;
+	static InputResult leaveRoom(const Common::Error &error) {
+		InputResult result;
 		result.error = error;
 		result.returnFromRoom = true;
 		return result;
 	}
 };
 
-class RoomInput {
+class Input {
 public:
-	RoomInput(HarvesterEngine &engine, Flow &flow, Scene &session, SceneState &scene,
+	Input(HarvesterEngine &engine, Flow &flow, Scene &session, SceneState &scene,
 		InventorySystem &inventory, CheatSystem &cheats,
-		RoomItemInteractions &roomItems, RoomInteractionProcessor &interactionProcessor,
+		ItemInteractions &roomItems, Interaction &interactionProcessor,
 		RoomPresentationState &presentationState,
 		const Art &art, bool canExitCloseupToParent);
 
-	RoomInputResult handleEvent(const Common::Event &event, bool &needsRedraw);
+	InputResult handleEvent(const Common::Event &event, bool &needsRedraw);
 
 private:
 	void handleMouseMove(bool &needsRedraw);
-	RoomInputResult handleRightButtonDown(bool &needsRedraw);
+	InputResult handleRightButtonDown(bool &needsRedraw);
 	void handleLeftButtonUp();
-	RoomInputResult handleLeftButtonDown(bool &needsRedraw);
-	RoomInputResult handleKeyDown(const Common::KeyState &key, bool &needsRedraw);
+	InputResult handleLeftButtonDown(bool &needsRedraw);
+	InputResult handleKeyDown(const Common::KeyState &key, bool &needsRedraw);
 	void handleKeyUp(const Common::KeyState &key);
 	void beginInspectText(const ObjectRecord &object, const ResolvedText &text);
 	void queueCombatLoadoutStatusMessage(const Common::String &message, bool &needsRedraw);
@@ -91,8 +91,8 @@ private:
 	SceneState &_scene;
 	InventorySystem &_inventory;
 	CheatSystem &_cheats;
-	RoomItemInteractions &_roomItems;
-	RoomInteractionProcessor &_interactionProcessor;
+	ItemInteractions &_roomItems;
+	Interaction &_interactionProcessor;
 	RoomPresentationState &_presentationState;
 	const Art &_art;
 	bool _canExitCloseupToParent;
@@ -100,4 +100,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_ROOM_INPUT_H
+#endif // HARVESTER_INPUT_H

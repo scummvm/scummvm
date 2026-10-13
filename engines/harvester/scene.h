@@ -24,13 +24,13 @@
 
 #include "common/error.h"
 #include "common/str.h"
-#include "harvester/room_combat.h"
-#include "harvester/room_input.h"
-#include "harvester/room_interaction.h"
+#include "harvester/combat.h"
+#include "harvester/input.h"
+#include "harvester/interaction.h"
 #include "harvester/room_presentation.h"
 #include "harvester/scene_entities.h"
 #include "harvester/room_support.h"
-#include "harvester/runtime_entity.h"
+#include "harvester/entity.h"
 
 namespace Harvester {
 
@@ -58,18 +58,18 @@ struct RoomPendingTransition {
 	SaveRoomState savedRoomState;
 };
 
-class Scene : public RoomInteractionCallbacks {
+class Scene : public InteractionCallbacks {
 public:
 	Scene(HarvesterEngine &engine, Flow &flow, SceneState &scene, EntityManager *entityManager,
 		InventorySystem &inventory, CheatSystem &cheats, const RoomViewResources &view, bool canExitCloseupToParent);
 
 	RoomPlayerState &getPlayerState() { return _playerState; }
 	RoomIdleAnimationState &getIdleState() { return _idleState; }
-	RoomInputState &getInputState() { return _inputState; }
+	InputState &getInputState() { return _inputState; }
 
 	void initializePlayerState();
-	RoomInputResult runRoomEntryInteraction(const InteractionResult &interaction);
-	RoomInputResult runRoomFrames(const Common::String &currentRoomTarget);
+	InputResult runRoomEntryInteraction(const InteractionResult &interaction);
+	InputResult runRoomFrames(const Common::String &currentRoomTarget);
 	const RoomPendingTransition &getPendingTransition() const { return _pendingTransition; }
 	void clearPendingRegionInteraction() { _pendingRegionName.clear(); }
 	void capturePlayerAttackTarget(const Common::Point &mousePos, const NpcRecord *npc);
@@ -104,7 +104,7 @@ private:
 	void requestPlayerGameOver(const char *reason, const Common::String &sourceName);
 	void updateRoomInterface(bool &needsRedraw);
 	bool drawRoomFrame(bool &needsRedraw);
-	RoomInputResult pollRoomEvents(RoomInput &input, bool &needsRedraw);
+	InputResult pollRoomEvents(Input &input, bool &needsRedraw);
 	PlayerControlState preparePlayerControlState();
 	Common::Error tryActivatePendingRegion(bool &needsRedraw);
 	Common::Error tryActivatePassiveRegion(bool &needsRedraw);
@@ -116,7 +116,7 @@ private:
 	void syncCombatHitEffects(bool &needsRedraw);
 	void updatePlayerDeath(bool &needsRedraw);
 	void pruneCombatEffects(bool &needsRedraw);
-	RoomInputResult dispatchExpiredTimers(bool &needsRedraw);
+	InputResult dispatchExpiredTimers(bool &needsRedraw);
 	void updateIdleAnimation(bool &needsRedraw);
 
 	HarvesterEngine &_engine;
@@ -126,19 +126,19 @@ private:
 	InventorySystem &_inventory;
 	SceneEntities _sceneRuntime;
 	RoomPlayerState _playerState;
-	RoomCombat _combat;
-	RoomCombatEffects _combatEffects;
+	Combat _combat;
+	CombatEffects _combatEffects;
 	RoomIdleAnimationState _idleState;
-	RoomInputState _inputState;
+	InputState _inputState;
 	Common::String _pendingRegionName;
 	CheatSystem &_cheats;
 	const RoomViewResources _view;
 	bool _canExitCloseupToParent;
 	RoomPresentationState _presentationState;
 	RoomPendingTransition _pendingTransition;
-	RoomItemInteractions _roomItems;
+	ItemInteractions _roomItems;
 	RoomPresentation _presentation;
-	RoomInteractionProcessor _interactionProcessor;
+	Interaction _interactionProcessor;
 };
 
 } // End of namespace Harvester

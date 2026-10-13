@@ -28,7 +28,7 @@
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/resources.h"
-#include "harvester/runtime_entity.h"
+#include "harvester/entity.h"
 
 namespace Harvester {
 
@@ -1052,7 +1052,7 @@ static void positionPlayerIdleAnimationEntity(const RoomSetupState &state,
 	if (!playerState.entity)
 		return;
 
-	idleEntity.setAnchorMode(kRuntimeEntityAnchorTopLeft);
+	idleEntity.setAnchorMode(kEntityAnchorTopLeft);
 	idleEntity.setDepthScale(Player::computeDepthScale(state, playerState.z));
 	idleEntity.setPosition(playerState.entity->getX(),
 		playerState.entity->getY() + kRoomPlayerIdleYOffset, playerState.z);

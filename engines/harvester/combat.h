@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HARVESTER_ROOM_COMBAT_H
-#define HARVESTER_ROOM_COMBAT_H
+#ifndef HARVESTER_COMBAT_H
+#define HARVESTER_COMBAT_H
 
 #include "common/error.h"
 #include "harvester/room_support.h"
@@ -31,9 +31,9 @@ class CheatSystem;
 class Entity;
 class EntityManager;
 class HarvesterEngine;
-class RoomCombatEffects;
-class RoomInteractionCallbacks;
-class RoomInteractionProcessor;
+class CombatEffects;
+class InteractionCallbacks;
+class Interaction;
 class SceneEntities;
 
 extern const int kRoomMonsterAnimationRate;
@@ -59,9 +59,9 @@ extern const char *const kMuckeyMonsterName;
 extern const char *const kActivateInnerSanctumDoorActionTag;
 extern const int kNativeDefaultNpcDeathDamageType;
 
-struct RoomAttackAnimationRange {
-	RoomAttackAnimationRange() {}
-	RoomAttackAnimationRange(int firstFrame, int lastFrame, int resumeFacing)
+struct AttackAnimationRange {
+	AttackAnimationRange() {}
+	AttackAnimationRange(int firstFrame, int lastFrame, int resumeFacing)
 		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing) {}
 
 	int firstFrame = 0;
@@ -69,18 +69,18 @@ struct RoomAttackAnimationRange {
 	int resumeFacing = 0;
 };
 
-struct RoomDeathAnimationRange {
-	RoomDeathAnimationRange() {}
-	RoomDeathAnimationRange(int firstFrame, int lastFrame)
+struct DeathAnimationRange {
+	DeathAnimationRange() {}
+	DeathAnimationRange(int firstFrame, int lastFrame)
 		: firstFrame(firstFrame), lastFrame(lastFrame) {}
 
 	int firstFrame = -1;
 	int lastFrame = -1;
 };
 
-struct RoomHitAnimationRange {
-	RoomHitAnimationRange() {}
-	RoomHitAnimationRange(int firstFrame, int lastFrame, int resumeFacing, int knockbackX)
+struct HitAnimationRange {
+	HitAnimationRange() {}
+	HitAnimationRange(int firstFrame, int lastFrame, int resumeFacing, int knockbackX)
 		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing),
 		  knockbackX(knockbackX) {}
 
@@ -90,7 +90,7 @@ struct RoomHitAnimationRange {
 	int knockbackX = 0;
 };
 
-struct RoomMonsterCombatState {
+struct MonsterCombatState {
 	bool attackActive = false;
 	int attackFirstFrame = -1;
 	int attackLastFrame = -1;
@@ -115,25 +115,25 @@ struct RoomMonsterCombatState {
 	uint32 attackCooldownSeedTick = 0;
 };
 
-struct RoomNpcCombatState {
+struct NpcCombatState {
 	bool deathActive = false;
 	int deathFirstFrame = -1;
 	int deathLastFrame = -1;
 	int deathDamageType = 0;
 };
 
-struct RoomNpcCombatUpdateResult {
+struct NpcCombatUpdateResult {
 	Common::Error error = Common::kNoError;
 	bool finalizedDeath = false;
 };
 
-class RoomCombat {
+class Combat {
 public:
 	void initializeCombatStates(const RoomSetupState &state);
 	// Keep prepared state separate until scene-entity mutations succeed.
-	Common::Array<RoomMonsterCombatState> prepareMonsterCombatStatesForSceneChange(
+	Common::Array<MonsterCombatState> prepareMonsterCombatStatesForSceneChange(
 		const Common::Array<MonsterRecord> &previousMonsters, const Common::Array<MonsterRecord> &updatedMonsters) const;
-	void commitMonsterCombatStatesForSceneChange(Common::Array<RoomMonsterCombatState> &&states);
+	void commitMonsterCombatStatesForSceneChange(Common::Array<MonsterCombatState> &&states);
 	void resetForSceneRefresh(const RoomSetupState &state);
 
 	void capturePlayerAttackTargetForKeyboard(RoomSetupState &state, RoomPlayerState &playerState,
@@ -151,34 +151,34 @@ public:
 
 	Common::Error killDebugActiveMonster(HarvesterEngine &engine, RoomSetupState &state,
 		RoomPlayerState &playerState, EntityManager *entityManager, const Common::Point &mousePos,
-		RoomCombatEffects &combatEffects, RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
+		CombatEffects &combatEffects, Interaction &interactionProcessor, bool &needsRedraw);
 
 	Common::Error updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetupState &state,
 		RoomPlayerState &playerState, RoomIdleAnimationState &idleState, EntityManager *entityManager,
-		SceneEntities &sceneRuntime, RoomCombatEffects &combatEffects, const CheatSystem &cheats,
-		RoomInteractionCallbacks &callbacks, RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
+		SceneEntities &sceneRuntime, CombatEffects &combatEffects, const CheatSystem &cheats,
+		InteractionCallbacks &callbacks, Interaction &interactionProcessor, bool &needsRedraw);
 	Common::Error resolvePlayerAttackContact(HarvesterEngine &engine,
 		RoomSetupState &state, RoomPlayerState &playerState,
 		EntityManager *entityManager, SceneEntities &sceneRuntime,
-		RoomCombatEffects &combatEffects,
-		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
+		CombatEffects &combatEffects,
+		Interaction &interactionProcessor, bool &needsRedraw);
 
 private:
 	void resizeCombatStates(const RoomSetupState &state);
 	bool queueInnerSanctumHerrillDeathAfterMuck(HarvesterEngine &engine, RoomSetupState &state, const MonsterRecord &monster) const;
 	// Called after resizeCombatStates; NPC finalization ends the entire combat update.
-	RoomNpcCombatUpdateResult updateRoomNpcCombat(HarvesterEngine &engine, RoomSetupState &state,
+	NpcCombatUpdateResult updateRoomNpcCombat(HarvesterEngine &engine, RoomSetupState &state,
 		EntityManager *entityManager, SceneEntities &sceneRuntime,
-		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw);
+		Interaction &interactionProcessor, bool &needsRedraw);
 
 	bool beginNpcDeathTransition(HarvesterEngine &engine,
-		NpcRecord &npc, Entity &npcEntity, RoomNpcCombatState &combatState, int deathDamageType, bool &needsRedraw) const;
+		NpcRecord &npc, Entity &npcEntity, NpcCombatState &combatState, int deathDamageType, bool &needsRedraw) const;
 	Common::Error finalizeNpcDeathTransition(HarvesterEngine &engine,
-		EntityManager *entityManager, SceneEntities &sceneRuntime, NpcRecord &npc, RoomNpcCombatState &combatState,
-		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) const;
+		EntityManager *entityManager, SceneEntities &sceneRuntime, NpcRecord &npc, NpcCombatState &combatState,
+		Interaction &interactionProcessor, bool &needsRedraw) const;
 
 	void startMonsterHitReaction(HarvesterEngine &engine,
-		RoomCombatEffects &combatEffects, MonsterRecord &monster, Entity &monsterEntity, RoomMonsterCombatState *combatState,
+		CombatEffects &combatEffects, MonsterRecord &monster, Entity &monsterEntity, MonsterCombatState *combatState,
 		int attackerAttackFirstFrame, bool &needsRedraw) const;
 
 	MonsterRecord *findMonsterTargetAtPoint(RoomSetupState &state, EntityManager *entityManager, const Common::Point &point) const;
@@ -188,11 +188,11 @@ private:
 	MonsterRecord *findProjectileContactMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState,
 		EntityManager *entityManager) const;
 
-	Common::Array<RoomMonsterCombatState> _monsterCombatStates;
-	Common::Array<RoomNpcCombatState> _npcCombatStates;
+	Common::Array<MonsterCombatState> _monsterCombatStates;
+	Common::Array<NpcCombatState> _npcCombatStates;
 };
 
-struct RoomHitEffectState {
+struct HitEffectState {
 	Common::String entityName;
 	Common::String followTargetName;
 	Common::Point anchorPoint;
@@ -200,16 +200,16 @@ struct RoomHitEffectState {
 	bool finished = false;
 };
 
-struct RoomCombatDamagePopupState {
+struct CombatDamagePopupState {
 	Common::String followTargetName;
 	Common::Point anchorPoint;
 	uint32 startTick = 0;
 	int damageAmount = 0;
 };
 
-class RoomCombatEffects {
+class CombatEffects {
 public:
-	explicit RoomCombatEffects(EntityManager *entityManager);
+	explicit CombatEffects(EntityManager *entityManager);
 
 	void clearHitEffects();
 	bool hasDamagePopups() const { return !_damagePopupStates.empty(); }
@@ -225,8 +225,8 @@ private:
 	static void resolveCombatDamagePopupAnchor(const Entity &targetEntity, Common::Point &anchorPoint);
 
 	EntityManager *_entityManager;
-	Common::Array<RoomHitEffectState> _hitEffectStates;
-	Common::Array<RoomCombatDamagePopupState> _damagePopupStates;
+	Common::Array<HitEffectState> _hitEffectStates;
+	Common::Array<CombatDamagePopupState> _damagePopupStates;
 	uint _nextCombatEffectId = 0;
 };
 
@@ -261,11 +261,11 @@ bool runtimeEntityHasFrameRange(const Entity &entity, int firstFrame, int lastFr
 bool runtimeEntityHasDrawableFrameRange(const Entity &entity, int firstFrame, int lastFrame);
 bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
 	const Entity &entity, int actorCenterX, int targetCenterX,
-	RoomAttackAnimationRange &range);
+	AttackAnimationRange &range);
 bool resolveMonsterDeathAnimationRange(const Entity &entity, int facing,
-	int deathDamageType, bool goreEnabled, RoomDeathAnimationRange &range);
+	int deathDamageType, bool goreEnabled, DeathAnimationRange &range);
 bool resolveNpcDeathAnimationRange(const Entity &entity, bool hasMonsterfyTarget,
-	int deathDamageType, bool goreEnabled, RoomDeathAnimationRange &range);
+	int deathDamageType, bool goreEnabled, DeathAnimationRange &range);
 int stepTowardsRoomCombatInt(int current, int target, int step);
 int computeRuntimeEntityHorizontalGap(const Entity &left, const Entity &right);
 bool doRuntimeEntityDepthExtentsOverlap(const Entity &first, const Entity &second);
@@ -277,16 +277,16 @@ bool isWithinNativeMonsterAttackEntryRange(const Entity &monster, float monsterZ
 bool playRandomRoomAttackSound(HarvesterEngine &engine, const Common::String &sound1,
 	const Common::String &sound2, const Common::String &sound3);
 bool resolveRoomMonsterHitAnimationRange(const Entity &entity,
-	int attackerAttackFirstFrame, RoomHitAnimationRange &range);
+	int attackerAttackFirstFrame, HitAnimationRange &range);
 float clampRoomDepthForEvent(const RoomSetupState &state, float z);
 int roundRoomCombatFloat(float value);
 int mapRoomDepthToScreenYForCombat(const RoomSetupState &state, float z, int fallbackY);
 int resolveMonsterAttackContactFrameOffset(const MonsterRecord &monster);
-void clearRoomMonsterCombatState(RoomMonsterCombatState &combatState);
-void clearRoomNpcCombatState(RoomNpcCombatState &combatState);
-void clearRoomMonsterAttackState(RoomMonsterCombatState &combatState);
-void clearRoomMonsterHitState(RoomMonsterCombatState &combatState);
+void clearRoomMonsterCombatState(MonsterCombatState &combatState);
+void clearRoomNpcCombatState(NpcCombatState &combatState);
+void clearRoomMonsterAttackState(MonsterCombatState &combatState);
+void clearRoomMonsterHitState(MonsterCombatState &combatState);
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_ROOM_COMBAT_H
+#endif // HARVESTER_COMBAT_H

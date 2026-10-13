@@ -41,7 +41,7 @@ namespace Harvester {
 
 class HarvesterEngine;
 class DialogueFlowAccess;
-class RoomInteractionProcessor;
+class Interaction;
 struct IndexedBitmap;
 
 class Flow {
@@ -61,9 +61,9 @@ private:
 	friend class DialogueSystem;
 	friend class InventorySystem;
 	friend class MenuSystem;
-	friend class RoomInteractionProcessor;
+	friend class Interaction;
 	friend class SceneRunner;
-	friend class RoomInput;
+	friend class Input;
 	friend class Scene;
 
 	bool loadQuickTips();

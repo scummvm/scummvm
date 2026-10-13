@@ -86,7 +86,7 @@
 #include "harvester/npc/whaley_dialogue.h"
 #include "harvester/npc/wasp_woman_dialogue.h"
 #include "harvester/resources.h"
-#include "harvester/runtime_entity.h"
+#include "harvester/entity.h"
 #include "harvester/art.h"
 #include "harvester/flow.h"
 #include "harvester/text.h"

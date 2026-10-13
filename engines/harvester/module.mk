@@ -17,13 +17,13 @@ MODULE_OBJS = \
 	monster.o \
 	player.o \
 	resources.o \
-	room_combat.o \
-	room_interaction.o \
-	room_input.o \
+	combat.o \
+	interaction.o \
+	input.o \
 	room_presentation.o \
 	scene_entities.o \
 	scene.o \
-	runtime_entity.o \
+	entity.o \
 	saveload.o \
 	script.o \
 	text.o \

@@ -21,7 +21,7 @@
 
 #include "harvester/monster.h"
 
-#include "harvester/runtime_entity.h"
+#include "harvester/entity.h"
 
 namespace Harvester {
 

@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/room_interaction.h"
+#include "harvester/interaction.h"
 
 #include "common/algorithm.h"
 #include "common/debug.h"
@@ -33,7 +33,7 @@
 #include "harvester/player.h"
 #include "harvester/scene_entities.h"
 #include "harvester/resources.h"
-#include "harvester/runtime_entity.h"
+#include "harvester/entity.h"
 
 namespace Harvester {
 
@@ -74,23 +74,23 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 	return decodeBitmap(data, bitmap);
 }
 
-RoomItemInteractions::RoomItemInteractions(HarvesterEngine &engine, SceneState &scene,
+ItemInteractions::ItemInteractions(HarvesterEngine &engine, SceneState &scene,
 		SceneEntities &sceneRuntime, InventorySystem &inventory, const Common::String &pendingRoomChange)
 	: _engine(engine), _scene(scene), _sceneRuntime(sceneRuntime), _inventory(inventory),
 	  _pendingRoomChange(pendingRoomChange) {
 }
 
-bool RoomItemInteractions::hasCarriedRoomItem() const {
+bool ItemInteractions::hasCarriedRoomItem() const {
 	return !_carriedRoomItemName.empty();
 }
 
-void RoomItemInteractions::clearCarriedRoomItem() {
+void ItemInteractions::clearCarriedRoomItem() {
 	_carriedRoomItemName.clear();
 	_carriedRoomItemLabel.clear();
 	_carriedRoomItemBitmap = IndexedBitmap();
 }
 
-void RoomItemInteractions::hideSceneObject(const Common::String &objectName, const Common::String *ownerOrRoom) {
+void ItemInteractions::hideSceneObject(const Common::String &objectName, const Common::String *ownerOrRoom) {
 	ObjectRecord *sceneObject = findSceneObjectByName(_scene.sceneObjects, objectName);
 	if (!sceneObject)
 		return;
@@ -101,7 +101,7 @@ void RoomItemInteractions::hideSceneObject(const Common::String &objectName, con
 		sceneObject->currentOwnerOrRoom = *ownerOrRoom;
 }
 
-bool RoomItemInteractions::stowCarriedRoomItemToInventory() {
+bool ItemInteractions::stowCarriedRoomItemToInventory() {
 	if (!hasCarriedRoomItem())
 		return true;
 
@@ -110,7 +110,7 @@ bool RoomItemInteractions::stowCarriedRoomItemToInventory() {
 	return _inventory.refresh();
 }
 
-bool RoomItemInteractions::shouldCancelDeniedPickup(const InteractionResult &interaction, bool didTransition) const {
+bool ItemInteractions::shouldCancelDeniedPickup(const InteractionResult &interaction, bool didTransition) const {
 	return !didTransition &&
 		!interaction.mutatedRuntimeState &&
 		!interaction.requestPlayerGotoXZ &&
@@ -126,8 +126,8 @@ bool RoomItemInteractions::shouldCancelDeniedPickup(const InteractionResult &int
 		!interaction.modalText.value.empty();
 }
 
-Common::Error RoomItemInteractions::restoreDeniedPickup(Script &script, const ObjectRecord &savedObject, bool clearCarryState,
-		RoomInteractionCallbacks &callbacks, bool &needsRedraw) {
+Common::Error ItemInteractions::restoreDeniedPickup(Script &script, const ObjectRecord &savedObject, bool clearCarryState,
+		InteractionCallbacks &callbacks, bool &needsRedraw) {
 	if (!script.syncRuntimeObjectRecord(savedObject))
 		return Common::kReadingFailed;
 	if (clearCarryState)
@@ -141,8 +141,8 @@ Common::Error RoomItemInteractions::restoreDeniedPickup(Script &script, const Ob
 	return Common::kNoError;
 }
 
-Common::Error RoomItemInteractions::moveRoomItemDirectlyToInventory(const ObjectRecord &object,
-		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw) {
+Common::Error ItemInteractions::moveRoomItemDirectlyToInventory(const ObjectRecord &object,
+		Interaction &interactionProcessor, InteractionCallbacks &callbacks, bool &needsRedraw) {
 	Script *script = _engine.getScript();
 	if (!script)
 		return Common::kReadingFailed;
@@ -182,8 +182,8 @@ Common::Error RoomItemInteractions::moveRoomItemDirectlyToInventory(const Object
 	return Common::kNoError;
 }
 
-Common::Error RoomItemInteractions::beginRoomItemCarry(const ObjectRecord &object,
-		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw) {
+Common::Error ItemInteractions::beginRoomItemCarry(const ObjectRecord &object,
+		Interaction &interactionProcessor, InteractionCallbacks &callbacks, bool &needsRedraw) {
 	Script *script = _engine.getScript();
 	ResourceManager *resources = _engine.getResources();
 	if (!script || !resources)
@@ -244,8 +244,8 @@ Common::Error RoomItemInteractions::beginRoomItemCarry(const ObjectRecord &objec
 	return Common::kNoError;
 }
 
-Common::Error RoomItemInteractions::handleInventoryTargetInteraction(const ObjectRecord &target,
-		RoomInteractionProcessor &interactionProcessor, bool &needsRedraw) {
+Common::Error ItemInteractions::handleInventoryTargetInteraction(const ObjectRecord &target,
+		Interaction &interactionProcessor, bool &needsRedraw) {
 	if (!_inventory.hasSelection())
 		return Common::kNoError;
 
@@ -287,7 +287,7 @@ Common::Error RoomItemInteractions::handleInventoryTargetInteraction(const Objec
 	return Common::kNoError;
 }
 
-ObjectRecord *RoomItemInteractions::findSelectedInventoryRoomTarget(const Common::Point &point) {
+ObjectRecord *ItemInteractions::findSelectedInventoryRoomTarget(const Common::Point &point) {
 	if (!_inventory.hasSelection())
 		return nullptr;
 
@@ -308,9 +308,9 @@ ObjectRecord *RoomItemInteractions::findSelectedInventoryRoomTarget(const Common
 		const Entity *entity = entityManager->findSceneEntityByName(candidate.objectName);
 		if (!entity || !entity->hitTest(point))
 			continue;
-		if (entity->getClassId() == kRuntimeEntityClassBackground ||
-				entity->getClassId() == kRuntimeEntityClassPlayer ||
-				entity->getClassId() == kRuntimeEntityClassRectHotspot19) {
+		if (entity->getClassId() == kEntityClassBackground ||
+				entity->getClassId() == kEntityClassPlayer ||
+				entity->getClassId() == kEntityClassRectHotspot19) {
 			continue;
 		}
 
@@ -326,8 +326,8 @@ ObjectRecord *RoomItemInteractions::findSelectedInventoryRoomTarget(const Common
 	return bestTarget;
 }
 
-Common::Error RoomItemInteractions::handleRoomItemPickup(const ObjectRecord &object, bool playerPresent,
-		RoomInteractionProcessor &interactionProcessor, RoomInteractionCallbacks &callbacks, bool &needsRedraw) {
+Common::Error ItemInteractions::handleRoomItemPickup(const ObjectRecord &object, bool playerPresent,
+		Interaction &interactionProcessor, InteractionCallbacks &callbacks, bool &needsRedraw) {
 	InteractionResult blockedPickupInteraction;
 	if (_engine.getScript()->isPickupBlockedByAction(object, &blockedPickupInteraction)) {
 		bool didTransition = false;
@@ -344,12 +344,12 @@ Common::Error RoomItemInteractions::handleRoomItemPickup(const ObjectRecord &obj
 		: moveRoomItemDirectlyToInventory(object, interactionProcessor, callbacks, needsRedraw);
 }
 
-RoomInteractionProcessor::RoomInteractionProcessor(HarvesterEngine &engine, Flow &flow,
+Interaction::Interaction(HarvesterEngine &engine, Flow &flow,
 		SceneState &scene, RoomPlayerState &playerState,
 		Common::String &pendingRegionName, Common::String &pendingRoomChange,
 		bool &pendingRoomChangeIsRoomName, bool &pendingRoomChangeUsesSavedRoomState,
 		SaveRoomState &pendingRoomChangeSavedRoomState, bool canExitCloseupToParent,
-		RoomInteractionCallbacks &callbacks)
+		InteractionCallbacks &callbacks)
 	: _engine(engine), _flow(flow), _scene(scene), _playerState(playerState),
 	  _pendingRegionName(pendingRegionName), _pendingRoomChange(pendingRoomChange),
 	  _pendingRoomChangeIsRoomName(pendingRoomChangeIsRoomName),
@@ -358,7 +358,7 @@ RoomInteractionProcessor::RoomInteractionProcessor(HarvesterEngine &engine, Flow
 	  _canExitCloseupToParent(canExitCloseupToParent), _callbacks(callbacks) {
 }
 
-void RoomInteractionProcessor::queueRegionInteraction(const RegionRecord &region, const Common::Point &mousePos) {
+void Interaction::queueRegionInteraction(const RegionRecord &region, const Common::Point &mousePos) {
 	_pendingRegionName = region.regionName;
 	if (!_playerState.entity)
 		return;
@@ -392,7 +392,7 @@ void RoomInteractionProcessor::queueRegionInteraction(const RegionRecord &region
 	}
 }
 
-Common::Error RoomInteractionProcessor::runRegionInteraction(const RegionRecord &region,
+Common::Error Interaction::runRegionInteraction(const RegionRecord &region,
 		InventorySystem &inventory, bool &needsRedraw) {
 	InteractionResult interaction;
 	if (!_engine.getScript()->resolveRegionInteraction(region, interaction, _scene.state.roomName))
@@ -417,7 +417,7 @@ Common::Error RoomInteractionProcessor::runRegionInteraction(const RegionRecord 
 	return Common::kNoError;
 }
 
-Common::Error RoomInteractionProcessor::tryActivatePendingRegion(InventorySystem &inventory, bool &needsRedraw) {
+Common::Error Interaction::tryActivatePendingRegion(InventorySystem &inventory, bool &needsRedraw) {
 	if (_pendingRegionName.empty() || !_playerState.entity)
 		return Common::kNoError;
 
@@ -438,7 +438,7 @@ Common::Error RoomInteractionProcessor::tryActivatePendingRegion(InventorySystem
 	return runRegionInteraction(*region, inventory, needsRedraw);
 }
 
-Common::Error RoomInteractionProcessor::tryActivatePassiveRegion(InventorySystem &inventory, bool &needsRedraw) {
+Common::Error Interaction::tryActivatePassiveRegion(InventorySystem &inventory, bool &needsRedraw) {
 	if (!_playerState.entity)
 		return Common::kNoError;
 
@@ -457,16 +457,16 @@ Common::Error RoomInteractionProcessor::tryActivatePassiveRegion(InventorySystem
 	return Common::kNoError;
 }
 
-int RoomInteractionProcessor::getPendingRegionFacing() const {
+int Interaction::getPendingRegionFacing() const {
 	const RegionRecord *pendingRegion = findSceneRegionByName(_scene.sceneRegions, _pendingRegionName);
 	return pendingRegion && pendingRegion->startEnabled ? pendingRegion->desiredFacing : -1;
 }
 
-bool RoomInteractionProcessor::hasPendingMainMenuReturn() const {
+bool Interaction::hasPendingMainMenuReturn() const {
 	return _flow.hasPendingMainMenuReturn();
 }
 
-Common::Error RoomInteractionProcessor::handleCombatInteraction(const InteractionResult &interaction, bool &needsRedraw) {
+Common::Error Interaction::handleCombatInteraction(const InteractionResult &interaction, bool &needsRedraw) {
 	bool didTransition = false;
 	Common::Error interactionError =
 		handleInteractionResult(interaction, didTransition, Common::String());
@@ -483,7 +483,7 @@ Common::Error RoomInteractionProcessor::handleCombatInteraction(const Interactio
 	return Common::kNoError;
 }
 
-Common::Error RoomInteractionProcessor::handleInteractionResult(const InteractionResult &interaction,
+Common::Error Interaction::handleInteractionResult(const InteractionResult &interaction,
 		bool &didTransition, const Common::String &usedItemName, bool interruptPlayerMovement) {
 	didTransition = false;
 
@@ -745,7 +745,7 @@ Common::Error RoomInteractionProcessor::handleInteractionResult(const Interactio
 	return Common::kNoError;
 }
 
-Common::Error RoomInteractionProcessor::runScriptedDialogue(const Common::String &npcName,
+Common::Error Interaction::runScriptedDialogue(const Common::String &npcName,
 		const Common::String &usedItemName, const Common::String &continuationTag,
 		bool &didTransition) {
 	didTransition = false;

@@ -38,7 +38,7 @@
 #include "harvester/palette_utils.h"
 #include "harvester/resources.h"
 #include "harvester/room_support.h"
-#include "harvester/runtime_entity.h"
+#include "harvester/entity.h"
 #include "harvester/art.h"
 #include "harvester/flow.h"
 #include "harvester/script.h"

@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/room_input.h"
+#include "harvester/input.h"
 
 #include "common/debug.h"
 #include "graphics/screen.h"
@@ -30,7 +30,7 @@
 #include "harvester/harvester.h"
 #include "harvester/inventory.h"
 #include "harvester/player.h"
-#include "harvester/room_interaction.h"
+#include "harvester/interaction.h"
 #include "harvester/room_presentation.h"
 #include "harvester/scene.h"
 #include "harvester/room_support.h"
@@ -75,9 +75,9 @@ static void debugLogInventoryClick(const char *buttonLabel, const Common::Point 
 		InventorySystem::isStatusObject(inventoryHover->object));
 }
 
-RoomInput::RoomInput(HarvesterEngine &engine, Flow &flow, Scene &session, SceneState &scene,
+Input::Input(HarvesterEngine &engine, Flow &flow, Scene &session, SceneState &scene,
 		InventorySystem &inventory, CheatSystem &cheats,
-		RoomItemInteractions &roomItems, RoomInteractionProcessor &interactionProcessor,
+		ItemInteractions &roomItems, Interaction &interactionProcessor,
 		RoomPresentationState &presentationState,
 		const Art &art, bool canExitCloseupToParent)
 	: _engine(engine), _flow(flow), _session(session), _scene(scene),
@@ -86,7 +86,7 @@ RoomInput::RoomInput(HarvesterEngine &engine, Flow &flow, Scene &session, SceneS
 	  _canExitCloseupToParent(canExitCloseupToParent) {
 }
 
-void RoomInput::beginInspectText(const ObjectRecord &object, const ResolvedText &text) {
+void Input::beginInspectText(const ObjectRecord &object, const ResolvedText &text) {
 	_presentationState.inspectText = text;
 	_presentationState.showingInspectText = true;
 	_presentationState.inspectCanDismiss = false;
@@ -96,7 +96,7 @@ void RoomInput::beginInspectText(const ObjectRecord &object, const ResolvedText 
 		_presentationState.inspectText.boxName.c_str(), _presentationState.inspectText.value.c_str());
 }
 
-void RoomInput::queueCombatLoadoutStatusMessage(const Common::String &message, bool &needsRedraw) {
+void Input::queueCombatLoadoutStatusMessage(const Common::String &message, bool &needsRedraw) {
 	if (message.empty()) {
 		const bool hadMessage = !_presentationState.combatLoadoutStatusText.value.empty();
 		_presentationState.combatLoadoutStatusText = ResolvedText();
@@ -113,9 +113,9 @@ void RoomInput::queueCombatLoadoutStatusMessage(const Common::String &message, b
 	needsRedraw = true;
 }
 
-bool RoomInput::openInventoryOverlay() {
+bool Input::openInventoryOverlay() {
 	RoomPlayerState &playerState = _session.getPlayerState();
-	RoomInputState &inputState = _session.getInputState();
+	InputState &inputState = _session.getInputState();
 
 	inputState.moveLeft = false;
 	inputState.moveRight = false;
@@ -131,7 +131,7 @@ bool RoomInput::openInventoryOverlay() {
 	return _inventory.open();
 }
 
-void RoomInput::capturePlayerAttackTarget() {
+void Input::capturePlayerAttackTarget() {
 	RoomPlayerState &playerState = _session.getPlayerState();
 
 	playerState.attackTargetName.clear();
@@ -143,7 +143,7 @@ void RoomInput::capturePlayerAttackTarget() {
 	_session.capturePlayerAttackTarget(_flow._mousePos, hoverState.npc);
 }
 
-void RoomInput::handleMouseMove(bool &needsRedraw) {
+void Input::handleMouseMove(bool &needsRedraw) {
 	if (_inventory.isOpen() && _inventory.hasSelection()) {
 		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow._mousePos);
 		// Native inventory handoff is driven by the latched selected item, not by
@@ -156,7 +156,7 @@ void RoomInput::handleMouseMove(bool &needsRedraw) {
 	needsRedraw = true;
 }
 
-RoomInputResult RoomInput::handleRightButtonDown(bool &needsRedraw) {
+InputResult Input::handleRightButtonDown(bool &needsRedraw) {
 	RoomPlayerState &playerState = _session.getPlayerState();
 	RoomIdleAnimationState &idleState = _session.getIdleState();
 
@@ -164,10 +164,10 @@ RoomInputResult RoomInput::handleRightButtonDown(bool &needsRedraw) {
 	if (idleState.active || idleState.exiting) {
 		if (Player::requestIdleAnimationExit(_scene.state, playerState, idleState))
 			needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 	if (_session.isPlayerCombatLocked())
-		return RoomInputResult();
+		return InputResult();
 	_session.clearPendingRegionInteraction();
 	if (_inventory.isOpen()) {
 		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow._mousePos);
@@ -178,7 +178,7 @@ RoomInputResult RoomInput::handleRightButtonDown(bool &needsRedraw) {
 				_inventory.getSelectedItemName().c_str());
 			if (_inventory.clearSelection())
 				needsRedraw = true;
-			return RoomInputResult();
+			return InputResult();
 		}
 		if (inventoryHover &&
 				!InventorySystem::isExitObject(inventoryHover->object) &&
@@ -210,10 +210,10 @@ RoomInputResult RoomInput::handleRightButtonDown(bool &needsRedraw) {
 							_engine.getScript()->getPlayerCombatLoadout();
 					}
 					if (!_inventory.refresh())
-						return RoomInputResult::leaveRoom(Common::kReadingFailed);
+						return InputResult::leaveRoom(Common::kReadingFailed);
 				}
 				needsRedraw = true;
-				return RoomInputResult();
+				return InputResult();
 			}
 
 			InventorySecondaryAction secondaryAction;
@@ -243,21 +243,21 @@ RoomInputResult RoomInput::handleRightButtonDown(bool &needsRedraw) {
 						secondaryAction.actionTag.c_str(), interactionError.getCode(),
 						didTransition, _flow.hasPendingMainMenuReturn());
 					if (interactionError.getCode() != Common::kNoError)
-						return RoomInputResult::leaveRoom(interactionError);
+						return InputResult::leaveRoom(interactionError);
 					if (_flow.hasPendingMainMenuReturn())
-						return RoomInputResult::leaveRoom(Common::kNoError);
+						return InputResult::leaveRoom(Common::kNoError);
 				}
 
 				if (_inventory.isOpen()) {
 					if (!_inventory.refresh())
-						return RoomInputResult::leaveRoom(Common::kReadingFailed);
+						return InputResult::leaveRoom(Common::kReadingFailed);
 				} else {
 					debugC(1, kDebugInventory,
 						"Harvester: inventory right click skipped overlay refresh after action='%s' transitioned=%d closeInventory=%d",
 						secondaryAction.actionTag.c_str(), didTransition, secondaryAction.closeInventory);
 				}
 				needsRedraw = true;
-				return RoomInputResult();
+				return InputResult();
 			}
 			debugC(1, kDebugInventory,
 				"Harvester: inventory right click object='%s' produced no combat toggle or secondary action",
@@ -266,18 +266,18 @@ RoomInputResult RoomInput::handleRightButtonDown(bool &needsRedraw) {
 		debugC(1, kDebugInventory, "Harvester: inventory right click closing overlay");
 		if (_inventory.close())
 			needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 	if (_inventory.hasSelection()) {
 		if (_inventory.clearSelection())
 			needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 	if (_roomItems.hasCarriedRoomItem()) {
 		if (!_roomItems.stowCarriedRoomItemToInventory())
-			return RoomInputResult::leaveRoom(Common::kReadingFailed);
+			return InputResult::leaveRoom(Common::kReadingFailed);
 		needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 	Script *script = _engine.getScript();
 	if (!_presentationState.showingInspectText && !_session.isPlayerCombatLocked() && script && playerState.entity &&
@@ -307,21 +307,21 @@ RoomInputResult RoomInput::handleRightButtonDown(bool &needsRedraw) {
 			playerState.attackTargetClassId = -1;
 		}
 	}
-	return RoomInputResult();
+	return InputResult();
 }
 
-void RoomInput::handleLeftButtonUp() {
-	RoomInputState &inputState = _session.getInputState();
+void Input::handleLeftButtonUp() {
+	InputState &inputState = _session.getInputState();
 
 	inputState.lastLeftButtonReleaseTick = Player::getRuntimeClockTicks();
 	if (_presentationState.showingInspectText)
 		_presentationState.inspectCanDismiss = true;
 }
 
-RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
+InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 	RoomPlayerState &playerState = _session.getPlayerState();
 	RoomIdleAnimationState &idleState = _session.getIdleState();
-	RoomInputState &inputState = _session.getInputState();
+	InputState &inputState = _session.getInputState();
 
 	const uint32 now = Player::getRuntimeClockTicks();
 	const bool isFastExitClick =
@@ -331,7 +331,7 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 	if (idleState.active || idleState.exiting) {
 		if (Player::requestIdleAnimationExit(_scene.state, playerState, idleState))
 			needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 
 	if (_presentationState.showingInspectText) {
@@ -341,10 +341,10 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 			_presentationState.inspectText = ResolvedText();
 			needsRedraw = true;
 		}
-		return RoomInputResult();
+		return InputResult();
 	}
 	if (_session.isPlayerCombatLocked())
-		return RoomInputResult();
+		return InputResult();
 
 	const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
 	if (_inventory.isOpen()) {
@@ -357,10 +357,10 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 				const bool closedInventory = _inventory.close();
 				if (clearedSelection || closedInventory)
 					needsRedraw = true;
-				return RoomInputResult();
+				return InputResult();
 			}
 			if (InventorySystem::isStatusObject(inventoryHover->object))
-				return RoomInputResult();
+				return InputResult();
 
 			if (!_inventory.hasSelection()) {
 				debugC(1, kDebugInventory,
@@ -370,7 +370,7 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 				_inventory.setPromptText(_inventory.buildSelectedPrompt(
 					Common::String(), _flow._menuTextConfig));
 				needsRedraw = true;
-				return RoomInputResult();
+				return InputResult();
 			}
 
 			if (!inventoryHover->object.objectName.equalsIgnoreCase(_inventory.getSelectedItemName())) {
@@ -381,20 +381,20 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 				Common::Error interactionError =
 					_roomItems.handleInventoryTargetInteraction(inventoryHover->object, _interactionProcessor, needsRedraw);
 				if (interactionError.getCode() != Common::kNoError)
-					return RoomInputResult::leaveRoom(interactionError);
+					return InputResult::leaveRoom(interactionError);
 			}
 			needsRedraw = true;
-			return RoomInputResult();
+			return InputResult();
 		}
 
 		if (_inventory.hasSelection()) {
 			if (!inventoryPanelBounds.contains(_flow._mousePos) && _inventory.close())
 				needsRedraw = true;
-			return RoomInputResult();
+			return InputResult();
 		}
 		if (!inventoryPanelBounds.contains(_flow._mousePos) && _inventory.close())
 			needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 
 	const RoomHoverState hoverState = resolveRoomHoverState(
@@ -426,10 +426,10 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 		if (clickHoverState.playerEntity && playerState.entity &&
 				clickHoverState.playerEntity == playerState.entity) {
 			if (!_roomItems.stowCarriedRoomItemToInventory())
-				return RoomInputResult::leaveRoom(Common::kReadingFailed);
+				return InputResult::leaveRoom(Common::kReadingFailed);
 			needsRedraw = true;
 		}
-		return RoomInputResult();
+		return InputResult();
 	}
 	if (_inventory.hasSelection()) {
 		const Common::String selectedItemName = _inventory.getSelectedItemName();
@@ -438,12 +438,12 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 			Common::Error dialogueError = _interactionProcessor.runScriptedDialogue(
 				clickHoverState.npc->npcName, selectedItemName, Common::String(), didTransition);
 			if (dialogueError.getCode() != Common::kNoError)
-				return RoomInputResult::leaveRoom(dialogueError);
+				return InputResult::leaveRoom(dialogueError);
 			if (_flow.hasPendingMainMenuReturn())
-				return RoomInputResult::leaveRoom(Common::kNoError);
+				return InputResult::leaveRoom(Common::kNoError);
 			if (_inventory.clearSelection())
 				needsRedraw = true;
-			return RoomInputResult();
+			return InputResult();
 		}
 
 		ObjectRecord *roomTarget = clickHoverState.object
@@ -453,22 +453,22 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 			Common::Error interactionError =
 				_roomItems.handleInventoryTargetInteraction(*roomTarget, _interactionProcessor, needsRedraw);
 			if (interactionError.getCode() != Common::kNoError)
-				return RoomInputResult::leaveRoom(interactionError);
+				return InputResult::leaveRoom(interactionError);
 			needsRedraw = true;
 		}
-		return RoomInputResult();
+		return InputResult();
 	}
 	if (hoverState.playerEntity) {
 		if (!playerState.entity || hoverState.playerEntity != playerState.entity ||
 			idleState.active || idleState.exiting ||
 			playerState.hasMoveTarget || playerState.turnActive ||
 			playerState.entity->getAnimationRate() != 0) {
-			return RoomInputResult();
+			return InputResult();
 		}
 		if (!openInventoryOverlay())
-			return RoomInputResult::leaveRoom(Common::kReadingFailed);
+			return InputResult::leaveRoom(Common::kReadingFailed);
 		needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 	if (hoverState.npc) {
 		_session.clearPendingRegionInteraction();
@@ -483,11 +483,11 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 		Common::Error dialogueError = _interactionProcessor.runScriptedDialogue(
 			hoverState.npc->npcName, Common::String(), Common::String(), didTransition);
 		if (dialogueError.getCode() != Common::kNoError)
-			return RoomInputResult::leaveRoom(dialogueError);
+			return InputResult::leaveRoom(dialogueError);
 		if (_flow.hasPendingMainMenuReturn())
-			return RoomInputResult::leaveRoom(Common::kNoError);
+			return InputResult::leaveRoom(Common::kNoError);
 		needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 	// select one target in reverse render order; a selected object prevents exit-region selection.
 	if (hoverState.region && !hoverState.object && playerState.entity) {
@@ -498,19 +498,19 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 			Common::Error interactionError =
 				_interactionProcessor.runRegionInteraction(*hoverState.region, _inventory, needsRedraw);
 			if (interactionError.getCode() != Common::kNoError)
-				return RoomInputResult::leaveRoom(interactionError);
+				return InputResult::leaveRoom(interactionError);
 			if (_flow.hasPendingMainMenuReturn())
-				return RoomInputResult::leaveRoom(Common::kNoError);
+				return InputResult::leaveRoom(Common::kNoError);
 			needsRedraw = true;
-			return RoomInputResult();
+			return InputResult();
 		}
 		_interactionProcessor.queueRegionInteraction(*hoverState.region, _flow._mousePos);
 		Common::Error interactionError =
 			_interactionProcessor.tryActivatePendingRegion(_inventory, needsRedraw);
 		if (interactionError.getCode() != Common::kNoError)
-			return RoomInputResult::leaveRoom(interactionError);
+			return InputResult::leaveRoom(interactionError);
 		needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 	ObjectRecord *clickedObject = hoverState.object
 		? findSceneObjectByName(_scene.sceneObjects, hoverState.object->objectName)
@@ -537,18 +537,18 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 			}
 			needsRedraw = true;
 		}
-		return RoomInputResult();
+		return InputResult();
 	}
 	_session.clearPendingRegionInteraction();
 	if (clickedObject->objectName.equalsIgnoreCase("EXIT_BM") ||
 		clickedObject->objectName.equalsIgnoreCase("EXIT_HS")) {
 		Common::Error exitError = _session.runRoomExitCommands();
 		if (exitError.getCode() != Common::kNoError)
-			return RoomInputResult::leaveRoom(exitError);
+			return InputResult::leaveRoom(exitError);
 		// Native closeup exits return through room_setup so the parent on-enter command runs.
 		if (_canExitCloseupToParent)
 			_flow.requestCloseupParentRestart();
-		return RoomInputResult::leaveRoom(Common::kNoError);
+		return InputResult::leaveRoom(Common::kNoError);
 	}
 
 	ResolvedText resolvedInspectText;
@@ -571,14 +571,14 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 		playerState.turnActive = false;
 		playerState.turnTargetFacing = -1;
 		needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 	if (_engine.getScript()->isPickupObject(*clickedObject)) {
 		Common::Error pickupError = _roomItems.handleRoomItemPickup(*clickedObject, playerState.entity != nullptr,
 			_interactionProcessor, _session, needsRedraw);
 		if (pickupError.getCode() != Common::kNoError)
-			return RoomInputResult::leaveRoom(pickupError);
-		return RoomInputResult();
+			return InputResult::leaveRoom(pickupError);
+		return InputResult();
 	}
 
 	InteractionResult interaction;
@@ -591,7 +591,7 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 				resolvedInspectText.boxName.c_str(), clickedObject->objectName.c_str());
 		}
 		needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 
 	bool didTransition = false;
@@ -599,17 +599,17 @@ RoomInputResult RoomInput::handleLeftButtonDown(bool &needsRedraw) {
 		_interactionProcessor.handleInteractionResult(
 			interaction, didTransition, Common::String());
 	if (interactionError.getCode() != Common::kNoError)
-		return RoomInputResult::leaveRoom(interactionError);
+		return InputResult::leaveRoom(interactionError);
 	if (_flow.hasPendingMainMenuReturn())
-		return RoomInputResult::leaveRoom(Common::kNoError);
+		return InputResult::leaveRoom(Common::kNoError);
 	needsRedraw = true;
-	return RoomInputResult();
+	return InputResult();
 }
 
-RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &needsRedraw) {
+InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw) {
 	RoomPlayerState &playerState = _session.getPlayerState();
 	RoomIdleAnimationState &idleState = _session.getIdleState();
-	RoomInputState &inputState = _session.getInputState();
+	InputState &inputState = _session.getInputState();
 
 	if (_presentationState.showingInspectText) {
 		if (key.keycode == Common::KEYCODE_ESCAPE) {
@@ -618,7 +618,7 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 			_presentationState.inspectText = ResolvedText();
 			needsRedraw = true;
 		}
-		return RoomInputResult();
+		return InputResult();
 	}
 
 	_session.notePlayerActivity();
@@ -627,7 +627,7 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 	if (idleState.active || idleState.exiting) {
 		if (Player::requestIdleAnimationExit(_scene.state, playerState, idleState))
 			needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 
 	if (Script *script = _engine.getScript()) {
@@ -642,7 +642,7 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 					needsRedraw = true;
 				if (cheatActivation.inventoryChanged && _inventory.isOpen() &&
 						!_inventory.refresh()) {
-					return RoomInputResult::leaveRoom(Common::kReadingFailed);
+					return InputResult::leaveRoom(Common::kReadingFailed);
 				}
 				if (cheatActivation.hasInteraction) {
 					if (_inventory.isOpen())
@@ -651,13 +651,13 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 					Common::Error cheatError = _interactionProcessor.handleInteractionResult(
 						cheatInteraction, didTransition, Common::String());
 					if (cheatError.getCode() != Common::kNoError)
-						return RoomInputResult::leaveRoom(cheatError);
+						return InputResult::leaveRoom(cheatError);
 					if (_flow.hasPendingMainMenuReturn())
-						return RoomInputResult::leaveRoom(Common::kNoError);
+						return InputResult::leaveRoom(Common::kNoError);
 				}
 				needsRedraw = true;
 			}
-			return RoomInputResult();
+			return InputResult();
 		}
 	}
 
@@ -673,25 +673,25 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 			if (_inventory.close())
 				needsRedraw = true;
 		}
-		return RoomInputResult();
+		return InputResult();
 	}
 	if (_inventory.hasSelection()) {
 		if (key.keycode == Common::KEYCODE_ESCAPE) {
 			if (_inventory.clearSelection())
 				needsRedraw = true;
-			return RoomInputResult();
+			return InputResult();
 		}
 		if (key.keycode == Common::KEYCODE_i) {
 			if (_inventory.clearSelection())
 				needsRedraw = true;
 			if (!openInventoryOverlay())
-				return RoomInputResult::leaveRoom(Common::kReadingFailed);
+				return InputResult::leaveRoom(Common::kReadingFailed);
 			needsRedraw = true;
-			return RoomInputResult();
+			return InputResult();
 		}
 	}
 	if (_session.isPlayerCombatLocked())
-		return RoomInputResult();
+		return InputResult();
 
 	if (key.keycode == Common::KEYCODE_LCTRL ||
 			key.keycode == Common::KEYCODE_RCTRL) {
@@ -699,8 +699,8 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 	} else if (key.keycode == Common::KEYCODE_k && _engine.isCombatDebugEnabled()) {
 		Common::Error debugKillError = _session.killDebugActiveMonster(_flow._mousePos, needsRedraw);
 		if (debugKillError.getCode() != Common::kNoError)
-			return RoomInputResult::leaveRoom(debugKillError);
-		return RoomInputResult();
+			return InputResult::leaveRoom(debugKillError);
+		return InputResult();
 	} else if (key.keycode == Common::KEYCODE_LEFT)
 		inputState.moveLeft = true;
 	else if (key.keycode == Common::KEYCODE_RIGHT)
@@ -711,14 +711,14 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 		inputState.moveDown = true;
 	else if (key.keycode == Common::KEYCODE_i) {
 		if (!openInventoryOverlay())
-			return RoomInputResult::leaveRoom(Common::kReadingFailed);
+			return InputResult::leaveRoom(Common::kReadingFailed);
 		needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	} else if (key.keycode == Common::KEYCODE_ESCAPE) {
 		if (_session.cancelPlayerAttackAnimation())
 			needsRedraw = true;
 		if (!_roomItems.stowCarriedRoomItemToInventory())
-			return RoomInputResult::leaveRoom(Common::kReadingFailed);
+			return InputResult::leaveRoom(Common::kReadingFailed);
 		inputState.moveLeft = false;
 		inputState.moveRight = false;
 		inputState.moveUp = false;
@@ -730,36 +730,36 @@ RoomInputResult RoomInput::handleKeyDown(const Common::KeyState &key, bool &need
 		_session.captureCurrentSaveState();
 		Graphics::Screen *activeScreen = _engine.getScreen();
 		if (!activeScreen)
-			return RoomInputResult::leaveRoom(Common::kNoError);
+			return InputResult::leaveRoom(Common::kNoError);
 		IndexedBitmap roomMenuBackdrop;
 		drawRoomScene(_engine, *activeScreen, _scene, _scene.targetPaletteBrightness);
 		if (!captureScreenBackdrop(*activeScreen, roomMenuBackdrop))
-			return RoomInputResult::leaveRoom(Common::kReadingFailed);
+			return InputResult::leaveRoom(Common::kReadingFailed);
 		Common::Error menuError = _flow.runRoomMenuStub(
 			roomMenuBackdrop, _scene.palette, _scene.targetPaletteBrightness,
 			_scene.state.hasEntrance);
 		if (menuError.getCode() != Common::kNoError)
-			return RoomInputResult::leaveRoom(menuError);
+			return InputResult::leaveRoom(menuError);
 		_flow.resetCursorAnimationSequence();
 		_session.resetIdleState();
 		needsRedraw = true;
-		return RoomInputResult();
+		return InputResult();
 	}
 
 	if (key.keycode == Common::KEYCODE_RETURN ||
 		key.keycode == Common::KEYCODE_KP_ENTER) {
 		if (!_roomItems.stowCarriedRoomItemToInventory())
-			return RoomInputResult::leaveRoom(Common::kReadingFailed);
+			return InputResult::leaveRoom(Common::kReadingFailed);
 		Common::Error exitError = _session.runRoomExitCommands();
 		if (exitError.getCode() != Common::kNoError)
-			return RoomInputResult::leaveRoom(exitError);
-		return RoomInputResult::leaveRoom(Common::kNoError);
+			return InputResult::leaveRoom(exitError);
+		return InputResult::leaveRoom(Common::kNoError);
 	}
-	return RoomInputResult();
+	return InputResult();
 }
 
-void RoomInput::handleKeyUp(const Common::KeyState &key) {
-	RoomInputState &inputState = _session.getInputState();
+void Input::handleKeyUp(const Common::KeyState &key) {
+	InputState &inputState = _session.getInputState();
 
 	if (key.keycode == Common::KEYCODE_LCTRL ||
 			key.keycode == Common::KEYCODE_RCTRL)
@@ -774,10 +774,10 @@ void RoomInput::handleKeyUp(const Common::KeyState &key) {
 		inputState.moveDown = false;
 }
 
-RoomInputResult RoomInput::handleEvent(const Common::Event &event, bool &needsRedraw) {
+InputResult Input::handleEvent(const Common::Event &event, bool &needsRedraw) {
 	Common::Error result = Common::kNoError;
 	if (_flow.handleSystemEvent(event, result))
-		return RoomInputResult::leaveRoom(result);
+		return InputResult::leaveRoom(result);
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
@@ -798,7 +798,7 @@ RoomInputResult RoomInput::handleEvent(const Common::Event &event, bool &needsRe
 	default:
 		break;
 	}
-	return RoomInputResult();
+	return InputResult();
 }
 
 } // End of namespace Harvester

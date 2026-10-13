@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HARVESTER_RUNTIME_ENTITY_H
-#define HARVESTER_RUNTIME_ENTITY_H
+#ifndef HARVESTER_ENTITY_H
+#define HARVESTER_ENTITY_H
 
 #include "common/array.h"
 #include "common/rect.h"
@@ -37,30 +37,30 @@ class ResourceManager;
 
 uint32 getRuntimeClockTicks();
 
-enum RuntimeEntityClass {
-	kRuntimeEntityClassObject = 0,
-	kRuntimeEntityClassAnimation = 1,
-	kRuntimeEntityClassCursor = 2,
-	kRuntimeEntityClassBackground = 3,
-	kRuntimeEntityClassNpc = 4,
-	kRuntimeEntityClassPlayer = 5,
-	kRuntimeEntityClassMonster = 6,
-	kRuntimeEntityClassRectHotspot = 0x15,
-	kRuntimeEntityClassDisabledHotspot = 0x16,
-	kRuntimeEntityClassTimer = 0x17,
-	kRuntimeEntityClassRectHotspot18 = 0x18,
-	kRuntimeEntityClassRectHotspot19 = 0x19
+enum EntityClass {
+	kEntityClassObject = 0,
+	kEntityClassAnimation = 1,
+	kEntityClassCursor = 2,
+	kEntityClassBackground = 3,
+	kEntityClassNpc = 4,
+	kEntityClassPlayer = 5,
+	kEntityClassMonster = 6,
+	kEntityClassRectHotspot = 0x15,
+	kEntityClassDisabledHotspot = 0x16,
+	kEntityClassTimer = 0x17,
+	kEntityClassRectHotspot18 = 0x18,
+	kEntityClassRectHotspot19 = 0x19
 };
 
-enum RuntimeEntityHitTestMode {
-	kRuntimeEntityHitTestNone = 0,
-	kRuntimeEntityHitTestBounds = 1,
-	kRuntimeEntityHitTestOpaquePixels = 2
+enum EntityHitTestMode {
+	kEntityHitTestNone = 0,
+	kEntityHitTestBounds = 1,
+	kEntityHitTestOpaquePixels = 2
 };
 
-enum RuntimeEntityAnchorMode {
-	kRuntimeEntityAnchorTopLeft = 0,
-	kRuntimeEntityAnchorCentered = 1
+enum EntityAnchorMode {
+	kEntityAnchorTopLeft = 0,
+	kEntityAnchorCentered = 1
 };
 
 class Entity {
@@ -73,7 +73,7 @@ public:
 
 	void setClassId(int classId) { _classId = classId; }
 	int getClassId() const { return _classId; }
-	void setAnchorMode(RuntimeEntityAnchorMode anchorMode);
+	void setAnchorMode(EntityAnchorMode anchorMode);
 	void setZExtent(float zExtent) { _zExtent = zExtent; }
 	float getZExtent() const { return _zExtent; }
 
@@ -101,7 +101,7 @@ public:
 	void setAnimationSequence(int sequence);
 	int getAnimationSequence() const { return _animationSequence; }
 	void configureHotspotBounds(int width, int height);
-	void setHitTestMode(RuntimeEntityHitTestMode mode) { _hitTestMode = mode; }
+	void setHitTestMode(EntityHitTestMode mode) { _hitTestMode = mode; }
 	int getBoundsWidth() const { return _boundsWidth; }
 	int getBoundsHeight() const { return _boundsHeight; }
 	bool getCurrentFrameMetrics(int &width, int &height, int &xOffset, int &yOffset) const;
@@ -165,8 +165,8 @@ private:
 	bool _drawEnabled = true;
 	int _boundsWidth = 0;
 	int _boundsHeight = 0;
-	RuntimeEntityHitTestMode _hitTestMode = kRuntimeEntityHitTestNone;
-	RuntimeEntityAnchorMode _anchorMode = kRuntimeEntityAnchorTopLeft;
+	EntityHitTestMode _hitTestMode = kEntityHitTestNone;
+	EntityAnchorMode _anchorMode = kEntityAnchorTopLeft;
 	float _zExtent = 0.0f;
 	float _depthScale = 1.0f;
 	int _timerInitialValue = 0;
@@ -234,4 +234,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_RUNTIME_ENTITY_H
+#endif // HARVESTER_ENTITY_H

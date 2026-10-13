@@ -42,7 +42,7 @@
 #include "harvester/harvester.h"
 #include "harvester/palette_utils.h"
 #include "harvester/resources.h"
-#include "harvester/runtime_entity.h"
+#include "harvester/entity.h"
 #include "harvester/scene_entities.h"
 #include "harvester/art.h"
 #include "harvester/monster.h"
@@ -233,7 +233,7 @@ static void drawRoomDebugOverlay(HarvesterEngine &engine, Graphics::Screen &scre
 		const Entity *entity = entityManager
 			? entityManager->findSceneEntityByName(object.objectName)
 			: nullptr;
-		if (entity && entity->getClassId() == kRuntimeEntityClassBackground)
+		if (entity && entity->getClassId() == kEntityClassBackground)
 			continue;
 
 		drawRoomDebugLabel(screen, *font, resolveRoomDebugObjectLabel(engine, object),
@@ -244,7 +244,7 @@ static void drawRoomDebugOverlay(HarvesterEngine &engine, Graphics::Screen &scre
 		const Entity *entity = entityManager
 			? entityManager->findSceneEntityByName(npc.npcName)
 			: nullptr;
-		if (!entity || entity->getClassId() != kRuntimeEntityClassNpc || !entity->isVisible())
+		if (!entity || entity->getClassId() != kEntityClassNpc || !entity->isVisible())
 			continue;
 
 		const Common::Rect npcRect = entity->getScreenRect();
@@ -272,7 +272,7 @@ static void drawCombatDebugOverlay(HarvesterEngine &engine, Graphics::Screen &sc
 
 	const Entity *playerEntity = entityManager->findSceneEntityByName(kPlayerActorEntityName);
 	if (script && playerEntity &&
-			playerEntity->getClassId() == kRuntimeEntityClassPlayer &&
+			playerEntity->getClassId() == kEntityClassPlayer &&
 			playerEntity->isVisible()) {
 		const Common::Rect playerRect = playerEntity->getScreenRect();
 		drawRoomDebugLabel(screen, *font,
@@ -283,7 +283,7 @@ static void drawCombatDebugOverlay(HarvesterEngine &engine, Graphics::Screen &sc
 
 	for (const MonsterRecord &monster : scene.state.roomMonsters) {
 		const Entity *entity = entityManager->findSceneEntityByName(monster.monsterName);
-		if (!entity || entity->getClassId() != kRuntimeEntityClassMonster || !entity->isVisible())
+		if (!entity || entity->getClassId() != kEntityClassMonster || !entity->isVisible())
 			continue;
 
 		const Common::Rect monsterRect = entity->getScreenRect();
@@ -315,18 +315,18 @@ static bool canEntityAffectPlayerPathfinding(const Entity &entity) {
 		return false;
 
 	switch (entity.getClassId()) {
-	case kRuntimeEntityClassCursor:
-	case kRuntimeEntityClassBackground:
-	case kRuntimeEntityClassPlayer:
-	case kRuntimeEntityClassRectHotspot:
-	case kRuntimeEntityClassRectHotspot19:
-	case kRuntimeEntityClassTimer:
+	case kEntityClassCursor:
+	case kEntityClassBackground:
+	case kEntityClassPlayer:
+	case kEntityClassRectHotspot:
+	case kEntityClassRectHotspot19:
+	case kEntityClassTimer:
 		return false;
 	default:
 		break;
 	}
 
-	return entity.getClassId() == kRuntimeEntityClassDisabledHotspot || entity.hasFrames();
+	return entity.getClassId() == kEntityClassDisabledHotspot || entity.hasFrames();
 }
 
 static void drawPathfindingBlockerOutline(Graphics::Screen &screen, EntityManager &entityManager,
@@ -397,7 +397,7 @@ static void drawTimerDebugOverlay(HarvesterEngine &engine, Graphics::Screen &scr
 	Common::Array<Common::String> labels;
 	for (const TimerRecord &timer : script->getTimers()) {
 		const Entity *entity = entityManager->findSceneEntityByName(timer.timerName);
-		if (!entity || entity->getClassId() != kRuntimeEntityClassTimer || !entity->isTimerEnabled())
+		if (!entity || entity->getClassId() != kEntityClassTimer || !entity->isTimerEnabled())
 			continue;
 
 		const TimerRecord *runtimeTimer = script->findRuntimeTimerRecord(timer.timerName);
@@ -529,7 +529,7 @@ static bool applyRoomActorPlacementInternal(const RoomSetupState &state, Entity 
 		return false;
 
 	const float renderZ = computeRoomActorRenderZ(z, entity);
-	entity.setAnchorMode(kRuntimeEntityAnchorTopLeft);
+	entity.setAnchorMode(kEntityAnchorTopLeft);
 	setRoomActorScreenPosition(entity, centerX, bottomY, renderZ, width, height, xOffset, yOffset);
 
 	float depthScale = 1.0f;
@@ -881,9 +881,9 @@ static const ObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 		const Entity *entity = entityManager->findSceneEntityByName(object.objectName);
 		if (!entity || !entity->hitTest(point))
 			continue;
-		if (entity->getClassId() == kRuntimeEntityClassBackground ||
-			entity->getClassId() == kRuntimeEntityClassPlayer ||
-			entity->getClassId() == kRuntimeEntityClassRectHotspot19) {
+		if (entity->getClassId() == kEntityClassBackground ||
+			entity->getClassId() == kEntityClassPlayer ||
+			entity->getClassId() == kEntityClassRectHotspot19) {
 			continue;
 		}
 		const int drawIndex = entityManager->findSceneEntityDrawIndexByName(entity->getName());
@@ -917,7 +917,7 @@ static const RegionRecord *findRoomRegionAtPoint(HarvesterEngine &engine,
 		const Entity *entity = entityManager->findSceneEntityByName(region.regionName);
 		if (!entity || !entity->hitTest(point))
 			continue;
-		if (entity->getClassId() != kRuntimeEntityClassRectHotspot19)
+		if (entity->getClassId() != kEntityClassRectHotspot19)
 			continue;
 		const int drawIndex = entityManager->findSceneEntityDrawIndexByName(entity->getName());
 		if (drawIndex < 0)
@@ -939,7 +939,7 @@ static const Entity *findRoomPlayerAtPoint(HarvesterEngine &engine, const Common
 		return nullptr;
 
 	const Entity *entity = entityManager->findTopSceneEntityAt(point);
-	if (!entity || entity->getClassId() != kRuntimeEntityClassPlayer)
+	if (!entity || entity->getClassId() != kEntityClassPlayer)
 		return nullptr;
 
 	return entity;
@@ -953,7 +953,7 @@ static const NpcRecord *findRoomNpcAtPoint(HarvesterEngine &engine,
 		return nullptr;
 
 	const Entity *entity = entityManager->findTopSceneEntityAt(point);
-	if (!entity || entity->getClassId() != kRuntimeEntityClassNpc)
+	if (!entity || entity->getClassId() != kEntityClassNpc)
 		return nullptr;
 
 	const NpcRecord *npc = findSceneNpcByName(sceneNpcs, entity->getName());
@@ -2148,7 +2148,7 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 	sceneRuntime.populateRoomRegions();
 	for (const TimerRecord &timer : state.roomTimers) {
 		Entity *existingTimer = entityManager->findSceneEntityByName(timer.timerName);
-		if (existingTimer && existingTimer->getClassId() == kRuntimeEntityClassTimer) {
+		if (existingTimer && existingTimer->getClassId() == kEntityClassTimer) {
 			debugC(1, kDebugRoom,
 				"Harvester: scene timer reused room='%s' timer='%s' current=%d initial=%d enabled=%d loop=%d global=%d",
 				state.roomName.c_str(), timer.timerName.c_str(), existingTimer->getTimerCurrentValue(),
@@ -2197,9 +2197,9 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 		if (!player) {
 			debug(1, "Harvester: unable to spawn startup player actor from '%s'", playerResourcePath.c_str());
 		} else {
-			player->setClassId(kRuntimeEntityClassPlayer);
-			player->setAnchorMode(kRuntimeEntityAnchorTopLeft);
-			player->setHitTestMode(kRuntimeEntityHitTestOpaquePixels);
+			player->setClassId(kEntityClassPlayer);
+			player->setAnchorMode(kEntityAnchorTopLeft);
+			player->setHitTestMode(kEntityHitTestOpaquePixels);
 			player->setVisible(true);
 			player->setAnimationRate(0);
 			player->setAnimationFrameRange(playerFrame, playerFrame, false);

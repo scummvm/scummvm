@@ -23,7 +23,7 @@
 #define HARVESTER_SCENE_ENTITIES_H
 
 #include "harvester/room_support.h"
-#include "harvester/runtime_entity.h"
+#include "harvester/entity.h"
 
 namespace Harvester {
 
@@ -57,7 +57,7 @@ public:
 private:
 	bool isTimerMaterializedInCurrentRoom(const Common::String &timerName) const;
 	bool isInteractiveSceneHotspot(const ObjectRecord &object) const;
-	RuntimeEntityClass resolveSceneObjectClassLocal(const ObjectRecord &object, const Entity *entity) const;
+	EntityClass resolveSceneObjectClassLocal(const ObjectRecord &object, const Entity *entity) const;
 	static Common::Rect getSceneRegionBounds(const RegionRecord &region);
 	static bool applyRoomNpcPlacement(Entity &entity, const NpcRecord &npc);
 
