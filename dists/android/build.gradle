@@ -33,8 +33,8 @@ android {
         // R8 configuration files.
         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), srcProperties['srcdir'] + '/dists/android/proguard-rules.pro'
 
-        versionName "2026.3.1"
-        versionCode 26031000
+        versionName "2026.4.1"
+        versionCode 26041000
         // versioncode must be incremented for each market upload
         // maximum versioncode allowed by Play Store is: 2100000000
         // After 2.9.1.1 release the versioncode numbering scheme changed to reflect the post-2026 naming convention for ScummVM versions.

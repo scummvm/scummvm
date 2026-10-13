@@ -506,12 +506,11 @@ public:
 				 bool holdLastFrame = false, bool fadeIn = false,
 				 bool setSkipIntroOnEsc = true);
 
-	/// Play a Flic (.FLC) movie, centred on the screen with a black
-	/// letterbox. The Mac CD ships its intro as a Flic (KDCDINTR.FLC) where
-	/// the DOS release uses .ANM movies. A click/key/Esc ends it (Esc also
-	/// sets `_skipIntro`).
+	/// Play a Flic (.FLC) movie, centred on the screen or an optional Mac
+	/// London PICT backdrop. Restore the game resolution after the backdrop.
+	/// A click/key/Esc ends playback (Esc also sets `_skipIntro`).
 	void playFlc(const Common::Path &path, bool fadeIn = false,
-				 bool holdLastFrame = false);
+				 bool holdLastFrame = false, uint16 backgroundPict = 0);
 
 private:
 	void interruptAudio(bool stopMusicToo = true);
@@ -529,6 +528,7 @@ private:
 	void showMacTitleIntro();
 
 	void runLondonStartup();
+	void showMacLondonTitle();
 	/// Start London mystery 0 after a freshly-created detective chooses a partner.
 	bool startLondonTrainingMystery();
 	void showLondonEAKidsLogo();
