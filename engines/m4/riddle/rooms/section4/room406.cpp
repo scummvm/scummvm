@@ -622,7 +622,7 @@ void Room406::parser() {
 			useAceOfSpades1();
 		else
 			useAceOfSpades2();
-	} else if (player_said("CUBE CABINET", "KEYS")) {
+	} else if (player_said("CUE CABINET", "KEYS")) {
 		digi_play("406r27", 1);
 	} else if (player_said("DART BOARD", "KEYS")) {
 		digi_play("406r26", 1);
