@@ -42,6 +42,7 @@ void NEResources::clear() {
 	}
 
 	_resources.clear();
+	_nameTable.clear();
 }
 
 bool NEResources::loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
@@ -142,15 +143,18 @@ uint32 NEResources::getResourceTableOffset() {
  * Not described by any documentation I could find, but the corresponding #define can be encountered in some old header files.
  * Mentioned by this blog post https://www.toptensoftware.com/blog/win3mu-5/ (section "The Mysterious Resource Type #15")
  *
+ * The two-string layout is documented in the Windows 3.1 SDK, Vol. 4, section 7.11.1 (pp. 97-98).
+ * https://archive.org/details/bitsavers_microsoftwindows3.1SDK1992PC302110492ProgrammersRe_14016743/page/97/mode/2up
+ *
  * The name table records have the following layout:
  *
  * struct
  * {
  *  WORD lengthEntry;        // length of this entry (including this field)
- *  WORD resourceType;       // see WinResourceType constants
- *  WORD resourceId;         // ordinal of resource | 0x8000
- *  BYTE paddingZero;        // maybe ??
- *  CHAR szName[];           // null-terminated name
+ *  WORD resourceType;       // type ordinal; high bit indicates a name alias
+ *  WORD resourceId;         // resource ordinal; high bit indicates a name alias
+ *  CHAR typeName[];         // null-terminated type name, or an empty string
+ *  CHAR resourceName[];     // null-terminated resource name, or an empty string
  * }
  *
  */
@@ -171,20 +175,33 @@ bool NEResources::readNameTable(uint32 offset, uint32 size) {
 		if (lengthEntry == 0)
 			break;
 
-		uint16 resourceType = _exe->readUint16LE();
-		uint16 resourceId = _exe->readUint16LE();
-		resourceId &= 0x7FFF;
-		_exe->skip(1); // paddingZero
+		uint16 rawResourceType = _exe->readUint16LE();
+		uint16 rawResourceId = _exe->readUint16LE();
 
-		Common::String name = _exe->readString('\0', lengthEntry - 7);
-		if (name.size() + 8 != lengthEntry) {
-			warning("NEResources::readNameTable(): unexpected string length in name table (expected = %d, found = %d, string = %s)",
-					lengthEntry - 7, name.size() + 1, name.c_str());
+		// The high bits indicate name aliases and must be checked before masking.
+		// Only the numeric ordinals are stored as map keys.
+		bool hasResourceTypeNameAlias = (rawResourceType & 0x8000) != 0;
+		uint16 resourceType = rawResourceType & 0x7FFF;
+		bool hasResourceIdNameAlias = (rawResourceId & 0x8000) != 0;
+		uint16 resourceId = rawResourceId & 0x7FFF;
+
+		// Maunal seeking to the correct position is necessary, as bounded readString always fully consumes the given length.
+		uint32 typeNamePos = _exe->pos();
+		String typeName = _exe->readString('\0', lengthEntry - 7);
+		_exe->seek(typeNamePos + typeName.size() + 1);
+
+		String resourceName = _exe->readString('\0', lengthEntry - typeName.size() - 7);
+		if (typeName.size() + resourceName.size() + 8 != lengthEntry) {
+			warning("NEResources::readNameTable(): unexpected string length in name table (expected = %d, found = %d, typeName = %s, resourceName = %s)",
+					lengthEntry - 6, typeName.size() + resourceName.size() + 2, typeName.c_str(), resourceName.c_str());
 		}
 
-		debug(2, "NEResources::readNameTable(): resourceType = %d, resourceId = %d, name = %s",
-			  resourceType, resourceId, name.c_str());
-		_nameTable[resourceType][resourceId] = name;
+		if (hasResourceTypeNameAlias && !typeName.empty())
+			_nameTable[resourceType].typeName = typeName;
+		if (hasResourceIdNameAlias && !resourceName.empty())
+			_nameTable[resourceType].resourceNames[resourceId] = resourceName;
+		debug(2, "NEResources::readNameTable(): resourceType = %d, resourceId = %d, typeName = %s, resourceName = %s",
+			  rawResourceType, rawResourceId, typeName.c_str(), resourceName.c_str());
 	}
 
 	_exe->seek(curPos);
@@ -222,9 +239,12 @@ bool NEResources::readResourceTable(uint32 offset) {
 
 		_exe->skip(4); // reserved
 
-		if (resCount > 256) {
-			warning("NEResources::readResourceTable(): resource table looks malformed, %d entries > 256", resCount);
-			resCount = 256;
+		// WORD TYPEINFO::rtResourceCount does not have a limit in the official docs (SDK Vol. 4, section 6.2.3.1, p. 76).
+		// https://archive.org/details/bitsavers_microsoftwindows3.1SDK1992PC302110492ProgrammersRe_14016743/page/75/mode/2up
+		// 1024 is an arbitrary bound for safeguard; Increase the bound if any valid NE file with more than 1024 entries are found.
+		if (resCount > 1024) {
+			warning("NEResources::readResourceTable(): resource table looks malformed, %d entries > 1024", resCount);
+			resCount = 1024;
 		}
 
 		for (int i = 0; i < resCount; i++) {
@@ -288,14 +308,38 @@ String NEResources::getResourceString(SeekableReadStream &exe, uint32 offset) {
 	return string;
 }
 
+bool NEResources::matchesType(const WinResourceID &resourceType, const WinResourceID &queryType) const {
+	// Match the stored type directly first; matching requires equality of both type and value.
+	if (resourceType == queryType)
+		return true;
+
+	// A name-table alias can link an ordinal type to a named type in either direction.
+	// With no aliases, only the direct comparison above can match.
+	if (_nameTable.empty())
+		return false;
+
+	const bool queryHasString = queryType.hasString();
+	const bool resourceHasString = resourceType.hasString();
+	// Alias matching requires exactly one non-empty name.
+	if (queryHasString == resourceHasString)
+		return false;
+
+	// NameTable keys are ordinals, so look up the side without a name.
+	// Null and empty-string keys have no entry and yield an empty alias.
+	const WinResourceID &ordinalType = queryHasString ? resourceType : queryType;
+	const WinResourceID &namedType = queryHasString ? queryType : resourceType;
+	const String &typeName = _nameTable.getValOrDefault(ordinalType).typeName;
+	return !typeName.empty() && namedType == typeName;
+}
+
 const NEResources::Resource *NEResources::findResource(const WinResourceID &type, const WinResourceID &id) const {
 	for (const auto &resource : _resources) {
-		if (resource.type == type &&
+		if (matchesType(resource.type, type) &&
 			(resource.id == id ||
 			 (!_nameTable.empty() &&
 			  _nameTable.contains(resource.type) &&
-			  _nameTable[resource.type].contains(resource.id) &&
-			  _nameTable[resource.type][resource.id] == id.toString())))
+			  _nameTable[resource.type].resourceNames.contains(resource.id) &&
+			  _nameTable[resource.type].resourceNames[resource.id] == id.toString())))
 			return &resource;
 	}
 
@@ -316,7 +360,7 @@ const Array<WinResourceID> NEResources::getIDList(const WinResourceID &type) con
 	Array<WinResourceID> idArray;
 
 	for (const auto &resource : _resources)
-		if (resource.type == type)
+		if (matchesType(resource.type, type))
 			idArray.push_back(resource.id);
 
 	return idArray;
