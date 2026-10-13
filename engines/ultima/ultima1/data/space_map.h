@@ -23,6 +23,7 @@
 #define ULTIMA1_DATA_SPACE_MAP_H
 
 #include "common/scummsys.h"
+#include "common/random.h"
 #include "common/serializer.h"
 
 namespace Ultima {
@@ -217,10 +218,26 @@ struct SpaceStarfield {
 	int16 _starX[SPACE_STAR_COUNT] = {};
 	int16 _starY[SPACE_STAR_COUNT] = {};
 
+	// Where each star sat on screen after the last advance(), and whether it
+	// was in view rather than just respawned - what the hyperjump needs to
+	// leave trails behind them or erase them again
+	int16 _prevX[SPACE_STAR_COUNT] = {};
+	int16 _prevY[SPACE_STAR_COUNT] = {};
+	bool _visible[SPACE_STAR_COUNT] = {};
+
+	SpaceStarfield();
+
 	/**
 	 * Fresh random stars, centre and pan back to their defaults (setupStars)
 	 */
 	void reset();
+
+	/**
+	 * Replaces every star with new ones rolled from a seed. The same seed
+	 * always gives the same stars, and the same ones replacing them as they
+	 * leave the view, so a run of advance() calls can be replayed exactly
+	 */
+	void reseed(uint32 seed);
 
 	/**
 	 * One frame: every star drifts further from the centre (respawning at
@@ -238,6 +255,8 @@ struct SpaceStarfield {
 	}
 
 private:
+	Common::RandomSource _rnd;
+
 	void spawnStar(int index);
 };
 

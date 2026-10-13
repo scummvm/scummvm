@@ -42,15 +42,22 @@ class SpaceCockpit : public Map {
 private:
 	enum HyperjumpState {
 		HYPERJUMP_IDLE,
-		HYPERJUMP_RAMP_UP,
-		HYPERJUMP_WARP,
-		HYPERJUMP_RAMP_DOWN
+		HYPERJUMP_ACCELERATE,	// Cruising at each speed up to the maximum
+		HYPERJUMP_WARP_IN,		// Stars streak outward, leaving their trails behind them
+		HYPERJUMP_WARP_OUT,		// The same stars replayed, erasing the trails again
+		HYPERJUMP_DECELERATE	// Cruising back down to the original speed
 	};
 
 	HyperjumpState _hyperjumpState = HYPERJUMP_IDLE;
-	int _hyperjumpTicks = 0;
 	int _hyperjumpDX = 0, _hyperjumpDY = 0;
 	int _hyperjumpOrigSpeed = 0;
+	int _hyperjumpLevelFrames = 0;		// Frames cruised at each speed
+	int _hyperjumpFrames = 0;			// Frames left in the current speed or warp phase
+	int _hyperjumpBudget = 0;			// Vertical retraces left to spend on cruise frames
+	uint32 _hyperjumpSeed = 0;
+
+	// The pixels the stars have left behind during the warp
+	Graphics::ManagedSurface _trails;
 
 	// Ticks left to keep showing the laser-bolt flash from fireLaser() (0 =
 	// not showing)
@@ -67,12 +74,39 @@ private:
 	void drawCockpitFrame(Graphics::Views::GfxSurface &s);
 
 	/**
-	 * Advances whichever phase of the hyperjump animation is running -
-	 * ramping the display speed up to 8, streaking the starfield hard for
-	 * a bit, then ramping back down to the original speed and handing off
-	 * to SpaceCockpitLogic::completeHyperjump()
+	 * Runs however many frames of the hyperjump animation are due: cruising
+	 * up through the speeds, then a warp that stops erasing the stars so
+	 * they fill the screen with trails, replayed to wipe them away again,
+	 * then cruising back down and handing off to
+	 * SpaceCockpitLogic::completeHyperjump()
 	 */
 	void tickHyperjump();
+
+	/**
+	 * Runs a single frame of whichever phase is under way
+	 */
+	void hyperjumpFrame();
+
+	/**
+	 * Starts the warp once the ship has reached full speed
+	 */
+	void startWarp();
+
+	/**
+	 * Ends the hyperjump animation, and carries on with the jump
+	 */
+	void finishHyperjump();
+
+	/**
+	 * Marks a pixel of the warp trails, or erases it with color 0
+	 */
+	void plotTrail(int x, int y, int color);
+
+	/**
+	 * Stops a hyperjump in progress, if there is one
+	 * @returns		True if there was one
+	 */
+	bool cancelHyperjump();
 
 public:
 	SpaceCockpit() : Map("SpaceCockpit") {}

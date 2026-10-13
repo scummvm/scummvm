@@ -222,12 +222,18 @@ void SpaceMap::setupSector(int x, int y) {
 	// and the checkOverlap* helpers). Not needed for the sector scan
 }
 
+// The short chirp played at the start and end of every starfield frame
+constexpr int SOUND_ENGINE_CHIRP = 9;
+
+SpaceStarfield::SpaceStarfield() : _rnd("ultima1starfield") {
+}
+
 void SpaceStarfield::spawnStar(int index) {
 	// A random quadrant and a random offset magnitude, so the star starts
 	// somewhere near an edge and heads outward
-	int quadrant = g_engine->getRandomNumber(0, 255) / 64;
-	int dx = g_engine->getRandomNumber(2, 255) / 2;
-	int dy = g_engine->getRandomNumber(4, 255) / 4;
+	int quadrant = _rnd.getRandomNumberRng(0, 255) / 64;
+	int dx = _rnd.getRandomNumberRng(2, 255) / 2;
+	int dy = _rnd.getRandomNumberRng(4, 255) / 4;
 
 	if (quadrant == 1 || quadrant == 2)
 		dx = -dx;
@@ -250,11 +256,23 @@ void SpaceStarfield::reset() {
 	_centerY = 0x4f;
 	_panX = _panY = 0;
 
-	for (int i = 0; i < SPACE_STAR_COUNT; ++i)
+	reseed(g_engine->getRandomNumber(0x7FFFFF));
+}
+
+void SpaceStarfield::reseed(uint32 seed) {
+	_rnd.setSeed(seed);
+
+	for (int i = 0; i < SPACE_STAR_COUNT; ++i) {
 		spawnStar(i);
+		_prevX[i] = (int16)(_centerX + 3);
+		_prevY[i] = (int16)(_centerY + 3);
+		_visible[i] = false;
+	}
 }
 
 void SpaceStarfield::advance() {
+	g_engine->playFX(SOUND_ENGINE_CHIRP);
+
 	for (int i = 0; i < SPACE_STAR_COUNT; ++i) {
 		int stepX = _starX[i] / 8;
 		int stepY = _starY[i] / 6;
@@ -268,8 +286,12 @@ void SpaceStarfield::advance() {
 		_starX[i] = (int16)(_starX[i] + stepX);
 		_starY[i] = (int16)(_starY[i] + stepY);
 
-		if (!withinView(_centerX + _starX[i], _centerY + _starY[i]))
+		_visible[i] = withinView(_centerX + _starX[i], _centerY + _starY[i]);
+		if (!_visible[i])
 			spawnStar(i);
+
+		_prevX[i] = (int16)(_centerX + _starX[i]);
+		_prevY[i] = (int16)(_centerY + _starY[i]);
 	}
 
 	// Pan the centre, stopping dead (and dropping the pan) at a viewport edge
@@ -283,6 +305,8 @@ void SpaceStarfield::advance() {
 		_centerY = (int16)(_centerY - _panY);
 		_panY = 0;
 	}
+
+	g_engine->playFX(SOUND_ENGINE_CHIRP);
 }
 
 } // namespace Data

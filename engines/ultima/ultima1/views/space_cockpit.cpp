@@ -50,6 +50,10 @@ bool SpaceCockpit::msgFocus(const FocusMessage &msg) {
 
 bool SpaceCockpit::msgUnfocus(const UnfocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+
+	_hyperjumpState = HYPERJUMP_IDLE;
+	_trails.free();
+
 	return Map::msgUnfocus(msg);
 }
 
@@ -67,12 +71,17 @@ void SpaceCockpit::draw() {
 	s.drawLine(sf._centerX - 2, sf._centerY, sf._centerX + 2, sf._centerY, STAR_COLOR);
 	s.drawLine(sf._centerX, sf._centerY - 2, sf._centerX, sf._centerY + 2, STAR_COLOR);
 
-	// The warp stars
-	for (int i = 0; i < Data::SPACE_STAR_COUNT; ++i) {
-		int x = sf._centerX + sf._starX[i];
-		int y = sf._centerY + sf._starY[i];
-		if (Data::SpaceStarfield::withinView(x, y))
-			s.setPixel(x, y, STAR_COLOR);
+	if (_hyperjumpState == HYPERJUMP_WARP_IN || _hyperjumpState == HYPERJUMP_WARP_OUT) {
+		// The stars along with all the trails behind them
+		s.transBlitFrom(_trails, Common::Point(0, 0), 0);
+	} else {
+		// The warp stars
+		for (int i = 0; i < Data::SPACE_STAR_COUNT; ++i) {
+			int x = sf._centerX + sf._starX[i];
+			int y = sf._centerY + sf._starY[i];
+			if (Data::SpaceStarfield::withinView(x, y))
+				s.setPixel(x, y, STAR_COLOR);
+		}
 	}
 
 	// The enemy fighter currently being engaged, if any
@@ -94,6 +103,10 @@ void SpaceCockpit::draw() {
 }
 
 bool SpaceCockpit::msgMouseMove(const MouseMoveMessage &msg) {
+	// The warp's stars are measured from the centre, so leave it where it is
+	if (_hyperjumpState != HYPERJUMP_IDLE)
+		return true;
+
 	Data::SpaceStarfield &sf = _G(starfield);
 	sf._panX = 0;
 	sf._panY = 0;
@@ -104,7 +117,8 @@ bool SpaceCockpit::msgMouseMove(const MouseMoveMessage &msg) {
 }
 
 bool SpaceCockpit::msgMouseDown(const MouseDownMessage &msg) {
-	_G(logic)->action(KEYBIND_FIRE);
+	if (!cancelHyperjump())
+		_G(logic)->action(KEYBIND_FIRE);
 	return true;
 }
 
@@ -120,65 +134,167 @@ void SpaceCockpit::alienFireFlash(int x1, int y1, int x2, int y2) {
 	redraw();
 }
 
-// Ticks per +/-1 step while ramping the display speed up/down
-constexpr int HYPERJUMP_SPEED_STEP_TICKS = 2;
-// How long (in ticks) to hold at full warp, streaking the starfield
-constexpr int HYPERJUMP_WARP_TICKS = 30;
-// Extra starfield advances per tick while at full warp, on top of the
-// normal per-frame one - this is the "speeded up" part of the animation
-constexpr int HYPERJUMP_WARP_ADVANCES = 5;
+constexpr int HYPERJUMP_MAX_SPEED = 8;
+
+// Frames cruised at each speed, depending on whether the ship started out
+// slow or fast
+constexpr int HYPERJUMP_SLOW_LEVEL_FRAMES = 11;
+constexpr int HYPERJUMP_FAST_LEVEL_FRAMES = 16;
+constexpr int HYPERJUMP_FAST_SPEED = 4;
+
+// Frames of each half of the warp: the first leaves the trails, the second
+// erases them again
+constexpr int HYPERJUMP_WARP_IN_FRAMES = 201;
+constexpr int HYPERJUMP_WARP_OUT_FRAMES = 200;
+
+// Vertical retraces a cruise frame waits for at each speed, so frames come
+// faster as the ship does. Ticks are 20 a second against 60 retraces
+constexpr int HYPERJUMP_FRAME_DELAY[HYPERJUMP_MAX_SPEED + 1] = { 0, 8, 7, 6, 5, 4, 3, 2, 1 };
+constexpr int HYPERJUMP_VBLANKS_PER_TICK = 3;
+
+// The warp itself runs flat out in the original, so this is chosen to take a
+// few seconds
+constexpr int HYPERJUMP_WARP_FRAMES_PER_TICK = 4;
 
 void SpaceCockpit::startHyperjump(int dx, int dy) {
-	_hyperjumpState = HYPERJUMP_RAMP_UP;
-	_hyperjumpTicks = 0;
+	_hyperjumpState = HYPERJUMP_ACCELERATE;
 	_hyperjumpDX = dx;
 	_hyperjumpDY = dy;
 	_hyperjumpOrigSpeed = _G(cockpitSpeed);
+	_hyperjumpLevelFrames = (_hyperjumpOrigSpeed < HYPERJUMP_FAST_SPEED) ?
+		HYPERJUMP_SLOW_LEVEL_FRAMES : HYPERJUMP_FAST_LEVEL_FRAMES;
+	_hyperjumpFrames = _hyperjumpLevelFrames;
+	_hyperjumpBudget = 0;
 
 	// Stop any manual steering - the animation takes over the view
 	_G(starfield)._panX = 0;
 	_G(starfield)._panY = 0;
 }
 
-void SpaceCockpit::tickHyperjump() {
-	++_hyperjumpTicks;
+void SpaceCockpit::startWarp() {
+	// The ship has stopped, as far as the stars are concerned
+	_G(cockpitSpeed) = 0;
+
+	_trails.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_trails.clear(0);
+
+	auto *logic = dynamic_cast<Logic::SpaceCockpitLogic *>(_G(logic).get());
+	if (logic)
+		logic->hyperjumpLightspeed();
+
+	_hyperjumpSeed = g_engine->getRandomNumber(0x7FFFFF);
+	_G(starfield).reseed(_hyperjumpSeed);
+	_hyperjumpState = HYPERJUMP_WARP_IN;
+	_hyperjumpFrames = HYPERJUMP_WARP_IN_FRAMES;
+}
+
+void SpaceCockpit::plotTrail(int x, int y, int color) {
+	if (x >= 0 && x < _trails.w && y >= 0 && y < _trails.h)
+		*(byte *)_trails.getBasePtr(x, y) = (byte)color;
+}
+
+void SpaceCockpit::finishHyperjump() {
+	_hyperjumpState = HYPERJUMP_IDLE;
+	_G(cockpitSpeed) = _hyperjumpOrigSpeed;
+
+	auto *logic = dynamic_cast<Logic::SpaceCockpitLogic *>(_G(logic).get());
+	if (logic)
+		logic->completeHyperjump(_hyperjumpDX, _hyperjumpDY);
+}
+
+void SpaceCockpit::hyperjumpFrame() {
+	Data::SpaceStarfield &sf = _G(starfield);
 
 	switch (_hyperjumpState) {
-	case HYPERJUMP_RAMP_UP:
-		if (_hyperjumpTicks % HYPERJUMP_SPEED_STEP_TICKS == 0 && _G(cockpitSpeed) < 8)
-			++_G(cockpitSpeed);
-		if (_G(cockpitSpeed) >= 8) {
-			_hyperjumpState = HYPERJUMP_WARP;
-			_hyperjumpTicks = 0;
+	case HYPERJUMP_ACCELERATE:
+		sf.advance();
 
-			auto *logic = dynamic_cast<Logic::SpaceCockpitLogic *>(_G(logic).get());
-			if (logic)
-				logic->hyperjumpLightspeed();
+		if (--_hyperjumpFrames == 0) {
+			if (_G(cockpitSpeed) < HYPERJUMP_MAX_SPEED) {
+				++_G(cockpitSpeed);
+				_hyperjumpFrames = _hyperjumpLevelFrames;
+			} else {
+				startWarp();
+			}
 		}
 		break;
 
-	case HYPERJUMP_WARP:
-		for (int i = 0; i < HYPERJUMP_WARP_ADVANCES; ++i)
-			_G(starfield).advance();
-		if (_hyperjumpTicks >= HYPERJUMP_WARP_TICKS) {
-			_hyperjumpState = HYPERJUMP_RAMP_DOWN;
-			_hyperjumpTicks = 0;
+	case HYPERJUMP_WARP_IN:
+		// Nothing is erased, so every star leaves its whole path behind it
+		sf.advance();
+		for (int i = 0; i < Data::SPACE_STAR_COUNT; ++i) {
+			if (sf._visible[i])
+				plotTrail(sf._prevX[i], sf._prevY[i], STAR_COLOR);
+		}
+
+		if (--_hyperjumpFrames == 0) {
+			// Replaying the same stars, each wipes out the pixels it left
+			sf.reseed(_hyperjumpSeed);
+			_hyperjumpState = HYPERJUMP_WARP_OUT;
+			_hyperjumpFrames = HYPERJUMP_WARP_OUT_FRAMES;
 		}
 		break;
 
-	case HYPERJUMP_RAMP_DOWN:
-		if (_hyperjumpTicks % HYPERJUMP_SPEED_STEP_TICKS == 0 && _G(cockpitSpeed) > _hyperjumpOrigSpeed)
-			--_G(cockpitSpeed);
-		if (_G(cockpitSpeed) <= _hyperjumpOrigSpeed) {
-			_hyperjumpState = HYPERJUMP_IDLE;
-			auto *logic = dynamic_cast<Logic::SpaceCockpitLogic *>(_G(logic).get());
-			if (logic)
-				logic->completeHyperjump(_hyperjumpDX, _hyperjumpDY);
+	case HYPERJUMP_WARP_OUT:
+		for (int i = 0; i < Data::SPACE_STAR_COUNT; ++i) {
+			if (Data::SpaceStarfield::withinView(sf._prevX[i], sf._prevY[i]))
+				plotTrail(sf._prevX[i], sf._prevY[i], 0);
+		}
+
+		sf.advance();
+		for (int i = 0; i < Data::SPACE_STAR_COUNT; ++i) {
+			if (sf._visible[i])
+				plotTrail(sf._prevX[i], sf._prevY[i], STAR_COLOR);
+		}
+
+		if (--_hyperjumpFrames == 0) {
+			_trails.free();
+			_hyperjumpBudget = 0;
+
+			if (_hyperjumpOrigSpeed < HYPERJUMP_MAX_SPEED) {
+				_G(cockpitSpeed) = HYPERJUMP_MAX_SPEED;
+				_hyperjumpState = HYPERJUMP_DECELERATE;
+				_hyperjumpFrames = _hyperjumpLevelFrames;
+			} else {
+				finishHyperjump();
+			}
+		}
+		break;
+
+	case HYPERJUMP_DECELERATE:
+		sf.advance();
+
+		if (--_hyperjumpFrames == 0) {
+			if (_G(cockpitSpeed) - 1 > _hyperjumpOrigSpeed) {
+				--_G(cockpitSpeed);
+				_hyperjumpFrames = _hyperjumpLevelFrames;
+			} else {
+				finishHyperjump();
+			}
 		}
 		break;
 
 	default:
 		break;
+	}
+}
+
+void SpaceCockpit::tickHyperjump() {
+	_hyperjumpBudget += HYPERJUMP_VBLANKS_PER_TICK;
+	int warpFrames = HYPERJUMP_WARP_FRAMES_PER_TICK;
+
+	while (_hyperjumpState != HYPERJUMP_IDLE) {
+		if (_hyperjumpState == HYPERJUMP_WARP_IN || _hyperjumpState == HYPERJUMP_WARP_OUT) {
+			if (warpFrames-- == 0)
+				break;
+		} else {
+			int delay = HYPERJUMP_FRAME_DELAY[_G(cockpitSpeed)];
+			if (delay > _hyperjumpBudget)
+				break;
+			_hyperjumpBudget -= delay;
+		}
+
+		hyperjumpFrame();
 	}
 
 	redraw();
@@ -196,31 +312,26 @@ bool SpaceCockpit::tick() {
 	return Map::tick();
 }
 
-static void abortHyperjumpAndNotify(int origSpeed) {
-	_G(cockpitSpeed) = origSpeed;
+bool SpaceCockpit::cancelHyperjump() {
+	if (_hyperjumpState == HYPERJUMP_IDLE)
+		return false;
+
+	_hyperjumpState = HYPERJUMP_IDLE;
+	_trails.free();
+	_G(cockpitSpeed) = _hyperjumpOrigSpeed;
+
 	auto *logic = dynamic_cast<Logic::SpaceCockpitLogic *>(_G(logic).get());
 	if (logic)
 		logic->abortHyperjump();
+	return true;
 }
 
 bool SpaceCockpit::msgAction(const ActionMessage &msg) {
-	if (_hyperjumpState != HYPERJUMP_IDLE) {
-		_hyperjumpState = HYPERJUMP_IDLE;
-		abortHyperjumpAndNotify(_hyperjumpOrigSpeed);
-		return true;
-	}
-
-	return Map::msgAction(msg);
+	return cancelHyperjump() || Map::msgAction(msg);
 }
 
 bool SpaceCockpit::msgKeypress(const KeypressMessage &msg) {
-	if (_hyperjumpState != HYPERJUMP_IDLE) {
-		_hyperjumpState = HYPERJUMP_IDLE;
-		abortHyperjumpAndNotify(_hyperjumpOrigSpeed);
-		return true;
-	}
-
-	return Map::msgKeypress(msg);
+	return cancelHyperjump() || Map::msgKeypress(msg);
 }
 
 void SpaceCockpit::drawCockpitFrame(Graphics::Views::GfxSurface &s) {

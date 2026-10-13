@@ -81,6 +81,9 @@ void SpaceCockpitLogic::keypress(Common::KeyCode keycode) {
 }
 
 void SpaceCockpitLogic::tick() {
+	if (_hyperjumping)
+		return;
+
 	// The original advances the starfield every cockpit frame; at 20fps
 	// that's far too fast, so only every 3rd tick
 	if (++_tickCounter < 3)
@@ -288,6 +291,7 @@ bool SpaceCockpitLogic::hyperjump() {
 
 	Views::SpaceCockpit *view = dynamic_cast<Views::SpaceCockpit *>(g_engine->findView("SpaceCockpit"));
 	assert(view);
+	_hyperjumping = true;
 	view->startHyperjump(dx, dy);
 
 	// The animation owns the commands area until it finishes or is
@@ -314,6 +318,7 @@ void SpaceCockpitLogic::hyperjumpLightspeed() {
 }
 
 void SpaceCockpitLogic::completeHyperjump(int dx, int dy) {
+	_hyperjumping = false;
 	subtractFuel(100);
 
 	int newSectorX = (_G(savegame)._sectorX + dx + Data::SPACE_SECTOR_COUNT) % Data::SPACE_SECTOR_COUNT;
@@ -359,6 +364,7 @@ void SpaceCockpitLogic::completeHyperjump(int dx, int dy) {
 }
 
 void SpaceCockpitLogic::abortHyperjump() {
+	_hyperjumping = false;
 	resetLine();
 	writeString("Hyperjump aborted!\n");
 	redrawMap();

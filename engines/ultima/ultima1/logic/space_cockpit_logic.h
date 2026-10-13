@@ -40,6 +40,10 @@ private:
 	// it doesn't streak by too fast
 	int _tickCounter = 0;
 
+	// True while the SpaceCockpit view is animating a hyperjump, which
+	// then drives the starfield itself
+	bool _hyperjumping = false;
+
 	/**
 	 * Sets the flight speed (1-8), spending 4 fuel per step of change
 	 * (setSpeed) - the number keys
