@@ -194,8 +194,10 @@ const ADGameDescription gameDescriptions[] = {
 
 	{"lochness",
 		"Nival",
-		AD_ENTRY3s("script.pak", "a7ee3aae653658f93bba7f237bcf06f3", 1904,
+		AD_ENTRY5s("script.pak", "a7ee3aae653658f93bba7f237bcf06f3", 1904,
 				   "textes.txt", "d1546d04243ee63f9ff6c5fc551082e1", 1763,
+                   "cd1/install/Lochness.exe", "400e046beb9de2acf5ca5c8b5fed1416", 196608,
+                   "cd2/LEVEL5/N5L07E06W52.TST", "69df780dbdf32a0c89fb8aecadd4d16b", 148,
 				   "N0C00.4Xm", "befe689a043a50f9268b9daa306d9931", 8288474),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
@@ -275,6 +277,17 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd1/LEVEL1/script1.pak", "f0ee2e406999f2c983e4a5de2e6a25c5", 21132,
 				   "cd2/LEVEL3/script3.pak", "c8ef637a44287b12de150407555ceaad", 26189),
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"lochness",
+		"Retail version",
+		AD_ENTRY3s("install.EXE", "872c13b9a3a7be96300d0fc4419e1569", 6052828,
+				   "cd1/LEVEL1/script1.pak", "f0ee2e406999f2c983e4a5de2e6a25c5", 21132,
+				   "cd2/LEVEL3/script3.pak", "c8ef637a44287b12de150407555ceaad", 26189),
+		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
