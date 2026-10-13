@@ -20,10 +20,26 @@
  */
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "graphics/scaler.h"
 
 #include "igor/igor.h"
 
 namespace Igor {
+
+class OptionsThumbnailScope {
+	const Graphics::Surface *&_slot;
+	const Graphics::Surface *_previous;
+	Graphics::Surface _thumbnail;
+public:
+	explicit OptionsThumbnailScope(const Graphics::Surface *&slot) : _slot(slot), _previous(slot) {
+		if (::createThumbnailFromScreen(&_thumbnail))
+			_slot = &_thumbnail;
+	}
+	~OptionsThumbnailScope() {
+		_slot = _previous;
+		_thumbnail.free();
+	}
+};
 
 static const struct {
 	int y;
@@ -273,6 +289,8 @@ static void drawButtonsBar(uint8 *dst, const uint8 *src) {
 }
 
 void IgorEngine::handleOptionsMenu() {
+	// Retain the gameplay view before the menu draws or dims its palette.
+	OptionsThumbnailScope thumbnailScope(_optionsMenuThumbnail);
 	loadOptionsMenuTexts();
 	PauseToken pauseToken = pauseEngine();
 	hideCursor();
