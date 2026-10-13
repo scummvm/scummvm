@@ -48,6 +48,12 @@ const char *IgorMetaEngine::getName() const {
 	return "igor";
 }
 
+void IgorMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	if (Igor::g_engine && Igor::g_engine->copyOptionsMenuThumbnail(thumb))
+		return;
+	MetaEngine::getSavegameThumbnail(thumb);
+}
+
 const ADExtraGuiOptionsMap *IgorMetaEngine::getAdvancedExtraGuiOptions() const {
 	return Igor::optionsList;
 }

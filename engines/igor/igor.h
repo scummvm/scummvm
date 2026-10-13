@@ -647,6 +647,7 @@ private:
 	int _walkToObjectPosX, _walkToObjectPosY;
 
 	int16 _currentPart;
+	const Graphics::Surface *_optionsMenuThumbnail = nullptr;
 	int _talkDelay;
 	int _talkSpeechCounter;
 	int _talkDelayCounter;
@@ -1641,6 +1642,12 @@ private:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+	bool copyOptionsMenuThumbnail(Graphics::Surface &thumb) const {
+		if (!_optionsMenuThumbnail)
+			return false;
+		thumb.copyFrom(*_optionsMenuThumbnail);
+		return true;
+	}
 
 	void handleOptionsMenu_paintQuit();
 	bool handleOptionsMenu_handleKeyDownQuit(int key);

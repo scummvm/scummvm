@@ -36,6 +36,7 @@ public:
 	 * Used by e.g. the launcher to determine whether to enable the Load button.
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 };
