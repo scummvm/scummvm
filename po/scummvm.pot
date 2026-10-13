@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-12 18:25+0000\n"
+"POT-Creation-Date: 2026-10-13 16:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3659,7 +3659,7 @@ msgstr ""
 #: engines/kyra/engine/lol.cpp:505 engines/lure/metaengine.cpp:177
 #: engines/made/metaengine.cpp:141 engines/mads/metaengine.cpp:270
 #: engines/mm/metaengine.cpp:186 engines/mtropolis/metaengine.cpp:161
-#: engines/nancy/input.cpp:189 engines/parallaction/metaengine.cpp:138
+#: engines/nancy/input.cpp:191 engines/parallaction/metaengine.cpp:138
 #: engines/saga/metaengine.cpp:278 engines/sludge/keymapper_tables.h:564
 #: engines/sludge/keymapper_tables.h:583 engines/stark/metaengine.cpp:189
 #: engines/sword1/metaengine.cpp:271 engines/tinsel/metaengine.cpp:246
@@ -3692,7 +3692,7 @@ msgstr ""
 #: engines/kyra/engine/eobcommon.cpp:378 engines/kyra/engine/lol.cpp:506
 #: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:148
 #: engines/mads/metaengine.cpp:276 engines/mm/metaengine.cpp:192
-#: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:196
+#: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:198
 #: engines/parallaction/metaengine.cpp:144 engines/saga/metaengine.cpp:289
 #: engines/sludge/keymapper_tables.h:570 engines/sludge/keymapper_tables.h:589
 #: engines/stark/metaengine.cpp:195 engines/sword1/metaengine.cpp:277
@@ -5806,7 +5806,7 @@ msgstr ""
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
 #: engines/efh/metaengine.cpp:286 engines/hdb/metaengine.cpp:213
 #: engines/hypno/metaengine.cpp:363 engines/hypno/metaengine.cpp:411
-#: engines/nancy/input.cpp:203 engines/tinsel/metaengine.cpp:263
+#: engines/nancy/input.cpp:205 engines/tinsel/metaengine.cpp:263
 #: engines/titanic/metaengine.cpp:324 engines/ultima/ultima8/metaengine.cpp:52
 msgid "Move up"
 msgstr ""
@@ -5816,7 +5816,7 @@ msgstr ""
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
 #: engines/efh/metaengine.cpp:293 engines/hdb/metaengine.cpp:219
 #: engines/hypno/metaengine.cpp:351 engines/hypno/metaengine.cpp:399
-#: engines/nancy/input.cpp:209 engines/tinsel/metaengine.cpp:269
+#: engines/nancy/input.cpp:211 engines/tinsel/metaengine.cpp:269
 #: engines/titanic/metaengine.cpp:330 engines/ultima/ultima8/metaengine.cpp:53
 msgid "Move down"
 msgstr ""
@@ -5828,7 +5828,7 @@ msgstr ""
 #: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
 #: engines/hypno/metaengine.cpp:345 engines/hypno/metaengine.cpp:393
 #: engines/kyra/engine/eobcommon.cpp:381 engines/lure/metaengine.cpp:218
-#: engines/nancy/input.cpp:215 engines/tinsel/metaengine.cpp:275
+#: engines/nancy/input.cpp:217 engines/tinsel/metaengine.cpp:275
 #: engines/titanic/metaengine.cpp:312 engines/titanic/metaengine.cpp:390
 #: engines/ultima/ultima8/metaengine.cpp:54
 msgid "Move left"
@@ -5841,7 +5841,7 @@ msgstr ""
 #: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
 #: engines/hypno/metaengine.cpp:357 engines/hypno/metaengine.cpp:405
 #: engines/kyra/engine/eobcommon.cpp:382 engines/lure/metaengine.cpp:226
-#: engines/nancy/input.cpp:221 engines/tinsel/metaengine.cpp:281
+#: engines/nancy/input.cpp:223 engines/tinsel/metaengine.cpp:281
 #: engines/titanic/metaengine.cpp:318 engines/titanic/metaengine.cpp:396
 #: engines/ultima/ultima8/metaengine.cpp:55
 msgid "Move right"
@@ -7287,7 +7287,7 @@ msgid ""
 msgstr ""
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:989 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:1204 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -7923,7 +7923,7 @@ msgstr ""
 
 #: engines/draci/metaengine.cpp:243 engines/hopkins/metaengine.cpp:327
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:233
+#: engines/nancy/input.cpp:235
 msgid "Open main menu"
 msgstr ""
 
@@ -11158,19 +11158,19 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr ""
 
-#: engines/nancy/input.cpp:186
+#: engines/nancy/input.cpp:188
 msgid "Nancy Drew"
 msgstr ""
 
-#: engines/nancy/input.cpp:227
+#: engines/nancy/input.cpp:229
 msgid "Fast move modifier"
 msgstr ""
 
-#: engines/nancy/input.cpp:242
+#: engines/nancy/input.cpp:244
 msgid "Nancy Drew - Maze"
 msgstr ""
 
-#: engines/nancy/input.cpp:244
+#: engines/nancy/input.cpp:246
 msgid "Show / hide maze map"
 msgstr ""
 
@@ -11226,6 +11226,14 @@ msgstr ""
 msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:151
+msgid "Support for Nancy Drew 18 is not compiled in"
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:157
+msgid "Support for Nancy Drew 19 and newer is not compiled in"
 msgstr ""
 
 #: engines/nancy/state/loadsave.cpp:108
