@@ -26,11 +26,11 @@ static const uint8 PART_12_DATA_ANIM_1[10] = { 0, 1, 2, 1, 2, 1, 2, 1, 2, 3 };
 
 static const uint8 PART_12_DATA_ANIM_2[16] = { 0, 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5, 6, 7 };
 
-void IgorEngine::PART_12_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_12_EXEC_ACTION %d", action);
+void IgorEngine::part12ExecuteAction(int action) {
+	debugC(9, kDebugGame, "part12ExecuteAction %d", action);
 	switch (action) {
 	case 101:
-		PART_12_ACTION_goToPath();
+		part12GoToPath();
 		break;
 	case 102: // look at portal
 		igorSay(201, 1, 789);
@@ -45,10 +45,10 @@ void IgorEngine::PART_12_EXEC_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 104:
-		PART_12_ACTION_104_tryEnterChurch();
+		part12TryEnterChurch();
 		break;
 	case 105:
-		PART_12_ACTION_105_useResinWithStone();
+		part12UseResinWithStone();
 		break;
 	case 106: // look at door
 		igorSay(207, 2, 793);
@@ -57,15 +57,15 @@ void IgorEngine::PART_12_EXEC_ACTION(int action) {
 		igorSay(206, 1, 792);
 		break;
 	case 108:
-		PART_12_ACTION_108_enterChurch();
+		part12EnterChurch();
 		break;
 	default:
-		error("PART_12_EXEC_ACTION unhandled action %d", action);
+		error("part12ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_12_ACTION_goToPath() {
+void IgorEngine::part12GoToPath() {
 	for (int i = 9; i <= 10; ++i) {
 		_roomObjectAreasTable[i].area = 3;
 	}
@@ -99,7 +99,7 @@ void IgorEngine::PART_12_ACTION_goToPath() {
 	_currentPart = 40;
 }
 
-void IgorEngine::PART_12_ACTION_104_tryEnterChurch() {
+void IgorEngine::part12TryEnterChurch() {
 	_walkCurrentFrame = 2;
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[33390]].area = _roomObjectAreasTable[_screenLayer2[34686]].area;
@@ -140,7 +140,7 @@ void IgorEngine::PART_12_ACTION_104_tryEnterChurch() {
 	decodeAnimFrame(src, _screenVGA);
 	decodeAnimFrame(src, _screenLayer1);
 	moveIgor(4, 0);
-	PART_12_HANDLE_DIALOGUE_PRIEST();
+	part12HandlePriestDialogue();
 	for (int i = 4; i >= 1; --i) {
 		src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA43E + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA);
@@ -152,10 +152,10 @@ void IgorEngine::PART_12_ACTION_104_tryEnterChurch() {
 	}
 	src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA440) - 1;
 	decodeAnimFrame(src, _screenLayer1);
-	PART_12_OBJECT_STATE(255);
+	part12ApplyObjectState(255);
 }
 
-void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
+void IgorEngine::part12UseResinWithStone() {
 	if (_objectsState[kLizardTakenStateIndex] == 1) {
 		ADD_DIALOGUE_TEXT(219, 1, 801);
 		SET_DIALOGUE_TEXT(1, 1);
@@ -199,7 +199,7 @@ void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
 	} while (_gameState.unk10 != 8);
 	--_walkDataLastIndex;
 	buildWalkPath(196, 64, 95, 142);
-	PART_12_HELPER_2_disablePathBehindChurch();
+	part12DisablePathBehindChurch();
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
@@ -242,13 +242,13 @@ void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
 	_currentAction.verb = kVerbWalk;
 	addObjectToInventory(kInventoryObjectMoney, 59);
 	_objectsState[kLizardTakenStateIndex] = 1;
-	PART_12_OBJECT_STATE(255);
+	part12ApplyObjectState(255);
 	ADD_DIALOGUE_TEXT(211, 1, 795);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 }
 
-void IgorEngine::PART_12_ACTION_108_enterChurch() {
+void IgorEngine::part12EnterChurch() {
 	_walkCurrentFrame = 2;
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[28555]].area = _roomObjectAreasTable[_screenLayer2[34686]].area;
@@ -280,7 +280,7 @@ void IgorEngine::PART_12_ACTION_108_enterChurch() {
 	_currentPart = 130;
 }
 
-void IgorEngine::PART_12_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part12UpdateBackground() {
 	if (compareGameTick(1) && getRandomNumber(14) == 0) {
 		switch (getRandomNumber(3)) {
 		case 0:
@@ -299,28 +299,28 @@ void IgorEngine::PART_12_UPDATE_ROOM_BACKGROUND() {
 	}
 }
 
-void IgorEngine::PART_12_UPDATE_DIALOGUE_PRIEST(int action) {
+void IgorEngine::part12UpdatePriestDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_12_HELPER_8_drawIdlePriest();
+		part12DrawIdlePriest();
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_12_HELPER_10_drawPriestTalkingFrame(6 + getRandomNumber(5));
+		part12DrawPriestTalkingFrame(6 + getRandomNumber(5));
 		break;
 	case kUpdateDialogueAnimStanding:
-		PART_12_HELPER_8_drawIdlePriest();
+		part12DrawIdlePriest();
 		break;
 	}
 }
 
-void IgorEngine::PART_12_HANDLE_DIALOGUE_PRIEST() {
+void IgorEngine::part12HandlePriestDialogue() {
 	loadDialogueData(DLG_OutsideChurch);
-	_updateDialogue = &IgorEngine::PART_12_UPDATE_DIALOGUE_PRIEST;
+	_updateDialogue = &IgorEngine::part12UpdatePriestDialogue;
 	handleDialogue(95, 55, 51, 28, 63);
 	_updateDialogue = 0;
 }
 
-void IgorEngine::PART_12_OBJECT_STATE(int num) {
+void IgorEngine::part12ApplyObjectState(int num) {
 	if (num == 2 || num == 255) {
 		if (_objectsState[kChurchDoorOpenStateIndex] == 0) {
 			_roomActionsTable[169] = 104;
@@ -338,7 +338,7 @@ void IgorEngine::PART_12_OBJECT_STATE(int num) {
 			_roomActionsTable[186] = 3;
 			_roomActionsTable[188] = 3;
 		} else {
-			PART_12_HELPER_9_drawEntrance();
+			part12DrawEntrance();
 			_roomActionsTable[169] = 108;
 			_roomActionsTable[175] = 106;
 			_roomActionsTable[177] = 2;
@@ -359,17 +359,17 @@ void IgorEngine::PART_12_OBJECT_STATE(int num) {
 
 // Disables the path behind the church, which shall only be enabled
 // in the cutscene where we pick the lizard
-void IgorEngine::PART_12_HELPER_2_disablePathBehindChurch() {
+void IgorEngine::part12DisablePathBehindChurch() {
 	for (int i = 9; i <= 10; ++i) {
 		_roomObjectAreasTable[i].area = 0;
 	}
 }
 
-void IgorEngine::PART_12_HELPER_3_paintOverLizard() {
+void IgorEngine::part12PaintOverLizard() {
 	decodeAnimFrame(_animFramesBuffer, _screenVGA, true);
 }
 
-void IgorEngine::PART_12_HELPER_4_exorcismCutscene() {
+void IgorEngine::part12ExorcismCutscene() {
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
 	fadeIn(768);
@@ -390,7 +390,7 @@ void IgorEngine::PART_12_HELPER_4_exorcismCutscene() {
 			waitForTimer(30);
 		}
 	}
-	cutsceneSayWithCallback(95, 55, 51, 28, 63, { { 212, 2, 796 }, { 214, 1, 797 }, { 215, 1, 798 } }, &IgorEngine::PART_12_UPDATE_DIALOGUE_PRIEST);
+	cutsceneSayWithCallback(95, 55, 51, 28, 63, { { 212, 2, 796 }, { 214, 1, 797 }, { 215, 1, 798 } }, &IgorEngine::part12UpdatePriestDialogue);
 	for (int i = 12; i <= 29; ++i){
 		const uint8 *src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA43E + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA, true);
@@ -412,7 +412,7 @@ void IgorEngine::PART_12_HELPER_4_exorcismCutscene() {
 	_currentPart = 40;
 }
 
-void IgorEngine::PART_12_HELPER_5_enterFromPath() {
+void IgorEngine::part12EnterFromPath() {
 	_walkData[0].setPos(196, 64, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 1;
@@ -448,8 +448,8 @@ void IgorEngine::PART_12_HELPER_5_enterFromPath() {
 	} while (_gameState.igorMoving || _gameState.unk10 != 11);
 }
 
-void IgorEngine::PART_12_HELPER_6_enterFromChurch() {
-	PART_12_OBJECT_STATE(255);
+void IgorEngine::part12EnterFromChurch() {
+	part12ApplyObjectState(255);
 	_walkData[0].setPos(75, 89, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 1;
@@ -486,19 +486,19 @@ void IgorEngine::PART_12_HELPER_6_enterFromChurch() {
 	} while (_gameState.igorMoving || _gameState.unk10 != 11);
 }
 
-void IgorEngine::PART_12_HELPER_8_drawIdlePriest() {
+void IgorEngine::part12DrawIdlePriest() {
 	decodeAnimFrame(_animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA454) - 1, _screenVGA, true);
 }
 
-void IgorEngine::PART_12_HELPER_9_drawEntrance() {
+void IgorEngine::part12DrawEntrance() {
 	decodeAnimFrame(_animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA442) - 1, _screenLayer1, true);
 }
 
-void IgorEngine::PART_12_HELPER_10_drawPriestTalkingFrame(int frame) {
+void IgorEngine::part12DrawPriestTalkingFrame(int frame) {
 	decodeAnimFrame(_animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA43E + frame * 2) - 1, _screenVGA, true);
 }
 
-void IgorEngine::PART_12() {
+void IgorEngine::part12() {
 	if (_currentPart != 122) {
 		playMusic(1);
 	}
@@ -517,25 +517,25 @@ void IgorEngine::PART_12() {
 	loadActionData(DAT_OutsideChurch);
 	_roomDataOffsets = PART_12_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(89, 0, 275, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_12_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_12_UPDATE_ROOM_BACKGROUND;
-	PART_12_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part12ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part12UpdateBackground;
+	part12ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (_objectsState[kLizardTakenStateIndex] == 0) {
-		PART_12_HELPER_3_paintOverLizard();
+		part12PaintOverLizard();
 	}
 	if (_currentPart == 122 && !_gameStateLoaded) {
-		PART_12_HELPER_4_exorcismCutscene();
+		part12ExorcismCutscene();
 		return;
 	}
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 120) {
-			PART_12_HELPER_5_enterFromPath();
+			part12EnterFromPath();
 		}
 		if (_currentPart == 121) {
-			PART_12_HELPER_6_enterFromChurch();
+			part12EnterFromChurch();
 			if (_objectsState[kStatuetteTaken2StateIndex] == 1) {
 				ADD_DIALOGUE_TEXT(216, 2, 799);
 				ADD_DIALOGUE_TEXT(218, 1, 800);
@@ -553,7 +553,7 @@ void IgorEngine::PART_12() {
 			}
 		}
 	}
-	PART_12_HELPER_2_disablePathBehindChurch();
+	part12DisablePathBehindChurch();
 	enterPartLoop();
 	while (_currentPart >= 120 && _currentPart <= 122 && !_gameStateLoaded) {
 		runPartLoop();

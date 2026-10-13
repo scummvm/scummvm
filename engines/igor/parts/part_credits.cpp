@@ -151,7 +151,7 @@ static const int kCreditsNameColor = 0xC3;
  * Centers the string on x. The underlined lines (the headings) have a bar of the text color, three rows high and
  * black at both ends, 18 rows below the top of the text.
  */
-void IgorEngine::PART_CREDITS_DRAW_TEXT(int x, int y, uint8 color, bool underline, const char *str) {
+void IgorEngine::partCreditsDrawText(int x, int y, uint8 color, bool underline, const char *str) {
 	const int width = _font.getStringWidth(str);
 	_font.drawString(_screenVGA, str, x - (width >> 1), y, color, 0, 0);
 	if (underline) {
@@ -169,7 +169,7 @@ void IgorEngine::PART_CREDITS_DRAW_TEXT(int x, int y, uint8 color, bool underlin
  * States 910 .. 970: seven pages with the credits, shown twice (the second pass has other texts over the same
  * pictures), then the logos again.
  */
-void IgorEngine::PART_CREDITS() {
+void IgorEngine::partCredits() {
 	const CreditsPage &page = kCreditsPages[(_currentPart - 910) / 10];
 
 	playMusic(kCreditsMusic);
@@ -186,14 +186,14 @@ void IgorEngine::PART_CREDITS() {
 	const int pass = (_creditsPass == 0) ? 0 : 1;
 	for (int i = 0; i < page.count[pass]; ++i) {
 		const CreditsLine &line = page.lines[pass][i];
-		PART_CREDITS_DRAW_TEXT(line.x, line.y, line.color, line.underline, getString(line.strId));
+		partCreditsDrawText(line.x, line.y, line.color, line.underline, getString(line.strId));
 	}
 
 	if (_gameStateLoaded) {
 		fadeIn(768);
 		_gameStateLoaded = false;
 	} else {
-		PART_79_FADE_COLORS(0, 255, true);
+		part79FadeColors(0, 255, true);
 	}
 
 	for (int ticks = 0; ticks < kCreditsPageTicks; ticks += kTimerTicksCount) {
@@ -218,7 +218,7 @@ void IgorEngine::PART_CREDITS() {
 		return;
 	}
 
-	PART_79_FADE_COLORS(0, 255, false);
+	part79FadeColors(0, 255, false);
 	if (_currentPart == 970) {
 		_currentPart = (_creditsPass == 1) ? 900 : 910;
 		++_creditsPass;

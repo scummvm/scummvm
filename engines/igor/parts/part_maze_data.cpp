@@ -529,7 +529,7 @@ static const MazeRoom kMazeRooms[] = {
 	  kMaze67Entries, 2, kMaze67Actions, 4, 0 }
 };
 
-const MazeRoom *IgorEngine::getMazeRoom(int part) {
+const MazeRoom *IgorEngine::partMazeGetRoom(int part) {
 	for (int i = 0; i < ARRAYSIZE(kMazeRooms); ++i) {
 		if (kMazeRooms[i].part == part) {
 			return &kMazeRooms[i];

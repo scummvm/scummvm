@@ -30,23 +30,23 @@ static const int kPart73PolicemanFrameSize = 26 * 53;
 // Great dosicua
 static const int kPart73InventoryIndex = 60;
 
-void IgorEngine::PART_73_drawPoliceman(int frame) {
+void IgorEngine::part73DrawPoliceman(int frame) {
 	copyArea(_screenVGA, kPart73PolicemanOffset, 320, _animFramesBuffer + (frame - 1) * kPart73PolicemanFrameSize + kPart73PolicemanWidth,
 			 kPart73PolicemanWidth, kPart73PolicemanWidth, kPart73PolicemanHeight);
 }
 
-void IgorEngine::PART_73_UPDATE_DIALOGUE(int action) {
+void IgorEngine::part73UpdateDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_73_drawPoliceman(1);
+		part73DrawPoliceman(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_73_drawPoliceman(getRandomNumber(4) + 1);
+		part73DrawPoliceman(getRandomNumber(4) + 1);
 		break;
 	}
 }
 
-void IgorEngine::PART_73_CUTSCENE() {
+void IgorEngine::part73Cutscene() {
 	playMusic(8);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_Part73, IMG_Part73, BOX_Part73, MSK_Part73, TXT_Part73);
@@ -56,7 +56,7 @@ void IgorEngine::PART_73_CUTSCENE() {
 	loadAnimData(anim);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	memset(_screenVGA + 46080, 0, 17920);
-	PART_73_drawPoliceman(1);
+	part73DrawPoliceman(1);
 	WalkData *wd = &_walkData[0];
 	wd->setPos(195, 107, 4, 0);
 	wd->clipSkipX = 1;
@@ -73,9 +73,9 @@ void IgorEngine::PART_73_CUTSCENE() {
 	fadeIn(768);
 	_gameState.igorMoving = false;
 
-	cutsceneSayWithCallback(170, 50, 63, 14, 19, { { 201, 2, 928 } }, &IgorEngine::PART_73_UPDATE_DIALOGUE);
+	cutsceneSayWithCallback(170, 50, 63, 14, 19, { { 201, 2, 928 } }, &IgorEngine::part73UpdateDialogue);
 	igorSayAndWait({ { 203, 1, 929 }, { 204, 2, 930 } });
-	cutsceneSayWithCallback(170, 50, 63, 14, 19, { { 206, 2, 931 }, { 208, 2, 932 } }, &IgorEngine::PART_73_UPDATE_DIALOGUE);
+	cutsceneSayWithCallback(170, 50, 63, 14, 19, { { 206, 2, 931 }, { 208, 2, 932 } }, &IgorEngine::part73UpdateDialogue);
 	igorSayAndWait({ { 210, 1, 933 }, { 211, 1, 934 } });
 
 	--_walkDataLastIndex;
@@ -85,7 +85,7 @@ void IgorEngine::PART_73_CUTSCENE() {
 	waitForIgorMove();
 
 	_objectsState[kStatueDeliveredStateIndex] = 1;
-	UPDATE_OBJECT_STATE(8);
+	partMainUpdateObjectState(8);
 	// removes the great dosicua
 	removeInventoryEntry(kPart73InventoryIndex);
 	++_inventoryInfo[73];
@@ -95,9 +95,9 @@ void IgorEngine::PART_73_CUTSCENE() {
 	fadeOut(624);
 
 	// the card with the time that has passed
-	PART_meanwhile(IMG_Part73Card);
+	partMainMeanwhile(IMG_Part73Card);
 	// loads part80 now
-	PART_80();
+	part80();
 
 	setupDefaultPalette();
 	SET_PAL_240_48_1();

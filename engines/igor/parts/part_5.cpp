@@ -22,8 +22,8 @@
 
 namespace Igor {
 
-	void IgorEngine::PART_05_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_05_EXEC_ACTION %d", action);
+	void IgorEngine::part5ExecuteAction(int action) {
+	debugC(9, kDebugGame, "part5ExecuteAction %d", action);
 	switch (action) {
 	case 101: {
 		// Look at water
@@ -32,10 +32,10 @@ namespace Igor {
 	}
 	case 102:
 		//scrolling action for Igor on the bridge
-		PART_05_ACTION_102_scrollRight();
+		part5ScrollRight();
 		break;
 	case 103:
-		PART_05_ACTION_103_pickPaper();
+		part5TakePaper();
 		break;
 	case 104:
 		// Look at photographer
@@ -46,20 +46,20 @@ namespace Igor {
 		_currentPart = 40;
 		break;
 	default:
-		error("PART_05_EXEC_ACTION unhandled action %d", action);
+		error("part5ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_05_HELPER_4_drawPaperOrNot(int num) {
+void IgorEngine::part5ApplyPaperState(int num) {
 
 	if (_objectsState[kSpringBridgePaperStateIndex] == 0) {
 		// paper not taken, paint "frame 0"
-		PART_05_06_drawPaperFrame(0);
+		part5And6DrawPaperFrame(0);
 		return;
 	}
 	// paper taken, paint "frame 1"
-	PART_05_06_drawPaperFrame(1);
+	part5And6DrawPaperFrame(1);
 	// disable object
 	_roomObjectAreasTable[24].object = 0;
 	for (int i = 27; i <= 29; ++i) {
@@ -67,35 +67,35 @@ void IgorEngine::PART_05_HELPER_4_drawPaperOrNot(int num) {
 	}
 }
 
-void IgorEngine::PART_05_06_drawPaperFrame(int frame) {
+void IgorEngine::part5And6DrawPaperFrame(int frame) {
 
 	const int offset = 41926;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x7E00 + frame * 12, 4, 4, 3);
 }
 
-void IgorEngine::PART_05_06_SAVE_PHOTOGRAPHER_BACKGROUND() {
+void IgorEngine::part5And6SavePhotographerBackground() {
 	const int offset = 23521;
 	copyArea(_animFramesBuffer, 0xDEA8 - 1, 23, _screenLayer1 + offset, 320, 23, 49);
 }
 
-void IgorEngine::PART_05_06_DRAW_PHOTOGRAPHER() {
+void IgorEngine::part5And6DrawPhotographer() {
 	const int offset = 23521;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x95C7, 23, 23, 49);
 }
 
-void IgorEngine::PART_05_06_DRAW_TRIPOD(bool drawToScreen) {
+void IgorEngine::part5And6DrawTripod(bool drawToScreen) {
 	const int offset = 28668;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x7E54, 23, 23, 33);
 	if (drawToScreen)
 		drawAnimRect(offset, 0x7E54, 23, 33);
 }
 
-void IgorEngine::PART_05_06_DRAW_CAMERA(int frame) {
+void IgorEngine::part5And6DrawCamera(int frame) {
 	const int offset = 26756;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x7E00 + frame * 42, 7, 7, 6);
 }
 
-void IgorEngine::PART_05_HELPER_6_walkIgorToScene() {
+void IgorEngine::part5WalkIgorToScene() {
 	_walkData[0].setPos(0, 141, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 0;
@@ -107,7 +107,7 @@ void IgorEngine::PART_05_HELPER_6_walkIgorToScene() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_05() {
+void IgorEngine::part5() {
 	playMusic(10);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
@@ -123,14 +123,14 @@ void IgorEngine::PART_05() {
 
 	// Draws photographer and objects before copying the screenLayer
 	if (_objectsState[kPhotographerGoneStateIndex] != 0) {
-		PART_05_06_SAVE_PHOTOGRAPHER_BACKGROUND();
-		PART_05_06_DRAW_PHOTOGRAPHER();
+		part5And6SavePhotographerBackground();
+		part5And6DrawPhotographer();
 	}
 	if (_objectsState[kCameraStateIndex] != 0) {
-		PART_05_06_DRAW_TRIPOD(false);
+		part5And6DrawTripod(false);
 	}
 	if (_objectsState[kTripodStateIndex] != 0) {
-		PART_05_06_DRAW_CAMERA(0);
+		part5And6DrawCamera(0);
 	}
 
 	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll
@@ -140,9 +140,9 @@ void IgorEngine::PART_05() {
 	loadRoomData(PAL_SpringBridge, IMG_SpringBridge, BOX_SpringBridge, MSK_SpringBridge, TXT_SpringBridge);
 	static const int anm1[] = {FRM_SpringBridge1, FRM_SpringBridge2, 0};
 	loadAnimData(anm1, 0x7E00);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_05_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND;
-	PART_05_HELPER_4_drawPaperOrNot(255);
+	partMainSetExecuteAction(1, &IgorEngine::part5ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part5UpdateBackground;
+	part5ApplyPaperState(255);
 	loadActionData(DAT_SpringRock);
 	_roomDataOffsets = PART_05_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
@@ -158,7 +158,7 @@ void IgorEngine::PART_05() {
 			memcpy(_screenVGA, _screenLayer1, 46080);
 			_currentAction.verb = kVerbWalk;
 			fadeIn(624);
-			PART_05_HELPER_6_walkIgorToScene();
+			part5WalkIgorToScene();
 		}
 		enterPartLoop();
 	}
@@ -181,7 +181,7 @@ void IgorEngine::PART_05() {
 	}
 }
 
-void IgorEngine::PART_05_ACTION_103_pickPaper() {
+void IgorEngine::part5TakePaper() {
 	_gameTicks = 0;
 	int i = 0;
 	do {
@@ -190,7 +190,7 @@ void IgorEngine::PART_05_ACTION_103_pickPaper() {
 			drawAnimRect(offset, 0x7E18 + i * 1470, 30, 49);
 			++i;
 		}
-		PART_05_UPDATE_ROOM_BACKGROUND();
+		part5UpdateBackground();
 		waitForTimer();
 	} while (i != 3);
 	addObjectToInventory(kInventoryObjectLoveNote, 56);
@@ -198,10 +198,10 @@ void IgorEngine::PART_05_ACTION_103_pickPaper() {
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
-	PART_05_HELPER_4_drawPaperOrNot(255);
+	part5ApplyPaperState(255);
 }
 
-void IgorEngine::PART_05_ACTION_102_scrollRight() {
+void IgorEngine::part5ScrollRight() {
 	uint8 *walkTable3 = loadData(WLK_Bridge3);
 	uint8 *walkTable4 = loadData(WLK_Bridge4);
 	int xPos = 220;
@@ -239,7 +239,7 @@ void IgorEngine::PART_05_ACTION_102_scrollRight() {
 			memcpy(_screenVGA, _screenLayer2, 46080);
 			++i;
 		}
-		PART_05_UPDATE_ROOM_BACKGROUND();
+		part5UpdateBackground();
 		waitForTimer();
 	} while (i != 29);
 	free(walkTable3);
@@ -250,7 +250,7 @@ void IgorEngine::PART_05_ACTION_102_scrollRight() {
 	_currentPart = 60;
 }
 
-void IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part5UpdateBackground() {
 	if (compareGameTick(61)) {
 		scrollPalette(160, 167);
 		setPaletteRange(160, 167);

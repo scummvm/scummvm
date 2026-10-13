@@ -24,7 +24,7 @@ namespace Igor {
 
 static int VAR_CURRENT_TALKING_ACTOR;
 
-void IgorEngine::PART_19_EXEC_ACTION(int action) {
+void IgorEngine::part19ExecuteAction(int action) {
 	switch (action) {
 	case 101:
 		igorSay(201, 1, 909);
@@ -45,21 +45,21 @@ void IgorEngine::PART_19_EXEC_ACTION(int action) {
 		_currentPart = 232;
 		break;
 	case 107:
-		PART_19_ACTION_107_lookAtSink();
+		part19LookAtSink();
 		break;
 	case 108:
 		igorSay(208, 1, 916);
 		break;
 	case 109:
-		PART_19_ACTION_109_usePapyrusOnDryer();
+		part19UsePapyrusOnDryer();
 		break;
 	default:
-		error("PART_19_EXEC_ACTION unhandled action %d", action);
+		error("part19ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_19_ACTION_107_lookAtSink() {
+void IgorEngine::part19LookAtSink() {
 	if (_objectsState[kHairpinTakenStateIndex] == 1) {
 		igorSay(211, 1, 919);
 		return;
@@ -74,10 +74,10 @@ void IgorEngine::PART_19_ACTION_107_lookAtSink() {
 	}
 	addObjectToInventory(kInventoryObjectHairpin, 47);
 	_objectsState[kHairpinTakenStateIndex] = 1;
-	PART_19_HELPER_1_OBJECT_STATE(255);
+	part19ApplyObjectState(255);
 }
 
-void IgorEngine::PART_19_ACTION_109_usePapyrusOnDryer() {
+void IgorEngine::part19UsePapyrusOnDryer() {
 	if (_objectsState[kPapyrusFiguresVisibleStateIndex] == 1) {
 		igorSay(210, 1, 918);
 		return;
@@ -89,25 +89,25 @@ void IgorEngine::PART_19_ACTION_109_usePapyrusOnDryer() {
 	}
 	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x35E) - 1, _screenVGA, true);
 	playSound(45, 1);
-	lookAtPapyrus(true);
-	PART_19_HELPER_1_OBJECT_STATE(255);
+	partMainLookAtPapyrus(true);
+	part19ApplyObjectState(255);
 	stopSound();
 	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x360) - 1, _screenVGA, true);
 	igorSayAndWait(209, 1, 917);
 }
 
-void IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN(int action) {
+void IgorEngine::part19UpdateWomenDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_19_HELPER_7_drawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 : 40);
+		part19DrawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 : 40);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_19_HELPER_7_drawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 + getRandomNumber(4) : 40 + getRandomNumber(4));
+		part19DrawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 + getRandomNumber(4) : 40 + getRandomNumber(4));
 		break;
 	}
 }
 
-void IgorEngine::PART_19_UPDATE_BACKGROUND_HELPER_9() {
+void IgorEngine::part19UpdateBackground() {
 	if (compareGameTick(3, 64) && _gameState.counter[1] <= 34) {
 		const uint8 *src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + _gameState.counter[1] * 2) - 1;
 		decodeAnimFrame(src, _screenVGA, true);
@@ -115,7 +115,7 @@ void IgorEngine::PART_19_UPDATE_BACKGROUND_HELPER_9() {
 	}
 }
 
-void IgorEngine::PART_19_HELPER_1_OBJECT_STATE(int num) {
+void IgorEngine::part19ApplyObjectState(int num) {
 	if (num == 2 || num == 255) {
 		if (_objectsState[kToiletGirlsHaveLeftStateIndex] == 0) {
 			decodeAnimFrame(_animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x4051) - 1, _screenLayer1, true);
@@ -123,7 +123,7 @@ void IgorEngine::PART_19_HELPER_1_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_19_HELPER_2_slugCutscene() { // sub_137_07AD
+void IgorEngine::part19SlugCutscene() { // sub_137_07AD
 	int talkSpeed = _gameState.talkSpeed;
 	_gameState.talkSpeed = 5;
 	memcpy(_screenLayer2, _screenVGA, 46080);
@@ -133,7 +133,7 @@ void IgorEngine::PART_19_HELPER_2_slugCutscene() { // sub_137_07AD
 	memcpy(_screenLayer1, _screenVGA, 46080);
 	fadeIn(624);
 	VAR_CURRENT_TALKING_ACTOR = 0;
-	cutsceneSayWithCallback(243, 92, 63, 23, 33, 212, 3, 920, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
+	cutsceneSayWithCallback(243, 92, 63, 23, 33, 212, 3, 920, &IgorEngine::part19UpdateWomenDialogue);
 	for (int i = 2; i <= 9; ++i) {
 		src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA, true);
@@ -142,11 +142,11 @@ void IgorEngine::PART_19_HELPER_2_slugCutscene() { // sub_137_07AD
 	cutsceneSayStart(227, 91, 0, 63, 63, { { 215, 1, 921 }, { 216, 2, 922 } });
 	_gameState.counter[1] = 10;
 	VAR_CURRENT_TALKING_ACTOR = 1;
-	_updateRoomBackground = &IgorEngine::PART_19_UPDATE_BACKGROUND_HELPER_9;
+	_updateRoomBackground = &IgorEngine::part19UpdateBackground;
 	waitForEndOfCutsceneDialogue(227, 91, 0, 63, 63);
 	_updateRoomBackground = 0;
 	while (_gameState.counter[1] != 35) {
-		PART_19_UPDATE_BACKGROUND_HELPER_9();
+		part19UpdateBackground();
 		waitForTimer();
 	}
 	for (int i = 47; i <= 48; ++i) {
@@ -168,19 +168,19 @@ void IgorEngine::PART_19_HELPER_2_slugCutscene() { // sub_137_07AD
 	decodeAnimFrame(src, _screenVGA, true);
 	waitForTimer(30);
 	VAR_CURRENT_TALKING_ACTOR = 0;
-	cutsceneSayWithCallback(243, 92, 63, 23, 33, 218, 1, 923, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
+	cutsceneSayWithCallback(243, 92, 63, 23, 33, 218, 1, 923, &IgorEngine::part19UpdateWomenDialogue);
 	VAR_CURRENT_TALKING_ACTOR = 1;
-	cutsceneSayWithCallback(227, 91, 0, 63, 63, 219, 2, 924, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
+	cutsceneSayWithCallback(227, 91, 0, 63, 63, 219, 2, 924, &IgorEngine::part19UpdateWomenDialogue);
 	VAR_CURRENT_TALKING_ACTOR = 0;
-	cutsceneSayWithCallback(243, 92, 63, 23, 33, 221, 2, 925, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
+	cutsceneSayWithCallback(243, 92, 63, 23, 33, 221, 2, 925, &IgorEngine::part19UpdateWomenDialogue);
 	VAR_CURRENT_TALKING_ACTOR = 1;
-	cutsceneSayWithCallback(227, 91, 0, 63, 63, 223, 2, 926, &IgorEngine::PART_19_UPDATE_DIALOGUE_WOMEN);
+	cutsceneSayWithCallback(227, 91, 0, 63, 63, 223, 2, 926, &IgorEngine::part19UpdateWomenDialogue);
 	_objectsState[kToiletGirlsHaveLeftStateIndex] = 1;
 	fadeOut(624);
 	_gameState.talkSpeed = talkSpeed;
 }
 
-void IgorEngine::PART_19_HELPER_3_walkIn() {
+void IgorEngine::part19WalkIn() {
 	_walkData[0].setPos(319, 142, 1, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 1;
@@ -193,7 +193,7 @@ void IgorEngine::PART_19_HELPER_3_walkIn() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_19_HELPER_4_enterAndLeave() {
+void IgorEngine::part19EnterAndLeave() {
 	decodeAnimFrame(_animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x40AB) - 1, _screenVGA, true);
 	waitForTimer(60);
 	igorSayAndWait(225, 1, 927);
@@ -205,12 +205,12 @@ void IgorEngine::PART_19_HELPER_4_enterAndLeave() {
 	_currentPart = 232;
 }
 
-void IgorEngine::PART_19_HELPER_7_drawTalkingFrame(int frame) {
+void IgorEngine::part19DrawTalkingFrame(int frame) {
 	const uint8 *src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + frame * 2) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
 }
 
-void IgorEngine::PART_19() {
+void IgorEngine::part19() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_WomenToilets, IMG_WomenToilets, BOX_WomenToilets, MSK_WomenToilets, TXT_WomenToilets);
@@ -221,18 +221,18 @@ void IgorEngine::PART_19() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	if (_currentPart == 191) {
 		// cutscene only: it fades out by itself and returns to the caller
-		PART_19_HELPER_2_slugCutscene();
+		part19SlugCutscene();
 		return;
 	}
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_19_EXEC_ACTION);
-	PART_19_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part19ExecuteAction);
+	part19ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_19_HELPER_3_walkIn();
+		part19WalkIn();
 		if (_objectsState[kToiletGirlsHaveLeftStateIndex] == 0) {
-			PART_19_HELPER_4_enterAndLeave();
+			part19EnterAndLeave();
 			if (!_gameStateLoaded && _currentPart != 191)
 				fadeOut(624);
 			return;

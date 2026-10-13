@@ -41,49 +41,49 @@ static const int kPart74CaptainY = 38;
 // Length in timer ticks of the part of the scene that only turns the colors.
 static const int kPart74ColorsTicks = 750;
 
-void IgorEngine::PART_74_CYCLE_COLORS() {
+void IgorEngine::part74CycleColors() {
 	if (compareGameTick(3, 32)) {
 		scrollPalette(192, 207);
 		setPaletteRange(192, 207);
 	}
 }
 
-void IgorEngine::PART_74_drawCharacterFrame(int frame) {
+void IgorEngine::part74DrawCharacterFrame(int frame) {
 	decodeAnimFrame(getAnimFrame(kPart74FramesBase, kPart74FramesTable, frame), _screenVGA, true);
 }
 
-void IgorEngine::PART_74_UPDATE_DIALOGUE_Sailor(int action) {
+void IgorEngine::part74UpdateSailorDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		PART_74_drawCharacterFrame(kPart74SailorStanding);
+		part74DrawCharacterFrame(kPart74SailorStanding);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_74_drawCharacterFrame(kPart74SailorTalking + getRandomNumber(3));
+		part74DrawCharacterFrame(kPart74SailorTalking + getRandomNumber(3));
 		break;
 	}
 }
 
-void IgorEngine::PART_74_UPDATE_DIALOGUE_CaptainA(int action) {
+void IgorEngine::part74UpdateCaptainADialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		PART_74_drawCharacterFrame(kPart74CaptainStandingA);
+		part74DrawCharacterFrame(kPart74CaptainStandingA);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_74_drawCharacterFrame(kPart74CaptainStandingA + getRandomNumber(4));
+		part74DrawCharacterFrame(kPart74CaptainStandingA + getRandomNumber(4));
 		break;
 	}
 }
 
-void IgorEngine::PART_74_UPDATE_DIALOGUE_CaptainB(int action) {
+void IgorEngine::part74UpdateCaptainBDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		PART_74_drawCharacterFrame(kPart74CaptainStandingB);
+		part74DrawCharacterFrame(kPart74CaptainStandingB);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_74_drawCharacterFrame(kPart74CaptainStandingB + getRandomNumber(4));
+		part74DrawCharacterFrame(kPart74CaptainStandingB + getRandomNumber(4));
 		break;
 	}
 }
@@ -91,16 +91,16 @@ void IgorEngine::PART_74_UPDATE_DIALOGUE_CaptainB(int action) {
 /**
  * One line of the scene, said by the first character (sailor) or by the second (captain).
  */
-void IgorEngine::PART_74_SAY(int who, const Common::Array<DialogueText> &lines) {
+void IgorEngine::part74Say(int who, const Common::Array<DialogueText> &lines) {
 	switch (who) {
 	case 0:
-		cutsceneSayWithCallback(kPart74SailorX, kPart74SailorY, 0, 50, 63, lines, &IgorEngine::PART_74_UPDATE_DIALOGUE_Sailor);
+		cutsceneSayWithCallback(kPart74SailorX, kPart74SailorY, 0, 50, 63, lines, &IgorEngine::part74UpdateSailorDialogue);
 		break;
 	case 1:
-		cutsceneSayWithCallback(kPart74CaptainX, kPart74CaptainY, 63, 32, 63, lines, &IgorEngine::PART_74_UPDATE_DIALOGUE_CaptainB);
+		cutsceneSayWithCallback(kPart74CaptainX, kPart74CaptainY, 63, 32, 63, lines, &IgorEngine::part74UpdateCaptainBDialogue);
 		break;
 	default:
-		cutsceneSayWithCallback(kPart74CaptainX, kPart74CaptainY, 63, 32, 63, lines, &IgorEngine::PART_74_UPDATE_DIALOGUE_CaptainA);
+		cutsceneSayWithCallback(kPart74CaptainX, kPart74CaptainY, 63, 32, 63, lines, &IgorEngine::part74UpdateCaptainADialogue);
 		break;
 	}
 }
@@ -108,7 +108,7 @@ void IgorEngine::PART_74_SAY(int who, const Common::Array<DialogueText> &lines) 
 /**
  * Boat scene
  */
-void IgorEngine::PART_74_shipCutscene() {
+void IgorEngine::part74ShipCutscene() {
 	UpdateRoomBackgroundProc previousBackground = _updateRoomBackground;
 	playMusic(4);
 	_gameState.enableLight = 1;
@@ -127,38 +127,38 @@ void IgorEngine::PART_74_shipCutscene() {
 	loadAnimData(anim, kPart74FramesBase);
 	fadeIn(624);
 	_gameState.igorMoving = false;
-	_updateRoomBackground = &IgorEngine::PART_74_CYCLE_COLORS;
+	_updateRoomBackground = &IgorEngine::part74CycleColors;
 
 	// water sound
 	playSound(43, 1);
 	do {
-		PART_74_CYCLE_COLORS();
+		part74CycleColors();
 		waitForTimer();
 	} while (_mixer->isSoundHandleActive(_sfxHandle) || isDialogueSpeechPlaying());
 
-	PART_74_SAY(0, { { 201, 1, 935 }, { 202, 1, 936 } });
-	PART_74_drawCharacterFrame(8);
-	PART_74_SAY(1, { { 203, 1, 937 } });
-	PART_74_drawCharacterFrame(3);
-	PART_74_SAY(2, { { 204, 1, 938 } });
-	PART_74_drawCharacterFrame(1);
+	part74Say(0, { { 201, 1, 935 }, { 202, 1, 936 } });
+	part74DrawCharacterFrame(8);
+	part74Say(1, { { 203, 1, 937 } });
+	part74DrawCharacterFrame(3);
+	part74Say(2, { { 204, 1, 938 } });
+	part74DrawCharacterFrame(1);
 
 	for (int ticks = 0; ticks < kPart74ColorsTicks; ticks += kTimerTicksCount) {
-		PART_74_CYCLE_COLORS();
+		part74CycleColors();
 		waitForTimer();
 	}
 
-	PART_74_drawCharacterFrame(2);
-	PART_74_SAY(0, { { 205, 1, 939 } });
-	PART_74_drawCharacterFrame(8);
-	PART_74_SAY(1, { { 206, 1, 940 } });
-	PART_74_drawCharacterFrame(3);
-	PART_74_SAY(2, { { 207, 1, 941 } });
-	PART_74_SAY(0, { { 208, 1, 942 } });
-	PART_74_drawCharacterFrame(8);
-	PART_74_SAY(1, { { 209, 1, 943 } });
-	PART_74_drawCharacterFrame(3);
-	PART_74_SAY(2, { { 210, 1, 944 } });
+	part74DrawCharacterFrame(2);
+	part74Say(0, { { 205, 1, 939 } });
+	part74DrawCharacterFrame(8);
+	part74Say(1, { { 206, 1, 940 } });
+	part74DrawCharacterFrame(3);
+	part74Say(2, { { 207, 1, 941 } });
+	part74Say(0, { { 208, 1, 942 } });
+	part74DrawCharacterFrame(8);
+	part74Say(1, { { 209, 1, 943 } });
+	part74DrawCharacterFrame(3);
+	part74Say(2, { { 210, 1, 944 } });
 
 	// the colors of the room come back and the picture of the room is shown from its top
 	memcpy(_paletteBuffer, _currentPalette, 624);

@@ -31,10 +31,10 @@ static const int kPart50DoorArea = 7;
 static const int kPart50DoorX = 264;
 static const int kPart50DoorY = 89;
 
-void IgorEngine::PART_50_EXEC_ACTION(int action) {
+void IgorEngine::part50ExecuteAction(int action) {
 	switch (action) {
 	case 101:
-		PART_50_ACTION_101_enterMaze();
+		part50EnterMaze();
 		break;
 	case 102: // look at maze door
 		igorSay(201, 1, 1083);
@@ -44,12 +44,12 @@ void IgorEngine::PART_50_EXEC_ACTION(int action) {
 		_currentPart = 700;
 		break;
 	default:
-		error("PART_50_EXEC_ACTION unhandled action %d", action);
+		error("part50ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_50_ACTION_101_enterMaze() {
+void IgorEngine::part50EnterMaze() {
 	_roomObjectAreasTable[_screenLayer2[kPart50DoorY * 320 + kPart50DoorX]].area = kPart50DoorArea;
 	--_walkDataLastIndex;
 	buildWalkPath(222, 102, kPart50DoorX, kPart50DoorY);
@@ -61,7 +61,7 @@ void IgorEngine::PART_50_ACTION_101_enterMaze() {
 	_objectsState[kMazeEntryDirectionStateIndex] = 1;
 }
 
-void IgorEngine::PART_50_enterFromDoor() {
+void IgorEngine::part50EnterFromDoor() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(kPart50DoorX, kPart50DoorY, kFacingPositionLeft, 0);
 	wd->setDefaultScale();
@@ -76,7 +76,7 @@ void IgorEngine::PART_50_enterFromDoor() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_50_enterFromHill() {
+void IgorEngine::part50EnterFromHill() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(45, 22, kFacingPositionFront, 0);
 	wd->clipSkipX = 1;
@@ -99,13 +99,13 @@ void IgorEngine::PART_50_enterFromHill() {
 /**
  * Something is heard from time to time.
  */
-void IgorEngine::PART_50_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part50UpdateBackground() {
 	if (compareGameTick(0x3D) && getRandomNumber(49) == 0) {
 		playSound(44, 1);
 	}
 }
 
-void IgorEngine::PART_50() {
+void IgorEngine::part50() {
 	playMusic(4);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_OutsideMaze, IMG_OutsideMaze, BOX_OutsideMaze, MSK_OutsideMaze, TXT_OutsideMaze);
@@ -114,8 +114,8 @@ void IgorEngine::PART_50() {
 	loadActionData(DAT_OutsideMaze);
 	_roomDataOffsets = PART_50_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(49, 22, 224, 119);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_50_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_50_UPDATE_ROOM_BACKGROUND;
+	partMainSetExecuteAction(1, &IgorEngine::part50ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part50UpdateBackground;
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	// the whole room is darker than its palette
@@ -125,9 +125,9 @@ void IgorEngine::PART_50() {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 500) {
-			PART_50_enterFromDoor();
+			part50EnterFromDoor();
 		} else {
-			PART_50_enterFromHill();
+			part50EnterFromHill();
 		}
 	}
 	enterPartLoop();

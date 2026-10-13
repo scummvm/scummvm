@@ -27,7 +27,7 @@ static int VAR_CURRENT_TALKING_ACTOR;
 static bool VAR_WATER_SOUND_PLAYING;
 
 
-void IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action) {
+void IgorEngine::part85UpdatePhilipLauraDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 		decodeAnimFrame(_animFramesBuffer - 1 + READ_LE_UINT16(_animFramesBuffer + 0x7480), _screenVGA, true);
@@ -43,7 +43,7 @@ void IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action) {
 	}
 }
 
-void IgorEngine::displayLogo() {
+void IgorEngine::part85DisplayLogo() {
 	// The CD executable preserves the last intro frame while it displays a
 	// 320x122 title card, then restores that frame before entering part 61.
 	memcpy(_screenTextLayer, _screenVGA, 46080);
@@ -63,7 +63,7 @@ void IgorEngine::displayLogo() {
 	auto waitForLogoHold = [this](int timerTicks, int refreshFrames, bool canSkip) {
 		const uint32 start = _system->getMillis();
 		for (int ticks = 0; ticks < timerTicks; ticks += kTimerTicksCount) {
-			PART_85_UPDATE_ROOM_BACKGROUND();
+			part85UpdateBackground();
 			if (_eventQuitGame) {
 				return;
 			}
@@ -142,19 +142,19 @@ void IgorEngine::displayLogo() {
 	waitForTimer(0);
 }
 
-void IgorEngine::PART_85_HELPER_1_playAnimationFrame(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay) {
+void IgorEngine::part85PlayAnimationFrame(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay) {
 	do {
 		if (compareGameTick(0, delay)) {
 			decodeAnimFrame(_animFramesBuffer + frameOffset2 - 1 + READ_LE_UINT16(_animFramesBuffer + frameOffset1 + firstFrame * 2 - 3), _screenVGA, true);
 			++firstFrame;
 		}
-		PART_85_UPDATE_ROOM_BACKGROUND();
+		part85UpdateBackground();
 		if (_inputVars[kInputEscape]) return;
 		waitForTimer();
 	} while (firstFrame <= lastFrame);
 }
 
-void IgorEngine::PART_85_HELPER_2_scrollRight() {
+void IgorEngine::part85ScrollRight() {
 	int x = 1;
 	do {
 		if (compareGameTick(0, 16)) {
@@ -163,12 +163,12 @@ void IgorEngine::PART_85_HELPER_2_scrollRight() {
 			memcpy(_screenVGA, _screenTextLayer, 46080);
 			++x;
 		}
-		PART_85_UPDATE_ROOM_BACKGROUND();
+		part85UpdateBackground();
 		waitForTimer();
 	} while (x != 29 && !_inputVars[kInputEscape]);
 }
 
-void IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part85UpdateBackground() {
 	if (compareGameTick(61)) {
 		scrollPalette(160, 167);
 		setPaletteRange(160, 167);
@@ -193,7 +193,7 @@ void IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND() {
 	}
 }
 
-void IgorEngine::PART_85_HELPER_6_animateIgorHead(int frame) {
+void IgorEngine::part85AnimateIgorHead(int frame) {
 	const int offset = (_walkCurrentPos == 4) ? 24564 : 22643;
 	// Animate Igor's head by copying the relevant area from the screen and overlaying the head frame.
 	copyArea(_screenVGA, offset, 320, _screenLayer2 + offset, 320, 14, 8);
@@ -201,7 +201,7 @@ void IgorEngine::PART_85_HELPER_6_animateIgorHead(int frame) {
 }
 
 // Introduction cutscene
-void IgorEngine::PART_85() {
+void IgorEngine::part85() {
 	if(_game.flags & kFlagFloppy) {
 		playMusic(2);
 	} else playMusic(10);
@@ -217,8 +217,8 @@ void IgorEngine::PART_85() {
 	// copies part6 into screen buffer
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
-	_updateDialogue = &IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA;
-	_updateRoomBackground = &IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND;
+	_updateDialogue = &IgorEngine::part85UpdatePhilipLauraDialogue;
+	_updateRoomBackground = &IgorEngine::part85UpdateBackground;
 
 	// In the CD version the water sound is embedded in the CD track
 	if(_game.flags & kFlagFloppy) {
@@ -232,7 +232,7 @@ void IgorEngine::PART_85() {
 
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	// Laura does her hair
-	PART_85_HELPER_1_playAnimationFrame(0, 0x7481, 2, 7, 32);
+	part85PlayAnimationFrame(0, 0x7481, 2, 7, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 
 	// 3 lines of text
@@ -256,7 +256,7 @@ void IgorEngine::PART_85() {
 	VAR_CURRENT_TALKING_ACTOR = 1;
 	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1_playAnimationFrame(0, 0x7481, 2, 7, 32);
+	part85PlayAnimationFrame(0, 0x7481, 2, 7, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	cutsceneSayStart(89, 56, 63, 63, 0, { { 215, 1, 554 }, { 216, 2, 555 }, { 218, 1, 556 } });
 	VAR_CURRENT_TALKING_ACTOR = 0;
@@ -267,18 +267,18 @@ void IgorEngine::PART_85() {
 	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
-	PART_85_HELPER_1_playAnimationFrame(0, 0x7481, 2, 7, 32);
+	part85PlayAnimationFrame(0, 0x7481, 2, 7, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1_playAnimationFrame(0, 0x7481, 18, 37, 20);
+	part85PlayAnimationFrame(0, 0x7481, 18, 37, 20);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_2_scrollRight();
+	part85ScrollRight();
 	VAR_WATER_SOUND_PLAYING = false;
 	stopSound();
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1_playAnimationFrame(0x74CA, 0xA6C4, 1, 6, 32);
+	part85PlayAnimationFrame(0x74CA, 0xA6C4, 1, 6, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	for (int i = 0; i <= 200 / kTimerTicksCount; ++i) {
-		PART_85_UPDATE_ROOM_BACKGROUND();
+		part85UpdateBackground();
 		if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 		waitForTimer();
 	}
@@ -289,16 +289,16 @@ void IgorEngine::PART_85() {
 	_walkCurrentPos = 4;
 	igorSayAndWait(223, 2, 559);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1_playAnimationFrame(0x74CA, 0xA6C4, 7, 9, 32);
+	part85PlayAnimationFrame(0x74CA, 0xA6C4, 7, 9, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	_walkData[0].x = 250;
 	_walkData[0].y = 119;
 	_walkCurrentPos = 3;
 	igorSayAndWait({ { 225, 2, 560 }, { 227, 3, 561 } });
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1_playAnimationFrame(0x74CA, 0xA6C4, 10, 24, 16);
+	part85PlayAnimationFrame(0x74CA, 0xA6C4, 10, 24, 16);
 	if (_game.version == kIdSpaCD) {
-		displayLogo();
+		part85DisplayLogo();
 	}
 
 PART_85_EXIT:

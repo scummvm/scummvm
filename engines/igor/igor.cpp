@@ -237,7 +237,7 @@ Common::Error IgorEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	PART_MAIN();
+	partMain();
 	_ovlFile.close();
 	_sndFile.close();
 
@@ -287,7 +287,7 @@ void IgorEngine::leavePartLoop() {
 	_roomClickFix.enabled = false;
 	_roomGiveObjectSize = 0;
 	hideCursor();
-	SET_EXEC_ACTION_FUNC(1, 0);
+	partMainSetExecuteAction(1, 0);
 	_updateRoomBackground = 0;
 
 }
@@ -579,7 +579,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 		fadeOut(768);
 		_gameStateLoaded = true;
 		memcpy(_igorPalette, (_currentPart == 760) ? PAL_IGOR_2 : PAL_IGOR_1, 48);
-		UPDATE_OBJECT_STATE(255);
+		partMainUpdateObjectState(255);
 		playMusic(_gameState.musicNum, true);
 		_system->warpMouse(_inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos]);
 		if (_currentPart < 900) {

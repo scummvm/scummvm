@@ -59,14 +59,14 @@ static const uint8 kOldLadyBagFrames[] = { 11, 15, 16, 6, 17, 1 };
 /**
  * Draws a frame of FRM_Park1 (old lady and Igor) preserving the dialogue text colors.
  */
-void IgorEngine::PARK_DRAW_drawOldLadyFrame(uint8 *dst, int frame) {
+void IgorEngine::part34And35DrawOldLadyFrame(uint8 *dst, int frame) {
 	decodeAnimFrame(getAnimFrame(kParkFrames, kParkFrameTable, frame), dst, true);
 }
 
 /**
  * Draws a frame of FRM_ParkLaura1 on the screen preserving the dialogue text colors.
  */
-void IgorEngine::PARK_DRAW_LAURA_FRAME(int frame) {
+void IgorEngine::part34DrawLauraFrame(int frame) {
 	decodeAnimFrame(getAnimFrame(kParkLauraFrames, kParkLauraFrameTable, frame), _screenVGA, true);
 }
 
@@ -74,7 +74,7 @@ void IgorEngine::PARK_DRAW_LAURA_FRAME(int frame) {
  * Plays the pick up animation, one raw 27x49 frame at a time. The first row of every frame is
  * not drawn.
  */
-void IgorEngine::PARK_PICK_UP_ANIMATION(int screenOffset, int framesOffset) {
+void IgorEngine::part34And35PickUpAnimation(int screenOffset, int framesOffset) {
 	for (uint i = 0; i < ARRAYSIZE(kPickUpFrames); ++i) {
 		drawAnimRect(screenOffset + 320, framesOffset + kPickUpFrames[i] * 1323 + 27, 27, 48);
 		waitForTimer(30);
@@ -84,7 +84,7 @@ void IgorEngine::PARK_PICK_UP_ANIMATION(int screenOffset, int framesOffset) {
 /**
  * Birds chirp.
  */
-void IgorEngine::PARK_UPDATE_AMBIENT_SOUND() {
+void IgorEngine::part34And35UpdateAmbientSound() {
 	if (compareGameTick(1) && getRandomNumber(14) == 0) {
 		switch (getRandomNumber(3)) {
 		case 0:
@@ -103,26 +103,26 @@ void IgorEngine::PARK_UPDATE_AMBIENT_SOUND() {
 	}
 }
 
-void IgorEngine::PARK_UPDATE_DIALOGUE_LADY(int action) {
+void IgorEngine::part34UpdateLadyDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		PARK_DRAW_drawOldLadyFrame(_screenVGA, 1);
+		part34And35DrawOldLadyFrame(_screenVGA, 1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PARK_DRAW_drawOldLadyFrame(_screenVGA, getRandomNumber(4) + 1);
+		part34And35DrawOldLadyFrame(_screenVGA, getRandomNumber(4) + 1);
 		break;
 	}
 }
 
-void IgorEngine::PARK_UPDATE_DIALOGUE_LAURA(int action) {
+void IgorEngine::part34UpdateLauraDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		PARK_DRAW_LAURA_FRAME(20);
+		part34DrawLauraFrame(20);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PARK_DRAW_LAURA_FRAME(20 + getRandomNumber(5));
+		part34DrawLauraFrame(20 + getRandomNumber(5));
 		break;
 	}
 }
@@ -131,7 +131,7 @@ void IgorEngine::PARK_UPDATE_DIALOGUE_LAURA(int action) {
  * Copies lines of the loaded conversation replies to the dialogue texts pool and queues them
  * as one dialogue text.
  */
-void IgorEngine::PARK_QUEUE_REPLY_TEXT(int reply, int count, int sound, int &textIndex) {
+void IgorEngine::part34QueueReplyText(int reply, int count, int sound, int &textIndex) {
 	for (int i = 0; i < count; ++i) {
 		Common::strlcpy(_globalDialogueTexts[textIndex + i], _dialogueReplies[reply - 1 + i],
 				sizeof(_globalDialogueTexts[0]));
@@ -143,36 +143,36 @@ void IgorEngine::PARK_QUEUE_REPLY_TEXT(int reply, int count, int sound, int &tex
 /**
  * Igor's blocking dialogues do not run the birds' sound.
  */
-void IgorEngine::PARK_WAIT_FOR_IGOR_DIALOGUE() {
+void IgorEngine::part34WaitForIgorDialogue() {
 	UpdateRoomBackgroundProc roomBackground = _updateRoomBackground;
 	_updateRoomBackground = 0;
 	waitForEndOfIgorDialogue();
 	_updateRoomBackground = roomBackground;
 }
 
-void IgorEngine::PARK_WAIT_FOR_LADY_DIALOGUE() {
+void IgorEngine::part34WaitForLadyDialogue() {
 	UpdateRoomBackgroundProc roomBackground = _updateRoomBackground;
-	_updateRoomBackground = &IgorEngine::PARK_UPDATE_AMBIENT_SOUND;
-	_updateDialogue = &IgorEngine::PARK_UPDATE_DIALOGUE_LADY;
+	_updateRoomBackground = &IgorEngine::part34And35UpdateAmbientSound;
+	_updateDialogue = &IgorEngine::part34UpdateLadyDialogue;
 	waitForEndOfCutsceneDialogue(121, 68, 63, 23, 0);
 	_updateDialogue = 0;
 	_updateRoomBackground = roomBackground;
 }
 
-void IgorEngine::PARK_WAIT_FOR_LAURA_DIALOGUE() {
+void IgorEngine::part34WaitForLauraDialogue() {
 	UpdateRoomBackgroundProc roomBackground = _updateRoomBackground;
-	_updateRoomBackground = &IgorEngine::PARK_UPDATE_AMBIENT_SOUND;
-	_updateDialogue = &IgorEngine::PARK_UPDATE_DIALOGUE_LAURA;
+	_updateRoomBackground = &IgorEngine::part34And35UpdateAmbientSound;
+	_updateDialogue = &IgorEngine::part34UpdateLauraDialogue;
 	waitForEndOfCutsceneDialogue(185, 69, 63, 0, 38);
 	_updateDialogue = 0;
 	_updateRoomBackground = roomBackground;
 }
 
-void IgorEngine::PART_34_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_34_EXEC_ACTION %d", action);
+void IgorEngine::part34ExecuteAction(int action) {
+	debugC(9, kDebugGame, "part34ExecuteAction %d", action);
 	// Only the birds keep chirping while an action takes over the room
 	UpdateRoomBackgroundProc roomBackground = _updateRoomBackground;
-	_updateRoomBackground = &IgorEngine::PARK_UPDATE_AMBIENT_SOUND;
+	_updateRoomBackground = &IgorEngine::part34And35UpdateAmbientSound;
 	switch (action) {
 	case 101: // look at statue
 		igorSay(201, 2, 562);
@@ -180,16 +180,16 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 	case 102: // look at tree
 		igorSay(203, 2, 563);
 		_objectsState[kTreeResinDiscoveredStateIndex] = 1;
-		PART_34_APPLY_OBJECT_STATE(3);
+		part34ApplyObjectState(3);
 		break;
 	case 103:
-		PART_34_ACTION_103_takeResin();
+		part34TakeResin();
 		break;
 	case 104: // look at roses
 		igorSay(205, 1, 564);
 		break;
 	case 105:
-		PART_34_ACTION_105_talkToOldLady();
+		part34TalkToOldLady();
 		break;
 	case 106: // look at old lady
 		igorSay(206, 2, 565);
@@ -198,67 +198,67 @@ void IgorEngine::PART_34_EXEC_ACTION(int action) {
 		igorSay(208, 2, 566);
 		break;
 	case 108:
-		PART_34_ACTION_108_giveLizardToOldLady();
+		part34GiveLizardToOldLady();
 		break;
 	case 109:
-		PART_34_ACTION_109_scrollRight();
+		part34ScrollRight();
 		break;
 	default:
-		warning("PART_34_EXEC_ACTION unhandled action %d", action);
+		warning("part34ExecuteAction unhandled action %d", action);
 		break;
 	}
 	_updateRoomBackground = roomBackground;
 }
 
-void IgorEngine::PART_34_ACTION_103_takeResin() {
+void IgorEngine::part34TakeResin() {
 	if (_inventoryInfo[62] != 0) {
 		igorSay(210, 1, 567);
 		return;
 	}
-	PARK_PICK_UP_ANIMATION(16499, kParkPickUpFrames);
+	part34And35PickUpAnimation(16499, kParkPickUpFrames);
 	addObjectToInventory(kInventoryObjectResin, 62);
-	PART_34_APPLY_OBJECT_STATE(255);
+	part34ApplyObjectState(255);
 }
 
-void IgorEngine::PART_34_ACTION_105_talkToOldLady() {
-	PART_34_OLD_LADY_CONVERSATION();
-	PART_34_APPLY_OBJECT_STATE(255);
+void IgorEngine::part34TalkToOldLady() {
+	part34OldLadyConversation();
+	part34ApplyObjectState(255);
 	_parkLadyIdleStep = 4;
-	PART_34_oldLadyIdleAnimationFrame(4);
+	part34OldLadyIdleAnimationFrame(4);
 }
 
-void IgorEngine::PART_34_ACTION_108_giveLizardToOldLady() {
-	PARK_DRAW_drawOldLadyFrame(_screenVGA, 1);
+void IgorEngine::part34GiveLizardToOldLady() {
+	part34And35DrawOldLadyFrame(_screenVGA, 1);
 	igorSay(211, 2, 568);
-	PARK_WAIT_FOR_IGOR_DIALOGUE();
+	part34WaitForIgorDialogue();
 	for (int frame = 12; frame <= 13; ++frame) {
-		PARK_DRAW_drawOldLadyFrame(_screenVGA, frame);
+		part34And35DrawOldLadyFrame(_screenVGA, frame);
 		waitForTimer(45);
 	}
 	if (_objectsState[kLizardFedStateIndex] == 0) {
 		cutsceneSayStart(121, 58, 63, 23, 0, { { 213, 1, 569 }, { 216, 1, 570 } });
-		PARK_WAIT_FOR_LADY_DIALOGUE();
+		part34WaitForLadyDialogue();
 		for (int frame = 14; frame >= 12; --frame) {
-			PARK_DRAW_drawOldLadyFrame(_screenVGA, frame);
+			part34And35DrawOldLadyFrame(_screenVGA, frame);
 			waitForTimer(45);
 		}
-		PARK_DRAW_drawOldLadyFrame(_screenVGA, 17);
+		part34And35DrawOldLadyFrame(_screenVGA, 17);
 		_parkLadyIdleStep = 1;
 		return;
 	}
 
 	cutsceneSayStart(121, 58, 63, 23, 0, { { 217, 1, 571 }, { 218, 1, 572 } });
-	PARK_WAIT_FOR_LADY_DIALOGUE();
+	part34WaitForLadyDialogue();
 	_parkLadyIdleStep = 1;
 	for (uint i = 0; i < ARRAYSIZE(kOldLadyPetFrames); ++i) {
-		PARK_DRAW_drawOldLadyFrame(_screenVGA, kOldLadyPetFrames[i]);
+		part34And35DrawOldLadyFrame(_screenVGA, kOldLadyPetFrames[i]);
 		waitForTimer(45);
 	}
 	removeObjectFromInventory(59);
 	cutsceneSayStart(121, 58, 63, 23, 0, { { 219, 2, 573 }, { 221, 2, 574 }, { 223, 1, 575 }, { 224, 2, 576 } });
-	PARK_WAIT_FOR_LADY_DIALOGUE();
+	part34WaitForLadyDialogue();
 	for (uint i = 0; i < ARRAYSIZE(kOldLadyBagFrames); ++i) {
-		PARK_DRAW_drawOldLadyFrame(_screenVGA, kOldLadyBagFrames[i]);
+		part34And35DrawOldLadyFrame(_screenVGA, kOldLadyBagFrames[i]);
 		waitForTimer(30);
 	}
 	while (isDialogueSpeechPlaying() && !_eventQuitGame) {
@@ -266,54 +266,54 @@ void IgorEngine::PART_34_ACTION_108_giveLizardToOldLady() {
 	}
 	addObjectToInventory(kInventoryObjectRocket, 61);
 	igorSay(226, 1, 577);
-	PARK_WAIT_FOR_IGOR_DIALOGUE();
+	part34WaitForIgorDialogue();
 	cutsceneSayStart(121, 58, 63, 23, 0, { { 227, 2, 578 }, { 229, 1, 579 } });
-	PARK_WAIT_FOR_LADY_DIALOGUE();
+	part34WaitForLadyDialogue();
 	igorSay(230, 1, 580);
-	PARK_WAIT_FOR_IGOR_DIALOGUE();
+	part34WaitForIgorDialogue();
 	for (int frame = 18; frame <= 31; ++frame) {
-		PARK_DRAW_drawOldLadyFrame(_screenVGA, frame);
+		part34And35DrawOldLadyFrame(_screenVGA, frame);
 		waitForTimer(30);
 	}
 	_objectsState[kLizardGivenStateIndex] = 1;
 
-	PART_34_LAURA_CONVERSATION();
+	part34LauraConversation();
 
 	loadActionData(DAT_ParkLeft);
 	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park);
 	SET_PAL_240_48_1();
 	static const int frames[] = { FRM_Park1, FRM_Park2, FRM_Park3, FRM_Park4, 0 };
 	loadAnimData(frames, kParkFrames);
-	PART_34_APPLY_OBJECT_STATE(255);
+	part34ApplyObjectState(255);
 }
 
-void IgorEngine::PART_34_OLD_LADY_CONVERSATION() {
+void IgorEngine::part34OldLadyConversation() {
 	_roomDataOffsets.dlg = kOldLadyDialogueData;
 	loadDialogueData(DLG_ParkLady);
 	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
 		memset(_screenVGA + 46080, 0, 17920);
 	}
 	int textIndex = 250;
-	PARK_QUEUE_REPLY_TEXT(1, 1, 584, textIndex);
+	part34QueueReplyText(1, 1, 584, textIndex);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(160, 58, 63, 63, 63);
-	PARK_WAIT_FOR_IGOR_DIALOGUE();
+	part34WaitForIgorDialogue();
 	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
 		textIndex = 250;
-		PARK_QUEUE_REPLY_TEXT(2, 1, 585, textIndex);
-		PARK_QUEUE_REPLY_TEXT(3, 1, 586, textIndex);
+		part34QueueReplyText(2, 1, 585, textIndex);
+		part34QueueReplyText(3, 1, 586, textIndex);
 		SET_DIALOGUE_TEXT(1, 2);
 		startCutsceneDialogue(121, 68, 63, 23, 0);
-		PARK_WAIT_FOR_LADY_DIALOGUE();
-		_updateDialogue = &IgorEngine::PARK_UPDATE_DIALOGUE_LADY;
+		part34WaitForLadyDialogue();
+		_updateDialogue = &IgorEngine::part34UpdateLadyDialogue;
 		handleDialogue(121, 68, 63, 23, 0, false);
 		_updateDialogue = 0;
 	}
 	textIndex = 250;
-	PARK_QUEUE_REPLY_TEXT(4, 2, 587, textIndex);
+	part34QueueReplyText(4, 2, 587, textIndex);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(121, 68, 63, 23, 0);
-	PARK_WAIT_FOR_LADY_DIALOGUE();
+	part34WaitForLadyDialogue();
 	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
 		memset(_screenVGA + 46080, 0, 17920);
 		drawVerbsPanel();
@@ -327,7 +327,7 @@ void IgorEngine::PART_34_OLD_LADY_CONVERSATION() {
 /**
  * Laura walks into the park, talks with Igor and leaves.
  */
-void IgorEngine::PART_34_LAURA_CONVERSATION() {
+void IgorEngine::part34LauraConversation() {
 	static const int frames[] = { FRM_ParkLaura1, FRM_ParkLaura2, FRM_ParkLaura3, 0 };
 	loadAnimData(frames, kParkLauraFrames);
 	memcpy(_paletteBuffer + 176 * 3, _animFramesBuffer + kParkLauraPalette, 48);
@@ -338,50 +338,50 @@ void IgorEngine::PART_34_LAURA_CONVERSATION() {
 	loadDialogueData(DLG_ParkLaura);
 	memset(_screenVGA + 46080, 0, 17920);
 	for (int frame = 1; frame <= 19; ++frame) {
-		PARK_DRAW_LAURA_FRAME(frame);
+		part34DrawLauraFrame(frame);
 		waitForTimer(30);
 	}
 	int textIndex = 250;
-	PARK_QUEUE_REPLY_TEXT(1, 1, 600, textIndex);
+	part34QueueReplyText(1, 1, 600, textIndex);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(185, 69, 63, 0, 38);
-	PARK_WAIT_FOR_LAURA_DIALOGUE();
+	part34WaitForLauraDialogue();
 	for (int frame = 26; frame <= 29; ++frame) {
-		PARK_DRAW_LAURA_FRAME(frame);
+		part34DrawLauraFrame(frame);
 		waitForTimer(5);
 	}
 	textIndex = 250;
-	PARK_QUEUE_REPLY_TEXT(2, 1, 601, textIndex);
+	part34QueueReplyText(2, 1, 601, textIndex);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(162, 64, 63, 63, 63);
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
 	wd->x = 162;
 	wd->y = 117;
 	wd->posNum = kFacingPositionRight;
-	PARK_WAIT_FOR_IGOR_DIALOGUE();
+	part34WaitForIgorDialogue();
 	textIndex = 250;
-	PARK_QUEUE_REPLY_TEXT(3, 1, 602, textIndex);
+	part34QueueReplyText(3, 1, 602, textIndex);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(185, 69, 63, 0, 38);
-	PARK_WAIT_FOR_LAURA_DIALOGUE();
-	_updateDialogue = &IgorEngine::PARK_UPDATE_DIALOGUE_LAURA;
+	part34WaitForLauraDialogue();
+	_updateDialogue = &IgorEngine::part34UpdateLauraDialogue;
 	handleDialogue(185, 69, 63, 0, 38, false);
 	_updateDialogue = 0;
-	PARK_DRAW_LAURA_FRAME(29);
+	part34DrawLauraFrame(29);
 	textIndex = 250;
-	PARK_QUEUE_REPLY_TEXT(4, 1, 603, textIndex);
+	part34QueueReplyText(4, 1, 603, textIndex);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(162, 64, 63, 63, 63);
-	PARK_WAIT_FOR_IGOR_DIALOGUE();
+	part34WaitForIgorDialogue();
 	for (int frame = 31; frame <= 57; ++frame) {
-		PARK_DRAW_LAURA_FRAME(frame);
+		part34DrawLauraFrame(frame);
 		waitForTimer(30);
 	}
 	textIndex = 250;
-	PARK_QUEUE_REPLY_TEXT(5, 1, 604, textIndex);
+	part34QueueReplyText(5, 1, 604, textIndex);
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(162, 64, 63, 63, 63);
-	PARK_WAIT_FOR_IGOR_DIALOGUE();
+	part34WaitForIgorDialogue();
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);
@@ -389,7 +389,7 @@ void IgorEngine::PART_34_LAURA_CONVERSATION() {
 	_roomDataOffsets.dlg = kNoDialogueData;
 }
 
-void IgorEngine::PART_34_ACTION_109_scrollRight() {
+void IgorEngine::part34ScrollRight() {
 	int xPos = 240;
 	const int yPos = 124;
 	int step = 1;
@@ -429,10 +429,10 @@ void IgorEngine::PART_34_ACTION_109_scrollRight() {
 /**
  * Redraws the old lady if she is in the park and updates the state dependent objects.
  */
-void IgorEngine::PART_34_APPLY_OBJECT_STATE(int num) {
+void IgorEngine::part34ApplyObjectState(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[kLizardGivenStateIndex] == 0 && _objectsState[kLauraMetAtCollegeStateIndex] == 1) {
-			PARK_DRAW_drawOldLadyFrame(_screenLayer1, 1);
+			part34And35DrawOldLadyFrame(_screenLayer1, 1);
 		} else {
 			_roomObjectAreasTable[5].object = 0;
 		}
@@ -442,19 +442,19 @@ void IgorEngine::PART_34_APPLY_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_34_oldLadyIdleAnimationFrame(int step) {
+void IgorEngine::part34OldLadyIdleAnimationFrame(int step) {
 	drawAnimRect(73 * 320 + 112, kParkIdleFrames + kOldLadyIdleFrames[step - 1] * 630, 18, 35, true, kBlendBehindIgorAndText);
 }
 
-void IgorEngine::PART_34_UPDATE_ROOM_BACKGROUND() {
-	PARK_UPDATE_AMBIENT_SOUND();
+void IgorEngine::part34UpdateBackground() {
+	part34And35UpdateAmbientSound();
 	if (compareGameTick(61) && _objectsState[kLizardGivenStateIndex] == 0 && _objectsState[kLauraMetAtCollegeStateIndex] == 1 && getRandomNumber(4) == 0) {
-		PART_34_oldLadyIdleAnimationFrame(_parkLadyIdleStep);
+		part34OldLadyIdleAnimationFrame(_parkLadyIdleStep);
 		_parkLadyIdleStep = (_parkLadyIdleStep == 6) ? 1 : _parkLadyIdleStep + 1;
 	}
 }
 
-void IgorEngine::PART_34() {
+void IgorEngine::part34() {
 	playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_ParkLeft);
@@ -465,12 +465,12 @@ void IgorEngine::PART_34() {
 	loadAnimData(frames, kParkFrames);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_34_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_34_UPDATE_ROOM_BACKGROUND;
+	partMainSetExecuteAction(1, &IgorEngine::part34ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part34UpdateBackground;
 	_parkLadyIdleStep = 1;
 	_roomDataOffsets = PART_34_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	PART_34_APPLY_OBJECT_STATE(255);
+	part34ApplyObjectState(255);
 
 	if (!restoreRoomAfterLoad()) {
 		_walkDataLastIndex = 1;

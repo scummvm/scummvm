@@ -15,7 +15,7 @@ const uint32 kDoor1Open = 0x23F1;
 const uint32 kDoor2Closed = 0x266D;
 const uint32 kDoor2Open = 0x28DD;
 
-void IgorEngine::PART_07_DRAW_DOOR_STATE(int num) {
+void IgorEngine::part7DrawDoorState(int num) {
 	_roomActionsTable[297] = 109;
 	if (num == 1 || num == 255) { // draws open or closed door depending on the flag
 		const uint32 srcOffset = _objectsState[kDeanDoorOpenStateIndex] == 0 ? kDoor1Closed : kDoor1Open;
@@ -29,7 +29,7 @@ void IgorEngine::PART_07_DRAW_DOOR_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_07_openCloseDoor(int door, bool open) {
+void IgorEngine::part7OpenCloseDoor(int door, bool open) {
 	const int stateIndex = door == 1 ? kDeanDoorOpenStateIndex : kSecretaryDoorOpenStateIndex;
 	if ((_objectsState[stateIndex] != 0) == open) {
 		const int text = open ? 19 : 23;
@@ -52,10 +52,10 @@ void IgorEngine::PART_07_openCloseDoor(int door, bool open) {
 		waitForTimer(127);
 	}
 	_objectsState[stateIndex] = open ? 1 : 0;
-	PART_07_DRAW_DOOR_STATE(door);
+	part7DrawDoorState(door);
 }
 
-void IgorEngine::PART_07_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, int dyPos) {
+void IgorEngine::part7DrawScaledIgor(int scaleStep, int facing, int frame, int dyPos) {
 	WalkData &wd = _walkData[0];
 	wd.setPos(109, 143, facing, frame);
 	wd.clipSkipX = 1;
@@ -70,14 +70,14 @@ void IgorEngine::PART_07_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, 
 	moveIgor(facing, frame);
 }
 
-void IgorEngine::PART_07_enterFromOutside() {
-	PART_07_DRAW_DOOR_STATE(255);
+void IgorEngine::part7EnterFromOutside() {
+	part7DrawDoorState(255);
 	for (int area = 11; area <= 13; ++area)
 		_roomObjectAreasTable[area].area = 0;
 
 	int frame = 1;
 	for (int step = 0; step <= 9; ++step) {
-		PART_07_DRAW_SCALED_IGOR(step, kFacingPositionBack, frame, 0);
+		part7DrawScaledIgor(step, kFacingPositionBack, frame, 0);
 		frame = frame == 6 ? 1 : frame + 1;
 		waitForTimer(15);
 	}
@@ -102,19 +102,19 @@ void IgorEngine::PART_07_enterFromOutside() {
 	}
 }
 
-void IgorEngine::PART_07_exitToOutside() {
+void IgorEngine::part7ExitToOutside() {
 	int frame = 1;
 	for (int step = 9; step >= 0; --step) {
 		if (step == 9)
 			frame = 0;
-		PART_07_DRAW_SCALED_IGOR(step, kFacingPositionFront, frame, 3);
+		part7DrawScaledIgor(step, kFacingPositionFront, frame, 3);
 		frame = frame == 6 ? 1 : frame + 1;
 		waitForTimer(15);
 	}
 	_currentPart = 101;
 }
 
-void IgorEngine::PART_07_EXEC_ACTION(int action) {
+void IgorEngine::part7ExecuteAction(int action) {
 	switch (action) {
 	case 101: // Look at dean's plaque
 		igorSayAndWait(201, 1, 140);
@@ -123,16 +123,16 @@ void IgorEngine::PART_07_EXEC_ACTION(int action) {
 		igorSayAndWait(202, 2, 141);
 		break;
 	case 103:
-		PART_07_openCloseDoor(1, true);
+		part7OpenCloseDoor(1, true);
 		break;
 	case 104:
-		PART_07_openCloseDoor(1, false);
+		part7OpenCloseDoor(1, false);
 		break;
 	case 105:
-		PART_07_openCloseDoor(2, true);
+		part7OpenCloseDoor(2, true);
 		break;
 	case 106:
-		PART_07_openCloseDoor(2, false);
+		part7OpenCloseDoor(2, false);
 		break;
 	case 107: // Secretary's plaque
 		igorSayAndWait(204, 1, 142);
@@ -154,7 +154,7 @@ void IgorEngine::PART_07_EXEC_ACTION(int action) {
 		igorSayAndWait(212, 1, 146);
 		break;
 	case 110:
-		PART_07_exitToOutside();
+		part7ExitToOutside();
 		break;
 	case 111: // Go through dean's door
 		if (_objectsState[kDeanDoorOpenStateIndex] != 0) {
@@ -183,12 +183,12 @@ void IgorEngine::PART_07_EXEC_ACTION(int action) {
 		}
 		break;
 	default:
-		warning("PART_07_EXEC_ACTION unhandled action %d", action);
+		warning("part7ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_07() {
+void IgorEngine::part7() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_AdministrationCorridor);
@@ -197,10 +197,10 @@ void IgorEngine::PART_07() {
 				 TXT_AdministrationCorridor);
 	static const int anim[] = {ANM_AdministrationCorridor, 0};
 	loadAnimData(anim);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_07_EXEC_ACTION);
+	partMainSetExecuteAction(1, &IgorEngine::part7ExecuteAction);
 	_roomDataOffsets = PART_07_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	PART_07_DRAW_DOOR_STATE(255);
+	part7DrawDoorState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
@@ -225,7 +225,7 @@ void IgorEngine::PART_07() {
 		_walkDataCurrentIndex = 1;
 		fadeIn(768);
 		if (_currentPart == 70) { // enter from outside
-			PART_07_enterFromOutside();
+			part7EnterFromOutside();
 		}
 	}
 	enterPartLoop();

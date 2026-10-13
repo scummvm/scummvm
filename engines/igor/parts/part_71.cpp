@@ -37,7 +37,7 @@ static const int kPart71StatuetteFramesOffset = kPart71TakeFramesCount * kPart71
 static const int kPart71StatuetteNameIndex = 2;
 static const int kPart71StatuetteInventoryIndex = 60;
 
-// What PART_71_APPLY_OBJECT_STATE refreshes.
+// What part71ApplyObjectState refreshes.
 static const int kPart71ApplyPicture = 1;
 static const int kPart71ApplyName = 2;
 static const int kPart71ApplyAll = 0xFF;
@@ -46,16 +46,16 @@ static const int kPart71ApplyAll = 0xFF;
 static const int kPart71ThunderDelay = 10;
 static const int kPart71ThunderSound = 42;
 
-void IgorEngine::PART_71_EXEC_ACTION(int action) {
+void IgorEngine::part71ExecuteAction(int action) {
 	switch (action) {
 	case 101: // look at John O'Callahan's grave
 		igorSay({ { 201, 1, 993 }, { 202, 1, 994 }, { 203, 1, 995 } });
 		break;
 	case 102: // take statuette
-		PART_71_ACTION_102_takeObject();
+		part71TakeObject();
 		break;
 	case 103: // look at statuette
-		PART_71_ACTION_103_look();
+		part71Look();
 		break;
 	case 104: // look at Mary O'hara's grave
 		igorSay({ { 208, 1, 997 }, { 209, 1, 998 }, { 210, 1, 999 } });
@@ -70,7 +70,7 @@ void IgorEngine::PART_71_EXEC_ACTION(int action) {
 		igorSay({ { 216, 1, 1003 }, { 217, 2, 1004 } });
 		break;
 	default:
-		error("PART_71_EXEC_ACTION unhandled action %d", action);
+		error("part71ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
@@ -78,16 +78,16 @@ void IgorEngine::PART_71_EXEC_ACTION(int action) {
 /**
  * Draws one of the two versions of the object into the room picture.
  */
-void IgorEngine::PART_71_DRAW_OBJECT(int frame) {
+void IgorEngine::part71DrawObject(int frame) {
 	const int frameSize = kPart71StatuetteFrameWidth * kPart71StatuetteFrameHeight;
 	copyArea(_screenLayer1, kPart71StatuetteFrameOffset, 320, _animFramesBuffer + kPart71StatuetteFramesOffset + frame * frameSize,
 			 kPart71StatuetteFrameWidth, kPart71StatuetteFrameWidth, kPart71StatuetteFrameHeight);
 }
 
 
-void IgorEngine::PART_71_APPLY_OBJECT_STATE(int what) {
+void IgorEngine::part71ApplyObjectState(int what) {
 	if (what == kPart71ApplyPicture || what == kPart71ApplyAll) {
-		PART_71_DRAW_OBJECT(_objectsState[kStatuetteTakenStateIndex] == 0 ? 0 : 1);
+		part71DrawObject(_objectsState[kStatuetteTakenStateIndex] == 0 ? 0 : 1);
 	}
 	if (what == kPart71ApplyName || what == kPart71ApplyAll) {
 		const char *name = getString(_objectsState[kStatuetteExaminedStateIndex] == 0 ? STR_ShinyThing : STR_Statuette);
@@ -98,18 +98,18 @@ void IgorEngine::PART_71_APPLY_OBJECT_STATE(int what) {
 }
 
 
-void IgorEngine::PART_71_ACTION_103_look() {
+void IgorEngine::part71Look() {
 	if (_objectsState[kStatuetteExaminedStateIndex] == 0) {
 		igorSay(220, 2, 1005);
 		_objectsState[kStatuetteExaminedStateIndex] = 1;
-		PART_71_APPLY_OBJECT_STATE(kPart71ApplyName);
+		part71ApplyObjectState(kPart71ApplyName);
 	} else {
 		igorSay(222, 2, 1006);
 	}
 }
 
 
-void IgorEngine::PART_71_ACTION_102_takeObject() {
+void IgorEngine::part71TakeObject() {
 	if (_objectsState[kStatuetteExaminedStateIndex] == 0) {
 		igorSayAndWait(220, 2, 1005);
 		_objectsState[kStatuetteExaminedStateIndex] = 1;
@@ -120,12 +120,12 @@ void IgorEngine::PART_71_ACTION_102_takeObject() {
 	}
 	addObjectToInventory(kInventoryObjectLizard, kPart71StatuetteInventoryIndex);
 	_objectsState[kStatuetteTakenStateIndex] = 1;
-	PART_71_APPLY_OBJECT_STATE(kPart71ApplyAll);
+	part71ApplyObjectState(kPart71ApplyAll);
 	igorSay(204, 3, 996);
 	_objectsState[kStatuetteTaken2StateIndex] = 1;
 }
 
-void IgorEngine::PART_71_enterFromRight() {
+void IgorEngine::part71EnterFromRight() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(319, 138, kFacingPositionLeft, 0);
 	wd->clipSkipX = 1;
@@ -148,7 +148,7 @@ void IgorEngine::PART_71_enterFromRight() {
  * The picture and the colors of the room are inverted twice, as when lightning strikes outside. The thunder follows
  * later.
  */
-void IgorEngine::PART_71_LIGHTNING() {
+void IgorEngine::part71Lightning() {
 	uint8 normalPalette[624];
 	uint8 invertedPalette[624];
 
@@ -171,10 +171,10 @@ void IgorEngine::PART_71_LIGHTNING() {
 	_roomAmbientIndex = 1;
 }
 
-void IgorEngine::PART_71_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part71UpdateBackground() {
 	if (compareGameTick(1)) {
 		if (getRandomNumber(99) == 0) {
-			PART_71_LIGHTNING();
+			part71Lightning();
 		}
 		if (_roomAmbientIndex > 0) {
 			++_roomAmbientIndex;
@@ -186,7 +186,7 @@ void IgorEngine::PART_71_UPDATE_ROOM_BACKGROUND() {
 	}
 }
 
-void IgorEngine::PART_71() {
+void IgorEngine::part71() {
 	playMusic(4);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_Part71);
@@ -198,9 +198,9 @@ void IgorEngine::PART_71() {
 	loadAnimData(anim);
 	_roomDataOffsets = PART_71_ROOM_DATA_OFFSETS;
 	setRoomClickFix(138, 127, -1, true, 138);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_71_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_71_UPDATE_ROOM_BACKGROUND;
-	PART_71_APPLY_OBJECT_STATE(kPart71ApplyAll);
+	partMainSetExecuteAction(1, &IgorEngine::part71ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part71UpdateBackground;
+	part71ApplyObjectState(kPart71ApplyAll);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_roomAmbientIndex = 0;
 
@@ -210,7 +210,7 @@ void IgorEngine::PART_71() {
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_71_enterFromRight();
+		part71EnterFromRight();
 	}
 	enterPartLoop();
 	while (_currentPart == 710 && !_gameStateLoaded) {

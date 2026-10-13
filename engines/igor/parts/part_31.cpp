@@ -28,20 +28,20 @@ static const uint8 PART_31_ANIM_DATA_1[] = { 0, 4, 5, 4, 5, 4, 5, 4, 5, 6 };
 
 static const uint8 PART_31_ANIM_DATA_2[] = { 0, 4, 5, 4, 5, 4, 5, 1, 2, 3 };
 
-void IgorEngine::PART_31_EXEC_ACTION(int action) {
+void IgorEngine::part31ExecuteAction(int action) {
 	switch (action) {
 	case 101:
 		_currentPart = 251;
 		break;
 	case 102:
-		PART_31_ACTION_102_enterAstronomyLab();
+		part31EnterAstronomyLab();
 		break;
 	case 103:
-		PART_31_ACTION_103_openDoor();
+		part31OpenDoor();
 		break;
 	case 104:
 		if (_objectsState[kAstronomyLabDoorStateIndex] == 0) {
-			EXEC_MAIN_ACTION(14);
+			partMainExecuteAction(14);
 		} else {
 			igorSay(205, 1, 885);
 		}
@@ -50,7 +50,7 @@ void IgorEngine::PART_31_EXEC_ACTION(int action) {
 		igorSay(201, 1, 881);
 		break;
 	case 106:
-		PART_31_ACTION_106_goDownstairs();
+		part31GoDownstairs();
 		break;
 	case 107:
 		igorSay(203, 1, 883);
@@ -62,7 +62,7 @@ void IgorEngine::PART_31_EXEC_ACTION(int action) {
 		igorSay(204, 1, 884);
 		break;
 	case 110:
-		PART_31_ACTION_110_openDoor2();
+		part31UseKeysWithDoor();
 		break;
 	case 111:
 		igorSay(206, 2, 886);
@@ -83,12 +83,12 @@ void IgorEngine::PART_31_EXEC_ACTION(int action) {
 		igorSay(218, 2, 894);
 		break;
 	default:
-		error("PART_31_EXEC_ACTION unhandled action %d", action);
+		error("part31ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_31_ACTION_102_enterAstronomyLab() {
+void IgorEngine::part31EnterAstronomyLab() {
 	if (_objectsState[kAstronomyLabDoorStateIndex] == 0) {
 		return;
 	}
@@ -110,9 +110,9 @@ void IgorEngine::PART_31_ACTION_102_enterAstronomyLab() {
 	_currentPart = 320;
 }
 
-void IgorEngine::PART_31_ACTION_103_openDoor() {
+void IgorEngine::part31OpenDoor() {
 	if (_objectsState[kAstronomyLabDoorStateIndex] == 1) {
-		EXEC_MAIN_ACTION(11);
+		partMainExecuteAction(11);
 		return;
 	}
 	playSound(49, 1);
@@ -126,7 +126,7 @@ void IgorEngine::PART_31_ACTION_103_openDoor() {
 	igorSay(202, 1, 882);
 }
 
-void IgorEngine::PART_31_ACTION_106_goDownstairs() {
+void IgorEngine::part31GoDownstairs() {
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[36326]].area = 2;
 	buildWalkPath(166, 120, 166, 113);
@@ -155,9 +155,9 @@ void IgorEngine::PART_31_ACTION_106_goDownstairs() {
 	_currentPart = 301;
 }
 
-void IgorEngine::PART_31_ACTION_110_openDoor2() {
+void IgorEngine::part31UseKeysWithDoor() {
 	if (_objectsState[kAstronomyLabDoorStateIndex] == 1) {
-		EXEC_MAIN_ACTION(11);
+		partMainExecuteAction(11);
 		return;
 	}
 	const int offset = 20250;
@@ -172,10 +172,10 @@ void IgorEngine::PART_31_ACTION_110_openDoor2() {
 		}
 	}
 	_objectsState[kAstronomyLabDoorStateIndex] = 1;
-	PART_31_HELPER_1_OBJECT_STATE(1);
+	part31ApplyObjectState(1);
 }
 
-void IgorEngine::PART_31_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part31UpdateBackground() {
 	int xPos, pos;
 	if (_gameState.igorMoving) {
 		xPos = _walkData[_walkDataCurrentIndex - 1].x;
@@ -188,34 +188,34 @@ void IgorEngine::PART_31_UPDATE_ROOM_BACKGROUND() {
 		if (pos == 2) {
 			if (_gameState.unk10 == 4 || _gameState.unk10 == 5) {
 				_gameState.unk10 = 3;
-				PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+				part31DrawJohnnyFrame(_gameState.unk10);
 				return;
 			}
 			if (_gameState.unk10 == 1 || _gameState.unk10 == 3) {
 				_gameState.unk10 = 2;
-				PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+				part31DrawJohnnyFrame(_gameState.unk10);
 				return;
 			}
 		} else if (!_gameState.igorMoving) {
 			if (_gameState.unk10 == 1 || _gameState.unk10 == 2) {
 				_gameState.unk10 = 3;
-				PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+				part31DrawJohnnyFrame(_gameState.unk10);
 				return;
 			} else if (_gameState.unk10 == 3) {
 				_gameState.unk10 = 4;
-				PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+				part31DrawJohnnyFrame(_gameState.unk10);
 				return;
 			} else if (_gameState.unk10 == 4) {
 				if (getRandomNumber(29) == 0) {
 					_gameState.unk10 = 5;
-					PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+					part31DrawJohnnyFrame(_gameState.unk10);
 					_gameState.counter[4] = 0;
 					return;
 				}
 			} else if (_gameState.unk10 == 5) {
 				if (_gameState.counter[4] == 20) {
 					_gameState.unk10 = 4;
-					PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+					part31DrawJohnnyFrame(_gameState.unk10);
 					return;
 				} else {
 					++_gameState.counter[4];
@@ -230,7 +230,7 @@ void IgorEngine::PART_31_UPDATE_ROOM_BACKGROUND() {
 			} else {
 				_gameState.unk10 = 2;
 			}
-			PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+			part31DrawJohnnyFrame(_gameState.unk10);
 			return;
 		}
 	}
@@ -240,22 +240,22 @@ void IgorEngine::PART_31_UPDATE_ROOM_BACKGROUND() {
 		} else {
 			_gameState.unk10 = 1;
 		}
-		PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+		part31DrawJohnnyFrame(_gameState.unk10);
 	}
 }
 
-void IgorEngine::PART_31_HELPER_1_OBJECT_STATE(int num) {
+void IgorEngine::part31ApplyObjectState(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[kAstronomyLabDoorStateIndex] == 0) {
 			_roomActionsTable[74] = 6;
 		} else {
-			PART_31_HELPER_9_drawOpenDoor();
+			part31DrawOpenDoor();
 			_roomActionsTable[74] = 7;
 		}
 	}
 }
 
-void IgorEngine::PART_31_HELPER_2_drawJohnnyFrame(int frame) {
+void IgorEngine::part31DrawJohnnyFrame(int frame) {
 	_roomCursorOn = false;
 	for (int i = 0; i <= 42; ++i) {
 		for (int j = 0; j <= 30; ++j) {
@@ -277,7 +277,7 @@ void IgorEngine::PART_31_HELPER_2_drawJohnnyFrame(int frame) {
 	}
 }
 
-void IgorEngine::PART_31_HELPER_3_enterFromLeft() {
+void IgorEngine::part31EnterFromLeft() {
 	_walkData[0].setPos(0, 137, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 15;
@@ -290,7 +290,7 @@ void IgorEngine::PART_31_HELPER_3_enterFromLeft() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_31_HELPER_4_enterFromAstronomyLab() {
+void IgorEngine::part31EnterFromAstronomyLab() {
 	_walkData[0].setPos(47, 63, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 30;
@@ -315,7 +315,7 @@ void IgorEngine::PART_31_HELPER_4_enterFromAstronomyLab() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_31_HELPER_5_enterFromDownstairs() {
+void IgorEngine::part31EnterFromDownstairs() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	_walkCurrentPos = 3;
@@ -349,7 +349,7 @@ void IgorEngine::PART_31_HELPER_5_enterFromDownstairs() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_31_HELPER_6_enterFromRight() {
+void IgorEngine::part31EnterFromRight() {
 	_walkData[0].setPos(319, 138, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -361,12 +361,12 @@ void IgorEngine::PART_31_HELPER_6_enterFromRight() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_31_HELPER_9_drawOpenDoor() {
+void IgorEngine::part31DrawOpenDoor() {
 	const int offset = 20256;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x562, 26, 26, 53);
 }
 
-void IgorEngine::PART_31() {
+void IgorEngine::part31() {
 	playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeStairsSecondFloor, IMG_CollegeStairsSecondFloor, BOX_CollegeStairsSecondFloor, MSK_CollegeStairsSecondFloor, TXT_CollegeStairsSecondFloor);
@@ -375,23 +375,23 @@ void IgorEngine::PART_31() {
 	loadActionData(DAT_CollegeStairsSecondFloor);
 	_roomDataOffsets = PART_31_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_31_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_31_UPDATE_ROOM_BACKGROUND;
-	PART_31_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part31ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part31UpdateBackground;
+	part31ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		_gameState.unk10 = 4;
-		PART_31_HELPER_2_drawJohnnyFrame(_gameState.unk10);
+		part31DrawJohnnyFrame(_gameState.unk10);
 		fadeIn(768);
 		if (_currentPart == 310) {
-			PART_31_HELPER_3_enterFromLeft();
+			part31EnterFromLeft();
 		} else if (_currentPart == 311) {
-			PART_31_HELPER_4_enterFromAstronomyLab();
+			part31EnterFromAstronomyLab();
 		} else if (_currentPart == 312) {
-			PART_31_HELPER_5_enterFromDownstairs();
+			part31EnterFromDownstairs();
 		} else if (_currentPart == 313) {
-			PART_31_HELPER_6_enterFromRight();
+			part31EnterFromRight();
 		}
 		enterPartLoop();
 	}

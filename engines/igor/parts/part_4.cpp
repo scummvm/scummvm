@@ -22,8 +22,8 @@
 
 namespace Igor {
 
-void IgorEngine::PART_04_EXEC_ACTION(int action) {
-    debugC(9, kDebugGame, "PART_04_EXEC_ACTION %d", action);
+void IgorEngine::part4ExecuteAction(int action) {
+    debugC(9, kDebugGame, "part4ExecuteAction %d", action);
     switch (action) {
 	case 101: // church
 		_currentPart = 120;
@@ -50,7 +50,7 @@ void IgorEngine::PART_04_EXEC_ACTION(int action) {
 		_currentPart = 50;
 		break;
 	default:
-		error("PART_04_EXEC_ACTION unhandled action %d", action);
+		error("part4ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
@@ -59,7 +59,7 @@ void IgorEngine::PART_04_EXEC_ACTION(int action) {
 /**
  * MAP
  * */
-void IgorEngine::PART_04() {
+void IgorEngine::part4() {
 
 	if (_objectsState[kStatuetteTaken2StateIndex] == 1) { // police custcene
 		_currentPart = 730;
@@ -76,7 +76,7 @@ void IgorEngine::PART_04() {
 	loadRoomData(PAL_Map, IMG_Map, BOX_Map, MSK_Map, TXT_Map);
 	loadActionData(DAT_Map);
 	_roomDataOffsets = PART_04_ROOM_DATA_OFFSETS;
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_04_EXEC_ACTION);
+	partMainSetExecuteAction(1, &IgorEngine::part4ExecuteAction);
 
 	// closes Philips locker
 	_objectsState[kPhillipLockerStateIndex] = 0;

@@ -21,7 +21,7 @@
 #include "igor/igor.h"
 
 namespace Igor {
-void IgorEngine::EXEC_MAIN_ACTION(int action) {
+void IgorEngine::partMainExecuteAction(int action) {
 	switch (action) {
 	case 0:
 	case 1:
@@ -153,7 +153,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		igorSay(69, 1, 46);
 		break;
 	case 38:
-		EXEC_MAIN_ACTION_38_lookAtNewspaper();
+		partMainLookAtNewspaper();
 		break;
 	case 39:
 		igorSay(70, 1, 47);
@@ -168,7 +168,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		igorSay(73, 1, 50);
 		break;
 	case 43:
-		EXEC_MAIN_ACTION_43_lookAtPhoto();
+		partMainLookAtPhoto();
 		break;
 	case 44:
 		igorSay(156, 1, 80);
@@ -212,7 +212,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		igorSay(88, 1, 62);
 		break;
 	case 54:
-		lookAtPapyrus(false);
+		partMainLookAtPapyrus(false);
 		break;
 	case 55:
 		igorSay(159, 1, 83);
@@ -249,7 +249,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		_inventoryInfo[59] = 0;
 		packInventory();
 		_objectsState[kLizardFedStateIndex] = 1;
-		UPDATE_OBJECT_STATE(2);
+		partMainUpdateObjectState(2);
 		addObjectToInventory(kInventoryObjectMoney, 59);
 		igorSay(169, 1, 93);
 		break;
@@ -262,7 +262,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		_inventoryInfo[69] = 0;
 		packInventory();
 		_objectsState[kVaseStateIndex] = 1;
-		UPDATE_OBJECT_STATE(7);
+		partMainUpdateObjectState(7);
 		addObjectToInventory(kInventoryObjectVase, 69);
 		break;
 	case 64: // look at vase
@@ -293,12 +293,12 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		break;
 
 	default:
-		warning("EXEC_MAIN_ACTION() Unhandled action %d", action);
+		warning("partMainExecuteAction() Unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::EXEC_MAIN_ACTION_38_lookAtNewspaper() {
+void IgorEngine::partMainLookAtNewspaper() {
 	memcpy(_paletteBuffer, _currentPalette, 624);
 	fadeOut(624);
 	uint8 *tmp = (uint8 *)malloc(64000 + 768);
@@ -345,7 +345,7 @@ void IgorEngine::EXEC_MAIN_ACTION_38_lookAtNewspaper() {
 	}
 }
 
-void IgorEngine::EXEC_MAIN_ACTION_43_lookAtPhoto() {
+void IgorEngine::partMainLookAtPhoto() {
 	memcpy(_paletteBuffer, _currentPalette, 624);
 	fadeOut(624);
 	uint8 *tmp = (uint8 *)malloc(64000 + 768);
@@ -378,7 +378,7 @@ void IgorEngine::EXEC_MAIN_ACTION_43_lookAtPhoto() {
 	fadeIn(624);
 }
 
-void IgorEngine::SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p) {
+void IgorEngine::partMainSetExecuteAction(int i, ExecuteActionProc p) {
 	switch (i) {
 	case 0:
 		_executeMainAction = p;
@@ -389,7 +389,7 @@ void IgorEngine::SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p) {
 	}
 }
 
-void IgorEngine::UPDATE_OBJECT_STATE(int num) {
+void IgorEngine::partMainUpdateObjectState(int num) {
 	if (num == 1 || num == 255) {
 		switch (_objectsState[kBottleStateIndex]) {
 		case 0:
@@ -449,8 +449,8 @@ void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_MAIN() {
-	SET_EXEC_ACTION_FUNC(0, &IgorEngine::EXEC_MAIN_ACTION);
+void IgorEngine::partMain() {
+	partMainSetExecuteAction(0, &IgorEngine::partMainExecuteAction);
 	if (!_gameStateLoaded) {
 		memset(_objectsState, 0, 112);
 		_objectsState[kAtticNailHotspotActiveStateIndex] = 1;
@@ -465,7 +465,7 @@ void IgorEngine::PART_MAIN() {
 		_inventoryInfo[72] = 1; // first object
 		_inventoryInfo[73] = 3; // last object
 	}
-	UPDATE_OBJECT_STATE(255);
+	partMainUpdateObjectState(255);
 	if (_currentPart != kStartupPart) { // boot param
 		SET_PAL_208_96_1();
 		SET_PAL_240_48_1();
@@ -474,162 +474,162 @@ void IgorEngine::PART_MAIN() {
 	}
 
 	do {
-		debugC(9, kDebugGame, "PART_MAIN _currentPart %d", _currentPart);
+		debugC(9, kDebugGame, "partMain _currentPart %d", _currentPart);
 		switch (_currentPart) {
 		case 0:
 		case 1:
-			PART_00(); // Student dormitory
+			part0(); // Student dormitory
 			break;
 		case 10:
 		case 11:
 		case 12:
-			PART_01(); // Outside the dormitory window
+			part1(); // Outside the dormitory window
 			break;
 		case 20:
 		case 21:
 		case 22:
 		case 23:
 		case 24:
-			PART_02(); // Dormitory attic
+			part2(); // Dormitory attic
 			break;
 
 		case 40:
-			PART_04(); // Map
+			part4(); // Map
 			break;
 		case 50: // arrive from map
 		case 51: // arrive from SpringRock through scroll
 		case 52:
-			PART_05(); // SpringBridge
+			part5(); // SpringBridge
 			break;
 		case 60:       // arrive through scroll
 		case 61:       // arrive from intro
 		case 62:
-			PART_06(); // SpringRock
+			part6(); // SpringRock
 			break;
 		case 70:       // enter from outside the administration corridor
 		case 71:       // enter from deans door
 		case 72:       // enter from secretary
-			PART_07(); // Administration corridor
+			part7(); // Administration corridor
 			break;
 		case 80:
-			PART_08(); // Dean Pepper office
+			part8(); // Dean Pepper office
 			break;
 		case 90:
 		case 91:
-			PART_09(); // Administration secretary room
+			part9(); // Administration secretary room
 			break;
 
 		case 100: // enter from map
 		case 101:
 		case 102:
-			PART_10(); // OutsideAdministrationBuilding street, right panel
+			part10(); // OutsideAdministrationBuilding street, right panel
 			break;
 		case 110:
-			PART_11(); // OutsideAdministrationBuilding street, left panel
+			part11(); // OutsideAdministrationBuilding street, left panel
 			break;
 		case 120:
 		case 121:
 		case 122:
-			PART_12(); // outside church
+			part12(); // outside church
 			break;
 		case 130:
 		case 131:
-			PART_13();
+			part13();
 			break;
 		case 140:
 		case 141:
 		case 142:
-			PART_14();
+			part14();
 			break;
 		case 150:
-			PART_15();
+			part15();
 			break;
 		case 160:
-			PART_16();
+			part16();
 			break;
 		case 170:
 		case 171:
-			PART_17(); // College entrance
+			part17(); // College entrance
 			break;
 		case 180:
 		case 181:
-			PART_18(); // men toilets
+			part18(); // men toilets
 			break;
 		case 190:
 		case 191:
-			PART_19(); // women toilets
+			part19(); // women toilets
 			break;
 		case 210:
 		case 211:
 		case 212:
-			PART_21(); //college corridor margaret
+			part21(); //college corridor margaret
 			break;
 		case 220:
 		case 221:
-			PART_22(); // church bell tower
+			part22(); // church bell tower
 			break;
 		case 230:
 		case 231:
 		case 232:
-			PART_23(); // college corridor lucas
+			part23(); // college corridor lucas
 			break;
 		case 240:
 		case 241:
 		case 242:
-			PART_24();
+			part24();
 			break;
 		case 250:
 		case 251:
 		case 252:
-			PART_25();
+			part25();
 			break;
 		case 260:
 		case 261:
-			PART_26();
+			part26();
 			break;
 		case 270:
 		case 271:
-			PART_27();
+			part27();
 			break;
 		case 280:
 		case 281:
-			PART_28(); // college corridor caroline
+			part28(); // college corridor caroline
 			break;
 		case 300:
 		case 301:
 		case 302:
 		case 303:
-			PART_30(); // college stairs first floor
+			part30(); // college stairs first floor
 			break;
 		case 310:
 		case 311:
 		case 312:
 		case 313:
-			PART_31();
+			part31();
 			break;
 		case 320:
-			PART_32(); // telescope room
+			part32(); // telescope room
 			break;
 		case 330:
 		case 331:
-			PART_33();
+			part33();
 			break;
 		case 340:
-			PART_34(); // Park, left panel
+			part34(); // Park, left panel
 			break;
 		case 350:
 		case 351:
-			PART_35(); // Park, right panel
+			part35(); // Park, right panel
 			break;
 		case 360:
-			PART_36();
+			part36();
 			break;
 		case 370:
-			PART_37();
+			part37();
 			break;
 		case 500:
 		case 501:
-			PART_50(); // outside the maze
+			part50(); // outside the maze
 			break;
 		case 510:
 		case 521:
@@ -667,53 +667,53 @@ void IgorEngine::PART_MAIN() {
 		case 663:
 		case 670:
 		case 671:
-			PART_MAZE(); // maze, 670 and 671 are the entrance
+			partMaze(); // maze, 670 and 671 are the entrance
 			break;
 		case 680:
 		case 681:
-			PART_68();
+			part68();
 			break;
 		case 690:
-			PART_69();
+			part69();
 			break;
 		case 700:
-			PART_70();
+			part70();
 			break;
 		case 710:
-			PART_71();
+			part71();
 			break;
 		case 720:
 		case 721:
-			PART_72();
+			part72();
 			break;
 		case 730:
-			PART_73_CUTSCENE(); // Cutscene followed by PART_80
+			part73Cutscene(); // Cutscene followed by part80
 			break;
 		case 740:
-			PART_74_shipCutscene();
+			part74ShipCutscene();
 			break;
 		case 750:
-			PART_75(); // philip vodka cutscene
+			part75(); // philip vodka cutscene
 			break;
 		case 760:
-			PART_76(); // room reached after the scene of the college garden
+			part76(); // room reached after the scene of the college garden
 			break;
 		case 770:
 		case 771:
-			PART_77();
+			part77();
 			break;
 		case 780:
-			PART_78(); // cutscene in the lecture hall
+			part78(); // cutscene in the lecture hall
 			break;
 		case 790:
 		case 791:
-			PART_79(); // two scenes, shown below a black band
+			part79(); // two scenes, shown below a black band
 			break;
 		case 800:
-			PART_80();
+			part80();
 			break;
 		case 810:
-			PART_81();
+			part81();
 			break;
 		case 850: // Intro cutscene
 			// Clear the entire screen buffer before starting the intro cutscene
@@ -723,10 +723,10 @@ void IgorEngine::PART_MAIN() {
 			// copy the initial portion of the screen to the display, with the vertical offset
 			_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, _screenVGAVOffset);
 			g_engine->_screen->updateScreen();
-			PART_85();
+			part85();
 			// Clears the bottom portion of the screen
 			memset(_screenVGA + 46080, 0, 17920);
-			moveScreenUp(_screenVGAVOffset);
+			partMainMoveScreenUp(_screenVGAVOffset);
 			_screenVGAVOffset = 0;
 			_inputVars[kInputCursorXPos] = 160;
 			_inputVars[kInputCursorYPos] = 72;
@@ -737,7 +737,7 @@ void IgorEngine::PART_MAIN() {
 		case 902:
 		case 903:
 		case 904:
-			PART_90();
+			part90();
 			break;
 		case 910: // End credits
 		case 920:
@@ -746,11 +746,11 @@ void IgorEngine::PART_MAIN() {
 		case 950:
 		case 960:
 		case 970:
-			PART_CREDITS();
+			partCredits();
 			break;
 
 		default:
-			error("PART_MAIN() Unhandled part %d", _currentPart);
+			error("partMain() Unhandled part %d", _currentPart);
 			break;
 		}
 		// These scheduler exclusions compare only the low byte of the state.
@@ -780,8 +780,8 @@ void IgorEngine::PART_MAIN() {
 			++_gameState.shouldShowCutsceneCounter;
 		} else {
 			playMusic(8);
-			PART_meanwhile();
-			PART_MARGARET_ROOM_CUTSCENE();
+			partMainMeanwhile();
+			partMargaret();
 			_gameState.shouldShowCutsceneCounter = 0;
 		}
 	} while (_currentPart != kInvalidPart && !_eventQuitGame);
@@ -790,7 +790,7 @@ void IgorEngine::PART_MAIN() {
 /**
  * Moves the screen up line by line from the selected offset down to 0
  */
-void IgorEngine::moveScreenUp(int offset) {
+void IgorEngine::partMainMoveScreenUp(int offset) {
 	_nextTimer = _system->getMillis() + 1000 / 60;
 	for (int y = offset; y >= 0; --y) {
 		_system->copyRectToScreen(_screenVGA, 320, 0, y, 320, 145);
@@ -805,7 +805,7 @@ void IgorEngine::moveScreenUp(int offset) {
 
 // Shows the papyrus full screen. With reveal set (dryer) the figures appear
 // slowly and are remembered as seen
-void IgorEngine::lookAtPapyrus(bool reveal) {
+void IgorEngine::partMainLookAtPapyrus(bool reveal) {
 	memcpy(_paletteBuffer, _currentPalette, 624);
 	fadeOut(624);
 	// reserve for entire screen + palette, to save current screen
@@ -819,13 +819,13 @@ void IgorEngine::lookAtPapyrus(bool reveal) {
 	loadData(PAL_RomanNumbersPaper, _paletteBuffer);
 	if (reveal) {
 		fadeIn(624);
-		PART_UPDATE_FIGURES_ON_PAPER(60);
+		partMainUpdateFiguresOnPaper(60);
 		_objectsState[kPapyrusFiguresVisibleStateIndex] = 1;
 		waitForTimer(255);
 	} else {
 
 		if (_objectsState[kPapyrusFiguresVisibleStateIndex] == 1) {
-			PART_UPDATE_FIGURES_ON_PAPER(0);
+			partMainUpdateFiguresOnPaper(0);
 		}
 		fadeIn(624);
 		WalkData *wd = &_walkData[_walkDataLastIndex - 1];
@@ -867,7 +867,7 @@ void IgorEngine::lookAtPapyrus(bool reveal) {
 }
 
 // loads and displays the figures on the paper
-void IgorEngine::PART_UPDATE_FIGURES_ON_PAPER(int delay) {
+void IgorEngine::partMainUpdateFiguresOnPaper(int delay) {
 	uint8 *framesData = loadData(FRM_NumbersPaper1);
 	uint8 *framesOffsets = loadData(FRM_NumbersPaper2);
 	for (int i = 1; i <= 20; ++i) {
@@ -879,7 +879,7 @@ void IgorEngine::PART_UPDATE_FIGURES_ON_PAPER(int delay) {
 	free(framesOffsets);
 }
 
-void IgorEngine::PART_meanwhile(int img) {
+void IgorEngine::partMainMeanwhile(int img) {
 	hideCursor();
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(208, 255);

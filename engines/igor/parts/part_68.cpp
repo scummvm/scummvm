@@ -68,36 +68,36 @@ static const int kPart68GiveInventoryIndex = 40;
 
 static const int kPart68TalkCodeEnd = 100;
 
-void IgorEngine::PART_68_LOAD_ROOM() {
+void IgorEngine::part68LoadRoom() {
 	loadRoomData(PAL_Part68, IMG_Part68, BOX_Part68, MSK_Part68, TXT_Part68);
 	SET_PAL_240_48_1();
 }
 
-void IgorEngine::PART_68_drawUndertaker(int frame) {
+void IgorEngine::part68DrawUndertaker(int frame) {
 	drawAnimRect(kPart68NBorisOffset, kPart68BorisFramesOffset + frame * kPart68BorisFrameSize, kPart68BorisWidth, kPart68BorisHeight,
 				 true, kBlendBehindIgorAndText);
 }
 
-void IgorEngine::PART_68_DRAW_AMBIENT(int frame) {
+void IgorEngine::part68DrawAmbient(int frame) {
 	drawAnimRect(kPart68OwlsEyesOffset, kPart68OwlsEyesFramesOffset + frame * kPart68OwlsEyesWidth * kPart68OwlsEyesHeight,
 				 kPart68OwlsEyesWidth, kPart68OwlsEyesHeight);
 }
 
-void IgorEngine::PART_68_drawVase(int frame) {
+void IgorEngine::part68DrawVase(int frame) {
 	copyArea(_screenLayer1, kPart68VaseOffset, 320, _animFramesBuffer + frame * kPart68VaseWidth * kPart68VaseHeight,
 			 kPart68VaseWidth, kPart68VaseWidth, kPart68VaseHeight);
 }
 
-void IgorEngine::PART_68_drawPose(int frame) {
+void IgorEngine::part68DrawPose(int frame) {
 	drawAnimRect(kPart68PoseOffset, kPart68PoseFramesOffset + frame * kPart68PoseWidth * kPart68PoseHeight,
 				 kPart68PoseWidth, kPart68PoseHeight);
 }
 
-void IgorEngine::PART_68_APPLY_OBJECT_STATE(int num) {
+void IgorEngine::part68ApplyObjectState(int num) {
 	if (num == 3 || num == 255) {
 		// undertaker is still in the room
 		if (_objectsState[kUndertakerLeftStateIndex] == 0) {
-			PART_68_drawUndertaker(0);
+			part68DrawUndertaker(0);
 			for (int i = 0; i < MAX_ROOM_OBJECT_AREAS; ++i) {
 				if (_roomObjectAreasTable[i].area >= 3 && _roomObjectAreasTable[i].area <= 4) {
 					_roomObjectAreasTable[i].area = 0;
@@ -108,7 +108,7 @@ void IgorEngine::PART_68_APPLY_OBJECT_STATE(int num) {
 			_part68NpcPresent = true;
 		} else {
 			loadActionData(DAT_Part68);
-			PART_68_LOAD_ROOM();
+			part68LoadRoom();
 			WRITE_LE_UINT16(_roomActionsTable + 156, 0x9081);
 			_roomActionsTable[246] = 3;
 			// disable undertaker hotspot
@@ -122,9 +122,9 @@ void IgorEngine::PART_68_APPLY_OBJECT_STATE(int num) {
 	}
 	if (num == 2 || num == 255) {
 		if (_objectsState[kVaseTakenStateIndex] == 0) {
-			PART_68_drawVase(0);
+			part68DrawVase(0);
 		} else {
-			PART_68_drawVase(1);
+			part68DrawVase(1);
 			for (int i = 0; i < MAX_ROOM_OBJECT_AREAS; ++i) {
 				if (_roomObjectAreasTable[i].object == 2) {
 					_roomObjectAreasTable[i].object = 0;
@@ -134,69 +134,69 @@ void IgorEngine::PART_68_APPLY_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_68_updateOwlsEyes() {
+void IgorEngine::part68UpdateOwlsEyes() {
 	if (compareGameTick(0x3D)) {
 		if (_roomAmbientIndex == 3) {
 			_roomAmbientIndex = 0;
-			PART_68_DRAW_AMBIENT(0);
+			part68DrawAmbient(0);
 		} else if (getRandomNumber(9) == 0) {
 			_roomAmbientIndex = getRandomNumber(3);
-			PART_68_DRAW_AMBIENT(_roomAmbientIndex);
+			part68DrawAmbient(_roomAmbientIndex);
 		}
 	}
 }
 
-void IgorEngine::PART_68_UPDATE_ROOM_BACKGROUND_TALK() {
+void IgorEngine::part68UpdateBackgroundTalk() {
 	if (compareGameTick(1) && getRandomNumber(49) == 0) {
 		playSound(41, 1);
 	}
-	PART_68_updateOwlsEyes();
+	part68UpdateOwlsEyes();
 }
 
-void IgorEngine::PART_68_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part68UpdateBackground() {
 	if (compareGameTick(1) && getRandomNumber(49) == 0) {
 		playSound(41, 1);
 	}
 	if (compareGameTick(0x3D) && _part68NpcPresent) {
-		PART_68_drawUndertaker(getRandomNumber(2));
+		part68DrawUndertaker(getRandomNumber(2));
 	}
-	PART_68_updateOwlsEyes();
+	part68UpdateOwlsEyes();
 }
 
-void IgorEngine::PART_68_BorisSayReplies(int action) {
+void IgorEngine::part68SayBorisReplies(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		PART_68_drawUndertaker(kPart68BorisStanding);
+		part68DrawUndertaker(kPart68BorisStanding);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_68_drawUndertaker(kPart68BorisStanding + getRandomNumber(4));
+		part68DrawUndertaker(kPart68BorisStanding + getRandomNumber(4));
 		break;
 	}
 }
 
-void IgorEngine::PART_68_sayBoris(const Common::Array<DialogueText> &lines) {
+void IgorEngine::part68SayBoris(const Common::Array<DialogueText> &lines) {
 	UpdateRoomBackgroundProc previous = _updateRoomBackground;
-	_updateRoomBackground = &IgorEngine::PART_68_UPDATE_ROOM_BACKGROUND_TALK;
+	_updateRoomBackground = &IgorEngine::part68UpdateBackgroundTalk;
 	cutsceneSayWithCallback(kPart68TextX, kPart68TextY, kPart68TextR, kPart68TextG, kPart68TextB, lines,
-							&IgorEngine::PART_68_BorisSayReplies);
+							&IgorEngine::part68SayBorisReplies);
 	_updateRoomBackground = previous;
 }
 
 /**
  * Since Boris speaks in four separate pages, utility function to help on that
  */
-void IgorEngine::PART_68_BorisSayReplies(const int *replies, const int *sounds, int count) {
+void IgorEngine::part68SayBorisReplies(const int *replies, const int *sounds, int count) {
 	Common::Array<DialogueText> lines;
 	for (int i = 0; i < count; ++i) {
 		Common::strlcpy(_globalDialogueTexts[250 + i], _dialogueReplies[replies[i] - 1], sizeof(_globalDialogueTexts[250 + i]));
 		DialogueText line = { 250 + i, 1, sounds[i] };
 		lines.push_back(line);
 	}
-	PART_68_sayBoris(lines);
+	part68SayBoris(lines);
 }
 
-void IgorEngine::PART_68_enterFromRight() {
+void IgorEngine::part68EnterFromRight() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(319, 143, kFacingPositionLeft, 0);
 	wd->clipSkipX = 1;
@@ -212,10 +212,10 @@ void IgorEngine::PART_68_enterFromRight() {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_68_UPDATE_ROOM_BACKGROUND);
+	waitForIgorMove(&IgorEngine::part68UpdateBackground);
 }
 
-void IgorEngine::PART_68_enterFromLeft() {
+void IgorEngine::part68EnterFromLeft() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(0, 143, kFacingPositionRight, 0);
 	wd->clipSkipX = 16;
@@ -231,10 +231,10 @@ void IgorEngine::PART_68_enterFromLeft() {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_68_UPDATE_ROOM_BACKGROUND);
+	waitForIgorMove(&IgorEngine::part68UpdateBackground);
 }
 
-void IgorEngine::PART_68_enterFromCemetery() {
+void IgorEngine::part68EnterFromCemetery() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(193, 115, kFacingPositionRight, 0);
 	wd->clipSkipX = 1;
@@ -250,18 +250,18 @@ void IgorEngine::PART_68_enterFromCemetery() {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_68_UPDATE_ROOM_BACKGROUND);
+	waitForIgorMove(&IgorEngine::part68UpdateBackground);
 }
 
 
-void IgorEngine::PART_68_ACTION_102_takeVase() {
+void IgorEngine::part68TakeVase() {
 	// will only let us take the vase if the records have been given to him
 	if (_objectsState[kRecordGivenToUndertakerStateIndex] == 0) {
-		PART_68_drawPose(0);
-		PART_68_drawUndertaker(kPart68BorisFacing);
+		part68DrawPose(0);
+		part68DrawUndertaker(kPart68BorisFacing);
 		waitForTimer(30);
-		PART_68_sayBoris({ { 202, 1, 1008 }, { 203, 1, 1009 }, { 204, 1, 1010 }, { 205, 1, 1011 } });
-		PART_68_drawPose(1);
+		part68SayBoris({ { 202, 1, 1008 }, { 203, 1, 1009 }, { 204, 1, 1010 }, { 205, 1, 1011 } });
+		part68DrawPose(1);
 		waitForTimer(30);
 
 		// Igor turns to the right
@@ -270,25 +270,25 @@ void IgorEngine::PART_68_ACTION_102_takeVase() {
 		moveIgor(kFacingPositionRight, 0);
 		_walkDataCurrentIndex = _walkDataLastIndex;
 		igorSayAndWait({ { 206, 1, 1012 }, { 207, 1, 1013 } });
-		PART_68_sayBoris({ { 208, 1, 1014 }, { 209, 1, 1015 }, { 210, 1, 1016 }, { 211, 1, 1017 } });
-		PART_68_drawUndertaker(kPart68BorisFacing);
+		part68SayBoris({ { 208, 1, 1014 }, { 209, 1, 1015 }, { 210, 1, 1016 }, { 211, 1, 1017 } });
+		part68DrawUndertaker(kPart68BorisFacing);
 		waitForTimer(30);
 		return;
 	}
 	for (int frame = 0; frame <= 1; ++frame) {
-		PART_68_drawPose(frame);
+		part68DrawPose(frame);
 		waitForTimer(120);
 	}
 	addObjectToInventory(kInventoryObjectVase, kPart68TakenObjectIndex);
 	_objectsState[kVaseTakenStateIndex] = 1;
-	PART_68_APPLY_OBJECT_STATE(255);
+	part68ApplyObjectState(255);
 }
 
 /**
  * Igor gives the object to the character.
  */
-void IgorEngine::PART_68_ACTION_108_giveRecordsToBoris() {
-	PART_68_drawUndertaker(kPart68BorisFacing);
+void IgorEngine::part68GiveRecordsToBoris() {
+	part68DrawUndertaker(kPart68BorisFacing);
 	waitForTimer(30);
 	drawAnimRect(kPart68GiveAnimOffset, kPart68GiveFramesOffset, kPart68GiveWidth, kPart68GiveHeight);
 	if (_inventoryInfo[kPart68GiveInventoryIndex] != 0) {
@@ -297,22 +297,22 @@ void IgorEngine::PART_68_ACTION_108_giveRecordsToBoris() {
 	}
 	playSound(63, 1);
 	igorSayAndWait(214, 1, 1019);
-	PART_68_sayBoris({ { 215, 1, 1020 }, { 216, 1, 1021 }, { 217, 1, 1022 }, { 218, 1, 1023 } });
+	part68SayBoris({ { 215, 1, 1020 }, { 216, 1, 1021 }, { 217, 1, 1022 }, { 218, 1, 1023 } });
 	for (int frame = 1; frame <= 3; ++frame) {
 		drawAnimRect(kPart68GiveAnimOffset, kPart68GiveFramesOffset + frame * kPart68GiveFrameSize, kPart68GiveWidth, kPart68GiveHeight);
 		waitForTimer(40);
 	}
-	PART_68_sayBoris({ { 219, 1, 1024 }, { 220, 1, 1025 }, { 221, 1, 1026 }, { 222, 1, 1027 } });
-	PART_68_drawUndertaker(kPart68BorisFacing);
+	part68SayBoris({ { 219, 1, 1024 }, { 220, 1, 1025 }, { 221, 1, 1026 }, { 222, 1, 1027 } });
+	part68DrawUndertaker(kPart68BorisFacing);
 	waitForTimer(30);
 	_objectsState[kRecordGivenToUndertakerStateIndex] = 1;
-	PART_68_APPLY_OBJECT_STATE(255);
+	part68ApplyObjectState(255);
 }
 
 /**
  * Chooses names at random for the replies
  */
-void IgorEngine::PART_68_chooseRandomNames(int code) {
+void IgorEngine::part68ChooseRandomNames(int code) {
 	uint8 *data = _gameState.dialogueData;
 	if (code == 10) {
 		const int entries = _objectsState[kLighthouseMessageSentStateIndex] == 1 ? 4 : 5;
@@ -341,20 +341,20 @@ void IgorEngine::PART_68_chooseRandomNames(int code) {
 /**
  * The sprites of the character going away.
  */
-void IgorEngine::PART_68_BorisLeaves() {
+void IgorEngine::part68BorisLeaves() {
 	for (int frame = 1; frame <= 6; ++frame) {
 		decodeAnimFrame(getAnimFrame(kPart68LeaveBase, kPart68LeaveTable, frame), _screenVGA, true);
 		waitForTimer(30);
 	}
 }
 
-void IgorEngine::PART_68_CONVERSATION() {
+void IgorEngine::part68Conversation() {
 	UpdateRoomBackgroundProc previousBackground = _updateRoomBackground;
-	_updateRoomBackground = &IgorEngine::PART_68_UPDATE_ROOM_BACKGROUND_TALK;
-	_updateDialogue = &IgorEngine::PART_68_BorisSayReplies;
+	_updateRoomBackground = &IgorEngine::part68UpdateBackgroundTalk;
+	_updateDialogue = &IgorEngine::part68SayBorisReplies;
 	loadDialogueData(DLG_Part68);
 	_part68QuestionCounter = 1;
-	PART_68_drawUndertaker(kPart68BorisStanding);
+	part68DrawUndertaker(kPart68BorisStanding);
 
 	memset(_screenVGA + 46080, 0, 17920);
 	_gameState.dialogueStarted = true;
@@ -365,19 +365,19 @@ void IgorEngine::PART_68_CONVERSATION() {
 		igorSayAndWait(225, 1, 1029);
 		static const int replies[4] = { 1, 2, 3, 4 };
 		static const int sounds[4] = { 1051, 1052, 1053, 1054 };
-		PART_68_BorisSayReplies(replies, sounds, 4);
+		part68SayBorisReplies(replies, sounds, 4);
 		_objectsState[kBorisIntroducedStateIndex] = 1;
 	} else {
 		igorSayAndWait(226, 1, 1030);
 		static const int replies[4] = { 5, 6, 7, 8 };
 		static const int sounds[4] = { 1055, 1056, 1057, 1058 };
-		PART_68_BorisSayReplies(replies, sounds, 4);
+		part68SayBorisReplies(replies, sounds, 4);
 	}
 
 	bool done = false;
 	do {
 		drawDialogueChoices();
-		PART_68_drawUndertaker(kPart68BorisStanding);
+		part68DrawUndertaker(kPart68BorisStanding);
 		const int choice = selectDialogue();
 		if (choice == 0) {
 			break;
@@ -394,7 +394,7 @@ void IgorEngine::PART_68_CONVERSATION() {
 						   (_gameState.dialogueChoiceStart - 1) * 30;
 		_part68LastDialogueCode = _gameState.dialogueData[offset + 5];
 		if (_part68LastDialogueCode != 0) {
-			PART_68_chooseRandomNames(_part68LastDialogueCode);
+			part68ChooseRandomNames(_part68LastDialogueCode);
 		}
 		switch (_gameState.dialogueData[offset + 2]) {
 		case 1:
@@ -418,8 +418,8 @@ void IgorEngine::PART_68_CONVERSATION() {
 	if (_part68LastDialogueCode == kPart68TalkCodeEnd) {
 		static const int replies[4] = { 29, 30, 31, 32 };
 		static const int sounds[4] = { 1079, 1080, 1081, 1082 };
-		PART_68_BorisSayReplies(replies, sounds, 4);
-		PART_68_BorisLeaves();
+		part68SayBorisReplies(replies, sounds, 4);
+		part68BorisLeaves();
 		_objectsState[kUndertakerLeftStateIndex] = 2;
 	}
 	memset(_screenVGA + 46080, 0, 17920);
@@ -431,69 +431,69 @@ void IgorEngine::PART_68_CONVERSATION() {
 	_updateRoomBackground = previousBackground;
 }
 
-void IgorEngine::PART_68_ACTION_104_talkToBoris() {
-	PART_68_CONVERSATION();
+void IgorEngine::part68TalkToBoris() {
+	part68Conversation();
 	if (_objectsState[kUndertakerLeftStateIndex] == 2) {
 		_objectsState[kUndertakerLeftStateIndex] = 1;
-		PART_68_APPLY_OBJECT_STATE(255);
+		part68ApplyObjectState(255);
 	}
 }
 
-void IgorEngine::PART_68_ACTION_106_enterCemetery() {
+void IgorEngine::part68EnterCemetery() {
 	if (_objectsState[kUndertakerLeftStateIndex] == 0) {
 		igorSayAndWait(223, 2, 1028);
-		PART_68_ACTION_104_talkToBoris();
+		part68TalkToBoris();
 	} else {
 		_currentPart = 710;
 	}
 }
 
-void IgorEngine::PART_68_EXEC_ACTION(int action) {
+void IgorEngine::part68ExecuteAction(int action) {
 	switch (action) {
 	case 101: // exit through either side will cause next entry to be that side
 		_objectsState[kCemeteryEntrySideStateIndex] = 1;
 		_currentPart = 700;
 		break;
 	case 102: // take vase
-		PART_68_ACTION_102_takeVase();
+		part68TakeVase();
 		break;
 	case 103: // look at vase
 		igorSay(201, 1, 1007);
 		break;
 	case 104: // talk to Boris
-		PART_68_ACTION_104_talkToBoris();
+		part68TalkToBoris();
 		break;
 	case 105: // look at Boris
 		igorSay(212, 2, 1018);
 		break;
 	case 106:
-		PART_68_ACTION_106_enterCemetery();
+		part68EnterCemetery();
 		break;
 	case 108:
-		PART_68_ACTION_108_giveRecordsToBoris();
+		part68GiveRecordsToBoris();
 		break;
 	case 109:
 		_objectsState[kCemeteryEntrySideStateIndex] = 0;
 		_currentPart = 700;
 		break;
 	default:
-		error("PART_68_EXEC_ACTION unhandled action %d", action);
+		error("part68ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_68() {
+void IgorEngine::part68() {
 	playMusic(4);
 	_gameState.enableLight = 2;
 	loadActionData(DAT_Part68);
-	PART_68_LOAD_ROOM();
+	part68LoadRoom();
 	static const int anim[] = { ANM_Part68, 0 };
 	loadAnimData(anim);
 	_roomDataOffsets = PART_68_ROOM_DATA_OFFSETS;
 	setRoomClickFix(143, -1, -1, false);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_68_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_68_UPDATE_ROOM_BACKGROUND;
-	PART_68_APPLY_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part68ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part68UpdateBackground;
+	part68ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	// the colors that change are darker than their palette
@@ -504,12 +504,12 @@ void IgorEngine::PART_68() {
 		fadeIn(768);
 		if (_currentPart == 680) {
 			if (_objectsState[kCemeteryEntrySideStateIndex] == 0) {
-				PART_68_enterFromRight();
+				part68EnterFromRight();
 			} else {
-				PART_68_enterFromLeft();
+				part68EnterFromLeft();
 			}
 		} else {
-			PART_68_enterFromCemetery();
+			part68EnterFromCemetery();
 		}
 	}
 	enterPartLoop();

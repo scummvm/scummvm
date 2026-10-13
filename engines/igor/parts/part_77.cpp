@@ -31,10 +31,10 @@ static const int kPart77MonkeyTextY = 40;
 
 static const uint8 kPart77CutsceneFrames[6] = { 17, 18, 17, 18, 17, 18 };
 
-void IgorEngine::PART_77_EXEC_ACTION(int action) {
+void IgorEngine::part77ExecuteAction(int action) {
 	switch (action) {
 	case 101:
-		PART_17_ACTION_101_walkIn(true);
+		part17WalkIn(true);
 		break;
 	case 102: // look at college door
 		igorSay(209, 1, 1125);
@@ -46,37 +46,37 @@ void IgorEngine::PART_77_EXEC_ACTION(int action) {
 		igorSay(201, 2, 1121);
 		break;
 	case 105:
-		PART_17_ACTION_105_leaveThroughPath(true);
+		part17LeaveThroughPath(true);
 		break;
 	case 106:
-		PART_77_ACTION_106_monkeyCageCutscene();
+		part77MonkeyCageCutscene();
 		break;
 	default:
-		error("PART_77_EXEC_ACTION unhandled action %d", action);
+		error("part77ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_77_APPLY_OBJECT_STATE() {
+void IgorEngine::part77ApplyObjectState() {
 	_roomObjectAreasTable[15].object = 2;
 }
 
-void IgorEngine::PART_77_drawMonkeyFrame(int frame) {
+void IgorEngine::part77DrawMonkeyFrame(int frame) {
 	decodeAnimFrame(getAnimFrame(0, kPart77MonkeyFramesTable, frame), _screenVGA, true);
 }
 
-void IgorEngine::PART_77_UPDATE_DIALOGUE(int action) {
+void IgorEngine::part77UpdateDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_77_drawMonkeyFrame(kPart77MonkeyStandingFrame);
+		part77DrawMonkeyFrame(kPart77MonkeyStandingFrame);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_77_drawMonkeyFrame(kPart77MonkeyStandingFrame + getRandomNumber(4));
+		part77DrawMonkeyFrame(kPart77MonkeyStandingFrame + getRandomNumber(4));
 		break;
 	}
 }
 
-void IgorEngine::PART_77_ACTION_106_monkeyCageCutscene() {
+void IgorEngine::part77MonkeyCageCutscene() {
 	memset(_screenVGA + 46080, 0, 17920);
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[88 * 320 + 124]].area = 5;
@@ -88,20 +88,20 @@ void IgorEngine::PART_77_ACTION_106_monkeyCageCutscene() {
 	waitForIgorMove();
 
 	for (int i = 1; i <= 5; ++i) {
-		PART_77_drawMonkeyFrame(i);
+		part77DrawMonkeyFrame(i);
 		waitForTimer(31);
 	}
 	igorSayAndWait(206, 2, 1123);
 	for (int i = 6; i <= 16; ++i) {
-		PART_77_drawMonkeyFrame(i);
+		part77DrawMonkeyFrame(i);
 		waitForTimer(31);
 	}
 	for (int i = 0; i < 6; ++i) {
-		PART_77_drawMonkeyFrame(kPart77CutsceneFrames[i]);
+		part77DrawMonkeyFrame(kPart77CutsceneFrames[i]);
 		waitForTimer(46);
 	}
 	for (int i = 19; i <= 21; ++i) {
-		PART_77_drawMonkeyFrame(i);
+		part77DrawMonkeyFrame(i);
 		waitForTimer(46);
 	}
 	_walkData[_walkDataLastIndex - 1].x = 155;
@@ -110,12 +110,12 @@ void IgorEngine::PART_77_ACTION_106_monkeyCageCutscene() {
 	waitForEndOfIgorDialogue(false);
 	waitForTimer(255);
 	for (int i = 22; i <= 39; ++i) {
-		PART_77_drawMonkeyFrame(i);
+		part77DrawMonkeyFrame(i);
 		waitForTimer(31);
 	}
 	cutsceneSayWithCallback(kPart77MonkeyTextX, kPart77MonkeyTextY, 63, 57, 0,
 							{ { 210, 2, 1126 }, { 212, 2, 1127 }, { 214, 1, 1128 }, { 215, 2, 1129 }, { 217, 2, 1130 } },
-							&IgorEngine::PART_77_UPDATE_DIALOGUE);
+							&IgorEngine::part77UpdateDialogue);
 	waitForTimer(255);
 	// the colors 240 to 255 are black on the screen
 	for (int i = 240; i <= 255; ++i) {
@@ -124,8 +124,8 @@ void IgorEngine::PART_77_ACTION_106_monkeyCageCutscene() {
 	_currentPart = 760;
 }
 
-void IgorEngine::PART_77_enterFromCollege() {
-	PART_77_APPLY_OBJECT_STATE();
+void IgorEngine::part77EnterFromCollege() {
+	part77ApplyObjectState();
 	WalkData *wd = &_walkData[0];
 	wd->setPos(225, 100, 3, 1);
 	wd->clipSkipX = 1;
@@ -147,11 +147,11 @@ void IgorEngine::PART_77_enterFromCollege() {
 	++_walkDataCurrentIndex;
 	fadeIn(768);
 	waitForIgorMove();
-	PART_17_HELPER_5_changeZindexOfPath(0);
-	PART_17_HELPER_2_clearEntryAreas();
+	part17ChangePathZIndex(0);
+	part17ClearEntryAreas();
 }
 
-void IgorEngine::PART_77() {
+void IgorEngine::part77() {
 	playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_Part77);
@@ -161,21 +161,21 @@ void IgorEngine::PART_77() {
 	loadAnimData(anim);
 	_roomDataOffsets = PART_77_ROOM_DATA_OFFSETS;
 	setRoomClickFix(143, -1, 286, true);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_77_EXEC_ACTION);
-	PART_77_APPLY_OBJECT_STATE();
+	partMainSetExecuteAction(1, &IgorEngine::part77ExecuteAction);
+	part77ApplyObjectState();
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	PART_17_HELPER_3_disableArea(0);
+	part17DisableArea(0);
 
 	if (_gameStateLoaded) {
-		PART_17_HELPER_5_changeZindexOfPath(0);
+		part17ChangePathZIndex(0);
 	}
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		if (_currentPart == 770) {
 			fadeIn(768);
-			PART_17_HELPER_2_walkFromMap(true);
+			part17WalkFromMap(true);
 		} else {
-			PART_77_enterFromCollege();
+			part77EnterFromCollege();
 		}
 	}
 	enterPartLoop();

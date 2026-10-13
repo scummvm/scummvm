@@ -24,16 +24,16 @@
 
 namespace Igor {
 
-void IgorEngine::PART_35_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_35_EXEC_ACTION %d", action);
+void IgorEngine::part35ExecuteAction(int action) {
+	debugC(9, kDebugGame, "part35ExecuteAction %d", action);
 	switch (action) {
 	case 101: // look at tree
 		igorSay(201, 2, 611);
 		_objectsState[kTreeResinDiscoveredStateIndex] = 1;
-		PART_35_APPLY_OBJECT_STATE(3);
+		part35ApplyObjectState(3);
 		break;
 	case 102: // take resin
-		PART_35_ACTION_102_takeResin();
+		part35TakeResin();
 		break;
 	case 103: // look at resin
 		igorSay(203, 1, 612);
@@ -45,28 +45,28 @@ void IgorEngine::PART_35_EXEC_ACTION(int action) {
 		igorSay(205, 1, 614);
 		break;
 	case 106:
-		PART_35_ACTION_106_exitToMap();
+		part35ExitToMap();
 		break;
 	case 107:
-		PART_35_ACTION_107_scrollLeft();
+		part35ScrollLeft();
 		break;
 	default:
-		warning("PART_35_EXEC_ACTION unhandled action %d", action);
+		warning("part35ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_35_ACTION_102_takeResin() {
+void IgorEngine::part35TakeResin() {
 	if (_inventoryInfo[62] != 0) {
 		igorSay(206, 1, 615);
 		return;
 	}
-	PARK_PICK_UP_ANIMATION(16339, kParkFrames);
+	part34And35PickUpAnimation(16339, kParkFrames);
 	addObjectToInventory(kInventoryObjectResin, 62);
-	PART_35_APPLY_OBJECT_STATE(255);
+	part35ApplyObjectState(255);
 }
 
-void IgorEngine::PART_35_ACTION_107_scrollLeft() {
+void IgorEngine::part35ScrollLeft() {
 	int xPos = 183;
 	const int yPos = 124;
 	int step = 1;
@@ -103,7 +103,7 @@ void IgorEngine::PART_35_ACTION_107_scrollLeft() {
 	_currentPart = 340;
 }
 
-void IgorEngine::PART_35_ACTION_106_exitToMap() {
+void IgorEngine::part35ExitToMap() {
 	--_walkDataLastIndex;
 	const uint8 area = _screenLayer2[10879]; // (319, 33)
 	_roomObjectAreasTable[area].area = 1;
@@ -115,13 +115,13 @@ void IgorEngine::PART_35_ACTION_106_exitToMap() {
 	_currentPart = 40;
 }
 
-void IgorEngine::PART_35_APPLY_OBJECT_STATE(int num) {
+void IgorEngine::part35ApplyObjectState(int num) {
 	if (num == 3 || num == 255) {// disable hotspot if resin taken
 		_roomObjectAreasTable[7].object = (_objectsState[kTreeResinDiscoveredStateIndex] == 0) ? 1 : 2;
 	}
 }
 
-void IgorEngine::PART_35() {
+void IgorEngine::part35() {
 	playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_ParkRight);
@@ -129,7 +129,7 @@ void IgorEngine::PART_35() {
 	static const int frames[] = { FRM_Park1, FRM_Park2, FRM_Park3, FRM_Park4, 0 };
 	loadAnimData(frames, kParkFrames);
 	if (_objectsState[kLizardGivenStateIndex] == 0 && _objectsState[kLauraMetAtCollegeStateIndex] == 1) {
-		PARK_DRAW_drawOldLadyFrame(_screenLayer1, 1);
+		part34And35DrawOldLadyFrame(_screenLayer1, 1);
 	}
 	copyArea(_animFramesBuffer, 0, 160, _screenLayer1, 320, 160, 144);
 	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight, TXT_ParkRight); // active right panel
@@ -138,11 +138,11 @@ void IgorEngine::PART_35() {
 	loadAnimData(pickUpFrames, kParkFrames);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_35_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PARK_UPDATE_AMBIENT_SOUND;
+	partMainSetExecuteAction(1, &IgorEngine::part35ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part34And35UpdateAmbientSound;
 	_roomDataOffsets = PART_35_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 281, 143); // rightmost walkable column is 281
-	PART_35_APPLY_OBJECT_STATE(255);
+	part35ApplyObjectState(255);
 
 	if (_currentPart != 351 && !_gameStateLoaded) {
 		memcpy(_screenVGA, _screenLayer1, 46080);

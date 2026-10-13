@@ -23,7 +23,7 @@
 
 namespace Igor {
 
-void IgorEngine::PART_90_FADE_PALETTE(bool fadeInColors) {
+void IgorEngine::part90FadePalette(bool fadeInColors) {
 	for (int pass = 1; pass <= 63; ++pass) {
 		const int threshold = fadeInColors ? 64 - pass : pass;
 		for (int i = 0; i < 768; ++i) {
@@ -44,7 +44,7 @@ void IgorEngine::PART_90_FADE_PALETTE(bool fadeInColors) {
 	}
 }
 
-void IgorEngine::PART_90() {
+void IgorEngine::part90() {
 	static const uint16 holdTicks[] = { 2000, 500, 500, 2500, 2000 };
 	const uint16 duration = holdTicks[_currentPart - 900];
 	const char *str;
@@ -83,7 +83,7 @@ void IgorEngine::PART_90() {
 		_gameStateLoaded = false;
 		fadeIn(768);
 	} else {
-		PART_90_FADE_PALETTE(true);
+		part90FadePalette(true);
 	}
 	if (!_gameStateLoaded && !_eventQuitGame && _currentPart != kInvalidPart) {
 		memcpy(_paletteBuffer, _currentPalette, 768);
@@ -125,7 +125,7 @@ void IgorEngine::PART_90() {
 		SET_PAL_240_48_1();
 		return;
 	}
-	PART_90_FADE_PALETTE(false);
+	part90FadePalette(false);
 	if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart) {
 		return;
 	}

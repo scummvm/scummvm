@@ -36,7 +36,7 @@ static const int kMazeStairsY = 143;
 /**
  * The track depends on the location: the maze is divided in three zones.
  */
-int IgorEngine::MAZE_getMusicTrack() const {
+int IgorEngine::partMazeGetMusicTrack() const {
 	uint8 location = _mazeLocation;
 	while (location > 21) {
 		location -= 21;
@@ -49,7 +49,7 @@ int IgorEngine::MAZE_getMusicTrack() const {
  * Draws a frame [frame] of a flame at (x, y). The empty pixels of the frame show the
  * room and the pixels with color 1 show either the first frame or the next pixel of the room.
  */
-void IgorEngine::mazeDrawFlameFrame(int x, int y, int frame) {
+void IgorEngine::partMazeDrawFlameFrame(int x, int y, int frame) {
 	const int screenOffset = y * 320 + x;
 	const uint8 *frames = _animFramesBuffer + (frame + 1) * kMazeFlameFrameSize;
 	uint8 tmp[kMazeFlameFrameSize];
@@ -82,7 +82,7 @@ void IgorEngine::mazeDrawFlameFrame(int x, int y, int frame) {
  * Changes the flames random frames and makes the light of the room flicker: the colors of the room and of
  * Igor are set to the (darkened) palette changed by 0, -1 or -2.
  */
-void IgorEngine::mazeFlicker() {
+void IgorEngine::partMazeFlicker() {
 	int frames[2] = { 0, 0 };
 	// random flame frames
 	for (int i = 0; i < _mazeRoom->numFlames; ++i) {
@@ -94,7 +94,7 @@ void IgorEngine::mazeFlicker() {
 		frames[i] = frame;
 	}
 	for (int i = 0; i < _mazeRoom->numFlames; ++i) {
-		mazeDrawFlameFrame(_mazeRoom->flames[i].x, _mazeRoom->flames[i].y, frames[i]);
+		partMazeDrawFlameFrame(_mazeRoom->flames[i].x, _mazeRoom->flames[i].y, frames[i]);
 	}
 
 	// random palette delta for room flickering
@@ -124,19 +124,19 @@ void IgorEngine::mazeFlicker() {
 }
 
 
-void IgorEngine::maybeUpdateFlicker() {
+void IgorEngine::partMazeMaybeUpdateFlicker() {
 	// the original phases 11, 35 and 59 are the ticks 8, 32 and 56
 	if (compareGameTick(16, 24)) {
-		mazeFlicker();
+		partMazeFlicker();
 	}
 }
 
 /**
  * The flames and the light flicker; spooky sounds are heard from time to time, only if no speech is playing.
  */
-void IgorEngine::PART_MAZE_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::partMazeUpdateBackground() {
 	if (_mazeRoom->numFlames > 0) {
-		maybeUpdateFlicker();
+		partMazeMaybeUpdateFlicker();
 	}
 	if (compareGameTick(0x3D) && getRandomNumber(24) == 0 && !isDialogueSpeechPlaying()) {
 		switch (getRandomNumber(4)) {
@@ -162,7 +162,7 @@ void IgorEngine::PART_MAZE_UPDATE_ROOM_BACKGROUND() {
 /**
  * Igor appears at the entry and walks to its destination.
  */
-void IgorEngine::MAZE_walkIn(const MazeEntry &entry) {
+void IgorEngine::partMazeWalkIn(const MazeEntry &entry) {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(entry.x, entry.y, entry.facing, 0);
 	wd->setDefaultScale();
@@ -174,10 +174,10 @@ void IgorEngine::MAZE_walkIn(const MazeEntry &entry) {
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	waitForIgorMove(_mazeRoom->numFlames > 0 ? &IgorEngine::maybeUpdateFlicker : 0);
+	waitForIgorMove(_mazeRoom->numFlames > 0 ? &IgorEngine::partMazeMaybeUpdateFlicker : 0);
 }
 
-void IgorEngine::enterFromStairs(const MazeEntry &entry) {
+void IgorEngine::partMazeEnterFromStairs(const MazeEntry &entry) {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	WalkData *wd = &_walkData[0];
@@ -203,7 +203,7 @@ void IgorEngine::enterFromStairs(const MazeEntry &entry) {
 			++i;
 		}
 		if (_mazeRoom->numFlames > 0) {
-			maybeUpdateFlicker();
+			partMazeMaybeUpdateFlicker();
 		}
 		waitForTimer();
 	}
@@ -214,16 +214,16 @@ void IgorEngine::enterFromStairs(const MazeEntry &entry) {
 /**
  * Igor walks to the exit and the maze moves to the neighbour location.
  */
-void IgorEngine::mazeWalkToExit(const MazeAction &action) {
+void IgorEngine::partMazeWalkToExit(const MazeAction &action) {
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[action.y2 * 320 + action.x2]].area = 1;
 	buildWalkPathSimple(action.x1, action.y1, action.x2, action.y2);
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
-	waitForIgorMove(_mazeRoom->numFlames > 0 ? &IgorEngine::maybeUpdateFlicker : 0);
+	waitForIgorMove(_mazeRoom->numFlames > 0 ? &IgorEngine::partMazeMaybeUpdateFlicker : 0);
 }
 
-void IgorEngine::mazeExitThroughStairs(const MazeAction &action) {
+void IgorEngine::partMazeExitThroughStairs(const MazeAction &action) {
 	if (_walkCurrentFrame > 6) {
 		_walkCurrentFrame = 1;
 	}
@@ -248,7 +248,7 @@ void IgorEngine::mazeExitThroughStairs(const MazeAction &action) {
 			--i;
 		}
 		if (_mazeRoom->numFlames > 0) {
-			maybeUpdateFlicker();
+			partMazeMaybeUpdateFlicker();
 		}
 		waitForTimer();
 	}
@@ -258,12 +258,12 @@ void IgorEngine::mazeExitThroughStairs(const MazeAction &action) {
  * Moves to the location next to the current one. The state is the shape of the new room and the side of it Igor
  * comes in from: the opposite of the side he left.
  */
-void IgorEngine::mazeGoToNeighbor(int dir) {
+void IgorEngine::partMazeGoToNeighbor(int dir) {
 	_mazeLocation = MAZE_NODES[_mazeLocation].neighbors[dir];
 	_currentPart = MAZE_NODES[_mazeLocation].shape * 10 + 500 + (dir + 2) % 4;
 }
 
-void IgorEngine::PART_MAZE_EXEC_ACTION(int action) {
+void IgorEngine::partMazeExecuteAction(int action) {
 	for (int i = 0; i < _mazeRoom->numActions; ++i) {
 		const MazeAction &a = _mazeRoom->actions[i];
 		if (a.code != action) {
@@ -271,15 +271,15 @@ void IgorEngine::PART_MAZE_EXEC_ACTION(int action) {
 		}
 		switch (a.kind) {
 		case kMazeActionExit:
-			mazeWalkToExit(a);
-			mazeGoToNeighbor(a.dir);
+			partMazeWalkToExit(a);
+			partMazeGoToNeighbor(a.dir);
 			break;
 		case kMazeActionStairsExit:
-			mazeExitThroughStairs(a);
-			mazeGoToNeighbor(a.dir);
+			partMazeExitThroughStairs(a);
+			partMazeGoToNeighbor(a.dir);
 			break;
 		case kMazeActionExitFixed:
-			mazeWalkToExit(a);
+			partMazeWalkToExit(a);
 			if (a.location >= 0) {
 				_mazeLocation = a.location;
 			}
@@ -298,15 +298,15 @@ void IgorEngine::PART_MAZE_EXEC_ACTION(int action) {
 		}
 		return;
 	}
-	error("PART_MAZE_EXEC_ACTION unhandled action %d", action);
+	error("partMazeExecuteAction unhandled action %d", action);
 }
 
-void IgorEngine::PART_MAZE() {
-	const MazeRoom *room = getMazeRoom(getPart());
+void IgorEngine::partMaze() {
+	const MazeRoom *room = partMazeGetRoom(getPart());
 	assert(room);
 	_mazeRoom = room;
 
-	playMusic(room->music >= 0 ? room->music : MAZE_getMusicTrack());
+	playMusic(room->music >= 0 ? room->music : partMazeGetMusicTrack());
 	_gameState.enableLight = 1;
 	if (room->saveLocation) {
 		_mazeSavedLocation = _mazeLocation;
@@ -320,8 +320,8 @@ void IgorEngine::PART_MAZE() {
 	_roomDataOffsets = *room->offsets;
 	_roomGiveObjectSize = room->giveObjectSize;
 	setRoomClickFix(room->clickFix.yMax, room->clickFix.xMin, room->clickFix.xMax, room->clickFix.scanUp);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_MAZE_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_MAZE_UPDATE_ROOM_BACKGROUND;
+	partMainSetExecuteAction(1, &IgorEngine::partMazeExecuteAction);
+	_updateRoomBackground = &IgorEngine::partMazeUpdateBackground;
 	if (room->objectName3) {
 		Common::strlcpy(_roomObjectNames[3], room->objectName3, sizeof(_roomObjectNames[3]));
 	}
@@ -333,7 +333,7 @@ void IgorEngine::PART_MAZE() {
 
 	// draws the first frames of the flames
 	for (int i = 0; i < room->numFlames; ++i) {
-		mazeDrawFlameFrame(room->flames[i].x, room->flames[i].y, room->flameFrames[i]);
+		partMazeDrawFlameFrame(room->flames[i].x, room->flames[i].y, room->flameFrames[i]);
 	}
 	_mazeFlameFrame[0] = 0;
 	_mazeFlameFrame[1] = room->secondFlameFrame;
@@ -345,9 +345,9 @@ void IgorEngine::PART_MAZE() {
 			const MazeEntry &entry = room->entries[i];
 			if (entry.state == _currentPart) {
 				if (entry.kind == kMazeEntryWalk) {
-					MAZE_walkIn(entry);
+					partMazeWalkIn(entry);
 				} else {
-					enterFromStairs(entry);
+					partMazeEnterFromStairs(entry);
 				}
 			}
 		}

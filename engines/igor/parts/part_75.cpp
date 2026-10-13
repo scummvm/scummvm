@@ -32,25 +32,25 @@ static const uint8 PART_75_ANIM_DATA_2[37] = {
 	33, 34, 31, 32, 33, 34, 31, 32, 33, 34, 31, 32, 33, 34, 31, 32, 33, 34
 };
 
-void IgorEngine::PART_75_UPDATE_DIALOGUE_PHILIP(int action) {
+void IgorEngine::part75UpdatePhilipDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_75_HELPER_drawPhilipFrame(2);
+		part75DrawPhilipFrame(2);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_75_HELPER_drawPhilipFrame(getRandomNumber(4) + 2);
+		part75DrawPhilipFrame(getRandomNumber(4) + 2);
 		break;
 	}
 }
 
-void IgorEngine::PART_75_HELPER_drawPhilipFrame(int frame) {
+void IgorEngine::part75DrawPhilipFrame(int frame) {
 	const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x5E6D + frame * 2) - 1;
 	decodeAnimFrame(src, _screenVGA);
 }
 
-void IgorEngine::PART_75() {
+void IgorEngine::part75() {
 	playMusic(8);
-	PART_meanwhile();
+	partMainMeanwhile();
 	_gameState.enableLight = 1;
 	_talkColorIndex = 255;
 	_talkShadowIndex = 0;
@@ -58,38 +58,38 @@ void IgorEngine::PART_75() {
 	static const int anm[] = { ANM_PhilipVodka, AOF_PhilipVodka, 0 };
 	loadAnimData(anm);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	_updateDialogue = &IgorEngine::PART_75_UPDATE_DIALOGUE_PHILIP;
-	PART_75_HELPER_drawPhilipFrame(1);
-	PART_75_HELPER_drawPhilipFrame(7);
+	_updateDialogue = &IgorEngine::part75UpdatePhilipDialogue;
+	part75DrawPhilipFrame(1);
+	part75DrawPhilipFrame(7);
 	memset(_currentPalette, 0, 768);
 	fadeIn(768);
 	_gameState.igorMoving = false;
 	cutsceneSay(187, 82, 63, 63, 0, { { 201, 1, 1156 }, { 202, 2, 1157 }, { 204, 1, 1158 } });
 	for (int i = 1; i <= 17; ++i) {
-		PART_75_HELPER_drawPhilipFrame(PART_75_ANIM_DATA_1[i]);
+		part75DrawPhilipFrame(PART_75_ANIM_DATA_1[i]);
 		waitForTimer(30);
 	}
 	cutsceneSay(187, 82, 63, 63, 0, { { 205, 1, 1159 }, { 206, 1, 1160 } });
 	for (int i = 17; i <= 30; ++i) {
-		PART_75_HELPER_drawPhilipFrame(i);
+		part75DrawPhilipFrame(i);
 		waitForTimer(15);
 	}
 	cutsceneSayStart(187, 82, 63, 63, 0, 208, 1);
 	playSound(62, 1);
 	for (int i = 1; i <= 36; ++i) {
-		PART_75_HELPER_drawPhilipFrame(PART_75_ANIM_DATA_2[i]);
+		part75DrawPhilipFrame(PART_75_ANIM_DATA_2[i]);
 		waitForTimer(15);
 	}
 	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
 	cutsceneSayStart(187, 82, 63, 63, 0, 209, 1);
-	PART_75_HELPER_drawPhilipFrame(35);
+	part75DrawPhilipFrame(35);
 	waitForTimer(255);
-	PART_75_HELPER_drawPhilipFrame(36);
+	part75DrawPhilipFrame(36);
 	waitForTimer(140);
 	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
 	cutsceneSayStart(187, 82, 63, 63, 0, 210, 1);
 	for (int i = 1; i <= 40; ++i) {
-		PART_75_HELPER_drawPhilipFrame(getRandomNumber(3) + 37);
+		part75DrawPhilipFrame(getRandomNumber(3) + 37);
 		waitForTimer(30);
 	}
 	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);

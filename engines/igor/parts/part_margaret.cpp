@@ -26,29 +26,29 @@ namespace Igor {
 
 static int VAR_MARGARET_ROOM_ANIM_COUNTER;
 
-void IgorEngine::PART_MARGARET_ROOM_CUTSCENE_drawMargaretBasePose() {
+void IgorEngine::partMargaretDrawBasePose() {
 	const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x2A63 + VAR_MARGARET_ROOM_ANIM_COUNTER * 2) - 1;
 	decodeAnimFrame(src, _screenVGA);
 }
 
-void IgorEngine::PART_MARGARET_ROOM_CUTSCENE_drawMargaretFrame(int frame) {
+void IgorEngine::partMargaretDrawFrame(int frame) {
 	const int offset = ((VAR_MARGARET_ROOM_ANIM_COUNTER - 1) * 5 + frame) * 2;
 	const uint8 *src = _animFramesBuffer + 0x2A75 + READ_LE_UINT16(_animFramesBuffer + offset + 0xD887) - 1;
 	decodeAnimFrame(src, _screenVGA);
 }
 
-void IgorEngine::PART_MARGARET_ROOM_CUTSCENE_UPDATE_DIALOGUE_MARGARET(int action) {
+void IgorEngine::partMargaretUpdateDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_MARGARET_ROOM_CUTSCENE_drawMargaretFrame(1);
+		partMargaretDrawFrame(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_MARGARET_ROOM_CUTSCENE_drawMargaretFrame(getRandomNumber(4) + 1);
+		partMargaretDrawFrame(getRandomNumber(4) + 1);
 		break;
 	}
 }
 
-void IgorEngine::PART_MARGARET_ROOM_CUTSCENE() {
+void IgorEngine::partMargaret() {
 	playMusic(8);
 	_gameState.enableLight = 1;
 	VAR_MARGARET_ROOM_ANIM_COUNTER = _objectsState[kMargaretSceneStateIndex] + 1;
@@ -59,8 +59,8 @@ void IgorEngine::PART_MARGARET_ROOM_CUTSCENE() {
 	static const int anm[] = { FRM_MargaretRoom1, FRM_MargaretRoom2, FRM_MargaretRoom3, FRM_MargaretRoom4, 0 };
 	loadAnimData(anm);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	_updateDialogue = &IgorEngine::PART_MARGARET_ROOM_CUTSCENE_UPDATE_DIALOGUE_MARGARET;
-	PART_MARGARET_ROOM_CUTSCENE_drawMargaretBasePose();
+	_updateDialogue = &IgorEngine::partMargaretUpdateDialogue;
+	partMargaretDrawBasePose();
 	memset(_currentPalette, 0, 768);
 	fadeIn(768);
 	_gameState.igorMoving = false;

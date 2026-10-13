@@ -10,7 +10,7 @@
 
 namespace Igor {
 
-void IgorEngine::PART_01_CLOSE_WINDOW() {
+void IgorEngine::part1CloseWindow() {
 	static const uint8 windowFrames[] = { 0, 1, 2, 1 };
 	for (int i = 0; i < 4; ++i) {
 		drawAnimRect(0x5919, 216 + windowFrames[i] * 1204, 28, 43, false, kBlendLitSprite);
@@ -28,30 +28,30 @@ void IgorEngine::PART_01_CLOSE_WINDOW() {
 	igorSayAndWait({ { 203, 1, 132 }, { 204, 1, 133 } });
 }
 
-void IgorEngine::PART_01_STATE_11_BLIT_blitIgor() {
+void IgorEngine::part1DrawIgor() {
 	drawAnimRect(0x5476, 0x1859, 16, 13);
 }
 
-void IgorEngine::PART_01_STATE_11_BLIT_blitRoof() {
+void IgorEngine::part1DrawRoof() {
 	drawAnimRect(0x118F, 0xA7F9, 0xDA, 40);
 }
 
 //
-void IgorEngine::PART_01_STATE_11_BLIT_drawIgorsEyes(int frame) {
+void IgorEngine::part1DrawIgorsEyes(int frame) {
 	drawAnimRect(0x55BB, 0xA7A9 + frame * 20, 5, 4);
 }
 
 //
-void IgorEngine::PART_01_STATE_11_DRAW_drawPigeons(int index) {
+void IgorEngine::part1DrawPigeons(int index) {
 	memcpy(_screenVGA + 0x6F40, _animFramesBuffer + 0x1929 + index * 0x2F80, 0x2F80);
 }
 
 // 11: the window-pigeons cutscene It blits two regions,
 // restores the current palette from the saved one, then runs a 1000-tick
 // animation loop before handing over to state 22.
-void IgorEngine::PART_01_STATE_11_pigeonsCutscene() {
-	PART_01_STATE_11_BLIT_blitIgor();
-	PART_01_STATE_11_BLIT_blitRoof();
+void IgorEngine::part1PigeonsCutscene() {
+	part1DrawIgor();
+	part1DrawRoof();
 
 	memcpy(_currentPalette, _paletteBuffer, 768);
 	updatePalette(768);
@@ -67,10 +67,10 @@ void IgorEngine::PART_01_STATE_11_pigeonsCutscene() {
 			pendingTicks = 0;
 		}
 		if (drawIgorsEyes) {
-			PART_01_STATE_11_BLIT_drawIgorsEyes(getRandomNumber(3));
+			part1DrawIgorsEyes(getRandomNumber(3));
 		}
 		if (drawPigeons) {
-			PART_01_STATE_11_DRAW_drawPigeons(getRandomNumber(2));
+			part1DrawPigeons(getRandomNumber(2));
 		}
 
 		++pendingTicks;
@@ -88,7 +88,7 @@ void IgorEngine::PART_01_STATE_11_pigeonsCutscene() {
 /**
  * Just a screen shaking effect
  */
-void IgorEngine::PART_01_STATE_12_explosion() {
+void IgorEngine::part1Explosion() {
 	int shakeY = 0;
 	int elapsed = 0;
 	for (int nextShake = 15; nextShake < 500; nextShake += 16) {
@@ -102,8 +102,8 @@ void IgorEngine::PART_01_STATE_12_explosion() {
 	waitForTimer(16);
 }
 
-void IgorEngine::PART_01_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_01_EXEC_ACTION %d", action);
+void IgorEngine::part1ExecuteAction(int action) {
+	debugC(9, kDebugGame, "part1ExecuteAction %d", action);
 	switch (action) {
 	case 101: // walk past pigeon
 		igorSay(201, 2, 131);
@@ -137,12 +137,12 @@ void IgorEngine::PART_01_EXEC_ACTION(int action) {
 		igorSay(211, 2, 139);
 		break;
 	default:
-		warning("PART_01_EXEC_ACTION unhandled action %d", action);
+		warning("part1ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_01() {
+void IgorEngine::part1() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_OutsideStudentDormitory);
@@ -159,7 +159,7 @@ void IgorEngine::PART_01() {
 	// clamps clicks to x 60..276 and y <= 143 before consulting
 	// the room mask
 	setRoomWalkBounds(60, 0, 276, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_01_EXEC_ACTION);
+	partMainSetExecuteAction(1, &IgorEngine::part1ExecuteAction);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	if (!restoreRoomAfterLoad()) {
@@ -179,15 +179,15 @@ void IgorEngine::PART_01() {
 			moveIgor(_walkData[0].posNum, _walkData[0].frameNum);
 			_walkDataLastIndex = 1;
 			_walkDataCurrentIndex = 1;
-			PART_01_CLOSE_WINDOW();
+			part1CloseWindow();
 		} else {
 			if (_currentPart == 11)
-				PART_01_STATE_11_pigeonsCutscene();
+				part1PigeonsCutscene();
 			else if (_currentPart == 12) {
 				memcpy(_currentPalette, _paletteBuffer, 768);
 				updatePalette(768);
 				playSound(12, 1);
-				PART_01_STATE_12_explosion();
+				part1Explosion();
 				_currentPart = 23;
 			}
 		}

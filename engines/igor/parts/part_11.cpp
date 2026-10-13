@@ -26,8 +26,8 @@ namespace Igor {
 
 const uint32 kPart11PanelRight = 0x0000;
 
-void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
-	PART_10_11_DRAW_OBJECT_STATE(num);
+void IgorEngine::part11ApplyObjectState(int num) {
+	part10And11DrawObjectState(num);
 
 	if (num == 1 || num == 255)
 		_roomObjectAreasTable[13].object = _objectsState[kSlugTakenStateIndex] == 0 ? 4 : 3;
@@ -58,27 +58,27 @@ void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_11_ACTION_105_pickSlug() {
+void IgorEngine::part11TakeSlug() {
 	for (int frame = 0; frame <= 1; ++frame) {
 		drawAnimRect(0x6167, kPart10_11_Frm1 + frame * 0x405, 21, 49);
 		waitForTimer(127);
 	}
 	addObjectToInventory(kInventoryObjectSlug, 53);
 	_objectsState[kSlugTakenStateIndex] = 1;
-	PART_11_APPLY_OBJECT_STATE(255);
+	part11ApplyObjectState(255);
 }
 
-void IgorEngine::PART_11_ACTION_107_useButterflyNetWithHole() {
+void IgorEngine::part11UseButterflyNetWithHole() {
 	for (int frame = 0; frame <= 2; ++frame) {
 		drawAnimRect(0x47E3, kPart10_11_Frm5 + frame * 0x348, 30, 28);
 		waitForTimer(61);
 	}
 	removeObjectFromInventory(42);
 	_objectsState[kButterflyNetStateIndex] = 1;
-	PART_11_APPLY_OBJECT_STATE(255);
+	part11ApplyObjectState(255);
 }
 
-void IgorEngine::PART_11_ACTION_108_scrollRight() {
+void IgorEngine::part11ScrollRight() {
 	uint8 *walkTable = loadData(WLK_DecanatoRight);
 	int xPos = 310;
 	int yPos = 0;
@@ -115,19 +115,19 @@ void IgorEngine::PART_11_ACTION_108_scrollRight() {
 	_currentPart = 102;
 }
 
-void IgorEngine::PART_11_ACTION_112_pickBottle() {
+void IgorEngine::part11TakeBottle() {
 	for (int frame = 0; frame <= 2; ++frame) {
 		drawAnimRect(0x47E3, kPart10_11_Frm2 + frame * 0x348, 30, 28);
 		waitForTimer(61);
 	}
 	addObjectToInventory(kInventoryObjectBottle, 58);
 	_objectsState[kButterflyNetStateIndex] = 1;
-	PART_11_APPLY_OBJECT_STATE(3);
+	part11ApplyObjectState(3);
 	_objectsState[kBottleStateIndex] = 1;
-	UPDATE_OBJECT_STATE(1);
+	partMainUpdateObjectState(1);
 }
 
-void IgorEngine::PART_11_EXEC_ACTION(int action) {
+void IgorEngine::part11ExecuteAction(int action) {
 	switch (action) {
 	case 101: // look at window
 		ADD_DIALOGUE_TEXT(201, 2, 616);
@@ -145,16 +145,16 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		igorSayAndWait({ { 205, 1, 619 }, { 206, 1, 620 } });
 		break;
 	case 105:
-		PART_11_ACTION_105_pickSlug();
+		part11TakeSlug();
 		break;
 	case 106: // look at slug
 		igorSayAndWait(73, 1, 50);
 		break;
 	case 107:
-		PART_11_ACTION_107_useButterflyNetWithHole();
+		part11UseButterflyNetWithHole();
 		break;
 	case 108:
-		PART_11_ACTION_108_scrollRight();
+		part11ScrollRight();
 		break;
 	case 109: // Look at hole
 		igorSayAndWait(207, 1, 621);
@@ -166,7 +166,7 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		igorSayAndWait(210, 1, 624);
 		break;
 	case 112:
-		PART_11_ACTION_112_pickBottle();
+		part11TakeBottle();
 		break;
 	case 113:
 		igorSayAndWait(211, 1, 625);
@@ -175,12 +175,12 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 		igorSayAndWait(29, 1, 29);
 		break;
 	default:
-		warning("PART_11_EXEC_ACTION unhandled action %d", action);
+		warning("part11ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_11() {
+void IgorEngine::part11() {
 	playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_DecanatoPart11);
@@ -199,10 +199,10 @@ void IgorEngine::PART_11() {
 	loadAnimData(frames4, kPart10_11_Frm4);
 	loadAnimData(frames5, kPart10_11_Frm5);
 
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_11_EXEC_ACTION);
+	partMainSetExecuteAction(1, &IgorEngine::part11ExecuteAction);
 	_roomDataOffsets = PART_11_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	PART_11_APPLY_OBJECT_STATE(255);
+	part11ApplyObjectState(255);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
 	if (!restoreRoomAfterLoad()) {

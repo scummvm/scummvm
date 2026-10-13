@@ -26,11 +26,11 @@ namespace Igor {
 
 static int VAR_CURRENT_TALKING_ACTOR;
 
-void IgorEngine::PART_16_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_16_EXEC_ACTION %d", action);
+void IgorEngine::part16ExecuteAction(int action) {
+	debugC(9, kDebugGame, "part16ExecuteAction %d", action);
 	switch (action) {
 	case 101: // pick up things
-		PART_16_ACTION_101_pickUpFlask();
+		part16TakeFlask();
 		break;
 	case 102: // look at things
 		igorSay(208, 2, 730);
@@ -39,12 +39,12 @@ void IgorEngine::PART_16_EXEC_ACTION(int action) {
 		_currentPart = 261;
 		break;
 	default:
-		error("PART_16_EXEC_ACTION unhandled action %d", action);
+		error("part16ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_16_ACTION_101_pickUpFlask() {
+void IgorEngine::part16TakeFlask() {
 	if (_objectsState[kFlaskTakenStateIndex] == 1) {
 		igorSay(207, 1, 729);
 		return;
@@ -63,32 +63,32 @@ void IgorEngine::PART_16_ACTION_101_pickUpFlask() {
 	igorSay(204, 3, 728);
 }
 
-void IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET_HARRISON(int action) {
+void IgorEngine::part16UpdateMargaretHarrisonDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_16_HELPER_6_drawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 34 : 48);
+		part16DrawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 34 : 48);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_16_HELPER_6_drawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? getRandomNumber(4) + 30 : getRandomNumber(4) + 44);
+		part16DrawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? getRandomNumber(4) + 30 : getRandomNumber(4) + 44);
 		break;
 	}
 }
 
-void IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET(int action) {
+void IgorEngine::part16UpdateMargaretDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_16_HELPER_6_drawTalkingFrame(49);
+		part16DrawTalkingFrame(49);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_16_HELPER_6_drawTalkingFrame(getRandomNumber(3) + 49);
+		part16DrawTalkingFrame(getRandomNumber(3) + 49);
 		break;
 	}
 }
 
-void IgorEngine::PART_16_HELPER_1_OBJECT_STATE(int num) {
+void IgorEngine::part16ApplyObjectState(int num) {
 }
 
-void IgorEngine::PART_16_HELPER_2_enterScene() {
+void IgorEngine::part16EnterScene() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(0, 135, 2, 0);
 	wd->clipSkipX = 1;
@@ -107,7 +107,7 @@ void IgorEngine::PART_16_HELPER_2_enterScene() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_16_HELPER_3_photoCutscene() {
+void IgorEngine::part16PhotoCutscene() {
 	memset(_screenVGA + 46080, 0, 17920);
 	igorSayAndWait({ { 210, 1, 731 }, { 211, 1, 732 }, { 212, 1, 733 }, { 213, 2, 734 } });
 	--_walkDataLastIndex;
@@ -136,19 +136,19 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 	fadeOut(768);
 	playMusic(8);
 	_currentPart = 331;
-	PART_33();
+	part33();
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(208, 255);
 	do {
-		PART_MARGARET_ROOM_CUTSCENE();
+		partMargaret();
 	} while (_objectsState[kMargaretSceneStateIndex] != 9);
 	setupDefaultPalette();
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
-	loadResourceData__ROOM_Laboratory();
-	loadResourceData__ANIM_Laboratory();
+	part16LoadRoom();
+	part16LoadAnimation();
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	PART_16_HELPER_1_OBJECT_STATE(255);
+	part16ApplyObjectState(255);
 	fadeIn(768);
 	waitForTimer(255);
 	for (int i = 1; i <= 29; ++i) {
@@ -156,19 +156,19 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 		waitForTimer(25);
 	}
 	VAR_CURRENT_TALKING_ACTOR = 0;
-	cutsceneSayWithCallback(175, 78, 0, 58, 40, { { 215, 1, 735 }, { 216, 1, 736 }, { 217, 1, 737 } }, &IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET_HARRISON);
+	cutsceneSayWithCallback(175, 78, 0, 58, 40, { { 215, 1, 735 }, { 216, 1, 736 }, { 217, 1, 737 } }, &IgorEngine::part16UpdateMargaretHarrisonDialogue);
 	for (int i = 35; i <= 41; ++i) {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + i * 2) - 1, _screenVGA, true);
 		waitForTimer(35);
 	}
-	cutsceneSayWithCallback(88, 69, 63, 32, 0, 218, 2, 738, &IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET);
+	cutsceneSayWithCallback(88, 69, 63, 32, 0, 218, 2, 738, &IgorEngine::part16UpdateMargaretDialogue);
 	for (int i = 42; i <= 43; ++i) {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + i * 2) - 1, _screenVGA, true);
 		waitForTimer(35);
 	}
 	VAR_CURRENT_TALKING_ACTOR = 1;
-	cutsceneSayWithCallback(175, 78, 0, 58, 40, { { 220, 1, 739 }, { 221, 1, 740 } }, &IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET_HARRISON);
-	cutsceneSayWithCallback(88, 69, 63, 32, 0, 222, 2, 741, &IgorEngine::PART_16_UPDATE_DIALOGUE_MARGARET);
+	cutsceneSayWithCallback(175, 78, 0, 58, 40, { { 220, 1, 739 }, { 221, 1, 740 } }, &IgorEngine::part16UpdateMargaretHarrisonDialogue);
+	cutsceneSayWithCallback(88, 69, 63, 32, 0, 222, 2, 741, &IgorEngine::part16UpdateMargaretDialogue);
 	playSound(26, 1);
 	for (int i = 53; i <= 61; ++i) {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + i * 2) - 1, _screenVGA, true);
@@ -181,11 +181,11 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 		waitForTimer(15);
 	}
 	playSound(27, 1);
-	PART_16_HELPER_5_displayPhoto();
+	part16DisplayPhoto();
 	for (int i = 1; i <= 3; ++i) {
 		waitForTimer(255);
 	}
-	PART_16_HELPER_1_OBJECT_STATE(255);
+	part16ApplyObjectState(255);
 	// Data-only inventory update: the panel is redrawn later together with the verbs
 	++_inventoryInfo[73];
 	_inventoryInfo[_inventoryInfo[73] - 1] = kInventoryObjectPhoto;
@@ -196,7 +196,7 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 	_currentPart = 261;
 }
 
-void IgorEngine::PART_16_HELPER_5_displayPhoto() {
+void IgorEngine::part16DisplayPhoto() {
 	memset(&_currentPalette[3], 63, 621);
 	setPaletteRange(1, 207);
 	loadData(IMG_PhotoHarrisonMargaret, _screenVGA);
@@ -212,28 +212,28 @@ void IgorEngine::PART_16_HELPER_5_displayPhoto() {
 	}
 }
 
-void IgorEngine::PART_16_HELPER_6_drawTalkingFrame(int frame) {
+void IgorEngine::part16DrawTalkingFrame(int frame) {
 	const uint8 *src = _animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + frame * 2) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
 }
 
-void IgorEngine::PART_16() {
+void IgorEngine::part16() {
 	playMusic(2);
 	_gameState.enableLight = 1;
-	loadResourceData__ROOM_Laboratory();
-	loadResourceData__ANIM_Laboratory();
+	part16LoadRoom();
+	part16LoadAnimation();
 	loadActionData(DAT_Laboratory);
 	_roomDataOffsets = PART_16_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 248, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_16_EXEC_ACTION);
-	PART_16_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part16ExecuteAction);
+	part16ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_16_HELPER_2_enterScene();
+		part16EnterScene();
 		if (_objectsState[kMargaretStateIndex] == kMargaretStateReadNote && _inventoryInfo[71] != 0 && _objectsState[kHarrisonNoteShownStateIndex] == 1) {
-			PART_16_HELPER_3_photoCutscene();
+			part16PhotoCutscene();
 		}
 		enterPartLoop();
 	}
@@ -245,11 +245,11 @@ void IgorEngine::PART_16() {
 		fadeOut(624);
 }
 
-void IgorEngine::loadResourceData__ROOM_Laboratory() {
+void IgorEngine::part16LoadRoom() {
 	loadRoomData(PAL_Laboratory, IMG_Laboratory, BOX_Laboratory, MSK_Laboratory, TXT_Laboratory);
 }
 
-void IgorEngine::loadResourceData__ANIM_Laboratory() {
+void IgorEngine::part16LoadAnimation() {
 	static const int anm[] = { FRM_Laboratory1, FRM_Laboratory2, FRM_Laboratory3, 0 };
 	loadAnimData(anm);
 }

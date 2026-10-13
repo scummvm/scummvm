@@ -65,7 +65,7 @@ static const int kPart69TransformFrameLast = 0x16;
 static const int kPart69EndingFrameFirst = 1;
 static const int kPart69EndingFrameLast = 0xE;
 
-void IgorEngine::PART_69_EXEC_ACTION(int action) {
+void IgorEngine::part69ExecuteAction(int action) {
 	switch (action) {
 	case 101:
 		_currentPart = 721;
@@ -87,13 +87,13 @@ void IgorEngine::PART_69_EXEC_ACTION(int action) {
 		igorSay(210, 1, 1089);
 		break;
 	case 107:
-		PART_69_ACTION_107_useVaseWithFireflies();
+		part69UseVaseWithFireflies();
 		break;
 	case 108:
 		igorSay(215, 2, 1092);
 		break;
 	default:
-		error("PART_69_EXEC_ACTION unhandled action %d", action);
+		error("part69ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
@@ -101,7 +101,7 @@ void IgorEngine::PART_69_EXEC_ACTION(int action) {
 /**
  * Once the scene is over the places of the fireflies are not objects anymore.
  */
-void IgorEngine::PART_69_APPLY_OBJECT_STATE() {
+void IgorEngine::part69ApplyObjectState() {
 	if (_objectsState[kPart69FireflyCapturedStateIndex] != 1) {
 		return;
 	}
@@ -116,15 +116,15 @@ void IgorEngine::PART_69_APPLY_OBJECT_STATE() {
 	}
 }
 
-void IgorEngine::PART_69_drawSwarm(int frame) {
+void IgorEngine::part69DrawSwarm(int frame) {
 	decodeAnimFrame(getAnimFrame(kPart69SwarmFramesBase, kPart69SwarmFramesTable, frame), _screenVGA, true);
 }
 
-void IgorEngine::PART_69_drawMainFirefly(int frame) {
+void IgorEngine::part69DrawMainFirefly(int frame) {
 	decodeAnimFrame(getAnimFrame(kPart69MainFireflyFramesBase, kPart69MainFireflyFramesTable, frame), _screenVGA, true);
 }
 
-void IgorEngine::PART_69_animateFireflies() {
+void IgorEngine::part69AnimateFireflies() {
 	if (!compareGameTick(13, 16)) {
 		return;
 	}
@@ -139,7 +139,7 @@ void IgorEngine::PART_69_animateFireflies() {
 		_part69FireflyStepCount = 0;
 	}
 	if (secondFirefly > 0) {
-		PART_69_drawMainFirefly(_part69FireflyFrameB);
+		part69DrawMainFirefly(_part69FireflyFrameB);
 		if (kPart69MainFireflyStepLastFrame[secondFirefly] == _part69FireflyFrameB) {
 			secondFirefly = 0;
 			sequence += 3;
@@ -147,7 +147,7 @@ void IgorEngine::PART_69_animateFireflies() {
 			++_part69FireflyFrameB;
 		}
 	}
-	PART_69_drawSwarm(_part69FireflyFrameA);
+	part69DrawSwarm(_part69FireflyFrameA);
 	if (kPart69SwarmStepLastFrame[sequence] == _part69FireflyFrameA) {
 		if (sequence > 3) {
 			sequence = kPart69SwarmStepNext[sequence];
@@ -180,7 +180,7 @@ void IgorEngine::PART_69_animateFireflies() {
 }
 
 
-void IgorEngine::PART_69_takeVaseBack(int num, int sound) {
+void IgorEngine::part69TakeVaseBack(int num, int sound) {
 	for (int frame = kPart69EndingFrameLast; frame <= kPart69EndingFrameLast + 1; ++frame) {
 		decodeAnimFrame(getAnimFrame(kPart69FramesDBase, kPart69FramesDTable, frame), _screenVGA, true);
 		waitForTimer(46);
@@ -189,26 +189,26 @@ void IgorEngine::PART_69_takeVaseBack(int num, int sound) {
 }
 
 
-void IgorEngine::PART_69_ACTION_107_useVaseWithFireflies() {
+void IgorEngine::part69UseVaseWithFireflies() {
 	drawAnimRect(kPart69PictureOffset, kPart69PictureAnimOffset, kPart69PictureWidth, kPart69PictureHeight);
 	if (_objectsState[kVaseStateIndex] == 0) {
 		for (int i = 0; i < 1000 / kTimerTicksCount && !_eventQuitGame; ++i) {
-			PART_69_animateFireflies();
+			part69AnimateFireflies();
 			waitForTimer();
 		}
-		PART_69_takeVaseBack(211, 1090);
+		part69TakeVaseBack(211, 1090);
 		return;
 	}
 
 	do {
-		PART_69_animateFireflies();
+		part69AnimateFireflies();
 		waitForTimer();
 	} while (!(_objectsState[kPart69SwarmAnimationPhaseStateIndex] == 3 && _objectsState[kPart69LeaderFireflyPathStateIndex] == 0) && !_eventQuitGame);
 
 	uint8 frameC = 1;
 	do {
 		if (compareGameTick(13, 16)) {
-			PART_69_drawSwarm(_part69FireflyFrameA);
+			part69DrawSwarm(_part69FireflyFrameA);
 			_part69FireflyFrameA = _part69FireflyFrameA == kPart69TalkFrameLast ? kPart69TalkFrameFirst : _part69FireflyFrameA + 1;
 			decodeAnimFrame(getAnimFrame(kPart69FramesCBase, kPart69FramesCTable, frameC), _screenVGA, true);
 			if (frameC < kPart69TransformFrameLast) {
@@ -230,21 +230,21 @@ void IgorEngine::PART_69_ACTION_107_useVaseWithFireflies() {
 	waitForTimer(255);
 	_objectsState[kPart69FireflyCapturedStateIndex] = 1;
 	_objectsState[kVaseStateIndex] = 2;
-	UPDATE_OBJECT_STATE(7);
+	partMainUpdateObjectState(7);
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(63, 1);
 	while (_mixer->isSoundHandleActive(_sfxHandle) && !_eventQuitGame) {
 		waitForTimer(1);
 	}
 	playSound(51, 1);
-	PART_69_APPLY_OBJECT_STATE();
-	PART_69_takeVaseBack(213, 1091);
+	part69ApplyObjectState();
+	part69TakeVaseBack(213, 1091);
 }
 
 /**
  * Igor comes from the right edge, walking to the left, while the fireflies move.
  */
-void IgorEngine::PART_69_enterFromRight() {
+void IgorEngine::part69EnterFromRight() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(319, kPart69EntryY, kFacingPositionLeft, 0);
 	wd->clipSkipX = 1;
@@ -260,10 +260,10 @@ void IgorEngine::PART_69_enterFromRight() {
 	buildWalkPath(319, kPart69EntryY, kPart69EntryDstX, kPart69EntryY);
 	_walkData[_walkDataLastIndex].frameNum = 0;
 	_gameState.igorMoving = true;
-	waitForIgorMove(&IgorEngine::PART_69_animateFireflies);
+	waitForIgorMove(&IgorEngine::part69AnimateFireflies);
 }
 
-void IgorEngine::PART_69_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part69UpdateBackground() {
 	if (compareGameTick(1)) {
 		if (getRandomNumber(14) == 0 && !isDialogueSpeechPlaying()) {
 			switch (getRandomNumber(2)) {
@@ -279,10 +279,10 @@ void IgorEngine::PART_69_UPDATE_ROOM_BACKGROUND() {
 			}
 		}
 	}
-	PART_69_animateFireflies();
+	part69AnimateFireflies();
 }
 
-void IgorEngine::PART_69() {
+void IgorEngine::part69() {
 	playMusic(4);
 	_gameState.enableLight = 2;
 	loadActionData(DAT_Part69);
@@ -294,13 +294,13 @@ void IgorEngine::PART_69() {
 	loadAnimData(anim);
 	_roomDataOffsets = PART_69_ROOM_DATA_OFFSETS;
 	setRoomClickFix(130, 166, -1, false, 130);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_69_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_69_UPDATE_ROOM_BACKGROUND;
-	PART_69_APPLY_OBJECT_STATE();
+	partMainSetExecuteAction(1, &IgorEngine::part69ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part69UpdateBackground;
+	part69ApplyObjectState();
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (_objectsState[kPart69FireflyCapturedStateIndex] == 0) {
-		PART_69_drawSwarm(kPart69SwarmInitialFrame);
-		PART_69_drawMainFirefly(kPart69MainFireflyInitialFrame);
+		part69DrawSwarm(kPart69SwarmInitialFrame);
+		part69DrawMainFirefly(kPart69MainFireflyInitialFrame);
 	}
 	_part69FireflyStepCount = 0;
 	_part69FireflyFrameB = 0;
@@ -314,7 +314,7 @@ void IgorEngine::PART_69() {
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_69_enterFromRight();
+		part69EnterFromRight();
 	}
 	enterPartLoop();
 	while (_currentPart == 690 && !_gameStateLoaded) {

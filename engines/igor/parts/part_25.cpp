@@ -23,7 +23,7 @@
 namespace Igor {
 
 
-void IgorEngine::PART_25_EXEC_ACTION(int action) {
+void IgorEngine::part25ExecuteAction(int action) {
 	switch (action) {
 	case 101: // go to left-side
 		_currentPart = 260;
@@ -47,27 +47,27 @@ void IgorEngine::PART_25_EXEC_ACTION(int action) {
 	case 104: // walk to board: nothing happens on arrival
 		break;
 	case 105: // enter men's toilet
-		PART_25_ACTION_105_enterMensToilet();
+		part25EnterMensToilet();
 		break;
 	case 106: // look at door
 		igorSay(203, 1, 1272);
 		break;
 	case 107: // open door
-		PART_25_ACTION_107_openDoor();
+		part25OpenDoor();
 		break;
 	case 108: // close door
-		PART_25_ACTION_108_closeDoor();
+		part25CloseDoor();
 		break;
 	case 109: // go to corridor
 		_currentPart = 310;
 		break;
 	default:
-		error("PART_25_EXEC_ACTION unhandled action %d", action);
+		error("part25ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_25_ACTION_105_enterMensToilet() {
+void IgorEngine::part25EnterMensToilet() {
 	if (_objectsState[kMensRoomDoorStateIndex] != 0) {
 		_roomObjectAreasTable[_screenLayer2[34370]].area = 1;
 		--_walkDataLastIndex;
@@ -79,9 +79,9 @@ void IgorEngine::PART_25_ACTION_105_enterMensToilet() {
 	}
 }
 
-void IgorEngine::PART_25_ACTION_107_openDoor() {
+void IgorEngine::part25OpenDoor() {
 	if (_objectsState[kMensRoomDoorStateIndex] == 1) {
-		EXEC_MAIN_ACTION(11);
+		partMainExecuteAction(11);
 		return;
 	}
 	for (int i = 1; i <= 2; ++i) {
@@ -95,12 +95,12 @@ void IgorEngine::PART_25_ACTION_107_openDoor() {
 		}
 	}
 	_objectsState[kMensRoomDoorStateIndex] = 1;
-	PART_25_HELPER_1_OBJECT_STATE(1);
+	part25ApplyObjectState(1);
 }
 
-void IgorEngine::PART_25_ACTION_108_closeDoor() {
+void IgorEngine::part25CloseDoor() {
 	if (_objectsState[kMensRoomDoorStateIndex] == 0) {
-		EXEC_MAIN_ACTION(14);
+		partMainExecuteAction(14);
 		return;
 	}
 	for (int i = 3; i <= 4; ++i) {
@@ -114,22 +114,22 @@ void IgorEngine::PART_25_ACTION_108_closeDoor() {
 		}
 	}
 	_objectsState[kMensRoomDoorStateIndex] = 0;
-	PART_25_HELPER_1_OBJECT_STATE(1);
+	part25ApplyObjectState(1);
 }
 
-void IgorEngine::PART_25_HELPER_1_OBJECT_STATE(int num) {
+void IgorEngine::part25ApplyObjectState(int num) {
 	if (num == 1 || num == 255) { // door state
 		if (_objectsState[kMensRoomDoorStateIndex] == 0) {
-			PART_25_HELPER_5_drawClosedDoor();
+			part25DrawClosedDoor();
 			_roomActionsTable[31] = 6;
 		} else {
-			PART_25_HELPER_7_drawOpenDoor();
+			part25DrawOpenDoor();
 			_roomActionsTable[31] = 7;
 		}
 	}
 }
 
-void IgorEngine::PART_25_HELPER_2_enterFromLeft() {
+void IgorEngine::part25EnterFromLeft() {
 	_walkData[0].setPos(0, 130, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 15;
@@ -142,7 +142,7 @@ void IgorEngine::PART_25_HELPER_2_enterFromLeft() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_25_HELPER_3_enterFromRight() {
+void IgorEngine::part25EnterFromRight() {
 	_walkData[0].setPos(319, 138, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -154,7 +154,7 @@ void IgorEngine::PART_25_HELPER_3_enterFromRight() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_25_HELPER_4_enterFromMensToilet() {
+void IgorEngine::part25EnterFromMensToilet() {
 	_walkData[0].setPos(130, 107, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 0;
@@ -167,17 +167,17 @@ void IgorEngine::PART_25_HELPER_4_enterFromMensToilet() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_25_HELPER_5_drawClosedDoor() {
+void IgorEngine::part25DrawClosedDoor() {
 	const int offset = 22208;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer, 23, 23, 52);
 }
 
-void IgorEngine::PART_25_HELPER_7_drawOpenDoor() {
+void IgorEngine::part25DrawOpenDoor() {
 	const int offset = 22208;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x4AC, 23, 23, 52);
 }
 
-void IgorEngine::PART_25() {
+void IgorEngine::part25() {
 	playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeCorridorAnnouncementBoard, IMG_CollegeCorridorAnnouncementBoard, BOX_CollegeCorridorAnnouncementBoard, MSK_CollegeCorridorAnnouncementBoard, TXT_CollegeCorridorAnnouncementBoard);
@@ -186,18 +186,18 @@ void IgorEngine::PART_25() {
 	loadActionData(DAT_CollegeCorridorAnnouncementBoard);
 	_roomDataOffsets = PART_25_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_25_EXEC_ACTION);
-	PART_25_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part25ExecuteAction);
+	part25ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 250) {
-			PART_25_HELPER_2_enterFromLeft();
+			part25EnterFromLeft();
 		} else if (_currentPart == 251) {
-			PART_25_HELPER_3_enterFromRight();
+			part25EnterFromRight();
 		} else if (_currentPart == 252) {
-			PART_25_HELPER_4_enterFromMensToilet();
+			part25EnterFromMensToilet();
 		}
 		enterPartLoop();
 	}

@@ -23,7 +23,7 @@
 namespace Igor {
 
 
-void IgorEngine::PART_18_EXEC_ACTION(int action) {
+void IgorEngine::part18ExecuteAction(int action) {
 	switch (action) {
 	case 101: // look at grating
 		igorSay(201, 1, 896);
@@ -50,21 +50,21 @@ void IgorEngine::PART_18_EXEC_ACTION(int action) {
 		igorSay(210, 1, 904);
 		break;
 	case 109: // use slug on grating
-		PART_18_ACTION_109_useSlugOnGrating();
+		part18UseSlugOnGrating();
 		break;
 	case 110: // leave
 		_currentPart = 252;
 		break;
 	case 111:
-		PART_18_ACTION_111_useBottleOnTap();
+		part18UseBottleOnTap();
 		break;
 	default:
-		error("PART_18_EXEC_ACTION unhandled action %d", action);
+		error("part18ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_18_ACTION_109_useSlugOnGrating() {
+void IgorEngine::part18UseSlugOnGrating() {
 	const int offset = 29480;
 	for (int i = 1; i <= 2; ++i) {
 		drawAnimRect(offset + 320, (i - 1) * 1519 + 31, 31, 48);
@@ -74,17 +74,17 @@ void IgorEngine::PART_18_ACTION_109_useSlugOnGrating() {
 	_currentPart = 191;
 	fadeOut(768);
 	// loads part 19
-	PART_19();
+	part19();
 
 	memcpy(_screenVGA, _screenLayer2, 46080);
 
-	loadResourceData__ROOM_MenToilets();
-	loadResourceData__ANIM_MenToilets();
+	part18LoadRoom();
+	part18LoadAnimation();
 	loadActionData(DAT_MenToilets);
 	_roomDataOffsets = PART_18_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_18_EXEC_ACTION);
-	PART_18_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part18ExecuteAction);
+	part18ApplyObjectState(255);
 	// paints bottom of screen black
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
@@ -95,7 +95,7 @@ void IgorEngine::PART_18_ACTION_109_useSlugOnGrating() {
 	igorSay(215, 1, 908);
 }
 
-void IgorEngine::PART_18_ACTION_111_useBottleOnTap() {
+void IgorEngine::part18UseBottleOnTap() {
 	if (_objectsState[kBottleStateIndex] == 0) {
 		igorSay(211, 1, 905);
 		return;
@@ -113,13 +113,13 @@ void IgorEngine::PART_18_ACTION_111_useBottleOnTap() {
 	drawAnimRect(offset, 0xBDE, 28, 29);
 	igorSay(213, 2, 907);
 	_objectsState[kBottleStateIndex] = 2;
-	UPDATE_OBJECT_STATE(1);
+	partMainUpdateObjectState(1);
 }
 
-void IgorEngine::PART_18_HELPER_1_OBJECT_STATE(int num) {
+void IgorEngine::part18ApplyObjectState(int num) {
 }
 
-void IgorEngine::PART_18_HELPER_2_walkIn() {
+void IgorEngine::part18WalkIn() {
 	_walkData[0].setPos(319, 142, 4, 0);
 	_walkData[0].clipSkipX = 1;
 	_walkData[0].clipWidth = 15;
@@ -137,21 +137,21 @@ void IgorEngine::PART_18_HELPER_2_walkIn() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_18() {
+void IgorEngine::part18() {
 	playMusic(2);
 	_gameState.enableLight = 1;
-	loadResourceData__ROOM_MenToilets();
-	loadResourceData__ANIM_MenToilets();
+	part18LoadRoom();
+	part18LoadAnimation();
 	loadActionData(DAT_MenToilets);
 	_roomDataOffsets = PART_18_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_18_EXEC_ACTION);
-	PART_18_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part18ExecuteAction);
+	part18ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_18_HELPER_2_walkIn();
+		part18WalkIn();
 		enterPartLoop();
 	}
 	while (_currentPart == 180 && !_gameStateLoaded) {
@@ -162,11 +162,11 @@ void IgorEngine::PART_18() {
 		fadeOut(624);
 }
 
-void IgorEngine::loadResourceData__ROOM_MenToilets() {
+void IgorEngine::part18LoadRoom() {
 	loadRoomData(PAL_MenToilets, IMG_MenToilets, BOX_MenToilets, MSK_MenToilets, TXT_MenToilets);
 }
 
-void IgorEngine::loadResourceData__ANIM_MenToilets() {
+void IgorEngine::part18LoadAnimation() {
 	static const int anm[] = { FRM_MenToilets1, FRM_MenToilets2, 0 };
 	loadAnimData(anm);
 }
