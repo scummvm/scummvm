@@ -195,7 +195,7 @@ void IgorEngine::part30WalkInFromRight() {
 void IgorEngine::part30LauraCutscene() {
 	memset(_screenVGA + 46080, 0, 17920);
 	fadeIn(768);
-    part30LauraAndIgorBumpIntoEachOther();
+	part30LauraAndIgorBumpIntoEachOther();
 	_walkData[0].setPos(172, 134, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
@@ -203,26 +203,26 @@ void IgorEngine::part30LauraCutscene() {
 	_updateDialogue = &IgorEngine::part30UpdateLauraDialogue;
 	igorSayAndWait({ { 203, 1, 452 }, { 204, 1, 453 }, { 205, 1, 454 } });
 	cutsceneSay(201, 85, 63, 0, 38, 206, 1, 455);
-    // igor crosses arms
+	// igor crosses arms
 	part30IgorCrossesArms();
 	// real dialogue
 
 	part30HandleLauraDialogue();
 	if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart)
 		return;
-    // "Nunca me habian descrito tan bien"
+	// "Nunca me habian descrito tan bien"
 	igorSayAndWait(207, 1, 456);
-    // at least you're funny
+	// at least you're funny
 	cutsceneSay(201, 85, 63, 0, 38, { { 208, 1, 457 }, { 209, 1, 458 } });
 	_updateDialogue = 0;
-    // Laura leaves
+	// Laura leaves
 	part30LauraLeaves();
 	_walkData[0].setPos(164, 135, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);
-    // Que caracter
+	// Que caracter
 	igorSay(210, 1, 459);
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
@@ -246,7 +246,7 @@ void IgorEngine::part30LauraAndIgorBumpIntoEachOther() {
 }
 
 void IgorEngine::part30IgorCrossesArms() {
-    decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBEE6) - 1, _screenVGA, true);
+	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBEE6) - 1, _screenVGA, true);
 	for (int i = 1; i <= 41; ++i) {
 		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA, true);

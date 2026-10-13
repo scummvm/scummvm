@@ -27,11 +27,11 @@
 namespace Igor {
 
 // Shared animation frame buffer offsets for Part 10 & Part 11
-const uint32 kPart10_11_Frm1 = 0xB400; // cseg175:2815
-const uint32 kPart10_11_Frm2 = 0xBC0A; // cseg177:0064
-const uint32 kPart10_11_Frm3 = 0xC5E2; // cseg177:0097
-const uint32 kPart10_11_Frm4 = 0xC786; // cseg177:00CA
-const uint32 kPart10_11_Frm5 = 0xC8AE; // cseg177:00FD
+const uint32 kPart10_11_Frm1 = 0xB400;
+const uint32 kPart10_11_Frm2 = 0xBC0A;
+const uint32 kPart10_11_Frm3 = 0xC5E2;
+const uint32 kPart10_11_Frm4 = 0xC786;
+const uint32 kPart10_11_Frm5 = 0xC8AE;
 
 // Layout of the animation buffer while the park is loaded: FRM_Park1..4 follow each other
 // from kParkFrames on, and the frames of Laura's entrance replace them while she is on screen.

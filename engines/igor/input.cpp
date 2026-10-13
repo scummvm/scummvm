@@ -507,7 +507,6 @@ void IgorEngine::handleRoomInput() {
 		_actionCode = 0;
 		return;
 	}
-	// verbatim from reference/scummvm-igor-engine/igor.cpp:1611
 	debugC(9, kDebugEngine, "handleRoomInput() actionCode %d", _actionCode);
 	// expanded: shows what the clicks resolved to and how the offset was built
 	debugC(9, kDebugEngine, "  verb %d verbType %d | obj1: type %d num %d (row %d) | obj2: type %d num %d (col %d) | verbBase %d offset %d -> %d",
