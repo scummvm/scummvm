@@ -748,7 +748,7 @@ void CellPhonePopup::drawScreenContent() {
 		drawLinkList();
 		drawDirectoryArrows();
 		// Zoomed-list Back: subButtons[7] before Nancy 13, [8] in Nancy 13.
-		drawBackButton(g_nancy->getGameType() >= kGameTypeNancy13 ? kN13SubBackFull : kSubEmailBack);
+		drawBackButton(g_nancy->getGameType() >= kGameTypeNancy13 ? (uint)kN13SubBackFull : (uint)kSubEmailBack);
 		break;
 
 	case kContentView:
@@ -2019,7 +2019,7 @@ bool CellPhonePopup::hasCameraFeature() const {
 
 Common::Rect CellPhonePopup::hubEmailRect() const {
 	// The Email option button: subButtons[3] before Nancy 13, [4] in Nancy 13.
-	const uint slot = g_nancy->getGameType() >= kGameTypeNancy13 ? kN13SubEmail : kSubEmail;
+	const uint slot = g_nancy->getGameType() >= kGameTypeNancy13 ? (uint)kN13SubEmail : (uint)kSubEmail;
 	Common::Rect r = _uiclData->subButtons[slot].destRect;
 	r.translate(-_screenPosition.left, -_screenPosition.top);
 	return r;
@@ -2028,7 +2028,7 @@ Common::Rect CellPhonePopup::hubEmailRect() const {
 Common::Rect CellPhonePopup::hubWebRect() const {
 	// The lower LCD option button: Web (subButtons[4]) before Nancy 13, View
 	// Pictures (subButtons[3]) in Nancy 13.
-	const uint slot = g_nancy->getGameType() >= kGameTypeNancy13 ? kN13SubViewPics : kSubWeb;
+	const uint slot = g_nancy->getGameType() >= kGameTypeNancy13 ? (uint)kN13SubViewPics : (uint)kSubWeb;
 	Common::Rect r = _uiclData->subButtons[slot].destRect;
 	r.translate(-_screenPosition.left, -_screenPosition.top);
 	return r;
@@ -2459,8 +2459,8 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		// pictures" option in the same slot is not signal-gated, but it is
 		// absent on a phone with no camera of its own.
 		const bool webDisabled = n13Hub ? !hasCameraFeature() : _noSignal;
-		const int emailSlot = n13Hub ? kN13SubEmail : kSubEmail;
-		const int webSlot = n13Hub ? kN13SubViewPics : kSubWeb;
+		const int emailSlot = n13Hub ? (int)kN13SubEmail : (int)kSubEmail;
+		const int webSlot = n13Hub ? (int)kN13SubViewPics : (int)kSubWeb;
 		const int newHubHover = emailR.contains(popupMouse) ? emailSlot
 								: (!webDisabled && webR.contains(popupMouse)) ? webSlot : -1;
 		if (newHubHover != _hoveredHubButton) {
