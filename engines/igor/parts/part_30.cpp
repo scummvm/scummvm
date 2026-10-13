@@ -24,19 +24,19 @@
 namespace Igor {
 
 
-void IgorEngine::PART_30_EXEC_ACTION(int action) {
+void IgorEngine::part30ExecuteAction(int action) {
 	switch (action) {
 	case 101:
 		_currentPart = 231;
 		break;
 	case 102:
-		PART_30_ACTION_102_goUpstairs();
+		part30GoUpstairs();
 		break;
 	case 103: // look at upward stairs
 		igorSay(201, 1, 450);
 		break;
 	case 104:
-		PART_30_ACTION_104_goDownstairs();
+		part30GoDownstairs();
 		break;
 	case 105: // look at downward stairs
 		igorSay(202, 1, 451);
@@ -45,12 +45,12 @@ void IgorEngine::PART_30_EXEC_ACTION(int action) {
 		_currentPart = 210;
 		break;
 	default:
-		error("PART_30_EXEC_ACTION unhandled action %d", action);
+		error("part30ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_30_ACTION_102_goUpstairs() {
+void IgorEngine::part30GoUpstairs() {
 	_roomObjectAreasTable[_screenLayer2[24108]].area = 2;
 	--_walkDataLastIndex;
 	buildWalkPath(99, 119, 108, 75);
@@ -66,7 +66,7 @@ void IgorEngine::PART_30_ACTION_102_goUpstairs() {
 	_currentPart = 312;
 }
 
-void IgorEngine::PART_30_ACTION_104_goDownstairs() {
+void IgorEngine::part30GoDownstairs() {
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[36318]].area = 2;
 	buildWalkPath(158, 119, 158, 113);
@@ -91,31 +91,31 @@ void IgorEngine::PART_30_ACTION_104_goDownstairs() {
 	_currentPart = (_objectsState[kExamCompletedStateIndex] == 0) ? 171 : 771;
 }
 
-void IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA(int action) {
+void IgorEngine::part30UpdateLauraDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_30_HELPER_9_setLauraFrame(42);
+		part30SetLauraFrame(42);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_30_HELPER_9_setLauraFrame(getRandomNumber(8) + 42);
+		part30SetLauraFrame(getRandomNumber(8) + 42);
 		break;
 	case kUpdateDialogueAnimStanding:
-		PART_30_HELPER_9_setLauraFrame(33);
+		part30SetLauraFrame(33);
 		break;
 	}
 }
 
-void IgorEngine::PART_30_HANDLE_DIALOGUE_LAURA() {
+void IgorEngine::part30HandleLauraDialogue() {
 	loadDialogueData(DLG_CollegeStairsFirstFloor);
-	_updateDialogue = &IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA;
+	_updateDialogue = &IgorEngine::part30UpdateLauraDialogue;
 	handleDialogue(201, 85, 63, 0, 38, false);
 	_updateDialogue = 0;
 }
 
-void IgorEngine::PART_30_HELPER_1_OBJECT_STATE(int num) {
+void IgorEngine::part30ApplyObjectState(int num) {
 }
 
-void IgorEngine::PART_30_HELPER_2_walkInFromLeft() {
+void IgorEngine::part30WalkInFromLeft() {
 	_walkData[0].setPos(0, 138, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -128,7 +128,7 @@ void IgorEngine::PART_30_HELPER_2_walkInFromLeft() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_30_HELPER_3_walkInFromUpstairs() {
+void IgorEngine::part30WalkInFromUpstairs() {
 	_roomObjectAreasTable[_screenLayer2[24170]].area = 2;
 	_walkData[0].setPos(170, 75, 4, 0);
 	_walkData[0].setDefaultScale();
@@ -153,7 +153,7 @@ void IgorEngine::PART_30_HELPER_3_walkInFromUpstairs() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_30_HELPER_2_walkInFromOutside() {
+void IgorEngine::part30WalkInFromOutside() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	_walkCurrentPos = 3;
@@ -180,7 +180,7 @@ void IgorEngine::PART_30_HELPER_2_walkInFromOutside() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_30_HELPER_5_walkInFromRight() {
+void IgorEngine::part30WalkInFromRight() {
 	_walkData[0].setPos(319, 138, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -192,22 +192,22 @@ void IgorEngine::PART_30_HELPER_5_walkInFromRight() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
+void IgorEngine::part30LauraCutscene() {
 	memset(_screenVGA + 46080, 0, 17920);
 	fadeIn(768);
-    lauraAndIgorBumpIntoEachOther();
+    part30LauraAndIgorBumpIntoEachOther();
 	_walkData[0].setPos(172, 134, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
-	_updateDialogue = &IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA;
+	_updateDialogue = &IgorEngine::part30UpdateLauraDialogue;
 	igorSayAndWait({ { 203, 1, 452 }, { 204, 1, 453 }, { 205, 1, 454 } });
 	cutsceneSay(201, 85, 63, 0, 38, 206, 1, 455);
     // igor crosses arms
-	igorCrossesArms();
+	part30IgorCrossesArms();
 	// real dialogue
 
-	PART_30_HANDLE_DIALOGUE_LAURA();
+	part30HandleLauraDialogue();
 	if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart)
 		return;
     // "Nunca me habian descrito tan bien"
@@ -216,7 +216,7 @@ void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
 	cutsceneSay(201, 85, 63, 0, 38, { { 208, 1, 457 }, { 209, 1, 458 } });
 	_updateDialogue = 0;
     // Laura leaves
-	lauraLeaves();
+	part30LauraLeaves();
 	_walkData[0].setPos(164, 135, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
@@ -229,10 +229,10 @@ void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
 	drawInventory(_inventoryInfo[72], 0);
 	_currentAction.verb = kVerbWalk;
 	_objectsState[kLauraMetAtCollegeStateIndex] = 1;
-	PART_30_HELPER_1_OBJECT_STATE(255);
+	part30ApplyObjectState(255);
 }
 
-void IgorEngine::lauraAndIgorBumpIntoEachOther() {
+void IgorEngine::part30LauraAndIgorBumpIntoEachOther() {
 // they both walk in
 	for (int i = 1; i <= 40; ++i) {
 		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
@@ -245,7 +245,7 @@ void IgorEngine::lauraAndIgorBumpIntoEachOther() {
 	}
 }
 
-void IgorEngine::igorCrossesArms() {
+void IgorEngine::part30IgorCrossesArms() {
     decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBEE6) - 1, _screenVGA, true);
 	for (int i = 1; i <= 41; ++i) {
 		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
@@ -253,7 +253,7 @@ void IgorEngine::igorCrossesArms() {
 	}
 }
 
-void IgorEngine::lauraLeaves() {
+void IgorEngine::part30LauraLeaves() {
 	for (int i = 51; i <= 70; ++i) {
 		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA, true);
@@ -263,12 +263,12 @@ void IgorEngine::lauraLeaves() {
 	}
 }
 
-void IgorEngine::PART_30_HELPER_9_setLauraFrame(int frame) {
+void IgorEngine::part30SetLauraFrame(int frame) {
 	const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0xBE94 + frame * 2) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
 }
 
-void IgorEngine::PART_30() {
+void IgorEngine::part30() {
 	playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeStairsFirstFloor, IMG_CollegeStairsFirstFloor, BOX_CollegeStairsFirstFloor, MSK_CollegeStairsFirstFloor, TXT_CollegeStairsFirstFloor);
@@ -277,26 +277,26 @@ void IgorEngine::PART_30() {
 	loadActionData(DAT_CollegeStairsFirstFloor);
 	_roomDataOffsets = PART_30_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_30_EXEC_ACTION);
-	PART_30_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part30ExecuteAction);
+	part30ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		if (_objectsState[kLauraMetAtCollegeStateIndex] == 0) {
-			PART_30_HELPER_8_LauraCutscene();
+			part30LauraCutscene();
 		} else {
 			if (_currentPart != 302) {
 				fadeIn(768);
 			}
 			if (_currentPart == 300) { // enter from outside
-				PART_30_HELPER_2_walkInFromLeft();
+				part30WalkInFromLeft();
 			} else if (_currentPart == 301) {
-				PART_30_HELPER_3_walkInFromUpstairs();
+				part30WalkInFromUpstairs();
 			} else if (_currentPart == 302) {
 				fadeIn(768);
-				PART_30_HELPER_2_walkInFromOutside();
+				part30WalkInFromOutside();
 			} else if (_currentPart == 303) {
-				PART_30_HELPER_5_walkInFromRight();
+				part30WalkInFromRight();
 			}
 		}
 	}

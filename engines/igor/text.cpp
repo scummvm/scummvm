@@ -498,11 +498,11 @@ void IgorEngine::animateIgorTalking(int frame) {
 		return;
 	}
 	if (getPart() == 85) {
-		PART_85_HELPER_6_animateIgorHead(frame);
+		part85AnimateIgorHead(frame);
 		return;
 	}
 	if (getPart() == 79) {
-		PART_79_animateIgorHead(frame);
+		part79AnimateIgorHead(frame);
 		return;
 	}
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
@@ -579,7 +579,7 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 			if (code == 4)
 				_gameState.dialogueData[120] = 0;
 			if (code == 98 || code == 101) {
-				PART_09_secretarySearchesFile();
+				part9SecretarySearchesFile();
 				dialogueReplyToQuestion(x, y, r, g, b, code);
 			}
 		}

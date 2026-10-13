@@ -23,7 +23,7 @@
 namespace Igor {
 
 
-void IgorEngine::PART_27_EXEC_ACTION(int action) {
+void IgorEngine::part27ExecuteAction(int action) {
 	switch (action) {
 	case 101: // go to right
 		_currentPart = 211;
@@ -32,7 +32,7 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		if (_objectsState[kLockersExaminedStateIndex] == 0) {
 			igorSay(216, 2, 1173);
 			_objectsState[kLockersExaminedStateIndex] = 1;
-			PART_27_HELPER_1_OBJECT_STATE(255);
+			part27ApplyObjectState(255);
 		} else {
 			igorSay(201, 1, 1162);
 		}
@@ -47,19 +47,19 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		igorSay(205, 1, 1165);
 		break;
 	case 106: // open Philip's locker
-		PART_27_ACTION_106_openPhilipLocker();
+		part27OpenPhilipLocker();
 		break;
 	case 107:
-		PART_27_ACTION_107_closeLocker();
+		part27CloseLocker();
 		break;
 	case 108:
-		PART_27_ACTION_108_openLocker();
+		part27OpenLocker();
 		break;
 	case 109: // look at bottles
 		igorSay(215, 1, 1172);
 		break;
 	case 110:
-		PART_27_ACTION_110_useFlaskOnLocker();
+		part27UseFlaskOnLocker();
 		break;
 	case 111: // look at messageboard
 		igorSay(218, 2, 1174);
@@ -71,14 +71,14 @@ void IgorEngine::PART_27_EXEC_ACTION(int action) {
 		_currentPart = 150;
 		break;
 	default:
-		error("PART_27_EXEC_ACTION unhandled action %d", action);
+		error("part27ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_27_ACTION_106_openPhilipLocker() {
+void IgorEngine::part27OpenPhilipLocker() {
 	if (_objectsState[kPhillipLockerStateIndex] == 1) {
-		EXEC_MAIN_ACTION(11);
+		partMainExecuteAction(11);
 		return;
 	}
 	if (_objectsState[kPhillipLockerCombinationLearnedStateIndex] == 0) {
@@ -100,12 +100,12 @@ void IgorEngine::PART_27_ACTION_106_openPhilipLocker() {
 		}
 	}
 	_objectsState[kPhillipLockerStateIndex] = 1;
-	PART_27_HELPER_1_OBJECT_STATE(1);
+	part27ApplyObjectState(1);
 }
 
-void IgorEngine::PART_27_ACTION_107_closeLocker() {
+void IgorEngine::part27CloseLocker() {
 	if (_objectsState[kPhillipLockerStateIndex] == 0) {
-		EXEC_MAIN_ACTION(14);
+		partMainExecuteAction(14);
 		return;
 	}
 	const int offset = 21810;
@@ -117,10 +117,10 @@ void IgorEngine::PART_27_ACTION_107_closeLocker() {
 		}
 	}
 	_objectsState[kPhillipLockerStateIndex] = 0;
-	PART_27_HELPER_1_OBJECT_STATE(1);
+	part27ApplyObjectState(1);
 }
 
-void IgorEngine::PART_27_ACTION_108_openLocker() {
+void IgorEngine::part27OpenLocker() {
 	if (_inventoryInfo[58] > 0 || _objectsState[kButterflyNetStateIndex] == 2) {
 		igorSay(208, 1, 1168);
 		return;
@@ -134,13 +134,13 @@ void IgorEngine::PART_27_ACTION_108_openLocker() {
 		}
 	}
 	addObjectToInventory(kInventoryObjectBottle, 58);
-	PART_27_HELPER_1_OBJECT_STATE(1);
+	part27ApplyObjectState(1);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }
 
-void IgorEngine::PART_27_ACTION_110_useFlaskOnLocker() {
+void IgorEngine::part27UseFlaskOnLocker() {
 	igorSayAndWait({ { 212, 1, 1170 }, { 213, 2, 1171 } });
 	const int offset = 25012;
 	for (int i = 1; i <= 2; ++i) {
@@ -150,21 +150,21 @@ void IgorEngine::PART_27_ACTION_110_useFlaskOnLocker() {
 		}
 	}
 	removeObjectFromInventory(55);
-	PART_27_HELPER_1_OBJECT_STATE(255);
+	part27ApplyObjectState(255);
 	_objectsState[kFlaskLeftInPhillipLockerStateIndex] = 1;
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }
 
-void IgorEngine::PART_27_HELPER_1_OBJECT_STATE(int num) {
+void IgorEngine::part27ApplyObjectState(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[kPhillipLockerStateIndex] == 0) {
-			PART_27_HELPER_3_drawClosedLocker();
+			part27DrawClosedLocker();
 			_roomActionsTable[3] = 6;
 			_roomObjectAreasTable[6].object = 3;
 		} else {
-			PART_27_HELPER_4_drawOpenLocker();
+			part27DrawOpenLocker();
 			_roomActionsTable[3] = 7;
 			_roomObjectAreasTable[6].object = 4;
 		}
@@ -179,7 +179,7 @@ void IgorEngine::PART_27_HELPER_1_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_27_HELPER_2_enterFromLeft() {
+void IgorEngine::part27EnterFromLeft() {
 	_walkData[0].setPos(0, 132, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -191,17 +191,17 @@ void IgorEngine::PART_27_HELPER_2_enterFromLeft() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_27_HELPER_3_drawClosedLocker() {
+void IgorEngine::part27DrawClosedLocker() {
 	const int offset = 21816;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer, 26, 26, 48);
 }
 
-void IgorEngine::PART_27_HELPER_4_drawOpenLocker() {
+void IgorEngine::part27DrawOpenLocker() {
 	const int offset = 21816;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x4E0, 26, 26, 48);
 }
 
-void IgorEngine::PART_27_HELPER_5_enterFromLibrary() {
+void IgorEngine::part27EnterFromLibrary() {
 	_walkData[0].setPos(270, 134, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 0;
@@ -212,7 +212,7 @@ void IgorEngine::PART_27_HELPER_5_enterFromLibrary() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_27() {
+void IgorEngine::part27() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_CollegeLockers, IMG_CollegeLockers, BOX_CollegeLockers, MSK_CollegeLockers, TXT_CollegeLockers);
@@ -221,16 +221,16 @@ void IgorEngine::PART_27() {
 	loadActionData(DAT_CollegeLockers);
 	_roomDataOffsets = PART_27_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_27_EXEC_ACTION);
-	PART_27_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part27ExecuteAction);
+	part27ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 270) {
-			PART_27_HELPER_2_enterFromLeft();
+			part27EnterFromLeft();
 		} else {
-			PART_27_HELPER_5_enterFromLibrary();
+			part27EnterFromLibrary();
 		}
 		enterPartLoop();
 	}

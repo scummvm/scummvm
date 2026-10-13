@@ -24,13 +24,13 @@
 namespace Igor {
 
 
-void IgorEngine::PART_36_EXEC_ACTION(int action) {
+void IgorEngine::part36ExecuteAction(int action) {
 	switch (action) {
 	case 101: // look at desk
 		igorSay(201, 1, 655);
 		break;
 	case 102:
-		PART_36_ACTION_102_takePen();
+		part36TakePen();
 		break;
 	case 103: // look at pen
 		igorSay(202, 1, 656);
@@ -54,12 +54,12 @@ void IgorEngine::PART_36_EXEC_ACTION(int action) {
 		_currentPart = 242;
 		break;
 	default:
-		error("PART_36_EXEC_ACTION unhandled action %d", action);
+		error("part36ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_36_ACTION_102_takePen() {
+void IgorEngine::part36TakePen() {
 	for (int i = 1; i >= 0; --i) {
 		for (int j = 0; j <= 48; ++j) {
 			for (int k = 0; k <= 33; ++k) {
@@ -85,25 +85,25 @@ void IgorEngine::PART_36_ACTION_102_takePen() {
 	}
 	addObjectToInventory(kInventoryObjectPen, 65);
 	_objectsState[kPenTakenStateIndex] = 1;
-	PART_36_HELPER_1_OBJECT_STATE(255);
+	part36ApplyObjectState(255);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }
 
-void IgorEngine::PART_36_HELPER_1_OBJECT_STATE(int num) {
+void IgorEngine::part36ApplyObjectState(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[kPenTakenStateIndex] == 0) {
-			PART_36_HELPER_4_drawPen(1);
+			part36DrawPen(1);
 		} else {
-			PART_36_HELPER_4_drawPen(0);
+			part36DrawPen(0);
 			_roomObjectAreasTable[6].object = 1;
 			_roomObjectAreasTable[7].object = 1;
 		}
 	}
 }
 
-void IgorEngine::PART_36_HELPER_2_walkIn() {
+void IgorEngine::part36WalkIn() {
 	_walkData[0].setPos(319, 143, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -116,7 +116,7 @@ void IgorEngine::PART_36_HELPER_2_walkIn() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_36_HELPER_4_drawPen(int frame) {
+void IgorEngine::part36DrawPen(int frame) {
 	if (frame == 0) {
 		memcpy(_screenLayer1 + 31430, _animFramesBuffer, 7);
 	} else if (frame == 1) {
@@ -124,7 +124,7 @@ void IgorEngine::PART_36_HELPER_4_drawPen(int frame) {
 	}
 }
 
-void IgorEngine::PART_36() {
+void IgorEngine::part36() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_ChemistryClassroom, IMG_ChemistryClassroom, BOX_ChemistryClassroom, MSK_ChemistryClassroom, TXT_ChemistryClassroom);
@@ -133,13 +133,13 @@ void IgorEngine::PART_36() {
 	loadActionData(DAT_ChemistryClassroom);
 	_roomDataOffsets = PART_36_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(90, 0, 319, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_36_EXEC_ACTION);
-	PART_36_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part36ExecuteAction);
+	part36ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_36_HELPER_2_walkIn();
+		part36WalkIn();
 		enterPartLoop();
 	}
 	while (_currentPart == 360 && !_gameStateLoaded) {

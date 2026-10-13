@@ -55,16 +55,16 @@ static const int kPart79SlideAnimSteps = 12;
 static const int kPart79SlideLayer2Offset = 0xA0;
 static const int kPart79BankTable = 0x6DA6;
 
-void IgorEngine::PART_79_drawLauraInWater(int frame) {
+void IgorEngine::part79DrawLauraInWater(int frame) {
 	decodeAnimFrame(getAnimFrame(0, kPart79LauraTable, frame), _screenVGA, false);
 }
 
-void IgorEngine::PART_79_drawReflection(int step) {
+void IgorEngine::part79DrawReflection(int step) {
 	copyArea(_screenVGA, kPart79ReflectionOffset, 320, _animFramesBuffer + kPart79ReflectionFrames + step * kPart79ReflectionFrameSize,
 			 kPart79ReflectionWidth, kPart79ReflectionWidth, kPart79PatchHeight);
 }
 
-void IgorEngine::PART_79_clearReflection() {
+void IgorEngine::part79ClearReflection() {
 	for (int y = 0; y < kPart79PatchHeight; ++y) {
 		memset(_screenVGA + kPart79ReflectionOffset + y * 320, kPart79ReflectionClearColor, kPart79ReflectionWidth);
 	}
@@ -73,34 +73,34 @@ void IgorEngine::PART_79_clearReflection() {
 /**
  * Every 64 ticks the small piece goes on to the next of its steps.
  */
-void IgorEngine::PART_79_updateReflection() {
+void IgorEngine::part79UpdateReflection() {
 	if (compareGameTick(0x3D)) {
-		PART_79_drawReflection(kPart79ReflectionSteps[_roomAmbientIndex]);
+		part79DrawReflection(kPart79ReflectionSteps[_roomAmbientIndex]);
 		_roomAmbientIndex = (_roomAmbientIndex == 7) ? 0 : _roomAmbientIndex + 1;
 	}
 }
 
-void IgorEngine::PART_79_updateLauraInWaterDialogue(int action) {
+void IgorEngine::part79UpdateLauraInWaterDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_79_drawLauraInWater(kPart79TalkFrame);
+		part79DrawLauraInWater(kPart79TalkFrame);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_79_drawLauraInWater(kPart79TalkFrame + getRandomNumber(4));
+		part79DrawLauraInWater(kPart79TalkFrame + getRandomNumber(4));
 		break;
 	}
 }
 
-void IgorEngine::PART_79_sayLaura(const Common::Array<DialogueText> &lines) {
+void IgorEngine::part79SayLaura(const Common::Array<DialogueText> &lines) {
 	cutsceneSayStartWithCallback(kPart79TextX, kPart79TextY, kPart79TextR, kPart79TextG, kPart79TextB, lines,
-								 &IgorEngine::PART_79_updateLauraInWaterDialogue);
-	_updateRoomBackground = &IgorEngine::PART_79_updateReflection;
+								 &IgorEngine::part79UpdateLauraInWaterDialogue);
+	_updateRoomBackground = &IgorEngine::part79UpdateReflection;
 	waitForEndOfCutsceneDialogue(kPart79TextX, kPart79TextY, kPart79TextR, kPart79TextG, kPart79TextB);
 	_updateDialogue = nullptr;
 	_updateRoomBackground = nullptr;
 }
 
-void IgorEngine::PART_79_scroll() {
+void IgorEngine::part79Scroll() {
 	uint8 *bank = loadData(ANM_Part79Frames);
 	uint8 *buffer = _screenTextLayer;
 	int frame = kPart79SlideFirstFrame;
@@ -128,7 +128,7 @@ void IgorEngine::PART_79_scroll() {
 }
 
 // Laura in the water
-void IgorEngine::PART_79_LauraInWater() {
+void IgorEngine::part79LauraInWater() {
 	playMusic(13);
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
@@ -139,36 +139,36 @@ void IgorEngine::PART_79_LauraInWater() {
 	loadData(IMG_Part79Layer2, _screenLayer2);
 	loadData(ANM_Part79, _animFramesBuffer);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	PART_79_drawLauraInWater(1);
+	part79DrawLauraInWater(1);
 	fadeIn(768);
 	_roomAmbientIndex = 0;
 
-	PART_79_sayLaura({ { 201, 2, 742 }, { 203, 1, 743 }, { 204, 2, 744 }, { 206, 1, 745 }, { 207, 1, 746 } });
-	PART_79_sayLaura({ { 208, 1, 747 }, { 209, 2, 748 } });
+	part79SayLaura({ { 201, 2, 742 }, { 203, 1, 743 }, { 204, 2, 744 }, { 206, 1, 745 }, { 207, 1, 746 } });
+	part79SayLaura({ { 208, 1, 747 }, { 209, 2, 748 } });
 
 	// the figure goes through its frames while the small piece keeps changing
 	int frame = kPart79StandingFirst;
 	do {
 		if (compareGameTick(1, 16)) {
-			PART_79_drawLauraInWater(frame);
+			part79DrawLauraInWater(frame);
 			++frame;
 		}
 		if (compareGameTick(0x3D)) {
-			PART_79_drawReflection(kPart79ReflectionSteps[_roomAmbientIndex]);
+			part79DrawReflection(kPart79ReflectionSteps[_roomAmbientIndex]);
 			_roomAmbientIndex = (_roomAmbientIndex == 7) ? 0 : _roomAmbientIndex + 1;
-			PART_79_drawReflection(getRandomNumber(4));
+			part79DrawReflection(getRandomNumber(4));
 		}
 		waitForTimer();
 	} while (frame != kPart79StandingEnd);
 
-	PART_79_sayLaura({ { 211, 1, 749 }, { 212, 1, 750 }, { 213, 1, 751 }, { 214, 2, 752 } });
-	PART_79_clearReflection();
+	part79SayLaura({ { 211, 1, 749 }, { 212, 1, 750 }, { 213, 1, 751 }, { 214, 2, 752 } });
+	part79ClearReflection();
 	// laura walks
 	for (frame = kPart79WalkFirst; frame <= kPart79WalkLast; ++frame) {
-		PART_79_drawLauraInWater(frame);
+		part79DrawLauraInWater(frame);
 		waitForTimer(31);
 	}
-	PART_79_scroll();
+	part79Scroll();
 	_currentPart = 791;
 }
 
@@ -213,29 +213,29 @@ static const int kPart79FadeFirstColor = 0xF5;
 static const int kPart79FadeLastColor = 0xFE;
 static const uint8 kPart79FadeColors[6] = { 0x3F, 0x20, 0x00, 0x2C, 0x0C, 0x00 };
 
-void IgorEngine::PART_79_drawGroupFrame(const uint8 *buffer, int table, int base, int frame) {
+void IgorEngine::part79DrawGroupFrame(const uint8 *buffer, int table, int base, int frame) {
 	decodeAnimFrame(buffer + base + READ_LE_UINT16(buffer + table + frame * 2) - 1, _screenVGA, false);
 }
 
-void IgorEngine::PART_79_drawBoomerangScene(int frame) {
-	PART_79_drawGroupFrame(_animFramesBuffer, kPart79Scenes.table, kPart79Scenes.base, frame);
+void IgorEngine::part79DrawBoomerangScene(int frame) {
+	part79DrawGroupFrame(_animFramesBuffer, kPart79Scenes.table, kPart79Scenes.base, frame);
 }
 
-void IgorEngine::PART_79_drawKiss(int frame) {
-	PART_79_drawGroupFrame(_screenLayer2, kPart79Layer2Frames.table, kPart79Layer2Frames.base, frame);
+void IgorEngine::part79DrawKiss(int frame) {
+	part79DrawGroupFrame(_screenLayer2, kPart79Layer2Frames.table, kPart79Layer2Frames.base, frame);
 }
 
-void IgorEngine::PART_79_drawCircularClosingTransition(int frame) {
+void IgorEngine::part79DrawCircularClosingTransition(int frame) {
 	const int offset = READ_LE_UINT16(_screenLayer2 + kPart79Layer2Frames2.table + frame * 2);
 	decodeAnimFrame(_screenLayer2 + kPart79Layer2Frames2.base + offset, _screenVGA, false);
 }
 
-void IgorEngine::PART_79_drawPhilipSharkScene(const void *group, int frame) {
+void IgorEngine::part79DrawPhilipSharkScene(const void *group, int frame) {
 	const Part79FrameGroup *g = (const Part79FrameGroup *)group;
-	PART_79_drawGroupFrame(_animFramesBuffer, g->table, g->base, frame);
+	part79DrawGroupFrame(_animFramesBuffer, g->table, g->base, frame);
 }
 
-void IgorEngine::PART_79_animateIgorHead(int frame) {
+void IgorEngine::part79AnimateIgorHead(int frame) {
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
 	int dst = (wd->y - wd->scaleWidth + 1) * 320;
 	const int delta = wd->x - _walkWidthScaleTable[wd->scaleHeight - 1] / 2;
@@ -255,78 +255,78 @@ void IgorEngine::PART_79_animateIgorHead(int frame) {
 	}
 }
 
-void IgorEngine::PART_79_UPDATE_DIALOGUE_SPEAKER(int action) {
+void IgorEngine::part79UpdateSpeakerDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_79_drawBoomerangScene(_part79EndFrame);
+		part79DrawBoomerangScene(_part79EndFrame);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_79_drawBoomerangScene(_part79BaseFrame + getRandomNumber(3));
+		part79DrawBoomerangScene(_part79BaseFrame + getRandomNumber(3));
 		break;
 	}
 }
 
-void IgorEngine::PART_79_UPDATE_DIALOGUE_FIRST_SPEAKER(int action) {
+void IgorEngine::part79UpdateLauraDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_79_drawBoomerangScene(kPart79FirstSpeakerEndFrame);
+		part79DrawBoomerangScene(kPart79FirstSpeakerEndFrame);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_79_drawBoomerangScene(kPart79FirstSpeakerBase + getRandomNumber(3));
+		part79DrawBoomerangScene(kPart79FirstSpeakerBase + getRandomNumber(3));
 		break;
 	}
 }
 
-void IgorEngine::PART_79_UPDATE_DIALOGUE_THIRD_SPEAKER(int action) {
+void IgorEngine::part79UpdatePhilipDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_79_drawKiss(kPart79ThirdSpeakerEndFrame);
+		part79DrawKiss(kPart79ThirdSpeakerEndFrame);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_79_drawKiss(kPart79ThirdSpeakerBase + getRandomNumber(3));
+		part79DrawKiss(kPart79ThirdSpeakerBase + getRandomNumber(3));
 		break;
 	}
 }
 
-void IgorEngine::PART_79_animatePhilipShaking() {
+void IgorEngine::part79AnimatePhilipShaking() {
 	if (compareGameTick(0x3D)) {
-		PART_79_drawBoomerangScene(_roomAmbientIndex);
+		part79DrawBoomerangScene(_roomAmbientIndex);
 		_roomAmbientIndex = (_roomAmbientIndex == kPart79AmbientFirst) ? kPart79AmbientSecond : kPart79AmbientFirst;
 	}
 }
 
-void IgorEngine::PART_79_SAY_SPEAKER(int startX, int startY, int x, int y, int r, int g, int b, int endFrame, int baseFrame,
+void IgorEngine::part79SaySpeaker(int startX, int startY, int x, int y, int r, int g, int b, int endFrame, int baseFrame,
 									 const Common::Array<DialogueText> &lines) {
 	_part79EndFrame = endFrame;
 	_part79BaseFrame = baseFrame;
-	cutsceneSayStartWithCallback(startX, startY, r, g, b, lines, &IgorEngine::PART_79_UPDATE_DIALOGUE_SPEAKER);
+	cutsceneSayStartWithCallback(startX, startY, r, g, b, lines, &IgorEngine::part79UpdateSpeakerDialogue);
 	waitForEndOfCutsceneDialogue(x, y, r, g, b);
 	_updateDialogue = nullptr;
 }
 
-void IgorEngine::PART_79_sayLaura(int startX, int startY, const Common::Array<DialogueText> &lines) {
-	cutsceneSayStartWithCallback(startX, startY, 63, 0, 38, lines, &IgorEngine::PART_79_UPDATE_DIALOGUE_FIRST_SPEAKER);
+void IgorEngine::part79SayLaura(int startX, int startY, const Common::Array<DialogueText> &lines) {
+	cutsceneSayStartWithCallback(startX, startY, 63, 0, 38, lines, &IgorEngine::part79UpdateLauraDialogue);
 	waitForEndOfCutsceneDialogue(145, 86, 63, 0, 38);
 	_updateDialogue = nullptr;
 }
 
-void IgorEngine::PART_79_sayPhilip(const Common::Array<DialogueText> &lines) {
-	cutsceneSayStartWithCallback(220, 91, 63, 0, 38, lines, &IgorEngine::PART_79_UPDATE_DIALOGUE_THIRD_SPEAKER);
+void IgorEngine::part79SayPhilip(const Common::Array<DialogueText> &lines) {
+	cutsceneSayStartWithCallback(220, 91, 63, 0, 38, lines, &IgorEngine::part79UpdatePhilipDialogue);
 	waitForEndOfCutsceneDialogue(220, 91, 63, 0, 38);
 	_updateDialogue = nullptr;
 }
 
-void IgorEngine::PART_79_sayIgor(const Common::Array<DialogueText> &lines) {
+void IgorEngine::part79SayIgor(const Common::Array<DialogueText> &lines) {
 	igorSay(lines);
 	waitForEndOfIgorDialogue();
 }
 
-void IgorEngine::PART_79_setIgorPos(int x, int y) {
+void IgorEngine::part79SetIgorPos(int x, int y) {
 	_walkData[0].x = x;
 	_walkData[0].y = y;
 }
 
-void IgorEngine::PART_79_FADE_COLORS(int first, int last, bool fadeInColors) {
+void IgorEngine::part79FadeColors(int first, int last, bool fadeInColors) {
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 	for (int step = 1; step <= 63; ++step) {
 		const int level = fadeInColors ? 64 - step : step;
@@ -345,12 +345,12 @@ void IgorEngine::PART_79_FADE_COLORS(int first, int last, bool fadeInColors) {
 	}
 }
 
-void IgorEngine::PART_79_FADE_IN_PAIR(int firstColor) {
+void IgorEngine::part79FadeInPair(int firstColor) {
 	memcpy(_paletteBuffer + firstColor * 3, kPart79FadeColors, 6);
-	PART_79_FADE_COLORS(firstColor, firstColor + 1, true);
+	part79FadeColors(firstColor, firstColor + 1, true);
 }
 
-void IgorEngine::PART_79_beachScene() {
+void IgorEngine::part79BeachScene() {
 	playMusic(13);
 	_gameState.enableLight = 2;
 	// The ending uses the beach clothes, including when entered directly.
@@ -362,63 +362,63 @@ void IgorEngine::PART_79_beachScene() {
 	loadData(ANM_Part79bFrames, _animFramesBuffer);
 	loadData(ANM_Part79bLayer2, _screenLayer2);
 
-	PART_79_SAY_SPEAKER(178, 82, 178, 82, 63, 63, 0, 2, 2, { { 201, 2, 753 }, { 203, 1, 754 }, { 204, 1, 755 } });
-	PART_79_sayLaura(145, 86, { { 205, 2, 756 }, { 207, 2, 757 } });
-	PART_79_SAY_SPEAKER(172, 82, 178, 82, 63, 63, 0, 2, 2, { { 209, 2, 758 } });
+	part79SaySpeaker(178, 82, 178, 82, 63, 63, 0, 2, 2, { { 201, 2, 753 }, { 203, 1, 754 }, { 204, 1, 755 } });
+	part79SayLaura(145, 86, { { 205, 2, 756 }, { 207, 2, 757 } });
+	part79SaySpeaker(172, 82, 178, 82, 63, 63, 0, 2, 2, { { 209, 2, 758 } });
 	for (int frame = 0x10; frame <= 0x1C; ++frame) {
-		PART_79_drawBoomerangScene(frame);
+		part79DrawBoomerangScene(frame);
 		waitForTimer(31);
 	}
-	PART_79_sayLaura(145, 86, { { 211, 1, 759 } });
+	part79SayLaura(145, 86, { { 211, 1, 759 } });
 	for (int frame = 0xB; frame <= 0xF; ++frame) {
-		PART_79_drawBoomerangScene(frame);
+		part79DrawBoomerangScene(frame);
 		waitForTimer(11);
 	}
-	PART_79_drawBoomerangScene(29);
-	PART_79_SAY_SPEAKER(178, 82, 178, 82, 63, 63, 0, 0x1D, 0x1E, { { 212, 1, 760 }, { 213, 1, 761 } });
+	part79DrawBoomerangScene(29);
+	part79SaySpeaker(178, 82, 178, 82, 63, 63, 0, 0x1D, 0x1E, { { 212, 1, 760 }, { 213, 1, 761 } });
 
-	PART_79_setIgorPos(229, 137);
+	part79SetIgorPos(229, 137);
 	_walkData[0].posNum = 4;
 	_walkData[0].clipSkipX = 1;
 	_walkData[0].clipWidth = 30;
 	_walkData[0].scaleWidth = 50;
 	_walkData[0].scaleHeight = 50;
 	_walkDataLastIndex = 1;
-	PART_79_sayIgor({ { 214, 2, 762 }, { 216, 2, 763 } });
-	PART_79_SAY_SPEAKER(178, 82, 178, 82, 63, 63, 0, 0x1D, 0x1E, { { 218, 2, 764 } });
+	part79SayIgor({ { 214, 2, 762 }, { 216, 2, 763 } });
+	part79SaySpeaker(178, 82, 178, 82, 63, 63, 0, 0x1D, 0x1E, { { 218, 2, 764 } });
 	for (int frame = 0x21; frame <= 0x26; ++frame) {
-		PART_79_drawBoomerangScene(frame);
+		part79DrawBoomerangScene(frame);
 		waitForTimer(31);
 	}
-	PART_79_drawBoomerangScene(46);
+	part79DrawBoomerangScene(46);
 
-	PART_79_setIgorPos(236, 138);
-	PART_79_sayIgor({ { 220, 2, 765 } });
-	PART_79_SAY_SPEAKER(195, 83, 195, 83, 63, 63, 0, 40, 41, { { 222, 2, 766 } });
-	PART_79_drawBoomerangScene(39);
+	part79SetIgorPos(236, 138);
+	part79SayIgor({ { 220, 2, 765 } });
+	part79SaySpeaker(195, 83, 195, 83, 63, 63, 0, 40, 41, { { 222, 2, 766 } });
+	part79DrawBoomerangScene(39);
 	waitForTimer(31);
-	PART_79_drawBoomerangScene(46);
-	PART_79_sayIgor({ { 224, 2, 767 } });
+	part79DrawBoomerangScene(46);
+	part79SayIgor({ { 224, 2, 767 } });
 	for (int frame = 0x2F; frame <= 0x32; ++frame) {
-		PART_79_drawBoomerangScene(frame);
+		part79DrawBoomerangScene(frame);
 		waitForTimer(31);
 	}
-	PART_79_SAY_SPEAKER(206, 85, 206, 85, 63, 63, 0, 0x35, 0x36, { { 226, 2, 768 } });
-	PART_79_drawBoomerangScene(51);
+	part79SaySpeaker(206, 85, 206, 85, 63, 63, 0, 0x35, 0x36, { { 226, 2, 768 } });
+	part79DrawBoomerangScene(51);
 	waitForTimer(31);
 
-	PART_79_setIgorPos(246, 138);
-	PART_79_sayIgor({ { 228, 2, 769 }, { 230, 2, 770 } });
-	PART_79_SAY_SPEAKER(206, 85, 206, 85, 63, 63, 0, 0x35, 0x36, { { 232, 1, 771 } });
+	part79SetIgorPos(246, 138);
+	part79SayIgor({ { 228, 2, 769 }, { 230, 2, 770 } });
+	part79SaySpeaker(206, 85, 206, 85, 63, 63, 0, 0x35, 0x36, { { 232, 1, 771 } });
 	playSound(28, 1);
 	for (int frame = 0x3A; frame <= 0x56; ++frame) {
-		PART_79_drawBoomerangScene(frame);
+		part79DrawBoomerangScene(frame);
 		if (frame == 0x4F) {
 			playSound(29, 1);
 		}
 		waitForTimer(17);
 	}
-	PART_79_drawBoomerangScene(52);
+	part79DrawBoomerangScene(52);
 	waitForTimer(33);
 	// the sound goes on until it ends
 	while (_mixer->isSoundHandleActive(_sfxHandle) || isDialogueSpeechPlaying()) {
@@ -426,11 +426,11 @@ void IgorEngine::PART_79_beachScene() {
 	}
 	_roomAmbientIndex = kPart79AmbientFirst;
 	igorSay(233, 2, 772);
-	_updateRoomBackground = &IgorEngine::PART_79_animatePhilipShaking;
+	_updateRoomBackground = &IgorEngine::part79AnimatePhilipShaking;
 	waitForEndOfIgorDialogue();
 	_updateRoomBackground = nullptr;
 	for (int frame = 0x58; frame <= 0x64; ++frame) {
-		PART_79_drawBoomerangScene(frame);
+		part79DrawBoomerangScene(frame);
 		if (frame < 0x64) {
 			waitForTimer(31);
 		}
@@ -440,48 +440,48 @@ void IgorEngine::PART_79_beachScene() {
 	}
 
 	for (int frame = 1; frame <= 3; ++frame) {
-		PART_79_drawKiss(frame);
+		part79DrawKiss(frame);
 		waitForTimer(31);
 	}
-	PART_79_setIgorPos(178, 142);
+	part79SetIgorPos(178, 142);
 	_walkData[0].posNum = 2;
-	PART_79_sayIgor({ { 235, 1, 773 }, { 236, 2, 774 } });
+	part79SayIgor({ { 235, 1, 773 }, { 236, 2, 774 } });
 	for (int frame = 4; frame <= 0x12; ++frame) {
-		PART_79_drawKiss(frame);
+		part79DrawKiss(frame);
 		waitForTimer(31);
 	}
-	PART_79_sayIgor({ { 238, 1, 775 } });
+	part79SayIgor({ { 238, 1, 775 } });
 	// the texts 201 to 215 are replaced by the ones of the main resource
 	text = loadData(TXT_Part79bMain);
 	decodeRoomStrings(text, true);
 	free(text);
 	for (int frame = 0x13; frame <= 0x15; ++frame) {
-		PART_79_drawKiss(frame);
+		part79DrawKiss(frame);
 		waitForTimer(31);
 	}
 
-	PART_79_setIgorPos(196, 141);
-	PART_79_sayIgor({ { 201, 2, 776 }, { 203, 2, 777 } });
-	PART_79_sayPhilip({ { 205, 1, 778 }, { 206, 1, 779 }, { 207, 1, 780 } });
-	PART_79_sayIgor({ { 208, 1, 781 }, { 209, 1, 782 } });
-	PART_79_sayPhilip({ { 210, 1, 783 } });
-	PART_79_sayIgor({ { 211, 1, 784 } });
-	PART_79_sayPhilip({ { 212, 1, 785 } });
-	PART_79_sayIgor({ { 213, 1, 786 } });
-	PART_79_sayPhilip({ { 214, 1, 787 } });
+	part79SetIgorPos(196, 141);
+	part79SayIgor({ { 201, 2, 776 }, { 203, 2, 777 } });
+	part79SayPhilip({ { 205, 1, 778 }, { 206, 1, 779 }, { 207, 1, 780 } });
+	part79SayIgor({ { 208, 1, 781 }, { 209, 1, 782 } });
+	part79SayPhilip({ { 210, 1, 783 } });
+	part79SayIgor({ { 211, 1, 784 } });
+	part79SayPhilip({ { 212, 1, 785 } });
+	part79SayIgor({ { 213, 1, 786 } });
+	part79SayPhilip({ { 214, 1, 787 } });
 	for (int frame = 0x1B; frame <= 0x1D; ++frame) {
-		PART_79_drawKiss(frame);
+		part79DrawKiss(frame);
 		waitForTimer(31);
 	}
 	for (int frame = 1; frame <= 0xE; ++frame) {
-		PART_79_drawCircularClosingTransition(frame);
+		part79DrawCircularClosingTransition(frame);
 		waitForTimer(31);
 	}
 	waitForTimer(255);
-	PART_79_drawKiss(30);
+	part79DrawKiss(30);
 	waitForTimer(255);
 	for (int frame = 0xF; frame <= 0x11; ++frame) {
-		PART_79_drawCircularClosingTransition(frame);
+		part79DrawCircularClosingTransition(frame);
 		waitForTimer(31);
 	}
 
@@ -490,70 +490,70 @@ void IgorEngine::PART_79_beachScene() {
 	copyArea(_screenVGA, kPart79Block1Offset, 320, _animFramesBuffer + kPart79Block1Frames, kPart79Block1Width,
 			 kPart79Block1Width, kPart79Block1Height);
 
-	PART_79_FADE_IN_PAIR(0xF5);
+	part79FadeInPair(0xF5);
 	for (int i = 0; i < 5; ++i) {
 		waitForTimer(255);
 	}
-	PART_79_FADE_IN_PAIR(0xF7);
+	part79FadeInPair(0xF7);
 	waitForTimer(255);
-	PART_79_FADE_IN_PAIR(0xF9);
+	part79FadeInPair(0xF9);
 	waitForTimer(255);
-	PART_79_FADE_IN_PAIR(0xFB);
+	part79FadeInPair(0xFB);
 	waitForTimer(255);
-	PART_79_FADE_IN_PAIR(0xFD);
+	part79FadeInPair(0xFD);
 	for (int i = 0; i < 3; ++i) {
 		waitForTimer(255);
 	}
-	PART_79_FADE_COLORS(kPart79FadeFirstColor, kPart79FadeLastColor, false);
+	part79FadeColors(kPart79FadeFirstColor, kPart79FadeLastColor, false);
 
 	for (int frame = 1; frame <= 7; ++frame) {
-		PART_79_drawPhilipSharkScene(&kPart79Anim2A, frame);
+		part79DrawPhilipSharkScene(&kPart79Anim2A, frame);
 		waitForTimer(31);
 	}
 	for (int frame = 2; frame <= 0x12; ++frame) {
-		PART_79_drawPhilipSharkScene(&kPart79Anim2B, frame);
+		part79DrawPhilipSharkScene(&kPart79Anim2B, frame);
 		waitForTimer(31);
 	}
 	for (int frame = 1; frame <= 0x12; ++frame) {
-		PART_79_drawPhilipSharkScene(&kPart79Anim2B, frame);
+		part79DrawPhilipSharkScene(&kPart79Anim2B, frame);
 		waitForTimer(31);
 	}
-	PART_79_drawPhilipSharkScene(&kPart79Anim2C, 1);
+	part79DrawPhilipSharkScene(&kPart79Anim2C, 1);
 	waitForTimer(31);
 	for (int y = 0; y < kPart79Block2Height; ++y) {
 		memset(_screenVGA + kPart79Block2Offset + y * 320, kPart79Block2Color, kPart79Block2Width);
 	}
 	for (int round = 1; round <= 5; ++round) {
 		for (int frame = 0x10; frame <= 0x11; ++frame) {
-			PART_79_drawPhilipSharkScene(&kPart79Anim2C, frame);
+			part79DrawPhilipSharkScene(&kPart79Anim2C, frame);
 			waitForTimer(61);
 		}
 	}
 	for (int frame = 2; frame <= 0xF; ++frame) {
-		PART_79_drawPhilipSharkScene(&kPart79Anim2C, frame);
+		part79DrawPhilipSharkScene(&kPart79Anim2C, frame);
 		waitForTimer(31);
 	}
 	cutsceneSayStart(206, 89, 63, 32, 0, { { 215, 1, 788 } });
 	waitForEndOfCutsceneDialogue(206, 89, 63, 32, 0);
 	waitForTimer(255);
 	for (int frame = 1; frame <= 7; ++frame) {
-		PART_79_drawPhilipSharkScene(&kPart79Anim2D, frame);
+		part79DrawPhilipSharkScene(&kPart79Anim2D, frame);
 		waitForTimer(31);
 	}
 	copyArea(_screenVGA, kPart79Block3Offset, 320, _animFramesBuffer + kPart79Block3Frames, kPart79Block3Width,
 			 kPart79Block3Width, kPart79Block3Height);
-	PART_79_FADE_COLORS(kPart79FadeFirstColor, kPart79FadeLastColor, true);
+	part79FadeColors(kPart79FadeFirstColor, kPart79FadeLastColor, true);
 	for (int i = 0; i < 8; ++i) {
 		waitForTimer(255);
 	}
-	PART_79_FADE_COLORS(kPart79FadeFirstColor, kPart79FadeLastColor, false);
+	part79FadeColors(kPart79FadeFirstColor, kPart79FadeLastColor, false);
 
 	loadIgorFrames();
 	_creditsPass = 0;
 	_currentPart = 910;
 }
 
-void IgorEngine::PART_79() {
+void IgorEngine::part79() {
 	// the picture is shown below a black band
 	if (_currentPart == 790) {
 		memset(_screenVGA, 0, 64000);
@@ -563,9 +563,9 @@ void IgorEngine::PART_79() {
 	_system->copyRectToScreen(band, 320, 0, 0, 320, kPart79BandRows);
 	_screenVGAVOffset = kPart79BandRows;
 	if (_currentPart == 790) {
-		PART_79_LauraInWater();
+		part79LauraInWater();
 	} else {
-		PART_79_beachScene();
+		part79BeachScene();
 	}
 	_screenVGAVOffset = 0;
 }

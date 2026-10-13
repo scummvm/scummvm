@@ -27,7 +27,7 @@ namespace Igor {
 
 const uint32 kPart10PanelLeft = 0x0000;
 
-void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
+void IgorEngine::part10And11DrawObjectState(int num) {
 	// These three original blitters are byte-for-byte duplicates in the two
 	// halves of the room
 
@@ -46,7 +46,7 @@ void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_10_EXEC_ACTION(int action) {
+void IgorEngine::part10ExecuteAction(int action) {
 	switch (action) {
 	case 101: // look at plaque
 		igorSayAndWait(201, 1, 626);
@@ -67,7 +67,7 @@ void IgorEngine::PART_10_EXEC_ACTION(int action) {
 		igorSayAndWait(202, 1, 627);
 		break;
 	case 104: // pick burger
-		PART_10_ACTION_104_pickHamburger();
+		part10TakeHamburger();
 		break;
 	case 105: // use anything with paperbin
 		igorSayAndWait(206, 1, 630);
@@ -79,18 +79,18 @@ void IgorEngine::PART_10_EXEC_ACTION(int action) {
 		igorSayAndWait(207, 1, 631);
 		break;
 	case 108:
-		PART_10_ACTION_108_scrollLeft();
+		part10ScrollLeft();
 		break;
 	case 109: // back to map
 		_currentPart = 40;
 		break;
 	default:
-		warning("PART_10_EXEC_ACTION unhandled action %d", action);
+		warning("part10ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_10_ACTION_104_pickHamburger() {
+void IgorEngine::part10TakeHamburger() {
 	if (_objectsState[kHamburgerTakenStateIndex] == 1) { // already picked hamburger
 		igorSayAndWait(205, 1, 629);
 		return;
@@ -108,7 +108,7 @@ void IgorEngine::PART_10_ACTION_104_pickHamburger() {
 	_objectsState[kHamburgerTakenStateIndex] = 1;
 }
 
-void IgorEngine::PART_10_ACTION_108_scrollLeft() {
+void IgorEngine::part10ScrollLeft() {
 	uint8 *walkTable = loadData(WLK_DecanatoLeft);
 	int xPos = 329;
 	int yPos = 0;
@@ -145,7 +145,7 @@ void IgorEngine::PART_10_ACTION_108_scrollLeft() {
 	_currentPart = 110;
 }
 
-void IgorEngine::PART_10() {
+void IgorEngine::part10() {
 	playMusic(1);
 	_gameState.enableLight = 1;
 
@@ -162,7 +162,7 @@ void IgorEngine::PART_10() {
 	loadAnimData(frames4, kPart10_11_Frm4);
 	loadAnimData(frames5, kPart10_11_Frm5);
 
-	PART_10_11_DRAW_OBJECT_STATE(255);
+	part10And11DrawObjectState(255);
 
 	// Preserve the complete left panel at ANM+0, then make the right panel
 	// active. The original load order is unconditional.
@@ -175,7 +175,7 @@ void IgorEngine::PART_10() {
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
 
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_10_EXEC_ACTION);
+	partMainSetExecuteAction(1, &IgorEngine::part10ExecuteAction);
 	_roomDataOffsets = PART_10_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 

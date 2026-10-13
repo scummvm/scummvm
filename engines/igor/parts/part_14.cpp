@@ -29,40 +29,40 @@ static const uint8 PART_14_ANIM_DATA_1[6] = { 0, 2, 5, 1, 8, 3 };
 static int VAR_NEW_CHURCH_MOSAIC_STONE;
 static int VAR_CURRENT_CHURCH_MOSAIC_STONE;
 
-void IgorEngine::PART_14_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_14_EXEC_ACTION %d", action);
+void IgorEngine::part14ExecuteAction(int action) {
+	debugC(9, kDebugGame, "part14ExecuteAction %d", action);
 	switch (action) {
 	case 101:
-		PART_14_ACTION_101_goToChurchBell();
+		part14GoToChurchBell();
 		break;
 	case 102: // look at stairs
 		igorSay(201, 1, 860);
 		break;
 	case 103:
-		PART_14_ACTION_103_lookAtPuzzle();
+		part14LookAtPuzzle();
 		break;
 	case 104: // look at candles
 		igorSay(202, 1, 861);
 		break;
 	case 105:
-		PART_14_ACTION_105_goBackToChurch();
+		part14GoBackToChurch();
 		break;
 	case 106:
-		PART_14_ACTION_106_enterMaze();
+		part14EnterMaze();
 		break;
 	case 107:
 		igorSay(203, 1, 862);
 		break;
 	case 108:
-		PART_14_ACTION_108_useMatchesOnCandles();
+		part14UseMatchesOnCandles();
 		break;
 	default:
-		error("PART_14_EXEC_ACTION unhandled action %d", action);
+		error("part14ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_14_ACTION_101_goToChurchBell() {
+void IgorEngine::part14GoToChurchBell() {
 	_roomObjectAreasTable[_screenLayer2[22156]].area = 1;
 	_roomObjectAreasTable[_screenLayer2[27895]].area = 1;
 	--_walkDataLastIndex;
@@ -86,10 +86,10 @@ void IgorEngine::PART_14_ACTION_101_goToChurchBell() {
 	_currentPart = 220;
 }
 
-void IgorEngine::PART_14_ACTION_103_lookAtPuzzle() {
+void IgorEngine::part14LookAtPuzzle() {
 	fadeOut(768);
-	PART_14_HELPER_9_showPuzzle();
-	loadResourceData__ROOM_ChurchPuzzle();
+	part14ShowPuzzle();
+	part14LoadRoom();
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);
@@ -104,11 +104,11 @@ void IgorEngine::PART_14_ACTION_103_lookAtPuzzle() {
 		igorSay(227, 1, 1292);
 		_objectsState[kSecretPassageEntranceOpenStateIndex] = 1;
 	}
-	PART_14_HELPER_1_OBJECT_STATE(255);
+	part14ApplyObjectState(255);
 	_currentPart = 140;
 }
 
-void IgorEngine::PART_14_ACTION_105_goBackToChurch() {
+void IgorEngine::part14GoBackToChurch() {
 	_walkDataCurrentIndex = 0;
 	for (int i = 9; i >= 0; --i) {
 		WalkData *wd = &_walkData[0];
@@ -131,7 +131,7 @@ void IgorEngine::PART_14_ACTION_105_goBackToChurch() {
 	_currentPart = 131;
 }
 
-void IgorEngine::PART_14_ACTION_106_enterMaze() {
+void IgorEngine::part14EnterMaze() {
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[35684]].area = 2;
 	buildWalkPath(164, 126, 164, 111);
@@ -170,9 +170,9 @@ void IgorEngine::PART_14_ACTION_106_enterMaze() {
 }
 
 // cutscene where the brother gives us the papyrus
-void IgorEngine::PART_14_ACTION_108_useMatchesOnCandles() {
+void IgorEngine::part14UseMatchesOnCandles() {
 	_gameState.unkF = false;
-	_updateRoomBackground = &IgorEngine::PART_14_UPDATE_ROOM_BACKGROUND_ACTION_108;
+	_updateRoomBackground = &IgorEngine::part14UpdateCandleFlicker;
 	igorSayAndWait(226, 1, 880);
 	removeObjectFromInventory(43);
 	for (int i = 1; i <= 3; ++i) {
@@ -182,11 +182,11 @@ void IgorEngine::PART_14_ACTION_108_useMatchesOnCandles() {
 	}
 	_gameState.unkF = true;
 	playSound(33, 1);
-	PART_14_HELPER_8_brotherReveal(4, 24);
+	part14BrotherReveal(4, 24);
 	stopSound();
 	cutsceneSay(221, 85, 12, 33, 63, 205, 1, 864);
-	PART_14_HELPER_8_brotherReveal(25, 26);
-	PART_14_HELPER_8_brotherReveal(60, 60);
+	part14BrotherReveal(25, 26);
+	part14BrotherReveal(60, 60);
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
 	wd->x = 250;
 	wd->y = 138;
@@ -203,27 +203,27 @@ void IgorEngine::PART_14_ACTION_108_useMatchesOnCandles() {
 	addObjectToInventory(kInventoryObjectPapyrus, 63);
 	igorSayAndWait({ { 217, 1, 872 }, { 218, 1, 873 }, { 219, 1, 874 } });
 	cutsceneSay(221, 85, 12, 33, 63, 220, 2, 875);
-	PART_14_HELPER_7_candleFlicker(0);
+	part14CandleFlicker(0);
 	_gameState.unkF = false;
 	_screenVGA[32865] = _screenLayer1[32865];
 	playSound(33, 1);
-	PART_14_HELPER_8_brotherReveal(36, 60);
+	part14BrotherReveal(36, 60);
 	stopSound();
 	igorSayAndWait({ { 222, 1, 876 }, { 223, 1, 877 }, { 224, 1, 878 }, { 225, 1, 879 } });
-	PART_14_HELPER_1_OBJECT_STATE(255);
+	part14ApplyObjectState(255);
 	_updateRoomBackground = 0;
 }
 
-void IgorEngine::PART_14_UPDATE_ROOM_BACKGROUND_ACTION_108() {
+void IgorEngine::part14UpdateCandleFlicker() {
 	if (compareGameTick(2, 16) && _gameState.unkF) {
-		PART_14_HELPER_7_candleFlicker(getRandomNumber(1) + 1);
+		part14CandleFlicker(getRandomNumber(1) + 1);
 	}
 }
 
-void IgorEngine::PART_14_HELPER_1_OBJECT_STATE(int num) {
+void IgorEngine::part14ApplyObjectState(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[kSecretPassageEntranceOpenStateIndex] == 1) {
-			PART_14_HELPER_6_drawEntrance();
+			part14DrawEntrance();
 			_roomObjectAreasTable[3].object = 5;
 			_roomObjectAreasTable[4].object = 5;
 			_roomObjectAreasTable[7].object = 5;
@@ -237,7 +237,7 @@ void IgorEngine::PART_14_HELPER_1_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_14_HELPER_2_enterFromChurch() {
+void IgorEngine::part14EnterFromChurch() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	for (int i = 0; i <= 9; ++i) {
@@ -267,7 +267,7 @@ void IgorEngine::PART_14_HELPER_2_enterFromChurch() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_14_HELPER_3_enterFromChurchBell() {
+void IgorEngine::part14EnterFromChurchBell() {
 	for (int i = 192 * 3; i <= 207 * 3; ++i) {
 		if (_paletteBuffer[i] > 5) {
 			_currentPalette[i] -= 5;
@@ -307,8 +307,8 @@ void IgorEngine::PART_14_HELPER_3_enterFromChurchBell() {
 	_roomObjectAreasTable[_screenLayer2[27895]].area = 0;
 }
 
-void IgorEngine::PART_14_HELPER_4_enterFromMaze() {
-	PART_14_HELPER_1_OBJECT_STATE(255);
+void IgorEngine::part14EnterFromMaze() {
+	part14ApplyObjectState(255);
 	for (int i = 192 * 3; i <= 207 * 3; ++i) {
 		if (_paletteBuffer[i] > 5) {
 			_currentPalette[i] -= 5;
@@ -352,19 +352,19 @@ void IgorEngine::PART_14_HELPER_4_enterFromMaze() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_14_HELPER_6_drawEntrance() {
+void IgorEngine::part14DrawEntrance() {
 	const int offset = 18382;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xD5BA, 44, 44, 66);
 }
 
-void IgorEngine::PART_14_HELPER_7_candleFlicker(int frame) {
+void IgorEngine::part14CandleFlicker(int frame) {
 	const int offset = 38038;
 	for (int i = 0; i <= 1; ++i) {
 		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + 0x2AA4 + frame * 2 + i, 1);
 	}
 }
 
-void IgorEngine::PART_14_HELPER_8_brotherReveal(int start, int end) {
+void IgorEngine::part14BrotherReveal(int start, int end) {
 	_gameState.counter[0] = start - 1;
 	do {
 		if (compareGameTick(1, 16)) {
@@ -373,14 +373,14 @@ void IgorEngine::PART_14_HELPER_8_brotherReveal(int start, int end) {
 			decodeAnimFrame(src, _screenVGA, true);
 		}
 		if (compareGameTick(2, 16) && _gameState.unkF) {
-			PART_14_HELPER_7_candleFlicker(getRandomNumber(1) + 1);
+			part14CandleFlicker(getRandomNumber(1) + 1);
 		}
 		waitForTimer();
 	} while (_gameState.counter[0] != end);
 }
 
-void IgorEngine::PART_14_HELPER_9_showPuzzle() {
-	PART_14_HELPER_10_loadChurchMosaicData();
+void IgorEngine::part14ShowPuzzle() {
+	part14LoadChurchMosaicData();
 	memcpy(_screenTextLayer, _screenVGA, 46080);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	memcpy(_screenLayer1, _screenTextLayer, 46080);
@@ -429,28 +429,28 @@ void IgorEngine::PART_14_HELPER_9_showPuzzle() {
 				playSound(34, 1);
 				switch (area) {
 				case 1:
-					PART_14_pushStone(33359, 28, 34, 0);
+					part14PushStone(33359, 28, 34, 0);
 					break;
 				case 2:
-					PART_14_pushStone(22800, 27, 34, 0x3D4);
+					part14PushStone(22800, 27, 34, 0x3D4);
 					break;
 				case 3:
-					PART_14_pushStone(10642, 39, 45, 0x785);
+					part14PushStone(10642, 39, 45, 0x785);
 					break;
 				case 4:
-					PART_14_pushStone(3624, 56, 39, 0xCCFA);
+					part14PushStone(3624, 56, 39, 0xCCFA);
 					break;
 				case 5:
-					PART_14_pushStone(3679, 54, 38, 0xE87);
+					part14PushStone(3679, 54, 38, 0xE87);
 					break;
 				case 6:
-					PART_14_pushStone(11077, 35, 35, 0x1D8F);
+					part14PushStone(11077, 35, 35, 0x1D8F);
 					break;
 				case 7:
-					PART_14_pushStone(20688, 28, 36, 0x227B);
+					part14PushStone(20688, 28, 36, 0x227B);
 					break;
 				case 8:
-					PART_14_pushStone(31889, 27, 38, 0x2687);
+					part14PushStone(31889, 27, 38, 0x2687);
 					break;
 				}
 				stopSound();
@@ -496,7 +496,7 @@ void IgorEngine::PART_14_HELPER_9_showPuzzle() {
 	SET_PAL_208_96_1();
 }
 
-void IgorEngine::PART_14_HELPER_10_loadChurchMosaicData() {
+void IgorEngine::part14LoadChurchMosaicData() {
 	loadData(PAL_ChurchMosaic, _paletteBuffer);
 	loadData(IMG_ChurchMosaic, _screenLayer1);
 	uint8 *p = loadData(MSK_ChurchMosaic);
@@ -504,7 +504,7 @@ void IgorEngine::PART_14_HELPER_10_loadChurchMosaicData() {
 	free(p);
 }
 
-void IgorEngine::PART_14_pushStone(int screenOffset, int w, int h, int animOffset) {
+void IgorEngine::part14PushStone(int screenOffset, int w, int h, int animOffset) {
 	for (int i = 0; i <= h; ++i) {
 		memcpy(_screenTempLayer + i * 100, _screenVGA + i * 320 + screenOffset, w);
 		memcpy(_screenVGA + i * 320 + screenOffset, _animFramesBuffer + animOffset + i * w, w);
@@ -515,28 +515,28 @@ void IgorEngine::PART_14_pushStone(int screenOffset, int w, int h, int animOffse
 	}
 }
 
-void IgorEngine::PART_14() {
+void IgorEngine::part14() {
 	playMusic(3);
 	_gameState.enableLight = 1;
-	loadResourceData__ROOM_ChurchPuzzle();
-	loadResourceData__ANIM_ChurchPuzzle();
+	part14LoadRoom();
+	part14LoadAnimation();
 	loadActionData(DAT_ChurchPuzzle);
 	_roomDataOffsets = PART_14_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 256, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_14_EXEC_ACTION);
-	PART_14_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part14ExecuteAction);
+	part14ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 140) {
-			PART_14_HELPER_2_enterFromChurch();
+			part14EnterFromChurch();
 		}
 		if (_currentPart == 141) {
-			PART_14_HELPER_3_enterFromChurchBell();
+			part14EnterFromChurchBell();
 		}
 		if (_currentPart == 142) {
-			PART_14_HELPER_4_enterFromMaze();
+			part14EnterFromMaze();
 		}
 		enterPartLoop();
 	}
@@ -548,11 +548,11 @@ void IgorEngine::PART_14() {
 		fadeOut(624);
 }
 
-void IgorEngine::loadResourceData__ROOM_ChurchPuzzle() {
+void IgorEngine::part14LoadRoom() {
 	loadRoomData(PAL_ChurchPuzzle, IMG_ChurchPuzzle, BOX_ChurchPuzzle, MSK_ChurchPuzzle, TXT_ChurchPuzzle);
 }
 
-void IgorEngine::loadResourceData__ANIM_ChurchPuzzle() {
+void IgorEngine::part14LoadAnimation() {
 	static const int anm1[] = { FRM_ChurchPuzzle1, FRM_ChurchPuzzle2, FRM_ChurchPuzzle3, FRM_ChurchPuzzle4, 0 };
 	loadAnimData(anm1, 0);
 	static const int anm2[] = { FRM_ChurchPuzzle5, FRM_ChurchPuzzle6, FRM_ChurchPuzzle7, FRM_ChurchPuzzle8, FRM_ChurchPuzzle9, FRM_ChurchPuzzle10, FRM_ChurchPuzzle11, 0 };

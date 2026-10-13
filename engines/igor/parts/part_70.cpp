@@ -29,7 +29,7 @@ static const int kPart70BoatHeight = 39;
 
 static const int kPart70ExitStates[4] = { 501, 720, 680, 810 };
 
-void IgorEngine::PART_70_EXEC_ACTION(int action) {
+void IgorEngine::part70ExecuteAction(int action) {
 	switch (action) {
 	case 101:
 	case 102:
@@ -38,7 +38,7 @@ void IgorEngine::PART_70_EXEC_ACTION(int action) {
 		_currentPart = kPart70ExitStates[action - 101];
 		break;
 	default:
-		error("PART_70_EXEC_ACTION unhandled action %d", action);
+		error("part70ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
@@ -46,7 +46,7 @@ void IgorEngine::PART_70_EXEC_ACTION(int action) {
 /**
  * Draws the boat if we havent sent the message yet
  */
-void IgorEngine::PART_70_DRAW_OBJECT_STATE() {
+void IgorEngine::part70DrawObjectState() {
 	const int frameSize = kPart70BoatWidth * kPart70BoatHeight;
 	const int frame = _objectsState[kLighthouseMessageSentStateIndex] == 0 ? 0 : 1;
 	copyArea(_screenLayer1, kPart70BoatOffset, 320, _animFramesBuffer + frame * frameSize, kPart70BoatWidth,
@@ -56,14 +56,14 @@ void IgorEngine::PART_70_DRAW_OBJECT_STATE() {
 /**
  * The colors 192 to 207 rotate for the water animation.
  */
-void IgorEngine::PART_70_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part70UpdateBackground() {
 	if (compareGameTick(3, 32)) {
 		scrollPalette(192, 207);
 		setPaletteRange(192, 207);
 	}
 }
 
-void IgorEngine::PART_70() {
+void IgorEngine::part70() {
 	playMusic(4);
 	_gameState.enableLight = 2;
 	loadActionData(DAT_Part70);
@@ -73,9 +73,9 @@ void IgorEngine::PART_70() {
 	loadAnimData(anim);
 	_roomDataOffsets = PART_70_ROOM_DATA_OFFSETS;
 	setRoomClickFix(143, -1, -1, false);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_70_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_70_UPDATE_ROOM_BACKGROUND;
-	PART_70_DRAW_OBJECT_STATE();
+	partMainSetExecuteAction(1, &IgorEngine::part70ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part70UpdateBackground;
+	part70DrawObjectState();
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	// Igor is not shown in the map

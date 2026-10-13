@@ -30,16 +30,16 @@ static const int kPart22PickUpFrameSize = 35 * 30;
 
 static const uint8 PART_22_PICK_UP_FRAMES[3] = { 1, 2, 1 };
 
-void IgorEngine::PART_22_EXEC_ACTION(int action) {
+void IgorEngine::part22ExecuteAction(int action) {
 	switch (action) {
 	case 101:
-		PART_22_ACTION_101_lookAtBell();
+		part22LookAtBell();
 		break;
 	case 102:
-		PART_22_ACTION_102_leave();
+		part22Leave();
 		break;
 	default:
-		error("PART_22_EXEC_ACTION unhandled action %d", action);
+		error("part22ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
@@ -47,7 +47,7 @@ void IgorEngine::PART_22_EXEC_ACTION(int action) {
 /**
  * Takes the object (inventory object 29) from the bell tower.
  */
-void IgorEngine::PART_22_ACTION_101_lookAtBell() {
+void IgorEngine::part22LookAtBell() {
 	if (_objectsState[kBellTowerConversationSeenStateIndex] == 1 && _inventoryInfo[64] == 0) {
 		igorSayAndWait(203, 2, 855);
 		for (int i = 0; i < 3; ++i) {
@@ -58,7 +58,7 @@ void IgorEngine::PART_22_ACTION_101_lookAtBell() {
 			waitForTimer(60);
 		}
 		addObjectToInventory(kInventoryObjectPassword, 64);
-		PART_22_APPLY_OBJECT_STATE(255);
+		part22ApplyObjectState(255);
 		igorSay({ { 205, 1, 856 }, { 206, 1, 857 } });
 		_objectsState[kChurchBellMessageSeenStateIndex] = 1;
 	} else {
@@ -69,16 +69,16 @@ void IgorEngine::PART_22_ACTION_101_lookAtBell() {
 /**
  * Igor leaves the tower
  */
-void IgorEngine::PART_22_ACTION_102_leave() {
+void IgorEngine::part22Leave() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	for (int i = 9; i >= 0; --i) {
-		PART_22_IGOR_STEP(kFacingPositionBack, i);
+		part22IgorStep(kFacingPositionBack, i);
 		waitForTimer(15);
 	}
 	for (int i = 16; i >= 0;) {
 		if (compareGameTick(1, 16)) {
-			PART_22_SCROLL_STEP(i);
+			part22ScrollStep(i);
 			--i;
 		}
 		waitForTimer();
@@ -89,13 +89,13 @@ void IgorEngine::PART_22_ACTION_102_leave() {
 /**
  * Nothing to redraw for this room: the object state has no visual effect.
  */
-void IgorEngine::PART_22_APPLY_OBJECT_STATE(int num) {
+void IgorEngine::part22ApplyObjectState(int num) {
 }
 
 /**
  * One step of Igor walking in place, scaled by the number of steps left to the ground.
  */
-void IgorEngine::PART_22_IGOR_STEP(int facing, int step) {
+void IgorEngine::part22IgorStep(int facing, int step) {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(138, 123, facing, _walkCurrentFrame);
 	WalkData::setNextFrame(facing, _walkCurrentFrame);
@@ -114,7 +114,7 @@ void IgorEngine::PART_22_IGOR_STEP(int facing, int step) {
  * Shows the bottom (step * 8 + 16) rows of the room picture on top of the top
  * (128 - step * 8) rows of the neighbouring picture.
  */
-void IgorEngine::PART_22_SCROLL_STEP(int step) {
+void IgorEngine::part22ScrollStep(int step) {
 	const int roomRows = step * 8 + 16;
 	const int pictureRows = kPart22PictureRows - step * 8;
 	memcpy(_screenTextLayer, _screenLayer1 + pictureRows * 320, roomRows * 320);
@@ -125,7 +125,7 @@ void IgorEngine::PART_22_SCROLL_STEP(int step) {
 /**
  * The first screen shows the church and scrolls up to church bell tower
  */
-void IgorEngine::PART_22_enter() {
+void IgorEngine::part22Enter() {
 	memcpy(_screenVGA, _screenLayer1 + kPart22PictureRows * 320, 16 * 320);
 	memcpy(_screenVGA + 16 * 320, _animFramesBuffer, kPart22PictureRows * 320);
 	_currentAction.verb = kVerbWalk;
@@ -133,7 +133,7 @@ void IgorEngine::PART_22_enter() {
 
 	for (int i = 0; i <= 16;) {
 		if (compareGameTick(1, 16)) {
-			PART_22_SCROLL_STEP(i);
+			part22ScrollStep(i);
 			++i;
 		}
 		waitForTimer();
@@ -145,7 +145,7 @@ void IgorEngine::PART_22_enter() {
 		if (i == 9) {
 			_walkCurrentFrame = 0;
 		}
-		PART_22_IGOR_STEP(kFacingPositionFront, i);
+		part22IgorStep(kFacingPositionFront, i);
 		waitForTimer(15);
 	}
 	_walkDataLastIndex = 0;
@@ -156,7 +156,7 @@ void IgorEngine::PART_22_enter() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_22() {
+void IgorEngine::part22() {
 	playMusic(3);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_BellChurch, IMG_BellChurch, BOX_BellChurch, MSK_BellChurch, TXT_BellChurch);
@@ -166,10 +166,10 @@ void IgorEngine::PART_22() {
 	loadActionData(DAT_BellChurch);
 	_roomDataOffsets = PART_22_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(126, 123, 193, 123);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_22_EXEC_ACTION);
-	PART_22_APPLY_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part22ExecuteAction);
+	part22ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
-		PART_22_enter();
+		part22Enter();
 	}
 	enterPartLoop();
 	while (_currentPart == 220 && !_gameStateLoaded) {

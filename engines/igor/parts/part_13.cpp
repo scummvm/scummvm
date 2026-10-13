@@ -23,31 +23,31 @@
 
 namespace Igor {
 
-void IgorEngine::PART_13_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_13_EXEC_ACTION %d", action);
+void IgorEngine::part13ExecuteAction(int action) {
+	debugC(9, kDebugGame, "part13ExecuteAction %d", action);
 	switch (action) {
 	case 101: // go to platform
-		PART_13_ACTION_101_103_goToPlatform();
+		part13GoToPlatform();
 		break;
 	case 102: // look at stained glass
 		igorSay(201, 2, 858);
 		break;
 	case 103: // look at platform
-		PART_13_ACTION_101_103_goToPlatform();
+		part13GoToPlatform();
 		break;
 	case 104:
-		PART_13_ACTION_104_exitChurch();
+		part13ExitChurch();
 		break;
 	case 105: // go to church puzzle
 		_currentPart = 140;
 		break;
 	default:
-		error("PART_13_EXEC_ACTION unhandled action %d", action);
+		error("part13ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_13_ACTION_101_103_goToPlatform() {
+void IgorEngine::part13GoToPlatform() {
 	waitForTimer(255);
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
@@ -126,7 +126,7 @@ void IgorEngine::PART_13_ACTION_101_103_goToPlatform() {
 	} while (_gameState.igorMoving);
 }
 
-void IgorEngine::PART_13_ACTION_104_exitChurch() {
+void IgorEngine::part13ExitChurch() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	for (int i = 9; i >= 0; --i) {
@@ -149,10 +149,10 @@ void IgorEngine::PART_13_ACTION_104_exitChurch() {
 	_currentPart = 121;
 }
 
-void IgorEngine::PART_13_HELPER_OBJECT_STATE(int num) {
+void IgorEngine::part13ApplyObjectState(int num) {
 }
 
-void IgorEngine::PART_13_HELPER_2_enterFromRight() {
+void IgorEngine::part13EnterFromRight() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(314, 127, 4, 0);
 	wd->clipSkipX = 1;
@@ -171,8 +171,8 @@ void IgorEngine::PART_13_HELPER_2_enterFromRight() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_13_HELPER_3_enterFromBelow() {
-	PART_13_HELPER_OBJECT_STATE(255);
+void IgorEngine::part13EnterFromBelow() {
+	part13ApplyObjectState(255);
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	for (int i = 0; i <= 9; ++i) {
@@ -197,23 +197,23 @@ void IgorEngine::PART_13_HELPER_3_enterFromBelow() {
 	_walkDataCurrentIndex = 1;
 }
 
-void IgorEngine::PART_13() {
+void IgorEngine::part13() {
 	playMusic(3);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_InsideChurch, IMG_InsideChurch, BOX_InsideChurch, MSK_InsideChurch, TXT_InsideChurch);
 	loadActionData(DAT_InsideChurch);
 	_roomDataOffsets = PART_13_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(92, 0, 288, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_13_EXEC_ACTION);
-	PART_13_HELPER_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part13ExecuteAction);
+	part13ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 130) {
-			PART_13_HELPER_3_enterFromBelow();
+			part13EnterFromBelow();
 		} else {
-			PART_13_HELPER_2_enterFromRight();
+			part13EnterFromRight();
 		}
 		enterPartLoop();
 	}

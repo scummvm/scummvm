@@ -25,7 +25,7 @@ namespace Igor {
 
 static const uint8 PART_23_ANIM_DATA_1[3] = { 0, 4, 1 };
 
-void IgorEngine::PART_23_EXEC_ACTION(int action) {
+void IgorEngine::part23ExecuteAction(int action) {
 	switch (action) {
 	case 101:
 		_currentPart = 280;
@@ -34,16 +34,16 @@ void IgorEngine::PART_23_EXEC_ACTION(int action) {
 		igorSay(201, 2, 1217);
 		break;
 	case 105:
-		PART_23_ACTION_105_enterLadiesRoom();
+		part23EnterLadiesRoom();
 		break;
 	case 106: // look at door
 		igorSay(205, 1, 1220);
 		break;
 	case 107: // open door
-		PART_23_ACTION_107_openDoor();
+		part23OpenDoor();
 		break;
 	case 108: // close door
-		PART_23_ACTION_108_closeDoor();
+		part23CloseDoor();
 		break;
 	case 109: // go through right corridor
 		_currentPart = 300;
@@ -61,12 +61,12 @@ void IgorEngine::PART_23_EXEC_ACTION(int action) {
 		igorSay(212, 1, 1225);
 		break;
 	default:
-		error("PART_23_EXEC_ACTION unhandled action %d", action);
+		error("part23ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_23_ACTION_105_enterLadiesRoom() {
+void IgorEngine::part23EnterLadiesRoom() {
 	if (_objectsState[kLadiesRoomDoorStateIndex] != 0) {
 		_roomObjectAreasTable[_screenLayer2[38633]].area = 1;
 		--_walkDataLastIndex;
@@ -78,9 +78,9 @@ void IgorEngine::PART_23_ACTION_105_enterLadiesRoom() {
 	}
 }
 
-void IgorEngine::PART_23_ACTION_107_openDoor() {
+void IgorEngine::part23OpenDoor() {
 	if (_objectsState[kLadiesRoomDoorStateIndex] == 1) {
-		EXEC_MAIN_ACTION(11);
+		partMainExecuteAction(11);
 		return;
 	}
 	const int offset = 23901;
@@ -94,12 +94,12 @@ void IgorEngine::PART_23_ACTION_107_openDoor() {
 		}
 	}
 	_objectsState[kLadiesRoomDoorStateIndex] = 1;
-	PART_23_HELPER_1_APPLY_OBJECT_STATE(1);
+	part23ApplyObjectState(1);
 }
 
-void IgorEngine::PART_23_ACTION_108_closeDoor() {
+void IgorEngine::part23CloseDoor() {
 	if (_objectsState[kLadiesRoomDoorStateIndex] == 0) {
-		EXEC_MAIN_ACTION(14);
+		partMainExecuteAction(14);
 		return;
 	}
 	const int offset = 23901;
@@ -113,10 +113,10 @@ void IgorEngine::PART_23_ACTION_108_closeDoor() {
 		}
 	}
 	_objectsState[kLadiesRoomDoorStateIndex] = 0;
-	PART_23_HELPER_1_APPLY_OBJECT_STATE(1);
+	part23ApplyObjectState(1);
 }
 
-void IgorEngine::PART_23_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part23UpdateBackground() {
 	if (compareGameTick(29) || compareGameTick(61)) {
 		int rnd = getRandomNumber(10);
 		if (rnd <= 4) {
@@ -130,34 +130,34 @@ void IgorEngine::PART_23_UPDATE_ROOM_BACKGROUND() {
 				_gameState.unk10 = getRandomNumber(1) + 1;
 			}
 		}
-		PART_23_HELPER_7_drawLucasFrame(_gameState.unk10);
+		part23DrawLucasFrame(_gameState.unk10);
 	}
 }
 
-void IgorEngine::PART_23_HELPER_1_APPLY_OBJECT_STATE(int num) {
+void IgorEngine::part23ApplyObjectState(int num) {
 	if (num == 1 || num == 255) {
 		if (_objectsState[kLadiesRoomDoorStateIndex] == 0) {
-			PART_23_HELPER_2_drawDoor(1);
+			part23DrawDoor(1);
 			_roomActionsTable[4] = 6;
 		} else {
-			PART_23_HELPER_2_drawDoor(2);
+			part23DrawDoor(2);
 			_roomActionsTable[4] = 7;
 		}
 	}
-	PART_23_HELPER_3_drawLucas();
+	part23DrawLucas();
 }
 
-void IgorEngine::PART_23_HELPER_2_drawDoor(int frame) {
+void IgorEngine::part23DrawDoor(int frame) {
 	const int offset = 23907;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + (frame - 1) * 1296, 24, 24, 54);
 }
 
-void IgorEngine::PART_23_HELPER_3_drawLucas() {
+void IgorEngine::part23DrawLucas() {
 	const int offset = 25763;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xA20, 25, 25, 49);
 }
 
-void IgorEngine::PART_23_HELPER_4_walkFromDoor() {
+void IgorEngine::part23WalkFromDoor() {
 	_walkData[0].setPos(233, 120, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 0;
@@ -172,12 +172,12 @@ void IgorEngine::PART_23_HELPER_4_walkFromDoor() {
 		drawAnimRect(23907, 0, 24, 54, false, kBlendBehindIgor);
 		playSound(14, 1);
 		_objectsState[kLadiesRoomDoorStateIndex] = 0;
-		PART_23_HELPER_1_APPLY_OBJECT_STATE(1);
+		part23ApplyObjectState(1);
 		igorSay(206, 2, 1221);
 	}
 }
 
-void IgorEngine::PART_23_HELPER_5_walkFromLeft() {
+void IgorEngine::part23WalkFromLeft() {
 	_walkData[0].setPos(0, 134, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 15;
@@ -190,7 +190,7 @@ void IgorEngine::PART_23_HELPER_5_walkFromLeft() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_23_HELPER_6_walkFromRight() {
+void IgorEngine::part23WalkFromRight() {
 	_walkData[0].setPos(319, 134, 4, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipWidth = 15;
@@ -202,7 +202,7 @@ void IgorEngine::PART_23_HELPER_6_walkFromRight() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_23_HELPER_7_drawLucasFrame(int frame) {
+void IgorEngine::part23DrawLucasFrame(int frame) {
 	_roomCursorOn = false;
 	for (int i = 0; i <= 18; ++i) {
 		for (int j = 0; j <= 14; ++j) {
@@ -223,7 +223,7 @@ void IgorEngine::PART_23_HELPER_7_drawLucasFrame(int frame) {
 	}
 }
 
-void IgorEngine::PART_23() {
+void IgorEngine::part23() {
 	playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeCorridorLucas, IMG_CollegeCorridorLucas, BOX_CollegeCorridorLucas, MSK_CollegeCorridorLucas, TXT_CollegeCorridorLucas);
@@ -237,19 +237,19 @@ void IgorEngine::PART_23() {
 	_roomDataOffsets = PART_23_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(15, 0, 319, 143);
 
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_23_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_23_UPDATE_ROOM_BACKGROUND;
-	PART_23_HELPER_1_APPLY_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part23ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part23UpdateBackground;
+	part23ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 230) {
-			PART_23_HELPER_5_walkFromLeft();
+			part23WalkFromLeft();
 		} else if (_currentPart == 231) {
-			PART_23_HELPER_6_walkFromRight();
+			part23WalkFromRight();
 		} else if (_currentPart == 232) {
-			PART_23_HELPER_4_walkFromDoor();
+			part23WalkFromDoor();
 		}
 	}
 	enterPartLoop();

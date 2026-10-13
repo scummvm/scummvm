@@ -63,7 +63,7 @@ static const int kPart76WalkEndY = 119;
 
 static const int kPart76ParachuteInventoryIndex = 38;
 
-void IgorEngine::PART_76_EXEC_ACTION(int action) {
+void IgorEngine::part76ExecuteAction(int action) {
 	if (action != 103) {
 		// the music of the room is started again by every action but the third one
 		playMusic(12);
@@ -76,16 +76,16 @@ void IgorEngine::PART_76_EXEC_ACTION(int action) {
 		igorSay(202, 1, 701);
 		break;
 	case 103:
-		PART_76_ACTION_103_openDoor();
+		part76OpenDoor();
 		break;
 	case 104:
-		PART_76_ACTION_104_takeParachute();
+		part76TakeParachute();
 		break;
 	case 105:  // look at parachute
 		igorSay(207, 2, 705);
 		break;
 	case 106:
-		PART_76_ACTION_106_useParachute();
+		part76UseParachute();
 		break;
 	case 107: // look at crate
 		igorSay(224, 1, 719);
@@ -94,7 +94,7 @@ void IgorEngine::PART_76_EXEC_ACTION(int action) {
 		igorSay(225, 1, 720);
 		break;
 	default:
-		error("PART_76_EXEC_ACTION unhandled action %d", action);
+		error("part76ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
@@ -103,7 +103,7 @@ void IgorEngine::PART_76_EXEC_ACTION(int action) {
  * Pieces of the room picture that follow the state of the objects (they are drawn into the picture, not on the
  * screen) and the actions and objects that go with them.
  */
-void IgorEngine::PART_76_APPLY_OBJECT_STATE() {
+void IgorEngine::part76ApplyObjectState() {
 	if (_objectsState[kPlaneDoorOpenStateIndex] == 0) {
 		copyArea(_screenLayer1, kPart76PlaneDoorOffset, 320, _animFramesBuffer + kPart76PlaneDoorFirst, kPart76PlaneDoorWidth,
 				 kPart76PlaneDoorWidth, kPart76PlaneDoorHeight);
@@ -129,39 +129,39 @@ void IgorEngine::PART_76_APPLY_OBJECT_STATE() {
 	}
 }
 
-void IgorEngine::PART_76_drawParachuteFrame(int frame) {
+void IgorEngine::part76DrawParachuteFrame(int frame) {
 	decodeAnimFrame(getAnimFrame(kPart76ParachuteAnimBase, kPart76ParachuteAnimTable, frame), _screenVGA);
 }
 
-void IgorEngine::PART_76_drawOpenDoorFrame(int frame) {
+void IgorEngine::part76DrawOpenDoorFrame(int frame) {
 	decodeAnimFrame(getAnimFrame(kPart76OpenDoorAnimBase, kPart76OpenDoorAnimTable, frame), _screenVGA);
 }
 
-void IgorEngine::PART_76_ACTION_103_openDoor() {
+void IgorEngine::part76OpenDoor() {
 	for (int i = 0; i < 5; ++i) {
-		PART_76_drawOpenDoorFrame(kPart76DoorFrames[i]);
+		part76DrawOpenDoorFrame(kPart76DoorFrames[i]);
 		waitForTimer(51);
 	}
 	for (int frame = 4; frame <= 9; ++frame) {
-		PART_76_drawOpenDoorFrame(frame);
+		part76DrawOpenDoorFrame(frame);
 		waitForTimer(31);
 	}
 	igorSay(206, 1, 704);
 	_objectsState[kPlaneDoorOpenStateIndex] = 1;
-	PART_76_APPLY_OBJECT_STATE();
+	part76ApplyObjectState();
 }
 
 /**
  * Three frames of a sprite are drawn on the screen, then object 3 goes into the inventory.
  */
-void IgorEngine::PART_76_ACTION_104_takeParachute() {
+void IgorEngine::part76TakeParachute() {
 	for (int frame = 1; frame <= 3; ++frame) {
 		drawAnimRect(kPart76TakeParachuteOffset, kPart76TakeParachuteFrames + frame * kPart76TakeParachuteFrameSize, kPart76TakeParachuteWidth, kPart76TakeParachuteHeight);
 		waitForTimer(91);
 	}
 	addObjectToInventory(kInventoryObjectParachute, kPart76ParachuteInventoryIndex);
 	_objectsState[kParachuteTakenStateIndex] = 1;
-	PART_76_APPLY_OBJECT_STATE();
+	part76ApplyObjectState();
 	igorSay({ { 203, 1, 702 }, { 204, 2, 703 } });
 }
 
@@ -170,7 +170,7 @@ void IgorEngine::PART_76_ACTION_104_takeParachute() {
  * where he is, talks, walks to the right of the picture, the sprite is drawn, he talks again and walks to (190, 85);
  * the full screen frames follow and the story goes on in state 790.
  */
-void IgorEngine::PART_76_ACTION_106_useParachute() {
+void IgorEngine::part76UseParachute() {
 	if (_objectsState[kPlaneDoorOpenStateIndex] == 0) {
 		igorSay(209, 1, 706);
 		return;
@@ -213,10 +213,10 @@ void IgorEngine::PART_76_ACTION_106_useParachute() {
 
 	igorSay({ { 216, 1, 711 }, { 217, 1, 712 }, { 218, 1, 713 }, { 219, 1, 714 } });
 	waitForEndOfIgorDialogue();
-	PART_76_drawParachuteFrame(11);
+	part76DrawParachuteFrame(11);
 	waitForTimer(255);
 	for (int frame = 12; frame <= 17; ++frame) {
-		PART_76_drawParachuteFrame(frame);
+		part76DrawParachuteFrame(frame);
 		if (frame < 17) {
 			waitForTimer(3);
 		}
@@ -224,7 +224,7 @@ void IgorEngine::PART_76_ACTION_106_useParachute() {
 	igorSay({ { 220, 1, 715 }, { 221, 1, 716 }, { 222, 1, 717 }, { 223, 1, 718 } });
 	waitForEndOfIgorDialogue();
 	for (int i = 0; i < 20; ++i) {
-		PART_76_drawParachuteFrame(kPart76ParachuteFrames[i]);
+		part76DrawParachuteFrame(kPart76ParachuteFrames[i]);
 		waitForTimer(31);
 	}
 	// the colors 240 to 255 are black on the screen
@@ -238,7 +238,7 @@ void IgorEngine::PART_76_ACTION_106_useParachute() {
  * Igor says something before he is in the picture, then he walks in from the left to (159, 94). The text that goes
  * with the arrival is shown while the room is already running.
  */
-void IgorEngine::PART_76_ENTRY() {
+void IgorEngine::part76Entry() {
 	WalkData *wd = &_walkData[0];
 	wd->x = 0;
 	wd->y = 71;
@@ -274,11 +274,11 @@ void IgorEngine::PART_76_ENTRY() {
 	igorSay({ { 229, 1, 723 }, { 230, 2, 724 }, { 232, 1, 725 } });
 }
 
-void IgorEngine::PART_76() {
+void IgorEngine::part76() {
 	playMusic(12);
 	if (!_gameStateLoaded) {
 		// the card that opens the part
-		PART_meanwhile(IMG_Part76Card);
+		partMainMeanwhile(IMG_Part76Card);
 	}
 	_gameState.enableLight = 2;
 	loadIgorBeachFrames();
@@ -292,14 +292,14 @@ void IgorEngine::PART_76() {
 	drawInventory(_inventoryInfo[72], 0);
 	_roomDataOffsets = PART_76_ROOM_DATA_OFFSETS;
 	setRoomClickFix(119, 153, 295, true, 119);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_76_EXEC_ACTION);
-	PART_76_APPLY_OBJECT_STATE();
+	partMainSetExecuteAction(1, &IgorEngine::part76ExecuteAction);
+	part76ApplyObjectState();
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_76_ENTRY();
+		part76Entry();
 	}
 	enterPartLoop();
 	while (_currentPart == 760 && !_gameStateLoaded) {

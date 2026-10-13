@@ -24,13 +24,13 @@
 namespace Igor {
 
 
-void IgorEngine::PART_37_EXEC_ACTION(int action) {
+void IgorEngine::part37ExecuteAction(int action) {
 	switch (action) {
 	case 101: // exit
 		_currentPart = 212;
 		break;
 	case 102:
-		PART_37_ACTION_102_lookAtPaperBinTakePaper();
+		part37LookAtPaperBinTakePaper();
 		break;
 	case 103: // look at blackboard
 		igorSay(203, 2, 664);
@@ -45,12 +45,12 @@ void IgorEngine::PART_37_EXEC_ACTION(int action) {
 		igorSay(206, 1, 666);
 		break;
 	default:
-		error("PART_37_EXEC_ACTION unhandled action %d", action);
+		error("part37ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_37_ACTION_102_lookAtPaperBinTakePaper() {
+void IgorEngine::part37LookAtPaperBinTakePaper() {
 	if (_objectsState[kPhysicsClassPaperTakenStateIndex] == 1) {
 		igorSay(202, 1, 663);
 		return;
@@ -63,16 +63,16 @@ void IgorEngine::PART_37_ACTION_102_lookAtPaperBinTakePaper() {
 	}
 	addObjectToInventory(kInventoryObjectLabNote, 67);
 	_objectsState[kPhysicsClassPaperTakenStateIndex] = 1;
-	PART_37_HELPER_1_OBJECT_STATE(255);
+	part37ApplyObjectState(255);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }
 
-void IgorEngine::PART_37_HELPER_1_OBJECT_STATE(int num) {
+void IgorEngine::part37ApplyObjectState(int num) {
 }
 
-void IgorEngine::PART_37_HELPER_2_walkIn() {
+void IgorEngine::part37WalkIn() {
 	_walkData[0].setPos(0, 143, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkData[0].clipSkipX = 16;
@@ -86,7 +86,7 @@ void IgorEngine::PART_37_HELPER_2_walkIn() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_37() {
+void IgorEngine::part37() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_PhysicsClassroom, IMG_PhysicsClassroom, BOX_PhysicsClassroom, MSK_PhysicsClassroom, TXT_PhysicsClassroom);
@@ -95,13 +95,13 @@ void IgorEngine::PART_37() {
 	loadActionData(DAT_PhysicsClassroom);
 	_roomDataOffsets = PART_37_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 228, 143);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_37_EXEC_ACTION);
-	PART_37_HELPER_1_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part37ExecuteAction);
+	part37ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_37_HELPER_2_walkIn();
+		part37WalkIn();
 		enterPartLoop();
 	}
 	while (_currentPart == 370 && !_gameStateLoaded) {

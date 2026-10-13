@@ -10,7 +10,7 @@
 
 namespace Igor {
 
-void IgorEngine::PART_02_searchTrunk() {
+void IgorEngine::part2SearchTrunk() {
 	for (int frame = 0; frame <= 2; ++frame) {
 		animateLitAnimFrames(0x3C0 + frame * 0x715, 0, 0, 0x715, 37, 49, 0x608C, 0, -1, 0);
 		if (frame > 0)
@@ -18,7 +18,7 @@ void IgorEngine::PART_02_searchTrunk() {
 	}
 }
 
-void IgorEngine::PART_02_drawFuseSpark(int frame) {
+void IgorEngine::part2DrawFuseSpark(int frame) {
 	// Four 12x12 spark frames are stored at animation offset 0x7FCB and are
 	// composited over the fuse at screen offset 0x5996.
 	const uint8 *src = _animFramesBuffer + 0x7FCB + frame * 0x90;
@@ -34,11 +34,11 @@ void IgorEngine::PART_02_drawFuseSpark(int frame) {
 	}
 }
 
-void IgorEngine::PART_02_updateFuse() {
-	PART_02_drawFuseSpark(getRandomNumber(3));
+void IgorEngine::part2UpdateFuse() {
+	part2DrawFuseSpark(getRandomNumber(3));
 }
 
-void IgorEngine::PART_02_walkWhileFuseBurns(int srcX, int srcY, int dstX, int dstY) {
+void IgorEngine::part2WalkWhileFuseBurns(int srcX, int srcY, int dstX, int dstY) {
 	--_walkDataLastIndex;
 	buildWalkPath(srcX, srcY, dstX, dstY);
 	_walkDataCurrentIndex = 1;
@@ -56,12 +56,12 @@ void IgorEngine::PART_02_walkWhileFuseBurns(int srcX, int srcY, int dstX, int ds
 				++_walkDataCurrentIndex;
 			}
 		}
-		PART_02_updateFuse();
+		part2UpdateFuse();
 		waitForTimer();
 	} while (_gameState.igorMoving);
 }
 
-void IgorEngine::PART_02_APPLY_OBJECT_STATE(int num) {
+void IgorEngine::part2ApplyObjectState(int num) {
 	if (num == 1 || num == 255) {
 		// redraws the closed/open trunk into the persistent room background.
 		const int srcOffset = _objectsState[kAtticTrunkOpenStateIndex] == 0 ? 0x2E3E : 0x30FC;
@@ -112,8 +112,8 @@ void IgorEngine::PART_02_APPLY_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_02_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_02_EXEC_ACTION %d", action);
+void IgorEngine::part2ExecuteAction(int action) {
+	debugC(9, kDebugGame, "part2ExecuteAction %d", action);
 	switch (action) {
 	case 101: // open trunk
 		if (_objectsState[kAtticTrunkOpenStateIndex] == 1) {
@@ -122,7 +122,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		}
 		animateLitAnimFrames(0x18FF, 1, 2, 0x715, 37, 49, 0x608C, 127, 1, 7);
 		_objectsState[kAtticTrunkOpenStateIndex] = 1;
-		PART_02_APPLY_OBJECT_STATE(1);
+		part2ApplyObjectState(1);
 		break;
 	case 102: // close trunk
 		if (_objectsState[kAtticTrunkOpenStateIndex] == 0) {
@@ -132,7 +132,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		playSound(8, 1);
 		animateLitAnimFrames(0x18FF, 1, 0, 0x715, 37, 49, 0x608C, 127, -1, 0);
 		_objectsState[kAtticTrunkOpenStateIndex] = 0;
-		PART_02_APPLY_OBJECT_STATE(1);
+		part2ApplyObjectState(1);
 		break;
 	case 103: { // hammer the nail
 		for (int step = 1; step <= 21; ++step) {
@@ -144,14 +144,14 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		}
 		_objectsState[kAtticSmallCrackPresentStateIndex] = 1;
 		_objectsState[kAtticNailHotspotActiveStateIndex] = 0;
-		PART_02_APPLY_OBJECT_STATE(5);
-		PART_02_APPLY_OBJECT_STATE(6);
+		part2ApplyObjectState(5);
+		part2ApplyObjectState(6);
 		igorSay(217, 1, 121);
 		break;
 	}
 	case 104: { // use the pick on the crack;
 		if (_objectsState[kDynamitePlacedStateIndex] == 1) {
-			EXEC_MAIN_ACTION(2);
+			partMainExecuteAction(2);
 			break;
 		}
 
@@ -164,9 +164,9 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		}
 		_objectsState[kAtticLargeCrackPresentStateIndex] = 1;
 		_objectsState[kAtticSmallCrackPresentStateIndex] = 0;
-		PART_02_APPLY_OBJECT_STATE(4);
-		PART_02_APPLY_OBJECT_STATE(5);
-		PART_02_APPLY_OBJECT_STATE(6);
+		part2ApplyObjectState(4);
+		part2ApplyObjectState(5);
+		part2ApplyObjectState(6);
 		igorSay(218, 1, 122);
 		break;
 	}
@@ -183,10 +183,10 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			if (_objectsState[kAtticNailExaminedStateIndex] == 0) {
 				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 			} else {
-				PART_02_searchTrunk();
+				part2SearchTrunk();
 				igorSay(204, 1, 111);
 				addObjectToInventory(kInventoryObjectHammer, 44);
-				PART_02_APPLY_OBJECT_STATE(255);
+				part2ApplyObjectState(255);
 			}
 			break;
 		}
@@ -194,17 +194,17 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			if (_objectsState[kAtticSmallCrackPresentStateIndex] == 0) {
 				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 			} else {
-				PART_02_searchTrunk();
+				part2SearchTrunk();
 				igorSay(205, 1, 112);
 				removeObjectFromInventory(44);
 				playSound(63, 1);
 				addObjectToInventory(kInventoryObjectPickaxe, 45);
-				PART_02_APPLY_OBJECT_STATE(255);
+				part2ApplyObjectState(255);
 			}
 			break;
 		}
 		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[kDynamitePlacedStateIndex] == 0 && _objectsState[kAtticLargeCrackPresentStateIndex] != 0) {
-			PART_02_searchTrunk();
+			part2SearchTrunk();
 			igorSay(206, 1, 113);
 			addObjectToInventory(kInventoryObjectDynamite, 46);
 		} else if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[kDynamitePlacedStateIndex] == 0) {
@@ -218,7 +218,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		waitForTimer(127);
 		addObjectToInventory(kInventoryObjectButterflyNet, 42);
 		_objectsState[kButterflyNetTakenStateIndex] = 1;
-		PART_02_APPLY_OBJECT_STATE(2);
+		part2ApplyObjectState(2);
 		break;
 	case 108: // Look at old junk
 		igorSay(210, 1, 116);
@@ -239,10 +239,10 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		animateLitAnimFrames(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
 		waitForTimer(127);
 		_objectsState[kDynamitePlacedStateIndex] = 1;
-		PART_02_APPLY_OBJECT_STATE(8);
+		part2ApplyObjectState(8);
 		removeObjectFromInventory(46);
 		playSound(63, 1);
-		PART_02_APPLY_OBJECT_STATE(255);
+		part2ApplyObjectState(255);
 		break;
 	case 114:
 		igorSay(219, 1, 123);
@@ -280,18 +280,18 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		break;
 	case 117: // light the dynamite
 		if (_objectsState[kDynamitePlacedStateIndex] == 0) {
-			EXEC_MAIN_ACTION(2);
+			partMainExecuteAction(2);
 		} else {
-			PART_02_lightUpDynamite();
+			part2LightUpDynamite();
 		}
 		break;
 	default:
-		warning("PART_02_EXEC_ACTION unhandled action %d", action);
+		warning("part2ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_02_lightUpDynamite() {
+void IgorEngine::part2LightUpDynamite() {
 	memset(_screenVGA + 0xB400, 0, 0x4BFF);
 	playSound(68, 1);
 	animateLitAnimFrames(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
@@ -300,7 +300,7 @@ void IgorEngine::PART_02_lightUpDynamite() {
 	igorSay(221, 1, 125);
 	if (_gameState.talkMode == kTalkModeTextOnly)
 		playSound(11, 1);
-	_updateRoomBackground = &IgorEngine::PART_02_updateFuse;
+	_updateRoomBackground = &IgorEngine::part2UpdateFuse;
 	waitForEndOfIgorDialogue();
 	_updateRoomBackground = 0;
 
@@ -308,9 +308,9 @@ void IgorEngine::PART_02_lightUpDynamite() {
 	if (_gameState.talkMode != kTalkModeTextOnly)
 		playSound(11, 1);
 
-	PART_02_walkWhileFuseBurns(211, 120, 0, 143);
+	part2WalkWhileFuseBurns(211, 120, 0, 143);
 	for (int elapsed = 0; elapsed < 255; elapsed += kTimerTicksCount) {
-		PART_02_updateFuse();
+		part2UpdateFuse();
 		waitForTimer();
 	}
 	copyArea(_screenVGA, 0x5996, 320, _screenLayer1 + 0x5996, 320, 12, 12);
@@ -336,15 +336,15 @@ void IgorEngine::PART_02_lightUpDynamite() {
 	_objectsState[kAtticLargeCrackPresentStateIndex] = 0;
 	_objectsState[kDynamitePlacedStateIndex] = 0;
 	_objectsState[kBedroomHoleOpenStateIndex] = 1;
-	PART_02_APPLY_OBJECT_STATE(3);
-	PART_02_APPLY_OBJECT_STATE(4);
-	PART_02_APPLY_OBJECT_STATE(5);
+	part2ApplyObjectState(3);
+	part2ApplyObjectState(4);
+	part2ApplyObjectState(5);
 	memset(_currentPalette + 240 * 3, 0, 16 * 3);
 	setPaletteRange(240, 255);
 	_currentPart = 12;
 }
 
-void IgorEngine::PART_02() {
+void IgorEngine::part2() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_StudentDormitoryAttic);
@@ -363,8 +363,8 @@ void IgorEngine::PART_02() {
 	// clamps clicks to x 41..253 and y <= 143; clicks past the
 	// horizontal edges also clamp to y >= 141/138.
 	setRoomWalkBounds(41, 0, 253, 143, 141, 138);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_02_EXEC_ACTION);
-	PART_02_APPLY_OBJECT_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part2ExecuteAction);
+	part2ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	if (!restoreRoomAfterLoad()) {
@@ -431,7 +431,7 @@ void IgorEngine::PART_02() {
 		_walkDataLastIndex = 1;
 		_walkDataCurrentIndex = 1;
 		if (_currentPart == 22)
-			PART_02_EXEC_ACTION(118);
+			part2ExecuteAction(118);
 	}
 
 	enterPartLoop();

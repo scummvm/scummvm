@@ -41,45 +41,45 @@ static const int kPart80FriendY = 59;
 static const int kPart80LauraX = 171;
 static const int kPart80LauraY = 60;
 
-void IgorEngine::PART_80_drawFrame(int frame) {
+void IgorEngine::part80DrawFrame(int frame) {
 	copyArea(_screenVGA, kPart80PatchOffset, 320, _animFramesBuffer + (frame - 1) * kPart80PatchFrameSize, kPart80PatchWidth,
 			 kPart80PatchWidth, kPart80PatchHeight);
 }
 
-void IgorEngine::PART_80_updateDialogueFriend(int action) {
+void IgorEngine::part80UpdateFriendDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_80_drawFrame(1);
+		part80DrawFrame(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_80_drawFrame(getRandomNumber(3) + 1);
+		part80DrawFrame(getRandomNumber(3) + 1);
 		break;
 	}
 }
 
-void IgorEngine::PART_80_updateDialogueLaura(int action) {
+void IgorEngine::part80UpdateLauraDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_80_drawFrame(5);
+		part80DrawFrame(5);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_80_drawFrame(getRandomNumber(3) + 5);
+		part80DrawFrame(getRandomNumber(3) + 5);
 		break;
 	}
 }
 
-void IgorEngine::PART_80_say(int who, const Common::Array<DialogueText> &lines) {
+void IgorEngine::part80Say(int who, const Common::Array<DialogueText> &lines) {
 	if (who == 0) {
-		cutsceneSayWithCallback(kPart80FriendX, kPart80FriendY, 0, 44, 63, lines, &IgorEngine::PART_80_updateDialogueFriend);
+		cutsceneSayWithCallback(kPart80FriendX, kPart80FriendY, 0, 44, 63, lines, &IgorEngine::part80UpdateFriendDialogue);
 	} else {
-		cutsceneSayWithCallback(kPart80LauraX, kPart80LauraY, 63, 0, 38, lines, &IgorEngine::PART_80_updateDialogueLaura);
+		cutsceneSayWithCallback(kPart80LauraX, kPart80LauraY, 63, 0, 38, lines, &IgorEngine::part80UpdateLauraDialogue);
 	}
 }
 
 /**
  * Larua and Friend discuss the great dosicua recovery.
  */
-void IgorEngine::PART_80() {
+void IgorEngine::part80() {
 	playMusic(8);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_Part80, IMG_Part80, BOX_Part80, MSK_Part80, TXT_Part80);
@@ -90,20 +90,20 @@ void IgorEngine::PART_80() {
 	fadeIn(768);
 	_gameState.igorMoving = false;
 
-	PART_80_say(0, { { 201, 2, 1131 } });
-	PART_80_say(1, { { 203, 1, 1132 } });
-	PART_80_say(0, { { 204, 2, 1133 } });
-	PART_80_say(1, { { 206, 1, 1134 } });
-	PART_80_say(0, { { 207, 1, 1135 } });
-	PART_80_say(1, { { 208, 1, 1136 } });
-	PART_80_say(0, { { 209, 1, 1137 } });
-	PART_80_say(1, { { 210, 1, 1138 } });
-	PART_80_say(0, { { 211, 1, 1139 }, { 212, 1, 1140 } });
-	PART_80_say(1, { { 213, 1, 1141 } });
-	PART_80_say(0, { { 214, 2, 1142 } });
-	PART_80_say(1, { { 216, 1, 1143 }, { 217, 1, 1144 } });
-	PART_80_say(0, { { 218, 1, 1145 } });
-	PART_80_say(1, { { 219, 1, 1146 }, { 220, 1, 1147 }, { 221, 1, 1148 } });
+	part80Say(0, { { 201, 2, 1131 } });
+	part80Say(1, { { 203, 1, 1132 } });
+	part80Say(0, { { 204, 2, 1133 } });
+	part80Say(1, { { 206, 1, 1134 } });
+	part80Say(0, { { 207, 1, 1135 } });
+	part80Say(1, { { 208, 1, 1136 } });
+	part80Say(0, { { 209, 1, 1137 } });
+	part80Say(1, { { 210, 1, 1138 } });
+	part80Say(0, { { 211, 1, 1139 }, { 212, 1, 1140 } });
+	part80Say(1, { { 213, 1, 1141 } });
+	part80Say(0, { { 214, 2, 1142 } });
+	part80Say(1, { { 216, 1, 1143 }, { 217, 1, 1144 } });
+	part80Say(0, { { 218, 1, 1145 } });
+	part80Say(1, { { 219, 1, 1146 }, { 220, 1, 1147 }, { 221, 1, 1148 } });
 	waitForTimer(255);
 
 	// left-most friend falls on the floor

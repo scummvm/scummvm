@@ -39,17 +39,17 @@ static const int kPart72EyeOffsets[5] = { 0x2C06, 0x135B, 0x0FC5, 0x23E7, 0x254D
 
 static const int kPart72FlowerObjectIndex = 68;
 
-static bool PART_72_shouldBlink(uint8 color) {
+static bool part72ShouldBlink(uint8 color) {
 	return (color >= 0xC0 && color <= 0xCF) || (color >= 0xF0 && color <= 0xF1);
 }
 
-void IgorEngine::PART_72_EXEC_ACTION(int action) {
+void IgorEngine::part72ExecuteAction(int action) {
 	switch (action) {
 	case 101: // go to swamp
 		_currentPart = 690;
 		break;
 	case 102:
-		PART_72_ACTION_102_takeFlower();
+		part72TakeFlower();
 		break;
 	case 103: // look at flower
 		igorSay(202, 1, 1094);
@@ -65,13 +65,13 @@ void IgorEngine::PART_72_EXEC_ACTION(int action) {
 		_currentPart = 700;
 		break;
 	default:
-		error("PART_72_EXEC_ACTION unhandled action %d", action);
+		error("part72ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
 
-void IgorEngine::PART_72_APPLY_OBJECT_STATE() {
+void IgorEngine::part72ApplyObjectState() {
 	const int taken = _objectsState[kFlowerTakenStateIndex] == 0 ? 0 : 1;
 	copyArea(_screenLayer1, kPart72FlowerOffset, 320, _animFramesBuffer + taken * kPart72FlowerWidth * kPart72FlowerHeight,
 			 kPart72FlowerWidth, kPart72FlowerWidth, kPart72FlowerHeight);
@@ -82,7 +82,7 @@ void IgorEngine::PART_72_APPLY_OBJECT_STATE() {
 	}
 }
 
-void IgorEngine::PART_72_ACTION_102_takeFlower() {
+void IgorEngine::part72TakeFlower() {
 	for (int i = 0; i < 3; ++i) {
 		const uint8 *frame = _animFramesBuffer + kPart72TakeFramesOffset + i * kPart72TakeFrameSize;
 		copyArea(_screenVGA, kPart72TakeOffset, 320, frame, kPart72TakeWidth, kPart72TakeWidth, kPart72TakeHeight);
@@ -90,11 +90,11 @@ void IgorEngine::PART_72_ACTION_102_takeFlower() {
 	}
 	addObjectToInventory(kInventoryObjectFlower, kPart72FlowerObjectIndex);
 	_objectsState[kFlowerTakenStateIndex] = 1;
-	PART_72_APPLY_OBJECT_STATE();
+	part72ApplyObjectState();
 	igorSay(201, 1, 1093);
 }
 
-void IgorEngine::PART_72_enterFromMap() {
+void IgorEngine::part72EnterFromMap() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(319, 68, kFacingPositionLeft, 0);
 	wd->clipSkipX = 1;
@@ -113,7 +113,7 @@ void IgorEngine::PART_72_enterFromMap() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_72_enterFromSwamp() {
+void IgorEngine::part72EnterFromSwamp() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(0, 119, kFacingPositionRight, 0);
 	wd->clipSkipX = 15;
@@ -135,12 +135,12 @@ void IgorEngine::PART_72_enterFromSwamp() {
 /**
  * Eyes in the background blink from time to time
  */
-void IgorEngine::PART_72_updateBlinkingEyes() {
+void IgorEngine::part72UpdateBlinkingEyes() {
 	int pos = kPart72EyeOffsets[_roomAmbientIndex - 1];
-	if (!PART_72_shouldBlink(_screenVGA[pos])) {
+	if (!part72ShouldBlink(_screenVGA[pos])) {
 		_screenVGA[pos] = 0xB3;
 	}
-	if (!PART_72_shouldBlink(_screenVGA[pos])) {
+	if (!part72ShouldBlink(_screenVGA[pos])) {
 		_screenVGA[pos + 2] = 0xB3;
 	}
 	if (getRandomNumber(4) != 0) {
@@ -148,15 +148,15 @@ void IgorEngine::PART_72_updateBlinkingEyes() {
 	}
 	_roomAmbientIndex = getRandomNumber(4) + 1;
 	pos = kPart72EyeOffsets[_roomAmbientIndex - 1];
-	if (!PART_72_shouldBlink(_screenVGA[pos])) {
+	if (!part72ShouldBlink(_screenVGA[pos])) {
 		_screenVGA[pos] = _screenLayer1[pos];
 	}
-	if (!PART_72_shouldBlink(_screenVGA[pos])) {
+	if (!part72ShouldBlink(_screenVGA[pos])) {
 		_screenVGA[pos + 2] = _screenLayer1[pos + 2];
 	}
 }
 
-void IgorEngine::PART_72_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part72UpdateBackground() {
 	if (compareGameTick(1)) {
 		if (getRandomNumber(14) == 0 && !isDialogueSpeechPlaying()) {
 			switch (getRandomNumber(1)) {
@@ -170,11 +170,11 @@ void IgorEngine::PART_72_UPDATE_ROOM_BACKGROUND() {
 		}
 	}
 	if (compareGameTick(0x3D)) {
-		PART_72_updateBlinkingEyes();
+		part72UpdateBlinkingEyes();
 	}
 }
 
-void IgorEngine::PART_72() {
+void IgorEngine::part72() {
 	playMusic(4);
 	_gameState.enableLight = 2;
 	_roomAmbientIndex = 1;
@@ -187,24 +187,24 @@ void IgorEngine::PART_72() {
 	loadAnimData(anim);
 	_roomDataOffsets = PART_72_ROOM_DATA_OFFSETS;
 	setRoomClickFix(143, -1, -1, true);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_72_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_72_UPDATE_ROOM_BACKGROUND;
-	PART_72_APPLY_OBJECT_STATE();
+	partMainSetExecuteAction(1, &IgorEngine::part72ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part72UpdateBackground;
+	part72ApplyObjectState();
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	// Darken the room colors by 10 and Igor's colors by 15.
 	darkenPalette(_paletteBuffer, 1, 175, 10);
 	darkenPalette(_paletteBuffer, 192, 207, 15);
 
-	PART_72_paintBlinkingEyes();
+	part72PaintBlinkingEyes();
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 720) {
-			PART_72_enterFromMap();
+			part72EnterFromMap();
 		} else {
-			PART_72_enterFromSwamp();
+			part72EnterFromSwamp();
 		}
 	}
 	enterPartLoop();
@@ -218,7 +218,7 @@ void IgorEngine::PART_72() {
 		fadeOut(624);
 }
 
-void IgorEngine::PART_72_paintBlinkingEyes() {
+void IgorEngine::part72PaintBlinkingEyes() {
 	for (int i = 0; i < 5; ++i) {
 		const int pos = kPart72EyeOffsets[i];
 		_screenVGA[pos] = 0xB3;

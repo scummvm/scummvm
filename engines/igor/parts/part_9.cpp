@@ -10,11 +10,11 @@
 
 namespace Igor {
 
-void IgorEngine::PART_09_drawSecretaryFrame(int frame, bool background) {
+void IgorEngine::part9DrawSecretaryFrame(int frame, bool background) {
 	drawAnimRect(0x7839, frame * 0x34E, 18, 47, background);
 }
 
-void IgorEngine::PART_09_APPLY_OBJECT_STATE(int num) {
+void IgorEngine::part9ApplyObjectState(int num) {
 	if (num == 1 || num == 255) {
 		const uint32 srcOffset = _objectsState[kSecretaryDoorOpenStateIndex] == 0 ? 0x5D0B : 0x61A3;
 		copyArea(_screenLayer1, 0x46C2, 320, _animFramesBuffer + srcOffset, 24, 24, 49);
@@ -27,7 +27,7 @@ void IgorEngine::PART_09_APPLY_OBJECT_STATE(int num) {
 	}
 	if (num == 3 || num == 255) {
 		if (_objectsState[kSecretaryDismissedStateIndex] == 0) {
-			PART_09_drawSecretaryFrame(1, true);
+			part9DrawSecretaryFrame(1, true);
 			_roomObjectAreasTable[6].object = 2;
 			_roomObjectAreasTable[15].object = 2;
 			_roomObjectAreasTable[15].area = 0;
@@ -45,7 +45,7 @@ void IgorEngine::PART_09_APPLY_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_09_ANIMATE_DOOR(bool open) {
+void IgorEngine::part9AnimateDoor(bool open) {
 	if ((_objectsState[kSecretaryDoorOpenStateIndex] != 0) == open) {
 		executeAction(open ? 11 : 14);
 		return;
@@ -61,14 +61,14 @@ void IgorEngine::PART_09_ANIMATE_DOOR(bool open) {
 		waitForTimer(127);
 	}
 	_objectsState[kSecretaryDoorOpenStateIndex] = open ? 1 : 0;
-	PART_09_APPLY_OBJECT_STATE(1);
+	part9ApplyObjectState(1);
 }
 
-void IgorEngine::PART_09_DRAW_openClosetFrame(int frame) {
+void IgorEngine::part9DrawOpenClosetFrame(int frame) {
 	drawAnimRect(0x48E6, 0x6E0B + frame * 0x639, 27, 59);
 }
 
-void IgorEngine::PART_09_ACTION_106_openCloset(bool hairpin) {
+void IgorEngine::part9OpenCloset(bool hairpin) {
 	if (_objectsState[kSecretaryDismissedStateIndex] == 0) { // if secretary present, she will prevent searching the closet
 		ADD_DIALOGUE_TEXT(214, 2, 243);
 	} else if (_objectsState[kSecretaryClosetOpenStateIndex] == 1) {
@@ -77,16 +77,16 @@ void IgorEngine::PART_09_ACTION_106_openCloset(bool hairpin) {
 	} else if (hairpin) {
 		static const uint8 frames[] = { 1, 2, 1, 2, 1, 2, 3 };
 		for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
-			PART_09_DRAW_openClosetFrame(frames[i]);
+			part9DrawOpenClosetFrame(frames[i]);
 			waitForTimer(61);
 		}
 		_objectsState[kSecretaryClosetOpenStateIndex] = 1;
-		PART_09_APPLY_OBJECT_STATE(2);
+		part9ApplyObjectState(2);
 		ADD_DIALOGUE_TEXT(212, 1, 241);
 	} else { // igor tries to open
 		static const uint8 frames[] = { 1, 2, 1, 2, 1, 2, 1, 2, 0 };
 		for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
-			PART_09_DRAW_openClosetFrame(frames[i]);
+			part9DrawOpenClosetFrame(frames[i]);
 			if (i == 0)
 				playSound(49, 1);
 			if (i + 1 < ARRAYSIZE(frames))
@@ -99,17 +99,17 @@ void IgorEngine::PART_09_ACTION_106_openCloset(bool hairpin) {
 	waitForEndOfIgorDialogue();
 }
 
-void IgorEngine::PART_09_ACTION_110_pickCostumeFromCloset() {
+void IgorEngine::part9TakeCostumeFromCloset() {
 	for (int frame = 1; frame >= 0; --frame) {
 		drawAnimRect(0x48E6, 0x9BA3 + frame * 0x438, 27, 40, false, kBlendLitSprite);
 		waitForTimer(127);
 	}
 	addObjectToInventory(kInventoryObjectMonkeySuit, 49);
 	_objectsState[kSecretaryClosetStateIndex] = 1;
-	PART_09_APPLY_OBJECT_STATE(255);
+	part9ApplyObjectState(255);
 }
 
-void IgorEngine::PART_09_ACTION_101_openFileCabinet() {
+void IgorEngine::part9OpenFileCabinet() {
 	if (_objectsState[kSecretaryDismissedStateIndex] == 0) { // secretary dismissed
 		ADD_DIALOGUE_TEXT(220, 1, 248);
 	} else if (_objectsState[kPersonalFileChangedStateIndex] == 1) { // already changed file
@@ -135,22 +135,22 @@ void IgorEngine::PART_09_ACTION_101_openFileCabinet() {
 	waitForEndOfIgorDialogue();
 }
 
-void IgorEngine::PART_09_DRAW_secretaryTalkingFrame(int frame) {
+void IgorEngine::part9DrawSecretaryTalkingFrame(int frame) {
 	drawAnimRect(0x783A, 0xD38 + frame * 0xA9, 13, 13, true);
 }
 
-void IgorEngine::PART_09_UPDATE_DIALOGUE_SECRETARY(int action) {
+void IgorEngine::part9UpdateSecretaryDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_09_DRAW_secretaryTalkingFrame(0);
+		part9DrawSecretaryTalkingFrame(0);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_09_DRAW_secretaryTalkingFrame(getRandomNumber(2));
+		part9DrawSecretaryTalkingFrame(getRandomNumber(2));
 		break;
 	}
 }
 
-void IgorEngine::PART_09_secretarySearchesFile() {
+void IgorEngine::part9SecretarySearchesFile() {
 	static const uint8 beginFrames[] = { 1, 2, 3, 4 };
 	static const uint8 endFrames[] = { 3, 2, 1, 8 };
 	for (uint step = 0; step < ARRAYSIZE(beginFrames); ++step) {
@@ -168,15 +168,15 @@ void IgorEngine::PART_09_secretarySearchesFile() {
 	}
 }
 
-void IgorEngine::PART_09_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part9UpdateBackground() {
 	if (_objectsState[kSecretaryDismissedStateIndex] == 0 && compareGameTick(61) && getRandomNumber(1) == 0)
-		PART_09_drawSecretaryFrame(getRandomNumber(2), false);
+		part9DrawSecretaryFrame(getRandomNumber(2), false);
 }
 
-void IgorEngine::PART_09_EXEC_ACTION(int action) {
+void IgorEngine::part9ExecuteAction(int action) {
 	switch (action) {
 	case 101: // open file cabinet
-		PART_09_ACTION_101_openFileCabinet();
+		part9OpenFileCabinet();
 		break;
 	case 102: // look at file cabinet
 		igorSayAndWait(201, 2, 234);
@@ -188,12 +188,12 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 			const UpdateRoomBackgroundProc updateRoomBackground = _updateRoomBackground;
 			_updateRoomBackground = 0;
 			loadDialogueData(DLG_AdministrationSecretaryRoom);
-			_updateDialogue = &IgorEngine::PART_09_UPDATE_DIALOGUE_SECRETARY;
+			_updateDialogue = &IgorEngine::part9UpdateSecretaryDialogue;
 			handleDialogue(63, 59, 0, 90, 65);
 			_updateDialogue = 0;
 			_updateRoomBackground = updateRoomBackground;
 		}
-		PART_09_APPLY_OBJECT_STATE(255);
+		part9ApplyObjectState(255);
 		break;
 	case 104: // look at secretary
 		igorSayAndWait(203, 2, 235);
@@ -204,7 +204,7 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		break;
 	}
 	case 106:
-		PART_09_ACTION_106_openCloset(false);
+		part9OpenCloset(false);
 		break;
 	case 107: // close closet
 		if (_objectsState[kSecretaryClosetOpenStateIndex] == 0) {
@@ -220,19 +220,19 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		igorSayAndWait(_objectsState[kSecretaryDismissedStateIndex] == 0 ? 216 : 224, 1, _objectsState[kSecretaryDismissedStateIndex] == 0 ? 244 : 252);
 		break;
 	case 110:
-		PART_09_ACTION_110_pickCostumeFromCloset();
+		part9TakeCostumeFromCloset();
 		break;
 	case 112: // look at door
 		igorSayAndWait(211, 1, 240);
 		break;
 	case 113: // open door
-		PART_09_ANIMATE_DOOR(true);
+		part9AnimateDoor(true);
 		break;
 	case 114: // close door
-		PART_09_ANIMATE_DOOR(false);
+		part9AnimateDoor(false);
 		break;
 	case 115: // use hairpin
-		PART_09_ACTION_106_openCloset(true);
+		part9OpenCloset(true);
 		break;
 	case 116: //leave
 		if (_objectsState[kSecretaryDoorOpenStateIndex] != 0) {
@@ -252,12 +252,12 @@ void IgorEngine::PART_09_EXEC_ACTION(int action) {
 		}
 		break;
 	default:
-		warning("PART_09_EXEC_ACTION unhandled action %d", action);
+		warning("part9ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_09() {
+void IgorEngine::part9() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_AdministrationSecretaryRoom);
@@ -267,14 +267,14 @@ void IgorEngine::PART_09() {
 	if (_currentPart == 91) {
 		// This sequence uses the animation frames retained from the dean's room.
 		memcpy(_screenVGA, _screenLayer1, 46080);
-		drawSecretaryTalkingFrame(1);
+		part8DrawSecretaryTalkingFrame(1);
 		memcpy(_screenLayer1, _screenVGA, 46080);
 		fadeIn(624);
 
-		cutsceneSayWithCallback(65, 70, 0, 59, 63, { { 226, 1, 254 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_SECRETARY);
+		cutsceneSayWithCallback(65, 70, 0, 59, 63, { { 226, 1, 254 } }, &IgorEngine::part8UpdateSecretaryDialogue);
 
 		for (int frame = 5; frame <= 19; ++frame) {
-			drawSecretaryTalkingFrame(frame);
+			part8DrawSecretaryTalkingFrame(frame);
 			if (frame < 19)
 				waitForTimer(31);
 			else
@@ -294,14 +294,14 @@ void IgorEngine::PART_09() {
 		ANM_AdministrationSecretaryRoom9, 0
 	};
 	loadAnimData(anim);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_09_EXEC_ACTION);
+	partMainSetExecuteAction(1, &IgorEngine::part9ExecuteAction);
 	_roomDataOffsets = PART_09_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
-	PART_09_APPLY_OBJECT_STATE(255);
+	part9ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
-	_updateRoomBackground = &IgorEngine::PART_09_UPDATE_ROOM_BACKGROUND;
+	_updateRoomBackground = &IgorEngine::part9UpdateBackground;
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		_walkData[0].setPos(206, 109, kFacingPositionFront, 0);

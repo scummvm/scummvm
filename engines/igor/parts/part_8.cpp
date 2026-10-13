@@ -17,7 +17,7 @@ enum Part08PendingDeanDrink {
 	kPart08PendingDeanDrinkWater = 2
 };
 
-void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
+void IgorEngine::part8ApplyObjectState(int num) {
 	if (num == 1 || num == 255) {
 		const uint32 srcOffset = _objectsState[kDeanDoorOpenStateIndex] == 0 ? 0 : 0x4C8;
 		copyArea(_screenLayer1, 0x572C, 320, _animFramesBuffer + srcOffset, 24, 24, 51);
@@ -52,7 +52,7 @@ void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 	}
 }
 
-void IgorEngine::drawDoor(bool open) {
+void IgorEngine::part8DrawDoor(bool open) {
 	if ((_objectsState[kDeanDoorOpenStateIndex] != 0) == open) {
 		const int text = open ? 19 : 23;
 		igorSayAndWait(text, 1, text);
@@ -70,30 +70,30 @@ void IgorEngine::drawDoor(bool open) {
 		waitForTimer(127);
 	}
 	_objectsState[kDeanDoorOpenStateIndex] = open ? 1 : 0;
-	PART_08_APPLY_OBJECT_STATE(1);
+	part8ApplyObjectState(1);
 }
 
-void IgorEngine::drawDean() {
+void IgorEngine::part8DrawDean() {
 	drawAnimRect(0x6BC3, 0x23FE, 34, 26, true);
 }
 
-void IgorEngine::drawDeanTalkingFrame(int frame) {
+void IgorEngine::part8DrawDeanTalkingFrame(int frame) {
 	drawAnimRect(0x6BC6, 0x4E6B + frame * 0x226, 25, 22, true);
 }
 
-void IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN(int action) {
+void IgorEngine::part8UpdateDeanDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		drawDeanTalkingFrame(0);
+		part8DrawDeanTalkingFrame(0);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		drawDeanTalkingFrame(getRandomNumber(6));
+		part8DrawDeanTalkingFrame(getRandomNumber(6));
 		break;
 	}
 }
 
-void IgorEngine::PART_08_ACTION_pickNewspaper() {
+void IgorEngine::part8TakeNewspaper() {
 	for (int frame = 0; frame <= 1; ++frame) {
 		drawAnimRect(0x66E3, 0x125E + frame * 0x55C, 28, 49);
 		if (frame == 0)
@@ -101,10 +101,10 @@ void IgorEngine::PART_08_ACTION_pickNewspaper() {
 	}
 	addObjectToInventory(kInventoryObjectNewspaper, 50);
 	_objectsState[kNewspaperTakenStateIndex] = 1;
-	PART_08_APPLY_OBJECT_STATE(255);
+	part8ApplyObjectState(255);
 }
 
-void IgorEngine::PART_08_ACTION_pickBook() {
+void IgorEngine::part8TakeBook() {
 	for (int frame = 0; frame <= 1; ++frame) {
 		drawAnimRect(0x4F77, 2448 + frame * 1127, 23, 49, false, kBlendLitSprite);
 		if (frame == 0)
@@ -112,28 +112,28 @@ void IgorEngine::PART_08_ACTION_pickBook() {
 	}
 
 	addObjectToInventory(kInventoryObjectDeansBook, 48);
-	PART_08_APPLY_OBJECT_STATE(255);
+	part8ApplyObjectState(255);
 	_objectsState[kDeanBookTakenStateIndex] = 1;
 }
 
-void IgorEngine::drawSecretaryTalkingFrame(int frame) {
+void IgorEngine::part8DrawSecretaryTalkingFrame(int frame) {
 	const uint16 frameOffset = READ_LE_UINT16(_animFramesBuffer + 0xE240 + frame * 2);
 	decodeAnimFrame(_animFramesBuffer + 0x9AC8 + frameOffset - 1, _screenVGA, true);
 }
 
-void IgorEngine::PART_08_UPDATE_DIALOGUE_SECRETARY(int action) {
+void IgorEngine::part8UpdateSecretaryDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 	case kUpdateDialogueAnimStanding:
-		drawSecretaryTalkingFrame(1);
+		part8DrawSecretaryTalkingFrame(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		drawSecretaryTalkingFrame(getRandomNumber(2) + 2);
+		part8DrawSecretaryTalkingFrame(getRandomNumber(2) + 2);
 		break;
 	}
 }
 
-void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
+void IgorEngine::part8DeanCallsSecretary() {
 	const int currentPart = _currentPart;
 	const int actionFrameOffset = _objectsState[kNewspaperTakenStateIndex] == 0 ? 0x2773 : 0x328D;
 	playSound(60, 1);
@@ -144,21 +144,21 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 			waitForTimer(127);
 	}
 
-	PART_08_HANDLE_DIALOGUE_INTERCOM();
+	part8HandleIntercomDialogue();
 
 	_currentPart = 91;
 	fadeOut(768);
 	// the room is saved again as it was left, Igor included
 	uint8 *roomScreen = (uint8 *)malloc(46080);
 	memcpy(roomScreen, _screenVGA, 46080);
-	PART_09();
+	part9();
 
 	// back to room 8
 	loadActionData(DAT_DeanPepperOffice);
 	loadRoomData(PAL_DeanPepperOffice, IMG_DeanPepperOffice, BOX_DeanPepperOffice, MSK_DeanPepperOffice, TXT_DeanPepperOffice);
 	_roomDataOffsets = PART_08_ROOM_DATA_OFFSETS;
 	setRoomClickFix(143, -1, 281, false);
-	PART_08_APPLY_OBJECT_STATE(255);
+	part8ApplyObjectState(255);
 	memcpy(_screenVGA, roomScreen, 46080);
 	free(roomScreen);
 	SET_PAL_240_48_1();
@@ -169,19 +169,19 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 	_objectsState[kIntercomUsedStateIndex] = 1;
 }
 
-void IgorEngine::PART_08_deanDrinksBottle() {
+void IgorEngine::part8DeanDrinksBottle() {
 	static const uint8 frames[] = {
 		3, 1, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5,
 		4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 6, 7, 8, 9
 	};
-	drawDean();
+	part8DrawDean();
 	for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
 		decodeAnimFrame(getAnimFrame(0x76DD, 0xD98, frames[i]), _screenVGA, true);
 		waitForTimer(31);
 	}
 }
 
-void IgorEngine::PART_08_deanPassesOut() {
+void IgorEngine::part8DeanPassesOut() {
 	const uint8 savedTalkMode = _gameState.talkMode;
 	_gameState.talkMode = kTalkModeTextOnly;
 	waitForTimer(255);
@@ -210,14 +210,14 @@ void IgorEngine::PART_08_deanPassesOut() {
 	_gameState.talkMode = savedTalkMode;
 }
 
-void IgorEngine::PART_08_HANDLE_DIALOGUE_DEAN() {
+void IgorEngine::part8HandleDeanDialogue() {
 	loadDialogueData(DLG_DeanPepperOffice);
-	_updateDialogue = &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN;
+	_updateDialogue = &IgorEngine::part8UpdateDeanDialogue;
 	handleDialogue(78, 75, 26, 58, 0);
 	_updateDialogue = 0;
 }
 
-void IgorEngine::PART_08_HANDLE_DIALOGUE_INTERCOM() {
+void IgorEngine::part8HandleIntercomDialogue() {
 	const RoomDataOffsets savedOffsets = _roomDataOffsets;
 	_roomDataOffsets.dlg = { -174, 2, 257, 0, 30, 0, 459, 459, 0 };
 	loadDialogueData(DLG_Part8Intercom);
@@ -226,24 +226,24 @@ void IgorEngine::PART_08_HANDLE_DIALOGUE_INTERCOM() {
 	_roomDataOffsets = savedOffsets;
 }
 
-void IgorEngine::PART_08_ACTION_103_talkToDean() {
+void IgorEngine::part8TalkToDean() {
 	if (_objectsState[kDeanPassedOutStateIndex] == 1) {
 		igorSayAndWait(223, 1, 169);
 		return;
 	}
 
 	if (_objectsState[kDeanDoorOpenStateIndex] == 1) { // door open
-		drawDean();
-		cutsceneSayWithCallback(78, 75, 26, 58, 0, { { 220, 1, 166 }, { 221, 1, 167 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN);
-		PART_08_APPLY_OBJECT_STATE(255);
+		part8DrawDean();
+		cutsceneSayWithCallback(78, 75, 26, 58, 0, { { 220, 1, 166 }, { 221, 1, 167 } }, &IgorEngine::part8UpdateDeanDialogue);
+		part8ApplyObjectState(255);
 		return;
 	}
 
-	PART_08_HANDLE_DIALOGUE_DEAN();
-	PART_08_APPLY_OBJECT_STATE(255);
+	part8HandleDeanDialogue();
+	part8ApplyObjectState(255);
 }
 
-void IgorEngine::giveBottleToDean() {
+void IgorEngine::part8GiveBottleToDean() {
 
 	if (_objectsState[kDeanPassedOutStateIndex] == 1) {
 		igorSayAndWait(227, 1, 172);
@@ -254,7 +254,7 @@ void IgorEngine::giveBottleToDean() {
 		return;
 	}
 
-	drawDean();
+	part8DrawDean();
 	igorSayAndWait(210, 2, 158);
 
 	static const uint8 deanFrames[] = { 1, 2, 3, 0 };
@@ -276,16 +276,16 @@ void IgorEngine::giveBottleToDean() {
 		drawInventory(_inventoryInfo[72], 0);
 	}
 
-	cutsceneSayWithCallback(78, 75, 26, 58, 0, { { 216, 1, 162 }, { 217, 1, 163 }, { 218, 1, 164 }, { 219, 1, 165 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN);
+	cutsceneSayWithCallback(78, 75, 26, 58, 0, { { 216, 1, 162 }, { 217, 1, 163 }, { 218, 1, 164 }, { 219, 1, 165 } }, &IgorEngine::part8UpdateDeanDialogue);
 	const Part08PendingDeanDrink pendingDeanDrink =
 		_objectsState[kBottleStateIndex] < 2 ? kPart08PendingDeanDrinkWhisky : kPart08PendingDeanDrinkWater;
 	_objectsState[kPendingDeanDrinkStateIndex] = pendingDeanDrink;
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(63, 1);
-	PART_08_APPLY_OBJECT_STATE(255);
+	part8ApplyObjectState(255);
 }
 
-void IgorEngine::PART_08_EXEC_ACTION(int action) {
+void IgorEngine::part8ExecuteAction(int action) {
 	switch (action) {
 	case 101: // exit office
 		if (_objectsState[kDeanDoorOpenStateIndex] == 0) {
@@ -305,7 +305,7 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 			uint8 &pendingDeanDrink = _objectsState[kPendingDeanDrinkStateIndex];
 			if (pendingDeanDrink != kPart08PendingDeanDrinkNone) {
 				waitForTimer(251);
-				PART_08_deanDrinksBottle();
+				part8DeanDrinksBottle();
 				const bool bottleCaught = _objectsState[kButterflyNetStateIndex] == 1;
 				if (bottleCaught)
 					_objectsState[kButterflyNetStateIndex] = 2;
@@ -315,7 +315,7 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 				if (!bottleCaught)
 					playSound(16, 1);
 				if (pendingDeanDrink == kPart08PendingDeanDrinkWater) {
-					PART_08_deanPassesOut();
+					part8DeanPassesOut();
 					_objectsState[kDeanPassedOutStateIndex] = 1;
 				}
 				pendingDeanDrink = kPart08PendingDeanDrinkNone;
@@ -345,10 +345,10 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		igorSayAndWait(209, 1, 157);
 		break;
 	case 105:
-		PART_08_ACTION_pickNewspaper();
+		part8TakeNewspaper();
 		break;
 	case 103:
-		PART_08_ACTION_103_talkToDean();
+		part8TalkToDean();
 		break;
 	case 108:
 		if (_objectsState[kDeanPassedOutStateIndex] == 0) {
@@ -356,7 +356,7 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		} else if (_objectsState[kIntercomUsedStateIndex] == 1) {
 			igorSayAndWait(224, 2, 170);
 		} else {
-			PART_08_ACTION_108_deanCallsSecretary();
+			part8DeanCallsSecretary();
 		}
 		break;
 	case 109:
@@ -365,25 +365,25 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		} else if (_objectsState[kDeanBookTakenStateIndex] == 1) {
 			igorSayAndWait(215, 1, 161);
 		} else {
-			PART_08_ACTION_pickBook();
+			part8TakeBook();
 		}
 		break;
 	case 114:
-		giveBottleToDean();
+		part8GiveBottleToDean();
 		break;
 	case 112:
-		drawDoor(true);
+		part8DrawDoor(true);
 		break;
 	case 113:
-		drawDoor(false);
+		part8DrawDoor(false);
 		break;
 	default:
-		warning("PART_08_EXEC_ACTION unhandled action %d", action);
+		warning("part8ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_08() {
+void IgorEngine::part8() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_DeanPepperOffice);
@@ -399,10 +399,10 @@ void IgorEngine::PART_08() {
 		FRM_DeanPepperOffice15, FRM_DeanPepperOffice16, 0
 	};
 	loadAnimData(anim);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_08_EXEC_ACTION);
+	partMainSetExecuteAction(1, &IgorEngine::part8ExecuteAction);
 	_roomDataOffsets = PART_08_ROOM_DATA_OFFSETS;
 	setRoomClickFix(143, -1, 281, false);
-	PART_08_APPLY_OBJECT_STATE(255);
+	part8ApplyObjectState(255);
 
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	SET_PAL_240_48_1();

@@ -28,7 +28,7 @@ static const uint8 PART_33_ANIM_DATA_4[4] = { 0, 1, 2, 1 };
 
 static const uint8 PART_33_ANIM_DATA_5[5] = { 0, 6, 7, 8, 1 };
 
-void IgorEngine::PART_33_EXEC_ACTION(int action) {
+void IgorEngine::part33ExecuteAction(int action) {
 	switch (action) {
 	case 101: // take any book
 		igorSay(201, 1, 396);
@@ -55,33 +55,33 @@ void IgorEngine::PART_33_EXEC_ACTION(int action) {
 		igorSay(208, 1, 403);
 		break;
 	case 109: // take astronomy books
-		PART_33_ACTION_109_takeAstronomyBooks();
+		part33TakeAstronomyBooks();
 		break;
 	case 110: // take philosophy books
 		igorSay(209, 1, 404);
 		break;
 	case 111: // talk to harrison
-		PART_33_ACTION_111_talkToHarrison();
+		part33TalkToHarrison();
 		break;
 	case 112: // look at harrison
 		igorSay(213, 2, 407);
 		break;
 	case 113:
-		PART_33_ACTION_113_walkOut();
+		part33WalkOut();
 		break;
 	case 114:
-		PART_33_ACTION_114_showPhotoToHarrison();
+		part33ShowPhotoToHarrison();
 		break;
 	case 115:
-		PART_33_ACTION_115_giveNoteToHarrison();
+		part33GiveNoteToHarrison();
 		break;
 	default:
-		error("PART_33_EXEC_ACTION unhandled action %d", action);
+		error("part33ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_33_ACTION_109_takeAstronomyBooks() {
+void IgorEngine::part33TakeAstronomyBooks() {
 	if (_objectsState[kAstronomyBookStateIndex] == 0) {
 		igorSay(201, 1, 396);
 		return;
@@ -98,25 +98,25 @@ void IgorEngine::PART_33_ACTION_109_takeAstronomyBooks() {
 	}
 	addObjectToInventory(kInventoryObjectAstronomyBook, 66);
 	_objectsState[kAstronomyBookTakenStateIndex] = 1;
-	PART_33_HELPER_1_OBJECTS_STATE(255);
+	part33ApplyObjectState(255);
 	igorSayAndWait({ { 210, 1, 405 }, { 211, 2, 406 } });
 }
 
-void IgorEngine::PART_33_ACTION_111_talkToHarrison() {
+void IgorEngine::part33TalkToHarrison() {
 	if (_objectsState[kHarrisonPhotoStateIndex] == 1) {
-		PART_33_HELPER_9_loadExtraTexts();
-		PART_33_HELPER_1_OBJECTS_STATE(255);
+		part33LoadExtraTexts();
+		part33ApplyObjectState(255);
 		igorSayAndWait(201, 1, 447);
-		PART_33_HarrisonSay({ { 202, 2, 448 }, { 204, 2, 449 } });
-		loadResourceData__ROOM_Library();
-		PART_33_HELPER_1_OBJECTS_STATE(255);
+		part33SayHarrison({ { 202, 2, 448 }, { 204, 2, 449 } });
+		part33LoadRoom();
+		part33ApplyObjectState(255);
 	} else {
-		PART_33_HANDLE_DIALOGUE_HARRISON();
-		PART_33_HELPER_1_OBJECTS_STATE(255);
+		part33HandleHarrisonDialogue();
+		part33ApplyObjectState(255);
 	}
 }
 
-void IgorEngine::PART_33_ACTION_113_walkOut() {
+void IgorEngine::part33WalkOut() {
 	_walkDataCurrentIndex = 0;
 	for (int i = 9; i >= 0; --i) {
 		if (i == 9) {
@@ -139,32 +139,32 @@ void IgorEngine::PART_33_ACTION_113_walkOut() {
 	_currentPart = 241;
 }
 
-void IgorEngine::PART_33_ACTION_114_showPhotoToHarrison() {
+void IgorEngine::part33ShowPhotoToHarrison() {
 	copyArea(_screenVGA, 26279, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
 	igorSayAndWait(223, 1, 414);
-	PART_33_HarrisonSay({ { 224, 1, 415 } });
+	part33SayHarrison({ { 224, 1, 415 } });
 	for (int i = 2; i <= 5; ++i) {
 		copyArea(_screenVGA, 26279, 320, _animFramesBuffer + i * 1827 + 0x5104, 63, 62, 29);
 		waitForTimer(60);
 	}
 	removeObjectFromInventory(54);
-	PART_33_HarrisonSay({ { 225, 1, 416 } });
+	part33SayHarrison({ { 225, 1, 416 } });
 	copyArea(_screenVGA, 26279, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
 	igorSayAndWait(226, 1, 417);
-	PART_33_HarrisonSay({ { 227, 1, 418 } });
+	part33SayHarrison({ { 227, 1, 418 } });
 	igorSayAndWait(228, 1, 419);
-	PART_33_HarrisonSay({ { 229, 2, 420 }, { 231, 2, 421 } });
+	part33SayHarrison({ { 229, 2, 420 }, { 231, 2, 421 } });
 	for (int i = 1; i <= 4; ++i) {
 		copyArea(_screenVGA, 26279, 320, _animFramesBuffer + PART_33_ANIM_DATA_5[i] * 1827 + 0x5104, 63, 62, 29);
 		waitForTimer(60);
 	}
 	addObjectToInventory(kInventoryObjectBiologyProject, 70);
-	PART_33_HELPER_1_OBJECTS_STATE(255);
-	PART_33_HarrisonSay({ { 233, 2, 422 } });
+	part33ApplyObjectState(255);
+	part33SayHarrison({ { 233, 2, 422 } });
 	_objectsState[kHarrisonPhotoStateIndex] = 1;
 }
 
-void IgorEngine::PART_33_ACTION_115_giveNoteToHarrison() {
+void IgorEngine::part33GiveNoteToHarrison() {
 	const int offset = 26279;
 	copyArea(_screenVGA, offset, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
 	waitForTimer(60);
@@ -174,75 +174,75 @@ void IgorEngine::PART_33_ACTION_115_giveNoteToHarrison() {
 		waitForTimer(60);
 	}
 	removeObjectFromInventory(67);
-	PART_33_HELPER_1_OBJECTS_STATE(255);
+	part33ApplyObjectState(255);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
-	PART_33_HarrisonSay({ { 217, 2, 409 } });
+	part33SayHarrison({ { 217, 2, 409 } });
 	copyArea(_screenVGA, offset, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
-	PART_33_HarrisonSay({ { 219, 1, 410 } });
+	part33SayHarrison({ { 219, 1, 410 } });
 	copyArea(_screenVGA, offset, 320, _animFramesBuffer + 0x5827, 63, 62, 29);
 	_objectsState[kHarrisonNoteShownStateIndex] = 1;
 }
 
 // The room's idle animation of Harrison is only driven by the room loop; the
 // blocking dialogue loops never run it, otherwise it fights the talking frames.
-void IgorEngine::PART_33_HarrisonSay(const Common::Array<DialogueText> &lines) {
+void IgorEngine::part33SayHarrison(const Common::Array<DialogueText> &lines) {
 	const UpdateRoomBackgroundProc updateRoomBackground = _updateRoomBackground;
 	_updateRoomBackground = 0;
-	cutsceneSayWithCallback(47, 82, 0, 58, 40, lines, &IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_2);
+	cutsceneSayWithCallback(47, 82, 0, 58, 40, lines, &IgorEngine::part33UpdateHarrisonHeadDialogue);
 	_updateRoomBackground = updateRoomBackground;
 }
 
-void IgorEngine::PART_33_HANDLE_DIALOGUE_HARRISON() {
+void IgorEngine::part33HandleHarrisonDialogue() {
 	const UpdateRoomBackgroundProc updateRoomBackground = _updateRoomBackground;
 	_updateRoomBackground = 0;
 	loadDialogueData(DLG_Library);
-	_updateDialogue = &IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_3;
+	_updateDialogue = &IgorEngine::part33UpdateHarrisonHeadDialogueWithStanding;
 	handleDialogue(47, 82, 0, 58, 40);
 	_updateDialogue = 0;
 	_updateRoomBackground = updateRoomBackground;
 }
 
-void IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_1(int action) {
+void IgorEngine::part33UpdateHarrisonBodyDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_33_HELPER_4_drawHarrisonBodyFrame(1);
+		part33DrawHarrisonBodyFrame(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_33_HELPER_4_drawHarrisonBodyFrame(getRandomNumber(3) + 2);
+		part33DrawHarrisonBodyFrame(getRandomNumber(3) + 2);
 		break;
 	}
 }
 
-void IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_2(int action) {
+void IgorEngine::part33UpdateHarrisonHeadDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_33_HELPER_5_drawHarrisonHeadFrame(4);
+		part33DrawHarrisonHeadFrame(4);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_33_HELPER_5_drawHarrisonHeadFrame(4 + getRandomNumber(2));
+		part33DrawHarrisonHeadFrame(4 + getRandomNumber(2));
 		break;
 	}
 }
 
-void IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_3(int action) {
+void IgorEngine::part33UpdateHarrisonHeadDialogueWithStanding(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_33_HELPER_5_drawHarrisonHeadFrame(4);
+		part33DrawHarrisonHeadFrame(4);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_33_HELPER_5_drawHarrisonHeadFrame(4 + getRandomNumber(2));
+		part33DrawHarrisonHeadFrame(4 + getRandomNumber(2));
 		break;
 	case kUpdateDialogueAnimStanding:
-		PART_33_HELPER_5_drawHarrisonHeadFrame(4);
+		part33DrawHarrisonHeadFrame(4);
 		break;
 	}
 }
 
-void IgorEngine::PART_33_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part33UpdateBackground() {
 	if (compareGameTick(61) && _objectsState[kHarrisonPhotoStateIndex] != 2) {
-		PART_33_HELPER_5_drawHarrisonHeadFrame(_gameState.unk10);
+		part33DrawHarrisonHeadFrame(_gameState.unk10);
 		_gameState.unk10 = getRandomNumber(3) + 1;
 		if (_gameState.unk10 >= 1 && _gameState.unk10 <= 2) {
 			_gameState.unk10 = 1;
@@ -252,24 +252,24 @@ void IgorEngine::PART_33_UPDATE_ROOM_BACKGROUND() {
 	}
 }
 
-void IgorEngine::PART_33_HELPER_1_OBJECTS_STATE(int num) {
+void IgorEngine::part33ApplyObjectState(int num) {
 	if (num == 2 || num == 255) {
 		// is harrison here or not
 		if (_objectsState[kHarrisonPhotoStateIndex] <= 1) {
-			PART_33_HELPER_3_drawHarrisonFrame();
+			part33DrawHarrisonFrame();
 		} else {
 			_roomObjectAreasTable[27].object = 0;
 		}
 	}
 }
 
-void IgorEngine::PART_33_HELPER_2_HarrisonWalksOut() {
+void IgorEngine::part33HarrisonWalksOut() {
 	memcpy(_screenLayer2, _screenVGA, 46080);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x5255) - 1, _screenVGA, true);
 	memcpy(_screenLayer1, _screenVGA, 46080);
 	fadeIn(624);
-	cutsceneSayWithCallback(92, 79, 0, 58, 40, { { 220, 1, 411 }, { 221, 1, 412 } }, &IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_1);
+	cutsceneSayWithCallback(92, 79, 0, 58, 40, { { 220, 1, 411 }, { 221, 1, 412 } }, &IgorEngine::part33UpdateHarrisonBodyDialogue);
 	// Harrison walks out
 	for (int i = 6; i <= 25; ++i) {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x5253 + i * 2) - 1, _screenVGA, true);
@@ -278,11 +278,11 @@ void IgorEngine::PART_33_HELPER_2_HarrisonWalksOut() {
 	fadeOut(624);
 }
 
-void IgorEngine::PART_33_HELPER_4_drawHarrisonBodyFrame(int frame) {
+void IgorEngine::part33DrawHarrisonBodyFrame(int frame) {
 	decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x5253 + frame * 2) - 1, _screenVGA, true);
 }
 
-void IgorEngine::PART_33_HELPER_5_drawHarrisonHeadFrame(int frame) {
+void IgorEngine::part33DrawHarrisonHeadFrame(int frame) {
 	_roomCursorOn = false;
 	for (int i = 0; i <= 14; ++i) {
 		for (int j = 0; j <= 15; ++j) {
@@ -305,7 +305,7 @@ void IgorEngine::PART_33_HELPER_5_drawHarrisonHeadFrame(int frame) {
 
 }
 
-void IgorEngine::PART_33_HELPER_7_walkIn() {
+void IgorEngine::part33WalkIn() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
 	_walkCurrentPos = 1;
@@ -334,40 +334,40 @@ void IgorEngine::PART_33_HELPER_7_walkIn() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_33_HELPER_3_drawHarrisonFrame() {
+void IgorEngine::part33DrawHarrisonFrame() {
 	const int offset = 29479;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x5287, 16, 16, 15);
 }
 
-void IgorEngine::PART_33_HELPER_9_loadExtraTexts() {
+void IgorEngine::part33LoadExtraTexts() {
 	uint8 *p = loadData(TXT_Library2);
 	decodeRoomStrings(p, true);
 	free(p);
 }
 
-void IgorEngine::PART_33() {
+void IgorEngine::part33() {
 	if (_currentPart != 331) {
 		playMusic(2);
 	}
 	_gameState.enableLight = 1;
 	_gameState.unk10 = 1;
-	loadResourceData__ROOM_Library();
-	loadResourceData__ANIM_Library();
+	part33LoadRoom();
+	part33LoadAnimation();
 	loadActionData(DAT_Library);
 	_roomDataOffsets = PART_33_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 276, 143);
 	if (_currentPart == 331) {
-		PART_33_HELPER_2_HarrisonWalksOut();
+		part33HarrisonWalksOut();
 		return;
 	}
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_33_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_33_UPDATE_ROOM_BACKGROUND;
-	PART_33_HELPER_1_OBJECTS_STATE(255);
+	partMainSetExecuteAction(1, &IgorEngine::part33ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part33UpdateBackground;
+	part33ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_33_HELPER_7_walkIn();
+		part33WalkIn();
 		enterPartLoop();
 	}
 	while (_currentPart == 330 && !_gameStateLoaded) {
@@ -384,11 +384,11 @@ void IgorEngine::PART_33() {
 	_updateRoomBackground = 0;
 }
 
-void IgorEngine::loadResourceData__ROOM_Library() {
+void IgorEngine::part33LoadRoom() {
 	loadRoomData(PAL_Library, IMG_Library, BOX_Library, MSK_Library, TXT_Library);
 }
 
-void IgorEngine::loadResourceData__ANIM_Library() {
+void IgorEngine::part33LoadAnimation() {
 	static const int anm[] = { FRM_Library1, FRM_Library2, FRM_Library3, FRM_Library4, FRM_Library5, 0 };
 	loadAnimData(anm);
 }

@@ -22,7 +22,7 @@
 
 namespace Igor {
 
-void IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND() {
+void IgorEngine::part6UpdateBackground() {
 	if (compareGameTick(61)) {
 		scrollPalette(160, 167);
 		setPaletteRange(160, 167);
@@ -59,92 +59,92 @@ void IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND() {
 	}
 }
 
-void IgorEngine::PART_06_HELPER_8_animatePhotographer(int frame) {
+void IgorEngine::part6AnimatePhotographer(int frame) {
 	const int offset = 23521;
 	drawAnimRect(offset, 0x95C7 + frame * 1127, 23, 49);
 }
 
 
-void IgorEngine::PART_06_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_06_EXEC_ACTION %d", action);
+void IgorEngine::part6ExecuteAction(int action) {
+	debugC(9, kDebugGame, "part6ExecuteAction %d", action);
 	switch (action) {
 	case 101:
 		//Look at water
 		igorSay(201, 2, 480);
 		break;
 	case 102:
-		PART_06_ACTION_102_scrollLeft();
+		part6ScrollLeft();
 		break;
 	case 103:
-		PART_06_ACTION_103_talkToPhotographer();
+		part6TalkToPhotographer();
 		break;
 	case 104: // look at photographer
 		igorSay(203, 1, 481);
 		break;
 	case 105: // pick camera
-		PART_06_ACTION_105_pickCamera();
+		part6TakeCamera();
 		break;
 	case 106: // Look at camera
 		igorSay(204, 1, 482);
 		break;
 	case 107:
-		PART_06_ACTION_107_giveAnythingToPhotographer();
+		part6GiveAnythingToPhotographer();
 		break;
 	case 108:
-		PART_06_ACTION_108_giveRocketToPhotographer();
+		part6GiveRocketToPhotographer();
 		break;
 	default:
-		error("PART_06_EXEC_ACTION unhandled action %d", action);
+		error("part6ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_06_ACTION_103_talkToPhotographer() {
+void IgorEngine::part6TalkToPhotographer() {
 	igorSayAndWait(215, 1, 489);
-	PART_06_HELPER_8_animatePhotographer(0);
+	part6AnimatePhotographer(0);
 	cutsceneSay(170, 69, 55, 37, 63, 216, 1, 490);
-	PART_06_HANDLE_DIALOGUE_PHOTOGRAPHER();
-	PART_06_HELPER_6_setPhotographerState(255);
+	part6HandlePhotographerDialogue();
+	part6SetPhotographerState(255);
 }
 
-void IgorEngine::PART_06_HANDLE_DIALOGUE_PHOTOGRAPHER() {
+void IgorEngine::part6HandlePhotographerDialogue() {
 	loadDialogueData(DLG_SpringPhotographer);
-	_updateDialogue = &IgorEngine::PART_06_UPDATE_DIALOGUE_PHOTOGRAPHER;
+	_updateDialogue = &IgorEngine::part6UpdatePhotographerDialogue;
 	handleDialogue(170, 69, 55, 37, 63);
 	_updateDialogue = 0;
 }
 
 
-void IgorEngine::PART_06_UPDATE_DIALOGUE_PHOTOGRAPHER(int action) {
+void IgorEngine::part6UpdatePhotographerDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_06_HELPER_7_decodePhotographerTalkingFrame(1);
+		part6DecodePhotographerTalkingFrame(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_06_HELPER_7_decodePhotographerTalkingFrame(getRandomNumber(5) + 1);
+		part6DecodePhotographerTalkingFrame(getRandomNumber(5) + 1);
 		break;
 	case kUpdateDialogueAnimStanding:
-		PART_06_HELPER_7_decodePhotographerTalkingFrame(1);
+		part6DecodePhotographerTalkingFrame(1);
 		break;
 	}
 }
 
-void IgorEngine::PART_06_HELPER_7_decodePhotographerTalkingFrame(int frame) {
+void IgorEngine::part6DecodePhotographerTalkingFrame(int frame) {
 	const uint8 *src = _animFramesBuffer + 0xA763 + READ_LE_UINT16(_animFramesBuffer + 0xDB95 + frame * 2) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
 }
 
-void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
+void IgorEngine::part6SetPhotographerState(int num) {
 	if (num == 2 || num == 255) {
 		if (_objectsState[kPhotographerGoneStateIndex] == 1) {
-			PART_05_06_DRAW_PHOTOGRAPHER();
+			part5And6DrawPhotographer();
 			_roomObjectAreasTable[3].object = 0;
 			_roomObjectAreasTable[13].area = 0;
 			_roomObjectAreasTable[15].area = 0;
 			_roomObjectAreasTable[17].area = 0;
 			_roomObjectAreasTable[18].area = 0;
 		} else {
-			PART_06_HELPER_12_drawBackgroundOverPhotographer();
+			part6DrawBackgroundOverPhotographer();
 			_roomObjectAreasTable[2].object = 0;
 			_roomObjectAreasTable[15].object = 0;
 			_roomObjectAreasTable[18].object = 0;
@@ -158,15 +158,15 @@ void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
 	}
 	if (num == 3 || num == 255) {
 		if (_objectsState[kTripodStateIndex] == 1) {
-			PART_05_06_DRAW_CAMERA(0);
+			part5And6DrawCamera(0);
 		} else {
-			PART_05_06_DRAW_CAMERA(1);
+			part5And6DrawCamera(1);
 			_roomObjectAreasTable[3].object = 0;
 		}
 	}
 }
 
-void IgorEngine::PART_06_ACTION_105_pickCamera() {
+void IgorEngine::part6TakeCamera() {
 	_gameTicks = 0;
 	int i = 0;
 	do {
@@ -178,23 +178,23 @@ void IgorEngine::PART_06_ACTION_105_pickCamera() {
 			}
 			++i;
 		}
-		PART_06_UPDATE_ROOM_BACKGROUND();
+		part6UpdateBackground();
 		waitForTimer();
 	} while (i != 3);
 	addObjectToInventory(kInventoryObjectCamera, 71);
 	_objectsState[kTripodStateIndex] = 0;
-	PART_06_HELPER_6_setPhotographerState(255);
+	part6SetPhotographerState(255);
 }
 
-void IgorEngine::PART_06_ACTION_107_giveAnythingToPhotographer() {
-	PART_06_HELPER_8_animatePhotographer(0);
+void IgorEngine::part6GiveAnythingToPhotographer() {
+	part6AnimatePhotographer(0);
 	igorSayAndWait(205, 1, 483);
 	cutsceneSay(170, 69, 55, 37, 63, 206, 2, 484);
 }
 
-void IgorEngine::PART_06_ACTION_108_giveRocketToPhotographer() {
+void IgorEngine::part6GiveRocketToPhotographer() {
 	// first frame of photographer
-	PART_06_HELPER_8_animatePhotographer(0);
+	part6AnimatePhotographer(0);
 	igorSayAndWait({ { 208, 2, 485 }, { 210, 2, 486 } });
 	cutsceneSay(170, 69, 55, 37, 63, 212, 1, 487);
 	int i = 7;
@@ -209,18 +209,18 @@ void IgorEngine::PART_06_ACTION_108_giveRocketToPhotographer() {
 				playSound(19, 1);
 			}
 		}
-		PART_06_UPDATE_ROOM_BACKGROUND();
+		part6UpdateBackground();
 		waitForTimer();
 	} while (i != 28);
 	// removes rocket
 	removeObjectFromInventory(61);
 	_objectsState[kPhotographerGoneStateIndex] = 0;
-	PART_06_HELPER_6_setPhotographerState(255);
+	part6SetPhotographerState(255);
 	_gameState.unkF = false;
 	igorSay(213, 2, 488);
 }
 
-void IgorEngine::PART_06_ACTION_102_scrollLeft() {
+void IgorEngine::part6ScrollLeft() {
 	uint8 *walkTable1 = loadData(WLK_Bridge1);
 	uint8 *walkTable2 = loadData(WLK_Bridge2);
 	int xPos = 323;
@@ -258,7 +258,7 @@ void IgorEngine::PART_06_ACTION_102_scrollLeft() {
 			memcpy(_screenVGA, _screenLayer2, 46080);
 			++i;
 		}
-		PART_06_UPDATE_ROOM_BACKGROUND();
+		part6UpdateBackground();
 		waitForTimer();
 	} while (i != 29);
 	free(walkTable1);
@@ -269,15 +269,15 @@ void IgorEngine::PART_06_ACTION_102_scrollLeft() {
 	_currentPart = 51;
 }
 
-void IgorEngine::PART_06_HELPER_12_drawBackgroundOverPhotographer() {
+void IgorEngine::part6DrawBackgroundOverPhotographer() {
 
 	const int offset = 23521;
 	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0xDEA7, 23, 23, 49);
 }
 
-void IgorEngine::PART_06() {
+void IgorEngine::part6() {
 	playMusic(10);
-	debug("Entering PART_06");
+	debug("Entering part6");
 	_gameState.enableLight = 1;
 
 	loadRoomData(PAL_SpringBridge, IMG_SpringBridge, BOX_SpringBridge, MSK_SpringBridge, TXT_SpringBridge);
@@ -285,7 +285,7 @@ void IgorEngine::PART_06() {
 	// loads from offset 32256
 	loadAnimData(anm1, 0x7E00);
 	if (_objectsState[kSpringBridgePaperStateIndex] == 0) {
-		PART_05_06_drawPaperFrame(0);
+		part5And6DrawPaperFrame(0);
 	}
 	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll
 	// then it loads the actual current scene, SpringRock
@@ -302,13 +302,13 @@ void IgorEngine::PART_06() {
 	static const int anm4[] = {FRM_SpringRock5, FRM_SpringRock6, 0};
 	loadAnimData(anm4, 0xA763);
 
-	PART_05_06_SAVE_PHOTOGRAPHER_BACKGROUND();
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_06_EXEC_ACTION);
-	_updateRoomBackground = &IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND;
-	PART_06_HELPER_6_setPhotographerState(255);
+	part5And6SavePhotographerBackground();
+	partMainSetExecuteAction(1, &IgorEngine::part6ExecuteAction);
+	_updateRoomBackground = &IgorEngine::part6UpdateBackground;
+	part6SetPhotographerState(255);
 
 	if (_objectsState[kCameraStateIndex] == 1) {
-		PART_05_06_DRAW_TRIPOD(true);
+		part5And6DrawTripod(true);
 	}
 
 	if (_currentPart == 61 && !_gameStateLoaded) {
@@ -346,10 +346,10 @@ void IgorEngine::PART_06() {
 		if (compareGameTick(1)) {
 			handleIgorIdleAnimation();
 		}
-		PART_06_UPDATE_ROOM_BACKGROUND();
+		part6UpdateBackground();
 
 		if (compareGameTick(61) && _gameState.unkF && getRandomNumber(9) == 0) {
-			PART_06_HELPER_8_animatePhotographer(getRandomNumber(3));
+			part6AnimatePhotographer(getRandomNumber(3));
 		}
 
 		waitForTimer();

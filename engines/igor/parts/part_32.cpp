@@ -87,7 +87,7 @@ static const int kPart32SpeakerAY = 70;
 static const int kPart32SpeakerBX = 166;
 static const int kPart32SpeakerBY = 67;
 
-void IgorEngine::PART_32_EXEC_ACTION(int action) {
+void IgorEngine::part32ExecuteAction(int action) {
 	switch (action) {
 	case 101:
 		_currentPart = 311;
@@ -96,7 +96,7 @@ void IgorEngine::PART_32_EXEC_ACTION(int action) {
 		igorSay(201, 1, 828);
 		break;
 	case 103:
-		PART_32_ACTION_103_useControls();
+		part32UseControls();
 		break;
 	case 104:
 		igorSay(202, 2, 829);
@@ -105,16 +105,16 @@ void IgorEngine::PART_32_EXEC_ACTION(int action) {
 		igorSay(204, 2, 830);
 		break;
 	case 106:
-		PART_32_ACTION_106_walkToControls();
+		part32WalkToControls();
 		break;
 	default:
-		error("PART_32_EXEC_ACTION unhandled action %d", action);
+		error("part32ExecuteAction unhandled action %d", action);
 		break;
 	}
 }
 
 
-void IgorEngine::PART_32_walkIn() {
+void IgorEngine::part32WalkIn() {
 	WalkData *wd = &_walkData[0];
 	wd->setPos(0, 143, kFacingPositionLeft, 0);
 	wd->clipSkipX = 11;
@@ -133,7 +133,7 @@ void IgorEngine::PART_32_walkIn() {
 	waitForIgorMove();
 }
 
-void IgorEngine::PART_32_ACTION_106_walkToControls() {
+void IgorEngine::part32WalkToControls() {
 	if (_gameState.igorMoving) {
 		_walkDataLastIndex = _walkDataCurrentIndex + 1;
 		_walkData[_walkDataCurrentIndex].frameNum = 0;
@@ -149,20 +149,20 @@ void IgorEngine::PART_32_ACTION_106_walkToControls() {
 		_gameState.igorMoving = true;
 		waitForIgorMove();
 	}
-	PART_32_ACTION_103_useControls();
+	part32UseControls();
 }
 
 /**
  * The room is faded out and its screen and palette are kept; the control panel takes the screen and, depending
  * on the coordinates that were set, a scene follows. Then the room is loaded again and faded in.
  */
-void IgorEngine::PART_32_ACTION_103_useControls() {
+void IgorEngine::part32UseControls() {
 	fadeOut(624);
 	memcpy(_animFramesBuffer, _screenVGA, 64000);
 	memcpy(_animFramesBuffer + 64000, _paletteBuffer, 768);
-	PART_32_controls();
+	part32Controls();
 	if (_part32Result >= kPart32ResultTower && _part32Result <= kPart32ResultChick) {
-		PART_32_SCENE();
+		part32Scene();
 	}
 	loadRoomData(PAL_Part32, IMG_Part32, BOX_Part32, MSK_Part32, TXT_Part32);
 	memcpy(_screenVGA, _animFramesBuffer, 64000);
@@ -189,11 +189,11 @@ void IgorEngine::PART_32_ACTION_103_useControls() {
 	}
 }
 
-void IgorEngine::PART_32_CONTROLS_copyColor(int dstColor, int srcColor) {
+void IgorEngine::part32CopyControlColor(int dstColor, int srcColor) {
 	memcpy(_currentPalette + dstColor * 3, _currentPalette + srcColor * 3, 3);
 }
 
-int IgorEngine::PART_32_CONTROLS_KEY_AT_CURSOR() const {
+int IgorEngine::part32ControlKeyAtCursor() const {
 	const int x = _inputVars[kInputCursorXPos];
 	const int y = _inputVars[kInputCursorYPos];
 	if (x < 0 || x >= 320 || y < 0 || y >= 144) {
@@ -202,26 +202,26 @@ int IgorEngine::PART_32_CONTROLS_KEY_AT_CURSOR() const {
 	return _screenLayer2[y * 320 + x];
 }
 
-void IgorEngine::PART_32_drawDigit(int fieldOffset, int index, int key) {
+void IgorEngine::part32DrawDigit(int fieldOffset, int index, int key) {
 	copyArea(_screenVGA, fieldOffset + index * kPart32DigitPitch, 320, _part32Glyphs + (key - 1) * kPart32GlyphSize,
 			 kPart32GlyphWidth, kPart32GlyphWidth, kPart32GlyphHeight);
 }
 
-void IgorEngine::PART_32_eraseDigit(int fieldOffset, int index) {
+void IgorEngine::part32EraseDigit(int fieldOffset, int index) {
 	for (int row = 0; row < kPart32GlyphHeight; ++row) {
 		memset(_screenVGA + fieldOffset + index * kPart32DigitPitch + row * 320, 0, kPart32GlyphWidth);
 	}
 }
 
-void IgorEngine::PART_32_controlsIdle(int fieldColor) {
+void IgorEngine::part32ControlsIdle(int fieldColor) {
 	if (_inputVars[kInputEscape]) {
-		PART_32_exitControls();
+		part32ExitControls();
 	}
 	if (compareGameTick(0)) {
 		if (_part32Blink == 1) {
-			PART_32_CONTROLS_copyColor(fieldColor, kPart32FieldColor);
+			part32CopyControlColor(fieldColor, kPart32FieldColor);
 		} else if (_part32Blink == 2) {
-			PART_32_CONTROLS_copyColor(fieldColor, 0);
+			part32CopyControlColor(fieldColor, 0);
 		}
 		setPaletteRange(fieldColor, fieldColor);
 		_part32Blink = _part32Blink == 1 ? 2 : 1;
@@ -229,25 +229,25 @@ void IgorEngine::PART_32_controlsIdle(int fieldColor) {
 	waitForTimer();
 }
 
-void IgorEngine::PART_32_exitControls() {
+void IgorEngine::part32ExitControls() {
 	playSound(getRandomNumber(1) + 0x42, 1);
-	PART_32_CONTROLS_copyColor(kPart32DeclinationColor, kPart32FieldColor);
-	PART_32_CONTROLS_copyColor(kPart32AscensionColor, kPart32FieldColor);
+	part32CopyControlColor(kPart32DeclinationColor, kPart32FieldColor);
+	part32CopyControlColor(kPart32AscensionColor, kPart32FieldColor);
 	setPaletteRange(kPart32DeclinationColor, kPart32AscensionColor);
 	_part32Done = true;
 }
 
 
-void IgorEngine::PART_32_CONTROLS_selectDeclination() {
+void IgorEngine::part32SelectDeclination() {
 	playSound(31, 1);
-	PART_32_CONTROLS_copyColor(kPart32DeclinationColor, kPart32FieldColor);
-	PART_32_CONTROLS_copyColor(kPart32AscensionColor, kPart32FieldColor);
+	part32CopyControlColor(kPart32DeclinationColor, kPart32FieldColor);
+	part32CopyControlColor(kPart32AscensionColor, kPart32FieldColor);
 	setPaletteRange(kPart32AscensionColor, kPart32AscensionColor);
 	_part32Blink = 2;
 	do {
 		if (_inputVars[kInputClick]) {
 			_inputVars[kInputClick] = 0;
-			const int key = PART_32_CONTROLS_KEY_AT_CURSOR();
+			const int key = part32ControlKeyAtCursor();
 			if (key != kPart32KeyAscension) {
 				playSound(getRandomNumber(1) + 0x42, 1);
 			}
@@ -256,7 +256,7 @@ void IgorEngine::PART_32_CONTROLS_selectDeclination() {
 				if (_part32DeclinationIndex == 1 && _part32DeclinationDigits[0] == 9 && key < 10) {
 					continue;
 				}
-				PART_32_drawDigit(kPart32DeclinationDigitsOffset, _part32DeclinationIndex, key);
+				part32DrawDigit(kPart32DeclinationDigitsOffset, _part32DeclinationIndex, key);
 				_part32DeclinationDigits[_part32DeclinationIndex] = key % 10;
 				if (_part32DeclinationIndex < 1) {
 					++_part32DeclinationIndex;
@@ -265,29 +265,29 @@ void IgorEngine::PART_32_CONTROLS_selectDeclination() {
 				if (_part32DeclinationDigits[_part32DeclinationIndex] == 0xFF && _part32DeclinationIndex > 0) {
 					--_part32DeclinationIndex;
 				}
-				PART_32_eraseDigit(kPart32DeclinationDigitsOffset, _part32DeclinationIndex);
+				part32EraseDigit(kPart32DeclinationDigitsOffset, _part32DeclinationIndex);
 				_part32DeclinationDigits[_part32DeclinationIndex] = 0xFF;
 			} else if (key == kPart32KeyAscension) {
-				PART_32_CONTROLS_selectAscension();
+				part32SelectAscension();
 			} else if (key == kPart32KeyConfirm) {
-				PART_32_CONTROLS_enterCoordinates();
+				part32EnterCoordinates();
 			} else if (key == kPart32KeyExit) {
-				PART_32_exitControls();
+				part32ExitControls();
 			}
 		}
-		PART_32_controlsIdle(kPart32DeclinationColor);
+		part32ControlsIdle(kPart32DeclinationColor);
 	} while (!_part32Done);
 }
 
-void IgorEngine::PART_32_CONTROLS_selectAscension() {
+void IgorEngine::part32SelectAscension() {
 	playSound(31, 1);
-	PART_32_CONTROLS_copyColor(kPart32DeclinationColor, kPart32FieldColor);
+	part32CopyControlColor(kPart32DeclinationColor, kPart32FieldColor);
 	setPaletteRange(kPart32DeclinationColor, kPart32DeclinationColor);
 	_part32Blink = 2;
 	do {
 		if (_inputVars[kInputClick]) {
 			_inputVars[kInputClick] = 0;
-			const int key = PART_32_CONTROLS_KEY_AT_CURSOR();
+			const int key = part32ControlKeyAtCursor();
 			if (key != kPart32KeyDeclination) {
 				playSound(getRandomNumber(1) + 0x42, 1);
 			}
@@ -302,7 +302,7 @@ void IgorEngine::PART_32_CONTROLS_selectAscension() {
 				if (_part32AscensionIndex == 2 && _part32AscensionDigits[0] == 3 && _part32AscensionDigits[1] == 6 && key < 10) {
 					continue;
 				}
-				PART_32_drawDigit(kPart32AscensionDigitsOffset, _part32AscensionIndex, key);
+				part32DrawDigit(kPart32AscensionDigitsOffset, _part32AscensionIndex, key);
 				_part32AscensionDigits[_part32AscensionIndex] = key % 10;
 				if (_part32AscensionIndex < 2) {
 					++_part32AscensionIndex;
@@ -311,27 +311,27 @@ void IgorEngine::PART_32_CONTROLS_selectAscension() {
 				if (_part32AscensionDigits[_part32AscensionIndex] == 0xFF && _part32AscensionIndex > 0) {
 					--_part32AscensionIndex;
 				}
-				PART_32_eraseDigit(kPart32AscensionDigitsOffset, _part32AscensionIndex);
+				part32EraseDigit(kPart32AscensionDigitsOffset, _part32AscensionIndex);
 				_part32AscensionDigits[_part32AscensionIndex] = 0xFF;
 			} else if (key == kPart32KeyDeclination) {
-				PART_32_CONTROLS_selectDeclination();
+				part32SelectDeclination();
 			} else if (key == kPart32KeyConfirm) {
-				PART_32_CONTROLS_enterCoordinates();
+				part32EnterCoordinates();
 			} else if (key == kPart32KeyExit) {
-				PART_32_exitControls();
+				part32ExitControls();
 			}
 		}
-		PART_32_controlsIdle(kPart32AscensionColor);
+		part32ControlsIdle(kPart32AscensionColor);
 	} while (!_part32Done);
 }
 
-void IgorEngine::PART_32_CONTROLS_enterCoordinates() {
+void IgorEngine::part32EnterCoordinates() {
 	playSound(getRandomNumber(1) + 0x42, 1);
-	PART_32_CONTROLS_copyColor(kPart32DeclinationColor, kPart32FieldColor);
-	PART_32_CONTROLS_copyColor(kPart32AscensionColor, kPart32FieldColor);
+	part32CopyControlColor(kPart32DeclinationColor, kPart32FieldColor);
+	part32CopyControlColor(kPart32AscensionColor, kPart32FieldColor);
 	setPaletteRange(kPart32DeclinationColor, kPart32AscensionColor);
-	const int declination = PART_32_CONTROLS_animateDeclination();
-	const int ascension = PART_32_CONTROLS_animateAscension();
+	const int declination = part32AnimateDeclination();
+	const int ascension = part32AnimateAscension();
 	waitForTimer(100);
 	if (declination == kPart32TowerDeclination && ascension == kPart32TowerAscension) {
 		_part32Result = kPart32ResultTower;
@@ -343,7 +343,7 @@ void IgorEngine::PART_32_CONTROLS_enterCoordinates() {
 	_part32Done = true;
 }
 
-int IgorEngine::PART_32_CONTROLS_animateDeclination() {
+int IgorEngine::part32AnimateDeclination() {
 	playSound(30, 1);
 	uint8 *digits = _part32DeclinationDigits;
 	if (digits[1] == 0xFF) {
@@ -368,7 +368,7 @@ int IgorEngine::PART_32_CONTROLS_animateDeclination() {
 	return declination;
 }
 
-int IgorEngine::PART_32_CONTROLS_animateAscension() {
+int IgorEngine::part32AnimateAscension() {
 	playSound(30, 1);
 	uint8 *digits = _part32AscensionDigits;
 	if (digits[2] == 0xFF) {
@@ -409,7 +409,7 @@ int IgorEngine::PART_32_CONTROLS_animateAscension() {
 /**
  * The picture with the digit boxes.
  */
-void IgorEngine::PART_32_controls() {
+void IgorEngine::part32Controls() {
 	loadData(PAL_Part32Lock, _paletteBuffer);
 	loadData(IMG_Part32Lock, _screenLayer1);
 	uint8 *mask = loadData(MSK_Part32Lock);
@@ -430,26 +430,26 @@ void IgorEngine::PART_32_controls() {
 	do {
 		if (_inputVars[kInputClick] && _inputVars[kInputCursorYPos] < 144) {
 			_inputVars[kInputClick] = 0;
-			switch (PART_32_CONTROLS_KEY_AT_CURSOR()) {
+			switch (part32ControlKeyAtCursor()) {
 			case kPart32KeyDeclination:
-				PART_32_CONTROLS_selectDeclination();
+				part32SelectDeclination();
 				break;
 			case kPart32KeyAscension:
-				PART_32_CONTROLS_selectAscension();
+				part32SelectAscension();
 				break;
 			case kPart32KeyConfirm:
-				PART_32_CONTROLS_enterCoordinates();
+				part32EnterCoordinates();
 				break;
 			case kPart32KeyExit:
-				PART_32_exitControls();
+				part32ExitControls();
 				break;
 			}
 		}
 		if (_inputVars[kInputEscape]) {
-			PART_32_exitControls();
+			part32ExitControls();
 		}
-		PART_32_CONTROLS_copyColor(kPart32DeclinationColor, kPart32FieldColor);
-		PART_32_CONTROLS_copyColor(kPart32AscensionColor, kPart32FieldColor);
+		part32CopyControlColor(kPart32DeclinationColor, kPart32FieldColor);
+		part32CopyControlColor(kPart32AscensionColor, kPart32FieldColor);
 		setPaletteRange(kPart32DeclinationColor, kPart32AscensionColor);
 		// the original polls the input here without waiting
 		waitForTimer();
@@ -463,7 +463,7 @@ void IgorEngine::PART_32_controls() {
 /**
  * The tower scenes and the girl one have their own pictures and palettes.
  */
-void IgorEngine::PART_32_loadTowerScene() {
+void IgorEngine::part32LoadTowerScene() {
 	loadData(PAL_Part32Tower, _paletteBuffer);
 	// the pictures start 1 byte into the buffer; the table of the offsets of the frames follows them
 	loadData(ANM_Part32Tower, _screenLayer1 + 1);
@@ -472,99 +472,99 @@ void IgorEngine::PART_32_loadTowerScene() {
 	free(texts);
 }
 
-void IgorEngine::PART_32_loadGirlScene() {
+void IgorEngine::part32LoadGirlScene() {
 	loadData(PAL_Part32Girl, _paletteBuffer);
 	loadData(IMG_Part32Girl, _screenLayer1);
 	// the offsets of the frames, and the frames after them
 	loadData(ANM_Part32Girl, _screenLayer2);
 }
 
-void IgorEngine::PART_32_drawTowerConversationFrame(int frame) {
+void IgorEngine::part32DrawTowerConversationFrame(int frame) {
 	const uint8 *src = _screenLayer1 + READ_LE_UINT16(_screenLayer1 + kPart32TowerFramesTable + frame * 2);
 	decodeAnimFrame(src, _screenVGA, true);
 }
 
-void IgorEngine::PART_32_updateDialogueSpeakerA(int action) {
+void IgorEngine::part32UpdateSpeakerADialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_32_drawTowerConversationFrame(9);
+		part32DrawTowerConversationFrame(9);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_32_drawTowerConversationFrame(getRandomNumber(4) + 9);
+		part32DrawTowerConversationFrame(getRandomNumber(4) + 9);
 		break;
 	}
 }
 
-void IgorEngine::PART_32_updateDialogueSpeakerB(int action) {
+void IgorEngine::part32UpdateSpeakerBDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		PART_32_drawTowerConversationFrame(4);
+		part32DrawTowerConversationFrame(4);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		PART_32_drawTowerConversationFrame(getRandomNumber(4) + 4);
+		part32DrawTowerConversationFrame(getRandomNumber(4) + 4);
 		break;
 	}
 }
 
-void IgorEngine::PART_32_speakerASays(const Common::Array<DialogueText> &lines) {
+void IgorEngine::part32SaySpeakerA(const Common::Array<DialogueText> &lines) {
 	cutsceneSayWithCallback(kPart32SpeakerAX, kPart32SpeakerAY, 63, 59, 0, lines,
-							&IgorEngine::PART_32_updateDialogueSpeakerA);
+							&IgorEngine::part32UpdateSpeakerADialogue);
 }
 
-void IgorEngine::PART_32_speakerBSays(const Common::Array<DialogueText> &lines) {
+void IgorEngine::part32SaySpeakerB(const Common::Array<DialogueText> &lines) {
 	cutsceneSayWithCallback(kPart32SpeakerBX, kPart32SpeakerBY, 63, 21, 21, lines,
-							&IgorEngine::PART_32_updateDialogueSpeakerB);
+							&IgorEngine::part32UpdateSpeakerBDialogue);
 }
 
 /**
  * The scene of the coordinates that were set.
  */
-void IgorEngine::PART_32_SCENE() {
+void IgorEngine::part32Scene() {
 	const bool tower = _part32Result != kPart32ResultChick;
 	if (tower) {
-		PART_32_loadTowerScene();
+		part32LoadTowerScene();
 	} else {
-		PART_32_loadGirlScene();
+		part32LoadGirlScene();
 	}
 	memset(_screenVGA, 0, 46080);
 	switch (_part32Result) {
 	case kPart32ResultTower:
 		if (_objectsState[kBellTowerConversationSeenStateIndex] == 0 && _objectsState[kAstronomyBookStateIndex] == 2) {
-			PART_32_sceneTowerConversation();
+			part32SceneTowerConversation();
 		} else {
-			PART_32_sceneTowerEmpty();
+			part32SceneTowerEmpty();
 		}
 		break;
 	case kPart32ResultNothing:
-		PART_32_sceneNothing();
+		part32SceneNothing();
 		break;
 	case kPart32ResultChick:
-		PART_32_sceneGirl();
+		part32SceneGirl();
 		break;
 	}
 	fadeOut(tower ? 624 : 768);
 }
 
 
-void IgorEngine::PART_32_sceneTowerConversation() {
-	PART_32_drawTowerConversationFrame(2);
-	PART_32_drawTowerConversationFrame(3);
+void IgorEngine::part32SceneTowerConversation() {
+	part32DrawTowerConversationFrame(2);
+	part32DrawTowerConversationFrame(3);
 	fadeIn(624);
-	PART_32_speakerASays({ { 201, 2, 835 } });
-	PART_32_speakerBSays({ { 203, 1, 836 }, { 204, 1, 837 }, { 205, 1, 838 }, { 206, 2, 839 } });
-	PART_32_speakerASays({ { 208, 1, 840 } });
-	PART_32_speakerBSays({ { 209, 2, 841 }, { 211, 1, 842 } });
-	PART_32_speakerASays({ { 212, 1, 843 } });
-	PART_32_speakerBSays({ { 213, 2, 844 }, { 215, 2, 845 } });
-	PART_32_speakerASays({ { 217, 1, 846 } });
-	PART_32_speakerBSays({ { 218, 1, 847 }, { 219, 2, 848 }, { 221, 1, 849 }, { 222, 2, 850 } });
-	PART_32_speakerASays({ { 224, 1, 851 } });
+	part32SaySpeakerA({ { 201, 2, 835 } });
+	part32SaySpeakerB({ { 203, 1, 836 }, { 204, 1, 837 }, { 205, 1, 838 }, { 206, 2, 839 } });
+	part32SaySpeakerA({ { 208, 1, 840 } });
+	part32SaySpeakerB({ { 209, 2, 841 }, { 211, 1, 842 } });
+	part32SaySpeakerA({ { 212, 1, 843 } });
+	part32SaySpeakerB({ { 213, 2, 844 }, { 215, 2, 845 } });
+	part32SaySpeakerA({ { 217, 1, 846 } });
+	part32SaySpeakerB({ { 218, 1, 847 }, { 219, 2, 848 }, { 221, 1, 849 }, { 222, 2, 850 } });
+	part32SaySpeakerA({ { 224, 1, 851 } });
 	waitForTimer(255);
 }
 
 
-void IgorEngine::PART_32_sceneTowerEmpty() {
-	PART_32_drawTowerConversationFrame(2);
+void IgorEngine::part32SceneTowerEmpty() {
+	part32DrawTowerConversationFrame(2);
 	fadeIn(624);
 	waitForTimer(255);
 	cutsceneSayStart(160, 70, 63, 63, 63, 227, 1, 853);
@@ -573,8 +573,8 @@ void IgorEngine::PART_32_sceneTowerEmpty() {
 }
 
 
-void IgorEngine::PART_32_sceneNothing() {
-	PART_32_drawTowerConversationFrame(1);
+void IgorEngine::part32SceneNothing() {
+	part32DrawTowerConversationFrame(1);
 	fadeIn(624);
 	waitForTimer(255);
 	cutsceneSayStart(160, 70, 63, 63, 63, 225, 2, 852);
@@ -585,7 +585,7 @@ void IgorEngine::PART_32_sceneNothing() {
 /**
  * The animation of the girl
  */
-void IgorEngine::PART_32_sceneGirl() {
+void IgorEngine::part32SceneGirl() {
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
@@ -599,7 +599,7 @@ void IgorEngine::PART_32_sceneGirl() {
 	waitForTimer(255);
 }
 
-void IgorEngine::PART_32() {
+void IgorEngine::part32() {
 	playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_Part32);
@@ -607,13 +607,13 @@ void IgorEngine::PART_32() {
 	SET_PAL_240_48_1();
 	_roomDataOffsets = PART_32_ROOM_DATA_OFFSETS;
 	setRoomClickFix(143, 10, 120, true);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_32_EXEC_ACTION);
+	partMainSetExecuteAction(1, &IgorEngine::part32ExecuteAction);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
-		PART_32_walkIn();
+		part32WalkIn();
 	}
 	enterPartLoop();
 	while (_currentPart == 320 && !_gameStateLoaded) {
