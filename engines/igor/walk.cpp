@@ -43,12 +43,12 @@ void IgorEngine::setRoomWalkBounds(int x1, int y1, int x2, int y2,
 }
 
 void IgorEngine::setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp, int yBottom) {
-	_roomClickFix.yMax = yMax;
-	_roomClickFixBottom = yBottom;
-	_roomClickFix.xMin = xMin;
-	_roomClickFix.xMax = xMax;
-	_roomClickFix.scanUp = scanUp;
-	_roomClickFix.enabled = true;
+	_roomWalkTargetRules.yMax = yMax;
+	_roomWalkTargetBottom = yBottom;
+	_roomWalkTargetRules.xMin = xMin;
+	_roomWalkTargetRules.xMax = xMax;
+	_roomWalkTargetRules.scanUp = scanUp;
+	_roomWalkTargetRules.enabled = true;
 }
 
 void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
@@ -1211,27 +1211,27 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 		*y = yPos;
 		return;
 	}
-	if (_roomClickFix.enabled) {
+	if (_roomWalkTargetRules.enabled) {
 		// The click is clamped, then the picture is scanned for the first walkable row strictly below it (the
 		// scan starts one row down, whatever the row is) and, if none is found down to the last row and the
 		// room says so, upwards from the last row.
 		int xPos = *x;
-		if (_roomClickFix.xMax >= 0) {
-			xPos = MIN(xPos, _roomClickFix.xMax);
+		if (_roomWalkTargetRules.xMax >= 0) {
+			xPos = MIN(xPos, _roomWalkTargetRules.xMax);
 		}
-		if (_roomClickFix.xMin >= 0) {
-			xPos = MAX(xPos, _roomClickFix.xMin);
+		if (_roomWalkTargetRules.xMin >= 0) {
+			xPos = MAX(xPos, _roomWalkTargetRules.xMin);
 		}
-		int yPos = MIN(*y, _roomClickFix.yMax);
+		int yPos = MIN(*y, _roomWalkTargetRules.yMax);
 		do {
-			if (yPos < _roomClickFixBottom) {
+			if (yPos < _roomWalkTargetBottom) {
 				++yPos;
 			}
 			if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area > 0) {
 				break;
 			}
-		} while (yPos != _roomClickFixBottom);
-		if (_roomClickFix.scanUp && yPos == _roomClickFixBottom && _roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
+		} while (yPos != _roomWalkTargetBottom);
+		if (_roomWalkTargetRules.scanUp && yPos == _roomWalkTargetBottom && _roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
 			do {
 				--yPos;
 			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > 0);

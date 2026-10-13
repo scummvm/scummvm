@@ -24,6 +24,12 @@ namespace Igor {
 
 void IgorEngine::part4ExecuteAction(int action) {
 	debugC(9, kDebugGame, "part4ExecuteAction %d", action);
+	if ((_game.flags & kFlagDemo) && (action == 102 || action == 103 || action == 104)) {
+		ADD_DIALOGUE_TEXT(102, 2);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		return;
+	}
 	switch (action) {
 	case 101: // church
 		_currentPart = 120;

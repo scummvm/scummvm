@@ -121,8 +121,8 @@ void IgorEngine::restart() {
 	_mazeLocation = 0;
 	_mazeSavedLocation = 0;
 	_mazeRoom = 0;
-	memset(&_roomClickFix, 0, sizeof(_roomClickFix));
-	_roomClickFixBottom = 143;
+	memset(&_roomWalkTargetRules, 0, sizeof(_roomWalkTargetRules));
+	_roomWalkTargetBottom = 143;
 	_roomGiveObjectSize = 0;
 	_nextTimer = 0;
 	_fastMode = 1;
@@ -284,7 +284,7 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
 }
 
 void IgorEngine::leavePartLoop() {
-	_roomClickFix.enabled = false;
+	_roomWalkTargetRules.enabled = false;
 	_roomGiveObjectSize = 0;
 	hideCursor();
 	partMainSetExecuteAction(1, 0);
