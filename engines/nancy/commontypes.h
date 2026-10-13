@@ -439,7 +439,7 @@ struct UIButtonRecord {
 	uint32 hoverCursorFlag = 0; // swap cursor sprite on hover when set
 	uint32 secondaryStateField = 0;
 	uint32 initialState = 0; // 0=idle, 1=hover, 2=pressed, 3/4=disabled
-	uint32 reservedField = 0;
+	uint32 pressedDuration = 0; // milliseconds the pressed sprite stays up after a click
 	SoundDescription clickSound;
 };
 

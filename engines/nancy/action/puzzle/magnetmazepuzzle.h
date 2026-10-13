@@ -28,12 +28,14 @@
 namespace Nancy {
 namespace Action {
 
-// Four magnet pieces, four targets on a maze board. The player picks a piece
-// from its home slot and drops it onto its target zone; an overlap snaps the
-// piece to a fixed position and locks it. Reset button returns all pieces
-// home. Wins when every piece is locked into its target.
-// Called in Nancy10 from scenes 3280 (normal mode, with overlaid pieces) and
-// 3281 (easy mode, without overlaid pieces, triggered as a cheat mode when
+// Four metal pieces lie in a maze, partly hidden under wooden boards. With
+// the magnet in hand, a piece is picked up by moving the cursor over it and
+// then heads for the cursor at a limited speed; it is dropped as soon as the
+// cursor gets away from it, e.g. because a wall holds the piece back. A piece
+// that reaches its target zone snaps into place and locks. The reset button
+// returns all loose pieces home. Wins when every piece is locked.
+// Called in Nancy10 from scenes 3280 (normal mode, with overlaid boards) and
+// 3281 (easy mode, without overlaid boards, triggered as a cheat mode when
 // visiting the puzzle multiple times).
 class MagnetMazePuzzle : public PuzzleRecord {
 public:
@@ -71,12 +73,20 @@ protected:
 
 	int16 _requiredItem = -1;
 
-	Common::Rect _resetButtonHotspot;
+	// When set, a piece is hovered while the center of the cursor image is
+	// inside it; otherwise the whole cursor image is tested against the piece
+	bool _hoverUsesCursorCenter = false;
+
+	UIButtonRecord _resetButton;
 
 	SoundDescription _pickupSound;
-	SoundDescription _placeSound;
-	SoundDescription _resetSound;
-	SoundDescription _bumpSound;
+	Common::String _pickupTextKey;
+	Common::String _pickupText;
+	SoundDescription _dropSound;
+	Common::String _dropTextKey;
+	Common::String _dropText;
+	SoundDescription _moveSound;
+	SoundDescription _lockSound;
 
 	// Runtime state
 
@@ -92,16 +102,21 @@ protected:
 
 	Common::Rect _magnetPos[kNumMagnets];
 	bool _magnetLocked[kNumMagnets] = {};
+	bool _magnetGrabbed[kNumMagnets] = {};
 
 	int  _heldMagnet  = -1;
+	bool _wasDropped  = false; // the pickup sound only plays after a drop
 	bool _isSolved    = false;
 	bool _cantPlayed[kNumMagnets] = {};
 	uint32 _winDelayEndTime = 0;
+	uint32 _lastMoveTime = 0;
 
-	Common::Point _heldDrawPos;
+	bool _resetPressed = false;
+	uint32 _resetPressEndTime = 0;
 
 	Graphics::ManagedSurface _boardImage;
 	Graphics::ManagedSurface _mazeImage; // wall mask for pixel-collision tests
+	Graphics::ManagedSurface _resetButtonImage;
 
 	// RGB of the maze image's "wall" pixel color; a magnet rect overlapping
 	// any pixel of this color in the maze image is treated as colliding.
@@ -110,12 +125,14 @@ protected:
 	byte _wallColorB = 0;
 
 	void resetMagnets();
-	void snapMagnet(int idx);
+	void lockMagnetsOnTargets();
+	void dropMagnets();
+	bool moveHeldMagnet(const Common::Point &cursorCenter);
+	bool isMagnetHovered(int idx, const Common::Rect &cursorRect, const Common::Point &cursorCenter) const;
+	void playPuzzleSound(SoundDescription &sound);
 	void persistState();
 	void redraw();
-	void checkSolved();
 	bool collidesAt(const Common::Rect &r) const;
-	void stepMagnetToward(Common::Rect &cur, const Common::Rect &target) const;
 };
 
 } // End of namespace Action

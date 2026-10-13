@@ -322,7 +322,7 @@ void readUIButton(Common::SeekableReadStream &stream, UIButtonRecord &dst) {
 	dst.hoverCursorFlag = stream.readUint32LE();
 	dst.secondaryStateField = stream.readUint32LE();
 	dst.initialState = stream.readUint32LE();
-	dst.reservedField = stream.readUint32LE();
+	dst.pressedDuration = stream.readUint32LE();
 
 	dst.clickSound.readNormal(stream);
 }
