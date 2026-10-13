@@ -1009,7 +1009,7 @@ next4:
 			break;
 
 		case 4:
-			digi_play("305r29a", 1);
+			digi_play("305r29b", 1);
 			break;
 
 		default:
