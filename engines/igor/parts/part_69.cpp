@@ -46,7 +46,7 @@ static const int kPart69SceneDoneState = 96;
 static const int kPart69FlagState = 97;
 static const int kPart69SequenceState = 98;
 static const int kPart69SecondFireflyState = 99;
-static const int kPart69RewardState = 6;
+static const int kPart69VaseState = 6;
 
 // The animation of the two fireflies is a sequence of steps (1 to 6). Each step plays the frames of the first firefly from
 // the first to the last frame of the step; every 5 steps of the first firefly the second firefly plays too. The values come
@@ -203,7 +203,7 @@ void IgorEngine::PART_69_FINALE(int num, int sound) {
  */
 void IgorEngine::PART_69_ACTION_107_watch() {
 	drawAnimRect(kPart69PictureOffset, kPart69PictureAnimOffset, kPart69PictureWidth, kPart69PictureHeight);
-	if (_objectsState[kPart69RewardState] == 0) {
+	if (_objectsState[kPart69VaseState] == 0) {
 		for (int i = 0; i < 1000 / kTimerTicksCount && !_eventQuitGame; ++i) {
 			PART_69_ANIMATE_FIREFLIES();
 			waitForTimer();
@@ -241,7 +241,7 @@ void IgorEngine::PART_69_ACTION_107_watch() {
 
 	waitForTimer(255);
 	_objectsState[kPart69SceneDoneState] = 1;
-	_objectsState[kPart69RewardState] = 2;
+	_objectsState[kPart69VaseState] = 2;
 	UPDATE_OBJECT_STATE(7);
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(63, 1);

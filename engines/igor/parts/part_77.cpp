@@ -26,8 +26,8 @@ static const int kPart77MonkeyFramesTable = 0x67D2;
 
 static const int kPart77MonkeyStandingFrame = 40;
 
-static const int kPart77TextX = 120;
-static const int kPart77TextY = 40;
+static const int kPart77MonkeyTextX = 120;
+static const int kPart77MonkeyTextY = 40;
 
 static const uint8 kPart77CutsceneFrames[6] = { 17, 18, 17, 18, 17, 18 };
 
@@ -113,7 +113,7 @@ void IgorEngine::PART_77_ACTION_106_monkeyCageCutscene() {
 		PART_77_drawMonkeyFrame(i);
 		waitForTimer(31);
 	}
-	cutsceneSayWithCallback(kPart77TextX, kPart77TextY, 63, 57, 0,
+	cutsceneSayWithCallback(kPart77MonkeyTextX, kPart77MonkeyTextY, 63, 57, 0,
 							{ { 210, 2, 1126 }, { 212, 2, 1127 }, { 214, 1, 1128 }, { 215, 2, 1129 }, { 217, 2, 1130 } },
 							&IgorEngine::PART_77_UPDATE_DIALOGUE);
 	waitForTimer(255);

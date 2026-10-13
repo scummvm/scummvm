@@ -265,7 +265,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		UPDATE_OBJECT_STATE(7);
 		addObjectToInventory(34, 69);
 		break;
-	case 64:
+	case 64: // look at vase
 		if (_objectsState[6] == 0) {
 			ADD_DIALOGUE_TEXT(162, 1, 86);
 		} else if (_objectsState[6] == 1) {
@@ -690,7 +690,7 @@ void IgorEngine::PART_MAIN() {
 			PART_73_CUTSCENE(); // Cutscene followed by PART_80
 			break;
 		case 740:
-			PART_74_CUTSCENE();
+			PART_74_shipCutscene();
 			break;
 		case 750:
 			PART_75(); // philip vodka cutscene
