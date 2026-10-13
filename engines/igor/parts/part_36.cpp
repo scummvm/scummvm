@@ -84,7 +84,7 @@ void IgorEngine::PART_36_ACTION_102_takePen() {
 		waitForTimer(45);
 	}
 	addObjectToInventory(30, 65);
-	_objectsState[88] = 1;
+	_objectsState[kPenTakenStateIndex] = 1;
 	PART_36_HELPER_1_OBJECT_STATE(255);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
@@ -93,7 +93,7 @@ void IgorEngine::PART_36_ACTION_102_takePen() {
 
 void IgorEngine::PART_36_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		if (_objectsState[88] == 0) {
+		if (_objectsState[kPenTakenStateIndex] == 0) {
 			PART_36_HELPER_4_drawPen(1);
 		} else {
 			PART_36_HELPER_4_drawPen(0);

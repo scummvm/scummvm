@@ -10,7 +10,6 @@
 
 namespace Igor {
 
-static const int kPart08PendingDeanDrinkState = 30;
 
 enum Part08PendingDeanDrink {
 	kPart08PendingDeanDrinkNone = 0,
@@ -20,12 +19,12 @@ enum Part08PendingDeanDrink {
 
 void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		const uint32 srcOffset = _objectsState[26] == 0 ? 0 : 0x4C8;
+		const uint32 srcOffset = _objectsState[kDeanDoorOpenStateIndex] == 0 ? 0 : 0x4C8;
 		copyArea(_screenLayer1, 0x572C, 320, _animFramesBuffer + srcOffset, 24, 24, 51);
-		_roomActionsTable[150] = _objectsState[26] == 0 ? 6 : 7;
+		_roomActionsTable[150] = _objectsState[kDeanDoorOpenStateIndex] == 0 ? 6 : 7;
 	}
 	if (num == 2 || num == 255) {
-		if (_objectsState[111] == 1) {
+		if (_objectsState[kExamCompletedStateIndex] == 1) {
 			_roomObjectAreasTable[7].object = 0;
 			_roomObjectAreasTable[8].object = 0;
 			_roomActionsTable[146] = 4;
@@ -35,18 +34,18 @@ void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 		int dstOffset;
 		int rows;
 		int width;
-		if (_objectsState[29] == 0) {
+		if (_objectsState[kDeanPassedOutStateIndex] == 0) {
 			srcOffset = 0x208A;
 			dstOffset = 0x6BC3;
 			rows = 26;
 			width = 34;
 			_roomObjectAreasTable[8].object = 0;
 		} else {
-			srcOffset = _objectsState[31] == 0 ? 0x9992 : 0x985C;
+			srcOffset = _objectsState[kNewspaperTakenStateIndex] == 0 ? 0x9992 : 0x985C;
 			dstOffset = 0x7FC8;
 			rows = 10;
 			width = 31;
-			_roomObjectAreasTable[8].object = _objectsState[31] == 0 ? 3 : 0;
+			_roomObjectAreasTable[8].object = _objectsState[kNewspaperTakenStateIndex] == 0 ? 3 : 0;
 		}
 		drawAnimRect(dstOffset, srcOffset, width, rows, true);
 		_roomActionsTable[146] = 4;
@@ -54,7 +53,7 @@ void IgorEngine::PART_08_APPLY_OBJECT_STATE(int num) {
 }
 
 void IgorEngine::drawDoor(bool open) {
-	if ((_objectsState[26] != 0) == open) {
+	if ((_objectsState[kDeanDoorOpenStateIndex] != 0) == open) {
 		const int text = open ? 19 : 23;
 		igorSayAndWait(text, 1, text);
 		return;
@@ -70,7 +69,7 @@ void IgorEngine::drawDoor(bool open) {
 			break;
 		waitForTimer(127);
 	}
-	_objectsState[26] = open ? 1 : 0;
+	_objectsState[kDeanDoorOpenStateIndex] = open ? 1 : 0;
 	PART_08_APPLY_OBJECT_STATE(1);
 }
 
@@ -101,7 +100,7 @@ void IgorEngine::PART_08_ACTION_pickNewspaper() {
 			waitForTimer(127);
 	}
 	addObjectToInventory(15, 50);
-	_objectsState[31] = 1;
+	_objectsState[kNewspaperTakenStateIndex] = 1;
 	PART_08_APPLY_OBJECT_STATE(255);
 }
 
@@ -114,7 +113,7 @@ void IgorEngine::PART_08_ACTION_pickBook() {
 
 	addObjectToInventory(13, 48);
 	PART_08_APPLY_OBJECT_STATE(255);
-	_objectsState[28] = 1;
+	_objectsState[kDeanBookTakenStateIndex] = 1;
 }
 
 void IgorEngine::drawSecretaryTalkingFrame(int frame) {
@@ -136,7 +135,7 @@ void IgorEngine::PART_08_UPDATE_DIALOGUE_SECRETARY(int action) {
 
 void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 	const int currentPart = _currentPart;
-	const int actionFrameOffset = _objectsState[31] == 0 ? 0x2773 : 0x328D;
+	const int actionFrameOffset = _objectsState[kNewspaperTakenStateIndex] == 0 ? 0x2773 : 0x328D;
 	playSound(60, 1);
 
 	for (int frame = 0; frame <= 1; ++frame) {
@@ -167,7 +166,7 @@ void IgorEngine::PART_08_ACTION_108_deanCallsSecretary() {
 	drawInventory(_inventoryInfo[72], 0);
 	fadeIn(768);
 	_currentPart = currentPart;
-	_objectsState[32] = 1;
+	_objectsState[kIntercomUsedStateIndex] = 1;
 }
 
 void IgorEngine::PART_08_deanDrinksBottle() {
@@ -228,12 +227,12 @@ void IgorEngine::PART_08_HANDLE_DIALOGUE_INTERCOM() {
 }
 
 void IgorEngine::PART_08_ACTION_103_talkToDean() {
-	if (_objectsState[29] == 1) {
+	if (_objectsState[kDeanPassedOutStateIndex] == 1) {
 		igorSayAndWait(223, 1, 169);
 		return;
 	}
 
-	if (_objectsState[26] == 1) { // door open
+	if (_objectsState[kDeanDoorOpenStateIndex] == 1) { // door open
 		drawDean();
 		cutsceneSayWithCallback(78, 75, 26, 58, 0, { { 220, 1, 166 }, { 221, 1, 167 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN);
 		PART_08_APPLY_OBJECT_STATE(255);
@@ -246,11 +245,11 @@ void IgorEngine::PART_08_ACTION_103_talkToDean() {
 
 void IgorEngine::giveBottleToDean() {
 
-	if (_objectsState[29] == 1) {
+	if (_objectsState[kDeanPassedOutStateIndex] == 1) {
 		igorSayAndWait(227, 1, 172);
 		return;
 	}
-	if (_objectsState[0] == 1) {
+	if (_objectsState[kBottleStateIndex] == 1) {
 		igorSayAndWait(226, 1, 171);
 		return;
 	}
@@ -279,8 +278,8 @@ void IgorEngine::giveBottleToDean() {
 
 	cutsceneSayWithCallback(78, 75, 26, 58, 0, { { 216, 1, 162 }, { 217, 1, 163 }, { 218, 1, 164 }, { 219, 1, 165 } }, &IgorEngine::PART_08_UPDATE_DIALOGUE_DEAN);
 	const Part08PendingDeanDrink pendingDeanDrink =
-		_objectsState[0] < 2 ? kPart08PendingDeanDrinkWhisky : kPart08PendingDeanDrinkWater;
-	_objectsState[kPart08PendingDeanDrinkState] = pendingDeanDrink;
+		_objectsState[kBottleStateIndex] < 2 ? kPart08PendingDeanDrinkWhisky : kPart08PendingDeanDrinkWater;
+	_objectsState[kPendingDeanDrinkStateIndex] = pendingDeanDrink;
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(63, 1);
 	PART_08_APPLY_OBJECT_STATE(255);
@@ -289,11 +288,11 @@ void IgorEngine::giveBottleToDean() {
 void IgorEngine::PART_08_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101: // exit office
-		if (_objectsState[26] == 0) {
+		if (_objectsState[kDeanDoorOpenStateIndex] == 0) {
 			_currentPart = 71;
 			break;
 		}
-		if (_objectsState[26] != 0) {
+		if (_objectsState[kDeanDoorOpenStateIndex] != 0) {
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].area = 4;
 			for (int area = 13; area <= 14; ++area)
@@ -303,19 +302,19 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 			_walkDataCurrentIndex = 1;
 			_gameState.igorMoving = true;
 			waitForIgorMove();
-			uint8 &pendingDeanDrink = _objectsState[kPart08PendingDeanDrinkState];
+			uint8 &pendingDeanDrink = _objectsState[kPendingDeanDrinkStateIndex];
 			if (pendingDeanDrink != kPart08PendingDeanDrinkNone) {
 				waitForTimer(251);
 				PART_08_deanDrinksBottle();
-				if (_objectsState[42] == 1)
-					_objectsState[42] = 2;
+				if (_objectsState[kButterflyNetStateIndex] == 1)
+					_objectsState[kButterflyNetStateIndex] = 2;
 				else
-					_objectsState[41] = 1;
+					_objectsState[kGlassShardsPresentStateIndex] = 1;
 				waitForTimer(101);
 				playSound(16, 1);
 				if (pendingDeanDrink == kPart08PendingDeanDrinkWater) {
 					PART_08_deanPassesOut();
-					_objectsState[29] = 1;
+					_objectsState[kDeanPassedOutStateIndex] = 1;
 				}
 				pendingDeanDrink = kPart08PendingDeanDrinkNone;
 			}
@@ -326,7 +325,7 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		igorSayAndWait(202, 1, 153);
 		break;
 	case 104: // Look at dean
-		if (_objectsState[29] == 1)
+		if (_objectsState[kDeanPassedOutStateIndex] == 1)
 			ADD_DIALOGUE_TEXT(222, 1, 168);
 		else
 			ADD_DIALOGUE_TEXT(203, 2, 154);
@@ -350,18 +349,18 @@ void IgorEngine::PART_08_EXEC_ACTION(int action) {
 		PART_08_ACTION_103_talkToDean();
 		break;
 	case 108:
-		if (_objectsState[29] == 0) {
+		if (_objectsState[kDeanPassedOutStateIndex] == 0) {
 			igorSayAndWait(212, 1, 159);
-		} else if (_objectsState[32] == 1) {
+		} else if (_objectsState[kIntercomUsedStateIndex] == 1) {
 			igorSayAndWait(224, 2, 170);
 		} else {
 			PART_08_ACTION_108_deanCallsSecretary();
 		}
 		break;
 	case 109:
-		if (_objectsState[29] == 0) {
+		if (_objectsState[kDeanPassedOutStateIndex] == 0) {
 			igorSayAndWait(213, 2, 160);
-		} else if (_objectsState[28] == 1) {
+		} else if (_objectsState[kDeanBookTakenStateIndex] == 1) {
 			igorSayAndWait(215, 1, 161);
 		} else {
 			PART_08_ACTION_pickBook();

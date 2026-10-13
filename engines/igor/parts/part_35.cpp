@@ -29,7 +29,7 @@ void IgorEngine::PART_35_EXEC_ACTION(int action) {
 	switch (action) {
 	case 101: // look at tree
 		igorSay(201, 2, 611);
-		_objectsState[82] = 1;
+		_objectsState[kTreeResinDiscoveredStateIndex] = 1;
 		PART_35_APPLY_OBJECT_STATE(3);
 		break;
 	case 102: // take resin
@@ -117,7 +117,7 @@ void IgorEngine::PART_35_ACTION_106_exitToMap() {
 
 void IgorEngine::PART_35_APPLY_OBJECT_STATE(int num) {
 	if (num == 3 || num == 255) {// disable hotspot if resin taken
-		_roomObjectAreasTable[7].object = (_objectsState[82] == 0) ? 1 : 2;
+		_roomObjectAreasTable[7].object = (_objectsState[kTreeResinDiscoveredStateIndex] == 0) ? 1 : 2;
 	}
 }
 
@@ -128,7 +128,7 @@ void IgorEngine::PART_35() {
 	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park); // left panel
 	static const int frames[] = { FRM_Park1, FRM_Park2, FRM_Park3, FRM_Park4, 0 };
 	loadAnimData(frames, kParkFrames);
-	if (_objectsState[80] == 0 && _objectsState[73] == 1) {
+	if (_objectsState[kLizardGivenStateIndex] == 0 && _objectsState[kLauraMetAtCollegeStateIndex] == 1) {
 		PARK_DRAW_drawOldLadyFrame(_screenLayer1, 1);
 	}
 	copyArea(_animFramesBuffer, 0, 160, _screenLayer1, 320, 160, 144);

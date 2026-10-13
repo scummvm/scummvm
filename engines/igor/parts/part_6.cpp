@@ -136,7 +136,7 @@ void IgorEngine::PART_06_HELPER_7_decodePhotographerTalkingFrame(int frame) {
 
 void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
 	if (num == 2 || num == 255) {
-		if (_objectsState[61] == 1) {
+		if (_objectsState[kPhotographerGoneStateIndex] == 1) {
 			PART_05_06_DRAW_PHOTOGRAPHER();
 			_roomObjectAreasTable[3].object = 0;
 			_roomObjectAreasTable[13].area = 0;
@@ -157,7 +157,7 @@ void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
 		}
 	}
 	if (num == 3 || num == 255) {
-		if (_objectsState[62] == 1) {
+		if (_objectsState[kTripodStateIndex] == 1) {
 			PART_05_06_DRAW_CAMERA(0);
 		} else {
 			PART_05_06_DRAW_CAMERA(1);
@@ -182,7 +182,7 @@ void IgorEngine::PART_06_ACTION_105_pickCamera() {
 		waitForTimer();
 	} while (i != 3);
 	addObjectToInventory(36, 71);
-	_objectsState[62] = 0;
+	_objectsState[kTripodStateIndex] = 0;
 	PART_06_HELPER_6_setPhotographerState(255);
 }
 
@@ -214,7 +214,7 @@ void IgorEngine::PART_06_ACTION_108_giveRocketToPhotographer() {
 	} while (i != 28);
 	// removes rocket
 	removeObjectFromInventory(61);
-	_objectsState[61] = 0;
+	_objectsState[kPhotographerGoneStateIndex] = 0;
 	PART_06_HELPER_6_setPhotographerState(255);
 	_gameState.unkF = false;
 	igorSay(213, 2, 488);
@@ -284,7 +284,7 @@ void IgorEngine::PART_06() {
 	static const int anm1[] = {FRM_SpringBridge1, FRM_SpringBridge2, 0};
 	// loads from offset 32256
 	loadAnimData(anm1, 0x7E00);
-	if (_objectsState[60] == 0) {
+	if (_objectsState[kSpringBridgePaperStateIndex] == 0) {
 		PART_05_06_drawPaperFrame(0);
 	}
 	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll
@@ -307,7 +307,7 @@ void IgorEngine::PART_06() {
 	_updateRoomBackground = &IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND;
 	PART_06_HELPER_6_setPhotographerState(255);
 
-	if (_objectsState[63] == 1) {
+	if (_objectsState[kCameraStateIndex] == 1) {
 		PART_05_06_DRAW_TRIPOD(true);
 	}
 
@@ -323,14 +323,14 @@ void IgorEngine::PART_06() {
 	loadActionData(DAT_SpringBridge);
 	_roomDataOffsets = PART_06_ROOM_DATA_OFFSETS;
 	if (!restoreRoomAfterLoad()) {
-		_gameState.unkF = (_objectsState[61] == 1);
+		_gameState.unkF = (_objectsState[kPhotographerGoneStateIndex] == 1);
 		_walkDataLastIndex = 1;
 		_walkDataCurrentIndex = 1;
 		enterPartLoop();
 	}
 
 	while (_currentPart >= 60 && _currentPart <= 61 && !_gameStateLoaded) {
-		setRoomWalkBounds(0, 0, _objectsState[61] == 0 ? 234 : 142, 143);
+		setRoomWalkBounds(0, 0, _objectsState[kPhotographerGoneStateIndex] == 0 ? 234 : 142, 143);
 		handleRoomInput();
 		if (_gameStateLoaded)
 			break;

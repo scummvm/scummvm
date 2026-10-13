@@ -64,12 +64,12 @@ void IgorEngine::PART_02_walkWhileFuseBurns(int srcX, int srcY, int dstX, int ds
 void IgorEngine::PART_02_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		// redraws the closed/open trunk into the persistent room background.
-		const int srcOffset = _objectsState[16] == 0 ? 0x2E3E : 0x30FC;
+		const int srcOffset = _objectsState[kAtticTrunkOpenStateIndex] == 0 ? 0x2E3E : 0x30FC;
 		copyArea(_screenLayer1, 0x748A, 320, _animFramesBuffer + srcOffset, 39, 39, 18);
-		_roomActionsTable[252] = _objectsState[16] == 0 ? 6 : 4;
+		_roomActionsTable[252] = _objectsState[kAtticTrunkOpenStateIndex] == 0 ? 6 : 4;
 	}
 	// butterfly net
-	if ((num == 2 || num == 255) && _objectsState[17] == 1) {
+	if ((num == 2 || num == 255) && _objectsState[kButterflyNetTakenStateIndex] == 1) {
 		_roomObjectAreasTable[17].object = 4;
 		_roomObjectAreasTable[19].object = 4;
 	}
@@ -78,32 +78,32 @@ void IgorEngine::PART_02_APPLY_OBJECT_STATE(int num) {
 	// 19 = big crack
 	// 20 = small crack
 	if (num == 3 || num == 255) {
-		if (_objectsState[18] == 1) {
+		if (_objectsState[kAtticWallHolePresentStateIndex] == 1) {
 			copyArea(_screenLayer1, 0x50D6, 320, _animFramesBuffer, 14, 14, 50);
 		}
-		_roomObjectAreasTable[9].object = _objectsState[18] == 0 ? 0 : 6;
+		_roomObjectAreasTable[9].object = _objectsState[kAtticWallHolePresentStateIndex] == 0 ? 0 : 6;
 	}
 	if (num == 4 || num == 255) {
-		if (_objectsState[19] == 0) {
-			_roomObjectAreasTable[12].object = _objectsState[18] == 1 ? 6 : 0;
+		if (_objectsState[kAtticLargeCrackPresentStateIndex] == 0) {
+			_roomObjectAreasTable[12].object = _objectsState[kAtticWallHolePresentStateIndex] == 1 ? 6 : 0;
 		} else {
 			copyArea(_screenLayer1, 0x5357, 320, _animFramesBuffer + 0x2BC, 10, 10, 22);
 			_roomObjectAreasTable[12].object = 7;
 		}
 	}
 	if (num == 5 || num == 255) {
-		if (_objectsState[20] == 0) {
-			_roomObjectAreasTable[13].object = _objectsState[19] == 1 ? 7 : (_objectsState[18] == 1 ? 6 : 0);
+		if (_objectsState[kAtticSmallCrackPresentStateIndex] == 0) {
+			_roomObjectAreasTable[13].object = _objectsState[kAtticLargeCrackPresentStateIndex] == 1 ? 7 : (_objectsState[kAtticWallHolePresentStateIndex] == 1 ? 6 : 0);
 		} else {
 			copyArea(_screenLayer1, 0x599B, 320, _animFramesBuffer + 0x398, 4, 4, 10);
 			_roomObjectAreasTable[13].object = 8;
 		}
 	}
 	if (num == 6 || num == 255) {
-		if (_objectsState[21] == 0) // changes action on hammer after using it the first time
-			_roomObjectAreasTable[14].object = _objectsState[20] == 1 ? 8 : (_objectsState[19] == 1 ? 7 : (_objectsState[18] == 1 ? 6 : 0));
+		if (_objectsState[kAtticNailHotspotActiveStateIndex] == 0) // changes action on hammer after using it the first time
+			_roomObjectAreasTable[14].object = _objectsState[kAtticSmallCrackPresentStateIndex] == 1 ? 8 : (_objectsState[kAtticLargeCrackPresentStateIndex] == 1 ? 7 : (_objectsState[kAtticWallHolePresentStateIndex] == 1 ? 6 : 0));
 	}
-	if ((num == 8 || num == 255) && _objectsState[23] == 1) {
+	if ((num == 8 || num == 255) && _objectsState[kDynamitePlacedStateIndex] == 1) {
 		_roomObjectAreasTable[13].object = 8;
 		// Reuse the already-loaded
 		// localized inventory-object name for dynamite.
@@ -116,22 +116,22 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_02_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101: // open trunk
-		if (_objectsState[16] == 1) {
+		if (_objectsState[kAtticTrunkOpenStateIndex] == 1) {
 			igorSay(201, 1, 108);
 			break;
 		}
 		animateLitAnimFrames(0x18FF, 1, 2, 0x715, 37, 49, 0x608C, 127, 1, 7);
-		_objectsState[16] = 1;
+		_objectsState[kAtticTrunkOpenStateIndex] = 1;
 		PART_02_APPLY_OBJECT_STATE(1);
 		break;
 	case 102: // close trunk
-		if (_objectsState[16] == 0) {
+		if (_objectsState[kAtticTrunkOpenStateIndex] == 0) {
 			igorSay(201, 1, 108);
 			break;
 		}
 		playSound(8, 1);
 		animateLitAnimFrames(0x18FF, 1, 0, 0x715, 37, 49, 0x608C, 127, -1, 0);
-		_objectsState[16] = 0;
+		_objectsState[kAtticTrunkOpenStateIndex] = 0;
 		PART_02_APPLY_OBJECT_STATE(1);
 		break;
 	case 103: { // hammer the nail
@@ -142,15 +142,15 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 				playSound(9, 1);
 			waitForTimer(63);
 		}
-		_objectsState[20] = 1;
-		_objectsState[21] = 0;
+		_objectsState[kAtticSmallCrackPresentStateIndex] = 1;
+		_objectsState[kAtticNailHotspotActiveStateIndex] = 0;
 		PART_02_APPLY_OBJECT_STATE(5);
 		PART_02_APPLY_OBJECT_STATE(6);
 		igorSay(217, 1, 121);
 		break;
 	}
 	case 104: { // use the pick on the crack;
-		if (_objectsState[23] == 1) {
+		if (_objectsState[kDynamitePlacedStateIndex] == 1) {
 			EXEC_MAIN_ACTION(2);
 			break;
 		}
@@ -162,8 +162,8 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 				playSound(10, 1);
 			waitForTimer(63);
 		}
-		_objectsState[19] = 1;
-		_objectsState[20] = 0;
+		_objectsState[kAtticLargeCrackPresentStateIndex] = 1;
+		_objectsState[kAtticSmallCrackPresentStateIndex] = 0;
 		PART_02_APPLY_OBJECT_STATE(4);
 		PART_02_APPLY_OBJECT_STATE(5);
 		PART_02_APPLY_OBJECT_STATE(6);
@@ -172,15 +172,15 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 	}
 	case 105: // look at nail
 		igorSay(209, 1, 115);
-		_objectsState[22] = 1;
+		_objectsState[kAtticNailExaminedStateIndex] = 1;
 		break;
 	case 106: // look in trunk
-		if (_objectsState[16] == 0) {
+		if (_objectsState[kAtticTrunkOpenStateIndex] == 0) {
 			igorSay(201, 1, 108);
 			break;
 		}
 		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] == 0) {
-			if (_objectsState[22] == 0) {
+			if (_objectsState[kAtticNailExaminedStateIndex] == 0) {
 				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 			} else {
 				PART_02_searchTrunk();
@@ -191,7 +191,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			break;
 		}
 		if (_inventoryInfo[44] != 0 && _inventoryInfo[45] == 0) {
-			if (_objectsState[20] == 0) {
+			if (_objectsState[kAtticSmallCrackPresentStateIndex] == 0) {
 				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 			} else {
 				PART_02_searchTrunk();
@@ -203,11 +203,11 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 			}
 			break;
 		}
-		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[23] == 0 && _objectsState[19] != 0) {
+		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[kDynamitePlacedStateIndex] == 0 && _objectsState[kAtticLargeCrackPresentStateIndex] != 0) {
 			PART_02_searchTrunk();
 			igorSay(206, 1, 113);
 			addObjectToInventory(11, 46);
-		} else if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[23] == 0) {
+		} else if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[kDynamitePlacedStateIndex] == 0) {
 			igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 		} else {
 			igorSay(207, 2, 114);
@@ -217,7 +217,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		animateLitAnimFrames(0x54D2, 0, 1, 0x405, 21, 49, 0x5A6D, 127, -1, 0);
 		waitForTimer(127);
 		addObjectToInventory(7, 42);
-		_objectsState[17] = 1;
+		_objectsState[kButterflyNetTakenStateIndex] = 1;
 		PART_02_APPLY_OBJECT_STATE(2);
 		break;
 	case 108: // Look at old junk
@@ -238,7 +238,7 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 	case 113: // place dynamite in the crack
 		animateLitAnimFrames(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
 		waitForTimer(127);
-		_objectsState[23] = 1;
+		_objectsState[kDynamitePlacedStateIndex] = 1;
 		PART_02_APPLY_OBJECT_STATE(8);
 		removeObjectFromInventory(46);
 		playSound(63, 1);
@@ -254,10 +254,10 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		igorSay(218, 1, 122);
 		break;
 	case 118: // exit through window
-		if (_objectsState[24] == 1) {
+		if (_objectsState[kAtticWindowExitTriedStateIndex] == 1) {
 			igorSay(220, 1, 124);
 		} else {
-			_objectsState[24] = 1;
+			_objectsState[kAtticWindowExitTriedStateIndex] = 1;
 			_currentPart = 11;
 		}
 		break;
@@ -270,16 +270,16 @@ void IgorEngine::PART_02_EXEC_ACTION(int action) {
 		_currentPart = 30;
 		break;
 	case 121: // look at shelf / take matches
-		if (_objectsState[25] == 1) {
+		if (_objectsState[kMatchesTakenStateIndex] == 1) {
 			igorSay(230, 1, 130);
 		} else {
 			igorSay(211, 2, 117);
 			addObjectToInventory(8, 43);
-			_objectsState[25] = 1;
+			_objectsState[kMatchesTakenStateIndex] = 1;
 		}
 		break;
 	case 117: // light the dynamite
-		if (_objectsState[23] == 0) {
+		if (_objectsState[kDynamitePlacedStateIndex] == 0) {
 			EXEC_MAIN_ACTION(2);
 		} else {
 			PART_02_lightUpDynamite();
@@ -332,10 +332,10 @@ void IgorEngine::PART_02_lightUpDynamite() {
 	_gameState.igorMoving = true;
 	waitForIgorMove();
 
-	_objectsState[18] = 1;
-	_objectsState[19] = 0;
-	_objectsState[23] = 0;
-	_objectsState[11] = 1;
+	_objectsState[kAtticWallHolePresentStateIndex] = 1;
+	_objectsState[kAtticLargeCrackPresentStateIndex] = 0;
+	_objectsState[kDynamitePlacedStateIndex] = 0;
+	_objectsState[kBedroomHoleOpenStateIndex] = 1;
 	PART_02_APPLY_OBJECT_STATE(3);
 	PART_02_APPLY_OBJECT_STATE(4);
 	PART_02_APPLY_OBJECT_STATE(5);

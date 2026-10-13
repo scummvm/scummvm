@@ -88,7 +88,7 @@ void IgorEngine::PART_30_ACTION_104_goDownstairs() {
 		moveIgor(_walkData[0].posNum, _walkData[0].frameNum);
 		waitForTimer(15);
 	}
-	_currentPart = (_objectsState[111] == 0) ? 171 : 771;
+	_currentPart = (_objectsState[kExamCompletedStateIndex] == 0) ? 171 : 771;
 }
 
 void IgorEngine::PART_30_UPDATE_DIALOGUE_LAURA(int action) {
@@ -228,7 +228,7 @@ void IgorEngine::PART_30_HELPER_8_LauraCutscene() {
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);
 	_currentAction.verb = kVerbWalk;
-	_objectsState[73] = 1;
+	_objectsState[kLauraMetAtCollegeStateIndex] = 1;
 	PART_30_HELPER_1_OBJECT_STATE(255);
 }
 
@@ -282,7 +282,7 @@ void IgorEngine::PART_30() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
-		if (_objectsState[73] == 0) {
+		if (_objectsState[kLauraMetAtCollegeStateIndex] == 0) {
 			PART_30_HELPER_8_LauraCutscene();
 		} else {
 			if (_currentPart != 302) {

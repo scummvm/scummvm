@@ -96,11 +96,11 @@ void IgorEngine::PART_18_ACTION_109_useSlugOnGrating() {
 }
 
 void IgorEngine::PART_18_ACTION_111_useBottleOnTap() {
-	if (_objectsState[0] == 0) {
+	if (_objectsState[kBottleStateIndex] == 0) {
 		igorSay(211, 1, 905);
 		return;
 	}
-	if (_objectsState[0] == 2) {
+	if (_objectsState[kBottleStateIndex] == 2) {
 		igorSay(212, 1, 906);
 		return;
 	}
@@ -112,7 +112,7 @@ void IgorEngine::PART_18_ACTION_111_useBottleOnTap() {
 	}
 	drawAnimRect(offset, 0xBDE, 28, 29);
 	igorSay(213, 2, 907);
-	_objectsState[0] = 2;
+	_objectsState[kBottleStateIndex] = 2;
 	UPDATE_OBJECT_STATE(1);
 }
 

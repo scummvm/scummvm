@@ -25,23 +25,23 @@ namespace Igor {
 
 void IgorEngine::PART_00_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		const bool open = _objectsState[8] != 0;
+		const bool open = _objectsState[kBedroomNightstandOpenStateIndex] != 0;
 		const int src = open ? 0x4CFA : 0x4C6A; // open or closed bedside table depending on the flag
 		copyArea(_screenLayer1, 0x8EBD, 320, _animFramesBuffer + src, 16, 16, 9);
 		_roomActionsTable[74] = open ? 7 : 6;
-		_roomObjectAreasTable[13].object = open ? (_objectsState[9] == 0 ? 3 : 2) : 2;
+		_roomObjectAreasTable[13].object = open ? (_objectsState[kAlarmClockTakenStateIndex] == 0 ? 3 : 2) : 2;
 	}
 	if (num == 3 || num == 255) {
-		const bool open = _objectsState[10] != 0;
+		const bool open = _objectsState[kBedroomClosetOpenStateIndex] != 0;
 		const int src = open ? 0x3900 : 0x3238; // open or closed door frame depending on the flag
 		copyArea(_screenLayer1, 0x5572, 320, _animFramesBuffer + src, 31, 31, 56);
 		_roomActionsTable[76] = open ? 7 : 6;
 		// hole open or not
-		_roomObjectAreasTable[3].object = (_objectsState[11] == 0) ? 4 : 5;
+		_roomObjectAreasTable[3].object = (_objectsState[kBedroomHoleOpenStateIndex] == 0) ? 4 : 5;
 	}
 	if (num == 6 || num == 255) {
 
-		const int state = _objectsState[13];
+		const int state = _objectsState[kBedroomWindowStateIndex];
 		const int src = state == 1 ? 0x143C : 0x1200; // open or closed window depending on the flag
 		copyArea(_screenLayer1, 0x6DB7, 320, _animFramesBuffer + src, 26, 26, 22);
 		_roomActionsTable[79] = state == 1 ? 7 : (state == 2 ? 6 : 4);
@@ -52,17 +52,17 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_00_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101: // open window
-		if (_objectsState[13] != 1) {
+		if (_objectsState[kBedroomWindowStateIndex] != 1) {
 
 			animateLitAnimFrames(0, 1, 3, 0x480, 36, 32, 0x6B2C, 62, 2, 1);
-			_objectsState[13] = 1;
+			_objectsState[kBedroomWindowStateIndex] = 1;
 			PART_00_APPLY_OBJECT_STATE(6);
 		}
 		break;
 	case 102: // close window
-		if (_objectsState[13] == 1) {
+		if (_objectsState[kBedroomWindowStateIndex] == 1) {
 			animateLitAnimFrames(0, 2, 0, 0x480, 36, 32, 0x6B2C, 62, 2, 2);
-			_objectsState[13] = 2;
+			_objectsState[kBedroomWindowStateIndex] = 2;
 			PART_00_APPLY_OBJECT_STATE(6);
 		}
 		break;
@@ -70,38 +70,38 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		igorSay(201, 3, 95);
 		break;
 	case 104: // go to window
-		if (_objectsState[13] != 1)
+		if (_objectsState[kBedroomWindowStateIndex] != 1)
 			break;
-		if (_objectsState[15] != 0) {
+		if (_objectsState[kBedroomWindowExitUsedStateIndex] != 0) {
 			igorSay(212, 1, 101);
 			break;
 		}
 		animateLitAnimFrames(0x4D8A, 0, 1, 0x5DC, 30, 50, 0x6B2C, 62, -1, 0);
-		_objectsState[13] = 2;
-		_objectsState[15] = 1;
+		_objectsState[kBedroomWindowStateIndex] = 2;
+		_objectsState[kBedroomWindowExitUsedStateIndex] = 1;
 		_currentPart = 10;
 		break;
 	case 105: // look at bed
 		igorSay(204, 1, 96);
 		break;
 	case 106: // open bedside table
-		if (_objectsState[8] == 0) {
+		if (_objectsState[kBedroomNightstandOpenStateIndex] == 0) {
 			animateLitAnimFrames(0x3FC8, 0, 2, 0x436, 22, 49, 0x693C, 126, 2, 6);
-			_objectsState[8] = 1;
+			_objectsState[kBedroomNightstandOpenStateIndex] = 1;
 			PART_00_APPLY_OBJECT_STATE(1);
 		}
 		break;
 	case 107: // close bedside table
-		if (_objectsState[8] != 0) {
+		if (_objectsState[kBedroomNightstandOpenStateIndex] != 0) {
 			animateLitAnimFrames(0x3FC8, 2, 0, 0x436, 22, 49, 0x693C, 126, 1, 6);
-			_objectsState[8] = 0;
+			_objectsState[kBedroomNightstandOpenStateIndex] = 0;
 			PART_00_APPLY_OBJECT_STATE(1);
 		}
 		break;
 	case 108: // look bedside table
-		if (_objectsState[8] == 0)
+		if (_objectsState[kBedroomNightstandOpenStateIndex] == 0)
 			ADD_DIALOGUE_TEXT(205, 1, 97);
-		else if (_objectsState[9] == 0)
+		else if (_objectsState[kAlarmClockTakenStateIndex] == 0)
 			ADD_DIALOGUE_TEXT(217, 1, 104);
 		else
 			ADD_DIALOGUE_TEXT(218, 1, 105);
@@ -109,24 +109,24 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 109: // take alarm clock
-		if (_objectsState[9] == 0) {
+		if (_objectsState[kAlarmClockTakenStateIndex] == 0) {
 			animateLitAnimFrames(0x8410, 0, 1, 0x405, 21, 49, 0x693D, 126, -1, 0);
 			addObjectToInventory(6, 41);
-			_objectsState[9] = 1;
+			_objectsState[kAlarmClockTakenStateIndex] = 1;
 			PART_00_APPLY_OBJECT_STATE(1);
 		}
 		break;
 	case 110: // open closet
-		if (_objectsState[10] == 0) {
+		if (_objectsState[kBedroomClosetOpenStateIndex] == 0) {
 			animateLitAnimFrames(0x1678, 0, 2, 0x940, 37, 64, 0x556C, 126, 2, 3);
-			_objectsState[10] = 1;
+			_objectsState[kBedroomClosetOpenStateIndex] = 1;
 			PART_00_APPLY_OBJECT_STATE(3);
 		}
 		break;
 	case 111: // close closet
-		if (_objectsState[10] != 0) {
+		if (_objectsState[kBedroomClosetOpenStateIndex] != 0) {
 			animateLitAnimFrames(0x1678, 2, 0, 0x940, 37, 64, 0x556C, 126, 1, 4);
-			_objectsState[10] = 0;
+			_objectsState[kBedroomClosetOpenStateIndex] = 0;
 			PART_00_APPLY_OBJECT_STATE(3);
 		}
 		break;
@@ -137,7 +137,7 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		igorSay(207, 2, 99);
 		break;
 	case 114: // go through hole
-		if (_objectsState[10] == 0)
+		if (_objectsState[kBedroomClosetOpenStateIndex] == 0)
 			PART_00_EXEC_ACTION(110);
 		animateLitAnimFrames(0x5942, 0, 2, 0x44C, 22, 50, 0x66EE, 30, -1, 0);
 		_currentPart = 24;
@@ -146,10 +146,10 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 		igorSay(209, 3, 100);
 		break;
 	case 116: // take records
-		if (_objectsState[12] == 0) {
+		if (_objectsState[kRecordTakenStateIndex] == 0) {
 			animateLitAnimFrames(0x7C06, 0, 1, 0x405, 21, 49, 0x7146, 126, -1, 0);
 			addObjectToInventory(5, 40);
-			_objectsState[12] = 1;
+			_objectsState[kRecordTakenStateIndex] = 1;
 			PART_00_APPLY_OBJECT_STATE(255);
 		} else {
 			igorSay(213, 2, 102);
@@ -188,10 +188,10 @@ void IgorEngine::PART_00_EXEC_ACTION(int action) {
 
 void IgorEngine::PART_00_ENTRY_ANIMATION() {
 	waitForTimer(62);
-	if (_objectsState[10] == 0) {
+	if (_objectsState[kBedroomClosetOpenStateIndex] == 0) {
 		drawAnimRect(0x5572, 0x3900, 31, 56);
 		// leave closet open
-		_objectsState[10] = 1;
+		_objectsState[kBedroomClosetOpenStateIndex] = 1;
 		PART_00_APPLY_OBJECT_STATE(3);
 		playSound(3, 1);
 		waitForTimer(30);
@@ -217,9 +217,9 @@ void IgorEngine::PART_00_WALK_IN_FROM_CLOSET() {
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	if (_objectsState[14] == 0) {
+	if (_objectsState[kRatSkinHatSeenStateIndex] == 0) {
 		igorSay(215, 2, 103);
-		_objectsState[14] = 1;
+		_objectsState[kRatSkinHatSeenStateIndex] = 1;
 	} else {
 		PART_00_ENTER_FROM_BELOW();
 	}

@@ -45,7 +45,7 @@ void IgorEngine::PART_16_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_16_ACTION_101_pickUpFlask() {
-	if (_objectsState[52] == 1) {
+	if (_objectsState[kFlaskTakenStateIndex] == 1) {
 		igorSay(207, 1, 729);
 		return;
 	}
@@ -56,7 +56,7 @@ void IgorEngine::PART_16_ACTION_101_pickUpFlask() {
 		waitForTimer(120);
 	}
 	addObjectToInventory(20, 55);
-	_objectsState[52] = 1;
+	_objectsState[kFlaskTakenStateIndex] = 1;
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
@@ -141,7 +141,7 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 	setPaletteRange(208, 255);
 	do {
 		PART_MARGARET_ROOM_CUTSCENE();
-	} while (_objectsState[110] != 9);
+	} while (_objectsState[kMargaretSceneStateIndex] != 9);
 	setupDefaultPalette();
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
@@ -191,7 +191,7 @@ void IgorEngine::PART_16_HELPER_3_photoCutscene() {
 	_inventoryInfo[_inventoryInfo[73] - 1] = 19;
 	_inventoryInfo[54] = _inventoryInfo[73];
 	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
-	_objectsState[53] = 1;
+	_objectsState[kPhotoCutsceneSeenStateIndex] = 1;
 	_objectsState[kMargaretStateIndex] = kMargaretStatePhotoTaken;
 	_currentPart = 261;
 }
@@ -232,7 +232,7 @@ void IgorEngine::PART_16() {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		PART_16_HELPER_2_enterScene();
-		if (_objectsState[kMargaretStateIndex] == kMargaretStateReadNote && _inventoryInfo[71] != 0 && _objectsState[76] == 1) {
+		if (_objectsState[kMargaretStateIndex] == kMargaretStateReadNote && _inventoryInfo[71] != 0 && _objectsState[kHarrisonNoteShownStateIndex] == 1) {
 			PART_16_HELPER_3_photoCutscene();
 		}
 		enterPartLoop();

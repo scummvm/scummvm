@@ -67,7 +67,7 @@ void IgorEngine::PART_23_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_23_ACTION_105_enterLadiesRoom() {
-	if (_objectsState[66] != 0) {
+	if (_objectsState[kLadiesRoomDoorStateIndex] != 0) {
 		_roomObjectAreasTable[_screenLayer2[38633]].area = 1;
 		--_walkDataLastIndex;
 		buildWalkPathSimple(233, 132, 233, 120);
@@ -79,7 +79,7 @@ void IgorEngine::PART_23_ACTION_105_enterLadiesRoom() {
 }
 
 void IgorEngine::PART_23_ACTION_107_openDoor() {
-	if (_objectsState[66] == 1) {
+	if (_objectsState[kLadiesRoomDoorStateIndex] == 1) {
 		EXEC_MAIN_ACTION(11);
 		return;
 	}
@@ -93,12 +93,12 @@ void IgorEngine::PART_23_ACTION_107_openDoor() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[66] = 1;
+	_objectsState[kLadiesRoomDoorStateIndex] = 1;
 	PART_23_HELPER_1_APPLY_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_23_ACTION_108_closeDoor() {
-	if (_objectsState[66] == 0) {
+	if (_objectsState[kLadiesRoomDoorStateIndex] == 0) {
 		EXEC_MAIN_ACTION(14);
 		return;
 	}
@@ -112,7 +112,7 @@ void IgorEngine::PART_23_ACTION_108_closeDoor() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[66] = 0;
+	_objectsState[kLadiesRoomDoorStateIndex] = 0;
 	PART_23_HELPER_1_APPLY_OBJECT_STATE(1);
 }
 
@@ -136,7 +136,7 @@ void IgorEngine::PART_23_UPDATE_ROOM_BACKGROUND() {
 
 void IgorEngine::PART_23_HELPER_1_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		if (_objectsState[66] == 0) {
+		if (_objectsState[kLadiesRoomDoorStateIndex] == 0) {
 			PART_23_HELPER_2_drawDoor(1);
 			_roomActionsTable[4] = 6;
 		} else {
@@ -168,10 +168,10 @@ void IgorEngine::PART_23_HELPER_4_walkFromDoor() {
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	if (_objectsState[59] == 0) {
+	if (_objectsState[kToiletGirlsHaveLeftStateIndex] == 0) {
 		drawAnimRect(23907, 0, 24, 54, false, kBlendBehindIgor);
 		playSound(14, 1);
-		_objectsState[66] = 0;
+		_objectsState[kLadiesRoomDoorStateIndex] = 0;
 		PART_23_HELPER_1_APPLY_OBJECT_STATE(1);
 		igorSay(206, 2, 1221);
 	}

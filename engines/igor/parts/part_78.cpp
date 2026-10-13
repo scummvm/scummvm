@@ -290,7 +290,7 @@ void IgorEngine::PART_78() {
 	_part78BandFrames = nullptr;
 	memcpy(_paletteBuffer, _currentPalette, 624);
 	fadeOut(768);
-	_objectsState[111] = 1;
+	_objectsState[kExamCompletedStateIndex] = 1;
 	playMusic(2);
 	// the card with the time that has passed
 	PART_meanwhile(IMG_Part78NextDay);

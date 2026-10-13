@@ -175,15 +175,15 @@ void IgorEngine::PART_32_ACTION_103_useControls() {
 	memcpy(_paletteBuffer, _animFramesBuffer + 64000, 768);
 	fadeIn(768);
 	if (_part32Result == kPart32ResultTower) {
-		if (_objectsState[78] == 0 && _objectsState[4] == 2) {
+		if (_objectsState[kBellTowerConversationSeenStateIndex] == 0 && _objectsState[kAstronomyBookStateIndex] == 2) {
 			igorSay(206, 3, 831);
-			_objectsState[78] = 1;
+			_objectsState[kBellTowerConversationSeenStateIndex] = 1;
 		}
 	}
 	if (_part32Result == kPart32ResultFinal) {
-		if (_objectsState[79] == 0) {
+		if (_objectsState[kFinalCoordinatesSceneSeenStateIndex] == 0) {
 			igorSay({ { 209, 1, 832 }, { 210, 1, 833 } });
-			_objectsState[79] = 1;
+			_objectsState[kFinalCoordinatesSceneSeenStateIndex] = 1;
 		} else {
 			igorSay(211, 1, 834);
 		}
@@ -565,7 +565,7 @@ void IgorEngine::PART_32_SCENE() {
 	memset(_screenVGA, 0, 46080);
 	switch (_part32Result) {
 	case kPart32ResultTower:
-		if (_objectsState[78] == 0 && _objectsState[4] == 2) {
+		if (_objectsState[kBellTowerConversationSeenStateIndex] == 0 && _objectsState[kAstronomyBookStateIndex] == 2) {
 			PART_32_SCENE_TOWER_CONVERSATION();
 		} else {
 			PART_32_SCENE_TOWER_EMPTY();

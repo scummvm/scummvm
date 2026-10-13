@@ -51,7 +51,7 @@ void IgorEngine::PART_MARGARET_ROOM_CUTSCENE_UPDATE_DIALOGUE_MARGARET(int action
 void IgorEngine::PART_MARGARET_ROOM_CUTSCENE() {
 	playMusic(8);
 	_gameState.enableLight = 1;
-	VAR_MARGARET_ROOM_ANIM_COUNTER = _objectsState[110] + 1;
+	VAR_MARGARET_ROOM_ANIM_COUNTER = _objectsState[kMargaretSceneStateIndex] + 1;
 	if (VAR_MARGARET_ROOM_ANIM_COUNTER == 9) {
 		VAR_MARGARET_ROOM_ANIM_COUNTER = 1;
 	}
@@ -111,11 +111,11 @@ void IgorEngine::PART_MARGARET_ROOM_CUTSCENE() {
 	waitForEndOfCutsceneDialogue(200, 73, 63, 32, 0);
 	waitForTimer(255);
 	_updateDialogue = 0;
-	++_objectsState[110];
+	++_objectsState[kMargaretSceneStateIndex];
 	memcpy(_paletteBuffer, _currentPalette, 768);
 	fadeOut(768);
 	memset(_screenVGA, 0, 46080);
-	if (_objectsState[110] < 9 && _currentPart != 331) {
+	if (_objectsState[kMargaretSceneStateIndex] < 9 && _currentPart != 331) {
 		setupDefaultPalette();
 		SET_PAL_240_48_1();
 		SET_PAL_208_96_1();

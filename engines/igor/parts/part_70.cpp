@@ -27,8 +27,6 @@ static const int kPart70BoatOffset = 6 * 320 + 265;
 static const int kPart70BoatWidth = 55;
 static const int kPart70BoatHeight = 39;
 
-static const int kPart70MessageSent = 104;
-
 static const int kPart70ExitStates[4] = { 501, 720, 680, 810 };
 
 void IgorEngine::PART_70_EXEC_ACTION(int action) {
@@ -50,7 +48,7 @@ void IgorEngine::PART_70_EXEC_ACTION(int action) {
  */
 void IgorEngine::PART_70_DRAW_OBJECT_STATE() {
 	const int frameSize = kPart70BoatWidth * kPart70BoatHeight;
-	const int frame = _objectsState[kPart70MessageSent] == 0 ? 0 : 1;
+	const int frame = _objectsState[kLighthouseMessageSentStateIndex] == 0 ? 0 : 1;
 	copyArea(_screenLayer1, kPart70BoatOffset, 320, _animFramesBuffer + frame * frameSize, kPart70BoatWidth,
 			 kPart70BoatWidth, kPart70BoatHeight);
 }

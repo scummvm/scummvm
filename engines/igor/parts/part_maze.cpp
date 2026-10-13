@@ -365,7 +365,7 @@ void IgorEngine::PART_MAZE() {
 		if (_inputVars[kInputEscape] && !_eventQuitGame) {
 			// leaves the maze
 			_inputVars[kInputEscape] = 0;
-			_currentPart = (_objectsState[70] == 1 && _objectsState[71] == 0) ? 500 : 142;
+			_currentPart = (_objectsState[kMazeBeatenStateIndex] == 1 && _objectsState[kMazeEntryDirectionStateIndex] == 0) ? 500 : 142;
 			break;
 		}
 		runPartLoop();

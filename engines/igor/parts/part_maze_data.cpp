@@ -416,7 +416,7 @@ static const MazeDialogueLine kMaze66Lines106[] = {
 };
 static const MazeAction kMaze66Actions[] = {
 	MAZE_EXIT_FIXED(101, 164, 106, 164, 92, 105, 562, -1, 0),
-	MAZE_EXIT_FIXED(102, 71, 128, 16, 128, -1, 500, 70, 1),
+	MAZE_EXIT_FIXED(102, 71, 128, 16, 128, -1, 500, kMazeBeatenStateIndex, 1),
 	MAZE_DIALOGUE(103, kMaze66Lines103, 1, 1, 1),
 	MAZE_DIALOGUE(104, kMaze66Lines104, 1, 1, 1),
 	MAZE_DIALOGUE(105, kMaze66Lines105, 3, 3, 1),

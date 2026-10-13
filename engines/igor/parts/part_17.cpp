@@ -167,7 +167,7 @@ void IgorEngine::PART_17_ACTION_105_leaveThroughPath(bool lateGame) {
 
 void IgorEngine::PART_17_ACTION_106_swapFolders() {
 	// folder already exchanged
-	if (_objectsState[55] == 1) {
+	if (_objectsState[kCollegeEntranceFoldersSwappedStateIndex] == 1) {
 		igorSay(226, 1, 649);
 		return;
 	}
@@ -186,8 +186,8 @@ void IgorEngine::PART_17_ACTION_106_swapFolders() {
 	g_engine->_screen->updateScreen();
 
 
-	_objectsState[55] = 1;
-	_objectsState[3] = 1;
+	_objectsState[kCollegeEntranceFoldersSwappedStateIndex] = 1;
+	_objectsState[kFolderSwappedStateIndex] = 1;
 	PART_17_HELPER_1_OBJECT_STATE(255);
 	UPDATE_OBJECT_STATE(4);
 	if (_game.version == kIdEngDemo110) {
@@ -271,7 +271,7 @@ void IgorEngine::PART_17_UPDATE_ROOM_BACKGROUND() {
 void IgorEngine::PART_17_HELPER_1_OBJECT_STATE(int num) {
 	// Enable or disable phillip and jimmy animation
 	if (num == 1 || num == 255) {
-		if (_objectsState[54] == 0) {
+		if (_objectsState[kPhillipAndJimmyPresentStateIndex] == 0) {
 			_gameState.unkF = false;
 		} else {
 			PART_17_HELPER_3_disableArea(0);
@@ -280,12 +280,12 @@ void IgorEngine::PART_17_HELPER_1_OBJECT_STATE(int num) {
 	}
 
 	if (num == 2 || num == 255) {
-		if (_objectsState[55] == 1) {
+		if (_objectsState[kCollegeEntranceFoldersSwappedStateIndex] == 1) {
 			_roomActionsTable[2698] = 0;
 		}
 	}
 	if (num == 3 || num == 255) {
-		if (_objectsState[56] == 1) {
+		if (_objectsState[kPhillipAndJimmyHaveLeftStateIndex] == 1) {
 			_gameState.unkF = false;
 			PART_17_HELPER_3_disableArea(6);
 		}
@@ -471,7 +471,7 @@ void IgorEngine::PART_17() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 
-	if (_objectsState[56] == 1) {
+	if (_objectsState[kPhillipAndJimmyHaveLeftStateIndex] == 1) {
 		_gameState.unkF = false;
 		PART_17_HELPER_3_disableArea(6);
 		_roomObjectAreasTable[14].object = 0;
@@ -507,11 +507,11 @@ void IgorEngine::PART_17() {
 	}
 	leavePartLoop();
 	if (!_gameStateLoaded) {
-		if (_objectsState[55] == 1) {
-			_objectsState[56] = 1;
+		if (_objectsState[kCollegeEntranceFoldersSwappedStateIndex] == 1) {
+			_objectsState[kPhillipAndJimmyHaveLeftStateIndex] = 1;
 		}
-		if (_objectsState[54] == 0) {
-			_objectsState[54] = 1;
+		if (_objectsState[kPhillipAndJimmyPresentStateIndex] == 0) {
+			_objectsState[kPhillipAndJimmyPresentStateIndex] = 1;
 		}
 		fadeOut(624);
 	}

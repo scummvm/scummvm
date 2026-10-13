@@ -183,7 +183,7 @@ void IgorEngine::PART_77() {
 		runPartLoop();
 	}
 	if (!_gameStateLoaded) {
-		_objectsState[54] = 1;
+		_objectsState[kPhillipAndJimmyPresentStateIndex] = 1;
 		if (_currentPart == 760) {
 			// the colors 208 to 254 are cleared in both palettes
 			memset(_paletteBuffer + 208 * 3, 0, 141);

@@ -36,7 +36,7 @@ void IgorEngine::PART_12_EXEC_ACTION(int action) {
 		igorSay(201, 1, 789);
 		break;
 	case 103: // look at stone
-		if (_objectsState[44] == 0) {
+		if (_objectsState[kLizardTakenStateIndex] == 0) {
 			ADD_DIALOGUE_TEXT(203, 2, 790);
 		} else {
 			ADD_DIALOGUE_TEXT(205, 1, 791);
@@ -88,7 +88,7 @@ void IgorEngine::PART_12_ACTION_goToPath() {
 			}
 		}
 		if (compareGameTick(2, 32) && _gameState.unk10 < 8) {
-			if (_objectsState[44] == 0) {
+			if (_objectsState[kLizardTakenStateIndex] == 0) {
 				const uint8 *src = _animFramesBuffer + 0x761 + READ_LE_UINT16(_animFramesBuffer + 0x1107 + _gameState.unk10 * 2) - 1;
 				decodeAnimFrame(src, _screenVGA, true);
 			}
@@ -156,7 +156,7 @@ void IgorEngine::PART_12_ACTION_104_tryEnterChurch() {
 }
 
 void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
-	if (_objectsState[44] == 1) {
+	if (_objectsState[kLizardTakenStateIndex] == 1) {
 		ADD_DIALOGUE_TEXT(219, 1, 801);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -164,7 +164,7 @@ void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
 	}
 	memset(_screenVGA + 46080, 0, 17920);
 	removeInventoryEntry(62);
-	const int animOffset = (_objectsState[45] == 0) ? 0x2543 : 0xBF1E;
+	const int animOffset = (_objectsState[kChurchDoorOpenStateIndex] == 0) ? 0x2543 : 0xBF1E;
 	for (int i = 1; i <= 9; ++i) {
 		const int offset = 30149;
 		for (int j = 0; j <= 48; ++j) {
@@ -224,7 +224,7 @@ void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
 	} while (_gameState.igorMoving);
 	decodeAnimFrame(_animFramesBuffer + 0x761 + READ_LE_UINT16(_animFramesBuffer + 0x1117) - 1, _screenVGA, true);
 	// draws the same scene with the church door open or closed
-	if (_objectsState[45] == 0) {
+	if (_objectsState[kChurchDoorOpenStateIndex] == 0) {
 		for (int i = 1; i <= 15; ++i) {
 			const uint8 *src = _animFramesBuffer + 0x1119 + READ_LE_UINT16(_animFramesBuffer + 0x2532 + PART_12_DATA_ANIM_2[i] * 2) - 1;
 			decodeAnimFrame(src, _screenVGA, true);
@@ -241,7 +241,7 @@ void IgorEngine::PART_12_ACTION_105_useResinWithStone() {
 	redrawVerb(kVerbWalk, true);
 	_currentAction.verb = kVerbWalk;
 	addObjectToInventory(24, 59);
-	_objectsState[44] = 1;
+	_objectsState[kLizardTakenStateIndex] = 1;
 	PART_12_OBJECT_STATE(255);
 	ADD_DIALOGUE_TEXT(211, 1, 795);
 	SET_DIALOGUE_TEXT(1, 1);
@@ -269,7 +269,7 @@ void IgorEngine::PART_12_ACTION_108_enterChurch() {
 			}
 		}
 		if (compareGameTick(2, 32) && _gameState.unk10 < 8) {
-			if (_objectsState[44] == 0) {
+			if (_objectsState[kLizardTakenStateIndex] == 0) {
 				const uint8 *src = _animFramesBuffer + 0x761 + READ_LE_UINT16(_animFramesBuffer + 0x1107 + _gameState.unk10 * 2) - 1;
 				decodeAnimFrame(src, _screenVGA, true);
 			}
@@ -322,7 +322,7 @@ void IgorEngine::PART_12_HANDLE_DIALOGUE_PRIEST() {
 
 void IgorEngine::PART_12_OBJECT_STATE(int num) {
 	if (num == 2 || num == 255) {
-		if (_objectsState[45] == 0) {
+		if (_objectsState[kChurchDoorOpenStateIndex] == 0) {
 			_roomActionsTable[169] = 104;
 			_roomActionsTable[175] = 104;
 			_roomActionsTable[177] = 104;
@@ -377,13 +377,13 @@ void IgorEngine::PART_12_HELPER_4_exorcismCutscene() {
 	for (int i = 1; i <= 5; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA43E + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA, true);
-		if (_objectsState[44] == 0) {
+		if (_objectsState[kLizardTakenStateIndex] == 0) {
 			src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x74B + i * 2) - 1;
 			decodeAnimFrame(src, _screenVGA, true);
 		}
 		waitForTimer(30);
 	}
-	if (_objectsState[44] == 0) {
+	if (_objectsState[kLizardTakenStateIndex] == 0) {
 		for (int i = 6; i <= 10; ++i) {
 			const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x74B + i * 2) - 1;
 			decodeAnimFrame(src, _screenVGA, true);
@@ -396,7 +396,7 @@ void IgorEngine::PART_12_HELPER_4_exorcismCutscene() {
 		decodeAnimFrame(src, _screenVGA, true);
 		waitForTimer(30);
 	}
-	if (_objectsState[44] == 0) {
+	if (_objectsState[kLizardTakenStateIndex] == 0) {
 		for (int i = 1; i <= 8; ++i) {
 			const uint8 *src = _animFramesBuffer + 0x761 + READ_LE_UINT16(_animFramesBuffer + 0x1107 + i * 2) - 1;
 			decodeAnimFrame(src, _screenVGA, true);
@@ -406,7 +406,7 @@ void IgorEngine::PART_12_HELPER_4_exorcismCutscene() {
 	waitForTimer(255);
 	fadeOut(768);
 	// door open
-	_objectsState[45] = 1;
+	_objectsState[kChurchDoorOpenStateIndex] = 1;
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);
 	_currentPart = 40;
@@ -438,7 +438,7 @@ void IgorEngine::PART_12_HELPER_5_enterFromPath() {
 			}
 		}
 		if (compareGameTick(2, 32) && _gameState.unk10 < 11) {
-			if (_objectsState[44] == 0) {
+			if (_objectsState[kLizardTakenStateIndex] == 0) {
 				const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x74B + _gameState.unk10 * 2) - 1;
 				decodeAnimFrame(src, _screenVGA, true);
 			}
@@ -476,7 +476,7 @@ void IgorEngine::PART_12_HELPER_6_enterFromChurch() {
 			}
 		}
 		if (compareGameTick(2, 32) && _gameState.unk10 < 11) {
-			if (_objectsState[44] == 0) {
+			if (_objectsState[kLizardTakenStateIndex] == 0) {
 				const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x74B + _gameState.unk10 * 2) - 1;
 				decodeAnimFrame(src, _screenVGA, true);
 			}
@@ -521,7 +521,7 @@ void IgorEngine::PART_12() {
 	_updateRoomBackground = &IgorEngine::PART_12_UPDATE_ROOM_BACKGROUND;
 	PART_12_OBJECT_STATE(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	if (_objectsState[44] == 0) {
+	if (_objectsState[kLizardTakenStateIndex] == 0) {
 		PART_12_HELPER_3_paintOverLizard();
 	}
 	if (_currentPart == 122 && !_gameStateLoaded) {
@@ -536,7 +536,7 @@ void IgorEngine::PART_12() {
 		}
 		if (_currentPart == 121) {
 			PART_12_HELPER_6_enterFromChurch();
-			if (_objectsState[106] == 1) {
+			if (_objectsState[kStatuetteTaken2StateIndex] == 1) {
 				ADD_DIALOGUE_TEXT(216, 2, 799);
 				ADD_DIALOGUE_TEXT(218, 1, 800);
 				SET_DIALOGUE_TEXT(1, 2);

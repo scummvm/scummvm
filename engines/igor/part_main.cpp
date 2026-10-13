@@ -177,27 +177,27 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		igorSay({ { 92, 1, 64 }, { 93, 3, 65 } });
 		break;
 	case 46: // look at folder
-		if (_objectsState[3] == 0) {
+		if (_objectsState[kFolderSwappedStateIndex] == 0) {
 			ADD_DIALOGUE_TEXT(85, 1, 60);
 		} else {
 			ADD_DIALOGUE_TEXT(86, 2, 61);
-			_objectsState[5] = 1;
+			_objectsState[kPhillipLockerCombinationLearnedStateIndex] = 1;
 		}
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 48: // look at bottle
-		igorSay(77 + _objectsState[0], 1, 53 + _objectsState[0]);
+		igorSay(77 + _objectsState[kBottleStateIndex], 1, 53 + _objectsState[kBottleStateIndex]);
 		break;
 	case 50:
-		if (_objectsState[1] == 0) {
+		if (_objectsState[kLizardFedStateIndex] == 0) {
 			igorSay({ { 80, 1, 56 }, { 81, 1, 57 } });
 		} else {
 			igorSay(82, 1, 58);
 		}
 		break;
 	case 51: // look at great statuette / money
-		if (_objectsState[7] == 0) {
+		if (_objectsState[kStatueDeliveredStateIndex] == 0) {
 			ADD_DIALOGUE_TEXT(157, 1, 81);
 		} else {
 			ADD_DIALOGUE_TEXT(158, 1, 82);
@@ -225,7 +225,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		break;
 	case 58: // look at astronomy book
 		igorSay({ { 140, 1, 70 }, { 141, 1, 71 }, { 142, 1, 72 }, { 143, 1, 73 } });
-		_objectsState[4] = 2;
+		_objectsState[kAstronomyBookStateIndex] = 2;
 		break;
 	case 59:
 		igorSay(97, 2, 67);
@@ -248,7 +248,7 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		_inventoryInfo[_inventoryInfo[59] - 1] = 0;
 		_inventoryInfo[59] = 0;
 		packInventory();
-		_objectsState[1] = 1;
+		_objectsState[kLizardFedStateIndex] = 1;
 		UPDATE_OBJECT_STATE(2);
 		addObjectToInventory(24, 59);
 		igorSay(169, 1, 93);
@@ -261,16 +261,16 @@ void IgorEngine::EXEC_MAIN_ACTION(int action) {
 		_inventoryInfo[_inventoryInfo[69] - 1] = 0;
 		_inventoryInfo[69] = 0;
 		packInventory();
-		_objectsState[6] = 1;
+		_objectsState[kVaseStateIndex] = 1;
 		UPDATE_OBJECT_STATE(7);
 		addObjectToInventory(34, 69);
 		break;
 	case 64: // look at vase
-		if (_objectsState[6] == 0) {
+		if (_objectsState[kVaseStateIndex] == 0) {
 			ADD_DIALOGUE_TEXT(162, 1, 86);
-		} else if (_objectsState[6] == 1) {
+		} else if (_objectsState[kVaseStateIndex] == 1) {
 			ADD_DIALOGUE_TEXT(163, 1, 87);
-		} else if (_objectsState[6] == 2) {
+		} else if (_objectsState[kVaseStateIndex] == 2) {
 			ADD_DIALOGUE_TEXT(164, 1, 88);
 		}
 		SET_DIALOGUE_TEXT(1, 1);
@@ -340,8 +340,8 @@ void IgorEngine::EXEC_MAIN_ACTION_38_lookAtNewspaper() {
 		free(tmp);
 	}
 	fadeIn(624);
-	if (_objectsState[4] == 0) {
-		_objectsState[4] = 1;
+	if (_objectsState[kAstronomyBookStateIndex] == 0) {
+		_objectsState[kAstronomyBookStateIndex] = 1;
 	}
 }
 
@@ -391,7 +391,7 @@ void IgorEngine::SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p) {
 
 void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
-		switch (_objectsState[0]) {
+		switch (_objectsState[kBottleStateIndex]) {
 		case 0:
 			Common::strlcpy(_globalObjectNames[23], getString(STR_BottleOfWhisky), sizeof(_globalObjectNames[23]));
 			break;
@@ -404,7 +404,7 @@ void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 		}
 	}
 	if (num == 2 || num == 255) {
-		switch (_objectsState[1]) {
+		switch (_objectsState[kLizardFedStateIndex]) {
 		case 0:
 			_inventoryImages[23] = 27;
 			Common::strlcpy(_globalObjectNames[24], getString(STR_Lizard), sizeof(_globalObjectNames[24]));
@@ -416,7 +416,7 @@ void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 		}
 	}
 	if (num == 4 || num == 255) {
-		switch (_objectsState[3]) {
+		switch (_objectsState[kFolderSwappedStateIndex]) {
 		case 0:
 			Common::strlcpy(_globalObjectNames[22], getString(STR_CarolineFolder), sizeof(_globalObjectNames[22]));
 			break;
@@ -426,7 +426,7 @@ void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 		}
 	}
 	if (num == 7 || num == 255) {
-		switch (_objectsState[6]) {
+		switch (_objectsState[kVaseStateIndex]) {
 		case 0:
 			_inventoryImages[33] = 21;
 			break;
@@ -439,7 +439,7 @@ void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 		}
 	}
 	if (num == 8 || num == 255) {
-		if (_objectsState[7] == 0) {
+		if (_objectsState[kStatueDeliveredStateIndex] == 0) {
 			Common::strlcpy(_globalObjectNames[25], getString(STR_Statuette), sizeof(_globalObjectNames[25]));
 			_inventoryImages[24] = 29;
 		} else {
@@ -453,8 +453,8 @@ void IgorEngine::PART_MAIN() {
 	SET_EXEC_ACTION_FUNC(0, &IgorEngine::EXEC_MAIN_ACTION);
 	if (!_gameStateLoaded) {
 		memset(_objectsState, 0, 112);
-		_objectsState[21] = 1;
-		_objectsState[49] = 1;
+		_objectsState[kAtticNailHotspotActiveStateIndex] = 1;
+		_objectsState[kCuckooAnimationControlStateIndex] = 1;
 		memset(_inventoryInfo, 0, 36);
 		_inventoryInfo[0] = 1; // ordering
 		_inventoryInfo[1] = 2;
@@ -772,7 +772,7 @@ void IgorEngine::PART_MAIN() {
 			continue;
 		}
 		// skip if we havent given the note to margaret yet
-		if (_objectsState[110] < 1 || _objectsState[110] > 7) {
+		if (_objectsState[kMargaretSceneStateIndex] < 1 || _objectsState[kMargaretSceneStateIndex] > 7) {
 			continue;
 		}
 		debugC(9, kDebugEngine, "Checking meanwhile with part: %d, should show cutscene counter %d", _currentPart, _gameState.shouldShowCutsceneCounter);
@@ -820,11 +820,11 @@ void IgorEngine::lookAtPapyrus(bool reveal) {
 	if (reveal) {
 		fadeIn(624);
 		PART_UPDATE_FIGURES_ON_PAPER(60);
-		_objectsState[2] = 1;
+		_objectsState[kPapyrusFiguresVisibleStateIndex] = 1;
 		waitForTimer(255);
 	} else {
 
-		if (_objectsState[2] == 1) {
+		if (_objectsState[kPapyrusFiguresVisibleStateIndex] == 1) {
 			PART_UPDATE_FIGURES_ON_PAPER(0);
 		}
 		fadeIn(624);
@@ -835,7 +835,7 @@ void IgorEngine::lookAtPapyrus(bool reveal) {
 		wd->x = 160;
 		wd->y = 130;
 		wd->scaleWidth = 50;
-		if (_objectsState[2] == 0) {
+		if (_objectsState[kPapyrusFiguresVisibleStateIndex] == 0) {
 			ADD_DIALOGUE_TEXT(99, 1, 68);
 		} else {
 			ADD_DIALOGUE_TEXT(100, 2, 69);

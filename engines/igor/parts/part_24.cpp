@@ -68,7 +68,7 @@ void IgorEngine::PART_24_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_24_ACTION_102_enterChemistryClass() {
-	if (_objectsState[67] != 0) {
+	if (_objectsState[kChemistryDoorStateIndex] != 0) {
 		_roomObjectAreasTable[_screenLayer2[37188]].area = 1;
 		--_walkDataLastIndex;
 		buildWalkPathSimple(76, 128, 68, 116);
@@ -80,7 +80,7 @@ void IgorEngine::PART_24_ACTION_102_enterChemistryClass() {
 }
 
 void IgorEngine::PART_24_ACTION_104_closeDoor() {
-	if (_objectsState[67] == 1) {
+	if (_objectsState[kChemistryDoorStateIndex] == 1) {
 		executeAction(11);
 		return;
 	}
@@ -93,12 +93,12 @@ void IgorEngine::PART_24_ACTION_104_closeDoor() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[67] = 1;
+	_objectsState[kChemistryDoorStateIndex] = 1;
 	PART_24_HELPER_1_OBJECT_STATE(1);
 }
 
 void IgorEngine::PART_24_ACTION_105_openDoor() {
-	if (_objectsState[67] == 0) {
+	if (_objectsState[kChemistryDoorStateIndex] == 0) {
 		executeAction(14);
 		return;
 	}
@@ -111,7 +111,7 @@ void IgorEngine::PART_24_ACTION_105_openDoor() {
 			waitForTimer(100);
 		}
 	}
-	_objectsState[67] = 0;
+	_objectsState[kChemistryDoorStateIndex] = 0;
 	PART_24_HELPER_1_OBJECT_STATE(1);
 }
 
@@ -149,7 +149,7 @@ void IgorEngine::PART_24_UPDATE_ROOM_BACKGROUND() {
 
 void IgorEngine::PART_24_HELPER_1_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) { // door
-		if (_objectsState[67] == 0) {
+		if (_objectsState[kChemistryDoorStateIndex] == 0) {
 			PART_24_HELPER_4_drawClosedDoor();
 			_roomActionsTable[2] = 6;
 		} else {

@@ -48,7 +48,7 @@ void IgorEngine::PART_22_EXEC_ACTION(int action) {
  * Takes the object (inventory object 29) from the bell tower.
  */
 void IgorEngine::PART_22_ACTION_101_lookAtBell() {
-	if (_objectsState[78] == 1 && _inventoryInfo[64] == 0) {
+	if (_objectsState[kBellTowerConversationSeenStateIndex] == 1 && _inventoryInfo[64] == 0) {
 		igorSayAndWait(203, 2, 855);
 		for (int i = 0; i < 3; ++i) {
 			// each frame is drawn as is, over Igor too
@@ -60,7 +60,7 @@ void IgorEngine::PART_22_ACTION_101_lookAtBell() {
 		addObjectToInventory(29, 64);
 		PART_22_APPLY_OBJECT_STATE(255);
 		igorSay({ { 205, 1, 856 }, { 206, 1, 857 } });
-		_objectsState[105] = 1;
+		_objectsState[kChurchBellMessageSeenStateIndex] = 1;
 	} else {
 		igorSay(201, 2, 854);
 	}
