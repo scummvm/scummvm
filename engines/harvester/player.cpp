@@ -962,6 +962,28 @@ static bool recordNativePrimaryWalkBlockerHistory(const RoomSetupState &state,
 	return false;
 }
 
+static void playPlayerBlockedWalkSounds(HarvesterEngine &engine, const RoomSetupState &state,
+		const RoomPlayerState &playerState, const Entity &blocker) {
+	const Entity &entity = *playerState.entity;
+	const PlayerAnimationRange range = resolvePlayerAnimationRange(playerState.facing);
+	if (entity.getAnimationRate() != kRoomPlayerWalkAnimationRate ||
+			entity.getCurrentFrame() < range.walkFirstFrame ||
+			entity.getCurrentFrame() > range.walkLastFrame)
+		return;
+
+	const int frameLeftX = computePlayerFrameLeftX(playerState);
+	if ((playerState.facing == 1 && frameLeftX < 30) ||
+			(playerState.facing == 2 && frameLeftX >= 611) ||
+			(playerState.facing == 0 && entity.getZ() <= state.roomMinZ) ||
+			(playerState.facing == 3 && entity.getZ() >= state.roomMaxZ))
+		return;
+
+	(void)engine.playSound("2:/SOUND/EFFECTS/FOOTLFT1.WAV");
+	(void)engine.playSound("2:/SOUND/EFFECTS/FOOTRHT1.WAV");
+	debugC(2, kDebugPlayer, "Harvester: player blocked walk sound blocker='%s' facing=%d",
+		blocker.getName().c_str(), playerState.facing);
+}
+
 static bool tryApplyPlayerWalkMovement(HarvesterEngine &engine, const RoomSetupState &state,
 		const Common::Array<ObjectRecord> &sceneObjects,
 		const Common::Array<AnimRecord> &sceneAnimations, RoomPlayerState &playerState,
@@ -974,6 +996,7 @@ static bool tryApplyPlayerWalkMovement(HarvesterEngine &engine, const RoomSetupS
 		*blockerOut = nullptr;
 	if (blocker && recordNativePrimaryWalkBlockerHistory(state, playerState, *blocker,
 			horizontalDirection, depthDirection)) {
+		playPlayerBlockedWalkSounds(engine, state, playerState, *blocker);
 		if (blockerOut)
 			*blockerOut = blocker;
 		return false;
