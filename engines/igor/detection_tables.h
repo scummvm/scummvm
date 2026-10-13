@@ -30,6 +30,42 @@ const IgorGameDescription gameDescriptions[] = {
 	{
 		{
 			"igor",
+			"Demo 1.00s",
+			AD_ENTRY2s(
+				"IGOR.DAT", nullptr, 4086790,
+				"IGOR.FSD", nullptr, 462564
+			),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		kIdEngDemo100,
+		kFlagDemo | kFlagFloppy,
+		"IGOR.DAT",
+		"IGOR.FSD"
+	},
+	{
+		{
+			"igor",
+			"Demo 1.10s",
+			AD_ENTRY2s(
+				"IGOR.DAT", nullptr, 4094103,
+				"IGOR.FSD", nullptr, 462564
+			),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		kIdEngDemo110,
+		kFlagDemo | kFlagFloppy,
+		"IGOR.DAT",
+		"IGOR.FSD"
+	},
+	{
+		{
+			"igor",
 			"CD",
 			AD_ENTRY2s(
 				"IGOR.DAT", "b4ba3ec480ec66a2fa456265ab51f5f6", 61682719,

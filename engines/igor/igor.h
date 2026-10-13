@@ -103,6 +103,7 @@ struct RoomWalkBounds {
 	int x1, y1;
 	int x2, y2;
 	// Minimum y after clamping a click past the corresponding horizontal edge.
+	// e.g. clamped to x1? then x1MinY is used to determine the minimum y.
 	int x1MinY, x2MinY;
 };
 
@@ -172,11 +173,11 @@ struct Action {
 };
 
 struct DialogueDataOffsets {
-	int questionsOffset;
+	int questionsOffset; // Base offset used to locate question text
 	int questionsSize;
-	int repliesOffset;
+	int repliesOffset; // Base offset used to locate reply text
 	int repliesSize;
-	int matSize;
+	int matSize; // Stride used to index the conversation choices matrix
 	int replyDataOffset;
 	int questionSoundsOffset;
 	int replySoundsOffset;
@@ -207,7 +208,7 @@ struct RoomDataOffsets {
 
 // The click fix of a room that clamps the clicked position: y is limited, x is limited to [xMin, xMax]
 // (-1: no limit), then the first walkable row below is looked for (and above if scanUp).
-struct RoomClickFix {
+struct RoomWalkTargetRules {
 	int yMax;
 	int xMin;
 	int xMax;
@@ -215,8 +216,6 @@ struct RoomClickFix {
 	bool enabled;
 };
 
-// The maze: a grid of locations, each with the location to the north, east, south and west (0: none)
-// and the shape of the room that shows it (the part of the room is 50 + shape).
 struct MazeNode {
 	uint8 neighbors[4];
 	uint8 shape;
@@ -285,7 +284,7 @@ struct MazeFlame {
 struct MazeRoom {
 	uint8 part;
 	int dat, txt, img, pal, msk, box;
-	int8 music;             // -1: depends on the location
+	int8 music;
 	uint8 darkness;
 	uint8 flameMode;
 	uint8 numFlames;
@@ -295,13 +294,14 @@ struct MazeRoom {
 	bool saveLocation;      // the room ends when the location changes
 	const RoomDataOffsets *offsets;
 	int giveObjectSize;     // stride of the give matrix when it is not the one of the use matrix
-	RoomClickFix clickFix;
+	RoomWalkTargetRules clickFix;
 	const MazeEntry *entries;
 	uint8 numEntries;
 	const MazeAction *actions;
 	uint8 numActions;
 	const char *objectName3;
 };
+
 enum {
 	kUpdateDialogueAnimEndOfSentence = 1,
 	kUpdateDialogueAnimMiddleOfSentence,
@@ -353,6 +353,9 @@ enum InventoryObjectNumber {
 	kInventoryObjectCamera = 36
 };
 
+/**
+ * Indices for global game objects state, for better readability
+ */
 enum ObjectStateIndex {
 	kBottleStateIndex = 0,
 	kLizardFedStateIndex = 1,
@@ -551,20 +554,19 @@ struct WalkData {
 };
 
 enum AnimBlend {
-		kBlendCopy,
-		kBlendLitSprite,
-		kBlendLitSpriteNoShade,
-		kBlendBehindIgor,
-		kBlendBehindIgorAndText
+	kBlendCopy, // blit the entire rectangle
+	kBlendLitSprite, // Igor colors follow the room’s masking and shading rules.
+	kBlendLitSpriteNoShade, // same as above, but no shading on igor
+	kBlendBehindIgor, // igor colors survive, the rest is replaced
+	kBlendBehindIgorAndText // igor colors AND text survive
 };
 
 class IgorEngine : public Engine {
 public:
-	typedef void (IgorEngine::*ExecuteActionProc)(int action);
-	typedef void (IgorEngine::*UpdateRoomBackgroundProc)();
+	typedef void (IgorEngine::*ExecuteActionProc)(int action); // pointer to room action function
+	typedef void (IgorEngine::*UpdateRoomBackgroundProc)(); // pointer to function that executes on every frame
 
-
-	typedef void (IgorEngine::*UpdateDialogueProc)(int action);
+	typedef void (IgorEngine::*UpdateDialogueProc)(int action); // pointer to function that executes on every frame during dialogue
 	void syncSoundSettings() override;
 
 private:
@@ -597,17 +599,17 @@ private:
 
 	bool _eventQuitGame;
 	bool _gameStateLoaded;
+
 	// pass of the end credits: 0 for the first one (set when the ending is over), the pages are shown again after it
 	uint8 _creditsPass;
 	GameStateData _gameState;
+
 	uint8 _mazeLocation;
 	uint8 _mazeSavedLocation;
 	const MazeRoom *_mazeRoom;
 	int _mazeFlameFrame[2];
 	uint32 _nextTimer;
 
-	// Speed multiplier, 1 = original timing. Divides the millisecond
-	// deadlines in waitForTimer();
 	// Toggled with Ctrl+F (1 <-> kFastModeFactor), or set to any 1..kFastModeMaxFactor
 	// with the console's fast_mode command.
 	int _fastMode;
@@ -659,15 +661,23 @@ private:
 	int _dialogueDirtyRectY;
 	int _dialogueDirtyRectSize;
 	char _dialogueQuestions[MAX_DIALOGUE_QUESTIONS][2][41];
-	uint16 _dialogueQuestionSounds[MAX_DIALOGUE_QUESTIONS];
 	char _dialogueReplies[MAX_DIALOGUE_REPLIES][51];
+	uint16 _dialogueQuestionSounds[MAX_DIALOGUE_QUESTIONS];
 	uint16 _dialogueReplySounds[MAX_DIALOGUE_REPLIES];
 	bool _dialogueEnded;
 	int _dialogueChoiceSelected;
 	uint8 _dialogueInfo[6];
 
 	uint8 _objectsState[112];
+	uint8 _inventoryImages[36];
+	uint8 _inventoryInfo[74];
+	char _verbPrepositions[3][7];
+	char _roomObjectNames[20][MAX_OBJECT_NAME_LENGTH];
+	char _globalObjectNames[37][MAX_OBJECT_NAME_LENGTH];
+	char _verbsName[9][MAX_VERB_NAME_LENGTH];
+
 	bool _part07FirstVisitDone;
+
 	// scratch of the room loops: the current ambient frame (a star in part 72, the screen in part 68)
 	uint8 _roomAmbientIndex;
 	// the two fireflies of room 69: the current frame of each and the steps of the first one since the second one started
@@ -691,12 +701,6 @@ private:
 	uint8 _part68LastDialogueCode;
 	bool _part68NpcPresent;
 	uint8 _parkLadyIdleStep;
-	uint8 _inventoryImages[36];
-	uint8 _inventoryInfo[74];
-	char _verbPrepositions[3][7];
-	char _roomObjectNames[20][MAX_OBJECT_NAME_LENGTH];
-	char _globalObjectNames[37][MAX_OBJECT_NAME_LENGTH];
-	char _verbsName[9][MAX_VERB_NAME_LENGTH];
 
 	uint8 _currentPalette[768];
 	uint8 _paletteBuffer[768];
@@ -704,12 +708,14 @@ private:
 	uint8 *_igorTempFrames;
 
 	RoomWalkBounds _roomWalkBounds;
-	RoomClickFix _roomClickFix;
-	int _roomClickFixBottom; // the last row the click fix scans
+	RoomWalkTargetRules _roomWalkTargetRules;
+	int _roomWalkTargetBottom; // the last row the click fix scans
+
 	// stride of the give matrix of the room when it differs from the use matrix (0: same)
 	int _roomGiveObjectSize;
 	RoomDataOffsets _roomDataOffsets;
 	UpdateDialogueProc _updateDialogue;
+
 	// palette indices used to draw cutscene dialogue text and its outline
 	uint8 _talkColorIndex;
 	uint8 _talkShadowIndex;
@@ -733,12 +739,10 @@ private:
 
 	void readTableFile();
 
-
 	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent = false);
 	void drawAnimRect(int dstOffset, int animOffset, int w, int h, bool alsoBackground = false, AnimBlend blend = kBlendCopy);
 	void animateLitAnimFrames(int srcOffset, int firstFrame, int lastFrame, int frameSize, int width, int height, int dstOffset, int delay, int soundFrame, int sound);
 	void updateIgorIdleAnimation(int fl);
-
 
 	void loadDialogueData(int dlg);
 	void loadMainTexts();
@@ -1501,6 +1505,8 @@ private:
 	void partMazeExitThroughStairs(const MazeAction &action);
 	void partMazeGoToNeighbor(int dir);
 	int partMazeGetMusicTrack() const;
+
+
 	void setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp, int yBottom = 143);
 
 	void partMainUpdateObjectState(int num);
@@ -1569,7 +1575,6 @@ private:
 
 	void handleIgorIdleAnimation();
 
-
 	void getClosestAreaTrianglePoint(int dstArea, int srcArea, int *dstY, int *dstX, int srcY, int srcX);
 	void getClosestAreaTrianglePoint2(int dstArea, int srcArea, int *dstY, int *dstX, int srcY1, int srcX1, int srcY2, int srcX2);
 
@@ -1585,8 +1590,9 @@ private:
 	void buildWalkPathAreaRightDirection(int srcX, int srcY, int dstX, int dstY);
 	void buildWalkPathAreaLeftDirection(int srcX, int srcY, int dstX, int dstY);
 	typedef void (IgorEngine::*IgorMoveTick)();
-	// tick: room effect that runs on every iteration while Igor walks (rooms with their own wait loop)
-	bool waitForIgorMove(IgorMoveTick tick = 0, bool escapeSkips = false, bool forceSkip = false, int fixedPosNum = -1);
+
+	// tickFunc: function that runs on every iteration while Igor walks (rooms with their own wait loop)
+	bool waitForIgorMove(IgorMoveTick tickFunc = 0, bool escapeSkips = false, bool forceSkip = false, int fixedPosNum = -1);
 
 	void moveIgor(int pos, int frame);
 
