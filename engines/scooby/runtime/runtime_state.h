@@ -69,6 +69,12 @@ public:
 
 	SaveGameData _saveGameData;
 
+	// Managed-only: true solely while the main room loop is idle at its top-of-loop retrace wait, with no
+	// room script, interaction, dialogue, or menu in progress. ScummVM saves (including autosaves) are only
+	// permitted then, because a save stores just the password-equivalent state and cannot capture a script
+	// that is part-way through moving objects or updating progress bits.
+	bool SaveAllowed = false;
+
 	// The active action icon from Ghidra g_wActiveActionIcon at 0xFF06C0–0xFF06C1. Original RAM has no image-
 	// backed value; runtime setup clears it before interaction updates. Command 0x09 queues any nonzero value
 	// as pending before clearing this word.

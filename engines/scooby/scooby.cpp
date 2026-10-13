@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
@@ -40,7 +41,7 @@ namespace Scooby {
 ScoobyEngine *g_engine;
 
 ScoobyEngine::ScoobyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Scooby") {
+	_gameDescription(gameDesc), _randomSource("Scooby"), _applicationLoop(nullptr) {
 	g_engine = this;
 }
 
@@ -91,6 +92,19 @@ Common::Error ScoobyEngine::run() {
 	_applicationLoop->run();
 
 	return Common::kNoError;
+}
+
+bool ScoobyEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	// Only allow saves while idle. Not when running a script.
+	if (_applicationLoop && _applicationLoop->canSaveGame()) {
+		return true;
+	}
+
+	if (msg) {
+		*msg = _("Cannot save at this point.");
+	}
+
+	return false;
 }
 
 Common::Error ScoobyEngine::syncGame(Common::Serializer &s) {

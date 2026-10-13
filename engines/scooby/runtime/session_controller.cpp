@@ -402,7 +402,12 @@ SessionExit SessionController::runGame() {
 
 		// Native VBLANK can preempt every pass through Ghidra 0x00000D38-0x000013B9. The managed loop
 		// services that installed callback and presents one clocked frame before consuming its state.
-		if (!waitForRoomVerticalBlank()) {
+		// Managed-only: this is the one point where no script or interaction is mid-flight, so allow ScummVM
+		// saves during this wait unless an interaction is already queued to run.
+		_state.SaveAllowed = (_state.DisplayFlags & kInteractionPendingMask) == 0;
+		bool frameCompleted = waitForRoomVerticalBlank();
+		_state.SaveAllowed = false;
+		if (!frameCompleted) {
 			return SessionExit::HostClosed;
 		}
 
