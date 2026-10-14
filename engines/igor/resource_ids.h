@@ -846,50 +846,6 @@
 #define IMG_Credits7 1222
 #define PAL_Credits7 1223
 
-// Credit texts (Spanish)
-#define STR_CreditsHistoriaYDiseno 450
-#define STR_CreditsRamonHernaez 451
-#define STR_CreditsFelipeGomez 452
-#define STR_CreditsRafaelLatiegui 453
-#define STR_CreditsMiguelAngelRamos 454
-#define STR_CreditsProduccionYDireccionDeVoces 455
-#define STR_CreditsLunaFaraco 456
-#define STR_CreditsProgramacion 457
-#define STR_CreditsVoces 458
-#define STR_CreditsAngieDeBirch 459
-#define STR_CreditsAntonioFdezMunoz 460
-#define STR_CreditsArantxaFranco 461
-#define STR_CreditsAlfredoGabrieli 462
-#define STR_CreditsFernandoLuna 463
-#define STR_CreditsAnaOlivares 464
-#define STR_CreditsAdolfoPastor 465
-#define STR_CreditsFondos 466
-#define STR_CreditsCarlosVeredas 467
-#define STR_CreditsMiguelAngelPerez 468
-#define STR_CreditsAntonioRamos 469
-#define STR_CreditsPatriciaReija 470
-#define STR_CreditsAparicioRivero 471
-#define STR_CreditsDanielSanchez 472
-#define STR_CreditsEnriqueSantaren 473
-#define STR_CreditsCarlosViaga 474
-#define STR_CreditsAnimaciones 475
-#define STR_CreditsProductorAsociado 476
-#define STR_CreditsPabloDeLaNuez 477
-#define STR_CreditsMusicaOriginalYArreglos 478
-#define STR_CreditsEstebanMoreno 479
-#define STR_CreditsDistribuidoPor 480
-#define STR_CreditsDinamicMultimedia 481
-#define STR_CreditsProduccionMusicaDigital 482
-#define STR_CreditsAgpDigital 483
-#define STR_CreditsAgradecimientos 484
-#define STR_CreditsThePromisedLand 485
-#define STR_CreditsRaquelAlvarez 486
-#define STR_CreditsPilarRomero 487
-#define STR_CreditsDouglasPrats 488
-#define STR_CreditsEnriqueRAtienzar 489
-#define STR_CreditsEfectosDeSonido 490
-#define STR_CreditsCreadoYProducidoPor 491
-#define STR_CreditsPenduloStudios 492
 
 #define DLG_Part8Intercom 1224
 
@@ -900,5 +856,13 @@
 #define TXT_OptionsSaveTitle 1229
 #define TXT_OptionsLoadTitle 1230
 #define TXT_OptionsUnavailable 1232
+
+#define TXT_Credits1 1233
+#define TXT_Credits2 1234
+#define TXT_Credits3 1235
+#define TXT_Credits4 1236
+#define TXT_Credits5 1237
+#define TXT_Credits6 1238
+#define TXT_Credits7 1239
 
 #endif // IGOR_RESOURCE_IDS

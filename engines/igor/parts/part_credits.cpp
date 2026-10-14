@@ -22,123 +22,28 @@
 
 namespace Igor {
 
-// Texts of the end credits: every page is a picture with the texts of the first or of the second pass drawn over
-// it. Positions are the centre of every line.
-
-struct CreditsLine {
+struct CreditsLayout {
 	int16 x;
 	int16 y;
-	uint8 color;
-	bool underline;
-	uint16 strId;
+	uint8 count;
 };
 
 struct CreditsPage {
 	uint16 imgId;
 	uint16 palId;
-	const CreditsLine *lines[2];
-	int count[2];
-};
-
-static const CreditsLine kCredits1Pass0[] = {
-	{ 232, 90, 0xC2, true, STR_CreditsHistoriaYDiseno },
-	{ 232, 118, 0xC3, false, STR_CreditsRamonHernaez },
-	{ 232, 133, 0xC3, false, STR_CreditsFelipeGomez },
-	{ 232, 148, 0xC3, false, STR_CreditsRafaelLatiegui },
-	{ 232, 163, 0xC3, false, STR_CreditsMiguelAngelRamos },
-};
-
-static const CreditsLine kCredits1Pass1[] = {
-	{ 210, 5, 0xC2, true, STR_CreditsProduccionYDireccionDeVoces },
-	{ 210, 33, 0xC3, false, STR_CreditsLunaFaraco },
-};
-
-static const CreditsLine kCredits2Pass0[] = {
-	{ 74, 105, 0xC2, true, STR_CreditsProgramacion },
-	{ 74, 133, 0xC3, false, STR_CreditsRamonHernaez },
-	{ 74, 148, 0xC3, false, STR_CreditsFelipeGomez },
-	{ 74, 163, 0xC3, false, STR_CreditsMiguelAngelRamos },
-};
-
-static const CreditsLine kCredits2Pass1[] = {
-	{ 74, 20, 0xC2, true, STR_CreditsVoces },
-	{ 74, 48, 0xC3, false, STR_CreditsAngieDeBirch },
-	{ 74, 63, 0xC3, false, STR_CreditsAntonioFdezMunoz },
-	{ 74, 78, 0xC3, false, STR_CreditsArantxaFranco },
-	{ 74, 93, 0xC3, false, STR_CreditsAlfredoGabrieli },
-	{ 74, 108, 0xC3, false, STR_CreditsFernandoLuna },
-	{ 74, 123, 0xC3, false, STR_CreditsAnaOlivares },
-	{ 74, 138, 0xC3, false, STR_CreditsAdolfoPastor },
-};
-
-static const CreditsLine kCredits3Pass0[] = {
-	{ 244, 30, 0xC2, true, STR_CreditsFondos },
-	{ 244, 58, 0xC3, false, STR_CreditsCarlosVeredas },
-};
-
-static const CreditsLine kCredits3Pass1[] = {
-	{ 244, 30, 0xC2, true, STR_CreditsVoces },
-	{ 244, 58, 0xC3, false, STR_CreditsMiguelAngelPerez },
-	{ 244, 73, 0xC3, false, STR_CreditsAntonioRamos },
-	{ 244, 88, 0xC3, false, STR_CreditsPatriciaReija },
-	{ 244, 103, 0xC3, false, STR_CreditsAparicioRivero },
-	{ 244, 118, 0xC3, false, STR_CreditsDanielSanchez },
-	{ 244, 133, 0xC3, false, STR_CreditsEnriqueSantaren },
-	{ 244, 148, 0xC3, false, STR_CreditsCarlosViaga },
-};
-
-static const CreditsLine kCredits4Pass0[] = {
-	{ 74, 23, 0xC2, true, STR_CreditsAnimaciones },
-	{ 74, 51, 0xC3, false, STR_CreditsRafaelLatiegui },
-};
-
-static const CreditsLine kCredits4Pass1[] = {
-	{ 74, 23, 0xC2, true, STR_CreditsProductorAsociado },
-	{ 74, 51, 0xC3, false, STR_CreditsPabloDeLaNuez },
-};
-
-static const CreditsLine kCredits5Pass0[] = {
-	{ 210, 20, 0xC2, true, STR_CreditsMusicaOriginalYArreglos },
-	{ 210, 48, 0xC3, false, STR_CreditsEstebanMoreno },
-};
-
-static const CreditsLine kCredits5Pass1[] = {
-	{ 240, 20, 0xC2, true, STR_CreditsDistribuidoPor },
-	{ 240, 48, 0xC3, false, STR_CreditsDinamicMultimedia },
-};
-
-static const CreditsLine kCredits6Pass0[] = {
-	{ 90, 5, 0xC2, true, STR_CreditsProduccionMusicaDigital },
-	{ 90, 33, 0xC3, false, STR_CreditsAgpDigital },
-};
-
-static const CreditsLine kCredits6Pass1[] = {
-	{ 74, 72, 0xC2, true, STR_CreditsAgradecimientos },
-	{ 74, 100, 0xC3, false, STR_CreditsThePromisedLand },
-	{ 74, 115, 0xC3, false, STR_CreditsRaquelAlvarez },
-	{ 74, 130, 0xC3, false, STR_CreditsPilarRomero },
-	{ 74, 145, 0xC3, false, STR_CreditsDouglasPrats },
-	{ 74, 160, 0xC3, false, STR_CreditsEnriqueRAtienzar },
-};
-
-static const CreditsLine kCredits7Pass0[] = {
-	{ 240, 142, 0xC2, true, STR_CreditsEfectosDeSonido },
-	{ 240, 170, 0xC3, false, STR_CreditsLunaFaraco },
-};
-
-static const CreditsLine kCredits7Pass1[] = {
-	{ 238, 140, 0xC2, true, STR_CreditsCreadoYProducidoPor },
-	{ 238, 168, 0xC3, false, STR_CreditsPenduloStudios },
+	uint16 textId;
+	CreditsLayout cd[2];
+	CreditsLayout floppy;
 };
 
 static const CreditsPage kCreditsPages[7] = {
-	{ IMG_Credits1, PAL_Credits1, { kCredits1Pass0, kCredits1Pass1 }, { ARRAYSIZE(kCredits1Pass0), ARRAYSIZE(kCredits1Pass1) } },
-	{ IMG_Credits2, PAL_Credits2, { kCredits2Pass0, kCredits2Pass1 }, { ARRAYSIZE(kCredits2Pass0), ARRAYSIZE(kCredits2Pass1) } },
-	{ IMG_Credits3, PAL_Credits3, { kCredits3Pass0, kCredits3Pass1 }, { ARRAYSIZE(kCredits3Pass0), ARRAYSIZE(kCredits3Pass1) } },
-	{ IMG_Credits4, PAL_Credits4, { kCredits4Pass0, kCredits4Pass1 }, { ARRAYSIZE(kCredits4Pass0), ARRAYSIZE(kCredits4Pass1) } },
-	{ IMG_Credits5, PAL_Credits5, { kCredits5Pass0, kCredits5Pass1 }, { ARRAYSIZE(kCredits5Pass0), ARRAYSIZE(kCredits5Pass1) } },
-	{ IMG_Credits6, PAL_Credits6, { kCredits6Pass0, kCredits6Pass1 }, { ARRAYSIZE(kCredits6Pass0), ARRAYSIZE(kCredits6Pass1) } },
-	{ IMG_Credits7, PAL_Credits7, { kCredits7Pass0, kCredits7Pass1 }, { ARRAYSIZE(kCredits7Pass0), ARRAYSIZE(kCredits7Pass1) } },
+	{ IMG_Credits1, PAL_Credits1, TXT_Credits1, { { 232, 90, 5 }, { 210, 5, 2 } }, { 232, 90, 5 } },
+	{ IMG_Credits2, PAL_Credits2, TXT_Credits2, { { 74, 105, 4 }, { 74, 20, 8 } }, { 74, 105, 4 } },
+	{ IMG_Credits3, PAL_Credits3, TXT_Credits3, { { 244, 30, 2 }, { 244, 30, 8 } }, { 244, 30, 2 } },
+	{ IMG_Credits4, PAL_Credits4, TXT_Credits4, { { 74, 23, 2 }, { 74, 23, 2 } }, { 74, 23, 2 } },
+	{ IMG_Credits5, PAL_Credits5, TXT_Credits5, { { 210, 20, 2 }, { 240, 20, 2 } }, { 210, 20, 2 } },
+	{ IMG_Credits6, PAL_Credits6, TXT_Credits6, { { 90, 5, 2 }, { 74, 72, 6 } }, { 74, 142, 2 } },
+	{ IMG_Credits7, PAL_Credits7, TXT_Credits7, { { 240, 142, 2 }, { 238, 140, 2 } }, { 238, 90, 5 } }
 };
 
 // Number of timer units a page stays on the screen
@@ -177,7 +82,7 @@ void IgorEngine::partCredits() {
 	if (isCDVersion())
 		playMusic(kCreditsMusic);
 	else
-		playMusic(12, true);
+		playMusic(12);
 
 	memset(_screenVGA, 0, 64000);
 	memset(_currentPalette, 0, 768);
@@ -188,11 +93,27 @@ void IgorEngine::partCredits() {
 	SET_PAL_240_48_1();
 	memset(_paletteBuffer + kCreditsNameColor * 3, 0x3F, 3);
 
+	const bool englishFloppy = _game.version == kIdEngFloppy;
 	const int pass = (_creditsPass == 0) ? 0 : 1;
-	for (int i = 0; i < page.count[pass]; ++i) {
-		const CreditsLine &line = page.lines[pass][i];
-		partCreditsDrawText(line.x, line.y, line.color, line.underline, getString(line.strId));
+	const CreditsLayout &layout = englishFloppy ? page.floppy : page.cd[pass];
+	const int skip = !englishFloppy && pass == 1 ? page.cd[0].count : 0;
+	int size;
+	uint8 *texts = loadData(page.textId, nullptr, &size);
+	int offset = 0;
+	for (int i = 0; i < skip + layout.count; ++i) {
+		assert(offset < size);
+		const int length = texts[offset++];
+		assert(offset + length <= size);
+		if (i >= skip) {
+			const int line = i - skip;
+			const Common::String text(reinterpret_cast<const char *>(texts + offset), length);
+			const int y = layout.y + (line == 0 ? 0 : 28 + (line - 1) * 15);
+			const uint8 color = line == 0 ? 0xC2 : (englishFloppy ? 0xFF : kCreditsNameColor);
+			partCreditsDrawText(layout.x, y, color, line == 0, text.c_str());
+		}
+		offset += length;
 	}
+	free(texts);
 
 	if (_gameStateLoaded) {
 		fadeIn(768);
@@ -201,7 +122,8 @@ void IgorEngine::partCredits() {
 		part79FadeColors(0, 255, true);
 	}
 
-	for (int ticks = 0; ticks < kCreditsPageTicks; ticks += kTimerTicksCount) {
+	const int pageTicks = _game.version == kIdEngFloppy ? 3928 : kCreditsPageTicks;
+	for (int ticks = 0; ticks < pageTicks; ticks += kTimerTicksCount) {
 		if (_inputVars[kInputOptions]) {
 			_inputVars[kInputOptions] = 0;
 			handleOptionsMenu();
