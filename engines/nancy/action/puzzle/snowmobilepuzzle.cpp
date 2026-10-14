@@ -992,6 +992,22 @@ void SnowmobilePuzzle::handleInput(NancyInput &input) {
 
 	_inputFlags = input.input;
 
+	// Cheat: Ctrl+Shift+H repairs the snowmobile, undoing the damage of the obstacles hit so far
+	for (const Common::KeyState &key : input.otherKbdInput) {
+		if ((key.flags & Common::KBD_CTRL) && (key.flags & Common::KBD_SHIFT) && key.keycode == Common::KEYCODE_h) {
+			_car.damage = 0;
+			debug("Snowmobile cheat: damage repaired");
+		}
+
+		// Cheat: Ctrl+Shift+W wins the chase, as if every stage of it was done
+		if (_variant == kChase && (key.flags & Common::KBD_CTRL) && (key.flags & Common::KBD_SHIFT) &&
+				key.keycode == Common::KEYCODE_w) {
+			changeScene(_winScene);
+			NancySceneState.setEventFlag(_winFlag, g_nancy->_true);
+			debug("Snowmobile cheat: chase won");
+		}
+	}
+
 	// The arrow keys take over the steering until the mouse is moved again
 	if (_inputFlags & (NancyInput::kMoveUp | NancyInput::kMoveDown | NancyInput::kMoveLeft | NancyInput::kMoveRight)) {
 		_isMouseSteering = false;
