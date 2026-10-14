@@ -41,9 +41,8 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 		_system->updateScreen();
 	}
 
-	// wait till next timer if no param is passed, ticks if not
-	// _fastMode divides the wall-clock deadlines. An absolute deadline avoids
-	// accumulating rounding error when repeating short waits.
+	// wait till next timer if no param is passed, [ticks] if not
+	// _fastMode divides the wall-clock deadlines.
 	uint32 endTicks = deadline ? deadline : ((ticks == -1) ? _nextTimer : _system->getMillis() + ticks * 1000 / kTickDelay / _fastMode);
 	do {
 		Common::Event ev;

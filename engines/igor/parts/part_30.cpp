@@ -193,6 +193,8 @@ void IgorEngine::part30WalkInFromRight() {
 }
 
 void IgorEngine::part30LauraCutscene() {
+	if (!isCDVersion())
+		playMusic(3, true);
 	memset(_screenVGA + 46080, 0, 17920);
 	fadeIn(768);
 	part30LauraAndIgorBumpIntoEachOther();
@@ -269,7 +271,8 @@ void IgorEngine::part30SetLauraFrame(int frame) {
 }
 
 void IgorEngine::part30() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeStairsFirstFloor, IMG_CollegeStairsFirstFloor, BOX_CollegeStairsFirstFloor, MSK_CollegeStairsFirstFloor, TXT_CollegeStairsFirstFloor);
 	static const int anm[] = { FRM_CollegeStairsFirstFloor1, FRM_CollegeStairsFirstFloor2, 0 };
@@ -293,6 +296,8 @@ void IgorEngine::part30() {
 			} else if (_currentPart == 301) {
 				part30WalkInFromUpstairs();
 			} else if (_currentPart == 302) {
+				if (!isCDVersion())
+					playMusic(3, true);
 				fadeIn(768);
 				part30WalkInFromOutside();
 			} else if (_currentPart == 303) {

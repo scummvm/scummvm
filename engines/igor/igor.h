@@ -576,6 +576,7 @@ private:
 	Common::RandomSource _randomSource;
 	MidiPlayer *_midiPlayer;
 	uint8 *_musicData;
+	int _previousMusic;
 
 	Common::File _ovlFile;
 	Common::File _sndFile;
@@ -1621,6 +1622,7 @@ private:
 
 	void debugApplyOverlay();
 
+	bool isCDVersion() const { return !(_game.flags & kFlagFloppy); }
 	int getPart() const { return _currentPart / 10; }
 	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; } // { return ((_gameTicks + add) % mod) == 0; }
 	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); }                          // { return _gameTicks == eq; }

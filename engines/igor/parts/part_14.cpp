@@ -308,6 +308,8 @@ void IgorEngine::part14EnterFromChurchBell() {
 }
 
 void IgorEngine::part14EnterFromMaze() {
+	if (!isCDVersion())
+		playMusic(4, true);
 	part14ApplyObjectState(255);
 	for (int i = 192 * 3; i <= 207 * 3; ++i) {
 		if (_paletteBuffer[i] > 5) {
@@ -516,7 +518,8 @@ void IgorEngine::part14PushStone(int screenOffset, int w, int h, int animOffset)
 }
 
 void IgorEngine::part14() {
-	playMusic(3);
+	if (isCDVersion())
+		playMusic(3);
 	_gameState.enableLight = 1;
 	part14LoadRoom();
 	part14LoadAnimation();

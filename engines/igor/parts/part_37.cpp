@@ -87,7 +87,8 @@ void IgorEngine::part37WalkIn() {
 }
 
 void IgorEngine::part37() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_PhysicsClassroom, IMG_PhysicsClassroom, BOX_PhysicsClassroom, MSK_PhysicsClassroom, TXT_PhysicsClassroom);
 	static const int anm[] = { FRM_PhysicsClassroom1, 0 };

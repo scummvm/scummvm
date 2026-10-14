@@ -106,7 +106,8 @@ void IgorEngine::part36DrawPen(int frame) {
 }
 
 void IgorEngine::part36() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_ChemistryClassroom, IMG_ChemistryClassroom, BOX_ChemistryClassroom, MSK_ChemistryClassroom, TXT_ChemistryClassroom);
 	static const int anm[] = { FRM_ChemistryClassroom1, FRM_ChemistryClassroom2, 0 };

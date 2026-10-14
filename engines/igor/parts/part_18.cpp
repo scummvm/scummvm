@@ -138,7 +138,8 @@ void IgorEngine::part18WalkIn() {
 }
 
 void IgorEngine::part18() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	part18LoadRoom();
 	part18LoadAnimation();

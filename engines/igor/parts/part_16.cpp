@@ -134,7 +134,8 @@ void IgorEngine::part16PhotoCutscene() {
 		waitForTimer(15);
 	}
 	fadeOut(768);
-	playMusic(8);
+	if (isCDVersion())
+		playMusic(8);
 	_currentPart = 331;
 	part33();
 	memset(_currentPalette, 0, 768);
@@ -193,6 +194,8 @@ void IgorEngine::part16PhotoCutscene() {
 	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
 	_objectsState[kPhotoCutsceneSeenStateIndex] = 1;
 	_objectsState[kMargaretStateIndex] = kMargaretStatePhotoTaken;
+	if (!isCDVersion())
+		playMusic(3, true);
 	_currentPart = 261;
 }
 
@@ -218,7 +221,8 @@ void IgorEngine::part16DrawTalkingFrame(int frame) {
 }
 
 void IgorEngine::part16() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	part16LoadRoom();
 	part16LoadAnimation();

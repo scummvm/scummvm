@@ -172,6 +172,8 @@ void IgorEngine::part13EnterFromRight() {
 }
 
 void IgorEngine::part13EnterFromBelow() {
+	if (!isCDVersion())
+		playMusic(4, true);
 	part13ApplyObjectState(255);
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
@@ -198,7 +200,8 @@ void IgorEngine::part13EnterFromBelow() {
 }
 
 void IgorEngine::part13() {
-	playMusic(3);
+	if (isCDVersion())
+		playMusic(3);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_InsideChurch, IMG_InsideChurch, BOX_InsideChurch, MSK_InsideChurch, TXT_InsideChurch);
 	loadActionData(DAT_InsideChurch);
