@@ -146,7 +146,8 @@ void IgorEngine::part10ScrollLeft() {
 }
 
 void IgorEngine::part10() {
-	playMusic(1);
+	if (isCDVersion())
+		playMusic(1);
 	_gameState.enableLight = 1;
 
 	loadActionData(DAT_Decanato);
@@ -199,6 +200,8 @@ void IgorEngine::part10() {
 			_gameState.igorMoving = true;
 			waitForIgorMove();
 		} else if (_currentPart == 101) {
+			if (!isCDVersion())
+				playMusic(2, true);
 			// Enter from the adjacent panel and walk right into the room.
 			_walkData[0].setPos(136, 86, kFacingPositionRight, 0);
 			_walkData[0].setDefaultScale();

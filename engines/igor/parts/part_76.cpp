@@ -64,7 +64,7 @@ static const int kPart76WalkEndY = 119;
 static const int kPart76ParachuteInventoryIndex = 38;
 
 void IgorEngine::part76ExecuteAction(int action) {
-	if (action != 103) {
+	if (isCDVersion() && action != 103) {
 		// the music of the room is started again by every action but the third one
 		playMusic(12);
 	}
@@ -275,7 +275,8 @@ void IgorEngine::part76Entry() {
 }
 
 void IgorEngine::part76() {
-	playMusic(12);
+	if (isCDVersion())
+		playMusic(12);
 	if (!_gameStateLoaded) {
 		// the card that opens the part
 		partMainMeanwhile(IMG_Part76Card);

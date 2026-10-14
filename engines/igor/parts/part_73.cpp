@@ -49,7 +49,8 @@ void IgorEngine::part73UpdateDialogue(int action) {
 void IgorEngine::part73Cutscene() {
 	const bool savingWasAllowed = _canSaveGame;
 	_canSaveGame = false;
-	playMusic(8);
+	if (isCDVersion())
+		playMusic(8);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_Part73, IMG_Part73, BOX_Part73, MSK_Part73, TXT_Part73);
 	// the colors of Igor

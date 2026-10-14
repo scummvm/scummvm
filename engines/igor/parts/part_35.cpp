@@ -122,7 +122,8 @@ void IgorEngine::part35ApplyObjectState(int num) {
 }
 
 void IgorEngine::part35() {
-	playMusic(1);
+	if (isCDVersion())
+		playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_ParkRight);
 	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park); // left panel

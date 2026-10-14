@@ -156,7 +156,8 @@ void IgorEngine::part1ExecuteAction(int action) {
 }
 
 void IgorEngine::part1() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_OutsideStudentDormitory);
 	loadRoomData(PAL_OutsideStudentDormitory, IMG_OutsideStudentDormitory, BOX_OutsideStudentDormitory, MSK_OutsideStudentDormitory, TXT_OutsideStudentDormitory);

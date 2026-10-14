@@ -87,12 +87,10 @@ void IgorEngine::playMusic(int num, bool restart) {
 		if (_midiPlayer) {
 			static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
 			if (num < 0 || num >= (int)ARRAYSIZE(cmf) || cmf[num] == 0) {
-				// TODO: Restore the remaining demo music selections once verified.
+				// TODO: Restore unsupported music selections once verified.
 				return;
 			}
 			startMusic(cmf[num]);
-		} else {
-			// TODO: Verify the full floppy game's music resource mapping.
 		}
 	} else {
 		g_system->getAudioCDManager()->stop();

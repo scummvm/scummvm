@@ -271,7 +271,8 @@ void IgorEngine::part9ExecuteAction(int action) {
 }
 
 void IgorEngine::part9() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_AdministrationSecretaryRoom);
 	loadRoomData(PAL_AdministrationSecretaryRoom, IMG_AdministrationSecretaryRoom,

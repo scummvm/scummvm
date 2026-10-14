@@ -175,7 +175,8 @@ void IgorEngine::part72UpdateBackground() {
 }
 
 void IgorEngine::part72() {
-	playMusic(4);
+	if (isCDVersion())
+		playMusic(4);
 	_gameState.enableLight = 2;
 	_roomAmbientIndex = 1;
 	loadActionData(DAT_Part72);

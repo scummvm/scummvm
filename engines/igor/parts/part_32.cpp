@@ -600,7 +600,8 @@ void IgorEngine::part32SceneGirl() {
 }
 
 void IgorEngine::part32() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_Part32);
 	loadRoomData(PAL_Part32, IMG_Part32, BOX_Part32, MSK_Part32, TXT_Part32);

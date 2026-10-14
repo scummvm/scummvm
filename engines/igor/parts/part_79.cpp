@@ -129,7 +129,10 @@ void IgorEngine::part79Scroll() {
 
 // Laura in the water
 void IgorEngine::part79LauraInWater() {
-	playMusic(13);
+	if (isCDVersion())
+		playMusic(13);
+	else
+		playMusic(11, true);
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
 	loadRoomData(PAL_Part79, IMG_Part79, 0, 0, 0);
@@ -351,7 +354,8 @@ void IgorEngine::part79FadeInPair(int firstColor) {
 }
 
 void IgorEngine::part79BeachScene() {
-	playMusic(13);
+	if (isCDVersion())
+		playMusic(13);
 	_gameState.enableLight = 2;
 	// The ending uses the beach clothes, including when entered directly.
 	loadIgorBeachFrames();

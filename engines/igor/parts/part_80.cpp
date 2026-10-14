@@ -82,7 +82,8 @@ void IgorEngine::part80Say(int who, const Common::Array<DialogueText> &lines) {
 void IgorEngine::part80() {
 	const bool savingWasAllowed = _canSaveGame;
 	_canSaveGame = false;
-	playMusic(8);
+	if (isCDVersion())
+		playMusic(8);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_Part80, IMG_Part80, BOX_Part80, MSK_Part80, TXT_Part80);
 	static const int anim[] = { ANM_Part80, 0 };

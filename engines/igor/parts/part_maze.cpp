@@ -42,7 +42,7 @@ int IgorEngine::partMazeGetMusicTrack() const {
 		location -= 21;
 	}
 	--location;
-	return location / 7 + 5;
+	return location / 7 + (isCDVersion() ? 5 : 8);
 }
 
 /**
@@ -306,7 +306,8 @@ void IgorEngine::partMaze() {
 	assert(room);
 	_mazeRoom = room;
 
-	playMusic(room->music >= 0 ? room->music : partMazeGetMusicTrack());
+	if (isCDVersion())
+		playMusic(room->music >= 0 ? room->music : partMazeGetMusicTrack());
 	_gameState.enableLight = 1;
 	if (room->saveLocation) {
 		_mazeSavedLocation = _mazeLocation;
@@ -341,6 +342,12 @@ void IgorEngine::partMaze() {
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
+		if (!isCDVersion()) {
+			if (_currentPart == 670)
+				playMusic(8, true);
+			else if (_currentPart == 663)
+				playMusic(10, true);
+		}
 		for (int i = 0; i < room->numEntries; ++i) {
 			const MazeEntry &entry = room->entries[i];
 			if (entry.state == _currentPart) {
@@ -368,6 +375,8 @@ void IgorEngine::partMaze() {
 			_currentPart = (_objectsState[kMazeBeatenStateIndex] == 1 && _objectsState[kMazeEntryDirectionStateIndex] == 0) ? 500 : 142;
 			break;
 		}
+		if (!isCDVersion() && room->music < 0)
+			playMusic(partMazeGetMusicTrack());
 		runPartLoop();
 	}
 	leavePartLoop();

@@ -397,7 +397,8 @@ void IgorEngine::part8ExecuteAction(int action) {
 }
 
 void IgorEngine::part8() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_DeanPepperOffice);
 	loadRoomData(PAL_DeanPepperOffice, IMG_DeanPepperOffice, BOX_DeanPepperOffice, MSK_DeanPepperOffice, TXT_DeanPepperOffice);
