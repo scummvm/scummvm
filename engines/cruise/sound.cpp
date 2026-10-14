@@ -28,6 +28,7 @@
 #include "cruise/sound.h"
 #include "cruise/volume.h"
 
+#include "audio/decoders/raw.h"
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
 #include "audio/mods/paula.h"
@@ -614,6 +615,66 @@ private:
 	}
 };
 
+// Sound effects use their own mixer channels, as in the Cine Amiga driver.
+// Copy sample data: scripts may free or replace a resource during playback.
+class AmigaSoundEffects {
+public:
+	AmigaSoundEffects(Audio::Mixer *mixer)
+		: _mixer(mixer) {
+	}
+
+	~AmigaSoundEffects() {
+		stop(-1);
+	}
+
+	void play(const byte *data, int size, int volume, int channel, int period, bool loop) {
+		if (!data || size <= 0 || channel < 0 || channel >= 4 || period <= 0)
+			return;
+
+		stop(channel);
+		const uint32 rate = Audio::Paula::kPalPaulaClock / period;
+		if (!rate || rate >= 131072)
+			return;
+
+		byte *sample = (byte *)malloc(size);
+		if (!sample) {
+			warning("Unable to allocate Cruise Amiga sound effect");
+			return;
+		}
+		memcpy(sample, data, size);
+
+		Audio::SeekableAudioStream *stream = Audio::makeRawStream(sample, size, rate, 0, DisposeAfterUse::YES);
+		static const int8 channelBalance[4] = { -64, 64, 64, -64 };
+		const byte mixerVolume = CLIP(volume, 0, 63) * Audio::Mixer::kMaxChannelVolume / 63;
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[channel], Audio::makeLoopingAudioStream(stream, loop ? 0 : 1), -1, mixerVolume, channelBalance[channel]);
+	}
+
+	void stop(int channel) {
+		if (channel == -1) {
+			for (uint i = 0; i < 4; ++i)
+				_mixer->stopHandle(_handles[i]);
+		} else if (channel >= 0 && channel < 4) {
+			_mixer->stopHandle(_handles[channel]);
+		}
+	}
+
+	void setPeriod(int channel, int period, int volume) {
+		if (channel < 0 || channel >= 4 || period <= 0)
+			return;
+
+		const uint32 rate = Audio::Paula::kPalPaulaClock / period;
+		if (!rate || rate >= 131072)
+			return;
+
+		_mixer->setChannelRate(_handles[channel], rate);
+		_mixer->setChannelVolume(_handles[channel], CLIP(volume, 0, 63) * Audio::Mixer::kMaxChannelVolume / 63);
+	}
+
+private:
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _handles[4];
+};
+
 void PCSoundDriver::setUpdateCallback(UpdateCallback upCb, void *ref) {
 	_upCb = upCb;
 	_upRef = ref;
@@ -1134,9 +1195,11 @@ PCSound::PCSound(Audio::Mixer *mixer, CruiseEngine *vm) {
 	_soundDriver = nullptr;
 	_player = nullptr;
 	_amigaPlayer = nullptr;
-	if (vm->getPlatform() == Common::kPlatformAmiga)
+	_amigaEffects = nullptr;
+	if (vm->getPlatform() == Common::kPlatformAmiga) {
 		_amigaPlayer = new AmigaSoundFxPlayer(_mixer);
-	else {
+		_amigaEffects = new AmigaSoundEffects(_mixer);
+	} else {
 		_soundDriver = new AdLibSoundDriverADL(_mixer);
 		_player = new PCSoundFxPlayer(_soundDriver);
 	}
@@ -1144,6 +1207,7 @@ PCSound::PCSound(Audio::Mixer *mixer, CruiseEngine *vm) {
 }
 
 PCSound::~PCSound() {
+	delete _amigaEffects;
 	delete _amigaPlayer;
 	delete _player;
 	delete _soundDriver;
@@ -1194,23 +1258,27 @@ void PCSound::fadeOutMusic() {
 	_player->fadeOut();
 }
 
-void PCSound::playSound(const uint8 *data, int size, int volume) {
-	if (_amigaPlayer)
-		return; // Amiga sound effects are outside the music player.
+void PCSound::playSound(const uint8 *data, int size, int volume, int channel, int period, bool loop) {
+	if (_amigaEffects) {
+		_amigaEffects->play(data, size, volume, channel, period, loop);
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::playSound() channel %d size %d", 4, size);
 	_soundDriver->playSample(data, size, 4, volume);
 }
 
 void PCSound::stopSound(int channel) {
-	if (_amigaPlayer)
-		return; // Amiga sound effects are outside the music player.
+	if (_amigaEffects) {
+		_amigaEffects->stop(channel);
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::stopSound() channel %d", channel);
 	_soundDriver->resetChannel(channel);
 }
 
 void PCSound::stopChannel(int channel) {
-	if (_amigaPlayer) {
-		_amigaPlayer->stopChannel(channel);
+	if (_amigaEffects) {
+		_amigaEffects->stop(channel);
 		return;
 	}
 	debugC(5, kCruiseDebugSound, "PCSound::stopChannel() channel %d", channel);
@@ -1280,14 +1348,18 @@ void PCSound::musicLoop(bool v) {
 }
 
 void PCSound::startNote(int channel, int volume, int freq) {
-	if (_amigaPlayer)
-		return; // Amiga sound effects are outside the music player.
+	if (_amigaEffects) {
+		_amigaEffects->setPeriod(channel, freq, volume);
+		return;
+	}
 	warning("TODO: startNote");
 //	_soundDriver->setVolume(channel, volume);
 	_soundDriver->setChannelFrequency(channel, freq);
 }
 
 void PCSound::doSync(Common::Serializer &s) {
+	if (s.isLoading() && _amigaEffects)
+		_amigaEffects->stop(-1);
 	if (_amigaPlayer)
 		_amigaPlayer->doSync(s);
 	else

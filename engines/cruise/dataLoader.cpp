@@ -19,6 +19,7 @@
  *
  */
 
+#include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "common/endian.h"
 #include "common/memstream.h"
@@ -266,7 +267,7 @@ int loadFile(const char* name, int idx, int destIdx) {
 	}
 	case type_SPL: {
 		// Sound file
-		loadSPLSub(ptr, idx);
+		loadSPLSub(ptr, idx, name);
 		break;
 	}
 	default:
@@ -306,7 +307,7 @@ int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numId
 	}
 	case type_SPL: {
 		// Sound file
-		loadSPLSub(ptr, startIdx);
+		loadSPLSub(ptr, _vm->getPlatform() == Common::kPlatformAmiga ? currentEntryIdx : startIdx, name);
 		break;
 	}
 	default:
@@ -347,7 +348,7 @@ int loadFullBundle(const char *name, int startIdx) {
 	}
 	case type_SPL: {
 		// Sound file
-		loadSPLSub(ptr, startIdx);
+		loadSPLSub(ptr, startIdx, name);
 		break;
 	}
 	default:
@@ -397,7 +398,46 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 	return 1;
 }
 
-int loadSPLSub(uint8 *ptr, int destIdx) {
+int loadSPLSub(uint8 *ptr, int destIdx, const char *name) {
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		// SMP header: tag, byte length and default frequency in Hz.
+		if (!ptr || loadFileVar1 < 12 || memcmp(ptr, "SMP\0", 4)) {
+			warning("Invalid Cruise Amiga sound header");
+			return -1;
+		}
+
+		const uint32 sampleSize = READ_BE_UINT32(ptr + 4);
+		const uint16 frequency = READ_BE_UINT16(ptr + 8);
+		// loadFileSub1 reserves two padding bytes beyond the resource.
+		if (!sampleSize || sampleSize > 65535 || sampleSize > (uint32)loadFileVar1 - 12) {
+			warning("Truncated or oversized Cruise Amiga sound");
+			return -1;
+		}
+
+		if (destIdx == -1) {
+			for (destIdx = 0; destIdx < NUM_FILE_ENTRIES; ++destIdx) {
+				if (!filesDatabase[destIdx].subData.ptr)
+					break;
+			}
+		}
+		if (destIdx < 0 || destIdx >= NUM_FILE_ENTRIES)
+			return -1;
+
+		const int fileIndex = updateResFileEntry(1, sampleSize, sampleSize, destIdx, OBJ_TYPE_SOUND);
+		if (fileIndex < 0)
+			return fileIndex;
+
+		filesDatabase[fileIndex].width = sampleSize;
+		filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SOUND;
+		// Keep the default frequency in the existing serialized resource metadata.
+		filesDatabase[fileIndex].subData.transparency = frequency;
+		filesDatabase[fileIndex].subData.index = 0;
+		if (name && name != filesDatabase[fileIndex].subData.name)
+			Common::strlcpy(filesDatabase[fileIndex].subData.name, name, sizeof(filesDatabase[fileIndex].subData.name));
+		memcpy(filesDatabase[fileIndex].subData.ptr, ptr + 10, sampleSize);
+		return 1;
+	}
+
 	int fileIndex;
 
 	if (destIdx == -1)

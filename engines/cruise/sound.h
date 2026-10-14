@@ -31,6 +31,7 @@ class CruiseEngine;
 class PCSoundDriver;
 class PCSoundFxPlayer;
 class AmigaSoundFxPlayer;
+class AmigaSoundEffects;
 
 class PCSound {
 private:
@@ -41,6 +42,7 @@ protected:
 	PCSoundDriver *_soundDriver;
 	PCSoundFxPlayer *_player;
 	AmigaSoundFxPlayer *_amigaPlayer;
+	AmigaSoundEffects *_amigaEffects;
 public:
 	PCSound(Audio::Mixer *mixer, CruiseEngine *vm);
 	virtual ~PCSound();
@@ -51,7 +53,7 @@ public:
 	virtual void removeMusic();
 	virtual void fadeOutMusic();
 
-	virtual void playSound(const uint8 *data, int size, int volume);
+	virtual void playSound(const uint8 *data, int size, int volume, int channel = 0, int period = 0, bool loop = false);
 	virtual void stopSound(int channel);
 
 	void doSync(Common::Serializer &s);
