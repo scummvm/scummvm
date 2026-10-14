@@ -1238,6 +1238,15 @@ void EscapeGridPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
+	// Cheat: Ctrl+Shift+W wins the puzzle, as if the player had reached the goal
+	for (const Common::KeyState &key : input.otherKbdInput) {
+		if ((key.flags & Common::KBD_CTRL) && (key.flags & Common::KBD_SHIFT) && key.keycode == Common::KEYCODE_w) {
+			debug("Escape grid cheat: puzzle won");
+			endPuzzle(0);
+			return;
+		}
+	}
+
 	const bool click = (input.input & NancyInput::kLeftMouseButtonUp) != 0;
 	const bool playerToMove = _actors[_turn].isPlayer && !_moveIssued && !_slidingPhase && !actorsAnimating();
 
