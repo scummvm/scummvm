@@ -178,7 +178,7 @@ void BCBEngine::loadNextTimedCaptionText() {
 }
 
 void BCBEngine::restoreCaptionBackingRect(const Common::Rect &rect) {
-	if (_activeMovieOnBlankScreen) {
+	if (_activeMovieOnBlankScreen || stateDword(kStateClearDisplayBeforeMediaCheckFlag) != 0) {
 		Graphics::Surface *screen = _screen->surfacePtr();
 		if (screen) {
 			_screen->fillRect(rect, screen->format.RGBToColor(0, 0, 0));

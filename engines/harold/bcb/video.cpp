@@ -39,7 +39,7 @@ bool BCBEngine::playNumberedMovie(int movieId, bool blankScreenMovie) {
 	stopActiveMovie();
 	_sceneChoiceActive = false;
 	_mapControlsActive = false;
-	_activeMovieOnBlankScreen = blankScreenMovie;
+	_activeMovieOnBlankScreen = blankScreenMovie || stateDword(kStateClearDisplayBeforeMediaCheckFlag) != 0;
 	loadTimedCaptionRecord(movieId);
 
 	const Common::String movieName = Common::String::format("mov%04d.avi", movieId);
