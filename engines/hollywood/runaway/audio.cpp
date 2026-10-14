@@ -88,9 +88,13 @@ void RunawayAudio::playIntroMusic() {
 		Audio::Mixer::kMusicSoundType, _music, Audio::Mixer::kMaxChannelVolume, false);
 }
 
-void RunawayAudio::playMusic(uint16 cue) {
-	play("RESOURCE.M03", cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
-		Audio::Mixer::kMusicSoundType, _music, 96, true);
+uint32 RunawayAudio::playMusic(uint16 cue, bool loop) {
+	return play("RESOURCE.M03", cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
+		Audio::Mixer::kMusicSoundType, _music, 96, loop);
+}
+
+void RunawayAudio::setMusicVolume(byte volume) {
+	_mixer->setChannelVolume(_music, volume);
 }
 
 uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
@@ -101,9 +105,18 @@ uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
 		Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false);
 }
 
-void RunawayAudio::playEffect(uint16 cue, byte volume) {
+void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop) {
+	assert(channel < ARRAYSIZE(_effects));
 	play("RESOURCE.S03", cue, 1000, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN,
-		Audio::Mixer::kSFXSoundType, _effect, volume, false);
+		Audio::Mixer::kSFXSoundType, _effects[channel], volume, loop);
+}
+
+void RunawayAudio::playFootstep(byte surface, byte variant, byte volume) {
+	assert(surface >= 1 && surface <= 7 && variant < 2);
+	// Native 0x407410 selects one of two mono samples per surface. These
+	// fourteen effects start at cue 21 in the otherwise shared music archive.
+	play("RESOURCE.002", 21 + (surface - 1) * 2 + variant, 100, false,
+		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _effects[0], volume, false);
 }
 
 void RunawayAudio::stopMusic() {
@@ -115,7 +128,8 @@ void RunawayAudio::stopSpeech() {
 }
 
 void RunawayAudio::stopEffect() {
-	_mixer->stopHandle(_effect);
+	for (uint i = 0; i < ARRAYSIZE(_effects); ++i)
+		_mixer->stopHandle(_effects[i]);
 }
 
 bool RunawayAudio::musicPlaying() const {

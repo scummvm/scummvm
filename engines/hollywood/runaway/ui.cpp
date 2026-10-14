@@ -127,7 +127,7 @@ void RunawayUI::toggleInventory() {
 }
 
 bool RunawayUI::cancel() {
-	if (busy())
+	if (busy() || _inventoryPresentation)
 		return true;
 	if (_inventory.selected()) {
 		_inventory.select(0);
@@ -140,11 +140,15 @@ bool RunawayUI::cancel() {
 	return false;
 }
 
-void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking) {
+void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking, bool inventoryPresentation) {
 	_now = now;
 	_mouse = mouse;
 	_blocked = blocked;
 	_speaking = speaking;
+	if (_inventoryPresentation != inventoryPresentation) {
+		_inventoryPresentation = inventoryPresentation;
+		setInventoryOpen(inventoryPresentation);
+	}
 	const byte added = _inventory.takeNewItem();
 	if (added) {
 		_returnAfterPickup = !_inventoryOpen;

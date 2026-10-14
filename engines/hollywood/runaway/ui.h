@@ -43,7 +43,7 @@ public:
 		_audio(mixer), _inventory(inventory), _strings(strings), _random("runaway-ui") {}
 	~RunawayUI();
 	bool load();
-	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking);
+	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking, bool inventoryPresentation = false);
 	Command click(bool right);
 	void toggleInventory();
 	bool cancel();
@@ -78,6 +78,7 @@ private:
 	RunawayVerb _verb = kVerbWalk, _previousVerb = kVerbWalk;
 	byte _hovered = 0, _buttonFrame = 0, _optionsFrame = 0, _pickupItem = 0;
 	bool _inventoryOpen = false, _enteredInventory = false, _returnAfterPickup = false;
+	bool _inventoryPresentation = false;
 	bool _pickupSoundPlayed = false;
 	bool _blocked = false, _speaking = false, _cursorPushed = false;
 	uint32 _now = 0, _buttonTick = 0, _verbStarted = 0, _portraitTick = 0;

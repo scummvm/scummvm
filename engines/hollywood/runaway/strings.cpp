@@ -67,7 +67,8 @@ const char *const kText[RunawayStrings::kTextCount][3] = {
 	{"SIND SIE SICHER?", "CONFIRMER ?", "\302\277EST\303\201S SEGURO?"},
 	{"JA", "OUI", "S\303\215"},
 	{"NEIN", "NON", "NO"},
-	{"V", "Q", "L"}
+	{"V", "Q", "L"},
+	{"STEIGE DURCH DIE FALLT\303\234R HINAB", "SORTIR PAR LA TRAPPE", "SALIR POR LA TRAMPILLA"}
 };
 
 const char *const kItemNames[][3] = {

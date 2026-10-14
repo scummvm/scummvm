@@ -35,6 +35,7 @@
 #include "hollywood/runaway/engine.h"
 #include "hollywood/runaway/intro.h"
 #include "hollywood/runaway/menu.h"
+#include "hollywood/runaway/presentation.h"
 #include "hollywood/runaway/scene5030.h"
 #include "hollywood/runaway/strings.h"
 #include "hollywood/runaway/ui.h"
@@ -61,9 +62,11 @@ void RunawayEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addSubDirectoryMatching(gamePath, "Resource");
 	SearchMan.addSubDirectoryMatching(gamePath, "Dataa");
 	SearchMan.addSubDirectoryMatching(gamePath, "Datav");
+	SearchMan.addSubDirectoryMatching(gamePath, "Screenshots");
 	// Also support targets added directly from the Resource directory.
 	SearchMan.addSubDirectoryMatching(gamePath.getParent(), "Dataa");
 	SearchMan.addSubDirectoryMatching(gamePath.getParent(), "Datav");
+	SearchMan.addSubDirectoryMatching(gamePath.getParent(), "Screenshots");
 }
 
 bool RunawayEngine::hasFeature(EngineFeature feature) const {
@@ -77,25 +80,32 @@ void RunawayEngine::syncSoundSettings() {
 	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute || ConfMan.getBool("sfx_mute"));
 }
 
-Common::Error RunawayEngine::playIntro() {
+Common::Error RunawayEngine::playIntro(RunawayMenu &menu) {
 	RunawayIntro intro(_mixer);
 	if (!intro.load())
 		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo logo or story card");
 	const bool cursorWasVisible = CursorMan.showMouse(false);
 	intro.start(getTotalPlayTime());
+	intro.draw();
 	while (!shouldQuit() && !intro.finished()) {
-		bool skip = false;
+		bool skip = false, openMenu = false;
 		Common::Event event;
-		while (_eventMan->pollEvent(event)) {
+		while (!openMenu && _eventMan->pollEvent(event)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
 				skip = true;
-			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
-					(event.customType == kSkip || event.customType == kCancelAction)) {
-				skip = true;
+			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				if (event.customType == kSkip || event.customType == kCancelAction)
+					skip = true;
+				else if (event.customType == kPauseMenu)
+					openMenu = true;
 			}
 		}
 		if (shouldQuit())
 			break;
+		if (openMenu) {
+			pauseMenu(menu, intro.screen());
+			continue;
+		}
 		const uint32 now = getTotalPlayTime();
 		intro.update(now);
 		if (skip)
@@ -117,18 +127,21 @@ Common::Error RunawayEngine::run() {
 		return Common::kUnsupportedColorMode;
 	setDebugger(new GUI::Debugger());
 	syncSoundSettings();
-	const Common::Error introResult = playIntro();
+	const RunawayStrings strings(_language);
+	RunawayMenu menu(strings);
+	if (!menu.load())
+		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo menu");
+	const Common::Error introResult = playIntro(menu);
 	if (introResult.getCode() != Common::kNoError || shouldQuit())
 		return introResult;
 
-	const RunawayStrings strings(_language);
 	RunawayInventory inventory(strings);
 	RunawayScene5030 scene(_mixer, inventory, strings);
 	RunawayUI ui(_mixer, inventory, strings);
-	RunawayMenu menu(strings);
-	if (!scene.load() || !ui.load() || !menu.load())
-		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo room, actor or interface data");
+	if (!scene.load() || !ui.load())
+		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo room, opening movie or interface data");
 	scene.start(getTotalPlayTime());
+	scene.draw();
 	CursorMan.showMouse(true);
 	_system->warpMouse(RunawayScene5030::kScreenWidth / 2, RunawayScene5030::kRoomTop + RunawayScene5030::kRoomHeight / 2);
 
@@ -136,12 +149,12 @@ Common::Error RunawayEngine::run() {
 	while (!shouldQuit()) {
 		const uint32 now = getTotalPlayTime();
 		Common::Point mouse = _eventMan->getMousePos();
-		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking());
+		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation());
 		bool openMenu = false;
 		Common::Event event;
 		while (!openMenu && _eventMan->pollEvent(event)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
-				ui.update(now, event.mouse, scene.hotspotAt(event.mouse), scene.busy(), scene.speaking());
+				ui.update(now, event.mouse, scene.hotspotAt(event.mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation());
 				const RunawayUI::Command command = ui.click(event.type == Common::EVENT_RBUTTONDOWN);
 				switch (command.type) {
 				case RunawayUI::Command::kOpenMenu:
@@ -166,7 +179,7 @@ Common::Error RunawayEngine::run() {
 				}
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 				mouse = _eventMan->getMousePos();
-				ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking());
+				ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation());
 				const bool pressed = event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START;
 				switch (event.customType) {
 				case kPauseMenu:
@@ -235,7 +248,11 @@ Common::Error RunawayEngine::run() {
 		// The engine clock excludes time spent in ScummVM dialogs, keeping
 		// animation frames and subtitle deadlines in sync with paused audio.
 		scene.update(now, ui.inventoryOpen() || scene.busy() ? 0 : direction, ui.inventoryOpen());
-		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking());
+		// The extended French demo's later rooms are not implemented yet;
+		// all three releases currently finish at the shared shack escape.
+		if (scene.escaped())
+			return playEnding(menu);
+		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation());
 		scene.draw();
 		Graphics::ManagedSurface &screen = scene.screen();
 		const bool subtitles = !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles") || ConfMan.getBool("speech_mute");
@@ -245,6 +262,46 @@ Common::Error RunawayEngine::run() {
 		_system->updateScreen();
 		_system->delayMillis(16);
 	}
+	return Common::kNoError;
+}
+
+Common::Error RunawayEngine::playEnding(RunawayMenu &menu) {
+	RunawayEnding ending(_mixer, _language);
+	if (!ending.load())
+		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo ending");
+	Graphics::ManagedSurface screen(kRunawayScreenWidth, kRunawayScreenHeight, _system->getScreenFormat());
+	const bool cursorWasVisible = CursorMan.showMouse(false);
+	ending.start(getTotalPlayTime());
+	ending.draw(screen);
+	while (!shouldQuit() && !ending.finished()) {
+		bool skip = false, openMenu = false;
+		Common::Event event;
+		while (!openMenu && _eventMan->pollEvent(event)) {
+			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN)
+				skip = true;
+			else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				if (event.customType == kSkip || event.customType == kCancelAction)
+					skip = true;
+				else if (event.customType == kPauseMenu)
+					openMenu = true;
+			}
+		}
+		if (shouldQuit())
+			break;
+		if (openMenu) {
+			pauseMenu(menu, screen);
+			continue;
+		}
+		const uint32 now = getTotalPlayTime();
+		ending.update(now);
+		if (skip)
+			ending.skip(now);
+		ending.draw(screen);
+		_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+		_system->updateScreen();
+		_system->delayMillis(16);
+	}
+	CursorMan.showMouse(cursorWasVisible);
 	return Common::kNoError;
 }
 

@@ -28,9 +28,8 @@
 
 namespace Hollywood {
 
-bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurface &surface) {
-	Common::Array<byte> pixels;
-	if (!readRunawayGlobalChunk(chunk, pixels) || pixels.size() != (uint)(width * height * 2))
+static bool decodeSurface(const Common::Array<byte> &pixels, int width, int height, Graphics::ManagedSurface &surface) {
+	if (width <= 0 || height <= 0 || pixels.size() != (uint64)width * height * 2)
 		return false;
 	surface.create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	for (int y = 0; y < height; ++y) {
@@ -39,6 +38,37 @@ bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurf
 			out[x] = READ_LE_UINT16(pixels.data() + (y * width + x) * 2);
 	}
 	return true;
+}
+
+bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurface &surface) {
+	Common::Array<byte> pixels;
+	return readRunawayGlobalChunk(chunk, pixels) && decodeSurface(pixels, width, height, surface);
+}
+
+bool loadRunawaySurface(ChunkArchive &archive, uint chunk, int width, int height, Graphics::ManagedSurface &surface) {
+	Common::Array<byte> pixels;
+	return archive.readVariableChunk(chunk, pixels) && decodeSurface(pixels, width, height, surface);
+}
+
+bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset) {
+	if (patch.size() < 2 || surface.format.bytesPerPixel != 2)
+		return false;
+	uint cursor = 2;
+	for (uint i = 0; i < READ_LE_UINT16(patch.data()); ++i) {
+		if (patch.size() - cursor < 6)
+			return false;
+		const uint x = READ_LE_UINT16(patch.data() + cursor);
+		const int y = READ_LE_UINT16(patch.data() + cursor + 2) + yOffset;
+		const uint length = READ_LE_UINT16(patch.data() + cursor + 4);
+		cursor += 6;
+		if (!length || x + length > (uint)surface.w || y < 0 || y >= surface.h || length * 2 > patch.size() - cursor)
+			return false;
+		uint16 *out = (uint16 *)surface.getBasePtr(x, y);
+		for (uint pixel = 0; pixel < length; ++pixel)
+			out[pixel] = READ_LE_UINT16(patch.data() + cursor + pixel * 2);
+		cursor += length * 2;
+	}
+	return cursor == patch.size();
 }
 
 bool RunawayAnimation::load(ChunkArchive &archive, uint chunk, uint frames) {
@@ -53,7 +83,7 @@ bool RunawayAnimation::load(const Common::Array<byte> &data, uint frames) {
 
 bool RunawayAnimation::validate(uint frames) {
 	_frames = 0;
-	if (!frames || frames > 1000 || _data.size() < frames * 14)
+	if (!frames || frames > 0xffff || _data.size() < frames * 14)
 		return false;
 	uint cursor = frames * 14;
 	for (uint frame = 0; frame < frames; ++frame) {

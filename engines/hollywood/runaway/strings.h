@@ -38,7 +38,7 @@ public:
 		kOptions, kLoad, kSave, kDelete, kPlay, kQuit, kMusic, kAntialias,
 		kScrolling, kPointerSound, kSubtitles, kOn, kOff, kFast, kSlow,
 		kVolume, kBrightness, kCredits, kSaveSettings, kDefaultSettings,
-		kConfirmQuit, kYes, kNo, kQuitKey, kTextCount
+		kConfirmQuit, kYes, kNo, kQuitKey, kLeaveHatch, kTextCount
 	};
 	explicit RunawayStrings(Common::Language language) :
 		_languageIndex(language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : 0) {}

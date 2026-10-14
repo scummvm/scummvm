@@ -52,7 +52,8 @@ public:
 	static Common::Array<Common::Keymap *> initKeymaps();
 
 private:
-	Common::Error playIntro();
+	Common::Error playIntro(RunawayMenu &menu);
+	Common::Error playEnding(RunawayMenu &menu);
 	void pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &screen);
 	Common::Language _language;
 };

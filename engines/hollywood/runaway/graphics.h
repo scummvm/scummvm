@@ -33,6 +33,8 @@ class ChunkArchive;
 // RESOURCE.000 has a ten-byte header followed by two 500-entry tables.
 bool readRunawayGlobalChunk(uint chunk, Common::Array<byte> &data);
 bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurface &surface);
+bool loadRunawaySurface(ChunkArchive &archive, uint chunk, int width, int height, Graphics::ManagedSurface &surface);
+bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset = 0);
 
 enum {
 	kRunawayScreenWidth = 1024,

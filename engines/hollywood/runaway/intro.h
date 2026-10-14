@@ -38,7 +38,7 @@ public:
 	void update(uint32 now);
 	void draw();
 	bool finished() const { return _phase == kFinished; }
-	const Graphics::ManagedSurface &screen() const { return _screen; }
+	Graphics::ManagedSurface &screen() { return _screen; }
 
 private:
 	enum Phase { kLogo, kLogoAudio, kStoryFadeIn, kStory, kStoryFadeOut, kFinished };
