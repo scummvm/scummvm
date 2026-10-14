@@ -89,6 +89,8 @@ Common::Error ButcherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	ButcherRoomDialogueState &state = _state;
 	Common::String &butcherTopicBuffer = state.currentTopicBuffer;
 	int &butcherTopicBufferLineIndex = state.currentTopicBufferLineIndex;
+	state.currentTopicBuffer.clear();
+	state.currentTopicBufferLineIndex = -1;
 
 	auto assignButcherTopicBuffer = [&](int responseLineIndex) {
 		runtime.assignTopicBuffer(butcherTopicBuffer, butcherTopicBufferLineIndex,
@@ -114,12 +116,14 @@ Common::Error ButcherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			sharedState.discussedWhaleyHerrillPhoto = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 			return playSequence(kButcherWhaleyPhotoLines, ARRAYSIZE(kButcherWhaleyPhotoLines));
 		}
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownPhotoOfCorpse, true);
 			return playSequence(kButcherCasketPhotoLines, ARRAYSIZE(kButcherCasketPhotoLines));
@@ -127,6 +131,7 @@ Common::Error ButcherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 					usedItemName.equalsIgnoreCase("LEDGER2")) &&
 				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
+			sharedState.discussedLedgerEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownLedgersToAnyone, true);
 			return playSequence(kButcherLedgerLines, ARRAYSIZE(kButcherLedgerLines));
@@ -135,6 +140,7 @@ Common::Error ButcherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceOfBlackmail, true);
 			return playButcherLine(0x1a9e);
@@ -403,7 +409,21 @@ Common::Error ButcherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			Common::Error lineError = playPcLine(0x1a24, 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			return playButcherLine(0x1a29, 1);
+			lineError = playButcherLine(0x1a29, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			if (!sharedState.dialogueStateD2f04) {
+				sharedState.dialogueStateD2f04 = true;
+				lineError = playPcLine(0x1a2d);
+			} else {
+				lineError = playPcLine(0x1a31);
+				if (lineError.getCode() == Common::kNoError)
+					lineError = playButcherLine(0x1a36, 2);
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignButcherTopicBuffer(0x278);
+			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x279))
