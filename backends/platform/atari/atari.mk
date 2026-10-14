@@ -12,7 +12,7 @@ FULL_DATA	:= ${FULL_DIR}/data
 FULL_DOCS	:= ${FULL_DIR}/doc
 FULL_THEMES	:= ${FULL_DIR}/themes
 
-FB_DIR		:= scummvm-${VERSION}-firebee
+FB_DIR		:= scummvm-${VERSION}-atari-m5475
 FB_DATA		:= ${FB_DIR}
 FB_DOCS		:= ${FB_DIR}/doc
 FB_THEMES	:= ${FB_DIR}
