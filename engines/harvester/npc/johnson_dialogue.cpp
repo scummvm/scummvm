@@ -101,6 +101,8 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	JohnsonRoomDialogueState &state = _state;
 	Common::String &johnsonTopicBuffer = state.currentTopicBuffer;
 	int &johnsonTopicBufferLineIndex = state.currentTopicBufferLineIndex;
+	state.currentTopicBuffer.clear();
+	state.currentTopicBufferLineIndex = -1;
 
 	auto assignJohnsonTopicBuffer = [&](int responseLineIndex) {
 		runtime.assignTopicBuffer(johnsonTopicBuffer, johnsonTopicBufferLineIndex,
@@ -273,9 +275,6 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-
-	if (johnsonTopicBufferLineIndex < 0)
-		assignJohnsonTopicBuffer(kJohnsonInitialTopicBufferLine);
 
 	for (;;) {
 		Common::String selectedTopic;

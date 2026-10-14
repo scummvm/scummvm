@@ -55,6 +55,8 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	Script &startupScript = runtime.startupScript();
 	Common::String &dwayneTopicBuffer = state.currentTopicBuffer;
 	int &dwayneTopicBufferLineIndex = state.currentTopicBufferLineIndex;
+	state.currentTopicBuffer.clear();
+	state.currentTopicBufferLineIndex = -1;
 	auto assignDwayneTopicBuffer = [&](int responseLineIndex) {
 		runtime.assignTopicBuffer(dwayneTopicBuffer, dwayneTopicBufferLineIndex,
 			responseLineIndex, "Dwayne topic buffer");

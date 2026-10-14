@@ -95,7 +95,7 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	WaspWomanRoomDialogueState &state = _state;
 	Common::String waspWomanTopicBuffer;
-	int waspWomanTopicBufferLineIndex = state.topicBufferLineIndex;
+	int waspWomanTopicBufferLineIndex = -1;
 	auto assignWaspWomanTopicBuffer = [&](int responseLineIndex) {
 		state.topicBufferLineIndex = responseLineIndex;
 		runtime.assignTopicBuffer(waspWomanTopicBuffer, waspWomanTopicBufferLineIndex,
@@ -153,7 +153,6 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		Common::Error lineError = playWaspWomanLine(0x4bee, 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		assignWaspWomanTopicBuffer(state.topicBufferLineIndex);
 	}
 
 	for (;;) {
