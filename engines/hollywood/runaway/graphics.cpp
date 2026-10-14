@@ -206,7 +206,7 @@ static uint16 blend565(uint16 source, uint16 destination, uint alpha) {
 }
 
 void RunawayActor::draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
-		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps) const {
+		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps, bool sunlit) const {
 	// Perspective planes from the demo's scene callback at 0x438970. Actor
 	// coordinates are anchored at (168,434) in a nominal 455-pixel-high image.
 	float height;
@@ -227,8 +227,12 @@ void RunawayActor::draw(Graphics::ManagedSurface &surface, Common::Point positio
 		return;
 	// Scene lighting and occlusion come from the same pixel lookup as hotspots.
 	const byte light = MIN<byte>(5, maps[768 + mask[position.y * 1376 + position.x]]);
-	const byte lights[6][3] = { {100,100,100}, {55,50,45}, {55,50,45},
+	byte lights[6][3] = { {100,100,100}, {55,50,45}, {55,50,45},
 		{85,80,75}, {75,70,65}, {70,65,60} };
+	if (sunlit) {
+		const byte windowLight[2][3] = {{90, 85, 80}, {80, 75, 70}};
+		memcpy(lights[1], windowLight, sizeof(windowLight));
+	}
 	uint16 palette[256];
 	for (uint i = 0; i < 256; ++i) {
 		const uint16 c = _palette[i];

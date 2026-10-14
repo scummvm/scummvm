@@ -66,20 +66,14 @@ const SceneHotspot kHotspots[] = {
 
 bool RunawayScene5030::load() {
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	Common::Array<byte> pixels, packedMask;
+	Common::Array<byte> packedMask;
 	if (!_archive.open(Common::Path("RESOURCE.E03"), 50) ||
-			_archive.chunkSize(0) != kRoomWidth * kRoomHeight * 2 ||
-			!_archive.readVariableChunk(0, pixels) || !_archive.readVariableChunk(1, packedMask) ||
+			!_archive.readVariableChunk(1, packedMask) ||
 			!_archive.readVariableChunk(2, _maps) || _maps.size() != 1536 ||
 			!_text.load("RESOURCE.003", "Runaway shack", 503, 0, 0x1135))
 		return false;
 	_background.create(kRoomWidth, kRoomHeight, format);
 	_screen.create(kScreenWidth, kScreenHeight, format);
-	for (int y = 0; y < kRoomHeight; ++y) {
-		uint16 *out = (uint16 *)_background.getBasePtr(0, y);
-		for (int x = 0; x < kRoomWidth; ++x)
-			out[x] = READ_LE_UINT16(pixels.data() + (y * kRoomWidth + x) * 2);
-	}
 	// 0x42b380 expands (byte value, uint16 length) runs into one room pixel
 	// lookup. Tables 0..3 map those values to walking, hotspots, depth, lighting.
 	_mask.resize(kRoomWidth * kRoomHeight);
@@ -94,15 +88,8 @@ bool RunawayScene5030::load() {
 		offset += length;
 	}
 	if (offset != _mask.size() || !_actor.load() ||
-			!_intro.load(_archive, 47, 20) || !_lidActor.load(_archive, 43, 33) ||
-			!_lid.load(_archive, 44, 5) || !_unplug.load(_archive, 40, 59) ||
-			!loadPatch(5, _unplugPatch) || !loadPatch(7, _openLidPatch) || !loadPatch(9, _closedLidPatch))
+			!_intro.load(_archive, 47, 20) || !_climb.load(_archive, 42, 18) || !loadRoomGraphics())
 		return false;
-	const uint pickupChunks[] = {20, 18, 15, 19, 17};
-	for (uint i = 0; i < ARRAYSIZE(pickupChunks); ++i) {
-		if (!loadPatch(pickupChunks[i], _pickupPatches[i]))
-			return false;
-	}
 	const uint rows = _text._stageLargeRows.size() / 321;
 	_voiceSamples.resize(rows, 0);
 	_cueEnds.resize(rows, 0);
@@ -120,6 +107,42 @@ bool RunawayScene5030::load() {
 		}
 	}
 	debugC(1, kDebugScene, "Runaway demo: scene 5030, 152 walking cels, room animations and hotspot mask loaded");
+	return true;
+}
+
+bool RunawayScene5030::loadRoomGraphics() {
+	Common::Array<byte> pixels, overlay;
+	if (!_archive.readVariableChunk(_windowClean ? 4 : 0, pixels) ||
+			pixels.size() != kRoomWidth * kRoomHeight * 2 ||
+			!_lidActor.load(_archive, _windowClean ? 45 : 43, 33) ||
+			!_lid.load(_archive, _windowClean ? 46 : 44, 5) ||
+			!_unplug.load(_archive, _windowClean ? 39 : 40, 59) ||
+			!loadPatch(_windowClean ? 6 : 5, _unplugPatch) ||
+			!loadPatch(_windowClean ? 8 : 7, _openLidPatch) ||
+			!loadPatch(_windowClean ? 10 : 9, _closedLidPatch) ||
+			!loadPatch(_windowClean ? 27 : 26, overlay))
+		return false;
+	for (int y = 0; y < kRoomHeight; ++y) {
+		uint16 *out = (uint16 *)_background.getBasePtr(0, y);
+		for (int x = 0; x < kRoomWidth; ++x)
+			out[x] = READ_LE_UINT16(pixels.data() + (y * kRoomWidth + x) * 2);
+	}
+	// 0x438ce0 rebuilds the room after cleaning. The sunny base already
+	// omits the cloth and cleaner; other collected objects still need patches.
+	const uint pickupChunks[2][5] = {{20, 18, 15, 19, 17}, {21, 0, 16, 19, 0}};
+	const byte hotspots[] = {5, 9, 14, 16, 17};
+	for (uint i = 0; i < ARRAYSIZE(hotspots); ++i) {
+		_pickupPatches[i].clear();
+		uint chunk = pickupChunks[_windowClean][i];
+		if (chunk && !loadPatch(chunk, _pickupPatches[i]))
+			return false;
+		if (_pickedUp[hotspots[i]])
+			drawPatch(_pickupPatches[i]);
+	}
+	drawPatch(_lidOpen ? _openLidPatch : _closedLidPatch);
+	if (_unplugged)
+		drawPatch(_unplugPatch);
+	drawPatch(overlay);
 	return true;
 }
 
@@ -151,6 +174,8 @@ bool RunawayScene5030::loadPatch(uint chunk, Common::Array<byte> &patch) {
 }
 
 void RunawayScene5030::drawPatch(const Common::Array<byte> &patch) {
+	if (patch.empty())
+		return;
 	const byte *run = patch.data() + 2;
 	for (uint i = 0; i < READ_LE_UINT16(patch.data()); ++i) {
 		const uint x = READ_LE_UINT16(run), y = READ_LE_UINT16(run + 2), length = READ_LE_UINT16(run + 4);
@@ -378,6 +403,21 @@ void RunawayScene5030::useItem(byte item, byte hotspot) {
 	if (item == 1 && hotspot == 3) {
 		// The large window is never cleaned; cue 33 belongs to the small one.
 		sayCue(35, 0);
+	} else if (item == 1 && hotspot == 4) {
+		if (_windowClean) {
+			sayCue(33, 3);
+		} else if (!_inventory.clothState()) {
+			sayCue(33, 0);
+		} else {
+			// Load before committing the interaction, so missing/corrupt movie
+			// data cannot leave Brian halfway through climbing onto the cooler.
+			if (!_cleanVideo.load("DATAVE01.001"))
+				error("Cannot load Runaway cleaning movie DATAVE01.001");
+			startAction(kCleanWindowSpeech);
+			sayCue(33, 1);
+		}
+	} else if (item == 3 && hotspot == 4) {
+		sayCue(39, 0);
 	} else {
 		sayInventory(RunawayInventory::Reply(1, 0));
 	}
@@ -396,6 +436,8 @@ void RunawayScene5030::arrive() {
 		_examined[id] = true;
 		if (id == 18)
 			say(_lidOpen ? 581 : 580);
+		else if (id == 4)
+			sayCue(7, _windowClean ? 1 : 0);
 		else if (id == 8)
 			say(!_lidOpen ? 535 : _unplugged ? 537 : 536);
 		else
@@ -444,9 +486,23 @@ void RunawayScene5030::finishAction() {
 		drawPatch(_unplugPatch);
 		_facing = 7;
 		say(555);
+	} else if (completed == kCleanWindowVideo) {
+		_cleanVideo.close();
+		_audio.stopEffect();
+		_windowClean = true;
+		_inventory.soilCloth();
+		if (!loadRoomGraphics())
+			error("Cannot load Runaway sunlit room resources");
+		_facing = 1;
+		sayCue(33, 2);
 	}
 	debugC(1, kDebugScene, "Runaway demo: animation %u finished, lid=%u unplugged=%u",
 		(uint)completed, (uint)_lidOpen, (uint)_unplugged);
+}
+
+void RunawayScene5030::skipVideo() {
+	if (playingVideo())
+		finishAction();
 }
 
 void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
@@ -461,7 +517,27 @@ void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpe
 		_walkStarted += pausedTime;
 		return;
 	}
-	if (_action != kNone) {
+	if (_action == kCleanWindowSpeech) {
+		if (!speaking())
+			startAction(kCleanWindowClimb);
+	} else if (_action == kCleanWindowClimb) {
+		// 0x4361e0 uses 60 ms ticks and repeats its first animation cel.
+		_step = (now - _actionStarted) / 60;
+		if (_step >= 18)
+			startAction(kCleanWindowVideo);
+	} else if (_action == kCleanWindowVideo) {
+		const uint previousStep = _step;
+		_step = (uint64)(now - _actionStarted) * 24 / 1000;
+		if (_step >= _cleanVideo.frameCount()) {
+			finishAction();
+		} else {
+			if (!_cleanVideo.decodeToFrame(_step))
+				error("Cannot decode Runaway cleaning movie frame %u", _step);
+			// Original 0x4329d0 starts RESOURCE.S03 effect 22 at frame 56.
+			if (previousStep < 56 && _step >= 56)
+				_audio.playEffect(22);
+		}
+	} else if (_action != kNone) {
 		const uint previousStep = _step;
 		_step = (now - _actionStarted) / 80;
 		// Frame triggers in 0x437110/0x4373e0 (lid) and 0x435a50 (plug).
@@ -519,6 +595,10 @@ void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpe
 
 void RunawayScene5030::draw() {
 	_screen.clear();
+	if (playingVideo()) {
+		_cleanVideo.draw(_screen, Common::Rect(0, kRoomTop, kScreenWidth, kRoomTop + kRoomHeight));
+		return;
+	}
 	_screen.copyRectToSurface(_background, 0, kRoomTop,
 		Common::Rect(_cameraX, 0, _cameraX + kScreenWidth, kRoomHeight));
 	uint lidFrame = _lidOpen ? 4 : 0;
@@ -535,8 +615,10 @@ void RunawayScene5030::draw() {
 		// Original 0x435a50 sequence: crouch, pull the plug, return to standing.
 		const uint frame = _step <= 36 ? MAX<int>(0, (int)_step - 1) : _step <= 47 ? _step + 10 : 83 - _step;
 		_unplug.draw(_screen, frame, _cameraX, kRoomTop);
+	} else if (_action == kCleanWindowClimb) {
+		_climb.draw(_screen, MAX<int>(0, (int)_step - 1), _cameraX, kRoomTop);
 	} else {
-		_actor.draw(_screen, _position, _cameraX, kRoomTop, _mask, _maps);
+		_actor.draw(_screen, _position, _cameraX, kRoomTop, _mask, _maps, _windowClean);
 	}
 }
 

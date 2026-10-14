@@ -27,6 +27,7 @@
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/inventory.h"
+#include "hollywood/runaway/video.h"
 #include "hollywood/scene_text_store.h"
 
 namespace Hollywood {
@@ -56,11 +57,14 @@ public:
 	bool busy() const { return _action != kNone; }
 	bool speaking() const { return _speechRow != 0; }
 	void skipSpeech();
+	bool playingVideo() const { return _action == kCleanWindowVideo; }
+	void skipVideo();
 	void cancelWalk();
 	void sayInventory(const RunawayInventory::Reply &reply);
 
 private:
-	enum Action { kNone, kIntro, kOpenLid, kCloseLid, kUnplug };
+	enum Action { kNone, kIntro, kOpenLid, kCloseLid, kUnplug, kCleanWindowSpeech, kCleanWindowClimb, kCleanWindowVideo };
+	bool loadRoomGraphics();
 	bool walkable(int x, int y) const;
 	bool clearPath(Common::Point start, Common::Point end) const;
 	void walkTo(Common::Point target);
@@ -87,7 +91,8 @@ private:
 	RunawayInventory &_inventory;
 	const RunawayStrings &_strings;
 	RunawayActor _actor;
-	RunawayAnimation _intro, _lidActor, _lid, _unplug;
+	RunawayAnimation _intro, _lidActor, _lid, _unplug, _climb;
+	RunawayVideo _cleanVideo;
 	Common::Point _position = Common::Point(623, 447);
 	Common::Array<Common::Point> _path;
 	uint _pathIndex = 0;
@@ -97,6 +102,7 @@ private:
 	RunawayVerb _pendingVerb = kVerbWalk;
 	Action _action = kNone;
 	bool _lidOpen = false, _unplugged = false;
+	bool _windowClean = false;
 	bool _pickedUp[20] = {};
 	bool _examined[20] = {};
 	bool _globalSpeech = false;

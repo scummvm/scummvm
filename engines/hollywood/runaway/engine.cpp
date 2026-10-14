@@ -60,8 +60,10 @@ void RunawayEngine::initializePath(const Common::FSNode &gamePath) {
 	Engine::initializePath(gamePath);
 	SearchMan.addSubDirectoryMatching(gamePath, "Resource");
 	SearchMan.addSubDirectoryMatching(gamePath, "Dataa");
+	SearchMan.addSubDirectoryMatching(gamePath, "Datav");
 	// Also support targets added directly from the Resource directory.
 	SearchMan.addSubDirectoryMatching(gamePath.getParent(), "Dataa");
+	SearchMan.addSubDirectoryMatching(gamePath.getParent(), "Datav");
 }
 
 bool RunawayEngine::hasFeature(EngineFeature feature) const {
@@ -158,6 +160,8 @@ Common::Error RunawayEngine::run() {
 					scene.skipSpeech();
 					break;
 				default:
+					if (scene.playingVideo())
+						scene.skipVideo();
 					break;
 				}
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
@@ -184,7 +188,9 @@ Common::Error RunawayEngine::run() {
 					break;
 				case kCancelAction:
 					if (pressed) {
-						if (scene.speaking())
+						if (scene.playingVideo())
+							scene.skipVideo();
+						else if (scene.speaking())
 							scene.skipSpeech();
 						else if (!ui.cancel())
 							openMenu = true;
@@ -199,8 +205,12 @@ Common::Error RunawayEngine::run() {
 						scene.skipSpeech();
 					break;
 				case kSkip:
-					if (pressed)
-						scene.skipSpeech();
+					if (pressed) {
+						if (scene.playingVideo())
+							scene.skipVideo();
+						else
+							scene.skipSpeech();
+					}
 					break;
 				}
 			}

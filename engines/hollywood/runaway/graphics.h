@@ -63,7 +63,7 @@ public:
 	bool load();
 	bool setFrame(uint facing, uint frame);
 	void draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
-		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps) const;
+		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps, bool sunlit = false) const;
 
 private:
 	enum { kWidth = 345, kHeight = 518, kFacings = 8, kFrames = 19 };
