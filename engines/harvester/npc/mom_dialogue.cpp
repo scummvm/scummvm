@@ -47,11 +47,16 @@ static const DialogueLineEntry kMomLedgerLines[] = {
 };
 
 static const DialogueLineEntry kMomCasketPhotoLines[] = {
-	{ 0x233b, "PC", 0 }
+	{ 0x233b, "PC", 0 },
+	{ 0x233f, "MOM", 1 },
+	{ 0x2344, "PC", 0 },
+	{ 0x2348, "MOM", 0 }
 };
 
 static const DialogueLineEntry kMomWhaleyPhotoLines[] = {
-	{ 0x239c, "MOM", 2 }
+	{ 0x239c, "MOM", 2 },
+	{ 0x23a0, "PC", 0 },
+	{ 0x23a5, "MOM", 0 }
 };
 
 static const DialogueLineEntry kMomIntroLines[] = {
