@@ -614,6 +614,9 @@ void SdlEventSource::preprocessFingerMotion(SDL_Event *event) {
 }
 
 bool SdlEventSource::pollEvent(Common::Event &event) {
+	if (pollImeCompositionCancellation(event))
+		return true;
+
 	if (_textInputEnabled)
 		applyNativeTextInputState();
 
@@ -813,12 +816,8 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 			// Always allow the display to turn off if ScummVM is out of focus
 			event.type = Common::EVENT_FOCUS_LOST;
 			SDL_EnableScreenSaver();
-			if (isImeCompositionEnabled()) {
-				Common::Event imeCancellationEvent;
-				imeCancellationEvent.type = Common::EVENT_IME_COMPOSITION;
-				imeCancellationEvent.imeComposition = Common::ImeComposition(Common::ImeComposition::kCancelled);
-				g_system->getEventManager()->pushEvent(imeCancellationEvent);
-			}
+			if (isImeCompositionEnabled())
+				_queuedImeCancellation = true;
 			return true;
 		}
 

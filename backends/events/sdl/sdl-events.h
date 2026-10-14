@@ -136,10 +136,25 @@ protected:
 	Common::Stack<ImeCompositionControlState> _imeCompositionControlStateStack;
 	/** Whether SDL text-editing events are converted to IME events. */
 	bool _imeCompositionEnabled = false;
+	/**
+	 * Whether a focus-loss cancellation is waiting to be delivered.
+	 * @ref SdlEventSource::pollImeCompositionCancellation() consumes it before subsequent SDL events.
+	 */
+	bool _queuedImeCancellation = false;
+	/**
+	 * Deliver a pending focus-loss cancellation before subsequent SDL events.
+	 *
+	 * @param event Receives the IME cancellation event when one is pending;
+	 *              otherwise, it is left unchanged.
+	 * @return True if a cancellation was delivered and removed from the pending state.
+	 */
+	bool pollImeCompositionCancellation(Common::Event &event);
 	/** Return whether committed SDL text input should enter the ScummVM event queue. */
 	bool shouldDispatchTextInput() const { return _imeCompositionControlStateStack.empty() || _textInputEnabled; }
 	/** Apply the desired native SDL text input session state. */
 	void applyNativeTextInputState();
+	/** Discard pending native text events, releasing SDL 2 extended text. */
+	void discardNativeTextInputEvents();
 #endif
 
 	int _mouseX;

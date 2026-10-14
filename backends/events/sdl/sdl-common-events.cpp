@@ -39,6 +39,9 @@ SdlEventSource::~SdlEventSource() {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 void SdlEventSource::acquireImeCompositionControl() {
+	if (_imeCompositionEnabled)
+		cancelImeComposition();
+
 	// Synchronize the first controlled scope with the existing native text-input
 	// state. SDL text input is also used for non-IME text such as dead keys and
 	// non-English layouts, so an acquisition must not unconditionally stop it.
@@ -109,6 +112,7 @@ void SdlEventSource::cancelImeComposition() {
 	if (!_imeCompositionEnabled || !_textInputEnabled)
 		return;
 
+	_queuedImeCancellation = false;
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 	SDL_Window *window = _graphicsManager ? _graphicsManager->getWindow()->getSDLWindow() : nullptr;
 	if (window && !SDL_ClearComposition(window))
@@ -122,6 +126,11 @@ void SdlEventSource::cancelImeComposition() {
 	_textInputEnabled = true;
 	applyNativeTextInputState();
 #endif
+	discardNativeTextInputEvents();
+	// The dispatcher may already have drained SDL into the Common queue.
+	// Those events still belong to the input owner being cancelled.
+	if (g_system->getEventManager())
+		g_system->getEventManager()->purgeImeCompositionEvents();
 }
 
 void SdlEventSource::releaseImeCompositionControl() {
@@ -157,8 +166,7 @@ void SdlEventSource::applyNativeTextInputState() {
 	} else {
 		if (SDL_TextInputActive(window) && !SDL_StopTextInput(window))
 			warning("Could not stop SDL text input: %s", SDL_GetError());
-		SDL_FlushEvent(SDL_EVENT_TEXT_INPUT);
-		SDL_FlushEvent(SDL_EVENT_TEXT_EDITING);
+		discardNativeTextInputEvents();
 	}
 #else
 	if (_textInputEnabled) {
@@ -173,13 +181,35 @@ void SdlEventSource::applyNativeTextInputState() {
 	} else {
 		if (SDL_IsTextInputActive())
 			SDL_StopTextInput();
-		SDL_FlushEvent(SDL_TEXTINPUT);
-		SDL_FlushEvent(SDL_TEXTEDITING);
-#if SDL_VERSION_ATLEAST(2, 0, 22)
-		SDL_FlushEvent(SDL_TEXTEDITING_EXT);
-#endif
+		discardNativeTextInputEvents();
 	}
 #endif
+}
+
+void SdlEventSource::discardNativeTextInputEvents() {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_FlushEvent(SDL_EVENT_TEXT_INPUT);
+	SDL_FlushEvent(SDL_EVENT_TEXT_EDITING);
+#else
+	SDL_FlushEvent(SDL_TEXTINPUT);
+	SDL_FlushEvent(SDL_TEXTEDITING);
+#if SDL_VERSION_ATLEAST(2, 0, 22)
+	// SDL_FlushEvent does not free the payload of extended editing events.
+	SDL_Event event;
+	while (0 < SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_TEXTEDITING_EXT, SDL_TEXTEDITING_EXT))
+		SDL_free(event.editExt.text);
+#endif
+#endif
+}
+
+bool SdlEventSource::pollImeCompositionCancellation(Common::Event &event) {
+	if (!_queuedImeCancellation)
+		return false;
+
+	_queuedImeCancellation = false;
+	event.type = Common::EVENT_IME_COMPOSITION;
+	event.imeComposition = Common::ImeComposition(Common::ImeComposition::kCancelled);
+	return true;
 }
 
 #endif

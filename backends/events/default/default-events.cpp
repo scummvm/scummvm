@@ -343,6 +343,29 @@ void DefaultEventManager::purgeKeyboardEvents() {
 	_eventQueue = filteredQueue;
 }
 
+void DefaultEventManager::purgeImeCompositionEvents() {
+	// Discard stale IME events already dispatched for the previous input owner,
+	// preserving all unrelated events in their original order.
+	Common::Queue<Common::Event> filteredQueue;
+	while (!_eventQueue.empty()) {
+		Common::Event event = _eventQueue.pop();
+		if (event.type != Common::EVENT_IME_COMPOSITION)
+			filteredQueue.push(event);
+	}
+	_eventQueue = filteredQueue;
+
+	// Also remove IME events pushed by clients but not yet dispatched.
+	// Do not run the dispatcher here: cancellation must not dispatch new events.
+	filteredQueue.clear();
+	Common::Event event;
+	while (_artificialEventSource.pollEvent(event)) {
+		if (event.type != Common::EVENT_IME_COMPOSITION)
+			filteredQueue.push(event);
+	}
+	while (!filteredQueue.empty())
+		_artificialEventSource.addEvent(filteredQueue.pop());
+}
+
 Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	using namespace Common;
 
