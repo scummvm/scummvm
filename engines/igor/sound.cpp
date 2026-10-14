@@ -120,6 +120,8 @@ void IgorEngine::playSound(int num, int type) {
 	Audio::SoundHandle *soundHandle = 0;
 	if (type == 1) {
 		// debugC(9, kDebugEngine, "playSound() %d -> sfx offset %d", num + 1, num);
+		if (!isCDVersion() && num >= _soundOffsetsCount)
+			return;
 		if (_mixer->isSoundHandleActive(_sfxHandle)) {
 			return;
 		}
