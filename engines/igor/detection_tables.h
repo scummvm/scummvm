@@ -22,7 +22,7 @@
 namespace Igor {
 
 const PlainGameDescriptor igorGames[] = {
-	{ "igor", "Igor" },
+	{ "igor", "Igor: Objective Uikokahonia" },
 	{ 0, 0 }
 };
 
