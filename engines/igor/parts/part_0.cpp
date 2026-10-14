@@ -211,17 +211,18 @@ void IgorEngine::part0WalkInFromCloset() {
 	wd->yPosChanged = 1;
 	wd->dyPos = 0;
 	wd->scaleHeight = 50;
-	_walkDataLastIndex = 0;
-	buildWalkPath(120, 131, 120, 136);
-	_walkData[_walkDataLastIndex].frameNum = 0;
+	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
-	_gameState.igorMoving = true;
-	waitForIgorMove();
+	if (isCDVersion()) {
+		_walkDataLastIndex = 0;
+		buildWalkPath(120, 131, 120, 136);
+		_walkData[_walkDataLastIndex].frameNum = 0;
+		_gameState.igorMoving = true;
+		waitForIgorMove();
+	}
 	if (_objectsState[kRatSkinHatSeenStateIndex] == 0) {
 		igorSay(215, 2, 103);
 		_objectsState[kRatSkinHatSeenStateIndex] = 1;
-	} else {
-		part0EnterFromBelow();
 	}
 }
 
