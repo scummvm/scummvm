@@ -110,12 +110,29 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return lineError;
 
 			sharedState.dialogueStateD2f04 = true;
-			return playPhelpsLine(0x1b5a, 0, "PC");
+			lineError = playPhelpsLine(0x1b5a, 0, "PC");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playPhelpsLine(0x1b5e);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			if (sharedState.dialogueStateD2ed0) {
+				lineError = playPhelpsLine(0x1b70, 3, "PC");
+				if (lineError.getCode() == Common::kNoError)
+					lineError = playPhelpsLine(0x1b75, 1);
+			} else {
+				lineError = playPhelpsLine(runtime.startupScript().getFlagValue("HEARD_DAD_MOAN") ?
+					0x1b6b : 0x1b67, 0, "PC");
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else {
+			Common::Error lineError = playPhelpsLine(0x1bf4, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 		}
 
-		Common::Error lineError = playPhelpsLine(0x1bf4, 1);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
+		Common::Error lineError;
 
 		if (runtime.startupScript().getCurrentStoryDayIndex() < 5) {
 			lineError = playPhelpsLine(0x1b7b, 1);
@@ -256,17 +273,20 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	}
 
 	if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+		sharedState.discussedWhaleyHerrillPhoto = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 		return playSequence(kPhelpsWhaleyLines, ARRAYSIZE(kPhelpsWhaleyLines));
 	}
 	if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 			usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+		sharedState.discussedCasketPhotoEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 		return playSequence(kPhelpsCasketLines, ARRAYSIZE(kPhelpsCasketLines));
 	}
 	if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 			runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
+		sharedState.discussedLedgerEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
 		return playPhelpsLine(0x1c36);
 	}
@@ -274,6 +294,7 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 			usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 			usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+		sharedState.discussedNoteCheckbookEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 		return playPhelpsLine(0x1c3d, 1);
 	}
