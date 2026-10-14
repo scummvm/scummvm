@@ -65,6 +65,8 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	HerrillRoomDialogueState &state = _state;
 	Common::String &herrillTopicBuffer = state.currentTopicBuffer;
 	int &herrillTopicBufferLineIndex = state.currentTopicBufferLineIndex;
+	state.currentTopicBuffer.clear();
+	state.currentTopicBufferLineIndex = -1;
 
 	auto assignHerrillTopicBuffer = [&](int responseLineIndex) {
 		runtime.assignTopicBuffer(herrillTopicBuffer, herrillTopicBufferLineIndex,
@@ -110,7 +112,7 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			hasInventoryItem("TV_DEED_PHOTOCOPY");
 	};
 	auto shownWhaleyHerrillPhoto = [&]() {
-		return runtime.startupScript().getFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill);
+		return sharedState.discussedWhaleyHerrillPhoto != 0;
 	};
 
 	if (runtime.startupScript().getFlagValue("HERRILL_IN_LODGE")) {
@@ -150,45 +152,87 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (state.requiresEvidenceForDialogue && !hasRequiredEvidence())
 		return Common::kNoError;
 
+	bool showGascanResponse = false;
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			return playHerrillLine(0x309f, 2);
 		}
-		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
-				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
-			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-			return playHerrillLine(0x30a6);
-		}
-		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
-					usedItemName.equalsIgnoreCase("LEDGER2")) &&
-				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
-			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
-			return playHerrillLine(0x30a6);
+		const bool isCasketPhoto = usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+			usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY");
+		const bool isLedger = (usedItemName.equalsIgnoreCase("LEDGER") ||
+			usedItemName.equalsIgnoreCase("LEDGER2")) &&
+			runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS");
+		if (isCasketPhoto || isLedger) {
+			if (isCasketPhoto) {
+				sharedState.discussedCasketPhotoEvidence = 1;
+				(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
+			} else {
+				sharedState.discussedLedgerEvidence = 1;
+				(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
+			}
+			Common::Error lineError = playHerrillLine(0x30a6);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x27f, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+			if (responseIndex == 1)
+				return playHerrillLine(0x30b1, 2);
+			if (responseIndex == 2)
+				return playHerrillLine(0x30b6, 2);
+			return Common::kNoError;
 		}
 		if (usedItemName.equalsIgnoreCase("GASCAN")) {
 			state.gascanPresented = true;
 		} else if (usedItemName.equalsIgnoreCase("TV_DEED") ||
 				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceSheriffOwns, true);
-			return playHerrillLine(0x3188);
+			sharedState.discussedTvDeedEvidence = 1;
+			const DialogueLineEntry lines[] = {
+				{ 0x3188, kHerrillNpc, 0 },
+				{ 0x318c, kPcSpeaker, 0 },
+				{ 0x3191, kHerrillNpc, 2 }
+			};
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			sharedState.dialogueStateD2eec = true;
+			if (!state.dialogueStateD2ce4)
+				return Common::kNoError;
+			lineError = playHerrillLine(0x3198, 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			return playHerrillLine(0x319d, 2);
 		} else if (usedItemName.equalsIgnoreCase("NOTE") ||
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
-			return playHerrillLine(0x30bf);
+			sharedState.discussedNoteCheckbookEvidence = 1;
+			const DialogueLineEntry lines[] = {
+				{ 0x30bf, kHerrillNpc, 0 },
+				{ 0x30c4, kPcSpeaker, 0 },
+				{ 0x30c8, kHerrillNpc, 0 }
+			};
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			showGascanResponse = true;
 		} else {
 			return playHerrillLine(0x3099);
 		}
 	}
 
-	if (state.gascanPresented) {
-		state.gascanPresented = false;
-
-		Common::Error lineError = runtime.playDialogueEntrySequence(
-			kHerrillGascanIntroLines, ARRAYSIZE(kHerrillGascanIntroLines));
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
+	if (state.gascanPresented || showGascanResponse) {
+		Common::Error lineError;
+		if (state.gascanPresented) {
+			lineError = runtime.playDialogueEntrySequence(
+				kHerrillGascanIntroLines, ARRAYSIZE(kHerrillGascanIntroLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			state.gascanPresented = false;
+		}
 		if (!sharedState.dialogueStateD2e98)
 			return playPcLine(0x3123);
 
@@ -203,7 +247,7 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			if (sharedState.dialogueStateD2eb0) {
-				lineError = playHerrillLine(0x30eb);
+				lineError = playPcLine(0x30eb);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
@@ -303,11 +347,17 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		Common::Error lineError = playHerrillLine(0x304c, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+		lineError = shownWhaleyHerrillPhoto() ? playHerrillLine(0x3050, 2) : playHerrillLine(0x3057, 1);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 	}
 	if (runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD") &&
 			!state.karinFoundDeadShown) {
 		state.karinFoundDeadShown = true;
 		Common::Error lineError = playHerrillLine(0x305e);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = playPcLine(0x461b, 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED")) {
@@ -333,10 +383,25 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		Common::Error lineError = playHerrillLine(0x31a6, 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(0x282, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+		if (responseIndex == 1) {
+			lineError = playHerrillLine(0x31b1, 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			state.dialogueSuppressed = true;
+			return Common::kNoError;
+		}
+		if (responseIndex == 2) {
+			lineError = playHerrillLine(0x31b9, 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			state.requiresEvidenceForDialogue = true;
+			return Common::kNoError;
+		}
 	}
-
-	if (herrillTopicBufferLineIndex < 0)
-		assignHerrillTopicBuffer(kHerrillTopicBufferResponseLine);
 
 	for (;;) {
 		Common::String selectedTopic;
@@ -350,53 +415,80 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return playHerrillLine(0x2ff4);
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x284)) {
-			Common::Error lineError = playPcLine(0x2f7b, 2);
+			const DialogueLineEntry lines[] = {
+				{ 0x2f7b, kPcSpeaker, 2 },
+				{ 0x2f7f, kHerrillNpc, 0 },
+				{ 0x2f80, kHerrillNpc, 0 },
+				{ 0x2f81, kHerrillNpc, 0 }
+			};
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			assignHerrillTopicBuffer(0x285);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x286)) {
-			Common::Error lineError = playHerrillLine(0x2f8f);
+			const DialogueLineEntry lines[] = {
+				{ 0x2f8f, kHerrillNpc, 0 },
+				{ 0x2f90, kHerrillNpc, 0 },
+				{ 0x2f91, kHerrillNpc, 1 }
+			};
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			assignHerrillTopicBuffer(0x287);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x288)) {
-			Common::Error lineError = playHerrillLine(0x2f9e, 1);
+			const DialogueLineEntry lines[] = {
+				{ 0x2f9e, kHerrillNpc, 1 },
+				{ 0x2fa3, kPcSpeaker, 2 },
+				{ 0x2fa7, kHerrillNpc, 1 }
+			};
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			assignHerrillTopicBuffer(0x289);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x28a)) {
-			Common::Error lineError = playPcLine(0x2fb2);
+			const DialogueLineEntry lines[] = {
+				{ 0x2fb2, kPcSpeaker, 0 },
+				{ 0x2fb6, kHerrillNpc, 0 },
+				{ 0x2fbe, kHerrillNpc, 1 },
+				{ 0x2fc2, kHerrillNpc, 1 }
+			};
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			assignHerrillTopicBuffer(0x28b);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x28c)) {
-			Common::Error lineError = playPcLine(0x2fcd);
+			const DialogueLineEntry lines[] = {
+				{ 0x2fcd, kPcSpeaker, 0 },
+				{ 0x2fd2, kHerrillNpc, 0 }
+			};
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			assignHerrillTopicBuffer(0x28d);
 			continue;
 		}
-		if (runtime.matchesResponseLine(selectedTopic, 0x28e)) {
+		if (runtime.matchesResponseLine(selectedTopic, 0x28e) ||
+				runtime.matchesResponseLine(selectedTopic, 0x28f)) {
 			sharedState.discussedLodgeTopic = true;
 			Common::Error lineError = playHerrillLine(0x2fdd);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			continue;
-		}
-		if (runtime.matchesResponseLine(selectedTopic, 0x28f)) {
-			sharedState.discussedLodgeTopic = true;
-			Common::Error lineError = playHerrillLine(0x2fdd);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+			assignHerrillTopicBuffer(0x290);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x291)) {
 			Common::Error lineError = playHerrillLine(0x2fe9, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			assignHerrillTopicBuffer(0x292);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x293))
@@ -405,7 +497,6 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		Common::Error lineError = playHerrillLine(0x3099);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		return playHerrillLine(0x2ff4);
 	}
 }
 
