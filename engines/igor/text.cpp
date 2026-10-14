@@ -83,7 +83,7 @@ void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
 }
 
 /**
- * Paints the text on the screen buffer
+ * Paints the text on the screen buffer for a NPC dialogue.
  */
 void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 	if (_eventQuitGame)
@@ -119,15 +119,14 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 
 	for (int i = 0; i < dt->count; ++i) {
 		const char *textLine = _globalDialogueTexts[dt->num + i];
-
 		int textLineWidth = _font.getStringWidth(textLine);
-		;
 		int textX = talkX - textLineWidth / 2;
 		int textY = i * 10;
 		_font.drawString(_screenTextLayer, textLine, textX, textY, _talkColorIndex, _talkShadowIndex, _talkShadowIndex);
 	}
 	setPaletteColor(_talkColorIndex, r, g, b);
 	setPaletteColor(_talkShadowIndex, 0, 0, 0);
+
 	const int talkMode = prepareDialoguePlayback(*dt);
 	if (talkMode != kTalkModeSpeechOnly)
 		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
@@ -136,8 +135,9 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 }
 
 void IgorEngine::queueDialogueLines(const Common::Array<DialogueText> &lines) {
-	for (uint i = 0; i < lines.size(); ++i)
+	for (uint i = 0; i < lines.size(); ++i) {
 		ADD_DIALOGUE_TEXT(lines[i].num, lines[i].count, lines[i].sound);
+	}
 	SET_DIALOGUE_TEXT(1, lines.size());
 }
 
@@ -201,9 +201,6 @@ void IgorEngine::cutsceneSayWithCallback(int x, int y, int r, int g, int b, int 
  * Loop for character talking
  */
 void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b) {
-	debugC(9, kDebugEngine, "waitForEndOfCutsceneDialogue() begin running %d start %d count %d speechCounter %d delay %d/%d",
-	       _gameState.dialogueTextRunning, _dialogueTextsStart, _dialogueTextsCount,
-	       _talkSpeechCounter, _talkDelayCounter, _talkDelay);
 	do {
 		if (_eventQuitGame) {
 			cancelDialogue();
@@ -263,16 +260,14 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 		}
 		// Escape only aborts dialogue during the intro cutscene.
 		if (_inputVars[kInputEscape] && _currentPart == 850) {
-			warning("waitForEndOfCutsceneDialogue() early exit with text active %d start %d count %d speechCounter %d delay %d/%d",
-			        _gameState.dialogueTextRunning, _dialogueTextsStart, _dialogueTextsCount,
-			        _talkSpeechCounter, _talkDelayCounter, _talkDelay);
 			return;
 		}
 		waitForTimer();
 	} while (_gameState.dialogueTextRunning);
-	debugC(9, kDebugEngine, "waitForEndOfCutsceneDialogue() end running %d", _gameState.dialogueTextRunning);
+
 }
 
+// Just fixes the dialogue position to that of igor's
 void IgorEngine::fixIgorDialogueTextPosition(int num, int count, int *x, int *y) {
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
 	*x = wd->x;
@@ -290,7 +285,7 @@ int IgorEngine::prepareDialoguePlayback(const DialogueText &text) {
 	if (!isDialogueSpeechPlaying())
 		talkMode = kTalkModeTextOnly;
 	// Speech modes use speed markers instead of a reading speed. Falling
-	// back to text selects normal speed, as switching to text-only does.
+	// back to text selects normal speed, same as switching to text-only.
 	const int talkSpeed = (_gameState.talkSpeed >= 1 && _gameState.talkSpeed <= 5)
 		? _gameState.talkSpeed : 3;
 	_talkDelay = talkMode == kTalkModeTextOnly? 2 * text.count * _talkDelays[talkSpeed] : -1;
@@ -432,14 +427,14 @@ void IgorEngine::waitForEndOfIgorDialogue(bool animateHead, bool updateRoomBackg
 }
 
 void IgorEngine::animateIgorTalking(int frame) {
-	if (getPart() == 4 || getPart() == 70) {
+	if (getPart() == 4 || getPart() == 70) { // maps
 		return;
 	}
-	if (getPart() == 85) {
+	if (getPart() == 85) { // intro scene, igor behind rock
 		part85AnimateIgorHead(frame);
 		return;
 	}
-	if (getPart() == 79) {
+	if (getPart() == 79) { // ending
 		part79AnimateIgorHead(frame);
 		return;
 	}
@@ -560,9 +555,6 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 }
 
 void IgorEngine::drawDialogueChoices() {
-	debugC(9, kDebugEngine, "drawDialogueChoices() enter running %d start %d count %d click %d skip %d escape %d quit %d",
-	       _gameState.dialogueTextRunning, _dialogueTextsStart, _dialogueTextsCount,
-	       _inputVars[kInputClick], _inputVars[kInputSkipDialogue], _inputVars[kInputEscape], _eventQuitGame);
 	if (_gameState.dialogueTextRunning) {
 		warning("drawDialogueChoices() entered while dialogue text is still active");
 	}

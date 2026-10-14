@@ -45,6 +45,21 @@ static const struct {
 	{ 3, 1 }
 };
 
+static void drawButtonsBar(uint8 *dst, const uint8 *src) {
+	int y0 = 15;
+	for (int i = 1; i <= 11; ++i) {
+		int y2 = y0 + buttonsBarCoords[i].h - 1;
+		if (y0 > y2) {
+			continue;
+		}
+		for (int y1 = y0; y1 <= y2; ++y1) {
+			memcpy(dst + (y1 - 15) * 320 + 43, src + (buttonsBarCoords[i].y - 1) * 234, 234);
+			++y0;
+		}
+	}
+}
+
+
 static void redrawButton(uint8 *dst, int button, bool highlight) {
 	const int colorDiff = highlight ? 4 : -4;
 	for (int y = 0; y <= 11; ++y) {
@@ -297,25 +312,13 @@ bool IgorEngine::handleOptionsMenu_handleKeyDownCtrl(int key) {
 	handleOptionsMenu_paintCtrl();
 	return false;
 }
-static void drawButtonsBar(uint8 *dst, const uint8 *src) {
-	int y0 = 15;
-	for (int i = 1; i <= 11; ++i) {
-		int y2 = y0 + buttonsBarCoords[i].h - 1;
-		if (y0 > y2) {
-			continue;
-		}
-		for (int y1 = y0; y1 <= y2; ++y1) {
-			memcpy(dst + (y1 - 15) * 320 + 43, src + (buttonsBarCoords[i].y - 1) * 234, 234);
-			++y0;
-		}
-	}
-}
 
 void IgorEngine::handleOptionsMenu() {
-	// Retain the gameplay view before the menu draws or dims its palette.
+	// get the gameplay screenshot before the menu draws or dims its palette.
 	_optionsMenuThumbnail.free();
 	::createThumbnailFromScreen(&_optionsMenuThumbnail);
 	loadOptionsMenuTexts();
+	// pause engine so no sounds keep playing while the options menu is active.
 	PauseToken pauseToken = pauseEngine();
 
 	Audio::PCSpeaker speaker;

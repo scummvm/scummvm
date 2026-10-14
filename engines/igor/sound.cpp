@@ -119,7 +119,6 @@ void IgorEngine::playSound(int num, int type) {
 	Audio::Mixer::SoundType soundType;
 	Audio::SoundHandle *soundHandle = 0;
 	if (type == 1) {
-		// debugC(9, kDebugEngine, "playSound() %d -> sfx offset %d", num + 1, num);
 		if (!isCDVersion() && num >= _soundOffsetsCount)
 			return;
 		if (_mixer->isSoundHandleActive(_sfxHandle)) {
@@ -147,7 +146,7 @@ void IgorEngine::playSound(int num, int type) {
 	}
 
 	// two streams must never share one Common::File: the second stream's seek would
-	// clobber the first one's cursor and the running sound would come out as
+	// fight for the first one's cursor and the running sound would come out as
 	// noise. Give each stream its own handle and let the stream dispose of it.
 	Common::File *sndFile = new Common::File;
 	if (!sndFile->open(_game.sfxFileName)) {

@@ -134,14 +134,10 @@ void IgorEngine::loadDialogueData(int dlg) {
 	memset(_dialogueQuestionSounds, 0, sizeof(_dialogueQuestionSounds));
 	memset(_dialogueReplySounds, 0, sizeof(_dialogueReplySounds));
 	if (_game.flags & kFlagTalkie) {
-		// A zero speech layout retains the legacy packed-tail layout for dialogue
-		// rooms that have not yet had their original offsets added to RoomDataOffsets.
 		int questionSoundsOffset = _roomDataOffsets.dlg.questionSoundsOffset;
 		int replySoundsOffset = _roomDataOffsets.dlg.replySoundsOffset;
 		int replySoundsSize = _roomDataOffsets.dlg.replySoundsSize;
 		if (questionSoundsOffset == 0) {
-			// The packed tail shares the last question word with the reply table's
-			// leading residue word.
 			questionSoundsOffset = dataSize - (_roomDataOffsets.dlg.questionsSize + _roomDataOffsets.dlg.repliesSize + 1) * 2;
 			replySoundsOffset = questionSoundsOffset + _roomDataOffsets.dlg.questionsSize * 2;
 			replySoundsSize = _roomDataOffsets.dlg.repliesSize;
@@ -279,7 +275,7 @@ ResourceEntry *IgorEngine::findData(int id) {
  * IGOR.TBL is produced externally using the same ids pointing to a given resource.
  */
 uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
-	// debugC(9, kDebugResource, "loadData() id %d", id);
+	debugC(9, kDebugResource, "loadData() id %d", id);
 	ResourceEntry *re = findData(id);
 	if (!dst) {
 		dst = (uint8 *)malloc(re->size);
