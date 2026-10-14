@@ -271,19 +271,13 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	MrPottsRoomDialogueState &state = _state;
 	Common::String mrPottsTopicBuffer;
-	int mrPottsTopicBufferLineIndex = state.topicBufferLineIndex;
+	int mrPottsTopicBufferLineIndex = -1;
+	state.topicBufferLineIndex = -1;
 
 	auto assignMrPottsTopicBuffer = [&](int responseLineIndex) {
 		runtime.assignTopicBuffer(mrPottsTopicBuffer, mrPottsTopicBufferLineIndex,
 			responseLineIndex, "Mr Potts topic buffer");
 		state.topicBufferLineIndex = mrPottsTopicBufferLineIndex;
-	};
-	auto restoreMrPottsTopicBuffer = [&]() {
-		if (state.topicBufferLineIndex < 0)
-			return;
-
-		runtime.assignTopicBuffer(mrPottsTopicBuffer, mrPottsTopicBufferLineIndex,
-			state.topicBufferLineIndex, "Mr Potts topic buffer");
 	};
 	auto playMrPottsLine = [&](int wavId, int headVariant) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, "MR_POTTS", headVariant);
@@ -838,10 +832,6 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 	}
 
-	restoreMrPottsTopicBuffer();
-	if (mrPottsTopicBufferLineIndex < 0)
-		return Common::kNoError;
-
 	Common::String selectedTopic;
 	for (;;) {
 		if (runtime.matchesResponseLine(selectedTopic, 0x1e9))
@@ -1056,8 +1046,11 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					lineError = playMrPottsLine(0x2d8e, 2);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
-				} else if (responseIndex == 2) {
+				} else if (responseIndex == 2 && sharedState.discussedMrPottsTuesdayNightAlibi) {
 					lineError = playMrPottsLine(0x2d93, 2);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+					lineError = runtime.playDialogueLineWithVariant(0x2d9c, "MRS_POTTS", 1);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 				}
