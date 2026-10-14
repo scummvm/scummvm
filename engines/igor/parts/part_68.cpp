@@ -483,7 +483,8 @@ void IgorEngine::part68ExecuteAction(int action) {
 }
 
 void IgorEngine::part68() {
-	playMusic(4);
+	if (isCDVersion())
+		playMusic(4);
 	_gameState.enableLight = 2;
 	loadActionData(DAT_Part68);
 	part68LoadRoom();

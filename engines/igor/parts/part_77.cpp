@@ -125,6 +125,8 @@ void IgorEngine::part77MonkeyCageCutscene() {
 }
 
 void IgorEngine::part77EnterFromCollege() {
+	if (!isCDVersion())
+		playMusic(2, true);
 	part77ApplyObjectState();
 	WalkData *wd = &_walkData[0];
 	wd->setPos(225, 100, 3, 1);
@@ -152,7 +154,8 @@ void IgorEngine::part77EnterFromCollege() {
 }
 
 void IgorEngine::part77() {
-	playMusic(1);
+	if (isCDVersion())
+		playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_Part77);
 	loadRoomData(PAL_Part77, IMG_Part77, BOX_Part77, MSK_Part77, TXT_Part77);

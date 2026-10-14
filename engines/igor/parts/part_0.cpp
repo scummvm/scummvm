@@ -226,6 +226,8 @@ void IgorEngine::part0WalkInFromCloset() {
 }
 
 void IgorEngine::part0EnterFromBelow() {
+	if (!isCDVersion())
+		playMusic(3, true);
 	part0ApplyObjectState(255);
 	_walkDataCurrentIndex = 0;
 	int walkFrame = 1;
@@ -253,7 +255,8 @@ void IgorEngine::part0EnterFromBelow() {
 }
 
 void IgorEngine::part0() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_StudentDormitoryRoom);
 	loadRoomData(PAL_StudentDormitoryRoom, IMG_StudentDormitoryRoom, BOX_StudentDormitoryRoom, MSK_StudentDormitoryRoom, TXT_StudentDormitoryRoom);

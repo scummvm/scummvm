@@ -62,6 +62,8 @@ void IgorEngine::part50EnterMaze() {
 }
 
 void IgorEngine::part50EnterFromDoor() {
+	if (!isCDVersion())
+		playMusic(7, true);
 	WalkData *wd = &_walkData[0];
 	wd->setPos(kPart50DoorX, kPart50DoorY, kFacingPositionLeft, 0);
 	wd->setDefaultScale();
@@ -106,7 +108,8 @@ void IgorEngine::part50UpdateBackground() {
 }
 
 void IgorEngine::part50() {
-	playMusic(4);
+	if (isCDVersion())
+		playMusic(4);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_OutsideMaze, IMG_OutsideMaze, BOX_OutsideMaze, MSK_OutsideMaze, TXT_OutsideMaze);
 	memcpy(_paletteBuffer + 192 * 3, _igorPalette, 48);

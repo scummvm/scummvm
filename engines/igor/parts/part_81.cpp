@@ -509,7 +509,8 @@ void IgorEngine::part81ExecuteAction(int action) {
 }
 
 void IgorEngine::part81() {
-	playMusic(4);
+	if (isCDVersion())
+		playMusic(4);
 	_gameState.enableLight = 2;
 	loadActionData(DAT_Part81);
 	part81LoadRoom();

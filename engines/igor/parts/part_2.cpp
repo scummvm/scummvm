@@ -358,7 +358,8 @@ void IgorEngine::part2LightUpDynamite() {
 }
 
 void IgorEngine::part2() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_StudentDormitoryAttic);
 	loadRoomData(PAL_StudentDormitoryAttic, IMG_StudentDormitoryAttic, BOX_StudentDormitoryAttic, MSK_StudentDormitoryAttic, TXT_StudentDormitoryAttic);

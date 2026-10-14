@@ -64,7 +64,8 @@ void IgorEngine::part70UpdateBackground() {
 }
 
 void IgorEngine::part70() {
-	playMusic(4);
+	if (isCDVersion())
+		playMusic(4);
 	_gameState.enableLight = 2;
 	loadActionData(DAT_Part70);
 	loadRoomData(PAL_Part70, IMG_Part70, BOX_Part70, MSK_Part70, TXT_Part70);

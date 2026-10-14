@@ -84,6 +84,8 @@ void IgorEngine::part7DrawScaledIgor(int scaleStep, int facing, int frame, int d
 }
 
 void IgorEngine::part7EnterFromOutside() {
+	if (!isCDVersion())
+		playMusic(3, true);
 	part7DrawDoorState(255);
 	for (int area = 11; area <= 13; ++area)
 		_roomObjectAreasTable[area].area = 0;
@@ -202,7 +204,8 @@ void IgorEngine::part7ExecuteAction(int action) {
 }
 
 void IgorEngine::part7() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_AdministrationCorridor);
 	loadRoomData(PAL_AdministrationCorridor, IMG_AdministrationCorridor,

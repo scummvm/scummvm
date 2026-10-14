@@ -112,7 +112,8 @@ void IgorEngine::part74ShipCutscene() {
 	const bool savingWasAllowed = _canSaveGame;
 	_canSaveGame = false;
 	UpdateRoomBackgroundProc previousBackground = _updateRoomBackground;
-	playMusic(4);
+	if (isCDVersion())
+		playMusic(4);
 	_gameState.enableLight = 1;
 	fadeOut(624);
 	uint8 savedPalette[624];

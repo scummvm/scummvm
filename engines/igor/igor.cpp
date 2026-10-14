@@ -220,7 +220,7 @@ Common::Error IgorEngine::run() {
 	}
 
 	readTableFile();
-	if (_game.flags & kFlagDemo)
+	if (_game.flags & kFlagFloppy)
 		_midiPlayer = new MidiPlayer(_mixer);
 	loadMainTexts();
 	loadIgorFrames();

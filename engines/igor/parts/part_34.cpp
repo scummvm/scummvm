@@ -455,7 +455,8 @@ void IgorEngine::part34UpdateBackground() {
 }
 
 void IgorEngine::part34() {
-	playMusic(1);
+	if (isCDVersion())
+		playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_ParkLeft);
 	loadRoomData(PAL_ParkRight, IMG_ParkRight, BOX_ParkRight, MSK_ParkRight, TXT_ParkRight);

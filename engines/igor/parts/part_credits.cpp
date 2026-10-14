@@ -174,7 +174,10 @@ void IgorEngine::partCredits() {
 	_canSaveGame = false;
 	const CreditsPage &page = kCreditsPages[(_currentPart - 910) / 10];
 
-	playMusic(kCreditsMusic);
+	if (isCDVersion())
+		playMusic(kCreditsMusic);
+	else
+		playMusic(12, true);
 
 	memset(_screenVGA, 0, 64000);
 	memset(_currentPalette, 0, 768);

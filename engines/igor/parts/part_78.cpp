@@ -201,7 +201,8 @@ void IgorEngine::part78ProfessorWarnings(int which) {
 void IgorEngine::part78() {
 	const bool savingWasAllowed = _canSaveGame;
 	_canSaveGame = false;
-	playMusic(11);
+	if (isCDVersion())
+		playMusic(11);
 	partMainMeanwhile(IMG_Part78MinutesLater);
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
@@ -293,7 +294,8 @@ void IgorEngine::part78() {
 	memcpy(_paletteBuffer, _currentPalette, 624);
 	fadeOut(768);
 	_objectsState[kExamCompletedStateIndex] = 1;
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	// the card with the time that has passed
 	partMainMeanwhile(IMG_Part78NextDay);
 	_currentPart = 281;

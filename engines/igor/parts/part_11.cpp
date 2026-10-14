@@ -181,7 +181,8 @@ void IgorEngine::part11ExecuteAction(int action) {
 }
 
 void IgorEngine::part11() {
-	playMusic(1);
+	if (isCDVersion())
+		playMusic(1);
 	_gameState.enableLight = 1;
 	loadActionData(DAT_DecanatoPart11);
 	loadRoomData(PAL_DecanatoRight, IMG_DecanatoRight, BOX_DecanatoRight, MSK_DecanatoRight, TXT_DecanatoRight);
