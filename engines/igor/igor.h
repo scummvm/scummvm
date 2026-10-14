@@ -654,7 +654,7 @@ private:
 
 	int16 _currentPart;
 	bool _canSaveGame = true;
-	const Graphics::Surface *_optionsMenuThumbnail = nullptr;
+	Graphics::Surface _optionsMenuThumbnail;
 	int _talkDelay;
 	int _talkSpeechCounter;
 	int _talkDelayCounter;
@@ -1655,9 +1655,9 @@ private:
 public:
 	Graphics::Screen *_screen = nullptr;
 	bool copyOptionsMenuThumbnail(Graphics::Surface &thumb) const {
-		if (!_optionsMenuThumbnail)
+		if (!_optionsMenuThumbnail.getPixels())
 			return false;
-		thumb.copyFrom(*_optionsMenuThumbnail);
+		thumb.copyFrom(_optionsMenuThumbnail);
 		return true;
 	}
 

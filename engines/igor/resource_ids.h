@@ -899,5 +899,6 @@
 #define TXT_OptionsQuit 1228
 #define TXT_OptionsSaveTitle 1229
 #define TXT_OptionsLoadTitle 1230
+#define TXT_OptionsUnavailable 1232
 
 #endif // IGOR_RESOURCE_IDS
