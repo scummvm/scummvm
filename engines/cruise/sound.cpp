@@ -29,6 +29,8 @@
 #include "cruise/volume.h"
 
 #include "audio/fmopl.h"
+#include "audio/mixer.h"
+#include "audio/mods/paula.h"
 
 namespace Audio {
 class Mixer;
@@ -228,11 +230,13 @@ public:
 	void setLooping(bool v) { _looping = v; }
 };
 
-byte *readBundleSoundFile(const char *name) {
+byte *readBundleSoundFile(const char *name, uint32 *size = nullptr) {
 	// Load the correct file
 	int fileIdx = findFileInDisks(name);
 	if (fileIdx < 0) return nullptr;
 
+	if (size)
+		*size = volumePtrToFileDescriptor[fileIdx].extSize;
 	int unpackedSize = volumePtrToFileDescriptor[fileIdx].extSize + 2;
 	byte *data = (byte *)MemAlloc(unpackedSize);
 	assert(data);
@@ -254,6 +258,361 @@ byte *readBundleSoundFile(const char *name) {
 	return data;
 }
 
+
+
+// Cruise's Amiga modules are SoundFX songs with external signed PCM .AMI files.
+// Keep a persistent stream: the scripts can stop, reload and restart music.
+class AmigaSoundFxPlayer : public Audio::Paula {
+public:
+	AmigaSoundFxPlayer(Audio::Mixer *mixer)
+		: Audio::Paula(true, mixer->getOutputRate(), 0, Audio::Paula::kFilterModeDefault, 2),
+		  _mixer(mixer),
+		  _module(nullptr),
+		  _moduleSize(0),
+		  _order(0),
+		  _pos(0),
+		  _orders(0),
+		  _fade(0),
+		  _active(false),
+		  _songPlayed(false),
+		  _looping(false),
+		  _rowNumerator(0),
+		  _sampleRemainder(0) {
+		memset(_musicName, 0, sizeof(_musicName));
+		memset(_instruments, 0, sizeof(_instruments));
+		memset(_volumes, 0, sizeof(_volumes));
+		setChannelPanning(0, PANNING_LEFT);
+		setChannelPanning(3, PANNING_LEFT);
+		setChannelPanning(1, PANNING_RIGHT);
+		setChannelPanning(2, PANNING_RIGHT);
+		_end = false;
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	}
+
+	~AmigaSoundFxPlayer() override {
+		_mixer->stopHandle(_handle);
+		unload();
+	}
+
+	bool load(const char *name) {
+		unload();
+		Common::strlcpy(_musicName, name, sizeof(_musicName));
+		uint32 size = 0;
+		byte *module = readBundleSoundFile(name, &size);
+		if (!module)
+			return false;
+		if (size < 600 || memcmp(module, "SONG", 4) || !READ_BE_UINT16(module + 4) || module[470] == 0 || module[470] > 128) {
+			warning("Invalid Cruise Amiga module '%s'", name);
+			MemFree(module);
+			return false;
+		}
+		const uint patterns = (size - 600) / 1024;
+		for (uint i = 0; i < module[470]; ++i) {
+			if (module[472 + i] >= patterns) {
+				MemFree(module);
+				return false;
+			}
+		}
+		Instrument instruments[15] = {};
+		bool valid = true;
+		for (uint i = 0; i < 15 && valid; ++i) {
+			const byte *header = module + 20 + i * 30;
+			Instrument &instrumentData = instruments[i];
+			instrumentData.length = READ_BE_UINT16(header + 22) * 2;
+			instrumentData.volume = MIN<byte>(header[25], 64);
+			instrumentData.repeatPos = READ_BE_UINT16(header + 26) * 2;
+			instrumentData.repeatLength = READ_BE_UINT16(header + 28) * 2;
+			char filename[23];
+			memcpy(filename, header, 22);
+			filename[22] = 0;
+			if (!filename[0])
+				continue; // Unused slots can contain stale length fields.
+			uint32 sampleSize = 0;
+			instrumentData.data = (int8 *)readBundleSoundFile(filename, &sampleSize);
+			valid = instrumentData.data && instrumentData.length <= sampleSize && (instrumentData.repeatLength <= 2 || instrumentData.repeatPos + instrumentData.repeatLength <= sampleSize);
+		}
+		if (!valid) {
+			warning("Missing or truncated instrument in Cruise Amiga module '%s'", name);
+			for (uint i = 0; i < 15; ++i)
+				MemFree(instruments[i].data);
+			MemFree(module);
+			return false;
+		}
+		Common::StackLock lock(_mutex);
+		_module = module;
+		_moduleSize = size;
+		memcpy(_instruments, instruments, sizeof(instruments));
+		_orders = module[470];
+		_order = _pos = _fade = 0;
+		_songPlayed = false;
+		_looping = false;
+		// Same global CIA period conversion as the validated Amiga executable.
+		// Pitch remains at the PAL Paula clock; only the song timer is scaled.
+		const uint32 originalTicks = READ_BE_UINT16(module + 4) + 1;
+		const bool originalTempo = ConfMan.hasKey("cruise_amiga_original_tempo") && ConfMan.getBool("cruise_amiga_original_tempo");
+		const uint32 ticks = originalTempo ? originalTicks : (uint32)(((uint64)originalTicks * 57031 + 32768) / 65536);
+		_rowNumerator = (uint64)ticks * 6 * getRate();
+		return true;
+	}
+
+	void play() {
+		Common::StackLock lock(_mutex);
+		if (!_module)
+			return;
+		clearVoices();
+		memset(_volumes, 0, sizeof(_volumes));
+		_order = _pos = _fade = 0;
+		_sampleRemainder = 0;
+		_active = true;
+		_songPlayed = false;
+		startPlay();
+		scheduleRow();
+	}
+
+	void stop() {
+		unload();
+	}
+
+	void unload() {
+		Common::StackLock lock(_mutex);
+		unloadUnlocked();
+	}
+
+	void fadeOut() {
+		Common::StackLock lock(_mutex);
+		if (_active) {
+			_fade = 1;
+			_active = false;
+		}
+	}
+
+	bool playing() const {
+		Common::StackLock lock(_mutex);
+		return _active;
+	}
+
+	bool songLoaded() const {
+		Common::StackLock lock(_mutex);
+		return _module != nullptr;
+	}
+
+	bool songPlayed() const {
+		Common::StackLock lock(_mutex);
+		return _songPlayed;
+	}
+
+	bool looping() const {
+		Common::StackLock lock(_mutex);
+		return _looping;
+	}
+
+	void setLooping(bool value) {
+		Common::StackLock lock(_mutex);
+		_looping = value;
+	}
+
+	const char *musicName() const {
+		return _musicName;
+	}
+
+	uint8 numOrders() const {
+		Common::StackLock lock(_mutex);
+		return _orders;
+	}
+
+	void setNumOrders(uint8 count) {
+		Common::StackLock lock(_mutex);
+		if (!_module || !count || count > 128)
+			return;
+		for (uint i = 0; i < count; ++i)
+			if (_module[472 + i] >= (_moduleSize - 600) / 1024)
+				return;
+		_orders = _module[470] = count;
+		if (_order >= count)
+			_order = 0;
+	}
+
+	void setPattern(int offset, uint8 pattern) {
+		Common::StackLock lock(_mutex);
+		if (_module && offset >= 0 && offset < 128 && pattern < (_moduleSize - 600) / 1024)
+			_module[472 + offset] = pattern;
+	}
+
+	void stopChannel(int channel) {
+		Common::StackLock lock(_mutex);
+		if (channel >= 0 && channel < 4)
+			clearVoice(channel);
+	}
+
+	void doSync(Common::Serializer &s) {
+		// Preserve the existing Cruise sound save layout (no version change).
+		char name[33];
+		int16 loaded;
+		int16 songPlayed;
+		int16 looping;
+		int16 pos;
+		int16 order;
+		int16 active;
+		{
+			Common::StackLock lock(_mutex);
+			memcpy(name, _musicName, sizeof(name));
+			loaded = _module != nullptr;
+			songPlayed = _songPlayed;
+			looping = _looping;
+			pos = _pos;
+			order = _order;
+			active = _active;
+		}
+		s.syncBytes((byte *)name, sizeof(name));
+		s.syncAsSint16LE(loaded);
+		s.syncAsSint16LE(songPlayed);
+		s.syncAsSint16LE(looping);
+		s.syncAsSint16LE(pos);
+		s.syncAsSint16LE(order);
+		s.syncAsSint16LE(active);
+		if (!s.isLoading())
+			return;
+		name[32] = 0;
+		if (!loaded) {
+			unload();
+			Common::StackLock lock(_mutex);
+			memcpy(_musicName, name, sizeof(name));
+			_songPlayed = songPlayed != 0;
+			_looping = looping != 0;
+			return;
+		}
+		if (!load(name)) {
+			unload();
+			return;
+		}
+		Common::StackLock lock(_mutex);
+		_looping = looping != 0;
+		_songPlayed = songPlayed != 0;
+		_order = (order >= 0 && order < _orders) ? order : 0;
+		_pos = (pos >= 0 && pos < 1024 && pos % 16 == 0) ? pos : 0;
+		// Recreate the last instrument/period on each voice. The legacy save
+		// format has no sample cursor: active notes restart on restoration.
+		for (int orderIndex = 0; orderIndex <= _order; ++orderIndex) {
+			const int end = orderIndex == _order ? _pos : 1024;
+			for (int row = 0; row < end; row += 16)
+				playRow(orderIndex, row);
+		}
+		_active = active != 0;
+		if (_active) {
+			_sampleRemainder = 0;
+			startPlay();
+			scheduleRow();
+		} else {
+			clearVoices();
+		}
+	}
+
+private:
+	struct Instrument {
+		int8 *data;
+		uint32 length;
+		uint32 repeatPos;
+		uint32 repeatLength;
+		byte volume;
+	};
+
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _handle;
+	byte *_module;
+	uint32 _moduleSize;
+	Instrument _instruments[15];
+	byte _volumes[4];
+	char _musicName[33];
+	int _order;
+	int _pos;
+	int _orders;
+	int _fade;
+	bool _active;
+	bool _songPlayed;
+	bool _looping;
+	uint64 _rowNumerator;
+	uint64 _sampleRemainder;
+
+	void unloadUnlocked() {
+		stopPlay();
+		clearVoices();
+		_active = false;
+		_fade = 0;
+		_songPlayed = true;
+		_orders = _order = _pos = 0;
+		MemFree(_module);
+		_module = nullptr;
+		_moduleSize = 0;
+		for (uint i = 0; i < 15; ++i) {
+			MemFree(_instruments[i].data);
+			_instruments[i].data = nullptr;
+		}
+	}
+
+	void scheduleRow() {
+		_sampleRemainder += _rowNumerator;
+		const uint samples = MAX<uint>(1, _sampleRemainder / kPalCiaClock);
+		_sampleRemainder %= kPalCiaClock;
+		// Paula invokes interrupt() before mixing its next block. Preserve the
+		// fractional sample remainder instead of truncating every CIA tick.
+		setInterruptFreq(samples + 1);
+		setSingleInterrupt(samples);
+	}
+
+	void playRow(int order, int pos) {
+		const byte *row = _module + 600 + _module[472 + order] * 1024 + pos;
+		for (uint channel = 0; channel < 4; ++channel, row += 4) {
+			const uint16 period = READ_BE_UINT16(row);
+			const uint16 command = READ_BE_UINT16(row + 2);
+			if (period == 0xFFFD)
+				continue; // PIC: no new note.
+			if (period == 0xFFFE) {
+				clearVoice(channel);
+				continue;
+			}
+			const uint instrument = command >> 12;
+			if (instrument) {
+				const Instrument &instrumentData = _instruments[instrument - 1];
+				if (instrumentData.data && instrumentData.length > 2) {
+					const bool loop = instrumentData.repeatLength > 2;
+					setChannelData(channel, instrumentData.data, loop ? instrumentData.data + instrumentData.repeatPos : nullptr, instrumentData.length, loop ? instrumentData.repeatLength : 0);
+				} else {
+					clearVoice(channel);
+				}
+				int volume = instrumentData.volume;
+				const int effect = (command >> 8) & 15;
+				if (effect == 5)
+					volume += command & 255;
+				else if (effect == 6)
+					volume -= command & 255;
+				_volumes[channel] = CLIP(volume, 0, 64);
+			}
+			if (period > 0 && period < 0x8000)
+				setChannelPeriod(channel, period);
+			setChannelVolume(channel, MAX<int>(0, _volumes[channel] - _fade));
+		}
+	}
+
+	void interrupt() override {
+		if (!_module || (!_active && !_fade))
+			return;
+		playRow(_order, _pos);
+		if (_fade) {
+			_fade += 2;
+			if (_fade >= 64) {
+				unloadUnlocked();
+				return;
+			}
+		}
+		_pos += 16;
+		if (_pos == 1024) {
+			_pos = 0;
+			if (++_order >= _orders)
+				_order = 0; // Native Cruise loops; SongLoop is only a stored flag.
+		}
+		scheduleRow();
+	}
+};
 
 void PCSoundDriver::setUpdateCallback(UpdateCallback upCb, void *ref) {
 	_upCb = upCb;
@@ -772,108 +1131,179 @@ void PCSoundFxPlayer::doSync(Common::Serializer &s) {
 PCSound::PCSound(Audio::Mixer *mixer, CruiseEngine *vm) {
 	_vm = vm;
 	_mixer = mixer;
-	_soundDriver = new AdLibSoundDriverADL(_mixer);
-	_player = new PCSoundFxPlayer(_soundDriver);
+	_soundDriver = nullptr;
+	_player = nullptr;
+	_amigaPlayer = nullptr;
+	if (vm->getPlatform() == Common::kPlatformAmiga)
+		_amigaPlayer = new AmigaSoundFxPlayer(_mixer);
+	else {
+		_soundDriver = new AdLibSoundDriverADL(_mixer);
+		_player = new PCSoundFxPlayer(_soundDriver);
+	}
 	_genVolume = 0;
 }
 
 PCSound::~PCSound() {
+	delete _amigaPlayer;
 	delete _player;
 	delete _soundDriver;
 }
 
 void PCSound::loadMusic(const char *name) {
+	if (_amigaPlayer) {
+		_amigaPlayer->load(name);
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::loadMusic('%s')", name);
 	_player->load(name);
 }
 
 void PCSound::playMusic() {
+	if (_amigaPlayer) {
+		_amigaPlayer->play();
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::playMusic()");
 	_player->play();
 }
 
 void PCSound::stopMusic() {
+	if (_amigaPlayer) {
+		_amigaPlayer->stop();
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::stopMusic()");
 	_player->stop();
 }
 
 void PCSound::removeMusic() {
+	if (_amigaPlayer) {
+		_amigaPlayer->unload();
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::removeMusic()");
 	_player->unload();
 }
 
 void PCSound::fadeOutMusic() {
+	if (_amigaPlayer) {
+		_amigaPlayer->fadeOut();
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::fadeOutMusic()");
 	_player->fadeOut();
 }
 
 void PCSound::playSound(const uint8 *data, int size, int volume) {
+	if (_amigaPlayer)
+		return; // Amiga sound effects are outside the music player.
 	debugC(5, kCruiseDebugSound, "PCSound::playSound() channel %d size %d", 4, size);
 	_soundDriver->playSample(data, size, 4, volume);
 }
 
 void PCSound::stopSound(int channel) {
+	if (_amigaPlayer)
+		return; // Amiga sound effects are outside the music player.
 	debugC(5, kCruiseDebugSound, "PCSound::stopSound() channel %d", channel);
 	_soundDriver->resetChannel(channel);
 }
 
 void PCSound::stopChannel(int channel) {
+	if (_amigaPlayer) {
+		_amigaPlayer->stopChannel(channel);
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::stopChannel() channel %d", channel);
 	_soundDriver->stopChannel(channel);
 }
 
 bool PCSound::isPlaying() const {
+	if (_amigaPlayer)
+		return _amigaPlayer->playing();
 	return _player->playing();
 }
 
 bool PCSound::songLoaded() const {
+	if (_amigaPlayer)
+		return _amigaPlayer->songLoaded();
 	return _player->songLoaded();
 }
 
 bool PCSound::songPlayed() const {
+	if (_amigaPlayer)
+		return _amigaPlayer->songPlayed();
 	return _player->songPlayed();
 }
 
 void PCSound::fadeSong() {
+	if (_amigaPlayer) {
+		_amigaPlayer->fadeOut();
+		return;
+	}
 	_player->fadeOut();
 }
 
 uint8 PCSound::numOrders() const {
+	if (_amigaPlayer)
+		return _amigaPlayer->numOrders();
 	return _player->numOrders();
 }
 
 void PCSound::setNumOrders(uint8 v) {
+	if (_amigaPlayer) {
+		_amigaPlayer->setNumOrders(v);
+		return;
+	}
 	_player->setNumOrders(v);
 }
 
 void PCSound::setPattern(int offset, uint8 value) {
+	if (_amigaPlayer) {
+		_amigaPlayer->setPattern(offset, value);
+		return;
+	}
 	_player->setPattern(offset, value);
 }
 
 bool PCSound::musicLooping() const {
+	if (_amigaPlayer)
+		return _amigaPlayer->looping();
 	return _player->looping();
 }
 
 void PCSound::musicLoop(bool v) {
+	if (_amigaPlayer) {
+		_amigaPlayer->setLooping(v);
+		return;
+	}
 	_player->setLooping(v);
 }
 
 void PCSound::startNote(int channel, int volume, int freq) {
+	if (_amigaPlayer)
+		return; // Amiga sound effects are outside the music player.
 	warning("TODO: startNote");
 //	_soundDriver->setVolume(channel, volume);
 	_soundDriver->setChannelFrequency(channel, freq);
 }
 
 void PCSound::doSync(Common::Serializer &s) {
-	_player->doSync(s);
+	if (_amigaPlayer)
+		_amigaPlayer->doSync(s);
+	else
+		_player->doSync(s);
 	s.syncAsSint16LE(_genVolume);
 }
 
 const char *PCSound::musicName() {
+	if (_amigaPlayer)
+		return _amigaPlayer->musicName();
 	return _player->musicName();
 }
 
 void PCSound::syncSounds() {
+	if (_amigaPlayer)
+		return; // Music volume/mute is applied by the mixer to the Paula stream.
 	_soundDriver->syncSounds();
 }
 

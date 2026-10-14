@@ -30,6 +30,7 @@ namespace Cruise {
 class CruiseEngine;
 class PCSoundDriver;
 class PCSoundFxPlayer;
+class AmigaSoundFxPlayer;
 
 class PCSound {
 private:
@@ -39,6 +40,7 @@ private:
 protected:
 	PCSoundDriver *_soundDriver;
 	PCSoundFxPlayer *_player;
+	AmigaSoundFxPlayer *_amigaPlayer;
 public:
 	PCSound(Audio::Mixer *mixer, CruiseEngine *vm);
 	virtual ~PCSound();
