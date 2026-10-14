@@ -90,6 +90,8 @@ protected:
 	bool findMoveNearCenter(const Common::Array<Common::Point> &moves, Common::Point &to) const;
 
 	void startFoxTurn();
+	void findFox();
+	void startWinEnding();
 	void finishFoxMove();
 	void placeGoose(const Common::Point &mousePos);
 	void startEnding(const Ending &ending);

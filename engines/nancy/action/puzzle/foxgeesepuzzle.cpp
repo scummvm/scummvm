@@ -332,7 +332,7 @@ bool FoxGeesePuzzle::findMoveNearCenter(const Common::Array<Common::Point> &move
 	return true;
 }
 
-void FoxGeesePuzzle::startFoxTurn() {
+void FoxGeesePuzzle::findFox() {
 	for (int y = 0; y < kBoardSize; ++y) {
 		for (int x = 0; x < kBoardSize; ++x) {
 			if (_pieces[y][x] == kFox) {
@@ -340,20 +340,28 @@ void FoxGeesePuzzle::startFoxTurn() {
 			}
 		}
 	}
+}
+
+// The fox is trapped; the ending may depend on where
+void FoxGeesePuzzle::startWinEnding() {
+	for (const WinEnding &win : _winEndings) {
+		for (const Common::Point &pos : win.foxPositions) {
+			if (pos == _foxFrom) {
+				startEnding(win.ending);
+				return;
+			}
+		}
+	}
+
+	startEnding(_defaultWinEnding);
+}
+
+void FoxGeesePuzzle::startFoxTurn() {
+	findFox();
 
 	Common::Point to, over;
 	if (!findFoxMove(to, over)) {
-		// The fox is trapped; the ending may depend on where
-		for (const WinEnding &win : _winEndings) {
-			for (const Common::Point &pos : win.foxPositions) {
-				if (pos == _foxFrom) {
-					startEnding(win.ending);
-					return;
-				}
-			}
-		}
-
-		startEnding(_defaultWinEnding);
+		startWinEnding();
 		return;
 	}
 
@@ -527,6 +535,16 @@ void FoxGeesePuzzle::execute() {
 void FoxGeesePuzzle::handleInput(NancyInput &input) {
 	if (_state != kRun || _isEnding || _exitRequested) {
 		return;
+	}
+
+	// Cheat: Ctrl+Shift+W traps the fox where it stands, and wins the game
+	for (const Common::KeyState &key : input.otherKbdInput) {
+		if ((key.flags & Common::KBD_CTRL) && (key.flags & Common::KBD_SHIFT) && key.keycode == Common::KEYCODE_w) {
+			debug("Fox and geese cheat: game won");
+			findFox();
+			startWinEnding();
+			return;
+		}
 	}
 
 	Common::Rect viewportBounds = NancySceneState.getViewport().getBounds();
