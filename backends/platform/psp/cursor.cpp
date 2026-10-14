@@ -144,6 +144,9 @@ void Cursor::copyFromArray(const byte *array) {
 		_blitFunc(_buffer.getPixels(), array,
 		          _buffer.getWidthInBytes(), _buffer.getSourceWidthInBytes(),
 		          _buffer.getWidth(), _buffer.getHeight());
+	} else if (_buffer.hasPalette()) {
+		// Preserve the palette indices; do not color-convert them.
+		_buffer.copyFromArray(array, _buffer.getSourceWidthInBytes());
 	} else {
 		Graphics::crossBlit(_buffer.getPixels(), array,
 		                    _buffer.getWidthInBytes(), _buffer.getSourceWidthInBytes(),
