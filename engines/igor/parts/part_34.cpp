@@ -443,7 +443,7 @@ void IgorEngine::part34ApplyObjectState(int num) {
 }
 
 void IgorEngine::part34OldLadyIdleAnimationFrame(int step) {
-	drawAnimRect(73 * 320 + 112, kParkIdleFrames + kOldLadyIdleFrames[step - 1] * 630, 18, 35, true, kBlendBehindIgorAndText);
+	drawAnimRect(73 * 320 + 112, kParkOldLadyIdleFrames + kOldLadyIdleFrames[step - 1] * 630, 18, 35, true, kBlendBehindIgorAndText);
 }
 
 void IgorEngine::part34UpdateBackground() {

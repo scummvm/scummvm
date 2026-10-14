@@ -45,7 +45,7 @@ void IgorEngine::copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *
 }
 
 /**
- * Draws a block of w x h pixels stored row after row (pitch == w) in the  animation frames buffer onto the screen at the given screen offset.
+ * Draws a block of w x h pixels stored row after row in the  animation frames buffer onto the screen at the given screen offset.
  * With alsoBackground the raw block is also written to the room background (_screenLayer1), so it persists when the screen is redrawn.
  *
  * "blend" selects how the block is combined with what is already there:
@@ -93,6 +93,7 @@ void IgorEngine::drawAnimRect(int dstOffset, int animOffset, int w, int h, bool 
  * Plays the frames from firstFrame to lastFrame (either direction) of a sprite strip with drawAnimRect(kBlendLitSprite)
  * (frames of frameSize bytes starting at srcOffset, each width x height), waiting "delay" ticks between frames. When soundFrame is drawn,
  * "sound" is played.
+ * Used for the shaded parts in room 0 and 2.
  */
 void IgorEngine::animateLitAnimFrames(int srcOffset, int firstFrame, int lastFrame,
 		int frameSize, int width, int height, int dstOffset, int delay,

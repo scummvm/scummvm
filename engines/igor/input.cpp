@@ -72,6 +72,7 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				if (_rightButtonSelecting) {
+					// righ button selects a verb in the panel
 					if (ev.mouse.x < _rightButtonSelectCursorX) {
 						_inputVars[kInputRightMoveLeft] = 1;
 					} else if (ev.mouse.x > _rightButtonSelectCursorX) {
@@ -298,7 +299,6 @@ void IgorEngine::handleRoomInput() {
 		_inputVars[kInputEscape] = 0;
 	}
 
-	// ESCAPE for pause
 	if (_inputVars[kInputPause]) {
 		_inputVars[kInputPause] = 0;
 		handlePause();
@@ -480,7 +480,7 @@ void IgorEngine::handleRoomInput() {
 		} else {
 			_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
 		}
-		// The original only exposes a room object when this action byte is
+		// Expose a room object when this action byte is
 		// non-zero; otherwise hover text is verb-only.
 		if (_actionCode == 0 && _currentAction.object1Type == kObjectTypeRoom) {
 			_currentAction.object1Num = 0;
@@ -505,17 +505,6 @@ void IgorEngine::handleRoomInput() {
 		return;
 	}
 	debugC(9, kDebugEngine, "handleRoomInput() actionCode %d", _actionCode);
-	// expanded: shows what the clicks resolved to and how the offset was built
-	debugC(9, kDebugEngine, "  verb %d verbType %d | obj1: type %d num %d (row %d) | obj2: type %d num %d (col %d) | verbBase %d offset %d -> %d",
-	       _currentAction.verb, _currentAction.verbType,
-	       _currentAction.object1Type, _currentAction.object1Num,
-	       _currentAction.object1Type == 0 ? -1 : _roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38],
-	       _currentAction.object2Type, _currentAction.object2Num,
-	       _currentAction.object2Type == 0 ? -1 : _roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38],
-	       _currentAction.verbType == 1 ? _roomDataOffsets.action.useVerb : _roomDataOffsets.action.giveVerb,
-	       (_roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38] * 2) +
-	           (_roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38] * _roomDataOffsets.action.objectSize),
-	       _actionCode);
 	if (_actionCode == 0) {
 		debugC(9, kDebugEngine, "handleRoomInput() actionCode is 0, clearing action");
 		clearAction();
@@ -585,9 +574,6 @@ void IgorEngine::handleRoomInput() {
 			_walkDataCurrentIndex = 1;
 			_gameState.igorMoving = true;
 		}
-		// Already at the target: the action is not run here. The walk index was
-		// decremented above, so the per-tick walk handler resynchronizes it and
-		// then executes the pending action.
 		return;
 	}
 
