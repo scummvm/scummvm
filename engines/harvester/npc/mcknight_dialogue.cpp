@@ -63,26 +63,49 @@ Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (usedItemName.empty()) {
 		if (_state.talkStatePending) {
 			_state.talkStatePending = false;
-			sharedState.dialogueStateD2f04 = true;
 			const DialogueLineEntry lines[] = {
 				{ 0x1587, kMcknightNpc, 2 },
 				{ 0x158b, kPcSpeaker, 0 },
 				{ 0x158f, kMcknightNpc, 0 },
 				{ 0x1594, kPcSpeaker, 0 },
-				{ 0x1598, kMcknightNpc, 2 },
-				{ 0x159d, kPcSpeaker, 0 }
+				{ 0x1598, kMcknightNpc, 2 }
 			};
-			return playSequence(lines, ARRAYSIZE(lines));
+			Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			sharedState.dialogueStateD2f04 = true;
+			lineError = playPcLine(0x159d);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playMcknightLine(0x15a2, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x18a, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+			if (responseIndex == 1)
+				return playMcknightLine(0x15af);
+			if (responseIndex == 2) {
+				const DialogueLineEntry replyLines[] = {
+					{ 0x15b5, kMcknightNpc, 4 },
+					{ 0x15bd, kPcSpeaker, 0 },
+					{ 0x15c1, kMcknightNpc, 2 }
+				};
+				return playSequence(replyLines, ARRAYSIZE(replyLines));
+			}
 		}
 		return playMcknightLine(0x15e4);
 	}
 
 	if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+		sharedState.discussedWhaleyHerrillPhoto = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 		return playMcknightLine(0x15ea, 1);
 	}
 	if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 			usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+		sharedState.discussedCasketPhotoEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 		Common::Error lineError = playMcknightLine(0x15f2);
 		if (lineError.getCode() != Common::kNoError)
@@ -103,6 +126,7 @@ Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 			runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
+		sharedState.discussedLedgerEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
 		return playMcknightLine(0x1611, 1);
 	}
@@ -110,6 +134,7 @@ Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 			usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 			usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+		sharedState.discussedNoteCheckbookEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 		const DialogueLineEntry lines[] = {
 			{ 0x161b, kMcknightNpc, 1 },
