@@ -416,14 +416,26 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return playMoynahanLine(0x3e3f, 2);
 	}
 
+	Common::Error lineError;
 	if (state.introPending) {
 		state.introPending = false;
-		return playDialogueSequence(runtime, kMoynahanIntroLines, ARRAYSIZE(kMoynahanIntroLines));
+		lineError = playDialogueSequence(runtime, kMoynahanIntroLines, ARRAYSIZE(kMoynahanIntroLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		sharedState.dialogueStateD2f04 = true;
+		const DialogueLineEntry tailLines[] = {
+			{ 0x3d50, kPcSpeaker, 0 },
+			{ 0x3d54, kMoynahanNpc, 0 }
+		};
+		lineError = playDialogueSequence(runtime, tailLines, ARRAYSIZE(tailLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		assignTopicBuffer(runtime.currentRoomName().equalsIgnoreCase(kMoynahanEmbalmingRoom) ? 0x193 : 0x192);
+	} else {
+		lineError = playMoynahanLine(0x3fd1);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 	}
-
-	Common::Error lineError = playMoynahanLine(0x3fd1);
-	if (lineError.getCode() != Common::kNoError)
-		return lineError;
 
 	if (runtime.startupScript().getFlagValue("IF_SAW_THE_SLASHES_ON_THE_BODY") &&
 			!state.slashMarksIntroShown) {
