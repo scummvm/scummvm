@@ -22,6 +22,7 @@
 
 #include "harvester/npc/hank_dialogue.h"
 
+#include "harvester/harvester.h"
 #include "harvester/npc/dialogue_flags.h"
 #include "harvester/npc/dialogue_runtime.h"
 
@@ -183,10 +184,13 @@ bool HankDialogueHandler::matchesNpc(const Common::String &npcName) const {
 
 Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
+	const bool europeanRelease = runtime.engine().isEuropeanRelease();
 	const int currentStoryDayIndex = runtime.startupScript().getCurrentStoryDayIndex();
 	HankRoomDialogueState &state = _state;
 	Common::String &hankTopicBuffer = state.currentTopicBuffer;
 	int &hankTopicBufferLineIndex = state.currentTopicBufferLineIndex;
+	state.currentTopicBuffer.clear();
+	state.currentTopicBufferLineIndex = -1;
 	auto assignHankTopicBuffer = [&](int responseLineIndex) {
 		runtime.assignTopicBuffer(hankTopicBuffer, hankTopicBufferLineIndex,
 			responseLineIndex, "Hank topic buffer");
@@ -254,8 +258,6 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.hasTrackedDayState = true;
 		state.pendingSameDayFollowup = true;
 		state.pendingInitialConversation = false;
-		hankTopicBuffer.clear();
-		hankTopicBufferLineIndex = -1;
 		skipHankFollowupBranches = true;
 
 		Common::Error lineError = runtime.playDialogueLine(0x703, "HANK");
@@ -537,7 +539,30 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (selectedTopic.empty())
 			return Common::kNoError;
-		if (runtime.matchesResponseLine(selectedTopic, 0xd2)) {
+		if (europeanRelease) {
+			if (runtime.matchesResponseLine(selectedTopic, 0xd2))
+				(void)runtime.startupScript().setRuntimeFlagValue("GOT_REMAINS_FOR_LODGE", true);
+			if (runtime.matchesResponseLine(selectedTopic, 0xd3)) {
+				(void)runtime.startupScript().setRuntimeFlagValue("GIVEN_PAPER_TODAY", true);
+				(void)runtime.startupScript().addRuntimeObjectToInventory("COMPLETED_LODGE_APPLICATION");
+			}
+			if (runtime.matchesResponseLine(selectedTopic, 0xd4)) {
+				(void)runtime.startupScript().setRuntimeFlagValue("GIVEN_PAPER_TODAY", true);
+				(void)runtime.startupScript().setRuntimeFlagValue("JUST_GOT_MANHOLE_KEY", true);
+				(void)runtime.startupScript().setRuntimeFlagValue("HAVE_COMPLETED_LODGE_APP", true);
+				sharedState.dialogueStateD2f08 = true;
+				sharedState.dialogueStateD2f00 = true;
+				(void)runtime.startupScript().setRuntimeFlagValue("QUEST_1", true);
+				(void)runtime.startupScript().setRuntimeFlagValue("DAY_1", false);
+				(void)runtime.startupScript().setRuntimeFlagValue("DAY_2", true);
+				(void)runtime.startupScript().setRuntimeFlagValue("DAY_FLAG", true);
+				(void)runtime.startupScript().addRuntimeObjectToInventory("MANKEY");
+				(void)runtime.startupScript().addRuntimeObjectToInventory("ORALUBE");
+				(void)runtime.startupScript().addRuntimeObjectToInventory("SHOVEL");
+			}
+		}
+
+		if (runtime.matchesResponseLine(selectedTopic, europeanRelease ? 0x30f : 0xd2)) {
 			Common::Error lineError = playSequence(
 				kHankMomTopicLines, ARRAYSIZE(kHankMomTopicLines));
 			if (lineError.getCode() != Common::kNoError)
