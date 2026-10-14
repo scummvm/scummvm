@@ -29,6 +29,7 @@
 #include "igor/igor.h"
 #include "igor/console.h"
 #include "igor/detection.h"
+#include "igor/midi.h"
 
 
 namespace Igor {
@@ -70,16 +71,15 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	// _currentPart = 62;
 	// _currentPart = 40;
 
-	// if (_game.flags & kFlagFloppy) {
-	// 	_midiPlayer = new Midi(this);
-	// } else {
-	// 	_midiPlayer = 0;
-	// }
+	_midiPlayer = nullptr;
+	_musicData = nullptr;
 
 	_fastMode = 1;
 }
 
 IgorEngine::~IgorEngine() {
+	delete _midiPlayer;
+	free(_musicData);
 	free(_resourceEntries);
 	free(_soundOffsets);
 	free(_screenVGA);
@@ -99,7 +99,6 @@ IgorEngine::~IgorEngine() {
 
 	// DebugMan.clearAllDebugChannels();
 
-	// delete _midiPlayer;
 	delete _screen;
 }
 
@@ -223,6 +222,8 @@ Common::Error IgorEngine::run() {
 	}
 
 	readTableFile();
+	if (_game.flags & kFlagDemo)
+		_midiPlayer = new MidiPlayer(_mixer);
 	loadMainTexts();
 	loadIgorFrames();
 
