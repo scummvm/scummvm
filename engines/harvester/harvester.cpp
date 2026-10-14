@@ -68,6 +68,10 @@ bool HarvesterEngine::isDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
 
+bool HarvesterEngine::isEuropeanRelease() const {
+	return _gameDescription->extra && Common::String(_gameDescription->extra) == "European Release";
+}
+
 bool HarvesterEngine::canLoadGameStateCurrently(Common::U32String *) {
 	return _script != nullptr;
 }

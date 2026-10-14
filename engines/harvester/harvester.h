@@ -55,6 +55,7 @@ public:
 	Common::String getGameId() const;
 	Common::Language getLanguage() const;
 	bool isDemo() const;
+	bool isEuropeanRelease() const;
 
 	uint32 getRandomNumber(uint maxNum) {
 		return _randomSource.getRandomNumber(maxNum);

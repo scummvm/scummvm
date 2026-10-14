@@ -64,6 +64,7 @@ private:
 	Common::Array<byte> _dialogueData;
 	Common::Array<DialogueIndexEntry> _dialogueEntries;
 	Common::Array<Common::String> _dialogueResponseLines;
+	bool _dialogueResponsesEndWithNewline = true;
 	Common::Array<CftFontResource> _fonts;
 };
 
