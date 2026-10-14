@@ -130,27 +130,31 @@ void IgorEngine::loadDialogueData(int dlg) {
 	assert(dialogueDataSize <= (int)sizeof(_gameState.dialogueData));
 	memcpy(_gameState.dialogueData, p, dialogueDataSize);
 	assert(_roomDataOffsets.dlg.questionsSize <= MAX_DIALOGUE_QUESTIONS);
-	// A zero speech layout retains the legacy packed-tail layout for dialogue
-	// rooms that have not yet had their original offsets added to RoomDataOffsets.
-	int questionSoundsOffset = _roomDataOffsets.dlg.questionSoundsOffset;
-	int replySoundsOffset = _roomDataOffsets.dlg.replySoundsOffset;
-	int replySoundsSize = _roomDataOffsets.dlg.replySoundsSize;
-	if (questionSoundsOffset == 0) {
-		// The packed tail shares the last question word with the reply table's
-		// leading residue word.
-		questionSoundsOffset = dataSize - (_roomDataOffsets.dlg.questionsSize + _roomDataOffsets.dlg.repliesSize + 1) * 2;
-		replySoundsOffset = questionSoundsOffset + _roomDataOffsets.dlg.questionsSize * 2;
-		replySoundsSize = _roomDataOffsets.dlg.repliesSize;
-	}
-	assert(questionSoundsOffset >= 0);
-	assert(questionSoundsOffset + (_roomDataOffsets.dlg.questionsSize + 1) * 2 <= dataSize);
-	for (int i = 0; i < _roomDataOffsets.dlg.questionsSize; ++i) {
-		_dialogueQuestionSounds[i] = READ_LE_UINT16(p + questionSoundsOffset + (i + 1) * 2);
-	}
 	assert(_roomDataOffsets.dlg.repliesSize <= MAX_DIALOGUE_REPLIES);
-	assert(replySoundsOffset + (replySoundsSize + 1) * 2 <= dataSize);
-	for (int i = 0; i < replySoundsSize; ++i) {
-		_dialogueReplySounds[i] = READ_LE_UINT16(p + replySoundsOffset + (i + 1) * 2);
+	memset(_dialogueQuestionSounds, 0, sizeof(_dialogueQuestionSounds));
+	memset(_dialogueReplySounds, 0, sizeof(_dialogueReplySounds));
+	if (_game.flags & kFlagTalkie) {
+		// A zero speech layout retains the legacy packed-tail layout for dialogue
+		// rooms that have not yet had their original offsets added to RoomDataOffsets.
+		int questionSoundsOffset = _roomDataOffsets.dlg.questionSoundsOffset;
+		int replySoundsOffset = _roomDataOffsets.dlg.replySoundsOffset;
+		int replySoundsSize = _roomDataOffsets.dlg.replySoundsSize;
+		if (questionSoundsOffset == 0) {
+			// The packed tail shares the last question word with the reply table's
+			// leading residue word.
+			questionSoundsOffset = dataSize - (_roomDataOffsets.dlg.questionsSize + _roomDataOffsets.dlg.repliesSize + 1) * 2;
+			replySoundsOffset = questionSoundsOffset + _roomDataOffsets.dlg.questionsSize * 2;
+			replySoundsSize = _roomDataOffsets.dlg.repliesSize;
+		}
+		assert(questionSoundsOffset >= 0);
+		assert(questionSoundsOffset + (_roomDataOffsets.dlg.questionsSize + 1) * 2 <= dataSize);
+		for (int i = 0; i < _roomDataOffsets.dlg.questionsSize; ++i) {
+			_dialogueQuestionSounds[i] = READ_LE_UINT16(p + questionSoundsOffset + (i + 1) * 2);
+		}
+		assert(replySoundsOffset + (replySoundsSize + 1) * 2 <= dataSize);
+		for (int i = 0; i < replySoundsSize; ++i) {
+			_dialogueReplySounds[i] = READ_LE_UINT16(p + replySoundsOffset + (i + 1) * 2);
+		}
 	}
 	for (int i = 0; i < _roomDataOffsets.dlg.questionsSize; ++i) {
 		for (int n = 0; n < 2; ++n) {
