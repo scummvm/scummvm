@@ -154,10 +154,14 @@ bool RunawayActor::load() {
 	Common::File file;
 	Common::Array<byte> palette;
 	// Native chapter-five actor loader at 0x40b590 selects entry 44. Entry 45
-	// is the palette, and 46..53 are the eight banks of 19 walking cels.
+	// is the palette, 46..53 hold walking cels, 54..59 hold head cels, and
+	// entry 60 describes the six banks of 40 head cels.
+	_facing = _frame = _headFrame = -1;
 	if (!file.open("RESOURCE.000") || !readGlobalChunk(file, 44, _descriptors) ||
 			_descriptors.size() != kFacings * kFrames * 32 ||
-			!readGlobalChunk(file, 45, palette) || palette.size() != 512)
+			!readGlobalChunk(file, 45, palette) || palette.size() != 512 ||
+			!readGlobalChunk(file, 60, _headDescriptors) ||
+			_headDescriptors.size() != kHeadFacings * kHeadFrames * 32)
 		return false;
 	for (uint i = 0; i < 256; ++i)
 		_palette[i] = READ_LE_UINT16(palette.data() + i * 2);
@@ -172,20 +176,30 @@ bool RunawayActor::load() {
 				return false;
 		}
 	}
+	const byte headFacings[kHeadFacings] = {0, 1, 2, 4, 5, 7};
+	for (uint bank = 0; bank < kHeadFacings; ++bank) {
+		if (!readGlobalChunk(file, 54 + bank, _headBanks[bank]))
+			return false;
+		for (uint frame = 0; frame < kHeadFrames; ++frame) {
+			if (!setFrame(headFacings[bank], 0, frame))
+				return false;
+		}
+	}
 	return setFrame(3, 0);
 }
 
-bool RunawayActor::setFrame(uint facing, uint frame) {
-	if (facing >= kFacings || frame >= kFrames)
+bool RunawayActor::setFrame(uint facing, uint frame, int headFrame) {
+	if (facing >= kFacings || frame >= kFrames || headFrame < -1 || headFrame >= kHeadFrames)
 		return false;
-	if (_facing == (int)facing && _frame == (int)frame)
+	// Head cels replace the top of the standing body; walking cels already
+	// contain their own moving head and shoulders.
+	if (frame)
+		headFrame = -1;
+	if (_facing == (int)facing && _frame == (int)frame && _headFrame == headFrame)
 		return true;
 	const byte *descriptor = _descriptors.data() + (facing * kFrames + frame) * 32;
 	const Common::Array<byte> &bank = _banks[facing];
-	uint cursor = READ_LE_UINT32(descriptor);
 	const uint end = frame + 1 < kFrames ? READ_LE_UINT32(descriptor + 32) : bank.size();
-	if (cursor > end || end > bank.size())
-		return false;
 	const int left = 168 - (int)READ_LE_UINT32(descriptor + 16);
 	const int top = 434 - (int)READ_LE_UINT32(descriptor + 20);
 	const uint width = READ_LE_UINT32(descriptor + 24), height = READ_LE_UINT32(descriptor + 28);
@@ -196,11 +210,39 @@ bool RunawayActor::setFrame(uint facing, uint frame) {
 	memset(_pixels.data(), 0, _pixels.size());
 	memset(_opacity.data(), 0, _opacity.size());
 	memset(_shadow.data(), 0, _shadow.size());
+	_facing = _frame = _headFrame = -1;
+	if (!decodeFrame(bank, descriptor, end, false))
+		return false;
+	if (headFrame >= 0) {
+		// Native 0x428560 maps eight body directions onto six head banks and
+		// clears the old head before compositing color and opacity. Keep the
+		// body's shadow, then scale/light/occlude the completed actor together.
+		const byte headFacings[kFacings] = {0, 1, 2, 2, 3, 4, 4, 5};
+		const uint headFacing = headFacings[facing];
+		const Common::Array<byte> &headBank = _headBanks[headFacing];
+		const byte *head = _headDescriptors.data() + (headFacing * kHeadFrames + headFrame) * 32;
+		const uint headEnd = headFrame + 1 < kHeadFrames ? READ_LE_UINT32(head + 32) : headBank.size();
+		memset(_pixels.data(), 0, kWidth * kHeadHeight);
+		memset(_opacity.data(), 0, kWidth * kHeadHeight);
+		if (!decodeFrame(headBank, head, headEnd, true))
+			return false;
+	}
+	_facing = facing;
+	_frame = frame;
+	_headFrame = headFrame;
+	return true;
+}
+
+bool RunawayActor::decodeFrame(const Common::Array<byte> &bank, const byte *descriptor, uint end, bool head) {
+	uint cursor = READ_LE_UINT32(descriptor);
+	if (cursor > end || end > bank.size())
+		return false;
 	// Packed streams: color spans (x,y,length), then opacity and shadow spans
 	// (x,y,literal,length). A nonliteral mask span expands to opaque bytes.
+	// Head descriptors retain a shadow count, but head banks omit that plane.
 	const uint counts[] = { READ_LE_UINT32(descriptor + 4), READ_LE_UINT32(descriptor + 12),
 		READ_LE_UINT32(descriptor + 8) };
-	for (uint plane = 0; plane < 3; ++plane) {
+	for (uint plane = 0; plane < (head ? 2U : 3U); ++plane) {
 		byte *destination = plane == 0 ? _pixels.data() : plane == 1 ? _opacity.data() : _shadow.data();
 		const uint header = plane == 0 ? 6 : 7;
 		for (uint span = 0; span < counts[plane]; ++span) {
@@ -211,8 +253,11 @@ bool RunawayActor::setFrame(uint facing, uint frame) {
 			const bool literal = plane == 0 || run[4] != 0;
 			const uint length = READ_LE_UINT16(run + header - 2);
 			cursor += header;
-			if (!length || x + length > kWidth || y >= kHeight || (literal && length > end - cursor))
+			if (!length || x + length > kWidth || y >= (head ? kHeadHeight : kHeight) ||
+					(literal && length > end - cursor))
 				return false;
+			if (head)
+				_bounds.extend(Common::Rect(x, y, x + length, y + 1));
 			if (literal) {
 				memcpy(destination + y * kWidth + x, bank.data() + cursor, length);
 				cursor += length;
@@ -221,11 +266,7 @@ bool RunawayActor::setFrame(uint facing, uint frame) {
 			}
 		}
 	}
-	if (cursor != end)
-		return false;
-	_facing = facing;
-	_frame = frame;
-	return true;
+	return cursor == end;
 }
 
 static uint16 blend565(uint16 source, uint16 destination, uint alpha) {

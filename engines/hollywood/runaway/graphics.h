@@ -58,24 +58,28 @@ private:
 	uint _frames = 0;
 };
 
-// Brian's walking banks are indexed RGB565 with separate opacity and shadow
-// planes. This is a different representation from the room animation spans.
+// Brian's walking and head banks are indexed RGB565 with separate opacity and
+// shadow planes. This differs from the room animation spans.
 class RunawayActor {
 public:
 	bool load();
-	bool setFrame(uint facing, uint frame);
+	bool setFrame(uint facing, uint frame, int headFrame = -1);
 	void draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
 		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps, bool sunlit = false) const;
 
 private:
-	enum { kWidth = 345, kHeight = 518, kFacings = 8, kFrames = 19 };
-	Common::Array<byte> _descriptors;
+	enum { kWidth = 345, kHeight = 518, kHeadHeight = 148, kFacings = 8, kFrames = 19,
+		kHeadFacings = 6, kHeadFrames = 40 };
+	bool decodeFrame(const Common::Array<byte> &bank, const byte *descriptor, uint end, bool head);
+	Common::Array<byte> _descriptors, _headDescriptors;
 	Common::Array<byte> _banks[kFacings];
+	Common::Array<byte> _headBanks[kHeadFacings];
 	Common::Array<byte> _pixels, _opacity, _shadow;
 	uint16 _palette[256];
 	Common::Rect _bounds;
 	int _facing = -1;
 	int _frame = -1;
+	int _headFrame = -1;
 };
 
 } // End of namespace Hollywood

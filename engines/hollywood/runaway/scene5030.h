@@ -96,6 +96,7 @@ private:
 	void setPosition(Common::Point position, byte facing);
 	void updateAction();
 	void showSpeechRow();
+	void animateSpeech(uint32 duration);
 	void stopSpeech();
 	void startAction(Action action);
 	void finishAction();
@@ -138,6 +139,8 @@ private:
 	bool _examined[20] = {};
 	bool _globalSpeech = false;
 	uint32 _now = 0, _lastUpdate = 0, _actionStarted = 0, _walkStarted = 0, _subtitleUntil = 0;
+	uint32 _speechStarted = 0, _speechDuration = 0, _speechFrameDuration = 80;
+	Common::Array<byte> _speechFrames;
 	uint _step = 0;
 	uint16 _speechRow = 0, _speechEnd = 0;
 	uint16 _speechSample = 0;

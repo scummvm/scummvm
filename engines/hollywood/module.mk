@@ -143,9 +143,11 @@ MODULE_OBJS = \
 	runaway/intro.o \
 	runaway/inventory.o \
 	runaway/menu.o \
+	runaway/presentation.o \
 	runaway/scene5030.o \
 	runaway/strings.o \
-	runaway/ui.o
+	runaway/ui.o \
+	runaway/video.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HOLLYWOOD), DYNAMIC_PLUGIN)
