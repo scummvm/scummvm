@@ -575,6 +575,41 @@ bool CookingPuzzle::servePlate(Plate &plate) {
 	return success;
 }
 
+void CookingPuzzle::addRequiredIngredientFlags(const Order &order, Common::Array<FlagDescription> &flags) {
+	for (const Order &required : order.required) {
+		for (const IngredientFlag &flag : order.flags) {
+			if (flag.ingredient == required.food) {
+				flags.push_back(flag.flag);
+			}
+		}
+
+		addRequiredIngredientFlags(required, flags);
+	}
+}
+
+void CookingPuzzle::serveAllPlates() {
+	for (Plate &plate : _plates) {
+		Common::Array<FlagDescription> flags;
+		for (const Order &order : plate.orders) {
+			addRequiredIngredientFlags(order, flags);
+		}
+
+		for (const FlagDescription &flag : flags) {
+			NancySceneState.setEventFlag(flag);
+		}
+
+		for (Food *food : plate.foods) {
+			deleteFood(food);
+		}
+	}
+
+	_plates.clear();
+	_openPlate = -1;
+
+	releaseHeldFood(true);
+	startEnding(_solveScene, _allServedSound);
+}
+
 bool CookingPuzzle::clickPlates(const Common::Point &pos) {
 	if (_openPlate == -1) {
 		for (uint i = 0; i < _plates.size(); ++i) {
@@ -1033,6 +1068,15 @@ void CookingPuzzle::execute() {
 void CookingPuzzle::handleInput(NancyInput &input) {
 	if (_state != kRun || _isEnding || _exitRequested) {
 		return;
+	}
+
+	// Cheat: Ctrl+Shift+W serves every order that is left, and ends the meal as won
+	for (const Common::KeyState &key : input.otherKbdInput) {
+		if ((key.flags & Common::KBD_CTRL) && (key.flags & Common::KBD_SHIFT) && key.keycode == Common::KEYCODE_w) {
+			debug("Cooking cheat: all orders served");
+			serveAllPlates();
+			return;
+		}
 	}
 
 	Common::Rect viewportBounds = NancySceneState.getViewport().getBounds();

@@ -156,6 +156,11 @@ protected:
 	bool clickGarbage(const Common::Point &pos);
 	bool putOnPlate(Plate &plate);
 	bool servePlate(Plate &plate);
+
+	// Cheat: serves every order that is left, the way plates with just what they need
+	// would have been served
+	void serveAllPlates();
+	static void addRequiredIngredientFlags(const Order &order, Common::Array<FlagDescription> &flags);
 	bool foodMatches(const Food *food, const Order &order, Common::Array<FlagDescription> &flags,
 		bool checkDoneness, bool &allWellDone) const;
 
