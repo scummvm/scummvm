@@ -252,9 +252,12 @@ void IgorEngine::enterPartLoop() {
 		showCursor();
 	}
 	_gameState.igorMoving = false;
-	// if (_game.version == kIdEngDemo110) {
-	// 	CHECK_FOR_END_OF_DEMO();
-	// }
+	if (_game.version == kIdEngDemo110 && _demoActionsCounter >= 10) {
+		ADD_DIALOGUE_TEXT(104, 2);
+		ADD_DIALOGUE_TEXT(106, 2);
+		SET_DIALOGUE_TEXT(1, 2);
+		startIgorDialogue();
+	}
 }
 
 bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
