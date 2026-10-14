@@ -141,6 +141,8 @@ void IgorEngine::part79LauraInWater() {
 	free(text);
 	loadData(IMG_Part79Layer2, _screenLayer2);
 	loadData(ANM_Part79, _animFramesBuffer);
+	if (!isCDVersion())
+		memset(_screenVGA, 0, 64000);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	part79DrawLauraInWater(1);
 	fadeIn(768);
@@ -203,6 +205,8 @@ static const int kPart79Block1Offset = 53 * 320 + 115;
 static const int kPart79Block1Width = 90;
 static const int kPart79Block1Height = 23;
 static const int kPart79Block1Frames = 0xC0A3;
+static const int kPart79Block1FloppyOffset = 53 * 320 + 84;
+static const int kPart79Block1FloppyWidth = 151;
 static const int kPart79Block2Offset = 108 * 320 + 201;
 static const int kPart79Block2Width = 13;
 static const int kPart79Block2Height = 11;
@@ -211,6 +215,9 @@ static const int kPart79Block3Offset = 53 * 320 + 138;
 static const int kPart79Block3Width = 44;
 static const int kPart79Block3Height = 23;
 static const int kPart79Block3Frames = 0xC8B9;
+static const int kPart79Block3FloppyOffset = 53 * 320 + 93;
+static const int kPart79Block3FloppyWidth = 133;
+static const int kPart79Block3FloppyFrames = 0xCE34;
 
 static const int kPart79FadeFirstColor = 0xF5;
 static const int kPart79FadeLastColor = 0xFE;
@@ -491,8 +498,11 @@ void IgorEngine::part79BeachScene() {
 
 	// the second animation resource replaces the first one
 	loadData(ANM_Part79bScenes, _animFramesBuffer);
-	copyArea(_screenVGA, kPart79Block1Offset, 320, _animFramesBuffer + kPart79Block1Frames, kPart79Block1Width,
-			 kPart79Block1Width, kPart79Block1Height);
+	const bool englishFloppy = _game.version == kIdEngFloppy;
+	const int titleOffset = englishFloppy ? kPart79Block1FloppyOffset : kPart79Block1Offset;
+	const int titleWidth = englishFloppy ? kPart79Block1FloppyWidth : kPart79Block1Width;
+	copyArea(_screenVGA, titleOffset, 320, _animFramesBuffer + kPart79Block1Frames, titleWidth,
+			 titleWidth, kPart79Block1Height);
 
 	part79FadeInPair(0xF5);
 	for (int i = 0; i < 5; ++i) {
@@ -544,8 +554,11 @@ void IgorEngine::part79BeachScene() {
 		part79DrawPhilipSharkScene(&kPart79Anim2D, frame);
 		waitForTimer(31);
 	}
-	copyArea(_screenVGA, kPart79Block3Offset, 320, _animFramesBuffer + kPart79Block3Frames, kPart79Block3Width,
-			 kPart79Block3Width, kPart79Block3Height);
+	const int finalTitleOffset = englishFloppy ? kPart79Block3FloppyOffset : kPart79Block3Offset;
+	const int finalTitleWidth = englishFloppy ? kPart79Block3FloppyWidth : kPart79Block3Width;
+	const int finalTitleFrames = englishFloppy ? kPart79Block3FloppyFrames : kPart79Block3Frames;
+	copyArea(_screenVGA, finalTitleOffset, 320, _animFramesBuffer + finalTitleFrames, finalTitleWidth,
+			 finalTitleWidth, kPart79Block3Height);
 	part79FadeColors(kPart79FadeFirstColor, kPart79FadeLastColor, true);
 	for (int i = 0; i < 8; ++i) {
 		waitForTimer(255);
