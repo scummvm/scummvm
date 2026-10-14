@@ -757,6 +757,8 @@ void IgorEngine::partMain() {
 			error("partMain() Unhandled part %d", _currentPart);
 			break;
 		}
+		if (_gameStateLoaded)
+			continue;
 		// These scheduler exclusions compare only the low byte of the state.
 		// Margaret cutscenes trigger between room changes, but scrollable
 		// areas are omitted so it doesnt trigger after a scroll
