@@ -23,7 +23,7 @@
 #include "cruise/cruise_main.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
-
+#define SKIP_INTRO
 namespace Cruise {
 
 scriptInstanceStruct relHead;
