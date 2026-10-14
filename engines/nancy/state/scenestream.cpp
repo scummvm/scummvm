@@ -23,6 +23,7 @@
 #include "engines/nancy/iff.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/action/actionrecord.h"
@@ -241,8 +242,10 @@ bool SceneStream::loadScene() {
 	}
 
 	Common::Path videoFile;
+	SoundDescription sound;
 	summaryChunk->skip(0x32);	// Description
 	readFilename(*summaryChunk, videoFile);
+	sound.readTerse(*summaryChunk);
 	delete summaryChunk;
 
 	beginScene();
@@ -264,6 +267,14 @@ bool SceneStream::loadScene() {
 	}
 
 	delete sceneIFF;
+
+	// Like the main scene, the scene of a stream starts the music of the area it names
+	// when the channel of its sound is silent
+	if (!sound.name.empty() && !g_nancy->_sound->isSoundPlaying(sound)) {
+		g_nancy->_sound->loadSound(sound, nullptr, true);
+		g_nancy->_sound->playSound(sound);
+	}
+
 	return true;
 }
 

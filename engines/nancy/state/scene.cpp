@@ -197,19 +197,24 @@ void Scene::process() {
 		// fall through
 	case kStartSound:
 		_state = kRun;
-		if (_sceneState.currentScene.continueSceneSound == kLoadSceneSound) {
+		// From Nancy16 on, scene changes have no say about the sounds: they keep playing
+		// into the new scene (e.g. Nancy's closing monologue, Nancy16 scenes 6514-6532).
+		// Only loading a game stops them.
+		if (_sceneState.currentScene.continueSceneSound == kLoadSceneSound && g_nancy->getGameType() <= kGameTypeNancy15) {
 			g_nancy->_sound->stopAndUnloadSceneSpecificSounds();
 
-			if (g_nancy->getGameType() <= kGameTypeNancy15) {
+			if (g_nancy->getGameType() <= kGameTypeNancy12) {
 				g_nancy->_sound->loadSound(_sceneState.summary.sound);
 				g_nancy->_sound->playSound(_sceneState.summary.sound);
 			}
 		}
 
-		// Nancy16 scenes name the music mix of their area. A track of it, picked at
-		// random, starts whenever a scene finds its music channel silent, so the
-		// tracks follow one another with no regard to scene changes.
-		if (g_nancy->getGameType() == kGameTypeNancy16 && !g_nancy->_sound->isSoundPlaying(_sceneState.summary.sound)) {
+		// From Nancy13 on, the sound of a scene can name the music mix of its area (its
+		// environment, from Nancy17 on). A track of it, picked at random, starts whenever
+		// a scene finds the channel of its sound silent, so the tracks follow one another
+		// with no regard to scene changes.
+		if (g_nancy->getGameType() >= kGameTypeNancy13 && g_nancy->getGameType() <= kGameTypeNancy18 &&
+				!g_nancy->_sound->isSoundPlaying(_sceneState.summary.sound)) {
 			g_nancy->_sound->loadSound(_sceneState.summary.sound, nullptr, true);
 			g_nancy->_sound->playSound(_sceneState.summary.sound);
 		}
