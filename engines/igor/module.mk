@@ -73,6 +73,7 @@ MODULE_OBJS = \
 	parts/part_margaret.o \
 	text.o \
 	part_main.o \
+	midi.o \
 	sound.o
 
 # This module can be built as a plugin

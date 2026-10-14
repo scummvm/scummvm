@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 
 #include "igor/igor.h"
+#include "igor/midi.h"
 
 namespace Igor {
 
@@ -66,6 +67,14 @@ void IgorEngine::syncSoundSettings() {
 	}
 }
 
+void IgorEngine::startMusic(int cmf) {
+	_midiPlayer->stopMusic();
+	free(_musicData);
+	int musicDataSize;
+	_musicData = loadData(cmf, nullptr, &musicDataSize);
+	_midiPlayer->playMusic(_musicData, musicDataSize);
+}
+
 void IgorEngine::playMusic(int num, bool restart) {
 	debugC(9, kDebugEngine, "playMusic() %d", num);
 	if (_gameState.musicNum == num && !restart)
@@ -75,8 +84,16 @@ void IgorEngine::playMusic(int num, bool restart) {
 		_gameState.musicSequenceIndex = 1;
 	}
 	if (_game.flags & kFlagFloppy) {
-		// TODO: the track number -> CMF file mapping is not known yet
-		// startMusic(...);
+		if (_midiPlayer) {
+			static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
+			if (num < 0 || num >= (int)ARRAYSIZE(cmf) || cmf[num] == 0) {
+				// TODO: Restore the remaining demo music selections once verified.
+				return;
+			}
+			startMusic(cmf[num]);
+		} else {
+			// TODO: Verify the full floppy game's music resource mapping.
+		}
 	} else {
 		g_system->getAudioCDManager()->stop();
 		// the first CD track is the data track: music number N is CD track N + 1

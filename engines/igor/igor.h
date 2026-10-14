@@ -561,6 +561,8 @@ enum AnimBlend {
 	kBlendBehindIgorAndText // igor colors AND text survive
 };
 
+class MidiPlayer;
+
 class IgorEngine : public Engine {
 public:
 	typedef void (IgorEngine::*ExecuteActionProc)(int action); // pointer to room action function
@@ -572,7 +574,8 @@ public:
 private:
 	const IgorGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	// MidiPlayer *_midiPlayer;
+	MidiPlayer *_midiPlayer;
+	uint8 *_musicData;
 
 	Common::File _ovlFile;
 	Common::File _sndFile;
