@@ -38,7 +38,20 @@ Common::Error Fireman2DialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		wavId = 0x5b9;
 	}
 
-	return runtime.playDialogueLineWithVariant(wavId, "FIREMAN2", 2);
+	Common::Error lineError = runtime.playDialogueLineWithVariant(wavId, "FIREMAN2", 2);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+	if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") && !_state.dialogueStateD2de0) {
+		_state.dialogueStateD2de0 = 1;
+		lineError = runtime.playDialogueLineWithVariant(0x5c0, "FIREMAN2", 1);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("BOLT_OF_CLOTH_TAKEN") && !_state.dialogueStateD2de4) {
+		_state.dialogueStateD2de4 = 1;
+		return runtime.playDialogueLineWithVariant(0x5cd, "FIREMAN2", 3);
+	}
+	return Common::kNoError;
 }
 
 } // End of namespace Harvester
