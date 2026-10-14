@@ -730,6 +730,9 @@ void PlaySecondaryMovie::readDataNancy13(Common::Serializer &ser, Common::Seekab
 	ser.syncAsSint16LE(_sceneChange.sceneID);
 	ser.syncAsUint16LE(_sceneChange.frameID);
 
+	// The scene sounds keep playing
+	_sceneChange.continueSceneSound = kContinueSceneSound;
+
 	_playDirection = orderSentinelFrame(_lastFrame) < orderSentinelFrame(_firstFrame) ?
 		kPlayMovieReverse : kPlayMovieForward;
 
@@ -811,6 +814,9 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 
 	ser.syncAsSint16LE(_sceneChange.sceneID);
 	ser.syncAsUint16LE(_sceneChange.frameID);
+
+	// The scene sounds keep playing (e.g. Nancy's monologue in Nancy14 scenes 0 -> 6401)
+	_sceneChange.continueSceneSound = kContinueSceneSound;
 
 	// Nancy17 marks "no scene change" with a different value
 	if (g_nancy->getGameType() >= kGameTypeNancy17 && _sceneChange.sceneID == kNoSceneNancy17) {
