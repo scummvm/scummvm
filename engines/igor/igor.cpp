@@ -179,7 +179,7 @@ void IgorEngine::restart() {
 	memset(_roomActionsTable, 0, sizeof(_roomActionsTable));
 	_executeMainAction = 0;
 	_executeRoomAction = 0;
-	// _previousMusic = 0;
+	_previousMusic = 0;
 	// _musicData = 0;
 	_scrollInventory = false;
 	_roomCursorOn = true;

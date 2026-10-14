@@ -51,7 +51,8 @@ void IgorEngine::partMargaretUpdateDialogue(int action) {
 void IgorEngine::partMargaret() {
 	const bool savingWasAllowed = _canSaveGame;
 	_canSaveGame = false;
-	playMusic(8);
+	if (isCDVersion())
+		playMusic(8);
 	_gameState.enableLight = 1;
 	VAR_MARGARET_ROOM_ANIM_COUNTER = _objectsState[kMargaretSceneStateIndex] + 1;
 	if (VAR_MARGARET_ROOM_ANIM_COUNTER == 9) {

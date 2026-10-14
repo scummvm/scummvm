@@ -401,7 +401,8 @@ void IgorEngine::part21UpdateBackground() {
 }
 
 void IgorEngine::part21() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeCorridorMargaret, IMG_CollegeCorridorMargaret, BOX_CollegeCorridorMargaret, MSK_CollegeCorridorMargaret, TXT_CollegeCorridorMargaret);
 	static const int anm[] = { FRM_CollegeCorridorMargaret1, FRM_CollegeCorridorMargaret2, FRM_CollegeCorridorMargaret3, FRM_CollegeCorridorMargaret4, 0 };

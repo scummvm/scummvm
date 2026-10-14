@@ -219,7 +219,8 @@ void IgorEngine::part26DrawMissSullivanFrame(int frame) {
 }
 
 void IgorEngine::part26() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_CollegeCorridorMissBarrymore, IMG_CollegeCorridorMissBarrymore, BOX_CollegeCorridorMissBarrymore, MSK_CollegeCorridorMissBarrymore, TXT_CollegeCorridorMissBarrymore);
 	static const int anm[] = { FRM_CollegeCorridorMissBarrymore1, FRM_CollegeCorridorMissBarrymore2, FRM_CollegeCorridorMissBarrymore3, 0 };

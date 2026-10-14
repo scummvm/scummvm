@@ -51,7 +51,7 @@ void IgorEngine::part90() {
 	const uint16 duration = holdTicks[_currentPart - 900];
 	const char *str;
 
-	if (_currentPart == 900) {
+	if (_currentPart == 900 && isCDVersion()) {
 		playMusic(14);
 	}
 

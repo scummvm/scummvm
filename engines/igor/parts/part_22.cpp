@@ -157,7 +157,8 @@ void IgorEngine::part22Enter() {
 }
 
 void IgorEngine::part22() {
-	playMusic(3);
+	if (isCDVersion())
+		playMusic(3);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_BellChurch, IMG_BellChurch, BOX_BellChurch, MSK_BellChurch, TXT_BellChurch);
 	SET_PAL_240_48_1();

@@ -367,7 +367,8 @@ void IgorEngine::part31DrawOpenDoor() {
 }
 
 void IgorEngine::part31() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeStairsSecondFloor, IMG_CollegeStairsSecondFloor, BOX_CollegeStairsSecondFloor, MSK_CollegeStairsSecondFloor, TXT_CollegeStairsSecondFloor);
 	static const int anm[] = { FRM_CollegeStairsSecondFloor1, FRM_CollegeStairsSecondFloor2, FRM_CollegeStairsSecondFloor3, 0 };

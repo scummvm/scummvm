@@ -224,7 +224,8 @@ void IgorEngine::part23DrawLucasFrame(int frame) {
 }
 
 void IgorEngine::part23() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeCorridorLucas, IMG_CollegeCorridorLucas, BOX_CollegeCorridorLucas, MSK_CollegeCorridorLucas, TXT_CollegeCorridorLucas);
 	static const int anm[] = {

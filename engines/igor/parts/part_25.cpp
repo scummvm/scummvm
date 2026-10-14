@@ -178,7 +178,8 @@ void IgorEngine::part25DrawOpenDoor() {
 }
 
 void IgorEngine::part25() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeCorridorAnnouncementBoard, IMG_CollegeCorridorAnnouncementBoard, BOX_CollegeCorridorAnnouncementBoard, MSK_CollegeCorridorAnnouncementBoard, TXT_CollegeCorridorAnnouncementBoard);
 	static const int anm[] = { FRM_CollegeCorridorAnnouncementBoard1, FRM_CollegeCorridorAnnouncementBoard2, 0 };

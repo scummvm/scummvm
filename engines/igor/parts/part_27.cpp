@@ -213,7 +213,8 @@ void IgorEngine::part27EnterFromLibrary() {
 }
 
 void IgorEngine::part27() {
-	playMusic(2);
+	if (isCDVersion())
+		playMusic(2);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_CollegeLockers, IMG_CollegeLockers, BOX_CollegeLockers, MSK_CollegeLockers, TXT_CollegeLockers);
 	static const int anm[] = { FRM_CollegeLockers1, FRM_CollegeLockers2, FRM_CollegeLockers3, 0 };

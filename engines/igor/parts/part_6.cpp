@@ -272,7 +272,8 @@ void IgorEngine::part6DrawBackgroundOverPhotographer() {
 }
 
 void IgorEngine::part6() {
-	playMusic(10);
+	if (isCDVersion())
+		playMusic(10);
 	debug("Entering part6");
 	_gameState.enableLight = 1;
 

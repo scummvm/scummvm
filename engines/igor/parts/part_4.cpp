@@ -69,6 +69,8 @@ void IgorEngine::part4() {
 
 	if (_objectsState[kStatuetteTaken2StateIndex] == 1) { // police custcene
 		_currentPart = 730;
+		if (!isCDVersion())
+			playMusic(11, true);
 		return;
 	}
 
@@ -76,6 +78,8 @@ void IgorEngine::part4() {
 	if (_objectsState[kFlaskLeftInPhillipLockerStateIndex] == 1) {
 		_objectsState[kFlaskLeftInPhillipLockerStateIndex] = 0;
 		_currentPart = 750;
+		if (!isCDVersion())
+			playMusic(11, true);
 		return;
 	}
 	_gameState.enableLight = 1;
@@ -88,10 +92,14 @@ void IgorEngine::part4() {
 	_objectsState[kPhillipLockerStateIndex] = 0;
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
-	playMusic(1);
+	if (isCDVersion())
+
+		playMusic(1);
 	if (!restoreRoomAfterLoad(false)) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
+		if (!isCDVersion())
+			playMusic(2);
 		_walkData[0].x = 160;
 		_walkData[0].y = 133;
 		_walkData[0].scaleWidth = 49;

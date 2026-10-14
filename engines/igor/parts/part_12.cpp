@@ -449,6 +449,8 @@ void IgorEngine::part12EnterFromPath() {
 }
 
 void IgorEngine::part12EnterFromChurch() {
+	if (!isCDVersion())
+		playMusic(2, true);
 	part12ApplyObjectState(255);
 	_walkData[0].setPos(75, 89, 2, 0);
 	_walkData[0].setDefaultScale();
@@ -499,7 +501,7 @@ void IgorEngine::part12DrawPriestTalkingFrame(int frame) {
 }
 
 void IgorEngine::part12() {
-	if (_currentPart != 122) {
+	if (_currentPart != 122 && isCDVersion()) {
 		playMusic(1);
 	}
 	_gameState.enableLight = 1;

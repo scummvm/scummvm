@@ -783,9 +783,18 @@ void IgorEngine::partMain() {
 		if (_gameState.shouldShowCutsceneCounter != 5) {
 			++_gameState.shouldShowCutsceneCounter;
 		} else {
-			playMusic(8);
+			if (!isCDVersion()) {
+				if (_gameState.musicNum != 11) {
+					_previousMusic = _gameState.musicNum;
+					playMusic(11);
+				}
+			} else {
+				playMusic(8);
+			}
 			partMainMeanwhile();
 			partMargaret();
+			if (!isCDVersion() && _previousMusic != 11)
+				playMusic(_previousMusic, true);
 			_gameState.shouldShowCutsceneCounter = 0;
 		}
 	} while (_currentPart != kInvalidPart && !_eventQuitGame);

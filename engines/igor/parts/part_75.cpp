@@ -51,7 +51,8 @@ void IgorEngine::part75DrawPhilipFrame(int frame) {
 void IgorEngine::part75() {
 	const bool savingWasAllowed = _canSaveGame;
 	_canSaveGame = false;
-	playMusic(8);
+	if (isCDVersion())
+		playMusic(8);
 	partMainMeanwhile();
 	_gameState.enableLight = 1;
 	_talkColorIndex = 255;
