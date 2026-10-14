@@ -78,6 +78,7 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 }
 
 IgorEngine::~IgorEngine() {
+	_optionsMenuThumbnail.free();
 	delete _midiPlayer;
 	free(_musicData);
 	free(_resourceEntries);

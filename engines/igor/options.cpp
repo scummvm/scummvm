@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "audio/softsynth/pcspk.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "graphics/scaler.h"
@@ -25,21 +26,6 @@
 #include "igor/igor.h"
 
 namespace Igor {
-
-class OptionsThumbnailScope {
-	const Graphics::Surface *&_slot;
-	const Graphics::Surface *_previous;
-	Graphics::Surface _thumbnail;
-public:
-	explicit OptionsThumbnailScope(const Graphics::Surface *&slot) : _slot(slot), _previous(slot) {
-		if (::createThumbnailFromScreen(&_thumbnail))
-			_slot = &_thumbnail;
-	}
-	~OptionsThumbnailScope() {
-		_slot = _previous;
-		_thumbnail.free();
-	}
-};
 
 static const struct {
 	int y;
@@ -107,6 +93,7 @@ enum OptionsMenuText {
 	kOptionsSaveTitle,
 	kOptionsNoSavedGames,
 	kOptionsLoadTitle,
+	kOptionsUnavailable,
 	kOptionsTextCount
 };
 
@@ -121,7 +108,7 @@ static const Page pages[] = {
 	{
 		{ kOptionsSave, kOptionsSaveTitle },
 		{ 67, 159 },
-		0,
+		0, // todo: native save/load screens
 		0
 	},
 	{
@@ -150,23 +137,29 @@ static const Page pages[] = {
 	}
 };
 
-
+// Load the texts from the resources of each game version
 void IgorEngine::loadOptionsMenuTexts() {
 	if (!_optionsMenuTexts.empty())
 		return;
 
+	const bool demo = _game.flags & kFlagDemo;
+	_optionsMenuTexts.resize(kOptionsTextCount);
 	const struct {
 		int resource;
 		int count;
+		int firstText;
 	} groups[] = {
-		{ TXT_OptionsButtons, 5 },
-		{ TXT_OptionsSettings, 17 },
-		{ TXT_OptionsTitle, 1 },
-		{ TXT_OptionsQuit, 3 },
-		{ TXT_OptionsSaveTitle, 1 },
-		{ TXT_OptionsLoadTitle, 2 }
+		{ TXT_OptionsButtons, 5, kOptionsSave },
+		{ TXT_OptionsSettings, demo ? 12 : 17, kOptionsSoundOff },
+		{ TXT_OptionsTitle, 1, kOptionsCtrlTitle },
+		{ TXT_OptionsQuit, 3, kOptionsQuitTitle },
+		{ TXT_OptionsSaveTitle, 1, kOptionsSaveTitle },
+		{ TXT_OptionsLoadTitle, demo ? 1 : 2, demo ? kOptionsLoadTitle : kOptionsNoSavedGames },
+		{ TXT_OptionsUnavailable, demo ? 1 : 0, kOptionsUnavailable }
 	};
 	for (uint i = 0; i < ARRAYSIZE(groups); ++i) {
+		if (groups[i].count == 0)
+			continue;
 		int size;
 		uint8 *data = loadData(groups[i].resource, 0, &size);
 		int offset = 0;
@@ -174,7 +167,12 @@ void IgorEngine::loadOptionsMenuTexts() {
 			if (offset >= size || data[offset] > size - offset - 1)
 				error("Invalid options menu text resource %d", groups[i].resource);
 			int length = data[offset++];
-			_optionsMenuTexts.push_back(Common::String((const char *)data + offset, length));
+			int text = groups[i].firstText + j;
+			if (demo && groups[i].resource == TXT_OptionsSettings && j >= 3) {
+				// The demo has one text-only label in place of the CD speech choices.
+				text = kOptionsSpeechUnavailable + j - 3;
+			}
+			_optionsMenuTexts[text] = Common::String((const char *)data + offset, length);
 			offset += length;
 		}
 		if (offset != size)
@@ -186,6 +184,7 @@ void IgorEngine::loadOptionsMenuTexts() {
 
 void IgorEngine::drawOptionsMenuText(int text, int x, int y, int color) {
 	const char *str = _optionsMenuTexts[text].c_str();
+	// center horizontally
 	_font.drawString(_screenTextLayer, str, x - _font.getStringWidth(str) / 2, y, color, -1, 0);
 }
 
@@ -195,9 +194,10 @@ void IgorEngine::handleOptionsMenu_paintQuit() {
 }
 
 bool IgorEngine::handleOptionsMenu_handleKeyDownQuit(int key) {
-	if (key == Common::KEYCODE_s)
+	const int yesKey = (_game.language == Common::ES_ESP) ? Common::KEYCODE_s : Common::KEYCODE_y;
+	if (key == yesKey)
 		_currentPart = kInvalidPart;
-	return key == Common::KEYCODE_s || key == Common::KEYCODE_n || key == Common::KEYCODE_ESCAPE;
+	return key == yesKey || key == Common::KEYCODE_n || key == Common::KEYCODE_ESCAPE;
 }
 
 static void redrawRect(uint8 *dst, int num, bool border) {
@@ -217,6 +217,19 @@ static void redrawRect(uint8 *dst, int num, bool border) {
 }
 
 void IgorEngine::handleOptionsMenu_paintCtrl() {
+	if (_game.flags & kFlagDemo) {
+		const int labels[] = {
+			kOptionsSoundOff + CLIP<int>(_gameState.configSoundEnabled, 0, 2),
+			kOptionsSpeechUnavailable,
+			kOptionsMusicOn,
+			kOptionsSpeedVerySlow + CLIP<int>(_gameState.talkSpeed, 1, 5) - 1 //choose option from the enum with base value + delta
+		};
+		for (int row = 1; row <= 4; ++row) {
+			redrawRect(_screenTextLayer, row, row == 4);
+			drawOptionsMenuText(labels[row - 1], 159, 22 * row + 4, row == 4 ? 0xF6 : 0xF7);
+		}
+		return;
+	}
 	const int talkMode = getTalkMode();
 	const int labels[] = {
 		kOptionsSoundOff + CLIP<int>(_gameState.configSoundEnabled, 0, 2),
@@ -234,6 +247,15 @@ void IgorEngine::handleOptionsMenu_paintCtrl() {
 }
 
 bool IgorEngine::handleOptionsMenu_handleKeyDownCtrl(int key) {
+	if (_game.flags & kFlagDemo) {
+		if (key == Common::KEYCODE_ESCAPE)
+			return true;
+		if (key == Common::KEYCODE_RETURN) {
+			_gameState.talkSpeed = _gameState.talkSpeed == 5 ? 1 : _gameState.talkSpeed + 1;
+			handleOptionsMenu_paintCtrl();
+		}
+		return false;
+	}
 	const int firstRow = (_game.flags & kFlagTalkie) ? 1 : 4;
 	const int lastRow = getTalkMode() == kTalkModeTextOnly ? 4 : 3;
 	switch (key) {
@@ -290,9 +312,14 @@ static void drawButtonsBar(uint8 *dst, const uint8 *src) {
 
 void IgorEngine::handleOptionsMenu() {
 	// Retain the gameplay view before the menu draws or dims its palette.
-	OptionsThumbnailScope thumbnailScope(_optionsMenuThumbnail);
+	_optionsMenuThumbnail.free();
+	::createThumbnailFromScreen(&_optionsMenuThumbnail);
 	loadOptionsMenuTexts();
 	PauseToken pauseToken = pauseEngine();
+
+	Audio::PCSpeaker speaker;
+	const bool speakerReady = (_game.flags & kFlagFloppy) && speaker.init();
+
 	hideCursor();
 	// End the room's spoken line before reusing its text backing store.
 	if (_gameState.dialogueTextRunning) {
@@ -358,7 +385,8 @@ void IgorEngine::handleOptionsMenu() {
 				break;
 			case Common::EVENT_KEYDOWN:
 				if (focusOnPage) {
-					if ((this->*pages[currentPage].handleKeyDownProc)(ev.kbd.keycode)) {
+					const bool unavailable = (_game.flags & kFlagDemo) && (currentPage == kPageSave || currentPage == kPageLoad);
+					if (unavailable || (this->*pages[currentPage].handleKeyDownProc)(ev.kbd.keycode)) {
 						memcpy(_screenTextLayer + 3 * 320, buttonsBarBackup, 320 * 12);
 						for (int y = 22; y <= 110; ++y) {
 							memset(_screenTextLayer + y * 320 + 43 + 4, 0xF8, 226);
@@ -371,11 +399,13 @@ void IgorEngine::handleOptionsMenu() {
 						menuLoop = false;
 						break;
 					case Common::KEYCODE_RETURN:
-						if (currentPage == kPageSave) {
+						if (currentPage == kPageSave && !(_game.flags & kFlagDemo)) {
 							saveGameDialog();
-						} else if (currentPage == kPageLoad) {
-							if (loadGameDialog())
+						} else if (currentPage == kPageLoad && !(_game.flags & kFlagDemo)) {
+							if (loadGameDialog()) {
+								_optionsMenuThumbnail.free();
 								return;
+							}
 						} else if (currentPage == kPagePlay) {
 							menuLoop = false;
 						} else {
@@ -386,7 +416,17 @@ void IgorEngine::handleOptionsMenu() {
 							drawOptionsMenuText(pages[currentPage].captions[1], pages[currentPage].xPos[1], yPosCaption, 0xFB);
 							if (currentPage == kPageCtrl)
 								_optionsControlRow = (_game.flags & kFlagTalkie) ? 1 : 4;
-							(this->*pages[currentPage].paintProc)();
+							if ((_game.flags & kFlagDemo) && (currentPage == kPageSave || currentPage == kPageLoad)) {
+								drawOptionsMenuText(kOptionsUnavailable, 159, 70 - 16, 0xF6);
+								_system->copyRectToScreen(_screenTextLayer, 320, 0, 15, 320, 115);
+								_system->updateScreen();
+								// The unavailable page requests a PCSpeaker beep before accepting another key.
+								if (speakerReady)
+									speaker.playQueue(Audio::PCSpeaker::kWaveFormSquare, 1193182.0f / 1320, 333000);
+								_system->delayMillis(333);
+							} else {
+								(this->*pages[currentPage].paintProc)();
+							}
 							focusOnPage = true;
 						}
 						break;
@@ -420,6 +460,7 @@ void IgorEngine::handleOptionsMenu() {
 		_system->updateScreen();
 	}
 
+	_optionsMenuThumbnail.free();
 	_inputVars[kInputClick] = 0;
 	_inputVars[kInputRightClick] = 0;
 	_inputVars[kInputSkipDialogue] = 0;
