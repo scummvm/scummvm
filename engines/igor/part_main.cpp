@@ -798,6 +798,14 @@ void IgorEngine::partMain() {
 			_gameState.shouldShowCutsceneCounter = 0;
 		}
 	} while (_currentPart != kInvalidPart && !_eventQuitGame);
+	if (_game.flags & kFlagDemo) {
+		const bool savingWasAllowed = _canSaveGame;
+		_canSaveGame = false;
+		for (_currentPart = kSharewarePart; !_eventQuitGame && _currentPart <= kSharewarePart + 6; ++_currentPart)
+			part95();
+		_currentPart = kInvalidPart;
+		_canSaveGame = savingWasAllowed;
+	}
 }
 
 /**

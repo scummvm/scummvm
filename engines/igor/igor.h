@@ -1535,6 +1535,7 @@ private:
 	void part85AnimateIgorHead(int frame);
 
 	// Splash screens
+	void part95();
 	void part90();
 	void part90FadePalette(bool fadeInColors);
 
