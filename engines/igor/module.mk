@@ -3,7 +3,6 @@ MODULE := engines/igor
 MODULE_OBJS = \
 	igor.o \
 	console.o \
-	debug.o \
 	metaengine.o \
 	walk.o \
 	palette.o \

@@ -143,6 +143,7 @@ void IgorEngine::loadOptionsMenuTexts() {
 		return;
 
 	const bool demo = _game.flags & kFlagDemo;
+	const bool talkie = _game.flags & kFlagTalkie;
 	_optionsMenuTexts.resize(kOptionsTextCount);
 	const struct {
 		int resource;
@@ -150,11 +151,11 @@ void IgorEngine::loadOptionsMenuTexts() {
 		int firstText;
 	} groups[] = {
 		{ TXT_OptionsButtons, 5, kOptionsSave },
-		{ TXT_OptionsSettings, demo ? 12 : 17, kOptionsSoundOff },
+		{ TXT_OptionsSettings, talkie ? 17 : 12, kOptionsSoundOff },
 		{ TXT_OptionsTitle, 1, kOptionsCtrlTitle },
 		{ TXT_OptionsQuit, 3, kOptionsQuitTitle },
 		{ TXT_OptionsSaveTitle, 1, kOptionsSaveTitle },
-		{ TXT_OptionsLoadTitle, demo ? 1 : 2, demo ? kOptionsLoadTitle : kOptionsNoSavedGames },
+		{ TXT_OptionsLoadTitle, talkie ? 2 : 1, talkie ? kOptionsNoSavedGames : kOptionsLoadTitle },
 		{ TXT_OptionsUnavailable, demo ? 1 : 0, kOptionsUnavailable }
 	};
 	for (uint i = 0; i < ARRAYSIZE(groups); ++i) {
@@ -168,8 +169,8 @@ void IgorEngine::loadOptionsMenuTexts() {
 				error("Invalid options menu text resource %d", groups[i].resource);
 			int length = data[offset++];
 			int text = groups[i].firstText + j;
-			if (demo && groups[i].resource == TXT_OptionsSettings && j >= 3) {
-				// The demo has one text-only label in place of the CD speech choices.
+			if (!talkie && groups[i].resource == TXT_OptionsSettings && j >= 3) {
+				// Non-talkie versions have one text-only label in place of the CD speech choices.
 				text = kOptionsSpeechUnavailable + j - 3;
 			}
 			_optionsMenuTexts[text] = Common::String((const char *)data + offset, length);
