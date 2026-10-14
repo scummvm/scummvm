@@ -49,7 +49,6 @@ static const int kParsonsAliensFollowupTopicLine = 0x1d0;
 static const int kParsonsHiddenExitTopicLine = 0x1d1;
 
 static const int kParsonsAliensTopicResponseLines[] = {
-	kParsonsAliensTopicLine,
 	kParsonsPastorelliTopicLine,
 	kParsonsBarberTopicLine,
 	kParsonsMrPastorelliTopicLine
@@ -116,6 +115,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			sharedState.discussedWhaleyHerrillPhoto = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 			return playParsonsLine(0xe77, 1);
@@ -123,6 +123,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownPhotoOfCorpse, true);
 
@@ -141,6 +142,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 					usedItemName.equalsIgnoreCase("LEDGER2")) &&
 				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
+			sharedState.discussedLedgerEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownLedgersToAnyone, true);
 			return playParsonsLine(0xe8e, 0);
@@ -150,6 +152,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceOfBlackmail, true);
 			return runtime.playDialogueEntrySequence(
@@ -158,6 +161,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (usedItemName.equalsIgnoreCase("TV_DEED") ||
 				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
+			sharedState.discussedTvDeedEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceSheriffOwns, true);
 			return playParsonsLine(0xea4, 1);
@@ -280,7 +284,15 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kParsonsAliensTopicResponseLines,
-					ARRAYSIZE(kParsonsAliensTopicResponseLines))) {
+				ARRAYSIZE(kParsonsAliensTopicResponseLines))) {
+			lineError = playParsonsLine(0xe54, 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignParsonsTopicBuffer(topicBuffer, topicBufferLineIndex, kParsonsAliensFollowupTopicLine);
+			continue;
+		}
+
+		if (runtime.matchesResponseLine(selectedTopic, kParsonsAliensTopicLine)) {
 			lineError = playParsonsLine(0xe1c, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -308,7 +320,6 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = playParsonsLine(0xe4b, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignParsonsTopicBuffer(topicBuffer, topicBufferLineIndex, kParsonsAliensFollowupTopicLine);
 			continue;
 		}
 
