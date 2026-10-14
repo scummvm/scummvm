@@ -190,7 +190,8 @@ protected:
 	bool		_useRTL;
 
 	bool		_displayTopDialogOnly;
-	bool		_imeCompositionControlActive = false;
+	/** Number of nested GUI IME control scopes, including tooltip dialogs. */
+	uint		_imeCompositionControlDepth = 0;
 
 	Common::Mutex _iconsMutex;
 	Common::SearchSet _iconsSet;

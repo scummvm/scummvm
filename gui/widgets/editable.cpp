@@ -72,10 +72,11 @@ EditableWidget::~EditableWidget() {
 }
 
 void EditableWidget::drawWidget() {
-	if (_caretVisible) {
+	if (_caretVisible)
 		drawCaret(false, true);
+	// Keep the candidate area current even during the caret's hidden blink phase.
+	if (_hasFocus)
 		updateImeCompositionArea();
-	}
 }
 
 void EditableWidget::reflowLayout() {

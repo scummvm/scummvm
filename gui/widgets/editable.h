@@ -106,6 +106,7 @@ protected:
 	virtual int getCaretOffset() const;
 	virtual int getSelectionCarretOffset() const;
 	Common::Rect getCaretRect(bool useRelativeCoordinates = false);
+	/** Update the native IME candidate area to this widget's caret. */
 	void updateImeCompositionArea();
 	void drawCaret(bool erase, bool useRelativeCoordinates = false);
 	bool adjustOffset();

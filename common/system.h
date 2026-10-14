@@ -714,6 +714,7 @@ public:
 	 *
 	 * The active input owner should call this before discarding its local
 	 * preedit state because of a caret move or another editing operation.
+	 * Pending composition updates and commits for that owner are discarded too.
 	 * This is a no-op when controlled composition is not enabled or the backend
 	 * does not support native IME composition.
 	 */

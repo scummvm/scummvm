@@ -216,12 +216,12 @@ enum MouseButton {
 typedef uint32 CustomEventType;
 
 /**
- * Data supplied with an @ref EVENT_IME_COMPOSITION event.
+ * Data structure for an @ref EVENT_IME_COMPOSITION event.
  *
- * The state distinguishes an in-progress update, text commitment, and
- * cancellation. Start and length describe the selected range inside an
- * in-progress composition, or are negative when the backend does not provide
- * that range. A completed composition carries the entire committed string in
+ * The state distinguishes an in-progress update, text commitment, and cancellation.
+ * Start and length describe the selected range inside an in-progress composition,
+ * or are negative when the backend does not provide that range.
+ * A completed composition carries the entire committed string in
  * @ref text instead of reducing it to a single @ref EVENT_KEYDOWN.
  */
 struct ImeComposition {
@@ -574,6 +574,11 @@ public:
 	 * Purge all unprocessed keyboard events already in the event queue.
 	 */
 	virtual void purgeKeyboardEvents() = 0;
+
+	/**
+	 * Purge queued IME updates and commits belonging to a cancelled input owner.
+	 */
+	virtual void purgeImeCompositionEvents() {}
 
 	/** Return the current mouse position. */
 	virtual Point getMousePos() const = 0;

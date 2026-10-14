@@ -658,14 +658,17 @@ void OSystem_SDL::engineDone() {
 void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
-		// ScummVM renders the transient composition text in its own editable
-		// widgets. Candidate lists are the OS-provided popups of conversion
-		// choices, such as Hanja and symbols, which ScummVM does not render.
-		// Configure both responsibilities before SDL initializes video.
+		// ScummVM renders uncommitted composition text in its editable widgets.
+		// The native IME displays candidate lists for conversion choices.
+		// Configure SDL for this UI responsibilities before initializing video.
 #if SDL_VERSION_ATLEAST(3, 2, 0)
 		SDL_SetHintWithPriority(SDL_HINT_IME_IMPLEMENTED_UI, "composition", SDL_HINT_OVERRIDE);
 #elif SDL_VERSION_ATLEAST(2, 0, 0)
 		SDL_SetHintWithPriority(SDL_HINT_IME_INTERNAL_EDITING, "0", SDL_HINT_OVERRIDE);
+#if SDL_VERSION_ATLEAST(2, 0, 22)
+		// Receive preedit strings that exceed SDL_TEXTEDITING's fixed buffer.
+		SDL_SetHintWithPriority(SDL_HINT_IME_SUPPORT_EXTENDED_TEXT, "1", SDL_HINT_OVERRIDE);
+#endif
 #ifdef SDL_HINT_IME_SHOW_UI
 		SDL_SetHintWithPriority(SDL_HINT_IME_SHOW_UI, "1", SDL_HINT_OVERRIDE);
 #endif
