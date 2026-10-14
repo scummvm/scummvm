@@ -37,7 +37,7 @@ static const char *const kDialogueC023AFstPath = "GRAPHIC/FST/C023A.FST";
 static const char *const kDialogueC025AFstPath = "GRAPHIC/FST/C025A.FST";
 static const char *const kDialogueC025BFstPath = "GRAPHIC/FST/C025B.FST";
 static const char *const kDialogueC007FstPath = "GRAPHIC/FST/C007.FST";
-static const int kStephanieSpyholeTopicLines[] = { 0x2f9, 0x2fa, 0x2fb, 0x2fc, 0x2fd };
+static const int kStephanieSpyholeTopicLines[] = { 0x2f9, 0x2fa, 0x2fb, 0x2fc };
 
 } // End of namespace
 
@@ -50,6 +50,8 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	StephanieRoomDialogueState &state = _state;
 	Common::String &stephanieTopicBuffer = state.currentTopicBuffer;
 	int &stephanieTopicBufferLineIndex = state.currentTopicBufferLineIndex;
+	state.currentTopicBuffer.clear();
+	state.currentTopicBufferLineIndex = -1;
 
 	auto assignStephanieTopicBuffer = [&](int responseLineIndex) {
 		runtime.assignTopicBuffer(stephanieTopicBuffer, stephanieTopicBufferLineIndex,
@@ -669,9 +671,6 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 	}
 
-	if (stephanieTopicBufferLineIndex < 0)
-		assignStephanieTopicBuffer(0x2d0);
-
 	for (;;) {
 		Common::String selectedTopic;
 		Common::Error menuError = runtime.runKeywordMenu(
@@ -868,13 +867,8 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			assignStephanieTopicBuffer(0x2f8);
 			continue;
 		}
-		// The spyhole continuation is a hidden typed-topic branch. Native only reaches
-		// it after the visible buffer has advanced to dialog.rsp[0x2f8], while the
-		// generic BYE path remains the immediate 0x46a4 exit.
-		if (stephanieTopicBufferLineIndex == 0x2f8 &&
-				runtime.lastKeywordSelectionWasTypedInput() &&
-				runtime.matchesAnyResponseLine(selectedTopic, kStephanieSpyholeTopicLines,
-					ARRAYSIZE(kStephanieSpyholeTopicLines))) {
+		if (runtime.matchesAnyResponseLine(selectedTopic, kStephanieSpyholeTopicLines,
+				ARRAYSIZE(kStephanieSpyholeTopicLines))) {
 			state.playedSpyholeBranch = true;
 			Common::Error lineError = runtime.playDialogueLine(0x4a05, "PC");
 			if (lineError.getCode() != Common::kNoError)
