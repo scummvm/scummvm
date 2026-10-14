@@ -344,7 +344,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 
 	getFileExtension(name, buffer, sizeof(buffer));
 
-	if (!strcmp(buffer, ".SPL")) {
+	if (!strcmp(buffer, ".SPL") && _vm->getPlatform() != Common::kPlatformAmiga) {
 		removeExtension(name, buffer, sizeof(buffer));
 
 		/* if (useH32)

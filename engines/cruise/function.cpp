@@ -198,55 +198,40 @@ int16 Op_Random() {
 
 int16 Op_PlayFX() {
 	int volume = popVar();
-
-#if 0
 	int speed = popVar();
 	int channelNum = popVar();
-#else
-	popVar();
-	popVar();
-#endif
-
 	int sampleNum = popVar();
 
-	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
-#if 0
-		if (speed == -1)
-			speed = filesDatabase[sampleNum].subData.transparency;
-#endif
-
-		_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr,
-			filesDatabase[sampleNum].width, volume);
+	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && filesDatabase[sampleNum].subData.ptr) {
+		if (_vm->getPlatform() == Common::kPlatformAmiga) {
+			const int frequency = speed == -1 ? (uint16)filesDatabase[sampleNum].subData.transparency : speed * 1000;
+			if (frequency > 0)
+				_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr, filesDatabase[sampleNum].width, volume, channelNum, Period(frequency), false);
+		} else {
+			_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr, filesDatabase[sampleNum].width, volume);
+		}
 	}
 
-	return (0);
+	return 0;
 }
 
 int16 Op_LoopFX() {
 	int volume = popVar();
-
-#if 0
 	int speed = popVar();
 	int channelNum = popVar();
-#else
-	popVar();
-	popVar();
-#endif
-
 	int sampleNum = popVar();
 
-	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
-
-#if 0
-		if (speed == -1)
-			speed = filesDatabase[sampleNum].subData.transparency;
-#endif
-
-		_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr,
-			filesDatabase[sampleNum].width, volume);
+	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && filesDatabase[sampleNum].subData.ptr) {
+		if (_vm->getPlatform() == Common::kPlatformAmiga) {
+			const int frequency = speed == -1 ? (uint16)filesDatabase[sampleNum].subData.transparency : speed * 1000;
+			if (frequency > 0)
+				_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr, filesDatabase[sampleNum].width, volume, channelNum, Period(frequency), true);
+		} else {
+			_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr, filesDatabase[sampleNum].width, volume);
+		}
 	}
 
-	return (0);
+	return 0;
 }
 
 int16 Op_StopFX() {
@@ -270,7 +255,7 @@ int16 Op_FreqFX() {
 	int channelNum = popVar();
 	int sampleNum = popVar();
 
-	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
+	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr) && freq2 > 0) {
 		int freq = Period(freq2 * 1000);
 
 		_vm->sound().startNote(channelNum, volume, freq);
