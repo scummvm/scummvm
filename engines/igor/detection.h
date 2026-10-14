@@ -94,11 +94,11 @@ public:
 	}
 
 	const char *getEngineName() const override {
-		return "Igor";
+		return "Igor: Objective Uikokahonia";
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Igor (C)";
+		return "Igor: Objetivo Uikokahonia (C) 1994 Péndulo Studios";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
