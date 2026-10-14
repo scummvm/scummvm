@@ -344,7 +344,18 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 
 	getFileExtension(name, buffer, sizeof(buffer));
 
-	if (!strcmp(buffer, ".SPL") && _vm->getPlatform() != Common::kPlatformAmiga) {
+	if (!strcmp(buffer, ".SPL") && _vm->sound().usesMT32()) {
+		removeExtension(name, buffer, sizeof(buffer));
+		Common::strcat_s(buffer, ".H32");
+		uint32 size = 0;
+		*ptr = readBundleSoundFile(buffer, &size);
+		if (!*ptr)
+			return -18;
+		loadFileVar1 = lastFileSize = size + 2;
+		return 1;
+	}
+
+	if (!strcmp(buffer, ".SPL") && _vm->getPlatform() != Common::kPlatformAmiga && _vm->getPlatform() != Common::kPlatformAtariST) {
 		removeExtension(name, buffer, sizeof(buffer));
 
 		/* if (useH32)

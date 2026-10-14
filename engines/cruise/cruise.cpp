@@ -41,11 +41,13 @@ namespace Cruise {
 CruiseEngine *_vm;
 
 CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc)
-	: Engine(syst), _gameDescription(gameDesc), _rnd("cruise") {
+	: Engine(syst),
+	  _sound(nullptr),
+	  _gameDescription(gameDesc),
+	  _rnd("cruise") {
 
 	_vm = this;
 	setDebugger(new Debugger());
-	_sound = new PCSound(_mixer, this);
 
 	PCFadeFlag = false;
 	_preLoad = false;
@@ -84,6 +86,8 @@ bool CruiseEngine::hasFeature(EngineFeature f) const {
 Common::Error CruiseEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200);
+	_sound = new PCSound(_mixer, this);
+	syncSoundSettings();
 
 	if (!loadLanguageStrings()) {
 		error("Could not setup language data for your version");
@@ -197,6 +201,12 @@ bool CruiseEngine::loadLanguageStrings() {
 	return true;
 }
 
+void CruiseEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (_sound)
+		_sound->pause(pause);
+}
+
 void CruiseEngine::pauseEngine(bool pause) {
 	if (pause) {
 		_gamePauseToken = Engine::pauseEngine();
@@ -273,7 +283,8 @@ const char *CruiseEngine::getSavegameFile(int saveGameIdx) {
 void CruiseEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	_sound->syncSounds();
+	if (_sound)
+		_sound->syncSounds();
 }
 
 } // End of namespace Cruise

@@ -28,10 +28,15 @@
 namespace Cruise {
 
 class CruiseEngine;
+byte *readBundleSoundFile(const char *name, uint32 *size);
+
 class PCSoundDriver;
 class PCSoundFxPlayer;
 class AmigaSoundFxPlayer;
 class AmigaSoundEffects;
+class AtariSoundFxPlayer;
+class AtariSoundEffects;
+class MT32SoundFxPlayer;
 
 class PCSound {
 private:
@@ -43,6 +48,9 @@ protected:
 	PCSoundFxPlayer *_player;
 	AmigaSoundFxPlayer *_amigaPlayer;
 	AmigaSoundEffects *_amigaEffects;
+	AtariSoundFxPlayer *_atariPlayer;
+	AtariSoundEffects *_atariEffects;
+	MT32SoundFxPlayer *_mt32Player;
 public:
 	PCSound(Audio::Mixer *mixer, CruiseEngine *vm);
 	virtual ~PCSound();
@@ -70,6 +78,8 @@ public:
 	void musicLoop(bool v);
 	void startNote(int channel, int volume, int freq);
 	void syncSounds();
+	bool usesMT32() const { return _mt32Player != nullptr; }
+	void pause(bool paused);
 
 	// Note: Volume variable accessed by these methods is never actually used in original game
 	void setVolume(int volume) { _genVolume = volume; }

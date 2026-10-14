@@ -30,8 +30,12 @@
 
 #include "audio/decoders/raw.h"
 #include "audio/fmopl.h"
+#include "audio/mididrv.h"
+#include "audio/mt32gm.h"
+#include "common/file.h"
 #include "audio/mixer.h"
 #include "audio/mods/paula.h"
+#include "audio/softsynth/ym2149.h"
 
 namespace Audio {
 class Mixer;
@@ -260,6 +264,487 @@ byte *readBundleSoundFile(const char *name, uint32 *size = nullptr) {
 }
 
 
+
+class MT32SoundFxPlayer {
+public:
+	MT32SoundFxPlayer(MidiDriver_MT32GM *output)
+		: _output(output),
+		  _module(nullptr),
+		  _moduleSize(0),
+		  _order(0),
+		  _pos(0),
+		  _orders(0),
+		  _fade(0),
+		  _active(false),
+		  _paused(false),
+		  _songPlayed(false),
+		  _looping(false),
+		  _elapsed(0),
+		  _rowDuration(0) {
+		memset(_musicName, 0, sizeof(_musicName));
+		memset(_types, 0, sizeof(_types));
+		resetChannels();
+		_output->property(MidiDriver::PROP_USER_VOLUME_SCALING, 1);
+		_output->setSourceType(0, MidiDriver_Multisource::SOURCE_TYPE_MUSIC);
+		_output->setSourceType(1, MidiDriver_Multisource::SOURCE_TYPE_SFX);
+		// Keep patch output levels constant; controllers provide per-source volume.
+		for (uint i = 0; i < 8; ++i) {
+			const byte level = 100;
+			_output->sysExMT32(&level, 1, 0xc008 + i * 16, true);
+		}
+		_output->setTimerCallback(this, timerCallback);
+	}
+
+	~MT32SoundFxPlayer() {
+		_output->setTimerCallback(nullptr, nullptr);
+		_output->clearSysExQueue();
+		_output->stopAllNotes(true);
+		_output->close();
+		delete _output;
+		MemFree(_module);
+	}
+
+	bool load(const char *name) {
+		unload();
+		Common::strlcpy(_musicName, name, sizeof(_musicName));
+		uint32 size = 0;
+		byte *module = readBundleSoundFile(name, &size);
+		if (!module)
+			return false;
+		if (size < 2400 || !module[470] || module[470] > 128) {
+			warning("Invalid Cruise MT-32 module '%s'", name);
+			MemFree(module);
+			return false;
+		}
+		for (uint i = 0; i < module[470]; ++i) {
+			if (module[472 + i] >= (size - 2400) / 1024) {
+				MemFree(module);
+				return false;
+			}
+		}
+		byte *instruments[15] = {};
+		uint32 instrumentSizes[15] = {};
+		bool valid = true;
+		for (uint i = 0; i < 15 && valid; ++i) {
+			char filename[23];
+			memcpy(filename, module + 20 + i * 30, 22);
+			filename[22] = 0;
+			if (!filename[0])
+				continue;
+			char *dot = strrchr(filename, '.');
+			if (dot)
+				*dot = 0;
+			Common::strlcat(filename, ".H32", sizeof(filename));
+			instruments[i] = readBundleSoundFile(filename, &instrumentSizes[i]);
+			valid = validInstrument(instruments[i], instrumentSizes[i]);
+		}
+		if (!valid) {
+			warning("Missing or invalid Cruise MT-32 instrument in '%s'", name);
+			for (uint i = 0; i < 15; ++i)
+				MemFree(instruments[i]);
+			MemFree(module);
+			return false;
+		}
+		Common::StackLock lock(_mutex);
+		_module = module;
+		_moduleSize = size;
+		_orders = module[470];
+		_order = _pos = 0;
+		for (uint i = 0; i < 4; ++i)
+			_instruments[i] = -1;
+		_songPlayed = _looping = false;
+		// Twelve MFP interrupts per row, with a clock divider of 200.
+		const uint divisor = (244 - module[471]) & 255;
+		_rowDuration = (uint64)12 * 200 * (divisor ? divisor : 256) * 1000000;
+		for (uint i = 0; i < 15; ++i) {
+			if (instruments[i]) {
+				_types[i] = instruments[i][22];
+				if (_types[i] >= 0x80)
+					_output->sysExMT32(instruments[i] + 23, 246, 0x20000 + i * 256, true);
+				MemFree(instruments[i]);
+			} else {
+				_types[i] = 0;
+			}
+			writePatch(i, _types[i]);
+		}
+		return true;
+	}
+
+	void play() {
+		Common::StackLock lock(_mutex);
+		if (!_module)
+			return;
+		stopMusicChannels();
+		_order = _pos = _fade = 0;
+		_elapsed = 0;
+		_active = true;
+		_songPlayed = false;
+		for (uint i = 0; i < 4; ++i)
+			_instruments[i] = -1;
+	}
+
+	void stop() {
+		Common::StackLock lock(_mutex);
+		_active = false;
+		_fade = 0;
+		stopMusicChannels();
+	}
+
+	void unload() {
+		stop();
+		Common::StackLock lock(_mutex);
+		MemFree(_module);
+		_module = nullptr;
+		_moduleSize = 0;
+		_orders = 0;
+	}
+
+	void fadeOut() {
+		Common::StackLock lock(_mutex);
+		if (_active) {
+			_active = false;
+			_fade = 1;
+		}
+	}
+
+	bool playing() const {
+		Common::StackLock lock(_mutex);
+		return _active;
+	}
+
+	bool songLoaded() const {
+		Common::StackLock lock(_mutex);
+		return _module != nullptr;
+	}
+
+	bool songPlayed() const {
+		Common::StackLock lock(_mutex);
+		return _songPlayed;
+	}
+
+	bool looping() const {
+		Common::StackLock lock(_mutex);
+		return _looping;
+	}
+
+	void setLooping(bool value) {
+		Common::StackLock lock(_mutex);
+		_looping = value;
+	}
+
+	const char *musicName() const { return _musicName; }
+
+	uint8 numOrders() const {
+		Common::StackLock lock(_mutex);
+		return _orders;
+	}
+
+	void setNumOrders(uint8 count) {
+		Common::StackLock lock(_mutex);
+		if (!_module || !count || count > 128)
+			return;
+		for (uint i = 0; i < count; ++i) {
+			if (_module[472 + i] >= (_moduleSize - 2400) / 1024)
+				return;
+		}
+		_orders = _module[470] = count;
+		if (_order >= count)
+			_order = 0;
+	}
+
+	void setPattern(int offset, uint8 pattern) {
+		Common::StackLock lock(_mutex);
+		if (_module && offset >= 0 && offset < 128 && pattern < (_moduleSize - 2400) / 1024)
+			_module[472 + offset] = pattern;
+	}
+
+	void playEffect(const byte *data, int size, int channel, int volume) {
+		if (!data || size < 1 || channel < 0 || channel >= 4 || data[0] >= 0xc0 || (data[0] >= 0x80 && size < 247))
+			return;
+		if (data[0] >= 0x80) {
+			for (uint i = 1; i < 247; ++i) {
+				if (data[i] >= 0x80)
+					return;
+			}
+		}
+		Common::StackLock lock(_mutex);
+		stopChannel(channel + 4);
+		const int slot = 15 + channel;
+		if (data[0] >= 0x80)
+			_output->sysExMT32(data + 1, 246, 0x20000 + slot * 256, true, true, 1);
+		writePatch(slot, data[0]);
+		_programs[channel + 4] = slot;
+		_output->send(1, (0xb5 + channel) | (7 << 8) | ((CLIP(volume, 0, 63) * 127 / 63) << 16));
+		// H32 effects use a fixed trigger note, as in Cine's MT-32 driver.
+		_notes[channel + 4] = 12;
+		_pending[channel + 4] = true;
+	}
+
+	void stopEffect(int channel) {
+		Common::StackLock lock(_mutex);
+		if (channel == -1) {
+			for (uint i = 4; i < 8; ++i)
+				stopChannel(i);
+		} else if (channel >= 0 && channel < 4) {
+			stopChannel(channel + 4);
+		}
+	}
+
+	void setEffectPeriod(int channel, int period, int volume) {
+		if (channel < 0 || channel >= 4 || period <= 0)
+			return;
+		Common::StackLock lock(_mutex);
+		if (_notes[channel + 4] < 0)
+			return;
+		const int program = _programs[channel + 4];
+		stopChannel(channel + 4);
+		_programs[channel + 4] = program;
+		_output->send(1, (0xb5 + channel) | (7 << 8) | ((CLIP(volume, 0, 63) * 127 / 63) << 16));
+		_notes[channel + 4] = noteForPeriod(period);
+		_pending[channel + 4] = true;
+	}
+
+	void pause(bool paused) {
+		Common::StackLock lock(_mutex);
+		if (_paused == paused)
+			return;
+		_paused = paused;
+		_output->setSourceVolume(0, paused ? 0 : 255);
+		_output->setSourceVolume(1, paused ? 0 : 255);
+		for (uint i = 0; i < 8; ++i) {
+			if (paused)
+				_output->send(i < 4 ? 0 : 1, (0xb1 + i) | (123 << 8));
+			else if (_notes[i] >= 0)
+				_pending[i] = true;
+		}
+	}
+
+	void syncSounds() {
+		Common::StackLock lock(_mutex);
+		_output->syncSoundSettings();
+	}
+
+	void doSync(Common::Serializer &s) {
+		char name[33];
+		int16 loaded;
+		int16 songPlayed;
+		int16 looping;
+		int16 pos;
+		int16 order;
+		int16 active;
+		{
+			Common::StackLock lock(_mutex);
+			memcpy(name, _musicName, sizeof(name));
+			loaded = _module != nullptr;
+			songPlayed = _songPlayed;
+			looping = _looping;
+			pos = _pos;
+			order = _order;
+			active = _active;
+		}
+		s.syncBytes((byte *)name, sizeof(name));
+		s.syncAsSint16LE(loaded);
+		s.syncAsSint16LE(songPlayed);
+		s.syncAsSint16LE(looping);
+		s.syncAsSint16LE(pos);
+		s.syncAsSint16LE(order);
+		s.syncAsSint16LE(active);
+		if (!s.isLoading())
+			return;
+		stopEffect(-1);
+		name[32] = 0;
+		if (!loaded) {
+			unload();
+			Common::strlcpy(_musicName, name, sizeof(_musicName));
+			Common::StackLock lock(_mutex);
+			_songPlayed = songPlayed != 0;
+			_looping = looping != 0;
+			return;
+		}
+		if (!load(name))
+			return;
+		Common::StackLock lock(_mutex);
+		_order = order >= 0 && order < _orders ? order : 0;
+		_pos = pos >= 0 && pos < 1024 && !(pos % 16) ? pos : 0;
+		_looping = looping != 0;
+		_songPlayed = songPlayed != 0;
+		for (int orderIndex = 0; orderIndex <= _order; ++orderIndex) {
+			const int end = orderIndex == _order ? _pos : 1024;
+			for (int row = 0; row < end; row += 16)
+				playRow(orderIndex, row);
+		}
+		for (uint i = 0; i < 4; ++i)
+			_programs[i] = _instruments[i];
+		_active = active != 0;
+		_elapsed = 0;
+		if (!_active)
+			stopMusicChannels();
+	}
+
+	static bool validInstrument(const byte *data, uint32 size) {
+		if (!data || size < 23 || data[22] >= 0xc0)
+			return false;
+		if (data[22] < 0x80)
+			return true;
+		if (size < 269)
+			return false;
+		for (uint i = 23; i < 269; ++i) {
+			if (data[i] >= 0x80)
+				return false;
+		}
+		return true;
+	}
+
+private:
+	void resetChannels() {
+		for (uint i = 0; i < 8; ++i) {
+			_notes[i] = -1;
+			_programs[i] = -1;
+			_pending[i] = false;
+		}
+		for (uint i = 0; i < 4; ++i)
+			_instruments[i] = -1;
+	}
+
+	void stopChannel(uint channel) {
+		_output->send(channel < 4 ? 0 : 1, (0xb1 + channel) | (123 << 8));
+		_notes[channel] = -1;
+		_programs[channel] = -1;
+		_pending[channel] = false;
+	}
+
+	void stopMusicChannels() {
+		for (uint i = 0; i < 4; ++i)
+			stopChannel(i);
+	}
+
+	void writePatch(uint slot, byte type) {
+		const byte patch[8] = { (byte)(type < 0x80 ? type >> 6 : 2), (byte)(type < 0x80 ? type & 63 : slot), 24, 50, 12, 3, 1, 0 };
+		_output->sysExMT32(patch, sizeof(patch), 0x14000 + slot * 8, true);
+	}
+
+	static int noteForPeriod(int period) {
+		static const uint16 periods[72] = {
+			1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076,
+			1076, 1016, 960, 906, 856, 808, 762, 720, 678, 640, 604, 570,
+			538, 508, 480, 453, 428, 404, 381, 360, 339, 320, 302, 285,
+			269, 254, 240, 226, 214, 202, 190, 180, 170, 160, 151, 143,
+			135, 127, 120, 113, 113, 113, 113, 113, 113, 113, 113, 113,
+			113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113,
+		};
+		int octave;
+		if (period < 113)
+			octave = 5;
+		else if (period <= 135)
+			octave = 4;
+		else if (period <= 269)
+			octave = 3;
+		else if (period <= 538)
+			octave = 2;
+		else if (period <= 1076)
+			octave = 1;
+		else
+			octave = 0;
+		int note = 0;
+		while (note < 11 && periods[octave * 12 + note] > period)
+			++note;
+		return (octave + 2) * 12 + note;
+	}
+
+	void playRow(int order, int pos) {
+		const byte *row = _module + 2400 + _module[472 + order] * 1024 + pos;
+		for (uint channel = 0; channel < 4; ++channel) {
+			const byte *event = row + channel * 4;
+			const int16 period = READ_BE_INT16(event);
+			if (period < 0) {
+				stopChannel(channel);
+				continue;
+			}
+			if (period > 0)
+				stopChannel(channel);
+			const int instrument = (event[2] >> 4) - 1;
+			if (instrument >= 0 && (_instruments[channel] != instrument || _fade)) {
+				_instruments[channel] = instrument;
+				_programs[channel] = instrument;
+				const int volume = CLIP<int>(_module[instrument] - _fade, 0, 100);
+				_output->send(0, (0xb1 + channel) | (7 << 8) | ((volume * 127 / 100) << 16));
+			}
+			if (period > 0) {
+				_notes[channel] = noteForPeriod(period);
+				_pending[channel] = true;
+			}
+		}
+	}
+
+	static void timerCallback(void *ref) { ((MT32SoundFxPlayer *)ref)->onTimer(); }
+
+	void flushPending() {
+		for (uint i = 0; i < 8; ++i) {
+			if (_programs[i] >= 0) {
+				_output->send(i < 4 ? 0 : 1, (0xc1 + i) | (_programs[i] << 8));
+				_programs[i] = -1;
+			}
+			if (_pending[i]) {
+				_output->send(i < 4 ? 0 : 1, (0x91 + i) | (_notes[i] << 8) | (127 << 16));
+				_pending[i] = false;
+			}
+		}
+	}
+
+	void onTimer() {
+		Common::StackLock lock(_mutex);
+		if (_paused || !_output->isReady())
+			return;
+		flushPending();
+		if (!_module || (!_active && !_fade))
+			return;
+		_elapsed += (uint64)_output->getBaseTempo() * 2457600;
+		while (_elapsed >= _rowDuration) {
+			_elapsed -= _rowDuration;
+			if (_fade) {
+				_fade += 2;
+				if (_fade >= 100) {
+					_active = false;
+					_fade = 0;
+					_songPlayed = true;
+					stopMusicChannels();
+					return;
+				}
+			}
+			playRow(_order, _pos);
+			_pos += 16;
+			if (_pos == 1024) {
+				_pos = 0;
+				if (++_order == _orders) {
+					_order = 0;
+					_songPlayed = true;
+				}
+			}
+		}
+		flushPending();
+	}
+
+	MidiDriver_MT32GM *_output;
+	mutable Common::Mutex _mutex;
+	byte *_module;
+	uint32 _moduleSize;
+	byte _types[15];
+	char _musicName[33];
+	int _notes[8];
+	int _programs[8];
+	bool _pending[8];
+	int _instruments[4];
+	int _order;
+	int _pos;
+	uint8 _orders;
+	int _fade;
+	bool _active;
+	bool _paused;
+	bool _songPlayed;
+	bool _looping;
+	uint64 _elapsed;
+	uint64 _rowDuration;
+};
 
 // Cruise's Amiga modules are SoundFX songs with external signed PCM .AMI files.
 // Keep a persistent stream: the scripts can stop, reload and restart music.
@@ -613,6 +1098,581 @@ private:
 		}
 		scheduleRow();
 	}
+};
+
+// The ST player uses three PSG voices and instruments embedded at offset 600.
+class AtariSoundFxPlayer : public Audio::AudioStream {
+public:
+	AtariSoundFxPlayer(Audio::Mixer *mixer)
+		: _mixer(mixer),
+		  _module(nullptr),
+		  _moduleSize(0),
+		  _order(0),
+		  _pos(0),
+		  _orders(0),
+		  _tick(0),
+		  _fade(0),
+		  _volume(15),
+		  _active(false),
+		  _songPlayed(false),
+		  _looping(false),
+		  _tickSamples(0),
+		  _envelopeSamples(0),
+		  _tickRemainder(0),
+		  _envelopeRemainder(0) {
+		memset(_musicName, 0, sizeof(_musicName));
+		memset(_voices, 0, sizeof(_voices));
+		_psg.init();
+		clearVoices();
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	}
+
+	~AtariSoundFxPlayer() override {
+		_mixer->stopHandle(_handle);
+		unload();
+	}
+
+	bool load(const char *name) {
+		unload();
+		Common::strlcpy(_musicName, name, sizeof(_musicName));
+		uint32 size = 0;
+		byte *module = readBundleSoundFile(name, &size);
+		if (!module)
+			return false;
+		if (size < 2400 || !module[470] || module[470] > 128) {
+			warning("Invalid Cruise Atari module '%s'", name);
+			MemFree(module);
+			return false;
+		}
+		for (uint i = 0; i < module[470]; ++i) {
+			if (module[472 + i] >= (size - 2400) / 1024) {
+				MemFree(module);
+				return false;
+			}
+		}
+		Common::StackLock lock(_mutex);
+		_module = module;
+		_moduleSize = size;
+		_orders = module[470];
+		_order = _pos = 0;
+		_songPlayed = _looping = false;
+		return true;
+	}
+
+	void play() {
+		Common::StackLock lock(_mutex);
+		if (!_module)
+			return;
+		clearVoices();
+		_order = _pos = _tick = _fade = 0;
+		_volume = 15;
+		_active = true;
+		_songPlayed = false;
+		resetTimers();
+	}
+
+	void stop() {
+		Common::StackLock lock(_mutex);
+		_active = false;
+		_fade = 0;
+		clearVoices();
+	}
+
+	void unload() {
+		stop();
+		Common::StackLock lock(_mutex);
+		MemFree(_module);
+		_module = nullptr;
+		_moduleSize = 0;
+		_orders = 0;
+	}
+
+	void fadeOut() {
+		Common::StackLock lock(_mutex);
+		if (_active) {
+			_active = false;
+			_fade = 1;
+		}
+	}
+
+	bool playing() const {
+		Common::StackLock lock(_mutex);
+		return _active;
+	}
+
+	bool songLoaded() const {
+		Common::StackLock lock(_mutex);
+		return _module != nullptr;
+	}
+
+	bool songPlayed() const {
+		Common::StackLock lock(_mutex);
+		return _songPlayed;
+	}
+
+	bool looping() const {
+		Common::StackLock lock(_mutex);
+		return _looping;
+	}
+
+	bool busy() const {
+		Common::StackLock lock(_mutex);
+		return _active || _fade;
+	}
+
+	void setLooping(bool value) {
+		Common::StackLock lock(_mutex);
+		_looping = value;
+	}
+
+	const char *musicName() const { return _musicName; }
+
+	uint8 numOrders() const {
+		Common::StackLock lock(_mutex);
+		return _orders;
+	}
+
+	void setNumOrders(uint8 count) {
+		Common::StackLock lock(_mutex);
+		if (!_module || !count || count > 128)
+			return;
+		for (uint i = 0; i < count; ++i) {
+			if (_module[472 + i] >= (_moduleSize - 2400) / 1024)
+				return;
+		}
+		_orders = _module[470] = count;
+		if (_order >= count)
+			_order = 0;
+	}
+
+	void setPattern(int offset, uint8 pattern) {
+		Common::StackLock lock(_mutex);
+		if (_module && offset >= 0 && offset < 128 && pattern < (_moduleSize - 2400) / 1024)
+			_module[472 + offset] = pattern;
+	}
+
+	int readBuffer(int16 *buffer, const int numSamples) override {
+		Common::StackLock lock(_mutex);
+		if (!_module || (!_active && !_fade)) {
+			memset(buffer, 0, numSamples * sizeof(int16));
+			return numSamples;
+		}
+		int remaining = numSamples;
+		while (remaining) {
+			const uint32 count = MIN<uint32>(remaining, MIN(_tickSamples, _envelopeSamples));
+			_psg.render(buffer, count);
+			buffer += count;
+			remaining -= count;
+			_tickSamples -= count;
+			_envelopeSamples -= count;
+			if (!_envelopeSamples) {
+				// The native Timer C updates voices in descending channel order.
+				for (int channel = 2; channel >= 0; --channel)
+					updateVoice(channel);
+				_envelopeSamples = schedule(getRate(), 200, _envelopeRemainder);
+			}
+			if (!_tickSamples) {
+				updateTick();
+				_tickSamples = schedule(tickNumerator(), 2457600, _tickRemainder);
+			}
+			if (!_active && !_fade) {
+				memset(buffer, 0, remaining * sizeof(int16));
+				break;
+			}
+		}
+		return numSamples;
+	}
+
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _mixer->getOutputRate(); }
+
+	void doSync(Common::Serializer &s) {
+		char name[33];
+		int16 loaded;
+		int16 songPlayed;
+		int16 looping;
+		int16 pos;
+		int16 order;
+		int16 active;
+		{
+			Common::StackLock lock(_mutex);
+			memcpy(name, _musicName, sizeof(name));
+			loaded = _module != nullptr;
+			songPlayed = _songPlayed;
+			looping = _looping;
+			pos = _pos;
+			order = _order;
+			active = _active;
+		}
+		s.syncBytes((byte *)name, sizeof(name));
+		s.syncAsSint16LE(loaded);
+		s.syncAsSint16LE(songPlayed);
+		s.syncAsSint16LE(looping);
+		s.syncAsSint16LE(pos);
+		s.syncAsSint16LE(order);
+		s.syncAsSint16LE(active);
+		if (!s.isLoading())
+			return;
+		name[32] = 0;
+		if (!loaded) {
+			unload();
+			Common::strlcpy(_musicName, name, sizeof(_musicName));
+			Common::StackLock lock(_mutex);
+			_songPlayed = songPlayed != 0;
+			_looping = looping != 0;
+			return;
+		}
+		if (!load(name))
+			return;
+		Common::StackLock lock(_mutex);
+		_order = order >= 0 && order < _orders ? order : 0;
+		_pos = pos >= 0 && pos < 1024 && !(pos % 16) ? pos : 0;
+		_songPlayed = songPlayed != 0;
+		_looping = looping != 0;
+		// The existing save layout has no PSG envelopes or timer phase.
+		for (int orderIndex = 0; orderIndex <= _order; ++orderIndex) {
+			const int end = orderIndex == _order ? _pos : 1024;
+			for (int row = 0; row < end; row += 16)
+				playRow(orderIndex, row);
+		}
+		_active = active != 0;
+		if (_active)
+			resetTimers();
+		else
+			clearVoices();
+	}
+
+private:
+	class PSG : public Audio::YM2149Emu {
+	public:
+		void render(int16 *buffer, int count) { generateSamples(buffer, count); }
+	};
+
+	struct Envelope {
+		uint16 phase;
+		int32 attack;
+		int32 attackLimit;
+		int32 decay;
+		int32 sustain;
+		int32 release;
+		int32 value;
+	};
+
+	struct Modulation {
+		int32 limit;
+		int32 step;
+		int32 positiveStep;
+		int32 negativeLimit;
+		int32 negativeStep;
+		uint16 delay;
+		int32 value;
+	};
+
+	struct Voice {
+		uint16 duration;
+		int16 tone;
+		int16 period;
+		int16 noise;
+		uint16 volume;
+		int instrument;
+		Envelope volumeEnvelope;
+		Envelope pitchEnvelope;
+		Envelope noiseEnvelope;
+		Modulation volumeModulation;
+		Modulation pitchModulation;
+		Modulation noiseModulation;
+	};
+
+	void clearVoices() {
+		memset(_voices, 0, sizeof(_voices));
+		for (uint i = 0; i < 3; ++i) {
+			_voices[i].instrument = -1;
+			_psg.writeReg(8 + i, 0);
+		}
+		_mixerRegister = 0x3f;
+		_psg.writeReg(7, _mixerRegister);
+	}
+
+	uint64 tickNumerator() const {
+		// The native byte subtraction wraps; a zero reload counts 256 ticks.
+		const uint divisor = (250 - _module[471]) & 255;
+		return (uint64)getRate() * 200 * (divisor ? divisor : 256);
+	}
+
+	static uint32 schedule(uint64 numerator, uint32 denominator, uint64 &remainder) {
+		remainder += numerator;
+		const uint32 samples = remainder / denominator;
+		remainder %= denominator;
+		return samples;
+	}
+
+	void resetTimers() {
+		_tick = _fade = 0;
+		_volume = 15;
+		_tickRemainder = _envelopeRemainder = 0;
+		_tickSamples = schedule(tickNumerator(), 2457600, _tickRemainder);
+		_envelopeSamples = schedule(getRate(), 200, _envelopeRemainder);
+	}
+
+	void updateTick() {
+		if (_fade && ++_fade == 33) {
+			_fade = 1;
+			if (!--_volume) {
+				_fade = 0;
+				clearVoices();
+				return;
+			}
+		}
+		if (++_tick == 12) {
+			_tick = 0;
+			playRow(_order, _pos);
+			_pos += 16;
+			if (_pos == 1024) {
+				_pos = 0;
+				if (++_order == _orders) {
+					_order = 0;
+					_songPlayed = true;
+				}
+			}
+		}
+	}
+
+	static int32 add(int32 a, int32 b) { return (int32)((uint32)a + (uint32)b); }
+
+	static void readEnvelope(Envelope &envelope, const byte *data, bool volume) {
+		envelope.phase = READ_BE_UINT16(data);
+		envelope.attack = READ_BE_INT32(data + 2);
+		envelope.attackLimit = volume ? 0xf0000 : READ_BE_INT32(data + 6);
+		envelope.decay = READ_BE_INT32(data + (volume ? 6 : 10));
+		envelope.sustain = READ_BE_INT32(data + (volume ? 10 : 14));
+		envelope.release = READ_BE_INT32(data + (volume ? 14 : 18));
+		envelope.value = 0;
+	}
+
+	static void readModulation(Modulation &modulation, const byte *data, bool pitch) {
+		modulation.limit = READ_BE_INT32(data);
+		modulation.step = READ_BE_INT32(data + 4);
+		modulation.positiveStep = pitch ? READ_BE_INT32(data + 8) : 0;
+		modulation.negativeLimit = pitch ? READ_BE_INT32(data + 12) : 0;
+		modulation.negativeStep = pitch ? READ_BE_INT32(data + 16) : 0;
+		modulation.delay = READ_BE_UINT16(data + (pitch ? 20 : 8));
+		modulation.value = 0;
+	}
+
+	void playRow(int order, int pos) {
+		const byte *row = _module + 2400 + _module[472 + order] * 1024 + pos;
+		for (uint channel = 0; channel < 3; ++channel) {
+			Voice &voice = _voices[channel];
+			const byte *event = row + channel * 4;
+			const int instrument = event[2] >> 4;
+			if (instrument)
+				voice.instrument = instrument - 1;
+			const int16 period = READ_BE_INT16(event);
+			if (!period || voice.instrument < 0)
+				continue;
+			const byte *data = _module + 600 + voice.instrument * 120;
+			_psg.writeReg(channel + 8, 0);
+			voice.period = period;
+			voice.duration = READ_BE_UINT16(data);
+			if (!voice.duration)
+				continue;
+			voice.tone = READ_BE_INT16(data + 2);
+			voice.noise = READ_BE_INT16(data + 4);
+			voice.volume = _volume;
+			readEnvelope(voice.volumeEnvelope, data + 8, true);
+			readModulation(voice.volumeModulation, data + 26, false);
+			readEnvelope(voice.pitchEnvelope, data + 36, false);
+			readModulation(voice.pitchModulation, data + 58, true);
+			readEnvelope(voice.noiseEnvelope, data + 80, false);
+			readModulation(voice.noiseModulation, data + 102, false);
+			_mixerRegister &= ~((1 << channel) | (8 << channel));
+			if (voice.tone >= 0) {
+				voice.tone = period;
+				_psg.writeReg(channel * 2, voice.tone);
+				if (voice.tone >= 0)
+					_psg.writeReg(channel * 2 + 1, voice.tone >> 8);
+			} else {
+				_mixerRegister |= 1 << channel;
+				voice.pitchEnvelope.phase = 0;
+				voice.pitchModulation.limit = 0;
+			}
+			if (voice.noise >= 0)
+				_psg.writeReg(6, voice.noise);
+			else {
+				_mixerRegister |= 8 << channel;
+				voice.noiseEnvelope.phase = 0;
+				voice.noiseModulation.limit = 0;
+			}
+			_psg.writeReg(7, _mixerRegister);
+			if (!voice.volumeEnvelope.phase) {
+				voice.volumeEnvelope.value = 0xf0000;
+				_psg.writeReg(channel + 8, voice.volume);
+			}
+		}
+	}
+
+	static void updateEnvelope(Envelope &envelope, bool volume) {
+		int32 step, limit;
+		switch (envelope.phase) {
+		case 1:
+			step = envelope.attack;
+			limit = envelope.attackLimit;
+			break;
+		case 2:
+			step = envelope.decay;
+			limit = envelope.sustain;
+			break;
+		case 4:
+			step = envelope.release;
+			limit = 0;
+			break;
+		default:
+			return;
+		}
+		envelope.value = add(envelope.value, step);
+		const bool reached = volume ? (envelope.phase == 1 ? envelope.value >= limit : envelope.value <= limit) : (step >= 0 ? envelope.value >= limit : envelope.value <= limit);
+		if (reached) {
+			envelope.value = limit;
+			if (envelope.phase != 4)
+				++envelope.phase;
+			else if (volume)
+				envelope.phase = 0;
+		}
+	}
+
+	static void updateModulation(Modulation &modulation, bool pitch) {
+		if (!modulation.limit)
+			return;
+		if (modulation.delay) {
+			--modulation.delay;
+			return;
+		}
+		const int32 previous = modulation.value;
+		modulation.value = add(previous, modulation.step);
+		if (pitch) {
+			const int32 limit = modulation.step >= 0 ? modulation.limit : modulation.negativeLimit;
+			if (modulation.step >= 0 ? (uint32)modulation.value < (uint32)previous : (uint32)modulation.value >= (uint32)previous)
+				modulation.step = modulation.step >= 0 ? modulation.positiveStep : modulation.negativeStep;
+			if (modulation.step >= 0 ? modulation.value < limit : modulation.value > limit)
+				return;
+			modulation.value = limit;
+		} else {
+			if (modulation.value < modulation.limit && modulation.value > -(int64)modulation.limit)
+				return;
+			modulation.value = modulation.value >= modulation.limit ? modulation.limit : (int32)-(int64)modulation.limit;
+		}
+		modulation.step = (int32)(0U - (uint32)modulation.step);
+	}
+
+	void updateVoice(uint channel) {
+		Voice &voice = _voices[channel];
+		if (!voice.duration)
+			return;
+		const uint16 previousPhase = voice.volumeEnvelope.phase;
+		updateEnvelope(voice.volumeEnvelope, true);
+		if (previousPhase == 4 && !voice.volumeEnvelope.phase)
+			voice.duration = 1;
+		updateModulation(voice.volumeModulation, false);
+		if (voice.volumeEnvelope.phase || (voice.volumeModulation.limit >> 16)) {
+			static const uint16 volumeScale[16] = { 0, 18, 35, 52, 69, 86, 103, 120, 137, 154, 171, 188, 205, 222, 237, 256 };
+			const int32 value = add(voice.volumeEnvelope.value, voice.volumeModulation.value);
+			const int volume = value < 0 ? 0 : MIN<int>(15, ((int16)(value >> 8) * volumeScale[voice.volume]) >> 16);
+			_psg.writeReg(channel + 8, volume);
+		}
+		updateEnvelope(voice.pitchEnvelope, false);
+		updateModulation(voice.pitchModulation, true);
+		if (voice.pitchEnvelope.phase || (voice.pitchModulation.limit >> 16)) {
+			const int16 amount = add(voice.pitchEnvelope.value, voice.pitchModulation.value) >> 16;
+			const uint32 scaled = (uint32)((int32)amount * voice.tone) << 4;
+			int delta = (int16)(scaled >> 16);
+			if (scaled & 0x8000)
+				++delta;
+			const int tone = CLIP<int>((int16)(voice.tone + delta), 0, 4095);
+			_psg.writeReg(channel * 2, tone);
+			_psg.writeReg(channel * 2 + 1, tone >> 8);
+		}
+		updateEnvelope(voice.noiseEnvelope, false);
+		updateModulation(voice.noiseModulation, false);
+		if (voice.noiseEnvelope.phase || (voice.noiseModulation.limit >> 16)) {
+			const int noise = (int16)((add(voice.noiseEnvelope.value, voice.noiseModulation.value) >> 16) + voice.noise);
+			_psg.writeReg(6, CLIP(noise, 0, 31));
+		}
+		if (voice.period < 0 && !--voice.duration) {
+			if (!voice.volumeEnvelope.phase) {
+				_psg.writeReg(channel + 8, 0);
+				return;
+			}
+			voice.duration = 0xffff;
+			voice.volumeEnvelope.phase = 4;
+			if (voice.pitchEnvelope.phase) {
+				voice.pitchEnvelope.phase = 4;
+				if ((int32)((uint32)voice.pitchEnvelope.release ^ (uint32)voice.pitchEnvelope.value) >= 0)
+					voice.pitchEnvelope.release = (int32)(0U - (uint32)voice.pitchEnvelope.release);
+			}
+			if (voice.noiseEnvelope.phase) {
+				voice.noiseEnvelope.phase = 4;
+				if ((int32)((uint32)voice.noiseEnvelope.release ^ (uint32)voice.noiseEnvelope.value) >= 0)
+					voice.noiseEnvelope.release = (int32)(0U - (uint32)voice.noiseEnvelope.release);
+			}
+		}
+
+	}
+
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _handle;
+	PSG _psg;
+	mutable Common::Mutex _mutex;
+	byte *_module;
+	uint32 _moduleSize;
+	Voice _voices[3];
+	char _musicName[33];
+	uint8 _mixerRegister;
+	int _order;
+	int _pos;
+	uint8 _orders;
+	uint _tick;
+	uint _fade;
+	uint _volume;
+	bool _active;
+	bool _songPlayed;
+	bool _looping;
+	uint32 _tickSamples;
+	uint32 _envelopeSamples;
+	uint64 _tickRemainder;
+	uint64 _envelopeRemainder;
+};
+
+class AtariSoundEffects {
+public:
+	AtariSoundEffects(Audio::Mixer *mixer)
+		: _mixer(mixer) {
+	}
+
+	~AtariSoundEffects() { stop(); }
+
+	void play(const byte *data, int size, bool loop) {
+		if (!data || size <= 0)
+			return;
+		stop();
+		byte *pcm = (byte *)malloc(size * 4);
+		if (!pcm)
+			return;
+		// Native three-channel PSG DAC levels, normalized to signed PCM.
+		static const int16 levels[16] = { 32767, 29038, 24851, 19536, 16259, 11718, 7106, 2329, -2069, -6414, -10775, -15473, -19632, -24013, -28338, -32767 };
+		for (int i = 0; i < size; ++i) {
+			WRITE_LE_UINT16(pcm + i * 4, levels[data[i] >> 4]);
+			WRITE_LE_UINT16(pcm + i * 4 + 2, levels[data[i] & 15]);
+		}
+		Audio::SeekableAudioStream *stream = Audio::makeRawStream(pcm, size * 4, 6400, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, Audio::makeLoopingAudioStream(stream, loop ? 0 : 1));
+	}
+
+	void stop() { _mixer->stopHandle(_handle); }
+
+private:
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _handle;
 };
 
 // Sound effects use their own mixer channels, as in the Cine Amiga driver.
@@ -1196,17 +2256,42 @@ PCSound::PCSound(Audio::Mixer *mixer, CruiseEngine *vm) {
 	_player = nullptr;
 	_amigaPlayer = nullptr;
 	_amigaEffects = nullptr;
+	_atariPlayer = nullptr;
+	_atariEffects = nullptr;
+	_mt32Player = nullptr;
+	_genVolume = 0;
+	if (vm->getPlatform() == Common::kPlatformDOS || vm->getPlatform() == Common::kPlatformAtariST) {
+		const uint32 flags = MDT_MIDI | MDT_PREFER_MT32 | (vm->getPlatform() == Common::kPlatformDOS ? MDT_ADLIB : 0);
+		const MidiDriver::DeviceHandle device = MidiDriver::detectDevice(flags);
+		const MusicType type = MidiDriver::getMusicType(device);
+		if (type == MT_MT32 || ((type == MT_GM || type == MT_GS) && ConfMan.getBool("native_mt32"))) {
+			MidiDriver_MT32GM *output = new MidiDriver_MT32GM(MT_MT32);
+			if (output->open(MidiDriver::createMidi(device), true) == 0)
+				_mt32Player = new MT32SoundFxPlayer(output);
+			else {
+				warning("Unable to open Cruise MT-32 output; using native audio");
+				delete output;
+			}
+		}
+	}
+	if (_mt32Player)
+		return;
 	if (vm->getPlatform() == Common::kPlatformAmiga) {
 		_amigaPlayer = new AmigaSoundFxPlayer(_mixer);
 		_amigaEffects = new AmigaSoundEffects(_mixer);
+	} else if (vm->getPlatform() == Common::kPlatformAtariST) {
+		_atariPlayer = new AtariSoundFxPlayer(_mixer);
+		_atariEffects = new AtariSoundEffects(_mixer);
 	} else {
 		_soundDriver = new AdLibSoundDriverADL(_mixer);
 		_player = new PCSoundFxPlayer(_soundDriver);
 	}
-	_genVolume = 0;
 }
 
 PCSound::~PCSound() {
+	delete _mt32Player;
+	delete _atariEffects;
+	delete _atariPlayer;
 	delete _amigaEffects;
 	delete _amigaPlayer;
 	delete _player;
@@ -1218,13 +2303,31 @@ void PCSound::loadMusic(const char *name) {
 		_amigaPlayer->load(name);
 		return;
 	}
+	if (_atariPlayer) {
+		_atariPlayer->load(name);
+		return;
+	}
+	if (_mt32Player) {
+		_mt32Player->load(name);
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::loadMusic('%s')", name);
 	_player->load(name);
 }
 
 void PCSound::playMusic() {
+	if (_atariEffects)
+		_atariEffects->stop();
 	if (_amigaPlayer) {
 		_amigaPlayer->play();
+		return;
+	}
+	if (_atariPlayer) {
+		_atariPlayer->play();
+		return;
+	}
+	if (_mt32Player) {
+		_mt32Player->play();
 		return;
 	}
 	debugC(5, kCruiseDebugSound, "PCSound::playMusic()");
@@ -1236,6 +2339,14 @@ void PCSound::stopMusic() {
 		_amigaPlayer->stop();
 		return;
 	}
+	if (_atariPlayer) {
+		_atariPlayer->stop();
+		return;
+	}
+	if (_mt32Player) {
+		_mt32Player->stop();
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::stopMusic()");
 	_player->stop();
 }
@@ -1243,6 +2354,14 @@ void PCSound::stopMusic() {
 void PCSound::removeMusic() {
 	if (_amigaPlayer) {
 		_amigaPlayer->unload();
+		return;
+	}
+	if (_atariPlayer) {
+		_atariPlayer->unload();
+		return;
+	}
+	if (_mt32Player) {
+		_mt32Player->unload();
 		return;
 	}
 	debugC(5, kCruiseDebugSound, "PCSound::removeMusic()");
@@ -1254,11 +2373,28 @@ void PCSound::fadeOutMusic() {
 		_amigaPlayer->fadeOut();
 		return;
 	}
+	if (_atariPlayer) {
+		_atariPlayer->fadeOut();
+		return;
+	}
+	if (_mt32Player) {
+		_mt32Player->fadeOut();
+		return;
+	}
 	debugC(5, kCruiseDebugSound, "PCSound::fadeOutMusic()");
 	_player->fadeOut();
 }
 
 void PCSound::playSound(const uint8 *data, int size, int volume, int channel, int period, bool loop) {
+	if (_mt32Player) {
+		_mt32Player->playEffect(data, size, channel, volume);
+		return;
+	}
+	if (_atariEffects) {
+		if (!_atariPlayer->busy())
+			_atariEffects->play(data, size, loop);
+		return;
+	}
 	if (_amigaEffects) {
 		_amigaEffects->play(data, size, volume, channel, period, loop);
 		return;
@@ -1268,6 +2404,14 @@ void PCSound::playSound(const uint8 *data, int size, int volume, int channel, in
 }
 
 void PCSound::stopSound(int channel) {
+	if (_mt32Player) {
+		_mt32Player->stopEffect(channel);
+		return;
+	}
+	if (_atariEffects) {
+		_atariEffects->stop();
+		return;
+	}
 	if (_amigaEffects) {
 		_amigaEffects->stop(channel);
 		return;
@@ -1277,6 +2421,14 @@ void PCSound::stopSound(int channel) {
 }
 
 void PCSound::stopChannel(int channel) {
+	if (_mt32Player) {
+		_mt32Player->stopEffect(channel);
+		return;
+	}
+	if (_atariEffects) {
+		_atariEffects->stop();
+		return;
+	}
 	if (_amigaEffects) {
 		_amigaEffects->stop(channel);
 		return;
@@ -1288,18 +2440,30 @@ void PCSound::stopChannel(int channel) {
 bool PCSound::isPlaying() const {
 	if (_amigaPlayer)
 		return _amigaPlayer->playing();
+	if (_atariPlayer)
+		return _atariPlayer->playing();
+	if (_mt32Player)
+		return _mt32Player->playing();
 	return _player->playing();
 }
 
 bool PCSound::songLoaded() const {
 	if (_amigaPlayer)
 		return _amigaPlayer->songLoaded();
+	if (_atariPlayer)
+		return _atariPlayer->songLoaded();
+	if (_mt32Player)
+		return _mt32Player->songLoaded();
 	return _player->songLoaded();
 }
 
 bool PCSound::songPlayed() const {
 	if (_amigaPlayer)
 		return _amigaPlayer->songPlayed();
+	if (_atariPlayer)
+		return _atariPlayer->songPlayed();
+	if (_mt32Player)
+		return _mt32Player->songPlayed();
 	return _player->songPlayed();
 }
 
@@ -1308,18 +2472,38 @@ void PCSound::fadeSong() {
 		_amigaPlayer->fadeOut();
 		return;
 	}
+	if (_atariPlayer) {
+		_atariPlayer->fadeOut();
+		return;
+	}
+	if (_mt32Player) {
+		_mt32Player->fadeOut();
+		return;
+	}
 	_player->fadeOut();
 }
 
 uint8 PCSound::numOrders() const {
 	if (_amigaPlayer)
 		return _amigaPlayer->numOrders();
+	if (_atariPlayer)
+		return _atariPlayer->numOrders();
+	if (_mt32Player)
+		return _mt32Player->numOrders();
 	return _player->numOrders();
 }
 
 void PCSound::setNumOrders(uint8 v) {
 	if (_amigaPlayer) {
 		_amigaPlayer->setNumOrders(v);
+		return;
+	}
+	if (_atariPlayer) {
+		_atariPlayer->setNumOrders(v);
+		return;
+	}
+	if (_mt32Player) {
+		_mt32Player->setNumOrders(v);
 		return;
 	}
 	_player->setNumOrders(v);
@@ -1330,12 +2514,24 @@ void PCSound::setPattern(int offset, uint8 value) {
 		_amigaPlayer->setPattern(offset, value);
 		return;
 	}
+	if (_atariPlayer) {
+		_atariPlayer->setPattern(offset, value);
+		return;
+	}
+	if (_mt32Player) {
+		_mt32Player->setPattern(offset, value);
+		return;
+	}
 	_player->setPattern(offset, value);
 }
 
 bool PCSound::musicLooping() const {
 	if (_amigaPlayer)
 		return _amigaPlayer->looping();
+	if (_atariPlayer)
+		return _atariPlayer->looping();
+	if (_mt32Player)
+		return _mt32Player->looping();
 	return _player->looping();
 }
 
@@ -1344,10 +2540,24 @@ void PCSound::musicLoop(bool v) {
 		_amigaPlayer->setLooping(v);
 		return;
 	}
+	if (_atariPlayer) {
+		_atariPlayer->setLooping(v);
+		return;
+	}
+	if (_mt32Player) {
+		_mt32Player->setLooping(v);
+		return;
+	}
 	_player->setLooping(v);
 }
 
 void PCSound::startNote(int channel, int volume, int freq) {
+	if (_mt32Player) {
+		_mt32Player->setEffectPeriod(channel, freq, volume);
+		return;
+	}
+	if (_atariEffects)
+		return; // The ST PSG sample interrupt runs at a fixed 6400 Hz.
 	if (_amigaEffects) {
 		_amigaEffects->setPeriod(channel, freq, volume);
 		return;
@@ -1360,8 +2570,14 @@ void PCSound::startNote(int channel, int volume, int freq) {
 void PCSound::doSync(Common::Serializer &s) {
 	if (s.isLoading() && _amigaEffects)
 		_amigaEffects->stop(-1);
+	if (s.isLoading() && _atariEffects)
+		_atariEffects->stop();
 	if (_amigaPlayer)
 		_amigaPlayer->doSync(s);
+	else if (_atariPlayer)
+		_atariPlayer->doSync(s);
+	else if (_mt32Player)
+		_mt32Player->doSync(s);
 	else
 		_player->doSync(s);
 	s.syncAsSint16LE(_genVolume);
@@ -1370,13 +2586,26 @@ void PCSound::doSync(Common::Serializer &s) {
 const char *PCSound::musicName() {
 	if (_amigaPlayer)
 		return _amigaPlayer->musicName();
+	if (_atariPlayer)
+		return _atariPlayer->musicName();
+	if (_mt32Player)
+		return _mt32Player->musicName();
 	return _player->musicName();
 }
 
 void PCSound::syncSounds() {
-	if (_amigaPlayer)
-		return; // Music volume/mute is applied by the mixer to the Paula stream.
+	if (_mt32Player) {
+		_mt32Player->syncSounds();
+		return;
+	}
+	if (_amigaPlayer || _atariPlayer)
+		return; // Native music volume and mute are applied by the mixer.
 	_soundDriver->syncSounds();
+}
+
+void PCSound::pause(bool paused) {
+	if (_mt32Player)
+		_mt32Player->pause(paused);
 }
 
 } // End of namespace Cruise

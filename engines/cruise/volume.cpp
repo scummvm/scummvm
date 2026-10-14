@@ -231,6 +231,12 @@ int16 findFileInDisks(const char *name) {
 
 	Common::strlcpy(fileName, name, sizeof(fileName));
 	strToUpper(fileName);
+	char cnfName[50];
+	Common::strlcpy(cnfName, fileName, sizeof(cnfName));
+	const uint length = strlen(cnfName);
+	// The ST volume catalogue retains PC sound names, unlike the disk indexes.
+	if (_vm->getPlatform() == Common::kPlatformAtariST && length >= 4 && !strcmp(cnfName + length - 4, ".SPL"))
+		Common::strlcpy(cnfName + length - 4, ".ADL", 5);
 
 	if (!volumeDataLoaded) {
 		debug(1, "CNF wasn't loaded, reading now...");
@@ -253,7 +259,7 @@ int16 findFileInDisks(const char *name) {
 		return (fileIdx);
 	}
 
-	disk = searchFileInVolCnf(fileName, currentDiskNumber);
+	disk = searchFileInVolCnf(cnfName, currentDiskNumber);
 
 	if (disk >= 0) {
 		int temp;
@@ -280,7 +286,7 @@ int16 findFileInDisks(const char *name) {
 	} else {
 		int temp;
 
-		temp = findFileInDisksSub1(fileName);
+		temp = findFileInDisksSub1(cnfName);
 
 		if (temp >= 0) {
 			int temp2;

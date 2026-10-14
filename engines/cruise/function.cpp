@@ -208,7 +208,7 @@ int16 Op_PlayFX() {
 			if (frequency > 0)
 				_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr, filesDatabase[sampleNum].width, volume, channelNum, Period(frequency), false);
 		} else {
-			_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr, filesDatabase[sampleNum].width, volume);
+			_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr, filesDatabase[sampleNum].width, volume, channelNum, 0, false);
 		}
 	}
 
@@ -227,7 +227,7 @@ int16 Op_LoopFX() {
 			if (frequency > 0)
 				_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr, filesDatabase[sampleNum].width, volume, channelNum, Period(frequency), true);
 		} else {
-			_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr, filesDatabase[sampleNum].width, volume);
+			_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr, filesDatabase[sampleNum].width, volume, channelNum, 0, true);
 		}
 	}
 

@@ -70,6 +70,7 @@ struct CRUISEGameDescription;
 
 class CruiseEngine: public Engine {
 private:
+	void pauseEngineIntern(bool pause) override;
 	bool _preLoad;
 	PCSound *_sound;
 	Common::StringArray _langStrings;
