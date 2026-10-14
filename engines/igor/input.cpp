@@ -34,10 +34,6 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 	if (presentScreen && !_eventQuitGame) {
 		_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 
-		if (_debugOverlayMode != kOverlayOff) {
-			debugApplyOverlay();
-		}
-
 		_system->updateScreen();
 	}
 

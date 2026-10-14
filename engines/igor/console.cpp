@@ -26,12 +26,6 @@ namespace Igor {
 
 	Console::Console() : GUI::Debugger() {
 	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
-	registerCmd("paint_walk",     WRAP_METHOD(Console, Cmd_paintWalk));
-	registerCmd("paint_hotspots", WRAP_METHOD(Console, Cmd_paintHotspots));
-	registerCmd("paint_y1lum",    WRAP_METHOD(Console, Cmd_paintY1Lum));
-	registerCmd("paint_y2lum",    WRAP_METHOD(Console, Cmd_paintY2Lum));
-	registerCmd("paint_deltalum", WRAP_METHOD(Console, Cmd_paintDeltaLum));
-	registerCmd("paint_off",      WRAP_METHOD(Console, Cmd_paintOff));
 	registerCmd("fast_mode",     WRAP_METHOD(Console, Cmd_fastMode));
 	registerCmd("room",     WRAP_METHOD(Console, Cmd_changePart));
 	registerCmd("give", WRAP_METHOD(Console, Cmd_addObjectToInventory));
@@ -43,44 +37,6 @@ Console::~Console() {
 
 bool Console::Cmd_test(int argc, const char **argv) {
 	debugPrintf("Test\n");
-	return true;
-}
-
-bool Console::Cmd_paintWalk(int argc, const char **argv) {
-	debugPrintf("Overlay: walk areas (BOX .area != 0); colours are the area id\n");
-	g_engine->debugPaintWalkAreas();
-	return true;
-}
-
-bool Console::Cmd_paintHotspots(int argc, const char **argv) {
-	debugPrintf("Overlay: hotspots (BOX .object != 0); colours are the object id\n");
-	g_engine->debugPaintHotspots();
-	return true;
-}
-
-bool Console::Cmd_paintY1Lum(int argc, const char **argv) {
-	debugPrintf("Overlay: y1Lum (BOX .y1Lum != 0); colour index is value / 16\n");
-	g_engine->debugPaintY1Lum();
-	return true;
-}
-
-bool Console::Cmd_paintY2Lum(int argc, const char **argv) {
-
-	debugPrintf("Overlay: y2Lum (BOX .y2Lum != 0); colour index is value / 16\n");
-	g_engine->debugPaintY2Lum();
-	return true;
-}
-
-bool Console::Cmd_paintDeltaLum(int argc, const char **argv) {
-
-	debugPrintf("Overlay: deltaLum (BOX .deltaLum != 0); colour index is value & 0x0F\n");
-	g_engine->debugPaintDeltaLum();
-	return true;
-}
-
-bool Console::Cmd_paintOff(int argc, const char **argv) {
-	g_engine->debugClearOverlay();
-	debugPrintf("Overlay off\n");
 	return true;
 }
 

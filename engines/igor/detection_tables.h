@@ -100,6 +100,25 @@ const IgorGameDescription gameDescriptions[] = {
 		"IGOR.FSD"
 	},
 
+	{
+		{
+			"igor",
+			"Floppy",
+			AD_ENTRY2s(
+				"IGOR.DAT", "dbbac4257430da5d616ae946a37750ef", 8819339,
+				"IGOR.FSD", "d081e286da14913379f0d7f58a6a5686", 1324850
+			),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		kIdEngFloppy,
+		kFlagFloppy,
+		"IGOR.DAT",
+		"IGOR.FSD"
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, nullptr, nullptr }
 };
 

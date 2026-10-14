@@ -56,7 +56,6 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_inventoryPanelBuffer = (uint8 *)malloc(9600 * 2);
 	_inventoryImagesBuffer = (uint8 *)malloc(48000);
 	_verbsPanelBuffer = (uint8 *)malloc(3840);
-	_debugOverlayBuffer = (uint8 *)malloc(320 * 144);
 
 	_game.ovlFileName = gameDesc->ovlFileName;
 	_game.sfxFileName = gameDesc->sfxFileName;
@@ -96,7 +95,6 @@ IgorEngine::~IgorEngine() {
 	free(_inventoryPanelBuffer);
 	free(_inventoryImagesBuffer);
 	free(_verbsPanelBuffer);
-	free(_debugOverlayBuffer);
 
 	// DebugMan.clearAllDebugChannels();
 
@@ -113,7 +111,6 @@ Common::String IgorEngine::getGameId() const {
 
 void IgorEngine::restart() {
 	_screenVGAVOffset = 0;
-	_debugOverlayMode = kOverlayOff;
 	_gameStateLoaded = false;
 	_creditsPass = 0;
 

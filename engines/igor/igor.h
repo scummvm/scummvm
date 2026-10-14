@@ -480,15 +480,6 @@ enum Verb {
 	kVerbGive
 };
 
-enum DebugOverlay {
-	kOverlayOff = 0,
-	kOverlayWalkAreas,
-	kOverlayHotspots,
-	kOverlayY1Lum,
-	kOverlayY2Lum,
-	kOverlayDeltaLum
-};
-
 struct DialogueText {
 	int num;
 	int count;
@@ -597,9 +588,6 @@ private:
 	uint8 *_inventoryImagesBuffer;
 	uint8 *_verbsPanelBuffer;
 	int _screenVGAVOffset;
-
-	uint8 *_debugOverlayBuffer;
-	int _debugOverlayMode;
 
 	bool _eventQuitGame;
 	bool _gameStateLoaded;
@@ -1700,17 +1688,6 @@ public:
 
 	void handlePause();
 
-	// Debug overlays (console: paint_walk / paint_hotspots / paint_y1lum /
-	// paint_y2lum / paint_deltalum / paint_off).
-	// Paint the mask regions whose BOX record has a non-zero walk area or
-	// object, or whose y1Lum / y2Lum / deltaLum threshold is set; applied on
-	// top of the presented frame until cleared.
-	void debugPaintWalkAreas();
-	void debugPaintHotspots();
-	void debugPaintY1Lum();
-	void debugPaintY2Lum();
-	void debugPaintDeltaLum();
-	void debugClearOverlay();
 	void debugSetFastMode(int factor) { _fastMode = factor; }
 	int debugGetFastMode() const { return _fastMode; }
 	void debugChangePart(int state);
