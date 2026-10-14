@@ -143,6 +143,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_enableSound = _vflags & 0x08;
 	_crop = !(_vflags & 0x02);
 	_center = _vflags & 0x01;
+	_scaleX = _scaleY = 100;
 	_dirty = false;
 	_emptyFile = false;
 
@@ -188,6 +189,8 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Digita
 	_avimovie = source._avimovie;
 	_qtmovie = source._qtmovie;
 	_dirty = source._dirty;
+	_emptyFile = source._emptyFile;
+	memcpy(_ditheringPalette, source._ditheringPalette, 256*3);
 	_frameRateType = source._frameRateType;
 	_videoType = source._videoType;
 
