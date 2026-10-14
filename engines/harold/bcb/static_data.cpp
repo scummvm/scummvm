@@ -219,8 +219,9 @@ const char *const kStillImageHighColorPaths[8] = {
 	"bmp/still/16m/pstill_3.bmp",
 	"bmp/still/16m/pstill_4.bmp",
 	"bmp/still/16m/pstill_5.bmp",
-	"bmp/still/16m/pbad.bmp",
+	// Correct the Windows ending order to match LaserActive.
 	"bmp/still/16m/pgood.bmp",
+	"bmp/still/16m/pbad.bmp",
 	"bmp/still/16m/pstaff.bmp"
 };
 

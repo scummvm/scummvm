@@ -347,7 +347,7 @@ void applyTranslatedStillImage(Graphics::Surface &still, int stillIndex, const T
 
 	drawTranslatedStillHeading(still, stillIndex, translation);
 	if (stillIndex == 5 || stillIndex == 6)
-		drawTranslatedEnding(still, translation, stillIndex == 5 ? "endings.pbad." : "endings.pgood.");
+		drawTranslatedEnding(still, translation, stillIndex == 5 ? "endings.pgood." : "endings.pbad.");
 }
 
 void applyTranslatedComputerButtons(Graphics::Surface &computer, const TextTranslationData &translation) {
