@@ -136,6 +136,7 @@ MODULE_OBJS = \
 	monsters/scenes/playable/speech_controller.o \
 	monsters/scenes/playable/playable_scene.o \
 	monsters/scenes/playable/playable_scene_actions.o \
+	runaway/animation.o \
 	runaway/audio.o \
 	runaway/engine.o \
 	runaway/font.o \

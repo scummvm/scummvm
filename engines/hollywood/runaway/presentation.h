@@ -25,6 +25,7 @@
 #include "common/random.h"
 #include "common/language.h"
 #include "common/ustr.h"
+#include "hollywood/runaway/animation.h"
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/scene_text_store.h"
@@ -48,6 +49,7 @@ private:
 	void showSpeechRow();
 	RunawayAudio _audio;
 	Common::RandomSource _random;
+	RunawayLipSync _lipSync;
 	SceneTextStore _text;
 	Graphics::ManagedSurface _background;
 	RunawayAnimation _actors[3];

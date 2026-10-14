@@ -149,12 +149,12 @@ Common::Error RunawayEngine::run() {
 	while (!shouldQuit()) {
 		const uint32 now = getTotalPlayTime();
 		Common::Point mouse = _eventMan->getMousePos();
-		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation());
+		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation(), scene.speechFrame());
 		bool openMenu = false;
 		Common::Event event;
 		while (!openMenu && _eventMan->pollEvent(event)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
-				ui.update(now, event.mouse, scene.hotspotAt(event.mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation());
+				ui.update(now, event.mouse, scene.hotspotAt(event.mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation(), scene.speechFrame());
 				const RunawayUI::Command command = ui.click(event.type == Common::EVENT_RBUTTONDOWN);
 				switch (command.type) {
 				case RunawayUI::Command::kOpenMenu:
@@ -179,7 +179,7 @@ Common::Error RunawayEngine::run() {
 				}
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 				mouse = _eventMan->getMousePos();
-				ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation());
+				ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation(), scene.speechFrame());
 				const bool pressed = event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START;
 				switch (event.customType) {
 				case kPauseMenu:
@@ -252,7 +252,7 @@ Common::Error RunawayEngine::run() {
 		// all three releases currently finish at the shared shack escape.
 		if (scene.escaped())
 			return playEnding(menu);
-		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation());
+		ui.update(now, mouse, scene.hotspotAt(mouse), scene.busy(), scene.speaking(), scene.inventoryPresentation(), scene.speechFrame());
 		scene.draw();
 		Graphics::ManagedSurface &screen = scene.screen();
 		const bool subtitles = !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles") || ConfMan.getBool("speech_mute");

@@ -61,55 +61,6 @@ const SceneHotspot kHotspots[] = {
 	{1215, 542, 7}
 };
 
-// The original 0x40fef0 generates one mouth shape per text character. Work
-// on decoded letters so accented French, German and Spanish vowels also
-// select the appropriate shape, independently of the source code page.
-uint32 speechLetter(uint32 c) {
-	if ((c >= 'A' && c <= 'Z') || (c >= 0xc0 && c <= 0xde && c != 0xd7))
-		c += 0x20;
-	switch (c) {
-	case 0xe0: case 0xe1: case 0xe2: case 0xe3: case 0xe4: case 0xe5: return 'a';
-	case 0xe8: case 0xe9: case 0xea: case 0xeb: return 'e';
-	case 0xec: case 0xed: case 0xee: case 0xef: return 'i';
-	case 0xf2: case 0xf3: case 0xf4: case 0xf5: case 0xf6: return 'o';
-	case 0xf9: case 0xfa: case 0xfb: case 0xfc: return 'u';
-	case 0xe7: return 'c';
-	case 0xf1: return 'n';
-	default: return c;
-	}
-}
-
-byte speechVowel(uint32 c) {
-	switch (c) {
-	case 'a': return 1;
-	case 'e': return 2;
-	case 'i': return 3;
-	case 'o': return 4;
-	case 'u': return 5;
-	default: return 0;
-	}
-}
-
-byte speechMouth(uint32 c, uint32 next, byte previous) {
-	const byte vowel = speechVowel(c), nextVowel = speechVowel(next);
-	if (vowel)
-		return vowel;
-	// Native 0x40fd30 anticipates the next vowel for most consonants, closes
-	// for B/P/V, and retains the previous shape at spaces and some endings.
-	switch (c) {
-	case 'b': case 'p': case 'v': return 0;
-	case 'f': return 5;
-	case 'l': return next == 'l' ? 3 : nextVowel ? nextVowel : previous;
-	case 'm': return nextVowel ? 0 : previous;
-	case 's': return nextVowel ? nextVowel : previous;
-	case ' ': return previous;
-	default:
-		if ((c >= 'a' && c <= 'z') || c == 0xdf)
-			return next == ' ' ? previous : nextVowel;
-		return 0;
-	}
-}
-
 } // End of anonymous namespace
 
 bool RunawayScene5030::load() {
@@ -340,7 +291,7 @@ void RunawayScene5030::walkTo(Common::Point target) {
 		_path.push_back(previous);
 		i = next - 1;
 	}
-	_walkStarted = _now;
+	_walkElapsed = _lastFootstep = 0;
 	debugC(1, kDebugScene, "Runaway demo: walk to %d,%d, reachable %d,%d, %u waypoints",
 		target.x, target.y, closest % kRoomWidth, closest / kRoomWidth, _path.size());
 	if (_path.empty())
@@ -362,41 +313,16 @@ void RunawayScene5030::showSpeechRow() {
 	const uint16 sample = _globalSpeech ? _speechSample : _voiceSamples[_speechRow - 500];
 	const uint32 duration = sample ? _audio.playSpeech(sample, _globalSpeech) : 0;
 	_subtitleUntil = _now + (duration ? MAX<uint>(1000, duration + 150) : MAX<uint>(3000, _subtitle.size() * 55));
-	animateSpeech(duration);
+	_idleHead.reset(_now);
+	_lipSync.start(_subtitle, _now, duration, _random);
 	debugC(1, kDebugScene, "Runaway demo: dialogue row %u, voice %u, ends at row %u",
 		_speechRow, sample, _speechEnd);
-}
-
-void RunawayScene5030::animateSpeech(uint32 duration) {
-	_speechStarted = _now;
-	_speechDuration = duration ? duration : _subtitleUntil - _now;
-	_speechFrames.resize(_subtitle.size());
-	if (_speechFrames.empty())
-		return;
-	// The native timer advances in 10 ms ticks, rounding up at a fractional
-	// tick of 0.3. Without a voice sample it uses 80 ms per character.
-	_speechFrameDuration = duration ? MAX<uint>(1, (duration / _speechFrames.size() + 7) / 10) * 10 : 80;
-	for (uint i = 0; i < _speechFrames.size(); ++i) {
-		const uint32 c = speechLetter(_subtitle[i]);
-		const uint32 next = i + 1 < _subtitle.size() ? speechLetter(_subtitle[i + 1]) : 0;
-		_speechFrames[i] = speechMouth(c, next, i ? _speechFrames[i - 1] : 0);
-	}
-	// Native 0x412680 occasionally selects the closed-eye set (6..11) for
-	// four consecutive characters, then returns to the open-eye set (0..5).
-	bool blink = false;
-	for (uint i = 0; i < _speechFrames.size(); i += 4) {
-		blink = !blink && _random.getRandomNumber(4) == 0;
-		if (blink) {
-			for (uint j = i; j < MIN<uint>(i + 4, _speechFrames.size()); ++j)
-				_speechFrames[j] += 6;
-		}
-	}
 }
 
 void RunawayScene5030::stopSpeech() {
 	_audio.stopSpeech();
 	_speechRow = _speechEnd = 0;
-	_speechFrames.clear();
+	_lipSync.stop();
 	_subtitle.clear();
 }
 
@@ -485,6 +411,17 @@ void RunawayScene5030::cancelWalk() {
 	_pathIndex = 0;
 	_pendingHotspot = _pendingItem = 0;
 	_committedCaption.clear();
+}
+
+void RunawayScene5030::playWalkFootstep() {
+	// The sixth E03 lookup table selects the walking surface (native
+	// 0x4282e2). Zero is silent; the shack uses surface 3. Volume follows
+	// the native actor-height / 455 ratio, so distant steps are quieter.
+	const byte surface = _maps[1280 + _mask[_position.y * kRoomWidth + _position.x]];
+	const uint volume = CLIP<int>((int)(RunawayActor::perspectiveHeight(_position) * 100 / 455), 0, 100);
+	if (surface >= 1 && surface <= 7)
+		_audio.playFootstep(surface, _random.getRandomBit(), volume * 255 / 100);
+	_lastFootstep = _walkElapsed;
 }
 
 void RunawayScene5030::click(Common::Point mouse, RunawayVerb verb, byte item) {
@@ -917,11 +854,13 @@ void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpe
 		skipSpeech();
 	if (inventoryOpen && !inventoryPresentation()) {
 		_actionStarted += pausedTime;
-		_walkStarted += pausedTime;
+		_idleHead.pause(pausedTime);
 		return;
 	}
 	updateAction();
 	if ((_action == kNone || _action == kWalkingAction) && _pathIndex < _path.size()) {
+		const uint previousWalkFrame = _walkElapsed / 60;
+		const float previousX = _x, previousY = _y;
 		float travel = elapsed * 0.18f;
 		while (travel > 0 && _pathIndex < _path.size()) {
 			const Common::Point target = _path[_pathIndex];
@@ -947,6 +886,19 @@ void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpe
 			}
 		}
 		_position = Common::Point((int)(_x + 0.5f), (int)(_y + 0.5f));
+		if (_x != previousX || _y != previousY) {
+			_walkElapsed += elapsed;
+			// Native walking repeats cels 1..12 at 60 ms, with contacts at
+			// 6 and 12. Cels 13..18 belong to stopping/turning, not the gait.
+			for (uint frame = previousWalkFrame + 1; frame <= _walkElapsed / 60; ++frame) {
+				if ((1 + frame % 12) % 6 == 0)
+					playWalkFootstep();
+			}
+			// The final standing cel (0) is also a contact. Suppress a
+			// duplicate when it immediately follows another footfall.
+			if (_pathIndex == _path.size() && (!_lastFootstep || _walkElapsed - _lastFootstep > 60))
+				playWalkFootstep();
+		}
 		if (_pathIndex == _path.size()) {
 			debugC(1, kDebugScene, "Runaway demo: arrived at %d,%d", _position.x, _position.y);
 			arrive();
@@ -956,13 +908,10 @@ void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpe
 			_windowClean && _unplugged && _lidOpen && _ice == kFrozen)
 		walkForAction(Common::Point(900, 473), 2, kMeltIce);
 	const bool walking = _pathIndex < _path.size();
-	int headFrame = -1;
-	if (_speechRow && !walking) {
-		const uint32 speechElapsed = now - _speechStarted;
-		const uint mouth = speechElapsed / _speechFrameDuration;
-		headFrame = speechElapsed < _speechDuration && mouth < _speechFrames.size() ? _speechFrames[mouth] : 0;
-	}
-	_actor.setFrame(_facing, walking ? 1 + ((now - _walkStarted) / 70) % 18 : 0, headFrame);
+	const bool idle = !walking && !_speechRow && _action == kNone;
+	_idleHead.update(now, idle, _lipSync.frameDuration(), _random);
+	const int headFrame = walking ? -1 : _speechRow ? speechFrame() : idle ? _idleHead.frame() : -1;
+	_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / 60) % 12 : 0, headFrame);
 	if (scrollDirection)
 		_cameraX += scrollDirection * MAX<int>(1, elapsed / 2);
 	else if (walking || (_action != kNone && _action != kIntro))

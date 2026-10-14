@@ -140,11 +140,15 @@ bool RunawayUI::cancel() {
 	return false;
 }
 
-void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking, bool inventoryPresentation) {
+void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
+		bool inventoryPresentation, byte speechFrame) {
 	_now = now;
 	_mouse = mouse;
 	_blocked = blocked;
 	_speaking = speaking;
+	// Native 0x40e8e0 uses the same twelve mouth/eye frames as Brian in
+	// the room, on the same speech clock, including continuation lines.
+	_mouth = MIN<byte>(11, speechFrame);
 	if (_inventoryPresentation != inventoryPresentation) {
 		_inventoryPresentation = inventoryPresentation;
 		setInventoryOpen(inventoryPresentation);
@@ -204,7 +208,7 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 	if (_inventoryOpen && now - _portraitTick >= 60) {
 		_portraitTick = now;
 		if (_speaking) {
-			_mouth = _random.getRandomNumber(5);
+			_blinkUntil = 0;
 			_lastInteraction = now;
 			_idleStarted = 0;
 		} else if (!busy() && _random.getRandomNumber(49) == 0) {

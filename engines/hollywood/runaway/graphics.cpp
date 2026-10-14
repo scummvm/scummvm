@@ -276,18 +276,19 @@ static uint16 blend565(uint16 source, uint16 destination, uint alpha) {
 	return (red << 11) | (green << 5) | blue;
 }
 
+float RunawayActor::perspectiveHeight(Common::Point position) {
+	// Native scene callback 0x438970, also used to set footstep volume.
+	if (position.x > 1079 && position.y < 542)
+		return position.y * 0.98648649f - 93.675674f;
+	if (position.x > 1215)
+		return position.x * 0.2857143f + 93.85714f;
+	return (position.y * 1.47f - 348.04f + position.x * 0.058927f + 362.462616f) * 0.5f;
+}
+
 void RunawayActor::draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
 		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps, bool sunlit) const {
-	// Perspective planes from the demo's scene callback at 0x438970. Actor
-	// coordinates are anchored at (168,434) in a nominal 455-pixel-high image.
-	float height;
-	if (position.x > 1079 && position.y < 542)
-		height = position.y * 0.98648649f - 93.675674f;
-	else if (position.x > 1215)
-		height = position.x * 0.2857143f + 93.85714f;
-	else
-		height = (position.y * 1.47f - 348.04f + position.x * 0.058927f + 362.462616f) * 0.5f;
-	const int scale = CLIP<int>((int)(height * 256 / 455), 64, 256);
+	// Actor coordinates are anchored at (168,434) in a nominal 455-pixel-high image.
+	const int scale = CLIP<int>((int)(perspectiveHeight(position) * 256 / 455), 64, 256);
 	const int originX = position.x - cameraX - 168 * scale / 256;
 	const int originY = position.y + roomTop - 434 * scale / 256;
 	const int x0 = MAX(0, originX + _bounds.left * scale / 256);

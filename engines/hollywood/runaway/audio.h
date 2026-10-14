@@ -46,7 +46,7 @@ private:
 	uint32 play(const char *archive, uint16 cue, uint tableCount, bool pairedTables,
 		byte flags, Audio::Mixer::SoundType type, Audio::SoundHandle &handle, byte volume, bool loop);
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _music, _speech, _effects[2];
+	Audio::SoundHandle _music, _speech, _effects[2], _footstep;
 };
 
 } // End of namespace Hollywood

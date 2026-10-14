@@ -25,6 +25,7 @@
 #include "common/random.h"
 #include "common/ustr.h"
 #include "hollywood/resource.h"
+#include "hollywood/runaway/animation.h"
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/inventory.h"
@@ -58,6 +59,7 @@ public:
 	const Common::U32String &subtitle() const { return _action == kPeekConversation ? _interrogation.subtitle() : _subtitle; }
 	bool busy() const { return _action != kNone; }
 	bool speaking() const { return _action == kPeekConversation ? _interrogation.speaking() : _speechRow != 0; }
+	byte speechFrame() const { return _lipSync.frame(_now); }
 	void skipSpeech();
 	bool playingVideo() const { return _action == kIntroVideo || _action == kCleanWindowVideo; }
 	bool inventoryPresentation() const { return _action == kIntroInventory; }
@@ -96,8 +98,8 @@ private:
 	void setPosition(Common::Point position, byte facing);
 	void updateAction();
 	void showSpeechRow();
-	void animateSpeech(uint32 duration);
 	void stopSpeech();
+	void playWalkFootstep();
 	void startAction(Action action);
 	void finishAction();
 	bool loadPatch(uint chunk, Common::Array<byte> &patch);
@@ -118,6 +120,8 @@ private:
 	Common::RandomSource _random;
 	bool _peeked = false;
 	RunawayActor _actor;
+	RunawayLipSync _lipSync;
+	RunawayIdleHead _idleHead;
 	RunawayAnimation _intro, _lidActor, _lid, _unplug, _climb, _actionAnimation, _water, _hatch;
 	RunawayVideo _video;
 	Common::Point _position = Common::Point(623, 447);
@@ -138,9 +142,8 @@ private:
 	bool _pickedUp[20] = {};
 	bool _examined[20] = {};
 	bool _globalSpeech = false;
-	uint32 _now = 0, _lastUpdate = 0, _actionStarted = 0, _walkStarted = 0, _subtitleUntil = 0;
-	uint32 _speechStarted = 0, _speechDuration = 0, _speechFrameDuration = 80;
-	Common::Array<byte> _speechFrames;
+	uint32 _now = 0, _lastUpdate = 0, _actionStarted = 0, _subtitleUntil = 0;
+	uint32 _walkElapsed = 0, _lastFootstep = 0;
 	uint _step = 0;
 	uint16 _speechRow = 0, _speechEnd = 0;
 	uint16 _speechSample = 0;

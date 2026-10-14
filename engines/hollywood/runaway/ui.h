@@ -43,7 +43,8 @@ public:
 		_audio(mixer), _inventory(inventory), _strings(strings), _random("runaway-ui") {}
 	~RunawayUI();
 	bool load();
-	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking, bool inventoryPresentation = false);
+	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
+		bool inventoryPresentation = false, byte speechFrame = 0);
 	Command click(bool right);
 	void toggleInventory();
 	bool cancel();

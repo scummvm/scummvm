@@ -28,6 +28,9 @@
 
 namespace Hollywood {
 
+static const uint kInterrogationSpeakerActor[] = {1, 2, 0};
+static const uint kInterrogationMouthBase[] = {67, 40, 20};
+
 static void dimViewport(Graphics::ManagedSurface &screen, uint brightness) {
 	for (int y = kRunawayViewportTop; y < kRunawayViewportTop + kRunawayViewportHeight; ++y) {
 		uint16 *pixels = (uint16 *)screen.getBasePtr(0, y);
@@ -74,6 +77,7 @@ void RunawayInterrogation::start(uint32 now) {
 
 void RunawayInterrogation::nextPhrase() {
 	_row = 0;
+	_lipSync.stop();
 	_subtitle.clear();
 	if (finished()) {
 		_audio.stopSpeech();
@@ -95,12 +99,19 @@ void RunawayInterrogation::nextPhrase() {
 void RunawayInterrogation::showSpeechRow() {
 	_subtitle = Common::U32String(_text.largeTextRecord(_row), Common::kDos850);
 	const uint32 duration = _audio.playSpeech(_sample);
+	_lipSync.start(_subtitle, _now, duration, _random);
+	const uint actor = kInterrogationSpeakerActor[_speakers[_phrase]];
+	_frames[actor] = kInterrogationMouthBase[actor] + _lipSync.frame(_now);
+	_idle[actor] = true;
+	_lastTick[actor] = _now;
 	_deadline = _now + (duration ? MAX<uint>(1000, duration + 150) : MAX<uint>(3000, _subtitle.size() * 55));
 }
 
 void RunawayInterrogation::skipSpeech() {
 	if (!speaking())
 		return;
+	const uint actor = kInterrogationSpeakerActor[_speakers[_phrase]];
+	_frames[actor] = kInterrogationMouthBase[actor];
 	_audio.stopSpeech();
 	if (_row < _lastRow) {
 		++_row;
@@ -118,20 +129,26 @@ void RunawayInterrogation::update(uint32 now) {
 		skipSpeech();
 	if (finished())
 		return;
-	const uint speakerActor[] = {1, 2, 0};
 	const uint idleEnd[] = {67, 39, 19};
-	const uint mouthBase[] = {67, 40, 20};
+	const uint speaker = kInterrogationSpeakerActor[_speakers[_phrase]];
 	for (uint i = 0; i < ARRAYSIZE(_actors); ++i) {
+		if (i == speaker) {
+			// Native 0x43c5a0/0x43c700/0x43c860 share the text-driven
+			// mouth sequence. Gina's table maps virtual 70..81 to 67..78.
+			_frames[i] = kInterrogationMouthBase[i] + _lipSync.frame(now);
+			_idle[i] = true;
+			_lastTick[i] = now;
+			continue;
+		}
 		const uint tick = i == 0 ? 60 : 80;
 		while (now - _lastTick[i] >= tick) {
 			_lastTick[i] += tick;
-			if (i == speakerActor[_speakers[_phrase]]) {
-				// Use the original speaking cels while the current line is active.
-				_frames[i] = mouthBase[i] + (_lastTick[i] / 90) % 6;
-				_idle[i] = true;
-			} else if (_idle[i]) {
-				_frames[i] = mouthBase[i] + (_random.getRandomNumber(14) == 0 ? 6 : 0);
-				if (_random.getRandomNumber(i == 0 ? 49 : 9) == 0) {
+			if (_idle[i]) {
+				if (_frames[i] != kInterrogationMouthBase[i]) {
+					_frames[i] = kInterrogationMouthBase[i];
+				} else if (_random.getRandomNumber(14) == 0) {
+					_frames[i] = kInterrogationMouthBase[i] + 6;
+				} else if (_random.getRandomNumber(i == 0 ? 49 : 9) == 0) {
 					_idle[i] = false;
 					_frames[i] = 0;
 				}

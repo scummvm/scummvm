@@ -116,7 +116,7 @@ void RunawayAudio::playFootstep(byte surface, byte variant, byte volume) {
 	// Native 0x407410 selects one of two mono samples per surface. These
 	// fourteen effects start at cue 21 in the otherwise shared music archive.
 	play("RESOURCE.002", 21 + (surface - 1) * 2 + variant, 100, false,
-		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _effects[0], volume, false);
+		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _footstep, volume, false);
 }
 
 void RunawayAudio::stopMusic() {
@@ -128,6 +128,7 @@ void RunawayAudio::stopSpeech() {
 }
 
 void RunawayAudio::stopEffect() {
+	_mixer->stopHandle(_footstep);
 	for (uint i = 0; i < ARRAYSIZE(_effects); ++i)
 		_mixer->stopHandle(_effects[i]);
 }
