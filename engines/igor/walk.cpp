@@ -31,17 +31,6 @@ static int16 truncReal(float f) {
 	return (int16)f;
 }
 
-void IgorEngine::setRoomWalkBounds(int x1, int y1, int x2, int y2,
-		int x1MinY, int x2MinY) {
-	assert(x1 <= x2 && y1 <= y2);
-	_roomWalkBounds.x1 = x1;
-	_roomWalkBounds.x2 = x2;
-	_roomWalkBounds.y1 = y1;
-	_roomWalkBounds.y2 = y2;
-	_roomWalkBounds.x1MinY = x1MinY < 0 ? y1 : x1MinY;
-	_roomWalkBounds.x2MinY = x2MinY < 0 ? y1 : x2MinY;
-}
-
 void IgorEngine::setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp, int yBottom) {
 	_roomWalkTargetRules.yMax = yMax;
 	_roomWalkTargetBottom = yBottom;
@@ -49,81 +38,6 @@ void IgorEngine::setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp, int 
 	_roomWalkTargetRules.xMax = xMax;
 	_roomWalkTargetRules.scanUp = scanUp;
 	_roomWalkTargetRules.enabled = true;
-}
-
-void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
-	if (srcX != dstX || srcY != dstY) {
-		_walkData[0] = _walkData[_walkDataLastIndex];
-		_walkDataLastIndex = 1;
-		int srcArea = _roomObjectAreasTable[_screenLayer2[srcY * 320 + srcX]].area;
-		int dstArea = _roomObjectAreasTable[_screenLayer2[dstY * 320 + dstX]].area;
-		debugC(9, kDebugWalk, "srcArea = %d dstArea = %d", srcArea, dstArea);
-		int currentArea = srcArea;
-		// Area 0 means the point is outside any walk area: there is no route
-		// through the area table, so walk straight to the destination
-		for (int i = 1; srcArea >= 1 && dstArea >= 1 && dstArea != currentArea; ++i) {
-			const int boxOffset = srcArea * _roomDataOffsets.area.boxSrcSize + dstArea * _roomDataOffsets.area.boxDstSize;
-			int nextArea = _roomActionsTable[boxOffset + i + _roomDataOffsets.area.box];
-			debugC(9, kDebugWalk, "nextArea %d (%d,%d,%d)", nextArea, _roomDataOffsets.area.box, _roomDataOffsets.area.boxSrcSize, _roomDataOffsets.area.boxDstSize);
-			int nextPosX, nextPosY;
-			if (dstArea != nextArea) {
-				getClosestAreaTrianglePoint(nextArea, currentArea, &nextPosY, &nextPosX, srcY, srcX);
-			} else {
-				getClosestAreaTrianglePoint2(nextArea, currentArea, &nextPosY, &nextPosX, dstY, dstX, srcY, srcX);
-			}
-			debugC(9, kDebugWalk, "buildWalkPath() transitionArea = %d next %d,%d pos %d,%d offset 0x%X", nextArea, nextPosX, nextPosY, dstX, dstY, _roomDataOffsets.area.box);
-			buildWalkPathArea(srcX, srcY, nextPosX, nextPosY);
-			srcX = nextPosX;
-			srcY = nextPosY;
-			currentArea = nextArea;
-		}
-		buildWalkPathArea(srcX, srcY, dstX, dstY);
-		--_walkDataLastIndex;
-	}
-	debugC(9, kDebugWalk, "buildWalkPath() end _walkDataLastIndex %d", _walkDataLastIndex);
-}
-
-
-void IgorEngine::getClosestAreaTrianglePoint(int dstArea, int srcArea, int *dstY, int *dstX, int srcY, int srcX) {
-	int minSqrDist = -1;
-	assert(dstArea >= 1 && srcArea >= 1);
-	const uint8 *p = _roomActionsTable + ((dstArea - 1) + (srcArea - 1) * _roomDataOffsets.area.boxSize) * 6;
-	for (int i = 0; i < 3; ++i) {
-		const uint16 offset = READ_LE_UINT16(p + i * 2);
-		const int yPos = offset / 320;
-		const int xPos = offset % 320;
-		int y = srcY - yPos;
-		int x = srcX - xPos;
-		int sqrDist = y * y + x * x;
-		if (minSqrDist == -1 || sqrDist < minSqrDist) {
-			*dstY = yPos;
-			*dstX = xPos;
-			minSqrDist = sqrDist;
-		}
-	}
-	debugC(9, kDebugWalk, "getClosestAreaTrianglePoint() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
-}
-
-void IgorEngine::getClosestAreaTrianglePoint2(int dstArea, int srcArea, int *dstY, int *dstX, int srcY1, int srcX1, int srcY2, int srcX2) {
-	int minSqrDist = -1;
-	assert(dstArea >= 1 && srcArea >= 1);
-	const uint8 *p = _roomActionsTable + ((dstArea - 1) + (srcArea - 1) * _roomDataOffsets.area.boxSize) * 6;
-	for (int i = 0; i < 3; ++i) {
-		const uint16 offset = READ_LE_UINT16(p + i * 2);
-		const int yPos = offset / 320;
-		const int xPos = offset % 320;
-		int y1 = srcY1 - yPos;
-		int x1 = srcX1 - xPos;
-		int y2 = srcY2 - yPos;
-		int x2 = srcX2 - xPos;
-		int sqrDist = y1 * y1 + x1 * x1 + y2 * y2 + x2 * x2;
-		if (minSqrDist == -1 || sqrDist < minSqrDist) {
-			*dstY = yPos;
-			*dstX = xPos;
-			minSqrDist = sqrDist;
-		}
-	}
-	debugC(9, kDebugWalk, "getClosestAreaTrianglePoint2() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
 }
 
 int IgorEngine::lookupScale(int xOffset, int yOffset, int h) const {
@@ -134,20 +48,10 @@ int IgorEngine::lookupScale(int xOffset, int yOffset, int h) const {
 	return offset;
 }
 
-void IgorEngine::lookupScale(int curX, int curY, uint8 &scale, uint8 &xScale, uint8 &yScale) const {
-	scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
-	yScale = _walkScaleTable[0x901 + scale];
-	xScale = _walkWidthScaleTable[scale - 1];
-}
-
 void IgorEngine::moveIgor(int pos, int frame) {
 	assert(_gameState.enableLight == 1 || _gameState.enableLight == 2);
 	debugC(9, kDebugWalk, "moveIgorHelper _walkDataCurrentIndex %d pos %d frame %d", _walkDataCurrentIndex, pos, frame);
 	if (pos < 1 || pos > 4) {
-		// The facing selects one of the four frame sets; any other value (a walk step whose
-		// facing byte came from a room object without a walk target) has no frames to draw.
-		// TODO: the original indexes its table of frame sets without a bounds check, so what
-		// it draws for such a facing is not derived.
 		warning("moveIgor: invalid facing %d, step not drawn", pos);
 		return;
 	}
@@ -286,14 +190,96 @@ void IgorEngine::moveIgor(int pos, int frame) {
 		}
 	}
 	for (igorBodyScanLine = 0; igorBodyScanLine < igorScaledHeight; ++igorBodyScanLine) {
-		// Pixels wrapping past the last room row would land in the panel area and
-		// come from unrelated memory, so never draw them.
+	.
 		if (screenIgorDrawOffset < 320 * 144) {
 			const int len = MIN<int>(igorScaledWidth, 320 * 144 - screenIgorDrawOffset);
 			memcpy(_screenVGA + screenIgorDrawOffset, _igorTempFrames + igorBodyScanLine * 50, len);
 		}
 		screenIgorDrawOffset += 320;
 	}
+}
+void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
+	debugC(9, kDebugWalk, "IgorEngine::buildWalkPathSimple(%d, %d, %d, %d)", srcX, srcY, dstX, dstY);
+	if (srcX != dstX || srcY != dstY) {
+		_walkData[0] = _walkData[_walkDataLastIndex];
+		_walkDataLastIndex = 1;
+		buildWalkPathArea(srcX, srcY, dstX, dstY);
+		--_walkDataLastIndex;
+	}
+}
+
+void IgorEngine::getClosestAreaTrianglePoint(int dstArea, int srcArea, int *dstY, int *dstX, int srcY, int srcX) {
+	int minSqrDist = -1;
+	assert(dstArea >= 1 && srcArea >= 1);
+	const uint8 *p = _roomActionsTable + ((dstArea - 1) + (srcArea - 1) * _roomDataOffsets.area.boxSize) * 6;
+	for (int i = 0; i < 3; ++i) {
+		const uint16 offset = READ_LE_UINT16(p + i * 2);
+		const int yPos = offset / 320;
+		const int xPos = offset % 320;
+		int y = srcY - yPos;
+		int x = srcX - xPos;
+		int sqrDist = y * y + x * x;
+		if (minSqrDist == -1 || sqrDist < minSqrDist) {
+			*dstY = yPos;
+			*dstX = xPos;
+			minSqrDist = sqrDist;
+		}
+	}
+	debugC(9, kDebugWalk, "getClosestAreaTrianglePoint() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
+}
+
+void IgorEngine::getClosestAreaTrianglePoint2(int dstArea, int srcArea, int *dstY, int *dstX, int srcY1, int srcX1, int srcY2, int srcX2) {
+	int minSqrDist = -1;
+	assert(dstArea >= 1 && srcArea >= 1);
+	const uint8 *p = _roomActionsTable + ((dstArea - 1) + (srcArea - 1) * _roomDataOffsets.area.boxSize) * 6;
+	for (int i = 0; i < 3; ++i) {
+		const uint16 offset = READ_LE_UINT16(p + i * 2);
+		const int yPos = offset / 320;
+		const int xPos = offset % 320;
+		int y1 = srcY1 - yPos;
+		int x1 = srcX1 - xPos;
+		int y2 = srcY2 - yPos;
+		int x2 = srcX2 - xPos;
+		int sqrDist = y1 * y1 + x1 * x1 + y2 * y2 + x2 * x2;
+		if (minSqrDist == -1 || sqrDist < minSqrDist) {
+			*dstY = yPos;
+			*dstX = xPos;
+			minSqrDist = sqrDist;
+		}
+	}
+	debugC(9, kDebugWalk, "getClosestAreaTrianglePoint2() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
+}
+
+void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
+	if (srcX != dstX || srcY != dstY) {
+		_walkData[0] = _walkData[_walkDataLastIndex];
+		_walkDataLastIndex = 1;
+		int srcArea = _roomObjectAreasTable[_screenLayer2[srcY * 320 + srcX]].area;
+		int dstArea = _roomObjectAreasTable[_screenLayer2[dstY * 320 + dstX]].area;
+		debugC(9, kDebugWalk, "srcArea = %d dstArea = %d", srcArea, dstArea);
+		int currentArea = srcArea;
+		// Area 0 means the point is outside any walk area: there is no route
+		// through the area table, so walk straight to the destination
+		for (int i = 1; srcArea >= 1 && dstArea >= 1 && dstArea != currentArea; ++i) {
+			const int boxOffset = srcArea * _roomDataOffsets.area.boxSrcSize + dstArea * _roomDataOffsets.area.boxDstSize;
+			int nextArea = _roomActionsTable[boxOffset + i + _roomDataOffsets.area.box];
+			debugC(9, kDebugWalk, "nextArea %d (%d,%d,%d)", nextArea, _roomDataOffsets.area.box, _roomDataOffsets.area.boxSrcSize, _roomDataOffsets.area.boxDstSize);
+			int nextPosX, nextPosY;
+			if (dstArea != nextArea) {
+				getClosestAreaTrianglePoint(nextArea, currentArea, &nextPosY, &nextPosX, srcY, srcX);
+			} else {
+				getClosestAreaTrianglePoint2(nextArea, currentArea, &nextPosY, &nextPosX, dstY, dstX, srcY, srcX);
+			}
+			debugC(9, kDebugWalk, "buildWalkPath() transitionArea = %d next %d,%d pos %d,%d offset 0x%X", nextArea, nextPosX, nextPosY, dstX, dstY, _roomDataOffsets.area.box);
+			buildWalkPathArea(srcX, srcY, nextPosX, nextPosY);
+			srcX = nextPosX;
+			srcY = nextPosY;
+			currentArea = nextArea;
+		}
+		buildWalkPathArea(srcX, srcY, dstX, dstY);
+		--_walkDataLastIndex;
+	}
+	debugC(9, kDebugWalk, "buildWalkPath() end _walkDataLastIndex %d", _walkDataLastIndex);
 }
 
 void IgorEngine::buildWalkPathArea(int srcX, int srcY, int dstX, int dstY) {
@@ -372,6 +358,12 @@ int IgorEngine::getHorizontalStepsCount(int minX, int minY, int maxX, int maxY) 
 		}
 	}
 	return count;
+}
+
+void IgorEngine::lookupScale(int curX, int curY, uint8 &scale, uint8 &xScale, uint8 &yScale) const {
+	scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+	yScale = _walkScaleTable[0x901 + scale];
+	xScale = _walkWidthScaleTable[scale - 1];
 }
 
 void IgorEngine::buildWalkPathAreaUpDirection(int srcX, int srcY, int dstX, int dstY) {
@@ -1090,12 +1082,13 @@ bool IgorEngine::waitForIgorMove(IgorMoveTick tick, bool escapeSkips, bool force
 				++_walkDataCurrentIndex;
 			}
 		}
-		if (tick) {
+		if (tick) { // run the update function if necessary
 			(this->*tick)();
 		}
 		if (escapeSkips && ((_inputVars[kInputEscape] && !_eventQuitGame) || forceSkip)) {
 			// Escape draws the remaining walk frames at once, without waiting for the timer.
 			// Once pressed, the walks that follow in the same sequence are skipped the same way.
+			// this is done in the college entrance, for instance.
 			_inputVars[kInputEscape] = 0;
 			skipped = true;
 			while (_gameState.igorMoving && _walkDataCurrentIndex <= _walkDataLastIndex) {
@@ -1112,41 +1105,19 @@ bool IgorEngine::waitForIgorMove(IgorMoveTick tick, bool escapeSkips, bool force
 	return skipped;
 }
 
-void IgorEngine::handleRoomIgorWalk() {
-	if (_walkDataCurrentIndex > _walkDataLastIndex) {
-		_gameState.igorMoving = false;
-		_walkDataLastIndex = _walkDataCurrentIndex;
-		if (_actionCode > 0) {
-			hideCursor();
-			debugC(9, kDebugEngine, "Executing action code %d", _actionCode);
-			const int actionPart = _currentPart;
-			executeAction(_actionCode);
-			if (!_gameState.dialogueTextRunning) {
-				showCursor();
-			}
-			clearAction(_currentPart == actionPart);
-		}
-	}
-	if (_gameState.igorMoving) {
-		moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
-		++_walkDataCurrentIndex;
-	}
-}
-
-void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
-	debugC(9, kDebugWalk, "IgorEngine::buildWalkPathSimple(%d, %d, %d, %d)", srcX, srcY, dstX, dstY);
-	if (srcX != dstX || srcY != dstY) {
-		_walkData[0] = _walkData[_walkDataLastIndex];
-		_walkDataLastIndex = 1;
-		buildWalkPathArea(srcX, srcY, dstX, dstY);
-		--_walkDataLastIndex;
-	}
+void IgorEngine::setRoomWalkBounds(int x1, int y1, int x2, int y2, int x1MinY, int x2MinY) {
+	assert(x1 <= x2 && y1 <= y2);
+	_roomWalkBounds.x1 = x1;
+	_roomWalkBounds.x2 = x2;
+	_roomWalkBounds.y1 = y1;
+	_roomWalkBounds.y2 = y2;
+	_roomWalkBounds.x1MinY = x1MinY < 0 ? y1 : x1MinY;
+	_roomWalkBounds.x2MinY = x2MinY < 0 ? y1 : x2MinY;
 }
 
 void IgorEngine::fixWalkPosition(int *x, int *y) {
+	// some rooms had specific walk behavior that needs to be handled differently
 	if (getPart() == 50) {
-		// The click is clamped to a rectangle. On the right half the first walkable row is looked for below it and,
-		// if there is none, above; on the left half the first walkable column to the right and then to the left.
 		int xPos = MAX(MIN(*x, 224), 49);
 		int yPos = MAX(MIN(MIN(*y, 143), 119), 22);
 		if (xPos > 144) {
@@ -1174,8 +1145,7 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 		return;
 	}
 	if (getPart() == 81) {
-		// The click is clamped to the floor: on the left part the first walkable row is looked for below it (starting
-		// one row down) and, if there is none, above; on the right part a click above row 93 goes to a fixed
+		// Clamps clicks to the floor; on the right part a click above row 93 goes to a fixed
 		// place and any other goes to the first walkable column to the left.
 		int xPos = *x;
 		int yPos = MIN(*y, 143);
@@ -1189,7 +1159,6 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 				}
 			} while (yPos != 143);
 			if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
-				// the scan upwards never stops by itself in the original when nothing is walkable
 				do {
 					if (yPos > 0) {
 						--yPos;
@@ -1200,7 +1169,6 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 			xPos = 128;
 			yPos = 93;
 		} else {
-			// the scan to the left never stops by itself in the original when nothing is walkable
 			do {
 				if (xPos > 0) {
 					--xPos;
@@ -1212,7 +1180,7 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 		return;
 	}
 	if (_roomWalkTargetRules.enabled) {
-		// The click is clamped, then the picture is scanned for the first walkable row strictly below it (the
+		// The click is clamped; then the picture is scanned for the first walkable row strictly below it (the
 		// scan starts one row down, whatever the row is) and, if none is found down to the last row and the
 		// room says so, upwards from the last row.
 		int xPos = *x;
@@ -1285,6 +1253,27 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 	}
 	*x = xPos;
 	*y = yPos;
+}
+
+void IgorEngine::handleRoomIgorWalk() {
+	if (_walkDataCurrentIndex > _walkDataLastIndex) {
+		_gameState.igorMoving = false;
+		_walkDataLastIndex = _walkDataCurrentIndex;
+		if (_actionCode > 0) {
+			hideCursor();
+			debugC(9, kDebugEngine, "Executing action code %d", _actionCode);
+			const int actionPart = _currentPart;
+			executeAction(_actionCode);
+			if (!_gameState.dialogueTextRunning) {
+				showCursor();
+			}
+			clearAction(_currentPart == actionPart);
+		}
+	}
+	if (_gameState.igorMoving) {
+		moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
+		++_walkDataCurrentIndex;
+	}
 }
 
 } // End of namespace Igor
