@@ -1775,8 +1775,6 @@ protected:
 extern IgorEngine *g_engine;
 #define SHOULD_QUIT ::Igor::g_engine->shouldQuit()
 
-// Static data tables (defined in static_walk.cpp, static_cursor.cpp)
-
 } // End of namespace Igor
 
 #endif // IGOR_H

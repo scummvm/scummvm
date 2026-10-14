@@ -190,7 +190,6 @@ void IgorEngine::moveIgor(int pos, int frame) {
 		}
 	}
 	for (igorBodyScanLine = 0; igorBodyScanLine < igorScaledHeight; ++igorBodyScanLine) {
-	.
 		if (screenIgorDrawOffset < 320 * 144) {
 			const int len = MIN<int>(igorScaledWidth, 320 * 144 - screenIgorDrawOffset);
 			memcpy(_screenVGA + screenIgorDrawOffset, _igorTempFrames + igorBodyScanLine * 50, len);
