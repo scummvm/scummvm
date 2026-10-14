@@ -728,6 +728,12 @@ void ConcatMultiSound::execute() {
 		}
 
 		if (!_soundStarted) {
+			// Wait for the channel to fall silent, even when the sound playing on it
+			// belongs to another record (e.g. Nancy14 scenes 0 -> 6401)
+			if (g_nancy->_sound->isSoundPlaying(_sound.channelID)) {
+				break;
+			}
+
 			startCurrentSound();
 			_soundStarted = true;
 		} else {
