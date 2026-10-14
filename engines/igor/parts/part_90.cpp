@@ -93,6 +93,8 @@ void IgorEngine::part90() {
 		_inputVars[kInputEscape] = 0;
 		_inputVars[kInputOptions] = 0;
 		_inputVars[kInputClick] = 0;
+		if (!isCDVersion())
+			_inputVars[kInputConfirm] = 0;
 		const uint32 timerStart = _system->getMillis();
 		uint8 observedTimer = 0;
 		for (uint16 elapsed = 0; elapsed < duration; ++elapsed) {
@@ -101,7 +103,8 @@ void IgorEngine::part90() {
 				_inputVars[kInputOptions] = 0;
 				waitForTimer(0);
 			}
-			while (!_gameStateLoaded && !_eventQuitGame && _currentPart != kInvalidPart) {
+			while (!_gameStateLoaded && !_eventQuitGame && _currentPart != kInvalidPart &&
+					(isCDVersion() || !_inputVars[kInputConfirm])) {
 				waitForTimer(0, false);
 				const uint32 timerMillis = _system->getMillis() - timerStart;
 				const uint64 timerRate = (uint64)kTickDelay * _fastMode;
@@ -115,10 +118,13 @@ void IgorEngine::part90() {
 				waitForTimer(0, false, deadline);
 			}
 			_gameTicks = (_gameTicks + 1) & 63;
-			if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart) {
+			if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart ||
+					(!isCDVersion() && _inputVars[kInputConfirm])) {
 				break;
 			}
 		}
+		if (!isCDVersion())
+			_inputVars[kInputConfirm] = 0;
 	}
 	if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart) {
 		if (!_gameStateLoaded)
