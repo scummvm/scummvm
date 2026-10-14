@@ -130,7 +130,7 @@ void drawConfiguredHighQualityTextLines(Graphics::Surface &surface, const TextTr
 
 	const Common::Array<Common::Point> shadowOffsets = getTranslationShadowOffsets(strings, prefix + "shadow_offsets");
 	const bool drawShadowWithoutStroke = getTranslationInt(strings, prefix + "shadow_without_stroke", 0) != 0;
-	const int scale = CLIP<int>(getTranslationInt(strings, prefix + "scale", 4), 1, 8);
+	const int scale = resampleBackground ? 4 : CLIP<int>(getTranslationInt(strings, prefix + "scale", 4), 1, 8);
 	Graphics::Surface layer;
 	layer.create(surface.w * scale, surface.h * scale, Graphics::PixelFormat::createFormatRGBA32());
 	if (resampleBackground) {
@@ -155,21 +155,23 @@ void drawConfiguredHighQualityTextLines(Graphics::Surface &surface, const TextTr
 	for (uint i = 0; i < shadowOffsets.size(); ++i)
 		scaledShadowOffsets.push_back(Common::Point(shadowOffsets[i].x * scale, shadowOffsets[i].y * scale));
 
-	const int lineCount = CLIP(getTranslationInt(strings, prefix + "line_count", 16), 0, 256);
 	HighQualityTextRenderer *renderer = translation.imageFonts.getValOrDefault(fontName, nullptr);
 	Common::ScopedPtr<HighQualityTextRenderer> fallbackRenderer;
 	if (!renderer) {
 		fallbackRenderer.reset(new HighQualityTextRenderer(fontName));
 		renderer = fallbackRenderer.get();
 	}
-	for (int i = 1; i <= lineCount; ++i) {
+	for (int i = 1; ; ++i) {
+		const char *definition = strings.getString(Common::String::format("%sline%d", prefix.c_str(), i));
+		if (!definition)
+			break;
 		Common::U32String text;
 		int x = 0;
 		int y = 0;
 		int size = 44;
 		int strokeWidth = 0;
 		uint32 textColor = scaledTextColor;
-		if (!parseImageTextLine(strings.getString(Common::String::format("%sline%d", prefix.c_str(), i)), text, x, y, size, strokeWidth, textColor, layer.format))
+		if (!parseImageTextLine(definition, text, x, y, size, strokeWidth, textColor, layer.format))
 			continue;
 		size = CLIP(size, 1, 128);
 		strokeWidth = CLIP(strokeWidth, 0, 16);
@@ -236,6 +238,87 @@ bool applyPatchImage(Graphics::Surface &surface, Common::SeekableReadStream *str
 	return true;
 }
 
+void drawTranslatedEnding(Graphics::Surface &surface, const TextTranslationData &translation, const Common::String &prefix) {
+#ifdef USE_FREETYPE2
+	const TextStringTable &strings = translation.strings;
+	const char *patch = strings.getString(prefix + "patch");
+	const char *font = strings.getString(prefix + "font");
+	HighQualityTextRenderer *renderer = font ? translation.imageFonts.getValOrDefault(font, nullptr) : nullptr;
+	if (!translation.packageArchive || !patch || !renderer || !strings.getString(prefix + "line1"))
+		return;
+	if (!applyPatchImage(surface, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "drawTranslatedEnding"))
+		return;
+
+	const int scale = 4;
+	const int widthPercent = CLIP(getTranslationInt(strings, prefix + "width_percent", 100), 1, 100);
+	const int shadowX = getTranslationInt(strings, prefix + "shadow_x", 2);
+	const int shadowY = getTranslationInt(strings, prefix + "shadow_y", 2);
+	const int opacity = CLIP(getTranslationInt(strings, prefix + "shadow_opacity", 100), 0, 100);
+	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatRGBA32();
+	const uint32 black = format.RGBToColor(0, 0, 0);
+	const uint32 white = format.RGBToColor(255, 255, 255);
+	Graphics::Surface mask, line;
+	mask.create(surface.w * scale, surface.h * scale, format);
+	mask.fillRect(Common::Rect(mask.w, mask.h), black);
+	line.create(mask.w, 60 * scale, format);
+	const Common::Array<Common::Point> noShadow;
+	for (int i = 1; ; ++i) {
+		const char *definition = strings.getString(Common::String::format("%sline%d", prefix.c_str(), i));
+		if (!definition)
+			break;
+		Common::U32String text;
+		int x = 0, y = 0, size = 23, stroke = 0;
+		uint32 color = white;
+		if (!parseImageTextLine(definition, text, x, y, size, stroke, color, format))
+			continue;
+		line.fillRect(Common::Rect(line.w, line.h), black);
+		renderer->drawLine(line, CLIP(size, 1, 128) * scale, noShadow, text, 0, 40 * scale, white, black, 0, true);
+		Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> narrowed(
+			downscaleRgbaLayerBicubic(line, MAX(1, (line.w * widthPercent + 50) / 100), line.h));
+		for (int row = 0; row < narrowed->h; ++row) {
+			const int destY = (y - 40) * scale + row;
+			if (destY < 0 || destY >= mask.h)
+				continue;
+			for (int col = 0; col < narrowed->w; ++col) {
+				const int destX = x * scale + col;
+				if (destX < 0 || destX >= mask.w)
+					continue;
+				const byte value = *static_cast<const byte *>(narrowed->getBasePtr(col, row));
+				byte *dest = static_cast<byte *>(mask.getBasePtr(destX, destY));
+				dest[0] = dest[1] = dest[2] = MAX(dest[0], value);
+			}
+		}
+	}
+	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> reduced(downscaleRgbaLayerBicubic(mask, surface.w, surface.h));
+	mask.free();
+	line.free();
+	uint8 textR, textG, textB, shadowR, shadowG, shadowB;
+	format.colorToRGB(getTranslationColor(strings, prefix + "text_color", format, 255, 237, 214), textR, textG, textB);
+	format.colorToRGB(getTranslationColor(strings, prefix + "shadow_color", format, 77, 0, 18), shadowR, shadowG, shadowB);
+	for (int y = 0; y < surface.h; ++y) {
+		for (int x = 0; x < surface.w; ++x) {
+			const int sx = x - shadowX, sy = y - shadowY;
+			const byte ink = *static_cast<const byte *>(reduced->getBasePtr(x, y));
+			const byte shade = sx >= 0 && sx < reduced->w && sy >= 0 && sy < reduced->h ?
+				*static_cast<const byte *>(reduced->getBasePtr(sx, sy)) : 0;
+			if (!ink && !shade)
+				continue;
+			uint8 r, g, b;
+			surface.format.colorToRGB(surface.getPixel(x, y), r, g, b);
+			const double alpha = ink / 255.0;
+			const double shadow = shade / 255.0 * (opacity / 100.0);
+			const auto blend = [&](uint8 background, uint8 tint, uint8 foreground) {
+				const double under = background * (1 - shadow) + MIN(background, tint) * shadow;
+				const double value = under * (1 - alpha) + foreground * alpha;
+				const int integral = (int)value;
+				return (uint8)(integral + (value - integral > 0.5 || (value - integral == 0.5 && (integral & 1))));
+			};
+			surface.setPixel(x, y, surface.format.RGBToColor(blend(r, shadowR, textR), blend(g, shadowG, textG), blend(b, shadowB, textB)));
+		}
+	}
+#endif
+}
+
 } // End of anonymous namespace
 
 void applyTranslatedComputerCard(Graphics::Surface &card, const char *path, const TextTranslationData &translation) {
@@ -263,6 +346,8 @@ void applyTranslatedStillImage(Graphics::Surface &still, int stillIndex, const T
 	}
 
 	drawTranslatedStillHeading(still, stillIndex, translation);
+	if (stillIndex == 5 || stillIndex == 6)
+		drawTranslatedEnding(still, translation, stillIndex == 5 ? "endings.pbad." : "endings.pgood.");
 }
 
 void applyTranslatedComputerButtons(Graphics::Surface &computer, const TextTranslationData &translation) {

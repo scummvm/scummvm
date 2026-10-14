@@ -337,7 +337,7 @@ bool drawFreeTypeTextPass(Graphics::Surface &surface, FT_Face face, const Common
 
 bool drawFreeTypeTextLine(Graphics::Surface &surface, FT_Face face, int size,
 						  const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
-						  int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth) {
+						  int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth, bool baseline) {
 	if (!face)
 		return false;
 
@@ -356,6 +356,8 @@ bool drawFreeTypeTextLine(Graphics::Surface &surface, FT_Face face, int size,
 		ok = layoutPillowGlyphs(face, text, glyphs);
 
 	if (ok) {
+		if (baseline)
+			y -= ftPixel(face->size->metrics.ascender);
 		for (uint i = 0; i < shadowOffsets.size(); ++i)
 			ok = drawFreeTypeTextPass(surface, face, glyphs, x + shadowOffsets[i].x, y + shadowOffsets[i].y, shadowColor, 0, false) && ok;
 		if (strokeWidth > 0)
@@ -721,9 +723,9 @@ HighQualityTextRenderer::~HighQualityTextRenderer() {
 
 void HighQualityTextRenderer::drawLine(Graphics::Surface &surface, int size,
 							 const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
-							 int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth) {
+							 int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth, bool baseline) {
 #ifdef USE_FREETYPE2
-	drawFreeTypeTextLine(surface, _font->face, size, shadowOffsets, text, x, y, textColor, shadowColor, strokeWidth);
+	drawFreeTypeTextLine(surface, _font->face, size, shadowOffsets, text, x, y, textColor, shadowColor, strokeWidth, baseline);
 #endif
 }
 
