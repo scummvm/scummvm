@@ -128,7 +128,7 @@ void IgorEngine::part81ApplyObjectState(int num) {
 	// change door hotspot to lighthouse keeper and vice-versa
 	uint8 objectNames[16];
 	loadData(TXT_Part81ObjectNames, objectNames);
-	const uint8 *name = objectNames + (_objectsState[kChurchBellMessageSeenStateIndex] == 1 ? 0 : 8);
+	const uint8 *name = objectNames + (_objectsState[kChurchBellMessageSeenStateIndex] == 1 ? 0 : objectNames[0] + 1);
 	memcpy(_roomObjectNames[2], name + 1, name[0]);
 	_roomObjectNames[2][name[0]] = '\0';
 	// show lighthouse keeper if the player has seen the church bell message
