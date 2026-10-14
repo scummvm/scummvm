@@ -27,8 +27,6 @@ namespace Ultima1 {
 namespace Views {
 
 // Colors used
-constexpr int COLOR_TEXT = 11;      // light cyan - normal values
-constexpr int COLOR_HIGHLIGHT = 12; // light red - low hits/food warning
 
 void Stats::draw() {
 	Data::Savegame &p = _G(savegame);
@@ -49,17 +47,17 @@ void Stats::draw() {
 	if (p._coins > 9999)
 		p._coins = 9999;
 
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(0, 0), "Hits:");
-	s.setColor(p._hits < 100 ? COLOR_HIGHLIGHT : COLOR_TEXT);
+	s.setColor(p._hits < 100 ? _G(colors)._highlight : _G(colors)._text);
 	s.writeString(Common::Point(5, 0), Common::String::format("%4d", p._hits));
 
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(0, 1), "Food:");
-	s.setColor(p._food < 100 ? COLOR_HIGHLIGHT : COLOR_TEXT);
+	s.setColor(p._food < 100 ? _G(colors)._highlight : _G(colors)._text);
 	s.writeString(Common::Point(5, 1), Common::String::format("%4d", p._food));
 
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(0, 2), "Exp.:");
 	s.writeString(Common::Point(5, 2), Common::String::format("%4d", p._experience));
 

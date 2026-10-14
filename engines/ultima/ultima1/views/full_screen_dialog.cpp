@@ -21,14 +21,13 @@
 
 #include "common/util.h"
 #include "ultima/ultima1/views/full_screen_dialog.h"
+#include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
 // Colors used
-constexpr int COLOR_BORDER = 1;  // blue - thick outer band
-constexpr int COLOR_EDGE = 15;   // white - thin inner highlight line
 constexpr int COLOR_NOTCH = 0;   // black - corner notch pixels
 
 void FullScreenDialog::draw() {
@@ -37,16 +36,16 @@ void FullScreenDialog::draw() {
 
 	// Thick outer border band - each edge flush against both the screen edge
 	// and the inner highlight line drawn just inside it
-	s.fillRect(Common::Rect(0, 0, 320, 7), COLOR_BORDER);
-	s.fillRect(Common::Rect(0, 7, 7, 193), COLOR_BORDER);
-	s.fillRect(Common::Rect(313, 7, 320, 193), COLOR_BORDER);
-	s.fillRect(Common::Rect(0, 193, 320, 200), COLOR_BORDER);
+	s.fillRect(Common::Rect(0, 0, 320, 7), _G(colors)._border);
+	s.fillRect(Common::Rect(0, 7, 7, 193), _G(colors)._border);
+	s.fillRect(Common::Rect(313, 7, 320, 193), _G(colors)._border);
+	s.fillRect(Common::Rect(0, 193, 320, 200), _G(colors)._border);
 
 	// Thin inner highlight line
-	s.drawLine(7, 7, 312, 7, COLOR_EDGE);
-	s.drawLine(7, 7, 7, 192, COLOR_EDGE);
-	s.drawLine(312, 7, 312, 192, COLOR_EDGE);
-	s.drawLine(7, 192, 312, 192, COLOR_EDGE);
+	s.drawLine(7, 7, 312, 7, _G(colors)._edge);
+	s.drawLine(7, 7, 7, 192, _G(colors)._edge);
+	s.drawLine(312, 7, 312, 192, _G(colors)._edge);
+	s.drawLine(7, 192, 312, 192, _G(colors)._edge);
 
 	// Diagonal-notched corners, cut as a growing staircase into each corner
 	for (int idx = 1; idx <= 4; ++idx) {

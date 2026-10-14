@@ -27,7 +27,6 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-constexpr int COLOR_TEXT = 11;      // light cyan - normal values
 constexpr int NEWLINE_DELAY = 50;	// Delay after a newline
 
 Commands::Commands(UIElement *parent) : Graphics::Views::UIElement("Commands", parent), _textCursor("CommandsCursor", this) {
@@ -40,7 +39,7 @@ void Commands::draw() {
 	_surface.clear();
 	_surface.setTextPos(Common::Point(0, 4));
 	_surface.setScrollable(true);
-	_surface.setColor(COLOR_TEXT);
+	_surface.setColor(_G(colors)._text);
 
 	prompt();
 }

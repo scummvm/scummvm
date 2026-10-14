@@ -29,8 +29,6 @@ namespace Views {
 using namespace Data;
 
 // Colors used
-constexpr int COLOR_EDGE = 15; // white
-constexpr int COLOR_TEXT = 11; // light cyan
 
 // Pads a label out with dots to a fixed width, matching the original's
 // dot-leader alignment for the attribute list
@@ -45,10 +43,10 @@ CreateCharacter::CreateCharacter() : FullScreenDialog("CreateCharacter"),
 		_cursor("Cursor", this), _nameInput("NameInput", this, _cursor) {
 	// Hidden until race/sex/class/save selection needs it
 	_cursor.hide();
-	_nameInput.setColor(COLOR_TEXT);
 }
 
 bool CreateCharacter::msgFocus(const FocusMessage &msg) {
+	_nameInput.setColor(_G(colors)._text);
 	reset();
 	return View::msgFocus(msg);
 }
@@ -87,7 +85,7 @@ void CreateCharacter::draw() {
 
 	switch (_state) {
 	case ATTRIBUTES:
-		s.setColor(COLOR_TEXT);
+		s.setColor(_G(colors)._text);
 		s.writeString(Common::Point(6, 4),
 			Common::String::format("Points left to distribute: %d", _pointsRemaining));
 		drawHelp(s);
@@ -98,7 +96,7 @@ void CreateCharacter::draw() {
 		break;
 
 	case RACE:
-		s.setColor(COLOR_TEXT);
+		s.setColor(_G(colors)._text);
 		s.writeString(Common::Point(3, 17), "Select thy race: ");
 		s.writeString(Common::Point(12, 19), "a) Human");
 		s.writeString(Common::Point(12, 20), "b) Elf");
@@ -108,7 +106,7 @@ void CreateCharacter::draw() {
 
 	case SEX:
 		drawConfirmedRace(s);
-		s.setColor(COLOR_TEXT);
+		s.setColor(_G(colors)._text);
 		s.writeString(Common::Point(3, 17), "Select thy sex: ");
 		s.writeString(Common::Point(12, 19), "a) Male");
 		s.writeString(Common::Point(12, 20), "b) Female");
@@ -117,7 +115,7 @@ void CreateCharacter::draw() {
 	case CLASS:
 		drawConfirmedRace(s);
 		drawConfirmedSex(s);
-		s.setColor(COLOR_TEXT);
+		s.setColor(_G(colors)._text);
 		s.writeString(Common::Point(3, 17), "Select thy class: ");
 		s.writeString(Common::Point(12, 19), "a) Fighter");
 		s.writeString(Common::Point(12, 20), "b) Cleric");
@@ -129,7 +127,7 @@ void CreateCharacter::draw() {
 		drawConfirmedRace(s);
 		drawConfirmedSex(s);
 		drawConfirmedClass(s);
-		s.setColor(COLOR_TEXT);
+		s.setColor(_G(colors)._text);
 		s.writeString(Common::Point(3, 17), "Enter thy name: ");
 		break;
 
@@ -137,7 +135,7 @@ void CreateCharacter::draw() {
 		drawConfirmedRace(s);
 		drawConfirmedSex(s);
 		drawConfirmedClass(s);
-		s.setColor(COLOR_TEXT);
+		s.setColor(_G(colors)._text);
 		s.writeString(Common::Point(12, 4), _G(savegame)._name);
 		s.writeString(Common::Point(3, 22), "Use this character? (Y-N) ");
 		break;
@@ -146,7 +144,7 @@ void CreateCharacter::draw() {
 
 void CreateCharacter::drawAttributes(Graphics::Views::GfxSurface &s) {
 	const Savegame &p = _G(savegame);
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 
 	s.writeString(Common::Point(12, 6), padLabel("Strength", 16) + Common::String::format("%2d", p._strength));
 	s.writeString(Common::Point(12, 7), padLabel("Agility", 16) + Common::String::format("%2d", p._agility));
@@ -157,7 +155,7 @@ void CreateCharacter::drawAttributes(Graphics::Views::GfxSurface &s) {
 }
 
 void CreateCharacter::drawHelp(Graphics::Views::GfxSurface &s) {
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(2, 16), "Move cursor with up and down arrows;");
 	s.writeString(Common::Point(2, 17), "increase and decrease attributes");
 	s.writeString(Common::Point(2, 18), "with left and right arrows.  Press");
@@ -166,19 +164,19 @@ void CreateCharacter::drawHelp(Graphics::Views::GfxSurface &s) {
 }
 
 void CreateCharacter::drawConfirmedRace(Graphics::Views::GfxSurface &s) {
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(14, 13),
 		Common::String::format("Race: %s", RACE_NAMES[_G(savegame)._race]));
 }
 
 void CreateCharacter::drawConfirmedSex(Graphics::Views::GfxSurface &s) {
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(15, 14),
 		Common::String::format("Sex: %s", SEX_NAMES[_G(savegame)._sex]));
 }
 
 void CreateCharacter::drawConfirmedClass(Graphics::Views::GfxSurface &s) {
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(13, 15),
 		Common::String::format("Class: %s", CLASS_NAMES[_G(savegame)._class]));
 }

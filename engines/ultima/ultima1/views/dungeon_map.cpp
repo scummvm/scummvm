@@ -28,8 +28,6 @@ namespace Ultima1 {
 namespace Views {
 
 // Colours used by the dungeon view's wireframe lines
-constexpr int EDGE_COLOR = 15;
-constexpr int HIGHLIGHT_COLOR = 12;
 
 // Perspective coordinate table, indexed by distance (0-5). Matches the
 // original's DUNGEON_ARRAY_X/DUNGEONL_ARRAY_Y
@@ -209,7 +207,7 @@ void DungeonMap::drawFacingDirection() {
 		break;
 	}
 
-	s.setColor(EDGE_COLOR);
+	s.setColor(_G(colors)._edge);
 	s.writeString(Common::Point(16, 19), "\x10 %s \x11", dirName);
 }
 
@@ -225,8 +223,8 @@ void DungeonMap::drawWall(int distance) {
 	int yTop = DUNGEON_ARRAY_Y[distance] + 8 + offset;
 	int yBottom = 151 - DUNGEON_ARRAY_Y[distance] - offset;
 
-	s.drawLine(x1, yTop, x2, yTop, EDGE_COLOR);
-	s.drawLine(x1, yBottom, x2, yBottom, EDGE_COLOR);
+	s.drawLine(x1, yTop, x2, yTop, _G(colors)._edge);
+	s.drawLine(x1, yBottom, x2, yBottom, _G(colors)._edge);
 }
 
 void DungeonMap::drawLeftWall(int distance) {
@@ -237,8 +235,8 @@ void DungeonMap::drawLeftWall(int distance) {
 	int x1 = DUNGEON_ARRAY_X[distance - 1] + 16;
 	int x2 = DUNGEON_ARRAY_X[distance] + 16;
 
-	s.drawLine(x1, DUNGEON_ARRAY_Y[distance - 1] + 8, x2, DUNGEON_ARRAY_Y[distance] + 8, EDGE_COLOR);
-	s.drawLine(x1, 151 - DUNGEON_ARRAY_Y[distance - 1], x2, 151 - DUNGEON_ARRAY_Y[distance], EDGE_COLOR);
+	s.drawLine(x1, DUNGEON_ARRAY_Y[distance - 1] + 8, x2, DUNGEON_ARRAY_Y[distance] + 8, _G(colors)._edge);
+	s.drawLine(x1, 151 - DUNGEON_ARRAY_Y[distance - 1], x2, 151 - DUNGEON_ARRAY_Y[distance], _G(colors)._edge);
 }
 
 void DungeonMap::drawRightWall(int distance) {
@@ -249,8 +247,8 @@ void DungeonMap::drawRightWall(int distance) {
 	int x1 = 303 - DUNGEON_ARRAY_X[distance - 1];
 	int x2 = 303 - DUNGEON_ARRAY_X[distance];
 
-	s.drawLine(x1, DUNGEON_ARRAY_Y[distance - 1] + 8, x2, DUNGEON_ARRAY_Y[distance] + 8, EDGE_COLOR);
-	s.drawLine(x1, 151 - DUNGEON_ARRAY_Y[distance - 1], x2, 151 - DUNGEON_ARRAY_Y[distance], EDGE_COLOR);
+	s.drawLine(x1, DUNGEON_ARRAY_Y[distance - 1] + 8, x2, DUNGEON_ARRAY_Y[distance] + 8, _G(colors)._edge);
+	s.drawLine(x1, 151 - DUNGEON_ARRAY_Y[distance - 1], x2, 151 - DUNGEON_ARRAY_Y[distance], _G(colors)._edge);
 }
 
 void DungeonMap::drawLeftBlank(int distance) {
@@ -263,8 +261,8 @@ void DungeonMap::drawLeftBlank(int distance) {
 	int yTop = DUNGEON_ARRAY_Y[distance] + 8;
 	int yBottom = 151 - DUNGEON_ARRAY_Y[distance];
 
-	s.drawLine(x1, yTop, x2, yTop, EDGE_COLOR);
-	s.drawLine(x1, yBottom, x2, yBottom, EDGE_COLOR);
+	s.drawLine(x1, yTop, x2, yTop, _G(colors)._edge);
+	s.drawLine(x1, yBottom, x2, yBottom, _G(colors)._edge);
 }
 
 void DungeonMap::drawRightBlank(int distance) {
@@ -277,8 +275,8 @@ void DungeonMap::drawRightBlank(int distance) {
 	int yTop = DUNGEON_ARRAY_Y[distance] + 8;
 	int yBottom = 151 - DUNGEON_ARRAY_Y[distance];
 
-	s.drawLine(x1, yTop, x2, yTop, EDGE_COLOR);
-	s.drawLine(x1, yBottom, x2, yBottom, EDGE_COLOR);
+	s.drawLine(x1, yTop, x2, yTop, _G(colors)._edge);
+	s.drawLine(x1, yBottom, x2, yBottom, _G(colors)._edge);
 }
 
 void DungeonMap::drawLeftEdge(int distance) {
@@ -287,7 +285,7 @@ void DungeonMap::drawLeftEdge(int distance) {
 	auto s = getSurface();
 
 	int x = DUNGEON_ARRAY_X[distance] + 16;
-	s.drawLine(x, DUNGEON_ARRAY_Y[distance] + 8, x, 151 - DUNGEON_ARRAY_Y[distance], EDGE_COLOR);
+	s.drawLine(x, DUNGEON_ARRAY_Y[distance] + 8, x, 151 - DUNGEON_ARRAY_Y[distance], _G(colors)._edge);
 }
 
 void DungeonMap::drawRightEdge(int distance) {
@@ -296,7 +294,7 @@ void DungeonMap::drawRightEdge(int distance) {
 	auto s = getSurface();
 
 	int x = 303 - DUNGEON_ARRAY_X[distance];
-	s.drawLine(x, DUNGEON_ARRAY_Y[distance] + 8, x, 151 - DUNGEON_ARRAY_Y[distance], EDGE_COLOR);
+	s.drawLine(x, DUNGEON_ARRAY_Y[distance] + 8, x, 151 - DUNGEON_ARRAY_Y[distance], _G(colors)._edge);
 }
 
 void DungeonMap::drawLeftDoor(int distance) {
@@ -314,14 +312,14 @@ void DungeonMap::drawLeftDoor(int distance) {
 	int y2 = DUNGEON_ARRAY_Y[distance] + 8 - diffY;
 
 	auto s = getSurface();
-	s.drawLine(x1, y1, x2, y2, EDGE_COLOR);
+	s.drawLine(x1, y1, x2, y2, _G(colors)._edge);
 
 	int xp = diffX * 6 + 16 + DUNGEON_ARRAY_X[distance - 1];
 	int yp = DUNGEON_ARRAY_Y[distance] + 8 + diffY;
-	s.drawLine(x2, y2, xp, yp, EDGE_COLOR);
+	s.drawLine(x2, y2, xp, yp, _G(colors)._edge);
 
 	int yp2 = 151 - DUNGEON_ARRAY_Y[distance] + diffY + diffY - ((distance == 1) ? 2 : 0);
-	s.drawLine(xp, yp, xp, yp2, EDGE_COLOR);
+	s.drawLine(xp, yp, xp, yp2, _G(colors)._edge);
 }
 
 void DungeonMap::drawRightDoor(int distance) {
@@ -339,19 +337,19 @@ void DungeonMap::drawRightDoor(int distance) {
 	int y2 = DUNGEON_ARRAY_Y[distance] + 8 - diffY;
 
 	auto s = getSurface();
-	s.drawLine(x1, y1, x2, y2, EDGE_COLOR);
+	s.drawLine(x1, y1, x2, y2, _G(colors)._edge);
 
 	int xp = 303 - (diffX * 6 + DUNGEON_ARRAY_X[distance - 1]);
 	int yp = DUNGEON_ARRAY_Y[distance] + 8 + diffY;
-	s.drawLine(x2, y2, xp, yp, EDGE_COLOR);
+	s.drawLine(x2, y2, xp, yp, _G(colors)._edge);
 
 	int yp2 = 151 - DUNGEON_ARRAY_Y[distance] + diffY + diffY - ((distance == 1) ? 2 : 0);
-	s.drawLine(xp, yp, xp, yp2, EDGE_COLOR);
+	s.drawLine(xp, yp, xp, yp2, _G(colors)._edge);
 }
 
 void DungeonMap::drawDoorway(int distance) {
 	int offsetY = 0;
-	int bottomColor = EDGE_COLOR;
+	int bottomColor = _G(colors)._edge;
 	if (distance == 0) {
 		offsetY = 8;
 		// Standing right at the threshold, so the near edge (right at the
@@ -371,9 +369,9 @@ void DungeonMap::drawDoorway(int distance) {
 	int topY = DUNGEON_ARRAY_Y[distance + 1] + 8;
 
 	s.drawLine(farRightX, bottomY, farLeftX, bottomY, bottomColor);
-	s.drawLine(farLeftX, bottomY, farLeftX, topY, EDGE_COLOR);
-	s.drawLine(farLeftX, topY, farRightX, topY, EDGE_COLOR);
-	s.drawLine(farRightX, topY, farRightX, bottomY, EDGE_COLOR);
+	s.drawLine(farLeftX, bottomY, farLeftX, topY, _G(colors)._edge);
+	s.drawLine(farLeftX, topY, farRightX, topY, _G(colors)._edge);
+	s.drawLine(farRightX, topY, farRightX, bottomY, _G(colors)._edge);
 }
 
 void DungeonMap::drawBeams(int distance) {
@@ -387,36 +385,36 @@ void DungeonMap::drawBeams(int distance) {
 	auto s = getSurface();
 	for (int beamNum = 1; beamNum <= 3; ++beamNum) {
 		int y = DUNGEON_ARRAY_Y[distance] + 8 + height * beamNum + distance / 2;
-		s.drawLine(x1, y, x2, y, HIGHLIGHT_COLOR);
+		s.drawLine(x1, y, x2, y, _G(colors)._highlight);
 	}
 }
 
 void DungeonMap::drawLadderUpFaceOn(int distance) {
 	if (distance > 5)
 		return;
-	dungeonDrawWidget(LADDER_UP_TOP_DATA, distance, EDGE_COLOR);
-	dungeonDrawWidget(LADDER_SHAFT_FACEON_DATA, distance, EDGE_COLOR);
+	dungeonDrawWidget(LADDER_UP_TOP_DATA, distance, _G(colors)._edge);
+	dungeonDrawWidget(LADDER_SHAFT_FACEON_DATA, distance, _G(colors)._edge);
 }
 
 void DungeonMap::drawLadderDownFaceOn(int distance) {
 	if (distance > 5)
 		return;
-	dungeonDrawWidget(LADDER_DOWN_TOP_DATA, distance, EDGE_COLOR);
-	dungeonDrawWidget(LADDER_SHAFT_FACEON_DATA, distance, EDGE_COLOR);
+	dungeonDrawWidget(LADDER_DOWN_TOP_DATA, distance, _G(colors)._edge);
+	dungeonDrawWidget(LADDER_SHAFT_FACEON_DATA, distance, _G(colors)._edge);
 }
 
 void DungeonMap::drawLadderUpSideways(int distance) {
 	if (distance > 5)
 		return;
-	dungeonDrawWidget(LADDER_UP_TOP_DATA, distance, EDGE_COLOR);
-	dungeonDrawWidget(LADDER_SHAFT_SIDE_DATA, distance, EDGE_COLOR);
+	dungeonDrawWidget(LADDER_UP_TOP_DATA, distance, _G(colors)._edge);
+	dungeonDrawWidget(LADDER_SHAFT_SIDE_DATA, distance, _G(colors)._edge);
 }
 
 void DungeonMap::drawLadderDownSideways(int distance) {
 	if (distance > 5)
 		return;
-	dungeonDrawWidget(LADDER_DOWN_TOP_DATA, distance, EDGE_COLOR);
-	dungeonDrawWidget(LADDER_SHAFT_SIDE_DATA, distance, EDGE_COLOR);
+	dungeonDrawWidget(LADDER_DOWN_TOP_DATA, distance, _G(colors)._edge);
+	dungeonDrawWidget(LADDER_SHAFT_SIDE_DATA, distance, _G(colors)._edge);
 }
 
 void DungeonMap::drawLeftCell(int distance, int tileNum) {
@@ -448,9 +446,9 @@ void DungeonMap::dungeonDrawCell(int distance, int x, int y) {
 		// A monster sharing a ladder's cell only gets the "hole" opening
 		// drawn, not the full shaft - matching the original's dungeonDrawCell2
 		if (cell._tileNum == Data::DTILE_LADDER_DOWN)
-			dungeonDrawWidget(LADDER_DOWN_TOP_DATA, distance + 1, EDGE_COLOR);
+			dungeonDrawWidget(LADDER_DOWN_TOP_DATA, distance + 1, _G(colors)._edge);
 		else if (cell._tileNum == Data::DTILE_LADDER_UP)
-			dungeonDrawWidget(LADDER_UP_TOP_DATA, distance + 1, EDGE_COLOR);
+			dungeonDrawWidget(LADDER_UP_TOP_DATA, distance + 1, _G(colors)._edge);
 
 		dungeonDrawMonster(cell._monsterId, distance);
 		return;
@@ -531,7 +529,7 @@ void DungeonMap::dungeonDrawWidget(const uint8 *data, int distance, int color) {
 void DungeonMap::drawCoffin(int distance) {
 	// The original also shows "Coffin" in the commands area here - that's
 	// handled by DungeonLogic::endOfTurn instead, as with monster names
-	dungeonDrawWidget(COFFIN_DRAW_DATA, distance, EDGE_COLOR);
+	dungeonDrawWidget(COFFIN_DRAW_DATA, distance, _G(colors)._edge);
 }
 
 void DungeonMap::drawChest(int distance) {
@@ -539,7 +537,7 @@ void DungeonMap::drawChest(int distance) {
 	// handled by DungeonLogic::endOfTurn instead, as with monster names.
 	// Reuses the mimic's widget shape, since the original draws chests and
 	// mimics identically
-	dungeonDrawWidget(UWIDGET_DRAW_TABLE[Data::UMONS_MIMIC], distance, EDGE_COLOR);
+	dungeonDrawWidget(UWIDGET_DRAW_TABLE[Data::UMONS_MIMIC], distance, _G(colors)._edge);
 }
 
 void DungeonMap::dungeonDrawMonster(int monsterId, int distance) {
@@ -556,7 +554,7 @@ void DungeonMap::dungeonDrawMonster(int monsterId, int distance) {
 		drawLeftEdge(distance);
 		drawRightEdge(distance);
 	} else {
-		dungeonDrawWidget(UWIDGET_DRAW_TABLE[monsterId], distance, EDGE_COLOR);
+		dungeonDrawWidget(UWIDGET_DRAW_TABLE[monsterId], distance, _G(colors)._edge);
 	}
 }
 

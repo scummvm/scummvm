@@ -27,7 +27,6 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-constexpr int COLOR_TEXT = 11; // light cyan
 
 Ready::Ready() : Interaction("Ready") {
 }
@@ -154,7 +153,7 @@ void Ready::drawItemList(const int16 *items, const char *const *names, int maxIn
 	}
 
 	int y = 10 - count / 2;
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 
 	for (int idx = 0; idx <= maxIndex; ++idx) {
 		if (items[idx]) {

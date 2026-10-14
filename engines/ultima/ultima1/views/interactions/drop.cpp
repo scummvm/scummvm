@@ -27,7 +27,6 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-constexpr int COLOR_TEXT = 11; // light cyan
 
 // Returns how many of items[1..maxIndex] are actually owned (index 0,
 // the innate/default state, is never droppable)
@@ -159,7 +158,7 @@ void Drop::drawItemList(const int16 *items, const char *const *names, int maxInd
 	int count = countOwned(items, maxIndex);
 	int y = 10 - count / 2;
 
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	for (int idx = 1; idx <= maxIndex; ++idx) {
 		if (items[idx]) {
 			s.writeString(Common::Point(col, y), "%c) %s", 'a' + idx, names[idx]);

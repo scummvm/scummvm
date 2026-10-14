@@ -275,6 +275,13 @@ const ADExtraGuiOptionsMap *UltimaMetaEngine::getAdvancedExtraGuiOptions() const
 
 GUI::OptionsContainerWidget *UltimaMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss,
 		const Common::String &name, const Common::String &target) const {
+#ifdef ENABLE_ULTIMA1
+	if (getGameId(target) == "ultima1") {
+		return new Ultima::Shared::GraphicsOptionsWidget(boss, name, target,
+			Ultima::Ultima1::Data::RENDER_MODE_LABELS, Ultima::Ultima1::Data::RENDER_MODE_COUNT,
+			ExtraGuiOptions(), false, Ultima::Ultima1::Data::RENDER_EGA);
+	}
+#endif
 #ifdef ENABLE_ULTIMA2
 	if (getGameId(target) == "ultima2" || getGameId(target) == "ultima2_enh") {
 		// The enhanced version starts off using the best of the graphics

@@ -30,10 +30,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-constexpr int FRAME_COLOR = 7;		// light grey cockpit surround
-constexpr int STAR_COLOR = 15;		// white stars / crosshair
 constexpr int RIVET_COLOR = 0;		// black detail punched into the frame
-constexpr int LASER_COLOR = 12;	// light red laser-bolt flash
 
 // How many ticks the laser-bolt flash from fireLaser() stays on-screen
 constexpr int LASER_FLASH_TICKS = 3;
@@ -68,8 +65,8 @@ void SpaceCockpit::draw() {
 	const Data::SpaceStarfield &sf = _G(starfield);
 
 	// The aiming crosshair marking the viewport centre
-	s.drawLine(sf._centerX - 2, sf._centerY, sf._centerX + 2, sf._centerY, STAR_COLOR);
-	s.drawLine(sf._centerX, sf._centerY - 2, sf._centerX, sf._centerY + 2, STAR_COLOR);
+	s.drawLine(sf._centerX - 2, sf._centerY, sf._centerX + 2, sf._centerY, _G(colors)._edge);
+	s.drawLine(sf._centerX, sf._centerY - 2, sf._centerX, sf._centerY + 2, _G(colors)._edge);
 
 	if (_hyperjumpState == HYPERJUMP_WARP_IN || _hyperjumpState == HYPERJUMP_WARP_OUT) {
 		// The stars along with all the trails behind them
@@ -80,7 +77,7 @@ void SpaceCockpit::draw() {
 			int x = sf._centerX + sf._starX[i];
 			int y = sf._centerY + sf._starY[i];
 			if (Data::SpaceStarfield::withinView(x, y))
-				s.setPixel(x, y, STAR_COLOR);
+				s.setPixel(x, y, _G(colors)._edge);
 		}
 	}
 
@@ -93,13 +90,13 @@ void SpaceCockpit::draw() {
 	// The brief laser-bolt flash from a shot just fired, converging on the
 	// crosshair from both bottom corners of the viewport
 	if (_laserFlashTicks > 0) {
-		s.drawLine(LASER_ORIGIN_LEFT_X, LASER_ORIGIN_Y, sf._centerX, sf._centerY, LASER_COLOR);
-		s.drawLine(LASER_ORIGIN_RIGHT_X, LASER_ORIGIN_Y, sf._centerX, sf._centerY, LASER_COLOR);
+		s.drawLine(LASER_ORIGIN_LEFT_X, LASER_ORIGIN_Y, sf._centerX, sf._centerY, _G(colors)._highlight);
+		s.drawLine(LASER_ORIGIN_RIGHT_X, LASER_ORIGIN_Y, sf._centerX, sf._centerY, _G(colors)._highlight);
 	}
 
 	// The brief laser-bolt flash from the current target firing back
 	if (_alienFlashTicks > 0)
-		s.drawLine(_alienFlashX1, _alienFlashY1, _alienFlashX2, _alienFlashY2, LASER_COLOR);
+		s.drawLine(_alienFlashX1, _alienFlashY1, _alienFlashX2, _alienFlashY2, _G(colors)._highlight);
 }
 
 bool SpaceCockpit::msgMouseMove(const MouseMoveMessage &msg) {
@@ -219,7 +216,7 @@ void SpaceCockpit::hyperjumpFrame() {
 		sf.advance();
 		for (int i = 0; i < Data::SPACE_STAR_COUNT; ++i) {
 			if (sf._visible[i])
-				plotTrail(sf._prevX[i], sf._prevY[i], STAR_COLOR);
+				plotTrail(sf._prevX[i], sf._prevY[i], _G(colors)._edge);
 		}
 
 		if (--_hyperjumpFrames == 0) {
@@ -239,7 +236,7 @@ void SpaceCockpit::hyperjumpFrame() {
 		sf.advance();
 		for (int i = 0; i < Data::SPACE_STAR_COUNT; ++i) {
 			if (sf._visible[i])
-				plotTrail(sf._prevX[i], sf._prevY[i], STAR_COLOR);
+				plotTrail(sf._prevX[i], sf._prevY[i], _G(colors)._edge);
 		}
 
 		if (--_hyperjumpFrames == 0) {
@@ -331,10 +328,10 @@ bool SpaceCockpit::msgKeypress(const KeypressMessage &msg) {
 
 void SpaceCockpit::drawCockpitFrame(Graphics::Views::GfxSurface &s) {
 	// The ~7px surround around the viewport
-	s.fillRect(Common::Rect(8, 8, 312, 16), FRAME_COLOR);
-	s.fillRect(Common::Rect(8, 144, 312, 152), FRAME_COLOR);
-	s.fillRect(Common::Rect(8, 16, 16, 145), FRAME_COLOR);
-	s.fillRect(Common::Rect(304, 16, 312, 145), FRAME_COLOR);
+	s.fillRect(Common::Rect(8, 8, 312, 16), _G(colors)._cockpitFrame);
+	s.fillRect(Common::Rect(8, 144, 312, 152), _G(colors)._cockpitFrame);
+	s.fillRect(Common::Rect(8, 16, 16, 145), _G(colors)._cockpitFrame);
+	s.fillRect(Common::Rect(304, 16, 312, 145), _G(colors)._cockpitFrame);
 
 	// Rivet detail along the top and bottom
 	for (int i = 1; i < 20; ++i) {

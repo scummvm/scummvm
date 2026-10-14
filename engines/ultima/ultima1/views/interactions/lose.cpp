@@ -27,8 +27,6 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-constexpr int TEXT_COLOR = 15;   // white
-constexpr int BORDER_COLOR = 1;  // dark blue
 
 // Same generic drawDialog box geometry the Win cutscene uses
 constexpr int DIALOG_X1 = 31, DIALOG_Y1 = 23, DIALOG_X2 = 287, DIALOG_Y2 = 127;
@@ -52,9 +50,9 @@ void Lose::draw() {
 void Lose::drawDialog() {
 	auto s = getSurface();
 	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
-	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), BORDER_COLOR);
+	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), _G(colors)._border);
 
-	s.setColor(TEXT_COLOR);
+	s.setColor(_G(colors)._edge);
 	s.writeString(Common::Point(5, 6), "   Thou hast been defeated by");
 	s.writeString(Common::Point(5, 7), "      Mondain the Wizard!");
 	s.writeString(Common::Point(5, 12), "    THE UNIVERSE IS DOOMED!");

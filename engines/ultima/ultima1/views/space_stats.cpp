@@ -27,8 +27,6 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-constexpr int COLOR_TEXT = 11;			// light cyan - normal values
-constexpr int COLOR_HIGHLIGHT = 12;		// light red - low shield/fuel warning
 
 void SpaceStats::draw() {
 	Data::Savegame &p = _G(savegame);
@@ -45,17 +43,17 @@ void SpaceStats::draw() {
 
 	// Shield and fuel go red once they're running low, matching
 	// displayShieldNumber / displayFuelNumber
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(0, 0), "Shld:");
-	s.setColor(ship._shield < 100 ? COLOR_HIGHLIGHT : COLOR_TEXT);
+	s.setColor(ship._shield < 100 ? _G(colors)._highlight : _G(colors)._text);
 	s.writeString(Common::Point(5, 0), Common::String::format("%4d", ship._shield));
 
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(0, 1), "Fuel:");
-	s.setColor(ship._fuel < 100 ? COLOR_HIGHLIGHT : COLOR_TEXT);
+	s.setColor(ship._fuel < 100 ? _G(colors)._highlight : _G(colors)._text);
 	s.writeString(Common::Point(5, 1), Common::String::format("%4d", ship._fuel));
 
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(0, 2), "Exp.:");
 	s.writeString(Common::Point(5, 2), Common::String::format("%4d", p._experience));
 

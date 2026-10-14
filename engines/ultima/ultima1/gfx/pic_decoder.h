@@ -66,6 +66,14 @@ public:
 	bool loadStream(Common::SeekableReadStream &stream) override;
 
 	/**
+	 * Loads the CGA version of a picture (e.g. "castle.4"), which is a
+	 * dump of the CGA's screen memory: 320x200, 2 bits/pixel, 4 pixels to
+	 * a byte, with the even lines in the first 8K, the odd lines in the
+	 * second 8K, and no palette of its own
+	 */
+	bool loadCgaStream(Common::SeekableReadStream &stream);
+
+	/**
 	 * Destroy this decoder's surface and palette.
 	 *
 	 * This should be called by a loadStream() implementation as well

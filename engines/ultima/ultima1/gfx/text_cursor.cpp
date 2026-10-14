@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima1/gfx/text_cursor.h"
+#include "ultima/ultima1/ultima1.h"
 #include "graphics/views/rect.h"
 
 namespace Ultima {
@@ -27,7 +28,6 @@ namespace Ultima1 {
 namespace Gfx {
 
 #define DELAY_FRAMES 2
-constexpr int COLOR_CURSOR = 11; // light cyan
 
 // 4-frame 8x8 glyph, one byte per row, low bit = leftmost pixel
 static const byte CURSOR_FRAMES[4][8] = {
@@ -69,7 +69,7 @@ void TextCursor::draw() {
 		byte bits = CURSOR_FRAMES[_frame][y];
 		for (int x = 0; x < 8; ++x, bits >>= 1) {
 			if (bits & 1)
-				s.drawLine(x, y, x, y, COLOR_CURSOR);
+				s.drawLine(x, y, x, y, _G(colors)._text);
 		}
 	}
 }

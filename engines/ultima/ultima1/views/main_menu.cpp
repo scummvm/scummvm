@@ -27,8 +27,6 @@ namespace Ultima1 {
 namespace Views {
 
 // Colors used
-constexpr int COLOR_EDGE = 15; // white - used for the title/tagline
-constexpr int COLOR_TEXT = 11; // light cyan - used for the menu options
 
 MainMenu::MainMenu() : FullScreenDialog("MainMenu"), _cursor("Cursor", this) {
 	// Position the cursor right after "Thy choice: "
@@ -39,13 +37,13 @@ void MainMenu::draw() {
 	FullScreenDialog::draw();
 
 	auto s = getSurface();
-	s.setColor(COLOR_EDGE);
+	s.setColor(_G(colors)._edge);
 	s.writeString(Common::Point(12, 6), "*** Ultima I ***");
 	s.writeString(Common::Point(14, 9), "from darkest");
 	s.writeString(Common::Point(14, 10), "dungeons, to");
 	s.writeString(Common::Point(13, 11), "deepest space!");
 
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(8, 14), "a) Generate new character");
 	s.writeString(Common::Point(8, 15), "b) Continue previous game");
 	s.writeString(Common::Point(13, 18), "Thy choice: ");

@@ -30,6 +30,7 @@
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/console.h"
 #include "ultima/ultima1/sound_effects.h"
+#include "ultima/shared/engine/graphics_options.h"
 #include "ultima/ultima1/gfx/font.h"
 #include "ultima/ultima1/views/views.h"
 #include "ultima/ultima1/views/map.h"
@@ -58,12 +59,22 @@ Common::String Ultima1Engine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
 
+// The graphics mode stored in the configuration, falling back to EGA if it's
+// missing or stale
+static Data::RenderMode configuredRenderMode() {
+	int mode = Shared::configuredGraphicsMode(Data::RENDER_EGA);
+	return (mode >= 0 && mode < Data::RENDER_MODE_COUNT) ?
+		(Data::RenderMode)mode : Data::RENDER_EGA;
+}
+
 Common::Error Ultima1Engine::run() {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
-	g_system->getPaletteManager()->setPalette(Graphics::Palette::createEGAPalette());
+	_renderMode = configuredRenderMode();
+	_colors.set(_renderMode);
+	Data::setPalette(_renderMode);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -138,6 +149,24 @@ void Ultima1Engine::queueEffect(const Common::Array<byte> &samples) {
 
 void Ultima1Engine::pauseMillis(uint32 millis) {
 	g_system->delayMillis(millis);
+}
+
+void Ultima1Engine::applyGameSettings() {
+	// The graphics can be changed from the in-game options dialog
+	setRenderMode(configuredRenderMode());
+}
+
+void Ultima1Engine::setRenderMode(Data::RenderMode mode) {
+	if (mode == _renderMode)
+		return;
+
+	_renderMode = mode;
+	_colors.set(mode);
+	Data::setPalette(mode);
+	_map.loadGraphics();
+
+	if (focusedView())
+		focusedView()->redraw();
 }
 
 Graphics::Font *Ultima1Engine::createFont() const {

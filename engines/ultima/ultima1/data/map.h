@@ -145,6 +145,11 @@ public:
 	void init();
 
 	/**
+	 * Loads the tile graphics for the current graphics mode
+	 */
+	void loadGraphics();
+
+	/**
 	 * Loads a specified map.
 	 * @param mapNum
 	 */

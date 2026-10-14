@@ -36,7 +36,6 @@ constexpr int COUNT_DELAY = 1;
 // Hits/food the player is resurrected with
 constexpr int RESURRECTED_AMOUNT = 99;
 
-constexpr int EDGE_COLOR = 15;
 
 // The skull glyph shown while the player is dead - a 64x95 1-bit-per-pixel
 // bitmap, stored as 95 rows of 4 big-endian 16-bit words (bit 15 = leftmost
@@ -118,7 +117,7 @@ static void drawSkullGraphic(Graphics::Views::GfxSurface &s) {
 
 			for (int bit = 15; bit >= 0; --bit, ++x) {
 				if (word & (1 << bit))
-					s.setPixel(x, startY + row, EDGE_COLOR);
+					s.setPixel(x, startY + row, _G(colors)._edge);
 			}
 		}
 	}

@@ -21,6 +21,7 @@
 
 #include "graphics/surface.h"
 #include "ultima/ultima1/gfx/font.h"
+#include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -42,13 +43,20 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 		// Get area for the arrow
 		Graphics::Surface sub = dst->getSubArea(Common::Rect(x, y, x + getMaxCharWidth(), y + getFontHeight()));
 
-		// Handle drawing left/right arrow in blue with white outline
+		// Handle drawing left/right arrow in the border color with an edge color outline
 		for (int yp = 0; yp < getFontHeight(); ++yp) {
 			const byte *src = &ARROW[yp][0];
 			byte *dest = (byte *)sub.getBasePtr(0, yp);
 
-			for (int xp = 0; xp < getMaxCharWidth(); ++xp, ++src)
-				dest[chr == '\x10' ? xp : 7 - xp] = *src;
+			for (int xp = 0; xp < getMaxCharWidth(); ++xp, ++src) {
+				byte pixel = *src;
+				if (pixel == 15)
+					pixel = _G(colors)._edge;
+				else if (pixel == 1)
+					pixel = _G(colors)._border;
+
+				dest[chr == '\x10' ? xp : 7 - xp] = pixel;
+			}
 		}
 
 	} else {

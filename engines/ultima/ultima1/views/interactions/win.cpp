@@ -28,8 +28,6 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-constexpr int TEXT_COLOR = 15;   // white
-constexpr int BORDER_COLOR = 1;  // dark blue
 
 // The small "Mondain is dead!" dialog reuses the same generic drawDialog
 // box geometry as Pillar's inscription dialog - both come from the
@@ -86,7 +84,7 @@ bool Win::msgFocus(const FocusMessage &msg) {
 
 void Win::renderEndingText() {
 	_textSurface.create(ENDING_WIDTH, ENDING_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
-	_textSurface.setColor(TEXT_COLOR);
+	_textSurface.setColor(_G(colors)._edge);
 
 	for (int i = 0; i < ARRAYSIZE(ENDING_TEXT); ++i)
 		_textSurface.writeString(Common::Point(0, i), ENDING_TEXT[i]);
@@ -106,9 +104,9 @@ void Win::draw() {
 void Win::drawDialog() {
 	auto s = getSurface();
 	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
-	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), BORDER_COLOR);
+	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), _G(colors)._border);
 
-	s.setColor(TEXT_COLOR);
+	s.setColor(_G(colors)._edge);
 	s.writeString(Common::Point(11, 8), "THOU ART VICTORIOUS!");
 }
 

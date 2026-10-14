@@ -28,8 +28,6 @@ namespace Ultima1 {
 namespace Views {
 
 // Colors used
-constexpr int COLOR_BORDER = 1;  // blue - thick outer band
-constexpr int COLOR_EDGE = 15;   // white - thin inner highlight line
 constexpr int COLOR_NOTCH = 0;   // black - corner notch pixels
 
 Dialog::Dialog(const Common::String &name) : View(name) {
@@ -42,15 +40,15 @@ void Dialog::draw() {
 
 	// Thick outer border band - each edge flush against both the screen edge
 	// and the inner highlight line drawn just inside it
-	s.fillRect(Common::Rect(0, 0, 320, 7), COLOR_BORDER);
-	s.fillRect(Common::Rect(0, 7, 7, 159), COLOR_BORDER);
-	s.fillRect(Common::Rect(313, 7, 320, 159), COLOR_BORDER);
-	s.fillRect(Common::Rect(0, 152, 320, 160), COLOR_BORDER);
+	s.fillRect(Common::Rect(0, 0, 320, 7), _G(colors)._border);
+	s.fillRect(Common::Rect(0, 7, 7, 159), _G(colors)._border);
+	s.fillRect(Common::Rect(313, 7, 320, 159), _G(colors)._border);
+	s.fillRect(Common::Rect(0, 152, 320, 160), _G(colors)._border);
 
 	// Thin inner highlight line
-	s.frameRect(Common::Rect(7, 7, 313, 153), COLOR_EDGE);
-	s.drawLine(0, 159, 240, 159, COLOR_EDGE);
-	s.drawLine(247, 159, 319, 159, COLOR_EDGE);
+	s.frameRect(Common::Rect(7, 7, 313, 153), _G(colors)._edge);
+	s.drawLine(0, 159, 240, 159, _G(colors)._edge);
+	s.drawLine(247, 159, 319, 159, _G(colors)._edge);
 
 	// Diagonal-notched corners, cut as a growing staircase into each corner
 	for (int idx = 1; idx <= 4; ++idx) {

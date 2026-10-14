@@ -21,14 +21,13 @@
 
 #include "ultima/ultima1/views/space_game.h"
 #include "graphics/views/rect.h"
+#include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
 // Colors used
-constexpr int COLOR_BORDER = 1;  // blue - thick outer band
-constexpr int COLOR_EDGE = 15;   // white - thin inner highlight line
 
 SpaceGame::SpaceGame() : Shared::View("SpaceGame"), _commands(this), _stats(this) {
 	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
@@ -42,9 +41,9 @@ void SpaceGame::draw() {
 	Graphics::Views::UIElement::draw();
 
 	// Divider between the command/message log (left) and the stats corner
-	s.fillRect(Common::Rect(241, 160, 247, 200), COLOR_BORDER);
-	s.drawLine(240, 160, 240, 199, COLOR_EDGE);
-	s.drawLine(247, 160, 247, 199, COLOR_EDGE);
+	s.fillRect(Common::Rect(241, 160, 247, 200), _G(colors)._border);
+	s.drawLine(240, 160, 240, 199, _G(colors)._edge);
+	s.drawLine(247, 160, 247, 199, _G(colors)._edge);
 }
 
 } // namespace Views

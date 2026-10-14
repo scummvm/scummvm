@@ -28,7 +28,6 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-constexpr int COLOR_TEXT = 11; // light cyan
 
 struct ShopName {
 	const char *_line1;
@@ -241,7 +240,7 @@ void Merchant::drawShopName() {
 		return;
 
 	auto s = getSurface();
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	s.writeString(Common::Point(19 - (int)Common::String(name._line1).size() / 2, 2), "%s", name._line1);
 	if (name._line2)
 		s.writeString(Common::Point(19 - (int)Common::String(name._line2).size() / 2, 3), "%s", name._line2);
@@ -412,7 +411,7 @@ void Merchant::chooseSell() {
 void Merchant::drawArmoryBuy() {
 	drawShopName();
 	auto s = getSurface();
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 
 	int maxIdx = (_G(moveCtr) > 3000) ? 5 : 3;
 	int y = 8;
@@ -453,7 +452,7 @@ void Merchant::armoryBuyKeypress(Common::KeyCode keycode) {
 void Merchant::drawArmorySell() {
 	drawShopName();
 	auto s = getSurface();
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 
 	int y = 8;
 	for (int idx = 1; idx < Data::ARMOR_COUNT; ++idx) {
@@ -505,7 +504,7 @@ void Merchant::weaponsRange(int &minIdx, int &maxIdx) const {
 void Merchant::drawWeaponsBuy() {
 	drawShopName();
 	auto s = getSurface();
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 
 	int minIdx, maxIdx;
 	weaponsRange(minIdx, maxIdx);
@@ -549,7 +548,7 @@ void Merchant::weaponsBuyKeypress(Common::KeyCode keycode) {
 void Merchant::drawWeaponsSell() {
 	drawShopName();
 	auto s = getSurface();
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 
 	int y = 6;
 	for (int idx = 1; idx < Data::WEAPON_COUNT; ++idx) {
@@ -595,7 +594,7 @@ void Merchant::magicRange(int &minIdx, int &maxIdx) const {
 void Merchant::drawMagicBuy() {
 	drawShopName();
 	auto s = getSurface();
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 
 	int minIdx, maxIdx;
 	magicRange(minIdx, maxIdx);
@@ -739,7 +738,7 @@ void Merchant::tavernBuy() {
 void Merchant::drawTransportBuy() {
 	drawShopName();
 	auto s = getSurface();
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 
 	int y = 8;
 	for (int i = 0; i < 6; ++i, ++y) {

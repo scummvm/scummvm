@@ -55,6 +55,7 @@ MODULE_OBJS += \
 	ultima1/data/entity.o \
 	ultima1/data/map.o \
 	ultima1/data/map_dungeon.o \
+	ultima1/data/render_mode.o \
 	ultima1/data/savegame.o \
 	ultima1/data/space_map.o \
 	ultima1/data/tiles.o \

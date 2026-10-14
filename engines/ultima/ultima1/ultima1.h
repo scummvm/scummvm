@@ -41,6 +41,7 @@
 #include "ultima/detection.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/map_dungeon.h"
+#include "ultima/ultima1/data/render_mode.h"
 #include "ultima/ultima1/data/savegame.h"
 #include "ultima/ultima1/data/space_map.h"
 #include "ultima/ultima1/data/tiles.h"
@@ -74,6 +75,10 @@ protected:
 	}
 
 public:
+	// The graphics being shown, and the palette indices things are drawn
+	// with in them
+	Data::RenderMode _renderMode = Data::RENDER_EGA;
+	Data::RenderColors _colors;
 	Data::Map _map;
 	Data::MapDungeon _dungeon;
 	Data::SpaceStarfield _starfield;
@@ -152,6 +157,16 @@ public:
 	 * Pause for a given number of milliseconds
 	 */
 	void pauseMillis(uint32 millis);
+
+	/**
+	 * Switches to a different set of graphics
+	 */
+	void setRenderMode(Data::RenderMode mode);
+
+	/**
+	 * Picks up changes made to the game options
+	 */
+	void applyGameSettings() override;
 
 	/**
 	 * Returns a font object that GfxSurface instances can use

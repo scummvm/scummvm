@@ -26,8 +26,9 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
-void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int tileSize) {
-	const int BYTES_PER_ROW = tileSize / 2;		// 4 planes, so 2 pixels per byte
+void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int tileSize, bool cga) {
+	// EGA is 4 planes, so 2 pixels per byte, and CGA is 4 pixels per byte
+	const int BYTES_PER_ROW = cga ? tileSize / 4 : tileSize / 2;
 	const int BYTES_PER_PLANE_ROW = BYTES_PER_ROW / 4;	// bytes per row, within a single plane
 	const int BYTES_PER_TILE = BYTES_PER_ROW * tileSize;
 
@@ -49,6 +50,11 @@ void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count,
 			byte *destRow = (byte *)tile.getBasePtr(0, y);
 
 			for (int x = 0; x < tileSize; ++x) {
+				if (cga) {
+					destRow[x] = (row[x / 4] >> (6 - 2 * (x % 4))) & 3;
+					continue;
+				}
+
 				int byteIdx = x / 8;
 				int bitMask = 0x80 >> (x % 8);
 
@@ -67,13 +73,14 @@ void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count,
 }
 
 constexpr int SHIP_TILE_HEIGHT = SPACE_SHIP_TILE_HEIGHT;
-constexpr int SHIP_TILE_SHIFT_VARIANTS = 8;
-constexpr byte SHIP_TILE_MASK_COLOR = 15;
+constexpr int EGA_SHIP_TILE_SHIFT_VARIANTS = 8;
+constexpr int CGA_SHIP_TILE_SHIFT_VARIANTS = 4;
+constexpr byte EGA_SHIP_TILE_MASK_COLOR = 15;
 
-void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int width) {
-	const int rowBytes = width / 8;
+void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int width, bool cga) {
+	const int rowBytes = cga ? width / 4 : width / 8;
 	const int tileBytes = rowBytes * SHIP_TILE_HEIGHT;
-	const int slotBytes = tileBytes * SHIP_TILE_SHIFT_VARIANTS;
+	const int slotBytes = tileBytes * (cga ? CGA_SHIP_TILE_SHIFT_VARIANTS : EGA_SHIP_TILE_SHIFT_VARIANTS);
 
 	Common::File f;
 	if (!f.open(filename))
@@ -95,10 +102,11 @@ void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int co
 			byte *destRow = (byte *)tile.getBasePtr(0, y);
 
 			for (int x = 0; x < width; ++x) {
-				int byteIdx = x / 8;
-				int bitMask = 0x80 >> (x % 8);
-				if (row[byteIdx] & bitMask)
-					destRow[x] = SHIP_TILE_MASK_COLOR;
+				if (cga) {
+					destRow[x] = (row[x / 4] >> (6 - 2 * (x % 4))) & 3;
+				} else if (row[x / 8] & (0x80 >> (x % 8))) {
+					destRow[x] = EGA_SHIP_TILE_MASK_COLOR;
+				}
 			}
 		}
 	}

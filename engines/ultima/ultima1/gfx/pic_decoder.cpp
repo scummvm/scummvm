@@ -72,6 +72,30 @@ bool PicDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
+bool PicDecoder::loadCgaStream(Common::SeekableReadStream &stream) {
+	constexpr int BANK_SIZE = 0x2000;
+	constexpr int ROW_BYTES = 80;
+
+	destroy();
+	_surface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_palette = Graphics::Palette();
+
+	Common::Array<byte> data;
+	data.resize(2 * BANK_SIZE);
+	if (stream.read(&data[0], data.size()) != data.size())
+		return false;
+
+	for (int y = 0; y < 200; ++y) {
+		const byte *row = &data[(y & 1) * BANK_SIZE + (y >> 1) * ROW_BYTES];
+		byte *outputRow = (byte *)_surface.getBasePtr(0, y);
+
+		for (int x = 0; x < 320; ++x)
+			outputRow[x] = (row[x / 4] >> (6 - 2 * (x % 4))) & 3;
+	}
+
+	return true;
+}
+
 } // namespace Gfx
 } // namespace Ultima1
 } // namespace Ultima

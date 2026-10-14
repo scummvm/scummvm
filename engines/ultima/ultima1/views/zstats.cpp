@@ -27,8 +27,6 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-constexpr int COLOR_TEXT = 11;      // light cyan - normal values
-constexpr int COLOR_HIGHLIGHT = 12; // light red - currently equipped/readied item
 
 // Two columns of 13 rows each per page
 constexpr int LINES_PER_PAGE = 26;
@@ -67,7 +65,7 @@ void ZStats::draw() {
 
 	// If there's more to show on a following page, prompt for it
 	if (pageEnd < _lines.size()) {
-		s.setColor(COLOR_TEXT);
+		s.setColor(_G(colors)._text);
 		s.writeString(Common::Point(16, 19), "\x10 More \x11");
 	}
 }
@@ -83,7 +81,7 @@ void ZStats::addLine(const char *name, int value, bool highlighted) {
 
 	StatLine line;
 	line._text = getLine(name, value);
-	line._color = highlighted ? COLOR_HIGHLIGHT : COLOR_TEXT;
+	line._color = highlighted ? _G(colors)._highlight : _G(colors)._text;
 	_lines.push_back(line);
 }
 

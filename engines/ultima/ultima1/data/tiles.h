@@ -121,31 +121,34 @@ enum MondainTileId {
 };
 
 /**
- * Loads the overworld tile sheet (52 16x16 tiles, 4-bit EGA planar,
- * row-interleaved: each 16-pixel row is 4 planes x 2 bytes) into a
- * caller-supplied array of TILE_COUNT surfaces
+ * Loads a tile sheet (such as the 52 16x16 overworld tiles) into a
+ * caller-supplied array of surfaces. The EGA ones are 4 bits per pixel in
+ * planes, each row of 16 pixels being 4 planes x 2 bytes. The CGA ones are
+ * 2 bits per pixel, 4 pixels to a byte, left to right
  * @param filename		Filename to load
  * @param tiles			Tiles array to load into
  * @param count			Number of tiles
  * @param tileSize		Width/Height of individual tiles
+ * @param cga			True if the sheet is the CGA version
  */
-extern void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int size);
+extern void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int size, bool cga);
 
 /**
- * Loads a sheet of 1-bit-per-pixel mask glyphs, 19 pixels high, into a
- * caller-supplied array of surfaces - the outer-space ship glyphs
- * (egaspace.bin, one per shipType*4+facing combination) and the cockpit
- * enemy fighter glyphs (egafight.bin, one per approach stage). Each glyph
- * is followed in the file by 7 more byte-alignment-shifted copies of itself
- * (for the original's hardware byte-aligned blitter) - only the first,
- * unshifted copy is loaded, since a software blit isn't limited to
- * byte-aligned X positions
+ * Loads a sheet of glyphs, 19 pixels high, into a caller-supplied array of
+ * surfaces - the outer-space ship glyphs (one per shipType*4+facing
+ * combination) and the cockpit enemy fighter glyphs (one per approach
+ * stage). The EGA ones are 1 bit per pixel masks, and the CGA ones 2 bits
+ * per pixel. Each glyph is followed in the file by byte-alignment-shifted
+ * copies of itself (7 for EGA, 3 for CGA, for the original's hardware
+ * byte-aligned blitter) - only the first, unshifted copy is loaded, since a
+ * software blit isn't limited to byte-aligned X positions
  * @param filename		Filename to load
  * @param tiles			Tiles array to load into
  * @param count			Number of glyphs
  * @param width			Width of each glyph in pixels, a multiple of 8
+ * @param cga			True if the sheet is the CGA version
  */
-extern void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int width);
+extern void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int width, bool cga);
 
 } // namespace Data
 } // namespace Ultima1

@@ -151,17 +151,24 @@ void Map::init() {
 	// Copy the Mondain map
 	resetMondainMap();
 
-	// Load tiles
-	loadTiles("egatiles.bin", _overworldTiles, OVERWORLD_TILES_COUNT, 16);
-	loadTiles("egatown.bin", _cityTiles, CITY_TILES_COUNT, 8);
+	loadGraphics();
+}
 
-	// Tile 0 is a blank empty floor tile, followed by 19 tiles, and tile 20 is duplicated from egatiles.bin
+void Map::loadGraphics() {
+	const bool cga = _G(renderMode) == RENDER_CGA;
+
+	loadTiles(cga ? "cgatiles.bin" : "egatiles.bin", _overworldTiles, OVERWORLD_TILES_COUNT, 16, cga);
+	loadTiles(cga ? "cgatown.bin" : "egatown.bin", _cityTiles, CITY_TILES_COUNT, 8, cga);
+
+	// Tile 0 is a blank empty floor tile, followed by 19 tiles, and tile 20 is duplicated from the overworld tiles
 	_mondainTiles[0].create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
-	loadTiles("egamond.bin", &_mondainTiles[1], MONDAIN_TILES_COUNT, 16);
+	loadTiles(cga ? "cgamond.bin" : "egamond.bin", &_mondainTiles[1], MONDAIN_TILES_COUNT, 16, cga);
 	_mondainTiles[20] = _overworldTiles[TILE_PLAYER];
 
-	loadShipTiles("egaspace.bin", _spaceShipTiles, SPACE_SHIP_TILES_COUNT, SPACE_SHIP_TILE_WIDTH);
-	loadShipTiles("egafight.bin", _enemyFighterTiles, SPACE_ENEMY_TILES_COUNT, SPACE_ENEMY_TILE_WIDTH);
+	loadShipTiles(cga ? "cgaspace.bin" : "egaspace.bin", _spaceShipTiles, SPACE_SHIP_TILES_COUNT,
+		SPACE_SHIP_TILE_WIDTH, cga);
+	loadShipTiles(cga ? "cgafight.bin" : "egafight.bin", _enemyFighterTiles, SPACE_ENEMY_TILES_COUNT,
+		SPACE_ENEMY_TILE_WIDTH, cga);
 }
 
 void Map::resetMondainMap() {

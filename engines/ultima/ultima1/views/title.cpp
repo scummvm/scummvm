@@ -28,14 +28,13 @@
 #include "image/xbm.h"
 #include "ultima/ultima1/views/title.h"
 #include "ultima/ultima1/gfx/pic_decoder.h"
+#include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
 // Colors used
-constexpr int COLOR_FOREGROUND = 15;	// white - used by the credits text
-constexpr int COLOR_TEXT       = 11;	// light cyan - used by blurb text
 
 // Flag pole x positions either side of the castle gate
 constexpr int FLAG_X1 = 123;
@@ -204,10 +203,6 @@ static const byte FLAGS_BITS[] = {
 	0x0c,0x00,0x00,0x18,0x00,0x00,0x00,0x00,0x00
 };
 
-// In XBM images, 0 is white and 1 is black. We need to remap this to the order required by the engine.
-static const uint32  LOGO_MAP[] = { 1,  0 };
-static const uint32 FLAGS_MAP[] = { 11, 10 };
-
 // Raw LFSR steps taken per draw() call while revealing the logo. Most are
 // discarded (see revealLogoPixels), so this is much larger than the
 // number of pixels actually drawn per call
@@ -225,15 +220,21 @@ constexpr int CREDITS_LOGO_STEP = 2;
 Title::Title() : View("Title") {
 }
 
-bool Title::msgFocus(const FocusMessage &msg) {
-	// Load images for display
+void Title::loadImages() {
+	const bool cga = _G(renderMode) == Data::RENDER_CGA;
+
+	// In XBM images, 0 is white and 1 is black. We need to remap this to the
+	// order required by the engine, and its colors
+	const uint32 logoMap[] = { _G(colors)._border, 0 };
+	const uint32 flagsMap[] = { _G(colors)._flag1, _G(colors)._flag2 };
+
 	Image::XBMDecoder logo;
 	if (!logo.loadBits(LOGO_BITS, LOGO_WIDTH, LOGO_HEIGHT))
 		error("Could not load logo");
 	const Graphics::Surface *src = logo.getSurface();
 	_logo.create(src->w, src->h);
 	Graphics::crossBlitMap((byte *)_logo.getPixels(), (const byte *)src->getPixels(),
-		_logo.pitch, src->pitch, _logo.w, _logo.h, _logo.format.bytesPerPixel, LOGO_MAP);
+		_logo.pitch, src->pitch, _logo.w, _logo.h, _logo.format.bytesPerPixel, logoMap);
 
 	Image::XBMDecoder flags;
 	if (!flags.loadBits(FLAGS_BITS, FLAGS_WIDTH, FLAGS_HEIGHT))
@@ -242,16 +243,23 @@ bool Title::msgFocus(const FocusMessage &msg) {
 	for (int idx = 0; idx < 3; ++idx) {
 		_flags[idx].create(8, 8);
 		Graphics::crossBlitMap((byte *)_flags[idx].getPixels(), (const byte *)src->getBasePtr(idx * 8, 0),
-			_flags[idx].pitch, src->pitch, _flags[idx].w, _flags[idx].h, _flags[idx].format.bytesPerPixel, FLAGS_MAP);
+			_flags[idx].pitch, src->pitch, _flags[idx].w, _flags[idx].h, _flags[idx].format.bytesPerPixel, flagsMap);
 	}
 
+	const char *castleFilename = cga ? "castle.4" : "castle.16";
 	Gfx::PicDecoder decoder;
 	Common::File f;
-	if (!f.open("castle.16") || !decoder.loadStream(f))
-		error("Could not load castle.16");
+	if (!f.open(castleFilename) || !(cga ? decoder.loadCgaStream(f) : decoder.loadStream(f)))
+		error("Could not load %s", castleFilename);
 	_castle.create(320, 200);
 	_castle.blitFrom(*decoder.getSurface());
 	_castlePalette = decoder.getPalette();
+
+	_loadedMode = _G(renderMode);
+}
+
+bool Title::msgFocus(const FocusMessage &msg) {
+	loadImages();
 
 	_state = PRESENTS;
 	resetLogoReveal();
@@ -272,10 +280,14 @@ bool Title::msgUnfocus(const UnfocusMessage &msg) {
 void Title::draw() {
 	auto s = getSurface();
 
-	// The castle picture uses its own custom palette (see PicDecoder);
-	// every other state uses the engine's standard EGA palette
-	if (_state != CASTLE)
-		g_system->getPaletteManager()->setPalette(Graphics::Palette::createEGAPalette());
+	// The graphics can be changed from the game options while here
+	if (_loadedMode != _G(renderMode))
+		loadImages();
+
+	// The EGA castle picture uses its own custom palette (see PicDecoder);
+	// every other state uses the standard palette
+	if (_state != CASTLE || _G(renderMode) == Data::RENDER_CGA)
+		Data::setPalette(_G(renderMode));
 
 	switch (_state) {
 	case PRESENTS:
@@ -288,7 +300,7 @@ void Title::draw() {
 		if (_logoPixelsDrawn < _logo.w * _logo.h) {
 			revealLogoPixels(s);
 		} else {
-			s.setColor(COLOR_TEXT);
+			s.setColor(_G(colors)._text);
 			s.writeString(Common::Point(14, 13), "Presents...");
 		}
 		break;
@@ -296,7 +308,7 @@ void Title::draw() {
 	case INTRO_A:
 		s.clear();
 		s.blitFrom(_logo, Common::Point(20, 21));
-		s.setColor(COLOR_TEXT);
+		s.setColor(_G(colors)._text);
 		s.writeString(Common::Point(5, 12), "...a new release of the best");
 		s.writeString(Common::Point(5, 13), "   selling personal computer");
 		s.writeString(Common::Point(5, 14), "   role-playing adventure...");
@@ -305,13 +317,14 @@ void Title::draw() {
 	case INTRO_B:
 		s.clear();
 		s.blitFrom(_logo, Common::Point(20, 21));
-		s.setColor(COLOR_TEXT);
+		s.setColor(_G(colors)._text);
 		s.writeString(Common::Point(6, 12), "...Lord British's original");
 		s.writeString(Common::Point(6, 13), "   fantasy masterpiece...");
 		break;
 
 	case CASTLE:
-		g_system->getPaletteManager()->setPalette(_castlePalette);
+		if (_G(renderMode) == Data::RENDER_EGA)
+			g_system->getPaletteManager()->setPalette(_castlePalette);
 		s.blitFrom(_castle);
 		drawCastleFlag(s, FLAG_X1);
 		drawCastleFlag(s, FLAG_X2);
@@ -326,7 +339,7 @@ void Title::draw() {
 		if (_creditsLine < CREDITS_LOGO_LINES) {
 			drawCreditsLogo(s);
 		} else {
-			s.setColor(COLOR_FOREGROUND);
+			s.setColor(_G(colors)._edge);
 			s.writeString(Common::Point(1, 17), "ULTIMA and LORD BRITISH are registered");
 			s.writeString(Common::Point(2, 18), "trademarks of Richard Garriott and");
 			s.writeString(Common::Point(11, 19), "Origin Systems, Inc.");

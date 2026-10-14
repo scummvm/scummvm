@@ -25,6 +25,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "ultima/shared/engine/view.h"
+#include "ultima/ultima1/data/render_mode.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -58,6 +59,12 @@ private:
 	Graphics::ManagedSurface _logo, _castle;
 	Graphics::ManagedSurface _flags[3];
 	Graphics::Palette _castlePalette;
+	Data::RenderMode _loadedMode = Data::RENDER_EGA;
+
+	/**
+	 * Loads the images for the current graphics mode
+	 */
+	void loadImages();
 
 	void showCredits();
 	void showMainMenu();

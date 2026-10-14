@@ -28,9 +28,6 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-constexpr int COLOR_TEXT = 11;   // light cyan - matches Commands/Stats
-constexpr int COLOR_BORDER = 1;  // dark blue
-constexpr int COLOR_EDGE = 15;   // white - brief "success" flash colour
 
 // The dialog box's own area, and the thin border line inset within it -
 // both given here in absolute screen pixels, as in the original
@@ -77,7 +74,7 @@ bool Pillar::msgGame(const GameMessage &msg) {
 
 bool Pillar::msgFocus(const FocusMessage &msg) {
 	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
-	_borderColor = COLOR_BORDER;
+	_borderColor = _G(colors)._border;
 
 	auto &sg = _G(savegame);
 	bool success;
@@ -100,7 +97,7 @@ bool Pillar::msgFocus(const FocusMessage &msg) {
 
 	if (success) {
 		// Flash the border briefly to celebrate the reward
-		_borderColor = COLOR_EDGE;
+		_borderColor = _G(colors)._edge;
 		g_engine->playFX(5);
 		delaySeconds(1);
 	} else if (_locationNum != 6) {
@@ -113,7 +110,7 @@ bool Pillar::msgFocus(const FocusMessage &msg) {
 }
 
 void Pillar::timeout() {
-	_borderColor = COLOR_BORDER;
+	_borderColor = _G(colors)._border;
 	redraw();
 }
 
@@ -122,7 +119,7 @@ void Pillar::draw() {
 	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
 	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), _borderColor);
 
-	s.setColor(COLOR_TEXT);
+	s.setColor(_G(colors)._text);
 	drawInscription();
 }
 

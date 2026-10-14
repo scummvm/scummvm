@@ -31,14 +31,6 @@ namespace Views {
 // outlines - the disassembly's own hardcoded non-CGA fallback values for
 // drawStarGraphic/drawStationGraphic, and (for the ships) the closest
 // equivalents already established elsewhere in this port's space UI
-constexpr int STAR_COLOR_1 = 12;
-constexpr int STAR_COLOR_2 = 14;
-constexpr int ANCHOR_COLOR = 15;
-constexpr int STATION_COLOR_HILIGHT = 1;
-constexpr int STATION_COLOR_BORDER = 10;
-constexpr int STATION_COLOR_EDGE = 7;
-constexpr int EXHAUST_COLOR_MAIN = 12;
-constexpr int EXHAUST_COLOR_HILIGHT = 14;
 
 // Bounds plotShipPixelBounded clips the exhaust trail's individual pixels to
 static bool withinShipView(int x, int y) {
@@ -96,7 +88,7 @@ static void drawWrappedTile(Graphics::Views::GfxSurface &s, const Graphics::Mana
 }
 
 // Star/heat hazard bitmap (18 rows x 19 cols), matching SPACE.EXE's own raw
-// table for drawStarGraphic. 1 -> STAR_COLOR_1, 2 -> STAR_COLOR_2
+// table for drawStarGraphic. 1 -> _G(colors)._star1, 2 -> _G(colors)._star2
 static const int8 STAR_BITMAP[18][19] = {
 	{ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
@@ -119,7 +111,7 @@ static const int8 STAR_BITMAP[18][19] = {
 };
 
 // Docking/encounter anchor bitmap (20 rows x 20 cols), matching SPACE.EXE's
-// own raw table for drawPlanetGraphic. Any nonzero value -> ANCHOR_COLOR
+// own raw table for drawPlanetGraphic. Any nonzero value -> _G(colors)._edge
 static const int8 PLANET_BITMAP[20][20] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
@@ -144,8 +136,8 @@ static const int8 PLANET_BITMAP[20][20] = {
 };
 
 // Space station bitmap (18 rows x 21 cols), matching SPACE.EXE's own raw
-// table for drawStationGraphic. 1/2 -> STATION_COLOR_HILIGHT,
-// 4 -> STATION_COLOR_EDGE, 3 -> STATION_COLOR_BORDER
+// table for drawStationGraphic. 1/2 -> _G(colors)._stationHighlight,
+// 4 -> _G(colors)._stationEdge, 3 -> _G(colors)._stationBorder
 static const int8 STATION_BITMAP[18][21] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0 },
@@ -223,10 +215,10 @@ void SpaceMap::drawStarGraphic(Graphics::Views::GfxSurface &s, int x, int y) {
 		for (int col = 0; col < 19; ++col) {
 			switch (STAR_BITMAP[row][col]) {
 			case 1:
-				s.setPixel(x + col, y + row, STAR_COLOR_1);
+				s.setPixel(x + col, y + row, _G(colors)._star1);
 				break;
 			case 2:
-				s.setPixel(x + col, y + row, STAR_COLOR_2);
+				s.setPixel(x + col, y + row, _G(colors)._star2);
 				break;
 			default:
 				break;
@@ -239,7 +231,7 @@ void SpaceMap::drawPlanetGraphic(Graphics::Views::GfxSurface &s, int x, int y) {
 	for (int row = 0; row < 20; ++row) {
 		for (int col = 0; col < 20; ++col) {
 			if (PLANET_BITMAP[row][col] != 0)
-				s.setPixel(x + col, y + row, ANCHOR_COLOR);
+				s.setPixel(x + col, y + row, _G(colors)._edge);
 		}
 	}
 }
@@ -250,13 +242,13 @@ void SpaceMap::drawStationGraphic(Graphics::Views::GfxSurface &s, int x, int y) 
 			switch (STATION_BITMAP[row][col]) {
 			case 1:
 			case 2:
-				s.setPixel(x + col, y + row, STATION_COLOR_HILIGHT);
+				s.setPixel(x + col, y + row, _G(colors)._stationHighlight);
 				break;
 			case 4:
-				s.setPixel(x + col, y + row, STATION_COLOR_EDGE);
+				s.setPixel(x + col, y + row, _G(colors)._stationEdge);
 				break;
 			case 3:
-				s.setPixel(x + col, y + row, STATION_COLOR_BORDER);
+				s.setPixel(x + col, y + row, _G(colors)._stationBorder);
 				break;
 			default:
 				break;
@@ -295,55 +287,55 @@ void SpaceMap::drawShuttleExhaust(Graphics::Views::GfxSurface &s, int x, int y, 
 	switch (facing) {
 	case Data::FACING_LEFT:
 		for (int i = 0; i < 3; ++i) {
-			plot(x + 19, y + 4 + i, EXHAUST_COLOR_MAIN);
-			plot(x + 19, y + 11 + i, EXHAUST_COLOR_MAIN);
+			plot(x + 19, y + 4 + i, _G(colors)._shuttle);
+			plot(x + 19, y + 11 + i, _G(colors)._shuttle);
 		}
-		plot(x + 20, y + 5, EXHAUST_COLOR_HILIGHT);
-		plot(x + 20, y + 6, EXHAUST_COLOR_HILIGHT);
-		plot(x + 20, y + 11, EXHAUST_COLOR_HILIGHT);
-		plot(x + 20, y + 12, EXHAUST_COLOR_HILIGHT);
-		plot(x + 21, y + 6, EXHAUST_COLOR_MAIN);
-		plot(x + 21, y + 11, EXHAUST_COLOR_MAIN);
+		plot(x + 20, y + 5, _G(colors)._edge);
+		plot(x + 20, y + 6, _G(colors)._edge);
+		plot(x + 20, y + 11, _G(colors)._edge);
+		plot(x + 20, y + 12, _G(colors)._edge);
+		plot(x + 21, y + 6, _G(colors)._shuttle);
+		plot(x + 21, y + 11, _G(colors)._shuttle);
 		break;
 
 	case Data::FACING_RIGHT:
 		for (int i = 0; i < 3; ++i) {
-			plot(x - 1, y + 4 + i, EXHAUST_COLOR_MAIN);
-			plot(x - 1, y + 11 + i, EXHAUST_COLOR_MAIN);
+			plot(x - 1, y + 4 + i, _G(colors)._shuttle);
+			plot(x - 1, y + 11 + i, _G(colors)._shuttle);
 		}
-		plot(x - 2, y + 5, EXHAUST_COLOR_HILIGHT);
-		plot(x - 2, y + 6, EXHAUST_COLOR_HILIGHT);
-		plot(x - 2, y + 11, EXHAUST_COLOR_HILIGHT);
-		plot(x - 2, y + 12, EXHAUST_COLOR_HILIGHT);
-		plot(x - 3, y + 6, EXHAUST_COLOR_MAIN);
-		plot(x - 3, y + 11, EXHAUST_COLOR_MAIN);
+		plot(x - 2, y + 5, _G(colors)._edge);
+		plot(x - 2, y + 6, _G(colors)._edge);
+		plot(x - 2, y + 11, _G(colors)._edge);
+		plot(x - 2, y + 12, _G(colors)._edge);
+		plot(x - 3, y + 6, _G(colors)._shuttle);
+		plot(x - 3, y + 11, _G(colors)._shuttle);
 		break;
 
 	case Data::FACING_UP:
 		for (int i = 0; i < 3; ++i) {
-			plot(x + 5 + i, y + 19, EXHAUST_COLOR_MAIN);
-			plot(x + 12 + i, y + 19, EXHAUST_COLOR_MAIN);
+			plot(x + 5 + i, y + 19, _G(colors)._shuttle);
+			plot(x + 12 + i, y + 19, _G(colors)._shuttle);
 		}
-		plot(x + 6, y + 20, EXHAUST_COLOR_HILIGHT);
-		plot(x + 7, y + 20, EXHAUST_COLOR_HILIGHT);
-		plot(x + 12, y + 20, EXHAUST_COLOR_HILIGHT);
-		plot(x + 13, y + 20, EXHAUST_COLOR_HILIGHT);
-		plot(x + 7, y + 21, EXHAUST_COLOR_MAIN);
-		plot(x + 12, y + 21, EXHAUST_COLOR_MAIN);
+		plot(x + 6, y + 20, _G(colors)._edge);
+		plot(x + 7, y + 20, _G(colors)._edge);
+		plot(x + 12, y + 20, _G(colors)._edge);
+		plot(x + 13, y + 20, _G(colors)._edge);
+		plot(x + 7, y + 21, _G(colors)._shuttle);
+		plot(x + 12, y + 21, _G(colors)._shuttle);
 		break;
 
 	case Data::FACING_DOWN:
 	default:
 		for (int i = 0; i < 3; ++i) {
-			plot(x + 5 + i, y - 1, EXHAUST_COLOR_MAIN);
-			plot(x + 12 + i, y - 1, EXHAUST_COLOR_MAIN);
+			plot(x + 5 + i, y - 1, _G(colors)._shuttle);
+			plot(x + 12 + i, y - 1, _G(colors)._shuttle);
 		}
-		plot(x + 6, y - 2, EXHAUST_COLOR_HILIGHT);
-		plot(x + 7, y - 2, EXHAUST_COLOR_HILIGHT);
-		plot(x + 12, y - 2, EXHAUST_COLOR_HILIGHT);
-		plot(x + 13, y - 2, EXHAUST_COLOR_HILIGHT);
-		plot(x + 7, y - 3, EXHAUST_COLOR_MAIN);
-		plot(x + 12, y - 3, EXHAUST_COLOR_MAIN);
+		plot(x + 6, y - 2, _G(colors)._edge);
+		plot(x + 7, y - 2, _G(colors)._edge);
+		plot(x + 12, y - 2, _G(colors)._edge);
+		plot(x + 13, y - 2, _G(colors)._edge);
+		plot(x + 7, y - 3, _G(colors)._shuttle);
+		plot(x + 12, y - 3, _G(colors)._shuttle);
 		break;
 	}
 }
@@ -351,7 +343,7 @@ void SpaceMap::drawShuttleExhaust(Graphics::Views::GfxSurface &s, int x, int y, 
 void SpaceMap::drawSmallFighterExhaust(Graphics::Views::GfxSurface &s, int x, int y, int facing) {
 	auto plot = [&s](int px, int py) {
 		if (withinShipView(px, py))
-			s.setPixel(px, py, EXHAUST_COLOR_MAIN);
+			s.setPixel(px, py, _G(colors)._shuttle);
 	};
 
 	switch (facing) {
@@ -413,7 +405,7 @@ void SpaceMap::drawSmallFighterExhaust(Graphics::Views::GfxSurface &s, int x, in
 void SpaceMap::drawLargeFighterExhaust(Graphics::Views::GfxSurface &s, int x, int y, int facing) {
 	auto plot = [&s](int px, int py) {
 		if (withinShipView(px, py))
-			s.setPixel(px, py, EXHAUST_COLOR_MAIN);
+			s.setPixel(px, py, _G(colors)._shuttle);
 	};
 
 	switch (facing) {

@@ -29,8 +29,6 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-constexpr int TEXT_COLOR = 11;   // light cyan - matches Commands/Stats
-constexpr int BORDER_COLOR = 1;  // dark blue
 
 // The dialog's own area (matching fillDialogArea's fill rect) and, inset
 // within it, the thin border line (matching drawDialogBorder) - both given
@@ -89,7 +87,8 @@ static const int GEM_HOLE_X[4] = { 9, 14, 19, 24 };
 constexpr int GEM_HOLE_Y = 5;
 
 // Red/Green/Blue/White, matching the gem each hole is labelled for
-static const byte GEM_COLORS[4] = { 4, 2, 9, 15 };
+static const byte EGA_GEM_COLORS[4] = { 4, 2, 9, 15 };
+static const byte CGA_GEM_COLORS[4] = { 2, 1, 1, 3 };
 
 // Per-row half-width of an 8x8 diamond, used to draw each gem as a small
 // solid diamond rather than relying on font glyphs (which the DosFont
@@ -114,7 +113,7 @@ void EnteringCraft::draw() {
 	auto s = getSurface();
 	s.fillRect(Common::Rect(0, 0, DIALOG_X2 - DIALOG_X1, DIALOG_Y2 - DIALOG_Y1), 0);
 	s.frameRect(Common::Rect(BORDER_X1 - DIALOG_X1, BORDER_Y1 - DIALOG_Y1,
-		BORDER_X2 - DIALOG_X1, BORDER_Y2 - DIALOG_Y1), BORDER_COLOR);
+		BORDER_X2 - DIALOG_X1, BORDER_Y2 - DIALOG_Y1), _G(colors)._border);
 
 	drawPageText();
 	if (_page == 1)
@@ -147,14 +146,16 @@ void EnteringCraft::drawPageText() {
 	}
 
 	auto s = getSurface();
-	s.setColor(TEXT_COLOR);
+	s.setColor(_G(colors)._text);
 	for (int i = 0; i < count; ++i)
 		s.writeString(Common::Point(lines[i]._x, lines[i]._y), lines[i]._text);
 }
 
 void EnteringCraft::drawGemHoles() {
+	const byte *colors = (_G(renderMode) == Data::RENDER_CGA) ? CGA_GEM_COLORS : EGA_GEM_COLORS;
+
 	for (int i = 0; i < 4; ++i)
-		drawGem(GEM_HOLE_X[i], GEM_HOLE_Y, GEM_COLORS[i]);
+		drawGem(GEM_HOLE_X[i], GEM_HOLE_Y, colors[i]);
 }
 
 void EnteringCraft::drawGem(int cellX, int cellY, byte color) {
