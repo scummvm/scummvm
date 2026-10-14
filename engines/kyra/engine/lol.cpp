@@ -3456,8 +3456,8 @@ int LoLEngine::battleHitSkillTest(int16 attacker, int16 target, int skill) {
 	int sk = 0;
 
 	if (attacker & 0x8000) {
-		hitChanceModifier = _monsters[target & 0x7FFF].properties->fightingStats[0];
-		sk = 100 - _monsters[target & 0x7FFF].properties->skillLevel;
+		hitChanceModifier = _monsters[attacker & 0x7FFF].properties->fightingStats[0];
+		sk = 100 - _monsters[attacker & 0x7FFF].properties->skillLevel;
 	} else {
 		hitChanceModifier = _characters[attacker].defaultModifiers[0];
 		int8 m = _characters[attacker].skillModifiers[skill];
