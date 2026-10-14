@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/inventory.h"
+#include "hollywood/runaway/saveload.h"
 #include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
@@ -36,6 +37,24 @@ const uint16 kExamineCues[] = {
 };
 
 } // End of anonymous namespace
+
+void RunawayInventory::captureState(RunawaySaveState &state) const {
+	state.itemCount = _items.size();
+	for (uint i = 0; i < sizeof(state.items); ++i)
+		state.items[i] = itemAt(i);
+	state.selected = _selected;
+	state.cloth = _clothState;
+}
+
+void RunawayInventory::restoreState(const RunawaySaveState &state) {
+	assert(state.valid());
+	_items.clear();
+	for (uint i = 0; i < state.itemCount; ++i)
+		_items.push_back(state.items[i]);
+	_selected = state.selected;
+	_clothState = state.cloth;
+	_newItem = 0;
+}
 
 bool RunawayInventory::contains(byte item) const {
 	for (uint i = 0; i < size(); ++i) {

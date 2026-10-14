@@ -67,6 +67,10 @@ public:
 	void cancelWalk();
 	void sayInventory(const RunawayInventory::Reply &reply);
 	bool escaped() const { return _escaped; }
+	bool canSave() const { return !busy() && !speaking() && !_escaped && _pathIndex == _path.size(); }
+	void captureState(RunawaySaveState &state) const;
+	bool restoreState(const RunawaySaveState &state, uint32 now);
+	void setOptions(bool antialias, bool fastScrolling) { _antialias = antialias; _fastScrolling = fastScrolling; }
 
 private:
 	enum Action {
@@ -119,6 +123,7 @@ private:
 	RunawayInterrogation _interrogation;
 	Common::RandomSource _random;
 	bool _peeked = false;
+	bool _antialias = true, _fastScrolling = true;
 	RunawayActor _actor;
 	RunawayLipSync _lipSync;
 	RunawayIdleHead _idleHead;

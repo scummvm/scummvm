@@ -52,6 +52,9 @@ public:
 	bool busy() const { return _pickupItem != 0; }
 	RunawayVerb verb() const { return _verb; }
 	byte hovered() const { return _hovered; }
+	void captureState(RunawaySaveState &state) const;
+	void restoreState(const RunawaySaveState &state, uint32 now);
+	void setPointerSound(bool enabled) { _pointerSound = enabled; }
 	void draw(Graphics::ManagedSurface &screen, const Common::U32String &roomCaption,
 		const Common::U32String &committedCaption, const Common::U32String &subtitle, bool showSubtitles);
 
@@ -80,6 +83,7 @@ private:
 	byte _hovered = 0, _buttonFrame = 0, _optionsFrame = 0, _pickupItem = 0;
 	bool _inventoryOpen = false, _enteredInventory = false, _returnAfterPickup = false;
 	bool _inventoryPresentation = false;
+	bool _pointerSound = true;
 	bool _pickupSoundPlayed = false;
 	bool _blocked = false, _speaking = false, _cursorPushed = false;
 	uint32 _now = 0, _buttonTick = 0, _verbStarted = 0, _portraitTick = 0;

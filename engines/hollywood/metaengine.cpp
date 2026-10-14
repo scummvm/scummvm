@@ -65,6 +65,7 @@ bool HollywoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 void HollywoodMetaEngine::registerDefaultSettings(const Common::String &) const {
 	ConfMan.registerDefault("subtitles", true);
 	registerMonstersDefaultSettings();
+	RunawayEngine::registerDefaultSettings();
 }
 
 void HollywoodMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
@@ -72,6 +73,9 @@ void HollywoodMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 		getMonstersSavegameThumbnail(thumb);
 		return;
 	}
+	if (g_engine && ConfMan.get("gameid") == "runaway" &&
+			static_cast<RunawayEngine *>(g_engine)->copySaveThumbnail(thumb))
+		return;
 
 	Graphics::createThumbnail(thumb);
 }

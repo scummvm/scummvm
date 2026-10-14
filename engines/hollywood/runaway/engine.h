@@ -24,7 +24,9 @@
 
 #include "common/array.h"
 #include "common/language.h"
+#include "common/ptr.h"
 #include "engines/engine.h"
+#include "hollywood/runaway/menu.h"
 
 namespace Common {
 class Keymap;
@@ -37,25 +39,43 @@ class ManagedSurface;
 namespace Hollywood {
 
 class RunawayMenu;
+class RunawayInventory;
+class RunawayScene5030;
+class RunawayUI;
 
 // Runaway shares the archive and text formats with Hollywood Monsters, but
 // has its own RGB565 renderer, scene state and audio formats.
 class RunawayEngine : public Engine {
 public:
-	RunawayEngine(OSystem *syst, Common::Language language) : Engine(syst), _language(language) {}
+	RunawayEngine(OSystem *syst, Common::Language language);
+	~RunawayEngine() override;
 
 	Common::Error run() override;
 	void initializePath(const Common::FSNode &gamePath) override;
 	bool hasFeature(EngineFeature feature) const override;
 	void syncSoundSettings() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	bool copySaveThumbnail(Graphics::Surface &thumbnail) const;
 
 	static Common::Array<Common::Keymap *> initKeymaps();
+	static void registerDefaultSettings();
 
 private:
 	Common::Error playIntro(RunawayMenu &menu);
 	Common::Error playEnding(RunawayMenu &menu);
 	void pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &screen);
+	RunawayMenu::Settings readSettings() const;
+	void applySettings(const RunawayMenu::Settings &settings, bool restoreDefaults = false);
+	void present(const Graphics::ManagedSurface &screen);
 	Common::Language _language;
+	RunawayStrings _strings;
+	Common::ScopedPtr<RunawayInventory> _inventory;
+	Common::ScopedPtr<RunawayScene5030> _scene;
+	Common::ScopedPtr<RunawayUI> _ui;
+	bool _inPresentation = false, _gameStarted = false, _loadedGame = false;
 };
 
 } // End of namespace Hollywood

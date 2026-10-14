@@ -27,6 +27,7 @@
 
 #include "hollywood/debug.h"
 #include "hollywood/runaway/audio.h"
+#include "hollywood/runaway/graphics.h"
 
 namespace Hollywood {
 
@@ -123,11 +124,32 @@ void RunawayAudio::stopMusic() {
 	_mixer->stopHandle(_music);
 }
 
+void RunawayAudio::playPointer() {
+	// Native 0x405d14 / 0x407530: RESOURCE.000 chunk 150, 16 kHz,
+	// signed 16-bit mono. This short effect accompanies a cursor change.
+	Common::Array<byte> data;
+	if (!readRunawayGlobalChunk(150, data) || data.size() % 2)
+		return;
+	byte *samples = (byte *)malloc(data.size());
+	memcpy(samples, data.data(), data.size());
+	_mixer->stopHandle(_pointer);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_pointer,
+		Audio::makeRawStream(samples, data.size(), 16000, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN),
+		-1, 3);
+}
+
+void RunawayAudio::playMenuMusic() {
+	// Options volume preview and credits use shared music cue 1, channel 7.
+	play("RESOURCE.002", 1, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
+		Audio::Mixer::kMusicSoundType, _music, 255, true);
+}
+
 void RunawayAudio::stopSpeech() {
 	_mixer->stopHandle(_speech);
 }
 
 void RunawayAudio::stopEffect() {
+	_mixer->stopHandle(_pointer);
 	_mixer->stopHandle(_footstep);
 	for (uint i = 0; i < ARRAYSIZE(_effects); ++i)
 		_mixer->stopHandle(_effects[i]);

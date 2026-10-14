@@ -36,6 +36,8 @@ public:
 	uint32 playSpeech(uint16 sample, bool global = false);
 	void playEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
 	void playFootstep(byte surface, byte variant, byte volume = Audio::Mixer::kMaxChannelVolume);
+	void playPointer();
+	void playMenuMusic();
 	void stopMusic();
 	void stopSpeech();
 	void stopEffect();
@@ -46,7 +48,7 @@ private:
 	uint32 play(const char *archive, uint16 cue, uint tableCount, bool pairedTables,
 		byte flags, Audio::Mixer::SoundType type, Audio::SoundHandle &handle, byte volume, bool loop);
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _music, _speech, _effects[2], _footstep;
+	Audio::SoundHandle _music, _speech, _effects[2], _footstep, _pointer;
 };
 
 } // End of namespace Hollywood

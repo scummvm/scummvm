@@ -23,6 +23,7 @@
 #include "graphics/cursorman.h"
 #include "hollywood/runaway/strings.h"
 #include "hollywood/runaway/ui.h"
+#include "hollywood/runaway/saveload.h"
 
 namespace Hollywood {
 namespace {
@@ -106,10 +107,31 @@ bool RunawayUI::inViewport() const {
 
 void RunawayUI::setVerb(RunawayVerb verb) {
 	if (_verb != verb) {
+		if (_pointerSound && !_blocked && !_speaking && !busy())
+			_audio.playPointer();
 		_previousVerb = _verb;
 		_verb = verb;
 		_verbStarted = _now;
 	}
+}
+
+void RunawayUI::captureState(RunawaySaveState &state) const {
+	state.inventoryOpen = _inventoryOpen;
+	state.verb = _verb;
+}
+
+void RunawayUI::restoreState(const RunawaySaveState &state, uint32 now) {
+	_audio.stopEffect();
+	_now = _buttonTick = _verbStarted = _portraitTick = _lastInteraction = now;
+	_blinkUntil = _idleStarted = _pickupStarted = 0;
+	_pickupItem = _hovered = _buttonFrame = _optionsFrame = _mouth = 0;
+	_blocked = _speaking = _inventoryPresentation = _returnAfterPickup = _pickupSoundPlayed = false;
+	_inventoryOpen = state.inventoryOpen;
+	_enteredInventory = false;
+	_verb = _previousVerb = (RunawayVerb)state.verb;
+	_cursorKey = -1;
+	// The options cursor may still be on top of the stack. Rebuild ours
+	// on the next gameplay update, after the menu has popped its cursor.
 }
 
 void RunawayUI::setInventoryOpen(bool open) {

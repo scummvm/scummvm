@@ -28,6 +28,7 @@
 namespace Hollywood {
 
 class RunawayStrings;
+struct RunawaySaveState;
 
 enum RunawayVerb { kVerbWalk, kVerbLook, kVerbUse };
 
@@ -55,6 +56,8 @@ public:
 	Reply combine(byte first, byte second);
 	byte clothState() const { return _clothState; }
 	void soilCloth() { _clothState = 2; }
+	void captureState(RunawaySaveState &state) const;
+	void restoreState(const RunawaySaveState &state);
 
 private:
 	const RunawayStrings &_strings;

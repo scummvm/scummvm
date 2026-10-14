@@ -42,6 +42,55 @@ static void dimViewport(Graphics::ManagedSurface &screen, uint brightness) {
 	}
 }
 
+bool RunawayCredits::load() {
+	if (!_roll.empty())
+		return true;
+	Common::Array<byte> data;
+	if (!readRunawayGlobalChunk(152, data) || data.size() % 800 ||
+			data.size() < 800 * 600 || data.size() > 800 * 20000 ||
+			!loadRunawaySurface(152, 400, data.size() / 800, _roll))
+		return false;
+	// The German release includes a final card. The Spanish and French
+	// archives end before this optional chunk.
+	loadRunawaySurface(160, 1024, 600, _card);
+	return true;
+}
+
+bool RunawayCredits::finished() const {
+	return _now - _started >= (uint)(_roll.h - 600) * 10 + 4000 + (_card.empty() ? 500 : 61500);
+}
+
+void RunawayCredits::draw(Graphics::ManagedSurface &screen) const {
+	screen.clear();
+	const uint elapsed = _now - _started;
+	const uint scrollTime = (_roll.h - 600) * 10;
+	if (elapsed < scrollTime + 4500 || _card.empty()) {
+		const uint first = MIN<uint>(_roll.h - 600, elapsed / 10);
+		screen.copyRectToSurface(_roll, 312, kRunawayViewportTop, Common::Rect(0, first, 400, first + 600));
+		// Native 0x42c8d0 fades thirty rows at each end of the scrolling strip.
+		for (uint y = 0; y < 600; ++y) {
+			const uint level = MIN<uint>(30, MIN(y, 599 - y));
+			if (level == 30)
+				continue;
+			uint16 *pixels = (uint16 *)screen.getBasePtr(312, kRunawayViewportTop + y);
+			for (uint x = 0; x < 400; ++x) {
+				const uint16 p = pixels[x];
+				pixels[x] = (((p >> 11) * level / 30) << 11) |
+					((((p >> 5) & 63) * level / 30) << 5) | ((p & 31) * level / 30);
+			}
+		}
+		if (elapsed > scrollTime + 4000)
+			dimViewport(screen, 1000 - MIN<uint>(1000, (elapsed - scrollTime - 4000) * 2));
+	} else {
+		screen.blitFrom(_card, Common::Point(0, kRunawayViewportTop));
+		const uint cardElapsed = elapsed - scrollTime - 4500;
+		if (cardElapsed < 500)
+			dimViewport(screen, cardElapsed * 2);
+		else if (cardElapsed > 60500)
+			dimViewport(screen, 1000 - MIN<uint>(1000, (cardElapsed - 60500) * 2));
+	}
+}
+
 bool RunawayInterrogation::load() {
 	if (!_background.empty())
 		return true;
@@ -73,6 +122,15 @@ void RunawayInterrogation::start(uint32 now) {
 		_lastTick[i] = now;
 	}
 	nextPhrase();
+}
+
+void RunawayInterrogation::stop() {
+	_audio.stopSpeech();
+	_audio.stopEffect();
+	_lipSync.stop();
+	_subtitle.clear();
+	_row = 0;
+	_phrase = _phraseCount;
 }
 
 void RunawayInterrogation::nextPhrase() {

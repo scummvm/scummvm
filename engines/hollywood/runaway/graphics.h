@@ -66,7 +66,8 @@ public:
 	bool setFrame(uint facing, uint frame, int headFrame = -1);
 	static float perspectiveHeight(Common::Point position);
 	void draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
-		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps, bool sunlit = false) const;
+		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps,
+		bool sunlit = false, bool antialias = true) const;
 
 private:
 	enum { kWidth = 345, kHeight = 518, kHeadHeight = 148, kFacings = 8, kFrames = 19,

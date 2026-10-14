@@ -32,6 +32,19 @@
 
 namespace Hollywood {
 
+class RunawayCredits {
+public:
+	bool load();
+	void start(uint32 now) { _started = _now = now; }
+	void update(uint32 now) { _now = now; }
+	bool finished() const;
+	void draw(Graphics::ManagedSurface &screen) const;
+
+private:
+	Graphics::ManagedSurface _roll, _card;
+	uint32 _started = 0, _now = 0;
+};
+
 class RunawayInterrogation {
 public:
 	explicit RunawayInterrogation(Audio::Mixer *mixer) : _audio(mixer), _random("runawayInterrogation") {}
@@ -39,6 +52,7 @@ public:
 	void start(uint32 now);
 	void update(uint32 now);
 	void skipSpeech();
+	void stop();
 	void draw(Graphics::ManagedSurface &screen) const;
 	bool finished() const { return _phrase >= _phraseCount; }
 	bool speaking() const { return _row != 0; }

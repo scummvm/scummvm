@@ -145,6 +145,7 @@ MODULE_OBJS = \
 	runaway/inventory.o \
 	runaway/menu.o \
 	runaway/presentation.o \
+	runaway/saveload.o \
 	runaway/scene5030.o \
 	runaway/strings.o \
 	runaway/ui.o \

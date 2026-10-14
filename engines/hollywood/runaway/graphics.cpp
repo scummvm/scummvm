@@ -286,7 +286,7 @@ float RunawayActor::perspectiveHeight(Common::Point position) {
 }
 
 void RunawayActor::draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
-		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps, bool sunlit) const {
+		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps, bool sunlit, bool antialias) const {
 	// Actor coordinates are anchored at (168,434) in a nominal 455-pixel-high image.
 	const int scale = CLIP<int>((int)(perspectiveHeight(position) * 256 / 455), 64, 256);
 	const int originX = position.x - cameraX - 168 * scale / 256;
@@ -317,11 +317,36 @@ void RunawayActor::draw(Graphics::ManagedSurface &surface, Common::Point positio
 		for (int x = x0; x < x1; ++x, ++out) {
 			if (maps[512 + mask[(y - roomTop) * 1376 + x + cameraX]])
 				continue;
-			const int source = sourceY * kWidth + (x - originX) * 256 / scale;
-			if (_shadow[source])
-				*out = blend565(0, *out, _shadow[source] / 2);
-			if (_opacity[source])
-				*out = blend565(palette[_pixels[source]], *out, _opacity[source]);
+			const int sourceX = (x - originX) * 256 / scale;
+			const int source = sourceY * kWidth + sourceX;
+			uint color = palette[_pixels[source]], opacity = _opacity[source], shadow = _shadow[source];
+			if (antialias && scale < 256) {
+				// Native 0x426040 averages color, opacity and shadow over
+				// each source footprint; 0x426de0 takes a single sample.
+				const int endX = MIN<int>(kWidth, (x - originX + 1) * 256 / scale);
+				const int endY = MIN<int>(kHeight, (y - originY + 1) * 256 / scale);
+				uint r = 0, g = 0, b = 0;
+				opacity = shadow = 0;
+				for (int sy = sourceY; sy < endY; ++sy) {
+					for (int sx = sourceX; sx < endX; ++sx) {
+						const uint sample = sy * kWidth + sx;
+						const uint16 c = _opacity[sample] ? palette[_pixels[sample]] : 0;
+						r += c >> 11;
+						g += (c >> 5) & 63;
+						b += c & 31;
+						opacity += _opacity[sample];
+						shadow += _shadow[sample];
+					}
+				}
+				const uint count = (endX - sourceX) * (endY - sourceY);
+				color = ((r / count) << 11) | ((g / count) << 5) | (b / count);
+				opacity /= count;
+				shadow /= count;
+			}
+			if (shadow)
+				*out = blend565(0, *out, shadow / 2);
+			if (opacity)
+				*out = blend565(color, *out, opacity);
 		}
 	}
 }

@@ -26,6 +26,7 @@
 
 #include "hollywood/debug.h"
 #include "hollywood/runaway/scene5030.h"
+#include "hollywood/runaway/saveload.h"
 #include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
@@ -112,7 +113,7 @@ bool RunawayScene5030::load() {
 }
 
 bool RunawayScene5030::loadRoomGraphics() {
-	Common::Array<byte> pixels, overlay;
+	Common::Array<byte> pixels, overlay, patch;
 	if (!_archive.readVariableChunk(_windowClean ? 4 : 0, pixels) ||
 			pixels.size() != kRoomWidth * kRoomHeight * 2 ||
 			!_lidActor.load(_archive, _windowClean ? 45 : 43, 33) ||
@@ -141,15 +142,23 @@ bool RunawayScene5030::loadRoomGraphics() {
 			drawPatch(_pickupPatches[i]);
 	}
 	if (_coolerMoved) {
-		applyPatch(_hatchState == kLocked ? 12 : 13);
-		if (_hatchState == kOpen)
-			applyPatch(24);
+		if (!loadPatch(_hatchState == kLocked ? 12 : 13, patch))
+			return false;
+		drawPatch(patch);
+		if (_hatchState == kOpen) {
+			if (!loadPatch(24, patch))
+				return false;
+			drawPatch(patch);
+		}
 	} else {
 		drawPatch(_lidOpen ? _openLidPatch : _closedLidPatch);
 		if (_unplugged)
 			drawPatch(_unplugPatch);
-		if (_ice == kDrained)
-			applyPatch(11);
+		if (_ice == kDrained) {
+			if (!loadPatch(11, patch))
+				return false;
+			drawPatch(patch);
+		}
 	}
 	drawPatch(overlay);
 	return true;
@@ -159,6 +168,67 @@ void RunawayScene5030::start(uint32 now) {
 	_now = _lastUpdate = now;
 	_audio.playMusic(11);
 	startAction(kIntroVideo);
+}
+
+void RunawayScene5030::captureState(RunawaySaveState &state) const {
+	state.x = _position.x;
+	state.y = _position.y;
+	state.camera = _cameraX;
+	state.facing = _facing;
+	state.lidOpen = _lidOpen;
+	state.unplugged = _unplugged;
+	state.windowClean = _windowClean;
+	state.coolerMoved = _coolerMoved;
+	state.coolerInspected = _coolerInspected;
+	state.peeked = _peeked;
+	state.ice = _ice;
+	state.hatch = _hatchState;
+	for (uint i = 0; i < ARRAYSIZE(_pickedUp); ++i) {
+		state.pickedUp[i] = _pickedUp[i];
+		state.examined[i] = _examined[i];
+	}
+	state.randomSeed = _random.getSeed();
+	_inventory.captureState(state);
+}
+
+bool RunawayScene5030::restoreState(const RunawaySaveState &state, uint32 now) {
+	if (!state.valid())
+		return false;
+	_lidOpen = state.lidOpen;
+	_unplugged = state.unplugged;
+	_windowClean = state.windowClean;
+	_coolerMoved = state.coolerMoved;
+	_coolerInspected = state.coolerInspected;
+	_peeked = state.peeked;
+	_ice = (IceState)state.ice;
+	_hatchState = (HatchState)state.hatch;
+	for (uint i = 0; i < ARRAYSIZE(_pickedUp); ++i) {
+		_pickedUp[i] = state.pickedUp[i];
+		_examined[i] = state.examined[i];
+	}
+	if (!loadRoomGraphics())
+		return false;
+	stopSpeech();
+	_audio.stopEffect();
+	_interrogation.stop();
+	_video.close();
+	_inventory.restoreState(state);
+	_random.setSeed(state.randomSeed);
+	_now = _lastUpdate = _actionStarted = now;
+	_walkElapsed = _lastFootstep = _step = 0;
+	_action = _afterSpeech = _afterWalk = kNone;
+	_pendingHotspot = _pendingItem = _pickupHotspot = 0;
+	_pendingVerb = kVerbWalk;
+	_path.clear();
+	_pathIndex = 0;
+	_committedCaption.clear();
+	_escaped = false;
+	setPosition(Common::Point(state.x, state.y), state.facing);
+	setCameraX(state.camera);
+	_idleHead.reset(now);
+	_actor.setFrame(_facing, 0, 0);
+	_audio.playMusic(11);
+	return true;
 }
 
 void RunawayScene5030::setCameraX(int x) {
@@ -913,9 +983,10 @@ void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpe
 	const int headFrame = walking ? -1 : _speechRow ? speechFrame() : idle ? _idleHead.frame() : -1;
 	_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / 60) % 12 : 0, headFrame);
 	if (scrollDirection)
-		_cameraX += scrollDirection * MAX<int>(1, elapsed / 2);
+		_cameraX += scrollDirection * MAX<int>(1, elapsed / (_fastScrolling ? 2 : 4));
 	else if (walking || (_action != kNone && _action != kIntro))
-		_cameraX += CLIP<int>(_position.x - kScreenWidth / 2 - _cameraX, -MIN<int>(8, elapsed), MIN<int>(8, elapsed));
+		_cameraX += CLIP<int>(_position.x - kScreenWidth / 2 - _cameraX,
+			-MIN<int>(_fastScrolling ? 8 : 4, elapsed), MIN<int>(_fastScrolling ? 8 : 4, elapsed));
 	setCameraX(_cameraX);
 }
 
@@ -969,7 +1040,7 @@ void RunawayScene5030::draw() {
 		const uint frame = _action == kPeekDoor ? MAX<int>(0, (int)_step - 1) : 18 - MAX<int>(0, (int)_step - 1);
 		_actionAnimation.draw(_screen, frame, _cameraX, kRoomTop);
 	} else {
-		_actor.draw(_screen, _position, _cameraX, kRoomTop, _mask, _maps, _windowClean);
+		_actor.draw(_screen, _position, _cameraX, kRoomTop, _mask, _maps, _windowClean, _antialias);
 	}
 	if (_action == kMeltWait) {
 		const uint elapsed = _now - _actionStarted;
