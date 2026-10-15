@@ -471,8 +471,13 @@ bool CifTree::sync(Common::Serializer &ser) {
 	return true;
 }
 
+// Nancy20 made room for longer names in the index
+static uint getIndexNameSize() {
+	return g_nancy->getGameType() >= kGameTypeNancy20 ? 64 : 33;
+}
+
 bool CifTree::readIndex(Common::SeekableReadStream &stream) {
-	const uint kNameSize = 33;
+	const uint kNameSize = getIndexNameSize();
 	const uint kIndexEntrySize = kNameSize + 4;
 
 	Common::Serializer headerSer(&stream, nullptr);
@@ -502,10 +507,7 @@ bool CifTree::readIndex(Common::SeekableReadStream &stream) {
 
 	Common::Array<CifInfo> infos(numFiles);
 	for (CifInfo &info : infos) {
-		char name[kNameSize + 1];
-		stream.read(name, kNameSize);
-		name[kNameSize] = 0;
-		info.name = name;
+		info.name = stream.readString(0, kNameSize);
 		info.dataOffset = stream.readUint32LE();
 	}
 
@@ -534,7 +536,7 @@ bool CifTree::readIndex(Common::SeekableReadStream &stream) {
 }
 
 void CifTree::write(Common::SeekableWriteStream &stream, const Common::Array<Common::SeekableReadStream *> &fileData) {
-	const uint kNameSize = 33;
+	const uint kNameSize = getIndexNameSize();
 	const uint kIndexEntrySize = kNameSize + 4;
 
 	assert(fileData.size() == _writeFileMap.size());
@@ -554,7 +556,7 @@ void CifTree::write(Common::SeekableWriteStream &stream, const Common::Array<Com
 	stream.writeUint32LE(_writeFileMap.size());
 
 	for (const CifInfo &info : _writeFileMap) {
-		char name[kNameSize] = {};
+		char name[64] = {};
 		Common::strlcpy(name, info.name.baseName().c_str(), kNameSize);
 		stream.write(name, kNameSize);
 		stream.writeUint32LE(info.dataOffset);
