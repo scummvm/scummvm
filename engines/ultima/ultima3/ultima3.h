@@ -81,9 +81,9 @@ protected:
 	}
 
 	/**
-	 * Handles the upgrade's Alt-X hotkey, which exits from anywhere
+	 * Goes back to the title screen
 	 */
-	bool msgKeypress(const Graphics::Views::KeypressMessage &msg) override;
+	void returnToMainMenu() override;
 
 private:
 	Audio::PCSpeaker *_pcSpeaker = nullptr;

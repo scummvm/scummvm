@@ -19,27 +19,25 @@
  *
  */
 
-#include "ultima/shared/engine/view.h"
-#include "engines/engine.h"
+
+#ifndef ULTIMA_SHARED_ENGINE_HOTKEYS_H
+#define ULTIMA_SHARED_ENGINE_HOTKEYS_H
 
 namespace Ultima {
 namespace Shared {
 
-bool View::msgKeypress(const Graphics::Views::KeypressMessage &msg) {
-	if ((msg.flags & Common::KBD_ALT) && msgHotkey(msg.keycode))
-		return true;
-
-	switch (msg.keycode) {
-	case Common::KEYCODE_F5:
-		g_engine->saveGameDialog();
-		return true;
-	case Common::KEYCODE_F7:
-		g_engine->loadGameDialog();
-		return true;
-	default:
-		return Graphics::Views::View::msgKeypress(msg);
-	}
-}
+/**
+ * Keymap actions that every Ultima engine handles in the same way, from any
+ * view. The values are kept well clear of the actions of the games themselves
+ */
+enum HotkeyAction {
+	HOTKEY_SAVE = 1000,		// Opens the save dialog
+	HOTKEY_RESTORE,			// Opens the restore dialog
+	HOTKEY_EXIT,			// Exits the game
+	HOTKEY_MAIN_MENU		// Goes back to the start of the game
+};
 
 } // namespace Shared
 } // namespace Ultima
+
+#endif

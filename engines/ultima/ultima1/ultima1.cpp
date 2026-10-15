@@ -90,6 +90,10 @@ Common::Error Ultima1Engine::run() {
 	return Common::kNoError;
 }
 
+void Ultima1Engine::returnToMainMenu() {
+	replaceView("MainMenu", true);
+}
+
 bool Ultima1Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// Only allow saving when any of the different map views are active
 	return dynamic_cast<Views::Map *>(focusedView()) != nullptr;

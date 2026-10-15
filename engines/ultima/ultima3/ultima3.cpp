@@ -116,13 +116,14 @@ Common::Error Ultima3Engine::run() {
 	return Common::kNoError;
 }
 
-bool Ultima3Engine::msgKeypress(const Graphics::Views::KeypressMessage &msg) {
-	if ((msg.flags & Common::KBD_ALT) && msg.keycode == Common::KEYCODE_x) {
-		quitGame();
-		return true;
-	}
+void Ultima3Engine::returnToMainMenu() {
+	// Back to the start of the game, which has no music
+	auto *game = dynamic_cast<Views::Game *>(baseView()->findView(gameViewName()));
+	if (game)
+		game->cancelInteraction();
 
-	return Shared::Events::msgKeypress(msg);
+	_music.silence();
+	replaceView("Title", true);
 }
 
 void Ultima3Engine::applyGameSettings() {

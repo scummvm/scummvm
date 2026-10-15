@@ -191,24 +191,6 @@ bool Game::handleCommand(const KeypressMessage &msg) {
 	}
 }
 
-bool Game::msgHotkey(Common::KeyCode key) {
-	switch (key) {
-	case Common::KEYCODE_r:
-		g_engine->loadGameDialog();
-		return true;
-
-	case Common::KEYCODE_m:
-		// Back to the start of the game, which has no music
-		_interaction.reset();
-		_G(music).silence();
-		replaceView("Title", true);
-		return true;
-
-	default:
-		return false;
-	}
-}
-
 bool Game::msgKeypress(const KeypressMessage &msg) {
 	if (isModifierKey(msg.keycode))
 		return true;

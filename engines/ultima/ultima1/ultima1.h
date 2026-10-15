@@ -74,6 +74,11 @@ protected:
 		return Engine::shouldQuit();
 	}
 
+	/**
+	 * Goes back to the main menu
+	 */
+	void returnToMainMenu() override;
+
 public:
 	// The graphics being shown, and the palette indices things are drawn
 	// with in them

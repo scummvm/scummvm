@@ -34,10 +34,15 @@ struct KeybindingRecord {
 	const char *_desc;
 	const char *_key;
 	const char *_joy;
+	const char *_keyAlt;
 };
 
 static const KeybindingRecord MINIMAL_KEYS[] = {
-	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+	{ KEYBIND_SAVE, "SAVE_GAME", _s("Save game"), "F5", nullptr, nullptr },
+	{ KEYBIND_RESTORE, "RESTORE_GAME", _s("Restore game"), "F7", nullptr, "A+r" },
+	{ KEYBIND_EXIT_GAME, "EXIT_GAME", _s("Exit game"), "A+x", nullptr, nullptr },
+	{ KEYBIND_MAIN_MENU, "MAIN_MENU", _s("Main menu"), "A+m", nullptr, nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord GAMEPLAY_KEYS[] = {
@@ -162,6 +167,8 @@ Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 			act->addDefaultInputMapping(r->_key);
 			if (r->_joy)
 				act->addDefaultInputMapping(r->_joy);
+			if (r->_keyAlt)
+				act->addDefaultInputMapping(r->_keyAlt);
 
 			if (r->_action == KEYBIND_UP || r->_action == KEYBIND_DOWN ||
 				r->_action == KEYBIND_LEFT || r->_action == KEYBIND_RIGHT)

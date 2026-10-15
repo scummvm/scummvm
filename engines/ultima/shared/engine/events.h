@@ -23,6 +23,7 @@
 #define ULTIMA_SHARED_ENGINE_EVENTS_H
 
 #include "graphics/views/events.h"
+#include "ultima/shared/engine/hotkeys.h"
 #include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
@@ -58,6 +59,19 @@ public:
 };
 
 class Events : public Graphics::Views::Events {
+protected:
+	/**
+	 * Handles the actions common to the Ultima engines (see HotkeyAction)
+	 * before passing others to the focused view
+	 */
+	bool msgAction(const Graphics::Views::ActionMessage &msg) override;
+
+	/**
+	 * Goes back to the start of the game, such as its title screen
+	 */
+	virtual void returnToMainMenu() {
+	}
+
 public:
 	Events(const Common::String &engineName) : Graphics::Views::Events(engineName) {
 	}

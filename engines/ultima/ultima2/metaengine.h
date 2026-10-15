@@ -23,6 +23,7 @@
 #define ULTIMA2_METAENGINE_H
 
 #include "backends/keymapper/keymapper.h"
+#include "ultima/shared/engine/hotkeys.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -34,7 +35,13 @@ enum KeybindingAction {
 	KEYBIND_MAGIC, KEYBIND_NEGATE_TIME, KEYBIND_OFFER, KEYBIND_PASS, KEYBIND_QUIT, KEYBIND_READY,
 	KEYBIND_STEAL, KEYBIND_TRANSACT, KEYBIND_UNLOCK, KEYBIND_VIEW, KEYBIND_WEAR_ARMOR,
 	KEYBIND_X_IT, KEYBIND_YELL, KEYBIND_ZSTATS,
-	KEYBIND_NONE
+	KEYBIND_NONE,
+
+	// Actions common to the Ultima games
+	KEYBIND_SAVE = Shared::HOTKEY_SAVE,
+	KEYBIND_RESTORE = Shared::HOTKEY_RESTORE,
+	KEYBIND_EXIT_GAME = Shared::HOTKEY_EXIT,
+	KEYBIND_MAIN_MENU = Shared::HOTKEY_MAIN_MENU
 };
 
 enum KeybindingMode {
