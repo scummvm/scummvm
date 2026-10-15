@@ -226,6 +226,7 @@ static const MD5Table md5table[] = {
 	{ "3ae7f002d9256b8bdf76aaf8a3a069f8", "freddi", "HE 100", "", 34837, Common::EN_ANY, Common::kPlatformWii },
 	{ "3af61c5edf8e15b43dbafd285b2e9777", "puttcircus", "", "Demo", 12364, Common::HE_ISR, Common::kPlatformWindows },
 	{ "3b301b7892f883ce42ab4be6a274fea6", "samnmax", "Floppy", "Floppy", 9040, Common::EN_ANY, Common::kPlatformDOS },
+	{ "3b7c14d1ffba2f56fe7cc18bf938173e", "puttputt", "HE 60", "Floppy", 8112, Common::EN_ANY, Common::kPlatformMacintosh },
 	{ "3b832f4a90740bf22e9b8ed42ca0128c", "freddi4", "HE 99", "", 44035, Common::EN_GRB, Common::kPlatformUnknown },
 	{ "3c4c471342bd95505a42334367d8f127", "puttmoon", "HE 70", "", 12161, Common::RU_RUS, Common::kPlatformWindows },
 	{ "3c90d2a39cafa60b8ebce70a34a59a41", "airport", "", "Demo", 51152, Common::NL_NLD, Common::kPlatformWindows },
