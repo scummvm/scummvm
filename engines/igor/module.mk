@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	walk.o \
 	palette.o \
 	font.o \
+	floppy_font.o \
 	room.o \
 	graphics.o \
 	resource.o \
