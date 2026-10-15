@@ -86,6 +86,31 @@ static void decodeRoomString(const uint8 *src, char *dst, int sz) {
 	}
 }
 
+void IgorEngine::handleRoomDialogue() {
+	if (_gameState.dialogueTextRunning) {
+		// Speech completion ends the sentence
+		if (_talkDelay < 0 && !isDialogueSpeechPlaying()) {
+			_talkDelayCounter = _talkDelay;
+		}
+		if (_talkDelayCounter == _talkDelay) {
+			animateIgorTalking(0);
+			memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+			if (_dialogueTextsCount == 0) {
+				// Speech must stop with the last line
+				stopDialogueSpeech();
+				_gameState.dialogueTextRunning = false;
+				showCursor();
+			} else {
+				++_dialogueTextsStart;
+				startIgorDialogue();
+			}
+		} else {
+			animateIgorTalking(getRandomNumber(5));
+			++_talkDelayCounter;
+		}
+	}
+}
+
 void IgorEngine::decodeRoomStrings(const uint8 *p, bool skipObjectNames) {
 	if (!skipObjectNames) {
 		for (int i = 0; i < 20; ++i) {
