@@ -40,9 +40,8 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 																		   _gameDescription(gameDesc), _randomSource("Igor") {
 	g_engine = this;
 
-	// The original draws the fifth Dean dialogue choice at y=190 into the
-	// 64-KiB mode-13h VGA segment; its 11th font row is outside the visible
-	// 320x200 area but still inside that segment.
+	// Some parts draw outside the visible 320x200 area, but still within 64kb segment
+	// hence allocate full 64-KiB VGA segment for the screen buffer
 	_screenVGA = (uint8 *)malloc(65536);
 	for (int i = 0; i < 4; i++) {
 		_facingIgorFrames[i] = (uint8 *)malloc(13500);
@@ -63,12 +62,7 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_game.flags = gameDesc->gameFlags;
 	_game.language = gameDesc->desc.language;
 
-	// _currentPart = 850;
 	_currentPart = kStartupPart;
-
-	// _currentPart = 171;
-	// _currentPart = 62;
-	// _currentPart = 40;
 
 	_midiPlayer = nullptr;
 	_musicData = nullptr;
@@ -95,8 +89,6 @@ IgorEngine::~IgorEngine() {
 	free(_inventoryPanelBuffer);
 	free(_inventoryImagesBuffer);
 	free(_verbsPanelBuffer);
-
-	// DebugMan.clearAllDebugChannels();
 
 	delete _screen;
 }
@@ -178,7 +170,7 @@ void IgorEngine::restart() {
 	_executeMainAction = 0;
 	_executeRoomAction = 0;
 	_previousMusic = 0;
-	// _musicData = 0;
+	_musicData = 0;
 	_scrollInventory = false;
 	_roomCursorOn = true;
 	_currentCursor = 0;
@@ -262,7 +254,7 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
 		return false;
 
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	if (drawIgor) {
+	if (drawIgor) { // position Igor in the room at the saved position
 		if (!_gameState.igorMoving)
 			_walkDataCurrentIndex = _walkDataLastIndex - 1;
 		WalkData *wd = &_walkData[_walkDataCurrentIndex];
@@ -270,7 +262,7 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
 		if (!_gameState.igorMoving)
 			_walkDataCurrentIndex = _walkDataLastIndex;
 	}
-	if (!_gameState.dialogueStarted) {
+	if (!_gameState.dialogueStarted) { // if loading we need to redraw the room background and UI
 		memset(_screenVGA + 46080, 0, 17920);
 		SET_PAL_208_96_1();
 		SET_PAL_240_48_1();
@@ -317,34 +309,9 @@ void IgorEngine::runPartLoop() {
 	waitForTimer();
 }
 
-void IgorEngine::handleRoomDialogue() {
-	if (_gameState.dialogueTextRunning) {
-		// Speech completion ends the sentence, exactly as in the two blocking
-		// dialogue loops. Without this the sentence only ever ends on a click:
-		if (_talkDelay < 0 && !isDialogueSpeechPlaying()) {
-			_talkDelayCounter = _talkDelay;
-		}
-		if (_talkDelayCounter == _talkDelay) {
-			animateIgorTalking(0);
-			memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
-			if (_dialogueTextsCount == 0) {
-				// Speech must stop with the last line, otherwise it keeps playing
-				// after the text is gone and nothing is left to stop it.
-				stopDialogueSpeech();
-				_gameState.dialogueTextRunning = false;
-				showCursor();
-			} else {
-				++_dialogueTextsStart;
-				startIgorDialogue();
-			}
-		} else {
-			animateIgorTalking(getRandomNumber(5));
-			++_talkDelayCounter;
-		}
-	}
-}
-
-
+/**
+ * igor's eyes blink when he is idle
+ */
 void IgorEngine::handleIgorIdleAnimation() {
 	if (_gameState.dialogueTextRunning || _gameState.igorMoving) {
 		_gameState.updateLight = false;
@@ -362,7 +329,6 @@ void IgorEngine::handleRoomInventoryScroll() {
 		scrollInventory();
 	}
 }
-
 
 void IgorEngine::addObjectToInventory(int object, int index) {
 	debugC(9, kDebugEngine, "addObjectToInventory %d %d", object, index);
@@ -392,6 +358,9 @@ bool IgorEngine::debugAddObjectToInventory(int object) {
 	return true;
 }
 
+/**
+ * just removes without updating ui or playing the sound
+ */
 void IgorEngine::removeInventoryEntry(int index) {
 	_inventoryInfo[_inventoryInfo[index] - 1] = 0;
 	_inventoryInfo[index] = 0;
@@ -457,9 +426,8 @@ void IgorEngine::handlePause() {
 }
 
 Common::Error IgorEngine::syncGame(Common::Serializer &s) {
-	// Serialize in the same order as reference implementation
 
-	// 1. Walk data (100 entries)
+	// Walk data (100 entries)
 	for (int i = 0; i < 100; ++i) {
 		s.skip(2);
 		s.syncAsSint16LE(_walkData[i].x);
@@ -476,7 +444,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 		s.syncAsByte(_walkData[i].scaleHeight);
 	}
 
-	// 2. Walk path state
+	// Walk path state
 	s.skip(20);
 	s.syncAsByte(_walkDataCurrentIndex);
 	s.syncAsByte(_walkDataLastIndex);
@@ -484,7 +452,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	s.syncAsByte(_walkCurrentPos);
 	s.skip(23);
 
-	// 3. Current action
+	// Current action
 	s.syncAsByte(_currentAction.verb);
 	s.syncAsByte(_currentAction.object1Num);
 	s.syncAsByte(_currentAction.object1Type);
@@ -493,24 +461,24 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	s.syncAsByte(_currentAction.object2Type);
 	s.skip(10);
 
-	// 4. Part/state
+	// Part/state
 	s.syncAsSint16LE(_currentPart);
-	// the location in the maze is kept in the padding
+	// the location in the maze
 	s.syncAsByte(_mazeLocation);
-	// whether Igor has already read the notice board in room 7 is also kept in the padding
+	// whether Igor has already read the notice board in room 7
 	s.syncAsByte(_part07FirstVisitDone);
 	s.skip(6);
 
-	// 5. Action state
+	// Action state
 	s.syncAsByte(_actionCode);
 	s.syncAsByte(_actionWalkPoint);
 	s.skip(2);
 
-	// 6. Cursor position
+	// Cursor position
 	s.syncAsSint16LE(_inputVars[kInputCursorXPos]);
 	s.syncAsSint16LE(_inputVars[kInputCursorYPos]);
 
-	// 7. Game state
+	// Game state
 	s.syncAsByte(_gameState.enableLight);
 	s.syncAsByte(_gameState.colorLum);
 	for (int i = 0; i < 5; ++i) {
@@ -569,12 +537,12 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	s.syncAsByte(_gameState.musicNum);
 	s.syncAsByte(_gameState.musicSequenceIndex);
 
-	// 8. Object states
+	// Global Object states
 	for (int i = 0; i < 112; ++i) {
 		s.syncAsByte(_objectsState[i]);
 	}
 
-	// 9. Inventory
+	// Inventory
 	for (int i = 0; i < 74; ++i) {
 		s.syncAsByte(_inventoryInfo[i]);
 	}

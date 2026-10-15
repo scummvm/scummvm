@@ -45,7 +45,6 @@
 
 namespace Igor {
 
-
 enum {
 	kStartupPart = 900,
 	kInvalidPart = 255,
@@ -289,11 +288,11 @@ struct MazeRoom {
 	uint8 flameMode;
 	uint8 numFlames;
 	MazeFlame flames[2];
-	uint8 flameFrames[2];   // frames drawn when the room starts
-	uint8 secondFlameFrame; // the frame the second flame counts as having at the start
+	uint8 flameFrames[2];
+	uint8 secondFlameFrame;
 	bool saveLocation;      // the room ends when the location changes
 	const RoomDataOffsets *offsets;
-	int giveObjectSize;     // stride of the give matrix when it is not the one of the use matrix
+	int giveObjectSize;
 	RoomWalkTargetRules clickFix;
 	const MazeEntry *entries;
 	uint8 numEntries;
@@ -592,7 +591,7 @@ private:
 	bool _eventQuitGame;
 	bool _gameStateLoaded;
 
-	// pass of the end credits: 0 for the first one (set when the ending is over), the pages are shown again after it
+	// pass of the end credits: 0 for the first one (set when the ending is over), the same "pages" are shown again after it
 	uint8 _creditsPass;
 	GameStateData _gameState;
 
@@ -602,8 +601,6 @@ private:
 	int _mazeFlameFrame[2];
 	uint32 _nextTimer;
 
-	// Toggled with Ctrl+F (1 <-> kFastModeFactor), or set to any 1..kFastModeMaxFactor
-	// with the console's fast_mode command.
 	int _fastMode;
 
 	int _language;
@@ -670,10 +667,9 @@ private:
 
 	bool _part07FirstVisitDone;
 
-	// scratch of the room loops: the current ambient frame (a star in part 72, the screen in part 68)
 	uint8 _roomAmbientIndex;
+
 	// the two fireflies of room 69: the current frame of each and the steps of the first one since the second one started
-	// frames of the band drawn across the picture in state 780 (loaded while the scene lasts)
 	uint8 *_part78BandFrames = nullptr;
 	uint8 _part79EndFrame = 0;
 	uint8 _part79BaseFrame = 0;
@@ -1353,6 +1349,7 @@ private:
 	void part70UpdateBackground();
 	void part70();
 
+	// cemetery
 	void part71ExecuteAction(int action);
 	void part71ApplyObjectState(int what);
 	void part71DrawObject(int frame);
@@ -1363,6 +1360,7 @@ private:
 	void part71UpdateBackground();
 	void part71();
 
+	// forest
 	void part72ExecuteAction(int action);
 	void part72ApplyObjectState();
 	void part72TakeFlower();
@@ -1373,10 +1371,12 @@ private:
 	void part72();
 	void part72PaintBlinkingEyes();
 
+	// police cutscene
 	void part73DrawPoliceman(int frame);
 	void part73UpdateDialogue(int action);
 	void part73Cutscene();
 
+	// ship cutscene
 	void part74CycleColors();
 	void part74DrawCharacterFrame(int frame);
 	void part74UpdateSailorDialogue(int action);
@@ -1390,6 +1390,7 @@ private:
 	void part75DrawPhilipFrame(int frame);
 	void part75();
 
+	// plane
 	void part76ExecuteAction(int action);
 	void part76ApplyObjectState();
 	void part76DrawParachuteFrame(int frame);
@@ -1400,6 +1401,7 @@ private:
 	void part76Entry();
 	void part76();
 
+	// college entrance (with cage)
 	void part77ExecuteAction(int action);
 	void part77ApplyObjectState();
 	void part77DrawMonkeyFrame(int frame);
@@ -1408,6 +1410,7 @@ private:
 	void part77EnterFromCollege();
 	void part77();
 
+	// Exam cutscene
 	void part78DrawProfessorFrame(int frame);
 	void part78DrawAlumniFrame(int frame);
 	void part78DrawIgorFrame(int frame);
@@ -1424,6 +1427,7 @@ private:
 	void part78ProfessorWarnings(int which);
 	void part78();
 
+	// Ending
 	void part79DrawLauraInWater(int frame);
 	void part79DrawReflection(int step);
 	void part79ClearReflection();
@@ -1452,12 +1456,14 @@ private:
 	void part79BeachScene();
 	void part79();
 
+	// Library cutscene
 	void part80DrawFrame(int frame);
 	void part80UpdateFriendDialogue(int action);
 	void part80UpdateLauraDialogue(int action);
 	void part80Say(int who, const Common::Array<DialogueText> &lines);
 	void part80();
 
+	// Lighthouse
 	void part81ExecuteAction(int action);
 	void part81LoadRoom();
 	void part81LoadAnimation();
@@ -1499,11 +1505,6 @@ private:
 	int partMazeGetMusicTrack() const;
 
 
-	void setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp, int yBottom = 143);
-
-	void partMainUpdateObjectState(int num);
-	void partMainUpdateFiguresOnPaper(int delay);
-
 	void partMainMeanwhile(int img = IMG_Meanwhile);
 
 	// Margaret cutscenes
@@ -1519,7 +1520,6 @@ private:
 	void part85DisplayLogo();
 	void part85UpdatePhilipLauraDialogue(int action);
 	void part85UpdateBackground();
-
 	void part85AnimateIgorHead(int frame);
 
 	// Splash screens
@@ -1530,6 +1530,11 @@ private:
 	// End credits
 	void partCredits();
 	void partCreditsDrawText(int x, int y, uint8 color, bool underline, const char *str);
+
+	void setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp, int yBottom = 143);
+
+	void partMainUpdateObjectState(int num);
+	void partMainUpdateFiguresOnPaper(int delay);
 
 	void handleRoomInput();
 
@@ -1613,8 +1618,8 @@ private:
 
 	bool isCDVersion() const { return !(_game.flags & kFlagFloppy); }
 	int getPart() const { return _currentPart / 10; }
-	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; } // { return ((_gameTicks + add) % mod) == 0; }
-	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); }                          // { return _gameTicks == eq; }
+	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; }
+	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); }
 
 	void waitForTimer(int ticks = -1, bool presentScreen = true, uint32 deadline = 0);
 

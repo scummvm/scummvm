@@ -48,18 +48,16 @@ static const CreditsPage kCreditsPages[7] = {
 
 // Number of timer units a page stays on the screen
 static const int kCreditsPageTicks = 4000;
-static const int kCreditsMusic = 9;
 // Color of the names, set to white in the palette of every page
 static const int kCreditsNameColor = 0xC3;
 
 /**
- * Centers the string on x. The underlined lines (the headings) have a bar of the text color, three rows high and
- * black at both ends, 18 rows below the top of the text.
+ * Centers the string horizontally
  */
 void IgorEngine::partCreditsDrawText(int x, int y, uint8 color, bool underline, const char *str) {
 	const int width = _font.getStringWidth(str);
 	_font.drawString(_screenVGA, str, x - (width >> 1), y, color, 0, 0);
-	if (underline) {
+	if (underline) { // headings have an underline of the same color as text
 		const int barX = x - (width >> 1) - 10;
 		const int barWidth = width + 21;
 		memset(_screenVGA + (y + 18) * 320 + barX, 0, barWidth);
@@ -71,7 +69,7 @@ void IgorEngine::partCreditsDrawText(int x, int y, uint8 color, bool underline, 
 }
 
 /**
- * States 910 .. 970: seven pages with the credits, shown twice (the second pass has other texts over the same
+ * States 910-970: seven pages with the credits, shown twice (the second time has other texts over the same
  * pictures), then the logos again.
  */
 void IgorEngine::partCredits() {
@@ -80,7 +78,7 @@ void IgorEngine::partCredits() {
 	const CreditsPage &page = kCreditsPages[(_currentPart - 910) / 10];
 
 	if (isCDVersion())
-		playMusic(kCreditsMusic);
+		playMusic(9);
 	else
 		playMusic(12);
 
