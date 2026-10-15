@@ -72,9 +72,9 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	}
 	memset(_actionSentenceColors, 0, sizeof(_actionSentenceColors));
 
-	// _currentPart = kStartupPart;
+	_currentPart = kStartupPart;
 
-	_currentPart = 850;
+	// _currentPart = 850;
 	_midiPlayer = nullptr;
 	_musicData = nullptr;
 

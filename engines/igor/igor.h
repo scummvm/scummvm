@@ -1557,6 +1557,9 @@ private:
 	void part95();
 	void part90();
 	void part90FadePalette(bool fadeInColors);
+	bool part90Hold(uint16 duration, int skipMode, bool optionsMenu);
+	void part90Highlight(bool brighten);
+	void part90SetUserInterfacePalettes();
 
 	// End credits
 	void partCredits();

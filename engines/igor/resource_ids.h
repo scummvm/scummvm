@@ -870,5 +870,6 @@
 #define PAL_VerbsPanel 1241
 #define PAL_InventoryPanel 1242
 #define DAT_FloppySentenceColors 1246
+#define IMG_FloppyTitleBackdrop 1249
 
 #endif // IGOR_RESOURCE_IDS

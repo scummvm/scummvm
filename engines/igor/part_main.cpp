@@ -741,6 +741,7 @@ void IgorEngine::partMain() {
 		case 902:
 		case 903:
 		case 904:
+		case 980: // Spanish floppy title screen
 			part90();
 			break;
 		case 910: // End credits
