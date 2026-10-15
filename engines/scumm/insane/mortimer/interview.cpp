@@ -305,7 +305,8 @@ bool MortimerInterview::fullScreen() const {
 }
 
 bool MortimerInterview::movieDoubled() const {
-	return _stage == kGate || _stage == kSong || _stage == kOpenGate;
+	// Retail popups start at 320x240, then switch to native size with IACT 6/7.
+	return _stage == kGate || _stage == kSong || _stage == kOpenGate || (!_isDemo && _stage == kPopup);
 }
 
 const byte *MortimerInterview::palette(const MortimerMovie &movie) const {
