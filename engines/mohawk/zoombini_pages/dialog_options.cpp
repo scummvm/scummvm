@@ -35,9 +35,6 @@
 
 namespace Mohawk {
 
-constexpr uint16 ZoombiniDialogOptions::_optionDialogTextTops[8];
-constexpr uint16 ZoombiniDialogOptions::_optionDialogTlcTextTops[10];
-
 static Common::U32String formatOptionDialogShortcut(const Common::HardwareInput &input) {
 	if (input.type != Common::kHardwareInputTypeKeyboard)
 		return input.description;
@@ -51,24 +48,50 @@ static Common::U32String formatOptionDialogShortcut(const Common::HardwareInput 
 	return description;
 }
 
-ZoombiniDialogOptions::ZoombiniDialogOptions(MohawkEngine_Zoombini *vm) : ZoombiniDialog(vm, ZoombiniPageType::kDialogOptions) {
+ZoombiniDialogOptions::ZoombiniDialogOptions(MohawkEngine_Zoombini *vm)
+	: ZoombiniDialog(vm, ZoombiniPageType::kDialogOptions), _layout(createLayout(vm->getRelInfo())) {
 	ZmbResource soundResId(ZmbResource::kSystem, kSysResSound0999_ButtonSFX);
-	const bool isTlc = _vm->isVersionFamilyTlcV2();
-	const uint16 redPressedBaseIdx = isTlc ? 10 : 8;
-	const uint16 togglePressedBaseIdx = isTlc ? 14 : 12;
 
-	_redButtonStateMap[kOptionDialogButton01_NewGame] = ButtonState(ZoombiniText::kOptionsNewGame, soundResId, 0, redPressedBaseIdx, kSystemShape0001_03_OptionsRedButtonNormal, kSystemShape0001_04_OptionsRedButtonPressed);
-	_redButtonStateMap[kOptionDialogButton02_LoadGame] = ButtonState(ZoombiniText::kOptionsLoadGame, soundResId, 1, redPressedBaseIdx + 1, kSystemShape0001_03_OptionsRedButtonNormal, kSystemShape0001_04_OptionsRedButtonPressed);
-	_redButtonStateMap[kOptionDialogButton03_SaveGame] = ButtonState(ZoombiniText::kOptionsSaveGame, soundResId, 2, redPressedBaseIdx + 2, kSystemShape0001_03_OptionsRedButtonNormal, kSystemShape0001_04_OptionsRedButtonPressed);
-	_redButtonStateMap[kOptionDialogButton04_Quit] = ButtonState(ZoombiniText::kOptionsQuit, soundResId, 3, redPressedBaseIdx + 3, kSystemShape0001_03_OptionsRedButtonNormal, kSystemShape0001_04_OptionsRedButtonPressed);
+	_redButtonStateMap[kOptionDialogButton01_NewGame] = ButtonState(
+		ZoombiniText::kOptionsNewGame, soundResId, 0, _layout.redPressedBaseIdx,
+		kSystemShape0001_03_OptionsRedButtonNormal, kSystemShape0001_04_OptionsRedButtonPressed);
+	_redButtonStateMap[kOptionDialogButton02_LoadGame] = ButtonState(
+		ZoombiniText::kOptionsLoadGame, soundResId, 1, _layout.redPressedBaseIdx + 1,
+		kSystemShape0001_03_OptionsRedButtonNormal, kSystemShape0001_04_OptionsRedButtonPressed);
+	_redButtonStateMap[kOptionDialogButton03_SaveGame] = ButtonState(
+		ZoombiniText::kOptionsSaveGame, soundResId, 2, _layout.redPressedBaseIdx + 2,
+		kSystemShape0001_03_OptionsRedButtonNormal, kSystemShape0001_04_OptionsRedButtonPressed);
+	_redButtonStateMap[kOptionDialogButton04_Quit] = ButtonState(
+		ZoombiniText::kOptionsQuit, soundResId, 3, _layout.redPressedBaseIdx + 3,
+		kSystemShape0001_03_OptionsRedButtonNormal, kSystemShape0001_04_OptionsRedButtonPressed);
 
-	_toggleButtonStateMap[kOptionDialogButton05_Sound] = ToggleButtonState(ZoombiniText::kOptionsSound, soundResId, 4, togglePressedBaseIdx, kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape, kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
-	_toggleButtonStateMap[kOptionDialogButton06_Music] = ToggleButtonState(ZoombiniText::kOptionsMusic, soundResId, 5, togglePressedBaseIdx + 1, kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape, kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
-	_toggleButtonStateMap[kOptionDialogButton07_StickyMouse] = ToggleButtonState(ZoombiniText::kOptionsStickyMouse, soundResId, 6, togglePressedBaseIdx + 2, kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape, kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
-	_toggleButtonStateMap[kOptionDialogButton08_Transitions] = ToggleButtonState(ZoombiniText::kOptionsTransitions, soundResId, 7, togglePressedBaseIdx + 3, kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape, kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
-	if (isTlc) {
-		_toggleButtonStateMap[kOptionDialogButton09_TouchSense] = ToggleButtonState(ZoombiniText::kOptionsTouchSense, soundResId, 8, togglePressedBaseIdx + 4, kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape, kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
-		_toggleButtonStateMap[kOptionDialogButton10_HelpAudio] = ToggleButtonState(ZoombiniText::kOptionsHelpAudio, soundResId, 9, togglePressedBaseIdx + 5, kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape, kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
+	_toggleButtonStateMap[kOptionDialogButton05_Sound] = ToggleButtonState(
+		ZoombiniText::kOptionsSound, soundResId, 4, _layout.togglePressedBaseIdx,
+		kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape,
+		kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
+	_toggleButtonStateMap[kOptionDialogButton06_Music] = ToggleButtonState(
+		ZoombiniText::kOptionsMusic, soundResId, 5, _layout.togglePressedBaseIdx + 1,
+		kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape,
+		kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
+	_toggleButtonStateMap[kOptionDialogButton07_StickyMouse] = ToggleButtonState(
+		ZoombiniText::kOptionsStickyMouse, soundResId, 6, _layout.togglePressedBaseIdx + 2,
+		kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape,
+		kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
+	_toggleButtonStateMap[kOptionDialogButton08_Transitions] = ToggleButtonState(
+		ZoombiniText::kOptionsTransitions, soundResId, 7, _layout.togglePressedBaseIdx + 3,
+		kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape,
+		kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
+	if (_layout.showTouchSense) {
+		_toggleButtonStateMap[kOptionDialogButton09_TouchSense] = ToggleButtonState(
+			ZoombiniText::kOptionsTouchSense, soundResId, 8, _layout.togglePressedBaseIdx + 4,
+			kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape,
+			kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
+	}
+	if (_layout.showHelpAudio) {
+		_toggleButtonStateMap[kOptionDialogButton10_HelpAudio] = ToggleButtonState(
+			ZoombiniText::kOptionsHelpAudio, soundResId, 9, _layout.togglePressedBaseIdx + 5,
+			kOptionDialogToggleTrueNormalShape, kOptionDialogToggleTruePressedShape,
+			kOptionDialogToggleFalseNormalShape, kOptionDialogToggleFalsePressedShape);
 	}
 
 	_longButtonStateMap[kOptionDialogButton11_Okay] = ButtonState(ZoombiniText::kDialogButtonOkay, soundResId, 0, 2, kSystemShape0001_09_ShortGreenButtonNormal, kSystemShape0001_10_ShortGreenButtonPressed);
@@ -76,6 +99,28 @@ ZoombiniDialogOptions::ZoombiniDialogOptions(MohawkEngine_Zoombini *vm) : Zoombi
 }
 
 ZoombiniDialogOptions::~ZoombiniDialogOptions() {
+}
+
+ZoombiniDialogOptions::Layout ZoombiniDialogOptions::createLayout(const ZmbReleaseInfo &relInfo) {
+	Layout layout;
+	layout.wordWrap = relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::PT_PRT);
+	if (relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) {
+		layout.titleRect = Common::Rect(0x00B9, 0x003A, 0x01BD, 0x0050);
+		layout.textTops = {
+			0x005A, 0x006F, 0x0084, 0x0099,
+			0x00BE, 0x00D3, 0x00E8, 0x00FD,
+			0x0112, 0x0127};
+		layout.redPressedBaseIdx = 10;
+		layout.togglePressedBaseIdx = 14;
+		layout.showToggleTitle = false;
+		layout.showTouchSense = true;
+		layout.showHelpAudio = true;
+	} else {
+		layout.textTops = {
+			0x0066, 0x007C, 0x0091, 0x00A6,
+			0x00DD, 0x00F3, 0x0108, 0x011D};
+	}
+	return layout;
 }
 
 void ZoombiniDialogOptions::loadFeatures() {
@@ -141,7 +186,6 @@ void ZoombiniDialogOptions::redToggleButtons_onPreRenderShape(ZmbFeature *featur
 
 void ZoombiniDialogOptions::redToggleButtons_onPostRender(ZmbFeature *feature) {
 	ZoombiniGraphics::ScreenKind screenKind = ZoombiniGraphics::kShapeScreen;
-	const bool portuguese10Layout = _vm->isGameVariant(MohawkGameFeatures::GF_ZMB_10_ESPT) && _vm->getLanguage() == Common::PT_PRT;
 
 	{ // [Text Render] Dialog Title
 		ZoombiniGraphics::TextConf titleConf;
@@ -151,25 +195,25 @@ void ZoombiniDialogOptions::redToggleButtons_onPostRender(ZmbFeature *feature) {
 		titleConf._outlineEffect = true;
 		titleConf._outlinePalette = 0x0E;
 		titleConf._textPalette = ZoombiniGraphics::kColor2D_Black;
-		titleConf._wordWrap = portuguese10Layout;
-		_vm->_gfx->drawText(screenKind, ZoombiniText::kOptionsTitle, getOptionDialogTitleRect(), titleConf);
+		titleConf._wordWrap = _layout.wordWrap;
+		_vm->_gfx->drawText(screenKind, ZoombiniText::kOptionsTitle, _layout.titleRect, titleConf);
 	}
 
 	{ // [Text Render] Toggle Title & Legend
 		ZoombiniGraphics::TextConf bigConf;
 		bigConf._fontUsage = ZoombiniFontUsage::kFontTitle;
 		bigConf._textPalette = ZoombiniGraphics::kColor2D_Black;
-		bigConf._wordWrap = portuguese10Layout;
-		if (!_vm->isVersionFamilyTlcV2())
-			_vm->_gfx->drawText(screenKind, ZoombiniText::kOptionsToggle, _optionDialogToggleRect, bigConf);
-		_vm->_gfx->drawText(screenKind, ZoombiniText::kOptionsLegendOn, _optionDialogLegendOnRect, bigConf);
-		_vm->_gfx->drawText(screenKind, ZoombiniText::kOptionsLegendOff, _optionDialogLegendOffRect, bigConf);
+		bigConf._wordWrap = _layout.wordWrap;
+		if (_layout.showToggleTitle)
+			_vm->_gfx->drawText(screenKind, ZoombiniText::kOptionsToggle, _layout.toggleTitleRect, bigConf);
+		_vm->_gfx->drawText(screenKind, ZoombiniText::kOptionsLegendOn, _layout.legendOnRect, bigConf);
+		_vm->_gfx->drawText(screenKind, ZoombiniText::kOptionsLegendOff, _layout.legendOffRect, bigConf);
 	}
 
 	// [Text Render] Small Button Descriptions
 	ZoombiniGraphics::TextConf tc;
 	tc._textPalette = ZoombiniGraphics::kColor2D_Black;
-	tc._wordWrap = portuguese10Layout;
+	tc._wordWrap = _layout.wordWrap;
 	optionButtonTextRender(feature, _redButtonStateMap, static_cast<ButtonGetRectFunc>(&ZoombiniDialogOptions::redButtons_textRect), tc);
 	optionToggleButtonTextRender(feature, _toggleButtonStateMap, static_cast<ToggleButtonGetRectFunc>(&ZoombiniDialogOptions::toggleButtons_textRect), tc);
 
@@ -184,7 +228,7 @@ Common::Rect ZoombiniDialogOptions::redButtons_textRect(ZmbFeature *feature, uin
 	(void)bs;
 
 	uint16 top = getOptionDialogTextTop(bsIdx);
-	return Common::Rect(_optionDialogTextLeft, top, _optionDialogTextRight, top + drawnRect.height());
+	return Common::Rect(_layout.textLeft, top, _layout.textRight, top + drawnRect.height());
 }
 
 Common::Rect ZoombiniDialogOptions::toggleButtons_textRect(ZmbFeature *feature, uint32 bsIdx, ToggleButtonState &bs, const Common::Rect &drawnRect) {
@@ -192,7 +236,7 @@ Common::Rect ZoombiniDialogOptions::toggleButtons_textRect(ZmbFeature *feature, 
 	(void)bs;
 
 	uint16 top = getOptionDialogTextTop(bsIdx);
-	return Common::Rect(_optionDialogTextLeft, top, _optionDialogTextRight, top + drawnRect.height());
+	return Common::Rect(_layout.textLeft, top, _layout.textRight, top + drawnRect.height());
 }
 
 const char *ZoombiniDialogOptions::getOptionDialogActionId(ZoombiniText::Key textKey) const {
@@ -374,17 +418,9 @@ void ZoombiniDialogOptions::optionToggleButtonTextRender(ZmbFeature *feature,
 	}
 }
 
-const Common::Rect &ZoombiniDialogOptions::getOptionDialogTitleRect() const {
-	return _vm->isVersionFamilyTlcV2() ? _optionDialogTlcTitleRect : _optionDialogTitleRect;
-}
-
 uint16 ZoombiniDialogOptions::getOptionDialogTextTop(uint32 bsIdx) const {
-	if (_vm->isVersionFamilyTlcV2()) {
-		if (bsIdx < ARRAYSIZE(_optionDialogTlcTextTops))
-			return _optionDialogTlcTextTops[bsIdx];
-	} else if (bsIdx < ARRAYSIZE(_optionDialogTextTops)) {
-		return _optionDialogTextTops[bsIdx];
-	}
+	if (bsIdx < _layout.textTops.size())
+		return _layout.textTops[bsIdx];
 
 	error("options: invalid option dialog text idx: %u", bsIdx);
 	return 0;
@@ -484,11 +520,11 @@ ZmbEventHandleResult ZoombiniDialogOptions::redToggleButtons_onKeyDown(ZmbFeatur
 		toggleState = &_toggleButtonStateMap[kOptionDialogButton08_Transitions];
 		break;
 	case Common::KEYCODE_k:
-		if (_vm->isVersionFamilyTlcV2())
+		if (_layout.showTouchSense)
 			toggleState = &_toggleButtonStateMap[kOptionDialogButton09_TouchSense];
 		break;
 	case Common::KEYCODE_a:
-		if (_vm->isVersionFamilyTlcV2())
+		if (_layout.showHelpAudio)
 			toggleState = &_toggleButtonStateMap[kOptionDialogButton10_HelpAudio];
 		break;
 	default:

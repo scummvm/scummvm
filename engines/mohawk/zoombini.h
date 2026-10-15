@@ -421,31 +421,9 @@ public:
 	/** Return an archive by namespace and zero-based archive index. */
 	Archive *getArchive(ZmbResource::ArchiveKind kind, uint archiveIdx) const;
 
-	/** Return whether the detected release belongs to the European v1 family. */
-	bool isVersionFamilyEuV1() const;
-	/** Return whether the detected release belongs to the US v1 family. */
-	bool isVersionFamilyUsV1() const;
-	/** Return whether the detected release belongs to the TLC v2 family. */
-	bool isVersionFamilyTlcV2() const;
-	/** Return whether the detected release belongs to either v1 family. */
-	bool isVersionFamilyV1() const;
-	/**
-	 * Return whether the detected release uses the classic Eurpoe six-SCRB MAP.MHK route layout.
-	 * v1.1US Demo also use this layout.
-	 */
-	bool usesClassicEurpoeLayout() const;
-	/** Return whether the detected release stores per-route perfect counters. */
-	bool hasRoutePerfectCounterState() const;
-	/** Return the compact display name for the detected release family. */
-	const char *getVersionFamilyName() const;
-	/** Return whether the detected game is the limited demo release. */
-	bool isDemo() const;
-	/** Return whether the detected game is the Win16 v1.1 US demo. */
-	bool isV11UsDemo() const;
-	/** Return whether the detected game is the Win16 v1.0 British demo. */
-	bool isV10BrDemo() const;
-	/** Return whether the detected game is the TLC v2.0 US demo. */
-	bool isV20UsDemo() const;
+	/** Release identity shared by engine services and pages. */
+	const ZmbReleaseInfo &getRelInfo() const { return _relInfo; }
+
 	/** Consume the one-shot demo startup-logo reveal request. */
 	bool consumeDemoStartupLogoReveal();
 
@@ -552,8 +530,8 @@ private:
 	/** Run one modal dialog until it returns a result. */
 	ZoombiniDialogResult loadModalDialog(ZoombiniDialog *page);
 
-	/** Language selected by the detected game description. */
-	Common::Language _language = Common::UNK_LANG;
+	/** Immutable detector identity shared by the engine services and pages. */
+	const ZmbReleaseInfo _relInfo;
 	/** Root path used while searching for the game's MHK archives. */
 	Common::String _mhkArchiveRoot;
 

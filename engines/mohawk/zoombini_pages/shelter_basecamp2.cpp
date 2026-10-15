@@ -44,7 +44,6 @@ ZoombiniShelterBasecampTwo::ZoombiniShelterBasecampTwo(MohawkEngine_Zoombini *vm
 							  kResBitmapShape9000_Buttons, false, _pedestalPoints,
 							  ZmbResource(ZmbResource::kPage, kResSound2000_StorageScrolling),
 							  ZmbResource(ZmbResource::kPage, kResSound2001_StorageScrollEnd)) {
-	memset(_buttonAnimRunnerIdxs, 0, sizeof(_buttonAnimRunnerIdxs));
 }
 
 ZoombiniShelterBasecampTwo::~ZoombiniShelterBasecampTwo() {
@@ -54,7 +53,8 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniShelterBasecampTwo::getSc
 	static const ZoombiniPage::ScriptSoundPriorityRanges kRanges = {
 		{kSysResSoundRange20000_Base, kSysResSoundRange29999_Last},
 		{kResSoundRange2000_StorageScrolling, kResSoundRange2099_StorageRangeLast},
-		{kResSoundRange6000_EasterEggRangeBase, kResSoundRange6099_EasterEggRangeLast}};
+		{kResSoundRange6000_EasterEggRangeBase, kResSoundRange6099_EasterEggRangeLast},
+	};
 	return kRanges;
 }
 
@@ -366,7 +366,7 @@ ZmbEventHandleResult ZoombiniShelterBasecampTwo::scrollButton_onLButtonDown(ZmbF
 bool ZoombiniShelterBasecampTwo::updateScrollButtonHover(const Common::Point &absPos) {
 	// Z1-20U/TLC v2.0 release only: BC2 storage scroll buttons use
 	// yellow-outline hover shapes.
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return false;
 
 	bool changed = false;
@@ -649,7 +649,7 @@ void ZoombiniShelterBasecampTwo::renderScrollButtons() {
 
 	for (int scrollIdx = 0; scrollIdx < kStorageScrollButtonCount; scrollIdx++) {
 		uint16 shapeIdx;
-		if (_vm->isVersionFamilyTlcV2() && _scrollButtonHovered[scrollIdx])
+		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && _scrollButtonHovered[scrollIdx])
 			shapeIdx = static_cast<uint16>(kResShape9000_ScrollLMaxHover20 + scrollIdx);
 		else if (_heldStorageScrollDirection == getBasecampStorageScrollDirection(scrollIdx))
 			shapeIdx = static_cast<uint16>(kResShape9000_ScrollLMaxPressed08 + 2 * scrollIdx);

@@ -37,25 +37,17 @@
 
 namespace Mohawk {
 
-static const int16 kTownClockTowerMemorialSlot = 4;
-static const byte kTownClockHandLastStep = 11;
-static const uint32 kTownClockTimeUpdateInterval = 1800;
-static const uint32 kTownClockNormalFrameInterval = 6;
-static const uint32 kTownClockSpinFrameInterval = 2;
-static const byte kTownMemorialCardScrbTypeBySlot[16] = {
-	2, 2, 4, 4, 2, 3, 3, 1, 4, 1, 1, 2, 4, 2, 3, 4};
-static const byte kTownMemorialCardTextTypeBySlot[16] = {
-	7, 1, 4, 5, 13, 3, 10, 11, 14, 15, 0, 8, 12, 9, 2, 6};
-static const int16 kTownMemorialMarkerOffsets[16][2] = {
-	{0x0048, 0x0046}, {0x0076, 0x007E}, {0x0051, 0x0076}, {0x004D, 0x003F}, {0x0041, 0x00E3}, {0x0090, 0x0053}, {0x006B, 0x0051}, {0x0090, 0x00BA}, {0x0031, 0x0061}, {0x0039, 0x0094}, {0x0056, 0x002E}, {0x0043, 0x0077}, {0x006C, 0x0050}, {0x004C, 0x0061}, {0x002F, 0x00B5}, {0x0077, 0x0041}};
-static const int16 kTownMemorialCardRowTopY[5] = {0x0000, 0x0024, 0x00C4, 0x00D2, 0x00E6};
-static const int16 kTownMemorialCardRowBottomY[5] = {0x0024, 0x00C4, 0x00D2, 0x00E6, 0x00F4};
-
 constexpr int16 ZoombiniShelterTown::kAmbientVoicePool[5];
 constexpr Common::Point ZoombiniShelterTown::kInhabitantPositions[16];
 constexpr int16 ZoombiniShelterTown::kInhabitantScrbTable[16];
+constexpr byte ZoombiniShelterTown::kTownMemorialCardScrbTypeBySlot[16];
+constexpr byte ZoombiniShelterTown::kTownMemorialCardTextTypeBySlot[16];
+constexpr Common::Point ZoombiniShelterTown::kTownMemorialMarkerOffsets[16];
+constexpr int16 ZoombiniShelterTown::kTownMemorialCardRowTopY[5];
+constexpr int16 ZoombiniShelterTown::kTownMemorialCardRowBottomY[5];
 
-ZoombiniShelterTown::ZoombiniShelterTown(MohawkEngine_Zoombini *vm) : ZoombiniShelter(vm, ZoombiniPageType::kTown) {
+ZoombiniShelterTown::ZoombiniShelterTown(MohawkEngine_Zoombini *vm)
+	: ZoombiniShelter(vm, ZoombiniPageType::kTown) {
 }
 
 ZoombiniShelterTown::~ZoombiniShelterTown() {
@@ -1027,8 +1019,8 @@ void ZoombiniShelterTown::memorialMarkers_preRenderShape(ZmbFeature *feature, Zm
 			_clockTowerHandsEnabled = true;
 
 		if (markerIdx < 16) {
-			const int16 left = hotspots[hotspotIdx]._x + kTownMemorialMarkerOffsets[slotIdx][0] - 28;
-			const int16 top = hotspots[hotspotIdx]._y + kTownMemorialMarkerOffsets[slotIdx][1] - 14;
+			const int16 left = hotspots[hotspotIdx]._x + kTownMemorialMarkerOffsets[slotIdx].x - 28;
+			const int16 top = hotspots[hotspotIdx]._y + kTownMemorialMarkerOffsets[slotIdx].y - 14;
 			_memorialHotspots[markerIdx] = Common::Rect(left, top, left + 56, top + 28);
 			_memorialSlotMapping[markerIdx] = slotIdx;
 		}
@@ -1542,9 +1534,9 @@ void ZoombiniShelterTown::memorialCard_onPostRender(ZmbFeature *feature) {
 	const Common::U32String monthText = _vm->_text->getLocalizedString(static_cast<uint32>(ZoombiniText::kMemorialJanuary) + monthIdx);
 	const byte memorialDay = stateFile._memorialDays[memorialDataSlotIdx];
 	const uint16 memorialYear = stateFile._memorialYears[memorialDataSlotIdx];
-	const bool usesDayMonthYear = _vm->isGameVariant(MohawkGameFeatures::GF_ZMB_10_EU) ||
-								  _vm->isGameVariant(MohawkGameFeatures::GF_ZMB_11_EU) ||
-								  _vm->isGameVariant(MohawkGameFeatures::GF_ZMB_11_FR_2002);
+	const bool usesDayMonthYear = _vm->getRelInfo().isVariant(ZmbReleaseInfo::kEuropeV10) ||
+								  _vm->getRelInfo().isVariant(ZmbReleaseInfo::kEuropeV11) ||
+								  _vm->getRelInfo().isVariant(ZmbReleaseInfo::kFranceV11_2002);
 
 	Common::U32String dateText;
 	if (usesDayMonthYear) {

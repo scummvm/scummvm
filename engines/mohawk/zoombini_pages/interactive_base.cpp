@@ -44,7 +44,8 @@ constexpr int16 ZoombiniInteractive::kAmbientPoolCaves[10];
 constexpr int16 ZoombiniInteractive::kAmbientPoolSmoke[10];
 constexpr int16 ZoombiniInteractive::kAmbientPoolMaze[10];
 
-ZoombiniInteractive::ZoombiniInteractive(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType) : ZoombiniPage(vm, ZoombiniPageCategory::kInteractive, pageType) {
+ZoombiniInteractive::ZoombiniInteractive(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType)
+	: ZoombiniPage(vm, ZoombiniPageCategory::kInteractive, pageType) {
 	// Default arrivals settle facing right; page-specific initializers such as Picker may override this direction.
 	_vm->setArrivalTurnDirection(ArrivalTurnDirection::kRight);
 	_useFadeEffect = true;
@@ -114,14 +115,14 @@ ZmbEventHandleResult ZoombiniInteractive::onKeyDown(const Common::KeyState &kbd,
 		case Common::KEYCODE_t: // Transition (CTRL-T)
 			_vm->_state->toggleTransitions();
 			break;
-		case Common::KEYCODE_a: // Help Audio (CTRL-A, v2.0US only)
-			if (_vm->isGameVariant(GF_ZMB_20_US))
+		case Common::KEYCODE_a: // Help Audio (CTRL-A, v2.0TLC only)
+			if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kTlcV20))
 				_vm->_state->toggleHelpAudio();
 			else
 				result = ZmbEventHandleResult::kPassthrough;
 			break;
-		case Common::KEYCODE_k: // TouchSense (CTRL-K, v2.0US only)
-			if (_vm->isGameVariant(GF_ZMB_20_US))
+		case Common::KEYCODE_k: // TouchSense (CTRL-K, v2.0TLC only)
+			if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kTlcV20))
 				_vm->_state->toggleTouchSense();
 			else
 				result = ZmbEventHandleResult::kPassthrough;
@@ -459,7 +460,7 @@ void ZoombiniInteractive::continuousButton_selectShapes(ZmbFeature *feature, Com
 
 		ZmbHotspot &hsNormal = hotspots[cbs._hsNormalIdx];
 		ZmbHotspot &hsPressed = hotspots[cbs._hsPressedIdx];
-		const bool useHoverShape = _vm->isVersionFamilyTlcV2() && cbs.hasHoverState() && cbs._isHovered &&
+		const bool useHoverShape = _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && cbs.hasHoverState() && cbs._isHovered &&
 								   cbs._shapeHoverId <= _vm->_gfx->getShapeCount(feature->getResource());
 
 		if (useHoverShape) {
@@ -564,7 +565,7 @@ void ZoombiniInteractive::setHelpButton(const Common::Rect &rect) {
 	ZmbResource soundResId(ZmbResource::kSystem, kSysResSound0999_ButtonSFX);
 	ButtonState helpButtonState = ButtonState(soundResId, kHotspotHelpButtonNormal, kHotspotHelpButtonPressed, kSystemShape0001_24_HelpButtonNormal, kSystemShape0001_25_HelpButtonPressed);
 	// v2.0US release only: the shared Help button has a hover shape.
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		helpButtonState.setHoverState(kSystemShape0001_39_HelpButtonHover);
 	_helpButtonStateMap[kThreeButtons_Help] = helpButtonState;
 	_threeButtonRectMap[kThreeButtons_Help] = rect;
@@ -638,7 +639,7 @@ void ZoombiniInteractive::setTlcButtonHoverIfPresent(ButtonState &buttonState, u
 
 void ZoombiniInteractive::configureTlcGoMapButtonHover(int16 bitmapResId) {
 	// Z1-20U/TLC v2.0 release only: 1.x releases do not have yellow-outline Go/Map hover bitmap states.
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return;
 
 	const ZmbResource bitmapRes(ZmbResource::kPage, bitmapResId);
@@ -710,7 +711,7 @@ void ZoombiniInteractive::loadHelpButtonFeature() {
 	ButtonState helpButtonState = ButtonState(soundResId, kHotspotHelpButtonNormal, kHotspotHelpButtonPressed,
 											  kSystemShape0001_24_HelpButtonNormal, kSystemShape0001_25_HelpButtonPressed);
 	// v2.0US release only: the shared Help button has a hover shape.
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		helpButtonState.setHoverState(kSystemShape0001_39_HelpButtonHover);
 	_helpButtonStateMap[kThreeButtons_Help] = helpButtonState;
 
@@ -759,7 +760,7 @@ void ZoombiniInteractive::bindEmbeddedControlFeature(ZmbFeature *feature) {
 
 void ZoombiniInteractive::updateTlcButtonHover(const Common::Point &absPos) {
 	// TLC v2.0 releases: shared three-button hover visuals.
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return;
 
 	if (_goMapButtonsFeature)
@@ -1037,13 +1038,13 @@ void ZoombiniInteractive::routeNonOccupiedToRestingPack() {
 			// The v1.1US and v2.0US layouts use four persisted counters and advance after three perfect route passes.
 			// Europe v1.0 and its 16-bit Europe v1.1 update have no counters in their 44549-byte save layout, and advance after one perfect pass.
 			if (static_cast<int16>(routeLevel) < 3) {
-				if (_vm->isVersionFamilyUsV1() || _vm->isVersionFamilyTlcV2()) { // Based on US v1.1 and further
+				if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kUsV1) || _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) { // v1.1US based and v2.0TLC
 					f._routePerfectCounters[routeIdx - 1] += 1;
 					if (3 <= f._routePerfectCounters[routeIdx - 1]) {
 						if (_vm->_state->advanceRouteLevel(routeId))
 							debugC(1, MohawkEngine_Zoombini::kDebugState03, "state: route %d advanced to level %d", routeIdx, f._routeLevels[routeIdx - 1]);
 					}
-				} else if (_vm->isVersionFamilyEuV1()) { // Europe v1.x
+				} else if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1)) { // Europe v1.x
 					if (_vm->_state->advanceRouteLevel(routeId))
 						debugC(1, MohawkEngine_Zoombini::kDebugState03, "state: route %d advanced to level %d", routeIdx, f._routeLevels[routeIdx - 1]);
 				} else {
@@ -1542,7 +1543,7 @@ void ZoombiniInteractive::runAmbientSoundDriver() {
 	ambientState._preloadCounter = (ambientState._preloadCounter + 1) % 16;
 
 	const ZmbResource ambientResource(ZmbResource::kSystem, sndId);
-	if (_vm->isDemo() && !_vm->hasResource(ID_SND, ambientResource)) {
+	if (_vm->getRelInfo().isDemo() && !_vm->hasResource(ID_SND, ambientResource)) {
 		ambientState._lastSoundId = sndId;
 		return;
 	}

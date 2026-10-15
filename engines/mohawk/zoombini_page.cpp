@@ -34,7 +34,8 @@
 
 namespace Mohawk {
 
-ZoombiniPage::ZoombiniPage(MohawkEngine_Zoombini *vm, ZoombiniPageCategory pageCategory, ZoombiniPageType pageType) : _vm(vm), _pageCategory(pageCategory), _pageType(pageType) {
+ZoombiniPage::ZoombiniPage(MohawkEngine_Zoombini *vm, ZoombiniPageCategory pageCategory, ZoombiniPageType pageType)
+	: _vm(vm), _pageCategory(pageCategory), _pageType(pageType) {
 	_pageStartFrameTime = _vm->getTotalPlayTime();
 	_pageStartFrameCounter = _vm->getAnimationFrameCounter(_pageStartFrameTime);
 	_currentFrameTime = _pageStartFrameTime;
@@ -751,10 +752,10 @@ void ZoombiniPage::dispatchFeatureSound(ZmbFeature *feature, ZmbResource resourc
 		const bool isZoombiniVoice = dynamic_cast<const ZmbSnoid *>(feature) && resource._archiveKind == ZmbResource::kSystem &&
 									 kSysResSound0100_ZoombiniVoiceBase <= resource._id && resource._id <= kSysResSound0499_ZoombiniVoiceLast;
 		// The v1.1 US demo leaves Zoombini voices silent while retaining page-local character speech.
-		if (_vm->isV11UsDemo() && isZoombiniVoice)
+		if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11) && isZoombiniVoice)
 			return;
 		// The v1.0 British demo retains script voice events whose system SND resources were removed.
-		if (_vm->isV10BrDemo() && !_vm->hasResource(ID_SND, resource))
+		if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kEuropeV10) && !_vm->hasResource(ID_SND, resource))
 			return;
 	}
 
@@ -3665,7 +3666,7 @@ void ZoombiniPage::onFadeIn() {
 		return;
 
 	// The v2.0US/TLC release does not use normal page enter/leave fades.
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return;
 
 	// v1.x releases use 500 ms when no frame time is supplied.
@@ -3677,7 +3678,7 @@ void ZoombiniPage::onFadeOut() {
 		return;
 
 	// The v2.0US/TLC release does not use normal page enter/leave fades.
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return;
 
 	// v1.x releases use the same 500 ms default.
@@ -3705,7 +3706,7 @@ void ZoombiniPage::genericButton_selectShapes(ZmbFeature *feature, Common::Array
 		ZmbHotspot &hsPressed = hotspots[bs._hsPressedId];
 		const bool useHoverShape = (!bs.hasDisabledState() || !bs._isPressDisabled) && bs.hasHoverState() && bs._isHovered &&
 								   (!validateHoverShapeCount || bs._shapeHoverIdx <= _vm->_gfx->getShapeCount(feature->getResource()));
-		const bool hoverMasksPress = _vm->isVersionFamilyTlcV2() && useHoverShape;
+		const bool hoverMasksPress = _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && useHoverShape;
 
 		if (bs.hasDisabledState() && bs._isPressDisabled)
 			hsNormal._shapeIdx = bs._shapeDisabledIdx;

@@ -498,9 +498,9 @@ protected:
 	/** Number of entries in the cliff-allergy rule. */
 	byte _allergyRuleEntryCount = 0;
 	/** One-based trait-kind codes for the cliff-allergy rule (1=hair, 2=eyes, 3=nose, 4=feet). */
-	byte _allergyRuleTraitKindCodes[5] = {};
+	byte _allergyRuleTraitKindCodes[5] = {0};
 	/** Trait values paired with @ref ZoombiniPuzzleBridge::_allergyRuleTraitKindCodes. */
-	byte _allergyRuleTraitValues[5] = {};
+	byte _allergyRuleTraitValues[5] = {0};
 	/** Whether the upper lane accepts Snoids that match at least one allergy-rule entry. */
 	bool _matchingTraitsUseUpperLane = false;
 	/** Whether Go is enabled after the first accepted lane arrival. */
@@ -523,15 +523,15 @@ protected:
 	/** Lanes selected by the two-entry pending-drop FIFO. */
 	BridgeLane _pendingDropLanes[2] = {};
 	/** Pack Snoid IDs for the two-entry pending-drop FIFO. */
-	int16 _pendingDropSnoidIds[2] = {};
+	int16 _pendingDropSnoidIds[2] = {0};
 	/** Whether the current drag removed the oldest pending drop rather than the second entry. */
 	bool _dragRemovedOldestPendingDrop = false;
 	/** Cached allergy-rule rejection results for the two-entry pending-drop FIFO. */
 	bool _pendingDropRejected[2] = {false, false};
 	/** Arrived Snoid IDs in upper-lane stacking order. */
-	int16 _upperLaneArrivedSnoidIds[16] = {};
+	int16 _upperLaneArrivedSnoidIds[16] = {0};
 	/** Arrived Snoid IDs in lower-lane stacking order. */
-	int16 _lowerLaneArrivedSnoidIds[16] = {};
+	int16 _lowerLaneArrivedSnoidIds[16] = {0};
 	/** Number of Snoids committed to upper-lane arrival positions. */
 	int16 _upperLaneArrivalCount = 0;
 	/** Number of Snoids committed to lower-lane arrival positions. */

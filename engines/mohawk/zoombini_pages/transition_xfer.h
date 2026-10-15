@@ -321,7 +321,7 @@ protected:
 	 * Mid-route walkers in registration order.
 	 * The first static composite renders them idle before the array is traversed in reverse.
 	 */
-	ZmbSnoid *_midRouteWalkers[16] = {};
+	ZmbSnoid *_midRouteWalkers[16] = {0};
 	/** Number of valid entries in @ref _midRouteWalkers. */
 	uint16 _midRouteWalkerCount = 0;
 	/** Whether mid-route walkers still need activation after the first composite. */
@@ -344,9 +344,9 @@ protected:
 
 	/** BFS queue for flood-fill expansion. */
 	static constexpr int kRoutePathQueueSize = 24;
-	bool _routePathQueueActive[kRoutePathQueueSize] = {};
-	int16 _routePathQueueX[kRoutePathQueueSize] = {};
-	int16 _routePathQueueY[kRoutePathQueueSize] = {};
+	bool _routePathQueueActive[kRoutePathQueueSize] = {0};
+	int16 _routePathQueueX[kRoutePathQueueSize] = {0};
+	int16 _routePathQueueY[kRoutePathQueueSize] = {0};
 
 	/** Flood-fill progress tracking. */
 	uint32 _routePathTotalPixels = 0;
@@ -379,7 +379,7 @@ protected:
 	 * Index = ZmbSrcPageKind enum value (0-16).
 	 * Values: -1 = current band (being animated), 0 = not completed, 1-4 = highest level.
 	 */
-	int8 _puzzleCompletionArr[17] = {};
+	int8 _puzzleCompletionArr[17] = {0};
 
 	/**
 	 * Route progress level for shape variant selection.

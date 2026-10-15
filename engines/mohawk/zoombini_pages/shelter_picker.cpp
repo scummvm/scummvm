@@ -36,9 +36,9 @@ constexpr Common::Point ZoombiniShelterPicker::_embarkDestination;
 constexpr Common::Point ZoombiniShelterPicker::_caveMarkRegPoint;
 constexpr Common::Point ZoombiniShelterPicker::_zoombiniSeatPoints[16];
 
-ZoombiniShelterPicker::ZoombiniShelterPicker(MohawkEngine_Zoombini *vm) : ZoombiniShelter(vm, ZoombiniPageType::kPicker),
-																		  _previewSnoid(vm, 0, ZmbFeature::FLAG_00000001_TYPE_SNOID) {
-	_mode = kPickerMode_SelectZoombinis;
+ZoombiniShelterPicker::ZoombiniShelterPicker(MohawkEngine_Zoombini *vm)
+	: ZoombiniShelter(vm, ZoombiniPageType::kPicker), _previewSnoid(vm, 0, ZmbFeature::FLAG_00000001_TYPE_SNOID),
+	  _textLayout(createTextLayout(vm->getRelInfo())) {
 	_clickZoneRadius = kPickerClickZoneRadius;
 	_isFirstVisit = _vm->_state->isFirstLaunch();
 	if (_isFirstVisit && 0 < _vm->_state->_r.getEntryCount() && _vm->_state->_currentSaveSlot == ZoombiniGameState::kUnsavedNewGame) {
@@ -60,17 +60,26 @@ ZoombiniShelterPicker::ZoombiniShelterPicker(MohawkEngine_Zoombini *vm) : Zoombi
 	_pickerButtonStateMap[kPickerButtons_Generate] = ButtonState(generateSoundResId, kHotspotGenerateButtonNormal, kHotspotGenerateButtonPressed, kShape4200_02_GenerateButtonNormal, kShape4200_03_GenerateButtonPressed);
 	_pickerButtonStateMap[kPickerButtons_Generate].setDisabledState(kShape4200_01_GenerateButtonDisabled);
 	// Z1-20U/TLC v2.0 release only: picker buttons gain yellow-outline hover states.
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		_pickerButtonStateMap[kPickerButtons_Generate].setHoverState(kShape4200_14_GenerateButtonHover);
 	_pickerButtonStateMap[kPickerButtons_Generate]._isPressDisabled = true; // Disabled until all matrix rows have a selection
 	_pickerButtonStateMap[kPickerButtons_Dice] = ButtonState(diceSoundResId, kHotspotDiceButtonNormal, kHotspotDiceButtonPressed, kShape4200_04_DiceButtonNormal, kShape4200_05_DiceButtonPressed);
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		_pickerButtonStateMap[kPickerButtons_Dice].setHoverState(kShape4200_15_DiceButtonHover);
 	_pickerButtonRectMap[kPickerButtons_Generate] = _generateButtonRect;
 	_pickerButtonRectMap[kPickerButtons_Dice] = _diceButtonRect;
 }
 
 ZoombiniShelterPicker::~ZoombiniShelterPicker() {
+}
+
+ZoombiniShelterPicker::TextLayout ZoombiniShelterPicker::createTextLayout(const ZmbReleaseInfo &relInfo) {
+	TextLayout layout;
+	if (relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::PT_PRT) ||
+		relInfo.isVariant(ZmbReleaseInfo::kTlcV20, Common::PL_POL)) {
+		layout.nameTopInset = 1;
+	}
+	return layout;
 }
 
 const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniShelterPicker::getScriptSoundPriorityRanges() const {
@@ -84,7 +93,7 @@ void ZoombiniShelterPicker::open() {
 	// The preview name is selected before any Picker archive is opened.
 	generateZoombiniName();
 
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		openArchive(ZMB_MHK_MUSIC);
 	else
 		openMidiArchive(); // v1.x MIDI BGM (tMID 30000-30001).
@@ -97,7 +106,7 @@ void ZoombiniShelterPicker::setBackgroundMusic() {
 	// its non-blocking startup Load dialog. ScummVM starts it at the standard background-
 	// music lifecycle point because its Load dialog is synchronous. This keeps the music
 	// audible while that dialog is open and does not add, remove, or move any RNG call.
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		_vm->_sound->playSound(ZmbResource(ZmbResource::kPage, kResSound30001_Isle), Audio::Mixer::kMusicSoundType);
 	else
 		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, kResMidi30001_Isle));
@@ -503,18 +512,14 @@ void ZoombiniShelterPicker::pickerButtons_onPostRender(ZmbFeature *feature) {
 
 	// Draw the name only when all four traits form a generatable combination.
 	if (isZoombiniTraitGeneratable(_previewSnoid._trait)) {
-		ZoombiniGraphics::ScreenKind screenKind = ZoombiniGraphics::kShapeScreen;
-		const bool portuguese10Layout = _vm->isGameVariant(MohawkGameFeatures::GF_ZMB_10_ESPT) && _vm->getLanguage() == Common::PT_PRT;
-		const bool polish20Layout = _vm->isVersionFamilyTlcV2() && _vm->getLanguage() == Common::PL_POL;
-
 		Common::Rect nameTextRect = _nameBoxRect;
-		nameTextRect.left += 4;
-		nameTextRect.top += (portuguese10Layout || polish20Layout) ? 1 : 4;
+		nameTextRect.left += _textLayout.nameLeftInset;
+		nameTextRect.top += _textLayout.nameTopInset;
 
 		ZoombiniGraphics::TextConf tc;
 		tc._hAlign = Graphics::TextAlign::kTextAlignCenter;
 		tc._vAlign = Graphics::TextAlign::kTextAlignCenter;
-		_vm->_gfx->drawText(screenKind, _previewSnoid._name, nameTextRect, tc);
+		_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, _previewSnoid._name, nameTextRect, tc);
 	}
 
 	genericButton_action(feature, _pickerButtonStateMap, static_cast<OnButtonActionFunc>(&ZoombiniShelterPicker::pickerButtons_onButtonAction));
@@ -762,7 +767,7 @@ void ZoombiniShelterPicker::updateDiceButtonVisual(ZmbFeature *feature) {
 	ButtonState &diceButton = _pickerButtonStateMap[kPickerButtons_Dice];
 	diceButton._shapeNormalIdx = rapidFill ? kShape4200_06_DiceArrowButtonNormal : kShape4200_04_DiceButtonNormal;
 	diceButton._shapePressedIdx = rapidFill ? kShape4200_07_DiceArrowButtonPressed : kShape4200_05_DiceButtonPressed;
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		diceButton.setHoverState(rapidFill ? kShape4200_16_DiceArrowButtonHover : kShape4200_15_DiceButtonHover);
 	}
 	addExternalDirtyRect(feature->getZSortRect());
@@ -896,7 +901,7 @@ ZmbEventHandleResult ZoombiniShelterPicker::onLButtonDown(const Common::Point &a
 
 ZmbEventHandleResult ZoombiniShelterPicker::onMouseMove(const Common::Point &absPos, const Common::Point &relPos) {
 	// Z1-20U/TLC v2.0 release only: picker-local buttons use hover shapes.
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		genericButton_updateHoverState(_pickerButtonsFeature, absPos, _pickerButtonStateMap, _pickerButtonRectMap);
 	return ZoombiniInteractive::onMouseMove(absPos, relPos);
 }

@@ -484,7 +484,8 @@ bool MohawkDefaultOptionsWidget::save() {
 
 #ifdef ENABLE_ZOOMBINI
 
-ZoombiniMenuDialog::ZoombiniMenuDialog(Engine *engine) : MainMenuDialog(engine) {
+ZoombiniMenuDialog::ZoombiniMenuDialog(Engine *engine)
+	: MainMenuDialog(engine) {
 }
 
 ZoombiniMenuDialog::~ZoombiniMenuDialog() {

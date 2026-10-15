@@ -33,7 +33,8 @@
 
 namespace Mohawk {
 
-ZoombiniTransitionXfer::ZoombiniTransitionXfer(MohawkEngine_Zoombini *vm) : ZoombiniTransition(vm, ZoombiniPageType::kXfer) {
+ZoombiniTransitionXfer::ZoombiniTransitionXfer(MohawkEngine_Zoombini *vm)
+	: ZoombiniTransition(vm, ZoombiniPageType::kXfer) {
 	_useFadeEffect = true;
 }
 
@@ -1733,7 +1734,7 @@ void ZoombiniTransitionXfer::routeView_updateSlots(ZmbFeature *feature, ZmbHotsp
 
 	// Build the shape remapping table through lastSlot.
 	// Zero removes a hotspot; a positive entry selects its replacement shape.
-	int16 shapeRemapTable[10] = {};
+	int16 shapeRemapTable[10] = {0};
 
 	for (int16 slotIdx = 1; slotIdx <= lastSlot; slotIdx++) {
 		shapeRemapTable[slotIdx] = 0;

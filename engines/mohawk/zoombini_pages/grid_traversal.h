@@ -45,14 +45,15 @@ enum ZmbGridDirection {
 /** A row/column coordinate in a page-owned logical grid. */
 struct ZmbGridCell {
 	/** Zero-based row coordinate. */
-	int16 row;
+	int16 row = 0;
 	/** Zero-based column coordinate. */
-	int16 col;
+	int16 col = 0;
 
 	/** Construct the origin cell. */
-	ZmbGridCell() : row(0), col(0) {}
+	ZmbGridCell() = default;
 	/** Construct a cell from its row and column coordinates. */
-	ZmbGridCell(int16 cellRow, int16 cellCol) : row(cellRow), col(cellCol) {}
+	ZmbGridCell(int16 cellRow, int16 cellCol)
+		: row(cellRow), col(cellCol) {}
 };
 
 /** Inclusive rectangular bounds for a logical grid. */

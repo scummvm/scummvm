@@ -50,7 +50,8 @@ bool ZoombiniPuzzlePizza::isLoadChantSkipEvent(const Common::Event &event) {
 	}
 }
 
-ZoombiniPuzzlePizza::ZoombiniPuzzlePizza(MohawkEngine_Zoombini *vm) : ZoombiniPuzzle(vm, ZoombiniPageType::kPizza, ZmbSrcPageKind::kPizza_04) {
+ZoombiniPuzzlePizza::ZoombiniPuzzlePizza(MohawkEngine_Zoombini *vm)
+	: ZoombiniPuzzle(vm, ZoombiniPageType::kPizza, ZmbSrcPageKind::kPizza_04) {
 }
 
 ZoombiniPuzzlePizza::~ZoombiniPuzzlePizza() {
@@ -122,19 +123,19 @@ void ZoombiniPuzzlePizza::setDifficultyParams() {
 	static constexpr int16 kThreshold[4] = {500, 800, 1000, 1000};
 	static constexpr int16 kMistakeAllowance[4] = {6, 7, 7, 7};
 
-	_machineToppingSlotCount = kSlots[_difficultyLevel - 1];
-	_minimumGeneratedToppingCount = kTarget[_difficultyLevel - 1];
-	_toppingGenerationThreshold = kThreshold[_difficultyLevel - 1];
-	_remainingMistakeAllowance = kMistakeAllowance[_difficultyLevel - 1];
-	_initialMistakeAllowance = kMistakeAllowance[_difficultyLevel - 1];
+	_machineToppingSlotCount = kSlots[_puzzleLevel - 1];
+	_minimumGeneratedToppingCount = kTarget[_puzzleLevel - 1];
+	_toppingGenerationThreshold = kThreshold[_puzzleLevel - 1];
+	_remainingMistakeAllowance = kMistakeAllowance[_puzzleLevel - 1];
+	_initialMistakeAllowance = kMistakeAllowance[_puzzleLevel - 1];
 
 	// Order line activation
 	_trollOrderStates[TrollOrderLine::kArno00] = TrollOrderState::kActive01; // Arno is always active
-	if (kPuzzleLevel2 <= _difficultyLevel)
+	if (kPuzzleLevel2 <= _puzzleLevel)
 		_trollOrderStates[TrollOrderLine::kWilla01] = TrollOrderState::kActive01;
 	else
 		_trollOrderStates[TrollOrderLine::kWilla01] = TrollOrderState::kInactive00;
-	if (kPuzzleLevel3 <= _difficultyLevel)
+	if (kPuzzleLevel3 <= _puzzleLevel)
 		_trollOrderStates[TrollOrderLine::kShyler02] = TrollOrderState::kActive01;
 	else
 		_trollOrderStates[TrollOrderLine::kShyler02] = TrollOrderState::kInactive00;
@@ -213,14 +214,14 @@ void ZoombiniPuzzlePizza::loadFeatures() {
 	}
 
 	// Conditional feature groups for difficulty levels 1+
-	if (kPuzzleLevel2 <= _difficultyLevel) {
+	if (kPuzzleLevel2 <= _puzzleLevel) {
 		ZmbFeature *parent = mainFeature;
 		for (uint16 i = 0; i < 35; i++) {
 			parent = loadSubFeature(parent, ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Willa), kResScrb9000_WillaOrderBase + i);
 		}
 	}
 
-	if (kPuzzleLevel3 <= _difficultyLevel) {
+	if (kPuzzleLevel3 <= _puzzleLevel) {
 		ZmbFeature *parent = mainFeature;
 		for (uint16 i = 0; i < 39; i++) {
 			parent = loadSubFeature(parent, ZmbResource(ZmbResource::kPage, kResBitmapShape10000_Shyler), kResScrb10000_ShylerOrderBase + i);
@@ -310,7 +311,7 @@ void ZoombiniPuzzlePizza::loadFeatures() {
 	// Initial Z-order (back->front): Willa -> Arno -> Shyler.
 	// The original registers these runners after the synchronous load chant.
 	// Troll frame sounds share the Postman's priority queue so a delivery reaction replaces its movement loop.
-	if (kPuzzleLevel2 <= _difficultyLevel) {
+	if (kPuzzleLevel2 <= _puzzleLevel) {
 		_willaFeature = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape9000_Willa), kResScrb9034_WillaOrderIntro, 6,
 			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE);
@@ -322,7 +323,7 @@ void ZoombiniPuzzlePizza::loadFeatures() {
 		ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE);
 	_arnoFeature->setScriptSoundPolicy(ZmbFeature::ScriptSoundPolicy::kPriorityQueue);
 
-	if (kPuzzleLevel3 <= _difficultyLevel) {
+	if (kPuzzleLevel3 <= _puzzleLevel) {
 		_shylerFeature = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape10000_Shyler), kResScrb10038_ShylerOrderIntro, 6,
 			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE);
@@ -339,7 +340,7 @@ void ZoombiniPuzzlePizza::loadFeatures() {
 
 void ZoombiniPuzzlePizza::initHelpPrompt() {
 	int16 helpSoundId;
-	if (kPuzzleLevel1 < _difficultyLevel)
+	if (kPuzzleLevel1 < _puzzleLevel)
 		helpSoundId = kSysResSound20072_HelpHard;
 	else
 		helpSoundId = kSysResSound20071_HelpEasy;
@@ -691,9 +692,9 @@ bool ZoombiniPuzzlePizza::debugDoPageCommand(int argc, const char **argv, Common
 		output = Common::String::format("Unknown Pizza troll '%s'. Use arno, willa, or shyler.\n", argv[2]);
 		return true;
 	}
-	if ((orderLine == 1 && _difficultyLevel < kPuzzleLevel2) ||
-		(orderLine == 2 && _difficultyLevel < kPuzzleLevel3)) {
-		output = Common::String::format("%s is not present at Pizza level %d.\n", argv[2], _difficultyLevel);
+	if ((orderLine == 1 && _puzzleLevel < kPuzzleLevel2) ||
+		(orderLine == 2 && _puzzleLevel < kPuzzleLevel3)) {
+		output = Common::String::format("%s is not present at Pizza level %d.\n", argv[2], _puzzleLevel);
 		return true;
 	}
 
@@ -737,9 +738,9 @@ bool ZoombiniPuzzlePizza::debugDoPageCommand(int argc, const char **argv, Common
 			   scumm_stricmp(argv[3], "reject-multi") == 0) {
 		const int16 requiredExtras = scumm_stricmp(argv[3], "reject-multi") == 0 ? 2 : 1;
 		for (int16 i = 0; i < _machineToppingSlotCount && extraToppingCount < requiredExtras; i++) {
-			const bool selectable = !(i == 4 && _difficultyLevel == kPuzzleLevel2) &&
-									!(5 <= i && i <= 6 && _difficultyLevel < kPuzzleLevel2) &&
-									!(i == 7 && _difficultyLevel < kPuzzleLevel4);
+			const bool selectable = !(i == 4 && _puzzleLevel == kPuzzleLevel2) &&
+									!(5 <= i && i <= 6 && _puzzleLevel < kPuzzleLevel2) &&
+									!(i == 7 && _puzzleLevel < kPuzzleLevel4);
 			if (selectable && !orderToppings[i]) {
 				testToppings[i] = 1;
 				extraToppingCount += 1;
@@ -848,15 +849,15 @@ Common::String ZoombiniPuzzlePizza::debugGetAnswer() const {
 	// Trolls present by level: Arno (level 1+), Willamaen (level 2+), Shyler (level 3+).
 	// Each troll must be satisfied to complete the puzzle.
 	s += "  Arno:\n" + buildTrollLine(_arnoToppings);
-	if (kPuzzleLevel2 <= _difficultyLevel)
+	if (kPuzzleLevel2 <= _puzzleLevel)
 		s += "  Willamaen:\n" + buildTrollLine(_willaToppings);
-	if (kPuzzleLevel3 <= _difficultyLevel)
+	if (kPuzzleLevel3 <= _puzzleLevel)
 		s += "  Shyler:\n" + buildTrollLine(_shylerToppings);
 
 	// "Not Wanted": slots that are selectable by the player but no troll wants them.
 	// Cheese is blocked at level 2, so its fixed slot is excluded.
 	bool toppingEnables[8] = {false, false, false, false, false, false, false, false};
-	const int forbiddenSlot = (_difficultyLevel == kPuzzleLevel2) ? kMealIngredientCheese04 : -1;
+	const int forbiddenSlot = (_puzzleLevel == kPuzzleLevel2) ? kMealIngredientCheese04 : -1;
 	for (int i = 0; i < _machineToppingSlotCount; i++) {
 		if (i != forbiddenSlot && !_arnoToppings[i] && !_willaToppings[i] && !_shylerToppings[i])
 			toppingEnables[i] = true;
@@ -874,7 +875,7 @@ void ZoombiniPuzzlePizza::generateToppingSet() {
 		_generatedToppings[i] = false;
 
 	// At level 2, forbid topping slot 4
-	int16 forbiddenSlot = (_difficultyLevel == kPuzzleLevel2) ? 4 : -1;
+	int16 forbiddenSlot = (_puzzleLevel == kPuzzleLevel2) ? 4 : -1;
 
 	int16 remaining = _minimumGeneratedToppingCount;
 	bool nonePlaced = true;
@@ -910,7 +911,7 @@ void ZoombiniPuzzlePizza::distributeToppings() {
 
 	generateToppingSet();
 
-	if (_difficultyLevel == kPuzzleLevel1) {
+	if (_puzzleLevel == kPuzzleLevel1) {
 		// Level 1 assigns every generated topping to Arno.
 		for (int16 i = 0; i < _machineToppingSlotCount; i++) {
 			_arnoToppings[i] = _generatedToppings[i];
@@ -923,7 +924,7 @@ void ZoombiniPuzzlePizza::distributeToppings() {
 	int16 willaToppingCount = 0;
 	int16 shylerToppingCount = 0;
 
-	if (_difficultyLevel == kPuzzleLevel2) {
+	if (_puzzleLevel == kPuzzleLevel2) {
 		// Level 2 assigns each generated topping to Arno or Willa with equal probability.
 		for (int16 i = 0; i < _machineToppingSlotCount; i++) {
 			if (_generatedToppings[i]) {
@@ -1031,12 +1032,12 @@ void ZoombiniPuzzlePizza::distributeToppings() {
 			shylerToppingCount = 1;
 		}
 	} while (arnoToppingCount == 0 || willaToppingCount == 0);
-	debugC(3, MohawkEngine_Zoombini::kDebugPage02, "pizza: assigned level %d toppings; Arno=%d, Willa=%d, Shyler=%d", _difficultyLevel,
+	debugC(3, MohawkEngine_Zoombini::kDebugPage02, "pizza: assigned level %d toppings; Arno=%d, Willa=%d, Shyler=%d", _puzzleLevel,
 		   arnoToppingCount, willaToppingCount, shylerToppingCount);
 
 	// At Level 4, create the four reject examples already present in the pit when the page opens.
 	// Pick two toppings from the largest order and one from each remaining order, then cross them into four distinct pairs.
-	if (_difficultyLevel == kPuzzleLevel4) {
+	if (_puzzleLevel == kPuzzleLevel4) {
 		TrollOrderLine dominantOrderLine = TrollOrderLine::kArno00;
 		if (willaToppingCount <= arnoToppingCount) {
 			if (arnoToppingCount < shylerToppingCount)
@@ -1641,7 +1642,7 @@ bool ZoombiniPuzzlePizza::hasToppingButtonForIngredient(int16 ingredientIdx) con
 	if (ingredientIdx < 0 || _machineToppingSlotCount <= ingredientIdx)
 		return false;
 
-	return _difficultyLevel != kPuzzleLevel2 || ingredientIdx != kMealIngredientCheese04;
+	return _puzzleLevel != kPuzzleLevel2 || ingredientIdx != kMealIngredientCheese04;
 }
 
 int16 ZoombiniPuzzlePizza::getToppingButtonScrbId(int16 ingredientIdx, bool selected) const {
@@ -1650,17 +1651,17 @@ int16 ZoombiniPuzzlePizza::getToppingButtonScrbId(int16 ingredientIdx, bool sele
 
 	int16 buttonOrdinal = ingredientIdx;
 	// Level 2 preserves the shared ingredient indices but packs six physical button pairs around the absent cheese slot.
-	if (_difficultyLevel == kPuzzleLevel2 && kMealIngredientCheese04 < ingredientIdx)
+	if (_puzzleLevel == kPuzzleLevel2 && kMealIngredientCheese04 < ingredientIdx)
 		buttonOrdinal -= 1;
 
-	return static_cast<int16>(kToppingScrbTable[_difficultyLevel - 1] + buttonOrdinal * 2 + (selected ? 1 : 0));
+	return static_cast<int16>(kToppingScrbTable[_puzzleLevel - 1] + buttonOrdinal * 2 + (selected ? 1 : 0));
 }
 
 void ZoombiniPuzzlePizza::updateV2MachineButtonHover() {
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return;
 
-	const int16 produceNormalScrbId = static_cast<int16>(kResScrb7001_AnswerLevel1 + (_difficultyLevel - 1));
+	const int16 produceNormalScrbId = static_cast<int16>(kResScrb7001_AnswerLevel1 + (_puzzleLevel - 1));
 	const int16 produceHoverScrbId = static_cast<int16>(produceNormalScrbId + kButtonHoverScrbDelta);
 	if (_produceButtonFeature && _produceSubmissionEnabled) {
 		const bool hovered = _produceButtonClickRect.contains(_lastMachineMousePos);
@@ -1689,10 +1690,10 @@ bool ZoombiniPuzzlePizza::isToppingButtonAtPoint(int16 ingredientIdx, const Comm
 	if (_machineToppingSlotCount <= ingredientIdx || !hasToppingButtonForIngredient(ingredientIdx) || !_toppingButtonFeatures[ingredientIdx])
 		return false;
 
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return _toppingButtonFeatures[ingredientIdx]->findDrawRecordAtPoint(point) != nullptr;
 
-	const int16 *rect = kToppingClickRectTable[_difficultyLevel - 1][ingredientIdx];
+	const int16 *rect = kToppingClickRectTable[_puzzleLevel - 1][ingredientIdx];
 	return Common::Rect(rect[0], rect[1], rect[2], rect[3]).contains(point);
 }
 
@@ -1718,7 +1719,7 @@ void ZoombiniPuzzlePizza::handleIngredientToggle(int16 ingredientIdx) {
 		loadScrbOntoFeature(_toppingButtonFeatures[ingredientIdx], targetScrb);
 	}
 	// TLC v2 topping SCRBs omit the frame sound, so the button queues it separately.
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		queueScriptSoundForNextRenderPass(ZmbResource(ZmbResource::kPage, kToppingButtonSoundTable[ingredientIdx]));
 	}
 
@@ -2185,7 +2186,7 @@ void ZoombiniPuzzlePizza::advanceIntroSequence() {
 		_introSequenceStep = 2;
 		break;
 	case 2:
-		if (kPuzzleLevel2 <= _difficultyLevel) {
+		if (kPuzzleLevel2 <= _puzzleLevel) {
 			// Step 2 (L2+): Load intro SCRB 9034 on order 1 runner (Willa)
 			if (_willaFeature) {
 				loadScrbOntoFeature(_willaFeature, kResScrb9034_WillaOrderIntro);
@@ -2198,7 +2199,7 @@ void ZoombiniPuzzlePizza::advanceIntroSequence() {
 		}
 		break;
 	case 3:
-		if (kPuzzleLevel3 <= _difficultyLevel) {
+		if (kPuzzleLevel3 <= _puzzleLevel) {
 			// Step 3 (L3+): Load intro SCRB 10038 on order 2 runner (Shyler)
 			if (_shylerFeature) {
 				loadScrbOntoFeature(_shylerFeature, kResScrb10038_ShylerOrderIntro);
@@ -2239,10 +2240,10 @@ void ZoombiniPuzzlePizza::triggerOrderFeatureAmbientAnim() {
 	// Set a post-intro phase and load an ambient SCRB on the last troll.
 	// Its completion spawns the next answer Zoombini;
 	// the subsequent draw-on-registration completion clears the delivery-in-progress state.
-	if (_difficultyLevel == kPuzzleLevel1) {
+	if (_puzzleLevel == kPuzzleLevel1) {
 		loadScrbOntoFeature(_arnoFeature, kResScrb8014_ArnoReject);
 		_arnoPhase = kPhasePostIntroAmbient;
-	} else if (_difficultyLevel == kPuzzleLevel2) {
+	} else if (_puzzleLevel == kPuzzleLevel2) {
 		int16 variant = _vm->_rnd->getRandomNumber(1); // 0 or 1
 		loadScrbOntoFeature(_willaFeature, kResScrb9019_WillaIdleBase + variant);
 		_willaPhase = kPhasePostIntroAmbient;
@@ -2257,13 +2258,13 @@ void ZoombiniPuzzlePizza::runOrderFeatureAmbientIdleDriver() {
 	if (_arnoPhase != kPhaseNone || _willaPhase != kPhaseNone || _shylerPhase != kPhaseNone)
 		return;
 
-	if (_difficultyLevel == kPuzzleLevel1) {
+	if (_puzzleLevel == kPuzzleLevel1) {
 		if (_trollOrderStates[TrollOrderLine::kArno00] != TrollOrderState::kAccepted03)
 			loadScrbOntoFeature(_arnoFeature, kResScrb8034_ArnoIdleBase + _vm->_rnd->getRandomNumber(1));
 		return;
 	}
 
-	if (_difficultyLevel == kPuzzleLevel2) {
+	if (_puzzleLevel == kPuzzleLevel2) {
 		if (_vm->_rnd->getRandomNumber(1000) < 500 && _trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01) {
 			loadScrbOntoFeature(_arnoFeature, kResScrb8034_ArnoIdleBase + _vm->_rnd->getRandomNumber(1));
 		} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01) {
@@ -2330,7 +2331,7 @@ void ZoombiniPuzzlePizza::handleSubmit() {
 
 	// Load the pressed Produce-button SCRB (7057 at level 1, 7058 at level 2+).
 	int16 answerScrbId;
-	if (_difficultyLevel == kPuzzleLevel1)
+	if (_puzzleLevel == kPuzzleLevel1)
 		answerScrbId = kResScrb7057_AnswerLevel1;
 	else
 		answerScrbId = kResScrb7058_AnswerLevel2Base;
@@ -2557,7 +2558,7 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(TrollOrderLine orderLine) {
 		if (_allTrollOrdersMatched) {
 			setupQuestionRunners();
 			// The v1.0BR demo keeps Go disabled after its only order is accepted.
-			if (!_vm->isV10BrDemo())
+			if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::kEuropeV10))
 				setGoButtonsEnabled(true);
 			return;
 		}
@@ -2655,7 +2656,7 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(TrollOrderLine orderLine) {
 	if (_allTrollOrdersMatched) {
 		setupQuestionRunners();
 		// The v1.0BR demo keeps Go disabled after its only order is accepted.
-		if (!_vm->isV10BrDemo())
+		if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::kEuropeV10))
 			setGoButtonsEnabled(true);
 		return;
 	}
@@ -2752,7 +2753,7 @@ void ZoombiniPuzzlePizza::onToppingDelivered() {
 // Register or reload the Produce button.
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzlePizza::registerProduceButton() {
-	int16 scrbId = static_cast<int16>(kResScrb7001_AnswerLevel1 + (_difficultyLevel - 1));
+	int16 scrbId = static_cast<int16>(kResScrb7001_AnswerLevel1 + (_puzzleLevel - 1));
 	if (_produceButtonFeature) {
 		loadScrbOntoFeature(_produceButtonFeature, scrbId);
 	} else {
@@ -2800,7 +2801,7 @@ void ZoombiniPuzzlePizza::spawnPostmanSnoid() {
 
 	// Load the Produce-button ready SCRB for the next delivery.
 	if (!_delivererPoolExhausted) {
-		int16 scrbId = (_difficultyLevel == kPuzzleLevel1) ? kResScrb7067_AnswerReadyLevel1 : kResScrb7068_AnswerReadyLevel2;
+		int16 scrbId = (_puzzleLevel == kPuzzleLevel1) ? kResScrb7067_AnswerReadyLevel1 : kResScrb7068_AnswerReadyLevel2;
 		loadScrbOntoFeature(_produceButtonFeature, scrbId);
 		// Track its completion before unlocking the delivery button.
 		_produceButtonPhase = kPhaseSpawnAnswer;
@@ -2988,7 +2989,7 @@ void ZoombiniPuzzlePizza::playOpeningChant(ZmbSfxGroupFlags sfxGroupFlags) {
 	int16 variant;
 	if (sfxGroupFlags == ZmbSfxGroupFlags::kEasy_01) {
 		variant = 0;
-	} else if (sfxGroupFlags == ZmbSfxGroupFlags::kPractice_05 && _difficultyLevel == kPuzzleLevel1) {
+	} else if (sfxGroupFlags == ZmbSfxGroupFlags::kPractice_05 && _puzzleLevel == kPuzzleLevel1) {
 		variant = 0;
 	} else {
 		int16 r = _vm->_rnd->getRandomNumber(0, 100);
@@ -3405,13 +3406,13 @@ void ZoombiniPuzzlePizza::toppingRunner_preRenderShape(ZmbFeature *feature, ZmbH
 		} else if (kMealShapeOlives21_First <= shapeIdx && shapeIdx <= kMealShapeOlives24_Last) {
 			keep = (activeMask & (1 << kMealIngredientOlives00)) != 0;
 		} else if (kMealShapePlainSundae25_First <= shapeIdx && shapeIdx <= kMealShapePlainSundae28_Last) {
-			keep = kPuzzleLevel2 <= _difficultyLevel;
+			keep = kPuzzleLevel2 <= _puzzleLevel;
 		} else if (kMealShapeChocolateSauce29_First <= shapeIdx && shapeIdx <= kMealShapeChocolateSauce32_Last) {
-			keep = (activeMask & (1 << kMealIngredientChocolateSauce07)) != 0 && _difficultyLevel == kPuzzleLevel4;
+			keep = (activeMask & (1 << kMealIngredientChocolateSauce07)) != 0 && _puzzleLevel == kPuzzleLevel4;
 		} else if (kMealShapeWhippedCream33_First <= shapeIdx && shapeIdx <= kMealShapeWhippedCream36_Last) {
-			keep = (activeMask & (1 << kMealIngredientWhippedCream06)) != 0 && kPuzzleLevel2 <= _difficultyLevel;
+			keep = (activeMask & (1 << kMealIngredientWhippedCream06)) != 0 && kPuzzleLevel2 <= _puzzleLevel;
 		} else if (kMealShapeCherry37_First <= shapeIdx && shapeIdx <= kMealShapeCherry40_Last) {
-			keep = (activeMask & (1 << kMealIngredientCherry05)) != 0 && kPuzzleLevel2 <= _difficultyLevel;
+			keep = (activeMask & (1 << kMealIngredientCherry05)) != 0 && kPuzzleLevel2 <= _puzzleLevel;
 		}
 
 		if (!keep)
@@ -3448,7 +3449,7 @@ void ZoombiniPuzzlePizza::hideToppingOverlay() {
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzlePizza::attachMealFilter(ZmbFeature *feature) {
 	if (feature)
-		feature->setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzlePizza::mealFilter_preRenderShape));
+		feature->setPreRenderShapeFunc(&ZoombiniPuzzlePizza::mealFilter_preRenderShape);
 }
 
 void ZoombiniPuzzlePizza::mealFilter_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots) {
@@ -3471,13 +3472,13 @@ void ZoombiniPuzzlePizza::mealFilter_preRenderShape(ZmbFeature *feature, ZmbHots
 			keep = _submittedMealToppings[kMealIngredientOlives00];
 		} else if (OrderFeatureShape::kPlainSundae176_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kPlainSundae179_Last) {
 			// Removed only at the lowest difficulty
-			keep = kPuzzleLevel2 <= _difficultyLevel;
+			keep = kPuzzleLevel2 <= _puzzleLevel;
 		} else if (OrderFeatureShape::kChocolateSauce180_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kChocolateSauce183_Last) {
-			keep = _submittedMealToppings[kMealIngredientChocolateSauce07] && _difficultyLevel == kPuzzleLevel4;
+			keep = _submittedMealToppings[kMealIngredientChocolateSauce07] && _puzzleLevel == kPuzzleLevel4;
 		} else if (OrderFeatureShape::kWhippedCream184_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kWhippedCream187_Last) {
-			keep = _submittedMealToppings[kMealIngredientWhippedCream06] && kPuzzleLevel2 <= _difficultyLevel;
+			keep = _submittedMealToppings[kMealIngredientWhippedCream06] && kPuzzleLevel2 <= _puzzleLevel;
 		} else if (OrderFeatureShape::kCherry188_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kCherry191_Last) {
-			keep = _submittedMealToppings[kMealIngredientCherry05] && kPuzzleLevel2 <= _difficultyLevel;
+			keep = _submittedMealToppings[kMealIngredientCherry05] && kPuzzleLevel2 <= _puzzleLevel;
 		} else if (shapeIdx == OrderFeatureShape::kArnoAndStoneOcclusionPatch212) {
 			// Omit Willa's Arno-and-stone occlusion patch after Arno accepts.
 			keep = _trollOrderStates[TrollOrderLine::kArno00] != TrollOrderState::kAccepted03;
@@ -3496,7 +3497,7 @@ void ZoombiniPuzzlePizza::mealFilter_preRenderShape(ZmbFeature *feature, ZmbHots
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzlePizza::attachOrderFilter(ZmbFeature *feature) {
 	if (feature)
-		feature->setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzlePizza::orderFeature_preRenderShape));
+		feature->setPreRenderShapeFunc(&ZoombiniPuzzlePizza::orderFeature_preRenderShape);
 }
 
 // ---------------------------------------------------------------------------
@@ -3522,7 +3523,7 @@ void ZoombiniPuzzlePizza::orderFeature_preRenderShape(ZmbFeature *feature, ZmbHo
 	else
 		combo = _arnoToppings;
 
-	const bool diffEnabled = kPuzzleLevel2 <= _difficultyLevel;
+	const bool diffEnabled = kPuzzleLevel2 <= _puzzleLevel;
 
 	for (int hotspotIdx = static_cast<int>(hotspots.size()) - 1; 0 <= hotspotIdx; hotspotIdx--) {
 		const OrderFeatureShape shapeIdx = static_cast<OrderFeatureShape>(hotspots[hotspotIdx]._shapeIdx);

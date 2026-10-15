@@ -144,7 +144,8 @@ struct ZmbLoadedFeatureInfo {
 	/** Construct an empty feature-list entry. */
 	ZmbLoadedFeatureInfo() = default;
 	/** Construct a feature-list entry with its owning registry kind. */
-	ZmbLoadedFeatureInfo(const ZmbFeature *feature, ZmbLoadedFeatureListKind listKind) : _feature(feature), _listKind(listKind) {}
+	ZmbLoadedFeatureInfo(const ZmbFeature *feature, ZmbLoadedFeatureListKind listKind)
+		: _feature(feature), _listKind(listKind) {}
 
 	/** Feature pointer exposed by the debug feature listing. */
 	const ZmbFeature *_feature = nullptr;
@@ -861,13 +862,13 @@ public:
 	 * Exact seat/pedestal runner instances.
 	 * SCRB resource IDs are not unique when several seats use the same script.
 	 */
-	ZmbFeature *_drawOnRegFeatures[kMaxDrawOnRegSlots] = {};
+	ZmbFeature *_drawOnRegFeatures[kMaxDrawOnRegSlots] = {0};
 
 	/** Snap positions for drop targets. */
 	Common::Point _drawOnRegSnapPositions[kMaxDrawOnRegSlots];
 
 	/** Occupancy: 0 = empty, else = feature ID of seated snoid. */
-	uint16 _drawOnRegOccupancy[kMaxDrawOnRegSlots] = {};
+	uint16 _drawOnRegOccupancy[kMaxDrawOnRegSlots] = {0};
 
 	/** Override the snap position of an existing slot. */
 	void setDrawOnRegSnapPosition(int16 slotIdx, const Common::Point &pos);
@@ -1535,7 +1536,8 @@ protected:
 
 		/** Construct an inactive animation state. */
 		AnimateState() = default;
-		AnimateState(ZmbResource pressSoundId) : _pressSoundId(pressSoundId) {}
+		AnimateState(ZmbResource pressSoundId)
+			: _pressSoundId(pressSoundId) {}
 		virtual ~AnimateState() = default;
 
 		/** Start the animation at @p frameCounter. */
@@ -1590,9 +1592,11 @@ protected:
 		ButtonState() = default;
 		~ButtonState() override = default;
 		ButtonState(ZoombiniText::Key textKey, ZmbResource pressSoundId, uint16 hsNormalId, uint16 hsPressedId, uint16 normalShapeId, uint16 pressedShapeId)
-			: AnimateState(pressSoundId), _drawEnabled(true), _textKey(textKey), _hsNormalId(hsNormalId), _hsPressedId(hsPressedId), _shapeNormalIdx(normalShapeId), _shapePressedIdx(pressedShapeId) {}
+			: AnimateState(pressSoundId), _drawEnabled(true), _textKey(textKey), _hsNormalId(hsNormalId), _hsPressedId(hsPressedId),
+			  _shapeNormalIdx(normalShapeId), _shapePressedIdx(pressedShapeId) {}
 		ButtonState(ZmbResource pressSoundId, uint16 hsNormalId, uint16 hsPressedId, uint16 normalShapeId, uint16 pressedShapeId)
-			: AnimateState(pressSoundId), _drawEnabled(true), _hsNormalId(hsNormalId), _hsPressedId(hsPressedId), _shapeNormalIdx(normalShapeId), _shapePressedIdx(pressedShapeId) {}
+			: AnimateState(pressSoundId), _drawEnabled(true), _hsNormalId(hsNormalId), _hsPressedId(hsPressedId),
+			  _shapeNormalIdx(normalShapeId), _shapePressedIdx(pressedShapeId) {}
 
 		/** Set the shape used while the button is disabled. */
 		void setDisabledState(uint16 disabledShapeId) {
@@ -1670,9 +1674,13 @@ protected:
 		ToggleButtonState() = default;
 		~ToggleButtonState() override = default;
 		ToggleButtonState(ZoombiniText::Key textKey, ZmbResource pressSoundId, uint16 hsNormalIdx, uint16 hsPressedIdx, uint16 onNormalShapeIdx, uint16 onPressedShapeIdx, uint16 offNormalShapeIdx, uint16 offPressedShapeIdx)
-			: AnimateState(pressSoundId), _enabled(true), _textKey(textKey), _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx), _onNormalShapeIdx(onNormalShapeIdx), _onPressedShapeIdx(onPressedShapeIdx), _offNormalShapeIdx(offNormalShapeIdx), _offPressedShapeIdx(offPressedShapeIdx) {}
+			: AnimateState(pressSoundId), _enabled(true), _textKey(textKey), _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx),
+			  _onNormalShapeIdx(onNormalShapeIdx), _onPressedShapeIdx(onPressedShapeIdx),
+			  _offNormalShapeIdx(offNormalShapeIdx), _offPressedShapeIdx(offPressedShapeIdx) {}
 		ToggleButtonState(ZmbResource pressSoundId, uint16 hsNormalIdx, uint16 hsPressedIdx, uint16 onNormalShapeIdx, uint16 onPressedShapeIdx, uint16 offNormalShapeIdx, uint16 offPressedShapeIdx)
-			: AnimateState(pressSoundId), _enabled(true), _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx), _onNormalShapeIdx(onNormalShapeIdx), _onPressedShapeIdx(onPressedShapeIdx), _offNormalShapeIdx(offNormalShapeIdx), _offPressedShapeIdx(offPressedShapeIdx) {}
+			: AnimateState(pressSoundId), _enabled(true), _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx),
+			  _onNormalShapeIdx(onNormalShapeIdx), _onPressedShapeIdx(onPressedShapeIdx),
+			  _offNormalShapeIdx(offNormalShapeIdx), _offPressedShapeIdx(offPressedShapeIdx) {}
 
 		/** Start the toggle press animation and its optional sound. */
 		void press(MohawkEngine_Zoombini *vm, ZmbFeature *feature, uint32 frameCounter);

@@ -20,8 +20,67 @@
  */
 
 #include "mohawk/zoombini_metaengine.h"
+#include "mohawk/detection.h"
 
 #include "common/config-manager.h"
+
+Mohawk::ZmbReleaseInfo::ZmbReleaseInfo(const MohawkGameDescription &gameDesc)
+	: _features(gameDesc.features),
+	  _lang(gameDesc.desc.language == Common::UNK_LANG ? Common::EN_USA : gameDesc.desc.language),
+	  _demo((gameDesc.desc.flags & ADGF_DEMO) != 0) {
+}
+
+bool Mohawk::ZmbReleaseInfo::isVariant(Variant variant) const {
+	switch (variant) {
+	case kEuropeV10:
+		return (_features & GF_ZMB_10_EU) != 0;
+	case kEuropeV11:
+		return (_features & GF_ZMB_11_EU) != 0;
+	case kFranceV11_2002:
+		return (_features & GF_ZMB_11_FR_2002) != 0;
+	case kEsPtV10:
+		return (_features & GF_ZMB_10_ESPT) != 0;
+	case kUsV11:
+		return (_features & GF_ZMB_11_US) != 0;
+	case kTlcV20:
+		return (_features & GF_ZMB_20_US) != 0;
+	}
+	return false;
+}
+
+bool Mohawk::ZmbReleaseInfo::isVariant(Variant variant, Common::Language lang) const {
+	return isVariant(variant) && _lang == lang;
+}
+
+bool Mohawk::ZmbReleaseInfo::isFamily(Family family) const {
+	switch (family) {
+	case kEuropeV1:
+		return isVariant(kEuropeV10) || isVariant(kEuropeV11) || isVariant(kFranceV11_2002) || isVariant(kEsPtV10);
+	case kUsV1:
+		return isVariant(kUsV11);
+	case kTlcV2:
+		return isVariant(kTlcV20);
+	}
+	return false;
+}
+
+bool Mohawk::ZmbReleaseInfo::isV1() const {
+	return isFamily(kEuropeV1) || isFamily(kUsV1);
+}
+
+bool Mohawk::ZmbReleaseInfo::isDemo(Variant variant) const {
+	return isDemo() && isVariant(variant);
+}
+
+const char *Mohawk::ZmbReleaseInfo::getFamilyName() const {
+	if (isFamily(kTlcV2))
+		return "TLCv2";
+	if (isFamily(kUsV1))
+		return "USv1";
+	if (isFamily(kEuropeV1))
+		return "EUv1";
+	return "unknown";
+}
 
 const char *const Mohawk::MohawkMetaEngine_Zoombini::kActionConfirm = "RETURN";
 const char *const Mohawk::MohawkMetaEngine_Zoombini::kActionToggleDialogAndSfx = "TG_SFX";

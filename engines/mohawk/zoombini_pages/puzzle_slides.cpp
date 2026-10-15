@@ -51,23 +51,11 @@ constexpr int16 ZoombiniPuzzleSlides::kInnerLinkPairs[12];
 // Constructor / Destructor
 // =============================================================================
 
-ZoombiniPuzzleSlides::ZoombiniPuzzleSlides(MohawkEngine_Zoombini *vm) : ZoombiniPuzzle(vm, ZoombiniPageType::kSlides, ZmbSrcPageKind::kSlides_09) {
-	// Initialize arrays
-	memset(_cellGrid, 0, sizeof(_cellGrid));
-	memset(_cellAdjacencyMasks, 0, sizeof(_cellAdjacencyMasks));
+ZoombiniPuzzleSlides::ZoombiniPuzzleSlides(MohawkEngine_Zoombini *vm)
+	: ZoombiniPuzzle(vm, ZoombiniPageType::kSlides, ZmbSrcPageKind::kSlides_09) {
 	memset(_slotCellIndices, -1, sizeof(_slotCellIndices));
-	memset(_snoidIds, 0, sizeof(_snoidIds));
-	memset(_sortedSnoidIndices, 0, sizeof(_sortedSnoidIndices));
-	memset(_pairingUsageStates, 0, sizeof(_pairingUsageStates));
-	memset(_pairLinkTypes, 0, sizeof(_pairLinkTypes));
-	memset(_activeCellIndices, 0, sizeof(_activeCellIndices));
-	memset(_activeCellSnoidIds, 0, sizeof(_activeCellSnoidIds));
-	memset(_cellFeatures, 0, sizeof(_cellFeatures));
-	memset(_slotFeatures, 0, sizeof(_slotFeatures));
 	memset(_slotDrawOnRegIndices, -1, sizeof(_slotDrawOnRegIndices));
-	memset(_rowLayerFeatures, 0, sizeof(_rowLayerFeatures));
 	memset(_debugSolutionCellIndices, -1, sizeof(_debugSolutionCellIndices));
-	memset(_debugSolutionRunnerIds, 0, sizeof(_debugSolutionRunnerIds));
 }
 
 ZoombiniPuzzleSlides::~ZoombiniPuzzleSlides() {
@@ -132,7 +120,7 @@ void ZoombiniPuzzleSlides::initStates() {
 	memset(_activeCellSnoidIds, 0, sizeof(_activeCellSnoidIds));
 
 	_entranceFadeObserved = false;
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		// The v2.0 release submits the entrance sound during page initialization.
 		playEntranceSound();
 		_entranceSoundPending = false;
@@ -213,7 +201,7 @@ void ZoombiniPuzzleSlides::runBuiltinSolveKey(char key) {
 	case 'e':
 		if (_builtinDebugSolveState == 4) {
 			_builtinDebugSolveState = 5;
-			if (_difficultyLevel == kPuzzleLevel4) {
+			if (_puzzleLevel == kPuzzleLevel4) {
 				placeBuiltinDebugSolution();
 				resetAnimStates();
 				_goButtonEnabled = true;
@@ -239,7 +227,7 @@ ZmbEventHandleResult ZoombiniPuzzleSlides::onDebugKeyDown(const Common::KeyState
 
 void ZoombiniPuzzleSlides::loadFeatures() {
 	// At the highest difficulty, load NODE/PATH 1000 for walking.
-	if (_difficultyLevel == kPuzzleLevel4) {
+	if (_puzzleLevel == kPuzzleLevel4) {
 		loadNodePath(ZmbResource(ZmbResource::kPage, kResNode1000_WalkNetwork));
 	}
 
@@ -410,7 +398,7 @@ void ZoombiniPuzzleSlides::debugPrepareForDeparture() {
 	// Re-enter the normal match propagation. This is what produces both state
 	// 508 Snoid cells and state 502 links for the ordinary Go choreography.
 	_fullMatchTriggerCount = 0;
-	if (_difficultyLevel <= kPuzzleLevel2) {
+	if (_puzzleLevel <= kPuzzleLevel2) {
 		for (int16 solutionIdx = 0; solutionIdx < _debugSolutionCount; solutionIdx++)
 			validateChainAndMarkMatched(_debugSolutionCellIndices[solutionIdx]);
 		checkVictoryCondition();
@@ -425,7 +413,7 @@ void ZoombiniPuzzleSlides::debugPrepareForDeparture() {
 	}
 
 	_goButtonEnabled = 0 < lockedCount;
-	_victoryPaletteActive = (_difficultyLevel == kPuzzleLevel4 && _goButtonEnabled);
+	_victoryPaletteActive = (_puzzleLevel == kPuzzleLevel4 && _goButtonEnabled);
 	if (_victoryPaletteActive)
 		_lastVictoryPaletteFrame = getCurrentFrameCounter();
 
@@ -550,7 +538,7 @@ void ZoombiniPuzzleSlides::initGridByDifficulty() {
 	_slotCellState = 504;
 	_linkShapeVariantOffset = 48;
 	// Level 4 selects its alternate slot base only after Snoid materialization and layout.
-	if (_difficultyLevel == kPuzzleLevel4) {
+	if (_puzzleLevel == kPuzzleLevel4) {
 		int16 randVal = _vm->_rnd->getRandomNumber(0, 1);
 		_slotCellState += randVal;
 		if (randVal != 0)
@@ -580,7 +568,7 @@ void ZoombiniPuzzleSlides::initGridByDifficulty() {
 
 	snapshotZmbTraits();
 
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel1:
 		generateTraitPairings();
 		if (_pairGroupCount < ARRAYSIZE(kPairStartOffsets)) {
@@ -1020,7 +1008,7 @@ void ZoombiniPuzzleSlides::initGridByDifficulty() {
 		break;
 	}
 	default:
-		warning("slides: unknown difficulty level %d", _difficultyLevel);
+		warning("slides: unknown difficulty level %d", _puzzleLevel);
 		break;
 	}
 
@@ -1395,17 +1383,17 @@ void ZoombiniPuzzleSlides::finishSolvedDepartureSequence() {
 			unregisterFeatureTimingGroup(getSnoid(_cellGrid[cellIdx * kFieldsPerCell + 2]));
 	}
 
-	if (_difficultyLevel == kPuzzleLevel3 || _difficultyLevel == kPuzzleLevel4)
+	if (_puzzleLevel == kPuzzleLevel3 || _puzzleLevel == kPuzzleLevel4)
 		selectAdvancedDepartureRunners();
 
-	if (_difficultyLevel <= kPuzzleLevel2)
+	if (_puzzleLevel <= kPuzzleLevel2)
 		startDepartWalkAnimation(Common::Point(1280, 240));
 	else
 		startDepartWalkAnimation(Common::Point(800, 200));
 
 	// Advanced boards move only their selected branch anchors, but every locked
 	// Snoid remains part of the continuing party serialized after the walk starts.
-	if (_difficultyLevel == kPuzzleLevel3 || _difficultyLevel == kPuzzleLevel4)
+	if (_puzzleLevel == kPuzzleLevel3 || _puzzleLevel == kPuzzleLevel4)
 		markMatchedRunnersDone();
 
 	// The common departure path owns and tracks the sole SND 996 instance.
@@ -1418,7 +1406,7 @@ void ZoombiniPuzzleSlides::selectAdvancedDepartureRunners() {
 	// enter that snapshot on the two advanced boards.
 	schedulePackSnoids(false, false);
 
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel3:
 		markCellRunnerForDeparture(19);
 		markCellRunnerForDeparture(55);
@@ -1554,7 +1542,7 @@ void ZoombiniPuzzleSlides::endDrag(const Common::Point &dropPos) {
 			_cellGrid[sourceCell * kFieldsPerCell + 1] = kCellConnector;
 			_cellGrid[sourceCell * kFieldsPerCell + 2] = 0;
 			syncCellFeatureScript(sourceCell);
-			if (_difficultyLevel <= kPuzzleLevel2)
+			if (_puzzleLevel <= kPuzzleLevel2)
 				orphanLinearChainFromCell(sourceCell);
 		}
 
@@ -1563,9 +1551,9 @@ void ZoombiniPuzzleSlides::endDrag(const Common::Point &dropPos) {
 		if (0 <= sourceCell) {
 			_cellGrid[sourceCell * kFieldsPerCell + 1] = kCellConnector;
 			_cellGrid[sourceCell * kFieldsPerCell + 2] =
-				(_difficultyLevel <= kPuzzleLevel2) ? 0 : -1;
+				(_puzzleLevel <= kPuzzleLevel2) ? 0 : -1;
 			syncCellFeatureScript(sourceCell);
-			if (_difficultyLevel <= kPuzzleLevel2)
+			if (_puzzleLevel <= kPuzzleLevel2)
 				orphanLinearChainFromCell(sourceCell);
 			else
 				resetAnimStates();
@@ -1642,7 +1630,7 @@ void ZoombiniPuzzleSlides::assignZmbToSlot(ZmbSnoid *snoid, int16 cellIdx) {
 	syncCellFeatureScript(cellIdx);
 
 	// Check for trait matches
-	if (_difficultyLevel <= kPuzzleLevel2) {
+	if (_puzzleLevel <= kPuzzleLevel2) {
 		validateChainAndMarkMatched(cellIdx);
 		checkVictoryCondition();
 	} else {
@@ -1950,7 +1938,7 @@ int16 ZoombiniPuzzleSlides::validateChainAndMarkMatched(int16 startCellIdx) {
 				} else {
 					blocked = true;
 				}
-			} else if (_difficultyLevel == kPuzzleLevel2 && traitKind == 0 && 0 < currentCell &&
+			} else if (_puzzleLevel == kPuzzleLevel2 && traitKind == 0 && 0 < currentCell &&
 					   _cellGrid[(currentCell - 1) * kFieldsPerCell + 1] == kCellLocked) {
 				if (setCellStateAndReload(currentCell, kCellMatched))
 					matchCount += 1;
@@ -2051,7 +2039,7 @@ int16 ZoombiniPuzzleSlides::findRunnerByMatchingTrait(int16 runnerIdx) {
 }
 
 void ZoombiniPuzzleSlides::sortZmbsByOverlapCount() {
-	int16 overlapCounts[16] = {};
+	int16 overlapCounts[16] = {0};
 
 	for (int16 snoidIdx = 0; snoidIdx < _pageLoadedZmbCount; snoidIdx++) {
 		for (int16 comparisonSnoidIdx = 0; comparisonSnoidIdx < _pageLoadedZmbCount; comparisonSnoidIdx++) {
@@ -2241,7 +2229,7 @@ void ZoombiniPuzzleSlides::activateChainLink(int16 linkIdx) {
 
 	checkVictoryCondition();
 
-	if (_difficultyLevel == kPuzzleLevel4 &&
+	if (_puzzleLevel == kPuzzleLevel4 &&
 		cellStateIs(57, kCellLocked) && cellStateIs(59, kCellLocked) && cellStateIs(61, kCellLocked)) {
 		int16 occupiedSlots = 0;
 		for (int16 i = 0; i < _slotCount; i++) {
@@ -2446,7 +2434,7 @@ void ZoombiniPuzzleSlides::resetAnimStates() {
 		}
 	}
 
-	if (_difficultyLevel == kPuzzleLevel4)
+	if (_puzzleLevel == kPuzzleLevel4)
 		activateChainLink(54);
 	else
 		confirmEndpointMatches();
@@ -2622,7 +2610,7 @@ void ZoombiniPuzzleSlides::unlockInteractiveSlots() {
 	// so positional sorting stops here for the rest of the page.
 	setRunnerZSortEnabled(false);
 
-	bool referenced[16] = {};
+	bool referenced[16] = {0};
 	for (int16 slotIdx = 0; slotIdx < _slotCount; slotIdx++) {
 		int16 cellIdx = _slotCellIndices[slotIdx];
 		if (cellIdx < 0 || kNumCells <= cellIdx)
@@ -3001,9 +2989,9 @@ void ZoombiniPuzzleSlides::snapshotDebugSolution() {
 	}
 
 	if (_debugSolutionCount != _pageLoadedZmbCount) {
-		if (_difficultyLevel <= kPuzzleLevel2)
+		if (_puzzleLevel <= kPuzzleLevel2)
 			buildDebugSolutionFromConstraints();
-		else if (_difficultyLevel == kPuzzleLevel3)
+		else if (_puzzleLevel == kPuzzleLevel3)
 			completeDebugSolutionWithUnusedSnoids();
 	}
 }
@@ -3020,7 +3008,7 @@ bool ZoombiniPuzzleSlides::buildDebugSolutionFromConstraints() {
 	memset(usedSnoids, 0, sizeof(usedSnoids));
 
 	int16 slotIdx = 0;
-	if (_difficultyLevel == kPuzzleLevel1) {
+	if (_puzzleLevel == kPuzzleLevel1) {
 		for (int16 pairIdx = 0; pairIdx < _pairGroupCount && slotIdx < _slotCount; pairIdx++) {
 			requiredTraits[slotIdx] = 0;
 			slotIdx += 1;
@@ -3095,8 +3083,7 @@ bool ZoombiniPuzzleSlides::completeDebugSolutionWithUnusedSnoids() {
 	return _debugSolutionCount == _pageLoadedZmbCount;
 }
 
-bool ZoombiniPuzzleSlides::solveDebugSlotAssignments(int16 slotIdx, const int16 *requiredTraits,
-													 bool *usedSnoids, int16 *assignedSnoids) {
+bool ZoombiniPuzzleSlides::solveDebugSlotAssignments(int16 slotIdx, const int16 *requiredTraits, bool *usedSnoids, int16 *assignedSnoids) {
 	if (_slotCount <= slotIdx)
 		return true;
 
@@ -3292,15 +3279,13 @@ void ZoombiniPuzzleSlides::setCellFeaturePreRenderHook(ZmbFeature *feature, int1
 	if (!feature)
 		return;
 
-	ZmbFeature::OnPreRenderShapeFunc callback = nullptr;
-
 	if (scrbId == kResScrb7000_CellBase) {
-		callback = static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleSlides::filterHotspotScript);
+		feature->setPreRenderShapeFunc(&ZoombiniPuzzleSlides::filterHotspotScript);
 	} else if (scrbId == kResScrb7002_MatchedCell) {
-		callback = static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleSlides::processCommandQueue);
+		feature->setPreRenderShapeFunc(&ZoombiniPuzzleSlides::processCommandQueue);
+	} else {
+		feature->setPreRenderShapeFunc(nullptr);
 	}
-
-	feature->setPreRenderShapeFunc(callback);
 }
 
 void ZoombiniPuzzleSlides::syncCellFeatureScript(int16 cellIdx) {

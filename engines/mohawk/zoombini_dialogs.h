@@ -56,7 +56,7 @@ public:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
-	GUI::EditTextWidget *_edit;
+	GUI::EditTextWidget *_edit = nullptr;
 };
 
 /** Modal ScummVM dialog for managing Logical Journey of the Zoombini saves. */
@@ -140,61 +140,61 @@ private:
 	/** Exclusive selection group for the save-slot cells. */
 	GUI::RadiobuttonGroup _saveSelectionGroup;
 	/** Zero-based slot selected for the bottom move controls, or -1. */
-	int _selectedSaveSlot;
+	int _selectedSaveSlot = -1;
 	/** Dialog description shown above the save table. */
-	GUI::StaticTextWidget *_description;
+	GUI::StaticTextWidget *_description = nullptr;
 	/** Fixed-column save table header. */
-	GUI::ContainerWidget *_saveHeader;
+	GUI::ContainerWidget *_saveHeader = nullptr;
 	/** Scroll container holding save rows. */
-	GUI::ScrollContainerWidget *_saveList;
+	GUI::ScrollContainerWidget *_saveList = nullptr;
 	/** Container holding save-row widgets. */
-	GUI::ContainerWidget *_saveTable;
+	GUI::ContainerWidget *_saveTable = nullptr;
 	/** Number of save rows currently populated in the table. */
-	int _saveRowCount;
+	int _saveRowCount = 0;
 	/** Whether Slot Compact is available and would change the current target. */
 	bool _saveCompactionNeeded = false;
 	/** Structural problems that make the current target's roster recoverable. */
 	uint32 _rosterIssueFlags = 0;
 	/** Common button that moves the selected save one slot upward. */
-	GUI::ButtonWidget *_moveUpButton;
+	GUI::ButtonWidget *_moveUpButton = nullptr;
 	/** Common button that moves the selected save one slot downward. */
-	GUI::ButtonWidget *_moveDownButton;
+	GUI::ButtonWidget *_moveDownButton = nullptr;
 	/** Common button that renames the selected save. */
-	GUI::ButtonWidget *_renameButton;
+	GUI::ButtonWidget *_renameButton = nullptr;
 	/** Common button that imports one save. */
-	GUI::ButtonWidget *_importButton;
+	GUI::ButtonWidget *_importButton = nullptr;
 	/** Common button that exports the selected save. */
-	GUI::ButtonWidget *_exportButton;
+	GUI::ButtonWidget *_exportButton = nullptr;
 	/** Common button that deletes the selected save. */
-	GUI::ButtonWidget *_deleteButton;
+	GUI::ButtonWidget *_deleteButton = nullptr;
 	/** Common button that recovers the selected corrupted save. */
-	GUI::ButtonWidget *_recoverButton;
+	GUI::ButtonWidget *_recoverButton = nullptr;
 	/** Common button that repairs a roster or compacts valid save-file stems. */
-	GUI::ButtonWidget *_compactButton;
+	GUI::ButtonWidget *_compactButton = nullptr;
 	/** Uncaptioned save-row selection controls. */
-	GUI::RadiobuttonWidget *_saveSelectionButtons[kMaxSaveRows];
+	GUI::RadiobuttonWidget *_saveSelectionButtons[kMaxSaveRows] = {0};
 	/** Save-file number labels. */
-	GUI::StaticTextWidget *_saveSlotLabels[kMaxSaveRows];
+	GUI::StaticTextWidget *_saveSlotLabels[kMaxSaveRows] = {0};
 	/** Save-name labels. */
-	GUI::StaticTextWidget *_saveNameLabels[kMaxSaveRows];
+	GUI::StaticTextWidget *_saveNameLabels[kMaxSaveRows] = {0};
 	/** Serialized save-format labels. */
-	GUI::StaticTextWidget *_saveVersionLabels[kMaxSaveRows];
+	GUI::StaticTextWidget *_saveVersionLabels[kMaxSaveRows] = {0};
 	/** Isle progress labels. */
-	GUI::StaticTextWidget *_saveIsleLabels[kMaxSaveRows];
+	GUI::StaticTextWidget *_saveIsleLabels[kMaxSaveRows] = {0};
 	/** Basecamp 1 progress labels. */
-	GUI::StaticTextWidget *_saveBasecamp1Labels[kMaxSaveRows];
+	GUI::StaticTextWidget *_saveBasecamp1Labels[kMaxSaveRows] = {0};
 	/** Basecamp 2 progress labels. */
-	GUI::StaticTextWidget *_saveBasecamp2Labels[kMaxSaveRows];
+	GUI::StaticTextWidget *_saveBasecamp2Labels[kMaxSaveRows] = {0};
 	/** Town progress labels. */
-	GUI::StaticTextWidget *_saveTownLabels[kMaxSaveRows];
+	GUI::StaticTextWidget *_saveTownLabels[kMaxSaveRows] = {0};
 	/** Active-pack count labels. */
-	GUI::StaticTextWidget *_saveActivePackLabels[kMaxSaveRows];
+	GUI::StaticTextWidget *_saveActivePackLabels[kMaxSaveRows] = {0};
 	/** Target-scoped state filenames used to describe recovery backups. */
 	Common::String _saveFileNames[kMaxSaveRows];
 	/** Whether each visible corrupted row has a recoverable state payload. */
-	bool _saveRecoverableRows[kMaxSaveRows];
+	bool _saveRecoverableRows[kMaxSaveRows] = {0};
 	/** Primary validation problem shown before recovering each row. */
-	uint8 _saveIssueRows[kMaxSaveRows];
+	uint8 _saveIssueRows[kMaxSaveRows] = {0};
 };
 
 /** ScummVM options dialog for Logical Journey of the Zoombinis */
@@ -250,9 +250,9 @@ private:
 	/** Fleens tree-descending feet compatibility option control. */
 	GUI::CheckboxWidget *_fixFleensTreeDescendFeetBugCheckbox;
 	/** Hotel MIDI-halt compatibility option control. */
-	GUI::CheckboxWidget *_fixHotelMidiHaltBugCheckbox;
+	GUI::CheckboxWidget *_fixHotelMidiHaltBugCheckbox = nullptr;
 	/** Caves level 4 MIDI compatibility option control. */
-	GUI::CheckboxWidget *_fixCavesL4MidiSilentBugCheckbox;
+	GUI::CheckboxWidget *_fixCavesL4MidiSilentBugCheckbox = nullptr;
 	/** Animation tick-rate label. */
 	GUI::StaticTextWidget *_tickRateLabel = nullptr;
 	/** Animation tick-rate selection control. */

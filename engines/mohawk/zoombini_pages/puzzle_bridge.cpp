@@ -155,7 +155,8 @@ bool ZoombiniPuzzleBridge::traitMatchesDescriptor(const ZmbTrait &trait, const T
 	return false;
 }
 
-ZoombiniPuzzleBridge::ZoombiniPuzzleBridge(MohawkEngine_Zoombini *vm) : ZoombiniPuzzle(vm, ZoombiniPageType::kBridge, ZmbSrcPageKind::kBridge_02) {
+ZoombiniPuzzleBridge::ZoombiniPuzzleBridge(MohawkEngine_Zoombini *vm)
+	: ZoombiniPuzzle(vm, ZoombiniPageType::kBridge, ZmbSrcPageKind::kBridge_02) {
 }
 
 ZoombiniPuzzleBridge::~ZoombiniPuzzleBridge() {
@@ -509,7 +510,7 @@ void ZoombiniPuzzleBridge::buildTraitTollTable() {
 
 	uint32 poolSize = 0;
 
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel1: {
 		// Level 1: Generate 20 single-trait combinations (5 values x 4 kinds).
 		poolSize = 20;
@@ -594,7 +595,7 @@ void ZoombiniPuzzleBridge::buildTraitTollTable() {
 		matchCounts[comboIdx] = 0;
 
 	// Level 2 also tests the second value in each pair.
-	const bool matchSecondValues = _difficultyLevel == kPuzzleLevel2;
+	const bool matchSecondValues = _puzzleLevel == kPuzzleLevel2;
 	for (uint32 zmbIdx = 0; zmbIdx < zmbTraits.size(); zmbIdx++) {
 		const ZmbTrait &trait = zmbTraits[zmbIdx];
 
@@ -639,13 +640,13 @@ void ZoombiniPuzzleBridge::buildTraitTollTable() {
 
 	// Keep a Level 1 split count available to Tunnels only when this pool had one matching rule.
 	_vm->_bridgeTunnelsLevel1Exclusion.clear();
-	if (_difficultyLevel == kPuzzleLevel1 && found == 1)
+	if (_puzzleLevel == kPuzzleLevel1 && found == 1)
 		_vm->_bridgeTunnelsLevel1Exclusion.setSplitCount(chosenMatchCount);
 
 	// Decode the selected named rule fields into the existing requirement arrays.
 	_matchingTraitsUseUpperLane = _vm->_rnd->getRandomBool();
 
-	if (_difficultyLevel == kPuzzleLevel1) {
+	if (_puzzleLevel == kPuzzleLevel1) {
 		// Level 1: single trait extraction.
 		_allergyRuleEntryCount = 1;
 		for (int16 ruleSlot = 0; ruleSlot < 4; ruleSlot++) {
@@ -657,7 +658,7 @@ void ZoombiniPuzzleBridge::buildTraitTollTable() {
 				break;
 			}
 		}
-	} else if (_difficultyLevel == kPuzzleLevel2) {
+	} else if (_puzzleLevel == kPuzzleLevel2) {
 		// Level 2: two trait values from the same category.
 		_allergyRuleEntryCount = 2;
 		for (int16 ruleSlot = 0; ruleSlot < 4; ruleSlot++) {
@@ -681,7 +682,7 @@ void ZoombiniPuzzleBridge::buildTraitTollTable() {
 			const TraitValueSet acceptedValues = targetDescriptor.getValues(traitKind);
 			if (acceptedValues.isEmpty())
 				continue;
-			if (ruleEntryIdx < static_cast<uint32>(_difficultyLevel - 1)) {
+			if (ruleEntryIdx < static_cast<uint32>(_puzzleLevel - 1)) {
 				_allergyRuleTraitKindCodes[ruleEntryIdx] = requirementTraitKindCode(traitKind);
 				_allergyRuleTraitValues[ruleEntryIdx] = acceptedValues.firstValue;
 				ruleEntryIdx += 1;
@@ -689,7 +690,7 @@ void ZoombiniPuzzleBridge::buildTraitTollTable() {
 			_allergyRuleEntryCount += 1;
 		}
 	}
-	debugC(3, MohawkEngine_Zoombini::kDebugPage02, "bridge: generated level %d with %d allergy rule entries", _difficultyLevel, _allergyRuleEntryCount);
+	debugC(3, MohawkEngine_Zoombini::kDebugPage02, "bridge: generated level %d with %d allergy rule entries", _puzzleLevel, _allergyRuleEntryCount);
 	for (int i = 0; i < _allergyRuleEntryCount; i++)
 		debugC(4, MohawkEngine_Zoombini::kDebugPage02, "bridge: allergy rule %d has trait kind %d and value %d", i, _allergyRuleTraitKindCodes[i], _allergyRuleTraitValues[i]);
 }

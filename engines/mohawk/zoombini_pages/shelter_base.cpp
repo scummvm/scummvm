@@ -59,24 +59,13 @@ bool ZoombiniShelterBasecamp::debugDoPageCommand(int argc, const char **argv, Co
 	return changedCount < 0;
 }
 
-ZoombiniShelterBasecamp::ZoombiniShelterBasecamp(MohawkEngine_Zoombini *vm,
-												 ZoombiniPageType pageType,
-												 const Common::Rect &storageRect,
-												 int16 initialStorageCapacity,
-												 int16 controlBitmapBaseId,
-												 bool controlBitmapIsCompoundShapes,
-												 const Common::Point *pedestalPoints,
-												 ZmbResource storageScrollingSound,
-												 ZmbResource storageScrollEndSound)
-	: ZoombiniShelter(vm, pageType),
-	  _storageRect(storageRect),
-	  _controlBitmapBaseId(controlBitmapBaseId),
-	  _controlBitmapIsCompoundShapes(controlBitmapIsCompoundShapes),
-	  _pedestalPoints(pedestalPoints),
-	  _storageColumnCount(initialStorageCapacity / kStorageRowsPerColumn),
-	  _storageCapacity(initialStorageCapacity),
-	  _storageScrollingSound(storageScrollingSound),
-	  _storageScrollEndSound(storageScrollEndSound) {
+ZoombiniShelterBasecamp::ZoombiniShelterBasecamp(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType, const Common::Rect &storageRect, int16 initialStorageCapacity,
+												 int16 controlBitmapBaseId, bool controlBitmapIsCompoundShapes, const Common::Point *pedestalPoints,
+												 ZmbResource storageScrollingSound, ZmbResource storageScrollEndSound)
+	: ZoombiniShelter(vm, pageType), _storageRect(storageRect),
+	  _controlBitmapBaseId(controlBitmapBaseId), _controlBitmapIsCompoundShapes(controlBitmapIsCompoundShapes), _pedestalPoints(pedestalPoints),
+	  _storageColumnCount(initialStorageCapacity / kStorageRowsPerColumn), _storageCapacity(initialStorageCapacity),
+	  _storageScrollingSound(storageScrollingSound), _storageScrollEndSound(storageScrollEndSound) {
 	static_assert(kStorageEntryCount == ZmbTrait::SNOID_MAX, "Basecamp storage must cover every possible Zoombini");
 }
 

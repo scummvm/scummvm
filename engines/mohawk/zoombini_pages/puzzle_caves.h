@@ -494,13 +494,13 @@ private:
 	/** Difficulty-selected SCRB base for ledge feedback frames (6006 through 6003). */
 	int16 _ledgeControllerScrbBaseId = kResScrb6006_GlyphPanelLevel4;
 	/** Visibility flags for one-based rule-clue slots 1-10; zero-based array index 0 is unused. */
-	byte _ruleGlyphVisibility[11] = {};
+	byte _ruleGlyphVisibility[11] = {0};
 	/** One-based tBMP 10000 shape numbers for one-based clue slots 1-10; zero-based array index 0 is unused. */
-	byte _ruleGlyphShapeIds[11] = {};
+	byte _ruleGlyphShapeIds[11] = {0};
 	/** One-based clue slot hidden by the level-1 attention sequence: 0 means none and 6 is the terminal sentinel. */
 	int16 _glyphBlinkHiddenSlot = 0;
 	/** REGS 201 vertical adjustments for one-based rule-clue slots 1-10; zero-based array index 0 is unused. */
-	int16 _ruleGlyphYAdjustments[11] = {};
+	int16 _ruleGlyphYAdjustments[11] = {0};
 
 	// Extended glyph system state ---
 
@@ -513,44 +513,44 @@ private:
 	/** Trait kind used by the secondary seat rule at levels 3/4. */
 	ZmbTrait::TraitKind _secondaryRuleTraitKind = ZmbTrait::kTraitHair;
 	/** Two zero-based rows of five shuffled trait values: indices 0-4 are primary and 5-9 are secondary. */
-	int16 _ruleTraitValues[10] = {};
+	int16 _ruleTraitValues[10] = {0};
 	/** Six-by-six counts at zero-based indices 0-35, addressed as `6 * secondaryValue + primaryValue` for trait values 0-5. */
-	int16 _ruleBucketCounts[36] = {};
+	int16 _ruleBucketCounts[36] = {0};
 	/** Primary rule value assigned to one-based seats 1-20; zero-based array index 0 is unused. */
-	int16 _seatPrimaryRuleValues[21] = {};
+	int16 _seatPrimaryRuleValues[21] = {0};
 	/** Secondary rule value assigned to one-based seats 1-20; zero-based array index 0 is unused. */
-	int16 _seatSecondaryRuleValues[21] = {};
+	int16 _seatSecondaryRuleValues[21] = {0};
 
 	/**
 	 * Occupant at each one-based seat 1-20, or nullptr for an empty seat; zero-based array index 0 is unused.
 	 * @ref ZoombiniPuzzleCaves::findMatchingSeatNumber() skips occupied seats.
 	 * @ref ZoombiniPuzzleCaves::triggerSuccessAnim() walks the placed Snoids out.
 	 */
-	ZmbSnoid *_seatOccupants[21] = {};
+	ZmbSnoid *_seatOccupants[21] = {0};
 	/** First usable one-based seat, computed as 21 - N and therefore in the range 5-20 for the current 1-16 Snoid group. */
 	int16 _firstUsableSeatNumber = 1;
 	/** Number of leading zero-based DRAW_ON_REG slots covered by SCRB 9025-9028, in the range 0-4. */
 	int16 _maskedLeadingSeatCount = 0;
 
 	/** Lion SCRB 6000, 6001, and 6002 runners at zero-based indices 0-2. */
-	ZmbFeature *_lionEntranceFeatures[3] = {};
+	ZmbFeature *_lionEntranceFeatures[3] = {0};
 	/** SCRB 9025-9028 overlay that covers unused leading background seats. */
 	ZmbFeature *_leadingSeatMaskFeature = nullptr;
 	/** SCRB 7000-7019 DRAW_ON_REG runners for one-based seats 1-20, stored at zero-based index seatNumber - 1. */
-	ZmbFeature *_seatDoorFeatures[20] = {};
+	ZmbFeature *_seatDoorFeatures[20] = {0};
 	/** Persistent SCRB 9011-9014 overlays for one-based seats 12-15, stored at zero-based indices 0-3. */
-	ZmbFeature *_middleSeatOverlayFeatures[4] = {};
+	ZmbFeature *_middleSeatOverlayFeatures[4] = {0};
 	/** Persistent SCRB 9004-9010 overlays for one-based seats 5-11, stored at zero-based indices 0-6. */
-	ZmbFeature *_upperSeatOverlayFeatures[7] = {};
+	ZmbFeature *_upperSeatOverlayFeatures[7] = {0};
 	/** Persistent SCRB 9015-9019 overlays for one-based seats 16-20, stored at zero-based indices 0-4. */
-	ZmbFeature *_lowerSeatOverlayFeatures[5] = {};
+	ZmbFeature *_lowerSeatOverlayFeatures[5] = {0};
 	/**
 	 * No-op Z-order anchors addressed directly by one-based number; array index 0 is unused.
 	 * Seats 5-20 receive one anchor each, registered immediately after that seat's persistent
 	 * overlay and immediately before its DRAW_ON_REG door runner.
 	 * Index 21 holds the trailing sentinel after seat 20.
 	 */
-	ZmbFeature *_seatZOrderAnchors[22] = {};
+	ZmbFeature *_seatZOrderAnchors[22] = {0};
 	/** Difficulty-selected REGION_TRACK runner that controls ledge feedback. */
 	ZmbFeature *_ledgeControllerFeature = nullptr;
 	/**

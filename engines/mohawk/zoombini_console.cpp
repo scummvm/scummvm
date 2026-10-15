@@ -72,7 +72,8 @@ static Common::U32String formatManualShortcutMapping(const Common::HardwareInput
 	return description.substr(0, separator + 1) + keyName;
 }
 
-ZoombiniConsole::ZoombiniConsole(MohawkEngine_Zoombini *vm) : GUI::Debugger(), _vm(vm) {
+ZoombiniConsole::ZoombiniConsole(MohawkEngine_Zoombini *vm)
+	: GUI::Debugger(), _vm(vm) {
 	// [*] Sound (tSND) commands
 	registerCmd(kCmdSound, WRAP_METHOD(ZoombiniConsole, Cmd_Sound));
 
@@ -195,13 +196,13 @@ bool ZoombiniConsole::CmdSub_SoundStop(int argc, const char **argv) {
 
 bool ZoombiniConsole::Cmd_Midi(int argc, const char **argv) {
 	if (argc == 2 && isHelpOption(argv[1])) {
-		if (_vm->isVersionFamilyTlcV2())
+		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 			debugPrintf("Control the built-in music test\n");
 		else
 			debugPrintf("Control MIDI playback and the built-in MIDI test\n");
 		debugPrintf("Usage: %s <subcommand> [arguments]\n\n", kCmdMidi);
 		debugPrintf("Subcommands:\n");
-		if (!_vm->isVersionFamilyTlcV2()) {
+		if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 			debugPrintf("  %s <midi-id>\n", kSubCmdMidiPlay);
 			debugPrintf("      Play a tMID resource from the selected shared v1 MIDI archive.\n");
 			debugPrintf("  %s\n", kSubCmdMidiStop);
@@ -215,7 +216,7 @@ bool ZoombiniConsole::Cmd_Midi(int argc, const char **argv) {
 	}
 
 	if (argc < 2) {
-		if (_vm->isVersionFamilyTlcV2())
+		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 			debugPrintf("Usage: %s %s <enable|disable|play|next>\n", kCmdMidi, kSubCmdMidiBuiltinDebug);
 		else
 			debugPrintf("Usage: %s <%s|%s|%s> [arguments]\n", kCmdMidi, kSubCmdMidiPlay, kSubCmdMidiStop, kSubCmdMidiBuiltinDebug);
@@ -226,7 +227,7 @@ bool ZoombiniConsole::Cmd_Midi(int argc, const char **argv) {
 	if (scumm_stricmp(argv[1], kSubCmdMidiBuiltinDebug) == 0)
 		return CmdSub_MidiBuiltinDebug(argc, argv);
 
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		debugPrintf("TLC v2 supports only the '%s %s' command.\n", kCmdMidi, kSubCmdMidiBuiltinDebug);
 		debugPrintf("Usage: %s %s <enable|disable|play|next>\n\n", kCmdMidi, kSubCmdMidiBuiltinDebug);
 		return true;
@@ -2079,7 +2080,7 @@ void ZoombiniConsole::printAvailableStateKeys() {
 	debugPrintf("  %s\n", kStateKeyOptionToggleLessAction);
 	debugPrintf("  %s\n", kStateKeyOptionToggleTransitions);
 
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		debugPrintf("  %s\n", kStateKeyOptionToggleTouchSense);
 		debugPrintf("  %s\n", kStateKeyOptionToggleHelpAudio);
 	}
@@ -2090,7 +2091,7 @@ void ZoombiniConsole::printAvailableStateKeys() {
 	debugPrintf("  %s\n", kStateKeyProgressRoute3Level);
 	debugPrintf("  %s\n", kStateKeyProgressRoute4Level);
 
-	if (_vm->hasRoutePerfectCounterState()) {
+	if (_vm->_state->hasRoutePerfectClearCounters()) {
 		debugPrintf("Route perfect counters (settable range 0-2; normal gameplay advances the route level at 3):\n");
 		debugPrintf("  %s\n", kStateKeyProgressRoute1PerfectCounter);
 		debugPrintf("  %s\n", kStateKeyProgressRoute2PerfectCounter);
@@ -2238,8 +2239,8 @@ bool ZoombiniConsole::isStateKeyAvailable(StateKeyKind keyKind) const {
 	if (keyKind == kStateKindUnknown)
 		return false;
 
-	const bool isGameV2 = _vm->isVersionFamilyTlcV2();
-	const bool routePerfectCounters = _vm->hasRoutePerfectCounterState();
+	const bool isGameV2 = _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2);
+	const bool routePerfectCounters = _vm->_state->hasRoutePerfectClearCounters();
 	if (keyKind == kStateKindTouchSense || keyKind == kStateKindHelpAudio)
 		return isGameV2;
 	if (kStateKindRoute1Level <= keyKind && keyKind <= kStateKindRoute4Level)
@@ -2281,43 +2282,45 @@ static const char *mazeNextLayoutName(int16 difficultyLevel, int16 counter) {
 	return "alt";
 }
 
-void ZoombiniConsole::printStateKeyValue(const char *key, StateKeyKind keyKind, uint memorialRouteIndex, uint memorialLevel,
-										 uint fleensTraitIndex) {
+void ZoombiniConsole::printStateKeyValue(const char *key, StateKeyKind keyKind, uint memorialRouteIndex, uint memorialLevel, uint fleensTraitIndex) {
+	const auto boolToOnOff = [](bool enabled) -> const char * {
+		return enabled ? "on" : "off";
+	};
 	const ZmbStateFile &state = _vm->_state->getCurrentState();
 	const char *value = nullptr;
 	switch (keyKind) {
 	case kStateKindSfx:
-		value = state.getSfxEnabled() ? "on" : "off";
+		value = boolToOnOff(state.getSfxEnabled());
 		break;
 	case kStateKindBgm:
-		value = state.getBgmEnabled() ? "on" : "off";
+		value = boolToOnOff(state.getBgmEnabled());
 		break;
 	case kStateKindStickyMouse:
-		value = state.getStickyMouseEnabled() ? "on" : "off";
+		value = boolToOnOff(state.getStickyMouseEnabled());
 		break;
 	case kStateKindCursor:
-		value = state.getCursorVisible() ? "on" : "off";
+		value = boolToOnOff(state.getCursorVisible());
 		break;
 	case kStateKindDebug:
-		value = state.getDebugEnabled() ? "on" : "off";
+		value = boolToOnOff(state.getDebugEnabled());
 		break;
 	case kStateKindMidiDebug:
-		value = _vm->isBuiltinMidiTestMode() ? "on" : "off";
+		value = boolToOnOff(_vm->isBuiltinMidiTestMode());
 		break;
 	case kStateKindAutoStickyMouse:
-		value = state.getAutoStickyMouseEnabled() ? "on" : "off";
+		value = boolToOnOff(state.getAutoStickyMouseEnabled());
 		break;
 	case kStateKindLessAction:
-		value = state.getLessActionEnabled() ? "on" : "off";
+		value = boolToOnOff(state.getLessActionEnabled());
 		break;
 	case kStateKindTransitions:
-		value = _vm->_state->getEnableTransitions() ? "on" : "off";
+		value = boolToOnOff(_vm->_state->getEnableTransitions());
 		break;
 	case kStateKindTouchSense:
-		value = state.getTouchSenseEnabled() ? "on" : "off";
+		value = boolToOnOff(state.getTouchSenseEnabled());
 		break;
 	case kStateKindHelpAudio:
-		value = state.getHelpAudioEnabled() ? "on" : "off";
+		value = boolToOnOff(state.getHelpAudioEnabled());
 		break;
 	default:
 		break;
@@ -2337,7 +2340,7 @@ void ZoombiniConsole::printStateKeyValue(const char *key, StateKeyKind keyKind, 
 
 	if (keyKind == kStateKindMemorialActive) {
 		const bool active = _vm->_state->readMemorialActive(static_cast<ZmbRouteId>(memorialRouteIndex), static_cast<int16>(memorialLevel));
-		debugPrintf("State key '%s': %s\n", key, active ? "on" : "off");
+		debugPrintf("State key '%s': %s\n", key, boolToOnOff(active));
 		return;
 	}
 
@@ -2358,12 +2361,12 @@ void ZoombiniConsole::printStateKeyValue(const char *key, StateKeyKind keyKind, 
 	if (keyKind == kStateKindFleensTraitValueRotation || keyKind == kStateKindFleensTraitDestSlot) {
 		const byte *traitValues = nullptr;
 		if (keyKind == kStateKindFleensTraitValueRotation) {
-			if (_vm->isVersionFamilyTlcV2())
+			if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 				traitValues = state._v2FleensTraitValueRotations;
 			else
 				traitValues = state._v1FleensTraitValueRotations;
 		} else {
-			if (_vm->isVersionFamilyTlcV2())
+			if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 				traitValues = state._v2FleensTraitDestSlots;
 			else
 				traitValues = state._v1FleensTraitDestSlots;
@@ -2451,7 +2454,7 @@ bool ZoombiniConsole::CmdSub_StateSet(int argc, const char **argv) {
 	}
 
 	if (!isStateKeyAvailable(keyKind)) {
-		debugPrintf("State key '%s' is not available in the %s release.\n", key, _vm->getVersionFamilyName());
+		debugPrintf("State key '%s' is not available in the %s release.\n", key, _vm->getRelInfo().getFamilyName());
 		debugPrintf("\n");
 		return true;
 	}
@@ -2529,12 +2532,12 @@ bool ZoombiniConsole::CmdSub_StateSet(int argc, const char **argv) {
 		ZmbStateFile &state = _vm->_state->getCurrentState();
 		byte *traitValues = nullptr;
 		if (keyKind == kStateKindFleensTraitValueRotation) {
-			if (_vm->isVersionFamilyTlcV2())
+			if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 				traitValues = state._v2FleensTraitValueRotations;
 			else
 				traitValues = state._v1FleensTraitValueRotations;
 		} else {
-			if (_vm->isVersionFamilyTlcV2())
+			if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 				traitValues = state._v2FleensTraitDestSlots;
 			else
 				traitValues = state._v1FleensTraitDestSlots;
@@ -2881,7 +2884,7 @@ bool ZoombiniConsole::Cmd_State(int argc, const char **argv) {
 			return true;
 		}
 		if (!isStateKeyAvailable(keyKind)) {
-			debugPrintf("State key '%s' is not available in the %s release.\n", key, _vm->getVersionFamilyName());
+			debugPrintf("State key '%s' is not available in the %s release.\n", key, _vm->getRelInfo().getFamilyName());
 			debugPrintf("\n");
 			return true;
 		}
@@ -2947,9 +2950,9 @@ bool ZoombiniConsole::Cmd_State(int argc, const char **argv) {
 	}
 
 	debugPrintf("ZmbStateFile:\n");
-	const bool tlcState = _vm->isVersionFamilyTlcV2();
-	const bool routePerfectCounters = _vm->hasRoutePerfectCounterState();
-	debugPrintf("  release=%s\n", _vm->getVersionFamilyName());
+	const bool tlcState = _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2);
+	const bool routePerfectCounters = _vm->_state->hasRoutePerfectClearCounters();
+	debugPrintf("  release=%s\n", _vm->getRelInfo().getFamilyName());
 	debugPrintf("  magic=0x%04X dirty=%c autoStickyDelay=%u\n",
 				static_cast<uint32>(state._magic006B), state._isDirty ? 'T' : 'F',
 				static_cast<uint32>(state._autoStickyDelay));
@@ -3709,7 +3712,7 @@ bool ZoombiniConsole::Cmd_ManBuiltinDebug(int argc, const char **argv) {
 
 	debugPrintf("\n[MIDI test mode: independent of gameplay.debug]\n");
 	debugPrintf("  Ctrl+A, type lowercase 'midi', Space\n");
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		debugPrintf("      Toggle the built-in MUSIC test selector.\n");
 		debugPrintf("  Space       Show the current selector; only Picker's SND 30001 can enter the music queue\n");
 		debugPrintf("  Shift+Space Advance with wraparound, then run the selected selector\n");

@@ -48,7 +48,8 @@ constexpr Common::Point ZoombiniPuzzleSmoke::kDisplayPairNormalB[13];
 constexpr Common::Point ZoombiniPuzzleSmoke::kDisplayPairSwappedA[17];
 constexpr Common::Point ZoombiniPuzzleSmoke::kDisplayPairSwappedB[17];
 
-ZoombiniPuzzleSmoke::ZoombiniPuzzleSmoke(MohawkEngine_Zoombini *vm) : ZoombiniPuzzle(vm, ZoombiniPageType::kSmoke, ZmbSrcPageKind::kSmoke_15) {
+ZoombiniPuzzleSmoke::ZoombiniPuzzleSmoke(MohawkEngine_Zoombini *vm)
+	: ZoombiniPuzzle(vm, ZoombiniPageType::kSmoke, ZmbSrcPageKind::kSmoke_15) {
 }
 
 ZoombiniPuzzleSmoke::~ZoombiniPuzzleSmoke() {
@@ -97,7 +98,7 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniPuzzleSmoke::getScriptSou
 		{kResSoundRange11005_Startup, kResSoundRange11005_Startup},
 		{kResSoundRange11000_Startup, kResSoundRange11000_Startup}};
 
-	if (_difficultyLevel == kPuzzleLevel3) {
+	if (_puzzleLevel == kPuzzleLevel3) {
 		return kLevel3Ranges;
 	}
 
@@ -106,14 +107,14 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniPuzzleSmoke::getScriptSou
 
 void ZoombiniPuzzleSmoke::open() {
 	// MIDI BGM (tMID 30030-30033) - Broderbund v1.x only.
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		openMidiArchive();
 	openArchive(ZMB_MHK_SMOKE);
 }
 
 void ZoombiniPuzzleSmoke::setBackgroundMusic() {
-	if (!_vm->isVersionFamilyTlcV2()) {
-		const int16 routeLevel = _difficultyLevel - kPuzzleLevel1;
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+		const int16 routeLevel = _puzzleLevel - kPuzzleLevel1;
 		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30030_SmokeBgmBase + routeLevel)));
 	}
 }
@@ -136,9 +137,9 @@ ZoombiniPuzzleSmoke::ZmbSmokeRunnerState *ZoombiniPuzzleSmoke::findRunnerState(Z
 		if (_cliffRunners[i] == feature)
 			return &_cliffRunnerStates[i];
 	}
-	for (int16 i = 0; i < _level2RunnerCount; i++) {
-		if (_level2Runners[i] == feature)
-			return &_level2RunnerStates[i];
+	for (int16 i = 0; i < _l2RunnerCount; i++) {
+		if (_l2Runners[i] == feature)
+			return &_l2RunnerStates[i];
 	}
 	for (int16 i = 0; i < _gridRunnerCount; i++) {
 		if (_gridRunners[i] == feature)
@@ -165,7 +166,7 @@ void ZoombiniPuzzleSmoke::initStates() {
 	_answerState = AnswerState::kIdle02;
 	_leftFilterCount = 0;
 	_rightFilterCount = 0;
-	_level2RunnerCount = 0;
+	_l2RunnerCount = 0;
 	_exitRunnerCount = 0;
 	_reflectionRunnerCount = 0;
 	_placedZmbCount = 0;
@@ -205,16 +206,16 @@ void ZoombiniPuzzleSmoke::initStates() {
 	_questionTraits[1] = ZmbTrait();
 
 	// --- Difficulty setup ---
-	_difficultyLevel = MIN<ZmbPuzzleLevel>(_difficultyLevel, kPuzzleLevel4);
+	_puzzleLevel = MIN<ZmbPuzzleLevel>(_puzzleLevel, kPuzzleLevel4);
 
 	// Per-difficulty SCRB IDs ---
-	if (_difficultyLevel <= kPuzzleLevel2) {
-		_scrbAnimIdArr[0] = kResScrb11024_MainLevel1;
-		_scrbAnimIdArr[1] = kResScrb11025_MainLevel1;
-		_scrbAnimIdArr[2] = kResScrb11026_MainLevel1;
-		_scrbAnimIdArr[3] = kResScrb11027_MainLevel1;
-		_scrbZmbAnimIdArr[0] = kResScrs11999_NormalBase;
-		_scrbZmbAnimIdArr[1] = kResScrs12004_RejectLevel2;
+	if (_puzzleLevel <= kPuzzleLevel2) {
+		_scrbAnimIds[0] = kResScrb11024_MainLevel1;
+		_scrbAnimIds[1] = kResScrb11025_MainLevel1;
+		_scrbAnimIds[2] = kResScrb11026_MainLevel1;
+		_scrbAnimIds[3] = kResScrb11027_MainLevel1;
+		_scrbZmbAnimIds[0] = kResScrs11999_NormalBase;
+		_scrbZmbAnimIds[1] = kResScrs12004_RejectLevel2;
 		_scrbSmokeStackResA = kResScrb11032_StackLevel1;
 		_scrbSmokeStackResB = 0;
 		_scrbTravelResId = 0;
@@ -222,12 +223,12 @@ void ZoombiniPuzzleSmoke::initStates() {
 		_scrbDropResId = 0;
 		_scrbWalkResId = 0;
 	} else {
-		_scrbAnimIdArr[0] = kResScrb11028_MainLevel3;
-		_scrbAnimIdArr[1] = kResScrb11029_MainLevel3;
-		_scrbAnimIdArr[2] = kResScrb11030_MainLevel3;
-		_scrbAnimIdArr[3] = kResScrb11031_MainLevel3;
-		_scrbZmbAnimIdArr[0] = kResScrs12009_RejectLevel3;
-		_scrbZmbAnimIdArr[1] = kResScrs12014_RejectLevel4;
+		_scrbAnimIds[0] = kResScrb11028_MainLevel3;
+		_scrbAnimIds[1] = kResScrb11029_MainLevel3;
+		_scrbAnimIds[2] = kResScrb11030_MainLevel3;
+		_scrbAnimIds[3] = kResScrb11031_MainLevel3;
+		_scrbZmbAnimIds[0] = kResScrs12009_RejectLevel3;
+		_scrbZmbAnimIds[1] = kResScrs12014_RejectLevel4;
 		_scrbSmokeStackResA = kResScrb11033_StackLevel3;
 		_scrbSmokeStackResB = kResScrb11034_StackLevel4;
 		_scrbTravelResId = kResScrb11035_TravelLevel3;
@@ -236,7 +237,7 @@ void ZoombiniPuzzleSmoke::initStates() {
 		_scrbWalkResId = kResScrs12040_WalkLevel34;
 	}
 
-	if (_difficultyLevel == kPuzzleLevel4) {
+	if (_puzzleLevel == kPuzzleLevel4) {
 		_scrbOverlayResId = kResScrb11011_Level4Overlay;
 		_scrbTransitionResId = kResScrb11012_Level4Transition;
 	} else {
@@ -268,7 +269,7 @@ void ZoombiniPuzzleSmoke::loadFeatures() {
 		_cliffRunners[i] = nullptr;
 	}
 	for (int i = 0; i < 6; i++)
-		_level2Runners[i] = nullptr;
+		_l2Runners[i] = nullptr;
 	for (int i = 0; i < 9; i++)
 		_gridRunners[i] = nullptr;
 	for (int i = 0; i < 4; i++)
@@ -295,7 +296,7 @@ void ZoombiniPuzzleSmoke::loadFeatures() {
 		ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_04000000_OVERLAY);
 
 	// SCRB 11076, L1-2 only, interval=10
-	if (_difficultyLevel <= kPuzzleLevel2) {
+	if (_puzzleLevel <= kPuzzleLevel2) {
 		_level12ExtraFeature = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape11000_Smoke), kResScrb11076_Level12Extra, 10,
 			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM |
@@ -319,7 +320,7 @@ void ZoombiniPuzzleSmoke::loadFeatures() {
 
 	// The first main-animation entry runs at interval 6.
 	_mainAnimFeature = loadScrbFeature(
-		ZmbResource(ZmbResource::kPage, kResBitmapShape11000_Smoke), _scrbAnimIdArr[0], 6,
+		ZmbResource(ZmbResource::kPage, kResBitmapShape11000_Smoke), _scrbAnimIds[0], 6,
 		ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM |
 			ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_01000000_DEFER_RENDER |
 			ZmbFeature::FLAG_04000000_OVERLAY);
@@ -333,7 +334,7 @@ void ZoombiniPuzzleSmoke::loadFeatures() {
 		ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_04000000_OVERLAY);
 
 	// L3-4 only
-	if (kPuzzleLevel3 <= _difficultyLevel) {
+	if (kPuzzleLevel3 <= _puzzleLevel) {
 		_smokeStackBFeature = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape11000_Smoke), _scrbSmokeStackResB, 6,
 			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_04000000_OVERLAY);
@@ -341,7 +342,7 @@ void ZoombiniPuzzleSmoke::loadFeatures() {
 
 	// The second main-animation entry also runs at interval 6.
 	_secondAnimFeature = loadScrbFeature(
-		ZmbResource(ZmbResource::kPage, kResBitmapShape11000_Smoke), _scrbAnimIdArr[1], 6,
+		ZmbResource(ZmbResource::kPage, kResBitmapShape11000_Smoke), _scrbAnimIds[1], 6,
 		ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE |
 			ZmbFeature::FLAG_01000000_DEFER_RENDER | ZmbFeature::FLAG_04000000_OVERLAY |
 			ZmbFeature::FLAG_08000000_REGION_TRACK);
@@ -387,7 +388,7 @@ void ZoombiniPuzzleSmoke::loadFeatures() {
 	// --- Load Zoombinis and build runner stacks ---
 	loadZoombinisFromPack();
 	if (0 < _pageLoadedZmbCount) {
-		if (kPuzzleLevel3 <= _difficultyLevel) {
+		if (kPuzzleLevel3 <= _puzzleLevel) {
 			// Consume the setup pack-selection draw even though these levels use queue order.
 			(void)_vm->_rnd->getRandomNumber(_pageLoadedZmbCount - 1);
 			// L3-4 hide the pack and seed the crystal generator from the first pair in queue order.
@@ -408,7 +409,7 @@ void ZoombiniPuzzleSmoke::loadFeatures() {
 
 	buildRunnerStacks();
 
-	if (_difficultyLevel < kPuzzleLevel3) {
+	if (_puzzleLevel < kPuzzleLevel3) {
 		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape11000_Smoke), kResScrb11001_DrawOnReg, 7, kDrawOnRegPosition,
 						ZmbFeature::FLAG_00002000_DRAW_ON_REG | ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_01000000_DEFER_RENDER);
 	}
@@ -436,7 +437,7 @@ void ZoombiniPuzzleSmoke::loadFeatures() {
 	schedulePackSnoids(false, false);
 
 	// For levels 3-4: show answer display on init
-	if (kPuzzleLevel3 <= _difficultyLevel) {
+	if (kPuzzleLevel3 <= _puzzleLevel) {
 		_bShowAnswer = true;
 		loadScrbOnAnswerRunner(kResScrb11003_Answer);
 	}
@@ -496,7 +497,7 @@ Common::String ZoombiniPuzzleSmoke::debugGetAnswer() const {
 	Common::String answer = getDebugBanner();
 	answer += ": current comparison state\n";
 
-	if (_difficultyLevel <= kPuzzleLevel2) {
+	if (_puzzleLevel <= kPuzzleLevel2) {
 		const ZmbSnoid *snoid = _questionSnoidId ? getSnoid(_questionSnoidId) : nullptr;
 		const ZmbFeature *crystal;
 		if (0 <= _questionCrystalIdx && _questionCrystalIdx < _cliffRunnerCount)
@@ -547,7 +548,7 @@ Common::String ZoombiniPuzzleSmoke::debugGetAnswer() const {
 	ZmbTrait secondaryTarget;
 	ZmbSnoid *secondarySnoid = nullptr;
 	const ZmbFeature *secondaryCrystal = nullptr;
-	if (_difficultyLevel == kPuzzleLevel4 && _currentQueueIdx + 1 < _pageLoadedZmbCount &&
+	if (_puzzleLevel == kPuzzleLevel4 && _currentQueueIdx + 1 < _pageLoadedZmbCount &&
 		_zmbQueue[_currentQueueIdx + 1] && 8 < _gridRunnerCount) {
 		secondarySnoid = getSnoid(_zmbQueue[_currentQueueIdx + 1]);
 		if (secondarySnoid) {
@@ -558,7 +559,7 @@ Common::String ZoombiniPuzzleSmoke::debugGetAnswer() const {
 		}
 	}
 
-	int16 solution[6] = {};
+	int16 solution[6] = {0};
 	int16 solutionLeftCount = 0;
 	int16 solutionRightCount = 0;
 	bool found = false;
@@ -649,7 +650,7 @@ Common::String ZoombiniPuzzleSmoke::debugGetAnswer() const {
 		for (int16 slot = 0; slot < solutionRightCount; slot++)
 			answer += Common::String::format("      Filter %d\n", solution[solutionLeftCount + slot] + 1);
 	}
-	bool usedFilters[6] = {};
+	bool usedFilters[6] = {0};
 	for (int16 slot = 0; slot < solutionLeftCount + solutionRightCount; slot++)
 		usedFilters[solution[slot]] = true;
 	bool hasUsedFilter = false;
@@ -738,7 +739,7 @@ ZoombiniPuzzleSmoke::BuiltinDebugAction ZoombiniPuzzleSmoke::parseBuiltinDebugAc
 bool ZoombiniPuzzleSmoke::runBuiltinDebugAction(BuiltinDebugAction action, Common::String &output) {
 	Common::String debugText;
 	if (action == BuiltinDebugAction::kLevel) {
-		const int originalDifficulty = static_cast<int>(_difficultyLevel);
+		const int originalDifficulty = static_cast<int>(_puzzleLevel);
 		output = Common::String::format("Level %d\n", originalDifficulty);
 		debugText = Common::String::format("Level %d ", originalDifficulty);
 	} else if (action == BuiltinDebugAction::kCheatOn) {
@@ -789,7 +790,7 @@ void ZoombiniPuzzleSmoke::loadZoombinisFromPack() {
 	// Levels 1-2 override only the final two pack runners.
 	// They enter from the left on row two and retain common image 0 when state 7 settles,
 	// so they face front at their assigned seats.
-	if (_difficultyLevel <= kPuzzleLevel2 && !loadedSnoids.empty()) {
+	if (_puzzleLevel <= kPuzzleLevel2 && !loadedSnoids.empty()) {
 		const int16 count = static_cast<int16>(loadedSnoids.size());
 		const int16 firstWalkIn = MAX<int16>(0, count - 2);
 		for (int16 snoidIdx = firstWalkIn; snoidIdx < count; snoidIdx++) {
@@ -1094,7 +1095,7 @@ void ZoombiniPuzzleSmoke::assignZmbTraitsFromSrc(int16 dstIdx, ZmbFeature *sourc
 
 	// At levels 1-2, hide the selected cliff crystal and link it immediately behind the angled destination image.
 	// Its custom renderer has a strict render-enabled state gate.
-	if (dstIdx && _difficultyLevel < kPuzzleLevel3) {
+	if (dstIdx && _puzzleLevel < kPuzzleLevel3) {
 		const Common::Rect oldRect = source->getZSortRect();
 		if (!oldRect.isEmpty())
 			addExternalDirtyRect(oldRect);
@@ -1324,7 +1325,7 @@ void ZoombiniPuzzleSmoke::startNextCompareSequence() {
 															ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00008000_LOOP_ANIM));
 		// Keep the current cart pixels until the new comparison runner replaces
 		// them on the next render pass. Queue only the deferred invalidation here.
-		if (_difficultyLevel <= kPuzzleLevel2) {
+		if (_puzzleLevel <= kPuzzleLevel2) {
 			loadScrbOntoFeature(stackFeature, _scrbSmokeStackResA, false, false);
 		} else {
 			_bRunnerToggle = !_bRunnerToggle;
@@ -1333,10 +1334,10 @@ void ZoombiniPuzzleSmoke::startNextCompareSequence() {
 	}
 
 	if (_mainAnimFeature)
-		loadScrbOntoFeature(_mainAnimFeature, _scrbAnimIdArr[static_cast<int16>(_compareResult)], true);
+		loadScrbOntoFeature(_mainAnimFeature, _scrbAnimIds[static_cast<int16>(_compareResult)], true);
 
 	if (_secondAnimFeature) {
-		loadScrbOntoFeature(_secondAnimFeature, _scrbAnimIdArr[static_cast<int16>(_compareResult) + 1], true);
+		loadScrbOntoFeature(_secondAnimFeature, _scrbAnimIds[static_cast<int16>(_compareResult) + 1], true);
 	}
 
 	manualLinkBefore(_activeZmb, _secondAnimFeature);
@@ -1349,7 +1350,7 @@ void ZoombiniPuzzleSmoke::startNextCompareSequence() {
 
 void ZoombiniPuzzleSmoke::selectQuestionZmb() {
 	int16 count = 0;
-	uint16 available[21] = {};
+	uint16 available[21] = {0};
 	_questionSnoidId = 0;
 	_questionCrystalIdx = -1;
 
@@ -1372,7 +1373,7 @@ void ZoombiniPuzzleSmoke::selectQuestionZmb() {
 		_questionTraits[0] = snoid->_trait;
 	}
 
-	if (_difficultyLevel < kPuzzleLevel3 || count <= 1) {
+	if (_puzzleLevel < kPuzzleLevel3 || count <= 1) {
 		_questionTraits[1] = ZmbTrait();
 	} else {
 		int16 idx2 = randIdx + 1;
@@ -1449,8 +1450,8 @@ void ZoombiniPuzzleSmoke::initLowLevelQuestionRunners(int16 count) {
 }
 
 void ZoombiniPuzzleSmoke::initLevel2RunnersAllTraits() {
-	for (int16 i = 0; i < _level2RunnerCount; i++) {
-		ZmbFeature *runner = _level2Runners[i];
+	for (int16 i = 0; i < _l2RunnerCount; i++) {
+		ZmbFeature *runner = _l2Runners[i];
 		if (!runner)
 			continue;
 		ZmbSmokeRunnerState *state = findRunnerState(runner);
@@ -1693,7 +1694,7 @@ void ZoombiniPuzzleSmoke::generateTraitGrid(int16 rowIndex, ZmbSmokeRunnerState 
 			}
 		}
 
-		if (_difficultyLevel == kPuzzleLevel3 || _difficultyLevel == kPuzzleLevel4) {
+		if (_puzzleLevel == kPuzzleLevel3 || _puzzleLevel == kPuzzleLevel4) {
 			ZmbTrait carryPrimary = lastPrimary;
 			ZmbTrait carrySecondary = lastSecondary;
 
@@ -1791,7 +1792,7 @@ void ZoombiniPuzzleSmoke::generateTraitGrid(int16 rowIndex, ZmbSmokeRunnerState 
 			}
 		}
 
-		if (_difficultyLevel == kPuzzleLevel3) {
+		if (_puzzleLevel == kPuzzleLevel3) {
 			for (int16 row = 5; row < 7; row++) {
 				byte valuePool[8];
 				for (int16 poolIdx = 0; poolIdx < 8; poolIdx++)
@@ -1817,7 +1818,7 @@ void ZoombiniPuzzleSmoke::generateTraitGrid(int16 rowIndex, ZmbSmokeRunnerState 
 					}
 				}
 			}
-		} else if (_difficultyLevel == kPuzzleLevel4) {
+		} else if (_puzzleLevel == kPuzzleLevel4) {
 			if (_vm->_rnd->getRandomBool()) {
 				const int16 sourceRow = _vm->_rnd->getRandomNumber(1, 2);
 				for (int16 col = 0; col < 4; col++) {
@@ -1903,7 +1904,7 @@ void ZoombiniPuzzleSmoke::playRejectedAnimation() {
 void ZoombiniPuzzleSmoke::buildRunnerStacks() {
 	clearAllRunnerSlots();
 
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel1:
 		spawnStackRunners(8, RunnerType::kCliff01);
 		spawnStackRunners(2, RunnerType::kExit04);
@@ -2027,10 +2028,10 @@ void ZoombiniPuzzleSmoke::spawnStackRunners(int16 count, RunnerType runnerType) 
 			manualLinkBefore(runner, _secondAnimFeature);
 			break;
 		case RunnerType::kLevel02:
-			if (_level2RunnerCount < 6) {
-				_level2Runners[_level2RunnerCount] = runner;
-				_level2RunnerStates[_level2RunnerCount] = tempState;
-				_level2RunnerCount += 1;
+			if (_l2RunnerCount < 6) {
+				_l2Runners[_l2RunnerCount] = runner;
+				_l2RunnerStates[_l2RunnerCount] = tempState;
+				_l2RunnerCount += 1;
 			}
 			manualLinkAfter(runner, _compareAFeature);
 			break;
@@ -2042,13 +2043,13 @@ void ZoombiniPuzzleSmoke::spawnStackRunners(int16 count, RunnerType runnerType) 
 
 				// Increment the count before initializing runners 7 and 8.
 				// @ref ZoombiniPuzzleSmoke::findRunnerState() must see the newly registered runner.
-				if (_gridRunnerCount == 8 && kPuzzleLevel3 <= _difficultyLevel) {
+				if (_gridRunnerCount == 8 && kPuzzleLevel3 <= _puzzleLevel) {
 					_targetDisplayRunner = runner;
 					assignZmbTraitsFromSrc(7, runner);
 					cacheZmbTraits(7, runner);
 					_matchRunnerIndex = 1;
 				}
-				if (_gridRunnerCount == 9 && kPuzzleLevel3 <= _difficultyLevel) {
+				if (_gridRunnerCount == 9 && kPuzzleLevel3 <= _puzzleLevel) {
 					_sourceDisplayRunner = runner;
 					assignZmbTraitsFromSrc(8, runner);
 				}
@@ -2185,8 +2186,8 @@ void ZoombiniPuzzleSmoke::tickSmokeRunners() {
 	const uint32 currentFrame = getCurrentFrameCounter();
 	for (int16 i = 0; i < _cliffRunnerCount; i++)
 		tickSmokeRunner(_cliffRunners[i], _cliffRunnerStates[i], currentFrame);
-	for (int16 i = 0; i < _level2RunnerCount; i++)
-		tickSmokeRunner(_level2Runners[i], _level2RunnerStates[i], currentFrame);
+	for (int16 i = 0; i < _l2RunnerCount; i++)
+		tickSmokeRunner(_l2Runners[i], _l2RunnerStates[i], currentFrame);
 	for (int16 i = 1; i < _gridRunnerCount; i++)
 		tickSmokeRunner(_gridRunners[i], _gridRunnerStates[i], currentFrame);
 	for (int16 i = 0; i < _exitRunnerCount; i++)
@@ -2217,14 +2218,14 @@ void ZoombiniPuzzleSmoke::setSmokeRunnerPoint(ZmbFeature *feature, const Common:
 
 void ZoombiniPuzzleSmoke::resetAndReinitLevel() {
 	clearZmbTraits(0);
-	if (_difficultyLevel <= kPuzzleLevel2)
+	if (_puzzleLevel <= kPuzzleLevel2)
 		clearZmbTraits(1);
 	else
 		clearZmbTraits(7);
 	clearReflectionRunners();
 	clearAllRunnerSlots();
 
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel1:
 		initLowLevelQuestionRunners(_questionZmbCount);
 		break;
@@ -2275,7 +2276,7 @@ int16 ZoombiniPuzzleSmoke::evaluateRunnerDrop(ZmbFeature *runner, const Common::
 	// Converted from blocking to event-driven.
 	// Return the slot index for a valid drop rectangle, or -1 otherwise.
 
-	if (kPuzzleLevel3 <= _difficultyLevel) {
+	if (kPuzzleLevel3 <= _puzzleLevel) {
 		if (_leftFilterCount < 3) {
 			for (int16 dropRectIdx = 0; dropRectIdx < 3; dropRectIdx++) {
 				int16 rectIdx = 3 * _leftFilterCount + dropRectIdx;
@@ -2354,7 +2355,7 @@ void ZoombiniPuzzleSmoke::handleFrameTransition(int16 eventCode) {
 void ZoombiniPuzzleSmoke::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCode) {
 	// Every active level-4 overlay SCRB uses this dispatch.
 	// Its first event changes phase 3 to phase 2.
-	if (feature == _overlayAnimFeature && _difficultyLevel == kPuzzleLevel4) {
+	if (feature == _overlayAnimFeature && _puzzleLevel == kPuzzleLevel4) {
 		handleFrameTransition(eventCode);
 		return;
 	}
@@ -2447,7 +2448,7 @@ void ZoombiniPuzzleSmoke::processAnimDispatchEvent(ZmbFeature *feature, int16 ev
 				break;
 			case kMirrorLaneEventCode038_FinishLevel4Compare:
 				// The level-4 compare marker either advances the transition or starts the answer result.
-				if (_difficultyLevel == kPuzzleLevel4) {
+				if (_puzzleLevel == kPuzzleLevel4) {
 					if (_transitionPhase == TransitionPhase::kInitialPair03) {
 						if (_activeZmb) {
 							assignZmbTraitsFromSrc(0, _activeZmb);
@@ -2520,7 +2521,7 @@ void ZoombiniPuzzleSmoke::processAnimDispatchEvent(ZmbFeature *feature, int16 ev
 		break;
 	case kMirrorMatchEventCode003_ResetCurrentLevel:
 		// Reset the current low-level state when the comparison animation rejects a pair.
-		if (kPuzzleLevel1 <= _difficultyLevel && _difficultyLevel < kPuzzleLevel4)
+		if (kPuzzleLevel1 <= _puzzleLevel && _puzzleLevel < kPuzzleLevel4)
 			_bResetLevel = true;
 		break;
 	case kMirrorMatchEventCode004_StartNextCompare:
@@ -2534,7 +2535,7 @@ void ZoombiniPuzzleSmoke::processAnimDispatchEvent(ZmbFeature *feature, int16 ev
 		// These markers select the feet-specific rejection SCRS for the active Snoid.
 		if (_activeZmb) {
 			byte orient = _activeZmb->_trait._feet;
-			int16 scrsId = static_cast<int16>(_scrbZmbAnimIdArr[_bCompareSwapped ? 1 : 0] + orient);
+			int16 scrsId = static_cast<int16>(_scrbZmbAnimIds[_bCompareSwapped ? 1 : 0] + orient);
 			playZmbScript(ZmbScrsCompletionMode::kHide, feature, scrsId, _activeZmb);
 		}
 		break;
@@ -2582,7 +2583,7 @@ void ZoombiniPuzzleSmoke::processAnimDispatchEvent(ZmbFeature *feature, int16 ev
 		// Remove the rejected Zoombini from the active queue and play its rejection animation.
 		if (_activeZmb) {
 			for (int16 i = 0; i < _pageLoadedZmbCount; i++) {
-				if (_zmbQueue[i] && getSnoid(_zmbQueue[i]) == _activeZmb && _difficultyLevel != kPuzzleLevel4) {
+				if (_zmbQueue[i] && getSnoid(_zmbQueue[i]) == _activeZmb && _puzzleLevel != kPuzzleLevel4) {
 					_zmbQueue[i] = 0;
 					break;
 				}
@@ -2652,10 +2653,10 @@ void ZoombiniPuzzleSmoke::onPostRenderFrame() {
 	// Reset level
 	if (_bResetLevel) {
 		_bResetLevel = false;
-		if (_difficultyLevel <= kPuzzleLevel2) {
+		if (_puzzleLevel <= kPuzzleLevel2) {
 			_bShowAnswer = false;
 			loadScrbOnWellRunner(kResScrb11002_Well);
-		} else if (_difficultyLevel == kPuzzleLevel3) {
+		} else if (_puzzleLevel == kPuzzleLevel3) {
 			_bShowAnswer = true;
 			_answerState = AnswerState::kIdle02;
 			loadScrbOnAnswerRunner(kResScrb11003_Answer);
@@ -2721,7 +2722,7 @@ void ZoombiniPuzzleSmoke::onPostRenderFrame() {
 		_activeZmb = nullptr;
 
 		// Reload smoke stack
-		if (_difficultyLevel <= kPuzzleLevel2) {
+		if (_puzzleLevel <= kPuzzleLevel2) {
 			if (_smokeStackAFeature) {
 				_smokeStackAFeature->addFlag(static_cast<ZmbFeature::Flag>(ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE));
 				_smokeStackAFeature->removeFlag(static_cast<ZmbFeature::Flag>(ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_01000000_DEFER_RENDER));
@@ -2735,17 +2736,17 @@ void ZoombiniPuzzleSmoke::onPostRenderFrame() {
 		}
 
 		// Update match readiness
-		if (_difficultyLevel <= kPuzzleLevel2)
+		if (_puzzleLevel <= kPuzzleLevel2)
 			_matchRunnerIndex = 0;
 
-		if (_difficultyLevel < kPuzzleLevel4 ||
-			(_difficultyLevel == kPuzzleLevel4 && _transitionPhase == TransitionPhase::kAnswerReady01)) {
-			if (kPuzzleLevel3 <= _difficultyLevel)
+		if (_puzzleLevel < kPuzzleLevel4 ||
+			(_puzzleLevel == kPuzzleLevel4 && _transitionPhase == TransitionPhase::kAnswerReady01)) {
+			if (kPuzzleLevel3 <= _puzzleLevel)
 				_questionZmbCount = copyPairToCompareBuffer();
 			else
 				selectQuestionZmb();
 
-			if (_questionZmbCount && _placedZmbCount <= _pageLoadedZmbCount && _difficultyLevel < kPuzzleLevel4) {
+			if (_questionZmbCount && _placedZmbCount <= _pageLoadedZmbCount && _puzzleLevel < kPuzzleLevel4) {
 				_answerState = AnswerState::kQuestion01;
 				loadScrbOnAnswerRunner(kResScrb11005_AnswerAlternate);
 			} else {
@@ -2886,7 +2887,7 @@ ZmbEventHandleResult ZoombiniPuzzleSmoke::onLButtonDown(const Common::Point &abs
 	}
 
 	// Real Zoombinis are manually draggable only in L1-2.
-	ZmbSnoid *clickedSnoid = (_difficultyLevel <= kPuzzleLevel2) ? findSnoidAtPoint(absPos) : nullptr;
+	ZmbSnoid *clickedSnoid = (_puzzleLevel <= kPuzzleLevel2) ? findSnoidAtPoint(absPos) : nullptr;
 	if (clickedSnoid) {
 		bool onCliff = false;
 		for (int16 i = 0; i < _loadedOnCliffCount; i++) {
@@ -2916,7 +2917,7 @@ ZmbEventHandleResult ZoombiniPuzzleSmoke::onLButtonDown(const Common::Point &abs
 	}
 
 	// L3-4: grid runner drag
-	if (kPuzzleLevel3 <= _difficultyLevel) {
+	if (kPuzzleLevel3 <= _puzzleLevel) {
 		for (int16 runnerIdx = 1; runnerIdx < _gridRunnerCount && runnerIdx < 7; runnerIdx++) {
 			ZmbFeature *gridRunner = _gridRunners[runnerIdx];
 			if (!gridRunner || !gridRunner->findDrawRecordAtPoint(absPos))
@@ -2984,7 +2985,7 @@ ZmbEventHandleResult ZoombiniPuzzleSmoke::onLButtonDown(const Common::Point &abs
 	}
 
 	// L1-2: cliff runner drag
-	if (_difficultyLevel <= kPuzzleLevel2) {
+	if (_puzzleLevel <= kPuzzleLevel2) {
 		// The right display contains a copy; re-drag the hidden cliff runner while preserving its 1-based source index.
 		if (_matchRunnerIndex && _cliffDropRect.contains(absPos)) {
 			const int16 sourceIdx = _matchRunnerIndex - 1;
@@ -3109,7 +3110,7 @@ ZmbEventHandleResult ZoombiniPuzzleSmoke::onLButtonUp(const Common::Point &absPo
 		_draggedRunner->setNeedsRedraw(true);
 
 		int16 dropSlot = evaluateRunnerDrop(_draggedRunner, _dragRunnerLastMousePos);
-		if (kPuzzleLevel3 <= _difficultyLevel) {
+		if (kPuzzleLevel3 <= _puzzleLevel) {
 			if (0 <= dropSlot && dropSlot < 6) {
 				const int16 sideStart = (dropSlot < 3) ? 0 : 3;
 				int16 &sideCount = (dropSlot < 3) ? _leftFilterCount : _rightFilterCount;
