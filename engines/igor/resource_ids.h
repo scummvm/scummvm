@@ -338,6 +338,7 @@
 #define CMF_7_2 314
 #define CMF_7_3 315
 #define CMF_7_4 316
+#define CMF_1 1275
 #define FRM_IgorDirBack 317
 #define FRM_IgorDirRight 318
 #define FRM_IgorDirFront 319
