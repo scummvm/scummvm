@@ -606,6 +606,7 @@ fbear	Fatty Bear's Birthday Surprise
 	4f1d6f8b38343dba405472538b5037ed	7717	en	DOS	HE 62	-	-	George Kormendi
 	ef74d9071d4e564b037cb44bd6774de7	-1	he	DOS	HE 62	-	-	sev
 	3df6ead57930488bc61e6e41901d0e97	-1	en	Mac	HE 62	-	-	khalek
+	af1da28105fa678dc03eed498156dc9f	7722	en	Mac	HE 62	Floppy	-	HerbFargus
 	179879b6e35c1ead0d93aab26db0951b	13381	en	Windows	HE 70	-	-	khalek
 
 	47e75b1bdcb44c78cb94883d1731ccf8	6203	en	DOS	HE 62	Demo	-	khalek
