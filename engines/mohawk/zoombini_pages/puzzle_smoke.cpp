@@ -559,7 +559,7 @@ Common::String ZoombiniPuzzleSmoke::debugGetAnswer() const {
 		}
 	}
 
-	int16 solution[6] = {0};
+	int16 solution[6] = {};
 	int16 solutionLeftCount = 0;
 	int16 solutionRightCount = 0;
 	bool found = false;
@@ -650,7 +650,7 @@ Common::String ZoombiniPuzzleSmoke::debugGetAnswer() const {
 		for (int16 slot = 0; slot < solutionRightCount; slot++)
 			answer += Common::String::format("      Filter %d\n", solution[solutionLeftCount + slot] + 1);
 	}
-	bool usedFilters[6] = {0};
+	bool usedFilters[6] = {};
 	for (int16 slot = 0; slot < solutionLeftCount + solutionRightCount; slot++)
 		usedFilters[solution[slot]] = true;
 	bool hasUsedFilter = false;
@@ -1350,7 +1350,7 @@ void ZoombiniPuzzleSmoke::startNextCompareSequence() {
 
 void ZoombiniPuzzleSmoke::selectQuestionZmb() {
 	int16 count = 0;
-	uint16 available[21] = {0};
+	uint16 available[21] = {};
 	_questionSnoidId = 0;
 	_questionCrystalIdx = -1;
 

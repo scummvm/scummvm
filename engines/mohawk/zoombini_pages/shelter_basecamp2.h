@@ -392,7 +392,7 @@ protected:
 	 * @ref ZoombiniShelterBasecampTwo::kEasterEggButton10_BonfireSticks also stores
 	 * @ref ZoombiniShelterBasecampTwo::_bonfireAnimRunnerIdx.
 	 */
-	uint16 _buttonAnimRunnerIdxs[kEasterEggButtonCount] = {0};
+	uint16 _buttonAnimRunnerIdxs[kEasterEggButtonCount] = {};
 
 	/** Index of the last occupied storage slot. */
 	int16 _storageLastOccupiedIdx = 0;

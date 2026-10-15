@@ -640,7 +640,7 @@ public:
 		/** Palette scale percentage for a partial fade. */
 		uint8 _scalePercent = 100;
 		/** Source palette captured before a partial fade begins. */
-		byte _sourcePalette[3 * 256] = {0};
+		byte _sourcePalette[3 * 256] = {};
 
 		FadeEffect(FadeType type, uint32 duration)
 			: _type(type), _duration(duration) {}

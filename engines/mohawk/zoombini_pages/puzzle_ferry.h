@@ -425,7 +425,7 @@ private:
 	 */
 	bool _mainRejectSnoidCallbackActive = false;
 	/** Up to eight zero-based neighboring seat indices per seat; -1 marks an unused entry. */
-	int8 _seatNeighborIndices[20][8] = {0};
+	int8 _seatNeighborIndices[20][8] = {};
 	/** Whether the required initial render populated @ref ZoombiniPuzzleFerry::_seatNeighborIndices. */
 	bool _seatAdjacencyReady = false;
 	/** Whether the optional matched-trait highlight was enabled when the page opened. */
@@ -475,7 +475,7 @@ private:
 	/** Reject-raft landing effect loaded from SCRB 1706 for destination codes 7 through 9. */
 	ZmbFeature *_rejectRaftLandingFeature = nullptr;
 	/** SCRB 1450-1452 priority-chain overlays used while the seat layout is materialized. */
-	ZmbFeature *_seatPriorityOverlayFeatures[3] = {0};
+	ZmbFeature *_seatPriorityOverlayFeatures[3] = {};
 	/** Seat and decoration features shifted with accepted Zoombinis during the real Go departure. */
 	Common::Array<ZmbFeature *> _departureShiftFeatures;
 };

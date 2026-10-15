@@ -691,9 +691,9 @@ private:
 	/** Runtime destination @ref ZmbTrait::TraitKind for each source Zoombini trait. */
 	ZmbTrait::TraitKind _traitDestinationKinds[4] = {ZmbTrait::kTraitHair, ZmbTrait::kTraitEyes, ZmbTrait::kTraitNose, ZmbTrait::kTraitFeet};
 	/** Zoombini IDs for up to seven accepted lure submissions; a seventh submission evicts the oldest pair. */
-	uint16 _submittedSnoidQueue[7] = {0};
+	uint16 _submittedSnoidQueue[7] = {};
 	/** Fleen indices paired one-to-one with @ref _submittedSnoidQueue. */
-	int16 _submittedFleenQueue[7] = {0};
+	int16 _submittedFleenQueue[7] = {};
 	/** Number of accepted pairs currently retained in the submission queue. */
 	int16 _submittedPairCount = 0;
 	/** Zoombini ID accepted for the next boarding sequence, or zero when none is pending. */
@@ -734,7 +734,7 @@ private:
 	/** Random SCRB 1004-1006 feature spawned for the bee and final escape. */
 	ZmbFeature *_escapeExitFeature = nullptr;
 	/** SCRB 1200-1206 overlay features used by the submitted-pair escape sequence. */
-	ZmbFeature *_escapeOverlayFeatures[7] = {0};
+	ZmbFeature *_escapeOverlayFeatures[7] = {};
 	/** Fleen creature state indexed by visual slot. */
 	FleenCreature _fleenCreatures[16];
 	/** Number of valid entries in @ref _fleenCreatures. */

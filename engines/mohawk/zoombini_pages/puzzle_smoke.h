@@ -791,9 +791,9 @@ private:
 	/** Whether the player may use the comparison lever or rearrange Zoombinis and comparison runners. */
 	bool _comparisonInputEnabled = true;
 	/** Zoombinis entering during the level 1/2 walk-in sequence. */
-	ZmbSnoid *_level12WalkInSnoids[2] = {0};
+	ZmbSnoid *_level12WalkInSnoids[2] = {};
 	/** Whether the level 1/2 walk-in pose is waiting for its animation event. */
-	bool _level12WalkInPosePending[2] = {0};
+	bool _level12WalkInPosePending[2] = {};
 
 	// --- Non-Snoid runner drag state ---
 	/** Cliff or grid runner currently being dragged. */
@@ -851,14 +851,14 @@ private:
 	ZmbTrait _seenTraitsB;
 
 	/** Home-position permutation for the six movable level 3-4 filters. */
-	int16 _filterHomePermutation[8] = {0};
+	int16 _filterHomePermutation[8] = {};
 
 	// === SCRB resource IDs (per-level) ===
 
 	/** Four level-specific main animation SCRB IDs. */
-	int16 _scrbAnimIds[4] = {0};
+	int16 _scrbAnimIds[4] = {};
 	/** Two Zoombini animation base SCRB IDs. */
-	int16 _scrbZmbAnimIds[2] = {0};
+	int16 _scrbZmbAnimIds[2] = {};
 	/** Smoke stack A SCRB ID. */
 	int16 _scrbSmokeStackResA = 0;
 	/** Smoke stack B SCRB ID. */
@@ -879,44 +879,44 @@ private:
 	// === Runner arrays ===
 
 	/** Cart-column runners created for placed Zoombinis and reused during departure. */
-	ZmbFeature *_departureColumnRunners[20] = {0};
+	ZmbFeature *_departureColumnRunners[20] = {};
 
 	/** Accepted Zoombinis aligned with the placed cart-column runners. */
-	ZmbSnoid *_acceptedZmbs[20] = {0};
+	ZmbSnoid *_acceptedZmbs[20] = {};
 
 	/** Zoombini queue waiting for Smoke's next authored phase. */
-	uint16 _zmbQueue[21] = {0};
+	uint16 _zmbQueue[21] = {};
 
 	/** Level 1-2 candidate-panel runner features. */
-	ZmbFeature *_cliffRunners[20] = {0};
+	ZmbFeature *_cliffRunners[20] = {};
 	/** Number of active cliff runners. */
 	int16 _cliffRunnerCount = 0;
 	/** Cached state for level 1 cliff runners. */
 	ZmbSmokeRunnerState _cliffRunnerStates[20];
 
 	/** Level 2 mirrored-lane runner features. */
-	ZmbFeature *_l2Runners[6] = {0};
+	ZmbFeature *_l2Runners[6] = {};
 	/** Number of active level 2 runners. */
 	int16 _l2RunnerCount = 0;
 	/** Cached state for level 2 runners. */
 	ZmbSmokeRunnerState _l2RunnerStates[6];
 
 	/** Level 3 grid runner features. */
-	ZmbFeature *_gridRunners[9] = {0};
+	ZmbFeature *_gridRunners[9] = {};
 	/** Number of active grid runners; runtime setup starts at one. */
 	int16 _gridRunnerCount = 0;
 	/** Cached state for level 3 grid runners. */
 	ZmbSmokeRunnerState _gridRunnerStates[9];
 
 	/** Level 4 exit runner features. */
-	ZmbFeature *_exitRunners[4] = {0};
+	ZmbFeature *_exitRunners[4] = {};
 	/** Number of active exit runners. */
 	int16 _exitRunnerCount = 0;
 	/** Cached state for level 4 exit runners. */
 	ZmbSmokeRunnerState _exitRunnerStates[4];
 
 	/** Central reflection runner features. */
-	ZmbFeature *_reflectionRunners[2] = {0};
+	ZmbFeature *_reflectionRunners[2] = {};
 	/** Number of active central reflection runners. */
 	int16 _reflectionRunnerCount = 0;
 	/** Cached state for central reflection runners. */
@@ -935,7 +935,7 @@ private:
 	// === Display runners (L3-4 only) ===
 
 	/** Filter runner assigned to each of the six ordered level 3/4 slots. */
-	ZmbFeature *_filterSlotRunners[6] = {0};
+	ZmbFeature *_filterSlotRunners[6] = {};
 
 	// === Trait grid (L3-4) ===
 

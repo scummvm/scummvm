@@ -388,7 +388,7 @@ void ZoombiniPuzzleFleens::spawnFleenCreatures() {
 	hooks.setPreRenderFunc(&ZoombiniPuzzleFleens::fleenCreature_preRender);
 	hooks.setRenderFunc(&ZoombiniPuzzleFleens::fleenCreature_render);
 
-	ZmbFeature *normalFeatures[kFleenPosCode16_LowerBranchFifth + 1] = {0};
+	ZmbFeature *normalFeatures[kFleenPosCode16_LowerBranchFifth + 1] = {};
 	for (int16 i = 0; i < _activeFleenCount; i++) {
 		FleenCreature &creature = _fleenCreatures[i];
 		// Create one linkable runner per Fleen.
@@ -1519,8 +1519,8 @@ bool ZoombiniPuzzleFleens::debugSetChances(int16 remaining) {
 	if (needed <= 0)
 		return true;
 
-	uint16 selectedSnoidIds[6] = {0};
-	int16 selectedFleenIndices[6] = {0};
+	uint16 selectedSnoidIds[6] = {};
+	int16 selectedFleenIndices[6] = {};
 	int16 selectedCount = 0;
 	for (int16 creatureIndex = 0;
 		 creatureIndex < _activeFleenCount && selectedCount < needed;

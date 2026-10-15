@@ -609,7 +609,7 @@ void ZoombiniPuzzleHotel::computeTraitVariantCounts() {
 	memset(_traitVariantCounts, 0, sizeof(_traitVariantCounts));
 
 	// Count each trait variant per axis.
-	byte traitCounts[kTraitAxisCount][6] = {0};
+	byte traitCounts[kTraitAxisCount][6] = {};
 
 	Common::Array<ZmbSnoid *> snoids;
 	collectPackSnoids(snoids, true);
@@ -688,9 +688,9 @@ void ZoombiniPuzzleHotel::generateRoomRules() {
 	// At difficulty 2, forbid rooms whose pre-filled constraint-grid cells have no matching Zoombinis.
 	if (_puzzleLevel == kPuzzleLevel3) {
 		// Build a temporary 5x5 constraint grid
-		int16 tempGrid[25] = {0};
-		int16 usedRowValues[5] = {0};
-		int16 usedColumnValues[5] = {0};
+		int16 tempGrid[25] = {};
+		int16 usedRowValues[5] = {};
+		int16 usedColumnValues[5] = {};
 
 		// Fill all rows and columns with random unique values.
 		for (int16 i = 0; i < 5; i++) {

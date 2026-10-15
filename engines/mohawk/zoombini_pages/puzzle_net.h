@@ -574,21 +574,21 @@ private:
 	// --- Rule grids (puzzle solution tables) ---
 
 	/** Generated selector value for the row axis at each wall cell. */
-	int16 _rowAxisRuleValues[125] = {0};
+	int16 _rowAxisRuleValues[125] = {};
 	/** Generated selector value for the broad-column axis at each wall cell. */
-	int16 _columnAxisRuleValues[125] = {0};
+	int16 _columnAxisRuleValues[125] = {};
 	/** Generated selector value for the subcolumn axis at each high-level wall cell. */
-	int16 _subcolumnAxisRuleValues[125] = {0};
+	int16 _subcolumnAxisRuleValues[125] = {};
 	/** Zoombinis launched by each unfired target; zero marks a miss and -1 a fired cell. */
-	int16 _targetLaunchCounts[125] = {0};
+	int16 _targetLaunchCounts[125] = {};
 	/** Immutable generated launch counts retained for target rendering and @ref debugGetAnswer(). */
-	int16 _initialTargetLaunchCounts[125] = {0};
+	int16 _initialTargetLaunchCounts[125] = {};
 
 	/** Level-2/4 cascading rotation step applied to one axis grid, or zero when unused. */
 	int16 _axisRuleRotationStep = 0;
 
 	/** Per-target launch batches whose sum covers the materialized active pack. */
-	int16 _targetLaunchBatchSizes[12] = {0};
+	int16 _targetLaunchBatchSizes[12] = {};
 	/** Number of generated nonzero targets for the materialized active pack. */
 	int16 _targetCount = 2;
 
@@ -622,7 +622,7 @@ private:
 	// --- Feature runners ---
 
 	/** Wall-column route features indexed by horizontal column. */
-	ZmbFeature *_columnRouteFeatures[5] = {0};
+	ZmbFeature *_columnRouteFeatures[5] = {};
 	/** Column-entry transition feature. */
 	ZmbFeature *_columnEntryFeature = nullptr;
 	/** Introductory wall-column label feature. */
@@ -632,11 +632,11 @@ private:
 	/** Submit and narrator-feedback feature. */
 	ZmbFeature *_feedbackFeature = nullptr;
 	/** Visible selector-value features indexed by machine control. */
-	ZmbFeature *_selectorValueFeatures[3] = {0};
+	ZmbFeature *_selectorValueFeatures[3] = {};
 
 	/** v2.0US only */
 	/** TLC v2 selector-hover feature runners. */
-	ZmbFeature *_selectorHoverFeatures[3] = {0};
+	ZmbFeature *_selectorHoverFeatures[3] = {};
 
 	/** v2.0US only */
 	/** TLC v2 submit-hover feature runner. */
@@ -647,15 +647,15 @@ private:
 	// --- Slot display tracking ---
 
 	/** Static target-indicator feature for each wall cell. */
-	ZmbFeature *_targetSlotFeatures[125] = {0};
+	ZmbFeature *_targetSlotFeatures[125] = {};
 	/** Fired-shot features in submission order, including a terminal rejected shot. */
-	ZmbFeature *_shotHistoryFeatures[25] = {0};
+	ZmbFeature *_shotHistoryFeatures[25] = {};
 	/** Settled wall position recorded for each fired-shot feature. */
 	Common::Point _shotHistoryPositions[25] = {};
 	/** Selector values captured when each shot was fired. */
-	int16 _shotSelectorValues[25][3] = {0};
+	int16 _shotSelectorValues[25][3] = {};
 	/** Previous selector values captured for each shot's transition frames. */
-	int16 _shotPreviousSelectorValues[25][3] = {0};
+	int16 _shotPreviousSelectorValues[25][3] = {};
 
 	/** Last occupied entry in the shot-history arrays, or -1 before the first shot. */
 	int16 _lastShotFeatureIdx = -1;
@@ -717,9 +717,9 @@ private:
 	// --- Column/walk tracking ---
 
 	/** Snoid IDs currently assigned to column slots. */
-	uint16 _columnSlotSnoidIds[3] = {0};
+	uint16 _columnSlotSnoidIds[3] = {};
 	/** Snoid IDs currently running the initial column-travel SCRS. */
-	uint16 _travelingColumnSnoidIds[3] = {0};
+	uint16 _travelingColumnSnoidIds[3] = {};
 	/** Column currently used by staging, entry, or launch processing. */
 	int16 _activeColumnIdx = 0;
 	/** Active-pack index walking to the staging point, or -1 when none. */

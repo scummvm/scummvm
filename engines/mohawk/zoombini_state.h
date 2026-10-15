@@ -544,7 +544,7 @@ public:
 	Common::Rect _rect;
 
 private:
-	byte _name[kNameByteCount] = {0};
+	byte _name[kNameByteCount] = {};
 
 public:
 	const ZmbTrait &getTraits() const { return _traits; }
@@ -644,7 +644,7 @@ private:
 	byte _bIsOccupied = 0;
 
 	/** 0x09-0x12: Zoombini name (10 bytes) */
-	byte _name[10] = {0};
+	byte _name[10] = {};
 
 public:
 	const ZmbTrait &getTraits() const { return _traits; }
@@ -1732,7 +1732,7 @@ public:
 		/** Retained modulo-16 ambient resource-release cadence. */
 		uint16 _preloadCounter = 0;
 		/** Non-repeat random-pool state indexed by @ref ZoombiniPageType. */
-		uint32 _poolStates[kPoolStateCount] = {0};
+		uint32 _poolStates[kPoolStateCount] = {};
 
 		/** Return the retained non-repeat pool for @p pageType. */
 		uint32 &getPoolState(ZoombiniPageType pageType) {
@@ -2304,7 +2304,7 @@ public:
 	 * Releases without that pool generate names procedurally and do not use this table.
 	 * This table is not serialized and survives save loads and new games within the engine session.
 	 */
-	byte _nameIdDrawnFlags[625] = {0};
+	byte _nameIdDrawnFlags[625] = {};
 	/** Runtime-only ambient scheduler state for this engine session. */
 	AmbientSoundState _ambientSoundState;
 	/** Runtime-only Slides celebration scheduler state for this engine session. */

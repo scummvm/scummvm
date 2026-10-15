@@ -1330,7 +1330,7 @@ void ZoombiniInteractiveRodMap::textRouteNames_postRender(ZmbFeature *feature) {
 }
 
 void ZoombiniInteractiveRodMap::buildPageRouteLevelMap() {
-	uint16 pageLevelValues[17] = {0};
+	uint16 pageLevelValues[17] = {};
 	for (uint16 shapeId = kResShape1000_Bridge01; shapeId <= kResShape1000_Picker16; shapeId++)
 		_pageNodeLevelMap[shapeId] = 0;
 

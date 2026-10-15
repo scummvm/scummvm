@@ -187,7 +187,7 @@ public:
 
 	// --- Per-runner traversal map ---
 	/** Per-runner visited-cell map used by the Lilly pathfinder. */
-	int16 visitGrid[12][13] = {0};
+	int16 visitGrid[12][13] = {};
 
 	/** Reset identity, traversal, interpolation, and callback state. */
 	void clear();
@@ -944,19 +944,19 @@ private:
 	int16 _obstacleGridFamily = 0;
 
 	/** Authored grid pattern tables selected during setup. */
-	int16 _authoredPathGrids[3][12][12] = {0};
+	int16 _authoredPathGrids[3][12][12] = {};
 	/** Occupancy marker for each pond cell. */
-	byte _cellOccupancy[12][13] = {0};
+	byte _cellOccupancy[12][13] = {};
 	/** Reservation marker used while a runner claims an exit cell. */
-	byte _exitCellReservations[12][13] = {0};
+	byte _exitCellReservations[12][13] = {};
 	/** Pattern attribute for each pad cell. */
-	byte _padPattern[12][13] = {0};
+	byte _padPattern[12][13] = {};
 	/** Pad-shape attribute for each pad cell. */
-	byte _padShape[12][13] = {0};
+	byte _padShape[12][13] = {};
 	/** Color attribute for each pad cell. */
-	byte _padColor[12][13] = {0};
+	byte _padColor[12][13] = {};
 	/** Decoration shape derived from each pad's pattern and color. */
-	byte _padDecorationShape[12][13] = {0};
+	byte _padDecorationShape[12][13] = {};
 	/** Hit rectangles for pond cells. */
 	Common::Rect _padCellRects[12][13];
 	/** Screen positions of pond cells. */
@@ -966,34 +966,34 @@ private:
 	/** Attribute family required by each generated challenge slot. */
 	ZmbLillyGridWalker::PadAttrType _challengeAttrTypes[13] = {};
 	/** Required value for each generated challenge slot. */
-	int16 _challengeAttrValues[13] = {0};
+	int16 _challengeAttrValues[13] = {};
 	/** Tattoo index associated with each generated challenge slot. */
-	int16 _challengeTattooIndices[13] = {0};
+	int16 _challengeTattooIndices[13] = {};
 	/** Number of times each generated challenge slot has been placed. */
-	int16 _challengePlacementCounts[13] = {0};
+	int16 _challengePlacementCounts[13] = {};
 	/** Challenge markers; zero marks a slot selected for this puzzle. */
-	int16 _challengeEnabledMarkers[13] = {0};
+	int16 _challengeEnabledMarkers[13] = {};
 	/** Randomized slot order used while selecting the active challenge set. */
-	int16 _challengeSlotShuffle[13] = {0};
+	int16 _challengeSlotShuffle[13] = {};
 	/** Generation-owned crossing-entry rows indexed by tattoo deck index. */
-	uint16 _generatedAnswerEntryRowMasks[kToadCount] = {0};
+	uint16 _generatedAnswerEntryRowMasks[kToadCount] = {};
 	/** Generated routes that remain directly crossable after challenge placement. */
-	uint16 _generatedDirectEntryRowMasks[kToadCount] = {0};
+	uint16 _generatedDirectEntryRowMasks[kToadCount] = {};
 
 	// --- Crab entry point table (difficulty 3/4) ---
 	/** Entry columns available to newly spawned crabs. */
-	int16 _crabEntryColumns[16] = {0};
+	int16 _crabEntryColumns[16] = {};
 	/** Attribute families assigned to crab entry points. */
 	ZmbLillyGridWalker::PadAttrType _crabEntryAttrTypes[16] = {};
 	/** Attribute values assigned to crab entry points. */
-	int16 _crabEntryAttrValues[16] = {0};
+	int16 _crabEntryAttrValues[16] = {};
 	/** Number of valid crab entry points. */
 	int16 _crabEntryCount = 0;
 	/** Pad attribute family followed by this puzzle's crabs. */
 	ZmbLillyGridWalker::PadAttrType _crabPathAttrType = ZmbLillyGridWalker::kPadAttrNone;
 
 	/** Claimed crab-trail state used when later crabs reuse an existing path. */
-	int8 _crabTrailState[12][13] = {0};
+	int8 _crabTrailState[12][13] = {};
 
 	// --- BFS layer arrays ---
 	/** Maximum number of attribute-specific BFS layers. */
@@ -1004,18 +1004,18 @@ private:
 	static const int kMaxBFSEntries = kBFSEntriesPerLayer * kMaxBFSLayers;
 
 	/** Row/layer visit value propagated through each BFS entry. */
-	int16 _bfsVisitState[kMaxBFSEntries] = {0};
+	int16 _bfsVisitState[kMaxBFSEntries] = {};
 	/** Direction used to reach each BFS layer entry. */
-	int16 _bfsDirection[kMaxBFSEntries] = {0};
+	int16 _bfsDirection[kMaxBFSEntries] = {};
 	/** Distance from the layer's BFS origin. */
-	int16 _bfsDistance[kMaxBFSEntries] = {0};
+	int16 _bfsDistance[kMaxBFSEntries] = {};
 
 	/** Maximum number of cells in the active BFS queue. */
 	static const int kBFSQueueMax = 144;
 	/** Queued BFS columns. */
-	int16 _bfsQueueCol[kBFSQueueMax] = {0};
+	int16 _bfsQueueCol[kBFSQueueMax] = {};
 	/** Queued BFS rows. */
-	int16 _bfsQueueRow[kBFSQueueMax] = {0};
+	int16 _bfsQueueRow[kBFSQueueMax] = {};
 	/** Head index of the active BFS queue. */
 	int16 _bfsQueueHead = 0;
 	/** Tail index of the active BFS queue. */
@@ -1041,12 +1041,12 @@ private:
 	 */
 	ZmbLillyGridWalker _runnerStates[kMaxRunners];
 	/** Visual feature runner for each Lilly semantic runner slot. */
-	ZmbFeature *_runnerFeatures[kMaxRunners] = {0};
+	ZmbFeature *_runnerFeatures[kMaxRunners] = {};
 	/** Active-pack Snoids in their original pack order. */
 	Common::Array<ZmbSnoid *> _packSnoids;
 
 	/** Runner slots currently occupied by crabs. */
-	int16 _activeCrabRunnerIndices[kMaxCrabs] = {0};
+	int16 _activeCrabRunnerIndices[kMaxCrabs] = {};
 	/** Number of active crab slots. */
 	int16 _activeCrabCount = 0;
 	/** Next crab entry table index to test. */
@@ -1056,7 +1056,7 @@ private:
 
 	// --- Freed runners pending cleanup ---
 	/** Runner slots awaiting feature unlink and cleanup. */
-	int16 _runnerCleanupQueue[kMaxRunners] = {0};
+	int16 _runnerCleanupQueue[kMaxRunners] = {};
 	/** Number of entries in @ref _runnerCleanupQueue. */
 	int16 _runnerCleanupQueueSize = 0;
 
@@ -1067,49 +1067,49 @@ private:
 	static const int kMaxMoveQueueSize = 100;
 
 	/** Toad runners waiting to turn in on the far bank. */
-	int16 _farBankTurnInQueue[kMaxQueueSize] = {0};
+	int16 _farBankTurnInQueue[kMaxQueueSize] = {};
 	/** Number of queued far-bank turn-in runners. */
 	int16 _farBankTurnInQueueSize = 0;
 	/** Toad runners waiting to return to the near bank. */
-	int16 _bankReturnQueue[kMaxQueueSize] = {0};
+	int16 _bankReturnQueue[kMaxQueueSize] = {};
 	/** Number of queued bank-return runners. */
 	int16 _bankReturnQueueSize = 0;
 	/** Toad runners waiting to play their retirement crossing. */
-	int16 _retirementQueue[kMaxQueueSize] = {0};
+	int16 _retirementQueue[kMaxQueueSize] = {};
 	/** Number of queued retirement runners. */
 	int16 _retirementQueueSize = 0;
 	/** Toad runners waiting to rotate on the far bank. */
-	int16 _farBankRotationQueue[kMaxQueueSize] = {0};
+	int16 _farBankRotationQueue[kMaxQueueSize] = {};
 	/** Number of queued rotation runners. */
 	int16 _farBankRotationQueueSize = 0;
 	/** Toad runners waiting for their child rider to mount. */
-	int16 _childMountQueue[kMaxQueueSize] = {0};
+	int16 _childMountQueue[kMaxQueueSize] = {};
 	/** Number of queued child-mount runners. */
 	int16 _childMountQueueSize = 0;
 	/** Child runners waiting to depart from the far bank. */
-	int16 _childDepartureQueue[kMaxQueueSize] = {0};
+	int16 _childDepartureQueue[kMaxQueueSize] = {};
 	/** Number of queued child departures. */
 	int16 _childDepartureQueueSize = 0;
 	/** Toad movement-ready queue. */
-	int16 _toadStepReadyQueue[kMaxMoveQueueSize] = {0};
+	int16 _toadStepReadyQueue[kMaxMoveQueueSize] = {};
 	/** Number of entries in the ready queue. */
 	int16 _toadStepReadyQueueSize = 0;
 	// Lilly queue entries use Lilly runner slots and Lilly traversal phases.
 	// Do not centralize this queue with Maze movement scheduling.
 	/** Lilly path-step queue. */
-	int16 _toadPathStepQueue[kMaxMoveQueueSize] = {0};
+	int16 _toadPathStepQueue[kMaxMoveQueueSize] = {};
 	/** Number of entries in the movement queue. */
 	int16 _toadPathStepQueueSize = 0;
 	/** Deferred ready events waiting for the current frame phase. */
-	int16 _pendingToadStepReadyQueue[kMaxMoveQueueSize] = {0};
+	int16 _pendingToadStepReadyQueue[kMaxMoveQueueSize] = {};
 	/** Number of deferred ready events. */
 	int16 _pendingToadStepReadyQueueSize = 0;
 	/** Deferred movement events waiting for the current frame phase. */
-	int16 _pendingToadPathStepQueue[kMaxMoveQueueSize] = {0};
+	int16 _pendingToadPathStepQueue[kMaxMoveQueueSize] = {};
 	/** Number of deferred movement events. */
 	int16 _pendingToadPathStepQueueSize = 0;
 	/** Toad runners waiting for path initialization. */
-	int16 _toadPathInitQueue[kMaxQueueSize] = {0};
+	int16 _toadPathInitQueue[kMaxQueueSize] = {};
 	/** Number of queued path initializations. */
 	int16 _toadPathInitQueueSize = 0;
 
@@ -1211,7 +1211,7 @@ private:
 	/** Second swap-cell animation feature. */
 	ZmbFeature *_secondSwapCellFeature = nullptr;
 	/** Row-anchor features used by lily-pad rendering. */
-	ZmbFeature *_padRowAnchorFeatures[12] = {0};
+	ZmbFeature *_padRowAnchorFeatures[12] = {};
 	/** One-shot Toad intro feature used at levels 2 through 4. */
 	ZmbFeature *_toadIntroFeature = nullptr;
 	/** Interactive swap-wand feature. */
