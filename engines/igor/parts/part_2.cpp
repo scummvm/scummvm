@@ -194,7 +194,10 @@ void IgorEngine::part2ExecuteAction(int action) {
 		}
 		if (_inventoryInfo[44] == 0 && _inventoryInfo[45] == 0) {
 			if (_objectsState[kAtticNailExaminedStateIndex] == 0) {
-				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
+				if (_game.version == kIdEngFloppy)
+					igorSay(202, 2);
+				else
+					igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 			} else {
 				part2SearchTrunk();
 				igorSay(204, 1, 111);
@@ -205,7 +208,10 @@ void IgorEngine::part2ExecuteAction(int action) {
 		}
 		if (_inventoryInfo[44] != 0 && _inventoryInfo[45] == 0) {
 			if (_objectsState[kAtticSmallCrackPresentStateIndex] == 0) {
-				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
+				if (_game.version == kIdEngFloppy)
+					igorSay(202, 2);
+				else
+					igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 			} else {
 				part2SearchTrunk();
 				igorSay(205, 1, 112);
@@ -221,7 +227,10 @@ void IgorEngine::part2ExecuteAction(int action) {
 			igorSay(206, 1, 113);
 			addObjectToInventory(kInventoryObjectDynamite, 46);
 		} else if (_inventoryInfo[44] == 0 && _inventoryInfo[45] != 0 && _inventoryInfo[46] == 0 && _objectsState[kDynamitePlacedStateIndex] == 0) {
-			igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
+			if (_game.version == kIdEngFloppy)
+				igorSay(202, 2);
+			else
+				igorSay({ { 202, 1, 109 }, { 203, 1, 110 } });
 		} else {
 			igorSay(207, 2, 114);
 		}
