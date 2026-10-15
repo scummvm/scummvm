@@ -19,14 +19,9 @@
  *
  */
 
-#include "common/archive.h"
-#include "common/scummsys.h"
-
-#include "mohawk/video.h"
-
+#include "mohawk/zoombini_pages/transition_base.h"
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"
-#include "mohawk/zoombini_pages/transition_base.h"
 #include "mohawk/zoombini_sound.h"
 
 namespace Mohawk {

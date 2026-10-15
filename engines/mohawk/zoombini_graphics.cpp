@@ -20,7 +20,6 @@
  */
 #include "mohawk/zoombini_resource.h"
 
-#include "common/substream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -39,7 +38,6 @@
 #include "mohawk/zoombini_page.h"
 #include "mohawk/zoombini_scripts.h"
 #include "mohawk/zoombini_text.h"
-#include "zoombini_graphics.h"
 
 namespace Mohawk {
 

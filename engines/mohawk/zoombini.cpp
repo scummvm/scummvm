@@ -36,7 +36,6 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "graphics/cursorman.h"
 #include "gui/message.h"
 
 #include "mohawk/cursors.h"

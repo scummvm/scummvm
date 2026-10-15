@@ -22,8 +22,9 @@
 #ifndef MOHAWK_ZOOMBINI_RESOURCE_H
 #define MOHAWK_ZOOMBINI_RESOURCE_H
 
-#include "common/hashmap.h"
+#include "common/func.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Common {
 

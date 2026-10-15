@@ -35,8 +35,6 @@
 #include "gui/browser.h"
 #include "gui/message.h"
 
-#include "mohawk/sound.h"
-
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_page.h"
 #include "mohawk/zoombini_pages/interactive_base.h"

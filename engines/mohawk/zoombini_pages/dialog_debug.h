@@ -22,6 +22,8 @@
 #ifndef MOHAWK_ZOOMBINI_PAGES_DIALOG_DEBUG_H
 #define MOHAWK_ZOOMBINI_PAGES_DIALOG_DEBUG_H
 
+#include "common/stack.h"
+
 #include "mohawk/zoombini_debug.h"
 #include "mohawk/zoombini_pages/dialog_base.h"
 

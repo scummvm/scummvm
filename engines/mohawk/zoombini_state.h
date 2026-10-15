@@ -22,16 +22,19 @@
 #ifndef ZOOMBINI_STATE_H
 #define ZOOMBINI_STATE_H
 
+#include "common/array.h"
 #include "common/error.h"
-#include "common/file.h"
 #include "common/fs.h"
 #include "common/noncopyable.h"
 #include "common/rect.h"
 #include "common/serializer.h"
 #include "common/str.h"
 
+#include "mohawk/zoombini_resource.h"
+
 namespace Common {
 
+class SaveFileManager;
 class WriteStream;
 
 } // namespace Common

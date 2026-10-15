@@ -19,11 +19,11 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "mohawk/cursors.h"
 #include "mohawk/mohawk.h"
-#include "mohawk/sound.h"
 
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"
