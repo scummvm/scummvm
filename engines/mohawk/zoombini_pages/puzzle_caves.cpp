@@ -20,6 +20,9 @@
  */
 
 #include "mohawk/zoombini_pages/puzzle_caves.h"
+
+#include "common/config-manager.h"
+
 #include "mohawk/graphics.h"
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"

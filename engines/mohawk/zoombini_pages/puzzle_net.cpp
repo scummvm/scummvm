@@ -22,7 +22,6 @@
 #include "mohawk/zoombini_pages/puzzle_net.h"
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"
-#include "mohawk/zoombini_metaengine.h"
 #include "mohawk/zoombini_random.h"
 #include "mohawk/zoombini_sound.h"
 #include "mohawk/zoombini_state.h"

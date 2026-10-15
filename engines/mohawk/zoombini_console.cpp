@@ -31,13 +31,10 @@
 
 #include "mohawk/cursors.h"
 #include "mohawk/resource.h"
-#include "mohawk/sound.h"
-#include "mohawk/video.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
-#include "common/textconsole.h"
 #include "graphics/paletteman.h"
 #include "image/bmp.h"
 #ifdef USE_PNG

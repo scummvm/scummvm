@@ -27,10 +27,8 @@
 #include "common/array.h"
 #include "common/events.h"
 #include "common/hashmap.h"
-#include "common/list.h"
 #include "common/noncopyable.h"
 #include "common/stablemap.h"
-#include "common/stack.h"
 #include "common/str.h"
 
 #include "mohawk/resource.h"

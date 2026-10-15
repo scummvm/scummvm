@@ -25,12 +25,10 @@
 #include "audio/mixer.h"
 
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/noncopyable.h"
-#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/stablemap.h"
-#include "common/stack.h"
-#include "common/substream.h"
 
 #include "mohawk/zoombini_graphics.h"
 #include "mohawk/zoombini_resource.h"

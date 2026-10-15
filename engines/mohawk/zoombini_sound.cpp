@@ -21,6 +21,8 @@
 
 #include "mohawk/resource.h"
 
+#include "common/config-manager.h"
+
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_metaengine.h"
 #include "mohawk/zoombini_page.h"

@@ -21,9 +21,7 @@
 
 #include "common/rect.h"
 
-#include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
-#include "mohawk/sound.h"
 
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"

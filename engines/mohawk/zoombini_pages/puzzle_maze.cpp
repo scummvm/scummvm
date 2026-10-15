@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/hashmap.h"
 
 #include "gui/debugger.h"
