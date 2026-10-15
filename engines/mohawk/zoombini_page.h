@@ -22,6 +22,11 @@
 #ifndef MOHAWK_ZOOMBINI_PAGE_H
 #define MOHAWK_ZOOMBINI_PAGE_H
 
+#ifndef ZOOMBINI_ENABLE_IME_COMPOSITION
+// TODO: Enable after https://github.com/scummvm/scummvm/pull/7906 is merged.
+#define ZOOMBINI_ENABLE_IME_COMPOSITION 0
+#endif
+
 #include "mohawk/zoombini_resource.h"
 
 #include "common/array.h"
@@ -491,14 +496,16 @@ public:
 	virtual ZmbEventHandleResult onKeyDown(const Common::KeyState &kbd, bool kbdRepeat);
 	/** Handle a page-local key release. */
 	virtual ZmbEventHandleResult onKeyUp(const Common::KeyState &kbd, bool kbdRepeat);
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
 	/**
-	 * Update or cancel transient IME composition owned by this page.
+	 * Update, commit, or cancel IME composition owned by this page.
 	 *
-	 * @param composition Native composition state or cancellation.
+	 * @param composition Native preedit text, committed text, or cancellation.
 	 */
 	virtual ZmbEventHandleResult onImeComposition(const Common::ImeComposition &composition);
 	/** Return true while this page owns native IME composition. */
 	virtual bool wantsImeComposition() const { return false; }
+#endif
 	/** Handle a quit request before the page is destroyed. */
 	virtual ZmbEventHandleResult onQuit();
 

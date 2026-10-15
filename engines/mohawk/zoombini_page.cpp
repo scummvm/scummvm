@@ -554,10 +554,12 @@ ZmbEventHandleResult ZoombiniPage::onKeyUp(const Common::KeyState &kbd, bool kbd
 	return result;
 }
 
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
 ZmbEventHandleResult ZoombiniPage::onImeComposition(const Common::ImeComposition &composition) {
 	(void)composition;
 	return ZmbEventHandleResult::kPassthrough;
 }
+#endif
 
 ZmbEventHandleResult ZoombiniPage::onQuit() {
 	// There is no per-feature quit callback.
