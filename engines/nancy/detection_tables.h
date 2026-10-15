@@ -953,6 +953,23 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy15
 	},
+	{ // MD5 by bluegr
+		{
+			"nancy15", nullptr,
+			{
+				{"data1.cab", 0, "64a4c8a731ca8e66f3ce09ca54511c77", 10632067},
+				{"data1.hdr", 0, "5ab2f3e387907796e8c177c0d15b92c3", 444368},
+				{"data2.cab", 0, "5c6e80b06e9fb2387002cdc48585fad0", 669384704},
+				{"data3.cab", 0, "2a8515f92971875f847dbaf58cc3f7e5", 344245326},
+				{"is:data1.cab:ciftree.dat", 0, "A:9c5af8a00225a528fe03f52d3664740d", 38659635},
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy15
+	},
 	{ // MD5 by BacchusEmperor from bug #17318
 		{
 			"nancy15", nullptr,
