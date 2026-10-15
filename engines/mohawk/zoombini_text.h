@@ -30,6 +30,7 @@
 #include "graphics/fontman.h"
 
 #include "mohawk/resource.h"
+#include "mohawk/zoombini_resource.h"
 
 namespace Common {
 

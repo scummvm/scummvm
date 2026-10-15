@@ -19,10 +19,7 @@
  *
  */
 
-#include "mohawk/console.h"
 #include "mohawk/mohawk.h"
-#include "mohawk/sound.h"
-#include "mohawk/video.h"
 
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"

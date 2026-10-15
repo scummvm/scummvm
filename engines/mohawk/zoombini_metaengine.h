@@ -22,7 +22,7 @@
 #ifndef MOHAWK_ZOOMBINI_METAENGINE_H
 #define MOHAWK_ZOOMBINI_METAENGINE_H
 
-#include "common/config-manager.h"
+#include "common/scummsys.h"
 
 namespace Mohawk {
 

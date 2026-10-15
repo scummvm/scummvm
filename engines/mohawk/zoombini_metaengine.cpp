@@ -21,6 +21,8 @@
 
 #include "mohawk/zoombini_metaengine.h"
 
+#include "common/config-manager.h"
+
 const char *const Mohawk::MohawkMetaEngine_Zoombini::kActionConfirm = "RETURN";
 const char *const Mohawk::MohawkMetaEngine_Zoombini::kActionToggleDialogAndSfx = "TG_SFX";
 const char *const Mohawk::MohawkMetaEngine_Zoombini::kActionToggleMusic = "TG_BGM";

@@ -19,17 +19,18 @@
  *
  */
 
-#include "mohawk/resource.h"
+#include "mohawk/zoombini_random.h"
 
 #include "common/config-manager.h"
 #include "common/random.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "gui/EventRecorder.h"
 
-#include "mohawk/zoombini.h"
 #include "mohawk/zoombini_metaengine.h"
-#include "mohawk/zoombini_random.h"
+
+#ifdef ENABLE_EVENTRECORDER
+#include "gui/EventRecorder.h"
+#endif
 
 namespace Mohawk {
 

@@ -20,9 +20,9 @@
  */
 
 #include "mohawk/zoombini_resource.h"
-#include "zoombini_resource.h"
 
 #include "common/stream.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include <errno.h>

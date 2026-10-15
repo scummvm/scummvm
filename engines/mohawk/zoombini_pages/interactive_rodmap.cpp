@@ -19,15 +19,9 @@
  *
  */
 
-#include "mohawk/console.h"
-#include "mohawk/mohawk.h"
-#include "mohawk/sound.h"
-#include "mohawk/video.h"
-
-#include "interactive_rodmap.h"
+#include "mohawk/zoombini_pages/interactive_rodmap.h"
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"
-#include "mohawk/zoombini_pages/interactive_rodmap.h"
 #include "mohawk/zoombini_sound.h"
 #include "mohawk/zoombini_state.h"
 #include "mohawk/zoombini_text.h"

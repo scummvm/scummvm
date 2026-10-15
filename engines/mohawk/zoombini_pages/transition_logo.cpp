@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/archive.h"
 #include "common/scummsys.h"
 #include "common/translation.h"
 #if defined(USE_BINK) && defined(USE_RGB_COLOR)

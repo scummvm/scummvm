@@ -25,7 +25,7 @@
 #include "common/array.h"
 #include "common/noncopyable.h"
 #include "common/ptr.h"
-#include "common/stack.h"
+#include "common/queue.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/palette.h"
