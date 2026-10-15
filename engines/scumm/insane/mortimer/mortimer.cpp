@@ -120,7 +120,8 @@ MortimerEngine::MortimerEngine(OSystem *system, bool isDemo) : Engine(system), _
 	_viewport(24, 20, 616, 360), _mouse(320, 240), _view(44, 60), _aim(320, 190), _shotWeapon(MortimerFlight::kRevitascope),
 	_crashStage(kNoCrash), _nextFrameTime(0), _pauseTime(0), _introIndex(-1), _loadedRegion(-1), _creditedRescues(0),
 	_segment(0), _carriedStones(0), _completedSpecies(0), _shellShocks(0), _shockFrame(0), _crashCount(0),
-	_uiFrame(0), _shotFrame(3), _glowFrame(10), _glowStones(0), _pendingGlowStones(0), _finished(false),
+	_uiFrame(0), _shotFrame(3), _glowFrame(10), _glowStones(0), _pendingGlowStones(0),
+	_fireButtons(0), _fireCountdown(0), _finished(false),
 	_controllerMode(false), _interviewActive(false), _castleActive(false), _resourcesLoaded(false), _playingCached(false), _needsRepair(false), _hitJolt(false),
 	_cheats(ConfMan.getBool("mortimer_cheats")), _programmer(!isDemo && ConfMan.getBool("mortimer_programmer_easter_egg")), _invulnerable(false) {
 	memset(_steering, 0, sizeof(_steering));
@@ -372,6 +373,7 @@ void MortimerEngine::updateMovieContext() {
 
 bool MortimerEngine::enterCampaignScene() {
 	stopSounds();
+	_fireButtons = _fireCountdown = 0;
 	if (_highScoresActive) {
 		setScoreNameInput(false);
 		_highScoresActive = false;
@@ -603,6 +605,7 @@ void MortimerEngine::creditRescues() {
 }
 
 bool MortimerEngine::restart(bool all) {
+	_fireButtons = _fireCountdown = 0;
 	_crashStage = kNoCrash;
 	_needsRepair = _hitJolt = false;
 	_shockFrame = _crashCount = 0;
@@ -1076,6 +1079,8 @@ Common::Point MortimerEngine::screenPoint(const Common::Point &point) const {
 }
 
 void MortimerEngine::fire() {
+	// Retail SHELL 40e510 repeats held input every 1/7/7 ticks by flight difficulty.
+	_fireCountdown = _flightDifficulty ? 7 : 1;
 	MortimerFlight &flight = currentFlight();
 	if (_shotFrame >= 3) {
 		_shot = _aim;
@@ -1105,6 +1110,19 @@ void MortimerEngine::fire() {
 	}
 }
 
+bool MortimerEngine::updateAutofire() {
+	if (_finished || !canFire()) {
+		_fireButtons = _fireCountdown = 0;
+		return true;
+	}
+	if (!_fireButtons)
+		return true;
+	if (_fireCountdown && --_fireCountdown)
+		return true;
+	fire();
+	return !_castleActive || processCastle();
+}
+
 void MortimerEngine::updateInterface() {
 	++_uiFrame;
 	_shockFrame ^= 1;
@@ -1130,10 +1148,13 @@ bool MortimerEngine::speechPlaying() const {
 
 void MortimerEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
-	if (pause)
+	if (pause) {
 		_pauseTime = _system->getMillis();
-	else
+		// Dialogs may consume the button release while the engine is paused.
+		_fireButtons = _fireCountdown = 0;
+	} else {
 		_nextFrameTime += _system->getMillis() - _pauseTime;
+	}
 }
 
 bool MortimerEngine::canPause() const {
@@ -1208,6 +1229,13 @@ Common::Error MortimerEngine::run() {
 			if (event.kbdRepeat && (event.type == Common::EVENT_KEYDOWN ||
 				event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START))
 				continue;
+			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == kActionFire) {
+				if (_fireButtons)
+					--_fireButtons;
+				continue;
+			}
+			if (event.type == Common::EVENT_FOCUS_LOST || event.type == Common::EVENT_INPUT_CHANGED)
+				_fireButtons = _fireCountdown = 0;
 			// The event manager leaves global menu requests to an already paused engine.
 			if (event.type == Common::EVENT_MAINMENU && pause.isActive()) {
 				event.type = Common::EVENT_CUSTOM_ENGINE_ACTION_START;
@@ -1255,11 +1283,13 @@ Common::Error MortimerEngine::run() {
 				switch (event.customType) {
 				case kActionFire:
 					if (!isPaused() && !_finished) {
-						if (_castleActive) {
-							if (_castle.courseView() && _castle.acceptsShots())
-								fire();
-							else
-								_castle.click(_mouse);
+						if (canFire()) {
+							++_fireButtons;
+							fire();
+							if (_castleActive)
+								exit = !processCastle();
+						} else if (_castleActive) {
+							_castle.click(_mouse);
 							exit = !processCastle();
 						} else if (_interviewActive) {
 							const bool playing = _interview.playingMovie();
@@ -1267,8 +1297,6 @@ Common::Error MortimerEngine::run() {
 							if (playing && !_interview.playingMovie())
 								stopSounds();
 							exit = !processInterview();
-						} else if (interactive()) {
-							fire();
 						}
 					}
 					break;
@@ -1322,7 +1350,7 @@ Common::Error MortimerEngine::run() {
 			continue;
 		if (!isPaused() && !_finished && int32(_system->getMillis() - _nextFrameTime) >= 0) {
 			_nextFrameTime += 1000 / currentMovie().frameRate();
-			if (!updateScene())
+			if (!updateScene() || !updateAutofire())
 				break;
 			// Avoid racing through queued frames following a slow backend call.
 			if (int32(_system->getMillis() - _nextFrameTime) > 250)
