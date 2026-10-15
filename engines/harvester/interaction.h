@@ -66,10 +66,14 @@ public:
 	const Common::String &getCarriedRoomItemLabel() const { return _carriedRoomItemLabel; }
 	const IndexedBitmap &getCarriedRoomItemBitmap() const { return _carriedRoomItemBitmap; }
 	bool hasCarriedRoomItem() const;
+	bool hasSelectedItem() const;
+	Common::String getSelectedItemName() const;
+	void clearSelectedItem();
+	void hideCarriedRoomItem();
 	bool stowCarriedRoomItemToInventory();
-	Common::Error handleInventoryTargetInteraction(const ObjectRecord &target,
+	Common::Error handleSelectedItemTargetInteraction(const ObjectRecord &target,
 		Interaction &interactionProcessor, bool &needsRedraw);
-	ObjectRecord *findSelectedInventoryRoomTarget(const Common::Point &point);
+	ObjectRecord *findSelectedItemRoomTarget(const Common::Point &point);
 	Common::Error handleRoomItemPickup(const ObjectRecord &object, bool playerPresent,
 		Interaction &interactionProcessor, InteractionCallbacks &callbacks, bool &needsRedraw);
 

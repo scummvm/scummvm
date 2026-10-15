@@ -379,7 +379,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 					_inventory.getSelectedItemName().c_str(),
 					inventoryHover->object.objectName.c_str());
 				Common::Error interactionError =
-					_roomItems.handleInventoryTargetInteraction(inventoryHover->object, _interactionProcessor, needsRedraw);
+					_roomItems.handleSelectedItemTargetInteraction(inventoryHover->object, _interactionProcessor, needsRedraw);
 				if (interactionError.getCode() != Common::kNoError)
 					return InputResult::leaveRoom(interactionError);
 			}
@@ -401,14 +401,14 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 		_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs, _scene.sceneRegions,
 		_flow._mousePos, _flow._menuTextConfig, &_flow._dialogue);
 	ObjectRecord *selectedRoomTarget = nullptr;
-	if (_inventory.hasSelection() && !hoverState.npc)
-		selectedRoomTarget = _roomItems.findSelectedInventoryRoomTarget(_flow._mousePos);
+	if (_roomItems.hasSelectedItem() && !hoverState.npc)
+		selectedRoomTarget = _roomItems.findSelectedItemRoomTarget(_flow._mousePos);
 	if (selectedRoomTarget &&
 			(!hoverState.object ||
 			 !selectedRoomTarget->objectName.equalsIgnoreCase(hoverState.object->objectName))) {
 		debugC(1, kDebugInventory,
 			"Harvester: inventory target remap selected='%s' hovered='%s' remapped='%s'",
-			_inventory.getSelectedItemName().c_str(),
+			_roomItems.getSelectedItemName().c_str(),
 			hoverState.object ? hoverState.object->objectName.c_str() : "",
 			selectedRoomTarget->objectName.c_str());
 	}
@@ -428,12 +428,13 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 			if (!_roomItems.stowCarriedRoomItemToInventory())
 				return InputResult::leaveRoom(Common::kReadingFailed);
 			needsRedraw = true;
+			return InputResult();
 		}
-		return InputResult();
 	}
-	if (_inventory.hasSelection()) {
-		const Common::String selectedItemName = _inventory.getSelectedItemName();
+	if (_roomItems.hasSelectedItem()) {
+		const Common::String selectedItemName = _roomItems.getSelectedItemName();
 		if (clickHoverState.npc) {
+			_roomItems.clearSelectedItem();
 			bool didTransition = false;
 			Common::Error dialogueError = _interactionProcessor.runScriptedDialogue(
 				clickHoverState.npc->npcName, selectedItemName, Common::String(), didTransition);
@@ -441,8 +442,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 				return InputResult::leaveRoom(dialogueError);
 			if (_flow.hasPendingMainMenuReturn())
 				return InputResult::leaveRoom(Common::kNoError);
-			if (_inventory.clearSelection())
-				needsRedraw = true;
+			needsRedraw = true;
 			return InputResult();
 		}
 
@@ -451,7 +451,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 			: nullptr;
 		if (roomTarget) {
 			Common::Error interactionError =
-				_roomItems.handleInventoryTargetInteraction(*roomTarget, _interactionProcessor, needsRedraw);
+				_roomItems.handleSelectedItemTargetInteraction(*roomTarget, _interactionProcessor, needsRedraw);
 			if (interactionError.getCode() != Common::kNoError)
 				return InputResult::leaveRoom(interactionError);
 			needsRedraw = true;

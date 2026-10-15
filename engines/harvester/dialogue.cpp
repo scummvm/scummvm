@@ -1513,6 +1513,11 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		return Common::kNoError;
 	}
 
+	if (!usedItemName.empty() && script->addRuntimeObjectToInventory(usedItemName)) {
+		debugC(2, kDebugDialogue, "Harvester: presented item moved to inventory object='%s' npc='%s'",
+			usedItemName.c_str(), npc.npcName.c_str());
+	}
+
 	RoomNpcDialogueSession session(_engine, _mousePos, flow, backdrop, palette, paletteBrightness, npc);
 	if (!session.isValid())
 		return Common::kReadingFailed;

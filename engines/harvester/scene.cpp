@@ -232,6 +232,7 @@ bool Scene::applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState) {
 	_scene.sceneObjects = updatedScene.sceneObjects;
 	_scene.sceneAnimations = updatedScene.sceneAnimations;
 	_scene.sceneRegions = updatedScene.sceneRegions;
+	_roomItems.hideCarriedRoomItem();
 	const int playerCombatLoadout = script->getPlayerCombatLoadout();
 	if (_playerState.entity && _playerState.combatLoadout != playerCombatLoadout &&
 			!Player::syncCombatLoadoutVisual(
@@ -266,6 +267,7 @@ bool Scene::refreshCurrentScene(bool preservePlayerPlacement) {
 	if (!_flow.populateRoomSceneEntities(_scene.state, _scene.sceneObjects, _scene.sceneAnimations))
 		return false;
 	_sceneRuntime.restoreRoomMonsterAnimations();
+	_roomItems.hideCarriedRoomItem();
 	Player::rebindAfterSceneRefresh(_scene.state, _playerState, _entityManager, preservePlayerPlacement);
 	_playerState.combatLoadout =
 		_engine.getScript() ? _engine.getScript()->getPlayerCombatLoadout() : 0;
@@ -483,8 +485,8 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 		? RoomHoverState()
 		: resolveRoomHoverState(_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs,
 			_scene.sceneRegions, _flow._mousePos, _flow._menuTextConfig, &_flow._dialogue);
-	if (!suppressHover && inventorySelectionActive && !hoverState.npc) {
-		if (ObjectRecord *selectedTarget = _roomItems.findSelectedInventoryRoomTarget(_flow._mousePos))
+	if (!suppressHover && activeCarry && !hoverState.npc) {
+		if (ObjectRecord *selectedTarget = _roomItems.findSelectedItemRoomTarget(_flow._mousePos))
 			hoverState.object = selectedTarget;
 	}
 	Common::String promptText;
