@@ -433,7 +433,7 @@ void IgorEngine::part2() {
 
 			// Rebuild the panels erased above.
 			drawVerbsPanel();
-			drawInventory(_inventoryInfo[72], 0);
+			drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 			_walkData[0].setPos(215, 134, kFacingPositionRight, 0);
 			break;
 		case 24: // From igor's room

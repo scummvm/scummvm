@@ -358,7 +358,7 @@ void IgorEngine::part81GiveLampToLighthouseKeeper() {
 	part81SayLighthouseKeeper({ { 230, 1, 970 } });
 	_objectsState[kLighthouseMessageSentStateIndex] = 1;
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	part81ApplyObjectState(255);
 }
 
@@ -427,7 +427,7 @@ void IgorEngine::part81HandleDialogue() {
 
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
 	_gameState.dialogueStarted = false;
 	_updateDialogue = 0;

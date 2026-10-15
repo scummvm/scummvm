@@ -360,7 +360,7 @@ void IgorEngine::part21MargaretTakesNote() {
 	_objectsState[kMargaretStateIndex] = 2;
 	drawVerbsPanel();
 	_currentAction.verb = kVerbWalk;
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	part21ApplyObjectState(255);
 	_objectsState[kMargaretSceneStateIndex] = 1;
 }

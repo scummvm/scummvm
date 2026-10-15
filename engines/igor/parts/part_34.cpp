@@ -317,7 +317,7 @@ void IgorEngine::part34OldLadyConversation() {
 	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
 		memset(_screenVGA + 46080, 0, 17920);
 		drawVerbsPanel();
-		drawInventory(_inventoryInfo[72], 0);
+		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 		_currentAction.verb = kVerbWalk;
 		_objectsState[kOldLadyConversationSeenStateIndex] = 1;
 	}
@@ -384,7 +384,7 @@ void IgorEngine::part34LauraConversation() {
 	part34WaitForIgorDialogue();
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
 	_roomDataOffsets.dlg = kNoDialogueData;
 }

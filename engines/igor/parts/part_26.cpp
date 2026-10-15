@@ -190,7 +190,7 @@ void IgorEngine::part26EnterFromLaboratory() {
 		drawVerbsPanel();
 		redrawVerb(kVerbWalk, true);
 		_currentAction.verb = kVerbWalk;
-		drawInventory(_inventoryInfo[72], 0);
+		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 		playSound(51, 1);
 		part26ApplyObjectState(255);
 	}

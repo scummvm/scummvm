@@ -231,7 +231,7 @@ void IgorEngine::part69UseVaseWithFireflies() {
 	_objectsState[kPart69FireflyCapturedStateIndex] = 1;
 	_objectsState[kVaseStateIndex] = 2;
 	partMainUpdateObjectState(7);
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	playSound(63, 1);
 	while (_mixer->isSoundHandleActive(_sfxHandle) && !_eventQuitGame) {
 		waitForTimer(1);

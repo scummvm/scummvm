@@ -371,9 +371,9 @@ void IgorEngine::handleRoomInput() {
 	// Inventory arrows
 	if (_game.version != kIdSpaFloppy && _inputVars[kInputCursorYPos] >= 172 && _inputVars[kInputCursorYPos] <= 183 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
 		if (_inputVars[kInputClick]) {
-			if (_inventoryInfo[72] > 1) {
-				_inventoryInfo[72] -= 7;
-				drawInventory(_inventoryInfo[72], 2);
+			if (_inventoryInfo[kInventoryFirstVisible] > 1) {
+				_inventoryInfo[kInventoryFirstVisible] -= 7;
+				drawInventory(_inventoryInfo[kInventoryFirstVisible], 2);
 			}
 			_inputVars[kInputClick] = 0;
 		}
@@ -382,9 +382,9 @@ void IgorEngine::handleRoomInput() {
 	// Inventory arrows
 	if (_game.version != kIdSpaFloppy && _inputVars[kInputCursorYPos] >= 186 && _inputVars[kInputCursorYPos] <= 197 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
 		if (_inputVars[kInputClick]) {
-			if (_inventoryInfo[73] > _inventoryInfo[72] + 6) {
-				_inventoryInfo[72] += 7;
-				drawInventory(_inventoryInfo[72], 1);
+			if (_inventoryInfo[kInventoryCount] > _inventoryInfo[kInventoryFirstVisible] + 6) {
+				_inventoryInfo[kInventoryFirstVisible] += 7;
+				drawInventory(_inventoryInfo[kInventoryFirstVisible], 1);
 			}
 			_inputVars[kInputClick] = 0;
 		}

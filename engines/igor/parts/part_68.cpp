@@ -293,7 +293,7 @@ void IgorEngine::part68GiveRecordsToBoris() {
 	drawAnimRect(kPart68GiveAnimOffset, kPart68GiveFramesOffset, kPart68GiveWidth, kPart68GiveHeight);
 	if (_inventoryInfo[kPart68GiveInventoryIndex] != 0) {
 		removeInventoryEntry(kPart68GiveInventoryIndex);
-		drawInventory(_inventoryInfo[72], 0);
+		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	}
 	playSound(63, 1);
 	igorSayAndWait(214, 1, 1019);
@@ -424,7 +424,7 @@ void IgorEngine::part68Conversation() {
 	}
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
 	_gameState.dialogueStarted = false;
 	_updateDialogue = 0;

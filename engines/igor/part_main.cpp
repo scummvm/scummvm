@@ -462,8 +462,8 @@ void IgorEngine::partMain() {
 		_inventoryInfo[36] = 1;
 		_inventoryInfo[37] = 2;
 		_inventoryInfo[39] = 3;
-		_inventoryInfo[72] = 1; // first object
-		_inventoryInfo[73] = 3; // last object
+		_inventoryInfo[kInventoryFirstVisible] = 1; // first object
+		_inventoryInfo[kInventoryCount] = 3; // last object
 	}
 	partMainUpdateObjectState(255);
 	if (_currentPart != kStartupPart) { // boot param

@@ -216,7 +216,7 @@ void IgorEngine::part28EnterAndCheckGrades() {
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	part28ApplyObjectState(255);
 	fadeIn(768);
 	_walkData[0].setPos(319, 142, 4, 0);
