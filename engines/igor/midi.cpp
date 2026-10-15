@@ -367,6 +367,11 @@ void MidiPlayer::stopMusic() {
 	_mutex.unlock();
 }
 
+bool MidiPlayer::isPlaying() {
+	Common::StackLock lock(_mutex);
+	return _isPlaying && _parser->isPlaying();
+}
+
 void MidiPlayer::updateTimer() {
 	_mutex.lock();
 	if (_isPlaying) {

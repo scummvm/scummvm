@@ -114,6 +114,14 @@ void IgorEngine::restart() {
 	_roomWalkTargetBottom = 143;
 	_roomGiveObjectSize = 0;
 	_nextTimer = 0;
+	_musicUpdateMillis = _system->getMillis();
+	_musicTimerRemainder = 0;
+	_musicTimerDivisor = 65536;
+	_musicRestartCounter = 0xFF;
+	_musicRestartDelay = 50;
+	_musicSuspended = false;
+	if (_midiPlayer)
+		_midiPlayer->stopMusic();
 	_fastMode = 1;
 	_language = 0;
 
@@ -548,6 +556,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	}
 
 	if (s.isLoading()) {
+		_musicSuspended = true;
 		syncSoundSettings();
 		// Fade the outgoing screen before any loaded room redraws its pixels.
 		fadeOut(768);
@@ -555,6 +564,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 		memcpy(_igorPalette, (_currentPart == 760) ? PAL_IGOR_2 : PAL_IGOR_1, 48);
 		partMainUpdateObjectState(255);
 		playMusic(_gameState.musicNum, true);
+		_musicSuspended = false;
 		_system->warpMouse(_inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos]);
 		if (_currentPart < 900) {
 			showCursor();

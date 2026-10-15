@@ -560,11 +560,18 @@ public:
 
 	typedef void (IgorEngine::*UpdateDialogueProc)(int action); // pointer to function that executes on every frame during dialogue
 	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
 
 private:
 	const IgorGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	MidiPlayer *_midiPlayer;
+	uint32 _musicUpdateMillis;
+	uint32 _musicTimerRemainder;
+	uint32 _musicTimerDivisor;
+	uint8 _musicRestartCounter;
+	uint8 _musicRestartDelay;
+	bool _musicSuspended;
 	uint8 *_musicData;
 	int _previousMusic;
 

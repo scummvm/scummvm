@@ -41,6 +41,7 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 	// _fastMode divides the wall-clock deadlines.
 	uint32 endTicks = deadline ? deadline : ((ticks == -1) ? _nextTimer : _system->getMillis() + ticks * 1000 / kTickDelay / _fastMode);
 	do {
+		updateMusic();
 		Common::Event ev;
 		while (!_eventQuitGame && _eventMan->pollEvent(ev)) {
 			switch (ev.type) {
@@ -147,9 +148,6 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 		setCursor(_currentCursor);
 		_currentCursor = (_currentCursor + 1) & 3;
 	}
-	// if (_game.flags & kFlagFloppy) {
-	// 	updateMusic();
-	// }
 	if (_gameTicks == 64) {
 		_gameTicks = 0;
 	}
