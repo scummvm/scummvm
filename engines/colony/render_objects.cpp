@@ -1977,17 +1977,23 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kObjToilet:
 		for (int i = 0; i < 4; i++) {
 			_gfx->setDepthRange((3 - i) * 0.002f, 1.0f);
-			draw3DPrism(obj, kToiletParts[i], false, -1, true, false);
+			// MakeToilet draws the flat raised seat from both sides.
+			draw3DPrism(obj, kToiletParts[i], false, -1, true, i == 3);
 		}
 		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
-	case kObjPToilet:
+	case kObjPToilet: {
+		// MakePToilet draws the two-sided partition first when it is behind the toilet.
+		const bool partitionBehind = isProjectedPrismSurfaceVisible(_screenR, obj, kPToiletParts[4], false, 0,
+			_me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
 		for (int i = 0; i < 5; i++) {
+			const int part = partitionBehind ? (i == 0 ? 4 : i - 1) : i;
 			_gfx->setDepthRange((4 - i) * 0.002f, 1.0f);
-			draw3DPrism(obj, kPToiletParts[i], false, -1, true, false);
+			draw3DPrism(obj, kPToiletParts[part], false, -1, true, part >= 3);
 		}
 		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
+	}
 	case kObjForkLift:
 		// Draw order: forks, arms, treads, cab (back-to-front)
 		_gfx->setDepthRange(0.010f, 1.0f);
