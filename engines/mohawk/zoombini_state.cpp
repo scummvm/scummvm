@@ -2020,7 +2020,7 @@ Common::String ZoombiniGameState::makeSaveFilename(const Common::String &targetN
 		baseName[8] != 0)
 		return Common::String();
 
-	char counter[5] = {0};
+	char counter[5] = {};
 	for (uint i = 0; i < 4; i++) {
 		const byte digit = baseName[i + 4];
 		if (digit < '0' || '9' < digit)

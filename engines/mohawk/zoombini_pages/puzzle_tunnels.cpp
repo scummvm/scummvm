@@ -610,7 +610,7 @@ void ZoombiniPuzzleTunnels::setupLevel1_singleTrait() {
 	}
 
 	// Build 20-element match count table: 4 categories x 5 values
-	int16 matchCounts[20] = {0};
+	int16 matchCounts[20] = {};
 	for (const ZmbTrait &trait : traits) {
 		for (int16 i = 0; i < 4; i++) {
 			byte val = trait[i] & 0x0F;
@@ -694,10 +694,10 @@ void ZoombiniPuzzleTunnels::setupLevel2_dualSingleTrait() {
 	}
 
 	const int16 pairCount = 400;
-	int16 bothMatch[400] = {0};
-	int16 aOnlyMatch[400] = {0};
-	int16 bOnlyMatch[400] = {0};
-	int16 neitherMatch[400] = {0};
+	int16 bothMatch[400] = {};
+	int16 aOnlyMatch[400] = {};
+	int16 bOnlyMatch[400] = {};
+	int16 neitherMatch[400] = {};
 
 	for (const ZmbTrait &trait : traits) {
 		for (int16 pairIdx = 0; pairIdx < pairCount; pairIdx++) {
@@ -818,10 +818,10 @@ void ZoombiniPuzzleTunnels::setupLevel3_dualDoubleTrait() {
 	}
 
 	// Bucket arrays for pair scoring
-	int16 bothMatch[1600] = {0};
-	int16 aOnlyMatch[1600] = {0};
-	int16 bOnlyMatch[1600] = {0};
-	int16 neitherMatch[1600] = {0};
+	int16 bothMatch[1600] = {};
+	int16 aOnlyMatch[1600] = {};
+	int16 bOnlyMatch[1600] = {};
+	int16 neitherMatch[1600] = {};
 
 	for (const ZmbTrait &trait : traits) {
 		for (int pairIdx = 0; pairIdx < 1600; pairIdx++) {

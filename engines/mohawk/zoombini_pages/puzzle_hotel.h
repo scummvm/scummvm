@@ -615,17 +615,17 @@ private:
 	/** Opening-room overlay runner for SCRB 11800. */
 	ZmbFeature *_openingRoomFeature = nullptr;
 	/** Per-slot room displays from SCRB 6013+slot or the level-4 9002 family. */
-	ZmbFeature *_roomDisplayFeatures[125] = {0};
+	ZmbFeature *_roomDisplayFeatures[125] = {};
 	/** Per-slot platform and checkpoint features from SCRB 6038+slot. */
-	ZmbFeature *_roomIconFeatures[125] = {0};
+	ZmbFeature *_roomIconFeatures[125] = {};
 	/** Per-slot level-4 room-background features from the SCRB 9007 family. */
-	ZmbFeature *_roomBackgroundFeatures[125] = {0};
+	ZmbFeature *_roomBackgroundFeatures[125] = {};
 	/** Hidden DRAW_ON_REG features that own the room drop targets. */
-	ZmbFeature *_roomDropTargetFeatures[125] = {0};
+	ZmbFeature *_roomDropTargetFeatures[125] = {};
 	/** Close-view board mask from SCRB 11503-11505. */
 	ZmbFeature *_boardMaskFeature = nullptr;
 	/** Per-slot boarded-room marker features. */
-	ZmbFeature *_forbiddenMarkerFeatures[125] = {0};
+	ZmbFeature *_forbiddenMarkerFeatures[125] = {};
 	/** Mistake-counter feature loaded from SCRB 6000 plus the current step. */
 	ZmbFeature *_mistakeCounterFeature = nullptr;
 	/** W-command offset cycling through room SCRBs 7000-7009. */
@@ -642,28 +642,28 @@ private:
 	 * Axis-1 constraints replicated across room slots at levels 1-3 and stored per Row at level 4.
 	 * 0 = unset.
 	 */
-	int16 _axis1TraitConstraints[25] = {0};
+	int16 _axis1TraitConstraints[25] = {};
 	/**
 	 * Axis-2 constraints replicated across room slots at levels 2-3 and stored per Column at level 4.
 	 * 0 = unset.
 	 */
-	int16 _axis2TraitConstraints[25] = {0};
+	int16 _axis2TraitConstraints[25] = {};
 	/**
 	 * Axis-3 constraint per SubColumn at level 4.
 	 * Zero means unset.
 	 */
-	int16 _axis3TraitConstraints[5] = {0};
+	int16 _axis3TraitConstraints[5] = {};
 	/** Debug-only bypass for the level 2-4 multi-axis validators. */
 	bool _debugTraitBypass = false;
 
 	/** Whether the level-3 generation snapshot is available to diagnostics. */
 	bool _level3GenerationSnapshotValid = false;
 	/** Axis-1 constraint snapshot captured before level-3 room constraints are cleared. */
-	int16 _level3GeneratedAxis1Traits[25] = {0};
+	int16 _level3GeneratedAxis1Traits[25] = {};
 	/** Axis-2 constraint snapshot captured before level-3 room constraints are cleared. */
-	int16 _level3GeneratedAxis2Traits[25] = {0};
+	int16 _level3GeneratedAxis2Traits[25] = {};
 	/** Number of active-pack Zoombinis matching each generated level-3 room. */
-	int16 _level3RoomMatchCounts[25] = {0};
+	int16 _level3RoomMatchCounts[25] = {};
 
 	// -----------------------------------------------------------------------
 	// Puzzle axis selection
@@ -675,7 +675,7 @@ private:
 	/** Hotel trait axis selected for grid axis 3 at level 4. */
 	TraitAxis _axis3TraitAxis = TraitAxis::kFeet00;
 	/** Number of distinct active-pack values for each @ref TraitAxis. */
-	int16 _traitVariantCounts[kTraitAxisCount] = {0};
+	int16 _traitVariantCounts[kTraitAxisCount] = {};
 	// -----------------------------------------------------------------------
 	// Room grid state
 	// -----------------------------------------------------------------------
@@ -683,9 +683,9 @@ private:
 	 * Per-slot room state: -1=boarded, 0=empty, and 1-6=accepted-Snoid display depth.
 	 * The active prefix has 25 entries at levels 1-3 and 125 at level 4.
 	 */
-	int16 _roomSlotStates[125] = {0};
+	int16 _roomSlotStates[125] = {};
 	/** Random 0-3 marker variant for each generated boarded room, in scan order. */
-	int16 _forbiddenMarkerVariants[8] = {0};
+	int16 _forbiddenMarkerVariants[8] = {};
 
 	// -----------------------------------------------------------------------
 	// Placement tracking

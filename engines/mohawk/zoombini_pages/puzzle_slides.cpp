@@ -2039,7 +2039,7 @@ int16 ZoombiniPuzzleSlides::findRunnerByMatchingTrait(int16 runnerIdx) {
 }
 
 void ZoombiniPuzzleSlides::sortZmbsByOverlapCount() {
-	int16 overlapCounts[16] = {0};
+	int16 overlapCounts[16] = {};
 
 	for (int16 snoidIdx = 0; snoidIdx < _pageLoadedZmbCount; snoidIdx++) {
 		for (int16 comparisonSnoidIdx = 0; comparisonSnoidIdx < _pageLoadedZmbCount; comparisonSnoidIdx++) {
@@ -2610,7 +2610,7 @@ void ZoombiniPuzzleSlides::unlockInteractiveSlots() {
 	// so positional sorting stops here for the rest of the page.
 	setRunnerZSortEnabled(false);
 
-	bool referenced[16] = {0};
+	bool referenced[16] = {};
 	for (int16 slotIdx = 0; slotIdx < _slotCount; slotIdx++) {
 		int16 cellIdx = _slotCellIndices[slotIdx];
 		if (cellIdx < 0 || kNumCells <= cellIdx)

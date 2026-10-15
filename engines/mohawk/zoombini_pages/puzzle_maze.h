@@ -289,7 +289,7 @@ private:
 		bool collisionPopStarted = false;
 
 		/** SCRS IDs for directional walk, alternate walk, idle, special, and feet entries. */
-		int16 scrsTable[12] = {0};
+		int16 scrsTable[12] = {};
 
 		void clear() {
 			col = row = oldCol = oldRow = 0;
@@ -1689,7 +1689,7 @@ private:
 	 */
 	struct SolverAcceptedPlanSearch {
 		/** Whether each pack slot must reach the accepted exit before completion. */
-		bool requiredSnoids[kDebugMazeMaxSnoids] = {0};
+		bool requiredSnoids[kDebugMazeMaxSnoids] = {};
 		/** Optional final key launched after all required Snoids are accepted. */
 		int16 finalSnoid = -1;
 		/** Switch group that the optional final key must press. */
@@ -1921,7 +1921,7 @@ private:
 	/** Number of validated ten-word cell records in the selected layout REGS. */
 	int16 _layoutCellRecordCount = 0;
 	/** One-based launcher seat identifiers from layout header words 1 through 9. */
-	int16 _launcherSeatIds[10] = {0};
+	int16 _launcherSeatIds[10] = {};
 	/** Header and ten-word cell records from the selected 16600-series layout resource. */
 	Common::Array<int16> _layoutRegsWords;
 	/** Values from REGS 16501 used to select collision overlay bases. */
@@ -1948,15 +1948,15 @@ private:
 	/** Index into @ref _cellStates for each authored cell, or -1. */
 	int16 _cellStateIdx[kGridRows][kGridCols];
 	/** Per-cell trait category, or zero for no trait constraint. */
-	int16 _cellTraitKind[kGridRows][kGridCols] = {0};
+	int16 _cellTraitKind[kGridRows][kGridCols] = {};
 	/** Per-cell trait value, or zero for no trait constraint. */
-	int16 _cellTraitValue[kGridRows][kGridCols] = {0};
+	int16 _cellTraitValue[kGridRows][kGridCols] = {};
 	/** Per-node direction availability flags. */
-	bool _nodeDirFlags[kGridRows][kGridCols][4] = {0};
+	bool _nodeDirFlags[kGridRows][kGridCols][4] = {};
 	/** Current direction output of each node. */
-	int16 _nodeDirection[kGridRows][kGridCols] = {0};
+	int16 _nodeDirection[kGridRows][kGridCols] = {};
 	/** Whether a node cycles its direction when passed. */
-	bool _nodeCycleFlag[kGridRows][kGridCols] = {0};
+	bool _nodeCycleFlag[kGridRows][kGridCols] = {};
 	/** Screen anchor of each grid cell, decoded from REGS 16000. */
 	Common::Point _gridCellPos[kGridRows][kGridCols] = {};
 
@@ -1967,11 +1967,11 @@ private:
 	/** Number of valid entries in @ref _cellStates. */
 	int16 _cellStateCount = 0;
 	/** Base shape selected for each activation wave group. */
-	int16 _waveGroupShapeBase[9] = {0};
+	int16 _waveGroupShapeBase[9] = {};
 
 	// Collision tracking grid.
 	/** Number of collision occupants per cell. */
-	int16 _collisionReservationCount[kGridRows][kGridCols] = {0};
+	int16 _collisionReservationCount[kGridRows][kGridCols] = {};
 	/** Runner index associated with each collision cell. */
 	int16 _collisionReservationRunnerIdx[kGridRows][kGridCols];
 
@@ -1981,7 +1981,7 @@ private:
 	/** Logical traversal state for each active runner. */
 	MazeRunnerState _runnerStates[kMaxRunners];
 	/** Snoid ID paired with each runner state. */
-	uint16 _runnerSnoidIds[kMaxRunners] = {0};
+	uint16 _runnerSnoidIds[kMaxRunners] = {};
 	/** Number of active runner states. */
 	int16 _runnerCount = 0;
 
@@ -1997,15 +1997,15 @@ private:
 	/** Working trait record for each of up to twenty Zoombinis. */
 	ZmbTrait _pathCandidateTraits[20];
 	/** Match score for each candidate path slot. */
-	int16 _pathTraitMatchCounts[21] = {0};
+	int16 _pathTraitMatchCounts[21] = {};
 	/** Connection table used while selecting path slots. */
-	int16 _connectionTable[21] = {0};
+	int16 _connectionTable[21] = {};
 	/** Sparse free-slot list: entry @c i is @c i when the slot has zero matches, otherwise zero. */
-	int16 _freePathSlotList[21] = {0};
+	int16 _freePathSlotList[21] = {};
 	/** Slots currently reachable from the generated graph. */
-	int16 _reachablePathSlots[21] = {0};
+	int16 _reachablePathSlots[21] = {};
 	/** Output path slot selected for each Zoombini. */
-	int16 _selectedPathSlots[20] = {0};
+	int16 _selectedPathSlots[20] = {};
 	/** Number of selected path slots and next output write index. */
 	int16 _selectedPathSlotCount = 0;
 	/** Next selected path slot to assign to a trait-arrow cell. */
@@ -2021,7 +2021,7 @@ private:
 	/** Complete trait records committed to selected paths. */
 	ZmbTrait _committedTraits[20];
 	/** Shuffled path candidate pool. */
-	int16 _shuffledPathPool[11] = {0};
+	int16 _shuffledPathPool[11] = {};
 	/** Selected layout variant reused by variant-sensitive path generation. */
 	int16 _pathLayoutVariantIdx = 0;
 
@@ -2036,28 +2036,28 @@ private:
 	static const int kMaxCrossQueueSize = 42;
 
 	/** Launcher seat indices waiting for SCRB setup. */
-	int16 _launcherSetupQueue[kMaxQueueSize] = {0};
+	int16 _launcherSetupQueue[kMaxQueueSize] = {};
 	/** Number of queued launcher seats. */
 	int16 _launcherSetupQueueSize = 0;
 
 	// The remaining Maze queues store Maze runner indices.
 	/** Runner indices waiting for a movement step. */
-	int16 _movementQueue[kMaxQueueSize] = {0};
+	int16 _movementQueue[kMaxQueueSize] = {};
 	/** Number of queued movement steps. */
 	int16 _movementQueueSize = 0;
 
 	/** Runner indices whose collision companion must be raised before the page overlay. */
-	int16 _collisionOverlayRelinkQueue[kMaxQueueSize] = {0};
+	int16 _collisionOverlayRelinkQueue[kMaxQueueSize] = {};
 	/** Number of queued collision-companion relinks. */
 	int16 _collisionOverlayRelinkQueueSize = 0;
 
 	/** Runner indices queued by launcher events 64, 74, and 84 for launch-column depth relinking. */
-	int16 _traversalColumnRelinkQueue[kMaxQueueSize] = {0};
+	int16 _traversalColumnRelinkQueue[kMaxQueueSize] = {};
 	/** Number of queued traversal-column relinks. */
 	int16 _traversalColumnRelinkQueueSize = 0;
 
 	/** Accepted runner indices waiting for feet-specific celebration SCRS playback. */
-	int16 _acceptedCelebrationQueue[kMaxQueueSize] = {0};
+	int16 _acceptedCelebrationQueue[kMaxQueueSize] = {};
 	/** Number of queued accepted-runner celebrations. */
 	int16 _acceptedCelebrationQueueSize = 0;
 
@@ -2071,16 +2071,16 @@ private:
 	bool _upperRightArrivalDepthReorderPending = false;
 
 	/** Runner indices waiting for rejection or boundary-exit completion. */
-	int16 _exitCompletionQueue[kMaxQueueSize] = {0};
+	int16 _exitCompletionQueue[kMaxQueueSize] = {};
 	/** Number of queued exit completions. */
 	int16 _exitCompletionQueueSize = 0;
 	/** Runner indices waiting for next-cell dispatch. */
-	int16 _cellArrivalQueue[kMaxQueueSize] = {0};
+	int16 _cellArrivalQueue[kMaxQueueSize] = {};
 	/** Number of queued cell arrivals. */
 	int16 _cellArrivalQueueSize = 0;
 
 	/** Paired runner indices waiting for collision SCRB assignment. */
-	int16 _collisionPairQueue[kMaxCrossQueueSize] = {0};
+	int16 _collisionPairQueue[kMaxCrossQueueSize] = {};
 	/** Number of queued collision pairs. */
 	int16 _collisionPairQueueSize = 0;
 
@@ -2095,13 +2095,13 @@ private:
 
 	// Placed runner tracking.
 	/** Runner indices currently placed on the grid. */
-	int16 _placedRunnerIndices[10] = {0};
+	int16 _placedRunnerIndices[10] = {};
 	/** Number of placed runners. */
 	int16 _placedRunnerCount = 0;
 
 	// Launcher assignment.
 	/** One-based seat marker for each occupied launcher, or zero when empty. */
-	int16 _launcherOccupancyMarkers[14] = {0};
+	int16 _launcherOccupancyMarkers[14] = {};
 	/** Maze runner index paired with each launcher seat, or -1. */
 	int16 _launcherRunnerIndices[14];
 
@@ -2109,15 +2109,15 @@ private:
 	/** Page overlay anchor before which collision companion overlays are raised. */
 	ZmbFeature *_collisionOverlayAnchorFeature = nullptr;
 	/** Shared visual companions indexed by authored launcher type. */
-	ZmbFeature *_launcherCompanionFeatures[3] = {0};
+	ZmbFeature *_launcherCompanionFeatures[3] = {};
 	/** DRAW_ON_REG drop-target helpers indexed by launcher seat. */
-	ZmbFeature *_launcherDropTargetFeatures[14] = {0};
+	ZmbFeature *_launcherDropTargetFeatures[14] = {};
 	/** Primary launcher features indexed by seat. */
-	ZmbFeature *_launcherFeatures[14] = {0};
+	ZmbFeature *_launcherFeatures[14] = {};
 	/** Optional launcher shadow features indexed by seat. */
-	ZmbFeature *_launcherShadowFeatures[14] = {0};
+	ZmbFeature *_launcherShadowFeatures[14] = {};
 	/** Callback-free overlay anchors retained for authored column depth links. */
-	ZmbFeature *_columnDepthAnchors[12] = {0};
+	ZmbFeature *_columnDepthAnchors[12] = {};
 
 	// --- Puzzle phase ---
 	/** Whether the cell grid has been initialized. */
@@ -2125,7 +2125,7 @@ private:
 	/** Whether the Maze frame loop may consume its runner and animation queues. */
 	bool _queueProcessingEnabled = false;
 	/** Whether each launcher seat is present in the selected layout header. */
-	bool _launcherSeatEnabled[14] = {0};
+	bool _launcherSeatEnabled[14] = {};
 
 	// --- Animation event state ---
 	/** Alternates the two collision impact sounds. */

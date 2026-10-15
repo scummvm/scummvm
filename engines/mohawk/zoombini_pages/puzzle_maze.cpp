@@ -4063,7 +4063,7 @@ void ZoombiniPuzzleMaze::initGridAndSelectPaths() {
 		// purple bank is remapped to the Zoombini dark-blue family during drawing.
 		// Derive this remap from the shuffled banks without consuming another draw.
 		static constexpr int16 kColorAssistPathPool[5] = {52, 73, 94, 136, 157};
-		bool activeGroups[9] = {0};
+		bool activeGroups[9] = {};
 		for (int16 runner = 0; runner < _layoutCellRecordCount; runner++) {
 			int16 baseOff = 10 + 10 * runner;
 			if (static_cast<int16>(_layoutRegsWords.size()) <= baseOff + 3)
@@ -4073,7 +4073,7 @@ void ZoombiniPuzzleMaze::initGridAndSelectPaths() {
 				activeGroups[waveGroup] = true;
 		}
 
-		int16 availablePathPool[5] = {0};
+		int16 availablePathPool[5] = {};
 		for (int16 i = 0; i < 5; i++)
 			availablePathPool[i] = kColorAssistPathPool[i];
 		int16 availablePathCount = 5;

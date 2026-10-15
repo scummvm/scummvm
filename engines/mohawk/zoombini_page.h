@@ -869,13 +869,13 @@ public:
 	 * Exact seat/pedestal runner instances.
 	 * SCRB resource IDs are not unique when several seats use the same script.
 	 */
-	ZmbFeature *_drawOnRegFeatures[kMaxDrawOnRegSlots] = {0};
+	ZmbFeature *_drawOnRegFeatures[kMaxDrawOnRegSlots] = {};
 
 	/** Snap positions for drop targets. */
 	Common::Point _drawOnRegSnapPositions[kMaxDrawOnRegSlots];
 
 	/** Occupancy: 0 = empty, else = feature ID of seated snoid. */
-	uint16 _drawOnRegOccupancy[kMaxDrawOnRegSlots] = {0};
+	uint16 _drawOnRegOccupancy[kMaxDrawOnRegSlots] = {};
 
 	/** Override the snap position of an existing slot. */
 	void setDrawOnRegSnapPosition(int16 slotIdx, const Common::Point &pos);

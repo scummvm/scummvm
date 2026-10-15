@@ -382,7 +382,7 @@ protected:
 	 * @ref ZmbGridWalker traversal state.
 	 * Snoid IDs use range 20000+ to avoid collision with inhabitant IDs (0-15).
 	 */
-	uint16 _walkingZmbSnoidIds[20] = {0};
+	uint16 _walkingZmbSnoidIds[20] = {};
 
 	/** Town inhabitant position data (16 x,y coordinate pairs). */
 	static constexpr Common::Point kInhabitantPositions[16]{
@@ -457,7 +457,7 @@ protected:
 	/** Authored Town statue rectangles used for memorial-card hit testing. */
 	Common::Rect _memorialHotspots[16] = {};
 	/** Mapping from visible statue index to stored memorial-card slot. */
-	int16 _memorialSlotMapping[16] = {0};
+	int16 _memorialSlotMapping[16] = {};
 	/** Cursor shape selected for the current Town hover target. */
 	uint16 _hoverCursorShapeIdx = ZmbHotspot::kShapeNone;
 

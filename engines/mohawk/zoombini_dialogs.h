@@ -172,29 +172,29 @@ private:
 	/** Common button that repairs a roster or compacts valid save-file stems. */
 	GUI::ButtonWidget *_compactButton = nullptr;
 	/** Uncaptioned save-row selection controls. */
-	GUI::RadiobuttonWidget *_saveSelectionButtons[kMaxSaveRows] = {0};
+	GUI::RadiobuttonWidget *_saveSelectionButtons[kMaxSaveRows] = {};
 	/** Save-file number labels. */
-	GUI::StaticTextWidget *_saveSlotLabels[kMaxSaveRows] = {0};
+	GUI::StaticTextWidget *_saveSlotLabels[kMaxSaveRows] = {};
 	/** Save-name labels. */
-	GUI::StaticTextWidget *_saveNameLabels[kMaxSaveRows] = {0};
+	GUI::StaticTextWidget *_saveNameLabels[kMaxSaveRows] = {};
 	/** Serialized save-format labels. */
-	GUI::StaticTextWidget *_saveVersionLabels[kMaxSaveRows] = {0};
+	GUI::StaticTextWidget *_saveVersionLabels[kMaxSaveRows] = {};
 	/** Isle progress labels. */
-	GUI::StaticTextWidget *_saveIsleLabels[kMaxSaveRows] = {0};
+	GUI::StaticTextWidget *_saveIsleLabels[kMaxSaveRows] = {};
 	/** Basecamp 1 progress labels. */
-	GUI::StaticTextWidget *_saveBasecamp1Labels[kMaxSaveRows] = {0};
+	GUI::StaticTextWidget *_saveBasecamp1Labels[kMaxSaveRows] = {};
 	/** Basecamp 2 progress labels. */
-	GUI::StaticTextWidget *_saveBasecamp2Labels[kMaxSaveRows] = {0};
+	GUI::StaticTextWidget *_saveBasecamp2Labels[kMaxSaveRows] = {};
 	/** Town progress labels. */
-	GUI::StaticTextWidget *_saveTownLabels[kMaxSaveRows] = {0};
+	GUI::StaticTextWidget *_saveTownLabels[kMaxSaveRows] = {};
 	/** Active-pack count labels. */
-	GUI::StaticTextWidget *_saveActivePackLabels[kMaxSaveRows] = {0};
+	GUI::StaticTextWidget *_saveActivePackLabels[kMaxSaveRows] = {};
 	/** Target-scoped state filenames used to describe recovery backups. */
 	Common::String _saveFileNames[kMaxSaveRows];
 	/** Whether each visible corrupted row has a recoverable state payload. */
-	bool _saveRecoverableRows[kMaxSaveRows] = {0};
+	bool _saveRecoverableRows[kMaxSaveRows] = {};
 	/** Primary validation problem shown before recovering each row. */
-	uint8 _saveIssueRows[kMaxSaveRows] = {0};
+	uint8 _saveIssueRows[kMaxSaveRows] = {};
 };
 
 /** ScummVM options dialog for Logical Journey of the Zoombinis */

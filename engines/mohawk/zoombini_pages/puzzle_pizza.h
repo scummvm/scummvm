@@ -668,17 +668,17 @@ private:
 	// Topping state arrays
 	// -----------------------------------------------------------------------
 	/** Topping categories distributed among the active troll orders. */
-	bool _generatedToppings[8] = {0};
+	bool _generatedToppings[8] = {};
 	/** Toppings requested by Arno. */
-	bool _arnoToppings[8] = {0};
+	bool _arnoToppings[8] = {};
 	/** Toppings requested by Willa. */
-	bool _willaToppings[8] = {0};
+	bool _willaToppings[8] = {};
 	/** Toppings requested by Shyler. */
-	bool _shylerToppings[8] = {0};
+	bool _shylerToppings[8] = {};
 	/** Machine selection captured for the delivery currently being evaluated. */
-	bool _submittedMealToppings[8] = {0};
+	bool _submittedMealToppings[8] = {};
 	/** Live topping-button selection used to prepare the next meal. */
-	bool _selectedMealToppings[8] = {0};
+	bool _selectedMealToppings[8] = {};
 
 	// -----------------------------------------------------------------------
 	// Troll order state
@@ -757,7 +757,7 @@ private:
 	// Topping bitmask history
 	// -----------------------------------------------------------------------
 	/** Recent topping masks used to avoid repeating generated orders. */
-	byte _toppingMaskHistory[28] = {0};
+	byte _toppingMaskHistory[28] = {};
 	/** Last occupied slot in @ref _toppingMaskHistory, or -1 when empty. */
 	int16 _lastToppingMaskHistoryIdx = -1;
 
@@ -851,7 +851,7 @@ private:
 	/** Visible Produce-button feature. */
 	ZmbFeature *_produceButtonFeature = nullptr;
 	/** Machine topping-button features indexed by ingredient; unavailable ingredient slots remain null. */
-	ZmbFeature *_toppingButtonFeatures[8] = {0};
+	ZmbFeature *_toppingButtonFeatures[8] = {};
 	/** Most recent pointer position used to recompute TLC v2 button hover. */
 	Common::Point _lastMachineMousePos = Common::Point(-1, -1);
 	/** Willa order and reaction feature. */
@@ -898,11 +898,11 @@ private:
 	/** Whether the generic SCRB cycle has wrapped and must reuse an old runner. */
 	bool _genericToppingRunnersWrapped = false;
 	/** Accepted-pizza runners assigned to Arno. */
-	ZmbFeature *_arnoToppingRunnerSlots[3] = {0};
+	ZmbFeature *_arnoToppingRunnerSlots[3] = {};
 	/** Accepted-pizza runners assigned to Willa. */
-	ZmbFeature *_willaToppingRunnerSlots[3] = {0};
+	ZmbFeature *_willaToppingRunnerSlots[3] = {};
 	/** Accepted-pizza runners assigned to Shyler. */
-	ZmbFeature *_shylerToppingRunnerSlots[3] = {0};
+	ZmbFeature *_shylerToppingRunnerSlots[3] = {};
 	/** Starting ID for dynamically created topping features. */
 	uint16 _nextDynamicFeatureId = 30000;
 	/** Pizza debug state advanced by R, O, and D. */
