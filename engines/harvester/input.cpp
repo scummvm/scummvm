@@ -400,21 +400,27 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 	const RoomHoverState hoverState = resolveRoomHoverState(
 		_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs, _scene.sceneRegions,
 		_flow._mousePos, _flow._menuTextConfig, &_flow._dialogue);
-	ObjectRecord *selectedRoomTarget = nullptr;
-	if (_roomItems.hasSelectedItem() && !hoverState.npc)
-		selectedRoomTarget = _roomItems.findSelectedItemRoomTarget(_flow._mousePos);
-	if (selectedRoomTarget &&
-			(!hoverState.object ||
-			 !selectedRoomTarget->objectName.equalsIgnoreCase(hoverState.object->objectName))) {
-		debugC(1, kDebugInventory,
-			"Harvester: inventory target remap selected='%s' hovered='%s' remapped='%s'",
-			_roomItems.getSelectedItemName().c_str(),
-			hoverState.object ? hoverState.object->objectName.c_str() : "",
-			selectedRoomTarget->objectName.c_str());
-	}
 	RoomHoverState clickHoverState = hoverState;
-	if (selectedRoomTarget)
-		clickHoverState.object = selectedRoomTarget;
+	const Entity *itemTarget = nullptr;
+	if (_roomItems.hasSelectedItem()) {
+		clickHoverState = RoomHoverState();
+		itemTarget = _roomItems.findSelectedItemTarget(_flow._mousePos);
+		if (!itemTarget)
+			return InputResult();
+		if (itemTarget == playerState.entity)
+			clickHoverState.playerEntity = itemTarget;
+		if (itemTarget->getClassId() == kEntityClassNpc &&
+				_flow._dialogue.hasRoomNpcHandler(itemTarget->getName()) &&
+				_engine.getScript()->isNamedNpcDeathTypeClear(itemTarget->getName())) {
+			for (const NpcRecord &npc : _scene.state.roomNpcs) {
+				if (npc.npcName.equalsIgnoreCase(itemTarget->getName())) {
+					clickHoverState.npc = &npc;
+					break;
+				}
+			}
+		}
+		clickHoverState.object = findSceneObjectByName(_scene.sceneObjects, itemTarget->getName());
+	}
 	debugC(1, kDebugRoom,
 		"Harvester: room click room='%s' mouse=(%d,%d) object='%s' npc='%s' region='%s' cursor_sequence=%d prompt='%s'",
 		_scene.state.roomName.c_str(), _flow._mousePos.x, _flow._mousePos.y,
@@ -455,6 +461,10 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 			if (interactionError.getCode() != Common::kNoError)
 				return InputResult::leaveRoom(interactionError);
 			needsRedraw = true;
+		} else if (itemTarget) {
+			Common::Error interactionError = _roomItems.handleSelectedItemMiss(_interactionProcessor, needsRedraw);
+			if (interactionError.getCode() != Common::kNoError)
+				return InputResult::leaveRoom(interactionError);
 		}
 		return InputResult();
 	}

@@ -485,19 +485,20 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 		? RoomHoverState()
 		: resolveRoomHoverState(_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs,
 			_scene.sceneRegions, _flow._mousePos, _flow._menuTextConfig, &_flow._dialogue);
-	if (!suppressHover && activeCarry && !hoverState.npc) {
-		if (ObjectRecord *selectedTarget = _roomItems.findSelectedItemRoomTarget(_flow._mousePos))
-			hoverState.object = selectedTarget;
-	}
 	Common::String promptText;
 	Common::String inventoryTooltipText;
 	auto resolveCarryTargetLabel = [&]() {
-		if (hoverState.playerEntity && _playerState.entity && hoverState.playerEntity == _playerState.entity)
+		const Entity *target = suppressHover ? nullptr : _roomItems.findSelectedItemTarget(_flow._mousePos, false);
+		if (!target)
+			return Common::String();
+		if (target == _playerState.entity)
 			return Common::String(kPlayerInventoryLabel);
-		if (hoverState.object)
-			return _engine.getScript()->resolveObjectLabel(*hoverState.object);
-		if (hoverState.npc)
-			return resolveStartupNpcLabel(*hoverState.npc);
+		if (const ObjectRecord *object = findSceneObjectByName(_scene.sceneObjects, target->getName()))
+			return _engine.getScript()->resolveObjectLabel(*object);
+		for (const NpcRecord &npc : _scene.state.roomNpcs) {
+			if (npc.npcName.equalsIgnoreCase(target->getName()))
+				return resolveStartupNpcLabel(npc);
+		}
 		return Common::String();
 	};
 	if (activeCarry) {

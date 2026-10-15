@@ -73,7 +73,8 @@ public:
 	bool stowCarriedRoomItemToInventory();
 	Common::Error handleSelectedItemTargetInteraction(const ObjectRecord &target,
 		Interaction &interactionProcessor, bool &needsRedraw);
-	ObjectRecord *findSelectedItemRoomTarget(const Common::Point &point);
+	const Entity *findSelectedItemTarget(const Common::Point &point, bool opaquePixels = true);
+	Common::Error handleSelectedItemMiss(Interaction &interactionProcessor, bool &needsRedraw);
 	Common::Error handleRoomItemPickup(const ObjectRecord &object, bool playerPresent,
 		Interaction &interactionProcessor, InteractionCallbacks &callbacks, bool &needsRedraw);
 

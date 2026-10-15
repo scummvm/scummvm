@@ -63,6 +63,7 @@ public:
 	bool isOpen() const;
 	bool hasSelection() const;
 	const Common::String &getSelectedItemName() const;
+	const IndexedBitmap *getSelectedItemBitmap() const;
 	Common::String resolveSelectedLabel() const;
 	Common::String buildSelectedPrompt(const Common::String &targetLabel,
 		const MenuTextConfig &menuTextConfig) const;

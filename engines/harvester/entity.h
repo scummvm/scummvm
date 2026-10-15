@@ -125,6 +125,7 @@ public:
 	void draw(Graphics::Screen &screen) const;
 	bool hitTest(const Common::Point &point) const;
 	bool overlapsEntity(const Entity &other) const;
+	bool overlapsBitmap(const IndexedBitmap &bitmap, const Common::Point &position, bool opaquePixels) const;
 	bool measureCurrentFrameTransparency(uint32 &framePixels, uint32 &transparentPixels,
 		uint32 &preservedPixels) const;
 
@@ -215,6 +216,8 @@ public:
 	void drawSceneEntities(Graphics::Screen &screen) const;
 	void drawCursor(Graphics::Screen &screen) const;
 	const Entity *findTopSceneEntityAt(const Common::Point &point, int classIdFilter = -1) const;
+	const Entity *findTopSceneEntityOverlappingBitmap(const IndexedBitmap &bitmap,
+		const Common::Point &position, const Common::String &excludedName, bool opaquePixels) const;
 	int findSceneEntityDrawIndexByName(const Common::String &name) const;
 	const Entity *findSceneEntityByName(const Common::String &name) const;
 	Entity *findSceneEntityByName(const Common::String &name);

@@ -505,6 +505,15 @@ Common::Rect InventorySystem::getPanelBounds() const {
 		kInventoryX + (int)bitmap.width, kInventoryY + (int)bitmap.height);
 }
 
+const IndexedBitmap *InventorySystem::getSelectedItemBitmap() const {
+	for (const InventoryVisual &item : _items) {
+		if (item.object.objectName.equalsIgnoreCase(_selectedItemName) &&
+				item.hasBitmap && item.bitmap.isValid())
+			return &item.bitmap;
+	}
+	return nullptr;
+}
+
 void InventorySystem::drawSelectedDragItem(Graphics::Screen &screen, const Common::Point &point) const {
 	if (_selectedItemName.empty())
 		return;

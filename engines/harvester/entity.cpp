@@ -580,6 +580,31 @@ bool Entity::hitTest(const Common::Point &point) const {
 	return isOpaqueAt(point);
 }
 
+bool Entity::overlapsBitmap(const IndexedBitmap &bitmap, const Common::Point &position, bool opaquePixels) const {
+	if (!_visible || !bitmap.isValid())
+		return false;
+	const Common::Rect bounds = getFrameRect();
+	const Common::Rect bitmapBounds(position.x, position.y,
+		position.x + bitmap.width, position.y + bitmap.height);
+	if (bounds.right < bitmapBounds.left || bitmapBounds.right < bounds.left ||
+			bounds.bottom < bitmapBounds.top || bitmapBounds.bottom < bounds.top)
+		return false;
+	if (!opaquePixels)
+		return true;
+	if (!hasOpaqueFrame() || bitmap.width > 640 || bitmap.height > 480 ||
+			bounds.width() > 640 || bounds.height() > 480)
+		return false;
+
+	for (uint y = 0; y < bitmap.height; ++y) {
+		for (uint x = 0; x < bitmap.width; x += 2) {
+			if (bitmap.pixels[y * bitmap.width + x] &&
+					isOpaqueAt(Common::Point(position.x + x, position.y + y)))
+				return true;
+		}
+	}
+	return false;
+}
+
 bool Entity::overlapsEntity(const Entity &other) const {
 	if (this == &other || !_visible || !other._visible)
 		return false;
@@ -1018,6 +1043,25 @@ const Entity *EntityManager::findTopSceneEntityAt(const Common::Point &point, in
 			return entity;
 	}
 
+	return nullptr;
+}
+
+const Entity *EntityManager::findTopSceneEntityOverlappingBitmap(const IndexedBitmap &bitmap,
+		const Common::Point &position, const Common::String &excludedName, bool opaquePixels) const {
+	// GOG handle_target_interaction (0x7ff50) excludes STAT and classes above 0x15.
+	for (int i = (int)_sceneEntities.size() - 1; i >= 0; --i) {
+		const Entity *entity = _sceneEntities[(uint)i];
+		const int classId = entity->getClassId();
+		if (entity->getName().empty() || entity->getName().equalsIgnoreCase(excludedName) ||
+				entity->getName().equalsIgnoreCase("STAT") || classId == kEntityClassCursor ||
+				classId > kEntityClassRectHotspot)
+			continue;
+		if (!opaquePixels && classId != kEntityClassObject && classId != kEntityClassRectHotspot &&
+				classId != kEntityClassNpc && classId != kEntityClassPlayer)
+			continue;
+		if (entity->overlapsBitmap(bitmap, position, opaquePixels))
+			return entity;
+	}
 	return nullptr;
 }
 
