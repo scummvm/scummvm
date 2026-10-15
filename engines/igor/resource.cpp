@@ -21,13 +21,37 @@
 
 #include "igor/igor.h"
 #include "common/debug-channels.h"
+#include "igor/unpack.h"
 
 namespace Igor {
+
+// The Spanish floppy version keeps part of its resources inside its packed
+// executable. They are read from the memory image of IGOR.EXE, restored at startup.
+void IgorEngine::unpackExecutable() {
+	Common::File exeFile;
+	if (!exeFile.open("IGOR.EXE")) {
+		error("Unable to open 'IGOR.EXE'");
+	}
+	Common::Array<byte> packed;
+	packed.resize(exeFile.size());
+	if (exeFile.read(packed.data(), packed.size()) != packed.size()) {
+		error("Unable to read 'IGOR.EXE'");
+	}
+	Common::String unpackError;
+	if (!unpackSpanishFloppyExe(packed.data(), packed.size(), _unpackedExe, unpackError)) {
+		error("Unable to unpack 'IGOR.EXE': %s", unpackError.c_str());
+	}
+}
 
 void IgorEngine::readTableFile() {
 	Common::File tblFile;
 	uint32 stringsEntriesOffset = 0, resourcesEntriesOffset = 0, soundEntriesOffset = 0;
-	if (tblFile.open("IGOR.TBL") && tblFile.readUint32BE() == 'ITBL' && tblFile.readUint32BE() == 4) {
+	uint32 tableVersion = 0;
+	if (tblFile.open("IGOR.TBL") && tblFile.readUint32BE() == 'ITBL') {
+		tableVersion = tblFile.readUint32BE();
+	}
+	// version 5 adds the source of the data of each resource
+	if (tableVersion == 4 || tableVersion == 5) {
 		stringsEntriesOffset = tblFile.readUint32BE();
 		uint32 borlandOverlaySize = _ovlFile.size();
 		int gameVersionsCount = tblFile.readByte();
@@ -49,6 +73,14 @@ void IgorEngine::readTableFile() {
 			_resourceEntries[i].id = tblFile.readUint16BE();
 			_resourceEntries[i].offs = tblFile.readUint32BE();
 			_resourceEntries[i].size = tblFile.readUint32BE();
+			_resourceEntries[i].source = kResourceSourceContainer;
+			if (tableVersion >= 5) {
+				const int source = tblFile.readByte();
+				if (source != kResourceSourceContainer && source != kResourceSourceExecutable) {
+					error("Invalid resource source in 'IGOR.TBL'");
+				}
+				_resourceEntries[i].source = (ResourceSource)source;
+			}
 		}
 		tblFile.seek(soundEntriesOffset);
 		_soundOffsetsCount = tblFile.readUint16BE();
@@ -75,6 +107,18 @@ void IgorEngine::readTableFile() {
 		return;
 	}
 	error("Unable to read 'IGOR.TBL'");
+}
+
+// The unpacked executable of the Spanish floppy version stores each text as a
+// plain Pascal string (length byte, then the characters) in a slot with room for
+// both languages.
+static void decodeFloppyMainString(const uint8 *src, char *dst, uint slotSize) {
+	const uint length = *src;
+	if (length >= slotSize) {
+		error("Invalid text length in the unpacked executable");
+	}
+	memcpy(dst, src + 1, length);
+	dst[length] = '\0';
 }
 
 static void decodeMainString(const uint8 *src, char *dst) {
@@ -203,6 +247,39 @@ void IgorEngine::loadMainTexts() {
 	}
 	int dataSize;
 	uint8 *p = loadData(TXT_MainTable, 0, &dataSize);
+	if (_game.version == kIdSpaFloppy) {
+		// it has 171 dialogue texts and its verbs are in a separate resource
+		const uint objectsOffset = 3 * 7 * 2;
+		const uint dialogueOffset = 0x8BA;
+		if ((uint)dataSize < dialogueOffset || (dataSize - dialogueOffset) % (51 * 2) != 0) {
+			error("Invalid main text resource");
+		}
+		const uint dialogueCount = (dataSize - dialogueOffset) / (51 * 2);
+		if (dialogueCount > ARRAYSIZE(_globalDialogueTexts) ||
+			objectsOffset + ARRAYSIZE(_globalObjectNames) * 31 * 2 > (uint)dataSize) {
+			error("Invalid main text resource");
+		}
+		for (uint i = 0; i < ARRAYSIZE(_verbPrepositions); ++i) {
+			decodeFloppyMainString(p + (i * 2 + _language) * 7, _verbPrepositions[i], 7);
+		}
+		for (uint i = 0; i < ARRAYSIZE(_globalObjectNames); ++i) {
+			decodeFloppyMainString(p + objectsOffset + (i * 2 + _language) * 31, _globalObjectNames[i], 31);
+		}
+		for (uint i = 0; i < dialogueCount; ++i) {
+			decodeFloppyMainString(p + dialogueOffset + (i * 2 + _language) * 51, _globalDialogueTexts[i], 51);
+		}
+		free(p);
+		p = loadData(TXT_MainVerbs, 0, &dataSize);
+		if (dataSize != (int)(ARRAYSIZE(_verbsName) - 1) * 12 * 2) {
+			error("Invalid verbs text resource");
+		}
+		for (uint i = 1; i < ARRAYSIZE(_verbsName); ++i) {
+			decodeFloppyMainString(p + ((i - 1) * 2 + _language) * 12, _verbsName[i], 12);
+		}
+		free(p);
+		debugC(9, kDebugResource, "loadMainTexts() %u dialogue texts", dialogueCount);
+		return;
+	}
 	const uint8 *src = &p[0] + _language * 7;
 	for (int i = 0; i < 3; ++i, src += 7 * 2) {
 		decodeMainString(src, _verbPrepositions[i]);
@@ -283,8 +360,16 @@ uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
 			error("Unable to allocate %d bytes", re->size);
 		}
 	}
-	_ovlFile.seek(re->offs);
-	_ovlFile.read(dst, re->size);
+	// copy directly from the in-memory unpacked executable if the resource is stored there
+	if (re->source == kResourceSourceExecutable) {
+		if (re->offs > _unpackedExe.size() || re->size > _unpackedExe.size() - re->offs) {
+			error("Resource %d lies outside the unpacked executable", id);
+		}
+		memcpy(dst, _unpackedExe.data() + re->offs, re->size);
+	} else {
+		_ovlFile.seek(re->offs);
+		_ovlFile.read(dst, re->size);
+	}
 	if (size) {
 		*size = re->size;
 	}
