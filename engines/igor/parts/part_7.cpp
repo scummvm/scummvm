@@ -99,7 +99,7 @@ void IgorEngine::part7EnterFromOutside() {
 
 	_walkDataLastIndex = 0;
 	// first time read notice board
-	if (!_part07FirstVisitDone) {
+	if (_game.version != kIdEngFloppy && !_part07FirstVisitDone) {
 		buildWalkPath(109, 143, 180, 129);
 		_walkData[_walkDataLastIndex].frameNum = 0;
 		_walkData[_walkDataLastIndex].posNum = kFacingPositionRight;
