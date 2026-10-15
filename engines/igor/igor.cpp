@@ -235,9 +235,7 @@ Common::Error IgorEngine::run() {
 	}
 
 	readTableFile();
-	// TODO: Spanish floppy music stays disabled until its music resources
-	// and their selection are identified.
-	if ((_game.flags & kFlagFloppy) && _game.version != kIdSpaFloppy)
+	if (_game.flags & kFlagFloppy)
 		_midiPlayer = new MidiPlayer(_mixer);
 	loadMainTexts();
 	loadIgorFrames();

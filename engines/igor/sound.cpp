@@ -81,12 +81,22 @@ void IgorEngine::startMusic(int cmf) {
 	_midiPlayer->playMusic(_musicData, musicDataSize);
 }
 
-static int getMusicResource(int num, int sequence) {
+// Number of segments cycled for the given music number (the Spanish floppy
+// version only ships three segments for number 2).
+static int getMusicSegmentCount(int num, int version) {
+	if (num == 2)
+		return version == kIdSpaFloppy ? 3 : 4;
+	return num == 7 ? 4 : 1;
+}
+
+static int getMusicResource(int num, int sequence, int version) {
 	static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
 	if (num < 0 || num >= (int)ARRAYSIZE(cmf))
 		return 0;
+	if (num == 1)
+		return version == kIdSpaFloppy ? CMF_1 : 0;
 	if (num == 2 || num == 7) {
-		if (sequence < 1 || sequence > 4)
+		if (sequence < 1 || sequence > getMusicSegmentCount(num, version))
 			return 0;
 		return cmf[num] + sequence - 1;
 	}
@@ -106,14 +116,23 @@ void IgorEngine::playMusic(int num, bool restart) {
 	if (_game.flags & kFlagFloppy) {
 		if (!_midiPlayer)
 			return;
-		const int cmf = getMusicResource(num, _gameState.musicSequenceIndex);
+		int cmf = getMusicResource(num, _gameState.musicSequenceIndex, _game.version);
+		// Selection 1 belongs to the Spanish floppy logo screen only.
+		if (num == 1 && _currentPart != 900)
+			cmf = 0;
 		if (num != 0 && !cmf) {
 			// TODO: Restore unsupported music selections once verified.
 			return;
 		}
 		_midiPlayer->stopMusic();
 		_musicRestartCounter = 0;
-		if (num == 12) {
+		if (_game.version == kIdSpaFloppy) {
+			// The selection starts the segment right away; repetition is
+			// handled by updateMusic() without a restart delay.
+			if (num != 0)
+				startMusic(cmf);
+			_musicRestartCounter = 0xFF;
+		} else if (num == 12) {
 			// Credits start directly and are excluded from automatic repetition.
 			startMusic(cmf);
 			_musicRestartCounter = 0xFF;
@@ -140,10 +159,28 @@ void IgorEngine::updateMusic() {
 	uint32 ticks = timer / period;
 	_musicTimerRemainder = timer % period;
 	while (ticks--) {
+		if (_game.version == kIdSpaFloppy) {
+			// Selections 1 and 12 play once; all others repeat as soon as
+			// the segment ends, without a restart delay.
+			const int num = _gameState.musicNum;
+			if (num > 1 && num < 12 && !_midiPlayer->isPlaying() &&
+					getMusicResource(num, _gameState.musicSequenceIndex, _game.version)) {
+				if (num == 2) {
+					const int previous = _gameState.musicSequenceIndex;
+					do {
+						_gameState.musicSequenceIndex = getRandomNumber(getMusicSegmentCount(2, _game.version) - 1) + 1;
+					} while (_gameState.musicSequenceIndex == previous);
+				} else if (num == 7) {
+					_gameState.musicSequenceIndex = _gameState.musicSequenceIndex == getMusicSegmentCount(7, _game.version) ? 1 : _gameState.musicSequenceIndex + 1;
+				}
+				startMusic(getMusicResource(num, _gameState.musicSequenceIndex, _game.version));
+			}
+			continue;
+		}
 		if (_musicRestartCounter != 0xFF) {
 			if (_musicRestartCounter == _musicRestartDelay) {
 				if (_gameState.musicNum > 0 && _gameState.musicNum < 12) {
-					const int cmf = getMusicResource(_gameState.musicNum, _gameState.musicSequenceIndex);
+					const int cmf = getMusicResource(_gameState.musicNum, _gameState.musicSequenceIndex, _game.version);
 					if (cmf)
 						startMusic(cmf);
 				}
@@ -153,18 +190,18 @@ void IgorEngine::updateMusic() {
 				++_musicRestartCounter;
 			}
 		} else if (_gameState.musicNum > 0 && _gameState.musicNum < 12 &&
-				getMusicResource(_gameState.musicNum, _gameState.musicSequenceIndex) && !_midiPlayer->isPlaying()) {
+				getMusicResource(_gameState.musicNum, _gameState.musicSequenceIndex, _game.version) && !_midiPlayer->isPlaying()) {
 			switch (_gameState.musicNum) {
 			case 2: {
 				const int previous = _gameState.musicSequenceIndex;
 				do {
-					_gameState.musicSequenceIndex = getRandomNumber(3) + 1;
+					_gameState.musicSequenceIndex = getRandomNumber(getMusicSegmentCount(2, _game.version) - 1) + 1;
 				} while (_gameState.musicSequenceIndex == previous);
 				_musicRestartDelay = 5;
 				break;
 			}
 			case 7:
-				_gameState.musicSequenceIndex = _gameState.musicSequenceIndex == 4 ? 1 : _gameState.musicSequenceIndex + 1;
+				_gameState.musicSequenceIndex = _gameState.musicSequenceIndex == getMusicSegmentCount(7, _game.version) ? 1 : _gameState.musicSequenceIndex + 1;
 				_musicRestartDelay = 5;
 				break;
 			case 11:
