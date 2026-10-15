@@ -123,9 +123,23 @@ void ZoombiniDialogSaveLoad::onPreTickFrame() {
 	}
 }
 
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
 ZmbEventHandleResult ZoombiniDialogSaveLoad::onImeComposition(const Common::ImeComposition &composition) {
 	if (_mode != kSaveMode)
 		return ZmbEventHandleResult::kPassthrough;
+
+	if (composition.state == Common::ImeComposition::kComplete && !composition.text.empty()) {
+		_saveInputCompositionText.clear();
+		_saveInputCompositionCursorPos = 0;
+		for (char32_t character : composition.text) {
+			if (saveTextBox_handleTyping(character) == ZmbEventHandleResult::kConsumed)
+				removeLeadingSaveInputSpaces();
+		}
+		_saveInputCursorVisible = true;
+		_saveInputCursorLastBlinkTimeMs = _currentFrameTime;
+		markDialogFrameDirty();
+		return ZmbEventHandleResult::kConsumed;
+	}
 
 	Common::U32String compositionText;
 	uint32 compositionCursorPos = 0;
@@ -155,6 +169,7 @@ ZmbEventHandleResult ZoombiniDialogSaveLoad::onImeComposition(const Common::ImeC
 	markDialogFrameDirty();
 	return ZmbEventHandleResult::kConsumed;
 }
+#endif
 
 Common::Rect ZoombiniDialogSaveLoad::getSaveEntryBaseRect() {
 	Common::Rect saveEntryRect = Common::Rect(_saveEntryLeft, 0, _saveEntryRight, 0);
@@ -371,14 +386,13 @@ ZmbEventHandleResult ZoombiniDialogSaveLoad::dialogFrame_onKeyDown(ZmbFeature *f
 			result = ZmbEventHandleResult::kConsumed;
 			break;
 		default: // Handle typing of printable characters
-			// When Windows IME is compositing characters, no keyboard event is produced.
-			// When Windows IME has finished compositing characters, keyboard event with KEYCODE_INVALID is produced.
+			// Accept key-event text when the backend is not delivering composition commits.
 			// @ref Common::KEYCODE_DELETE passes this check, but it has been handled above.
 			if ((Common::KEYCODE_EXCLAIM <= kbd.keycode && kbd.keycode <= Common::KEYCODE_TILDE) ||
 				kbd.keycode == Common::KEYCODE_INVALID ||
 				(Common::KEYCODE_KP0 <= kbd.keycode && kbd.keycode <= Common::KEYCODE_KP9 && (kbd.flags & Common::KBD_NUM)) ||
 				(Common::KEYCODE_KP_PERIOD <= kbd.keycode && kbd.keycode <= Common::KEYCODE_KP_EQUALS && kbd.keycode != Common::KEYCODE_KP_ENTER)) {
-				result = saveTextBox_handleTyping(kbd);
+				result = saveTextBox_handleTyping(kbd.ascii);
 			}
 			break;
 		}
@@ -423,22 +437,27 @@ ZmbEventHandleResult ZoombiniDialogSaveLoad::dialogFrame_onKeyDown(ZmbFeature *f
 		clampLoadSelection();
 	}
 
-	if (result == ZmbEventHandleResult::kConsumed)
+	if (result == ZmbEventHandleResult::kConsumed) {
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
+		if (_mode == kSaveMode) {
+			g_system->cancelImeComposition();
+			_saveInputCompositionText.clear();
+			_saveInputCompositionCursorPos = 0;
+		}
+#endif
 		removeLeadingSaveInputSpaces();
-	if (result == ZmbEventHandleResult::kConsumed)
 		markDialogFrameDirty();
+	}
 
 	return result;
 }
 
-ZmbEventHandleResult ZoombiniDialogSaveLoad::saveTextBox_handleTyping(const Common::KeyState &kbd) {
+ZmbEventHandleResult ZoombiniDialogSaveLoad::saveTextBox_handleTyping(char32_t character) {
 	ZmbEventHandleResult result = ZmbEventHandleResult::kPassthrough;
 
-	// The key event's ASCII field contains the Unicode code point of the typed key.
-	char32_t uch = kbd.ascii;
-
+	// Key events and committed IME text share the same character insertion rules.
 	// ASCII range - filter out control characters
-	if (uch < 128 && !Common::isPrint(kbd.ascii))
+	if (character < 128 && !Common::isPrint(character))
 		return result;
 
 	if (!_saveInputCompositionText.empty()) {
@@ -450,14 +469,13 @@ ZmbEventHandleResult ZoombiniDialogSaveLoad::saveTextBox_handleTyping(const Comm
 	// Check if adding this character would exceed maximum save name length
 	// Non-ASCII characters may take more than 1 byte in the target code page
 	Common::U32String newInputText = _saveInputText;
-	newInputText.insertChar(kbd.ascii, _saveInputCursorPos);
+	newInputText.insertChar(character, _saveInputCursorPos);
 	if (ZmbRosterEntry::checkSaveNameSize(_vm, newInputText)) {
 		_saveInputText = newInputText;
 		_saveInputCursorPos += 1;
 		result = ZmbEventHandleResult::kConsumed;
 	}
 
-	// SDL emits committed IME text as key events with Unicode code points.
 	return result;
 }
 

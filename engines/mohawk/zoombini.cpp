@@ -172,9 +172,11 @@ bool MohawkEngine_Zoombini::tryAddZoombiniIsoRootSearchPath(const Common::FSNode
 
 MohawkEngine_Zoombini::MohawkEngine_Zoombini(OSystem *syst, const MohawkGameDescription *gameDesc)
 	: MohawkEngine(syst, gameDesc), _relInfo(*gameDesc) {
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
 	// Opt in before page initialization so ordinary pages use direct key events.
 	// Editable text fields enable composition only while they own keyboard input.
 	syst->acquireImeCompositionControl();
+#endif
 
 	DebugMan.addDebugChannel(MohawkEngine_Zoombini::kDebugSaveLoad01, "SaveLoad", "Log Zoombini save and roster I/O");
 	DebugMan.addDebugChannel(MohawkEngine_Zoombini::kDebugState03, "State", "Log Zoombini persistent game-state transitions");
@@ -203,6 +205,9 @@ MohawkEngine_Zoombini::~MohawkEngine_Zoombini() {
 	delete _rnd;
 	delete _state;
 	delete _text;
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
+	_system->releaseImeCompositionControl();
+#endif
 }
 
 Common::Error MohawkEngine_Zoombini::run() {
@@ -396,7 +401,9 @@ void MohawkEngine_Zoombini::processEvent(ZoombiniPage *page, const Common::Event
 	case Common::EVENT_MOUSEMOVE:
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP:
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
 	case Common::EVENT_IME_COMPOSITION:
+#endif
 		resetFidgetActivity();
 		break;
 	default:
@@ -460,9 +467,11 @@ void MohawkEngine_Zoombini::processEvent(ZoombiniPage *page, const Common::Event
 	case Common::EVENT_KEYUP:
 		page->onKeyUp(event.kbd, event.kbdRepeat);
 		break;
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
 	case Common::EVENT_IME_COMPOSITION:
 		page->onImeComposition(event.imeComposition);
 		break;
+#endif
 	case Common::EVENT_QUIT:
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 		beginQuitEvent(page);
@@ -1656,10 +1665,12 @@ ZoombiniDialogResult MohawkEngine_Zoombini::loadModalDialog(ZoombiniDialog *dial
 	dialogPage->open();
 	dialogPage->setBackgroundBitmap();
 	dialogPage->loadFeatures();
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
 	if (!_dialogPageStack.empty()) {
 		const Common::ImeComposition composition(Common::ImeComposition::kCancelled);
 		_dialogPageStack.top()->onImeComposition(composition);
 	}
+#endif
 	_dialogPageStack.push(dialogPage);
 	updateImeCompositionState();
 
@@ -1699,9 +1710,11 @@ void MohawkEngine_Zoombini::closeActiveDialog() {
 }
 
 void MohawkEngine_Zoombini::updateImeCompositionState() {
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
 	ZoombiniPage *inputPage = _dialogPageStack.empty() ? _activePage : _dialogPageStack.top();
 	const bool enable = inputPage && inputPage->wantsImeComposition();
 	g_system->setFeatureState(OSystem::kFeatureImeComposition, enable);
+#endif
 }
 
 ZmbResource::ArchiveKind MohawkEngine_Zoombini::setActiveResourceKind(ZmbResource::ArchiveKind kind) {
