@@ -31,6 +31,7 @@
 namespace Scumm {
 
 const uint32 kMortimerHighScoresCmd = 'MHSC';
+const char *const kMortimerDifficultyLevels[] = {_s("Easy"), _s("Medium"), _s("Hard")};
 
 MortimerDifficultyDialog::MortimerDifficultyDialog(bool isDemo, uint flightDifficulty, uint riddleDifficulty, bool girl, bool newPilot)
 	: GUI::Dialog("MortimerDifficultyDialog"), _character(nullptr), _pilotName(nullptr) {
@@ -41,42 +42,50 @@ MortimerDifficultyDialog::MortimerDifficultyDialog(bool isDemo, uint flightDiffi
 	}
 	if (!isDemo) {
 		new GUI::StaticTextWidget(this, _name + ".CharacterLabel", _("Character:"));
-		_character = new GUI::PopUpWidget(this, _name + ".Character");
-		_character->appendEntry(_("Sid"), 0);
-		_character->appendEntry(_("Sally"), 1);
-		_character->setSelectedTag(girl ? 1 : 0);
+		_character = new GUI::RadiobuttonGroup(this);
+		new GUI::RadiobuttonWidget(this, _name + ".Sally", _character, 1, _("Sally"));
+		new GUI::RadiobuttonWidget(this, _name + ".Sid", _character, 0, _("Sid"));
+		_character->setValue(girl ? 1 : 0);
 	}
 	new GUI::StaticTextWidget(this, _name + ".FlightLabel", _("Flight difficulty:"));
 	new GUI::StaticTextWidget(this, _name + ".RiddleLabel", _("Riddle difficulty:"));
-	_flight = new GUI::PopUpWidget(this, _name + ".Flight", _("Choose how difficult flying and recovering from crashes should be."));
-	_riddle = new GUI::PopUpWidget(this, _name + ".Riddle", isDemo ?
-		_("The demo includes only one set of riddles.") : _("Choose the riddle difficulty and the cost and number of guesses."));
-	const char *const levels[] = {_s("Easy"), _s("Medium"), _s("Hard")};
-	for (uint i = 0; i < ARRAYSIZE(levels); ++i) {
-		_flight->appendEntry(_(levels[i]), i);
+	_flight = new GUI::RadiobuttonGroup(this);
+	_riddle = new GUI::RadiobuttonGroup(this);
+	for (uint i = 0; i < ARRAYSIZE(kMortimerDifficultyLevels); ++i) {
+		new GUI::RadiobuttonWidget(this, Common::String::format("%s.Flight%u", _name.c_str(), i), _flight, i,
+			_(kMortimerDifficultyLevels[i]), _("Choose how difficult flying and recovering from crashes should be."));
 		if (!isDemo)
-			_riddle->appendEntry(_(levels[i]), i);
+			new GUI::RadiobuttonWidget(this, Common::String::format("%s.Riddle%u", _name.c_str(), i), _riddle, i,
+				_(kMortimerDifficultyLevels[i]), _("Choose the riddle difficulty and the cost and number of guesses."));
 	}
 	if (isDemo) {
-		_riddle->appendEntry(_("Fixed (demo)"), 0);
+		new GUI::RadiobuttonWidget(this, _name + ".Riddle0", _riddle, 0, _("Fixed (demo)"),
+			_("The demo includes only one set of riddles."));
 		_riddle->setEnabled(false);
 	}
-	_flight->setSelectedTag(MIN(flightDifficulty, 2U));
-	_riddle->setSelectedTag(isDemo ? 0 : MIN(riddleDifficulty, 2U));
-	new GUI::ButtonWidget(this, _name + ".Cancel", _("~C~ancel"), Common::U32String(), GUI::kCloseCmd);
+	_flight->setValue(MIN(flightDifficulty, 2U));
+	_riddle->setValue(isDemo ? 0 : MIN(riddleDifficulty, 2U));
+	if (newPilot)
+		new GUI::ButtonWidget(this, _name + ".Back", _("Back"), Common::U32String(), GUI::kCloseCmd);
 	new GUI::ButtonWidget(this, _name + ".Start", _("Start"), Common::U32String(), GUI::kOKCmd, Common::ASCII_RETURN);
 }
 
+MortimerDifficultyDialog::~MortimerDifficultyDialog() {
+	delete _flight;
+	delete _riddle;
+	delete _character;
+}
+
 uint MortimerDifficultyDialog::flightDifficulty() const {
-	return _flight->getSelectedTag();
+	return _flight->getValue();
 }
 
 uint MortimerDifficultyDialog::riddleDifficulty() const {
-	return _riddle->getSelectedTag();
+	return _riddle->getValue();
 }
 
 bool MortimerDifficultyDialog::girl() const {
-	return _character && _character->getSelectedTag() == 1;
+	return _character && _character->getValue() == 1;
 }
 
 Common::String MortimerDifficultyDialog::pilotName() const {
@@ -88,25 +97,41 @@ Common::String MortimerDifficultyDialog::pilotName() const {
 void MortimerDifficultyDialog::reflowLayout() {
 	GUI::ThemeEval &layouts = *g_gui.xmlEval();
 	const int lineHeight = layouts.getVar("Globals.Line.Height");
-	const int width = 240 * g_gui.getScaleFactor();
+	const int width = 280 * g_gui.getScaleFactor();
+	const int columnWidth = (width - 8) / 2;
 	layouts.addDialog(_name, "screen_center")
-		.addLayout(GUI::ThemeLayout::kLayoutVertical, 8)
+		.addLayout(GUI::ThemeLayout::kLayoutVertical, 8, GUI::ThemeLayout::kItemAlignCenter)
 			.addPadding(8, 8, 8, 8)
 			.addWidget("Title", "", width, lineHeight, Graphics::kTextAlignCenter);
-	if (_pilotName)
-		layouts.addWidget("NameLabel", "", -1, lineHeight).addWidget("Name", "EditTextWidget");
-	if (_character)
-		layouts.addWidget("CharacterLabel", "", -1, lineHeight).addWidget("Character", "PopUp");
-	layouts.addWidget("FlightLabel", "", -1, lineHeight)
-			.addWidget("Flight", "PopUp")
-			.addWidget("RiddleLabel", "", -1, lineHeight)
-			.addWidget("Riddle", "PopUp")
-			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 8, GUI::ThemeLayout::kItemAlignEnd)
+	if (_character) {
+		layouts.addWidget("CharacterLabel", "", -1, lineHeight)
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 8)
 				.addPadding(0, 0, 0, 0)
-				.addSpace()
-				.addWidget("Cancel", "Button")
-				.addWidget("Start", "Button")
-			.closeLayout()
+				.addWidget("Sally", "Radiobutton", columnWidth)
+				.addWidget("Sid", "Radiobutton", columnWidth)
+			.closeLayout();
+	}
+	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 8)
+		.addPadding(0, 0, 0, 0)
+		.addLayout(GUI::ThemeLayout::kLayoutVertical, 8)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("FlightLabel", "", columnWidth, lineHeight);
+	for (uint i = 0; i < ARRAYSIZE(kMortimerDifficultyLevels); ++i)
+		layouts.addWidget(Common::String::format("Flight%u", i), "Radiobutton");
+	layouts.closeLayout()
+		.addLayout(GUI::ThemeLayout::kLayoutVertical, 8)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("RiddleLabel", "", columnWidth, lineHeight);
+	for (uint i = 0; i < ARRAYSIZE(kMortimerDifficultyLevels); ++i)
+		layouts.addWidget(Common::String::format("Riddle%u", i), "Radiobutton");
+	layouts.closeLayout().closeLayout();
+	if (_pilotName)
+		layouts.addWidget("NameLabel", "", -1, lineHeight).addWidget("Name", "EditTextWidget", -1, lineHeight);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 8, GUI::ThemeLayout::kItemAlignEnd)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("Back", "Button")
+			.addWidget("Start", "Button")
+		.closeLayout()
 		.closeLayout()
 	.closeDialog();
 	GUI::Dialog::reflowLayout();
@@ -135,8 +160,7 @@ MortimerPilotDialog::MortimerPilotDialog(const SaveStateList &pilots) : GUI::Dia
 		_pilot->appendEntry(pilots[i].getDescription(), pilots[i].getSaveSlot());
 	_pilot->setSelected(pilots.empty() ? 0 : 1);
 	new GUI::ButtonWidget(this, _name + ".HighScores", _("High Scores"), Common::U32String(), kMortimerHighScoresCmd);
-	new GUI::ButtonWidget(this, _name + ".Cancel", _("~C~ancel"), Common::U32String(), GUI::kCloseCmd);
-	new GUI::ButtonWidget(this, _name + ".Start", _("Start"), Common::U32String(), GUI::kOKCmd, Common::ASCII_RETURN);
+	new GUI::ButtonWidget(this, _name + ".Start", _("Play Mortimer"), Common::U32String(), GUI::kOKCmd, Common::ASCII_RETURN);
 }
 
 int MortimerPilotDialog::selectedPilot() const {
@@ -148,18 +172,13 @@ void MortimerPilotDialog::reflowLayout() {
 	const int lineHeight = layouts.getVar("Globals.Line.Height");
 	const int width = 280 * g_gui.getScaleFactor();
 	layouts.addDialog(_name, "screen_center")
-		.addLayout(GUI::ThemeLayout::kLayoutVertical, 8)
+		.addLayout(GUI::ThemeLayout::kLayoutVertical, 8, GUI::ThemeLayout::kItemAlignStretch)
 			.addPadding(8, 8, 8, 8)
 			.addWidget("Title", "", width, lineHeight, Graphics::kTextAlignCenter)
 			.addWidget("Pilot", "PopUp")
 			.addWidget("Hint", "", -1, lineHeight, Graphics::kTextAlignCenter)
+			.addWidget("Start", "Button")
 			.addWidget("HighScores", "Button")
-			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 8, GUI::ThemeLayout::kItemAlignEnd)
-				.addPadding(0, 0, 0, 0)
-				.addSpace()
-				.addWidget("Cancel", "Button")
-				.addWidget("Start", "Button")
-			.closeLayout()
 		.closeLayout()
 	.closeDialog();
 	GUI::Dialog::reflowLayout();

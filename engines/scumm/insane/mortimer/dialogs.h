@@ -27,6 +27,7 @@
 namespace GUI {
 class PopUpWidget;
 class EditTextWidget;
+class RadiobuttonGroup;
 }
 
 namespace Scumm {
@@ -34,6 +35,7 @@ namespace Scumm {
 class MortimerDifficultyDialog : public GUI::Dialog {
 public:
 	MortimerDifficultyDialog(bool isDemo, uint flightDifficulty, uint riddleDifficulty, bool girl = false, bool newPilot = false);
+	~MortimerDifficultyDialog() override;
 	uint flightDifficulty() const;
 	uint riddleDifficulty() const;
 	bool girl() const;
@@ -44,8 +46,8 @@ protected:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
-	GUI::PopUpWidget *_flight, *_riddle;
-	GUI::PopUpWidget *_character;
+	GUI::RadiobuttonGroup *_flight, *_riddle;
+	GUI::RadiobuttonGroup *_character;
 	GUI::EditTextWidget *_pilotName;
 };
 
