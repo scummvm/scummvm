@@ -69,12 +69,15 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_res = new ResourceReader();
 	_screen = new Screen(this);
 
-	if (getGameID() == GID_LGOP2 || getGameID() == GID_MANHOLE || getGameID() == GID_RODNEY) {
-		_dat = new GameDatabaseV2(this);
-	} else if (getGameID() == GID_RTZ) {
-		_dat = new GameDatabaseV3(this);
-	} else if (getGameID() == GID_RSBESTNDE || getGameID() == GID_RSBUSYNDE) {
-		_dat = new GameDatabaseV3_1(this);
+	if (getVersion() == 1)
+		_dat = new GameDatabaseV1();
+	else if (getVersion() == 2)
+		_dat = new GameDatabaseV2();
+	else if (getVersion() == 3) {
+		if (getSubVersion() == 1)
+			_dat = new GameDatabaseV3_1();
+		else
+			_dat = new GameDatabaseV3();
 	} else {
 		error("Unknown GameID");
 	}
