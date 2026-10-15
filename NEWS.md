@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Deja Vu II: Lost in Last Vegas.
    - Added support for Uninvited.
 
+ M4:
+   - Missing Animation and journal fixes for Ripley's Riddle of Master Lu
+ 
 #### 2026.4.0 "Never-slop" (2026-10-10)
 
  New games:
