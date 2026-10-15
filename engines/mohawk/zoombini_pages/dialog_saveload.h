@@ -60,10 +60,12 @@ public:
 	void loadFeatures() override;
 	/** Advance save-entry animations and delayed actions. */
 	void onPreTickFrame() override;
-	/** Update or cancel the uncommitted IME composition shown in the save-name field. */
+#if ZOOMBINI_ENABLE_IME_COMPOSITION
+	/** Update, commit, or cancel IME composition in the save-name field. */
 	ZmbEventHandleResult onImeComposition(const Common::ImeComposition &composition) override;
 	/** Enable native IME composition only for the save-name variant. */
 	bool wantsImeComposition() const override { return _mode == kSaveMode; }
+#endif
 
 	/** Return the screen rectangle occupied by a save entry row. */
 	Common::Rect getSaveEntryBaseRect();
@@ -74,8 +76,8 @@ public:
 	ZmbEventHandleResult dialogFrame_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos);
 	/** Handle keyboard selection and text-box focus. */
 	ZmbEventHandleResult dialogFrame_onKeyDown(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat);
-	/** Insert, delete, or move the cursor for save-name input. */
-	ZmbEventHandleResult saveTextBox_handleTyping(const Common::KeyState &kbd);
+	/** Insert one printable Unicode character into the save-name field. */
+	ZmbEventHandleResult saveTextBox_handleTyping(char32_t character);
 
 	/** Update scroll-button shapes before drawing the list. */
 	void scrollButtons_onPreRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
