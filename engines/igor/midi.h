@@ -142,6 +142,7 @@ public:
 
 	void playMusic(uint8 *data, uint32 size);
 	void stopMusic();
+	bool isPlaying();
 
 private:
 

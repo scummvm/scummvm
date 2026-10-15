@@ -68,6 +68,12 @@ void IgorEngine::syncSoundSettings() {
 }
 
 void IgorEngine::startMusic(int cmf) {
+	debugC(9, kDebugEngine, "startMusic() cue %d segment %d resource %d",
+		_gameState.musicNum, _gameState.musicSequenceIndex, cmf);
+	if (_musicTimerDivisor != 4096) {
+		_musicTimerDivisor = 4096;
+		_musicTimerRemainder = 0;
+	}
 	_midiPlayer->stopMusic();
 	free(_musicData);
 	int musicDataSize;
@@ -75,28 +81,107 @@ void IgorEngine::startMusic(int cmf) {
 	_midiPlayer->playMusic(_musicData, musicDataSize);
 }
 
+static int getMusicResource(int num, int sequence) {
+	static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
+	if (num < 0 || num >= (int)ARRAYSIZE(cmf))
+		return 0;
+	if (num == 2 || num == 7) {
+		if (sequence < 1 || sequence > 4)
+			return 0;
+		return cmf[num] + sequence - 1;
+	}
+	return cmf[num];
+}
+
 void IgorEngine::playMusic(int num, bool restart) {
 	debugC(9, kDebugEngine, "playMusic() %d", num);
 	if (_gameState.musicNum == num && !restart)
 		return;
+	if (_game.flags & kFlagFloppy)
+		updateMusic();
 	if (_gameState.musicNum != num) {
 		_gameState.musicNum = num;
 		_gameState.musicSequenceIndex = 1;
 	}
 	if (_game.flags & kFlagFloppy) {
-		if (_midiPlayer) {
-			static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
-			if (num < 0 || num >= (int)ARRAYSIZE(cmf) || cmf[num] == 0) {
-				// TODO: Restore unsupported music selections once verified.
-				return;
-			}
-			startMusic(cmf[num]);
+		if (!_midiPlayer)
+			return;
+		const int cmf = getMusicResource(num, _gameState.musicSequenceIndex);
+		if (num != 0 && !cmf) {
+			// TODO: Restore unsupported music selections once verified.
+			return;
+		}
+		_midiPlayer->stopMusic();
+		_musicRestartCounter = 0;
+		if (num == 12) {
+			// Credits start directly and are excluded from automatic repetition.
+			startMusic(cmf);
+			_musicRestartCounter = 0xFF;
 		}
 	} else {
 		g_system->getAudioCDManager()->stop();
 		// the first CD track is the data track: music number N is CD track N + 1
 		g_system->getAudioCDManager()->play(num + 1, -1, 0, 0);
 	}
+}
+
+void IgorEngine::updateMusic() {
+	if (!_midiPlayer)
+		return;
+	const uint32 now = _system->getMillis();
+	const uint32 elapsed = now - _musicUpdateMillis;
+	_musicUpdateMillis = now;
+	if (isPaused() || _musicSuspended)
+		return;
+
+	// The music scheduler uses the BIOS timer, independently of game speed.
+	const uint64 timer = _musicTimerRemainder + (uint64)elapsed * 1193180;
+	const uint32 period = _musicTimerDivisor * 1000;
+	uint32 ticks = timer / period;
+	_musicTimerRemainder = timer % period;
+	while (ticks--) {
+		if (_musicRestartCounter != 0xFF) {
+			if (_musicRestartCounter == _musicRestartDelay) {
+				if (_gameState.musicNum > 0 && _gameState.musicNum < 12) {
+					const int cmf = getMusicResource(_gameState.musicNum, _gameState.musicSequenceIndex);
+					if (cmf)
+						startMusic(cmf);
+				}
+				_musicRestartCounter = 0xFF;
+				_musicRestartDelay = 50;
+			} else {
+				++_musicRestartCounter;
+			}
+		} else if (_gameState.musicNum > 0 && _gameState.musicNum < 12 &&
+				getMusicResource(_gameState.musicNum, _gameState.musicSequenceIndex) && !_midiPlayer->isPlaying()) {
+			switch (_gameState.musicNum) {
+			case 2: {
+				const int previous = _gameState.musicSequenceIndex;
+				do {
+					_gameState.musicSequenceIndex = getRandomNumber(3) + 1;
+				} while (_gameState.musicSequenceIndex == previous);
+				_musicRestartDelay = 5;
+				break;
+			}
+			case 7:
+				_gameState.musicSequenceIndex = _gameState.musicSequenceIndex == 4 ? 1 : _gameState.musicSequenceIndex + 1;
+				_musicRestartDelay = 5;
+				break;
+			case 11:
+				_musicRestartDelay = 5;
+				break;
+			default:
+				_musicRestartDelay = 50;
+				break;
+			}
+			_musicRestartCounter = 0;
+		}
+	}
+}
+
+void IgorEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	_musicUpdateMillis = _system->getMillis();
 }
 
 void IgorEngine::playSound(int num, int type) {
