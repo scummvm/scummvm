@@ -107,8 +107,8 @@ public:
 		flow.queueDialogueInteraction(interaction);
 	}
 
-	static void requestMainMenuReturn(Flow &flow) {
-		flow.requestMainMenuReturn();
+	static void requestGameOverReturn(Flow &flow) {
+		flow.requestGameOverReturn();
 	}
 
 	static const MenuTextConfig &getMenuTextConfig(const Flow &flow) {
@@ -143,9 +143,6 @@ static const int kDialogueGenericByeResponseIndex = 13;
 static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
 static const char *const kDialogueKeywordBitmapPath = "1:/GRAPHIC/OTHER/KEYWORD.BM";
 static const char *const kDialogueLocalizedKeywordBitmapPath = "GRAPHIC/OTHER/KEYWORD.BM";
-static const char *const kDialogueGameOverBitmapPath = "1:/GRAPHIC/OTHER/GAMEOVER.BM";
-static const char *const kDialogueGameOverPalettePath = "1:/GRAPHIC/PAL/GAMEOVER.PAL";
-static const char *const kDialogueGameOverMusicPath = "SOUND/MUSIC/ANXIETY.CMP";
 
 static const byte kTextColorNormal = 255;
 static const byte kTextColorHover = 251;
@@ -869,80 +866,17 @@ public:
 	}
 
 	Common::Error runGameOverScreen() override {
-		Graphics::Screen *screen = _engine.getScreen();
-		ResourceManager *resources = _engine.getResources();
-		if (!screen || !resources)
-			return Common::kReadingFailed;
-
-		IndexedBitmap gameOverBitmap;
-		byte gameOverPalette[256 * 3];
-		if (!loadBitmapResource(*resources, kDialogueGameOverBitmapPath, gameOverBitmap) ||
-				!loadPaletteResource(*resources, kDialogueGameOverPalettePath, gameOverPalette)) {
-			return Common::kReadingFailed;
-		}
-
-		_engine.stopSpeech();
-		_engine.stopMusic();
-		_engine.stopSound();
-
-		screen->fillRect(screen->getBounds(), 0);
-		blitBitmap(*screen, gameOverBitmap, 0, 0);
-		setScaledPalette(*screen, gameOverPalette, 1.0f);
-		screen->makeAllDirty();
-		screen->update();
-
-		(void)_engine.playMusic(kDialogueGameOverMusicPath);
-
-		bool dismissed = false;
-		Graphics::FrameLimiter limiter(g_system, 60);
-		while (!dismissed && !SHOULD_QUIT) {
-			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event)) {
-				Common::Error result = Common::kNoError;
-				if (DialogueFlowAccess::handleSystemEvent(_flow, event, result)) {
-					_engine.stopMusic();
-					return result;
-				}
-
-				switch (event.type) {
-				case Common::EVENT_LBUTTONDOWN:
-				case Common::EVENT_RBUTTONDOWN:
-				case Common::EVENT_KEYDOWN:
-					dismissed = true;
-					break;
-				default:
-					break;
-				}
-			}
-
-			if (_entityManager)
-				(void)_entityManager->syncCursorEntityPosition(_mousePos);
-			if (dismissed)
-				break;
-
-			limiter.delayBeforeSwap();
-			limiter.startFrame();
-		}
-
-		_engine.stopMusic();
-		if (dismissed) {
-			Common::Error releaseError = waitForPointerRelease();
-			if (releaseError.getCode() != Common::kNoError)
-				return releaseError;
-		}
-
-		DialogueFlowAccess::requestMainMenuReturn(_flow);
+		// GOG run_game_over_screen (0x7c540) enters run_main_menu (0x67390)
+		// with GAMEOVER.BM and GAMEOVER.PAL retained as the menu backdrop.
+		debugC(1, kDebugDialogue, "Harvester: dialogue death requesting game-over menu");
+		DialogueFlowAccess::requestGameOverReturn(_flow);
 		return Common::kNoError;
 	}
 
 	void assignTopicBuffer(Common::String &topicBuffer, int &topicBufferLineIndex,
-			int responseLineIndex, const char *label) override {
+			int responseLineIndex, const char *) override {
 		topicBuffer = _text->getDialogueResponseLine(responseLineIndex);
 		topicBufferLineIndex = responseLineIndex;
-
-		Common::Array<Common::String> topics;
-		splitDialogueMenuLine(topicBuffer, topics);
-		logDialogueMenuItems(label, responseLineIndex, topicBuffer, topics);
 	}
 
 	bool matchesResponseLine(const Common::String &selectedTopic, int responseLineIndex) override {

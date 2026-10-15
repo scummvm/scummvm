@@ -1050,7 +1050,6 @@ const Entity *EntityManager::findTopSceneEntityAt(const Common::Point &point, in
 
 const Entity *EntityManager::findTopSceneEntityOverlappingBitmap(const IndexedBitmap &bitmap,
 		const Common::Point &position, const Common::String &excludedName, bool opaquePixels) const {
-	// GOG handle_target_interaction (0x7ff50) excludes STAT and classes above 0x15.
 	for (int i = (int)_sceneEntities.size() - 1; i >= 0; --i) {
 		const Entity *entity = _sceneEntities[(uint)i];
 		const int classId = entity->getClassId();
