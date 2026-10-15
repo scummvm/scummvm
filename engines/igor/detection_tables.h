@@ -97,7 +97,7 @@ const IgorGameDescription gameDescriptions[] = {
 		kIdSpaFloppy,
 		kFlagFloppy,
 		"IGOR.DAT",
-		"IGOR.FSD"
+		"IGOR.DAT" // no IGOR.FSD; the sound effects are stored in IGOR.DAT
 	},
 
 	{
