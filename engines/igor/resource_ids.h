@@ -868,5 +868,6 @@
 #define TXT_MainVerbs 1240
 #define PAL_VerbsPanel 1241
 #define PAL_InventoryPanel 1242
+#define DAT_FloppySentenceColors 1246
 
 #endif // IGOR_RESOURCE_IDS

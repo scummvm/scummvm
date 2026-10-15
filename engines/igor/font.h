@@ -26,7 +26,19 @@
 
 namespace Igor {
 
-class Font : public Graphics::Font {
+/**
+ * Interface of the fonts of the game. They draw directly into the 8-bit screen
+ * buffers using up to three colors, for the glyph pixel values 1, 2 and 3.
+ *
+ * Floppy fonts dont use the third color.
+ */
+class IgorFont : public Graphics::Font {
+public:
+	virtual int getStringWidth(const char *s) const = 0;
+	virtual void drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3) const = 0;
+};
+
+class Font : public IgorFont {
 public:
 	Font();
 
@@ -37,9 +49,9 @@ public:
 
 	// Engine-specific: raw buffer rendering with shadow/highlight colors
 	using Graphics::Font::drawChar;
-	void drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3) const;
+	void drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3) const override;
 	void drawChar(uint8 *dst, int chr, int x, int y, int color1, int color2, int color3) const;
-	int getStringWidth(const char *s) const;
+	int getStringWidth(const char *s) const override;
 
 private:
 	static const int kFontHeight = 11;

@@ -22,7 +22,7 @@
 #ifndef IGOR_FLOPPY_FONT_H
 #define IGOR_FLOPPY_FONT_H
 
-#include "graphics/font.h"
+#include "igor/font.h"
 
 namespace Igor {
 
@@ -30,18 +30,19 @@ namespace Igor {
  * Common part of the two Spanish floppy fonts: the shared character map and
  * the drawing code. Glyph pixels are 1 (text color) or 2 (shadow color).
  */
-class FloppyFont : public Graphics::Font {
+class FloppyFont : public IgorFont {
 public:
 	int getFontHeight() const override { return kFontHeight; }
 	int getMaxCharWidth() const override { return _glyphWidth; }
 	int getCharWidth(uint32 chr) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
-	// Engine-specific: raw buffer rendering with shadow color
+	// Engine-specific: raw buffer rendering. The glyphs have no third pixel value,
+	// so color3 is not used.
 	using Graphics::Font::drawChar;
-	void drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2) const;
+	void drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3) const override;
 	void drawChar(uint8 *dst, int chr, int x, int y, int color1, int color2) const;
-	int getStringWidth(const char *s) const;
+	int getStringWidth(const char *s) const override;
 
 protected:
 	FloppyFont(const uint8 *widths, const uint32 *glyphs, int glyphWidth);
@@ -61,7 +62,7 @@ private:
 };
 
 /**
- * Spanish floppy dialogue font, 9x11 glyphs.
+ * Dialogue font, 9x11 glyphs.
  */
 class FloppyDialogueFont : public FloppyFont {
 public:
@@ -73,7 +74,7 @@ private:
 };
 
 /**
- * Spanish floppy action sentence font, 7x11 glyphs.
+ * Action sentence font, 7x11 glyphs.
  */
 class FloppySentenceFont : public FloppyFont {
 public:

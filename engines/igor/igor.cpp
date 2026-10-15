@@ -55,12 +55,22 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_inventoryPanelBuffer = (uint8 *)malloc(9600 * 2);
 	_inventoryImagesBuffer = (uint8 *)malloc(48000);
 	_verbsPanelBuffer = (uint8 *)malloc(3840);
+	_verbsPanelSize = 0; // set when the panel is loaded
 
 	_game.ovlFileName = gameDesc->ovlFileName;
 	_game.sfxFileName = gameDesc->sfxFileName;
 	_game.version = gameDesc->gameVersion;
 	_game.flags = gameDesc->gameFlags;
 	_game.language = gameDesc->desc.language;
+
+	if (_game.version == kIdSpaFloppy) {
+		_dialogueFont = &_floppyDialogueFont;
+		_sentenceFont = &_floppySentenceFont;
+	} else {
+		_dialogueFont = &_font;
+		_sentenceFont = &_font;
+	}
+	memset(_actionSentenceColors, 0, sizeof(_actionSentenceColors));
 
 	// _currentPart = kStartupPart;
 
@@ -350,7 +360,12 @@ void IgorEngine::addObjectToInventory(int object, int index) {
 	++_inventoryInfo[73];
 	_inventoryInfo[_inventoryInfo[73] - 1] = object;
 	_inventoryInfo[index] = _inventoryInfo[73];
-	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+	if (_game.version == kIdSpaFloppy) {
+		if (_inventoryInfo[73] > 8)
+			_inventoryInfo[72] = _inventoryInfo[73] - 7;
+	} else {
+		_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+	}
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(51, 1);
 }
@@ -380,7 +395,7 @@ void IgorEngine::removeInventoryEntry(int index) {
 	_inventoryInfo[_inventoryInfo[index] - 1] = 0;
 	_inventoryInfo[index] = 0;
 	packInventory();
-	if (_inventoryInfo[72] > _inventoryInfo[73]) {
+	if (_game.version != kIdSpaFloppy && _inventoryInfo[72] > _inventoryInfo[73]) {
 		_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
 	}
 }
@@ -392,6 +407,14 @@ void IgorEngine::removeObjectFromInventory(int index) {
 }
 
 int IgorEngine::getObjectFromInventory(int x) const {
+	if (_game.version == kIdSpaFloppy) {
+		if (x >= 0 && x < 320) {
+			const int i = x / 40 + _inventoryInfo[72];
+			if (i <= _inventoryInfo[73])
+				return _inventoryInfo[i - 1];
+		}
+		return 0;
+	}
 	if (x >= 20 && x <= 299) {
 		int i = (x - 20) / 40 + _inventoryInfo[72];
 		if (i <= _inventoryInfo[73]) {
@@ -399,6 +422,21 @@ int IgorEngine::getObjectFromInventory(int x) const {
 		}
 	}
 	return 0;
+}
+
+void IgorEngine::pageFloppyInventory(bool forward) {
+	const int count = _inventoryInfo[73];
+	const int start = _inventoryInfo[72];
+	if (forward) {
+		if (count <= start + 7 || start >= count - 7)
+			return;
+		_inventoryInfo[72] = (start < count - 11) ? start + 4 : count - 7;
+	} else {
+		if (count <= 8 || start <= 1)
+			return;
+		_inventoryInfo[72] = (start > 4) ? start - 4 : 1;
+	}
+	drawInventory(_inventoryInfo[72], 0);
 }
 
 void IgorEngine::packInventory() {

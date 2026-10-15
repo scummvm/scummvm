@@ -41,6 +41,7 @@
 
 #include "igor/detection.h"
 #include "igor/font.h"
+#include "igor/floppy_font.h"
 #include "igor/resource_ids.h"
 
 namespace Igor {
@@ -600,6 +601,7 @@ private:
 	uint8 *_inventoryPanelBuffer;
 	uint8 *_inventoryImagesBuffer;
 	uint8 *_verbsPanelBuffer;
+	int _verbsPanelSize;
 	int _screenVGAVOffset;
 
 	bool _eventQuitGame;
@@ -728,7 +730,14 @@ private:
 	int _soundOffsetsCount;
 	uint32 *_soundOffsets;
 
+	// _dialogueFont and _sentenceFont are the same on all versions
+	// but the Spanish Floppy
 	Font _font;
+	FloppyDialogueFont _floppyDialogueFont;
+	FloppySentenceFont _floppySentenceFont;
+	const IgorFont *_dialogueFont;
+	const IgorFont *_sentenceFont;
+	uint8 _actionSentenceColors[3];
 
 	ResourceEntry *_resourceEntries;
 	Common::Array<StringEntry> _stringEntries;
@@ -1564,13 +1573,18 @@ private:
 	void updateRightButtonVerbPick();
 	void endRightButtonVerbPick();
 	void formatRightButtonSentence();
-	int getVerbUnderCursor(int x) const { return ((x % 46) < 44) ? (kVerbTalk + x / 46) : 0; }
+	int getVerbUnderCursor(int x) const {
+		if (_game.version == kIdSpaFloppy)
+			return kVerbWalk + x / 40;
+		return ((x % 46) < 44) ? (kVerbTalk + x / 46) : 0;
+	}
 	void handleRoomInventoryScroll();
 	void loadOptionsMenuTexts();
 	void drawOptionsMenuText(int text, int x, int y, int color);
 	void handleOptionsMenu();
 	void scrollInventory();
 	void drawInventory(int start, int mode);
+	void pageFloppyInventory(bool forward);
 	void addObjectToInventory(int object, int index);
 	void removeInventoryEntry(int index);
 	void removeObjectFromInventory(int index);

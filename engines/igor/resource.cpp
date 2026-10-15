@@ -224,7 +224,13 @@ void IgorEngine::loadDialogueData(int dlg) {
 }
 
 void IgorEngine::loadMainTexts() {
-	loadData(IMG_VerbsPanel, _verbsPanelBuffer);
+	// the panel of the Spanish floppy version has one row less than the CD one
+	const ResourceEntry *panel = findData(IMG_VerbsPanel);
+	if (panel->size > 320 * 12 || panel->size % 320 != 0) {
+		error("Invalid verbs panel dimensions");
+	}
+	// save the size in _verbsPanelSize
+	loadData(IMG_VerbsPanel, _verbsPanelBuffer, &_verbsPanelSize);
 	debugC(9, kDebugResource, "loadMainTexts()");
 	if (_game.version == kIdSpaCD) {
 		const struct {
@@ -241,13 +247,14 @@ void IgorEngine::loadMainTexts() {
 		};
 		for (int i = 0; i < 7; ++i) {
 			const char *s = getString(verbTexts[i].strId);
-			int x = verbTexts[i].x - _font.getStringWidth(s) / 2;
-			_font.drawString(_verbsPanelBuffer, s, x, 0, 0xF2, -1, 0);
+			int x = verbTexts[i].x - _dialogueFont->getStringWidth(s) / 2;
+			_dialogueFont->drawString(_verbsPanelBuffer, s, x, 0, 0xF2, -1, 0);
 		}
 	}
 	int dataSize;
 	uint8 *p = loadData(TXT_MainTable, 0, &dataSize);
 	if (_game.version == kIdSpaFloppy) {
+		loadData(DAT_FloppySentenceColors, _actionSentenceColors);
 		// it has 171 dialogue texts and its verbs are in a separate resource
 		const uint objectsOffset = 3 * 7 * 2;
 		const uint dialogueOffset = 0x8BA;

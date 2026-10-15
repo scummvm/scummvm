@@ -331,7 +331,7 @@ int FloppyFont::getStringWidth(const char *s) const {
 	return w;
 }
 
-void FloppyFont::drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2) const {
+void FloppyFont::drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3) const {
 	for (; *s; ++s) {
 		if (*s == ' ') {
 			x += kSpaceWidth;
