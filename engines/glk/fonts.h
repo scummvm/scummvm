@@ -36,9 +36,8 @@ enum STYLES { FONTR, FONTB, FONTI, FONTZ };
  */
 struct FontInfo {
 public:
-	static uint _caretColor, _caretSave;
-	static int _caretShape;
-public:
+	uint _caretColor, _caretSave;
+	int _caretShape;
 	double _size;
 	double _aspect;
 	int _cellW, _cellH;

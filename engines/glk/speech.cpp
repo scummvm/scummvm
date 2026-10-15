@@ -145,6 +145,15 @@ Speech::~Speech() {
 	}
 }
 
+void Speech::setSpeechEnabled(bool enabled) {
+	if (enabled) {
+		gli_initialize_tts();
+	} else {
+		gli_tts_purge();
+		gli_free_tts();
+	}
+}
+
 void Speech::gli_initialize_tts(void) {
 	debugC(kDebugSpeech, "gli_initialize_tts");
 	if (!_speechManager)
