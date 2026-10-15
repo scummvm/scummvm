@@ -865,4 +865,8 @@
 #define TXT_Credits6 1238
 #define TXT_Credits7 1239
 
+#define TXT_MainVerbs 1240
+#define PAL_VerbsPanel 1241
+#define PAL_InventoryPanel 1242
+
 #endif // IGOR_RESOURCE_IDS

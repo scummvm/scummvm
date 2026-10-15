@@ -62,8 +62,9 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_game.flags = gameDesc->gameFlags;
 	_game.language = gameDesc->desc.language;
 
-	_currentPart = kStartupPart;
+	// _currentPart = kStartupPart;
 
+	_currentPart = 850;
 	_midiPlayer = nullptr;
 	_musicData = nullptr;
 
@@ -217,6 +218,10 @@ Common::Error IgorEngine::run() {
 
 	if (!_sndFile.open(_game.sfxFileName)) {
 		error("Unable to open '%s'", _game.sfxFileName);
+	}
+
+	if (_game.version == kIdSpaFloppy) {
+		unpackExecutable();
 	}
 
 	readTableFile();

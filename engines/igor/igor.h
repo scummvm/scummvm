@@ -114,10 +114,16 @@ struct DetectedGameVersion {
 	const char *sfxFileName;
 };
 
+enum ResourceSource {
+	kResourceSourceContainer, // the game's resource container (IGOR.DAT, IGOR.EXE)
+	kResourceSourceExecutable // the unpacked executable image of the Spanish floppy version
+};
+
 struct ResourceEntry {
 	int id;
 	uint32 offs;
 	uint32 size;
+	ResourceSource source;
 };
 
 struct StringEntry {
@@ -577,6 +583,7 @@ private:
 
 	Common::File _ovlFile;
 	Common::File _sndFile;
+	Common::Array<byte> _unpackedExe;
 
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _speechHandle;
@@ -1631,6 +1638,7 @@ private:
 	void waitForTimer(int ticks = -1, bool presentScreen = true, uint32 deadline = 0);
 
 	ResourceEntry *findData(int num);
+	void unpackExecutable();
 	uint8 *loadData(int num, uint8 *dst = 0, int *size = 0);
 	void loadAnimData(const int *anm, int loadOffset = 0);
 	void loadActionData(int act);

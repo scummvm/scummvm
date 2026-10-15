@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	palette.o \
 	font.o \
 	floppy_font.o \
+	unpack.o \
 	room.o \
 	graphics.o \
 	resource.o \
