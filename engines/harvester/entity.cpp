@@ -591,14 +591,16 @@ bool Entity::overlapsBitmap(const IndexedBitmap &bitmap, const Common::Point &po
 		return false;
 	if (!opaquePixels)
 		return true;
-	if (!hasOpaqueFrame() || bitmap.width > 640 || bitmap.height > 480 ||
+	const bool rectangleTarget = _classId == kEntityClassRectHotspot;
+	if ((!rectangleTarget && !hasOpaqueFrame()) || bitmap.width > 640 || bitmap.height > 480 ||
 			bounds.width() > 640 || bounds.height() > 480)
 		return false;
 
 	for (uint y = 0; y < bitmap.height; ++y) {
 		for (uint x = 0; x < bitmap.width; x += 2) {
+			const Common::Point point(position.x + x, position.y + y);
 			if (bitmap.pixels[y * bitmap.width + x] &&
-					isOpaqueAt(Common::Point(position.x + x, position.y + y)))
+					(rectangleTarget ? bounds.contains(point) : isOpaqueAt(point)))
 				return true;
 		}
 	}
