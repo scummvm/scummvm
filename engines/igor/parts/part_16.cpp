@@ -188,10 +188,10 @@ void IgorEngine::part16PhotoCutscene() {
 	}
 	part16ApplyObjectState(255);
 	// Data-only inventory update: the panel is redrawn later together with the verbs
-	++_inventoryInfo[73];
-	_inventoryInfo[_inventoryInfo[73] - 1] = kInventoryObjectPhoto;
-	_inventoryInfo[54] = _inventoryInfo[73];
-	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+	++_inventoryInfo[kInventoryCount];
+	_inventoryInfo[_inventoryInfo[kInventoryCount] - 1] = kInventoryObjectPhoto;
+	_inventoryInfo[54] = _inventoryInfo[kInventoryCount];
+	_inventoryInfo[kInventoryFirstVisible] = _inventoryOffsetTable[(_inventoryInfo[kInventoryCount] - 1) / 7];
 	_objectsState[kPhotoCutsceneSeenStateIndex] = 1;
 	_objectsState[kMargaretStateIndex] = kMargaretStatePhotoTaken;
 	if (!isCDVersion())

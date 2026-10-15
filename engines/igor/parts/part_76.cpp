@@ -290,7 +290,7 @@ void IgorEngine::part76() {
 	loadAnimData(anim);
 	SET_PAL_208_96_1();
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_roomDataOffsets = PART_76_ROOM_DATA_OFFSETS;
 	setRoomClickFix(119, 153, 295, true, 119);
 	partMainSetExecuteAction(1, &IgorEngine::part76ExecuteAction);

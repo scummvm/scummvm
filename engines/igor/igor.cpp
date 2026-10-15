@@ -293,7 +293,7 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
 		SET_PAL_240_48_1();
 		drawVerbsPanel();
 		redrawVerb(_currentAction.verb, true);
-		drawInventory(_inventoryInfo[72], 0);
+		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	}
 	if (!_gameState.dialogueTextRunning)
 		showCursor();
@@ -357,16 +357,16 @@ void IgorEngine::handleRoomInventoryScroll() {
 
 void IgorEngine::addObjectToInventory(int object, int index) {
 	debugC(9, kDebugEngine, "addObjectToInventory %d %d", object, index);
-	++_inventoryInfo[73];
-	_inventoryInfo[_inventoryInfo[73] - 1] = object;
-	_inventoryInfo[index] = _inventoryInfo[73];
+	++_inventoryInfo[kInventoryCount];
+	_inventoryInfo[_inventoryInfo[kInventoryCount] - 1] = object;
+	_inventoryInfo[index] = _inventoryInfo[kInventoryCount];
 	if (_game.version == kIdSpaFloppy) {
-		if (_inventoryInfo[73] > 8)
-			_inventoryInfo[72] = _inventoryInfo[73] - 7;
+		if (_inventoryInfo[kInventoryCount] > 8)
+			_inventoryInfo[kInventoryFirstVisible] = _inventoryInfo[kInventoryCount] - 7;
 	} else {
-		_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+		_inventoryInfo[kInventoryFirstVisible] = _inventoryOffsetTable[(_inventoryInfo[kInventoryCount] - 1) / 7];
 	}
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	playSound(51, 1);
 }
 
@@ -380,7 +380,7 @@ bool IgorEngine::debugAddObjectToInventory(int object) {
 	}
 
 	const int index = object + ARRAYSIZE(_inventoryImages) - 1;
-	if (_inventoryInfo[index] != 0 || _inventoryInfo[73] >= ARRAYSIZE(_inventoryImages)) {
+	if (_inventoryInfo[index] != 0 || _inventoryInfo[kInventoryCount] >= ARRAYSIZE(_inventoryImages)) {
 		return false;
 	}
 
@@ -395,29 +395,29 @@ void IgorEngine::removeInventoryEntry(int index) {
 	_inventoryInfo[_inventoryInfo[index] - 1] = 0;
 	_inventoryInfo[index] = 0;
 	packInventory();
-	if (_game.version != kIdSpaFloppy && _inventoryInfo[72] > _inventoryInfo[73]) {
-		_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+	if (_game.version != kIdSpaFloppy && _inventoryInfo[kInventoryFirstVisible] > _inventoryInfo[kInventoryCount]) {
+		_inventoryInfo[kInventoryFirstVisible] = _inventoryOffsetTable[(_inventoryInfo[kInventoryCount] - 1) / 7];
 	}
 }
 
 void IgorEngine::removeObjectFromInventory(int index) {
 	removeInventoryEntry(index);
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	playSound(63, 1);
 }
 
 int IgorEngine::getObjectFromInventory(int x) const {
 	if (_game.version == kIdSpaFloppy) {
 		if (x >= 0 && x < 320) {
-			const int i = x / 40 + _inventoryInfo[72];
-			if (i <= _inventoryInfo[73])
+			const int i = x / 40 + _inventoryInfo[kInventoryFirstVisible];
+			if (i <= _inventoryInfo[kInventoryCount])
 				return _inventoryInfo[i - 1];
 		}
 		return 0;
 	}
 	if (x >= 20 && x <= 299) {
-		int i = (x - 20) / 40 + _inventoryInfo[72];
-		if (i <= _inventoryInfo[73]) {
+		int i = (x - 20) / 40 + _inventoryInfo[kInventoryFirstVisible];
+		if (i <= _inventoryInfo[kInventoryCount]) {
 			return _inventoryInfo[i - 1];
 		}
 	}
@@ -425,33 +425,33 @@ int IgorEngine::getObjectFromInventory(int x) const {
 }
 
 void IgorEngine::pageFloppyInventory(bool forward) {
-	const int count = _inventoryInfo[73];
-	const int start = _inventoryInfo[72];
+	const int count = _inventoryInfo[kInventoryCount];
+	const int start = _inventoryInfo[kInventoryFirstVisible];
 	if (forward) {
 		if (count <= start + 7 || start >= count - 7)
 			return;
-		_inventoryInfo[72] = (start < count - 11) ? start + 4 : count - 7;
+		_inventoryInfo[kInventoryFirstVisible] = (start < count - 11) ? start + 4 : count - 7;
 	} else {
 		if (count <= 8 || start <= 1)
 			return;
-		_inventoryInfo[72] = (start > 4) ? start - 4 : 1;
+		_inventoryInfo[kInventoryFirstVisible] = (start > 4) ? start - 4 : 1;
 	}
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 }
 
 void IgorEngine::packInventory() {
-	for (int i = 1; i <= _inventoryInfo[73]; ++i) {
+	for (int i = 1; i <= _inventoryInfo[kInventoryCount]; ++i) {
 
 		if (_inventoryInfo[i - 1] != 0) {
 			continue;
 		}
-		int count = _inventoryInfo[73] - 1;
+		int count = _inventoryInfo[kInventoryCount] - 1;
 		for (int index = i; index <= count; ++index) {
 			_inventoryInfo[index - 1] = _inventoryInfo[index];
 			_inventoryInfo[_inventoryInfo[index - 1] + ARRAYSIZE(_inventoryImages) - 1] = index;
 		}
-		_inventoryInfo[_inventoryInfo[73] - 1] = 0;
-		--_inventoryInfo[73];
+		_inventoryInfo[_inventoryInfo[kInventoryCount] - 1] = 0;
+		--_inventoryInfo[kInventoryCount];
 	}
 }
 

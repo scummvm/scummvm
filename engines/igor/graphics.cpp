@@ -246,7 +246,7 @@ void IgorEngine::drawInventory(int start, int mode) {
 		++x;
 	}
 	// Hide arrows
-	if (_inventoryInfo[72] == 1) {
+	if (_inventoryInfo[kInventoryFirstVisible] == 1) {
 		// 'hide' scroll up
 		for (y = 5; y <= 11; ++y) {
 			for (x = 4; x <= 12; ++x) {
@@ -259,7 +259,7 @@ void IgorEngine::drawInventory(int start, int mode) {
 			}
 		}
 	}
-	if (_inventoryInfo[73] <= _inventoryInfo[72] + 6 || _inventoryInfo[72] >= _inventoryInfo[73] - 6) {
+	if (_inventoryInfo[kInventoryCount] <= _inventoryInfo[kInventoryFirstVisible] + 6 || _inventoryInfo[kInventoryFirstVisible] >= _inventoryInfo[kInventoryCount] - 6) {
 		// 'hide' scroll down
 		for (y = 19; y <= 25; ++y) {
 			for (x = 4; x <= 12; ++x) {

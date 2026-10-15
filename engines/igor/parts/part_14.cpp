@@ -92,7 +92,7 @@ void IgorEngine::part14LookAtPuzzle() {
 	part14LoadRoom();
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	fadeIn(768);
 	if (_currentPart == 145) {
 		for (int i = 1; i <= 10; ++i) {

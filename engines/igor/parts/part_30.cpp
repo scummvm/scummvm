@@ -223,12 +223,12 @@ void IgorEngine::part30LauraCutscene() {
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	// Que caracter
 	igorSay(210, 1, 459);
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
 	_objectsState[kLauraMetAtCollegeStateIndex] = 1;
 	part30ApplyObjectState(255);

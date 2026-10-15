@@ -475,6 +475,14 @@ enum MargaretState {
 	kMargaretStatePhotoSequenceComplete
 };
 
+// Special Entries of _inventoryInfo after the objects: the number of the first
+// visible object of the inventory and the number of objects held.
+enum {
+	kInventoryFirstVisible = 72,
+	kInventoryCount = 73,
+	kInventoryInfoSize = 74
+};
+
 enum Verb {
 	kVerbWalk = 1,
 	kVerbTalk,
@@ -675,7 +683,7 @@ private:
 
 	uint8 _objectsState[112];
 	uint8 _inventoryImages[36];
-	uint8 _inventoryInfo[74];
+	uint8 _inventoryInfo[kInventoryInfoSize];
 	char _verbPrepositions[3][7];
 	char _roomObjectNames[20][MAX_OBJECT_NAME_LENGTH];
 	char _globalObjectNames[37][MAX_OBJECT_NAME_LENGTH];

@@ -176,7 +176,7 @@ void IgorEngine::part8DeanCallsSecretary() {
 	free(roomScreen);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	fadeIn(768);
 	_currentPart = currentPart;
 	_objectsState[kIntercomUsedStateIndex] = 1;
@@ -286,14 +286,14 @@ void IgorEngine::part8GiveBottleToDean() {
 
 	if (_inventoryInfo[58] != 0) {
 		removeInventoryEntry(58);
-		drawInventory(_inventoryInfo[72], 0);
+		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	}
 
 	cutsceneSayWithCallback(78, 75, 26, 58, 0, { { 216, 1, 162 }, { 217, 1, 163 }, { 218, 1, 164 }, { 219, 1, 165 } }, &IgorEngine::part8UpdateDeanDialogue);
 	const Part08PendingDeanDrink pendingDeanDrink =
 		_objectsState[kBottleStateIndex] < 2 ? kPart08PendingDeanDrinkWhisky : kPart08PendingDeanDrinkWater;
 	_objectsState[kPendingDeanDrinkStateIndex] = pendingDeanDrink;
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	playSound(63, 1);
 	part8ApplyObjectState(255);
 }

@@ -411,7 +411,7 @@ void IgorEngine::part12ExorcismCutscene() {
 	// door open
 	_objectsState[kChurchDoorOpenStateIndex] = 1;
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentPart = 40;
 }
 

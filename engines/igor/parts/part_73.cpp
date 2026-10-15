@@ -91,10 +91,10 @@ void IgorEngine::part73Cutscene() {
 	partMainUpdateObjectState(8);
 	// removes the great dosicua
 	removeInventoryEntry(kPart73InventoryIndex);
-	++_inventoryInfo[73];
-	_inventoryInfo[_inventoryInfo[73] - 1] = kInventoryObjectLizard;
-	_inventoryInfo[kPart73InventoryIndex] = _inventoryInfo[73];
-	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+	++_inventoryInfo[kInventoryCount];
+	_inventoryInfo[_inventoryInfo[kInventoryCount] - 1] = kInventoryObjectLizard;
+	_inventoryInfo[kPart73InventoryIndex] = _inventoryInfo[kInventoryCount];
+	_inventoryInfo[kInventoryFirstVisible] = _inventoryOffsetTable[(_inventoryInfo[kInventoryCount] - 1) / 7];
 	fadeOut(624);
 
 	// the card with the time that has passed
@@ -106,7 +106,7 @@ void IgorEngine::part73Cutscene() {
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
 	drawVerbsPanel();
-	drawInventory(_inventoryInfo[72], 0);
+	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
 	_objectsState[kStatuetteTaken2StateIndex] = 0;
 	_currentPart = 40;

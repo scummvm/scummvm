@@ -548,7 +548,7 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 	memset(_screenVGA + 46080, 0, 17920);
 	if(restoreUI) {
 		drawVerbsPanel();
-		drawInventory(_inventoryInfo[72], 0);
+		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	}
 	_currentAction.verb = kVerbWalk;
 	_gameState.dialogueStarted = false;
