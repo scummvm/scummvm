@@ -32,7 +32,7 @@
 #if defined(PLAYSTATION3) || defined(PSP2) || defined(NINTENDO_SWITCH)
 #define SAMPLES_PER_SEC 48000
 #elif defined(__MINT__)
-#define SAMPLES_PER_SEC 49170
+#define SAMPLES_PER_SEC 22050
 #else
 #define SAMPLES_PER_SEC 44100
 #endif

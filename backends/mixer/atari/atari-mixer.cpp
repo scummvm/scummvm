@@ -35,11 +35,11 @@
 #ifdef DISABLE_FANCY_THEMES
 #define DEFAULT_OUTPUT_RATE			11025
 #define DEFAULT_OUTPUT_CHANNELS		1
-#define DEFAULT_SAMPLES				512		// 2 * 46ms (42ms at 12292 Hz) latency
+#define DEFAULT_SAMPLES				512		// 2 * 46ms (52ms at 9834 Hz) latency
 #else
 #define DEFAULT_OUTPUT_RATE			22050
 #define DEFAULT_OUTPUT_CHANNELS		2
-#define DEFAULT_SAMPLES				1024	// 2 * 46ms (42ms at 24585 Hz) latency
+#define DEFAULT_SAMPLES				1024	// 2 * 46ms (52ms at 19668 Hz) latency
 #endif
 
 static USoundContext usoundContext;
