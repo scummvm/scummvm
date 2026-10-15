@@ -157,7 +157,10 @@ void IgorEngine::part12TryEnterChurch() {
 
 void IgorEngine::part12UseResinWithStone() {
 	if (_objectsState[kLizardTakenStateIndex] == 1) {
-		ADD_DIALOGUE_TEXT(219, 1, 801);
+		if (_game.version == kIdEngFloppy)
+			ADD_DIALOGUE_TEXT(216, 2, kNoSpeechSound);
+		else
+			ADD_DIALOGUE_TEXT(219, 1, 801);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		return;
