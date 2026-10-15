@@ -201,7 +201,7 @@ void IgorEngine::loadOptionsMenuTexts() {
 void IgorEngine::drawOptionsMenuText(int text, int x, int y, int color) {
 	const char *str = _optionsMenuTexts[text].c_str();
 	// center horizontally
-	_font.drawString(_screenTextLayer, str, x - _font.getStringWidth(str) / 2, y, color, -1, 0);
+	_dialogueFont->drawString(_screenTextLayer, str, x - _dialogueFont->getStringWidth(str) / 2, y, color, -1, 0);
 }
 
 void IgorEngine::handleOptionsMenu_paintQuit() {

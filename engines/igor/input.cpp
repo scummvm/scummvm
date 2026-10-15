@@ -27,8 +27,6 @@
 
 namespace Igor {
 
-static const uint8 kSentenceColorIndex[] = {0xFD, 0xFB, 0xF1};
-
 void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 
 	if (presentScreen && !_eventQuitGame) {
@@ -188,8 +186,9 @@ void IgorEngine::beginRightButtonVerbPick() {
 	_inputVars[kInputRightMoveLeft] = 0;
 	_inputVars[kInputRightMoveRight] = 0;
 
-	const bool inventorySlot = _rightButtonSelectCursorY >= 170 && _rightButtonSelectCursorY <= 199 &&
-		_rightButtonSelectCursorX > 19 && _rightButtonSelectCursorX < 299;
+	const bool inventorySlot = _rightButtonSelectCursorY >= 170 &&
+		((_game.version == kIdSpaFloppy) ? (_rightButtonSelectCursorY <= 197) :
+		 (_rightButtonSelectCursorY <= 199 && _rightButtonSelectCursorX > 19 && _rightButtonSelectCursorX < 299));
 	int defaultVerb = 0;
 	// if in the scene, choose the hotspot's default verb as starting point
 	if (_rightButtonSelectCursorY < 144) {
@@ -235,7 +234,7 @@ void IgorEngine::beginRightButtonVerbPick() {
 void IgorEngine::updateRightButtonVerbPick() {
 	if (_inputVars[kInputRightMoveLeft]) {
 		_inputVars[kInputRightMoveLeft] = 0;
-		const int candidate = MAX<int>(_currentAction.verb - 1, kVerbTalk);
+		const int candidate = MAX<int>(_currentAction.verb - 1, (_game.version == kIdSpaFloppy) ? kVerbWalk : kVerbTalk);
 		if (candidate != _currentAction.verb) {
 			redrawVerb(_currentAction.verb, false);
 			redrawVerb(candidate, true);
@@ -324,6 +323,17 @@ void IgorEngine::handleRoomInput() {
 	if (!_roomCursorOn || _gameState.dialogueTextRunning || _scrollInventory) {
 		return;
 	}
+	// Spanish floppy inventory paging works with left and right mouse buttons pressed on the 2 last rows of the screen
+	if (_game.version == kIdSpaFloppy && !_rightButtonSelecting && _inputVars[kInputCursorYPos] >= 198) {
+		if (_inputVars[kInputClick])
+			pageFloppyInventory(false);
+		if (_inputVars[kInputRightClick])
+			pageFloppyInventory(true);
+		_inputVars[kInputClick] = 0;
+		_inputVars[kInputRightClick] = 0;
+		_inputVars[kInputRightRelease] = 0;
+		return;
+	}
 	if (_inputVars[kInputRightClick]) {
 		_inputVars[kInputRightClick] = 0;
 		if (!_rightButtonSelecting) {
@@ -341,7 +351,7 @@ void IgorEngine::handleRoomInput() {
 	}
 	_inputVars[kInputRightRelease] = 0;
 	// verbs panel click
-	if (_inputVars[kInputCursorYPos] >= 156 && _inputVars[kInputCursorYPos] <= 167) {
+	if (_inputVars[kInputCursorYPos] >= 156 && _inputVars[kInputCursorYPos] <= ((_game.version == kIdSpaFloppy) ? 166 : 167)) {
 		if (_inputVars[kInputClick]) {
 			int verb = getVerbUnderCursor(_inputVars[kInputCursorXPos]);
 			if (verb != _currentAction.verb) {
@@ -359,7 +369,7 @@ void IgorEngine::handleRoomInput() {
 		return;
 	}
 	// Inventory arrows
-	if (_inputVars[kInputCursorYPos] >= 172 && _inputVars[kInputCursorYPos] <= 183 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
+	if (_game.version != kIdSpaFloppy && _inputVars[kInputCursorYPos] >= 172 && _inputVars[kInputCursorYPos] <= 183 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
 		if (_inputVars[kInputClick]) {
 			if (_inventoryInfo[72] > 1) {
 				_inventoryInfo[72] -= 7;
@@ -370,7 +380,7 @@ void IgorEngine::handleRoomInput() {
 		return;
 	}
 	// Inventory arrows
-	if (_inputVars[kInputCursorYPos] >= 186 && _inputVars[kInputCursorYPos] <= 197 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
+	if (_game.version != kIdSpaFloppy && _inputVars[kInputCursorYPos] >= 186 && _inputVars[kInputCursorYPos] <= 197 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
 		if (_inputVars[kInputClick]) {
 			if (_inventoryInfo[73] > _inventoryInfo[72] + 6) {
 				_inventoryInfo[72] += 7;
@@ -412,7 +422,7 @@ void IgorEngine::handleRoomInput() {
 
 	// Action previousAction = _currentAction;
 	// Handle inventory and room object selection based on cursor position and clicks
-	if (_inputVars[kInputCursorYPos] >= 170 && _inputVars[kInputCursorYPos] <= 199) {
+	if (_inputVars[kInputCursorYPos] >= 170 && _inputVars[kInputCursorYPos] <= ((_game.version == kIdSpaFloppy) ? 197 : 199)) {
 		int object = getObjectFromInventory(_inputVars[kInputCursorXPos]);
 		if (_currentAction.verbType == 0) {
 			_currentAction.object1Num = object;
@@ -620,12 +630,12 @@ void IgorEngine::formatActionSentence(uint8 color) {
 		}
 	}
 
-	drawActionSentence(actionSentence, kSentenceColorIndex[color]);
+	drawActionSentence(actionSentence, (_game.version == kIdSpaFloppy) ? _actionSentenceColors[color] : _sentenceColorIndex[color]);
 }
 
 void IgorEngine::drawActionSentence(const char *sentence, uint8 color) {
 	memset(_screenVGA + 144 * 320, 0, 11 * 320);
-	int w = _font.getStringWidth(sentence);
+	int w = _sentenceFont->getStringWidth(sentence);
 	int x = (320 - w) / 2;
 	// A sentence wider than the screen would start at a negative offset and
 	// wrap into the previous scanline; keep it left-aligned and let drawString
@@ -633,7 +643,7 @@ void IgorEngine::drawActionSentence(const char *sentence, uint8 color) {
 	if (x < 0) {
 		x = 0;
 	}
-	_font.drawString(_screenVGA, sentence, x, 144, color, 0, 0);
+	_sentenceFont->drawString(_screenVGA, sentence, x, 144, color, 0, 0);
 }
 
 } // End of namespace Igor

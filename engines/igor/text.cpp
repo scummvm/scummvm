@@ -55,7 +55,7 @@ void IgorEngine::SET_DIALOGUE_TEXT(int start, int count) {
 void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
 	int textLineWidth = 0;
 	for (int i = 0; i < count; ++i) {
-		int w = _font.getStringWidth(_globalDialogueTexts[num + i]);
+		int w = _dialogueFont->getStringWidth(_globalDialogueTexts[num + i]);
 		if (w > textLineWidth) {
 			textLineWidth = w;
 		}
@@ -119,10 +119,10 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 
 	for (int i = 0; i < dt->count; ++i) {
 		const char *textLine = _globalDialogueTexts[dt->num + i];
-		int textLineWidth = _font.getStringWidth(textLine);
+		int textLineWidth = _dialogueFont->getStringWidth(textLine);
 		int textX = talkX - textLineWidth / 2;
 		int textY = i * 10;
-		_font.drawString(_screenTextLayer, textLine, textX, textY, _talkColorIndex, _talkShadowIndex, _talkShadowIndex);
+		_dialogueFont->drawString(_screenTextLayer, textLine, textX, textY, _talkColorIndex, _talkShadowIndex, _talkShadowIndex);
 	}
 	setPaletteColor(_talkColorIndex, r, g, b);
 	setPaletteColor(_talkShadowIndex, 0, 0, 0);
@@ -351,10 +351,10 @@ void IgorEngine::startIgorDialogue() {
 	}
 	for (int i = 0; i < dt->count; ++i) {
 		const char *textLine = _globalDialogueTexts[dt->num + i];
-		int textLineWidth = _font.getStringWidth(textLine);
+		int textLineWidth = _dialogueFont->getStringWidth(textLine);
 		int textX = talkX - textLineWidth / 2;
 		int textY = i * 10;
-		_font.drawString(_screenTextLayer, textLine, textX, textY, _talkColorIndex, _talkShadowIndex, _talkShadowIndex);
+		_dialogueFont->drawString(_screenTextLayer, textLine, textX, textY, _talkColorIndex, _talkShadowIndex, _talkShadowIndex);
 	}
 	setPaletteColor(_talkColorIndex, _dialogueColor[0], _dialogueColor[1], _dialogueColor[2]);
 	setPaletteColor(_talkShadowIndex, 0, 0, 0);
@@ -572,7 +572,7 @@ void IgorEngine::drawDialogueChoices() {
 			int num = _gameState.dialogueData[offset + 3] - 1;
 			char questionText[128];
 			snprintf(questionText, sizeof(questionText), "@%s %s", _dialogueQuestions[num][0], _dialogueQuestions[num][1]);
-			_font.drawString(_screenVGA, questionText, 0, _dialogueInfo[0] * 11 + 135, 240, 0, 0);
+			_dialogueFont->drawString(_screenVGA, questionText, 0, _dialogueInfo[0] * 11 + 135, 240, 0, 0);
 		}
 		debugC(9, kDebugEngine, "drawDialogueChoices() i %d state %d num %d", i, _gameState.dialogueData[offset], _gameState.dialogueData[offset + 3]);
 	}

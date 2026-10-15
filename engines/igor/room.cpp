@@ -123,13 +123,15 @@ void IgorEngine::decodeRoomStrings(const uint8 *p, bool skipObjectNames) {
 				++index;
 			}
 			int len = *p++;
-			if (len != 0) {
+			// The spanish floppy has two sets of object names, one for each language,
+			// so we only decode the one marked by the current language setting
+			if (len != 0 && code == 0xF4 + _language) {
 				assert(index >= 0);
 				decodeRoomString(p, _roomObjectNames[index], len);
-				p += len;
 				_roomObjectNames[index][len] = '\0';
 				debugC(9, kDebugResource, "decodeRoomStrings() _roomObjectNames[%d] '%s'", index, _roomObjectNames[index]);
 			}
+			p += len;
 			code = *p++;
 		}
 	}
@@ -143,12 +145,12 @@ void IgorEngine::decodeRoomStrings(const uint8 *p, bool skipObjectNames) {
 			++index;
 		}
 		int len = *p++;
-		if (len != 0) {
+		if (len != 0 && code == 0xF4 + _language) {
 			decodeRoomString(p, _globalDialogueTexts[index], len);
-			p += len;
 			_globalDialogueTexts[index][len] = '\0';
 			debugC(9, kDebugResource, "decodeRoomStrings() _globalDialogueTexts[%d] '%s'", index, _globalDialogueTexts[index]);
 		}
+		p += len;
 		code = *p++;
 	}
 }

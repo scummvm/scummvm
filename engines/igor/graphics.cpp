@@ -161,14 +161,27 @@ void IgorEngine::decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText
 }
 
 void IgorEngine::drawVerbsPanel() {
-	memcpy(_screenVGA + 320 * 156, _verbsPanelBuffer, 320 * 12);
+	memcpy(_screenVGA + 320 * 156, _verbsPanelBuffer, _verbsPanelSize);
 }
 
 void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
+	if (_game.version == kIdSpaFloppy) {
+		if (verb < kVerbWalk || verb > kVerbGive)
+			return;
+		const int x = (verb - 1) * 40;
+		memset(_screenVGA + 155 * 320 + x, highlight ? 254 : 0, 40);
+		for (int y = 156; y <= 166; ++y) {
+			_screenVGA[y * 320 + x] = highlight ? 254 : 0;
+			_screenVGA[y * 320 + x + 39] = highlight ? 253 : 0;
+		}
+		memset(_screenVGA + 167 * 320 + x, highlight ? 253 : 0, 40);
+		return;
+	}
 	uint8 verbBitmap[44 * 12];
 	if (verb >= 2 && verb <= 8) {
 		verb -= 2;
-		for (int i = 0; i <= 11; ++i) {
+		const int height = _verbsPanelSize / 320;
+		for (int i = 0; i < height; ++i) {
 			for (int j = 0; j <= 43; ++j) {
 				uint8 color = _verbsPanelBuffer[i * 320 + verb * 46 + j];
 				if (highlight && color != 0) {
@@ -177,7 +190,7 @@ void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
 				verbBitmap[i * 44 + j] = color;
 			}
 		}
-		copyArea(_screenVGA, 320 * 156 + verb * 46, 320, verbBitmap, 44, 44, 12);
+		copyArea(_screenVGA, 320 * 156 + verb * 46, 320, verbBitmap, 44, 44, height);
 	}
 }
 
@@ -198,6 +211,22 @@ void IgorEngine::scrollInventory() {
 void IgorEngine::drawInventory(int start, int mode) {
 	loadData(IMG_InventoryPanel, _inventoryPanelBuffer);
 	loadData(IMG_Objects, _inventoryImagesBuffer);
+	if (_game.version == kIdSpaFloppy) {
+		for (int slot = 0; slot < 8; ++slot) {
+			const int object = _inventoryInfo[start + slot - 1];
+			for (int row = 0; row < 30; ++row) {
+				uint8 *dst = _inventoryPanelBuffer + row * 320 + slot * 40;
+				if (object == 0) {
+					memset(dst, 0, 40);
+				} else {
+					memcpy(dst, _inventoryImagesBuffer + (_inventoryImages[object - 1] - 1) * 1200 + row * 40, 40);
+				}
+			}
+		}
+		memcpy(_screenVGA + 170 * 320, _inventoryPanelBuffer, 9600);
+		_scrollInventory = false;
+		return;
+	}
 	int y, i;
 	int end = start + 7; // seven slots
 	int x = 1;
