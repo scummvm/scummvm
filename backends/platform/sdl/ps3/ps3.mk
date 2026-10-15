@@ -22,7 +22,7 @@ endif
 	@cp $(srcdir)/dists/ps3/PIC1.PNG ps3pkg/
 	@sfo.py -f $(srcdir)/dists/ps3/sfo.xml ps3pkg/PARAM.SFO
 
-ps3eboot: $(EXECUTABLE)
+ps3eboot: $(EXECUTABLE) ps3dir
 	@$(STRIP) $(EXECUTABLE)
 	@sprxlinker $(EXECUTABLE)
 	@make_self_npdrm "$(EXECUTABLE)" ps3pkg/USRDIR/EBOOT.BIN UP0001-SCUM12000_00-0000000000000000
@@ -38,10 +38,10 @@ ps3fself: $(EXECUTABLE)
 	@sprxlinker $(EXECUTABLE).elf
 	@fself.py $(EXECUTABLE).elf $(EXECUTABLE).self
 
-ps3makepkg:
+ps3makepkg: ps3dir ps3eboot
 	@pkg.py --contentid UP0001-SCUM12000_00-0000000000000000 ps3pkg/ scummvm-ps3.pkg
 
-ps3pkg: ps3dir ps3eboot ps3makepkg
+ps3pkg: ps3makepkg
 
 ps3run: ps3self
 	@ps3load $(EXECUTABLE).self
