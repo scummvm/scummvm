@@ -220,7 +220,8 @@ void Viewport::loadVideo(const Common::Path &filename, uint frameNr, uint vertic
 	// Only panorama scenes step through frames, so only they need the frame cache
 	// for fast bidirectional scrubbing; other scenes would just waste memory.
 	const bool isPanorama = panningType == kPan360 || panningType == kPanLeftRight;
-	if (!_decoder.loadFile(filename, kVideoPlaytypeAuto, isPanorama)) {
+	// The background is drawn opaquely, so it can keep the screen format's precision.
+	if (!_decoder.loadFile(filename, kVideoPlaytypeAuto, isPanorama, true)) {
 		error("Couldn't load video file %s.avf or %s.bik", filename.toString().c_str(), filename.toString().c_str());
 	}
 

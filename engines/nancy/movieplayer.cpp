@@ -83,7 +83,7 @@ byte MoviePlayer::resolvePlaytype(byte videoPlaytype) {
 	return g_nancy->getGameType() >= kGameTypeNancy10 ? kVideoPlaytypeBink : kVideoPlaytypeAVF;
 }
 
-bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bidirectionalCache) {
+bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bidirectionalCache, bool screenFormat) {
 	freeFrameCache();
 	unregisterMovie();
 
@@ -122,12 +122,15 @@ bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bi
 	// chroma-keyed video such as Nancy11's Nigel_Fidget.bik ends up storing its key
 	// colour as 0x07E0 while the engine keys on 0x03E0, and the green background is
 	// never keyed out. From Nancy13 both formats are BGRA32 and this is a no-op.
+	// Opaque videos may keep the screen format: RGB555 drops a bit of green, which
+	// bands smooth gradients such as the Nancy11 LIB_AlanLogin_TEXT_PUZ background.
 	// Has to come after loadFile(): setOutputPixelFormat() walks the decoder's tracks,
 	// and those only exist once the file is loaded.
 	if (_videoType == kVideoPlaytypeBink) {
-		const Graphics::PixelFormat &inputFormat = g_nancy->_graphics->getInputPixelFormat();
-		if (inputFormat.bytesPerPixel == 2 || inputFormat.bytesPerPixel == 4) {
-			_decoder->setOutputPixelFormat(inputFormat);
+		const Graphics::PixelFormat &outputFormat = screenFormat ?
+			g_nancy->_graphics->getScreenPixelFormat() : g_nancy->_graphics->getInputPixelFormat();
+		if (outputFormat.bytesPerPixel == 2 || outputFormat.bytesPerPixel == 4) {
+			_decoder->setOutputPixelFormat(outputFormat);
 		}
 	}
 

@@ -552,7 +552,7 @@ void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const
 }
 
 void GraphicsManager::copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip, bool doubleSize) {
-	if (dst.w != (doubleSize ? src.w * 2 : src.w) || dst.h != (doubleSize ? src.h * 2 : src.h)) {
+	if (dst.w != (doubleSize ? src.w * 2 : src.w) || dst.h != (doubleSize ? src.h * 2 : src.h) || dst.format != src.format) {
 		uint8 palette[256 * 3];
 		bool hasPalette = dst.hasPalette();
 		bool hasTransColor = dst.hasTransparentColor();

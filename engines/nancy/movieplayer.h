@@ -61,8 +61,10 @@ public:
 	// Load <name> + ".avf"/".bik" and create the matching decoder. videoPlaytype
 	// picks the container, falling back to the other one if its file is missing.
 	// bidirectionalCache enables fast bidirectional scrubbing; pass it only for
-	// scrubbed panorama scenes.
-	bool loadFile(const Common::Path &name, byte videoPlaytype = kVideoPlaytypeAuto, bool bidirectionalCache = false);
+	// scrubbed panorama scenes. screenFormat decodes Bink frames in the screen
+	// format instead of the input format; only for opaque videos, since the
+	// transparent color is defined in the input format.
+	bool loadFile(const Common::Path &name, byte videoPlaytype = kVideoPlaytypeAuto, bool bidirectionalCache = false, bool screenFormat = false);
 	bool isVideoLoaded() const;
 	void close();
 	Video::VideoDecoder *getDecoder() { return _decoder.get(); }
