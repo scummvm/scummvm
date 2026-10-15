@@ -24,7 +24,7 @@
 #include "common/util.h"
 #include "common/mutex.h"
 
-#include "audio/softsynth/opl/mame.h"
+#include "audio/fmopl.h"
 #include "audio/softsynth/emumidi.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
@@ -83,7 +83,7 @@ public:
 		kAdlibChannelsCount = 18
 	};
 
-	AdlibMidiDriver(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _opl(nullptr) {}
+	AdlibMidiDriver(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _opl(nullptr), _oplStream(nullptr), _oplStereo(false) {}
 	~AdlibMidiDriver() {}
 
 	// MidiDriver
@@ -95,7 +95,7 @@ public:
 	MidiChannel *allocateChannel() override { return 0; }
 	MidiChannel *getPercussionChannel() override { return 0; }
 
-	bool isStereo() const override { return false; }
+	bool isStereo() const override { return _oplStereo; }
 	int getRate() const override { return _mixer->getOutputRate(); }
 	void generateSamples(int16 *buf, int len) override;
 
@@ -115,7 +115,9 @@ private:
 	void adlibControlChange(int channel, int control, int param);
 	void adlibProgramChange(int channel, int num);
 
-	OPL::MAME::FM_OPL *_opl;
+	OPL::OPL *_opl;
+	Audio::EmulatedChip *_oplStream;
+	bool _oplStereo;
 	uint8 _adlibData[256];
 	bool _adlibRhythmMode;
 	struct {

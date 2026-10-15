@@ -22,6 +22,10 @@
 #include "common/textconsole.h"
 #include "igor/midi.h"
 
+#ifndef DISABLE_NUKED_OPL
+#include "audio/softsynth/opl/nuked.h"
+#endif
+
 namespace Igor {
 
 MidiParser_CTMF::MidiParser_CTMF()
@@ -115,9 +119,16 @@ void MidiParser_CTMF::parseNextEvent(EventInfo &info) {
 
 int AdlibMidiDriver::open() {
 	MidiDriver_Emulated::open();
-	_opl = OPL::MAME::makeAdLibOPL(getRate());
-	if (!_opl)
+	_opl = OPL::Config::create(OPL::Config::kOpl2);
+	if (!_opl || !_opl->init())
 		error("Unable to initialize Igor AdLib music");
+	_oplStream = dynamic_cast<Audio::EmulatedChip *>(_opl);
+#ifndef DISABLE_NUKED_OPL
+	// Nuked produces stereo samples even when emulating an OPL2 chip.
+	_oplStereo = dynamic_cast<OPL::NUKED::OPL *>(_opl) != nullptr;
+#endif
+	if (_oplStream)
+		_oplStream->setCallbackFrequency(_baseFreq);
 	memset(_adlibData, 0, sizeof(_adlibData));
 	_adlibRhythmMode = false;
 	for (int i = 0; i < kAdlibChannelsCount; ++i) {
@@ -133,8 +144,10 @@ int AdlibMidiDriver::open() {
 
 void AdlibMidiDriver::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
-	OPL::MAME::OPLDestroy(_opl);
+	delete _opl;
 	_opl = nullptr;
+	_oplStream = nullptr;
+	_oplStereo = false;
 	_isOpen = false;
 }
 
@@ -163,12 +176,15 @@ void AdlibMidiDriver::send(uint32 b) {
 }
 
 void AdlibMidiDriver::generateSamples(int16 *data, int len) {
-	memset(data, 0, sizeof(int16) * len);
-	OPL::MAME::YM3812UpdateOne(_opl, data, len);
+	const int samples = len * (isStereo() ? 2 : 1);
+	if (_oplStream)
+		_oplStream->readBuffer(data, samples);
+	else
+		memset(data, 0, sizeof(int16) * samples);
 }
 
 void AdlibMidiDriver::adlibWrite(int port, int value) {
-	OPL::MAME::OPLWriteReg(_opl, port, value);
+	_opl->writeReg(port, value);
 	_adlibData[port & 255] = value & 255;
 }
 
