@@ -996,38 +996,38 @@ private:
 	 * The hex cell grid.
 	 * 117 cells x 9 fields = 1053 int16 values.
 	 */
-	int16 _cellGrid[kNumCells * kFieldsPerCell] = {0};
+	int16 _cellGrid[kNumCells * kFieldsPerCell] = {};
 	/** Six-direction adjacency mask for each cell. */
-	uint16 _cellAdjacencyMasks[kNumCells] = {0};
+	uint16 _cellAdjacencyMasks[kNumCells] = {};
 	/** Mapping from each active placement-slot index to its grid-cell index. */
 	int16 _slotCellIndices[26];
 	/** Number of valid entries in @ref _slotCellIndices. */
 	int16 _slotCount = 0;
 	/** Runner IDs of the loaded Snoids in trait-array order. */
-	int16 _snoidIds[16] = {0};
+	int16 _snoidIds[16] = {};
 	/** Indices into @ref _snoidIds, sorted by trait-overlap count. */
-	int16 _sortedSnoidIndices[16] = {0};
+	int16 _sortedSnoidIndices[16] = {};
 	/** Canonical traits in the same order as @ref _snoidIds. */
 	ZmbTrait _snoidTraits[16];
 	/** Pairing state per Snoid: zero unused, one used, or 99 for an unpaired sentinel. */
-	int16 _pairingUsageStates[16] = {0};
+	int16 _pairingUsageStates[16] = {};
 	/** Generated link type per pair/group: 501 or one of trait codes 510-513. */
-	int16 _pairLinkTypes[16] = {0};
+	int16 _pairLinkTypes[16] = {};
 	/** Number of Level-1 pairs or Level-2 three-Snoid groups generated. */
 	int16 _pairGroupCount = 0;
 	/** Zero-based trait index selected by the current match search. */
 	int16 _currentMatchedTraitIndex = 0;
 	/** Grid-cell indices in the current occupied-cell propagation work list. */
-	int16 _activeCellIndices[26] = {0};
+	int16 _activeCellIndices[26] = {};
 	/** Snoid runner IDs corresponding to @ref _activeCellIndices. */
-	int16 _activeCellSnoidIds[26] = {0};
+	int16 _activeCellSnoidIds[26] = {};
 	/** Number of valid entries in the active-cell work lists. */
 	int16 _activeCellCount = 0;
 	/**
 	 * Feature pointers for cells (optional, for quick lookup).
 	 * These are tracked explicitly rather than through runner indices.
 	 */
-	ZmbFeature *_cellFeatures[kNumCells] = {0};
+	ZmbFeature *_cellFeatures[kNumCells] = {};
 	/** Shared runner that draws SCRB 7000 direction shapes after every cell surface. */
 	ZmbFeature *_cellLinkOverlayFeature = nullptr;
 	/** True when the shared cell-link hotspot list must be rebuilt. */
@@ -1035,15 +1035,15 @@ private:
 	/** True while the flat-grid overlay owns the SCRB 7000 relationship shapes. */
 	bool _cellLinkOverlayActive = true;
 	/** SCRB 7013 DRAW_ON_REG helper for each valid placement slot. */
-	ZmbFeature *_slotFeatures[26] = {0};
+	ZmbFeature *_slotFeatures[26] = {};
 	/** Shared DRAW_ON_REG index belonging to each Slides placement helper. */
 	int16 _slotDrawOnRegIndices[26];
 	/** Row-layer SCRB features used to preserve grid depth order. */
-	ZmbFeature *_rowLayerFeatures[9] = {0};
+	ZmbFeature *_rowLayerFeatures[9] = {};
 	/** Cell indexes of the generated solved placement for @c puzzle finish. */
 	int16 _debugSolutionCellIndices[16];
 	/** Runner IDs corresponding to the generated solved placement. */
-	int16 _debugSolutionRunnerIds[16] = {0};
+	int16 _debugSolutionRunnerIds[16] = {};
 	/** Number of valid entries in the retained debug solved placement. */
 	int16 _debugSolutionCount = 0;
 	/** Progress through the lowercase s-o-v-l-e solve sequence. */

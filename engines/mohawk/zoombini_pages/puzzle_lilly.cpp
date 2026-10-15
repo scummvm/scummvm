@@ -597,7 +597,7 @@ void ZoombiniPuzzleLilly::generateChallengePatterns() {
 	// 12 challenge triplets (type, value, extra) picked without replacement
 	// from 3 pools (pattern 3 / pad-shape 4 / color 5).
 	ZmbLillyGridWalker::PadAttrType poolAType[4] = {};
-	int16 poolAValue[4] = {0}, poolAExtra[4] = {0};
+	int16 poolAValue[4] = {}, poolAExtra[4] = {};
 	for (int i = 0; i < 3; i++) {
 		poolAType[i] = kPatternAttrType[i];
 		poolAValue[i] = kPatternAttrValue[i];
@@ -605,7 +605,7 @@ void ZoombiniPuzzleLilly::generateChallengePatterns() {
 	}
 
 	ZmbLillyGridWalker::PadAttrType poolBType[5] = {};
-	int16 poolBValue[5] = {0}, poolBExtra[5] = {0};
+	int16 poolBValue[5] = {}, poolBExtra[5] = {};
 	for (int i = 0; i < 4; i++) {
 		poolBType[i] = kPatternAttrType[3 + i];
 		poolBValue[i] = kPatternAttrValue[3 + i];
@@ -613,7 +613,7 @@ void ZoombiniPuzzleLilly::generateChallengePatterns() {
 	}
 
 	ZmbLillyGridWalker::PadAttrType poolCType[6] = {};
-	int16 poolCValue[6] = {0}, poolCExtra[6] = {0};
+	int16 poolCValue[6] = {}, poolCExtra[6] = {};
 	for (int i = 0; i < 5; i++) {
 		poolCType[i] = kPatternAttrType[7 + i];
 		poolCValue[i] = kPatternAttrValue[7 + i];
@@ -2981,7 +2981,7 @@ void ZoombiniPuzzleLilly::swapCellsAndUpdateRunners(int16 colA, int16 rowA, int1
 
 	// Crabs: same, plus record which BFS layers need re-initialization.
 	ZmbLillyGridWalker::PadAttrType affectedTypes[kMaxBFSLayers] = {};
-	int16 affectedValues[kMaxBFSLayers] = {0};
+	int16 affectedValues[kMaxBFSLayers] = {};
 
 	for (int16 crabIdx = 0; crabIdx < _activeCrabCount; crabIdx++) {
 		int16 runnerIdx = _activeCrabRunnerIndices[crabIdx];
@@ -3557,7 +3557,7 @@ Common::String ZoombiniPuzzleLilly::debugGetAnswer() const {
 		}
 	}
 
-	int16 toadOrder[kToadCount] = {0};
+	int16 toadOrder[kToadCount] = {};
 	for (int16 toadRunnerIdx = 0; toadRunnerIdx < kToadCount; toadRunnerIdx++)
 		toadOrder[toadRunnerIdx] = toadRunnerIdx;
 

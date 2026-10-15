@@ -152,7 +152,7 @@ void ZoombiniGraphics::showStartupLoadingScreen() {
 
 	// Setup a temporary CLUT8 grayscale palette, which will get its antialiased text rendered.
 	// 0 is #000000, 254 is #FEFEFE. 255 is set to a key.
-	byte loadingPalette[3 * 256] = {0};
+	byte loadingPalette[3 * 256] = {};
 	for (uint16 palIdx = 0; palIdx < kBlackKey; palIdx++) {
 		const byte val = static_cast<byte>(palIdx);
 		loadingPalette[palIdx * 3 + 0] = val;
