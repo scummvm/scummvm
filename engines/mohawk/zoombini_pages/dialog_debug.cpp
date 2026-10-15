@@ -30,8 +30,8 @@
 
 namespace Mohawk {
 
-ZoombiniDialogDebug::ZoombiniDialogDebug(MohawkEngine_Zoombini *vm, const ZoombiniDebugCommand &cmd) : ZoombiniDialog(vm, ZoombiniPageType::kDialogDebug),
-																									   _cmd(cmd) {
+ZoombiniDialogDebug::ZoombiniDialogDebug(MohawkEngine_Zoombini *vm, const ZoombiniDebugCommand &cmd)
+	: ZoombiniDialog(vm, ZoombiniPageType::kDialogDebug), _cmd(cmd) {
 }
 
 ZoombiniDialogDebug::~ZoombiniDialogDebug() {

@@ -335,16 +335,20 @@ void ZmbHotspotGroup::clearScriptMetadata() {
 ZmbResource ZmbFeature::resolveSoundId(int16 soundResId) const {
 	return _vm->resolveLegacySoundResource(soundResId);
 }
-ZmbFeature::ZmbFeature(MohawkEngine_Zoombini *vm, uint16 runnerId, int16 scrbId, uint32 frameInterval, uint32 flags, ZmbResource imgResource) : _vm(vm), _id(runnerId), _scrbId(scrbId), _frameInterval(frameInterval), _flags(flags), _imgResource(imgResource) {
+ZmbFeature::ZmbFeature(MohawkEngine_Zoombini *vm, uint16 runnerId, int16 scrbId, uint32 frameInterval, uint32 flags, ZmbResource imgResource)
+	: _vm(vm), _id(runnerId), _scrbId(scrbId), _frameInterval(frameInterval), _flags(flags), _imgResource(imgResource) {
 }
 
-ZmbFeature::ZmbFeature(MohawkEngine_Zoombini *vm, uint16 runnerId, int16 scrbId, uint32 frameInterval, const Common::Point &pointRef, uint32 flags, ZmbResource imgResource) : _vm(vm), _id(runnerId), _scrbId(scrbId), _frameInterval(frameInterval), _pointLoc(pointRef), _flags(flags), _imgResource(imgResource) {
+ZmbFeature::ZmbFeature(MohawkEngine_Zoombini *vm, uint16 runnerId, int16 scrbId, uint32 frameInterval, const Common::Point &pointRef, uint32 flags, ZmbResource imgResource)
+	: _vm(vm), _id(runnerId), _scrbId(scrbId), _frameInterval(frameInterval), _pointLoc(pointRef), _flags(flags), _imgResource(imgResource) {
 }
 
-ZmbFeature::ZmbFeature(MohawkEngine_Zoombini *vm, uint16 runnerId, int16 scrbId, uint32 flags, ZmbResource imgResource) : _vm(vm), _id(runnerId), _scrbId(scrbId), _flags(flags), _imgResource(imgResource) {
+ZmbFeature::ZmbFeature(MohawkEngine_Zoombini *vm, uint16 runnerId, int16 scrbId, uint32 flags, ZmbResource imgResource)
+	: _vm(vm), _id(runnerId), _scrbId(scrbId), _flags(flags), _imgResource(imgResource) {
 }
 
-ZmbFeature::ZmbFeature(MohawkEngine_Zoombini *vm, uint16 runnerId, int16 scrbId, uint32 flags) : _vm(vm), _id(runnerId), _scrbId(scrbId), _flags(flags) {
+ZmbFeature::ZmbFeature(MohawkEngine_Zoombini *vm, uint16 runnerId, int16 scrbId, uint32 flags)
+	: _vm(vm), _id(runnerId), _scrbId(scrbId), _flags(flags) {
 }
 
 ZmbFeature::~ZmbFeature() {
@@ -1040,7 +1044,7 @@ void ZmbFeature::deactivateAnimate() {
 }
 
 void ZmbFeature::setSelectRenderFrameFunc(OnSelectRenderFrameFunc func) {
-	_eventHooks._selectRenderFrameFunc = func;
+	_eventHooks.setSelectRenderFrameFunc(func);
 }
 
 bool ZmbFeature::isAnimateActivated() const {
@@ -1092,7 +1096,8 @@ void ZmbFeature::runSubFeature(ZoombiniPage *page) {
 	page->attachSubFeature(_refSubFeature);
 }
 
-ZmbSnoid::ZmbSnoid(MohawkEngine_Zoombini *vm, uint16 snoidId, uint32 flags) : _vm(vm), _id(snoidId), ZmbFeature(vm, snoidId, 0, flags) {
+ZmbSnoid::ZmbSnoid(MohawkEngine_Zoombini *vm, uint16 snoidId, uint32 flags)
+	: ZmbFeature(vm, snoidId, 0, flags), _vm(vm), _id(snoidId) {
 	assert(hasFlag(FLAG_00000001_TYPE_SNOID));
 	setFrameInterval(6);
 	setScriptSoundPolicy(ScriptSoundPolicy::kPriorityQueue);

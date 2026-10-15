@@ -51,7 +51,7 @@ ZoombiniShelterBasecampOne::ZoombiniShelterBasecampOne(MohawkEngine_Zoombini *vm
 
 	// Z1-20U/TLC v2.0 release only: storage scroll buttons gain yellow-outline
 	// hover bitmap states in addition to the page-local cursor arrows.
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		_scrollButtonStateMap[kStorageScrollButton01_LeftMaximum].setHoverState(kResShape2100_ScrollLeftFourHover20);
 		_scrollButtonStateMap[kStorageScrollButton02_LeftOne].setHoverState(kResShape2100_ScrollLeftOneHover21);
 		_scrollButtonStateMap[kStorageScrollButton03_RightOne].setHoverState(kResShape2100_ScrollRightOneHover22);
@@ -508,7 +508,7 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::scroll_mouseMove(ZmbFeature *fe
 			continue;
 
 		Common::HashMap<uint32, Common::Rect>::const_iterator rit = _scrollButtonRectMap.find(buttonIdx);
-		if (_vm->isVersionFamilyTlcV2() && bs.hasHoverState() && rit != _scrollButtonRectMap.end()) {
+		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && bs.hasHoverState() && rit != _scrollButtonRectMap.end()) {
 			if (hoverDirtyRect.isEmpty())
 				hoverDirtyRect = rit->_value;
 			else
@@ -517,7 +517,7 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::scroll_mouseMove(ZmbFeature *fe
 
 		const bool buttonHovered = drawRecord &&
 								   (drawRecord->_hs._hsId == bs._hsNormalIdx || drawRecord->_hs._hsId == bs._hsPressedIdx);
-		if (_vm->isVersionFamilyTlcV2() && bs.hasHoverState())
+		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && bs.hasHoverState())
 			hoverChanged |= bs.setHovered(buttonHovered);
 
 		if (bs._pressed && rit != _scrollButtonRectMap.end() && !rit->_value.contains(absPos))

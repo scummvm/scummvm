@@ -640,7 +640,7 @@ public:
 		/** Palette scale percentage for a partial fade. */
 		uint8 _scalePercent = 100;
 		/** Source palette captured before a partial fade begins. */
-		byte _sourcePalette[3 * 256] = {};
+		byte _sourcePalette[3 * 256] = {0};
 
 		FadeEffect(FadeType type, uint32 duration)
 			: _type(type), _duration(duration) {}
@@ -740,7 +740,7 @@ private:
 	/** Pixel format of the active game screen. */
 	Graphics::PixelFormat _pixelFormat;
 	/** 640x480 rectangle of the active game screen. */
-	const Common::Rect _screenRect;
+	const Common::Rect _screenRect = Common::Rect(kScreenWidth, kScreenHeight);
 
 	/** Persistent back buffer containing the composed page image. */
 	Graphics::Surface *_backScreen = nullptr;

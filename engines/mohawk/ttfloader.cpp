@@ -52,9 +52,8 @@ TTFLoader::TTFLoader(const Common::String &fileName, const Common::String &faceN
 TTFLoader::TTFLoader(const Common::String &fileName, const Common::String &faceName,
 					 const Common::String &srcInst, bool bold, int32 faceIndex,
 					 Graphics::TTFRenderMode renderMode, Graphics::TTFSizeMode sizeMode)
-	: _filePath(Common::Path(fileName)), _faceName(faceName), _bold(bold),
-	  _faceIndex(faceIndex), _srcInst(srcInst), _renderMode(renderMode),
-	  _sizeMode(sizeMode) {
+	: _filePath(Common::Path(fileName)), _faceName(faceName), _bold(bold), _faceIndex(faceIndex),
+	  _srcInst(srcInst), _renderMode(renderMode), _sizeMode(sizeMode) {
 }
 
 Common::String TTFLoader::getCacheName(int point) const {
@@ -157,8 +156,7 @@ ISCabTTFLoader::ISCabTTFLoader(const Common::String &iscabFile,
 							   const Common::String &srcInst, bool bold, int32 faceIndex,
 							   Graphics::TTFSizeMode sizeMode)
 	: FileTTFLoader(fileName, faceName, srcInst, bold, faceIndex, sizeMode),
-	  _iscabPath(Common::Path(iscabFile)),
-	  _inPath(Common::Path(fileName, Common::Path::kNoSeparator)) {
+	  _iscabPath(Common::Path(iscabFile)), _inPath(Common::Path(fileName, Common::Path::kNoSeparator)) {
 }
 
 ISCabTTFLoader::~ISCabTTFLoader() {
@@ -205,8 +203,7 @@ ISZTTFLoader::ISZTTFLoader(const Common::String &iszFile,
 						   const Common::String &srcInst, bool bold, int32 faceIndex,
 						   Graphics::TTFSizeMode sizeMode)
 	: FileTTFLoader(fileName, faceName, srcInst, bold, faceIndex, sizeMode),
-	  _iszPath(Common::Path(iszFile)),
-	  _inPath(Common::Path(fileName, Common::Path::kNoSeparator)) {
+	  _iszPath(Common::Path(iszFile)), _inPath(Common::Path(fileName, Common::Path::kNoSeparator)) {
 }
 
 ISZTTFLoader::~ISZTTFLoader() {

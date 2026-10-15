@@ -75,9 +75,9 @@ private:
 	Common::Rect getBodyTextRect() const;
 
 	/** Predefined message-box kind, when one was selected. */
-	ZoombiniMsgBoxType _type;
+	ZoombiniMsgBoxType _type = ZoombiniMsgBoxType::kNone;
 	/** Localized message key used by a predefined message box. */
-	ZoombiniText::Key _msgKey;
+	ZoombiniText::Key _msgKey = ZoombiniText::kNone;
 	/** Caller-provided message text, when present. */
 	Common::U32String _msgText;
 };

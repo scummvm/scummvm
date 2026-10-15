@@ -49,7 +49,8 @@ constexpr int16 ZoombiniPuzzleTunnels::kRejectScrbPool4[6];
 // Constructor / Destructor
 // =========================================================================
 
-ZoombiniPuzzleTunnels::ZoombiniPuzzleTunnels(MohawkEngine_Zoombini *vm) : ZoombiniPuzzle(vm, ZoombiniPageType::kTunnels, ZmbSrcPageKind::kTunnels_03) {
+ZoombiniPuzzleTunnels::ZoombiniPuzzleTunnels(MohawkEngine_Zoombini *vm)
+	: ZoombiniPuzzle(vm, ZoombiniPageType::kTunnels, ZmbSrcPageKind::kTunnels_03) {
 }
 
 ZoombiniPuzzleTunnels::~ZoombiniPuzzleTunnels() {
@@ -556,7 +557,7 @@ void ZoombiniPuzzleTunnels::loadZoombinisFromPack() {
 	// Set the remaining target from difficulty rather than the loaded pack size.
 	// As it falls through 4, 3, 2, and 1, it drives sound cues 4700-4703.
 	int16 perLevelTarget;
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel2:
 		perLevelTarget = 18;
 		break;
@@ -578,7 +579,7 @@ void ZoombiniPuzzleTunnels::loadZoombinisFromPack() {
 // =========================================================================
 
 void ZoombiniPuzzleTunnels::generateRules() {
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel1:
 		setupLevel1_singleTrait();
 		break;
@@ -609,7 +610,7 @@ void ZoombiniPuzzleTunnels::setupLevel1_singleTrait() {
 	}
 
 	// Build 20-element match count table: 4 categories x 5 values
-	int16 matchCounts[20] = {};
+	int16 matchCounts[20] = {0};
 	for (const ZmbTrait &trait : traits) {
 		for (int16 i = 0; i < 4; i++) {
 			byte val = trait[i] & 0x0F;
@@ -693,10 +694,10 @@ void ZoombiniPuzzleTunnels::setupLevel2_dualSingleTrait() {
 	}
 
 	const int16 pairCount = 400;
-	int16 bothMatch[400] = {};
-	int16 aOnlyMatch[400] = {};
-	int16 bOnlyMatch[400] = {};
-	int16 neitherMatch[400] = {};
+	int16 bothMatch[400] = {0};
+	int16 aOnlyMatch[400] = {0};
+	int16 bOnlyMatch[400] = {0};
+	int16 neitherMatch[400] = {0};
 
 	for (const ZmbTrait &trait : traits) {
 		for (int16 pairIdx = 0; pairIdx < pairCount; pairIdx++) {
@@ -817,10 +818,10 @@ void ZoombiniPuzzleTunnels::setupLevel3_dualDoubleTrait() {
 	}
 
 	// Bucket arrays for pair scoring
-	int16 bothMatch[1600] = {};
-	int16 aOnlyMatch[1600] = {};
-	int16 bOnlyMatch[1600] = {};
-	int16 neitherMatch[1600] = {};
+	int16 bothMatch[1600] = {0};
+	int16 aOnlyMatch[1600] = {0};
+	int16 bOnlyMatch[1600] = {0};
+	int16 neitherMatch[1600] = {0};
 
 	for (const ZmbTrait &trait : traits) {
 		for (int pairIdx = 0; pairIdx < 1600; pairIdx++) {
@@ -1290,7 +1291,7 @@ void ZoombiniPuzzleTunnels::handleZoombiniPlacement(ZmbSnoid *snoid, int16 zone,
 	}
 
 	// Apply the level-1 blocked entrance pair.
-	if (!isRejection && _difficultyLevel == kPuzzleLevel1) {
+	if (!isRejection && _puzzleLevel == kPuzzleLevel1) {
 		if (_level1BlockedPairToggle) {
 			if (zone == 1 || zone == 4)
 				isRejection = true;
@@ -2561,13 +2562,13 @@ ZmbChanceInfo ZoombiniPuzzleTunnels::debugGetChances() const {
 	// @ref ZoombiniPuzzleTunnels::_remainingRejectChances decreases only for a rejection.
 	// The Crystal and Igno retry counters select reaction animations and reset after a successful entrance.
 	// They are not the chance tally.
-	const int16 opportunities = static_cast<int16>(14 + 2 * _difficultyLevel);
+	const int16 opportunities = static_cast<int16>(14 + 2 * _puzzleLevel);
 	const int16 used = CLIP<int16>(static_cast<int16>(opportunities - _remainingRejectChances), 0, opportunities);
 	return {ZmbChanceInfo::ZmbChanceType::kMistake, opportunities, used, "wrong tunnel entrance"};
 }
 
 bool ZoombiniPuzzleTunnels::debugSetChances(int16 remaining) {
-	const int16 opportunities = static_cast<int16>(14 + 2 * _difficultyLevel);
+	const int16 opportunities = static_cast<int16>(14 + 2 * _puzzleLevel);
 	if (remaining < 0 || opportunities < remaining)
 		return false;
 

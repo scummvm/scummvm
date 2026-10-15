@@ -653,7 +653,7 @@ private:
 		/** Canonical trait categories tested by this guard. */
 		ZmbTrait::TraitKind traitKinds[2] = {};
 		/** Trait values tested by this guard. */
-		byte traitValues[2] = {};
+		byte traitValues[2] = {0};
 	};
 
 	/**
@@ -750,12 +750,12 @@ private:
 	// ========================================
 
 	/** Consecutive correct-entry count for visible zones 1-4; element zero is unused. */
-	int16 _zoneCorrectStreak[5] = {};
+	int16 _zoneCorrectStreak[5] = {0};
 	/** Number of accepted Zoombinis occupying each authored output lane. */
-	int16 _laneOccupancy[4] = {};
+	int16 _laneOccupancy[4] = {0};
 
 	/** Snoid runner IDs stored in each output lane's sixteen authored positions. */
-	uint16 _laneSnoidIds[4][16] = {};
+	uint16 _laneSnoidIds[4][16] = {0};
 
 	/** Crystal rejections since the last accepted submission. */
 	int16 _crystalRejectCountSinceSuccess = 0;
@@ -872,11 +872,11 @@ private:
 	/** SCRB 9000 feature used as the first accepted-Snoid link anchor. */
 	ZmbFeature *_laneLinkAnchorFeature = nullptr;
 	/** Gate-entry feature runners for the four visible lanes. */
-	ZmbFeature *_tunnelEntryFeatures[4] = {};
+	ZmbFeature *_tunnelEntryFeatures[4] = {0};
 	/** SCRB 7001-7004 falling-rock overlay used for low-chance rejection warnings. */
 	ZmbFeature *_rockfallWarningFeature = nullptr;
 	/** Gate-actor features in Crystal, Onyx, Ferrous, and Igno slot order. */
-	ZmbFeature *_gateActorFeatures[4] = {};
+	ZmbFeature *_gateActorFeatures[4] = {0};
 	/** Main route feature used for gate and path animation. */
 	ZmbFeature *_mainPathFeature = nullptr;
 	/** Shared current debug SCRB resource ID across the four gate actors. */
@@ -943,7 +943,7 @@ private:
 	uint32 _celebrationSnoidPoolState = 0;
 
 	/** Snoid runner IDs assigned to the authored input-side seat order. */
-	uint16 _packSeatSnoidIds[16] = {};
+	uint16 _packSeatSnoidIds[16] = {0};
 };
 
 } // End of namespace Mohawk

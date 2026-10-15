@@ -138,6 +138,45 @@ protected:
 	void transferActivePackToTownStorage();
 
 private:
+	/** Clock-tower memorial identity and hand-animation timing. */
+	static constexpr int16 kTownClockTowerMemorialSlot = 4;
+	static constexpr byte kTownClockHandLastStep = 11;
+	static constexpr uint32 kTownClockTimeUpdateInterval = 1800;
+	static constexpr uint32 kTownClockNormalFrameInterval = 6;
+	static constexpr uint32 kTownClockSpinFrameInterval = 2;
+
+	/** Per-slot memorial-card script and localized text variants. */
+	static constexpr byte kTownMemorialCardScrbTypeBySlot[16]{
+		2, 2, 4, 4, 2, 3, 3, 1, 4, 1, 1, 2, 4, 2, 3, 4};
+	static constexpr byte kTownMemorialCardTextTypeBySlot[16]{
+		7, 1, 4, 5, 13, 3, 10, 11, 14, 15, 0, 8, 12, 9, 2, 6};
+
+	/** Memorial-marker center offsets relative to each hotspot origin. */
+	static constexpr Common::Point kTownMemorialMarkerOffsets[16]{
+		Common::Point(0x0048, 0x0046),
+		Common::Point(0x0076, 0x007E),
+		Common::Point(0x0051, 0x0076),
+		Common::Point(0x004D, 0x003F),
+		Common::Point(0x0041, 0x00E3),
+		Common::Point(0x0090, 0x0053),
+		Common::Point(0x006B, 0x0051),
+		Common::Point(0x0090, 0x00BA),
+		Common::Point(0x0031, 0x0061),
+		Common::Point(0x0039, 0x0094),
+		Common::Point(0x0056, 0x002E),
+		Common::Point(0x0043, 0x0077),
+		Common::Point(0x006C, 0x0050),
+		Common::Point(0x004C, 0x0061),
+		Common::Point(0x002F, 0x00B5),
+		Common::Point(0x0077, 0x0041),
+	};
+
+	/** Text-row bounds within a memorial card. */
+	static constexpr int16 kTownMemorialCardRowTopY[5]{
+		0x0000, 0x0024, 0x00C4, 0x00D2, 0x00E6};
+	static constexpr int16 kTownMemorialCardRowBottomY[5]{
+		0x0024, 0x00C4, 0x00D2, 0x00E6, 0x00F4};
+
 	/** Town actions accepted by the built-in debug console and keyboard dispatcher. */
 	enum class BuiltinDebugAction {
 		kInvalid,
@@ -343,7 +382,7 @@ protected:
 	 * @ref ZmbGridWalker traversal state.
 	 * Snoid IDs use range 20000+ to avoid collision with inhabitant IDs (0-15).
 	 */
-	uint16 _walkingZmbSnoidIds[20] = {};
+	uint16 _walkingZmbSnoidIds[20] = {0};
 
 	/** Town inhabitant position data (16 x,y coordinate pairs). */
 	static constexpr Common::Point kInhabitantPositions[16]{
@@ -418,7 +457,7 @@ protected:
 	/** Authored Town statue rectangles used for memorial-card hit testing. */
 	Common::Rect _memorialHotspots[16] = {};
 	/** Mapping from visible statue index to stored memorial-card slot. */
-	int16 _memorialSlotMapping[16] = {};
+	int16 _memorialSlotMapping[16] = {0};
 	/** Cursor shape selected for the current Town hover target. */
 	uint16 _hoverCursorShapeIdx = ZmbHotspot::kShapeNone;
 

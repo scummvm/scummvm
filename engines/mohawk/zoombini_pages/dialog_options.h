@@ -26,6 +26,8 @@
 
 namespace Mohawk {
 
+class ZmbReleaseInfo;
+
 /**
  * Options dialog for state management and gameplay preferences.
  *
@@ -84,8 +86,6 @@ protected:
 									  Common::StableMap<uint32, ToggleButtonState> &buttonStateMap,
 									  ToggleButtonGetRectFunc textRectFunc,
 									  const ZoombiniGraphics::TextConf &tc);
-	/** Return the options title rectangle for the current release layout. */
-	const Common::Rect &getOptionDialogTitleRect() const;
 	/** Return the top coordinate for option text @p bsIdx. */
 	uint16 getOptionDialogTextTop(uint32 bsIdx) const;
 	/** Apply an ordinary navigation-button action. */
@@ -141,28 +141,45 @@ protected:
 	/** State of the on/off option toggles. */
 	Common::StableMap<uint32, ToggleButtonState> _toggleButtonStateMap;
 
+private:
 	/**
-	 * Dialog layout rectangles are instance members because Common::Rect requires
-	 * runtime construction and ScummVM prohibits global C++ constructors.
+	 * Release-selected dialog geometry, button configuration, and text wrapping.
+	 * Rectangles are instance data because Common::Rect requires runtime construction.
 	 */
-	/** Standard options-dialog title rectangle. */
-	const Common::Rect _optionDialogTitleRect = Common::Rect(0x00FA, 0x003A, 0x017C, 0x0050);
-	/** TLC options-dialog title rectangle. */
-	const Common::Rect _optionDialogTlcTitleRect = Common::Rect(0x00B9, 0x003A, 0x01BD, 0x0050);
-	/** Toggle-button rectangle used by the options layout. */
-	const Common::Rect _optionDialogToggleRect = Common::Rect(0x00A6, 0x00BE, 0x01D1, 0x00D2);
-	/** Legend rectangle for the enabled state. */
-	const Common::Rect _optionDialogLegendOnRect = Common::Rect(0x00C5, 0x0140, 0x0104, 0x0159);
-	/** Legend rectangle for the disabled state. */
-	const Common::Rect _optionDialogLegendOffRect = Common::Rect(0x00C5, 0x0159, 0x0104, 0x016D);
-	/** Left edge of standard options text. */
-	static constexpr uint16 _optionDialogTextLeft = 0x00C4;
-	/** Right edge of standard options text. */
-	static constexpr uint16 _optionDialogTextRight = 0x01D6;
-	/** Text top coordinates for the standard options layout. */
-	static constexpr uint16 _optionDialogTextTops[8] = {0x0066, 0x007C, 0x0091, 0x00A6, 0x00DD, 0x00F3, 0x0108, 0x011D};
-	/** Text top coordinates for the TLC options layout. */
-	static constexpr uint16 _optionDialogTlcTextTops[10] = {0x005A, 0x006F, 0x0084, 0x0099, 0x00BE, 0x00D3, 0x00E8, 0x00FD, 0x0112, 0x0127};
+	struct Layout {
+		/** Text bounds for the dialog title. */
+		Common::Rect titleRect = Common::Rect(0x00FA, 0x003A, 0x017C, 0x0050);
+		/** Text bounds for the heading above the toggle options. */
+		Common::Rect toggleTitleRect = Common::Rect(0x00A6, 0x00BE, 0x01D1, 0x00D2);
+		/** Text bounds for the legend identifying the enabled toggle state. */
+		Common::Rect legendOnRect = Common::Rect(0x00C5, 0x0140, 0x0104, 0x0159);
+		/** Text bounds for the legend identifying the disabled toggle state. */
+		Common::Rect legendOffRect = Common::Rect(0x00C5, 0x0159, 0x0104, 0x016D);
+		/** Left edge shared by ordinary and toggle button labels. */
+		uint16 textLeft = 0x00C4;
+		/** Right edge shared by ordinary and toggle button labels. */
+		uint16 textRight = 0x01D6;
+		/** Label top coordinates indexed by @ref ZoombiniDialogOptions::OptionDialogButtonIdx. */
+		Common::Array<uint16> textTops;
+		/** First pressed hotspot index for the ordinary navigation buttons. */
+		uint16 redPressedBaseIdx = 8;
+		/** First pressed hotspot index for the on/off option buttons. */
+		uint16 togglePressedBaseIdx = 12;
+		/** Whether to draw the heading above the toggle options. */
+		bool showToggleTitle = true;
+		/** Whether the release provides the touch-sensitivity toggle. */
+		bool showTouchSense = false;
+		/** Whether the release provides the help-narration toggle. */
+		bool showHelpAudio = false;
+		/** Whether the dialog title, legends, and option labels may wrap. */
+		bool wordWrap = false;
+	};
+
+	/** Resolve geometry and available controls from the release identity. */
+	static Layout createLayout(const ZmbReleaseInfo &relInfo);
+
+	/** Layout selected once when the dialog is constructed. */
+	const Layout _layout;
 };
 
 } // End of namespace Mohawk

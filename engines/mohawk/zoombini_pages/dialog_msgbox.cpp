@@ -27,15 +27,14 @@
 
 namespace Mohawk {
 
-ZoombiniDialogMsgBox::ZoombiniDialogMsgBox(MohawkEngine_Zoombini *vm, ZoombiniMsgBoxType type) : ZoombiniDialog(vm, ZoombiniPageType::kDialogMsgBox),
-																								 _type(type),
-																								 _msgKey(ZoombiniText::kNone) {
+ZoombiniDialogMsgBox::ZoombiniDialogMsgBox(MohawkEngine_Zoombini *vm, ZoombiniMsgBoxType type)
+	: ZoombiniDialog(vm, ZoombiniPageType::kDialogMsgBox), _type(type) {
 	ZoombiniText::Key yesKey = ZoombiniText::kDialogButtonYes;
 	ZoombiniText::Key noKey = ZoombiniText::kDialogButtonNo;
 	// Spanish and Portuguese v1.0 keep the Options OK label in a separate
 	// executable string from the one-button alert label.
 	ZoombiniText::Key alertAcceptKey;
-	if (_vm->isGameVariant(MohawkGameFeatures::GF_ZMB_10_ESPT))
+	if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kEsPtV10))
 		alertAcceptKey = ZoombiniText::kDialogButtonAccept;
 	else
 		alertAcceptKey = ZoombiniText::kDialogButtonOkay;
@@ -107,17 +106,13 @@ ZoombiniDialogMsgBox::ZoombiniDialogMsgBox(MohawkEngine_Zoombini *vm, ZoombiniMs
 	initButtons(yesKey, noKey);
 }
 
-ZoombiniDialogMsgBox::ZoombiniDialogMsgBox(MohawkEngine_Zoombini *vm, const Common::U32String &message) : ZoombiniDialog(vm, ZoombiniPageType::kDialogMsgBox),
-																										  _type(ZoombiniMsgBoxType::kNone),
-																										  _msgKey(ZoombiniText::kNone),
-																										  _msgText(message) {
+ZoombiniDialogMsgBox::ZoombiniDialogMsgBox(MohawkEngine_Zoombini *vm, const Common::U32String &message)
+	: ZoombiniDialog(vm, ZoombiniPageType::kDialogMsgBox), _msgText(message) {
 	initButtons(ZoombiniText::kDialogButtonOkay, ZoombiniText::kNone);
 }
 
-ZoombiniDialogMsgBox::ZoombiniDialogMsgBox(MohawkEngine_Zoombini *vm, const Common::U32String &message, ZoombiniText::Key yesKey, ZoombiniText::Key noKey) : ZoombiniDialog(vm, ZoombiniPageType::kDialogMsgBox),
-																																							 _type(ZoombiniMsgBoxType::kNone),
-																																							 _msgKey(ZoombiniText::kNone),
-																																							 _msgText(message) {
+ZoombiniDialogMsgBox::ZoombiniDialogMsgBox(MohawkEngine_Zoombini *vm, const Common::U32String &message, ZoombiniText::Key yesKey, ZoombiniText::Key noKey)
+	: ZoombiniDialog(vm, ZoombiniPageType::kDialogMsgBox), _msgText(message) {
 	initButtons(yesKey, noKey);
 }
 
@@ -131,7 +126,7 @@ void ZoombiniDialogMsgBox::initButtons(ZoombiniText::Key yesKey, ZoombiniText::K
 }
 
 Common::Rect ZoombiniDialogMsgBox::getBodyTextRect() const {
-	if (_vm->isGameVariant(MohawkGameFeatures::GF_ZMB_10_EU) && _vm->getLanguage() == Common::IT_ITA)
+	if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kEuropeV10, Common::IT_ITA))
 		return Common::Rect(0x009A, 0x0082, 0x01E7, 0x00EB);
 
 	return Common::Rect(0x009A, 0x0091, 0x01E7, 0x00DC);

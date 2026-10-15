@@ -34,7 +34,8 @@
 
 namespace Mohawk {
 
-ZoombiniTransitionLogo::ZoombiniTransitionLogo(MohawkEngine_Zoombini *vm) : ZoombiniTransition(vm, ZoombiniPageType::kLogo) {
+ZoombiniTransitionLogo::ZoombiniTransitionLogo(MohawkEngine_Zoombini *vm)
+	: ZoombiniTransition(vm, ZoombiniPageType::kLogo) {
 }
 
 ZoombiniTransitionLogo::~ZoombiniTransitionLogo() {
@@ -54,20 +55,20 @@ ZoombiniTransitionLogo::~ZoombiniTransitionLogo() {
 
 void ZoombiniTransitionLogo::loadFeatures() {
 	ZoombiniPageType nextPage = ZoombiniPageType::kPicker;
-	if (_vm->isV20UsDemo())
+	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kTlcV20))
 		nextPage = ZoombiniPageType::kNet;
 	_vm->setNextPage(nextPage);
 
 	// 1.x: LOGO025.MOV (CDToons)
 	// 2.0 retail: LOGO025.BIK (Bink)
 	// 2.0 demo: LOGODEMO.BIK (Bink)
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 #ifndef USE_RGB_COLOR
 		_vm->_system->displayMessageOnOSD(_("16-bit color support is required to play Bink videos. Skipping the intro."));
 		close();
 		return;
 #else
-		const char *videoFile = _vm->isV20UsDemo() ? ZMB_VIDEO_BINK_DEMO : ZMB_VIDEO_BINK;
+		const char *videoFile = _vm->getRelInfo().isDemo(ZmbReleaseInfo::kTlcV20) ? ZMB_VIDEO_BINK_DEMO : ZMB_VIDEO_BINK;
 		const Common::Path videoPath = Common::Path(_vm->getArchiveRoot()).append(videoFile);
 		if (!Common::File::exists(videoPath)) {
 			warning("Bink video file [%s] does not exist, skip", videoPath.toString().c_str());
@@ -129,7 +130,7 @@ void ZoombiniTransitionLogo::loadFeatures() {
 }
 
 void ZoombiniTransitionLogo::onPreTickFrame() {
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 #if defined(USE_BINK) && defined(USE_RGB_COLOR)
 		if (!_binkDecoder || _binkDecoder->endOfVideo()) {
 			close();

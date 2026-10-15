@@ -190,12 +190,6 @@ bool ZoombiniGameState::renameRosterEntry(const Common::String &target, ZmbRoste
 	return true;
 }
 
-ZmbStateFile::ZmbStateFile() : _magic006B(ZoombiniGameState::kEndianMagic) {
-}
-
-ZmbRosterFile::ZmbRosterFile() : _magic006B(ZoombiniGameState::kEndianMagic) {
-}
-
 ZoombiniGameState::ZmbSaveFormat ZoombiniGameState::getSaveFormatFromSize(int32 size) {
 	switch (size) {
 	case kStateFileSizeBrV10:
@@ -236,12 +230,12 @@ bool ZoombiniGameState::hasCompletionCounters(ZmbSaveFormat format) {
 }
 
 ZoombiniGameState::ZmbSaveFormat ZoombiniGameState::getTargetSaveFormat(const MohawkEngine_Zoombini *vm) {
-	if (vm->isVersionFamilyTlcV2())
+	if (vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return ZmbSaveFormat::kTlcV20;
 
 	// The native 16-bit Europe v1.1 executable keeps the v1.0 save layout.
 	// ScummVM still accepts other recognized source layouts when loading.
-	if (vm->isVersionFamilyUsV1() && !vm->isVersionFamilyEuV1())
+	if (vm->getRelInfo().isFamily(ZmbReleaseInfo::kUsV1) && !vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1))
 		return ZmbSaveFormat::kUsV11;
 
 	return ZmbSaveFormat::kEuV10;
@@ -790,7 +784,8 @@ void ZoombiniGameState::compactActivePack(ZmbStateActivePack &pack) {
 	pack.removeEntriesFromBack(pack.getPackZmbCount() - destIdx);
 }
 
-ZoombiniGameState::ZoombiniGameState(MohawkEngine_Zoombini *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
+ZoombiniGameState::ZoombiniGameState(MohawkEngine_Zoombini *vm, Common::SaveFileManager *saveFileMan)
+	: _vm(vm), _saveFileMan(saveFileMan) {
 	initVariantDefaults();
 }
 
@@ -2025,7 +2020,7 @@ Common::String ZoombiniGameState::makeSaveFilename(const Common::String &targetN
 		baseName[8] != 0)
 		return Common::String();
 
-	char counter[5] = {};
+	char counter[5] = {0};
 	for (uint i = 0; i < 4; i++) {
 		const byte digit = baseName[i + 4];
 		if (digit < '0' || '9' < digit)
@@ -3316,6 +3311,11 @@ void ZoombiniGameState::syncRouteFirstClearMemorials(ZmbRouteId routeId, int16 d
 		addFirstClearMemorial(routeId, memorialLevel, year, month, day);
 }
 
+bool ZoombiniGameState::hasRoutePerfectClearCounters() const {
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	return relInfo.isFamily(ZmbReleaseInfo::kUsV1) || relInfo.isFamily(ZmbReleaseInfo::kTlcV2);
+}
+
 bool ZoombiniGameState::advanceRouteLevel(ZmbRouteId routeId) {
 	if (ZmbRouteId::kMontDespair < routeId)
 		return false;
@@ -3327,7 +3327,7 @@ bool ZoombiniGameState::advanceRouteLevel(ZmbRouteId routeId) {
 		return false;
 
 	routeLevel += 1;
-	if (_vm->hasRoutePerfectCounterState())
+	if (hasRoutePerfectClearCounters())
 		state._routePerfectCounters[routeIndex] = 0;
 	_routeLevelJustAdvanced = true;
 	return true;
@@ -3354,7 +3354,7 @@ bool ZoombiniGameState::setRouteDifficultyLevel(ZmbRouteId routeId, int16 diffic
 		routeLevel = targetRouteLevel;
 	}
 
-	if (_vm->hasRoutePerfectCounterState())
+	if (hasRoutePerfectClearCounters())
 		state._routePerfectCounters[routeIndex] = 0;
 	syncRouteProgressFlags(routeId, difficultyLevel);
 	syncRouteFirstClearMemorials(routeId, difficultyLevel, routeLevelDecreased);
@@ -3427,7 +3427,7 @@ void ZoombiniGameState::startNewGame(bool askSaveCurrentGame) {
 
 	// Demos practice without a journey roster, so the generated-count gate applies to full releases only.
 	// This keeps the practice-mode alert reachable in demos while preserving the full-release guard.
-	if (!_vm->isDemo() && _journeyState._zmbGeneratedCount == 0)
+	if (!_vm->getRelInfo().isDemo() && _journeyState._zmbGeneratedCount == 0)
 		return;
 
 	// Ctrl+N owns the save-current-game preflight. The Options New button does not.
@@ -3473,7 +3473,7 @@ void ZoombiniGameState::startNewGame(bool askSaveCurrentGame) {
 }
 
 void ZoombiniGameState::initVariantDefaults() {
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return;
 
 	_journeyState.setTouchSenseEnabled(true);
@@ -3482,18 +3482,18 @@ void ZoombiniGameState::initVariantDefaults() {
 }
 
 bool ZoombiniGameState::getEnableTransitions() {
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return !_journeyState.getV2TransitionsDisabled();
 
 	return !_journeyState.getV1TransitionsDisabled();
 }
 
 bool ZoombiniGameState::getEnableTouchSense() {
-	return _vm->isVersionFamilyTlcV2() && _journeyState.getTouchSenseEnabled();
+	return _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && _journeyState.getTouchSenseEnabled();
 }
 
 bool ZoombiniGameState::getEnableHelpAudio() {
-	return !_vm->isVersionFamilyTlcV2() || _journeyState.getHelpAudioEnabled();
+	return !_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) || _journeyState.getHelpAudioEnabled();
 }
 
 void ZoombiniGameState::setEnableSound(bool val, bool showNotification) {
@@ -3543,7 +3543,7 @@ void ZoombiniGameState::setEnableAutoStickyMouse(bool val) {
 }
 
 void ZoombiniGameState::setEnableTransitions(bool val, bool showNotification) {
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		_journeyState.setV2TransitionsDisabled(!val);
 	} else {
 		_journeyState.setV1TransitionsDisabled(!val);
@@ -3558,7 +3558,7 @@ void ZoombiniGameState::setEnableTransitions(bool val, bool showNotification) {
 }
 
 void ZoombiniGameState::setEnableTouchSense(bool val, bool showNotification) {
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return;
 
 	_journeyState.setTouchSenseEnabled(val);
@@ -3575,7 +3575,7 @@ void ZoombiniGameState::setEnableTouchSense(bool val, bool showNotification) {
 }
 
 void ZoombiniGameState::setEnableHelpAudio(bool val, bool showNotification) {
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return;
 
 	_journeyState.setHelpAudioEnabled(val);

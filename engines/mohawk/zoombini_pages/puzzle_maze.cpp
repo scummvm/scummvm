@@ -64,41 +64,11 @@ constexpr int16 ZoombiniPuzzleMaze::kTraitSlotValue[21];
 // =================================================================
 // Construction / Lifecycle
 // =================================================================
-ZoombiniPuzzleMaze::ZoombiniPuzzleMaze(MohawkEngine_Zoombini *vm) : ZoombiniPuzzle(vm, ZoombiniPageType::kMaze, ZmbSrcPageKind::kMaze_16) {
-	memset(_cellTypes, 0, sizeof(_cellTypes));
+ZoombiniPuzzleMaze::ZoombiniPuzzleMaze(MohawkEngine_Zoombini *vm)
+	: ZoombiniPuzzle(vm, ZoombiniPageType::kMaze, ZmbSrcPageKind::kMaze_16) {
 	memset(_cellStateIdx, 0xFF, sizeof(_cellStateIdx));
-	memset(_cellTraitKind, 0, sizeof(_cellTraitKind));
-	memset(_cellTraitValue, 0, sizeof(_cellTraitValue));
-	memset(_nodeDirFlags, 0, sizeof(_nodeDirFlags));
-	memset(_nodeDirection, 0, sizeof(_nodeDirection));
-	memset(_nodeCycleFlag, 0, sizeof(_nodeCycleFlag));
-	memset(_gridCellPos, 0, sizeof(_gridCellPos));
-	memset(_collisionReservationCount, 0, sizeof(_collisionReservationCount));
 	memset(_collisionReservationRunnerIdx, 0xFF, sizeof(_collisionReservationRunnerIdx));
-	memset(_runnerSnoidIds, 0, sizeof(_runnerSnoidIds));
-	memset(_launcherSetupQueue, 0, sizeof(_launcherSetupQueue));
-	memset(_movementQueue, 0, sizeof(_movementQueue));
-	memset(_collisionOverlayRelinkQueue, 0, sizeof(_collisionOverlayRelinkQueue));
-	memset(_traversalColumnRelinkQueue, 0, sizeof(_traversalColumnRelinkQueue));
-	memset(_acceptedCelebrationQueue, 0, sizeof(_acceptedCelebrationQueue));
-	memset(_exitCompletionQueue, 0, sizeof(_exitCompletionQueue));
-	memset(_cellArrivalQueue, 0, sizeof(_cellArrivalQueue));
-	memset(_collisionPairQueue, 0, sizeof(_collisionPairQueue));
-	resetArrivalPosCounters();
-	memset(_pathTraitMatchCounts, 0, sizeof(_pathTraitMatchCounts));
-	memset(_connectionTable, 0, sizeof(_connectionTable));
-	memset(_freePathSlotList, 0, sizeof(_freePathSlotList));
-	memset(_reachablePathSlots, 0, sizeof(_reachablePathSlots));
-	memset(_selectedPathSlots, 0, sizeof(_selectedPathSlots));
-	clearTraitSelectionTables();
-	memset(_shuffledPathPool, 0, sizeof(_shuffledPathPool));
-	memset(_placedRunnerIndices, 0, sizeof(_placedRunnerIndices));
-	memset(_launcherOccupancyMarkers, 0, sizeof(_launcherOccupancyMarkers));
-	memset(_launcherRunnerIndices, 0xFF, sizeof(_launcherRunnerIndices));
-	memset(_launcherSeatEnabled, 0, sizeof(_launcherSeatEnabled));
-	memset(_waveGroupShapeBase, 0, sizeof(_waveGroupShapeBase));
-	for (int i = 0; i < kMaxRunners; i++)
-		_runnerStates[i].clear();
+	memset(_launcherRunnerIndices, -1, sizeof(_launcherRunnerIndices));
 }
 
 ZoombiniPuzzleMaze::~ZoombiniPuzzleMaze() {
@@ -124,15 +94,15 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniPuzzleMaze::getScriptSoun
 
 void ZoombiniPuzzleMaze::open() {
 	// MIDI BGM (tMID 30035-30038) - Broderbund v1.x only.
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		openMidiArchive();
 	openArchive(ZMB_MHK_MAZE2);
 }
 
 void ZoombiniPuzzleMaze::setBackgroundMusic() {
 	// Select the MIDI track from the active route difficulty.
-	if (!_vm->isVersionFamilyTlcV2()) {
-		const int16 routeLevel = _difficultyLevel - kPuzzleLevel1;
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+		const int16 routeLevel = _puzzleLevel - kPuzzleLevel1;
 		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30035_MazeBgmBase + routeLevel)));
 	}
 }
@@ -143,7 +113,7 @@ void ZoombiniPuzzleMaze::setBackgroundBitmap() {
 }
 
 void ZoombiniPuzzleMaze::initStates() {
-	_layoutLevel = static_cast<MazeLayoutLevel>(_difficultyLevel);
+	_layoutLevel = static_cast<MazeLayoutLevel>(_puzzleLevel);
 
 	_celebrationTrigger = false;
 	_celebrationsPlayed = 0;
@@ -211,7 +181,7 @@ void ZoombiniPuzzleMaze::loadFeatures() {
 	_celebrationTarget = _pageLoadedZmbCount - 1;
 
 	// At @ref kPuzzleLevel4, fewer than five Zoombinis use the fixed REGS 16609 layout.
-	if (_difficultyLevel == kPuzzleLevel4 && _pageLoadedZmbCount < 5)
+	if (_puzzleLevel == kPuzzleLevel4 && _pageLoadedZmbCount < 5)
 		_layoutLevel = kMazeLayoutLevel4SmallPack;
 
 	loadLayoutRegsConfigByLevel();
@@ -4093,7 +4063,7 @@ void ZoombiniPuzzleMaze::initGridAndSelectPaths() {
 		// purple bank is remapped to the Zoombini dark-blue family during drawing.
 		// Derive this remap from the shuffled banks without consuming another draw.
 		static constexpr int16 kColorAssistPathPool[5] = {52, 73, 94, 136, 157};
-		bool activeGroups[9] = {};
+		bool activeGroups[9] = {0};
 		for (int16 runner = 0; runner < _layoutCellRecordCount; runner++) {
 			int16 baseOff = 10 + 10 * runner;
 			if (static_cast<int16>(_layoutRegsWords.size()) <= baseOff + 3)
@@ -4103,7 +4073,7 @@ void ZoombiniPuzzleMaze::initGridAndSelectPaths() {
 				activeGroups[waveGroup] = true;
 		}
 
-		int16 availablePathPool[5] = {};
+		int16 availablePathPool[5] = {0};
 		for (int16 i = 0; i < 5; i++)
 			availablePathPool[i] = kColorAssistPathPool[i];
 		int16 availablePathCount = 5;
@@ -4870,7 +4840,7 @@ void ZoombiniPuzzleMaze::selectPathSlots2() {
 			midSlot = randomReachableSlot();
 		_selectedPathSlots[_selectedPathSlotCount] = midSlot;
 		_selectedPathSlotCount += 1;
-		if (_difficultyLevel == kPuzzleLevel2 && phase == 0) {
+		if (_puzzleLevel == kPuzzleLevel2 && phase == 0) {
 			_selectedPathSlots[_selectedPathSlotCount] = midSlot;
 			_selectedPathSlotCount += 1;
 		}
@@ -5986,7 +5956,7 @@ void ZoombiniPuzzleMaze::activateRunnerBubble(int16 runnerIdx, int16 scrbId,
 		loadScrbOntoFeature(rs.bubbleFeature, scrbId);
 		rs.bubbleFeature->setPointLoc(pos);
 	}
-	rs.bubbleFeature->setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleMaze::adjustBubbleHotspotPosition));
+	rs.bubbleFeature->setPreRenderShapeFunc(&ZoombiniPuzzleMaze::adjustBubbleHotspotPosition);
 	rs.bubbleFeature->activateRender();
 }
 
@@ -6506,7 +6476,7 @@ void ZoombiniPuzzleMaze::zmbArriveAtNode(MazeCellType cellType, int16 runnerIdx)
 	rs.pixelX = pos.x;
 	rs.pixelY = pos.y;
 	activateRunnerBubble(runnerIdx, kResScrb10040_ExitBubbleBase, pos);
-	rs.bubbleFeature->setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleMaze::adjustExitBubbleHotspotPosition));
+	rs.bubbleFeature->setPreRenderShapeFunc(&ZoombiniPuzzleMaze::adjustExitBubbleHotspotPosition);
 	if (!rs.overlayFeature) {
 		rs.overlayFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape10000_Cell), kResScrb10041_BubbleOverlayAlt, 7, pos,
 											ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_00800000_POS_DELTA);
@@ -6519,7 +6489,7 @@ void ZoombiniPuzzleMaze::zmbArriveAtNode(MazeCellType cellType, int16 runnerIdx)
 		loadScrbOntoFeature(rs.overlayFeature, kResScrb10041_BubbleOverlayAlt);
 		rs.overlayFeature->activateRender();
 	}
-	rs.overlayFeature->setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleMaze::adjustBubbleHotspotPosition));
+	rs.overlayFeature->setPreRenderShapeFunc(&ZoombiniPuzzleMaze::adjustBubbleHotspotPosition);
 	registerFeatureTimingGroup(rs.bubbleFeature, snoid);
 	joinFeatureTimingGroup(rs.bubbleFeature, rs.overlayFeature);
 
@@ -6561,7 +6531,7 @@ void ZoombiniPuzzleMaze::zmbArriveAtNodeAlt(int16 cellIdx, int16 runnerIdx) {
 		loadScrbOntoFeature(rs.overlayFeature, kResScrb10031_BubbleOverlay);
 		rs.overlayFeature->activateRender();
 	}
-	rs.overlayFeature->setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleMaze::adjustBubbleHotspotPosition));
+	rs.overlayFeature->setPreRenderShapeFunc(&ZoombiniPuzzleMaze::adjustBubbleHotspotPosition);
 	manualLinkBefore(rs.overlayFeature, snoid);
 	registerFeatureTimingGroup(rs.bubbleFeature, snoid);
 	joinFeatureTimingGroup(rs.bubbleFeature, rs.overlayFeature);
@@ -6783,7 +6753,7 @@ void ZoombiniPuzzleMaze::assignCrossRunnerScrbs(int16 runner1Idx, int16 runner2I
 			loadScrbOntoFeature(state.overlayFeature, overlayScrbId);
 			state.overlayFeature->setPointLoc(pos);
 		}
-		state.overlayFeature->setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleMaze::adjustBubbleHotspotPosition));
+		state.overlayFeature->setPreRenderShapeFunc(&ZoombiniPuzzleMaze::adjustBubbleHotspotPosition);
 		state.overlayFeature->activateRender();
 	}
 

@@ -63,7 +63,8 @@ struct ZmbChanceInfo {
 
 	ZmbChanceInfo() = default;
 	/** Construct an unbounded snapshot with the supplied classification. */
-	ZmbChanceInfo(ZmbChanceType t) : type(t) {}
+	ZmbChanceInfo(ZmbChanceType t)
+		: type(t) {}
 	/** Construct a fully populated chance snapshot. */
 	ZmbChanceInfo(ZmbChanceType t, int16 opps, int16 u, const char *unit = nullptr)
 		: type(t), opportunities(opps), used(u), unitName(unit) {}
@@ -473,13 +474,17 @@ protected:
 		StickyButtonState() = default;
 		~StickyButtonState() = default;
 		StickyButtonState(ZmbResource pressSoundId, uint16 hsNormalIdx, uint16 hsPressedIdx, uint16 normalShapeIdx, uint16 pressedShapeIdx)
-			: _enabled(true), _pressSoundId(pressSoundId), _releaseSoundId(pressSoundId), _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx), _normalShapeIdx(normalShapeIdx), _pressedShapeIdx(pressedShapeIdx) {}
+			: _enabled(true), _pressSoundId(pressSoundId), _releaseSoundId(pressSoundId),
+			  _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx), _normalShapeIdx(normalShapeIdx), _pressedShapeIdx(pressedShapeIdx) {}
 		StickyButtonState(ZmbResource pressSoundId, ZmbResource releaseSoundId, uint16 hsNormalIdx, uint16 hsPressedIdx, uint16 normalShapeIdx, uint16 pressedShapeIdx)
-			: _enabled(true), _pressSoundId(pressSoundId), _releaseSoundId(releaseSoundId), _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx), _normalShapeIdx(normalShapeIdx), _pressedShapeIdx(pressedShapeIdx) {}
+			: _enabled(true), _pressSoundId(pressSoundId), _releaseSoundId(releaseSoundId),
+			  _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx), _normalShapeIdx(normalShapeIdx), _pressedShapeIdx(pressedShapeIdx) {}
 		StickyButtonState(ZoombiniText::Key textKey, ZmbResource pressSoundId, uint16 hsNormalIdx, uint16 hsPressedIdx, uint16 normalShapeIdx, uint16 pressedShapeIdx)
-			: _enabled(true), _textKey(textKey), _pressSoundId(pressSoundId), _releaseSoundId(pressSoundId), _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx), _normalShapeIdx(normalShapeIdx), _pressedShapeIdx(pressedShapeIdx) {}
+			: _enabled(true), _pressSoundId(pressSoundId), _releaseSoundId(pressSoundId), _textKey(textKey),
+			  _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx), _normalShapeIdx(normalShapeIdx), _pressedShapeIdx(pressedShapeIdx) {}
 		StickyButtonState(ZoombiniText::Key textKey, ZmbResource pressSoundId, ZmbResource releaseSoundId, uint16 hsNormalIdx, uint16 hsPressedIdx, uint16 normalShapeIdx, uint16 pressedShapeIdx)
-			: _enabled(true), _textKey(textKey), _pressSoundId(pressSoundId), _releaseSoundId(releaseSoundId), _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx), _normalShapeIdx(normalShapeIdx), _pressedShapeIdx(pressedShapeIdx) {}
+			: _enabled(true), _pressSoundId(pressSoundId), _releaseSoundId(releaseSoundId), _textKey(textKey),
+			  _hsNormalId(hsNormalIdx), _hsPressedId(hsPressedIdx), _normalShapeIdx(normalShapeIdx), _pressedShapeIdx(pressedShapeIdx) {}
 
 		/** Return true when the toggle is in its selected state. */
 		bool isStuck() const { return _isStuck; }

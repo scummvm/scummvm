@@ -115,7 +115,8 @@ struct ZmbResource {
 	/** Construct an invalid resource address. */
 	ZmbResource() = default;
 	/** Construct an explicit archive-qualified resource address. */
-	ZmbResource(ArchiveKind archiveKind, int16 id) : _archiveKind(archiveKind), _id(id) {}
+	ZmbResource(ArchiveKind archiveKind, int16 id)
+		: _archiveKind(archiveKind), _id(id) {}
 
 	/** Return whether @p byteCount bytes remain at the current stream position. */
 	static bool hasBytes(Common::SeekableReadStream *stream, int64 byteCount);

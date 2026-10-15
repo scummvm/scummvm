@@ -101,30 +101,8 @@ constexpr int16 ZoombiniPuzzleLilly::kCellBlinkShapeBase[4];
 // Construction / Lifecycle
 // =================================================================
 
-ZoombiniPuzzleLilly::ZoombiniPuzzleLilly(MohawkEngine_Zoombini *vm) : ZoombiniPuzzle(vm, ZoombiniPageType::kLilly, ZmbSrcPageKind::kLilly_08) {
-	memset(_authoredPathGrids, 0, sizeof(_authoredPathGrids));
-	memset(_cellOccupancy, 0, sizeof(_cellOccupancy));
-	memset(_exitCellReservations, 0, sizeof(_exitCellReservations));
-	memset(_padPattern, 0, sizeof(_padPattern));
-	memset(_padShape, 0, sizeof(_padShape));
-	memset(_padColor, 0, sizeof(_padColor));
-	memset(_padDecorationShape, 0, sizeof(_padDecorationShape));
-	memset(_farBankTurnInQueue, 0, sizeof(_farBankTurnInQueue));
-	memset(_bankReturnQueue, 0, sizeof(_bankReturnQueue));
-	memset(_retirementQueue, 0, sizeof(_retirementQueue));
-	memset(_farBankRotationQueue, 0, sizeof(_farBankRotationQueue));
-	memset(_childMountQueue, 0, sizeof(_childMountQueue));
-	memset(_childDepartureQueue, 0, sizeof(_childDepartureQueue));
-	memset(_toadStepReadyQueue, 0, sizeof(_toadStepReadyQueue));
-	memset(_toadPathStepQueue, 0, sizeof(_toadPathStepQueue));
-	memset(_pendingToadStepReadyQueue, 0, sizeof(_pendingToadStepReadyQueue));
-	memset(_pendingToadPathStepQueue, 0, sizeof(_pendingToadPathStepQueue));
-	memset(_toadPathInitQueue, 0, sizeof(_toadPathInitQueue));
-	memset(_activeCrabRunnerIndices, 0, sizeof(_activeCrabRunnerIndices));
-	memset(_runnerCleanupQueue, 0, sizeof(_runnerCleanupQueue));
-	memset(_crabTrailState, 0, sizeof(_crabTrailState));
-	for (int i = 0; i < kMaxRunners; i++)
-		_runnerStates[i].clear();
+ZoombiniPuzzleLilly::ZoombiniPuzzleLilly(MohawkEngine_Zoombini *vm)
+	: ZoombiniPuzzle(vm, ZoombiniPageType::kLilly, ZmbSrcPageKind::kLilly_08) {
 }
 
 ZoombiniPuzzleLilly::~ZoombiniPuzzleLilly() {
@@ -269,7 +247,7 @@ void ZoombiniPuzzleLilly::loadFeatures() {
 	}
 
 	// Toad (1 < difficulty)
-	if (kPuzzleLevel2 <= _difficultyLevel) {
+	if (kPuzzleLevel2 <= _puzzleLevel) {
 		// Toad intro SCRB runner (prio 5, SCRB 11000).
 		_toadIntroFeature = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape11000_Water), kResScrb11000_ToadIntro, 5,
@@ -324,7 +302,7 @@ void ZoombiniPuzzleLilly::loadFeatures() {
 	configureStandardPuzzleControlRects();
 	loadStandardPuzzleControlFeatures(kResBitmapShape7000_LilyPads);
 
-	if (_difficultyLevel == kPuzzleLevel1) {
+	if (_puzzleLevel == kPuzzleLevel1) {
 		queueScriptSoundForNextRenderPass(ZmbResource(ZmbResource::kSystem, kSysResSound0997_Intro));
 	}
 
@@ -333,7 +311,7 @@ void ZoombiniPuzzleLilly::loadFeatures() {
 
 	// Load toad intro SCRB 11000 so events 3 and 4 fire.
 	// Its event handler drives the last two walk-in Zoombinis.
-	if (kPuzzleLevel2 <= _difficultyLevel && _toadIntroFeature)
+	if (kPuzzleLevel2 <= _puzzleLevel && _toadIntroFeature)
 		loadScrbOntoFeature(_toadIntroFeature, kResScrb11000_ToadIntro);
 
 	setRunnerZSortEnabled(false);
@@ -343,7 +321,7 @@ void ZoombiniPuzzleLilly::initHelpPrompt() {
 	int16 helpSoundId;
 	if (_entrySfxGroupFlags == ZmbSfxGroupFlags::kHardFirstTrigger_02) {
 		helpSoundId = _vm->_rnd->getRandomNumber(kSysResSound20076_HelpLevel2, kSysResSound20077_HelpHard);
-	} else if (_difficultyLevel <= kPuzzleLevel1) {
+	} else if (_puzzleLevel <= kPuzzleLevel1) {
 		helpSoundId = kSysResSound20075_HelpEasy;
 	} else {
 		helpSoundId = _vm->_rnd->getRandomNumber(kSysResSound20075_HelpEasy, kSysResSound20077_HelpHard);
@@ -389,7 +367,7 @@ void ZoombiniPuzzleLilly::loadZoombinisFromPack() {
 
 void ZoombiniPuzzleLilly::setDifficultyParams() {
 	// Levels 3 and 4 cycle through two or three generated crab-entry slots.
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel1:
 	case kPuzzleLevel2:
 		_crabEntryCycleLength = 0;
@@ -467,7 +445,7 @@ void ZoombiniPuzzleLilly::createZoombiniChildRunners() {
 			// Hide the final two children.
 			// At difficulty 1, SCRB 10089+i starts their walk-in immediately; otherwise, toad-intro event 3 starts it.
 			_runnerFeatures[i]->deactivateRender();
-			if (_difficultyLevel == kPuzzleLevel1) {
+			if (_puzzleLevel == kPuzzleLevel1) {
 				_runnerFeatures[i]->activateRender();
 				loadScrbOntoFeature(_runnerFeatures[i], kResScrb10089_ChildBase + i);
 				rs.callbackMode = ZmbLillyGridWalker::kCallbackSnoid;
@@ -619,7 +597,7 @@ void ZoombiniPuzzleLilly::generateChallengePatterns() {
 	// 12 challenge triplets (type, value, extra) picked without replacement
 	// from 3 pools (pattern 3 / pad-shape 4 / color 5).
 	ZmbLillyGridWalker::PadAttrType poolAType[4] = {};
-	int16 poolAValue[4] = {}, poolAExtra[4] = {};
+	int16 poolAValue[4] = {0}, poolAExtra[4] = {0};
 	for (int i = 0; i < 3; i++) {
 		poolAType[i] = kPatternAttrType[i];
 		poolAValue[i] = kPatternAttrValue[i];
@@ -627,7 +605,7 @@ void ZoombiniPuzzleLilly::generateChallengePatterns() {
 	}
 
 	ZmbLillyGridWalker::PadAttrType poolBType[5] = {};
-	int16 poolBValue[5] = {}, poolBExtra[5] = {};
+	int16 poolBValue[5] = {0}, poolBExtra[5] = {0};
 	for (int i = 0; i < 4; i++) {
 		poolBType[i] = kPatternAttrType[3 + i];
 		poolBValue[i] = kPatternAttrValue[3 + i];
@@ -635,7 +613,7 @@ void ZoombiniPuzzleLilly::generateChallengePatterns() {
 	}
 
 	ZmbLillyGridWalker::PadAttrType poolCType[6] = {};
-	int16 poolCValue[6] = {}, poolCExtra[6] = {};
+	int16 poolCValue[6] = {0}, poolCExtra[6] = {0};
 	for (int i = 0; i < 5; i++) {
 		poolCType[i] = kPatternAttrType[7 + i];
 		poolCValue[i] = kPatternAttrValue[7 + i];
@@ -693,7 +671,7 @@ void ZoombiniPuzzleLilly::recordGeneratedAnswerEntryRows() {
 			const int16 rawPathIdx = _authoredPathGrids[gridIdx][entryRow][0];
 			if (rawPathIdx < 1 || 12 < rawPathIdx)
 				continue;
-			if (_difficultyLevel == kPuzzleLevel1 && _challengeEnabledMarkers[rawPathIdx] == 0)
+			if (_puzzleLevel == kPuzzleLevel1 && _challengeEnabledMarkers[rawPathIdx] == 0)
 				continue;
 
 			const int16 tattooIdx = _challengeTattooIndices[rawPathIdx];
@@ -742,8 +720,8 @@ void ZoombiniPuzzleLilly::initGridWithAttributes() {
 	int16 maxObstacleEntries = 0;
 	int16 slotsToEnable = 12; // Number of pattern slots enabled
 
-	if (_difficultyLevel != kPuzzleLevel1 && _difficultyLevel != kPuzzleLevel2) {
-		if (_difficultyLevel == kPuzzleLevel3) {
+	if (_puzzleLevel != kPuzzleLevel1 && _puzzleLevel != kPuzzleLevel2) {
+		if (_puzzleLevel == kPuzzleLevel3) {
 			maxObstacleEntries = 2;
 			if (kZmbToRowCount[_pageLoadedZmbCount] < 8) {
 				int16 rndGrid = _vm->_rnd->getRandomNumber(3, 5);
@@ -776,7 +754,7 @@ void ZoombiniPuzzleLilly::initGridWithAttributes() {
 	} else {
 		maxObstacleEntries = 0;
 		_obstacleGridFamily = 0;
-		if (_difficultyLevel == kPuzzleLevel1)
+		if (_puzzleLevel == kPuzzleLevel1)
 			slotsToEnable = 12 - kZmbToRowCount[_pageLoadedZmbCount];
 		else
 			slotsToEnable = 12;
@@ -873,7 +851,7 @@ void ZoombiniPuzzleLilly::initGridWithAttributes() {
 					}
 
 					// Record crab entry columns (difficulty 3/4, top row only)
-					if ((_difficultyLevel == kPuzzleLevel3 || _difficultyLevel == kPuzzleLevel4) &&
+					if ((_puzzleLevel == kPuzzleLevel3 || _puzzleLevel == kPuzzleLevel4) &&
 						entryCount < maxObstacleEntries && gridColIdx == 0) {
 						bool isObstaclePattern = false;
 						if (_obstacleGridFamily == 3 && patternIdx <= 3)
@@ -933,7 +911,7 @@ void ZoombiniPuzzleLilly::initGridWithAttributes() {
 	recordGeneratedAnswerEntryRows();
 
 	// --- Phase 9: Initial cell swaps (difficulty > 1) ---
-	if (kPuzzleLevel2 <= _difficultyLevel) {
+	if (kPuzzleLevel2 <= _puzzleLevel) {
 		_firstSwapCellCol = kSwapPairCol[0];
 		_firstSwapCellRow = kSwapPairRow[0];
 		_secondSwapCellCol = kSwapPairCol[2];
@@ -1220,7 +1198,7 @@ void ZoombiniPuzzleLilly::beginToadSwapDrag(const Common::Point &absPos) {
 	if (!_swapWandFeature)
 		return;
 
-	if (_vm->isVersionFamilyTlcV2()) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		const int16 normalScrbId = static_cast<int16>(kResScrb10078_ToadBase + MIN<int16>(_swapWandStage, 6));
 		if (_swapWandFeature->getScrbId() != normalScrbId)
 			loadSwapWandScrb(normalScrbId);
@@ -1229,7 +1207,7 @@ void ZoombiniPuzzleLilly::beginToadSwapDrag(const Common::Point &absPos) {
 	// Preserve the positioned home hit area before the runner begins following the cursor.
 	// Restoring it on cancel makes the wand immediately reusable without waiting for another
 	// materialization pass to replace the cursor-position click rectangle.
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		_swapWandHomeClickRect = _normalSwapWandHomeRect;
 	else
 		_swapWandHomeClickRect = _swapWandFeature->getClickRect();
@@ -1370,7 +1348,7 @@ void ZoombiniPuzzleLilly::cancelToadSwapDrag() {
 }
 
 void ZoombiniPuzzleLilly::updateV2SwapWandHover() {
-	if (!_vm->isVersionFamilyTlcV2() || !_swapWandFeature || _swapWandDragging)
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) || !_swapWandFeature || _swapWandDragging)
 		return;
 	if (_swapWandFeature->hasFlag(ZmbFeature::FLAG_01000000_DEFER_RENDER))
 		return;
@@ -1387,7 +1365,7 @@ void ZoombiniPuzzleLilly::updateV2SwapWandHover() {
 bool ZoombiniPuzzleLilly::isSwapWandAtPoint(const Common::Point &pos) const {
 	if (!_swapWandFeature)
 		return false;
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return _normalSwapWandHomeRect.contains(pos);
 	return _swapWandFeature->hasClickRect() && _swapWandFeature->getClickRect().contains(pos);
 }
@@ -1681,7 +1659,7 @@ void ZoombiniPuzzleLilly::processMovePhase() {
 	// === BRANCH B: Crab spawning + crab movement ===
 	_toadPathPhasePending = true;
 
-	if (static_cast<int16>(_difficultyLevel) <= 2)
+	if (static_cast<int16>(_puzzleLevel) <= 2)
 		return;
 
 	if (_pendingChildWalkInCount <= 0) {
@@ -2793,7 +2771,7 @@ void ZoombiniPuzzleLilly::handleScriptEvent(int16 eventId, ZmbFeature *eventFeat
 	case kToadReturnEventCode003_StartFinalChildWalkIn:
 		// The toad script requests the final child walk-in batch.
 		// Walk in the last 2 zoombini children (SCRB 10089+i)
-		if (kPuzzleLevel2 <= _difficultyLevel) {
+		if (kPuzzleLevel2 <= _puzzleLevel) {
 			for (int16 i = MAX<int16>(0, _pageLoadedZmbCount - 2); i < _pageLoadedZmbCount; i++) {
 				if (_runnerFeatures[i]) {
 					_runnerFeatures[i]->activateRender();
@@ -2824,7 +2802,7 @@ void ZoombiniPuzzleLilly::handleScriptEvent(int16 eventId, ZmbFeature *eventFeat
 			_swapWandFeature->setNeedsRedraw(true);
 		}
 		// Initialize the crab BFS layers (one per family value)
-		if (kPuzzleLevel3 <= _difficultyLevel) {
+		if (kPuzzleLevel3 <= _puzzleLevel) {
 			for (int16 bfsLayerIdx = 0; bfsLayerIdx < _obstacleGridFamily; bfsLayerIdx++)
 				initBFSGrid(bfsLayerIdx, _crabPathAttrType);
 		}
@@ -3003,7 +2981,7 @@ void ZoombiniPuzzleLilly::swapCellsAndUpdateRunners(int16 colA, int16 rowA, int1
 
 	// Crabs: same, plus record which BFS layers need re-initialization.
 	ZmbLillyGridWalker::PadAttrType affectedTypes[kMaxBFSLayers] = {};
-	int16 affectedValues[kMaxBFSLayers] = {};
+	int16 affectedValues[kMaxBFSLayers] = {0};
 
 	for (int16 crabIdx = 0; crabIdx < _activeCrabCount; crabIdx++) {
 		int16 runnerIdx = _activeCrabRunnerIndices[crabIdx];
@@ -3579,7 +3557,7 @@ Common::String ZoombiniPuzzleLilly::debugGetAnswer() const {
 		}
 	}
 
-	int16 toadOrder[kToadCount] = {};
+	int16 toadOrder[kToadCount] = {0};
 	for (int16 toadRunnerIdx = 0; toadRunnerIdx < kToadCount; toadRunnerIdx++)
 		toadOrder[toadRunnerIdx] = toadRunnerIdx;
 
@@ -3638,7 +3616,7 @@ Common::String ZoombiniPuzzleLilly::debugGetAnswer() const {
 }
 
 ZmbChanceInfo ZoombiniPuzzleLilly::debugGetChances() const {
-	if (_difficultyLevel < kPuzzleLevel2 || _swapsPerWandStage <= 0)
+	if (_puzzleLevel < kPuzzleLevel2 || _swapsPerWandStage <= 0)
 		return ZmbChanceInfo(ZmbChanceInfo::ZmbChanceType::kAmorphous);
 
 	const int16 totalUses = static_cast<int16>(6 * _swapsPerWandStage);
@@ -3648,7 +3626,7 @@ ZmbChanceInfo ZoombiniPuzzleLilly::debugGetChances() const {
 }
 
 bool ZoombiniPuzzleLilly::debugCanSetChances() const {
-	return kPuzzleLevel2 <= _difficultyLevel && 0 < _swapsPerWandStage;
+	return kPuzzleLevel2 <= _puzzleLevel && 0 < _swapsPerWandStage;
 }
 
 bool ZoombiniPuzzleLilly::debugSetChances(int16 remaining) {

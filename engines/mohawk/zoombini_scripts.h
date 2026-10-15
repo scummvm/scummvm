@@ -143,7 +143,8 @@ public:
 	 * @param x X position
 	 * @param y Y position
 	 */
-	ZmbHotspot(uint16 hsId, int16 shapeid, uint16 frame, int16 x, int16 y) : _hsId(hsId), _shapeIdx(shapeid), _frame(frame), _x(x), _y(y) {}
+	ZmbHotspot(uint16 hsId, int16 shapeid, uint16 frame, int16 x, int16 y)
+		: _hsId(hsId), _shapeIdx(shapeid), _frame(frame), _x(x), _y(y) {}
 	/**
 	 * Represents a virtual hotspot entry from MapRects.
 	 * @param hsId 0-based index
@@ -151,7 +152,8 @@ public:
 	 * @param frame 0-based frame index
 	 * @param rect Rectangle defining the hotspot area
 	 */
-	ZmbHotspot(uint16 hsId, int16 shapeid, uint16 frame, const Common::Rect &rect) : _hsId(hsId), _shapeIdx(shapeid), _frame(frame), _x(rect.left), _y(rect.top) {}
+	ZmbHotspot(uint16 hsId, int16 shapeid, uint16 frame, const Common::Rect &rect)
+		: _hsId(hsId), _shapeIdx(shapeid), _frame(frame), _x(rect.left), _y(rect.top) {}
 
 	/**
 	 * Convert the one-based @ref ZmbHotspot::_shapeIdx to a zero-based subimage ID.
@@ -259,7 +261,8 @@ public:
 	/** Frame index. 0-based, -1 means no frame is selected. */
 	int32 _frameIdx = -1;
 
-	ZmbHotspotGroup(uint16 runnerId, int32 frameIdx) : _runnerId(runnerId), _frameIdx(frameIdx) {}
+	ZmbHotspotGroup(uint16 runnerId, int32 frameIdx)
+		: _runnerId(runnerId), _frameIdx(frameIdx) {}
 	/** Release draw records and hotspot-owned resources. */
 	~ZmbHotspotGroup();
 
@@ -335,7 +338,8 @@ public:
 	Common::Rect _drawnRect;
 
 	ZmbDrawRecord() {}
-	ZmbDrawRecord(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, const ZmbHotspot &hs, const Common::Rect &drawnRect) : _scrb(feature), _hsGroup(hsGroup), _hs(hs), _drawnRect(drawnRect) {}
+	ZmbDrawRecord(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, const ZmbHotspot &hs, const Common::Rect &drawnRect)
+		: _scrb(feature), _hsGroup(hsGroup), _hs(hs), _drawnRect(drawnRect) {}
 
 	/** Return whether the record no longer refers to a live feature/group. */
 	bool isEmpty() { return !_scrb || !_hsGroup; }
@@ -675,11 +679,16 @@ public:
 	void setEventHooks(const EventHooks &hooks);
 
 	/**
-	 * Set the pre-render shape callback on an existing feature.
+	 * Set or clear the pre-render shape callback on an existing feature.
 	 * Used when a callback needs to be set after feature construction.
 	 * @param func The pre-render shape callback
 	 */
-	void setPreRenderShapeFunc(OnPreRenderShapeFunc func) { _eventHooks._preRenderShapeFunc = func; }
+	void setPreRenderShapeFunc(OnPreRenderShapeFunc func) { _eventHooks.setPreRenderShapeFunc(func); }
+	/** Install a page-specific shape callback through @ref ZmbFeature::EventHooks::setPreRenderShapeFunc(). */
+	template<class PageType>
+	void setPreRenderShapeFunc(void (PageType::*func)(ZmbFeature *, ZmbHotspotGroup *, Common::Array<ZmbHotspot> &)) {
+		_eventHooks.setPreRenderShapeFunc(func);
+	}
 
 	/**
 	 * Pre-render pass: animation logic.
@@ -1066,8 +1075,13 @@ public:
 	void activateAnimate();
 	/** Disable standard animation for this runner. */
 	void deactivateAnimate();
-	/** Install a page callback that selects the render frame. */
+	/** Set or clear the page callback that selects the render frame. */
 	void setSelectRenderFrameFunc(OnSelectRenderFrameFunc func);
+	/** Install a page-specific frame selector through @ref ZmbFeature::EventHooks::setSelectRenderFrameFunc(). */
+	template<class PageType>
+	void setSelectRenderFrameFunc(int32 (PageType::*func)(ZmbFeature *)) {
+		_eventHooks.setSelectRenderFrameFunc(func);
+	}
 
 	// Dirty-rect tracking for the render pipeline.
 	bool needsRedraw() const { return _needsRedraw; }
