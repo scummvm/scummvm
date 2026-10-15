@@ -34,7 +34,8 @@
 
 namespace Mohawk {
 
-ZoombiniRandom::ZoombiniRandom(const Common::String &name) : _scummRnd(name) {
+ZoombiniRandom::ZoombiniRandom(const Common::String &name)
+	: _scummRnd(name) {
 	const int prngAlgorithmVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionPrngAlgorithm);
 	_prngAlgorithm = static_cast<MohawkMetaEngine_Zoombini::PrngAlgorithm>(prngAlgorithmVal);
 

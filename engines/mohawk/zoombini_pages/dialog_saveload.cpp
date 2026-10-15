@@ -27,8 +27,8 @@
 
 namespace Mohawk {
 
-ZoombiniDialogSaveLoad::ZoombiniDialogSaveLoad(MohawkEngine_Zoombini *vm, SaveLoadMode mode) : ZoombiniDialog(vm, ZoombiniPageType::kDialogSaveLoad),
-																							   _mode(mode) {
+ZoombiniDialogSaveLoad::ZoombiniDialogSaveLoad(MohawkEngine_Zoombini *vm, SaveLoadMode mode)
+	: ZoombiniDialog(vm, ZoombiniPageType::kDialogSaveLoad), _mode(mode) {
 	ZoombiniText::Key yesKey = ZoombiniText::kNone;
 	ZoombiniText::Key noKey = ZoombiniText::kDialogButtonCancel;
 

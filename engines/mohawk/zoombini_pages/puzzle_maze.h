@@ -289,7 +289,7 @@ private:
 		bool collisionPopStarted = false;
 
 		/** SCRS IDs for directional walk, alternate walk, idle, special, and feet entries. */
-		int16 scrsTable[12];
+		int16 scrsTable[12] = {0};
 
 		void clear() {
 			col = row = oldCol = oldRow = 0;
@@ -1423,23 +1423,24 @@ private:
 
 	/** Complete Level4 relay plan with its selected keys and ordered actions. */
 	struct SolverLevel4Plan {
-		bool valid;
-		int16 primaryGroup;
-		int16 finalStickyGroup;
-		int16 rescueGroup;
-		int16 highwayGroup;
-		int16 stagingStickyGroup;
-		int16 stagingCorner;
-		int16 stagingKeyCount;
+		bool valid = false;
+		int16 primaryGroup = 0;
+		int16 finalStickyGroup = 0;
+		int16 rescueGroup = 0;
+		int16 highwayGroup = 0;
+		int16 stagingStickyGroup = 0;
+		int16 stagingCorner = 0;
+		int16 stagingKeyCount = 0;
+		/** Selected staging keys, or -1 for unused entries. */
 		int16 stagingKeys[kDebugMazeMaxStagingKeys];
-		int16 stagingKey;
-		int16 primaryKey;
-		int16 pusherKey;
-		int16 rescueKey;
-		int16 finalKey;
-		int16 highwaySeat;
-		int16 highwaySnoidCount;
-		bool rescueReleasesStagingKey;
+		int16 stagingKey = -1;
+		int16 primaryKey = -1;
+		int16 pusherKey = -1;
+		int16 rescueKey = -1;
+		int16 finalKey = -1;
+		int16 highwaySeat = -1;
+		int16 highwaySnoidCount = 0;
+		bool rescueReleasesStagingKey = false;
 		SolverPlanAction stageStagingActions[kDebugMazeMaxStagingKeys];
 		SolverPlanAction stageHighwaySwitchActions[kDebugMazeMaxStagingKeys];
 		SolverPlanAction stageStaging;
@@ -1449,13 +1450,9 @@ private:
 		SolverPlanAction stagePush;
 		SolverPlanAction stageFinal;
 
-		SolverLevel4Plan()
-			: valid(false), primaryGroup(0), finalStickyGroup(0), rescueGroup(0), highwayGroup(0),
-			  stagingStickyGroup(0), stagingCorner(0), stagingKeyCount(0), stagingKey(-1), primaryKey(-1), pusherKey(-1),
-			  rescueKey(-1), finalKey(-1), highwaySeat(-1), highwaySnoidCount(0),
-			  rescueReleasesStagingKey(false) {
-			for (int16 keyIdx = 0; keyIdx < kDebugMazeMaxStagingKeys; keyIdx++)
-				stagingKeys[keyIdx] = -1;
+		/** Construct an unselected Level-4 relay plan. */
+		SolverLevel4Plan() {
+			memset(stagingKeys, -1, sizeof(stagingKeys));
 		}
 	};
 
@@ -1484,7 +1481,7 @@ private:
 		/** Simulated state after every staging key has made its highway launch. */
 		SolverPlanState postHighwayState;
 		/** Number of staging keys and actions stored in the fixed-size arrays. */
-		int16 stagingKeyCount;
+		int16 stagingKeyCount = 0;
 		/** Selected keys that first moved to the common staging corner. */
 		int16 stagingKeys[kDebugMazeMaxStagingKeys];
 		/** Actions that transferred the staging keys to the common corner. */
@@ -1492,45 +1489,39 @@ private:
 		/** Actions that sent the staging keys through the highway switch. */
 		SolverPlanAction highwayActions[kDebugMazeMaxStagingKeys];
 		/** Common corner occupied before the staging keys enter the highway. */
-		int16 stagingCorner;
+		int16 stagingCorner = -1;
 		/** Group of the sticky cell holding a staging key after the highway phase. */
-		int16 stagingStickyGroup;
+		int16 stagingStickyGroup = 0;
 		/** Key and action that activated the primary switch before the highway phase. */
-		int16 primaryKey;
+		int16 primaryKey = -1;
 		SolverPlanAction primaryAction;
 
-		SolverLevel4StagedRelay() : stagingKeyCount(0), stagingCorner(-1), stagingStickyGroup(0), primaryKey(-1) {
-			for (int16 keyIdx = 0; keyIdx < kDebugMazeMaxStagingKeys; keyIdx++)
-				stagingKeys[keyIdx] = -1;
+		/** Construct an empty staged relay candidate. */
+		SolverLevel4StagedRelay() {
+			memset(stagingKeys, -1, sizeof(stagingKeys));
 		}
 	};
 
 	/** Level1-Level3 answer plan with an optional two-switch phase. */
 	struct SolverLevel123Plan {
-		bool valid;
-		bool hasSwitchPhase;
-		int16 priorityCategory;
-		int16 priorityValue;
-		bool priorityMatched;
-		bool precursorInPriorityGroup;
-		int16 priorityCount;
-		int16 remainderCount;
-		int16 precursorKey;
-		int16 victim;
-		int16 finalKey;
-		int16 precursorGroup;
-		int16 finalGroup;
-		int16 victimActionIdx;
-		int16 finalActionIdx;
+		bool valid = false;
+		bool hasSwitchPhase = false;
+		int16 priorityCategory = 0;
+		int16 priorityValue = 0;
+		bool priorityMatched = false;
+		bool precursorInPriorityGroup = false;
+		int16 priorityCount = 0;
+		int16 remainderCount = 0;
+		int16 precursorKey = -1;
+		int16 victim = -1;
+		int16 finalKey = -1;
+		int16 precursorGroup = 0;
+		int16 finalGroup = 0;
+		int16 victimActionIdx = -1;
+		int16 finalActionIdx = -1;
 		Common::Array<SolverPlanAction> actions;
 
-		SolverLevel123Plan()
-			: valid(false), hasSwitchPhase(false), priorityCategory(0), priorityValue(0),
-			  priorityMatched(false), precursorInPriorityGroup(false), priorityCount(0),
-			  remainderCount(0), precursorKey(-1),
-			  victim(-1), finalKey(-1), precursorGroup(0), finalGroup(0),
-			  victimActionIdx(-1), finalActionIdx(-1) {
-		}
+		SolverLevel123Plan() = default;
 	};
 
 	/** One Zoombini mid-trace while simulating a launch; direction uses the authored encoding. */
@@ -1630,18 +1621,16 @@ private:
 
 	/** One launch of a generic plan. */
 	struct SolverGenericStep {
-		int16 snoidIdx;
-		int16 launcherSeatIdx;
-		bool controlStep;
-		int16 outcome;
-		int16 stickyCellIdx;
+		int16 snoidIdx = -1;
+		int16 launcherSeatIdx = -1;
+		bool controlStep = false;
+		int16 outcome = -4;
+		int16 stickyCellIdx = -1;
 		Common::Array<int16> switchGroups;
 		Common::Array<int16> pushedSnoids;
 		Common::Array<int16> releasedSnoids;
 
-		SolverGenericStep()
-			: snoidIdx(-1), launcherSeatIdx(-1), controlStep(false), outcome(-4), stickyCellIdx(-1) {
-		}
+		SolverGenericStep() = default;
 	};
 
 	/** One selected control launch in the generic solver's parent chain. */
@@ -1658,13 +1647,12 @@ private:
 	 * The progress report compares these positions with the live pack.
 	 */
 	struct SolverGenericPlan {
-		bool valid;
-		int16 controlStepCount;
+		bool valid = false;
+		int16 controlStepCount = 0;
 		Common::Array<SolverGenericStep> steps;
 		Common::Array<int16> postSpots;
 
-		SolverGenericPlan() : valid(false), controlStepCount(0) {
-		}
+		SolverGenericPlan() = default;
 	};
 
 	/** Search caps for one layout-agnostic answer-plan search. */
@@ -1678,14 +1666,13 @@ private:
 	/** Status published by one layout-agnostic answer-plan search. */
 	struct SolverGenericSearchResult {
 		/** Whether all queued search nodes were exhausted without finding a plan. */
-		bool searchExhausted;
+		bool searchExhausted = false;
 		/** Whether a configured step or node cap stopped the search. */
-		bool limitReached;
+		bool limitReached = false;
 		/** Number of candidate control launches examined by the search. */
-		uint32 stepsUsed;
+		uint32 stepsUsed = 0;
 
-		SolverGenericSearchResult() : searchExhausted(false), limitReached(false), stepsUsed(0) {
-		}
+		SolverGenericSearchResult() = default;
 	};
 
 	/** Step budget for one bounded answer-plan search; limit 0 disables the cap. */
@@ -1702,11 +1689,11 @@ private:
 	 */
 	struct SolverAcceptedPlanSearch {
 		/** Whether each pack slot must reach the accepted exit before completion. */
-		bool requiredSnoids[kDebugMazeMaxSnoids];
+		bool requiredSnoids[kDebugMazeMaxSnoids] = {0};
 		/** Optional final key launched after all required Snoids are accepted. */
-		int16 finalSnoid;
+		int16 finalSnoid = -1;
 		/** Switch group that the optional final key must press. */
-		int16 finalSwitchGroup;
+		int16 finalSwitchGroup = 0;
 		/** Accepted launch sequence accumulated along the current recursive branch. */
 		Common::Array<SolverPlanAction> actions;
 		/** Simulated state that reached the requested accepted-plan outcome. */
@@ -1714,11 +1701,9 @@ private:
 		/** Hashes of states already explored by this search. */
 		Common::HashMap<uint64, bool> visited;
 		/** Number of states inserted into @ref ZoombiniPuzzleMaze::SolverAcceptedPlanSearch::visited. */
-		int32 visitedStateCount;
+		int32 visitedStateCount = 0;
 
-		SolverAcceptedPlanSearch() : finalSnoid(-1), finalSwitchGroup(0), visitedStateCount(0) {
-			memset(requiredSnoids, 0, sizeof(requiredSnoids));
-		}
+		SolverAcceptedPlanSearch() {}
 	};
 
 	/**
@@ -1936,7 +1921,7 @@ private:
 	/** Number of validated ten-word cell records in the selected layout REGS. */
 	int16 _layoutCellRecordCount = 0;
 	/** One-based launcher seat identifiers from layout header words 1 through 9. */
-	int16 _launcherSeatIds[10] = {};
+	int16 _launcherSeatIds[10] = {0};
 	/** Header and ten-word cell records from the selected 16600-series layout resource. */
 	Common::Array<int16> _layoutRegsWords;
 	/** Values from REGS 16501 used to select collision overlay bases. */
@@ -1959,21 +1944,21 @@ private:
 	static const int kGridCols = 13;
 
 	/** Cell behavior codes for the authored grid. */
-	MazeCellType _cellTypes[kGridRows][kGridCols];
+	MazeCellType _cellTypes[kGridRows][kGridCols] = {};
 	/** Index into @ref _cellStates for each authored cell, or -1. */
 	int16 _cellStateIdx[kGridRows][kGridCols];
 	/** Per-cell trait category, or zero for no trait constraint. */
-	int16 _cellTraitKind[kGridRows][kGridCols];
+	int16 _cellTraitKind[kGridRows][kGridCols] = {0};
 	/** Per-cell trait value, or zero for no trait constraint. */
-	int16 _cellTraitValue[kGridRows][kGridCols];
+	int16 _cellTraitValue[kGridRows][kGridCols] = {0};
 	/** Per-node direction availability flags. */
-	bool _nodeDirFlags[kGridRows][kGridCols][4];
+	bool _nodeDirFlags[kGridRows][kGridCols][4] = {0};
 	/** Current direction output of each node. */
-	int16 _nodeDirection[kGridRows][kGridCols];
+	int16 _nodeDirection[kGridRows][kGridCols] = {0};
 	/** Whether a node cycles its direction when passed. */
-	bool _nodeCycleFlag[kGridRows][kGridCols];
+	bool _nodeCycleFlag[kGridRows][kGridCols] = {0};
 	/** Screen anchor of each grid cell, decoded from REGS 16000. */
-	Common::Point _gridCellPos[kGridRows][kGridCols];
+	Common::Point _gridCellPos[kGridRows][kGridCols] = {};
 
 	/** Maximum number of decoded layout cell states. */
 	static const int kMaxCellStates = 64;
@@ -1982,11 +1967,11 @@ private:
 	/** Number of valid entries in @ref _cellStates. */
 	int16 _cellStateCount = 0;
 	/** Base shape selected for each activation wave group. */
-	int16 _waveGroupShapeBase[9] = {};
+	int16 _waveGroupShapeBase[9] = {0};
 
 	// Collision tracking grid.
 	/** Number of collision occupants per cell. */
-	int16 _collisionReservationCount[kGridRows][kGridCols];
+	int16 _collisionReservationCount[kGridRows][kGridCols] = {0};
 	/** Runner index associated with each collision cell. */
 	int16 _collisionReservationRunnerIdx[kGridRows][kGridCols];
 
@@ -1996,7 +1981,7 @@ private:
 	/** Logical traversal state for each active runner. */
 	MazeRunnerState _runnerStates[kMaxRunners];
 	/** Snoid ID paired with each runner state. */
-	uint16 _runnerSnoidIds[kMaxRunners];
+	uint16 _runnerSnoidIds[kMaxRunners] = {0};
 	/** Number of active runner states. */
 	int16 _runnerCount = 0;
 
@@ -2012,15 +1997,15 @@ private:
 	/** Working trait record for each of up to twenty Zoombinis. */
 	ZmbTrait _pathCandidateTraits[20];
 	/** Match score for each candidate path slot. */
-	int16 _pathTraitMatchCounts[21];
+	int16 _pathTraitMatchCounts[21] = {0};
 	/** Connection table used while selecting path slots. */
-	int16 _connectionTable[21];
+	int16 _connectionTable[21] = {0};
 	/** Sparse free-slot list: entry @c i is @c i when the slot has zero matches, otherwise zero. */
-	int16 _freePathSlotList[21];
+	int16 _freePathSlotList[21] = {0};
 	/** Slots currently reachable from the generated graph. */
-	int16 _reachablePathSlots[21];
+	int16 _reachablePathSlots[21] = {0};
 	/** Output path slot selected for each Zoombini. */
-	int16 _selectedPathSlots[20];
+	int16 _selectedPathSlots[20] = {0};
 	/** Number of selected path slots and next output write index. */
 	int16 _selectedPathSlotCount = 0;
 	/** Next selected path slot to assign to a trait-arrow cell. */
@@ -2036,7 +2021,7 @@ private:
 	/** Complete trait records committed to selected paths. */
 	ZmbTrait _committedTraits[20];
 	/** Shuffled path candidate pool. */
-	int16 _shuffledPathPool[11];
+	int16 _shuffledPathPool[11] = {0};
 	/** Selected layout variant reused by variant-sensitive path generation. */
 	int16 _pathLayoutVariantIdx = 0;
 
@@ -2051,28 +2036,28 @@ private:
 	static const int kMaxCrossQueueSize = 42;
 
 	/** Launcher seat indices waiting for SCRB setup. */
-	int16 _launcherSetupQueue[kMaxQueueSize];
+	int16 _launcherSetupQueue[kMaxQueueSize] = {0};
 	/** Number of queued launcher seats. */
 	int16 _launcherSetupQueueSize = 0;
 
 	// The remaining Maze queues store Maze runner indices.
 	/** Runner indices waiting for a movement step. */
-	int16 _movementQueue[kMaxQueueSize];
+	int16 _movementQueue[kMaxQueueSize] = {0};
 	/** Number of queued movement steps. */
 	int16 _movementQueueSize = 0;
 
 	/** Runner indices whose collision companion must be raised before the page overlay. */
-	int16 _collisionOverlayRelinkQueue[kMaxQueueSize];
+	int16 _collisionOverlayRelinkQueue[kMaxQueueSize] = {0};
 	/** Number of queued collision-companion relinks. */
 	int16 _collisionOverlayRelinkQueueSize = 0;
 
 	/** Runner indices queued by launcher events 64, 74, and 84 for launch-column depth relinking. */
-	int16 _traversalColumnRelinkQueue[kMaxQueueSize];
+	int16 _traversalColumnRelinkQueue[kMaxQueueSize] = {0};
 	/** Number of queued traversal-column relinks. */
 	int16 _traversalColumnRelinkQueueSize = 0;
 
 	/** Accepted runner indices waiting for feet-specific celebration SCRS playback. */
-	int16 _acceptedCelebrationQueue[kMaxQueueSize];
+	int16 _acceptedCelebrationQueue[kMaxQueueSize] = {0};
 	/** Number of queued accepted-runner celebrations. */
 	int16 _acceptedCelebrationQueueSize = 0;
 
@@ -2086,16 +2071,16 @@ private:
 	bool _upperRightArrivalDepthReorderPending = false;
 
 	/** Runner indices waiting for rejection or boundary-exit completion. */
-	int16 _exitCompletionQueue[kMaxQueueSize];
+	int16 _exitCompletionQueue[kMaxQueueSize] = {0};
 	/** Number of queued exit completions. */
 	int16 _exitCompletionQueueSize = 0;
 	/** Runner indices waiting for next-cell dispatch. */
-	int16 _cellArrivalQueue[kMaxQueueSize];
+	int16 _cellArrivalQueue[kMaxQueueSize] = {0};
 	/** Number of queued cell arrivals. */
 	int16 _cellArrivalQueueSize = 0;
 
 	/** Paired runner indices waiting for collision SCRB assignment. */
-	int16 _collisionPairQueue[kMaxCrossQueueSize];
+	int16 _collisionPairQueue[kMaxCrossQueueSize] = {0};
 	/** Number of queued collision pairs. */
 	int16 _collisionPairQueueSize = 0;
 
@@ -2110,29 +2095,29 @@ private:
 
 	// Placed runner tracking.
 	/** Runner indices currently placed on the grid. */
-	int16 _placedRunnerIndices[10] = {};
+	int16 _placedRunnerIndices[10] = {0};
 	/** Number of placed runners. */
 	int16 _placedRunnerCount = 0;
 
 	// Launcher assignment.
 	/** One-based seat marker for each occupied launcher, or zero when empty. */
-	int16 _launcherOccupancyMarkers[14] = {};
+	int16 _launcherOccupancyMarkers[14] = {0};
 	/** Maze runner index paired with each launcher seat, or -1. */
-	int16 _launcherRunnerIndices[14] = {};
+	int16 _launcherRunnerIndices[14];
 
 	// --- Feature runners ---
 	/** Page overlay anchor before which collision companion overlays are raised. */
 	ZmbFeature *_collisionOverlayAnchorFeature = nullptr;
 	/** Shared visual companions indexed by authored launcher type. */
-	ZmbFeature *_launcherCompanionFeatures[3] = {};
+	ZmbFeature *_launcherCompanionFeatures[3] = {0};
 	/** DRAW_ON_REG drop-target helpers indexed by launcher seat. */
-	ZmbFeature *_launcherDropTargetFeatures[14] = {};
+	ZmbFeature *_launcherDropTargetFeatures[14] = {0};
 	/** Primary launcher features indexed by seat. */
-	ZmbFeature *_launcherFeatures[14] = {};
+	ZmbFeature *_launcherFeatures[14] = {0};
 	/** Optional launcher shadow features indexed by seat. */
-	ZmbFeature *_launcherShadowFeatures[14] = {};
+	ZmbFeature *_launcherShadowFeatures[14] = {0};
 	/** Callback-free overlay anchors retained for authored column depth links. */
-	ZmbFeature *_columnDepthAnchors[12] = {};
+	ZmbFeature *_columnDepthAnchors[12] = {0};
 
 	// --- Puzzle phase ---
 	/** Whether the cell grid has been initialized. */
@@ -2140,7 +2125,7 @@ private:
 	/** Whether the Maze frame loop may consume its runner and animation queues. */
 	bool _queueProcessingEnabled = false;
 	/** Whether each launcher seat is present in the selected layout header. */
-	bool _launcherSeatEnabled[14] = {};
+	bool _launcherSeatEnabled[14] = {0};
 
 	// --- Animation event state ---
 	/** Alternates the two collision impact sounds. */

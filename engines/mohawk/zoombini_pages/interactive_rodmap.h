@@ -26,6 +26,8 @@
 
 namespace Mohawk {
 
+class ZmbReleaseInfo;
+
 /**
  * Interactive route map page used between puzzle visits.
  *
@@ -423,6 +425,88 @@ protected:
 	Common::StableMap<uint16, int16> _pageNodeLevelMap;
 	/** Build the route-to-difficulty lookup from the current save state. */
 	void buildPageRouteLevelMap();
+
+private:
+	/** Text geometry relative to the level-legend feature bounds. */
+	struct LegendLayout {
+		/** Vertical title offset in pixels from the legend feature's top edge. */
+		int16 titleTopOffset = 3;
+		/** Height in pixels of the legend title's text rectangle. */
+		int16 titleHeight = 15;
+		/** Vertical offset in pixels from the feature's top edge to the first level label. */
+		int16 rowTopOffset = 22;
+		/** Extra pixels added beyond the feature's right edge for level labels. */
+		int16 rowRightExtension = 0;
+		/** Whether the four difficulty labels may wrap within their rows. */
+		bool rowWordWrap = false;
+	};
+
+	/** Statistics and practice-description geometry relative to the panel bounds. */
+	struct StatsLayout {
+		/** Vertical title offset in pixels from the statistics panel's top edge. */
+		int16 titleTopOffset = 3;
+		/** Height in pixels of the statistics or practice title's text rectangle. */
+		int16 titleHeight = 15;
+		/** Vertical offset in pixels from the panel's top edge to its first text row. */
+		int16 rowTopOffset = 26;
+		/** Initial text-row height and vertical advance in pixels. */
+		int16 rowHeight = 18;
+		/** Width in pixels of the journey-label and general practice-description column. */
+		int16 labelWidth = 115;
+		/** The top advances by rowHeight; a larger bottom step grows the practice rectangle. */
+		int16 practiceRowBottomStep = 18;
+		/** Whether the statistics or practice title may wrap. */
+		bool titleWordWrap = false;
+		/** Enable wrapping for every journey label and practice-description row. */
+		bool descWordWrap = false;
+		/** Whether the last journey label wraps even when the other labels do not. */
+		bool wrapLastJourneyRow = true;
+		/** Whether practice mode shows progress-dependent return instructions. */
+		bool practiceReturnInsts = false;
+		/** Journey count labels ordered as the start, Basecamp 1, Basecamp 2, and town. */
+		ZoombiniText::Key journeyLabelKeys[4] = {
+			ZoombiniText::kPicker,
+			ZoombiniText::kBasecamp1,
+			ZoombiniText::kBasecamp2,
+			ZoombiniText::kTown};
+	};
+
+	/** Page-name tooltip placement and wrapping. */
+	struct TooltipLayout {
+		/** Vertical translation in pixels applied to the tooltip feature's text bounds. */
+		int16 topOffset = 0;
+		/** Whether the hovered page name may wrap within the tooltip. */
+		bool wordWrap = false;
+	};
+
+	/**
+	 * Release-selected text settings with retail v1.1US as the default layout.
+	 * @ref ZoombiniInteractiveRodMap::createTextLayout applies the differences for other releases.
+	 */
+	struct TextLayout {
+		/** Geometry and wrapping for the difficulty legend. */
+		LegendLayout legend;
+		/** Geometry, labels, and wrapping for journey statistics and practice instructions. */
+		StatsLayout stats;
+		/** Placement and wrapping for the hovered page name. */
+		TooltipLayout tooltip;
+		/** Whether route names use the wider European text rectangles. */
+		bool wideRouteNameRects = false;
+	};
+
+	/** Resolve text settings independently of resource numbering and input behavior. */
+	static TextLayout createTextLayout(const ZmbReleaseInfo &relInfo);
+	/** Whether the map uses the six-SCRB MAP.MHK resources, including the US v1.1 demo. */
+	static bool usesMapArchive(const ZmbReleaseInfo &relInfo);
+	/** Draw the progress-dependent practice return instructions. */
+	void drawPracticeReturnInstructions(const Common::Rect &panelRect);
+	/** Draw the general practice description in the statistics label column. */
+	void drawPracticeDesc(const Common::Rect &panelRect);
+	/** Draw the four journey labels and their population counts. */
+	void drawJourneyStatistics(const Common::Rect &panelRect);
+
+	/** Text settings selected once from the release when the page is constructed. */
+	const TextLayout _textLayout;
 };
 
 } // End of namespace Mohawk

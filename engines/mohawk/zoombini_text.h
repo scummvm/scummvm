@@ -42,8 +42,9 @@ namespace Mohawk {
 
 class TTFLoader;
 class MohawkEngine_Zoombini;
+class ZmbReleaseInfo;
 
-/** Extract the localized hard-coded strings from the Zoombinis executable, and provide access to them by key. */
+/** Provide release-specific strings, credits, fonts, text encoding, and Zoombini names. */
 class ZoombiniText : private Common::NonCopyable {
 public:
 	/** Load localized text sources for the selected engine language. */
@@ -270,11 +271,137 @@ public:
 		kSvmDialogBodyAskConvertUnreadableZoombiniNames,
 	};
 
-	enum FontKind : uint32 {
-		kFontDebugTitle = 0,
-		kFontDebugText,
-		kFontTitle,
-		kFontText,
+	/** One paragraph of localized credit text. */
+	struct CreditParagraph {
+		/** Localized lines in this paragraph. */
+		Common::Array<Common::U32String> _lines;
+		/** Number of blank lines following the paragraph. */
+		uint32 _blankLineCount = 1;
+		/** Whether the first nonempty line uses the title font and palette. */
+		bool _firstLineIsTitle = true;
+
+		/** Build an empty paragraph. */
+		CreditParagraph() {}
+		/** Build a paragraph from lines and a trailing blank-line count. */
+		CreditParagraph(const Common::Array<Common::U32String> &lines, uint32 blankLineCount, bool firstLineIsTitle = true)
+			: _lines(lines), _blankLineCount(blankLineCount), _firstLineIsTitle(firstLineIsTitle) {}
+
+		/** Return the total rendered line count including trailing blank lines. */
+		uint32 getTotalLineCount() const { return _lines.size() + _blankLineCount; }
+	};
+
+	/** One numeric-key localized string. */
+	struct LocalizedString {
+		/** Numeric localized-string key. */
+		uint32 _key = 0;
+		/** Decoded localized text. */
+		Common::U32String _text;
+
+		/** Build an empty string entry. */
+		LocalizedString() {}
+		/** Build a string entry from a key and decoded text. */
+		LocalizedString(uint32 key, const Common::U32String &text)
+			: _key(key), _text(text) {}
+	};
+
+	/** Return the code page used by executable strings for a Zoombini language. */
+	static Common::CodePage getExeCodePage(Common::Language lang);
+	/** Return the code page used by string resources for a Zoombini language. */
+	static Common::CodePage getResCodePage(Common::Language lang);
+	/** Return the display name for a code page used by Zoombini text and save names. */
+	static const char *getCodePageName(Common::CodePage codePage);
+	/** Return the normal text font loaded during initialization. */
+	const Graphics::Font *getTextFont();
+	/** Return the title font loaded during initialization. */
+	const Graphics::Font *getTitleFont();
+	/** Return the font selected by a renderer-facing usage enum. */
+	const Graphics::Font *getFont(ZoombiniFontUsage fontUsage);
+	/** Return whether the selected font retains grayscale glyph coverage. */
+	bool fontUsesAntialiasing(ZoombiniFontUsage fontUsage) const;
+
+	// Convert strings to @ref Common::U32String with the selected code page.
+	enum StringKind {
+		kExeString = 0,
+		kResString,
+	};
+	/** Return the code page used for executable strings in this release. */
+	Common::CodePage getExeCodePage() const { return _exeCodePage; }
+	/** Decode a null-terminated byte string with the selected source code page. */
+	Common::U32String toU32String(const byte *buf, StringKind strKind) const;
+	/** Decode a bounded byte string with the selected source code page. */
+	Common::U32String toU32String(const byte *buf, int32 len, StringKind strKind) const;
+	/** Decode a null-terminated char string with the selected source code page. */
+	Common::U32String toU32String(const char *str, StringKind strKind) const;
+	/** Decode a bounded char string with the selected source code page. */
+	Common::U32String toU32String(const char *str, int32 len, StringKind strKind) const;
+	/** Decode a ScummVM string with the selected source code page. */
+	Common::U32String toU32String(const Common::String &str, StringKind strKind) const;
+	/** Encode UTF-32 text into the selected executable or resource code page. */
+	Common::String fromU32String(const Common::U32String &ustr, StringKind strKind) const;
+
+	// [*] STRL resource
+	/** Decode every string in a STRL resource. */
+	bool getStrl(Common::Array<Common::U32String> &outStrs, ZmbResource resource);
+	/** Decode one indexed string from a STRL resource. */
+	bool getStrl(Common::U32String &outStr, ZmbResource resource, uint16 subStrIdx);
+	/** Return the localized name for a canonical Zoombini ID. */
+	Common::U32String getZoombiniName(int16 zmbid);
+
+	// [*] Zoombini names
+	/**
+	 * Pick the next name for a preview Zoombini.
+	 * Korean: draws each of the 625 STRL name IDs once per cycle, then clears the draw history.
+	 * Different IDs may contain equal strings, and existing Zoombini names do not restrict selection.
+	 * English: generates a name procedurally from syllable tables.
+	 */
+	Common::U32String pickNextZoombiniName();
+
+	// [*] Text getters
+	/** Return the localized display name for a page type. */
+	Common::U32String getPageName(ZoombiniPageType pageType) const;
+	/** Return one localized string by numeric key. */
+	Common::U32String getLocalizedString(uint32 textKey) const;
+	/** Copy all localized strings in stable key order. */
+	void getLocalizedStrings(Common::Array<LocalizedString> &strings) const;
+	/** Copy localized credit paragraphs in display order. */
+	void getLocalizedCredits(Common::Array<CreditParagraph> &paragraphs) const;
+
+private:
+	/** Localized page-name key indexed by page type. */
+	struct PageKeyEntry {
+		/** Page whose display name is supplied by this entry. */
+		ZoombiniPageType pageType;
+		/** Localized string key for the page's display name. */
+		Key key;
+	};
+	/** Display-name keys for the journey's interactive and puzzle pages. */
+	static constexpr PageKeyEntry kPageKeyTable[] = {
+		{ZoombiniPageType::kPicker, kPicker},
+		{ZoombiniPageType::kBridge, kBridge},
+		{ZoombiniPageType::kCaves, kCaves},
+		{ZoombiniPageType::kPizza, kPizza},
+		{ZoombiniPageType::kBasecamp1, kBasecamp1},
+		{ZoombiniPageType::kFerry, kFerry},
+		{ZoombiniPageType::kLilly, kLilly},
+		{ZoombiniPageType::kSlides, kSlides},
+		{ZoombiniPageType::kFleens, kFleens},
+		{ZoombiniPageType::kHotel, kHotel},
+		{ZoombiniPageType::kNet, kNet},
+		{ZoombiniPageType::kBasecamp2, kBasecamp2},
+		{ZoombiniPageType::kTunnels, kTunnels},
+		{ZoombiniPageType::kSmoke, kSmoke},
+		{ZoombiniPageType::kMaze, kMaze},
+		{ZoombiniPageType::kTown, kTown},
+	};
+
+	/** Point size and cached result for one font role. */
+	struct FontState {
+		/** Size interpreted using the selected loader's character or cell mode. */
+		int point = 0;
+		/** Name of the font owned by FontMan. */
+		Common::String cacheName;
+		/** Whether the selected font retains grayscale glyph coverage. */
+		bool enableHinting = false;
 	};
 
 	/** Internal STRL text-table metadata. */
@@ -370,12 +497,12 @@ public:
 		/** Bounds measured from this release's supported executable credit source. */
 		CreditLimits creditLimits = {0, 0, 0};
 
-		/** Build a source descriptor for a loose executable file. */
-		static ExeTextSource fromFile(const char *fileName, uint32 expectedSize);
-		/** Build a source descriptor for an executable member inside an InstallShield v3 .Z archive. */
-		static ExeTextSource fromArchiveMember(const char *archiveName, const char *archiveMemberName, uint32 expectedSize);
-		/** Build a source descriptor for an executable member inside an InstallShield cabinet. */
-		static ExeTextSource fromCabinetMember(const char *archiveName, const char *archiveMemberName, uint32 expectedSize);
+		/** Copy these decoding settings to a candidate in a loose executable file. */
+		ExeTextSource inFile(const char *srcFileName, uint32 srcExpectedSize) const;
+		/** Copy these decoding settings to a candidate in an InstallShield v3 .Z archive. */
+		ExeTextSource inArchiveMember(const char *srcArchiveName, const char *srcMemberName, uint32 srcExpectedSize) const;
+		/** Copy these decoding settings to a candidate in an InstallShield cabinet. */
+		ExeTextSource inCabinetMember(const char *srcArchiveName, const char *srcMemberName, uint32 srcExpectedSize) const;
 
 		/** Set the code page and keyed string table, returning the updated descriptor. */
 		template<size_t size>
@@ -401,100 +528,32 @@ public:
 		ExeTextSource withCreditLimits(const CreditLimits &limits);
 	};
 
-	/** One paragraph of localized credit text. */
-	struct CreditParagraph {
-		/** Localized lines in this paragraph. */
-		Common::Array<Common::U32String> _lines;
-		/** Number of blank lines following the paragraph. */
-		uint32 _blankLineCount = 1;
-		/** Whether the first nonempty line uses the title font and palette. */
-		bool _firstLineIsTitle = true;
-
-		/** Build an empty paragraph. */
-		CreditParagraph() {}
-		/** Build a paragraph from lines and a trailing blank-line count. */
-		CreditParagraph(const Common::Array<Common::U32String> &lines, uint32 blankLineCount, bool firstLineIsTitle = true) : _lines(lines), _blankLineCount(blankLineCount), _firstLineIsTitle(firstLineIsTitle) {}
-
-		/** Return the total rendered line count including trailing blank lines. */
-		uint32 getTotalLineCount() const { return _lines.size() + _blankLineCount; }
+	/** Release-selected string sources; defaults select no executable or archive. */
+	struct StringSources {
+		/** Executable candidates in search order; the first fully valid candidate wins. */
+		Common::Array<ExeTextSource> executables;
+		/** Load TEXTSTR.MHK after executable and ScummVM-added strings. */
+		bool textStrArchive = false;
+		/** Exact TEXTSTR.MHK credit entry count, or zero to retain executable credits. */
+		uint32 textStrCreditEntryCount = 0;
 	};
 
-	/** One numeric-key localized string. */
-	struct LocalizedString {
-		/** Numeric localized-string key. */
-		uint32 _key = 0;
-		/** Decoded localized text. */
-		Common::U32String _text;
+	/** One localized replacement and its release applicability. */
+	struct StringOverride {
+		/** Replacement text; null only in a default-constructed map value. */
+		const char32_t *text;
+		/** Keep the executable's text when running v2.0US, v2.0PL, or v2.0US Demo. */
+		bool preserveTlcText;
 
-		/** Build an empty string entry. */
-		LocalizedString() {}
-		/** Build a string entry from a key and decoded text. */
-		LocalizedString(uint32 key, const Common::U32String &text) : _key(key), _text(text) {}
+		/** Create a replacement, or an empty value for HashMap initialization. */
+		constexpr StringOverride(const char32_t *replacementText = nullptr, bool keepTlcText = false)
+			: text(replacementText), preserveTlcText(keepTlcText) {}
 	};
+	/** Available translations for one text key, indexed by language. */
+	typedef Common::HashMap<Common::Language, StringOverride, Common::Hash<int>> LanguageStringOverrides;
+	/** Localized replacements indexed first by text key, then by language. */
+	typedef Common::HashMap<Key, LanguageStringOverrides, Common::Hash<uint32>> StringOverrideMap;
 
-	/** Return the code page used by executable strings for a Zoombini language. */
-	static Common::CodePage getExeCodePage(Common::Language language);
-	/** Return the code page used by string resources for a Zoombini language. */
-	static Common::CodePage getResCodePage(Common::Language language);
-	/** Return the display name for a code page used by Zoombini text and save names. */
-	static const char *getCodePageName(Common::CodePage codePage);
-	/** Return the normal text font, loading it on first use. */
-	const Graphics::Font *getTextFont();
-	/** Return the title font, loading it on first use. */
-	const Graphics::Font *getTitleFont();
-	/** Return the font selected by a renderer-facing usage enum. */
-	const Graphics::Font *getFont(ZoombiniFontUsage fontUsage);
-	/** Return whether the selected font retains grayscale glyph coverage. */
-	bool fontUsesAntialiasing(ZoombiniFontUsage fontUsage) const;
-
-	// Convert strings to @ref Common::U32String with the selected code page.
-	enum StringKind {
-		kExeString = 0,
-		kResString,
-	};
-	/** Return the code page used for executable strings in this release. */
-	Common::CodePage getExeCodePage() const { return _exeCodePage; }
-	/** Decode a null-terminated byte string with the selected source code page. */
-	Common::U32String toU32String(const byte *buf, StringKind strKind) const;
-	/** Decode a bounded byte string with the selected source code page. */
-	Common::U32String toU32String(const byte *buf, int32 len, StringKind strKind) const;
-	/** Decode a null-terminated char string with the selected source code page. */
-	Common::U32String toU32String(const char *str, StringKind strKind) const;
-	/** Decode a bounded char string with the selected source code page. */
-	Common::U32String toU32String(const char *str, int32 len, StringKind strKind) const;
-	/** Decode a ScummVM string with the selected source code page. */
-	Common::U32String toU32String(const Common::String &str, StringKind strKind) const;
-	/** Encode UTF-32 text into the selected executable or resource code page. */
-	Common::String fromU32String(const Common::U32String &ustr, StringKind strKind) const;
-
-	// [*] STRL resource
-	/** Decode every string in a STRL resource. */
-	bool getStrl(Common::Array<Common::U32String> &outStrs, ZmbResource resource);
-	/** Decode one indexed string from a STRL resource. */
-	bool getStrl(Common::U32String &outStr, ZmbResource resource, uint16 subStrIdx);
-	/** Return the localized name for a canonical Zoombini ID. */
-	Common::U32String getZoombiniName(int16 zmbid);
-
-	// [*] Zoombini names
-	/**
-	 * Pick the next name for a preview Zoombini.
-	 * Korean: draws each of the 625 STRL name IDs once per cycle, then clears the draw history.
-	 * Different IDs may contain equal strings, and existing Zoombini names do not restrict selection.
-	 * English: generates a name procedurally from syllable tables.
-	 */
-	Common::U32String pickNextZoombiniName();
-
-	// [*] Text getters
-	/** Return the localized display name for a page type. */
-	Common::U32String getPageName(ZoombiniPageType pageType) const;
-	/** Return one localized string by numeric key. */
-	Common::U32String getLocalizedString(uint32 textKey) const;
-	/** Copy all localized strings in stable key order. */
-	void getLocalizedStrings(Common::Array<LocalizedString> &strings) const;
-	/** Copy localized credit paragraphs in display order. */
-	void getLocalizedCredits(Common::Array<CreditParagraph> &paragraphs) const;
-
-private:
 	/** Bounds measured from the Spanish v1.0 executable credit source. */
 	static const CreditLimits kV10ESCreditLimits;
 	/** Bounds measured from the Portuguese v1.0 executable credit source. */
@@ -559,25 +618,32 @@ private:
 	static bool compareLocalizedStrings(const LocalizedString &left, const LocalizedString &right);
 	/** Return whether an ASCII byte sequence matches at an offset. */
 	static bool bytesMatchAt(const Common::Array<byte> &data, uint32 offset, const char *bytes);
-	/** Decode one TextSTR entry using a specified code page. */
-	bool readTextStrString(MohawkArchive &archive, const ResTextEntry &entry, Common::CodePage codePage, Common::U32String &text);
+	/** Decode the declared STRL body, leaving resource-specific trailing-byte checks to the caller. */
+	static bool readStrlBody(Common::SeekableReadStream *stream, uint16 stringCount, Common::CodePage codePage, Common::Array<Common::U32String> &texts);
 	/** Decode every string in one TextSTR STRL resource using a specified code page. */
 	bool readTextStrStrings(MohawkArchive &archive, int16 resourceId, Common::CodePage codePage, Common::Array<Common::U32String> &texts);
 	/** Read one NUL-terminated STRL string while reserving one terminator byte for every following string. */
 	static bool readBoundedStrlString(Common::SeekableReadStream *stream, Common::String &text, uint16 remainingStringCount);
-	/** Engine instance that owns resource and executable text access. */
-	MohawkEngine_Zoombini *_vm;
-	/** Load and cache a font from preferred and fallback TTF loaders. */
-	const Graphics::Font *loadFont(const Common::Array<TTFLoader *> &optimalTTFLoaders, const Common::Array<TTFLoader *> &fallbackTTFLoaders, int point, bool showWarnMsgBox, Common::String &cacheName, bool &usesAntialiasing);
+	/** Configure release-specific font sources and load the normal and title fonts. */
+	void initFonts();
+	/** Select and cache one font role, optionally warning when a fallback is used. */
+	const Graphics::Font *loadFont(FontState &state, bool showWarnMsgBox);
 
-	/** Build the page-type to localized-key lookup. */
-	void initPageKeyMap();
-	/** Initialize English resource and fallback strings. */
-	void initEnglishStrings();
-	/** Load Europe-language strings from the original archive family. */
-	bool initOriginalEuropeArchiveStrings();
-	/** Load hard-coded strings from the original executable family. */
-	bool initOriginalExecutableStrings();
+	/**
+	 * Insert or replace ScummVM-provided strings while preserving release-owned text.
+	 * Look up the selected language, falling back to English when no applicable translation exists.
+	 */
+	void applyStringOverrides(const ZmbReleaseInfo &relInfo);
+	/** Build the key-to-language replacement map used by @ref ZoombiniText::applyStringOverrides. */
+	static StringOverrideMap createStringOverrides();
+	/** Select executable candidates and TEXTSTR.MHK settings without reading files. */
+	static StringSources createStringSources(const ZmbReleaseInfo &relInfo);
+	/** Load mapped TEXTSTR.MHK strings and, for a nonzero entry count, archive credits. */
+	bool initArchiveStrings(uint32 creditEntryCount);
+	/** Try the selected executable candidates in order. */
+	bool initExecutableStrings(const Common::Array<ExeTextSource> &sources);
+	/** Validate and decode one candidate, committing strings and credits only on success. */
+	bool tryExecutableSource(const ExeTextSource &source);
 	/** Read a release-matched executable image of the exact configured size into memory. */
 	static bool readExecutableData(Common::SeekableReadStream *exeStream, uint32 expectedSize, Common::Array<byte> &data);
 	/** Find an ASCII byte sequence in executable data. */
@@ -605,19 +671,12 @@ private:
 	void patchSpanish10ExeText();
 	/** Correct the Korean executable credit directly in the loaded paragraphs. */
 	void patchKoreanExeCredits();
-	template<size_t size>
-	static void addCreditParagraph(Common::Array<CreditParagraph> &paragraphs, const char *const (&creditLines)[size], uint32 blankLineCount) {
-		Common::Array<Common::U32String> lines;
-		for (uint i = 0; i < size; i++)
-			lines.push_back(Common::U32String(creditLines[i], Common::kUtf8));
-		paragraphs.push_back(CreditParagraph(lines, blankLineCount));
-	}
-	/** Initialize Korean resource and fallback strings. */
-	void initKoreanStrings();
 
 	/** Generate a localized procedural Zoombini name. */
 	Common::U32String generateRandomName();
 
+	/** Engine instance that owns resource and executable text access. */
+	MohawkEngine_Zoombini *_vm;
 	/** Language selected for this engine instance. */
 	Common::Language _lang;
 	/** Cached code page used to decode Zoombini executable strings (EXE). */
@@ -625,21 +684,13 @@ private:
 	/** Cached code page used to decode Zoombini string resources (STRL). */
 	Common::CodePage _resCodePage;
 
-	/** Cache key for the normal text font. */
-	Common::String _textFontCacheName;
-	/** Cache key for the title font. */
-	Common::String _titleFontCacheName;
-	/** Point size selected for the normal text font. */
-	int _textFontPoint = 0;
-	/** Point size selected for the title font. */
-	int _titleFontPoint = 0;
-	/** Whether the selected normal text font retains grayscale glyph coverage. */
-	bool _textFontUsesAntialiasing = false;
-	/** Whether the selected title font retains grayscale glyph coverage. */
-	bool _titleFontUsesAntialiasing = false;
+	/** Selected normal text font. */
+	FontState _textFont;
+	/** Selected title font. */
+	FontState _titleFont;
 	/** Font loaders tried first for the selected language and point size. */
 	Common::Array<TTFLoader *> _optimalTTFLoaders;
-	/** Fallback font loaders used when the preferred font lacks a glyph. */
+	/** Fallback font loaders tried when no preferred font can be loaded. */
 	Common::Array<TTFLoader *> _fallbackTTFLoaders;
 
 	/** Forward canonical-ID cache for the STRL Zoombini-name pool. */
@@ -649,8 +700,6 @@ private:
 	Common::HashMap<uint32, Common::U32String> _strMap;
 	/** Localized credits in display order. */
 	Common::Array<CreditParagraph> _creditParagraphs;
-	/** Page-type to localized page-name key map. */
-	Common::HashMap<ZoombiniPageType, Key> _pageKeyMap;
 };
 
 } // End of namespace Mohawk

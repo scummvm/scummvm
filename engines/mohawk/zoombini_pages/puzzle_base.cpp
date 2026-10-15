@@ -28,9 +28,7 @@
 namespace Mohawk {
 
 ZoombiniPuzzle::ZoombiniPuzzle(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType, ZmbSrcPageKind departXferSrcSiPage)
-	: ZoombiniInteractive(vm, pageType),
-	  _difficultyLevel(static_cast<ZmbPuzzleLevel>(vm->_state->readPageRouteLevel(pageType) + 1)),
-	  _entrySfxGroupFlags(ZmbSfxGroupFlags::kRandom_00) {
+	: ZoombiniInteractive(vm, pageType), _puzzleLevel(static_cast<ZmbPuzzleLevel>(vm->_state->readPageRouteLevel(pageType) + 1)) {
 	_departXferSrcSiPage = departXferSrcSiPage;
 
 	// Every puzzle starts from one active pack containing 1 to 16 Snoids.
@@ -42,7 +40,7 @@ ZoombiniPuzzle::~ZoombiniPuzzle() {
 }
 
 Common::String ZoombiniPuzzle::getDebugBanner() const {
-	return Common::String::format("%s L%d (Route%d-%d)", getPageName(), static_cast<int>(_difficultyLevel), getRouteNumber(), getRoutePuzzleIdx());
+	return Common::String::format("%s L%d (Route%d-%d)", getPageName(), static_cast<int>(_puzzleLevel), getRouteNumber(), getRoutePuzzleIdx());
 }
 
 void ZoombiniPuzzle::initSfxGroupFlags() {
@@ -87,7 +85,7 @@ void ZoombiniPuzzle::queueNarratorSound(int16 soundId) {
 
 bool ZoombiniPuzzle::passesPartialResultFeedbackGate() {
 	const ZmbStateFile::PageFlag &pageFlag = _vm->_state->getCurrentState().getPageFlagFromPageType(getPageType());
-	return _difficultyLevel - 1 < _vm->_rnd->getRandomNumber(0, 4) ||
+	return _puzzleLevel - 1 < _vm->_rnd->getRandomNumber(0, 4) ||
 		   _vm->_state->getPageVisitCountFromPageFlag(pageFlag) <= kPartialResultFeedbackEarlyVisitCount;
 }
 

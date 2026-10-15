@@ -400,7 +400,8 @@ struct ZmbTrait {
 
 	/** Construct an empty trait record. */
 	ZmbTrait() = default;
-	ZmbTrait(HairKind hair, EyeKind eyes, NoseKind nose, FeetKind feet) : _hair(hair), _eyes(eyes), _nose(nose), _feet(feet) {}
+	ZmbTrait(HairKind hair, EyeKind eyes, NoseKind nose, FeetKind feet)
+		: _hair(hair), _eyes(eyes), _nose(nose), _feet(feet) {}
 
 	/** Convert the four trait values to the canonical roster ID. */
 	int16 snoidId() const;
@@ -794,7 +795,10 @@ public:
  */
 struct ZmbStateFile {
 	/** Construct a state file with its release-independent defaults. */
-	ZmbStateFile();
+	ZmbStateFile() {}
+
+	/** Shared state-file and roster magic, with file-specific byte order. */
+	static constexpr uint16 kEndianMagic = 0x006B;
 
 	/**
 	 * Persisted two-byte page state.
@@ -864,7 +868,7 @@ struct ZmbStateFile {
 	 * 00 6B).
 	 * The roster stores the same value little-endian instead.
 	 */
-	uint16 _magic006B;
+	uint16 _magic006B = kEndianMagic;
 	/**
 	 * (v1.0BR) 0x0002
 	 * (v1.1US) 0x0002
@@ -1473,10 +1477,10 @@ private:
 
 struct ZmbRosterFile {
 	/** Construct an empty roster with the current roster magic. */
-	ZmbRosterFile();
+	ZmbRosterFile() {}
 
 	/** Endian-aware roster magic value. */
-	uint16 _magic006B;
+	uint16 _magic006B = ZmbStateFile::kEndianMagic;
 	/** Next monotonic ZOOM#### filename counter. */
 	uint16 _nextSaveFileNameCounter = 0;
 	/** Number of valid save entries. */
@@ -1689,7 +1693,7 @@ public:
 		kPhysicalLocationCount
 	};
 
-	static constexpr uint16 kEndianMagic = 0x006B; // 6B 00 in LE, 00 6B in BE.
+	static constexpr uint16 kEndianMagic = ZmbStateFile::kEndianMagic; // 6B 00 in LE, 00 6B in BE.
 	/** Raw little-endian bytes for the roster magic. */
 	static constexpr byte kLittleEndianMagicBytes[2]{
 		0x6B,
@@ -1728,7 +1732,7 @@ public:
 		/** Retained modulo-16 ambient resource-release cadence. */
 		uint16 _preloadCounter = 0;
 		/** Non-repeat random-pool state indexed by @ref ZoombiniPageType. */
-		uint32 _poolStates[kPoolStateCount] = {};
+		uint32 _poolStates[kPoolStateCount] = {0};
 
 		/** Return the retained non-repeat pool for @p pageType. */
 		uint32 &getPoolState(ZoombiniPageType pageType) {
@@ -2140,6 +2144,9 @@ public:
 	void beginPracticeState();
 	/** Stop using the isolated practice state without changing the saved game state. */
 	void endPracticeState();
+
+	/** Whether this release stores a separate perfect clear counter for each route. */
+	bool hasRoutePerfectClearCounters() const;
 
 	/**
 	 * "Perfect streak" flag.

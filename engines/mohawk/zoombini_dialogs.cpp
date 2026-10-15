@@ -53,7 +53,8 @@ namespace {
 
 class ZoombiniSeparatorWidget : public GUI::Widget, private Common::NonCopyable {
 public:
-	ZoombiniSeparatorWidget(GUI::GuiObject *boss, const Common::String &name) : GUI::Widget(boss, name) {
+	ZoombiniSeparatorWidget(GUI::GuiObject *boss, const Common::String &name)
+		: GUI::Widget(boss, name) {
 		setFlags(GUI::WIDGET_ENABLED | GUI::WIDGET_CLEARBG);
 	}
 
@@ -101,11 +102,8 @@ private:
 	}
 
 	struct RowState {
-		RowState() : _widget(nullptr), _corrupted(false) {
-		}
-
-		GUI::Widget *_widget;
-		bool _corrupted;
+		GUI::Widget *_widget = nullptr;
+		bool _corrupted = false;
 	};
 
 	Common::Array<RowState> _rows;
@@ -211,7 +209,7 @@ static void appendBackupStorageDescription(Common::U32String &description,
 } // End of anonymous namespace
 
 ZoombiniSaveNameDialog::ZoombiniSaveNameDialog(const Common::U32String &initialName, bool rename, Common::CodePage codePage)
-	: GUI::Dialog(0, 0, 360, 168), _edit(nullptr) {
+	: GUI::Dialog(0, 0, 360, 168) {
 	Common::U32String title;
 	if (rename)
 		title = _c("Rename savefile", "zoombini-options");
@@ -386,38 +384,8 @@ bool ZoombiniSaveTransfer::importOneSave(const Common::String &target) {
 	return true;
 }
 
-ZoombiniSaveManagementDialog::ZoombiniSaveManagementDialog(const Common::String &domain) : GUI::Dialog(0, 0, 1, 1),
-																						   _domain(domain),
-																						   _saveSelectionGroup(this, kSaveSelectionChangedCmd),
-																						   _selectedSaveSlot(-1),
-																						   _description(nullptr),
-																						   _saveHeader(nullptr),
-																						   _saveList(nullptr),
-																						   _saveTable(nullptr),
-																						   _saveRowCount(0),
-																						   _moveUpButton(nullptr),
-																						   _moveDownButton(nullptr),
-																						   _renameButton(nullptr),
-																						   _importButton(nullptr),
-																						   _exportButton(nullptr),
-																						   _deleteButton(nullptr),
-																						   _recoverButton(nullptr),
-																						   _compactButton(nullptr) {
-	for (int i = 0; i < kMaxSaveRows; i++) {
-		_saveSelectionButtons[i] = nullptr;
-		_saveSlotLabels[i] = nullptr;
-		_saveNameLabels[i] = nullptr;
-		_saveVersionLabels[i] = nullptr;
-		_saveIsleLabels[i] = nullptr;
-		_saveBasecamp1Labels[i] = nullptr;
-		_saveBasecamp2Labels[i] = nullptr;
-		_saveTownLabels[i] = nullptr;
-		_saveActivePackLabels[i] = nullptr;
-		_saveFileNames[i].clear();
-		_saveRecoverableRows[i] = false;
-		_saveIssueRows[i] = static_cast<uint8>(ZoombiniGameState::ZmbSaveIssue::kNone);
-	}
-
+ZoombiniSaveManagementDialog::ZoombiniSaveManagementDialog(const Common::String &domain)
+	: GUI::Dialog(0, 0, 1, 1), _domain(domain), _saveSelectionGroup(this, kSaveSelectionChangedCmd) {
 	const int margin = kZmbSaveDialogWidthMargin;
 
 	_description = new GUI::StaticTextWidget(this, margin, 8, kZmbSaveTableWidth, kZmbSaveDialogDescriptionHeight,
@@ -931,13 +899,12 @@ void ZoombiniSaveManagementDialog::handleCommand(GUI::CommandSender *sender, uin
 	}
 }
 
-ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &domain) : OptionsContainerWidget(boss, name, "ZoombiniEngineOptionsDialog", domain) {
+ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &domain)
+	: OptionsContainerWidget(boss, name, "ZoombiniEngineOptionsDialog", domain) {
 	// Hide the v1.x-only MIDI settings on the TLC v2.0 rebuilds, as they does not have any MIDI resources.
 	Common::String guiOptions = ConfMan.get("guioptions", _domain);
 	_isV1x = !checkGameGUIOption(GAMEOPTION_ZMB_V20, guiOptions);
 
-	_fixHotelMidiHaltBugCheckbox = nullptr;
-	_fixCavesL4MidiSilentBugCheckbox = nullptr;
 	GUI::StaticTextWidget *text = nullptr;
 
 	new ZoombiniSeparatorWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.SaveFilesSeparator");

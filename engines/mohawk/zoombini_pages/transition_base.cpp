@@ -26,7 +26,8 @@
 
 namespace Mohawk {
 
-ZoombiniTransition::ZoombiniTransition(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType) : ZoombiniPage(vm, ZoombiniPageCategory::kTransition, pageType) {
+ZoombiniTransition::ZoombiniTransition(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType)
+	: ZoombiniPage(vm, ZoombiniPageCategory::kTransition, pageType) {
 	_useFadeEffect = false;
 }
 

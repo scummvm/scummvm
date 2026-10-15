@@ -26,6 +26,8 @@
 
 namespace Mohawk {
 
+class ZmbReleaseInfo;
+
 /**
  * Zoombini picker shelter page.
  *
@@ -84,7 +86,7 @@ protected:
 	/** Run one typed Picker built-in debug action. */
 	bool runBuiltinDebugAction(BuiltinDebugAction action, Common::String &output);
 	/** Current Picker mode: saved-game loading or active-pack generation. */
-	PickerMode _mode;
+	PickerMode _mode = kPickerMode_SelectZoombinis;
 
 	/**
 	 * Callbacks for the single picker UI runner.
@@ -570,6 +572,21 @@ protected:
 	void updatePendingGoWalkCompletion();
 	/** Release the bounded rapid-fill burst when Go begins. */
 	void releaseRapidFillBurstForGo();
+
+private:
+	/** Release-selected text insets for the generated Zoombini name. */
+	struct TextLayout {
+		/** Pixels added to the left edge of @ref ZoombiniShelterPicker::_nameBoxRect for name text. */
+		int16 nameLeftInset = 4;
+		/** Pixels added to the top edge of @ref ZoombiniShelterPicker::_nameBoxRect for name text. */
+		int16 nameTopInset = 4;
+	};
+
+	/** Resolve text settings independently of Picker control behavior. */
+	static TextLayout createTextLayout(const ZmbReleaseInfo &relInfo);
+
+	/** Text geometry selected once when the page is constructed. */
+	const TextLayout _textLayout;
 };
 
 } // End of namespace Mohawk

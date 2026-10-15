@@ -39,9 +39,9 @@
 
 #ifdef ENABLE_ZOOMBINI
 #include "graphics/paletteman.h"
+#include "mohawk/bitmap.h"
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"
-#include "mohawk/bitmap.h"
 #endif
 
 namespace Mohawk {
@@ -200,7 +200,8 @@ LivingBooksCursorManager_v2::~LivingBooksCursorManager_v2() {
 
 #ifdef ENABLE_ZOOMBINI
 
-ZoombiniCursorManager::ZoombiniCursorManager(MohawkEngine_Zoombini *vm) : _vm(vm) {
+ZoombiniCursorManager::ZoombiniCursorManager(MohawkEngine_Zoombini *vm)
+	: _vm(vm) {
 }
 
 ZoombiniCursorManager::~ZoombiniCursorManager() {

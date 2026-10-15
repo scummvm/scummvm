@@ -27,7 +27,8 @@
 
 namespace Mohawk {
 
-ZoombiniDialog::ZoombiniDialog(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType) : ZoombiniPage(vm, ZoombiniPageCategory::kDialog, pageType) {
+ZoombiniDialog::ZoombiniDialog(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType)
+	: ZoombiniPage(vm, ZoombiniPageCategory::kDialog, pageType) {
 	_useFadeEffect = false;
 
 	// Backup current back screen

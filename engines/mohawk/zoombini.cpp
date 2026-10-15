@@ -170,7 +170,8 @@ bool MohawkEngine_Zoombini::tryAddZoombiniIsoRootSearchPath(const Common::FSNode
 	return true;
 }
 
-MohawkEngine_Zoombini::MohawkEngine_Zoombini(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
+MohawkEngine_Zoombini::MohawkEngine_Zoombini(OSystem *syst, const MohawkGameDescription *gameDesc)
+	: MohawkEngine(syst, gameDesc), _relInfo(*gameDesc) {
 	// Opt in before page initialization so ordinary pages use direct key events.
 	// Editable text fields enable composition only while they own keyboard input.
 	syst->acquireImeCompositionControl();
@@ -214,10 +215,10 @@ Common::Error MohawkEngine_Zoombini::run() {
 	setDebugger(new ZoombiniConsole(this));
 	initSearchPaths();
 
-	_language = getLanguage();
+	const Common::Language lang = _relInfo.getLanguage();
 	_mhkArchiveRoot = ZMB_MHK_ROOT_GENERIC;
-	if (isVersionFamilyEuV1()) {
-		switch (_language) {
+	if (_relInfo.isFamily(ZmbReleaseInfo::kEuropeV1)) {
+		switch (lang) {
 		case Common::EN_GRB:
 			_mhkArchiveRoot = ZMB_MHK_ROOT_EUR_GB;
 			break;
@@ -235,7 +236,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 			_mhkArchiveRoot = ZMB_MHK_ROOT_EUR_IT;
 			break;
 		default:
-			error("engine: unsupported language for v1.x Europe variant: %s", Common::getLanguageLocale(_language));
+			error("engine: unsupported language for v1.x Europe variant: %s", Common::getLanguageLocale(lang));
 			break;
 		}
 	}
@@ -247,14 +248,14 @@ Common::Error MohawkEngine_Zoombini::run() {
 	_midi = new ZoombiniMidiPlayer(this);
 	_rnd = new ZoombiniRandom(getGameId());
 	_state = new ZoombiniGameState(this, _saveFileMan);
-	_text = new ZoombiniText(this, _language);
+	_text = new ZoombiniText(this, lang);
 	applyGameSettings();
 
 	// Load ZOOMBINI.MHK
 	_sysMhk = loadSystemArchive();
-	if (isVersionFamilyTlcV2())
+	if (_relInfo.isFamily(ZmbReleaseInfo::kTlcV2))
 		_helpMhk = loadHelpArchive();
-	if (isVersionFamilyV1())
+	if (_relInfo.isV1())
 		loadMidiArchive();
 
 	ZoombiniCursorManager *zmbCursor = new ZoombiniCursorManager(this);
@@ -307,18 +308,18 @@ Common::Error MohawkEngine_Zoombini::run() {
 					bootParam);
 		}
 		ZoombiniPageType startPage = ZoombiniPageType::kLogo;
-		if (isV10BrDemo()) {
+		if (_relInfo.isDemo(ZmbReleaseInfo::kEuropeV10)) {
 			_state->_practiceLevel = 1;
 			_state->beginPracticeState();
 			_state->generateRandomPack();
 			_state->markGameStateReady();
 			startPage = ZoombiniPageType::kPizza;
-		} else if (isV11UsDemo()) {
+		} else if (_relInfo.isDemo(ZmbReleaseInfo::kUsV11)) {
 			_state->_practiceLevel = 1;
 			_state->beginPracticeState();
 			_state->markGameStateReady();
 			startPage = ZoombiniPageType::kRodMap;
-		} else if (isV20UsDemo()) {
+		} else if (_relInfo.isDemo(ZmbReleaseInfo::kTlcV20)) {
 			_state->_practiceLevel = 1;
 			_state->markGameStateReady();
 		} else if (_state->_r._nextSaveFileNameCounter == 0) {
@@ -563,7 +564,7 @@ uint16 MohawkEngine_Zoombini::playBuiltinMidiTestResource(bool advance) {
 
 	const uint16 resourceId = getBuiltinMidiTestResource();
 	if (!_state || _state->getEnableMusic()) {
-		if (isVersionFamilyTlcV2()) {
+		if (_relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) {
 			const ZmbResource musicResource(ZmbResource::kPage, static_cast<int16>(resourceId));
 			if (resourceId == kBuiltinTlcMidiTestSoundResourceId && hasResource(ID_SND, musicResource) && !_sound->isSoundPlaying(musicResource))
 				_sound->playSound(musicResource, Audio::Mixer::kMusicSoundType);
@@ -644,7 +645,7 @@ void MohawkEngine_Zoombini::processPendingQuitRequest() {
 bool MohawkEngine_Zoombini::shouldAskSaveBeforeQuit() const {
 	// The runtime save-exit marker gates this prompt.
 	// It is not limited to an unsaved new game: Basecamp setup also sets it after loading a save.
-	if (isDemo() || !_state->isGameStateReady() || _state->inPracticeMode() ||
+	if (_relInfo.isDemo() || !_state->isGameStateReady() || _state->inPracticeMode() ||
 		!_state->needsSaveBeforeQuit() || !_dialogPageStack.empty() || !_activePage)
 		return false;
 
@@ -752,7 +753,7 @@ void MohawkEngine_Zoombini::doFrame() {
 	if (_gfx->isMouseCursorEyeAnimationActive()) {
 		uint32 currentFrame = getAnimationFrameCounter(frameStartTime);
 		bool keepCursor = inFade;
-		if (isVersionFamilyTlcV2() && currentFrame <= _pageLoadingCursorStopFrame)
+		if (_relInfo.isFamily(ZmbReleaseInfo::kTlcV2) && currentFrame <= _pageLoadingCursorStopFrame)
 			keepCursor = true;
 
 		if (keepCursor)
@@ -798,7 +799,7 @@ void MohawkEngine_Zoombini::delayRunningFrames(uint32 ms) {
 
 void MohawkEngine_Zoombini::initSearchPaths() {
 	Common::FSNode candidate(ConfMan.getPath("path"));
-	if (isV10BrDemo()) {
+	if (_relInfo.isDemo(ZmbReleaseInfo::kEuropeV10)) {
 		const Common::FSNode nestedComponent = candidate.getChild("PIZZA");
 		if (nestedComponent.getChild("ENGLISH").getChild("ZOOMBINI.MHK").exists())
 			candidate = nestedComponent;
@@ -1195,7 +1196,7 @@ MohawkArchive *MohawkEngine_Zoombini::loadHelpArchive() {
 }
 
 MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
-	if (!isVersionFamilyV1())
+	if (!_relInfo.isV1())
 		return nullptr;
 
 	const int midiSoundtrackVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack);
@@ -1313,7 +1314,7 @@ void MohawkEngine_Zoombini::loadNextPage() {
 		break;
 	case ZoombiniPageType::kNet:
 		// The v2.0US demo starts a page instance with a fresh active pack.
-		if (isV20UsDemo())
+		if (_relInfo.isDemo(ZmbReleaseInfo::kTlcV20))
 			_state->generateRandomPack();
 		page = new ZoombiniPuzzleNet(this);
 		break;
@@ -1369,7 +1370,7 @@ void MohawkEngine_Zoombini::loadNextPage() {
 		_gfx->startMouseCursorEyeAnimation();
 	}
 	page->onFadeIn();
-	if (replacingPage && isVersionFamilyTlcV2()) {
+	if (replacingPage && _relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) {
 		uint32 currentFrame = getAnimationFrameCounter(getTotalPlayTime());
 		_pageLoadingCursorStopFrame = currentFrame + kTlcV2BusyCursorStopDelay;
 	} else if (replacingPage && !_gfx->isFading()) {
@@ -1401,59 +1402,8 @@ void MohawkEngine_Zoombini::clearPageArchives() {
 	MohawkEngine::closeAllArchives();
 }
 
-bool MohawkEngine_Zoombini::isVersionFamilyEuV1() const {
-	return isGameVariant(MohawkGameFeatures::GF_ZMB_10_EU) || isGameVariant(MohawkGameFeatures::GF_ZMB_11_EU) ||
-		   isGameVariant(MohawkGameFeatures::GF_ZMB_11_FR_2002) || isGameVariant(MohawkGameFeatures::GF_ZMB_10_ESPT);
-}
-
-bool MohawkEngine_Zoombini::isVersionFamilyUsV1() const {
-	return isGameVariant(MohawkGameFeatures::GF_ZMB_11_US);
-}
-
-bool MohawkEngine_Zoombini::isVersionFamilyTlcV2() const {
-	return isGameVariant(MohawkGameFeatures::GF_ZMB_20_US);
-}
-
-bool MohawkEngine_Zoombini::isVersionFamilyV1() const {
-	return isVersionFamilyEuV1() || isVersionFamilyUsV1();
-}
-
-bool MohawkEngine_Zoombini::usesClassicEurpoeLayout() const {
-	return isVersionFamilyEuV1() || isV11UsDemo();
-}
-
-bool MohawkEngine_Zoombini::hasRoutePerfectCounterState() const {
-	return isVersionFamilyUsV1() || isVersionFamilyTlcV2();
-}
-
-const char *MohawkEngine_Zoombini::getVersionFamilyName() const {
-	if (isVersionFamilyTlcV2())
-		return "TLCv2";
-	if (isVersionFamilyUsV1())
-		return "USv1";
-	if (isVersionFamilyEuV1())
-		return "EUv1";
-	return "unknown";
-}
-
-bool MohawkEngine_Zoombini::isDemo() const {
-	return (_gameDescription->desc.flags & ADGF_DEMO) != 0;
-}
-
-bool MohawkEngine_Zoombini::isV11UsDemo() const {
-	return isDemo() && isVersionFamilyUsV1();
-}
-
-bool MohawkEngine_Zoombini::isV10BrDemo() const {
-	return isDemo() && isGameVariant(MohawkGameFeatures::GF_ZMB_10_EU);
-}
-
-bool MohawkEngine_Zoombini::isV20UsDemo() const {
-	return isDemo() && isVersionFamilyTlcV2();
-}
-
 bool MohawkEngine_Zoombini::consumeDemoStartupLogoReveal() {
-	if (!isV20UsDemo() || !_demoStartupLogoRevealPending)
+	if (!_relInfo.isDemo(ZmbReleaseInfo::kTlcV20) || !_demoStartupLogoRevealPending)
 		return false;
 
 	_demoStartupLogoRevealPending = false;
@@ -1461,15 +1411,13 @@ bool MohawkEngine_Zoombini::consumeDemoStartupLogoReveal() {
 }
 
 Common::Language MohawkEngine_Zoombini::getLanguage() const {
-	Common::Language language = MohawkEngine::getLanguage();
-	if (language == Common::UNK_LANG)
-		language = Common::EN_USA;
-	return language;
+	return _relInfo.getLanguage();
 }
 
 void MohawkEngine_Zoombini::setNextPage(ZoombiniPageType type) {
 	// Practice pages in the v1.1 demo return to its route map instead of entering an archive that the demo does not ship.
-	if (isV11UsDemo() && _state->inPracticeMode() && _activePage && _activePage->getPageType() != ZoombiniPageType::kRodMap &&
+	if (_relInfo.isDemo(ZmbReleaseInfo::kUsV11) && _state->inPracticeMode() &&
+		_activePage && _activePage->getPageType() != ZoombiniPageType::kRodMap &&
 		type != ZoombiniPageType::kPicker && type != ZoombiniPageType::kLogo)
 		type = ZoombiniPageType::kRodMap;
 
@@ -1524,7 +1472,7 @@ void MohawkEngine_Zoombini::openOptionsDialog() {
 }
 
 bool MohawkEngine_Zoombini::finishV10BrDemoComponent() {
-	if (!isV10BrDemo())
+	if (!_relInfo.isDemo(ZmbReleaseInfo::kEuropeV10))
 		return false;
 	// Return through the main loop so a chained Director launcher can resume.
 	ConfMan.setBool("confirm_exit", false, Common::ConfigManager::kTransientDomain);
@@ -1687,7 +1635,7 @@ bool MohawkEngine_Zoombini::consumePickerUpdateHelpRequest() {
 
 bool MohawkEngine_Zoombini::supportsOnScreenHelp() const {
 	// European v1.x releases and the v1.1 US demo do not provide the on-screen Help button or dialog.
-	return !isVersionFamilyEuV1() && !isV11UsDemo();
+	return !_relInfo.isFamily(ZmbReleaseInfo::kEuropeV1) && !_relInfo.isDemo(ZmbReleaseInfo::kUsV11);
 }
 
 void MohawkEngine_Zoombini::openDebugDialog(const ZoombiniDebugCommand &cmd) {

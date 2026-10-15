@@ -27,9 +27,9 @@
 
 namespace Mohawk {
 
-ZoombiniDialogHelp::ZoombiniDialogHelp(MohawkEngine_Zoombini *vm, ZoombiniPageType forPage) : ZoombiniDialog(vm, ZoombiniPageType::kDialogHelp),
-																							  _forPageType(forPage),
-																							  _showPickerHeaderEasterEgg(vm->consumePickerUpdateHelpRequest()) {
+ZoombiniDialogHelp::ZoombiniDialogHelp(MohawkEngine_Zoombini *vm, ZoombiniPageType forPage)
+	: ZoombiniDialog(vm, ZoombiniPageType::kDialogHelp), _forPageType(forPage),
+	  _showPickerHeaderEasterEgg(vm->consumePickerUpdateHelpRequest()) {
 
 	_helpStrlMap[ZoombiniPageType::kPicker] = kSysResStrl1300_HelpPicker;
 	_helpStrlMap[ZoombiniPageType::kBasecamp1] = kSysResStrl1400_HelpBasecamp1;
@@ -57,7 +57,7 @@ ZoombiniDialogHelp::~ZoombiniDialogHelp() {
 
 void ZoombiniDialogHelp::loadFeatures() {
 	loadHelpStrings();
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		_helpSoundQueue = _vm->_sound->createSoundQueue();
 
 	// Initialize button states
@@ -239,7 +239,7 @@ Common::Rect ZoombiniDialogHelp::helpDialog_getButtonTextRect(ZmbFeature *featur
 	else
 		textRect = _helpDialogButtonRects[bsIdx];
 
-	if (!_vm->isVersionFamilyTlcV2()) {
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		textRect.top += 3;
 		textRect.bottom += 3;
 	}
@@ -251,11 +251,19 @@ Common::Rect ZoombiniDialogHelp::helpDialog_getButtonTextRect(ZmbFeature *featur
 }
 
 const Common::Rect &ZoombiniDialogHelp::helpDialog_getTitleRect() const {
-	return _vm->isVersionFamilyTlcV2() ? _helpDialogTlcTitleRect : _helpDialogTitleRect;
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+		return _helpDialogTlcTitleRect;
+	} else {
+		return _helpDialogTitleRect;
+	}
 }
 
 const Common::Rect &ZoombiniDialogHelp::helpDialog_getHeadRect() const {
-	return _vm->isVersionFamilyTlcV2() ? _helpDialogTlcHeadRect : _helpDialogHeadRect;
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+		return _helpDialogTlcHeadRect;
+	} else {
+		return _helpDialogHeadRect;
+	}
 }
 
 Common::U32String ZoombiniDialogHelp::helpDialog_getHeading() const {
@@ -281,7 +289,11 @@ Common::U32String ZoombiniDialogHelp::helpDialog_getHeading() const {
 }
 
 const Common::Rect &ZoombiniDialogHelp::helpDialog_getBodyRect() const {
-	return _vm->isVersionFamilyTlcV2() ? _helpDialogTlcBodyRect : _helpDialogBodyRect;
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+		return _helpDialogTlcBodyRect;
+	} else {
+		return _helpDialogBodyRect;
+	}
 }
 
 ZmbEventHandleResult ZoombiniDialogHelp::helpDialog_onMouseLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos) {
@@ -292,7 +304,7 @@ ZmbEventHandleResult ZoombiniDialogHelp::helpDialog_onMouseLButtonDown(ZmbFeatur
 
 	// TLC Help narration is click-to-stop even when the click does not
 	// activate a dialog button.
-	if (_vm->isVersionFamilyTlcV2() &&
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) &&
 		_helpSoundQueue != ZoombiniSound::kInvalidSoundQueueHandle &&
 		_vm->_sound->isSoundQueuePlaying(_helpSoundQueue))
 		stopHelpVoice();
@@ -311,7 +323,7 @@ Common::Rect ZoombiniDialogHelp::helpDialog_getButtonClickRect(ZmbFeature *featu
 ZmbEventHandleResult ZoombiniDialogHelp::helpDialog_onKeyDown(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat) {
 	ZmbEventHandleResult result = ZmbEventHandleResult::kPassthrough;
 
-	if (_vm->isVersionFamilyTlcV2() && kbd.keycode == Common::KEYCODE_SPACE &&
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && kbd.keycode == Common::KEYCODE_SPACE &&
 		_helpSoundQueue != ZoombiniSound::kInvalidSoundQueueHandle &&
 		_vm->_sound->isSoundQueuePlaying(_helpSoundQueue)) {
 		stopHelpVoice();
@@ -366,11 +378,16 @@ ZmbEventHandleResult ZoombiniDialogHelp::helpDialog_onKeyDown(ZmbFeature *featur
 }
 
 void ZoombiniDialogHelp::updateNavigationButtons() {
-	const uint32 helpBodyCount = _showPickerUpdateHelpBody ? _normalHelpBodyCount : _pageHelpBodyStrs.size();
+	uint32 helpBodyCount;
+	if (_showPickerUpdateHelpBody) {
+		helpBodyCount = _normalHelpBodyCount;
+	} else {
+		helpBodyCount = _pageHelpBodyStrs.size();
+	}
 	if (helpBodyCount <= 1) {
 		_helpDialogButtonStateMap[kHelpDialogButton01_Prev]._drawEnabled = false;
 		_helpDialogButtonStateMap[kHelpDialogButton02_Next]._drawEnabled = false;
-	} else if (_vm->isVersionFamilyTlcV2()) {
+	} else if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
 		_helpDialogButtonStateMap[kHelpDialogButton01_Prev]._drawEnabled = 0 < _pageHelpBodyIdx;
 		_helpDialogButtonStateMap[kHelpDialogButton02_Next]._drawEnabled = _pageHelpBodyIdx + 1 < helpBodyCount;
 	} else {
@@ -385,7 +402,7 @@ void ZoombiniDialogHelp::stopHelpVoice() {
 }
 
 void ZoombiniDialogHelp::playHelpVoice() {
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return;
 
 	stopHelpVoice();

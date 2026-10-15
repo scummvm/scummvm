@@ -66,7 +66,8 @@ static const int16 kRejectSecondarySnoidScrsIds[10] = {
 	ZoombiniPuzzleFerry::kResScrs1905_RejectVariant5, ZoombiniPuzzleFerry::kResScrs1907_RejectVariant7,
 	ZoombiniPuzzleFerry::kResScrs1907_RejectVariant7, ZoombiniPuzzleFerry::kResScrs1907_RejectVariant7};
 
-ZoombiniPuzzleFerry::ZoombiniPuzzleFerry(MohawkEngine_Zoombini *vm) : ZoombiniPuzzle(vm, ZoombiniPageType::kFerry, ZmbSrcPageKind::kFerry_07) {
+ZoombiniPuzzleFerry::ZoombiniPuzzleFerry(MohawkEngine_Zoombini *vm)
+	: ZoombiniPuzzle(vm, ZoombiniPageType::kFerry, ZmbSrcPageKind::kFerry_07) {
 }
 
 ZoombiniPuzzleFerry::~ZoombiniPuzzleFerry() {
@@ -222,7 +223,7 @@ void ZoombiniPuzzleFerry::loadFeatures() {
 		int16 zmbCount = _pageLoadedZmbCount;
 		if (zmbCount < 16 || 20 < zmbCount)
 			zmbCount = 16;
-		const int16 scrbBase = static_cast<int16>(kResScrb1510_SeatingBase + ((_difficultyLevel - 1) * 5));
+		const int16 scrbBase = static_cast<int16>(kResScrb1510_SeatingBase + ((_puzzleLevel - 1) * 5));
 		_seatLayoutScrbId = scrbBase + (zmbCount - 16);
 	}
 
@@ -264,7 +265,7 @@ void ZoombiniPuzzleFerry::initHelpPrompt() {
 	int16 helpSoundId;
 	if (_entrySfxGroupFlags == ZmbSfxGroupFlags::kHardFirstTrigger_02) {
 		helpSoundId = kSysResSound20074_FerryHelpHard;
-	} else if (kPuzzleLevel2 <= _difficultyLevel) {
+	} else if (kPuzzleLevel2 <= _puzzleLevel) {
 		helpSoundId = _vm->_rnd->getRandomNumber(kSysResSound20073_FerryHelpEasy, kSysResSound20074_FerryHelpHard);
 	} else {
 		helpSoundId = kSysResSound20073_FerryHelpEasy;
@@ -441,7 +442,7 @@ bool ZoombiniPuzzleFerry::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		loadScrbOntoFeature(_captainRaftFeature, _debugCaptainScrbId, true);
 		output = Common::String::format("Play Caption Cajun SCRB id: %d\n", _debugCaptainScrbId);
 	} else if (action == BuiltinDebugAction::kLevel) {
-		output = Common::String::format("Level %d\n", static_cast<int>(_difficultyLevel));
+		output = Common::String::format("Level %d\n", static_cast<int>(_puzzleLevel));
 	} else {
 		return true;
 	}
@@ -449,7 +450,7 @@ bool ZoombiniPuzzleFerry::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 	if (action == BuiltinDebugAction::kCaptain)
 		showBuiltinDebugText(Common::String::format("Play Caption Cajun SCRB id: %d", _debugCaptainScrbId));
 	else if (action == BuiltinDebugAction::kLevel)
-		showBuiltinDebugText(Common::String::format("Level %d", static_cast<int>(_difficultyLevel)));
+		showBuiltinDebugText(Common::String::format("Level %d", static_cast<int>(_puzzleLevel)));
 	return false;
 }
 
@@ -632,7 +633,7 @@ void ZoombiniPuzzleFerry::buildAdjacencyMatrix(int8 seatNeighborIndices[20][8]) 
 			}
 
 			// Test 3: vertical-only expansion for level 4.
-			if (!adjacent && kPuzzleLevel4 <= _difficultyLevel) {
+			if (!adjacent && kPuzzleLevel4 <= _puzzleLevel) {
 				Common::Rect expandedK(rectK.left, rectK.top - halfHeight, rectK.right, rectK.bottom + halfHeight);
 				adjacent = expandedK.intersects(rectM);
 			}

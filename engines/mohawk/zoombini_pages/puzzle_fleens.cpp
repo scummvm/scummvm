@@ -41,7 +41,8 @@ constexpr int16 ZoombiniPuzzleFleens::kFleenEyeShapeOffsets[6];
 constexpr int16 ZoombiniPuzzleFleens::kFleenNoseShapeOffsets[6];
 constexpr int16 ZoombiniPuzzleFleens::kFleenFeetShapeOffsets[6];
 
-ZoombiniPuzzleFleens::ZoombiniPuzzleFleens(MohawkEngine_Zoombini *vm) : ZoombiniPuzzle(vm, ZoombiniPageType::kFleens, ZmbSrcPageKind::kFleens_10) {
+ZoombiniPuzzleFleens::ZoombiniPuzzleFleens(MohawkEngine_Zoombini *vm)
+	: ZoombiniPuzzle(vm, ZoombiniPageType::kFleens, ZmbSrcPageKind::kFleens_10) {
 }
 
 ZoombiniPuzzleFleens::~ZoombiniPuzzleFleens() {
@@ -212,7 +213,7 @@ void ZoombiniPuzzleFleens::initHelpPrompt() {
 	int16 helpSoundId = kSysResSound20079_HelpEasy;
 	if (_entrySfxGroupFlags == ZmbSfxGroupFlags::kHardFirstTrigger_02)
 		helpSoundId = kSysResSound20080_HelpHard;
-	else if (_difficultyLevel == kPuzzleLevel2 || _difficultyLevel == kPuzzleLevel4)
+	else if (_puzzleLevel == kPuzzleLevel2 || _puzzleLevel == kPuzzleLevel4)
 		helpSoundId = _vm->_rnd->getRandomNumber(kSysResSound20079_HelpEasy, kSysResSound20080_HelpHard);
 	_activeHelpSoundId = ZmbResource(ZmbResource::kSystem, helpSoundId);
 }
@@ -231,7 +232,7 @@ void ZoombiniPuzzleFleens::buildZmbTraitSetup() {
 	// Their indices follow @ref ZmbTrait::TraitKind order: hair, eyes, nose, and feet.
 	// Select the table belonging to the active layout.
 	// Generated transforms persist across later Fleens visits and save/load operations.
-	const bool isTlc = _vm->isVersionFamilyTlcV2();
+	const bool isTlc = _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2);
 	byte *traitValueRotations;
 	byte *traitDestSlots;
 	if (isTlc) {
@@ -266,7 +267,7 @@ void ZoombiniPuzzleFleens::buildZmbTraitSetup() {
 	// The first rotation byte is the serialized uninitialized-table sentinel.
 	// Levels 2 and 4 replace all four rotations on every visit.
 	// Levels 1 and 3 retain an initialized table without consuming these draws.
-	if (traitValueRotations[0] == 0 || _difficultyLevel == kPuzzleLevel2 || _difficultyLevel == kPuzzleLevel4) {
+	if (traitValueRotations[0] == 0 || _puzzleLevel == kPuzzleLevel2 || _puzzleLevel == kPuzzleLevel4) {
 		for (int i = 0; i < 4; i++)
 			traitValueRotations[i] = static_cast<byte>(_vm->_rnd->getRandomNumber(1, 5));
 	}
@@ -275,10 +276,10 @@ void ZoombiniPuzzleFleens::buildZmbTraitSetup() {
 	// Levels 1 and 2 force the direct mapping without random draws.
 	// Level 3 creates a map only when the saved table is uninitialized.
 	// Level 4 replaces the complete map on every visit.
-	if (_difficultyLevel <= kPuzzleLevel2) {
+	if (_puzzleLevel <= kPuzzleLevel2) {
 		for (int i = 0; i < 4; i++)
 			traitDestSlots[i] = 0;
-	} else if (traitDestSlots[0] == 0 || _difficultyLevel == kPuzzleLevel4) {
+	} else if (traitDestSlots[0] == 0 || _puzzleLevel == kPuzzleLevel4) {
 		// Serialized destination slots are one-based.
 		// Start at 2 so the first source trait, hair, does not keep its direct slot.
 		traitDestSlots[0] = static_cast<byte>(_vm->_rnd->getRandomNumber(2, 4));
@@ -387,7 +388,7 @@ void ZoombiniPuzzleFleens::spawnFleenCreatures() {
 	hooks.setPreRenderFunc(&ZoombiniPuzzleFleens::fleenCreature_preRender);
 	hooks.setRenderFunc(&ZoombiniPuzzleFleens::fleenCreature_render);
 
-	ZmbFeature *normalFeatures[kFleenPosCode16_LowerBranchFifth + 1] = {};
+	ZmbFeature *normalFeatures[kFleenPosCode16_LowerBranchFifth + 1] = {0};
 	for (int16 i = 0; i < _activeFleenCount; i++) {
 		FleenCreature &creature = _fleenCreatures[i];
 		// Create one linkable runner per Fleen.
@@ -1518,8 +1519,8 @@ bool ZoombiniPuzzleFleens::debugSetChances(int16 remaining) {
 	if (needed <= 0)
 		return true;
 
-	uint16 selectedSnoidIds[6] = {};
-	int16 selectedFleenIndices[6] = {};
+	uint16 selectedSnoidIds[6] = {0};
+	int16 selectedFleenIndices[6] = {0};
 	int16 selectedCount = 0;
 	for (int16 creatureIndex = 0;
 		 creatureIndex < _activeFleenCount && selectedCount < needed;
@@ -1639,8 +1640,8 @@ ZoombiniPuzzleFleens::BuiltinDebugAction ZoombiniPuzzleFleens::parseBuiltinDebug
 bool ZoombiniPuzzleFleens::runBuiltinDebugAction(BuiltinDebugAction action, Common::String &output) {
 	if (action != BuiltinDebugAction::kLevel)
 		return true;
-	output = Common::String::format("Level %d\n", static_cast<int>(_difficultyLevel));
-	showBuiltinDebugText(Common::String::format("Level %d", static_cast<int>(_difficultyLevel)));
+	output = Common::String::format("Level %d\n", static_cast<int>(_puzzleLevel));
+	showBuiltinDebugText(Common::String::format("Level %d", static_cast<int>(_puzzleLevel)));
 	return false;
 }
 

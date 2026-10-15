@@ -30,7 +30,8 @@
 
 namespace Mohawk {
 
-ZoombiniSound::ZoombiniSound(MohawkEngine_Zoombini *vm) : Sound(vm), _vm(vm) {
+ZoombiniSound::ZoombiniSound(MohawkEngine_Zoombini *vm)
+	: Sound(vm), _vm(vm) {
 }
 
 ZoombiniSound::~ZoombiniSound() {
@@ -50,7 +51,7 @@ Audio::SoundHandle *ZoombiniSound::playSound(ZmbResource resource, Audio::Mixer:
 	}
 	if (!_vm->hasResource(ID_SND, resource)) {
 		// Demo scripts may retain requests for sounds omitted from their reduced archives.
-		if (_vm->isDemo())
+		if (_vm->getRelInfo().isDemo())
 			return nullptr;
 		error("ZoombiniSound: required sound resource %s is missing", resource.toString().c_str());
 		return nullptr;
@@ -358,7 +359,8 @@ bool ZoombiniSound::isSoundQueuePlaying(ZmbSoundQueueHandle handle) const {
 	return it->_value.playing;
 }
 
-ZoombiniMidiPlayer::ZoombiniMidiPlayer(MohawkEngine_Zoombini *vm) : MidiPlayer(vm), _vm(vm) {
+ZoombiniMidiPlayer::ZoombiniMidiPlayer(MohawkEngine_Zoombini *vm)
+	: MidiPlayer(vm), _vm(vm) {
 }
 
 ZoombiniMidiPlayer::~ZoombiniMidiPlayer() {

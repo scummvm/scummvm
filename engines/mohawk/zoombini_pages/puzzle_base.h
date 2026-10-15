@@ -52,7 +52,8 @@ protected:
 	/** Restore the shared frame-update flag when a page update scope exits. */
 	class PuzzleUpdateGuard {
 	public:
-		explicit PuzzleUpdateGuard(bool &isUpdating) : _isUpdating(isUpdating) { _isUpdating = true; }
+		explicit PuzzleUpdateGuard(bool &isUpdating)
+			: _isUpdating(isUpdating) { _isUpdating = true; }
 		~PuzzleUpdateGuard() { _isUpdating = false; }
 
 	private:
@@ -62,9 +63,9 @@ protected:
 	};
 
 	/** Puzzle difficulty level (1-4). */
-	ZmbPuzzleLevel _difficultyLevel = kPuzzleLevel1;
+	ZmbPuzzleLevel _puzzleLevel = kPuzzleLevel1;
 	/** Transient SFX selector computed once for this puzzle-page entry. */
-	ZmbSfxGroupFlags _entrySfxGroupFlags;
+	ZmbSfxGroupFlags _entrySfxGroupFlags = ZmbSfxGroupFlags::kRandom_00;
 	/** Whether @ref ZoombiniPuzzle::_entrySfxGroupFlags has been computed for this page entry. */
 	bool _entrySfxGroupFlagsInitialized = false;
 	/** Guard to prevent reentrant frame processing during updates. */

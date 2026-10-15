@@ -39,7 +39,8 @@ constexpr int16 ZoombiniPuzzleCaves::kRuleGlyphScreenX[11];
 constexpr int16 ZoombiniPuzzleCaves::kRuleGlyphScreenY[11];
 constexpr bool ZoombiniPuzzleCaves::kSeatFacingLeft[20];
 
-ZoombiniPuzzleCaves::ZoombiniPuzzleCaves(MohawkEngine_Zoombini *vm) : ZoombiniPuzzle(vm, ZoombiniPageType::kCaves, ZmbSrcPageKind::kCaves_14) {
+ZoombiniPuzzleCaves::ZoombiniPuzzleCaves(MohawkEngine_Zoombini *vm)
+	: ZoombiniPuzzle(vm, ZoombiniPageType::kCaves, ZmbSrcPageKind::kCaves_14) {
 }
 
 ZoombiniPuzzleCaves::~ZoombiniPuzzleCaves() {
@@ -116,7 +117,7 @@ Audio::Mixer::SoundType ZoombiniPuzzleCaves::getFeatureSoundType(const ZmbFeatur
 
 void ZoombiniPuzzleCaves::open() {
 	// MIDI BGM (tMID 30025-30028) - Broderbund v1.x only.
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		openMidiArchive();
 	openArchive(ZMB_MHK_CAVES);
 }
@@ -125,8 +126,8 @@ void ZoombiniPuzzleCaves::setBackgroundMusic() {
 	// In original engine, only L1-L3 plays MIDI BGM. L4 remains silent.
 	// However, the MIDI .MHK archives has a song for a L4, too.
 	// This ScummVM option deliberately restores the shipped silent level 4 behavior when disabled.
-	if (!_vm->isVersionFamilyTlcV2()) { // TLC v2.0 has no MIDI resources.
-		const int16 routeLevel = _difficultyLevel - kPuzzleLevel1;
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) { // TLC v2.0 has no MIDI resources.
+		const int16 routeLevel = _puzzleLevel - kPuzzleLevel1;
 		if (routeLevel < 3 || ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixCavesL4MidiSilentBug))
 			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30025_CavesBgmBase + routeLevel)));
 	}
@@ -554,7 +555,7 @@ Common::String ZoombiniPuzzleCaves::debugGetBuiltinDebugCommandHelp() const {
 }
 
 bool ZoombiniPuzzleCaves::debugReplayActiveHelpSound() {
-	if (_difficultyLevel == kPuzzleLevel4)
+	if (_puzzleLevel == kPuzzleLevel4)
 		return false;
 	return ZoombiniInteractive::debugReplayActiveHelpSound();
 }
@@ -563,7 +564,7 @@ void ZoombiniPuzzleCaves::debugReinitDifficulty() {
 	_glyphBlinkHiddenSlot = 0;
 	_glyphBlinkSequenceIndex = 0;
 	_nextGlyphBlinkFrame = 0;
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel1:
 		_mistakeLimit = 4;
 		_ledgeControllerScrbBaseId = kResScrb6006_GlyphPanelLevel4;
@@ -730,7 +731,7 @@ ZoombiniPuzzleCaves::BuiltinDebugAction ZoombiniPuzzleCaves::parseBuiltinDebugAc
 
 bool ZoombiniPuzzleCaves::runBuiltinDebugAction(BuiltinDebugAction action, int16 argument, Common::String &output) {
 	if (action == BuiltinDebugAction::kDifficulty) {
-		_difficultyLevel = static_cast<ZmbPuzzleLevel>(argument);
+		_puzzleLevel = static_cast<ZmbPuzzleLevel>(argument);
 		debugProcessEntrance(-1);
 		output = Common::String::format("Lion's Lair runtime difficulty set to level %d.\n", argument);
 		showBuiltinDebugText(Common::String::format("Level %d", argument));
@@ -741,11 +742,11 @@ bool ZoombiniPuzzleCaves::runBuiltinDebugAction(BuiltinDebugAction action, int16
 			debugReinitAfterExit();
 		else
 			debugReinitDifficulty();
-		output = Common::String::format("Lion's Lair level %d controller reinitialized.\n", static_cast<int>(_difficultyLevel));
+		output = Common::String::format("Lion's Lair level %d controller reinitialized.\n", static_cast<int>(_puzzleLevel));
 		return false;
 	}
 	if (action == BuiltinDebugAction::kLevel) {
-		output = Common::String::format("Level %d\n", static_cast<int>(_difficultyLevel));
+		output = Common::String::format("Level %d\n", static_cast<int>(_puzzleLevel));
 	} else if (action == BuiltinDebugAction::kEntrance) {
 		debugProcessEntrance(argument);
 		const ZmbTrait::TraitKind traitKind = ZmbTrait::traitKindFromIndex(argument);
@@ -755,7 +756,7 @@ bool ZoombiniPuzzleCaves::runBuiltinDebugAction(BuiltinDebugAction action, int16
 	}
 
 	if (action == BuiltinDebugAction::kLevel)
-		showBuiltinDebugText(Common::String::format("Level %d", static_cast<int>(_difficultyLevel)));
+		showBuiltinDebugText(Common::String::format("Level %d", static_cast<int>(_puzzleLevel)));
 	return false;
 }
 
@@ -808,7 +809,7 @@ void ZoombiniPuzzleCaves::initDifficultyParams() {
 	}
 
 	// Map level (1-4) to allowed mistakes (4-7) and ledge/door SCRB base.
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel1:
 		_mistakeLimit = 4;
 		_ledgeControllerScrbBaseId = kResScrb6006_GlyphPanelLevel4;
@@ -843,7 +844,7 @@ void ZoombiniPuzzleCaves::initEntranceTraitPattern() {
 	// Initialize random trait patterns with a Fisher-Yates shuffle.
 
 	// Use one rule dimension at levels 1/2 and two at levels 3/4.
-	_ruleTraitCount = (_difficultyLevel <= kPuzzleLevel2) ? 1 : 2;
+	_ruleTraitCount = (_puzzleLevel <= kPuzzleLevel2) ? 1 : 2;
 
 	// Use five zero-based rule-value columns numbered 0-4.
 	_ruleValueCount = 5;
@@ -916,7 +917,7 @@ void ZoombiniPuzzleCaves::countGlyphDistribution() {
 	// Counts glyph trait distribution across loaded Zoombinis.
 
 	// Reassert the difficulty-selected rule dimension count.
-	_ruleTraitCount = (_difficultyLevel <= kPuzzleLevel2) ? 1 : 2;
+	_ruleTraitCount = (_puzzleLevel <= kPuzzleLevel2) ? 1 : 2;
 
 	// Clear zero-based bucket indices 0-35.
 	for (int bucketIdx = 0; bucketIdx < 36; bucketIdx++) {
@@ -1000,7 +1001,7 @@ void ZoombiniPuzzleCaves::distributeEntranceTraits() {
 		_ruleGlyphShapeIds[clueArrayIdx] = 0;
 	}
 
-	switch (_difficultyLevel) {
+	switch (_puzzleLevel) {
 	case kPuzzleLevel1: // Level 1: All first 5 entrances active
 		for (int clueSlot = 1; clueSlot < 6; clueSlot++)
 			_ruleGlyphVisibility[clueSlot] = 1;
@@ -1105,7 +1106,7 @@ ZmbRenderResult ZoombiniPuzzleCaves::renderEntranceGlyphs(ZmbFeature *feature) {
 	// current slot for 30 ticks. Slot 0 is the intervening all-visible sentinel.
 	ZmbResource glyphRes(ZmbResource::kPage, kResBitmapShape10000_Glyphs);
 	const bool blinkActive =
-		_difficultyLevel == kPuzzleLevel1 && _glyphBlinkHiddenSlot < 6;
+		_puzzleLevel == kPuzzleLevel1 && _glyphBlinkHiddenSlot < 6;
 
 	for (int clueSlot = 1; clueSlot < 11; clueSlot++) {
 		if (!_ruleGlyphVisibility[clueSlot])
@@ -1542,7 +1543,7 @@ void ZoombiniPuzzleCaves::onPostRenderFrame() {
 	// One-shot startup glyph-attention sequence at difficulty 1.
 	// Cycle through hiding one glyph and then showing all glyphs, from one-based clue slot 1 through slot 5.
 	// Assigning sentinel slot 6 terminates the driver while the renderer permanently shows all glyphs.
-	if (_difficultyLevel == kPuzzleLevel1 && _glyphBlinkHiddenSlot < 6) {
+	if (_puzzleLevel == kPuzzleLevel1 && _glyphBlinkHiddenSlot < 6) {
 		if (_ruleGlyphRendererFeature) {
 			uint32 currFrame = getCurrentFrameCounter();
 			if (_nextGlyphBlinkFrame <= currFrame) {

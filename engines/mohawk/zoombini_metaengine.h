@@ -22,9 +22,73 @@
 #ifndef MOHAWK_ZOOMBINI_METAENGINE_H
 #define MOHAWK_ZOOMBINI_METAENGINE_H
 
+#include "common/language.h"
 #include "common/scummsys.h"
 
 namespace Mohawk {
+
+struct MohawkGameDescription;
+
+/** Immutable release identity derived from the detector, independent of page behavior. */
+class ZmbReleaseInfo {
+public:
+	/** Broad implementation lineages; localized variants retain their parent family. */
+	enum Family {
+		/**
+		 * v1.0BR, v1.0FR, v1.0GE, v1.0BR Demo,
+		 * v1.1BR, v1.1FR, v1.1GE, v1.1FR_2002,
+		 * v1.0ES, v1.0PT and v1.0IT.
+		 */
+		kEuropeV1,
+		/** v1.1US, v1.11KR, and v1.1US Demo. */
+		kUsV1,
+		/** v2.0US, v2.0PL, and v2.0US Demo. */
+		kTlcV2
+	};
+
+	/** Detector variants, without assigning a separate identity to every language or demo. */
+	enum Variant {
+		/** v1.0BR, v1.0FR, v1.0GE, v1.0IT, and v1.0BR Demo. */
+		kEuropeV10,
+		/** v1.1BR, v1.1FR, and v1.1GE. */
+		kEuropeV11,
+		/** v1.1FR_2002. */
+		kFranceV11_2002,
+		/** v1.0ES, v1.0PT. */
+		kEsPtV10,
+		/** v1.1US, v1.11KR, and v1.1US Demo. */
+		kUsV11,
+		/** v2.0US, v2.0PL, and v2.0US Demo. */
+		kTlcV20
+	};
+
+	/** Snapshot detector flags and normalize an unknown language to US English. */
+	explicit ZmbReleaseInfo(const MohawkGameDescription &gameDesc);
+	/** Match a broad implementation lineage. */
+	bool isFamily(Family family) const;
+	/** Match a detector variant, including its localized and demo releases. */
+	bool isVariant(Variant variant) const;
+	/** Match both the detector variant and its language. */
+	bool isVariant(Variant variant, Common::Language lang) const;
+	/** Match either v1 implementation family. */
+	bool isV1() const;
+	/** Whether the detector marks the release as a demo. */
+	bool isDemo() const { return _demo; }
+	/** Match a demo without implicitly restricting its language. */
+	bool isDemo(Variant variant) const;
+	/** Language used by the engine, including the unknown-language fallback. */
+	Common::Language getLanguage() const { return _lang; }
+	/** Compact family label used in diagnostic output. */
+	const char *getFamilyName() const;
+
+private:
+	/** Detector feature bits retained for release-family and variant queries. */
+	const uint32 _features;
+	/** Detector language normalized to US English when unknown. */
+	const Common::Language _lang;
+	/** Whether the detector marks this release as a demo. */
+	const bool _demo;
+};
 
 class MohawkMetaEngine_Zoombini {
 public:

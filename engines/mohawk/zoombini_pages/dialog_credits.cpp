@@ -27,7 +27,8 @@
 
 namespace Mohawk {
 
-ZoombiniDialogCredits::ZoombiniDialogCredits(MohawkEngine_Zoombini *vm) : ZoombiniDialog(vm, ZoombiniPageType::kCreditScreen) {
+ZoombiniDialogCredits::ZoombiniDialogCredits(MohawkEngine_Zoombini *vm)
+	: ZoombiniDialog(vm, ZoombiniPageType::kCreditScreen) {
 }
 
 ZoombiniDialogCredits::~ZoombiniDialogCredits() {
@@ -46,7 +47,7 @@ void ZoombiniDialogCredits::open() {
 	// [Deliberate MIDI difference]
 	// Do not stop the entire MIDI. Pause MIDI when opening, and resume MIDI when closing.
 	_vm->_midi->pause(true);
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		_vm->_sound->pauseActiveMusicSoundsForDialog();
 }
 
@@ -92,7 +93,7 @@ Common::Rect ZoombiniDialogCredits::getCreditLineRect() const {
 }
 
 uint32 ZoombiniDialogCredits::getCreditScrollLineCount() const {
-	if (_vm->isVersionFamilyTlcV2())
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return _totalCreditLines + kTlcCreditsPreLogoBlankLineCount +
 			   kTlcCreditsLogoLineCount + kTlcCreditsPostLogoBlankLineCount;
 
@@ -100,7 +101,7 @@ uint32 ZoombiniDialogCredits::getCreditScrollLineCount() const {
 }
 
 void ZoombiniDialogCredits::drawTlcEndLogos(int32 elapsedFrames, int32 baseLineIdx, int32 startLineIdx, int32 endLineIdx) {
-	if (!_vm->isVersionFamilyTlcV2())
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
 		return;
 
 	const int32 logoStartLineIdx = static_cast<int32>(_totalCreditLines + kTlcCreditsPreLogoBlankLineCount + 1);
@@ -149,7 +150,7 @@ void ZoombiniDialogCredits::loadFeatures() {
 
 	const ZmbResource creditsMusic(ZmbResource::kSystem, kSysResSound20104_TownBGM);
 	// Some demos omit the authored Credits BGM and show this dialog in silence.
-	if (!_vm->isDemo() || _vm->hasResource(ID_SND, creditsMusic)) {
+	if (!_vm->getRelInfo().isDemo() || _vm->hasResource(ID_SND, creditsMusic)) {
 		Audio::SoundHandle *creditsMusicHandle = _vm->_sound->playSound(creditsMusic, Audio::Mixer::SoundType::kMusicSoundType, true);
 		if (creditsMusicHandle) {
 			_creditsMusicHandle = *creditsMusicHandle;
