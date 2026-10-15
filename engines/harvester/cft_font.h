@@ -40,6 +40,7 @@ public:
 	Common::String getFontName() const override { return _resource.name; }
 	int getMaxCharWidth() const override { return _maxCharWidth; }
 	int getCharWidth(uint32 chr) const override;
+	bool hasGlyph(uint32 chr) const;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:

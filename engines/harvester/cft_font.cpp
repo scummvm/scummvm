@@ -121,6 +121,10 @@ HarvesterCftFont::HarvesterCftFont(const CftFontResource &resource) : _resource(
 		_spaceWidth = MAX<int>(1, _maxCharWidth);
 }
 
+bool HarvesterCftFont::hasGlyph(uint32 chr) const {
+	return chr == ' ' || chr == '_' || findGlyph(chr) != nullptr;
+}
+
 int HarvesterCftFont::getCharWidth(uint32 chr) const {
 	if (chr == ' ' || chr == '_')
 		return _spaceWidth;
