@@ -34,8 +34,6 @@
 #include "common/util.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
 #include "graphics/paletteman.h"
 #include "gui/message.h"
 
@@ -75,7 +73,7 @@ Common::KeymapArray MortimerEngine::initKeymaps() {
 	const Binding bindings[] = {
 		{"FIRE", _s("Fire"), kActionFire, {"MOUSE_LEFT", "MOUSE_RIGHT", "JOY_A", "JOY_B"}},
 		{"PAUSE", _s("Pause"), kActionPause, {"SPACE", "JOY_START", nullptr, nullptr}},
-		{"SKIP", _s("Skip"), kActionSkip, {"ESCAPE", "JOY_Y", nullptr, nullptr}},
+		{"SKIP", _s("Skip cutscene / open menu"), kActionSkip, {"ESCAPE", "JOY_Y", nullptr, nullptr}},
 		{"RESTART", _s("Restart"), kActionRestart, {"C+r", "JOY_X", nullptr, nullptr}},
 		{"QUIT", _s("Quit"), kActionQuit, {"q", "A+q", nullptr, nullptr}},
 		{"MENU", _s("Game menu"), kActionMenu, {"F5", "JOY_LEFT_SHOULDER", nullptr, nullptr}},
@@ -1138,6 +1136,12 @@ void MortimerEngine::pauseEngineIntern(bool pause) {
 		_nextFrameTime += _system->getMillis() - _pauseTime;
 }
 
+bool MortimerEngine::canPause() const {
+	// SHELL's input handler excludes mode 4 (the animal and castle riddles).
+	const int scene = _interviewActive ? _interview.sceneId() : _castleActive ? _castle.sceneId() : -1;
+	return !isPaused() && !(scene >= 8 && scene <= 11) && scene != 23;
+}
+
 Common::Error MortimerEngine::run() {
 	const int boot = ConfMan.hasKey("boot_param") ? ConfMan.getInt("boot_param") : -1;
 	if (_isDemo && boot == kBootProgrammer)
@@ -1201,6 +1205,14 @@ Common::Error MortimerEngine::run() {
 		}
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
+			if (event.kbdRepeat && (event.type == Common::EVENT_KEYDOWN ||
+				event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START))
+				continue;
+			// The event manager leaves global menu requests to an already paused engine.
+			if (event.type == Common::EVENT_MAINMENU && pause.isActive()) {
+				event.type = Common::EVENT_CUSTOM_ENGINE_ACTION_START;
+				event.customType = kActionMenu;
+			}
 			if (_highScoresActive && !isPaused()) {
 				if (_highScores.enteringName()) {
 					if (event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat && _highScores.handleKey(event.kbd)) {
@@ -1219,8 +1231,6 @@ Common::Error MortimerEngine::run() {
 				continue;
 			}
 			if (event.type == Common::EVENT_KEYDOWN) {
-				if (event.kbdRepeat)
-					continue;
 				if (handleCheatKey(event.kbd)) {
 					if (!_loadError.empty()) {
 						exit = true;
@@ -1263,10 +1273,20 @@ Common::Error MortimerEngine::run() {
 					}
 					break;
 				case kActionSkip:
-					if (pause.isActive())
+					if (!gameplay()) {
+						if (pause.isActive())
+							pause.clear();
+						else if (!isPaused())
+							exit = !nextScene(true);
+						break;
+					}
+					// fall through
+				case kActionMenu:
+					if (pause.isActive()) {
 						pause.clear();
-					else if (!interactive() || _cheats)
-						exit = !nextScene(true);
+						draw();
+					}
+					openMainMenuDialog();
 					break;
 				case kActionQuit:
 					exit = true;
@@ -1274,16 +1294,13 @@ Common::Error MortimerEngine::run() {
 				case kActionPause:
 					if (pause.isActive())
 						pause.clear();
-					else
+					else if (canPause())
 						pause = pauseEngine();
 					break;
 				case kActionRestart:
 					if (pause.isActive())
 						pause.clear();
 					exit = !restart();
-					break;
-				case kActionMenu:
-					openMainMenuDialog();
 					break;
 				case kActionMouse:
 					_controllerMode = false;
@@ -1311,7 +1328,7 @@ Common::Error MortimerEngine::run() {
 			if (int32(_system->getMillis() - _nextFrameTime) > 250)
 				_nextFrameTime = _system->getMillis() + 1000 / currentMovie().frameRate();
 		}
-		draw();
+		draw(pause.isActive());
 		if (_finished) {
 			if (!_viewingHighScores) {
 				GUI::MessageDialog dialog(_("Play again?"), _("Restart"), _("Quit"));
@@ -1432,7 +1449,7 @@ void MortimerEngine::drawDashboard() {
 		drawSprite(_cockpit[3], 306, 465, true);
 }
 
-void MortimerEngine::draw() {
+void MortimerEngine::draw(bool paused) {
 	if (_interviewActive) {
 		_interview.draw(_screen, _intro, _soundState.variable(1));
 		if (_interview.showDashboard())
@@ -1473,11 +1490,8 @@ void MortimerEngine::draw() {
 		if (_interviewActive && _interview.payingBonus())
 			_subtitles.drawScore(_screen, _score);
 	}
-	if (isPaused()) {
-		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-		_screen.fillRect(Common::Rect(90, 142, 550, 182), 10);
-		font->drawString(&_screen, _("Paused"), 90, 155, 460, 20, Graphics::kTextAlignCenter);
-	}
+	if (paused)
+		_subtitles.drawPause(_screen, _isDemo);
 	_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, 640, 480);
 	_system->updateScreen();
 }

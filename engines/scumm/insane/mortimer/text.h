@@ -47,6 +47,7 @@ public:
 	bool loadText(Common::SeekableReadStream &stream);
 	Common::String text(uint16 id) const;
 	void drawScore(Graphics::Surface &screen, uint32 score) const;
+	void drawPause(Graphics::Surface &screen, bool isDemo) const;
 	void draw(Graphics::Surface &screen, const Common::Array<MortimerMovie::Caption> &captions, bool enabled,
 		const MortimerMovieContext *context = nullptr) const;
 

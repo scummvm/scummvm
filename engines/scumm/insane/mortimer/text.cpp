@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/tokenizer.h"
 #include "common/util.h"
+#include "graphics/fontman.h"
 #include "graphics/surface.h"
 
 namespace Scumm {
@@ -150,6 +151,25 @@ void drawMortimerMessage(Graphics::Surface &screen, const MortimerFont &font, co
 
 void MortimerSubtitles::drawScore(Graphics::Surface &screen, uint32 score) const {
 	drawMortimerMessage(screen, _infoFont, Common::String::format(text(3).c_str(), (long)score), 231);
+}
+
+void MortimerSubtitles::drawPause(Graphics::Surface &screen, bool isDemo) const {
+	// SHELL 404ae0 (retail), 4053cb (demo): a fixed, centered 400 x 100 box.
+	Common::Rect box(400, 100);
+	box.moveTo((screen.w - box.width()) / 2, (screen.h - box.height()) / 2);
+	screen.fillRect(box, isDemo ? 0 : 251);
+	for (int i = 0; i < (isDemo ? 1 : 3); ++i) {
+		screen.hLine(box.left, box.top, box.right - 1, isDemo ? 255 : 250);
+		screen.vLine(box.left, box.top, box.bottom - 1, isDemo ? 255 : 250);
+		screen.vLine(box.right - 1, box.top, box.bottom - 1, isDemo ? 255 : 252);
+		screen.hLine(box.left, box.bottom - 1, box.right - 1, isDemo ? 255 : 252);
+		box.grow(-1);
+	}
+	const Graphics::Font &font = isDemo ?
+		*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont) : _infoFont;
+	font.drawString(&screen, "Game paused - press space to continue.", 0,
+		(screen.h - font.getFontHeight() - 1) / 2, screen.w, isDemo ? 255 : 231,
+		Graphics::kTextAlignCenter, 0, false);
 }
 
 void MortimerSubtitles::draw(Graphics::Surface &screen, const Common::Array<MortimerMovie::Caption> &captions, bool enabled,

@@ -90,6 +90,9 @@ private:
 	MortimerFlight &currentFlight() { return _castleActive ? _castle : _flight; }
 	bool interactive() const { return _castleActive ? _castle.courseView() :
 		_crashStage == kNoCrash && !_interviewActive && _introIndex < 0 && _flight.interactive(); }
+	bool gameplay() const { return _interviewActive || _castleActive || _crashStage != kNoCrash ||
+		(_introIndex < 0 && (!_isDemo || _flight.interactive())); }
+	bool canPause() const;
 	void setMouse(const Common::Point &position);
 	void updateSteering(bool centerView = false);
 	void updateView(int x, int y);
@@ -97,7 +100,7 @@ private:
 	void fire();
 	Common::Point moviePoint(const Common::Point &point) const;
 	Common::Point screenPoint(const Common::Point &point) const;
-	void draw();
+	void draw(bool paused = false);
 	void drawSprite(const MortimerSprite &sprite, int x, int y, bool centered = false, const Common::Rect *clip = nullptr);
 	void drawProjectile();
 	void drawTargets();
