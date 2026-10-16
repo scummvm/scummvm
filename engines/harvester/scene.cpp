@@ -488,7 +488,7 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 				: hoverState.cursorSequence);
 	}
 
-	drawRoomScene(_engine, *activeScreen, _scene, _scene.targetPaletteBrightness);
+	RoomPresentation::drawRoomScene(_engine, *activeScreen, _scene, _scene.targetPaletteBrightness);
 	_combatEffects.drawCombatDamagePopups(*activeScreen, _engine.isCombatDebugEnabled());
 	if (_engine.getScript() && playerState.entity) {
 		drawCombatLoadoutResourceIcons(*activeScreen, *_view.art, *_engine.getScript(),
@@ -1061,7 +1061,7 @@ Common::Error SceneRunner::runRoomLoop(Flow &flow, const Common::String &targetN
 			return transitionError;
 
 		logScenePaletteSummary("room setup initial palette", scene, 0.0f);
-		drawRoomScene(_engine, *screen, scene, 0.0f);
+		RoomPresentation::drawRoomScene(_engine, *screen, scene, 0.0f);
 		screen->makeAllDirty();
 		screen->update();
 

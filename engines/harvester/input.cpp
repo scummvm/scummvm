@@ -721,7 +721,7 @@ InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw)
 		if (!activeScreen)
 			return InputResult::leaveRoom(Common::kNoError);
 		IndexedBitmap roomMenuBackdrop;
-		drawRoomScene(_engine, *activeScreen, _scene, _scene.targetPaletteBrightness);
+		RoomPresentation::drawRoomScene(_engine, *activeScreen, _scene, _scene.targetPaletteBrightness);
 		if (!captureScreenBackdrop(*activeScreen, roomMenuBackdrop))
 			return InputResult::leaveRoom(Common::kReadingFailed);
 		Common::Error menuError = _flow.runRoomMenu(

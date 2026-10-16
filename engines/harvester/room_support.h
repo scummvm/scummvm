@@ -73,8 +73,6 @@ Common::Rect getRoomObjectHotspotBounds(const ObjectRecord &object);
 bool shouldDisplaySceneAnimation(const AnimRecord &anim);
 bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, SceneState &scene);
 bool shouldRunStartupRoomProbe();
-void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const SceneState &scene,
-	float brightness);
 const ObjectRecord *findSceneObjectByName(const Common::Array<ObjectRecord> &objects,
 	const Common::String &objectName);
 const RegionRecord *findSceneRegionByName(const Common::Array<RegionRecord> &regions,

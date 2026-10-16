@@ -26,12 +26,16 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
 #include "harvester/art.h"
 #include "harvester/detection.h"
+#include "harvester/entity.h"
 #include "harvester/flow.h"
 #include "harvester/harvester.h"
 #include "harvester/palette_utils.h"
+#include "harvester/player.h"
 #include "harvester/resources.h"
 #include "harvester/room_support.h"
 
@@ -39,6 +43,13 @@ namespace Harvester {
 
 static const float kNormalPaletteBrightness = 1.0f;
 static const float kDimPaletteBrightness = 0.6f;
+static const char *const kPlayerActorEntityName = "PLAYER";
+static const int kRoomDebugLabelPaddingX = 3;
+static const int kRoomDebugLabelPaddingY = 2;
+static const int kRoomDebugRoomNameX = 4;
+static const int kRoomDebugRoomNameY = 4;
+static const int kTimerDebugOverlayXDivisor = 8;
+static const int kTimerDebugOverlayLineSpacing = 1;
 
 static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *palette) {
 	Common::Array<byte> data;
@@ -54,6 +65,306 @@ static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, 
 	const float gammaBrightness = g_engine ? g_engine->getGammaBrightnessScale() : 1.0f;
 	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
 	screen.setPalette(scaledPalette);
+}
+
+static byte findNearestPaletteColor(const byte *palette, byte red, byte green, byte blue) {
+	if (!palette)
+		return 0;
+
+	byte bestIndex = 0;
+	uint32 bestDistance = 0xffffffffu;
+	for (int i = 0; i < 256; ++i) {
+		const int paletteOffset = i * 3;
+		const int dr = (int)palette[paletteOffset] - red;
+		const int dg = (int)palette[paletteOffset + 1] - green;
+		const int db = (int)palette[paletteOffset + 2] - blue;
+		const uint32 distance = (uint32)(dr * dr + dg * dg + db * db);
+		if (distance < bestDistance) {
+			bestDistance = distance;
+			bestIndex = (byte)i;
+		}
+	}
+
+	return bestIndex;
+}
+
+static Common::String resolveRoomDebugObjectLabel(HarvesterEngine &engine, const ObjectRecord &object) {
+	if (Script *script = engine.getScript()) {
+		const Common::String resolvedLabel = script->resolveObjectLabel(object);
+		if (!resolvedLabel.empty())
+			return resolvedLabel;
+	}
+
+	return object.objectName;
+}
+
+static Common::String resolveRoomDebugNpcLabel(const NpcRecord &npc) {
+	Common::String label = !npc.entityInitArg.empty() ? npc.entityInitArg : npc.npcName;
+	for (uint i = 0; i < label.size(); ++i) {
+		if (label[i] == '_')
+			label.setChar(' ', i);
+	}
+
+	return label;
+}
+
+static Common::String resolveCombatDebugLabel(const Common::String &name, int currentHitPoints, int maxHitPoints) {
+	Common::String label = name;
+	for (uint i = 0; i < label.size(); ++i) {
+		if (label[i] == '_')
+			label.setChar(' ', i);
+	}
+
+	return Common::String::format("%s (%d/%d)", label.c_str(), currentHitPoints, maxHitPoints);
+}
+
+static void drawRoomDebugLabel(Graphics::Screen &screen, const Graphics::Font &font,
+		const Common::String &text, int x, int y, byte textColor, byte backgroundColor) {
+	if (text.empty())
+		return;
+
+	const int labelWidth = font.getStringWidth(text) + kRoomDebugLabelPaddingX * 2;
+	const int labelHeight = font.getFontHeight() + kRoomDebugLabelPaddingY * 2;
+	const int drawX = CLIP<int>(x, 0, MAX(0, screen.w - labelWidth));
+	const int drawY = CLIP<int>(y, 0, MAX(0, screen.h - labelHeight));
+	const Common::Rect background(drawX, drawY,
+		MIN<int>(screen.w, drawX + labelWidth), MIN<int>(screen.h, drawY + labelHeight));
+	screen.fillRect(background, backgroundColor);
+	font.drawString(&screen, text,
+		background.left + kRoomDebugLabelPaddingX,
+		background.top + kRoomDebugLabelPaddingY,
+		MAX(0, background.width() - kRoomDebugLabelPaddingX * 2),
+		textColor);
+}
+
+static void drawRoomDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
+		const SceneState &scene) {
+	if (!engine.isRoomDebugEnabled())
+		return;
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!font)
+		return;
+
+	byte displayPalette[256 * 3];
+	screen.getPalette(displayPalette);
+	const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
+	const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
+	const byte darkGray = findNearestPaletteColor(displayPalette, 0x40, 0x40, 0x40);
+	const byte red = findNearestPaletteColor(displayPalette, 0xff, 0x00, 0x00);
+	Common::String roomName = scene.state.roomName;
+	roomName.toUppercase();
+
+	drawRoomDebugLabel(screen, *font, roomName,
+		kRoomDebugRoomNameX, kRoomDebugRoomNameY, black, white);
+
+	for (const RegionRecord &region : scene.sceneRegions)
+		drawRoomDebugLabel(screen, *font, region.regionName, region.left, region.top, white, darkGray);
+
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	for (const ObjectRecord &object : scene.sceneObjects) {
+		const Entity *entity = entityManager
+			? entityManager->findSceneEntityByName(object.objectName)
+			: nullptr;
+		if (entity && entity->getClassId() == kEntityClassBackground)
+			continue;
+
+		drawRoomDebugLabel(screen, *font, resolveRoomDebugObjectLabel(engine, object),
+			object.currentX, object.currentY, white, black);
+	}
+
+	for (const NpcRecord &npc : scene.state.roomNpcs) {
+		const Entity *entity = entityManager
+			? entityManager->findSceneEntityByName(npc.npcName)
+			: nullptr;
+		if (!entity || entity->getClassId() != kEntityClassNpc || !entity->isVisible())
+			continue;
+
+		const Common::Rect npcRect = entity->getScreenRect();
+		drawRoomDebugLabel(screen, *font, resolveRoomDebugNpcLabel(npc),
+			npcRect.left, npcRect.top, white, red);
+	}
+}
+
+static void drawCombatDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
+		const SceneState &scene) {
+	if (!engine.isCombatDebugEnabled())
+		return;
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	Script *script = engine.getScript();
+	if (!font || !entityManager)
+		return;
+
+	byte displayPalette[256 * 3];
+	screen.getPalette(displayPalette);
+	const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
+	const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
+	const byte red = findNearestPaletteColor(displayPalette, 0xff, 0x00, 0x00);
+
+	const Entity *playerEntity = entityManager->findSceneEntityByName(kPlayerActorEntityName);
+	if (script && playerEntity &&
+			playerEntity->getClassId() == kEntityClassPlayer &&
+			playerEntity->isVisible()) {
+		const Common::Rect playerRect = playerEntity->getScreenRect();
+		drawRoomDebugLabel(screen, *font,
+			resolveCombatDebugLabel(playerEntity->getName(),
+				script->getPlayerCurrentHitPoints(), Script::kDefaultPlayerHitPoints),
+			playerRect.left, playerRect.top, white, red);
+	}
+
+	for (const MonsterRecord &monster : scene.state.roomMonsters) {
+		const Entity *entity = entityManager->findSceneEntityByName(monster.monsterName);
+		if (!entity || entity->getClassId() != kEntityClassMonster || !entity->isVisible())
+			continue;
+
+		const Common::Rect monsterRect = entity->getScreenRect();
+		drawRoomDebugLabel(screen, *font,
+			resolveCombatDebugLabel(monster.monsterName,
+				monster.currentHitPoints, monster.initialHitPoints),
+			monsterRect.left, monsterRect.top, white, black);
+	}
+}
+
+static Common::Rect getPathfindingMovementBounds(const Graphics::Screen &screen,
+		const RoomSetupState &state) {
+	if (!Player::supportsMovementBand(state))
+		return Common::Rect();
+
+	return Common::Rect(0, state.roomMaxZScreenY, screen.w, state.roomMinZScreenY + 1);
+}
+
+static void drawClippedDebugFrame(Graphics::Screen &screen, Common::Rect rect, byte color) {
+	rect.clip(screen.getBounds());
+	if (rect.isEmpty())
+		return;
+
+	screen.frameRect(rect, color);
+}
+
+static bool canEntityAffectPlayerPathfinding(const Entity &entity) {
+	if (!entity.isVisible())
+		return false;
+
+	switch (entity.getClassId()) {
+	case kEntityClassCursor:
+	case kEntityClassBackground:
+	case kEntityClassPlayer:
+	case kEntityClassRectHotspot:
+	case kEntityClassRectHotspot19:
+	case kEntityClassTimer:
+		return false;
+	default:
+		break;
+	}
+
+	return entity.getClassId() == kEntityClassDisabledHotspot || entity.hasFrames();
+}
+
+static void drawPathfindingBlockerOutline(Graphics::Screen &screen, EntityManager &entityManager,
+		const Common::String &entityName, const Common::Rect &movementBounds, byte color) {
+	const Entity *entity = entityManager.findSceneEntityByName(entityName);
+	if (!entity || !canEntityAffectPlayerPathfinding(*entity))
+		return;
+
+	Common::Rect rect = entity->getScreenRect();
+	if (rect.isEmpty())
+		return;
+
+	Common::Rect overlap = rect;
+	overlap.clip(movementBounds);
+	if (overlap.isEmpty())
+		return;
+
+	drawClippedDebugFrame(screen, rect, color);
+}
+
+static void drawPathfindingDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
+		const SceneState &scene) {
+	if (!engine.isPathfindingDebugEnabled())
+		return;
+
+	byte displayPalette[256 * 3];
+	screen.getPalette(displayPalette);
+	const byte blue = findNearestPaletteColor(displayPalette, 0x00, 0x40, 0xff);
+	const byte green = findNearestPaletteColor(displayPalette, 0x00, 0xff, 0x00);
+	const Common::Rect movementBounds = getPathfindingMovementBounds(screen, scene.state);
+	if (movementBounds.isEmpty())
+		return;
+
+	drawClippedDebugFrame(screen, movementBounds, blue);
+
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	if (!entityManager)
+		return;
+
+	for (const ObjectRecord &object : scene.sceneObjects)
+		drawPathfindingBlockerOutline(screen, *entityManager,
+			object.objectName, movementBounds, green);
+
+	for (const AnimRecord &anim : scene.sceneAnimations)
+		drawPathfindingBlockerOutline(screen, *entityManager,
+			anim.animName, movementBounds, green);
+}
+
+static Common::String resolveTimerDebugLabel(const TimerRecord &timer, const Entity &entity) {
+	const Common::String actionTag = timer.arg2.empty() ? Common::String("<none>") : timer.arg2;
+
+	return Common::String::format("%s start=%d current=%d action=%s",
+		timer.timerName.c_str(), entity.getTimerInitialValue(),
+		entity.getTimerCurrentValue(), actionTag.c_str());
+}
+
+static void drawTimerDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
+		const SceneState &) {
+	if (!engine.isTimerDebugEnabled())
+		return;
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	Script *script = engine.getScript();
+	if (!font || !entityManager || !script)
+		return;
+
+	Common::Array<Common::String> labels;
+	for (const TimerRecord &timer : script->getTimers()) {
+		const Entity *entity = entityManager->findSceneEntityByName(timer.timerName);
+		if (!entity || entity->getClassId() != kEntityClassTimer || !entity->isTimerEnabled())
+			continue;
+
+		const TimerRecord *runtimeTimer = script->findRuntimeTimerRecord(timer.timerName);
+		labels.push_back(resolveTimerDebugLabel(runtimeTimer ? *runtimeTimer : timer, *entity));
+	}
+	if (labels.empty())
+		return;
+
+	byte displayPalette[256 * 3];
+	screen.getPalette(displayPalette);
+	const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
+	const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
+
+	const int labelHeight = font->getFontHeight() + kRoomDebugLabelPaddingY * 2;
+	const int lineHeight = labelHeight + kTimerDebugOverlayLineSpacing;
+	const int totalHeight = (int)labels.size() * labelHeight +
+		(int)(labels.size() - 1) * kTimerDebugOverlayLineSpacing;
+	const int x = screen.w / kTimerDebugOverlayXDivisor;
+	const int y = CLIP<int>((screen.h - totalHeight) / 2, 0, MAX(0, screen.h - totalHeight));
+
+	for (uint i = 0; i < labels.size(); ++i)
+		drawRoomDebugLabel(screen, *font, labels[i], x, y + (int)i * lineHeight, white, black);
+}
+
+void RoomPresentation::drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const SceneState &scene,
+		float brightness) {
+	setScaledRoomPalette(screen, scene.palette, brightness);
+	screen.fillRect(screen.getBounds(), 0);
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawSceneEntities(screen);
+	drawRoomDebugOverlay(engine, screen, scene);
+	drawCombatDebugOverlay(engine, screen, scene);
+	drawPathfindingDebugOverlay(engine, screen, scene);
+	drawTimerDebugOverlay(engine, screen, scene);
 }
 
 RoomPresentation::RoomPresentation(HarvesterEngine &engine, SceneState &scene,

@@ -63,6 +63,9 @@ public:
 	RoomPresentation(HarvesterEngine &engine, SceneState &scene,
 		const Art *art, const Graphics::Font *inspectFont, bool useNativeInspectFont);
 
+	static void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen,
+		const SceneState &scene, float brightness);
+
 	bool captureDialogueBackdrop(IndexedBitmap &dialogueBackdrop);
 	Common::Error applyLightingCommand(StartupLightingCommand lightingCommand);
 	Common::Error runModalShowText(const ResolvedText &modalText, Flow &flow);
