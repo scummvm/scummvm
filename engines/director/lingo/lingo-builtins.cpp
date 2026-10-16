@@ -835,6 +835,13 @@ void LB::b_value(int nargs) {
 		return;
 	}
 
+	// "<Void>" is how Director stringifies VOID, and some games
+	// (e.g. SFPD Homicide) use value("<void>") as an idiom to obtain VOID
+	if (expr.equalsIgnoreCase("<void>")) {
+		g_lingo->pushVoid();
+		return;
+	}
+
 	Common::String code = "return " + expr;
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code, kLPPTrimGarbage);
