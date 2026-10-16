@@ -426,7 +426,7 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 	RoomHoverState hoverState = suppressHover
 		? RoomHoverState()
 		: resolveRoomHoverState(_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs,
-			_scene.sceneRegions, _flow._mousePos, _flow._menuTextConfig, &_flow._dialogue);
+			_scene.sceneRegions, _flow._mousePos, _flow.getMenuTextConfig(), &_flow._dialogue);
 	Common::String promptText;
 	Common::String inventoryTooltipText;
 	auto resolveCarryTargetLabel = [&]() {
@@ -458,11 +458,11 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 			targetLabel = resolveCarryTargetLabel();
 		}
 		if (inventorySelectionActive) {
-			promptText = _inventory.buildSelectedPrompt(targetLabel, _flow._menuTextConfig);
+			promptText = _inventory.buildSelectedPrompt(targetLabel, _flow.getMenuTextConfig());
 			_inventory.setPromptText(promptText);
 		} else {
 			promptText = buildUseItemPrompt(
-				_flow._menuTextConfig, _roomItems.getCarriedRoomItemLabel(), targetLabel);
+				_flow.getMenuTextConfig(), _roomItems.getCarriedRoomItemLabel(), targetLabel);
 		}
 		hoverState.cursorSequence = 7;
 	} else if (_inventory.isOpen()) {
@@ -497,7 +497,7 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 	if (_inventory.isOpen()) {
 		_inventory.drawOverlay(*activeScreen);
 		drawInventoryWeekday(*activeScreen, *_view.inventoryTooltipFont,
-			_inventory.resolveWeekdayLabel(_flow._menuTextConfig));
+			_inventory.resolveWeekdayLabel(_flow.getMenuTextConfig()));
 	}
 	if (inventorySelectionActive) {
 		_inventory.drawSelectedDragItem(*activeScreen, _flow._mousePos);
@@ -688,7 +688,7 @@ InputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 	captureCurrentSaveState();
 
 	if (shouldRunStartupRoomProbe())
-		logStartupRoomProbe(_engine, _scene, currentRoomTarget, _flow._mousePos, _flow._menuTextConfig);
+		logStartupRoomProbe(_engine, _scene, currentRoomTarget, _flow._mousePos, _flow.getMenuTextConfig());
 
 	while (!_engine.shouldQuit()) {
 		if (_flow.hasPendingMainMenuReturn())

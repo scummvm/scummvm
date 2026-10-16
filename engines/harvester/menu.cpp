@@ -899,7 +899,7 @@ Common::Error MenuSystem::runMainMenu(Flow &flow) {
 			selectedItem, item.c_str());
 
 		if (selectedItem == kMainMenuItemNewGame) {
-			const MenuTextConfig &config = flow._menuTextConfig;
+			const MenuTextConfig &config = flow.getMenuTextConfig();
 
 			IndexedBitmap menuBackdrop;
 			if (!captureMenuBackdrop(menuBackdrop))
@@ -1151,7 +1151,7 @@ Common::Error MenuSystem::runRoomMenu(const IndexedBitmap &backdrop, const byte 
 			selectedItem, item.c_str());
 
 		if (selectedItem == kMainMenuItemNewGame) {
-			const MenuTextConfig &config = flow._menuTextConfig;
+			const MenuTextConfig &config = flow.getMenuTextConfig();
 
 			bool confirmed = false;
 			Common::Error confirmError = runConfirmPrompt(
@@ -1661,7 +1661,7 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 	if (!promptFont.isValid() || !choiceFont.isValid())
 		return Common::kReadingFailed;
 
-	const MenuTextConfig &config = flow._menuTextConfig;
+	const MenuTextConfig &config = flow.getMenuTextConfig();
 	const IndexedBitmap *textbox = art->getTextboxBitmap(3);
 	if (!textbox || !textbox->isValid())
 		return Common::kReadingFailed;
@@ -1731,7 +1731,7 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 
 Common::Error MenuSystem::runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow) {
-	const MenuTextConfig &config = flow._menuTextConfig;
+	const MenuTextConfig &config = flow.getMenuTextConfig();
 
 	bool confirmed = false;
 	Common::Error confirmError = runConfirmPrompt(
@@ -1772,7 +1772,7 @@ Common::Error MenuSystem::runPasswordPrompt(const IndexedBitmap &backdrop, const
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
 			renderPasswordPromptScreen(_engine, backdrop, palette, paletteBrightness,
-				titleFont, entryFont, *art, flow._menuTextConfig.enterPasswordLabel,
+				titleFont, entryFont, *art, flow.getMenuTextConfig().enterPasswordLabel,
 				password, cursorVisible, drawLogo);
 			needsRedraw = false;
 		}
@@ -1882,7 +1882,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 	if (!selectedFont.isValid() || !unselectedFont.isValid())
 		return Common::kReadingFailed;
 
-	const MenuTextConfig &config = flow._menuTextConfig;
+	const MenuTextConfig &config = flow.getMenuTextConfig();
 
 	IndexedBitmap volumeBar;
 	IndexedBitmap indicator;

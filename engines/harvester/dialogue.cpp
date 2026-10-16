@@ -92,29 +92,6 @@
 
 namespace Harvester {
 
-class DialogueFlowAccess {
-public:
-	static bool handleSystemEvent(Flow &flow, const Common::Event &event, Common::Error &result) {
-		return flow.handleSystemEvent(event, result);
-	}
-
-	static void executeStartupAudioCommands(Flow &flow, const Common::Array<AudioCommand> &commands) {
-		flow.executeStartupAudioCommands(commands);
-	}
-
-	static void queueDialogueInteraction(Flow &flow, const InteractionResult &interaction) {
-		flow.queueDialogueInteraction(interaction);
-	}
-
-	static void requestGameOverReturn(Flow &flow) {
-		flow.requestGameOverReturn();
-	}
-
-	static const MenuTextConfig &getMenuTextConfig(const Flow &flow) {
-		return flow._menuTextConfig;
-	}
-};
-
 namespace {
 
 static const int kDialogueOverlayX = 167;
@@ -407,7 +384,7 @@ public:
 			const IndexedBitmap &backdrop, const byte *palette, float paletteBrightness,
 			const NpcRecord &npc)
 		: _engine(engine), _mousePos(mousePos), _flow(flow),
-		  _menuTextConfig(DialogueFlowAccess::getMenuTextConfig(flow)), _backdrop(backdrop),
+		  _menuTextConfig(flow.getMenuTextConfig()), _backdrop(backdrop),
 		  _palette(palette), _paletteBrightness(paletteBrightness), _npc(npc),
 		  _script(engine.getScript()), _text(engine.getText()), _art(engine.getArt()),
 		  _entityManager(engine.getRuntimeEntities()),
@@ -512,7 +489,7 @@ public:
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (DialogueFlowAccess::handleSystemEvent(_flow, event, result)) {
+				if (_flow.handleSystemEvent(event, result)) {
 					_engine.stopSpeech();
 					return result;
 				}
@@ -548,7 +525,7 @@ public:
 				Common::Event event;
 				while (g_system->getEventManager()->pollEvent(event)) {
 					Common::Error result = Common::kNoError;
-					if (DialogueFlowAccess::handleSystemEvent(_flow, event, result))
+					if (_flow.handleSystemEvent(event, result))
 						return result;
 
 					if (isDialogueContinueEvent(event))
@@ -638,7 +615,7 @@ public:
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (DialogueFlowAccess::handleSystemEvent(_flow, event, result))
+				if (_flow.handleSystemEvent(event, result))
 					return result;
 				if (event.type == Common::EVENT_MOUSEMOVE)
 					_mousePos = event.mouse;
@@ -663,7 +640,7 @@ public:
 
 				while (g_system->getEventManager()->pollEvent(event)) {
 					Common::Error result = Common::kNoError;
-					if (DialogueFlowAccess::handleSystemEvent(_flow, event, result))
+					if (_flow.handleSystemEvent(event, result))
 						return result;
 
 					switch (event.type) {
@@ -741,7 +718,7 @@ public:
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (DialogueFlowAccess::handleSystemEvent(_flow, event, result)) {
+				if (_flow.handleSystemEvent(event, result)) {
 					if (editingOther && _entityManager)
 						_entityManager->showCursor();
 					return result;
@@ -847,7 +824,7 @@ public:
 		// GOG run_game_over_screen (0x7c540) enters run_main_menu (0x67390)
 		// with GAMEOVER.BM and GAMEOVER.PAL retained as the menu backdrop.
 		debugC(1, kDebugDialogue, "Harvester: dialogue death requesting game-over menu");
-		DialogueFlowAccess::requestGameOverReturn(_flow);
+		_flow.requestGameOverReturn();
 		return Common::kNoError;
 	}
 
@@ -888,7 +865,7 @@ public:
 				interaction.lightingCommand != kStartupLightingCommandNone ||
 				interaction.requestPlayerGotoXZ ||
 				!interaction.audioCommands.empty()) {
-			DialogueFlowAccess::queueDialogueInteraction(_flow, interaction);
+			_flow.queueDialogueInteraction(interaction);
 		}
 	}
 
@@ -896,7 +873,7 @@ public:
 		if (!interaction.musicPath.empty())
 			(void)_engine.playMusic(interaction.musicPath);
 		if (!interaction.audioCommands.empty())
-			DialogueFlowAccess::executeStartupAudioCommands(_flow, interaction.audioCommands);
+			_flow.executeStartupAudioCommands(interaction.audioCommands);
 		interaction.musicPath.clear();
 		interaction.audioCommands.clear();
 	}
@@ -930,7 +907,7 @@ private:
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (DialogueFlowAccess::handleSystemEvent(_flow, event, result))
+				if (_flow.handleSystemEvent(event, result))
 					return result;
 			}
 
@@ -1231,7 +1208,7 @@ private:
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (DialogueFlowAccess::handleSystemEvent(_flow, event, result))
+				if (_flow.handleSystemEvent(event, result))
 					return result;
 
 				if (event.type == Common::EVENT_KEYDOWN) {

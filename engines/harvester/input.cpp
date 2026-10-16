@@ -136,7 +136,7 @@ void Input::capturePlayerAttackTarget() {
 
 	const RoomHoverState hoverState = resolveRoomHoverState(
 		_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs, _scene.sceneRegions,
-		_flow._mousePos, _flow._menuTextConfig, &_flow._dialogue);
+		_flow._mousePos, _flow.getMenuTextConfig(), &_flow._dialogue);
 	_session.capturePlayerAttackTarget(_flow._mousePos, hoverState.npc);
 }
 
@@ -353,7 +353,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 					inventoryHover->object.objectName.c_str());
 				_inventory.selectItem(inventoryHover->object.objectName);
 				_inventory.setPromptText(_inventory.buildSelectedPrompt(
-					Common::String(), _flow._menuTextConfig));
+					Common::String(), _flow.getMenuTextConfig()));
 				needsRedraw = true;
 				return InputResult();
 			}
@@ -384,7 +384,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 
 	const RoomHoverState hoverState = resolveRoomHoverState(
 		_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs, _scene.sceneRegions,
-		_flow._mousePos, _flow._menuTextConfig, &_flow._dialogue);
+		_flow._mousePos, _flow.getMenuTextConfig(), &_flow._dialogue);
 	RoomHoverState clickHoverState = hoverState;
 	const Entity *itemTarget = nullptr;
 	if (_roomItems.hasSelectedItem()) {

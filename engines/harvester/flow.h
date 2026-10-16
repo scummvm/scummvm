@@ -40,7 +40,6 @@ struct Event;
 namespace Harvester {
 
 class HarvesterEngine;
-class DialogueFlowAccess;
 class Interaction;
 struct IndexedBitmap;
 
@@ -55,11 +54,16 @@ public:
 	Common::Error showCdChangePrompt(int discNumber);
 	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
 
+	const MenuTextConfig &getMenuTextConfig() const { return _menuTextConfig; }
+	void executeStartupAudioCommands(const Common::Array<AudioCommand> &commands);
+	void queueDialogueInteraction(const InteractionResult &interaction);
+	void requestGameOverReturn();
+
+	bool hasQueuedDebugInteraction() const { return _hasQueuedDebugInteraction; }
+	bool queueDebugInteraction(const InteractionResult &interaction);
+	bool requestDebugRoomChange(const Common::String &roomName);
+
 private:
-	friend class HarvesterEngine;
-	friend class DialogueFlowAccess;
-	friend class DialogueSystem;
-	friend class InventorySystem;
 	friend class MenuSystem;
 	friend class Interaction;
 	friend class SceneRunner;
@@ -90,18 +94,13 @@ private:
 	Common::Error fadePalette(const byte *palette, float fromBrightness, float toBrightness);
 	bool waitForPaletteFadeTick(uint32 startTick, Common::Error &result);
 	bool pumpTransitionEvents(Common::Error &result);
-	void executeStartupAudioCommands(const Common::Array<AudioCommand> &commands);
-	void queueDialogueInteraction(const InteractionResult &interaction);
 	bool takeQueuedDialogueInteraction(InteractionResult &interaction);
-	bool hasQueuedDebugInteraction() const { return _hasQueuedDebugInteraction; }
-	bool queueDebugInteraction(const InteractionResult &interaction);
 	bool takeQueuedDebugInteraction(InteractionResult &interaction);
 	void prepareForNewGame();
 	void requestNewGameRestart();
 	bool hasPendingNewGameRestart() const;
 	bool takePendingNewGameRestart();
 	void clearPendingNewGameRestart();
-	void requestGameOverReturn();
 	bool hasPendingGameOverReturn() const;
 	bool takePendingGameOverReturn();
 	void clearPendingGameOverReturn();
@@ -113,7 +112,6 @@ private:
 	bool hasPendingCloseupParentRestart() const;
 	bool takePendingCloseupParentRestart();
 	void clearPendingCloseupParentRestart();
-	bool requestDebugRoomChange(const Common::String &roomName);
 	bool hasPendingDebugRoomChange() const { return !_pendingDebugRoomName.empty(); }
 	Common::String takePendingDebugRoomChange();
 	void resetRoomNpcDialogueState();

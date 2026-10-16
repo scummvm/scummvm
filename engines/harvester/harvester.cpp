@@ -358,7 +358,7 @@ Common::Error HarvesterEngine::run() {
 	if (!flow.load())
 		return Common::kReadingFailed;
 
-	if (!_media->loadQuickTipsResources(flow._menuTextConfig.hasQuickTipsHeader()))
+	if (!_media->loadQuickTipsResources(flow.getMenuTextConfig().hasQuickTipsHeader()))
 		return Common::kReadingFailed;
 
 	// If a savegame was selected from the launcher, load it
