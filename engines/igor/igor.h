@@ -1658,6 +1658,16 @@ private:
 	void loadOptionsMenuTexts();
 	void drawOptionsMenuText(int text, int x, int y, int color);
 	void handleOptionsMenu();
+	void loadFloppyOptionsMenuTexts();
+	void floppyOptionsDrawText(int text, int x, int y, int color);
+	void floppyOptionsFillRow(const uint8 *button, int buttonRow, int y);
+	void floppyOptionsDrawMainPage(const uint8 *button);
+	void floppyOptionsClearCaptionBar(const uint8 *button);
+	void floppyOptionsPaintControl(const uint8 *button, int row);
+	void floppyOptionsPresent(int selectedButton);
+	void floppyOptionsQuitPage(const uint8 *button);
+	void floppyOptionsControlPage(const uint8 *button);
+	void handleFloppyOptionsMenu();
 	void scrollInventory();
 	void drawInventory(int start, int mode);
 	void pageFloppyInventory(bool forward);
@@ -1740,6 +1750,9 @@ private:
 			int x1MinY = -1, int x2MinY = -1);
 	void fixWalkPosition(int *x, int *y);
 	void recolorDialogueChoice(int num, bool highlight);
+	int dialogueChoiceOffset(int i) const;
+	Common::String dialogueChoiceText(int choice, const char *prefix) const;
+	void drawFloppyDialogueChoice(int choice, int color);
 	void handleDialogue(int x, int y, int r, int g, int b, bool restoreUI = true);
 	void drawDialogueChoices();
 	int selectDialogue();
@@ -1753,9 +1766,6 @@ private:
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	int dialogueChoiceOffset(int i) const;
-	Common::String dialogueChoiceText(int choice, const char *prefix) const;
-	void drawFloppyDialogueChoice(int choice, int color);
 	bool copyOptionsMenuThumbnail(Graphics::Surface &thumb) const {
 		if (!_optionsMenuThumbnail.getPixels())
 			return false;
