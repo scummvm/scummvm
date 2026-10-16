@@ -92,9 +92,6 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 	const Common::Array<RegionRecord> &regions,
 	const Common::Point &mousePos, const MenuTextConfig &menuTextConfig,
 	const DialogueSystem *dialogue = nullptr);
-void logStartupRoomProbe(HarvesterEngine &engine, const SceneState &scene,
-	const Common::String &entranceName, Common::Point &mousePos,
-	const MenuTextConfig &menuTextConfig);
 
 } // End of namespace Harvester
 

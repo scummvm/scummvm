@@ -134,18 +134,16 @@ void Input::capturePlayerAttackTarget() {
 
 	player.clearAttackTarget();
 
-	const RoomHoverState hoverState = resolveRoomHoverState(
-		_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs, _scene.sceneRegions,
-		_flow._mousePos, _flow.getMenuTextConfig(), &_flow._dialogue);
-	_session.capturePlayerAttackTarget(_flow._mousePos, hoverState.npc);
+	const RoomHoverState hoverState = _flow.getRoomHoverState(_scene);
+	_session.capturePlayerAttackTarget(_flow.getMousePos(), hoverState.npc);
 }
 
 void Input::handleMouseMove(bool &needsRedraw) {
 	if (_inventory.isOpen() && _inventory.hasSelection()) {
-		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow._mousePos);
+		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow.getMousePos());
 		// Native inventory handoff is driven by the latched selected item, not by
 		// a second click after the selection has already been made.
-		if (!inventoryHover && isOutsideNativeInventoryDragCloseBounds(_flow._mousePos)) {
+		if (!inventoryHover && isOutsideNativeInventoryDragCloseBounds(_flow.getMousePos())) {
 			if (_inventory.close())
 				needsRedraw = true;
 		}
@@ -168,8 +166,8 @@ InputResult Input::handleRightButtonDown(bool &needsRedraw) {
 		return InputResult();
 	_session.clearPendingRegionInteraction();
 	if (_inventory.isOpen()) {
-		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow._mousePos);
-		debugLogInventoryClick("right", _flow._mousePos, inventoryHover);
+		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow.getMousePos());
+		debugLogInventoryClick("right", _flow.getMousePos(), inventoryHover);
 		if (_inventory.hasSelection()) {
 			debugC(1, kDebugInventory,
 				"Harvester: inventory right click cleared active selection='%s'",
@@ -277,7 +275,7 @@ InputResult Input::handleRightButtonDown(bool &needsRedraw) {
 		player.cancelMovementForAttack();
 		(void)player.syncCombatLoadoutVisual(_engine, _scene.state, script->getPlayerCombatLoadout());
 		capturePlayerAttackTarget();
-		if (player.startAttackAnimation(_scene.state, _flow._mousePos)) {
+		if (player.startAttackAnimation(_scene.state, _flow.getMousePos())) {
 			debugC(1, kDebugCombat,
 				"Harvester: combat player attack start loadout=%d weapon='%s' damage=%d damage_type='%s' target_class='%s' target='%s' cursor=(%d,%d)",
 				playerState.combatLoadout,
@@ -285,7 +283,7 @@ InputResult Input::handleRightButtonDown(bool &needsRedraw) {
 				Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout),
 				Player::describeCombatDamageType(Player::resolveCombatLoadoutDamageType(playerState.combatLoadout)),
 				describeCombatTargetClass(playerState.attackTargetClassId),
-				playerState.attackTargetName.c_str(), _flow._mousePos.x, _flow._mousePos.y);
+				playerState.attackTargetName.c_str(), _flow.getMousePos().x, _flow.getMousePos().y);
 			needsRedraw = true;
 		} else {
 			player.clearAttackTarget();
@@ -333,8 +331,8 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 
 	const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
 	if (_inventory.isOpen()) {
-		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow._mousePos);
-		debugLogInventoryClick("left", _flow._mousePos, inventoryHover);
+		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow.getMousePos());
+		debugLogInventoryClick("left", _flow.getMousePos(), inventoryHover);
 		if (inventoryHover) {
 			if (InventorySystem::isExitObject(inventoryHover->object)) {
 				debugC(1, kDebugInventory, "Harvester: inventory left click exit button");
@@ -373,29 +371,27 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 		}
 
 		if (_inventory.hasSelection()) {
-			if (!inventoryPanelBounds.contains(_flow._mousePos) && _inventory.close())
+			if (!inventoryPanelBounds.contains(_flow.getMousePos()) && _inventory.close())
 				needsRedraw = true;
 			return InputResult();
 		}
-		if (!inventoryPanelBounds.contains(_flow._mousePos) && _inventory.close())
+		if (!inventoryPanelBounds.contains(_flow.getMousePos()) && _inventory.close())
 			needsRedraw = true;
 		return InputResult();
 	}
 
-	const RoomHoverState hoverState = resolveRoomHoverState(
-		_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs, _scene.sceneRegions,
-		_flow._mousePos, _flow.getMenuTextConfig(), &_flow._dialogue);
+	const RoomHoverState hoverState = _flow.getRoomHoverState(_scene);
 	RoomHoverState clickHoverState = hoverState;
 	const Entity *itemTarget = nullptr;
 	if (_roomItems.hasSelectedItem()) {
 		clickHoverState = RoomHoverState();
-		itemTarget = _roomItems.findSelectedItemTarget(_flow._mousePos);
+		itemTarget = _roomItems.findSelectedItemTarget(_flow.getMousePos());
 		if (!itemTarget)
 			return InputResult();
 		if (itemTarget == playerState.entity)
 			clickHoverState.playerEntity = itemTarget;
 		if (itemTarget->getClassId() == kEntityClassNpc &&
-				_flow._dialogue.hasRoomNpcHandler(itemTarget->getName()) &&
+				_flow.hasRoomNpcHandler(itemTarget->getName()) &&
 				_engine.getScript()->isNamedNpcDeathTypeClear(itemTarget->getName())) {
 			for (const NpcRecord &npc : _scene.state.roomNpcs) {
 				if (npc.npcName.equalsIgnoreCase(itemTarget->getName())) {
@@ -408,7 +404,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 	}
 	debugC(1, kDebugRoom,
 		"Harvester: room click room='%s' mouse=(%d,%d) object='%s' npc='%s' region='%s' cursor_sequence=%d prompt='%s'",
-		_scene.state.roomName.c_str(), _flow._mousePos.x, _flow._mousePos.y,
+		_scene.state.roomName.c_str(), _flow.getMousePos().x, _flow.getMousePos().y,
 		clickHoverState.object ? clickHoverState.object->objectName.c_str() : "",
 		clickHoverState.npc ? clickHoverState.npc->npcName.c_str() : "",
 		clickHoverState.region ? clickHoverState.region->regionName.c_str() : "",
@@ -497,7 +493,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 			needsRedraw = true;
 			return InputResult();
 		}
-		_interactionProcessor.queueRegionInteraction(*hoverState.region, _flow._mousePos);
+		_interactionProcessor.queueRegionInteraction(*hoverState.region, _flow.getMousePos());
 		Common::Error interactionError =
 			_interactionProcessor.tryActivatePendingRegion(_inventory, needsRedraw);
 		if (interactionError.getCode() != Common::kNoError)
@@ -515,17 +511,17 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 				const Common::Rect playerRect = playerState.entity->getScreenRect();
 				debugC(1, kDebugPathfinding,
 					"Harvester: pathfinding click accepted room='%s' mouse=(%d,%d) movement_band=(y=%d..%d,z=%d..%d) player=(%d,%d,z=%.2f) player_rect=(%d,%d)-(%d,%d)",
-					_scene.state.roomName.c_str(), _flow._mousePos.x, _flow._mousePos.y,
+					_scene.state.roomName.c_str(), _flow.getMousePos().x, _flow.getMousePos().y,
 					_scene.state.roomMaxZScreenY, _scene.state.roomMinZScreenY,
 					_scene.state.roomMinZ, _scene.state.roomMaxZ,
 					playerState.centerX, playerState.bottomY, (double)playerState.z,
 					playerRect.left, playerRect.top, playerRect.right, playerRect.bottom);
 			}
-			player.setMoveTargetFromScreenPoint(_scene.state, _flow._mousePos.x, _flow._mousePos.y);
+			player.setMoveTargetFromScreenPoint(_scene.state, _flow.getMousePos().x, _flow.getMousePos().y);
 			if (_engine.isPathfindingDebugEnabled()) {
 				debugC(1, kDebugPathfinding,
 					"Harvester: pathfinding click target room='%s' mouse=(%d,%d) target=(%d,%d,z=%.2f)",
-					_scene.state.roomName.c_str(), _flow._mousePos.x, _flow._mousePos.y,
+					_scene.state.roomName.c_str(), _flow.getMousePos().x, _flow.getMousePos().y,
 					playerState.targetX, playerState.targetBottomY, (double)playerState.targetZ);
 			}
 			needsRedraw = true;
@@ -688,7 +684,7 @@ InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw)
 			key.keycode == Common::KEYCODE_RCTRL) {
 		inputState.attackModifierHeld = true;
 	} else if (key.keycode == Common::KEYCODE_k && _engine.isCombatDebugEnabled()) {
-		Common::Error debugKillError = _session.killDebugActiveMonster(_flow._mousePos, needsRedraw);
+		Common::Error debugKillError = _session.killDebugActiveMonster(_flow.getMousePos(), needsRedraw);
 		if (debugKillError.getCode() != Common::kNoError)
 			return InputResult::leaveRoom(debugKillError);
 		return InputResult();

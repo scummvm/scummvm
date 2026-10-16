@@ -419,18 +419,17 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 	const bool inventorySelectionActive = _inventory.hasSelection();
 	const bool roomCarryActive = _roomItems.hasCarriedRoomItem();
 	const bool activeCarry = inventorySelectionActive || roomCarryActive;
-	const bool inventoryPanelContainsMouse = _inventory.isOpen() && inventoryPanelBounds.contains(_flow._mousePos);
+	const bool inventoryPanelContainsMouse = _inventory.isOpen() && inventoryPanelBounds.contains(_flow.getMousePos());
 	const bool suppressHover = _presentationState.showingInspectText || idleState.active || idleState.exiting ||
 		isPlayerCombatLocked() ||
 		(_inventory.isOpen() && (inventoryPanelContainsMouse || !inventorySelectionActive));
 	RoomHoverState hoverState = suppressHover
 		? RoomHoverState()
-		: resolveRoomHoverState(_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs,
-			_scene.sceneRegions, _flow._mousePos, _flow.getMenuTextConfig(), &_flow._dialogue);
+		: _flow.getRoomHoverState(_scene);
 	Common::String promptText;
 	Common::String inventoryTooltipText;
 	auto resolveCarryTargetLabel = [&]() {
-		const Entity *target = suppressHover ? nullptr : _roomItems.findSelectedItemTarget(_flow._mousePos, false);
+		const Entity *target = suppressHover ? nullptr : _roomItems.findSelectedItemTarget(_flow.getMousePos(), false);
 		if (!target)
 			return Common::String();
 		if (target == playerState.entity)
@@ -445,7 +444,7 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 	};
 	if (activeCarry) {
 		Common::String targetLabel;
-		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow._mousePos);
+		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow.getMousePos());
 		if (_inventory.isOpen()) {
 			if (inventoryHover && !InventorySystem::isExitObject(inventoryHover->object) &&
 					!InventorySystem::isStatusObject(inventoryHover->object) &&
@@ -466,7 +465,7 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 		}
 		hoverState.cursorSequence = 7;
 	} else if (_inventory.isOpen()) {
-		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow._mousePos);
+		const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_flow.getMousePos());
 		if (inventoryHover &&
 				!InventorySystem::isExitObject(inventoryHover->object)) {
 			inventoryTooltipText =
@@ -500,10 +499,10 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 			_inventory.resolveWeekdayLabel(_flow.getMenuTextConfig()));
 	}
 	if (inventorySelectionActive) {
-		_inventory.drawSelectedDragItem(*activeScreen, _flow._mousePos);
+		_inventory.drawSelectedDragItem(*activeScreen, _flow.getMousePos());
 	} else if (roomCarryActive && _roomItems.getCarriedRoomItemBitmap().isValid()) {
-		const int drawX = _flow._mousePos.x - (int)_roomItems.getCarriedRoomItemBitmap().width / 2;
-		const int drawY = _flow._mousePos.y - (int)_roomItems.getCarriedRoomItemBitmap().height / 2;
+		const int drawX = _flow.getMousePos().x - (int)_roomItems.getCarriedRoomItemBitmap().width / 2;
+		const int drawY = _flow.getMousePos().y - (int)_roomItems.getCarriedRoomItemBitmap().height / 2;
 		blitTransparentBitmap(*activeScreen, _roomItems.getCarriedRoomItemBitmap(), drawX, drawY);
 	}
 
@@ -688,7 +687,7 @@ InputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 	captureCurrentSaveState();
 
 	if (shouldRunStartupRoomProbe())
-		logStartupRoomProbe(_engine, _scene, currentRoomTarget, _flow._mousePos, _flow.getMenuTextConfig());
+		_flow.logStartupRoomProbe(_scene, currentRoomTarget);
 
 	while (!_engine.shouldQuit()) {
 		if (_flow.hasPendingMainMenuReturn())
@@ -1029,7 +1028,7 @@ Common::Error SceneRunner::runRoomLoop(Flow &flow, const Common::String &targetN
 		const RoomViewResources view = { art, promptFont, inspectFont, inventoryTooltipFont,
 			useNativePromptFont, useNativeInspectFont };
 		Scene session(_engine, flow, scene, entityManager, _inventory, _cheats, view,
-			flow._roomLoopDepth > 1);
+			flow.isNestedRoomLoop());
 		debugC(1, kDebugRoom, "Harvester: created room session room='%s'", scene.state.roomName.c_str());
 		session.initializePlayerState();
 

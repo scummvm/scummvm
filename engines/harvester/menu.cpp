@@ -1896,7 +1896,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 	int capturedSlider = -1;
 	bool showingQuickTips = false;
 	bool needsRedraw = true;
-	uint quickTipIndex = flow._quickTips.empty() ? 0 : _engine.getRandomNumber(flow._quickTips.size() - 1);
+	uint quickTipIndex = flow.getQuickTipCount() == 0 ? 0 : _engine.getRandomNumber(flow.getQuickTipCount() - 1);
 	QuickTipsLayout quickTipsLayout;
 
 	auto persistConfig = [&]() -> bool {
@@ -2009,7 +2009,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 			toggleGore();
 			break;
 		case 5:
-			if (!flow._quickTips.empty()) {
+			if (flow.getQuickTipCount() != 0) {
 				if (!resolveQuickTipsLayout(_engine, config, quickTipsLayout))
 					return Common::kReadingFailed;
 				showingQuickTips = true;
@@ -2031,7 +2031,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 		if (needsRedraw) {
 			if (showingQuickTips) {
 				renderQuickTipsOverlay(_engine, backdrop, palette, paletteBrightness,
-					config, quickTipsLayout, flow._quickTips[quickTipIndex]);
+					config, quickTipsLayout, flow.getQuickTip(quickTipIndex));
 			} else {
 				renderOptionsMenuScreen(_engine, backdrop, palette, paletteBrightness,
 					selectedFont, unselectedFont, *art, config, volumeBar, indicator, selectedItem);
@@ -2055,7 +2055,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 						showingQuickTips = false;
 						needsRedraw = true;
 					} else if (quickTipsLayout.nextRect.contains(_mousePos)) {
-						quickTipIndex = (quickTipIndex + 1) % flow._quickTips.size();
+						quickTipIndex = (quickTipIndex + 1) % flow.getQuickTipCount();
 						needsRedraw = true;
 					} else if (quickTipsLayout.toggleRect.contains(_mousePos)) {
 						script->setQuickTipsEnabled(!script->isQuickTipsEnabled());
@@ -2174,7 +2174,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 					break;
 				case Common::KEYCODE_q:
 					selectedItem = 5;
-					if (!flow._quickTips.empty()) {
+					if (flow.getQuickTipCount() != 0) {
 						showingQuickTips = true;
 						needsRedraw = true;
 					}

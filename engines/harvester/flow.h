@@ -55,6 +55,14 @@ public:
 	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
 
 	const MenuTextConfig &getMenuTextConfig() const { return _menuTextConfig; }
+	const Common::Point &getMousePos() const { return _mousePos; }
+	uint getQuickTipCount() const { return _quickTips.size(); }
+	const Common::String &getQuickTip(uint index) const { return _quickTips[index]; }
+	bool hasRoomNpcHandler(const Common::String &npcName) const { return _dialogue.hasRoomNpcHandler(npcName); }
+	bool isNestedRoomLoop() const { return _roomLoopDepth > 1; }
+	RoomHoverState getRoomHoverState(const SceneState &scene) const;
+	void logStartupRoomProbe(const SceneState &scene, const Common::String &entranceName);
+
 	void executeStartupAudioCommands(const Common::Array<AudioCommand> &commands);
 	void queueDialogueInteraction(const InteractionResult &interaction);
 	void requestGameOverReturn();

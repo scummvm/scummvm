@@ -814,6 +814,11 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 	return hoverState;
 }
 
+RoomHoverState Flow::getRoomHoverState(const SceneState &scene) const {
+	return resolveRoomHoverState(_engine, scene.state, scene.sceneObjects,
+		scene.state.roomNpcs, scene.sceneRegions, _mousePos, _menuTextConfig, &_dialogue);
+}
+
 static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Array<ObjectRecord> &sceneObjects,
 		const ObjectRecord &object, Common::Point &probePoint) {
 	const Common::Rect bounds = getRoomObjectHotspotBounds(object);
@@ -852,11 +857,9 @@ static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Arra
 	return false;
 }
 
-void logStartupRoomProbe(HarvesterEngine &engine, const SceneState &scene,
-		const Common::String &entranceName, Common::Point &mousePos,
-		const MenuTextConfig &menuTextConfig) {
-	EntityManager *entityManager = engine.getRuntimeEntities();
-	Script *script = engine.getScript();
+void Flow::logStartupRoomProbe(const SceneState &scene, const Common::String &entranceName) {
+	EntityManager *entityManager = _engine.getRuntimeEntities();
+	Script *script = _engine.getScript();
 	if (!entityManager || !script)
 		return;
 
@@ -890,19 +893,19 @@ void logStartupRoomProbe(HarvesterEngine &engine, const SceneState &scene,
 			continue;
 
 		Common::Point probePoint;
-		if (!findRoomObjectProbePoint(engine, scene.sceneObjects, object, probePoint))
+		if (!findRoomObjectProbePoint(_engine, scene.sceneObjects, object, probePoint))
 			continue;
 
-		const ObjectRecord *hoveredObject = findRoomObjectAtPoint(engine, scene.sceneObjects, probePoint);
+		const ObjectRecord *hoveredObject = findRoomObjectAtPoint(_engine, scene.sceneObjects, probePoint);
 		if (!hoveredObject)
 			continue;
 
-		mousePos = probePoint;
+		_mousePos = probePoint;
 		const Common::String objectLabel = script->resolveObjectLabel(*hoveredObject);
 		ResolvedText inspectText;
 		const RoomHoverState hoverState = resolveRoomHoverState(
-			engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
-			probePoint, menuTextConfig);
+			_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
+			probePoint, _menuTextConfig);
 		const bool hasInteraction = script->hasObjectInteraction(*hoveredObject);
 		const bool hasInspectText = script->resolveObjectInspectText(*hoveredObject, inspectText);
 		debugC(1, kDebugRoom,
@@ -918,8 +921,8 @@ void logStartupRoomProbe(HarvesterEngine &engine, const SceneState &scene,
 			for (int y = scene.state.roomMaxZScreenY; y <= scene.state.roomMinZScreenY && !foundFloorProbe; y += 12) {
 				for (int x = 48; x < 592; x += 16) {
 					const RoomHoverState candidateHover = resolveRoomHoverState(
-						engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
-						Common::Point(x, y), menuTextConfig);
+						_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
+						Common::Point(x, y), _menuTextConfig);
 					if (candidateHover.cursorSequence == kCursorSequenceWalk) {
 						floorProbe = Common::Point(x, y);
 						foundFloorProbe = true;
@@ -929,8 +932,8 @@ void logStartupRoomProbe(HarvesterEngine &engine, const SceneState &scene,
 			}
 
 			const RoomHoverState floorHover = foundFloorProbe
-				? resolveRoomHoverState(engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
-					scene.sceneRegions, floorProbe, menuTextConfig)
+				? resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
+					scene.sceneRegions, floorProbe, _menuTextConfig)
 				: RoomHoverState();
 			debugC(1, kDebugRoom,
 				"Harvester: startup probe floor room='%s' point=(%d,%d) found=%d cursor_sequence=%d prompt='%s'",
@@ -943,7 +946,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const SceneState &scene,
 				probePlayer.initialize(scene.state, player, 0);
 				probePlayer.setMoveTargetFromScreenPoint(scene.state, floorProbe.x, floorProbe.y);
 				for (int i = 0; i < 32 && probePlayer.getState().hasMoveTarget; ++i)
-					(void)probePlayer.stepMoveTarget(engine, scene.state, scene.sceneObjects, scene.sceneAnimations);
+					(void)probePlayer.stepMoveTarget(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations);
 
 				const Common::Rect movedRect = player->getScreenRect();
 				debugC(1, kDebugPlayer,
