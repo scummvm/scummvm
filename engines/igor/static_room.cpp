@@ -148,6 +148,14 @@ const RoomDataOffsets IgorEngine::PART_15_ROOM_DATA_OFFSETS = {
 	{ 45, 22, 3756, 66, 60, 180, 10588, 10632, 66 }
 };
 
+// The Spanish floppy room has no dialogue data (Tobias isnt a character)
+const RoomDataOffsets IgorEngine::PART_15_FLOPPY_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 },
+	{ 4, 15 },
+	{ 19, 209, 3155, 103, 179, 82 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
 const RoomDataOffsets IgorEngine::PART_16_ROOM_DATA_OFFSETS = {
 	{ 20, 2, 2, 1 },
 	{ 29, 34 },

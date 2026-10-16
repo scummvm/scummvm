@@ -1010,6 +1010,18 @@ private:
 	void part15DrawTobiasTalking(int frame);
 	void part15DrawTobiasIdleFrame(int frame);
 	void part15();
+	void part15Floppy();
+	void part15FloppyExecuteAction(int action);
+	void part15FloppyLeaveToStreet();
+	void part15FloppyGoUpstairs();
+	void part15FloppyGiveProjectToTobias();
+	void part15FloppyGiveMoneyToTobias();
+	void part15FloppyHandOver();
+	void part15FloppyUpdateBackground();
+	void part15FloppyApplyObjectState(int num);
+	void part15FloppyEnterFromStreet();
+	void part15FloppyEnterFromStairs();
+	void part15FloppyDrawFigure(int figure, int frame);
 
 	// laboratory
 	void part16ExecuteAction(int action);
@@ -1809,6 +1821,7 @@ protected:
 	static const RoomDataOffsets PART_13_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_14_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_15_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_15_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_16_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_17_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_18_ROOM_DATA_OFFSETS;
