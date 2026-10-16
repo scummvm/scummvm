@@ -32,6 +32,10 @@ namespace Graphics {
 class Font;
 }
 
+namespace Common {
+struct Event;
+}
+
 namespace Harvester {
 
 class HarvesterEngine;
@@ -96,6 +100,20 @@ public:
 		Flow &flow, bool &promptCompleted);
 
 private:
+	struct SaveSlotMenu;
+	enum SaveLoadMode { kSaveMode, kLoadMode };
+	enum SaveSlotCommand { kNoSlotCommand, kConfirmSlot, kCancelSlot };
+
+	Common::Error runSaveSlotMenu(Flow &flow, SaveLoadMode mode, bool &completed);
+	void reloadSaveSlotTitles(SaveSlotMenu &menu) const;
+	int getSaveSlotAt(const Common::Point &mousePos) const;
+	SaveSlotCommand getSaveSlotCommand(const Common::Event &event) const;
+	void renderSaveSlotMenu(const SaveSlotMenu &menu, const Common::String *editingText = nullptr) const;
+	Common::Error runSaveSlotEditor(SaveSlotMenu &menu, Flow &flow,
+		Common::String &editedTitle, bool &confirmed);
+	Common::Error saveSelectedSlot(SaveSlotMenu &menu, Flow &flow, bool &saved);
+	void loadSelectedSlot(SaveSlotMenu &menu, bool &loaded);
+
 	Common::Error runLoadGameMenu(const byte *palette, float paletteBrightness,
 		Flow &flow, bool &loadedGame);
 	Common::Error runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,

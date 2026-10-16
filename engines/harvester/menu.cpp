@@ -497,23 +497,6 @@ static Common::String buildOptionsMenuItemLabel(const Script &script,
 	}
 }
 
-static bool appendBoundedTextEntryCharacter(Common::String &text, const Graphics::Font &font,
-		uint32 ascii, uint maxCharacters, int maxWidth) {
-	if (ascii < 32 || ascii > 126 || ascii == '~' || text.size() >= maxCharacters)
-		return false;
-
-	const Common::String candidate = text + (char)ascii;
-	if (font.getStringWidth(candidate) > maxWidth)
-		return false;
-
-	text = candidate;
-	return true;
-}
-
-static bool appendInlineSaveCharacter(Common::String &text, const Graphics::Font &font, uint32 ascii) {
-	return appendBoundedTextEntryCharacter(text, font, ascii, kSaveSlotMaxCharacters, kSaveSlotTextWidth);
-}
-
 static Common::String buildDefaultSaveSlotLabel(int slotIndex) {
 	return Common::String::format("GAME %02d", slotIndex + 1);
 }
@@ -649,43 +632,6 @@ static void renderQuickTipsOverlay(HarvesterEngine &engine, const IndexedBitmap 
 	blitBitmap(*screen, backdrop, 0, 0);
 	blitTransparentBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
 	drawQuickTipsPanel(engine, config, layout, tipText);
-
-	if (engine.getRuntimeEntities())
-		engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
-}
-
-static void renderSaveGameMenuScreen(HarvesterEngine &engine, const IndexedBitmap &background,
-		const byte *palette, float paletteBrightness, const Graphics::Font &selectedLabelFont,
-		const Graphics::Font &unselectedLabelFont, const Graphics::Font &slotNameFont,
-		const Common::Array<Common::String> &slotTitles, int activeSlot,
-		const Common::String &statusMessage, int editingSlot = -1,
-		const Common::String *editingText = nullptr) {
-	Graphics::Screen *screen = engine.getScreen();
-	if (!screen)
-		return;
-
-	applyMenuPalette(*screen, engine, palette, paletteBrightness);
-	blitBitmap(*screen, background, 0, 0);
-
-	for (int i = 0; i < kSaveSlotCount; ++i) {
-		const Graphics::Font &labelFont = (i == activeSlot) ? selectedLabelFont : unselectedLabelFont;
-		const int y = kSaveSlotStartY + i * kSaveSlotStride;
-		const Common::String slotLabel = buildDefaultSaveSlotLabel(i);
-		labelFont.drawString(screen, slotLabel, kSaveSlotLabelX, y,
-			labelFont.getStringWidth(slotLabel), 0);
-
-		Common::String displayTitle = slotTitles[i];
-		if (i == editingSlot && editingText)
-			displayTitle = *editingText + "_";
-		slotNameFont.drawString(screen, displayTitle, kSaveSlotNameX, y, kSaveSlotTextWidth, 0);
-	}
-
-	if (!statusMessage.empty()) {
-		drawShadowedString(*screen, slotNameFont, statusMessage, 20, kSaveStatusTextY,
-			screen->w - 40, kTextColorNormal, Graphics::kTextAlignCenter);
-	}
 
 	if (engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawCursor(*screen);
@@ -1363,86 +1309,97 @@ Common::Error MenuSystem::runRoomMenu(const IndexedBitmap &backdrop, const byte 
 	return Common::kNoError;
 }
 
-Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrightness,
-		Flow &flow, bool &loadedGame) {
-	(void)palette;
-	(void)paletteBrightness;
-	loadedGame = false;
+struct MenuSystem::SaveSlotMenu {
+	SaveSlotMenu(MetaEngine &meta, const CftFontResource &nameFont, const CftFontResource &labelFont)
+		: metaEngine(meta), slotNameFont(nameFont), slotLabelFont(labelFont) {}
 
-	ResourceManager *resources = _engine.getResources();
-	MetaEngine *metaEngine = _engine.getMetaEngine();
-	const CftFontResource *slotNameFontResource = findStartupFontByName(_engine, "MEDFONT1");
-	const CftFontResource *slotLabelFontResource = findStartupFontByName(_engine, "MEDFONT2");
-	if (!resources || !metaEngine || !slotNameFontResource || !slotLabelFontResource)
-		return Common::kReadingFailed;
-	if (!_engine.canLoadGameStateCurrently())
-		return Common::kNoError;
-
-	HarvesterCftFont slotNameFont(*slotNameFontResource);
-	HarvesterCftFont slotLabelFont(*slotLabelFontResource);
-	if (!slotNameFont.isValid() || !slotLabelFont.isValid())
-		return Common::kReadingFailed;
-
+	MetaEngine &metaEngine;
+	HarvesterCftFont slotNameFont;
+	HarvesterCftFont slotLabelFont;
 	IndexedBitmap background;
-	byte loadPalette[256 * 3];
-	if (!loadBitmapResource(*resources, kLoadGameBitmapPath, background) ||
-			!loadPaletteResource(*resources, kLoadGamePalettePath, loadPalette)) {
-		return Common::kReadingFailed;
-	}
-
+	byte palette[256 * 3];
 	Common::Array<Common::String> slotTitles;
-	slotTitles.resize(kSaveSlotCount);
-	for (int i = 0; i < kSaveSlotCount; ++i)
-		slotTitles[i].clear();
+	int activeSlot = 0;
+	Common::String statusMessage;
+	bool needsRedraw = true;
+};
 
-	const SaveStateList saves = metaEngine->listSaves(ConfMan.getActiveDomainName().c_str());
+void MenuSystem::reloadSaveSlotTitles(SaveSlotMenu &menu) const {
+	menu.slotTitles.clear();
+	menu.slotTitles.resize(kSaveSlotCount);
+	const SaveStateList saves = menu.metaEngine.listSaves(ConfMan.getActiveDomainName().c_str());
 	for (const SaveStateDescriptor &save : saves) {
 		const int slot = save.getSaveSlot();
-		if (slot < 0 || slot >= kSaveSlotCount)
-			continue;
-		slotTitles[slot] = save.getDescription();
+		if (slot >= 0 && slot < kSaveSlotCount)
+			menu.slotTitles[slot] = save.getDescription();
 	}
+}
 
-	auto resolveHoveredSlot = [&]() -> int {
-		for (int slot = 0; slot < kSaveSlotCount; ++slot) {
-			if (saveSlotRect(slot).contains(_mousePos))
-				return slot;
-		}
-		return -1;
-	};
-
-	int activeSlot = 0;
+int MenuSystem::getSaveSlotAt(const Common::Point &mousePos) const {
 	for (int slot = 0; slot < kSaveSlotCount; ++slot) {
-		if (!slotTitles[slot].empty()) {
-			activeSlot = slot;
-			break;
-		}
+		if (saveSlotRect(slot).contains(mousePos))
+			return slot;
+	}
+	return -1;
+}
+
+MenuSystem::SaveSlotCommand MenuSystem::getSaveSlotCommand(const Common::Event &event) const {
+	if (event.type == Common::EVENT_KEYDOWN) {
+		if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			return kCancelSlot;
+		if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_KP_ENTER)
+			return kConfirmSlot;
+	} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+		if (saveConfirmRect().contains(_mousePos))
+			return kConfirmSlot;
+		if (saveCancelRect().contains(_mousePos))
+			return kCancelSlot;
+	}
+	return kNoSlotCommand;
+}
+
+void MenuSystem::renderSaveSlotMenu(const SaveSlotMenu &menu, const Common::String *editingText) const {
+	Graphics::Screen *screen = _engine.getScreen();
+	if (!screen)
+		return;
+
+	applyMenuPalette(*screen, _engine, menu.palette, 1.0f);
+	blitBitmap(*screen, menu.background, 0, 0);
+
+	for (int i = 0; i < kSaveSlotCount; ++i) {
+		const Graphics::Font &labelFont = (i == menu.activeSlot) ? menu.slotNameFont : menu.slotLabelFont;
+		const int y = kSaveSlotStartY + i * kSaveSlotStride;
+		const Common::String slotLabel = buildDefaultSaveSlotLabel(i);
+		labelFont.drawString(screen, slotLabel, kSaveSlotLabelX, y,
+			labelFont.getStringWidth(slotLabel), 0);
+
+		Common::String displayTitle = menu.slotTitles[i];
+		if (i == menu.activeSlot && editingText)
+			displayTitle = *editingText + "_";
+		menu.slotNameFont.drawString(screen, displayTitle, kSaveSlotNameX, y, kSaveSlotTextWidth, 0);
 	}
 
-	Common::String statusMessage;
+	if (!editingText && !menu.statusMessage.empty()) {
+		drawShadowedString(*screen, menu.slotNameFont, menu.statusMessage, 20, kSaveStatusTextY,
+			screen->w - 40, kTextColorNormal, Graphics::kTextAlignCenter);
+	}
+
+	if (_engine.getRuntimeEntities())
+		_engine.getRuntimeEntities()->drawCursor(*screen);
+	screen->makeAllDirty();
+	screen->update();
+}
+
+Common::Error MenuSystem::runSaveSlotEditor(SaveSlotMenu &menu, Flow &flow,
+		Common::String &editedTitle, bool &confirmed) {
+	confirmed = false;
 	bool needsRedraw = true;
 	flow.resetCursorAnimationSequence();
 	Graphics::FrameLimiter limiter(g_system, 60);
 
-	auto activateSelectedSlot = [&]() -> Common::Error {
-		if (slotTitles[activeSlot].empty())
-			return Common::kNoError;
-
-		Common::Error loadError = _engine.loadGameState(activeSlot);
-		if (loadError.getCode() == Common::kNoError) {
-			loadedGame = true;
-			return Common::kNoError;
-		}
-
-		statusMessage = loadError.getDesc();
-		needsRedraw = true;
-		return Common::kNoError;
-	};
-
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderSaveGameMenuScreen(_engine, background, loadPalette, 1.0f,
-				slotNameFont, slotLabelFont, slotNameFont, slotTitles, activeSlot, statusMessage);
+			renderSaveSlotMenu(menu, &editedTitle);
 			needsRedraw = false;
 		}
 
@@ -1452,59 +1409,24 @@ Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrig
 			if (flow.handleSystemEvent(event, result))
 				return result;
 
+			const SaveSlotCommand command = getSaveSlotCommand(event);
+			if (command != kNoSlotCommand) {
+				confirmed = command == kConfirmSlot;
+				return Common::kNoError;
+			}
+
 			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE: {
-				const int hoveredSlot = resolveHoveredSlot();
-				if (hoveredSlot != -1 && hoveredSlot != activeSlot)
-					activeSlot = hoveredSlot;
+			case Common::EVENT_MOUSEMOVE:
 				needsRedraw = true;
 				break;
-			}
-			case Common::EVENT_LBUTTONDOWN: {
-				const int hoveredSlot = resolveHoveredSlot();
-				statusMessage.clear();
-				if (hoveredSlot != -1) {
-					activeSlot = hoveredSlot;
-					Common::Error loadError = activateSelectedSlot();
-					if (loadError.getCode() != Common::kNoError)
-						return loadError;
-					if (loadedGame)
-						return Common::kNoError;
-					needsRedraw = true;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+					needsRedraw |= deleteTextEntryCharacter(editedTitle);
 					break;
 				}
-				if (saveConfirmRect().contains(_mousePos)) {
-					Common::Error loadError = activateSelectedSlot();
-					if (loadError.getCode() != Common::kNoError)
-						return loadError;
-					if (loadedGame)
-						return Common::kNoError;
-				} else if (saveCancelRect().contains(_mousePos)) {
-					return Common::kNoError;
-				}
-				needsRedraw = true;
-				break;
-			}
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
-					return Common::kNoError;
-				if (event.kbd.keycode == Common::KEYCODE_UP) {
-					activeSlot = (activeSlot + kSaveSlotCount - 1) % kSaveSlotCount;
-					statusMessage.clear();
-					needsRedraw = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-					activeSlot = (activeSlot + 1) % kSaveSlotCount;
-					statusMessage.clear();
-					needsRedraw = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-					statusMessage.clear();
-					Common::Error loadError = activateSelectedSlot();
-					if (loadError.getCode() != Common::kNoError)
-						return loadError;
-					if (loadedGame)
-						return Common::kNoError;
-					needsRedraw = true;
+				if (event.kbd.ascii >= 32 && event.kbd.ascii <= 126 && event.kbd.ascii != '~') {
+					needsRedraw |= appendTextEntryCharacter(editedTitle, menu.slotNameFont,
+						event.kbd.ascii, kSaveSlotMaxCharacters, kSaveSlotTextWidth);
 				}
 				break;
 			default:
@@ -1522,154 +1444,89 @@ Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrig
 	return Common::kNoError;
 }
 
+void MenuSystem::loadSelectedSlot(SaveSlotMenu &menu, bool &loaded) {
+	if (menu.slotTitles[menu.activeSlot].empty())
+		return;
+
+	Common::Error loadError = _engine.loadGameState(menu.activeSlot);
+	if (loadError.getCode() == Common::kNoError) {
+		loaded = true;
+		return;
+	}
+
+	menu.statusMessage = loadError.getDesc();
+	menu.needsRedraw = true;
+}
+
+Common::Error MenuSystem::saveSelectedSlot(SaveSlotMenu &menu, Flow &flow, bool &saved) {
+	saved = false;
+	Common::String editedTitle = menu.slotTitles[menu.activeSlot];
+	bool confirmed = false;
+	Common::Error entryError = runSaveSlotEditor(menu, flow, editedTitle, confirmed);
+	if (entryError.getCode() != Common::kNoError)
+		return entryError;
+	if (!confirmed)
+		return Common::kNoError;
+
+	Common::Error saveError = _engine.saveGameState(menu.activeSlot, editedTitle);
+	if (saveError.getCode() == Common::kNoError) {
+		saved = true;
+		return Common::kNoError;
+	}
+
+	menu.statusMessage = saveError.getDesc();
+	reloadSaveSlotTitles(menu);
+	menu.needsRedraw = true;
+	return Common::kNoError;
+}
+
+Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrightness,
+		Flow &flow, bool &loadedGame) {
+	return runSaveSlotMenu(flow, kLoadMode, loadedGame);
+}
+
 Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrightness,
 		Flow &flow, bool &savedGame) {
-	(void)palette;
-	(void)paletteBrightness;
-	savedGame = false;
+	return runSaveSlotMenu(flow, kSaveMode, savedGame);
+}
+
+Common::Error MenuSystem::runSaveSlotMenu(Flow &flow, SaveLoadMode mode, bool &completed) {
+	completed = false;
 	ResourceManager *resources = _engine.getResources();
 	MetaEngine *metaEngine = _engine.getMetaEngine();
 	const CftFontResource *slotNameFontResource = findStartupFontByName(_engine, "MEDFONT1");
 	const CftFontResource *slotLabelFontResource = findStartupFontByName(_engine, "MEDFONT2");
 	if (!resources || !metaEngine || !slotNameFontResource || !slotLabelFontResource)
 		return Common::kReadingFailed;
-	if (!_engine.canSaveGameStateCurrently())
+	if (mode == kSaveMode ? !_engine.canSaveGameStateCurrently() : !_engine.canLoadGameStateCurrently())
 		return Common::kNoError;
 
-	HarvesterCftFont slotNameFont(*slotNameFontResource);
-	HarvesterCftFont slotLabelFont(*slotLabelFontResource);
-	if (!slotNameFont.isValid() || !slotLabelFont.isValid())
+	SaveSlotMenu menu(*metaEngine, *slotNameFontResource, *slotLabelFontResource);
+	if (!menu.slotNameFont.isValid() || !menu.slotLabelFont.isValid())
 		return Common::kReadingFailed;
 
-	IndexedBitmap background;
-	byte savePalette[256 * 3];
-	if (!loadBitmapResource(*resources, kSaveGameBitmapPath, background) ||
-			!loadPaletteResource(*resources, kSaveGamePalettePath, savePalette)) {
+	if (!loadBitmapResource(*resources, mode == kSaveMode ? kSaveGameBitmapPath : kLoadGameBitmapPath, menu.background) ||
+			!loadPaletteResource(*resources, mode == kSaveMode ? kSaveGamePalettePath : kLoadGamePalettePath, menu.palette)) {
 		return Common::kReadingFailed;
 	}
 
-	Common::Array<Common::String> slotTitles;
-	slotTitles.resize(kSaveSlotCount);
-	auto reloadSlotTitles = [&]() {
-		for (int i = 0; i < kSaveSlotCount; ++i)
-			slotTitles[i].clear();
-
-		const SaveStateList saves = metaEngine->listSaves(ConfMan.getActiveDomainName().c_str());
-		for (const SaveStateDescriptor &save : saves) {
-			const int slot = save.getSaveSlot();
-			if (slot < 0 || slot >= kSaveSlotCount)
-				continue;
-			slotTitles[slot] = save.getDescription();
-		}
-	};
-	reloadSlotTitles();
-
-	auto resolveHoveredSlot = [&]() -> int {
+	reloadSaveSlotTitles(menu);
+	if (mode == kLoadMode) {
 		for (int slot = 0; slot < kSaveSlotCount; ++slot) {
-			if (saveSlotRect(slot).contains(_mousePos))
-				return slot;
-		}
-		return -1;
-	};
-	auto runInlineSlotEditor = [&](int slotIndex, Common::String &editedTitle,
-			bool &confirmed) -> Common::Error {
-		confirmed = false;
-		bool needsRedraw = true;
-		flow.resetCursorAnimationSequence();
-		Graphics::FrameLimiter entryLimiter(g_system, 60);
-
-		while (!_engine.shouldQuit()) {
-			if (needsRedraw) {
-				renderSaveGameMenuScreen(_engine, background, savePalette, 1.0f,
-					slotNameFont, slotLabelFont, slotNameFont, slotTitles, slotIndex,
-					Common::String(), slotIndex, &editedTitle);
-				needsRedraw = false;
+			if (!menu.slotTitles[slot].empty()) {
+				menu.activeSlot = slot;
+				break;
 			}
-
-			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event)) {
-				Common::Error result = Common::kNoError;
-				if (flow.handleSystemEvent(event, result))
-					return result;
-
-				switch (event.type) {
-				case Common::EVENT_MOUSEMOVE:
-					needsRedraw = true;
-					break;
-				case Common::EVENT_LBUTTONDOWN:
-					if (saveConfirmRect().contains(_mousePos)) {
-						confirmed = true;
-						return Common::kNoError;
-					}
-					if (saveCancelRect().contains(_mousePos))
-						return Common::kNoError;
-					break;
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
-						return Common::kNoError;
-					if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-							event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-						confirmed = true;
-						return Common::kNoError;
-					}
-					if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
-						if (!editedTitle.empty()) {
-							editedTitle.deleteLastChar();
-							needsRedraw = true;
-						}
-						break;
-					}
-					if (appendInlineSaveCharacter(editedTitle, slotNameFont, event.kbd.ascii))
-						needsRedraw = true;
-					break;
-				default:
-					break;
-				}
-			}
-
-			if (EntityManager *entityManager = _engine.getRuntimeEntities())
-				(void)entityManager->syncCursorEntityPosition(_mousePos);
-
-			entryLimiter.delayBeforeSwap();
-			entryLimiter.startFrame();
 		}
+	}
 
-		return Common::kNoError;
-	};
-
-	int activeSlot = 0;
-	Common::String statusMessage;
-	bool needsRedraw = true;
 	flow.resetCursorAnimationSequence();
 	Graphics::FrameLimiter limiter(g_system, 60);
 
-	auto activateSelectedSlot = [&](bool &saved) -> Common::Error {
-		saved = false;
-		Common::String editedTitle = slotTitles[activeSlot];
-		bool confirmed = false;
-		Common::Error entryError = runInlineSlotEditor(activeSlot, editedTitle, confirmed);
-		if (entryError.getCode() != Common::kNoError)
-			return entryError;
-		if (!confirmed)
-			return Common::kNoError;
-
-		Common::Error saveError = _engine.saveGameState(activeSlot, editedTitle);
-		if (saveError.getCode() == Common::kNoError) {
-			saved = true;
-			return Common::kNoError;
-		}
-
-		statusMessage = saveError.getDesc();
-		reloadSlotTitles();
-		needsRedraw = true;
-		return Common::kNoError;
-	};
-
 	while (!_engine.shouldQuit()) {
-		if (needsRedraw) {
-			renderSaveGameMenuScreen(_engine, background, savePalette, 1.0f,
-				slotNameFont, slotLabelFont, slotNameFont, slotTitles, activeSlot, statusMessage);
-			needsRedraw = false;
+		if (menu.needsRedraw) {
+			renderSaveSlotMenu(menu);
+			menu.needsRedraw = false;
 		}
 
 		Common::Event event;
@@ -1678,71 +1535,64 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 			if (flow.handleSystemEvent(event, result))
 				return result;
 
+			bool activateSlot = false;
+			bool redrawAfterActivation = false;
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
-				const int hoveredSlot = resolveHoveredSlot();
-				if (hoveredSlot != -1 && hoveredSlot != activeSlot)
-					activeSlot = hoveredSlot;
-				needsRedraw = true;
+				const int hoveredSlot = getSaveSlotAt(_mousePos);
+				if (hoveredSlot != -1 && hoveredSlot != menu.activeSlot)
+					menu.activeSlot = hoveredSlot;
+				menu.needsRedraw = true;
 				break;
 			}
 			case Common::EVENT_LBUTTONDOWN: {
-				const int hoveredSlot = resolveHoveredSlot();
-				bool saved = false;
-				statusMessage.clear();
+				const int hoveredSlot = getSaveSlotAt(_mousePos);
+				menu.statusMessage.clear();
 				if (hoveredSlot != -1) {
-					activeSlot = hoveredSlot;
-					Common::Error saveError = activateSelectedSlot(saved);
-					if (saveError.getCode() != Common::kNoError)
-						return saveError;
-					if (saved) {
-						savedGame = true;
+					menu.activeSlot = hoveredSlot;
+					activateSlot = true;
+					// Cancelling a row-opened save editor does not force a browser redraw.
+					redrawAfterActivation = mode == kLoadMode;
+				} else {
+					const SaveSlotCommand command = getSaveSlotCommand(event);
+					if (command == kCancelSlot)
 						return Common::kNoError;
-					}
-					break;
+					activateSlot = command == kConfirmSlot;
+					redrawAfterActivation = true;
 				}
-				if (saveConfirmRect().contains(_mousePos)) {
-					Common::Error saveError = activateSelectedSlot(saved);
-					if (saveError.getCode() != Common::kNoError)
-						return saveError;
-					if (saved) {
-						savedGame = true;
-						return Common::kNoError;
-					}
-				} else if (saveCancelRect().contains(_mousePos)) {
-					return Common::kNoError;
-				}
-				needsRedraw = true;
 				break;
 			}
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				if (getSaveSlotCommand(event) == kCancelSlot)
 					return Common::kNoError;
-				if (event.kbd.keycode == Common::KEYCODE_UP) {
-					activeSlot = (activeSlot + kSaveSlotCount - 1) % kSaveSlotCount;
-					statusMessage.clear();
-					needsRedraw = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-					activeSlot = (activeSlot + 1) % kSaveSlotCount;
-					statusMessage.clear();
-					needsRedraw = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-					bool saved = false;
-					statusMessage.clear();
-					Common::Error saveError = activateSelectedSlot(saved);
-					if (saveError.getCode() != Common::kNoError)
-						return saveError;
-					if (saved) {
-						savedGame = true;
-						return Common::kNoError;
-					}
-					needsRedraw = true;
+				if (event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_DOWN) {
+					const int step = event.kbd.keycode == Common::KEYCODE_UP ? kSaveSlotCount - 1 : 1;
+					menu.activeSlot = (menu.activeSlot + step) % kSaveSlotCount;
+					menu.statusMessage.clear();
+					menu.needsRedraw = true;
+				} else if (getSaveSlotCommand(event) == kConfirmSlot) {
+					menu.statusMessage.clear();
+					activateSlot = true;
+					redrawAfterActivation = true;
 				}
 				break;
 			default:
 				break;
 			}
+
+			if (activateSlot) {
+				Common::Error actionError = Common::kNoError;
+				if (mode == kSaveMode)
+					actionError = saveSelectedSlot(menu, flow, completed);
+				else
+					loadSelectedSlot(menu, completed);
+				if (actionError.getCode() != Common::kNoError)
+					return actionError;
+				if (completed)
+					return Common::kNoError;
+			}
+			if (redrawAfterActivation)
+				menu.needsRedraw = true;
 		}
 
 		if (EntityManager *entityManager = _engine.getRuntimeEntities())
@@ -1956,10 +1806,7 @@ Common::Error MenuSystem::runPasswordPrompt(const IndexedBitmap &backdrop, const
 				}
 				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE ||
 						event.kbd.keycode == Common::KEYCODE_LEFT) {
-					if (!password.empty()) {
-						password.deleteLastChar();
-						needsRedraw = true;
-					}
+					needsRedraw |= deleteTextEntryCharacter(password);
 					break;
 				}
 				if (event.kbd.keycode == Common::KEYCODE_HOME) {
@@ -1969,9 +1816,9 @@ Common::Error MenuSystem::runPasswordPrompt(const IndexedBitmap &backdrop, const
 					}
 					break;
 				}
-				if (appendBoundedTextEntryCharacter(password, entryFont, event.kbd.ascii,
-						kPasswordMaxCharacters, kPasswordEntryWidth)) {
-					needsRedraw = true;
+				if (event.kbd.ascii >= 32 && event.kbd.ascii <= 126 && event.kbd.ascii != '~') {
+					needsRedraw |= appendTextEntryCharacter(password, entryFont, event.kbd.ascii,
+						kPasswordMaxCharacters, kPasswordEntryWidth);
 				}
 				break;
 			default:
