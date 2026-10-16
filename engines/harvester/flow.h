@@ -40,7 +40,6 @@ struct Event;
 namespace Harvester {
 
 class HarvesterEngine;
-class Interaction;
 struct IndexedBitmap;
 
 class Flow {
@@ -71,60 +70,58 @@ public:
 	bool queueDebugInteraction(const InteractionResult &interaction);
 	bool requestDebugRoomChange(const Common::String &roomName);
 
-private:
-	friend class MenuSystem;
-	friend class Interaction;
-	friend class SceneRunner;
-	friend class Input;
-	friend class Scene;
-
-	bool loadQuickTips();
-	bool loadMenuItems();
-	Common::Error runQuickTips();
-	Common::Error runDemoIntroduction();
 	Common::Error runDemoEnding();
-	Common::Error runMainMenu();
 	Common::Error runRoomMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, bool canSaveGame);
 	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const ScriptExecutionContext &executionContext,
 		const NpcRecord &npc, const Common::String &usedItemName);
-	Common::Error runTownMapSelector(const Common::String &mapEntryName, Common::String &destinationEntranceName);
 	Common::Error runRoomLoop(const Common::String &entranceName);
 	Common::Error resolveRoomTransitionTarget(const Common::String &targetName, Common::String &resolvedTargetName);
-	bool ensureCursorEntity();
+
 	bool populateRoomSceneEntities(RoomSetupState &state,
 		const Common::Array<ObjectRecord> &drawableObjects,
 		const Common::Array<AnimRecord> &drawableAnimations);
 	Common::Error beginRoomSetupTransition();
 	Common::Error waitForRoomSetupTransitionHold();
 	Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
-	Common::Error fadePalette(const byte *palette, float fromBrightness, float toBrightness);
-	bool waitForPaletteFadeTick(uint32 startTick, Common::Error &result);
-	bool pumpTransitionEvents(Common::Error &result);
+	void resetCursorAnimationSequence();
+	bool tickRuntimeEntities();
+
 	bool takeQueuedDialogueInteraction(InteractionResult &interaction);
 	bool takeQueuedDebugInteraction(InteractionResult &interaction);
+
 	void prepareForNewGame();
 	void requestNewGameRestart();
-	bool hasPendingNewGameRestart() const;
 	bool takePendingNewGameRestart();
-	void clearPendingNewGameRestart();
-	bool hasPendingGameOverReturn() const;
 	bool takePendingGameOverReturn();
-	void clearPendingGameOverReturn();
 	void requestMainMenuReturn();
 	bool hasPendingMainMenuReturn() const;
 	bool takePendingMainMenuReturn();
-	void clearPendingMainMenuReturn();
 	void requestCloseupParentRestart();
-	bool hasPendingCloseupParentRestart() const;
 	bool takePendingCloseupParentRestart();
-	void clearPendingCloseupParentRestart();
 	bool hasPendingDebugRoomChange() const { return !_pendingDebugRoomName.empty(); }
-	Common::String takePendingDebugRoomChange();
 	void resetRoomNpcDialogueState();
-	void resetCursorAnimationSequence();
-	bool tickRuntimeEntities();
+
+private:
+	bool loadQuickTips();
+	bool loadMenuItems();
+	Common::Error runQuickTips();
+	Common::Error runDemoIntroduction();
+	Common::Error runMainMenu();
+	Common::Error runTownMapSelector(const Common::String &mapEntryName, Common::String &destinationEntranceName);
+	bool ensureCursorEntity();
+	Common::Error fadePalette(const byte *palette, float fromBrightness, float toBrightness);
+	bool waitForPaletteFadeTick(uint32 startTick, Common::Error &result);
+	bool pumpTransitionEvents(Common::Error &result);
+	bool hasPendingNewGameRestart() const;
+	void clearPendingNewGameRestart();
+	bool hasPendingGameOverReturn() const;
+	void clearPendingGameOverReturn();
+	void clearPendingMainMenuReturn();
+	bool hasPendingCloseupParentRestart() const;
+	void clearPendingCloseupParentRestart();
+	Common::String takePendingDebugRoomChange();
 
 	HarvesterEngine &_engine;
 	Common::Array<Common::String> _quickTips;
