@@ -886,6 +886,9 @@
 #define FRM_CollegeCorridorAnnouncementBoardFloppy1 1250
 #define FRM_CollegeCorridorAnnouncementBoardFloppy2 1251
 
+#define FRM_CollegeCorridorMissBarrymoreFloppy1 1267
+#define FRM_CollegeCorridorMissBarrymoreFloppy2 1268
+
 #define FRM_CollegeCorridorCarolineFloppy1 1252
 #define FRM_CollegeCorridorCarolineFloppy2 1253
 #define FRM_CollegeCorridorCarolineFloppy3 1254
