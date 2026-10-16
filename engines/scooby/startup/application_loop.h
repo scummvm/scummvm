@@ -55,6 +55,8 @@ public:
 	// Returns whether the session is idle in the main room loop
 	bool canSaveGame() const { return _state.SaveAllowed; }
 
+	const RuntimeState &getState() const { return _state; }
+
 private:
 	// Initializes the shared state lifecycle before any startup presentation can run.
 	// state: runtime state retained through the following adventure session.

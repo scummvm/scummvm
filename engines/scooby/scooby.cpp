@@ -74,15 +74,15 @@ Common::Error ScoobyEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	// Set the engine's debugger console
-	setDebugger(new Console());
-
 	Graphics::Screen screen;
 
 	TileScene scene;
 	IndexedFrame frame(screen);
 
 	_applicationLoop = new ApplicationLoop(*rom, scene, frame, *host);
+
+	// Set the engine's debugger console
+	setDebugger(new Console(_applicationLoop));
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");

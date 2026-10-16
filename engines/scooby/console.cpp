@@ -23,8 +23,9 @@
 
 namespace Scooby {
 
-Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+Console::Console(const ApplicationLoop *applicationLoop) : GUI::Debugger(), _applicationLoop(applicationLoop) {
+	registerCmd("test", WRAP_METHOD(Console, Cmd_test));
+	registerCmd("info", WRAP_METHOD(Console, Cmd_info));
 }
 
 Console::~Console() {
@@ -32,6 +33,11 @@ Console::~Console() {
 
 bool Console::Cmd_test(int argc, const char **argv) {
 	debugPrintf("Test\n");
+	return true;
+}
+
+bool Console::Cmd_info(int argc, const char **argv) {
+	debugPrintf("RoomId: %d\n", _applicationLoop->getState().RoomId);
 	return true;
 }
 

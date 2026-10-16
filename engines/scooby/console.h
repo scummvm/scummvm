@@ -24,14 +24,18 @@
 #define SCOOBY_CONSOLE_H
 
 #include "gui/debugger.h"
+#include "startup/application_loop.h"
 
 namespace Scooby {
 
 class Console : public GUI::Debugger {
 private:
+	const ApplicationLoop *_applicationLoop;
+
 	bool Cmd_test(int argc, const char **argv);
+	bool Cmd_info(int argc, const char **argv);
 public:
-	Console();
+	Console(const ApplicationLoop *applicationLoop);
 	~Console() override;
 };
 
