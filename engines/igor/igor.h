@@ -1786,6 +1786,8 @@ private:
 	void debugApplyOverlay();
 
 	bool isCDVersion() const { return !(_game.flags & kFlagFloppy); }
+	// The two full floppy releases (the demos also carry the floppy flag)
+	bool isFullFloppyVersion() const { return _game.version == kIdEngFloppy || _game.version == kIdSpaFloppy; }
 	int getPart() const { return _currentPart / 10; }
 	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; }
 	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); }
