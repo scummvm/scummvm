@@ -883,4 +883,7 @@
 #define FRM_CollegeCorridorMargaretFloppy7 1265
 #define FRM_CollegeCorridorMargaretFloppy8 1266
 
+#define FRM_CollegeStairsSecondFloorFloppy1 1273
+#define FRM_CollegeStairsSecondFloorFloppy2 1274
+
 #endif // IGOR_RESOURCE_IDS

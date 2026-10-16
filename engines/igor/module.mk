@@ -52,6 +52,7 @@ MODULE_OBJS = \
 	parts/part_30.o \
 	parts/part_30_floppy.o \
 	parts/part_31.o \
+	parts/part_31_floppy.o \
 	parts/part_32.o \
 	parts/part_33.o \
 	parts/part_34.o \
