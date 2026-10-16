@@ -184,6 +184,14 @@ const RoomDataOffsets IgorEngine::PART_19_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+// This room doesnt exist in the English floppy onwards
+const RoomDataOffsets IgorEngine::PART_20_FLOPPY_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 },
+	{ 4, 15 },
+	{ 19, 209, 3155, 103, 179, 82 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
 const RoomDataOffsets IgorEngine::PART_21_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
 	{ 5, 18 },
@@ -288,7 +296,6 @@ const RoomDataOffsets IgorEngine::PART_31_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-// The Spanish floppy room has no dialogue data and uses the area routed walk builder.
 const RoomDataOffsets IgorEngine::PART_31_FLOPPY_ROOM_DATA_OFFSETS = {
 	{ 20, 2, 2, 1 },
 	{ 32, 43 },
