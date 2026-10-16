@@ -27,6 +27,29 @@
 
 namespace Igor {
 
+// The menu is drawn in a 234x115 panel whose top-left corner is at (43, 15) on the 320x200 screen.
+static const int kMenuX = 43;
+static const int kMenuY = 15;
+static const int kMenuWidth = 234;
+static const int kMenuHeight = 115;
+static const int kMenuSize = 320 * kMenuHeight;
+static const int kButtonSpacing = 46;
+static const int kButtonWidth = 44;
+static const int kCaptionY = 18 - kMenuY;
+static const int kPageCenterX = 159;
+static const int kPageRowHeight = 22;
+static const int kFadeSteps = 21;
+static const int kLastFadedColor = 245;
+
+enum {
+	kColorTitle = 0xF6,
+	kColorFrameLight = 0xF7,
+	kColorFill = 0xF8,
+	kColorFrameDark = 0xF9,
+	kColorPageCaption = 0xFB,
+	kColorText = 0xFF
+};
+
 static const struct {
 	int y;
 	int h;
@@ -46,14 +69,14 @@ static const struct {
 };
 
 static void drawButtonsBar(uint8 *dst, const uint8 *src) {
-	int y0 = 15;
+	int y0 = kMenuY;
 	for (int i = 1; i <= 11; ++i) {
 		int y2 = y0 + buttonsBarCoords[i].h - 1;
 		if (y0 > y2) {
 			continue;
 		}
 		for (int y1 = y0; y1 <= y2; ++y1) {
-			memcpy(dst + (y1 - 15) * 320 + 43, src + (buttonsBarCoords[i].y - 1) * 234, 234);
+			memcpy(dst + (y1 - kMenuY) * 320 + kMenuX, src + (buttonsBarCoords[i].y - 1) * kMenuWidth, kMenuWidth);
 			++y0;
 		}
 	}
@@ -63,8 +86,8 @@ static void drawButtonsBar(uint8 *dst, const uint8 *src) {
 static void redrawButton(uint8 *dst, int button, bool highlight) {
 	const int colorDiff = highlight ? 4 : -4;
 	for (int y = 0; y <= 11; ++y) {
-		uint8 *p = dst + (y + 3) * 320 + button * 46 + 43 + 3;
-		for (int x = 0; x <= 43; ++x) {
+		uint8 *p = dst + (y + 3) * 320 + button * kButtonSpacing + kMenuX + 3;
+		for (int x = 0; x < kButtonWidth; ++x) {
 			p[x] += colorDiff;
 		}
 	}
@@ -156,6 +179,10 @@ static const Page pages[] = {
 void IgorEngine::loadOptionsMenuTexts() {
 	if (!_optionsMenuTexts.empty())
 		return;
+	if (_game.version == kIdSpaFloppy) {
+		loadFloppyOptionsMenuTexts();
+		return;
+	}
 
 	const bool demo = _game.flags & kFlagDemo;
 	const bool talkie = _game.flags & kFlagTalkie;
@@ -205,8 +232,8 @@ void IgorEngine::drawOptionsMenuText(int text, int x, int y, int color) {
 }
 
 void IgorEngine::handleOptionsMenu_paintQuit() {
-	drawOptionsMenuText(kOptionsQuitQuestion, 159, 64 - 15, 0xF6);
-	drawOptionsMenuText(kOptionsQuitKeys, 159, 76 - 15, 0xF6);
+	drawOptionsMenuText(kOptionsQuitQuestion, kPageCenterX, 64 - kMenuY, kColorTitle);
+	drawOptionsMenuText(kOptionsQuitKeys, kPageCenterX, 76 - kMenuY, kColorTitle);
 }
 
 bool IgorEngine::handleOptionsMenu_handleKeyDownQuit(int key) {
@@ -217,17 +244,17 @@ bool IgorEngine::handleOptionsMenu_handleKeyDownQuit(int key) {
 }
 
 static void redrawRect(uint8 *dst, int num, bool border) {
-	const int x = 43 + 6;
-	const int y = 22 * num;
+	const int x = kMenuX + 6;
+	const int y = kPageRowHeight * num;
 	for (int i = 0; i < 21; ++i) {
-		memset(dst + (y + i) * 320 + x, 0xF8, 222);
+		memset(dst + (y + i) * 320 + x, kColorFill, 222);
 	}
 	if (border) {
-		memset(dst +  y       * 320 + x, 0xF7, 222);
-		memset(dst + (y + 20) * 320 + x, 0xF9, 222);
+		memset(dst +  y       * 320 + x, kColorFrameLight, 222);
+		memset(dst + (y + 20) * 320 + x, kColorFrameDark, 222);
 		for (int i = 1; i < 20; ++i) {
-			dst[(y + i) * 320 + x      ] = 0xF7;
-			dst[(y + i) * 320 + x + 221] = 0xF9;
+			dst[(y + i) * 320 + x      ] = kColorFrameLight;
+			dst[(y + i) * 320 + x + 221] = kColorFrameDark;
 		}
 	}
 }
@@ -242,7 +269,7 @@ void IgorEngine::handleOptionsMenu_paintCtrl() {
 		};
 		for (int row = 1; row <= 4; ++row) {
 			redrawRect(_screenTextLayer, row, row == 4);
-			drawOptionsMenuText(labels[row - 1], 159, 22 * row + 4, row == 4 ? 0xF6 : 0xF7);
+			drawOptionsMenuText(labels[row - 1], kPageCenterX, kPageRowHeight * row + 4, row == 4 ? kColorTitle : kColorFrameLight);
 		}
 		return;
 	}
@@ -257,8 +284,8 @@ void IgorEngine::handleOptionsMenu_paintCtrl() {
 	};
 	for (int row = 1; row <= 4; ++row) {
 		redrawRect(_screenTextLayer, row, row == _optionsControlRow);
-		drawOptionsMenuText(labels[row - 1], 159, 22 * row + 4,
-			row == _optionsControlRow ? 0xF6 : 0xFF);
+		drawOptionsMenuText(labels[row - 1], kPageCenterX, kPageRowHeight * row + 4,
+			row == _optionsControlRow ? kColorTitle : kColorText);
 	}
 }
 
@@ -313,6 +340,331 @@ bool IgorEngine::handleOptionsMenu_handleKeyDownCtrl(int key) {
 	return false;
 }
 
+static const int kFloppyMenuX = 53;
+static const int kFloppyMenuY = 19;
+static const int kFloppyMenuWidth = 214;
+static const int kFloppyMenuHeight = 106;
+static const int kFloppyMenuSize = 320 * kFloppyMenuHeight;
+static const int kFloppyButtonX = 55;
+static const int kFloppyButtonY = 21;
+static const int kFloppyButtonWidth = 42;
+static const int kFloppyButtonHeight = 13;
+static const int kFloppyControlPanelFirstRow = 36;
+static const int kFloppyControlPanelRows = 85;
+static const int kFloppyCaptionY = 22;
+static const int kFloppyCaptionLastRow = 34;
+static const int kFloppyLastFadedColor = 248;
+static const int kFloppyFadeSteps = 30;
+static const int kFloppyFadeCount = 3 * (kFloppyLastFadedColor + 1);
+
+enum {
+	kFloppyColorCaption = 0xF9,
+	kFloppyColorText = 0xFF,
+	kFloppyColorFrameLight = 0xFA,
+	kFloppyColorFrameDark = 0xFC,
+	kFloppyColorButtonLight = 0xFE,
+	kFloppyColorButtonDark = 0xFD
+};
+
+enum FloppyOptionsText {
+	kFloppySave = 0,
+	kFloppyLoad,
+	kFloppyQuit,
+	kFloppyCtrl,
+	kFloppyPlay,
+	kFloppySpeedTitle,
+	kFloppySpeedVerySlow,
+	kFloppySpeedSlow,
+	kFloppySpeedNormal,
+	kFloppySpeedFast,
+	kFloppySpeedVeryFast,
+	kFloppyMusicTitle,
+	kFloppyMusicOff,
+	kFloppyMusicOn,
+	kFloppyMusicUnavailable,
+	kFloppySoundTitle,
+	kFloppySoundOff,
+	kFloppySoundOn,
+	kFloppySoundUnavailable,
+	kFloppyCtrlTitle,
+	kFloppyQuitTitle,
+	kFloppyQuitQuestion,
+	kFloppyTextCount
+};
+
+static const int kFloppyCaptionX[5] = { 60, 102, 148, 185, 231 };
+static const int kFloppySpeedX[5] = { 137, 148, 145, 146, 135 };
+
+// Row of the button image (1-based) and the number of screen rows it is repeated for.
+static const struct {
+	int row;
+	int count;
+} kFloppyPanelRows[] = {
+	{ 1, 1 }, { 2, 2 }, { 4, 1 }, { 5, 9 }, { 6, 1 }, { 2, 2 },
+	{ 7, 1 }, { 8, 85 }, { 9, 1 }, { 2, 2 }, { 3, 1 }
+};
+
+void IgorEngine::loadFloppyOptionsMenuTexts() {
+	const struct {
+		int resource;
+		int count;
+	} groups[] = {
+		{ TXT_OptionsButtons, 5 },
+		{ TXT_OptionsSettings, 14 },
+		{ TXT_OptionsTitle, 1 },
+		{ TXT_OptionsQuit, 2 }
+	};
+	for (uint i = 0; i < ARRAYSIZE(groups); ++i) {
+		int size;
+		uint8 *data = loadData(groups[i].resource, 0, &size);
+		int offset = 0;
+		for (int j = 0; j < groups[i].count; ++j) {
+			if (offset >= size || data[offset] > size - offset - 1)
+				error("Invalid options menu text resource %d", groups[i].resource);
+			const int length = data[offset++];
+			_optionsMenuTexts.push_back(Common::String((const char *)data + offset, length));
+			offset += length;
+		}
+		if (offset != size)
+			error("Unexpected data in options menu text resource %d", groups[i].resource);
+		free(data);
+	}
+	assert(_optionsMenuTexts.size() == kFloppyTextCount);
+}
+
+// Texts are left aligned and drawn with the action sentence font into the menu panel.
+void IgorEngine::floppyOptionsDrawText(int text, int x, int y, int color) {
+	_sentenceFont->drawString(_screenTextLayer, _optionsMenuTexts[text].c_str(), x, y - kFloppyMenuY, color, -1, -1);
+}
+
+void IgorEngine::floppyOptionsFillRow(const uint8 *button, int buttonRow, int y) {
+	memcpy(_screenTextLayer + (y - kFloppyMenuY) * 320 + kFloppyMenuX,
+	       button + (buttonRow - 1) * kFloppyMenuWidth, kFloppyMenuWidth);
+}
+
+void IgorEngine::floppyOptionsDrawMainPage(const uint8 *button) {
+	int y = 0;
+	for (uint i = 0; i < ARRAYSIZE(kFloppyPanelRows); ++i) {
+		for (int j = 0; j < kFloppyPanelRows[i].count; ++j) {
+			memcpy(_screenTextLayer + y * 320 + kFloppyMenuX, button + (kFloppyPanelRows[i].row - 1) * kFloppyMenuWidth, kFloppyMenuWidth);
+			++y;
+		}
+	}
+	for (int i = 0; i < 5; ++i) {
+		floppyOptionsDrawText(kFloppySave + i, kFloppyCaptionX[i], kFloppyCaptionY, kFloppyColorCaption);
+	}
+}
+
+void IgorEngine::floppyOptionsClearCaptionBar(const uint8 *button) {
+	for (int y = kFloppyCaptionY; y <= kFloppyCaptionLastRow; ++y) {
+		floppyOptionsFillRow(button, 2, y);
+	}
+}
+
+// Sends the panel to the screen, with the frame of the selected button (0 for none) on top.
+void IgorEngine::floppyOptionsPresent(int selectedButton) {
+	uint8 panel[kFloppyMenuSize];
+	memcpy(panel, _screenTextLayer, kFloppyMenuSize);
+	if (selectedButton >= 1 && selectedButton <= 5) {
+		const int x = kFloppyButtonX + (selectedButton - 1) * kFloppyButtonWidth;
+		uint8 *top = panel + (kFloppyButtonY - kFloppyMenuY) * 320 + x;
+		memset(top, kFloppyColorButtonLight, kFloppyButtonWidth);
+		for (int i = 1; i < kFloppyButtonHeight - 1; ++i) {
+			top[i * 320] = kFloppyColorButtonLight;
+			top[i * 320 + kFloppyButtonWidth - 1] = kFloppyColorButtonDark;
+		}
+		memset(top + (kFloppyButtonHeight - 1) * 320, kFloppyColorButtonDark, kFloppyButtonWidth);
+	}
+	_system->copyRectToScreen(panel, 320, 0, kFloppyMenuY, 320, kFloppyMenuHeight);
+	_system->updateScreen();
+}
+
+void IgorEngine::floppyOptionsPaintControl(const uint8 *button, int row) {
+	for (int i = 0; i < kFloppyControlPanelRows; ++i) {
+		floppyOptionsFillRow(button, 8, kFloppyControlPanelFirstRow + i);
+	}
+	const int speed = CLIP<int>(_gameState.talkSpeed, 1, 5);
+	const bool musicOn = !(ConfMan.getBool("mute") || ConfMan.getBool("music_mute"));
+	const bool soundOn = !(ConfMan.getBool("mute") || ConfMan.getBool("sfx_mute"));
+	const int speedColor = (row == 1) ? kFloppyColorCaption : kFloppyColorText;
+	const int musicColor = (row == 2) ? kFloppyColorCaption : kFloppyColorText;
+	const int soundColor = (row == 3) ? kFloppyColorCaption : kFloppyColorText;
+	floppyOptionsDrawText(kFloppySpeedTitle, 120, 40, speedColor);
+	floppyOptionsDrawText(kFloppySpeedVerySlow + speed - 1, kFloppySpeedX[speed - 1], 51, speedColor);
+	floppyOptionsDrawText(kFloppyMusicTitle, 147, 68, musicColor);
+	if (musicOn)
+		floppyOptionsDrawText(kFloppyMusicOn, 141, 79, musicColor);
+	else
+		floppyOptionsDrawText(kFloppyMusicOff, 133, 79, musicColor);
+	floppyOptionsDrawText(kFloppySoundTitle, 122, 96, soundColor);
+	if (soundOn)
+		floppyOptionsDrawText(kFloppySoundOn, 138, 107, soundColor);
+	else
+		floppyOptionsDrawText(kFloppySoundOff, 131, 107, soundColor);
+
+	// Frame around the selected row: light top and left edges, dark bottom and right edges.
+	const int top = (28 * row + 10 - kFloppyMenuY) * 320 + 59;
+	memset(_screenTextLayer + top, kFloppyColorFrameLight, 202);
+	for (int i = 1; i <= 23; ++i) {
+		_screenTextLayer[top + i * 320] = kFloppyColorFrameLight;
+		_screenTextLayer[top + i * 320 + 201] = kFloppyColorFrameDark;
+	}
+	memset(_screenTextLayer + top + 24 * 320, kFloppyColorFrameDark, 202);
+}
+
+void IgorEngine::floppyOptionsControlPage(const uint8 *button) {
+	floppyOptionsClearCaptionBar(button);
+	floppyOptionsDrawText(kFloppyCtrlTitle, 121, kFloppyCaptionY, kFloppyColorCaption);
+	int row = 1;
+	bool leave = false;
+	floppyOptionsPaintControl(button, row);
+	while (!leave && !_eventQuitGame && _currentPart != kInvalidPart) {
+		Common::Event ev;
+		while (_eventMan->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT) {
+				_currentPart = kInvalidPart;
+				_eventQuitGame = true;
+			} else if (ev.type == Common::EVENT_KEYDOWN) {
+				switch (ev.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					leave = true;
+					break;
+				case Common::KEYCODE_UP:
+					row = MAX(1, row - 1);
+					break;
+				case Common::KEYCODE_DOWN:
+					row = MIN(3, row + 1);
+					break;
+				case Common::KEYCODE_RETURN:
+				case Common::KEYCODE_KP_ENTER:
+					if (row == 1) {
+						_gameState.talkSpeed = _gameState.talkSpeed >= 5 ? 1 : _gameState.talkSpeed + 1;
+					} else if (row == 2) {
+						ConfMan.setBool("music_mute", !ConfMan.getBool("music_mute"));
+					} else {
+						ConfMan.setBool("sfx_mute", !ConfMan.getBool("sfx_mute"));
+					}
+					syncSoundSettings();
+					ConfMan.flushToDisk();
+					break;
+				default:
+					break;
+				}
+				floppyOptionsPaintControl(button, row);
+			}
+		}
+		floppyOptionsPresent(0);
+		_system->delayMillis(10);
+	}
+	floppyOptionsDrawMainPage(button);
+}
+
+void IgorEngine::floppyOptionsQuitPage(const uint8 *button) {
+	floppyOptionsClearCaptionBar(button);
+	floppyOptionsDrawText(kFloppyQuitTitle, 132, kFloppyCaptionY, kFloppyColorCaption);
+	floppyOptionsDrawText(kFloppyQuitQuestion, 90, 70, kFloppyColorCaption);
+	bool leave = false;
+	while (!leave && !_eventQuitGame && _currentPart != kInvalidPart) {
+		Common::Event ev;
+		while (_eventMan->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT) {
+				_currentPart = kInvalidPart;
+				_eventQuitGame = true;
+			} else if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_s) {
+					_currentPart = kInvalidPart;
+					leave = true;
+				} else if (ev.kbd.keycode == Common::KEYCODE_n || ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					leave = true;
+				}
+			}
+		}
+		floppyOptionsPresent(0);
+		_system->delayMillis(10);
+	}
+	if (_currentPart != kInvalidPart)
+		floppyOptionsDrawMainPage(button);
+}
+
+void IgorEngine::handleFloppyOptionsMenu() {
+	// The menu starts from the full palette and dims colors 1..248 in steps of three levels.
+	memcpy(_currentPalette, _paletteBuffer, 768);
+	for (int m = 3; m <= kFloppyFadeSteps; m += 3) {
+		for (int i = 3; i < kFloppyFadeCount; ++i) {
+			if (_paletteBuffer[i] >= m) {
+				_currentPalette[i] = MAX<int>(_paletteBuffer[i] - m, _currentPalette[i] - 3);
+			}
+		}
+		setPaletteRange(1, kFloppyLastFadedColor);
+		_system->updateScreen();
+		_system->delayMillis(1000 / 60);
+	}
+	setPaletteColor(255, 35, 35, 23);
+
+	memcpy(_screenTextLayer, _screenVGA + kFloppyMenuY * 320, kFloppyMenuSize);
+	uint8 *button = loadData(IMG_OptionsButton);
+	floppyOptionsDrawMainPage(button);
+
+	int selected = 1;
+	bool menuLoop = true;
+	while (menuLoop && !_eventQuitGame && _currentPart != kInvalidPart) {
+		Common::Event ev;
+		while (_eventMan->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT) {
+				_currentPart = kInvalidPart;
+				_eventQuitGame = true;
+			} else if (ev.type == Common::EVENT_KEYDOWN) {
+				switch (ev.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					menuLoop = false;
+					break;
+				case Common::KEYCODE_LEFT:
+					selected = MAX(1, selected - 1);
+					break;
+				case Common::KEYCODE_RIGHT:
+					selected = MIN(5, selected + 1);
+					break;
+				case Common::KEYCODE_RETURN:
+				case Common::KEYCODE_KP_ENTER:
+					if (selected == 1) {
+						saveGameDialog();
+					} else if (selected == 2) {
+						if (loadGameDialog()) {
+							free(button);
+							_optionsMenuThumbnail.free();
+							return;
+						}
+					} else if (selected == 3) {
+						floppyOptionsQuitPage(button);
+					} else if (selected == 4) {
+						floppyOptionsControlPage(button);
+					} else {
+						menuLoop = false;
+					}
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		floppyOptionsPresent(selected);
+		_system->delayMillis(10);
+	}
+	free(button);
+
+	_optionsMenuThumbnail.free();
+	_inputVars[kInputClick] = 0;
+	_inputVars[kInputRightClick] = 0;
+	_inputVars[kInputSkipDialogue] = 0;
+	_inputVars[kInputOptions] = 0;
+	_inputVars[kInputPause] = 0;
+	setPaletteColor(255, 63, 63, 63);
+	if (_currentPart != kInvalidPart) {
+		fadeIn(kFloppyFadeCount);
+	}
+	showCursor();
+}
+
 void IgorEngine::handleOptionsMenu() {
 	// get the gameplay screenshot before the menu draws or dims its palette.
 	_optionsMenuThumbnail.free();
@@ -336,6 +688,10 @@ void IgorEngine::handleOptionsMenu() {
 		_currentAction.object2Num = 0;
 		_currentAction.object2Type = 0;
 	}
+	if (_game.version == kIdSpaFloppy) {
+		handleFloppyOptionsMenu();
+		return;
+	}
 	// Keep the reserved UI colors: dialogue changes the displayed palette only.
 	memcpy(_paletteBuffer, _currentPalette, 208 * 3);
 	memcpy(_currentPalette + 208 * 3, _paletteBuffer + 208 * 3, 48 * 3);
@@ -343,22 +699,22 @@ void IgorEngine::handleOptionsMenu() {
 	if (!_gameState.dialogueStarted)
 		memset(_screenVGA + 144 * 320, 0, 11 * 320);
 	_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, 200);
-	for (int m = 3; m < 22; m += 3) {
-		for (int i = 1 * 3; i <= 245 * 3; ++i) {
+	for (int m = 3; m <= kFadeSteps; m += 3) {
+		for (int i = 1 * 3; i <= kLastFadedColor * 3; ++i) {
 			if (_paletteBuffer[i] >= m) {
 				_currentPalette[i] = MAX<int>(_paletteBuffer[i] - m, _currentPalette[i] - 3);
 			}
 		}
-		setPaletteRange(1, 245);
+		setPaletteRange(1, kLastFadedColor);
 		_system->updateScreen();
 		_system->delayMillis(1000 / 60);
 	}
 	setPaletteColor(255, 35, 35, 23);
 
-	memcpy(_screenTextLayer, _screenVGA + 4800, 36800);
+	memcpy(_screenTextLayer, _screenVGA + kMenuY * 320, kMenuSize);
 
 	uint8 *optionsMenu = loadData(IMG_OptionsMenu);
-	for (int i = 0; i < 36800; ++i) {
+	for (int i = 0; i < kMenuSize; ++i) {
 		if (optionsMenu[i]) {
 			_screenTextLayer[i] = optionsMenu[i];
 		}
@@ -368,9 +724,9 @@ void IgorEngine::handleOptionsMenu() {
 	drawButtonsBar(_screenTextLayer, optionsButton);
 	free(optionsButton);
 
-	const int yPosCaption = 18 - 15;
+	const int yPosCaption = kCaptionY;
 	for (int i = 0; i < 5; ++i) {
-		drawOptionsMenuText(pages[i].captions[0], pages[i].xPos[0], yPosCaption, 0xF6);
+		drawOptionsMenuText(pages[i].captions[0], pages[i].xPos[0], yPosCaption, kColorTitle);
 	}
 	redrawButton(_screenTextLayer, 0, true);
 
@@ -393,7 +749,7 @@ void IgorEngine::handleOptionsMenu() {
 					if (unavailable || (this->*pages[currentPage].handleKeyDownProc)(ev.kbd.keycode)) {
 						memcpy(_screenTextLayer + 3 * 320, buttonsBarBackup, 320 * 12);
 						for (int y = 22; y <= 110; ++y) {
-							memset(_screenTextLayer + y * 320 + 43 + 4, 0xF8, 226);
+							memset(_screenTextLayer + y * 320 + kMenuX + 4, kColorFill, 226);
 						}
 						focusOnPage = false;
 					}
@@ -415,14 +771,14 @@ void IgorEngine::handleOptionsMenu() {
 						} else {
 							memcpy(buttonsBarBackup, _screenTextLayer + 3 * 320, 320 * 12);
 							for (int y = 0; y <= 11; ++y) {
-								memset(_screenTextLayer + (y + 3) * 320 + 44, 0xF8, 232);
+								memset(_screenTextLayer + (y + 3) * 320 + kMenuX + 1, kColorFill, 232);
 							}
-							drawOptionsMenuText(pages[currentPage].captions[1], pages[currentPage].xPos[1], yPosCaption, 0xFB);
+							drawOptionsMenuText(pages[currentPage].captions[1], pages[currentPage].xPos[1], yPosCaption, kColorPageCaption);
 							if (currentPage == kPageCtrl)
 								_optionsControlRow = (_game.flags & kFlagTalkie) ? 1 : 4;
 							if ((_game.flags & kFlagDemo) && (currentPage == kPageSave || currentPage == kPageLoad)) {
-								drawOptionsMenuText(kOptionsUnavailable, 159, 70 - 16, 0xF6);
-								_system->copyRectToScreen(_screenTextLayer, 320, 0, 15, 320, 115);
+								drawOptionsMenuText(kOptionsUnavailable, kPageCenterX, 70 - 16, kColorTitle);
+								_system->copyRectToScreen(_screenTextLayer, 320, 0, kMenuY, 320, kMenuHeight);
 								_system->updateScreen();
 								// The unavailable page requests a PCSpeaker beep before accepting another key.
 								if (speakerReady)
@@ -460,7 +816,7 @@ void IgorEngine::handleOptionsMenu() {
 			redrawButton(_screenTextLayer, currentPage, true);
 		}
 		_system->delayMillis(10);
-		_system->copyRectToScreen(_screenTextLayer, 320, 0, 15, 320, 115);
+		_system->copyRectToScreen(_screenTextLayer, 320, 0, kMenuY, 320, kMenuHeight);
 		_system->updateScreen();
 	}
 
@@ -472,13 +828,13 @@ void IgorEngine::handleOptionsMenu() {
 	_inputVars[kInputPause] = 0;
 	_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, 200);
 	setPaletteColor(255, 63, 63, 63);
-	for (int m = 21; m >= 3; m -= 3) {
-		for (int i = 1 * 3; i <= 245 * 3; ++i) {
+	for (int m = kFadeSteps; m >= 3; m -= 3) {
+		for (int i = 1 * 3; i <= kLastFadedColor * 3; ++i) {
 			if (_paletteBuffer[i] >= m) {
 				_currentPalette[i] = MIN<int>(_paletteBuffer[i], _currentPalette[i] + 3);
 			}
 		}
-		setPaletteRange(1, 245);
+		setPaletteRange(1, kLastFadedColor);
 		_system->updateScreen();
 		_system->delayMillis(1000 / 60);
 	}
