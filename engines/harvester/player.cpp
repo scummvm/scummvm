@@ -1696,13 +1696,19 @@ bool Player::startTurnAnimation(RoomPlayerState &playerState, int targetFacing) 
 			playerState.facing < 0 || playerState.facing == targetFacing)
 		return false;
 
-	// update_actor_runtime_state (0x4d750) routes desired states 1/2 from the
-	// opposite horizontal facing through front-facing state 0.
-	const int nextFacing = (playerState.facing == 1 && targetFacing == 2) ||
-			(playerState.facing == 2 && targetFacing == 1) ? 0 : targetFacing;
+	int nextFacing = targetFacing;
+	if ((playerState.facing == 1 && targetFacing == 2) ||
+			(playerState.facing == 2 && targetFacing == 1))
+		nextFacing = 0;
+	else if ((playerState.facing == 0 && targetFacing == 3) ||
+			(playerState.facing == 3 && targetFacing == 0))
+		nextFacing = 2;
 	PlayerTurnAnimationRange range;
-	if (!resolvePlayerTurnAnimationRange(playerState.facing, nextFacing, range))
+	if (playerState.facing == 3 && targetFacing == 0) {
+		range = PlayerTurnAnimationRange{ 0x28, 0x28, false };
+	} else if (!resolvePlayerTurnAnimationRange(playerState.facing, nextFacing, range)) {
 		return false;
+	}
 
 	playerState.turnActive = true;
 	playerState.turnTargetFacing = nextFacing;
