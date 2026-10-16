@@ -234,7 +234,8 @@ void IgorEngine::part0EnterFromBelow() {
 	int walkFrame = 1;
 	for (int i = 0; i <= 9; ++i) {
 		WalkData *entry = &_walkData[0];
-		entry->setPos(145, 143, kFacingPositionBack, walkFrame);
+		// The Spanish floppy ends the entrance on the standing frame
+		entry->setPos(145, 143, kFacingPositionBack, (_game.version == kIdSpaFloppy && i == 9) ? 0 : walkFrame);
 		walkFrame = walkFrame == 6 ? 1 : walkFrame + 1;
 		entry->clipSkipX = 1;
 		entry->clipWidth = 30;
@@ -246,6 +247,12 @@ void IgorEngine::part0EnterFromBelow() {
 		entry->scaleHeight = 50;
 		moveIgor(entry->posNum, entry->frameNum);
 		waitForTimer(15);
+	}
+	if (_game.version == kIdSpaFloppy) {
+		// The Spanish floppy does not walk further inside after the entrance
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+		return;
 	}
 	_walkDataLastIndex = 0;
 	buildWalkPath(145, 143, 125, 138);

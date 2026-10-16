@@ -311,6 +311,10 @@ void IgorEngine::part33WalkIn() {
 	_walkCurrentPos = 1;
 	for (int i = 0; i <= 9; ++i) {
 		WalkData *wd = &_walkData[0];
+		if (_game.version == kIdSpaFloppy && i == 9) {
+			// The Spanish floppy ends the entrance on the standing frame
+			_walkCurrentFrame = 0;
+		}
 		wd->setPos(207, 143, 1, _walkCurrentFrame);
 		WalkData::setNextFrame(1, _walkCurrentFrame);
 		wd->clipSkipX = 1;
@@ -326,6 +330,10 @@ void IgorEngine::part33WalkIn() {
 	}
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
+	if (_game.version == kIdSpaFloppy) {
+		// The Spanish floppy does not walk further inside after the entrance
+		return;
+	}
 	--_walkDataLastIndex;
 	buildWalkPath(207, 143, 187, 138);
 	_walkData[_walkDataLastIndex].frameNum = 0;

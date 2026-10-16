@@ -101,7 +101,8 @@ void IgorEngine::part14LookAtPuzzle() {
 			waitForTimer(60);
 		}
 		stopSound();
-		igorSay(227, 1, 1292);
+		if (!isFullFloppyVersion())
+			igorSay(227, 1, 1292);
 		_objectsState[kSecretPassageEntranceOpenStateIndex] = 1;
 	}
 	part14ApplyObjectState(255);
@@ -257,6 +258,12 @@ void IgorEngine::part14EnterFromChurch() {
 		wd->scaleHeight = 50;
 		moveIgor(wd->posNum, wd->frameNum);
 		waitForTimer(15);
+	}
+	if (_game.version == kIdSpaFloppy) {
+		// The Spanish floppy does not walk further inside after the entrance
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+		return;
 	}
 	_walkDataLastIndex = 0;
 	_walkDataCurrentIndex = 1;

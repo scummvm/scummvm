@@ -272,7 +272,12 @@ void IgorEngine::part78() {
 	part78Say(kPart78IgorRight, { { 216, 1, 681 } });
 	part78Say(kPart78ProfessorLeft, { { 217, 1, 682 }, { 218, 1, 683 } });
 	part78Say(kPart78IgorRight, { { 219, 1, 684 } });
-	part78Say(kPart78ProfessorLeft, { { 235, 1, 698 }, { 236, 2, 699 } });
+	if (_game.version == kIdSpaFloppy) {
+		// The Spanish floppy has this accusation in two lines (220-221); lines 235-237 do not exist there
+		part78Say(kPart78ProfessorLeft, { { 220, 1, kNoSpeechSound }, { 221, 1, kNoSpeechSound } });
+	} else {
+		part78Say(kPart78ProfessorLeft, { { 235, 1, 698 }, { 236, 2, 699 } });
+	}
 	part78Say(kPart78IgorRight, { { 222, 1, 685 }, { 223, 1, 686 } });
 	part78DrawIgorFrame(3);
 	part78Say(kPart78Philip, { { 224, 1, 687 }, { 225, 1, 688 }, { 226, 1, 689 } });

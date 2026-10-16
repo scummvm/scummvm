@@ -92,11 +92,18 @@ void IgorEngine::part7EnterFromOutside() {
 
 	int frame = 1;
 	for (int step = 0; step <= 9; ++step) {
-		part7DrawScaledIgor(step, kFacingPositionBack, frame, 0);
+		// The Spanish floppy ends the entrance on the standing frame
+		part7DrawScaledIgor(step, kFacingPositionBack, (_game.version == kIdSpaFloppy && step == 9) ? 0 : frame, 0);
 		frame = frame == 6 ? 1 : frame + 1;
 		waitForTimer(15);
 	}
 
+	if (_game.version == kIdSpaFloppy) {
+		// The Spanish floppy does not walk further inside after the entrance
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+		return;
+	}
 	_walkDataLastIndex = 0;
 	// first time read notice board
 	if (_game.version == kIdSpaCD && !_part07FirstVisitDone) {
