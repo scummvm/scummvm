@@ -599,7 +599,11 @@ void IgorEngine::partMain() {
 		case 301:
 		case 302:
 		case 303:
-			part30(); // college stairs first floor
+			if (_game.version == kIdSpaFloppy) {
+				part30Floppy();
+			} else {
+				part30(); // college stairs first floor
+			}
 			break;
 		case 310:
 		case 311:

@@ -1212,6 +1212,22 @@ private:
 	void part30LauraLeaves();
 	void part30SetLauraFrame(int frame);
 	void part30();
+	void part30Floppy();
+	void part30FloppyExecuteAction(int action);
+	void part30FloppyGoUpstairs();
+	void part30FloppyGoDownstairs();
+	void part30FloppyUpdateLauraDialogue(int action);
+	void part30FloppyHandleLauraDialogue();
+	void part30FloppyApplyObjectState(int num);
+	void part30FloppyWalkInFromLeft();
+	void part30FloppyWalkInFromUpstairs();
+	void part30FloppyWalkInFromOutside();
+	void part30FloppyWalkInFromRight();
+	void part30FloppyLauraCutscene();
+	void part30FloppyLauraAndIgorBumpIntoEachOther();
+	void part30FloppyIgorCrossesArms();
+	void part30FloppyLauraLeaves();
+	void part30FloppyDrawCutsceneFrame(int frame, bool keepTextColors);
 
 	// college corridor stairs second floor
 	void part31ExecuteAction(int action);
@@ -1785,6 +1801,7 @@ protected:
 	static const RoomDataOffsets PART_27_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_28_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_30_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_30_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_31_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_32_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_33_ROOM_DATA_OFFSETS;
