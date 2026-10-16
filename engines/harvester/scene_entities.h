@@ -62,6 +62,7 @@ private:
 	EntityClass resolveSceneObjectClassLocal(const ObjectRecord &object, const Entity *entity) const;
 	static Common::Rect getSceneRegionBounds(const RegionRecord &region);
 	static bool applyRoomNpcPlacement(Entity &entity, const NpcRecord &npc);
+	static void configureRoomNpcAnimation(Entity &entity, const NpcRecord &npc, bool preservedCorpse);
 
 	RoomSetupState &_state;
 	Script *_script;

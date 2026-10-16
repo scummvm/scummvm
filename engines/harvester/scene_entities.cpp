@@ -593,6 +593,19 @@ bool SceneEntities::applyRoomNpcPlacement(Entity &entity, const NpcRecord &npc) 
 	return true;
 }
 
+void SceneEntities::configureRoomNpcAnimation(Entity &entity, const NpcRecord &npc, bool preservedCorpse) {
+	if (preservedCorpse) {
+		const int corpseFrame = MIN(entity.getLastFrame(), npc.runtimeState);
+		entity.setAnimationFrameRange(corpseFrame, corpseFrame, false);
+		entity.setAnimationRate(0);
+		entity.setCurrentFrame(corpseFrame);
+		entity.setAnimationEnabled(false);
+	} else {
+		// Native spawn_npc_entity_from_record seeds the passive room-NPC loop as frames 0..0x3b.
+		entity.setAnimationFrameRange(0, MIN(entity.getLastFrame(), kRoomNpcAmbientLastFrame), true);
+	}
+}
+
 Entity *SceneEntities::spawnSceneNpcEntityFromRecord(const NpcRecord &npc) {
 	const bool shouldSpawnNpc = shouldSpawnRoomNpcEntity(npc);
 	const bool preservedCorpse = !npc.active &&
@@ -615,16 +628,9 @@ Entity *SceneEntities::spawnSceneNpcEntityFromRecord(const NpcRecord &npc) {
 		removeSceneEntityByName(npc.npcName);
 		return nullptr;
 	}
-	if (preservedCorpse) {
-		const int corpseFrame = MIN(entity->getLastFrame(), npc.runtimeState);
-		entity->setAnimationFrameRange(corpseFrame, corpseFrame, false);
-		entity->setAnimationRate(0);
-		entity->setCurrentFrame(corpseFrame);
-		entity->setAnimationEnabled(false);
-	} else {
-		entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
+	configureRoomNpcAnimation(*entity, npc, preservedCorpse);
+	if (!preservedCorpse)
 		entity->setAnimationRate(npc.frameDelay > 0 ? npc.frameDelay : 0);
-	}
 	_entityManager->reinsertSceneEntity(entity);
 	return entity;
 }
@@ -754,18 +760,9 @@ void SceneEntities::populateRoomNpcs() {
 			debug(1, "Harvester: unable to apply room npc placement for '%s'",
 				npc.npcName.c_str());
 		}
-		if (isCorpse) {
-			const int corpseFrame = MIN(entity->getLastFrame(), npc.runtimeState);
-			entity->setAnimationFrameRange(corpseFrame, corpseFrame, false);
-			entity->setAnimationRate(0);
-			entity->setCurrentFrame(corpseFrame);
-			entity->setAnimationEnabled(false);
-		} else {
-			// Native spawn_npc_entity_from_record seeds the passive room-NPC loop as frames 0..0x3b.
-			entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
-			if (npc.frameDelay > 0)
-				entity->setAnimationRate(npc.frameDelay);
-		}
+		configureRoomNpcAnimation(*entity, npc, isCorpse);
+		if (!isCorpse && npc.frameDelay > 0)
+			entity->setAnimationRate(npc.frameDelay);
 		_entityManager->reinsertSceneEntity(entity);
 		debugC(1, kDebugRoom,
 			"Harvester: scene npc spawned room='%s' npc='%s' class=0x%x pos=(%d,%d,z=%.2f) frame_delay=%d model='%s' active=%d visible=%d",
