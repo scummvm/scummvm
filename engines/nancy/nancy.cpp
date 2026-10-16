@@ -296,7 +296,7 @@ bool NancyEngine::setPlayerCharacter(uint characterIndex) {
 		tables.boot = boot;
 		tables.playerIndex = characterIndex;
 
-		const Common::String scriptName = treeName + "_boot";
+		const Common::String scriptName = treeName + (getGameType() >= kGameTypeNancy20 ? "_BOOT_SC" : "_boot");
 		if (!Script::runBootScript(scriptName.c_str(), tables)) {
 			error("Failed to load boot script for player character %s", treeName.c_str());
 		}
@@ -903,8 +903,14 @@ void NancyEngine::bootGameEngine() {
 
 #ifdef ENABLE_NANCY_V4
 static void runRequiredBootScript(const char *name, const Script::BootTables &tables) {
-	if (!Script::runBootScript(name, tables)) {
-		error("Failed to load boot script %s", name);
+	// Nancy20 ends the names of all scripts in "_SC"
+	Common::String scriptName = name;
+	if (g_nancy->getGameType() >= kGameTypeNancy20) {
+		scriptName += "_SC";
+	}
+
+	if (!Script::runBootScript(scriptName.c_str(), tables)) {
+		error("Failed to load boot script %s", scriptName.c_str());
 	}
 }
 
@@ -947,11 +953,13 @@ void NancyEngine::bootScriptedGameEngine() {
 	runRequiredBootScript("Cursors", inventoryTables);
 
 	Script::BootTables textTables;
-	textTables.texts = autotext;
-	runRequiredBootScript("Autotext", textTables);
+	if (getGameType() <= kGameTypeNancy19) {
+		textTables.texts = autotext;
+		runRequiredBootScript("Autotext", textTables);
 
-	textTables.texts = convo;
-	runRequiredBootScript("Convo", textTables);
+		textTables.texts = convo;
+		runRequiredBootScript("Convo", textTables);
+	}
 
 	Script::BootTables bootTables;
 	bootTables.boot = boot;
@@ -960,11 +968,21 @@ void NancyEngine::bootScriptedGameEngine() {
 	bootTables.viewport = viewport;
 	runRequiredBootScript("Boot", bootTables);
 
+	// Nancy20 names its files of texts in the boot script, and keeps the
+	// lines of the conversations together with the other texts
+	textTables.texts = autotext;
+	for (const Common::String &name : boot->textFileNames) {
+		if (!Script::runBootScript(name.c_str(), textTables)) {
+			error("Failed to load text file %s", name.c_str());
+		}
+	}
+
 	_staticData.numItems = inventory->items.size();
 	_staticData.numEventFlags = (uint16)(kNumGenericEventFlags + flags->numRecords);
 
 	// Saved games get matched against the name of the game
-	Common::strlcpy((char *)bootSummary->header, boot->saveFolderName.c_str(), sizeof(bootSummary->header));
+	const Common::String &saveName = boot->saveFolderName.empty() ? boot->defaultSaveName : boot->saveFolderName;
+	Common::strlcpy((char *)bootSummary->header, saveName.c_str(), sizeof(bootSummary->header));
 	bootSummary->firstScene.sceneID = 0;
 
 	// The clock of the game runs a little faster than a real one

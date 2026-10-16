@@ -1131,9 +1131,14 @@ struct ScriptBootData : public EngineData {
 	ScriptBootData() {}
 
 	Common::String windowName;
-	Common::String saveFolderName;
+	Common::String saveFolderName;	// Nancy19
 	double playerTimeScale = 1.0;
 	int diagnosticFontID = 0;
+
+	// Nancy20 names the scripts holding the texts, and the scripts that get
+	// run in front of every scene
+	Common::Array<Common::String> textFileNames;
+	Common::Array<Common::String> includeFileNames;
 
 	Common::String cheatSavePrefix;
 	Common::String saveExtension;

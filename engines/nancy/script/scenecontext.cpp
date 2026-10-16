@@ -79,6 +79,16 @@ lua_State *SceneContext::getLua() const {
 }
 
 bool SceneContext::load() {
+	// Nancy20 runs a few shared scripts in every scene before its own
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	if (boot) {
+		for (const Common::String &name : boot->includeFileNames) {
+			if (!_lua->runScript(name)) {
+				return false;
+			}
+		}
+	}
+
 	if (!_lua->runScript(_sceneName)) {
 		return false;
 	}
