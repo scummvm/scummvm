@@ -288,6 +288,14 @@ const RoomDataOffsets IgorEngine::PART_31_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+// The Spanish floppy room has no dialogue data and uses the area routed walk builder.
+const RoomDataOffsets IgorEngine::PART_31_FLOPPY_ROOM_DATA_OFFSETS = {
+	{ 20, 2, 2, 1 },
+	{ 32, 43 },
+	{ 47, 237, 3183, 131, 207, 82 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
 const RoomDataOffsets IgorEngine::PART_32_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
 	{ 4, 15 },

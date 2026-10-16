@@ -24,22 +24,16 @@
 namespace Igor {
 
 // Part 15 (the porter Tobias Jennings) as in the Spanish floppy version.
-namespace {
 
-// Tobias' text position and color (palette entry 192 of the room palette)
 const int kTobiasTalkX = 50;
 const int kTobiasTalkY = 85;
 const int kTobiasTalkR = 53;
 const int kTobiasTalkG = 31;
 const int kTobiasTalkB = 23;
 
-// Area cell of the street door
 const int kStreetDoorCell = 97 * 320 + 309;
 
-// Where the hand-over frames are drawn
 const int kHandOverOffset = 29808;
-
-} // End of anonymous namespace
 
 void IgorEngine::part15FloppyExecuteAction(int action) {
 	switch (action) {

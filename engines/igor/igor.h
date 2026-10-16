@@ -1277,6 +1277,18 @@ private:
 	void part31EnterFromRight();
 	void part31DrawOpenDoor();
 	void part31();
+	void part31Floppy();
+	void part31FloppyExecuteAction(int action);
+	void part31FloppyEnterAstronomyLab();
+	void part31FloppyOpenDoor();
+	void part31FloppyGoDownstairs();
+	void part31FloppyUseKeysWithDoor();
+	void part31FloppyApplyObjectState(int num);
+	void part31FloppyEnterFromLeft();
+	void part31FloppyEnterFromAstronomyLab();
+	void part31FloppyEnterFromDownstairs();
+	void part31FloppyEnterFromRight();
+	void part31FloppyDrawDoorFrame(int frame);
 
 	// telescope room
 	void part32ExecuteAction(int action);
@@ -1838,6 +1850,7 @@ protected:
 	static const RoomDataOffsets PART_30_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_30_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_31_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_31_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_32_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_33_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_34_ROOM_DATA_OFFSETS;

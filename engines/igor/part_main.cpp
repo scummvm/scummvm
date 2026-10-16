@@ -623,7 +623,11 @@ void IgorEngine::partMain() {
 		case 311:
 		case 312:
 		case 313:
-			part31();
+			if (_game.version == kIdSpaFloppy) {
+				part31Floppy();
+			} else {
+				part31();
+			}
 			break;
 		case 320:
 			part32(); // telescope room
