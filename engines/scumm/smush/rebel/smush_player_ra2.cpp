@@ -125,6 +125,9 @@ SmushPlayerRebel2::SmushPlayerRebel2(ScummEngine_v7 *scumm, IMuseDigital *imuseD
 	: SmushPlayer(scumm, imuseDigital, insane) {
 	initGamePlayerFields();
 	ra2InitAudioTrackSizes();
+	// The original uses a 40/256 music floor and a rate of 256.
+	// Compensate for RebelAudio doubling the configured rate.
+	setGainReductionParams(40, 256 / 2);
 }
 
 SmushPlayerRebel2::~SmushPlayerRebel2() {
@@ -1276,7 +1279,8 @@ void SmushPlayerRebel2::handleGameParseNextFrame() {
 		_startTime = _vm->_system->getMillis();
 		_pauseTime = 0;
 	}
-	processDispatches(_smushAudioSampleRate / 12);
+	// Queue one frame of audio at the movie's actual playback rate.
+	processDispatches(_smushAudioSampleRate / _speed);
 }
 
 void SmushPlayerRebel2::ra2StartLoadPlayback() {
