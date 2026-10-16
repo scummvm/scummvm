@@ -1155,6 +1155,15 @@ private:
 	void part23WalkFromRight();
 	void part23DrawLucasFrame(int frame);
 	void part23();
+	void part23Floppy();
+	void part23FloppyExecuteAction(int action);
+	void part23FloppyEnterLadiesRoom();
+	void part23FloppyOpenDoor();
+	void part23FloppyCloseDoor();
+	void part23FloppyApplyObjectState(int num);
+	void part23FloppyEnterFromLeft();
+	void part23FloppyEnterFromRight();
+	void part23FloppyEnterFromLadiesRoom();
 
 	// college corridor sharon michael
 	void part24ExecuteAction(int action);
@@ -1878,6 +1887,7 @@ protected:
 	static const RoomDataOffsets PART_31_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_31_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_20_FLOPPY_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_23_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_24_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_32_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_33_ROOM_DATA_OFFSETS;

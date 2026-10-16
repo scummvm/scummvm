@@ -265,10 +265,10 @@ void IgorEngine::part24() {
 	if (isCDVersion())
 		playMusic(2);
 	_gameState.enableLight = 2;
-	loadRoomData(PAL_CollegeCorridorSharonMichael, IMG_CollegeCorridorSharonMichael, BOX_CollegeCorridorSharonMichael, MSK_CollegeCorridorSharonMichael, TXT_CollegeCorridorSharonMichael);
-	static const int anm[] = { FRM_CollegeCorridorSharonMichael1, FRM_CollegeCorridorSharonMichael2, FRM_CollegeCorridorSharonMichael3, FRM_CollegeCorridorSharonMichael4, 0 };
+	loadRoomData(PAL_CollegeCorridorChemistryClass, IMG_CollegeCorridorChemistryClass, BOX_CollegeCorridorChemistryClass, MSK_CollegeCorridorChemistryClass, TXT_CollegeCorridorChemistryClass);
+	static const int anm[] = { FRM_CollegeCorridorChemistryClass1, FRM_CollegeCorridorChemistryClass2, FRM_CollegeCorridorChemistryClass3, FRM_CollegeCorridorChemistryClass4, 0 };
 	loadAnimData(anm);
-	loadActionData(DAT_CollegeCorridorSharonMichael);
+	loadActionData(DAT_CollegeCorridorChemistryClass);
 	_roomDataOffsets = PART_24_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	partMainSetExecuteAction(1, &IgorEngine::part24ExecuteAction);

@@ -227,14 +227,14 @@ void IgorEngine::part23() {
 	if (isCDVersion())
 		playMusic(2);
 	_gameState.enableLight = 2;
-	loadRoomData(PAL_CollegeCorridorLucas, IMG_CollegeCorridorLucas, BOX_CollegeCorridorLucas, MSK_CollegeCorridorLucas, TXT_CollegeCorridorLucas);
+	loadRoomData(PAL_CollegeCorridorLadiesRoom, IMG_CollegeCorridorLadiesRoom, BOX_CollegeCorridorLadiesRoom, MSK_CollegeCorridorLadiesRoom, TXT_CollegeCorridorLadiesRoom);
 	static const int anm[] = {
-		FRM_CollegeCorridorLucas1, FRM_CollegeCorridorLucas2,
-		FRM_CollegeCorridorLucas3, FRM_CollegeCorridorLucas4,
+		FRM_CollegeCorridorLadiesRoom1, FRM_CollegeCorridorLadiesRoom2,
+		FRM_CollegeCorridorLadiesRoom3, FRM_CollegeCorridorLadiesRoom4,
 		0
 	};
 	loadAnimData(anm);
-	loadActionData(DAT_CollegeCorridorLucas);
+	loadActionData(DAT_CollegeCorridorLadiesRoom);
 	_roomDataOffsets = PART_23_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(15, 0, 319, 143);
 
