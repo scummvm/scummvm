@@ -1425,7 +1425,7 @@ void DialogueSystem::syncRuntimeSaveState(Common::Serializer &s) {
 }
 
 Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, const Common::String &currentRoomName,
+		float paletteBrightness, const ScriptExecutionContext &executionContext,
 		const NpcRecord &npc, const Common::String &usedItemName,
 		Flow &flow) {
 	Script *script = _engine.getScript();
@@ -1457,7 +1457,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		return Common::kReadingFailed;
 	// START_DIALOG may invoke an NPC assigned to another room.
 	DialogueRuntime runtime(
-		_engine, *script, *text, flow, currentRoomName, session.getGenericByeTopic(), session);
+		_engine, *script, *text, flow, executionContext, session.getGenericByeTopic(), session);
 
 	return handler->handleDialogue(runtime, usedItemName, _sharedDialogueState);
 }

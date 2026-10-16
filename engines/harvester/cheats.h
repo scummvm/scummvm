@@ -32,6 +32,7 @@ namespace Harvester {
 
 class HarvesterEngine;
 class Script;
+class ScriptExecutionContext;
 struct InteractionResult;
 
 enum CheatInputResult {
@@ -53,7 +54,7 @@ public:
 	explicit CheatSystem(HarvesterEngine &engine);
 
 	CheatInputResult processKey(const Common::KeyState &key, Script &script,
-		const Common::String &roomName, InteractionResult &interaction,
+		const ScriptExecutionContext &executionContext, InteractionResult &interaction,
 		CheatActivation &activation);
 	void reset();
 	bool isPlayerDamageDisabled() const { return _playerDamageDisabled; }
@@ -72,7 +73,7 @@ private:
 
 	CheatInputResult matchKey(uint16 ascii, CheatId &cheatId);
 	static const char *describe(CheatId cheatId);
-	void execute(CheatId cheatId, Script &script, const Common::String &roomName,
+	void execute(CheatId cheatId, Script &script, const ScriptExecutionContext &executionContext,
 		InteractionResult &interaction, CheatActivation &activation);
 
 	HarvesterEngine &_engine;

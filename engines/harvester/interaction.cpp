@@ -178,7 +178,7 @@ Common::Error ItemInteractions::moveRoomItemDirectlyToInventory(const ObjectReco
 	if (shouldDispatchPickupActionOnDirectInventoryTransfer(object)) {
 		InteractionResult pickupInteraction;
 		if (script->executeActionTag(
-				object.actionTag, pickupInteraction, true, _scene.state.roomName)) {
+				object.actionTag, pickupInteraction, true, _scene.executionContext())) {
 			Common::Error interactionError =
 				interactionProcessor.handleInteractionResult(
 					pickupInteraction, didTransition, Common::String());
@@ -229,7 +229,7 @@ Common::Error ItemInteractions::beginRoomItemCarry(const ObjectRecord &object,
 	if (shouldDispatchPickupActionOnCarryStart(object)) {
 		InteractionResult pickupInteraction;
 		if (script->executeActionTag(
-				object.actionTag, pickupInteraction, true, _scene.state.roomName)) {
+				object.actionTag, pickupInteraction, true, _scene.executionContext())) {
 			Common::Error interactionError =
 				interactionProcessor.handleInteractionResult(
 					pickupInteraction, didTransition, Common::String());
@@ -275,7 +275,7 @@ Common::Error ItemInteractions::handleSelectedItemTargetInteraction(const Object
 	const Common::String selectedItemName = getSelectedItemName();
 	InteractionResult interaction;
 	const bool handled = _engine.getScript()->resolveUseItemInteraction(
-		selectedItemName, target, interaction, _scene.state.roomName);
+		selectedItemName, target, interaction, _scene.executionContext());
 	if (!handled) {
 		debugC(3, kDebugRoom, "Harvester: item use miss selected='%s' target='%s'",
 			selectedItemName.c_str(), target.objectName.c_str());
@@ -310,7 +310,7 @@ Common::Error ItemInteractions::handleSelectedItemMiss(Interaction &interactionP
 	};
 	InteractionResult interaction;
 	_engine.getScript()->executeActionTag(responseTags[_engine.getRandomNumber(4)],
-		interaction, true, _scene.state.roomName);
+		interaction, true, _scene.executionContext());
 	bool didTransition = false;
 	Common::Error interactionError =
 		interactionProcessor.handleInteractionResult(interaction, didTransition, getSelectedItemName());
@@ -399,7 +399,7 @@ Common::Error Interaction::runRegionInteraction(const RegionRecord &region,
 		InventorySystem &inventory, bool &needsRedraw) {
 	const RoomPlayerState &playerState = _player.getState();
 	InteractionResult interaction;
-	if (!_engine.getScript()->resolveRegionInteraction(region, interaction, _scene.state.roomName))
+	if (!_engine.getScript()->resolveRegionInteraction(region, interaction, _scene.executionContext()))
 		return Common::kNoError;
 	debugC(2, kDebugRoom,
 		"Harvester: region interaction room='%s' region='%s' action='%s' player=(%d,%d,z=%.2f) next_room='%s'",
@@ -739,7 +739,7 @@ Common::Error Interaction::handleInteractionResult(const InteractionResult &inte
 		InteractionResult continuationInteraction;
 		if (_engine.getScript()->executeActionTag(
 				interaction.continuationTag, continuationInteraction, true,
-				_scene.state.roomName)) {
+				_scene.executionContext())) {
 			Common::Error interactionError =
 				handleInteractionResult(continuationInteraction, didTransition, usedItemName, interruptPlayerMovement);
 			if (interactionError.getCode() != Common::kNoError)
@@ -763,7 +763,7 @@ Common::Error Interaction::runScriptedDialogue(const Common::String &npcName,
 
 		Common::Error dialogueError = _flow.runRoomNpcDialogue(
 			dialogueBackdrop, _scene.palette, _scene.targetPaletteBrightness,
-			_scene.state.roomName, *dialogueNpc, usedItemName);
+			_scene.executionContext(), *dialogueNpc, usedItemName);
 		if (dialogueError.getCode() != Common::kNoError)
 			return dialogueError;
 	} else {
@@ -785,7 +785,7 @@ Common::Error Interaction::runScriptedDialogue(const Common::String &npcName,
 	if (!didTransition && !abortRemainingCommandChain && !continuationTag.empty()) {
 		InteractionResult continuationInteraction;
 		if (_engine.getScript()->executeActionTag(
-				continuationTag, continuationInteraction, true, _scene.state.roomName)) {
+				continuationTag, continuationInteraction, true, _scene.executionContext())) {
 			Common::Error interactionError =
 				handleInteractionResult(continuationInteraction, didTransition, usedItemName);
 			if (interactionError.getCode() != Common::kNoError)

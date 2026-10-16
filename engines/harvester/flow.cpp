@@ -1751,12 +1751,12 @@ Common::Error Flow::runRoomMenu(const IndexedBitmap &backdrop, const byte *palet
 }
 
 Common::Error Flow::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, const Common::String &currentRoomName,
+		float paletteBrightness, const ScriptExecutionContext &executionContext,
 		const NpcRecord &npc, const Common::String &usedItemName) {
 	_queuedDialogueInteraction = InteractionResult();
 	_hasQueuedDialogueInteraction = false;
 	return _dialogue.runRoomNpcDialogue(backdrop, palette, paletteBrightness,
-		currentRoomName, npc, usedItemName, *this);
+		executionContext, npc, usedItemName, *this);
 }
 
 Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,

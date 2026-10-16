@@ -266,6 +266,30 @@ struct RoomSetupState {
 	Common::Array<AudioCommand> audioCommands;
 };
 
+class ScriptExecutionContext {
+public:
+	ScriptExecutionContext() = default;
+
+	static ScriptExecutionContext forNpcDeath(const NpcRecord &npc) {
+		return ScriptExecutionContext(npc.roomName);
+	}
+	static ScriptExecutionContext forMonsterDeath(const MonsterRecord &monster) {
+		return ScriptExecutionContext(monster.roomName);
+	}
+
+	const Common::String &roomName() const {
+		static const Common::String noRoom;
+		return _roomName ? *_roomName : noRoom;
+	}
+
+private:
+	friend struct SceneState;
+
+	explicit ScriptExecutionContext(const Common::String &roomName) : _roomName(&roomName) {}
+
+	const Common::String *const _roomName = nullptr;
+};
+
 enum StartupRoomTransitionKind {
 	kStartupRoomTransitionNone = 0,
 	kStartupRoomTransitionChangeRoom,
@@ -369,17 +393,17 @@ public:
 	bool executeRoomEnterCommands(const Common::String &roomName, InteractionResult &result);
 	bool executeRoomExitCommands(const Common::String &roomName, InteractionResult &result);
 	bool resolveObjectInteraction(const ObjectRecord &object, InteractionResult &result,
-		const Common::String &roomName = Common::String());
+		const ScriptExecutionContext &executionContext);
 	bool resolveRegionInteraction(const RegionRecord &region, InteractionResult &result,
-		const Common::String &roomName = Common::String());
+		const ScriptExecutionContext &executionContext);
 	bool resolveUseItemInteraction(const Common::String &itemName, const ObjectRecord &target,
-		InteractionResult &result, const Common::String &roomName = Common::String());
+		InteractionResult &result, const ScriptExecutionContext &executionContext);
 	bool executeDebugCommand(const CommandRecord &command, InteractionResult &result,
 		bool allowTransitions = true);
 	bool executeActionTag(const Common::String &tag, InteractionResult &result,
-		bool allowTransitions = true, const Common::String &roomName = Common::String());
+		bool allowTransitions, const ScriptExecutionContext &executionContext);
 	bool executeTimerAction(const Common::String &timerName, InteractionResult &result,
-		bool allowTransitions = true, const Common::String &roomName = Common::String());
+		bool allowTransitions, const ScriptExecutionContext &executionContext);
 	bool executeNestedActionTag(const Common::String &tag, InteractionResult &result,
 		bool allowTransitions = true);
 	bool isPickupObject(const ObjectRecord &object) const;

@@ -44,6 +44,9 @@ struct IndexedBitmap;
 struct MenuTextConfig;
 
 struct SceneState {
+	ScriptExecutionContext executionContext() const & { return ScriptExecutionContext(state.roomName); }
+	ScriptExecutionContext executionContext() const && = delete;
+
 	RoomSetupState state;
 	byte palette[256 * 3] = { 0 };
 	Common::Array<ObjectRecord> sceneObjects;

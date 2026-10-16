@@ -59,11 +59,11 @@ public:
 	typedef DialogueKeywordMenuSelectionState KeywordMenuSelectionState;
 
 	DialogueRuntime(HarvesterEngine &engine, Script &script, Text &text,
-			Flow &flow, const Common::String &currentRoomName,
+			Flow &flow, const ScriptExecutionContext &executionContext,
 			const Common::String &genericByeTopic,
 			DialogueRuntimeCallbacks &callbacks)
 		: _engine(engine), _script(script), _text(text),
-		  _flow(flow), _currentRoomName(currentRoomName),
+		  _flow(flow), _executionContext(executionContext),
 		  _genericByeTopic(genericByeTopic),
 		  _callbacks(callbacks) {
 	}
@@ -72,11 +72,11 @@ public:
 	Script &startupScript() const { return _script; }
 	Text &startupText() const { return _text; }
 	Flow &startupFlow() const { return _flow; }
-	const Common::String &currentRoomName() const { return _currentRoomName; }
+	const Common::String &currentRoomName() const { return _executionContext.roomName(); }
 	const Common::String &genericByeTopic() const { return _genericByeTopic; }
 	bool executeActionTag(const Common::String &tag, InteractionResult &result,
 			bool allowTransitions = true) const {
-		return _script.executeActionTag(tag, result, allowTransitions, _currentRoomName);
+		return _script.executeActionTag(tag, result, allowTransitions, _executionContext);
 	}
 	void executeAndQueueAction(const Common::String &tag) const {
 		InteractionResult interaction;
@@ -140,7 +140,7 @@ private:
 	Script &_script;
 	Text &_text;
 	Flow &_flow;
-	const Common::String &_currentRoomName;
+	const ScriptExecutionContext _executionContext;
 	const Common::String &_genericByeTopic;
 	DialogueRuntimeCallbacks &_callbacks;
 	mutable KeywordMenuSelectionState _lastKeywordSelection;

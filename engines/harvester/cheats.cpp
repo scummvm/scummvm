@@ -180,7 +180,7 @@ CheatInputResult CheatSystem::matchKey(uint16 ascii, CheatId &cheatId) {
 }
 
 CheatInputResult CheatSystem::processKey(const Common::KeyState &key, Script &script,
-		const Common::String &roomName, InteractionResult &interaction,
+		const ScriptExecutionContext &executionContext, InteractionResult &interaction,
 		CheatActivation &activation) {
 	interaction = InteractionResult();
 	activation = CheatActivation();
@@ -188,12 +188,12 @@ CheatInputResult CheatSystem::processKey(const Common::KeyState &key, Script &sc
 	CheatId cheatId = kCheatMaxHealth;
 	const CheatInputResult inputResult = matchKey(key.ascii, cheatId);
 	if (inputResult == kCheatInputComplete)
-		execute(cheatId, script, roomName, interaction, activation);
+		execute(cheatId, script, executionContext, interaction, activation);
 
 	return inputResult;
 }
 
-void CheatSystem::execute(CheatId cheatId, Script &script, const Common::String &roomName,
+void CheatSystem::execute(CheatId cheatId, Script &script, const ScriptExecutionContext &executionContext,
 		InteractionResult &interaction, CheatActivation &activation) {
 	const bool hasHarvestBlade = script.isObjectInInventory(kHarvestBladeObjectName);
 	const bool requiresHarvestBlade = cheatId == kCheatLodgeLevel2 ||
@@ -243,17 +243,17 @@ void CheatSystem::execute(CheatId cheatId, Script &script, const Common::String 
 		break;
 	case kCheatLodgeLevel2:
 		activation.hasInteraction = script.executeActionTag(
-			"FOUNTAIN_ART1", interaction, true, roomName);
+			"FOUNTAIN_ART1", interaction, true, executionContext);
 		break;
 	case kCheatLodgeLevel3:
 		activation.clearInteractionState = true;
 		activation.hasInteraction = script.executeActionTag(
-			"3RD_2_3RDNTRYR", interaction, true, roomName);
+			"3RD_2_3RDNTRYR", interaction, true, executionContext);
 		break;
 	case kCheatLodgeFinalLevel:
 		activation.clearInteractionState = true;
 		activation.hasInteraction = script.executeActionTag(
-			"L2_M1", interaction, true, roomName);
+			"L2_M1", interaction, true, executionContext);
 		break;
 	case kCheatInvincibility:
 		activation.clearInteractionState = true;
@@ -263,7 +263,7 @@ void CheatSystem::execute(CheatId cheatId, Script &script, const Common::String 
 	case kCheatLodgeLevel1:
 		activation.clearInteractionState = true;
 		activation.hasInteraction = script.executeActionTag(
-			"WARP_TO_LODGE", interaction, true, roomName);
+			"WARP_TO_LODGE", interaction, true, executionContext);
 		break;
 	}
 
@@ -272,7 +272,7 @@ void CheatSystem::execute(CheatId cheatId, Script &script, const Common::String 
 			!activation.hasInteraction) {
 		debugC(1, kDebugGeneral,
 			"Harvester: cheat action tag produced no interaction id='%s' room='%s'",
-			describe(cheatId), roomName.c_str());
+			describe(cheatId), executionContext.roomName().c_str());
 	}
 
 	debugC(2, kDebugGeneral,

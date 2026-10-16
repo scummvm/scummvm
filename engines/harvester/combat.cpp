@@ -1112,7 +1112,8 @@ Common::Error Combat::finalizeNpcDeathTransition(NpcRecord &npc, NpcCombatState 
 	interaction.visualRuntimeStateChanged = runtimeChanged;
 	if (script && !npc.onDeathActionTag.empty()) {
 		InteractionResult deathInteraction;
-		if (script->executeActionTag(npc.onDeathActionTag, deathInteraction, true, npc.roomName)) {
+		if (script->executeActionTag(npc.onDeathActionTag, deathInteraction, true,
+				ScriptExecutionContext::forNpcDeath(npc))) {
 			interaction = Common::move(deathInteraction);
 			interaction.mutatedRuntimeState = true;
 			interaction.visualRuntimeStateChanged = true;
@@ -1242,7 +1243,7 @@ Common::Error Combat::killDebugActiveMonster(const Common::Point &mousePos, bool
 	if (!monster->onDeathActionTag.empty()) {
 		InteractionResult deathInteraction;
 		if (script->executeActionTag(
-				monster->onDeathActionTag, deathInteraction, true, monster->roomName)) {
+				monster->onDeathActionTag, deathInteraction, true, ScriptExecutionContext::forMonsterDeath(*monster))) {
 			interaction = Common::move(deathInteraction);
 			interaction.mutatedRuntimeState = true;
 			interaction.visualRuntimeStateChanged = true;
@@ -1305,7 +1306,7 @@ Common::Error Combat::updateRoomMonsterCombat(bool &needsRedraw) {
 				if (!monster.onDeathActionTag.empty()) {
 					InteractionResult deathInteraction;
 					if (script.executeActionTag(
-							monster.onDeathActionTag, deathInteraction, true, monster.roomName)) {
+							monster.onDeathActionTag, deathInteraction, true, ScriptExecutionContext::forMonsterDeath(monster))) {
 						interaction = Common::move(deathInteraction);
 						interaction.mutatedRuntimeState = true;
 						interaction.visualRuntimeStateChanged = true;
@@ -1711,7 +1712,7 @@ Common::Error Combat::resolvePlayerAttackContact(bool &needsRedraw) {
 	if (!monster->onDeathActionTag.empty()) {
 		InteractionResult deathInteraction;
 		if (script->executeActionTag(
-				monster->onDeathActionTag, deathInteraction, true, monster->roomName)) {
+				monster->onDeathActionTag, deathInteraction, true, ScriptExecutionContext::forMonsterDeath(*monster))) {
 			interaction = Common::move(deathInteraction);
 			interaction.mutatedRuntimeState = true;
 			interaction.visualRuntimeStateChanged = true;

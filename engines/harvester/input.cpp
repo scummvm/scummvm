@@ -220,7 +220,7 @@ InputResult Input::handleRightButtonDown(bool &needsRedraw) {
 				InteractionResult interaction;
 				bool didTransition = false;
 				const bool executedActionTag = _engine.getScript()->executeActionTag(
-						secondaryAction.actionTag, interaction, true, _scene.state.roomName);
+						secondaryAction.actionTag, interaction, true, _scene.executionContext());
 				debugC(1, kDebugInventory,
 					"Harvester: inventory right click executeActionTag('%s') -> %d music='%s' cutscene='%s' nextRoom='%s'",
 					secondaryAction.actionTag.c_str(), executedActionTag,
@@ -574,7 +574,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 
 	InteractionResult interaction;
 	if (!_engine.getScript()->resolveObjectInteraction(
-			*clickedObject, interaction, _scene.state.roomName)) {
+			*clickedObject, interaction, _scene.executionContext())) {
 		if (canShowInspectText) {
 			beginInspectText(*clickedObject, resolvedInspectText);
 		} else if (hasInspectText) {
@@ -625,7 +625,7 @@ InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw)
 		InteractionResult cheatInteraction;
 		CheatActivation cheatActivation;
 		const CheatInputResult cheatInputResult = _cheats.processKey(
-			key, *script, _scene.state.roomName,
+			key, *script, _scene.executionContext(),
 			cheatInteraction, cheatActivation);
 		if (cheatInputResult != kCheatInputIgnored) {
 			if (cheatInputResult == kCheatInputComplete && cheatActivation.activated) {

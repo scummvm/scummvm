@@ -1735,7 +1735,8 @@ bool Script::executeRoomExitCommands(const Common::String &roomName,
 }
 
 bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionResult &result,
-		const Common::String &roomName) {
+		const ScriptExecutionContext &executionContext) {
+	const Common::String &roomName = executionContext.roomName();
 	result = InteractionResult();
 	Common::String commandRoomName = roomName;
 	if (commandRoomName.empty() &&
@@ -1777,7 +1778,8 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 }
 
 bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionResult &result,
-		const Common::String &roomName) {
+		const ScriptExecutionContext &executionContext) {
+	const Common::String &roomName = executionContext.roomName();
 	result = InteractionResult();
 	if (region.actionTag.empty())
 		return false;
@@ -1800,7 +1802,8 @@ bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionRes
 }
 
 bool Script::resolveUseItemInteraction(const Common::String &itemName, const ObjectRecord &target,
-		InteractionResult &result, const Common::String &roomName) {
+		InteractionResult &result, const ScriptExecutionContext &executionContext) {
+	const Common::String &roomName = executionContext.roomName();
 	result = InteractionResult();
 
 	const UseItemRecord *useItem = findUseItemRecord(itemName, target);
@@ -1840,13 +1843,14 @@ bool Script::executeDebugCommand(const CommandRecord &command,
 	CommandRecord debugCommand = command;
 	debugCommand.triggerTag = debugTag;
 	_commands.push_back(Common::move(debugCommand));
-	const bool handled = executeActionTag(debugTag, result, allowTransitions);
+	const bool handled = executeActionTag(debugTag, result, allowTransitions, ScriptExecutionContext());
 	_commands.pop_back();
 	return handled;
 }
 
 bool Script::executeActionTag(const Common::String &tag, InteractionResult &result,
-		bool allowTransitions, const Common::String &roomName) {
+		bool allowTransitions, const ScriptExecutionContext &executionContext) {
+	const Common::String &roomName = executionContext.roomName();
 	result = InteractionResult();
 	if (tag.empty())
 		return false;
@@ -1869,7 +1873,8 @@ bool Script::executeActionTag(const Common::String &tag, InteractionResult &resu
 }
 
 bool Script::executeTimerAction(const Common::String &timerName, InteractionResult &result,
-		bool allowTransitions, const Common::String &roomName) {
+		bool allowTransitions, const ScriptExecutionContext &executionContext) {
+	const Common::String &roomName = executionContext.roomName();
 	result = InteractionResult();
 	if (timerName.empty())
 		return false;
@@ -1904,7 +1909,7 @@ bool Script::executeTimerAction(const Common::String &timerName, InteractionResu
 
 bool Script::executeNestedActionTag(const Common::String &tag, InteractionResult &result,
 		bool allowTransitions) {
-	const bool handled = executeActionTag(tag, result, allowTransitions);
+	const bool handled = executeActionTag(tag, result, allowTransitions, ScriptExecutionContext());
 	if (handled)
 		result.abortRemainingCommandChain = true;
 

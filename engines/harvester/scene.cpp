@@ -319,7 +319,7 @@ Common::Error Scene::runRoomExitCommands() {
 		InteractionResult continuationInteraction;
 		if (!_engine.getScript()->executeActionTag(
 				exitInteraction.continuationTag, continuationInteraction, false,
-				_scene.state.roomName)) {
+				_scene.executionContext())) {
 			return Common::kNoError;
 		}
 
@@ -657,7 +657,7 @@ InputResult Scene::dispatchExpiredTimers(bool &needsRedraw) {
 			for (const Common::String &timerName : expiredTimerNames) {
 				InteractionResult timerInteraction;
 				if (!_engine.getScript()->executeTimerAction(
-						timerName, timerInteraction, true, _scene.state.roomName))
+						timerName, timerInteraction, true, _scene.executionContext()))
 					continue;
 
 				bool didTransition = false;
