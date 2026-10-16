@@ -120,19 +120,6 @@ static const int kCursorSequenceTransition = 6;
 static const int kCursorSequenceNeutral = 7;
 } // End of anonymous namespace
 
-static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const Text *text = engine.getText();
-	if (!text || !fontName)
-		return nullptr;
-
-	for (const CftFontResource &font : text->getFonts()) {
-		if (font.name.equalsIgnoreCase(fontName))
-			return &font;
-	}
-
-	return nullptr;
-}
-
 static byte findNearestPaletteColor(const byte *palette, byte red, byte green, byte blue) {
 	if (!palette)
 		return 0;
@@ -1639,7 +1626,8 @@ Common::Error Flow::runDemoIntroduction() {
 	ResourceManager *resources = _engine.getResources();
 	EntityManager *entityManager = _engine.getRuntimeEntities();
 	const Art *art = _engine.getArt();
-	const CftFontResource *fontResource = findStartupFontByName(_engine, "TEXTFONT");
+	const Text *text = _engine.getText();
+	const CftFontResource *fontResource = text ? text->findFont("TEXTFONT") : nullptr;
 	if (!screen || !resources || !art || !fontResource)
 		return Common::kReadingFailed;
 
@@ -1768,7 +1756,8 @@ Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 	Graphics::Screen *screen = _engine.getScreen();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	Common::ScopedPtr<HarvesterCftFont> townMapFont;
-	if (const CftFontResource *townMapFontResource = findStartupFontByName(_engine, "TEXTFONT")) {
+	const Text *text = _engine.getText();
+	if (const CftFontResource *townMapFontResource = text ? text->findFont("TEXTFONT") : nullptr) {
 		townMapFont.reset(new HarvesterCftFont(*townMapFontResource));
 		if (townMapFont->isValid())
 			font = townMapFont.get();

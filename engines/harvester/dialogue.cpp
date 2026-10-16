@@ -207,19 +207,6 @@ static void syncDialogueSharedState(Common::Serializer &s, DialogueSharedState &
 	syncDialogueInt(s, state.dialogueStateD2f30);
 }
 
-static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const Text *text = engine.getText();
-	if (!text || !fontName)
-		return nullptr;
-
-	for (const CftFontResource &font : text->getFonts()) {
-		if (font.name.equalsIgnoreCase(fontName))
-			return &font;
-	}
-
-	return nullptr;
-}
-
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
 	if (!bitmap.isValid())
 		return;
@@ -435,12 +422,12 @@ public:
 			return;
 		}
 
-		if (const CftFontResource *subtitleFontResource = findStartupFontByName(_engine, "TEXTFONT")) {
+		if (const CftFontResource *subtitleFontResource = _text->findFont("TEXTFONT")) {
 			_subtitleCftFont.reset(new HarvesterCftFont(*subtitleFontResource));
 			if (!_subtitleCftFont->isValid())
 				_subtitleCftFont.reset();
 		}
-		if (const CftFontResource *menuFontResource = findStartupFontByName(_engine, "TEXTFNT2")) {
+		if (const CftFontResource *menuFontResource = _text->findFont("TEXTFNT2")) {
 			_menuCftFont.reset(new HarvesterCftFont(*menuFontResource));
 			if (!_menuCftFont->isValid())
 				_menuCftFont.reset();

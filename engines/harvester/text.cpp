@@ -277,6 +277,18 @@ void Text::decodeXorText(Common::Array<byte> &data) const {
 	}
 }
 
+const CftFontResource *Text::findFont(const char *fontName) const {
+	if (!fontName)
+		return nullptr;
+
+	for (const CftFontResource &font : _fonts) {
+		if (font.name.equalsIgnoreCase(fontName))
+			return &font;
+	}
+
+	return nullptr;
+}
+
 bool Text::resolveDialogueSubtitle(int wavId, Common::String &text) const {
 	text.clear();
 	if (wavId <= 0 || _dialogueEntries.empty() || _dialogueData.empty())

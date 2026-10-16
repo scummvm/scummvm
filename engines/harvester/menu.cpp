@@ -182,19 +182,6 @@ private:
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y);
 static int getNativeRoomMenuLineHeight(const Graphics::Font &selectedFont);
 
-static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const Text *text = engine.getText();
-	if (!text || !fontName)
-		return nullptr;
-
-	for (const CftFontResource &font : text->getFonts()) {
-		if (font.name.equalsIgnoreCase(fontName))
-			return &font;
-	}
-
-	return nullptr;
-}
-
 static int clampStartupOptionLevel(int level) {
 	if (level < 0)
 		return 0;
@@ -1494,8 +1481,9 @@ Common::Error MenuSystem::runSaveSlotMenu(Flow &flow, SaveLoadMode mode, bool &c
 	completed = false;
 	ResourceManager *resources = _engine.getResources();
 	MetaEngine *metaEngine = _engine.getMetaEngine();
-	const CftFontResource *slotNameFontResource = findStartupFontByName(_engine, "MEDFONT1");
-	const CftFontResource *slotLabelFontResource = findStartupFontByName(_engine, "MEDFONT2");
+	const Text *text = _engine.getText();
+	const CftFontResource *slotNameFontResource = text ? text->findFont("MEDFONT1") : nullptr;
+	const CftFontResource *slotLabelFontResource = text ? text->findFont("MEDFONT2") : nullptr;
 	if (!resources || !metaEngine || !slotNameFontResource || !slotLabelFontResource)
 		return Common::kReadingFailed;
 	if (mode == kSaveMode ? !_engine.canSaveGameStateCurrently() : !_engine.canLoadGameStateCurrently())
@@ -1662,8 +1650,9 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 		float paletteBrightness, Flow &flow, const Common::String &promptText,
 		bool &confirmed) {
 	const Art *art = _engine.getArt();
-	const CftFontResource *promptFontResource = findStartupFontByName(_engine, "MEDFONT1");
-	const CftFontResource *choiceFontResource = findStartupFontByName(_engine, "MEDFONT2");
+	const Text *text = _engine.getText();
+	const CftFontResource *promptFontResource = text ? text->findFont("MEDFONT1") : nullptr;
+	const CftFontResource *choiceFontResource = text ? text->findFont("MEDFONT2") : nullptr;
 	if (!art || !promptFontResource || !choiceFontResource)
 		return Common::kReadingFailed;
 
@@ -1762,8 +1751,9 @@ Common::Error MenuSystem::runPasswordPrompt(const IndexedBitmap &backdrop, const
 		float paletteBrightness, Flow &flow, bool drawLogo, Common::String &password,
 		bool &accepted) const {
 	const Art *art = _engine.getArt();
-	const CftFontResource *titleFontResource = findStartupFontByName(_engine, "HARVFONT");
-	const CftFontResource *entryFontResource = findStartupFontByName(_engine, "HARVFNT2");
+	const Text *text = _engine.getText();
+	const CftFontResource *titleFontResource = text ? text->findFont("HARVFONT") : nullptr;
+	const CftFontResource *entryFontResource = text ? text->findFont("HARVFNT2") : nullptr;
 	if (!art || !titleFontResource || !entryFontResource)
 		return Common::kReadingFailed;
 
@@ -1881,8 +1871,9 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 	const Art *art = _engine.getArt();
 	Script *script = _engine.getScript();
 	ResourceManager *resources = _engine.getResources();
-	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
-	const CftFontResource *unselectedFontResource = findStartupFontByName(_engine, "HARVFNT2");
+	const Text *text = _engine.getText();
+	const CftFontResource *selectedFontResource = text ? text->findFont("HARVFONT") : nullptr;
+	const CftFontResource *unselectedFontResource = text ? text->findFont("HARVFNT2") : nullptr;
 	if (!art || !script || !resources || !selectedFontResource || !unselectedFontResource)
 		return Common::kReadingFailed;
 
@@ -2333,8 +2324,9 @@ void MenuSystem::renderBackdropMenuScreen(const IndexedBitmap &backdrop, const b
 		int selectedItem) const {
 	Graphics::Screen *screen = _engine.getScreen();
 	const Art *art = _engine.getArt();
-	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
-	const CftFontResource *unselectedFontResource = findStartupFontByName(_engine, "HARVFNT2");
+	const Text *text = _engine.getText();
+	const CftFontResource *selectedFontResource = text ? text->findFont("HARVFONT") : nullptr;
+	const CftFontResource *unselectedFontResource = text ? text->findFont("HARVFNT2") : nullptr;
 	if (!screen || !art || !selectedFontResource || !unselectedFontResource || !backdrop.isValid())
 		return;
 
@@ -2384,7 +2376,8 @@ int MenuSystem::getMenuItemAt(const Common::Point &mousePos,
 
 int MenuSystem::getBackdropMenuItemAt(const Common::Point &mousePos,
 		const Common::Array<Common::String> &menuItems) const {
-	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
+	const Text *text = _engine.getText();
+	const CftFontResource *selectedFontResource = text ? text->findFont("HARVFONT") : nullptr;
 	if (!selectedFontResource)
 		return getMenuItemAt(mousePos, menuItems);
 

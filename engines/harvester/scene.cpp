@@ -891,19 +891,6 @@ Common::Error Scene::killDebugActiveMonster(const Common::Point &mousePos, bool 
 	return _combat.killDebugActiveMonster(mousePos, needsRedraw);
 }
 
-static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const Text *text = engine.getText();
-	if (!text || !fontName)
-		return nullptr;
-
-	for (const CftFontResource &font : text->getFonts()) {
-		if (font.name.equalsIgnoreCase(fontName))
-			return &font;
-	}
-
-	return nullptr;
-}
-
 SceneRunner::SceneRunner(HarvesterEngine &engine,
 		InventorySystem &inventory, CheatSystem &cheats)
 	: _engine(engine), _inventory(inventory), _cheats(cheats) {
@@ -995,8 +982,9 @@ Common::Error SceneRunner::runRoomLoop(Flow &flow, const Common::String &targetN
 		Graphics::Screen *screen = _engine.getScreen();
 		const Art *art = _engine.getArt();
 		const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		const CftFontResource *promptFontResource = findStartupFontByName(_engine, "MEDFONT1");
-		const CftFontResource *inventoryTooltipFontResource = findStartupFontByName(_engine, "TEXTFONT");
+		const Text *text = _engine.getText();
+		const CftFontResource *promptFontResource = text ? text->findFont("MEDFONT1") : nullptr;
+		const CftFontResource *inventoryTooltipFontResource = text ? text->findFont("TEXTFONT") : nullptr;
 		Common::ScopedPtr<HarvesterCftFont> promptCftFont;
 		Common::ScopedPtr<HarvesterCftFont> inventoryTooltipCftFont;
 		const Graphics::Font *promptFont = bodyFont;
