@@ -1227,6 +1227,14 @@ private:
 	void part26EnterFromLaboratory();
 	void part26DrawMissSullivanFrame(int frame);
 	void part26();
+	void part26Floppy();
+	void part26FloppyExecuteAction(int action);
+	void part26FloppyOpenDoor();
+	void part26FloppyCloseDoor();
+	void part26FloppyEnterLab();
+	void part26FloppyApplyObjectState(int num);
+	void part26FloppyEnterFromRight();
+	void part26FloppyEnterFromLaboratory();
 
 	// college lockers
 	void part27ExecuteAction(int action);
@@ -1901,6 +1909,7 @@ protected:
 	static const RoomDataOffsets PART_25_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_25_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_26_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_26_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_27_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_28_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_30_ROOM_DATA_OFFSETS;
