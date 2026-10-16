@@ -49,7 +49,7 @@ static const uint16 kConvoVolume = 85;
 // The parts of an XSheet
 static const uint kXSheetFrameCountOffset = 0x22;
 static const uint kXSheetMaxTrees = 4;
-static const uint kXSheetNameSize = 33;
+//static const uint kXSheetNameSize = 33;
 
 // The record a conversation or a response keeps for later, which has to be a NavLogic
 static Record *checkHeldRecord(lua_State *L, int index) {
