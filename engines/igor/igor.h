@@ -1245,6 +1245,17 @@ private:
 	void part28EnterAndCheckGrades();
 	void part28DrawFolder(int frame);
 	void part28();
+	void part28Floppy();
+	void part28FloppyExecuteAction(int action);
+	void part28FloppyTalkToCaroline();
+	void part28FloppyTakeFolder();
+	void part28FloppyUpdateCarolineDialogue(int action);
+	void part28FloppyUpdateBackground();
+	void part28FloppyApplyObjectState(int num);
+	void part28FloppyDrawCaroline();
+	void part28FloppyDrawCarolineFrame(int frame);
+	void part28FloppyEnterFromRight();
+	void part28FloppyEnterAndCheckGrades();
 
 	// college corridor stairs first floor
 	void part30ExecuteAction(int action);
@@ -1888,6 +1899,7 @@ protected:
 	static const RoomDataOffsets PART_31_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_20_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_23_FLOPPY_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_28_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_24_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_32_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_33_ROOM_DATA_OFFSETS;

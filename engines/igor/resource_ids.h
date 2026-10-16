@@ -883,6 +883,12 @@
 #define FRM_CollegeCorridorMargaretFloppy7 1265
 #define FRM_CollegeCorridorMargaretFloppy8 1266
 
+#define FRM_CollegeCorridorCarolineFloppy1 1252
+#define FRM_CollegeCorridorCarolineFloppy2 1253
+#define FRM_CollegeCorridorCarolineFloppy3 1254
+#define FRM_CollegeCorridorCarolineFloppy4 1255
+#define FRM_CollegeCorridorCarolineFloppy5 1256
+
 #define FRM_CollegeCorridorChemistryClassFloppy1 1269
 #define FRM_CollegeCorridorChemistryClassFloppy2 1270
 
