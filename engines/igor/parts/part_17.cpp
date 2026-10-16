@@ -67,7 +67,8 @@ void IgorEngine::part17WalkIn(bool lateGame) {
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove(tick);
-	_currentPart = 302;
+	// The Spanish floppy college entrance leads to the hall, not to the stairs
+	_currentPart = (_game.version == kIdSpaFloppy) ? 150 : 302;
 }
 
 void IgorEngine::part17TalkToPhilipAndJimmy() {

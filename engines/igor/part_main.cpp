@@ -542,7 +542,17 @@ void IgorEngine::partMain() {
 			part14();
 			break;
 		case 150:
-			part15();
+			if (_game.version == kIdSpaFloppy) {
+				part15Floppy();
+			} else {
+				part15();
+			}
+			break;
+		case 151: // exists only in the Spanish floppy version
+			if (_game.version != kIdSpaFloppy) {
+				error("partMain() Unhandled part %d", _currentPart);
+			}
+			part15Floppy();
 			break;
 		case 160:
 			part16();
