@@ -50,7 +50,8 @@ public:
 	void resetRoomNpcDialogueState();
 	void syncRuntimeSaveState(Common::Serializer &s);
 	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, const NpcRecord &npc, const Common::String &usedItemName,
+		float paletteBrightness, const Common::String &currentRoomName,
+		const NpcRecord &npc, const Common::String &usedItemName,
 		Flow &flow);
 
 private:

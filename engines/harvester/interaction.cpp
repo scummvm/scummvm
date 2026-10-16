@@ -760,8 +760,8 @@ Common::Error Interaction::runScriptedDialogue(const Common::String &npcName,
 			return Common::kReadingFailed;
 
 		Common::Error dialogueError = _flow.runRoomNpcDialogue(
-			dialogueBackdrop, _scene.palette, _scene.targetPaletteBrightness, *dialogueNpc,
-			usedItemName);
+			dialogueBackdrop, _scene.palette, _scene.targetPaletteBrightness,
+			_scene.state.roomName, *dialogueNpc, usedItemName);
 		if (dialogueError.getCode() != Common::kNoError)
 			return dialogueError;
 	} else {

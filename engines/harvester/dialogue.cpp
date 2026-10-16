@@ -1459,7 +1459,8 @@ void DialogueSystem::syncRuntimeSaveState(Common::Serializer &s) {
 }
 
 Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, const NpcRecord &npc, const Common::String &usedItemName,
+		float paletteBrightness, const Common::String &currentRoomName,
+		const NpcRecord &npc, const Common::String &usedItemName,
 		Flow &flow) {
 	Script *script = _engine.getScript();
 	Text *text = _engine.getText();
@@ -1487,8 +1488,9 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	RoomNpcDialogueSession session(_engine, _mousePos, flow, backdrop, palette, paletteBrightness, npc);
 	if (!session.isValid())
 		return Common::kReadingFailed;
+	// START_DIALOG may invoke an NPC assigned to another room.
 	DialogueRuntime runtime(
-		_engine, *script, *text, flow, npc.roomName, session.getGenericByeTopic(), session);
+		_engine, *script, *text, flow, currentRoomName, session.getGenericByeTopic(), session);
 
 	for (uint i = 0; i < _npcHandlers.size(); ++i) {
 		if (_npcHandlers[i]->matchesNpc(npc.npcName))
