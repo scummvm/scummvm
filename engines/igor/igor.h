@@ -1753,6 +1753,9 @@ private:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+	int dialogueChoiceOffset(int i) const;
+	Common::String dialogueChoiceText(int choice, const char *prefix) const;
+	void drawFloppyDialogueChoice(int choice, int color);
 	bool copyOptionsMenuThumbnail(Graphics::Surface &thumb) const {
 		if (!_optionsMenuThumbnail.getPixels())
 			return false;

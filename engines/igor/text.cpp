@@ -22,6 +22,22 @@
 
 namespace Igor {
 
+// palette colors of a choice and of the one under the cursor, y of the
+// first line and distance between lines. The CD hover area starts one row above the first line.
+static const int kChoiceColor = 240;
+static const int kChoiceHoverColor = 241;
+static const int kChoiceFirstY = 135;
+static const int kChoiceLineSpacing = 11;
+static const int kChoiceHoverFirstY = 134;
+
+// Spanish floppy dialogue choices use the action sentence colors: the normal color, and the
+// one used for the choice under the cursor.
+static const int kFloppyChoiceColor = 248;
+static const int kFloppyChoiceHoverColor = 247;
+static const int kFloppyChoiceFirstY = 135;
+static const int kFloppyChoiceLineSpacing = 10;
+
+
 /**
  * appends one DialogueText{num, count, sound} record to the batch being built.
  * Game accumulates texts in _dialogeTextsTable, then displays them during dialogues.
@@ -478,6 +494,24 @@ void IgorEngine::animateIgorTalking(int frame) {
 	}
 }
 
+
+// Offset in the dialogue data of the entry of choice slot i (1..5) in the current menu.
+int IgorEngine::dialogueChoiceOffset(int i) const {
+	return (i - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
+}
+
+// Text of a choice: both parts of the question, after an optional prefix.
+Common::String IgorEngine::dialogueChoiceText(int choice, const char *prefix) const {
+	const int offset = dialogueChoiceOffset(_dialogueInfo[choice]);
+	const int num = _gameState.dialogueData[offset + 3] - 1;
+	return Common::String::format("%s%s %s", prefix, _dialogueQuestions[num][0], _dialogueQuestions[num][1]);
+}
+
+void IgorEngine::drawFloppyDialogueChoice(int choice, int color) {
+	const Common::String text = dialogueChoiceText(choice, "");
+	_sentenceFont->drawString(_screenVGA, text.c_str(), 0, kFloppyChoiceFirstY + choice * kFloppyChoiceLineSpacing, color, -1, -1);
+}
+
 /**
  * Pos and color
  */
@@ -506,7 +540,7 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 		}
 		dialogueAskQuestion();
 		dialogueReplyToQuestion(x, y, r, g, b);
-		int offset = (_dialogueInfo[_dialogueChoiceSelected] - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
+		int offset = dialogueChoiceOffset(_dialogueInfo[_dialogueChoiceSelected]);
 		int code = _gameState.dialogueData[offset + 5];
 		if (getPart() == 9) {
 			if (code == 4)
@@ -554,30 +588,38 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 	_gameState.dialogueStarted = false;
 }
 
+
 void IgorEngine::drawDialogueChoices() {
 	if (_gameState.dialogueTextRunning) {
 		warning("drawDialogueChoices() entered while dialogue text is still active");
 	}
+	const bool floppy = (_game.version == kIdSpaFloppy);
 	memset(_screenVGA + 46080, 0, 56 * 320);
-	setPaletteColor(240, 0, 0, 0);
+	setPaletteColor(floppy ? kFloppyChoiceColor : kChoiceColor, 0, 0, 0);
 	_dialogueInfo[0] = 0;
 	for (int i = 1; i <= 5; ++i) {
 		_dialogueInfo[i] = 0;
 	}
 	for (int i = 1; i <= 5; ++i) {
-		int offset = (i - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
+		int offset = dialogueChoiceOffset(i);
 		if (_gameState.dialogueData[offset] == 1) {
 			++_dialogueInfo[0];
 			_dialogueInfo[_dialogueInfo[0]] = i;
-			int num = _gameState.dialogueData[offset + 3] - 1;
-			char questionText[128];
-			snprintf(questionText, sizeof(questionText), "@%s %s", _dialogueQuestions[num][0], _dialogueQuestions[num][1]);
-			_sentenceFont->drawString(_screenVGA, questionText, 0, _dialogueInfo[0] * 11 + 135, 240, 0, 0);
+			if (floppy) {
+				drawFloppyDialogueChoice(_dialogueInfo[0], kFloppyChoiceColor);
+			} else {
+				const Common::String questionText = dialogueChoiceText(_dialogueInfo[0], "@");
+				_dialogueFont->drawString(_screenVGA, questionText.c_str(), 0, _dialogueInfo[0] * kChoiceLineSpacing + kChoiceFirstY, kChoiceColor, 0, 0);
+			}
 		}
 		debugC(9, kDebugEngine, "drawDialogueChoices() i %d state %d num %d", i, _gameState.dialogueData[offset], _gameState.dialogueData[offset + 3]);
 	}
-	setPaletteColor(240, _paletteBuffer[0x2F6 + 1], _paletteBuffer[0x2F6 + 2], _paletteBuffer[0x2F6 + 3]);
-	setPaletteColor(241, _paletteBuffer[0x2F0 + 1], _paletteBuffer[0x2F0 + 2], _paletteBuffer[0x2F0 + 3]);
+	if (floppy) {
+		setPaletteColor(kFloppyChoiceColor, _paletteBuffer[3 * kFloppyChoiceColor], _paletteBuffer[3 * kFloppyChoiceColor + 1], _paletteBuffer[3 * kFloppyChoiceColor + 2]);
+		return;
+	}
+	setPaletteColor(kChoiceColor, _paletteBuffer[0x2F6 + 1], _paletteBuffer[0x2F6 + 2], _paletteBuffer[0x2F6 + 3]);
+	setPaletteColor(kChoiceHoverColor, _paletteBuffer[0x2F0 + 1], _paletteBuffer[0x2F0 + 2], _paletteBuffer[0x2F0 + 3]);
 }
 
 int IgorEngine::selectDialogue() {
@@ -596,9 +638,16 @@ int IgorEngine::selectDialogue() {
 			drawDialogueChoices();
 			hoveredChoice = 0;
 		}
-		int currentChoice = (_inputVars[kInputCursorYPos] - 134) / 11;
-		if (currentChoice < 0) {
-			currentChoice = 0;
+		int currentChoice;
+		if (_game.version == kIdSpaFloppy) {
+			// only the rows of the choices react to the cursor
+			const int y = _inputVars[kInputCursorYPos];
+			currentChoice = (y >= 145 && y <= 194) ? (y - kFloppyChoiceFirstY) / kFloppyChoiceLineSpacing : 0;
+		} else {
+			currentChoice = (_inputVars[kInputCursorYPos] - kChoiceHoverFirstY) / kChoiceLineSpacing;
+			if (currentChoice < 0) {
+				currentChoice = 0;
+			}
 		}
 
 		if (currentChoice != hoveredChoice) {
@@ -629,7 +678,7 @@ int IgorEngine::selectDialogue() {
 
 void IgorEngine::dialogueAskQuestion() {
 	memset(_screenVGA + 46080, 0, 17920);
-	int offset = (_dialogueInfo[_dialogueChoiceSelected] - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
+	int offset = dialogueChoiceOffset(_dialogueInfo[_dialogueChoiceSelected]);
 	int question = _gameState.dialogueData[offset + 3];
 	// For part 5 igor always chickens out from Phillip
 	if (getPart() == 17) {
@@ -651,15 +700,21 @@ void IgorEngine::dialogueAskQuestion() {
 }
 
 void IgorEngine::recolorDialogueChoice(int num, bool highlight) {
-	uint8 *p = _screenVGA + 320 * (11 * num + 135);
-	for (int i = 0; i < 320 * 11; ++i) {
+	if (_game.version == kIdSpaFloppy) {
+		if (num >= 1 && num <= _dialogueInfo[0]) {
+			drawFloppyDialogueChoice(num, highlight ? kFloppyChoiceHoverColor : kFloppyChoiceColor);
+		}
+		return;
+	}
+	uint8 *p = _screenVGA + 320 * (kChoiceLineSpacing * num + kChoiceFirstY);
+	for (int i = 0; i < 320 * kChoiceLineSpacing; ++i) {
 		if (highlight) {
-			if (p[i] == 240) {
-				p[i] = 241;
+			if (p[i] == kChoiceColor) {
+				p[i] = kChoiceHoverColor;
 			}
 		} else {
-			if (p[i] == 241) {
-				p[i] = 240;
+			if (p[i] == kChoiceHoverColor) {
+				p[i] = kChoiceColor;
 			}
 		}
 	}
@@ -667,7 +722,7 @@ void IgorEngine::recolorDialogueChoice(int num, bool highlight) {
 
 void IgorEngine::dialogueReplyToQuestion(int x, int y, int r, int g, int b, int reply) {
 	if (reply == 0) {
-		int offset = (_dialogueInfo[_dialogueChoiceSelected] - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
+		int offset = dialogueChoiceOffset(_dialogueInfo[_dialogueChoiceSelected]);
 		reply = _gameState.dialogueData[offset + 4];
 		debugC(9, kDebugEngine, "dialogueReplyToQuestion() dialogue choice %d reply %d", _dialogueChoiceSelected, reply);
 		if (reply == 0) {
