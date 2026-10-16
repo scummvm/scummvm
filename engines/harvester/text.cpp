@@ -28,11 +28,32 @@
 #include "common/fs.h"
 #include "common/ptr.h"
 #include "common/stream.h"
+#include "graphics/font.h"
 #include "harvester/harvester.h"
 #include "harvester/parse_utils.h"
 #include "harvester/resources.h"
 
 namespace Harvester {
+
+bool appendTextEntryCharacter(Common::String &text, const Graphics::Font &font,
+		uint32 character, uint maxCharacters, int maxWidth) {
+	if (text.size() >= maxCharacters)
+		return false;
+
+	const Common::String candidate = text + (char)character;
+	if (font.getStringWidth(candidate) > maxWidth)
+		return false;
+
+	text = candidate;
+	return true;
+}
+
+bool deleteTextEntryCharacter(Common::String &text) {
+	if (text.empty())
+		return false;
+	text.deleteLastChar();
+	return true;
+}
 
 namespace {
 

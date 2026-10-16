@@ -768,19 +768,17 @@ public:
 							cancelInput = true;
 						} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE ||
 								event.kbd.keycode == Common::KEYCODE_LEFT) {
-							if (!typedTopic.empty())
-								typedTopic.deleteLastChar();
+							deleteTextEntryCharacter(typedTopic);
 						} else if (event.kbd.keycode == Common::KEYCODE_HOME) {
 							typedTopic.clear();
 						} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 								event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 							acceptInput = true;
 						} else if (event.kbd.ascii >= 0x1f && event.kbd.ascii <= 0x80 &&
-								event.kbd.ascii != '~' && typedTopic.size() < kDialogueTextEntryMaxLength &&
+								event.kbd.ascii != '~' &&
 								(!_subtitleCftFont || _subtitleCftFont->hasGlyph(event.kbd.ascii))) {
-							typedTopic += (char)event.kbd.ascii;
-							if (_highlightFont->getStringWidth(typedTopic) > kDialogueTextEntryMaxWidth)
-								typedTopic.deleteLastChar();
+							appendTextEntryCharacter(typedTopic, *_highlightFont, event.kbd.ascii,
+								kDialogueTextEntryMaxLength, kDialogueTextEntryMaxWidth);
 						}
 					} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 						acceptInput = Common::Rect(3, 460, 318, 477).contains(event.mouse);

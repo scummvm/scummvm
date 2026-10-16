@@ -25,9 +25,17 @@
 #include "common/array.h"
 #include "common/str.h"
 
+namespace Graphics {
+class Font;
+}
+
 namespace Harvester {
 
 class ResourceManager;
+
+bool appendTextEntryCharacter(Common::String &text, const Graphics::Font &font,
+	uint32 character, uint maxCharacters, int maxWidth);
+bool deleteTextEntryCharacter(Common::String &text);
 
 struct DialogueIndexEntry {
 	int wavId = 0;
