@@ -55,19 +55,9 @@ Common::Array<Common::String> RoomObjectSelectionCatalog::decodeEpisode(
 		int labelOffset =
 			labelBaseOffset + static_cast<int>(rom.readUInt32(
 								  recordOffset + static_cast<int>(sizeof(uint32))));
-		labels[static_cast<std::size_t>(objectIndex)] = readNullTerminatedAscii(rom, labelOffset);
+		labels[static_cast<std::size_t>(objectIndex)] = rom.readNullTerminatedAscii(labelOffset);
 	}
 
 	return labels;
-}
-
-Common::String RoomObjectSelectionCatalog::readNullTerminatedAscii(const ScoobyDooRom &rom, int offset) {
-	int endOffset = offset;
-	while (rom.readByte(endOffset) != 0) {
-		endOffset++;
-	}
-
-	Span<const uint8> bytes = rom.readBytes(offset, endOffset - offset);
-	return Common::String(reinterpret_cast<const char *>(bytes.data()), static_cast<uint32>(bytes.size()));
 }
 } // namespace Scooby

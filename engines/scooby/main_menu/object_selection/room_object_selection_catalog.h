@@ -69,7 +69,6 @@ private:
 	static const int kSourceRecordSize = 14;
 
 	static Common::Array<Common::String> decodeEpisode(const ScoobyDooRom &rom, int episodeIndex);
-	static Common::String readNullTerminatedAscii(const ScoobyDooRom &rom, int offset);
 
 	Common::Array<Common::Array<Common::String>> _episodeLabels;
 };

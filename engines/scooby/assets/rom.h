@@ -56,6 +56,17 @@ public:
 			   (uint32(_bytes[o + 2]) << 8) | uint32(_bytes[o + 3]);
 	}
 
+	// Reads the ASCII bytes from offset up to, but not including, the next zero terminator.
+	Common::String readNullTerminatedAscii(int offset) const {
+		int endOffset = offset;
+		while (readByte(endOffset) != 0) {
+			endOffset++;
+		}
+
+		Span<const uint8> bytes = readBytes(offset, endOffset - offset);
+		return Common::String(reinterpret_cast<const char *>(bytes.data()), static_cast<uint32>(bytes.size()));
+	}
+
 private:
 	ScoobyDooRom(Common::Array<uint8> bytes);
 

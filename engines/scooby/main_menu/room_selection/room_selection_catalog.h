@@ -70,7 +70,6 @@ private:
 	static Common::Array<Common::String> decodeEpisode(const ScoobyDooRom &rom, int episodeIndex,
 													   const Common::String &limboLabel,
 													   const Common::String &playerInventoryLabel);
-	static Common::String readNullTerminatedAscii(const ScoobyDooRom &rom, int offset);
 
 	Common::Array<Common::Array<Common::String>> _episodeRoomLabels;
 };
