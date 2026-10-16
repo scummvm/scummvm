@@ -52,58 +52,6 @@ struct SceneState {
 	float targetPaletteBrightness = 1.0f;
 };
 
-struct RoomPlayerState {
-	Entity *entity = nullptr;
-	int centerX = 0;
-	int bottomY = 0;
-	float z = 0.0f;
-	int facing = -1;
-	int combatLoadout = 0;
-	uint32 nextMovementTick = 0;
-	int keyboardWalkRequest = -1;
-	int walkHorizontalDirection = 0;
-	int walkDepthDirection = 0;
-	bool hasMoveTarget = false;
-	int targetX = 0;
-	int targetBottomY = 0;
-	float targetZ = 0.0f;
-	bool moveTargetXReached = false;
-	bool moveTargetZReached = false;
-	Common::String currentBlockerName;
-
-	Common::String upwardBlockerHistory;
-	Common::String downwardBlockerHistory;
-	Common::String leftwardBlockerHistory;
-	Common::String rightwardBlockerHistory;
-	bool turnActive = false;
-	int turnTargetFacing = -1;
-	int turnFirstFrame = -1;
-	int turnLastFrame = -1;
-	int turnEndFrame = -1;
-	bool turnPlayBackwards = false;
-	bool attackActive = false;
-	int attackFirstFrame = -1;
-	int attackLastFrame = -1;
-	int attackContactFrame = -1;
-	int attackResumeFacing = -1;
-	bool attackSoundPlayed = false;
-	int attackSoundPlaybackFrame = -1;
-	bool attackContactResolved = false;
-
-	Common::String attackTargetName;
-	int attackTargetClassId = -1;
-	bool hitActive = false;
-	int hitFirstFrame = -1;
-	int hitLastFrame = -1;
-	int hitResumeFacing = -1;
-	int hitKnockbackRemainingX = 0;
-	int hitKnockbackDecayStep = 0;
-	bool deathActive = false;
-	int deathFirstFrame = -1;
-	int deathLastFrame = -1;
-	int deathDamageType = 0;
-};
-
 struct RoomHoverState {
 	const ObjectRecord *object = nullptr;
 	const NpcRecord *npc = nullptr;
@@ -111,17 +59,6 @@ struct RoomHoverState {
 	const Entity *playerEntity = nullptr;
 	Common::String promptText;
 	int cursorSequence = 7;
-};
-
-struct RoomIdleAnimationState {
-	Entity *entity = nullptr;
-	int restoreFacing = -1;
-	uint32 activityTick = 0;
-	uint32 resetTick = 0;
-	uint32 triggerTick = 0;
-	bool active = false;
-	bool loopStarted = false;
-	bool exiting = false;
 };
 
 bool sameMonsterEntityState(const MonsterRecord &lhs, const MonsterRecord &rhs);

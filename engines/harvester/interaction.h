@@ -34,6 +34,7 @@ class HarvesterEngine;
 class InventorySystem;
 class Interaction;
 class SceneEntities;
+class Player;
 struct IndexedBitmap;
 
 extern const char *const kExitCloseupPendingRoomChange;
@@ -102,7 +103,7 @@ private:
 class Interaction {
 public:
 	Interaction(HarvesterEngine &engine, Flow &flow, SceneState &scene,
-		RoomPlayerState &playerState, Common::String &pendingRegionName,
+		Player &player, Common::String &pendingRegionName,
 		Common::String &pendingRoomChange, bool &pendingRoomChangeIsRoomName,
 		bool &pendingRoomChangeUsesSavedRoomState, SaveRoomState &pendingRoomChangeSavedRoomState,
 		bool canExitCloseupToParent, InteractionCallbacks &callbacks);
@@ -125,7 +126,7 @@ private:
 	HarvesterEngine &_engine;
 	Flow &_flow;
 	SceneState &_scene;
-	RoomPlayerState &_playerState;
+	Player &_player;
 	Common::String &_pendingRegionName;
 	Common::String &_pendingRoomChange;
 	bool &_pendingRoomChangeIsRoomName;

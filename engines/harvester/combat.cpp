@@ -737,10 +737,10 @@ MonsterRecord *Combat::findProjectileContactMonsterTarget(RoomSetupState &state,
 	return bestMonster;
 }
 
-void Combat::capturePlayerAttackTargetForKeyboard(RoomSetupState &state, RoomPlayerState &playerState,
+void Combat::capturePlayerAttackTargetForKeyboard(RoomSetupState &state, Player &player,
 		EntityManager *entityManager, bool attackLeft, bool attackRight, bool attackUp, bool attackDown) const {
-	playerState.attackTargetName.clear();
-	playerState.attackTargetClassId = -1;
+	const RoomPlayerState &playerState = player.getState();
+	player.clearAttackTarget();
 	if (!playerState.entity)
 		return;
 
@@ -838,8 +838,7 @@ void Combat::capturePlayerAttackTargetForKeyboard(RoomSetupState &state, RoomPla
 		return;
 	}
 
-	playerState.attackTargetName = bestName;
-	playerState.attackTargetClassId = bestClassId;
+	player.captureAttackTarget(bestName, bestClassId);
 	debugC(1, kDebugCombat,
 		"Harvester: combat player keyboard target capture class='%s' name='%s' input=(L=%d R=%d U=%d D=%d) facing=%d target_rect=(%d,%d)-(%d,%d)",
 		describeCombatTargetClass(bestClassId), bestName.c_str(),
@@ -902,11 +901,11 @@ MonsterRecord *Combat::resolveKillTarget(RoomSetupState &state, const RoomPlayer
 	return bestMonster;
 }
 
-void Combat::capturePlayerAttackTarget(RoomSetupState &state, RoomPlayerState &playerState,
+void Combat::capturePlayerAttackTarget(RoomSetupState &state, Player &player,
 		EntityManager *entityManager, const Common::Point &mousePos, const NpcRecord *hoverNpc) const {
+	const RoomPlayerState &playerState = player.getState();
 	if (hoverNpc) {
-		playerState.attackTargetName = hoverNpc->npcName;
-		playerState.attackTargetClassId = kEntityClassNpc;
+		player.captureAttackTarget(hoverNpc->npcName, kEntityClassNpc);
 		debugC(1, kDebugCombat,
 			"Harvester: combat player target capture class='npc' name='%s' cursor=(%d,%d)",
 			playerState.attackTargetName.c_str(), mousePos.x, mousePos.y);
@@ -914,8 +913,7 @@ void Combat::capturePlayerAttackTarget(RoomSetupState &state, RoomPlayerState &p
 	}
 
 	if (MonsterRecord *monster = findMonsterTargetAtPoint(state, entityManager, mousePos)) {
-		playerState.attackTargetName = monster->monsterName;
-		playerState.attackTargetClassId = kEntityClassMonster;
+		player.captureAttackTarget(monster->monsterName, kEntityClassMonster);
 		debugC(1, kDebugCombat,
 			"Harvester: combat player target capture class='monster' name='%s' cursor=(%d,%d)",
 			playerState.attackTargetName.c_str(), mousePos.x, mousePos.y);
@@ -927,11 +925,11 @@ void Combat::capturePlayerAttackTarget(RoomSetupState &state, RoomPlayerState &p
 		mousePos.x, mousePos.y);
 }
 
-void Combat::captureOverlappingNpcAttackTarget(RoomSetupState &state, RoomPlayerState &playerState, EntityManager *entityManager) const {
+void Combat::captureOverlappingNpcAttackTarget(RoomSetupState &state, Player &player, EntityManager *entityManager) const {
+	const RoomPlayerState &playerState = player.getState();
 	if (playerState.attackTargetClassId < 0 && !Player::isProjectileCombatLoadout(playerState.combatLoadout)) {
 		if (NpcRecord *fallbackNpc = findOverlappingNpcTarget(state, playerState, entityManager)) {
-			playerState.attackTargetName = fallbackNpc->npcName;
-			playerState.attackTargetClassId = kEntityClassNpc;
+			player.captureAttackTarget(fallbackNpc->npcName, kEntityClassNpc);
 		}
 	}
 }
@@ -946,8 +944,9 @@ NpcRecord *Combat::selectNpcAttackContactTarget(RoomSetupState &state, const Roo
 	return npc;
 }
 
-MonsterRecord *Combat::selectMonsterAttackContactTarget(RoomSetupState &state, RoomPlayerState &playerState,
+MonsterRecord *Combat::selectMonsterAttackContactTarget(RoomSetupState &state, Player &player,
 		EntityManager *entityManager, Entity *&monsterEntity) const {
+	const RoomPlayerState &playerState = player.getState();
 	MonsterRecord *monster = nullptr;
 	if (playerState.attackTargetClassId == kEntityClassMonster)
 		monster = findRoomMonsterRecordByName(state, playerState.attackTargetName);
@@ -958,8 +957,7 @@ MonsterRecord *Combat::selectMonsterAttackContactTarget(RoomSetupState &state, R
 		} else if (playerState.attackTargetClassId < 0) {
 			monster = findProjectileContactMonsterTarget(state, playerState, entityManager);
 			if (monster) {
-				playerState.attackTargetName = monster->monsterName;
-				playerState.attackTargetClassId = kEntityClassMonster;
+				player.captureAttackTarget(monster->monsterName, kEntityClassMonster);
 			}
 		} else {
 			monster = nullptr;
@@ -1173,8 +1171,9 @@ void Combat::startMonsterHitReaction(HarvesterEngine &engine,
 }
 
 Common::Error Combat::killDebugActiveMonster(HarvesterEngine &engine, RoomSetupState &state,
-		RoomPlayerState &playerState, EntityManager *entityManager, const Common::Point &mousePos,
+		Player &player, EntityManager *entityManager, const Common::Point &mousePos,
 		CombatEffects &combatEffects, Interaction &interactionProcessor, bool &needsRedraw) {
+	const RoomPlayerState &playerState = player.getState();
 	if (!engine.isCombatDebugEnabled())
 		return Common::kNoError;
 	MonsterRecord *monster = resolveKillTarget(state, playerState, entityManager, mousePos);
@@ -1202,8 +1201,7 @@ Common::Error Combat::killDebugActiveMonster(HarvesterEngine &engine, RoomSetupS
 
 	if (playerState.attackTargetClassId == kEntityClassMonster &&
 			playerState.attackTargetName.equalsIgnoreCase(monster->monsterName)) {
-		playerState.attackTargetName.clear();
-		playerState.attackTargetClassId = -1;
+		player.clearAttackTarget();
 	}
 
 	debugC(1, kDebugCombat,
@@ -1256,9 +1254,10 @@ Common::Error Combat::killDebugActiveMonster(HarvesterEngine &engine, RoomSetupS
 }
 
 Common::Error Combat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetupState &state,
-		RoomPlayerState &playerState, RoomIdleAnimationState &idleState, EntityManager *entityManager,
+		Player &player, EntityManager *entityManager,
 		SceneEntities &sceneRuntime, CombatEffects &combatEffects, const CheatSystem &cheats,
 		InteractionCallbacks &callbacks, Interaction &interactionProcessor, bool &needsRedraw) {
+	const RoomPlayerState &playerState = player.getState();
 	if (!entityManager)
 		return Common::kNoError;
 
@@ -1413,17 +1412,9 @@ Common::Error Combat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetup
 						damageDisabled ? 1 : 0);
 					if (damageLanded > 0 && playerState.entity) {
 						combatEffects.spawnCombatDamagePopup(*playerState.entity, playerState.entity->getName(), damageLanded);
-						if (idleState.entity) {
-							idleState.entity->setVisible(false);
-							idleState.entity->setAnimationRate(0);
-						}
-						idleState.active = false;
-						idleState.loopStarted = false;
-						idleState.exiting = false;
-						idleState.restoreFacing = -1;
-						playerState.entity->setVisible(true);
+						player.cancelIdleAnimation();
 						if (playerHitPointsAfter > 0 &&
-								Player::startHitAnimation(engine, playerState, combatState.attackFirstFrame)) {
+								player.startHitAnimation(engine, combatState.attackFirstFrame)) {
 							callbacks.notePlayerActivity();
 						}
 					}
@@ -1583,17 +1574,18 @@ Common::Error Combat::updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetup
 }
 
 Common::Error Combat::resolvePlayerAttackContact(HarvesterEngine &engine,
-		RoomSetupState &state, RoomPlayerState &playerState,
+		RoomSetupState &state, Player &player,
 		EntityManager *entityManager, SceneEntities &sceneRuntime,
 		CombatEffects &combatEffects,
 		Interaction &interactionProcessor, bool &needsRedraw) {
+	const RoomPlayerState &playerState = player.getState();
 	if (!playerState.attackActive || playerState.attackContactResolved || !playerState.entity ||
 			playerState.attackContactFrame < 0 ||
 			playerState.entity->getCurrentFrame() < playerState.attackContactFrame) {
 		return Common::kNoError;
 	}
 
-	playerState.attackContactResolved = true;
+	player.markAttackContactResolved();
 	const int damageType = Player::resolveCombatLoadoutDamageType(playerState.combatLoadout);
 	const int damageAmount = Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout);
 	debugC(1, kDebugCombat,
@@ -1606,7 +1598,7 @@ Common::Error Combat::resolvePlayerAttackContact(HarvesterEngine &engine,
 	if (!script)
 		return Common::kNoError;
 
-	captureOverlappingNpcAttackTarget(state, playerState, entityManager);
+	captureOverlappingNpcAttackTarget(state, player, entityManager);
 	if (playerState.attackTargetClassId == kEntityClassNpc) {
 		Entity *npcEntity = nullptr;
 		NpcRecord *npc = selectNpcAttackContactTarget(state, playerState, entityManager, npcEntity);
@@ -1658,7 +1650,7 @@ Common::Error Combat::resolvePlayerAttackContact(HarvesterEngine &engine,
 	}
 
 	Entity *monsterEntity = nullptr;
-	MonsterRecord *monster = selectMonsterAttackContactTarget(state, playerState, entityManager, monsterEntity);
+	MonsterRecord *monster = selectMonsterAttackContactTarget(state, player, entityManager, monsterEntity);
 	if (!monster || !monsterEntity) {
 		debugC(1, kDebugCombat,
 			"Harvester: combat player attack missed class='monster' target='%s' reason='no reachable monster'",

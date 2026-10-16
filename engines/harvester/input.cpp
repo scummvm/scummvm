@@ -114,7 +114,7 @@ void Input::queueCombatLoadoutStatusMessage(const Common::String &message, bool 
 }
 
 bool Input::openInventoryOverlay() {
-	RoomPlayerState &playerState = _session.getPlayerState();
+	Player &player = _session.getPlayer();
 	InputState &inputState = _session.getInputState();
 
 	inputState.moveLeft = false;
@@ -123,19 +123,16 @@ bool Input::openInventoryOverlay() {
 	inputState.moveDown = false;
 	_session.clearPendingRegionInteraction();
 	(void)_session.cancelPlayerAttackAnimation();
-	playerState.hasMoveTarget = false;
-	playerState.turnActive = false;
-	playerState.turnTargetFacing = -1;
+	player.cancelMovement();
 	if (!_roomItems.stowCarriedRoomItemToInventory())
 		return false;
 	return _inventory.open();
 }
 
 void Input::capturePlayerAttackTarget() {
-	RoomPlayerState &playerState = _session.getPlayerState();
+	Player &player = _session.getPlayer();
 
-	playerState.attackTargetName.clear();
-	playerState.attackTargetClassId = -1;
+	player.clearAttackTarget();
 
 	const RoomHoverState hoverState = resolveRoomHoverState(
 		_engine, _scene.state, _scene.sceneObjects, _scene.state.roomNpcs, _scene.sceneRegions,
@@ -157,12 +154,13 @@ void Input::handleMouseMove(bool &needsRedraw) {
 }
 
 InputResult Input::handleRightButtonDown(bool &needsRedraw) {
-	RoomPlayerState &playerState = _session.getPlayerState();
-	RoomIdleAnimationState &idleState = _session.getIdleState();
+	Player &player = _session.getPlayer();
+	const RoomPlayerState &playerState = player.getState();
+	const RoomIdleAnimationState &idleState = player.getIdleState();
 
 	_session.notePlayerActivity();
 	if (idleState.active || idleState.exiting) {
-		if (Player::requestIdleAnimationExit(_scene.state, playerState, idleState))
+		if (player.requestIdleAnimationExit(_scene.state))
 			needsRedraw = true;
 		return InputResult();
 	}
@@ -202,13 +200,7 @@ InputResult Input::handleRightButtonDown(bool &needsRedraw) {
 						_presentationState.closeInventoryAfterCombatLoadoutStatus = true;
 					}
 					_session.captureCurrentSaveState();
-					if (playerState.entity) {
-						(void)Player::syncCombatLoadoutVisual(_engine, _scene.state, playerState,
-							_engine.getScript()->getPlayerCombatLoadout());
-					} else if (_engine.getScript()) {
-						playerState.combatLoadout =
-							_engine.getScript()->getPlayerCombatLoadout();
-					}
+					player.syncCombatLoadout(_engine, _scene.state);
 					if (!_inventory.refresh())
 						return InputResult::leaveRoom(Common::kReadingFailed);
 				}
@@ -282,17 +274,10 @@ InputResult Input::handleRightButtonDown(bool &needsRedraw) {
 	Script *script = _engine.getScript();
 	if (!_presentationState.showingInspectText && !_session.isPlayerCombatLocked() && script && playerState.entity &&
 			script->getPlayerCurrentHitPoints() > 0 && !script->isPlayerControlPaused()) {
-		playerState.hasMoveTarget = false;
-		playerState.turnActive = false;
-		playerState.turnTargetFacing = -1;
-		playerState.turnFirstFrame = -1;
-		playerState.turnLastFrame = -1;
-		playerState.turnEndFrame = -1;
-		playerState.turnPlayBackwards = false;
-		(void)Player::syncCombatLoadoutVisual(_engine, _scene.state, playerState,
-			script->getPlayerCombatLoadout());
+		player.cancelMovementForAttack();
+		(void)player.syncCombatLoadoutVisual(_engine, _scene.state, script->getPlayerCombatLoadout());
 		capturePlayerAttackTarget();
-		if (Player::startAttackAnimation(_scene.state, playerState, _flow._mousePos)) {
+		if (player.startAttackAnimation(_scene.state, _flow._mousePos)) {
 			debugC(1, kDebugCombat,
 				"Harvester: combat player attack start loadout=%d weapon='%s' damage=%d damage_type='%s' target_class='%s' target='%s' cursor=(%d,%d)",
 				playerState.combatLoadout,
@@ -303,8 +288,7 @@ InputResult Input::handleRightButtonDown(bool &needsRedraw) {
 				playerState.attackTargetName.c_str(), _flow._mousePos.x, _flow._mousePos.y);
 			needsRedraw = true;
 		} else {
-			playerState.attackTargetName.clear();
-			playerState.attackTargetClassId = -1;
+			player.clearAttackTarget();
 		}
 	}
 	return InputResult();
@@ -319,8 +303,9 @@ void Input::handleLeftButtonUp() {
 }
 
 InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
-	RoomPlayerState &playerState = _session.getPlayerState();
-	RoomIdleAnimationState &idleState = _session.getIdleState();
+	Player &player = _session.getPlayer();
+	const RoomPlayerState &playerState = player.getState();
+	const RoomIdleAnimationState &idleState = player.getIdleState();
 	InputState &inputState = _session.getInputState();
 
 	const uint32 now = Player::getRuntimeClockTicks();
@@ -329,7 +314,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 		now - inputState.lastLeftButtonReleaseTick < kRoomExitFastClickWindowTicks;
 	_session.notePlayerActivity();
 	if (idleState.active || idleState.exiting) {
-		if (Player::requestIdleAnimationExit(_scene.state, playerState, idleState))
+		if (player.requestIdleAnimationExit(_scene.state))
 			needsRedraw = true;
 		return InputResult();
 	}
@@ -486,9 +471,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 		inputState.moveRight = false;
 		inputState.moveUp = false;
 		inputState.moveDown = false;
-		playerState.hasMoveTarget = false;
-		playerState.turnActive = false;
-		playerState.turnTargetFacing = -1;
+		player.cancelMovement();
 		bool didTransition = false;
 		Common::Error dialogueError = _interactionProcessor.runScriptedDialogue(
 			hoverState.npc->npcName, Common::String(), Common::String(), didTransition);
@@ -538,7 +521,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 					playerState.centerX, playerState.bottomY, (double)playerState.z,
 					playerRect.left, playerRect.top, playerRect.right, playerRect.bottom);
 			}
-			Player::setMoveTargetFromScreenPoint(_scene.state, playerState, _flow._mousePos.x, _flow._mousePos.y);
+			player.setMoveTargetFromScreenPoint(_scene.state, _flow._mousePos.x, _flow._mousePos.y);
 			if (_engine.isPathfindingDebugEnabled()) {
 				debugC(1, kDebugPathfinding,
 					"Harvester: pathfinding click target room='%s' mouse=(%d,%d) target=(%d,%d,z=%.2f)",
@@ -577,9 +560,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 			debug(1, "Harvester: unsupported IDENT textbox '%s' for object '%s'",
 				resolvedInspectText.boxName.c_str(), clickedObject->objectName.c_str());
 		}
-		playerState.hasMoveTarget = false;
-		playerState.turnActive = false;
-		playerState.turnTargetFacing = -1;
+		player.cancelMovement();
 		needsRedraw = true;
 		return InputResult();
 	}
@@ -617,8 +598,8 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 }
 
 InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw) {
-	RoomPlayerState &playerState = _session.getPlayerState();
-	RoomIdleAnimationState &idleState = _session.getIdleState();
+	Player &player = _session.getPlayer();
+	const RoomIdleAnimationState &idleState = player.getIdleState();
 	InputState &inputState = _session.getInputState();
 
 	if (_presentationState.showingInspectText) {
@@ -635,7 +616,7 @@ InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw)
 	if (key.hasFlags(Common::KBD_CTRL))
 		inputState.attackModifierHeld = true;
 	if (idleState.active || idleState.exiting) {
-		if (Player::requestIdleAnimationExit(_scene.state, playerState, idleState))
+		if (player.requestIdleAnimationExit(_scene.state))
 			needsRedraw = true;
 		return InputResult();
 	}
@@ -734,9 +715,7 @@ InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw)
 		inputState.moveUp = false;
 		inputState.moveDown = false;
 		_session.clearPendingRegionInteraction();
-		playerState.hasMoveTarget = false;
-		playerState.turnActive = false;
-		playerState.turnTargetFacing = -1;
+		player.cancelMovement();
 		_session.captureCurrentSaveState();
 		Graphics::Screen *activeScreen = _engine.getScreen();
 		if (!activeScreen)

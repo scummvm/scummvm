@@ -1257,22 +1257,17 @@ void logStartupRoomProbe(HarvesterEngine &engine, const SceneState &scene,
 
 			Entity *player = entityManager->findSceneEntityByName(kPlayerActorEntityName);
 			if (player && foundFloorProbe && floorHover.cursorSequence == kCursorSequenceWalk) {
-				RoomPlayerState probePlayer;
-				probePlayer.entity = player;
-				probePlayer.centerX = scene.state.playerSpawnX;
-				probePlayer.bottomY = scene.state.playerSpawnY;
-				probePlayer.z = (float)scene.state.playerSpawnZ;
-				probePlayer.facing = scene.state.playerFacing;
-				Player::setMoveTargetFromScreenPoint(scene.state, probePlayer, floorProbe.x, floorProbe.y);
-				for (int i = 0; i < 32 && probePlayer.hasMoveTarget; ++i)
-					(void)Player::stepMoveTarget(
-						engine, scene.state, scene.sceneObjects, scene.sceneAnimations, probePlayer);
+				Player probePlayer;
+				probePlayer.initialize(scene.state, player, 0);
+				probePlayer.setMoveTargetFromScreenPoint(scene.state, floorProbe.x, floorProbe.y);
+				for (int i = 0; i < 32 && probePlayer.getState().hasMoveTarget; ++i)
+					(void)probePlayer.stepMoveTarget(engine, scene.state, scene.sceneObjects, scene.sceneAnimations);
 
 				const Common::Rect movedRect = player->getScreenRect();
 				debugC(1, kDebugPlayer,
 					"Harvester: startup probe movement room='%s' target=(%d,%d) final_rect=(%d,%d)-(%d,%d) z=%.2f",
 					scene.state.roomName.c_str(), floorProbe.x, floorProbe.y,
-					movedRect.left, movedRect.top, movedRect.right, movedRect.bottom, (double)probePlayer.z);
+					movedRect.left, movedRect.top, movedRect.right, movedRect.bottom, (double)probePlayer.getState().z);
 
 				player->setCurrentFrame(Player::resolveFacingFrame(scene.state.playerFacing));
 				(void)applyRoomActorPlacement(scene.state, *player,
@@ -2180,26 +2175,16 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 					state.entranceName.c_str());
 			}
 			if (reusedPlayer) {
-				RoomPlayerState playerState;
-				playerState.entity = player;
-				playerState.centerX = state.playerSpawnX;
-				playerState.bottomY = state.playerSpawnY;
-				playerState.z = (float)state.playerSpawnZ;
-				playerState.facing = state.playerFacing;
-				playerState.combatLoadout = -1;
-				(void)Player::syncCombatLoadoutVisual(_engine, state, playerState, playerCombatLoadout);
+				Player loadoutPlayer;
+				loadoutPlayer.initialize(state, player, -1);
+				(void)loadoutPlayer.syncCombatLoadoutVisual(_engine, state, playerCombatLoadout);
 			}
-			RoomPlayerState playerSpawnState;
-			playerSpawnState.entity = player;
-			playerSpawnState.centerX = state.playerSpawnX;
-			playerSpawnState.bottomY = state.playerSpawnY;
-			playerSpawnState.z = (float)state.playerSpawnZ;
-			playerSpawnState.facing = state.playerFacing;
-			if (Player::resolveBlockedStartupSpawn(
-					_engine, state, drawableObjects, drawableAnimations, playerSpawnState)) {
-				state.playerSpawnX = playerSpawnState.centerX;
-				state.playerSpawnY = playerSpawnState.bottomY;
-				state.playerSpawnZ = (int)playerSpawnState.z;
+			Player spawnPlayer;
+			spawnPlayer.initialize(state, player, 0);
+			if (spawnPlayer.resolveBlockedStartupSpawn(_engine, state, drawableObjects, drawableAnimations)) {
+				state.playerSpawnX = spawnPlayer.getState().centerX;
+				state.playerSpawnY = spawnPlayer.getState().bottomY;
+				state.playerSpawnZ = (int)spawnPlayer.getState().z;
 			}
 			if (reusedPlayer)
 				entityManager->adoptSceneEntity(player);

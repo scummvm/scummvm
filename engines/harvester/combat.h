@@ -35,6 +35,8 @@ class CombatEffects;
 class InteractionCallbacks;
 class Interaction;
 class SceneEntities;
+class Player;
+struct RoomPlayerState;
 
 extern const int kRoomMonsterAnimationRate;
 extern const int kNativeMonsterAttackAnimationRate;
@@ -137,29 +139,29 @@ public:
 	void commitMonsterCombatStatesForSceneChange(Common::Array<MonsterCombatState> &&states);
 	void resetForSceneRefresh(const RoomSetupState &state);
 
-	void capturePlayerAttackTargetForKeyboard(RoomSetupState &state, RoomPlayerState &playerState,
+	void capturePlayerAttackTargetForKeyboard(RoomSetupState &state, Player &player,
 		EntityManager *entityManager, bool attackLeft, bool attackRight, bool attackUp, bool attackDown) const;
 	MonsterRecord *resolveKillTarget(RoomSetupState &state, const RoomPlayerState &playerState,
 		EntityManager *entityManager, const Common::Point &mousePos) const;
 	// The caller clears the captured target before resolving the room hover state.
-	void capturePlayerAttackTarget(RoomSetupState &state, RoomPlayerState &playerState,
+	void capturePlayerAttackTarget(RoomSetupState &state, Player &player,
 		EntityManager *entityManager, const Common::Point &mousePos, const NpcRecord *hoverNpc) const;
-	void captureOverlappingNpcAttackTarget(RoomSetupState &state, RoomPlayerState &playerState, EntityManager *entityManager) const;
+	void captureOverlappingNpcAttackTarget(RoomSetupState &state, Player &player, EntityManager *entityManager) const;
 	NpcRecord *selectNpcAttackContactTarget(RoomSetupState &state, const RoomPlayerState &playerState,
 		EntityManager *entityManager, Entity *&npcEntity) const;
-	MonsterRecord *selectMonsterAttackContactTarget(RoomSetupState &state, RoomPlayerState &playerState,
+	MonsterRecord *selectMonsterAttackContactTarget(RoomSetupState &state, Player &player,
 		EntityManager *entityManager, Entity *&monsterEntity) const;
 
 	Common::Error killDebugActiveMonster(HarvesterEngine &engine, RoomSetupState &state,
-		RoomPlayerState &playerState, EntityManager *entityManager, const Common::Point &mousePos,
+		Player &player, EntityManager *entityManager, const Common::Point &mousePos,
 		CombatEffects &combatEffects, Interaction &interactionProcessor, bool &needsRedraw);
 
 	Common::Error updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetupState &state,
-		RoomPlayerState &playerState, RoomIdleAnimationState &idleState, EntityManager *entityManager,
+		Player &player, EntityManager *entityManager,
 		SceneEntities &sceneRuntime, CombatEffects &combatEffects, const CheatSystem &cheats,
 		InteractionCallbacks &callbacks, Interaction &interactionProcessor, bool &needsRedraw);
 	Common::Error resolvePlayerAttackContact(HarvesterEngine &engine,
-		RoomSetupState &state, RoomPlayerState &playerState,
+		RoomSetupState &state, Player &player,
 		EntityManager *entityManager, SceneEntities &sceneRuntime,
 		CombatEffects &combatEffects,
 		Interaction &interactionProcessor, bool &needsRedraw);
