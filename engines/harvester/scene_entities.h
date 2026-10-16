@@ -56,6 +56,8 @@ public:
 
 private:
 	bool isTimerMaterializedInCurrentRoom(const Common::String &timerName) const;
+	Entity *createSceneObjectEntity(const ObjectRecord &object,
+		const Common::String &spritePath, const Common::Rect &hotspotBounds);
 	bool isInteractiveSceneHotspot(const ObjectRecord &object) const;
 	EntityClass resolveSceneObjectClassLocal(const ObjectRecord &object, const Entity *entity) const;
 	static Common::Rect getSceneRegionBounds(const RegionRecord &region);

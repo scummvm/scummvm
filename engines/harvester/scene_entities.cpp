@@ -30,41 +30,6 @@ namespace Harvester {
 
 static const char *const kInventoryOwnerName = "INVENTORY";
 
-static bool isBackgroundSceneObject(const RoomSetupState &state,
-		const ObjectRecord &object, const Entity &entity) {
-	if (!state.backgroundObjectName.empty() &&
-			object.objectName.equalsIgnoreCase(state.backgroundObjectName)) {
-		return true;
-	}
-
-	return object.initialX == 0 && object.initialY == 0 &&
-		entity.getBoundsWidth() == 640 && entity.getBoundsHeight() == 480;
-}
-
-static bool isInteractiveSceneHotspot(const ObjectRecord &object, Script *script) {
-	if (object.operatable || !object.actionTag.empty())
-		return true;
-	if (!script)
-		return false;
-	if (script->isPickupObject(object))
-		return true;
-
-	ResolvedText inspectText;
-	return script->resolveObjectInspectText(object, inspectText);
-}
-
-static int resolveSceneObjectClass(const RoomSetupState &state,
-		const ObjectRecord &object, const Entity *entity, Script *script) {
-	if (entity)
-		return isBackgroundSceneObject(state, object, *entity)
-			? kEntityClassBackground
-			: kEntityClassObject;
-
-	return isInteractiveSceneHotspot(object, script)
-		? kEntityClassRectHotspot
-		: kEntityClassDisabledHotspot;
-}
-
 static bool sameRect(const Common::Rect &lhs, const Common::Rect &rhs) {
 	return lhs.left == rhs.left && lhs.top == rhs.top &&
 		lhs.right == rhs.right && lhs.bottom == rhs.bottom;
@@ -540,12 +505,8 @@ EntityClass SceneEntities::resolveSceneObjectClassLocal(const ObjectRecord &obje
 		: kEntityClassDisabledHotspot;
 }
 
-void SceneEntities::spawnSceneObjectEntityFromRecord(const ObjectRecord &object) {
-	if (!_entityManager)
-		return;
-
-	const Common::String spritePath = resolveSceneObjectSpritePathLocal(object);
-	const Common::Rect hotspotBounds = getSceneObjectBounds(object);
+Entity *SceneEntities::createSceneObjectEntity(const ObjectRecord &object,
+		const Common::String &spritePath, const Common::Rect &hotspotBounds) {
 	Entity *entity = nullptr;
 	if (!spritePath.empty() && spritePath.hasSuffixIgnoreCase(".BM")) {
 		entity = _entityManager->spawnSceneBitmapEntity(object.objectName, spritePath,
@@ -555,12 +516,25 @@ void SceneEntities::spawnSceneObjectEntityFromRecord(const ObjectRecord &object)
 			(float)object.currentZ);
 	}
 	if (!entity)
-		return;
+		return nullptr;
 
 	entity->setClassId(resolveSceneObjectClassLocal(
 		object, entity->hasFrames() ? entity : nullptr));
 	entity->setAnchorMode(kEntityAnchorTopLeft);
 	entity->setZExtent((float)object.zExtent);
+	return entity;
+}
+
+void SceneEntities::spawnSceneObjectEntityFromRecord(const ObjectRecord &object) {
+	if (!_entityManager)
+		return;
+
+	const Common::String spritePath = resolveSceneObjectSpritePathLocal(object);
+	const Common::Rect hotspotBounds = getSceneObjectBounds(object);
+	Entity *entity = createSceneObjectEntity(object, spritePath, hotspotBounds);
+	if (!entity)
+		return;
+
 	debugC(3, kDebugRoom, "Harvester: scene object spawned object='%s' sprite='%s' class=0x%x",
 		object.objectName.c_str(), spritePath.c_str(), entity->getClassId());
 }
@@ -727,16 +701,9 @@ void SceneEntities::populateRoomObjects(const Common::Array<ObjectRecord> &drawa
 		return;
 
 	for (const ObjectRecord &object : drawableObjects) {
-		Entity *entity = nullptr;
 		const Common::String spritePath = resolveSceneObjectSpritePathLocal(object);
 		const Common::Rect hotspotBounds = getRoomObjectHotspotBounds(object);
-		if (!spritePath.empty() && spritePath.hasSuffixIgnoreCase(".BM")) {
-			entity = _entityManager->spawnSceneBitmapEntity(object.objectName, spritePath,
-				Common::Point(object.currentX, object.currentY), (float)object.currentZ);
-		} else {
-			if (!hotspotBounds.isEmpty())
-				entity = _entityManager->spawnSceneHotspotEntity(object.objectName, hotspotBounds, (float)object.currentZ);
-		}
+		Entity *entity = createSceneObjectEntity(object, spritePath, hotspotBounds);
 
 		if (!entity) {
 			debugC(1, kDebugRoom,
@@ -751,10 +718,6 @@ void SceneEntities::populateRoomObjects(const Common::Array<ObjectRecord> &drawa
 			continue;
 		}
 
-		entity->setClassId(resolveSceneObjectClass(
-			_state, object, entity->hasFrames() ? entity : nullptr, _script));
-		entity->setAnchorMode(kEntityAnchorTopLeft);
-		entity->setZExtent((float)object.zExtent);
 		const Common::Rect entityRect = entity->getScreenRect();
 		debugC(1, kDebugRoom,
 			"Harvester: scene entity spawned room='%s' object='%s' type='%s' class=0x%x pos=(%d,%d,z=%.2f) rect=(%d,%d)-(%d,%d) sprite='%s' action='%s' operatable=%d ident='%s'",
