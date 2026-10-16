@@ -87,10 +87,6 @@ static const DialogueLineEntry kWaspWomanTopic30cLines[] = {
 
 } // End of namespace
 
-bool WaspWomanDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("WASP_WOMAN");
-}
-
 Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	WaspWomanRoomDialogueState &state = _state;
@@ -100,9 +96,6 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.topicBufferLineIndex = responseLineIndex;
 		runtime.assignTopicBuffer(waspWomanTopicBuffer, waspWomanTopicBufferLineIndex,
 			responseLineIndex, "Wasp Woman topic buffer");
-	};
-	auto playWaspWomanLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "WASP_WOMAN", headVariant);
 	};
 
 	if (!usedItemName.empty()) {
@@ -116,7 +109,7 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-			return playWaspWomanLine(0x4cbd, 0);
+			return runtime.playDialogueLineWithVariant(0x4cbd, "WASP_WOMAN", 0);
 		}
 		if (usedItemName.equalsIgnoreCase("NOTE") ||
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
@@ -124,16 +117,16 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
-			return playWaspWomanLine(0x4cc3, 0);
+			return runtime.playDialogueLineWithVariant(0x4cc3, "WASP_WOMAN", 0);
 		}
 
-		return playWaspWomanLine(0x4ca0, 0);
+		return runtime.playDialogueLineWithVariant(0x4ca0, "WASP_WOMAN", 0);
 	}
 
 	if (state.introPending) {
 		state.introPending = false;
 
-		Common::Error lineError = playWaspWomanLine(0x4bee, 1);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x4bee, "WASP_WOMAN", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (sharedState.waspWomanDialogueState) {
@@ -145,12 +138,12 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			ARRAYSIZE(kWaspWomanIntroTailLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playWaspWomanLine(0x4c00, 0);
+		lineError = runtime.playDialogueLineWithVariant(0x4c00, "WASP_WOMAN", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		assignWaspWomanTopicBuffer(kWaspWomanInitialTopicBufferResponseLine);
 	} else {
-		Common::Error lineError = playWaspWomanLine(0x4bee, 0);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x4bee, "WASP_WOMAN", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -183,7 +176,7 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, kWaspWomanTopic305ResponseLine)) {
-			Common::Error lineError = playWaspWomanLine(0x4c31, 0);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x4c31, "WASP_WOMAN", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC027BFstPath);
@@ -204,7 +197,7 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					ARRAYSIZE(kWaspWomanTopic305Response1Lines));
 				break;
 			case 2:
-				lineError = playWaspWomanLine(0x4c5e, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x4c5e, "WASP_WOMAN", 2);
 				break;
 			default:
 				lineError = Common::kNoError;
@@ -215,7 +208,7 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, kWaspWomanTopic308ResponseLine)) {
-			Common::Error lineError = playWaspWomanLine(0x4c67, 0);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x4c67, "WASP_WOMAN", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			assignWaspWomanTopicBuffer(kWaspWomanTopic308PostBufferResponseLine);
@@ -239,7 +232,7 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (runtime.matchesResponseLine(selectedTopic, kWaspWomanLateSilentLoopResponseLine))
 			continue;
-		Common::Error lineError = playWaspWomanLine(0x4c9a, 0);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x4c9a, "WASP_WOMAN", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}

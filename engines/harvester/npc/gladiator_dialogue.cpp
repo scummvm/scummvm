@@ -28,7 +28,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kGladiatorNpc = "GLADIATOR";
 static const char *const kGladiatorInterruptFlag = "GLADIATOR_INTERRUPT_CONVERSATION";
 static const char *const kStartMercyTimerActionTag = "START_MERCY_TIMR";
 static const char *const kDialogueC110FstPath = "GRAPHIC/FST/C110.FST";
@@ -37,29 +36,22 @@ static const int kGladiatorFollowupResponseLine = 0xc4;
 
 } // End of namespace
 
-bool GladiatorDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kGladiatorNpc);
-}
-
 Common::Error GladiatorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	auto playGladiatorLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kGladiatorNpc, headVariant);
-	};
 	auto queueGladiatorMonsterfyTransition = [&]() {
 		InteractionResult interaction;
-		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(kGladiatorNpc)) {
+		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy("GLADIATOR")) {
 			interaction.mutatedRuntimeState = true;
 			interaction.visualRuntimeStateChanged = true;
 		}
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
 	auto runGladiatorDeathBranch = [&](int leadWavId) -> Common::Error {
-		Common::Error lineError = playGladiatorLine(leadWavId, 2);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(leadWavId, "GLADIATOR", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playGladiatorLine(0x6cd, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x6cd, "GLADIATOR", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -72,11 +64,11 @@ Common::Error GladiatorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	(void)runtime.startupScript().setRuntimeFlagValue(kGladiatorInterruptFlag, false);
 
-	Common::Error lineError = playGladiatorLine(0x69c, 1);
+	Common::Error lineError = runtime.playDialogueLineWithVariant(0x69c, "GLADIATOR", 1);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playGladiatorLine(0x6a3, 0);
+	lineError = runtime.playDialogueLineWithVariant(0x6a3, "GLADIATOR", 0);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -91,7 +83,7 @@ Common::Error GladiatorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (responseIndex != 2)
 		return Common::kNoError;
 
-	lineError = playGladiatorLine(0x6b3, 0);
+	lineError = runtime.playDialogueLineWithVariant(0x6b3, "GLADIATOR", 0);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -110,11 +102,11 @@ Common::Error GladiatorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (responseIndex != 2)
 		return Common::kNoError;
 
-	lineError = playGladiatorLine(0x6c7, 1);
+	lineError = runtime.playDialogueLineWithVariant(0x6c7, "GLADIATOR", 1);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playGladiatorLine(0x6cd, 0);
+	lineError = runtime.playDialogueLineWithVariant(0x6cd, "GLADIATOR", 0);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 

@@ -28,27 +28,21 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kLodgeChefNpc = "LODGE_CHEF";
-static const char *const kPcSpeaker = "PC";
 static const int kLodgeChefResponseLine = 0x21;
 
 static const DialogueLineEntry kLodgeChefIntroLines[] = {
-	{ 0x1b10, kLodgeChefNpc, 2 },
-	{ 0x1b19, kLodgeChefNpc, 0 },
-	{ 0x1b1a, kLodgeChefNpc, 3 },
-	{ 0x1b1b, kLodgeChefNpc, 0 }
+	{ 0x1b10, "LODGE_CHEF", 2 },
+	{ 0x1b19, "LODGE_CHEF", 0 },
+	{ 0x1b1a, "LODGE_CHEF", 3 },
+	{ 0x1b1b, "LODGE_CHEF", 0 }
 };
 
 static const DialogueLineEntry kLodgeChefTailLines[] = {
-	{ 0x1b36, kPcSpeaker, 0 },
-	{ 0x1b3a, kLodgeChefNpc, 3 }
+	{ 0x1b36, "PC", 0 },
+	{ 0x1b3a, "LODGE_CHEF", 3 }
 };
 
 } // End of namespace
-
-bool LodgeChefDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kLodgeChefNpc);
-}
 
 Common::Error LodgeChefDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
@@ -64,9 +58,9 @@ Common::Error LodgeChefDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1) {
-		lineError = runtime.playDialogueLineWithVariant(0x1b2c, kLodgeChefNpc, 3);
+		lineError = runtime.playDialogueLineWithVariant(0x1b2c, "LODGE_CHEF", 3);
 	} else if (responseIndex == 2) {
-		lineError = runtime.playDialogueLineWithVariant(0x1b31, kLodgeChefNpc, 0);
+		lineError = runtime.playDialogueLineWithVariant(0x1b31, "LODGE_CHEF", 0);
 	} else {
 		lineError = Common::kNoError;
 	}

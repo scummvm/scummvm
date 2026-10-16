@@ -28,8 +28,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kMadamNpc = "MADAM";
-static const char *const kPcSpeaker = "PC";
 static const char *const kHookerNpc = "HOOKER";
 static const char *const kBarCash200ItemName = "BARCASH200";
 static const char *const kInventoryOwnerName = "INVENTORY";
@@ -43,18 +41,8 @@ static const int kMadamPaymentResponseLine = 0xfc;
 
 } // End of namespace
 
-bool MadamDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kMadamNpc);
-}
-
 Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	auto playMadamLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kMadamNpc, headVariant);
-	};
-	auto playPcLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kPcSpeaker, headVariant);
-	};
 	auto queueHookerMonsterfyTransition = [&]() {
 		InteractionResult interaction;
 		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(kHookerNpc)) {
@@ -79,7 +67,7 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	(void)runtime.startupScript().setRuntimeFlagValue(kMadamInterruptFlag, false);
 
-	Common::Error lineError = playMadamLine(0x1537, 1);
+	Common::Error lineError = runtime.playDialogueLineWithVariant(0x1537, "MADAM", 1);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -89,11 +77,11 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex != 1) {
-		lineError = playMadamLine(0x1577);
+		lineError = runtime.playDialogueLineWithVariant(0x1577, "MADAM", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playMadamLine(0x157b, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x157b, "MADAM", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -101,20 +89,20 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return Common::kNoError;
 	}
 
-	lineError = playMadamLine(0x1542, 1);
+	lineError = runtime.playDialogueLineWithVariant(0x1542, "MADAM", 1);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
 	if (!runtime.startupScript().isObjectInInventory(kBarCash200ItemName)) {
-		lineError = playPcLine(0x156e);
+		lineError = runtime.playDialogueLineWithVariant(0x156e, "PC", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playMadamLine(0x1572);
+		lineError = runtime.playDialogueLineWithVariant(0x1572, "MADAM", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playMadamLine(0x157b, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x157b, "MADAM", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -128,11 +116,11 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1) {
-		lineError = playMadamLine(0x154e);
+		lineError = runtime.playDialogueLineWithVariant(0x154e, "MADAM", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playMadamLine(0x157b, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x157b, "MADAM", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -142,7 +130,7 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (responseIndex != 2)
 		return Common::kNoError;
 
-	lineError = playMadamLine(0x1555, 1);
+	lineError = runtime.playDialogueLineWithVariant(0x1555, "MADAM", 1);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -153,11 +141,11 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playMadamLine(0x155a);
+	lineError = runtime.playDialogueLineWithVariant(0x155a, "MADAM", 0);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playMadamLine(0x1563);
+	lineError = runtime.playDialogueLineWithVariant(0x1563, "MADAM", 0);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 

@@ -55,12 +55,18 @@ public:
 		Flow &flow);
 
 private:
+	struct NpcHandlerRegistration {
+		NpcDialogueHandler *handler;
+		Common::Array<const char *> names;
+	};
+
 	void registerNpcHandlers();
+	NpcDialogueHandler *findNpcHandler(const Common::String &npcName) const;
 
 	HarvesterEngine &_engine;
 	Common::Point &_mousePos;
 	DialogueSharedState _sharedDialogueState;
-	Common::Array<NpcDialogueHandler *> _npcHandlers;
+	Common::Array<NpcHandlerRegistration> _npcHandlers;
 };
 
 } // End of namespace Harvester

@@ -37,7 +37,6 @@ public:
 		bool karinKidnapedShown = false;
 	};
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = SwellRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.talkStatePending);

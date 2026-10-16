@@ -29,55 +29,34 @@
 
 namespace Harvester {
 
-namespace {
-
-static const char *const kMcknightNpc = "MCKNIGHT";
-static const char *const kPcSpeaker = "PC";
-
-} // End of namespace
-
-bool McknightDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kMcknightNpc);
-}
-
 Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
-	auto playMcknightLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kMcknightNpc, headVariant);
-	};
-	auto playPcLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kPcSpeaker, headVariant);
-	};
-	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
-		return runtime.playDialogueEntrySequence(lines, count);
-	};
-
 	if (runtime.startupScript().getFlagValue("LOOK_SAFE_2ND"))
-		return playMcknightLine(0x15d0, 2);
+		return runtime.playDialogueLineWithVariant(0x15d0, "MCKNIGHT", 2);
 
 	if (runtime.startupScript().getFlagValue("LOOK_SAFE_1ST") && !_state.lookSafeFirstLineGate) {
 		_state.lookSafeFirstLineGate = true;
-		return playMcknightLine(0x15c9, 2);
+		return runtime.playDialogueLineWithVariant(0x15c9, "MCKNIGHT", 2);
 	}
 
 	if (usedItemName.empty()) {
 		if (_state.talkStatePending) {
 			_state.talkStatePending = false;
 			const DialogueLineEntry lines[] = {
-				{ 0x1587, kMcknightNpc, 2 },
-				{ 0x158b, kPcSpeaker, 0 },
-				{ 0x158f, kMcknightNpc, 0 },
-				{ 0x1594, kPcSpeaker, 0 },
-				{ 0x1598, kMcknightNpc, 2 }
+				{ 0x1587, "MCKNIGHT", 2 },
+				{ 0x158b, "PC", 0 },
+				{ 0x158f, "MCKNIGHT", 0 },
+				{ 0x1594, "PC", 0 },
+				{ 0x1598, "MCKNIGHT", 2 }
 			};
-			Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			sharedState.dialogueStateD2f04 = true;
-			lineError = playPcLine(0x159d);
+			lineError = runtime.playDialogueLineWithVariant(0x159d, "PC", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playMcknightLine(0x15a2, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x15a2, "MCKNIGHT", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			int responseIndex = 0;
@@ -85,50 +64,50 @@ Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1)
-				return playMcknightLine(0x15af);
+				return runtime.playDialogueLineWithVariant(0x15af, "MCKNIGHT", 0);
 			if (responseIndex == 2) {
 				const DialogueLineEntry replyLines[] = {
-					{ 0x15b5, kMcknightNpc, 4 },
-					{ 0x15bd, kPcSpeaker, 0 },
-					{ 0x15c1, kMcknightNpc, 2 }
+					{ 0x15b5, "MCKNIGHT", 4 },
+					{ 0x15bd, "PC", 0 },
+					{ 0x15c1, "MCKNIGHT", 2 }
 				};
-				return playSequence(replyLines, ARRAYSIZE(replyLines));
+				return runtime.playDialogueEntrySequence(replyLines, ARRAYSIZE(replyLines));
 			}
 		}
-		return playMcknightLine(0x15e4);
+		return runtime.playDialogueLineWithVariant(0x15e4, "MCKNIGHT", 0);
 	}
 
 	if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 		sharedState.discussedWhaleyHerrillPhoto = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
-		return playMcknightLine(0x15ea, 1);
+		return runtime.playDialogueLineWithVariant(0x15ea, "MCKNIGHT", 1);
 	}
 	if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 			usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 		sharedState.discussedCasketPhotoEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-		Common::Error lineError = playMcknightLine(0x15f2);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x15f2, "MCKNIGHT", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		if (sharedState.dialogueStateD2ebc) {
-			lineError = playPcLine(0x15f8);
+			lineError = runtime.playDialogueLineWithVariant(0x15f8, "PC", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			return playMcknightLine(0x15fd);
+			return runtime.playDialogueLineWithVariant(0x15fd, "MCKNIGHT", 0);
 		}
 
-		lineError = playPcLine(0x1605);
+		lineError = runtime.playDialogueLineWithVariant(0x1605, "PC", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		return playMcknightLine(0x1609);
+		return runtime.playDialogueLineWithVariant(0x1609, "MCKNIGHT", 0);
 	}
 	if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 			runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
 		sharedState.discussedLedgerEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
-		return playMcknightLine(0x1611, 1);
+		return runtime.playDialogueLineWithVariant(0x1611, "MCKNIGHT", 1);
 	}
 	if (usedItemName.equalsIgnoreCase("NOTE") ||
 			usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
@@ -137,16 +116,16 @@ Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		sharedState.discussedNoteCheckbookEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 		const DialogueLineEntry lines[] = {
-			{ 0x161b, kMcknightNpc, 1 },
-			{ 0x1621, kPcSpeaker, 0 },
-			{ 0x1626, kMcknightNpc, 3 },
-			{ 0x162b, kPcSpeaker, 4 },
-			{ 0x1631, kMcknightNpc, 0 }
+			{ 0x161b, "MCKNIGHT", 1 },
+			{ 0x1621, "PC", 0 },
+			{ 0x1626, "MCKNIGHT", 3 },
+			{ 0x162b, "PC", 4 },
+			{ 0x1631, "MCKNIGHT", 0 }
 		};
-		return playSequence(lines, ARRAYSIZE(lines));
+		return runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 	}
 
-	return playMcknightLine(0x15de);
+	return runtime.playDialogueLineWithVariant(0x15de, "MCKNIGHT", 0);
 }
 
 } // End of namespace Harvester

@@ -30,11 +30,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kDwayneNpc = "DWAYNE";
-static const char *const kDwayneDnaLeftNpc = "DWAYNE_DNALFT";
-static const char *const kDwayneStBedroomNpc = "DWAYNE_ST_BEDRM";
-static const char *const kEdnaNpc = "EDNA";
-static const char *const kPcSpeaker = "PC";
 static const char *const kInventoryOwnerName = "INVENTORY";
 static const char *const kRahRoomName = "RAH";
 
@@ -42,12 +37,6 @@ static const int kDwayneWhaleyTopicResponseLines[] = { 0x85, 0x86, 0x87 };
 static const int kDwayneLoomisTopicResponseLines[] = { 0x8c, 0x8d };
 
 } // End of namespace
-
-bool DwayneDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kDwayneNpc) ||
-		npcName.equalsIgnoreCase(kDwayneDnaLeftNpc) ||
-		npcName.equalsIgnoreCase(kDwayneStBedroomNpc);
-}
 
 Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
@@ -57,19 +46,8 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	int &dwayneTopicBufferLineIndex = state.currentTopicBufferLineIndex;
 	state.currentTopicBuffer.clear();
 	state.currentTopicBufferLineIndex = -1;
-	auto assignDwayneTopicBuffer = [&](int responseLineIndex) {
-		runtime.assignTopicBuffer(dwayneTopicBuffer, dwayneTopicBufferLineIndex,
-			responseLineIndex, "Dwayne topic buffer");
-	};
-	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
-		return runtime.playDialogueEntrySequence(lines, count);
-	};
-	auto playDwayneLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kDwayneNpc, headVariant);
-	};
-	auto playEdnaLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kEdnaNpc, headVariant);
-	};
+	DialogueTopicBuffer topics(runtime, dwayneTopicBuffer, dwayneTopicBufferLineIndex, "Dwayne topic buffer");
+
 	auto hideObjectIfPresent = [&](const char *ownerOrRoom, const Common::String &objectName) {
 		if (startupScript.isObjectInInventory(objectName))
 			(void)startupScript.setRuntimeObjectVisible(ownerOrRoom, objectName, false);
@@ -86,14 +64,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		(void)startupScript.addRuntimeObjectToInventory("GOOJF_CARD");
 		(void)startupScript.setRuntimeFlagValue("PC_HAS_GOOJF_CARD", true);
 	};
-	auto executeActionTagIfSet = [&](const char *tag) {
-		InteractionResult interaction;
-		if (!runtime.executeActionTag(tag, interaction))
-			return;
 
-		runtime.applyImmediateDialogueInteractionEffects(interaction);
-		runtime.queueDialogueInteractionIfNeeded(interaction);
-	};
 	auto setDwayneIntroduced = [&]() {
 		(void)startupScript.setRuntimeFlagValue("DWAYNE_INTRODUCED", true);
 	};
@@ -113,44 +84,44 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		(void)startupScript.setRuntimeFlagValue("ARREST_FLAG", false);
 
 		if (startupScript.getFlagValue("PC_BUSTED_KILLED_MOYNAHAN")) {
-			Common::Error lineError = playDwayneLine(0x38d6, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x38d6, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)startupScript.setRuntimeFlagValue("PC_BUSTED_KILLED_MOYNAHAN", false);
 		} else if (startupScript.getFlagValue("PC_BUSTED_KILLED_JIMMY")) {
-			Common::Error lineError = playDwayneLine(0x384d, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x384d, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)startupScript.setRuntimeFlagValue("PC_BUSTED_KILLED_JIMMY", false);
 			(void)startupScript.setRuntimeFlagValue("KILLED_JIMMY", false);
 		} else if (startupScript.getFlagValue("PC_BUSTED_KILLED_JOHNSON")) {
-			Common::Error lineError = playDwayneLine(0x386d, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x386d, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)startupScript.setRuntimeFlagValue("PC_BUSTED_KILLED_JOHNSON", false);
 		} else if (startupScript.getFlagValue("PC_BUSTED_KILLED_PHELPS")) {
-			Common::Error lineError = playDwayneLine(0x38bc, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x38bc, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)startupScript.setRuntimeFlagValue("PC_BUSTED_KILLED_PHELPS", false);
 		} else if (startupScript.getFlagValue("PC_BUSTED_KILLED_OREILLY")) {
-			Common::Error lineError = playDwayneLine(0x38b5, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x38b5, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)startupScript.setRuntimeFlagValue("PC_BUSTED_KILLED_OREILLY", false);
 			(void)startupScript.setRuntimeFlagValue("KILLED_OREILLY", false);
 		} else if (startupScript.getFlagValue("IF_KILL_POTTSDAM_AT_GRAVE")) {
-			Common::Error lineError = playDwayneLine(0x37ed, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x37ed, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)startupScript.setRuntimeFlagValue("IF_KILL_POTTSDAM_AT_GRAVE", false);
 		} else if (startupScript.getFlagValue("GENERIC_BUST")) {
-			Common::Error lineError = playDwayneLine(0x38fc, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x38fc, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)startupScript.setRuntimeFlagValue("GENERIC_BUST", false);
 		} else if (startupScript.getFlagValue("DNALFT_PERVERT")) {
-			Common::Error lineError = playDwayneLine(0x3580, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x3580, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)startupScript.setRuntimeFlagValue("DNALFT_PERVERT", false);
@@ -158,17 +129,17 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (startupScript.getFlagValue("PC_HAS_GOOJF_CARD") &&
 				!startupScript.getFlagValue("PC_FRY_IN_CHAIR")) {
-			Common::Error lineError = playDwayneLine(0x3814);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x3814, "DWAYNE", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			if (startupScript.getFlagValue("PC_KILLED_ANYONE")) {
 				const DialogueLineEntry goojfCardLines[] = {
-					{ 0x3820, kDwayneNpc, 0 },
-					{ 0x3824, kPcSpeaker, 0 },
-					{ 0x3828, kDwayneNpc, 0 }
+					{ 0x3820, "DWAYNE", 0 },
+					{ 0x3824, "PC", 0 },
+					{ 0x3828, "DWAYNE", 0 }
 				};
-				lineError = playSequence(goojfCardLines, ARRAYSIZE(goojfCardLines));
+				lineError = runtime.playDialogueEntrySequence(goojfCardLines, ARRAYSIZE(goojfCardLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
@@ -177,15 +148,15 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				if (responseError.getCode() != Common::kNoError)
 					return responseError;
 				if (responseIndex == 1) {
-					lineError = playDwayneLine(0x3832, 1);
+					lineError = runtime.playDialogueLineWithVariant(0x3832, "DWAYNE", 1);
 				} else if (responseIndex == 2) {
-					lineError = playDwayneLine(0x383b, 2);
+					lineError = runtime.playDialogueLineWithVariant(0x383b, "DWAYNE", 2);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
-					lineError = runtime.playDialogueLineWithVariant(0x3840, kPcSpeaker, 0);
+					lineError = runtime.playDialogueLineWithVariant(0x3840, "PC", 0);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
-					lineError = playDwayneLine(0x3844, 2);
+					lineError = runtime.playDialogueLineWithVariant(0x3844, "DWAYNE", 2);
 				}
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
@@ -198,32 +169,32 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (startupScript.getFlagValue("PC_FRY_IN_CHAIR"))
 			return Common::kNoError;
 		if (startupScript.getFlagValue("BUSTED_THIRD"))
-			return playDwayneLine(0x3928, 2);
+			return runtime.playDialogueLineWithVariant(0x3928, "DWAYNE", 2);
 		if (startupScript.getFlagValue("BUSTED_TWICE"))
-			return playDwayneLine(0x3921, 2);
+			return runtime.playDialogueLineWithVariant(0x3921, "DWAYNE", 2);
 		if (startupScript.getFlagValue("BUSTED_ONCE"))
-			return playDwayneLine(0x3918);
+			return runtime.playDialogueLineWithVariant(0x3918, "DWAYNE", 0);
 		return Common::kNoError;
 	}
 
 	if (startupScript.getFlagValue("CHECK_EVIDENCE_DOOR")) {
-		Common::Error lineError = playDwayneLine(0x3386);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3386, "DWAYNE", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		(void)startupScript.setRuntimeFlagValue("CHECK_EVIDENCE_DOOR", false);
 		return Common::kNoError;
 	}
 	if (startupScript.getFlagValue("PC_TRIES_TO_TAKE_STEPHANIES_REMAINS"))
-		return playDwayneLine(0x34e3, 2);
+		return runtime.playDialogueLineWithVariant(0x34e3, "DWAYNE", 2);
 	if (runtime.currentRoomName().equalsIgnoreCase("ST_BEDRM")) {
 		if (!startupScript.getFlagValue("SD_TALKED_OF_CARD")) {
-			Common::Error lineError = playDwayneLine(0x34da);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x34da, "DWAYNE", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)startupScript.setRuntimeFlagValue("SD_TALKED_OF_CARD", true);
 			return Common::kNoError;
 		}
-		return playDwayneLine(0x3395);
+		return runtime.playDialogueLineWithVariant(0x3395, "DWAYNE", 0);
 	}
 
 	if (startupScript.getFlagValue("BRING_KARIN_TO_SHERIFF") &&
@@ -232,12 +203,12 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		setPendingKarinAliveFollowup();
 		state.bringKarinToSheriffLinePlayed = true;
 		const DialogueLineEntry lines[] = {
-			{ 0x3750, kDwayneNpc, 1 },
-			{ 0x3754, kPcSpeaker, 0 },
-			{ 0x3759, kDwayneNpc, 0 },
-			{ 0x375d, kDwayneNpc, 1 }
+			{ 0x3750, "DWAYNE", 1 },
+			{ 0x3754, "PC", 0 },
+			{ 0x3759, "DWAYNE", 0 },
+			{ 0x375d, "DWAYNE", 1 }
 		};
-		return playSequence(lines, ARRAYSIZE(lines));
+		return runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 	}
 	if (startupScript.getFlagValue("KARIN_FOUND_ALIVE"))
 		setPendingKarinAliveFollowup();
@@ -247,30 +218,30 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			state.discussedBoylesButton = true;
 			sharedState.dwayneDiscussedBoylesButton = true;
 			const DialogueLineEntry lines[] = {
-				{ 0x339b, kDwayneNpc, 0 },
-				{ 0x33a0, kPcSpeaker, 0 },
-				{ 0x33a5, kDwayneNpc, 0 },
-				{ 0x33a9, kPcSpeaker, 0 },
-				{ 0x33ad, kDwayneNpc, 2 }
+				{ 0x339b, "DWAYNE", 0 },
+				{ 0x33a0, "PC", 0 },
+				{ 0x33a5, "DWAYNE", 0 },
+				{ 0x33a9, "PC", 0 },
+				{ 0x33ad, "DWAYNE", 2 }
 			};
-			return playSequence(lines, ARRAYSIZE(lines));
+			return runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 		}
 		if (usedItemName.equalsIgnoreCase("K_PURSE")) {
 			state.discussedKarinPurse = true;
 			sharedState.discussedKarinPurse = 1;
 			const DialogueLineEntry lines[] = {
-				{ 0x37cb, kDwayneNpc, 1 },
-				{ 0x37cf, kPcSpeaker, 3 },
-				{ 0x37b4, kDwayneNpc, 3 },
-				{ 0x37c1, kDwayneNpc, 0 },
-				{ 0x37c5, kPcSpeaker, 0 }
+				{ 0x37cb, "DWAYNE", 1 },
+				{ 0x37cf, "PC", 3 },
+				{ 0x37b4, "DWAYNE", 3 },
+				{ 0x37c1, "DWAYNE", 0 },
+				{ 0x37c5, "PC", 0 }
 			};
-			return playSequence(lines, ARRAYSIZE(lines));
+			return runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 		}
 		if (usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
-			Common::Error lineError = playDwayneLine(0x33b9, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x33b9, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -279,17 +250,17 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playDwayneLine(0x33c3, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x33c3, "DWAYNE", 2);
 			} else if (responseIndex == 2) {
-				lineError = playDwayneLine(0x33c7, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x33c7, "DWAYNE", 2);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			lineError = runtime.playDialogueLineWithVariant(0x33cb, kPcSpeaker, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x33cb, "PC", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playDwayneLine(0x33d2);
+			lineError = runtime.playDialogueLineWithVariant(0x33d2, "DWAYNE", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -298,15 +269,15 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playDwayneLine(0x33e0);
+				lineError = runtime.playDialogueLineWithVariant(0x33e0, "DWAYNE", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				state.presentedEvidenceReplyOverride = true;
 			} else if (responseIndex == 2) {
-				lineError = playDwayneLine(0x33e7, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x33e7, "DWAYNE", 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				executeActionTagIfSet("PC_FRY_DADDY_1");
+				runtime.executeAndQueueAction("PC_FRY_DADDY_1");
 			}
 			return Common::kNoError;
 		}
@@ -315,11 +286,11 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 			if (state.presentedEvidenceReplyOverride) {
 				const DialogueLineEntry introLines[] = {
-					{ 0x342c, kDwayneNpc, 0 },
-					{ 0x3430, kPcSpeaker, 0 },
-					{ 0x3435, kDwayneNpc, 2 }
+					{ 0x342c, "DWAYNE", 0 },
+					{ 0x3430, "PC", 0 },
+					{ 0x3435, "DWAYNE", 2 }
 				};
-				Common::Error lineError = playSequence(introLines, ARRAYSIZE(introLines));
+				Common::Error lineError = runtime.playDialogueEntrySequence(introLines, ARRAYSIZE(introLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
@@ -328,14 +299,14 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				if (responseError.getCode() != Common::kNoError)
 					return responseError;
 				if (responseIndex == 1) {
-					lineError = playDwayneLine(0x3440, 2);
+					lineError = runtime.playDialogueLineWithVariant(0x3440, "DWAYNE", 2);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
-					executeActionTagIfSet("PC_FRY_DADDY_1");
+					runtime.executeAndQueueAction("PC_FRY_DADDY_1");
 					return Common::kNoError;
 				}
 				if (responseIndex == 2) {
-					lineError = playDwayneLine(0x3448);
+					lineError = runtime.playDialogueLineWithVariant(0x3448, "DWAYNE", 0);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 					confiscateSheriffEvidence();
@@ -344,7 +315,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return Common::kNoError;
 			}
 
-			Common::Error lineError = playDwayneLine(0x33f4, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x33f4, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -354,17 +325,17 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 			lineError = Common::kNoError;
 			if (responseIndex == 1) {
-				lineError = playDwayneLine(0x33c3, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x33c3, "DWAYNE", 2);
 			} else if (responseIndex == 2) {
-				lineError = playDwayneLine(0x3403, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x3403, "DWAYNE", 2);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			lineError = runtime.playDialogueLineWithVariant(0x3407, kPcSpeaker, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x3407, "PC", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playDwayneLine(0x340d);
+			lineError = runtime.playDialogueLineWithVariant(0x340d, "DWAYNE", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -375,17 +346,17 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseIndex == 0)
 				return Common::kNoError;
 			if (responseIndex == 1) {
-				lineError = playDwayneLine(0x341a);
+				lineError = runtime.playDialogueLineWithVariant(0x341a, "DWAYNE", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				executeActionTagIfSet("PC_FRY_DADDY_1");
+				runtime.executeAndQueueAction("PC_FRY_DADDY_1");
 				return Common::kNoError;
 			}
 			if (responseIndex == 2) {
-				lineError = playDwayneLine(0x3422, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x3422, "DWAYNE", 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				executeActionTagIfSet("PC_FRY_DADDY_1");
+				runtime.executeAndQueueAction("PC_FRY_DADDY_1");
 				return Common::kNoError;
 			}
 			return Common::kNoError;
@@ -396,65 +367,65 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			sharedState.discussedLedgerEvidence = 1;
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
 			const DialogueLineEntry lines[] = {
-				{ 0x3452, kDwayneNpc, 0 },
-				{ 0x3457, kPcSpeaker, 0 },
-				{ 0x345c, kDwayneNpc, 0 },
-				{ 0x3460, kPcSpeaker, 2 },
-				{ 0x3464, kDwayneNpc, 0 },
-				{ 0x346a, kPcSpeaker, 2 },
-				{ 0x346e, kDwayneNpc, 0 },
-				{ 0x3474, kPcSpeaker, 4 },
-				{ 0x3478, kDwayneNpc, 2 }
+				{ 0x3452, "DWAYNE", 0 },
+				{ 0x3457, "PC", 0 },
+				{ 0x345c, "DWAYNE", 0 },
+				{ 0x3460, "PC", 2 },
+				{ 0x3464, "DWAYNE", 0 },
+				{ 0x346a, "PC", 2 },
+				{ 0x346e, "DWAYNE", 0 },
+				{ 0x3474, "PC", 4 },
+				{ 0x3478, "DWAYNE", 2 }
 			};
-			Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			(void)startupScript.resetRuntimeObjectToInitialState("LEDGER");
 			(void)startupScript.resetRuntimeObjectToInitialState("LEDGER2");
-			executeActionTagIfSet(sheriffInDiner ? "CALL_POLICE" : "LEDGER_BUST");
+			runtime.executeAndQueueAction(sheriffInDiner ? "CALL_POLICE" : "LEDGER_BUST");
 			return Common::kNoError;
 		}
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			sharedState.discussedWhaleyHerrillPhoto = 1;
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 			const DialogueLineEntry lines[] = {
-				{ 0x3975, kDwayneNpc, 3 },
-				{ 0x3979, kPcSpeaker, 0 },
-				{ 0x397e, kDwayneNpc, 0 }
+				{ 0x3975, "DWAYNE", 3 },
+				{ 0x3979, "PC", 0 },
+				{ 0x397e, "DWAYNE", 0 }
 			};
-			return playSequence(lines, ARRAYSIZE(lines));
+			return runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 		}
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 
-			Common::Error lineError = playDwayneLine(0x3942, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x3942, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			if (sharedState.dialogueStateD2ec8) {
 				const DialogueLineEntry lines[] = {
-					{ 0x3949, kPcSpeaker, 0 },
-					{ 0x3950, kDwayneNpc, 0 },
-					{ 0x3955, kPcSpeaker, 4 },
-					{ 0x3959, kDwayneNpc, 1 },
-					{ 0x396d, kDwayneNpc, 0 }
+					{ 0x3949, "PC", 0 },
+					{ 0x3950, "DWAYNE", 0 },
+					{ 0x3955, "PC", 4 },
+					{ 0x3959, "DWAYNE", 1 },
+					{ 0x396d, "DWAYNE", 0 }
 				};
-				lineError = playSequence(lines, ARRAYSIZE(lines));
+				lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
 				hideObjectIfPresent(kInventoryOwnerName, usedItemName);
-				executeActionTagIfSet("CALL_POLICE");
+				runtime.executeAndQueueAction("CALL_POLICE");
 			} else {
 				const DialogueLineEntry lines[] = {
-					{ 0x3961, kPcSpeaker, 0 },
-					{ 0x3967, kDwayneNpc, 0 },
-					{ 0x396d, kDwayneNpc, 0 }
+					{ 0x3961, "PC", 0 },
+					{ 0x3967, "DWAYNE", 0 },
+					{ 0x396d, "DWAYNE", 0 }
 				};
-				lineError = playSequence(lines, ARRAYSIZE(lines));
+				lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
@@ -466,11 +437,11 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceSheriffOwns, true);
 
 			const DialogueLineEntry introLines[] = {
-				{ 0x3686, kDwayneNpc, 0 },
-				{ 0x368a, kPcSpeaker, 0 },
-				{ 0x3690, kDwayneNpc, 0 }
+				{ 0x3686, "DWAYNE", 0 },
+				{ 0x368a, "PC", 0 },
+				{ 0x3690, "DWAYNE", 0 }
 			};
-			Common::Error lineError = playSequence(introLines, ARRAYSIZE(introLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(introLines, ARRAYSIZE(introLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -479,14 +450,14 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playDwayneLine(0x369b, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x369b, "DWAYNE", 2);
 			} else if (responseIndex == 2) {
 				const DialogueLineEntry responseLines[] = {
-					{ 0x36a3, kDwayneNpc, 0 },
-					{ 0x36a8, kPcSpeaker, 2 },
-					{ 0x36ac, kDwayneNpc, 2 }
+					{ 0x36a3, "DWAYNE", 0 },
+					{ 0x36a8, "PC", 2 },
+					{ 0x36ac, "DWAYNE", 2 }
 				};
-				lineError = playSequence(responseLines, ARRAYSIZE(responseLines));
+				lineError = runtime.playDialogueEntrySequence(responseLines, ARRAYSIZE(responseLines));
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -497,12 +468,12 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (!usedItemName.equalsIgnoreCase("TV_DEED") &&
 				!usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
-			return playDwayneLine(0x3935);
+			return runtime.playDialogueLineWithVariant(0x3935, "DWAYNE", 0);
 		}
 
 		(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceSheriffOwns, true);
 
-		Common::Error lineError = playDwayneLine(0x3608);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3608, "DWAYNE", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -511,14 +482,14 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 		if (responseIndex == 1) {
-			lineError = playDwayneLine(0x3613);
+			lineError = runtime.playDialogueLineWithVariant(0x3613, "DWAYNE", 0);
 		} else if (responseIndex == 2) {
-			lineError = playDwayneLine(0x3618);
+			lineError = runtime.playDialogueLineWithVariant(0x3618, "DWAYNE", 0);
 		}
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playDwayneLine(0x361c);
+		lineError = runtime.playDialogueLineWithVariant(0x361c, "DWAYNE", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -527,9 +498,9 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 		if (responseIndex == 1) {
-			lineError = playDwayneLine(0x3629, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x3629, "DWAYNE", 2);
 		} else if (responseIndex == 2) {
-			lineError = playDwayneLine(0x362d);
+			lineError = runtime.playDialogueLineWithVariant(0x362d, "DWAYNE", 0);
 		}
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
@@ -540,18 +511,18 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 		if (usedItemName.equalsIgnoreCase("TV_DEED")) {
 			const DialogueLineEntry deedLines[] = {
-				{ 0x363b, kDwayneNpc, 0 },
-				{ 0x3641, kPcSpeaker, 0 },
-				{ 0x3645, kDwayneNpc, 0 }
+				{ 0x363b, "DWAYNE", 0 },
+				{ 0x3641, "PC", 0 },
+				{ 0x3645, "DWAYNE", 0 }
 			};
-			lineError = playSequence(deedLines, ARRAYSIZE(deedLines));
+			lineError = runtime.playDialogueEntrySequence(deedLines, ARRAYSIZE(deedLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			executeActionTagIfSet("PC_FRY_DADDY_1");
+			runtime.executeAndQueueAction("PC_FRY_DADDY_1");
 			return Common::kNoError;
 		}
 		if (responseIndex != 1) {
-			lineError = playDwayneLine(0x367b, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x367b, "DWAYNE", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			hideObjectIfPresent(kRahRoomName, "TV_DEED_PHOTOCOPY");
@@ -559,11 +530,11 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 
 		const DialogueLineEntry copyLines[] = {
-			{ 0x364e, kDwayneNpc, 0 },
-			{ 0x3656, kPcSpeaker, 0 },
-			{ 0x365b, kDwayneNpc, 0 }
+			{ 0x364e, "DWAYNE", 0 },
+			{ 0x3656, "PC", 0 },
+			{ 0x365b, "DWAYNE", 0 }
 		};
-		lineError = playSequence(copyLines, ARRAYSIZE(copyLines));
+		lineError = runtime.playDialogueEntrySequence(copyLines, ARRAYSIZE(copyLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -572,7 +543,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 		if (responseIndex == 1) {
-			lineError = playDwayneLine(0x3665);
+			lineError = runtime.playDialogueLineWithVariant(0x3665, "DWAYNE", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			state.tvDeedReplyOverride = true;
@@ -580,14 +551,14 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (responseIndex == 2) {
 			const DialogueLineEntry responseLines[] = {
-				{ 0x366b, kDwayneNpc, 3 },
-				{ 0x3670, kPcSpeaker, 2 },
-				{ 0x3674, kDwayneNpc, 2 }
+				{ 0x366b, "DWAYNE", 3 },
+				{ 0x3670, "PC", 2 },
+				{ 0x3674, "DWAYNE", 2 }
 			};
-			lineError = playSequence(responseLines, ARRAYSIZE(responseLines));
+			lineError = runtime.playDialogueEntrySequence(responseLines, ARRAYSIZE(responseLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			executeActionTagIfSet("PC_FRY_DADDY_1");
+			runtime.executeAndQueueAction("PC_FRY_DADDY_1");
 		}
 		return Common::kNoError;
 	}
@@ -599,36 +570,36 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		setDwayneIntroduced();
 
 		const DialogueLineEntry introLines[] = {
-			{ 0x3482, kDwayneNpc, 1 },
-			{ 0x3486, kPcSpeaker, 0 },
-			{ 0x348b, kDwayneNpc, 1 },
-			{ 0x3490, kEdnaNpc, 0 }
+			{ 0x3482, "DWAYNE", 1 },
+			{ 0x3486, "PC", 0 },
+			{ 0x348b, "DWAYNE", 1 },
+			{ 0x3490, "EDNA", 0 }
 		};
-		Common::Error lineError = playSequence(introLines, ARRAYSIZE(introLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(introLines, ARRAYSIZE(introLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (startupScript.getFlagValue("KARIN_KIDNAPED")) {
 			sharedState.karinKidnapedDialogueState = true;
-			lineError = playEdnaLine(0x3496, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x3496, "EDNA", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
-		lineError = playDwayneLine(0x349b, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x349b, "DWAYNE", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (state.pendingInitialConversation) {
 			const DialogueLineEntry initialLines[] = {
-				{ 0x34a0, kPcSpeaker, 0 },
-				{ 0x34a4, kDwayneNpc, 1 }
+				{ 0x34a0, "PC", 0 },
+				{ 0x34a4, "DWAYNE", 1 }
 			};
-			lineError = playSequence(initialLines, ARRAYSIZE(initialLines));
+			lineError = runtime.playDialogueEntrySequence(initialLines, ARRAYSIZE(initialLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		handledIntroOrRevisit = true;
 	}
 	else if (state.sheriffInDinerIntroPlayed && sheriffInDiner) {
-		Common::Error lineError = playDwayneLine(0x34ac);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x34ac, "DWAYNE", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		handledIntroOrRevisit = true;
@@ -638,22 +609,22 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		setDwayneIntroduced();
 
 		const DialogueLineEntry initialLines[] = {
-			{ 0x3245, kDwayneNpc, 1 },
+			{ 0x3245, "DWAYNE", 1 },
 			{ 0x324a, "LOOMIS", 1 },
-			{ 0x324e, kPcSpeaker, 0 },
-			{ 0x3252, kDwayneNpc, 0 }
+			{ 0x324e, "PC", 0 },
+			{ 0x3252, "DWAYNE", 0 }
 		};
-		Common::Error lineError = playSequence(initialLines, ARRAYSIZE(initialLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(initialLines, ARRAYSIZE(initialLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		assignDwayneTopicBuffer(0x78);
+		topics.assign(0x78);
 		if (sharedState.boyleGascanApplicationState)
 			(void)startupScript.setRuntimeFlagValue("MOVE_SHERIFF", true);
 		handledIntroOrRevisit = true;
 	}
 
 	if (!handledIntroOrRevisit && state.eventFollowupGate) {
-		Common::Error lineError = playDwayneLine(0x34d3, 2);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x34d3, "DWAYNE", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -661,7 +632,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (sharedState.dwayneWhaleyDisciplineFollowupState &&
 			!state.whaleyDisciplineFollowupShown) {
 		state.whaleyDisciplineFollowupShown = true;
-		Common::Error lineError = playDwayneLine(0x34b3);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x34b3, "DWAYNE", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -671,13 +642,13 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 		lineError = Common::kNoError;
 		if (responseIndex == 1) {
-			lineError = playDwayneLine(0x34bf, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x34bf, "DWAYNE", 2);
 		} else if (responseIndex == 2) {
-			lineError = playDwayneLine(0x34c5, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x34c5, "DWAYNE", 1);
 		}
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playDwayneLine(0x34cb, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x34cb, "DWAYNE", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -685,20 +656,20 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (sharedState.discussedNoteCheckbookEvidence != 0 &&
 			!state.noteCheckbookFollowupShown) {
 		state.noteCheckbookFollowupShown = true;
-		Common::Error lineError = playDwayneLine(0x355f, 2);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x355f, "DWAYNE", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (sharedState.discussedTvDeedEvidence != 0) {
 			const DialogueLineEntry lines[] = {
-				{ 0x3565, kDwayneNpc, 2 },
-				{ 0x356a, kDwayneNpc, 2 },
-				{ 0x356f, kPcSpeaker, 2 },
-				{ 0x3573, kDwayneNpc, 0 }
+				{ 0x3565, "DWAYNE", 2 },
+				{ 0x356a, "DWAYNE", 2 },
+				{ 0x356f, "PC", 2 },
+				{ 0x3573, "DWAYNE", 0 }
 			};
-			lineError = playSequence(lines, ARRAYSIZE(lines));
+			lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			executeActionTagIfSet("PC_FRY_DADDY_1");
+			runtime.executeAndQueueAction("PC_FRY_DADDY_1");
 			return Common::kNoError;
 		}
 	}
@@ -707,14 +678,14 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (startupScript.getFlagValue("SCRATCHED_TUCKER") &&
 				!state.scratchedTuckerShown) {
 			state.scratchedTuckerShown = true;
-			Common::Error lineError = playDwayneLine(0x358b, 1);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x358b, "DWAYNE", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (startupScript.getFlagValue("BOLT_OF_CLOTH_TAKEN") &&
 				!state.boltOfClothTakenShown) {
 			state.boltOfClothTakenShown = true;
-			Common::Error lineError = playDwayneLine(0x3594, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x3594, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -722,26 +693,26 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				!state.barberPoleStolenShown) {
 			state.barberPoleStolenShown = true;
 			const DialogueLineEntry lines[] = {
-				{ 0x359d, kDwayneNpc, 0 },
-				{ 0x35a4, kDwayneNpc, 0 },
-				{ 0x35ab, kDwayneNpc, 0 }
+				{ 0x359d, "DWAYNE", 0 },
+				{ 0x35a4, "DWAYNE", 0 },
+				{ 0x35ab, "DWAYNE", 0 }
 			};
-			Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (startupScript.getFlagValue("DINER_BURNED") &&
 				!state.dinerBurnedShown) {
 			state.dinerBurnedShown = true;
-			Common::Error lineError = playDwayneLine(0x35bc, 3);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x35bc, "DWAYNE", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			if (startupScript.getFlagValue("KARIN_FOUND_ALIVE")) {
 				const DialogueLineEntry lines[] = {
-					{ 0x35c1, kDwayneNpc, 3 },
-					{ 0x35c5, kDwayneNpc, 3 }
+					{ 0x35c1, "DWAYNE", 3 },
+					{ 0x35c5, "DWAYNE", 3 }
 				};
-				lineError = playSequence(lines, ARRAYSIZE(lines));
+				lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
@@ -749,14 +720,14 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (startupScript.getFlagValue("PC_ESCAPED_JAIL") &&
 				!state.escapedJailShown) {
 			state.escapedJailShown = true;
-			Common::Error lineError = playDwayneLine(0x35cd);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x35cd, "DWAYNE", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (startupScript.getFlagValue("GOT_REMAINS_FOR_LODGE") &&
 				!state.gotRemainsForLodgeShown) {
 			state.gotRemainsForLodgeShown = true;
-			Common::Error lineError = playDwayneLine(0x35d7);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x35d7, "DWAYNE", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -764,18 +735,18 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				!state.burnedTvStationShown) {
 			state.burnedTvStationShown = true;
 			const DialogueLineEntry lines[] = {
-				{ 0x35f6, kDwayneNpc, 2 },
-				{ 0x35fb, kDwayneNpc, 2 },
-				{ 0x3601, kDwayneNpc, 2 }
+				{ 0x35f6, "DWAYNE", 2 },
+				{ 0x35fb, "DWAYNE", 2 },
+				{ 0x3601, "DWAYNE", 2 }
 			};
-			Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (startupScript.getFlagValue("KARIN_KIDNAPED") &&
 				!state.karinKidnapedShown) {
 			state.karinKidnapedShown = true;
-			Common::Error lineError = playDwayneLine(0x36b2, 3);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x36b2, "DWAYNE", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			sharedState.karinKidnapedDialogueState = true;
@@ -785,14 +756,14 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playDwayneLine(0x36bd);
+				lineError = runtime.playDialogueLineWithVariant(0x36bd, "DWAYNE", 0);
 			} else if (responseIndex == 2) {
-				lineError = playDwayneLine(0x36c1);
+				lineError = runtime.playDialogueLineWithVariant(0x36c1, "DWAYNE", 0);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			lineError = playDwayneLine(0x36c5);
+			lineError = runtime.playDialogueLineWithVariant(0x36c5, "DWAYNE", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -801,14 +772,14 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playDwayneLine(0x36d0);
+				lineError = runtime.playDialogueLineWithVariant(0x36d0, "DWAYNE", 0);
 			} else if (responseIndex == 2) {
-				lineError = playDwayneLine(0x36d6, 1);
+				lineError = runtime.playDialogueLineWithVariant(0x36d6, "DWAYNE", 1);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			lineError = playDwayneLine(0x36e7, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x36e7, "DWAYNE", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -822,11 +793,11 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		sharedState.dwaynePendingKarinAliveFollowupState = 0;
 
 		const DialogueLineEntry lines[] = {
-			{ 0x3780, kDwayneNpc, 0 },
-			{ 0x3786, kPcSpeaker, 4 },
-			{ 0x378a, kDwayneNpc, 2 }
+			{ 0x3780, "DWAYNE", 0 },
+			{ 0x3786, "PC", 4 },
+			{ 0x378a, "DWAYNE", 2 }
 		};
-		Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		state.completedKarinAliveFollowup = true;
@@ -839,7 +810,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			!sheriffInDiner &&
 			!state.karinFoundDeadWithoutPurseShown) {
 		state.karinFoundDeadWithoutPurseShown = true;
-		Common::Error lineError = playDwayneLine(0x3793);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3793, "DWAYNE", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -848,9 +819,9 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 		if (responseIndex == 1) {
-			return playDwayneLine(0x379d);
+			return runtime.playDialogueLineWithVariant(0x379d, "DWAYNE", 0);
 		} else if (responseIndex == 2) {
-			lineError = playDwayneLine(0x37a4, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x37a4, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -859,18 +830,18 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playDwayneLine(0x37ae);
+				lineError = runtime.playDialogueLineWithVariant(0x37ae, "DWAYNE", 0);
 			} else if (responseIndex == 2) {
-				lineError = playDwayneLine(0x37b4, 3);
+				lineError = runtime.playDialogueLineWithVariant(0x37b4, "DWAYNE", 3);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			const DialogueLineEntry lines[] = {
-				{ 0x37c1, kDwayneNpc, 0 },
-				{ 0x37c5, kPcSpeaker, 0 }
+				{ 0x37c1, "DWAYNE", 0 },
+				{ 0x37c5, "PC", 0 }
 			};
-			lineError = playSequence(lines, ARRAYSIZE(lines));
+			lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -880,11 +851,11 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			!sheriffInDiner &&
 			!state.jimmyAbsentShown) {
 		state.jimmyAbsentShown = true;
-		Common::Error lineError = playDwayneLine(0x3855, 3);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3855, "DWAYNE", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (startupScript.getFlagValue("JIMMY_ATTACKED")) {
-			lineError = playDwayneLine(0x37f8);
+			lineError = runtime.playDialogueLineWithVariant(0x37f8, "DWAYNE", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -894,9 +865,9 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 			lineError = Common::kNoError;
 			if (responseIndex == 1) {
-				lineError = playDwayneLine(0x3805, 1);
+				lineError = runtime.playDialogueLineWithVariant(0x3805, "DWAYNE", 1);
 			} else if (responseIndex == 2) {
-				lineError = playDwayneLine(0x380c);
+				lineError = runtime.playDialogueLineWithVariant(0x380c, "DWAYNE", 0);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -907,7 +878,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			!sheriffInDiner &&
 			!state.moynahanAbsentShown) {
 		state.moynahanAbsentShown = true;
-		Common::Error lineError = playDwayneLine(0x38ce);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x38ce, "DWAYNE", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -915,7 +886,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (startupScript.getFlagValue("EDNA_HUNG") &&
 			!state.ednaHungShown) {
 		state.ednaHungShown = true;
-		Common::Error lineError = playDwayneLine(0x38f1, 3);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x38f1, "DWAYNE", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -925,8 +896,8 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			!state.mcknightAbsentShown) {
 		state.mcknightAbsentShown = true;
 		Common::Error lineError = startupScript.isObjectInInventory("TV_DEED")
-			? playDwayneLine(0x3904, 3)
-			: playDwayneLine(0x390f, 1);
+			? runtime.playDialogueLineWithVariant(0x3904, "DWAYNE", 3)
+			: runtime.playDialogueLineWithVariant(0x390f, "DWAYNE", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -934,7 +905,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	Common::String selectedTopic;
 	for (;;) {
 		if (runtime.matchesResponseLine(selectedTopic, 0x82))
-			return playDwayneLine(0x3395);
+			return runtime.playDialogueLineWithVariant(0x3395, "DWAYNE", 0);
 
 		Common::Error menuError = runtime.runKeywordMenu(
 			dwayneTopicBuffer, dwayneTopicBufferLineIndex, selectedTopic);
@@ -944,10 +915,10 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return Common::kNoError;
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x83)) {
-			Common::Error lineError = playDwayneLine(0x326e);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x326e, "DWAYNE", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignDwayneTopicBuffer(0x84);
+			topics.assign(0x84);
 			continue;
 		}
 
@@ -955,20 +926,20 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				ARRAYSIZE(kDwayneWhaleyTopicResponseLines))) {
 			if (!sheriffInDiner) {
 				const DialogueLineEntry lines[] = {
-					{ 0x327b, kDwayneNpc, 0 },
-					{ 0x3280, kPcSpeaker, 2 },
-					{ 0x3285, kDwayneNpc, 0 },
+					{ 0x327b, "DWAYNE", 0 },
+					{ 0x3280, "PC", 2 },
+					{ 0x3285, "DWAYNE", 0 },
 					{ 0x328b, "LOOMIS", 1 },
-					{ 0x3290, kDwayneNpc, 2 },
+					{ 0x3290, "DWAYNE", 2 },
 					{ 0x3294, "LOOMIS", 3 },
-					{ 0x3299, kPcSpeaker, 4 },
-					{ 0x329e, kDwayneNpc, 1 }
+					{ 0x3299, "PC", 4 },
+					{ 0x329e, "DWAYNE", 1 }
 				};
-				Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+				Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				sharedState.dialogueStateD2f04 = true;
-				assignDwayneTopicBuffer(0x89);
+				topics.assign(0x89);
 			}
 			continue;
 		}
@@ -977,46 +948,46 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				ARRAYSIZE(kDwayneLoomisTopicResponseLines))) {
 			if (!sheriffInDiner) {
 				const DialogueLineEntry lines[] = {
-					{ 0x32bf, kDwayneNpc, 1 },
-					{ 0x32c1, kDwayneNpc, 0 },
+					{ 0x32bf, "DWAYNE", 1 },
+					{ 0x32c1, "DWAYNE", 0 },
 					{ 0x32c7, "LOOMIS", 3 },
-					{ 0x32cb, kDwayneNpc, 0 },
+					{ 0x32cb, "DWAYNE", 0 },
 					{ 0x32d1, "LOOMIS", 1 }
 				};
-				Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+				Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				runtime.setActiveSpeakerPortrait(kDwayneNpc, 0);
-				assignDwayneTopicBuffer(0x8e);
+				runtime.setActiveSpeakerPortrait("DWAYNE", 0);
+				topics.assign(0x8e);
 			}
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x8f)) {
 			const DialogueLineEntry lines[] = {
-				{ 0x32db, kDwayneNpc, 0 },
-				{ 0x32e2, kPcSpeaker, 4 },
-				{ 0x32e6, kDwayneNpc, 0 }
+				{ 0x32db, "DWAYNE", 0 },
+				{ 0x32e2, "PC", 4 },
+				{ 0x32e6, "DWAYNE", 0 }
 			};
-			Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignDwayneTopicBuffer(0x90);
+			topics.assign(0x90);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x91)) {
 			const DialogueLineEntry lines[] = {
-				{ 0x32f2, kDwayneNpc, 0 },
-				{ 0x32f9, kPcSpeaker, 0 },
-				{ 0x32fd, kDwayneNpc, 0 },
-				{ 0x32fe, kDwayneNpc, 0 },
-				{ 0x32ff, kDwayneNpc, 0 }
+				{ 0x32f2, "DWAYNE", 0 },
+				{ 0x32f9, "PC", 0 },
+				{ 0x32fd, "DWAYNE", 0 },
+				{ 0x32fe, "DWAYNE", 0 },
+				{ 0x32ff, "DWAYNE", 0 }
 			};
-			Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignDwayneTopicBuffer(0x92);
+			topics.assign(0x92);
 			continue;
 		}
 
@@ -1024,30 +995,30 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			Common::Error lineError = Common::kNoError;
 			if (!startupScript.getFlagValue("STEPH_MIDGAME_PLAYED")) {
 				const DialogueLineEntry lines[] = {
-					{ 0x330d, kDwayneNpc, 1 },
-					{ 0x3314, kPcSpeaker, 0 },
-					{ 0x3318, kDwayneNpc, 0 },
-					{ 0x332c, kDwayneNpc, 0 }
+					{ 0x330d, "DWAYNE", 1 },
+					{ 0x3314, "PC", 0 },
+					{ 0x3318, "DWAYNE", 0 },
+					{ 0x332c, "DWAYNE", 0 }
 				};
-				lineError = playSequence(lines, ARRAYSIZE(lines));
+				lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			} else {
 				const DialogueLineEntry lines[] = {
-					{ 0x331f, kDwayneNpc, 3 },
-					{ 0x3320, kDwayneNpc, 0 },
-					{ 0x3321, kDwayneNpc, 0 },
-					{ 0x332c, kDwayneNpc, 0 }
+					{ 0x331f, "DWAYNE", 3 },
+					{ 0x3320, "DWAYNE", 0 },
+					{ 0x3321, "DWAYNE", 0 },
+					{ 0x332c, "DWAYNE", 0 }
 				};
-				lineError = playSequence(lines, ARRAYSIZE(lines));
+				lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignDwayneTopicBuffer(0x94);
+			topics.assign(0x94);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x95)) {
 			sharedState.discussedLodgeTopic = true;
-			Common::Error lineError = playDwayneLine(0x3339, 1);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x3339, "DWAYNE", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -1058,65 +1029,65 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = Common::kNoError;
 			if (responseIndex == 1) {
 				const DialogueLineEntry responseLines[] = {
-					{ 0x3345, kDwayneNpc, 2 },
-					{ 0x3346, kDwayneNpc, 2 },
-					{ 0x3347, kDwayneNpc, 2 }
+					{ 0x3345, "DWAYNE", 2 },
+					{ 0x3346, "DWAYNE", 2 },
+					{ 0x3347, "DWAYNE", 2 }
 				};
-				lineError = playSequence(responseLines, ARRAYSIZE(responseLines));
+				lineError = runtime.playDialogueEntrySequence(responseLines, ARRAYSIZE(responseLines));
 			} else if (responseIndex == 2) {
-				lineError = playDwayneLine(0x3350);
+				lineError = runtime.playDialogueLineWithVariant(0x3350, "DWAYNE", 0);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignDwayneTopicBuffer(0x97);
+			topics.assign(0x97);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x98)) {
 			const DialogueLineEntry lines[] = {
-				{ 0x335b, kDwayneNpc, 2 },
-				{ 0x3360, kPcSpeaker, 2 },
-				{ 0x3364, kDwayneNpc, 3 }
+				{ 0x335b, "DWAYNE", 2 },
+				{ 0x3360, "PC", 2 },
+				{ 0x3364, "DWAYNE", 3 }
 			};
-			Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = sharedState.dialogueStateD2f04
-				? runtime.playDialogueLineWithVariant(0x3368, kPcSpeaker, 2)
-				: runtime.playDialogueLineWithVariant(0x336c, kPcSpeaker, 2);
+				? runtime.playDialogueLineWithVariant(0x3368, "PC", 2)
+				: runtime.playDialogueLineWithVariant(0x336c, "PC", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playDwayneLine(0x3370, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x3370, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignDwayneTopicBuffer(0x99);
+			topics.assign(0x99);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x9a)) {
-			Common::Error lineError = playDwayneLine(0x337a, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x337a, "DWAYNE", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignDwayneTopicBuffer(0x9b);
+			topics.assign(0x9b);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x9c)) {
 			const DialogueLineEntry lines[] = {
-				{ 0x3386, kDwayneNpc, 0 },
-				{ 0x3387, kDwayneNpc, 0 }
+				{ 0x3386, "DWAYNE", 0 },
+				{ 0x3387, "DWAYNE", 0 }
 			};
-			Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignDwayneTopicBuffer(0x9d);
+			topics.assign(0x9d);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x9e))
 			continue;
 
-		Common::Error lineError = playDwayneLine(0x393c);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x393c, "DWAYNE", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}

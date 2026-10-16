@@ -28,87 +28,60 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kKarinNpc = "KARIN";
-static const char *const kKarinStandingNpc = "KARIN_STANDING";
-static const char *const kKarinCem10Npc = "KARIN_CEM10";
-static const char *const kKarinOfficeNpc = "KARIN_OFFICE";
-static const char *const kPcSpeaker = "PC";
-static const char *const kEdnaNpc = "EDNA";
 
 static const DialogueLineEntry kKarinCem10AliveLines[] = {
-	{ 0x10a5, kPcSpeaker, 4 },
-	{ 0x10a9, kKarinNpc, 3 },
-	{ 0x10ae, kPcSpeaker, 2 },
-	{ 0x10b2, kKarinNpc, 3 },
-	{ 0x10b6, kPcSpeaker, 0 },
-	{ 0x10ba, kKarinNpc, 3 },
-	{ 0x10bf, kPcSpeaker, 0 },
-	{ 0x10c3, kKarinNpc, 3 }
+	{ 0x10a5, "PC", 4 },
+	{ 0x10a9, "KARIN", 3 },
+	{ 0x10ae, "PC", 2 },
+	{ 0x10b2, "KARIN", 3 },
+	{ 0x10b6, "PC", 0 },
+	{ 0x10ba, "KARIN", 3 },
+	{ 0x10bf, "PC", 0 },
+	{ 0x10c3, "KARIN", 3 }
 };
 
 static const DialogueLineEntry kKarinFirstNoItemLines[] = {
-	{ 0x1076, kPcSpeaker, 1 },
-	{ 0x107a, kKarinNpc, 1 },
-	{ 0x107e, kPcSpeaker, 1 },
-	{ 0x1082, kKarinNpc, 1 },
-	{ 0x1087, kPcSpeaker, 0 },
-	{ 0x108b, kKarinNpc, 1 }
+	{ 0x1076, "PC", 1 },
+	{ 0x107a, "KARIN", 1 },
+	{ 0x107e, "PC", 1 },
+	{ 0x1082, "KARIN", 1 },
+	{ 0x1087, "PC", 0 },
+	{ 0x108b, "KARIN", 1 }
 };
 
 static const DialogueLineEntry kKarinFirstPhotoReplyLines[] = {
-	{ 0x10e3, kKarinNpc, 4 },
-	{ 0x10e7, kEdnaNpc, 2 }
+	{ 0x10e3, "KARIN", 4 },
+	{ 0x10e7, "EDNA", 2 }
 };
 
 static const DialogueLineEntry kKarinInvMagLines[] = {
-	{ 0x10ee, kKarinNpc, 0 },
-	{ 0x10f2, kEdnaNpc, 2 }
+	{ 0x10ee, "KARIN", 0 },
+	{ 0x10f2, "EDNA", 2 }
 };
 
 } // End of namespace
 
-bool KarinDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kKarinNpc) ||
-		npcName.equalsIgnoreCase(kKarinStandingNpc) ||
-		npcName.equalsIgnoreCase(kKarinCem10Npc) ||
-		npcName.equalsIgnoreCase(kKarinOfficeNpc);
-}
-
 Common::Error KarinDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	KarinRoomDialogueState &state = _state;
-	auto playKarinLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kKarinNpc, headVariant);
-	};
-	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
-		return runtime.playDialogueEntrySequence(lines, count);
-	};
-	auto executeActionTagIfSet = [&](const char *tag) {
-		InteractionResult interaction;
-		if (!runtime.executeActionTag(tag, interaction))
-			return;
-
-		runtime.applyImmediateDialogueInteractionEffects(interaction);
-		runtime.queueDialogueInteractionIfNeeded(interaction);
-	};
 
 	const bool karinFoundAlive = runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE");
 	if (karinFoundAlive && runtime.startupScript().getFlagValue("IN_CEM10") &&
 			!state.cem10AliveLinePlayed) {
 		state.cem10AliveLinePlayed = true;
-		return playSequence(kKarinCem10AliveLines, ARRAYSIZE(kKarinCem10AliveLines));
+		return runtime.playDialogueEntrySequence(kKarinCem10AliveLines, ARRAYSIZE(kKarinCem10AliveLines));
 	}
 
 	if (usedItemName.empty()) {
 		if (!karinFoundAlive && !state.notFoundAliveLinePlayed) {
 			state.notFoundAliveLinePlayed = true;
-			Common::Error lineError = playSequence(
-				kKarinFirstNoItemLines, ARRAYSIZE(kKarinFirstNoItemLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kKarinFirstNoItemLines,
+				ARRAYSIZE(kKarinFirstNoItemLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 
-		return playKarinLine(0x10dc);
+		return runtime.playDialogueLineWithVariant(0x10dc, "KARIN", 0);
 	}
 
 	const bool photoEvidence = usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
@@ -121,36 +94,36 @@ Common::Error KarinDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			else
 				sharedState.discussedCasketPhotoEvidence = 1;
 
-			Common::Error lineError = playSequence(
-				kKarinFirstPhotoReplyLines, ARRAYSIZE(kKarinFirstPhotoReplyLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kKarinFirstPhotoReplyLines,
+				ARRAYSIZE(kKarinFirstPhotoReplyLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			runtime.setActiveSpeakerPortrait(kKarinNpc, 0);
+			runtime.setActiveSpeakerPortrait("KARIN", 0);
 			state.photoReplyOverrideFlag = true;
 			return Common::kNoError;
 		}
 
-		Common::Error lineError = playKarinLine(0x10e3, 4);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x10e3, "KARIN", 4);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		(void)runtime.startupScript().setRuntimeFlagValue("DNALFT_PERVERT", true);
-		executeActionTagIfSet("CALL_POLICE");
+		runtime.executeAndQueueAction("CALL_POLICE");
 		return Common::kNoError;
 	}
 
 	if (usedItemName.equalsIgnoreCase("INV_MAG")) {
-		Common::Error lineError = playSequence(kKarinInvMagLines, ARRAYSIZE(kKarinInvMagLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(kKarinInvMagLines, ARRAYSIZE(kKarinInvMagLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		(void)runtime.startupScript().setRuntimeFlagValue("DNALFT_PERVERT", true);
-		executeActionTagIfSet("CALL_POLICE");
+		runtime.executeAndQueueAction("CALL_POLICE");
 		return Common::kNoError;
 	}
 
-	return playKarinLine(0x10d6, 1);
+	return runtime.playDialogueLineWithVariant(0x10d6, "KARIN", 1);
 }
 
 } // End of namespace Harvester

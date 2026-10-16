@@ -28,7 +28,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kDarkWomanNpc = "DARK_WOMAN";
 static const char *const kHandMirrorItemName = "HANDMIRROR";
 static const char *const kInventoryOwnerName = "INVENTORY";
 static const char *const kSetDarkWomanFlagActionTag = "SET_D_W_FLAG";
@@ -41,25 +40,18 @@ static const int kDarkWomanNeedsMirrorResponseLine = 0x4f;
 
 } // End of namespace
 
-bool DarkWomanDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kDarkWomanNpc);
-}
-
 Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
-	auto playDarkWomanLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kDarkWomanNpc, headVariant);
-	};
 	auto queueDarkWomanMonsterfyTransition = [&]() {
 		InteractionResult interaction;
-		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(kDarkWomanNpc)) {
+		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy("DARK_WOMAN")) {
 			interaction.mutatedRuntimeState = true;
 			interaction.visualRuntimeStateChanged = true;
 		}
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
 	auto runDarkWomanMonsterfyBranch = [&]() -> Common::Error {
-		Common::Error lineError = playDarkWomanLine(0x4ce2, 2);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x4ce2, "DARK_WOMAN", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -67,7 +59,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return Common::kNoError;
 	};
 	auto runMirrorRevealBranch = [&]() -> Common::Error {
-		Common::Error lineError = playDarkWomanLine(0x4d03, 2);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x4d03, "DARK_WOMAN", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -75,7 +67,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playDarkWomanLine(0x4d0d, 3);
+		lineError = runtime.playDialogueLineWithVariant(0x4d0d, "DARK_WOMAN", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -100,7 +92,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	_state.talkStatePending = false;
 
-	Common::Error lineError = playDarkWomanLine(0x4cd5, 1);
+	Common::Error lineError = runtime.playDialogueLineWithVariant(0x4cd5, "DARK_WOMAN", 1);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -115,7 +107,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (responseIndex != 2)
 		return Common::kNoError;
 
-	lineError = playDarkWomanLine(0x4ce6, 4);
+	lineError = runtime.playDialogueLineWithVariant(0x4ce6, "DARK_WOMAN", 4);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -130,7 +122,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (responseIndex != 2)
 		return Common::kNoError;
 
-	lineError = playDarkWomanLine(0x4ce6, 4);
+	lineError = runtime.playDialogueLineWithVariant(0x4ce6, "DARK_WOMAN", 4);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -145,7 +137,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (responseIndex != 2)
 		return Common::kNoError;
 
-	lineError = playDarkWomanLine(0x4ce6, 4);
+	lineError = runtime.playDialogueLineWithVariant(0x4ce6, "DARK_WOMAN", 4);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -160,7 +152,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (responseIndex == 1)
 		return runDarkWomanMonsterfyBranch();
 	if (!hasHandMirror)
-		return playDarkWomanLine(0x4cfc, 2);
+		return runtime.playDialogueLineWithVariant(0x4cfc, "DARK_WOMAN", 2);
 
 	return runMirrorRevealBranch();
 }

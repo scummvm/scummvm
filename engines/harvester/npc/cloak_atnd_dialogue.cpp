@@ -28,17 +28,12 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kCloakAtndNpc = "CLOAK_ATND";
 static const char *const kCleanedClothesFlag = "CLEANED_CLOTHES";
 static const char *const kCleanClothesActionTag = "CLEAN_CLOTHES";
 static const char *const kPaymentItemName = "BARCASHFIVE";
 static const int kNeedCleaningPaymentLine = 0x1066;
 
 } // End of namespace
-
-bool CloakAtndDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kCloakAtndNpc);
-}
 
 Common::Error CloakAtndDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
@@ -58,7 +53,7 @@ Common::Error CloakAtndDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue(kCleanedClothesFlag))
 		return Common::kNoError;
 
-	return runtime.playDialogueLine(kNeedCleaningPaymentLine, kCloakAtndNpc);
+	return runtime.playDialogueLine(kNeedCleaningPaymentLine, "CLOAK_ATND");
 }
 
 } // End of namespace Harvester

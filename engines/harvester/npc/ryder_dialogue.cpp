@@ -29,9 +29,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kPcSpeakerId = "PC";
-static const char *const kRyderSpeakerId = "RYDER";
-static const char *const kRyderTvOutSpeakerId = "RYDER_TV_OUT";
 static const char *const kRyderIntroFstPath = "GRAPHIC/FST/C063A.FST";
 static const char *const kRyderFollowupFstPath = "GRAPHIC/FST/C063B.FST";
 static const char *const kRyderKarinIntroFstPath = "GRAPHIC/FST/C063D.FST";
@@ -40,46 +37,36 @@ static const char *const kRyderTopicFstPath = "GRAPHIC/FST/C101.FST";
 static const int kRyderInterviewTopicLineIndices[] = { 0x2a7, 0x2a8 };
 
 static const DialogueLineEntry kRyderWhaleyPhotoLines[] = {
-	{ 0x52d, kRyderSpeakerId, 0 },
-	{ 0x533, kPcSpeakerId, 2 },
-	{ 0x538, kRyderSpeakerId, 0 },
-	{ 0x542, kRyderSpeakerId, 1 },
-	{ 0x546, kRyderSpeakerId, 1 }
+	{ 0x52d, "RYDER", 0 },
+	{ 0x533, "PC", 2 },
+	{ 0x538, "RYDER", 0 },
+	{ 0x542, "RYDER", 1 },
+	{ 0x546, "RYDER", 1 }
 };
 
 static const DialogueLineEntry kRyderBlackmailEvidenceLines[] = {
-	{ 0x556, kRyderSpeakerId, 0 },
-	{ 0x560, kRyderSpeakerId, 1 },
-	{ 0x564, kRyderSpeakerId, 1 }
+	{ 0x556, "RYDER", 0 },
+	{ 0x560, "RYDER", 1 },
+	{ 0x564, "RYDER", 1 }
 };
 
 } // End of namespace
 
-bool RyderDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kRyderSpeakerId) || npcName.equalsIgnoreCase(kRyderTvOutSpeakerId);
-}
-
 Common::Error RyderDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	const bool burnedTvStation = runtime.startupScript().getFlagValue("BURNED_TV_STATION");
-	const char *speakerId = burnedTvStation ? kRyderTvOutSpeakerId : kRyderSpeakerId;
-	auto playSpeakerLine = [&](int wavId, int headVariant, const char *lineSpeakerId) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, lineSpeakerId, headVariant);
-	};
-	auto playRyderLine = [&](int wavId, int headVariant) -> Common::Error {
-		return playSpeakerLine(wavId, headVariant, speakerId);
-	};
+	const char *speakerId = burnedTvStation ? "RYDER_TV_OUT" : "RYDER";
 
 	if (burnedTvStation) {
-		Common::Error lineError = playSpeakerLine(0x5a6, 3, kRyderTvOutSpeakerId);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x5a6, "RYDER_TV_OUT", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (!runtime.startupScript().getFlagValue("BOYLE_BURNED_TV")) {
-			lineError = playSpeakerLine(0x5ab, 4, kPcSpeakerId);
+			lineError = runtime.playDialogueLineWithVariant(0x5ab, "PC", 4);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
-		return playSpeakerLine(0x5af, 3, kRyderTvOutSpeakerId);
+		return runtime.playDialogueLineWithVariant(0x5af, "RYDER_TV_OUT", 3);
 	}
 
 	if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
@@ -91,7 +78,7 @@ Common::Error RyderDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 		sharedState.discussedCasketPhotoEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-		return playRyderLine(0x54f, 1);
+		return runtime.playDialogueLineWithVariant(0x54f, speakerId, 1);
 	}
 	if (usedItemName.equalsIgnoreCase("NOTE") ||
 			usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
@@ -103,28 +90,28 @@ Common::Error RyderDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			kRyderBlackmailEvidenceLines, ARRAYSIZE(kRyderBlackmailEvidenceLines));
 	}
 	if (!usedItemName.empty())
-		return playRyderLine(0x4db, 1);
+		return runtime.playDialogueLineWithVariant(0x4db, speakerId, 1);
 
 	Common::Error lineError = Common::kNoError;
 	if (_state.talkStatePending) {
 		_state.talkStatePending = false;
 
-		lineError = playRyderLine(0x477, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x477, speakerId, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		lineError = runtime.playDialogueFst(kRyderIntroFstPath);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playRyderLine(0x485, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x485, speakerId, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playSpeakerLine(0x489, 0, kPcSpeakerId);
+		lineError = runtime.playDialogueLineWithVariant(0x489, "PC", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		lineError = runtime.playDialogueFst(kRyderFollowupFstPath);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playRyderLine(0x49b, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x49b, speakerId, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -135,19 +122,19 @@ Common::Error RyderDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (responseIndex == 1) {
 			(void)runtime.startupScript().addRuntimeObjectToInventory("AUTOGRAPH");
-			lineError = playRyderLine(0x4a5, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x4a5, speakerId, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
-			lineError = playRyderLine(0x4a9, 0);
+			lineError = runtime.playDialogueLineWithVariant(0x4a9, speakerId, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playRyderLine(0x4ae, 0);
+			lineError = runtime.playDialogueLineWithVariant(0x4ae, speakerId, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 	} else {
-		lineError = playRyderLine(0x4cf, 0);
+		lineError = runtime.playDialogueLineWithVariant(0x4cf, speakerId, 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -156,13 +143,13 @@ Common::Error RyderDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			!sharedState.karinKidnapedDialogueState) {
 		sharedState.karinKidnapedDialogueState = true;
 
-		lineError = playRyderLine(0x56d, 3);
+		lineError = runtime.playDialogueLineWithVariant(0x56d, speakerId, 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		lineError = runtime.playDialogueFst(kRyderKarinIntroFstPath);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playRyderLine(0x57f, 0);
+		lineError = runtime.playDialogueLineWithVariant(0x57f, speakerId, 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -172,20 +159,20 @@ Common::Error RyderDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playRyderLine(0x589, 0);
+			lineError = runtime.playDialogueLineWithVariant(0x589, speakerId, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playRyderLine(0x592, 0);
+			lineError = runtime.playDialogueLineWithVariant(0x592, speakerId, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kRyderKarinExitFstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
-			lineError = playRyderLine(0x58e, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x58e, speakerId, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playRyderLine(0x4a5, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x4a5, speakerId, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)runtime.startupScript().addRuntimeObjectToInventory("AUTOGRAPH");
@@ -206,11 +193,11 @@ Common::Error RyderDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2a6))
-			return playRyderLine(0x4e1, 1);
+			return runtime.playDialogueLineWithVariant(0x4e1, speakerId, 1);
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kRyderInterviewTopicLineIndices,
 					ARRAYSIZE(kRyderInterviewTopicLineIndices))) {
-			lineError = playRyderLine(0x4e7, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x4e7, speakerId, 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -220,46 +207,46 @@ Common::Error RyderDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playRyderLine(0x4f2, 0);
+				lineError = runtime.playDialogueLineWithVariant(0x4f2, speakerId, 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playSpeakerLine(0x4f9, 0, kPcSpeakerId);
+				lineError = runtime.playDialogueLineWithVariant(0x4f9, "PC", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playRyderLine(0x4fe, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x4fe, speakerId, 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				lineError = runtime.playDialogueFst(kRyderTopicFstPath);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playRyderLine(0x4ff, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x4ff, speakerId, 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playSpeakerLine(0x50c, 0, kPcSpeakerId);
+				lineError = runtime.playDialogueLineWithVariant(0x50c, "PC", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playRyderLine(0x511, 1);
+				lineError = runtime.playDialogueLineWithVariant(0x511, speakerId, 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else if (responseIndex == 2) {
-				lineError = playRyderLine(0x517, 1);
+				lineError = runtime.playDialogueLineWithVariant(0x517, speakerId, 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playSpeakerLine(0x51c, 0, kPcSpeakerId);
+				lineError = runtime.playDialogueLineWithVariant(0x51c, "PC", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playRyderLine(0x521, 1);
+				lineError = runtime.playDialogueLineWithVariant(0x521, speakerId, 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 
-			return playRyderLine(0x527, 0);
+			return runtime.playDialogueLineWithVariant(0x527, speakerId, 0);
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x2aa))
 			continue;
 
-		lineError = playRyderLine(0x4d5, 0);
+		lineError = runtime.playDialogueLineWithVariant(0x4d5, speakerId, 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}

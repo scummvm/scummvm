@@ -29,41 +29,28 @@ namespace Harvester {
 namespace {
 
 static const char *const kPtaRespondToTvFlag = "PTA_RESPOND_TO_TV";
-static const char *const kPtaMomSpeakerId = "PTA_MOM1";
 static const int kPtaMomResponseLineIndex = 0x297;
 
 static const DialogueLineEntry kPtaMomResponse2Lines[] = {
-	{ 0x320f, kPtaMomSpeakerId, 0 },
-	{ 0x3213, kPtaMomSpeakerId, 0 }
+	{ 0x320f, "PTA_MOM1", 0 },
+	{ 0x3213, "PTA_MOM1", 0 }
 };
 
 static const DialogueLineEntry kPtaMomResponse3Lines[] = {
-	{ 0x3217, kPtaMomSpeakerId, 0 },
-	{ 0x321c, kPtaMomSpeakerId, 0 },
+	{ 0x3217, "PTA_MOM1", 0 },
+	{ 0x321c, "PTA_MOM1", 0 },
 	{ 0x3221, "PC", 0 },
-	{ 0x3226, kPtaMomSpeakerId, 0 }
+	{ 0x3226, "PTA_MOM1", 0 }
 };
 
 } // End of namespace
-
-bool PtaMomDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("PTA_MOM1") ||
-		npcName.equalsIgnoreCase("PTA_MOM2") ||
-		npcName.equalsIgnoreCase("PTA_MOM3") ||
-		npcName.equalsIgnoreCase("PTA_MOM4") ||
-		npcName.equalsIgnoreCase("PTA_MOM5");
-}
 
 Common::Error PtaMomDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
 	(void)usedItemName;
 
-	auto playPtaMomLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kPtaMomSpeakerId, headVariant);
-	};
-
 	if (runtime.startupScript().getFlagValue(kPtaRespondToTvFlag)) {
-		Common::Error lineError = playPtaMomLine(0x3233, 2);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3233, "PTA_MOM1", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -74,13 +61,13 @@ Common::Error PtaMomDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	Common::Error lineError = Common::kNoError;
 	switch (runtime.getRandomNumber(2)) {
 	case 0:
-		lineError = playPtaMomLine(0x31ee, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x31ee, "PTA_MOM1", 1);
 		break;
 	case 1:
-		lineError = playPtaMomLine(0x31f2, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x31f2, "PTA_MOM1", 1);
 		break;
 	default:
-		lineError = playPtaMomLine(0x31f6, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x31f6, "PTA_MOM1", 1);
 		break;
 	}
 	if (lineError.getCode() != Common::kNoError)
@@ -93,11 +80,11 @@ Common::Error PtaMomDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	switch (responseIndex) {
 	case 1: {
-		lineError = playPtaMomLine(0x3204, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x3204, "PTA_MOM1", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		return playPtaMomLine(0x320b, 0);
+		return runtime.playDialogueLineWithVariant(0x320b, "PTA_MOM1", 0);
 	}
 	case 2:
 		return runtime.playDialogueEntrySequence(kPtaMomResponse2Lines, ARRAYSIZE(kPtaMomResponse2Lines));

@@ -34,7 +34,6 @@ public:
 		int dialogueStateD2de4 = 0;
 	};
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = Fireman2RoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.talkStateBlock);

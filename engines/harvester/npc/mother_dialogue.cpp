@@ -28,28 +28,19 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kMotherSpeakerId = "MOTHER";
 static const char *const kDialogueC072FstPath = "GRAPHIC/FST/C072.FST";
 static const char *const kDialogueC073FstPath = "GRAPHIC/FST/C073.FST";
 
 } // End of namespace
-
-bool MotherDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("MOTHER");
-}
 
 Common::Error MotherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
 	if (!_state.talkStatePending)
 		return Common::kNoError;
 
-	auto playMotherLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kMotherSpeakerId, headVariant);
-	};
-
 	_state.talkStatePending = false;
 
-	Common::Error lineError = playMotherLine(0x26d6, 3);
+	Common::Error lineError = runtime.playDialogueLineWithVariant(0x26d6, "MOTHER", 3);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -57,7 +48,7 @@ Common::Error MotherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playMotherLine(0x26e9, 0);
+	lineError = runtime.playDialogueLineWithVariant(0x26e9, "MOTHER", 0);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -67,7 +58,7 @@ Common::Error MotherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1) {
-		lineError = playMotherLine(0x26f5, 3);
+		lineError = runtime.playDialogueLineWithVariant(0x26f5, "MOTHER", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -81,7 +72,7 @@ Common::Error MotherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playMotherLine(0x2709, 3);
+	lineError = runtime.playDialogueLineWithVariant(0x2709, "MOTHER", 3);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -89,11 +80,11 @@ Common::Error MotherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playMotherLine(0x2714, 0);
+	lineError = runtime.playDialogueLineWithVariant(0x2714, "MOTHER", 0);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	return playMotherLine(0x2719, 3);
+	return runtime.playDialogueLineWithVariant(0x2719, "MOTHER", 3);
 }
 
 } // End of namespace Harvester

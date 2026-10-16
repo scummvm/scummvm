@@ -46,7 +46,6 @@ public:
 		bool karinKidnapedShown = false;
 	};
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = PhelpsRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.talkStatePending);

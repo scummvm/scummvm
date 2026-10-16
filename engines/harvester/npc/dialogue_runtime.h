@@ -78,6 +78,13 @@ public:
 			bool allowTransitions = true) const {
 		return _script.executeActionTag(tag, result, allowTransitions, _currentRoomName);
 	}
+	void executeAndQueueAction(const Common::String &tag) const {
+		InteractionResult interaction;
+		if (executeActionTag(tag, interaction)) {
+			applyImmediateDialogueInteractionEffects(interaction);
+			queueDialogueInteractionIfNeeded(interaction);
+		}
+	}
 
 	Common::Error playDialogueLineWithVariant(int wavId, const Common::String &speakerId,
 			int headVariant) const {
@@ -137,6 +144,27 @@ private:
 	const Common::String &_genericByeTopic;
 	DialogueRuntimeCallbacks &_callbacks;
 	mutable KeywordMenuSelectionState _lastKeywordSelection;
+};
+
+class DialogueTopicBuffer {
+public:
+	DialogueTopicBuffer(const DialogueRuntime &runtime, Common::String &text, int &lineIndex,
+			const char *label)
+		: _runtime(runtime), _text(text), _lineIndex(lineIndex), _label(label) {}
+
+	void assign(int responseLineIndex) const {
+		_runtime.assignTopicBuffer(_text, _lineIndex, responseLineIndex, _label);
+	}
+	void clear() const {
+		_text.clear();
+		_lineIndex = -1;
+	}
+
+private:
+	const DialogueRuntime &_runtime;
+	Common::String &_text;
+	int &_lineIndex;
+	const char *_label;
 };
 
 } // End of namespace Harvester

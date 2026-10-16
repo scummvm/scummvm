@@ -47,7 +47,6 @@ public:
 		int currentTopicBufferLineIndex = -1;
 	};
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = HerrillRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.introPending);

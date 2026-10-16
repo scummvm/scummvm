@@ -178,10 +178,6 @@ static const DialogueLineEntry kHankResponse0EdTopicLines[] = {
 
 } // End of namespace
 
-bool HankDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("HANK");
-}
-
 Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	const bool europeanRelease = runtime.engine().isEuropeanRelease();
@@ -191,17 +187,8 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	int &hankTopicBufferLineIndex = state.currentTopicBufferLineIndex;
 	state.currentTopicBuffer.clear();
 	state.currentTopicBufferLineIndex = -1;
-	auto assignHankTopicBuffer = [&](int responseLineIndex) {
-		runtime.assignTopicBuffer(hankTopicBuffer, hankTopicBufferLineIndex,
-			responseLineIndex, "Hank topic buffer");
-	};
-	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
-		return runtime.playDialogueEntrySequence(lines, count);
-	};
-	auto playLine = [&](int wavId, const char *speakerId = "HANK",
-			int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, speakerId, headVariant);
-	};
+	DialogueTopicBuffer topics(runtime, hankTopicBuffer, hankTopicBufferLineIndex, "Hank topic buffer");
+
 	auto hidePresentedInventoryItem = [&]() {
 		(void)runtime.startupScript().setRuntimeObjectVisible(
 			kInventoryOwnerName, usedItemName, false);
@@ -274,19 +261,19 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = runtime.playDialogueLine(0x70f, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignHankTopicBuffer(0xc8);
+			topics.assign(0xc8);
 			break;
 		case 2:
 			lineError = runtime.playDialogueLine(0x715, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignHankTopicBuffer(0xc9);
+			topics.assign(0xc9);
 			break;
 		case 3:
 			lineError = runtime.playDialogueLine(0x71c, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignHankTopicBuffer(0xca);
+			topics.assign(0xca);
 			break;
 		default:
 			break;
@@ -310,11 +297,9 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				if (responseError.getCode() != Common::kNoError)
 					return responseError;
 				if (responseIndex == 1) {
-					lineError = playSequence(
-						kHankRangshotResponse1Lines, ARRAYSIZE(kHankRangshotResponse1Lines));
+					lineError = runtime.playDialogueEntrySequence(kHankRangshotResponse1Lines, ARRAYSIZE(kHankRangshotResponse1Lines));
 				} else if (responseIndex == 2) {
-					lineError = playSequence(
-						kHankRangshotResponse2Lines, ARRAYSIZE(kHankRangshotResponse2Lines));
+					lineError = runtime.playDialogueEntrySequence(kHankRangshotResponse2Lines, ARRAYSIZE(kHankRangshotResponse2Lines));
 				}
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
@@ -408,8 +393,8 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (!skipHankFollowupBranches && runtime.startupScript().getFlagValue("BURNED_TV_STATION") &&
 			!state.burnedTvStationShown) {
 		state.burnedTvStationShown = true;
-		Common::Error lineError = playSequence(
-			kHankBurnedTvStationLines, ARRAYSIZE(kHankBurnedTvStationLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(kHankBurnedTvStationLines,
+			ARRAYSIZE(kHankBurnedTvStationLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -519,8 +504,7 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = runtime.playDialogueLine(0xa20, "HANK");
 			break;
 		case 2:
-			lineError = playSequence(
-				kHankKarinFoundDeadResponse2Lines,
+			lineError = runtime.playDialogueEntrySequence(kHankKarinFoundDeadResponse2Lines,
 				ARRAYSIZE(kHankKarinFoundDeadResponse2Lines));
 			break;
 		default:
@@ -563,35 +547,33 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, europeanRelease ? 0x30f : 0xd2)) {
-			Common::Error lineError = playSequence(
-				kHankMomTopicLines, ARRAYSIZE(kHankMomTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankMomTopicLines, ARRAYSIZE(kHankMomTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			runtime.setActiveSpeakerPortrait("HANK", 0);
-			assignHankTopicBuffer(0xd5);
+			topics.assign(0xd5);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xd6)) {
-			Common::Error lineError = playSequence(
-				kHankSteveTopicLines, ARRAYSIZE(kHankSteveTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankSteveTopicLines, ARRAYSIZE(kHankSteveTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignHankTopicBuffer(0xd7);
+			topics.assign(0xd7);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xd8) ||
 				runtime.matchesResponseLine(selectedTopic, 0xd9)) {
-			Common::Error lineError = playSequence(
-				kHankLousyRatTopicLines, ARRAYSIZE(kHankLousyRatTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankLousyRatTopicLines,
+				ARRAYSIZE(kHankLousyRatTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignHankTopicBuffer(0xda);
+			topics.assign(0xda);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xdb) ||
 				runtime.matchesResponseLine(selectedTopic, 0xdc)) {
-			Common::Error lineError = playSequence(
-				kHankLightingOutTopicLines, ARRAYSIZE(kHankLightingOutTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankLightingOutTopicLines,
+				ARRAYSIZE(kHankLightingOutTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -600,67 +582,64 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playLine(0x79d);
+				lineError = runtime.playDialogueLineWithVariant(0x79d, "HANK", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				assignHankTopicBuffer(0xde);
+				topics.assign(0xde);
 				continue;
 			}
 			if (responseIndex == 2) {
-				lineError = playLine(0x7a4);
+				lineError = runtime.playDialogueLineWithVariant(0x7a4, "HANK", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				assignHankTopicBuffer(0xdf);
+				topics.assign(0xdf);
 				continue;
 			}
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xe0)) {
-			Common::Error lineError = playLine(0x7ad);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x7ad, "HANK", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xe1)) {
-			Common::Error lineError = playSequence(
-				kHankDaddyTopicLines, ARRAYSIZE(kHankDaddyTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankDaddyTopicLines, ARRAYSIZE(kHankDaddyTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignHankTopicBuffer(0xe2);
+			topics.assign(0xe2);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xe3)) {
-			Common::Error lineError = playSequence(
-				kHankGirlTopicLines, ARRAYSIZE(kHankGirlTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankGirlTopicLines, ARRAYSIZE(kHankGirlTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignHankTopicBuffer(0xe4);
+			topics.assign(0xe4);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xe5)) {
-			Common::Error lineError = playLine(0x7f4);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x7f4, "HANK", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xe6)) {
-			Common::Error lineError = playSequence(
-				kHankTvTopicIntroLines, ARRAYSIZE(kHankTvTopicIntroLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankTvTopicIntroLines,
+				ARRAYSIZE(kHankTvTopicIntroLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC021FstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playSequence(
-				kHankTvTopicOutroLines, ARRAYSIZE(kHankTvTopicOutroLines));
+			lineError = runtime.playDialogueEntrySequence(kHankTvTopicOutroLines, ARRAYSIZE(kHankTvTopicOutroLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignHankTopicBuffer(0xe8);
+			topics.assign(0xe8);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xe9)) {
-			Common::Error lineError = playSequence(
-				kHankCowboyShowTopicLines, ARRAYSIZE(kHankCowboyShowTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankCowboyShowTopicLines,
+				ARRAYSIZE(kHankCowboyShowTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -669,25 +648,24 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playLine(0x856);
+				lineError = runtime.playDialogueLineWithVariant(0x856, "HANK", 0);
 			} else if (responseIndex == 2) {
-				lineError = playLine(0x85a);
+				lineError = runtime.playDialogueLineWithVariant(0x85a, "HANK", 0);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xeb)) {
-			Common::Error lineError = playSequence(
-				kHankSickTopicLines, ARRAYSIZE(kHankSickTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankSickTopicLines, ARRAYSIZE(kHankSickTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignHankTopicBuffer(0xec);
+			topics.assign(0xec);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xed)) {
-			Common::Error lineError = playSequence(
-				kHankResponse0EdTopicLines, ARRAYSIZE(kHankResponse0EdTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankResponse0EdTopicLines,
+				ARRAYSIZE(kHankResponse0EdTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			continue;
@@ -695,8 +673,7 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.matchesResponseLine(selectedTopic, 0xee) ||
 				runtime.matchesResponseLine(selectedTopic, 0xef) ||
 				runtime.matchesResponseLine(selectedTopic, 0xf0)) {
-			Common::Error lineError = playSequence(
-				kHankNewspaperFireSentinelTopicLines,
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankNewspaperFireSentinelTopicLines,
 				ARRAYSIZE(kHankNewspaperFireSentinelTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -704,16 +681,15 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xf1)) {
 			sharedState.discussedLodgeTopic = true;
-			Common::Error lineError = playSequence(
-				kHankLodgeTopicLines, ARRAYSIZE(kHankLodgeTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kHankLodgeTopicLines, ARRAYSIZE(kHankLodgeTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xf2))
-			return playLine(0x8dc);
+			return runtime.playDialogueLineWithVariant(0x8dc, "HANK", 0);
 
-		Common::Error lineError = playLine(0xa32);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0xa32, "HANK", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		continue;

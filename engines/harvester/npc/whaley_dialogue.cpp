@@ -130,43 +130,14 @@ static const DialogueLineEntry kWhaleyLodgeTopicLines[] = {
 
 } // End of namespace
 
-bool WhaleyDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("WHALEY");
-}
-
 Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	WhaleyRoomDialogueState &state = _state;
 	Common::String whaleyTopicBuffer;
 	int whaleyTopicBufferLineIndex = -1;
 
-	auto assignWhaleyTopicBuffer = [&](int responseLineIndex) {
-		runtime.assignTopicBuffer(whaleyTopicBuffer, whaleyTopicBufferLineIndex,
-			responseLineIndex, "Whaley topic buffer");
-	};
-	auto clearWhaleyTopicBuffer = [&]() {
-		whaleyTopicBuffer.clear();
-		whaleyTopicBufferLineIndex = -1;
-	};
-	auto playWhaleyLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "WHALEY", headVariant);
-	};
-	auto playHerrillLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "HERRILL", headVariant);
-	};
-	auto playPcLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "PC", headVariant);
-	};
-	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
-		return runtime.playDialogueEntrySequence(lines, count);
-	};
-	auto executeActionTagIfSet = [&](const char *actionTag) {
-		InteractionResult interaction;
-		if (runtime.executeActionTag(actionTag, interaction)) {
-			runtime.applyImmediateDialogueInteractionEffects(interaction);
-			runtime.queueDialogueInteractionIfNeeded(interaction);
-		}
-	};
+	DialogueTopicBuffer topics(runtime, whaleyTopicBuffer, whaleyTopicBufferLineIndex, "Whaley topic buffer");
+
 	auto hasInventoryItem = [&](const char *objectName) {
 		Common::Array<ObjectRecord> inventoryObjects;
 		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
@@ -183,7 +154,7 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 
 	if (runtime.startupScript().getFlagValue("BUSTED_SCREWING_MIDGAME")) {
-		Common::Error lineError = playWhaleyLine(0x143b, 2);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x143b, "WHALEY", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -193,27 +164,27 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playWhaleyLine(0x1445, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x1445, "WHALEY", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
-			lineError = playHerrillLine(0x1449, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x1449, "HERRILL", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playPcLine(0x144d, 0);
+			lineError = runtime.playDialogueLineWithVariant(0x144d, "PC", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			if (!hasInventoryItem(kWhaleyPhotoObjectName)) {
-				lineError = playSequence(kWhaleyBustedScrewingResponse2WithoutPhotoLines,
+				lineError = runtime.playDialogueEntrySequence(kWhaleyBustedScrewingResponse2WithoutPhotoLines,
 					ARRAYSIZE(kWhaleyBustedScrewingResponse2WithoutPhotoLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else {
-				lineError = playHerrillLine(0x1465, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x1465, "HERRILL", 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playWhaleyLine(0x1469, 0);
+				lineError = runtime.playDialogueLineWithVariant(0x1469, "WHALEY", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
@@ -223,7 +194,7 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					return responseError;
 
 				if (responseIndex == 1) {
-					lineError = playWhaleyLine(0x1476, 2);
+					lineError = runtime.playDialogueLineWithVariant(0x1476, "WHALEY", 2);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 
@@ -233,20 +204,20 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 						return responseError;
 
 					if (nestedResponseIndex == 1) {
-						lineError = playWhaleyLine(0x1482, 0);
+						lineError = runtime.playDialogueLineWithVariant(0x1482, "WHALEY", 0);
 						if (lineError.getCode() != Common::kNoError)
 							return lineError;
 						tradePhotoForBat();
 					} else if (nestedResponseIndex == 2) {
-						lineError = playWhaleyLine(0x1487, 2);
+						lineError = runtime.playDialogueLineWithVariant(0x1487, "WHALEY", 2);
 						if (lineError.getCode() != Common::kNoError)
 							return lineError;
-						lineError = playHerrillLine(0x148c, 2);
+						lineError = runtime.playDialogueLineWithVariant(0x148c, "HERRILL", 2);
 						if (lineError.getCode() != Common::kNoError)
 							return lineError;
 					}
 				} else if (responseIndex == 2) {
-					lineError = playSequence(kWhaleyBustedScrewingResponse2Menu2Lines,
+					lineError = runtime.playDialogueEntrySequence(kWhaleyBustedScrewingResponse2Menu2Lines,
 						ARRAYSIZE(kWhaleyBustedScrewingResponse2Menu2Lines));
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
@@ -258,31 +229,31 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		(void)runtime.startupScript().setRuntimeFlagValue("BUSTED_SCREWING_MIDGAME", false);
 		if (runtime.startupScript().getFlagValue("TALKING_BROOM_WHALEY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue("TALKING_BROOM_WHALEY", false);
-			executeActionTagIfSet(kReverseBroomActionTag);
+			runtime.executeAndQueueAction(kReverseBroomActionTag);
 		}
 		return Common::kNoError;
 	}
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase(kWhaleyPhotoObjectName))
-			return playWhaleyLine(0x1411, 2);
+			return runtime.playDialogueLineWithVariant(0x1411, "WHALEY", 2);
 
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-			Common::Error lineError = playSequence(kWhaleyCasketPhotoLines,
+			Common::Error lineError = runtime.playDialogueEntrySequence(kWhaleyCasketPhotoLines,
 				ARRAYSIZE(kWhaleyCasketPhotoLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			if (runtime.startupScript().getFlagValue("IF_SAW_THE_SLASHES_ON_THE_BODY")) {
-				lineError = playWhaleyLine(0x1428, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x1428, "WHALEY", 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				lineError = runtime.playDialogueFst(kDialogueC055FstPath);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playWhaleyLine(0x1430, 1);
+				lineError = runtime.playDialogueLineWithVariant(0x1430, "WHALEY", 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
@@ -294,7 +265,7 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
 			sharedState.discussedLedgerEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
-			return playSequence(kWhaleyLedgerLines, ARRAYSIZE(kWhaleyLedgerLines));
+			return runtime.playDialogueEntrySequence(kWhaleyLedgerLines, ARRAYSIZE(kWhaleyLedgerLines));
 		}
 
 		if (usedItemName.equalsIgnoreCase("NOTE") ||
@@ -303,15 +274,15 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
-			return playSequence(kWhaleyBlackmailLines, ARRAYSIZE(kWhaleyBlackmailLines));
+			return runtime.playDialogueEntrySequence(kWhaleyBlackmailLines, ARRAYSIZE(kWhaleyBlackmailLines));
 		}
 
-		return playWhaleyLine(0x140b, 2);
+		return runtime.playDialogueLineWithVariant(0x140b, "WHALEY", 2);
 	}
 
 	if (state.introPending) {
 		state.introPending = false;
-		Common::Error lineError = playSequence(kWhaleyIntroLines, ARRAYSIZE(kWhaleyIntroLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(kWhaleyIntroLines, ARRAYSIZE(kWhaleyIntroLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -321,29 +292,29 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			assignWhaleyTopicBuffer(0x24f);
-			lineError = playWhaleyLine(0x1316, 1);
+			topics.assign(0x24f);
+			lineError = runtime.playDialogueLineWithVariant(0x1316, "WHALEY", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
-			clearWhaleyTopicBuffer();
-			lineError = playWhaleyLine(0x131a, 1);
+			topics.clear();
+			lineError = runtime.playDialogueLineWithVariant(0x131a, "WHALEY", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			return Common::kNoError;
 		}
 	} else {
-		Common::Error lineError = playSequence(kWhaleyRevisitLines, ARRAYSIZE(kWhaleyRevisitLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(kWhaleyRevisitLines, ARRAYSIZE(kWhaleyRevisitLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		assignWhaleyTopicBuffer(0x250);
+		topics.assign(0x250);
 	}
 
 	if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") &&
 			!state.stephMidgameShown) {
 		state.stephMidgameShown = true;
 
-		Common::Error lineError = playSequence(kWhaleyStephMidgameOpeningLines,
+		Common::Error lineError = runtime.playDialogueEntrySequence(kWhaleyStephMidgameOpeningLines,
 			ARRAYSIZE(kWhaleyStephMidgameOpeningLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
@@ -354,10 +325,10 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playSequence(kWhaleyStephMidgameResponse1Lines,
+			lineError = runtime.playDialogueEntrySequence(kWhaleyStephMidgameResponse1Lines,
 				ARRAYSIZE(kWhaleyStephMidgameResponse1Lines));
 		} else if (responseIndex == 2) {
-			lineError = playWhaleyLine(0x13b5, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x13b5, "WHALEY", 1);
 		} else {
 			lineError = Common::kNoError;
 		}
@@ -368,7 +339,7 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getCurrentStoryDayIndex() == 5 && !state.day5Shown) {
 		state.day5Shown = true;
 
-		Common::Error lineError = playWhaleyLine(0x13bf, 1);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x13bf, "WHALEY", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -378,13 +349,12 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playWhaleyLine(0x13ca, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x13ca, "WHALEY", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC057FstPath);
 		} else if (responseIndex == 2) {
-			lineError = playSequence(kWhaleyDay5Response2Lines,
-				ARRAYSIZE(kWhaleyDay5Response2Lines));
+			lineError = runtime.playDialogueEntrySequence(kWhaleyDay5Response2Lines, ARRAYSIZE(kWhaleyDay5Response2Lines));
 		} else {
 			lineError = Common::kNoError;
 		}
@@ -395,20 +365,20 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
 			!state.karinKidnapedShown) {
 		state.karinKidnapedShown = true;
-		Common::Error lineError = playWhaleyLine(0x13e5, 0);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x13e5, "WHALEY", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		sharedState.karinKidnapedDialogueState = true;
-		lineError = playWhaleyLine(0x13ee, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x13ee, "WHALEY", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playPcLine(0x13f3, 0);
+		lineError = runtime.playDialogueLineWithVariant(0x13f3, "PC", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playWhaleyLine(0x13f8, 0);
+		lineError = runtime.playDialogueLineWithVariant(0x13f8, "WHALEY", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playWhaleyLine(0x13ff, 0);
+		lineError = runtime.playDialogueLineWithVariant(0x13ff, "WHALEY", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -416,7 +386,7 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (sharedState.discussedWhaleyHerrillPhoto != 0 &&
 			!state.whaleyHerrillPhotoFollowupShown) {
 		state.whaleyHerrillPhotoFollowupShown = true;
-		Common::Error lineError = playWhaleyLine(0x14dd, 2);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x14dd, "WHALEY", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -425,14 +395,14 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			!state.burnedTvStationShown) {
 		state.burnedTvStationShown = true;
 
-		Common::Error lineError = playSequence(kWhaleyBurnedTvStationLines,
+		Common::Error lineError = runtime.playDialogueEntrySequence(kWhaleyBurnedTvStationLines,
 			ARRAYSIZE(kWhaleyBurnedTvStationLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		lineError = runtime.playDialogueFst(kDialogueC055FstPath);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playWhaleyLine(0x1512, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x1512, "WHALEY", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -447,53 +417,52 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return Common::kNoError;
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x254))
-			return playWhaleyLine(0x1373, 0);
+			return runtime.playDialogueLineWithVariant(0x1373, "WHALEY", 0);
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x255)) {
-			Common::Error lineError = playSequence(kWhaleyTopic255Lines,
-				ARRAYSIZE(kWhaleyTopic255Lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kWhaleyTopic255Lines, ARRAYSIZE(kWhaleyTopic255Lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignWhaleyTopicBuffer(0x256);
+			topics.assign(0x256);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x257)) {
 			sharedState.discussedLodgeTopic = true;
-			Common::Error lineError = playSequence(kWhaleyLodgeTopicLines,
+			Common::Error lineError = runtime.playDialogueEntrySequence(kWhaleyLodgeTopicLines,
 				ARRAYSIZE(kWhaleyLodgeTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignWhaleyTopicBuffer(0x258);
+			topics.assign(0x258);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x259)) {
-			Common::Error lineError = playWhaleyLine(0x134e, 0);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x134e, "WHALEY", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC053FstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			executeActionTagIfSet(kSoundAirRaidActionTag);
-			lineError = playWhaleyLine(0x135f, 0);
+			runtime.executeAndQueueAction(kSoundAirRaidActionTag);
+			lineError = runtime.playDialogueLineWithVariant(0x135f, "WHALEY", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC052FstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			sharedState.dwayneWhaleyDisciplineFollowupState = true;
-			lineError = playWhaleyLine(0x136c, 0);
+			lineError = runtime.playDialogueLineWithVariant(0x136c, "WHALEY", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignWhaleyTopicBuffer(0x25b);
+			topics.assign(0x25b);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x25c))
 			continue;
 
-		Common::Error lineError = playWhaleyLine(0x1405, 0);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x1405, "WHALEY", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}

@@ -32,10 +32,6 @@ static const char *const kPastorelliTalkActionTag = "PASTORELLI_TALK";
 
 } // End of namespace
 
-bool PastorelliDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("PASTORELLI");
-}
-
 Common::Error PastorelliDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
 	InteractionResult interaction;

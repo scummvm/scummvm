@@ -32,15 +32,6 @@ StubNpcDialogueHandler::StubNpcDialogueHandler(const Common::Array<Common::Strin
 	: _npcNames(npcNames) {
 }
 
-bool StubNpcDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	for (uint i = 0; i < _npcNames.size(); ++i) {
-		if (npcName.equalsIgnoreCase(_npcNames[i]))
-			return true;
-	}
-
-	return false;
-}
-
 Common::Error StubNpcDialogueHandler::handleDialogue(DialogueRuntime &,
 		const Common::String &usedItemName, DialogueSharedState &) {
 	debug(1, "Harvester: stub NPC dialogue handler '%s' item='%s'",

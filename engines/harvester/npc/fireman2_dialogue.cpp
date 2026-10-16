@@ -26,10 +26,6 @@
 
 namespace Harvester {
 
-bool Fireman2DialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("FIREMAN2");
-}
-
 Common::Error Fireman2DialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
 	int wavId = 0x5c7;

@@ -1338,84 +1338,89 @@ DialogueSystem::DialogueSystem(HarvesterEngine &engine, Common::Point &mousePos)
 
 DialogueSystem::~DialogueSystem() {
 	for (uint i = 0; i < _npcHandlers.size(); ++i)
-		delete _npcHandlers[i];
+		delete _npcHandlers[i].handler;
+}
+
+NpcDialogueHandler *DialogueSystem::findNpcHandler(const Common::String &npcName) const {
+	for (const NpcHandlerRegistration &registration : _npcHandlers) {
+		for (const char *name : registration.names) {
+			if (npcName.equalsIgnoreCase(name))
+				return registration.handler;
+		}
+	}
+	return nullptr;
 }
 
 bool DialogueSystem::hasRoomNpcHandler(const Common::String &npcName) const {
-	for (uint i = 0; i < _npcHandlers.size(); ++i) {
-		if (_npcHandlers[i]->matchesNpc(npcName))
-			return true;
-	}
-
-	return false;
+	return findNpcHandler(npcName) != nullptr;
 }
 
 void DialogueSystem::registerNpcHandlers() {
-	_npcHandlers.push_back(new AuthorityDialogueHandler());
-	_npcHandlers.push_back(new BeggarDialogueHandler());
-	_npcHandlers.push_back(new BoyleDialogueHandler());
-	_npcHandlers.push_back(new BusterDialogueHandler());
-	_npcHandlers.push_back(new ButcherDialogueHandler());
-	_npcHandlers.push_back(new DwayneDialogueHandler());
-	_npcHandlers.push_back(new EdnaDialogueHandler());
-	_npcHandlers.push_back(new Fireman1DialogueHandler());
-	_npcHandlers.push_back(new Fireman2DialogueHandler());
-	_npcHandlers.push_back(new ChessmasterDialogueHandler());
-	_npcHandlers.push_back(new CloakAtndDialogueHandler());
-	_npcHandlers.push_back(new CuratorDialogueHandler());
-	_npcHandlers.push_back(new DadDialogueHandler());
-	_npcHandlers.push_back(new DarkWomanDialogueHandler());
-	_npcHandlers.push_back(new JimmyDialogueHandler());
-	_npcHandlers.push_back(new InquisitorDialogueHandler());
-	_npcHandlers.push_back(new KarinDialogueHandler());
-	_npcHandlers.push_back(new WaspWomanDialogueHandler());
-	_npcHandlers.push_back(new GladiatorDialogueHandler());
-	_npcHandlers.push_back(new LibrarianDialogueHandler());
-	_npcHandlers.push_back(new LoomisDialogueHandler());
-	_npcHandlers.push_back(new McknightDialogueHandler());
-	_npcHandlers.push_back(new MembDirDialogueHandler());
-	_npcHandlers.push_back(new MaintManDialogueHandler());
-	_npcHandlers.push_back(new MadamDialogueHandler());
-	_npcHandlers.push_back(new MomDialogueHandler());
-	_npcHandlers.push_back(new MotherDialogueHandler());
-	_npcHandlers.push_back(new MoynahanDialogueHandler());
-	_npcHandlers.push_back(new MrPottsDialogueHandler());
-	_npcHandlers.push_back(new MrsPottsDialogueHandler());
-	_npcHandlers.push_back(new LodgeChefDialogueHandler());
-	_npcHandlers.push_back(new NudeManDialogueHandler());
-	_npcHandlers.push_back(new ParsonsDialogueHandler());
-	_npcHandlers.push_back(new PastorelliDialogueHandler());
-	_npcHandlers.push_back(new PhelpsDialogueHandler());
-	_npcHandlers.push_back(new PriestDialogueHandler());
-	_npcHandlers.push_back(new RyderDialogueHandler());
-	_npcHandlers.push_back(new ValetDialogueHandler());
-	_npcHandlers.push_back(new VetDialogueHandler());
-	_npcHandlers.push_back(new SparkyDialogueHandler());
-	_npcHandlers.push_back(new StephanieDialogueHandler());
-	_npcHandlers.push_back(new SwellDialogueHandler());
-	_npcHandlers.push_back(new WhaleyDialogueHandler());
-	_npcHandlers.push_back(new HankDialogueHandler());
-	_npcHandlers.push_back(new HerrillDialogueHandler());
-	_npcHandlers.push_back(new JohnsonDialogueHandler());
-	_npcHandlers.push_back(new PtaMomDialogueHandler());
+	_npcHandlers.push_back({ new AuthorityDialogueHandler(), { "AUTHORITY", "AUTHORITY2" } });
+	_npcHandlers.push_back({ new BeggarDialogueHandler(), { "BEGGAR" } });
+	_npcHandlers.push_back({ new BoyleDialogueHandler(), { "BOYLE" } });
+	_npcHandlers.push_back({ new BusterDialogueHandler(), { "BUSTER" } });
+	_npcHandlers.push_back({ new ButcherDialogueHandler(), { "BUTCHER" } });
+	_npcHandlers.push_back({ new DwayneDialogueHandler(), { "DWAYNE", "DWAYNE_DNALFT", "DWAYNE_ST_BEDRM" } });
+	_npcHandlers.push_back({ new EdnaDialogueHandler(), { "EDNA" } });
+	_npcHandlers.push_back({ new Fireman1DialogueHandler(), { "FIREMAN1" } });
+	_npcHandlers.push_back({ new Fireman2DialogueHandler(), { "FIREMAN2" } });
+	_npcHandlers.push_back({ new ChessmasterDialogueHandler(), { "CHESSMASTER" } });
+	_npcHandlers.push_back({ new CloakAtndDialogueHandler(), { "CLOAK_ATND" } });
+	_npcHandlers.push_back({ new CuratorDialogueHandler(), { "CURATOR" } });
+	_npcHandlers.push_back({ new DadDialogueHandler(), { "DAD" } });
+	_npcHandlers.push_back({ new DarkWomanDialogueHandler(), { "DARK_WOMAN" } });
+	_npcHandlers.push_back({ new JimmyDialogueHandler(), { "JIMMY" } });
+	_npcHandlers.push_back({ new InquisitorDialogueHandler(), { "INQUISITOR" } });
+	_npcHandlers.push_back({ new KarinDialogueHandler(), { "KARIN", "KARIN_STANDING", "KARIN_CEM10", "KARIN_OFFICE" } });
+	_npcHandlers.push_back({ new WaspWomanDialogueHandler(), { "WASP_WOMAN" } });
+	_npcHandlers.push_back({ new GladiatorDialogueHandler(), { "GLADIATOR" } });
+	_npcHandlers.push_back({ new LibrarianDialogueHandler(), { "LIBRARIAN" } });
+	_npcHandlers.push_back({ new LoomisDialogueHandler(), { "LOOMIS" } });
+	_npcHandlers.push_back({ new McknightDialogueHandler(), { "MCKNIGHT" } });
+	_npcHandlers.push_back({ new MembDirDialogueHandler(), { "MEMB_DIR" } });
+	_npcHandlers.push_back({ new MaintManDialogueHandler(), { "MAINT_MAN" } });
+	_npcHandlers.push_back({ new MadamDialogueHandler(), { "MADAM" } });
+	_npcHandlers.push_back({ new MomDialogueHandler(), { "MOM" } });
+	_npcHandlers.push_back({ new MotherDialogueHandler(), { "MOTHER" } });
+	_npcHandlers.push_back({ new MoynahanDialogueHandler(), { "MOYNAHAN", "MOYNAHAN_MBLM" } });
+	_npcHandlers.push_back({ new MrPottsDialogueHandler(), { "MR_POTTS", "POTTS_FLESH", "MR_POTTS_CEM10", "MR_POTTS_HALL" } });
+	_npcHandlers.push_back({ new MrsPottsDialogueHandler(), { "MRS_POTTS", "MRS_POTTS_ST_BEDRM" } });
+	_npcHandlers.push_back({ new LodgeChefDialogueHandler(), { "LODGE_CHEF" } });
+	_npcHandlers.push_back({ new NudeManDialogueHandler(), { "NUDE_MAN" } });
+	_npcHandlers.push_back({ new ParsonsDialogueHandler(), { "PARSONS" } });
+	_npcHandlers.push_back({ new PastorelliDialogueHandler(), { "PASTORELLI" } });
+	_npcHandlers.push_back({ new PhelpsDialogueHandler(), { "PHELPS" } });
+	_npcHandlers.push_back({ new PriestDialogueHandler(), { "PRIEST" } });
+	_npcHandlers.push_back({ new RyderDialogueHandler(), { "RYDER", "RYDER_TV_OUT" } });
+	_npcHandlers.push_back({ new ValetDialogueHandler(), { "VALET" } });
+	_npcHandlers.push_back({ new VetDialogueHandler(), { "VET" } });
+	_npcHandlers.push_back({ new SparkyDialogueHandler(), { "SPARKY" } });
+	_npcHandlers.push_back({ new StephanieDialogueHandler(), { "STEPHANIE" } });
+	_npcHandlers.push_back({ new SwellDialogueHandler(), { "SWELL" } });
+	_npcHandlers.push_back({ new WhaleyDialogueHandler(), { "WHALEY" } });
+	_npcHandlers.push_back({ new HankDialogueHandler(), { "HANK" } });
+	_npcHandlers.push_back({ new HerrillDialogueHandler(), { "HERRILL", "HERRILL_LOG" } });
+	_npcHandlers.push_back({ new JohnsonDialogueHandler(), { "JOHNSON" } });
+	_npcHandlers.push_back({ new PtaMomDialogueHandler(), { "PTA_MOM1", "PTA_MOM2", "PTA_MOM3", "PTA_MOM4", "PTA_MOM5" } });
 
-	_npcHandlers.push_back(new SergeantDialogueHandler());
-	_npcHandlers.push_back(new StubNpcDialogueHandler("PTA_MOM"));
+	_npcHandlers.push_back({ new SergeantDialogueHandler(), { "SERGEANT" } });
+	_npcHandlers.push_back({ new StubNpcDialogueHandler("PTA_MOM"), { "PTA_MOM" } });
 }
 
 void DialogueSystem::resetRoomNpcDialogueState() {
 	_sharedDialogueState = DialogueSharedState();
 	for (uint i = 0; i < _npcHandlers.size(); ++i)
-		_npcHandlers[i]->resetState();
+		_npcHandlers[i].handler->resetState();
 }
 
 void DialogueSystem::syncRuntimeSaveState(Common::Serializer &s) {
 	syncDialogueSharedState(s, _sharedDialogueState);
 	for (uint i = 0; i < _npcHandlers.size(); ++i)
-		_npcHandlers[i]->syncState(s);
+		_npcHandlers[i].handler->syncState(s);
 	if (s.isLoading()) {
 		for (uint i = 0; i < _npcHandlers.size(); ++i)
-			_npcHandlers[i]->migrateSharedState(_sharedDialogueState);
+			_npcHandlers[i].handler->migrateSharedState(_sharedDialogueState);
 	}
 }
 
@@ -1427,7 +1432,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	Text *text = _engine.getText();
 	if (!script || !text || !backdrop.isValid())
 		return Common::kReadingFailed;
-	if (!hasRoomNpcHandler(npc.npcName)) {
+	NpcDialogueHandler *handler = findNpcHandler(npc.npcName);
+	if (!handler) {
 		debugC(1, kDebugDialogue,
 			"Harvester: blocked room NPC dialogue npc='%s' reason='no handler'",
 			npc.npcName.c_str());
@@ -1453,13 +1459,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	DialogueRuntime runtime(
 		_engine, *script, *text, flow, currentRoomName, session.getGenericByeTopic(), session);
 
-	for (uint i = 0; i < _npcHandlers.size(); ++i) {
-		if (_npcHandlers[i]->matchesNpc(npc.npcName))
-			return _npcHandlers[i]->handleDialogue(runtime, usedItemName, _sharedDialogueState);
-	}
-
-	debug(1, "Harvester: unsupported room NPC dialogue handler '%s'", npc.npcName.c_str());
-	return Common::kNoError;
+	return handler->handleDialogue(runtime, usedItemName, _sharedDialogueState);
 }
 
 } // End of namespace Harvester

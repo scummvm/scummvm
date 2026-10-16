@@ -29,9 +29,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kMoynahanNpc = "MOYNAHAN";
-static const char *const kMoynahanEmbalmingPortrait = "MOYNAHAN_MBLM";
-static const char *const kPcSpeaker = "PC";
 static const char *const kMoynahanHotelRoom = "HTL-RT";
 static const char *const kMoynahanEmbalmingRoom = "MBLM";
 static const char *const kRahRoom = "RAH";
@@ -48,158 +45,148 @@ static const int kMoynahanLateTopicLines[] = { 0x1b8, 0x1b9, 0x1ba, 0x1bb, 0x1bc
 static const int kMoynahanGlueTopicLines[] = { 0x1bf, 0x1c0, 0x1c1, 0x1c2 };
 
 static const DialogueLineEntry kMoynahanGlueInterruptOpeningLines[] = {
-	{ 0x3e4d, kMoynahanNpc, 2 },
-	{ 0x3e52, kPcSpeaker, 0 },
-	{ 0x3e56, kMoynahanNpc, 0 }
+	{ 0x3e4d, "MOYNAHAN", 2 },
+	{ 0x3e52, "PC", 0 },
+	{ 0x3e56, "MOYNAHAN", 0 }
 };
 
 static const DialogueLineEntry kMoynahanGlueInterruptShortReplyLines[] = {
-	{ 0x3e76, kPcSpeaker, 0 },
-	{ 0x3e7a, kMoynahanNpc, 0 }
+	{ 0x3e76, "PC", 0 },
+	{ 0x3e7a, "MOYNAHAN", 0 }
 };
 
 static const DialogueLineEntry kMoynahanGlueInterruptExtendedReplyLines[] = {
-	{ 0x3e5b, kPcSpeaker, 0 },
-	{ 0x3e60, kMoynahanNpc, 0 },
-	{ 0x3e64, kPcSpeaker, 2 },
-	{ 0x3e69, kMoynahanNpc, 0 },
-	{ 0x3e6d, kPcSpeaker, 2 },
-	{ 0x3e71, kMoynahanNpc, 2 }
+	{ 0x3e5b, "PC", 0 },
+	{ 0x3e60, "MOYNAHAN", 0 },
+	{ 0x3e64, "PC", 2 },
+	{ 0x3e69, "MOYNAHAN", 0 },
+	{ 0x3e6d, "PC", 2 },
+	{ 0x3e71, "MOYNAHAN", 2 }
 };
 
 static const DialogueLineEntry kMoynahanIntroLines[] = {
-	{ 0x3d33, kMoynahanNpc, 0 },
-	{ 0x3d37, kPcSpeaker, 0 },
-	{ 0x3d3b, kMoynahanNpc, 0 },
-	{ 0x3d40, kPcSpeaker, 0 },
-	{ 0x3d45, kMoynahanNpc, 0 },
-	{ 0x3d47, kMoynahanNpc, 0 }
+	{ 0x3d33, "MOYNAHAN", 0 },
+	{ 0x3d37, "PC", 0 },
+	{ 0x3d3b, "MOYNAHAN", 0 },
+	{ 0x3d40, "PC", 0 },
+	{ 0x3d45, "MOYNAHAN", 0 },
+	{ 0x3d47, "MOYNAHAN", 0 }
 };
 
 static const DialogueLineEntry kMoynahanSlashMarksIntroLines[] = {
-	{ 0x3da0, kMoynahanNpc, 3 },
-	{ 0x3da1, kMoynahanNpc, 3 },
-	{ 0x3da2, kMoynahanNpc, 2 }
+	{ 0x3da0, "MOYNAHAN", 3 },
+	{ 0x3da1, "MOYNAHAN", 3 },
+	{ 0x3da2, "MOYNAHAN", 2 }
 };
 
 static const DialogueLineEntry kMoynahanDayFiveLines[] = {
-	{ 0x3fe5, kMoynahanNpc, 1 },
-	{ 0x3fea, kPcSpeaker, 0 },
-	{ 0x3fee, kMoynahanNpc, 2 },
-	{ 0x3ff3, kPcSpeaker, 0 },
-	{ 0x3ff7, kMoynahanNpc, 0 }
+	{ 0x3fe5, "MOYNAHAN", 1 },
+	{ 0x3fea, "PC", 0 },
+	{ 0x3fee, "MOYNAHAN", 2 },
+	{ 0x3ff3, "PC", 0 },
+	{ 0x3ff7, "MOYNAHAN", 0 }
 };
 
 static const DialogueLineEntry kMoynahanKarinKidnapedTailLines[] = {
-	{ 0x4020, kMoynahanNpc, 0 },
-	{ 0x4026, kPcSpeaker, 0 },
-	{ 0x402a, kMoynahanNpc, 0 },
-	{ 0x4034, kPcSpeaker, 0 },
-	{ 0x4038, kMoynahanNpc, 0 },
-	{ 0x403d, kPcSpeaker, 0 },
-	{ 0x4041, kMoynahanNpc, 1 }
+	{ 0x4020, "MOYNAHAN", 0 },
+	{ 0x4026, "PC", 0 },
+	{ 0x402a, "MOYNAHAN", 0 },
+	{ 0x4034, "PC", 0 },
+	{ 0x4038, "MOYNAHAN", 0 },
+	{ 0x403d, "PC", 0 },
+	{ 0x4041, "MOYNAHAN", 1 }
 };
 
 static const DialogueLineEntry kMoynahanCasketIntroLines[] = {
-	{ 0x3e84, kMoynahanNpc, 0 },
-	{ 0x3e89, kPcSpeaker, 0 },
-	{ 0x3e8e, kMoynahanNpc, 0 },
-	{ 0x3e93, kPcSpeaker, 0 },
-	{ 0x3e98, kMoynahanNpc, 2 }
+	{ 0x3e84, "MOYNAHAN", 0 },
+	{ 0x3e89, "PC", 0 },
+	{ 0x3e8e, "MOYNAHAN", 0 },
+	{ 0x3e93, "PC", 0 },
+	{ 0x3e98, "MOYNAHAN", 2 }
 };
 
 static const DialogueLineEntry kMoynahanCasketResponseOneLines[] = {
-	{ 0x3ea4, kMoynahanNpc, 0 },
-	{ 0x3ea8, kPcSpeaker, 2 },
-	{ 0x3ead, kMoynahanNpc, 2 }
+	{ 0x3ea4, "MOYNAHAN", 0 },
+	{ 0x3ea8, "PC", 2 },
+	{ 0x3ead, "MOYNAHAN", 2 }
 };
 
 static const DialogueLineEntry kMoynahanCasketFollowupLines[] = {
-	{ 0x3eb7, kPcSpeaker, 2 },
-	{ 0x3ebc, kMoynahanNpc, 2 }
+	{ 0x3eb7, "PC", 2 },
+	{ 0x3ebc, "MOYNAHAN", 2 }
 };
 
 static const DialogueLineEntry kMoynahanLedgerIntroLines[] = {
-	{ 0x3ede, kPcSpeaker, 0 },
-	{ 0x3ee3, kMoynahanNpc, 0 },
-	{ 0x3ee7, kPcSpeaker, 0 },
-	{ 0x3eec, kMoynahanNpc, 0 }
+	{ 0x3ede, "PC", 0 },
+	{ 0x3ee3, "MOYNAHAN", 0 },
+	{ 0x3ee7, "PC", 0 },
+	{ 0x3eec, "MOYNAHAN", 0 }
 };
 
 static const DialogueLineEntry kMoynahanLedgerResponseOneLines[] = {
-	{ 0x3ef7, kMoynahanNpc, 0 },
-	{ 0x3efb, kPcSpeaker, 0 },
-	{ 0x3eff, kMoynahanNpc, 2 },
-	{ 0x3f05, kPcSpeaker, 2 }
+	{ 0x3ef7, "MOYNAHAN", 0 },
+	{ 0x3efb, "PC", 0 },
+	{ 0x3eff, "MOYNAHAN", 2 },
+	{ 0x3f05, "PC", 2 }
 };
 
 static const DialogueLineEntry kMoynahanLedgerResponseTwoLines[] = {
-	{ 0x3f09, kMoynahanNpc, 0 },
-	{ 0x3f0f, kPcSpeaker, 2 },
-	{ 0x3f13, kMoynahanNpc, 0 },
-	{ 0x3f18, kPcSpeaker, 2 }
+	{ 0x3f09, "MOYNAHAN", 0 },
+	{ 0x3f0f, "PC", 2 },
+	{ 0x3f13, "MOYNAHAN", 0 },
+	{ 0x3f18, "PC", 2 }
 };
 
 static const DialogueLineEntry kMoynahanMatchesLines[] = {
-	{ 0x4049, kPcSpeaker, 0 },
-	{ 0x404d, kMoynahanNpc, 0 }
+	{ 0x4049, "PC", 0 },
+	{ 0x404d, "MOYNAHAN", 0 }
 };
 
 static const DialogueLineEntry kMoynahanGoodCauseLines[] = {
-	{ 0x3d5f, kMoynahanNpc, 0 },
-	{ 0x3d66, kPcSpeaker, 0 },
-	{ 0x3d6a, kMoynahanNpc, 0 }
+	{ 0x3d5f, "MOYNAHAN", 0 },
+	{ 0x3d66, "PC", 0 },
+	{ 0x3d6a, "MOYNAHAN", 0 }
 };
 
 static const DialogueLineEntry kMoynahanSlashMarksTopicReplyLines[] = {
-	{ 0x3d76, kMoynahanNpc, 0 },
-	{ 0x3d7d, kPcSpeaker, 0 },
-	{ 0x3d81, kMoynahanNpc, 0 },
-	{ 0x3d88, kPcSpeaker, 0 },
-	{ 0x3d8c, kMoynahanNpc, 0 },
-	{ 0x3d92, kPcSpeaker, 0 },
-	{ 0x3d96, kMoynahanNpc, 0 }
+	{ 0x3d76, "MOYNAHAN", 0 },
+	{ 0x3d7d, "PC", 0 },
+	{ 0x3d81, "MOYNAHAN", 0 },
+	{ 0x3d88, "PC", 0 },
+	{ 0x3d8c, "MOYNAHAN", 0 },
+	{ 0x3d92, "PC", 0 },
+	{ 0x3d96, "MOYNAHAN", 0 }
 };
 
 static const DialogueLineEntry kMoynahanGeneralTopicResponseOneLines[] = {
-	{ 0x3dbe, kMoynahanNpc, 1 },
-	{ 0x3dc4, kPcSpeaker, 0 },
-	{ 0x3dc8, kMoynahanNpc, 2 }
+	{ 0x3dbe, "MOYNAHAN", 1 },
+	{ 0x3dc4, "PC", 0 },
+	{ 0x3dc8, "MOYNAHAN", 2 }
 };
 
 static const DialogueLineEntry kMoynahanGeneralTopicResponseTwoLines[] = {
-	{ 0x3dcf, kMoynahanNpc, 0 },
-	{ 0x3dd4, kPcSpeaker, 0 },
-	{ 0x3dd8, kMoynahanNpc, 1 },
-	{ 0x3ddd, kPcSpeaker, 0 },
-	{ 0x3de2, kMoynahanNpc, 2 }
+	{ 0x3dcf, "MOYNAHAN", 0 },
+	{ 0x3dd4, "PC", 0 },
+	{ 0x3dd8, "MOYNAHAN", 1 },
+	{ 0x3ddd, "PC", 0 },
+	{ 0x3de2, "MOYNAHAN", 2 }
 };
 
 static const DialogueLineEntry kMoynahanDayFiveUnlockLines[] = {
-	{ 0x3df5, kMoynahanNpc, 3 },
-	{ 0x3dfc, kPcSpeaker, 0 },
-	{ 0x3e00, kMoynahanNpc, 0 },
-	{ 0x3e05, kPcSpeaker, 0 },
-	{ 0x3e0a, kMoynahanNpc, 0 }
+	{ 0x3df5, "MOYNAHAN", 3 },
+	{ 0x3dfc, "PC", 0 },
+	{ 0x3e00, "MOYNAHAN", 0 },
+	{ 0x3e05, "PC", 0 },
+	{ 0x3e0a, "MOYNAHAN", 0 }
 };
 
 static const DialogueLineEntry kMoynahanEmbalmingRoomLines[] = {
-	{ 0x3e18, kMoynahanNpc, 0 },
-	{ 0x3e22, kPcSpeaker, 0 },
-	{ 0x3e26, kMoynahanNpc, 2 }
+	{ 0x3e18, "MOYNAHAN", 0 },
+	{ 0x3e22, "PC", 0 },
+	{ 0x3e26, "MOYNAHAN", 2 }
 };
 
-static Common::Error playDialogueSequence(DialogueRuntime &runtime,
-		const DialogueLineEntry *lines, uint count) {
-	return runtime.playDialogueEntrySequence(lines, count);
-}
-
 } // End of namespace
-
-bool MoynahanDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kMoynahanNpc) ||
-		npcName.equalsIgnoreCase(kMoynahanEmbalmingPortrait);
-}
 
 Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
@@ -207,26 +194,17 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	Common::String topicBuffer;
 	int topicBufferLineIndex = -1;
 
-	auto assignTopicBuffer = [&](int responseLineIndex) {
-		runtime.assignTopicBuffer(topicBuffer, topicBufferLineIndex,
-			responseLineIndex, "Moynahan topic buffer");
-	};
+	DialogueTopicBuffer topics(runtime, topicBuffer, topicBufferLineIndex, "Moynahan topic buffer");
 	auto appendTopicBuffer = [&](int responseLineIndex) {
 		if (topicBuffer.empty()) {
-			assignTopicBuffer(responseLineIndex);
+			topics.assign(responseLineIndex);
 			return;
 		}
 
 		topicBuffer += runtime.startupText().getDialogueResponseLine(responseLineIndex);
 		topicBufferLineIndex = -1;
 	};
-	auto clearTopicBuffer = [&]() {
-		topicBuffer.clear();
-		topicBufferLineIndex = -1;
-	};
-	auto playMoynahanLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kMoynahanNpc, headVariant);
-	};
+
 	auto queueRoomVisualMutation = [&](bool changed) {
 		if (!changed)
 			return;
@@ -260,32 +238,30 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 
 	if (runtime.startupScript().getFlagValue("IF_TRY_TO_TAKE_THE_GLUE")) {
-		Common::Error lineError = playDialogueSequence(runtime,
-			kMoynahanGlueInterruptOpeningLines, ARRAYSIZE(kMoynahanGlueInterruptOpeningLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(kMoynahanGlueInterruptOpeningLines,
+			ARRAYSIZE(kMoynahanGlueInterruptOpeningLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		if (!runtime.startupScript().getFlagValue("IF_SAW_THE_SLASHES_ON_THE_BODY") ||
 				!state.slashMarksTopicUnlocked) {
-			return playDialogueSequence(runtime,
-				kMoynahanGlueInterruptShortReplyLines,
+			return runtime.playDialogueEntrySequence(kMoynahanGlueInterruptShortReplyLines,
 				ARRAYSIZE(kMoynahanGlueInterruptShortReplyLines));
 		}
 
-		return playDialogueSequence(runtime,
-			kMoynahanGlueInterruptExtendedReplyLines,
+		return runtime.playDialogueEntrySequence(kMoynahanGlueInterruptExtendedReplyLines,
 			ARRAYSIZE(kMoynahanGlueInterruptExtendedReplyLines));
 	}
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			sharedState.discussedWhaleyHerrillPhoto = 1;
-			return playMoynahanLine(0x3e45);
+			return runtime.playDialogueLineWithVariant(0x3e45, "MOYNAHAN", 0);
 		}
 
 		if (isCasketPhoto(usedItemName)) {
-			Common::Error lineError = playDialogueSequence(runtime,
-				kMoynahanCasketIntroLines, ARRAYSIZE(kMoynahanCasketIntroLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kMoynahanCasketIntroLines,
+				ARRAYSIZE(kMoynahanCasketIntroLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -295,23 +271,22 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playDialogueSequence(runtime, kMoynahanCasketResponseOneLines,
+				lineError = runtime.playDialogueEntrySequence(kMoynahanCasketResponseOneLines,
 					ARRAYSIZE(kMoynahanCasketResponseOneLines));
 			} else if (responseIndex == 2) {
-				lineError = playMoynahanLine(0x3eb1, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x3eb1, "MOYNAHAN", 2);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			lineError = playDialogueSequence(runtime, kMoynahanCasketFollowupLines,
-				ARRAYSIZE(kMoynahanCasketFollowupLines));
+			lineError = runtime.playDialogueEntrySequence(kMoynahanCasketFollowupLines, ARRAYSIZE(kMoynahanCasketFollowupLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			if (state.gotGlue)
-				return playMoynahanLine(0x3ec3, 2);
+				return runtime.playDialogueLineWithVariant(0x3ec3, "MOYNAHAN", 2);
 
-			lineError = playMoynahanLine(0x3ec8, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x3ec8, "MOYNAHAN", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -321,7 +296,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playMoynahanLine(0x3ed2, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x3ed2, "MOYNAHAN", 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
@@ -333,7 +308,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			}
 
 			if (responseIndex == 2)
-				return playMoynahanLine(0x3ed7, 1);
+				return runtime.playDialogueLineWithVariant(0x3ed7, "MOYNAHAN", 1);
 
 			return Common::kNoError;
 		}
@@ -342,20 +317,20 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
 			if (sharedState.discussedLedgerEvidence != 0 && !state.ledgerEvidenceLinePlayed) {
 				state.ledgerEvidenceLinePlayed = true;
-				Common::Error lineError = playMoynahanLine(0x3f87, 2);
+				Common::Error lineError = runtime.playDialogueLineWithVariant(0x3f87, "MOYNAHAN", 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
 				runtime.setActiveSpeakerPortrait(
 					runtime.currentRoomName().equalsIgnoreCase(kMoynahanHotelRoom)
-						? kMoynahanNpc
-						: kMoynahanEmbalmingPortrait,
+						? "MOYNAHAN"
+						: "MOYNAHAN_MBLM",
 					0);
 				return Common::kNoError;
 			}
 
-			Common::Error lineError = playDialogueSequence(runtime,
-				kMoynahanLedgerIntroLines, ARRAYSIZE(kMoynahanLedgerIntroLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kMoynahanLedgerIntroLines,
+				ARRAYSIZE(kMoynahanLedgerIntroLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -365,24 +340,22 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playDialogueSequence(runtime,
-					kMoynahanLedgerResponseOneLines,
+				lineError = runtime.playDialogueEntrySequence(kMoynahanLedgerResponseOneLines,
 					ARRAYSIZE(kMoynahanLedgerResponseOneLines));
 			} else if (responseIndex == 2) {
-				lineError = playDialogueSequence(runtime,
-					kMoynahanLedgerResponseTwoLines,
+				lineError = runtime.playDialogueEntrySequence(kMoynahanLedgerResponseTwoLines,
 					ARRAYSIZE(kMoynahanLedgerResponseTwoLines));
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			return playMoynahanLine(0x3ed7, 1);
+			return runtime.playDialogueLineWithVariant(0x3ed7, "MOYNAHAN", 1);
 		}
 
 		if (isBlackmailEvidence(usedItemName)) {
 			sharedState.discussedNoteCheckbookEvidence = 1;
 
-			Common::Error lineError = playMoynahanLine(0x3f3e);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x3f3e, "MOYNAHAN", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -392,54 +365,53 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playMoynahanLine(0x3f4a);
+				lineError = runtime.playDialogueLineWithVariant(0x3f4a, "MOYNAHAN", 0);
 			} else if (responseIndex == 2) {
-				lineError = playMoynahanLine(0x3f4f, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x3f4f, "MOYNAHAN", 2);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			return playMoynahanLine(0x3f54, 2);
+			return runtime.playDialogueLineWithVariant(0x3f54, "MOYNAHAN", 2);
 		}
 
 		if (usedItemName.equalsIgnoreCase("WED_MATCHES")) {
-			Common::Error lineError = playDialogueSequence(runtime,
-				kMoynahanMatchesLines, ARRAYSIZE(kMoynahanMatchesLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kMoynahanMatchesLines, ARRAYSIZE(kMoynahanMatchesLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED"))
-				return playMoynahanLine(0x4054, 3);
+				return runtime.playDialogueLineWithVariant(0x4054, "MOYNAHAN", 3);
 			return Common::kNoError;
 		}
 
-		return playMoynahanLine(0x3e3f, 2);
+		return runtime.playDialogueLineWithVariant(0x3e3f, "MOYNAHAN", 2);
 	}
 
 	Common::Error lineError;
 	if (state.introPending) {
 		state.introPending = false;
-		lineError = playDialogueSequence(runtime, kMoynahanIntroLines, ARRAYSIZE(kMoynahanIntroLines));
+		lineError = runtime.playDialogueEntrySequence(kMoynahanIntroLines, ARRAYSIZE(kMoynahanIntroLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		sharedState.dialogueStateD2f04 = true;
 		const DialogueLineEntry tailLines[] = {
-			{ 0x3d50, kPcSpeaker, 0 },
-			{ 0x3d54, kMoynahanNpc, 0 }
+			{ 0x3d50, "PC", 0 },
+			{ 0x3d54, "MOYNAHAN", 0 }
 		};
-		lineError = playDialogueSequence(runtime, tailLines, ARRAYSIZE(tailLines));
+		lineError = runtime.playDialogueEntrySequence(tailLines, ARRAYSIZE(tailLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		assignTopicBuffer(runtime.currentRoomName().equalsIgnoreCase(kMoynahanEmbalmingRoom) ? 0x193 : 0x192);
+		topics.assign(runtime.currentRoomName().equalsIgnoreCase(kMoynahanEmbalmingRoom) ? 0x193 : 0x192);
 	} else {
-		lineError = playMoynahanLine(0x3fd1);
+		lineError = runtime.playDialogueLineWithVariant(0x3fd1, "MOYNAHAN", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 
 	if (runtime.startupScript().getFlagValue("IF_SAW_THE_SLASHES_ON_THE_BODY") &&
 			!state.slashMarksIntroShown) {
-		lineError = playDialogueSequence(runtime, kMoynahanSlashMarksIntroLines,
+		lineError = runtime.playDialogueEntrySequence(kMoynahanSlashMarksIntroLines,
 			ARRAYSIZE(kMoynahanSlashMarksIntroLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
@@ -448,21 +420,21 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.slashMarksTopicUnlocked = true;
 		state.slashMarksIntroShown = true;
 		if (topicBuffer.empty())
-			assignTopicBuffer(0x194);
+			topics.assign(0x194);
 		else
 			appendTopicBuffer(0x195);
 	}
 
 	if (sharedState.discussedCasketPhotoEvidence != 0 && !state.introPending) {
 		state.introPending = true;
-		lineError = playMoynahanLine(0x3f5b, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x3f5b, "MOYNAHAN", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 
 	if (runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS") && !state.ledgersIntroduced) {
 		state.ledgersIntroduced = true;
-		lineError = playMoynahanLine(0x3f65);
+		lineError = runtime.playDialogueLineWithVariant(0x3f65, "MOYNAHAN", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -472,25 +444,25 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playMoynahanLine(0x3f70);
+			lineError = runtime.playDialogueLineWithVariant(0x3f70, "MOYNAHAN", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			(void)runtime.startupScript().resetRuntimeObjectToInitialState("LEDGER");
 			(void)runtime.startupScript().resetRuntimeObjectToInitialState("LEDGER2");
 		} else if (responseIndex == 2) {
-			lineError = playMoynahanLine(0x3f76);
+			lineError = runtime.playDialogueLineWithVariant(0x3f76, "MOYNAHAN", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			if (runtime.startupScript().getCurrentStoryDayIndex() > 2) {
 				sharedState.moynahanKarinKidnapedDiscussionState = true;
-				lineError = playMoynahanLine(0x3f7a);
+				lineError = runtime.playDialogueLineWithVariant(0x3f7a, "MOYNAHAN", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 
-			lineError = playMoynahanLine(0x3f7e, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x3f7e, "MOYNAHAN", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -499,15 +471,14 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") &&
 			!state.stephMidgameShown) {
 		state.stephMidgameShown = true;
-		lineError = playMoynahanLine(0x3fd9);
+		lineError = runtime.playDialogueLineWithVariant(0x3fd9, "MOYNAHAN", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 
 	if (runtime.startupScript().getCurrentStoryDayIndex() == 5 && !state.dayFiveShown) {
 		state.dayFiveShown = true;
-		lineError = playDialogueSequence(runtime, kMoynahanDayFiveLines,
-			ARRAYSIZE(kMoynahanDayFiveLines));
+		lineError = runtime.playDialogueEntrySequence(kMoynahanDayFiveLines, ARRAYSIZE(kMoynahanDayFiveLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -515,7 +486,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("BURNED_TV_STATION") &&
 			!state.burnedTvStationShown) {
 		state.burnedTvStationShown = true;
-		lineError = playMoynahanLine(0x3ffe);
+		lineError = runtime.playDialogueLineWithVariant(0x3ffe, "MOYNAHAN", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -523,7 +494,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
 			!state.karinKidnapedShown) {
 		state.karinKidnapedShown = true;
-		lineError = playMoynahanLine(0x4007);
+		lineError = runtime.playDialogueLineWithVariant(0x4007, "MOYNAHAN", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -533,18 +504,18 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playMoynahanLine(0x4012);
+			lineError = runtime.playDialogueLineWithVariant(0x4012, "MOYNAHAN", 0);
 		} else if (responseIndex == 2) {
 			const DialogueLineEntry responseTwoLines[] = {
-				{ 0x4017, kMoynahanNpc, 0 },
-				{ 0x401c, kPcSpeaker, 0 }
+				{ 0x4017, "MOYNAHAN", 0 },
+				{ 0x401c, "PC", 0 }
 			};
-			lineError = playDialogueSequence(runtime, responseTwoLines, ARRAYSIZE(responseTwoLines));
+			lineError = runtime.playDialogueEntrySequence(responseTwoLines, ARRAYSIZE(responseTwoLines));
 		}
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playDialogueSequence(runtime, kMoynahanKarinKidnapedTailLines,
+		lineError = runtime.playDialogueEntrySequence(kMoynahanKarinKidnapedTailLines,
 			ARRAYSIZE(kMoynahanKarinKidnapedTailLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
@@ -556,7 +527,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (!runtime.startupScript().isNamedNpcDeathTypeClear("BUTCHER") &&
 			!state.butcherDeadShown) {
 		state.butcherDeadShown = true;
-		lineError = playMoynahanLine(0x40bb, 3);
+		lineError = runtime.playDialogueLineWithVariant(0x40bb, "MOYNAHAN", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -564,7 +535,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (!runtime.startupScript().isNamedNpcDeathTypeClear("JIMMY") &&
 			!state.jimmyDeadShown) {
 		state.jimmyDeadShown = true;
-		lineError = playMoynahanLine(0x40cd, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x40cd, "MOYNAHAN", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -572,7 +543,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD") &&
 			!state.karinFoundDeadShown) {
 		state.karinFoundDeadShown = true;
-		lineError = playMoynahanLine(0x40d4, 3);
+		lineError = runtime.playDialogueLineWithVariant(0x40d4, "MOYNAHAN", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -588,37 +559,36 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
 				runtime.matchesResponseLine(selectedTopic, 0x199))
-			return playMoynahanLine(0x3e32, 3);
+			return runtime.playDialogueLineWithVariant(0x3e32, "MOYNAHAN", 3);
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kMoynahanGoodCauseTopicLines,
 				ARRAYSIZE(kMoynahanGoodCauseTopicLines))) {
 			sharedState.momGoodCauseDay5State = true;
-			lineError = playDialogueSequence(runtime, kMoynahanGoodCauseLines,
-				ARRAYSIZE(kMoynahanGoodCauseLines));
+			lineError = runtime.playDialogueEntrySequence(kMoynahanGoodCauseLines, ARRAYSIZE(kMoynahanGoodCauseLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignTopicBuffer(0x19c);
+			topics.assign(0x19c);
 			continue;
 		}
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kMoynahanSlashMarksTopicLines,
 				ARRAYSIZE(kMoynahanSlashMarksTopicLines))) {
-			lineError = playDialogueSequence(runtime, kMoynahanSlashMarksTopicReplyLines,
+			lineError = runtime.playDialogueEntrySequence(kMoynahanSlashMarksTopicReplyLines,
 				ARRAYSIZE(kMoynahanSlashMarksTopicReplyLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignTopicBuffer(0x1a1);
+			topics.assign(0x1a1);
 			continue;
 		}
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kMoynahanBodyTopicLines,
 				ARRAYSIZE(kMoynahanBodyTopicLines))) {
-			lineError = playMoynahanLine(0x3da0, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x3da0, "MOYNAHAN", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			if (runtime.startupScript().getCurrentStoryDayIndex() > 4) {
-				lineError = playMoynahanLine(0x3da1, 3);
+				lineError = runtime.playDialogueLineWithVariant(0x3da1, "MOYNAHAN", 3);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
@@ -626,11 +596,11 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				state.slashMarksTopicUnlocked = true;
 			}
 
-			lineError = playMoynahanLine(0x3da2, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x3da2, "MOYNAHAN", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			assignTopicBuffer(0x1a6);
+			topics.assign(0x1a6);
 			if (runtime.startupScript().getCurrentStoryDayIndex() > 4)
 				appendTopicBuffer(0x1a7);
 			if (runtime.currentRoomName().equalsIgnoreCase(kMoynahanEmbalmingRoom))
@@ -640,7 +610,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kMoynahanGeneralTopicLines,
 				ARRAYSIZE(kMoynahanGeneralTopicLines))) {
-			lineError = playMoynahanLine(0x3db1);
+			lineError = runtime.playDialogueLineWithVariant(0x3db1, "MOYNAHAN", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -650,27 +620,25 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playDialogueSequence(runtime,
-					kMoynahanGeneralTopicResponseOneLines,
+				lineError = runtime.playDialogueEntrySequence(kMoynahanGeneralTopicResponseOneLines,
 					ARRAYSIZE(kMoynahanGeneralTopicResponseOneLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				assignTopicBuffer(0x1ad);
+				topics.assign(0x1ad);
 			} else if (responseIndex == 2) {
-				lineError = playDialogueSequence(runtime,
-					kMoynahanGeneralTopicResponseTwoLines,
+				lineError = runtime.playDialogueEntrySequence(kMoynahanGeneralTopicResponseTwoLines,
 					ARRAYSIZE(kMoynahanGeneralTopicResponseTwoLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
 				if (runtime.startupScript().getCurrentStoryDayIndex() > 4) {
-					lineError = playMoynahanLine(0x3deb);
+					lineError = runtime.playDialogueLineWithVariant(0x3deb, "MOYNAHAN", 0);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 					sharedState.dialogueStateD2ec8 = true;
 				}
 
-				assignTopicBuffer(0x1b0);
+				topics.assign(0x1b0);
 				if (runtime.startupScript().getCurrentStoryDayIndex() > 4)
 					appendTopicBuffer(0x1b1);
 			}
@@ -683,13 +651,12 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				sharedState.dialogueStateD2ec8 = true;
 				sharedState.dialogueStateD2ebc = true;
 				sharedState.dialogueStateD2ec0 = true;
-				lineError = playDialogueSequence(runtime, kMoynahanDayFiveUnlockLines,
-					ARRAYSIZE(kMoynahanDayFiveUnlockLines));
+				lineError = runtime.playDialogueEntrySequence(kMoynahanDayFiveUnlockLines, ARRAYSIZE(kMoynahanDayFiveUnlockLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
 				state.slashMarksTopicUnlocked = true;
-				clearTopicBuffer();
+				topics.clear();
 			}
 			continue;
 		}
@@ -697,11 +664,10 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.matchesAnyResponseLine(selectedTopic, kMoynahanEmbalmingRoomTopicLines,
 				ARRAYSIZE(kMoynahanEmbalmingRoomTopicLines))) {
 			if (runtime.currentRoomName().equalsIgnoreCase(kMoynahanEmbalmingRoom)) {
-				lineError = playDialogueSequence(runtime, kMoynahanEmbalmingRoomLines,
-					ARRAYSIZE(kMoynahanEmbalmingRoomLines));
+				lineError = runtime.playDialogueEntrySequence(kMoynahanEmbalmingRoomLines, ARRAYSIZE(kMoynahanEmbalmingRoomLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				assignTopicBuffer(0x1b6);
+				topics.assign(0x1b6);
 			}
 			continue;
 		}
@@ -709,7 +675,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.matchesAnyResponseLine(selectedTopic, kMoynahanLateTopicLines,
 				ARRAYSIZE(kMoynahanLateTopicLines))) {
 			if (runtime.startupScript().getCurrentStoryDayIndex() > 4) {
-				lineError = playMoynahanLine(0x40f5);
+				lineError = runtime.playDialogueLineWithVariant(0x40f5, "MOYNAHAN", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
@@ -720,7 +686,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				ARRAYSIZE(kMoynahanGlueTopicLines))) {
 			if (runtime.startupScript().getCurrentStoryDayIndex() > 4) {
 				if (!state.gotGlue) {
-					lineError = playMoynahanLine(0x40fb);
+					lineError = runtime.playDialogueLineWithVariant(0x40fb, "MOYNAHAN", 0);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 
@@ -730,17 +696,17 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 						return responseError;
 
 					if (responseIndex == 1) {
-						lineError = playMoynahanLine(0x4108, 2);
+						lineError = runtime.playDialogueLineWithVariant(0x4108, "MOYNAHAN", 2);
 						if (lineError.getCode() != Common::kNoError)
 							return lineError;
 						queueRoomVisualMutation(giveGlue());
 					} else if (responseIndex == 2) {
-						lineError = playMoynahanLine(0x410d, 2);
+						lineError = runtime.playDialogueLineWithVariant(0x410d, "MOYNAHAN", 2);
 						if (lineError.getCode() != Common::kNoError)
 							return lineError;
 					}
 				} else {
-					lineError = playMoynahanLine(0x410d, 2);
+					lineError = runtime.playDialogueLineWithVariant(0x410d, "MOYNAHAN", 2);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 				}
@@ -751,7 +717,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.matchesResponseLine(selectedTopic, 0x1c4))
 			continue;
 
-		lineError = playMoynahanLine(0x3e39);
+		lineError = runtime.playDialogueLineWithVariant(0x3e39, "MOYNAHAN", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}

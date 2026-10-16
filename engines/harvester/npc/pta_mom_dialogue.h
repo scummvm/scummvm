@@ -28,7 +28,6 @@ namespace Harvester {
 
 class PtaMomDialogueHandler : public NpcDialogueHandler {
 public:
-	bool matchesNpc(const Common::String &npcName) const override;
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 };

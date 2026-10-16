@@ -33,7 +33,6 @@ public:
 		int topicBufferLineIndex = 0x300;
 	};
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = WaspWomanRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.introPending);

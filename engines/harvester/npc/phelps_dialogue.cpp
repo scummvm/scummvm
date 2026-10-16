@@ -78,56 +78,37 @@ static const DialogueLineEntry kPhelpsKarinKidnapedLines[] = {
 
 } // End of namespace
 
-bool PhelpsDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("PHELPS");
-}
-
 Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	PhelpsRoomDialogueState &state = _state;
 
-	auto executeDialogueActionTag = [&](const char *tag) {
-		InteractionResult interaction;
-		if (runtime.executeActionTag(tag, interaction)) {
-			runtime.applyImmediateDialogueInteractionEffects(interaction);
-			runtime.queueDialogueInteractionIfNeeded(interaction);
-		}
-	};
-	auto playPhelpsLine = [&](int wavId, int headVariant = 0,
-			const char *speakerId = "PHELPS") -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, speakerId, headVariant);
-	};
-	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
-		return runtime.playDialogueEntrySequence(lines, count);
-	};
-
 	if (usedItemName.empty()) {
 		if (state.talkStatePending) {
 			state.talkStatePending = false;
-			Common::Error lineError = playSequence(kPhelpsIntroPreludeLines,
+			Common::Error lineError = runtime.playDialogueEntrySequence(kPhelpsIntroPreludeLines,
 				ARRAYSIZE(kPhelpsIntroPreludeLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			sharedState.dialogueStateD2f04 = true;
-			lineError = playPhelpsLine(0x1b5a, 0, "PC");
+			lineError = runtime.playDialogueLineWithVariant(0x1b5a, "PC", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playPhelpsLine(0x1b5e);
+			lineError = runtime.playDialogueLineWithVariant(0x1b5e, "PHELPS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			if (sharedState.dialogueStateD2ed0) {
-				lineError = playPhelpsLine(0x1b70, 3, "PC");
+				lineError = runtime.playDialogueLineWithVariant(0x1b70, "PC", 3);
 				if (lineError.getCode() == Common::kNoError)
-					lineError = playPhelpsLine(0x1b75, 1);
+					lineError = runtime.playDialogueLineWithVariant(0x1b75, "PHELPS", 1);
 			} else {
-				lineError = playPhelpsLine(runtime.startupScript().getFlagValue("HEARD_DAD_MOAN") ?
-					0x1b6b : 0x1b67, 0, "PC");
+				lineError = runtime.playDialogueLineWithVariant(runtime.startupScript().getFlagValue("HEARD_DAD_MOAN") ?
+					0x1b6b : 0x1b67, "PC", 0);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else {
-			Common::Error lineError = playPhelpsLine(0x1bf4, 1);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x1bf4, "PHELPS", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -135,7 +116,7 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		Common::Error lineError;
 
 		if (runtime.startupScript().getCurrentStoryDayIndex() < 5) {
-			lineError = playPhelpsLine(0x1b7b, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x1b7b, "PHELPS", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -144,11 +125,11 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playPhelpsLine(0x1b85);
+				lineError = runtime.playDialogueLineWithVariant(0x1b85, "PHELPS", 0);
 			} else {
-				lineError = playPhelpsLine(0x1bbc, 1);
+				lineError = runtime.playDialogueLineWithVariant(0x1bbc, "PHELPS", 1);
 				if (lineError.getCode() == Common::kNoError)
-					lineError = playPhelpsLine(0x1c44, 1);
+					lineError = runtime.playDialogueLineWithVariant(0x1c44, "PHELPS", 1);
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -156,54 +137,54 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") && !state.stephMidgameShown) {
 			state.stephMidgameShown = true;
-			lineError = playPhelpsLine(0x1c4a, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x1c4a, "PHELPS", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (runtime.startupScript().getCurrentStoryDayIndex() == 5 && !state.dayFiveShown) {
 			state.dayFiveShown = true;
-			lineError = playPhelpsLine(0x1c56, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x1c56, "PHELPS", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (runtime.startupScript().getFlagValue("SCRATCHED_TUCKER") && !state.scratchedTuckerShown) {
 			state.scratchedTuckerShown = true;
-			lineError = playPhelpsLine(0x1c65, 4);
+			lineError = runtime.playDialogueLineWithVariant(0x1c65, "PHELPS", 4);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (runtime.startupScript().getFlagValue("BARBER_POLE_STOLEN") &&
 				!state.barberPoleStolenShown) {
 			state.barberPoleStolenShown = true;
-			lineError = playPhelpsLine(0x1c6e, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x1c6e, "PHELPS", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playPhelpsLine(0x1c73, 4);
+			lineError = runtime.playDialogueLineWithVariant(0x1c73, "PHELPS", 4);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (runtime.startupScript().getFlagValue("BOLT_OF_CLOTH_TAKEN") &&
 				!state.boltOfClothTakenShown) {
 			state.boltOfClothTakenShown = true;
-			lineError = playPhelpsLine(0x1c80);
+			lineError = runtime.playDialogueLineWithVariant(0x1c80, "PHELPS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			if (runtime.startupScript().isNamedNpcDeathTypeClear("FIREMAN2") &&
 					runtime.startupScript().isNamedNpcDeathTypeClear("SPARKY")) {
-				lineError = playPhelpsLine(0x1c87);
+				lineError = runtime.playDialogueLineWithVariant(0x1c87, "PHELPS", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 		}
 		if (runtime.startupScript().getFlagValue("DINER_BURNED") && !state.dinerBurnedShown) {
 			state.dinerBurnedShown = true;
-			lineError = playPhelpsLine(0x1c8f);
+			lineError = runtime.playDialogueLineWithVariant(0x1c8f, "PHELPS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (runtime.startupScript().getFlagValue("PC_ESCAPED_JAIL") && !state.escapedJailShown) {
 			state.escapedJailShown = true;
-			lineError = playPhelpsLine(0x1c98, 4);
+			lineError = runtime.playDialogueLineWithVariant(0x1c98, "PHELPS", 4);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -211,35 +192,35 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				runtime.startupScript().isNamedNpcDeathTypeClear("MOYNAHAN") &&
 				!state.gotRemainsForLodgeShown) {
 			state.gotRemainsForLodgeShown = true;
-			lineError = playPhelpsLine(0x1ca0, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x1ca0, "PHELPS", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (runtime.startupScript().getFlagValue("BURNED_TV_STATION") &&
 				!state.burnedTvStationShown) {
 			state.burnedTvStationShown = true;
-			lineError = playPhelpsLine(0x1cb4);
+			lineError = runtime.playDialogueLineWithVariant(0x1cb4, "PHELPS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (!runtime.startupScript().isNamedNpcDeathTypeClear("BUTCHER") &&
 				!state.butcherDeadShown) {
 			state.butcherDeadShown = true;
-			lineError = playPhelpsLine(0x1cfe, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x1cfe, "PHELPS", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (!runtime.startupScript().isNamedNpcDeathTypeClear("MOYNAHAN") &&
 				!state.moynahanDeadShown) {
 			state.moynahanDeadShown = true;
-			lineError = playPhelpsLine(0x1d06, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x1d06, "PHELPS", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 		if (!runtime.startupScript().isNamedNpcDeathTypeClear("JIMMY") &&
 				!state.jimmyDeadShown) {
 			state.jimmyDeadShown = true;
-			lineError = playPhelpsLine(0x1d0f);
+			lineError = runtime.playDialogueLineWithVariant(0x1d0f, "PHELPS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -248,9 +229,9 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playPhelpsLine(0x1d1c, 1);
+				lineError = runtime.playDialogueLineWithVariant(0x1d1c, "PHELPS", 1);
 			} else if (responseIndex == 2) {
-				lineError = playPhelpsLine(0x1d21);
+				lineError = runtime.playDialogueLineWithVariant(0x1d21, "PHELPS", 0);
 			} else {
 				lineError = Common::kNoError;
 			}
@@ -260,13 +241,13 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD") &&
 				!state.karinFoundDeadShown) {
 			state.karinFoundDeadShown = true;
-			return playSequence(kPhelpsKarinFoundDeadLines, ARRAYSIZE(kPhelpsKarinFoundDeadLines));
+			return runtime.playDialogueEntrySequence(kPhelpsKarinFoundDeadLines, ARRAYSIZE(kPhelpsKarinFoundDeadLines));
 		}
 		if (runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
 				!state.karinKidnapedShown) {
 			state.karinKidnapedShown = true;
 			sharedState.karinKidnapedDialogueState = true;
-			return playSequence(kPhelpsKarinKidnapedLines, ARRAYSIZE(kPhelpsKarinKidnapedLines));
+			return runtime.playDialogueEntrySequence(kPhelpsKarinKidnapedLines, ARRAYSIZE(kPhelpsKarinKidnapedLines));
 		}
 
 		return Common::kNoError;
@@ -275,20 +256,20 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 		sharedState.discussedWhaleyHerrillPhoto = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
-		return playSequence(kPhelpsWhaleyLines, ARRAYSIZE(kPhelpsWhaleyLines));
+		return runtime.playDialogueEntrySequence(kPhelpsWhaleyLines, ARRAYSIZE(kPhelpsWhaleyLines));
 	}
 	if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 			usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 		sharedState.discussedCasketPhotoEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-		return playSequence(kPhelpsCasketLines, ARRAYSIZE(kPhelpsCasketLines));
+		return runtime.playDialogueEntrySequence(kPhelpsCasketLines, ARRAYSIZE(kPhelpsCasketLines));
 	}
 	if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 			runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
 		sharedState.discussedLedgerEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
-		return playPhelpsLine(0x1c36);
+		return runtime.playDialogueLineWithVariant(0x1c36, "PHELPS", 0);
 	}
 	if (usedItemName.equalsIgnoreCase("NOTE") ||
 			usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
@@ -296,23 +277,23 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 		sharedState.discussedNoteCheckbookEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
-		return playPhelpsLine(0x1c3d, 1);
+		return runtime.playDialogueLineWithVariant(0x1c3d, "PHELPS", 1);
 	}
 	if (usedItemName.equalsIgnoreCase("QUARTER")) {
-		executeDialogueActionTag(kGetPrnMagActionTag);
-		Common::Error lineError = playSequence(kPhelpsQuarterLines, ARRAYSIZE(kPhelpsQuarterLines));
+		runtime.executeAndQueueAction(kGetPrnMagActionTag);
+		Common::Error lineError = runtime.playDialogueEntrySequence(kPhelpsQuarterLines, ARRAYSIZE(kPhelpsQuarterLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		executeDialogueActionTag(kDeleteDirtyMagazineActionTag);
+		runtime.executeAndQueueAction(kDeleteDirtyMagazineActionTag);
 		return Common::kNoError;
 	}
 	if (usedItemName.equalsIgnoreCase("REWARD_MONEY")) {
-		executeDialogueActionTag(kUseRewardAtStoreActionTag);
-		executeDialogueActionTag(kSetGenCuStuffActionTag);
+		runtime.executeAndQueueAction(kUseRewardAtStoreActionTag);
+		runtime.executeAndQueueAction(kSetGenCuStuffActionTag);
 		return Common::kNoError;
 	}
 
-	return playPhelpsLine(0x1c06, 1);
+	return runtime.playDialogueLineWithVariant(0x1c06, "PHELPS", 1);
 }
 
 } // End of namespace Harvester

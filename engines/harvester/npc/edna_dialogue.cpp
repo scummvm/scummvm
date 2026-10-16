@@ -29,8 +29,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kEdnaNpc = "EDNA";
-static const char *const kPcSpeaker = "PC";
 static const char *const kRahRoomName = "RAH";
 static const char *const kDialogueC043FstPath = "GRAPHIC/FST/C043.FST";
 static const char *const kDialogueC043KFstPath = "GRAPHIC/FST/C043K.FST";
@@ -49,64 +47,60 @@ static const int kEdnaLodgeTopicLineIndices[] = { 0xb6, 0xb7 };
 static const int kEdnaBcBdBeTopicLineIndices[] = { 0xbc, 0xbd, 0xbe };
 
 static const DialogueLineEntry kEdnaBringKarinToSheriffLines[] = {
-	{ 0x3cce, kEdnaNpc, 2 },
-	{ 0x3cd2, kPcSpeaker, 0 },
-	{ 0x3cd7, kEdnaNpc, 1 }
+	{ 0x3cce, "EDNA", 2 },
+	{ 0x3cd2, "PC", 0 },
+	{ 0x3cd7, "EDNA", 1 }
 };
 
 static const DialogueLineEntry kEdnaIntroResponseTwoLines[] = {
-	{ 0x3ab2, kEdnaNpc, 0 },
-	{ 0x3ab7, kPcSpeaker, 0 },
-	{ 0x3abb, kEdnaNpc, 0 },
-	{ 0x3ac2, kPcSpeaker, 0 }
+	{ 0x3ab2, "EDNA", 0 },
+	{ 0x3ab7, "PC", 0 },
+	{ 0x3abb, "EDNA", 0 },
+	{ 0x3ac2, "PC", 0 }
 };
 
 static const DialogueLineEntry kEdnaDayFiveAliveResponseOneLines[] = {
-	{ 0x3c23, kEdnaNpc, 0 },
-	{ 0x3c29, kPcSpeaker, 0 },
-	{ 0x3c2e, kEdnaNpc, 3 }
+	{ 0x3c23, "EDNA", 0 },
+	{ 0x3c29, "PC", 0 },
+	{ 0x3c2e, "EDNA", 3 }
 };
 
 static const DialogueLineEntry kEdnaBarberPoleStolenLines[] = {
-	{ 0x3c4e, kEdnaNpc, 3 },
-	{ 0x3c54, kPcSpeaker, 0 },
-	{ 0x3c5a, kEdnaNpc, 2 }
+	{ 0x3c4e, "EDNA", 3 },
+	{ 0x3c54, "PC", 0 },
+	{ 0x3c5a, "EDNA", 2 }
 };
 
 static const DialogueLineEntry kEdnaKarinFoundDeadIntroLines[] = {
-	{ 0x3cf0, kEdnaNpc, 2 },
-	{ 0x3cf5, kPcSpeaker, 0 },
-	{ 0x3cf9, kEdnaNpc, 2 }
+	{ 0x3cf0, "EDNA", 2 },
+	{ 0x3cf5, "PC", 0 },
+	{ 0x3cf9, "EDNA", 2 }
 };
 
 static const DialogueLineEntry kEdnaTopicB2Lines[] = {
-	{ 0x3b15, kEdnaNpc, 1 },
-	{ 0x3b1a, kPcSpeaker, 0 },
-	{ 0x3b1e, kEdnaNpc, 0 }
+	{ 0x3b15, "EDNA", 1 },
+	{ 0x3b1a, "PC", 0 },
+	{ 0x3b1e, "EDNA", 0 }
 };
 
 static const DialogueLineEntry kEdnaLodgeTopicLines[] = {
-	{ 0x3b57, kEdnaNpc, 0 },
-	{ 0x3b5d, kPcSpeaker, 0 },
-	{ 0x3b61, kEdnaNpc, 0 },
-	{ 0x3b62, kEdnaNpc, 0 },
-	{ 0x3b63, kEdnaNpc, 0 },
-	{ 0x3b6c, kPcSpeaker, 0 },
-	{ 0x3b70, kEdnaNpc, 0 },
-	{ 0x3b75, kPcSpeaker, 0 },
-	{ 0x3b79, kEdnaNpc, 0 }
+	{ 0x3b57, "EDNA", 0 },
+	{ 0x3b5d, "PC", 0 },
+	{ 0x3b61, "EDNA", 0 },
+	{ 0x3b62, "EDNA", 0 },
+	{ 0x3b63, "EDNA", 0 },
+	{ 0x3b6c, "PC", 0 },
+	{ 0x3b70, "EDNA", 0 },
+	{ 0x3b75, "PC", 0 },
+	{ 0x3b79, "EDNA", 0 }
 };
 
 static const DialogueLineEntry kEdnaTopicBcBdBeLines[] = {
-	{ 0x3b8e, kEdnaNpc, 0 },
-	{ 0x3b8f, kEdnaNpc, 0 }
+	{ 0x3b8e, "EDNA", 0 },
+	{ 0x3b8f, "EDNA", 0 }
 };
 
 } // End of namespace
-
-bool EdnaDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kEdnaNpc);
-}
 
 Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
@@ -115,19 +109,11 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	Common::String topicBuffer;
 	int topicBufferLineIndex = -1;
 
-	auto assignEdnaTopicBuffer = [&](int responseLineIndex) {
-		runtime.assignTopicBuffer(topicBuffer, topicBufferLineIndex,
-			responseLineIndex, "Edna topic buffer");
-	};
-	auto playEdnaLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kEdnaNpc, headVariant);
-	};
-	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
-		return runtime.playDialogueEntrySequence(lines, count);
-	};
+	DialogueTopicBuffer topics(runtime, topicBuffer, topicBufferLineIndex, "Edna topic buffer");
+
 	auto completeKarinPurseExchange = [&]() -> Common::Error {
 		state.karinPurseLinePlayed = true;
-		Common::Error lineError = playEdnaLine(0x3d05, 3);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3d05, "EDNA", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -137,7 +123,7 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 
 	if (startupScript.getFlagValue("KILLED_KARIN1")) {
-		Common::Error lineError = playEdnaLine(0x3cdf, 2);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3cdf, "EDNA", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		(void)startupScript.setRuntimeFlagValue("KILLED_KARIN1", false);
@@ -166,19 +152,19 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 			sharedState.discussedCasketPhotoEvidence = 1;
-			return playEdnaLine(0x3bd6);
+			return runtime.playDialogueLineWithVariant(0x3bd6, "EDNA", 0);
 		}
 		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 				startupScript.getFlagValue("HAVE_BOTH_LEDGERS")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
 			sharedState.discussedLedgerEvidence = 1;
-			return playEdnaLine(0x3bd6);
+			return runtime.playDialogueLineWithVariant(0x3bd6, "EDNA", 0);
 		}
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 			sharedState.discussedWhaleyHerrillPhoto = 1;
-			return playEdnaLine(0x3bde, 2);
+			return runtime.playDialogueLineWithVariant(0x3bde, "EDNA", 2);
 		}
 		if (usedItemName.equalsIgnoreCase("NOTE") ||
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
@@ -186,21 +172,21 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 			sharedState.discussedNoteCheckbookEvidence = 1;
-			return playEdnaLine(0x3be5, 2);
+			return runtime.playDialogueLineWithVariant(0x3be5, "EDNA", 2);
 		}
 		if (usedItemName.equalsIgnoreCase("TV_DEED") ||
 				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceSheriffOwns, true);
 			sharedState.discussedTvDeedEvidence = 1;
-			return playEdnaLine(0x3bee);
+			return runtime.playDialogueLineWithVariant(0x3bee, "EDNA", 0);
 		}
 
-		return playEdnaLine(0x3bcf);
+		return runtime.playDialogueLineWithVariant(0x3bcf, "EDNA", 0);
 	}
 
 	if (startupScript.getFlagValue("BRING_KARIN_TO_SHERIFF")) {
-		Common::Error lineError = playSequence(
-			kEdnaBringKarinToSheriffLines, ARRAYSIZE(kEdnaBringKarinToSheriffLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(kEdnaBringKarinToSheriffLines,
+			ARRAYSIZE(kEdnaBringKarinToSheriffLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -211,7 +197,7 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (state.introPending) {
 		state.introPending = false;
-		Common::Error lineError = playEdnaLine(0x3a95);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3a95, "EDNA", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -221,44 +207,44 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playEdnaLine(0x3aa1, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x3aa1, "EDNA", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueLine(0x3aa6, "PC");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playEdnaLine(0x3aaa);
+			lineError = runtime.playDialogueLineWithVariant(0x3aaa, "EDNA", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			sharedState.dialogueStateD2f04 = true;
-			lineError = runtime.playDialogueLine(0x3aae, kPcSpeaker);
+			lineError = runtime.playDialogueLine(0x3aae, "PC");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
-			lineError = playSequence(kEdnaIntroResponseTwoLines, ARRAYSIZE(kEdnaIntroResponseTwoLines));
+			lineError = runtime.playDialogueEntrySequence(kEdnaIntroResponseTwoLines, ARRAYSIZE(kEdnaIntroResponseTwoLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 
-		lineError = playEdnaLine(0x3ac6, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x3ac6, "EDNA", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playEdnaLine(0x3aca);
+		lineError = runtime.playDialogueLineWithVariant(0x3aca, "EDNA", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playEdnaLine(0x3acf);
+		lineError = runtime.playDialogueLineWithVariant(0x3acf, "EDNA", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		assignEdnaTopicBuffer(kEdnaInitialTopicBufferLine);
+		topics.assign(kEdnaInitialTopicBufferLine);
 	}
 
 	if (!startupScript.getFlagValue("KARIN_KIDNAPED")) {
-		Common::Error lineError = playEdnaLine(0x3bf8);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3bf8, "EDNA", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	} else {
-		Common::Error lineError = playEdnaLine(0x3bff);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3bff, "EDNA", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		sharedState.karinKidnapedDialogueState = true;
@@ -267,7 +253,7 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (startupScript.getFlagValue("DAY_5") && !state.dayFiveShown) {
 		state.dayFiveShown = true;
 		if (startupScript.getFlagValue("KARIN_FOUND_ALIVE")) {
-			Common::Error lineError = playEdnaLine(0x3c17);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x3c17, "EDNA", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -277,17 +263,17 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playSequence(kEdnaDayFiveAliveResponseOneLines,
+				lineError = runtime.playDialogueEntrySequence(kEdnaDayFiveAliveResponseOneLines,
 					ARRAYSIZE(kEdnaDayFiveAliveResponseOneLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else if (responseIndex == 2) {
-				lineError = playEdnaLine(0x3c33);
+				lineError = runtime.playDialogueLineWithVariant(0x3c33, "EDNA", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 		} else if (startupScript.getFlagValue("KARIN_FOUND_DEAD")) {
-			Common::Error lineError = playEdnaLine(0x3c3a, 3);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x3c3a, "EDNA", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -295,43 +281,43 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (startupScript.getFlagValue("SCRATCHED_TUCKER") && !state.scratchedTuckerShown) {
 		state.scratchedTuckerShown = true;
-		Common::Error lineError = playEdnaLine(0x3c45);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3c45, "EDNA", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 	if (startupScript.getFlagValue("BARBER_POLE_STOLEN") &&
 			!state.barberPoleStolenShown) {
 		state.barberPoleStolenShown = true;
-		Common::Error lineError = playSequence(
-			kEdnaBarberPoleStolenLines, ARRAYSIZE(kEdnaBarberPoleStolenLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(kEdnaBarberPoleStolenLines,
+			ARRAYSIZE(kEdnaBarberPoleStolenLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 	if (startupScript.getFlagValue("BOLT_OF_CLOTH_TAKEN") &&
 			!state.boltOfClothTakenShown) {
 		state.boltOfClothTakenShown = true;
-		Common::Error lineError = playEdnaLine(0x3c62);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3c62, "EDNA", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 	if (startupScript.getFlagValue("PC_ESCAPED_JAIL") &&
 			!state.escapedJailShown) {
 		state.escapedJailShown = true;
-		Common::Error lineError = playEdnaLine(0x3c92, 3);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3c92, "EDNA", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 	if (startupScript.getFlagValue("BURNED_TV_STATION") &&
 			!state.burnedTvStationShown) {
 		state.burnedTvStationShown = true;
-		Common::Error lineError = playEdnaLine(0x3ca2, 3);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3ca2, "EDNA", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 	if (startupScript.getFlagValue("KARIN_FOUND_DEAD") &&
 			!state.karinFoundDeadShown) {
 		state.karinFoundDeadShown = true;
-		Common::Error lineError = playEdnaLine(0x3ce5, 3);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3ce5, "EDNA", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -341,8 +327,8 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 		if (responseIndex == 1) {
-			lineError = playSequence(
-				kEdnaKarinFoundDeadIntroLines, ARRAYSIZE(kEdnaKarinFoundDeadIntroLines));
+			lineError = runtime.playDialogueEntrySequence(kEdnaKarinFoundDeadIntroLines,
+				ARRAYSIZE(kEdnaKarinFoundDeadIntroLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -364,12 +350,12 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 						return lineError;
 				}
 			} else if (responseIndex == 2) {
-				lineError = playEdnaLine(0x3d0a, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x3d0a, "EDNA", 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 		} else if (responseIndex == 2) {
-			lineError = playEdnaLine(0x3d0e, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x3d0e, "EDNA", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -389,7 +375,7 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (!startupScript.getFlagValue("KARIN_KIDNAPED") &&
 					!startupScript.getFlagValue("KARIN_FOUND_DEAD") &&
 					!startupScript.getFlagValue("KARIN_FOUND_ALIVE")) {
-				Common::Error lineError = playEdnaLine(0x3bc3, 1);
+				Common::Error lineError = runtime.playDialogueLineWithVariant(0x3bc3, "EDNA", 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
@@ -399,22 +385,21 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.matchesResponseLine(selectedTopic, 0xa6)) {
 			if (!startupScript.getFlagValue("KARIN_KIDNAPED") &&
 					!startupScript.getFlagValue("KARIN_FOUND_DEAD")) {
-				Common::Error lineError = playEdnaLine(0x3ad9, 1);
+				Common::Error lineError = runtime.playDialogueLineWithVariant(0x3ad9, "EDNA", 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				lineError = runtime.playDialogueFst(kDialogueC091FstPath);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else {
-				Common::Error lineError = playEdnaLine(0x3ae3, 3);
+				Common::Error lineError = runtime.playDialogueLineWithVariant(0x3ae3, "EDNA", 3);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				if (!startupScript.getFlagValue("KARIN_FOUND_DEAD")) {
-					lineError = playEdnaLine(0x3ae9, 3);
+					lineError = runtime.playDialogueLineWithVariant(0x3ae9, "EDNA", 3);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
-					assignEdnaTopicBuffer(
-						startupScript.getFlagValue("SHERIFF_IN_DINER") ? 0xab : 0xaa);
+					topics.assign(startupScript.getFlagValue("SHERIFF_IN_DINER") ? 0xab : 0xaa);
 				}
 			}
 			continue;
@@ -422,31 +407,31 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kEdnaAcAdTopicLineIndices,
 					ARRAYSIZE(kEdnaAcAdTopicLineIndices))) {
-			Common::Error lineError = playEdnaLine(0x3af6);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x3af6, "EDNA", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playEdnaLine(0x3af8);
+			lineError = runtime.playDialogueLineWithVariant(0x3af8, "EDNA", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignEdnaTopicBuffer(startupScript.getFlagValue("SHERIFF_IN_DINER") ? 0xaf : 0xae);
+			topics.assign(startupScript.getFlagValue("SHERIFF_IN_DINER") ? 0xaf : 0xae);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0xb0)) {
 			if (!startupScript.getFlagValue("SHERIFF_IN_DINER")) {
-				Common::Error lineError = playEdnaLine(0x3b03);
+				Common::Error lineError = runtime.playDialogueLineWithVariant(0x3b03, "EDNA", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playEdnaLine(0x3b07);
+				lineError = runtime.playDialogueLineWithVariant(0x3b07, "EDNA", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				assignEdnaTopicBuffer(0xb1);
+				topics.assign(0xb1);
 			}
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0xb2)) {
-			Common::Error lineError = playSequence(kEdnaTopicB2Lines, ARRAYSIZE(kEdnaTopicB2Lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kEdnaTopicB2Lines, ARRAYSIZE(kEdnaTopicB2Lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			continue;
@@ -455,19 +440,19 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.matchesAnyResponseLine(selectedTopic, kEdnaLodgeTopicLineIndices,
 					ARRAYSIZE(kEdnaLodgeTopicLineIndices))) {
 			sharedState.discussedLodgeTopic = true;
-			Common::Error lineError = playSequence(kEdnaLodgeTopicLines, ARRAYSIZE(kEdnaLodgeTopicLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kEdnaLodgeTopicLines, ARRAYSIZE(kEdnaLodgeTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignEdnaTopicBuffer(startupScript.getFlagValue("SHERIFF_IN_DINER") ? 0xb9 : 0xb8);
+			topics.assign(startupScript.getFlagValue("SHERIFF_IN_DINER") ? 0xb9 : 0xb8);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0xba)) {
 			if (!startupScript.getFlagValue("SHERIFF_IN_DINER")) {
-				Common::Error lineError = playEdnaLine(0x3b82);
+				Common::Error lineError = runtime.playDialogueLineWithVariant(0x3b82, "EDNA", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				assignEdnaTopicBuffer(0xbb);
+				topics.assign(0xbb);
 			}
 			continue;
 		}
@@ -475,18 +460,18 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.matchesAnyResponseLine(selectedTopic, kEdnaBcBdBeTopicLineIndices,
 					ARRAYSIZE(kEdnaBcBdBeTopicLineIndices))) {
 			if (!startupScript.getFlagValue("SHERIFF_IN_DINER")) {
-				Common::Error lineError = playSequence(
-					kEdnaTopicBcBdBeLines, ARRAYSIZE(kEdnaTopicBcBdBeLines));
+				Common::Error lineError = runtime.playDialogueEntrySequence(kEdnaTopicBcBdBeLines,
+					ARRAYSIZE(kEdnaTopicBcBdBeLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				assignEdnaTopicBuffer(0xbf);
+				topics.assign(0xbf);
 			}
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, 0xc0)) {
 			if (startupScript.getFlagValue("KARIN_KIDNAPED")) {
-				Common::Error lineError = playEdnaLine(0x3b9e, 2);
+				Common::Error lineError = runtime.playDialogueLineWithVariant(0x3b9e, "EDNA", 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				sharedState.karinKidnapedDialogueState = true;
@@ -496,7 +481,7 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				if (responseError.getCode() != Common::kNoError)
 					return responseError;
 
-				lineError = playEdnaLine(responseIndex == 1 ? 0x3bad : 0x3bb3, 3);
+				lineError = runtime.playDialogueLineWithVariant(responseIndex == 1 ? 0x3bad : 0x3bb3, "EDNA", 3);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				lineError = runtime.playDialogueFst(kDialogueC070FstPath);
@@ -510,7 +495,7 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.matchesResponseLine(selectedTopic, 0xc2))
 			continue;
 
-		Common::Error lineError = playEdnaLine(0x3bc9);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x3bc9, "EDNA", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}

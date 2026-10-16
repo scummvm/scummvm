@@ -37,7 +37,6 @@ public:
 		bool dayFiveShown = false;
 	};
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = LoomisRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueString(s, _state.currentTopicBuffer);

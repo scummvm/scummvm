@@ -29,9 +29,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kParsonsSpeakerId = "PARSONS";
-static const char *const kSwellSpeakerId = "SWELL";
-static const char *const kPcSpeakerId = "PC";
 static const char *const kDialogueC093FstPath = "GRAPHIC/FST/C093.FST";
 static const char *const kDialogueC094FstPath = "GRAPHIC/FST/C094.FST";
 
@@ -55,70 +52,51 @@ static const int kParsonsAliensTopicResponseLines[] = {
 };
 
 static const DialogueLineEntry kParsonsIntroLines[] = {
-	{ 0xdcc, kParsonsSpeakerId, 1 },
-	{ 0xdd2, kSwellSpeakerId, 0 },
-	{ 0xdd6, kParsonsSpeakerId, 0 },
-	{ 0xde3, kParsonsSpeakerId, 1 }
+	{ 0xdcc, "PARSONS", 1 },
+	{ 0xdd2, "SWELL", 0 },
+	{ 0xdd6, "PARSONS", 0 },
+	{ 0xde3, "PARSONS", 1 }
 };
 
 static const DialogueLineEntry kParsonsStephMidgameLines[] = {
-	{ 0xeab, kParsonsSpeakerId, 3 },
-	{ 0xeb3, kSwellSpeakerId, 0 },
-	{ 0xeb7, kParsonsSpeakerId, 1 }
+	{ 0xeab, "PARSONS", 3 },
+	{ 0xeb3, "SWELL", 0 },
+	{ 0xeb7, "PARSONS", 1 }
 };
 
 static const DialogueLineEntry kParsonsScratchedTuckerLines[] = {
-	{ 0xec2, kParsonsSpeakerId, 2 },
-	{ 0xec9, kParsonsSpeakerId, 2 }
+	{ 0xec2, "PARSONS", 2 },
+	{ 0xec9, "PARSONS", 2 }
 };
 
 static const DialogueLineEntry kParsonsBurnedTvStationLines[] = {
-	{ 0xee5, kParsonsSpeakerId, 0 },
-	{ 0xeea, kSwellSpeakerId, 1 },
-	{ 0xeef, kParsonsSpeakerId, 0 },
-	{ 0xef4, kSwellSpeakerId, 3 }
+	{ 0xee5, "PARSONS", 0 },
+	{ 0xeea, "SWELL", 1 },
+	{ 0xeef, "PARSONS", 0 },
+	{ 0xef4, "SWELL", 3 }
 };
 
 static const DialogueLineEntry kParsonsKarinKidnapedLines[] = {
-	{ 0xefa, kParsonsSpeakerId, 3 },
-	{ 0xf03, kSwellSpeakerId, 3 }
+	{ 0xefa, "PARSONS", 3 },
+	{ 0xf03, "SWELL", 3 }
 };
 
 static const DialogueLineEntry kParsonsBlackmailEvidenceLines[] = {
-	{ 0xe95, kParsonsSpeakerId, 0 },
-	{ 0xe99, kPcSpeakerId, 0 },
-	{ 0xe9d, kParsonsSpeakerId, 1 }
+	{ 0xe95, "PARSONS", 0 },
+	{ 0xe99, "PC", 0 },
+	{ 0xe9d, "PARSONS", 1 }
 };
 
 } // End of anonymous namespace
 
-bool ParsonsDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kParsonsSpeakerId);
-}
-
 Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
-	auto playParsonsLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kParsonsSpeakerId, headVariant);
-	};
-	auto playSwellLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kSwellSpeakerId, headVariant);
-	};
-	auto playPcLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kPcSpeakerId, headVariant);
-	};
-	auto assignParsonsTopicBuffer = [&](Common::String &topicBuffer, int &topicBufferLineIndex,
-			int responseLineIndex) {
-		runtime.assignTopicBuffer(topicBuffer, topicBufferLineIndex,
-			responseLineIndex, "Parsons topic buffer");
-	};
-
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			sharedState.discussedWhaleyHerrillPhoto = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
-			return playParsonsLine(0xe77, 1);
+			return runtime.playDialogueLineWithVariant(0xe77, "PARSONS", 1);
 		}
 
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
@@ -127,16 +105,16 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownPhotoOfCorpse, true);
 
-			Common::Error lineError = playParsonsLine(0xe7e, 0);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0xe7e, "PARSONS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			if (!sharedState.dialogueStateD2ebc)
 				return Common::kNoError;
 
-			lineError = playPcLine(0xe84, 0);
+			lineError = runtime.playDialogueLineWithVariant(0xe84, "PC", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			return playParsonsLine(0xe88, 0);
+			return runtime.playDialogueLineWithVariant(0xe88, "PARSONS", 0);
 		}
 
 		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
@@ -145,7 +123,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			sharedState.discussedLedgerEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownLedgersToAnyone, true);
-			return playParsonsLine(0xe8e, 0);
+			return runtime.playDialogueLineWithVariant(0xe8e, "PARSONS", 0);
 		}
 
 		if (usedItemName.equalsIgnoreCase("NOTE") ||
@@ -164,16 +142,16 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			sharedState.discussedTvDeedEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceSheriffOwns, true);
-			return playParsonsLine(0xea4, 1);
+			return runtime.playDialogueLineWithVariant(0xea4, "PARSONS", 1);
 		}
 
-		return playParsonsLine(0xe71, 2);
+		return runtime.playDialogueLineWithVariant(0xe71, "PARSONS", 2);
 	}
 
 	Common::Error lineError = Common::kNoError;
 	Common::String topicBuffer;
 	int topicBufferLineIndex = -1;
-	assignParsonsTopicBuffer(topicBuffer, topicBufferLineIndex, kParsonsIntroTopicLine);
+	runtime.assignTopicBuffer(topicBuffer, topicBufferLineIndex, kParsonsIntroTopicLine, "Parsons topic buffer");
 
 	if (_state.introPending) {
 		_state.introPending = false;
@@ -181,7 +159,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	} else {
-		lineError = playParsonsLine(0xe65, 2);
+		lineError = runtime.playDialogueLineWithVariant(0xe65, "PARSONS", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -207,7 +185,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("BARBER_POLE_STOLEN") &&
 			!_state.barberPoleStolenShown) {
 		_state.barberPoleStolenShown = true;
-		lineError = playParsonsLine(0xed2, 3);
+		lineError = runtime.playDialogueLineWithVariant(0xed2, "PARSONS", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -215,7 +193,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("DINER_BURNED") &&
 			!_state.dinerBurnedShown) {
 		_state.dinerBurnedShown = true;
-		lineError = playParsonsLine(0xedd, 2);
+		lineError = runtime.playDialogueLineWithVariant(0xedd, "PARSONS", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -227,7 +205,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			kParsonsBurnedTvStationLines, ARRAYSIZE(kParsonsBurnedTvStationLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		runtime.setActiveSpeakerPortrait(kParsonsSpeakerId, 0);
+		runtime.setActiveSpeakerPortrait("PARSONS", 0);
 	}
 
 	if (runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
@@ -237,7 +215,7 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			kParsonsKarinKidnapedLines, ARRAYSIZE(kParsonsKarinKidnapedLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		runtime.setActiveSpeakerPortrait(kParsonsSpeakerId, 0);
+		runtime.setActiveSpeakerPortrait("PARSONS", 0);
 	}
 
 	for (;;) {
@@ -251,79 +229,78 @@ Common::Error ParsonsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
 				runtime.matchesResponseLine(selectedTopic, kParsonsExitTopicLine) ||
 				runtime.matchesResponseLine(selectedTopic, kParsonsHiddenExitTopicLine)) {
-			return playParsonsLine(0xe5f, 0);
+			return runtime.playDialogueLineWithVariant(0xe5f, "PARSONS", 0);
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, kParsonsPoleTopicLine)) {
-			lineError = playParsonsLine(0xdee, 0);
+			lineError = runtime.playDialogueLineWithVariant(0xdee, "PARSONS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC093FstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playParsonsLine(0xdf9, 0);
+			lineError = runtime.playDialogueLineWithVariant(0xdf9, "PARSONS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playSwellLine(0xe00, 1);
+			lineError = runtime.playDialogueLineWithVariant(0xe00, "SWELL", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playParsonsLine(0xe04, 2);
+			lineError = runtime.playDialogueLineWithVariant(0xe04, "PARSONS", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignParsonsTopicBuffer(topicBuffer, topicBufferLineIndex, kParsonsPoleFollowupTopicLine);
+			runtime.assignTopicBuffer(topicBuffer, topicBufferLineIndex, kParsonsPoleFollowupTopicLine, "Parsons topic buffer");
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, kParsonsAlarmSystemTopicLine)) {
-			lineError = playParsonsLine(0xe0f, 0);
+			lineError = runtime.playDialogueLineWithVariant(0xe0f, "PARSONS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignParsonsTopicBuffer(topicBuffer, topicBufferLineIndex,
-				kParsonsAlarmSystemFollowupTopicLine);
+			runtime.assignTopicBuffer(topicBuffer, topicBufferLineIndex, kParsonsAlarmSystemFollowupTopicLine, "Parsons topic buffer");
 			continue;
 		}
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kParsonsAliensTopicResponseLines,
 				ARRAYSIZE(kParsonsAliensTopicResponseLines))) {
-			lineError = playParsonsLine(0xe54, 2);
+			lineError = runtime.playDialogueLineWithVariant(0xe54, "PARSONS", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			assignParsonsTopicBuffer(topicBuffer, topicBufferLineIndex, kParsonsAliensFollowupTopicLine);
+			runtime.assignTopicBuffer(topicBuffer, topicBufferLineIndex, kParsonsAliensFollowupTopicLine, "Parsons topic buffer");
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, kParsonsAliensTopicLine)) {
-			lineError = playParsonsLine(0xe1c, 0);
+			lineError = runtime.playDialogueLineWithVariant(0xe1c, "PARSONS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playPcLine(0xe24, 0);
+			lineError = runtime.playDialogueLineWithVariant(0xe24, "PC", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playParsonsLine(0xe28, 1);
+			lineError = runtime.playDialogueLineWithVariant(0xe28, "PARSONS", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC094FstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playParsonsLine(0xe33, 0);
+			lineError = runtime.playDialogueLineWithVariant(0xe33, "PARSONS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playSwellLine(0xe39, 0);
+			lineError = runtime.playDialogueLineWithVariant(0xe39, "SWELL", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playParsonsLine(0xe3e, 2);
+			lineError = runtime.playDialogueLineWithVariant(0xe3e, "PARSONS", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playParsonsLine(0xe46, 1);
+			lineError = runtime.playDialogueLineWithVariant(0xe46, "PARSONS", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playParsonsLine(0xe4b, 0);
+			lineError = runtime.playDialogueLineWithVariant(0xe4b, "PARSONS", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			continue;
 		}
 
-		lineError = playParsonsLine(0xe6b, 0);
+		lineError = runtime.playDialogueLineWithVariant(0xe6b, "PARSONS", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}

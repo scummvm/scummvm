@@ -28,16 +28,11 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kInquisitorNpc = "INQUISITOR";
 static const char *const kPainSolvedFlag = "PAIN_SOLVED";
 static const char *const kStartInquisitorTimerActionTag = "START_INQ_TIM";
 static const char *const kTorch2FstPath = "GRAPHIC/FST/TORCH2.FST";
 
 } // End of namespace
-
-bool InquisitorDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kInquisitorNpc);
-}
 
 Common::Error InquisitorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
@@ -46,19 +41,15 @@ Common::Error InquisitorDialogueHandler::handleDialogue(DialogueRuntime &runtime
 
 	_state.talkStatePending = false;
 
-	auto playInquisitorLine = [&](int wavId) -> Common::Error {
-		return runtime.playDialogueLine(wavId, kInquisitorNpc);
-	};
-
-	Common::Error lineError = playInquisitorLine(0x18e7);
+	Common::Error lineError = runtime.playDialogueLine(0x18e7, "INQUISITOR");
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playInquisitorLine(0x18e8);
+	lineError = runtime.playDialogueLine(0x18e8, "INQUISITOR");
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playInquisitorLine(0x18e9);
+	lineError = runtime.playDialogueLine(0x18e9, "INQUISITOR");
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -66,7 +57,7 @@ Common::Error InquisitorDialogueHandler::handleDialogue(DialogueRuntime &runtime
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playInquisitorLine(0x18f8);
+	lineError = runtime.playDialogueLine(0x18f8, "INQUISITOR");
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 

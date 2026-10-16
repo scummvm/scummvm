@@ -26,30 +26,18 @@
 
 namespace Harvester {
 
-namespace {
-
-static const char *const kAuthorityNpc = "AUTHORITY";
-static const char *const kAuthority2Npc = "AUTHORITY2";
-
-} // End of namespace
-
-bool AuthorityDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kAuthorityNpc) ||
-		npcName.equalsIgnoreCase(kAuthority2Npc);
-}
-
 Common::Error AuthorityDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
 	if (runtime.startupScript().getFlagValue("STOP_AUTHOR_TALK"))
 		return Common::kNoError;
 
 	if (runtime.startupScript().getFlagValue("IF_DON_T_EAT_THE_FOOD")) {
-		Common::Error lineError = runtime.playDialogueLine(0x3992, kAuthorityNpc);
+		Common::Error lineError = runtime.playDialogueLine(0x3992, "AUTHORITY");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		if (runtime.startupScript().getFlagValue("IF_YOU_EAT_THE_FOOD_AND_DEFEAT_THE_ENEMIES"))
-			return runtime.playDialogueLine(0x399b, kAuthorityNpc);
+			return runtime.playDialogueLine(0x399b, "AUTHORITY");
 
 		return Common::kNoError;
 	}
@@ -58,7 +46,7 @@ Common::Error AuthorityDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		runtime.startupScript().getFlagValue("IF_YOU_EAT_THE_FOOD_AND_DEFEAT_THE_ENEMIES")
 			? 0x399b
 			: 0x398a,
-		kAuthorityNpc);
+		"AUTHORITY");
 }
 
 } // End of namespace Harvester

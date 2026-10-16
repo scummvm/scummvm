@@ -26,16 +26,6 @@
 
 namespace Harvester {
 
-namespace {
-
-static const char *const kFireman1Npc = "FIREMAN1";
-
-} // End of namespace
-
-bool Fireman1DialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kFireman1Npc);
-}
-
 Common::Error Fireman1DialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
 	Fireman1RoomDialogueState &state = _state;
@@ -43,9 +33,9 @@ Common::Error Fireman1DialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	Common::Error lineError = Common::kNoError;
 	if (state.talkStatePending) {
 		state.talkStatePending = false;
-		lineError = runtime.playDialogueLine(0x453, kFireman1Npc);
+		lineError = runtime.playDialogueLine(0x453, "FIREMAN1");
 	} else {
-		lineError = runtime.playDialogueLine(0x463, kFireman1Npc);
+		lineError = runtime.playDialogueLine(0x463, "FIREMAN1");
 	}
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
@@ -53,7 +43,7 @@ Common::Error Fireman1DialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") &&
 			!state.stephMidgamePlayedShown) {
 		state.stephMidgamePlayedShown = true;
-		lineError = runtime.playDialogueLineWithVariant(0x45a, kFireman1Npc, 3);
+		lineError = runtime.playDialogueLineWithVariant(0x45a, "FIREMAN1", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -61,7 +51,7 @@ Common::Error Fireman1DialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("BOLT_OF_CLOTH_TAKEN") &&
 			!state.boltOfClothTakenShown) {
 		state.boltOfClothTakenShown = true;
-		lineError = runtime.playDialogueLineWithVariant(0x46a, kFireman1Npc, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x46a, "FIREMAN1", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}

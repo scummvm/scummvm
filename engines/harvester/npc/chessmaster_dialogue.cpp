@@ -35,7 +35,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kChessmasterNpc = "CHESSMASTER";
 static const char *const kChessSolvedFlag = "CHESS_SOLVED";
 static const char *const kChessKingMonsterActionTag = "ADD_CHESS_KING_MONSTER";
 static const int kChessmasterSlashDamageType = 2;
@@ -353,13 +352,9 @@ static Common::Error runChessmasterThreeMovePuzzle(DialogueRuntime &runtime, boo
 
 } // End of namespace
 
-bool ChessmasterDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kChessmasterNpc);
-}
-
 Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	Common::Error lineError = runtime.playDialogueLine(0x4115, kChessmasterNpc);
+	Common::Error lineError = runtime.playDialogueLine(0x4115, "CHESSMASTER");
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -370,7 +365,7 @@ Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtim
 
 	bool solvedPuzzle = false;
 	if (responseIndex == 1) {
-		lineError = runtime.playDialogueLineWithVariant(0x4122, kChessmasterNpc, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x4122, "CHESSMASTER", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -382,7 +377,7 @@ Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtim
 	}
 
 	if (responseIndex != 1 || !solvedPuzzle) {
-		lineError = runtime.playDialogueLineWithVariant(0x4126, kChessmasterNpc, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x4126, "CHESSMASTER", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -405,7 +400,7 @@ Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtim
 	InteractionResult interaction;
 	// C125.FST already shows the chessmaster death; do not queue the room death bank again.
 	if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(
-			kChessmasterNpc, kChessmasterSlashDamageType)) {
+			"CHESSMASTER", kChessmasterSlashDamageType)) {
 		interaction.mutatedRuntimeState = true;
 		interaction.visualRuntimeStateChanged = true;
 	}

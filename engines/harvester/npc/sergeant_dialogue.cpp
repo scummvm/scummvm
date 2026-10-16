@@ -52,25 +52,10 @@ static const int kSergeantReminderResponseLine = 0x2bb;
 
 } // End of namespace
 
-bool SergeantDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("SERGEANT");
-}
-
 Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	SergeantRoomDialogueState &state = _state;
-	auto playLine = [&](int wavId, const char *speakerId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, speakerId, headVariant);
-	};
-	auto playSergeantLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return playLine(wavId, "SERGEANT", headVariant);
-	};
-	auto playPcLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return playLine(wavId, "PC", headVariant);
-	};
-	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
-		return runtime.playDialogueEntrySequence(lines, count);
-	};
+
 	auto hasInventoryItem = [&](const char *objectName) {
 		Common::Array<ObjectRecord> inventoryObjects;
 		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
@@ -89,12 +74,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		resetAndSetObjectVisible(kRahRoomName, objectName, visible);
 	};
 	auto executeActionTagIfSet = [&](const char *actionTag) -> Common::Error {
-		InteractionResult interaction;
-		if (!runtime.executeActionTag(actionTag, interaction))
-			return Common::kNoError;
-
-		runtime.applyImmediateDialogueInteractionEffects(interaction);
-		runtime.queueDialogueInteractionIfNeeded(interaction);
+		runtime.executeAndQueueAction(actionTag);
 		return Common::kNoError;
 	};
 	auto queueNpcSlashTransition = [&](const char *npcName) {
@@ -110,7 +90,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return Common::kNoError;
 
 		state.day5ExitLinePlayed = true;
-		return playSergeantLine(0x4324, 1);
+		return runtime.playDialogueLineWithVariant(0x4324, "SERGEANT", 1);
 	};
 	auto handleRemainsBranch = [&]() -> Common::Error {
 		sharedState.dialogueStateD2f08 = true;
@@ -126,7 +106,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.dialogueStateD2d6c = true;
 		returnItemToRah("REMAINS", false);
 
-		Common::Error lineError = playSergeantLine(0x4333, 1);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x4333, "SERGEANT", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		lineError = runtime.playDialogueFst(kDialogueC150FstPath);
@@ -139,7 +119,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			{ 0x434f, "PC", 0 },
 			{ 0x4353, "SERGEANT", 1 }
 		};
-		lineError = playSequence(remainsIntroLines, ARRAYSIZE(remainsIntroLines));
+		lineError = runtime.playDialogueEntrySequence(remainsIntroLines, ARRAYSIZE(remainsIntroLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -150,11 +130,11 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playSergeantLine(0x435f, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x435f, "SERGEANT", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
-			lineError = playSergeantLine(0x4364);
+			lineError = runtime.playDialogueLineWithVariant(0x4364, "SERGEANT", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -166,7 +146,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			{ 0x4381, "PC", 2 },
 			{ 0x4385, "SERGEANT", 0 }
 		};
-		lineError = playSequence(remainsExitLines, ARRAYSIZE(remainsExitLines));
+		lineError = runtime.playDialogueEntrySequence(remainsExitLines, ARRAYSIZE(remainsExitLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -213,7 +193,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			{ 0x4305, "PC", 0 },
 			{ 0x4309, "SERGEANT", 2 }
 		};
-		lineError = playSequence(inviteLines, ARRAYSIZE(inviteLines));
+		lineError = runtime.playDialogueEntrySequence(inviteLines, ARRAYSIZE(inviteLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -224,16 +204,16 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playSergeantLine(0x4314, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x4314, "SERGEANT", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
-			lineError = playSergeantLine(0x4319, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x4319, "SERGEANT", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 
-		lineError = playSergeantLine(0x431d);
+		lineError = runtime.playDialogueLineWithVariant(0x431d, "SERGEANT", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		return runDay5ExitIfNeeded();
@@ -250,10 +230,10 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		returnItemToRah("BARBER_POLE", false);
 		(void)runtime.startupScript().setRuntimeFlagValue("ASSIGNED_DNA_TASK", true);
 
-		Common::Error lineError = playSergeantLine(0x426f, 1);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x426f, "SERGEANT", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playSergeantLine(0x4274);
+		lineError = runtime.playDialogueLineWithVariant(0x4274, "SERGEANT", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -264,19 +244,19 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playSergeantLine(0x4281);
+			lineError = runtime.playDialogueLineWithVariant(0x4281, "SERGEANT", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
-			lineError = playSergeantLine(0x4289);
+			lineError = runtime.playDialogueLineWithVariant(0x4289, "SERGEANT", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 
-		lineError = playSergeantLine(0x428d);
+		lineError = runtime.playDialogueLineWithVariant(0x428d, "SERGEANT", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playSergeantLine(0x4299);
+		lineError = runtime.playDialogueLineWithVariant(0x4299, "SERGEANT", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -287,16 +267,16 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playSergeantLine(0x42a4, 3);
+			lineError = runtime.playDialogueLineWithVariant(0x42a4, "SERGEANT", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			if (runtime.startupScript().getFlagValue("PC_KILLED_ANYONE")) {
-				lineError = playSergeantLine(0x42a8);
+				lineError = runtime.playDialogueLineWithVariant(0x42a8, "SERGEANT", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 		} else if (responseIndex == 2) {
-			lineError = playSergeantLine(0x42ad);
+			lineError = runtime.playDialogueLineWithVariant(0x42ad, "SERGEANT", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -317,7 +297,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			{ 0x4245, "SERGEANT", 1 },
 			{ 0x4252, "SERGEANT", 0 }
 		};
-		Common::Error lineError = playSequence(boltClothLines, ARRAYSIZE(boltClothLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(boltClothLines, ARRAYSIZE(boltClothLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -328,11 +308,11 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playSergeantLine(0x425e, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x425e, "SERGEANT", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
-			lineError = playSergeantLine(0x4266, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x4266, "SERGEANT", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -354,10 +334,10 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.postApplicationBriefingCompleted = true;
 		state.completedFirstTaskState = true;
 
-		Common::Error lineError = playSergeantLine(0x420d, 1);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x420d, "SERGEANT", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = playSergeantLine(0x421e);
+		lineError = runtime.playDialogueLineWithVariant(0x421e, "SERGEANT", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -368,7 +348,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playSergeantLine(0x422a);
+			lineError = runtime.playDialogueLineWithVariant(0x422a, "SERGEANT", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
@@ -376,8 +356,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				{ 0x422f, "SERGEANT", 2 },
 				{ 0x4239, "SERGEANT", 3 }
 			};
-			lineError = playSequence(
-				reluctantTaskLines, ARRAYSIZE(reluctantTaskLines));
+			lineError = runtime.playDialogueEntrySequence(reluctantTaskLines, ARRAYSIZE(reluctantTaskLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -397,17 +376,17 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.dialogueStateD2d50 = true;
 		returnItemToRah("COMPLETED_LODGE_APPLICATION", false);
 		if (!runtime.startupScript().getFlagValue("QUEST_1")) {
-			Common::Error lineError = playSergeantLine(0x41cd, 1);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x41cd, "SERGEANT", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playSergeantLine(0x4292);
+			lineError = runtime.playDialogueLineWithVariant(0x4292, "SERGEANT", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			(void)runtime.startupScript().setRuntimeFlagValue("QUEST_1", true);
 			return executeActionTagIfSet(kGoDay2ActionTag);
 		}
 		if (!state.postApplicationBriefingCompleted) {
-			Common::Error lineError = playSergeantLine(0x41d2, 1);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x41d2, "SERGEANT", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -471,7 +450,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				{ 0x4146, "PC", 0 },
 				{ 0x4148, "SERGEANT", 2 }
 			};
-			Common::Error lineError = playSequence(introLines, ARRAYSIZE(introLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(introLines, ARRAYSIZE(introLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -482,16 +461,16 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playSergeantLine(0x4153);
+				lineError = runtime.playDialogueLineWithVariant(0x4153, "SERGEANT", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else if (responseIndex == 2) {
-				lineError = playSergeantLine(0x4157, 1);
+				lineError = runtime.playDialogueLineWithVariant(0x4157, "SERGEANT", 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 
-			lineError = playSergeantLine(0x415d);
+			lineError = runtime.playDialogueLineWithVariant(0x415d, "SERGEANT", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -507,7 +486,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					{ 0x416c, "PC", 0 },
 					{ 0x4170, "SERGEANT", 1 }
 				};
-				lineError = playSequence(applicationLines, ARRAYSIZE(applicationLines));
+				lineError = runtime.playDialogueEntrySequence(applicationLines, ARRAYSIZE(applicationLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
@@ -518,11 +497,11 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					return responseError;
 
 				if (responseIndex == 1) {
-					lineError = playSergeantLine(0x417c);
+					lineError = runtime.playDialogueLineWithVariant(0x417c, "SERGEANT", 0);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 				} else if (responseIndex == 2) {
-					lineError = playSergeantLine(0x4182, 2);
+					lineError = runtime.playDialogueLineWithVariant(0x4182, "SERGEANT", 2);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 				}
@@ -532,7 +511,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					{ 0x418e, "PC", 0 },
 					{ 0x4192, "SERGEANT", 0 }
 				};
-				lineError = playSequence(applicationLines, ARRAYSIZE(applicationLines));
+				lineError = runtime.playDialogueEntrySequence(applicationLines, ARRAYSIZE(applicationLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
@@ -541,15 +520,15 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 
 		state.talkStateBlock = true;
-		Common::Error lineError = playSergeantLine(0x41ac);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x41ac, "SERGEANT", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (!runtime.startupScript().getFlagValue("HAVE_LODGE_APP")) {
-			lineError = playPcLine(0x41b0);
+			lineError = runtime.playDialogueLineWithVariant(0x41b0, "PC", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
-		lineError = playSergeantLine(0x41b4, 3);
+		lineError = runtime.playDialogueLineWithVariant(0x41b4, "SERGEANT", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -560,12 +539,12 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playSergeantLine(0x41bf, 2);
+			lineError = runtime.playDialogueLineWithVariant(0x41bf, "SERGEANT", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			state.dialogueStateD2d50 = true;
 		} else if (responseIndex == 2) {
-			lineError = playSergeantLine(0x41c4);
+			lineError = runtime.playDialogueLineWithVariant(0x41c4, "SERGEANT", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -592,10 +571,10 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			state.dialogueStateD2d60 = true;
 			state.dialogueStateD2d64 = true;
 
-			Common::Error lineError = playSergeantLine(0x42b5, 1);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x42b5, "SERGEANT", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playSergeantLine(0x42b9);
+			lineError = runtime.playDialogueLineWithVariant(0x42b9, "SERGEANT", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -606,16 +585,16 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playSergeantLine(0x42c5);
+				lineError = runtime.playDialogueLineWithVariant(0x42c5, "SERGEANT", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else if (responseIndex == 2) {
-				lineError = playSergeantLine(0x42cb);
+				lineError = runtime.playDialogueLineWithVariant(0x42cb, "SERGEANT", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 
-			lineError = playSergeantLine(0x42d2, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x42d2, "SERGEANT", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -626,11 +605,11 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playSergeantLine(0x42de, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x42de, "SERGEANT", 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else if (responseIndex == 2) {
-				lineError = playSergeantLine(0x42e3);
+				lineError = runtime.playDialogueLineWithVariant(0x42e3, "SERGEANT", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
@@ -640,7 +619,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				{ 0x42ef, "PC", 0 },
 				{ 0x42f3, "SERGEANT", 0 }
 			};
-			lineError = playSequence(dinerBurnedTailLines, ARRAYSIZE(dinerBurnedTailLines));
+			lineError = runtime.playDialogueEntrySequence(dinerBurnedTailLines, ARRAYSIZE(dinerBurnedTailLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -675,7 +654,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (usedItemName.equalsIgnoreCase("REMAINS"))
 		return handleRemainsBranch();
 
-	return playSergeantLine(0x42fa);
+	return runtime.playDialogueLineWithVariant(0x42fa, "SERGEANT", 0);
 }
 
 } // End of namespace Harvester

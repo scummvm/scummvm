@@ -29,41 +29,35 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kLibrarianNpc = "LIBRARIAN";
-static const char *const kPcSpeaker = "PC";
 static const char *const kRahRoomName = "RAH";
 static const int kLibrarianResponseLineIndex = 0xfa;
 
 static const DialogueLineEntry kLibrarianCainbookTradeLines[] = {
-	{ 0x1db1, kLibrarianNpc, 1 },
-	{ 0x1db7, kPcSpeaker, 0 },
-	{ 0x1dbb, kLibrarianNpc, 0 },
-	{ 0x1dc2, kPcSpeaker, 4 },
-	{ 0x1dc6, kLibrarianNpc, 0 }
+	{ 0x1db1, "LIBRARIAN", 1 },
+	{ 0x1db7, "PC", 0 },
+	{ 0x1dbb, "LIBRARIAN", 0 },
+	{ 0x1dc2, "PC", 4 },
+	{ 0x1dc6, "LIBRARIAN", 0 }
 };
 
 static const DialogueLineEntry kLibrarianIntroLines[] = {
-	{ 0x1d5b, kLibrarianNpc, 0 },
-	{ 0x1d5f, kPcSpeaker, 0 },
-	{ 0x1d63, kLibrarianNpc, 2 },
-	{ 0x1d67, kPcSpeaker, 0 },
-	{ 0x1d6c, kLibrarianNpc, 0 },
-	{ 0x1d77, kLibrarianNpc, 0 }
+	{ 0x1d5b, "LIBRARIAN", 0 },
+	{ 0x1d5f, "PC", 0 },
+	{ 0x1d63, "LIBRARIAN", 2 },
+	{ 0x1d67, "PC", 0 },
+	{ 0x1d6c, "LIBRARIAN", 0 },
+	{ 0x1d77, "LIBRARIAN", 0 }
 };
 
 static const DialogueLineEntry kLibrarianNoItemFollowupLines[] = {
-	{ 0x1d8f, kLibrarianNpc, 0 },
-	{ 0x1d94, kPcSpeaker, 0 },
-	{ 0x1d98, kLibrarianNpc, 0 },
-	{ 0x1da1, kPcSpeaker, 0 },
-	{ 0x1da5, kLibrarianNpc, 0 }
+	{ 0x1d8f, "LIBRARIAN", 0 },
+	{ 0x1d94, "PC", 0 },
+	{ 0x1d98, "LIBRARIAN", 0 },
+	{ 0x1da1, "PC", 0 },
+	{ 0x1da5, "LIBRARIAN", 0 }
 };
 
 } // End of namespace
-
-bool LibrarianDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kLibrarianNpc);
-}
 
 Common::Error LibrarianDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
@@ -77,14 +71,12 @@ Common::Error LibrarianDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		return false;
 	};
-	auto playSequence = [&](const DialogueLineEntry *lines, uint count) {
-		return runtime.playDialogueEntrySequence(lines, count);
-	};
+
 	auto completeCainbookTrade = [&]() -> Common::Error {
 		(void)runtime.startupScript().addRuntimeObjectToInventory("CLUE");
 
-		Common::Error lineError = playSequence(
-			kLibrarianCainbookTradeLines, ARRAYSIZE(kLibrarianCainbookTradeLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(kLibrarianCainbookTradeLines,
+			ARRAYSIZE(kLibrarianCainbookTradeLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -98,12 +90,12 @@ Common::Error LibrarianDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (!usedItemName.empty()) {
 		if (!usedItemName.equalsIgnoreCase("CAINBOOK"))
-			return runtime.playDialogueLine(0x1d5b, kLibrarianNpc);
+			return runtime.playDialogueLine(0x1d5b, "LIBRARIAN");
 
 		return completeCainbookTrade();
 	}
 
-	Common::Error lineError = playSequence(kLibrarianIntroLines, ARRAYSIZE(kLibrarianIntroLines));
+	Common::Error lineError = runtime.playDialogueEntrySequence(kLibrarianIntroLines, ARRAYSIZE(kLibrarianIntroLines));
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -113,16 +105,16 @@ Common::Error LibrarianDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1) {
-		lineError = runtime.playDialogueLine(0x1d85, kLibrarianNpc);
+		lineError = runtime.playDialogueLine(0x1d85, "LIBRARIAN");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	} else if (responseIndex == 2) {
-		lineError = runtime.playDialogueLineWithVariant(0x1d8b, kLibrarianNpc, 4);
+		lineError = runtime.playDialogueLineWithVariant(0x1d8b, "LIBRARIAN", 4);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 
-	return playSequence(kLibrarianNoItemFollowupLines, ARRAYSIZE(kLibrarianNoItemFollowupLines));
+	return runtime.playDialogueEntrySequence(kLibrarianNoItemFollowupLines, ARRAYSIZE(kLibrarianNoItemFollowupLines));
 }
 
 } // End of namespace Harvester

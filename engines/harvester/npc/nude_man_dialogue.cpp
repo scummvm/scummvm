@@ -33,18 +33,10 @@ static const int kNudeManFollowupResponseLine = 0x25e;
 
 } // End of namespace
 
-bool NudeManDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("NUDE_MAN");
-}
-
 Common::Error NudeManDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &sharedState) {
-	auto playNudeManLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "NUDE_MAN", headVariant);
-	};
-
 	if (runtime.startupScript().getFlagValue("DAY_FLAG"))
-		return playNudeManLine(0x65c);
+		return runtime.playDialogueLineWithVariant(0x65c, "NUDE_MAN", 0);
 
 	if (_state.talkStatePending) {
 		_state.talkStatePending = false;
@@ -68,14 +60,14 @@ Common::Error NudeManDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playNudeManLine(0x628, 1);
+			lineError = runtime.playDialogueLineWithVariant(0x628, "NUDE_MAN", 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			if (sharedState.sergeantCompletedFirstTaskState == 0)
 				return Common::kNoError;
 
-			lineError = playNudeManLine(0x62c);
+			lineError = runtime.playDialogueLineWithVariant(0x62c, "NUDE_MAN", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -86,14 +78,14 @@ Common::Error NudeManDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1)
-				return playNudeManLine(0x636);
+				return runtime.playDialogueLineWithVariant(0x636, "NUDE_MAN", 0);
 			if (responseIndex == 2)
-				return playNudeManLine(0x63f);
+				return runtime.playDialogueLineWithVariant(0x63f, "NUDE_MAN", 0);
 			return Common::kNoError;
 		}
 
 		if (responseIndex == 2)
-			return playNudeManLine(0x648, 1);
+			return runtime.playDialogueLineWithVariant(0x648, "NUDE_MAN", 1);
 		return Common::kNoError;
 	}
 

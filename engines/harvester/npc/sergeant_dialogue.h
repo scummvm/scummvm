@@ -42,7 +42,6 @@ public:
 		bool day5ExitLinePlayed = false;
 	};
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = SergeantRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.talkStateBlock);

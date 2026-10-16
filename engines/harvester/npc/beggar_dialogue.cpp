@@ -28,8 +28,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kBeggarNpc = "BEGGAR";
-static const char *const kPcSpeaker = "PC";
 static const char *const kBeggarInterruptFlag = "BEGGAR_INTERRUPT_CONVERSATION";
 static const char *const kBeggarDialog3ActionTag = "BEGGAR_DIALOG_3";
 static const int kBeggarInitialResponseLine = 0x0;
@@ -37,21 +35,11 @@ static const int kBeggarFollowupResponseLine = 0x1;
 
 } // End of namespace
 
-bool BeggarDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kBeggarNpc);
-}
-
 Common::Error BeggarDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	auto playBeggarLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kBeggarNpc, headVariant);
-	};
-	auto playPcLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, kPcSpeaker, headVariant);
-	};
 	auto queueBeggarMonsterfyTransition = [&]() {
 		InteractionResult interaction;
-		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(kBeggarNpc)) {
+		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy("BEGGAR")) {
 			interaction.mutatedRuntimeState = true;
 			interaction.visualRuntimeStateChanged = true;
 		}
@@ -67,15 +55,15 @@ Common::Error BeggarDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	}
 
-	Common::Error lineError = playBeggarLine(0x1276, 1);
+	Common::Error lineError = runtime.playDialogueLineWithVariant(0x1276, "BEGGAR", 1);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playPcLine(0x127a, 2);
+	lineError = runtime.playDialogueLineWithVariant(0x127a, "PC", 2);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playBeggarLine(0x127e);
+	lineError = runtime.playDialogueLineWithVariant(0x127e, "BEGGAR", 0);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -86,9 +74,9 @@ Common::Error BeggarDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1) {
-		lineError = playBeggarLine(0x128d, 1);
+		lineError = runtime.playDialogueLineWithVariant(0x128d, "BEGGAR", 1);
 	} else if (responseIndex == 2) {
-		lineError = playBeggarLine(0x1291, 3);
+		lineError = runtime.playDialogueLineWithVariant(0x1291, "BEGGAR", 3);
 	} else {
 		queueBeggarMonsterfyTransition();
 		return Common::kNoError;
@@ -96,7 +84,7 @@ Common::Error BeggarDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	lineError = playBeggarLine(0x1295);
+	lineError = runtime.playDialogueLineWithVariant(0x1295, "BEGGAR", 0);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
@@ -107,11 +95,11 @@ Common::Error BeggarDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1) {
-		lineError = playBeggarLine(0x12ab, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x12ab, "BEGGAR", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	} else if (responseIndex == 2) {
-		lineError = playBeggarLine(0x12a5, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x12a5, "BEGGAR", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}

@@ -28,7 +28,6 @@ namespace Harvester {
 
 class LibrarianDialogueHandler : public NpcDialogueHandler {
 public:
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override {}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;

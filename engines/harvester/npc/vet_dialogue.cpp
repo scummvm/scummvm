@@ -28,22 +28,16 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kVetNpc = "VET";
-static const char *const kPcSpeaker = "PC";
 static const char *const kVetInterruptFlag = "VET_INTERRUPT";
 static const int kVetInterruptResponseLine = 0x2ff;
 
 static const DialogueLineEntry kVetInterruptIntroLines[] = {
-	{ 0x6d9, kVetNpc, 0 },
-	{ 0x447, kPcSpeaker, 0 },
-	{ 0x6e1, kVetNpc, 2 }
+	{ 0x6d9, "VET", 0 },
+	{ 0x447, "PC", 0 },
+	{ 0x6e1, "VET", 2 }
 };
 
 } // End of namespace
-
-bool VetDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kVetNpc);
-}
 
 Common::Error VetDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
@@ -63,16 +57,16 @@ Common::Error VetDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1) {
-		lineError = runtime.playDialogueLineWithVariant(0x6ec, kVetNpc, 2);
+		lineError = runtime.playDialogueLineWithVariant(0x6ec, "VET", 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	} else if (responseIndex == 2) {
-		lineError = runtime.playDialogueLineWithVariant(0x6f0, kVetNpc, 0);
+		lineError = runtime.playDialogueLineWithVariant(0x6f0, "VET", 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 
-	lineError = runtime.playDialogueLineWithVariant(0x6f4, kVetNpc, 2);
+	lineError = runtime.playDialogueLineWithVariant(0x6f4, "VET", 2);
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 

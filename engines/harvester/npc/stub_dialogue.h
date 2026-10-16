@@ -32,7 +32,6 @@ public:
 	explicit StubNpcDialogueHandler(const char *npcName);
 	explicit StubNpcDialogueHandler(const Common::Array<Common::String> &npcNames);
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

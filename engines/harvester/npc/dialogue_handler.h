@@ -100,7 +100,6 @@ class NpcDialogueHandler {
 public:
 	virtual ~NpcDialogueHandler() {}
 
-	virtual bool matchesNpc(const Common::String &npcName) const = 0;
 	virtual void resetState() {}
 	virtual void syncState(Common::Serializer &) {}
 	virtual void migrateSharedState(DialogueSharedState &) {}

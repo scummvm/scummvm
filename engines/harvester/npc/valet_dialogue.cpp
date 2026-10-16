@@ -28,29 +28,23 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kValetSpeakerId = "VALET";
-static const char *const kPcSpeakerId = "PC";
 static const char *const kValetCutscenePath = "GRAPHIC/FST/MIDGET02.FST";
 static const int kValetResponseLineIndex = 0x2fe;
 static const int kValetFirstResponseIndex = 1;
 static const int kValetSecondResponseIndex = 2;
 
 static const DialogueLineEntry kValetIntroLines[] = {
-	{ 0xf2c, kValetSpeakerId, 1 },
-	{ 0xf31, kPcSpeakerId, 0 },
-	{ 0xf35, kValetSpeakerId, 0 },
-	{ 0xf39, kPcSpeakerId, 0 }
+	{ 0xf2c, "VALET", 1 },
+	{ 0xf31, "PC", 0 },
+	{ 0xf35, "VALET", 0 },
+	{ 0xf39, "PC", 0 }
 };
 
-static const DialogueLineEntry kValetFirstResponseLine = { 0xf4a, kValetSpeakerId, 0 };
-static const DialogueLineEntry kValetSecondResponseLine = { 0xf50, kValetSpeakerId, 2 };
-static const DialogueLineEntry kValetExitLine = { 0xf56, kValetSpeakerId, 0 };
+static const DialogueLineEntry kValetFirstResponseLine = { 0xf4a, "VALET", 0 };
+static const DialogueLineEntry kValetSecondResponseLine = { 0xf50, "VALET", 2 };
+static const DialogueLineEntry kValetExitLine = { 0xf56, "VALET", 0 };
 
 } // End of namespace
-
-bool ValetDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("VALET");
-}
 
 Common::Error ValetDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {

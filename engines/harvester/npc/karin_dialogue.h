@@ -34,7 +34,6 @@ public:
 		bool notFoundAliveLinePlayed = false;
 	};
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = KarinRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.photoReplyOverrideFlag);

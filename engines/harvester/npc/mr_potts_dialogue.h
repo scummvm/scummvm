@@ -50,7 +50,6 @@ public:
 		bool day6KarinFoundAliveFollowupShown = false;
 	};
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override {
 		const int topicBufferLineIndex = _state.topicBufferLineIndex;
 		_state = MrPottsRoomDialogueState();

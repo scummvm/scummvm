@@ -34,7 +34,6 @@ public:
 		bool boltOfClothTakenShown = false;
 	};
 
-	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = Fireman1RoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.talkStatePending);

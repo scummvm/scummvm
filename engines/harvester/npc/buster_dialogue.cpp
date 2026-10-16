@@ -32,8 +32,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kBusterNpc = "BUSTER";
-static const char *const kPcSpeaker = "PC";
 static const char *const kDialogueC058FstPath = "GRAPHIC/FST/C058.FST";
 static const char *const kDialogueC085FstPath = "GRAPHIC/FST/C085.FST";
 static const char *const kDialogueC086FstPath = "GRAPHIC/FST/C086.FST";
@@ -71,130 +69,117 @@ static const int kBusterTopic0x48Line = 0x48;
 static const int kBusterTopic0x49Line = 0x49;
 
 static const DialogueLineEntry kBusterCorpsePhotoLines[] = {
-	{ 0x1884, kBusterNpc, 0 },
-	{ 0x1889, kPcSpeaker, 4 },
-	{ 0x188e, kBusterNpc, 2 },
-	{ 0x1895, kBusterNpc, 2 }
+	{ 0x1884, "BUSTER", 0 },
+	{ 0x1889, "PC", 4 },
+	{ 0x188e, "BUSTER", 2 },
+	{ 0x1895, "BUSTER", 2 }
 };
 
 static const DialogueLineEntry kBusterIntroLines[] = {
-	{ 0x163c, kBusterNpc, 2 },
-	{ 0x1640, kPcSpeaker, 0 },
-	{ 0x1644, kBusterNpc, 0 },
-	{ 0x1649, kPcSpeaker, 0 },
-	{ 0x164d, kBusterNpc, 0 },
-	{ 0x1654, kPcSpeaker, 0 },
-	{ 0x1658, kBusterNpc, 0 },
-	{ 0x165e, kPcSpeaker, 4 },
-	{ 0x1662, kBusterNpc, 0 },
-	{ 0x1669, kPcSpeaker, 0 },
-	{ 0x166e, kBusterNpc, 0 },
-	{ 0x1673, kPcSpeaker, 0 },
-	{ 0x1677, kBusterNpc, 0 },
-	{ 0x167e, kBusterNpc, 0 },
-	{ 0x1682, kBusterNpc, 2 },
-	{ 0x168e, kBusterNpc, 0 }
+	{ 0x163c, "BUSTER", 2 },
+	{ 0x1640, "PC", 0 },
+	{ 0x1644, "BUSTER", 0 },
+	{ 0x1649, "PC", 0 },
+	{ 0x164d, "BUSTER", 0 },
+	{ 0x1654, "PC", 0 },
+	{ 0x1658, "BUSTER", 0 },
+	{ 0x165e, "PC", 4 },
+	{ 0x1662, "BUSTER", 0 },
+	{ 0x1669, "PC", 0 },
+	{ 0x166e, "BUSTER", 0 },
+	{ 0x1673, "PC", 0 },
+	{ 0x1677, "BUSTER", 0 },
+	{ 0x167e, "BUSTER", 0 },
+	{ 0x1682, "BUSTER", 2 },
+	{ 0x168e, "BUSTER", 0 }
 };
 
 static const DialogueLineEntry kBusterSecondIntroPreludeLines[] = {
-	{ 0x1828, kBusterNpc, 2 },
-	{ 0x182c, kPcSpeaker, 2 },
-	{ 0x1830, kBusterNpc, 2 }
+	{ 0x1828, "BUSTER", 2 },
+	{ 0x182c, "PC", 2 },
+	{ 0x1830, "BUSTER", 2 }
 };
 
 static const DialogueLineEntry kBusterThirdIntroLines[] = {
-	{ 0x18c5, kBusterNpc, 2 },
-	{ 0x18c9, kPcSpeaker, 4 },
-	{ 0x18cd, kBusterNpc, 2 }
+	{ 0x18c5, "BUSTER", 2 },
+	{ 0x18c9, "PC", 4 },
+	{ 0x18cd, "BUSTER", 2 }
 };
 
 static const DialogueLineEntry kBusterTopic0x28Or0x29LinesSequence[] = {
-	{ 0x1698, kBusterNpc, 0 },
-	{ 0x169c, kPcSpeaker, 4 },
-	{ 0x16a1, kBusterNpc, 0 }
+	{ 0x1698, "BUSTER", 0 },
+	{ 0x169c, "PC", 4 },
+	{ 0x16a1, "BUSTER", 0 }
 };
 
 static const DialogueLineEntry kBusterTopic0x28Or0x29TailLines[] = {
-	{ 0x16ad, kBusterNpc, 2 },
-	{ 0x16b6, kBusterNpc, 0 }
+	{ 0x16ad, "BUSTER", 2 },
+	{ 0x16b6, "BUSTER", 0 }
 };
 
 static const DialogueLineEntry kBusterTopic0x32Lines[] = {
-	{ 0x170a, kPcSpeaker, 0 },
-	{ 0x170f, kBusterNpc, 0 },
-	{ 0x1710, kBusterNpc, 0 },
-	{ 0x1711, kBusterNpc, 0 },
-	{ 0x1712, kBusterNpc, 0 }
+	{ 0x170a, "PC", 0 },
+	{ 0x170f, "BUSTER", 0 },
+	{ 0x1710, "BUSTER", 0 },
+	{ 0x1711, "BUSTER", 0 },
+	{ 0x1712, "BUSTER", 0 }
 };
 
 static const DialogueLineEntry kBusterTopic0x34Lines[] = {
-	{ 0x1727, kBusterNpc, 0 },
-	{ 0x1728, kBusterNpc, 0 },
-	{ 0x1729, kBusterNpc, 0 },
-	{ 0x172a, kBusterNpc, 0 },
-	{ 0x172b, kBusterNpc, 0 }
+	{ 0x1727, "BUSTER", 0 },
+	{ 0x1728, "BUSTER", 0 },
+	{ 0x1729, "BUSTER", 0 },
+	{ 0x172a, "BUSTER", 0 },
+	{ 0x172b, "BUSTER", 0 }
 };
 
 static const DialogueLineEntry kBusterTopic0x36Lines[] = {
-	{ 0x173d, kPcSpeaker, 0 },
-	{ 0x1742, kBusterNpc, 0 },
-	{ 0x1749, kPcSpeaker, 0 },
-	{ 0x174d, kBusterNpc, 0 },
-	{ 0x174e, kBusterNpc, 0 },
-	{ 0x174f, kBusterNpc, 0 },
-	{ 0x1750, kBusterNpc, 2 },
-	{ 0x1762, kBusterNpc, 2 }
+	{ 0x173d, "PC", 0 },
+	{ 0x1742, "BUSTER", 0 },
+	{ 0x1749, "PC", 0 },
+	{ 0x174d, "BUSTER", 0 },
+	{ 0x174e, "BUSTER", 0 },
+	{ 0x174f, "BUSTER", 0 },
+	{ 0x1750, "BUSTER", 2 },
+	{ 0x1762, "BUSTER", 2 }
 };
 
 static const DialogueLineEntry kBusterTopic0x38ResponseTwoLines[] = {
-	{ 0x1787, kBusterNpc, 0 },
-	{ 0x1791, kBusterNpc, 0 },
-	{ 0x1796, kPcSpeaker, 0 },
-	{ 0x179d, kBusterNpc, 0 }
+	{ 0x1787, "BUSTER", 0 },
+	{ 0x1791, "BUSTER", 0 },
+	{ 0x1796, "PC", 0 },
+	{ 0x179d, "BUSTER", 0 }
 };
 
 static const DialogueLineEntry kBusterTopic0x3bTailLines[] = {
-	{ 0x17bb, kBusterNpc, 0 },
-	{ 0x17c3, kBusterNpc, 0 }
+	{ 0x17bb, "BUSTER", 0 },
+	{ 0x17c3, "BUSTER", 0 }
 };
 
 static const DialogueLineEntry kBusterTopic0x3eLines[] = {
-	{ 0x17cc, kBusterNpc, 0 },
-	{ 0x17cd, kBusterNpc, 0 },
-	{ 0x17ce, kBusterNpc, 0 },
-	{ 0x17db, kBusterNpc, 0 }
+	{ 0x17cc, "BUSTER", 0 },
+	{ 0x17cd, "BUSTER", 0 },
+	{ 0x17ce, "BUSTER", 0 },
+	{ 0x17db, "BUSTER", 0 }
 };
 
 static const DialogueLineEntry kBusterTopic0x40Or0x41PreludeLines[] = {
-	{ 0x17e4, kBusterNpc, 0 },
-	{ 0x17e5, kBusterNpc, 0 },
-	{ 0x17e6, kBusterNpc, 0 },
-	{ 0x17e7, kBusterNpc, 0 },
-	{ 0x17f7, kBusterNpc, 0 }
+	{ 0x17e4, "BUSTER", 0 },
+	{ 0x17e5, "BUSTER", 0 },
+	{ 0x17e6, "BUSTER", 0 },
+	{ 0x17e7, "BUSTER", 0 },
+	{ 0x17f7, "BUSTER", 0 }
 };
 
 } // End of namespace
-
-bool BusterDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kBusterNpc);
-}
 
 Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	Common::String topicBuffer;
 	int topicBufferLineIndex = -1;
 
-	auto assignBusterTopicBuffer = [&](int responseLineIndex) {
-		runtime.assignTopicBuffer(topicBuffer, topicBufferLineIndex,
-			responseLineIndex, "Buster topic buffer");
-	};
-	auto playBusterLine = [&](int wavId, int headVariant = 0,
-			const char *speakerId = kBusterNpc) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, speakerId, headVariant);
-	};
-	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
-		return runtime.playDialogueEntrySequence(lines, count);
-	};
+	DialogueTopicBuffer topics(runtime, topicBuffer, topicBufferLineIndex, "Buster topic buffer");
+
 	auto clearScreenToBlack = [&]() {
 		Graphics::Screen *screen = runtime.engine().getScreen();
 		if (!screen)
@@ -204,7 +189,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		screen->update();
 	};
 	auto playFatalBusterBranch = [&](int wavId, int headVariant = 0) -> Common::Error {
-		Common::Error lineError = playBusterLine(wavId, headVariant);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(wavId, "BUSTER", headVariant);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -230,17 +215,17 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			sharedState.discussedWhaleyHerrillPhoto = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
-			return playBusterLine(0x187b);
+			return runtime.playDialogueLineWithVariant(0x187b, "BUSTER", 0);
 		}
 		if (isCorpsePhoto(usedItemName)) {
 			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-			return playSequence(kBusterCorpsePhotoLines, ARRAYSIZE(kBusterCorpsePhotoLines));
+			return runtime.playDialogueEntrySequence(kBusterCorpsePhotoLines, ARRAYSIZE(kBusterCorpsePhotoLines));
 		}
 		if (isBlackmailEvidence(usedItemName)) {
 			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
-			Common::Error lineError = playBusterLine(0x189b);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x189b, "BUSTER", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -251,38 +236,38 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playBusterLine(0x18a6, 1);
+				lineError = runtime.playDialogueLineWithVariant(0x18a6, "BUSTER", 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playBusterLine(0x18aa, 0, kPcSpeaker);
+				lineError = runtime.playDialogueLineWithVariant(0x18aa, "PC", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				return playBusterLine(0x18ae);
+				return runtime.playDialogueLineWithVariant(0x18ae, "BUSTER", 0);
 			}
 			if (responseIndex == 2) {
-				lineError = playBusterLine(0x18b5, 2);
+				lineError = runtime.playDialogueLineWithVariant(0x18b5, "BUSTER", 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				return playBusterLine(0x18be, 2);
+				return runtime.playDialogueLineWithVariant(0x18be, "BUSTER", 2);
 			}
 			return Common::kNoError;
 		}
-		return playBusterLine(0x1875);
+		return runtime.playDialogueLineWithVariant(0x1875, "BUSTER", 0);
 	}
 
 	if (_state.introPending) {
 		_state.introPending = false;
 		_state.secondIntroPending = true;
-		Common::Error lineError = playSequence(kBusterIntroLines, ARRAYSIZE(kBusterIntroLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(kBusterIntroLines, ARRAYSIZE(kBusterIntroLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		assignBusterTopicBuffer(kBusterIntroTopicBufferLine);
+		topics.assign(kBusterIntroTopicBufferLine);
 	} else if (_state.secondIntroPending) {
 		_state.secondIntroPending = false;
 		_state.thirdIntroPending = true;
-		Common::Error lineError = playSequence(
-			kBusterSecondIntroPreludeLines, ARRAYSIZE(kBusterSecondIntroPreludeLines));
+		Common::Error lineError = runtime.playDialogueEntrySequence(kBusterSecondIntroPreludeLines,
+			ARRAYSIZE(kBusterSecondIntroPreludeLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -295,12 +280,12 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseIndex == 1)
 			return playFatalBusterBranch(0x183a, 2);
 		if (responseIndex == 2) {
-			lineError = playBusterLine(0x1841);
+			lineError = runtime.playDialogueLineWithVariant(0x1841, "BUSTER", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
 			if (!_state.secondIntroResponseTwoSeen) {
-				lineError = playBusterLine(0x185e);
+				lineError = runtime.playDialogueLineWithVariant(0x185e, "BUSTER", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
@@ -308,7 +293,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				_state.secondIntroPending = true;
 				_state.thirdIntroPending = false;
 			} else {
-				lineError = playBusterLine(0x1845);
+				lineError = runtime.playDialogueLineWithVariant(0x1845, "BUSTER", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
@@ -321,7 +306,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				if (followupResponseIndex == 1)
 					return playFatalBusterBranch(0x1850);
 				if (followupResponseIndex == 2) {
-					lineError = playBusterLine(0x1858);
+					lineError = runtime.playDialogueLineWithVariant(0x1858, "BUSTER", 0);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 				}
@@ -329,9 +314,9 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 	} else if (_state.thirdIntroPending) {
 		_state.thirdIntroPending = false;
-		return playSequence(kBusterThirdIntroLines, ARRAYSIZE(kBusterThirdIntroLines));
+		return runtime.playDialogueEntrySequence(kBusterThirdIntroLines, ARRAYSIZE(kBusterThirdIntroLines));
 	} else {
-		return playBusterLine(0x1868);
+		return runtime.playDialogueLineWithVariant(0x1868, "BUSTER", 0);
 	}
 
 	for (;;) {
@@ -343,32 +328,32 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return Common::kNoError;
 
 		if (runtime.matchesResponseLine(selectedTopic, kBusterExitTopicLine))
-			return playBusterLine(0x1818);
+			return runtime.playDialogueLineWithVariant(0x1818, "BUSTER", 0);
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kBusterTopic0x28Or0x29Lines,
 				ARRAYSIZE(kBusterTopic0x28Or0x29Lines))) {
-			Common::Error lineError = playSequence(
-				kBusterTopic0x28Or0x29LinesSequence, ARRAYSIZE(kBusterTopic0x28Or0x29LinesSequence));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kBusterTopic0x28Or0x29LinesSequence,
+				ARRAYSIZE(kBusterTopic0x28Or0x29LinesSequence));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC085FstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playSequence(
-				kBusterTopic0x28Or0x29TailLines, ARRAYSIZE(kBusterTopic0x28Or0x29TailLines));
+			lineError = runtime.playDialogueEntrySequence(kBusterTopic0x28Or0x29TailLines,
+				ARRAYSIZE(kBusterTopic0x28Or0x29TailLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			assignBusterTopicBuffer(0x2b);
+			topics.assign(0x2b);
 			continue;
 		}
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kBusterTopic0x2cOr0x2dLines,
 				ARRAYSIZE(kBusterTopic0x2cOr0x2dLines))) {
-			Common::Error lineError = playBusterLine(0x16be);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x16be, "BUSTER", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playBusterLine(0x16c5);
+			lineError = runtime.playDialogueLineWithVariant(0x16c5, "BUSTER", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -381,7 +366,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseIndex == 1)
 				return playFatalBusterBranch(0x16d0);
 			if (responseIndex == 2) {
-				lineError = playBusterLine(0x16d6);
+				lineError = runtime.playDialogueLineWithVariant(0x16d6, "BUSTER", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
@@ -392,7 +377,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					return responseError;
 
 				if (followupResponseIndex == 1) {
-					lineError = playBusterLine(0x16e2);
+					lineError = runtime.playDialogueLineWithVariant(0x16e2, "BUSTER", 0);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 
@@ -405,11 +390,11 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					if (nestedResponseIndex == 1)
 						return playFatalBusterBranch(0x16ef);
 					if (nestedResponseIndex == 2) {
-						lineError = playBusterLine(0x16f6);
+						lineError = runtime.playDialogueLineWithVariant(0x16f6, "BUSTER", 0);
 						if (lineError.getCode() != Common::kNoError)
 							return lineError;
 
-						assignBusterTopicBuffer(0x31);
+						topics.assign(0x31);
 					}
 				} else if (followupResponseIndex == 2) {
 					return playFatalBusterBranch(0x1702);
@@ -419,37 +404,34 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, kBusterTopic0x32Line)) {
-			Common::Error lineError = playSequence(
-				kBusterTopic0x32Lines, ARRAYSIZE(kBusterTopic0x32Lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kBusterTopic0x32Lines, ARRAYSIZE(kBusterTopic0x32Lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			assignBusterTopicBuffer(kBusterTopic0x32TopicBufferLine);
+			topics.assign(kBusterTopic0x32TopicBufferLine);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, kBusterTopic0x34Line)) {
-			Common::Error lineError = playSequence(
-				kBusterTopic0x34Lines, ARRAYSIZE(kBusterTopic0x34Lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kBusterTopic0x34Lines, ARRAYSIZE(kBusterTopic0x34Lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			assignBusterTopicBuffer(kBusterTopic0x34TopicBufferLine);
+			topics.assign(kBusterTopic0x34TopicBufferLine);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, kBusterTopic0x36Line)) {
-			Common::Error lineError = playSequence(
-				kBusterTopic0x36Lines, ARRAYSIZE(kBusterTopic0x36Lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kBusterTopic0x36Lines, ARRAYSIZE(kBusterTopic0x36Lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			assignBusterTopicBuffer(kBusterTopic0x36TopicBufferLine);
+			topics.assign(kBusterTopic0x36TopicBufferLine);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, kBusterTopic0x38Line)) {
-			Common::Error lineError = playBusterLine(0x176b);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x176b, "BUSTER", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC058FstPath);
@@ -463,20 +445,20 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1)
-				return playBusterLine(0x1781);
+				return runtime.playDialogueLineWithVariant(0x1781, "BUSTER", 0);
 			if (responseIndex == 2) {
-				lineError = playSequence(
-					kBusterTopic0x38ResponseTwoLines, ARRAYSIZE(kBusterTopic0x38ResponseTwoLines));
+				lineError = runtime.playDialogueEntrySequence(kBusterTopic0x38ResponseTwoLines,
+					ARRAYSIZE(kBusterTopic0x38ResponseTwoLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 
-			assignBusterTopicBuffer(kBusterTopic0x38TopicBufferLine);
+			topics.assign(kBusterTopic0x38TopicBufferLine);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, kBusterTopic0x3bLine)) {
-			Common::Error lineError = playBusterLine(0x17a5);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x17a5, "BUSTER", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -487,36 +469,35 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playBusterLine(0x17b3);
+				lineError = runtime.playDialogueLineWithVariant(0x17b3, "BUSTER", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else if (responseIndex == 2) {
-				lineError = playBusterLine(0x17b7);
+				lineError = runtime.playDialogueLineWithVariant(0x17b7, "BUSTER", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 
-			lineError = playSequence(kBusterTopic0x3bTailLines, ARRAYSIZE(kBusterTopic0x3bTailLines));
+			lineError = runtime.playDialogueEntrySequence(kBusterTopic0x3bTailLines, ARRAYSIZE(kBusterTopic0x3bTailLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			assignBusterTopicBuffer(kBusterTopic0x3bTopicBufferLine);
+			topics.assign(kBusterTopic0x3bTopicBufferLine);
 			continue;
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, kBusterTopic0x3eLine)) {
-			Common::Error lineError = playSequence(
-				kBusterTopic0x3eLines, ARRAYSIZE(kBusterTopic0x3eLines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(kBusterTopic0x3eLines, ARRAYSIZE(kBusterTopic0x3eLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			assignBusterTopicBuffer(kBusterTopic0x3eTopicBufferLine);
+			topics.assign(kBusterTopic0x3eTopicBufferLine);
 			continue;
 		}
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kBusterTopic0x40Or0x41Lines,
 				ARRAYSIZE(kBusterTopic0x40Or0x41Lines))) {
-			Common::Error lineError = playSequence(kBusterTopic0x40Or0x41PreludeLines,
+			Common::Error lineError = runtime.playDialogueEntrySequence(kBusterTopic0x40Or0x41PreludeLines,
 				ARRAYSIZE(kBusterTopic0x40Or0x41PreludeLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -530,22 +511,22 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseIndex == 1)
 				return playFatalBusterBranch(0x1804);
 			if (responseIndex == 2) {
-				lineError = playBusterLine(0x180b);
+				lineError = runtime.playDialogueLineWithVariant(0x180b, "BUSTER", 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
-				assignBusterTopicBuffer(kBusterTopic0x40TopicBufferLine);
+				topics.assign(kBusterTopic0x40TopicBufferLine);
 			}
 			continue;
 		}
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kBusterTopic0x44Or0x45Or0x46Lines,
 				ARRAYSIZE(kBusterTopic0x44Or0x45Or0x46Lines))) {
-			Common::Error lineError = playBusterLine(0x181e, 2);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x181e, "BUSTER", 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			assignBusterTopicBuffer(kBusterTopic0x44TopicBufferLine);
+			topics.assign(kBusterTopic0x44TopicBufferLine);
 			continue;
 		}
 
@@ -553,7 +534,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return playFatalBusterBranch(0x18df, 2);
 
 		if (runtime.matchesResponseLine(selectedTopic, kBusterTopic0x49Line)) {
-			Common::Error lineError = playBusterLine(0x186f);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0x186f, "BUSTER", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
