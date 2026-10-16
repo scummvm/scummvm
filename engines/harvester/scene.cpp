@@ -130,7 +130,9 @@ Scene::Scene(HarvesterEngine &engine, Flow &flow, SceneState &scene, EntityManag
 	  _presentation(engine, scene, view.art, view.inspectFont, view.useNativeInspectFont),
 	  _interactionProcessor(engine, flow, scene, _player, _pendingRegionName, _pendingTransition.roomName,
 		_pendingTransition.isRoomName, _pendingTransition.usesSavedRoomState, _pendingTransition.savedRoomState,
-		canExitCloseupToParent, *this) {
+		canExitCloseupToParent, *this),
+	  _combat(engine, scene, _player, entityManager, _sceneRuntime, _combatEffects,
+		cheats, *this, _interactionProcessor) {
 }
 
 void Scene::resetIdleState() {
@@ -247,7 +249,7 @@ bool Scene::refreshCurrentScene(bool preservePlayerPlacement) {
 	_sceneRuntime.restoreRoomMonsterAnimations();
 	_roomItems.hideCarriedRoomItem();
 	_player.rebindAfterSceneRefresh(_engine, _scene.state, _entityManager, preservePlayerPlacement);
-	_combat.resetForSceneRefresh(_scene.state);
+	_combat.resetForSceneRefresh();
 	_pendingRegionName.clear();
 	resetIdleState();
 	_flow.resetCursorAnimationSequence();
@@ -259,7 +261,7 @@ void Scene::initializePlayerState() {
 	_player.initialize(_scene.state,
 		_entityManager ? _entityManager->findSceneEntityByName("PLAYER") : nullptr,
 		_engine.getScript() ? _engine.getScript()->getPlayerCombatLoadout() : 0);
-	_combat.initializeCombatStates(_scene.state);
+	_combat.initializeCombatStates();
 }
 
 void Scene::syncAnimatedRoomActorPlacement() {
@@ -582,7 +584,7 @@ void Scene::updatePlayerControls(const PlayerControlState &control, bool &needsR
 			!idleState.active && !idleState.exiting) {
 		const uint32 now = Player::getRuntimeClockTicks();
 		if (_inputState.nextKeyboardAttackAllowedTick == 0 || (int32)(now - _inputState.nextKeyboardAttackAllowedTick) >= 0) {
-			_combat.capturePlayerAttackTargetForKeyboard(_scene.state, _player, _entityManager,
+			_combat.capturePlayerAttackTargetForKeyboard(
 				_inputState.moveLeft, _inputState.moveRight, _inputState.moveUp, _inputState.moveDown);
 			if (_player.startKeyboardAttackAnimation(_scene.state,
 					_inputState.moveLeft, _inputState.moveRight, _inputState.moveUp, _inputState.moveDown)) {
@@ -864,13 +866,11 @@ Common::Error Scene::tryActivatePassiveRegion(bool &needsRedraw) {
 }
 
 Common::Error Scene::resolvePlayerAttackContact(bool &needsRedraw) {
-	return _combat.resolvePlayerAttackContact(_engine, _scene.state, _player, _entityManager,
-		_sceneRuntime, _combatEffects, _interactionProcessor, needsRedraw);
+	return _combat.resolvePlayerAttackContact(needsRedraw);
 }
 
 Common::Error Scene::updateRoomMonsterCombat(bool &needsRedraw) {
-	return _combat.updateRoomMonsterCombat(_engine, _scene.state, _player, _entityManager,
-		_sceneRuntime, _combatEffects, _cheats, *this, _interactionProcessor, needsRedraw);
+	return _combat.updateRoomMonsterCombat(needsRedraw);
 }
 
 void Scene::syncCombatHitEffects(bool &needsRedraw) {
@@ -884,12 +884,11 @@ void Scene::updateIdleAnimation(bool &needsRedraw) {
 }
 
 void Scene::capturePlayerAttackTarget(const Common::Point &mousePos, const NpcRecord *npc) {
-	_combat.capturePlayerAttackTarget(_scene.state, _player, _entityManager, mousePos, npc);
+	_combat.capturePlayerAttackTarget(mousePos, npc);
 }
 
 Common::Error Scene::killDebugActiveMonster(const Common::Point &mousePos, bool &needsRedraw) {
-	return _combat.killDebugActiveMonster(_engine, _scene.state, _player, _entityManager,
-		mousePos, _combatEffects, _interactionProcessor, needsRedraw);
+	return _combat.killDebugActiveMonster(mousePos, needsRedraw);
 }
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {

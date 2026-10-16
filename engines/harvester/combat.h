@@ -36,7 +36,6 @@ class InteractionCallbacks;
 class Interaction;
 class SceneEntities;
 class Player;
-struct RoomPlayerState;
 
 extern const int kRoomMonsterAnimationRate;
 extern const int kNativeMonsterAttackAnimationRate;
@@ -132,65 +131,61 @@ struct NpcCombatUpdateResult {
 
 class Combat {
 public:
-	void initializeCombatStates(const RoomSetupState &state);
+	Combat(HarvesterEngine &engine, SceneState &scene, Player &player,
+		EntityManager *entityManager, SceneEntities &sceneRuntime, CombatEffects &combatEffects,
+		const CheatSystem &cheats, InteractionCallbacks &callbacks, Interaction &interactionProcessor);
+	Combat(const Combat &) = delete;
+	Combat &operator=(const Combat &) = delete;
+
+	void initializeCombatStates();
 	// Keep prepared state separate until scene-entity mutations succeed.
 	Common::Array<MonsterCombatState> prepareMonsterCombatStatesForSceneChange(
 		const Common::Array<MonsterRecord> &previousMonsters, const Common::Array<MonsterRecord> &updatedMonsters) const;
 	void commitMonsterCombatStatesForSceneChange(Common::Array<MonsterCombatState> &&states);
-	void resetForSceneRefresh(const RoomSetupState &state);
+	void resetForSceneRefresh();
 
-	void capturePlayerAttackTargetForKeyboard(RoomSetupState &state, Player &player,
-		EntityManager *entityManager, bool attackLeft, bool attackRight, bool attackUp, bool attackDown) const;
-	MonsterRecord *resolveKillTarget(RoomSetupState &state, const RoomPlayerState &playerState,
-		EntityManager *entityManager, const Common::Point &mousePos) const;
+	void capturePlayerAttackTargetForKeyboard(bool attackLeft, bool attackRight, bool attackUp, bool attackDown) const;
+	MonsterRecord *resolveKillTarget(const Common::Point &mousePos) const;
 	// The caller clears the captured target before resolving the room hover state.
-	void capturePlayerAttackTarget(RoomSetupState &state, Player &player,
-		EntityManager *entityManager, const Common::Point &mousePos, const NpcRecord *hoverNpc) const;
-	void captureOverlappingNpcAttackTarget(RoomSetupState &state, Player &player, EntityManager *entityManager) const;
-	NpcRecord *selectNpcAttackContactTarget(RoomSetupState &state, const RoomPlayerState &playerState,
-		EntityManager *entityManager, Entity *&npcEntity) const;
-	MonsterRecord *selectMonsterAttackContactTarget(RoomSetupState &state, Player &player,
-		EntityManager *entityManager, Entity *&monsterEntity) const;
+	void capturePlayerAttackTarget(const Common::Point &mousePos, const NpcRecord *hoverNpc) const;
+	void captureOverlappingNpcAttackTarget() const;
+	NpcRecord *selectNpcAttackContactTarget(Entity *&npcEntity) const;
+	MonsterRecord *selectMonsterAttackContactTarget(Entity *&monsterEntity) const;
 
-	Common::Error killDebugActiveMonster(HarvesterEngine &engine, RoomSetupState &state,
-		Player &player, EntityManager *entityManager, const Common::Point &mousePos,
-		CombatEffects &combatEffects, Interaction &interactionProcessor, bool &needsRedraw);
+	Common::Error killDebugActiveMonster(const Common::Point &mousePos, bool &needsRedraw);
 
-	Common::Error updateRoomMonsterCombat(HarvesterEngine &engine, RoomSetupState &state,
-		Player &player, EntityManager *entityManager,
-		SceneEntities &sceneRuntime, CombatEffects &combatEffects, const CheatSystem &cheats,
-		InteractionCallbacks &callbacks, Interaction &interactionProcessor, bool &needsRedraw);
-	Common::Error resolvePlayerAttackContact(HarvesterEngine &engine,
-		RoomSetupState &state, Player &player,
-		EntityManager *entityManager, SceneEntities &sceneRuntime,
-		CombatEffects &combatEffects,
-		Interaction &interactionProcessor, bool &needsRedraw);
+	Common::Error updateRoomMonsterCombat(bool &needsRedraw);
+	Common::Error resolvePlayerAttackContact(bool &needsRedraw);
 
 private:
-	void resizeCombatStates(const RoomSetupState &state);
-	bool queueInnerSanctumHerrillDeathAfterMuck(HarvesterEngine &engine, RoomSetupState &state, const MonsterRecord &monster) const;
+	void resizeCombatStates();
+	bool queueInnerSanctumHerrillDeathAfterMuck(const MonsterRecord &monster) const;
 	// Called after resizeCombatStates; NPC finalization ends the entire combat update.
-	NpcCombatUpdateResult updateRoomNpcCombat(HarvesterEngine &engine, RoomSetupState &state,
-		EntityManager *entityManager, SceneEntities &sceneRuntime,
-		Interaction &interactionProcessor, bool &needsRedraw);
+	NpcCombatUpdateResult updateRoomNpcCombat(bool &needsRedraw);
 
-	bool beginNpcDeathTransition(HarvesterEngine &engine,
-		NpcRecord &npc, Entity &npcEntity, NpcCombatState &combatState, int deathDamageType, bool &needsRedraw) const;
-	Common::Error finalizeNpcDeathTransition(HarvesterEngine &engine,
-		EntityManager *entityManager, SceneEntities &sceneRuntime, NpcRecord &npc, NpcCombatState &combatState,
-		Interaction &interactionProcessor, bool &needsRedraw) const;
+	bool beginNpcDeathTransition(NpcRecord &npc, Entity &npcEntity, NpcCombatState &combatState,
+		int deathDamageType, bool &needsRedraw) const;
+	Common::Error finalizeNpcDeathTransition(NpcRecord &npc, NpcCombatState &combatState, bool &needsRedraw) const;
 
-	void startMonsterHitReaction(HarvesterEngine &engine,
-		CombatEffects &combatEffects, MonsterRecord &monster, Entity &monsterEntity, MonsterCombatState *combatState,
+	void startMonsterHitReaction(MonsterRecord &monster, Entity &monsterEntity, MonsterCombatState *combatState,
 		int attackerAttackFirstFrame, bool &needsRedraw) const;
 
-	MonsterRecord *findMonsterTargetAtPoint(RoomSetupState &state, EntityManager *entityManager, const Common::Point &point) const;
-	MonsterRecord *findOverlappingMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState, EntityManager *entityManager) const;
-	NpcRecord *findOverlappingNpcTarget(RoomSetupState &state, const RoomPlayerState &playerState, EntityManager *entityManager) const;
-	bool playerAttackCanReachTarget(RoomSetupState &state, const RoomPlayerState &playerState, Entity *targetEntity, int engageDistance = 0) const;
-	MonsterRecord *findProjectileContactMonsterTarget(RoomSetupState &state, const RoomPlayerState &playerState,
-		EntityManager *entityManager) const;
+	MonsterRecord *findMonsterTargetAtPoint(const Common::Point &point) const;
+	MonsterRecord *findOverlappingMonsterTarget() const;
+	NpcRecord *findOverlappingNpcTarget() const;
+	bool playerAttackCanReachTarget(Entity *targetEntity, int engageDistance = 0) const;
+	MonsterRecord *findProjectileContactMonsterTarget() const;
 
+	HarvesterEngine &_engine;
+	// Refresh assigns new room data into this scene object.
+	SceneState &_scene;
+	Player &_player;
+	EntityManager *const _entityManager;
+	SceneEntities &_sceneRuntime;
+	CombatEffects &_combatEffects;
+	const CheatSystem &_cheats;
+	InteractionCallbacks &_callbacks;
+	Interaction &_interactionProcessor;
 	Common::Array<MonsterCombatState> _monsterCombatStates;
 	Common::Array<NpcCombatState> _npcCombatStates;
 };

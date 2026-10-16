@@ -126,7 +126,6 @@ private:
 	InventorySystem &_inventory;
 	SceneEntities _sceneRuntime;
 	Player _player;
-	Combat _combat;
 	CombatEffects _combatEffects;
 	InputState _inputState;
 	Common::String _pendingRegionName;
@@ -138,6 +137,7 @@ private:
 	ItemInteractions _roomItems;
 	RoomPresentation _presentation;
 	Interaction _interactionProcessor;
+	Combat _combat;
 };
 
 } // End of namespace Harvester
