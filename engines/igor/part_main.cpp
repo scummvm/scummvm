@@ -562,7 +562,11 @@ void IgorEngine::partMain() {
 		case 210:
 		case 211:
 		case 212:
-			part21(); //college corridor margaret
+			if (_game.version == kIdSpaFloppy) {
+				part21Floppy();
+			} else {
+				part21(); //college corridor margaret
+			}
 			break;
 		case 220:
 		case 221:

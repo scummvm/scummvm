@@ -1097,6 +1097,27 @@ private:
 	void part21MargaretTakesNote();
 	void part21SetMargaretBackgroundFrame(int frame);
 	void part21();
+	void part21Floppy();
+	void part21FloppyExecuteAction(int action);
+	void part21FloppyLeaveLeft();
+	void part21FloppyLeaveRight();
+	void part21FloppyTalkToMargaret();
+	void part21FloppyOpenPhysicsDoor();
+	void part21FloppyClosePhysicsDoor();
+	void part21FloppyUseNoteWithSandwiches();
+	void part21FloppyEnterPhysicsClass();
+	void part21FloppyUpdateBackground();
+	void part21FloppyUpdateMargaretDialogue(int action);
+	void part21FloppyUpdateMargaretNoteDialogue(int action);
+	void part21FloppyHandleMargaretDialogue();
+	void part21FloppyApplyObjectState(int num);
+	void part21FloppyEnterFromLeft();
+	void part21FloppyEnterFromRight();
+	void part21FloppyEnterFromPhysicsClass();
+	void part21FloppyDrawMargaretFrameComposited(int frame);
+	void part21FloppyDrawMargaretHead(int frame);
+	void part21FloppyDrawMargaretNoteHead(int frame);
+	void part21FloppyMargaretTakesNote();
 
 	// church bell tower
 	void part22ExecuteAction(int action);
@@ -1793,6 +1814,7 @@ protected:
 	static const RoomDataOffsets PART_18_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_19_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_21_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_21_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_22_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_23_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_24_ROOM_DATA_OFFSETS;

@@ -872,4 +872,15 @@
 #define DAT_FloppySentenceColors 1246
 #define IMG_FloppyTitleBackdrop 1249
 
+// Margaret's frames are more in the Spanish Floppy version so we
+// need new ids
+#define FRM_CollegeCorridorMargaretFloppy1 1259
+#define FRM_CollegeCorridorMargaretFloppy2 1260
+#define FRM_CollegeCorridorMargaretFloppy3 1261
+#define FRM_CollegeCorridorMargaretFloppy4 1262
+#define FRM_CollegeCorridorMargaretFloppy5 1263
+#define FRM_CollegeCorridorMargaretFloppy6 1264
+#define FRM_CollegeCorridorMargaretFloppy7 1265
+#define FRM_CollegeCorridorMargaretFloppy8 1266
+
 #endif // IGOR_RESOURCE_IDS
