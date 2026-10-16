@@ -275,9 +275,13 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand06(int mode) {
 				}
 			}
 
-			// Ghidra 0x00002BEC-0x00002BF1: the indexed destination extension writes record +0x00
-			// for both signed fixed-position-index outcomes; UpdateActorAnimationFrames preserves D0/A0.
-			roomObject.TilePatchIndex = animationOffset;
+			// Ghidra 0x00002BEC-0x00002BF1: MOVE.W (4,A5),(0,A0) (opcode 0x316D) uses the plain
+			// (d16,An) destination mode, not an indexed one. A0 still holds the table base 0xFF1200, so
+			// for both signed fixed-position-index outcomes the original writes record +0x00 of room
+			// object 0, not of the selected object. The selected object's tile-patch word (which the actor
+			// initializers use as its animation) is deliberately left unchanged; e.g. the mine cart keeps
+			// its repaired animation 3 while its actor plays the riding animation during the room 6 -> 18 trip.
+			_state.RoomObjects[0].TilePatchIndex = animationOffset;
 			break;
 		}
 		}
