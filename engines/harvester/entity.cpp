@@ -66,39 +66,8 @@ static void scaleIndexedBitmapNearest(const IndexedBitmap &source, IndexedBitmap
 
 static void blitAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames, uint frameIndex,
 		int x, int y) {
-	if (frameIndex >= frames.size() || !frames[frameIndex].isValid())
-		return;
-
-	const AbmFrame &frame = frames[frameIndex];
-	int destX = x;
-	int destY = y;
-	int srcX = 0;
-	int srcY = 0;
-	int width = (int)frame.width;
-	int height = (int)frame.height;
-
-	if (destX < 0) {
-		srcX = -destX;
-		width += destX;
-		destX = 0;
-	}
-	if (destY < 0) {
-		srcY = -destY;
-		height += destY;
-		destY = 0;
-	}
-	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
-		return;
-
-	width = MIN<int>(width, screen.w - destX);
-	height = MIN<int>(height, screen.h - destY);
-	if (width <= 0 || height <= 0)
-		return;
-
-	const byte *src = frame.pixels.data() + srcY * frame.width + srcX;
-	byte *dst = (byte *)screen.getBasePtr(destX, destY);
-	Graphics::keyBlit(dst, src, screen.pitch, frame.width, width, height,
-		screen.format.bytesPerPixel, kTransparentPaletteIndex);
+	if (frameIndex < frames.size())
+		blitTransparentBitmap(screen, frames[frameIndex], x, y);
 }
 
 } // End of anonymous namespace

@@ -32,7 +32,6 @@
 #include "common/ptr.h"
 #include "common/serializer.h"
 #include "common/system.h"
-#include "graphics/blit.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
@@ -584,26 +583,6 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 		return;
 
 	screen.copyRectToSurface(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
-}
-
-static void blitTransparentBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap,
-		int x, int y) {
-	if (!bitmap.isValid())
-		return;
-
-	for (uint32 srcY = 0; srcY < bitmap.height; ++srcY) {
-		const int destY = y + (int)srcY;
-		if (destY < 0 || destY >= screen.h)
-			continue;
-		for (uint32 srcX = 0; srcX < bitmap.width; ++srcX) {
-			const int destX = x + (int)srcX;
-			if (destX < 0 || destX >= screen.w)
-				continue;
-			const byte color = bitmap.pixels[srcY * bitmap.width + srcX];
-			if (color != 0)
-				*(byte *)screen.getBasePtr(destX, destY) = color;
-		}
-	}
 }
 
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap) {

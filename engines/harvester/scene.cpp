@@ -117,7 +117,7 @@ static void drawCombatLoadoutResourceIcons(Graphics::Screen &screen, const Art &
 
 	const int iconCount = CLIP<int>(script.getPlayerCombatResourceCount(loadout), 0, info.maxVisibleCount);
 	for (int i = 0; i < iconCount; ++i)
-		RoomPresentation::blitBitmap(screen, icon, kNativeCombatResourceIconsX + i * kNativeCombatResourceIconSpacing,
+		blitTransparentBitmap(screen, icon, kNativeCombatResourceIconsX + i * kNativeCombatResourceIconSpacing,
 			kNativeCombatResourceIconsY);
 }
 
@@ -562,7 +562,7 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 	} else if (roomCarryActive && _roomItems.getCarriedRoomItemBitmap().isValid()) {
 		const int drawX = _flow._mousePos.x - (int)_roomItems.getCarriedRoomItemBitmap().width / 2;
 		const int drawY = _flow._mousePos.y - (int)_roomItems.getCarriedRoomItemBitmap().height / 2;
-		RoomPresentation::blitBitmap(*activeScreen, _roomItems.getCarriedRoomItemBitmap(), drawX, drawY);
+		blitTransparentBitmap(*activeScreen, _roomItems.getCarriedRoomItemBitmap(), drawX, drawY);
 	}
 
 	if (_presentationState.showingInspectText) {

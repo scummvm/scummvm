@@ -23,7 +23,6 @@
 
 #include "common/algorithm.h"
 #include "common/debug.h"
-#include "graphics/blit.h"
 #include "graphics/font.h"
 #include "graphics/screen.h"
 #include "harvester/detection.h"
@@ -43,7 +42,6 @@ static const int kInventoryItemStartX = 73;
 static const int kInventoryItemStartY = 115;
 static const int kInventoryItemMaxRight = 564;
 static const int kInventoryItemSpacing = 5;
-static const byte kTransparentPaletteIndex = 0;
 static const char *const kHarvestBladeObjectName = "HARVEST_BLADE";
 
 struct InventoryCombatLoadoutEntry {
@@ -112,41 +110,6 @@ static const char *const kInventoryObjectActionItems[] = {
 	"ST_COUGHM",
 	"ST_VITAMN"
 };
-
-static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
-	if (!bitmap.isValid())
-		return;
-
-	int destX = x;
-	int destY = y;
-	int srcX = 0;
-	int srcY = 0;
-	int width = (int)bitmap.width;
-	int height = (int)bitmap.height;
-
-	if (destX < 0) {
-		srcX = -destX;
-		width += destX;
-		destX = 0;
-	}
-	if (destY < 0) {
-		srcY = -destY;
-		height += destY;
-		destY = 0;
-	}
-	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
-		return;
-
-	width = MIN<int>(width, screen.w - destX);
-	height = MIN<int>(height, screen.h - destY);
-	if (width <= 0 || height <= 0)
-		return;
-
-	const byte *src = bitmap.pixels.data() + srcY * bitmap.width + srcX;
-	byte *dst = (byte *)screen.getBasePtr(destX, destY);
-	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
-		screen.format.bytesPerPixel, kTransparentPaletteIndex);
-}
 
 static Common::Rect getHotspotBounds(const ObjectRecord &object) {
 	if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
@@ -526,7 +489,7 @@ void InventorySystem::drawSelectedDragItem(Graphics::Screen &screen, const Commo
 
 		const int drawX = point.x - (int)item.bitmap.width / 2;
 		const int drawY = point.y - (int)item.bitmap.height / 2;
-		blitBitmap(screen, item.bitmap, drawX, drawY);
+		blitTransparentBitmap(screen, item.bitmap, drawX, drawY);
 		return;
 	}
 }
@@ -536,13 +499,13 @@ void InventorySystem::drawOverlay(Graphics::Screen &screen) const {
 	if (!art)
 		return;
 
-	blitBitmap(screen, art->getInventoryBitmap(), kInventoryX, kInventoryY);
+	blitTransparentBitmap(screen, art->getInventoryBitmap(), kInventoryX, kInventoryY);
 
 	for (const InventoryVisual &item : _items) {
 		if (!_selectedItemName.empty() && item.object.objectName.equalsIgnoreCase(_selectedItemName))
 			continue;
 		if (item.hasBitmap && item.bitmap.isValid())
-			blitBitmap(screen, item.bitmap, item.object.currentX, item.object.currentY);
+			blitTransparentBitmap(screen, item.bitmap, item.object.currentX, item.object.currentY);
 	}
 }
 

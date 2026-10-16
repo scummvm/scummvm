@@ -24,6 +24,10 @@
 
 #include "common/array.h"
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace Harvester {
 
 struct IndexedBitmap {
@@ -40,6 +44,9 @@ struct AbmFrame : IndexedBitmap {
 	int32 xOffset = 0;
 	int32 yOffset = 0;
 };
+
+// Draw unscaled pixels with index 0 transparent; callers supply the final position.
+void blitTransparentBitmap(Graphics::ManagedSurface &surface, const IndexedBitmap &bitmap, int x, int y);
 
 // Callers choose when to clear output. Failed decoding can leave partial header or frame data.
 bool decodeBitmap(const Common::Array<byte> &data, IndexedBitmap &bitmap);

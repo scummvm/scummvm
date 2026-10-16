@@ -66,7 +66,6 @@ public:
 	bool captureDialogueBackdrop(IndexedBitmap &dialogueBackdrop);
 	Common::Error applyLightingCommand(StartupLightingCommand lightingCommand);
 	Common::Error runModalShowText(const ResolvedText &modalText, Flow &flow);
-	static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y);
 
 private:
 	HarvesterEngine &_engine;

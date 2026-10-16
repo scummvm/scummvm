@@ -26,7 +26,6 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "graphics/blit.h"
 #include "graphics/framelimiter.h"
 #include "harvester/art.h"
 #include "harvester/detection.h"
@@ -38,7 +37,6 @@
 
 namespace Harvester {
 
-static const byte kTransparentPaletteIndex = 0;
 static const float kNormalPaletteBrightness = 1.0f;
 static const float kDimPaletteBrightness = 0.6f;
 
@@ -56,41 +54,6 @@ static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, 
 	const float gammaBrightness = g_engine ? g_engine->getGammaBrightnessScale() : 1.0f;
 	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
 	screen.setPalette(scaledPalette);
-}
-
-void RoomPresentation::blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
-	if (!bitmap.isValid())
-		return;
-
-	int destX = x;
-	int destY = y;
-	int srcX = 0;
-	int srcY = 0;
-	int width = (int)bitmap.width;
-	int height = (int)bitmap.height;
-
-	if (destX < 0) {
-		srcX = -destX;
-		width += destX;
-		destX = 0;
-	}
-	if (destY < 0) {
-		srcY = -destY;
-		height += destY;
-		destY = 0;
-	}
-	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
-		return;
-
-	width = MIN<int>(width, screen.w - destX);
-	height = MIN<int>(height, screen.h - destY);
-	if (width <= 0 || height <= 0)
-		return;
-
-	const byte *src = bitmap.pixels.data() + srcY * bitmap.width + srcX;
-	byte *dst = (byte *)screen.getBasePtr(destX, destY);
-	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
-		screen.format.bytesPerPixel, kTransparentPaletteIndex);
 }
 
 RoomPresentation::RoomPresentation(HarvesterEngine &engine, SceneState &scene,
@@ -208,7 +171,7 @@ Common::Error RoomPresentation::runModalShowText(const ResolvedText &modalText, 
 		if (!initialInputReleased && frameCount++ > 0)
 			initialInputReleased = true;
 
-		blitBitmap(*activeScreen, backdrop, 0, 0);
+		blitTransparentBitmap(*activeScreen, backdrop, 0, 0);
 		setScaledRoomPalette(*activeScreen, _scene.palette, _scene.targetPaletteBrightness);
 		drawRoomInspectText(*activeScreen, *_art, *_inspectFont, modalText, _useNativeInspectFont);
 		activeScreen->makeAllDirty();

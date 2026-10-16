@@ -22,7 +22,6 @@
 #include "harvester/art.h"
 
 #include "common/debug.h"
-#include "graphics/blit.h"
 #include "graphics/screen.h"
 #include "harvester/detection.h"
 #include "harvester/palette_utils.h"
@@ -194,41 +193,6 @@ bool Art::loadAnimation(ResourceManager &resources, const Common::String &path, 
 
 	debug(1, "Harvester: loaded %u frames from '%s'", (uint)frames.size(), path.c_str());
 	return true;
-}
-
-void Art::blitTransparentBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) const {
-	if (!bitmap.isValid())
-		return;
-
-	int srcX = 0;
-	int srcY = 0;
-	int destX = x;
-	int destY = y;
-	int width = (int)bitmap.width;
-	int height = (int)bitmap.height;
-
-	if (destX < 0) {
-		srcX = -destX;
-		width += destX;
-		destX = 0;
-	}
-	if (destY < 0) {
-		srcY = -destY;
-		height += destY;
-		destY = 0;
-	}
-	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
-		return;
-
-	width = MIN<int>(width, screen.w - destX);
-	height = MIN<int>(height, screen.h - destY);
-	if (width <= 0 || height <= 0)
-		return;
-
-	const byte *src = bitmap.pixels.data() + srcY * bitmap.width + srcX;
-	byte *dst = (byte *)screen.getBasePtr(destX, destY);
-	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
-		screen.format.bytesPerPixel, kTransparentPaletteIndex);
 }
 
 void Art::blitTransparentAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames,

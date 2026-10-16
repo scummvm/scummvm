@@ -23,9 +23,23 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "graphics/managed_surface.h"
 #include "harvester/detection.h"
 
 namespace Harvester {
+
+void blitTransparentBitmap(Graphics::ManagedSurface &surface, const IndexedBitmap &bitmap, int x, int y) {
+	if (!bitmap.isValid() || x >= surface.w || y >= surface.h ||
+			x <= -(int)bitmap.width || y <= -(int)bitmap.height)
+		return;
+
+	Graphics::ManagedSurface source;
+	// Borrow the bitmap pixels without taking ownership.
+	source.surfacePtr()->init(bitmap.width, bitmap.height, bitmap.width,
+		const_cast<byte *>(bitmap.pixels.data()), Graphics::PixelFormat::createFormatCLUT8());
+	source.setTransparentColor(0);
+	surface.simpleBlitFrom(source, Common::Point(x, y));
+}
 
 namespace {
 
