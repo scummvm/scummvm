@@ -390,6 +390,33 @@ void IgorEngine::part17WalkFromCollege() {
 	if (!isCDVersion())
 		playMusic(2, true);
 	part17ApplyObjectState(255);
+	if (_game.version == kIdSpaFloppy) {
+		// The Spanish floppy college door leads to the hall: Igor appears at the foot of the steps and takes a single walk
+		WalkData &wd = _walkData[0];
+		wd.setPos(225, 100, 3, 1);
+		wd.clipSkipX = 1;
+		wd.clipWidth = 30;
+		wd.scaleWidth = 50;
+		wd.xPosChanged = 1;
+		wd.dxPos = 0;
+		wd.yPosChanged = 1;
+		wd.dyPos = 0;
+		wd.scaleHeight = 50;
+		_walkCurrentFrame = 1;
+		_walkDataCurrentIndex = 0;
+		_walkDataLastIndex = 0;
+		buildWalkPath(225, 100, 205, 124);
+		_walkData[_walkDataLastIndex].frameNum = 0;
+		_walkDataCurrentIndex = 1;
+		_gameState.igorMoving = true;
+		moveIgor(3, _walkData[1].frameNum);
+		++_walkDataCurrentIndex;
+		fadeIn(768);
+		waitForIgorMove(&IgorEngine::part17UpdateBackground);
+		part17ChangePathZIndex(0);
+		part17ClearEntryAreas();
+		return;
+	}
 	fadeIn(768);
 	_walkData[0].setPos(274, 68, 4, 1);
 	_walkData[0].setDefaultScale();

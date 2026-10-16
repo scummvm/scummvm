@@ -107,17 +107,20 @@ void IgorEngine::part80() {
 	part80Say(1, { { 216, 1, 1143 }, { 217, 1, 1144 } });
 	part80Say(0, { { 218, 1, 1145 } });
 	part80Say(1, { { 219, 1, 1146 }, { 220, 1, 1147 }, { 221, 1, 1148 } });
-	waitForTimer(255);
+	// The Spanish floppy has no animation of the friend falling and goes straight to the final holds
+	if (_game.version != kIdSpaFloppy) {
+		waitForTimer(255);
 
-	// left-most friend falls on the floor
-	for (int i = 1; i <= 4; ++i) {
-		copyArea(_screenVGA, kPart80FallingGirlOffset, 320,
-				 _animFramesBuffer + kPart80FallingGirlFramesBase + i * kPart80FallingGirlFrameSize, kPart80FallingGirlWidth,
-				 kPart80FallingGirlWidth, kPart80FallingGirlHeight);
-		if (i < 4) {
-			waitForTimer(21);
-		} else {
-			playSound(15, 1);
+		// left-most friend falls on the floor
+		for (int i = 1; i <= 4; ++i) {
+			copyArea(_screenVGA, kPart80FallingGirlOffset, 320,
+					 _animFramesBuffer + kPart80FallingGirlFramesBase + i * kPart80FallingGirlFrameSize, kPart80FallingGirlWidth,
+					 kPart80FallingGirlWidth, kPart80FallingGirlHeight);
+			if (i < 4) {
+				waitForTimer(21);
+			} else {
+				playSound(15, 1);
+			}
 		}
 	}
 	for (int i = 1; i <= 3; ++i) {

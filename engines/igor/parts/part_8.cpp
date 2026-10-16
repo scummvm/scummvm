@@ -190,6 +190,16 @@ void IgorEngine::part8DeanDrinksBottle() {
 	part8DrawDean();
 	for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
 		decodeAnimFrame(getAnimFrame(0x76DD, 0xD98, frames[i]), _screenVGA, true);
+		if (_game.version == kIdSpaFloppy) {
+			// The Spanish floppy shows the gulping while Dean drinks
+			if (i == 3)
+				cutsceneSayStart(78, 75, 26, 58, 0, 228, 1, 0);
+			if (i == 22) {
+				memcpy(_screenVGA + _dialogueDirtyRectY,
+						_screenTextLayer + 320 * 72, _dialogueDirtyRectSize);
+				_gameState.dialogueTextRunning = false;
+			}
+		}
 		waitForTimer(31);
 	}
 }
@@ -317,16 +327,25 @@ void IgorEngine::part8ExecuteAction(int action) {
 			waitForIgorMove();
 			uint8 &pendingDeanDrink = _objectsState[kPendingDeanDrinkStateIndex];
 			if (pendingDeanDrink != kPart08PendingDeanDrinkNone) {
-				waitForTimer(251);
+				if (_game.version != kIdSpaFloppy)
+					waitForTimer(251);
 				part8DeanDrinksBottle();
 				const bool bottleCaught = _objectsState[kButterflyNetStateIndex] == 1;
 				if (bottleCaught)
 					_objectsState[kButterflyNetStateIndex] = 2;
 				else
 					_objectsState[kGlassShardsPresentStateIndex] = 1;
-				waitForTimer(101);
-				if (!bottleCaught)
-					playSound(16, 1);
+				if (_game.version == kIdSpaFloppy) {
+					// Only the shards fall with a pause and a sound
+					if (!bottleCaught) {
+						waitForTimer(100);
+						playSound(16, 1);
+					}
+				} else {
+					waitForTimer(101);
+					if (!bottleCaught)
+						playSound(16, 1);
+				}
 				if (pendingDeanDrink == kPart08PendingDeanDrinkWater) {
 					part8DeanPassesOut();
 					_objectsState[kDeanPassedOutStateIndex] = 1;
