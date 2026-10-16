@@ -1278,6 +1278,10 @@ private:
 	void part31DrawOpenDoor();
 	void part31();
 	void part31Floppy();
+	void part20Floppy();
+	void part20FloppyExecuteAction(int action);
+	void part20FloppyEnterFromLeft();
+	void part20FloppyEnterFromRight();
 	void part31FloppyExecuteAction(int action);
 	void part31FloppyEnterAstronomyLab();
 	void part31FloppyOpenDoor();
@@ -1851,6 +1855,7 @@ protected:
 	static const RoomDataOffsets PART_30_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_31_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_31_FLOPPY_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_20_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_32_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_33_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_34_ROOM_DATA_OFFSETS;

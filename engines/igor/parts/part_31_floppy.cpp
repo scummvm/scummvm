@@ -238,10 +238,8 @@ void IgorEngine::part31FloppyEnterFromRight() {
 }
 
 void IgorEngine::part31Floppy() {
-	// The room does not select any music, the current music keeps playing
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_CollegeStairsSecondFloor, IMG_CollegeStairsSecondFloor, BOX_CollegeStairsSecondFloor, MSK_CollegeStairsSecondFloor, TXT_CollegeStairsSecondFloor);
-	// The room palette leaves Igor's colors empty: the room loader fills them from Igor's palette
 	memcpy(_paletteBuffer + 192 * 3, _igorPalette, 48);
 	static const int anm[] = { FRM_CollegeStairsSecondFloorFloppy1, FRM_CollegeStairsSecondFloorFloppy2, 0 };
 	loadAnimData(anm);

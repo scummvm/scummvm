@@ -569,6 +569,13 @@ void IgorEngine::partMain() {
 		case 191:
 			part19(); // women toilets
 			break;
+		case 200: // exist only in the Spanish floppy version
+		case 201:
+			if (_game.version != kIdSpaFloppy) {
+				error("partMain() Unhandled part %d", _currentPart);
+			}
+			part20Floppy();
+			break;
 		case 210:
 		case 211:
 		case 212:
