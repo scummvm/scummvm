@@ -241,12 +241,13 @@ void Entity::setAnimationEnabled(bool enabled) {
 	}
 }
 
-void Entity::setCurrentFrame(int frame) {
+void Entity::setCurrentFrame(int frame, bool preserveScreenBase) {
 	if (_frames.empty())
 		return;
 
 	advanceAnimationFrame(frame);
-	updateScreenBaseFromCurrentFrame();
+	if (!preserveScreenBase)
+		updateScreenBaseFromCurrentFrame();
 }
 
 void Entity::setAnimationFrameRange(int firstFrame, int lastFrame, bool looping) {
@@ -900,10 +901,6 @@ Entity *EntityManager::spawnSceneAnimationEntity(const Common::String &name,
 	if (!entity)
 		return nullptr;
 
-	// Native room ANIM entities center the initially shown frame on the record
-	// x/y pivot, lower the render-list depth anchor by half z_extent, and then
-	// keep that cached screen base while later frame ABM x/y offsets shift the
-	// final draw rect.
 	entity->setAnchorMode(kEntityAnchorCentered);
 	entity->setZExtent(3.0f);
 	entity->setPosition(position.x, position.y, z - floorf(MAX<float>(entity->getZExtent(), 0.0f) * 0.5f));
@@ -913,7 +910,7 @@ Entity *EntityManager::spawnSceneAnimationEntity(const Common::String &name,
 	int startFrame = playBackwards ? entity->getLastFrame() : 0;
 	if (!playBackwards && initialFrame >= 0)
 		startFrame = CLIP<int>(initialFrame, 0, entity->getLastFrame());
-	entity->setCurrentFrame(startFrame);
+	entity->setCurrentFrame(startFrame, true);
 	// Non-looping room ANIM records can be authored visible but are started by SET_ANIM.
 	const bool shouldAdvance = active && (looping || initialFrame >= 0);
 	entity->setAnimationEnabled(shouldAdvance);

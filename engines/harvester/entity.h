@@ -92,7 +92,7 @@ public:
 	int getAnimationRate() const { return _animationRate; }
 	void setAnimationEnabled(bool enabled);
 	bool isAnimationEnabled() const { return _animationEnabled; }
-	void setCurrentFrame(int frame);
+	void setCurrentFrame(int frame, bool preserveScreenBase = false);
 	int getCurrentFrame() const { return _currentFrame; }
 	int getLastFrame() const { return _lastFrame; }
 	uint getFrameCount() const { return _frames.size(); }
