@@ -1204,6 +1204,15 @@ private:
 	void part25DrawClosedDoor();
 	void part25DrawOpenDoor();
 	void part25();
+	void part25Floppy();
+	void part25FloppyExecuteAction(int action);
+	void part25FloppyEnterMensToilet();
+	void part25FloppyOpenDoor();
+	void part25FloppyCloseDoor();
+	void part25FloppyApplyObjectState(int num);
+	void part25FloppyEnterFromLeft();
+	void part25FloppyEnterFromRight();
+	void part25FloppyEnterFromMensToilet();
 
 	// college corridor miss barrymore
 	void part26ExecuteAction(int action);
@@ -1890,6 +1899,7 @@ protected:
 	static const RoomDataOffsets PART_23_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_24_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_25_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_25_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_26_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_27_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_28_ROOM_DATA_OFFSETS;
