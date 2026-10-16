@@ -1248,6 +1248,15 @@ private:
 	void part27DrawOpenLocker();
 	void part27EnterFromLibrary();
 	void part27();
+	void part27Floppy();
+	void part27FloppyExecuteAction(int action);
+	void part27FloppyDrawLockerFrame(int frame);
+	void part27FloppyOpenPhilipLocker();
+	void part27FloppyClosePhilipLocker();
+	void part27FloppyTakeBottle();
+	void part27FloppyUseFlaskOnLocker();
+	void part27FloppyApplyObjectState(int num);
+	void part27FloppyEnterFromLeft();
 
 	// college corridor caroline
 	void part28ExecuteAction(int action);
@@ -1911,6 +1920,7 @@ protected:
 	static const RoomDataOffsets PART_26_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_26_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_27_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_27_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_28_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_30_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_30_FLOPPY_ROOM_DATA_OFFSETS;

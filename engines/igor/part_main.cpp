@@ -626,7 +626,11 @@ void IgorEngine::partMain() {
 			break;
 		case 270:
 		case 271:
-			part27();
+			if (_game.version == kIdSpaFloppy) {
+				part27Floppy();
+			} else {
+				part27();
+			}
 			break;
 		case 280:
 		case 281:
