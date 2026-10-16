@@ -108,7 +108,7 @@ void IgorEngine::part18UseBottleOnTap() {
 	drawAnimRect(offset, 0xF0A, 28, 29);
 	playSound(47, 1);
 	for (int i = 1; i <= 2; ++i) {
-		waitForTimer(200);
+		waitForTimer(_game.version == kIdSpaFloppy ? 120 : 200);
 	}
 	drawAnimRect(offset, 0xBDE, 28, 29);
 	igorSay(213, 2, 907);

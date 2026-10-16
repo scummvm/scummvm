@@ -300,7 +300,7 @@ void IgorEngine::part68GiveRecordsToBoris() {
 	part68SayBoris({ { 215, 1, 1020 }, { 216, 1, 1021 }, { 217, 1, 1022 }, { 218, 1, 1023 } });
 	for (int frame = 1; frame <= 3; ++frame) {
 		drawAnimRect(kPart68GiveAnimOffset, kPart68GiveFramesOffset + frame * kPart68GiveFrameSize, kPart68GiveWidth, kPart68GiveHeight);
-		waitForTimer(40);
+		waitForTimer(_game.version == kIdSpaFloppy ? 60 : 40);
 	}
 	part68SayBoris({ { 219, 1, 1024 }, { 220, 1, 1025 }, { 221, 1, 1026 }, { 222, 1, 1027 } });
 	part68DrawUndertaker(kPart68BorisFacing);
