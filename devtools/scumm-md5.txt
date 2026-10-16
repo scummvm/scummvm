@@ -938,6 +938,7 @@ puttputt	Putt-Putt Joins the Parade
 	be2abe172f58db170de3a037daa1dd27	-1	ja	3DO	HE 61	-	-	clone2727
 	ee41f6afbc5b26fa475754b56fe92048	8032	ja	3DO	HE 61	-	-	George Kormendi
 	9708cf716ed8bcc9ff3fcfc69413b746	8117	en	DOS	HE 62	-	-	khalek
+	be0b1191b42109c30b8d9122dae0bef5	8117	en	DOS	HE 62	Floppy v1.1	-	HerbFargus
 	e361a7058ed8e8ebb462663c0a3ae8d6	-1	he	DOS	HE 62	-	-	sev
 	684732efb5799c0f78804c99d8de9aba	-1	en	Mac	HE 62	-	-	khalek
 	3b7c14d1ffba2f56fe7cc18bf938173e	8112	en	Mac	HE 60	Floppy	-	HerbFargus
