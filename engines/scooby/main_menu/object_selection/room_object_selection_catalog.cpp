@@ -24,13 +24,13 @@
 namespace Scooby {
 
 RoomObjectSelectionCatalog::RoomObjectSelectionCatalog(const ScoobyDooRom &rom)
-	: _episodeLabels(kEpisodeCount) {
-	for (int episodeIndex = 0; episodeIndex < static_cast<int>(_episodeLabels.size()); episodeIndex++) {
-		_episodeLabels[static_cast<std::size_t>(episodeIndex)] = decodeEpisode(rom, episodeIndex);
+	: _episodeObjectLabels(kEpisodeCount) {
+	for (int episodeIndex = 0; episodeIndex < static_cast<int>(_episodeObjectLabels.size()); episodeIndex++) {
+		_episodeObjectLabels[static_cast<std::size_t>(episodeIndex)] = decodeEpisodeObjectLabels(rom, episodeIndex);
 	}
 }
 
-Common::Array<Common::String> RoomObjectSelectionCatalog::decodeEpisode(
+Common::Array<Common::String> RoomObjectSelectionCatalog::decodeEpisodeObjectLabels(
 	const ScoobyDooRom &rom, int episodeIndex) {
 	int descriptorOffset =
 		static_cast<int>(rom.readUInt32(kDescriptorTableOffset + episodeIndex * static_cast<int>(sizeof(uint32))));

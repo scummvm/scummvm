@@ -50,7 +50,7 @@ public:
 	// episodeIndex: managed equivalent of original episode word 0xFF06AA.
 	// Returns all labels for the selected episode's room-object records.
 	Span<const Common::String> getLabels(int episodeIndex) const {
-		return MakeSpan(_episodeLabels[static_cast<std::size_t>(episodeIndex)]);
+		return MakeSpan(_episodeObjectLabels[static_cast<std::size_t>(episodeIndex)]);
 	}
 
 private:
@@ -68,9 +68,9 @@ private:
 	static const uint16 kSourceHasExtendedDataMask = 0x0200;
 	static const int kSourceRecordSize = 14;
 
-	static Common::Array<Common::String> decodeEpisode(const ScoobyDooRom &rom, int episodeIndex);
+	static Common::Array<Common::String> decodeEpisodeObjectLabels(const ScoobyDooRom &rom, int episodeIndex);
 
-	Common::Array<Common::Array<Common::String>> _episodeLabels;
+	Common::Array<Common::Array<Common::String>> _episodeObjectLabels;
 };
 } // namespace Scooby
 
