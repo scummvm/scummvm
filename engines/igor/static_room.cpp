@@ -249,6 +249,23 @@ const RoomDataOffsets IgorEngine::PART_30_ROOM_DATA_OFFSETS = {
 	}
 };
 
+const RoomDataOffsets IgorEngine::PART_30_FLOPPY_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 },
+	{ 3, 12 },
+	{ 15, 187, 3063, 79, 155, 80 },
+	{
+		-90,
+		9,
+		1489,
+		11,
+		30,
+		90,
+		2711,
+		2729,
+		11
+	}
+};
+
 const RoomDataOffsets IgorEngine::PART_31_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },
 	{ 79, 96 },
