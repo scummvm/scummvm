@@ -360,6 +360,12 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 		return;
 	}
 
+	// Nancy19 and up play nothing for a sound named "silence", which only
+	// stops the channel
+	if (g_nancy->getGameType() >= kGameTypeNancy19 && soundName == "silence") {
+		return;
+	}
+
 	Common::Path path(soundName + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(path);
 	if (file) {
