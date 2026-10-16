@@ -133,7 +133,8 @@ bool readHISHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &
 	size = stream->readUint32LE();
 
 	if (hasType) {
-		uint16 tp = stream->readUint16LE();
+		// Nancy20 made the type 32 bits wide
+		uint32 tp = g_nancy->getGameType() >= kGameTypeNancy20 ? stream->readUint32LE() : stream->readUint16LE();
 		switch (tp) {
 		case 1:
 			type = kSoundTypeRaw;
@@ -142,7 +143,7 @@ bool readHISHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &
 			type = kSoundTypeOgg;
 			break;
 		default:
-			warning("Unsupported sound type %d found in HIS file", tp);
+			warning("Unsupported sound type %u found in HIS file", tp);
 			return false;
 		}
 	} else
