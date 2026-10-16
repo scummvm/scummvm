@@ -1172,6 +1172,15 @@ private:
 	void part24EnterFromRight();
 	void part24EnterFromChemistryClass();
 	void part24();
+	void part24Floppy();
+	void part24FloppyExecuteAction(int action);
+	void part24FloppyEnterChemistryClass();
+	void part24FloppyOpenDoor();
+	void part24FloppyCloseDoor();
+	void part24FloppyApplyObjectState(int num);
+	void part24FloppyEnterFromLeft();
+	void part24FloppyEnterFromRight();
+	void part24FloppyEnterFromChemistryClass();
 
 
 	// college corridor announcement board
@@ -1869,6 +1878,7 @@ protected:
 	static const RoomDataOffsets PART_31_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_31_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_20_FLOPPY_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_24_FLOPPY_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_32_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_33_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_34_ROOM_DATA_OFFSETS;

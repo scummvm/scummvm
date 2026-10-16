@@ -883,6 +883,9 @@
 #define FRM_CollegeCorridorMargaretFloppy7 1265
 #define FRM_CollegeCorridorMargaretFloppy8 1266
 
+#define FRM_CollegeCorridorChemistryClassFloppy1 1269
+#define FRM_CollegeCorridorChemistryClassFloppy2 1270
+
 #define FRM_CollegeStairsSecondFloorFloppy1 1273
 #define FRM_CollegeStairsSecondFloorFloppy2 1274
 
@@ -892,5 +895,11 @@
 #define PAL_CollegeCorridorMathClass 1279
 #define MSK_CollegeCorridorMathClass 1280
 #define BOX_CollegeCorridorMathClass 1281
+#define DAT_CollegeCorridorChemistryClass 1282
+#define TXT_CollegeCorridorChemistryClass 1283
+#define IMG_CollegeCorridorChemistryClass 1284
+#define PAL_CollegeCorridorChemistryClass 1285
+#define MSK_CollegeCorridorChemistryClass 1286
+#define BOX_CollegeCorridorChemistryClass 1287
 
 #endif // IGOR_RESOURCE_IDS
