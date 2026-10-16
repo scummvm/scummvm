@@ -218,10 +218,21 @@ static const int kPart79Block3Frames = 0xC8B9;
 static const int kPart79Block3FloppyOffset = 53 * 320 + 93;
 static const int kPart79Block3FloppyWidth = 133;
 static const int kPart79Block3FloppyFrames = 0xCE34;
+// The Spanish floppy title blocks are smaller, lower on the screen and in a different color
+static const int kPart79Block1SpaFloppyOffset = 89 * 320 + 121;
+static const int kPart79Block1SpaFloppyWidth = 79;
+static const int kPart79Block1SpaFloppyHeight = 22;
+static const int kPart79Block1SpaFloppyMark1 = 0x73C0;
+static const int kPart79Block1SpaFloppyMark2 = 0x74FF;
+static const int kPart79Block3SpaFloppyOffset = 89 * 320 + 141;
+static const int kPart79Block3SpaFloppyWidth = 38;
+static const int kPart79Block3SpaFloppyHeight = 22;
+static const int kPart79Block3SpaFloppyFrames = 0xC76D;
 
 static const int kPart79FadeFirstColor = 0xF5;
 static const int kPart79FadeLastColor = 0xFE;
 static const uint8 kPart79FadeColors[6] = { 0x3F, 0x20, 0x00, 0x2C, 0x0C, 0x00 };
+static const uint8 kPart79SpaFloppyFadeColors[6] = { 0x00, 0x27, 0x19, 0x00, 0x12, 0x00 };
 
 void IgorEngine::part79DrawGroupFrame(const uint8 *buffer, int table, int base, int frame) {
 	decodeAnimFrame(buffer + base + READ_LE_UINT16(buffer + table + frame * 2) - 1, _screenVGA, false);
@@ -356,7 +367,7 @@ void IgorEngine::part79FadeColors(int first, int last, bool fadeInColors) {
 }
 
 void IgorEngine::part79FadeInPair(int firstColor) {
-	memcpy(_paletteBuffer + firstColor * 3, kPart79FadeColors, 6);
+	memcpy(_paletteBuffer + firstColor * 3, _game.version == kIdSpaFloppy ? kPart79SpaFloppyFadeColors : kPart79FadeColors, 6);
 	part79FadeColors(firstColor, firstColor + 1, true);
 }
 
@@ -499,13 +510,21 @@ void IgorEngine::part79BeachScene() {
 	// the second animation resource replaces the first one
 	loadData(ANM_Part79bScenes, _animFramesBuffer);
 	const bool englishFloppy = _game.version == kIdEngFloppy;
+	const bool spanishFloppy = _game.version == kIdSpaFloppy;
 	const int titleOffset = englishFloppy ? kPart79Block1FloppyOffset : kPart79Block1Offset;
 	const int titleWidth = englishFloppy ? kPart79Block1FloppyWidth : kPart79Block1Width;
-	copyArea(_screenVGA, titleOffset, 320, _animFramesBuffer + kPart79Block1Frames, titleWidth,
-			 titleWidth, kPart79Block1Height);
+	if (spanishFloppy) {
+		copyArea(_screenVGA, kPart79Block1SpaFloppyOffset, 320, _animFramesBuffer + kPart79Block1Frames, kPart79Block1SpaFloppyWidth,
+				 kPart79Block1SpaFloppyWidth, kPart79Block1SpaFloppyHeight);
+		memset(_screenVGA + kPart79Block1SpaFloppyMark1, 0xFE, 2);
+		memset(_screenVGA + kPart79Block1SpaFloppyMark2, 0xFE, 2);
+	} else {
+		copyArea(_screenVGA, titleOffset, 320, _animFramesBuffer + kPart79Block1Frames, titleWidth,
+				 titleWidth, kPart79Block1Height);
+	}
 
 	part79FadeInPair(0xF5);
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < (spanishFloppy ? 3 : 5); ++i) {
 		waitForTimer(255);
 	}
 	part79FadeInPair(0xF7);
@@ -557,10 +576,15 @@ void IgorEngine::part79BeachScene() {
 	const int finalTitleOffset = englishFloppy ? kPart79Block3FloppyOffset : kPart79Block3Offset;
 	const int finalTitleWidth = englishFloppy ? kPart79Block3FloppyWidth : kPart79Block3Width;
 	const int finalTitleFrames = englishFloppy ? kPart79Block3FloppyFrames : kPart79Block3Frames;
-	copyArea(_screenVGA, finalTitleOffset, 320, _animFramesBuffer + finalTitleFrames, finalTitleWidth,
-			 finalTitleWidth, kPart79Block3Height);
+	if (spanishFloppy) {
+		copyArea(_screenVGA, kPart79Block3SpaFloppyOffset, 320, _animFramesBuffer + kPart79Block3SpaFloppyFrames, kPart79Block3SpaFloppyWidth,
+				 kPart79Block3SpaFloppyWidth, kPart79Block3SpaFloppyHeight);
+	} else {
+		copyArea(_screenVGA, finalTitleOffset, 320, _animFramesBuffer + finalTitleFrames, finalTitleWidth,
+				 finalTitleWidth, kPart79Block3Height);
+	}
 	part79FadeColors(kPart79FadeFirstColor, kPart79FadeLastColor, true);
-	for (int i = 0; i < 8; ++i) {
+	for (int i = 0; i < (spanishFloppy ? 5 : 8); ++i) {
 		waitForTimer(255);
 	}
 	part79FadeColors(kPart79FadeFirstColor, kPart79FadeLastColor, false);
@@ -573,14 +597,16 @@ void IgorEngine::part79BeachScene() {
 void IgorEngine::part79() {
 	const bool savingWasAllowed = _canSaveGame;
 	_canSaveGame = false;
-	// the picture is shown below a black band
+	// the picture is shown below a black band (the Spanish floppy draws it at the top of the screen)
 	if (_currentPart == 790) {
 		memset(_screenVGA, 0, 64000);
 	}
-	uint8 band[320 * kPart79BandRows];
-	memset(band, 0, sizeof(band));
-	_system->copyRectToScreen(band, 320, 0, 0, 320, kPart79BandRows);
-	_screenVGAVOffset = kPart79BandRows;
+	if (_game.version != kIdSpaFloppy) {
+		uint8 band[320 * kPart79BandRows];
+		memset(band, 0, sizeof(band));
+		_system->copyRectToScreen(band, 320, 0, 0, 320, kPart79BandRows);
+		_screenVGAVOffset = kPart79BandRows;
+	}
 	if (_currentPart == 790) {
 		part79LauraInWater();
 	} else {
