@@ -572,7 +572,7 @@ void IgorEngine::drawDialogueChoices() {
 			int num = _gameState.dialogueData[offset + 3] - 1;
 			char questionText[128];
 			snprintf(questionText, sizeof(questionText), "@%s %s", _dialogueQuestions[num][0], _dialogueQuestions[num][1]);
-			_dialogueFont->drawString(_screenVGA, questionText, 0, _dialogueInfo[0] * 11 + 135, 240, 0, 0);
+			_sentenceFont->drawString(_screenVGA, questionText, 0, _dialogueInfo[0] * 11 + 135, 240, 0, 0);
 		}
 		debugC(9, kDebugEngine, "drawDialogueChoices() i %d state %d num %d", i, _gameState.dialogueData[offset], _gameState.dialogueData[offset + 3]);
 	}
