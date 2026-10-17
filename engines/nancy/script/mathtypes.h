@@ -57,6 +57,9 @@ struct ScriptMatrix {
 
 	// Whether the matrix does nothing but move things
 	bool isTranslation() const;
+
+	// The matrix that undoes this one; one that can't be undone comes back as it is
+	ScriptMatrix inverse() const;
 };
 
 void registerMathTypes(lua_State *L);
