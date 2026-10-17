@@ -26,14 +26,27 @@ namespace Igor {
 
 static int VAR_MARGARET_ROOM_ANIM_COUNTER;
 
+// The Spanish floppy has other animation blocks, so the tables are at other places
+static const int kMargaretBasePoseTable = 0x2A63;
+static const int kMargaretFramesBase = 0x2A75;
+static const int kMargaretFramesTable = 0xD887;
+static const int kMargaretFloppyBasePoseTable = 0x28A6;
+static const int kMargaretFloppyFramesBase = 0x28B8;
+static const int kMargaretFloppyFramesTable = 0xE338;
+
 void IgorEngine::partMargaretDrawBasePose() {
-	const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x2A63 + VAR_MARGARET_ROOM_ANIM_COUNTER * 2) - 1;
+	const bool floppy = _game.version == kIdSpaFloppy;
+	const int table = floppy ? kMargaretFloppyBasePoseTable : kMargaretBasePoseTable;
+	const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + table + VAR_MARGARET_ROOM_ANIM_COUNTER * 2) - 1;
 	decodeAnimFrame(src, _screenVGA);
 }
 
 void IgorEngine::partMargaretDrawFrame(int frame) {
+	const bool floppy = _game.version == kIdSpaFloppy;
 	const int offset = ((VAR_MARGARET_ROOM_ANIM_COUNTER - 1) * 5 + frame) * 2;
-	const uint8 *src = _animFramesBuffer + 0x2A75 + READ_LE_UINT16(_animFramesBuffer + offset + 0xD887) - 1;
+	const int base = floppy ? kMargaretFloppyFramesBase : kMargaretFramesBase;
+	const int table = floppy ? kMargaretFloppyFramesTable : kMargaretFramesTable;
+	const uint8 *src = _animFramesBuffer + base + READ_LE_UINT16(_animFramesBuffer + offset + table) - 1;
 	decodeAnimFrame(src, _screenVGA);
 }
 
@@ -54,6 +67,7 @@ void IgorEngine::partMargaret() {
 	if (isCDVersion())
 		playMusic(8);
 	_gameState.enableLight = 1;
+	const bool floppy = _game.version == kIdSpaFloppy;
 	VAR_MARGARET_ROOM_ANIM_COUNTER = _objectsState[kMargaretSceneStateIndex] + 1;
 	if (VAR_MARGARET_ROOM_ANIM_COUNTER == 9) {
 		VAR_MARGARET_ROOM_ANIM_COUNTER = 1;
@@ -110,14 +124,24 @@ void IgorEngine::partMargaret() {
 		break;
 	}
 	SET_DIALOGUE_TEXT(1, 3);
-	startCutsceneDialogue(200, 73, 63, 32, 0);
-	waitForEndOfCutsceneDialogue(200, 73, 63, 32, 0);
+	int textX = 200, textY = 73, textR = 63, textG = 32, textB = 0;
+	if (floppy) {
+		// The Spanish floppy shows the text elsewhere, in the color of palette entry 201
+		textX = 121;
+		textY = 62;
+		textR = _paletteBuffer[201 * 3];
+		textG = _paletteBuffer[201 * 3 + 1];
+		textB = _paletteBuffer[201 * 3 + 2];
+	}
+	startCutsceneDialogue(textX, textY, textR, textG, textB);
+	waitForEndOfCutsceneDialogue(textX, textY, textR, textG, textB);
 	waitForTimer(255);
 	_updateDialogue = 0;
 	++_objectsState[kMargaretSceneStateIndex];
-	memcpy(_paletteBuffer, _currentPalette, 768);
+	memcpy(_paletteBuffer, _currentPalette, floppy ? 624 : 768);
 	fadeOut(768);
-	memset(_screenVGA, 0, 46080);
+	if (!floppy)
+		memset(_screenVGA, 0, 46080);
 	if (_objectsState[kMargaretSceneStateIndex] < 9 && _currentPart != 331) {
 		setupDefaultPalette();
 		SET_PAL_240_48_1();
