@@ -3865,17 +3865,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 				}
 			} else if (i == 7) {
 				// Binary: if music enabled AND sound active, play active music
-				if (exec->_musicEnabled && exec->_soundSystemActive) {
-					const uint16 slot = exec->_activeMusicSlot;
-					if (slot != 0 && !exec->_musicSlots[slot - 1].empty() &&
-						g_engine->getMusic()->playSongData(exec->_musicSlots[slot - 1])) {
-						// Original's adlibTickHandler resets g_bAdlibMasterVolume=0 (full volume).
-						// ScummVM layers user volume on top via scaledMusicVolume, so re-apply it.
-						exec->_musicControlMode = 0;
-						exec->_musicControlVolume = 0;
-						g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(0));
-					}
-				}
+				exec->resumeActiveMusic();
 			}
 		} else {
 			// Button NOT hit - reset confirm flags for buttons 5/6

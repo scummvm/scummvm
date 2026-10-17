@@ -785,6 +785,10 @@ Common::Error Macs2Engine::syncGameV1(Common::Serializer &s) {
 			view1->startFadingWithSpeed(8);
 		}
 		view1->presentFrame();
+
+		// Binary resumes music only when closing the save/load panel (button 7).
+		// ScummVM launcher/GMM/ActionBar loads never hit that path, so restart here.
+		_scriptExecutor->resumeActiveMusic();
 	}
 
 	return Common::kNoError;

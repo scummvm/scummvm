@@ -511,6 +511,13 @@ public:
 
 	Macs2::Macs2Engine *_engine;
 
+	/**
+	 * Restart the active music slot if music is enabled and the system is active.
+	 * Used after save load and when closing the original save/load panel (button 7).
+	 * Returns true if playback was started.
+	 */
+	bool resumeActiveMusic();
+
 	// Button 8 skip from handleInput (1008:e8bf)
 	bool skipToEndOfSkippableSection();
 

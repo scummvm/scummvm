@@ -2865,6 +2865,28 @@ OpcodeResult Script::ScriptExecutor::scriptStopPcmSound() {
 	return OpcodeResult::Continue;
 }
 
+bool Script::ScriptExecutor::resumeActiveMusic() {
+	// Mirrors the original save/load panel close (button 7): if music is enabled
+	// and the sound system is active, restart the saved active music slot.
+	if (!_musicEnabled || !_soundSystemActive)
+		return false;
+
+	const uint16 slot = _activeMusicSlot;
+	if (slot < 1 || slot > 2 || _musicSlots[slot - 1].empty())
+		return false;
+
+	if (!_engine->getMusic()->playSongData(_musicSlots[slot - 1]))
+		return false;
+
+	// Original adlibTickHandler resets master volume to 0 (full). ScummVM layers
+	// user volume on top via scaledMusicVolume.
+	_musicControlMode = 0;
+	_musicControlStep = 0;
+	_musicControlVolume = 0;
+	_engine->getMusic()->setVolume(_engine->scaledMusicVolume(0));
+	return true;
+}
+
 OpcodeResult Script::ScriptExecutor::scriptLoadMusicSlot() {
 	const uint16 slotID = scriptReadValue16();
 	const uint8 resourceIndex = readByte();
