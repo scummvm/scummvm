@@ -194,7 +194,7 @@ void IgorEngine::part16PhotoCutscene() {
 	_inventoryInfo[kInventoryFirstVisible] = _inventoryOffsetTable[(_inventoryInfo[kInventoryCount] - 1) / 7];
 	_objectsState[kPhotoCutsceneSeenStateIndex] = 1;
 	_objectsState[kMargaretStateIndex] = kMargaretStatePhotoTaken;
-	if (!isCDVersion())
+	if (!isCDVersion() && _game.version != kIdSpaFloppy)
 		playMusic(3, true);
 	_currentPart = 261;
 }

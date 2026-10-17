@@ -117,7 +117,7 @@ void IgorEngine::part77MonkeyCageCutscene() {
 							{ { 210, 2, 1126 }, { 212, 2, 1127 }, { 214, 1, 1128 }, { 215, 2, 1129 }, { 217, 2, 1130 } },
 							&IgorEngine::part77UpdateDialogue);
 	waitForTimer(255);
-	if (!isCDVersion())
+	if (!isCDVersion() && _game.version != kIdSpaFloppy)
 		playMusic(0);
 	// the colors 240 to 255 are black on the screen
 	for (int i = 240; i <= 255; ++i) {

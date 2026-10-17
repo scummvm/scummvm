@@ -262,7 +262,7 @@ void IgorEngine::part33ApplyObjectState(int num) {
 }
 
 void IgorEngine::part33HarrisonWalksOut() {
-	if (!isCDVersion())
+	if (!isCDVersion() && _game.version != kIdSpaFloppy)
 		playMusic(11, true);
 	memcpy(_screenLayer2, _screenVGA, 46080);
 	memcpy(_screenVGA, _screenLayer1, 46080);
