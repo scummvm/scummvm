@@ -89,6 +89,7 @@ Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int point
 	TTFId id;
 	id._filename = filename;
 	id._pointSize = pointsize;
+	id._antialiasing = antialiasing;
 
 	TTFFonts::iterator iter;
 	iter = _ttfFonts.find(id);

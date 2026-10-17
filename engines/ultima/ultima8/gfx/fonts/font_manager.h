@@ -42,6 +42,7 @@ private:
 	struct TTFId {
 		Common::Path _filename;
 		int _pointSize;
+		bool _antialiasing;
 		bool operator<(const TTFId &other) const {
 			return (_pointSize < other._pointSize ||
 			        (_pointSize == other._pointSize &&
@@ -49,16 +50,17 @@ private:
 		}
 	};
 
+	// The hash must not depend on where the key is: hashing its address
+	// broke the map once it grew (an assertion in HashMap::getOrCreateVal)
 	struct TTFHash {
 		uint operator()(const TTFId &x) const {
-			// TODO: See if something better can be used as a hash key
-			int64 val = (int64)&x;
-			return (uint)val;
+			return x._filename.hash() ^ ((uint)x._pointSize << 1) ^ (x._antialiasing ? 1 : 0);
 		}
 	};
 	struct TTFEqual {
 		bool operator()(const TTFId &x, const TTFId &y) const {
-			return x._filename == y._filename && x._pointSize == y._pointSize;
+			return x._filename == y._filename && x._pointSize == y._pointSize &&
+			       x._antialiasing == y._antialiasing;
 		}
 	};
 
