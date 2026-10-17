@@ -101,6 +101,10 @@ GuiManager::GuiManager() : CommandSender(nullptr), _redrawStatus(kRedrawDisabled
 }
 
 GuiManager::~GuiManager() {
+	while (0 < _imeCompositionControlDepth) {
+		_imeCompositionControlDepth -= 1;
+		_system->releaseImeCompositionControl();
+	}
 	delete _theme;
 	delete _wm;
 }
@@ -779,8 +783,19 @@ void GuiManager::restoreState() {
 }
 
 void GuiManager::openDialog(Dialog *dialog) {
+	// Suspend the parent's preedit without ending its edit mode or selection.
+	if (!_dialogStack.empty()) {
+		Common::Event event;
+		event.type = Common::EVENT_IME_COMPOSITION;
+		event.imeComposition = Common::ImeComposition(Common::ImeComposition::kCancelled);
+		_dialogStack.top()->handleOtherEvent(event);
+	}
+
 	if (!_dialogStack.empty())
 		_dialogStack.top()->lostFocus();
+
+	_system->acquireImeCompositionControl();
+	_imeCompositionControlDepth += 1;
 
 	giveFocusToDialog(dialog);
 
@@ -815,9 +830,15 @@ void GuiManager::closeTopDialog() {
 		_dialogStack.pop()->lostFocus();
 	}
 
+	_imeCompositionControlDepth -= 1;
+	_system->releaseImeCompositionControl();
+
 	if (!_dialogStack.empty()) {
 		Dialog *dialog = _dialogStack.top();
 		giveFocusToDialog(dialog);
+		// Refresh the restored field's native candidate area on the next draw.
+		if (dialog->getFocusWidget())
+			dialog->getFocusWidget()->markAsDirty();
 	}
 
 	if (_tooltip) {
