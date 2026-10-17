@@ -298,6 +298,17 @@ void IgorEngine::partMainExecuteAction(int action) {
 	}
 }
 
+// Waits until a click (left or right button, or the keys that stand for them).
+void IgorEngine::partMainWaitForClick() {
+	_inputVars[kInputClick] = 0;
+	_inputVars[kInputRightClick] = 0;
+	while (!_inputVars[kInputClick] && !_inputVars[kInputRightClick] && !_eventQuitGame) {
+		waitForTimer(1);
+	}
+	_inputVars[kInputClick] = 0;
+	_inputVars[kInputRightClick] = 0;
+}
+
 void IgorEngine::partMainLookAtNewspaper() {
 	memcpy(_paletteBuffer, _currentPalette, 624);
 	fadeOut(624);
@@ -330,6 +341,9 @@ void IgorEngine::partMainLookAtNewspaper() {
 	SET_DIALOGUE_TEXT(1, 2);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue(false, false);
+	// the Spanish floppy keeps the newspaper on screen until a click
+	if (_game.version == kIdSpaFloppy)
+		partMainWaitForClick();
 	wd->x = _walkDataCurrentPosX2;
 	wd->y = _walkDataCurrentPosY2;
 	wd->scaleWidth = _walkDataCurrentWScale;
@@ -340,7 +354,8 @@ void IgorEngine::partMainLookAtNewspaper() {
 		free(tmp);
 	}
 	fadeIn(624);
-	if (_objectsState[kAstronomyBookStateIndex] == 0) {
+	// the Spanish floppy sets the state even when the astronomy book was already read
+	if (_game.version == kIdSpaFloppy || _objectsState[kAstronomyBookStateIndex] == 0) {
 		_objectsState[kAstronomyBookStateIndex] = 1;
 	}
 }
@@ -365,6 +380,9 @@ void IgorEngine::partMainLookAtPhoto() {
 	wd->scaleWidth = 50;
 	igorSay(83, 2, 59);
 	waitForEndOfIgorDialogue(false, false);
+	// the Spanish floppy keeps the photo on screen until a click
+	if (_game.version == kIdSpaFloppy)
+		partMainWaitForClick();
 	_currentAction.object1Num = 0;
 	wd->x = _walkDataCurrentPosX2;
 	wd->y = _walkDataCurrentPosY2;
@@ -921,22 +939,19 @@ void IgorEngine::partMainLookAtPapyrus(bool reveal) {
 		wd->x = 160;
 		wd->y = 130;
 		wd->scaleWidth = 50;
-		if (_objectsState[kPapyrusFiguresVisibleStateIndex] == 0) {
-			ADD_DIALOGUE_TEXT(99, 1, 68);
-		} else {
-			ADD_DIALOGUE_TEXT(100, 2, 69);
+		// the Spanish floppy shows the paper without any comment
+		if (_game.version != kIdSpaFloppy) {
+			if (_objectsState[kPapyrusFiguresVisibleStateIndex] == 0) {
+				ADD_DIALOGUE_TEXT(99, 1, 68);
+			} else {
+				ADD_DIALOGUE_TEXT(100, 2, 69);
+			}
+			SET_DIALOGUE_TEXT(1, 1);
+			startIgorDialogue();
+			waitForEndOfIgorDialogue(false, false);
 		}
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
-		waitForEndOfIgorDialogue(false, false);
 		// the paper stays on screen until another click (left or right)
-		_inputVars[kInputClick] = 0;
-		_inputVars[kInputRightClick] = 0;
-		while (!_inputVars[kInputClick] && !_inputVars[kInputRightClick] && !_eventQuitGame) {
-			waitForTimer(1);
-		}
-		_inputVars[kInputClick] = 0;
-		_inputVars[kInputRightClick] = 0;
+		partMainWaitForClick();
 		wd->x = _walkDataCurrentPosX2;
 		wd->y = _walkDataCurrentPosY2;
 		wd->scaleWidth = _walkDataCurrentWScale;

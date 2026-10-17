@@ -856,6 +856,7 @@ private:
 	void partMainMoveScreenUp(int offset);
 	void partMainLookAtPapyrus(bool reveal);
 	void partMainExecuteAction(int action);
+	void partMainWaitForClick();
 	void partMainLookAtNewspaper();
 	void partMainLookAtPhoto();
 
