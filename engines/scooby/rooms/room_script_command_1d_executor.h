@@ -48,8 +48,6 @@ public:
 	void executeRoomScriptCommand1D(int mode);
 
 private:
-	static const int kRoomObjectRecordSize = 0x1A;
-
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;
 };

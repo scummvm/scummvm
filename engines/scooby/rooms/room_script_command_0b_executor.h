@@ -56,7 +56,6 @@ private:
 	static const uint8 kFixedPositionMask = 0x02;
 	static const uint8 kTilePatchPendingMask = 0x01;
 	static const uint16 kTilePatchRetirementMask = 0xC000;
-	static const int kRoomObjectRecordSize = 0x1A;
 
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;

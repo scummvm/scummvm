@@ -55,8 +55,6 @@ public:
 	void executeRoomScriptCommand19(int mode);
 
 private:
-	static const int kRoomObjectRecordSize = 0x1A;
-
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;
 	Common::Functor0<void> &_updateActorAnimationFrames;

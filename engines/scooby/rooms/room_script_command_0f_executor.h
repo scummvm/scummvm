@@ -67,7 +67,6 @@ private:
 	static const int kEpisodeShapePointerTableField = 0x24;
 	static const uint8 kFixedPositionMask = 0x02;
 	static const int kRecordSize = 12;
-	static const int kRoomObjectRecordSize = 0x1A;
 
 	// Replaces the C# private "(short X, short Y)" tuple return.
 	struct RelativeDestination {

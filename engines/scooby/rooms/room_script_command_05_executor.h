@@ -73,7 +73,6 @@ private:
 	static const uint8 kFixedPositionMask = 0x02;
 	static const int16 kInventoryRoomId = 1;
 	static const uint8 kObjectTilePatchPendingMask = 0x01;
-	static const int kRoomObjectRecordSize = 0x1A;
 	static const uint8 kSuppressActionPromptRefreshMask = 0x04;
 
 	// Returns false when host closure interrupted a synchronous wait (the caller must abort without consuming

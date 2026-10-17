@@ -63,8 +63,6 @@ public:
 	void executeRoomScriptCommand1F(int mode);
 
 private:
-	static const int kRoomObjectRecordSize = 0x1A;
-
 	bool waitForRoomVerticalBlank();
 
 	const ScoobyDooRom &_rom;
