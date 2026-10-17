@@ -24,9 +24,6 @@
 #include "common/array.h"
 #include "common/str.h"
 
-#include "ripper/display.h"
-#include "ripper/script.h"
-
 namespace Ripper {
 
 class RipperEngine;
@@ -44,12 +41,15 @@ public:
 	Result runProgram(uint action, const char *scriptBaseName, uint argument);
 
 private:
-	bool captureDisplay(IndexedDisplaySnapshot &snapshot) const;
-	void restoreDisplay(const IndexedDisplaySnapshot &snapshot) const;
+	struct Session;
+
+	bool suspendSession(Session &session) const;
+	void prepareSession(int selectionIndex = -1) const;
+	bool runScriptLoop(bool active, uint action = 0,
+		const Common::String &programName = Common::String()) const;
+	Result restoreSession(Session &session, uint selectionIndex, Result result) const;
 	bool captureAudio(Common::Array<byte> &state) const;
 	bool restoreAudio(const Common::Array<byte> &state) const;
-	void suspendRuntime(SceneRuntimeState &snapshot) const;
-	void restoreRuntime(SceneRuntimeState &snapshot) const;
 
 	RipperEngine *_engine;
 };
