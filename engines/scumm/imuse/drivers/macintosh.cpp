@@ -42,7 +42,7 @@ struct ChanControlNode;
 struct DeviceChannel {
 	DeviceChannel(const uint32 *pitchtable) : pitchTable(pitchtable), frequency(0), phase(0), end(nullptr), pos(nullptr), smpBuffStart(nullptr),
 		smpBuffEnd(nullptr), loopStart(nullptr), loopEnd(nullptr), pitch(0), mute(true), release(false), instr(nullptr), rhtm(false),
-		prog(0), baseFreq(0), note(0), volumeL(0), volumeR(0), rate(0), totalLevelL(0), totalLevelR(0), node(nullptr), prev(nullptr), next(nullptr) {}
+			prog(0), baseFreq(0), note(0), prio(0), volPara(0), volumeL(0), volumeR(0), rate(0), totalLevelL(0), totalLevelR(0), node(nullptr), prev(nullptr), next(nullptr) {}
 	~DeviceChannel() {}
 
 	void recalcFrequency();
@@ -56,6 +56,8 @@ struct DeviceChannel {
 	const byte *loopStart;
 	const byte *loopEnd;
 	uint16 pitch;
+	byte prio;
+	byte volPara;
 	byte volumeL;
 	byte volumeR;
 	byte totalLevelL;
@@ -500,6 +502,7 @@ void IMSMacSoundSystem::noteOn(const ChanControlNode *node) {
 	c->end = c->loopEnd;
 	c->pos = c->smpBuffStart;
 	c->phase = 0;
+	c->prio = node->prio;
 
 	recalcFrequency(c);
 }
@@ -808,7 +811,7 @@ void DJMSoundSystem::recalcFrequency(DeviceChannel *chan) {
 
 void DJMSoundSystem::recalcVolume(DeviceChannel *c) {
 	assert(c && c->node);
-	c->totalLevelL = c->node->volume;
+	c->volPara = c->totalLevelL = c->node->volume;
 	if (c->instr != nullptr)
 		c->mute = false;
  }
@@ -960,6 +963,7 @@ void NewMacSoundSystem::recalcVolume(DeviceChannel *chan) {
 		0x6a, 0x6c, 0x6f, 0x72, 0x75, 0x78, 0x7c, 0x7f
 	};
 
+	chan->volPara = chan->node->volume;
 	if (_stereo) {
 		chan->volumeL = (volumeTable[127 - (chan->node->panPos >> 2)] * chan->node->volume) >> 7;
 		chan->volumeR = (volumeTable[96 + (chan->node->panPos >> 2)] * chan->node->volume) >> 7;
@@ -1018,15 +1022,15 @@ DeviceChannel *NewMacSoundSystem::allocateChannel(const ChanControlNode *node) {
 		}
 
 		if (c->release) {
-			if (c->node && c->node->volume < lovol) {
+			if (c->volPara < lovol) {
 				res2 = c;
-				lovol = c->node->volume;
+				lovol = c->volPara;
 			}
 		}
 
-		if (c->node && c->node->prio < lopri) {
+		if (c->prio < lopri) {
 			res3 = c;
-			lopri = c->node->prio;
+			lopri = c->prio;
 		}
 	}
 
