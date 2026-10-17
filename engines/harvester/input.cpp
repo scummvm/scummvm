@@ -26,6 +26,7 @@
 #include "harvester/art.h"
 #include "harvester/cheats.h"
 #include "harvester/detection.h"
+#include "harvester/dialogue.h"
 #include "harvester/flow.h"
 #include "harvester/harvester.h"
 #include "harvester/inventory.h"
@@ -37,6 +38,14 @@
 #include "harvester/scene_entities.h"
 
 namespace Harvester {
+
+static const int kCursorSequenceWalk = 0;
+static const int kCursorSequenceExamine = 1;
+static const int kCursorSequenceTalk = 2;
+static const int kCursorSequenceOperate = 4;
+static const int kCursorSequencePickup = 5;
+static const int kCursorSequenceTransition = 6;
+static const int kCursorSequenceNeutral = 7;
 
 static const uint32 kRoomExitFastClickWindowTicks = 20;
 static const int kNativeInventoryDragCloseLeft = 0x45;
@@ -74,6 +83,250 @@ static void debugLogInventoryClick(const char *buttonLabel, const Common::Point 
 		inventoryHover->bounds.top, inventoryHover->bounds.right, inventoryHover->bounds.bottom,
 		InventorySystem::isExitObject(inventoryHover->object),
 		InventorySystem::isStatusObject(inventoryHover->object));
+}
+
+static bool canTalkToRoomNpc(HarvesterEngine &engine, const NpcRecord &npc,
+		const DialogueSystem *dialogue) {
+	Script *script = engine.getScript();
+	if (!script || !script->isNamedNpcDeathTypeClear(npc.npcName))
+		return false;
+
+	return dialogue && dialogue->hasRoomNpcHandler(npc.npcName);
+}
+
+const ObjectRecord *Input::findRoomObjectAtPoint(HarvesterEngine &engine,
+		const Common::Array<ObjectRecord> &sceneObjects, const Common::Point &point) {
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	if (!entityManager)
+		return nullptr;
+
+	const Entity *topEntity = nullptr;
+	const ObjectRecord *topObject = nullptr;
+	int topDrawIndex = -1;
+	for (const ObjectRecord &object : sceneObjects) {
+		if (object.objectName.empty())
+			continue;
+
+		const Entity *entity = entityManager->findSceneEntityByName(object.objectName);
+		if (!entity || !entity->hitTest(point))
+			continue;
+		if (entity->getClassId() == kEntityClassBackground ||
+			entity->getClassId() == kEntityClassPlayer ||
+			entity->getClassId() == kEntityClassRectHotspot19) {
+			continue;
+		}
+		const int drawIndex = entityManager->findSceneEntityDrawIndexByName(entity->getName());
+		if (drawIndex < 0)
+			continue;
+		const bool objectVisible = object.visible && object.runtimeVisible;
+		const bool topObjectVisible = topObject && topObject->visible && topObject->runtimeVisible;
+		if (!topEntity ||
+			(objectVisible && !topObjectVisible) ||
+			(objectVisible == topObjectVisible && drawIndex > topDrawIndex)) {
+			topEntity = entity;
+			topObject = &object;
+			topDrawIndex = drawIndex;
+		}
+	}
+	if (!topEntity)
+		return nullptr;
+
+	return topObject;
+}
+
+static const RegionRecord *findRoomRegionAtPoint(HarvesterEngine &engine,
+		const Common::Array<RegionRecord> &sceneRegions, const Common::Point &point) {
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	if (!entityManager)
+		return nullptr;
+
+	const Entity *topEntity = nullptr;
+	int topDrawIndex = -1;
+	for (const RegionRecord &region : sceneRegions) {
+		const Entity *entity = entityManager->findSceneEntityByName(region.regionName);
+		if (!entity || !entity->hitTest(point))
+			continue;
+		if (entity->getClassId() != kEntityClassRectHotspot19)
+			continue;
+		const int drawIndex = entityManager->findSceneEntityDrawIndexByName(entity->getName());
+		if (drawIndex < 0)
+			continue;
+		if (!topEntity || drawIndex > topDrawIndex) {
+			topEntity = entity;
+			topDrawIndex = drawIndex;
+		}
+	}
+	if (!topEntity)
+		return nullptr;
+
+	return SceneEntities::findSceneRegionByName(sceneRegions, topEntity->getName());
+}
+
+static const Entity *findRoomPlayerAtPoint(HarvesterEngine &engine, const Common::Point &point) {
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	if (!entityManager)
+		return nullptr;
+
+	const Entity *entity = entityManager->findTopSceneEntityAt(point);
+	if (!entity || entity->getClassId() != kEntityClassPlayer)
+		return nullptr;
+
+	return entity;
+}
+
+static const NpcRecord *findRoomNpcAtPoint(HarvesterEngine &engine,
+		const Common::Array<NpcRecord> &sceneNpcs, const Common::Point &point,
+		const DialogueSystem *dialogue) {
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	if (!entityManager)
+		return nullptr;
+
+	const Entity *entity = entityManager->findTopSceneEntityAt(point);
+	if (!entity || entity->getClassId() != kEntityClassNpc)
+		return nullptr;
+
+	const NpcRecord *npc = SceneEntities::findSceneNpcByName(sceneNpcs, entity->getName());
+	if (!npc || !canTalkToRoomNpc(engine, *npc, dialogue))
+		return nullptr;
+
+	return npc;
+}
+
+static bool suppressesInitialObjectInspectGate(const ObjectRecord &object) {
+	// Native HARVEST.SCR uses ident key X as a no-text sentinel.
+	return object.identTextKey.equalsIgnoreCase("X");
+}
+
+static bool usesBareOperatePrompt(const ObjectRecord &object) {
+	return object.objectName.equalsIgnoreCase("HAPPLY_HS") ||
+		object.objectName.equalsIgnoreCase("KILL_STEPH_HS");
+}
+
+static bool unlocksRoomObjectInteractionAfterInitialExamine(const ObjectRecord &object,
+		Script &script) {
+	if (suppressesInitialObjectInspectGate(object))
+		return false;
+
+	return object.operatable || script.isPickupObject(object);
+}
+
+static int resolveRoomObjectCursorSequence(const ObjectRecord &object, Script &script) {
+	if (object.objectName.equalsIgnoreCase("EXIT_BM") || object.objectName.equalsIgnoreCase("EXIT_HS"))
+		return kCursorSequenceTransition;
+
+	ResolvedText inspectText;
+	const bool pickupObject = script.isPickupObject(object);
+	const bool pickupBlocked = pickupObject && script.isPickupBlockedByAction(object);
+	if (!object.identShown && unlocksRoomObjectInteractionAfterInitialExamine(object, script))
+		return kCursorSequenceExamine;
+	if (pickupObject && !pickupBlocked)
+		return kCursorSequencePickup;
+	if (pickupBlocked)
+		return kCursorSequenceExamine;
+	if (object.operatable)
+		return kCursorSequenceOperate;
+	if (script.resolveObjectInspectText(object, inspectText))
+		return kCursorSequenceExamine;
+
+	if (script.hasObjectInteraction(object))
+		return kCursorSequenceExamine;
+
+	return kCursorSequenceNeutral;
+}
+
+static Common::String buildRoomObjectPrompt(const ObjectRecord &object, Script &script,
+		int cursorSequence, const MenuTextConfig &menuTextConfig) {
+	// Native room prompts come from explicit interaction metadata. Neutral scene sprites
+	// should not surface synthetic "Examine <object id>" prompts or steal hover/click focus.
+	if (cursorSequence == kCursorSequenceNeutral)
+		return Common::String();
+
+	const Common::String label = script.resolveObjectLabel(object);
+	if (label.empty())
+		return Common::String();
+
+	if (cursorSequence == kCursorSequenceOperate) {
+		if (usesBareOperatePrompt(object))
+			return label;
+		return Common::String::format("%s %s", menuTextConfig.operateVerb.c_str(), label.c_str());
+	}
+	if (cursorSequence == kCursorSequencePickup)
+		return Common::String::format("%s %s", menuTextConfig.pickUpVerb.c_str(), label.c_str());
+	if (cursorSequence == kCursorSequenceTalk)
+		return Common::String::format("%s %s", menuTextConfig.talkToVerb.c_str(), label.c_str());
+	if (cursorSequence == kCursorSequenceTransition)
+		return Common::String::format("Go to %s", label.c_str());
+
+	return Common::String::format("%s %s", menuTextConfig.examineTheVerb.c_str(), label.c_str());
+}
+
+static Common::String buildRoomNpcPrompt(const NpcRecord &npc,
+		const MenuTextConfig &menuTextConfig) {
+	Common::String label = !npc.entityInitArg.empty() ? npc.entityInitArg : npc.npcName;
+	for (uint i = 0; i < label.size(); ++i) {
+		if (label[i] == '_')
+			label.setChar(' ', i);
+	}
+
+	if (label.empty())
+		return Common::String();
+	return Common::String::format("%s %s", menuTextConfig.talkToVerb.c_str(), label.c_str());
+}
+
+RoomHoverState Input::resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<NpcRecord> &sceneNpcs,
+		const Common::Array<RegionRecord> &sceneRegions, const Common::Point &mousePos,
+		const MenuTextConfig &menuTextConfig, const DialogueSystem *dialogue) {
+	RoomHoverState hoverState;
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	if (const Entity *playerEntity = findRoomPlayerAtPoint(engine, mousePos)) {
+		hoverState.playerEntity = playerEntity;
+		hoverState.cursorSequence = kCursorSequenceExamine;
+		return hoverState;
+	}
+	if (const NpcRecord *npc = findRoomNpcAtPoint(engine, sceneNpcs, mousePos, dialogue)) {
+		hoverState.npc = npc;
+		hoverState.cursorSequence = kCursorSequenceTalk;
+		hoverState.promptText = buildRoomNpcPrompt(*npc, menuTextConfig);
+		return hoverState;
+	}
+
+	Script *script = engine.getScript();
+	if (!script)
+		return hoverState;
+	hoverState.object = findRoomObjectAtPoint(engine, sceneObjects, mousePos);
+	hoverState.region = findRoomRegionAtPoint(engine, sceneRegions, mousePos);
+	if (entityManager && hoverState.object && hoverState.region) {
+		const int objectDrawIndex =
+			entityManager->findSceneEntityDrawIndexByName(hoverState.object->objectName);
+		const int regionDrawIndex =
+			entityManager->findSceneEntityDrawIndexByName(hoverState.region->regionName);
+		if (regionDrawIndex >= 0 && objectDrawIndex >= 0 && regionDrawIndex > objectDrawIndex)
+			hoverState.object = nullptr;
+	}
+	if (hoverState.object) {
+		hoverState.cursorSequence = resolveRoomObjectCursorSequence(*hoverState.object, *script);
+		hoverState.promptText = buildRoomObjectPrompt(
+			*hoverState.object, *script, hoverState.cursorSequence, menuTextConfig);
+		if (hoverState.cursorSequence != kCursorSequenceNeutral || !hoverState.promptText.empty())
+			return hoverState;
+		hoverState.object = nullptr;
+	}
+	if (hoverState.region && hoverState.region->cursorEnabled) {
+		hoverState.object = nullptr;
+		hoverState.cursorSequence = kCursorSequenceTransition;
+		hoverState.promptText.clear();
+		return hoverState;
+	}
+
+	if (Player::supportsMovementBand(state) &&
+		mousePos.y >= state.roomMaxZScreenY &&
+		mousePos.y <= state.roomMinZScreenY) {
+		hoverState.cursorSequence = kCursorSequenceWalk;
+	}
+
+	return hoverState;
 }
 
 Input::Input(HarvesterEngine &engine, Flow &flow, Scene &session, SceneState &scene,

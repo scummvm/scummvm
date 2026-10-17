@@ -22,22 +22,30 @@
 #ifndef HARVESTER_INPUT_H
 #define HARVESTER_INPUT_H
 
+#include "common/array.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/rect.h"
 
 namespace Harvester {
 
 class Art;
 class CheatSystem;
+class DialogueSystem;
 class Flow;
 class HarvesterEngine;
 class InventorySystem;
 class Interaction;
 class ItemInteractions;
 class Scene;
+struct MenuTextConfig;
+struct NpcRecord;
 struct ObjectRecord;
+struct RegionRecord;
 struct ResolvedText;
+struct RoomHoverState;
 struct RoomPresentationState;
+struct RoomSetupState;
 struct SceneState;
 
 struct InputState {
@@ -72,6 +80,15 @@ public:
 		const Art &art, bool canExitCloseupToParent);
 
 	InputResult handleEvent(const Common::Event &event, bool &needsRedraw);
+
+	static const ObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
+		const Common::Array<ObjectRecord> &sceneObjects, const Common::Point &point);
+	static RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<NpcRecord> &npcs,
+		const Common::Array<RegionRecord> &regions,
+		const Common::Point &mousePos, const MenuTextConfig &menuTextConfig,
+		const DialogueSystem *dialogue = nullptr);
 
 private:
 	void handleMouseMove(bool &needsRedraw);

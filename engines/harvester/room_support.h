@@ -71,16 +71,8 @@ void logScenePaletteSummary(const char *label, const SceneState &scene, float br
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap);
 bool shouldDisplaySceneAnimation(const AnimRecord &anim);
 bool shouldRunStartupRoomProbe();
-bool unlocksRoomObjectInteractionAfterInitialExamine(const ObjectRecord &object,
-	Script &script);
 bool doesPlayerFacingMatchRegion(int playerFacing, const RegionRecord &region);
 bool doesPlayerOverlapRegion(const Entity &playerEntity, const RegionRecord &region);
-RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupState &state,
-	const Common::Array<ObjectRecord> &sceneObjects,
-	const Common::Array<NpcRecord> &npcs,
-	const Common::Array<RegionRecord> &regions,
-	const Common::Point &mousePos, const MenuTextConfig &menuTextConfig,
-	const DialogueSystem *dialogue = nullptr);
 
 } // End of namespace Harvester
 
