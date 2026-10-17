@@ -32,6 +32,9 @@
 #include "base/plugins.h"
 #include "backends/plugins/psp2/psp2-plugin.h"
 
+// hacks to make libc work
+extern void *__dso_handle __attribute__((weak));
+
 extern "C" {
 
 int32 PLUGIN_getVersion();
@@ -46,10 +49,6 @@ static PSP2FunctionPointers PSP2Functions = {
 	PLUGIN_getTypeVersion,
 	PLUGIN_getObject,
 };
-
-// hacks to make libc work
-//void* __dso_handle = (void*) &__dso_handle;
-extern void *__dso_handle __attribute__((weak));
 
 /* These magic symbols are provided by the linker.  */
 extern void (*__preinit_array_start []) (void) __attribute__((weak));

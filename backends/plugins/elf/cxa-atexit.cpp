@@ -54,13 +54,6 @@ static int s_count;
 
 extern "C" {
 
-// GCC with -fuse-cxa-atexit emits references to __dso_handle in every TU that
-// has function-local statics with non-trivial destructors. It is normally
-// provided by crtbegin.o; on targets whose startup files don't supply one,
-// define it here for the main executable. Its address uniquely identifies
-// the main DSO.
-void *__dso_handle = &__dso_handle;
-
 int __cxa_atexit(void (*destructor)(void *), void *arg, void *dso_handle) {
 	if (s_count >= CXA_ATEXIT_MAX) {
 		warning("elfloader: cxa-atexit table full (max=%d), dropping dtor %p dso=%p",

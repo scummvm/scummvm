@@ -67,7 +67,7 @@ extern const int pluginTypeVersions[PLUGIN_TYPE_MAX];
 // see comments in backends/plugins/elf/elf-provider.cpp
 #if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
 #define PLUGIN_DYNAMIC_DSO_HANDLE \
-	uint32 __dso_handle __attribute__((visibility("hidden"))) = 0;
+	__attribute__((visibility("hidden"))) void *__dso_handle = &__dso_handle;
 // Exported helper that runs __cxa_finalize from inside the plugin, so the
 // &__dso_handle argument is the plugin's own resolved address -- the same one
 // GCC embedded in its __cxa_atexit calls. Calling __cxa_finalize from the host
@@ -115,8 +115,8 @@ extern const int pluginTypeVersions[PLUGIN_TYPE_MAX];
  * @see REGISTER_PLUGIN_STATIC
  */
 #define REGISTER_PLUGIN_DYNAMIC(ID,TYPE,PLUGINCLASS) \
+	PLUGIN_DYNAMIC_DSO_HANDLE \
 	extern "C" { \
-		PLUGIN_DYNAMIC_DSO_HANDLE \
 		PLUGIN_DYNAMIC_FINALIZE \
 		PLUGIN_DYNAMIC_BUILD_DATE \
 		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
