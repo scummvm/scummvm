@@ -111,7 +111,7 @@ void ItemInteractions::clearCarriedRoomItem() {
 }
 
 void ItemInteractions::hideSceneObject(const Common::String &objectName, const Common::String *ownerOrRoom) {
-	ObjectRecord *sceneObject = findSceneObjectByName(_scene.sceneObjects, objectName);
+	ObjectRecord *sceneObject = SceneEntities::findSceneObjectByName(_scene.sceneObjects, objectName);
 	if (!sceneObject)
 		return;
 
@@ -426,7 +426,7 @@ Common::Error Interaction::tryActivatePendingRegion(InventorySystem &inventory, 
 	if (_pendingRegionName.empty() || !playerState.entity)
 		return Common::kNoError;
 
-	const RegionRecord *region = findSceneRegionByName(_scene.sceneRegions, _pendingRegionName);
+	const RegionRecord *region = SceneEntities::findSceneRegionByName(_scene.sceneRegions, _pendingRegionName);
 	if (!region || !region->startEnabled) {
 		_pendingRegionName.clear();
 		return Common::kNoError;
@@ -464,7 +464,7 @@ Common::Error Interaction::tryActivatePassiveRegion(InventorySystem &inventory, 
 }
 
 int Interaction::getPendingRegionFacing() const {
-	const RegionRecord *pendingRegion = findSceneRegionByName(_scene.sceneRegions, _pendingRegionName);
+	const RegionRecord *pendingRegion = SceneEntities::findSceneRegionByName(_scene.sceneRegions, _pendingRegionName);
 	return pendingRegion && pendingRegion->startEnabled ? pendingRegion->desiredFacing : -1;
 }
 

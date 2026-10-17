@@ -44,6 +44,15 @@ public:
 	void populateRoomMonsters();
 	void restoreRoomMonsterAnimations();
 
+	static const ObjectRecord *findSceneObjectByName(const Common::Array<ObjectRecord> &objects,
+		const Common::String &objectName);
+	static ObjectRecord *findSceneObjectByName(Common::Array<ObjectRecord> &objects,
+		const Common::String &objectName);
+	static const RegionRecord *findSceneRegionByName(const Common::Array<RegionRecord> &regions,
+		const Common::String &regionName);
+	static const NpcRecord *findSceneNpcByName(const Common::Array<NpcRecord> &npcs,
+		const Common::String &npcName);
+
 	void removeSceneEntityByName(const Common::String &entityName);
 	static Common::Rect getSceneObjectBounds(const ObjectRecord &object);
 	static Common::String resolveSceneObjectSpritePathLocal(const ObjectRecord &object);

@@ -35,18 +35,50 @@ static bool sameRect(const Common::Rect &lhs, const Common::Rect &rhs) {
 		lhs.right == rhs.right && lhs.bottom == rhs.bottom;
 }
 
+const ObjectRecord *SceneEntities::findSceneObjectByName(const Common::Array<ObjectRecord> &objects,
+		const Common::String &objectName) {
+	for (const ObjectRecord &object : objects) {
+		if (object.objectName.equalsIgnoreCase(objectName))
+			return &object;
+	}
+
+	return nullptr;
+}
+
+const RegionRecord *SceneEntities::findSceneRegionByName(const Common::Array<RegionRecord> &regions,
+		const Common::String &regionName) {
+	for (const RegionRecord &region : regions) {
+		if (region.regionName.equalsIgnoreCase(regionName))
+			return &region;
+	}
+
+	return nullptr;
+}
+
+const NpcRecord *SceneEntities::findSceneNpcByName(const Common::Array<NpcRecord> &npcs,
+		const Common::String &npcName) {
+	for (const NpcRecord &npc : npcs) {
+		if (npc.npcName.equalsIgnoreCase(npcName))
+			return &npc;
+	}
+
+	return nullptr;
+}
+
+ObjectRecord *SceneEntities::findSceneObjectByName(Common::Array<ObjectRecord> &objects,
+		const Common::String &objectName) {
+	for (ObjectRecord &object : objects) {
+		if (object.objectName.equalsIgnoreCase(objectName))
+			return &object;
+	}
+
+	return nullptr;
+}
+
 static const AnimRecord *findRoomAnimByNameConst(const Common::Array<AnimRecord> &anims, const Common::String &animName) {
 	for (const AnimRecord &anim : anims) {
 		if (anim.animName.equalsIgnoreCase(animName))
 			return &anim;
-	}
-	return nullptr;
-}
-
-static const NpcRecord *findRoomNpcByNameConst(const Common::Array<NpcRecord> &npcs, const Common::String &npcName) {
-	for (const NpcRecord &npc : npcs) {
-		if (npc.npcName.equalsIgnoreCase(npcName))
-			return &npc;
 	}
 	return nullptr;
 }
@@ -270,7 +302,7 @@ bool SceneEntities::reconcileSceneEntitiesInPlace(const SceneState &previousScen
 
 	for (const NpcRecord &npc : _state.roomNpcs) {
 		const NpcRecord *updatedNpc =
-			findRoomNpcByNameConst(updatedState.roomNpcs, npc.npcName);
+			findSceneNpcByName(updatedState.roomNpcs, npc.npcName);
 		const bool keepCurrentRoomDeathEntity =
 			!updatedNpc &&
 			isRetainedCurrentRoomNpcDeathRecord(npc) &&
@@ -298,7 +330,7 @@ bool SceneEntities::reconcileSceneEntitiesInPlace(const SceneState &previousScen
 			? _entityManager->findSceneEntityByName(npc.npcName)
 			: nullptr;
 		const NpcRecord *previousNpc =
-			findRoomNpcByNameConst(_state.roomNpcs, npc.npcName);
+			findSceneNpcByName(_state.roomNpcs, npc.npcName);
 		const bool keepQueuedDeathEntity =
 			entity &&
 			previousNpc &&

@@ -34,6 +34,7 @@
 #include "harvester/room_presentation.h"
 #include "harvester/scene.h"
 #include "harvester/room_support.h"
+#include "harvester/scene_entities.h"
 
 namespace Harvester {
 
@@ -400,7 +401,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 				}
 			}
 		}
-		clickHoverState.object = findSceneObjectByName(_scene.sceneObjects, itemTarget->getName());
+		clickHoverState.object = SceneEntities::findSceneObjectByName(_scene.sceneObjects, itemTarget->getName());
 	}
 	debugC(1, kDebugRoom,
 		"Harvester: room click room='%s' mouse=(%d,%d) object='%s' npc='%s' region='%s' cursor_sequence=%d prompt='%s'",
@@ -434,7 +435,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 		}
 
 		ObjectRecord *roomTarget = clickHoverState.object
-			? findSceneObjectByName(_scene.sceneObjects, clickHoverState.object->objectName)
+			? SceneEntities::findSceneObjectByName(_scene.sceneObjects, clickHoverState.object->objectName)
 			: nullptr;
 		if (roomTarget) {
 			Common::Error interactionError =
@@ -502,7 +503,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 		return InputResult();
 	}
 	ObjectRecord *clickedObject = hoverState.object
-		? findSceneObjectByName(_scene.sceneObjects, hoverState.object->objectName)
+		? SceneEntities::findSceneObjectByName(_scene.sceneObjects, hoverState.object->objectName)
 		: nullptr;
 	if (!clickedObject) {
 		_session.clearPendingRegionInteraction();

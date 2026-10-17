@@ -47,6 +47,7 @@
 #include "harvester/input.h"
 #include "harvester/room_presentation.h"
 #include "harvester/room_support.h"
+#include "harvester/scene_entities.h"
 
 namespace Harvester {
 
@@ -434,7 +435,7 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 			return Common::String();
 		if (target == playerState.entity)
 			return Common::String(kPlayerInventoryLabel);
-		if (const ObjectRecord *object = findSceneObjectByName(_scene.sceneObjects, target->getName()))
+		if (const ObjectRecord *object = SceneEntities::findSceneObjectByName(_scene.sceneObjects, target->getName()))
 			return _engine.getScript()->resolveObjectLabel(*object);
 		for (const NpcRecord &npc : _scene.state.roomNpcs) {
 			if (npc.npcName.equalsIgnoreCase(target->getName()))

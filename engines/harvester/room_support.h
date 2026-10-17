@@ -73,12 +73,6 @@ Common::Rect getRoomObjectHotspotBounds(const ObjectRecord &object);
 bool shouldDisplaySceneAnimation(const AnimRecord &anim);
 bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, SceneState &scene);
 bool shouldRunStartupRoomProbe();
-const ObjectRecord *findSceneObjectByName(const Common::Array<ObjectRecord> &objects,
-	const Common::String &objectName);
-const RegionRecord *findSceneRegionByName(const Common::Array<RegionRecord> &regions,
-	const Common::String &regionName);
-ObjectRecord *findSceneObjectByName(Common::Array<ObjectRecord> &objects,
-	const Common::String &objectName);
 bool unlocksRoomObjectInteractionAfterInitialExamine(const ObjectRecord &object,
 	Script &script);
 bool doesPlayerFacingMatchRegion(int playerFacing, const RegionRecord &region);

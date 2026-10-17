@@ -425,36 +425,6 @@ bool shouldRunStartupRoomProbe() {
 		ConfMan.getBool("harvester_debug_probe_startup_room");
 }
 
-const ObjectRecord *findSceneObjectByName(const Common::Array<ObjectRecord> &objects,
-		const Common::String &objectName) {
-	for (const ObjectRecord &object : objects) {
-		if (object.objectName.equalsIgnoreCase(objectName))
-			return &object;
-	}
-
-	return nullptr;
-}
-
-const RegionRecord *findSceneRegionByName(const Common::Array<RegionRecord> &regions,
-		const Common::String &regionName) {
-	for (const RegionRecord &region : regions) {
-		if (region.regionName.equalsIgnoreCase(regionName))
-			return &region;
-	}
-
-	return nullptr;
-}
-
-static const NpcRecord *findSceneNpcByName(const Common::Array<NpcRecord> &npcs,
-		const Common::String &npcName) {
-	for (const NpcRecord &npc : npcs) {
-		if (npc.npcName.equalsIgnoreCase(npcName))
-			return &npc;
-	}
-
-	return nullptr;
-}
-
 static bool canTalkToRoomNpc(HarvesterEngine &engine, const NpcRecord &npc,
 		const DialogueSystem *dialogue) {
 	Script *script = engine.getScript();
@@ -462,16 +432,6 @@ static bool canTalkToRoomNpc(HarvesterEngine &engine, const NpcRecord &npc,
 		return false;
 
 	return dialogue && dialogue->hasRoomNpcHandler(npc.npcName);
-}
-
-ObjectRecord *findSceneObjectByName(Common::Array<ObjectRecord> &objects,
-		const Common::String &objectName) {
-	for (ObjectRecord &object : objects) {
-		if (object.objectName.equalsIgnoreCase(objectName))
-			return &object;
-	}
-
-	return nullptr;
 }
 
 static const ObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
@@ -539,7 +499,7 @@ static const RegionRecord *findRoomRegionAtPoint(HarvesterEngine &engine,
 	if (!topEntity)
 		return nullptr;
 
-	return findSceneRegionByName(sceneRegions, topEntity->getName());
+	return SceneEntities::findSceneRegionByName(sceneRegions, topEntity->getName());
 }
 
 static const Entity *findRoomPlayerAtPoint(HarvesterEngine &engine, const Common::Point &point) {
@@ -565,7 +525,7 @@ static const NpcRecord *findRoomNpcAtPoint(HarvesterEngine &engine,
 	if (!entity || entity->getClassId() != kEntityClassNpc)
 		return nullptr;
 
-	const NpcRecord *npc = findSceneNpcByName(sceneNpcs, entity->getName());
+	const NpcRecord *npc = SceneEntities::findSceneNpcByName(sceneNpcs, entity->getName());
 	if (!npc || !canTalkToRoomNpc(engine, *npc, dialogue))
 		return nullptr;
 
