@@ -176,6 +176,15 @@ void IgorEngine::hideCursor() {
 	CursorMan.showMouse(_roomCursorOn);
 }
 
+// Default verb of the room object under a scene position.
+int IgorEngine::getDefaultVerbAt(int x, int y) const {
+	const int area = _screenLayer2[y * 320 + x];
+	const int object = _roomObjectAreasTable[area].object;
+	const int defaultVerbOffset = _roomDataOffsets.obj.walkPoints +
+		_roomDataOffsets.obj.walkFacingPosition - _roomDataOffsets.action.defaultVerb;
+	return _roomActionsTable[defaultVerbOffset + object];
+}
+
 /**
  * Action to select a verb with moving the right mouse button clicked
  */
@@ -192,11 +201,7 @@ void IgorEngine::beginRightButtonVerbPick() {
 	int defaultVerb = 0;
 	// if in the scene, choose the hotspot's default verb as starting point
 	if (_rightButtonSelectCursorY < 144) {
-		const int area = _screenLayer2[_rightButtonSelectCursorY * 320 + _rightButtonSelectCursorX];
-		const int object = _roomObjectAreasTable[area].object;
-		const int defaultVerbOffset = _roomDataOffsets.obj.walkPoints +
-			_roomDataOffsets.obj.walkFacingPosition - _roomDataOffsets.action.defaultVerb;
-		defaultVerb = _roomActionsTable[defaultVerbOffset + object];
+		defaultVerb = getDefaultVerbAt(_rightButtonSelectCursorX, _rightButtonSelectCursorY);
 	} else if (inventorySlot) { // for items, look is default
 		defaultVerb = kVerbLook;
 	}
@@ -300,11 +305,7 @@ void IgorEngine::updateHoverVerbHighlight() {
 	const int y = _inputVars[kInputCursorYPos];
 	if (idle) {
 		if (y >= 0 && y < 144 && x >= 0 && x < 320) {
-			const int area = _screenLayer2[y * 320 + x];
-			const int object = _roomObjectAreasTable[area].object;
-			const int defaultVerbOffset = _roomDataOffsets.obj.walkPoints +
-				_roomDataOffsets.obj.walkFacingPosition - _roomDataOffsets.action.defaultVerb;
-			wanted = _roomActionsTable[defaultVerbOffset + object];
+			wanted = getDefaultVerbAt(x, y);
 		} else if (y >= 170 && y <= 197) {
 			wanted = kVerbLook;
 		}
@@ -370,7 +371,27 @@ void IgorEngine::handleRoomInput() {
 		_inputVars[kInputRightRelease] = 0;
 		return;
 	}
-	if (_inputVars[kInputRightClick]) {
+	if (_game.version == kIdSpaFloppy && _inputVars[kInputRightClick]) {
+		// Right click runs the hovered object's default verb right away
+		// (Look for inventory items) instead of opening a verb pick.
+		_inputVars[kInputRightClick] = 0;
+		const int x = _inputVars[kInputCursorXPos];
+		const int y = _inputVars[kInputCursorYPos];
+		int verb = 0;
+		if (y < 144) {
+			verb = getDefaultVerbAt(x, y);
+		} else if (y >= 170 && y <= 197 && getObjectFromInventory(x) != 0) {
+			verb = kVerbLook;
+		}
+		if (verb >= kVerbWalk && verb <= kVerbGive) {
+			redrawVerb(_hoverVerbState == kHoverVerbSelected ? _currentAction.verb : _hoverVerbState, false);
+			memset(&_currentAction, 0, sizeof(_currentAction));
+			_currentAction.verb = verb;
+			_hoverVerbState = verb;
+			redrawVerb(verb, true);
+			_inputVars[kInputClick] = 1;
+		}
+	} else if (_inputVars[kInputRightClick]) {
 		_inputVars[kInputRightClick] = 0;
 		if (!_rightButtonSelecting) {
 			beginRightButtonVerbPick();
@@ -633,8 +654,13 @@ void IgorEngine::handleRoomInput() {
 }
 
 void IgorEngine::clearAction(bool redraw) {
-	if (redraw)
+	if (redraw) {
+		if (_game.version == kIdSpaFloppy && _hoverVerbState != kHoverVerbSelected) {
+			redrawVerb(_hoverVerbState, false);
+			_hoverVerbState = kHoverVerbSelected;
+		}
 		redrawVerb(_currentAction.verb, false);
+	}
 	memset(&_currentAction, 0, sizeof(_currentAction));
 	_currentAction.verb = kVerbWalk;
 	_actionCode = 0;
