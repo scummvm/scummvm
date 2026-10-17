@@ -64,7 +64,7 @@ void FoolGame::straightPathRun() {
 		gridX = puzzlesReadByte();
 		gridY = puzzlesReadByte();
 		_zbasic->indexRawSet(puzzlesReadString(), 1, i);
-		arr_i16_2f38[gridX*32 + gridX] = i;
+		arr_i16_2f38[gridX*32 + gridY] = i;
 		arr_i16_3b38[gridX*32 + gridY] = _zbasic->asc(_zbasic->leftStr(_zbasic->index(1, i), 1));
 		_straightPathGoal += _zbasic->indexRaw(1, i);
 		// 143:0276
