@@ -1706,6 +1706,7 @@ private:
 	void drawVerbsPanel();
 	void redrawVerb(uint8 verb, bool highlight);
 	void beginRightButtonVerbPick();
+	int getDefaultVerbAt(int x, int y) const;
 	void updateHoverVerbHighlight();
 	void updateRightButtonVerbPick();
 	void endRightButtonVerbPick();
