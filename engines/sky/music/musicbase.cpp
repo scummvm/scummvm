@@ -63,6 +63,9 @@ void MusicBase::loadSection(uint8 pSection) {
 bool MusicBase::musicIsPlaying() {
 	if (_mixer->isSoundHandleActive(_musicHandle))
 		return true;
+	// not before the mixer call: the mixer thread holds its lock while
+	// calling pollMusic()
+	Common::StackLock lock(_mutex);
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		if (_channels[cnt]->isActive())
 			return true;

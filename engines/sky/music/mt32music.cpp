@@ -61,6 +61,7 @@ void MT32Music::timerCall() {
 }
 
 void MT32Music::setVolume(uint16 volume) {
+	Common::StackLock lock(_mutex);
 	uint8 sysEx[10] = "\x41\x10\x16\x12\x10\x00\x16\x00\x00";
 	_musicVolume = volume;
 	sysEx[7] = (volume > 100) ? 100 : (uint8)volume;
