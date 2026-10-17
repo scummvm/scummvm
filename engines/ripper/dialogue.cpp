@@ -11,7 +11,7 @@
 #include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/ripper.h"
-#include "ripper/script.h"
+#include "ripper/script/compiled_script.h"
 
 namespace Ripper {
 

@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/script.h"
+#include "ripper/script/compiled_script.h"
 
 #include "common/debug.h"
 #include "common/ptr.h"
@@ -78,9 +78,6 @@ Common::String CompiledScript::getPresentationText(uint32 offset) const {
 	Common::String value;
 	while (offset < _data.size() && _data[offset] != 0) {
 		byte character = _data[offset++];
-		// ExecutePresentationEntry at 0x1754b receives the frame's auxiliary
-		// string pointer. RIPPER.LE SCR compilation stores those bytes inverted,
-		// preserving line feeds just like inline type-7 command arguments.
 		if (character != '\n')
 			character ^= 0xff;
 		value += (char)character;

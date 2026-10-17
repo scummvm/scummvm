@@ -71,7 +71,7 @@ static const int kCallbackSuspendedForText = -5;
 
 class ScriptManager::IdleMediaCallback : public MediaSequenceCallback {
 public:
-	IdleMediaCallback(ScriptManager *manager, CompiledScript &script,
+	IdleMediaCallback(ScriptManager *manager, const CompiledScript &script,
 			uint32 callbackOffset, uint targetFrame, uint initialFrame) :
 			_manager(manager), _script(script), _callbackOffset(callbackOffset),
 			_targetFrame(targetFrame), _nextFrame(initialFrame), _result(0),
@@ -152,7 +152,7 @@ private:
 		return 1;
 	}
 	ScriptManager *_manager;
-	CompiledScript &_script;
+	const CompiledScript &_script;
 	uint32 _callbackOffset;
 	uint _targetFrame;
 	uint _nextFrame;
@@ -169,9 +169,6 @@ private:
 };
 
 static Common::String compiledScriptMemberName(const Common::String &target) {
-	// RunSceneScriptLoop at 0x124e9 replaces everything from the first dot with
-	// ".run" before opening the compiled member. Script sources therefore pass
-	// names such as DK1.SCR even though SCRIPT.PL stores the DK1 runtime.
 	return target.substr(0, target.findFirstOf('.')) + ".run";
 }
 
@@ -231,8 +228,6 @@ bool ScriptManager::canSaveGame() const {
 void ScriptManager::requestCyberExit(const char *source) {
 	if (!_runtime.cyberActive)
 		return;
-	// RIPPER.LE dismisses the chooser during phase-3 cleanup before any nested
-	// exit. Retire it before its saved display region can survive the unwind.
 	_dialogue->dismissForSceneTransition("cyber-runtime-exit");
 	_runtime.cyberExitRequested = true;
 	debugC(1, kDebugCyber, "Ripper: Cyber nested runtime exit requested source=%s", source);
@@ -257,8 +252,12 @@ void ScriptManager::restoreFromCyber(SceneRuntimeState &snapshot) {
 		_runtime.concurrentScript.getMemberName().c_str());
 }
 
-bool ScriptManager::startActiveFrame(uint frameIndex) {
-	return advanceBa0ToFrame(frameIndex);
+bool ScriptManager::startCyberScript(const Common::String &memberName) {
+	if (!_runtime.activeScript.load(_engine->getResources()->scripts(), memberName))
+		return false;
+	if (_engine->shouldQuit())
+		return true;
+	return advanceBa0ToFrame(0);
 }
 
 void ScriptManager::logRuntimeFailure(const char *reason) const {
@@ -348,8 +347,6 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 			!restoredConcurrent.load(_engine->getResources()->scripts(), concurrentMember))
 		return false;
 
-	// ScummVM loads inside the modal toolbar, before the current frame unwinds.
-	// Mark replacement before moving scripts invalidates presentation references.
 	_runtimeRestorePending = true;
 	_runtime.activeScript = Common::move(restoredBa0);
 	_runtime.concurrentScript = Common::move(restoredConcurrent);
@@ -383,15 +380,10 @@ ScriptManager::~ScriptManager() {
 }
 
 bool ScriptManager::hasActivePrompt() const {
-	// DispatchFrontEndAction at 0x190b7 selects contextual help while
-	// SceneRuntime+0x189 bit 0x20 is set. HandleSceneEntryChoiceListLifecycle
-	// sets that bit for the choice list currently modeled by DialogueChooser.
 	return _dialogue->isPending();
 }
 
 bool ScriptManager::showHelp(const char *source) {
-	// PollInteractionAndResolveSelection at 0x13c8d and DispatchFrontEndAction
-	// at 0x190b7 use the same prompt-state branch for F1 and toolbar Help.
 	const bool promptActive = hasActivePrompt();
 	const uint resourceId = _runtime.cyberActive ? kCyberHelpResource :
 		(promptActive ? kPromptHelpResource : kGeneralHelpResource);
@@ -399,9 +391,6 @@ bool ScriptManager::showHelp(const char *source) {
 		"Ripper: opening scene help source=%s resource=%u promptActive=%d cyberActive=%d",
 		source, resourceId, promptActive, _runtime.cyberActive);
 	_engine->getCursor()->setVisible(true);
-	// PollInteractionAndResolveSelection at 0x13c8d sends Cyber help resource
-	// 0x1a4 through RunModalTextDialog without replacing the active palette.
-	// The MENUB pixels therefore retain the colors of the Cyber presentation.
 	const ModalDialogManager::PaletteBehavior paletteBehavior = _runtime.cyberActive ?
 		ModalDialogManager::kPreserveActivePalette :
 		ModalDialogManager::kApplyModalPalette;
@@ -442,9 +431,6 @@ bool ScriptManager::openWorldMap() {
 	if (!targetScript.empty()) {
 		if (!runWorldMapCheckpoint(chapter))
 			return false;
-		// Demo DispatchFrontEndAction at 0x16a2f stores the formatted world-map
-		// target on the scene runtime. RunSceneScriptLoop at 0x113cf then replaces
-		// the first dot, or the string terminator, with ".run" before opening it.
 		_runtime.pendingSceneMember = compiledScriptMemberName(targetScript);
 		_runtime.pendingSceneEntryLabel.clear();
 		_runtime.clearPreservedAudioOnTransition = true;
@@ -562,9 +548,6 @@ void ScriptManager::markScenePlayed(const Common::String &scene) {
 
 void ScriptManager::retainPreviousInteractionScene(
 		const Common::String &mediaPath, const char *source) {
-	// ExecutePresentationEntry at 0x1754b copies only its .AVI path to the
-	// dedicated replay buffer at 0x9b0e0. WAV entries and direct type-1
-	// RunMediaSequence presentations leave the previous value unchanged.
 	if (_demoScriptAbi || !mediaPath.hasSuffixIgnoreCase(".avi"))
 		return;
 	_previousInteractionSceneMediaPath = mediaPath;
@@ -609,9 +592,6 @@ uint ScriptManager::resolveFrameIndex(const CompiledScript &script,
 		}
 	}
 
-	// FindSceneFrameIndexByLabel at 0x1464d returns frame 0 when no label
-	// matches. HA2.RUN relies on this for its "hcw1in" handoff to HC2.RUN,
-	// whose first frame is labeled "HCW1CIN".
 	const Common::String fallbackLabel = script.getFrames().empty() ?
 		Common::String() : script.getString(script.getFrames()[0].labelOffset);
 	debugC(2, kDebugScene,
@@ -623,9 +603,6 @@ uint ScriptManager::resolveFrameIndex(const CompiledScript &script,
 
 void ScriptManager::beginBa0InteractionWait(const Common::String &frameLabel,
 		uint interactionCount) {
-	// RIPPER.LE 0x13277 and RIP.EXE 0x11be0
-	// service the new controls once after type-0 frame media, discarding that
-	// result before starting the blocking chooser loop.
 	if (_engine->getInput()->pollEvents())
 		_engine->quitGame();
 	_engine->getInput()->discardMouseTransitions();
@@ -659,8 +636,6 @@ void ScriptManager::initializeBa0InteractionState(const ScriptFrame &frame) {
 }
 
 void ScriptManager::bindBa0Frame(uint frameIndex) {
-	// BindSceneRuntimeCurrentFrame at 0x145d6 preserves the outgoing frame label
-	// at SceneRuntime+0x177 before changing the current frame record.
 	if (_runtime.activeFrame < _runtime.activeScript.getFrames().size())
 		_runtime.previousFrameLabel = _runtime.activeScript.getString(_runtime.activeScript.getFrames()[_runtime.activeFrame].labelOffset);
 	else
@@ -671,7 +646,7 @@ void ScriptManager::bindBa0Frame(uint frameIndex) {
 		_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame, _runtime.previousFrameLabel.c_str());
 }
 
-bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
+bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbackOffset, int &result,
 		uint *nextFrame, uint commandStart) {
 	Common::Array<ScriptCommand> commands;
 	result = 0;
@@ -702,8 +677,6 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.opcode == kMilestoneCondition) {
 				const uint flag = command.arguments[1].value;
 				actual = _engine->getMilestones()->isSet(flag);
-				// The numeric fields uniquely identify this gate and avoid expanding
-				// mutable script or label storage in this high-frequency variadic trace.
 				debugC(3, kDebugMilestones,
 					"Ripper: milestone gate flag=%u expected=%d actual=%d target=0x%x offset=0x%x",
 					flag, expected, actual, command.arguments[2].value, command.offset);
@@ -865,17 +838,12 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.arguments.size() < expectedArgumentCount)
 				return false;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
-			// RIPPER.LE's compiler stores this optional authored text as an inline
+			// Compiler stores this optional authored text as an inline
 			// type-7 argument. An absent caption is encoded as a one-byte NUL
 			// payload; argument.value is not a string-table offset for this type.
 			const Common::String presentationText = !_demoScriptAbi &&
 				_engine->getSettings()->getSubtitles() ?
 				argumentString(command.arguments[1]) : Common::String();
-			// The demo's opcode handler at 0x13e46 calls FUN_000142bb with
-			// path, auxiliary text, Y, and X, and forces its scene-presentation
-			// control argument to one. RIPPER.LE's command executor at
-			// 0x1357f inserts a separate keyboard-control argument before its
-			// placement pair.
 			const bool allowEscSpace = _demoScriptAbi || command.arguments[2].value == 0;
 			const int x = (int32)command.arguments[3].value;
 			const int y = (int32)command.arguments[_demoScriptAbi ? 2 : 4].value;
@@ -887,16 +855,11 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				allowEscSpace, x, y, !presentationText.empty(),
 				presentationText.size(), command.arguments[1].type,
 				command.arguments[1].data.size());
-			// ExecutePresentationEntry at 0x1754b deactivates the UI selection
-			// presentation before media playback. The following frame activation
-			// restores the cursor after the callback finishes.
 			retainPreviousInteractionScene(mediaPath, "script-media-command");
 			_engine->getCursor()->setVisible(false);
 			if (!_engine->getMedia()->play(mediaPath, allowEscSpace, x, y, true,
 					presentationText))
 				return false;
-			// RIPPER.LE's command executor at 0x1357f marks the presentation
-			// basename only after ExecutePresentationEntry returns.
 			const size_t extension = mediaPath.findFirstOf('.');
 			const Common::String playedKey = mediaPath.substr(0, extension);
 			markScenePlayed(playedKey);
@@ -936,9 +899,6 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				return false;
 			const Common::String target = argumentString(command.arguments[0]);
 			const Common::String entryLabel = argumentString(command.arguments[1]);
-			// The demo handler at 0x140dc has only the target and entry-label
-			// arguments. It stores both pending pointers and returns -3
-			// unconditionally; RIPPER.LE adds the concurrency selector.
 			if (_demoScriptAbi) {
 				_runtime.pendingSceneMember = compiledScriptMemberName(target);
 				_runtime.pendingSceneEntryLabel = entryLabel;
@@ -949,8 +909,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				result = -3;
 				return true;
 			}
-			// HandleSceneEntryAndStartConcurrentSceneRuntime at 0x15cd3 always
-			// turns opcode 0x1d into a scene handoff when the command belongs to
+			// Opcode 0x1d is always turned into a scene handoff when the command belongs to
 			// the concurrent runtime. The third argument only selects this path
 			// when the active scene issues the command.
 			if (&script == &_runtime.concurrentScript || command.arguments[2].value == 0) {
@@ -981,10 +940,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			const Common::String scene = argumentString(command.arguments[1]);
 			if (scene.empty())
 				return false;
-			const bool previous = isScenePlayed(scene);
-			// HandleSceneEntrySetOrClearNamedFlag at 0x15dfe forwards the
-			// first argument and named play-list entry to the shared bitset
-			// helper; zero clears the bit and nonzero sets it.
+			const bool previous = isScenePlayed(scene);			
 			setScenePlayed(scene, played);
 			debugC(2, kDebugScene,
 				"Ripper: updated named scene flag scene='%s' value=%d previous=%d script='%s' offset=0x%x",
@@ -1041,9 +997,6 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.arguments.size() < 1)
 				return false;
 			const uint targetFrame = command.arguments[0].value;
-			// HandleSceneEntryWaitForSceneFrameCounter at 0x1633e suspends the
-			// idle command stream until RunMediaSequence publishes this one-based
-			// frame. IdleMediaCallback enters the stream only after that boundary.
 			if (_sceneCallbackFrame < targetFrame) {
 				warning("Ripper: scene callback frame=%u did not reach wait target=%u script='%s' offset=0x%x",
 					_sceneCallbackFrame, targetFrame, script.getMemberName().c_str(),
@@ -1071,10 +1024,6 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				return false;
 			}
 
-			// DispatchSceneEntryAction 30 captures the active presentation as the
-			// following chooser's one-shot template. ConfigureSceneEntryChooserLayout
-			// at 0x18740 maps layout 2 to the unskinned primary chooser template at
-			// 0x8a2de, retaining the edit-field surround from the active movie.
 			const byte templateMode = _chooserTemplateMode;
 			_chooserTemplateMode = 0;
 			if (!_activeIdleMediaCallback->beginTextRequest(prompt, expected,
@@ -1151,9 +1100,7 @@ bool ScriptManager::handleActiveRuntimeExit(int result, const CompiledScript &sc
 	if (result != -4)
 		return false;
 
-	// -4 is a normal active-runtime exit. RIP.EXE returns to its ending
-	// coordinator; Cyber restores its caller; top-level RIPPER.LE returns to
-	// the startup loop.
+	// -4 is a normal active-runtime exit. 
 	if (_runtime.cyberActive) {
 		if (!_runtime.cyberExitRequested)
 			return false;
@@ -1183,9 +1130,6 @@ bool ScriptManager::acceptConcurrentRuntimeExit(int result,
 	if (result != -4 || _runtime.concurrentScript.getFrames().empty())
 		return false;
 
-	// RunSceneScriptLoop at 0x124e9 destroys the top-level concurrent runtime
-	// and resumes the active runtime when ExecuteSceneFrameAndInteractions
-	// returns -4. ACT3_CHK.RUN uses this path after arming the Act IV milestone.
 	debugC(1, kDebugScene,
 		"Ripper: concurrent runtime exited normally script='%s' entry='%s' callback='%s' result=%d",
 		_runtime.concurrentScript.getMemberName().c_str(),
@@ -1207,8 +1151,6 @@ bool ScriptManager::runStartupPath() {
 		return false;
 	}
 
-	// RIP.EXE destroys RIPPER.RUN before creating BA0.RUN. Use the normal
-	// transition path so a pending handoff cannot preempt BA0's first frame.
 	return performPendingSceneTransition();
 }
 
@@ -1273,8 +1215,6 @@ bool ScriptManager::performPendingSceneTransition() {
 		"Ripper: applying scene transition target='%s' entry='%s' concurrent='%s' clearPreservedAudio=%d",
 		memberName.c_str(), entryLabel.c_str(), _runtime.concurrentScript.getMemberName().c_str(),
 		_runtime.clearPreservedAudioOnTransition);
-	// RunSceneScriptLoop at 0x124e9 retires non-preserved slots at every scene
-	// handoff. Concurrent and world-map handoffs clear preserve bits first.
 	_engine->getSceneAudio()->clearAll(_runtime.clearPreservedAudioOnTransition);
 	_runtime.clearPreservedAudioOnTransition = false;
 	_engine->getToolbar()->leave();
@@ -1299,7 +1239,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 	_engine->getCursor()->setVisible(false);
 	_runtime.hoveredInteraction = -1;
 	// -2 re-enters this unbounded loop so the concurrent runtime runs before the
-	// next active frame, even when opcode 0x14 selects the same frame again.
+	// next active frame
 	while (!_engine->shouldQuit()) {
 		if (!executeConcurrentFrame())
 			return false;
@@ -1392,9 +1332,6 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			const bool dialoguePending = _dialogue->isPending();
 			const bool waitsForSceneInput =
 				frame.interactionCount != 0 || dialoguePending || idleTextRequest;
-			// ExecuteSceneFrameAndInteractions at 0x11be0 activates demo type-0
-			// controls only after ExecutePresentationEntry returns. Type-1 controls
-			// and callback-owned input must remain active while their media loops.
 			const bool activatesInputDuringMedia =
 				(frame.presentationType == 1 && frame.interactionCount != 0) ||
 				dialoguePending || idleTextRequest;
@@ -1422,9 +1359,6 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			if (!played)
 				return false;
 			if (_runtimeRestorePending) {
-				// PollInteractionAndResolveSelection at 0x13c8d propagates the
-				// restore result before ExecuteSceneFrameAndInteractions at
-				// 0x13277 reads the old frame or runs another callback.
 				debugC(1, kDebugSaveLoad,
 					"Ripper: unwound replaced active presentation media='%s'",
 					mediaPath.c_str());
@@ -1588,8 +1522,6 @@ bool ScriptManager::serviceCyberKeyboardCommand() {
 	if (!_runtime.cyberActive || command == 0)
 		return true;
 	if (command == kCyberEscapeCommand) {
-		// HandleSceneChooserSpecialCommand at 0x17c5a turns Escape into the
-		// normal -4 nested-runtime exit before resolving frame hotspots.
 		requestCyberExit("keyboard-escape");
 		return true;
 	}
@@ -1952,9 +1884,6 @@ void ScriptManager::updateModalSceneCursor(const Common::Point &point) {
 }
 
 Common::Rect ScriptManager::interactionBounds(const ScriptInteraction &interaction) const {
-	// ExecuteSceneFrameAndInteractions at 0x13277 transposes the compiled
-	// interaction axes and adds the active 0x32 presentation origin to the
-	// first logical coordinate before registering the physical UI rectangle.
 	return Common::Rect(interaction.y, interaction.x + kSceneInteractionOriginY,
 		interaction.y + interaction.height,
 		interaction.x + kSceneInteractionOriginY + interaction.width);

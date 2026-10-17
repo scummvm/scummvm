@@ -527,9 +527,9 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 			Common::String sceneLabel;
 			ScriptManager *scripts = _database->engine()->getScripts();
 			const uint activeFrame = scripts->getActiveFrame();
-			if (activeFrame < scripts->ba0().getFrames().size())
-				sceneLabel = scripts->ba0().getString(
-					scripts->ba0().getFrames()[activeFrame].labelOffset);
+			if (activeFrame < scripts->getActiveScript().getFrames().size())
+				sceneLabel = scripts->getActiveScript().getString(
+					scripts->getActiveScript().getFrames()[activeFrame].labelOffset);
 			Common::String rangeDiagnostics;
 			const bool rangesMatch = validateWacVoiceLockSelections(
 				selections, rangeDiagnostics);
@@ -574,8 +574,6 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		warning("Ripper: could not restore WAC voice-lock transient drag backing");
 	if (solved) {
 		_database->engine()->getCursor()->setVisible(false);
-		// ACCESED.AVI covers only 640x300. RIPPER.LE clears the full logical page
-		// at 0x45ed8 first so WAC pixels do not remain in the outer bands.
 		g_system->fillScreen(0);
 		presentScreen();
 		debugC(2, kDebugWac,

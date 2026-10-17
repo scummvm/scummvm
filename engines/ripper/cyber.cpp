@@ -32,9 +32,9 @@
 #include "ripper/scenes/librarian_scene.h"
 #include "ripper/scenes/wofford_scene.h"
 #include "ripper/media.h"
-#include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/scene_audio.h"
+#include "ripper/scene_dispatcher.h"
 #include "ripper/script.h"
 #include "ripper/toolbar.h"
 
@@ -97,11 +97,11 @@ bool CyberManager::runScriptLoop(bool active, uint action,
 		if (!scripts->serviceScene()) {
 			if (!programName.empty()) {
 				const uint frame = scripts->getActiveFrame();
-				const Common::String label = frame < scripts->ba0().getFrames().size() ?
-					scripts->ba0().getString(scripts->ba0().getFrames()[frame].labelOffset) :
+				const Common::String label = frame < scripts->getActiveScript().getFrames().size() ?
+					scripts->getActiveScript().getString(scripts->getActiveScript().getFrames()[frame].labelOffset) :
 					Common::String();
 				warning("Ripper: Cyber program service failed action=%u script='%s' frame=%u/%u label='%s' awaitingInteraction=%d pendingScript='%s' pendingEntry='%s'",
-					action, programName.c_str(), frame, scripts->ba0().getFrames().size(),
+					action, programName.c_str(), frame, scripts->getActiveScript().getFrames().size(),
 					label.c_str(), scripts->isAwaitingInteraction(),
 					scripts->getPendingSceneMember().c_str(), scripts->getPendingSceneEntryLabel().c_str());
 			}
@@ -179,13 +179,7 @@ CyberManager::Result CyberManager::run() {
 	if (active && !_engine->shouldQuit()) {
 		g_system->fillScreen(0);
 		presentScreen();
-		active = scripts->ba0().load(_engine->getResources()->scripts(), kCyberScript);
-	}
-	if (active && !_engine->shouldQuit()) {
-		debugC(1, kDebugCyber,
-			"Ripper: activated Cyber nested runtime frames=%u interactions=%u",
-			scripts->ba0().getFrames().size(), scripts->ba0().getInteractions().size());
-		active = scripts->startActiveFrame(0);
+		active = scripts->startCyberScript(kCyberScript);
 	}
 
 	active = runScriptLoop(active);
@@ -236,14 +230,7 @@ CyberManager::Result CyberManager::runProgram(uint action,
 		if (active)
 			result = kExited;
 	} else {
-		active = scripts->ba0().load(_engine->getResources()->scripts(), programName);
-		if (active && !_engine->shouldQuit()) {
-			debugC(1, kDebugCyber,
-				"Ripper: activated Cyber program action=%u script='%s' frames=%u interactions=%u",
-				action, programName.c_str(), scripts->ba0().getFrames().size(),
-				scripts->ba0().getInteractions().size());
-			active = scripts->startActiveFrame(0);
-		}
+		active = scripts->startCyberScript(programName);
 	}
 
 	if (!isSelfContainedScene) {
