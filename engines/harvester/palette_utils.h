@@ -22,8 +22,6 @@
 #ifndef HARVESTER_PALETTE_UTILS_H
 #define HARVESTER_PALETTE_UTILS_H
 
-#include <cstring>
-
 #include "common/scummsys.h"
 
 namespace Harvester {

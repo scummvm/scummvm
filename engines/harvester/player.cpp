@@ -19,8 +19,6 @@
  *
  */
 
-#include <math.h>
-
 #include "harvester/player.h"
 #include "harvester/combat.h"
 

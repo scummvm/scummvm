@@ -19,8 +19,6 @@
  *
  */
 
-#include <math.h>
-
 #include "harvester/flow.h"
 
 #include "common/algorithm.h"

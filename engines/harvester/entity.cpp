@@ -19,8 +19,6 @@
  *
  */
 
-#include <math.h>
-
 #include "harvester/entity.h"
 
 #include "common/algorithm.h"

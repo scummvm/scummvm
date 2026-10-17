@@ -19,9 +19,6 @@
  *
  */
 
-#include <cstdlib>
-#include <cstring>
-
 #include "harvester/media_manager.h"
 
 #include "audio/audiostream.h"
