@@ -83,6 +83,35 @@ enum {
 	kTalkModeTextOnly = 2
 };
 
+// Effects that the Spanish floppy plays with another number than the other versions (see playRoomSound)
+enum RoomSound {
+	kSoundPart0Nightstand = 6,
+	kSoundPart0ClosetClose = 4,
+	kSoundPart1Window = 12,
+	kSoundPart2Fuse = 11,
+	kSoundPart8Shards = 16,
+	kSoundPart18Tap = 47,
+	kSoundPart19Dryer = 45,
+	kSoundPart50Ambient = 44
+};
+
+// Numbers of the Spanish floppy sound table
+enum SpaFloppySound {
+	kSpaFloppySoundPart0Nightstand = 5,
+	kSpaFloppySoundPart0ClosetClose = 14,
+	kSpaFloppySoundPlaneEngine = 66,
+	kSpaFloppySoundPart50Door = 68,
+	kSpaFloppySoundPart68AmbientA = 69,
+	kSpaFloppySoundPart68AmbientB = 70,
+	kSpaFloppySoundPart18Tap = 71,
+	kSpaFloppySoundPart19Dryer = 72,
+	kSpaFloppySoundParkAmbient = 75,
+	kSpaFloppySoundPart6Ambient = 76,
+	kSpaFloppySoundPart8Shards = 77,
+	kSpaFloppySoundPart1Window = 79,
+	kSpaFloppySoundPart2Fuse = 80
+};
+
 // Value of _hoverVerbState when the verb panel shows the selected verb
 static const int kHoverVerbSelected = -1;
 
@@ -776,6 +805,7 @@ private:
 	void playMusic(int num, bool restart = false);
 	void updateMusic();
 	void playSound(int num, int type);
+	void playRoomSound(int sound, int spaFloppySound);
 	void stopSound();
 	int getTalkMode() const;
 	int prepareDialoguePlayback(const DialogueText &text);
@@ -1471,6 +1501,7 @@ private:
 	void part68DrawPose(int frame);
 	void part68UpdateOwlsEyes();
 	void part68UpdateBackground();
+	void part68PlayAmbientSound();
 	void part68UpdateBackgroundTalk();
 	void part68SayBorisReplies(int action);
 	void part68SayBoris(const Common::Array<DialogueText> &lines);

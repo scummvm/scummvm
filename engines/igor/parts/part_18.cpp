@@ -106,7 +106,7 @@ void IgorEngine::part18UseBottleOnTap() {
 	}
 	const int offset = 26798;
 	drawAnimRect(offset, 0xF0A, 28, 29);
-	playSound(47, 1);
+	playRoomSound(kSoundPart18Tap, kSpaFloppySoundPart18Tap);
 	for (int i = 1; i <= 2; ++i) {
 		waitForTimer(_game.version == kIdSpaFloppy ? 120 : 200);
 	}

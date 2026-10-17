@@ -200,7 +200,7 @@ void IgorEngine::part1() {
 			else if (_currentPart == 12) {
 				memcpy(_currentPalette, _paletteBuffer, 768);
 				updatePalette(768);
-				playSound(12, 1);
+				playRoomSound(kSoundPart1Window, kSpaFloppySoundPart1Window);
 				part1Explosion();
 				_currentPart = 23;
 			}

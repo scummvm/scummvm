@@ -315,20 +315,20 @@ void IgorEngine::part2ExecuteAction(int action) {
 
 void IgorEngine::part2LightUpDynamite() {
 	memset(_screenVGA + 0xB400, 0, 0x4BFF);
-	playSound(68, 1);
+	playRoomSound(68, 0);
 	animateLitAnimFrames(0x5CDC, 0, 2, 0x44C, 22, 50, 0x5989, 127, -1, 0);
 	waitForTimer(127);
 
 	igorSay(221, 1, 125);
 	if (_gameState.talkMode == kTalkModeTextOnly)
-		playSound(11, 1);
+		playRoomSound(kSoundPart2Fuse, kSpaFloppySoundPart2Fuse);
 	_updateRoomBackground = &IgorEngine::part2UpdateFuse;
 	waitForEndOfIgorDialogue();
 	_updateRoomBackground = 0;
 
 	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 320 * 72, _dialogueDirtyRectSize);
 	if (_gameState.talkMode != kTalkModeTextOnly)
-		playSound(11, 1);
+		playRoomSound(kSoundPart2Fuse, kSpaFloppySoundPart2Fuse);
 
 	part2WalkWhileFuseBurns(211, 120, 0, 143);
 	for (int elapsed = 0; elapsed < 255; elapsed += kTimerTicksCount) {

@@ -230,7 +230,7 @@ void IgorEngine::part32ControlsIdle(int fieldColor) {
 }
 
 void IgorEngine::part32ExitControls() {
-	playSound(getRandomNumber(1) + 0x42, 1);
+	playRoomSound(getRandomNumber(1) + 0x42, 0);
 	part32CopyControlColor(kPart32DeclinationColor, kPart32FieldColor);
 	part32CopyControlColor(kPart32AscensionColor, kPart32FieldColor);
 	setPaletteRange(kPart32DeclinationColor, kPart32AscensionColor);
@@ -239,7 +239,7 @@ void IgorEngine::part32ExitControls() {
 
 
 void IgorEngine::part32SelectDeclination() {
-	playSound(31, 1);
+	playRoomSound(31, 0);
 	part32CopyControlColor(kPart32DeclinationColor, kPart32FieldColor);
 	part32CopyControlColor(kPart32AscensionColor, kPart32FieldColor);
 	setPaletteRange(kPart32AscensionColor, kPart32AscensionColor);
@@ -249,7 +249,7 @@ void IgorEngine::part32SelectDeclination() {
 			_inputVars[kInputClick] = 0;
 			const int key = part32ControlKeyAtCursor();
 			if (key != kPart32KeyAscension) {
-				playSound(getRandomNumber(1) + 0x42, 1);
+				playRoomSound(getRandomNumber(1) + 0x42, 0);
 			}
 			if (key >= 1 && key <= 10) {
 				// the declination does not go over 90
@@ -280,7 +280,7 @@ void IgorEngine::part32SelectDeclination() {
 }
 
 void IgorEngine::part32SelectAscension() {
-	playSound(31, 1);
+	playRoomSound(31, 0);
 	part32CopyControlColor(kPart32DeclinationColor, kPart32FieldColor);
 	setPaletteRange(kPart32DeclinationColor, kPart32DeclinationColor);
 	_part32Blink = 2;
@@ -289,7 +289,7 @@ void IgorEngine::part32SelectAscension() {
 			_inputVars[kInputClick] = 0;
 			const int key = part32ControlKeyAtCursor();
 			if (key != kPart32KeyDeclination) {
-				playSound(getRandomNumber(1) + 0x42, 1);
+				playRoomSound(getRandomNumber(1) + 0x42, 0);
 			}
 			if (key >= 1 && key <= 10) {
 				// the ascension does not go over 360
@@ -326,7 +326,7 @@ void IgorEngine::part32SelectAscension() {
 }
 
 void IgorEngine::part32EnterCoordinates() {
-	playSound(getRandomNumber(1) + 0x42, 1);
+	playRoomSound(getRandomNumber(1) + 0x42, 0);
 	part32CopyControlColor(kPart32DeclinationColor, kPart32FieldColor);
 	part32CopyControlColor(kPart32AscensionColor, kPart32FieldColor);
 	setPaletteRange(kPart32DeclinationColor, kPart32AscensionColor);
@@ -344,7 +344,7 @@ void IgorEngine::part32EnterCoordinates() {
 }
 
 int IgorEngine::part32AnimateDeclination() {
-	playSound(30, 1);
+	playRoomSound(30, 0);
 	uint8 *digits = _part32DeclinationDigits;
 	if (digits[1] == 0xFF) {
 		digits[1] = digits[0];
@@ -369,7 +369,7 @@ int IgorEngine::part32AnimateDeclination() {
 }
 
 int IgorEngine::part32AnimateAscension() {
-	playSound(30, 1);
+	playRoomSound(30, 0);
 	uint8 *digits = _part32AscensionDigits;
 	if (digits[2] == 0xFF) {
 		digits[2] = digits[1];
@@ -595,7 +595,7 @@ void IgorEngine::part32SceneGirl() {
 		decodeAnimFrame(_screenLayer2 + READ_LE_UINT16(_screenLayer2 + frame * 2 - 2) + 9, _screenVGA, false);
 		waitForTimer(50);
 	}
-	playSound(32, 1);
+	playRoomSound(32, 0);
 	waitForTimer(255);
 }
 

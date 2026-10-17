@@ -47,7 +47,7 @@ void IgorEngine::part85DisplayLogo() {
 	// The CD executable preserves the last intro frame while it displays a
 	// 320x122 title card, then restores that frame before entering part 61.
 	memcpy(_screenTextLayer, _screenVGA, 46080);
-	playSound(65, 1);
+	playRoomSound(65, 0);
 
 	memcpy(_paletteBuffer, _currentPalette, 768);
 	loadData(PAL_IgorIntroLogo, _currentPalette);

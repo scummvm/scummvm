@@ -292,7 +292,7 @@ void IgorEngine::part9() {
 			if (frame < 19)
 				waitForTimer(31);
 			else
-				playSound(14, 1);
+				playRoomSound(14, 0);
 		}
 		waitForTimer(255);
 		fadeOut(624);

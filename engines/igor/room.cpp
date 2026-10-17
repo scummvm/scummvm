@@ -24,6 +24,17 @@
 
 namespace Igor {
 
+/**
+ * Plays an effect of a room. The Spanish floppy plays its own effect (or none, when spaFloppySound is 0)
+ * where the other versions play "sound".
+ */
+void IgorEngine::playRoomSound(int sound, int spaFloppySound) {
+	if (_game.version == kIdSpaFloppy)
+		sound = spaFloppySound;
+	if (sound > 0)
+		playSound(sound, 1);
+}
+
 void IgorEngine::decodeRoomAreas(const uint8 *p, int count) {
 	for (int i = 0; i < count; ++i) {
 		RoomObjectArea *roa = &_roomObjectAreasTable[i];

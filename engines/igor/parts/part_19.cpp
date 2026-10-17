@@ -88,7 +88,7 @@ void IgorEngine::part19UsePapyrusOnDryer() {
 		waitForTimer(45);
 	}
 	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x35E) - 1, _screenVGA, true);
-	playSound(45, 1);
+	playRoomSound(kSoundPart19Dryer, kSpaFloppySoundPart19Dryer);
 	partMainLookAtPapyrus(true);
 	part19ApplyObjectState(255);
 	stopSound();

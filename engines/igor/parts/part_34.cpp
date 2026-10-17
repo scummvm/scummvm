@@ -86,19 +86,33 @@ void IgorEngine::part34And35PickUpAnimation(int screenOffset, int framesOffset) 
  */
 void IgorEngine::part34And35UpdateAmbientSound() {
 	if (compareGameTick(1) && getRandomNumber(14) == 0) {
-		switch (getRandomNumber(3)) {
-		case 0:
-			playSound(21, 1);
-			break;
-		case 1:
-			playSound(22, 1);
-			break;
-		case 2:
-			playSound(23, 1);
-			break;
-		case 3:
-			playSound(18, 1);
-			break;
+		if (_game.version == kIdSpaFloppy) {
+			switch (getRandomNumber(2)) {
+			case 0:
+				playSound(21, 1);
+				break;
+			case 1:
+				playSound(kSpaFloppySoundParkAmbient, 1);
+				break;
+			case 2:
+				playSound(23, 1);
+				break;
+			}
+		} else {
+			switch (getRandomNumber(3)) {
+			case 0:
+				playSound(21, 1);
+				break;
+			case 1:
+				playSound(22, 1);
+				break;
+			case 2:
+				playSound(23, 1);
+				break;
+			case 3:
+				playSound(18, 1);
+				break;
+			}
 		}
 	}
 }
