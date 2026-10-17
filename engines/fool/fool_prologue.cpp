@@ -639,7 +639,7 @@ void FoolPrologue::setupWindow() {
 		// 1c4 == string
 		// 2c4 == unused
 		// 2c8 == volume number?
-		var_i16_176 = _zbasic->finderInfo(var_i16_180, var_i16_1c4, _tickMarkerc4, var_i16_2c8);
+		var_i16_176 = _zbasic->finderInfo(var_i16_180, var_i16_1c4, var_i32_2c4, var_i16_2c8);
 		if (Common::U32String("") != var_i16_1c4) {
 			// 129:04de
 			// "and now it is time to show the finale" message
