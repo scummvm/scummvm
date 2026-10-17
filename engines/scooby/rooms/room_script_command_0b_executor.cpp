@@ -24,7 +24,7 @@
 #include "common/scummsys.h"
 
 namespace Scooby {
-void RoomScriptCommand0BExecutor::executeRoomScriptCommand0B(int mode) {
+void RoomScriptCommand0BExecutor::scriptCommand0BSetBackgroundGfx(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002DF2-0x00002DF5: dispatcher mode zero skips every object-state branch.

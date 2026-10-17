@@ -52,7 +52,7 @@ public:
 	//
 	// Ghidra: executeRoomScriptCommand19 (0x00002B0E). Every identity other than one or two retains the
 	// wrapped object-table branch, and byte-bit selection remains modulo eight.
-	void executeRoomScriptCommand19(int mode);
+	void scriptCommand19ShowActor(int mode);
 
 private:
 	const ScoobyDooRom &_rom;

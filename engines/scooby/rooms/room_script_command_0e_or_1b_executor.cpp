@@ -25,7 +25,7 @@
 
 namespace Scooby {
 
-void RoomScriptCommand0EOr1BExecutor::executeRoomScriptCommand0EOr1B(int mode) {
+void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 	uint16 command = _rom.readUInt16(commandOffset);
 

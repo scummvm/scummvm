@@ -62,7 +62,7 @@ public:
 	// identity selection; room-object direct placement still waits for a requested animation's graphics.
 	// Negative movement mode replaces only the integer half of each 16.16 coordinate; actor zero restarts at
 	// delay -1, while actor one retains the original asymmetric delay 1.
-	void executeRoomScriptCommand0EOr1B(int mode);
+	void scriptCommand0EOr1BMoveToPosition(int mode);
 
 private:
 	static const uint16 kIndexedPositionCommand = 0x0E;

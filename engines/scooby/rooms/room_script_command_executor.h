@@ -125,7 +125,7 @@ private:
 	// mode: ignored because scan and execution modes consume the same record.
 	//
 	// Ghidra: executeRoomScriptCommand00 (0x0000250C).
-	void executeRoomScriptCommand00(int mode);
+	void scriptCommand00NoOp(int mode);
 
 	// Forwards to the recovered command 0x01 owner with the retained interaction-mode snapshot.
 	// mode: original D0 mode selected by the calling script loop.
@@ -137,7 +137,7 @@ private:
 	// mode: ignored because the shared condition record has the same meaning in either mode.
 	//
 	// Ghidra: executeRoomScriptCommand03 (0x00002732).
-	void executeRoomScriptCommand03(int mode);
+	void scriptCommand03IfStatement(int mode);
 
 	// Runs a conditional nested script window and merges its resulting cursor into the parent window.
 	// mode: selects the scan or execution dispatcher installed by the current script owner.
@@ -146,7 +146,7 @@ private:
 	// g_pRoomScriptDispatchCallback is represented by the runtime-owned callback rather than a mutable
 	// executable pointer. Signed script displacements and the auto-flag early return retain their original
 	// cursor and bound ownership.
-	void executeRoomScriptCommand04(int mode);
+	void scriptCommand04IfStatementNested(int mode);
 
 	// Selects an actor animation directly or through its fixed-position room object.
 	// mode: zero scans past the command; nonzero applies its animation selection.
@@ -168,7 +168,7 @@ private:
 	//
 	// Ghidra: executeRoomScriptCommand0A (0x00002DC0). The installed room callback and
 	// host presenter replace the original vertical-blank handshake before the canonical prompt commit.
-	void executeRoomScriptCommand0A(int mode);
+	void scriptCommand0ASetInventoryGfx(int mode);
 
 	// Dispatches one authored nested room-script action and advances past its command record.
 	// mode: zero scans past the command; nonzero executes its nested action.
@@ -176,14 +176,14 @@ private:
 	// Ghidra: executeRoomScriptCommand0C (0x00002E9E). The executable 62-entry table at
 	// 0x00002EB4-0x00002FAB is represented by RoomScriptActionExecutor rather than
 	// read as cartridge asset data.
-	void executeRoomScriptCommand0C(int mode);
+	void scriptCommand0CRunAction(int mode);
 
 	// Routes one encoded audio command to its play or stop boundary.
 	// mode: zero scans past the command; nonzero dispatches its audio request.
 	//
 	// Ghidra: executeRoomScriptCommand0D (0x000048B6). Audio playback remains an explicitly
 	// deferred nonthrowing domain, while the encoded sign branch and command ordering remain intact.
-	void executeRoomScriptCommand0D(int mode);
+	void scriptCommand0DPlayOrStopAudio(int mode);
 
 	static void playAudioCommand(int command);
 	static void stopAudioPlayback(int command);
@@ -200,21 +200,21 @@ private:
 	//
 	// Ghidra: executeRoomScriptCommand12 (0x00004F50). The object identity is converted to
 	// the original signed low-word byte offset before selecting the typed 0x1A-byte record.
-	void executeRoomScriptCommand12(int mode);
+	void scriptCommand12SetObjShape(int mode);
 
 	// Stops automatic-interaction scanning at its marker or follows the marker's signed displacement.
 	// mode: zero recognizes an active automatic-interaction scan; nonzero follows the displacement.
 	//
 	// Ghidra: executeRoomScriptCommand13 (0x00002446). The automatic scan stop leaves the
 	// cursor on this command so its owner can derive the nested execution window from the same record.
-	void executeRoomScriptCommand13(int mode);
+	void scriptCommand13Jump(int mode);
 
 	// Replaces one room object's complete shape index word through command slot 0x14.
 	// mode: zero scans the six-byte record; nonzero applies its shape index.
 	//
 	// Ghidra: executeRoomScriptCommand14 (0x00002E7E). This remains a distinct original
 	// boundary even though its complete 32-byte body is identical to command 0x12.
-	void executeRoomScriptCommand14(int mode);
+	void scriptCommand14SetObjShape(int mode);
 
 	// Advances actor animations for an inclusive authored retrace countdown.
 	// mode: zero scans the four-byte record; nonzero performs the timed animation wait.
@@ -228,7 +228,7 @@ private:
 	//
 	// Ghidra: executeRoomScriptCommand16 (0x00002AD0). Dynamic byte-bit selection remains
 	// modulo eight, including the room object's -1 fixed-position sentinel branch.
-	void executeRoomScriptCommand16(int mode);
+	void scriptCommand16HideActor(int mode);
 
 	// Advances animations until a direct actor or room object's assigned actor reaches a hold command.
 	// mode: zero scans the four-byte record; nonzero waits for the selected actor hold.
@@ -237,7 +237,7 @@ private:
 	// least once, and dynamic byte-bit selection retains the fixed-position -1 sentinel branch.
 	// The installed room callback and host presenter replace interrupt-driven delay progress on each
 	// continuation of the native tight loop.
-	void executeRoomScriptCommand17(int mode);
+	void scriptCommand17WaitForObjAnim(int mode);
 
 	bool waitForRoomVerticalBlank();
 
@@ -246,7 +246,7 @@ private:
 	//
 	// Ghidra: executeRoomScriptCommand18 (0x00004EE4). The coordinate index shifts within
 	// a word before the separate room-state reset boundary consumes the selected room state.
-	void executeRoomScriptCommand18(int mode);
+	void scriptCommand18ChangeRoomNoFade(int mode);
 
 	// Records the non-returning handover from a nested movement command.
 	void requestMovementHostClose() {

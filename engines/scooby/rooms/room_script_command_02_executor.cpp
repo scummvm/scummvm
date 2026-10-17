@@ -26,7 +26,8 @@
 
 namespace Scooby {
 
-void RoomScriptCommand02Executor::executeRoomScriptCommand02(int mode) {
+// loads a interaction line that the player can select. Used when talking to Actors.
+void RoomScriptCommand02Executor::scriptCommand02AddPlayerChoiceInteractionLine(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x000025AC-0x000025AF: a nonzero execution mode skips registration.

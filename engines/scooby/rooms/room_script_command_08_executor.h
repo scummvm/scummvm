@@ -50,7 +50,7 @@ public:
 	// sum and even alignment, including offsets that cross into a neighboring record. The progress-word XOR
 	// uses the command destination held in D3; raw instruction 0x00002D08 instead indexes through inherited
 	// A3.W, which neither dispatcher establishes.
-	void executeRoomScriptCommand08(int mode);
+	void scriptCommand08SetVariable(int mode);
 
 private:
 	// Preserves a mutable reference to the resolved room-object record and its aligned command-word offset,

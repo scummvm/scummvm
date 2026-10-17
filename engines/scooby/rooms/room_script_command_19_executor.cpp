@@ -25,7 +25,7 @@
 
 namespace Scooby {
 
-void RoomScriptCommand19Executor::executeRoomScriptCommand19(int mode) {
+void RoomScriptCommand19Executor::scriptCommand19ShowActor(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002B0E-0x00002B11: scan mode skips every actor-selection and publication effect.

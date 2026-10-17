@@ -25,7 +25,7 @@
 
 namespace Scooby {
 
-void RoomScriptCommand0FExecutor::executeRoomScriptCommand0F(int mode) {
+void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004C20-0x00004C23: scan mode skips every effect and joins the fixed-width epilogue.

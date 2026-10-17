@@ -25,7 +25,7 @@
 
 namespace Scooby {
 
-void RoomScriptCommand08Executor::executeRoomScriptCommand08(int mode) {
+void RoomScriptCommand08Executor::scriptCommand08SetVariable(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002C56-0x00002C59: mode zero skips every update and retains the common cursor advance.

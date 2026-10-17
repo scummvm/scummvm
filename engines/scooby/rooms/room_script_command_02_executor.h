@@ -47,7 +47,7 @@ public:
 	// episode zero and 0x001AF33C for episode one. The original stores five parallel arrays;
 	// InteractionActionRegistry preserves each indexed relationship as one value without retaining mutable
 	// cartridge pointers.
-	void executeRoomScriptCommand02(int mode);
+	void scriptCommand02AddPlayerChoiceInteractionLine(int mode);
 
 private:
 	static const int kInteractionTextBaseField = 0x20;

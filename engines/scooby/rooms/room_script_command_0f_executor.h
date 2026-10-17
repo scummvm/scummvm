@@ -60,7 +60,7 @@ public:
 	// movement does not inspect it. Source identities one and two use actor integer coordinates; every other
 	// source uses its room-position selector and the target animation descriptor's type-two record before
 	// fixed or shape-relative placement.
-	void executeRoomScriptCommand0F(int mode);
+	void scriptCommand0FWalkRelativeTo(int mode);
 
 private:
 	static const int kEpisodeShapeDataBaseField = 0x1C;

@@ -50,7 +50,7 @@ public:
 	// Ghidra: executeRoomScriptCommand0B (0x00002DF2). Encoded identity bit 15 controls synchronous completion
 	// independently from the low 15-bit object identity. The callback-aware clocked frame replaces the
 	// original asynchronous interrupt progress observed by the busy loop.
-	void executeRoomScriptCommand0B(int mode);
+	void scriptCommand0BSetBackgroundGfx(int mode);
 
 private:
 	static const uint8 kFixedPositionMask = 0x02;

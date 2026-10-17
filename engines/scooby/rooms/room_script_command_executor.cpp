@@ -50,33 +50,33 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _waitForRoomVerticalBlankFunctor(this, &RoomScriptCommandExecutor::waitForRoomVerticalBlank),
 	  _requestMovementHostCloseFunctor(this, &RoomScriptCommandExecutor::requestMovementHostClose),
 	  _requestSessionExitFunctor(this, &RoomScriptCommandExecutor::requestSessionExit),
-	  _command00Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand00),
+	  _command00Functor(this, &RoomScriptCommandExecutor::scriptCommand00NoOp),
 	  _command01Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand01),
-	  _command03Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand03),
-	  _command04Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand04),
+	  _command03Functor(this, &RoomScriptCommandExecutor::scriptCommand03IfStatement),
+	  _command04Functor(this, &RoomScriptCommandExecutor::scriptCommand04IfStatementNested),
 	  _command06Functor(this, &RoomScriptCommandExecutor::scriptCommand06PlayObjAnim),
 	  _command07Functor(this, &RoomScriptCommandExecutor::scriptCommand07RefreshObject),
-	  _command0AFunctor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand0A),
-	  _command0CFunctor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand0C),
-	  _command0DFunctor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand0D),
+	  _command0AFunctor(this, &RoomScriptCommandExecutor::scriptCommand0ASetInventoryGfx),
+	  _command0CFunctor(this, &RoomScriptCommandExecutor::scriptCommand0CRunAction),
+	  _command0DFunctor(this, &RoomScriptCommandExecutor::scriptCommand0DPlayOrStopAudio),
 	  _command11Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand11ChangeRoom),
-	  _command12Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand12),
-	  _command13Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand13),
-	  _command14Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand14),
+	  _command12Functor(this, &RoomScriptCommandExecutor::scriptCommand12SetObjShape),
+	  _command13Functor(this, &RoomScriptCommandExecutor::scriptCommand13Jump),
+	  _command14Functor(this, &RoomScriptCommandExecutor::scriptCommand14SetObjShape),
 	  _command15Functor(this, &RoomScriptCommandExecutor::scriptCommand15WaitNFrames),
-	  _command16Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand16),
-	  _command17Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand17),
-	  _command18Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand18),
-	  _command02Functor(&_command02Executor, &RoomScriptCommand02Executor::executeRoomScriptCommand02),
+	  _command16Functor(this, &RoomScriptCommandExecutor::scriptCommand16HideActor),
+	  _command17Functor(this, &RoomScriptCommandExecutor::scriptCommand17WaitForObjAnim),
+	  _command18Functor(this, &RoomScriptCommandExecutor::scriptCommand18ChangeRoomNoFade),
+	  _command02Functor(&_command02Executor, &RoomScriptCommand02Executor::scriptCommand02AddPlayerChoiceInteractionLine),
 	  _command05Functor(&_command05Executor, &RoomScriptCommand05MoveObject::executeRoomScriptCommand05),
-	  _command08Functor(&_command08Executor, &RoomScriptCommand08Executor::executeRoomScriptCommand08),
+	  _command08Functor(&_command08Executor, &RoomScriptCommand08Executor::scriptCommand08SetVariable),
 	  _command09Functor(&_command09Executor, &RoomScriptCommand09Executor::executeRoomScriptCommand09),
-	  _command0BFunctor(&_command0BExecutor, &RoomScriptCommand0BExecutor::executeRoomScriptCommand0B),
+	  _command0BFunctor(&_command0BExecutor, &RoomScriptCommand0BExecutor::scriptCommand0BSetBackgroundGfx),
 	  _command0EFunctor(&_command0EOr1BExecutor,
-						&RoomScriptCommand0EOr1BExecutor::executeRoomScriptCommand0EOr1B),
-	  _command0FFunctor(&_command0FExecutor, &RoomScriptCommand0FExecutor::executeRoomScriptCommand0F),
+						&RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition),
+	  _command0FFunctor(&_command0FExecutor, &RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo),
 	  _command10Functor(&_command10Executor, &RoomScriptCommand10Executor::scriptCommand10Dialog),
-	  _command19Functor(&_command19Executor, &RoomScriptCommand19Executor::executeRoomScriptCommand19),
+	  _command19Functor(&_command19Executor, &RoomScriptCommand19Executor::scriptCommand19ShowActor),
 	  _command1AFunctor(&_command1AExecutor, &RoomScriptCommand1AExecutor::executeRoomScriptCommand1A),
 	  _command1CFunctor(&_command1CExecutor, &RoomScriptCommand1CExecutor::executeRoomScriptCommand1C),
 	  _command1DFunctor(&_command1DExecutor, &RoomScriptCommand1DExecutor::executeRoomScriptCommand1D),
@@ -149,7 +149,7 @@ Optional<SessionExit> RoomScriptCommandExecutor::execute(uint16 command, int mod
 	return _requestedSessionExit;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand00(int mode) {
+void RoomScriptCommandExecutor::scriptCommand00NoOp(int mode) {
 	(void)mode;
 
 	// Ghidra 0x0000250C-0x0000250D: test the current command word solely for A5's post-increment;
@@ -159,7 +159,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand00(int mode) {
 	// Ghidra 0x0000250E-0x0000250F: return without consuming the inherited mode or changing other state.
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand03(int mode) {
+void RoomScriptCommandExecutor::scriptCommand03IfStatement(int mode) {
 	(void)mode;
 	int commandOffset = _state.roomScriptCurrentOffset;
 
@@ -173,7 +173,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand03(int mode) {
 	}
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand04(int mode) {
+void RoomScriptCommandExecutor::scriptCommand04IfStatementNested(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x0000274A-0x00002751: evaluate the complete shared condition and branch to the authored
@@ -322,7 +322,7 @@ void RoomScriptCommandExecutor::scriptCommand07RefreshObject(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand0A(int mode) {
+void RoomScriptCommandExecutor::scriptCommand0ASetInventoryGfx(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002DC0-0x00002DC3: dispatcher mode zero skips the complete object and prompt update.
@@ -349,7 +349,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand0A(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand0C(int mode) {
+void RoomScriptCommandExecutor::scriptCommand0CRunAction(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002E9E-0x00002EAD: mode zero skips dispatch; a nonzero mode selects the nested action
@@ -366,7 +366,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand0C(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand0D(int mode) {
+void RoomScriptCommandExecutor::scriptCommand0DPlayOrStopAudio(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x000048B6-0x000048B9: dispatcher mode zero skips both audio call branches.
@@ -434,7 +434,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand11ChangeRoom(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 8;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand12(int mode) {
+void RoomScriptCommandExecutor::scriptCommand12SetObjShape(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004F50-0x00004F53: scan mode skips only the room-object write.
@@ -449,7 +449,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand12(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand13(int mode) {
+void RoomScriptCommandExecutor::scriptCommand13Jump(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002446-0x0000245F: execution mode skips the flag test; scan mode with bit four set
@@ -464,7 +464,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand13(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + _rom.readInt16(commandOffset + 2);
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand14(int mode) {
+void RoomScriptCommandExecutor::scriptCommand14SetObjShape(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002E7E-0x00002E81: scan mode skips only the room-object write.
@@ -503,7 +503,7 @@ void RoomScriptCommandExecutor::scriptCommand15WaitNFrames(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand16(int mode) {
+void RoomScriptCommandExecutor::scriptCommand16HideActor(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002AD0-0x00002AD3: scan mode skips every actor-selection and visibility effect.
@@ -531,7 +531,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand16(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand17(int mode) {
+void RoomScriptCommandExecutor::scriptCommand17WaitForObjAnim(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004FBE-0x00004FC1: scan mode skips every actor-selection and animation effect.
@@ -580,7 +580,7 @@ bool RoomScriptCommandExecutor::waitForRoomVerticalBlank() {
 	return false;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand18(int mode) {
+void RoomScriptCommandExecutor::scriptCommand18ChangeRoomNoFade(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004EE4-0x00004EE7: scan mode skips every room-selection and reset effect.
