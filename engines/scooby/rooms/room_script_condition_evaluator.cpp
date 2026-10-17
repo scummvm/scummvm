@@ -24,7 +24,7 @@
 namespace Scooby {
 
 bool RoomScriptConditionEvaluator::evaluateRoomScriptCondition() {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 	uint16 flags = _rom.readUInt16(commandOffset + 14);
 	int16 left;
 

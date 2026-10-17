@@ -26,7 +26,7 @@
 namespace Scooby {
 
 void RoomScriptCommand1FExecutor::executeRoomScriptCommand1F(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004F70-0x00004F73: scan mode bypasses actor resolution and the complete wait loop.
 	if (mode != 0) {
@@ -73,7 +73,7 @@ void RoomScriptCommand1FExecutor::executeRoomScriptCommand1F(int mode) {
 	}
 
 	// Ghidra 0x00004FB8-0x00004FBD: every mode, identity, and wait outcome consumes four bytes.
-	_state.RoomScriptStartOffset = commandOffset + 4;
+	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
 bool RoomScriptCommand1FExecutor::waitForRoomVerticalBlank() {

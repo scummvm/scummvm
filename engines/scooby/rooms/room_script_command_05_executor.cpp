@@ -26,7 +26,7 @@
 namespace Scooby {
 
 void RoomScriptCommand05MoveObject::executeRoomScriptCommand05(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x000028A0-0x000028C3: scan mode and masked identities zero, one, and two each take their own
 	// branch to the common epilogue; every other identity retains the original word-width table offset.
@@ -52,7 +52,7 @@ void RoomScriptCommand05MoveObject::executeRoomScriptCommand05(int mode) {
 	}
 
 	// Ghidra 0x00002ACA-0x00002ACF: every native return path consumes the command and its two arguments.
-	_state.RoomScriptStartOffset = commandOffset + 6;
+	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
 bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, int16 newRoomId) {

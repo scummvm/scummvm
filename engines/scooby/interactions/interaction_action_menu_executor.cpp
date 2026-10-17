@@ -94,14 +94,14 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 
 	// Ghidra 0x00001CA8-0x00001CC3: the initial native saved pointers, depth zero, and cleared used word
 	// become one typed base frame. The shared line counts retain their process lifetime across every frame.
-	InteractionActionMenuFrame currentFrame(_state.RoomScriptStartOffset, _state.RoomScriptEndOffset, 0);
+	InteractionActionMenuFrame currentFrame(_state.roomScriptCurrentOffset, _state.RoomScriptEndOffset, 0);
 	Common::Array<InteractionActionMenuFrame> parentFrames;
 	Common::Array<int16> &lineCounts = _state.InteractionActionLineCounts;
 
 	while (true) {
 		// Ghidra 0x00001CC4-0x00001CE5: restore the current frame's full script window, rescan it without
 		// consuming that window, and preserve the zero-count branch that unwinds exactly one frame.
-		_state.RoomScriptStartOffset = currentFrame.ScriptStartOffset;
+		_state.roomScriptCurrentOffset = currentFrame.ScriptStartOffset;
 		_state.RoomScriptEndOffset = currentFrame.ScriptEndOffset;
 		Optional<SessionExit> frameScanExit = _runRoomScriptInitializationCommands();
 		if (frameScanExit.hasValue()) {
@@ -247,7 +247,7 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 		// Ghidra 0x00001EF6-0x00001F2D: publish the selected state word and its exact signed-length script
 		// window while retaining the independently addressed response pointer.
 		_state.SelectedInteractionActionStateValue = selectedAction.RoomObjectStateValue;
-		_state.RoomScriptStartOffset = selectedAction.ScriptStartOffset;
+		_state.roomScriptCurrentOffset = selectedAction.ScriptStartOffset;
 		_state.RoomScriptEndOffset = selectedAction.ScriptStartOffset + selectedAction.ScriptLength;
 
 		// Ghidra 0x00001F2E-0x00001F6D: clear text through DrawDialogueText, derive both palette arguments
@@ -281,13 +281,13 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 
 		_dialogue.drawDialogueText(DialogueTextSource(Common::String()));
 		_state.AutomaticInteractionFlags = 0;
-		int32 selectedScriptStartOffset = _state.RoomScriptStartOffset;
+		int32 selectedScriptStartOffset = _state.roomScriptCurrentOffset;
 		Optional<SessionExit> executionExit = _runRoomScriptCommands();
 		if (executionExit.hasValue()) {
 			return executionExit;
 		}
 
-		_state.RoomScriptStartOffset = selectedScriptStartOffset;
+		_state.roomScriptCurrentOffset = selectedScriptStartOffset;
 
 		// Ghidra 0x00001FEA-0x0000202D: automatic bit zero unwinds one frame; room-script bit two selects
 		// the separate full-unwind path; otherwise save the complete current frame and enter the selected script.
@@ -309,7 +309,7 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 		}
 
 		parentFrames.push_back(currentFrame);
-		currentFrame = InteractionActionMenuFrame(_state.RoomScriptStartOffset, _state.RoomScriptEndOffset, 0);
+		currentFrame = InteractionActionMenuFrame(_state.roomScriptCurrentOffset, _state.RoomScriptEndOffset, 0);
 	}
 
 	// Ghidra 0x0000204A-0x00002069: each ordinary unwind decrements one logical depth and either restores

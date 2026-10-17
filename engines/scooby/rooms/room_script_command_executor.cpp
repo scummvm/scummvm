@@ -54,8 +54,8 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _command01Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand01),
 	  _command03Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand03),
 	  _command04Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand04),
-	  _command06Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand06),
-	  _command07Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand07),
+	  _command06Functor(this, &RoomScriptCommandExecutor::scriptCommand06PlayObjAnim),
+	  _command07Functor(this, &RoomScriptCommandExecutor::scriptCommand07RefreshObject),
 	  _command0AFunctor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand0A),
 	  _command0CFunctor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand0C),
 	  _command0DFunctor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand0D),
@@ -63,7 +63,7 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _command12Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand12),
 	  _command13Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand13),
 	  _command14Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand14),
-	  _command15Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand15),
+	  _command15Functor(this, &RoomScriptCommandExecutor::scriptCommand15WaitNFrames),
 	  _command16Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand16),
 	  _command17Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand17),
 	  _command18Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand18),
@@ -75,7 +75,7 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _command0EFunctor(&_command0EOr1BExecutor,
 						&RoomScriptCommand0EOr1BExecutor::executeRoomScriptCommand0EOr1B),
 	  _command0FFunctor(&_command0FExecutor, &RoomScriptCommand0FExecutor::executeRoomScriptCommand0F),
-	  _command10Functor(&_command10Executor, &RoomScriptCommand10Executor::executeRoomScriptCommand10),
+	  _command10Functor(&_command10Executor, &RoomScriptCommand10Executor::scriptCommand10Dialog),
 	  _command19Functor(&_command19Executor, &RoomScriptCommand19Executor::executeRoomScriptCommand19),
 	  _command1AFunctor(&_command1AExecutor, &RoomScriptCommand1AExecutor::executeRoomScriptCommand1A),
 	  _command1CFunctor(&_command1CExecutor, &RoomScriptCommand1CExecutor::executeRoomScriptCommand1C),
@@ -144,7 +144,7 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 Optional<SessionExit> RoomScriptCommandExecutor::execute(uint16 command, int mode,
 														 int16 interactionModeSnapshot) {
 	_interactionModeSnapshot = interactionModeSnapshot;
-	// debug("executing command: %x, mode: %d", command, mode);
+	debug("executing command: %x, mode: %d", command, mode);
 	(*_handlers[static_cast<std::size_t>(command)])(mode);
 	return _requestedSessionExit;
 }
@@ -154,33 +154,33 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand00(int mode) {
 
 	// Ghidra 0x0000250C-0x0000250D: test the current command word solely for A5's post-increment;
 	// the dispatcher has already read the word, so preserve only the two-byte cursor advance.
-	_state.RoomScriptStartOffset += static_cast<int>(sizeof(uint16));
+	_state.roomScriptCurrentOffset += static_cast<int>(sizeof(uint16));
 
 	// Ghidra 0x0000250E-0x0000250F: return without consuming the inherited mode or changing other state.
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand03(int mode) {
 	(void)mode;
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002732-0x00002739: evaluate the complete shared condition and branch on its Z result.
 	if (_conditionEvaluator.evaluateRoomScriptCondition()) {
 		// Ghidra 0x0000273A-0x0000273F: true consumes the fixed 16-byte condition record and returns.
-		_state.RoomScriptStartOffset = commandOffset + 16;
+		_state.roomScriptCurrentOffset = commandOffset + 16;
 	} else {
 		// Ghidra 0x00002740-0x00002749: false sign-extends record field +2 as the replacement A5 offset.
-		_state.RoomScriptStartOffset = commandOffset + _rom.readInt16(commandOffset + 2);
+		_state.roomScriptCurrentOffset = commandOffset + _rom.readInt16(commandOffset + 2);
 	}
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand04(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x0000274A-0x00002751: evaluate the complete shared condition and branch to the authored
 	// signed failure displacement when it is false.
 	if (!_conditionEvaluator.evaluateRoomScriptCondition()) {
 		// Ghidra 0x0000278C-0x00002795: false replaces A5 with command start plus signed field +2.
-		_state.RoomScriptStartOffset = commandOffset + _rom.readInt16(commandOffset + 2);
+		_state.roomScriptCurrentOffset = commandOffset + _rom.readInt16(commandOffset + 2);
 		return;
 	}
 
@@ -188,7 +188,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand04(int mode) {
 	// field +2, start at fixed record offset +0x10, and invoke the currently installed script dispatcher.
 	int parentEndOffset = _state.RoomScriptEndOffset;
 	_state.RoomScriptEndOffset = commandOffset + _rom.readInt16(commandOffset + 2);
-	_state.RoomScriptStartOffset = commandOffset + 16;
+	_state.roomScriptCurrentOffset = commandOffset + 16;
 	_requestedSessionExit = _invokeRoomScriptDispatchCallback(mode);
 	if (_requestedSessionExit.hasValue()) {
 		// A native non-returning nested command never reaches either original callback-return path.
@@ -203,19 +203,19 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand04(int mode) {
 
 	// Ghidra 0x0000277C-0x0000278B: preserve the nested post-dispatch A5, restore the parent A5/A6 pair,
 	// then replace A5 with the nested cursor plus the parent's signed field +4.
-	int nestedCursorOffset = _state.RoomScriptStartOffset;
+	int nestedCursorOffset = _state.roomScriptCurrentOffset;
 	_state.RoomScriptEndOffset = parentEndOffset;
-	_state.RoomScriptStartOffset = nestedCursorOffset + _rom.readInt16(commandOffset + 4);
+	_state.roomScriptCurrentOffset = nestedCursorOffset + _rom.readInt16(commandOffset + 4);
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand06(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002B5A-0x00002B5D: mode zero retains the common six-byte cursor advance.
 	if (mode != 0) {
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 2);
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
 		int16 animationOffset = _rom.readInt16(commandOffset + 4);
-		switch (objectIdentity) {
+		switch (objectId) {
 		case 1:
 			// Ghidra 0x00002B5E-0x00002B75: identity one selects actor slot zero and joins the
 			// restart-pending loop without passing through the identity-two comparison.
@@ -253,7 +253,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand06(int mode) {
 		default: {
 			// Ghidra 0x00002BA0-0x00002BB3: every identity other than one or two retains the
 			// low-word 0x1A-byte object-table calculation and the signed fixed-position-index branch.
-			uint16 tableByteOffset = static_cast<uint16>((objectIdentity - 3) * 0x1A);
+			uint16 tableByteOffset = static_cast<uint16>((objectId - 3) * 0x1A);
 			RoomObject &roomObject = _state.RoomObjects[static_cast<std::size_t>(tableByteOffset / 0x1A)];
 			if (roomObject.FixedPositionIndex >= 0) {
 				// Ghidra 0x00002BB4-0x00002BEB: retarget the corresponding actor slot, force its
@@ -288,18 +288,18 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand06(int mode) {
 	}
 
 	// Ghidra 0x00002BF2-0x00002BF7: every native return path consumes the command and its two arguments.
-	_state.RoomScriptStartOffset = commandOffset + 6;
+	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand07(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+void RoomScriptCommandExecutor::scriptCommand07RefreshObject(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002BF8-0x00002BFB: mode zero retains the common four-byte cursor advance.
 	if (mode != 0) {
 		// Ghidra 0x00002BFC-0x00002C1F: retain the low-word object-table calculation and both active-room
 		// outcomes. A match sets only object flag bit zero and skips every inventory branch.
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 2);
-		uint16 tableByteOffset = static_cast<uint16>((objectIdentity - 3) * 0x1A);
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		uint16 tableByteOffset = static_cast<uint16>((objectId - 3) * 0x1A);
 		RoomObject &roomObject = _state.RoomObjects[static_cast<std::size_t>(tableByteOffset / 0x1A)];
 		if (roomObject.RoomId == _state.RoomId) {
 			roomObject.Flags |= 0x01;
@@ -321,19 +321,18 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand07(int mode) {
 	}
 
 	// Ghidra 0x00002C50-0x00002C55: every native return path consumes the command and its argument.
-	_state.RoomScriptStartOffset = commandOffset + 4;
+	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand0A(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002DC0-0x00002DC3: dispatcher mode zero skips the complete object and prompt update.
 	if (mode != 0) {
 		// Ghidra 0x00002DC4-0x00002DD9: retain the unsigned word multiply and low-word object-table index,
 		// then replace the complete inventory-graphic word from command field +4.
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 2);
-		uint16 tableByteOffset = static_cast<uint16>((objectIdentity - 3) * 0x1A);
-		RoomObject &roomObject = _state.RoomObjects[static_cast<std::size_t>(tableByteOffset / 0x1A)];
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		RoomObject &roomObject = _state.RoomObjects[objectId - 3];
 		roomObject.InventoryGraphicIndex = _rom.readInt16(commandOffset + 4);
 
 		// Ghidra 0x00002DDA-0x00002DE3: preserve both room-ID outcomes; only inventory room one calls on.
@@ -349,11 +348,11 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand0A(int mode) {
 	}
 
 	// Ghidra 0x00002DEC-0x00002DF1: every native mode and room branch consumes the six-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 6;
+	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand0C(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002E9E-0x00002EAD: mode zero skips dispatch; a nonzero mode selects the nested action
 	// from the managed equivalent of g_apRoomScriptActionHandlers.
@@ -366,11 +365,11 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand0C(int mode) {
 	}
 
 	// Ghidra 0x00002EAE-0x00002EB3: consume the command and action-index words in either mode.
-	_state.RoomScriptStartOffset = commandOffset + 4;
+	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand0D(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x000048B6-0x000048B9: dispatcher mode zero skips both audio call branches.
 	if (mode != 0) {
@@ -388,7 +387,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand0D(int mode) {
 	}
 
 	// Ghidra 0x000048D2-0x000048D7: every mode and sign branch consumes the four-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 4;
+	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
 void RoomScriptCommandExecutor::playAudioCommand(int command) {
@@ -402,7 +401,7 @@ void RoomScriptCommandExecutor::stopAudioPlayback(int command) {
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand11ChangeRoom(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004F0E-0x00004F11: scan mode skips every state and presentation effect.
 	if (mode != 0) {
@@ -434,11 +433,11 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand11ChangeRoom(int mode) {
 	}
 
 	// Ghidra 0x00004F4A-0x00004F4F: every native mode consumes the complete eight-byte record.
-	_state.RoomScriptStartOffset = commandOffset + 8;
+	_state.roomScriptCurrentOffset = commandOffset + 8;
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand12(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004F50-0x00004F53: scan mode skips only the room-object write.
 	if (mode != 0) {
@@ -451,11 +450,11 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand12(int mode) {
 	}
 
 	// Ghidra 0x00004F6A-0x00004F6F: every native mode consumes the complete six-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 6;
+	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand13(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002446-0x0000245F: execution mode skips the flag test; scan mode with bit four set
 	// latches only stop bit zero and returns with the exact command cursor unchanged.
@@ -466,11 +465,11 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand13(int mode) {
 
 	// Ghidra 0x00002460-0x00002469: every other path adds the signed field at +0x02 to the original
 	// command cursor without imposing a fixed record size or a defensive progress requirement.
-	_state.RoomScriptStartOffset = commandOffset + _rom.readInt16(commandOffset + 2);
+	_state.roomScriptCurrentOffset = commandOffset + _rom.readInt16(commandOffset + 2);
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand14(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002E7E-0x00002E81: scan mode skips only the room-object write.
 	if (mode != 0) {
@@ -483,11 +482,11 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand14(int mode) {
 	}
 
 	// Ghidra 0x00002E98-0x00002E9D: every native mode consumes the complete six-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 6;
+	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand15(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+void RoomScriptCommandExecutor::scriptCommand15WaitNFrames(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x000048D8-0x000048DB: scan mode skips the complete countdown and animation loop.
 	if (mode != 0) {
@@ -507,11 +506,11 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand15(int mode) {
 	}
 
 	// Ghidra 0x000048F2-0x000048F7: every native mode consumes the complete four-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 4;
+	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand16(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002AD0-0x00002AD3: scan mode skips every actor-selection and visibility effect.
 	if (mode != 0) {
@@ -536,11 +535,11 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand16(int mode) {
 	}
 
 	// Ghidra 0x00002B08-0x00002B0D: every native mode and identity consumes the four-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 4;
+	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand17(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004FBE-0x00004FC1: scan mode skips every actor-selection and animation effect.
 	if (mode != 0) {
@@ -576,7 +575,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand17(int mode) {
 	}
 
 	// Ghidra 0x00004FFC-0x00005001: every native mode and identity consumes the four-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 4;
+	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
 bool RoomScriptCommandExecutor::waitForRoomVerticalBlank() {
@@ -590,7 +589,7 @@ bool RoomScriptCommandExecutor::waitForRoomVerticalBlank() {
 }
 
 void RoomScriptCommandExecutor::executeRoomScriptCommand18(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004EE4-0x00004EE7: scan mode skips every room-selection and reset effect.
 	if (mode != 0) {
@@ -611,6 +610,6 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand18(int mode) {
 	}
 
 	// Ghidra 0x00004F08-0x00004F0D: every native mode consumes the complete eight-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 8;
+	_state.roomScriptCurrentOffset = commandOffset + 8;
 }
 } // namespace Scooby

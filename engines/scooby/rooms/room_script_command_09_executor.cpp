@@ -26,7 +26,7 @@
 namespace Scooby {
 
 void RoomScriptCommand09Executor::executeRoomScriptCommand09(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002D5E-0x00002D61: inherited Z from dispatcher mode zero skips every state mutation.
 	if (mode != 0) {
@@ -55,7 +55,7 @@ void RoomScriptCommand09Executor::executeRoomScriptCommand09(int mode) {
 	}
 
 	// Ghidra 0x00002DBA-0x00002DBF: every mode and state branch consumes the six-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 6;
+	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
 RoomScriptCommand09Executor::RoomObjectByteLocation RoomScriptCommand09Executor::resolveRoomObjectByte(

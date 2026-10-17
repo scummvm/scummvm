@@ -26,7 +26,7 @@
 namespace Scooby {
 
 void RoomScriptCommand1CExecutor::executeRoomScriptCommand1C(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x0000255E-0x00002561: scan mode skips all progress, identity, and movement effects.
 	if (mode != 0) {
@@ -59,6 +59,6 @@ void RoomScriptCommand1CExecutor::executeRoomScriptCommand1C(int mode) {
 	}
 
 	// Ghidra 0x000025A6-0x000025AB: every mode and identity branch consumes the four-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 4;
+	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 } // namespace Scooby

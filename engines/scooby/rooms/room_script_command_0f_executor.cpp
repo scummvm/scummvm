@@ -26,7 +26,7 @@
 namespace Scooby {
 
 void RoomScriptCommand0FExecutor::executeRoomScriptCommand0F(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004C20-0x00004C23: scan mode skips every effect and joins the fixed-width epilogue.
 	if (mode != 0) {
@@ -85,7 +85,7 @@ void RoomScriptCommand0FExecutor::executeRoomScriptCommand0F(int mode) {
 	}
 
 	// Ghidra 0x00004D7A-0x00004D7F: every mode, catalog outcome, source, and target consumes 12 bytes.
-	_state.RoomScriptStartOffset = commandOffset + kRecordSize;
+	_state.roomScriptCurrentOffset = commandOffset + kRecordSize;
 }
 
 bool RoomScriptCommand0FExecutor::tryResolveTargetAnimationDescriptor(uint16 targetIdentity,

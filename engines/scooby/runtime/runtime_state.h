@@ -927,7 +927,7 @@ public:
 	// The current ROM script offset corresponding to original register A5. Automatic-interaction processing
 	// replaces it with each scan and nested execution cursor, then restores the caller's value.
 	// RunInteractionActionMenu restores each parent cursor and the selected script's initial cursor.
-	int32 RoomScriptStartOffset{};
+	int32 roomScriptCurrentOffset{};
 
 	// The scripted interaction from Ghidra g_wScriptedInteraction at 0xFF06DA–0xFF06DB. No image-backed value
 	// is consumed; managed state starts at zero. Action 0x2F copies the first room object's script result

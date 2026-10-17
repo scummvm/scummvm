@@ -26,7 +26,7 @@
 namespace Scooby {
 
 void RoomScriptCommand21Executor::executeRoomScriptCommand21(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004944-0x00004947: scan mode bypasses actor resolution and every path-state write.
 	if (mode != 0) {
@@ -62,6 +62,6 @@ void RoomScriptCommand21Executor::executeRoomScriptCommand21(int mode) {
 	}
 
 	// Ghidra 0x000049B0-0x000049B9: every mode advances over the eight-byte header and signed inline extent.
-	_state.RoomScriptStartOffset = commandOffset + 8 + _rom.readInt16(commandOffset + 2);
+	_state.roomScriptCurrentOffset = commandOffset + 8 + _rom.readInt16(commandOffset + 2);
 }
 } // namespace Scooby

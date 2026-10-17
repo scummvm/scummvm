@@ -25,7 +25,7 @@
 
 namespace Scooby {
 void RoomScriptCommand0BExecutor::executeRoomScriptCommand0B(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002DF2-0x00002DF5: dispatcher mode zero skips every object-state branch.
 	if (mode != 0) {
@@ -86,6 +86,6 @@ void RoomScriptCommand0BExecutor::executeRoomScriptCommand0B(int mode) {
 	}
 
 	// Ghidra 0x00002E78-0x00002E7D: every native branch consumes the six-byte command.
-	_state.RoomScriptStartOffset = commandOffset + 6;
+	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 } // namespace Scooby

@@ -60,7 +60,7 @@ Optional<SessionExit> RoomScriptController::runRoomScriptInitializationCommands(
 
 	// Ghidra 0x00002330-0x00002343: preserve both script offsets. The explicit mode argument below replaces
 	// saving and installing the mutable native callback pointer without introducing code-address state.
-	int scriptStartOffset = _state.RoomScriptStartOffset;
+	int scriptStartOffset = _state.roomScriptCurrentOffset;
 	int scriptEndOffset = _state.RoomScriptEndOffset;
 
 	// Ghidra 0x00002344-0x00002347: invoke the separate scan dispatcher exactly once. A managed
@@ -72,7 +72,7 @@ Optional<SessionExit> RoomScriptController::runRoomScriptInitializationCommands(
 
 	// Ghidra 0x00002348-0x00002353: explicit mode needs no callback restoration; restore A5 and A6 in
 	// their native order and return while retaining every other handler update.
-	_state.RoomScriptStartOffset = scriptStartOffset;
+	_state.roomScriptCurrentOffset = scriptStartOffset;
 	_state.RoomScriptEndOffset = scriptEndOffset;
 	return Optional<SessionExit>();
 }
@@ -81,13 +81,13 @@ Optional<SessionExit> RoomScriptController::dispatchRoomScriptCommands() {
 	while (true) {
 		// Ghidra 0x000023DC-0x000023E1: compare the complete cursor addresses and return whenever the
 		// exclusive bound is at or below the current command, including on the first iteration.
-		if (_state.RoomScriptEndOffset <= _state.RoomScriptStartOffset) {
+		if (_state.RoomScriptEndOffset <= _state.roomScriptCurrentOffset) {
 			return Optional<SessionExit>();
 		}
 
 		// Ghidra 0x000023E2-0x000023F3: read the command without consuming it, select its original table
 		// entry, clear D0 to choose scan mode, and preserve a managed non-returning descendant handover.
-		uint16 command = _rom.readUInt16(_state.RoomScriptStartOffset);
+		uint16 command = _rom.readUInt16(_state.roomScriptCurrentOffset);
 		Optional<SessionExit> requestedExit = _commands.execute(
 			command, 0, _state.InteractionMode);
 		if (requestedExit.hasValue()) {
@@ -127,8 +127,8 @@ Optional<SessionExit> RoomScriptController::runRoomExitScript() {
 		static_cast<int>(_rom.readUInt32(_state.ActiveEpisodeDescriptorOffset + kEpisodeRoomScriptBaseField)) +
 		relativeScriptOffset;
 	int16 scriptLength = _rom.readInt16(scriptHeaderOffset);
-	_state.RoomScriptStartOffset = scriptHeaderOffset + kRoomScriptHeaderByteCount;
-	_state.RoomScriptEndOffset = _state.RoomScriptStartOffset + scriptLength;
+	_state.roomScriptCurrentOffset = scriptHeaderOffset + kRoomScriptHeaderByteCount;
+	_state.RoomScriptEndOffset = _state.roomScriptCurrentOffset + scriptLength;
 
 	// Ghidra 0x00002258-0x00002263: force display bit seven during the complete execution-mode script.
 	_state.DisplayFlags |= 0x80;
@@ -161,8 +161,8 @@ Optional<SessionExit> RoomScriptController::runRoomEntryScript() {
 		static_cast<int>(_rom.readUInt32(_state.ActiveEpisodeDescriptorOffset + kEpisodeRoomScriptBaseField)) +
 		relativeScriptOffset;
 	int16 scriptLength = _rom.readInt16(scriptHeaderOffset);
-	_state.RoomScriptStartOffset = scriptHeaderOffset + kRoomScriptHeaderByteCount;
-	_state.RoomScriptEndOffset = _state.RoomScriptStartOffset + scriptLength;
+	_state.roomScriptCurrentOffset = scriptHeaderOffset + kRoomScriptHeaderByteCount;
+	_state.RoomScriptEndOffset = _state.roomScriptCurrentOffset + scriptLength;
 
 	// Ghidra 0x000022B6-0x000022C1: force display bit seven and invoke the execution-mode dispatcher even
 	// for an empty script window. Managed non-returning handovers leave before the native restoration path.
@@ -187,11 +187,11 @@ Optional<SessionExit> RoomScriptController::runRoomScriptCommands() {
 
 		// Ghidra 0x0000241A-0x00002431: stop at the exclusive bound, then dispatch the current
 		// big-endian command word with this loop's original D0 mode value one.
-		if (_state.RoomScriptEndOffset <= _state.RoomScriptStartOffset) {
+		if (_state.RoomScriptEndOffset <= _state.roomScriptCurrentOffset) {
 			return Optional<SessionExit>();
 		}
 
-		uint16 command = _rom.readUInt16(_state.RoomScriptStartOffset);
+		uint16 command = _rom.readUInt16(_state.roomScriptCurrentOffset);
 		Optional<SessionExit> requestedExit = _commands.execute(
 			command, 1, _state.InteractionMode);
 		if (requestedExit.hasValue()) {
@@ -201,7 +201,7 @@ Optional<SessionExit> RoomScriptController::runRoomScriptCommands() {
 
 		// Ghidra 0x00002432-0x00002445: an automatic-interaction latch yields immediately; otherwise
 		// repeat only while the handler-updated cursor remains below the exclusive script bound.
-		if ((_state.AutomaticInteractionFlags & 0x01) != 0 || _state.RoomScriptStartOffset >= _state.RoomScriptEndOffset) {
+		if ((_state.AutomaticInteractionFlags & 0x01) != 0 || _state.roomScriptCurrentOffset >= _state.RoomScriptEndOffset) {
 			return Optional<SessionExit>();
 		}
 	}

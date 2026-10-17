@@ -26,7 +26,7 @@
 namespace Scooby {
 
 void RoomScriptCommand0EOr1BExecutor::executeRoomScriptCommand0EOr1B(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 	uint16 command = _rom.readUInt16(commandOffset);
 
 	// Ghidra 0x000049BA-0x000049CB: scan mode bypasses every effect. Execution masks identity bit 15 and
@@ -114,7 +114,7 @@ void RoomScriptCommand0EOr1BExecutor::executeRoomScriptCommand0EOr1B(int mode) {
 
 	// Ghidra 0x00004B0E-0x00004B23: restore the retained register and preserve both record-width returns;
 	// command 0x0E consumes ten bytes while every other mapped command consumes twelve.
-	_state.RoomScriptStartOffset =
+	_state.roomScriptCurrentOffset =
 		commandOffset + (command == kIndexedPositionCommand ? kIndexedRecordSize : kImmediateRecordSize);
 }
 

@@ -40,7 +40,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 	// Ghidra 0x000045B2-0x000045C3: set progress bit one, then preserve Action0C's direct branch to the
 	// separate Action1D owner instead of executing any Action05 presentation work.
 	_state.ProgressStateBytes[0] |= 0x02;
-	if (_rom.readUInt16(_state.RoomScriptStartOffset + static_cast<int>(sizeof(uint16))) ==
+	if (_rom.readUInt16(_state.roomScriptCurrentOffset + static_cast<int>(sizeof(uint16))) ==
 		kShortcutAction) {
 		_executeRoomScriptAction1D();
 		return;

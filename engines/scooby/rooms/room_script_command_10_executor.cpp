@@ -29,8 +29,8 @@
 
 namespace Scooby {
 
-void RoomScriptCommand10Executor::executeRoomScriptCommand10(int mode) {
-	int commandOffset = _state.RoomScriptStartOffset;
+void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004D80-0x00004D83: scan mode bypasses the complete stateful body and joins the common
 	// eight-byte cursor advance.
@@ -96,7 +96,7 @@ void RoomScriptCommand10Executor::executeRoomScriptCommand10(int mode) {
 	}
 
 	// Ghidra 0x00004EDE-0x00004EE3: both modes consume the command, flags, and longword displacement.
-	_state.RoomScriptStartOffset = commandOffset + kRecordSize;
+	_state.roomScriptCurrentOffset = commandOffset + kRecordSize;
 }
 
 void RoomScriptCommand10Executor::generateDialogueMaskTiles(uint8 nonzeroPaletteIndex) {

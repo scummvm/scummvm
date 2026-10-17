@@ -64,7 +64,7 @@ public:
 	// 14-15 select its temporary position, bits 4-5 replace tile palette bits 13-14, and bits 0-3 select
 	// the mask's nonzero palette index. The managed scene receives the same 95 generated patterns without
 	// retaining the original VRAM transport.
-	void executeRoomScriptCommand10(int mode);
+	void scriptCommand10Dialog(int mode);
 
 private:
 	static const uint8 kLeadActorMask = 0x01;

@@ -27,7 +27,7 @@
 namespace Scooby {
 
 void RoomScriptCommand02Executor::executeRoomScriptCommand02(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x000025AC-0x000025AF: a nonzero execution mode skips registration.
 	if (mode == 0) {
@@ -52,6 +52,6 @@ void RoomScriptCommand02Executor::executeRoomScriptCommand02(int mode) {
 
 	// Ghidra 0x0000261C-0x00002625: every branch rereads and sign-extends record field +0x0A before replacing
 	// A5; a zero or backward displacement is therefore preserved without a managed guard.
-	_state.RoomScriptStartOffset = commandOffset + _rom.readInt16(commandOffset + 10);
+	_state.roomScriptCurrentOffset = commandOffset + _rom.readInt16(commandOffset + 10);
 }
 } // namespace Scooby

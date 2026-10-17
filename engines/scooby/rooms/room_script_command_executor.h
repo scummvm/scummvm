@@ -154,14 +154,14 @@ private:
 	// Ghidra: executeRoomScriptCommand06 (0x00002B5A). Each managed continuation services
 	// the installed room callback and one clocked host frame because the original tight loops allow
 	// asynchronous interrupt publication.
-	void executeRoomScriptCommand06(int mode);
+	void scriptCommand06PlayObjAnim(int mode);
 
 	// Marks an active object pending or aligns the inventory page for an inventory object.
 	// mode: zero scans past the command; nonzero applies its object update.
 	//
 	// Ghidra: executeRoomScriptCommand07 (0x00002BF8). The typed inventory list replaces
 	// the original contiguous words and their trailing -1 sentinel without removing its count path.
-	void executeRoomScriptCommand07(int mode);
+	void scriptCommand07RefreshObject(int mode);
 
 	// Replaces an object's inventory graphic and refreshes inventory prompts when required.
 	// mode: zero scans past the command; nonzero applies its object update.
@@ -221,7 +221,7 @@ private:
 	//
 	// Ghidra: executeRoomScriptCommand15 (0x000048D8). The room callback and host retrace
 	// replace the asynchronous interrupt that decrements the original signed countdown.
-	void executeRoomScriptCommand15(int mode);
+	void scriptCommand15WaitNFrames(int mode);
 
 	// Blocks visibility for a direct actor or a room object's assigned actor slot.
 	// mode: zero scans the four-byte record; nonzero applies its actor visibility block.

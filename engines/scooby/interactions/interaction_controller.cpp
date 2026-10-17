@@ -162,7 +162,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 			interactionScriptHeaderOffset + _rom.readInt16(interactionScriptHeaderOffset);
 		_state.InteractionDescriptionFlags =
 			_rom.readUInt16(interactionScriptHeaderOffset + static_cast<int>(sizeof(uint16)));
-		_state.RoomScriptStartOffset = interactionScriptStartOffset;
+		_state.roomScriptCurrentOffset = interactionScriptStartOffset;
 		_state.RoomScriptEndOffset = interactionScriptEndOffset;
 		SDM_ASSERT(_runRoomScriptInitializationCommands != nullptr,
 				   "InteractionController runRoomScriptInitializationCommands callback is not bound.");
@@ -194,9 +194,9 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// marker bit zero, refreshes icons unconditionally, and runs the separate execution dispatcher.
 		if ((_state.AutomaticInteractionFlags & kAutomaticInteractionMarkerMask) != 0) {
 			_state.AutomaticInteractionFlags |= kMatchedSelectedInteractionMask;
-			int nestedScriptHeaderOffset = _state.RoomScriptStartOffset;
+			int nestedScriptHeaderOffset = _state.roomScriptCurrentOffset;
 			_state.RoomScriptEndOffset = nestedScriptHeaderOffset + _rom.readInt16(nestedScriptHeaderOffset + 6);
-			_state.RoomScriptStartOffset =
+			_state.roomScriptCurrentOffset =
 				nestedScriptHeaderOffset + kNestedSelectedInteractionScriptHeaderByteCount;
 			_state.AutomaticInteractionFlags &= static_cast<uint8>(~kAutomaticInteractionMarkerMask);
 			_actionMenu.refreshSelectedActionIcons();
@@ -211,7 +211,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// Ghidra 0x00001A80-0x00001AAB: restore the selected interaction's initial cursor and bound. Mode
 		// eight alone saves the complete automatic byte around its menu and sets bit six only for a nonzero
 		// post-menu action count. A managed non-returning menu path bypasses both native restorations.
-		_state.RoomScriptStartOffset = interactionScriptStartOffset;
+		_state.roomScriptCurrentOffset = interactionScriptStartOffset;
 		_state.RoomScriptEndOffset = interactionScriptEndOffset;
 		if (interactionMode == kInteractionActionMenuMode) {
 			uint8 automaticInteractionFlags = _state.AutomaticInteractionFlags;
@@ -438,7 +438,7 @@ Optional<SessionExit> InteractionController::processAutomaticInteractions() {
 	// Ghidra 0x0000AFDA-0x0000AFE9: managed locals preserve the caller's dynamic script window and the
 	// complete automatic-interaction byte; the bound mode callback replaces the native code pointer.
 	uint8 automaticInteractionFlags = _state.AutomaticInteractionFlags;
-	int32 scriptStartOffset = _state.RoomScriptStartOffset;
+	int32 scriptStartOffset = _state.roomScriptCurrentOffset;
 	int32 scriptEndOffset = _state.RoomScriptEndOffset;
 
 	// Ghidra 0x0000AFEA-0x0000B005: resolve both episode-relative tables once, then reproduce the native
@@ -470,8 +470,8 @@ Optional<SessionExit> InteractionController::processAutomaticInteractions() {
 			interactionRecordTableOffset + static_cast<int>(objectIndex) * kAutomaticInteractionRecordByteCount;
 		int scriptHeaderOffset =
 			interactionScriptBaseOffset + static_cast<int>(_rom.readUInt32(interactionRecordOffset));
-		_state.RoomScriptStartOffset = scriptHeaderOffset + kInteractionScriptHeaderByteCount;
-		_state.RoomScriptEndOffset = _state.RoomScriptStartOffset + _rom.readInt16(scriptHeaderOffset);
+		_state.roomScriptCurrentOffset = scriptHeaderOffset + kInteractionScriptHeaderByteCount;
+		_state.RoomScriptEndOffset = _state.roomScriptCurrentOffset + _rom.readInt16(scriptHeaderOffset);
 		SDM_ASSERT(_invokeRoomScriptDispatchCallback != nullptr,
 				   "InteractionController invokeRoomScriptDispatchCallback callback is not bound.");
 		Optional<SessionExit> scanExit = (*_invokeRoomScriptDispatchCallback)(0);
@@ -490,11 +490,11 @@ Optional<SessionExit> InteractionController::processAutomaticInteractions() {
 
 		// Ghidra 0x0000B078-0x0000B099: command 0x13 leaves A5 on its marker. Its signed length at +2
 		// remains relative to that marker, while execution begins after the complete four-byte header.
-		int nestedScriptHeaderOffset = _state.RoomScriptStartOffset;
+		int nestedScriptHeaderOffset = _state.roomScriptCurrentOffset;
 		_state.RoomScriptEndOffset =
 			nestedScriptHeaderOffset + _rom.readInt16(
 										   nestedScriptHeaderOffset + static_cast<int>(sizeof(uint16)));
-		_state.RoomScriptStartOffset = nestedScriptHeaderOffset + kNestedInteractionScriptHeaderByteCount;
+		_state.roomScriptCurrentOffset = nestedScriptHeaderOffset + kNestedInteractionScriptHeaderByteCount;
 		SDM_ASSERT(_invokeRoomScriptDispatchCallback != nullptr,
 				   "InteractionController invokeRoomScriptDispatchCallback callback is not bound.");
 		Optional<SessionExit> executionExit = (*_invokeRoomScriptDispatchCallback)(1);
@@ -509,7 +509,7 @@ Optional<SessionExit> InteractionController::processAutomaticInteractions() {
 	// Ghidra 0x0000B0A6-0x0000B0B7: restore the complete saved byte before the caller's dynamic script
 	// window and return normally. Managed non-returning paths above deliberately never reach this range.
 	_state.AutomaticInteractionFlags = automaticInteractionFlags;
-	_state.RoomScriptStartOffset = scriptStartOffset;
+	_state.roomScriptCurrentOffset = scriptStartOffset;
 	_state.RoomScriptEndOffset = scriptEndOffset;
 	return Optional<SessionExit>();
 }

@@ -82,7 +82,7 @@ void RuntimeState::resetRuntimeState(const ScoobyDooRom &rom) {
 
 void RuntimeState::advanceRoomScriptBlock(const ScoobyDooRom &rom) {
 	int16 length = rom.readInt16(RoomScriptEndOffset);
-	RoomScriptStartOffset = RoomScriptEndOffset + static_cast<int>(sizeof(int16));
-	RoomScriptEndOffset = RoomScriptStartOffset + length;
+	roomScriptCurrentOffset = RoomScriptEndOffset + static_cast<int>(sizeof(int16));
+	RoomScriptEndOffset = roomScriptCurrentOffset + length;
 }
 } // namespace Scooby

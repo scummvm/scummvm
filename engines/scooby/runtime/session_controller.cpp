@@ -120,7 +120,7 @@ bool SessionController::waitForRoomVerticalBlank() {
 Optional<SessionExit> SessionController::resetRoomStateForReload() {
 	// Ghidra 0x00002138-0x0000213B: preserve all native registers. Managed locals retain the script cursor
 	// and exclusive bound represented by A5/A6; the remaining register preservation is intrinsic to calls.
-	int32 scriptStartOffset = _state.RoomScriptStartOffset;
+	int32 scriptStartOffset = _state.roomScriptCurrentOffset;
 	int32 scriptEndOffset = _state.RoomScriptEndOffset;
 
 	// Ghidra 0x0000213C-0x00002167: while native interrupts are masked, reset controller input, clear
@@ -164,7 +164,7 @@ Optional<SessionExit> SessionController::resetRoomStateForReload() {
 	}
 
 	// Ghidra 0x00002190-0x00002195: restore every preserved register, including A5/A6, then return.
-	_state.RoomScriptStartOffset = scriptStartOffset;
+	_state.roomScriptCurrentOffset = scriptStartOffset;
 	_state.RoomScriptEndOffset = scriptEndOffset;
 	return Optional<SessionExit>();
 }
@@ -184,7 +184,7 @@ Optional<SessionExit> SessionController::reloadAndPresentRoom() {
 Optional<SessionExit> SessionController::presentRoom() {
 	// Ghidra 0x0000219A-0x0000219D: preserve all native registers. Managed locals retain the script cursor
 	// and exclusive bound represented by A5/A6; the remaining register preservation is intrinsic to calls.
-	int32 scriptStartOffset = _state.RoomScriptStartOffset;
+	int32 scriptStartOffset = _state.roomScriptCurrentOffset;
 	int32 scriptEndOffset = _state.RoomScriptEndOffset;
 
 	// Ghidra 0x0000219E-0x000021AB: request the complete interaction refresh, then invoke its distinct
@@ -226,7 +226,7 @@ Optional<SessionExit> SessionController::presentRoom() {
 	}
 
 	// Ghidra 0x00002214-0x00002219: restore every preserved register, including A5/A6, then return.
-	_state.RoomScriptStartOffset = scriptStartOffset;
+	_state.roomScriptCurrentOffset = scriptStartOffset;
 	_state.RoomScriptEndOffset = scriptEndOffset;
 	return Optional<SessionExit>();
 }
@@ -282,8 +282,8 @@ bool SessionController::loadRoomObjectTable() {
 		descriptorOffset + kDescriptorInitialRoomScriptField));
 	_state.RoomId = _rom.readInt16(scriptHeaderOffset);
 	_state.ResumeAudioCommand = _rom.readInt16(scriptHeaderOffset + static_cast<int>(sizeof(int16)));
-	_state.RoomScriptStartOffset = scriptHeaderOffset + kRoomScriptHeaderSize;
-	_state.RoomScriptEndOffset = _state.RoomScriptStartOffset + _rom.readInt16(scriptHeaderOffset + 4);
+	_state.roomScriptCurrentOffset = scriptHeaderOffset + kRoomScriptHeaderSize;
+	_state.RoomScriptEndOffset = _state.roomScriptCurrentOffset + _rom.readInt16(scriptHeaderOffset + 4);
 
 	// Ghidra 0x0000800A-0x00008019: run the episode opening, then preserve its explicit audio-stop
 	// boundary.

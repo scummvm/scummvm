@@ -26,7 +26,7 @@
 namespace Scooby {
 
 void RoomScriptCommand20Executor::executeRoomScriptCommand20(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x000048F8-0x000048FB: scan mode bypasses actor resolution and both state mutations.
 	if (mode != 0) {
@@ -59,6 +59,6 @@ void RoomScriptCommand20Executor::executeRoomScriptCommand20(int mode) {
 	}
 
 	// Ghidra 0x0000493E-0x00004943: every mode, identity, and movement outcome consumes four bytes.
-	_state.RoomScriptStartOffset = commandOffset + 4;
+	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 } // namespace Scooby

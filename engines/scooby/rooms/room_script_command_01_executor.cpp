@@ -24,7 +24,7 @@
 namespace Scooby {
 
 void RoomScriptCommand01Executor::executeRoomScriptCommand01(int mode, int16 interactionMode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x0000246A-0x0000246D: execution mode bypasses every condition branch.
 	if (mode != 0) {
@@ -106,6 +106,6 @@ StopDispatch:
 AdvanceCursor:
 	// Ghidra 0x00002502-0x0000250B: sign-extend record field +6, add it to the original command start, and
 	// return without adding a defensive progress check for zero or backward authored displacements.
-	_state.RoomScriptStartOffset = commandOffset + _rom.readInt16(commandOffset + 6);
+	_state.roomScriptCurrentOffset = commandOffset + _rom.readInt16(commandOffset + 6);
 }
 } // namespace Scooby

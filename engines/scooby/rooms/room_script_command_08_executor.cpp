@@ -26,7 +26,7 @@
 namespace Scooby {
 
 void RoomScriptCommand08Executor::executeRoomScriptCommand08(int mode) {
-	int32 commandOffset = _state.RoomScriptStartOffset;
+	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002C56-0x00002C59: mode zero skips every update and retains the common cursor advance.
 	if (mode != 0) {
@@ -110,7 +110,7 @@ void RoomScriptCommand08Executor::executeRoomScriptCommand08(int mode) {
 	}
 
 	// Ghidra 0x00002D58-0x00002D5D: every native return path consumes the complete six-word record.
-	_state.RoomScriptStartOffset = commandOffset + 12;
+	_state.roomScriptCurrentOffset = commandOffset + 12;
 }
 
 RoomScriptCommand08Executor::RoomObjectWordAddress RoomScriptCommand08Executor::resolveRoomObjectWordAddress(
