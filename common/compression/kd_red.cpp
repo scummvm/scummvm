@@ -19,12 +19,12 @@
  *
  */
 
-#include "made/redreader.h"
+#include "common/compression/kd_red.h"
 
 #include "common/file.h"
 #include "common/memstream.h"
 
-namespace Made {
+namespace Common {
 
 Common::SeekableReadStream *RedReader::load(const char *redFilename, const char *filename) {
 
@@ -394,7 +394,7 @@ void LzhDecompressor::downheap(int i) {
 	heap[i] = k;
 }
 
-void LzhDecompressor::make_code(int n, byte len[], uint16 code[]) {
+void LzhDecompressor::make_code(int n, byte len[], uint16 code[]) const {
 	int	i;
 	uint16 start[18];
 	start[1] = 0;

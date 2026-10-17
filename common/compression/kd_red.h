@@ -19,17 +19,18 @@
  *
  */
 
-#ifndef MADE_REDREADER_H
-#define MADE_REDREADER_H
+#ifndef COMMON_KD_RED_H
+#define COMMON_KD_RED_H
 
 #include "common/scummsys.h"
 
 namespace Common {
 class SeekableReadStream;
 class File;
-}
 
-namespace Made {
+// Decoder for RED ("REDuce") installer archives
+//  from Knowledge Dynamics Corporation (of Canyon Lake, Texas, later San Antonio).
+// See http://fileformats.archiveteam.org/wiki/RED_(Knowledge_Dynamics) for more details.
 
 class RedReader {
 public:
@@ -96,12 +97,12 @@ private:
 	void count_len(int i);
 	void make_len(int root);
 	void downheap(int i);
-	void make_code(int n, byte len[], uint16 code[]);
+	void make_code(int n, byte len[], uint16 code[]) const;
 	void make_table(uint nchar, byte bitlen[], uint tablebits, uint16 table[]);
 	int make_tree(int nparm, uint16 freqparm[], byte lenparm[], uint16 codeparm[]);
 
 };
 
-} // End of namespace Made
+} // End of namespace Common
 
-#endif /* MADE_H */
+#endif /* COMMON_KD_RED_H */

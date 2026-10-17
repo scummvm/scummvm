@@ -69,14 +69,17 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_res = new ResourceReader();
 	_screen = new Screen(this);
 
-	if (getGameID() == GID_LGOP2 || getGameID() == GID_MANHOLE || getGameID() == GID_RODNEY) {
-		_dat = new GameDatabaseV2(this);
-	} else if (getGameID() == GID_RTZ) {
-		_dat = new GameDatabaseV3(this);
-	} else if (getGameID() == GID_RSBESTNDE || getGameID() == GID_RSBUSYNDE) {
-		_dat = new GameDatabaseV3_1(this);
+	if (getVersion() == 1)
+		_dat = new GameDatabaseV1();
+	else if (getVersion() == 2)
+		_dat = new GameDatabaseV2();
+	else if (getVersion() == 3) {
+		if (getSubVersion() == 1)
+			_dat = new GameDatabaseV3_1();
+		else
+			_dat = new GameDatabaseV3();
 	} else {
-		error("Unknown GameID");
+		error("Unknown Game Version");
 	}
 
 	_script = new ScriptInterpreter(this);
@@ -103,10 +106,9 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 
 	// Set default sound frequency
 	switch (getGameID()) {
-	case GID_RODNEY:
-		_soundRate = 11025;
-		break;
 	case GID_MANHOLE:
+	case GID_MANHOLE_NE:
+	case GID_RODNEY:
 		_soundRate = 11025;
 		break;
 	case GID_LGOP2:
@@ -390,6 +392,26 @@ void MadeEngine::handleEvents() {
 
 }
 
+void MadeEngine::loadWin16Cursor(Common::String basename) {
+	// Try to open the EXE and get the hand cursor out
+	Common::WinResources *exe = Common::WinResources::createFromEXE(Common::Path(basename + "w.exe")); // Win16 executable
+	if (!exe)
+		exe = Common::WinResources::createFromEXE(Common::Path(basename + "v.exe")); // Tandy VIS executable
+
+	if (exe) {
+		Graphics::WinCursorGroup *_winCursor = Graphics::WinCursorGroup::createCursorGroup(exe, Common::WinResourceID("HANDCURSOR"));
+		if (_winCursor) {
+			if (_winCursor->cursors.size() > 0) {
+				_screen->setMouseCursor(_winCursor->cursors[0].cursor);
+				_useWinCursors = true;
+			}
+			delete _winCursor;
+		}
+
+		delete exe;
+	}
+}
+
 Common::Error MadeEngine::run() {
 	if (getPlatform() == Common::kPlatformMacintosh)
 		_music = nullptr; // TODO: Macintosh music player
@@ -438,10 +460,43 @@ Common::Error MadeEngine::run() {
 	} else if (getGameID() == GID_MANHOLE) {
 		_dat->open("manhole.dat");
 
-		if (getVersion() == 2) {
-			_res->open("manhole.prj");
+		// the various Manhole versions have different combinations of dependencies
+		if (getPlatform() == Common::kPlatformDOS) {
+			if (getFeatures() & GF_FLOPPY) {
+				// English DOS Floppy version
+				_res->openPicsBlock(false);
+				_res->openMusicBlock();
+				_res->openSndsBlock();
+			} else {
+				// English DOS CD version - snds come from the CD tracks
+				_res->openPicsBlock(true);
+				_res->openMusicBlock();
+			}
+		} else if (getPlatform() == Common::kPlatformFMTowns) {
+			// Japanese FM Towns version - music comes from the CD tracks
+			_res->openPicsBlock(true);
+			_res->openSndsBlock();
 		} else {
-			_res->openResourceBlocks();
+			// Japanese PC-98 version - PICS block is split in two with a separate Index
+			//  This file is also packed, and thus unsupported at all.
+			_res->openPicsBlock(false);
+			_res->openMusicBlock();
+			_res->openSndsBlock();
+		}
+	} else if (getGameID() == GID_MANHOLE_NE) {
+		_dat->open("manhole.dat");
+
+		if (getLanguage() == Common::JA_JPN) {
+			// Japanese DOS-V version
+			_res->openPicsBlock(true);
+			_res->openMusicBlock();
+			_res->openSndsBlock();
+		} else {
+			// English DOS / Windows / VIS
+			_res->open("manhole.prj");
+
+			if (ConfMan.hasKey("windows_cursors") && ConfMan.getBool("windows_cursors"))
+				loadWin16Cursor("manhole");
 		}
 	} else if (getGameID() == GID_LGOP2) {
 		_dat->open("lgop2.dat");
@@ -450,25 +505,9 @@ Common::Error MadeEngine::run() {
 		_dat->open("rodneys.dat");
 		_res->open("rodneys.prj");
 
-		if (ConfMan.hasKey("windows_cursors") && ConfMan.getBool("windows_cursors")) {
-			// Try to open the EXE and get the hand cursor out
-			Common::WinResources *exe = Common::WinResources::createFromEXE("rodneysw.exe"); // Win16 executable
-			if (!exe)
-				exe = Common::WinResources::createFromEXE("rodneysv.exe"); // Tandy VIS executable
+		if (ConfMan.hasKey("windows_cursors") && ConfMan.getBool("windows_cursors"))
+			loadWin16Cursor("rodneys");
 
-			if (exe) {
-				Graphics::WinCursorGroup *_winCursor = Graphics::WinCursorGroup::createCursorGroup(exe, Common::WinResourceID("HANDCURSOR"));
-				if (_winCursor) {
-					if (_winCursor->cursors.size() > 0) {
-						_screen->setMouseCursor(_winCursor->cursors[0].cursor);
-						_useWinCursors = true;
-					}
-					delete _winCursor;
-				}
-
-				delete exe;
-			}
-		}
 	} else if (getGameID() == GID_RSBESTNDE) {
 		if (getFeatures() & GF_DEMO) {
 			_dat->open("bestdemo.dat");
