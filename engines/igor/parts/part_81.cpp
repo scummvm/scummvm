@@ -256,7 +256,9 @@ void IgorEngine::part81DrawLighthouseFrame(int frame) {
 
 void IgorEngine::part81LighthouseSendMessage() {
 	part81TransitionScrollUp();
-	for (int i = 0; i < 3; ++i) {
+	// The Spanish floppy goes straight to the flashes, without the long pauses
+	const bool pauses = _game.version != kIdSpaFloppy;
+	for (int i = 0; pauses && i < 3; ++i) {
 		waitForTimer(251);
 	}
 	// lighthouse flashes message
@@ -264,7 +266,8 @@ void IgorEngine::part81LighthouseSendMessage() {
 		part81DrawLighthouseFrame(kPart81EndFrames[i]);
 		waitForTimer(kPart81EndHold[i]);
 	}
-	waitForTimer(251);
+	if (pauses)
+		waitForTimer(251);
 	part74ShipCutscene();
 	// ship receives message
 	for (int i = 0; i < 10; ++i) {
