@@ -53,12 +53,12 @@ public:
 	// packed tiles. The 121 words at 0x000320CC-0x000321BD form an 11x11 map whose cells receive the packed
 	// dynamic-tile base with original word wrapping. The original shared output workspace at 0xFF4000 becomes
 	// an operation-owned decoded array.
-	void executeRoomScriptAction07();
+	void scriptAction07FlashlightModeOn();
 
 	// Restores camera-derived foreground scrolling and normal foreground edge streaming.
 	//
 	// Ghidra: executeRoomScriptAction08 (0x00004534).
-	void executeRoomScriptAction08();
+	void scriptAction08FlashlightModeOff();
 
 private:
 	static const int kForegroundMapColumnCount = 11;

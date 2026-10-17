@@ -34,7 +34,7 @@
 
 namespace Scooby {
 
-class RoomScriptCommand05Executor {
+class RoomScriptCommand05MoveObject {
 public:
 	// Binds object relocation to its actor, inventory, retrace, and prompt owners.
 	// rom: verified cartridge containing command records and the parallel actor-shape catalogs.
@@ -44,7 +44,7 @@ public:
 	// waitForRoomVerticalBlank: callback-aware clocked frame publishing actor and object state.
 	// commitActionPromptUpdate: recovered action-prompt commit boundary.
 	// refreshActionPrompts: recovered action-prompt refresh boundary.
-	RoomScriptCommand05Executor(const ScoobyDooRom &rom, RuntimeState &state,
+	RoomScriptCommand05MoveObject(const ScoobyDooRom &rom, RuntimeState &state,
 								const ActorAnimationDescriptorCatalog &actorDescriptorCatalog,
 								Common::Functor0<void> &updateActorAnimationFrames,
 								Common::Functor0<bool> &waitForRoomVerticalBlank,

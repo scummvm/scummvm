@@ -43,7 +43,7 @@ void WriteUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value)
 }
 } // namespace
 
-void RoomScriptForegroundOverrideExecutor::executeRoomScriptAction07() { // maze sequence. maybe
+void RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn() { // maze sequence. maybe
 	// Ghidra 0x000044BA-0x000044C1: preserve the full-byte busy branch. Original interrupts keep publishing
 	// actor tiles during the spin, so each continuation services one callback-aware clocked frame.
 	while (_state.ActorTileUploadPendingFlags != 0) {
@@ -87,7 +87,7 @@ void RoomScriptForegroundOverrideExecutor::executeRoomScriptAction07() { // maze
 	// Ghidra 0x00004532-0x00004533: return with the foreground override installed.
 }
 
-void RoomScriptForegroundOverrideExecutor::executeRoomScriptAction08() {
+void RoomScriptForegroundOverrideExecutor::scriptAction08FlashlightModeOff() {
 	// Ghidra 0x00004534-0x0000453B: clear only the authored foreground-override mode.
 	_state.InteractionFlags &= static_cast<uint8>(~kForegroundOverrideMask);
 	// Ghidra 0x0000453C-0x0000453D: return with every other interaction flag preserved.

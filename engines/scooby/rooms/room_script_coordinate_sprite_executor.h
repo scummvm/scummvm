@@ -48,19 +48,19 @@ public:
 	// Ghidra: executeRoomScriptAction17 (0x000042A2). The first four packed tiles come from
 	// g_abScriptedSpritePrimaryPatternFrame at 0x000321BE-0x0003223D; the second four come from
 	// g_abScriptedSpriteSharedPatternFrame at 0x0003223E-0x000322BD.
-	void executeRoomScriptAction17();
+	void scriptAction17ShowObjectSprite();
 
 	// Starts the alternate coordinate-sprite presentation with two copies of its authored frame.
 	//
 	// Ghidra: executeRoomScriptAction18 (0x000042E0). Both four-tile slots come from
 	// g_abScriptedSpriteAlternatePatternFrame at 0x000322BE-0x0003233D: the first transfer advances A0 by
 	// 0x80 bytes, then LEA -0x80(A0),A0 restores the same source for the second transfer.
-	void executeRoomScriptAction18();
+	void scriptAction18ShowObjectAltSprite();
 
 	// Suppresses the optional scripted coordinate sprite while preserving its prepared state.
 	//
 	// Ghidra: executeRoomScriptAction19 (0x00004322).
-	void executeRoomScriptAction19();
+	void scriptAction19HideObjectSprite();
 
 private:
 	static const int kAlternatePatternFrameOffset = 0x322BE;

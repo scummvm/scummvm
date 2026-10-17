@@ -68,7 +68,7 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _command17Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand17),
 	  _command18Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand18),
 	  _command02Functor(&_command02Executor, &RoomScriptCommand02Executor::executeRoomScriptCommand02),
-	  _command05Functor(&_command05Executor, &RoomScriptCommand05Executor::executeRoomScriptCommand05),
+	  _command05Functor(&_command05Executor, &RoomScriptCommand05MoveObject::executeRoomScriptCommand05),
 	  _command08Functor(&_command08Executor, &RoomScriptCommand08Executor::executeRoomScriptCommand08),
 	  _command09Functor(&_command09Executor, &RoomScriptCommand09Executor::executeRoomScriptCommand09),
 	  _command0BFunctor(&_command0BExecutor, &RoomScriptCommand0BExecutor::executeRoomScriptCommand0B),

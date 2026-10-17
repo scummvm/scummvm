@@ -23,19 +23,19 @@
 
 namespace Scooby {
 
-void RoomScriptCameraPanExecutor::executeRoomScriptAction0D() {
+void RoomScriptCameraPanExecutor::scriptAction0DLockCamera() {
 	// Ghidra 0x00004482-0x00004489: set only the camera-follow lock.
 	_state.RoomBehaviorFlags |= 0x02;
 	// Ghidra 0x0000448A-0x0000448B: return with every other room-behavior flag preserved.
 }
 
-void RoomScriptCameraPanExecutor::executeRoomScriptAction0E() {
+void RoomScriptCameraPanExecutor::scriptAction0EUnlockCamera() {
 	// Ghidra 0x0000448C-0x00004493: clear only the camera-follow lock.
 	_state.RoomBehaviorFlags &= 0xFD;
 	// Ghidra 0x00004494-0x00004495: return with every other room-behavior flag preserved.
 }
 
-void RoomScriptCameraPanExecutor::executeRoomScriptAction0F() {
+void RoomScriptCameraPanExecutor::scriptAction0FCameraPanRight() {
 	// Ghidra 0x000043C0-0x000043C7: disable automatic camera following without changing other behavior.
 	_state.RoomBehaviorFlags |= 0x02;
 
@@ -70,7 +70,7 @@ void RoomScriptCameraPanExecutor::executeRoomScriptAction0F() {
 	// Ghidra 0x00004426-0x00004427: return after the scrolling owner reaches the exact target.
 }
 
-void RoomScriptCameraPanExecutor::executeRoomScriptAction10() {
+void RoomScriptCameraPanExecutor::scriptAction10CameraPanLeft() {
 	// Ghidra 0x00004428-0x0000442F: disable automatic camera following without changing other behavior.
 	_state.RoomBehaviorFlags |= 0x02;
 

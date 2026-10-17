@@ -292,7 +292,7 @@ private:
 	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command18Functor;
 
 	Common::Functor1Mem<int, void, RoomScriptCommand02Executor> _command02Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommand05Executor> _command05Functor;
+	Common::Functor1Mem<int, void, RoomScriptCommand05MoveObject> _command05Functor;
 	Common::Functor1Mem<int, void, RoomScriptCommand08Executor> _command08Functor;
 	Common::Functor1Mem<int, void, RoomScriptCommand09Executor> _command09Functor;
 	Common::Functor1Mem<int, void, RoomScriptCommand0BExecutor> _command0BFunctor;
@@ -311,7 +311,7 @@ private:
 	ActorAnimationDescriptorCatalog _actorDescriptorCatalog;
 	RoomScriptCommand01Executor _command01Executor;
 	RoomScriptCommand02Executor _command02Executor;
-	RoomScriptCommand05Executor _command05Executor;
+	RoomScriptCommand05MoveObject _command05Executor;
 	RoomScriptCommand08Executor _command08Executor;
 	RoomScriptCommand09Executor _command09Executor;
 	RoomScriptCommand0BExecutor _command0BExecutor;

@@ -94,22 +94,22 @@ public:
 private:
 	static const int kHandlerCount = 62;
 
-	void executeRoomScriptAction00();
+	void scriptAction00NoOp();
 	void executeRoomScriptAction01();
-	void executeRoomScriptAction02();
-	bool tryExecuteRoomScriptAction02();
-	void executeRoomScriptAction03();
-	void executeRoomScriptAction04();
+	void scriptAction02PresentRoom();
+	bool tryExecuteScriptAction02PresentRoom();
+	void scriptAction03FadeOut();
+	void scriptAction04WaitForButtonPress();
 	void executeRoomScriptAction06();
-	void executeRoomScriptAction09();
-	void executeRoomScriptAction0A();
-	void executeRoomScriptAction0B();
-	void executeRoomScriptAction11();
-	void executeRoomScriptAction12();
-	void executeRoomScriptAction13();
-	void executeRoomScriptAction14();
-	void executeRoomScriptAction1A();
-	void executeRoomScriptAction1B();
+	void scriptAction09HideScoobyDoo();
+	void scriptAction0AShowScoobyDoo();
+	void scriptAction0BScoobyDooStartAnimation();
+	void scriptAction11StopShaggyLeadMode();
+	void scriptAction12StartShaggyLeadMode();
+	void scriptAction13PlaySfx1();
+	void scriptAction14PlaySfx2();
+	void scriptAction1AStartVerticalScroll();
+	void scriptAction1BStopVerticalScroll();
 	void executeRoomScriptAction1F();
 	void executeRoomScriptAction20();
 	void executeRoomScriptAction21();

@@ -46,24 +46,24 @@ public:
 	// Locks the current camera origin by disabling automatic following.
 	//
 	// Ghidra: executeRoomScriptAction0D (0x00004482).
-	void executeRoomScriptAction0D();
+	void scriptAction0DLockCamera();
 
 	// Restores automatic horizontal and vertical camera following.
 	//
 	// Ghidra: executeRoomScriptAction0E (0x0000448C).
-	void executeRoomScriptAction0E();
+	void scriptAction0EUnlockCamera();
 
 	// Locks automatic following and pans the camera to the room's right edge.
 	//
 	// Ghidra: executeRoomScriptAction0F (0x000043C0). The installed room callback retains
 	// UpdateScrollingAndStreamTiles as the owner that advances the pan and clears its active flag.
-	void executeRoomScriptAction0F();
+	void scriptAction0FCameraPanRight();
 
 	// Locks automatic following and pans the camera to the room's left edge.
 	//
 	// Ghidra: executeRoomScriptAction10 (0x00004428). The installed room callback retains
 	// UpdateScrollingAndStreamTiles as the owner that advances the pan and clears its active flag.
-	void executeRoomScriptAction10();
+	void scriptAction10CameraPanLeft();
 
 private:
 	static const uint8 kCameraPanActiveMask = 0x20;

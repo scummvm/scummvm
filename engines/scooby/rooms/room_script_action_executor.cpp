@@ -40,22 +40,22 @@ RoomScriptActionExecutor::RoomScriptActionExecutor(
 	  _finishRoomStartup(finishRoomStartup),
 	  _waitForRoomVerticalBlankFunctor(this, &RoomScriptActionExecutor::waitForRoomVerticalBlank),
 	  _requestSessionExitFunctor(this, &RoomScriptActionExecutor::requestSessionExit),
-	  _tryExecuteRoomScriptAction02Functor(this, &RoomScriptActionExecutor::tryExecuteRoomScriptAction02),
-	  _action00Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction00),
+	  _tryExecuteRoomScriptAction02Functor(this, &RoomScriptActionExecutor::tryExecuteScriptAction02PresentRoom),
+	  _action00Functor(this, &RoomScriptActionExecutor::scriptAction00NoOp),
 	  _action01Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction01),
-	  _action02Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction02),
-	  _action03Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction03),
-	  _action04Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction04),
+	  _action02Functor(this, &RoomScriptActionExecutor::scriptAction02PresentRoom),
+	  _action03Functor(this, &RoomScriptActionExecutor::scriptAction03FadeOut),
+	  _action04Functor(this, &RoomScriptActionExecutor::scriptAction04WaitForButtonPress),
 	  _action06Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction06),
-	  _action09Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction09),
-	  _action0AFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction0A),
-	  _action0BFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction0B),
-	  _action11Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction11),
-	  _action12Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction12),
-	  _action13Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction13),
-	  _action14Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction14),
-	  _action1AFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction1A),
-	  _action1BFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction1B),
+	  _action09Functor(this, &RoomScriptActionExecutor::scriptAction09HideScoobyDoo),
+	  _action0AFunctor(this, &RoomScriptActionExecutor::scriptAction0AShowScoobyDoo),
+	  _action0BFunctor(this, &RoomScriptActionExecutor::scriptAction0BScoobyDooStartAnimation),
+	  _action11Functor(this, &RoomScriptActionExecutor::scriptAction11StopShaggyLeadMode),
+	  _action12Functor(this, &RoomScriptActionExecutor::scriptAction12StartShaggyLeadMode),
+	  _action13Functor(this, &RoomScriptActionExecutor::scriptAction13PlaySfx1),
+	  _action14Functor(this, &RoomScriptActionExecutor::scriptAction14PlaySfx2),
+	  _action1AFunctor(this, &RoomScriptActionExecutor::scriptAction1AStartVerticalScroll),
+	  _action1BFunctor(this, &RoomScriptActionExecutor::scriptAction1BStopVerticalScroll),
 	  _action1FFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction1F),
 	  _action20Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction20),
 	  _action21Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction21),
@@ -86,17 +86,17 @@ RoomScriptActionExecutor::RoomScriptActionExecutor(
 	  _action3CFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction3C),
 	  _action3DFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction3D),
 	  _action05Or0CFunctor(&_action05Or0CExecutor, &RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C),
-	  _action07Functor(&_foregroundOverrideExecutor, &RoomScriptForegroundOverrideExecutor::executeRoomScriptAction07),
-	  _action08Functor(&_foregroundOverrideExecutor, &RoomScriptForegroundOverrideExecutor::executeRoomScriptAction08),
-	  _action0DFunctor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::executeRoomScriptAction0D),
-	  _action0EFunctor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::executeRoomScriptAction0E),
-	  _action0FFunctor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::executeRoomScriptAction0F),
-	  _action10Functor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::executeRoomScriptAction10),
+	  _action07Functor(&_foregroundOverrideExecutor, &RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn),
+	  _action08Functor(&_foregroundOverrideExecutor, &RoomScriptForegroundOverrideExecutor::scriptAction08FlashlightModeOff),
+	  _action0DFunctor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::scriptAction0DLockCamera),
+	  _action0EFunctor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::scriptAction0EUnlockCamera),
+	  _action0FFunctor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::scriptAction0FCameraPanRight),
+	  _action10Functor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::scriptAction10CameraPanLeft),
 	  _action15Functor(&_pairedActorTransitionExecutor, &RoomScriptPairedActorTransitionExecutor::executeRoomScriptAction15),
 	  _action16Functor(&_pairedActorTransitionExecutor, &RoomScriptPairedActorTransitionExecutor::executeRoomScriptAction16),
-	  _action17Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::executeRoomScriptAction17),
-	  _action18Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::executeRoomScriptAction18),
-	  _action19Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::executeRoomScriptAction19),
+	  _action17Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::scriptAction17ShowObjectSprite),
+	  _action18Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::scriptAction18ShowObjectAltSprite),
+	  _action19Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::scriptAction19HideObjectSprite),
 	  _action1EFunctor(&_action1EExecutor, &RoomScriptAction1EExecutor::executeRoomScriptAction1E),
 	  _action27Functor(&_action27Executor, &RoomScriptAction27Executor::executeRoomScriptAction27),
 	  _action32Functor(&_duelActionExecutor, &DuelRoomScriptActionExecutor::executeRoomScriptAction32),
@@ -186,7 +186,7 @@ Optional<SessionExit> RoomScriptActionExecutor::execute(uint16 action) {
 // Preserves the intentional no-op action-table entry.
 //
 // Ghidra: executeRoomScriptAction00 (0x00002FAC).
-void RoomScriptActionExecutor::executeRoomScriptAction00() {
+void RoomScriptActionExecutor::scriptAction00NoOp() {
 	// Ghidra 0x00002FAC-0x00002FAD: return without reading or changing any state.
 }
 
@@ -203,22 +203,22 @@ void RoomScriptActionExecutor::executeRoomScriptAction01() {
 // Calls the separate room-presentation owner without absorbing its original boundary.
 //
 // Ghidra: executeRoomScriptAction02 (0x00004548).
-void RoomScriptActionExecutor::executeRoomScriptAction02() {
+void RoomScriptActionExecutor::scriptAction02PresentRoom() {
 	// Ghidra 0x00004548-0x0000454B: call the separate PresentRoom owner at 0x0000219A.
 	_requestedSessionExit = _presentRoom();
 
 	// Ghidra 0x0000454C-0x0000454D: return without adding action-owned state.
 }
 
-bool RoomScriptActionExecutor::tryExecuteRoomScriptAction02() {
-	executeRoomScriptAction02();
+bool RoomScriptActionExecutor::tryExecuteScriptAction02PresentRoom() {
+	scriptAction02PresentRoom();
 	return !_requestedSessionExit.hasValue();
 }
 
 // Fades the palette while preserving the complete display-flag byte around the operation.
 //
 // Ghidra: executeRoomScriptAction03 (0x0000454E).
-void RoomScriptActionExecutor::executeRoomScriptAction03() {
+void RoomScriptActionExecutor::scriptAction03FadeOut() {
 	// Ghidra 0x0000454E-0x0000455B: save every display flag and clear only the room-update gate.
 	uint8 displayFlags = _state.DisplayFlags;
 	_state.DisplayFlags &= 0xBF;
@@ -238,7 +238,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction03() {
 //
 // Ghidra: executeRoomScriptAction04 (0x00004568). Each input-wait back edge services one room callback and
 // clocked host frame because native VBlank updates both controller samples.
-void RoomScriptActionExecutor::executeRoomScriptAction04() {
+void RoomScriptActionExecutor::scriptAction04WaitForButtonPress() {
 	while (true) {
 		// Ghidra 0x00004568-0x0000456F: every repeated native iteration calls both separate original
 		// owners. A managed non-returning handover from the first call bypasses the second as native control did.
@@ -303,7 +303,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction06() {
 // Establishes actor-slot-one exclusion and blocks its visibility.
 //
 // Ghidra: executeRoomScriptAction09 (0x00004496).
-void RoomScriptActionExecutor::executeRoomScriptAction09() {
+void RoomScriptActionExecutor::scriptAction09HideScoobyDoo() {
 	// Ghidra 0x00004496-0x0000449D: set only actor-slot-one exclusion mode.
 	_state.InteractionFlags |= 0x80;
 	// Ghidra 0x0000449E-0x000044A5: set only actor slot one's visibility block.
@@ -314,7 +314,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction09() {
 // Ends actor-slot-one exclusion and clears its visibility block.
 //
 // Ghidra: executeRoomScriptAction0A (0x000044A8).
-void RoomScriptActionExecutor::executeRoomScriptAction0A() {
+void RoomScriptActionExecutor::scriptAction0AShowScoobyDoo() {
 	// Ghidra 0x000044A8-0x000044AF: clear only actor-slot-one exclusion mode.
 	_state.InteractionFlags &= 0x7F;
 	// Ghidra 0x000044B0-0x000044B7: clear only actor slot one's visibility block.
@@ -325,7 +325,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction0A() {
 // Derives slot one's animation offset and suspends its normal update path.
 //
 // Ghidra: executeRoomScriptAction0B (0x00002FFC).
-void RoomScriptActionExecutor::executeRoomScriptAction0B() {
+void RoomScriptActionExecutor::scriptAction0BScoobyDooStartAnimation() {
 	// Ghidra 0x00002FFC-0x00003003: load slot one's signed position index and add four with word wrap.
 	// Ghidra 0x00003004-0x00003009: replace slot one's raw descriptor-relative animation offset.
 	_state.ActorAnimationOffsets[1] = static_cast<int16>(_state.ActorPositionIndices[1] + 4);
@@ -339,7 +339,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction0B() {
 // Suppresses normal actor-zero movement and automatic animation selection.
 //
 // Ghidra: executeRoomScriptAction11 (0x000043AC).
-void RoomScriptActionExecutor::executeRoomScriptAction11() {
+void RoomScriptActionExecutor::scriptAction11StopShaggyLeadMode() {
 	// Ghidra 0x000043AC-0x000043B3: set only the special actor-zero update-mode flag.
 	_state.RoomBehaviorFlags |= 0x04;
 
@@ -349,7 +349,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction11() {
 // Restores normal actor-zero movement and automatic animation selection.
 //
 // Ghidra: executeRoomScriptAction12 (0x000043B6).
-void RoomScriptActionExecutor::executeRoomScriptAction12() {
+void RoomScriptActionExecutor::scriptAction12StartShaggyLeadMode() {
 	// Ghidra 0x000043B6-0x000043BD: clear only the special actor-zero update-mode flag.
 	_state.RoomBehaviorFlags &= 0xFB;
 
@@ -359,7 +359,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction12() {
 // Chooses between the two action-0x13 audio commands through the shared random sequence.
 //
 // Ghidra: executeRoomScriptAction13 (0x00004374).
-void RoomScriptActionExecutor::executeRoomScriptAction13() {
+void RoomScriptActionExecutor::scriptAction13PlaySfx1() {
 	// Ghidra 0x00004374-0x00004379: advance the shared random longword and scale its low word to [0, 2).
 	uint16 selection = _random.scaleNextRandomValue(2);
 
@@ -377,7 +377,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction13() {
 // Chooses between the two action-0x14 audio commands through the shared random sequence.
 //
 // Ghidra: executeRoomScriptAction14 (0x00004390).
-void RoomScriptActionExecutor::executeRoomScriptAction14() {
+void RoomScriptActionExecutor::scriptAction14PlaySfx2() {
 	// Ghidra 0x00004390-0x00004395: advance the shared random longword and scale its low word to [0, 2).
 	uint16 selection = _random.scaleNextRandomValue(2);
 
@@ -397,7 +397,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction14() {
 // Ghidra: executeRoomScriptAction1A (0x00004274). Authored delay sequence g_abRoomScrollPhaseDelays at
 // 0x0003247C-0x0003247F contains 0x77, 0x77, 0x0E, 0x00. The word write of one leaves room delay-table index
 // zero in the packed cursor's high byte for UpdateScrollingAndStreamTiles.
-void RoomScriptActionExecutor::executeRoomScriptAction1A() {
+void RoomScriptActionExecutor::scriptAction1AStartVerticalScroll() {
 	// Ghidra 0x00004274-0x00004283: park the phase cursor and initialize the packed delay cursor word.
 	// Its high byte is the room delay-table index, so writing word one selects entry zero.
 	_state.ScrollAnimationPhaseOffset = -1;
@@ -413,7 +413,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction1A() {
 // Disables the optional phase-table vertical-scroll offset.
 //
 // Ghidra: executeRoomScriptAction1B (0x00004298).
-void RoomScriptActionExecutor::executeRoomScriptAction1B() {
+void RoomScriptActionExecutor::scriptAction1BStopVerticalScroll() {
 	// Ghidra 0x00004298-0x000042A1: clear only room-behavior bit seven and return.
 	_state.RoomBehaviorFlags &= 0x7F;
 }

@@ -29,7 +29,7 @@
 
 namespace Scooby {
 
-void RoomScriptCoordinateSpriteExecutor::executeRoomScriptAction17() {
+void RoomScriptCoordinateSpriteExecutor::scriptAction17ShowObjectSprite() {
 	// Ghidra 0x000042A2-0x000042A9: select unflipped tile 0x7F8.
 	_state.ScriptedCoordinateSprite._tileAttributes = 0x07F8;
 
@@ -49,7 +49,7 @@ void RoomScriptCoordinateSpriteExecutor::executeRoomScriptAction17() {
 	_state.RoomBehaviorFlags |= 0x10;
 }
 
-void RoomScriptCoordinateSpriteExecutor::executeRoomScriptAction18() {
+void RoomScriptCoordinateSpriteExecutor::scriptAction18ShowObjectAltSprite() {
 	// Ghidra 0x000042E0-0x000042E7: select tile 0x7F8 with the original horizontal-flip attribute.
 	_state.ScriptedCoordinateSprite._tileAttributes = 0x47F8;
 
@@ -74,7 +74,7 @@ void RoomScriptCoordinateSpriteExecutor::executeRoomScriptAction18() {
 	_state.RoomBehaviorFlags |= 0x10;
 }
 
-void RoomScriptCoordinateSpriteExecutor::executeRoomScriptAction19() {
+void RoomScriptCoordinateSpriteExecutor::scriptAction19HideObjectSprite() {
 	// Ghidra 0x00004322-0x0000432B: clear only room-behavior bit four and return.
 	_state.RoomBehaviorFlags &= 0xEF;
 }

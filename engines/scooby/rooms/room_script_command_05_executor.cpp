@@ -25,25 +25,18 @@
 
 namespace Scooby {
 
-void RoomScriptCommand05Executor::executeRoomScriptCommand05(int mode) {
+void RoomScriptCommand05MoveObject::executeRoomScriptCommand05(int mode) {
 	int32 commandOffset = _state.RoomScriptStartOffset;
 
 	// Ghidra 0x000028A0-0x000028C3: scan mode and masked identities zero, one, and two each take their own
 	// branch to the common epilogue; every other identity retains the original word-width table offset.
 	if (mode != 0) {
-		uint16 encodedObjectIdentity = _rom.readUInt16(commandOffset + 2);
-		uint16 objectIdentity = static_cast<uint16>(encodedObjectIdentity & 0x7FFF);
-		switch (objectIdentity) {
-		case 0:
-			break;
-		case 1:
-			break;
-		case 2:
-			break;
-		default: {
+		uint16 encodedObjectId = _rom.readUInt16(commandOffset + 2);
+		uint16 objectId = static_cast<uint16>(encodedObjectId & 0x7FFF);
+		if (objectId > 2) {
 			// Ghidra 0x000028C4-0x000028DD: resolve the 0x1A-byte record through the original low-word
 			// multiply and select its fixed-position or portable-object ecosystem from flag bit one.
-			uint16 tableByteOffset = static_cast<uint16>((objectIdentity - 3) *
+			uint16 tableByteOffset = static_cast<uint16>((objectId - 3) *
 														 kRoomObjectRecordSize);
 			int objectIndex = tableByteOffset / kRoomObjectRecordSize;
 			RoomObject &roomObject = _state.RoomObjects[static_cast<std::size_t>(objectIndex)];
@@ -52,12 +45,9 @@ void RoomScriptCommand05Executor::executeRoomScriptCommand05(int mode) {
 				if (!relocateFixedObject(roomObject, newRoomId)) {
 					return;
 				}
-			} else if (relocatePortableObject(roomObject, objectIndex, encodedObjectIdentity, newRoomId)) {
+			} else if (relocatePortableObject(roomObject, objectIndex, encodedObjectId, newRoomId)) {
 				return;
 			}
-
-			break;
-		}
 		}
 	}
 
@@ -65,7 +55,7 @@ void RoomScriptCommand05Executor::executeRoomScriptCommand05(int mode) {
 	_state.RoomScriptStartOffset = commandOffset + 6;
 }
 
-bool RoomScriptCommand05Executor::relocateFixedObject(RoomObject &roomObject, int16 newRoomId) {
+bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, int16 newRoomId) {
 	int16 currentRoomId = _state.RoomId;
 
 	// Ghidra 0x000028DE-0x00002907: detach an actor only when its object belongs to the active room. Dynamic
@@ -151,7 +141,7 @@ bool RoomScriptCommand05Executor::relocateFixedObject(RoomObject &roomObject, in
 	return true;
 }
 
-bool RoomScriptCommand05Executor::relocatePortableObject(RoomObject &roomObject, int objectIndex,
+bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObject, int objectIndex,
 														 uint16 encodedObjectIdentity,
 														 int16 newRoomId) {
 	int16 previousRoomId = roomObject.RoomId;
@@ -215,7 +205,7 @@ bool RoomScriptCommand05Executor::relocatePortableObject(RoomObject &roomObject,
 	return refreshActionPromptsAfterRelocation(encodedObjectIdentity);
 }
 
-bool RoomScriptCommand05Executor::refreshActionPromptsAfterRelocation(uint16 encodedObjectIdentity) {
+bool RoomScriptCommand05MoveObject::refreshActionPromptsAfterRelocation(uint16 encodedObjectIdentity) {
 	// Ghidra 0x00002AA6-0x00002AC9: interaction bit two and a negative encoded identity independently skip
 	// all three calls. Otherwise preserve WaitForVerticalBlank, CommitActionPromptUpdate, then refresh.
 	if ((_state.InteractionFlags & kSuppressActionPromptRefreshMask) != 0) {
@@ -235,7 +225,7 @@ bool RoomScriptCommand05Executor::refreshActionPromptsAfterRelocation(uint16 enc
 	return false;
 }
 
-int RoomScriptCommand05Executor::replaceIntegerCoordinate(int coordinate, int16 integer) {
+int RoomScriptCommand05MoveObject::replaceIntegerCoordinate(int coordinate, int16 integer) {
 	return (coordinate & 0x0000FFFF) | (static_cast<int>(integer) << 16);
 }
 } // namespace Scooby
