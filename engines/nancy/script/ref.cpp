@@ -19,38 +19,18 @@
  *
  */
 
-#include "graphics/managed_surface.h"
-
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/ref.h"
 #include "engines/nancy/script/types.h"
 
 namespace Nancy {
 namespace Script {
 
-// A "Ref" is an image scripts look things up in instead of showing it: the
-// colors of its pixels say what is where. The map the player walks around on
-// has one for every part of it, painted in the colors of where one can go.
-
 static const char *const kRefType = "ND.Ref";
-
-// What to do about a place that is outside of the image
-enum RefEdgeMode {
-	kRefClamp	= 0,	// take the nearest pixel
-	kRefWrap	= 1,	// start over at the other side
-	kRefDismiss	= 2		// there is nothing there
-};
-
-struct RefImage {
-	Graphics::ManagedSurface image;
-	RefEdgeMode edgeMode = kRefClamp;
-
-	// Returns false when there is no pixel at that place
-	bool getPixel(int x, int y, uint32 &argb) const;
-};
 
 bool RefImage::getPixel(int x, int y, uint32 &argb) const {
 	if (image.w == 0 || image.h == 0) {

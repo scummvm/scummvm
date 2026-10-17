@@ -26,6 +26,7 @@
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/script/convo.h"
@@ -33,6 +34,7 @@
 #include "engines/nancy/script/luastate.h"
 #include "engines/nancy/script/record.h"
 #include "engines/nancy/script/records.h"
+#include "engines/nancy/script/ref.h"
 #include "engines/nancy/script/scenecontext.h"
 
 #include "engines/nancy/state/scene.h"
@@ -72,7 +74,25 @@ SceneContext::~SceneContext() {
 		delete response;
 	}
 
+	for (auto &ref : _refs) {
+		delete ref._value;
+	}
+
 	delete _lua;
+}
+
+const RefImage *SceneContext::loadRef(const Common::String &name) {
+	RefImage *ref = _refs.getValOrDefault(name, nullptr);
+	if (!ref) {
+		ref = new RefImage();
+		if (!g_nancy->_resource->loadImage(Common::Path(name), ref->image)) {
+			warning("Could not load Ref %s", name.c_str());
+		}
+
+		_refs.setVal(name, ref);
+	}
+
+	return ref;
 }
 
 lua_State *SceneContext::getLua() const {
