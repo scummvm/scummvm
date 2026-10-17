@@ -278,8 +278,7 @@ public:
 	}
 
 	const Common::String &roomName() const {
-		static const Common::String noRoom;
-		return _roomName ? *_roomName : noRoom;
+		return _roomName ? *_roomName : "";
 	}
 
 private:
