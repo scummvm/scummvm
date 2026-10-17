@@ -289,6 +289,39 @@ void IgorEngine::formatRightButtonSentence() {
 	}
 }
 
+/**
+ * The Spanish floppy highlights, while the cursor is over a hotspot, the default verb of that hotspot
+ * (Look for inventory objects) and shows the selected verb again when the cursor leaves.
+ */
+void IgorEngine::updateHoverVerbHighlight() {
+	int wanted = kHoverVerbSelected;
+	const bool idle = !_rightButtonSelecting && !_gameState.dialogueTextRunning && !_inputVars[kInputClick];
+	const int x = _inputVars[kInputCursorXPos];
+	const int y = _inputVars[kInputCursorYPos];
+	if (idle) {
+		if (y >= 0 && y < 144 && x >= 0 && x < 320) {
+			const int area = _screenLayer2[y * 320 + x];
+			const int object = _roomObjectAreasTable[area].object;
+			const int defaultVerbOffset = _roomDataOffsets.obj.walkPoints +
+				_roomDataOffsets.obj.walkFacingPosition - _roomDataOffsets.action.defaultVerb;
+			wanted = _roomActionsTable[defaultVerbOffset + object];
+		} else if (y >= 170 && y <= 197) {
+			wanted = kVerbLook;
+		}
+	}
+	if (wanted == _hoverVerbState)
+		return;
+	if (_hoverVerbState == kHoverVerbSelected)
+		redrawVerb(_currentAction.verb, false);
+	else
+		redrawVerb(_hoverVerbState, false);
+	if (wanted == kHoverVerbSelected)
+		redrawVerb(_currentAction.verb, true);
+	else
+		redrawVerb(wanted, true);
+	_hoverVerbState = wanted;
+}
+
 void IgorEngine::handleRoomInput() {
 	// Escape is a transient abort input. Do not let an unused press from the
 	// room loop leak into a later blocking walk or dialogue sequence.
@@ -322,6 +355,9 @@ void IgorEngine::handleRoomInput() {
 
 	if (!_roomCursorOn || _gameState.dialogueTextRunning || _scrollInventory) {
 		return;
+	}
+	if (_game.version == kIdSpaFloppy) {
+		updateHoverVerbHighlight();
 	}
 	// Spanish floppy inventory paging works with left and right mouse buttons pressed on the 2 last rows of the screen
 	if (_game.version == kIdSpaFloppy && !_rightButtonSelecting && _inputVars[kInputCursorYPos] >= 198) {

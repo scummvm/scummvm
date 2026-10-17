@@ -83,6 +83,9 @@ enum {
 	kTalkModeTextOnly = 2
 };
 
+// Value of _hoverVerbState when the verb panel shows the selected verb
+static const int kHoverVerbSelected = -1;
+
 enum InputVar {
 	kInputSkipDialogue = 0,
 	kInputCursorXPos,
@@ -649,6 +652,8 @@ private:
 	int16 _inputVars[kInputVarCount];
 
 	bool _rightButtonSelecting;
+	// Verb highlighted while the cursor is over a hotspot (Spanish floppy): kHoverVerbSelected = the selected verb
+	int _hoverVerbState;
 	int _rightButtonSelectCursorX, _rightButtonSelectCursorY;
 
 	bool _scrollInventory;
@@ -1701,6 +1706,7 @@ private:
 	void drawVerbsPanel();
 	void redrawVerb(uint8 verb, bool highlight);
 	void beginRightButtonVerbPick();
+	void updateHoverVerbHighlight();
 	void updateRightButtonVerbPick();
 	void endRightButtonVerbPick();
 	void formatRightButtonSentence();
