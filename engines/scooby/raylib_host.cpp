@@ -158,7 +158,7 @@ ControllerButtons RaylibHost::getControllerButtons(ControllerButtons backButton)
 				_buttons &= buttonMask(ControllerButtons::Start);
 			}
 			if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				_buttons |= backButton;
+				_buttons &= buttonMask(backButton);
 			}
 		}
 		}
