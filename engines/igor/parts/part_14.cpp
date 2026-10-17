@@ -435,7 +435,7 @@ void IgorEngine::part14ShowPuzzle() {
 			if (area >= 1 && area <= 8) {
 				drawActionSentence(getString(STR_PushStone), mosaicSentenceColor(1));
 				hideCursor();
-				playRoomSound(34, 0);
+				playRoomSound(34, kSpaFloppySoundPart14StonePush);
 				switch (area) {
 				case 1:
 					part14PushStone(33359, 28, 34, 0);
@@ -476,7 +476,7 @@ void IgorEngine::part14ShowPuzzle() {
 					} else {
 						_currentPart = 145;
 						_gameState.counter[4] = 0;
-						playSound(35, 1);
+						playRoomSound(35, kSpaFloppySoundPart14Solved);
 						waitForTimer(255);
 						stopSound();
 						// The mosaic screen has no Igor sprite, so his head is not animated.
@@ -498,7 +498,7 @@ void IgorEngine::part14ShowPuzzle() {
 	drawActionSentence("", mosaicSentenceColor(0));
 	hideCursor();
 	if (_currentPart == 145) {
-		playSound(35, 1);
+		playRoomSound(35, kSpaFloppySoundPart14Solved);
 	}
 	fadeOut(768);
 	memcpy(_screenVGA, _screenLayer1, 46080);
