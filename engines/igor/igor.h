@@ -1025,6 +1025,7 @@ private:
 	void part14ShowPuzzle();
 	void part14LoadChurchMosaicData();
 	void part14PushStone(int screenOffset, int w, int h, int animOffset);
+	uint8 mosaicSentenceColor(int index) const;
 	void part14();
 	void part14LoadRoom();
 	void part14LoadAnimation();
