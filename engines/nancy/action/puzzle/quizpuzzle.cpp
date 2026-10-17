@@ -922,7 +922,9 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 		if (!screenRect.contains(input.mousePos))
 			continue;
 
-		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+		// The puzzle arrow cursor only exists in Nancy 10 and up
+		g_nancy->_cursor->setCursorType(g_nancy->getGameType() >= kGameTypeNancy10 ?
+			CursorManager::kPuzzleArrow : CursorManager::kHotspot);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			if (i != _currentBox) {
