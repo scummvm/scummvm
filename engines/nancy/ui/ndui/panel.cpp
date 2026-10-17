@@ -168,7 +168,6 @@ void Panel::addBuiltInTooltip() {
 	static const double kShowAfter = 1.0;
 	static const double kHideAfter = 10.0;
 	static const char *const kFontName = "UIFont";
-	static const char *const kPreventFlagName = "PreventTooltips";
 
 	// TODO: The colors of the original aren't known; these are the usual ones
 	// of a tooltip
@@ -178,11 +177,14 @@ void Panel::addBuiltInTooltip() {
 	// Centered, and on a single line
 	static const int32 kAlignCenter = 2;
 
+	// Nancy20 ends the names of all flags in "_FL"
+	const char *preventFlagName = g_nancy->getGameType() >= kGameTypeNancy20 ? "PreventTooltips_FL" : "PreventTooltips";
+
 	int16 preventFlag = -1;
 	const EVNT *flags = GetEngineData(EVNT);
 	if (flags) {
 		for (uint i = 0; i < flags->eventFlagNames.size(); ++i) {
-			if (flags->eventFlagNames[i].equalsIgnoreCase(kPreventFlagName)) {
+			if (flags->eventFlagNames[i].equalsIgnoreCase(preventFlagName)) {
 				preventFlag = (int16)(EVNT::kFirstEventFlag + i);
 			}
 		}
