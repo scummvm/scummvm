@@ -78,6 +78,7 @@ enum Language : int8 {
 	SV_SWE,
 	SK_SVK,
 	SR_SRB,
+	TH_THA,
 	TR_TUR,
 	UA_UKR,
 	ZH_ANY,     // Generic Chinese (when only one game version exist)
