@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
+#include "common/keyboard.h"
 #include "common/random.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -683,6 +684,7 @@ private:
 	bool _rightButtonSelecting;
 	// Verb highlighted while the cursor is over a hotspot (Spanish floppy): kHoverVerbSelected = the selected verb
 	int _hoverVerbState;
+	int _keyboardCursorStep;
 	int _rightButtonSelectCursorX, _rightButtonSelectCursorY;
 
 	bool _scrollInventory;
@@ -1739,6 +1741,8 @@ private:
 	void beginRightButtonVerbPick();
 	int getDefaultVerbAt(int x, int y) const;
 	void updateHoverVerbHighlight();
+	bool isCursorKey(Common::KeyCode key) const;
+	bool moveCursorWithKeyboard(Common::KeyCode key);
 	void updateRightButtonVerbPick();
 	void endRightButtonVerbPick();
 	void formatRightButtonSentence();
