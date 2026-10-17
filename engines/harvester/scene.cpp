@@ -507,12 +507,12 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 	}
 
 	if (_presentationState.showingInspectText) {
-		drawRoomInspectText(*activeScreen, *_view.art, *_view.inspectFont, _presentationState.inspectText, _view.useNativeInspectFont);
+		RoomPresentation::drawRoomInspectText(*activeScreen, *_view.art, *_view.inspectFont, _presentationState.inspectText, _view.useNativeInspectFont);
 		if (!_presentationState.currentInteractionPromptText.empty())
 			drawRoomPrompt(*activeScreen, *_view.promptFont,
 				_presentationState.currentInteractionPromptText, _view.useNativePromptFont);
 	} else if (!_presentationState.combatLoadoutStatusText.value.empty()) {
-		drawRoomInspectText(*activeScreen, *_view.art, *_view.inspectFont, _presentationState.combatLoadoutStatusText,
+		RoomPresentation::drawRoomInspectText(*activeScreen, *_view.art, *_view.inspectFont, _presentationState.combatLoadoutStatusText,
 			_view.useNativeInspectFont);
 	} else if (!inventoryTooltipText.empty()) {
 		drawInventoryTooltip(*activeScreen, *_view.inventoryTooltipFont, inventoryTooltipText);

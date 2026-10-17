@@ -546,7 +546,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 	const bool unlocksAfterInitialExamine =
 		unlocksRoomObjectInteractionAfterInitialExamine(*clickedObject, *_engine.getScript());
 	const bool canShowInspectText =
-		hasInspectText && resolveInspectTextboxBitmap(_art, resolvedInspectText);
+		hasInspectText && RoomPresentation::resolveInspectTextboxBitmap(_art, resolvedInspectText);
 	if (!clickedObject->identShown && unlocksAfterInitialExamine) {
 		clickedObject->identShown = true;
 		_engine.getScript()->markObjectIdentShown(*clickedObject);

@@ -79,9 +79,6 @@ const RegionRecord *findSceneRegionByName(const Common::Array<RegionRecord> &reg
 	const Common::String &regionName);
 ObjectRecord *findSceneObjectByName(Common::Array<ObjectRecord> &objects,
 	const Common::String &objectName);
-const IndexedBitmap *resolveInspectTextboxBitmap(const Art &art, const ResolvedText &text);
-void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphics::Font &font,
-	const ResolvedText &inspectText, bool useNativeFont);
 bool unlocksRoomObjectInteractionAfterInitialExamine(const ObjectRecord &object,
 	Script &script);
 bool doesPlayerFacingMatchRegion(int playerFacing, const RegionRecord &region);

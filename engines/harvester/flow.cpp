@@ -74,10 +74,6 @@ static const char *const kTownMapBitmapPaths[] = {
 };
 
 static const int kCursorSequence7 = 7;
-static const int kIdentTextboxX = 177;
-static const int kIdentTextboxY = 85;
-static const int kIdentTextboxTextInsetX = 10;
-static const int kIdentTextboxTextInsetY = 5;
 static const int kNativeIdentTextLineSpacing = 3;
 static const char *const kPlayerActorEntityName = "PLAYER";
 // ramp_palette_brightness (0x23a30) waits four DOS centiseconds per step.
@@ -102,8 +98,6 @@ static const uint32 kTransitionWaitFrameMinMs = 120;
 static const int kTownMapEdgeThreshold = 9;
 static const int kTownMapCursorHitExtent = 5;
 
-static const byte kIdentTextColor = 0xd3;
-static const byte kShadowColor = 0;
 static const byte kTownMapLabelColor = 0x28;
 
 static const int kCursorSequenceWalk = 0;
@@ -272,13 +266,6 @@ void logScenePaletteSummary(const char *label, const SceneState &scene, float br
 		label, scene.state.roomName.c_str(), scene.state.palettePath.c_str(), (double)brightness);
 }
 
-static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
-	if (!bitmap.isValid())
-		return;
-
-	screen.copyRectToSurface(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
-}
-
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap) {
 	if (screen.w <= 0 || screen.h <= 0 || screen.format.bytesPerPixel != 1)
 		return false;
@@ -290,35 +277,6 @@ bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap
 		memcpy(bitmap.pixels.data() + y * bitmap.width, screen.getBasePtr(0, y), bitmap.width);
 
 	return true;
-}
-
-static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
-		int x, int y, int width, byte color, Graphics::TextAlign align = Graphics::kTextAlignLeft) {
-	font.drawString(&screen, text, x + 1, y + 1, width, kShadowColor, align);
-	font.drawString(&screen, text, x, y, width, color, align);
-}
-
-static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
-		int x, int y, int width, byte color) {
-	Common::Array<Common::String> lines;
-	font.wordWrapText(text, width, lines);
-
-	const int lineHeight = font.getFontHeight() + 2;
-	for (uint i = 0; i < lines.size(); ++i)
-		drawShadowedString(screen, font, lines[i], x, y + i * lineHeight, width, color);
-}
-
-static void drawWrappedText(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
-		int x, int y, int width, byte color, int lineSpacing, bool useCftCharacterWrapping = false) {
-	Common::Array<Common::String> lines;
-	if (useCftCharacterWrapping)
-		wrapCftTextByCharacterCount(font, text, width, lines);
-	else
-		font.wordWrapText(text, width, lines);
-
-	const int lineHeight = font.getFontHeight() + lineSpacing;
-	for (uint i = 0; i < lines.size(); ++i)
-		font.drawString(&screen, lines[i], x, y + i * lineHeight, width, color);
 }
 
 static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
@@ -612,44 +570,6 @@ static const NpcRecord *findRoomNpcAtPoint(HarvesterEngine &engine,
 		return nullptr;
 
 	return npc;
-}
-
-const IndexedBitmap *resolveInspectTextboxBitmap(const Art &art, const ResolvedText &text) {
-	if (text.boxName.equalsIgnoreCase("BOX1"))
-		return art.getTextboxBitmap(0);
-	if (text.boxName.equalsIgnoreCase("BOX2"))
-		return art.getTextboxBitmap(1);
-	if (text.boxName.equalsIgnoreCase("BOX3"))
-		return art.getTextboxBitmap(2);
-	if (text.boxName.equalsIgnoreCase("BOX4"))
-		return art.getTextboxBitmap(3);
-
-	return nullptr;
-}
-
-void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphics::Font &font,
-		const ResolvedText &inspectText, bool useNativeFont) {
-	const IndexedBitmap *textbox = resolveInspectTextboxBitmap(art, inspectText);
-	if (!textbox || !textbox->isValid())
-		return;
-
-	blitBitmap(screen, *textbox, kIdentTextboxX, kIdentTextboxY);
-	if (useNativeFont) {
-		drawWrappedText(screen, font, inspectText.value,
-			kIdentTextboxX + kIdentTextboxTextInsetX,
-			kIdentTextboxY + kIdentTextboxTextInsetY,
-			MAX<int>(0, (int)textbox->width - 2),
-			0,
-			kNativeIdentTextLineSpacing,
-			true);
-		return;
-	}
-
-	drawWrappedShadowedText(screen, font, inspectText.value,
-		kIdentTextboxX + kIdentTextboxTextInsetX,
-		kIdentTextboxY + kIdentTextboxTextInsetY,
-		MAX<int>(0, (int)textbox->width - (kIdentTextboxTextInsetX + 2)),
-		kIdentTextColor);
 }
 
 static bool suppressesInitialObjectInspectGate(const ObjectRecord &object) {
@@ -1278,7 +1198,7 @@ Common::Error Flow::runDemoEnding() {
 
 		setScaledPalette(*screen, palette, kPaletteBrightnessBlack);
 		screen->fillRect(Common::Rect(0, 0, screen->w, screen->h), 0);
-		blitBitmap(*screen, bitmap, 0, 0);
+		RoomPresentation::blitBitmap(*screen, bitmap, 0, 0);
 		screen->makeAllDirty();
 		screen->update();
 
@@ -1347,9 +1267,9 @@ Common::Error Flow::runDemoIntroduction() {
 		entityManager->hideCursor();
 	setScaledPalette(*screen, palette, kPaletteBrightnessBlack);
 	screen->fillRect(Common::Rect(0, 0, screen->w, screen->h), 0);
-	blitBitmap(*screen, bitmap, 0, 0);
+	RoomPresentation::blitBitmap(*screen, bitmap, 0, 0);
 	blitTransparentBitmap(*screen, art->getLogoBitmap(), 160, 0);
-	drawWrappedText(*screen, font, kDemoIntroductionText, 90, 200, 420, 0xce,
+	RoomPresentation::drawWrappedText(*screen, font, kDemoIntroductionText, 90, 200, 420, 0xce,
 		kNativeIdentTextLineSpacing);
 	screen->makeAllDirty();
 	screen->update();
@@ -1528,9 +1448,9 @@ Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 		if (needsRedraw) {
 			setScaledPalette(*screen, palette, paletteBrightness);
 			screen->fillRect(screen->getBounds(), 0);
-			blitBitmap(*screen, panels[(uint)currentPanel], 0, 0);
+			RoomPresentation::blitBitmap(*screen, panels[(uint)currentPanel], 0, 0);
 			if (hoveredLocation) {
-				drawShadowedString(*screen, *font, hoveredLocation->labelText,
+				RoomPresentation::drawShadowedString(*screen, *font, hoveredLocation->labelText,
 					hoveredLocation->labelX, hoveredLocation->labelY, screen->w, kTownMapLabelColor);
 			}
 			if (EntityManager *entityManager = _engine.getRuntimeEntities())
