@@ -132,6 +132,14 @@ Optional<SessionExit> SessionController::resetRoomStateForReload() {
 	_state.DisplayFlags |= 0x04;
 	_state.DisplayFlags |= 0x40;
 
+	// Ghidra 0x00002164-0x00002167: MOVE #0x2000,SR re-enables interrupts after the masked load. Room
+	// loading spans many frames, so the VDP's latched vertical interrupt is always pending here and the
+	// room VBlank handler runs immediately, with the room-update gate just opened. Among other things it
+	// recomputes the compact actor scales for the new room positions, so the UpdateActorAnimationFrames
+	// call below stages and scales the first frames at the correct size. Service that handler once here
+	// (without presenting a frame); otherwise the actors are first drawn at the previous room's scale.
+	_roomVBlank.handleRoomVBlank();
+
 	// Ghidra 0x00002168-0x00002177: progress byte-zero bit one independently skips prompt refresh.
 	if ((_state.ProgressStateBytes[0] & 0x02) == 0) {
 		_actionMenu.refreshActionPrompts();
