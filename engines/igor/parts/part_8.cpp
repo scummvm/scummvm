@@ -311,10 +311,9 @@ void IgorEngine::part8GiveBottleToDean() {
 void IgorEngine::part8ExecuteAction(int action) {
 	switch (action) {
 	case 101: // exit office
-		if (_objectsState[kDeanDoorOpenStateIndex] == 0) {
-			_currentPart = 71;
+		// With the door closed nothing happens: Igor has to open it first
+		if (_objectsState[kDeanDoorOpenStateIndex] == 0)
 			break;
-		}
 		if (_objectsState[kDeanDoorOpenStateIndex] != 0) {
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].area = 4;
