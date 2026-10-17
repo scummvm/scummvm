@@ -25,6 +25,7 @@
 #include "common/rect.h"
 
 #include "ripper/controls.h"
+#include "ripper/display.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
@@ -86,8 +87,7 @@ private:
 	Common::Array<BitmapAssetFrame> _databaseScrollArrows;
 	Common::Array<Common::String> _gameText;
 	BitmapFontAsset _font;
-	Common::Array<byte> _savedPixels;
-	Common::Array<byte> _savedPalette;
+	IndexedDisplaySnapshot _savedDisplay;
 	int _hoveredControl;
 	int _pressedControl;
 	bool _notebookUpdatePending;

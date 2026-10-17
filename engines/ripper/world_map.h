@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "ripper/display.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
@@ -52,7 +53,6 @@ private:
 		TravelLocation() : available(false) {}
 	};
 
-	bool captureDisplay();
 	void restoreDisplay();
 	void refreshLocations();
 	void draw() const;
@@ -76,8 +76,7 @@ private:
 	Common::Array<Common::String> _gameText;
 	Common::Array<TravelLocation> _locations;
 	Common::Array<uint> _visibleLocations;
-	Common::Array<byte> _savedPixels;
-	Common::Array<byte> _savedPalette;
+	IndexedDisplaySnapshot _savedDisplay;
 	uint _selectedVisible;
 	uint _firstVisible;
 	int _pressedVisible;

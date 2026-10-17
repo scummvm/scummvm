@@ -123,33 +123,9 @@ const Common::String &WorldMap::resourceString(uint resourceId) const {
 	return _gameText[resourceId - 1];
 }
 
-bool WorldMap::captureDisplay() {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 ||
-		screen->w < (int)kWorldMapWidth || screen->h < (int)kWorldMapHeight) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-
-	_savedPixels.resize(kWorldMapWidth * kWorldMapHeight);
-	for (uint y = 0; y < kWorldMapHeight; ++y)
-		memcpy(_savedPixels.data() + y * kWorldMapWidth, screen->getBasePtr(0, y), kWorldMapWidth);
-	g_system->unlockScreen();
-	_savedPalette.resize(256 * 3);
-	g_system->getPaletteManager()->grabPalette(_savedPalette.data(), 0, 256);
-	return true;
-}
-
 void WorldMap::restoreDisplay() {
-	if (!_savedPixels.empty())
-		g_system->copyRectToScreen(_savedPixels.data(), kWorldMapWidth,
-			0, 0, kWorldMapWidth, kWorldMapHeight);
-	if (_savedPalette.size() >= 256 * 3)
-		g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
-	presentScreen();
-	_savedPixels.clear();
-	_savedPalette.clear();
+	_savedDisplay.restore();
+	_savedDisplay.clear();
 }
 
 void WorldMap::refreshLocations() {
@@ -367,7 +343,7 @@ Common::String WorldMap::resolveTargetScript(uint locationIndex, uint chapter) c
 bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 	targetScript.clear();
 	chapter = 0;
-	if (!_initialized || !captureDisplay())
+	if (!_initialized || !_savedDisplay.capture())
 		return false;
 
 	refreshLocations();
@@ -468,8 +444,7 @@ bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 			targetScript.c_str());
 		g_system->fillScreen(0);
 		presentScreen();
-		_savedPixels.clear();
-		_savedPalette.clear();
+		_savedDisplay.clear();
 	} else {
 		debugC(1, kDebugScene, "Ripper: world map cancelled");
 		restoreDisplay();

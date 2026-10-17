@@ -131,40 +131,23 @@ bool WacManager::initialize(ResourceManager &resources, bool demoVariant) {
 }
 
 bool WacManager::captureDisplay() {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 || screen->w != kWacWidth ||
-		screen->h != kWacHeight) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-
-	_savedPixels.resize(kWacWidth * kWacHeight);
-	for (int y = 0; y < kWacHeight; ++y)
-		memcpy(_savedPixels.data() + y * kWacWidth, screen->getBasePtr(0, y), kWacWidth);
-	g_system->unlockScreen();
-	_savedPalette.resize(256 * 3);
-	g_system->getPaletteManager()->grabPalette(_savedPalette.data(), 0, 256);
-	return true;
+	return g_system->getWidth() == kWacWidth &&
+		g_system->getHeight() == kWacHeight && _savedDisplay.capture();
 }
 
 void WacManager::restoreDisplay() {
-	if (_savedPixels.size() != kWacWidth * kWacHeight || _savedPalette.size() != 256 * 3)
+	if (!_savedDisplay.isValid())
 		return;
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1 || screen->w != kWacWidth ||
-		screen->h != kWacHeight) {
+			screen->h != kWacHeight) {
 		if (screen)
 			g_system->unlockScreen();
 		return;
 	}
-	for (int y = 0; y < kWacHeight; ++y)
-		memcpy(screen->getBasePtr(0, y), _savedPixels.data() + y * kWacWidth, kWacWidth);
 	g_system->unlockScreen();
-	g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
-	presentScreen();
-	_savedPixels.clear();
-	_savedPalette.clear();
+	_savedDisplay.restore();
+	_savedDisplay.clear();
 }
 
 void WacManager::drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const {
