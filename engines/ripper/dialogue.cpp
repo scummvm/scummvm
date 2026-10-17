@@ -171,7 +171,7 @@ void DialogueChooser::draw(bool captureBacking) {
 	_visualDirty = false;
 }
 
-bool DialogueChooser::execute(const CompiledScript &script, const ScriptCommand &command,
+bool DialogueChooser::execute(const ScriptCommand &command,
 		bool includeChoice) {
 	if (command.opcode == kAddDialogueChoice ||
 		command.opcode == kAddConditionalDialogueChoice) {
@@ -184,11 +184,11 @@ bool DialogueChooser::execute(const CompiledScript &script, const ScriptCommand 
 		choice.result = command.arguments[1].value & 0xffff;
 		if (includeChoice) {
 			appendChoice(choice.text, choice.result);
-			debugC(1, kDebugDialogue,
+			debugC(3, kDebugDialogue,
 				"Ripper: dialogue choice appended index=%u result=%u text='%s'",
 				_choices.size() - 1, choice.result, choice.text.c_str());
 		} else {
-			debugC(1, kDebugDialogue,
+			debugC(3, kDebugDialogue,
 				"Ripper: dialogue choice omitted result=%u reason=response-played text='%s'",
 				choice.result, choice.text.c_str());
 		}
@@ -198,29 +198,9 @@ bool DialogueChooser::execute(const CompiledScript &script, const ScriptCommand 
 	if (command.opcode == kStartDialogue) {
 		if (!activateChoices("scene-script"))
 			return false;
-		debugC(1, kDebugDialogue,
-			"Ripper: dialogue chooser activated script='%s' offset=0x%x "
-				"selector=%u choices=%u",
-			script.getMemberName().c_str(), command.offset, command.selector, _choices.size());
-		for (uint i = 0; i < _choices.size(); ++i)
-			debugC(2, kDebugDialogue, "Ripper: dialogue choice index=%u result=%u text='%s'",
-				i, _choices[i].result, _choices[i].text.c_str());
 		return true;
 	}
 
-	debugC(1, kDebugDialogue,
-		"Ripper: dialogue command script='%s' offset=0x%x selector=%u arguments=%u",
-		script.getMemberName().c_str(), command.offset, command.selector,
-		command.arguments.size());
-	for (uint i = 0; i < command.arguments.size(); ++i) {
-		const ScriptArgument &argument = command.arguments[i];
-		Common::String text;
-		for (uint j = 0; j < argument.data.size() && argument.data[j] != 0; ++j)
-			text += (char)argument.data[j];
-		debugC(2, kDebugDialogue,
-			"Ripper: dialogue argument=%u type=%u value=0x%x bytes=%u text='%s'",
-			i, argument.type, argument.value, argument.data.size(), text.c_str());
-	}
 	return true;
 }
 

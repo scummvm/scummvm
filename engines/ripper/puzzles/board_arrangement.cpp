@@ -383,7 +383,7 @@ bool BoardArrangementPuzzle::complete(uint completionFlag) {
 	if (!markSolved(completionFlag, "board-arrangement-puzzle"))
 		return false;
 	debugC(1, kDebugPuzzles,
-		"Ripper: solved board arrangement puzzle milestone=%u order=1,0,3,6,2",
+		"Ripper: solved board arrangement puzzle milestone=%u",
 		completionFlag);
 	if (!_engine->getMedia()->playBlockingAudio("q_p_16.wav"))
 		warning("Ripper: board arrangement completion audio failed");
@@ -406,14 +406,7 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 		return kLoadFailed;
 	}
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered board arrangement puzzle function=RunBoardArrangementPuzzleScene@0x39d8f "
-		"milestone=%u help=0x%x dragBounds=[%d,%d,%d,%d] validation=1,0,3,6,2",
-		completionFlag, kHelpSelectionTable, kDragLeft, kDragTop,
-		kDragRight, kDragBottom);
-	debugC(1, kDebugPuzzles,
-		"Ripper: board arrangement rules leftToRight=1,0,3,6,2 "
-		"nextLeft>=previousRight vertical=touch-or-overlap "
-		"maximumHorizontalGap=none ignoredPieces=4,5,7");
+		"Ripper: entered board arrangement puzzle milestone=%u", completionFlag);
 
 	Result result = _engine->getMilestones()->isSet(completionFlag) ?
 		kSolved : kExited;

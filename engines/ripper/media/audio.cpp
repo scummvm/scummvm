@@ -72,7 +72,7 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
 	}
 
 	Audio::SoundHandle handle;
-	// PlayBlockingAudioWithOptionalText at 0x206e0 is part of the same presentation path as
+	// PlayBlockingAudioWithOptionalText at 0x206e0 [1.05] uses the same category as
 	// packetized dialogue/video audio, which the Remote Control names VIDEO VOL.
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, stream);
 	if (showCursor)

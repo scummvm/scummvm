@@ -17,12 +17,11 @@ namespace Ripper {
 
 struct ScriptCommand;
 struct MouseState;
-class CompiledScript;
 
 class DialogueChooser {
 public:
 	bool initialize(ResourceManager &resources, bool retailPresentation);
-	bool execute(const CompiledScript &script, const ScriptCommand &command, bool includeChoice = true);
+	bool execute(const ScriptCommand &command, bool includeChoice = true);
 	bool service(const MouseState &mouse, uint &result);
 	bool serviceKeyboard(uint16 command, uint &result);
 	void appendChoice(const Common::String &text, uint16 result);

@@ -200,7 +200,7 @@ RolodexPuzzle::Result RolodexPuzzle::run(uint completionFlag) {
 		if (_activeSequence > 6)
 			_activeSequence = 1;
 		if (_activeSequence == 6) {
-			// RunRolodexSequencePuzzleScene at 0x28328 sets the caller's
+			// RunRolodexSequencePuzzleScene at 0x280ae [LE, instruction 0x28328] sets the caller's
 			// named flag before starting the sixth sequence.
 			if (!markSolved(completionFlag, "rolodex-puzzle")) {
 				result = kLoadFailed;

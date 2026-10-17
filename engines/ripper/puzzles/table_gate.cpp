@@ -547,7 +547,7 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 		"Ripper: entered table gate puzzle completionFlag=%u pathNodes=%u gates=%u levers=%u",
 		completionFlag, kPathNodeCount, kGateCount, kLeverCount);
 	_engine->getInput()->discardMouseTransitions();
-	// RunTableGateLeverPuzzleScene at 0x3912a..0x39134 stores and dispatches
+	// RunTableGateLeverPuzzleScene at 0x38eb8 [LE, instructions 0x3912a..0x39134] stores and dispatches
 	// cursor row 14 before activating the puzzle's UI-selection presentation.
 	// GBZ1 has just hidden the cursor, so reinstall the frame after the retained
 	// scene and overlay palette have been presented.
@@ -586,8 +586,8 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		updateCursor(mouse.position);
-		// ServiceUiControlStateSelection at 0x393f6 runs under RIPPER.LE's
-		// active UI-selection presentation. Present each translated cursor tick
+		// RunTableGateLeverPuzzleScene at 0x38eb8 [LE] calls
+		// ServiceUiControlStateSelection at 0x4a912 at instruction 0x393f6. Present each cursor tick
 		// explicitly for ScummVM's software cursor.
 		presentScreen();
 		if ((mouse.pressed & kMouseButtonLeft) != 0) {

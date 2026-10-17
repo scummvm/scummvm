@@ -43,7 +43,7 @@ byte findNearestPaletteIndex(const byte *palette, byte red, byte green,
 		const int redDistance = palette[index * 3] - red;
 		const int greenDistance = palette[index * 3 + 1] - green;
 		const int blueDistance = palette[index * 3 + 2] - blue;
-		// FindNearestPaletteColorIndex at 0x56af1 minimizes the sum of the
+		// FindNearestPaletteColorIndex at 0x56af1 [1.05] minimizes the sum of the
 		// absolute channel differences rather than squared RGB distance.
 		const uint distance = ABS<int>(redDistance) +
 			ABS<int>(greenDistance) + ABS<int>(blueDistance);
@@ -71,7 +71,7 @@ const char *presentationStyleName(ModalDialogManager::PresentationStyle style) {
 } // End of anonymous namespace
 
 void ModalDialogManager::resolveSceneEntryTextColor() {
-	// ServiceMediaPresentationTextControl at 0x17014 writes the palette entry
+	// ServiceMediaPresentationTextControl at 0x17014 [1.05] writes the palette entry
 	// nearest RGB white into the normal NF2T glyph template byte at 0x94338.
 	byte palette[256 * 3];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
@@ -375,7 +375,7 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 			_primaryFont.lineHeight : _font.lineHeight;
 		const int titleX = bounds.left + leftPadding +
 			(contentWidth - measureText(title)) / 2;
-		// DrawPromptChooserTemplateLabelCallback at 0x16def reads the
+		// DrawPromptChooserTemplateLabelCallback at 0x16d0f [LE, instruction 0x16def] reads the
 		// WAC template's +0x19 byte as an absolute top inset rather than
 		// vertically centering the label in its 20-pixel heading.
 		const int titleY = wacStyle ?
@@ -635,12 +635,6 @@ bool ModalDialogManager::drawRetainedTextPanelLine(
 		applyModalPalette();
 	_engine->getCursor()->refresh();
 	presentScreen();
-	debugC(3, kDebugScene,
-		"Ripper: redrew retained text panel line style=%s line=%u "
-		"firstLine=%u visibleRow=%u bounds=%d,%d,%d,%d",
-		presentationStyleName(style),
-		lineIndex, firstVisible, visibleRow,
-		bounds.left, bounds.top, bounds.width(), bounds.height());
 	return true;
 }
 

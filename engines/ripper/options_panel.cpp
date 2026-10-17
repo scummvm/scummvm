@@ -61,9 +61,6 @@ struct ControlLayout {
 	int height;
 };
 
-// g_optionsMenuControlLayoutRows at 0x1be40 stores ordinary controls in the
-// display-service Y/X order. RunOptionsMenu at
-// 0x1c001 supplies the two special rows directly.
 static const ControlLayout kControlLayouts[] = {
 	{ 77, 71, 23, 16 },
 	{ 103, 71, 23, 16 },
@@ -88,9 +85,6 @@ static const ControlLayout kControlLayouts[] = {
 
 static const uint kActionKeySlots[] = { 0, 1, 2, 3, 4, 5, 6, 8 };
 
-// g_take2IniSliderSetupLayout at 0x62208 is stored as vertical/horizontal
-// coordinate pairs. RunTake2IniSliderSetupMenu at 0x17fc0 creates six toggle,
-// three slider, eight hotkey, and four fixed-text controls from these rows.
 static const ControlLayout kDemoControlLayouts[] = {
 	{ 30, 30, 15, 15 },
 	{ 30, 60, 15, 15 },
@@ -280,8 +274,7 @@ void OptionsPanelManager::drawBitmap(const BitmapAssetFrame &frame, int x, int y
 }
 
 void OptionsPanelManager::drawState(const State &state) {
-	// RenderOptionsStateStripSelections at 0x1d935 selects these fixed anchor
-	// frames from the four strip animations.
+	// Select these fixed anchor frames from the four strip animations.
 	drawBitmap(_toggleFrames[state.bufferedVideo ? 8 : 0], 68, 64);
 	drawBitmap(_videoModeFrames[state.videoMode * 8], 54, 90);
 	drawBitmap(_combatFrames[(state.combatLevel - 1) * 6], 125, 340);
@@ -336,8 +329,6 @@ void OptionsPanelManager::drawKeyLabel(uint16 command) {
 }
 
 int OptionsPanelManager::findControl(const Common::Point &point) const {
-	// FindUiControlStateAtPoint at 0x4aae8 returns the first rectangular hit in
-	// insertion order; the options controls do not use per-pixel hit masks.
 	return _controls.findFirst(point);
 }
 

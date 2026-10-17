@@ -292,8 +292,6 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		return result != KiSkullMazePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionRatiniCombat) {
-		// DispatchSceneEntryAction at 0x36cc6 forwards the completion flag and
-		// RATINI%d.INI template to RunCombatEncounterScene at 0x31436.
 		RatiniEncounter encounter(engine);
 		const RatiniEncounter::Result result = encounter.run(argument);
 		debugC(1, kDebugCombat,
@@ -302,8 +300,6 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		return result != RatiniEncounter::kLoadFailed;
 	}
 	if (action == kSceneActionAtkiniCombat) {
-		// DispatchSceneEntryAction at 0x36cd8 forwards the completion flag and
-		// ATKINI%d.INI template to RunCombatEncounterScene at 0x31436.
 		AtkiniEncounter encounter(engine);
 		const AtkiniEncounter::Result result = encounter.run(argument);
 		debugC(1, kDebugCombat,
@@ -388,8 +384,6 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		return result != CrystalPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionSetChooserTemplateMode) {
-		// DispatchSceneEntryAction at 0x36892 captures the active media presentation
-		// for the following chooser. ScummVM uses the active framebuffer for mode zero.
 		manager._chooserTemplateMode = 0;
 		debugC(2, kDebugScene,
 			"Ripper: scene action 30 captured active presentation templateMode=%u script='%s' offset=0x%x",
@@ -397,7 +391,6 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		return true;
 	}
 	if (action == kSceneActionNoOp) {
-		debugC(3, kDebugCyber, "Ripper: Cyber scene action 31 completed as original no-op");
 		return true;
 	}
 	if (action == kSceneActionClearDisplay) {
@@ -439,8 +432,6 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		return true;
 	}
 	if (action == kSceneActionSetFrontEndActionMask) {
-		// DispatchSceneEntryAction at 0x36892 stores the low 16 bits at
-		// SceneRuntime+0x183 for the toolbar and key resolver.
 		manager._runtime.frontEndActionMask = (uint16)argument;
 		debugC(2, kDebugScene,
 			"Ripper: scene action 37 set front-end action mask=0x%04x script='%s' offset=0x%x",
@@ -457,20 +448,11 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		return result != BoardGamePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionKaDialogue) {
-		debugC(1, kDebugCyber,
-			"Ripper: dispatching Cyber dialogue action=%u name='%s' argument=%u activeScript='%s' frame=%u",
-			action, actionName(action), argument,
-			manager._runtime.activeScript.getMemberName().c_str(), manager._runtime.activeFrame);
 		const CyberManager::Result result = engine->getCyber()->runProgram(action, "ka", argument);
-		debugC(result == CyberManager::kExited ? 1 : 2, kDebugCyber,
-			"Ripper: Cyber dialogue action=%u completed result=%d restoredScript='%s' frame=%u",
-			action, result, manager._runtime.activeScript.getMemberName().c_str(),
-			manager._runtime.activeFrame);
 		return result != CyberManager::kLoadFailed;
 	}
 	if (action >= kSceneActionKbProgram && action <= kSceneActionKrProgram && action != 44) {
 		const char *program = nullptr;
-		bool woffordMedia = false;
 		uint chapter = 0;
 		for (uint flag = kMilestoneCompletedAct3; flag != 0; --flag) {
 			if (engine->getMilestones()->isSet(flag)) {
@@ -483,7 +465,6 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		case kSceneActionKcOrWoffordProgram:
 			if (chapter < 3) {
 				program = "wofford-media";
-				woffordMedia = true;
 			} else {
 				program = "kc";
 			}
@@ -505,22 +486,10 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		}
 		if (!program)
 			return false;
-		const Common::String target = woffordMedia ? Common::String(program) :
-			Common::String::format("%s.run", program);
-		debugC(1, kDebugCyber,
-			"Ripper: dispatching Cyber program action=%u name='%s' target='%s' type=%s argument=%u activeScript='%s' frame=%u",
-			action, actionName(action), target.c_str(),
-			woffordMedia ? "media-scene" : "script", argument,
-			manager._runtime.activeScript.getMemberName().c_str(), manager._runtime.activeFrame);
 		const CyberManager::Result result = engine->getCyber()->runProgram(action, program, argument);
-		debugC(result == CyberManager::kExited ? 1 : 2, kDebugCyber,
-			"Ripper: Cyber program action=%u target='%s' completed result=%d restoredScript='%s' frame=%u",
-			action, target.c_str(), result, manager._runtime.activeScript.getMemberName().c_str(),
-			manager._runtime.activeFrame);
 		return result != CyberManager::kLoadFailed;
 	}
 	if (action == 44) {
-		debugC(3, kDebugCyber, "Ripper: Cyber scene action 44 completed as original no-op");
 		return true;
 	}
 	if (action == kSceneActionEightButtonSequencePuzzle) {
@@ -543,8 +512,7 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	if (action == kSceneActionAppendNotebookText)
 		return engine->getWac()->appendNotebookResourceString(argument);
 	if (manager._demoScriptAbi && action == 200) {
-		// RIP.EXE action 200 starts one-shot R_P_L1.WAV from persistent handle
-		// 0x68e0a. It survives the scene handoff; action 201 stops it.
+		// Action 200 starts one-shot R_P_L1.WAV. It survives the scene handoff; action 201 stops it.
 		SceneAudioManager *sceneAudio = engine->getSceneAudio();
 		return sceneAudio->load("r_p_l1.wav", true) &&
 			sceneAudio->configure("r_p_l1", 100, 0, 0);

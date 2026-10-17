@@ -50,7 +50,7 @@ Common::Rect calculatePresentationTextBounds(uint sequenceId, uint videoMode,
 	const int left = (640 - kPresentationTextWidth) / 2;
 	int top = displayTop + kPresentationTextInitialTop;
 	if (sequenceId != 1) {
-		// ServiceMediaPresentationTextControl at 0x17014 moves the wrapped
+		// ServiceMediaPresentationTextControl at 0x17014 [1.05] moves the wrapped
 		// chooser down to the bottom of an unscaled small-media page. Scaled
 		// and large branches move it to y=400, outside the active display.
 		if (videoMode >= 2 || largeMedia)

@@ -282,7 +282,7 @@ uint16 WacJournalPuzzle::run(byte entryIndex,
 
 	bool cancelled = false;
 	while (!unlocked && !_database->engine()->shouldQuit()) {
-		// RunWacJournalRevealScene at 0x24538 places the password control five
+		// RunWacJournalRevealScene at 0x24261 [LE, instruction 0x24538] places the password control five
 		// pixels below the journal panel. Its -1 size request produces one
 		// 14-pixel row plus the WAC heading, bottom, and frame insets.
 		const Common::Rect entryBounds(kWacMediaLeft, kWacJournalTextEntryTop,

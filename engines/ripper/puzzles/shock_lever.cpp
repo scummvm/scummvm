@@ -692,7 +692,7 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 		case kCheatCommand:
 			_solved = true;
 			result = kSolved;
-			// RunShockLeverPuzzleScene at 0x3b90b sets the supplied flag
+			// RunShockLeverPuzzleScene at 0x3affb [LE, instruction 0x3b90b] sets the supplied flag
 			// before presenting M_2 on the hidden-keyword path.
 			if (!markSolved(completionFlag, "shock-lever-keyword")) {
 				result = kLoadFailed;

@@ -358,7 +358,7 @@ byte BoardGamePuzzle::blendSelectionPixel(byte source,
 		byte destination) const {
 	// BOARDPAL's 0x1000-byte tail maps 12-bit RGB (rrrrggggbbbb) back
 	// into its 256-color palette. The strength passed at 0x41876 grows
-	// from 0 toward 0xff during AnimateBoardIntroFadeIn at 0x4365c, so
+	// from 0 toward 0xff during AnimateBoardIntroFadeIn at 0x4363e [LE, instruction 0x4365c], so
 	// it is source opacity rather than a shade-table index.
 	const byte *palette = _selectionShading.data();
 	const byte *colorCube = palette + kShadingPaletteBytes;
@@ -799,7 +799,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 				continue;
 			}
 			if (serviceKeyword(command)) {
-				// RunBoardGameScene at 0x437bb stores result code 1;
+				// RunBoardGameScene at 0x436c0 [LE, instruction 0x437bb] stores result code 1;
 				// its common cleanup path records the supplied milestone.
 				_model.setResult(1);
 				break;

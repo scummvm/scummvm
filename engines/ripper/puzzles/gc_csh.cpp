@@ -221,7 +221,7 @@ bool GcCshPuzzle::playChoice(uint choice, uint sequenceSlot) {
 	_engine->getCursor()->setVisible(false);
 	playCue(0);
 	const Common::String media = Common::String::format("gc_csh%u.avi", choice);
-	// RunGcCshFourChoiceSequencePuzzleScene at 0x38b88 uses the generic
+	// RunGcCshFourChoiceSequencePuzzleScene at 0x38871 [LE, instruction 0x38b88] uses the generic
 	// uncontrolled RunMediaPresentation path, leaving its final IAVF display.
 	if (!_engine->getMedia()->play(media, false, 0, 64, true)) {
 		warning("Ripper: could not play GC/CSH choice media '%s'", media.c_str());

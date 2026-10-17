@@ -284,7 +284,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 					sourceSelection.end);
 				const int selectionRight = MAX(sourceSelection.start,
 					sourceSelection.end);
-				// RunWacVoiceLockPuzzleScene at 0x2505c checks the BIOS
+				// RunWacVoiceLockPuzzleScene at 0x24ba4 [LE, instruction 0x2505c] checks the BIOS
 				// shift state when adjusting the highlighted endpoints. A
 				// plain press within the retained highlight starts the
 				// transient drag that can be dropped onto the editor.

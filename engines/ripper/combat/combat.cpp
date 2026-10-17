@@ -552,7 +552,7 @@ uint CombatEncounter::chooseNextScene() {
 	if (_scenes.size() <= 1)
 		return 0;
 	if (_definition.atkiniSceneRouting && _scenes.size() >= 6) {
-		// RunCombatEncounterScene at 0x324a7 uses the tables at 0x3134c
+		// RunCombatEncounterScene at 0x31436 [LE, instruction 0x324a7] uses the tables at 0x3134c
 		// and 0x31358 to keep the six ATKINI scenes moving between groups.
 		static const uint sceneGroupOne[] = { 0, 4, 5 };
 		static const uint sceneGroupTwo[] = { 1, 2, 3 };
@@ -567,7 +567,7 @@ uint CombatEncounter::chooseNextScene() {
 Scene::Result CombatEncounter::run(uint completionFlag) {
 	prepare("combat-entry", 14, false);
 	_completionFlag = completionFlag;
-	// RunCombatEncounterScene at 0x31563 reads g_combatLevelSetting once and
+	// RunCombatEncounterScene at 0x31436 [LE, instruction 0x31563] reads g_combatLevelSetting once and
 	// formats the encounter's numbered INI before loading any combat resources.
 	const uint difficulty = _engine->getSettings()->getCombatLevel();
 	const Common::String configName = selectConfigName(difficulty);

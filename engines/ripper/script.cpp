@@ -552,8 +552,7 @@ void ScriptManager::retainPreviousInteractionScene(
 		return;
 	_previousInteractionSceneMediaPath = mediaPath;
 	debugC(2, kDebugScene,
-		"Ripper: retained previous interaction scene media='%s' source=%s "
-		"route=ExecutePresentationEntry@0x1754b",
+		"Ripper: retained previous interaction scene media='%s' source=%s ",
 		mediaPath.c_str(), source);
 }
 
@@ -569,7 +568,7 @@ bool ScriptManager::replayPreviousInteractionScene(const char *source) {
 
 	debugC(1, kDebugScene,
 		"Ripper: replaying previous interaction scene media='%s' source=%s "
-		"command=0x%04x route=PollInteractionAndResolveSelection@0x13fc7",
+		"command=0x%04x",
 		_previousInteractionSceneMediaPath.c_str(), source,
 		kReplayPreviousSceneCommand);
 	const bool replayed = _engine->getMedia()->play(
@@ -654,7 +653,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 		*nextFrame = 0;
 	if (!script.decodeCallback(callbackOffset, true, commands))
 		return false;
-	debugC(2, kDebugScripts,
+	debugC(3, kDebugScripts,
 		"Ripper: decoded callback script='%s' offset=0x%x commands=%u",
 		script.getMemberName().c_str(), callbackOffset, commands.size());
 
@@ -662,7 +661,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 	bool branchTaken = false;
 	while (commandIndex < commands.size()) {
 		const ScriptCommand &command = commands[commandIndex];
-		debugC(2, kDebugScripts,
+		debugC(3, kDebugScripts,
 			"Ripper: execute script='%s' offset=0x%x opcode=0x%02x name='%s' selector=%u arguments=%u",
 			script.getMemberName().c_str(), command.offset, command.opcode,
 			scriptOpcodeName(command.opcode), command.selector, command.arguments.size());
@@ -880,16 +879,12 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 				const ScriptFrame &responseFrame = _runtime.activeScript.getFrames()[command.arguments[1].value];
 				const Common::String responseLabel = _runtime.activeScript.getString(responseFrame.labelOffset);
 				includeChoice = !isScenePlayed(responseLabel);
-				debugC(2, kDebugDialogue,
+				debugC(3, kDebugDialogue,
 					"Ripper: dialogue response frame=%u label='%s' played=%d",
 					command.arguments[1].value, responseLabel.c_str(), !includeChoice);
 			}
-			if (!_dialogue->execute(script, command, includeChoice))
+			if (!_dialogue->execute(command, includeChoice))
 				return false;
-			if (command.opcode == kStartDialogue)
-				debugC(2, kDebugAudio,
-					"Ripper: dialogue chooser retained scene audio active=%d",
-					_engine->getSceneAudio()->isActive());
 			break;
 		}
 
@@ -1731,7 +1726,6 @@ bool ScriptManager::serviceScene() {
 		return true;
 	}
 
-	const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
 	uint hoveredInteractionIndex = 0;
 	const ScriptInteraction *hoveredInteraction =
 		findBa0Interaction(mouse.position, &hoveredInteractionIndex);
@@ -1771,14 +1765,6 @@ bool ScriptManager::serviceScene() {
 				"Ripper: dialogue chooser closed by scene interaction=%u label='%s'",
 				hoveredInteractionIndex, hoveredInteraction->label.c_str());
 		}
-		debugC(1, kDebugInput,
-			"Ripper: hotspot click frame=%u label='%s' interaction=%u action='%s' "
-				"point=%d,%d rect=%d,%d,%d,%d cursor=%u condition=0x%x callback=0x%x flags=0x%02x",
-			_runtime.activeFrame, _runtime.activeScript.getString(frame.labelOffset).c_str(), hoveredInteractionIndex,
-			hoveredInteraction->label.c_str(), mouse.position.x, mouse.position.y,
-			bounds.left, bounds.top, bounds.width(), bounds.height(), cursorIndex,
-			hoveredInteraction->conditionOffset,
-			hoveredInteraction->callbackOffset, hoveredInteraction->flags);
 		debugC(2, kDebugScene,
 			"Ripper: active scene chooser selected script='%s' interaction=%u label='%s' point=%d,%d rect=%d,%d,%d,%d",
 			_runtime.activeScript.getMemberName().c_str(), hoveredInteractionIndex,

@@ -86,10 +86,6 @@ void MediaPlayer::pauseActiveMedia(bool pause) {
 		logPlaybackPause("ScummVM", pause, *playback.decoder, playback.name,
 			playback.externalAudio);
 	}
-	if (_activePlaybacks.empty()) {
-		debugC(2, kDebugVideo, "Ripper: ScummVM %s without active media",
-			pause ? "paused" : "resumed");
-	}
 }
 
 bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
@@ -313,10 +309,6 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d sceneUi=%d frameLimit=%u",
 		name.c_str(), decoder.getFrameCount(), decoder.getWidth(), decoder.getHeight(),
 		outputWidth, outputHeight, x, y, allowEscSpace, serviceSceneUi, frameLimit);
-	debugC(2, kDebugVideo, "Ripper: Smacker '%s' interfacePalettePatch=%d",
-		name.c_str(), patchInterfacePalette);
-	if (patchWacMediaPalette)
-		debugC(2, kDebugVideo, "Ripper: Smacker '%s' WAC palette patch=10..149", name.c_str());
 	const bool synchronizeToTimeline = frameAudioOffsets &&
 		frameAudioOffsets->size() == decoder.getFrameCount() && audioByteRate != 0;
 	if (synchronizeToTimeline) {

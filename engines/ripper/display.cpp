@@ -226,9 +226,6 @@ static void drawBitmapFontText(byte *pixels, uint pitch, const BitmapFontAsset &
 		}
 		drawX += glyph.xOffset + glyph.width + font.characterSpacing;
 	}
-	debugC(11, kDebugVideo,
-		"Ripper: rendered NF2T text characters=%u x=%d y=%d color=%u clipped=%d",
-		text.size(), x, y, color, clip != nullptr);
 }
 
 void BitmapFontRenderer::drawText(byte *pixels, uint pitch, const BitmapFontAsset &font,

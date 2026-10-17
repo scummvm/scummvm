@@ -324,12 +324,7 @@ SixDigitCodePuzzle::Result SixDigitCodePuzzle::run(uint completionFlag) {
 	_hoveredControl = -1;
 	render();
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered six-digit code puzzle function="
-		"RunSixDigitCodePuzzleScene@0x3e913 milestone=%u help=0x%x "
-		"controls=%u digits=%u",
-		completionFlag, kHelpSelectionTable, kControlCount, kDigitCount);
-	debugC(3, kDebugPuzzles,
-		"Ripper: six-digit code retail solution=185621");
+		"Ripper: entered six-digit code puzzle milestone=%u", completionFlag);
 
 	Result result = kExited;
 	bool active = true;

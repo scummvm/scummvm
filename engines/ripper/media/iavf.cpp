@@ -108,8 +108,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 				"Ripper: IAVF '%s' cleared display before segment=%u from opcode 0x68",
 				name.c_str(), i);
 		}
-		// Initializes sequence id zero from the IAVF header, then 
-		// assigns ids one and above to the actual media branches.
+		// Sequence zero describes the IAVF header; media branch ids start at one.
 		const uint sequenceId = i + 1;
 		IavfSegment &segment = movie.segments[i];
 		Common::SeekableReadStream *smacker = smackerStreams[i].release();

@@ -136,11 +136,6 @@ void ModalDialogManager::applySharedPalettePatch(byte *palette, uint colorCount)
 	if (!palette || colorCount < 256 || _modalPalette.size() < 256 * 3)
 		return;
 
-	// InitializeSharedPresentationTemplates at 0x10c9d (demo) and 0x1196f
-	// (RIPPER.LE) capture these ranges from the MENUB palette through
-	// CaptureSharedDisplayPalettePatch at 0x1b176/0x205a9. The corresponding
-	// ApplySharedDisplayPalettePatch functions at 0x1b1bd/0x205d0 restore them
-	// for chooser text and frame pixels without replacing the active scene palette.
 	memset(palette, 0, 3);
 	memcpy(palette + 4 * 3, _modalPalette.data() + 4 * 3, 6 * 3);
 	memcpy(palette + 246 * 3, _modalPalette.data() + 246 * 3, 10 * 3);
@@ -162,9 +157,6 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	const bool wacStyle = style == kWacPresentation;
 	const bool sceneEntryStyle = style == kSceneEntryPresentation;
 	if (sceneEntryStyle) {
-		// BuildChooserControlVisuals at 0x54413 captures the pixels beneath
-		// an unskinned chooser. RedrawTextEntryChooserTextSpan at 0x5aecb
-		// restores that backing before drawing each text or caret update.
 		_textEntryBacking.restorePixels();
 	}
 
@@ -196,9 +188,6 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	int textLeft;
 	int textRight;
 	if (wacStyle) {
-		// CreateTextEntryChooserControl at 0x59d93 passes the prompt as the
-		// chooser heading. BuildChooserControlVisuals centers it in the WAC
-		// template's 20-pixel heading, above the single editable row.
 		const int promptWidth = measureText(prompt);
 		const int contentWidth =
 			bounds.width() - kWacModalLeftPadding - kWacModalRightPadding;
@@ -402,8 +391,6 @@ void ModalDialogManager::finishTextEntry(Common::String &text) {
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setVisible(_textEntryRestoreCursor);
 	if (_textEntryBacking.isValid()) {
-		// ReleaseChooserControlVisualState at 0x5489f restores the saved
-		// chooser backing before freeing its display snapshots.
 		_textEntryBacking.restorePixels();
 		_textEntryBacking.clear();
 		_engine->getCursor()->refresh();
@@ -588,10 +575,6 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 		return false;
 	}
 
-	// RunBinaryPromptChooser at 0x1803c creates a two-row list using the
-	// secondary chooser template at 0x8a392. Its auto-sized client is centered
-	// and uses the template's five-pixel horizontal padding, 17-pixel heading,
-	// and 14-pixel rows. A false default argument selects row one ("No").
 	const uint contentWidth = MAX<uint>(measureText(prompt),
 		MAX<uint>(measureText(options[0]), measureText(options[1])));
 	const int width = contentWidth + kModalLeftPadding +
@@ -754,10 +737,6 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 	wrapText(body, wrapWidth, lines);
 	if (lines.size() > kModalMaximumRows &&
 			skin.size() > kModalScrollTrackFrame) {
-		// ComputeChooserControlLayout at 0x54e9a through 0x54f17 adjusts
-		// an overflowing text client's width by the scrollbar track width
-		// plus its edge inset, less the right padding already reserved by
-		// the chooser template.
 		wrapWidth -= skin[kModalScrollTrackFrame].width +
 			scrollEdgeInset - rightPadding;
 		if (wrapWidth > 0)
@@ -875,8 +854,6 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 		if (redraw)
 			drawDialog(title, lines, firstVisible, visibleRows, bounds, style);
 		else
-			// The modal owns the main loop, so it must keep presenting frames
-			// for CursorMan's software cursor to follow mouse-motion events.
 			presentScreen();
 		g_system->delayMillis(10);
 	}

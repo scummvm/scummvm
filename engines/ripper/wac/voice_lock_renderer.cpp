@@ -195,7 +195,7 @@ static void drawWaveform(Graphics::Surface &screen,
 static void drawEditorWaveform(Graphics::Surface &screen,
 		const WacVoiceLockPcm &pcm, const Common::Rect &bounds,
 		const Common::Array<WacVoiceLockEditorSegment> &segments) {
-	// RunWacVoiceLockPuzzleScene at 0x25403 copies each selected source
+	// RunWacVoiceLockPuzzleScene at 0x24ba4 [LE, instruction 0x25403] copies each selected source
 	// rectangle to the next editor column. Preserve those pixel widths rather
 	// than scaling the growing PCM assembly across the complete panel.
 	clearWaveform(screen, bounds);

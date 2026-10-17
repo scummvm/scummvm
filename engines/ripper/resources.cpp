@@ -132,7 +132,6 @@ static bool expandCustomBitmap(const Common::Array<byte> &payload, const byte *d
 }
 
 static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
-	// DecodeCustomBitmapAsset at 0x53f60 reads this 0x1c-byte header and optional GCMS extension.
 	byte header[kCustomBitmapHeaderSize];
 	if (stream.read(header, sizeof(header)) != sizeof(header))
 		return false;
@@ -155,7 +154,6 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 		return false;
 	}
 
-	// DecodeCustomBitmapAsset at 0x53f60 stores descriptor height first and width second.
 	const uint16 height = READ_LE_UINT16(header + 0x16);
 	const uint16 width = READ_LE_UINT16(header + 0x18);
 	const uint32 pixelCount = (uint32)width * height;
@@ -186,10 +184,6 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 
 	byte colorMap[256];
 	if ((flags & 2) != 0) {
-		// DecodeCustomBitmapAsset at 0x54106 reads only colorCount bytes into
-		// its zero-initialized remap table. This matters for assets such as the
-		// combat explosions, whose 0xff transparency key lies beyond that range
-		// and therefore resolves to palette index 0.
 		memset(colorMap, 0, sizeof(colorMap));
 		if (stream.read(colorMap, colorCount) != colorCount)
 			return false;
@@ -200,7 +194,6 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 
 	decodedFrame.transparentColor = colorMap[transparentColor];
 	decodedFrame.pixels.resize(pixelCount);
-	// ExpandCustomBitmapCompressedPixels at 0x53de0 consumes low nibbles before high nibbles.
 	if (!expandCustomBitmap(payload, header + 5, colorCount, rawTailSize, compressionMode,
 			colorMap, decodedFrame.pixels))
 		return false;
@@ -238,7 +231,6 @@ static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame
 	if (!decoder.loadStream(stream))
 		return false;
 
-	// DecodeIffBitmapAssetToDescriptor at 0x6aca4 maps IFF height/width to the same descriptor order.
 	if (!copyIndexedSurface(decoder.getSurface(), decoder.getPalette(),
 			decoder.getHeader()->transparentColor & 0xff, frame))
 		return false;
@@ -303,8 +295,7 @@ bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
 
 bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
 		PresentationFrameRegionTable &table) {
-	// LoadPresentationFrameRegionTable at 0x35615 skips the 0x64-byte tool
-	// header, then separates frameCount * 6 state bytes from 9-byte regions.
+	// Skip the 0x64-byte tool header, then separates frameCount * 6 state bytes from 9-byte regions.
 	table.frames.clear();
 	if (stream.size() < 0x68)
 		return false;
@@ -359,9 +350,6 @@ bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
 
 bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream,
 		uint frameCount, PresentationFrameAudioMap &map) {
-	// LoadPresentationFrameAudioCueMap at 0x3574a reads the 16-bit rate and
-	// optional 16-bit frame count, 60-byte source paths, then one
-	// cue-index/volume pair for every presentation frame.
 	map = PresentationFrameAudioMap();
 	if (stream.size() < 0x6c)
 		return false;
@@ -897,8 +885,6 @@ bool ResourceManager::loadInterfaceBitmapFont(const Common::String &memberName,
 		return false;
 	}
 
-	// LoadNF2TDescriptorAndBitmap at 0x5c290 reads the 12-byte descriptor,
-	// its eight-byte glyph records, and the trailing custom bitmap.
 	const uint glyphCount = data[5];
 	const uint32 bitmapOffset = 12 + glyphCount * 8;
 	if (glyphCount == 0 || bitmapOffset >= data.size())
@@ -953,7 +939,6 @@ bool ResourceManager::loadGameText(Common::Array<Common::String> &strings) const
 	if (!stream || !readStream(*stream, data) || data.size() < 4)
 		return false;
 
-	// ResolveStartupResourceString at 0x1f7a2 indexes this one-based offset table.
 	const uint32 stringCount = READ_LE_UINT32(data.data());
 	if (stringCount == 0 || (uint64)4 + (uint64)stringCount * 4 > data.size())
 		return false;

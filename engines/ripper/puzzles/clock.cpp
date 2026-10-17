@@ -392,8 +392,8 @@ void ClockPuzzle::storePersistentState() const {
 ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {
 	const uint puzzleLevel = CLIP<uint>(_engine->getSettings()->getPuzzleLevel(), 1, 3);
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered clock puzzle completionFlag=%u level=%u helpTable=0x%x target=dials:7,8 first:14:35 second:09:35 halfDay=1",
-		completionFlag, puzzleLevel, kHelpSelectionTable);
+		"Ripper: entered clock puzzle completionFlag=%u level=%u",
+		completionFlag, puzzleLevel);
 	if (!captureBackground() || !loadAssets())
 		return kLoadFailed;
 

@@ -28,15 +28,17 @@ namespace Ripper {
 
 class AssetLibrary;
 
+// Handler entries refer to RIPPER.LE. Opcodes 0x00..0x07 share
+// HandleSceneEntryNoOp at 0x146e5.
 enum ScriptOpcode : byte {
-	kNoOp0                       = 0x00, // HandleSceneEntryNoOp at 0x146e5
-	kNoOp1                       = 0x01, // HandleSceneEntryNoOp at 0x146e5
-	kNoOp2                       = 0x02, // HandleSceneEntryNoOp at 0x146e5
-	kNoOp3                       = 0x03, // HandleSceneEntryNoOp at 0x146e5
-	kNoOp4                       = 0x04, // HandleSceneEntryNoOp at 0x146e5
-	kNoOp5                       = 0x05, // HandleSceneEntryNoOp at 0x146e5
-	kNoOp6                       = 0x06, // HandleSceneEntryNoOp at 0x146e5
-	kNoOp7                       = 0x07, // HandleSceneEntryNoOp at 0x146e5
+	kNoOp0                       = 0x00,
+	kNoOp1                       = 0x01,
+	kNoOp2                       = 0x02,
+	kNoOp3                       = 0x03,
+	kNoOp4                       = 0x04,
+	kNoOp5                       = 0x05,
+	kNoOp6                       = 0x06,
+	kNoOp7                       = 0x07,
 	kMilestoneCondition          = 0x08, // HandleSceneEntryPromptMilestoneCondition at 0x1470a
 	kScenePlayedCondition        = 0x09, // HandleSceneEntryPromptScenePlayedCondition at 0x1488f
 	kDialogueChoiceCondition     = 0x0a, // HandleSceneEntryStepPromptCondition at 0x149b4
@@ -55,7 +57,7 @@ enum ScriptOpcode : byte {
 	kStartDialogue               = 0x17, // HandleSceneEntryChoiceListLifecycle at 0x1523d
 	kDispatchSceneAction         = 0x18, // HandleSceneEntryPromptAndDispatchAction at 0x1574d
 	kRequestTextInput            = 0x19, // HandleSceneEntryAsyncTextRequest at 0x157a1
-	kPlayMedia                   = 0x1a, // Retail script command executor FUN_0001357f at 0x1357f
+	kPlayMedia                   = 0x1a, // HandleSceneEntryMediaAndSetBasenameFlag at 0x159e1
 	kPreviewMedia                = 0x1b, // HandleSceneEntryMediaPreviewOrPrompt at 0x15b03
 	kFadePalette                 = 0x1c, // HandleSceneEntryStepPromptTransition at 0x15c30
 	kStartSceneRuntime           = 0x1d, // HandleSceneEntryAndStartConcurrentSceneRuntime at 0x15cd3

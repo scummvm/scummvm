@@ -300,17 +300,16 @@ uint16 InputManager::consumeKey() {
 void InputManager::drainKeys() {
 	const int count = _pendingKeys.size();
 	_pendingKeys.clear();
-	// RIPPER.LE blocking loops drain after every empty poll. Log empty drains at
-	// level 3 so mouse-only waits do not flood normal diagnostics.
-	debugC(count == 0 ? 3 : 2, kDebugInput,
-		"Ripper: drained %d pending keyboard commands", count);
+	if (count != 0)
+		debugC(2, kDebugInput, "Ripper: drained %d pending keyboard commands", count);
 }
 
 void InputManager::discardMouseTransitions() {
-	debugC(2, kDebugInput,
-		"Ripper: discarded mouse transitions pressed=0x%02x released=0x%02x "
-		"buttons=0x%02x wheel=%d",
-		_mouseState.pressed, _mouseState.released, _mouseState.buttons, _mouseState.wheel);
+	if (_mouseState.pressed != 0 || _mouseState.released != 0 || _mouseState.wheel != 0)
+		debugC(3, kDebugInput,
+			"Ripper: discarded mouse transitions pressed=0x%02x released=0x%02x "
+			"buttons=0x%02x wheel=%d",
+			_mouseState.pressed, _mouseState.released, _mouseState.buttons, _mouseState.wheel);
 	_mouseState.pressed = 0;
 	_mouseState.released = 0;
 	_mouseState.wheel = 0;
