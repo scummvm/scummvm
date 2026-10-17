@@ -8243,6 +8243,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	//found on TKKG1 De Schat van de Maya's by Lannoo (Belgium)
 	WINDEMO1_l("welkom", "",  "lannoo/welkom/DEMO.exe",	"t:39126441ec01512d70275280292d7028",  1309296, Common::NL_NLD, 500),
 
+	// 1996 Thai release is trilingual (Thai, French, English)
+	MACGAME1t_l("willywabbit", "", "Willy Wabbit  (Click Me!)", "65a01326b96bdf4b7764af0129a6223d", 705415, Common::TH_THA, 505),
+	WINGAME1t_l("willywabbit", "", "WILLY95.EXE", "0fe0b837a9622e4842321cb1d5ed9567", 2322295, Common::TH_THA, 505),
+
 	// Published by Arc Media (1998)
 	MACGAME1("wine", "", "double-click me!",	"rt:c0f42117931db25b431cf7918c774b6d", 719033, 501),
 	WINGAME2("wine", "", "WIN95.EXE",			"t:55b0d7abf1859713f984ee413c7c28d3", 1411337,
