@@ -67,7 +67,7 @@ private:
 		}
 	};
 
-	RoomObjectByteLocation resolveRoomObjectByte(uint16 objectIdentity, int8 displacement);
+	RoomObjectByteLocation resolveRoomObjectByte(uint16 objectId, int8 displacement);
 
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;

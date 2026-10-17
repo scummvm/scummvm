@@ -32,13 +32,13 @@ void RoomScriptCommand09Executor::executeRoomScriptCommand09(int mode) {
 	if (mode != 0) {
 		// Ghidra 0x00002D62-0x00002D7F: retain the unsigned word identity multiply, low-word wrapping add,
 		// signed field +5 displacement, and the independent +0x16 base before resolving the typed byte.
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 2);
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
 		RoomObjectByteLocation location =
-			resolveRoomObjectByte(objectIdentity, static_cast<int8>(_rom.readByte(commandOffset + 5)));
+			resolveRoomObjectByte(objectId, static_cast<int8>(_rom.readByte(commandOffset + 5)));
 
 		// Ghidra 0x00002D80-0x00002D99: both identity outcomes retain the same resolved byte. A match
 		// sign-extends its old value into the pending icon and draws mode zero before the replacement.
-		if (objectIdentity == static_cast<uint16>(_state.CurrentInteraction)) {
+		if (objectId == static_cast<uint16>(_state.CurrentInteraction)) {
 			_state.PendingActionIcon =
 				static_cast<int8>(location.TargetRoomObject.readCommandByte(location.ByteOffset));
 			_drawSelectedActionIcon(0);
@@ -59,8 +59,8 @@ void RoomScriptCommand09Executor::executeRoomScriptCommand09(int mode) {
 }
 
 RoomScriptCommand09Executor::RoomObjectByteLocation RoomScriptCommand09Executor::resolveRoomObjectByte(
-	uint16 objectIdentity, int8 displacement) {
-	uint16 recordOffset = static_cast<uint16>((objectIdentity - 3) * kRoomObjectRecordSize);
+	uint16 objectId, int8 displacement) {
+	uint16 recordOffset = static_cast<uint16>((objectId - 3) * kRoomObjectRecordSize);
 	int16 wrappedRecordOffset = static_cast<int16>(recordOffset + displacement);
 	int tableByteOffset = kActionIconByteOffset + wrappedRecordOffset;
 	int objectIndex = tableByteOffset / kRoomObjectRecordSize;

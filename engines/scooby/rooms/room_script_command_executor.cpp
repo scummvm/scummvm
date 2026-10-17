@@ -253,8 +253,7 @@ void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
 		default: {
 			// Ghidra 0x00002BA0-0x00002BB3: every identity other than one or two retains the
 			// low-word 0x1A-byte object-table calculation and the signed fixed-position-index branch.
-			uint16 tableByteOffset = static_cast<uint16>((objectId - 3) * 0x1A);
-			RoomObject &roomObject = _state.RoomObjects[static_cast<std::size_t>(tableByteOffset / 0x1A)];
+			RoomObject &roomObject = _state.RoomObjects[objectId - 3];
 			if (roomObject.FixedPositionIndex >= 0) {
 				// Ghidra 0x00002BB4-0x00002BEB: retarget the corresponding actor slot, force its
 				// delay due, request restart, and retain both graphics-ready loop outcomes.
@@ -299,8 +298,7 @@ void RoomScriptCommandExecutor::scriptCommand07RefreshObject(int mode) {
 		// Ghidra 0x00002BFC-0x00002C1F: retain the low-word object-table calculation and both active-room
 		// outcomes. A match sets only object flag bit zero and skips every inventory branch.
 		uint16 objectId = _rom.readUInt16(commandOffset + 2);
-		uint16 tableByteOffset = static_cast<uint16>((objectId - 3) * 0x1A);
-		RoomObject &roomObject = _state.RoomObjects[static_cast<std::size_t>(tableByteOffset / 0x1A)];
+		RoomObject &roomObject = _state.RoomObjects[objectId - 3];
 		if (roomObject.RoomId == _state.RoomId) {
 			roomObject.Flags |= 0x01;
 		}
@@ -443,10 +441,8 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand12(int mode) {
 	if (mode != 0) {
 		// Ghidra 0x00004F54-0x00004F69: subtract the three-identity prefix, retain the signed low word of
 		// the 0x1A-byte product used by indexed addressing, and replace shape word +0x02 unconditionally.
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 2);
-		int16 tableByteOffset = static_cast<int16>((objectIdentity - 3) * 0x1A);
-		_state.RoomObjects[static_cast<std::size_t>(tableByteOffset / 0x1A)].ShapeIndex =
-			_rom.readInt16(commandOffset + 4);
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		_state.RoomObjects[objectId - 3].ShapeIndex = _rom.readInt16(commandOffset + 4);
 	}
 
 	// Ghidra 0x00004F6A-0x00004F6F: every native mode consumes the complete six-byte command.
@@ -475,10 +471,8 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand14(int mode) {
 	if (mode != 0) {
 		// Ghidra 0x00002E82-0x00002E97: subtract the three-identity prefix, retain the signed low word of
 		// the 0x1A-byte product used by indexed addressing, and replace shape word +0x02 unconditionally.
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 2);
-		int16 tableByteOffset = static_cast<int16>((objectIdentity - 3) * 0x1A);
-		_state.RoomObjects[static_cast<std::size_t>(tableByteOffset / 0x1A)].ShapeIndex =
-			_rom.readInt16(commandOffset + 4);
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		_state.RoomObjects[objectId - 3].ShapeIndex = _rom.readInt16(commandOffset + 4);
 	}
 
 	// Ghidra 0x00002E98-0x00002E9D: every native mode consumes the complete six-byte command.
@@ -515,17 +509,16 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand16(int mode) {
 	// Ghidra 0x00002AD0-0x00002AD3: scan mode skips every actor-selection and visibility effect.
 	if (mode != 0) {
 		// Ghidra 0x00002AD4-0x00002AE7: identities one and two select actor bits zero and one directly.
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 2);
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
 		int actorSlot;
-		if (objectIdentity == 1) {
+		if (objectId == 1) {
 			actorSlot = 0;
-		} else if (objectIdentity == 2) {
+		} else if (objectId == 2) {
 			actorSlot = 1;
 		} else {
 			// Ghidra 0x00002AE8-0x00002AF9: every other identity retains the signed low word of the
 			// 0x1A-byte table offset, reads byte +0x19, adds two, and keeps its modulo-eight bit number.
-			int16 tableByteOffset = static_cast<int16>((objectIdentity - 3) * 0x1A);
-			RoomObject &roomObject = _state.RoomObjects[static_cast<std::size_t>(tableByteOffset / 0x1A)];
+			RoomObject &roomObject = _state.RoomObjects[objectId - 3];
 			actorSlot = (static_cast<uint8>(roomObject.FixedPositionIndex) + 2) & 0x07;
 		}
 
@@ -544,17 +537,16 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand17(int mode) {
 	// Ghidra 0x00004FBE-0x00004FC1: scan mode skips every actor-selection and animation effect.
 	if (mode != 0) {
 		// Ghidra 0x00004FC2-0x00004FD7: identities one and two select actor bits zero and one directly.
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 2);
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
 		int actorSlot;
-		if (objectIdentity == 1) {
+		if (objectId == 1) {
 			actorSlot = 0;
-		} else if (objectIdentity == 2) {
+		} else if (objectId == 2) {
 			actorSlot = 1;
 		} else {
 			// Ghidra 0x00004FD8-0x00004FED: every other identity retains the signed low-word table
 			// offset, zero-extends byte +0x19, adds two, and keeps the modulo-eight bit number.
-			int16 tableByteOffset = static_cast<int16>((objectIdentity - 3) * 0x1A);
-			RoomObject &roomObject = _state.RoomObjects[static_cast<std::size_t>(tableByteOffset / 0x1A)];
+			RoomObject &roomObject = _state.RoomObjects[objectId - 3];
 			actorSlot = (static_cast<uint8>(roomObject.FixedPositionIndex) + 2) & 0x07;
 		}
 

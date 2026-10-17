@@ -65,26 +65,26 @@ public:
 	}
 
 	// Moves one room object and its attached dynamic actor to a scripted target.
-	// objectIdentity: one-based object identity after the caller masks encoded bit 15.
+	// objectId: one-based object identity after the caller masks encoded bit 15.
 	// targetX/targetY: signed target coordinates written to the mutable room-object record.
 	// movementMode: negative places directly; nonnegative scales and starts dynamic movement.
 	// animationOffset: negative retains animation; nonnegative selects and restarts it.
-	// encodedObjectIdentity: original command identity whose sign suppresses movement waiting.
+	// encodedObjectId: original command identity whose sign suppresses movement waiting.
 	// Returns false when host closure interrupts a synchronous movement wait.
 	//
 	// Ghidra: moveRoomObjectToPosition (0x00004B24). The complete body is 0x00004B24-0x00004C1F. Mutable
 	// record fields +0x12/+0x14 are replaced before the signed attached-actor guard. Native VBlank advances
 	// graphics publication and movement during the two busy waits; the managed room callback and shared frame
 	// clock supply those updates explicitly.
-	bool moveRoomObjectToPosition(uint16 objectIdentity, int16 targetX, int16 targetY,
+	bool moveRoomObjectToPosition(uint16 objectId, int16 targetX, int16 targetY,
 								  int16 movementMode, int16 animationOffset,
-								  uint16 encodedObjectIdentity);
+								  uint16 encodedObjectId);
 
 	// Chooses and starts a direct or waypoint-routed lead-actor movement.
 	// targetX/targetY: signed final coordinates in room pixels.
 	// movementScale: signed movement multiplier forwarded to each selected route segment.
 	// animationBias: zero derives a directional animation; nonzero biases the selected position.
-	// encodedObjectIdentity: original command identity whose sign suppresses completion waiting.
+	// encodedObjectId: original command identity whose sign suppresses completion waiting.
 	// Returns false when host closure interrupts a callback-aware movement wait.
 	//
 	// Ghidra: moveLeadActorToRoomPosition (0x00005002). The complete body is 0x00005002-0x0000519B. The two
@@ -92,13 +92,13 @@ public:
 	// independently describe clear actor-to-waypoint paths; every clear/blocked waypoint-to-target combination
 	// is preserved before the direct-movement tail.
 	bool moveLeadActorToRoomPosition(int16 targetX, int16 targetY, int16 movementScale,
-									 int16 animationBias, uint16 encodedObjectIdentity);
+									 int16 animationBias, uint16 encodedObjectId);
 
 	// Starts a companion move and optionally waits through movement and its final animation.
 	// targetX/targetY: signed final coordinates in room pixels.
 	// movementMode: signed movement mode or scale forwarded to route selection.
 	// destinationBias: animation or destination bias forwarded to route selection.
-	// encodedObjectIdentity: a negative encoded word suppresses completion waiting.
+	// encodedObjectId: a negative encoded word suppresses completion waiting.
 	// Returns false when host closure interrupts one of the clocked waits.
 	//
 	// Ghidra: finishCompanionMovement (0x0000566A). The complete body is 0x0000566A-0x000056AF. Actual
@@ -108,7 +108,7 @@ public:
 	// Both busy loops update animations at least once and service the installed room callback on every
 	// continuing back edge.
 	bool finishCompanionMovement(int16 targetX, int16 targetY, int16 movementMode,
-								 int16 destinationBias, uint16 encodedObjectIdentity);
+								 int16 destinationBias, uint16 encodedObjectId);
 
 	// Chooses and starts a direct or waypoint-routed companion-actor movement.
 	// targetX/targetY: signed final coordinates in room pixels.
@@ -186,7 +186,7 @@ private:
 	VelocityResult computeLeadMovementVelocity(int16 targetX, int16 targetY,
 											   int16 movementScale);
 	bool moveLeadActorDirectly(int16 targetX, int16 targetY, int16 movementScale,
-							   int16 animationBias, uint16 encodedObjectIdentity,
+							   int16 animationBias, uint16 encodedObjectId,
 							   bool resetMovementPointIndex);
 
 	void buildCompanionRouteFromFirstWaypoint(int16 targetX, int16 targetY,

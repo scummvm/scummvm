@@ -32,17 +32,14 @@ void RoomScriptCommand21Executor::executeRoomScriptCommand21(int mode) {
 	if (mode != 0) {
 		// Ghidra 0x00004948-0x0000496D: selectors one and two choose slots zero and one. Every other selector
 		// retains the wrapped signed object-record offset, sign-extends byte +0x19, and adds two.
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 4);
+		uint16 objectId = _rom.readUInt16(commandOffset + 4);
 		int actorSlot;
-		if (objectIdentity == 1) {
+		if (objectId == 1) {
 			actorSlot = 0;
-		} else if (objectIdentity == 2) {
+		} else if (objectId == 2) {
 			actorSlot = 1;
 		} else {
-			int16 tableByteOffset = static_cast<int16>((objectIdentity - 3) *
-													   kRoomObjectRecordSize);
-			const RoomObject &roomObject =
-				_state.RoomObjects[static_cast<std::size_t>(tableByteOffset / kRoomObjectRecordSize)];
+			const RoomObject &roomObject = _state.RoomObjects[objectId - 3];
 			actorSlot = roomObject.FixedPositionIndex + 2;
 		}
 

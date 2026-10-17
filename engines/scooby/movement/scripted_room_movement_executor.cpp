@@ -26,13 +26,13 @@
 
 namespace Scooby {
 
-bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectIdentity, int16 targetX,
+bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectId, int16 targetX,
 															int16 targetY, int16 movementMode,
 															int16 animationOffset,
-															uint16 encodedObjectIdentity) {
+															uint16 encodedObjectId) {
 	// Ghidra 0x00004B24-0x00004B4B: select the 0x1A-byte typed record, replace both target words, and retain
 	// the signed-negative attached-actor return after restoring all three saved input words.
-	RoomObject &roomObject = _state.RoomObjects[static_cast<uint16>(objectIdentity - 3)];
+	RoomObject &roomObject = _state.RoomObjects[static_cast<uint16>(objectId - 3)];
 	roomObject.FixedX = targetX;
 	roomObject.FixedY = targetY;
 	if (roomObject.FixedPositionIndex < 0) {
@@ -104,7 +104,7 @@ bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectIdentit
 	// Ghidra 0x00004BFC-0x00004C0F: set movement active unconditionally. Encoded bit 15 returns without
 	// waiting, while preserving every movement and optional animation side effect above.
 	_state.ActorMovementFlags |= actorMask;
-	if (static_cast<int16>(encodedObjectIdentity) < 0) {
+	if (static_cast<int16>(encodedObjectId) < 0) {
 		return true;
 	}
 
@@ -125,7 +125,7 @@ bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectIdentit
 bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, int16 targetY,
 															   int16 movementScale,
 															   int16 animationBias,
-															   uint16 encodedObjectIdentity) {
+															   uint16 encodedObjectId) {
 	// Ghidra 0x00005002-0x0000501B: clear stale lead movement and return only when both signed integer
 	// coordinates already equal the requested destination.
 	_state.ActorMovementFlags &= static_cast<uint8>(~kLeadActorMask);
@@ -137,13 +137,13 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 	// Ghidra 0x0000501C-0x00005043: progress bit four, a clear direct trace, or no visible waypoint all
 	// tail-enter direct movement with a freshly reset queued-point index.
 	if ((_state.ProgressStateBytes[0] & 0x10) != 0 || !traceLeadPathToTarget(targetX, targetY)) {
-		return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectIdentity,
+		return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 									 true);
 	}
 
 	uint16 visibleWaypoints = classifyLeadWaypointVisibility();
 	if (visibleWaypoints == 0) {
-		return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectIdentity,
+		return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 									 true);
 	}
 
@@ -167,7 +167,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 		if (firstSquaredMagnitude < secondSquaredMagnitude) {
 			if (tracePathFromSecondWaypoint(targetX, targetY)) {
 				return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias,
-											 encodedObjectIdentity,
+											 encodedObjectId,
 											 true);
 			}
 
@@ -176,11 +176,11 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 			buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
 			_state.LeadActorMovementPointIndex = 1;
 			return moveLeadActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
-										 encodedObjectIdentity, false);
+										 encodedObjectId, false);
 		}
 
 		if (tracePathFromFirstWaypoint(targetX, targetY)) {
-			return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectIdentity,
+			return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 										 true);
 		}
 
@@ -189,7 +189,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 		buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
 		_state.LeadActorMovementPointIndex = 1;
 		return moveLeadActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
-									 encodedObjectIdentity, false);
+									 encodedObjectId, false);
 	}
 
 	// Ghidra 0x000050EC-0x00005145: visibility mask one first tries a two-segment route through waypoint one,
@@ -201,11 +201,11 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 			buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
 			_state.LeadActorMovementPointIndex = 1;
 			return moveLeadActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
-										 encodedObjectIdentity, false);
+										 encodedObjectId, false);
 		}
 
 		if (tracePathFromSecondWaypoint(targetX, targetY)) {
-			return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectIdentity,
+			return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 										 true);
 		}
 
@@ -217,7 +217,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 		appendLeadRouteFromFirstWaypoint(secondWaypointX, secondWaypointY, movementScale);
 		_state.LeadActorMovementPointIndex = 2;
 		return moveLeadActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
-									 encodedObjectIdentity, false);
+									 encodedObjectId, false);
 	}
 
 	// Ghidra 0x00005146-0x0000519B: every remaining nonzero mask (including the produced mask two) mirrors the
@@ -228,11 +228,11 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 		buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
 		_state.LeadActorMovementPointIndex = 1;
 		return moveLeadActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
-									 encodedObjectIdentity, false);
+									 encodedObjectId, false);
 	}
 
 	if (tracePathFromFirstWaypoint(targetX, targetY)) {
-		return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectIdentity,
+		return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 									 true);
 	}
 
@@ -244,7 +244,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 	appendLeadRouteFromSecondWaypoint(firstWaypointX, firstWaypointY, movementScale);
 	_state.LeadActorMovementPointIndex = 2;
 	return moveLeadActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
-								 encodedObjectIdentity, false);
+								 encodedObjectId, false);
 }
 
 void ScriptedRoomMovementExecutor::buildLeadRouteFromFirstWaypoint(int16 targetX, int16 targetY,
@@ -548,7 +548,7 @@ ScriptedRoomMovementExecutor::VelocityResult ScriptedRoomMovementExecutor::compu
 
 bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 targetY,
 														 int16 movementScale, int16 animationBias,
-														 uint16 encodedObjectIdentity,
+														 uint16 encodedObjectId,
 														 bool resetMovementPointIndex) {
 	// Ghidra 0x0000558A-0x00005591: only the full entry resets the queued movement-point index; routed internal
 	// entry 0x00005592 retains the caller's prepared reverse-order queue.
@@ -593,7 +593,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 ta
 
 	// Ghidra 0x00005614-0x00005629: a negative encoded identity leaves movement asynchronous. Every nonnegative
 	// identity waits at least once until the room callback clears the complete routed movement.
-	if (static_cast<int16>(encodedObjectIdentity) >= 0) {
+	if (static_cast<int16>(encodedObjectId) >= 0) {
 		while (true) {
 			_updateActorAnimationFrames();
 			if ((_state.ActorMovementFlags & kLeadActorMask) == 0) {
@@ -631,7 +631,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 ta
 bool ScriptedRoomMovementExecutor::finishCompanionMovement(int16 targetX, int16 targetY,
 														   int16 movementMode,
 														   int16 destinationBias,
-														   uint16 encodedObjectIdentity) {
+														   uint16 encodedObjectId) {
 	// Ghidra 0x0000566A-0x0000566D: start the complete companion route and retain its D6 position result.
 	MovementResult result = movePlayerToRoomPosition(targetX, targetY, movementMode, destinationBias);
 	if (!result.Completed) {
@@ -640,7 +640,7 @@ bool ScriptedRoomMovementExecutor::finishCompanionMovement(int16 targetX, int16 
 
 	// Ghidra 0x0000566E-0x00005683: a negative encoded identity returns asynchronously. Every nonnegative value
 	// updates animations at least once and waits until callback progress clears movement.
-	if (static_cast<int16>(encodedObjectIdentity) < 0) {
+	if (static_cast<int16>(encodedObjectId) < 0) {
 		return true;
 	}
 

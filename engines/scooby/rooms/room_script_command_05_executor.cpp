@@ -36,9 +36,7 @@ void RoomScriptCommand05MoveObject::executeRoomScriptCommand05(int mode) {
 		if (objectId > 2) {
 			// Ghidra 0x000028C4-0x000028DD: resolve the 0x1A-byte record through the original low-word
 			// multiply and select its fixed-position or portable-object ecosystem from flag bit one.
-			uint16 tableByteOffset = static_cast<uint16>((objectId - 3) *
-														 kRoomObjectRecordSize);
-			int objectIndex = tableByteOffset / kRoomObjectRecordSize;
+			int objectIndex = objectId - 3;
 			RoomObject &roomObject = _state.RoomObjects[static_cast<std::size_t>(objectIndex)];
 			int16 newRoomId = _rom.readInt16(commandOffset + 4);
 			if ((roomObject.Flags & kFixedPositionMask) != 0) {
@@ -142,14 +140,14 @@ bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, 
 }
 
 bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObject, int objectIndex,
-														 uint16 encodedObjectIdentity,
+														 uint16 encodedObjectId,
 														 int16 newRoomId) {
 	int16 previousRoomId = roomObject.RoomId;
 
 	// Ghidra 0x000029FE-0x00002A2B: when a positive-identity visible patch leaves the active room, mark its
 	// tile index and object flags before waiting one retrace. Each room, sign, and zero-patch branch remains.
 	if (previousRoomId == _state.RoomId) {
-		if (static_cast<int16>(encodedObjectIdentity) >= 0) {
+		if (static_cast<int16>(encodedObjectId) >= 0) {
 			if (roomObject.TilePatchIndex != 0) {
 				roomObject.TilePatchIndex =
 					static_cast<int16>(static_cast<uint16>(roomObject.TilePatchIndex) | 0x8000);
@@ -165,7 +163,7 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 	// active room. A different room or negative identity independently skips the flag update.
 	roomObject.RoomId = newRoomId;
 	if (newRoomId == _state.RoomId) {
-		if (static_cast<int16>(encodedObjectIdentity) >= 0) {
+		if (static_cast<int16>(encodedObjectId) >= 0) {
 			roomObject.Flags |= kObjectTilePatchPendingMask;
 		}
 	}
@@ -185,7 +183,7 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 
 		_state.InventoryObjectIndices.pop_back();
 		if (newRoomId != kInventoryRoomId) {
-			return refreshActionPromptsAfterRelocation(encodedObjectIdentity);
+			return refreshActionPromptsAfterRelocation(encodedObjectId);
 		}
 	}
 
@@ -202,17 +200,17 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 		_state.MenuPage = inventoryPage;
 	}
 
-	return refreshActionPromptsAfterRelocation(encodedObjectIdentity);
+	return refreshActionPromptsAfterRelocation(encodedObjectId);
 }
 
-bool RoomScriptCommand05MoveObject::refreshActionPromptsAfterRelocation(uint16 encodedObjectIdentity) {
+bool RoomScriptCommand05MoveObject::refreshActionPromptsAfterRelocation(uint16 encodedObjectId) {
 	// Ghidra 0x00002AA6-0x00002AC9: interaction bit two and a negative encoded identity independently skip
 	// all three calls. Otherwise preserve WaitForVerticalBlank, CommitActionPromptUpdate, then refresh.
 	if ((_state.InteractionFlags & kSuppressActionPromptRefreshMask) != 0) {
 		return false;
 	}
 
-	if (static_cast<int16>(encodedObjectIdentity) < 0) {
+	if (static_cast<int16>(encodedObjectId) < 0) {
 		return false;
 	}
 

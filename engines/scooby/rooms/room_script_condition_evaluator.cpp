@@ -43,15 +43,15 @@ bool RoomScriptConditionEvaluator::evaluateRoomScriptCondition() {
 		// Ghidra 0x000027D0-0x00002807: preserve both RoomId-special-case branches; every other
 		// identity/field pair uses the wrapped and aligned typed room-object projection.
 		uint16 fieldOffset = _rom.readUInt16(commandOffset + 6);
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 8);
-		if (objectIdentity == 1) {
+		uint16 objectId = _rom.readUInt16(commandOffset + 8);
+		if (objectId == 1) {
 			if (fieldOffset == 6) {
 				left = _state.RoomId;
 			} else {
-				left = readRoomObjectConditionWord(fieldOffset, objectIdentity);
+				left = readRoomObjectConditionWord(fieldOffset, objectId);
 			}
 		} else {
-			left = readRoomObjectConditionWord(fieldOffset, objectIdentity);
+			left = readRoomObjectConditionWord(fieldOffset, objectId);
 		}
 	} else {
 		// Ghidra 0x000027AA-0x000027B1: the default left source is the signed immediate at +6.
@@ -117,9 +117,9 @@ bool RoomScriptConditionEvaluator::evaluateRoomScriptCondition() {
 }
 
 int16 RoomScriptConditionEvaluator::readRoomObjectConditionWord(uint16 fieldOffset,
-																uint16 objectIdentity) const {
+																uint16 objectId) const {
 	uint16 tableByteOffset =
-		static_cast<uint16>(fieldOffset + (objectIdentity - 3) * kRoomObjectRecordSize);
+		static_cast<uint16>(fieldOffset + (objectId - 3) * kRoomObjectRecordSize);
 	tableByteOffset &= 0xFFFE;
 	return _state.RoomObjects[tableByteOffset / kRoomObjectRecordSize].readScriptConditionWord(
 		tableByteOffset % kRoomObjectRecordSize);

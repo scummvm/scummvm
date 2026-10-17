@@ -80,7 +80,7 @@ private:
 
 	bool tryResolveTargetAnimationDescriptor(uint16 targetIdentity, int &descriptorOffset);
 	RelativeDestination resolveRelativeDestination(int commandOffset, int animationDescriptorOffset);
-	RoomObject &resolveRoomObject(uint16 objectIdentity);
+	RoomObject &resolveRoomObject(uint16 objectId);
 	static int16 getIntegerCoordinate(int fixedCoordinate);
 
 	// Resolves signed coordinates through an animation descriptor's type-two interaction record.

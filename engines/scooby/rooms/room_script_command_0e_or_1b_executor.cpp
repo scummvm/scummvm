@@ -32,12 +32,12 @@ void RoomScriptCommand0EOr1BExecutor::executeRoomScriptCommand0EOr1B(int mode) {
 	// Ghidra 0x000049BA-0x000049CB: scan mode bypasses every effect. Execution masks identity bit 15 and
 	// preserves identity zero as a no-op.
 	if (mode != 0) {
-		uint16 encodedObjectIdentity = _rom.readUInt16(commandOffset + 2);
-		uint16 objectIdentity = static_cast<uint16>(encodedObjectIdentity & 0x7FFF);
-		if (objectIdentity != 0) {
+		uint16 encodedObjectId = _rom.readUInt16(commandOffset + 2);
+		uint16 objectId = static_cast<uint16>(encodedObjectId & 0x7FFF);
+		if (objectId != 0) {
 			// Ghidra 0x000049CC-0x000049D7: establish the active room-position source and select the
 			// identity-one branch. The managed source is read only when indexed command 0x0E consumes it.
-			switch (objectIdentity) {
+			switch (objectId) {
 			case 1: {
 				// Ghidra 0x000049D8-0x000049FB: identity one independently selects indexed or immediate
 				// coordinates before loading its animation or movement argument.
@@ -58,7 +58,7 @@ void RoomScriptCommand0EOr1BExecutor::executeRoomScriptCommand0EOr1B(int mode) {
 					// closure bypasses the native record epilogue as a non-returning handover.
 					if (!_movement.moveLeadActorToRoomPosition(
 							target.X, target.Y, movementMode, movementArgument,
-							encodedObjectIdentity)) {
+							encodedObjectId)) {
 						_requestMovementHostClose();
 						return;
 					}
@@ -85,7 +85,7 @@ void RoomScriptCommand0EOr1BExecutor::executeRoomScriptCommand0EOr1B(int mode) {
 					// movement and finish boundary, including encoded bit 15.
 					if (!_movement.finishCompanionMovement(target.X, target.Y, movementMode,
 														   movementArgument,
-														   encodedObjectIdentity)) {
+														   encodedObjectId)) {
 						_requestMovementHostClose();
 						return;
 					}
@@ -98,10 +98,10 @@ void RoomScriptCommand0EOr1BExecutor::executeRoomScriptCommand0EOr1B(int mode) {
 				// movement mode, independent coordinate-source branch, animation argument, and encoded
 				// identity context at the room-object movement boundary.
 				TargetCoordinates target = readTargetCoordinates(commandOffset, command);
-				if (!_movement.moveRoomObjectToPosition(objectIdentity, target.X, target.Y,
+				if (!_movement.moveRoomObjectToPosition(objectId, target.X, target.Y,
 														_rom.readInt16(commandOffset + 4),
 														_rom.readInt16(commandOffset + 6),
-														encodedObjectIdentity)) {
+														encodedObjectId)) {
 					_requestMovementHostClose();
 					return;
 				}

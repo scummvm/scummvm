@@ -66,7 +66,7 @@ private:
 		}
 	};
 
-	RoomObjectWordAddress resolveRoomObjectWordAddress(uint16 objectIdentity, uint16 fieldOffset);
+	RoomObjectWordAddress resolveRoomObjectWordAddress(uint16 objectId, uint16 fieldOffset);
 
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;

@@ -114,9 +114,9 @@ void RoomScriptCommand08Executor::executeRoomScriptCommand08(int mode) {
 }
 
 RoomScriptCommand08Executor::RoomObjectWordAddress RoomScriptCommand08Executor::resolveRoomObjectWordAddress(
-	uint16 objectIdentity, uint16 fieldOffset) {
+	uint16 objectId, uint16 fieldOffset) {
 	uint16 tableByteOffset =
-		static_cast<uint16>(fieldOffset + (objectIdentity - 3) * kRoomObjectRecordSize);
+		static_cast<uint16>(fieldOffset + (objectId - 3) * kRoomObjectRecordSize);
 	tableByteOffset &= 0xFFFE;
 	return RoomObjectWordAddress(
 		_state.RoomObjects[static_cast<std::size_t>(tableByteOffset / kRoomObjectRecordSize)],

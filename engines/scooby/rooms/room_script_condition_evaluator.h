@@ -52,7 +52,7 @@ public:
 private:
 	static const int kRoomObjectRecordSize = 0x1A;
 
-	int16 readRoomObjectConditionWord(uint16 fieldOffset, uint16 objectIdentity) const;
+	int16 readRoomObjectConditionWord(uint16 fieldOffset, uint16 objectId) const;
 
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;

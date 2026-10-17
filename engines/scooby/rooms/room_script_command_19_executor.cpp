@@ -32,17 +32,14 @@ void RoomScriptCommand19Executor::executeRoomScriptCommand19(int mode) {
 	if (mode != 0) {
 		// Ghidra 0x00002B12-0x00002B37: identities one and two select actor bits zero and one directly; every
 		// other word retains the signed low-word object offset and byte +0x19 modulo-eight branch.
-		uint16 objectIdentity = _rom.readUInt16(commandOffset + 2);
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
 		int actorSlot;
-		if (objectIdentity == 1) {
+		if (objectId == 1) {
 			actorSlot = 0;
-		} else if (objectIdentity == 2) {
+		} else if (objectId == 2) {
 			actorSlot = 1;
 		} else {
-			int16 tableByteOffset = static_cast<int16>((objectIdentity - 3) *
-													   kRoomObjectRecordSize);
-			const RoomObject &roomObject =
-				_state.RoomObjects[static_cast<std::size_t>(tableByteOffset / kRoomObjectRecordSize)];
+			const RoomObject &roomObject = _state.RoomObjects[objectId - 3];
 			actorSlot = (static_cast<uint8>(roomObject.FixedPositionIndex) + 2) & 0x07;
 		}
 

@@ -83,11 +83,11 @@ private:
 	// Returns true when host closure interrupted a synchronous wait (the caller must abort without consuming
 	// the command record), false on normal completion. Mirrors the C# source's asymmetric true/false polarity
 	// relative to RelocateFixedObject exactly.
-	bool relocatePortableObject(RoomObject &roomObject, int objectIndex, uint16 encodedObjectIdentity,
+	bool relocatePortableObject(RoomObject &roomObject, int objectIndex, uint16 encodedObjectId,
 								int16 newRoomId);
 
 	// Returns true when host closure interrupted the wait, false otherwise.
-	bool refreshActionPromptsAfterRelocation(uint16 encodedObjectIdentity);
+	bool refreshActionPromptsAfterRelocation(uint16 encodedObjectId);
 
 	static int replaceIntegerCoordinate(int coordinate, int16 integer);
 

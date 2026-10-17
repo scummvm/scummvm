@@ -31,12 +31,9 @@ void RoomScriptCommand0BExecutor::executeRoomScriptCommand0B(int mode) {
 	if (mode != 0) {
 		// Ghidra 0x00002DF6-0x00002E13: mask encoded identity bit 15, retain the low-word table calculation,
 		// and preserve both outcomes of fixed-position flag bit one.
-		uint16 encodedObjectIdentity = _rom.readUInt16(commandOffset + 2);
-		uint16 objectIdentity = static_cast<uint16>(encodedObjectIdentity & 0x7FFF);
-		uint16 tableByteOffset = static_cast<uint16>((objectIdentity - 3) *
-													 kRoomObjectRecordSize);
-		RoomObject &roomObject =
-			_state.RoomObjects[static_cast<std::size_t>(tableByteOffset / kRoomObjectRecordSize)];
+		uint16 encodedObjectId = _rom.readUInt16(commandOffset + 2);
+		uint16 objectId = static_cast<uint16>(encodedObjectId & 0x7FFF);
+		RoomObject &roomObject = _state.RoomObjects[objectId - 3];
 		int16 tilePatchIndex = _rom.readInt16(commandOffset + 4);
 		if ((roomObject.Flags & kFixedPositionMask) != 0) {
 			// Ghidra 0x00002E14-0x00002E1D: a fixed-position object replaces only its tile-patch word.
@@ -73,7 +70,7 @@ void RoomScriptCommand0BExecutor::executeRoomScriptCommand0B(int mode) {
 					// Ghidra 0x00002E62-0x00002E77: queue flag bit zero, preserve both encoded-sign outcomes,
 					// and retain both busy-loop outcomes until asynchronous publication clears it.
 					roomObject.Flags |= kTilePatchPendingMask;
-					if (static_cast<int16>(encodedObjectIdentity) < 0) {
+					if (static_cast<int16>(encodedObjectId) < 0) {
 						while ((roomObject.Flags & kTilePatchPendingMask) != 0) {
 							if (!_waitForRoomVerticalBlank()) {
 								return;

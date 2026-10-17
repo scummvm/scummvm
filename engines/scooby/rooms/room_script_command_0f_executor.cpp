@@ -148,9 +148,8 @@ RoomScriptCommand0FExecutor::RelativeDestination RoomScriptCommand0FExecutor::re
 							   static_cast<int16>(descriptor.Y + _rom.readInt16(shapeOffset + 10)));
 }
 
-RoomObject &RoomScriptCommand0FExecutor::resolveRoomObject(uint16 objectIdentity) {
-	int16 tableByteOffset = static_cast<int16>((objectIdentity - 3) * kRoomObjectRecordSize);
-	return _state.RoomObjects[static_cast<std::size_t>(tableByteOffset / kRoomObjectRecordSize)];
+RoomObject &RoomScriptCommand0FExecutor::resolveRoomObject(uint16 objectId) {
+	return _state.RoomObjects[objectId - 3];
 }
 
 int16 RoomScriptCommand0FExecutor::getIntegerCoordinate(int fixedCoordinate) {
