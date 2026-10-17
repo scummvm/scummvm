@@ -149,6 +149,7 @@ void IgorEngine::restart() {
 	_actionWalkPoint = 0;
 	_rightButtonSelecting = false;
 	_hoverVerbState = kHoverVerbSelected;
+	_keyboardCursorStep = 1;
 	_rightButtonSelectCursorX = _rightButtonSelectCursorY = 0;
 	memset(_inputVars, 0, sizeof(_inputVars));
 

@@ -56,8 +56,20 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 					       _fastMode, kTimerTicksCount * 1000 / kTickDelay / _fastMode);
 				} else if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_inputVars[kInputEscape] = 1;
+				} else if (_game.version == kIdSpaFloppy && moveCursorWithKeyboard(ev.kbd.keycode)) {
+					// the cursor was moved with the arrow/keypad keys
+				} else if (_game.version == kIdSpaFloppy && ev.kbd.keycode == Common::KEYCODE_INSERT) {
+					// Insert acts as the right button
+					if (!_gameState.dialogueTextRunning && !ev.kbdRepeat) {
+						_inputVars[kInputRightRelease] = 0;
+						_inputVars[kInputRightClick] = 1;
+					}
 				} else if (ev.kbd.keycode == Common::KEYCODE_RETURN || ev.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 					_inputVars[kInputConfirm] = 1;
+					// Enter acts as the left button at the cursor position (first press only)
+					if (_game.version == kIdSpaFloppy && !_gameState.dialogueTextRunning && !ev.kbdRepeat) {
+						_inputVars[kInputClick] = 1;
+					}
 				} else if (ev.kbd.keycode == Common::KEYCODE_SPACE) {
 					_inputVars[kInputOptions] = 1;
 				} else if (ev.kbd.keycode == Common::KEYCODE_p) {
@@ -65,6 +77,9 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 				}
 				break;
 			case Common::EVENT_KEYUP:
+				if (_game.version == kIdSpaFloppy && isCursorKey(ev.kbd.keycode)) {
+					_keyboardCursorStep = 1;
+				}
 				if (ev.kbd.keycode == Common::KEYCODE_RETURN || ev.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 					_inputVars[kInputConfirm] = 0;
 				}
@@ -292,6 +307,47 @@ void IgorEngine::formatRightButtonSentence() {
 	} else {
 		formatActionSentence(0);
 	}
+}
+
+static const Common::KeyCode kCursorKeys[] = {
+	Common::KEYCODE_UP, Common::KEYCODE_DOWN, Common::KEYCODE_LEFT, Common::KEYCODE_RIGHT,
+	Common::KEYCODE_HOME, Common::KEYCODE_END, Common::KEYCODE_PAGEUP, Common::KEYCODE_PAGEDOWN,
+	Common::KEYCODE_KP8, Common::KEYCODE_KP2, Common::KEYCODE_KP4, Common::KEYCODE_KP6,
+	Common::KEYCODE_KP7, Common::KEYCODE_KP1, Common::KEYCODE_KP9, Common::KEYCODE_KP3
+};
+
+bool IgorEngine::isCursorKey(Common::KeyCode key) const {
+	for (uint i = 0; i < ARRAYSIZE(kCursorKeys); ++i) {
+		if (kCursorKeys[i] == key)
+			return true;
+	}
+	return false;
+}
+
+// Arrow and keypad keys move the cursor by a step that grows with every key
+// press (key repeat included) and returns to 1 when a key is released.
+bool IgorEngine::moveCursorWithKeyboard(Common::KeyCode key) {
+	if (!isCursorKey(key))
+		return false;
+	int dx = 0;
+	int dy = 0;
+	switch (key) {
+	case Common::KEYCODE_UP: case Common::KEYCODE_KP8: dy = -1; break;
+	case Common::KEYCODE_DOWN: case Common::KEYCODE_KP2: dy = 1; break;
+	case Common::KEYCODE_LEFT: case Common::KEYCODE_KP4: dx = -1; break;
+	case Common::KEYCODE_RIGHT: case Common::KEYCODE_KP6: dx = 1; break;
+	case Common::KEYCODE_HOME: case Common::KEYCODE_KP7: dx = -1; dy = -1; break;
+	case Common::KEYCODE_PAGEUP: case Common::KEYCODE_KP9: dx = 1; dy = -1; break;
+	case Common::KEYCODE_END: case Common::KEYCODE_KP1: dx = -1; dy = 1; break;
+	default: dx = 1; dy = 1; break;
+	}
+	const int step = _keyboardCursorStep++;
+	const int x = CLIP<int>(_inputVars[kInputCursorXPos] + dx * step, 0, 319);
+	const int y = CLIP<int>(_inputVars[kInputCursorYPos] + dy * step, 0, 199);
+	_inputVars[kInputCursorXPos] = x;
+	_inputVars[kInputCursorYPos] = y;
+	_system->warpMouse(x, y);
+	return true;
 }
 
 /**
