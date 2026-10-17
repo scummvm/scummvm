@@ -92,6 +92,7 @@ void Record::create(int tableIndex) {
 	}
 
 	readField(L, tableIndex, "z", _z);
+	readField(L, tableIndex, "scriptOwns", _isScriptOwned);
 
 	lua_getfield(L, tableIndex, "active");
 	if (lua_isboolean(L, -1)) {
@@ -113,6 +114,28 @@ void Record::create(int tableIndex) {
 void Record::push() {
 	Record **object = (Record **)pushUserData(getLua(), sizeof(Record *), _typeName);
 	*object = this;
+	++_numObjects;
+}
+
+void Record::onObjectCollected() {
+	if (_numObjects > 0) {
+		--_numObjects;
+	}
+
+	if (_numObjects > 0 || !_isScriptOwned || _isDropped) {
+		return;
+	}
+
+	// Nothing the scripts stored in it is needed anymore
+	lua_State *L = getLua();
+	lua_pushlightuserdata(L, this);
+	lua_pushnil(L);
+	lua_rawset(L, LUA_REGISTRYINDEX);
+
+	_isActive = false;
+	_hasActiveFunction = false;
+	_isDone = true;
+	_isDropped = true;
 }
 
 void Record::update(double sceneTime, double elapsedTime) {
@@ -483,8 +506,25 @@ static int recordOnKeyEvent(lua_State *L) {
 	return 1;
 }
 
+// Lua lets go of an object standing for a record
+static int recordCollected(lua_State *L) {
+	// The records of a scene that is going away are deleted before its state
+	SceneContext *context = LuaState::getContext(L);
+	if (!context || context->isEnding()) {
+		return 0;
+	}
+
+	Record **object = (Record **)lua_touserdata(L, 1);
+	if (object && *object) {
+		(*object)->onObjectCollected();
+	}
+
+	return 0;
+}
+
 static const luaL_Reg kRecordFunctions[] = {
 	{ "__index", recordIndex },
+	{ "__gc", recordCollected },
 	{ "__newindex", recordNewIndex },
 	{ "__eq", recordEquals },
 	{ "Reset", recordReset },

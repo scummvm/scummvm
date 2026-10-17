@@ -67,6 +67,9 @@ public:
 	// They use it to undo what they did to the rest of the game, the UI for one.
 	void end();
 
+	// The scene is being deleted
+	bool isEnding() const { return _isEnding; }
+
 	// Hands a message to the scene when it is the one it names, and to the
 	// records that go by that name otherwise, until one of them takes it.
 	// Returns false when the message is for neither.
@@ -126,6 +129,7 @@ private:
 	bool callSceneFunction(const char *name, int numArgs);
 	void pushMessage(const Message &message);
 	void runFrame(double elapsedTime);
+	void deleteDroppedRecords();
 	void renderAttachment();
 	bool hasSkippableRecord() const;
 	void pushSceneFunctions();

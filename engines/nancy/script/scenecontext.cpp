@@ -326,6 +326,15 @@ void SceneContext::runFrame(double elapsedTime) {
 	_records.push_back(_newRecords);
 	_newRecords.clear();
 
+	// Nancy20 collects what the scripts let go of once a frame, and only then.
+	// That takes out the records that belonged to the scripts.
+	if (g_nancy->getGameType() >= kGameTypeNancy20) {
+		lua_gc(L, LUA_GCRESTART, 0);
+		lua_gc(L, LUA_GCCOLLECT, 0);
+		lua_gc(L, LUA_GCSTOP, 0);
+		deleteDroppedRecords();
+	}
+
 	// The records run in the order they were made, but what the player does
 	// goes to the ones closest to them first, and among the ones just as close
 	// to the one made last. A z can change at any time.
@@ -357,6 +366,27 @@ void SceneContext::runFrame(double elapsedTime) {
 		for (Record *record : _records) {
 			record->update(_time, elapsedTime);
 		}
+	}
+}
+
+void SceneContext::deleteDroppedRecords() {
+	for (uint i = 0; i < _records.size(); ) {
+		Record *record = _records[i];
+		if (!record->isDropped()) {
+			++i;
+			continue;
+		}
+
+		if (record == _summary) {
+			_summary = nullptr;
+		}
+
+		if (record == _convo) {
+			_convo = nullptr;
+		}
+
+		_records.remove_at(i);
+		delete record;
 	}
 }
 
