@@ -63,6 +63,7 @@ private:
 	static Common::Rect getSceneRegionBounds(const RegionRecord &region);
 	static bool applyRoomNpcPlacement(Entity &entity, const NpcRecord &npc);
 	static void configureRoomNpcAnimation(Entity &entity, const NpcRecord &npc, bool preservedCorpse);
+	Entity *createSceneMonsterEntity(const MonsterRecord &monster);
 
 	RoomSetupState &_state;
 	Script *_script;

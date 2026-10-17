@@ -635,10 +635,7 @@ Entity *SceneEntities::spawnSceneNpcEntityFromRecord(const NpcRecord &npc) {
 	return entity;
 }
 
-Entity *SceneEntities::spawnSceneMonsterEntityFromRecord(const RoomSetupState &roomState, const MonsterRecord &monster) {
-	if (!_entityManager || !shouldSpawnRoomMonsterEntity(monster))
-		return nullptr;
-
+Entity *SceneEntities::createSceneMonsterEntity(const MonsterRecord &monster) {
 	Entity *entity = _entityManager->spawnSceneActorEntity(
 		monster.monsterName, monster.modelPath,
 		Common::Point(monster.posX, monster.posY), (float)monster.posZ,
@@ -651,6 +648,17 @@ Entity *SceneEntities::spawnSceneMonsterEntityFromRecord(const RoomSetupState &r
 	entity->setHitTestMode(kEntityHitTestNone);
 	entity->setVisible(monster.visible);
 	Monster::applyAnimation(*entity, monster);
+	return entity;
+}
+
+Entity *SceneEntities::spawnSceneMonsterEntityFromRecord(const RoomSetupState &roomState, const MonsterRecord &monster) {
+	if (!_entityManager || !shouldSpawnRoomMonsterEntity(monster))
+		return nullptr;
+
+	Entity *entity = createSceneMonsterEntity(monster);
+	if (!entity)
+		return nullptr;
+
 	if (!applyRoomActorPlacement(roomState, *entity, monster.posX, monster.posY, (float)monster.posZ)) {
 		removeSceneEntityByName(monster.monsterName);
 		return nullptr;
@@ -777,21 +785,13 @@ void SceneEntities::populateRoomMonsters() {
 		return;
 
 	for (const MonsterRecord &monster : _state.roomMonsters) {
-		Entity *entity = _entityManager->spawnSceneActorEntity(monster.monsterName,
-			monster.modelPath, Common::Point(monster.posX, monster.posY), (float)monster.posZ,
-			Monster::resolveFacingFrame(monster.facing));
+		Entity *entity = createSceneMonsterEntity(monster);
 		if (!entity) {
 			debug(1, "Harvester: unable to spawn room monster entity '%s' from '%s'",
 				monster.monsterName.c_str(), monster.modelPath.c_str());
 			continue;
 		}
 
-		entity->setClassId(kEntityClassMonster);
-		entity->setZExtent(kNativeNpcMonsterZExtent);
-		entity->setHitTestMode(kEntityHitTestNone);
-		entity->setVisible(monster.visible);
-		// Native restores a saved monster corpse frame before set_entity_screen_position().
-		Monster::applyAnimation(*entity, monster);
 		if (!applyRoomActorPlacement(_state, *entity, monster.posX, monster.posY, (float)monster.posZ)) {
 			debug(1, "Harvester: unable to apply room monster placement for '%s'",
 				monster.monsterName.c_str());
