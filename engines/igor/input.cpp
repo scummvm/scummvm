@@ -628,7 +628,13 @@ void IgorEngine::handleRoomInput() {
 	debugC(9, kDebugEngine, "handleRoomInput() actionCode %d", _actionCode);
 	if (_actionCode == 0) {
 		debugC(9, kDebugEngine, "handleRoomInput() actionCode is 0, clearing action");
+		// The Spanish floppy selects Look when the last clicked object is an inventory item, otherwise Walk.
+		const int lastObjectType = _currentAction.verbType == 0 ? _currentAction.object1Type : _currentAction.object2Type;
 		clearAction();
+		if (_game.version == kIdSpaFloppy && lastObjectType == kObjectTypeInventory) {
+			_currentAction.verb = kVerbLook;
+			redrawVerb(kVerbLook, true);
+		}
 		return;
 	}
 	formatActionSentence(1);
