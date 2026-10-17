@@ -3,7 +3,6 @@ MODULE := engines/scooby
 MODULE_OBJS = \
 	scooby.o \
 	console.o \
-	md/vdp.o \
 	assets/rom.o \
     compression/byte_rle_decoder.o \
     compression/ring_lz_decoder.o \
