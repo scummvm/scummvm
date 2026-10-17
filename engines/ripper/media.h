@@ -26,6 +26,8 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "ripper/media/playback_plan.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -56,9 +58,6 @@ public:
 
 	virtual ~MediaSequenceCallback() {}
 
-	// RunPacketizedMediaPlaybackCore at 0x5b592 invokes its branch setup
-	// callback with sequence ids starting at one for the first IAVF segment.
-	// Most sequence callbacks only need the per-segment frame counter.
 	virtual void beginIavfSegment(uint sequenceId) {}
 	virtual void beginIavfSegment(uint sequenceId, uint frameCount,
 		uint width, uint height) {
@@ -72,95 +71,6 @@ public:
 	virtual void transformPalette(byte *palette, uint colorCount) const {}
 };
 
-struct SmackerPlacementPolicy {
-	int x;
-	int y;
-	int originY;
-	uint displayScale;
-	Common::Rect centerBounds;
-
-	SmackerPlacementPolicy() : x(-1), y(-1), originY(0), displayScale(1),
-		centerBounds() {}
-};
-
-struct SmackerInputPolicy {
-	bool allowEscSpace;
-	bool serviceSceneUi;
-	bool *stoppedByUser;
-	bool *advanceSegment;
-
-	SmackerInputPolicy() : allowEscSpace(false), serviceSceneUi(false),
-		stoppedByUser(nullptr), advanceSegment(nullptr) {}
-};
-
-struct SmackerTimelinePolicy {
-	Audio::SoundHandle *externalAudio;
-	const Common::Array<uint32> *frameAudioOffsets;
-	uint32 audioByteRate;
-	uint32 timelineStartMillis;
-
-	SmackerTimelinePolicy() : externalAudio(nullptr), frameAudioOffsets(nullptr),
-		audioByteRate(0), timelineStartMillis(0) {}
-};
-
-struct SmackerPalettePolicy {
-	bool patchInterfacePalette;
-	bool patchWacMediaPalette;
-	bool preserveDisplayPalette;
-	Common::Array<byte> *sourcePalette;
-	bool rememberVideoPalette;
-
-	SmackerPalettePolicy() : patchInterfacePalette(true),
-		patchWacMediaPalette(false), preserveDisplayPalette(false), sourcePalette(nullptr),
-		rememberVideoPalette(true) {}
-};
-
-struct SmackerFramePolicy {
-	uint frameLimit;
-	uint firstFrame;
-	uint lastFrame;
-
-	SmackerFramePolicy() : frameLimit(0), firstFrame(0), lastFrame(0xffffffff) {}
-};
-
-struct SmackerLoopPolicy {
-	bool loopFromStart;
-	uint loopStartFrame;
-	uint boundedLoopStartFrame;
-
-	SmackerLoopPolicy() : loopFromStart(false), loopStartFrame(0),
-		boundedLoopStartFrame(0xffffffff) {}
-};
-
-struct SmackerCallbackPolicy {
-	MediaSequenceCallback *sequenceCallback;
-	uint16 *sequenceCommand;
-
-	SmackerCallbackPolicy() : sequenceCallback(nullptr), sequenceCommand(nullptr) {}
-};
-
-struct SmackerRenderingPolicy {
-	bool transparentFirstPixel;
-	bool retainFinalTransparentFrame;
-
-	SmackerRenderingPolicy() : transparentFirstPixel(false), retainFinalTransparentFrame(false) {}
-};
-
-struct SmackerPlaybackPlan {
-	SmackerPlacementPolicy placement;
-	SmackerInputPolicy input;
-	SmackerTimelinePolicy timeline;
-	SmackerPalettePolicy palette;
-	SmackerFramePolicy frames;
-	SmackerLoopPolicy loop;
-	SmackerCallbackPolicy callback;
-	SmackerRenderingPolicy rendering;
-	const char *retailRoute;
-
-	SmackerPlaybackPlan() : retailRoute("RunMediaSequence@0x1e516") {}
-};
-
-Common::String describeSmackerPlaybackPlan(const SmackerPlaybackPlan &plan);
 
 class MediaPlayer {
 public:

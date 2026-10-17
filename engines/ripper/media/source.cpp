@@ -23,12 +23,38 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/ptr.h"
+#include "common/stream.h"
 
 #include "ripper/detection.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
 
 namespace Ripper {
+
+MediaFormat detectMediaFormat(Common::SeekableReadStream &stream) {
+	const int64 originalPosition = stream.pos();
+	byte magic[8] = { 0 };
+	const uint32 bytesRead = stream.read(magic, sizeof(magic));
+	if (!stream.seek(originalPosition))
+		return kMediaFormatUnknown;
+	if (bytesRead >= 8 && memcmp(magic, "IAVF2.00", 8) == 0)
+		return kMediaFormatIavf;
+	if (bytesRead >= 4 &&
+			(memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0))
+		return kMediaFormatSmacker;
+	return kMediaFormatUnknown;
+}
+
+const char *mediaFormatName(MediaFormat format) {
+	switch (format) {
+	case kMediaFormatSmacker:
+		return "smacker";
+	case kMediaFormatIavf:
+		return "iavf";
+	default:
+		return "unknown";
+	}
+}
 
 Common::SeekableReadStream *MediaPlayer::openSource(const Common::String &path,
 		SourcePolicy policy, Common::String &source) const {

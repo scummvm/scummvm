@@ -22,8 +22,11 @@ MODULE_OBJS := \
 	inventory.o \
 	media/audio.o \
 	media/display.o \
+	media/iavf.o \
 	media/plan.o \
 	media/presentation_text.o \
+	media/routes.o \
+	media/smacker_decoder.o \
 	media/source.o \
 	media/video.o \
 	menu.o \
