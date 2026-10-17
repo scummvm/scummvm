@@ -774,14 +774,19 @@ void IgorEngine::partMain() {
 			// Clear the entire screen buffer before starting the intro cutscene
 			memset(_screenVGA, 0, 64000);
 			g_engine->_screen->updateScreen();
-			_screenVGAVOffset = 24;
-			// copy the initial portion of the screen to the display, with the vertical offset
-			_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, _screenVGAVOffset);
-			g_engine->_screen->updateScreen();
+			// The Spanish floppy draws the intro at the top of the screen, without the black band
+			const bool band = _game.version != kIdSpaFloppy;
+			if (band) {
+				_screenVGAVOffset = 24;
+				// copy the initial portion of the screen to the display, with the vertical offset
+				_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, _screenVGAVOffset);
+				g_engine->_screen->updateScreen();
+			}
 			part85();
 			// Clears the bottom portion of the screen
 			memset(_screenVGA + 46080, 0, 17920);
-			partMainMoveScreenUp(_screenVGAVOffset);
+			if (band)
+				partMainMoveScreenUp(_screenVGAVOffset);
 			_screenVGAVOffset = 0;
 			_inputVars[kInputCursorXPos] = 160;
 			_inputVars[kInputCursorYPos] = 72;

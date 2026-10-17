@@ -89,29 +89,33 @@ void IgorEngine::partCredits() {
 	loadData(page.imgId, _screenVGA);
 	loadData(page.palId, _paletteBuffer);
 	SET_PAL_240_48_1();
-	memset(_paletteBuffer + kCreditsNameColor * 3, 0x3F, 3);
+	// The Spanish floppy pictures already contain the credits text
+	const bool bakedText = _game.version == kIdSpaFloppy;
+	if (!bakedText) {
+		memset(_paletteBuffer + kCreditsNameColor * 3, 0x3F, 3);
 
-	const bool englishFloppy = _game.version == kIdEngFloppy;
-	const int pass = (_creditsPass == 0) ? 0 : 1;
-	const CreditsLayout &layout = englishFloppy ? page.floppy : page.cd[pass];
-	const int skip = !englishFloppy && pass == 1 ? page.cd[0].count : 0;
-	int size;
-	uint8 *texts = loadData(page.textId, nullptr, &size);
-	int offset = 0;
-	for (int i = 0; i < skip + layout.count; ++i) {
-		assert(offset < size);
-		const int length = texts[offset++];
-		assert(offset + length <= size);
-		if (i >= skip) {
-			const int line = i - skip;
-			const Common::String text(reinterpret_cast<const char *>(texts + offset), length);
-			const int y = layout.y + (line == 0 ? 0 : 28 + (line - 1) * 15);
-			const uint8 color = line == 0 ? 0xC2 : (englishFloppy ? 0xFF : kCreditsNameColor);
-			partCreditsDrawText(layout.x, y, color, line == 0, text.c_str());
+		const bool englishFloppy = _game.version == kIdEngFloppy;
+		const int pass = (_creditsPass == 0) ? 0 : 1;
+		const CreditsLayout &layout = englishFloppy ? page.floppy : page.cd[pass];
+		const int skip = !englishFloppy && pass == 1 ? page.cd[0].count : 0;
+		int size;
+		uint8 *texts = loadData(page.textId, nullptr, &size);
+		int offset = 0;
+		for (int i = 0; i < skip + layout.count; ++i) {
+			assert(offset < size);
+			const int length = texts[offset++];
+			assert(offset + length <= size);
+			if (i >= skip) {
+				const int line = i - skip;
+				const Common::String text(reinterpret_cast<const char *>(texts + offset), length);
+				const int y = layout.y + (line == 0 ? 0 : 28 + (line - 1) * 15);
+				const uint8 color = line == 0 ? 0xC2 : (englishFloppy ? 0xFF : kCreditsNameColor);
+				partCreditsDrawText(layout.x, y, color, line == 0, text.c_str());
+			}
+			offset += length;
 		}
-		offset += length;
+		free(texts);
 	}
-	free(texts);
 
 	if (_gameStateLoaded) {
 		fadeIn(768);
@@ -120,7 +124,7 @@ void IgorEngine::partCredits() {
 		part79FadeColors(0, 255, true);
 	}
 
-	const int pageTicks = _game.version == kIdEngFloppy ? 3928 : kCreditsPageTicks;
+	const int pageTicks = isFullFloppyVersion() ? 3928 : kCreditsPageTicks;
 	for (int ticks = 0; ticks < pageTicks; ticks += kTimerTicksCount) {
 		if (_inputVars[kInputOptions]) {
 			_inputVars[kInputOptions] = 0;
