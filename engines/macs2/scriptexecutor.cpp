@@ -666,14 +666,15 @@ void ScriptExecutor::step() {
 		}
 		}
 	}
-	// Rewind and reset to the scene script after we are done executing
+	// Rewind and reset to the scene script after we are done executing.
+	// End position 0 keeps g_wScriptIsExecuting false (pos < end) while Idle so
+	// prepareScriptStateForSave does not persist a fake mid-script state.
 	_scriptIsExecuting = false;
 	_executingObjectIndex = Scenes::instance()._currentSceneIndex;
 	setScript(Scenes::instance()._currentSceneScript);
-	if (_stream && _stream->size() > 0) {
+	if (_stream && _stream->size() > 0)
 		_stream->seek(0, SEEK_SET);
-		_scriptEndPosition = _stream->size();
-	}
+	_scriptEndPosition = 0;
 	_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	_state = ExecutorState::Idle;
 	g_engine->_scriptExecutor->_isRepeatRun = false;
@@ -1913,7 +1914,7 @@ void Script::ScriptExecutor::seedMotionState(GameObject *object, Character *c, u
 void Script::ScriptExecutor::saveOpenInventoryScriptContext() {
 	// scriptOpenInventory (1008:c3e6): g_wSavedScriptPosition / End / ExecutingObjectId.
 	_savedOpenInventoryScriptPos = _stream ? _stream->pos() : 0;
-	_savedOpenInventoryScriptEndPos = _stream ? _stream->size() : 0;
+	_savedOpenInventoryScriptEndPos = _scriptEndPosition ? _scriptEndPosition : (_stream ? (uint32)_stream->size() : 0);
 	_savedOpenInventoryExecutingObjectId = _executingScriptObjectId;
 	_secondaryInventoryLocation = _savedOpenInventoryScriptPos;
 }
@@ -1940,14 +1941,19 @@ void Script::ScriptExecutor::restoreOpenInventoryScriptContext() {
 		_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	}
 	if (_stream) {
-		_stream->seek(_savedOpenInventoryScriptPos, SEEK_SET);
+		_scriptEndPosition = _savedOpenInventoryScriptEndPos ? _savedOpenInventoryScriptEndPos : (uint32)_stream->size();
+		clampScriptEndToStream();
+		const uint32 seekPos = MIN(_savedOpenInventoryScriptPos, effectiveScriptEnd());
+		_stream->seek(seekPos, SEEK_SET);
 	}
-	_expectedEndLocation = _savedOpenInventoryScriptEndPos;
+	_expectedEndLocation = _savedOpenInventoryScriptPos;
 	_scriptClickFlag = _savedScriptClickFlag;
 	_scriptClickX = _savedScriptClickX;
 	_scriptClickY = _savedScriptClickY;
 	_scriptClickResult = _savedScriptClickResult;
-	_state = ExecutorState::Executing;
+	_scriptIsExecuting = true;
+	syncScriptIsExecutingFlag();
+	_state = ExecutorState::WaitingForCallback;
 }
 
 OpcodeResult Script::ScriptExecutor::scriptSetYOffset() {
@@ -2627,12 +2633,13 @@ OpcodeResult Script::ScriptExecutor::scriptDismissAllPanels() {
 }
 
 OpcodeResult Script::ScriptExecutor::scriptResetToSceneScript() {
-	// scriptResetToSceneScript (1008:ad3e). Resets script execution
-	// context back to the current scene script at position 0.
+	// scriptResetToSceneScript (1008:ad3e). Point the VM at the scene script at
+	// position 0 and keep executing. Do not switch _scriptExecutionState back to
+	// ExecutingSceneScript or rewrite _executingObjectIndex: during an object-walk
+	// that would make loadNextScript() restart from object 1 after the scene
+	// finishes, rematching the same interaction forever (#17335 pouch+cage).
 	debugC(kDebugScript, "SCRIPT::resetToSceneScript()");
 	_executingScriptObjectId = 0;
-	_executingObjectIndex = Scenes::instance()._currentSceneIndex;
-	_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	setCurrentSceneScriptAt(0);
 	_expectedEndLocation = 0;
 	return OpcodeResult::Continue;
@@ -4343,9 +4350,10 @@ void ScriptExecutor::releaseObjectStream() {
 void ScriptExecutor::setCurrentSceneScriptAt(uint32 offset) {
 	setScript(Scenes::instance()._currentSceneScript);
 	if (_stream) {
-		if (_scriptEndPosition == 0)
-			_scriptEndPosition = _stream->size();
-		clampScriptEndToStream();
+		// Always adopt the scene script's end. Leaving a previous object-script end
+		// in place truncates the scene (effectiveScriptEnd clamps to MIN) so opcode
+		// 0x37 barely runs the scene then returns to the object walk (#17335).
+		_scriptEndPosition = _stream->size();
 		const uint32 seekPos = MIN(offset, effectiveScriptEnd());
 		_stream->seek(seekPos, SEEK_SET);
 	}
@@ -4354,6 +4362,14 @@ void ScriptExecutor::setCurrentSceneScriptAt(uint32 offset) {
 void ScriptExecutor::prepareScriptStateForSave() {
 	if (!_stream)
 		return;
+
+	// Idle is never mid-script; keep end at 0 so we do not save g_wScriptIsExecuting=1
+	// from a bare pos < size check after step() rewound the scene stream to 0.
+	if (_state == ExecutorState::Idle) {
+		_scriptIsExecuting = false;
+		_scriptEndPosition = 0;
+		return;
+	}
 
 	Common::MemoryReadStream *sceneScript = Scenes::instance()._currentSceneScript;
 	const uint32 streamPos = (uint32)_stream->pos();
