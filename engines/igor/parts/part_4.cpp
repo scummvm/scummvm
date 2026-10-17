@@ -69,7 +69,7 @@ void IgorEngine::part4() {
 
 	if (_objectsState[kStatuetteTaken2StateIndex] == 1) { // police custcene
 		_currentPart = 730;
-		if (!isCDVersion())
+		if (!isCDVersion() && _game.version != kIdSpaFloppy)
 			playMusic(11, true);
 		return;
 	}
@@ -78,7 +78,7 @@ void IgorEngine::part4() {
 	if (_objectsState[kFlaskLeftInPhillipLockerStateIndex] == 1) {
 		_objectsState[kFlaskLeftInPhillipLockerStateIndex] = 0;
 		_currentPart = 750;
-		if (!isCDVersion())
+		if (!isCDVersion() && _game.version != kIdSpaFloppy)
 			playMusic(11, true);
 		return;
 	}

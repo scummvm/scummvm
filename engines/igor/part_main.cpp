@@ -844,17 +844,21 @@ void IgorEngine::partMain() {
 		if (_gameState.shouldShowCutsceneCounter != 5) {
 			++_gameState.shouldShowCutsceneCounter;
 		} else {
-			if (!isCDVersion()) {
-				if (_gameState.musicNum != 11) {
-					_previousMusic = _gameState.musicNum;
-					playMusic(11);
+			// The Spanish floppy leaves the music alone during the scene
+			const bool changeMusic = _game.version != kIdSpaFloppy;
+			if (changeMusic) {
+				if (!isCDVersion()) {
+					if (_gameState.musicNum != 11) {
+						_previousMusic = _gameState.musicNum;
+						playMusic(11);
+					}
+				} else {
+					playMusic(8);
 				}
-			} else {
-				playMusic(8);
 			}
 			partMainMeanwhile();
 			partMargaret();
-			if (!isCDVersion() && _previousMusic != 11)
+			if (changeMusic && !isCDVersion() && _previousMusic != 11)
 				playMusic(_previousMusic, true);
 			_gameState.shouldShowCutsceneCounter = 0;
 		}
