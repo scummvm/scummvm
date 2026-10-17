@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	database.o \
 	graphics.o \
 	made.o \
+	mpegplayer.o \
 	metaengine.o \
 	music.o \
 	pmvplayer.o \
@@ -15,7 +16,6 @@ MODULE_OBJS := \
 	script.o \
 	scriptfuncs.o \
 	sound.o
-
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MADE), DYNAMIC_PLUGIN)
