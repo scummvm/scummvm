@@ -2271,10 +2271,15 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 
 	clearSceneData();
 
+	// The streams of the outgoing scene end first, then the scene itself
+	_streams.onMainSceneChange();
+	if (_scriptScene) {
+		_scriptScene->end();
+	}
+
 	delete _scriptScene;
 	_scriptScene = scriptScene;
 
-	_streams.onMainSceneChange();
 	g_nancy->_graphics->suppressNextDraw();
 
 	debugC(0, kDebugScene, "Loading new scene %s, frame %i", sceneName.c_str(), _sceneState.nextScene.frameID);

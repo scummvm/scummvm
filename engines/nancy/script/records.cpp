@@ -979,6 +979,7 @@ void AnimOverlayRecord::run(double sceneTime, double elapsedTime) {
 	if (_numLoops != 0 && _numLoopsDone >= _numLoops) {
 		if (_pausesOnLastFrame) {
 			_isPaused = true;
+			callFunction("OnPause");
 		} else {
 			finish();
 		}
@@ -1483,15 +1484,24 @@ void MovieRecord::run(double sceneTime, double elapsedTime) {
 		drawFrame();
 	}
 
-	if (!_player.isRangePlaying() && !_pausesOnLastFrame) {
+	if (_player.isRangePlaying()) {
+		return;
+	}
+
+	if (!_pausesOnLastFrame) {
 		_endTime = sceneTime;
 		finish();
+	} else if (!_hasCalledOnPause) {
+		// Nancy20 scripts can be told once that the movie stopped on its last frame
+		_hasCalledOnPause = true;
+		callFunction("OnPause");
 	}
 }
 
 bool MovieRecord::prepareReset() {
 	_endTime = 0.0;
 	_isPaused = false;
+	_hasCalledOnPause = false;
 	_player.goToFrame(_firstFrame);
 	drawFrame();
 	return true;

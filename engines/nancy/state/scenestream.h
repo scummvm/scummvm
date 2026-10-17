@@ -94,6 +94,9 @@ public:
 	void end() { _isEnded = true; }
 	bool isEnded() const { return _isEnded; }
 
+	// Nancy20: lets the records of the scene know that it is being left
+	void endScene();
+
 	// Loads the scene the stream was asked to go to, without running it.
 	// Returns whether there was one, and it could be loaded.
 	bool loadNextScene();

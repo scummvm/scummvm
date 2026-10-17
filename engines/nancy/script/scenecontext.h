@@ -63,6 +63,10 @@ public:
 	// Tells the records that the game is about to be saved
 	void onSave();
 
+	// Tells the records that the scene is being left, while the game goes on.
+	// They use it to undo what they did to the rest of the game, the UI for one.
+	void end();
+
 	// Hands a message to the scene when it is the one it names, and to the
 	// records that go by that name otherwise, until one of them takes it.
 	// Returns false when the message is for neither.

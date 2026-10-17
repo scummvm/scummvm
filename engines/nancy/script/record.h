@@ -104,6 +104,9 @@ public:
 	// something across scenes store it
 	virtual void onSave() {}
 
+	// The scene of the record is being taken down
+	virtual void onDie() {}
+
 	// Whether messages sent to the given name are for this record
 	virtual bool hasMessagingName(const Common::String &name) { return false; }
 

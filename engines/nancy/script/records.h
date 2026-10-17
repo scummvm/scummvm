@@ -184,6 +184,7 @@ public:
 
 	void updateGraphics() override;
 	void onSave() override { callFunction("OnSave"); }
+	void onDie() override { callFunction("OnDie"); }
 	bool hasMessagingName(const Common::String &name) override;
 
 protected:
@@ -390,6 +391,7 @@ private:
 	int _firstFrame = 0;
 	int _lastFrame = 0;
 	bool _pausesOnLastFrame = false;
+	bool _hasCalledOnPause = false;
 	bool _isPaused = false;
 	bool _isVisible = true;
 	double _endTime = 0.0;

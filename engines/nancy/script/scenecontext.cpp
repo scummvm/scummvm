@@ -196,6 +196,12 @@ bool SceneContext::skipMovies() {
 	return true;
 }
 
+void SceneContext::end() {
+	for (Record *record : _records) {
+		record->onDie();
+	}
+}
+
 // A scene that has a function for it runs that in place of its records
 void SceneContext::onSave() {
 	if (callSceneFunction("OnSave", 0)) {

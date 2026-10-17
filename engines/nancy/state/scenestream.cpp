@@ -198,10 +198,7 @@ bool SceneStream::loadScriptedScene() {
 // Takes the stream from the scene it was running to the one it asked for
 void SceneStream::beginScene() {
 	// The streams that were started for the outgoing scene end with it
-	const bool hadScene = !_sceneName.empty();
-	clearScene();
-
-	if (hadScene) {
+	if (!_sceneName.empty()) {
 		for (uint i = 0; i < _children.size(); ) {
 			if (_children[i].lifetime == StreamFlags::kEndsWithParentScene) {
 				NancySceneState.getStreams().end(_children[i].name);
@@ -211,6 +208,9 @@ void SceneStream::beginScene() {
 			}
 		}
 	}
+
+	endScene();
+	clearScene();
 
 	_sceneName = _nextSceneName;
 	_sceneInfo.frameID = _nextFrameID;
@@ -287,6 +287,14 @@ bool SceneStream::loadScene() {
 	}
 
 	return true;
+}
+
+void SceneStream::endScene() {
+#ifdef ENABLE_NANCY_V4
+	if (_scriptScene) {
+		_scriptScene->end();
+	}
+#endif
 }
 
 void SceneStream::clearScene() {
@@ -448,6 +456,7 @@ void SceneStreamManager::process() {
 
 	for (uint i = 0; i < _streams.size(); ) {
 		if (_streams[i] && _streams[i]->isEnded()) {
+			_streams[i]->endScene();
 			delete _streams[i];
 			_streams.remove_at(i);
 		} else {
