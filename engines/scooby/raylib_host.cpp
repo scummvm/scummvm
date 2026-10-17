@@ -88,82 +88,71 @@ RaylibHost::~RaylibHost() {
 bool RaylibHost::shouldClose() const {
 	return g_engine->shouldQuit();
 }
-bool RaylibHost::isIntroSkipPressed() const {
-	Common::Event e;
-	while (g_system->getEventManager()->pollEvent(e)) {
-		if (e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-			return true;
-		}
-	}
-	return false;
+bool RaylibHost::isIntroSkipPressed() {
+	// Drain the queue through the shared key-state tracking so key releases seen during the intro still
+	// clear held buttons. Escape is the skip key here and is deliberately not mapped to a controller button.
+	return processEvents(ControllerButtons::None, false);
 }
 
 ControllerButtons RaylibHost::getControllerButtons(ControllerButtons backButton) {
+	processEvents(backButton, true);
+	return getGamepadButtons() | getKeyboardAndMouseButtons(_buttons);
+}
+
+ControllerButtons RaylibHost::keyToButton(Common::KeyCode keycode) {
+	switch (keycode) {
+	case Common::KEYCODE_UP:
+		return ControllerButtons::Up;
+	case Common::KEYCODE_DOWN:
+		return ControllerButtons::Down;
+	case Common::KEYCODE_LEFT:
+		return ControllerButtons::Left;
+	case Common::KEYCODE_RIGHT:
+		return ControllerButtons::Right;
+	case Common::KEYCODE_z:
+		return ControllerButtons::A;
+	case Common::KEYCODE_x:
+		return ControllerButtons::B;
+	case Common::KEYCODE_c:
+		return ControllerButtons::C;
+	case Common::KEYCODE_RETURN:
+		return ControllerButtons::Start;
+	default:
+		return ControllerButtons::None;
+	}
+}
+
+bool RaylibHost::processEvents(ControllerButtons backButton, bool mapEscapeToBackButton) {
+	bool escapePressed = false;
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
-		switch (e.type) {
-		case Common::EVENT_KEYDOWN : {
-			if (e.kbd.keycode == Common::KEYCODE_UP) {
-				_buttons |= ControllerButtons::Up;
-			}
-			if (e.kbd.keycode == Common::KEYCODE_DOWN) {
-				_buttons |= ControllerButtons::Down;
-			}
-			if (e.kbd.keycode == Common::KEYCODE_LEFT) {
-				_buttons |= ControllerButtons::Left;
-			}
-			if (e.kbd.keycode == Common::KEYCODE_RIGHT) {
-				_buttons |= ControllerButtons::Right;
-			}
-			if (e.kbd.keycode == Common::KEYCODE_z) {
-				_buttons |= ControllerButtons::A;
-			}
-			if (e.kbd.keycode == Common::KEYCODE_x) {
-				_buttons |= ControllerButtons::B;
-			}
-			if (e.kbd.keycode == Common::KEYCODE_c) {
-				_buttons |= ControllerButtons::C;
-			}
-			if (e.kbd.keycode == Common::KEYCODE_RETURN) {
-				_buttons |= ControllerButtons::Start;
-			}
+		if (e.type == Common::EVENT_KEYDOWN) {
 			if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				_buttons |= backButton;
+				if (e.kbdRepeat) {
+					continue;
+				}
+
+				escapePressed = true;
+				if (mapEscapeToBackButton) {
+					// Remember which button this press set, so its release clears the same button even if
+					// the back-button mapping changes in between (the sound test switches it to C).
+					_escapeButton = backButton;
+					_buttons |= backButton;
+				}
+			} else {
+				_buttons |= keyToButton(e.kbd.keycode);
 			}
-			break;
-		}
-		case Common::EVENT_KEYUP : {
-			if (e.kbd.keycode == Common::KEYCODE_UP) {
-				_buttons &= buttonMask(ControllerButtons::Up);
-			}
-			if (e.kbd.keycode == Common::KEYCODE_DOWN) {
-				_buttons &= buttonMask(ControllerButtons::Down);
-			}
-			if (e.kbd.keycode == Common::KEYCODE_LEFT) {
-				_buttons &= buttonMask(ControllerButtons::Left);
-			}
-			if (e.kbd.keycode == Common::KEYCODE_RIGHT) {
-				_buttons &= buttonMask(ControllerButtons::Right);
-			}
-			if (e.kbd.keycode == Common::KEYCODE_z) {
-				_buttons &= buttonMask(ControllerButtons::A);
-			}
-			if (e.kbd.keycode == Common::KEYCODE_x) {
-				_buttons &= buttonMask(ControllerButtons::B);
-			}
-			if (e.kbd.keycode == Common::KEYCODE_c) {
-				_buttons &= buttonMask(ControllerButtons::C);
-			}
-			if (e.kbd.keycode == Common::KEYCODE_RETURN) {
-				_buttons &= buttonMask(ControllerButtons::Start);
-			}
+		} else if (e.type == Common::EVENT_KEYUP) {
 			if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				_buttons &= buttonMask(backButton);
+				_buttons &= buttonMask(_escapeButton);
+				_escapeButton = ControllerButtons::None;
+			} else {
+				_buttons &= buttonMask(keyToButton(e.kbd.keycode));
 			}
-		}
 		}
 	}
-	return getGamepadButtons() | getKeyboardAndMouseButtons(_buttons);
+
+	return escapePressed;
 }
 
 ControllerButtons RaylibHost::getKeyboardAndMouseButtons(ControllerButtons backButton) {

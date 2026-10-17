@@ -9,7 +9,7 @@ Scooby-Doo Mystery Todo List
   - [ ] Ha Ha carnival
 - [ ] Mouse only control scheme
 - [ ] Add Music and Sfx support
-- [ ] BUG: Characters don't start talking automatically in intro van scene
+- [x] BUG: Characters don't start talking automatically in intro van scene
 - [x] BUG: End credits not scrolling properly
 - [ ] refactor code to make it more understandable
   - [ ] Move ApplicationLoop logic into main Scooby engine class

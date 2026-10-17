@@ -22,6 +22,7 @@
 #ifndef SCOOBY_RAYLIB_HOST_H
 #define SCOOBY_RAYLIB_HOST_H
 
+#include "common/keyboard.h"
 #include "common/ptr.h"
 
 #include "common/array.h"
@@ -58,7 +59,9 @@ public:
 
 	// Consumes one Escape press used to skip exactly one current intro
 	// presentation. True only on the key-down edge reported by raylib.
-	bool isIntroSkipPressed() const;
+	// Every queued event is consumed through the same key-state tracking as getControllerButtons, so key
+	// releases that arrive during the intro are not lost (a lost release would leave that button held).
+	bool isIntroSkipPressed();
 
 	// Samples the backend-neutral player controls from keyboard, mouse
 	// buttons, and gamepad zero.
@@ -74,6 +77,11 @@ private:
 	// the window or texture could not be created.
 	bool init();
 
+	// Drains all pending host events, applying key presses and releases to _buttons. Escape sets
+	// backButton only when mapEscapeToBackButton is true. Returns whether an Escape press was seen.
+	bool processEvents(Scooby::ControllerButtons backButton, bool mapEscapeToBackButton);
+
+	static Scooby::ControllerButtons keyToButton(Common::KeyCode keycode);
 	static Scooby::ControllerButtons getKeyboardAndMouseButtons(Scooby::ControllerButtons backButton);
 	static Scooby::ControllerButtons getGamepadButtons();
 	static uint8 expandLevel(uint8 level);
@@ -83,6 +91,8 @@ private:
 	bool _textureValid;
 	bool _windowOpen;
 	ControllerButtons _buttons = ControllerButtons::None;
+	// The controller button the currently held Escape key is mapped to, or None.
+	ControllerButtons _escapeButton = ControllerButtons::None;
 };
 } // namespace Scooby
 
