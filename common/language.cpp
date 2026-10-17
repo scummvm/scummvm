@@ -90,6 +90,7 @@ const LanguageDescription g_languages[] = {
 	{ "es", "es_ES", "Spanish", ES_ESP },
 	{ "eu", "eu_ES", "Basque", EU_ESP },
 	{ "sv", "sv_SE", "Swedish", SV_SWE },
+	{ "th", "th_TH", "Thai", TH_THA },
 	{ "tr", "tr_TR", "Turkish", TR_TUR },
 	{ "uk", "uk_UA", "Ukrainian", UA_UKR },
 	{ nullptr, nullptr, nullptr, UNK_LANG }
