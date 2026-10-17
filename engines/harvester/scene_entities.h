@@ -61,6 +61,8 @@ private:
 	bool isInteractiveSceneHotspot(const ObjectRecord &object) const;
 	EntityClass resolveSceneObjectClassLocal(const ObjectRecord &object, const Entity *entity) const;
 	static Common::Rect getSceneRegionBounds(const RegionRecord &region);
+	Entity *createSceneRegionEntity(const RegionRecord &region,
+		const Common::Rect &bounds, const Common::String &diagnosticRoomName);
 	static bool applyRoomNpcPlacement(Entity &entity, const NpcRecord &npc);
 	static void configureRoomNpcAnimation(Entity &entity, const NpcRecord &npc, bool preservedCorpse);
 	Entity *createSceneMonsterEntity(const MonsterRecord &monster);

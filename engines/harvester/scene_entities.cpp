@@ -545,18 +545,12 @@ Common::Rect SceneEntities::getSceneRegionBounds(const RegionRecord &region) {
 	return Common::Rect();
 }
 
-void SceneEntities::spawnSceneRegionEntityFromRecord(const RegionRecord &region) {
-	if (!_entityManager)
-		return;
-
-	const Common::Rect bounds = getSceneRegionBounds(region);
-	if (bounds.isEmpty())
-		return;
-
+Entity *SceneEntities::createSceneRegionEntity(const RegionRecord &region,
+		const Common::Rect &bounds, const Common::String &diagnosticRoomName) {
 	Entity *entity = _entityManager->spawnSceneHotspotEntity(
 		region.regionName, bounds, (float)region.minZ);
 	if (!entity)
-		return;
+		return nullptr;
 
 	entity->setClassId(kEntityClassRectHotspot19);
 	entity->setAnchorMode(kEntityAnchorTopLeft);
@@ -565,9 +559,21 @@ void SceneEntities::spawnSceneRegionEntityFromRecord(const RegionRecord &region)
 		entity->setHitTestMode(kEntityHitTestNone);
 	debugC(1, kDebugRoom,
 		"Harvester: scene region spawned room='%s' region='%s' class=0x%x bounds=(%d,%d)-(%d,%d) z=[%d,%d] facing=%d cursor=%d action='%s'",
-		region.roomName.c_str(), region.regionName.c_str(), entity->getClassId(),
+		diagnosticRoomName.c_str(), region.regionName.c_str(), entity->getClassId(),
 		bounds.left, bounds.top, bounds.right, bounds.bottom,
 		region.minZ, region.maxZ, region.desiredFacing, region.cursorEnabled, region.actionTag.c_str());
+	return entity;
+}
+
+void SceneEntities::spawnSceneRegionEntityFromRecord(const RegionRecord &region) {
+	if (!_entityManager)
+		return;
+
+	const Common::Rect bounds = getSceneRegionBounds(region);
+	if (bounds.isEmpty())
+		return;
+
+	(void)createSceneRegionEntity(region, bounds, region.roomName);
 }
 
 bool SceneEntities::shouldSpawnRoomNpcEntity(const NpcRecord &npc) {
@@ -686,9 +692,7 @@ void SceneEntities::populateRoomRegions() {
 		if (regionBounds.isEmpty())
 			continue;
 
-		Entity *entity = _entityManager->spawnSceneHotspotEntity(
-			region.regionName, regionBounds, (float)region.minZ);
-		if (!entity) {
+		if (!createSceneRegionEntity(region, regionBounds, _state.roomName)) {
 			debugC(1, kDebugRoom,
 				"Harvester: scene region skipped room='%s' region='%s' bounds=(%d,%d)-(%d,%d) z=[%d,%d]",
 				_state.roomName.c_str(), region.regionName.c_str(),
@@ -696,17 +700,6 @@ void SceneEntities::populateRoomRegions() {
 				region.minZ, region.maxZ);
 			continue;
 		}
-
-		entity->setClassId(kEntityClassRectHotspot19);
-		entity->setAnchorMode(kEntityAnchorTopLeft);
-		entity->setZExtent((float)MAX(0, region.maxZ - region.minZ));
-		if (!region.cursorEnabled)
-			entity->setHitTestMode(kEntityHitTestNone);
-		debugC(1, kDebugRoom,
-			"Harvester: scene region spawned room='%s' region='%s' class=0x%x bounds=(%d,%d)-(%d,%d) z=[%d,%d] facing=%d cursor=%d action='%s'",
-			_state.roomName.c_str(), region.regionName.c_str(), entity->getClassId(),
-			regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
-			region.minZ, region.maxZ, region.desiredFacing, region.cursorEnabled, region.actionTag.c_str());
 	}
 }
 
