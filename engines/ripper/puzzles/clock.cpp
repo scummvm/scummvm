@@ -25,6 +25,7 @@
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
+#include "ripper/puzzles/state.h"
 #include "ripper/ripper.h"
 #include "ripper/settings.h"
 #include "ripper/toolbar.h"
@@ -53,8 +54,6 @@ static const uint16 kExitCommand = 0x1b;
 static const uint16 kHelpCommand = 0x3b00;
 static const uint kHelpSelectionTable = 0x1a2;
 
-// g_clockPuzzleUiControlRecords at 0x846a6 stores these seven
-// x/y/width/height/control-id records. Y is relative to the scene viewport.
 static const ClockControlLayout kControls[] = {
 	{290, 82, 94, 91, 0x672},
 	{490, 236, 18, 18, 0x673},
@@ -65,8 +64,6 @@ static const ClockControlLayout kControls[] = {
 	{144, 246, 35, 30, 0x678}
 };
 
-// g_clockPuzzleOverlayFrameTable at 0x8463a. Entries 0..11 anchor the
-// two analog hands; entries 12..17 anchor Egyptian digits and markers.
 static const Common::Point kDialPositions[kDialCount] = {
 	Common::Point(330, 91), Common::Point(331, 97),
 	Common::Point(330, 110), Common::Point(331, 123),
@@ -93,13 +90,13 @@ static const int kTargetFirstClock[4] = {1, 4, 3, 5};
 static const int kTargetSecondClock[4] = {0, 9, 3, 5};
 static const bool kTargetHalfDay = true;
 
-static RipperEngine *sClockStateOwner = nullptr;
-static int sDialIndices[2] = {0, 0};
-static int sFirstClockDigits[4] = {0, 0, 0, 0};
-static int sSecondClockDigits[4] = {0, 0, 0, 0};
-static bool sHalfDay = false;
-
 } // End of anonymous namespace
+
+ClockPuzzleState::ClockPuzzleState() : halfDay(false) {
+	memset(dialIndices, 0, sizeof(dialIndices));
+	memset(firstClockDigits, 0, sizeof(firstClockDigits));
+	memset(secondClockDigits, 0, sizeof(secondClockDigits));
+}
 
 ClockPuzzle::ClockPuzzle(RipperEngine *engine) : Puzzle(engine),
 		_hoveredControl(-1), _dragDial(-1), _lastDragIndex(-1),
@@ -152,9 +149,6 @@ bool ClockPuzzle::loadAssets() {
 
 	const Common::String maskName = SearchMan.hasFile(Common::Path("clock_tmp.mcg")) ?
 		"clock_tmp.mcg" : "clock_tm.mcg";
-	// RunClockPuzzleScene at 0x374c5 loads CLOCK_TMP.MCG through
-	// DecodeCustomBitmapAsset at 0x53fdf. It is one compressed 640x300 bitmap,
-	// not a bitmap-set container like the numbered hand and digit resources.
 	if (!_engine->getResources()->loadBitmap(maskName, _dialHitMask) ||
 			_dialHitMask.width != 640 ||
 			_dialHitMask.height != 300) {
@@ -380,24 +374,19 @@ bool ClockPuzzle::isSolved() const {
 }
 
 void ClockPuzzle::loadPersistentState() {
-	if (sClockStateOwner != _engine) {
-		sClockStateOwner = _engine;
-		memset(sDialIndices, 0, sizeof(sDialIndices));
-		memset(sFirstClockDigits, 0, sizeof(sFirstClockDigits));
-		memset(sSecondClockDigits, 0, sizeof(sSecondClockDigits));
-		sHalfDay = false;
-	}
-	memcpy(_dialIndices, sDialIndices, sizeof(_dialIndices));
-	memcpy(_firstClockDigits, sFirstClockDigits, sizeof(_firstClockDigits));
-	memcpy(_secondClockDigits, sSecondClockDigits, sizeof(_secondClockDigits));
-	_halfDay = sHalfDay;
+	const ClockPuzzleState &state = _engine->getPuzzleState()->clock;
+	memcpy(_dialIndices, state.dialIndices, sizeof(_dialIndices));
+	memcpy(_firstClockDigits, state.firstClockDigits, sizeof(_firstClockDigits));
+	memcpy(_secondClockDigits, state.secondClockDigits, sizeof(_secondClockDigits));
+	_halfDay = state.halfDay;
 }
 
 void ClockPuzzle::storePersistentState() const {
-	memcpy(sDialIndices, _dialIndices, sizeof(_dialIndices));
-	memcpy(sFirstClockDigits, _firstClockDigits, sizeof(_firstClockDigits));
-	memcpy(sSecondClockDigits, _secondClockDigits, sizeof(_secondClockDigits));
-	sHalfDay = _halfDay;
+	ClockPuzzleState &state = _engine->getPuzzleState()->clock;
+	memcpy(state.dialIndices, _dialIndices, sizeof(_dialIndices));
+	memcpy(state.firstClockDigits, _firstClockDigits, sizeof(_firstClockDigits));
+	memcpy(state.secondClockDigits, _secondClockDigits, sizeof(_secondClockDigits));
+	state.halfDay = _halfDay;
 }
 
 ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {

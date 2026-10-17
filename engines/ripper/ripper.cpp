@@ -40,6 +40,7 @@
 #include "ripper/menu.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
+#include "ripper/puzzles/state.h"
 #include "ripper/resources.h"
 #include "ripper/scene_audio.h"
 #include "ripper/script.h"
@@ -61,6 +62,7 @@ static const char kRiperBatFarewell[] = "Thank you for playing  R I P E R !\n";
 
 RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescription) :
 		Engine(system), _gameDescription(gameDescription), _randomSource("ripper"),
+		_puzzleState(new PuzzleState()),
 		_cursor(new CursorManager()),
 		_cyber(new CyberManager(this)), _input(new InputManager(_eventMan)),
 		_inventory(new Inventory(this)),

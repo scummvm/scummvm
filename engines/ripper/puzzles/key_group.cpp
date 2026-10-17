@@ -32,6 +32,7 @@
 #include "ripper/input.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
+#include "ripper/puzzles/state.h"
 #include "ripper/ripper.h"
 #include "ripper/settings.h"
 #include "ripper/toolbar.h"
@@ -59,16 +60,11 @@ static const uint16 kPreviousPageCommand = 0x4b00;
 static const uint16 kNextPageCommand = 0x4d00;
 static const char kCompletionKeyword[] = "sponge";
 
-// RunKeyGroupPuzzleScene at 0x3ca1f reads these source-control Y values
-// from g_keyGroupPuzzleSourcePieceControlY at 0x84c9a. The controls use
-// the puzzle's fixed physical X coordinate of 14.
 static const int kSourceY[kSourceSlotCount] = {
 	37, 54, 71, 88, 105, 122, 139, 156, 172, 189,
 	206, 223, 240, 256, 273, 289, 306, 323, 339, 355
 };
 
-// g_keyGroupPuzzleTargetPieceControlY at 0x84cc2 supplies these physical
-// Y values. The corresponding fixed X coordinate is 330.
 static const int kTargetY[kTargetSlotCount] = {
 	44, 65, 87, 108, 129, 150, 171,
 	192, 213, 233, 254, 275, 296, 317
@@ -78,11 +74,14 @@ static const int kSolvedTargetPieces[kTargetSlotCount] = {
 	0, 4, 10, 15, 1, 13, 16, 5, 9, 7, 18, 19, 14, 11
 };
 
-static RipperEngine *sStateOwner = nullptr;
-static int sSourceSlots[kSourceSlotCount];
-static int sTargetSlots[kTargetSlotCount];
-
 } // End of anonymous namespace
+
+KeyGroupPuzzleState::KeyGroupPuzzleState() {
+	for (uint index = 0; index < kSourceSlotCount; ++index)
+		sourceSlots[index] = index;
+	for (uint index = 0; index < kTargetSlotCount; ++index)
+		targetSlots[index] = -1;
+}
 
 KeyGroupPuzzle::KeyGroupPuzzle(RipperEngine *engine) :
 		Puzzle(engine), _maxPieceWidth(0), _maxPieceHeight(0),
@@ -150,24 +149,19 @@ bool KeyGroupPuzzle::loadAssets() {
 }
 
 void KeyGroupPuzzle::loadPersistentState() {
-	if (sStateOwner != _engine) {
-		sStateOwner = _engine;
-		for (uint index = 0; index < kSourceSlotCount; ++index)
-			sSourceSlots[index] = index;
-		for (uint index = 0; index < kTargetSlotCount; ++index)
-			sTargetSlots[index] = -1;
-	}
+	const KeyGroupPuzzleState &state = _engine->getPuzzleState()->keyGroup;
 	for (uint index = 0; index < kSourceSlotCount; ++index)
-		_sourceSlots[index] = sSourceSlots[index];
+		_sourceSlots[index] = state.sourceSlots[index];
 	for (uint index = 0; index < kTargetSlotCount; ++index)
-		_targetSlots[index] = sTargetSlots[index];
+		_targetSlots[index] = state.targetSlots[index];
 }
 
 void KeyGroupPuzzle::storePersistentState() const {
+	KeyGroupPuzzleState &state = _engine->getPuzzleState()->keyGroup;
 	for (uint index = 0; index < kSourceSlotCount; ++index)
-		sSourceSlots[index] = _sourceSlots[index];
+		state.sourceSlots[index] = _sourceSlots[index];
 	for (uint index = 0; index < kTargetSlotCount; ++index)
-		sTargetSlots[index] = _targetSlots[index];
+		state.targetSlots[index] = _targetSlots[index];
 }
 
 void KeyGroupPuzzle::applyPalette() const {

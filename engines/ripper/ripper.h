@@ -39,6 +39,7 @@ class MediaPlayer;
 class MilestoneOverlay;
 class Milestones;
 class ModalDialogManager;
+struct PuzzleState;
 class ResourceManager;
 class SceneAudioManager;
 class ScriptManager;
@@ -70,6 +71,7 @@ public:
 	MilestoneOverlay *getMilestoneOverlay() const { return _milestoneOverlay.get(); }
 	Milestones *getMilestones() const { return _milestones.get(); }
 	ModalDialogManager *getModalDialog() const { return _modalDialog.get(); }
+	PuzzleState *getPuzzleState() const { return _puzzleState.get(); }
 	ResourceManager *getResources() const { return _resources.get(); }
 	SceneAudioManager *getSceneAudio() const { return _sceneAudio.get(); }
 	ScriptManager *getScripts() const { return _scripts.get(); }
@@ -93,6 +95,7 @@ private:
 
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;
+	Common::ScopedPtr<PuzzleState> _puzzleState;
 	Common::ScopedPtr<CursorManager> _cursor;
 	Common::ScopedPtr<CyberManager> _cyber;
 	Common::ScopedPtr<InputManager> _input;

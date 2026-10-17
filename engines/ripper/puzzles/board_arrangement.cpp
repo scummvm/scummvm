@@ -30,6 +30,7 @@
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
+#include "ripper/puzzles/state.h"
 #include "ripper/ripper.h"
 #include "ripper/toolbar.h"
 
@@ -81,10 +82,12 @@ static const Common::Point kInitialPositions[kPieceCount] = {
 
 static const uint kValidationOrder[5] = {1, 0, 3, 6, 2};
 
-static RipperEngine *sBoardStateOwner = nullptr;
-static Common::Point sBoardPositions[kPieceCount];
-
 } // End of anonymous namespace
+
+BoardArrangementPuzzleState::BoardArrangementPuzzleState() {
+	for (uint piece = 0; piece < kPieceCount; ++piece)
+		positions[piece] = kInitialPositions[piece];
+}
 
 BoardArrangementPuzzle::BoardArrangementPuzzle(RipperEngine *engine) :
 		Puzzle(engine), _draggedPiece(-1), _hoveredPiece(-1) {
@@ -156,18 +159,15 @@ bool BoardArrangementPuzzle::loadAssets() {
 }
 
 void BoardArrangementPuzzle::loadPersistentState() {
-	if (sBoardStateOwner != _engine) {
-		sBoardStateOwner = _engine;
-		for (uint piece = 0; piece < kPieceCount; ++piece)
-			sBoardPositions[piece] = kInitialPositions[piece];
-	}
+	const BoardArrangementPuzzleState &state = _engine->getPuzzleState()->boardArrangement;
 	for (uint piece = 0; piece < kPieceCount; ++piece)
-		_positions[piece] = sBoardPositions[piece];
+		_positions[piece] = state.positions[piece];
 }
 
 void BoardArrangementPuzzle::storePersistentState() const {
+	BoardArrangementPuzzleState &state = _engine->getPuzzleState()->boardArrangement;
 	for (uint piece = 0; piece < kPieceCount; ++piece)
-		sBoardPositions[piece] = _positions[piece];
+		state.positions[piece] = _positions[piece];
 }
 
 void BoardArrangementPuzzle::drawFrame(byte *screen, uint pitch,
