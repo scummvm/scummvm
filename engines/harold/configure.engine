@@ -1,0 +1,4 @@
+# This file is included from the main "configure" script
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
+add_engine harold "J.B. Harold series" no "bcb"
+add_engine bcb "J.B. Harold: Blue Chicago Blues" no "" "" "highres 16bit" "msmpeg4"
