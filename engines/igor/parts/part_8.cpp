@@ -176,6 +176,7 @@ void IgorEngine::part8DeanCallsSecretary() {
 	free(roomScreen);
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
+	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	fadeIn(768);
 	_currentPart = currentPart;
@@ -245,7 +246,7 @@ void IgorEngine::part8HandleIntercomDialogue() {
 	_roomDataOffsets.dlg = { -174, 2, 257, 0, 30, 0, 459, 459, 0 };
 	loadDialogueData(DLG_Part8Intercom);
 	_updateDialogue = 0;
-	handleDialogue(0, 0, 0, 0, 0);
+	handleDialogue(0, 0, 0, 0, 0, false);
 	_roomDataOffsets = savedOffsets;
 }
 
