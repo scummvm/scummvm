@@ -40,7 +40,10 @@ void IgorEngine::part6UpdateBackground() {
 		setPaletteRange(185, 191);
 	}
 	if (compareGameTick(1)) {
-		if (getRandomNumber(14) == 0) {
+		if (_game.version == kIdSpaFloppy) {
+			if (getRandomNumber(19) == 0)
+				playSound(kSpaFloppySoundPart6Ambient, 1);
+		} else if (getRandomNumber(14) == 0) {
 			switch (getRandomNumber(3)) {
 			case 0:
 				playSound(21, 1);

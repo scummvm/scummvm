@@ -146,16 +146,23 @@ void IgorEngine::part68UpdateOwlsEyes() {
 	}
 }
 
+void IgorEngine::part68PlayAmbientSound() {
+	if (_game.version == kIdSpaFloppy)
+		playSound(getRandomNumber(1) == 0 ? kSpaFloppySoundPart68AmbientA : kSpaFloppySoundPart68AmbientB, 1);
+	else
+		playSound(41, 1);
+}
+
 void IgorEngine::part68UpdateBackgroundTalk() {
 	if (compareGameTick(1) && getRandomNumber(49) == 0) {
-		playSound(41, 1);
+		part68PlayAmbientSound();
 	}
 	part68UpdateOwlsEyes();
 }
 
 void IgorEngine::part68UpdateBackground() {
 	if (compareGameTick(1) && getRandomNumber(49) == 0) {
-		playSound(41, 1);
+		part68PlayAmbientSound();
 	}
 	if (compareGameTick(0x3D) && _part68NpcPresent) {
 		part68DrawUndertaker(getRandomNumber(2));

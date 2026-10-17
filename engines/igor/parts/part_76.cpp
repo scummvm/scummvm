@@ -295,6 +295,8 @@ void IgorEngine::part76() {
 	setRoomClickFix(119, 153, 295, true, 119);
 	partMainSetExecuteAction(1, &IgorEngine::part76ExecuteAction);
 	part76ApplyObjectState();
+	if (_game.version == kIdSpaFloppy)
+		playSound(kSpaFloppySoundPlaneEngine, 1);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
 	if (!restoreRoomAfterLoad()) {

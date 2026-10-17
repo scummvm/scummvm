@@ -435,7 +435,7 @@ void IgorEngine::part14ShowPuzzle() {
 			if (area >= 1 && area <= 8) {
 				drawActionSentence(getString(STR_PushStone), 251);
 				hideCursor();
-				playSound(34, 1);
+				playRoomSound(34, 0);
 				switch (area) {
 				case 1:
 					part14PushStone(33359, 28, 34, 0);

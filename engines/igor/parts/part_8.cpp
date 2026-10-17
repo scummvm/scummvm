@@ -338,12 +338,12 @@ void IgorEngine::part8ExecuteAction(int action) {
 					// Only the shards fall with a pause and a sound
 					if (!bottleCaught) {
 						waitForTimer(100);
-						playSound(16, 1);
+						playRoomSound(kSoundPart8Shards, kSpaFloppySoundPart8Shards);
 					}
 				} else {
 					waitForTimer(101);
 					if (!bottleCaught)
-						playSound(16, 1);
+						playRoomSound(kSoundPart8Shards, kSpaFloppySoundPart8Shards);
 				}
 				if (pendingDeanDrink == kPart08PendingDeanDrinkWater) {
 					part8DeanPassesOut();

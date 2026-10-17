@@ -457,7 +457,7 @@ void IgorEngine::part79BeachScene() {
 			waitForTimer(31);
 		}
 		if (frame == 0x59) {
-			playSound(48, 1);
+			playRoomSound(48, 0);
 		}
 	}
 

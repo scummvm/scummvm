@@ -268,21 +268,23 @@ void IgorEngine::part5UpdateBackground() {
 		scrollPalette(185, 191);
 		setPaletteRange(185, 191);
 	}
-	if (compareGameTick(1)) {
-		if (getRandomNumber(14) == 0) {
-			switch (getRandomNumber(3)) {
-			case 0:
-				playSound(21, 1);
-				break;
-			case 1:
-				playSound(22, 1);
-				break;
-			case 2:
-				playSound(23, 1);
-				break;
-			case 3:
-				playSound(18, 1);
-				break;
+	if (_game.version != kIdSpaFloppy) {
+		if (compareGameTick(1)) {
+			if (getRandomNumber(14) == 0) {
+				switch (getRandomNumber(3)) {
+				case 0:
+					playSound(21, 1);
+					break;
+				case 1:
+					playSound(22, 1);
+					break;
+				case 2:
+					playSound(23, 1);
+					break;
+				case 3:
+					playSound(18, 1);
+					break;
+				}
 			}
 		}
 	}

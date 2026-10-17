@@ -76,6 +76,8 @@ void IgorEngine::part50EnterFromDoor() {
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
+	if (_game.version == kIdSpaFloppy)
+		playSound(kSpaFloppySoundPart50Door, 1);
 }
 
 void IgorEngine::part50EnterFromHill() {
@@ -103,7 +105,7 @@ void IgorEngine::part50EnterFromHill() {
  */
 void IgorEngine::part50UpdateBackground() {
 	if (compareGameTick(0x3D) && getRandomNumber(49) == 0) {
-		playSound(44, 1);
+		playRoomSound(kSoundPart50Ambient, kSpaFloppySoundPart50Door);
 	}
 }
 

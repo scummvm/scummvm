@@ -110,7 +110,7 @@ void IgorEngine::part12TryEnterChurch() {
 	moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
 	waitForTimer(35);
 	// dor opening
-	playSound(13, 1);
+	playRoomSound(13, 0);
 	_walkDataCurrentIndex = _walkDataLastIndex;
 	const uint8 *src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA444) - 1;
 	decodeAnimFrame(src, _screenVGA);
@@ -147,7 +147,7 @@ void IgorEngine::part12TryEnterChurch() {
 		if (i > 1) {
 			waitForTimer(35);
 		} else {
-			playSound(14, 1);
+			playRoomSound(14, 0);
 		}
 	}
 	src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA440) - 1;
@@ -285,19 +285,33 @@ void IgorEngine::part12EnterChurch() {
 
 void IgorEngine::part12UpdateBackground() {
 	if (compareGameTick(1) && getRandomNumber(14) == 0) {
-		switch (getRandomNumber(3)) {
-		case 0:
-			playSound(21, 1);
-			break;
-		case 1:
-			playSound(22, 1);
-			break;
-		case 2:
-			playSound(23, 1);
-			break;
-		case 3:
-			playSound(18, 1);
-			break;
+		if (_game.version == kIdSpaFloppy) {
+			switch (getRandomNumber(2)) {
+			case 0:
+				playSound(21, 1);
+				break;
+			case 1:
+				playSound(kSpaFloppySoundParkAmbient, 1);
+				break;
+			case 2:
+				playSound(23, 1);
+				break;
+			}
+		} else {
+			switch (getRandomNumber(3)) {
+			case 0:
+				playSound(21, 1);
+				break;
+			case 1:
+				playSound(22, 1);
+				break;
+			case 2:
+				playSound(23, 1);
+				break;
+			case 3:
+				playSound(18, 1);
+				break;
+			}
 		}
 	}
 }
@@ -376,7 +390,7 @@ void IgorEngine::part12ExorcismCutscene() {
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
 	fadeIn(768);
-	playSound(13, 1);
+	playRoomSound(13, 0);
 	for (int i = 1; i <= 5; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA43E + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA, true);
