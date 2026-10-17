@@ -217,8 +217,7 @@ void SceneStream::beginScene() {
 
 	// Numbered scenes are named after their number
 	_sceneInfo.sceneID = kNoSceneID;
-	if (_sceneName.size() > 1 && tolower(_sceneName[0]) == 's' && Common::isDigit(_sceneName[1])) {
-		_sceneInfo.sceneID = atoi(_sceneName.c_str() + 1);
+	if (parseSceneName(_sceneName, _sceneInfo.sceneID)) {
 		NancySceneState.addSceneVisit(_sceneInfo.sceneID);
 	}
 
@@ -402,6 +401,14 @@ void SceneStreamManager::changeScene(const Common::String &name, const Common::S
 	SceneStream *stream = name.empty() ? _running : find(name);
 	if (stream) {
 		stream->changeScene(sceneName, frameID);
+#ifdef ENABLE_NANCY_V4
+	} else if (name.empty() || name.equalsIgnoreCase(kMainStreamName)) {
+		// Nancy20 has scenes of the main stream that go by name
+		SceneStream *running = _running;
+		_running = nullptr;
+		NancySceneState.changeScene(sceneName, frameID);
+		_running = running;
+#endif
 	} else {
 		warning("Tried to change the scene of stream %s, which is not running", name.c_str());
 	}
@@ -409,7 +416,7 @@ void SceneStreamManager::changeScene(const Common::String &name, const Common::S
 
 Common::String SceneStreamManager::getSceneName(const Common::String &name) const {
 	if (name.equalsIgnoreCase(kMainStreamName)) {
-		return Common::String::format("s%u", NancySceneState.getMainSceneInfo().sceneID);
+		return NancySceneState.getMainSceneName();
 	}
 
 	const SceneStream *stream = name.empty() ? _running : find(name);

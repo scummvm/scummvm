@@ -302,6 +302,10 @@ public:
 
 	SceneChangeDescription &getSceneInfo() { return _streams.getRunning() ? _streams.getRunning()->getSceneInfo() : _sceneState.currentScene; }
 	const SceneChangeDescription &getMainSceneInfo() const { return _sceneState.currentScene; }
+
+	// Nancy19+: the name of the script of the scene the main stream is in, which
+	// is "s" and the scene number unless the scene goes by a name of its own
+	Common::String getMainSceneName() const;
 	SceneChangeDescription &getNextSceneInfo() { return _sceneState.nextScene; }
 	const SceneSummary &getSceneSummary() const { return _sceneState.summary; }
 
@@ -321,6 +325,11 @@ public:
 	UI::NDUI::Manager *getNDUI() { return _ndui; }
 
 #ifdef ENABLE_NANCY_V4
+	// Nancy20: goes to a scene of the main stream that has a name of its own
+	// instead of a number. Numbered scenes ("s1002") are taken as well, and
+	// go through changeScene(const SceneChangeDescription &) like before.
+	void changeScene(const Common::String &sceneName, uint16 frameID);
+
 	// Nancy19: the scripts of the UI stream have made the panels
 	void onScriptedUILoaded();
 
@@ -525,6 +534,15 @@ private:
 	// Nancy19: the script of the scene, which takes the place of the action records
 	Script::SceneContext *_scriptScene = nullptr;
 	bool _isScriptedUIReady = false;
+
+	// Nancy20: the main stream can also be in a scene that has a name instead of
+	// a number, like "s1002a_SC". These hold the name of the scene it is in and
+	// of the one it goes to next. When a name is set, it is what counts: the
+	// sceneID of _sceneState.currentScene or nextScene is kNoScene then, while
+	// the frame and the rest of the description still apply. For numbered scenes
+	// both stay empty, and the earlier games never set them.
+	Common::String _scriptSceneName;
+	Common::String _nextScriptSceneName;
 #endif
 	double _frameSeconds = 0.0;	// how long the last frame took
 	Action::PlaySecondaryMovie *_activeMovie;

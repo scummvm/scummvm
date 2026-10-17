@@ -381,6 +381,21 @@ void readUIPopupHeader(Common::SeekableReadStream &stream, UIPopupHeader &dst) {
 
 // A text line will often be broken up into chunks separated by nulls, use
 // this function to put it back together as a Common::String
+bool parseSceneName(const Common::String &sceneName, uint16 &sceneID) {
+	if (sceneName.size() < 2 || tolower(sceneName[0]) != 's') {
+		return false;
+	}
+
+	for (uint i = 1; i < sceneName.size(); ++i) {
+		if (!Common::isDigit(sceneName[i])) {
+			return false;
+		}
+	}
+
+	sceneID = (uint16)atoi(sceneName.c_str() + 1);
+	return true;
+}
+
 void assembleTextLine(char *rawCaption, Common::String &output, uint size) {
 	for (uint i = 0; i < size; ++i) {
 		// A single line can be broken up into bits, look for them and

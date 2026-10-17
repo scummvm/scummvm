@@ -26,6 +26,7 @@
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/util.h"
 
 #include "engines/nancy/script/convo.h"
 #include "engines/nancy/script/luabind.h"
@@ -467,10 +468,11 @@ void SceneContext::changeScene(const Common::String &streamName, const Common::S
 
 	_hasChangedScene = true;
 
-	// The scenes of the main stream go by number
-	if (sceneName.size() > 1 && tolower(sceneName[0]) == 's' && Common::isDigit(sceneName[1])) {
+	// The scenes of the main stream mostly go by number
+	uint16 sceneID;
+	if (parseSceneName(sceneName, sceneID)) {
 		SceneChangeDescription scene;
-		scene.sceneID = (uint16)atoi(sceneName.c_str() + 1);
+		scene.sceneID = sceneID;
 		scene.frameID = frame;
 		scene.continueSceneSound = kContinueSceneSound;
 		streams.changeScene(streamName, scene);
