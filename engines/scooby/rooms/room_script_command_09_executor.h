@@ -54,7 +54,6 @@ public:
 
 private:
 	static const int kActionIconByteOffset = 0x16;
-	static const int kRoomObjectRecordSize = 0x1A;
 
 	// Preserves a mutable reference to the resolved room-object record and its command-byte offset, replacing
 	// the C# "(RoomObject RoomObject, int ByteOffset)" tuple return.

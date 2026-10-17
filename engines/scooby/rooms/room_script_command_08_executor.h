@@ -53,8 +53,6 @@ public:
 	void executeRoomScriptCommand08(int mode);
 
 private:
-	static const int kRoomObjectRecordSize = 0x1A;
-
 	// Preserves a mutable reference to the resolved room-object record and its aligned command-word offset,
 	// replacing the C# "(RoomObject RoomObject, int ByteOffset)" tuple return.
 	struct RoomObjectWordAddress {

@@ -116,10 +116,10 @@ void RoomScriptCommand08Executor::executeRoomScriptCommand08(int mode) {
 RoomScriptCommand08Executor::RoomObjectWordAddress RoomScriptCommand08Executor::resolveRoomObjectWordAddress(
 	uint16 objectId, uint16 fieldOffset) {
 	uint16 tableByteOffset =
-		static_cast<uint16>(fieldOffset + (objectId - 3) * kRoomObjectRecordSize);
+		static_cast<uint16>(fieldOffset + (objectId - 3) * RoomObject::kRecordSize);
 	tableByteOffset &= 0xFFFE;
 	return RoomObjectWordAddress(
-		_state.RoomObjects[static_cast<std::size_t>(tableByteOffset / kRoomObjectRecordSize)],
-		tableByteOffset % kRoomObjectRecordSize);
+		_state.RoomObjects[static_cast<std::size_t>(tableByteOffset / RoomObject::kRecordSize)],
+		tableByteOffset % RoomObject::kRecordSize);
 }
 } // namespace Scooby

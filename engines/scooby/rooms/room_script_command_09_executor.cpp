@@ -60,14 +60,14 @@ void RoomScriptCommand09Executor::executeRoomScriptCommand09(int mode) {
 
 RoomScriptCommand09Executor::RoomObjectByteLocation RoomScriptCommand09Executor::resolveRoomObjectByte(
 	uint16 objectId, int8 displacement) {
-	uint16 recordOffset = static_cast<uint16>((objectId - 3) * kRoomObjectRecordSize);
+	uint16 recordOffset = static_cast<uint16>((objectId - 3) * RoomObject::kRecordSize);
 	int16 wrappedRecordOffset = static_cast<int16>(recordOffset + displacement);
 	int tableByteOffset = kActionIconByteOffset + wrappedRecordOffset;
-	int objectIndex = tableByteOffset / kRoomObjectRecordSize;
-	int byteOffset = tableByteOffset % kRoomObjectRecordSize;
+	int objectIndex = tableByteOffset / RoomObject::kRecordSize;
+	int byteOffset = tableByteOffset % RoomObject::kRecordSize;
 	if (byteOffset < 0) {
 		objectIndex--;
-		byteOffset += kRoomObjectRecordSize;
+		byteOffset += RoomObject::kRecordSize;
 	}
 
 	return RoomObjectByteLocation(_state.RoomObjects[static_cast<std::size_t>(objectIndex)], byteOffset);

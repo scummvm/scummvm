@@ -119,9 +119,9 @@ bool RoomScriptConditionEvaluator::evaluateRoomScriptCondition() {
 int16 RoomScriptConditionEvaluator::readRoomObjectConditionWord(uint16 fieldOffset,
 																uint16 objectId) const {
 	uint16 tableByteOffset =
-		static_cast<uint16>(fieldOffset + (objectId - 3) * kRoomObjectRecordSize);
+		static_cast<uint16>(fieldOffset + (objectId - 3) * RoomObject::kRecordSize);
 	tableByteOffset &= 0xFFFE;
-	return _state.RoomObjects[tableByteOffset / kRoomObjectRecordSize].readScriptConditionWord(
-		tableByteOffset % kRoomObjectRecordSize);
+	return _state.RoomObjects[tableByteOffset / RoomObject::kRecordSize].readScriptConditionWord(
+		tableByteOffset % RoomObject::kRecordSize);
 }
 } // namespace Scooby

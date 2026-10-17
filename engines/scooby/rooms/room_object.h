@@ -35,6 +35,9 @@ namespace Scooby {
 
 class RoomObject {
 public:
+	// Size in bytes of one original room-object record (offsets +0x00 through +0x19).
+	static const int kRecordSize = 0x1A;
+
 	RoomObject()
 		: TilePatchIndex(0), ShapeIndex(0), InventoryGraphicIndex(0), RoomId(0), PositionIndex(0),
 		  AnimationCountdown(0), ScriptStateWords(3), FixedX(0), FixedY(0), ActionIcon(0),
