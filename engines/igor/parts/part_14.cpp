@@ -415,13 +415,13 @@ void IgorEngine::part14ShowPuzzle() {
 		if (VAR_NEW_CHURCH_MOSAIC_STONE != VAR_CURRENT_CHURCH_MOSAIC_STONE) {
 			switch (VAR_NEW_CHURCH_MOSAIC_STONE) {
 			case 1:
-				drawActionSentence("", 253);
+				drawActionSentence("", mosaicSentenceColor(0));
 				break;
 			case 2:
-				drawActionSentence(getString(STR_PushStone), 253);
+				drawActionSentence(getString(STR_PushStone), mosaicSentenceColor(0));
 				break;
 			case 3:
-				drawActionSentence(getString(STR_Exit), 253);
+				drawActionSentence(getString(STR_Exit), mosaicSentenceColor(0));
 				break;
 			}
 			VAR_CURRENT_CHURCH_MOSAIC_STONE = VAR_NEW_CHURCH_MOSAIC_STONE;
@@ -433,7 +433,7 @@ void IgorEngine::part14ShowPuzzle() {
 				_currentPart = 146;
 			}
 			if (area >= 1 && area <= 8) {
-				drawActionSentence(getString(STR_PushStone), 251);
+				drawActionSentence(getString(STR_PushStone), mosaicSentenceColor(1));
 				hideCursor();
 				playRoomSound(34, 0);
 				switch (area) {
@@ -463,7 +463,7 @@ void IgorEngine::part14ShowPuzzle() {
 					break;
 				}
 				stopSound();
-				drawActionSentence(getString(STR_PushStone), 253);
+				drawActionSentence(getString(STR_PushStone), mosaicSentenceColor(0));
 				showCursor();
 				_dialogueEnded = false;
 				++_gameState.counter[4];
@@ -495,7 +495,7 @@ void IgorEngine::part14ShowPuzzle() {
 		// input is only gathered while waiting for the timer.
 		waitForTimer();
 	} while (!_eventQuitGame && !(_currentPart >= 145 && _currentPart <= 146 && _dialogueEnded));
-	drawActionSentence("", 253);
+	drawActionSentence("", mosaicSentenceColor(0));
 	hideCursor();
 	if (_currentPart == 145) {
 		playSound(35, 1);
@@ -511,6 +511,10 @@ void IgorEngine::part14LoadChurchMosaicData() {
 	uint8 *p = loadData(MSK_ChurchMosaic);
 	decodeRoomMask(p);
 	free(p);
+}
+
+uint8 IgorEngine::mosaicSentenceColor(int index) const {
+	return (_game.version == kIdSpaFloppy) ? _actionSentenceColors[index] : _sentenceColorIndex[index];
 }
 
 void IgorEngine::part14PushStone(int screenOffset, int w, int h, int animOffset) {
