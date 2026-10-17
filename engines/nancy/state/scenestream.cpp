@@ -71,18 +71,30 @@ bool SceneStream::update() {
 
 	processRecords();
 
-	if (_hasNextScene && !_isEnded) {
-		_hasNextScene = false;
-
-		if (loadScene()) {
-			processRecords();
-		} else if (_sceneName.empty()) {
-			// There was nothing to run in the first place
-			_isEnded = true;
-		}
+	if (loadNextScene()) {
+		processRecords();
 	}
 
 	return !_isEnded;
+}
+
+bool SceneStream::loadNextScene() {
+	if (!_hasNextScene || _isEnded) {
+		return false;
+	}
+
+	_hasNextScene = false;
+
+	if (loadScene()) {
+		return true;
+	}
+
+	if (_sceneName.empty()) {
+		// There was nothing to run in the first place
+		_isEnded = true;
+	}
+
+	return false;
 }
 
 void SceneStream::processRecords() {
@@ -337,6 +349,18 @@ void SceneStreamManager::begin(const Common::String &name, const Common::String 
 	} else {
 		_mainStreamChildren.push_back(child);
 	}
+}
+
+void SceneStreamManager::loadNow(const Common::String &name) {
+	SceneStream *stream = find(name);
+	if (!stream) {
+		return;
+	}
+
+	SceneStream *running = _running;
+	_running = stream;
+	stream->loadNextScene();
+	_running = running;
 }
 
 void SceneStreamManager::end(const Common::String &name) {

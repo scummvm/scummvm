@@ -3038,7 +3038,10 @@ void Scene::initUI() {
 #ifdef ENABLE_NANCY_V4
 		_isScriptedUIReady = false;
 #endif
+		// The panels are there before the first frame of the scene, which can
+		// hide some of them right away
 		_streams.begin("UIStream", pcui->uiName.toString(), 0, StreamFlags());
+		_streams.loadNow("UIStream");
 		return;
 	}
 
