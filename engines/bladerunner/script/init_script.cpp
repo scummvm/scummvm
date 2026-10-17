@@ -2497,6 +2497,9 @@ void InitScript::Init_CDB() {
 	CDB_Set_Crime(kClueVKLucyReplicant, kCrimeMoonbusHijacking);
 	CDB_Set_Crime(kClueCrystalsCase, kCrimeMoonbusHijacking);
 	CDB_Set_Crime(kCluePhoneCallCrystal, kCrimeMoonbusHijacking);
+	if (_vm->_cutContent) {
+		CDB_Set_Crime(kClueSuspectDektora, kCrimeMoonbusHijacking);
+	}
 
 	CDB_Set_Crime(kClueCrimeSceneNotes, kCrimeFactoryBombing);
 	CDB_Set_Crime(kClueGrigorianInterviewA, kCrimeFactoryBombing);
@@ -2735,6 +2738,7 @@ void InitScript::Init_CDB() {
 		CDB_Set_Clue_Asset_Type(kClueDragonflyCollection, kClueTypeAudioRecording);
 		CDB_Set_Clue_Asset_Type(kClueDragonflyBelt, kClueTypeObject);
 		CDB_Set_Clue_Asset_Type(kClueEarlyQInterview, kClueTypeAudioRecording);
+		CDB_Set_Clue_Asset_Type(kClueSuspectDektora, kClueTypeAudioRecording);
 	}
 }
 
