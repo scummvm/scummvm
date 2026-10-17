@@ -652,6 +652,7 @@ private:
 
 	bool _eventQuitGame;
 	bool _gameStateLoaded;
+	bool _loadedIgorMoving;
 
 	// pass of the end credits: 0 for the first one (set when the ending is over), the same "pages" are shown again after it
 	uint8 _creditsPass;

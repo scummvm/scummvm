@@ -115,6 +115,7 @@ Common::String IgorEngine::getGameId() const {
 void IgorEngine::restart() {
 	_screenVGAVOffset = 0;
 	_gameStateLoaded = false;
+	_loadedIgorMoving = false;
 	_creditsPass = 0;
 
 	memset(&_gameState, 0, sizeof(_gameState));
@@ -265,7 +266,8 @@ void IgorEngine::enterPartLoop() {
 	if (!_gameState.dialogueTextRunning) {
 		showCursor();
 	}
-	_gameState.igorMoving = false;
+	_gameState.igorMoving = _loadedIgorMoving;
+	_loadedIgorMoving = false;
 	if (_game.version == kIdEngDemo110 && _demoActionsCounter >= 10) {
 		ADD_DIALOGUE_TEXT(104, 2);
 		ADD_DIALOGUE_TEXT(106, 2);
@@ -275,9 +277,12 @@ void IgorEngine::enterPartLoop() {
 }
 
 bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
+	_loadedIgorMoving = false;
 	if (!_gameStateLoaded)
 		return false;
 
+	// A game saved while Igor was walking keeps walking once the room is entered.
+	_loadedIgorMoving = _gameState.igorMoving;
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (drawIgor) { // position Igor in the room at the saved position
 		if (!_gameState.igorMoving)
