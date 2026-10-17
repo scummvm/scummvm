@@ -69,9 +69,7 @@ bool applyRoomActorPlacement(const RoomSetupState &state, Entity &entity,
 	int centerX, int bottomY, float z, const Common::String *entranceName = nullptr);
 void logScenePaletteSummary(const char *label, const SceneState &scene, float brightness);
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap);
-Common::Rect getRoomObjectHotspotBounds(const ObjectRecord &object);
 bool shouldDisplaySceneAnimation(const AnimRecord &anim);
-bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, SceneState &scene);
 bool shouldRunStartupRoomProbe();
 bool unlocksRoomObjectInteractionAfterInitialExamine(const ObjectRecord &object,
 	Script &script);

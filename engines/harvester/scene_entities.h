@@ -32,6 +32,7 @@ class SceneEntities {
 public:
 	SceneEntities(RoomSetupState &state, Script *script, ResourceManager *resources, EntityManager *entityManager);
 
+	static bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, SceneState &scene);
 	bool loadSceneResources(const RoomSetupState &state, SceneState &scene) const;
 	bool reconcileSceneEntitiesInPlace(const SceneState &previousScene,
 		RoomSetupState &updatedState, const SceneState &updatedScene);

@@ -241,26 +241,6 @@ static bool applyStartupActorPlacement(const RoomSetupState &state, Entity &enti
 		state.playerSpawnX, state.playerSpawnY, (float)state.playerSpawnZ, &state.entranceName);
 }
 
-static void getPaletteByteRange(const byte *palette, byte &minValue, byte &maxValue) {
-	minValue = 255;
-	maxValue = 0;
-
-	for (uint i = 0; i < 256 * 3; ++i) {
-		minValue = MIN(minValue, palette[i]);
-		maxValue = MAX(maxValue, palette[i]);
-	}
-}
-
-static uint32 hashPalette(const byte *palette) {
-	uint32 hash = 2166136261U;
-	for (uint i = 0; i < 256 * 3; ++i) {
-		hash ^= palette[i];
-		hash *= 16777619U;
-	}
-
-	return hash;
-}
-
 void logScenePaletteSummary(const char *label, const SceneState &scene, float brightness) {
 	debugC(2, kDebugRoom, "Harvester: %s room='%s' palette='%s' brightness=%.2f",
 		label, scene.state.roomName.c_str(), scene.state.palettePath.c_str(), (double)brightness);
@@ -294,50 +274,11 @@ static void setScaledDisplayPalette(Graphics::Screen &screen, const byte *palett
 	screen.setPalette(scaledPalette);
 }
 
-static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *dest) {
-	Common::Array<byte> data;
-	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
-		return false;
-
-	memcpy(dest, data.data(), 256 * 3);
-
-	byte minValue = 0;
-	byte maxValue = 0;
-	getPaletteByteRange(dest, minValue, maxValue);
-	debugC(3, kDebugRoom,
-		"Harvester: decoded room palette '%s' bytes=%u range=[%u,%u] hash=%08x idx0=(%u,%u,%u) idx1=(%u,%u,%u) idx127=(%u,%u,%u) idx255=(%u,%u,%u)",
-		path.c_str(), (uint)data.size(), minValue, maxValue, hashPalette(dest),
-		dest[0], dest[1], dest[2],
-		dest[3], dest[4], dest[5],
-		dest[127 * 3], dest[127 * 3 + 1], dest[127 * 3 + 2],
-		dest[255 * 3], dest[255 * 3 + 1], dest[255 * 3 + 2]);
-
-	return true;
-}
-
-Common::Rect getRoomObjectHotspotBounds(const ObjectRecord &object) {
-	if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
-		return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
-
-	return Common::Rect();
-}
-
 static Common::Rect getRegionBounds(const RegionRecord &region) {
 	if (region.right > region.left && region.bottom > region.top)
 		return Common::Rect(region.left, region.top, region.right, region.bottom);
 
 	return Common::Rect();
-}
-
-Common::String resolveSceneObjectSpritePath(const ObjectRecord &object) {
-	const bool atInitialPlacement = object.currentX == object.initialX &&
-		object.currentY == object.initialY &&
-		object.currentOwnerOrRoom.equalsIgnoreCase(object.initialOwnerOrRoom);
-	if (!object.altSpritePath.empty() &&
-		(!atInitialPlacement || object.currentOwnerOrRoom.equalsIgnoreCase("INVENTORY")))
-		return object.altSpritePath;
-
-	return object.spritePath;
 }
 
 bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
@@ -347,77 +288,6 @@ bool loadBitmapResource(ResourceManager &resources, const Common::String &path, 
 
 	bitmap = IndexedBitmap();
 	return decodeBitmap(data, bitmap);
-}
-
-static void logSceneObjectSelection(const char *decision, const char *source, const ObjectRecord &object,
-		const Common::String &detail = Common::String()) {
-	const Common::Rect hotspotBounds = getRoomObjectHotspotBounds(object);
-	const Common::String resolvedSpritePath = resolveSceneObjectSpritePath(object);
-	debugC(3, kDebugScene,
-		"Harvester: scene object %s source='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' resolved='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s' detail='%s'",
-		decision, source, object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
-		object.visible, object.runtimeVisible, object.spritePath.c_str(), object.altSpritePath.c_str(),
-		resolvedSpritePath.c_str(),
-		object.currentX, object.currentY, object.currentZ,
-		hotspotBounds.left, hotspotBounds.top, hotspotBounds.right, hotspotBounds.bottom,
-		object.actionTag.c_str(), detail.c_str());
-}
-
-static bool shouldQueueSceneObject(const ObjectRecord &object) {
-	return object.visible;
-}
-
-bool shouldDisplaySceneAnimation(const AnimRecord &anim) {
-	return anim.active || anim.visible;
-}
-
-static void queueSceneObject(const char *source, const ObjectRecord &object,
-		Common::Array<ObjectRecord> &sceneObjects) {
-	if (!shouldQueueSceneObject(object)) {
-		logSceneObjectSelection("skipped", source, object, object.visible ? "inactive" : "visible=0");
-		return;
-	}
-
-	for (const ObjectRecord &sceneObject : sceneObjects) {
-		if (sceneObject.currentOwnerOrRoom.equalsIgnoreCase(object.currentOwnerOrRoom) &&
-			sceneObject.objectName.equalsIgnoreCase(object.objectName)) {
-			logSceneObjectSelection("skipped", source, object, "duplicate owner/object");
-			return;
-		}
-	}
-
-	sceneObjects.push_back(object);
-	logSceneObjectSelection("queued", source, object);
-}
-
-bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, SceneState &scene) {
-	scene = SceneState();
-	scene.state = state;
-	scene.targetPaletteBrightness = state.paletteBrightness;
-	if (!loadPaletteResource(resources, state.palettePath, scene.palette)) {
-		return false;
-	}
-
-	Common::Array<ObjectRecord> sceneObjects;
-	for (const ObjectRecord &object : state.roomObjects)
-		queueSceneObject("room", object, sceneObjects);
-	for (const ObjectRecord &object : state.activeObjects)
-		queueSceneObject("active", object, sceneObjects);
-
-	scene.sceneObjects = Common::move(sceneObjects);
-	for (const AnimRecord &anim : state.roomAnimations) {
-		if (shouldDisplaySceneAnimation(anim))
-			scene.sceneAnimations.push_back(anim);
-	}
-	scene.sceneRegions = state.roomRegions;
-
-	debugC(2, kDebugRoom,
-		"Harvester: room scene loaded room='%s' objects=%u anims=%u npcs=%u monsters=%u timers=%u regions=%u",
-		state.roomName.c_str(), (uint)scene.sceneObjects.size(), (uint)scene.sceneAnimations.size(),
-		(uint)state.roomNpcs.size(), (uint)state.roomMonsters.size(),
-		(uint)state.roomTimers.size(), (uint)scene.sceneRegions.size());
-
-	return true;
 }
 
 bool shouldRunStartupRoomProbe() {
@@ -701,7 +571,7 @@ RoomHoverState Flow::getRoomHoverState(const SceneState &scene) const {
 
 static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Array<ObjectRecord> &sceneObjects,
 		const ObjectRecord &object, Common::Point &probePoint) {
-	const Common::Rect bounds = getRoomObjectHotspotBounds(object);
+	const Common::Rect bounds = SceneEntities::getSceneObjectBounds(object);
 	if (bounds.isEmpty())
 		return false;
 
@@ -769,7 +639,7 @@ void Flow::logStartupRoomProbe(const SceneState &scene, const Common::String &en
 	}
 
 	for (const ObjectRecord &object : scene.sceneObjects) {
-		if (getRoomObjectHotspotBounds(object).isEmpty())
+		if (SceneEntities::getSceneObjectBounds(object).isEmpty())
 			continue;
 
 		Common::Point probePoint;
@@ -864,7 +734,7 @@ static bool loadQuickTipsScene(HarvesterEngine &engine, SceneState &scene) {
 	if (!engine.getScript()->resolveRoomSetupState("START", state, *engine.getResources()))
 		return false;
 
-	return loadRoomSceneResources(state, *engine.getResources(), scene);
+	return SceneEntities::loadRoomSceneResources(state, *engine.getResources(), scene);
 }
 
 static void renderQuickTipsScreen(HarvesterEngine &engine, const SceneState &scene,
@@ -1151,7 +1021,7 @@ Common::Error Flow::runDemoEnding() {
 		IndexedBitmap bitmap;
 		byte palette[256 * 3];
 		if (!loadBitmapResource(*resources, bitmapPath, bitmap) ||
-				!loadPaletteResource(*resources, palettePath, palette)) {
+				!Art::loadPaletteResource(*resources, palettePath, palette)) {
 			warning("Harvester: unable to load DOS demo ending screen %d", screenNumber);
 			return Common::kReadingFailed;
 		}
@@ -1212,7 +1082,7 @@ Common::Error Flow::runDemoIntroduction() {
 	IndexedBitmap bitmap;
 	byte palette[256 * 3];
 	if (!loadBitmapResource(*resources, kDemoIntroductionBitmapPath, bitmap) ||
-			!loadPaletteResource(*resources, kDemoIntroductionPalettePath, palette)) {
+			!Art::loadPaletteResource(*resources, kDemoIntroductionPalettePath, palette)) {
 		return Common::kReadingFailed;
 	}
 
@@ -1355,7 +1225,7 @@ Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 		: kTownMapNightPaletteBrightness;
 
 	byte palette[256 * 3];
-	if (!loadPaletteResource(*resources, kTownMapPalettePath, palette))
+	if (!Art::loadPaletteResource(*resources, kTownMapPalettePath, palette))
 		return Common::kReadingFailed;
 
 	Common::Array<IndexedBitmap> panels;

@@ -976,7 +976,7 @@ Common::Error SceneRunner::runRoomLoop(Flow &flow, const Common::String &targetN
 			return transitionError;
 
 		SceneState scene;
-		if (!loadRoomSceneResources(state, *_engine.getResources(), scene))
+		if (!SceneEntities::loadRoomSceneResources(state, *_engine.getResources(), scene))
 			return Common::kReadingFailed;
 
 		Graphics::Screen *screen = _engine.getScreen();

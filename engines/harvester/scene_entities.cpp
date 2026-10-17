@@ -21,7 +21,9 @@
 
 #include "harvester/scene_entities.h"
 
+#include "harvester/art.h"
 #include "harvester/detection.h"
+#include "harvester/resources.h"
 #include "harvester/monster.h"
 #include "harvester/player.h"
 #include "harvester/combat.h"
@@ -170,6 +172,77 @@ SceneEntities::SceneEntities(RoomSetupState &state, Script *script, ResourceMana
 	: _state(state), _script(script), _resources(resources), _entityManager(entityManager) {
 	debugC(1, kDebugRoom, "Harvester: created room scene runtime room='%s' entities=%d",
 		_state.roomName.c_str(), _entityManager != nullptr);
+}
+
+static void logSceneObjectSelection(const char *decision, const char *source, const ObjectRecord &object,
+		const Common::String &detail = Common::String()) {
+	const Common::Rect hotspotBounds = SceneEntities::getSceneObjectBounds(object);
+	const Common::String resolvedSpritePath = SceneEntities::resolveSceneObjectSpritePathLocal(object);
+	debugC(3, kDebugScene,
+		"Harvester: scene object %s source='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' resolved='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s' detail='%s'",
+		decision, source, object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
+		object.visible, object.runtimeVisible, object.spritePath.c_str(), object.altSpritePath.c_str(),
+		resolvedSpritePath.c_str(),
+		object.currentX, object.currentY, object.currentZ,
+		hotspotBounds.left, hotspotBounds.top, hotspotBounds.right, hotspotBounds.bottom,
+		object.actionTag.c_str(), detail.c_str());
+}
+
+static bool shouldQueueSceneObject(const ObjectRecord &object) {
+	return object.visible;
+}
+
+bool shouldDisplaySceneAnimation(const AnimRecord &anim) {
+	return anim.active || anim.visible;
+}
+
+static void queueSceneObject(const char *source, const ObjectRecord &object,
+		Common::Array<ObjectRecord> &sceneObjects) {
+	if (!shouldQueueSceneObject(object)) {
+		logSceneObjectSelection("skipped", source, object, object.visible ? "inactive" : "visible=0");
+		return;
+	}
+
+	for (const ObjectRecord &sceneObject : sceneObjects) {
+		if (sceneObject.currentOwnerOrRoom.equalsIgnoreCase(object.currentOwnerOrRoom) &&
+			sceneObject.objectName.equalsIgnoreCase(object.objectName)) {
+			logSceneObjectSelection("skipped", source, object, "duplicate owner/object");
+			return;
+		}
+	}
+
+	sceneObjects.push_back(object);
+	logSceneObjectSelection("queued", source, object);
+}
+
+bool SceneEntities::loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, SceneState &scene) {
+	scene = SceneState();
+	scene.state = state;
+	scene.targetPaletteBrightness = state.paletteBrightness;
+	if (!Art::loadPaletteResource(resources, state.palettePath, scene.palette)) {
+		return false;
+	}
+
+	Common::Array<ObjectRecord> sceneObjects;
+	for (const ObjectRecord &object : state.roomObjects)
+		queueSceneObject("room", object, sceneObjects);
+	for (const ObjectRecord &object : state.activeObjects)
+		queueSceneObject("active", object, sceneObjects);
+
+	scene.sceneObjects = Common::move(sceneObjects);
+	for (const AnimRecord &anim : state.roomAnimations) {
+		if (shouldDisplaySceneAnimation(anim))
+			scene.sceneAnimations.push_back(anim);
+	}
+	scene.sceneRegions = state.roomRegions;
+
+	debugC(2, kDebugRoom,
+		"Harvester: room scene loaded room='%s' objects=%u anims=%u npcs=%u monsters=%u timers=%u regions=%u",
+		state.roomName.c_str(), (uint)scene.sceneObjects.size(), (uint)scene.sceneAnimations.size(),
+		(uint)state.roomNpcs.size(), (uint)state.roomMonsters.size(),
+		(uint)state.roomTimers.size(), (uint)scene.sceneRegions.size());
+
+	return true;
 }
 
 bool SceneEntities::loadSceneResources(const RoomSetupState &state, SceneState &scene) const {
@@ -741,7 +814,7 @@ void SceneEntities::populateRoomObjects(const Common::Array<ObjectRecord> &drawa
 
 	for (const ObjectRecord &object : drawableObjects) {
 		const Common::String spritePath = resolveSceneObjectSpritePathLocal(object);
-		const Common::Rect hotspotBounds = getRoomObjectHotspotBounds(object);
+		const Common::Rect hotspotBounds = getSceneObjectBounds(object);
 		Entity *entity = createSceneObjectEntity(object, spritePath, hotspotBounds);
 
 		if (!entity) {

@@ -93,6 +93,27 @@ static const char *const kAmmoIconPaths[] = {
 
 } // End of anonymous namespace
 
+bool Art::loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *dest) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
+		return false;
+
+	memcpy(dest, data.data(), 256 * 3);
+
+	byte minValue = 0;
+	byte maxValue = 0;
+	getPaletteByteRange(dest, minValue, maxValue);
+	debugC(3, kDebugRoom,
+		"Harvester: decoded room palette '%s' bytes=%u range=[%u,%u] hash=%08x idx0=(%u,%u,%u) idx1=(%u,%u,%u) idx127=(%u,%u,%u) idx255=(%u,%u,%u)",
+		path.c_str(), (uint)data.size(), minValue, maxValue, hashPalette(dest),
+		dest[0], dest[1], dest[2],
+		dest[3], dest[4], dest[5],
+		dest[127 * 3], dest[127 * 3 + 1], dest[127 * 3 + 2],
+		dest[255 * 3], dest[255 * 3 + 1], dest[255 * 3 + 2]);
+
+	return true;
+}
+
 bool Art::load(ResourceManager &resources) {
 	_waitFrames.clear();
 	_textboxes.clear();

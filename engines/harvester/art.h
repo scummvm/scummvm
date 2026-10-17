@@ -36,6 +36,7 @@ class Art {
 public:
 	bool load(ResourceManager &resources);
 	bool loadQuickTipsResources(ResourceManager &resources, bool useTextboxPanel);
+	static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *dest);
 	void drawWaitFrame(Graphics::Screen &screen) const;
 
 	const byte *getWaitPalette() const { return _waitPalette; }
