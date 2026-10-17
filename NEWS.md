@@ -8,6 +8,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Deja Vu: A Nightmare Comes True!!
    - Added support for Deja Vu II: Lost in Last Vegas.
    - Added support for Uninvited.
+   - Added support for The Colony.
 
  M4:
    - Missing Animation and journal fixes for Ripley's Riddle of Master Lu
