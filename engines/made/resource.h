@@ -191,7 +191,10 @@ public:
 	~ResourceReader();
 
 	void open(const char *filename);
-	void openResourceBlocks();
+
+	void openPicsBlock(bool altFormat);
+	void openMusicBlock();
+	void openSndsBlock();
 
 	PictureResource *getPicture(int index);
 	AnimationResource *getAnimation(int index);
@@ -211,7 +214,7 @@ protected:
 
 	typedef Common::Array<ResourceSlot> ResourceSlots;
 	typedef Common::HashMap<uint32, ResourceSlots *> ResMap;
-	void openResourceBlock(const char *filename, Common::File *blockFile, uint32 resType);
+	void openResourceBlock(const char *filename, Common::File *blockFile, uint32 resType, bool altFormat);
 
 	ResMap _resSlots;
 	int _cacheCount;

@@ -81,7 +81,7 @@ void PictureResource::loadRaw(byte *source, int size) {
 	uint16 width = sourceS->readUint16LE();
 	uint16 height = sourceS->readUint16LE();
 
-	if (cmdFlags || pixelFlags || maskFlags) {
+	if (cmdFlags || (pixelFlags & 0xFD) || (maskFlags & 0xFD)) {
 		warning("PictureResource::loadRaw() Graphic has flags set (%d, %d, %d)", cmdFlags, pixelFlags, maskFlags);
 	}
 
@@ -439,18 +439,25 @@ void ResourceReader::open(const char *filename) {
 }
 
 // V1
-void ResourceReader::openResourceBlocks() {
+void ResourceReader::openPicsBlock(bool altFormat) {
 	_isV1 = true;
 	_fdPics = new Common::File();
-	_fdSounds = new Common::File();
-	_fdMusic = new Common::File();
-
-	openResourceBlock("pics.blk", _fdPics, kResFLEX);
-	openResourceBlock("snds.blk", _fdSounds, kResSNDS);
-	openResourceBlock("music.blk", _fdMusic, kResMIDI);
+	openResourceBlock("pics.blk", _fdPics, kResFLEX, altFormat);
 }
 
-void ResourceReader::openResourceBlock(const char *filename, Common::File *blockFile, uint32 resType) {
+void ResourceReader::openMusicBlock() {
+	_isV1 = true;
+	_fdMusic = new Common::File();
+	openResourceBlock("music.blk", _fdMusic, kResMIDI, false);
+}
+
+void ResourceReader::openSndsBlock() {
+	_isV1 = true;
+	_fdSounds = new Common::File();
+	openResourceBlock("snds.blk", _fdSounds, kResSNDS, false);
+}
+
+void ResourceReader::openResourceBlock(const char *filename, Common::File *blockFile, uint32 resType, bool altFormat) {
 	if (!blockFile->open(filename))
 		error("Failed to open '%s'", filename);
 
@@ -468,8 +475,13 @@ void ResourceReader::openResourceBlock(const char *filename, Common::File *block
 
 	for (uint16 i = 0; i < count; i++) {
 		uint32 offset = blockFile->readUint32LE();
-		blockFile->readUint32LE();
+		blockFile->readUint32LE(); // always 0
 		uint32 size = blockFile->readUint32LE();
+		if (altFormat) {
+			// always a duplicate of Size -
+			//  maybe there were once plans for a compression scheme here
+			blockFile->readUint32LE();
+		}
 		_resSlots[resType]->push_back(ResourceSlot(offset, size));
 	}
 }
