@@ -272,7 +272,7 @@ void CheatSystem::execute(CheatId cheatId, Script &script, const ScriptExecution
 			!activation.hasInteraction) {
 		debugC(1, kDebugGeneral,
 			"Harvester: cheat action tag produced no interaction id='%s' room='%s'",
-			describe(cheatId), executionContext.roomName().c_str());
+			describe(cheatId), executionContext.roomName());
 	}
 
 	debugC(2, kDebugGeneral,

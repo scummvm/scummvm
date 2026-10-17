@@ -1736,7 +1736,7 @@ bool Script::executeRoomExitCommands(const Common::String &roomName,
 
 bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionResult &result,
 		const ScriptExecutionContext &executionContext) {
-	const Common::String &roomName = executionContext.roomName();
+	const Common::String roomName = executionContext.roomName();
 	result = InteractionResult();
 	Common::String commandRoomName = roomName;
 	if (commandRoomName.empty() &&
@@ -1779,7 +1779,7 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 
 bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionResult &result,
 		const ScriptExecutionContext &executionContext) {
-	const Common::String &roomName = executionContext.roomName();
+	const Common::String roomName = executionContext.roomName();
 	result = InteractionResult();
 	if (region.actionTag.empty())
 		return false;
@@ -1803,7 +1803,7 @@ bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionRes
 
 bool Script::resolveUseItemInteraction(const Common::String &itemName, const ObjectRecord &target,
 		InteractionResult &result, const ScriptExecutionContext &executionContext) {
-	const Common::String &roomName = executionContext.roomName();
+	const Common::String roomName = executionContext.roomName();
 	result = InteractionResult();
 
 	const UseItemRecord *useItem = findUseItemRecord(itemName, target);
@@ -1850,7 +1850,7 @@ bool Script::executeDebugCommand(const CommandRecord &command,
 
 bool Script::executeActionTag(const Common::String &tag, InteractionResult &result,
 		bool allowTransitions, const ScriptExecutionContext &executionContext) {
-	const Common::String &roomName = executionContext.roomName();
+	const Common::String roomName = executionContext.roomName();
 	result = InteractionResult();
 	if (tag.empty())
 		return false;
@@ -1874,7 +1874,7 @@ bool Script::executeActionTag(const Common::String &tag, InteractionResult &resu
 
 bool Script::executeTimerAction(const Common::String &timerName, InteractionResult &result,
 		bool allowTransitions, const ScriptExecutionContext &executionContext) {
-	const Common::String &roomName = executionContext.roomName();
+	const Common::String roomName = executionContext.roomName();
 	result = InteractionResult();
 	if (timerName.empty())
 		return false;

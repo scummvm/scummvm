@@ -72,7 +72,7 @@ public:
 	Script &startupScript() const { return _script; }
 	Text &startupText() const { return _text; }
 	Flow &startupFlow() const { return _flow; }
-	const Common::String &currentRoomName() const { return _executionContext.roomName(); }
+	Common::String currentRoomName() const { return _executionContext.roomName(); }
 	const Common::String &genericByeTopic() const { return _genericByeTopic; }
 	bool executeActionTag(const Common::String &tag, InteractionResult &result,
 			bool allowTransitions = true) const {

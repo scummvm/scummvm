@@ -277,8 +277,8 @@ public:
 		return ScriptExecutionContext(monster.roomName);
 	}
 
-	const Common::String &roomName() const {
-		return _roomName ? *_roomName : "";
+	const char *roomName() const {
+		return _roomName ? _roomName->c_str() : "";
 	}
 
 private:
