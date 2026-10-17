@@ -110,7 +110,12 @@ enum SpaFloppySound {
 	kSpaFloppySoundPart6Ambient = 76,
 	kSpaFloppySoundPart8Shards = 77,
 	kSpaFloppySoundPart1Window = 79,
-	kSpaFloppySoundPart2Fuse = 80
+	kSpaFloppySoundPart2Fuse = 80,
+	kSpaFloppySoundPart14StonePush = 34,
+	kSpaFloppySoundPart14Solved = 74,
+	kSpaFloppySoundPart32Key = 31,
+	kSpaFloppySoundPart32Animation = 73,
+	kSpaFloppySoundPart32Girl = 32
 };
 
 // Value of _hoverVerbState when the verb panel shows the selected verb
