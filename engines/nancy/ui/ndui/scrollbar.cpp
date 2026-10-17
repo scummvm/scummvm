@@ -27,7 +27,7 @@ namespace UI {
 namespace NDUI {
 
 // The thumb of a scroll bar never gets smaller than this
-static const int kMinThumbHeight = 8;
+static const int32 kMinThumbHeight = 8;
 
 // Holding an arrow of a scroll bar keeps scrolling, after a delay
 static const float kArrowRepeatDelay = 0.33f;
