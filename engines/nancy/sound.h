@@ -94,6 +94,10 @@ public:
 	void setVolume(const SoundDescription &description, uint16 volume);
 	void setVolume(const Common::String &chunkName, uint16 volume);
 
+	// The volume a channel was last given, by the sound loaded into it or by
+	// setVolume(), from 0 to 100. Nancy20 scripts read it back.
+	uint16 getRequestedVolume(uint16 channelID) const;
+
 	// Nancy 11+ Update3DSound (AR 156). Adjusts a playing fixed-position
 	// 3D sound's position and/or its min/max audible distance.
 	void update3DSoundPosition(uint16 channelID, int32 x, int32 y, int32 z);
@@ -144,6 +148,7 @@ protected:
 		uint16 playCommands = 1;
 		uint16 numLoops = 0;
 		uint volume = 0;
+		uint16 requestedVolume = 0;
 		uint16 panAnchorFrame = 0;
 		bool isPanning = false;
 		Audio::SeekableAudioStream *stream = nullptr;

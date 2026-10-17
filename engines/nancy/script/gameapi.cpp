@@ -233,6 +233,12 @@ static int cursorIndex(lua_State *L) {
 		return 1;
 	}
 
+	if (key == "inViewport") {
+		ScriptPoint point;
+		lua_pushboolean(L, SceneContext::getViewportMouse(g_nancy->_input->getInput(), point));
+		return 1;
+	}
+
 	return luaL_error(L, "Tried to change the cursor to %s, which is not valid.", name);
 }
 
@@ -260,8 +266,25 @@ static int cursorVariantIndex(lua_State *L) {
 	return 1;
 }
 
+// Nancy20: "Cursor.currentInv = nil" puts the item that is held back into the
+// inventory. Items are only ever put into the hand by Player:AddInventoryItem().
+static int cursorNewIndex(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+	if (strcmp(name, "currentInv") != 0) {
+		return luaL_error(L, "Cursor does not have field %s", name);
+	}
+
+	if (!lua_isnil(L, 3)) {
+		return luaL_error(L, "Inventory cursor is only settable to nil. Use Player:AddInventoryItem(...) to put in hand.");
+	}
+
+	NancySceneState.setNoHeldItem();
+	return 0;
+}
+
 static const luaL_Reg kCursorFunctions[] = {
 	{ "__index", cursorIndex },
+	{ "__newindex", cursorNewIndex },
 	{ nullptr, nullptr }
 };
 
@@ -284,6 +307,8 @@ static const KeyName kKeyNames[] = {
 	{ "SPACE", Common::KEYCODE_SPACE },
 	{ "END", Common::KEYCODE_END },
 	{ "HOME", Common::KEYCODE_HOME },
+	{ "PGUP", Common::KEYCODE_PAGEUP },
+	{ "PGDOWN", Common::KEYCODE_PAGEDOWN },
 	{ "LEFT", Common::KEYCODE_LEFT },
 	{ "UP", Common::KEYCODE_UP },
 	{ "RIGHT", Common::KEYCODE_RIGHT },
@@ -296,7 +321,18 @@ static const KeyName kKeyNames[] = {
 	{ "TAB", Common::KEYCODE_TAB },
 	{ "CONTROL", Common::KEYCODE_LCTRL },
 	{ "CTRL", Common::KEYCODE_LCTRL },
-	{ "SHIFT", Common::KEYCODE_LSHIFT }
+	{ "SHIFT", Common::KEYCODE_LSHIFT },
+	{ "BACKSPACE", Common::KEYCODE_BACKSPACE },	// Nancy20
+	{ "NUMPAD0", Common::KEYCODE_KP0 },
+	{ "NUMPAD1", Common::KEYCODE_KP1 },
+	{ "NUMPAD2", Common::KEYCODE_KP2 },
+	{ "NUMPAD3", Common::KEYCODE_KP3 },
+	{ "NUMPAD4", Common::KEYCODE_KP4 },
+	{ "NUMPAD5", Common::KEYCODE_KP5 },
+	{ "NUMPAD6", Common::KEYCODE_KP6 },
+	{ "NUMPAD7", Common::KEYCODE_KP7 },
+	{ "NUMPAD8", Common::KEYCODE_KP8 },
+	{ "NUMPAD9", Common::KEYCODE_KP9 }
 };
 
 void pushKey(lua_State *L, Common::KeyCode key) {
@@ -389,20 +425,97 @@ static const luaL_Reg kGameFunctions[] = {
 // Draw, for the "Render" functions of the records
 // TODO: Draw:Tri
 
+static Graphics::ManagedSurface *checkDrawTarget(lua_State *L) {
+	Graphics::ManagedSurface *target = getDrawTarget();
+	if (!target) {
+		luaL_error(L, "Draw can only be used while a record is rendering");
+	}
+
+	return target;
+}
+
+static uint32 getDrawColor(const Graphics::ManagedSurface &target, uint32 argb) {
+	return target.format.ARGBToColor(argb >> 24, (argb >> 16) & 0xFF, (argb >> 8) & 0xFF, argb & 0xFF);
+}
+
+// A place given as a point, a vector or a table with x and y
+static void checkDrawPlace(lua_State *L, int index, double &x, double &y) {
+	index = absoluteIndex(L, index);
+	if (lua_type(L, index) != LUA_TUSERDATA && lua_type(L, index) != LUA_TTABLE) {
+		luaL_argerror(L, index, "Parameter must be a Point, a Vector or a table with x and y fields");
+	}
+
+	lua_getfield(L, index, "x");
+	lua_getfield(L, index, "y");
+	if (!lua_isnumber(L, -2) || !lua_isnumber(L, -1)) {
+		luaL_argerror(L, index, "Parameter must be a Point, a Vector or a table with x and y fields");
+	}
+
+	x = lua_tonumber(L, -2);
+	y = lua_tonumber(L, -1);
+	lua_pop(L, 2);
+}
+
 // Draw:Rect(rect, color)
 static int drawRect(lua_State *L) {
 	const ScriptRect &rect = checkRect(L, 2);
 	const uint32 color = checkColor(L, 3);
-
-	Graphics::ManagedSurface *target = getDrawTarget();
-	if (!target) {
-		return luaL_error(L, "Draw can only be used while a record is rendering");
-	}
+	Graphics::ManagedSurface *target = checkDrawTarget(L);
 
 	Common::Rect area = rect.toRect();
 	area.clip(Common::Rect(target->w, target->h));
 	if (!area.isEmpty()) {
-		target->fillRect(area, target->format.ARGBToColor(color >> 24, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF));
+		target->fillRect(area, getDrawColor(*target, color));
+	}
+
+	return 0;
+}
+
+// Draw:Line(from, to, color), Nancy20
+static int drawLine(lua_State *L) {
+	double x0, y0, x1, y1;
+	checkDrawPlace(L, 2, x0, y0);
+	checkDrawPlace(L, 3, x1, y1);
+	const uint32 color = checkColor(L, 4);
+	Graphics::ManagedSurface *target = checkDrawTarget(L);
+
+	target->drawLine((int)x0, (int)y0, (int)x1, (int)y1, getDrawColor(*target, color));
+	return 0;
+}
+
+// Draw:Circle(circle, color), Nancy20, where the circle is a table with a
+// center and a radius. Only the outline is drawn, as a polygon of 19 sides.
+static int drawCircle(lua_State *L) {
+	static const int kNumPoints = 20;
+
+	luaL_checktype(L, 2, LUA_TTABLE);
+	lua_getfield(L, 2, "center");
+	lua_getfield(L, 2, "radius");
+	if (lua_isnil(L, -2) || !lua_isnumber(L, -1)) {
+		return luaL_argerror(L, 2, "Parameter is not a circle (table with center and radius fields)");
+	}
+
+	double centerX, centerY;
+	checkDrawPlace(L, -2, centerX, centerY);
+	const double radius = lua_tonumber(L, -1);
+	lua_pop(L, 2);
+
+	const uint32 color = checkColor(L, 3);
+	Graphics::ManagedSurface *target = checkDrawTarget(L);
+	const uint32 drawColor = getDrawColor(*target, color);
+
+	int lastX = 0;
+	int lastY = 0;
+	for (int i = 0; i < kNumPoints; ++i) {
+		const double angle = i / (double)(kNumPoints - 1) * 2.0 * M_PI;
+		const int x = (int)(cos(angle) * radius + centerX);
+		const int y = (int)(sin(angle) * radius + centerY);
+		if (i > 0) {
+			target->drawLine(lastX, lastY, x, y, drawColor);
+		}
+
+		lastX = x;
+		lastY = y;
 	}
 
 	return 0;
@@ -411,6 +524,8 @@ static int drawRect(lua_State *L) {
 static const luaL_Reg kDrawFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Rect", drawRect },
+	{ "Line", drawLine },
+	{ "Circle", drawCircle },
 	{ nullptr, nullptr }
 };
 
@@ -721,6 +836,33 @@ static int soundSetVolume(lua_State *L) {
 	return 0;
 }
 
+// Sound:GetVolume(channel), from 0 to 1. It has to be a single channel.
+static int soundGetVolume(lua_State *L) {
+	const uint16 channel = checkSoundChannel(L, 2);
+	uint16 first, last;
+	getChannelRange(channel, first, last);
+	if (first != last) {
+		return luaL_error(L, "Passed in Channel Group to GetVolume.");
+	}
+
+	lua_pushnumber(L, g_nancy->_sound->getRequestedVolume(channel) / 100.0);
+	return 1;
+}
+
+// Sound:IsPlaying(channel), which is true for a group when any of its channels plays
+static int soundIsPlaying(lua_State *L) {
+	uint16 first, last;
+	getChannelRange(checkSoundChannel(L, 2), first, last);
+
+	bool isPlaying = false;
+	for (uint16 channel = first; channel <= last && !isPlaying; ++channel) {
+		isPlaying = g_nancy->_sound->isSoundPlaying(channel);
+	}
+
+	lua_pushboolean(L, isPlaying);
+	return 1;
+}
+
 static const luaL_Reg kSoundChannelHelperFunctions[] = {
 	{ "__index", soundChannelIndex },
 	{ nullptr, nullptr }
@@ -734,6 +876,8 @@ static const luaL_Reg kSoundFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Stop", soundStop },
 	{ "SetVolume", soundSetVolume },
+	{ "GetVolume", soundGetVolume },
+	{ "IsPlaying", soundIsPlaying },
 	{ nullptr, nullptr }
 };
 
@@ -756,6 +900,8 @@ static int sceneIndex(lua_State *L) {
 		lua_pushstring(L, context->getSceneName().c_str());
 	} else if (key == "time") {
 		lua_pushnumber(L, context->getTime());
+	} else if (key == "elapsedTime") {
+		lua_pushnumber(L, context->getElapsedTime());
 	} else if (key == "frame") {
 		lua_pushinteger(L, context->getFrame());
 	} else if (key == "streamName") {
@@ -802,6 +948,17 @@ static int sceneInclude(lua_State *L) {
 	}
 
 	return 0;
+}
+
+// Scene:ChangeScene(stream, scene), which goes to the first frame of the scene
+static int sceneChangeScene(lua_State *L) {
+	SceneContext *context = checkContext(L);
+	const char *streamName = luaL_checkstring(L, 2);
+	const char *sceneName = luaL_checkstring(L, 3);
+
+	context->changeScene(streamName, sceneName, 0);
+	lua_pushboolean(L, true);
+	return 1;
 }
 
 // Scene:BeginStream(name, scene, frame, lifetime, capturesInput, runsFirst)
@@ -892,6 +1049,7 @@ static const luaL_Reg kSceneFunctions[] = {
 	{ "Include", sceneInclude },
 	{ "BeginStream", sceneBeginStream },
 	{ "EndStream", sceneEndStream },
+	{ "ChangeScene", sceneChangeScene },
 	{ nullptr, nullptr }
 };
 
@@ -1256,13 +1414,58 @@ static int logWrite(lua_State *L) {
 	return 0;
 }
 
+// Log:Assert(condition, text) writes down the text when the condition doesn't hold
+static int logAssert(lua_State *L) {
+	if (!lua_toboolean(L, 2)) {
+		luaL_where(L, 1);
+		debugC(1, kDebugScene, "Script assertion failed: %s%s", lua_tostring(L, -1), luaL_optstring(L, 3, ""));
+		lua_pop(L, 1);
+	}
+
+	return 0;
+}
+
+// Log:Watch(function) and Log:Clear() are for the debug console of the original,
+// which isn't there
+static int logWatch(lua_State *L) {
+	luaL_checktype(L, 2, LUA_TFUNCTION);
+	return 0;
+}
+
+static int logClear(lua_State *L) {
+	return 0;
+}
+
 static const luaL_Reg kLogFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Write", logWrite },
+	{ "Assert", logAssert },
+	{ "Watch", logWatch },
+	{ "Clear", logClear },
 	{ nullptr, nullptr }
 };
 
-// TODO: The Autotext, Generics and UIMgr objects, and Log:WriteAll
+// Autotext, for the captions
+
+// Autotext:RemoveCC(anything) takes down the caption that shows. The original
+// only checks which caption it is when no parameter is given, which no script does.
+static int autotextRemoveCC(lua_State *L) {
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	if (ui) {
+		ui->setCaption(Common::String());
+	}
+
+	lua_pushboolean(L, true);
+	return 1;
+}
+
+static const luaL_Reg kAutotextFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "RemoveCC", autotextRemoveCC },
+	{ nullptr, nullptr }
+};
+
+// TODO: Autotext:ShowCC, the Generics and UIMgr objects, and Log:WriteAll
 void registerGameAPI(lua_State *L) {
 	registerGlobal(L, "Flags", "ND.Flags", kFlagsFunctions);
 	registerGlobal(L, "VarTable", "ND.VarTable", kVarTableFunctions);
@@ -1281,6 +1484,7 @@ void registerGameAPI(lua_State *L) {
 	registerGlobal(L, "Sound", "ND.Sound", kSoundFunctions);
 
 	registerGlobal(L, "Scene", "ND.Scene", kSceneFunctions);
+	registerGlobal(L, "Autotext", "ND.Autotext", kAutotextFunctions);
 	registerGlobal(L, "Streams", "ND.Streams", kStreamsFunctions);
 	registerGlobal(L, "Player", "ND.CurPlayer", kPlayerFunctions);
 	registerGlobal(L, "Message", "ND.Message", kMessageFunctions);

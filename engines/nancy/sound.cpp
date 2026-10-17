@@ -342,6 +342,7 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 	chan.playCommands = description.playCommands;
 	chan.numLoops = description.numLoops;
 	chan.volume = description.volume;
+	chan.requestedVolume = description.volume;
 	chan.panAnchorFrame = description.panAnchorFrame;
 	chan.isPanning = description.isPanning;
 
@@ -580,10 +581,19 @@ byte SoundManager::getVolume(const Common::String &chunkName) {
 }
 
 void SoundManager::setVolume(uint16 channelID, uint16 volume) {
-	if (channelID >= _channels.size() || !isSoundPlaying(channelID))
+	if (channelID >= _channels.size())
+		return;
+
+	_channels[channelID].requestedVolume = volume;
+
+	if (!isSoundPlaying(channelID))
 		return;
 
 	_mixer->setChannelVolume(_channels[channelID].handle, getAdjustedVolume(volume) * 255 / 100);
+}
+
+uint16 SoundManager::getRequestedVolume(uint16 channelID) const {
+	return channelID < _channels.size() ? _channels[channelID].requestedVolume : 0;
 }
 
 void SoundManager::setVolume(const SoundDescription &description, uint16 volume) {

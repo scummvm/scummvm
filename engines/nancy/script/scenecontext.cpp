@@ -341,6 +341,7 @@ void SceneContext::runFrame(double elapsedTime) {
 	lua_State *L = getLua();
 
 	_time += elapsedTime;
+	_elapsedTime = elapsedTime;
 
 	// The records made since the last frame join in
 	_records.push_back(_newRecords);

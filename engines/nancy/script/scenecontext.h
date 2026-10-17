@@ -101,6 +101,7 @@ public:
 
 	// The seconds the scene has been running for
 	double getTime() const { return _time; }
+	double getElapsedTime() const { return _elapsedTime; }	// of the last frame
 
 	// Enhancement: skips the movies that are playing. They are played through
 	// a frame at a time, without their sounds, so that everything the scripts
@@ -158,6 +159,7 @@ private:
 	Common::HashMap<Common::String, RefImage *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _refs;
 
 	double _time = 0.0;
+	double _elapsedTime = 0.0;
 	bool _hasRunOnce = false;
 	bool _makesUI = false;
 	bool _isSkipping = false;
