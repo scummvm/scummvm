@@ -81,9 +81,10 @@ bool SceneScriptNR07::ClickedOnActor(int actorId) {
 				DM_Add_To_List_Never_Repeat_Once_Selected(1130, 3, 5, 7); // BLACK SEDAN
 			}
 			if (_vm->_cutContent
-				&& ((Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow) // if McCoy zoomed on her and the box
+				&& Game_Flag_Query(kFlagAR02DektoraBoughtScorpions) // if Dektora bought the scorpions
+				&& ((Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow) // and McCoy saw her with the box
 					 && Actor_Clue_Query(kActorMcCoy, kClueScorpions))
-					|| Actor_Clue_Query(kActorMcCoy, kClueScorpionbox)) // or zoomed on the box in her room
+					|| Actor_Clue_Query(kActorMcCoy, kClueScorpionbox)) // or saw the box in her room (always there)
 			) {
 				DM_Add_To_List_Never_Repeat_Once_Selected(1140, 1, 4, 7); // SCORPIONS
 			}
