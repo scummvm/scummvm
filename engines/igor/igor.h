@@ -1092,6 +1092,7 @@ private:
 	void part17LeaveThroughPath(bool lateGame = false);
 	void part17SwapFolders();
 	void part17HandlePhilipDialogue();
+	void part17PhilipDialogueAndTail();
 	void part17UpdateJimmyDialogue(int action);
 	void part17UpdatePhilipDialogue(int action);
 	void part17UpdateBackground();
@@ -1473,6 +1474,7 @@ private:
 	void part34OldLadyIdleAnimationFrame(int step);
 	void part34LauraConversation();
 	void part34OldLadyConversation();
+	void part34ReloadParkAfterLaura();
 	void part34UpdateBackground();
 	void part35();
 	void part35ExecuteAction(int action);

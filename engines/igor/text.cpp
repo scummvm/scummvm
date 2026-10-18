@@ -535,7 +535,7 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 		_gameState.dialogueChoiceCount = 1;
 	}
 	_dialogueEnded = false;
-	if (getPart() == 12 && _objectsState[kLizardTakenStateIndex] == 0) {
+	if (getPart() == 12 && _objectsState[kLizardTakenStateIndex] == 0 && !resuming) {
 		_gameState.dialogueData[6] = 1;
 		dialogueReplyToQuestion(x, y, r, g, b, 40);
 	}

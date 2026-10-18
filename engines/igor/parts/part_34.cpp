@@ -27,6 +27,10 @@ namespace Igor {
 static const DialogueDataOffsets kNoDialogueData = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // Conversation with the old lady
+// ids of the dialogues of this room stored in a savegame while a choice menu is open
+static const uint8 kOldLadyDialogueId = 1;
+static const uint8 kLauraDialogueId = 2;
+
 static const DialogueDataOffsets kOldLadyDialogueData = {
 	-162, 3,   // questions
 	433, 10,   // replies
@@ -236,6 +240,8 @@ void IgorEngine::part34TakeResin() {
 
 void IgorEngine::part34TalkToOldLady() {
 	part34OldLadyConversation();
+	if (_gameStateLoaded || _eventQuitGame)
+		return;
 	part34ApplyObjectState(255);
 	_parkLadyIdleStep = 4;
 	part34OldLadyIdleAnimationFrame(4);
@@ -292,7 +298,12 @@ void IgorEngine::part34GiveLizardToOldLady() {
 	_objectsState[kLizardGivenStateIndex] = 1;
 
 	part34LauraConversation();
+	if (_gameStateLoaded || _eventQuitGame)
+		return;
+	part34ReloadParkAfterLaura();
+}
 
+void IgorEngine::part34ReloadParkAfterLaura() {
 	loadActionData(DAT_ParkLeft);
 	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park);
 	SET_PAL_240_48_1();
@@ -304,24 +315,33 @@ void IgorEngine::part34GiveLizardToOldLady() {
 void IgorEngine::part34OldLadyConversation() {
 	_roomDataOffsets.dlg = kOldLadyDialogueData;
 	loadDialogueData(DLG_ParkLady);
+	const bool resuming = _dialogueResuming;
 	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
 		memset(_screenVGA + 46080, 0, 17920);
 	}
 	int textIndex = 250;
-	part34QueueReplyText(1, 1, 584, textIndex);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(160, 58, 63, 63, 63);
-	part34WaitForIgorDialogue();
+	if (!resuming) {
+		part34QueueReplyText(1, 1, 584, textIndex);
+		SET_DIALOGUE_TEXT(1, 1);
+		startCutsceneDialogue(160, 58, 63, 63, 63);
+		part34WaitForIgorDialogue();
+	}
 	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
-		textIndex = 250;
-		part34QueueReplyText(2, 1, 585, textIndex);
-		part34QueueReplyText(3, 1, 586, textIndex);
-		SET_DIALOGUE_TEXT(1, 2);
-		startCutsceneDialogue(121, 68, 63, 23, 0);
-		part34WaitForLadyDialogue();
+		if (!resuming) {
+			textIndex = 250;
+			part34QueueReplyText(2, 1, 585, textIndex);
+			part34QueueReplyText(3, 1, 586, textIndex);
+			SET_DIALOGUE_TEXT(1, 2);
+			startCutsceneDialogue(121, 68, 63, 23, 0);
+			part34WaitForLadyDialogue();
+		}
 		_updateDialogue = &IgorEngine::part34UpdateLadyDialogue;
-		handleDialogue(121, 68, 63, 23, 0, false);
+		handleDialogue(121, 68, 63, 23, 0, false, kOldLadyDialogueId);
 		_updateDialogue = 0;
+		if (_gameStateLoaded || _eventQuitGame) {
+			_roomDataOffsets.dlg = kNoDialogueData;
+			return;
+		}
 	}
 	textIndex = 250;
 	part34QueueReplyText(4, 2, 587, textIndex);
@@ -350,37 +370,47 @@ void IgorEngine::part34LauraConversation() {
 
 	_roomDataOffsets.dlg = kLauraDialogueData;
 	loadDialogueData(DLG_ParkLaura);
+	// a loaded savegame continues at the choice menu
+	const bool resuming = _dialogueResuming;
 	memset(_screenVGA + 46080, 0, 17920);
+	int textIndex = 250;
+	// the frames of Laura walking in are also drawn when resuming
 	for (int frame = 1; frame <= 19; ++frame) {
 		part34DrawLauraFrame(frame);
-		waitForTimer(30);
+		if (!resuming)
+			waitForTimer(30);
 	}
-	int textIndex = 250;
-	part34QueueReplyText(1, 1, 600, textIndex);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(185, 69, 63, 0, 38);
-	part34WaitForLauraDialogue();
-	for (int frame = 26; frame <= 29; ++frame) {
-		part34DrawLauraFrame(frame);
-		waitForTimer(5);
+	if (!resuming) {
+		part34QueueReplyText(1, 1, 600, textIndex);
+		SET_DIALOGUE_TEXT(1, 1);
+		startCutsceneDialogue(185, 69, 63, 0, 38);
+		part34WaitForLauraDialogue();
+		for (int frame = 26; frame <= 29; ++frame) {
+			part34DrawLauraFrame(frame);
+			waitForTimer(5);
+		}
+		textIndex = 250;
+		part34QueueReplyText(2, 1, 601, textIndex);
+		SET_DIALOGUE_TEXT(1, 1);
+		startCutsceneDialogue(162, 64, 63, 63, 63);
+		WalkData *wd = &_walkData[_walkDataLastIndex - 1];
+		wd->x = 162;
+		wd->y = 117;
+		wd->posNum = kFacingPositionRight;
+		part34WaitForIgorDialogue();
+		textIndex = 250;
+		part34QueueReplyText(3, 1, 602, textIndex);
+		SET_DIALOGUE_TEXT(1, 1);
+		startCutsceneDialogue(185, 69, 63, 0, 38);
+		part34WaitForLauraDialogue();
 	}
-	textIndex = 250;
-	part34QueueReplyText(2, 1, 601, textIndex);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(162, 64, 63, 63, 63);
-	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
-	wd->x = 162;
-	wd->y = 117;
-	wd->posNum = kFacingPositionRight;
-	part34WaitForIgorDialogue();
-	textIndex = 250;
-	part34QueueReplyText(3, 1, 602, textIndex);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(185, 69, 63, 0, 38);
-	part34WaitForLauraDialogue();
 	_updateDialogue = &IgorEngine::part34UpdateLauraDialogue;
-	handleDialogue(185, 69, 63, 0, 38, false);
+	handleDialogue(185, 69, 63, 0, 38, false, kLauraDialogueId);
 	_updateDialogue = 0;
+	if (_gameStateLoaded || _eventQuitGame) {
+		_roomDataOffsets.dlg = kNoDialogueData;
+		return;
+	}
 	part34DrawLauraFrame(29);
 	textIndex = 250;
 	part34QueueReplyText(4, 1, 603, textIndex);
@@ -492,6 +522,17 @@ void IgorEngine::part34() {
 		_walkDataCurrentIndex = 1;
 	}
 	enterPartLoop();
+	if (takeResumeDialogue(kOldLadyDialogueId)) { // loaded while talking to the old lady
+		part34OldLadyConversation();
+		if (!_gameStateLoaded && !_eventQuitGame)
+			part34ApplyObjectState(255);
+		finishResumedDialogue();
+	} else if (takeResumeDialogue(kLauraDialogueId)) { // loaded while talking to laura
+		part34LauraConversation();
+		if (!_gameStateLoaded && !_eventQuitGame)
+			part34ReloadParkAfterLaura();
+		finishResumedDialogue();
+	}
 	while (_currentPart == 340 && !_gameStateLoaded) {
 		runPartLoop();
 	}
