@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	entity.o \
 	saveload.o \
 	script.o \
+	script_records.o \
 	text.o \
 	xfile_archive.o \
 	npc/authority_dialogue.o \

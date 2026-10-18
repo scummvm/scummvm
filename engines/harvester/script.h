@@ -473,6 +473,32 @@ private:
 	bool loadConfig(ResourceManager &resources);
 	void decode();
 	void parseTownRecords(ResourceManager &resources);
+	void parseTownRecordLine(ResourceManager &resources,
+		const Common::String &rawLine, uint32 &anonymousObjectId);
+	void parseFlagRecord(const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseCommandRecord(ResourceManager &resources,
+		const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseExecListRecord(const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseTextRecord(const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseHeadRecord(ResourceManager &resources,
+		const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseUseItemRecord(const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseEntranceRecord(const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseMapEntranceRecord(const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseMapLocationRecord(const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseRoomRecord(ResourceManager &resources,
+		const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseNpcRecord(ResourceManager &resources,
+		const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseMonsterRecord(ResourceManager &resources,
+		const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseTimerRecord(const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseRegionRecord(const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseAnimRecord(ResourceManager &resources,
+		const Common::Array<Common::String> &tokens, uint tagIndex);
+	void parseObjectRecord(ResourceManager &resources,
+		const Common::Array<Common::String> &tokens, uint tagIndex, uint32 &anonymousObjectId);
+	static int parseDeathDamageType(const Common::String &value);
 	const RoomRecord *findRoomRecord(const Common::String &roomName) const;
 	const CommandRecord *findCommandRecord(const Common::String &tag) const;
 	const ExecListRecord *findExecListRecord(const Common::String &name) const;
