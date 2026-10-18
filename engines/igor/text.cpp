@@ -217,9 +217,12 @@ void IgorEngine::cutsceneSayWithCallback(int x, int y, int r, int g, int b, int 
  * Loop for character talking
  */
 void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b) {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	do {
 		if (_eventQuitGame) {
 			cancelDialogue();
+			_canSaveGame = savingWasAllowed;
 			return;
 		}
 		// stop speech if skip dialogue hit
@@ -276,10 +279,12 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 		}
 		// Escape only aborts dialogue during the intro cutscene.
 		if (_inputVars[kInputEscape] && _currentPart == 850) {
+			_canSaveGame = savingWasAllowed;
 			return;
 		}
 		waitForTimer();
 	} while (_gameState.dialogueTextRunning);
+	_canSaveGame = savingWasAllowed;
 
 }
 
@@ -382,9 +387,12 @@ void IgorEngine::startIgorDialogue() {
 }
 
 void IgorEngine::waitForEndOfIgorDialogue(bool animateHead, bool updateRoomBackground) {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	do {
 		if (_eventQuitGame) {
 			cancelDialogue();
+			_canSaveGame = savingWasAllowed;
 			return;
 		}
 		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
@@ -436,10 +444,13 @@ void IgorEngine::waitForEndOfIgorDialogue(bool animateHead, bool updateRoomBackg
 		if (updateRoomBackground && _updateRoomBackground) {
 			(this->*_updateRoomBackground)();
 		}
-		if (_inputVars[kInputEscape] && _currentPart == 850)
+		if (_inputVars[kInputEscape] && _currentPart == 850) {
+			_canSaveGame = savingWasAllowed;
 			return;
+		}
 		waitForTimer();
 	} while (_gameState.dialogueTextRunning);
+	_canSaveGame = savingWasAllowed;
 }
 
 void IgorEngine::animateIgorTalking(int frame) {
