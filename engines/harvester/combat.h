@@ -62,7 +62,7 @@ extern const int kNativeDefaultNpcDeathDamageType;
 
 struct AttackAnimationRange {
 	AttackAnimationRange() {}
-	AttackAnimationRange(int firstFrame, int lastFrame, int resumeFacing)
+	constexpr AttackAnimationRange(int firstFrame, int lastFrame, int resumeFacing)
 		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing) {}
 
 	int firstFrame = 0;
