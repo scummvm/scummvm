@@ -27,6 +27,7 @@
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/ui/textbox.h"
 #include "engines/nancy/puzzledata.h"
 #include "engines/nancy/action/puzzle/beadpuzzle.h"
 
@@ -66,7 +67,7 @@ void BeadPuzzle::readData(Common::SeekableReadStream &stream) {
 	for (int i = 0; i < kMaxSlots; ++i)
 		_solution[i] = stream.readUint16LE();
 
-	stream.skip(2);
+	_beadCursorType = stream.readSint16LE();
 
 	_pickupSound.readNormal(stream);
 	_placeSound.readNormal(stream);
@@ -85,9 +86,9 @@ void BeadPuzzle::readData(Common::SeekableReadStream &stream) {
 	_perfectFlag.label = stream.readSint16LE();
 	_perfectFlag.flag  = stream.readByte();
 
-	_exitScene._sceneChange.readData(stream);
-	stream.skip(2);
 	_solveScene._sceneChange.readData(stream);
+	stream.skip(2);
+	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
 
 	readRect(stream, _exitHotspot);
@@ -117,6 +118,7 @@ void BeadPuzzle::init() {
 	}
 
 	_heldBead = -1;
+	_movingBead = -1;
 	_subState = kPlaying;
 	_resultKind = kNoResult;
 	_resultSoundPlayed = false;
@@ -150,15 +152,35 @@ void BeadPuzzle::execute() {
 			break;
 
 		case kDroppingBead:
-			if (g_system->getMillis() >= _dropNextTick) {
-				if (_dropCurrentSlot <= (int)_placed.size()) {
-					_placed.push_back(_heldBead);
-					holdBead(-1, nullptr);
+			// The place sound loops until the bead reaches its slot
+			if (_placeSound.name != "NO SOUND" && !g_nancy->_sound->isSoundPlaying(_placeSound))
+				g_nancy->_sound->playSound(_placeSound);
+
+			if (g_system->getMillis() >= _moveNextTick) {
+				if (_movingSlot <= (int)_placed.size()) {
+					_placed.push_back(_movingBead);
+					_movingBead = -1;
+					g_nancy->_sound->stopSound(_placeSound);
 					_subState = kPlaying;
 					persistState();
 				} else {
-					--_dropCurrentSlot;
-					_dropNextTick = g_system->getMillis() + kDropTickMs;
+					--_movingSlot;
+					_moveNextTick = g_system->getMillis() + kDropTickMs;
+				}
+				redraw();
+			}
+			break;
+
+		case kRemovingBead:
+			// The removed bead slides off the far end of the thread
+			if (g_system->getMillis() >= _moveNextTick) {
+				if (_movingSlot >= (int)_numSlots - 1) {
+					_movingBead = -1;
+					g_nancy->_sound->stopSound(_removeSound);
+					_subState = kPlaying;
+				} else {
+					++_movingSlot;
+					_moveNextTick = g_system->getMillis() + kDropTickMs;
 				}
 				redraw();
 			}
@@ -166,13 +188,7 @@ void BeadPuzzle::execute() {
 
 		case kShowingResult:
 			if (!_resultSoundPlayed) {
-				const SoundDescription *snd = nullptr;
-				if (_resultKind == kPartial)      snd = &_partialSound;
-				else if (_resultKind == kWrong)   snd = &_wrongSound;
-				if (snd && snd->name != "NO SOUND") {
-					g_nancy->_sound->loadSound(*snd);
-					g_nancy->_sound->playSound(*snd);
-				}
+				playResultSound(_resultKind == kPartial ? _partialSound : _wrongSound);
 				_resultSoundPlayed = true;
 			}
 			break;
@@ -209,6 +225,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 	if (_state != kRun)
 		return;
 	if (_subState == kDroppingBead ||
+	    _subState == kRemovingBead ||
 	    _subState == kPerfectWaitSound ||
 	    _subState == kExitToSolved ||
 	    _subState == kExitToDefault)
@@ -225,6 +242,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->stopSound(_partialSound);
 				g_nancy->_sound->stopSound(_wrongSound);
+				NancySceneState.getTextbox().clear();
 				if (!_placed.empty())
 					_placed.pop_back();
 				holdBead(-1, nullptr);
@@ -240,7 +258,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 		for (int i = 0; i < (int)_numBeadTypes; ++i) {
 			if (_pickupHotspots[i].isEmpty() || !_pickupHotspots[i].contains(mouseVP))
 				continue;
-			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_beadCursorType, true);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				if ((int)_placed.size() < (int)_numSlots) {
 					holdBead((int16)i, &input);
@@ -255,9 +273,13 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 		}
 
 		if (!_removeHotspot.isEmpty() && _removeHotspot.contains(mouseVP) && !_placed.empty()) {
-			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_beadCursorType, true);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				_movingBead = _placed.back();
 				_placed.pop_back();
+				_movingSlot = (int16)_placed.size();
+				_moveNextTick = g_system->getMillis() + kDropTickMs;
+				_subState = kRemovingBead;
 				if (_removeSound.name != "NO SOUND") {
 					g_nancy->_sound->loadSound(_removeSound);
 					g_nancy->_sound->playSound(_removeSound);
@@ -271,7 +293,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 		if ((int)_placed.size() < (int)_numSlots &&
 		    !_removeHotspot.isEmpty() &&
 		    _removeHotspot.contains(mouseVP)) {
-			g_nancy->_cursor->setCursorType(CursorManager::kDragHand);
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_beadCursorType, true);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->stopSound(_pickupSound);
 				if (_placeSound.name != "NO SOUND") {
@@ -281,11 +303,10 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 				// The bead leaves the cursor and slides from the bottom of the
 				// thread up to the next free slot before it is committed.
 				_subState = kDroppingBead;
-				_heldBeadObject.setVisible(false);
-				_heldBeadObject.putDown();
-				_dropCurrentSlot = (int16)((int)_numSlots - 1);
-				_dropNextTick = g_system->getMillis() + kDropTickMs;
-				redraw();
+				_movingBead = _heldBead;
+				_movingSlot = (int16)((int)_numSlots - 1);
+				_moveNextTick = g_system->getMillis() + kDropTickMs;
+				holdBead(-1, nullptr);
 			}
 			return;
 		}
@@ -293,7 +314,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 		if (_heldBead >= 0 && _heldBead < (int)_numBeadTypes &&
 		    !_pickupHotspots[_heldBead].isEmpty() &&
 		    _pickupHotspots[_heldBead].contains(mouseVP)) {
-			g_nancy->_cursor->setCursorType(CursorManager::kDragHand);
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_beadCursorType, true);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				holdBead(-1, nullptr);
 				g_nancy->_sound->stopSound(_pickupSound);
@@ -322,10 +343,7 @@ void BeadPuzzle::evaluate() {
 		_resultKind = kPerfect;
 		if (_perfectFlag.label != -1)
 			NancySceneState.setEventFlag(_perfectFlag);
-		if (_perfectSound.name != "NO SOUND") {
-			g_nancy->_sound->loadSound(_perfectSound);
-			g_nancy->_sound->playSound(_perfectSound);
-		}
+		playResultSound(_perfectSound);
 		_perfectExitTime = g_system->getMillis() + 4000;
 		_subState = kPerfectWaitSound;
 	} else if (mismatches > _mistakeThreshold) {
@@ -339,6 +357,20 @@ void BeadPuzzle::evaluate() {
 	}
 
 	redraw();
+}
+
+// Plays a result remark and shows its caption, looked up by the sound name.
+void BeadPuzzle::playResultSound(const SoundDescription &sound) {
+	if (sound.name == "NO SOUND")
+		return;
+
+	g_nancy->_sound->loadSound(sound);
+	g_nancy->_sound->playSound(sound);
+
+	Common::String caption = resolveSubtitleText(sound.name);
+	if (caption.empty())
+		caption = resolveSubtitleText(sound.name, Common::String(), "CONVO");
+	showSubtitle(caption);
 }
 
 // Puts a bead on the cursor, or takes the held one off it for a bead of -1. The
@@ -384,10 +416,11 @@ void BeadPuzzle::redraw() {
 		_drawSurface.blitFrom(_image, src, Common::Point(dst.left, dst.top));
 	}
 
-	if (_subState == kDroppingBead && _heldBead >= 0 && _heldBead < (int)_numBeadTypes &&
-	    _dropCurrentSlot >= 0 && _dropCurrentSlot < (int)_numSlots) {
-		const Common::Rect &src = _beadSrcRects[_heldBead];
-		const Common::Rect &dst = _slotDestRects[_dropCurrentSlot];
+	if ((_subState == kDroppingBead || _subState == kRemovingBead) &&
+	    _movingBead >= 0 && _movingBead < (int)_numBeadTypes &&
+	    _movingSlot >= 0 && _movingSlot < (int)_numSlots) {
+		const Common::Rect &src = _beadSrcRects[_movingBead];
+		const Common::Rect &dst = _slotDestRects[_movingSlot];
 		if (!src.isEmpty() && !dst.isEmpty())
 			_drawSurface.blitFrom(_image, src, Common::Point(dst.left, dst.top));
 	}
