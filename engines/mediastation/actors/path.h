@@ -51,7 +51,6 @@ private:
 	double _stepRate = 0.0;
 	uint _stepDurationInMilliseconds = 0;
 	uint _currentStep = 0;
-	uint _startTime = 0;
 	uint _pauseTime = 0;
 	uint _totalSteps = 0;
 	uint _nextPathStepTime = 0;
