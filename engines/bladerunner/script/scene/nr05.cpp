@@ -303,16 +303,16 @@ void SceneScriptNR05::talkToEarlyQ() {
 		if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(900, 5, 6, 5); // LUCY
 		}
-		if (Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)) {
-			// TODO A bug? kClueDektorasDressingRoom is acquired from EarlyQ
-			// at his office (nr04) while being threatened by McCoy.
-			// At which point EarlyQ already tells McCoy who the people on the photograph are.
-			// It makes no sense that McCoy will next find EarlyQ at the VIP area (this area, nr05)
-			// and casually ask him about who the woman is in this photo.
-			// (McCoy won't be able to even find EarlyQ there again).
-			// Maybe it's another photo of Dektora needed here
-			// --- Animoid Row? Why would McCoy suspect that woman?
-			// --- Hawker's Bar? Can we find a Dektora pic in SHP resources?
+		bool canAskAboutBlondWoman;
+		if (_vm->_cutContent) {
+			// Can ask this if McCoy saw her with Clovis (the prime suspect).
+			canAskAboutBlondWoman = Actor_Clue_Query(kActorMcCoy, kClueIzosFriend);
+		} else {
+			// McCoy can't get this clue prior to this event.
+			// This would also mean that Early Q already told McCoy about her identity.
+			canAskAboutBlondWoman = Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom);
+		}
+		if (canAskAboutBlondWoman) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(910, 5, 5, 5); // BLOND WOMAN
 		}
 	}
@@ -332,19 +332,20 @@ void SceneScriptNR05::talkToEarlyQ() {
 
 	switch (answer) {
 	case 890: // JEWELRY
-		Actor_Says(kActorMcCoy, 3505, kAnimationModeTalk);
+		Game_Flag_Set(kFlagMcCoyAskedEarlyQAboutJewelry);
+		Actor_Says(kActorMcCoy, 3505, kAnimationModeTalk); // "You buy some jewelry at an auction recently? Real old elite stuff?"
 		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
-		Actor_Says(kActorEarlyQ, 420, 12);
-		Actor_Says(kActorEarlyQ, 430, 13);
-		Actor_Says(kActorMcCoy, 3530, 15);
-		Actor_Says(kActorEarlyQ, 440, 15);
-		Actor_Says(kActorMcCoy, 3535, 13);
-		Actor_Says(kActorEarlyQ, 460, 16);
-		Actor_Says(kActorMcCoy, 3540, 15);
-		Actor_Says(kActorEarlyQ, 490, 16);
-		Actor_Says(kActorEarlyQ, 500, 13);
-		Actor_Says(kActorMcCoy, 3545, 15);
-		Actor_Says(kActorEarlyQ, 520, 12);
+		Actor_Says(kActorEarlyQ, 420, 12); // "Who's asking?"
+		Actor_Says(kActorEarlyQ, 430, 13); // "You ain't with Robbery-Homicide."
+		Actor_Says(kActorMcCoy, 3530, 15); // "No, sir."
+		Actor_Says(kActorEarlyQ, 440, 15); // "Eh, those pieces ain't hot. I got the papers to prove it. I picked them up at a legitimate auction. Cost me nearly a pound of flesh too."
+		Actor_Says(kActorMcCoy, 3535, 13); // "You give this stuff to a girlfriend, Early?"
+		Actor_Says(kActorEarlyQ, 460, 16); // "You kiddin? I ain't that stupid. No, no, no, no. I was letting one of my dancers use the stuff in her act. Kind of a tribute to the ancient swamp lands, you know what I mean?"
+		Actor_Says(kActorMcCoy, 3540, 15); // "Which dancer?"
+		Actor_Says(kActorEarlyQ, 490, 16); // "Hecuba. She's going on in a few."
+		Actor_Says(kActorEarlyQ, 500, 13); // "She's one of my biggest earners too. She ain't in any trouble now, is she?"
+		Actor_Says(kActorMcCoy, 3545, 15); // "Not yet."
+		Actor_Says(kActorEarlyQ, 520, 12); // "Good, good. Wouldn't wanna slaughter the goose that lays them golden eggs."
 		Actor_Face_Heading(kActorEarlyQ, 849, false);
 		break;
 
@@ -361,35 +362,31 @@ void SceneScriptNR05::talkToEarlyQ() {
 		break;
 
 	case 910: // BLOND WOMAN
-		Actor_Says(kActorMcCoy, 3515, 14);
+		Actor_Says(kActorMcCoy, 3515, 14); // "You ever seen this woman before?"
 		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
-		if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) { // cut content? this clue is unobtanium
-			// A BUG?
-			// TODO why is Grigorian's Note needed here, for EarlyQ to reveal who Hecuba is?
-			// TODO could CrazysInvolvement also do here?
-			//      maybe another clue should be required in its place or some additional ones?
-			// Early Q acknowledges he knows Dektora, and also reveals Hecuba is her stage name
-			// (Early Q also mentions Hecuba in the JEWELRY question but does not connect her with Dektora)
-			// This dialogue thread assumes:
-			// - Early Q has told McCoy about JEWELRY (weak, not necessarily)
-			// --- If McCoy has not discussed the JEWELRY topic with EarlyQ yet, 
-			// --- then he should NOT be able to do this AFTER this conversation IF McCoy has the clue condition
-			// --- for this specific bit of dialogue which reveals Hecuba's identity.
-			// --- Otherwiase it would create inconsistency to what is known about Hecuba
-			// - Dektora/Hecuba has *not* performed her act yet
-			Actor_Says(kActorEarlyQ, 580, 12);
-			Actor_Says(kActorMcCoy, 3560, 13);
-			Actor_Says(kActorEarlyQ, 590, 16);
-			Actor_Says(kActorMcCoy, 3565, 16);
-			Actor_Says(kActorEarlyQ, 600, 13);
-			Actor_Says(kActorMcCoy, 3570, 14);
-			Actor_Says(kActorEarlyQ, 620, 15);
-			Actor_Says(kActorMcCoy, 3575, 13);
+		bool canUseExtendedDialog;
+		if (_vm->_cutContent) {
+			// Just checking if McCoy asked about jewelry because it's the only contextual requirement
+			// for the extended dialog. The extended dialog suggests no need for any other clues.
+			canUseExtendedDialog = Game_Flag_Query(kFlagMcCoyAskedEarlyQAboutJewelry);
 		} else {
-			// Early Q denies recongnizing Dektora
-			Actor_Says(kActorEarlyQ, 640, 13);
-			Actor_Says(kActorMcCoy, 3580, 15);
-			Actor_Says(kActorEarlyQ, 660, 12);
+			// This clue has no relation to Dektora's identity. Instead, it implies Grigorians
+			// connection to Crazy-legs Larry and the replicants who stole the car.
+			canUseExtendedDialog = Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote);
+		}
+		if (canUseExtendedDialog) {
+			Actor_Says(kActorEarlyQ, 580, 12); // "Hey. That kinda looks like Hecuba. The one I lent the jewelry to?"
+			Actor_Says(kActorMcCoy, 3560, 13); // "Yeah? What's her real name?"
+			Actor_Says(kActorEarlyQ, 590, 16); // "That's it."
+			Actor_Says(kActorMcCoy, 3565, 16); // "There hasn't been an exotic dancer who used her real name since Jesus was a pup."
+			Actor_Says(kActorEarlyQ, 600, 13); // "Okay, you got me. Dektora is the name on her work card. Let me tell you, General. She works it like a freaking house of fire."
+			Actor_Says(kActorMcCoy, 3570, 14); // "I'm gonna want to talk to her. When is she up?"
+			Actor_Says(kActorEarlyQ, 620, 15); // "Next, General. Have a couple of drinks, relax a little. But wait until her act is over. I don't want to deprive a lady of her livelihood."
+			Actor_Says(kActorMcCoy, 3575, 13); // "Oh, god forbid."
+		} else {
+			Actor_Says(kActorEarlyQ, 640, 13); // "Gee, I don't know. She looks kind of familiar but I got so many broads working here, they all get kinda jumbled in my brain."
+			Actor_Says(kActorMcCoy, 3580, 15); // "Sure they do."
+			Actor_Says(kActorEarlyQ, 660, 12); // "Relax, have a drink, loosen up. You see her, you let me know."
 		}
 		Actor_Face_Heading(kActorEarlyQ, 849, false);
 		break;
