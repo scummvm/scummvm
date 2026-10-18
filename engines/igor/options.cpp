@@ -627,7 +627,8 @@ void IgorEngine::handleFloppyOptionsMenu() {
 				case Common::KEYCODE_RETURN:
 				case Common::KEYCODE_KP_ENTER:
 					if (selected == 1) {
-						saveGameDialog();
+						if (saveGameDialog())
+							menuLoop = false;
 					} else if (selected == 2) {
 						if (loadGameDialog()) {
 							free(button);
@@ -760,7 +761,8 @@ void IgorEngine::handleOptionsMenu() {
 						break;
 					case Common::KEYCODE_RETURN:
 						if (currentPage == kPageSave && !(_game.flags & kFlagDemo)) {
-							saveGameDialog();
+							if (saveGameDialog())
+								menuLoop = false;
 						} else if (currentPage == kPageLoad && !(_game.flags & kFlagDemo)) {
 							if (loadGameDialog()) {
 								_optionsMenuThumbnail.free();

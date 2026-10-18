@@ -195,18 +195,25 @@ void IgorEngine::part30WalkInFromRight() {
 void IgorEngine::part30LauraCutscene() {
 	if (!isCDVersion())
 		playMusic(3, true);
+
+	const bool resuming = _dialogueResuming;
 	memset(_screenVGA + 46080, 0, 17920);
-	fadeIn(768);
-	part30LauraAndIgorBumpIntoEachOther();
+	if (!resuming) {
+		fadeIn(768);
+		part30LauraAndIgorBumpIntoEachOther();
+	}
 	_walkData[0].setPos(172, 134, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
 	_updateDialogue = &IgorEngine::part30UpdateLauraDialogue;
-	igorSayAndWait({ { 203, 1, 452 }, { 204, 1, 453 }, { 205, 1, 454 } });
-	cutsceneSay(201, 85, 63, 0, 38, 206, 1, 455);
+	if (!resuming) {
+		igorSayAndWait({ { 203, 1, 452 }, { 204, 1, 453 }, { 205, 1, 454 } });
+		cutsceneSay(201, 85, 63, 0, 38, 206, 1, 455);
+	}
 	// igor crosses arms
-	part30IgorCrossesArms();
+	if (!resuming) // when resuming it was drawn before the screen faded in
+		part30IgorCrossesArms();
 	// real dialogue
 
 	part30HandleLauraDialogue();
@@ -283,7 +290,15 @@ void IgorEngine::part30() {
 	partMainSetExecuteAction(1, &IgorEngine::part30ExecuteAction);
 	part30ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	if (!restoreRoomAfterLoad()) {
+	SET_PAL_240_48_1();
+	SET_PAL_208_96_1();
+	const bool loaded = restoreRoomAfterLoad(true, false);
+	if (loaded) {
+				// a game saved at laura's dialogue shows the scene of the dialogue from the first frame
+		if (_resumeDialogueId == 1)
+			part30IgorCrossesArms();
+		fadeIn(768);
+	} else {
 		_currentAction.verb = kVerbWalk;
 		if (_objectsState[kLauraMetAtCollegeStateIndex] == 0) {
 			part30LauraCutscene();
@@ -306,6 +321,10 @@ void IgorEngine::part30() {
 		}
 	}
 	enterPartLoop();
+	if (takeResumeDialogue(1)) { // loaded while talking to laura
+		part30LauraCutscene();
+		finishResumedDialogue();
+	}
 	while (_currentPart >= 300 && _currentPart <= 303 && !_gameStateLoaded) {
 		runPartLoop();
 	}

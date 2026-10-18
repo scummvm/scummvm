@@ -278,7 +278,8 @@ void IgorEngine::enterPartLoop() {
 	}
 }
 
-bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
+// With [fade] false the caller draws what the room shows when the game resumes and then fades in the screen itself.
+bool IgorEngine::restoreRoomAfterLoad(bool drawIgor, bool fade) {
 	_loadedIgorMoving = false;
 	if (!_gameStateLoaded)
 		return false;
@@ -309,7 +310,8 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
 		showCursor();
 	_resumeDialogueId = _gameState.dialogueStarted;
 	_gameStateLoaded = false;
-	fadeIn(768);
+	if (fade)
+		fadeIn(768);
 	return true;
 }
 

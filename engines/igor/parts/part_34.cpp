@@ -361,12 +361,29 @@ void IgorEngine::part34OldLadyConversation() {
 /**
  * Laura walks into the park, talks with Igor and leaves.
  */
-void IgorEngine::part34LauraConversation() {
+void IgorEngine::part34LoadLauraScene(bool showPalette) {
 	static const int frames[] = { FRM_ParkLaura1, FRM_ParkLaura2, FRM_ParkLaura3, 0 };
 	loadAnimData(frames, kParkLauraFrames);
 	memcpy(_paletteBuffer + 176 * 3, _animFramesBuffer + kParkLauraPalette, 48);
-	memcpy(_currentPalette + 176 * 3, _animFramesBuffer + kParkLauraPalette, 48);
-	setPaletteRange(176, 191);
+	if (showPalette) {
+		memcpy(_currentPalette + 176 * 3, _animFramesBuffer + kParkLauraPalette, 48);
+		setPaletteRange(176, 191);
+	}
+}
+
+// The frames of laura walking in are drawn again without waits when a savegame at her dialogue is loaded.
+void IgorEngine::part34DrawLauraWalkingIn(bool wait) {
+	for (int frame = 1; frame <= 19; ++frame) {
+		part34DrawLauraFrame(frame);
+		if (wait)
+			waitForTimer(30);
+	}
+}
+
+void IgorEngine::part34LauraConversation() {
+	// when resuming the scene was already loaded and drawn before the screen faded in
+	if (!_dialogueResuming)
+		part34LoadLauraScene(true);
 
 	_roomDataOffsets.dlg = kLauraDialogueData;
 	loadDialogueData(DLG_ParkLaura);
@@ -374,13 +391,8 @@ void IgorEngine::part34LauraConversation() {
 	const bool resuming = _dialogueResuming;
 	memset(_screenVGA + 46080, 0, 17920);
 	int textIndex = 250;
-	// the frames of Laura walking in are also drawn when resuming
-	for (int frame = 1; frame <= 19; ++frame) {
-		part34DrawLauraFrame(frame);
-		if (!resuming)
-			waitForTimer(30);
-	}
 	if (!resuming) {
+		part34DrawLauraWalkingIn(true);
 		part34QueueReplyText(1, 1, 600, textIndex);
 		SET_DIALOGUE_TEXT(1, 1);
 		startCutsceneDialogue(185, 69, 63, 0, 38);
@@ -517,7 +529,14 @@ void IgorEngine::part34() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	part34ApplyObjectState(255);
 
-	if (!restoreRoomAfterLoad()) {
+	if (restoreRoomAfterLoad(true, false)) {
+		// a game saved at laura's menu shows her scene from the first frame
+		if (_resumeDialogueId == kLauraDialogueId) {
+			part34LoadLauraScene(false);
+			part34DrawLauraWalkingIn(false);
+		}
+		fadeIn(768);
+	} else {
 		_walkDataLastIndex = 1;
 		_walkDataCurrentIndex = 1;
 	}

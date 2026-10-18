@@ -246,7 +246,11 @@ void IgorEngine::part8HandleIntercomDialogue() {
 	_roomDataOffsets.dlg = { -174, 2, 257, 0, 30, 0, 459, 459, 0 };
 	loadDialogueData(DLG_Part8Intercom);
 	_updateDialogue = 0;
+	// this menu is part of the scene that leads to the secretary: it cannot be saved
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
 	handleDialogue(0, 0, 0, 0, 0, false, 2);
+	_canSaveGame = savingWasAllowed;
 	_roomDataOffsets = savedOffsets;
 }
 
