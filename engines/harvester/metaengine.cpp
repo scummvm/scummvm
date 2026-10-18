@@ -92,14 +92,20 @@ Common::KeymapArray HarvesterMetaEngine::initKeymaps(const char *target) const {
 		{ "EVADE", _s("Evasive movement modifier"), kActionEvasiveModifier, "RSHIFT", nullptr },
 		{ "SPEEDUP", _s("Speed up"), kActionSpeedUp, "LALT", "RALT" },
 		{ "INVENTORY", _s("Inventory"), kActionInventory, "i", nullptr },
-		{ "MENU", _s("Game menu"), kActionMenu, "ESCAPE", "JOY_Y" }
+		{ "MENU", _s("Game menu"), kActionMenu, "ESCAPE", "JOY_Y" },
+		{ "HIGHATTACK", _s("High attack"), kActionHighAttack, nullptr, nullptr },
+		{ "MEDIUMATTACK", _s("Medium attack"), kActionMediumAttack, nullptr, nullptr },
+		{ "LOWATTACK", _s("Low attack"), kActionLowAttack, nullptr, nullptr },
+		{ "DUCK", _s("Duck"), kActionDuck, nullptr, nullptr },
+		{ "JUMP", _s("Jump"), kActionJump, nullptr, nullptr }
 	};
 	for (const auto &binding : bindings) {
 		Action *action = new Action(binding.id, _(binding.description));
 		action->setCustomEngineActionEvent(binding.action);
-		if (binding.action <= kActionSpeedUp)
+		if (binding.action <= kActionSpeedUp || binding.action >= kActionHighAttack)
 			action->allowKbdRepeats();
-		action->addDefaultInputMapping(binding.mapping);
+		if (binding.mapping)
+			action->addDefaultInputMapping(binding.mapping);
 		if (binding.alternateMapping)
 			action->addDefaultInputMapping(binding.alternateMapping);
 		gameplay->addAction(action);

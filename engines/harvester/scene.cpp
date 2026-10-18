@@ -597,17 +597,24 @@ void Scene::updatePlayerCombatAnimations(bool &needsRedraw) {
 void Scene::updatePlayerControls(const PlayerControlState &control, bool &needsRedraw) {
 	const RoomPlayerState &playerState = _player.getState();
 	const RoomIdleAnimationState &idleState = _player.getIdleState();
+	const bool attackLeft = (_inputState.attackModifierHeld && _inputState.moveLeft) ||
+		(_inputState.mediumAttackHeld && playerState.facing == 1);
+	const bool attackRight = (_inputState.attackModifierHeld && _inputState.moveRight) ||
+		(_inputState.mediumAttackHeld && playerState.facing == 2);
+	const bool attackUp = _inputState.highAttackHeld || (_inputState.attackModifierHeld && _inputState.moveUp);
+	const bool attackDown = _inputState.lowAttackHeld || (_inputState.attackModifierHeld && _inputState.moveDown);
 	const bool keyboardAttackRequested =
-		_inputState.attackModifierHeld && (_inputState.moveLeft || _inputState.moveRight || _inputState.moveUp || _inputState.moveDown);
+		attackLeft || attackRight || attackUp || attackDown || _inputState.mediumAttackHeld;
+	const bool directEvasiveRequested = _inputState.duckHeld || _inputState.jumpHeld;
 	if (control.canAct &&
 			!playerState.attackActive && !playerState.hitActive && playerState.evasiveState < 0 && keyboardAttackRequested &&
 			!idleState.active && !idleState.exiting) {
 		const uint32 now = Player::getRuntimeClockTicks();
 		if (_inputState.nextKeyboardAttackAllowedTick == 0 || (int32)(now - _inputState.nextKeyboardAttackAllowedTick) >= 0) {
 			_combat.capturePlayerAttackTargetForKeyboard(
-				_inputState.moveLeft, _inputState.moveRight, _inputState.moveUp, _inputState.moveDown);
+				attackLeft, attackRight, attackUp, attackDown);
 			if (_player.startKeyboardAttackAnimation(_scene.state,
-					_inputState.moveLeft, _inputState.moveRight, _inputState.moveUp, _inputState.moveDown)) {
+					attackLeft, attackRight, attackUp, attackDown)) {
 				_inputState.nextKeyboardAttackAllowedTick = now + kNativeKeyboardAttackRepeatTicks;
 				notePlayerActivity();
 				debugC(1, kDebugCombat,
@@ -618,7 +625,7 @@ void Scene::updatePlayerControls(const PlayerControlState &control, bool &needsR
 					Player::describeCombatDamageType(Player::resolveCombatLoadoutDamageType(playerState.combatLoadout)),
 					describeCombatTargetClass(playerState.attackTargetClassId),
 					playerState.attackTargetName.c_str(),
-					_inputState.moveLeft, _inputState.moveRight, _inputState.moveUp, _inputState.moveDown, playerState.facing);
+					attackLeft, attackRight, attackUp, attackDown, playerState.facing);
 				needsRedraw = true;
 			} else {
 				_player.clearAttackTarget();
@@ -634,9 +641,12 @@ void Scene::updatePlayerControls(const PlayerControlState &control, bool &needsR
 			!playerState.attackActive && !playerState.hitActive && playerState.evasiveState < 0 &&
 			!keyboardAttackRequested && !idleState.active && !idleState.exiting) {
 		const int regionFacing = _interactionProcessor.getPendingRegionFacing();
-		if (_inputState.evasiveModifierHeld) {
-			if (_player.startEvasiveAnimation(_inputState.moveLeft, _inputState.moveRight,
-					_inputState.moveUp, _inputState.moveDown) ||
+		if (_inputState.evasiveModifierHeld || directEvasiveRequested) {
+			if (_player.startEvasiveAnimation(
+					!directEvasiveRequested && _inputState.moveLeft,
+					!directEvasiveRequested && _inputState.moveRight,
+					_inputState.jumpHeld || (!directEvasiveRequested && _inputState.moveUp),
+					_inputState.duckHeld || (!directEvasiveRequested && _inputState.moveDown)) ||
 					_player.stepKeyboardMovement(_engine, _scene.state, _scene.sceneObjects, _scene.sceneAnimations,
 						false, false, false, false)) {
 				notePlayerActivity();
@@ -651,7 +661,7 @@ void Scene::updatePlayerControls(const PlayerControlState &control, bool &needsR
 			needsRedraw = true;
 		}
 
-		if (!_presentationState.showingInspectText && !keyboardAttackRequested &&
+		if (!_presentationState.showingInspectText && !keyboardAttackRequested && !directEvasiveRequested &&
 				!_inputState.moveLeft && !_inputState.moveRight && !_inputState.moveUp && !_inputState.moveDown &&
 				!playerState.hasMoveTarget && !playerState.turnActive && !playerState.hitActive && playerState.evasiveState < 0 &&
 				playerState.entity && playerState.facing >= 0 &&

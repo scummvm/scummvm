@@ -57,7 +57,12 @@ enum GameAction {
 	kActionEvasiveModifier,
 	kActionSpeedUp,
 	kActionInventory,
-	kActionMenu
+	kActionMenu,
+	kActionHighAttack,
+	kActionMediumAttack,
+	kActionLowAttack,
+	kActionDuck,
+	kActionJump
 };
 
 struct InputState {
@@ -68,12 +73,18 @@ struct InputState {
 	bool attackModifierHeld = false;
 	bool evasiveModifierHeld = false;
 	bool speedUpActive = false;
+	bool highAttackHeld = false;
+	bool mediumAttackHeld = false;
+	bool lowAttackHeld = false;
+	bool duckHeld = false;
+	bool jumpHeld = false;
 	uint32 lastLeftButtonReleaseTick = 0;
 	uint32 nextKeyboardAttackAllowedTick = 0;
 
 	void clearHeldActions() {
 		moveLeft = moveRight = moveUp = moveDown = false;
 		attackModifierHeld = evasiveModifierHeld = speedUpActive = false;
+		highAttackHeld = mediumAttackHeld = lowAttackHeld = duckHeld = jumpHeld = false;
 	}
 };
 

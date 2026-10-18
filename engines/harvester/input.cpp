@@ -843,6 +843,46 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 }
 
 InputResult Input::handleGameAction(GameAction action, bool pressed, bool &needsRedraw) {
+	InputState &inputState = _session.getInputState();
+	bool *heldAction = nullptr;
+	switch (action) {
+	case kActionHighAttack:
+		heldAction = &inputState.highAttackHeld;
+		break;
+	case kActionMediumAttack:
+		heldAction = &inputState.mediumAttackHeld;
+		break;
+	case kActionLowAttack:
+		heldAction = &inputState.lowAttackHeld;
+		break;
+	case kActionDuck:
+		heldAction = &inputState.duckHeld;
+		break;
+	case kActionJump:
+		heldAction = &inputState.jumpHeld;
+		break;
+	default:
+		break;
+	}
+	if (heldAction) {
+		inputState.speedUpActive = false;
+		if (!pressed) {
+			*heldAction = false;
+			return InputResult();
+		}
+		_session.notePlayerActivity();
+		if (_presentationState.showingInspectText || _inventory.isOpen())
+			return InputResult();
+		Player &player = _session.getPlayer();
+		const RoomIdleAnimationState &idleState = player.getIdleState();
+		if (idleState.active || idleState.exiting) {
+			if (player.requestIdleAnimationExit(_scene.state))
+				needsRedraw = true;
+			return InputResult();
+		}
+		*heldAction = true;
+		return InputResult();
+	}
 	static const Common::KeyCode keys[] = {
 		Common::KEYCODE_LEFT, Common::KEYCODE_RIGHT, Common::KEYCODE_UP, Common::KEYCODE_DOWN,
 		Common::KEYCODE_LCTRL, Common::KEYCODE_RSHIFT, Common::KEYCODE_LALT,
