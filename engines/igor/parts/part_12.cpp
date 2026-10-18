@@ -108,7 +108,8 @@ void IgorEngine::part12TryEnterChurch() {
 	_walkDataCurrentIndex = 1;
 
 	moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
-	waitForTimer(35);
+	if (!_dialogueResuming)
+		waitForTimer(35);
 	// dor opening
 	playRoomSound(13, 0);
 	_walkDataCurrentIndex = _walkDataLastIndex;
@@ -116,7 +117,8 @@ void IgorEngine::part12TryEnterChurch() {
 	decodeAnimFrame(src, _screenVGA);
 	decodeAnimFrame(src, _screenLayer1);
 	moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
-	waitForTimer(35);
+	if (!_dialogueResuming)
+		waitForTimer(35);
 	_walkDataCurrentIndex = _walkDataLastIndex - 1;
 	src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA446) - 1;
 	decodeAnimFrame(src, _screenVGA);
@@ -124,7 +126,8 @@ void IgorEngine::part12TryEnterChurch() {
 	_walkData[_walkDataCurrentIndex].xPosChanged = 1;
 	_walkData[_walkDataCurrentIndex].yPosChanged = 1;
 	moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
-	waitForTimer(35);
+	if (!_dialogueResuming)
+		waitForTimer(35);
 	_walkData[0].setPos(127, 108, 4, 0);
 	_walkData[0].clipSkipX = 1;
 	_walkData[0].clipWidth = 30;
@@ -141,6 +144,8 @@ void IgorEngine::part12TryEnterChurch() {
 	decodeAnimFrame(src, _screenLayer1);
 	moveIgor(4, 0);
 	part12HandlePriestDialogue();
+	if (_gameStateLoaded || _eventQuitGame)
+		return;
 	for (int i = 4; i >= 1; --i) {
 		src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA43E + i * 2) - 1;
 		decodeAnimFrame(src, _screenVGA);
@@ -538,6 +543,8 @@ void IgorEngine::part12() {
 	setRoomWalkBounds(89, 0, 275, 143);
 	partMainSetExecuteAction(1, &IgorEngine::part12ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part12UpdateBackground;
+	SET_PAL_240_48_1();
+	SET_PAL_208_96_1();
 	part12ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (_objectsState[kLizardTakenStateIndex] == 0) {
@@ -574,6 +581,10 @@ void IgorEngine::part12() {
 	}
 	part12DisablePathBehindChurch();
 	enterPartLoop();
+	if (takeResumeDialogue(1)) { // loaded while talking to the priest
+		part12TryEnterChurch();
+		finishResumedDialogue();
+	}
 	while (_currentPart >= 120 && _currentPart <= 122 && !_gameStateLoaded) {
 		runPartLoop();
 	}

@@ -101,7 +101,13 @@ void IgorEngine::part17TalkToPhilipAndJimmy() {
 	VAR_CURRENT_TALKING_ACTOR = 1;
 	cutsceneSayWithCallback(135, 33, 63, 63, 0, 215 + randomDialogue, 1, 641 + randomDialogue, &IgorEngine::part17UpdatePhilipDialogue);
 
+	part17PhilipDialogueAndTail();
+}
+
+void IgorEngine::part17PhilipDialogueAndTail() {
 	part17HandlePhilipDialogue();
+	if (_gameStateLoaded || _eventQuitGame)
+		return;
 	part17ApplyObjectState(255);
 	part17PhilipToJimmyAnimFrame(0);
 
@@ -497,6 +503,8 @@ void IgorEngine::part17() {
 	partMainSetExecuteAction(1, &IgorEngine::part17ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part17UpdateBackground;
 
+	SET_PAL_240_48_1();
+	SET_PAL_208_96_1();
 	part17ApplyObjectState(255);
 
 	memcpy(_screenVGA, _screenLayer1, 46080);
@@ -533,6 +541,13 @@ void IgorEngine::part17() {
 		}
 	}
 	enterPartLoop();
+	if (takeResumeDialogue(1)) { // loaded while talking to philip
+		// the lines before the menu are not played again, only philip's pose is drawn
+		VAR_CURRENT_TALKING_ACTOR = 1;
+		part17PhilipToIgor(0);
+		part17PhilipDialogueAndTail();
+		finishResumedDialogue();
+	}
 	while (_currentPart >= 170 && _currentPart <= 171 && !_gameStateLoaded) {
 		runPartLoop();
 	}
