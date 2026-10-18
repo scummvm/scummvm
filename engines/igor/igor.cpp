@@ -301,6 +301,9 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
 		drawVerbsPanel();
 		redrawVerb(_currentAction.verb, true);
 		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
+	} else {
+		// the choice menu fills this area once the dialogue resumes; until then it must not show what was on screen before the load
+		memset(_screenVGA + 46080, 0, 17920);
 	}
 	if (!_gameState.dialogueTextRunning)
 		showCursor();
