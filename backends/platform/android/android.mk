@@ -9,12 +9,16 @@ PATH_BUILD_GRADLE = $(PATH_BUILD)/gradle/.timestamp $(PATH_BUILD)/gradlew $(PATH
 PATH_BUILD_ASSETS = $(PATH_BUILD)/mainAssets/src/main/assets
 PATH_BUILD_LIB = $(PATH_BUILD)/lib/$(ABI)
 PATH_BUILD_LIBSCUMMVM = $(PATH_BUILD)/lib/$(ABI)/libscummvm.so
+PATH_BUILD_LOADER = $(PATH_BUILD)/lib/$(ABI)/libloader.so
 
 APK_MAIN = ScummVM-debug.apk
 APK_MAIN_RELEASE = ScummVM-release-unsigned.apk
 AAB_MAIN_RELEASE = ScummVM-release.aab
 
 DIST_FILES_PLATFORM = $(PATH_DIST)/android-help.zip $(PATH_DIST)/gamepad.svg
+
+libloader.so: $(srcdir)/backends/platform/android/loader.cpp
+	+$(QUIET_LINK)$(CXX) $(LDFLAGS) $(CXXFLAGS) $(CPPFLAGS) $^ -o $@ -ldl -llog
 
 $(PATH_BUILD):
 	$(MKDIR) $(PATH_BUILD)
@@ -62,17 +66,21 @@ endif
 
 $(PATH_BUILD_LIBSCUMMVM): libscummvm.so | $(PATH_BUILD)
 	$(INSTALL) -d  $(PATH_BUILD_LIB)
-	$(INSTALL) -c -m 644 libscummvm.so $(PATH_BUILD_LIBSCUMMVM)
+	$(INSTALL) -c -m 644 $< $@
 
-$(APK_MAIN): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS)/MD5SUMS $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
+$(PATH_BUILD_LOADER): libloader.so | $(PATH_BUILD)
+	$(INSTALL) -d  $(PATH_BUILD_LIB)
+	$(INSTALL) -c -m 644 $< $@
+
+$(APK_MAIN): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS)/MD5SUMS $(PATH_BUILD_LIBSCUMMVM) $(PATH_BUILD_LOADER) | $(PATH_BUILD)
 	(cd $(PATH_BUILD); ./gradlew assembleDebug)
 	$(CP) $(PATH_BUILD)/build/outputs/apk/debug/$(APK_MAIN) $@
 
-$(APK_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS)/MD5SUMS $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
+$(APK_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS)/MD5SUMS $(PATH_BUILD_LIBSCUMMVM) $(PATH_BUILD_LOADER) | $(PATH_BUILD)
 	(cd $(PATH_BUILD); ./gradlew assembleRelease)
 	$(CP) $(PATH_BUILD)/build/outputs/apk/release/$(APK_MAIN_RELEASE) $@
 
-$(AAB_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS)/MD5SUMS $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
+$(AAB_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS)/MD5SUMS $(PATH_BUILD_LIBSCUMMVM) $(PATH_BUILD_LOADER) | $(PATH_BUILD)
 	(cd $(PATH_BUILD); ./gradlew bundleRelease -PsplitAssets)
 	$(CP) $(PATH_BUILD)/build/outputs/bundle/release/$(AAB_MAIN_RELEASE) $@
 
