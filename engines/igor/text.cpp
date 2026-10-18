@@ -353,9 +353,16 @@ void IgorEngine::startIgorDialogue() {
 		_gameState.dialogueTextRunning = false;
 		return;
 	}
-	fixIgorDialogueTextPosition(dt->num, dt->count, &talkX, &talkY);
+	DialogueText text = *dt;
+	// Empty lines reduce the displayed prefix without changing the queued record.
+	for (int i = dt->count - 1; i >= 0; --i) {
+		if (_globalDialogueTexts[dt->num + i][0] == '\0') {
+			--text.count;
+		}
+	}
+	fixIgorDialogueTextPosition(text.num, text.count, &talkX, &talkY);
 	_dialogueDirtyRectY = talkY * 320;
-	_dialogueDirtyRectSize = dt->count * 11 * 320;
+	_dialogueDirtyRectSize = (text.count * 10 + 1) * 320;
 	assert(_dialogueDirtyRectSize < 320 * 72);
 	memcpy(_screenTextLayer, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
 
@@ -370,8 +377,8 @@ void IgorEngine::startIgorDialogue() {
 	} else {
 		memcpy(_screenTextLayer + 320 * 72, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
 	}
-	for (int i = 0; i < dt->count; ++i) {
-		const char *textLine = _globalDialogueTexts[dt->num + i];
+	for (int i = 0; i < text.count; ++i) {
+		const char *textLine = _globalDialogueTexts[text.num + i];
 		int textLineWidth = _dialogueFont->getStringWidth(textLine);
 		int textX = talkX - textLineWidth / 2;
 		int textY = i * 10;
@@ -379,7 +386,7 @@ void IgorEngine::startIgorDialogue() {
 	}
 	setPaletteColor(_talkColorIndex, _dialogueColor[0], _dialogueColor[1], _dialogueColor[2]);
 	setPaletteColor(_talkShadowIndex, 0, 0, 0);
-	const int talkMode = prepareDialoguePlayback(*dt);
+	const int talkMode = prepareDialoguePlayback(text);
 	if (talkMode != kTalkModeSpeechOnly)
 		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
 	_gameState.dialogueTextRunning = true;
