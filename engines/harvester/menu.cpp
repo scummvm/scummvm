@@ -20,12 +20,11 @@
  */
 
 #include "harvester/menu.h"
+#include "harvester/menu_render.h"
 
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/formats/ini-file.h"
-#include "common/memstream.h"
 #include "common/system.h"
 #include "engines/metaengine.h"
 #include "graphics/font.h"
@@ -47,37 +46,6 @@ namespace Harvester {
 
 namespace {
 
-static const int kInventoryX = 64;
-static const int kInventoryY = 48;
-static const int kLogoX = 160;
-static const int kLogoY = 0;
-static const int kMenuStartY = 100;
-static const int kMenuLineSpacing = 28;
-
-static const byte kTextColorNormal = 255;
-static const byte kTextColorHover = 251;
-static const byte kTextColorDim = 248;
-static const byte kShadowColor = 0;
-static const byte kPanelFillColor = 1;
-static const byte kQuickTipActionColor = 0xc3;
-
-static const char *const kMenuPath = "MENU.INI";
-static const char *const kMenuSectionName = "menu";
-
-struct MenuWeekdayEntry {
-	const char *key;
-	const char *englishFallback;
-};
-
-static const MenuWeekdayEntry kMenuWeekdays[] = {
-	{ "monday", "Monday" },
-	{ "tuesday", "Tuesday" },
-	{ "wednesday", "Wednesday" },
-	{ "thursday", "Thursday" },
-	{ "friday", "Friday" },
-	{ "saturday", "Saturday" }
-};
-
 static const char *const kOptionsVolumeBitmapPath = "1:/GRAPHIC/OTHER/VOLUME.BM";
 static const char *const kOptionsIndicatorBitmapPath = "1:/GRAPHIC/OTHER/INDICATR.BM";
 static const char *const kOptionsPreviewSoundPath = "1:/SOUND/EFFECTS/WHIP2.WAV";
@@ -88,47 +56,9 @@ static const char *const kSaveGamePalettePath = "1:/GRAPHIC/PAL/SAVEGAME.PAL";
 static const char *const kGameOverBitmapPath = "1:/GRAPHIC/OTHER/GAMEOVER.BM";
 static const char *const kGameOverPalettePath = "1:/GRAPHIC/PAL/GAMEOVER.PAL";
 static const char *const kGameOverMusicPath = "SOUND/MUSIC/ANXIETY.CMP";
-
-static const int kOptionsSliderMinX = 0x16f;
 static const int kOptionsSliderMaxX = 0x22b;
-static const int kOptionsSliderStep = 0x13;
-static const int kOptionsVolumeBitmapX = 0x168;
-static const int kOptionsVolumeBitmapY = 0x68;
-static const int kOptionsIndicatorY = 0x6c;
 static const int kOptionsSliderHeight = 0x1e;
-static const int kOptionsItemCount = 7;
 static const int kStartupOptionMaxLevel = 9;
-
-// The first three strings retain the padding from the European executable's
-// fixed-width table so their centered text sits underneath the volume bars.
-static const char *const kEuropeanBuiltInOptionItems[kOptionsItemCount] = {
-	" SOUND FX              ",
-	" MUSIC               ",
-	" GAMMA               ",
-	"TEXT",
-	"GORE",
-	"QUICK TIPS",
-	"PASSWORD"
-};
-
-static const int kQuickTipsOverlayX = 167;
-static const int kQuickTipsOverlayY = 200;
-static const int kQuickTipsHeaderY = 202;
-static const int kQuickTipTextX = 180;
-static const int kQuickTipTextY = 228;
-static const int kEnglishQuickTipTextWidth = 280;
-static const int kLocalizedQuickTipTextWidth = 300;
-static const int kLocalizedQuickTipActionY = 308;
-static const int kQuickTipExitX = 180;
-static const int kQuickTipToggleX = 258;
-static const int kQuickTipNextRightInset = 8;
-static const int kConfirmDialogX = 167;
-static const int kConfirmDialogY = 200;
-static const int kConfirmPromptTextX = 0xea;
-static const int kConfirmPromptTextY = 0xd6;
-static const int kConfirmChoiceTextY = 0xf8;
-static const int kConfirmYesTextX = 0xdc;
-static const int kConfirmNoTextX = 0x17c;
 static const int kSaveSlotCount = 25;
 static const int kSaveSlotLabelX = 8;
 static const int kSaveSlotNameX = 0x50;
@@ -137,15 +67,13 @@ static const int kSaveSlotStride = 0x11;
 static const int kSaveSlotTextWidth = 0x27b - kSaveSlotNameX;
 static const int kSaveStatusTextY = 0x1b8;
 static const int kSaveSlotMaxCharacters = 0xf6;
-static const int kPasswordEntryX = 0xdc;
-static const int kPasswordEntryY = 0xdc;
-static const int kPasswordEntryWidth = 0x226;
 static const int kPasswordMaxCharacters = 8;
 static const uint32 kPasswordCursorBlinkMs = 480;
 static const uint32 kPaletteFadeTickMs = 4;
 static const float kPaletteFadeStep = 0.1f;
 static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
 static const float kPaletteBrightnessBlack = 0.0f;
+static const char *const kBlankMenuSlot = " ";
 
 class ScopedSceneTimerPause {
 public:
@@ -179,9 +107,6 @@ private:
 	bool _paused = false;
 };
 
-static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y);
-static int getNativeRoomMenuLineHeight(const Graphics::Font &selectedFont);
-
 static int clampStartupOptionLevel(int level) {
 	if (level < 0)
 		return 0;
@@ -213,166 +138,17 @@ static Common::Rect quitConfirmNoRect() {
 }
 
 static Common::Rect optionsSliderRect(int sliderIndex, int lineHeight) {
-	const int y = kOptionsIndicatorY + sliderIndex * lineHeight;
-	return Common::Rect(kOptionsSliderMinX, y, kOptionsSliderMaxX + 1, y + kOptionsSliderHeight + 1);
+	const int y = MenuRendering::kOptionsIndicatorY + sliderIndex * lineHeight;
+	return Common::Rect(MenuRendering::kOptionsSliderMinX, y, kOptionsSliderMaxX + 1, y + kOptionsSliderHeight + 1);
 }
 
 static int resolveOptionsSliderIndexFromMouseX(int mouseX) {
-	const int relativeX = mouseX - kOptionsSliderMinX;
-	return clampStartupOptionLevel((relativeX + (kOptionsSliderStep / 2)) / kOptionsSliderStep);
-}
-
-static bool loadRawMenuValue(const Common::Array<byte> &data, const char *key, Common::String &value) {
-	value.clear();
-	if (!key)
-		return false;
-
-	Common::String line;
-	for (uint i = 0; i <= data.size(); ++i) {
-		const bool atEnd = i == data.size();
-		const byte chr = atEnd ? '\n' : data[i];
-		if (chr == '\r')
-			continue;
-
-		if (chr != '\n') {
-			line += (char)chr;
-			continue;
-		}
-
-		const char *separator = strchr(line.c_str(), '=');
-		if (separator) {
-			const Common::String currentKey(line.c_str(), separator);
-			if (currentKey.equalsIgnoreCase(key)) {
-				value = Common::String(separator + 1);
-				return true;
-			}
-		}
-
-		line.clear();
-	}
-
-	return false;
-}
-
-static void loadMenuDisplayValue(Common::INIFile &menu, const char *key, Common::String &dest) {
-	Common::String value;
-	if (!menu.getKey(key, kMenuSectionName, value) || value.empty())
-		return;
-
-	for (uint i = 0; i < value.size(); ++i) {
-		if (value[i] == '_')
-			value.setChar(' ', i);
-	}
-	dest = Common::move(value);
-}
-
-static void applyEuropeanBuiltInMenuText(MenuTextConfig &config) {
-	config.yesLabel = "Yes";
-	config.noLabel = "No";
-	config.clickLabel = "Click";
-	config.newGamePrompt = "START A NEW GAME?";
-	config.quitGamePrompt = " QUIT HARVESTER?";
-	for (uint i = 0; i < config.optionItems.size(); ++i)
-		config.optionItems[i] = kEuropeanBuiltInOptionItems[i];
+	const int relativeX = mouseX - MenuRendering::kOptionsSliderMinX;
+	return clampStartupOptionLevel(
+		(relativeX + (MenuRendering::kOptionsSliderStep / 2)) / MenuRendering::kOptionsSliderStep);
 }
 
 } // End of anonymous namespace
-
-bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config) {
-	config = MenuTextConfig();
-	if (engine.isDemo()) {
-		config.clickLabel = "Click";
-		config.newGamePrompt = "START A NEW GAME?";
-		config.quitGamePrompt = " QUIT HARVESTER?";
-	}
-	config.optionItems.resize(kOptionsItemCount);
-	config.optionItems[0] = "SOUND FX";
-	config.optionItems[1] = "MUSIC";
-	config.optionItems[2] = "GAMMA";
-	config.optionItems[3] = "TEXT";
-	config.optionItems[4] = "GORE";
-	config.optionItems[5] = "QUICK TIPS";
-	config.optionItems[6] = "PASSWORD";
-	config.weekdayLabels.resize(ARRAYSIZE(kMenuWeekdays));
-	for (uint i = 0; i < config.weekdayLabels.size(); ++i)
-		config.weekdayLabels[i] = kMenuWeekdays[i].englishFallback;
-
-	ResourceManager *resources = engine.getResources();
-	if (!resources)
-		return false;
-
-	Common::Array<byte> data;
-	if (!resources->loadFile(kMenuPath, data)) {
-		if (!engine.isDemo())
-			applyEuropeanBuiltInMenuText(config);
-		debugC(2, kDebugGeneral,
-			"Harvester: using built-in menu text because '%s' is unavailable", kMenuPath);
-		return true;
-	}
-
-	Common::MemoryReadStream stream(data.data(), data.size());
-	Common::INIFile menu;
-	menu.setDefaultSectionName(kMenuSectionName);
-	menu.requireKeyValueDelimiter();
-	menu.suppressValuelessLineWarning();
-	if (!menu.loadFromStream(stream))
-		return false;
-
-	for (uint i = 0; i < config.optionItems.size(); ++i) {
-		const Common::String key = Common::String::format("options_menu_%u", i + 1);
-		Common::String value;
-		if (loadRawMenuValue(data, key.c_str(), value) && !value.empty())
-			config.optionItems[i] = Common::move(value);
-		else if (menu.getKey(key, kMenuSectionName, value) && !value.empty())
-			config.optionItems[i] = Common::move(value);
-	}
-
-	Common::String value;
-	if (menu.getKey("yes", kMenuSectionName, value) && !value.empty())
-		config.yesLabel = Common::move(value);
-	if (menu.getKey("no", kMenuSectionName, value) && !value.empty())
-		config.noLabel = Common::move(value);
-	if (menu.getKey("click", kMenuSectionName, value) && !value.empty())
-		config.clickLabel = Common::move(value);
-	loadMenuDisplayValue(menu, "on", config.onLabel);
-	loadMenuDisplayValue(menu, "off", config.offLabel);
-	loadMenuDisplayValue(menu, "enter_password", config.enterPasswordLabel);
-	if (loadRawMenuValue(data, "newgame", value) && !value.empty())
-		config.newGamePrompt = Common::move(value);
-	if (loadRawMenuValue(data, "quitgame", value) && !value.empty())
-		config.quitGamePrompt = Common::move(value);
-	loadMenuDisplayValue(menu, "talk_to", config.talkToVerb);
-	loadMenuDisplayValue(menu, "examine", config.examineVerb);
-	loadMenuDisplayValue(menu, "examine_the", config.examineTheVerb);
-	loadMenuDisplayValue(menu, "operate", config.operateVerb);
-	loadMenuDisplayValue(menu, "pick_up", config.pickUpVerb);
-	loadMenuDisplayValue(menu, "use", config.useVerb);
-	loadMenuDisplayValue(menu, "use_on", config.useOnPreposition);
-	loadMenuDisplayValue(menu, "other", config.dialogueOtherLabel);
-	loadMenuDisplayValue(menu, "responses", config.dialogueResponsesLabel);
-	loadMenuDisplayValue(menu, "keyword", config.dialogueKeywordLabel);
-	for (uint i = 0; i < config.weekdayLabels.size(); ++i)
-		loadMenuDisplayValue(menu, kMenuWeekdays[i].key, config.weekdayLabels[i]);
-	loadMenuDisplayValue(menu, "Exit", config.quickTipsExitLabel);
-	loadMenuDisplayValue(menu, "next", config.quickTipsNextLabel);
-	loadMenuDisplayValue(menu, "show_tips_on", config.quickTipsOnLabel);
-	loadMenuDisplayValue(menu, "show_tips_off", config.quickTipsOffLabel);
-	loadMenuDisplayValue(menu, "quick_tips_header", config.quickTipsHeader);
-
-	return true;
-}
-
-Common::String buildUseItemPrompt(const MenuTextConfig &config,
-		const Common::String &itemLabel, const Common::String &targetLabel) {
-	if (itemLabel.empty())
-		return Common::String();
-	if (targetLabel.empty())
-		return Common::String::format("%s %s %s",
-			config.useVerb.c_str(), itemLabel.c_str(), config.useOnPreposition.c_str());
-
-	return Common::String::format("%s %s %s %s", config.useVerb.c_str(), itemLabel.c_str(),
-		config.useOnPreposition.c_str(), targetLabel.c_str());
-}
 
 namespace {
 
@@ -384,8 +160,6 @@ enum MainMenuItem {
 	kMainMenuItemHelp,
 	kMainMenuItemQuitGame
 };
-
-static const char *const kBlankMenuSlot = " ";
 
 static void buildDisplayMainMenuItems(const Common::Array<Common::String> &source,
 		bool canSaveGame, bool canLoadGame, Common::Array<Common::String> &dest) {
@@ -413,250 +187,8 @@ static bool loadPaletteResource(ResourceManager &resources, const Common::String
 	return true;
 }
 
-static void applyMenuPalette(Graphics::Screen &screen, const HarvesterEngine &engine,
-		const byte *palette, float brightness) {
-	if (!palette)
-		return;
-
-	byte displayPalette[256 * 3];
-	buildHarvesterDisplayPalette(palette, brightness * engine.getGammaBrightnessScale(), displayPalette);
-	screen.setPalette(displayPalette);
-}
-
-static void renderCdChangePromptScreen(HarvesterEngine &engine, const IndexedBitmap &bitmap,
-		const byte *palette) {
-	Graphics::Screen *screen = engine.getScreen();
-	if (!screen)
-		return;
-
-	applyMenuPalette(*screen, engine, palette, 1.0f);
-	screen->fillRect(screen->getBounds(), 0);
-	if (bitmap.isValid())
-		screen->copyRectToSurface(bitmap.pixels.data(), bitmap.width, 0, 0, bitmap.width, bitmap.height);
-	if (engine.getRuntimeEntities())
-		engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
-}
-
-static void renderHelpScreen(HarvesterEngine &engine, const IndexedBitmap &bitmap, const byte *palette) {
-	Graphics::Screen *screen = engine.getScreen();
-	if (!screen)
-		return;
-
-	applyMenuPalette(*screen, engine, palette, 1.0f);
-	screen->fillRect(screen->getBounds(), 0);
-	blitBitmap(*screen, bitmap, 0, 0);
-	if (engine.getRuntimeEntities())
-		engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
-}
-
-static Common::String buildTextModeSuffix(const Script &script, const MenuTextConfig &config) {
-	switch (script.getDialogueTextMode()) {
-	case kStartupDialogueTextNone:
-		return Common::String::format(" - %s", config.noLabel.c_str());
-	case kStartupDialogueTextClick:
-		return Common::String::format(" - %s", config.clickLabel.c_str());
-	case kStartupDialogueTextYes:
-	default:
-		return Common::String::format(" - %s", config.yesLabel.c_str());
-	}
-}
-
-static Common::String buildOptionsMenuItemLabel(const Script &script,
-		const MenuTextConfig &config, int index) {
-	if (index < 0 || index >= (int)config.optionItems.size())
-		return Common::String();
-
-	switch (index) {
-	case 3:
-		return config.optionItems[index] + buildTextModeSuffix(script, config);
-	case 4:
-		return Common::String::format("%s - %s", config.optionItems[index].c_str(),
-			(script.isGoreEnabled() ? config.onLabel : config.offLabel).c_str());
-	case 6:
-		return Common::String::format("%s - %s", config.optionItems[index].c_str(),
-			(script.getParentalPassword().empty() ? config.offLabel : config.onLabel).c_str());
-	default:
-		return config.optionItems[index];
-	}
-}
-
 static Common::String buildDefaultSaveSlotLabel(int slotIndex) {
 	return Common::String::format("GAME %02d", slotIndex + 1);
-}
-
-static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
-	if (!bitmap.isValid())
-		return;
-
-	screen.copyRectToSurface(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
-}
-
-static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
-		int x, int y, int width, byte color, Graphics::TextAlign align = Graphics::kTextAlignLeft) {
-	font.drawString(&screen, text, x + 1, y + 1, width, kShadowColor, align);
-	font.drawString(&screen, text, x, y, width, color, align);
-}
-
-static void drawSinglePassString(Graphics::Screen &screen, const Graphics::Font &font,
-		const Common::String &text, int x, int y) {
-	if (text.empty())
-		return;
-
-	font.drawString(&screen, text, x, y, font.getStringWidth(text), 0);
-}
-
-static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Font &font,
-		const Common::String &text, int x, int y, int width, byte color) {
-	Common::Array<Common::String> lines;
-	font.wordWrapText(text, width, lines);
-	for (uint i = 0; i < lines.size(); ++i)
-		drawShadowedString(screen, font, lines[i], x, y + (int)i * (font.getFontHeight() + 2), width, color);
-}
-
-static void splitMenuConfigLines(const Common::String &text, Common::Array<Common::String> &lines) {
-	lines.clear();
-	Common::String currentLine;
-	for (uint i = 0; i < text.size(); ++i) {
-		if (text[i] == '/') {
-			lines.push_back(Common::move(currentLine));
-			currentLine.clear();
-			continue;
-		}
-		currentLine += text[i];
-	}
-	lines.push_back(Common::move(currentLine));
-}
-
-static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap &backdrop,
-		const byte *palette, float paletteBrightness,
-		const Graphics::Font &selectedFont, const Graphics::Font &unselectedFont,
-		const Art &art, const MenuTextConfig &config,
-		const IndexedBitmap &volumeBar, const IndexedBitmap &indicator, int selectedItem,
-		bool drawCursor = true) {
-	Graphics::Screen *screen = engine.getScreen();
-	Script *script = engine.getScript();
-	if (!screen || !script)
-		return;
-
-	applyMenuPalette(*screen, engine, palette, paletteBrightness);
-	blitBitmap(*screen, backdrop, 0, 0);
-	blitTransparentBitmap(*screen, art.getLogoBitmap(), kLogoX, kLogoY);
-
-	const int lineHeight = getNativeRoomMenuLineHeight(selectedFont);
-	for (int i = 0; i < (int)config.optionItems.size(); ++i) {
-		const Common::String label = buildOptionsMenuItemLabel(*script, config, i);
-		const Graphics::Font &font = (i == selectedItem) ? selectedFont : unselectedFont;
-		const int width = font.getStringWidth(label);
-		const int x = (screen->w - width) / 2;
-		const int y = kMenuStartY + i * lineHeight;
-		font.drawString(screen, label, x, y, width, 0);
-	}
-
-	// Native run_main_menu spawns the option text entities before adding the
-	// VOLUME/INDICATR bitmap entities, so the bars clip the trailing overlap on
-	// the first three rows instead of the text painting over them.
-	for (int i = 0; i < 3; ++i)
-		blitTransparentBitmap(*screen, volumeBar, kOptionsVolumeBitmapX, kOptionsVolumeBitmapY + i * lineHeight);
-
-	const int levels[3] = {
-		script->getFxVolumeLevel(),
-		script->getMusicVolumeLevel(),
-		script->getGammaLevel()
-	};
-	for (int i = 0; i < 3; ++i) {
-		blitTransparentBitmap(*screen, indicator, kOptionsSliderMinX + levels[i] * kOptionsSliderStep,
-			kOptionsIndicatorY + i * lineHeight);
-	}
-
-	if (drawCursor && engine.getRuntimeEntities())
-		engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
-}
-
-static void renderPasswordPromptScreen(HarvesterEngine &engine, const IndexedBitmap &backdrop,
-		const byte *palette, float paletteBrightness, const Graphics::Font &titleFont,
-		const Graphics::Font &entryFont, const Art &art, const Common::String &title,
-		const Common::String &text, bool cursorVisible, bool drawLogo) {
-	Graphics::Screen *screen = engine.getScreen();
-	if (!screen)
-		return;
-
-	if (palette)
-		applyMenuPalette(*screen, engine, palette, paletteBrightness);
-	blitBitmap(*screen, backdrop, 0, 0);
-	if (drawLogo)
-		blitTransparentBitmap(*screen, art.getLogoBitmap(), kLogoX, kLogoY);
-
-	const int titleWidth = titleFont.getStringWidth(title);
-	const int titleX = (screen->w - titleWidth) / 2;
-	titleFont.drawString(screen, title, titleX, 0xa0, titleWidth, 0);
-
-	Common::String displayText = text;
-	if (cursorVisible)
-		displayText += '~';
-	entryFont.drawString(screen, displayText, kPasswordEntryX, kPasswordEntryY,
-		kPasswordEntryWidth, 0);
-
-	screen->makeAllDirty();
-	screen->update();
-}
-
-static void renderQuickTipsOverlay(HarvesterEngine &engine, const IndexedBitmap &backdrop,
-		const byte *palette, float paletteBrightness,
-		const MenuTextConfig &config, const QuickTipsLayout &layout,
-		const Common::String &tipText) {
-	Graphics::Screen *screen = engine.getScreen();
-	const Art *art = engine.getArt();
-	if (!screen || !art)
-		return;
-
-	applyMenuPalette(*screen, engine, palette, paletteBrightness);
-	blitBitmap(*screen, backdrop, 0, 0);
-	blitTransparentBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
-	drawQuickTipsPanel(engine, config, layout, tipText);
-
-	if (engine.getRuntimeEntities())
-		engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
-}
-
-static void renderConfirmPromptScreen(HarvesterEngine &engine, const IndexedBitmap &backdrop,
-		const byte *palette, float paletteBrightness, const Graphics::Font &promptFont,
-		const Graphics::Font &yesFont, const Graphics::Font &noFont,
-		const IndexedBitmap &textbox, const Common::String &promptText,
-		const MenuTextConfig &config) {
-	Graphics::Screen *screen = engine.getScreen();
-	const Art *art = engine.getArt();
-	if (!screen || !art)
-		return;
-
-	applyMenuPalette(*screen, engine, palette, paletteBrightness);
-	blitBitmap(*screen, backdrop, 0, 0);
-	blitTransparentBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
-	blitTransparentBitmap(*screen, textbox, kConfirmDialogX, kConfirmDialogY);
-	Common::Array<Common::String> promptLines;
-	splitMenuConfigLines(promptText, promptLines);
-	for (uint i = 0; i < promptLines.size(); ++i) {
-		drawSinglePassString(*screen, promptFont, promptLines[i], kConfirmPromptTextX,
-			kConfirmPromptTextY + (int)i * (promptFont.getFontHeight() + 2));
-	}
-	drawSinglePassString(*screen, yesFont, config.yesLabel, kConfirmYesTextX, kConfirmChoiceTextY);
-	drawSinglePassString(*screen, noFont, config.noLabel, kConfirmNoTextX, kConfirmChoiceTextY);
-
-	if (engine.getRuntimeEntities())
-		engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
-}
-
-static int getNativeRoomMenuLineHeight(const Graphics::Font &selectedFont) {
-	return selectedFont.getFontHeight() + 2;
 }
 
 static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFont, uint itemCount,
@@ -664,11 +196,11 @@ static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFon
 	if (itemCount == 0)
 		return -1;
 
-	int selection = mousePos.y - kMenuStartY;
+	int selection = mousePos.y - MenuRendering::kMenuStartY;
 	if (selection < 1)
 		selection = 1;
 
-	selection /= MAX<int>(1, getNativeRoomMenuLineHeight(selectedFont));
+	selection /= MAX<int>(1, MenuRendering::getNativeRoomMenuLineHeight(selectedFont));
 	if (selection >= (int)itemCount)
 		selection = (int)itemCount - 1;
 
@@ -676,77 +208,6 @@ static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFon
 }
 
 } // End of anonymous namespace
-
-bool resolveQuickTipsLayout(HarvesterEngine &engine, const MenuTextConfig &config,
-		QuickTipsLayout &layout) {
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	const Art *art = engine.getArt();
-	const Script *script = engine.getScript();
-	if (!font || !art || !script)
-		return false;
-
-	if (!config.hasQuickTipsHeader()) {
-		layout.exitRect = Common::Rect(180, 280, 238, 291);
-		layout.nextRect = Common::Rect(420, 280, 492, 291);
-		layout.toggleRect = Common::Rect(258, 280, 366, 291);
-		return true;
-	}
-
-	const IndexedBitmap *panel = art->getQuickTipsTextboxBitmap();
-	if (!panel || !panel->isValid())
-		return false;
-
-	const Common::String &toggleLabel = script->isQuickTipsEnabled()
-		? config.quickTipsOnLabel : config.quickTipsOffLabel;
-	auto makeLabelRect = [font](const Common::String &label, int x) {
-		const int width = MAX<int>(1, font->getStringWidth(label));
-		const int height = MAX<int>(1, font->getFontHeight());
-		return Common::Rect(x, kLocalizedQuickTipActionY,
-			x + width, kLocalizedQuickTipActionY + height);
-	};
-
-	layout.exitRect = makeLabelRect(config.quickTipsExitLabel, kQuickTipExitX);
-	layout.toggleRect = makeLabelRect(toggleLabel, kQuickTipToggleX);
-	const int nextX = kQuickTipsOverlayX + (int)panel->width
-		- font->getStringWidth(config.quickTipsNextLabel) - kQuickTipNextRightInset;
-	layout.nextRect = makeLabelRect(config.quickTipsNextLabel, nextX);
-	return true;
-}
-
-void drawQuickTipsPanel(HarvesterEngine &engine, const MenuTextConfig &config,
-		const QuickTipsLayout &layout, const Common::String &tipText) {
-	Graphics::Screen *screen = engine.getScreen();
-	const Art *art = engine.getArt();
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	const Script *script = engine.getScript();
-	if (!screen || !art || !font || !script)
-		return;
-
-	const IndexedBitmap *panel = config.hasQuickTipsHeader()
-		? art->getQuickTipsTextboxBitmap() : &art->getTipsBitmap();
-	if (!panel || !panel->isValid())
-		return;
-
-	blitBitmap(*screen, *panel, kQuickTipsOverlayX, kQuickTipsOverlayY);
-	if (config.hasQuickTipsHeader()) {
-		drawShadowedString(*screen, *font, config.quickTipsHeader,
-			kQuickTipsOverlayX, kQuickTipsHeaderY, panel->width,
-			kQuickTipActionColor, Graphics::kTextAlignCenter);
-	}
-
-	const int tipTextWidth = config.hasQuickTipsHeader()
-		? kLocalizedQuickTipTextWidth : kEnglishQuickTipTextWidth;
-	drawWrappedShadowedText(*screen, *font, tipText,
-		kQuickTipTextX, kQuickTipTextY, tipTextWidth, kTextColorNormal);
-	const Common::String &toggleLabel = script->isQuickTipsEnabled()
-		? config.quickTipsOnLabel : config.quickTipsOffLabel;
-	drawShadowedString(*screen, *font, config.quickTipsExitLabel,
-		layout.exitRect.left, layout.exitRect.top, layout.exitRect.width(), kQuickTipActionColor);
-	drawShadowedString(*screen, *font, config.quickTipsNextLabel,
-		layout.nextRect.left, layout.nextRect.top, layout.nextRect.width(), kQuickTipActionColor);
-	drawShadowedString(*screen, *font, toggleLabel,
-		layout.toggleRect.left, layout.toggleRect.top, layout.toggleRect.width(), kQuickTipActionColor);
-}
 
 MenuSystem::MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
 		const Common::Array<Common::String> &menuItems)
@@ -788,7 +249,7 @@ Common::Error MenuSystem::showCdChangePrompt(int discNumber, ResourceManager &re
 
 	while (!_engine.shouldQuit() && !activateRequestedDisc) {
 		if (needsRedraw) {
-			renderCdChangePromptScreen(_engine, promptBitmap, promptPalette);
+			MenuRendering::renderCdChangePromptScreen(_engine, promptBitmap, promptPalette);
 			needsRedraw = false;
 		}
 
@@ -1075,9 +536,9 @@ Common::Error MenuSystem::showGameOverBackdrop(Flow &flow) {
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			applyMenuPalette(*screen, _engine, _mainMenuBackdropPalette, 1.0f);
+			MenuRendering::applyMenuPalette(*screen, _engine, _mainMenuBackdropPalette, 1.0f);
 			screen->fillRect(screen->getBounds(), 0);
-			blitBitmap(*screen, _mainMenuBackdrop, 0, 0);
+			MenuRendering::blitBitmap(*screen, _mainMenuBackdrop, 0, 0);
 			if (_engine.getRuntimeEntities())
 				_engine.getRuntimeEntities()->drawCursor(*screen);
 			screen->makeAllDirty();
@@ -1350,8 +811,8 @@ void MenuSystem::renderSaveSlotMenu(const SaveSlotMenu &menu, const Common::Stri
 	if (!screen)
 		return;
 
-	applyMenuPalette(*screen, _engine, menu.palette, 1.0f);
-	blitBitmap(*screen, menu.background, 0, 0);
+	MenuRendering::applyMenuPalette(*screen, _engine, menu.palette, 1.0f);
+	MenuRendering::blitBitmap(*screen, menu.background, 0, 0);
 
 	for (int i = 0; i < kSaveSlotCount; ++i) {
 		const Graphics::Font &labelFont = (i == menu.activeSlot) ? menu.slotNameFont : menu.slotLabelFont;
@@ -1367,8 +828,9 @@ void MenuSystem::renderSaveSlotMenu(const SaveSlotMenu &menu, const Common::Stri
 	}
 
 	if (!editingText && !menu.statusMessage.empty()) {
-		drawShadowedString(*screen, menu.slotNameFont, menu.statusMessage, 20, kSaveStatusTextY,
-			screen->w - 40, kTextColorNormal, Graphics::kTextAlignCenter);
+		MenuRendering::drawShadowedString(*screen, menu.slotNameFont, menu.statusMessage,
+			MenuRendering::TextLayout(20, kSaveStatusTextY, screen->w - 40),
+			MenuRendering::kTextColorNormal, Graphics::kTextAlignCenter);
 	}
 
 	if (_engine.getRuntimeEntities())
@@ -1638,8 +1100,8 @@ Common::Error MenuSystem::restoreRoomBackdropAfterSave(const IndexedBitmap &back
 	}
 
 	screen->fillRect(screen->getBounds(), 0);
-	blitBitmap(*screen, backdrop, 0, 0);
-	applyMenuPalette(*screen, _engine, palette, kPaletteBrightnessBlack);
+	MenuRendering::blitBitmap(*screen, backdrop, 0, 0);
+	MenuRendering::applyMenuPalette(*screen, _engine, palette, kPaletteBrightnessBlack);
 	screen->makeAllDirty();
 	screen->update();
 
@@ -1679,7 +1141,7 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 				: static_cast<const Graphics::Font &>(choiceFont);
 			const Graphics::Font &noFont = hoverNo ? static_cast<const Graphics::Font &>(promptFont)
 				: static_cast<const Graphics::Font &>(choiceFont);
-			renderConfirmPromptScreen(_engine, backdrop, palette, paletteBrightness,
+			MenuRendering::Renderer(_engine, backdrop, palette, paletteBrightness).renderConfirmPrompt(
 				promptFont, yesFont, noFont, *textbox, promptText, config);
 			needsRedraw = false;
 		}
@@ -1771,9 +1233,9 @@ Common::Error MenuSystem::runPasswordPrompt(const IndexedBitmap &backdrop, const
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderPasswordPromptScreen(_engine, backdrop, palette, paletteBrightness,
-				titleFont, entryFont, *art, flow.getMenuTextConfig().enterPasswordLabel,
-				password, cursorVisible, drawLogo);
+			MenuRendering::Renderer(_engine, backdrop, palette, paletteBrightness).renderPasswordPrompt(
+				MenuRendering::FontPair(titleFont, entryFont), *art,
+				flow.getMenuTextConfig().enterPasswordLabel, password, cursorVisible, drawLogo);
 			needsRedraw = false;
 		}
 
@@ -1808,7 +1270,7 @@ Common::Error MenuSystem::runPasswordPrompt(const IndexedBitmap &backdrop, const
 				}
 				if (event.kbd.ascii >= 32 && event.kbd.ascii <= 126 && event.kbd.ascii != '~') {
 					needsRedraw |= appendTextEntryCharacter(password, entryFont, event.kbd.ascii,
-						kPasswordMaxCharacters, kPasswordEntryWidth);
+						kPasswordMaxCharacters, MenuRendering::kPasswordEntryWidth);
 				}
 				break;
 			default:
@@ -1891,7 +1353,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 		return Common::kReadingFailed;
 	}
 
-	const int lineHeight = getNativeRoomMenuLineHeight(selectedFont);
+	const int lineHeight = MenuRendering::getNativeRoomMenuLineHeight(selectedFont);
 	int selectedItem = 0;
 	int capturedSlider = -1;
 	bool showingQuickTips = false;
@@ -2030,11 +1492,12 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
 			if (showingQuickTips) {
-				renderQuickTipsOverlay(_engine, backdrop, palette, paletteBrightness,
+				MenuRendering::Renderer(_engine, backdrop, palette, paletteBrightness).renderQuickTipsOverlay(
 					config, quickTipsLayout, flow.getQuickTip(quickTipIndex));
 			} else {
-				renderOptionsMenuScreen(_engine, backdrop, palette, paletteBrightness,
-					selectedFont, unselectedFont, *art, config, volumeBar, indicator, selectedItem);
+				MenuRendering::Renderer(_engine, backdrop, palette, paletteBrightness).renderOptionsMenu(
+					MenuRendering::FontPair(selectedFont, unselectedFont), *art, config,
+					MenuRendering::SliderBitmaps(volumeBar, indicator), selectedItem);
 			}
 			needsRedraw = false;
 		}
@@ -2145,14 +1608,14 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 					break;
 				case Common::KEYCODE_LEFT:
 					if (selectedItem < 3) {
-						_mousePos.x = MAX<int>(kOptionsSliderMinX, _mousePos.x - kOptionsSliderStep);
+						_mousePos.x = MAX<int>(MenuRendering::kOptionsSliderMinX, _mousePos.x - MenuRendering::kOptionsSliderStep);
 						updateSlider(selectedItem);
 						needsRedraw = true;
 					}
 					break;
 				case Common::KEYCODE_RIGHT:
 					if (selectedItem < 3) {
-						_mousePos.x = MIN<int>(kOptionsSliderMaxX, _mousePos.x + kOptionsSliderStep);
+						_mousePos.x = MIN<int>(kOptionsSliderMaxX, _mousePos.x + MenuRendering::kOptionsSliderStep);
 						updateSlider(selectedItem);
 						needsRedraw = true;
 					}
@@ -2225,7 +1688,7 @@ Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBright
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderHelpScreen(_engine, page == 0 ? mouseHelp : keysHelp,
+			MenuRendering::renderHelpScreen(_engine, page == 0 ? mouseHelp : keysHelp,
 				page == 0 ? mouseHelpPalette : keysHelpPalette);
 			needsRedraw = false;
 		}
@@ -2242,7 +1705,7 @@ Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBright
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				if (Graphics::Screen *screen = _engine.getScreen()) {
-					applyMenuPalette(*screen, _engine, palette, paletteBrightness);
+					MenuRendering::applyMenuPalette(*screen, _engine, palette, paletteBrightness);
 					screen->fillRect(screen->getBounds(), 0);
 				}
 				return Common::kNoError;
@@ -2253,7 +1716,7 @@ Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBright
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					if (Graphics::Screen *screen = _engine.getScreen()) {
-						applyMenuPalette(*screen, _engine, palette, paletteBrightness);
+						MenuRendering::applyMenuPalette(*screen, _engine, palette, paletteBrightness);
 						screen->fillRect(screen->getBounds(), 0);
 					}
 					return Common::kNoError;
@@ -2277,85 +1740,6 @@ Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBright
 	return Common::kNoError;
 }
 
-void MenuSystem::renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,
-		bool drawCursor, const Common::Array<Common::String> &menuItems) const {
-	Graphics::Screen *screen = _engine.getScreen();
-	const Art *art = _engine.getArt();
-	const Graphics::Font *titleFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	if (!screen || !art || !titleFont || !bodyFont)
-		return;
-
-	byte displayPalette[256 * 3];
-	buildHarvesterDisplayPalette(art->getWaitPalette(), 1.0f, displayPalette);
-	screen->setPalette(displayPalette);
-	screen->fillRect(screen->getBounds(), 0);
-	blitBitmap(*screen, art->getInventoryBitmap(), kInventoryX, kInventoryY);
-	blitBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
-
-	const Common::Rect panel(96, 96, 544, 432);
-	screen->fillRect(panel, kPanelFillColor);
-
-	drawShadowedString(*screen, *titleFont, "Harvester", panel.left, 110, panel.width(),
-		kTextColorNormal, Graphics::kTextAlignCenter);
-
-	for (uint i = 0; i < menuItems.size(); ++i) {
-		const int itemY = kMenuStartY + (int)i * kMenuLineSpacing;
-		const byte color = ((int)i == selectedItem) ? kTextColorHover : kTextColorNormal;
-		drawShadowedString(*screen, *bodyFont, menuItems[i], panel.left, itemY, panel.width(), color,
-			Graphics::kTextAlignCenter);
-	}
-
-	if (!statusMessage.empty()) {
-		drawWrappedShadowedText(*screen, *bodyFont, statusMessage, panel.left + 24, 352, panel.width() - 48,
-			kTextColorNormal);
-	}
-	drawShadowedString(*screen, *bodyFont, "Use mouse or arrow keys. Enter activates. Esc returns to launcher.",
-		panel.left, 404, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
-
-	if (drawCursor && _engine.getRuntimeEntities())
-		_engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
-}
-
-void MenuSystem::renderBackdropMenuScreen(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, const Common::Array<Common::String> &menuItems,
-		int selectedItem) const {
-	Graphics::Screen *screen = _engine.getScreen();
-	const Art *art = _engine.getArt();
-	const Text *text = _engine.getText();
-	const CftFontResource *selectedFontResource = text ? text->findFont("HARVFONT") : nullptr;
-	const CftFontResource *unselectedFontResource = text ? text->findFont("HARVFNT2") : nullptr;
-	if (!screen || !art || !selectedFontResource || !unselectedFontResource || !backdrop.isValid())
-		return;
-
-	HarvesterCftFont selectedFont(*selectedFontResource);
-	HarvesterCftFont unselectedFont(*unselectedFontResource);
-	if (!selectedFont.isValid() || !unselectedFont.isValid())
-		return;
-
-	applyMenuPalette(*screen, _engine, palette, paletteBrightness);
-	blitBitmap(*screen, backdrop, 0, 0);
-	blitTransparentBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
-
-	const int lineSpacing = getNativeRoomMenuLineHeight(selectedFont);
-	for (uint i = 0; i < menuItems.size(); ++i) {
-		const Graphics::Font *font = ((int)i == selectedItem)
-			? static_cast<const Graphics::Font *>(&selectedFont)
-			: static_cast<const Graphics::Font *>(&unselectedFont);
-		const int width = font->getStringWidth(menuItems[i]);
-		const int x = (screen->w - width) / 2;
-		const int y = kMenuStartY + (int)i * lineSpacing;
-		font->drawString(screen, menuItems[i], x, y, width, 0);
-	}
-
-	if (_engine.getRuntimeEntities())
-		_engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
-}
-
 int MenuSystem::getMenuItemAt(const Common::Point &mousePos,
 		const Common::Array<Common::String> &menuItems) const {
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
@@ -2365,7 +1749,7 @@ int MenuSystem::getMenuItemAt(const Common::Point &mousePos,
 	for (uint i = 0; i < menuItems.size(); ++i) {
 		const int width = font->getStringWidth(menuItems[i]);
 		const int x = (640 - width) / 2;
-		const int y = kMenuStartY + (int)i * kMenuLineSpacing;
+		const int y = MenuRendering::kMenuStartY + (int)i * MenuRendering::kMenuLineSpacing;
 		const Common::Rect bounds(x - 12, y - 2, x + width + 12, y + font->getFontHeight() + 2);
 		if (bounds.contains(mousePos))
 			return (int)i;

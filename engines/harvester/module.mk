@@ -13,6 +13,8 @@ MODULE_OBJS = \
 	inventory.o \
 	media_manager.o \
 	menu.o \
+	menu_config.o \
+	menu_render.o \
 	metaengine.o \
 	monster.o \
 	player.o \
