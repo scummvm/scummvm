@@ -186,6 +186,19 @@ void IgorEngine::part9UpdateBackground() {
 		part9DrawSecretaryFrame(getRandomNumber(2), false);
 }
 
+void IgorEngine::part9TalkToSecretary() {
+	// the blocking dialogue loops never run the room's idle animation, which
+	// would otherwise fight the secretary's talking frames
+	const UpdateRoomBackgroundProc updateRoomBackground = _updateRoomBackground;
+	_updateRoomBackground = 0;
+	loadDialogueData(DLG_AdministrationSecretaryRoom);
+	_updateDialogue = &IgorEngine::part9UpdateSecretaryDialogue;
+	handleDialogue(63, 59, 0, 90, 65);
+	_updateDialogue = 0;
+	_updateRoomBackground = updateRoomBackground;
+	part9ApplyObjectState(255);
+}
+
 void IgorEngine::part9ExecuteAction(int action) {
 	switch (action) {
 	case 101: // open file cabinet
@@ -195,18 +208,7 @@ void IgorEngine::part9ExecuteAction(int action) {
 		igorSayAndWait(201, 2, 234);
 		break;
 	case 103: // talk to secretary
-		{
-			// the blocking dialogue loops never run the room's idle animation, which
-			// would otherwise fight the secretary's talking frames
-			const UpdateRoomBackgroundProc updateRoomBackground = _updateRoomBackground;
-			_updateRoomBackground = 0;
-			loadDialogueData(DLG_AdministrationSecretaryRoom);
-			_updateDialogue = &IgorEngine::part9UpdateSecretaryDialogue;
-			handleDialogue(63, 59, 0, 90, 65);
-			_updateDialogue = 0;
-			_updateRoomBackground = updateRoomBackground;
-		}
-		part9ApplyObjectState(255);
+		part9TalkToSecretary();
 		break;
 	case 104: // look at secretary
 		igorSayAndWait(203, 2, 235);
@@ -328,6 +330,10 @@ void IgorEngine::part9() {
 	}
 
 	enterPartLoop();
+	if (takeResumeDialogue(1)) { // loaded while talking to the secretary
+		part9TalkToSecretary();
+		finishResumedDialogue();
+	}
 	while (_currentPart == 90 && !_gameStateLoaded)
 		runPartLoop();
 	leavePartLoop();

@@ -383,9 +383,13 @@ void IgorEngine::part81HandleDialogue() {
 	_updateRoomBackground = 0;
 	_updateDialogue = &IgorEngine::part81UpdateLighthouseKeeperDialogue;
 	loadDialogueData(DLG_Part81);
-	_gameState.dialogueStarted = true;
-	_gameState.dialogueChoiceStart = 1;
-	_gameState.dialogueChoiceCount = 1;
+	const bool resuming = _dialogueResuming;
+	_dialogueResuming = false;
+	_gameState.dialogueStarted = 1;
+	if (!resuming) { // a loaded savegame keeps the menu position it was saved at
+		_gameState.dialogueChoiceStart = 1;
+		_gameState.dialogueChoiceCount = 1;
+	}
 
 	bool done = false;
 	do {
@@ -432,7 +436,7 @@ void IgorEngine::part81HandleDialogue() {
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
-	_gameState.dialogueStarted = false;
+	_gameState.dialogueStarted = 0;
 	_updateDialogue = 0;
 	_updateRoomBackground = previousBackground;
 }
@@ -533,6 +537,11 @@ void IgorEngine::part81() {
 		part81WalkIn();
 	}
 	enterPartLoop();
+	if (takeResumeDialogue(1)) { // loaded while talking to the lighthouse keeper
+		part81HandleDialogue();
+		part81ApplyObjectState(255);
+		finishResumedDialogue();
+	}
 	while (_currentPart == 810 && !_gameStateLoaded) {
 		runPartLoop();
 	}
