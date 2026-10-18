@@ -396,6 +396,8 @@ void IgorEngine::part21Floppy() {
 	_updateRoomBackground = &IgorEngine::part21FloppyUpdateBackground;
 	part21FloppyApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
+	SET_PAL_240_48_1();
+	SET_PAL_208_96_1();
 	if (!restoreRoomAfterLoad()) {
 		_gameState.unk10 = 1;
 		_currentAction.verb = kVerbWalk;
@@ -409,6 +411,11 @@ void IgorEngine::part21Floppy() {
 		}
 	}
 	enterPartLoop();
+	if (takeResumeDialogue(1)) { // loaded while talking to margaret
+		part21FloppyHandleMargaretDialogue();
+		part21FloppyApplyObjectState(255);
+		finishResumedDialogue();
+	}
 	while (_currentPart >= 210 && _currentPart <= 212 && !_gameStateLoaded) {
 		runPartLoop();
 	}
