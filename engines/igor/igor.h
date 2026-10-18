@@ -968,6 +968,7 @@ private:
 	void part9UpdateSecretaryDialogue(int action);
 	void part9DrawSecretaryTalkingFrame(int frame);
 	void part9SecretarySearchesFile();
+	void part9TalkToSecretary();
 	void part9UpdateBackground();
 
 	// Decanato right
