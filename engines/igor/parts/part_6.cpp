@@ -328,6 +328,11 @@ void IgorEngine::part6() {
 		_walkDataCurrentIndex = 1;
 		enterPartLoop();
 	}
+	if (takeResumeDialogue(1)) { // loaded while talking to the photographer
+		part6HandlePhotographerDialogue();
+		part6SetPhotographerState(255);
+		finishResumedDialogue();
+	}
 
 	while (_currentPart >= 60 && _currentPart <= 61 && !_gameStateLoaded) {
 		setRoomWalkBounds(0, 0, _objectsState[kPhotographerGoneStateIndex] == 0 ? 234 : 142, 143);
