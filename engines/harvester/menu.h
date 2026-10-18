@@ -100,6 +100,23 @@ public:
 		Flow &flow, bool &promptCompleted);
 
 private:
+	static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap);
+	static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFont, uint itemCount,
+		const Common::Point &mousePos);
+
+	struct OptionsMenu;
+	void updateOptionsSlider(OptionsMenu &menu, int sliderIndex);
+	void cycleOptionsTextMode(OptionsMenu &menu);
+	void toggleOptionsGore(OptionsMenu &menu);
+	void toggleOptionsPassword(OptionsMenu &menu);
+	Common::Error activateOptionsItem(OptionsMenu &menu);
+	Common::Error handleOptionsQuickTipsEvent(OptionsMenu &menu, const Common::Event &event);
+	void handleOptionsMouseMove(OptionsMenu &menu, const Graphics::Font &selectedFont);
+	Common::Error handleOptionsMouseDown(OptionsMenu &menu, const Graphics::Font &selectedFont);
+	Common::Error handleOptionsKey(OptionsMenu &menu, const Common::Event &event, bool &closed);
+	Common::Error handleOptionsEvent(OptionsMenu &menu, const Common::Event &event,
+		const Graphics::Font &selectedFont, bool &closed);
+
 	struct SaveSlotMenu;
 	enum SaveLoadMode { kSaveMode, kLoadMode };
 	enum SaveSlotCommand { kNoSlotCommand, kConfirmSlot, kCancelSlot };

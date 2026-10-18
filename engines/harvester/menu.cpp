@@ -46,9 +46,6 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kOptionsVolumeBitmapPath = "1:/GRAPHIC/OTHER/VOLUME.BM";
-static const char *const kOptionsIndicatorBitmapPath = "1:/GRAPHIC/OTHER/INDICATR.BM";
-static const char *const kOptionsPreviewSoundPath = "1:/SOUND/EFFECTS/WHIP2.WAV";
 static const char *const kLoadGameBitmapPath = "1:/GRAPHIC/OTHER/LOADGAME.BM";
 static const char *const kLoadGamePalettePath = "1:/GRAPHIC/PAL/LOADGAME.PAL";
 static const char *const kSaveGameBitmapPath = "1:/GRAPHIC/OTHER/SAVEGAME.BM";
@@ -56,9 +53,6 @@ static const char *const kSaveGamePalettePath = "1:/GRAPHIC/PAL/SAVEGAME.PAL";
 static const char *const kGameOverBitmapPath = "1:/GRAPHIC/OTHER/GAMEOVER.BM";
 static const char *const kGameOverPalettePath = "1:/GRAPHIC/PAL/GAMEOVER.PAL";
 static const char *const kGameOverMusicPath = "SOUND/MUSIC/ANXIETY.CMP";
-static const int kOptionsSliderMaxX = 0x22b;
-static const int kOptionsSliderHeight = 0x1e;
-static const int kStartupOptionMaxLevel = 9;
 static const int kSaveSlotCount = 25;
 static const int kSaveSlotLabelX = 8;
 static const int kSaveSlotNameX = 0x50;
@@ -107,15 +101,6 @@ private:
 	bool _paused = false;
 };
 
-static int clampStartupOptionLevel(int level) {
-	if (level < 0)
-		return 0;
-	if (level > kStartupOptionMaxLevel)
-		return kStartupOptionMaxLevel;
-
-	return level;
-}
-
 static Common::Rect saveSlotRect(int slotIndex) {
 	const int top = kSaveSlotStartY + slotIndex * kSaveSlotStride;
 	return Common::Rect(8, top, 0x27b + 1, top + kSaveSlotStride);
@@ -135,17 +120,6 @@ static Common::Rect quitConfirmYesRect() {
 
 static Common::Rect quitConfirmNoRect() {
 	return Common::Rect(0x172, 0xee, 0x19a + 1, 0x108 + 1);
-}
-
-static Common::Rect optionsSliderRect(int sliderIndex, int lineHeight) {
-	const int y = MenuRendering::kOptionsIndicatorY + sliderIndex * lineHeight;
-	return Common::Rect(MenuRendering::kOptionsSliderMinX, y, kOptionsSliderMaxX + 1, y + kOptionsSliderHeight + 1);
-}
-
-static int resolveOptionsSliderIndexFromMouseX(int mouseX) {
-	const int relativeX = mouseX - MenuRendering::kOptionsSliderMinX;
-	return clampStartupOptionLevel(
-		(relativeX + (MenuRendering::kOptionsSliderStep / 2)) / MenuRendering::kOptionsSliderStep);
 }
 
 } // End of anonymous namespace
@@ -170,14 +144,6 @@ static void buildDisplayMainMenuItems(const Common::Array<Common::String> &sourc
 		dest[2] = kBlankMenuSlot;
 }
 
-static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
-	Common::Array<byte> data;
-	if (!resources.loadFile(path, data) || data.size() < 12)
-		return false;
-
-	return decodeBitmap(data, bitmap);
-}
-
 static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *palette) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
@@ -191,7 +157,17 @@ static Common::String buildDefaultSaveSlotLabel(int slotIndex) {
 	return Common::String::format("GAME %02d", slotIndex + 1);
 }
 
-static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFont, uint itemCount,
+} // End of anonymous namespace
+
+bool MenuSystem::loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 12)
+		return false;
+
+	return decodeBitmap(data, bitmap);
+}
+
+int MenuSystem::getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFont, uint itemCount,
 		const Common::Point &mousePos) {
 	if (itemCount == 0)
 		return -1;
@@ -201,13 +177,11 @@ static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFon
 		selection = 1;
 
 	selection /= MAX<int>(1, MenuRendering::getNativeRoomMenuLineHeight(selectedFont));
-	if (selection >= (int)itemCount)
-		selection = (int)itemCount - 1;
+	if (selection >= static_cast<int>(itemCount))
+		selection = static_cast<int>(itemCount) - 1;
 
 	return selection;
 }
-
-} // End of anonymous namespace
 
 MenuSystem::MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
 		const Common::Array<Common::String> &menuItems)
@@ -1325,344 +1299,6 @@ Common::Error MenuSystem::validateParentalPassword(Flow &flow) {
 	}
 
 	debugC(1, kDebugGeneral, "Harvester: parental password accepted; startup permitted");
-	return Common::kNoError;
-}
-
-Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &flow) {
-	const Art *art = _engine.getArt();
-	Script *script = _engine.getScript();
-	ResourceManager *resources = _engine.getResources();
-	const Text *text = _engine.getText();
-	const CftFontResource *selectedFontResource = text ? text->findFont("HARVFONT") : nullptr;
-	const CftFontResource *unselectedFontResource = text ? text->findFont("HARVFNT2") : nullptr;
-	if (!art || !script || !resources || !selectedFontResource || !unselectedFontResource)
-		return Common::kReadingFailed;
-
-	HarvesterCftFont selectedFont(*selectedFontResource);
-	HarvesterCftFont unselectedFont(*unselectedFontResource);
-	if (!selectedFont.isValid() || !unselectedFont.isValid())
-		return Common::kReadingFailed;
-
-	const MenuTextConfig &config = flow.getMenuTextConfig();
-
-	IndexedBitmap volumeBar;
-	IndexedBitmap indicator;
-	if (!loadBitmapResource(*resources, kOptionsVolumeBitmapPath, volumeBar) ||
-			!loadBitmapResource(*resources, kOptionsIndicatorBitmapPath, indicator)) {
-		return Common::kReadingFailed;
-	}
-
-	const int lineHeight = MenuRendering::getNativeRoomMenuLineHeight(selectedFont);
-	int selectedItem = 0;
-	int capturedSlider = -1;
-	bool showingQuickTips = false;
-	bool needsRedraw = true;
-	uint quickTipIndex = flow.getQuickTipCount() == 0 ? 0 : _engine.getRandomNumber(flow.getQuickTipCount() - 1);
-	QuickTipsLayout quickTipsLayout;
-
-	auto persistConfig = [&]() -> bool {
-		return script->saveConfig();
-	};
-
-	auto updateSlider = [&](int sliderIndex) {
-		const int newLevel = resolveOptionsSliderIndexFromMouseX(_mousePos.x);
-		switch (sliderIndex) {
-		case 0:
-			if (newLevel != script->getFxVolumeLevel()) {
-				_engine.setFxVolumeLevel(newLevel);
-				_engine.playSingleSound(kOptionsPreviewSoundPath);
-				persistConfig();
-				needsRedraw = true;
-			}
-			break;
-		case 1:
-			if (newLevel != script->getMusicVolumeLevel()) {
-				_engine.setMusicVolumeLevel(newLevel);
-				persistConfig();
-				needsRedraw = true;
-			}
-			break;
-		case 2:
-			if (newLevel != script->getGammaLevel()) {
-				_engine.setGammaLevel(newLevel);
-				persistConfig();
-				needsRedraw = true;
-			}
-			break;
-		default:
-			break;
-		}
-	};
-
-	auto cycleTextMode = [&]() {
-		switch (script->getDialogueTextMode()) {
-		case kStartupDialogueTextNone:
-			script->setDialogueTextMode(kStartupDialogueTextYes);
-			break;
-		case kStartupDialogueTextYes:
-			script->setDialogueTextMode(kStartupDialogueTextClick);
-			break;
-		case kStartupDialogueTextClick:
-		default:
-			script->setDialogueTextMode(kStartupDialogueTextNone);
-			break;
-		}
-		persistConfig();
-		needsRedraw = true;
-	};
-
-	auto toggleGore = [&]() {
-		script->setGoreEnabled(!script->isGoreEnabled());
-		ConfMan.setBool("gore", script->isGoreEnabled());
-		persistConfig();
-		needsRedraw = true;
-	};
-
-	auto togglePassword = [&]() {
-		if (script->getParentalPassword().empty()) {
-			debugC(2, kDebugGeneral, "Harvester: parental password set prompt opened");
-			Common::String password;
-			bool accepted = false;
-			Common::Error promptError = runPasswordPrompt(
-				backdrop, palette, paletteBrightness, flow, true, password, accepted);
-			if (promptError.getCode() != Common::kNoError) {
-				debugC(1, kDebugGeneral,
-					"Harvester: parental password set prompt failed error=%d",
-					(int)promptError.getCode());
-				return;
-			}
-			if (accepted) {
-				script->setParentalPassword(password);
-				if (!persistConfig()) {
-					script->setParentalPassword(Common::String());
-					debugC(1, kDebugGeneral,
-						"Harvester: parental password enable failed");
-				} else {
-					debugC(1, kDebugGeneral,
-						"Harvester: parental password enabled");
-				}
-				needsRedraw = true;
-			} else {
-				debugC(2, kDebugGeneral,
-					"Harvester: parental password set prompt cancelled state=disabled");
-			}
-		} else {
-			const Common::String previousPassword = script->getParentalPassword();
-			script->setParentalPassword(Common::String());
-			if (!persistConfig()) {
-				script->setParentalPassword(previousPassword);
-				debugC(1, kDebugGeneral,
-					"Harvester: parental password disable failed");
-			} else {
-				debugC(1, kDebugGeneral,
-					"Harvester: parental password disabled");
-			}
-			needsRedraw = true;
-		}
-	};
-
-	auto activateSelectedItem = [&]() -> Common::Error {
-		switch (selectedItem) {
-		case 3:
-			cycleTextMode();
-			break;
-		case 4:
-			toggleGore();
-			break;
-		case 5:
-			if (flow.getQuickTipCount() != 0) {
-				if (!resolveQuickTipsLayout(_engine, config, quickTipsLayout))
-					return Common::kReadingFailed;
-				showingQuickTips = true;
-				needsRedraw = true;
-			}
-			break;
-		case 6:
-			togglePassword();
-			break;
-		default:
-			break;
-		}
-
-		return Common::kNoError;
-	};
-
-	Graphics::FrameLimiter limiter(g_system, 60);
-	while (!_engine.shouldQuit()) {
-		if (needsRedraw) {
-			if (showingQuickTips) {
-				MenuRendering::Renderer(_engine, backdrop, palette, paletteBrightness).renderQuickTipsOverlay(
-					config, quickTipsLayout, flow.getQuickTip(quickTipIndex));
-			} else {
-				MenuRendering::Renderer(_engine, backdrop, palette, paletteBrightness).renderOptionsMenu(
-					MenuRendering::FontPair(selectedFont, unselectedFont), *art, config,
-					MenuRendering::SliderBitmaps(volumeBar, indicator), selectedItem);
-			}
-			needsRedraw = false;
-		}
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			Common::Error result = Common::kNoError;
-			if (flow.handleSystemEvent(event, result))
-				return result;
-
-			if (showingQuickTips) {
-				switch (event.type) {
-				case Common::EVENT_MOUSEMOVE:
-					needsRedraw = true;
-					break;
-				case Common::EVENT_LBUTTONDOWN:
-					if (quickTipsLayout.exitRect.contains(_mousePos)) {
-						showingQuickTips = false;
-						needsRedraw = true;
-					} else if (quickTipsLayout.nextRect.contains(_mousePos)) {
-						quickTipIndex = (quickTipIndex + 1) % flow.getQuickTipCount();
-						needsRedraw = true;
-					} else if (quickTipsLayout.toggleRect.contains(_mousePos)) {
-						script->setQuickTipsEnabled(!script->isQuickTipsEnabled());
-						if (!resolveQuickTipsLayout(_engine, config, quickTipsLayout))
-							return Common::kReadingFailed;
-						persistConfig();
-						needsRedraw = true;
-					}
-					break;
-				case Common::EVENT_RBUTTONDOWN:
-					showingQuickTips = false;
-					needsRedraw = true;
-					break;
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						showingQuickTips = false;
-						needsRedraw = true;
-					}
-					break;
-				default:
-					break;
-				}
-				continue;
-			}
-
-			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE: {
-				if (capturedSlider != -1) {
-					selectedItem = capturedSlider;
-					updateSlider(capturedSlider);
-					needsRedraw = true;
-				} else {
-					const int hoveredItem = getNativeRoomMenuSelectionFromMouse(selectedFont,
-						config.optionItems.size(), _mousePos);
-					if (hoveredItem != -1 && hoveredItem != selectedItem) {
-						selectedItem = hoveredItem;
-						needsRedraw = true;
-					}
-				}
-				break;
-			}
-			case Common::EVENT_LBUTTONDOWN: {
-				bool handled = false;
-				for (int sliderIndex = 0; sliderIndex < 3; ++sliderIndex) {
-					if (optionsSliderRect(sliderIndex, lineHeight).contains(_mousePos)) {
-						selectedItem = sliderIndex;
-						capturedSlider = sliderIndex;
-						updateSlider(sliderIndex);
-						needsRedraw = true;
-						handled = true;
-						break;
-					}
-				}
-				if (handled)
-					break;
-
-				const int clickedItem = getNativeRoomMenuSelectionFromMouse(selectedFont,
-					config.optionItems.size(), _mousePos);
-				if (clickedItem == -1)
-					break;
-
-				selectedItem = clickedItem;
-				needsRedraw = true;
-				if (selectedItem >= 3) {
-					Common::Error activateError = activateSelectedItem();
-					if (activateError.getCode() != Common::kNoError)
-						return activateError;
-				}
-				break;
-			}
-			case Common::EVENT_LBUTTONUP:
-				capturedSlider = -1;
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				return Common::kNoError;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
-					return Common::kNoError;
-				case Common::KEYCODE_UP:
-					selectedItem = (selectedItem + (int)config.optionItems.size() - 1) % (int)config.optionItems.size();
-					needsRedraw = true;
-					break;
-				case Common::KEYCODE_DOWN:
-					selectedItem = (selectedItem + 1) % (int)config.optionItems.size();
-					needsRedraw = true;
-					break;
-				case Common::KEYCODE_LEFT:
-					if (selectedItem < 3) {
-						_mousePos.x = MAX<int>(MenuRendering::kOptionsSliderMinX, _mousePos.x - MenuRendering::kOptionsSliderStep);
-						updateSlider(selectedItem);
-						needsRedraw = true;
-					}
-					break;
-				case Common::KEYCODE_RIGHT:
-					if (selectedItem < 3) {
-						_mousePos.x = MIN<int>(kOptionsSliderMaxX, _mousePos.x + MenuRendering::kOptionsSliderStep);
-						updateSlider(selectedItem);
-						needsRedraw = true;
-					}
-					break;
-				case Common::KEYCODE_RETURN:
-				case Common::KEYCODE_KP_ENTER: {
-					Common::Error activateError = activateSelectedItem();
-					if (activateError.getCode() != Common::kNoError)
-						return activateError;
-					break;
-				}
-				case Common::KEYCODE_t:
-					selectedItem = 3;
-					cycleTextMode();
-					break;
-				case Common::KEYCODE_g:
-					selectedItem = 4;
-					toggleGore();
-					break;
-				case Common::KEYCODE_q:
-					selectedItem = 5;
-					if (flow.getQuickTipCount() != 0) {
-						showingQuickTips = true;
-						needsRedraw = true;
-					}
-					break;
-				case Common::KEYCODE_p:
-					selectedItem = 6;
-					togglePassword();
-					break;
-				default:
-					break;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-
-		EntityManager *entityManager = _engine.getRuntimeEntities();
-		if (entityManager && entityManager->syncCursorEntityPosition(_mousePos))
-			needsRedraw = true;
-
-		limiter.delayBeforeSwap();
-		limiter.startFrame();
-	}
-
 	return Common::kNoError;
 }
 
