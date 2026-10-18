@@ -1005,6 +1005,25 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_BOOL("dump-all-dialogs")
 			END_OPTION
 
+			// Filters for --dump-all-dialogs (comma separated lists), also internal
+			DO_LONG_OPTION("dump-dialog")
+			END_OPTION
+
+			DO_LONG_OPTION("dump-lang")
+			END_OPTION
+
+			DO_LONG_OPTION("dump-res")
+			END_OPTION
+
+			DO_LONG_OPTION("dump-engine")
+			END_OPTION
+
+			DO_LONG_OPTION("dump-output-dir")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("dump-list-only")
+			END_OPTION
+
 			DO_LONG_OPTION("shader")
 				Common::SearchSet _shaderSet;
 				Common::generateZipSet(_shaderSet, "shaders.dat", "shaders*.dat");
@@ -2320,6 +2339,12 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		"random-seed",
 		"renderer",
 		"dump-all-dialogs",
+		"dump-dialog",
+		"dump-lang",
+		"dump-res",
+		"dump-engine",
+		"dump-output-dir",
+		"dump-list-only",
 		nullptr
 	};
 
