@@ -470,6 +470,12 @@ private:
 		kCommandOutputsRoomExit
 	};
 
+	enum CommandStepResult {
+		kCommandUnhandled,
+		kCommandContinue,
+		kCommandStop
+	};
+
 	bool loadConfig(ResourceManager &resources);
 	void decode();
 	void parseTownRecords(ResourceManager &resources);
@@ -523,6 +529,37 @@ private:
 		ResourceManager &resources, RoomSetupState &state) const;
 	void executeCommandChain(const Common::String &initialTag, const CommandExecutionContext &context,
 		CommandOutputPolicy outputPolicy, InteractionResult &result);
+	CommandStepResult executeCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, CommandOutputPolicy outputPolicy,
+		InteractionResult &result, Common::String &nextTag);
+	CommandStepResult executeBranchCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, InteractionResult &result, Common::String &nextTag);
+	CommandStepResult executeAudioCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, InteractionResult &result);
+	CommandStepResult executeObjectCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, InteractionResult &result);
+	CommandStepResult executeAnimationCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, InteractionResult &result);
+	CommandStepResult executeRegionCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, InteractionResult &result);
+	CommandStepResult executeNpcCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, InteractionResult &result);
+	CommandStepResult executeMonsterCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, InteractionResult &result);
+	CommandStepResult executeTimerCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, InteractionResult &result);
+	CommandStepResult executeExecListCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, CommandOutputPolicy outputPolicy, InteractionResult &result);
+	CommandStepResult executeModalCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, InteractionResult &result);
+	CommandStepResult executePlayerCommand(const CommandRecord &command,
+		InteractionResult &result);
+	CommandStepResult executeMovementCommand(const CommandRecord &command,
+		InteractionResult &result);
+	CommandStepResult executeTransitionCommand(const CommandRecord &command,
+		const CommandExecutionContext &context, CommandOutputPolicy outputPolicy, InteractionResult &result);
+	static bool hasDeferredInteractionOutputs(const InteractionResult &result, CommandOutputPolicy outputPolicy);
+	static int resolveCombatResourcePickupMax(int loadout);
 	bool probePickupBlockingCommandChain(const Common::String &initialTag,
 		const Common::String &contextName, InteractionResult &result, uint recursionDepth) const;
 	bool hasActionableCommandChain(const Common::String &initialTag) const;
