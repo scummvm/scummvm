@@ -879,7 +879,7 @@ void RoomActorUpdater::tryOpenInteractionInterface() {
 	_state.InteractionFlags &= 0xFE;
 	_state.CursorHorizontalStep = 2;
 	_state.CursorVerticalStep = 2;
-	_state.ActiveActionIcon = 0;
+	_state.ActiveActionIcon = NONE;
 	_state.PreviousInteraction = 0;
 	_state.SecondaryInteraction = 0;
 

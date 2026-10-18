@@ -50,7 +50,7 @@ void RoomScriptCommand09Executor::executeRoomScriptCommand09(int mode) {
 		if (_state.ActiveActionIcon != 0) {
 			// Ghidra 0x00002DA8-0x00002DB9: queue the complete active word and clear it without drawing.
 			_state.PendingActionIcon = _state.ActiveActionIcon;
-			_state.ActiveActionIcon = 0;
+			_state.ActiveActionIcon = NONE;
 		}
 	}
 

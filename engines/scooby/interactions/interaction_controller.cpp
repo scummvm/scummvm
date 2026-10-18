@@ -52,7 +52,7 @@ Optional<SessionExit> InteractionController::updateAutomaticInteraction(bool &re
 		return Optional<SessionExit>();
 	}
 
-	_state.selectedVerb = 11;
+	_state.selectedVerb = NO_SUGGESTED_VERB;
 	_state.DisplayFlags |= kInteractionPendingMask;
 	Optional<SessionExit> requestedExit = runSelectedInteraction();
 	if (requestedExit.hasValue()) {
@@ -147,7 +147,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 			return Optional<SessionExit>();
 		}
 
-		if (_state.selectedVerb == kInventorySelectionMode &&
+		if (_state.selectedVerb == TAKE &&
 			_state.RoomObjects[objectIndex].RoomId == kInventoryRoomId) {
 			return Optional<SessionExit>();
 		}
@@ -213,7 +213,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// post-menu action count. A managed non-returning menu path bypasses both native restorations.
 		_state.roomScriptCurrentOffset = interactionScriptStartOffset;
 		_state.RoomScriptEndOffset = interactionScriptEndOffset;
-		if (verb == kInteractionActionMenuMode) {
+		if (verb == TALK) {
 			uint8 automaticInteractionFlags = _state.AutomaticInteractionFlags;
 			SDM_ASSERT(_runInteractionActionMenu != nullptr,
 					   "InteractionController runInteractionActionMenu callback is not bound.");
@@ -233,13 +233,13 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// clear, and set outcome of the interaction-bit-zero toggle.
 		if ((_state.AutomaticInteractionFlags & kMatchedSelectedInteractionMask) == 0) {
 			bool applyInteractionToggle = false;
-			if (verb == kClearRoomBehaviorMode) {
+			if (verb == USE) {
 				applyInteractionToggle = (_state.RoomBehaviorFlags & kRoomBehaviorInteractionMask) == 0;
 				_state.RoomBehaviorFlags &= static_cast<uint8>(~kRoomBehaviorInteractionMask);
 				if (!applyInteractionToggle) {
 					_state.InteractionFlags &= static_cast<uint8>(~kAlternateInteractionMask);
 				}
-			} else if (verb == kSetRoomBehaviorMode) {
+			} else if (verb == GIVE) {
 				_state.RoomBehaviorFlags |= kRoomBehaviorInteractionMask;
 				applyInteractionToggle = (interactionFlags & kAlternateInteractionMask) == 0;
 				if (!applyInteractionToggle) {
@@ -260,7 +260,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 			// Ghidra 0x00001B1E-0x00001B9F: preserve both dialogue suppressors, the wrapped mode table
 			// index, every template byte, and all three description-placeholder selection branches.
 			if ((_state.InteractionFlags & kAlternateInteractionMask) == 0 &&
-				verb != kSuppressFallbackDialogueMode) {
+				verb != NO_SUGGESTED_VERB) {
 				int16 templatePointerByteOffset = static_cast<int16>((verb - 1) << 2);
 				int templateOffset = static_cast<int>(
 					_rom.readUInt32(kInteractionDialogueTemplateTableOffset + templatePointerByteOffset));
@@ -299,7 +299,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// then preserve both room-script-bit-three outcomes. A set bit selects scripted mode eight and
 		// repeats from the complete reset path; a clear bit returns.
 		if (_state.ActiveActionIcon != _state.selectedVerb) {
-			_state.ActiveActionIcon = 0;
+			_state.ActiveActionIcon = NONE;
 		}
 
 		if ((_state.RoomScriptFlags & kScriptedInteractionMask) == 0) {
@@ -308,7 +308,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 			return Optional<SessionExit>();
 		}
 
-		_state.selectedVerb = kInteractionActionMenuMode;
+		_state.selectedVerb = TALK;
 		_state.CurrentInteraction = _state.ScriptedInteraction;
 	}
 }

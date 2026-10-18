@@ -26,6 +26,7 @@
 #include "common/ptr.h"
 
 #include "common/array.h"
+#include "scooby/types.h"
 
 #include "scooby/assets/rom.h"
 #include "scooby/common/optional.h"
@@ -78,7 +79,7 @@ public:
 	// The active action icon from Ghidra g_wActiveActionIcon at 0xFF06C0–0xFF06C1. Original RAM has no image-
 	// backed value; runtime setup clears it before interaction updates. Command 0x09 queues any nonzero value
 	// as pending before clearing this word.
-	int16 ActiveActionIcon{};
+	VerbEnum ActiveActionIcon{};
 
 	// The cartridge offset from Ghidra g_pActiveEpisodeDescriptor at 0xFF068E. Process memory starts at zero;
 	// LoadRoomObjectTable is the sole writer and publishes the descriptor selected from g_wEpisodeIndex before
@@ -465,7 +466,7 @@ public:
 	// The last action icon committed to the display from Ghidra g_wCachedActionIcon at 0xFF06C4–0xFF06C5. No
 	// image-backed value is consumed; display refresh writes it before the room updater uses it when the
 	// active icon is zero.
-	int16 CachedActionIcon{};
+	VerbEnum CachedActionIcon{};
 
 	// The room camera X origin from Ghidra g_wCameraX at 0xFF06CA. No image-backed value is consumed; runtime
 	// reset writes zero before room loading selects the authored origin. Actions 0x0F and 0x10 clear bit zero
@@ -666,7 +667,7 @@ public:
 	// mode command dispatch; command 0x01 compares that stable snapshot with its record field at +2.
 	// Take = 2, Look = 10, Open = 3, Push = 7, Eat = 9
 	// Give = 6, Talk = 8, Shut = 4, Pull = 1, Use = 5
-	int16 selectedVerb{};
+	VerbEnum selectedVerb{};
 
 	// The signed menu entries decoded from the active interaction table.
 	Common::Array<int16> InteractionMenuItems{};

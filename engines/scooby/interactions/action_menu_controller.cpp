@@ -29,7 +29,7 @@
 #include "scooby/rooms/room_object.h"
 
 namespace Scooby {
-const Common::Array<int16> ActionMenuController::kActionIconByCommand{0, 2, 10, 3, 7, 9, 6, 8, 4, 1, 5};
+const Common::Array<VerbEnum> ActionMenuController::kActionIconByCommand{NONE, TAKE, LOOK, OPEN, PUSH, EAT, GIVE, TALK, SHUT, PULL, USE};
 
 namespace {
 void WriteUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
@@ -62,7 +62,7 @@ void ActionMenuController::refreshSelectedActionIcons() {
 }
 
 void ActionMenuController::synchronizeActionIcon() {
-	int16 previousActionIcon = 0;
+	VerbEnum previousActionIcon = NONE;
 	if (_state.PreviousInteraction != _state.CurrentInteraction &&
 		resolveActionIcon(_state.PreviousInteraction, previousActionIcon) &&
 		previousActionIcon != _state.ActiveActionIcon) {
@@ -70,7 +70,7 @@ void ActionMenuController::synchronizeActionIcon() {
 		drawSelectedActionIcon(0);
 	}
 
-	int16 currentActionIcon = 0;
+	VerbEnum currentActionIcon = NONE;
 	if (_state.ActiveActionIcon == 0 && resolveActionIcon(_state.CurrentInteraction, currentActionIcon)) {
 		_state.CachedActionIcon = currentActionIcon;
 		if (currentActionIcon != 0) {
@@ -88,7 +88,7 @@ bool ActionMenuController::updateActionMenu() {
 		}
 
 		if ((_state.ControllerOneInput & 0x10) == 0) {
-			int16 selectedAction = kActionIconByCommand[static_cast<std::size_t>(command)];
+			VerbEnum selectedAction = kActionIconByCommand[static_cast<std::size_t>(command)];
 			if (_state.ActiveActionIcon == 0) {
 				_state.PendingActionIcon = _state.CachedActionIcon;
 				drawSelectedActionIcon(0);
@@ -154,15 +154,15 @@ bool ActionMenuController::updateActionMenu() {
 	return _waitForRoomVerticalBlank();
 }
 
-bool ActionMenuController::resolveActionIcon(int16 interaction, int16 &actionIcon) {
+bool ActionMenuController::resolveActionIcon(int16 interaction, VerbEnum &actionIcon) {
 	if (interaction == 0) {
-		actionIcon = 0;
+		actionIcon = NONE;
 		return false;
 	}
 
 	actionIcon = interaction < 3
-					 ? static_cast<int16>(10)
-					 : static_cast<int16>(_state.RoomObjects[interaction - 3].ActionIcon);
+					 ? LOOK
+					 : static_cast<VerbEnum>(_state.RoomObjects[interaction - 3].ActionIcon);
 	return true;
 }
 

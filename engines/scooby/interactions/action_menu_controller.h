@@ -144,9 +144,9 @@ private:
 	static const uint8 kSelectedActionIconRefreshMask = 0x08;
 
 	// Ghidra g_awActionIconByCommand at 0x0002FE3A-0x0002FE4F, including unused command zero.
-	static const Common::Array<int16> kActionIconByCommand;
+	static const Common::Array<VerbEnum> kActionIconByCommand;
 
-	bool resolveActionIcon(int16 interaction, int16 &actionIcon);
+	bool resolveActionIcon(int16 interaction, VerbEnum &actionIcon);
 
 	// Waits for the left prompt to become inactive, then queues its next asset index.
 	// mode: prompt update value written by the original D0 word.

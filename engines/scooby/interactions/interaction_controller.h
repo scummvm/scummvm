@@ -170,11 +170,6 @@ private:
 	static const uint8 kSuppressRoomNameRefreshMask = 0x20;
 	static const uint8 kUseToConnectorMask = 0x01;
 	static const int16 kInventoryRoomId = 1;
-	static const int16 kInventorySelectionMode = 2;
-	static const int16 kSetRoomBehaviorMode = 6;
-	static const int16 kClearRoomBehaviorMode = 5;
-	static const int16 kInteractionActionMenuMode = 8;
-	static const int16 kSuppressFallbackDialogueMode = 11;
 
 	// Appends one cartridge byte string to the shared managed text workspace.
 	// sourceOffset: cartridge offset of the first source byte.
