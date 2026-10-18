@@ -24,6 +24,7 @@
 
 #include "engines/advancedDetector.h"
 #include "engines/game.h"
+#include "glk/glk_types.h"
 
 /**
  * ScummVM Meta Engine interface
@@ -31,6 +32,7 @@
 class GlkMetaEngineDetection : public MetaEngineDetection {
 private:
 	Common::String findFileByGameId(const Common::String &gameId);
+	PlainGameDescriptor findGame(const char *gameId, Glk::InterpreterType *interpreterType) const;
 public:
 	GlkMetaEngineDetection() : MetaEngineDetection() {}
 
@@ -64,6 +66,7 @@ public:
 	 * Query the engine for a PlainGameDescriptor for the specified gameid, if any.
 	 */
 	PlainGameDescriptor findGame(const char *gameId) const override;
+	bool findInterpreterType(const char *gameId, Glk::InterpreterType &interpreterType) const;
 
 	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override;
 
