@@ -28,6 +28,7 @@ MODULE_OBJS = \
 	script.o \
 	script_commands.o \
 	script_records.o \
+	script_room.o \
 	text.o \
 	xfile_archive.o \
 	npc/authority_dialogue.o \

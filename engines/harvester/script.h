@@ -525,6 +525,8 @@ private:
 	const MonsterRecord *findBaseMonster(const MonsterRecord &monster) const;
 	TimerRecord *findRuntimeTimer(const Common::String &timerName);
 	const TimerRecord *findRuntimeTimer(const Common::String &timerName) const;
+	const ObjectRecord *findRoomBackground(const RoomRecord &room, ResourceManager &resources) const;
+	void collectRuntimeRoomRecords(const RoomRecord &room, RoomSetupState &state) const;
 	bool buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord *entrance,
 		ResourceManager &resources, RoomSetupState &state) const;
 	void executeCommandChain(const Common::String &initialTag, const CommandExecutionContext &context,
