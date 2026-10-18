@@ -9720,6 +9720,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("maisybday", "", "Maisy BDay",		"r:0944b962ebb00f4b5d5149d220f8449b", 113458,  702),
 	WINGAME1("maisybday", "", "Maisy BDay.exe", "t:26fc28194d1991645a9a42794bcb1b36", 2619122, 702),
 
+	MACGAME1t_l("masakanokazoku", "1.22", "xn--v1.22-pd4dq68z44qut9apb4c", "090e49a62eeb56df86525cc3fdcff2f8", 120079, Common::JA_JPN, 702),
+
 	// Korean title is 수학교실
 	WINDEMO2_l("mathsworkshop", "Preview", "Math.exe",	   "t:5e2d026147a09b063a2e8db2dba0ab94", 10146326,
 										   "gorilla1.avi", "f:93c4103cf645bdaaf03df5259cfd17de",   966656, Common::KO_KOR, 702),
@@ -10356,7 +10358,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Advertainment film from Ferrero (chocolates)
 	WINGAME1_l("magicanti", "", "Magicanti.exe", "0c81c84ca4966313ad27d47daba44537", 2158202, Common::IT_ITA, 851),
 
-	MACGAME1t_l("masakanokazoku", "1.22", "xn--v1.22-pd4dq68z44qut9apb4c", "090e49a62eeb56df86525cc3fdcff2f8", 120079, Common::JA_JPN, 850),
 	WINGAME1t_l("masakanokazoku", "1.23", "mk123.exe", "7463dfe9b4d53843b2b4c4caa721f231", 2668180, Common::JA_JPN, 850),
 
 	WINGAME1_l("mathica", "", "Mathica.exe", "t:9b226694c9f0727b6e2d5025ecdb2187", 2240795, Common::RU_RUS, 851),
