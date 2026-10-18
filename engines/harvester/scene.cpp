@@ -21,6 +21,7 @@
 
 #include "harvester/scene.h"
 
+#include "backends/keymapper/keymapper.h"
 #include "common/algorithm.h"
 #include "common/events.h"
 #include "common/system.h"
@@ -531,8 +532,24 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 }
 
 InputResult Scene::pollRoomEvents(Input &input, bool &needsRedraw) {
+	Common::Keymap *gameplay = g_system->getEventManager()->getKeymapper()->getKeymap("harvester-gameplay");
+	Common::Keymap *defaults = g_system->getEventManager()->getKeymapper()->getKeymap("engine-default");
+	const bool defaultsEnabled = defaults && defaults->isEnabled();
 	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
+	while (true) {
+		// Nested menus and dialogue retain their keyboard input while the room
+		// handler runs. Only the room event poll uses the gameplay actions.
+		if (gameplay)
+			gameplay->setEnabled(true);
+		if (gameplay && defaults)
+			defaults->setEnabled(false);
+		const bool hasEvent = g_system->getEventManager()->pollEvent(event);
+		if (gameplay)
+			gameplay->setEnabled(false);
+		if (gameplay && defaults)
+			defaults->setEnabled(defaultsEnabled);
+		if (!hasEvent)
+			break;
 		const InputResult inputResult = input.handleEvent(event, needsRedraw);
 		if (inputResult.returnFromRoom)
 			return inputResult;
@@ -546,6 +563,7 @@ Scene::PlayerControlState Scene::preparePlayerControlState() {
 	const bool playerAlive = script && script->getPlayerCurrentHitPoints() > 0;
 	const bool playerControlPaused = script && script->isPlayerControlPaused();
 	const bool playerCanAct = playerAlive && !playerControlPaused;
+	(void)_player.updateAnimationRate(!playerControlPaused && _inputState.speedUpActive);
 	if (!playerAlive && (_inputState.moveLeft || _inputState.moveRight || _inputState.moveUp || _inputState.moveDown ||
 			playerState.hasMoveTarget || playerState.turnActive ||
 			playerState.attackActive || playerState.hitActive)) {
@@ -572,6 +590,8 @@ void Scene::updatePlayerCombatAnimations(bool &needsRedraw) {
 	if (_player.updateHitAnimationState(_engine, _scene.state, _scene.sceneObjects, _scene.sceneAnimations)) {
 		needsRedraw = true;
 	}
+	if (_player.updateEvasiveAnimation(_engine))
+		needsRedraw = true;
 }
 
 void Scene::updatePlayerControls(const PlayerControlState &control, bool &needsRedraw) {
@@ -580,7 +600,7 @@ void Scene::updatePlayerControls(const PlayerControlState &control, bool &needsR
 	const bool keyboardAttackRequested =
 		_inputState.attackModifierHeld && (_inputState.moveLeft || _inputState.moveRight || _inputState.moveUp || _inputState.moveDown);
 	if (control.canAct &&
-			!playerState.attackActive && !playerState.hitActive && keyboardAttackRequested &&
+			!playerState.attackActive && !playerState.hitActive && playerState.evasiveState < 0 && keyboardAttackRequested &&
 			!idleState.active && !idleState.exiting) {
 		const uint32 now = Player::getRuntimeClockTicks();
 		if (_inputState.nextKeyboardAttackAllowedTick == 0 || (int32)(now - _inputState.nextKeyboardAttackAllowedTick) >= 0) {
@@ -611,10 +631,18 @@ void Scene::updatePlayerControls(const PlayerControlState &control, bool &needsR
 	}
 
 	if (control.canAct &&
-			!playerState.attackActive && !playerState.hitActive &&
+			!playerState.attackActive && !playerState.hitActive && playerState.evasiveState < 0 &&
 			!keyboardAttackRequested && !idleState.active && !idleState.exiting) {
 		const int regionFacing = _interactionProcessor.getPendingRegionFacing();
-		if (_player.stepKeyboardMovement(_engine, _scene.state, _scene.sceneObjects, _scene.sceneAnimations,
+		if (_inputState.evasiveModifierHeld) {
+			if (_player.startEvasiveAnimation(_inputState.moveLeft, _inputState.moveRight,
+					_inputState.moveUp, _inputState.moveDown) ||
+					_player.stepKeyboardMovement(_engine, _scene.state, _scene.sceneObjects, _scene.sceneAnimations,
+						false, false, false, false)) {
+				notePlayerActivity();
+				needsRedraw = true;
+			}
+		} else if (_player.stepKeyboardMovement(_engine, _scene.state, _scene.sceneObjects, _scene.sceneAnimations,
 				_inputState.moveLeft, _inputState.moveRight, _inputState.moveUp, _inputState.moveDown)) {
 			notePlayerActivity();
 			needsRedraw = true;
@@ -625,7 +653,7 @@ void Scene::updatePlayerControls(const PlayerControlState &control, bool &needsR
 
 		if (!_presentationState.showingInspectText && !keyboardAttackRequested &&
 				!_inputState.moveLeft && !_inputState.moveRight && !_inputState.moveUp && !_inputState.moveDown &&
-				!playerState.hasMoveTarget && !playerState.turnActive && !playerState.hitActive &&
+				!playerState.hasMoveTarget && !playerState.turnActive && !playerState.hitActive && playerState.evasiveState < 0 &&
 				playerState.entity && playerState.facing >= 0 &&
 				!Player::isIdleAnimationExcludedRoom(_scene.state.roomName) &&
 				Player::getRuntimeClockTicks() > idleState.triggerTick &&

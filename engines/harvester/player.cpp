@@ -45,13 +45,9 @@ static const int kRoomRegionTargetXBias = 10;
 static const float kRoomDepthCompareEpsilon = 0.01f;
 static const int kRoomPlayerWalkAnimationRate = 17;
 static const int kRoomPlayerVerticalScreenStep = 1;
-static const int kRoomPlayerAttackAnimationRate = kRoomPlayerWalkAnimationRate;
+static const int kRoomPlayerFastAnimationRate = 30;
 static const int kRoomPlayerHitAnimationRate = 4;
-// update_actor_runtime_state (0x4d750) seeds a zero-HP transition at 0x4e576
-// with rate 14, then death states 0x28..0x33 consume the normal rate 17 seeded
-// at 0x4d889 after the first death frame advances.
 static const int kNativePlayerDeathEntryAnimationRate = 14;
-static const int kNativePlayerDeathAnimationRate = kRoomPlayerWalkAnimationRate;
 static const int kRoomPlayerMinOpaqueLeftX = 4;
 static const int kRoomPlayerMaxOpaqueRightX = 0x27c;
 static const float kRoomPlayerAttackUpperYOffset = 144.44f;
@@ -61,7 +57,6 @@ static const char *const kPlayerIdleAnimationResourcePath = "1:/GRAPHIC/ROOMANIM
 static const uint32 kRoomPlayerIdleDelayTicks = 3000;
 static const int kPlayerHitKnockbackDistance = 18;
 static const int kPlayerHitKnockbackDecayStep = 3;
-// Native run_harvester_main_loop sets EBX=0x0e before spawning PCLOUN02.ABM.
 static const int kRoomPlayerIdleAnimationRate = 14;
 static const int kRoomPlayerIdleLoopStartFrame = 0x0f;
 static const int kRoomPlayerIdleLoopLastFrame = 0xb2;
@@ -130,10 +125,6 @@ struct PlayerCombatLoadoutTuning {
 	int contactFrameOffset;
 };
 
-// The live player avatar seeds these from RenderEntityRuntime.player_combat_loadout_id (+0x11bc)
-// into attack_damage_amount (+0x1180) and attack_contact_frame_offset (+0x113c).
-// Recovered from spawn_player_combat_avatar and update_actor_runtime_state:
-// the native room-combat path commits player attack audio on first_frame + 1.
 static const int kPlayerAttackSoundTriggerFrameOffset = 1;
 static const PlayerAttackSoundSet kPlayerAttackSoundSets[] = {
 	{ 3, { "2:/sound/effects/swoosh1.wav", "2:/sound/effects/swoosh2.wav", "2:/sound/effects/swoosh3.wav" } },
@@ -319,8 +310,6 @@ static bool resolvePlayerDeathAnimationRange(const RoomPlayerState &playerState,
 	if (!playerState.entity)
 		return false;
 
-	// Native update_actor_runtime_state selects the player death bank from the
-	// live combat state family before the terminal 0x38 game-over handoff.
 	enum PlayerDeathBankFamily {
 		kPlayerDeathBankHorizontalRight,
 		kPlayerDeathBankHorizontalLeft,
@@ -421,9 +410,6 @@ static bool resolvePlayerAttackAnimationRange(const RoomSetupState &state,
 static bool resolveKeyboardAttackAnimationRange(const RoomPlayerState &playerState,
 		bool attackLeft, bool attackRight, bool attackUp, bool attackDown,
 		PlayerAttackAnimationRange &range) {
-	// Native update_player_combat_avatar_state uses scan-code 0x1d as the attack modifier:
-	// Left/Right pick the side mid attacks directly, while Up/Down only choose upper/lower
-	// attacks when the current actor state is already in the matching horizontal family.
 	if (attackRight) {
 		range = PlayerAttackAnimationRange(0x78, 0x81, 2);
 		return true;
@@ -497,6 +483,8 @@ static bool startResolvedAttackAnimation(RoomPlayerState &playerState,
 		return false;
 
 	playerState.hasMoveTarget = false;
+	playerState.evasiveState = -1;
+	playerState.evasiveXStep = 0;
 	playerState.turnActive = false;
 	playerState.turnTargetFacing = -1;
 	playerState.turnFirstFrame = -1;
@@ -516,7 +504,7 @@ static bool startResolvedAttackAnimation(RoomPlayerState &playerState,
 	playerState.attackContactResolved = false;
 	playerState.nextMovementTick = 0;
 	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
-	playerState.entity->setAnimationRate(kRoomPlayerAttackAnimationRate);
+	playerState.entity->setAnimationRate(playerState.animationRate);
 	playerState.entity->setCurrentFrame(range.firstFrame);
 	return true;
 }
@@ -589,9 +577,6 @@ static float computeRoomPlayerDepthStep(const RoomSetupState &state) {
 }
 
 static int computeRoomPlayerVerticalScreenStep() {
-	// Native spawn_player_combat_avatar seeds player runtime +0x1140 with 1,
-	// and update_actor_runtime_state copies abs(+0x1140) into frame_y_step for
-	// the vertical walk states instead of remapping screen Y from depth.
 	return kRoomPlayerVerticalScreenStep;
 }
 
@@ -676,7 +661,7 @@ static bool consumePlayerMovementTick(RoomPlayerState &playerState) {
 		return playerState.entity->didAnimationAdvanceLastTick();
 	}
 
-	const uint32 interval = computeAnimationTickInterval(kRoomPlayerWalkAnimationRate);
+	const uint32 interval = computeAnimationTickInterval(playerState.animationRate);
 	if (interval == 0) {
 		playerState.nextMovementTick = 0;
 		return true;
@@ -772,8 +757,6 @@ static void reinsertPlayerSceneEntity(HarvesterEngine &engine, const RoomPlayerS
 static void applyPlayerMovementPlacement(const RoomSetupState &state, RoomPlayerState &playerState,
 		int candidateCenterX, int candidateBottomY, float candidateZ) {
 	Entity &entity = *playerState.entity;
-	// advance_entity_animation_frame (0x4c8a0) moves the pre-offset screen base.
-	// rescale_entity_sprite_for_depth (0x4b440) changes bounds without recentering it.
 	const float renderZ = candidateZ - floorf(MAX<float>(entity.getZExtent(), 0.0f) * 0.5f);
 	entity.setPosition(entity.getX() + candidateCenterX - playerState.centerX,
 		entity.getY() + candidateBottomY - playerState.bottomY, renderZ);
@@ -969,7 +952,7 @@ static void playPlayerBlockedWalkSounds(HarvesterEngine &engine, const RoomSetup
 		const RoomPlayerState &playerState, const Entity &blocker) {
 	const Entity &entity = *playerState.entity;
 	const PlayerAnimationRange range = resolvePlayerAnimationRange(playerState.facing);
-	if (entity.getAnimationRate() != kRoomPlayerWalkAnimationRate ||
+	if (entity.getAnimationRate() != playerState.animationRate ||
 			entity.getCurrentFrame() < range.walkFirstFrame ||
 			entity.getCurrentFrame() > range.walkLastFrame)
 		return;
@@ -1010,8 +993,6 @@ static bool tryApplyPlayerWalkMovement(HarvesterEngine &engine, const RoomSetupS
 			fabsf(candidateZ - playerState.z) <= kRoomDepthCompareEpsilon)
 		return false;
 
-	// tick_entity_visual_state (0x4cae0) records overlap after placement.
-	// Region activation gets the resulting frame before the next blocker response.
 	applyPlayerMovementPlacement(state, playerState, candidateCenterX, candidateBottomY, candidateZ);
 	playerState.z = candidateZ;
 	syncPlayerAnimationPlacement(playerState);
@@ -1053,17 +1034,17 @@ static bool setPlayerWalkAnimation(RoomPlayerState &playerState, int facing) {
 	const PlayerAnimationRange range = resolvePlayerAnimationRange(facing);
 	const int currentFrame = playerState.entity->getCurrentFrame();
 	const bool alreadyWalking = playerState.facing == facing &&
-		playerState.entity->getAnimationRate() == kRoomPlayerWalkAnimationRate &&
+		playerState.entity->getAnimationRate() == playerState.animationRate &&
 		currentFrame >= range.walkFirstFrame && currentFrame <= range.walkLastFrame;
 	if (alreadyWalking)
 		return false;
 
 	playerState.facing = facing;
 	playerState.entity->setAnimationFrameRange(range.walkFirstFrame, range.walkLastFrame, true);
-	playerState.entity->setAnimationRate(kRoomPlayerWalkAnimationRate);
+	playerState.entity->setAnimationRate(playerState.animationRate);
 	debugC(1, kDebugPlayer,
 		"Harvester: player walk animation facing=%d frames=%d..%d rate=%d",
-		facing, range.walkFirstFrame, range.walkLastFrame, kRoomPlayerWalkAnimationRate);
+		facing, range.walkFirstFrame, range.walkLastFrame, playerState.animationRate);
 	return true;
 }
 
@@ -1161,6 +1142,8 @@ static bool setPlayerIdleAnimation(RoomPlayerState &playerState, int facing) {
 		playerState.entity->getCurrentFrame() != range.idleFrame ||
 		playerState.entity->getAnimationRate() != 0;
 	playerState.facing = facing;
+	playerState.evasiveState = -1;
+	playerState.evasiveXStep = 0;
 	playerState.nextMovementTick = 0;
 	playerState.keyboardWalkRequest = -1;
 	playerState.walkHorizontalDirection = 0;
@@ -1186,16 +1169,20 @@ void Player::initialize(const RoomSetupState &state, Entity *entity, int combatL
 	playerState.z = (float)state.playerSpawnZ;
 	playerState.facing = state.playerFacing;
 	playerState.combatLoadout = combatLoadout;
+	playerState.evasiveState = -1;
+	playerState.evasiveXStep = 0;
 	playerState.turnActive = false;
 	playerState.turnTargetFacing = -1;
 }
 
 bool Player::isCombatLocked() const {
-	return _state.attackActive || _state.hitActive || _state.deathActive;
+	return _state.attackActive || _state.hitActive || _state.deathActive || _state.evasiveState >= 0;
 }
 
 void Player::cancelMovement() {
 	_state.hasMoveTarget = false;
+	_state.evasiveState = -1;
+	_state.evasiveXStep = 0;
 	_state.turnActive = false;
 	_state.turnTargetFacing = -1;
 }
@@ -1277,6 +1264,8 @@ void Player::cancelIdleAnimation() {
 void Player::applyGotoXZ(const RoomSetupState &state, EntityManager *entityManager, int x, int z) {
 	RoomPlayerState &playerState = _state;
 	playerState.hasMoveTarget = false;
+	playerState.evasiveState = -1;
+	playerState.evasiveXStep = 0;
 	playerState.turnActive = false;
 	playerState.turnTargetFacing = -1;
 	playerState.centerX = x;
@@ -1323,6 +1312,8 @@ void Player::rebindAfterSceneRefresh(HarvesterEngine &engine, const RoomSetupSta
 
 	// Death state survives a scene refresh.
 	playerState.hasMoveTarget = false;
+	playerState.evasiveState = -1;
+	playerState.evasiveXStep = 0;
 	playerState.turnActive = false;
 	playerState.turnTargetFacing = -1;
 	playerState.attackActive = false;
@@ -1600,6 +1591,107 @@ bool Player::setIdleAnimation(int facing) {
 	return setPlayerIdleAnimation(_state, facing);
 }
 
+bool Player::updateAnimationRate(bool speedUp) {
+	RoomPlayerState &playerState = _state;
+	const int rate = speedUp ? kRoomPlayerFastAnimationRate : kRoomPlayerWalkAnimationRate;
+	if (playerState.animationRate == rate)
+		return false;
+	playerState.animationRate = rate;
+	if (playerState.entity && !playerState.hitActive && !playerState.deathActive &&
+			playerState.entity->getAnimationRate() != 0)
+		playerState.entity->setAnimationRate(rate);
+	debugC(2, kDebugPlayer, "Harvester: player actor rate=%d", rate);
+	return true;
+}
+
+bool Player::startEvasiveAnimation(bool moveLeft, bool moveRight, bool moveUp, bool moveDown) {
+	RoomPlayerState &playerState = _state;
+	if (!playerState.entity || playerState.attackActive || playerState.hitActive || playerState.deathActive ||
+			playerState.evasiveState >= 0)
+		return false;
+	playerState.hasMoveTarget = false;
+	playerState.keyboardWalkRequest = -1;
+	if (playerState.turnActive)
+		return false;
+	const PlayerAnimationRange walk = resolvePlayerAnimationRange(playerState.facing);
+	const int frame = playerState.entity->getCurrentFrame();
+	if (playerState.entity->getAnimationRate() != 0 &&
+			frame >= walk.walkFirstFrame && frame < walk.walkLastFrame)
+		return false;
+
+	// Right Shift branch:
+	// vertical requests select duck/leap banks; horizontal requests can override them.
+	int actorState = -1;
+	if (playerState.facing == 1 || playerState.facing == 2) {
+		if (moveUp)
+			actorState = playerState.facing == 2 ? 0x12 : 0x13;
+		else if (moveDown)
+			actorState = playerState.facing == 2 ? 0x14 : 0x15;
+		if (moveLeft) {
+			if (playerState.facing == 2)
+				actorState = 0x08;
+		} else if (moveRight && playerState.facing == 1) {
+			actorState = 0x0f;
+		}
+	}
+	if (actorState < 0)
+		return false;
+
+	const bool backwards = actorState == 0x08 || actorState == 0x0f;
+	const int firstFrame = actorState == 0x08 ? 0x2d : actorState == 0x0f ? 0x0f :
+		0x3c + (actorState - 0x12) * 5;
+	const int lastFrame = firstFrame + (backwards ? 9 : 4);
+	if (!playerEntityHasFrameRange(*playerState.entity, firstFrame, lastFrame))
+		return false;
+	playerState.evasiveState = actorState;
+	playerState.evasiveFirstFrame = firstFrame;
+	playerState.evasiveLastFrame = lastFrame;
+	playerState.evasiveXStep = backwards
+		? (int)(playerState.walkHorizontalDirection * playerState.entity->getDepthScale() * 8.0f) : 0;
+	playerState.walkHorizontalDirection = 0;
+	playerState.walkDepthDirection = 0;
+	playerState.nextMovementTick = 0;
+	playerState.entity->setAnimationFrameRange(firstFrame, lastFrame, false);
+	playerState.entity->setPlayBackwards(backwards);
+	playerState.entity->setAnimationRate(playerState.animationRate);
+	playerState.entity->setCurrentFrame(backwards ? lastFrame : firstFrame);
+	debugC(2, kDebugPlayer, "Harvester: player evasive state=0x%x facing=%d frames=%d..%d backwards=%d",
+		actorState, playerState.facing, firstFrame, lastFrame, backwards);
+	return true;
+}
+
+bool Player::updateEvasiveAnimation(HarvesterEngine &engine) {
+	RoomPlayerState &playerState = _state;
+	if (!playerState.entity || playerState.evasiveState < 0 ||
+			!playerState.entity->didAnimationAdvanceLastTick())
+		return false;
+
+	Entity &entity = *playerState.entity;
+	const int actorState = playerState.evasiveState;
+	if (playerState.evasiveXStep != 0) {
+		entity.setPosition(entity.getX() + playerState.evasiveXStep, entity.getY(), entity.getZ());
+		syncAnimationPlacement();
+		reinsertPlayerSceneEntity(engine, playerState);
+		debugC(3, kDebugPlayer, "Harvester: player evasive step state=0x%x frame=%d dx=%d",
+			actorState, entity.getCurrentFrame(), playerState.evasiveXStep);
+	}
+	const bool backwards = actorState == 0x08 || actorState == 0x0f;
+	if (entity.getCurrentFrame() == (backwards ? playerState.evasiveFirstFrame : playerState.evasiveLastFrame)) {
+		debugC(2, kDebugPlayer, "Harvester: player evasive complete state=0x%x facing=%d",
+			actorState, playerState.facing);
+		return setIdleAnimation(playerState.facing);
+	}
+
+	const int frameLeft = computePlayerFrameLeftX(playerState);
+	if ((actorState == 0x08 && frameLeft > 20) || (actorState == 0x0f && frameLeft < 620)) {
+		playerState.evasiveXStep = (int)(entity.getDepthScale() * (actorState == 0x08 ? -8.0f : 8.0f));
+	} else if (entity.getCurrentFrame() > playerState.evasiveFirstFrame + 2 &&
+			((actorState == 0x12 && frameLeft > 36) || (actorState == 0x13 && frameLeft < 616))) {
+		playerState.evasiveXStep = (int)(entity.getDepthScale() * (actorState == 0x12 ? -16.0f : 16.0f));
+	}
+	return true;
+}
+
 bool Player::startAttackAnimation(const RoomSetupState &state, const Common::Point &mousePos) {
 	RoomPlayerState &playerState = _state;
 	PlayerAttackAnimationRange range;
@@ -1687,6 +1779,8 @@ bool Player::startHitAnimation(HarvesterEngine &engine, int monsterAttackFirstFr
 		return false;
 
 	playerState.hasMoveTarget = false;
+	playerState.evasiveState = -1;
+	playerState.evasiveXStep = 0;
 	playerState.turnActive = false;
 	playerState.turnTargetFacing = -1;
 	playerState.turnFirstFrame = -1;
@@ -1771,6 +1865,8 @@ bool Player::startDeathAnimation(int damageType, bool goreEnabled) {
 		return false;
 
 	playerState.hasMoveTarget = false;
+	playerState.evasiveState = -1;
+	playerState.evasiveXStep = 0;
 	playerState.turnActive = false;
 	playerState.turnTargetFacing = -1;
 	playerState.turnFirstFrame = -1;
@@ -1809,7 +1905,7 @@ bool Player::startDeathAnimation(int damageType, bool goreEnabled) {
 		"Harvester: player death animation timing frames=%d..%d entry_rate=%d entry_interval_ticks=%d running_rate=%d running_interval_ticks=%d",
 		range.firstFrame, range.lastFrame,
 		kNativePlayerDeathEntryAnimationRate, 100 / kNativePlayerDeathEntryAnimationRate,
-		kNativePlayerDeathAnimationRate, 100 / kNativePlayerDeathAnimationRate);
+		playerState.animationRate, 100 / playerState.animationRate);
 	return true;
 }
 
@@ -1821,12 +1917,12 @@ bool Player::updateDeathAnimationState() {
 	const int currentFrame = playerState.entity->getCurrentFrame();
 	if (currentFrame > playerState.deathFirstFrame &&
 			currentFrame < playerState.deathLastFrame &&
-			playerState.entity->getAnimationRate() != kNativePlayerDeathAnimationRate) {
-		playerState.entity->setAnimationRate(kNativePlayerDeathAnimationRate);
+			playerState.entity->getAnimationRate() != playerState.animationRate) {
+		playerState.entity->setAnimationRate(playerState.animationRate);
 		debugC(3, kDebugCombat,
 			"Harvester: player death animation running frame=%d rate=%d interval_ticks=%d",
-			currentFrame, kNativePlayerDeathAnimationRate,
-			100 / kNativePlayerDeathAnimationRate);
+			currentFrame, playerState.animationRate,
+			100 / playerState.animationRate);
 	}
 
 	if (currentFrame < playerState.deathLastFrame)
@@ -1841,7 +1937,7 @@ bool Player::updateDeathAnimationState() {
 
 bool Player::startTurnAnimation(int targetFacing) {
 	RoomPlayerState &playerState = _state;
-	if (!playerState.entity || playerState.hitActive ||
+	if (!playerState.entity || playerState.hitActive || playerState.evasiveState >= 0 ||
 			playerState.facing < 0 || playerState.facing == targetFacing)
 		return false;
 
@@ -1868,12 +1964,12 @@ bool Player::startTurnAnimation(int targetFacing) {
 	playerState.nextMovementTick = 0;
 	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
 	playerState.entity->setPlayBackwards(range.playBackwards);
-	playerState.entity->setAnimationRate(kRoomPlayerWalkAnimationRate);
+	playerState.entity->setAnimationRate(playerState.animationRate);
 	playerState.entity->setCurrentFrame(range.playBackwards ? range.lastFrame : range.firstFrame);
 	debugC(1, kDebugPlayer,
 		"Harvester: player turn animation from=%d to=%d frames=%d..%d backwards=%d rate=%d requested_facing=%d",
 		playerState.facing, nextFacing, range.firstFrame, range.lastFrame,
-		range.playBackwards, kRoomPlayerWalkAnimationRate, targetFacing);
+		range.playBackwards, playerState.animationRate, targetFacing);
 	return true;
 }
 
@@ -1902,20 +1998,16 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 		const Common::Array<ObjectRecord> &sceneObjects, const Common::Array<AnimRecord> &sceneAnimations,
 		int regionFacing) {
 	RoomPlayerState &playerState = _state;
-	if (!playerState.entity || !playerState.hasMoveTarget || playerState.turnActive || playerState.hitActive)
+	if (!playerState.entity || !playerState.hasMoveTarget || playerState.turnActive ||
+			playerState.hitActive || playerState.evasiveState >= 0)
 		return false;
 
 	refreshPlayerCurrentBlocker(engine, sceneObjects, sceneAnimations, playerState);
 
-	// run_harvester_main_loop (0x6dc70) latches the clicked region facing at
-	// 0xc3f0c. update_actor_runtime_state (0x4d750) uses it to keep the matching
-	// target component active inside the usual X/Z stopping tolerance.
 	const PlayerAnimationRange range = resolvePlayerAnimationRange(playerState.facing);
 	const int currentFrame = playerState.entity->getCurrentFrame();
-	const bool walking = playerState.entity->getAnimationRate() == kRoomPlayerWalkAnimationRate &&
+	const bool walking = playerState.entity->getAnimationRate() == playerState.animationRate &&
 		currentFrame >= range.walkFirstFrame && currentFrame <= range.walkLastFrame;
-	// update_actor_runtime_state (0x4d750) evaluates waypoints only at a bank
-	// endpoint. Between endpoints the current walk state retains frame_z_step.
 	const bool updateTarget = !walking || currentFrame == range.walkLastFrame;
 	if (updateTarget)
 		updatePlayerMoveTargetProgress(state, playerState, regionFacing);
@@ -2070,7 +2162,7 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 	RoomPlayerState &playerState = _state;
 	if (!playerState.entity || !supportsMovementBand(state))
 		return false;
-	if (playerState.turnActive || playerState.hitActive)
+	if (playerState.turnActive || playerState.hitActive || playerState.evasiveState >= 0)
 		return false;
 
 	int horizontalInput = (moveRight ? 1 : 0) - (moveLeft ? 1 : 0);
@@ -2078,7 +2170,7 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 	const PlayerAnimationRange range = resolvePlayerAnimationRange(playerState.facing);
 	const int currentFrame = playerState.entity->getCurrentFrame();
 	const bool keyboardWalking = !playerState.hasMoveTarget &&
-		playerState.entity->getAnimationRate() == kRoomPlayerWalkAnimationRate &&
+		playerState.entity->getAnimationRate() == playerState.animationRate &&
 		currentFrame >= range.walkFirstFrame && currentFrame <= range.walkLastFrame;
 	if (keyboardWalking) {
 		if (horizontalInput != 0 || verticalInput != 0)
@@ -2221,6 +2313,8 @@ bool Player::startIdleAnimation(HarvesterEngine &engine, const RoomSetupState &s
 	idleEntity->setCurrentFrame(0);
 	idleEntity->setAnimationRate(kRoomPlayerIdleAnimationRate);
 	playerState.hasMoveTarget = false;
+	playerState.evasiveState = -1;
+	playerState.evasiveXStep = 0;
 	playerState.turnActive = false;
 	playerState.turnTargetFacing = -1;
 	playerState.entity->setVisible(false);

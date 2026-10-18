@@ -35,6 +35,11 @@ struct RoomPlayerState {
 	float z = 0.0f;
 	int facing = -1;
 	int combatLoadout = 0;
+	int animationRate = 17;
+	int evasiveState = -1;
+	int evasiveFirstFrame = -1;
+	int evasiveLastFrame = -1;
+	int evasiveXStep = 0;
 	uint32 nextMovementTick = 0;
 	int keyboardWalkRequest = -1;
 	int walkHorizontalDirection = 0;
@@ -138,6 +143,9 @@ public:
 	void syncCombatLoadout(HarvesterEngine &engine, const RoomSetupState &state);
 	bool syncCombatLoadoutVisual(HarvesterEngine &engine, const RoomSetupState &state, int loadout);
 	bool setIdleAnimation(int facing);
+	bool updateAnimationRate(bool speedUp);
+	bool startEvasiveAnimation(bool moveLeft, bool moveRight, bool moveUp, bool moveDown);
+	bool updateEvasiveAnimation(HarvesterEngine &engine);
 	bool startAttackAnimation(const RoomSetupState &state, const Common::Point &mousePos);
 	bool startKeyboardAttackAnimation(const RoomSetupState &state,
 		bool attackLeft, bool attackRight, bool attackUp, bool attackDown);

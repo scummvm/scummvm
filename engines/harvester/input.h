@@ -48,14 +48,33 @@ struct RoomPresentationState;
 struct RoomSetupState;
 struct SceneState;
 
+enum GameAction {
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveUp,
+	kActionMoveDown,
+	kActionAttackModifier,
+	kActionEvasiveModifier,
+	kActionSpeedUp,
+	kActionInventory,
+	kActionMenu
+};
+
 struct InputState {
 	bool moveLeft = false;
 	bool moveRight = false;
 	bool moveUp = false;
 	bool moveDown = false;
 	bool attackModifierHeld = false;
+	bool evasiveModifierHeld = false;
+	bool speedUpActive = false;
 	uint32 lastLeftButtonReleaseTick = 0;
 	uint32 nextKeyboardAttackAllowedTick = 0;
+
+	void clearHeldActions() {
+		moveLeft = moveRight = moveUp = moveDown = false;
+		attackModifierHeld = evasiveModifierHeld = speedUpActive = false;
+	}
 };
 
 // Enter and closeup exits return from runRoomLoop even when the error is kNoError.
@@ -95,8 +114,9 @@ private:
 	InputResult handleRightButtonDown(bool &needsRedraw);
 	void handleLeftButtonUp();
 	InputResult handleLeftButtonDown(bool &needsRedraw);
-	InputResult handleKeyDown(const Common::KeyState &key, bool &needsRedraw);
-	void handleKeyUp(const Common::KeyState &key);
+	InputResult handleKeyDown(const Common::KeyState &key, bool &needsRedraw, bool gameAction = false);
+	void handleKeyUp(const Common::KeyState &key, bool gameAction = false);
+	InputResult handleGameAction(GameAction action, bool pressed, bool &needsRedraw);
 	void beginInspectText(const ObjectRecord &object, const ResolvedText &text);
 	void queueCombatLoadoutStatusMessage(const Common::String &message, bool &needsRedraw);
 	bool openInventoryOverlay();

@@ -371,10 +371,7 @@ bool Input::openInventoryOverlay() {
 	Player &player = _session.getPlayer();
 	InputState &inputState = _session.getInputState();
 
-	inputState.moveLeft = false;
-	inputState.moveRight = false;
-	inputState.moveUp = false;
-	inputState.moveDown = false;
+	inputState.clearHeldActions();
 	_session.clearPendingRegionInteraction();
 	(void)_session.cancelPlayerAttackAnimation();
 	player.cancelMovement();
@@ -675,6 +672,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 	if (_roomItems.hasSelectedItem()) {
 		const Common::String selectedItemName = _roomItems.getSelectedItemName();
 		if (clickHoverState.npc) {
+			inputState.clearHeldActions();
 			_roomItems.clearSelectedItem();
 			bool didTransition = false;
 			Common::Error dialogueError = _interactionProcessor.runScriptedDialogue(
@@ -717,10 +715,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 	}
 	if (hoverState.npc) {
 		_session.clearPendingRegionInteraction();
-		inputState.moveLeft = false;
-		inputState.moveRight = false;
-		inputState.moveUp = false;
-		inputState.moveDown = false;
+		inputState.clearHeldActions();
 		player.cancelMovement();
 		bool didTransition = false;
 		Common::Error dialogueError = _interactionProcessor.runScriptedDialogue(
@@ -847,10 +842,28 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 	return InputResult();
 }
 
-InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw) {
+InputResult Input::handleGameAction(GameAction action, bool pressed, bool &needsRedraw) {
+	static const Common::KeyCode keys[] = {
+		Common::KEYCODE_LEFT, Common::KEYCODE_RIGHT, Common::KEYCODE_UP, Common::KEYCODE_DOWN,
+		Common::KEYCODE_LCTRL, Common::KEYCODE_RSHIFT, Common::KEYCODE_LALT,
+		Common::KEYCODE_i, Common::KEYCODE_ESCAPE
+	};
+	if ((uint)action >= ARRAYSIZE(keys))
+		return InputResult();
+	const Common::KeyState key(keys[action]);
+	if (pressed)
+		return handleKeyDown(key, needsRedraw, true);
+	handleKeyUp(key, true);
+	return InputResult();
+}
+
+InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw, bool gameAction) {
 	Player &player = _session.getPlayer();
 	const RoomIdleAnimationState &idleState = player.getIdleState();
 	InputState &inputState = _session.getInputState();
+	// GOG update_actor_runtime_state (0x4d750) tests the last scan code,
+	// not the held Alt slot. Any other key press or release clears fast speed.
+	inputState.speedUpActive = gameAction && key.keycode == Common::KEYCODE_LALT;
 
 	if (_presentationState.showingInspectText) {
 		if (key.keycode == Common::KEYCODE_ESCAPE) {
@@ -863,8 +876,6 @@ InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw)
 	}
 
 	_session.notePlayerActivity();
-	if (key.hasFlags(Common::KBD_CTRL))
-		inputState.attackModifierHeld = true;
 	if (idleState.active || idleState.exiting) {
 		if (player.requestIdleAnimationExit(_scene.state))
 			needsRedraw = true;
@@ -931,39 +942,38 @@ InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw)
 			return InputResult();
 		}
 	}
+	if (gameAction && key.keycode == Common::KEYCODE_LCTRL) {
+		inputState.attackModifierHeld = true;
+	} else if (gameAction && key.keycode == Common::KEYCODE_RSHIFT) {
+		inputState.evasiveModifierHeld = true;
+	} else if (gameAction && key.keycode == Common::KEYCODE_LEFT)
+		inputState.moveLeft = true;
+	else if (gameAction && key.keycode == Common::KEYCODE_RIGHT)
+		inputState.moveRight = true;
+	else if (gameAction && key.keycode == Common::KEYCODE_UP)
+		inputState.moveUp = true;
+	else if (gameAction && key.keycode == Common::KEYCODE_DOWN)
+		inputState.moveDown = true;
+
 	if (_session.isPlayerCombatLocked())
 		return InputResult();
 
-	if (key.keycode == Common::KEYCODE_LCTRL ||
-			key.keycode == Common::KEYCODE_RCTRL) {
-		inputState.attackModifierHeld = true;
-	} else if (key.keycode == Common::KEYCODE_k && _engine.isCombatDebugEnabled()) {
+	if (key.keycode == Common::KEYCODE_k && _engine.isCombatDebugEnabled()) {
 		Common::Error debugKillError = _session.killDebugActiveMonster(_flow.getMousePos(), needsRedraw);
 		if (debugKillError.getCode() != Common::kNoError)
 			return InputResult::leaveRoom(debugKillError);
 		return InputResult();
-	} else if (key.keycode == Common::KEYCODE_LEFT)
-		inputState.moveLeft = true;
-	else if (key.keycode == Common::KEYCODE_RIGHT)
-		inputState.moveRight = true;
-	else if (key.keycode == Common::KEYCODE_UP)
-		inputState.moveUp = true;
-	else if (key.keycode == Common::KEYCODE_DOWN)
-		inputState.moveDown = true;
-	else if (key.keycode == Common::KEYCODE_i) {
+	} else if (gameAction && key.keycode == Common::KEYCODE_i) {
 		if (!openInventoryOverlay())
 			return InputResult::leaveRoom(Common::kReadingFailed);
 		needsRedraw = true;
 		return InputResult();
-	} else if (key.keycode == Common::KEYCODE_ESCAPE) {
+	} else if (gameAction && key.keycode == Common::KEYCODE_ESCAPE) {
 		if (_session.cancelPlayerAttackAnimation())
 			needsRedraw = true;
 		if (!_roomItems.stowCarriedRoomItemToInventory())
 			return InputResult::leaveRoom(Common::kReadingFailed);
-		inputState.moveLeft = false;
-		inputState.moveRight = false;
-		inputState.moveUp = false;
-		inputState.moveDown = false;
+		inputState.clearHeldActions();
 		_session.clearPendingRegionInteraction();
 		player.cancelMovement();
 		_session.captureCurrentSaveState();
@@ -997,12 +1007,17 @@ InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw)
 	return InputResult();
 }
 
-void Input::handleKeyUp(const Common::KeyState &key) {
+void Input::handleKeyUp(const Common::KeyState &key, bool gameAction) {
 	InputState &inputState = _session.getInputState();
+	inputState.speedUpActive = false;
+	if (!gameAction)
+		return;
 
 	if (key.keycode == Common::KEYCODE_LCTRL ||
 			key.keycode == Common::KEYCODE_RCTRL)
 		inputState.attackModifierHeld = false;
+	else if (key.keycode == Common::KEYCODE_RSHIFT)
+		inputState.evasiveModifierHeld = false;
 	else if (key.keycode == Common::KEYCODE_LEFT)
 		inputState.moveLeft = false;
 	else if (key.keycode == Common::KEYCODE_RIGHT)
@@ -1019,6 +1034,10 @@ InputResult Input::handleEvent(const Common::Event &event, bool &needsRedraw) {
 		return InputResult::leaveRoom(result);
 
 	switch (event.type) {
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		return handleGameAction((GameAction)event.customType,
+			event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START, needsRedraw);
 	case Common::EVENT_MOUSEMOVE:
 		handleMouseMove(needsRedraw);
 		break;
