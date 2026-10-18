@@ -191,7 +191,7 @@ struct GameStateData {
 	bool unkF;
 	uint8 unk10;
 	uint8 unk11;
-	bool dialogueStarted;
+	uint8 dialogueStarted; // 0 = no choice menu open, otherwise the id of the dialogue that is open
 	// byte[1]
 	uint8 dialogueData[583];
 	uint8 dialogueChoiceStart;
@@ -652,6 +652,8 @@ private:
 
 	bool _eventQuitGame;
 	bool _gameStateLoaded;
+	uint8 _resumeDialogueId; // id of the choice menu that was open in the loaded savegame, until a room resumes it
+	bool _dialogueResuming; // the choice menu being run continues a loaded savegame
 	bool _loadedIgorMoving;
 
 	// pass of the end credits: 0 for the first one (set when the ending is over), the same "pages" are shown again after it
@@ -1787,6 +1789,8 @@ private:
 	void leavePartLoop();
 	void runPartLoop();
 	bool restoreRoomAfterLoad(bool drawIgor = true);
+	bool takeResumeDialogue(uint8 id);
+	void finishResumedDialogue();
 
 	void handleRoomDialogue();
 
@@ -1860,7 +1864,7 @@ private:
 	int dialogueChoiceOffset(int i) const;
 	Common::String dialogueChoiceText(int choice, const char *prefix) const;
 	void drawFloppyDialogueChoice(int choice, int color);
-	void handleDialogue(int x, int y, int r, int g, int b, bool restoreUI = true);
+	void handleDialogue(int x, int y, int r, int g, int b, bool restoreUI = true, uint8 id = 1);
 	void drawDialogueChoices();
 	int selectDialogue();
 	void dialogueAskQuestion();

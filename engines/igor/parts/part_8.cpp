@@ -246,7 +246,7 @@ void IgorEngine::part8HandleIntercomDialogue() {
 	_roomDataOffsets.dlg = { -174, 2, 257, 0, 30, 0, 459, 459, 0 };
 	loadDialogueData(DLG_Part8Intercom);
 	_updateDialogue = 0;
-	handleDialogue(0, 0, 0, 0, 0, false);
+	handleDialogue(0, 0, 0, 0, 0, false, 2);
 	_roomDataOffsets = savedOffsets;
 }
 
@@ -452,6 +452,11 @@ void IgorEngine::part8() {
 	}
 
 	enterPartLoop();
+	if (takeResumeDialogue(1)) { // loaded while talking to the dean
+		part8HandleDeanDialogue();
+		part8ApplyObjectState(255);
+		finishResumedDialogue();
+	}
 	while (_currentPart == 80 && !_gameStateLoaded)
 		runPartLoop();
 	leavePartLoop();
