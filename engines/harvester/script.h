@@ -569,6 +569,23 @@ private:
 	const int *getPlayerCombatResourceCountPtr(int loadout) const;
 	bool adjustPlayerCombatResourceCount(int loadout, int delta, int maxCount,
 		const Common::String &reason);
+	void restoreRuntimeFlags(const Common::Array<FlagRecord> &currentFlags);
+	void restoreRuntimeObjects(const Common::Array<ObjectRecord> &currentObjects);
+	void restoreRuntimeAnimations(const Common::Array<AnimRecord> &currentAnimations);
+	void restoreRuntimeRegions(const Common::Array<RegionRecord> &currentRegions);
+	void restoreRuntimeNpcs(const Common::Array<NpcRecord> &currentNpcs);
+	void restoreRuntimeMonsters(const Common::Array<MonsterRecord> &currentMonsters);
+	void restoreRuntimeTimers(const Common::Array<TimerRecord> &currentTimers);
+	void logRuntimeSaveFlags(const char *operation) const;
+	void logRuntimeSaveObjects(const char *operation) const;
+	void logRuntimeSaveNpcs(const char *operation) const;
+	void logRuntimeSaveMonsters(const char *operation) const;
+	void logRuntimeSaveTimers(const char *operation) const;
+	static int clampPlayerHitPoints(int hitPoints);
+	static int clampPlayerCombatLoadout(int loadout);
+	static int clampCombatResourceCount(int loadout, int count);
+	static int validatePlayerCombatLoadoutAgainstInventory(const Common::Array<ObjectRecord> &currentObjects,
+		int loadout, const char *contextLabel);
 	void logRuntimeSaveState(const char *operation) const;
 
 	Common::String _path;
