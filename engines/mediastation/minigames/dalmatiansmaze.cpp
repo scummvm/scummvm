@@ -93,9 +93,9 @@ MazeMinigame::CellGraphType MazeMinigame::Cell::getType() const {
 	default:
 		warning("%s: Unexpected direction mask 0x%x", __func__, _directionMask);
 		break;
-  }
+	}
 
-  return result;
+	return result;
 }
 
 void MazeMinigame::Maze::solve(const Common::Array<ScriptValue> &args, ScriptValue &returnValue) {

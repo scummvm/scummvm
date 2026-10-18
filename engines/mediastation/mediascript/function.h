@@ -55,11 +55,11 @@ private:
 };
 
 namespace MazeMinigame {
-	class Maze;
+class Maze;
 } // End of namespace MazeMinigame
 
 namespace CheckersMinigame {
-	class Checkers;
+class Checkers;
 } // End of namespace CheckersMinigame
 
 class FunctionManager : public ParameterClient {
