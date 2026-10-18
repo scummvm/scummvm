@@ -21,6 +21,8 @@
 
 #include "frame_presenter.h"
 
+#include "scooby/scooby.h"
+
 namespace Scooby {
 
 FramePresenter::FramePresenter(TileScene &scene, IndexedFrame &frame, RaylibHost &host,
@@ -66,7 +68,7 @@ bool FramePresenter::waitForVerticalBlank() {
 	_clock.waitForNextFrame();
 	_scene.render(_frame);
 	_host.present(_frame);
-	return !_host.shouldClose();
+	return !g_engine->shouldQuit();
 }
 
 bool FramePresenter::fadePaletteIn(Span<const PaletteColor> targetPalette,

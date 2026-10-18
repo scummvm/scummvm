@@ -54,9 +54,6 @@ public:
 	RaylibHost(const RaylibHost &) = delete;
 	RaylibHost &operator=(const RaylibHost &) = delete;
 
-	// Gets whether the native close control requested process shutdown.
-	bool shouldClose() const;
-
 	// Consumes one Escape press used to skip exactly one current intro
 	// presentation. True only on the key-down edge reported by raylib.
 	// Every queued event is consumed through the same key-state tracking as getControllerButtons, so key
@@ -73,10 +70,6 @@ public:
 private:
 	RaylibHost();
 
-	// Returns false (leaving the object safely destructible either way) if
-	// the window or texture could not be created.
-	bool init();
-
 	// Drains all pending host events, applying key presses and releases to _buttons. Escape sets
 	// backButton only when mapEscapeToBackButton is true. Returns whether an Escape press was seen.
 	bool processEvents(Scooby::ControllerButtons backButton, bool mapEscapeToBackButton);
@@ -86,10 +79,6 @@ private:
 	static Scooby::ControllerButtons getGamepadButtons();
 	static uint8 expandLevel(uint8 level);
 
-	// Texture2D _texture;
-	Common::Array<Scooby::Color> _rgbaPixels;
-	bool _textureValid;
-	bool _windowOpen;
 	ControllerButtons _buttons = ControllerButtons::None;
 	// The controller button the currently held Escape key is mapped to, or None.
 	ControllerButtons _escapeButton = ControllerButtons::None;

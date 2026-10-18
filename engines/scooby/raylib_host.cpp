@@ -32,62 +32,15 @@
 #include "scooby.h"
 
 namespace Scooby {
-RaylibHost::RaylibHost() : _rgbaPixels(static_cast<std::size_t>(IndexedFrame::Width) *
-							  static_cast<std::size_t>(IndexedFrame::Height)) {}
-	//   _textureValid(false), _windowOpen(false) {
+RaylibHost::RaylibHost() {}
 
 Common::ScopedPtr<RaylibHost> RaylibHost::create() {
 	Common::ScopedPtr<RaylibHost> host(new RaylibHost());
-	if (!host->init()) {
-		// host's destructor tears down whatever partially succeeded
-		// (texture and/or window), mirroring the C# constructor's
-		// try/catch/finally cleanup path.
-		return nullptr;
-	}
 	return host;
 }
 
-bool RaylibHost::init() {
-	// SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-	// InitWindow(896, 672, "Scooby-Doo Mystery");
-	// if (!IsWindowReady()) {
-	// 	error("raylib did not create the Scooby-Doo Mystery window.\n");
-	// 	return false;
-	// }
-	// _windowOpen = true;
-	//
-	// SetWindowMinSize(640, 480);
-	// SetExitKey(KEY_NULL);
-	//
-	// Image image = GenImageColor(IndexedFrame::Width, IndexedFrame::Height, BLACK);
-	// _texture = LoadTextureFromImage(image);
-	// UnloadImage(image);
-	//
-	// if (!IsTextureValid(_texture)) {
-	// 	error("raylib did not create the indexed frame texture.\n");
-	// 	return false;
-	// }
-	// _textureValid = true;
-	//
-	// SetTextureFilter(_texture, TEXTURE_FILTER_POINT);
-	// SetTextureWrap(_texture, TEXTURE_WRAP_CLAMP);
-	return true;
-}
+RaylibHost::~RaylibHost() {}
 
-RaylibHost::~RaylibHost() {
-	// if (_textureValid) {
-	// 	UnloadTexture(_texture);
-	// 	_textureValid = false;
-	// }
-	// if (_windowOpen) {
-	// 	CloseWindow();
-	// 	_windowOpen = false;
-	// }
-}
-
-bool RaylibHost::shouldClose() const {
-	return g_engine->shouldQuit();
-}
 bool RaylibHost::isIntroSkipPressed() {
 	// Drain the queue through the shared key-state tracking so key releases seen during the intro still
 	// clear held buttons. Escape is the skip key here and is deliberately not mapped to a controller button.
@@ -235,21 +188,6 @@ void RaylibHost::present(const IndexedFrame &frame) {
 	frame._screen.copyRectToSurface(frame._pixels.data(), frame.Width, 0, 0, frame.Width, frame.Height);
 	frame._screen.makeAllDirty();
 	frame._screen.update();
-	// for (std::size_t pixelIndex = 0; pixelIndex < _rgbaPixels.size(); ++pixelIndex) {
-	// 	const PaletteColor &color = frame._palette[frame._pixels[pixelIndex]];
-	// 	Color expanded;
-	// 	expanded.r = expandLevel(color.redLevel);
-	// 	expanded.g = expandLevel(color.greenLevel);
-	// 	expanded.b = expandLevel(color.blueLevel);
-	// 	expanded.a = 255;
-	// 	_rgbaPixels[pixelIndex] = expanded;
-	// }
-	//
-	// UpdateTexture(_texture, _rgbaPixels.data());
-	// BeginDrawing();
-	// ClearBackground(BLACK);
-	// FrameViewport::fromCurrentWindow().draw(_texture);
-	// EndDrawing();
 }
 
 uint8 RaylibHost::expandLevel(uint8 level) {

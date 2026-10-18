@@ -25,18 +25,19 @@
 #include "scooby/rendering/frame_clock.h"
 #include "scooby/runtime/session_controller.h"
 #include "scooby/runtime/session_exit.h"
+#include "scooby/scooby.h"
 
 namespace Scooby {
 
 void ApplicationLoop::run() {
-	while (!_host.shouldClose()) {
+	while (!g_engine->shouldQuit()) {
 		 _state = RuntimeState{};
 		DeterministicRandom random;
 		initializeRuntimeState(_state, random);
 		FrameClock clock;
 		if (!_state._saveGameData.shouldLoadGameData) {
 			IntroSequence intro(_rom, _scene);
-			while (!_host.shouldClose() && !intro.isComplete()) {
+			while (!g_engine->shouldQuit() && !intro.isComplete()) {
 				clock.waitForNextFrame();
 				if (_host.isIntroSkipPressed()) {
 					intro.skipCurrentStep();
@@ -49,7 +50,7 @@ void ApplicationLoop::run() {
 			}
 		}
 
-		if (_host.shouldClose()) {
+		if (g_engine->shouldQuit()) {
 			return;
 		}
 

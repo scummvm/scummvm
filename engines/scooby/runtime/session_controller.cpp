@@ -22,6 +22,7 @@
 #include "session_controller.h"
 
 #include "common/algorithm.h"
+#include "scooby/scooby.h"
 
 #include "scooby/common/contracts.h"
 
@@ -403,7 +404,7 @@ SessionExit SessionController::runGame() {
 
 	_roomInterfaceTransitions.finishRoomStartup();
 
-	while (!_host.shouldClose()) {
+	while (!g_engine->shouldQuit()) {
 		if (_state._saveGameData.shouldLoadGameData) {
 			return SessionExit::RestartRequested;
 		}
