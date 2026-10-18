@@ -26,6 +26,7 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace Harvester {
 
@@ -38,6 +39,7 @@ class InventorySystem;
 class Interaction;
 class ItemInteractions;
 class Scene;
+struct InteractionResult;
 struct MenuTextConfig;
 struct NpcRecord;
 struct ObjectRecord;
@@ -129,6 +131,8 @@ private:
 	void handleKeyUp(const Common::KeyState &key, bool gameAction = false);
 	InputResult handleGameAction(GameAction action, bool pressed, bool &needsRedraw);
 	void beginInspectText(const ObjectRecord &object, const ResolvedText &text);
+	InputResult finishInspectText(bool &needsRedraw);
+	InputResult applyObjectInteraction(InteractionResult &interaction, bool &needsRedraw);
 	void queueCombatLoadoutStatusMessage(const Common::String &message, bool &needsRedraw);
 	bool openInventoryOverlay();
 	void capturePlayerAttackTarget();
@@ -144,6 +148,8 @@ private:
 	RoomPresentationState &_presentationState;
 	const Art &_art;
 	bool _canExitCloseupToParent;
+	Common::String _pendingInspectObjectName;
+	bool _inspectDismissPressed = false;
 };
 
 } // End of namespace Harvester

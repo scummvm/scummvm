@@ -341,6 +341,8 @@ Input::Input(HarvesterEngine &engine, Flow &flow, Scene &session, SceneState &sc
 }
 
 void Input::beginInspectText(const ObjectRecord &object, const ResolvedText &text) {
+	_pendingInspectObjectName.clear();
+	_inspectDismissPressed = false;
 	_presentationState.inspectText = text;
 	_presentationState.showingInspectText = true;
 	_presentationState.inspectCanDismiss = false;
@@ -348,6 +350,38 @@ void Input::beginInspectText(const ObjectRecord &object, const ResolvedText &tex
 		"Harvester: showing IDENT object='%s' prompt='%s' box='%s' text='%s'",
 		object.objectName.c_str(), _presentationState.currentInteractionPromptText.c_str(),
 		_presentationState.inspectText.boxName.c_str(), _presentationState.inspectText.value.c_str());
+}
+
+InputResult Input::finishInspectText(bool &needsRedraw) {
+	_inspectDismissPressed = false;
+	_presentationState.showingInspectText = false;
+	_presentationState.inspectCanDismiss = false;
+	_presentationState.inspectText = ResolvedText();
+	needsRedraw = true;
+	const Common::String objectName = _pendingInspectObjectName;
+	_pendingInspectObjectName.clear();
+	if (objectName.empty())
+		return InputResult();
+
+	const ObjectRecord *object = SceneEntities::findSceneObjectByName(_scene.sceneObjects, objectName);
+	InteractionResult interaction;
+	if (!object || !_engine.getScript()->resolveObjectInteraction(*object, interaction, _scene.executionContext()))
+		return InputResult();
+
+	return applyObjectInteraction(interaction, needsRedraw);
+}
+
+InputResult Input::applyObjectInteraction(InteractionResult &interaction, bool &needsRedraw) {
+	bool didTransition = false;
+	Common::Error interactionError =
+		_interactionProcessor.handleInteractionResult(
+			interaction, didTransition, Common::String());
+	if (interactionError.getCode() != Common::kNoError)
+		return InputResult::leaveRoom(interactionError);
+	if (_flow.hasPendingMainMenuReturn())
+		return InputResult::leaveRoom(Common::kNoError);
+	needsRedraw = true;
+	return InputResult();
 }
 
 void Input::queueCombatLoadoutStatusMessage(const Common::String &message, bool &needsRedraw) {
@@ -569,12 +603,8 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 	}
 
 	if (_presentationState.showingInspectText) {
-		if (_presentationState.inspectCanDismiss) {
-			_presentationState.showingInspectText = false;
-			_presentationState.inspectCanDismiss = false;
-			_presentationState.inspectText = ResolvedText();
-			needsRedraw = true;
-		}
+		if (_presentationState.inspectCanDismiss)
+			_inspectDismissPressed = true;
 		return InputResult();
 	}
 	if (_session.isPlayerCombatLocked())
@@ -763,7 +793,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 					_scene.state.roomName.c_str(), _flow.getMousePos().x, _flow.getMousePos().y,
 					_scene.state.roomMaxZScreenY, _scene.state.roomMinZScreenY,
 					_scene.state.roomMinZ, _scene.state.roomMaxZ,
-					playerState.centerX, playerState.bottomY, (double)playerState.z,
+					playerState.centerX, playerState.bottomY, static_cast<double>(playerState.z),
 					playerRect.left, playerRect.top, playerRect.right, playerRect.bottom);
 			}
 			player.setMoveTargetFromScreenPoint(_scene.state, _flow.getMousePos().x, _flow.getMousePos().y);
@@ -771,7 +801,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 				debugC(1, kDebugPathfinding,
 					"Harvester: pathfinding click target room='%s' mouse=(%d,%d) target=(%d,%d,z=%.2f)",
 					_scene.state.roomName.c_str(), _flow.getMousePos().x, _flow.getMousePos().y,
-					playerState.targetX, playerState.targetBottomY, (double)playerState.targetZ);
+					playerState.targetX, playerState.targetBottomY, static_cast<double>(playerState.targetZ));
 			}
 			needsRedraw = true;
 		}
@@ -809,6 +839,16 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 		needsRedraw = true;
 		return InputResult();
 	}
+	// An IDENT can be shown before a non-operatable object's action, without setting identShown. Dispatch after dismissal.
+	if (!clickedObject->identShown && !suppressesInitialObjectInspectGate(*clickedObject) &&
+			!unlocksAfterInitialExamine && canShowInspectText) {
+		beginInspectText(*clickedObject, resolvedInspectText);
+		if (!clickedObject->actionTag.empty())
+			_pendingInspectObjectName = clickedObject->objectName;
+		player.cancelMovement();
+		needsRedraw = true;
+		return InputResult();
+	}
 	if (_engine.getScript()->isPickupObject(*clickedObject)) {
 		Common::Error pickupError = _roomItems.handleRoomItemPickup(*clickedObject, playerState.entity != nullptr,
 			_interactionProcessor, _session, needsRedraw);
@@ -830,16 +870,7 @@ InputResult Input::handleLeftButtonDown(bool &needsRedraw) {
 		return InputResult();
 	}
 
-	bool didTransition = false;
-	Common::Error interactionError =
-		_interactionProcessor.handleInteractionResult(
-			interaction, didTransition, Common::String());
-	if (interactionError.getCode() != Common::kNoError)
-		return InputResult::leaveRoom(interactionError);
-	if (_flow.hasPendingMainMenuReturn())
-		return InputResult::leaveRoom(Common::kNoError);
-	needsRedraw = true;
-	return InputResult();
+	return applyObjectInteraction(interaction, needsRedraw);
 }
 
 InputResult Input::handleGameAction(GameAction action, bool pressed, bool &needsRedraw) {
@@ -906,12 +937,8 @@ InputResult Input::handleKeyDown(const Common::KeyState &key, bool &needsRedraw,
 	inputState.speedUpActive = gameAction && key.keycode == Common::KEYCODE_LALT;
 
 	if (_presentationState.showingInspectText) {
-		if (key.keycode == Common::KEYCODE_ESCAPE) {
-			_presentationState.showingInspectText = false;
-			_presentationState.inspectCanDismiss = false;
-			_presentationState.inspectText = ResolvedText();
-			needsRedraw = true;
-		}
+		if (key.keycode == Common::KEYCODE_ESCAPE)
+			_inspectDismissPressed = true;
 		return InputResult();
 	}
 
@@ -1072,6 +1099,16 @@ InputResult Input::handleEvent(const Common::Event &event, bool &needsRedraw) {
 	Common::Error result = Common::kNoError;
 	if (_flow.handleSystemEvent(event, result))
 		return InputResult::leaveRoom(result);
+
+	if (_presentationState.showingInspectText && _inspectDismissPressed) {
+		if (event.type == Common::EVENT_LBUTTONUP ||
+				(event.type == Common::EVENT_KEYUP && event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
+				(event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == kActionMenu)) {
+			if (event.type == Common::EVENT_LBUTTONUP)
+				handleLeftButtonUp();
+			return finishInspectText(needsRedraw);
+		}
+	}
 
 	switch (event.type) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
