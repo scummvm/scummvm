@@ -135,10 +135,6 @@ DXViewport BaseRenderer3D::getViewPort() {
 	return _viewport;
 }
 
-Graphics::PixelFormat BaseRenderer3D::getPixelFormat() const {
-	return Graphics::PixelFormat::createFormatRGBA32();
-}
-
 bool BaseRenderer3D::flip() {
 	_lastTexture = nullptr;
 	g_system->updateScreen();
