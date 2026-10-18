@@ -457,6 +457,9 @@ public:
 	bool setRuntimeTimerEnabled(const Common::String &timerName, bool enabled);
 
 private:
+	static const char *const kInventoryOwnerName;
+	static const int kDefaultPlayerCombatLoadout;
+
 	struct CommandExecutionContext {
 		const char *label;
 		const Common::String &name;

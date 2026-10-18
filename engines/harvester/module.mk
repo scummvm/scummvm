@@ -26,9 +26,11 @@ MODULE_OBJS = \
 	entity.o \
 	saveload.o \
 	script.o \
+	script_actors.o \
 	script_commands.o \
 	script_records.o \
 	script_room.o \
+	script_runtime.o \
 	script_save.o \
 	text.o \
 	xfile_archive.o \
