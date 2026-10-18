@@ -228,14 +228,11 @@ void SoundActor::start() {
 		}
 
 		openStream();
-		_playState = kSoundPlayStatePlaying;
 		_startTime = g_engine->getTotalPlayTime();
 		_lastProcessedTime = 0;
 		setupNextScriptResponseTimer();
 		_sequence.start();
 
-		ActorEvent actorEvent(_id, kSoundBeginEvent);
-		g_engine->getEventLoop()->queueEvent(actorEvent);
 	} else {
 		warning("[%s] %s: Attempted to play sound before it was loaded", debugName(), __func__);
 	}
@@ -243,7 +240,6 @@ void SoundActor::start() {
 
 void SoundActor::stop() {
 	if (_playState == kSoundPlayStatePlaying || _playState == kSoundPlayStatePaused) {
-		_playState = kSoundPlayStateStopped;
 		_sequence.stop();
 		g_engine->getTimerService()->stopTimer(_timer);
 	}
