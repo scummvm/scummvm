@@ -276,10 +276,10 @@ void RoomActorUpdater::updateInteractionCursor() {
 		return;
 	}
 
-	_state.InteractionMode = _state.ActiveActionIcon;
-	if (_state.InteractionMode == 0) {
-		_state.InteractionMode = _state.CachedActionIcon;
-		if (_state.InteractionMode == 0) {
+	_state.selectedVerb = _state.ActiveActionIcon;
+	if (_state.selectedVerb == 0) {
+		_state.selectedVerb = _state.CachedActionIcon;
+		if (_state.selectedVerb == 0) {
 			return;
 		}
 	}

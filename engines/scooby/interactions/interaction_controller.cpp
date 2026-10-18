@@ -52,7 +52,7 @@ Optional<SessionExit> InteractionController::updateAutomaticInteraction(bool &re
 		return Optional<SessionExit>();
 	}
 
-	_state.InteractionMode = 11;
+	_state.selectedVerb = 11;
 	_state.DisplayFlags |= kInteractionPendingMask;
 	Optional<SessionExit> requestedExit = runSelectedInteraction();
 	if (requestedExit.hasValue()) {
@@ -147,7 +147,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 			return Optional<SessionExit>();
 		}
 
-		if (_state.InteractionMode == kInventorySelectionMode &&
+		if (_state.selectedVerb == kInventorySelectionMode &&
 			_state.RoomObjects[objectIndex].RoomId == kInventoryRoomId) {
 			return Optional<SessionExit>();
 		}
@@ -180,7 +180,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// Ghidra 0x00001A22-0x00001A43: overwrite the automatic byte with scan gate one, snapshot the
 		// stable interaction mode and complete interaction byte, then invoke the scan dispatcher.
 		_state.AutomaticInteractionFlags = kSelectedInteractionScanMask;
-		int16 interactionMode = _state.InteractionMode;
+		int16 verb = _state.selectedVerb;
 		uint8 interactionFlags = _state.InteractionFlags;
 		SDM_ASSERT(_invokeRoomScriptDispatchCallback != nullptr,
 				   "InteractionController invokeRoomScriptDispatchCallback callback is not bound.");
@@ -213,7 +213,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// post-menu action count. A managed non-returning menu path bypasses both native restorations.
 		_state.roomScriptCurrentOffset = interactionScriptStartOffset;
 		_state.RoomScriptEndOffset = interactionScriptEndOffset;
-		if (interactionMode == kInteractionActionMenuMode) {
+		if (verb == kInteractionActionMenuMode) {
 			uint8 automaticInteractionFlags = _state.AutomaticInteractionFlags;
 			SDM_ASSERT(_runInteractionActionMenu != nullptr,
 					   "InteractionController runInteractionActionMenu callback is not bound.");
@@ -233,13 +233,13 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// clear, and set outcome of the interaction-bit-zero toggle.
 		if ((_state.AutomaticInteractionFlags & kMatchedSelectedInteractionMask) == 0) {
 			bool applyInteractionToggle = false;
-			if (interactionMode == kClearRoomBehaviorMode) {
+			if (verb == kClearRoomBehaviorMode) {
 				applyInteractionToggle = (_state.RoomBehaviorFlags & kRoomBehaviorInteractionMask) == 0;
 				_state.RoomBehaviorFlags &= static_cast<uint8>(~kRoomBehaviorInteractionMask);
 				if (!applyInteractionToggle) {
 					_state.InteractionFlags &= static_cast<uint8>(~kAlternateInteractionMask);
 				}
-			} else if (interactionMode == kSetRoomBehaviorMode) {
+			} else if (verb == kSetRoomBehaviorMode) {
 				_state.RoomBehaviorFlags |= kRoomBehaviorInteractionMask;
 				applyInteractionToggle = (interactionFlags & kAlternateInteractionMask) == 0;
 				if (!applyInteractionToggle) {
@@ -260,8 +260,8 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 			// Ghidra 0x00001B1E-0x00001B9F: preserve both dialogue suppressors, the wrapped mode table
 			// index, every template byte, and all three description-placeholder selection branches.
 			if ((_state.InteractionFlags & kAlternateInteractionMask) == 0 &&
-				interactionMode != kSuppressFallbackDialogueMode) {
-				int16 templatePointerByteOffset = static_cast<int16>((interactionMode - 1) << 2);
+				verb != kSuppressFallbackDialogueMode) {
+				int16 templatePointerByteOffset = static_cast<int16>((verb - 1) << 2);
 				int templateOffset = static_cast<int>(
 					_rom.readUInt32(kInteractionDialogueTemplateTableOffset + templatePointerByteOffset));
 				Common::String dialogueText;
@@ -298,7 +298,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// Ghidra 0x00001BA0-0x00001BD5: compare the active icon with current mutable interaction mode,
 		// then preserve both room-script-bit-three outcomes. A set bit selects scripted mode eight and
 		// repeats from the complete reset path; a clear bit returns.
-		if (_state.ActiveActionIcon != _state.InteractionMode) {
+		if (_state.ActiveActionIcon != _state.selectedVerb) {
 			_state.ActiveActionIcon = 0;
 		}
 
@@ -308,7 +308,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 			return Optional<SessionExit>();
 		}
 
-		_state.InteractionMode = kInteractionActionMenuMode;
+		_state.selectedVerb = kInteractionActionMenuMode;
 		_state.CurrentInteraction = _state.ScriptedInteraction;
 	}
 }

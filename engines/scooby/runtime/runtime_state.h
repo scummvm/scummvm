@@ -664,7 +664,9 @@ public:
 	// The current interaction mode from Ghidra g_wInteractionMode at 0xFF06BE–0xFF06BF. No image-backed RAM
 	// value exists, so managed state starts at zero. RunSelectedInteraction snapshots this word before scan-
 	// mode command dispatch; command 0x01 compares that stable snapshot with its record field at +2.
-	int16 InteractionMode{};
+	// Take = 2, Look = 10, Open = 3, Push = 7, Eat = 9
+	// Give = 6, Talk = 8, Shut = 4, Pull = 1, Use = 5
+	int16 selectedVerb{};
 
 	// The signed menu entries decoded from the active interaction table.
 	Common::Array<int16> InteractionMenuItems{};

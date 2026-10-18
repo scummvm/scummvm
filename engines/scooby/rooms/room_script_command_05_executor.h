@@ -63,7 +63,7 @@ public:
 	// Ghidra: executeRoomScriptCommand05 (0x000028A0). The 36-entry descriptor and movement-step catalogs
 	// remain ROM-owned authored data. Four dynamic actor movement slots replace the original overlapping RAM
 	// aliases, while the typed inventory list replaces its trailing -1 word.
-	void executeRoomScriptCommand05(int mode);
+	void scriptCommand05MoveObject(int mode);
 
 private:
 	static const uint8 kCompactActorMask = 0x08;

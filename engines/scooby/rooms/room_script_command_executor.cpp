@@ -59,7 +59,7 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _command0AFunctor(this, &RoomScriptCommandExecutor::scriptCommand0ASetInventoryGfx),
 	  _command0CFunctor(this, &RoomScriptCommandExecutor::scriptCommand0CRunAction),
 	  _command0DFunctor(this, &RoomScriptCommandExecutor::scriptCommand0DPlayOrStopAudio),
-	  _command11Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand11ChangeRoom),
+	  _command11Functor(this, &RoomScriptCommandExecutor::scriptCommand11ChangeRoom),
 	  _command12Functor(this, &RoomScriptCommandExecutor::scriptCommand12SetObjShape),
 	  _command13Functor(this, &RoomScriptCommandExecutor::scriptCommand13Jump),
 	  _command14Functor(this, &RoomScriptCommandExecutor::scriptCommand14SetObjShape),
@@ -68,7 +68,7 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _command17Functor(this, &RoomScriptCommandExecutor::scriptCommand17WaitForObjAnim),
 	  _command18Functor(this, &RoomScriptCommandExecutor::scriptCommand18ChangeRoomNoFade),
 	  _command02Functor(&_command02Executor, &RoomScriptCommand02Executor::scriptCommand02AddPlayerChoiceInteractionLine),
-	  _command05Functor(&_command05Executor, &RoomScriptCommand05MoveObject::executeRoomScriptCommand05),
+	  _command05Functor(&_command05Executor, &RoomScriptCommand05MoveObject::scriptCommand05MoveObject),
 	  _command08Functor(&_command08Executor, &RoomScriptCommand08Executor::scriptCommand08SetVariable),
 	  _command09Functor(&_command09Executor, &RoomScriptCommand09Executor::executeRoomScriptCommand09),
 	  _command0BFunctor(&_command0BExecutor, &RoomScriptCommand0BExecutor::scriptCommand0BSetBackgroundGfx),
@@ -144,7 +144,9 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 Optional<SessionExit> RoomScriptCommandExecutor::execute(uint16 command, int mode,
 														 int16 interactionModeSnapshot) {
 	_interactionModeSnapshot = interactionModeSnapshot;
-	debug("executing command: %x, mode: %d", command, mode);
+	if (command != 1 && command != 3 && command != 2 && _state.AutomaticInteractionFlags & 0x10 == 0) {
+		debug("executing command: %x, mode: %d", command, mode);
+	}
 	(*_handlers[static_cast<std::size_t>(command)])(mode);
 	return _requestedSessionExit;
 }
@@ -398,7 +400,7 @@ void RoomScriptCommandExecutor::stopAudioPlayback(int command) {
 	(void)command;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand11ChangeRoom(int mode) {
+void RoomScriptCommandExecutor::scriptCommand11ChangeRoom(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004F0E-0x00004F11: scan mode skips every state and presentation effect.

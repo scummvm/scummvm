@@ -25,7 +25,7 @@
 
 namespace Scooby {
 
-void RoomScriptCommand05MoveObject::executeRoomScriptCommand05(int mode) {
+void RoomScriptCommand05MoveObject::scriptCommand05MoveObject(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x000028A0-0x000028C3: scan mode and masked identities zero, one, and two each take their own

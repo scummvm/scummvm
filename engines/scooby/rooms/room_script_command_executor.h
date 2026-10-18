@@ -193,7 +193,7 @@ private:
 	//
 	// Ghidra: executeRoomScriptCommand11 (0x00004F0E). The coordinate index is shifted
 	// within a word, preserving 16-bit wrap before LoadRoomScene consumes it as a byte offset.
-	void executeRoomScriptCommand11ChangeRoom(int mode);
+	void scriptCommand11ChangeRoom(int mode);
 
 	// Replaces one room object's complete shape index word.
 	// mode: zero scans the six-byte record; nonzero applies its shape index.

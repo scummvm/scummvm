@@ -89,7 +89,7 @@ Optional<SessionExit> RoomScriptController::dispatchRoomScriptCommands() {
 		// entry, clear D0 to choose scan mode, and preserve a managed non-returning descendant handover.
 		uint16 command = _rom.readUInt16(_state.roomScriptCurrentOffset);
 		Optional<SessionExit> requestedExit = _commands.execute(
-			command, 0, _state.InteractionMode);
+			command, 0, _state.selectedVerb);
 		if (requestedExit.hasValue()) {
 			return requestedExit;
 		}
@@ -193,7 +193,7 @@ Optional<SessionExit> RoomScriptController::runRoomScriptCommands() {
 
 		uint16 command = _rom.readUInt16(_state.roomScriptCurrentOffset);
 		Optional<SessionExit> requestedExit = _commands.execute(
-			command, 1, _state.InteractionMode);
+			command, 1, _state.selectedVerb);
 		if (requestedExit.hasValue()) {
 			// A native non-returning target hands process control back to the managed application loop.
 			return requestedExit;
