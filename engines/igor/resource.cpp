@@ -172,7 +172,8 @@ void IgorEngine::loadDialogueData(int dlg) {
 	uint8 *p = loadData(dlg, 0, &dataSize);
 	int dialogueDataSize = _roomDataOffsets.dlg.questionsOffset + 164 + 41;
 	assert(dialogueDataSize <= (int)sizeof(_gameState.dialogueData));
-	memcpy(_gameState.dialogueData, p, dialogueDataSize);
+	if (!_dialogueResuming) // a loaded savegame already holds the answered questions
+		memcpy(_gameState.dialogueData, p, dialogueDataSize);
 	assert(_roomDataOffsets.dlg.questionsSize <= MAX_DIALOGUE_QUESTIONS);
 	assert(_roomDataOffsets.dlg.repliesSize <= MAX_DIALOGUE_REPLIES);
 	memset(_dialogueQuestionSounds, 0, sizeof(_dialogueQuestionSounds));

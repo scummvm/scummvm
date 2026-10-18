@@ -115,6 +115,8 @@ Common::String IgorEngine::getGameId() const {
 void IgorEngine::restart() {
 	_screenVGAVOffset = 0;
 	_gameStateLoaded = false;
+	_resumeDialogueId = 0;
+	_dialogueResuming = false;
 	_loadedIgorMoving = false;
 	_creditsPass = 0;
 
@@ -302,12 +304,34 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor) {
 	}
 	if (!_gameState.dialogueTextRunning)
 		showCursor();
+	_resumeDialogueId = _gameState.dialogueStarted;
 	_gameStateLoaded = false;
 	fadeIn(768);
 	return true;
 }
 
+/**
+ * Called by a room after loading a savegame taken while one of its dialogue choice menus was open.
+ * Returns true if that menu is the dialogue with the given id and has to be run again
+ */
+bool IgorEngine::takeResumeDialogue(uint8 id) {
+	if (_resumeDialogueId == 0 || _resumeDialogueId != id)
+		return false;
+	_resumeDialogueId = 0;
+	_dialogueResuming = true;
+	return true;
+}
+
+// the cursor comes back and the action is cleared.
+void IgorEngine::finishResumedDialogue() {
+	if (!_gameState.dialogueTextRunning) {
+		showCursor();
+	}
+	clearAction(true);
+}
+
 void IgorEngine::leavePartLoop() {
+	_resumeDialogueId = 0;
 	_roomWalkTargetRules.enabled = false;
 	_roomGiveObjectSize = 0;
 	hideCursor();
@@ -568,12 +592,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	}
 	s.syncAsByte(_gameState.unk10);
 	s.syncAsByte(_gameState.unk11);
-	{
-		byte v = _gameState.dialogueStarted ? 1 : 0;
-		s.syncAsByte(v);
-		if (s.isLoading())
-			_gameState.dialogueStarted = v != 0;
-	}
+	s.syncAsByte(_gameState.dialogueStarted);
 	s.skip(1);
 	for (int i = 0; i < 500; ++i) {
 		s.syncAsByte(_gameState.dialogueData[i]);

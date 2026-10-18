@@ -526,10 +526,14 @@ void IgorEngine::drawFloppyDialogueChoice(int choice, int color) {
 /**
  * Pos and color
  */
-void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreUI) {
-	_gameState.dialogueStarted = true;
-	_gameState.dialogueChoiceStart = 1;
-	_gameState.dialogueChoiceCount = 1;
+void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreUI, uint8 id) {
+	const bool resuming = _dialogueResuming;
+	_dialogueResuming = false;
+	_gameState.dialogueStarted = id;
+	if (!resuming) { // a loaded savegame keeps the menu position it was saved at
+		_gameState.dialogueChoiceStart = 1;
+		_gameState.dialogueChoiceCount = 1;
+	}
 	_dialogueEnded = false;
 	if (getPart() == 12 && _objectsState[kLizardTakenStateIndex] == 0) {
 		_gameState.dialogueData[6] = 1;
@@ -596,7 +600,7 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	}
 	_currentAction.verb = kVerbWalk;
-	_gameState.dialogueStarted = false;
+	_gameState.dialogueStarted = 0;
 }
 
 
@@ -681,9 +685,11 @@ int IgorEngine::selectDialogue() {
 		}
 
 		waitForTimer();
-	} while (!end && !_eventQuitGame);
+	} while (!end && !_eventQuitGame && !_gameStateLoaded);
 	hideCursor();
 	debugC(9, kDebugEngine, "selectDialogue() end hovered %d quit %d", hoveredChoice, _eventQuitGame);
+	if (_gameStateLoaded)
+		return -1;
 	return hoveredChoice;
 }
 
