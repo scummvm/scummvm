@@ -242,18 +242,24 @@ void IgorEngine::part30FloppyLauraLeaves() {
 
 void IgorEngine::part30FloppyLauraCutscene() {
 	// The cutscene does not select any music, the current music keeps playing
+	const bool resuming = _dialogueResuming;
 	memset(_screenVGA + 46080, 0, 17920);
-	fadeIn(768);
-	part30FloppyLauraAndIgorBumpIntoEachOther();
+	if (!resuming) {
+		fadeIn(768);
+		part30FloppyLauraAndIgorBumpIntoEachOther();
+	}
 	_walkData[0].setPos(190, 119, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
-	igorSayAndWait({ { 203, 1, 0 }, { 204, 1, 0 }, { 205, 1, 0 } });
-	_updateDialogue = &IgorEngine::part30FloppyUpdateLauraDialogue;
-	cutsceneSay(kLauraTalkX, kLauraTalkY, kLauraTalkR, kLauraTalkG, kLauraTalkB, 206, 1, 0);
-	_updateDialogue = 0;
-	part30FloppyIgorCrossesArms();
+	if (!resuming) {
+		igorSayAndWait({ { 203, 1, 0 }, { 204, 1, 0 }, { 205, 1, 0 } });
+		_updateDialogue = &IgorEngine::part30FloppyUpdateLauraDialogue;
+		cutsceneSay(kLauraTalkX, kLauraTalkY, kLauraTalkR, kLauraTalkG, kLauraTalkB, 206, 1, 0);
+		_updateDialogue = 0;
+	}
+	if (!resuming) // when resuming igor has to be drawn before the screen fades in
+		part30FloppyIgorCrossesArms();
 	part30FloppyHandleLauraDialogue();
 	if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart)
 		return;
@@ -285,7 +291,15 @@ void IgorEngine::part30Floppy() {
 	partMainSetExecuteAction(1, &IgorEngine::part30FloppyExecuteAction);
 	part30FloppyApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	if (!restoreRoomAfterLoad()) {
+	SET_PAL_240_48_1();
+	SET_PAL_208_96_1();
+	const bool loaded = restoreRoomAfterLoad(true, false);
+	if (loaded) {
+		// a game saved at laura's dialogue shows the scene of the dialogue from the first frame
+		if (_resumeDialogueId == 1)
+			part30FloppyIgorCrossesArms();
+		fadeIn(768);
+	} else {
 		_currentAction.verb = kVerbWalk;
 		if (_objectsState[kLauraMetAtCollegeStateIndex] == 0) {
 			part30FloppyLauraCutscene();
@@ -303,6 +317,10 @@ void IgorEngine::part30Floppy() {
 		}
 	}
 	enterPartLoop();
+	if (takeResumeDialogue(1)) { // loaded while talking to laura
+		part30FloppyLauraCutscene();
+		finishResumedDialogue();
+	}
 	while (_currentPart >= 300 && _currentPart <= 303 && !_gameStateLoaded) {
 		runPartLoop();
 	}

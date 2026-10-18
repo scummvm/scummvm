@@ -1475,6 +1475,8 @@ private:
 	void part34LauraConversation();
 	void part34OldLadyConversation();
 	void part34ReloadParkAfterLaura();
+	void part34LoadLauraScene(bool showPalette);
+	void part34DrawLauraWalkingIn(bool wait);
 	void part34UpdateBackground();
 	void part35();
 	void part35ExecuteAction(int action);
@@ -1791,7 +1793,7 @@ private:
 	void enterPartLoop();
 	void leavePartLoop();
 	void runPartLoop();
-	bool restoreRoomAfterLoad(bool drawIgor = true);
+	bool restoreRoomAfterLoad(bool drawIgor = true, bool fade = true);
 	bool takeResumeDialogue(uint8 id);
 	void finishResumedDialogue();
 

@@ -360,25 +360,29 @@ void IgorEngine::part68Conversation() {
 	_updateRoomBackground = &IgorEngine::part68UpdateBackgroundTalk;
 	_updateDialogue = &IgorEngine::part68SayBorisReplies;
 	loadDialogueData(DLG_Part68);
+	const bool resuming = _dialogueResuming;
+	_dialogueResuming = false;
 	_part68QuestionCounter = 1;
 	part68DrawUndertaker(kPart68BorisStanding);
 
 	memset(_screenVGA + 46080, 0, 17920);
-	_gameState.dialogueStarted = true;
-	_gameState.dialogueChoiceStart = 1;
-	_gameState.dialogueChoiceCount = 1;
-	// boris says different greeting depending if its the first time or not
-	if (_objectsState[kBorisIntroducedStateIndex] == 0) {
-		igorSayAndWait(225, 1, 1029);
-		static const int replies[4] = { 1, 2, 3, 4 };
-		static const int sounds[4] = { 1051, 1052, 1053, 1054 };
-		part68SayBorisReplies(replies, sounds, 4);
-		_objectsState[kBorisIntroducedStateIndex] = 1;
-	} else {
-		igorSayAndWait(226, 1, 1030);
-		static const int replies[4] = { 5, 6, 7, 8 };
-		static const int sounds[4] = { 1055, 1056, 1057, 1058 };
-		part68SayBorisReplies(replies, sounds, 4);
+	_gameState.dialogueStarted = 1;
+	if (!resuming) {
+		_gameState.dialogueChoiceStart = 1;
+		_gameState.dialogueChoiceCount = 1;
+		// boris says different greeting depending if its the first time or not
+		if (_objectsState[kBorisIntroducedStateIndex] == 0) {
+			igorSayAndWait(225, 1, 1029);
+			static const int replies[4] = { 1, 2, 3, 4 };
+			static const int sounds[4] = { 1051, 1052, 1053, 1054 };
+			part68SayBorisReplies(replies, sounds, 4);
+			_objectsState[kBorisIntroducedStateIndex] = 1;
+		} else {
+			igorSayAndWait(226, 1, 1030);
+			static const int replies[4] = { 5, 6, 7, 8 };
+			static const int sounds[4] = { 1055, 1056, 1057, 1058 };
+			part68SayBorisReplies(replies, sounds, 4);
+		}
 	}
 
 	bool done = false;
@@ -433,13 +437,15 @@ void IgorEngine::part68Conversation() {
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
-	_gameState.dialogueStarted = false;
+	_gameState.dialogueStarted = 0;
 	_updateDialogue = 0;
 	_updateRoomBackground = previousBackground;
 }
 
 void IgorEngine::part68TalkToBoris() {
 	part68Conversation();
+	if (_gameStateLoaded || _eventQuitGame)
+		return;
 	if (_objectsState[kUndertakerLeftStateIndex] == 2) {
 		_objectsState[kUndertakerLeftStateIndex] = 1;
 		part68ApplyObjectState(255);
@@ -501,6 +507,7 @@ void IgorEngine::part68() {
 	setRoomClickFix(143, -1, -1, false);
 	partMainSetExecuteAction(1, &IgorEngine::part68ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part68UpdateBackground;
+	SET_PAL_208_96_1();
 	part68ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 
@@ -521,6 +528,10 @@ void IgorEngine::part68() {
 		}
 	}
 	enterPartLoop();
+	if (takeResumeDialogue(1)) { // loaded while talking to boris
+		part68TalkToBoris();
+		finishResumedDialogue();
+	}
 	while ((_currentPart == 680 || _currentPart == 681) && !_gameStateLoaded) {
 		runPartLoop();
 	}
