@@ -1382,6 +1382,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jmac",				"J-MAC みんなの広場 Vol.1" },
 	{ "keiri",				"経理入門" },										// Introduction to Accounting
 	{ "llla",				"Live Love Life AIDS" },
+	{ "masakanokazoku",		"真逆の家族" }, // Masaka no Kazoku
 	{ "mazebox",			"The Latest Works of MazeBox" },
 	{ "macintosho20",		"村上隆" }, // Macintosho exhibit disk #20 - Takashi Murakami's Hiropon
 	{ "microphonefiend",	"Microphone Fiend" },
@@ -10354,6 +10355,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Advertainment film from Ferrero (chocolates)
 	WINGAME1_l("magicanti", "", "Magicanti.exe", "0c81c84ca4966313ad27d47daba44537", 2158202, Common::IT_ITA, 851),
+
+	MACGAME1t_l("masakanokazoku", "1.22", "xn--v1.22-pd4dq68z44qut9apb4c", "090e49a62eeb56df86525cc3fdcff2f8", 120079, Common::JA_JPN, 850),
+	WINGAME1t_l("masakanokazoku", "1.23", "mk123.exe", "7463dfe9b4d53843b2b4c4caa721f231", 2668180, Common::JA_JPN, 850),
 
 	WINGAME1_l("mathica", "", "Mathica.exe", "t:9b226694c9f0727b6e2d5025ecdb2187", 2240795, Common::RU_RUS, 851),
 
