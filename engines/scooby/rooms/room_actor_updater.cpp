@@ -276,9 +276,9 @@ void RoomActorUpdater::updateInteractionCursor() {
 		return;
 	}
 
-	_state.selectedVerb = _state.ActiveActionIcon;
+	_state.selectedVerb = _state.activeVerbIcon;
 	if (_state.selectedVerb == 0) {
-		_state.selectedVerb = _state.CachedActionIcon;
+		_state.selectedVerb = _state.cachedVerbIcon;
 		if (_state.selectedVerb == 0) {
 			return;
 		}
@@ -336,14 +336,14 @@ void RoomActorUpdater::updateMenuCommandFromCursor() {
 
 void RoomActorUpdater::closeInteractionInterface() {
 	_state.DisplayFlags &= static_cast<uint8>(~kDisplayInterfaceMask);
-	_state.PendingActionIcon = _state.ActiveActionIcon;
+	_state.pendingVerbIcon = _state.activeVerbIcon;
 	_drawSelectedActionIcon(0);
 	if (_state.CurrentInteraction == 0) {
 		return;
 	}
 
 	const RoomObject &roomObject = _state.RoomObjects[_state.CurrentInteraction - kRoomObjectFirstInteraction];
-	_state.PendingActionIcon = roomObject.ActionIcon;
+	_state.pendingVerbIcon = static_cast<VerbEnum>(roomObject.suggestedVerb);
 	_drawSelectedActionIcon(0);
 }
 
@@ -879,7 +879,7 @@ void RoomActorUpdater::tryOpenInteractionInterface() {
 	_state.InteractionFlags &= 0xFE;
 	_state.CursorHorizontalStep = 2;
 	_state.CursorVerticalStep = 2;
-	_state.ActiveActionIcon = NONE;
+	_state.activeVerbIcon = NONE;
 	_state.PreviousInteraction = 0;
 	_state.SecondaryInteraction = 0;
 

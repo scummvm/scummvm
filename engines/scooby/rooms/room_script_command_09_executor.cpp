@@ -39,18 +39,18 @@ void RoomScriptCommand09Executor::executeRoomScriptCommand09(int mode) {
 		// Ghidra 0x00002D80-0x00002D99: both identity outcomes retain the same resolved byte. A match
 		// sign-extends its old value into the pending icon and draws mode zero before the replacement.
 		if (objectId == static_cast<uint16>(_state.CurrentInteraction)) {
-			_state.PendingActionIcon =
-				static_cast<int8>(location.TargetRoomObject.readCommandByte(location.ByteOffset));
+			_state.pendingVerbIcon =
+				static_cast<VerbEnum>(location.TargetRoomObject.readCommandByte(location.ByteOffset));
 			_drawSelectedActionIcon(0);
 		}
 
 		// Ghidra 0x00002D9A-0x00002DA7: replace the resolved byte, then retain both outcomes of the
 		// active-icon test rather than narrowing the displacement to the authored action-icon field.
 		location.TargetRoomObject.writeCommandByte(location.ByteOffset, _rom.readByte(commandOffset + 4));
-		if (_state.ActiveActionIcon != 0) {
+		if (_state.activeVerbIcon != 0) {
 			// Ghidra 0x00002DA8-0x00002DB9: queue the complete active word and clear it without drawing.
-			_state.PendingActionIcon = _state.ActiveActionIcon;
-			_state.ActiveActionIcon = NONE;
+			_state.pendingVerbIcon = _state.activeVerbIcon;
+			_state.activeVerbIcon = NONE;
 		}
 	}
 

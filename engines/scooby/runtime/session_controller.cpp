@@ -215,7 +215,7 @@ Optional<SessionExit> SessionController::presentRoom() {
 	_state.PreviousInteractionFlags = _state.InteractionFlags;
 	_state.PreviousRoomNameTextOffset = _state.RoomNameTextOffset;
 	_state.PreviousInteraction = _state.CurrentInteraction;
-	_state.PreviousActionIcon = _state.ActiveActionIcon;
+	_state.PreviousActionIcon = _state.activeVerbIcon;
 	_state.PreviousSecondaryInteraction = _state.SecondaryInteraction;
 
 	// Ghidra 0x00002210-0x00002213: preserve the separate room-entry-script call. A managed non-returning
@@ -261,7 +261,7 @@ bool SessionController::loadRoomObjectTable() {
 								? _rom.readInt16(
 									  sourceOffset + kSourceRecordSize + static_cast<int>(sizeof(int16)))
 								: static_cast<int16>(0);
-		roomObject.ActionIcon = static_cast<int8>(actionWord >> 8);
+		roomObject.suggestedVerb = static_cast<int8>(actionWord >> 8);
 		roomObject.ActionArgument = static_cast<uint8>(actionWord);
 		roomObject.Flags = static_cast<uint8>(flagsWord >> 8);
 		roomObject.FixedPositionIndex = -1;

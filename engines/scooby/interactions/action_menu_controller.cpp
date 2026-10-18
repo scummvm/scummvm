@@ -50,12 +50,12 @@ void ActionMenuController::refreshSelectedActionIcons() {
 	// Ghidra 0x00001BDE-0x00001BF5: clear only display bit three, stage the active icon, and invoke the
 	// existing renderer in mode zero even when the staged identity is zero.
 	_state.DisplayFlags &= static_cast<uint8>(~kSelectedActionIconRefreshMask);
-	_state.PendingActionIcon = _state.ActiveActionIcon;
+	_state.pendingVerbIcon = _state.activeVerbIcon;
 	drawSelectedActionIcon(0);
 
 	// Ghidra 0x00001BF6-0x00001C05: independently stage the cached icon and preserve the second
 	// unconditional mode-zero draw instead of coalescing equal or zero identities.
-	_state.PendingActionIcon = _state.CachedActionIcon;
+	_state.pendingVerbIcon = _state.cachedVerbIcon;
 	drawSelectedActionIcon(0);
 
 	// Ghidra 0x00001C06-0x00001C0B: managed return restores the native register-preservation boundary.
@@ -65,16 +65,16 @@ void ActionMenuController::synchronizeActionIcon() {
 	VerbEnum previousActionIcon = NONE;
 	if (_state.PreviousInteraction != _state.CurrentInteraction &&
 		resolveActionIcon(_state.PreviousInteraction, previousActionIcon) &&
-		previousActionIcon != _state.ActiveActionIcon) {
-		_state.PendingActionIcon = previousActionIcon;
+		previousActionIcon != _state.activeVerbIcon) {
+		_state.pendingVerbIcon = previousActionIcon;
 		drawSelectedActionIcon(0);
 	}
 
 	VerbEnum currentActionIcon = NONE;
-	if (_state.ActiveActionIcon == 0 && resolveActionIcon(_state.CurrentInteraction, currentActionIcon)) {
-		_state.CachedActionIcon = currentActionIcon;
+	if (_state.activeVerbIcon == 0 && resolveActionIcon(_state.CurrentInteraction, currentActionIcon)) {
+		_state.cachedVerbIcon = currentActionIcon;
 		if (currentActionIcon != 0) {
-			_state.PendingActionIcon = currentActionIcon;
+			_state.pendingVerbIcon = currentActionIcon;
 			drawSelectedActionIcon(2);
 		}
 	}
@@ -89,17 +89,17 @@ bool ActionMenuController::updateActionMenu() {
 
 		if ((_state.ControllerOneInput & 0x10) == 0) {
 			VerbEnum selectedAction = kActionIconByCommand[static_cast<std::size_t>(command)];
-			if (_state.ActiveActionIcon == 0) {
-				_state.PendingActionIcon = _state.CachedActionIcon;
+			if (_state.activeVerbIcon == 0) {
+				_state.pendingVerbIcon = _state.cachedVerbIcon;
 				drawSelectedActionIcon(0);
 			}
 
-			if (selectedAction != _state.ActiveActionIcon) {
-				_state.PendingActionIcon = _state.ActiveActionIcon;
+			if (selectedAction != _state.activeVerbIcon) {
+				_state.pendingVerbIcon = _state.activeVerbIcon;
 				drawSelectedActionIcon(0);
 				_state.InteractionFlags &= static_cast<uint8>(~kAlternateInteractionMask);
-				_state.ActiveActionIcon = selectedAction;
-				_state.PendingActionIcon = selectedAction;
+				_state.activeVerbIcon = selectedAction;
+				_state.pendingVerbIcon = selectedAction;
 				drawSelectedActionIcon(1);
 			}
 		}
@@ -162,7 +162,7 @@ bool ActionMenuController::resolveActionIcon(int16 interaction, VerbEnum &action
 
 	actionIcon = interaction < 3
 					 ? LOOK
-					 : static_cast<VerbEnum>(_state.RoomObjects[interaction - 3].ActionIcon);
+					 : static_cast<VerbEnum>(_state.RoomObjects[interaction - 3].suggestedVerb);
 	return true;
 }
 
@@ -311,14 +311,14 @@ void ActionMenuController::refreshActionPrompts() {
 // highlight an action that can be taken for this object in room
 void ActionMenuController::drawSelectedActionIcon(int mode) {
 	// Ghidra 0x00005BDC-0x00005BE5: a zero pending identity leaves every interface cell unchanged.
-	if (_state.PendingActionIcon == 0) {
+	if (_state.pendingVerbIcon == 0) {
 		return;
 	}
 
 	// Ghidra 0x00005BE6-0x00005C31: retain low-word mode multiplication, linear icon lookup, both row-band
 	// branches, and the exact ten-byte horizontal slot stride.
 	int iconIndex = 0;
-	while (kActionIconByCommand[static_cast<std::size_t>(iconIndex + 1)] != _state.PendingActionIcon) {
+	while (kActionIconByCommand[static_cast<std::size_t>(iconIndex + 1)] != _state.pendingVerbIcon) {
 		iconIndex++;
 	}
 

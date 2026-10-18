@@ -79,7 +79,7 @@ public:
 	// The active action icon from Ghidra g_wActiveActionIcon at 0xFF06C0–0xFF06C1. Original RAM has no image-
 	// backed value; runtime setup clears it before interaction updates. Command 0x09 queues any nonzero value
 	// as pending before clearing this word.
-	VerbEnum ActiveActionIcon{};
+	VerbEnum activeVerbIcon{};
 
 	// The cartridge offset from Ghidra g_pActiveEpisodeDescriptor at 0xFF068E. Process memory starts at zero;
 	// LoadRoomObjectTable is the sole writer and publishes the descriptor selected from g_wEpisodeIndex before
@@ -466,7 +466,7 @@ public:
 	// The last action icon committed to the display from Ghidra g_wCachedActionIcon at 0xFF06C4–0xFF06C5. No
 	// image-backed value is consumed; display refresh writes it before the room updater uses it when the
 	// active icon is zero.
-	VerbEnum CachedActionIcon{};
+	VerbEnum cachedVerbIcon{};
 
 	// The room camera X origin from Ghidra g_wCameraX at 0xFF06CA. No image-backed value is consumed; runtime
 	// reset writes zero before room loading selects the authored origin. Actions 0x0F and 0x10 clear bit zero
@@ -731,7 +731,7 @@ public:
 
 	// The next action icon from Ghidra g_wPendingActionIcon at 0xFF06C2–0xFF06C3. Original RAM has no image-
 	// backed value; every recovered drawing path writes it before use.
-	int16 PendingActionIcon{};
+	VerbEnum pendingVerbIcon{};
 
 	// The complete table from Ghidra g_abProgressStateBytes at original RAM 0xFF2A00. Managed storage starts
 	// all-zero; episode initialization clears all 256 bytes before copying authored defaults, the password

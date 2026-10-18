@@ -33,7 +33,7 @@ void InteractionController::snapshotInteractionState() {
 	_state.PreviousDisplayFlags = _state.DisplayFlags;
 	_state.PreviousInteractionFlags = _state.InteractionFlags;
 	_state.PreviousRoomNameTextOffset = _state.RoomNameTextOffset;
-	_state.PreviousActionIcon = _state.ActiveActionIcon;
+	_state.PreviousActionIcon = _state.activeVerbIcon;
 	_state.PreviousSecondaryInteraction = _state.SecondaryInteraction;
 }
 
@@ -180,7 +180,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// Ghidra 0x00001A22-0x00001A43: overwrite the automatic byte with scan gate one, snapshot the
 		// stable interaction mode and complete interaction byte, then invoke the scan dispatcher.
 		_state.AutomaticInteractionFlags = kSelectedInteractionScanMask;
-		int16 verb = _state.selectedVerb;
+		VerbEnum verb = _state.selectedVerb;
 		uint8 interactionFlags = _state.InteractionFlags;
 		SDM_ASSERT(_invokeRoomScriptDispatchCallback != nullptr,
 				   "InteractionController invokeRoomScriptDispatchCallback callback is not bound.");
@@ -298,8 +298,8 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		// Ghidra 0x00001BA0-0x00001BD5: compare the active icon with current mutable interaction mode,
 		// then preserve both room-script-bit-three outcomes. A set bit selects scripted mode eight and
 		// repeats from the complete reset path; a clear bit returns.
-		if (_state.ActiveActionIcon != _state.selectedVerb) {
-			_state.ActiveActionIcon = NONE;
+		if (_state.activeVerbIcon != _state.selectedVerb) {
+			_state.activeVerbIcon = NONE;
 		}
 
 		if ((_state.RoomScriptFlags & kScriptedInteractionMask) == 0) {
@@ -339,7 +339,7 @@ void InteractionController::refreshInteractionDisplay() {
 		_state.InteractionFlags &= static_cast<uint8>(~kCompleteRefreshMask);
 	} else if ((_state.PreviousDisplayFlags & kInteractionDisplayMask) != 0 &&
 			   _state.CurrentInteraction == _state.PreviousInteraction &&
-			   _state.ActiveActionIcon == _state.PreviousActionIcon &&
+			   _state.activeVerbIcon == _state.PreviousActionIcon &&
 			   _state.SecondaryInteraction == _state.PreviousSecondaryInteraction &&
 			   (_state.InteractionFlags & kAlternateInteractionMask) ==
 				   (_state.PreviousInteractionFlags & kAlternateInteractionMask)) {
@@ -354,8 +354,8 @@ void InteractionController::refreshInteractionDisplay() {
 
 		// Ghidra 0x0000A8FA-0x0000A91F: walk complete NUL terminators with signed-word DBF wrapping,
 		// retaining out-of-authored-range traversal instead of constraining state to the ten known entries.
-		if (_state.ActiveActionIcon != 0) {
-			int16 remainingPrefixes = static_cast<int16>(_state.ActiveActionIcon - 1);
+		if (_state.activeVerbIcon != 0) {
+			int16 remainingPrefixes = static_cast<int16>(_state.activeVerbIcon - 1);
 			do {
 				while (_rom.readByte(actionTextOffset++) != 0) {
 				}

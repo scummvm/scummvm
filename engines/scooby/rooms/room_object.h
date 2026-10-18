@@ -40,7 +40,7 @@ public:
 
 	RoomObject()
 		: TilePatchIndex(0), ShapeIndex(0), InventoryGraphicIndex(0), RoomId(0), PositionIndex(0),
-		  AnimationCountdown(0), ScriptStateWords(3), FixedX(0), FixedY(0), ActionIcon(0),
+		  AnimationCountdown(0), ScriptStateWords(3), FixedX(0), FixedY(0), suggestedVerb(0),
 		  ActionArgument(0), Flags(0), FixedPositionIndex(0) {
 		Common::fill(ScriptStateWords.begin(), ScriptStateWords.end(), 0);
 	}
@@ -75,7 +75,7 @@ public:
 	int16 FixedY;
 
 	// Record offset +0x16 high byte. Signed action icon.
-	int8 ActionIcon;
+	int8 suggestedVerb;
 
 	// Record offset +0x17. Adjacent authored action byte.
 	uint8 ActionArgument;
@@ -118,7 +118,7 @@ public:
 		case 0x14:
 			return static_cast<uint16>(FixedY);
 		case 0x16:
-			return static_cast<uint16>((static_cast<uint8>(ActionIcon) << 8) | ActionArgument);
+			return static_cast<uint16>((static_cast<uint8>(suggestedVerb) << 8) | ActionArgument);
 		case 0x18:
 			return static_cast<uint16>((Flags << 8) | static_cast<uint8>(FixedPositionIndex));
 		default:
@@ -169,7 +169,7 @@ public:
 			FixedY = static_cast<int16>(value);
 			break;
 		case 0x16:
-			ActionIcon = static_cast<int8>(value >> 8);
+			suggestedVerb = static_cast<int8>(value >> 8);
 			ActionArgument = static_cast<uint8>(value);
 			break;
 		case 0x18:
