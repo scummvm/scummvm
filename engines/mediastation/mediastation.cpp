@@ -27,6 +27,7 @@
 #include "mediastation/detection.h"
 #include "mediastation/boot.h"
 #include "mediastation/context.h"
+#include "mediastation/clients.h"
 #include "mediastation/actor.h"
 #include "mediastation/actors/document.h"
 #include "mediastation/actors/movie.h"

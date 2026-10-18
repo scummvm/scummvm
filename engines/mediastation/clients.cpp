@@ -28,6 +28,7 @@
 #include "mediastation/mediastation.h"
 
 namespace MediaStation {
+
 ParameterClient::ParameterClient() {
 	g_engine->getImtGod()->registerParameterClient(this);
 }
@@ -36,16 +37,25 @@ ParameterClient::~ParameterClient() {
 	g_engine->getImtGod()->unregisterParameterClient(this);
 }
 
+ImtDeviceOwner::ImtDeviceOwner() : ParameterClient() {
+	_deviceUsers.getOrCreateVal(kImtDeviceTypeSound);
+	_deviceUsers.getOrCreateVal(kImtDeviceTypeStream);
+}
+
 bool ImtDeviceOwner::attemptToReadFromStream(Chunk &chunk, uint sectionType) {
 	bool handledParam = true;
 	switch (sectionType) {
-	case kDeviceOwnerAllowMultipleSounds:
-		_allowMultipleSounds = chunk.readTypedByte();
+	case kDeviceOwnerAllowMultipleSounds: {
+		bool allowMultipleSounds = (chunk.readTypedByte() == 1);
+		setMultipleSounds(allowMultipleSounds);
 		break;
+	}
 
-	case kDeviceOwnerAllowMultipleStreams:
-		_allowMultipleStreams = chunk.readTypedByte();
+	case kDeviceOwnerAllowMultipleStreams: {
+		bool allowMultipleStreams = (chunk.readTypedByte() == 1);
+		setMultipleStreams(allowMultipleStreams);
 		break;
+	}
 
 	default:
 		handledParam = false;
@@ -54,6 +64,90 @@ bool ImtDeviceOwner::attemptToReadFromStream(Chunk &chunk, uint sectionType) {
 	return handledParam;
 }
 
+bool ImtDeviceOwner::hasExclusiveAccessTo(ImtDeviceType type) {
+	switch (type) {
+	case kImtDeviceTypeSound:
+		return _exclusiveAccessToSounds;
+
+	case kImtDeviceTypeStream:
+		return _exclusiveAccessToStreams;
+
+	default:
+		return true;
+	}
+}
+
+bool ImtDeviceOwner::grantDevice(ImtDeviceUser *user, ImtDeviceType type) {
+	// The original returns false on success, true on failure... maybe we should flip
+	// that around to be more readable, but I'm keeping it as the original had it for now.
+	if (hasExclusiveAccessTo(type)) {
+		Common::Array<ImtDeviceUser *> &deviceUsers = _deviceUsers.getVal(type);
+		for (ImtDeviceUser *existingUser : deviceUsers) {
+			if (user == existingUser) {
+				// We have already been granted this device.
+				return false;
+			}
+
+			// If the device is already in use, see if the existing user will give it up.
+			bool existingUserRejectedDeviceRelease = existingUser->giveUpDevice();
+			if (existingUserRejectedDeviceRelease) {
+				return true;
+			}
+		}
+
+		_deviceUsers[type].clear();
+	}
+
+	_deviceUsers[type].push_back(user);
+	return false;
+}
+
+void ImtDeviceOwner::releaseDevice(ImtDeviceUser *user, ImtDeviceType type) {
+	// The original does NOT call giveUpDevice here but seems like it should...
+	Common::Array<ImtDeviceUser *> &deviceUsers = _deviceUsers.getVal(type);
+	for (uint i = 0; i < deviceUsers.size(); ++i) {
+		if (deviceUsers[i] == user) {
+			deviceUsers.remove_at(i);
+			break;
+		}
+	}
+}
+
+bool ImtDeviceOwner::releaseAll() {
+	if (hasExclusiveAccessTo(kImtDeviceTypeSound) || hasExclusiveAccessTo(kImtDeviceTypeStream)) {
+		for (auto &deviceUserNode : _deviceUsers) {
+			for (ImtDeviceUser *deviceUser : deviceUserNode._value) {
+				deviceUser->giveUpDevice();
+			}
+		}
+	}
+	_deviceUsers.clear();
+	return true;
+}
+
+void ImtDeviceOwner::setMultipleSounds(bool allowMultipleSounds) {
+	if (allowMultipleSounds) {
+		_exclusiveAccessToSounds = false;
+		forceReleaseDevice(kImtDeviceTypeSound);
+	} else {
+		releaseAll();
+		_exclusiveAccessToSounds = true;
+	}
+}
+
+void ImtDeviceOwner::setMultipleStreams(bool allowMultipleStreams) {
+	if (allowMultipleStreams) {
+		_exclusiveAccessToStreams = false;
+		forceReleaseDevice(kImtDeviceTypeStream);
+	} else {
+		releaseAll();
+		_exclusiveAccessToStreams = true;
+	}
+}
+
+void ImtDeviceOwner::forceReleaseDevice(ImtDeviceType type) {
+	_deviceUsers[type].clear();
+}
 
 bool Document::attemptToReadFromStream(Chunk &chunk, uint sectionType) {
 	bool handledParam = true;
@@ -71,6 +165,10 @@ bool Document::attemptToReadFromStream(Chunk &chunk, uint sectionType) {
 	}
 
 	return handledParam;
+}
+
+bool Document::giveUpDevice() {
+	return true;
 }
 
 void Document::readStartupInformation(Chunk &chunk) {
