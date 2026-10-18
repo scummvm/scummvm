@@ -371,6 +371,8 @@ void IgorEngine::part15() {
 	partMainSetExecuteAction(1, &IgorEngine::part15ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part15UpdateBackground;
 	part15ApplyObjectState(255);
+	SET_PAL_240_48_1();
+	SET_PAL_208_96_1();
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
@@ -381,6 +383,11 @@ void IgorEngine::part15() {
 		_gameState.counter[4] = 0;
 		part15WalkIn();
 		enterPartLoop();
+	}
+	if (takeResumeDialogue(1)) { // loaded while talking to tobias
+		part15HandleTobiasDialogue();
+		part15ApplyObjectState(255);
+		finishResumedDialogue();
 	}
 	while (_currentPart == 150 && !_gameStateLoaded) {
 		runPartLoop();
