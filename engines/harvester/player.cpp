@@ -1025,7 +1025,7 @@ static void setMoveTargetInternal(const RoomSetupState &state, RoomPlayerState &
 	playerState.nextMovementTick = 0;
 	playerState.targetX = CLIP<int>(targetX, 0, 639);
 	playerState.targetBottomY = clampRoomMovementY(state, targetBottomY);
-	playerState.targetZ = clampRoomDepth(state, targetZ);
+	playerState.targetZ = targetZ;
 	resetPlayerMoveTargetProgress(playerState);
 	debugC(1, kDebugPlayer,
 		"Harvester: player move target room='%s' current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f)",
@@ -1448,7 +1448,7 @@ bool Player::isIdleAnimationExcludedRoom(const Common::String &roomName) {
 
 void Player::setMoveTarget(const RoomSetupState &state, int targetX, float targetZ) {
 	RoomPlayerState &playerState = _state;
-	setMoveTargetInternal(state, playerState, targetX, targetZ,
+	setMoveTargetInternal(state, playerState, targetX, clampRoomDepth(state, targetZ),
 		mapRoomDepthToScreenY(state, targetZ));
 }
 
