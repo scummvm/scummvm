@@ -285,6 +285,7 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool s
 	case kNewPuzzleSlideLeft:   return kNewPuzzleSlideLeft;
 	case kNewPuzzleSlideRight:  return kNewPuzzleSlideRight;
 	case kDropHand:             return kNewDropHand;
+	case kNewDropHandHotspot:   return kNewDropHandHotspot;
 	default:
 		return kNewNormal;
 	}
