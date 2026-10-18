@@ -1135,6 +1135,10 @@ public class ScummVMActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 
+		if (!ScummVM.Reloader.reload()) {
+			throw new RuntimeException("Can't reload ScummVM");
+		}
+
 		setLogFile();
 
 		safSyncObject = new Object();
