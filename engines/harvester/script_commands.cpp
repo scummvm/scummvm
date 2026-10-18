@@ -249,8 +249,7 @@ Script::CommandStepResult Script::executeAnimationCommand(const CommandRecord &c
 		const bool active = isTruthy(command.arg2);
 		const bool visible = isTruthy(command.arg3);
 		int runtimeState = currentAnimation->runtimeState;
-		if (active && visible &&
-				(!wasVisible || !currentAnimation->runtimeActive || runtimeState < 0)) {
+		if (visible && (!wasVisible || (active && runtimeState < 0))) {
 			runtimeState = 0;
 		}
 		const bool changed = currentAnimation->active != active ||
