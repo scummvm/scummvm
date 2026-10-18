@@ -22,8 +22,8 @@
 #ifndef SCOOBY_CONTROLLER_INPUT_H
 #define SCOOBY_CONTROLLER_INPUT_H
 
+#include "common/keyboard.h"
 #include "controller_buttons.h"
-#include "scooby/raylib_host.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns the host-input replacement for Ghidra PollControllers at 0x00009D34
@@ -40,8 +40,8 @@ namespace Scooby {
 class ControllerInput {
 public:
 	// Binds the process input owner to the recovered active-low input state.
-	ControllerInput(RaylibHost &host, RuntimeState &state)
-		: _backButton(ControllerButtons::A), _host(host), _state(state) {
+	ControllerInput()
+		: _backButton(ControllerButtons::A) {
 	}
 
 	// Selects the original controller action produced by Escape or
@@ -52,11 +52,30 @@ public:
 	// Reimplements Ghidra PollControllers at 0x00009D34, retaining its
 	// current, previous, baseline, and accumulated-change states without
 	// its controller-port or Z80-bus operations.
-	void pollControllers();
+	void pollControllers(RuntimeState &state);
+
+	// Consumes one Escape press used to skip exactly one current intro
+	// presentation. True only on the key-down edge reported by raylib.
+	// Every queued event is consumed through the same key-state tracking as getControllerButtons, so key
+	// releases that arrive during the intro are not lost (a lost release would leave that button held).
+	bool isIntroSkipPressed();
 
 private:
-	RaylibHost &_host;
-	RuntimeState &_state;
+	// Samples the backend-neutral player controls from keyboard, mouse
+	// buttons, and gamepad zero.
+	Scooby::ControllerButtons getControllerButtons(Scooby::ControllerButtons backButton);
+
+	// Drains all pending host events, applying key presses and releases to _buttons. Escape sets
+	// backButton only when mapEscapeToBackButton is true. Returns whether an Escape press was seen.
+	bool processEvents(Scooby::ControllerButtons backButton, bool mapEscapeToBackButton);
+
+	static Scooby::ControllerButtons keyToButton(Common::KeyCode keycode);
+	static Scooby::ControllerButtons getKeyboardAndMouseButtons(Scooby::ControllerButtons backButton);
+	static Scooby::ControllerButtons getGamepadButtons();
+
+	ControllerButtons _buttons = ControllerButtons::None;
+	// The controller button the currently held Escape key is mapped to, or None.
+	ControllerButtons _escapeButton = ControllerButtons::None;
 };
 } // namespace Scooby
 

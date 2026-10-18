@@ -13,7 +13,7 @@ Scooby-Doo Mystery Todo List
 - [x] BUG: End credits not scrolling properly
 - [ ] refactor code to make it more understandable
   - [ ] Move ApplicationLoop logic into main Scooby engine class
-  - [ ] Remove/rename raylib_host class
-  - [ ] Remove old classes. file, vdp, and gfx
+  - [x] Remove/rename raylib_host class
+  - [x] Remove old classes. file, vdp, and gfx
   - [ ] Identify and name all script functions
 - [ ] Use re-assignable input mapping. (currently hardcoded keys)

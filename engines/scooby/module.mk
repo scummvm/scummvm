@@ -36,7 +36,6 @@ MODULE_OBJS = \
     movement/scripted_room_movement_executor.o \
     presentation/frame_presenter.o \
     randomness/deterministic_random.o \
-    raylib_host.o \
     rendering/frame_clock.o \
     rendering/frame_viewport.o \
     rooms/actor_animation_descriptor_catalog.o \

@@ -31,7 +31,6 @@
 #include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
 #include "graphics/tile_scene.h"
-#include "raylib_host.h"
 #include "scooby/console.h"
 #include "scooby/detection.h"
 #include "startup/application_loop.h"
@@ -68,18 +67,13 @@ Common::Error ScoobyEngine::run() {
 
 	initGraphics(320, 240);
 
-	Common::ScopedPtr<Scooby::RaylibHost> host = Scooby::RaylibHost::create();
-	if (!host) {
-		error("Could not open the raylib host window.\n");
-		return Common::kUnknownError;
-	}
-
+	ControllerInput input;
 	Graphics::Screen screen;
 
 	TileScene scene;
 	IndexedFrame frame(screen);
 
-	_applicationLoop = new ApplicationLoop(*rom, scene, frame, *host);
+	_applicationLoop = new ApplicationLoop(*rom, scene, frame, input);
 
 	// Set the engine's debugger console
 	setDebugger(new Console(_applicationLoop));

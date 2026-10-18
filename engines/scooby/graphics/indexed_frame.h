@@ -52,7 +52,11 @@ public:
 	Common::Array<PaletteColor> _palette;
 
 	Graphics::Screen &_screen;
+
+	void present();
+
 private:
+	static uint8 expandLevel(uint8 level);
 };
 } // namespace Scooby
 

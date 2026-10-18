@@ -29,9 +29,9 @@
 namespace Scooby {
 
 StudioLogoSequence::StudioLogoSequence(const ScoobyDooRom &rom, TileScene &scene,
-									   FramePresenter &presenter, RaylibHost &host,
+									   FramePresenter &presenter, ControllerInput &input,
 									   Common::Functor0<void> &handleRoomVBlank)
-	: _handleRoomVBlank(handleRoomVBlank), _presenter(presenter), _host(host), _rom(rom),
+	: _handleRoomVBlank(handleRoomVBlank), _presenter(presenter), _input(input), _rom(rom),
 	  _scene(scene) {
 }
 
@@ -135,7 +135,7 @@ StudioLogoSequence::StepResult StudioLogoSequence::waitForFrame() {
 		return StepResult::HostClosed;
 	}
 
-	return _host.isIntroSkipPressed() ? StepResult::Skipped : StepResult::Completed;
+	return _input.isIntroSkipPressed() ? StepResult::Skipped : StepResult::Completed;
 }
 
 void StudioLogoSequence::uploadStagedTilemapBand(Span<const uint8> source, int band) {

@@ -39,14 +39,14 @@ void ApplicationLoop::run() {
 			IntroSequence intro(_rom, _scene);
 			while (!g_engine->shouldQuit() && !intro.isComplete()) {
 				clock.waitForNextFrame();
-				if (_host.isIntroSkipPressed()) {
+				if (_input.isIntroSkipPressed()) {
 					intro.skipCurrentStep();
 				} else {
 					intro.advanceFrame();
 				}
 
 				_scene.render(_frame);
-				_host.present(_frame);
+				_frame.present();
 			}
 		}
 
@@ -54,7 +54,7 @@ void ApplicationLoop::run() {
 			return;
 		}
 
-		SessionController session(_rom, _scene, _frame, _host, clock, _state, random);
+		SessionController session(_rom, _scene, _frame, _input, clock, _state, random);
 		_scene.setInterfaceScroll(0);
 		if (session.runGame() == SessionExit::HostClosed) {
 			return;

@@ -42,7 +42,6 @@
 #include "scooby/movement/scripted_room_movement_executor.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/randomness/deterministic_random.h"
-#include "scooby/raylib_host.h"
 #include "scooby/rendering/frame_clock.h"
 #include "scooby/rooms/room_actor_animator.h"
 #include "scooby/rooms/room_actor_initializer.h"
@@ -75,7 +74,7 @@ public:
 	// random: deterministic random state initialized and warmed before the startup presentations.
 	SessionController(const ScoobyDooRom &rom, TileScene &scene,
 					  IndexedFrame &frame,
-					  RaylibHost &host, FrameClock &clock, RuntimeState &state,
+					  ControllerInput &input, FrameClock &clock, RuntimeState &state,
 					  DeterministicRandom &random);
 
 	// Reimplements Ghidra RunAdventure at 0x00000BF4 from entry through its perpetual frame loop. Audio
@@ -167,9 +166,8 @@ private:
 	}
 
 	const ScoobyDooRom &_rom;
-	RaylibHost &_host;
 	RuntimeState &_state;
-	ControllerInput _input;
+	ControllerInput &_input;
 	RoomTileStreamer _roomTileStreamer;
 	RoomActorInitializer _roomActorInitializer;
 	RoomObjectTilePatchRenderer _roomObjectTilePatches;

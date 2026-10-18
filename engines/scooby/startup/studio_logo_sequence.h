@@ -28,8 +28,8 @@
 #include "scooby/common/span.h"
 #include "scooby/graphics/palette_color.h"
 #include "scooby/graphics/tile_scene.h"
+#include "scooby/input/controller_input.h"
 #include "scooby/presentation/frame_presenter.h"
-#include "scooby/raylib_host.h"
 
 // Owns the tile, tilemap, palette, and timing sequence that bridges the
 // intro into the main menu.
@@ -43,7 +43,7 @@ public:
 	// before the startup logo sequence begins.
 	StudioLogoSequence(const ScoobyDooRom &rom, TileScene &scene,
 					   FramePresenter &presenter,
-					   RaylibHost &host, Common::Functor0<void> &handleRoomVBlank);
+					   ControllerInput &input, Common::Functor0<void> &handleRoomVBlank);
 
 	// Runs the opening portion of Ghidra RunAdventure at 0x00000BF4 without
 	// changing its asset offsets, inclusive waits, or tilemap upload order.
@@ -77,7 +77,7 @@ private:
 
 	Common::Functor0<void> &_handleRoomVBlank;
 	FramePresenter &_presenter;
-	RaylibHost &_host;
+	ControllerInput &_input;
 	const ScoobyDooRom &_rom;
 	TileScene &_scene;
 };

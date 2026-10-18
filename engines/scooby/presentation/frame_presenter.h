@@ -28,7 +28,6 @@
 #include "scooby/graphics/indexed_frame.h"
 #include "scooby/graphics/palette_color.h"
 #include "scooby/graphics/tile_scene.h"
-#include "scooby/raylib_host.h"
 #include "scooby/rendering/frame_clock.h"
 
 // Owns retrace pacing, logical-frame presentation, and palette transitions
@@ -38,7 +37,7 @@ namespace Scooby {
 
 class FramePresenter {
 public:
-	FramePresenter(TileScene &scene, IndexedFrame &frame, RaylibHost &host,
+	FramePresenter(TileScene &scene, IndexedFrame &frame,
 				   FrameClock &clock);
 
 	// Ghidra fadePaletteOut (0x00009DE0), including its leading retrace.
@@ -63,7 +62,6 @@ public:
 private:
 	FrameClock &_clock;
 	IndexedFrame &_frame;
-	RaylibHost &_host;
 	TileScene &_scene;
 };
 } // namespace Scooby

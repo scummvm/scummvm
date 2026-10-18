@@ -27,8 +27,8 @@
 #include "scooby/assets/rom.h"
 #include "scooby/graphics/indexed_frame.h"
 #include "scooby/graphics/tile_scene.h"
+#include "scooby/input/controller_input.h"
 #include "scooby/randomness/deterministic_random.h"
-#include "scooby/raylib_host.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns recovered top-level sequencing independently from the raylib platform boundary.
@@ -43,8 +43,8 @@ public:
 	// frame: shared logical presentation frame.
 	// host: process-global raylib owner.
 	ApplicationLoop(const ScoobyDooRom &rom, TileScene &scene, IndexedFrame &frame,
-					RaylibHost &host)
-		: _rom(rom), _scene(scene), _frame(frame), _host(host) {
+					ControllerInput &input)
+		: _rom(rom), _scene(scene), _frame(frame), _input(input) {
 	}
 
 	// Executes the ported startup path and then enters Ghidra RunAdventure at 0x00000BF4.
@@ -70,7 +70,7 @@ private:
 	const ScoobyDooRom &_rom;
 	TileScene &_scene;
 	IndexedFrame &_frame;
-	RaylibHost &_host;
+	ControllerInput &_input;
 	RuntimeState _state;
 	SaveGameData _loadGameData;
 };
