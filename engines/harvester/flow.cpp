@@ -22,17 +22,12 @@
 #include "harvester/flow.h"
 
 #include "common/algorithm.h"
-#include "common/debug.h"
 #include "common/events.h"
 #include "common/memstream.h"
 #include "common/serializer.h"
-#include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/input.h"
-#include "harvester/resources.h"
 #include "harvester/entity.h"
-#include "harvester/scene_entities.h"
-#include "harvester/player.h"
 #include "harvester/script.h"
 
 namespace Harvester {
@@ -40,56 +35,8 @@ namespace Harvester {
 namespace {
 
 static const int kCursorSequence7 = 7;
-static const char *const kPlayerActorEntityName = "PLAYER";
 
 } // End of anonymous namespace
-
-static void setRoomActorScreenPosition(Entity &entity, int centerX, int bottomY, float z,
-		int width, int height, int xOffset, int yOffset) {
-	entity.setPosition(centerX - xOffset - width / 2, bottomY - height - yOffset, z);
-}
-
-static float computeRoomActorRenderZ(float z, const Entity &entity) {
-	// Native actor spawns lower the render-list depth anchor by half the z extent
-	// before insertion. Without that adjustment, cemetery Karin lands one layer
-	// too far back and gets occluded by the grave mask in CEM10.
-	return z - floorf(MAX<float>(entity.getZExtent(), 0.0f) * 0.5f);
-}
-
-static bool applyRoomActorPlacementInternal(const RoomSetupState &state, Entity &entity,
-		int centerX, int bottomY, float z, const Common::String *entranceName, bool applyDepthScale) {
-	int width = 0;
-	int height = 0;
-	int xOffset = 0;
-	int yOffset = 0;
-	if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
-		return false;
-
-	const float renderZ = computeRoomActorRenderZ(z, entity);
-	entity.setAnchorMode(kEntityAnchorTopLeft);
-	setRoomActorScreenPosition(entity, centerX, bottomY, renderZ, width, height, xOffset, yOffset);
-
-	float depthScale = 1.0f;
-	if (applyDepthScale) {
-		depthScale = Player::computeDepthScale(state, renderZ);
-		entity.setDepthScale(depthScale);
-		if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
-			return false;
-		setRoomActorScreenPosition(entity, centerX, bottomY, renderZ, width, height, xOffset, yOffset);
-	}
-
-	return true;
-}
-
-bool applyRoomActorPlacement(const RoomSetupState &state, Entity &entity,
-		int centerX, int bottomY, float z, const Common::String *entranceName) {
-	return applyRoomActorPlacementInternal(state, entity, centerX, bottomY, z, entranceName, true);
-}
-
-static bool applyStartupActorPlacement(const RoomSetupState &state, Entity &entity) {
-	return applyRoomActorPlacement(state, entity,
-		state.playerSpawnX, state.playerSpawnY, (float)state.playerSpawnZ, &state.entranceName);
-}
 
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap) {
 	if (screen.w <= 0 || screen.h <= 0 || screen.format.bytesPerPixel != 1)
@@ -419,109 +366,6 @@ bool Flow::ensureCursorEntity() {
 		return true;
 
 	return entityManager->spawnCursorEntity(_mousePos) != nullptr;
-}
-
-bool Flow::populateRoomSceneEntities(RoomSetupState &state,
-		const Common::Array<ObjectRecord> &drawableObjects,
-		const Common::Array<AnimRecord> &drawableAnimations) {
-	EntityManager *entityManager = _engine.getRuntimeEntities();
-	if (!entityManager)
-		return false;
-
-	SceneEntities sceneRuntime(state, _engine.getScript(), _engine.getResources(), entityManager);
-	Entity *preservedPlayer = entityManager->detachSceneEntityByName(kPlayerActorEntityName);
-	entityManager->clearSceneEntities(true);
-	sceneRuntime.populateRoomRegions();
-	for (const TimerRecord &timer : state.roomTimers) {
-		Entity *existingTimer = entityManager->findSceneEntityByName(timer.timerName);
-		if (existingTimer && existingTimer->getClassId() == kEntityClassTimer) {
-			debugC(1, kDebugRoom,
-				"Harvester: scene timer reused room='%s' timer='%s' current=%d initial=%d enabled=%d loop=%d global=%d",
-				state.roomName.c_str(), timer.timerName.c_str(), existingTimer->getTimerCurrentValue(),
-				existingTimer->getTimerInitialValue(), existingTimer->isTimerEnabled(),
-				existingTimer->isTimerLooping(), existingTimer->isTimerGlobal());
-			continue;
-		}
-
-		if (!entityManager->spawnSceneTimerEntity(timer.timerName,
-				timer.initialValue, timer.currentValue, timer.enabled, timer.looping, timer.global)) {
-			debug(1, "Harvester: unable to spawn room timer entity '%s'",
-				timer.timerName.c_str());
-			continue;
-		}
-
-		debugC(1, kDebugRoom,
-			"Harvester: scene timer spawned room='%s' timer='%s' current=%d initial=%d enabled=%d loop=%d global=%d",
-			state.roomName.c_str(), timer.timerName.c_str(), timer.currentValue, timer.initialValue,
-			timer.enabled, timer.looping, timer.global);
-	}
-	sceneRuntime.populateRoomObjects(drawableObjects);
-	for (const AnimRecord &anim : drawableAnimations) {
-		const bool displayVisible = shouldDisplaySceneAnimation(anim);
-		if (!entityManager->spawnSceneAnimationEntity(anim.animName, anim.resourcePath,
-				Common::Point(anim.x, anim.y), (float)anim.z, anim.frameDelay, anim.active, displayVisible,
-				anim.looping, anim.backward, anim.pingPong, anim.runtimeState)) {
-			debug(1, "Harvester: unable to spawn room anim entity '%s' from '%s'",
-				anim.animName.c_str(), anim.resourcePath.c_str());
-		}
-	}
-	sceneRuntime.populateRoomNpcs();
-	sceneRuntime.populateRoomMonsters();
-	if (state.hasEntrance) {
-		const int playerFrame = Player::resolveFacingFrame(state.playerFacing);
-		Script *script = _engine.getScript();
-		const int playerCombatLoadout = script ? script->getPlayerCombatLoadout() : 0;
-		const Common::String playerResourcePath =
-			Player::resolveCombatLoadoutResourcePath(playerCombatLoadout);
-		const bool reusedPlayer = preservedPlayer != nullptr;
-		Entity *player = preservedPlayer;
-		if (!reusedPlayer) {
-			player = entityManager->spawnSceneActorEntity(kPlayerActorEntityName,
-				playerResourcePath, Common::Point(state.playerSpawnX, state.playerSpawnY),
-				(float)state.playerSpawnZ, playerFrame);
-		}
-		if (!player) {
-			debug(1, "Harvester: unable to spawn startup player actor from '%s'", playerResourcePath.c_str());
-		} else {
-			player->setClassId(kEntityClassPlayer);
-			player->setAnchorMode(kEntityAnchorTopLeft);
-			player->setHitTestMode(kEntityHitTestOpaquePixels);
-			player->setVisible(true);
-			player->setAnimationRate(0);
-			player->setAnimationFrameRange(playerFrame, playerFrame, false);
-			player->setCurrentFrame(playerFrame);
-			if (!applyStartupActorPlacement(state, *player)) {
-				debug(1, "Harvester: unable to apply startup player placement for entrance '%s'",
-					state.entranceName.c_str());
-			}
-			if (reusedPlayer) {
-				Player loadoutPlayer;
-				loadoutPlayer.initialize(state, player, -1);
-				(void)loadoutPlayer.syncCombatLoadoutVisual(_engine, state, playerCombatLoadout);
-			}
-			Player spawnPlayer;
-			spawnPlayer.initialize(state, player, 0);
-			if (spawnPlayer.resolveBlockedStartupSpawn(_engine, state, drawableObjects, drawableAnimations)) {
-				state.playerSpawnX = spawnPlayer.getState().centerX;
-				state.playerSpawnY = spawnPlayer.getState().bottomY;
-				state.playerSpawnZ = (int)spawnPlayer.getState().z;
-			}
-			if (reusedPlayer)
-				entityManager->adoptSceneEntity(player);
-			else
-				entityManager->reinsertSceneEntity(player);
-			debugC(1, kDebugPlayer,
-				"Harvester: %s startup player actor '%s' entrance='%s' pos=(%d,%d,%d) facing=%d frame=%d",
-				reusedPlayer ? "reused" : "spawned", playerResourcePath.c_str(), state.entranceName.c_str(),
-				state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ,
-				state.playerFacing, playerFrame);
-		}
-		preservedPlayer = nullptr;
-	} else if (preservedPlayer) {
-		delete preservedPlayer;
-	}
-
-	return true;
 }
 
 void Flow::executeStartupAudioCommands(const Common::Array<AudioCommand> &commands) {
