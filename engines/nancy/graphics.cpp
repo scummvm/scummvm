@@ -254,45 +254,50 @@ void GraphicsManager::filterDirtyRects(Common::List<Common::Rect> &rects) {
 // Perform the actual drawing. This checks for cases where something would be fully obscured,
 // and skips them (e.g. redrawing the Viewport won't also redraw the background)
 void GraphicsManager::drawObjects(Graphics::ManagedSurface &target, const Common::List<Common::Rect> &rects, Layer layer) {
-	for (const Common::Rect &rect : rects) {
-		for (RenderObject **it = _objects.begin(); it < _objects.end(); ++it) {
-			RenderObject &current = **it;
+	if (rects.empty()) {
+		return;
+	}
 
-			if (!isInLayer(current, layer) || !current.isVisible() || current.getScreenPosition().isEmpty()) {
+	// What gets drawn and where, worked out once for all of the rects
+	struct DrawnObject {
+		const RenderObject *object;
+		Common::Rect position;
+		bool isOpaque;
+	};
+
+	Common::Array<DrawnObject> drawn;
+	for (const RenderObject *object : _objects) {
+		if (!isInLayer(*object, layer) || !object->isVisible()) {
+			continue;
+		}
+
+		DrawnObject entry;
+		entry.object = object;
+		entry.position = object->getScreenPosition();
+		entry.isOpaque = !object->_drawSurface.hasTransparentColor() && object->_drawSurface.format != _transparentPixelFormat;
+		if (!entry.position.isEmpty()) {
+			drawn.push_back(entry);
+		}
+	}
+
+	for (const Common::Rect &rect : rects) {
+		for (uint i = 0; i < drawn.size(); ++i) {
+			const Common::Rect intersection = rect.findIntersectingRect(drawn[i].position);
+			if (intersection.isEmpty()) {
 				continue;
 			}
 
-			bool shouldSkip = false;
-
-			Common::Rect intersection = rect.findIntersectingRect(current.getScreenPosition());
-			if (!intersection.isEmpty()) {
-				// Found an intersecting RenderObject. Loop through the following
-				// RenderObjects, and see if we have another that fully obscures the intersection
-				for (auto it2 = it + 1; it2 < _objects.end(); ++it2) {
-					RenderObject &other = **it2;
-
-					if (!isInLayer(other, layer) || !other.isVisible() || other.getScreenPosition().isEmpty()) {
-						continue;
-					}
-
-					Common::Rect intersection2 = intersection.findIntersectingRect(other.getScreenPosition());
-					if (intersection == intersection2) {
-						// The entire area that would be drawn is obscured by another RenderObject.
-						// If the obscuring RenderObject is not transparent, we skip drawing current
-
-						if (!other._drawSurface.hasTransparentColor() && other._drawSurface.format != _transparentPixelFormat) {
-							// No transparency, skip current
-							shouldSkip = true;
-							break;
-						}
-					}
+			// An opaque object that comes later and covers all of the area hides it
+			bool isHidden = false;
+			for (uint j = i + 1; j < drawn.size(); ++j) {
+				if (drawn[j].isOpaque && intersection.findIntersectingRect(drawn[j].position) == intersection) {
+					isHidden = true;
+					break;
 				}
+			}
 
-				if (shouldSkip) {
-					continue;
-				}
-
-				blitObject(target, current, rect.findIntersectingRect(current.getScreenPosition()));
+			if (!isHidden) {
+				blitObject(target, *drawn[i].object, intersection);
 			}
 		}
 	}
