@@ -408,7 +408,7 @@ void IgorEngine::part2() {
 			updatePalette(768);
 			_walkData[0].setPos(49, 118, kFacingPositionBack, 0);
 			break;
-		case 23: // back after outdoor explosion scene
+		case 23: { // back after outdoor explosion scene
 			memset(_screenVGA + 0xB400, 0, 0x4600);
 			memcpy(_currentPalette, _paletteBuffer, 768);
 			drawAnimRect(0x6C3B, 0x820B + 0 * 0xA19, 47, 55, false, kBlendLitSprite);
@@ -436,6 +436,7 @@ void IgorEngine::part2() {
 			drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 			_walkData[0].setPos(215, 134, kFacingPositionRight, 0);
 			break;
+		}
 		case 24: // From igor's room
 			_walkData[0].setPos(211, 120, kFacingPositionFront, 0);
 			fadeIn(768);
