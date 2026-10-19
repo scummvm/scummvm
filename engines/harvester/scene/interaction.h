@@ -128,6 +128,13 @@ private:
 	Common::Error handleDemoEnding(bool &didTransition);
 	Common::Error handleMainMenuReturn(const Common::String &deathFlicPath);
 	void applyPlayerDeathRequest(const InteractionResult &interaction);
+	Common::Error queueImplicitRoomRestart(const InteractionResult &interaction,
+		bool discChanged, bool &didTransition);
+	Common::Error queueSavedRoomRestart(const SaveRoomState &savedState, bool &didTransition);
+	Common::Error queueRoomChange(const Common::String &nextRoomName, bool &didTransition);
+	Common::Error runCloseupInteraction(const InteractionResult &interaction, bool discChanged,
+		const Common::String &restoreMusicPath, bool &didTransition);
+	Common::Error queueCloseupExit(bool &didTransition);
 
 	HarvesterEngine &_engine;
 	Flow &_flow;
