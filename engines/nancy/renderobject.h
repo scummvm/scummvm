@@ -52,6 +52,12 @@ public:
 	void setTransparent(bool isTransparent);
 	bool isVisible() const { return _isVisible; }
 
+	// Where on the screen the object was the last time it got drawn; empty when it
+	// wasn't shown. The viewport can scroll since, which moves where the object
+	// would be now, but not what is on the screen.
+	const Common::Rect &getDrawnScreenPosition() const { return _drawnScreenPosition; }
+	void setDrawnScreenPosition(const Common::Rect &position) { _drawnScreenPosition = position; }
+
 	bool needsRedraw() const { return _needsRedraw; }
 	void setNeedsRedraw(bool needsRedraw) { _needsRedraw = needsRedraw; }
 
@@ -96,6 +102,7 @@ protected:
 	bool _hasMoved;
 	bool _isNativeResolution = false;
 	uint16 _z;
+	Common::Rect _drawnScreenPosition;
 	Common::Rect _previousScreenPosition;
 	Common::Rect _screenPosition;
 };

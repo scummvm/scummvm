@@ -160,20 +160,23 @@ void GraphicsManager::draw(bool updateScreen) {
 		current.updateGraphics();
 
 		if (current.needsRedraw()) {
+			const Common::Rect &drawnPosition = current.getDrawnScreenPosition();
 			if (current.isVisible()) {
-				if (current.hasMoved() && !current.getPreviousScreenPosition().isEmpty()) {
+				if (!drawnPosition.isEmpty() && drawnPosition != current.getScreenPosition()) {
 					// Object moved to a new location on screen, update the previous one
-					addDirtyRect(current, current.getPreviousScreenPosition());
+					addDirtyRect(current, drawnPosition);
 				}
 
 				// Redraw the current location
 				addDirtyRect(current, current.getScreenPosition());
-			} else if (!current.getPreviousScreenPosition().isEmpty()) {
-				// Object just turned invisible, redraw the last location
-				addDirtyRect(current, current.getPreviousScreenPosition());
+			} else if (!drawnPosition.isEmpty()) {
+				// Object just turned invisible, redraw the last location. An object
+				// that stays invisible has nothing to clean up, however often it changes.
+				addDirtyRect(current, drawnPosition);
 			}
 		}
 
+		current.setDrawnScreenPosition(current.isVisible() ? current.getScreenPosition() : Common::Rect());
 		current.setNeedsRedraw(false);
 		current.setHasMoved(false);
 		current.updatePreviousScreenPosition();
@@ -519,8 +522,11 @@ void GraphicsManager::reorderObject(RenderObject *object) {
 void GraphicsManager::removeObject(RenderObject *object) {
 	for (auto &r : _objects) {
 		if (r == object) {
-			// Make sure the object gets properly cleared
-			addDirtyRect(*r, r->getPreviousScreenPosition());
+			// Make sure the object gets properly cleared, where it was drawn
+			if (!r->getDrawnScreenPosition().isEmpty()) {
+				addDirtyRect(*r, r->getDrawnScreenPosition());
+			}
+
 			_objects.erase(&r);
 			break;
 		}
