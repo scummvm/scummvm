@@ -26,7 +26,7 @@
 #include "harvester/console.h"
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
-#include "harvester/media_manager.h"
+#include "harvester/media/media_manager.h"
 #include "harvester/resources.h"
 #include "harvester/flow/flow.h"
 #include "harvester/script/script.h"

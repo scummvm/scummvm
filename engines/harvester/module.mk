@@ -21,7 +21,8 @@ MODULE_OBJS = \
 	harvester.o \
 	inventory.o \
 	media/audio_decoder.o \
-	media_manager.o \
+	media/media_manager.o \
+	media/media_playback.o \
 	menu/menu.o \
 	menu/menu_config.o \
 	menu/menu_navigation.o \
