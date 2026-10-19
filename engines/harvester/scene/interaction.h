@@ -36,6 +36,7 @@ class Interaction;
 class SceneEntities;
 class Player;
 struct IndexedBitmap;
+struct RoomPlayerState;
 
 extern const char *const kExitCloseupPendingRoomChange;
 
@@ -123,6 +124,11 @@ public:
 		const Common::String &continuationTag, bool &didTransition);
 
 private:
+	void preparePlayerForInteraction(const RoomPlayerState &playerState, bool interruptPlayerMovement);
+	Common::Error handleDemoEnding(bool &didTransition);
+	Common::Error handleMainMenuReturn(const Common::String &deathFlicPath);
+	void applyPlayerDeathRequest(const InteractionResult &interaction);
+
 	HarvesterEngine &_engine;
 	Flow &_flow;
 	SceneState &_scene;

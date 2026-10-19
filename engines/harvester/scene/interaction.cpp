@@ -468,65 +468,17 @@ int Interaction::getPendingRegionFacing() const {
 	return pendingRegion && pendingRegion->startEnabled ? pendingRegion->desiredFacing : -1;
 }
 
-bool Interaction::hasPendingMainMenuReturn() const {
-	return _flow.hasPendingMainMenuReturn();
-}
-
-Common::Error Interaction::handleCombatInteraction(const InteractionResult &interaction, bool &needsRedraw) {
-	bool didTransition = false;
-	Common::Error interactionError =
-		handleInteractionResult(interaction, didTransition, Common::String());
-	if (interactionError.getCode() != Common::kNoError)
-		return interactionError;
-	if (!_flow.hasPendingMainMenuReturn() &&
-			_engine.getScript() &&
-			_engine.getScript()->getPlayerCurrentHitPoints() <= 0) {
-		_callbacks.stopPlayerRegionInteraction();
-		_callbacks.startPlayerDefeatSequence("combat_interaction", Common::String(), 1);
-	}
-
-	needsRedraw = true;
-	return Common::kNoError;
-}
-
 Common::Error Interaction::handleInteractionResult(const InteractionResult &interaction,
 		bool &didTransition, const Common::String &usedItemName, bool interruptPlayerMovement) {
 	const RoomPlayerState &playerState = _player.getState();
 	didTransition = false;
 
-	if (interruptPlayerMovement) {
-		_player.cancelMovement();
-		_pendingRegionName.clear();
-	} else if (playerState.hasMoveTarget || playerState.turnActive) {
-		debugC(2, kDebugPlayer,
-			"Harvester: background action preserving player movement room='%s' pos=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f) region='%s' turning=%d",
-			_scene.state.roomName.c_str(), playerState.centerX, playerState.bottomY,
-			playerState.z, playerState.targetX, playerState.targetBottomY,
-			playerState.targetZ, _pendingRegionName.c_str(), playerState.turnActive);
-	}
-	if (interaction.requestDemoEnding) {
-		Common::Error endingError = _flow.runDemoEnding();
-		if (endingError.getCode() != Common::kNoError)
-			return endingError;
-		didTransition = true;
-		return Common::kNoError;
-	}
+	preparePlayerForInteraction(playerState, interruptPlayerMovement);
+	if (interaction.requestDemoEnding)
+		return handleDemoEnding(didTransition);
 
-	if (interaction.requestMainMenu) {
-		_engine.stopMusic();
-		_engine.stopSound();
-		if (!interaction.deathFlicPath.empty()) {
-			FstPlayer fstPlayer(_engine);
-			if (!fstPlayer.play(interaction.deathFlicPath))
-				return Common::kReadingFailed;
-		}
-
-		if (!interaction.deathFlicPath.empty())
-			_flow.requestGameOverReturn();
-		else
-			_flow.requestMainMenuReturn();
-		return Common::kNoError;
-	}
+	if (interaction.requestMainMenu)
+		return handleMainMenuReturn(interaction.deathFlicPath);
 
 	Common::String restoreMusicPath = _engine.getMusicPath();
 	bool discChanged = false;
@@ -680,13 +632,7 @@ Common::Error Interaction::handleInteractionResult(const InteractionResult &inte
 	if (didTransition)
 		return Common::kNoError;
 
-	if (interaction.requestPlayerDeath &&
-			_engine.getScript() &&
-			_engine.getScript()->getPlayerCurrentHitPoints() <= 0) {
-		_callbacks.stopPlayerRegionInteraction();
-		_callbacks.startPlayerDefeatSequence("script_kill_pc", Common::String(),
-			interaction.playerDeathDamageType);
-	}
+	applyPlayerDeathRequest(interaction);
 
 	if (interaction.requestPlayerGotoXZ)
 		_callbacks.applyPlayerGotoXZ(interaction.playerGotoX, interaction.playerGotoZ);
