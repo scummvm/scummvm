@@ -199,7 +199,7 @@ bool IgorEngine::readProtectionWord(uint8 *typed) {
 		}
 		if (blinkCounter == kFloppyProtectionBlinkTick && !full && !done) {
 			floppyMenuFillRow(x, kFloppyProtectionInputY + kFloppyProtectionCaretRow, kFloppyProtectionCaretWidth, caretColor);
-			caretColor = (caretColor == kFloppyColorCaption) ? kFloppyColorInputFill : kFloppyColorCaption;
+			caretColor = (caretColor == kFloppyColorCaption) ? (int)kFloppyColorInputFill : (int)kFloppyColorCaption;
 			changed = true;
 		}
 		if (changed)

@@ -230,7 +230,7 @@ void IgorEngine::beginRightButtonVerbPick() {
 	}
 	// if in inventory area but no item is below the mouse, choose use
 	if (inventorySlot && getObjectFromInventory(_rightButtonSelectCursorX) == 0 && defaultVerb == kVerbLook) {
-		defaultVerb = (_currentAction.verb == kVerbWalk) ? kVerbUse : _currentAction.verb;
+		defaultVerb = (_currentAction.verb == kVerbWalk) ? (int)kVerbUse : (int)_currentAction.verb;
 	}
 	const int previousVerb = _currentAction.verb;
 	if (defaultVerb > 0) {

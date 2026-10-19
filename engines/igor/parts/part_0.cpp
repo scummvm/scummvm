@@ -86,14 +86,14 @@ void IgorEngine::part0ExecuteAction(int action) {
 		break;
 	case 106: // open bedside table
 		if (_objectsState[kBedroomNightstandOpenStateIndex] == 0) {
-			animateLitAnimFrames(0x3FC8, 0, 2, 0x436, 22, 49, 0x693C, 126, 2, _game.version == kIdSpaFloppy ? kSpaFloppySoundPart0Nightstand : kSoundPart0Nightstand);
+			animateLitAnimFrames(0x3FC8, 0, 2, 0x436, 22, 49, 0x693C, 126, 2, _game.version == kIdSpaFloppy ? (int)kSpaFloppySoundPart0Nightstand : (int)kSoundPart0Nightstand);
 			_objectsState[kBedroomNightstandOpenStateIndex] = 1;
 			part0ApplyObjectState(1);
 		}
 		break;
 	case 107: // close bedside table
 		if (_objectsState[kBedroomNightstandOpenStateIndex] != 0) {
-			animateLitAnimFrames(0x3FC8, 2, 0, 0x436, 22, 49, 0x693C, 126, 1, _game.version == kIdSpaFloppy ? kSpaFloppySoundPart0Nightstand : kSoundPart0Nightstand);
+			animateLitAnimFrames(0x3FC8, 2, 0, 0x436, 22, 49, 0x693C, 126, 1, _game.version == kIdSpaFloppy ? (int)kSpaFloppySoundPart0Nightstand : (int)kSoundPart0Nightstand);
 			_objectsState[kBedroomNightstandOpenStateIndex] = 0;
 			part0ApplyObjectState(1);
 		}
@@ -125,7 +125,7 @@ void IgorEngine::part0ExecuteAction(int action) {
 		break;
 	case 111: // close closet
 		if (_objectsState[kBedroomClosetOpenStateIndex] != 0) {
-			animateLitAnimFrames(0x1678, 2, 0, 0x940, 37, 64, 0x556C, 126, 1, _game.version == kIdSpaFloppy ? kSpaFloppySoundPart0ClosetClose : kSoundPart0ClosetClose);
+			animateLitAnimFrames(0x1678, 2, 0, 0x940, 37, 64, 0x556C, 126, 1, _game.version == kIdSpaFloppy ? (int)kSpaFloppySoundPart0ClosetClose : (int)kSoundPart0ClosetClose);
 			_objectsState[kBedroomClosetOpenStateIndex] = 0;
 			part0ApplyObjectState(3);
 		}
