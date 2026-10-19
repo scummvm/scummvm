@@ -142,18 +142,17 @@ void MenuSystem::toggleOptionsGore(OptionsMenu &menu) {
 void MenuSystem::toggleOptionsPassword(OptionsMenu &menu) {
 	if (menu.script.getParentalPassword().empty()) {
 		debugC(2, kDebugGeneral, "Harvester: parental password set prompt opened");
-		Common::String password;
-		bool accepted = false;
+		PasswordPromptResult prompt;
 		Common::Error promptError = runPasswordPrompt(
-			menu.backdrop, menu.palette, menu.paletteBrightness, menu.flow, true, password, accepted);
+			menu.backdrop, menu.palette, menu.paletteBrightness, menu.flow, true, prompt);
 		if (promptError.getCode() != Common::kNoError) {
 			debugC(1, kDebugGeneral,
 				"Harvester: parental password set prompt failed error=%d",
 				static_cast<int>(promptError.getCode()));
 			return;
 		}
-		if (accepted) {
-			menu.script.setParentalPassword(password);
+		if (prompt.accepted) {
+			menu.script.setParentalPassword(prompt.password);
 			if (!menu.script.saveConfig()) {
 				menu.script.setParentalPassword(Common::String());
 				debugC(1, kDebugGeneral,

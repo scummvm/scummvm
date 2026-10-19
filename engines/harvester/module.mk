@@ -16,7 +16,9 @@ MODULE_OBJS = \
 	menu_config.o \
 	menu_navigation.o \
 	menu_options.o \
+	menu_prompts.o \
 	menu_render.o \
+	menu_save.o \
 	metaengine.o \
 	monster.o \
 	player.o \

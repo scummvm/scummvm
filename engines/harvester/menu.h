@@ -135,9 +135,12 @@ private:
 		const Graphics::Font &selectedFont, bool &closed);
 
 	struct SaveSlotMenu;
+	struct SaveSlotEventResult;
 	enum SaveLoadMode { kSaveMode, kLoadMode };
 	enum SaveSlotCommand { kNoSlotCommand, kConfirmSlot, kCancelSlot };
 
+	SaveSlotEventResult handleSaveSlotEvent(SaveSlotMenu &menu, SaveLoadMode mode,
+		const Common::Event &event) const;
 	Common::Error runSaveSlotMenu(Flow &flow, SaveLoadMode mode, bool &completed);
 	void reloadSaveSlotTitles(SaveSlotMenu &menu) const;
 	int getSaveSlotAt(const Common::Point &mousePos) const;
@@ -162,9 +165,12 @@ private:
 		bool &confirmed);
 	Common::Error runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow);
+	struct PasswordPromptResult {
+		Common::String password;
+		bool accepted = false;
+	};
 	Common::Error runPasswordPrompt(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &flow, bool drawLogo, Common::String &password,
-		bool &accepted) const;
+		float paletteBrightness, Flow &flow, bool drawLogo, PasswordPromptResult &prompt) const;
 	Common::Error showGameOverBackdrop(Flow &flow);
 	void clearMainMenuBackdrop();
 	void renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,
