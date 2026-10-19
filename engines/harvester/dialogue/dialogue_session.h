@@ -36,6 +36,7 @@ namespace Harvester {
 
 class Art;
 class EntityManager;
+class ResourceManager;
 struct MenuTextConfig;
 
 class RoomNpcDialogueSession : public DialogueRuntimeCallbacks {
@@ -79,6 +80,9 @@ public:
 private:
 	Graphics::Screen *getActiveScreen() const;
 	Common::Error waitForPointerRelease();
+	Common::Error waitForDialogueContinue(const IndexedBitmap *textboxBitmap,
+		const Common::Array<Common::String> *subtitleLines);
+	Common::Error activateDialogueDisc(ResourceManager &resources, int discNumber, int previousDisc);
 	void drawFontString(const Graphics::Font &font, bool usesCft, const Common::String &text,
 		int x, int y, int width, byte color);
 	void ensureSpeakerPortrait(const Common::String &speakerId, int headVariant);

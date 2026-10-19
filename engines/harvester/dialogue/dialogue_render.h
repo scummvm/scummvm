@@ -34,6 +34,7 @@ class Screen;
 namespace Harvester {
 namespace DialogueRendering {
 
+static const int kDialogueSubtitleTextWidth = 316;
 static const int kDialogueKeywordTextY = 34;
 static const int kDialogueTopicStartX = 168;
 static const int kDialogueTopicEndX = 482;
