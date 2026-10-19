@@ -635,6 +635,7 @@ private:
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _speechHandle;
 	int _optionsControlRow;
+	bool _floppyProtectionPassed;
 
 	uint8 *_screenVGA;
 	uint8 *_facingIgorFrames[4];
@@ -1773,13 +1774,19 @@ private:
 	void loadFloppyOptionsMenuTexts();
 	void floppyOptionsDrawText(int text, int x, int y, int color);
 	void floppyOptionsFillRow(const uint8 *button, int buttonRow, int y);
+	void floppyOptionsDrawPanel(const uint8 *button);
 	void floppyOptionsDrawMainPage(const uint8 *button);
 	void floppyOptionsClearCaptionBar(const uint8 *button);
 	void floppyOptionsPaintControl(const uint8 *button, int row);
 	void floppyOptionsPresent(int selectedButton);
 	void floppyOptionsQuitPage(const uint8 *button);
 	void floppyOptionsControlPage(const uint8 *button);
+	void floppyMenuFadeOut();
 	void handleFloppyOptionsMenu();
+	void floppyMenuFillRow(int x, int y, int count, int color);
+	bool isGameEnding() const;
+	bool copyProtection();
+	bool checkCopyProtection();
 	void scrollInventory();
 	void drawInventory(int start, int mode);
 	void pageFloppyInventory(bool forward);
@@ -1852,6 +1859,7 @@ private:
 	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); }
 
 	void waitForTimer(int ticks = -1, bool presentScreen = true, uint32 deadline = 0);
+	uint32 ticksSince(uint32 startMillis) const;
 
 	ResourceEntry *findData(int num);
 	void unpackExecutable();

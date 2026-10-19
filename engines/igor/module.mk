@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	static_palette.o \
 	static_text.o \
 	options.o \
+	copy_protection.o \
 	parts/part_0.o \
 	parts/part_1.o \
 	parts/part_2.o \
