@@ -341,7 +341,13 @@ void writeTextElement(lua_State *L, int tableIndex, const Common::String &fontNa
 	int32 horizontalAlignment = kAlignCenter;
 	int32 verticalAlignment = kAlignTop;
 
+	// A font named in the font table takes the place of the one by number
+	Common::String name = fontName;
+	bool bold = isBold;
+
 	pushTableField(L, tableIndex, "font");
+	readField(L, -1, "name", name);
+	readField(L, -1, "bold", bold);
 	readNamedField(L, -1, "horzAlign", kHorizontalAlignments, ARRAYSIZE(kHorizontalAlignments), horizontalAlignment);
 	readNamedField(L, -1, "vertAlign", kVerticalAlignments, ARRAYSIZE(kVerticalAlignments), verticalAlignment);
 	readField(L, -1, "wrap", wraps);
@@ -354,8 +360,8 @@ void writeTextElement(lua_State *L, int tableIndex, const Common::String &fontNa
 		out.writeUint32BE(kDefaultColor);
 	}
 
-	writeName(out, fontName);
-	out.writeByte(isBold);
+	writeName(out, name);
+	out.writeByte(bold);
 	out.writeSint32LE(horizontalAlignment);
 	out.writeSint32LE(verticalAlignment);
 	out.writeByte(wraps);
