@@ -478,12 +478,15 @@ void SceneContext::handleInput(NancyInput &input) {
 		record->sendMouseMove(point, inViewport);
 	}
 
-	for (Record *record : _inputOrder) {
-		uint cursorType = 0;
-		bool isHot = false;
-		if (record->sendChangeCursor(point, inViewport, cursorType, isHot)) {
-			g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, isHot);
-			break;
+	// The UI that took the mouse already picked the cursor
+	if (input.mousePos.x >= 0) {
+		for (Record *record : _inputOrder) {
+			uint cursorType = 0;
+			bool isHot = false;
+			if (record->sendChangeCursor(point, inViewport, cursorType, isHot)) {
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, isHot);
+				break;
+			}
 		}
 	}
 
