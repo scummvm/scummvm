@@ -282,6 +282,10 @@ void ConvoRecord::showFrame(uint frame) {
 // The line is over once the XSheet has reached its last frame, and the parts
 // that play by themselves have played through
 bool ConvoRecord::isVideoDone() const {
+	if (_isLineSkipped) {
+		return true;
+	}
+
 	for (const Tree *tree : _trees) {
 		if (isTreeFreeRunning(*tree) && !tree->player.endOfVideo()) {
 			return false;
@@ -289,6 +293,50 @@ bool ConvoRecord::isVideoDone() const {
 	}
 
 	return _numFrames == 0 || _frame == _numFrames - 1;
+}
+
+// The character stops talking, and the video goes to the end of the line, where
+// the responses wait to be picked. A response that is being said stops as well.
+bool ConvoRecord::skipSpeech() {
+	if (!isActive() || isDone()) {
+		return false;
+	}
+
+	switch (_state) {
+	case kWaitForLine:
+	case kPlayLine:
+		if (_isLineSkipped) {
+			return false;
+		}
+
+		g_nancy->_sound->stopSound(kCharacterChannel);
+		_hasSoundStarted = false;
+		_isLineSkipped = true;
+
+		// The parts that play by themselves, like the head that moves its lips,
+		// stop on their last frame, so they stay together with the rest
+		for (Tree *tree : _trees) {
+			if (isTreeFreeRunning(*tree) && tree->player.getFrameCount() > 0) {
+				const Graphics::Surface *movieFrame = tree->player.decodeNextFrame(tree->player.getFrameCount() - 1);
+				if (movieFrame) {
+					drawTree(*tree, *movieFrame);
+				}
+			}
+		}
+
+		if (_isVideo && _numFrames > 0) {
+			showFrame(_numFrames - 1);
+		}
+
+		return true;
+	case kWaitForResponse:
+	case kPlayResponse:
+		g_nancy->_sound->stopSound(kPlayerChannel);
+		_state = kPlayResponse;
+		return true;
+	default:
+		return false;
+	}
 }
 
 void ConvoRecord::playSound(const Common::String &name, uint16 channel) {
@@ -391,6 +439,7 @@ void ConvoRecord::run(double sceneTime, double elapsedTime) {
 
 	switch (_state) {
 	case kStartLine:
+		_isLineSkipped = false;
 		playSound(_soundNames[_curSound], kCharacterChannel);
 
 		if (_curSound > 0 && ui) {
@@ -419,7 +468,7 @@ void ConvoRecord::run(double sceneTime, double elapsedTime) {
 		break;
 	case kPlayLine: {
 		for (Tree *tree : _trees) {
-			if (isTreeFreeRunning(*tree) && tree->player.needsUpdate()) {
+			if (!_isLineSkipped && isTreeFreeRunning(*tree) && tree->player.needsUpdate()) {
 				const Graphics::Surface *movieFrame = tree->player.decodeNextFrame();
 				if (movieFrame) {
 					drawTree(*tree, *movieFrame);
@@ -427,7 +476,7 @@ void ConvoRecord::run(double sceneTime, double elapsedTime) {
 			}
 		}
 
-		if (_isVideo && _numFrames > 0) {
+		if (_isVideo && _numFrames > 0 && !_isLineSkipped) {
 			// The frames keep up with the sound, and go on one at a time after it
 			uint frame = _frame + 1;
 			if (isSoundPlaying) {

@@ -321,6 +321,38 @@ void SceneStream::clearScene() {
 
 static const char *const kMainStreamName = "MainStream";
 
+#ifdef ENABLE_NANCY_V4
+bool SceneStream::skipSpeech() {
+	return _scriptScene && !_isEnded && _scriptScene->skipSpeech();
+}
+
+bool SceneStream::skipMovies() {
+	return _scriptScene && !_isEnded && _scriptScene->skipMovies();
+}
+
+bool SceneStreamManager::skipSpeech() {
+	bool hasSkipped = false;
+	for (SceneStream *stream : _streams) {
+		if (stream) {
+			hasSkipped |= stream->skipSpeech();
+		}
+	}
+
+	return hasSkipped;
+}
+
+bool SceneStreamManager::skipMovies() {
+	bool hasSkipped = false;
+	for (SceneStream *stream : _streams) {
+		if (stream) {
+			hasSkipped |= stream->skipMovies();
+		}
+	}
+
+	return hasSkipped;
+}
+#endif
+
 SceneStream *SceneStreamManager::find(const Common::String &name) const {
 	for (SceneStream *stream : _streams) {
 		if (stream && !stream->isEnded() && stream->getName().equalsIgnoreCase(name)) {

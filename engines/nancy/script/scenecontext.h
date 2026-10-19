@@ -109,6 +109,10 @@ public:
 	bool skipMovies();
 	bool isSkipping() const { return _isSkipping; }
 
+	// Enhancement: ends what the characters of the scene are saying. Returns false
+	// when nobody is talking.
+	bool skipSpeech();
+
 	// The conversation of the scene, once one has begun
 	ConvoRecord *getConvo() const { return _convo; }
 	void setConvo(ConvoRecord *convo) { _convo = convo; }

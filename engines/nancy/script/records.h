@@ -305,6 +305,7 @@ public:
 	SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") {}
 
 	void onSkip() override;
+	bool skipSpeech() override;
 
 protected:
 	void readTable(int tableIndex) override;
@@ -403,6 +404,7 @@ private:
 	MoviePlayer _player;
 	RecordGraphic _graphic;
 	ScriptRect _dest;
+	int _skipFrame = -1;	// the frame a skipped movie is at; -1 when not skipped
 
 	int _firstFrame = 0;
 	int _lastFrame = 0;

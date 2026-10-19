@@ -195,7 +195,7 @@ static const double kSkipFrameSeconds = 1.0 / 15.0;
 
 bool SceneContext::hasSkippableRecord() const {
 	for (const Record *record : _records) {
-		if (record->isSkippable()) {
+		if (record->canBeSkipped()) {
 			return true;
 		}
 	}
@@ -214,6 +214,15 @@ bool SceneContext::skipMovies() {
 	}
 
 	return true;
+}
+
+bool SceneContext::skipSpeech() {
+	bool hasSkipped = false;
+	for (Record *record : _records) {
+		hasSkipped |= record->skipSpeech();
+	}
+
+	return hasSkipped;
 }
 
 void SceneContext::end() {
@@ -308,6 +317,9 @@ void SceneContext::run(double elapsedTime) {
 	for (uint i = 0; _isSkipping && i < kSkipFramesPerRun; ++i) {
 		if (_hasChangedScene || !hasSkippableRecord()) {
 			_isSkipping = false;
+			for (Record *record : _records) {
+				record->onSkipEnded();
+			}
 		} else {
 			runFrame(kSkipFrameSeconds);
 		}

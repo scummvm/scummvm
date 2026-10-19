@@ -66,6 +66,9 @@ public:
 	// Responses can be added while the scripts named by the record are run
 	void addResponse(ConvoResponse *response) { _responses.push_back(response); }
 
+	// Enhancement: ends the line that is being said
+	bool skipSpeech() override;
+
 	// The UI reports the response the player picked
 	void onEngineAction(const UI::NDUI::Action &action) override;
 
@@ -124,6 +127,7 @@ private:
 	SoundDescription _sound;
 	bool _hasSoundStarted = false;
 	double _lineStartTime = 0.0;
+	bool _isLineSkipped = false;
 
 	Common::Array<ConvoResponse *> _offeredResponses;
 	int _pickedResponse = -1;

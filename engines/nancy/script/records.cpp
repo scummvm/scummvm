@@ -1204,6 +1204,24 @@ void SoundRecord::onSkip() {
 	}
 }
 
+// The channels speech plays on: NPCVoice, PlayerVoice, Voice1, Voice2, UIVoice
+// and EngineVoice
+static const uint16 kFirstVoiceChannel = 24;
+static const uint16 kLastVoiceChannel = 29;
+
+bool SoundRecord::skipSpeech() {
+	if (!isActive() || !hasStarted() || _isLooping || !_isPlaying ||
+			_channel < kFirstVoiceChannel || _channel > kLastVoiceChannel ||
+			!g_nancy->_sound->isSoundPlaying(_sound)) {
+		return false;
+	}
+
+	// The record ends with its next run, and takes the caption with it
+	g_nancy->_sound->stopSound(_sound);
+	_endTime = 0.0;
+	return true;
+}
+
 void SoundRecord::runOnce() {
 	// A sound that would start in a movie that is being skipped is over at once,
 	// unless it is one that keeps playing afterwards
@@ -1552,26 +1570,32 @@ bool MovieRecord::isSkippable() const {
 }
 
 void MovieRecord::run(double sceneTime, double elapsedTime) {
-	// A movie that is being skipped moves on by one frame every time it runs
-	if (getContext().isSkipping() && isSkippable()) {
-		const int frame = _player.getCurrentFrame();
-		bool hasEnded = frame == _lastFrame;
-
-		if (!hasEnded && _lastFrame > frame) {
-			hasEnded = _player.decodeNextFrame() == nullptr;
-		} else if (!hasEnded) {
-			_player.goToFrame(frame - 1);
+	// A movie that is being skipped moves on by one frame every time it runs, so
+	// the scripts that wait for one of its frames still see it. The frames on the
+	// way aren't decoded, and neither is the last one: a skipped movie ends, which
+	// hides it, and getting to its last frame can take decoding all of it, since
+	// some have no other keyframe than their first one.
+	if (getContext().isSkipping() && canBeSkipped()) {
+		if (_skipFrame < 0) {
+			_skipFrame = _player.getCurrentFrame();
 		}
 
-		if (hasEnded) {
-			_player.goToFrame(_lastFrame);
-			drawFrame();
+		if (_skipFrame < _lastFrame) {
+			++_skipFrame;
+		} else if (_skipFrame > _lastFrame) {
+			--_skipFrame;
+		}
+
+		// The movie stays at its last frame for the scripts until it starts over
+		if (_skipFrame == _lastFrame) {
 			_endTime = sceneTime;
 			finish();
 		}
 
 		return;
 	}
+
+	_skipFrame = -1;
 
 	if (!_isPaused && _player.update()) {
 		drawFrame();
@@ -1593,6 +1617,7 @@ void MovieRecord::run(double sceneTime, double elapsedTime) {
 
 bool MovieRecord::prepareReset() {
 	_endTime = 0.0;
+	_skipFrame = -1;
 	_isPaused = false;
 	_hasCalledOnPause = false;
 	_player.goToFrame(_firstFrame);
@@ -1645,7 +1670,7 @@ bool MovieRecord::getField(const Common::String &key) {
 	} else if (key == "visible") {
 		lua_pushboolean(L, _isVisible);
 	} else if (key == "frame") {
-		lua_pushinteger(L, _player.getCurrentFrame());
+		lua_pushinteger(L, _skipFrame >= 0 ? _skipFrame : _player.getCurrentFrame());
 	} else if (key == "endTime") {
 		lua_pushnumber(L, _endTime);
 	} else if (key == "firstFrame") {

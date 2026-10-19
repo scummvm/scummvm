@@ -90,6 +90,12 @@ public:
 	// Nancy19: hands a message to the scene. Returns false when it isn't for it.
 	bool receiveMessage(const Script::Message &message, bool &wasTaken);
 
+#ifdef ENABLE_NANCY_V4
+	// Enhancement: what Esc skips in the scene of the stream
+	bool skipSpeech();
+	bool skipMovies();
+#endif
+
 	void changeScene(const Common::String &sceneName, uint16 frameID);
 	void end() { _isEnded = true; }
 	bool isEnded() const { return _isEnded; }
@@ -178,6 +184,13 @@ public:
 	// Nancy19: hands a message to the scenes of the streams it is for. Returns
 	// false when there is none.
 	bool receiveMessage(const Script::Message &message, bool &wasTaken);
+
+#ifdef ENABLE_NANCY_V4
+	// Enhancement: Esc skips what is being said in any of the streams, or else
+	// the movies they play. Returns whether there was something to skip.
+	bool skipSpeech();
+	bool skipMovies();
+#endif
 
 	// Keeps the streams in the saved game, and starts them again after loading
 	void store();

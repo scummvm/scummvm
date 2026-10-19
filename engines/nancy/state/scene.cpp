@@ -2756,7 +2756,14 @@ void Scene::handleInput() {
 			_hasSkippedMovie = _activeMovie->skip();
 #ifdef ENABLE_NANCY_V4
 		} else if (_scriptScene) {
-			_scriptScene->skipMovies();
+			// The movies of any stream go first, along with what is said in them.
+			// Without one, Esc ends what the characters are saying.
+			bool hasSkipped = _scriptScene->skipMovies();
+			hasSkipped |= _streams.skipMovies();
+			if (!hasSkipped) {
+				_scriptScene->skipSpeech();
+				_streams.skipSpeech();
+			}
 #endif
 		} else if (g_nancy->getGameType() <= kGameTypeNancy15) {
 			// Nancy16 has no main menu state

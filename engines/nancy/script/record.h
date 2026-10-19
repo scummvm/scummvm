@@ -154,6 +154,15 @@ public:
 	virtual bool isSkippable() const { return false; }
 	virtual void onSkip() {}
 
+	// A record that ended during a skip doesn't keep it going when the scripts
+	// start it over, as the random fidget movies do
+	bool canBeSkipped() const { return !_hasEndedInSkip && isSkippable(); }
+	void onSkipEnded() { _hasEndedInSkip = false; }
+
+	// Enhancement: what a character says can be skipped as well. Returns
+	// whether the record was saying something.
+	virtual bool skipSpeech() { return false; }
+
 protected:
 	lua_State *getLua() const;
 
@@ -206,6 +215,7 @@ private:
 	bool _wasActive = false;
 	bool _isDone = false;
 	bool _isFinishing = false;	// while OnDone runs
+	bool _hasEndedInSkip = false;
 	bool _hasRunOnce = false;
 
 	bool _isScriptOwned = false;
