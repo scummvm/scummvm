@@ -88,6 +88,33 @@ static bool resolvePlayerTurnAnimationRange(int fromFacing, int toFacing, Player
 
 } // End of anonymous namespace
 
+bool Player::setIdleAnimation(int facing) {
+	RoomPlayerState &playerState = _state;
+	if (!playerState.entity)
+		return false;
+
+	const PlayerAnimationRange range = resolvePlayerAnimationRange(facing);
+	const bool changed = playerState.facing != facing ||
+		playerState.entity->getCurrentFrame() != range.idleFrame ||
+		playerState.entity->getAnimationRate() != 0;
+	playerState.facing = facing;
+	playerState.evasiveState = -1;
+	playerState.evasiveXStep = 0;
+	playerState.nextMovementTick = 0;
+	playerState.keyboardWalkRequest = -1;
+	playerState.walkHorizontalDirection = 0;
+	playerState.walkDepthDirection = 0;
+	playerState.entity->setAnimationRate(0);
+	playerState.entity->setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
+	playerState.entity->setCurrentFrame(range.idleFrame);
+	if (changed) {
+		debugC(1, kDebugPlayer,
+			"Harvester: player idle animation facing=%d frame=%d",
+			facing, range.idleFrame);
+	}
+	return changed;
+}
+
 bool Player::updateAnimationRate(bool speedUp) {
 	RoomPlayerState &playerState = _state;
 	const int rate = speedUp ? kRoomPlayerFastAnimationRate : kRoomPlayerWalkAnimationRate;

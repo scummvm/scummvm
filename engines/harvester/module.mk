@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	player.o \
 	player_animation.o \
 	player_attack.o \
+	player_idle.o \
 	player_keyboard.o \
 	player_movement.o \
 	player_reactions.o \

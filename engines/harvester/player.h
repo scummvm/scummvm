@@ -173,6 +173,8 @@ public:
 	bool updateIdleAnimation(const RoomSetupState &state);
 
 private:
+	bool finishIdleAnimation(const RoomSetupState &state);
+
 	bool stopMoveTargetStep(const PlayerMovement::MovementContext &context,
 		const PlayerMovement::MovementPosition &candidate, int horizontalDirection, int depthDirection,
 		const Entity *blocker);
