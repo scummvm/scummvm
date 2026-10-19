@@ -178,7 +178,7 @@ uint64 SaveGame::readLEUint64() {
 		error("SaveGame::readBlock called when storing a savegame");
 	if (_currentSection == 0)
 		error("Tried to read a block without starting a section");
-	uint32 data = READ_LE_UINT64(&_sectionBuffer[_sectionPtr]);
+	uint64 data = READ_LE_UINT64(&_sectionBuffer[_sectionPtr]);
 	_sectionPtr += 8;
 	return data;
 }
