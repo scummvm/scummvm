@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "igor/igor.h"
 #include "igor/floppy_menu.h"
@@ -26,8 +27,11 @@
 namespace Igor {
 
 // Copy protection screen of the floppy version
+static const int kFloppyProtectionTries = 3;
 static const int kFloppyProtectionWordCount = 100;
 static const int kFloppyProtectionEntrySize = 14;
+static const int kFloppyProtectionWordLength = 10;
+static const int kFloppyProtectionCodeOffset = 0x45;
 static const int kFloppyProtectionInputX = 122;
 static const int kFloppyProtectionInputY = 75;
 static const int kFloppyProtectionInputFullX = 197;
@@ -36,6 +40,9 @@ static const int kFloppyProtectionPromptX = 93;
 static const int kFloppyProtectionPromptY = 42;
 static const int kFloppyProtectionQuestionX = 81;
 static const int kFloppyProtectionQuestionY = 52;
+static const int kFloppyProtectionReplyX = 100;
+static const int kFloppyProtectionReplyY = 86;
+static const int kFloppyProtectionReplyTicks = 2 * 200;
 static const int kFloppyProtectionBlinkTick = 61;
 static const int kFloppyProtectionBlinkPeriod = 64;
 static const int kFloppyProtectionBoxX = 120;
@@ -57,6 +64,8 @@ enum FloppyProtectionText {
 	kFloppyProtectionLine,
 	kFloppyProtectionWord,
 	kFloppyProtectionPrompt,
+	kFloppyProtectionMaster,
+	kFloppyProtectionWrong,
 	kFloppyProtectionTextCount
 };
 
@@ -108,32 +117,13 @@ bool IgorEngine::isGameEnding() const {
 	return _eventQuitGame || _currentPart == kInvalidPart;
 }
 
-// Returns false if the game has to end.
-bool IgorEngine::copyProtection() {
-	int size;
-	Common::Array<Common::String> texts;
-	uint8 *data = loadData(TXT_FloppyProtectionScreen, 0, &size);
-	readProtectionStrings(texts, data, size, 5);
-	free(data);
-	assert(texts.size() == kFloppyProtectionTextCount);
-	uint8 *words = loadData(DAT_FloppyProtectionWords, 0, &size);
-	assert(size == kFloppyProtectionWordCount * kFloppyProtectionEntrySize);
-	uint8 *button = loadData(IMG_OptionsButton);
 
-	PauseToken pauseToken = pauseEngine();
-	hideCursor();
-	floppyMenuFadeOut();
-	memcpy(_screenTextLayer, _screenVGA + kFloppyMenuY * 320, kFloppyMenuSize);
-
-	const uint32 startMillis = _system->getMillis();
-
-	const uint8 *entry = words + getRandomNumber(kFloppyProtectionWordCount - 1) * kFloppyProtectionEntrySize;
+// Draws the panel with the question for [entry] and the empty input box.
+void IgorEngine::drawProtectionScreen(const Common::Array<Common::String> &texts, const uint8 *button, const uint8 *entry) {
 	const int numbers[3] = { entry[11], entry[12], entry[13] };
-
 	floppyOptionsDrawPanel(button);
 	floppyOptionsClearCaptionBar(button);
 	_sentenceFont->drawString(_screenTextLayer, texts[kFloppyProtectionTitle].c_str(), kFloppyProtectionTitleX, kFloppyCaptionY - kFloppyMenuY, kFloppyColorCaption, -1, -1);
-	//format the requested protection question
 	Common::String question = texts[kFloppyProtectionPage] + Common::String::format("%d", numbers[0]) +
 		texts[kFloppyProtectionLine] + Common::String::format("%d", numbers[1]) +
 		texts[kFloppyProtectionWord] + Common::String::format("%d", numbers[2]);
@@ -145,7 +135,7 @@ bool IgorEngine::copyProtection() {
 	_sentenceFont->drawString(_screenTextLayer, texts[kFloppyProtectionPrompt].c_str(), kFloppyProtectionPromptX, kFloppyProtectionPromptY - kFloppyMenuY, kFloppyColorCaption, -1, -1);
 	_sentenceFont->drawString(_screenTextLayer, question.c_str(), questionX, kFloppyProtectionQuestionY - kFloppyMenuY, kFloppyColorCaption, -1, -1);
 
-
+	// Frame of the input box: light top and left edges, dark bottom and right edges.
 	const int boxY = kFloppyMenuY + kFloppyProtectionBoxY;
 	floppyMenuFillRow(kFloppyProtectionBoxX, boxY, kFloppyProtectionBoxWidth, kFloppyColorFrameLight);
 	for (int i = 1; i < kFloppyProtectionBoxHeight - 1; ++i) {
@@ -154,16 +144,18 @@ bool IgorEngine::copyProtection() {
 	}
 	floppyMenuFillRow(kFloppyProtectionBoxX, boxY + kFloppyProtectionBoxHeight - 1, kFloppyProtectionBoxWidth, kFloppyColorFrameDark);
 	floppyOptionsPresent(0);
+}
 
-	uint8 typed[kFloppyProtectionMaxInput + 1];
-	memset(typed, ' ', sizeof(typed));
+bool IgorEngine::readProtectionWord(uint8 *typed) {
+	memset(typed, ' ', kFloppyProtectionMaxInput + 1);
 	int position = 1;
 	int x = kFloppyProtectionInputX;
 	bool full = false;
 	bool done = false;
 	int caretColor = kFloppyColorCaption;
 	int blinkCounter = 0;
-	uint32 lastTick = ticksSince(startMillis);
+	const uint32 startMillis = _system->getMillis();
+	uint32 lastTick = 0;
 	while (!done && !isGameEnding()) {
 		Common::Event ev;
 		bool changed = false;
@@ -218,6 +210,54 @@ bool IgorEngine::copyProtection() {
 		lastTick = ticksSince(startMillis);
 		blinkCounter = (blinkCounter == kFloppyProtectionBlinkPeriod - 1) ? 0 : blinkCounter + 1;
 	}
+	return !isGameEnding();
+}
+
+// Returns false if the test failed
+bool IgorEngine::copyProtection() {
+	int size;
+	Common::Array<Common::String> texts;
+	uint8 *data = loadData(TXT_FloppyProtectionScreen, 0, &size);
+	readProtectionStrings(texts, data, size, 5);
+	free(data);
+	data = loadData(TXT_FloppyProtectionReply, 0, &size);
+	readProtectionStrings(texts, data, size, 2);
+	free(data);
+	assert(texts.size() == kFloppyProtectionTextCount);
+	uint8 *words = loadData(DAT_FloppyProtectionWords, 0, &size);
+	assert(size == kFloppyProtectionWordCount * kFloppyProtectionEntrySize);
+	uint8 *button = loadData(IMG_OptionsButton);
+
+	PauseToken pauseToken = pauseEngine();
+	hideCursor();
+	floppyMenuFadeOut();
+	memcpy(_screenTextLayer, _screenVGA + kFloppyMenuY * 320, kFloppyMenuSize);
+
+	bool passed = false;
+	for (int attempt = 1; attempt <= kFloppyProtectionTries && !passed && !isGameEnding(); ++attempt) {
+		const uint8 *entry = words + getRandomNumber(kFloppyProtectionWordCount - 1) * kFloppyProtectionEntrySize;
+		drawProtectionScreen(texts, button, entry);
+		uint8 typed[kFloppyProtectionMaxInput + 1];
+		if (!readProtectionWord(typed))
+			break;
+
+		// Compare the typed word, in the stored form, with the expected word and the master code.
+		uint8 encoded[kFloppyProtectionWordLength + 1];
+		encoded[0] = kFloppyProtectionWordLength;
+		for (int i = 1; i <= kFloppyProtectionWordLength; ++i) {
+			const uint8 chr = (typed[i] >= 'a' && typed[i] <= 'z') ? typed[i] - 0x20 : typed[i];
+			encoded[i] = (uint8)(chr + kFloppyProtectionCodeOffset);
+		}
+		const Common::String &master = texts[kFloppyProtectionMaster];
+		passed = !memcmp(encoded, entry, kFloppyProtectionWordLength + 1) ||
+			(master.size() == kFloppyProtectionWordLength && !memcmp(encoded + 1, master.c_str(), kFloppyProtectionWordLength));
+		if (!passed && attempt < kFloppyProtectionTries) {
+			// TODO: the original also beeps here; the tone and length of that beep are not established.
+			_sentenceFont->drawString(_screenTextLayer, texts[kFloppyProtectionWrong].c_str(), kFloppyProtectionReplyX, kFloppyProtectionReplyY - kFloppyMenuY, kFloppyColorCaption, -1, -1);
+			floppyOptionsPresent(0);
+			waitForTimer(kFloppyProtectionReplyTicks, false);
+		}
+	}
 
 	free(button);
 	free(words);
@@ -226,16 +266,21 @@ bool IgorEngine::copyProtection() {
 	_inputVars[kInputSkipDialogue] = 0;
 	_inputVars[kInputOptions] = 0;
 	_inputVars[kInputPause] = 0;
+	_inputVars[kInputEscape] = 0;
+	_inputVars[kInputConfirm] = 0;
 	showCursor();
-	if (isGameEnding())
+	if (!passed) {
+		// Three wrong words end the game.
+		_currentPart = kInvalidPart;
 		return false;
+	}
 	setPaletteColor(255, 63, 63, 63);
 	fadeIn(kFloppyFadeCount);
 	return true;
 }
 
 bool IgorEngine::checkCopyProtection() {
-	if (_game.version != kIdSpaFloppy || _floppyProtectionPassed)
+	if (_game.version != kIdSpaFloppy || _floppyProtectionPassed || (ConfMan.hasKey("skip_copy_protection") && ConfMan.getBool("skip_copy_protection")))
 		return true;
 	if (!copyProtection())
 		return false;

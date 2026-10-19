@@ -912,6 +912,7 @@
 #define BOX_CollegeCorridorMathClass 1281
 #define DAT_FloppyProtectionWords 1282
 #define TXT_FloppyProtectionScreen 1283
+#define TXT_FloppyProtectionReply 1284
 #define FRM_CollegeCorridorLadiesRoomFloppy1 1257
 #define FRM_CollegeCorridorLadiesRoomFloppy2 1258
 

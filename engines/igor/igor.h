@@ -23,6 +23,7 @@
 #define IGOR_H
 
 #include "common/error.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
@@ -1785,6 +1786,8 @@ private:
 	void handleFloppyOptionsMenu();
 	void floppyMenuFillRow(int x, int y, int count, int color);
 	bool isGameEnding() const;
+	void drawProtectionScreen(const Common::Array<Common::String> &texts, const uint8 *button, const uint8 *entry);
+	bool readProtectionWord(uint8 *typed);
 	bool copyProtection();
 	bool checkCopyProtection();
 	void scrollInventory();
