@@ -391,7 +391,7 @@ void FunctionManager::script_EffectTransition(Common::Array<ScriptValue> &args, 
 	// Puzzle Castle has this weird code path where it checks for this magic value.
 	// If so, it doesn't actually do the transition. Otherwise, we just do a normal
 	// transition. Scripts rely on this behavior, so we must reimplement it.
-	bool triggerPuzzleCastleIterationUpdate = (args.size() == 2) && (args[0].asFloat() == 9999);
+	bool triggerPuzzleCastleIterationUpdate = (args.size() == 2) && (args[0].getType() == kScriptValueTypeFloat && args[0].asFloat() == 9999);
 	if (triggerPuzzleCastleIterationUpdate) {
 		uint iterations = static_cast<uint>(args[1].asFloat());
 		uint start = g_engine->currentTimeInSeconds();

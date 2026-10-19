@@ -365,14 +365,13 @@ Common::String ScriptValue::getDebugString(bool includeDefaultName) const {
 }
 
 bool ScriptValue::compare(Opcode op, const ScriptValue &lhs, const ScriptValue &rhs) {
-	if (lhs.getType() != rhs.getType()) {
-		warning("%s: Attempt to compare mismatched values: %s; %s",
-			__func__, lhs.getDebugString().c_str(), rhs.getDebugString().c_str());
-	}
-
 	bool result = false;
 	switch (lhs.getType()) {
 	case kScriptValueTypeEmpty:
+		if (lhs.getType() != rhs.getType()) {
+			warning("%s: Attempt to compare mismatched values: %s; %s",
+				__func__, lhs.getDebugString().c_str(), rhs.getDebugString().c_str());
+		}
 		result = compareEmptyValues(op);
 		break;
 
