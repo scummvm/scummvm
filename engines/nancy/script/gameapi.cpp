@@ -1476,8 +1476,27 @@ static int autotextRemoveCC(lua_State *L) {
 	return 1;
 }
 
+// Autotext.<key> is the text of that key, or nil when there is none
+static int autotextIndex(lua_State *L) {
+	indexFunctions(L);
+	if (!lua_isnil(L, -1) || lua_type(L, 2) != LUA_TSTRING) {
+		return 1;
+	}
+
+	lua_pop(L, 1);
+
+	Common::String text;
+	if (findText(lua_tostring(L, 2), text)) {
+		lua_pushstring(L, text.c_str());
+	} else {
+		lua_pushnil(L);
+	}
+
+	return 1;
+}
+
 static const luaL_Reg kAutotextFunctions[] = {
-	{ "__index", indexFunctions },
+	{ "__index", autotextIndex },
 	{ "RemoveCC", autotextRemoveCC },
 	{ nullptr, nullptr }
 };
