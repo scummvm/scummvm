@@ -21,27 +21,8 @@
 
 #include "igor/igor.h"
 #include "common/debug-channels.h"
-#include "igor/unpack.h"
 
 namespace Igor {
-
-// The Spanish floppy version keeps part of its resources inside its packed
-// executable. They are read from the memory image of IGOR.EXE, restored at startup.
-void IgorEngine::unpackExecutable() {
-	Common::File exeFile;
-	if (!exeFile.open("IGOR.EXE")) {
-		error("Unable to open 'IGOR.EXE'");
-	}
-	Common::Array<byte> packed;
-	packed.resize(exeFile.size());
-	if (exeFile.read(packed.data(), packed.size()) != packed.size()) {
-		error("Unable to read 'IGOR.EXE'");
-	}
-	Common::String unpackError;
-	if (!unpackSpanishFloppyExe(packed.data(), packed.size(), _unpackedExe, unpackError)) {
-		error("Unable to unpack 'IGOR.EXE': %s", unpackError.c_str());
-	}
-}
 
 void IgorEngine::readTableFile() {
 	Common::File tblFile;
@@ -50,8 +31,8 @@ void IgorEngine::readTableFile() {
 	if (tblFile.open("IGOR.TBL") && tblFile.readUint32BE() == 'ITBL') {
 		tableVersion = tblFile.readUint32BE();
 	}
-	// version 5 adds the source of the data of each resource
-	if (tableVersion == 4 || tableVersion == 5) {
+	// version 5 adds the source of the data of each resource, version 6 data embedded in the table
+	if (tableVersion >= 4 && tableVersion <= 6) {
 		stringsEntriesOffset = tblFile.readUint32BE();
 		uint32 borlandOverlaySize = _ovlFile.size();
 		int gameVersionsCount = tblFile.readByte();
@@ -76,7 +57,7 @@ void IgorEngine::readTableFile() {
 			_resourceEntries[i].source = kResourceSourceContainer;
 			if (tableVersion >= 5) {
 				const int source = tblFile.readByte();
-				if (source != kResourceSourceContainer && source != kResourceSourceExecutable) {
+				if (source != kResourceSourceContainer && !(tableVersion >= 6 && source == kResourceSourceTable)) {
 					error("Invalid resource source in 'IGOR.TBL'");
 				}
 				_resourceEntries[i].source = (ResourceSource)source;
@@ -109,13 +90,13 @@ void IgorEngine::readTableFile() {
 	error("Unable to read 'IGOR.TBL'");
 }
 
-// The unpacked executable of the Spanish floppy version stores each text as a
+// The Spanish floppy text table stores each text as a
 // plain Pascal string (length byte, then the characters) in a slot with room for
 // both languages.
 static void decodeFloppyMainString(const uint8 *src, char *dst, uint slotSize) {
 	const uint length = *src;
 	if (length >= slotSize) {
-		error("Invalid text length in the unpacked executable");
+		error("Invalid text length in the floppy text table");
 	}
 	memcpy(dst, src + 1, length);
 	dst[length] = '\0';
@@ -368,12 +349,11 @@ uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
 			error("Unable to allocate %d bytes", re->size);
 		}
 	}
-	// copy directly from the in-memory unpacked executable if the resource is stored there
-	if (re->source == kResourceSourceExecutable) {
-		if (re->offs > _unpackedExe.size() || re->size > _unpackedExe.size() - re->offs) {
-			error("Resource %d lies outside the unpacked executable", id);
+	if (re->source == kResourceSourceTable) {
+		Common::File tblFile;
+		if (!tblFile.open("IGOR.TBL") || !tblFile.seek(re->offs) || tblFile.read(dst, re->size) != re->size) {
+			error("Unable to read resource %d from 'IGOR.TBL'", id);
 		}
-		memcpy(dst, _unpackedExe.data() + re->offs, re->size);
 	} else {
 		_ovlFile.seek(re->offs);
 		_ovlFile.read(dst, re->size);
