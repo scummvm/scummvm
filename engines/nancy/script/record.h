@@ -205,6 +205,7 @@ private:
 	bool _isActive = true;
 	bool _wasActive = false;
 	bool _isDone = false;
+	bool _isFinishing = false;	// while OnDone runs
 	bool _hasRunOnce = false;
 
 	bool _isScriptOwned = false;

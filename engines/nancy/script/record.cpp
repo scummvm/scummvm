@@ -209,7 +209,17 @@ void Record::limitZ(double z) {
 
 void Record::finish() {
 	_isDone = true;
+
+	// Some OnDone functions end with this:Done(), which would call them again and
+	// again until the C stack ran out. The original stops there with a Lua error;
+	// running them once leaves things the same way.
+	if (_isFinishing) {
+		return;
+	}
+
+	_isFinishing = true;
 	callFunction("OnDone");
+	_isFinishing = false;
 }
 
 bool Record::reset() {
