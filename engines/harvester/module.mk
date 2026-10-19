@@ -25,7 +25,9 @@ MODULE_OBJS = \
 	resources.o \
 	combat.o \
 	combat_contact.o \
+	combat_effects.o \
 	combat_geometry.o \
+	combat_hud.o \
 	combat_monsters.o \
 	combat_reactions.o \
 	combat_targeting.o \
