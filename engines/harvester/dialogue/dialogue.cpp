@@ -19,7 +19,8 @@
  *
  */
 
-#include "harvester/dialogue.h"
+#include "harvester/dialogue/dialogue.h"
+#include "harvester/dialogue/dialogue_render.h"
 
 #include "common/algorithm.h"
 #include "common/debug.h"
@@ -75,7 +76,8 @@
 #include "harvester/npc/ryder_dialogue.h"
 #include "harvester/npc/sergeant_dialogue.h"
 #include "harvester/npc/nude_man_dialogue.h"
-#include "harvester/palette_utils.h"
+#include "harvester/flow/flow_support.h"
+#include "harvester/scene/room_presentation.h"
 #include "harvester/npc/stephanie_dialogue.h"
 #include "harvester/npc/stub_dialogue.h"
 #include "harvester/npc/sparky_dialogue.h"
@@ -103,7 +105,6 @@ static const int kDialogueSubtitleTextX = 178;
 static const int kDialogueSubtitleTextY = 12;
 static const int kDialogueSubtitleTextWidth = 316;
 static const int kDialogueKeywordTextX = 178;
-static const int kDialogueKeywordTextY = 34;
 static const int kDialogueKeywordTextWidth = 300;
 static const int kDialogueOtherX = 171;
 static const int kDialogueOtherY = 183;
@@ -113,10 +114,6 @@ static const uint kDialogueTextEntryMaxLength = 26;
 static const int kDialogueTextEntryMaxWidth = 550;
 static const uint32 kDialogueTextEntryBlinkTicks = 0x30;
 static const int kDialogueOtherWidth = 120;
-static const int kDialogueTopicStartX = 168;
-static const int kDialogueTopicEndX = 482;
-static const int kDialogueOtherStartY = 170;
-static const int kDialogueOtherEndY = 193;
 static const int kDialogueKeywordTitleYOffset = 4;
 static const int kDialogueGenericByeResponseIndex = 13;
 static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
@@ -125,7 +122,6 @@ static const char *const kDialogueLocalizedKeywordBitmapPath = "GRAPHIC/OTHER/KE
 
 static const byte kTextColorNormal = 255;
 static const byte kTextColorHover = 251;
-static const byte kShadowColor = 0;
 
 static bool isDialogueVoiceInterruptEvent(const Common::Event &event) {
 	return event.type == Common::EVENT_LBUTTONDOWN ||
@@ -184,35 +180,6 @@ static void syncDialogueSharedState(Common::Serializer &s, DialogueSharedState &
 	syncDialogueInt(s, state.dialogueStateD2f30);
 }
 
-static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
-	if (!bitmap.isValid())
-		return;
-
-	screen.copyRectToSurface(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
-}
-
-static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
-		int x, int y, int width, byte color, Graphics::TextAlign align = Graphics::kTextAlignLeft) {
-	font.drawString(&screen, text, x + 1, y + 1, width, kShadowColor, align);
-	font.drawString(&screen, text, x, y, width, color, align);
-}
-
-static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
-	byte scaledPalette[256 * 3];
-	const float gammaBrightness = g_engine ? g_engine->getGammaBrightnessScale() : 1.0f;
-	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
-	screen.setPalette(scaledPalette);
-}
-
-static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
-	Common::Array<byte> data;
-	if (!resources.loadFile(path, data) || data.size() < 12)
-		return false;
-
-	bitmap = IndexedBitmap();
-	return decodeBitmap(data, bitmap);
-}
-
 static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *dest) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
@@ -230,63 +197,6 @@ static bool isPrimaryMouseDown() {
 static bool isSecondaryMouseDown() {
 	return g_system && g_system->getEventManager() &&
 		((g_system->getEventManager()->getButtonState() & 2) != 0);
-}
-
-static int getDialogueTextLineHeight(const Graphics::Font &font) {
-	return font.getFontHeight() + 2;
-}
-
-static int resolveDialogueTextboxIndex(uint lineCount) {
-	if (lineCount <= 1)
-		return 0;
-	if (lineCount < 3)
-		return 1;
-	if (lineCount < 4)
-		return 2;
-	if (lineCount < 6)
-		return 3;
-	if (lineCount < 7)
-		return 4;
-	if (lineCount < 9)
-		return 5;
-	if (lineCount < 11)
-		return 6;
-	return 7;
-}
-
-static int resolveDialogueResponseTextboxIndex(uint responseRowCount) {
-	if (responseRowCount == 0)
-		return 0;
-	if (responseRowCount < 3)
-		return 3;
-	if (responseRowCount < 4)
-		return 4;
-	if (responseRowCount < 6)
-		return 5;
-	return 6;
-}
-
-static void drawDialogueTextLines(Graphics::Screen &screen, const Graphics::Font &font,
-		const Common::Array<Common::String> &lines, int x, int y, int width) {
-	const int lineHeight = getDialogueTextLineHeight(font);
-	for (uint i = 0; i < lines.size(); ++i)
-		font.drawString(&screen, lines[i], x, y + (int)i * lineHeight, width, 0);
-}
-
-static void wrapDialogueTextLikeNative(const Graphics::Font &font, bool usesCft,
-		const Common::String &text, int width, Common::Array<Common::String> &lines) {
-	lines.clear();
-	if (text.empty())
-		return;
-
-	if (!usesCft || width <= 0) {
-		font.wordWrapText(text, width, lines);
-		if (lines.empty())
-			lines.push_back(text);
-		return;
-	}
-
-	wrapCftTextByCharacterCount(font, text, width, lines);
 }
 
 static void splitDialogueMenuLine(const Common::String &line, Common::Array<Common::String> &parts) {
@@ -350,24 +260,6 @@ static Common::String buildDialogueVoicePath(const Script &script, int wavId) {
 		return Common::String();
 
 	return Common::String::format("%s%d.CMP", script.getVoicePath().c_str(), wavId);
-}
-
-static int getDialogueMenuItemAt(const Graphics::Font &font, uint itemCount, const Common::Point &mousePos) {
-	if (itemCount == 0)
-		return -1;
-	if (mousePos.x < kDialogueTopicStartX || mousePos.x > kDialogueTopicEndX)
-		return -1;
-	if (mousePos.y < kDialogueKeywordTextY)
-		return -1;
-
-	const int lineHeight = getDialogueTextLineHeight(font);
-	const int selection = (mousePos.y - kDialogueKeywordTextY) / MAX<int>(1, lineHeight);
-	return selection >= 0 && selection < (int)itemCount ? selection : -1;
-}
-
-static bool isDialogueOtherHit(const Common::Point &mousePos) {
-	return mousePos.x >= kDialogueTopicStartX && mousePos.x <= kDialogueTopicEndX &&
-		mousePos.y >= kDialogueOtherStartY && mousePos.y <= kDialogueOtherEndY;
 }
 
 class RoomNpcDialogueSession : public DialogueRuntimeCallbacks {
@@ -463,9 +355,9 @@ public:
 		Common::Array<Common::String> subtitleLines;
 		const IndexedBitmap *textboxBitmap = nullptr;
 		if (textEnabled) {
-			wrapDialogueTextLikeNative(*_subtitleFont, _subtitleFontUsesCft,
+			DialogueRendering::wrapDialogueTextLikeNative(*_subtitleFont, _subtitleFontUsesCft,
 				subtitleText, kDialogueSubtitleTextWidth, subtitleLines);
-			textboxBitmap = _art->getTextboxBitmap(resolveDialogueTextboxIndex(subtitleLines.size()));
+			textboxBitmap = _art->getTextboxBitmap(DialogueRendering::resolveDialogueTextboxIndex(subtitleLines.size()));
 		}
 
 		const Common::String voicePath = buildDialogueVoicePath(*_script, wavId);
@@ -629,7 +521,7 @@ public:
 			while (!_engine.shouldQuit() && !activateRequestedDisc) {
 				if (needsRedraw) {
 					screen->fillRect(screen->getBounds(), 0);
-					blitBitmap(*screen, promptBitmap, 0, 0);
+					RoomPresentation::blitBitmap(*screen, promptBitmap, 0, 0);
 					setScaledPalette(*screen, promptPalette, 1.0f);
 					if (_entityManager)
 						_entityManager->drawCursor(*screen);
@@ -710,8 +602,8 @@ public:
 				textEntryCursorVisible = !textEntryCursorVisible;
 				textEntryBlinkTimestamp = now;
 			}
-			const int hoveredTopicIndex = editingOther ? -1 : getDialogueMenuItemAt(*_menuFont, topics.size(), _mousePos);
-			const bool hoverOther = editingOther || isDialogueOtherHit(_mousePos);
+			const int hoveredTopicIndex = editingOther ? -1 : DialogueRendering::getDialogueMenuItemAt(*_menuFont, topics.size(), _mousePos);
+			const bool hoverOther = editingOther || DialogueRendering::isDialogueOtherHit(_mousePos);
 			drawDialogueOverlay(&_keywordBitmap, nullptr, &topics, hoveredTopicIndex, hoverOther,
 				editingOther ? &typedTopic : nullptr, textEntryCursorVisible);
 
@@ -780,7 +672,7 @@ public:
 					}
 					break;
 				case Common::EVENT_LBUTTONDOWN: {
-					const int clickedTopic = getDialogueMenuItemAt(*_menuFont, topics.size(), _mousePos);
+					const int clickedTopic = DialogueRendering::getDialogueMenuItemAt(*_menuFont, topics.size(), _mousePos);
 					if (clickedTopic >= 0) {
 						selectedTopic = topics[(uint)clickedTopic];
 						selection.fromGenericBye = clickedTopic == (int)topics.size() - 1;
@@ -788,7 +680,7 @@ public:
 							clickedTopic + 1, selectedTopic.c_str());
 						return Common::kNoError;
 					}
-					if (isDialogueOtherHit(_mousePos)) {
+					if (DialogueRendering::isDialogueOtherHit(_mousePos)) {
 						typedTopic.clear();
 						editingOther = true;
 						textEntryCursorVisible = false;
@@ -929,7 +821,7 @@ private:
 		if (usesCft)
 			font.drawString(activeScreen, text, x, y, width, 0);
 		else
-			drawShadowedString(*activeScreen, font, text, x, y, width, color);
+			RoomPresentation::drawShadowedString(*activeScreen, font, text, x, y, width, color);
 	}
 
 	void ensureSpeakerPortrait(const Common::String &speakerId, int headVariant) {
@@ -960,7 +852,7 @@ private:
 			return;
 
 		setScaledPalette(*activeScreen, _palette, _paletteBrightness);
-		blitBitmap(*activeScreen, _backdrop, 0, 0);
+		RoomPresentation::blitBitmap(*activeScreen, _backdrop, 0, 0);
 		if (_leftHeadVisible && _leftHeadBitmap.isValid())
 			blitTransparentBitmap(*activeScreen, _leftHeadBitmap, kDialogueLeftHeadX, kDialogueHeadY);
 		if (_rightHeadVisible && _rightHeadBitmap.isValid())
@@ -970,12 +862,12 @@ private:
 
 		if (subtitleLines) {
 			if (_subtitleFontUsesCft) {
-				drawDialogueTextLines(*activeScreen, *_subtitleFont, *subtitleLines,
+				DialogueRendering::drawDialogueTextLines(*activeScreen, *_subtitleFont, *subtitleLines,
 					kDialogueSubtitleTextX, kDialogueSubtitleTextY, kDialogueSubtitleTextWidth);
 			} else {
-				const int lineHeight = getDialogueTextLineHeight(*_subtitleFont);
+				const int lineHeight = DialogueRendering::getDialogueTextLineHeight(*_subtitleFont);
 				for (uint i = 0; i < subtitleLines->size(); ++i) {
-					drawShadowedString(*activeScreen, *_subtitleFont, (*subtitleLines)[i],
+					RoomPresentation::drawShadowedString(*activeScreen, *_subtitleFont, (*subtitleLines)[i],
 						kDialogueSubtitleTextX,
 						kDialogueSubtitleTextY + (int)i * lineHeight,
 						kDialogueSubtitleTextWidth, kTextColorNormal);
@@ -994,13 +886,13 @@ private:
 					kTextColorNormal);
 			}
 
-			const int lineHeight = getDialogueTextLineHeight(*_menuFont);
+			const int lineHeight = DialogueRendering::getDialogueTextLineHeight(*_menuFont);
 			for (uint i = 0; i < topics->size(); ++i) {
 				const bool highlighted = (int)i == hoveredTopicIndex;
 				const Graphics::Font &font = highlighted ? *_highlightFont : *_menuFont;
 				const bool usesCft = highlighted ? _highlightFontUsesCft : _menuFontUsesCft;
 				drawFontString(font, usesCft, (*topics)[i], kDialogueKeywordTextX,
-					kDialogueKeywordTextY + (int)i * lineHeight, kDialogueKeywordTextWidth,
+					DialogueRendering::kDialogueKeywordTextY + (int)i * lineHeight, kDialogueKeywordTextWidth,
 					highlighted ? kTextColorNormal : kTextColorHover);
 			}
 
@@ -1047,7 +939,7 @@ private:
 			option.rowStart = (int)totalRows;
 			for (const Common::String &explicitLine : explicitLines) {
 				Common::Array<Common::String> wrappedExplicitLines;
-				wrapDialogueTextLikeNative(*_menuFont, _menuFontUsesCft,
+				DialogueRendering::wrapDialogueTextLikeNative(*_menuFont, _menuFontUsesCft,
 					explicitLine, kDialogueSubtitleTextWidth, wrappedExplicitLines);
 				if (wrappedExplicitLines.empty())
 					wrappedExplicitLines.push_back(explicitLine);
@@ -1098,13 +990,13 @@ private:
 
 	int getResponseMenuItemAt(const Common::Array<DialogueResponseOptionLayout> &options,
 			uint totalRows, const Common::Point &mousePos) {
-		if (mousePos.x < kDialogueTopicStartX || mousePos.x > kDialogueTopicEndX)
+		if (mousePos.x < DialogueRendering::kDialogueTopicStartX || mousePos.x > DialogueRendering::kDialogueTopicEndX)
 			return -1;
-		if (mousePos.y < kDialogueKeywordTextY)
+		if (mousePos.y < DialogueRendering::kDialogueKeywordTextY)
 			return -1;
 
-		const int lineHeight = getDialogueTextLineHeight(*_menuFont);
-		const int row = (mousePos.y - kDialogueKeywordTextY) / MAX<int>(1, lineHeight);
+		const int lineHeight = DialogueRendering::getDialogueTextLineHeight(*_menuFont);
+		const int row = (mousePos.y - DialogueRendering::kDialogueKeywordTextY) / MAX<int>(1, lineHeight);
 		if (row < 0 || row >= (int)totalRows)
 			return -1;
 
@@ -1124,7 +1016,7 @@ private:
 			return;
 
 		setScaledPalette(*activeScreen, _palette, _paletteBrightness);
-		blitBitmap(*activeScreen, _backdrop, 0, 0);
+		RoomPresentation::blitBitmap(*activeScreen, _backdrop, 0, 0);
 		if (_leftHeadVisible && _leftHeadBitmap.isValid())
 			blitTransparentBitmap(*activeScreen, _leftHeadBitmap, kDialogueLeftHeadX, kDialogueHeadY);
 		if (_rightHeadVisible && _rightHeadBitmap.isValid())
@@ -1139,8 +1031,8 @@ private:
 		const int titleX = kDialogueSubtitleTextX + MAX<int>(0, (kDialogueSubtitleTextWidth - titleWidth) / 2);
 		drawFontString(titleFont, titleUsesCft, title, titleX, 11, titleWidth, kTextColorNormal);
 
-		const int lineHeight = getDialogueTextLineHeight(*_menuFont);
-		int drawY = kDialogueKeywordTextY;
+		const int lineHeight = DialogueRendering::getDialogueTextLineHeight(*_menuFont);
+		int drawY = DialogueRendering::kDialogueKeywordTextY;
 		for (uint i = 0; i < options.size(); ++i) {
 			const bool highlighted = (int)i == hoveredOptionIndex;
 			const Graphics::Font &font = highlighted ? *_highlightFont : *_menuFont;
@@ -1195,7 +1087,7 @@ private:
 		}
 		logDialogueMenuItems("Response menu", responseLineIndex, responseLine, optionTexts);
 
-		const IndexedBitmap *textboxBitmap = _art->getTextboxBitmap(resolveDialogueResponseTextboxIndex(totalRows));
+		const IndexedBitmap *textboxBitmap = _art->getTextboxBitmap(DialogueRendering::resolveDialogueResponseTextboxIndex(totalRows));
 		Common::Error releaseError = waitForPointerRelease();
 		if (releaseError.getCode() != Common::kNoError)
 			return releaseError;

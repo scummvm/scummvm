@@ -6,7 +6,8 @@ MODULE_OBJS = \
 	cft_font.o \
 	cheats.o \
 	console.o \
-	dialogue.o \
+	dialogue/dialogue.o \
+	dialogue/dialogue_render.o \
 	flow/flow.o \
 	flow/flow_debug.o \
 	flow/flow_map.o \

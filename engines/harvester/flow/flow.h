@@ -27,7 +27,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "harvester/cheats.h"
-#include "harvester/dialogue.h"
+#include "harvester/dialogue/dialogue.h"
 #include "harvester/inventory.h"
 #include "harvester/menu/menu.h"
 #include "harvester/scene/scene.h"

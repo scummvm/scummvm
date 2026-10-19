@@ -26,7 +26,7 @@
 #include "harvester/art.h"
 #include "harvester/cheats.h"
 #include "harvester/detection.h"
-#include "harvester/dialogue.h"
+#include "harvester/dialogue/dialogue.h"
 #include "harvester/flow/flow.h"
 #include "harvester/harvester.h"
 #include "harvester/inventory.h"
