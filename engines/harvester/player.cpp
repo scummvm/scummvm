@@ -44,7 +44,6 @@ static const float kRoomPlayerDepthTargetSlack = 8.0f;
 static const int kRoomRegionTargetXBias = 10;
 static const float kRoomDepthCompareEpsilon = 0.01f;
 static const int kRoomPlayerWalkAnimationRate = 17;
-static const int kRoomPlayerVerticalScreenStep = 1;
 static const int kRoomPlayerFastAnimationRate = 30;
 static const int kRoomPlayerHitAnimationRate = 4;
 static const int kNativePlayerDeathEntryAnimationRate = 14;
@@ -553,21 +552,6 @@ static int mapRoomDepthToScreenY(const RoomSetupState &state, float z) {
 	return clampRoomMovementY(state, state.roomMaxZScreenY + roundToInt(offset));
 }
 
-static int resolveFacingFromMovementDelta(int dx, int dy) {
-	if (ABS(dx) > ABS(dy))
-		return dx < 0 ? 1 : 2;
-	if (dy < 0)
-		return 3;
-	return 0;
-}
-
-static int resolveFacingFromRoomMovement(
-		int fromCenterX, int fromBottomY, int toCenterX, int toBottomY) {
-	return resolveFacingFromMovementDelta(
-		toCenterX - fromCenterX,
-		toBottomY - fromBottomY);
-}
-
 static int computeRoomPlayerHorizontalStep(const RoomSetupState &state, float z) {
 	return MAX<int>(1, (int)(Player::computeDepthScale(state, z) * kRoomPlayerHorizontalMoveBase));
 }
@@ -576,16 +560,18 @@ static float computeRoomPlayerDepthStep(const RoomSetupState &state) {
 	return state.roomZVelocityStep > 0.0f ? state.roomZVelocityStep : 1.0f;
 }
 
-static int computeRoomPlayerVerticalScreenStep() {
-	return kRoomPlayerVerticalScreenStep;
-}
-
 static int computePlayerFrameLeftX(const RoomPlayerState &playerState) {
 	return playerState.entity ? playerState.entity->getScreenRect().left : playerState.centerX;
 }
 
 static float computePlayerRenderZ(const RoomPlayerState &playerState) {
 	return playerState.entity ? playerState.entity->getZ() : playerState.z;
+}
+
+static float clampPlayerMovementDepth(const RoomSetupState &state,
+		const RoomPlayerState &playerState, float z) {
+	const float placementOffset = playerState.z - computePlayerRenderZ(playerState);
+	return clampRoomDepth(state, z - placementOffset) + placementOffset;
 }
 
 static void resetPlayerMoveTargetProgress(RoomPlayerState &playerState) {
@@ -2066,22 +2052,20 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 		return false;
 
 	int candidateCenterX = playerState.centerX;
-	int candidateBottomY = playerState.bottomY;
+	const int candidateBottomY = playerState.bottomY;
 	float candidateZ = playerState.z;
 	if (horizontalDirection != 0) {
 		const int horizontalStep = computeRoomPlayerHorizontalStep(state, computePlayerRenderZ(playerState));
 		candidateCenterX = clampPlayerCenterXToNativeBounds(
 			playerState, playerState.centerX + horizontalDirection * horizontalStep);
-		candidateZ = clampRoomDepth(state, playerState.z - depthDirection);
+		candidateZ = clampPlayerMovementDepth(state, playerState, playerState.z - depthDirection);
 	} else if (depthDirection != 0) {
-		const int verticalStep = computeRoomPlayerVerticalScreenStep();
 		const float depthStep = computeRoomPlayerDepthStep(state);
 		const bool depthBoundaryReached = depthDirection < 0
-			? playerState.z >= (float)state.roomMaxZ
-			: playerState.z <= (float)state.roomMinZ;
+			? computePlayerRenderZ(playerState) >= state.roomMaxZ
+			: computePlayerRenderZ(playerState) <= state.roomMinZ;
 		if (!depthBoundaryReached) {
-			candidateBottomY = playerState.bottomY + depthDirection * verticalStep;
-			candidateZ = clampRoomDepth(state, playerState.z - depthDirection * depthStep);
+			candidateZ = clampPlayerMovementDepth(state, playerState, playerState.z - depthDirection * depthStep);
 		}
 	}
 
@@ -2191,24 +2175,20 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 		return setIdleAnimation(playerState.facing);
 	}
 
-	const int previousBaseX = playerState.entity->getX();
-	const int previousBaseY = playerState.entity->getY();
 	const int horizontalStep = computeRoomPlayerHorizontalStep(state, computePlayerRenderZ(playerState));
-	const int verticalStep = computeRoomPlayerVerticalScreenStep();
 	const float depthStep = computeRoomPlayerDepthStep(state);
 	int candidateCenterX = clampPlayerCenterXToNativeBounds(
 		playerState, playerState.centerX + horizontalInput * horizontalStep);
-	int candidateBottomY = playerState.bottomY;
+	const int candidateBottomY = playerState.bottomY;
 	float candidateZ = playerState.z;
 	bool depthBoundaryReached = false;
 	if (verticalInput != 0) {
 
 		depthBoundaryReached = verticalInput < 0
-			? playerState.z >= (float)state.roomMaxZ
-			: playerState.z <= (float)state.roomMinZ;
+			? computePlayerRenderZ(playerState) >= state.roomMaxZ
+			: computePlayerRenderZ(playerState) <= state.roomMinZ;
 		if (!depthBoundaryReached) {
-			candidateBottomY = playerState.bottomY + verticalInput * verticalStep;
-			candidateZ = clampRoomDepth(state, playerState.z - verticalInput * depthStep);
+			candidateZ = clampPlayerMovementDepth(state, playerState, playerState.z - verticalInput * depthStep);
 		}
 	}
 	if (candidateCenterX == playerState.centerX &&
@@ -2229,8 +2209,8 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 		return setIdleAnimation(playerState.facing >= 0 ? playerState.facing : 0);
 	}
 
-	const int desiredFacing = resolveFacingFromRoomMovement(
-		playerState.centerX, playerState.bottomY, candidateCenterX, candidateBottomY);
+	const int desiredFacing = resolveFacingFromMoveDirection(
+		horizontalInput, verticalInput, playerState.facing);
 	if (desiredFacing != playerState.facing && startTurnAnimation(desiredFacing)) {
 		playerState.keyboardWalkRequest = -1;
 		return true;
@@ -2246,8 +2226,7 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 	if (!moved)
 		return setIdleAnimation(playerState.facing >= 0 ? playerState.facing : 0);
 
-	const int actualFacing = resolveFacingFromRoomMovement(
-		previousBaseX, previousBaseY, playerState.entity->getX(), playerState.entity->getY());
+	const int actualFacing = desiredFacing;
 	playerState.walkHorizontalDirection = actualFacing == 1 ? -1 : actualFacing == 2 ? 1 : 0;
 	playerState.walkDepthDirection = actualFacing == 3 ? -1 : actualFacing == 0 ? 1 : 0;
 	(void)setPlayerWalkAnimation(playerState, actualFacing);
