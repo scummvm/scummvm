@@ -170,6 +170,10 @@ private:
 	void startMonsterHitReaction(MonsterRecord &monster, Entity &monsterEntity, MonsterCombatState *combatState,
 		int attackerAttackFirstFrame, bool &needsRedraw) const;
 
+	static Entity *findSceneRuntimeEntity(EntityManager *entityManager, const Common::String &name);
+	static NpcRecord *findRoomNpcRecordByName(RoomSetupState &state, const Common::String &name);
+	static Entity *selectMonsterEntity(EntityManager *entityManager, const MonsterRecord &monster);
+
 	MonsterRecord *findMonsterTargetAtPoint(const Common::Point &point) const;
 	MonsterRecord *findOverlappingMonsterTarget() const;
 	NpcRecord *findOverlappingNpcTarget() const;
