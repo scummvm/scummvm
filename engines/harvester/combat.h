@@ -158,6 +158,16 @@ public:
 	Common::Error resolvePlayerAttackContact(bool &needsRedraw);
 
 private:
+	struct MonsterPursuitResult;
+
+	// Returns true when player defeat must end the entire combat update.
+	bool updateMonsterAttack(Script &script, const MonsterRecord &monster,
+		Entity &entity, MonsterCombatState &combatState, bool &playerAlive, bool &needsRedraw);
+	MonsterPursuitResult updateMonsterPursuit(Script &script, MonsterRecord &monster,
+		Entity &entity, MonsterCombatState &combatState, int depthStep, bool &needsRedraw) const;
+	void beginMonsterAttack(MonsterRecord &monster, Entity &entity, MonsterCombatState &combatState,
+		const MonsterPursuitResult &pursuit, uint32 now, bool &needsRedraw) const;
+
 	void resizeCombatStates();
 	bool queueInnerSanctumHerrillDeathAfterMuck(const MonsterRecord &monster) const;
 	// Called after resizeCombatStates; NPC finalization ends the entire combat update.
