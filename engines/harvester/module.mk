@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	fst_player.o \
 	harvester.o \
 	inventory.o \
+	media/audio_decoder.o \
 	media_manager.o \
 	menu/menu.o \
 	menu/menu_config.o \
