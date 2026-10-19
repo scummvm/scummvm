@@ -92,7 +92,7 @@ const IgorGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_SKIP_COPY_PROTECTION)
 		},
 		kIdSpaFloppy,
 		kFlagFloppy,

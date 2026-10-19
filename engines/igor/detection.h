@@ -79,6 +79,7 @@ extern const PlainGameDescriptor igorGames[];
 extern const IgorGameDescription gameDescriptions[];
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_SKIP_COPY_PROTECTION GUIO_GAMEOPTIONS2
 
 } // End of namespace Igor
 

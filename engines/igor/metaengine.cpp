@@ -39,6 +39,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_SKIP_COPY_PROTECTION,
+		{
+			_s("Skip copy protection"),
+			_s("Skips original copy protection screen"),
+			"skip_copy_protection",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
