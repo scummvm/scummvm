@@ -912,12 +912,28 @@ bool OverlayRecord::getField(const Common::String &key) {
 bool OverlayRecord::setField(const Common::String &key) {
 	lua_State *L = getLua();
 
+	// Only a change gets the picture drawn anew
 	if (key == "onScreen") {
-		_dest = checkRect(L, 3);
+		const ScriptRect dest = checkRect(L, 3);
+		if (dest == _dest) {
+			return true;
+		}
+
+		_dest = dest;
 	} else if (key == "source") {
-		_source = checkRect(L, 3);
+		const ScriptRect source = checkRect(L, 3);
+		if (source == _source) {
+			return true;
+		}
+
+		_source = source;
 	} else if (key == "modColor") {
-		_modColor = checkColor(L, 3);
+		const uint32 modColor = checkColor(L, 3);
+		if (modColor == _modColor) {
+			return true;
+		}
+
+		_modColor = modColor;
 	} else {
 		return false;
 	}
@@ -1130,11 +1146,17 @@ bool AnimOverlayRecord::setField(const Common::String &key) {
 	lua_State *L = getLua();
 
 	if (key == "onScreen") {
-		_dest = checkRect(L, 3);
-		applyFrame();
+		const ScriptRect dest = checkRect(L, 3);
+		if (dest != _dest) {
+			_dest = dest;
+			applyFrame();
+		}
 	} else if (key == "modColor") {
-		_modColor = checkColor(L, 3);
-		applyFrame();
+		const uint32 modColor = checkColor(L, 3);
+		if (modColor != _modColor) {
+			_modColor = modColor;
+			applyFrame();
+		}
 	} else if (key == "pauseOnLastFrame") {
 		_pausesOnLastFrame = lua_toboolean(L, 3) != 0;
 	} else if (key == "visible") {
@@ -1642,9 +1664,13 @@ bool MovieRecord::getField(const Common::String &key) {
 bool MovieRecord::setField(const Common::String &key) {
 	lua_State *L = getLua();
 
+	// Scripts set these every frame, mostly to what they already are
 	if (key == "onScreen") {
-		_dest = checkRect(L, 3);
-		applyPosition();
+		const ScriptRect dest = checkRect(L, 3);
+		if (dest != _dest) {
+			_dest = dest;
+			applyPosition();
+		}
 	} else if (key == "pauseOnLastFrame") {
 		_pausesOnLastFrame = lua_toboolean(L, 3) != 0;
 	} else if (key == "visible") {

@@ -55,6 +55,8 @@ struct ScriptRect {
 		return left == other.left && top == other.top && right == other.right && bottom == other.bottom;
 	}
 
+	bool operator!=(const ScriptRect &other) const { return !(*this == other); }
+
 	// An empty or inside out rectangle becomes an empty one
 	Common::Rect toRect() const;
 };

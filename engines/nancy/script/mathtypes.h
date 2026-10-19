@@ -50,6 +50,7 @@ struct ScriptMatrix {
 	ScriptMatrix();	// the identity
 
 	bool operator==(const ScriptMatrix &other) const;
+	bool operator!=(const ScriptMatrix &other) const { return !(*this == other); }
 	ScriptMatrix operator*(const ScriptMatrix &other) const;
 
 	// A point moved by the matrix

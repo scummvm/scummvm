@@ -295,11 +295,18 @@ int Record::setScriptField() {
 			_hasActiveFunction = false;
 		}
 	} else if (key == "z") {
-		_z = luaL_checknumber(L, 3);
-		onZChanged();
+		const double z = luaL_checknumber(L, 3);
+		if (z != _z) {
+			_z = z;
+			onZChanged();
+		}
 	} else if (key == "transform" && hasTransform()) {
-		_transform = checkMatrix(L, 3);
-		onTransformChanged();
+		// Scripts that move things around set it every frame, whether it changed or not
+		const ScriptMatrix &transform = checkMatrix(L, 3);
+		if (transform != _transform) {
+			_transform = transform;
+			onTransformChanged();
+		}
 	} else if (!setField(key)) {
 		lua_pushvalue(L, 3);
 		storeValue(key.c_str());
