@@ -10,6 +10,8 @@ MODULE_OBJS = \
 	flow.o \
 	flow_debug.o \
 	flow_map.o \
+	flow_startup.o \
+	flow_transition.o \
 	fst_player.o \
 	harvester.o \
 	inventory.o \

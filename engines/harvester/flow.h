@@ -107,6 +107,7 @@ private:
 	bool loadQuickTips();
 	bool loadMenuItems();
 	Common::Error runQuickTips();
+	Common::Error runQuickTipsOverlay(const SceneState &scene);
 	Common::Error runDemoIntroduction();
 	Common::Error runMainMenu();
 	Common::Error runTownMapSelector(const Common::String &mapEntryName, Common::String &destinationEntranceName);

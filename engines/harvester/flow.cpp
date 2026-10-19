@@ -20,31 +20,18 @@
  */
 
 #include "harvester/flow.h"
-#include "harvester/flow_support.h"
 
 #include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/events.h"
-#include "common/formats/ini-file.h"
 #include "common/memstream.h"
-#include "common/ptr.h"
 #include "common/serializer.h"
-#include "common/system.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "graphics/framelimiter.h"
-#include "harvester/cft_font.h"
 #include "harvester/detection.h"
-#include "harvester/fst_player.h"
 #include "harvester/harvester.h"
 #include "harvester/input.h"
-#include "harvester/palette_utils.h"
 #include "harvester/resources.h"
 #include "harvester/entity.h"
 #include "harvester/scene_entities.h"
-#include "harvester/room_presentation.h"
-#include "harvester/art.h"
-#include "harvester/monster.h"
 #include "harvester/player.h"
 #include "harvester/script.h"
 
@@ -52,38 +39,8 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kQuickTipsPath = "ADJHEAD.RCS";
-static const char *const kMenuPath = "MENU.INI";
-static const char *const kMenuSectionName = "menu";
-static const char *const kBuiltInMenuItems[] = {
-	"NEW GAME",
-	"SAVE GAME",
-	"LOAD GAME",
-	"OPTIONS",
-	"HELP",
-	"QUIT GAME"
-};
-
 static const int kCursorSequence7 = 7;
-static const int kNativeIdentTextLineSpacing = 3;
 static const char *const kPlayerActorEntityName = "PLAYER";
-static const uint32 kPaletteFadeIntervalTicks = 4;
-static const float kPaletteBrightnessBlack = 0.0f;
-static const float kPaletteBrightnessFull = 1.0f;
-static const uint32 kDemoEndingScreenDurationMs = 10000;
-static const int kDemoEndingScreenNumbers[] = { 1, 2, 3, 4, 6 };
-static const char *const kDemoEndingMusicPath = "SOUND/MUSIC/ROCKFITE.CMP";
-static const uint32 kDemoIntroductionDurationMs = 17000;
-static const char *const kDemoIntroductionBitmapPath = "1:/GRAPHIC/OTHER/MAINMENU.BM";
-static const char *const kDemoIntroductionPalettePath = "1:/GRAPHIC/PAL/MAINMENU.PAL";
-static const char *const kDemoIntroductionMusicPath = "SOUND/MUSIC/LODGERB.CMP";
-static const char *const kDemoIntroductionFstPath = "GRAPHIC/FST/PCFALL.FST";
-static const char *const kDemoIntroductionText =
-	"After solving the enigmas of the Harvest town, you are thrust into the realm of "
-	"the Order of the Harvest Moon, a bizarre institution of secretive knowledge.  "
-	"However, the only thing you really care about is escaping from this hellish reality...";
-// Keep WAIT_BM visible while room construction runs
-static const uint32 kTransitionWaitFrameMinMs = 120;
 
 } // End of anonymous namespace
 
@@ -147,35 +104,11 @@ bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap
 	return true;
 }
 
-void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
-	byte scaledPalette[256 * 3];
-	const float gammaBrightness = g_engine ? g_engine->getGammaBrightnessScale() : 1.0f;
-	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
-	screen.setPalette(scaledPalette);
-}
-
-static void setScaledDisplayPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
-	byte scaledPalette[256 * 3];
-	const float clampedBrightness = CLIP<float>(brightness, 0.0f, 1.0f);
-	for (uint i = 0; i < ARRAYSIZE(scaledPalette); ++i)
-		scaledPalette[i] = (byte)CLIP<int>((int)(palette[i] * clampedBrightness + 0.5f), 0, 255);
-	screen.setPalette(scaledPalette);
-}
-
 static Common::Rect getRegionBounds(const RegionRecord &region) {
 	if (region.right > region.left && region.bottom > region.top)
 		return Common::Rect(region.left, region.top, region.right, region.bottom);
 
 	return Common::Rect();
-}
-
-bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
-	Common::Array<byte> data;
-	if (!resources.loadFile(path, data) || data.size() < 12)
-		return false;
-
-	bitmap = IndexedBitmap();
-	return decodeBitmap(data, bitmap);
 }
 
 bool doesPlayerFacingMatchRegion(int playerFacing, const RegionRecord &region) {
@@ -204,52 +137,10 @@ RoomHoverState Flow::getRoomHoverState(const SceneState &scene) const {
 		scene.state.roomNpcs, scene.sceneRegions, _mousePos, _menuTextConfig, &_dialogue);
 }
 
-static Common::String trimAsciiLine(const Common::String &value) {
-	uint start = 0;
-	uint end = value.size();
-
-	while (start < end && (value[start] == ' ' || value[start] == '\t'))
-		++start;
-	while (end > start && (value[end - 1] == ' ' || value[end - 1] == '\t' || value[end - 1] == '\r'))
-		--end;
-
-	return value.substr(start, end - start);
-}
-
-static bool loadQuickTipsScene(HarvesterEngine &engine, SceneState &scene) {
-	RoomSetupState state;
-	// The original startup path enters the START room first and overlays quick tips on top of it.
-	if (!engine.getScript()->resolveRoomSetupState("START", state, *engine.getResources()))
-		return false;
-
-	return SceneEntities::loadRoomSceneResources(state, *engine.getResources(), scene);
-}
-
-static void renderQuickTipsScreen(HarvesterEngine &engine, const SceneState &scene,
-		const MenuTextConfig &config, const QuickTipsLayout &layout,
-		const Common::String &tipText) {
-	Graphics::Screen *screen = engine.getScreen();
-	if (!screen)
-		return;
-
-	RoomPresentation::drawRoomScene(engine, *screen, scene, scene.targetPaletteBrightness);
-	drawQuickTipsPanel(engine, config, layout, tipText);
-
-	if (engine.getRuntimeEntities())
-		engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
-}
-
 Flow::Flow(HarvesterEngine &engine)
 	: _engine(engine), _mousePos(320, 200), _dialogue(engine, _mousePos), _inventory(engine),
 	  _menu(engine, _mousePos, _menuItems), _cheats(engine),
 	  _room(engine, _inventory, _cheats) {
-}
-
-bool Flow::load() {
-	(void)loadMenuTextConfig(_engine, _menuTextConfig);
-	return loadQuickTips() && loadMenuItems();
 }
 
 bool Flow::buildDialogueSaveStateBlob(Common::Array<byte> &blob, uint32 saveVersion) {
@@ -322,351 +213,8 @@ Common::Error Flow::run() {
 	return runMainMenu();
 }
 
-bool Flow::loadQuickTips() {
-	_quickTips.clear();
-
-	Common::Array<byte> data;
-	if (!_engine.getResources()->loadFile(kQuickTipsPath, data)) {
-		warning("Harvester: unable to load quick tips '%s'", kQuickTipsPath);
-		return true;
-	}
-
-	Common::String currentLine;
-	for (uint i = 0; i < data.size(); ++i) {
-		const char ch = (char)data[i];
-		if (ch == '\r')
-			continue;
-		if (ch == '\n') {
-			Common::String trimmed = trimAsciiLine(currentLine);
-			if (!trimmed.empty())
-				_quickTips.push_back(Common::move(trimmed));
-			currentLine.clear();
-			continue;
-		}
-
-		currentLine += ch;
-	}
-
-	Common::String trimmed = trimAsciiLine(currentLine);
-	if (!trimmed.empty())
-		_quickTips.push_back(Common::move(trimmed));
-
-	debugC(1, kDebugGeneral, "Harvester: loaded %u quick tips from '%s'", (uint)_quickTips.size(), kQuickTipsPath);
-	return true;
-}
-
-bool Flow::loadMenuItems() {
-	_menuItems.clear();
-
-	Common::Array<byte> data;
-	if (!_engine.getResources()->loadFile(kMenuPath, data)) {
-		for (const char *item : kBuiltInMenuItems)
-			_menuItems.push_back(item);
-		debugC(2, kDebugGeneral,
-			"Harvester: using %u built-in startup menu items because '%s' is unavailable",
-			(uint)_menuItems.size(), kMenuPath);
-		return true;
-	}
-
-	Common::MemoryReadStream stream(data.data(), data.size());
-	Common::INIFile menu;
-	menu.setDefaultSectionName(kMenuSectionName);
-	menu.requireKeyValueDelimiter();
-	menu.suppressValuelessLineWarning();
-	if (!menu.loadFromStream(stream)) {
-		warning("Harvester: unable to parse startup menu '%s'", kMenuPath);
-		return true;
-	}
-
-	for (uint i = 1; i <= 6; ++i) {
-		Common::String key = Common::String::format("main_menu_%u", i);
-		Common::String value;
-		if (menu.getKey(key, kMenuSectionName, value) && !value.empty())
-			_menuItems.push_back(Common::move(value));
-	}
-
-	debugC(1, kDebugGeneral, "Harvester: loaded %u startup menu items from '%s'", (uint)_menuItems.size(), kMenuPath);
-	return true;
-}
-
-Common::Error Flow::runQuickTips() {
-	if (!_engine.getScript()->isQuickTipsEnabled() || _quickTips.empty())
-		return Common::kNoError;
-
-	Common::Error transitionError = beginRoomSetupTransition();
-	if (transitionError.getCode() != Common::kNoError)
-		return transitionError;
-
-	SceneState scene;
-	if (!loadQuickTipsScene(_engine, scene))
-		return Common::kReadingFailed;
-
-	Graphics::Screen *screen = _engine.getScreen();
-	if (screen) {
-		if (!populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
-			return Common::kReadingFailed;
-
-		transitionError = waitForRoomSetupTransitionHold();
-		if (transitionError.getCode() != Common::kNoError)
-			return transitionError;
-
-		logScenePaletteSummary("quick tips scene palette", scene, kPaletteBrightnessBlack);
-		RoomPresentation::drawRoomScene(_engine, *screen, scene, kPaletteBrightnessBlack);
-		screen->makeAllDirty();
-		screen->update();
-
-		logScenePaletteSummary("quick tips fade target", scene, scene.targetPaletteBrightness);
-		transitionError = fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
-		if (transitionError.getCode() != Common::kNoError)
-			return transitionError;
-	}
-
-	resetCursorAnimationSequence();
-
-	QuickTipsLayout quickTipsLayout;
-	if (!resolveQuickTipsLayout(_engine, _menuTextConfig, quickTipsLayout))
-		return Common::kReadingFailed;
-	const Common::String &toggleLabel = _engine.getScript()->isQuickTipsEnabled()
-		? _menuTextConfig.quickTipsOnLabel : _menuTextConfig.quickTipsOffLabel;
-	debugC(1, kDebugGeneral,
-		"Harvester: quick tips panel='%s' header='%s' exit='%s' next='%s' toggle='%s'",
-		_menuTextConfig.hasQuickTipsHeader() ? "TEXTBOX6.BM" : "TIPS.BM",
-		_menuTextConfig.quickTipsHeader.c_str(), _menuTextConfig.quickTipsExitLabel.c_str(),
-		_menuTextConfig.quickTipsNextLabel.c_str(), toggleLabel.c_str());
-
-	uint tipIndex = _engine.getRandomNumber(_quickTips.size() - 1);
-	bool needsRedraw = true;
-	Graphics::FrameLimiter limiter(g_system, 60);
-
-	while (!_engine.shouldQuit()) {
-		if (needsRedraw) {
-			renderQuickTipsScreen(_engine, scene, _menuTextConfig, quickTipsLayout, _quickTips[tipIndex]);
-			needsRedraw = false;
-		}
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			Common::Error result = Common::kNoError;
-			if (handleSystemEvent(event, result))
-				return result;
-
-			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE:
-				needsRedraw = true;
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				if (quickTipsLayout.exitRect.contains(_mousePos))
-					return Common::kNoError;
-
-				if (quickTipsLayout.nextRect.contains(_mousePos)) {
-					tipIndex = (tipIndex + 1) % _quickTips.size();
-					needsRedraw = true;
-				} else if (quickTipsLayout.toggleRect.contains(_mousePos)) {
-					_engine.getScript()->setQuickTipsEnabled(!_engine.getScript()->isQuickTipsEnabled());
-					if (!resolveQuickTipsLayout(_engine, _menuTextConfig, quickTipsLayout))
-						return Common::kReadingFailed;
-					needsRedraw = true;
-				}
-				break;
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
-					return Common::kNoError;
-				break;
-			default:
-				break;
-			}
-		}
-
-		if (tickRuntimeEntities())
-			needsRedraw = true;
-
-		limiter.delayBeforeSwap();
-		limiter.startFrame();
-	}
-
-	return Common::kNoError;
-}
-
-Common::Error Flow::runDemoEnding() {
-	Graphics::Screen *screen = _engine.getScreen();
-	ResourceManager *resources = _engine.getResources();
-	EntityManager *entityManager = _engine.getRuntimeEntities();
-	if (!screen || !resources)
-		return Common::kReadingFailed;
-
-	if (entityManager)
-		entityManager->hideCursor();
-	_engine.stopSound();
-	if (!_engine.playMusic(kDemoEndingMusicPath))
-		return Common::kReadingFailed;
-
-	for (uint i = 0; i < ARRAYSIZE(kDemoEndingScreenNumbers) && !_engine.shouldQuit(); ++i) {
-		const int screenNumber = kDemoEndingScreenNumbers[i];
-		const Common::String bitmapPath = Common::String::format(
-			"1:/GRAPHIC/OTHER/SCREEN%d.BM", screenNumber);
-		const Common::String palettePath = Common::String::format(
-			"1:/GRAPHIC/PAL/SCREEN%d.PAL", screenNumber);
-		IndexedBitmap bitmap;
-		byte palette[256 * 3];
-		if (!loadBitmapResource(*resources, bitmapPath, bitmap) ||
-				!Art::loadPaletteResource(*resources, palettePath, palette)) {
-			warning("Harvester: unable to load DOS demo ending screen %d", screenNumber);
-			return Common::kReadingFailed;
-		}
-
-		setScaledPalette(*screen, palette, kPaletteBrightnessBlack);
-		screen->fillRect(Common::Rect(0, 0, screen->w, screen->h), 0);
-		RoomPresentation::blitBitmap(*screen, bitmap, 0, 0);
-		screen->makeAllDirty();
-		screen->update();
-
-		Common::Error fadeError = fadePalette(
-			palette, kPaletteBrightnessBlack, kPaletteBrightnessFull);
-		if (fadeError.getCode() != Common::kNoError)
-			return fadeError;
-
-		const uint32 deadline = g_system->getMillis() + kDemoEndingScreenDurationMs;
-		bool skipScreen = false;
-		while (!skipScreen && !_engine.shouldQuit() &&
-				(int32)(deadline - g_system->getMillis()) > 0) {
-			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event)) {
-				Common::Error eventError = Common::kNoError;
-				if (handleSystemEvent(event, eventError))
-					return eventError;
-				if (event.type == Common::EVENT_LBUTTONDOWN ||
-						(event.type == Common::EVENT_KEYDOWN &&
-						(event.kbd.keycode == Common::KEYCODE_SPACE ||
-						event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-						event.kbd.keycode == Common::KEYCODE_RETURN))) {
-					skipScreen = true;
-				}
-			}
-			g_system->delayMillis(1);
-		}
-
-		if (i + 1 == ARRAYSIZE(kDemoEndingScreenNumbers))
-			_engine.stopMusic();
-		fadeError = fadePalette(
-			palette, kPaletteBrightnessFull, kPaletteBrightnessBlack);
-		if (fadeError.getCode() != Common::kNoError)
-			return fadeError;
-	}
-
-	_engine.quitGame();
-	return Common::kNoError;
-}
-
-Common::Error Flow::runDemoIntroduction() {
-	Graphics::Screen *screen = _engine.getScreen();
-	ResourceManager *resources = _engine.getResources();
-	EntityManager *entityManager = _engine.getRuntimeEntities();
-	const Art *art = _engine.getArt();
-	const Text *text = _engine.getText();
-	const CftFontResource *fontResource = text ? text->findFont("TEXTFONT") : nullptr;
-	if (!screen || !resources || !art || !fontResource)
-		return Common::kReadingFailed;
-
-	IndexedBitmap bitmap;
-	byte palette[256 * 3];
-	if (!loadBitmapResource(*resources, kDemoIntroductionBitmapPath, bitmap) ||
-			!Art::loadPaletteResource(*resources, kDemoIntroductionPalettePath, palette)) {
-		return Common::kReadingFailed;
-	}
-
-	HarvesterCftFont font(*fontResource);
-	if (!font.isValid())
-		return Common::kReadingFailed;
-	debugC(1, kDebugGeneral,
-		"Harvester: showing DOS demo introduction for %u ms",
-		kDemoIntroductionDurationMs);
-
-	if (entityManager)
-		entityManager->hideCursor();
-	setScaledPalette(*screen, palette, kPaletteBrightnessBlack);
-	screen->fillRect(Common::Rect(0, 0, screen->w, screen->h), 0);
-	RoomPresentation::blitBitmap(*screen, bitmap, 0, 0);
-	blitTransparentBitmap(*screen, art->getLogoBitmap(), 160, 0);
-	RoomPresentation::drawWrappedText(*screen, font, kDemoIntroductionText, 90, 200, 420, 0xce,
-		kNativeIdentTextLineSpacing);
-	screen->makeAllDirty();
-	screen->update();
-
-	if (!_engine.playMusic(kDemoIntroductionMusicPath))
-		return Common::kReadingFailed;
-	Common::Error fadeError = fadePalette(
-		palette, kPaletteBrightnessBlack, kPaletteBrightnessFull);
-	if (fadeError.getCode() != Common::kNoError)
-		return fadeError;
-
-	const uint32 deadline = g_system->getMillis() + kDemoIntroductionDurationMs;
-	bool skipIntroduction = false;
-	while (!skipIntroduction && !_engine.shouldQuit() &&
-			(int32)(deadline - g_system->getMillis()) > 0) {
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			Common::Error eventError = Common::kNoError;
-			if (handleSystemEvent(event, eventError))
-				return eventError;
-			if (event.type == Common::EVENT_LBUTTONDOWN ||
-					event.type == Common::EVENT_RBUTTONDOWN ||
-					(event.type == Common::EVENT_KEYDOWN &&
-					(event.kbd.keycode == Common::KEYCODE_SPACE ||
-					event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN))) {
-				skipIntroduction = true;
-			}
-		}
-		g_system->delayMillis(1);
-	}
-
-	fadeError = fadePalette(palette, kPaletteBrightnessFull, kPaletteBrightnessBlack);
-	if (fadeError.getCode() != Common::kNoError)
-		return fadeError;
-	_engine.stopMusic();
-
-	FstPlayer fstPlayer(_engine);
-	if (!fstPlayer.play(kDemoIntroductionFstPath))
-		return Common::kReadingFailed;
-	return Common::kNoError;
-}
-
 Common::Error Flow::runMainMenu() {
 	return _menu.runMainMenu(*this);
-}
-
-Common::Error Flow::showCdChangePrompt(int discNumber) {
-	if (discNumber <= 0)
-		return Common::kNoError;
-
-	ResourceManager *resources = _engine.getResources();
-	if (!resources)
-		return Common::kReadingFailed;
-	const int previousDisc = resources->getCurrentDisc();
-
-	if (_engine.shouldShowCdChangePrompts()) {
-		bool promptCompleted = false;
-		Common::Error promptError = _menu.showCdChangePrompt(discNumber, *resources, *this, promptCompleted);
-		// System-event exits can return kNoError without completing the prompt.
-		if (promptError.getCode() != Common::kNoError || !promptCompleted)
-			return promptError;
-	}
-
-	if (!_engine.activateDisc(discNumber)) {
-		warning("Harvester: unable to activate disc %d resources", discNumber);
-		return Common::kReadingFailed;
-	}
-	if ((discNumber == 1 || discNumber == 3) &&
-			previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
-		Script *script = _engine.getScript();
-		if (!script || !script->reloadTownWorld(*resources)) {
-			warning("Harvester: unable to reload town script after disc prompt %d -> %d",
-				previousDisc, discNumber);
-			return Common::kReadingFailed;
-		}
-	}
-
-	return Common::kNoError;
 }
 
 Common::Error Flow::runRoomMenu(const IndexedBitmap &backdrop, const byte *palette,
@@ -974,140 +522,6 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 	}
 
 	return true;
-}
-
-Common::Error Flow::beginRoomSetupTransition() {
-	Graphics::Screen *screen = _engine.getScreen();
-	if (screen) {
-		byte displayPalette[256 * 3];
-		screen->getPalette(displayPalette);
-		bool hasVisiblePalette = false;
-		for (byte value : displayPalette) {
-			if (value != 0) {
-				hasVisiblePalette = true;
-				break;
-			}
-		}
-
-		if (hasVisiblePalette) {
-			for (double brightness = 1.0;
-					brightness > kPaletteBrightnessBlack; brightness -= 0.1) {
-				const uint32 startTick = getRuntimeClockTicks();
-				setScaledDisplayPalette(*screen, displayPalette, brightness);
-				screen->makeAllDirty();
-				screen->update();
-
-				Common::Error fadeError = Common::kNoError;
-				if (waitForPaletteFadeTick(startTick, fadeError))
-					return fadeError;
-			}
-
-			setScaledDisplayPalette(*screen, displayPalette, kPaletteBrightnessBlack);
-			screen->makeAllDirty();
-			screen->update();
-		}
-	}
-
-	if (_engine.getRuntimeEntities())
-		_engine.getRuntimeEntities()->hideCursor();
-
-	const Art *art = _engine.getArt();
-	if (art && screen)
-		art->drawWaitFrame(*screen);
-	_roomSetupTransitionShownTick = g_system ? g_system->getMillis() : 0;
-
-	Common::Error result = Common::kNoError;
-	if (pumpTransitionEvents(result))
-		return result;
-
-	return Common::kNoError;
-}
-
-Common::Error Flow::waitForRoomSetupTransitionHold() {
-	if (_roomSetupTransitionShownTick == 0 || !g_system)
-		return Common::kNoError;
-
-	const uint32 deadline = _roomSetupTransitionShownTick + kTransitionWaitFrameMinMs;
-	while ((int32)(deadline - g_system->getMillis()) > 0) {
-		Common::Error result = Common::kNoError;
-		if (pumpTransitionEvents(result))
-			return result;
-		g_system->delayMillis(1);
-	}
-
-	_roomSetupTransitionShownTick = 0;
-	return Common::kNoError;
-}
-
-Common::Error Flow::fadeInRoomScene(const byte *palette, float targetBrightness) {
-	Graphics::Screen *screen = _engine.getScreen();
-	if (!screen || !palette)
-		return Common::kNoError;
-
-	for (double brightness = 0.0; brightness < targetBrightness; brightness += 0.1) {
-		const uint32 startTick = getRuntimeClockTicks();
-		setScaledPalette(*screen, palette, brightness);
-		screen->makeAllDirty();
-		screen->update();
-
-		Common::Error fadeError = Common::kNoError;
-		if (waitForPaletteFadeTick(startTick, fadeError))
-			return fadeError;
-	}
-
-	setScaledPalette(*screen, palette, targetBrightness);
-	screen->makeAllDirty();
-	screen->update();
-	return Common::kNoError;
-}
-
-Common::Error Flow::fadePalette(const byte *palette, float fromBrightness,
-		float toBrightness) {
-	Graphics::Screen *screen = _engine.getScreen();
-	if (!screen || !palette)
-		return Common::kNoError;
-
-	const double step = fromBrightness < toBrightness ? 0.1 : -0.1;
-	for (double brightness = fromBrightness;
-			step > 0.0f ? brightness < toBrightness : brightness > toBrightness;
-			brightness += step) {
-		const uint32 startTick = getRuntimeClockTicks();
-		setScaledPalette(*screen, palette, brightness);
-		screen->makeAllDirty();
-		screen->update();
-
-		Common::Error fadeError = Common::kNoError;
-		if (waitForPaletteFadeTick(startTick, fadeError))
-			return fadeError;
-	}
-
-	setScaledPalette(*screen, palette, toBrightness);
-	screen->makeAllDirty();
-	screen->update();
-	return Common::kNoError;
-}
-
-bool Flow::waitForPaletteFadeTick(uint32 startTick, Common::Error &result) {
-	const uint32 deadline = startTick + kPaletteFadeIntervalTicks;
-	while ((int32)(deadline - getRuntimeClockTicks()) > 0) {
-		if (pumpTransitionEvents(result))
-			return true;
-		g_system->delayMillis(1);
-	}
-	debugC(4, kDebugScene,
-		"Harvester: palette fade step tick=%u->%u interval=%u",
-		startTick, getRuntimeClockTicks(), kPaletteFadeIntervalTicks);
-	return false;
-}
-
-bool Flow::pumpTransitionEvents(Common::Error &result) {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		if (handleSystemEvent(event, result))
-			return true;
-	}
-
-	return false;
 }
 
 void Flow::executeStartupAudioCommands(const Common::Array<AudioCommand> &commands) {
