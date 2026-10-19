@@ -233,6 +233,16 @@ void Panel::addBuiltInTooltip() {
 	_tooltip->read(stream);
 }
 
+bool Panel::hasControl(const Common::String &name) const {
+	for (const Control *control : _controls) {
+		if (control->getName().equalsIgnoreCase(name)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool Panel::createObject(const Common::String &name, const Common::String &templateName) {
 	return _objectFactory && _objectFactory->createObject(name, templateName);
 }

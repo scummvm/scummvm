@@ -406,10 +406,21 @@ void Manager::addJournalEntry(const Common::String &pageName, const Common::Stri
 	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 	assert(autotext);
 
+	// The scripts that hand out the entries can run before the UI is there, e.g.
+	// right after loading. The entries are kept, and come back with the UI.
+	const Panel *page = findPanel(pageName);
+	if (!page) {
+		return;
+	}
+
 	Common::String title = autotext->texts.getValOrDefault(pageName);
 	if (!_journalPages.contains(title)) {
 		takeAction(kActionAddText, "JournalItems", title);
 		_journalPages.setVal(title, pageName);
+	}
+
+	if (page->hasControl(textKey)) {
+		return;
 	}
 
 	createObject(textKey, "JournalEntry", pageName);
@@ -443,7 +454,17 @@ void Manager::addTasklistEntry(const Common::String &textKey, int16 flag) {
 	assert(autotext);
 
 	_tasklistFlags.setVal(textKey, flag);
-	createObject(textKey, "TasklistEntry", "TasklistDialog");
+
+	// Like the journal entries, the tasks come back with the UI
+	const Panel *list = findPanel("TasklistDialog");
+	if (!list) {
+		return;
+	}
+
+	if (!list->hasControl(textKey)) {
+		createObject(textKey, "TasklistEntry", "TasklistDialog");
+	}
+
 	takeAction(kActionSetText, textKey, autotext->texts.getValOrDefault(textKey));
 
 	TasklistData *tasklistData = (TasklistData *)NancySceneState.getPuzzleData(TasklistData::getTag());

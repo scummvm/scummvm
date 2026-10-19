@@ -84,6 +84,8 @@ public:
 	// Whether saved games keep what was done to the panel and its controls
 	void setSavesState(bool savesState) { _savesState = savesState; }
 
+	bool hasControl(const Common::String &name) const;
+
 	// Nancy17 keeps the items apart from the panel that shows them, which comes
 	// with nothing but a template for their buttons
 	void addItemButtons(const Common::Array<byte> &buttonTemplate);
