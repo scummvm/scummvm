@@ -607,6 +607,29 @@ enum AnimBlend {
 
 class MidiPlayer;
 
+// We create a struct to share the same implementation for
+// both Spanish floppy and english & CD versions of the game
+// logic is the same, statics differ
+struct SaveLoadLayout {
+	const IgorFont *font;
+	int shadowColor;
+	int menuY, menuHeight;
+	int menuX, menuWidth; // position and width of the panel imagery
+	int captionTextY, captionFirstY, captionLastY;
+	int bodyFirstY, bodyRows;
+	int listTextX, listFirstY, rowHeight;
+	int frameX, frameWidth;
+	int colorSelected, colorNormal, colorFrameLight, colorFrameDark, colorEraser;
+	int colorTitle, colorNoGames;
+	int nameLimitX, nameMargin;
+	int cursorRows, cursorY, cursorX, cursorWidth;
+	int eraseLastRow, eraseX;
+	bool apostropheGlyph;
+	int centerX; // titles are centered on this x, or start at titleX when negative
+	// x position of the titles when they are not centered
+	int saveTitleX, describeTitleX, loadTitleX, noSavedGamesX;
+};
+
 class IgorEngine : public Engine {
 public:
 	typedef void (IgorEngine::*ExecuteActionProc)(int action); // pointer to room action function
@@ -1781,6 +1804,14 @@ private:
 	void floppyOptionsPaintControl(const uint8 *button, int row);
 	void floppyOptionsPresent(int selectedButton);
 	void floppyOptionsQuitPage(const uint8 *button);
+	void saveLoadDrawTitle(const SaveLoadLayout &layout, int text, int x, int y, int color);
+	void saveLoadFillRows(const SaveLoadLayout &layout, const uint8 *button, int artRow, int firstY, int lastY);
+	void saveLoadFillCursor(const SaveLoadLayout &layout, int x, int y, int firstColor, int secondColor);
+	void saveLoadPresent(const SaveLoadLayout &layout);
+	void saveLoadDrawList(const SaveLoadLayout &layout, const uint8 *button, const Common::Array<Common::String> &names, int top, int row);
+	bool saveLoadChoose(const SaveLoadLayout &layout, const uint8 *button, const Common::Array<Common::String> &names, int &top, int &row);
+	bool saveLoadEditName(const SaveLoadLayout &layout, const uint8 *button, Common::String &name, int row);
+	bool originalSaveLoadPage(bool save);
 	void floppyOptionsControlPage(const uint8 *button);
 	void floppyMenuFadeOut();
 	void handleFloppyOptionsMenu();

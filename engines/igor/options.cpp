@@ -133,6 +133,7 @@ enum OptionsMenuText {
 	kOptionsNoSavedGames,
 	kOptionsLoadTitle,
 	kOptionsUnavailable,
+	kOptionsDescribe,
 	kOptionsTextCount
 };
 
@@ -199,6 +200,8 @@ void IgorEngine::loadOptionsMenuTexts() {
 		{ TXT_OptionsQuit, 3, kOptionsQuitTitle },
 		{ TXT_OptionsSaveTitle, 1, kOptionsSaveTitle },
 		{ TXT_OptionsLoadTitle, talkie ? 2 : 1, talkie ? kOptionsNoSavedGames : kOptionsLoadTitle },
+		{ TXT_OptionsNoSavedGames, (!talkie && !demo) ? 1 : 0, kOptionsNoSavedGames },
+		{ TXT_OptionsDescribeSave, demo ? 0 : 1, kOptionsDescribe },
 		{ TXT_OptionsUnavailable, demo ? 1 : 0, kOptionsUnavailable }
 	};
 	for (uint i = 0; i < ARRAYSIZE(groups); ++i) {
@@ -380,14 +383,22 @@ static const struct {
 };
 
 void IgorEngine::loadFloppyOptionsMenuTexts() {
+	// The floppy texts use their own indices; the save/load texts share the indices of the other versions.
+	static_assert((int)kFloppyTextCount <= (int)kOptionsSaveTitle, "floppy texts overlap the shared save/load texts");
+	_optionsMenuTexts.resize(kOptionsTextCount);
 	const struct {
 		int resource;
 		int count;
+		int firstText;
 	} groups[] = {
-		{ TXT_OptionsButtons, 5 },
-		{ TXT_OptionsSettings, 14 },
-		{ TXT_OptionsTitle, 1 },
-		{ TXT_OptionsQuit, 2 }
+		{ TXT_OptionsButtons, 5, kFloppySave },
+		{ TXT_OptionsSettings, 14, kFloppySpeedTitle },
+		{ TXT_OptionsTitle, 1, kFloppyCtrlTitle },
+		{ TXT_OptionsQuit, 2, kFloppyQuitTitle },
+		{ TXT_OptionsSaveTitle, 1, kOptionsSaveTitle },
+		{ TXT_OptionsLoadTitle, 1, kOptionsLoadTitle },
+		{ TXT_OptionsDescribeSave, 1, kOptionsDescribe },
+		{ TXT_OptionsNoSavedGames, 1, kOptionsNoSavedGames }
 	};
 	for (uint i = 0; i < ARRAYSIZE(groups); ++i) {
 		int size;
@@ -397,14 +408,13 @@ void IgorEngine::loadFloppyOptionsMenuTexts() {
 			if (offset >= size || data[offset] > size - offset - 1)
 				error("Invalid options menu text resource %d", groups[i].resource);
 			const int length = data[offset++];
-			_optionsMenuTexts.push_back(Common::String((const char *)data + offset, length));
+			_optionsMenuTexts[groups[i].firstText + j] = Common::String((const char *)data + offset, length);
 			offset += length;
 		}
 		if (offset != size)
 			error("Unexpected data in options menu text resource %d", groups[i].resource);
 		free(data);
 	}
-	assert(_optionsMenuTexts.size() == kFloppyTextCount);
 }
 
 // Texts are left aligned and drawn with the action sentence font into the menu panel.
@@ -565,6 +575,399 @@ void IgorEngine::floppyOptionsQuitPage(const uint8 *button) {
 		floppyOptionsDrawMainPage(button);
 }
 
+// Original save/load screens. Every version runs the same code, only the offset/colors/font differ.
+static const int kSaveLoadVisibleRows = 8;
+static const int kSaveLoadNameLength = 100;
+static const int kSaveLoadNoSavedGamesY = 70;
+static const int kSaveLoadCaptionArtRow = 1;
+static const int kSaveLoadBodyArtRow = 7;
+static const int kSaveLoadBlinkPeriod = 64;
+static const int kSaveLoadBlinkToggleAt = 0x3d;
+static const int kSaveLoadNameCharsSize = 32;
+
+static SaveLoadLayout makeSaveLoadLayout(const IgorFont *sentenceFont, const IgorFont *dialogueFont, bool spanish, bool floppy) {
+	SaveLoadLayout l;
+	if (floppy) {
+		l.font = sentenceFont;
+		l.shadowColor = -1;
+		l.menuY = kFloppyMenuY;
+		l.menuHeight = kFloppyMenuHeight;
+		l.menuX = kFloppyMenuX;
+		l.menuWidth = kFloppyMenuWidth;
+		l.captionTextY = kFloppyCaptionY;
+		l.captionFirstY = kFloppyCaptionY;
+		l.captionLastY = kFloppyCaptionLastRow;
+		l.bodyFirstY = kFloppyControlPanelFirstRow;
+		l.bodyRows = kFloppyControlPanelRows;
+		l.listTextX = 62;
+		l.listFirstY = 38;
+		l.rowHeight = 10;
+		l.frameX = 59;
+		l.frameWidth = 202;
+		l.colorSelected = kFloppyColorCaption;
+		l.colorNormal = kFloppyColorText;
+		l.colorFrameLight = kFloppyColorFrameLight;
+		l.colorFrameDark = kFloppyColorFrameDark;
+		l.colorEraser = 0xFB;
+		l.colorTitle = kFloppyColorCaption;
+		l.colorNoGames = kFloppyColorCaption;
+		l.nameLimitX = 0x101;
+		l.nameMargin = 6;
+		l.cursorRows = 1;
+		l.cursorY = 8;
+		l.cursorX = 0;
+		l.cursorWidth = 7;
+		l.eraseLastRow = 9;
+		l.eraseX = 0;
+		l.apostropheGlyph = false;
+		l.centerX = -1;
+		l.saveTitleX = 108;
+		l.describeTitleX = 101;
+		l.loadTitleX = 108;
+		l.noSavedGamesX = 103;
+	} else {
+		l.font = dialogueFont;
+		l.shadowColor = 0;
+		l.menuY = kMenuY;
+		l.menuHeight = kMenuHeight;
+		l.menuX = kMenuX;
+		l.menuWidth = kMenuWidth;
+		l.captionTextY = kCaptionY + kMenuY;
+		l.captionFirstY = 18;
+		l.captionLastY = 29;
+		l.bodyFirstY = 35;
+		l.bodyRows = 89;
+		l.listTextX = 51;
+		l.listFirstY = 35;
+		l.rowHeight = 11;
+		l.frameX = 49;
+		l.frameWidth = 222;
+		l.colorSelected = kColorTitle;
+		l.colorNormal = kColorText;
+		l.colorFrameLight = kColorFrameLight;
+		l.colorFrameDark = kColorFrameDark;
+		l.colorEraser = kColorFill;
+		l.colorTitle = kColorPageCaption;
+		l.colorNoGames = kColorTitle;
+		l.nameLimitX = 0x10b;
+		l.nameMargin = 7;
+		l.cursorRows = 2;
+		l.cursorY = 9;
+		l.cursorX = 1;
+		l.cursorWidth = 8;
+		l.eraseLastRow = 10;
+		l.eraseX = 1;
+		l.apostropheGlyph = true;
+		// the Spanish texts are centered, the English ones start at a fixed position
+		l.centerX = spanish ? kPageCenterX : -1;
+		l.saveTitleX = 75;
+		l.describeTitleX = 103;
+		l.loadTitleX = 93;
+		l.noSavedGamesX = 87;
+	}
+	return l;
+}
+
+void IgorEngine::saveLoadDrawTitle(const SaveLoadLayout &l, int text, int x, int y, int color) {
+	const char *str = _optionsMenuTexts[text].c_str();
+	if (l.centerX >= 0) {
+		x = l.centerX - l.font->getStringWidth(str) / 2;
+	}
+	l.font->drawString(_screenTextLayer, str, x, y - l.menuY, color, -1, l.shadowColor);
+}
+
+void IgorEngine::saveLoadFillRows(const SaveLoadLayout &l, const uint8 *button, int artRow, int firstY, int lastY) {
+	for (int y = firstY; y <= lastY; ++y) {
+		memcpy(_screenTextLayer + (y - l.menuY) * 320 + l.menuX, button + artRow * l.menuWidth, l.menuWidth);
+	}
+}
+
+void IgorEngine::saveLoadPresent(const SaveLoadLayout &l) {
+	_system->copyRectToScreen(_screenTextLayer, 320, 0, l.menuY, 320, l.menuHeight);
+	_system->updateScreen();
+}
+
+// Long names, which can come from ScummVM’s own save dialog, are cut at the editing limit so they don’t exceed the available space.
+static Common::String saveLoadFitName(const SaveLoadLayout &l, const Common::String &name) {
+	Common::String fitted;
+	int x = l.listTextX;
+	for (uint i = 0; i < name.size(); ++i) {
+		x += l.font->getCharWidth((uint8)name[i]);
+		if (x + l.nameMargin > l.nameLimitX)
+			break;
+		fitted += name[i];
+	}
+	return fitted;
+}
+
+void IgorEngine::saveLoadDrawList(const SaveLoadLayout &l, const uint8 *button, const Common::Array<Common::String> &names, int top, int row) {
+	saveLoadFillRows(l, button, kSaveLoadBodyArtRow, l.bodyFirstY, l.bodyFirstY + l.bodyRows - 1);
+	const int last = MIN<int>(top + kSaveLoadVisibleRows - 1, names.size());
+	int y = l.listFirstY;
+	for (int i = top; i <= last; ++i) {
+		const int color = (i - top + 1 == row) ? l.colorSelected : l.colorNormal;
+		l.font->drawString(_screenTextLayer, saveLoadFitName(l, names[i - 1]).c_str(), l.listTextX, y - l.menuY, color, -1, l.shadowColor);
+		y += l.rowHeight;
+	}
+	uint8 *frame = _screenTextLayer + (9 + l.rowHeight * row) * 320 + l.frameX;
+	memset(frame, l.colorFrameLight, l.frameWidth);
+	for (int i = 1; i < l.rowHeight; ++i) {
+		frame[i * 320] = l.colorFrameLight;
+		frame[i * 320 + l.frameWidth - 1] = l.colorFrameDark;
+	}
+	memset(frame + l.rowHeight * 320, l.colorFrameDark, l.frameWidth);
+}
+
+// Selects an entry with the keyboard; the selected position is row (1..8) of the window starting at top.
+bool IgorEngine::saveLoadChoose(const SaveLoadLayout &l, const uint8 *button, const Common::Array<Common::String> &names, int &top, int &row) {
+	row = 1;
+	const int count = names.size();
+	bool redraw = true;
+	bool done = false;
+	bool accepted = false;
+	while (!done && !_eventQuitGame && _currentPart != kInvalidPart) {
+		if (redraw) {
+			saveLoadDrawList(l, button, names, top, row);
+			redraw = false;
+		}
+		Common::Event ev;
+		while (_eventMan->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT) {
+				_currentPart = kInvalidPart;
+				_eventQuitGame = true;
+			} else if (ev.type == Common::EVENT_KEYDOWN) {
+				switch (ev.kbd.keycode) {
+				case Common::KEYCODE_UP:
+					if (row > 1) {
+						--row;
+					} else if (top > 1) {
+						--top;
+					}
+					redraw = true;
+					break;
+				case Common::KEYCODE_DOWN:
+					if (row < kSaveLoadVisibleRows) {
+						if (row < count)
+							++row;
+					} else if (count > kSaveLoadVisibleRows && top + kSaveLoadVisibleRows - 1 < count) {
+						++top;
+					}
+					redraw = true;
+					break;
+				case Common::KEYCODE_RETURN:
+				case Common::KEYCODE_KP_ENTER:
+					accepted = true;
+					done = true;
+					break;
+				case Common::KEYCODE_ESCAPE:
+					done = true;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		saveLoadPresent(l);
+		_system->delayMillis(10);
+	}
+	return accepted;
+}
+
+static int saveLoadKeyToCode(const Common::KeyState &key) {
+	switch (key.keycode) {
+	case Common::KEYCODE_BACKSPACE:
+		return 8;
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+		return 13;
+	case Common::KEYCODE_ESCAPE:
+		return 27;
+	default:
+		break;
+	}
+	if (key.ascii >= 0x20 && key.ascii < 0x7f)
+		return key.ascii;
+	switch (key.ascii) {
+	case 0xe9: return 130;
+	case 0xe1: return 160;
+	case 0xed: return 161;
+	case 0xf3: return 162;
+	case 0xfa: return 163;
+	case 0xf1: return 164;
+	case 0xd1: return 165;
+	case 0xbf: return 168;
+	case 0xa1: return 173;
+	default: return 0;
+	}
+}
+
+// Fills the blinking cursor below the line being edited; the second row is its shadow.
+void IgorEngine::saveLoadFillCursor(const SaveLoadLayout &l, int x, int y, int firstColor, int secondColor) {
+	memset(_screenTextLayer + (y + l.cursorY - l.menuY) * 320 + x + l.cursorX, firstColor, l.cursorWidth);
+	if (l.cursorRows > 1)
+		memset(_screenTextLayer + (y + l.cursorY + 1 - l.menuY) * 320 + x + l.cursorX + 1, secondColor, l.cursorWidth);
+}
+
+bool IgorEngine::saveLoadEditName(const SaveLoadLayout &l, const uint8 *button, Common::String &name, int row) {
+	uint8 *allowed = loadData(DAT_OptionsNameChars);
+	saveLoadFillRows(l, button, kSaveLoadCaptionArtRow, l.captionFirstY, l.captionLastY);
+	saveLoadDrawTitle(l, kOptionsDescribe, l.describeTitleX, l.captionTextY, l.colorTitle);
+
+	char text[kSaveLoadNameLength + 2];
+	memset(text, ' ', sizeof(text));
+	for (int i = 0; i < kSaveLoadNameLength && i < (int)name.size(); ++i) {
+		text[i + 1] = name[i];
+	}
+	int index = kSaveLoadNameLength;
+	while (text[index] == ' ' && index != 1) {
+		--index;
+	}
+	int x = l.listTextX;
+	if (index > 1) {
+		for (int i = 1; i <= index; ++i) {
+			x += l.font->getCharWidth((uint8)text[i]);
+		}
+		++index;
+	}
+	bool full = (x + l.nameMargin > l.nameLimitX);
+	const int y = row * l.rowHeight + l.listFirstY - l.rowHeight;
+	int blinkColor = l.colorSelected;
+	int blinkCounter = 0;
+	uint32 lastUnit = _system->getMillis() * kTickDelay / 1000;
+	bool done = false;
+	bool accepted = false;
+
+	while (!done && !_eventQuitGame && _currentPart != kInvalidPart) {
+		Common::Event ev;
+		while (_eventMan->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT) {
+				_currentPart = kInvalidPart;
+				_eventQuitGame = true;
+			} else if (ev.type == Common::EVENT_KEYDOWN) {
+				int key = saveLoadKeyToCode(ev.kbd);
+				if (key >= 0 && key < kSaveLoadNameCharsSize * 8 && (allowed[key >> 3] & (1 << (key & 7))) && !full && index <= kSaveLoadNameLength) {
+					if (key == 0x27 && l.apostropheGlyph) {
+						key = 0x25;
+					}
+					text[index] = key;
+					saveLoadFillCursor(l, x, y, l.colorEraser, l.colorEraser);
+					const char str[2] = { (char)key, 0 };
+					l.font->drawString(_screenTextLayer, str, x, y - l.menuY, l.colorSelected, -1, l.shadowColor);
+					++index;
+					x += l.font->getCharWidth((uint8)key);
+					full = (x + l.nameMargin > l.nameLimitX);
+				}
+				if (key == 8 && index > 1) {
+					--index;
+					if (!full) {
+						saveLoadFillCursor(l, x, y, l.colorEraser, l.colorEraser);
+					}
+					x -= l.font->getCharWidth((uint8)text[index]);
+					full = (x + l.nameMargin > l.nameLimitX);
+					text[index] = ' ';
+					for (int i = y + 1; i <= y + l.eraseLastRow; ++i) {
+						memset(_screenTextLayer + (i - l.menuY) * 320 + x + l.eraseX, l.colorEraser, l.cursorWidth);
+					}
+				}
+				if (key == 13) {
+					accepted = true;
+					done = true;
+				}
+				if (key == 27) {
+					done = true;
+				}
+			}
+		}
+		const uint32 unit = _system->getMillis() * kTickDelay / 1000;
+		for (; lastUnit != unit; ++lastUnit) {
+			if (blinkCounter == kSaveLoadBlinkToggleAt && !full) {
+				if (blinkColor == l.colorSelected) {
+					saveLoadFillCursor(l, x, y, l.colorSelected, 0);
+					blinkColor = l.colorEraser;
+				} else {
+					saveLoadFillCursor(l, x, y, blinkColor, blinkColor);
+					blinkColor = l.colorSelected;
+				}
+			}
+			blinkCounter = (blinkCounter == kSaveLoadBlinkPeriod - 1) ? 0 : blinkCounter + 1;
+		}
+		saveLoadPresent(l);
+		_system->delayMillis(10);
+	}
+	free(allowed);
+	if (accepted) {
+		name = Common::String(text + 1, kSaveLoadNameLength);
+	}
+	return accepted;
+}
+
+// Returns true when a game was saved or loaded.
+bool IgorEngine::originalSaveLoadPage(bool save) {
+	const SaveLoadLayout l = makeSaveLoadLayout(_sentenceFont, _dialogueFont, _game.language == Common::ES_ESP, _game.version == kIdSpaFloppy);
+	Common::Array<int> slots;
+	Common::Array<Common::String> names;
+	const int autosaveSlot = getAutosaveSlot();
+	// ScummVM's slot limit replaces the original's fixed number of savegame files (40)
+	const uint maxEntries = getMetaEngine()->getMaximumSaveSlot() + 1;
+	const SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
+	for (uint i = 0; i < saves.size() && slots.size() < maxEntries; ++i) {
+		if (saves[i].getSaveSlot() == autosaveSlot)
+			continue;
+		slots.push_back(saves[i].getSaveSlot());
+		names.push_back(saves[i].getDescription().substr(0, kSaveLoadNameLength));
+	}
+	if (save && slots.size() < maxEntries) {
+		// the new savegame uses the first free slot
+		int freeSlot = 0;
+		for (;;) {
+			bool used = (freeSlot == autosaveSlot);
+			for (uint i = 0; i < slots.size() && !used; ++i) {
+				used = (slots[i] == freeSlot);
+			}
+			if (!used)
+				break;
+			++freeSlot;
+		}
+		slots.push_back(freeSlot);
+		names.push_back(Common::String(kSaveLoadNameLength, ' '));
+	}
+	if (slots.empty()) {
+		saveLoadDrawTitle(l, kOptionsNoSavedGames, l.noSavedGamesX, kSaveLoadNoSavedGamesY, l.colorNoGames);
+		saveLoadPresent(l);
+		return false;
+	}
+
+	Common::Array<uint8> backup(_screenTextLayer, 320 * l.menuHeight);
+	uint8 *button = loadData(IMG_OptionsButton);
+	bool done = false;
+	int top = 1;
+	while (!done && !_eventQuitGame && _currentPart != kInvalidPart) {
+		saveLoadFillRows(l, button, kSaveLoadCaptionArtRow, l.captionFirstY, l.captionLastY);
+		saveLoadDrawTitle(l, save ? kOptionsSaveTitle : kOptionsLoadTitle, save ? l.saveTitleX : l.loadTitleX, l.captionTextY, l.colorTitle);
+		int row;
+		if (!saveLoadChoose(l, button, names, top, row)) {
+			break;
+		}
+		const int entry = row + top - 1;
+		if (!save) {
+			done = (loadGameState(slots[entry - 1]).getCode() == Common::kNoError);
+			break;
+		}
+		Common::String name = names[entry - 1];
+		if (saveLoadEditName(l, button, name, row)) {
+			while (name.size() > 0 && name.lastChar() == ' ') {
+				name.deleteLastChar();
+			}
+			done = (saveGameState(slots[entry - 1], name).getCode() == Common::kNoError);
+			break;
+		}
+	}
+	free(button);
+	if (!done)
+		memcpy(_screenTextLayer, backup.data(), backup.size());
+	return done;
+}
+
 // The menus start from the full palette and dim colors 1..248 in steps of three levels.
 void IgorEngine::floppyMenuFadeOut() {
 	memcpy(_currentPalette, _paletteBuffer, 768);
@@ -610,10 +1013,10 @@ void IgorEngine::handleFloppyOptionsMenu() {
 				case Common::KEYCODE_RETURN:
 				case Common::KEYCODE_KP_ENTER:
 					if (selected == 1) {
-						if (saveGameDialog())
+						if (ConfMan.getBool("original_menus") ? originalSaveLoadPage(true) : saveGameDialog())
 							menuLoop = false;
 					} else if (selected == 2) {
-						if (loadGameDialog()) {
+						if (ConfMan.getBool("original_menus") ? originalSaveLoadPage(false) : loadGameDialog()) {
 							free(button);
 							_optionsMenuThumbnail.free();
 							return;
@@ -744,10 +1147,10 @@ void IgorEngine::handleOptionsMenu() {
 						break;
 					case Common::KEYCODE_RETURN:
 						if (currentPage == kPageSave && !(_game.flags & kFlagDemo)) {
-							if (saveGameDialog())
+							if (ConfMan.getBool("original_menus") ? originalSaveLoadPage(true) : saveGameDialog())
 								menuLoop = false;
 						} else if (currentPage == kPageLoad && !(_game.flags & kFlagDemo)) {
-							if (loadGameDialog()) {
+							if (ConfMan.getBool("original_menus") ? originalSaveLoadPage(false) : loadGameDialog()) {
 								_optionsMenuThumbnail.free();
 								return;
 							}

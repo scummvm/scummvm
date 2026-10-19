@@ -913,6 +913,9 @@
 #define DAT_FloppyProtectionWords 1282
 #define TXT_FloppyProtectionScreen 1283
 #define TXT_FloppyProtectionReply 1284
+#define TXT_OptionsDescribeSave 1285
+#define DAT_OptionsNameChars 1286
+#define TXT_OptionsNoSavedGames 1287
 #define FRM_CollegeCorridorLadiesRoomFloppy1 1257
 #define FRM_CollegeCorridorLadiesRoomFloppy2 1258
 
