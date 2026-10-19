@@ -228,6 +228,11 @@ void SceneStream::loadBackground(const Common::Path &videoFile) {
 	_background = new UI::Viewport();
 	_background->init();
 	_background->setZOrder(_background->getZOrder() + _zOffset);
+#ifdef ENABLE_NANCY_V4
+	if (_scriptScene) {
+		_background->setZOrder(Script::RecordGraphic::getBackgroundZOrder(_zOffset));
+	}
+#endif
 	_background->loadVideo(videoFile, _sceneInfo.frameID, 0, kPanNone, kLargeVideoFormat);
 	_background->registerGraphics();
 }

@@ -69,7 +69,7 @@ public:
 // get created while the game runs, like journal entries and conversation responses.
 class Manager {
 public:
-	static const uint16 kTooltipZ = 2000;
+	static const uint16 kTooltipZ = 64000;
 
 	// What the UI asked of the engine, which has to wait until the UI is done
 	// handling the player's input, since it can replace the UI

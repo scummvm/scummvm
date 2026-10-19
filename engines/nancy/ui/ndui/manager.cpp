@@ -41,7 +41,7 @@ namespace UI {
 namespace NDUI {
 
 // Panels are drawn over everything else, in the order they were created
-static const uint16 kFirstPanelZ = 1000;
+static const uint16 kFirstPanelZ = 60000;
 
 // The cursor shown while the mouse is over the UI; Nancy19 has it by name
 static const uint16 kUICursor = 14;

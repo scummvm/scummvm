@@ -80,6 +80,10 @@ public:
 	// Scripts order what they draw with numbers of their own
 	void setScriptZ(double z, int32 streamZOffset);
 
+	// The z order of a script z in a stream that is the given steps in front
+	static uint16 getScriptZOrder(double z, int32 zOffset);
+	static uint16 getBackgroundZOrder(int32 zOffset);
+
 protected:
 	bool isViewportRelative() const override { return true; }
 };

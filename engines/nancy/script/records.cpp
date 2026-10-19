@@ -107,9 +107,22 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 static const double kBackgroundScriptZ = -5.0;
 static const int kBackgroundZ = 6;
 
+// Scripts tell apart z values as close as 0.001, and every stream is one step
+// closer than the one that began it
+static const double kStepsPerScriptZ = 1000.0;
+static const int kMaxScriptZOrder = 59000;
+
+uint16 RecordGraphic::getScriptZOrder(double z, int32 zOffset) {
+	const double steps = (z - kBackgroundScriptZ + zOffset) * kStepsPerScriptZ;
+	return (uint16)CLIP<int>(kBackgroundZ + (int)floor(steps + 0.5), 0, kMaxScriptZOrder);
+}
+
+uint16 RecordGraphic::getBackgroundZOrder(int32 zOffset) {
+	return getScriptZOrder(kBackgroundScriptZ, zOffset);
+}
+
 void RecordGraphic::setScriptZ(double z, int32 streamZOffset) {
-	const int engineZ = kBackgroundZ + (int)(z - kBackgroundScriptZ) + streamZOffset;
-	setZOrder((uint16)CLIP<int>(engineZ, 0, 0xFFFF));
+	setZOrder(getScriptZOrder(z, streamZOffset));
 }
 
 // Where something that was placed in the viewport ends up once the transform
@@ -862,7 +875,7 @@ void OverlayRecord::updateGraphics() {
 }
 
 // What a script draws by itself goes over everything else the scene shows
-static const uint16 kAttachmentZ = 999;
+static const uint16 kAttachmentZ = 59999;
 
 // TODO: The picture is cut off at the edges of the viewport
 void OverlayRecord::renderNow() {
