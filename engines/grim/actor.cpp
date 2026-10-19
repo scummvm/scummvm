@@ -1536,6 +1536,15 @@ void Actor::updateWalk() {
 
 	turnTo(destPos, true);
 
+	// In EMI, if the actor faces more than 80 degrees away from where it's
+	// walking, it turns in place before moving.
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Math::Angle remaining = _moveYaw - _yaw;
+		remaining.normalize(-180);
+		if (ABS(remaining.getDegrees()) >= 80.f)
+			return;
+	}
+
 	dir = destPos - _pos;
 	dir.normalize();
 	_pos += dir * walkAmt;
