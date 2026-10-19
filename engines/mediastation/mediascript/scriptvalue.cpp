@@ -132,15 +132,12 @@ void ScriptValue::copyFrom(const ScriptValue &other) {
 		break;
 
 	case kScriptValueTypeFloat:
+	case kScriptValueTypeTime:
 		_u.d = other._u.d;
 		break;
 
 	case kScriptValueTypeBool:
 		_u.b = other._u.b;
-		break;
-
-	case kScriptValueTypeTime:
-		_u.d = other._u.d;
 		break;
 
 	case kScriptValueTypeParamToken:
@@ -380,15 +377,12 @@ bool ScriptValue::compare(Opcode op, const ScriptValue &lhs, const ScriptValue &
 		break;
 
 	case kScriptValueTypeFloat:
+	case kScriptValueTypeTime:
 		result = compare(op, lhs.asFloatOrTime(), rhs.asFloatOrTime());
 		break;
 
 	case kScriptValueTypeBool:
 		result = compare(op, lhs.asBool(), rhs.asBool());
-		break;
-
-	case kScriptValueTypeTime:
-		result = compare(op, lhs.asFloatOrTime(), rhs.asFloatOrTime());
 		break;
 
 	case kScriptValueTypeParamToken:
