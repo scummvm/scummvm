@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	dialogue.o \
 	flow.o \
 	flow_debug.o \
+	flow_map.o \
 	fst_player.o \
 	harvester.o \
 	inventory.o \

@@ -20,6 +20,7 @@
  */
 
 #include "harvester/flow.h"
+#include "harvester/flow_support.h"
 
 #include "common/algorithm.h"
 #include "common/debug.h"
@@ -62,14 +63,6 @@ static const char *const kBuiltInMenuItems[] = {
 	"HELP",
 	"QUIT GAME"
 };
-static const char *const kTownMapPalettePath = "1:/GRAPHIC/PAL/HARVMAP.PAL";
-static const char *const kTownMapMusicPath = "SOUND/MUSIC/MENACE.CMP";
-static const char *const kTownMapBitmapPaths[] = {
-	"1:/GRAPHIC/TOWN/HARVMAP1.BM",
-	"1:/GRAPHIC/TOWN/HARVMAP2.BM",
-	"1:/GRAPHIC/TOWN/HARVMAP3.BM",
-	"1:/GRAPHIC/TOWN/HARVMAP4.BM"
-};
 
 static const int kCursorSequence7 = 7;
 static const int kNativeIdentTextLineSpacing = 3;
@@ -89,100 +82,10 @@ static const char *const kDemoIntroductionText =
 	"After solving the enigmas of the Harvest town, you are thrust into the realm of "
 	"the Order of the Harvest Moon, a bizarre institution of secretive knowledge.  "
 	"However, the only thing you really care about is escaping from this hellish reality...";
-static const float kTownMapNightPaletteBrightness = 0.6f;
 // Keep WAIT_BM visible while room construction runs
 static const uint32 kTransitionWaitFrameMinMs = 120;
-static const int kTownMapEdgeThreshold = 9;
-static const int kTownMapCursorHitExtent = 5;
-
-static const byte kTownMapLabelColor = 0x28;
 
 } // End of anonymous namespace
-
-static int clampTownMapPanelIndex(int panelIndex) {
-	return CLIP<int>(panelIndex, 0, ARRAYSIZE(kTownMapBitmapPaths) - 1);
-}
-
-static int resolveTownMapEdgePanel(int currentPanel, const Common::Point &mousePos, int width, int height) {
-	if (mousePos.x <= kTownMapEdgeThreshold) {
-		if (currentPanel == 1)
-			return 0;
-		if (currentPanel == 3)
-			return 2;
-	} else if (mousePos.x >= width - 1 - kTownMapEdgeThreshold) {
-		if (currentPanel == 0)
-			return 1;
-		if (currentPanel == 2)
-			return 3;
-	} else if (mousePos.y <= kTownMapEdgeThreshold) {
-		if (currentPanel == 2)
-			return 0;
-		if (currentPanel == 3)
-			return 1;
-	} else if (mousePos.y >= height - 1 - kTownMapEdgeThreshold) {
-		if (currentPanel == 0)
-			return 2;
-		if (currentPanel == 1)
-			return 3;
-	}
-
-	return currentPanel;
-}
-
-static int resolveTownMapKeyPanel(int currentPanel, Common::KeyCode keycode) {
-	switch (keycode) {
-	case Common::KEYCODE_LEFT:
-		if (currentPanel == 1)
-			return 0;
-		if (currentPanel == 3)
-			return 2;
-		break;
-	case Common::KEYCODE_RIGHT:
-		if (currentPanel == 0)
-			return 1;
-		if (currentPanel == 2)
-			return 3;
-		break;
-	case Common::KEYCODE_UP:
-		if (currentPanel == 2)
-			return 0;
-		if (currentPanel == 3)
-			return 1;
-		break;
-	case Common::KEYCODE_DOWN:
-		if (currentPanel == 0)
-			return 2;
-		if (currentPanel == 1)
-			return 3;
-		break;
-	default:
-		break;
-	}
-
-	return currentPanel;
-}
-
-static bool isTownMapLocationHovered(const MapLocationRecord &location, int currentPanel,
-		const Common::Point &mousePos) {
-	if (location.panelIndex != currentPanel)
-		return false;
-
-	const int cursorRight = mousePos.x + kTownMapCursorHitExtent;
-	const int cursorBottom = mousePos.y + kTownMapCursorHitExtent;
-	return mousePos.x <= location.maxX && cursorRight >= location.minX &&
-		mousePos.y <= location.maxY && cursorBottom >= location.minY;
-}
-
-static const MapLocationRecord *findTownMapLocationAt(
-		const Common::Array<MapLocationRecord> &locations, int currentPanel,
-		const Common::Point &mousePos) {
-	for (const MapLocationRecord &location : locations) {
-		if (isTownMapLocationHovered(location, currentPanel, mousePos))
-			return &location;
-	}
-
-	return nullptr;
-}
 
 static void setRoomActorScreenPosition(Entity &entity, int centerX, int bottomY, float z,
 		int width, int height, int xOffset, int yOffset) {
@@ -244,7 +147,7 @@ bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap
 	return true;
 }
 
-static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
+void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
 	byte scaledPalette[256 * 3];
 	const float gammaBrightness = g_engine ? g_engine->getGammaBrightnessScale() : 1.0f;
 	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
@@ -778,159 +681,6 @@ Common::Error Flow::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte
 	_hasQueuedDialogueInteraction = false;
 	return _dialogue.runRoomNpcDialogue(backdrop, palette, paletteBrightness,
 		executionContext, npc, usedItemName, *this);
-}
-
-Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
-		Common::String &destinationEntranceName) {
-	destinationEntranceName.clear();
-
-	Script *script = _engine.getScript();
-	ResourceManager *resources = _engine.getResources();
-	Graphics::Screen *screen = _engine.getScreen();
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	Common::ScopedPtr<HarvesterCftFont> townMapFont;
-	const Text *text = _engine.getText();
-	if (const CftFontResource *townMapFontResource = text ? text->findFont("TEXTFONT") : nullptr) {
-		townMapFont.reset(new HarvesterCftFont(*townMapFontResource));
-		if (townMapFont->isValid())
-			font = townMapFont.get();
-		else
-			townMapFont.reset();
-	}
-	if (!script || !resources || !screen || !font)
-		return Common::kReadingFailed;
-
-	const MapEntranceRecord *mapEntrance = script->findMapEntranceRecord(mapEntryName);
-	if (!mapEntrance) {
-		warning("Harvester: unresolved town map entry '%s'", mapEntryName.c_str());
-		return Common::kReadingFailed;
-	}
-	const float paletteBrightness = script->getFlagValue("DAY_FLAG")
-		? 1.0f
-		: kTownMapNightPaletteBrightness;
-
-	byte palette[256 * 3];
-	if (!Art::loadPaletteResource(*resources, kTownMapPalettePath, palette))
-		return Common::kReadingFailed;
-
-	Common::Array<IndexedBitmap> panels;
-	panels.resize(ARRAYSIZE(kTownMapBitmapPaths));
-	for (uint i = 0; i < ARRAYSIZE(kTownMapBitmapPaths); ++i) {
-		if (!loadBitmapResource(*resources, kTownMapBitmapPaths[i], panels[i]))
-			return Common::kReadingFailed;
-	}
-
-	const Common::String previousMusicPath = _engine.getMusicPath();
-	(void)_engine.playMusic(kTownMapMusicPath);
-
-	if (!ensureCursorEntity())
-		return Common::kReadingFailed;
-	resetCursorAnimationSequence();
-
-	if (_mousePos.x < 0 || _mousePos.y < 0 || _mousePos.x >= screen->w || _mousePos.y >= screen->h)
-		_mousePos = Common::Point(screen->w / 2, screen->h / 2);
-	if (EntityManager *entityManager = _engine.getRuntimeEntities())
-		(void)entityManager->syncCursorEntityPosition(_mousePos);
-
-	int currentPanel = clampTownMapPanelIndex(mapEntrance->initialPanelIndex);
-	bool needsRedraw = true;
-	Graphics::FrameLimiter limiter(g_system, 60);
-
-	auto centerCursor = [&]() {
-		_mousePos = Common::Point(screen->w / 2, screen->h / 2);
-		if (EntityManager *entityManager = _engine.getRuntimeEntities())
-			(void)entityManager->syncCursorEntityPosition(_mousePos);
-	};
-	auto restorePreviousMusic = [&]() {
-		if (!destinationEntranceName.empty())
-			return;
-		if (!previousMusicPath.empty())
-			(void)_engine.playMusic(previousMusicPath);
-		else
-			_engine.stopMusic();
-	};
-
-	while (!_engine.shouldQuit()) {
-		const int edgePanel = resolveTownMapEdgePanel(currentPanel, _mousePos, screen->w, screen->h);
-		if (edgePanel != currentPanel) {
-			currentPanel = edgePanel;
-			centerCursor();
-			needsRedraw = true;
-		}
-
-		const MapLocationRecord *hoveredLocation =
-			findTownMapLocationAt(script->getMapLocations(), currentPanel, _mousePos);
-		if (needsRedraw) {
-			setScaledPalette(*screen, palette, paletteBrightness);
-			screen->fillRect(screen->getBounds(), 0);
-			RoomPresentation::blitBitmap(*screen, panels[(uint)currentPanel], 0, 0);
-			if (hoveredLocation) {
-				RoomPresentation::drawShadowedString(*screen, *font, hoveredLocation->labelText,
-					hoveredLocation->labelX, hoveredLocation->labelY, screen->w, kTownMapLabelColor);
-			}
-			if (EntityManager *entityManager = _engine.getRuntimeEntities())
-				entityManager->drawCursor(*screen);
-			screen->makeAllDirty();
-			screen->update();
-			needsRedraw = false;
-		}
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			Common::Error result = Common::kNoError;
-			if (handleSystemEvent(event, result)) {
-				restorePreviousMusic();
-				return result;
-			}
-
-			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE:
-				needsRedraw = true;
-				break;
-			case Common::EVENT_LBUTTONDOWN: {
-				const MapLocationRecord *clickedLocation =
-					findTownMapLocationAt(script->getMapLocations(), currentPanel, _mousePos);
-				if (!clickedLocation)
-					break;
-
-				const EntranceRecord *destinationEntrance =
-					script->findEntranceRecord(clickedLocation->destinationEntranceName);
-				if (!destinationEntrance) {
-					warning("Harvester: unresolved town map destination '%s' from '%s'",
-						clickedLocation->destinationEntranceName.c_str(), mapEntryName.c_str());
-					break;
-				}
-
-				destinationEntranceName = destinationEntrance->entranceName;
-				debugC(1, kDebugGeneral,
-					"Harvester: town map selection entry='%s' panel=%d label='%s' destination='%s'",
-					mapEntryName.c_str(), currentPanel, clickedLocation->labelText.c_str(),
-					destinationEntranceName.c_str());
-				return Common::kNoError;
-			}
-			case Common::EVENT_KEYDOWN: {
-				const int nextPanel = resolveTownMapKeyPanel(currentPanel, event.kbd.keycode);
-				if (nextPanel != currentPanel) {
-					currentPanel = nextPanel;
-					centerCursor();
-					needsRedraw = true;
-				}
-				break;
-			}
-			default:
-				break;
-			}
-		}
-
-		if (tickRuntimeEntities())
-			needsRedraw = true;
-
-		limiter.delayBeforeSwap();
-		limiter.startFrame();
-	}
-
-	restorePreviousMusic();
-	return Common::kNoError;
 }
 
 Common::Error Flow::resolveRoomTransitionTarget(const Common::String &targetName,
