@@ -74,7 +74,7 @@ const IgorGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		kIdSpaCD,
 		kFlagTalkie,
@@ -92,7 +92,7 @@ const IgorGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO2(GUIO_NOSPEECH, GAMEOPTION_SKIP_COPY_PROTECTION)
+			GUIO3(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_SKIP_COPY_PROTECTION)
 		},
 		kIdSpaFloppy,
 		kFlagFloppy,
@@ -111,7 +111,7 @@ const IgorGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		kIdEngFloppy,
 		kFlagFloppy,

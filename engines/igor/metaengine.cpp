@@ -43,7 +43,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_SKIP_COPY_PROTECTION,
 		{
 			_s("Skip copy protection"),
-			_s("Skips original copy protection screen"),
+			_s("Skips original copy protection screen."),
 			"skip_copy_protection",
 			false,
 			0,
