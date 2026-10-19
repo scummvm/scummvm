@@ -100,6 +100,23 @@ public:
 		Flow &flow, bool &promptCompleted);
 
 private:
+	static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *palette);
+	struct MenuSelection;
+	struct MainMenu;
+	struct RoomMenu;
+	struct RoomMenuActivationResult;
+	enum MenuNavigationCommand { kNoMenuCommand, kActivateMenuItem, kCloseMenu };
+	MenuNavigationCommand handleMenuNavigationEvent(MenuSelection &selection,
+		const Common::Event &event, bool useBackdrop) const;
+	bool captureMainMenuBackdrop(MainMenu &menu, IndexedBitmap &backdrop);
+	Common::Error runMainMenuRoomLoop(MainMenu &menu, const Common::String &targetName);
+	Common::Error startNewGameFromMainMenu(MainMenu &menu, const byte *menuPalette);
+	Common::Error loadGameFromMainMenu(MainMenu &menu, const byte *menuPalette);
+	Common::Error activateMainMenuItem(MainMenu &menu);
+	RoomMenuActivationResult startNewGameFromRoomMenu(RoomMenu &menu);
+	RoomMenuActivationResult saveGameFromRoomMenu(RoomMenu &menu);
+	RoomMenuActivationResult activateRoomMenuItem(RoomMenu &menu);
+
 	static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap);
 	static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFont, uint itemCount,
 		const Common::Point &mousePos);

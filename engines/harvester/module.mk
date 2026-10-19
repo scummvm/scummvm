@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	media_manager.o \
 	menu.o \
 	menu_config.o \
+	menu_navigation.o \
 	menu_options.o \
 	menu_render.o \
 	metaengine.o \
