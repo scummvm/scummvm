@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	console.o \
 	dialogue.o \
 	flow.o \
+	flow_debug.o \
 	fst_player.o \
 	harvester.o \
 	inventory.o \
