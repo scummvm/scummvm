@@ -645,12 +645,12 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 
 	// Set up gradient palette entries (200-213) for story text
 	// Mac original: tColor.blue starts at 0xFFFF and decreases by 4096 per visible line
-	// B&W Mac: white gradient instead of blue
-	const bool bwMac = (macFont && !isMacColorMode());
+	// B&W Mac uses solid white text.
+	const bool bwMac = isMacRenderMode() && !isMacColorMode();
 	byte pal[14 * 3]; // storyLength entries
 	memset(pal, 0, sizeof(pal));
 	for (int i = 0; i < storyLength; i++) {
-		int val = 255 - i * 16;
+		int val = bwMac ? 255 : 255 - i * 16;
 		if (val < 0)
 			val = 0;
 		pal[i * 3 + 0] = bwMac ? val : 0;  // R
@@ -881,10 +881,11 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 
 bool ColonyEngine::makeBlackHole() {
 	// Original: Makeblackhole() in intro.c
-	// Mac original draws spiral lines with fading colors:
+	// Color Mac original draws spiral lines with fading colors:
 	// bcolor starts at (0,0,0) and subtracts (rd=2048, gd=1024, bd=4096) per step,
 	// which wraps around creating shifting color gradients.
-	// We use palette entries 128-191 for the gradient colors.
+	// Palette entry 128 holds the current pen color.
+	const bool bwMac = isMacRenderMode() && !isMacColorMode();
 	int centerX = _width / 2;
 	int centerY = _height / 2;
 	int dec = 16;
@@ -922,7 +923,11 @@ bool ColonyEngine::makeBlackHole() {
 			uint8 palB = (colorB >> 8) & 0xFF;
 
 			// Use palette entry 128 for current step color
-			byte pal[3] = { palR, palG, palB };
+			byte pal[3] = {
+				(byte)(bwMac ? 255 : palR),
+				(byte)(bwMac ? 255 : palG),
+				(byte)(bwMac ? 255 : palB)
+			};
 			_gfx->setPalette(pal, 128, 1);
 
 			starcnt++;
@@ -1322,8 +1327,8 @@ bool ColonyEngine::explodePlanet() {
 bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *macFont, bool gameOver) {
 	// Original: TimeSquare() in intro.c
 	// Mac and DOS use different presentation here. DOS is a monochrome/gray
-	// warning band with 16-pixel blits and white text; Mac uses the colorful
-	// gradient treatment.
+	// warning band with 16-pixel blits and white text; color Mac uses the
+	// gradient treatment, while B&W Mac uses thin, dithered borders.
 
 	_gfx->clear(_gfx->black());
 
@@ -1344,19 +1349,19 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 	const uint32 textIndex = 176;
 	const Common::Rect textBand(0, centery + 1, _width, centery + 16);
 
-	if (macStyle) {
+	if (macStyle && !bwMac) {
 		// Mac original: blue starts at 0xFFFF and decreases by 4096 per line pair.
 		for (int i = 0; i < 16; i++) {
 			int val = 255 - i * 16; // 255, 239, 223, ... 15
 			if (val < 0)
 				val = 0;
-			byte pal[3] = { (byte)(bwMac ? val : 0), (byte)(bwMac ? val : 0), (byte)val };
+			byte pal[3] = { 0, 0, (byte)val };
 			_gfx->setPalette(pal, 160 + i, 1);
 		}
 
-		// Text is red in color, white in B&W.
+		// Color Mac uses red text.
 		{
-			byte pal[3] = { 255, (byte)(bwMac ? 255 : 0), (byte)(bwMac ? 255 : 0) };
+			byte pal[3] = { 255, 0, 0 };
 			_gfx->setPalette(pal, textIndex, 1);
 		}
 
@@ -1365,6 +1370,17 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 		for (int i = 0; i < 16; i++) {
 			_gfx->fillRect(Common::Rect(0, centery - 3 - i * 2, _width, centery - 1 - i * 2), 160 + i);
 			_gfx->fillRect(Common::Rect(0, centery + 16 + i * 2, _width, centery + 18 + i * 2), 160 + i);
+		}
+	} else if (bwMac) {
+		const byte whitePal[3] = { 255, 255, 255 };
+		_gfx->setPalette(whitePal, textIndex, 1);
+
+		// Original B&W TimeSquare: white borders with QuickDraw gray middle rows.
+		_gfx->fillRect(Common::Rect(0, centery - 3, _width, centery), textIndex);
+		_gfx->fillRect(Common::Rect(0, centery + 17, _width, centery + 20), textIndex);
+		for (int x = centery & 1; x < _width; x += 2) {
+			_gfx->setPixel(x, centery - 2, _gfx->black());
+			_gfx->setPixel(x, centery + 18, _gfx->black());
 		}
 	} else {
 		// DOS warning band: white outer lines, gray inner lines, white text.
