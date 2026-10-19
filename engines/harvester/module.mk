@@ -22,6 +22,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	monster.o \
 	player.o \
+	player_movement.o \
 	resources.o \
 	combat.o \
 	combat_contact.o \
