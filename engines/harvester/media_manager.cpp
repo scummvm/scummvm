@@ -32,7 +32,7 @@
 #include "harvester/art.h"
 #include "harvester/resources.h"
 #include "harvester/entity.h"
-#include "harvester/script.h"
+#include "harvester/script/script.h"
 #include "harvester/text.h"
 
 namespace Harvester {

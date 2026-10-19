@@ -28,8 +28,8 @@
 #include "harvester/fst_player.h"
 #include "harvester/media_manager.h"
 #include "harvester/resources.h"
-#include "harvester/flow.h"
-#include "harvester/script.h"
+#include "harvester/flow/flow.h"
+#include "harvester/script/script.h"
 
 namespace Harvester {
 

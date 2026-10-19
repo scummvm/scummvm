@@ -25,7 +25,7 @@
 #include "common/util.h"
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
-#include "harvester/script.h"
+#include "harvester/script/script.h"
 
 namespace Harvester {
 

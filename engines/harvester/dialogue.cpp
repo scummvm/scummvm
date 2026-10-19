@@ -87,7 +87,7 @@
 #include "harvester/resources.h"
 #include "harvester/entity.h"
 #include "harvester/art.h"
-#include "harvester/flow.h"
+#include "harvester/flow/flow.h"
 #include "harvester/text.h"
 
 namespace Harvester {

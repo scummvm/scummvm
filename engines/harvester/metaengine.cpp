@@ -28,7 +28,7 @@
 #include "harvester/detection.h"
 #include "harvester/metaengine.h"
 #include "harvester/harvester.h"
-#include "harvester/input.h"
+#include "harvester/scene/input.h"
 
 static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{

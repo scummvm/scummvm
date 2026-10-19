@@ -28,7 +28,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "harvester/art.h"
-#include "harvester/room_support.h"
+#include "harvester/scene/room_support.h"
 
 namespace Graphics {
 class Screen;

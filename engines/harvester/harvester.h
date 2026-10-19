@@ -30,7 +30,7 @@
 #include "engines/engine.h"
 #include "graphics/screen.h"
 #include "harvester/saveload.h"
-#include "harvester/script.h"
+#include "harvester/script/script.h"
 
 struct ADGameDescription;
 
