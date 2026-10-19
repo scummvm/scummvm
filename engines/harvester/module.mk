@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	cheats.o \
 	console.o \
 	dialogue/dialogue.o \
+	dialogue/dialogue_menu.o \
 	dialogue/dialogue_playback.o \
 	dialogue/dialogue_render.o \
 	dialogue/dialogue_session.o \

@@ -20,11 +20,17 @@
  */
 
 #include "harvester/dialogue/dialogue_render.h"
+#include "harvester/dialogue/dialogue_session.h"
 
 #include "common/util.h"
 #include "graphics/font.h"
 #include "graphics/screen.h"
 #include "harvester/cft_font.h"
+#include "harvester/entity.h"
+#include "harvester/flow/flow.h"
+#include "harvester/flow/flow_support.h"
+#include "harvester/harvester.h"
+#include "harvester/scene/room_presentation.h"
 
 namespace Harvester {
 namespace DialogueRendering {
@@ -105,4 +111,159 @@ bool isDialogueOtherHit(const Common::Point &mousePos) {
 }
 
 } // End of namespace DialogueRendering
+
+namespace {
+
+static const int kDialogueOverlayX = 167;
+static const int kDialogueOverlayY = 6;
+static const int kDialogueLeftHeadX = 6;
+static const int kDialogueRightHeadX = 474;
+static const int kDialogueHeadY = 6;
+static const int kDialogueSubtitleTextX = 178;
+static const int kDialogueSubtitleTextY = 12;
+static const int kDialogueKeywordTextX = 178;
+static const int kDialogueKeywordTextWidth = 300;
+static const int kDialogueOtherX = 171;
+static const int kDialogueOtherY = 183;
+static const int kDialogueTextEntryX = 208;
+static const int kDialogueTextEntryY = 184;
+static const int kDialogueOtherWidth = 120;
+static const int kDialogueKeywordTitleYOffset = 4;
+static const byte kTextColorNormal = 255;
+static const byte kTextColorHover = 251;
+
+} // End of anonymous namespace
+
+Graphics::Screen *RoomNpcDialogueSession::getActiveScreen() const {
+	return _engine.getScreen();
+}
+
+void RoomNpcDialogueSession::drawFontString(const Graphics::Font &font, bool usesCft, const Common::String &text,
+		int x, int y, int width, byte color) {
+	Graphics::Screen *activeScreen = getActiveScreen();
+	if (!activeScreen)
+		return;
+
+	if (usesCft)
+		font.drawString(activeScreen, text, x, y, width, 0);
+	else
+		RoomPresentation::drawShadowedString(*activeScreen, font, text, x, y, width, color);
+}
+
+void RoomNpcDialogueSession::drawDialogueOverlay(const IndexedBitmap *overlayBitmap,
+		const Common::Array<Common::String> *subtitleLines, const Common::Array<Common::String> *topics,
+		int hoveredTopicIndex, bool hoverOther, const Common::String *textEntryValue,
+		bool textEntryCursorVisible) {
+	Graphics::Screen *activeScreen = getActiveScreen();
+	if (!activeScreen)
+		return;
+
+	setScaledPalette(*activeScreen, _palette, _paletteBrightness);
+	RoomPresentation::blitBitmap(*activeScreen, _backdrop, 0, 0);
+	if (_leftHeadVisible && _leftHeadBitmap.isValid())
+		blitTransparentBitmap(*activeScreen, _leftHeadBitmap, kDialogueLeftHeadX, kDialogueHeadY);
+	if (_rightHeadVisible && _rightHeadBitmap.isValid())
+		blitTransparentBitmap(*activeScreen, _rightHeadBitmap, kDialogueRightHeadX, kDialogueHeadY);
+	if (overlayBitmap && overlayBitmap->isValid())
+		blitTransparentBitmap(*activeScreen, *overlayBitmap, kDialogueOverlayX, kDialogueOverlayY);
+
+	if (subtitleLines) {
+		if (_subtitleFontUsesCft) {
+			DialogueRendering::drawDialogueTextLines(*activeScreen, *_subtitleFont, *subtitleLines,
+				kDialogueSubtitleTextX, kDialogueSubtitleTextY, DialogueRendering::kDialogueSubtitleTextWidth);
+		} else {
+			const int lineHeight = DialogueRendering::getDialogueTextLineHeight(*_subtitleFont);
+			for (uint i = 0; i < subtitleLines->size(); ++i) {
+				RoomPresentation::drawShadowedString(*activeScreen, *_subtitleFont, (*subtitleLines)[i],
+					kDialogueSubtitleTextX,
+					kDialogueSubtitleTextY + (int)i * lineHeight,
+					DialogueRendering::kDialogueSubtitleTextWidth, kTextColorNormal);
+			}
+		}
+	}
+
+	if (topics) {
+		if (_menuTextConfig.hasDialogueKeywordLabel()) {
+			const Common::String &title = _menuTextConfig.dialogueKeywordLabel;
+			const int titleWidth = _highlightFont->getStringWidth(title);
+			const int titleX = kDialogueOverlayX +
+				MAX<int>(0, ((int)_keywordBitmap.width - titleWidth) / 2);
+			drawFontString(*_highlightFont, _highlightFontUsesCft, title, titleX,
+				kDialogueOverlayY + kDialogueKeywordTitleYOffset, titleWidth,
+				kTextColorNormal);
+		}
+
+		const int lineHeight = DialogueRendering::getDialogueTextLineHeight(*_menuFont);
+		for (uint i = 0; i < topics->size(); ++i) {
+			const bool highlighted = (int)i == hoveredTopicIndex;
+			const Graphics::Font &font = highlighted ? *_highlightFont : *_menuFont;
+			const bool usesCft = highlighted ? _highlightFontUsesCft : _menuFontUsesCft;
+			drawFontString(font, usesCft, (*topics)[i], kDialogueKeywordTextX,
+				DialogueRendering::kDialogueKeywordTextY + (int)i * lineHeight, kDialogueKeywordTextWidth,
+				highlighted ? kTextColorNormal : kTextColorHover);
+		}
+
+		const Graphics::Font &otherFont = hoverOther ? *_highlightFont : *_menuFont;
+		const bool otherUsesCft = hoverOther ? _highlightFontUsesCft : _menuFontUsesCft;
+		drawFontString(otherFont, otherUsesCft, _menuTextConfig.dialogueOtherLabel,
+			kDialogueOtherX, kDialogueOtherY,
+			kDialogueOtherWidth, hoverOther ? kTextColorNormal : kTextColorHover);
+	}
+
+	if (textEntryValue) {
+		drawFontString(*_highlightFont, _highlightFontUsesCft,
+			*textEntryValue + (textEntryCursorVisible ? "~" : ""),
+			kDialogueTextEntryX, kDialogueTextEntryY, DialogueRendering::kDialogueTextEntryMaxWidth,
+			kTextColorNormal);
+	}
+
+	if (_entityManager)
+		_entityManager->drawCursor(*activeScreen);
+	activeScreen->makeAllDirty();
+	activeScreen->update();
+}
+
+void RoomNpcDialogueSession::drawDialogueResponseMenu(const IndexedBitmap *textboxBitmap,
+		const Common::Array<DialogueResponseOptionLayout> &options, int hoveredOptionIndex) {
+	Graphics::Screen *activeScreen = getActiveScreen();
+	if (!activeScreen)
+		return;
+
+	setScaledPalette(*activeScreen, _palette, _paletteBrightness);
+	RoomPresentation::blitBitmap(*activeScreen, _backdrop, 0, 0);
+	if (_leftHeadVisible && _leftHeadBitmap.isValid())
+		blitTransparentBitmap(*activeScreen, _leftHeadBitmap, kDialogueLeftHeadX, kDialogueHeadY);
+	if (_rightHeadVisible && _rightHeadBitmap.isValid())
+		blitTransparentBitmap(*activeScreen, _rightHeadBitmap, kDialogueRightHeadX, kDialogueHeadY);
+	if (textboxBitmap && textboxBitmap->isValid())
+		blitTransparentBitmap(*activeScreen, *textboxBitmap, kDialogueOverlayX, kDialogueOverlayY);
+
+	const Common::String &title = _menuTextConfig.dialogueResponsesLabel;
+	const Graphics::Font &titleFont = *_highlightFont;
+	const bool titleUsesCft = _highlightFontUsesCft;
+	const int titleWidth = titleFont.getStringWidth(title);
+	const int titleX = kDialogueSubtitleTextX + MAX<int>(0, (DialogueRendering::kDialogueSubtitleTextWidth - titleWidth) / 2);
+	drawFontString(titleFont, titleUsesCft, title, titleX, 11, titleWidth, kTextColorNormal);
+
+	const int lineHeight = DialogueRendering::getDialogueTextLineHeight(*_menuFont);
+	int drawY = DialogueRendering::kDialogueKeywordTextY;
+	for (uint i = 0; i < options.size(); ++i) {
+		const bool highlighted = (int)i == hoveredOptionIndex;
+		const Graphics::Font &font = highlighted ? *_highlightFont : *_menuFont;
+		const bool usesCft = highlighted ? _highlightFontUsesCft : _menuFontUsesCft;
+		const byte color = highlighted ? kTextColorNormal : kTextColorHover;
+
+		for (const Common::String &wrappedLine : options[i].wrappedLines) {
+			drawFontString(font, usesCft, wrappedLine, kDialogueSubtitleTextX, drawY,
+				DialogueRendering::kDialogueSubtitleTextWidth, color);
+			drawY += lineHeight;
+		}
+	}
+
+	if (_entityManager)
+		_entityManager->drawCursor(*activeScreen);
+	activeScreen->makeAllDirty();
+	activeScreen->update();
+}
+
 } // End of namespace Harvester

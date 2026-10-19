@@ -28,6 +28,10 @@
 #include "harvester/cft_font.h"
 #include "harvester/npc/dialogue_runtime.h"
 
+namespace Common {
+struct Event;
+}
+
 namespace Graphics {
 class Screen;
 }
@@ -90,6 +94,11 @@ private:
 		const Common::Array<Common::String> *subtitleLines, const Common::Array<Common::String> *topics,
 		int hoveredTopicIndex, bool hoverOther, const Common::String *textEntryValue,
 		bool textEntryCursorVisible = false);
+	bool handleKeywordTextEntry(const Common::Event &event, Common::String &typedTopic,
+		bool &editingOther, Common::String &selectedTopic, DialogueKeywordMenuSelectionState &selection);
+	bool selectResponseMenuHotkey(const Common::Event &event,
+		const Common::Array<DialogueResponseOptionLayout> &options, int responseLineIndex,
+		int &selectedIndex);
 	void parseResponseMenuLine(const Common::String &responseLine,
 		Common::Array<DialogueResponseOptionLayout> &options, uint &totalRows);
 	int getResponseMenuItemAt(const Common::Array<DialogueResponseOptionLayout> &options,
