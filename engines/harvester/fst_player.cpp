@@ -257,6 +257,9 @@ static bool pumpVideoEvents(HarvesterEngine &vm, bool &skipRequested, bool &defe
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
+			if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode != Common::KEYCODE_ESCAPE)
+				break;
+
 			if (allowSkipInput) {
 				skipRequested = true;
 			} else {
