@@ -170,6 +170,13 @@ private:
 	void startMonsterHitReaction(MonsterRecord &monster, Entity &monsterEntity, MonsterCombatState *combatState,
 		int attackerAttackFirstFrame, bool &needsRedraw) const;
 
+	void updateMonsterHitReaction(Script &script, MonsterRecord &monster,
+		Entity &entity, MonsterCombatState &combatState, bool &needsRedraw) const;
+	void startMonsterDeathAnimation(const MonsterRecord &monster, Entity &monsterEntity,
+		MonsterCombatState &combatState, const DeathAnimationRange &deathRange, int deathDamageType) const;
+	Common::Error finalizeMonsterDeathTransition(Script &script, MonsterRecord &monster,
+		Entity &entity, MonsterCombatState &combatState, bool &needsRedraw) const;
+
 	static Entity *findSceneRuntimeEntity(EntityManager *entityManager, const Common::String &name);
 	static NpcRecord *findRoomNpcRecordByName(RoomSetupState &state, const Common::String &name);
 	static Entity *selectMonsterEntity(EntityManager *entityManager, const MonsterRecord &monster);
