@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	console.o \
 	dialogue/dialogue.o \
 	dialogue/dialogue_render.o \
+	dialogue/dialogue_session.o \
 	flow/flow.o \
 	flow/flow_debug.o \
 	flow/flow_map.o \
