@@ -88,7 +88,7 @@ static NpcRecord *findRoomNpcRecordByName(RoomSetupState &state, const Common::S
 static int findRoomNpcIndexByName(const RoomSetupState &state, const Common::String &name) {
 	for (uint i = 0; i < state.roomNpcs.size(); ++i) {
 		if (state.roomNpcs[i].npcName.equalsIgnoreCase(name))
-			return (int)i;
+			return static_cast<int>(i);
 	}
 
 	return -1;
@@ -97,7 +97,7 @@ static int findRoomNpcIndexByName(const RoomSetupState &state, const Common::Str
 static int findRoomMonsterIndexByName(const RoomSetupState &state, const Common::String &name) {
 	for (uint i = 0; i < state.roomMonsters.size(); ++i) {
 		if (state.roomMonsters[i].monsterName.equalsIgnoreCase(name))
-			return (int)i;
+			return static_cast<int>(i);
 	}
 
 	return -1;
@@ -166,10 +166,10 @@ static byte findNearestPaletteColor(const byte *palette, byte red, byte green, b
 	uint32 bestDistance = 0xffffffffu;
 	for (int i = 0; i < 256; ++i) {
 		const int paletteOffset = i * 3;
-		const int dr = (int)palette[paletteOffset] - red;
-		const int dg = (int)palette[paletteOffset + 1] - green;
-		const int db = (int)palette[paletteOffset + 2] - blue;
-		const uint32 distance = (uint32)(dr * dr + dg * dg + db * db);
+		const int dr = static_cast<int>(palette[paletteOffset]) - red;
+		const int dg = static_cast<int>(palette[paletteOffset + 1]) - green;
+		const int db = static_cast<int>(palette[paletteOffset + 2]) - blue;
+		const uint32 distance = static_cast<uint32>(dr * dr + dg * dg + db * db);
 		if (distance < bestDistance) {
 			bestDistance = distance;
 			bestIndex = (byte)i;
@@ -262,8 +262,8 @@ int computeRectAxisGap(int minA, int maxA, int minB, int maxB) {
 
 float clampRoomDepthForEvent(const RoomSetupState &state, float z) {
 	return CLIP<float>(z,
-		(float)MIN(state.roomMinZ, state.roomMaxZ),
-		(float)MAX(state.roomMinZ, state.roomMaxZ));
+		static_cast<float>(MIN(state.roomMinZ, state.roomMaxZ)),
+		static_cast<float>(MAX(state.roomMinZ, state.roomMaxZ)));
 }
 
 bool shouldRetainNpcDeathEntityInCurrentRoom(const NpcRecord &npc) {
@@ -354,7 +354,7 @@ bool runtimeEntityHasFrameRange(const Entity &entity, int firstFrame, int lastFr
 	if (!entity.hasFrames() || firstFrame < 0 || lastFrame < firstFrame)
 		return false;
 
-	return (uint)lastFrame < entity.getFrameCount();
+	return static_cast<uint>(lastFrame) < entity.getFrameCount();
 }
 
 bool runtimeEntityHasDrawableFrameRange(const Entity &entity, int firstFrame, int lastFrame) {
@@ -561,7 +561,7 @@ bool resolveRoomMonsterHitAnimationRange(const Entity &entity,
 }
 
 int roundRoomCombatFloat(float value) {
-	return value >= 0.0f ? (int)(value + 0.5f) : (int)(value - 0.5f);
+	return value >= 0.0f ? static_cast<int>(value + 0.5f) : static_cast<int>(value - 0.5f);
 }
 
 int mapRoomDepthToScreenYForCombat(const RoomSetupState &state, float z, int fallbackY) {
@@ -571,9 +571,9 @@ int mapRoomDepthToScreenYForCombat(const RoomSetupState &state, float z, int fal
 		return CLIP<int>(fallbackY, state.roomMaxZScreenY, state.roomMinZScreenY);
 
 	const float clampedZ = clampRoomDepthForEvent(state, z);
-	const float offset = ((float)state.roomMaxZ - clampedZ) *
-		(float)(state.roomMinZScreenY - state.roomMaxZScreenY) /
-		(float)(state.roomMaxZ - state.roomMinZ);
+	const float offset = (static_cast<float>(state.roomMaxZ) - clampedZ) *
+		static_cast<float>(state.roomMinZScreenY - state.roomMaxZScreenY) /
+		static_cast<float>(state.roomMaxZ - state.roomMinZ);
 	return CLIP<int>(state.roomMaxZScreenY + roundRoomCombatFloat(offset),
 		state.roomMaxZScreenY, state.roomMinZScreenY);
 }
@@ -643,7 +643,7 @@ MonsterRecord *Combat::findOverlappingMonsterTarget() const {
 
 		Entity *entity = findSceneRuntimeEntity(_entityManager, monster.monsterName);
 		if (entity && areCombatantsWithinRoomCombatReach(_scene.state,
-				*playerState.entity, playerState.z, *entity, (float)monster.posZ, monster.engageDistance))
+				*playerState.entity, playerState.z, *entity, static_cast<float>(monster.posZ), monster.engageDistance))
 			return &monster;
 	}
 
@@ -1210,8 +1210,8 @@ Common::Error Combat::killDebugActiveMonster(const Common::Point &mousePos, bool
 
 	const int monsterIndex = findRoomMonsterIndexByName(_scene.state, monster->monsterName);
 	MonsterCombatState *combatState =
-		monsterIndex >= 0 && monsterIndex < (int)_monsterCombatStates.size()
-			? &_monsterCombatStates[(uint)monsterIndex]
+		monsterIndex >= 0 && monsterIndex < static_cast<int>(_monsterCombatStates.size())
+			? &_monsterCombatStates[static_cast<uint>(monsterIndex)]
 			: nullptr;
 	if (combatState)
 		clearRoomMonsterCombatState(*combatState);
@@ -1260,7 +1260,7 @@ Common::Error Combat::updateRoomMonsterCombat(bool &needsRedraw) {
 
 	Script &script = *_engine.getScript();
 	const uint32 now = Player::getRuntimeClockTicks();
-	const uint32 moveInterval = MAX<uint32>(1, 100U / (uint32)kRoomMonsterAnimationRate);
+	const uint32 moveInterval = MAX<uint32>(1, 100U / static_cast<uint32>(kRoomMonsterAnimationRate));
 	const int horizontalStepBase = 8;
 	const int depthStep = MAX<int>(1, roundRoomCombatFloat(
 		_scene.state.roomZVelocityStep > 0.0f ? _scene.state.roomZVelocityStep : 1.0f));
@@ -1351,7 +1351,7 @@ Common::Error Combat::updateRoomMonsterCombat(bool &needsRedraw) {
 					monster.posX + knockbackStep, monster.screenMinXBound, monster.screenMaxXBound);
 				if (monster.posX != previousX) {
 					(void)applyRoomActorPlacement(
-						_scene.state, *entity, monster.posX, monster.posY, (float)monster.posZ);
+						_scene.state, *entity, monster.posX, monster.posY, static_cast<float>(monster.posZ));
 					(void)script.syncRuntimeMonsterRecord(monster);
 					debugC(1, kDebugCombat,
 						"Harvester: combat monster hit knockback target='%s' from_x=%d to_x=%d remaining=%d",
@@ -1454,19 +1454,19 @@ Common::Error Combat::updateRoomMonsterCombat(bool &needsRedraw) {
 		const int liveCenterDx = playerCenterX - monsterCenterX;
 		const int absLiveCenterDx = ABS(liveCenterDx);
 		const int playerTargetZ = roundRoomCombatFloat(playerState.z);
-		const float zDelta = playerState.z - (float)monster.posZ;
+		const float zDelta = playerState.z - static_cast<float>(monster.posZ);
 		const float absZDelta = zDelta >= 0.0f ? zDelta : -zDelta;
 		const int engageDistance = MAX(0, monster.engageDistance);
 		const int liveWaypointTolerance = roundRoomCombatFloat(
 			Player::computeDepthScale(_scene.state,
-				MIN<float>(playerState.z, (float)monster.posZ)) * kNativeMonsterHorizontalWaypointTolerance);
+				MIN<float>(playerState.z, static_cast<float>(monster.posZ))) * kNativeMonsterHorizontalWaypointTolerance);
 		bool attemptedMoveX = false;
 		bool attemptedMoveZ = false;
 		if (absZDelta > kNativeMonsterPursuitZTolerance) {
 			attemptedMoveZ = true;
 			monster.posZ = stepTowardsRoomCombatInt(monster.posZ, playerTargetZ, depthStep);
-			monster.posZ = (int)clampRoomDepthForEvent(_scene.state, (float)monster.posZ);
-			monster.posY = mapRoomDepthToScreenYForCombat(_scene.state, (float)monster.posZ, monster.posY);
+			monster.posZ = static_cast<int>(clampRoomDepthForEvent(_scene.state, static_cast<float>(monster.posZ)));
+			monster.posY = mapRoomDepthToScreenYForCombat(_scene.state, static_cast<float>(monster.posZ), monster.posY);
 		} else if (absLiveCenterDx > engageDistance) {
 			// Native class-6 pursuit stores a target frame-left X, not a center X.
 			const int desiredFrameLeftX = monsterCenterX < playerCenterX
@@ -1475,7 +1475,7 @@ Common::Error Combat::updateRoomMonsterCombat(bool &needsRedraw) {
 			if (ABS(monsterRect.left - desiredFrameLeftX) > liveWaypointTolerance) {
 				attemptedMoveX = true;
 				const int step = MAX<int>(1, roundRoomCombatFloat(
-					Player::computeDepthScale(_scene.state, (float)monster.posZ) * (float)horizontalStepBase));
+					Player::computeDepthScale(_scene.state, static_cast<float>(monster.posZ)) * static_cast<float>(horizontalStepBase)));
 				const int monsterFrameLeftOffset = monsterRect.left - monster.posX;
 				const int desiredLogicalCenterX = desiredFrameLeftX - monsterFrameLeftOffset;
 				monster.posX = stepTowardsRoomCombatInt(monster.posX, desiredLogicalCenterX, step);
@@ -1494,13 +1494,13 @@ Common::Error Combat::updateRoomMonsterCombat(bool &needsRedraw) {
 				monster.facing = movedX < 0 ? 1 : 2;
 			else if (movedY != 0)
 				monster.facing = movedY < 0 ? 3 : 0;
-			(void)applyRoomActorPlacement(_scene.state, *entity, monster.posX, monster.posY, (float)monster.posZ);
+			(void)applyRoomActorPlacement(_scene.state, *entity, monster.posX, monster.posY, static_cast<float>(monster.posZ));
 			if (monster.posZ != previousZ)
 				_entityManager->reinsertSceneEntity(entity);
 			(void)script.syncRuntimeMonsterRecord(monster);
 			debugC(3, kDebugCombat,
 				"Harvester: combat monster chase move monster='%s' live_center_dx=%d z_delta=%.2f engage=%d waypoint_tol=%d from=(%d,%d,z=%d) to=(%d,%d,z=%d) facing=%d",
-				monster.monsterName.c_str(), liveCenterDx, (double)zDelta, engageDistance, liveWaypointTolerance,
+				monster.monsterName.c_str(), liveCenterDx, static_cast<double>(zDelta), engageDistance, liveWaypointTolerance,
 				previousX, previousY, previousZ, monster.posX, monster.posY, monster.posZ, monster.facing);
 			needsRedraw = true;
 			needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, true) || needsRedraw;
@@ -1510,13 +1510,13 @@ Common::Error Combat::updateRoomMonsterCombat(bool &needsRedraw) {
 		if (stalledDirections != 0 && stallChanged) {
 			debugC(2, kDebugCombat,
 				"Harvester: combat monster chase stalled monster='%s' live_center_dx=%d z_delta=%.2f engage=%d waypoint_tol=%d pos=(%d,%d,z=%d) attempted_x=%d attempted_z=%d",
-				monster.monsterName.c_str(), liveCenterDx, (double)zDelta, engageDistance, liveWaypointTolerance,
+				monster.monsterName.c_str(), liveCenterDx, static_cast<double>(zDelta), engageDistance, liveWaypointTolerance,
 				monster.posX, monster.posY, monster.posZ, attemptedMoveX, attemptedMoveZ);
 		}
 
 		needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
 		const bool closeEnoughForAttack = isWithinNativeMonsterAttackEntryRange(
-			*entity, (float)monster.posZ, *playerState.entity, playerState.z, engageDistance);
+			*entity, static_cast<float>(monster.posZ), *playerState.entity, playerState.z, engageDistance);
 		// Class-6 monsters store `now + random(99)` when they arm an attack, then
 		// apply a 0x32-tick gate when deciding whether a later strike may start.
 		// A fresh zeroed spawn therefore attacks immediately once it reaches engage range.
@@ -1560,7 +1560,7 @@ Common::Error Combat::updateRoomMonsterCombat(bool &needsRedraw) {
 		debugC(3, kDebugCombat,
 			"Harvester: combat monster attack timing monster='%s' target='%s' frames=%d..%d contact=%d resume_facing=%d live_center_dx=%d z_delta=%.2f engage=%d rate=%d attack_seed_tick=%u close_bypass=%d",
 			monster.monsterName.c_str(), combatState.attackTargetName.c_str(), range.firstFrame, range.lastFrame,
-			combatState.attackContactFrame, range.resumeFacing, liveCenterDx, (double)zDelta,
+			combatState.attackContactFrame, range.resumeFacing, liveCenterDx, static_cast<double>(zDelta),
 			engageDistance, kNativeMonsterAttackAnimationRate, combatState.attackCooldownSeedTick,
 			closeRangeBypassDistance);
 		needsRedraw = true;
@@ -1577,15 +1577,11 @@ Common::Error Combat::resolvePlayerAttackContact(bool &needsRedraw) {
 		return Common::kNoError;
 	}
 
-	_player.markAttackContactResolved();
+	const bool projectile = Player::isProjectileCombatLoadout(playerState.combatLoadout);
+	if (projectile)
+		_player.markAttackContactResolved();
 	const int damageType = Player::resolveCombatLoadoutDamageType(playerState.combatLoadout);
 	const int damageAmount = Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout);
-	debugC(1, kDebugCombat,
-		"Harvester: combat player attack contact frame=%d loadout=%d weapon='%s' damage=%d damage_type='%s' target_class='%s' target='%s'",
-		playerState.entity->getCurrentFrame(), playerState.combatLoadout,
-		Player::describeCombatLoadout(playerState.combatLoadout), damageAmount,
-		Player::describeCombatDamageType(damageType),
-		describeCombatTargetClass(playerState.attackTargetClassId), playerState.attackTargetName.c_str());
 	Script *script = _engine.getScript();
 	if (!script)
 		return Common::kNoError;
@@ -1595,12 +1591,15 @@ Common::Error Combat::resolvePlayerAttackContact(bool &needsRedraw) {
 		Entity *npcEntity = nullptr;
 		NpcRecord *npc = selectNpcAttackContactTarget(npcEntity);
 		if (!npc) {
-			debugC(1, kDebugCombat,
-				"Harvester: combat player attack missed class='npc' target='%s' reason='no reachable npc'",
-				playerState.attackTargetName.c_str());
+			if (playerState.entity->didAnimationAdvanceLastTick()) {
+				debugC(3, kDebugCombat,
+					"Harvester: combat player attack missed class='npc' target='%s' frame=%d reason='no reachable npc'",
+					playerState.attackTargetName.c_str(), playerState.entity->getCurrentFrame());
+			}
 			return Common::kNoError;
 		}
 
+		_player.markAttackContactResolved();
 		const bool runtimeChanged =
 			script->queueRuntimeNpcDeathOrMonsterfy(npc->npcName, damageType);
 		const bool jimmyFlagChanged = npc->npcName.equalsIgnoreCase("JIMMY")
@@ -1608,8 +1607,8 @@ Common::Error Combat::resolvePlayerAttackContact(bool &needsRedraw) {
 			: false;
 		const int npcIndex = findRoomNpcIndexByName(_scene.state, npc->npcName);
 		NpcCombatState *combatState =
-			npcIndex >= 0 && npcIndex < (int)_npcCombatStates.size()
-				? &_npcCombatStates[(uint)npcIndex]
+			npcIndex >= 0 && npcIndex < static_cast<int>(_npcCombatStates.size())
+				? &_npcCombatStates[static_cast<uint>(npcIndex)]
 				: nullptr;
 		if (runtimeChanged) {
 			npc->deathDamageType = damageType;
@@ -1644,20 +1643,24 @@ Common::Error Combat::resolvePlayerAttackContact(bool &needsRedraw) {
 	Entity *monsterEntity = nullptr;
 	MonsterRecord *monster = selectMonsterAttackContactTarget(monsterEntity);
 	if (!monster || !monsterEntity) {
-		debugC(1, kDebugCombat,
-			"Harvester: combat player attack missed class='monster' target='%s' reason='no reachable monster'",
-			playerState.attackTargetName.c_str());
+		if (playerState.entity->didAnimationAdvanceLastTick()) {
+			debugC(3, kDebugCombat,
+				"Harvester: combat player attack missed class='monster' target='%s' frame=%d reason='no reachable monster'",
+				playerState.attackTargetName.c_str(), playerState.entity->getCurrentFrame());
+		}
 		return Common::kNoError;
 	}
 
+	// update_actor_runtime_state (0x4d750) latches melee contact only after a hit.
+	_player.markAttackContactResolved();
 	const int hitPointsBefore = monster->currentHitPoints;
 	monster->currentHitPoints = MAX(0,
 		monster->currentHitPoints - damageAmount);
 	const int damageLanded = hitPointsBefore - monster->currentHitPoints;
 	const int monsterIndex = findRoomMonsterIndexByName(_scene.state, monster->monsterName);
 	MonsterCombatState *combatState =
-		monsterIndex >= 0 && monsterIndex < (int)_monsterCombatStates.size()
-			? &_monsterCombatStates[(uint)monsterIndex]
+		monsterIndex >= 0 && monsterIndex < static_cast<int>(_monsterCombatStates.size())
+			? &_monsterCombatStates[static_cast<uint>(monsterIndex)]
 			: nullptr;
 	debugC(1, kDebugCombat,
 		"Harvester: combat player monster hit target='%s' loadout=%d weapon='%s' damage=%d damage_type='%s' hp=%d->%d reachable=1",
@@ -1808,7 +1811,7 @@ CombatEffects::CombatEffects(EntityManager *entityManager) : _entityManager(enti
 
 void CombatEffects::clearHitEffects() {
 	debugC(2, kDebugCombat, "Harvester: resetting room blood effects records=%u next_id=%u",
-		(uint)_hitEffectStates.size(), _nextCombatEffectId);
+		static_cast<uint>(_hitEffectStates.size()), _nextCombatEffectId);
 	_hitEffectStates.clear();
 	_nextCombatEffectId = 0;
 }
@@ -1915,8 +1918,8 @@ void CombatEffects::drawCombatDamagePopups(Graphics::Screen &screen, bool combat
 
 		const uint32 elapsed = now - popupState.startTick;
 		const uint32 clampedElapsed = MIN<uint32>(elapsed, kCombatDebugDamagePopupDurationMs);
-		const int rise = (int)(
-			clampedElapsed * (uint32)kCombatDebugDamagePopupRisePixels /
+		const int rise = static_cast<int>(
+			clampedElapsed * static_cast<uint32>(kCombatDebugDamagePopupRisePixels) /
 			kCombatDebugDamagePopupDurationMs);
 		const Common::String popupText = Common::String::format("+%d", popupState.damageAmount);
 		const int textWidth = font->getStringWidth(popupText);
