@@ -236,10 +236,6 @@ Common::Error IgorEngine::run() {
 		error("Unable to open '%s'", _game.sfxFileName);
 	}
 
-	if (_game.version == kIdSpaFloppy) {
-		unpackExecutable();
-	}
-
 	readTableFile();
 	if (_game.flags & kFlagFloppy)
 		_midiPlayer = new MidiPlayer(_mixer);
