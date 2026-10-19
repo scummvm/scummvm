@@ -24,6 +24,7 @@
 #include "graphics/scaler.h"
 
 #include "igor/igor.h"
+#include "igor/floppy_menu.h"
 
 namespace Igor {
 
@@ -340,32 +341,6 @@ bool IgorEngine::handleOptionsMenu_handleKeyDownCtrl(int key) {
 	return false;
 }
 
-static const int kFloppyMenuX = 53;
-static const int kFloppyMenuY = 19;
-static const int kFloppyMenuWidth = 214;
-static const int kFloppyMenuHeight = 106;
-static const int kFloppyMenuSize = 320 * kFloppyMenuHeight;
-static const int kFloppyButtonX = 55;
-static const int kFloppyButtonY = 21;
-static const int kFloppyButtonWidth = 42;
-static const int kFloppyButtonHeight = 13;
-static const int kFloppyControlPanelFirstRow = 36;
-static const int kFloppyControlPanelRows = 85;
-static const int kFloppyCaptionY = 22;
-static const int kFloppyCaptionLastRow = 34;
-static const int kFloppyLastFadedColor = 248;
-static const int kFloppyFadeSteps = 30;
-static const int kFloppyFadeCount = 3 * (kFloppyLastFadedColor + 1);
-
-enum {
-	kFloppyColorCaption = 0xF9,
-	kFloppyColorText = 0xFF,
-	kFloppyColorFrameLight = 0xFA,
-	kFloppyColorFrameDark = 0xFC,
-	kFloppyColorButtonLight = 0xFE,
-	kFloppyColorButtonDark = 0xFD
-};
-
 enum FloppyOptionsText {
 	kFloppySave = 0,
 	kFloppyLoad,
@@ -442,7 +417,7 @@ void IgorEngine::floppyOptionsFillRow(const uint8 *button, int buttonRow, int y)
 	       button + (buttonRow - 1) * kFloppyMenuWidth, kFloppyMenuWidth);
 }
 
-void IgorEngine::floppyOptionsDrawMainPage(const uint8 *button) {
+void IgorEngine::floppyOptionsDrawPanel(const uint8 *button) {
 	int y = 0;
 	for (uint i = 0; i < ARRAYSIZE(kFloppyPanelRows); ++i) {
 		for (int j = 0; j < kFloppyPanelRows[i].count; ++j) {
@@ -450,6 +425,10 @@ void IgorEngine::floppyOptionsDrawMainPage(const uint8 *button) {
 			++y;
 		}
 	}
+}
+
+void IgorEngine::floppyOptionsDrawMainPage(const uint8 *button) {
+	floppyOptionsDrawPanel(button);
 	for (int i = 0; i < 5; ++i) {
 		floppyOptionsDrawText(kFloppySave + i, kFloppyCaptionX[i], kFloppyCaptionY, kFloppyColorCaption);
 	}
@@ -586,8 +565,8 @@ void IgorEngine::floppyOptionsQuitPage(const uint8 *button) {
 		floppyOptionsDrawMainPage(button);
 }
 
-void IgorEngine::handleFloppyOptionsMenu() {
-	// The menu starts from the full palette and dims colors 1..248 in steps of three levels.
+// The menus start from the full palette and dim colors 1..248 in steps of three levels.
+void IgorEngine::floppyMenuFadeOut() {
 	memcpy(_currentPalette, _paletteBuffer, 768);
 	for (int m = 3; m <= kFloppyFadeSteps; m += 3) {
 		for (int i = 3; i < kFloppyFadeCount; ++i) {
@@ -600,6 +579,10 @@ void IgorEngine::handleFloppyOptionsMenu() {
 		_system->delayMillis(1000 / 60);
 	}
 	setPaletteColor(255, 35, 35, 23);
+}
+
+void IgorEngine::handleFloppyOptionsMenu() {
+	floppyMenuFadeOut();
 
 	memcpy(_screenTextLayer, _screenVGA + kFloppyMenuY * 320, kFloppyMenuSize);
 	uint8 *button = loadData(IMG_OptionsButton);

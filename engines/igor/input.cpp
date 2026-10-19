@@ -27,6 +27,11 @@
 
 namespace Igor {
 
+// Timer ticks elapsed since [startMillis], at the rate of the original timer (scaled by fast mode).
+uint32 IgorEngine::ticksSince(uint32 startMillis) const {
+	return (uint32)((uint64)(_system->getMillis() - startMillis) * kTickDelay * _fastMode / 1000);
+}
+
 void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 
 	if (presentScreen && !_eventQuitGame) {

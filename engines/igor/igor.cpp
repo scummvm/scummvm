@@ -57,6 +57,7 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_verbsPanelBuffer = (uint8 *)malloc(3840);
 	_verbsPanelSize = 0; // set when the panel is loaded
 
+	_floppyProtectionPassed = false;
 	_game.ovlFileName = gameDesc->ovlFileName;
 	_game.sfxFileName = gameDesc->sfxFileName;
 	_game.version = gameDesc->gameVersion;

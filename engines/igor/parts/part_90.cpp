@@ -83,15 +83,17 @@ bool IgorEngine::part90Hold(uint16 duration, int skipMode, bool optionsMenu) {
 	uint8 observedTimer = 0;
 	for (uint16 elapsed = 0; elapsed < duration; ++elapsed) {
 		if (optionsMenu && _inputVars[kInputOptions]) {
+			// The title screen asks for the protection before opening the menu for the first time.
+			if (_currentPart == 900 && !checkCopyProtection())
+				break;
 			handleOptionsMenu();
 			_inputVars[kInputOptions] = 0;
 			waitForTimer(0);
 		}
 		while (!_gameStateLoaded && !_eventQuitGame && _currentPart != kInvalidPart && !skipRequested()) {
 			waitForTimer(0, false);
-			const uint32 timerMillis = _system->getMillis() - timerStart;
 			const uint64 timerRate = (uint64)kTickDelay * _fastMode;
-			const uint64 timerTicks = (uint64)timerMillis * timerRate / 1000;
+			const uint64 timerTicks = ticksSince(timerStart);
 			const uint8 timerByte = (uint8)timerTicks;
 			if (timerByte != observedTimer) {
 				observedTimer = timerByte;
