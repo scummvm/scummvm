@@ -451,6 +451,40 @@ void syncPlayerAnimationPlacement(RoomPlayerState &playerState) {
 	playerState.bottomY = rect.bottom;
 }
 
+int resolveFacingFromMoveDirection(int horizontalDirection, int depthDirection,
+		int fallbackFacing) {
+	if (horizontalDirection < 0)
+		return 1;
+	if (horizontalDirection > 0)
+		return 2;
+	if (depthDirection < 0)
+		return 3;
+	if (depthDirection > 0)
+		return 0;
+	return fallbackFacing >= 0 ? fallbackFacing : 0;
+}
+
+bool setPlayerWalkAnimation(RoomPlayerState &playerState, int facing) {
+	if (!playerState.entity)
+		return false;
+
+	const PlayerAnimationRange range = resolvePlayerAnimationRange(facing);
+	const int currentFrame = playerState.entity->getCurrentFrame();
+	const bool alreadyWalking = playerState.facing == facing &&
+		playerState.entity->getAnimationRate() == playerState.animationRate &&
+		currentFrame >= range.walkFirstFrame && currentFrame <= range.walkLastFrame;
+	if (alreadyWalking)
+		return false;
+
+	playerState.facing = facing;
+	playerState.entity->setAnimationFrameRange(range.walkFirstFrame, range.walkLastFrame, true);
+	playerState.entity->setAnimationRate(playerState.animationRate);
+	debugC(1, kDebugPlayer,
+		"Harvester: player walk animation facing=%d frames=%d..%d rate=%d",
+		facing, range.walkFirstFrame, range.walkLastFrame, playerState.animationRate);
+	return true;
+}
+
 } // End of namespace PlayerMovement
 
 using namespace PlayerMovement;

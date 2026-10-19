@@ -23,6 +23,7 @@ MODULE_OBJS = \
 	monster.o \
 	player.o \
 	player_movement.o \
+	player_target.o \
 	resources.o \
 	combat.o \
 	combat_contact.o \

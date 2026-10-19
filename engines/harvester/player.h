@@ -28,6 +28,11 @@ namespace Harvester {
 
 class EntityManager;
 
+namespace PlayerMovement {
+struct MovementContext;
+struct MovementPosition;
+}
+
 struct RoomPlayerState {
 	Entity *entity = nullptr;
 	int centerX = 0;
@@ -168,6 +173,10 @@ public:
 	bool updateIdleAnimation(const RoomSetupState &state);
 
 private:
+	bool stopMoveTargetStep(const PlayerMovement::MovementContext &context,
+		const PlayerMovement::MovementPosition &candidate, int horizontalDirection, int depthDirection,
+		const Entity *blocker);
+
 	RoomPlayerState _state;
 	RoomIdleAnimationState _idleState;
 };

@@ -78,6 +78,9 @@ bool tryApplyPlayerWalkMovement(const MovementContext &context, const MovementPo
 bool isPathfindingDebugEnabled();
 void syncPlayerAnimationPlacement(RoomPlayerState &playerState);
 
+int resolveFacingFromMoveDirection(int horizontalDirection, int depthDirection, int fallbackFacing);
+bool setPlayerWalkAnimation(RoomPlayerState &playerState, int facing);
+
 } // End of namespace PlayerMovement
 } // End of namespace Harvester
 
