@@ -158,6 +158,10 @@ public:
 	Common::Error resolvePlayerAttackContact(bool &needsRedraw);
 
 private:
+	Common::Error resolvePlayerNpcAttackContact(Script &script, int damageType, bool &needsRedraw);
+	Common::Error resolvePlayerMonsterAttackContact(Script &script,
+		int damageType, int damageAmount, bool &needsRedraw);
+
 	struct MonsterPursuitResult;
 
 	// Returns true when player defeat must end the entire combat update.

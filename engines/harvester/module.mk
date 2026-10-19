@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	player.o \
 	resources.o \
 	combat.o \
+	combat_contact.o \
 	combat_geometry.o \
 	combat_monsters.o \
 	combat_reactions.o \
