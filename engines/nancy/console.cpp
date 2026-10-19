@@ -1108,16 +1108,35 @@ bool NancyConsole::Cmd_getEventFlags(int argc, const char **argv) {
 bool NancyConsole::Cmd_setEventFlags(int argc, const char **argv) {
 	if (argc < 2 || argc % 2 == 0) {
 		debugPrintf("Sets one or more event flags to the provided value.\n");
-		debugPrintf("Usage: %s <flagID> <true/false>...\n", argv[0]);
+		debugPrintf("Usage: %s <flagID or name> <true/false>...\n", argv[0]);
 		return true;
 	}
 
 	// Event flags are addressed by label (numbered from 1000 in Nancy3 and later)
 	int baseLabel = g_nancy->getGameType() >= kGameTypeNancy3 ? 1000 : 0;
+	auto *eventFlags = GetEngineData(EVNT);
 
 	for (int i = 1; i < argc; i += 2) {
-		int label = baseLabel + atoi(argv[i]);
-		if (label - baseLabel < 0 || label - baseLabel >= (int)g_nancy->getStaticData().numEventFlags) {
+		int label = -1;
+		if (Common::isDigit(argv[i][0])) {
+			label = baseLabel + atoi(argv[i]);
+			if (label - baseLabel >= (int)g_nancy->getStaticData().numEventFlags) {
+				label = -1;
+			}
+		} else {
+			// By name. From Nancy12 on, the flags of the game are the ones of the
+			// EVNT chunk, numbered from 2000.
+			const uint firstLabel = eventFlags ? (uint)EVNT::kFirstEventFlag : (uint)baseLabel;
+			const uint numFlags = eventFlags ? eventFlags->eventFlagNames.size() : g_nancy->getStaticData().numEventFlags;
+			for (uint j = 0; j < numFlags; ++j) {
+				if (g_nancy->getEventFlagName(firstLabel + j).equalsIgnoreCase(argv[i])) {
+					label = firstLabel + j;
+					break;
+				}
+			}
+		}
+
+		if (label < 0) {
 			debugPrintf("Invalid flag %s\n", argv[i]);
 			continue;
 		}
