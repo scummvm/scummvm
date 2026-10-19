@@ -34,7 +34,7 @@ namespace MediaStation {
 enum Platform {
 	kPlatformParamTokenUnknown = 0,
 	kPlatformParamTokenWindows = 0x76D,
-	kPlatformParakTokenMacintosh = 0x76E
+	kPlatformParamTokenMacintosh = 0x76E
 };
 
 class ScriptFunction {

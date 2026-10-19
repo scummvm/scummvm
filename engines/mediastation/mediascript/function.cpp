@@ -297,7 +297,7 @@ void FunctionManager::script_GetPlatform(Common::Array<ScriptValue> &args, Scrip
 		break;
 
 	case Common::Platform::kPlatformMacintosh:
-		returnValue.setToParamToken(kPlatformParamTokenWindows);
+		returnValue.setToParamToken(kPlatformParamTokenMacintosh);
 		break;
 
 	default:
