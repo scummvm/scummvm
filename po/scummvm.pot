@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-18 07:43+0000\n"
+"POT-Creation-Date: 2026-10-19 23:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3653,19 +3653,20 @@ msgstr ""
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:277
 #: engines/composer/metaengine.cpp:114 engines/cruise/metaengine.cpp:173
 #: engines/draci/metaengine.cpp:200 engines/fool/metaengine.cpp:137
-#: engines/groovie/metaengine.cpp:205 engines/hdb/metaengine.cpp:207
-#: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:134
-#: engines/illusions/metaengine.cpp:94 engines/kyra/engine/eobcommon.cpp:377
-#: engines/kyra/engine/lol.cpp:505 engines/lure/metaengine.cpp:177
-#: engines/made/metaengine.cpp:141 engines/mads/metaengine.cpp:270
-#: engines/mm/metaengine.cpp:186 engines/mtropolis/metaengine.cpp:161
-#: engines/nancy/input.cpp:191 engines/parallaction/metaengine.cpp:138
-#: engines/saga/metaengine.cpp:278 engines/sludge/keymapper_tables.h:564
-#: engines/sludge/keymapper_tables.h:583 engines/stark/metaengine.cpp:189
-#: engines/sword1/metaengine.cpp:271 engines/tinsel/metaengine.cpp:246
-#: engines/toon/metaengine.cpp:86 engines/touche/metaengine.cpp:123
-#: engines/trecision/metaengine.cpp:125 engines/tsage/metaengine.cpp:178
-#: engines/tucker/metaengine.cpp:172 engines/ultima/ultima0/metaengine.cpp:180
+#: engines/groovie/metaengine.cpp:205 engines/harvester/metaengine.cpp:70
+#: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:238
+#: engines/hugo/metaengine.cpp:134 engines/illusions/metaengine.cpp:94
+#: engines/kyra/engine/eobcommon.cpp:377 engines/kyra/engine/lol.cpp:505
+#: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:141
+#: engines/mads/metaengine.cpp:270 engines/mm/metaengine.cpp:186
+#: engines/mtropolis/metaengine.cpp:161 engines/nancy/input.cpp:191
+#: engines/parallaction/metaengine.cpp:138 engines/saga/metaengine.cpp:278
+#: engines/sludge/keymapper_tables.h:564 engines/sludge/keymapper_tables.h:583
+#: engines/stark/metaengine.cpp:189 engines/sword1/metaengine.cpp:271
+#: engines/tinsel/metaengine.cpp:246 engines/toon/metaengine.cpp:86
+#: engines/touche/metaengine.cpp:123 engines/trecision/metaengine.cpp:125
+#: engines/tsage/metaengine.cpp:178 engines/tucker/metaengine.cpp:172
+#: engines/ultima/ultima0/metaengine.cpp:180
 #: engines/ultima/ultima4/metaengine.cpp:227
 #: engines/ultima/nuvie/metaengine.cpp:238
 #: engines/ultima/ultima8/metaengine.cpp:138 engines/vcruise/metaengine.cpp:158
@@ -3687,19 +3688,19 @@ msgstr ""
 #: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:283
 #: engines/composer/metaengine.cpp:120 engines/cruise/metaengine.cpp:179
 #: engines/draci/metaengine.cpp:206 engines/fool/metaengine.cpp:148
-#: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:244
-#: engines/hugo/metaengine.cpp:141 engines/illusions/metaengine.cpp:101
-#: engines/kyra/engine/eobcommon.cpp:378 engines/kyra/engine/lol.cpp:506
-#: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:148
-#: engines/mads/metaengine.cpp:276 engines/mm/metaengine.cpp:192
-#: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:198
-#: engines/parallaction/metaengine.cpp:144 engines/saga/metaengine.cpp:289
-#: engines/sludge/keymapper_tables.h:570 engines/sludge/keymapper_tables.h:589
-#: engines/stark/metaengine.cpp:195 engines/sword1/metaengine.cpp:277
-#: engines/tinsel/metaengine.cpp:252 engines/toon/metaengine.cpp:92
-#: engines/touche/metaengine.cpp:129 engines/trecision/metaengine.cpp:131
-#: engines/tsage/metaengine.cpp:184 engines/tucker/metaengine.cpp:178
-#: engines/ultima/ultima0/metaengine.cpp:186
+#: engines/groovie/metaengine.cpp:211 engines/harvester/metaengine.cpp:75
+#: engines/hopkins/metaengine.cpp:244 engines/hugo/metaengine.cpp:141
+#: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:378
+#: engines/kyra/engine/lol.cpp:506 engines/lure/metaengine.cpp:183
+#: engines/made/metaengine.cpp:148 engines/mads/metaengine.cpp:276
+#: engines/mm/metaengine.cpp:192 engines/mtropolis/metaengine.cpp:167
+#: engines/nancy/input.cpp:198 engines/parallaction/metaengine.cpp:144
+#: engines/saga/metaengine.cpp:289 engines/sludge/keymapper_tables.h:570
+#: engines/sludge/keymapper_tables.h:589 engines/stark/metaengine.cpp:195
+#: engines/sword1/metaengine.cpp:277 engines/tinsel/metaengine.cpp:252
+#: engines/toon/metaengine.cpp:92 engines/touche/metaengine.cpp:129
+#: engines/trecision/metaengine.cpp:131 engines/tsage/metaengine.cpp:184
+#: engines/tucker/metaengine.cpp:178 engines/ultima/ultima0/metaengine.cpp:186
 #: engines/ultima/ultima4/metaengine.cpp:233
 #: engines/ultima/nuvie/metaengine.cpp:244
 #: engines/ultima/ultima8/metaengine.cpp:144
@@ -3726,7 +3727,8 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
-#: engines/metaengine.cpp:105 engines/parallaction/metaengine.cpp:163
+#: engines/metaengine.cpp:105 engines/harvester/metaengine.cpp:95
+#: engines/parallaction/metaengine.cpp:163
 #: engines/ultima/ultima8/metaengine.cpp:47
 msgid "Game menu"
 msgstr ""
@@ -5804,20 +5806,22 @@ msgstr ""
 #. I18N: Move Actor to upwards direction
 #: engines/access/metaengine.cpp:258 engines/asylum/metaengine.cpp:171
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
-#: engines/efh/metaengine.cpp:286 engines/hdb/metaengine.cpp:213
-#: engines/hypno/metaengine.cpp:363 engines/hypno/metaengine.cpp:411
-#: engines/nancy/input.cpp:205 engines/tinsel/metaengine.cpp:263
-#: engines/titanic/metaengine.cpp:324 engines/ultima/ultima8/metaengine.cpp:52
+#: engines/efh/metaengine.cpp:286 engines/harvester/metaengine.cpp:89
+#: engines/hdb/metaengine.cpp:213 engines/hypno/metaengine.cpp:363
+#: engines/hypno/metaengine.cpp:411 engines/nancy/input.cpp:205
+#: engines/tinsel/metaengine.cpp:263 engines/titanic/metaengine.cpp:324
+#: engines/ultima/ultima8/metaengine.cpp:52
 msgid "Move up"
 msgstr ""
 
 #. I18N: Move Actor to downwards direction
 #: engines/access/metaengine.cpp:265 engines/asylum/metaengine.cpp:177
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
-#: engines/efh/metaengine.cpp:293 engines/hdb/metaengine.cpp:219
-#: engines/hypno/metaengine.cpp:351 engines/hypno/metaengine.cpp:399
-#: engines/nancy/input.cpp:211 engines/tinsel/metaengine.cpp:269
-#: engines/titanic/metaengine.cpp:330 engines/ultima/ultima8/metaengine.cpp:53
+#: engines/efh/metaengine.cpp:293 engines/harvester/metaengine.cpp:90
+#: engines/hdb/metaengine.cpp:219 engines/hypno/metaengine.cpp:351
+#: engines/hypno/metaengine.cpp:399 engines/nancy/input.cpp:211
+#: engines/tinsel/metaengine.cpp:269 engines/titanic/metaengine.cpp:330
+#: engines/ultima/ultima8/metaengine.cpp:53
 msgid "Move down"
 msgstr ""
 
@@ -5825,12 +5829,12 @@ msgstr ""
 #. I18N: Move actor left during fight
 #: engines/access/metaengine.cpp:272 engines/asylum/metaengine.cpp:183
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
-#: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
-#: engines/hypno/metaengine.cpp:345 engines/hypno/metaengine.cpp:393
-#: engines/kyra/engine/eobcommon.cpp:381 engines/lure/metaengine.cpp:218
-#: engines/nancy/input.cpp:217 engines/tinsel/metaengine.cpp:275
-#: engines/titanic/metaengine.cpp:312 engines/titanic/metaengine.cpp:390
-#: engines/ultima/ultima8/metaengine.cpp:54
+#: engines/efh/metaengine.cpp:300 engines/harvester/metaengine.cpp:87
+#: engines/hdb/metaengine.cpp:225 engines/hypno/metaengine.cpp:345
+#: engines/hypno/metaengine.cpp:393 engines/kyra/engine/eobcommon.cpp:381
+#: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:217
+#: engines/tinsel/metaengine.cpp:275 engines/titanic/metaengine.cpp:312
+#: engines/titanic/metaengine.cpp:390 engines/ultima/ultima8/metaengine.cpp:54
 msgid "Move left"
 msgstr ""
 
@@ -5838,12 +5842,12 @@ msgstr ""
 #. I18N: Move actor right during fight
 #: engines/access/metaengine.cpp:279 engines/asylum/metaengine.cpp:189
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
-#: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
-#: engines/hypno/metaengine.cpp:357 engines/hypno/metaengine.cpp:405
-#: engines/kyra/engine/eobcommon.cpp:382 engines/lure/metaengine.cpp:226
-#: engines/nancy/input.cpp:223 engines/tinsel/metaengine.cpp:281
-#: engines/titanic/metaengine.cpp:318 engines/titanic/metaengine.cpp:396
-#: engines/ultima/ultima8/metaengine.cpp:55
+#: engines/efh/metaengine.cpp:307 engines/harvester/metaengine.cpp:88
+#: engines/hdb/metaengine.cpp:231 engines/hypno/metaengine.cpp:357
+#: engines/hypno/metaengine.cpp:405 engines/kyra/engine/eobcommon.cpp:382
+#: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:223
+#: engines/tinsel/metaengine.cpp:281 engines/titanic/metaengine.cpp:318
+#: engines/titanic/metaengine.cpp:396 engines/ultima/ultima8/metaengine.cpp:55
 msgid "Move right"
 msgstr ""
 
@@ -5950,19 +5954,19 @@ msgstr ""
 #: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:521
-#: engines/grim/grim.cpp:621 engines/hdb/metaengine.cpp:251
-#: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
-#: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
-#: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
-#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:237
-#: engines/scumm/help.cpp:244 engines/scumm/help.cpp:252
-#: engines/sherlock/metaengine.cpp:435 engines/sludge/keymapper_tables.h:61
-#: engines/sludge/keymapper_tables.h:122 engines/sludge/keymapper_tables.h:171
-#: engines/sludge/keymapper_tables.h:184 engines/sludge/keymapper_tables.h:220
-#: engines/sludge/keymapper_tables.h:259 engines/stark/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:313 engines/titanic/metaengine.cpp:244
-#: engines/titanic/metaengine.cpp:297 engines/twine/metaengine.cpp:370
-#: engines/zvision/metaengine.cpp:252
+#: engines/grim/grim.cpp:621 engines/harvester/metaengine.cpp:94
+#: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
+#: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179
+#: engines/macs2/metaengine.cpp:64 engines/petka/metaengine.cpp:173
+#: engines/phoenixvr/metaengine.cpp:82 engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
+#: engines/scumm/help.cpp:252 engines/sherlock/metaengine.cpp:435
+#: engines/sludge/keymapper_tables.h:61 engines/sludge/keymapper_tables.h:122
+#: engines/sludge/keymapper_tables.h:171 engines/sludge/keymapper_tables.h:184
+#: engines/sludge/keymapper_tables.h:220 engines/sludge/keymapper_tables.h:259
+#: engines/stark/metaengine.cpp:267 engines/tinsel/metaengine.cpp:313
+#: engines/titanic/metaengine.cpp:244 engines/titanic/metaengine.cpp:297
+#: engines/twine/metaengine.cpp:370 engines/zvision/metaengine.cpp:252
 msgid "Inventory"
 msgstr ""
 
@@ -6737,7 +6741,8 @@ msgstr ""
 msgid "Select / Kick / Run"
 msgstr ""
 
-#: engines/awe/metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
+#: engines/awe/metaengine.cpp:62 engines/harvester/metaengine.cpp:100
+#: engines/hpl1/metaengine.cpp:83
 msgid "Jump"
 msgstr ""
 
@@ -9389,24 +9394,56 @@ msgstr ""
 msgid "The Troy minigame is not supported yet. Skipping"
 msgstr ""
 
-#: engines/harvester/metaengine.cpp:33
+#: engines/harvester/metaengine.cpp:37
 msgid "Enable gore"
 msgstr ""
 
-#: engines/harvester/metaengine.cpp:34
+#: engines/harvester/metaengine.cpp:38
 msgid ""
 "When disabled, the startup movie player follows the original GORE=NO "
 "censorship path."
 msgstr ""
 
-#: engines/harvester/metaengine.cpp:44
+#: engines/harvester/metaengine.cpp:48
 msgid "Show CD change prompts"
 msgstr ""
 
-#: engines/harvester/metaengine.cpp:45
+#: engines/harvester/metaengine.cpp:49
 msgid ""
 "Display the original CD swap image and wait for a left click when the script "
 "requests disc 2 or 3."
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:69
+msgid "Gameplay"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:91
+msgid "Attack modifier"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:92
+msgid "Evasive movement modifier"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:93 engines/ultima/ultima4/metaengine.cpp:82
+msgid "Speed up"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:96
+msgid "High attack"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:97
+msgid "Medium attack"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:98
+msgid "Low attack"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:99
+msgid "Duck"
 msgstr ""
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
@@ -15033,10 +15070,6 @@ msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:76
 msgid "Yell"
-msgstr ""
-
-#: engines/ultima/ultima4/metaengine.cpp:82
-msgid "Speed up"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:83
