@@ -192,6 +192,10 @@ static const uint kNoCursorType = 0xFFFFFFFF;
 static int cursorIndex(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
 
+	if (strcmp(name, "MoveTo") == 0) {
+		return indexFunctions(L);
+	}
+
 	const int type = g_nancy->_cursor->getCursorTypeByName(name);
 	if (type >= 0) {
 		pushCursor(L, type, false);
@@ -282,9 +286,22 @@ static int cursorNewIndex(lua_State *L) {
 	return 0;
 }
 
+// Cursor:MoveTo(point), Nancy21: puts the mouse at a place in the viewport
+static int cursorMoveTo(lua_State *L) {
+	ScriptPoint point;
+	if (!readPoint(L, 2, point)) {
+		return luaL_argerror(L, 2, "expected a point");
+	}
+
+	const Common::Rect screen = NancySceneState.getViewport().convertViewportToScreen(Common::Rect(point.x, point.y, point.x + 1, point.y + 1));
+	g_nancy->_cursor->warpCursor(Common::Point(screen.left, screen.top));
+	return 0;
+}
+
 static const luaL_Reg kCursorFunctions[] = {
 	{ "__index", cursorIndex },
 	{ "__newindex", cursorNewIndex },
+	{ "MoveTo", cursorMoveTo },
 	{ nullptr, nullptr }
 };
 
@@ -1474,6 +1491,13 @@ void registerGameAPI(lua_State *L) {
 	luaL_getmetatable(L, "ND.ZHelper");
 	lua_pushnumber(L, 0.0);
 	lua_setfield(L, -2, "middle");
+	if (g_nancy->getGameType() >= kGameTypeNancy21) {
+		// The range z gets kept in
+		lua_pushnumber(L, -1.0);
+		lua_setfield(L, -2, "min");
+		lua_pushnumber(L, 8.9);
+		lua_setfield(L, -2, "max");
+	}
 	lua_pop(L, 1);
 
 	registerType(L, kCursorIndexType, kCursorIndexFunctions);

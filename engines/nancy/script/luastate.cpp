@@ -143,6 +143,30 @@ static int mathIsNaN(lua_State *L) {
 	return 1;
 }
 
+// Nancy21's string.compare(a, b[, ordered]) and string.comparenocase(): whether
+// the strings are the same, or with "ordered" set, a number below, at or above 0
+static int compareStrings(lua_State *L, bool ignoreCase) {
+	const char *a = luaL_checkstring(L, 1);
+	const char *b = luaL_checkstring(L, 2);
+	const int result = ignoreCase ? scumm_stricmp(a, b) : strcmp(a, b);
+
+	if (lua_gettop(L) > 2 && lua_toboolean(L, 3)) {
+		lua_pushinteger(L, result);
+	} else {
+		lua_pushboolean(L, result == 0);
+	}
+
+	return 1;
+}
+
+static int stringCompare(lua_State *L) {
+	return compareStrings(L, false);
+}
+
+static int stringCompareNoCase(lua_State *L) {
+	return compareStrings(L, true);
+}
+
 LuaState::LuaState(SceneContext *context) {
 	_state = luaL_newstate();
 	if (!_state) {
@@ -159,6 +183,11 @@ LuaState::LuaState(SceneContext *context) {
 	if (g_nancy->getGameType() >= kGameTypeNancy20) {
 		setLibraryFunction(_state, LUA_TABLIBNAME, "sort", tableSort);
 		setLibraryFunction(_state, LUA_MATHLIBNAME, "isnan", mathIsNaN);
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy21) {
+		setLibraryFunction(_state, LUA_STRLIBNAME, "compare", stringCompare);
+		setLibraryFunction(_state, LUA_STRLIBNAME, "comparenocase", stringCompareNoCase);
 	}
 
 	removeGlobal(_state, "collectgarbage");

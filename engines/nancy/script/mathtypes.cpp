@@ -216,6 +216,12 @@ static int vectorIndex(lua_State *L) {
 			lua_pushnumber(L, getVectorLength(vector));
 			return 1;
 		}
+
+		if (strcmp(key, "lenSq") == 0 || strcmp(key, "lengthSq") == 0) {
+			const double length = getVectorLength(vector);
+			lua_pushnumber(L, length * length);
+			return 1;
+		}
 	}
 
 	const int component = getVectorComponent(L, 2);
@@ -518,6 +524,27 @@ static int matrixTranslate(lua_State *L) {
 	return 1;
 }
 
+// Matrix:Perspective(fovy, aspectRatio, zNear, zFar), Nancy21: the projection of a
+// camera looking down the z axis, for the particles
+static int matrixPerspective(lua_State *L) {
+	const double fovy = luaL_checknumber(L, 2);
+	const double aspectRatio = luaL_checknumber(L, 3);
+	const double zNear = luaL_checknumber(L, 4);
+	const double zFar = luaL_checknumber(L, 5);
+
+	const double yScale = 1.0 / tan(fovy / 2.0);
+
+	ScriptMatrix matrix;
+	matrix.m[0][0] = yScale / aspectRatio;
+	matrix.m[1][1] = yScale;
+	matrix.m[2][2] = zFar / (zFar - zNear);
+	matrix.m[2][3] = 1.0;
+	matrix.m[3][2] = -zNear * zFar / (zFar - zNear);
+	matrix.m[3][3] = 0.0;
+	pushMatrix(L, matrix);
+	return 1;
+}
+
 // Matrix:Scale(x, y, z)
 static int matrixScale(lua_State *L) {
 	ScriptMatrix matrix;
@@ -762,6 +789,7 @@ static const luaL_Reg kMatrixHelperFunctions[] = {
 	{ "Translate", matrixTranslate },
 	{ "Scaling", matrixScale },
 	{ "Scale", matrixScale },
+	{ "Perspective", matrixPerspective },
 	{ "RotationAngle", matrixRotateAngle },
 	{ "RotateAngle", matrixRotateAngle },
 	{ "RotationAxis", matrixRotateAxis },
