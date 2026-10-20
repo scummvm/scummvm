@@ -65,6 +65,10 @@ bool FramePresenter::waitForFrames(int frameCounter, const Common::Functor0<void
 }
 
 bool FramePresenter::waitForVerticalBlank() {
+	if (_presentationSuspended) {
+		return !g_engine->shouldQuit();
+	}
+
 	_clock.waitForNextFrame();
 	_scene.render(_frame);
 	_frame.present();

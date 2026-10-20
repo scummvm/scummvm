@@ -344,7 +344,8 @@ void SessionController::initializeRoomRuntimeState() {
 }
 
 SessionExit SessionController::runGame() {
-	if (_state._saveGameData.shouldLoadGameData) {
+	bool loadingSavedGame = _state._saveGameData.shouldLoadGameData;
+	if (loadingSavedGame) {
 		_state.EpisodeIndex = _state._saveGameData.episodeIdx;
 		Common::copy(_state._saveGameData.data.begin(), _state._saveGameData.data.begin() + 29,
 				  _state.ProgressStateBytes.begin());
@@ -372,6 +373,14 @@ SessionExit SessionController::runGame() {
 		return SessionExit::HostClosed;
 	}
 
+	// Managed-only: after the episode opening, a loaded save runs the password-resume scripts that rebuild the
+	// world from the progress bytes behind a black screen. Skip presenting those retraces so the saved room
+	// appears without the blank pause; presentation resumes before the room fades in. An early exit below
+	// discards this session and its presenter, so no other path needs to restore it.
+	if (loadingSavedGame) {
+		_presenter.setPresentationSuspended(true);
+	}
+
 	initializeRoomRuntimeState();
 	_state.DisplayFlags |= kInteractionPendingMask;
 	_state.RoomScriptFlags &= 0xFC;
@@ -397,6 +406,7 @@ SessionExit SessionController::runGame() {
 		}
 	}
 
+	_presenter.setPresentationSuspended(false);
 	Optional<SessionExit> presentationExit = presentRoom();
 	if (presentationExit.hasValue()) {
 		return presentationExit.value();

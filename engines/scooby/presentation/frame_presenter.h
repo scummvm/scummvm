@@ -59,7 +59,15 @@ public:
 	bool fadePaletteIn(Span<const PaletteColor> targetPalette,
 					   const Common::Functor0<void> *beforeRetrace = nullptr);
 
+	// Managed-only: while suspended, retrace waits neither pace, render, nor present a frame, so recovered
+	// sequences that only wait on retraces run to completion immediately. Callers still run their own
+	// per-retrace callbacks, keeping every game-state update and its ordering unchanged.
+	void setPresentationSuspended(bool suspended) {
+		_presentationSuspended = suspended;
+	}
+
 private:
+	bool _presentationSuspended = false;
 	FrameClock &_clock;
 	IndexedFrame &_frame;
 	TileScene &_scene;
