@@ -325,6 +325,15 @@ void SceneStream::clearScene() {
 }
 
 static const char *const kMainStreamName = "MainStream";
+static const char *const kUIStreamName = "UIStream";
+
+const char *SceneStreamManager::getMainStreamName() {
+	return kMainStreamName;
+}
+
+const char *SceneStreamManager::getUIStreamName() {
+	return kUIStreamName;
+}
 
 #ifdef ENABLE_NANCY_V4
 bool SceneStream::skipSpeech() {
@@ -357,6 +366,25 @@ bool SceneStreamManager::skipMovies() {
 	return hasSkipped;
 }
 #endif
+
+double SceneStreamManager::getZ(const Common::String &name) const {
+	const SceneStream *stream = find(name);
+	return stream ? stream->getZOffset() : 0.0;
+}
+
+void SceneStreamManager::getStreamNames(Common::Array<Common::String> &names, bool withUI) const {
+	if (withUI && find(kUIStreamName)) {
+		names.push_back(kUIStreamName);
+	}
+
+	for (const SceneStream *stream : _streams) {
+		if (!stream) {
+			names.push_back(kMainStreamName);
+		} else if (!stream->isEnded() && !stream->getName().equalsIgnoreCase(kUIStreamName)) {
+			names.push_back(stream->getName());
+		}
+	}
+}
 
 SceneStream *SceneStreamManager::find(const Common::String &name) const {
 	for (SceneStream *stream : _streams) {
@@ -513,7 +541,14 @@ bool SceneStreamManager::handleInput(NancyInput &input, bool beforeMainStream) {
 			continue;
 		}
 
-		if (isBeforeMainStream != beforeMainStream) {
+		// From Nancy21 on, a stream drawn in front of the main one gets the
+		// mouse before it too, like the phone
+		bool isInFront = isBeforeMainStream;
+		if (g_nancy->getGameType() >= kGameTypeNancy21 && stream->getZOffset() > 0) {
+			isInFront = true;
+		}
+
+		if (isInFront != beforeMainStream) {
 			continue;
 		}
 

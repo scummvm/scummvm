@@ -3111,8 +3111,8 @@ void Scene::initUI() {
 #endif
 		// The panels are there before the first frame of the scene, which can
 		// hide some of them right away
-		_streams.begin("UIStream", pcui->uiName.toString(), 0, StreamFlags());
-		_streams.loadNow("UIStream");
+		_streams.begin(SceneStreamManager::getUIStreamName(), pcui->uiName.toString(), 0, StreamFlags());
+		_streams.loadNow(SceneStreamManager::getUIStreamName());
 		return;
 	}
 

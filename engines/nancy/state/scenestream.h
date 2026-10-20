@@ -180,6 +180,14 @@ public:
 
 	void onMainSceneChange();
 	void changeEnvironment(const Common::String &newEnvironment);
+	const Common::String &getEnvironment() const { return _environment; }
+
+	// The names of the running streams, in the order they run in. The UI's
+	// stream is left out unless asked for.
+	void getStreamNames(Common::Array<Common::String> &names, bool withUI) const;
+
+	static const char *getMainStreamName();
+	static const char *getUIStreamName();
 
 	// Nancy19: hands a message to the scenes of the streams it is for. Returns
 	// false when there is none.
@@ -191,6 +199,10 @@ public:
 	bool skipSpeech();
 	bool skipMovies();
 #endif
+
+	// Nancy21: where a stream is among the others. Every stream is a step closer
+	// than the one that began it, and the main stream is at 0.
+	double getZ(const Common::String &name) const;
 
 	// Keeps the streams in the saved game, and starts them again after loading
 	void store();

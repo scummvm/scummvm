@@ -978,15 +978,8 @@ static int sceneChangeScene(lua_State *L) {
 	return 1;
 }
 
-// Scene:BeginStream(name, scene, frame, lifetime, capturesInput, runsFirst)
-static int sceneBeginStream(lua_State *L) {
-	checkContext(L);
-	const char *name = luaL_checkstring(L, 2);
-	const char *sceneName = luaL_checkstring(L, 3);
-	const int frame = luaL_checkint(L, 4);
-	const Common::String lifetime = luaL_checkstring(L, 5);
-
-	State::StreamFlags flags;
+// How long a stream lives: "manual" (until it ends itself), "withScene" or "withStream"
+static bool readStreamLifetime(const Common::String &lifetime, State::StreamFlags &flags) {
 	if (lifetime == "manual") {
 		flags.lifetime = State::StreamFlags::kIndependent;
 	} else if (lifetime == "withScene") {
@@ -994,13 +987,58 @@ static int sceneBeginStream(lua_State *L) {
 	} else if (lifetime == "withStream") {
 		flags.lifetime = State::StreamFlags::kEndsWithParent;
 	} else {
-		return luaL_argerror(L, 5, "parameter must be \"manual\", \"withScene\" or \"withStream\"");
+		return false;
 	}
 
-	luaL_checktype(L, 6, LUA_TBOOLEAN);
-	luaL_checktype(L, 7, LUA_TBOOLEAN);
-	flags.capturesInput = lua_toboolean(L, 6) != 0;
-	flags.runsFirst = lua_toboolean(L, 7) != 0;
+	return true;
+}
+
+// Scene:BeginStream(name, scene, frame, lifetime, capturesInput, runsFirst), or
+// from Nancy21 on, Scene:BeginStream({stream, scene, frame, ends, captureInput})
+static int sceneBeginStream(lua_State *L) {
+	checkContext(L);
+
+	Common::String name;
+	Common::String sceneName;
+	int frame = 0;
+	State::StreamFlags flags;
+
+	if (lua_istable(L, 2)) {
+		if (!readField(L, 2, "stream", name)) {
+			return luaL_argerror(L, 2, "Table must have 'stream' field");
+		}
+
+		if (!readField(L, 2, "scene", sceneName)) {
+			return luaL_argerror(L, 2, "Table must have 'scene' field");
+		}
+
+		readField(L, 2, "frame", frame);
+
+		Common::String lifetime = "manual";
+		readField(L, 2, "ends", lifetime);
+		if (!readStreamLifetime(lifetime, flags)) {
+			return luaL_argerror(L, 2, "ends field must be \"manual\", \"withScene\" or \"withStream\"");
+		}
+
+		// TODO: "restartParent" and "isUI", which no script sets
+		readField(L, 2, "captureInput", flags.capturesInput);
+
+		// A stream is a step closer than the one that began it
+		flags.zOffset = 1;
+	} else {
+		name = luaL_checkstring(L, 2);
+		sceneName = luaL_checkstring(L, 3);
+		frame = luaL_checkint(L, 4);
+
+		if (!readStreamLifetime(luaL_checkstring(L, 5), flags)) {
+			return luaL_argerror(L, 5, "parameter must be \"manual\", \"withScene\" or \"withStream\"");
+		}
+
+		luaL_checktype(L, 6, LUA_TBOOLEAN);
+		luaL_checktype(L, 7, LUA_TBOOLEAN);
+		flags.capturesInput = lua_toboolean(L, 6) != 0;
+		flags.runsFirst = lua_toboolean(L, 7) != 0;
+	}
 
 	State::SceneStreamManager &streams = NancySceneState.getStreams();
 	const bool isNew = !streams.isRunning(name);
@@ -1071,7 +1109,18 @@ static const luaL_Reg kSceneFunctions[] = {
 };
 
 // Streams
-// TODO: Streams.environment and Streams.mainName
+
+// Streams.environment is the environment of the main stream's scene
+static int streamsIndex(lua_State *L) {
+	const Common::String key = luaL_checkstring(L, 2);
+
+	if (key == "environment") {
+		lua_pushstring(L, NancySceneState.getStreams().getEnvironment().c_str());
+		return 1;
+	}
+
+	return indexFunctions(L);
+}
 
 // Streams:GetScene(stream), which gives no name for a stream that isn't running
 static int streamsGetScene(lua_State *L) {
@@ -1080,9 +1129,34 @@ static int streamsGetScene(lua_State *L) {
 	return 1;
 }
 
+// Streams:GetStreams(withUI), Nancy21: the names of the running streams, the
+// main stream among them. The one of the UI is only in there when asked for.
+static int streamsGetStreams(lua_State *L) {
+	const bool withUI = lua_toboolean(L, 2) != 0;
+
+	Common::Array<Common::String> names;
+	NancySceneState.getStreams().getStreamNames(names, withUI);
+
+	lua_createtable(L, names.size(), 0);
+	for (uint i = 0; i < names.size(); ++i) {
+		lua_pushstring(L, names[i].c_str());
+		lua_rawseti(L, -2, i + 1);
+	}
+
+	return 1;
+}
+
+// Streams:GetZ(stream), Nancy21
+static int streamsGetZ(lua_State *L) {
+	lua_pushnumber(L, NancySceneState.getStreams().getZ(luaL_checkstring(L, 2)));
+	return 1;
+}
+
 static const luaL_Reg kStreamsFunctions[] = {
-	{ "__index", indexFunctions },
+	{ "__index", streamsIndex },
 	{ "GetScene", streamsGetScene },
+	{ "GetStreams", streamsGetStreams },
+	{ "GetZ", streamsGetZ },
 	{ nullptr, nullptr }
 };
 
@@ -1529,6 +1603,10 @@ void registerGameAPI(lua_State *L) {
 	registerGlobal(L, "Scene", "ND.Scene", kSceneFunctions);
 	registerGlobal(L, "Autotext", "ND.Autotext", kAutotextFunctions);
 	registerGlobal(L, "Streams", "ND.Streams", kStreamsFunctions);
+	luaL_getmetatable(L, "ND.Streams");
+	lua_pushstring(L, State::SceneStreamManager::getMainStreamName());
+	lua_setfield(L, -2, "mainName");
+	lua_pop(L, 1);
 	registerGlobal(L, "Player", "ND.CurPlayer", kPlayerFunctions);
 	registerGlobal(L, "Message", "ND.Message", kMessageFunctions);
 	registerGlobal(L, "Viewport", "ND.Viewport", kViewportFunctions);
