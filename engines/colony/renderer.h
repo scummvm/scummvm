@@ -37,6 +37,7 @@ namespace Colony {
 
 // CALCROBO.C projects both axes with (coordinate << 8) / depth.
 const float kProjectionFocalLength = 256.0f;
+const float kProjectionNearClip = 1.0f;
 
 class Renderer {
 public:

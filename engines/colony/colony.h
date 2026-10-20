@@ -668,6 +668,7 @@ private:
 	int _direction = 0;
 
 	float _eyeDepthPull = 0.0f; // world units the eye parts are pulled at the camera
+	Common::Point _renderCamera;
 	// think.c: the snoop's snout bobs while it hunts (sniff/csniff).
 	int _snoopSnoutZ = 0;
 	int _snoopSniff = 5;
@@ -729,6 +730,8 @@ private:
 	bool drawStaticObjectPrisms3D(Thing &obj);
 	void initRobots();
 	void renderCorridor3D();
+	void computeRenderCamera();
+	void separateRenderCameraFromWall(int x, int y, uint8 bit, int separation, bool featuresVisible);
 	void drawWallFeatures3D();
 	bool isWallFeatureFacingCamera(int cellX, int cellY, int direction) const;
 	void drawWallFeature3D(int cellX, int cellY, int direction);
@@ -736,6 +739,7 @@ private:
 	void getWallFace3D(int cellX, int cellY, int direction, float corners[4][3]);
 	bool isVisibleRecessFeature(int x, int y, int direction) const;
 	bool wallSegmentIsOpenWell(int x, int y, uint8 bit) const;
+	bool wallSegmentIsRendered(int x, int y, uint8 bit) const;
 	void getWallRecess3D(const float corners[4][3], float farC[4][3]) const;
 	void recessPoint(const float nearC[4][3], const float farC[4][3], float u, float v, float depth, float out[3]) const;
 	void recessLine(const float nearC[4][3], const float farC[4][3], float u1, float v1, float d1,

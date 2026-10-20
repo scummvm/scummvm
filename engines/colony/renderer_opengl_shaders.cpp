@@ -772,7 +772,7 @@ void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int 
 
 	// Match CALCROBO.C's center + (coordinate << 8) / depth projection and
 	// the fixed-function path by using a 256-logical-pixel focal length.
-	const float nearClip = 1.0f;
+	const float nearClip = kProjectionNearClip;
 	const float farClip = 10000.0f;
 	const float xmax = nearClip * viewport.width() * 0.5f / kProjectionFocalLength;
 	const float ymax = nearClip * viewport.height() * 0.5f / kProjectionFocalLength;

@@ -322,7 +322,7 @@ void projectCorridorPointClamped(const Common::Rect &screenR, int look, int look
 	const float eyeX = side;
 	const float eyeY = dz * cosPitch + forward * sinPitch;
 	const float eyeZ = dz * sinPitch - forward * cosPitch;
-	const float depth = MAX(-eyeZ, 1.0f);
+	const float depth = MAX(-eyeZ, kProjectionNearClip);
 
 	const float centerX = screenR.left + screenR.width() * 0.5f;
 	const float centerY = screenR.top + screenR.height() * 0.5f;
@@ -455,6 +455,11 @@ bool ColonyEngine::wallSegmentIsOpenWell(int x, int y, uint8 bit) const {
 	return isVisibleRecessFeature(x, y, kDirWest) || isVisibleRecessFeature(x - 1, y, kDirEast);
 }
 
+bool ColonyEngine::wallSegmentIsRendered(int x, int y, uint8 bit) const {
+	return x >= 0 && x < 32 && y >= 0 && y < 32 &&
+		(_wall[x][y] & bit) && !wallSegmentIsOpenWell(x, y, bit);
+}
+
 const uint8 *ColonyEngine::mapFeatureAt(int x, int y, int direction) const {
 	if (x < 0 || x >= 31 || y < 0 || y >= 31 || direction < 0 || direction >= 5)
 		return nullptr;
@@ -481,7 +486,7 @@ bool projectCorridorPoint(const Common::Rect &screenR, uint8 look, int8 lookY,
 	const float eyeX = side;
 	const float eyeY = dz * cosPitch + forward * sinPitch;
 	const float eyeZ = dz * sinPitch - forward * cosPitch;
-	if (eyeZ >= -1.0f)
+	if (eyeZ >= -kProjectionNearClip)
 		return false;
 
 	const float centerX = screenR.left + screenR.width() * 0.5f;
@@ -517,14 +522,14 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 		transformedX[i] = (float)(rx + obj.where.xloc);
 		transformedY[i] = (float)(ry + obj.where.yloc);
 		transformedZ[i] = (float)(oz - 160);
-		projectCorridorPointClamped(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
+		projectCorridorPointClamped(_screenR, _me.look, _me.lookY, _sint, _cost, _renderCamera.x, _renderCamera.y,
 			transformedX[i], transformedY[i], transformedZ[i],
 			projectedX[i], projectedY[i]);
 
 		if (accumulateBounds) {
 			int sx = 0;
 			int sy = 0;
-			if (projectCorridorPoint(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
+			if (projectCorridorPoint(_screenR, _me.look, _me.lookY, _sint, _cost, _renderCamera.x, _renderCamera.y,
 				transformedX[i], transformedY[i], transformedZ[i], sx, sy)) {
 				obj.where.xmn = MIN(obj.where.xmn, sx);
 				obj.where.xmx = MAX(obj.where.xmx, sx);
@@ -721,14 +726,14 @@ void ColonyEngine::pullTowardCamera(float *px, float *py, float *pz, int count) 
 	if (_eyeDepthPull <= 0.0f)
 		return;
 	for (int i = 0; i < count; i++) {
-		const float dx = px[i] - (float)_me.xloc;
-		const float dy = py[i] - (float)_me.yloc;
+		const float dx = px[i] - (float)_renderCamera.x;
+		const float dy = py[i] - (float)_renderCamera.y;
 		const float d = sqrtf(dx * dx + dy * dy + pz[i] * pz[i]);
 		if (d <= _eyeDepthPull)
 			continue;
 		const float k = (d - _eyeDepthPull) / d;
-		px[i] = (float)_me.xloc + dx * k;
-		py[i] = (float)_me.yloc + dy * k;
+		px[i] = (float)_renderCamera.x + dx * k;
+		py[i] = (float)_renderCamera.y + dy * k;
 		pz[i] *= k;
 	}
 }
@@ -769,9 +774,9 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 	// Billboard turned to face the camera in 3D. The original drew the ball as a
 	// screen-space oval and never tilted the view; keeping the disc upright in
 	// world Z instead flattens it to a sliver when looking down at a floor egg.
-	// Camera is at (_me.xloc, _me.yloc, 0).
-	float viewX = cx - (float)_me.xloc;
-	float viewY = cy - (float)_me.yloc;
+	// Camera is at (_renderCamera.x, _renderCamera.y, 0).
+	float viewX = cx - (float)_renderCamera.x;
+	float viewY = cy - (float)_renderCamera.y;
 	float viewZ = cz;
 	float viewLen = sqrtf(viewX * viewX + viewY * viewY + viewZ * viewZ);
 	if (viewLen < 0.001f)
@@ -813,7 +818,7 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 		for (int i = 0; i < N; i++) {
 			int sx = 0;
 			int sy = 0;
-			if (projectCorridorPoint(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
+			if (projectCorridorPoint(_screenR, _me.look, _me.lookY, _sint, _cost, _renderCamera.x, _renderCamera.y,
 				px[i], py[i], pz[i], sx, sy)) {
 				obj.where.xmn = MIN(obj.where.xmn, sx);
 				obj.where.xmx = MAX(obj.where.xmx, sx);
@@ -958,8 +963,61 @@ void ColonyEngine::computeVisibleCells() {
 	}
 }
 
+void ColonyEngine::separateRenderCameraFromWall(int x, int y, uint8 bit, int separation, bool featuresVisible) {
+	if (!wallSegmentIsRendered(x, y, bit))
+		return;
+
+	const bool horizontal = (bit == 0x01);
+	const int along = horizontal ? _me.xloc : _me.yloc;
+	const int start = (horizontal ? x : y) * 256;
+	if (along < start - separation || along > start + 256 + separation)
+		return;
+
+	const bool positiveSide = horizontal ? _me.yindex >= y : _me.xindex >= x;
+	float wall = (horizontal ? y : x) * 256.0f;
+	const int cellX = horizontal || positiveSide ? x : x - 1;
+	const int cellY = !horizontal || positiveSide ? y : y - 1;
+	const int direction = horizontal ? (positiveSide ? kDirSouth : kDirNorth)
+		: (positiveSide ? kDirWest : kDirEast);
+	const uint8 *feature = mapFeatureAt(cellX, cellY, direction);
+	if (featuresVisible && feature && feature[0] != kWallFeatureNone && _visibleCell[cellX][cellY]) {
+		float corners[4][3];
+		getWallFace3D(cellX, cellY, direction, corners);
+		wall = corners[0][horizontal ? 1 : 0];
+	}
+
+	int camera = horizontal ? _renderCamera.y : _renderCamera.x;
+	camera = positiveSide ? MAX(camera, (int)ceilf(wall + separation))
+		: MIN(camera, (int)floorf(wall - separation));
+	if (horizontal)
+		_renderCamera.y = camera;
+	else
+		_renderCamera.x = camera;
+}
+
+void ColonyEngine::computeRenderCamera() {
+	_renderCamera = Common::Point(_me.xloc, _me.yloc);
+
+	// Enclose the near-plane corners for every view angle, including pitch.
+	const float halfWidth = kProjectionNearClip * _screenR.width() * 0.5f / kProjectionFocalLength;
+	const float halfHeight = kProjectionNearClip * _screenR.height() * 0.5f / kProjectionFocalLength;
+	const int separation = (int)ceilf(sqrtf(kProjectionNearClip * kProjectionNearClip +
+		halfWidth * halfWidth + halfHeight * halfHeight));
+	const bool featuresVisible = isMacColorMode() || _corePower[_coreIndex] > 0;
+
+	// Like Freescape, separate only the rendering camera. Touching a wall must
+	// still reach the door, stair and other interaction triggers.
+	for (int y = 0; y < 32; y++) {
+		for (int x = 0; x < 32; x++) {
+			separateRenderCameraFromWall(x, y, 0x01, separation, featuresVisible);
+			separateRenderCameraFromWall(x, y, 0x02, separation, featuresVisible);
+		}
+	}
+}
+
 void ColonyEngine::renderCorridor3D() {
 	computeVisibleCells();
+	computeRenderCamera();
 
 	bool lit = (_corePower[_coreIndex] > 0);
 	bool macMode = isMacRenderMode();
@@ -990,7 +1048,7 @@ void ColonyEngine::renderCorridor3D() {
 		ceilColor  = macMode ? (lit ? 255 : 0) : wallFill;
 	}
 
-	_gfx->begin3D(_me.xloc, _me.yloc, 0, _me.look, _me.lookY, _screenR);
+	_gfx->begin3D(_renderCamera.x, _renderCamera.y, 0, _me.look, _me.lookY, _screenR);
 	_gfx->clear(ceilColor);
 
 	uint32 wallColor = wallLine;
@@ -1037,12 +1095,11 @@ void ColonyEngine::renderCorridor3D() {
 
 	for (int y = 0; y < 32; y++) {
 		for (int x = 0; x < 32; x++) {
-			uint8 w = _wall[x][y];
 			// A stair well is a hole: the feature draws the opening itself.
-			if ((w & 0x01) && !wallSegmentIsOpenWell(x, y, 0x01)) {
+			if (wallSegmentIsRendered(x, y, 0x01)) {
 				_gfx->draw3DWall(x, y, x + 1, y, wallColor);
 			}
-			if ((w & 0x02) && !wallSegmentIsOpenWell(x, y, 0x02)) {
+			if (wallSegmentIsRendered(x, y, 0x02)) {
 				_gfx->draw3DWall(x, y, x, y + 1, wallColor);
 			}
 		}
