@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-20 03:37+0000\n"
+"POT-Creation-Date: 2026-10-20 11:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7528,7 +7528,7 @@ msgstr ""
 msgid "Load Game"
 msgstr ""
 
-#: engines/colony/intro.cpp:1581
+#: engines/colony/intro.cpp:1597
 msgid "You have been terminated."
 msgstr ""
 
