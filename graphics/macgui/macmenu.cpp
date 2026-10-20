@@ -589,6 +589,14 @@ void MacMenu::calcDimensions() {
 	_dimensionsDirty = false;
 }
 
+void MacMenu::resize(int width, int height) {
+	_composeSurface->create(width, height, _wm->_pixelformat);
+	_tempSurface.create(width, _font->getFontHeight(), _wm->_pixelformat);
+	_bbox.right = width;
+	_dimensionsDirty = true;
+	_contentIsDirty = true;
+}
+
 void MacMenu::loadMenuResource(Common::MacResManager *resFork, uint16 id) {
 	Common::SeekableReadStream *res = resFork->getResource(MKTAG('M', 'E', 'N', 'U'), id);
 	assert(res);

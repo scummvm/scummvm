@@ -602,6 +602,13 @@ void ColonyEngine::playAnimation() {
 	uint32 lastDrawTime = 0;
 	bool needsDraw = true;
 	while (_animationRunning && !shouldQuit()) {
+		if (updateScreenSize()) {
+			_animExitPressed = _animExitInside = false;
+			_coderPressed = -1;
+			_coderPressInside = false;
+			drawAnimation();
+			needsDraw = true;
+		}
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 			if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
@@ -609,6 +616,12 @@ void ColonyEngine::playAnimation() {
 				break;
 			} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
 				_gfx->computeScreenViewport();
+				if (updateScreenSize()) {
+					_animExitPressed = _animExitInside = false;
+					_coderPressed = -1;
+					_coderPressInside = false;
+				}
+				drawAnimation();
 				needsDraw = true;
 			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 				const Common::Point pt = eventMouseToLogical(event.mouse);

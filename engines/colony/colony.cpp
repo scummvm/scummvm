@@ -321,6 +321,32 @@ void ColonyEngine::warpMouseLogical(int x, int y) {
 	_system->warpMouse(p.x, p.y);
 }
 
+bool ColonyEngine::updateScreenSize() {
+	if (isMacRenderMode()) {
+		const Common::Point size = computeMacCanvasSize(_system->getWidth(), _system->getHeight(), _widescreen);
+		if (size.x != _width || size.y != _height) {
+			_width = size.x;
+			_height = size.y;
+			_gfx->setCanvasSize(_width, _height);
+			const bool menuWasActive = _wm && _wm->isMenuActive();
+			if (_wm) {
+				_macMenu->closeMenu();
+				_menuSurface->create(_width, _height, _gfx->getPixelFormat());
+				_wm->setScreen(_menuSurface);
+				_macMenu->resize(_width, _height);
+			}
+			updateViewportLayout();
+			_mousePos = eventMouseToLogical(_system->getEventManager()->getMousePos());
+			if (menuWasActive)
+				updateMouseCapture(true);
+			else if (_mouseLocked && !_animationRunning)
+				warpMouseLogical(_centerX, _centerY);
+			return true;
+		}
+	}
+	return false;
+}
+
 void ColonyEngine::pauseEngineIntern(bool pause) {
 	if (pause && _gfx && _level >= 1 && _level <= 7) {
 		if (_savedScreen) {
@@ -811,9 +837,8 @@ Common::Error ColonyEngine::run() {
 		_sound->init();
 	}
 
-	// Original Mac Colony: rScreen capped at 640x480 (inits.c lines 111-112).
-	// DOS EGA: 640x350 with non-square pixels displayed at 4:3.
-	// Mac uses square pixels at native 640x480.
+	// DOS keeps its 640x350 EGA canvas. Mac starts at 640x480 and adapts
+	// its layout to the window once the graphics backend is initialized.
 	if (isMacRenderMode()) {
 		_width = 640;
 		_height = 480;
@@ -833,7 +858,9 @@ Common::Error ColonyEngine::run() {
 	if (!_gfx)
 		return Common::kUserCanceled;
 
+	_gfx->setSquarePixelViewport(isMacRenderMode());
 	loadMacColors();
+	updateScreenSize();
 	updateViewportLayout();
 	const Graphics::PixelFormat format = _system->getScreenFormat();
 	debugC(1, kColonyDebugRender, "Screen format: %d bytesPerPixel. Actual size: %dx%d", format.bytesPerPixel, _width, _height);
@@ -896,6 +923,8 @@ Common::Error ColonyEngine::run() {
 	uint32 lastCenterTick = lastMoveTick;
 	while (!shouldQuit()) {
 		_frameLimiter->startFrame();
+		// Modal screens keep their layout stable until the next full redraw.
+		updateScreenSize();
 
 		auto qlog = [](int32 x) -> int {
 			int i = 0;
@@ -989,6 +1018,7 @@ Common::Error ColonyEngine::run() {
 				return Common::kNoError;
 			} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
 				_gfx->computeScreenViewport();
+				updateScreenSize();
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				switch (event.customType) {
 				case kActionMoveForward:

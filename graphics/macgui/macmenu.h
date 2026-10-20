@@ -111,6 +111,7 @@ public:
 
 	void addStaticMenus(const MacMenuData *data);
 	void calcDimensions();
+	void resize(int width, int height);
 
 	int numberOfMenus();
 	int numberOfMenuItems(MacMenuItem *menu);

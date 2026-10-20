@@ -810,6 +810,7 @@ private:
 	void updateMouseCapture(bool recenter = true);
 	Common::Point getAimPoint() const;
 	void updateViewportLayout();
+	bool updateScreenSize();
 	void drawDashboardStep1();
 	void drawDashboardMac();
 	void drawDOSBarGraph(int x, int y, int height);
