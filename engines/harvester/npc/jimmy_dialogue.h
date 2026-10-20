@@ -42,6 +42,11 @@ public:
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 
 private:
+	Common::Error playPaperHandoffPreludeIfNeeded(DialogueRuntime &runtime);
+	Common::Error runSneakersOfferMenu(DialogueRuntime &runtime);
+	Common::Error runJimmySneakersPrompt(DialogueRuntime &runtime, int responseLineIndex);
+	Common::Error playJimmyNoItemFallback(DialogueRuntime &runtime);
+
 	JimmyRoomDialogueState _state;
 };
 
