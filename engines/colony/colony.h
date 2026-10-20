@@ -38,6 +38,7 @@
 #include "graphics/surface.h"
 
 namespace Common {
+struct Event;
 class MacResManager;
 class SeekableReadStreamEndian;
 }
@@ -652,7 +653,12 @@ private:
 	Graphics::MacMenu *_macMenu = nullptr;
 	Graphics::ManagedSurface *_menuSurface = nullptr;
 	int _menuBarHeight = 0;
+	int _pendingMenuAction = 0;
+	int _pendingLoadSlot = -1;
 	void initMacMenus();
+	void drawMacMenuBar();
+	bool processMacMenuEvent(const Common::Event &event);
+	void processPendingMenuAction();
 	void loadMacCursorResources();
 	void handleMenuAction(int action);
 	static void menuCommandsCallback(int action, Common::String &text, void *data);
