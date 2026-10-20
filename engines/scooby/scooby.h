@@ -38,20 +38,29 @@
 #include "startup/application_loop.h"
 
 namespace Scooby {
-class Gfx;
-class VDP;
-class File;
 
 struct ScoobyGameDescription;
+
+enum ScoobyAction {
+	kScoobyActionNone,
+	kScoobyActionSelect,
+	kScoobyActionToggleInventory,
+	kScoobyActionCancel,
+	kScoobyActionStart,
+	kScoobyActionQuit,
+	kScoobyActionSkipCutscene,
+
+	kScoobyActionUp,
+	kScoobyActionDown,
+	kScoobyActionLeft,
+	kScoobyActionRight
+};
 
 class ScoobyEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
-	File *_file;
-	Gfx *_gfx;
-	VDP *_vdp;
 	Graphics::FrameLimiter *_limiter;
 	ApplicationLoop *_applicationLoop;
 

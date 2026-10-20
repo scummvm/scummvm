@@ -22,6 +22,7 @@
 #ifndef SCOOBY_METAENGINE_H
 #define SCOOBY_METAENGINE_H
 
+#include "backends/keymapper/keymap.h"
 #include "engines/advancedDetector.h"
 
 class ScoobyMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
@@ -36,6 +37,8 @@ public:
 	 * Used by e.g. the launcher to determine whether to enable the Load button.
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 };

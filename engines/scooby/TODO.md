@@ -16,4 +16,4 @@ Scooby-Doo Mystery Todo List
   - [x] Remove/rename raylib_host class
   - [x] Remove old classes. file, vdp, and gfx
   - [ ] Identify and name all script functions
-- [ ] Use re-assignable input mapping. (currently hardcoded keys)
+- [x] Use re-assignable input mapping. (currently hardcoded keys)

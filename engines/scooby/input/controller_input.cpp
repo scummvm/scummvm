@@ -22,6 +22,7 @@
 #include "controller_input.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "scooby/scooby.h"
 
 namespace Scooby {
 
@@ -65,13 +66,58 @@ ControllerButtons ControllerInput::keyToButton(Common::KeyCode keycode) {
 		return ControllerButtons::None;
 	}
 }
+Scooby::ControllerButtons ControllerInput::mappedActionEventToButton(uint16 action) {
+	switch (action) {
+	case kScoobyActionUp:
+		return ControllerButtons::Up;
+	case kScoobyActionDown:
+		return ControllerButtons::Down;
+	case kScoobyActionLeft:
+		return ControllerButtons::Left;
+	case kScoobyActionRight:
+		return ControllerButtons::Right;
+	case kScoobyActionCancel:
+		return ControllerButtons::A;
+	case kScoobyActionSelect:
+		return ControllerButtons::B;
+	case kScoobyActionToggleInventory:
+		return ControllerButtons::C;
+	case kScoobyActionStart:
+		return ControllerButtons::Start;
+	default:
+		return ControllerButtons::None;
+	}
+}
 
 bool ControllerInput::processEvents(ControllerButtons backButton, bool mapEscapeToBackButton) {
 	bool escapePressed = false;
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (e.type == Common::EVENT_KEYDOWN) {
-			if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			// if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			// 	if (e.kbdRepeat) {
+			// 		continue;
+			// 	}
+			//
+			// 	escapePressed = true;
+			// 	if (mapEscapeToBackButton) {
+			// 		// Remember which button this press set, so its release clears the same button even if
+			// 		// the back-button mapping changes in between (the sound test switches it to C).
+			// 		_escapeButton = backButton;
+			// 		_buttons |= backButton;
+			// 	}
+			// } else {
+			// 	// _buttons |= keyToButton(e.kbd.keycode);
+			// }
+		} else if (e.type == Common::EVENT_KEYUP) {
+			// if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			// 	_buttons &= buttonMask(_escapeButton);
+			// 	_escapeButton = ControllerButtons::None;
+			// } else {
+			// 	// _buttons &= buttonMask(keyToButton(e.kbd.keycode));
+			// }
+		} else if (e.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+			if (e.customType == kScoobyActionSkipCutscene) {
 				if (e.kbdRepeat) {
 					continue;
 				}
@@ -84,14 +130,14 @@ bool ControllerInput::processEvents(ControllerButtons backButton, bool mapEscape
 					_buttons |= backButton;
 				}
 			} else {
-				_buttons |= keyToButton(e.kbd.keycode);
+				_buttons |= mappedActionEventToButton(static_cast<ScoobyAction>(e.customType));
 			}
-		} else if (e.type == Common::EVENT_KEYUP) {
-			if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
+		} else if (e.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+			if (e.customType == kScoobyActionSkipCutscene) {
 				_buttons &= buttonMask(_escapeButton);
 				_escapeButton = ControllerButtons::None;
 			} else {
-				_buttons &= buttonMask(keyToButton(e.kbd.keycode));
+				_buttons &= buttonMask(mappedActionEventToButton(static_cast<ScoobyAction>(e.customType)));
 			}
 		}
 	}

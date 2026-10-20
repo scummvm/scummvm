@@ -22,6 +22,9 @@
 #include "common/translation.h"
 
 #include "scooby/metaengine.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/standard-actions.h"
 #include "scooby/detection.h"
 #include "scooby/scooby.h"
 
@@ -60,6 +63,71 @@ Common::Error ScoobyMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 bool ScoobyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 		(f == kSupportsLoadingDuringStartup);
+}
+
+Common::KeymapArray ScoobyMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "scooby", "Scooby-Doo Mystery");
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Select"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionSelect);
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("x");
+	engineKeyMap->addAction(act);
+
+	act = new Action("CANCEL", _("Cancel"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionCancel);
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_A");
+	act->addDefaultInputMapping("z");
+	engineKeyMap->addAction(act);
+
+	act = new Action("TOGGLEINVENTORY", _("Toggle Inventory"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionToggleInventory);
+	act->addDefaultInputMapping("JOY_C");
+	act->addDefaultInputMapping("c");
+	engineKeyMap->addAction(act);
+
+	act = new Action("QUIT", _("Quit game"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionQuit);
+	act->addDefaultInputMapping("C+q");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIPCUTSCENE", _("Skip cutscene"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionSkipCutscene);
+	act->addDefaultInputMapping("ESCAPE");
+	engineKeyMap->addAction(act);
+
+	act = new Action("START", _("Start"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionStart);
+	act->addDefaultInputMapping("RETURN");
+	engineKeyMap->addAction(act);
+
+	act = new Action("UP", _("Up"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionUp);
+	act->addDefaultInputMapping("UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action("DOWN", _("Down"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionDown);
+	act->addDefaultInputMapping("DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action("LEFT", _("Left"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionLeft);
+	act->addDefaultInputMapping("LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("RIGHT", _("Right"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionRight);
+	act->addDefaultInputMapping("RIGHT");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCOOBY)

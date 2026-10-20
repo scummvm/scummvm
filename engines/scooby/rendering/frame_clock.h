@@ -36,8 +36,6 @@ class FrameClock {
 public:
 	FrameClock();
 
-	// Waits until the next fixed update without enabling an independent
-	// raylib frame limiter.
 	void waitForNextFrame();
 	void startFrame();
 
@@ -45,7 +43,6 @@ private:
 	static const int kFramesPerSecond = 60;
 
 	Graphics::FrameLimiter _limiter;
-	// Std::chrono::steady_clock::time_point _nextFrameTimestamp;
 };
 } // namespace Scooby
 

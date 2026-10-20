@@ -28,23 +28,6 @@ FrameClock::FrameClock() : _limiter(g_system, kFramesPerSecond) {
 
 void FrameClock::waitForNextFrame() {
 	_limiter.delayBeforeSwap();
-	// _nextFrameTimestamp += Std::chrono::milliseconds(1000 / kFramesPerSecond);
-	// const std::chrono::nanoseconds spinThreshold(1000000); // 1ms, mirrors Stopwatch.Frequency / 1000
-	// while (true) {
-	// 	Std::chrono::steady_clock::duration remaining = _nextFrameTimestamp - Std::chrono::steady_clock::now();
-	// 	if (remaining.count() <= 0) {
-	// 		return;
-	// 	}
-	//
-	// 	if (remaining > spinThreshold) {
-	// 		std::this_thread::yield();
-	// 	} else {
-	// 		// No portable std::this_thread::spin equivalent; a short sleep_for(0)
-	// 		// behaves like Thread.Yield()'s busy-wait fallback closely enough
-	// 		// for a sub-millisecond remainder.
-	// 		// std::this_thread::sleep_for(Std::chrono::microseconds(0));
-	// 	}
-	// }
 }
 
 void FrameClock::startFrame() {

@@ -70,6 +70,7 @@ private:
 	bool processEvents(Scooby::ControllerButtons backButton, bool mapEscapeToBackButton);
 
 	static Scooby::ControllerButtons keyToButton(Common::KeyCode keycode);
+	static Scooby::ControllerButtons mappedActionEventToButton(uint16 action);
 	static Scooby::ControllerButtons getKeyboardAndMouseButtons(Scooby::ControllerButtons backButton);
 	static Scooby::ControllerButtons getGamepadButtons();
 
