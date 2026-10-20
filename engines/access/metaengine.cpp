@@ -70,7 +70,9 @@ bool AccessEngine::isDemo() const {
 }
 
 Common::Language AccessEngine::getLanguage() const {
-	return _lang;
+	if (_lang != Common::UNK_LANG)
+		return _lang;
+	return Common::EN_ANY;
 }
 
 Common::Platform AccessEngine::getPlatform() const {
