@@ -169,6 +169,7 @@ public:
 	}
 
 	void setPlayerTime(Time time, byte relative);
+	void setPlayerClock(Time time);	// Nancy21: the days, hours and minutes at once
 	Time getPlayerTime() const { return _timers.playerTime; }
 	Time getTimerTime() const { return _timers.timerIsActive ? _timers.timerTime : 0; }
 	uint getPlayerTimeMinutes() const;

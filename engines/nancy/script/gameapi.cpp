@@ -1342,8 +1342,56 @@ void showPlayerEntries() {
 	}
 }
 
+// Player.time is the clock of the game, as {days, hours, minutes}. Player.name
+// is the character being played.
+static int playerIndex(lua_State *L) {
+	const Common::String key = luaL_checkstring(L, 2);
+
+	if (key == "time") {
+		const Time time = NancySceneState.getPlayerTime();
+		lua_createtable(L, 0, 3);
+		lua_pushinteger(L, time.getDays());
+		lua_setfield(L, -2, "days");
+		lua_pushinteger(L, time.getHours());
+		lua_setfield(L, -2, "hours");
+		lua_pushinteger(L, time.getMinutes());
+		lua_setfield(L, -2, "minutes");
+		return 1;
+	}
+
+	if (key == "name") {
+		const PCUI *players = GetEngineData(PCUI);
+		const uint character = g_nancy->getPlayerCharacter();
+		lua_pushstring(L, players && character < players->characters.size() ? players->characters[character].name.c_str() : "");
+		return 1;
+	}
+
+	return indexFunctions(L);
+}
+
+static int playerNewIndex(lua_State *L) {
+	const Common::String key = luaL_checkstring(L, 2);
+	if (key != "time") {
+		return luaL_error(L, "Player does not have field %s", key.c_str());
+	}
+
+	luaL_checktype(L, 3, LUA_TTABLE);
+
+	static const char *const kFieldNames[] = { "days", "hours", "minutes" };
+	int values[3] = { 0, 0, 0 };
+	for (uint i = 0; i < 3; ++i) {
+		if (!readField(L, 3, kFieldNames[i], values[i])) {
+			return luaL_error(L, "Player.time must have a field '%s'", kFieldNames[i]);
+		}
+	}
+
+	NancySceneState.setPlayerClock((uint32)values[0] * 86400000 + (uint32)values[1] * 3600000 + (uint32)values[2] * 60000);
+	return 0;
+}
+
 static const luaL_Reg kPlayerFunctions[] = {
-	{ "__index", indexFunctions },
+	{ "__index", playerIndex },
+	{ "__newindex", playerNewIndex },
 	{ "Switch", playerSwitch },
 	{ "HasInventoryItem", playerHasInventoryItem },
 	{ "AddInventoryItem", playerAddInventoryItem },

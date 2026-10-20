@@ -470,6 +470,14 @@ void Scene::setPlayerTime(Time time, byte relative) {
 	}
 }
 
+void Scene::setPlayerClock(Time time) {
+	_timers.playerTime = time;
+
+	if (_ndui) {
+		_ndui->updatePlayerTime();
+	}
+}
+
 uint Scene::getPlayerTimeMinutes() const {
 	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
