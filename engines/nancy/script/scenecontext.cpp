@@ -30,6 +30,7 @@
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/script/convo.h"
+#include "engines/nancy/script/graphnode.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/luastate.h"
 #include "engines/nancy/script/record.h"
@@ -72,6 +73,10 @@ SceneContext::~SceneContext() {
 
 	for (ConvoResponse *response : _convoResponses) {
 		delete response;
+	}
+
+	for (GraphNode *node : _graphNodes) {
+		delete node;
 	}
 
 	for (auto &ref : _refs) {
@@ -420,6 +425,26 @@ void SceneContext::deleteDroppedRecords() {
 
 		_records.remove_at(i);
 		delete record;
+	}
+}
+
+GraphNode *SceneContext::createGraphNode() {
+	GraphNode *node = new GraphNode(*this);
+	_graphNodes.push_back(node);
+	return node;
+}
+
+void SceneContext::onGraphNodeChanged(GraphNode *node) {
+	for (Record *record : _records) {
+		if (record->getParentNode() && record->getParentNode()->isUnder(node)) {
+			record->onParentNodeChanged();
+		}
+	}
+
+	for (Record *record : _newRecords) {
+		if (record->getParentNode() && record->getParentNode()->isUnder(node)) {
+			record->onParentNodeChanged();
+		}
 	}
 }
 

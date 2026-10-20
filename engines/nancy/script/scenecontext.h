@@ -41,6 +41,7 @@ class LuaState;
 class Record;
 struct RefImage;
 class ConvoRecord;
+class GraphNode;
 struct ConvoResponse;
 class SummaryRecord;
 
@@ -123,6 +124,12 @@ public:
 	// The panels a scene adds to the UI call into its scripts, so they go when it does
 	void setMakesUI() { _makesUI = true; }
 
+	// Nancy21: a new node to group records under, which lasts as long as the scene
+	GraphNode *createGraphNode();
+
+	// Lets the records under a node know that it changed its z or transform
+	void onGraphNodeChanged(GraphNode *node);
+
 	// Runs another script as a part of this scene
 	bool include(const Common::String &name);
 
@@ -160,6 +167,7 @@ private:
 	SummaryRecord *_summary = nullptr;
 	ConvoRecord *_convo = nullptr;
 	Common::Array<ConvoResponse *> _convoResponses;
+	Common::Array<GraphNode *> _graphNodes;
 	Common::HashMap<Common::String, RefImage *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _refs;
 
 	double _time = 0.0;

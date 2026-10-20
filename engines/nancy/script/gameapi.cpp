@@ -29,6 +29,7 @@
 #include "engines/nancy/sound.h"
 
 #include "engines/nancy/script/api.h"
+#include "engines/nancy/script/graphnode.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/luastate.h"
 #include "engines/nancy/script/record.h"
@@ -1048,6 +1049,27 @@ static int sceneBeginStream(lua_State *L) {
 	return 1;
 }
 
+// Scene:GraphNode(), Nancy21: a new node to group records of the scene under
+static int sceneGraphNode(lua_State *L) {
+	checkContext(L)->createGraphNode()->push(L);
+	return 1;
+}
+
+// Scene:TransferChild(child), Nancy21: takes a record or a node out of the node
+// it was put under
+static int sceneTransferChild(lua_State *L) {
+	checkContext(L);
+
+	GraphNode *node = testGraphNode(L, 2);
+	if (node) {
+		node->setParent(nullptr);
+	} else {
+		checkRecord(L, 2)->setParentNode(nullptr);
+	}
+
+	return 0;
+}
+
 // Scene:EndStream(name)
 static int sceneEndStream(lua_State *L) {
 	checkContext(L);
@@ -1105,6 +1127,8 @@ static const luaL_Reg kSceneFunctions[] = {
 	{ "BeginStream", sceneBeginStream },
 	{ "EndStream", sceneEndStream },
 	{ "ChangeScene", sceneChangeScene },
+	{ "GraphNode", sceneGraphNode },
+	{ "TransferChild", sceneTransferChild },
 	{ nullptr, nullptr }
 };
 

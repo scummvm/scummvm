@@ -35,6 +35,7 @@ struct NancyInput;
 
 namespace Script {
 
+class GraphNode;
 class SceneContext;
 
 // What the player does that records get told about
@@ -119,7 +120,8 @@ public:
 	bool isActive() const { return _isActive && !_isDone; }
 	bool isDone() const { return _isDone; }
 	bool hasStarted() const { return _hasStarted; }
-	double getZ() const { return _z; }
+	// Counted from the node the record is under, when it is under one
+	double getZ() const;
 
 	// Puts the record no closer to the player than the given z
 	void limitZ(double z);
@@ -143,8 +145,16 @@ public:
 	bool sendMouseEvent(RecordEvent event, const ScriptPoint &point, bool inViewport);
 	bool sendKeyEvent(RecordEvent event, Common::KeyCode key);
 
-	// Where the record puts what it shows, for the kinds that show something
-	const ScriptMatrix &getTransform() const { return _transform; }
+	// Where the record puts what it shows, for the kinds that show something,
+	// after the nodes it is under moved it
+	ScriptMatrix getTransform() const;
+
+	// Nancy21: puts the record under a node; null for none
+	GraphNode *getParentNode() const { return _parentNode; }
+	void setParentNode(GraphNode *node);
+
+	// A node above the record changed its z or its transform
+	void onParentNodeChanged();
 
 	// Shows or hides what the record draws, once the records of a frame have run
 	virtual void updateGraphics() {}
@@ -209,6 +219,7 @@ private:
 
 	double _z = 0.0;
 	ScriptMatrix _transform;
+	GraphNode *_parentNode = nullptr;
 	bool _hasActiveFunction = false;
 	bool _hasStarted = false;
 	bool _isActive = true;

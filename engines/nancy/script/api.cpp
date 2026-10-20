@@ -24,6 +24,7 @@
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/convo.h"
+#include "engines/nancy/script/graphnode.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/mathtypes.h"
 #include "engines/nancy/script/record.h"
@@ -81,6 +82,7 @@ void registerAPI(lua_State *L) {
 	registerBootAPI(L);
 	registerInventoryAPI(L);
 	registerGameAPI(L);
+	registerGraphNodeAPI(L);
 	registerUIAPI(L);
 	registerConvoAPI(L);
 	registerRecordAPI(L);

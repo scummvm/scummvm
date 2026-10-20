@@ -189,6 +189,7 @@ MODULE_OBJS += \
   script/bootapi.o \
   script/convo.o \
   script/gameapi.o \
+  script/graphnode.o \
   script/luabind.o \
   script/luastate.o \
   script/mathtypes.o \

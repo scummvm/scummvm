@@ -20,6 +20,7 @@
  */
 
 #include "engines/nancy/script/api.h"
+#include "engines/nancy/script/graphnode.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/luastate.h"
 #include "engines/nancy/script/record.h"
@@ -197,6 +198,26 @@ void Record::release() {
 void Record::render() {
 	if (isActive()) {
 		renderNow();
+	}
+}
+
+double Record::getZ() const {
+	return _parentNode ? _z + _parentNode->getZ() : _z;
+}
+
+ScriptMatrix Record::getTransform() const {
+	return _parentNode ? _transform * _parentNode->getTransform() : _transform;
+}
+
+void Record::setParentNode(GraphNode *node) {
+	_parentNode = node;
+	onParentNodeChanged();
+}
+
+void Record::onParentNodeChanged() {
+	onZChanged();
+	if (hasTransform()) {
+		onTransformChanged();
 	}
 }
 
