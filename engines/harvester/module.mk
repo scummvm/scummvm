@@ -54,6 +54,8 @@ MODULE_OBJS = \
 	scene/interaction_outcomes.o \
 	scene/interaction_transitions.o \
 	scene/input.o \
+	scene/input_inventory.o \
+	scene/input_keyboard.o \
 	scene/room_presentation.o \
 	scene/scene_entities.o \
 	scene/scene.o \

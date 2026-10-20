@@ -33,13 +33,16 @@ namespace Harvester {
 class Art;
 class CheatSystem;
 class DialogueSystem;
+class Entity;
 class Flow;
 class HarvesterEngine;
 class InventorySystem;
 class Interaction;
 class ItemInteractions;
 class Scene;
+struct CheatActivation;
 struct InteractionResult;
+struct InventorySecondaryAction;
 struct MenuTextConfig;
 struct NpcRecord;
 struct ObjectRecord;
@@ -127,9 +130,25 @@ private:
 	InputResult handleRightButtonDown(bool &needsRedraw);
 	void handleLeftButtonUp();
 	InputResult handleLeftButtonDown(bool &needsRedraw);
+	InputResult handleSceneClick(bool isFastExitClick, bool &needsRedraw);
+	InputResult handleSelectedItemClick(const RoomHoverState &clickHoverState,
+		const Entity *itemTarget, bool &needsRedraw);
+	InputResult handleSceneTargetClick(const RoomHoverState &hoverState,
+		bool isFastExitClick, bool &needsRedraw);
+	InputResult handleWalkClick(const RoomHoverState &hoverState, bool &needsRedraw);
+	InputResult handleObjectClick(ObjectRecord &object, bool &needsRedraw);
+	InputResult handleInventoryLeftClick(bool &needsRedraw);
+	InputResult handleInventoryRightClick(bool &needsRedraw);
+	InputResult applyInventorySecondaryAction(const ObjectRecord &object,
+		const InventorySecondaryAction &secondaryAction, bool &needsRedraw);
+	InputResult handleInventoryKeyDown(const Common::KeyState &key, bool &needsRedraw);
 	InputResult handleKeyDown(const Common::KeyState &key, bool &needsRedraw, bool gameAction = false);
+	InputResult handleGameplayKeyDown(const Common::KeyState &key, bool &needsRedraw, bool gameAction);
 	void handleKeyUp(const Common::KeyState &key, bool gameAction = false);
 	InputResult handleGameAction(GameAction action, bool pressed, bool &needsRedraw);
+	InputResult applyCheatActivation(InteractionResult &cheatInteraction,
+		const CheatActivation &cheatActivation, bool &needsRedraw);
+	InputResult openRoomMenu(bool &needsRedraw);
 	void beginInspectText(const ObjectRecord &object, const ResolvedText &text);
 	InputResult finishInspectText(bool &needsRedraw);
 	InputResult applyObjectInteraction(InteractionResult &interaction, bool &needsRedraw);
