@@ -135,6 +135,9 @@ private:
 	Common::Error runCloseupInteraction(const InteractionResult &interaction, bool discChanged,
 		const Common::String &restoreMusicPath, bool &didTransition);
 	Common::Error queueCloseupExit(bool &didTransition);
+	Common::Error applySameSceneEffects(const InteractionResult &interaction,
+		const RoomPlayerState &playerState, bool &didTransition, const Common::String &usedItemName,
+		bool interruptPlayerMovement);
 
 	HarvesterEngine &_engine;
 	Flow &_flow;

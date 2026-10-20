@@ -50,6 +50,7 @@ MODULE_OBJS = \
 	combat/combat_reactions.o \
 	combat/combat_targeting.o \
 	scene/interaction.o \
+	scene/interaction_effects.o \
 	scene/interaction_outcomes.o \
 	scene/interaction_transitions.o \
 	scene/input.o \

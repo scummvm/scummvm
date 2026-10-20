@@ -27,7 +27,6 @@
 #include "harvester/art.h"
 #include "harvester/detection.h"
 #include "harvester/flow/flow.h"
-#include "harvester/fst_player.h"
 #include "harvester/harvester.h"
 #include "harvester/inventory.h"
 #include "harvester/player/player.h"
@@ -532,118 +531,8 @@ Common::Error Interaction::handleInteractionResult(const InteractionResult &inte
 	if (didTransition)
 		return Common::kNoError;
 
-	applyPlayerDeathRequest(interaction);
-
-	if (interaction.requestPlayerGotoXZ)
-		_callbacks.applyPlayerGotoXZ(interaction.playerGotoX, interaction.playerGotoZ);
-	else if (interaction.requestPlayerGotoZ)
-		_callbacks.applyPlayerGotoXZ(playerState.centerX, interaction.playerGotoZ);
-
-	if (!interaction.moveEntityToPlayerZName.empty()) {
-		EntityManager *entityManager = _engine.getRuntimeEntities();
-		Entity *entity = entityManager
-			? entityManager->findSceneEntityByName(interaction.moveEntityToPlayerZName)
-			: nullptr;
-		if (entity && playerState.entity) {
-			entity->setPosition(entity->getX(), entity->getY(), playerState.entity->getZ());
-			entityManager->reinsertSceneEntity(entity);
-			debugC(1, kDebugPlayer, "Harvester: MOVE_BM2PCZ entity='%s' z=%.2f",
-				interaction.moveEntityToPlayerZName.c_str(), entity->getZ());
-		}
-	}
-
-	if (interaction.lightingCommand != kStartupLightingCommandNone) {
-		Common::Error lightingError = _callbacks.applyLightingCommand(interaction.lightingCommand);
-		if (lightingError.getCode() != Common::kNoError)
-			return lightingError;
-	}
-
-	if (!interaction.cutscenePath.empty()) {
-		FstPlayer fstPlayer(_engine);
-		if (!fstPlayer.play(interaction.cutscenePath))
-			return Common::kReadingFailed;
-	}
-
-	if (!interaction.modalText.value.empty()) {
-		Common::Error modalError = _callbacks.runModalShowText(interaction.modalText);
-		if (modalError.getCode() != Common::kNoError)
-			return modalError;
-	}
-
-	if (!interaction.dialogueNpcName.empty()) {
-		Common::Error dialogueError = runScriptedDialogue(
-			interaction.dialogueNpcName, usedItemName, interaction.dialogueContinuationTag,
-			didTransition);
-		if (dialogueError.getCode() != Common::kNoError)
-			return dialogueError;
-	}
-
-	if (didTransition)
-		return Common::kNoError;
-
-	if (!interaction.continuationTag.empty()) {
-		InteractionResult continuationInteraction;
-		if (_engine.getScript()->executeActionTag(
-				interaction.continuationTag, continuationInteraction, true,
-				_scene.executionContext())) {
-			Common::Error interactionError =
-				handleInteractionResult(continuationInteraction, didTransition, usedItemName, interruptPlayerMovement);
-			if (interactionError.getCode() != Common::kNoError)
-				return interactionError;
-		}
-	}
-
-	return Common::kNoError;
-}
-
-Common::Error Interaction::runScriptedDialogue(const Common::String &npcName,
-		const Common::String &usedItemName, const Common::String &continuationTag,
-		bool &didTransition) {
-	didTransition = false;
-
-	const NpcRecord *dialogueNpc = _engine.getScript()->findRuntimeNpcRecord(npcName);
-	if (dialogueNpc) {
-		IndexedBitmap dialogueBackdrop;
-		if (!_callbacks.captureDialogueBackdrop(dialogueBackdrop))
-			return Common::kReadingFailed;
-
-		Common::Error dialogueError = _flow.runRoomNpcDialogue(
-			dialogueBackdrop, _scene.palette, _scene.targetPaletteBrightness,
-			_scene.executionContext(), *dialogueNpc, usedItemName);
-		if (dialogueError.getCode() != Common::kNoError)
-			return dialogueError;
-	} else {
-		warning("Harvester: unresolved startup dialogue npc '%s' while processing room dialogue",
-			npcName.c_str());
-	}
-
-	InteractionResult dialogueInteraction;
-	bool abortRemainingCommandChain = false;
-	if (_flow.takeQueuedDialogueInteraction(dialogueInteraction)) {
-		abortRemainingCommandChain = dialogueInteraction.abortRemainingCommandChain;
-		Common::Error interactionError =
-			handleInteractionResult(dialogueInteraction, didTransition, usedItemName);
-		if (interactionError.getCode() != Common::kNoError)
-			return interactionError;
-		if (_flow.hasPendingMainMenuReturn())
-			return Common::kNoError;
-	}
-	if (!didTransition && !abortRemainingCommandChain && !continuationTag.empty()) {
-		InteractionResult continuationInteraction;
-		if (_engine.getScript()->executeActionTag(
-				continuationTag, continuationInteraction, true, _scene.executionContext())) {
-			Common::Error interactionError =
-				handleInteractionResult(continuationInteraction, didTransition, usedItemName);
-			if (interactionError.getCode() != Common::kNoError)
-				return interactionError;
-			if (_flow.hasPendingMainMenuReturn())
-				return Common::kNoError;
-		}
-	}
-
-	_flow.resetCursorAnimationSequence();
-	_callbacks.resetIdleState();
-	return Common::kNoError;
+	return applySameSceneEffects(interaction, playerState, didTransition, usedItemName,
+		interruptPlayerMovement);
 }
 
 bool hasRoomEntryInteraction(const InteractionResult &interaction) {
