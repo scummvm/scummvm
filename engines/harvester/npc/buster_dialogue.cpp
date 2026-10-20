@@ -171,6 +171,23 @@ static const DialogueLineEntry kBusterTopic0x40Or0x41PreludeLines[] = {
 	{ 0x17f7, "BUSTER", 0 }
 };
 
+static Common::Error playFatalBusterBranch(DialogueRuntime &runtime, int wavId, int headVariant = 0) {
+	Common::Error lineError = runtime.playDialogueLineWithVariant(wavId, "BUSTER", headVariant);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	Graphics::Screen *screen = runtime.engine().getScreen();
+	if (screen) {
+		screen->fillRect(screen->getBounds(), 0);
+		screen->update();
+	}
+	lineError = runtime.playDialogueFst(kDialogueC086FstPath);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	return runtime.runGameOverScreen();
+}
+
 } // End of namespace
 
 Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
@@ -180,26 +197,6 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	DialogueTopicBuffer topics(runtime, topicBuffer, topicBufferLineIndex, "Buster topic buffer");
 
-	auto clearScreenToBlack = [&]() {
-		Graphics::Screen *screen = runtime.engine().getScreen();
-		if (!screen)
-			return;
-
-		screen->fillRect(screen->getBounds(), 0);
-		screen->update();
-	};
-	auto playFatalBusterBranch = [&](int wavId, int headVariant = 0) -> Common::Error {
-		Common::Error lineError = runtime.playDialogueLineWithVariant(wavId, "BUSTER", headVariant);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-
-		clearScreenToBlack();
-		lineError = runtime.playDialogueFst(kDialogueC086FstPath);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-
-		return runtime.runGameOverScreen();
-	};
 	auto isCorpsePhoto = [&](const Common::String &itemName) {
 		return itemName.equalsIgnoreCase("CASKET_PHOTO") ||
 			itemName.equalsIgnoreCase("CASKET_PHOTOCOPY");
@@ -278,7 +275,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1)
-			return playFatalBusterBranch(0x183a, 2);
+			return playFatalBusterBranch(runtime, 0x183a, 2);
 		if (responseIndex == 2) {
 			lineError = runtime.playDialogueLineWithVariant(0x1841, "BUSTER", 0);
 			if (lineError.getCode() != Common::kNoError)
@@ -304,7 +301,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					return responseError;
 
 				if (followupResponseIndex == 1)
-					return playFatalBusterBranch(0x1850);
+					return playFatalBusterBranch(runtime, 0x1850);
 				if (followupResponseIndex == 2) {
 					lineError = runtime.playDialogueLineWithVariant(0x1858, "BUSTER", 0);
 					if (lineError.getCode() != Common::kNoError)
@@ -364,7 +361,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1)
-				return playFatalBusterBranch(0x16d0);
+				return playFatalBusterBranch(runtime, 0x16d0);
 			if (responseIndex == 2) {
 				lineError = runtime.playDialogueLineWithVariant(0x16d6, "BUSTER", 0);
 				if (lineError.getCode() != Common::kNoError)
@@ -388,7 +385,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 						return responseError;
 
 					if (nestedResponseIndex == 1)
-						return playFatalBusterBranch(0x16ef);
+						return playFatalBusterBranch(runtime, 0x16ef);
 					if (nestedResponseIndex == 2) {
 						lineError = runtime.playDialogueLineWithVariant(0x16f6, "BUSTER", 0);
 						if (lineError.getCode() != Common::kNoError)
@@ -397,7 +394,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 						topics.assign(0x31);
 					}
 				} else if (followupResponseIndex == 2) {
-					return playFatalBusterBranch(0x1702);
+					return playFatalBusterBranch(runtime, 0x1702);
 				}
 			}
 			continue;
@@ -509,7 +506,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1)
-				return playFatalBusterBranch(0x1804);
+				return playFatalBusterBranch(runtime, 0x1804);
 			if (responseIndex == 2) {
 				lineError = runtime.playDialogueLineWithVariant(0x180b, "BUSTER", 0);
 				if (lineError.getCode() != Common::kNoError)
@@ -531,7 +528,7 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 
 		if (runtime.matchesResponseLine(selectedTopic, kBusterTopic0x48Line))
-			return playFatalBusterBranch(0x18df, 2);
+			return playFatalBusterBranch(runtime, 0x18df, 2);
 
 		if (runtime.matchesResponseLine(selectedTopic, kBusterTopic0x49Line)) {
 			Common::Error lineError = runtime.playDialogueLineWithVariant(0x186f, "BUSTER", 0);
