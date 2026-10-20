@@ -25,6 +25,7 @@
 
 #include "common/debug.h"
 #include "common/mutex.h"
+#include "common/memstream.h"
 #include "common/ptr.h"
 #include "common/queue.h"
 #include "common/stream.h"
@@ -74,6 +75,8 @@ protected:
 
 	uint _posInFrame;
 	State _state;
+	bool _allowEndPadding;
+	bool _endPaddingAdded;
 
 	mad_timer_t _curTime;
 
@@ -134,7 +137,7 @@ private:
 
 BaseMP3Stream::BaseMP3Stream() :
 	_posInFrame(0),
-	_state(MP3_STATE_INIT),
+	_state(MP3_STATE_INIT), _allowEndPadding(false), _endPaddingAdded(false),
 	_curTime(mad_timer_zero) {
 
 	// The MAD_BUFFER_GUARD must always contain zeros (the reason
@@ -194,8 +197,8 @@ void BaseMP3Stream::decodeMP3Data(Common::ReadStream &stream) {
 void BaseMP3Stream::readMP3Data(Common::ReadStream &stream) {
 	uint32 remaining = 0;
 
-	// Give up immediately if we already used up all data in the stream
-	if (stream.eos()) {
+	// The guard bytes have already been consumed by the decoder.
+	if (_endPaddingAdded) {
 		_state = MP3_STATE_EOS;
 		return;
 	}
@@ -210,10 +213,18 @@ void BaseMP3Stream::readMP3Data(Common::ReadStream &stream) {
 	}
 
 	// Try to read the next block
-	uint32 size = stream.read(_buf + remaining, BUFFER_SIZE - remaining);
-	if (size <= 0) {
+	uint32 size = stream.eos() ? 0 : stream.read(_buf + remaining, BUFFER_SIZE - remaining);
+	if (size == 0 && (!_allowEndPadding || remaining == 0 || !stream.eos() || stream.err())) {
 		_state = MP3_STATE_EOS;
 		return;
+	}
+
+	// libmad requires bytes beyond the final frame. Append them only at the
+	// end of the complete input, not at a packet boundary.
+	if (_allowEndPadding && stream.eos() && !stream.err()) {
+		memset(_buf + remaining + size, 0, MAD_BUFFER_GUARD);
+		size += MAD_BUFFER_GUARD;
+		_endPaddingAdded = true;
 	}
 
 	// Feed the data we just read into the stream decoder
@@ -233,6 +244,7 @@ void BaseMP3Stream::initStream(Common::ReadStream &stream) {
 	// Reset the stream data
 	_curTime = mad_timer_zero;
 	_posInFrame = 0;
+	_endPaddingAdded = false;
 
 	// Update state
 	_state = MP3_STATE_READY;
@@ -329,6 +341,8 @@ MP3Stream::MP3Stream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag
 		BaseMP3Stream(),
 		_inStream(skipID3(inStream, dispose)),
 		_length(0, 1000) {
+
+	_allowEndPadding = true;
 
 	// Initialize the stream with some data and set the channels and rate
 	// variables
@@ -452,14 +466,21 @@ int PacketizedMP3Stream::readBuffer(int16 *buffer, const int numSamples) {
 	while (samples < numSamples) {
 		// Empty? Bail out for now, and mark the stream as ended
 		if (_queue.empty()) {
-			// EOS state is only valid once a packet has been received at least
-			// once
-			if (_state == MP3_STATE_READY)
+			if (_finished && _state == MP3_STATE_READY) {
+				_allowEndPadding = true;
+				// The encoded packets may be gone while libmad still holds
+				// compressed data or PCM. Drain it before reporting EOF.
+				const byte dummy = 0;
+				Common::MemoryReadStream empty(&dummy, 0);
+				samples += fillBuffer(empty, buffer + samples, numSamples - samples);
+			} else if (_state == MP3_STATE_READY) {
 				_state = MP3_STATE_EOS;
+			}
 			return samples;
 		}
 
 		Common::SeekableReadStream *packet = _queue.front();
+		_allowEndPadding = _finished && _queue.size() == 1;
 
 		if (_state == MP3_STATE_INIT) {
 			// Initialize everything
@@ -489,7 +510,7 @@ int PacketizedMP3Stream::readBuffer(int16 *buffer, const int numSamples) {
 
 bool PacketizedMP3Stream::endOfData() const {
 	Common::StackLock lock(_mutex);
-	return BaseMP3Stream::endOfData();
+	return (_finished && _state == MP3_STATE_INIT && _queue.empty()) || BaseMP3Stream::endOfData();
 }
 
 bool PacketizedMP3Stream::endOfStream() const {
@@ -519,6 +540,11 @@ void PacketizedMP3Stream::queuePacket(Common::SeekableReadStream *packet) {
 void PacketizedMP3Stream::finish() {
 	Common::StackLock lock(_mutex);
 	_finished = true;
+	_allowEndPadding = _queue.empty();
+
+	// An underrun can leave decoded data behind the temporary EOS state.
+	if (_state == MP3_STATE_EOS && !_endPaddingAdded)
+		_state = MP3_STATE_READY;
 }
 
 
