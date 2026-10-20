@@ -1640,14 +1640,14 @@ int16 ZoombiniShelterPicker::debugUnseatAllZoombinis(Common::String &output) {
 	return removedCount;
 }
 
-bool ZoombiniShelterPicker::debugDoPageCommand(int argc, const char **argv, Common::String &output) {
-	if (argc != 2 || (scumm_stricmp(argv[1], kPageCommandAutoseat) != 0 && scumm_stricmp(argv[1], kPageCommandAutounseat) != 0)) {
+bool ZoombiniShelterPicker::debugDoPageCommand(const Common::Array<Common::String> &args, Common::String &output) {
+	if (args.size() != 1 || (!args[0].equalsIgnoreCase(kPageCommandAutoseat) && !args[0].equalsIgnoreCase(kPageCommandAutounseat))) {
 		output = debugGetPickerCommandsHelp();
 		return true;
 	}
 
 	int16 changedCount;
-	if (scumm_stricmp(argv[1], kPageCommandAutoseat) == 0)
+	if (args[0].equalsIgnoreCase(kPageCommandAutoseat))
 		changedCount = debugGenerateZoombinisIntoEmptySeats(output);
 	else
 		changedCount = debugUnseatAllZoombinis(output);

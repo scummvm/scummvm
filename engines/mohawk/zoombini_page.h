@@ -413,12 +413,12 @@ public:
 	/**
 	 * Handle a page-specific debugger command from the console's @c page command.
 	 *
-	 * @param argc Number of arguments, including the registered command at @p argv[0].
-	 * @param argv Registered command, page subcommand, and its arguments.
+	 * @param args Page subcommand at index zero, followed by its arguments; excludes the registered page/puzzle command.
+	 *             For example, "page solvable 10" passes {"solvable", "10"}.
 	 * @param output Diagnostic text to print after the handler returns.
-	 * @return True when the command was invalid or unsupported; false when it succeeded.
+	 * @return True to keep the debugger open; false to resume the game.
 	 */
-	virtual bool debugDoPageCommand(int argc, const char **argv, Common::String &output);
+	virtual bool debugDoPageCommand(const Common::Array<Common::String> &args, Common::String &output);
 	/** Handle a built-in page-local debug action from @c page @c builtin_debug. */
 	virtual bool debugDoBuiltinDebugCommand(int argc, const char **argv, Common::String &output);
 	/**

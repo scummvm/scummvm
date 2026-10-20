@@ -242,7 +242,7 @@ protected:
 	/** Restore hidden pack runners before the shared departure writer runs. */
 	void executeDeparture() override;
 	/** Describe the generated lily-pad constraints for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
 	/** Report the finite swap-wand use budget for diagnostics. */
 	ZmbChanceInfo debugGetChances() const override;
 	/** Lilly supports debugger adjustment of the swap-wand use budget. */

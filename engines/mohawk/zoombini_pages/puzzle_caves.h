@@ -102,7 +102,7 @@ protected:
 	/** Prepare every runner in a solved seat layout for the debug finish motion. */
 	void debugPrepareForDeparture() override;
 	/** Describe the generated glyph rule for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
 	/** Describe the Lion's Lair built-in debug actions. */
 	Common::String debugGetBuiltinDebugCommandHelp() const override;
 	/** Run one Lion's Lair built-in debug action. */

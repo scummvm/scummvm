@@ -230,6 +230,8 @@ public:
 	ZoombiniPage *getCurrentPage() const;
 	/** Queue a page transition and unwind every modal dialog before @ref doFrame() completes it. */
 	void setNextPage(ZoombiniPageType type);
+	/** Recreate the active puzzle with the current party, returning false when a transition or dialog prevents it. */
+	bool debugRetryPuzzle();
 
 	/**
 	 * Source SI page set by each puzzle or area before transitioning to @ref ZoombiniPageType::kXfer.
@@ -510,6 +512,9 @@ private:
 	static bool hasEuropeLanguageDirectories(const Common::FSNode &root);
 	/** Detect and register the root of an extracted Zoombini ISO layout. */
 	static bool tryAddZoombiniIsoRootSearchPath(const Common::FSNode &root);
+
+	/** Replace the pending destination with @p type and close modal dialogs without adjusting the destination. */
+	void queueNextPage(ZoombiniPageType type);
 
 	/** Dispatch all queued events to the active page or its modal dialog. */
 	void processEvents(ZoombiniPage *page);

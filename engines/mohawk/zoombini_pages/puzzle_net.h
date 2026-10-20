@@ -79,7 +79,7 @@ protected:
 	/** Move every active runner to the accepted exit side for debug Go handling. */
 	void debugPrepareForDeparture() override;
 	/** Describe the generated column rules for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
 	/** Describe the Mudball Wall built-in debug actions. */
 	Common::String debugGetBuiltinDebugCommandHelp() const override;
 	/** Run one Mudball Wall built-in debug action. */

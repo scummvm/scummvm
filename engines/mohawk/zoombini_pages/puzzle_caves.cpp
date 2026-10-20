@@ -452,7 +452,7 @@ bool ZoombiniPuzzleCaves::debugSetChances(int16 remaining) {
 	return true;
 }
 
-Common::String ZoombiniPuzzleCaves::debugGetAnswer() const {
+Common::String ZoombiniPuzzleCaves::debugGetAnswer(const Common::Array<Common::String> &) const {
 	// Format a compact glyph offset for debug answer output.
 	const auto decodeOffset = [](byte offset) -> Common::String {
 		if (offset < 1 || 20 < offset)

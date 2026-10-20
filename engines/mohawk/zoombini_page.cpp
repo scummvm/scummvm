@@ -61,9 +61,9 @@ Audio::Mixer::SoundType ZoombiniPage::getFeatureSoundType(const ZmbFeature *feat
 	return Audio::Mixer::kSFXSoundType;
 }
 
-bool ZoombiniPage::debugDoPageCommand(int argc, const char **argv, Common::String &output) {
-	if (1 < argc)
-		output = Common::String::format("Page command '%s' is not available on the active page.\n", argv[1]);
+bool ZoombiniPage::debugDoPageCommand(const Common::Array<Common::String> &args, Common::String &output) {
+	if (!args.empty())
+		output = Common::String::format("Page command '%s' is not available on the active page.\n", args[0].c_str());
 	else
 		output = "No page commands are available on the active page.\n";
 	return true;

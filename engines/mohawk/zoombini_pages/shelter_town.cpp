@@ -288,14 +288,14 @@ ZmbEventHandleResult ZoombiniShelterTown::onDebugKeyDown(const Common::KeyState 
 	return consumesKey ? ZmbEventHandleResult::kConsumed : ZmbEventHandleResult::kPassthrough;
 }
 
-bool ZoombiniShelterTown::debugDoPageCommand(int argc, const char **argv, Common::String &output) {
-	if (argc < 2) {
+bool ZoombiniShelterTown::debugDoPageCommand(const Common::Array<Common::String> &args, Common::String &output) {
+	if (args.empty()) {
 		output = "Usage: page <devel|fireworks> ...\n";
 		return true;
 	}
 
-	if (scumm_stricmp(argv[1], "devel") == 0) {
-		if (argc != 3 || scumm_stricmp(argv[2], "--help") == 0 || scumm_stricmp(argv[2], "-h") == 0) {
+	if (args[0].equalsIgnoreCase("devel")) {
+		if (args.size() != 2 || args[1].equalsIgnoreCase("--help") || args[1].equalsIgnoreCase("-h")) {
 			output = "Temporarily preview Town building development without changing the save.\n";
 			output += "Usage: page devel <population|reset>\n";
 			output += "  population: 0-625 stored Town Zoombinis\n\n";
@@ -305,15 +305,15 @@ bool ZoombiniShelterTown::debugDoPageCommand(int argc, const char **argv, Common
 			return true;
 		}
 
-		if (scumm_stricmp(argv[2], "reset") == 0) {
+		if (args[1].equalsIgnoreCase("reset")) {
 			debugClearPopulationPreview();
 			output = "Town development preview cleared; restored the saved population background.\n";
 			return false;
 		}
 
 		int32 population;
-		if (!ZmbResource::parseSignedInt(argv[2], population) || population < 0 || 625 < population) {
-			output = Common::String::format("Invalid population '%s'. Must be 0-625 or reset.\n", argv[2]);
+		if (!ZmbResource::parseSignedInt(args[1].c_str(), population) || population < 0 || 625 < population) {
+			output = Common::String::format("Invalid population '%s'. Must be 0-625 or reset.\n", args[1].c_str());
 			return true;
 		}
 
@@ -322,8 +322,8 @@ bool ZoombiniShelterTown::debugDoPageCommand(int argc, const char **argv, Common
 		return false;
 	}
 
-	if (scumm_stricmp(argv[1], "fireworks") == 0) {
-		if (argc != 3 || scumm_stricmp(argv[2], "--help") == 0 || scumm_stricmp(argv[2], "-h") == 0) {
+	if (args[0].equalsIgnoreCase("fireworks")) {
+		if (args.size() != 2 || args[1].equalsIgnoreCase("--help") || args[1].equalsIgnoreCase("-h")) {
 			output = "Temporarily test Town celebration walkers without changing the save.\n";
 			output += "Usage: page fireworks <count|cycle|stop>\n";
 			output += "  count: 1-50 pending celebration walkers\n";
@@ -349,21 +349,21 @@ bool ZoombiniShelterTown::debugDoPageCommand(int argc, const char **argv, Common
 			return true;
 		}
 
-		if (scumm_stricmp(argv[2], "cycle") == 0) {
+		if (args[1].equalsIgnoreCase("cycle")) {
 			debugStartFireworksCycle();
 			output = "Town fireworks cycle started: 20 entry walkers, then 50 refill walkers.\n";
 			return false;
 		}
 
-		if (scumm_stricmp(argv[2], "stop") == 0) {
+		if (args[1].equalsIgnoreCase("stop")) {
 			debugStopFireworksCycle();
 			output = "Town fireworks test queue cancelled; visible walkers remain until their scripts finish.\n";
 			return false;
 		}
 
 		int32 count;
-		if (!ZmbResource::parseSignedInt(argv[2], count) || count < 1 || 50 < count) {
-			output = Common::String::format("Invalid fireworks count '%s'. Must be 1-50, cycle, or stop.\n", argv[2]);
+		if (!ZmbResource::parseSignedInt(args[1].c_str(), count) || count < 1 || 50 < count) {
+			output = Common::String::format("Invalid fireworks count '%s'. Must be 1-50, cycle, or stop.\n", args[1].c_str());
 			return true;
 		}
 
@@ -372,7 +372,7 @@ bool ZoombiniShelterTown::debugDoPageCommand(int argc, const char **argv, Common
 		return false;
 	}
 
-	output = Common::String::format("Unknown Town page command '%s'.\nUsage: page <devel|fireworks> ...\n", argv[1]);
+	output = Common::String::format("Unknown Town page command '%s'.\nUsage: page <devel|fireworks> ...\n", args[0].c_str());
 	return true;
 }
 

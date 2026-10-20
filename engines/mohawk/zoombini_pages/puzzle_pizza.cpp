@@ -417,14 +417,6 @@ ZmbChanceInfo ZoombiniPuzzlePizza::debugGetChances() const {
 			"unsuccessful pizza or sundae delivery"};
 }
 
-Common::String ZoombiniPuzzlePizza::debugGetPageCommandHelp() const {
-	Common::String output;
-	output += "  delivery-test <arno|willa|shyler> <partial|full|reject|reject-multi>\n";
-	output += "      Prepare a first-delivery renderer test from the generated troll order.\n";
-	output += "      Click Produce after closing the debugger to run the normal delivery chain.\n";
-	return output;
-}
-
 Common::String ZoombiniPuzzlePizza::debugGetBuiltinDebugCommandHelp() const {
 	Common::String output;
 	output += Common::String::format("  %-7s (%s)\n", "A/a", kBuiltinDebugActionToppings);
@@ -663,135 +655,6 @@ ZmbEventHandleResult ZoombiniPuzzlePizza::onDebugKeyDown(const Common::KeyState 
 	return runBuiltinDebugAction(action, output) ? ZmbEventHandleResult::kPassthrough : ZmbEventHandleResult::kConsumed;
 }
 
-bool ZoombiniPuzzlePizza::debugDoPageCommand(int argc, const char **argv, Common::String &output) {
-	if (argc != 4 || scumm_stricmp(argv[1], "delivery-test") != 0 ||
-		scumm_stricmp(argv[2], "--help") == 0 || scumm_stricmp(argv[2], "-h") == 0 ||
-		scumm_stricmp(argv[3], "--help") == 0 || scumm_stricmp(argv[3], "-h") == 0) {
-		output = "Prepare one isolated Pizza delivery using the generated order.\n";
-		output += "Usage: page delivery-test <arno|willa|shyler> <partial|full|reject|reject-multi>\n";
-		output += "  partial: select a strict subset of the requested toppings\n";
-		output += "  full: select the complete requested topping set\n";
-		output += "  reject: select one topping absent from the order\n";
-		output += "  reject-multi: select two toppings absent from the order\n\n";
-		output += "Run this only after the intro and before the first delivery.\n";
-		output += "Close the debugger and click Produce to start the normal delivery chain.\n";
-		output += "Options:\n";
-		output += "  -h, --help  Show this help text and exit.\n";
-		return true;
-	}
-
-	int16 orderLine = -1;
-	if (scumm_stricmp(argv[2], "arno") == 0)
-		orderLine = 0;
-	else if (scumm_stricmp(argv[2], "willa") == 0)
-		orderLine = 1;
-	else if (scumm_stricmp(argv[2], "shyler") == 0)
-		orderLine = 2;
-
-	if (orderLine < 0) {
-		output = Common::String::format("Unknown Pizza troll '%s'. Use arno, willa, or shyler.\n", argv[2]);
-		return true;
-	}
-	if ((orderLine == 1 && _puzzleLevel < kPuzzleLevel2) ||
-		(orderLine == 2 && _puzzleLevel < kPuzzleLevel3)) {
-		output = Common::String::format("%s is not present at Pizza level %d.\n", argv[2], _puzzleLevel);
-		return true;
-	}
-
-	if (!_pageActive || !_produceSubmissionEnabled ||
-		!_postmanSnoid || _postmanSnoid->getAnimState() != kSnoidAnimState000_Idle ||
-		_machinePhase != kPhaseNone || _overlayPhase != kPhaseNone || _arnoPhase != kPhaseNone || _willaPhase != kPhaseNone || _shylerPhase != kPhaseNone ||
-		0 <= _lastToppingMaskHistoryIdx || _preserveAcceptedTrollLinkCount != 0 || _lostDelivererCount != 0) {
-		output = "Pizza delivery-test requires the idle page after its intro and before the first delivery.\n";
-		return true;
-	}
-
-	const bool *orderToppings = _arnoToppings;
-	if (orderLine == 1)
-		orderToppings = _willaToppings;
-	else if (orderLine == 2)
-		orderToppings = _shylerToppings;
-	bool testToppings[8] = {false, false, false, false, false, false, false, false};
-	int16 orderToppingCount = 0;
-	int16 firstOrderTopping = -1;
-	int16 extraToppingCount = 0;
-
-	for (int16 i = 0; i < _machineToppingSlotCount; i++) {
-		if (orderToppings[i]) {
-			orderToppingCount += 1;
-			if (firstOrderTopping < 0)
-				firstOrderTopping = i;
-		}
-	}
-
-	if (scumm_stricmp(argv[3], "full") == 0) {
-		for (int16 i = 0; i < _machineToppingSlotCount; i++)
-			testToppings[i] = orderToppings[i];
-	} else if (scumm_stricmp(argv[3], "partial") == 0) {
-		if (orderToppingCount < 1) {
-			output = "The selected troll has no requested topping for a partial test.\n";
-			return true;
-		}
-		if (1 < orderToppingCount)
-			testToppings[firstOrderTopping] = 1;
-	} else if (scumm_stricmp(argv[3], "reject") == 0 ||
-			   scumm_stricmp(argv[3], "reject-multi") == 0) {
-		const int16 requiredExtras = scumm_stricmp(argv[3], "reject-multi") == 0 ? 2 : 1;
-		for (int16 i = 0; i < _machineToppingSlotCount && extraToppingCount < requiredExtras; i++) {
-			const bool selectable = !(i == 4 && _puzzleLevel == kPuzzleLevel2) &&
-									!(5 <= i && i <= 6 && _puzzleLevel < kPuzzleLevel2) &&
-									!(i == 7 && _puzzleLevel < kPuzzleLevel4);
-			if (selectable && !orderToppings[i]) {
-				testToppings[i] = 1;
-				extraToppingCount += 1;
-			}
-		}
-		if (extraToppingCount < requiredExtras) {
-			output = Common::String::format("The selected order has fewer than %d selectable extra toppings.\n", requiredExtras);
-			return true;
-		}
-	} else {
-		output = Common::String::format("Unknown Pizza result '%s'. Use partial, full, reject, or reject-multi.\n", argv[3]);
-		return true;
-	}
-
-	const TrollOrderLine order = static_cast<TrollOrderLine>(orderLine);
-	_trollOrderStates[TrollOrderLine::kArno00] = TrollOrderState::kInactive00;
-	_trollOrderStates[TrollOrderLine::kWilla01] = TrollOrderState::kInactive00;
-	_trollOrderStates[TrollOrderLine::kShyler02] = TrollOrderState::kInactive00;
-	_trollOrderStates[order] = TrollOrderState::kActive01;
-	_allTrollOrdersMatched = false;
-	_delivererPoolExhausted = false;
-	_acceptedOrdersThisMeal = 0;
-	_pendingResultOrderSlot = 0;
-	_toppingOwnerOrderSlot = 0;
-	_toppingRunnerCategory = 0;
-	_submittedMealAlreadyTried = false;
-	_exactOrderMatchCount = 0;
-
-	Common::String selectedSlots;
-	for (int16 i = 0; i < _machineToppingSlotCount; i++) {
-		_selectedMealToppings[i] = hasToppingButtonForIngredient(i) && testToppings[i];
-		if (_toppingButtonFeatures[i]) {
-			const int16 toppingScrbId = getToppingButtonScrbId(i, _selectedMealToppings[i]);
-			loadScrbOntoFeature(_toppingButtonFeatures[i], toppingScrbId);
-		}
-		if (_selectedMealToppings[i]) {
-			if (!selectedSlots.empty())
-				selectedSlots += ",";
-			selectedSlots += Common::String::format("%d", i);
-		}
-	}
-	if (selectedSlots.empty())
-		selectedSlots = "none";
-
-	linkToppingRunners();
-	registerProduceButton();
-	output = Common::String::format("Pizza delivery test prepared: %s %s, topping slots %s. Close the debugger and click Produce.\n",
-									argv[2], argv[3], selectedSlots.c_str());
-	return false;
-}
-
 bool ZoombiniPuzzlePizza::debugSetChances(int16 remaining) {
 	if (remaining < 0 || _initialMistakeAllowance < remaining)
 		return false;
@@ -800,7 +663,7 @@ bool ZoombiniPuzzlePizza::debugSetChances(int16 remaining) {
 	return true;
 }
 
-Common::String ZoombiniPuzzlePizza::debugGetAnswer() const {
+Common::String ZoombiniPuzzlePizza::debugGetAnswer(const Common::Array<Common::String> &) const {
 	// [*] Ingredient identities keep the same mask index at every difficulty.
 	// Level 1 uses indices 0-4.
 	// Level 2 uses 0-6 but blocks index 4, leaving four pizza toppings and two sundae toppings.

@@ -22,6 +22,7 @@
 #ifndef MOHAWK_ZOOMBINI_PAGES_PUZZLE_BASE_H
 #define MOHAWK_ZOOMBINI_PAGES_PUZZLE_BASE_H
 
+#include "common/array.h"
 #include "mohawk/zoombini_pages/interactive_base.h"
 
 namespace Mohawk {
@@ -41,6 +42,44 @@ enum ZmbPuzzleLevel : int16 {
 	kPuzzleLevel3 = 3,
 	/** Level4: "Very Very Hard" */
 	kPuzzleLevel4 = 4
+};
+
+/**
+ * Incremental 32-bit FNV-1a over bytes, shared by puzzle solvers.
+ * @see https://datatracker.ietf.org/doc/html/rfc9923
+ */
+class FNV1a32Hasher {
+public:
+	/** Start at the standard 32-bit FNV offset basis. */
+	FNV1a32Hasher();
+	/** Discard accumulated input and restore the standard 32-bit FNV offset basis. */
+	void clear();
+	/**
+	 * Append one byte to the hash.
+	 * @param[in] value Byte to mix into the current hash.
+	 */
+	void addByte(byte value);
+	/**
+	 * Append bytes in the supplied order, including any zero bytes.
+	 * @param[in] data Bytes to append; may be null when @p size is zero.
+	 * @param[in] size Number of bytes to read from @p data.
+	 */
+	void addBytes(const byte *data, uint32 size);
+	/**
+	 * Append every byte in an array, in index order.
+	 * @param[in] data Bytes to append; an empty array leaves the hash unchanged.
+	 */
+	void addBytes(const Common::Array<byte> &data);
+	/** Return the current hash without changing its state. */
+	uint32 getHash() const;
+
+private:
+	/** Standard 32-bit FNV offset basis used for an empty input sequence. */
+	static constexpr uint32 kOffsetBasis = 2166136261u;
+	/** Standard 32-bit FNV prime used after XORing each byte. */
+	static constexpr uint32 kPrime = 16777619u;
+	/** Accumulated hash; the constructor and @ref FNV1a32Hasher::clear restore the offset basis. */
+	uint32 _hash = 0;
 };
 
 /**
@@ -121,8 +160,11 @@ public:
 	void initSfxGroupFlags() override;
 	bool canOpenSaveLoadDialog() const override { return true; }
 
-	/** Return a page-specific rule description for debug output. */
-	virtual Common::String debugGetAnswer() const { return "(no answer available)"; }
+	/** Return the default puzzle answer text; page overrides may parse debugger arguments. */
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override {
+		(void)args;
+		return "(no answer available)";
+	}
 
 	/**
 	 * Puzzles default to the "amorphous" chance type (a puzzle that does not

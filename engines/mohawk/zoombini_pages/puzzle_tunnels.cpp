@@ -2597,7 +2597,7 @@ bool ZoombiniPuzzleTunnels::debugSetChances(int16 remaining) {
 	return true;
 }
 
-Common::String ZoombiniPuzzleTunnels::debugGetAnswer() const {
+Common::String ZoombiniPuzzleTunnels::debugGetAnswer(const Common::Array<Common::String> &) const {
 	// 4 cave entrances are in a single horizontal row (y~=415-430):
 	//   Zone 1: x=98  (leftmost)     Zone 2: x=178 (left-center)
 	//   Zone 3: x=453 (right-center) Zone 4: x=533 (rightmost)

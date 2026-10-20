@@ -23,6 +23,8 @@
 #define MOHAWK_ZOOMBINI_PAGES_INTERACTIVE_BASE_H
 
 #include "audio/mixer.h"
+#include "common/array.h"
+#include "common/str.h"
 #include "mohawk/zoombini_page.h"
 
 namespace Mohawk {
@@ -153,8 +155,16 @@ public:
 	/**
 	 * Override to return a human-readable description of the current puzzle rule/answer.
 	 * Default implementation returns "(no answer required)".
+	 * Parse and validate page-specific arguments in the page implementation.
+	 * @param args Page-specific arguments after the command and answer subcommand.
+	 * An empty array requests the default answer.
 	 */
-	virtual Common::String debugGetAnswer() const { return "(no answer required)"; }
+	virtual Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const {
+		(void)args;
+		return "(no answer required)";
+	}
+	/** Return page-specific answer command help, or an empty string to use the common help. */
+	virtual Common::String debugGetAnswerCommandHelp() const { return Common::String(); }
 	/**
 	 * Override to describe how the page counts the player's chances, for the debug "puzzle chances" command.
 	 * @ref ZmbChanceInfo::ZmbChanceType::kNone marks a non-puzzle page.
