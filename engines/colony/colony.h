@@ -693,9 +693,9 @@ private:
 	int _powerWidth = 0;     // width of each of the 3 power bar columns
 	int _powerHeight = 0;    // pixel height per power bar unit (max 5)
 
-	// Cached decoded PICT surfaces for dashboard panels (Mac color mode)
+	// Cached Mac dashboard surfaces
 	Graphics::Surface *_pictPower = nullptr;      // PICT -32755 (normal) or -32760 (trouble)
-	Graphics::Surface *_pictPowerNoArmor = nullptr; // PICT -32761 (no armor, color)
+	Graphics::Surface *_pictPowerNoArmor = nullptr; // B&W panel from DrawInfo()
 	Graphics::Surface *_pictCompass = nullptr;     // PICT -32757
 	int _pictPowerID = 0;   // Track which PICT is cached
 	Graphics::Surface *loadPictSurface(int resID);
@@ -823,6 +823,7 @@ private:
 	bool updateScreenSize();
 	void drawDashboardStep1();
 	void drawDashboardMac();
+	void drawMacNoArmorPanel();
 	void drawDOSBarGraph(int x, int y, int height);
 	void updateDOSPowerBars();
 	void drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac, const Common::Rect *clip = nullptr);

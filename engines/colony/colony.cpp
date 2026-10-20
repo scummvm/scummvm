@@ -914,11 +914,7 @@ Common::Error ColonyEngine::run() {
 				warning("Failed to open Colony resource fork");
 			}
 		}
-		// Open Color Colony resource fork for shared PICT resources.
-		// The B&W Colony app references PICTs (-32752, -32757) that only
-		// exist in the Color Colony resource fork. Both apps were always
-		// distributed together — the B&W code dereferences GetPicture()
-		// without null checks, so these PICTs are required, not optional.
+		// Color Colony supplies additional dashboard PICT resources.
 		if (!_colorResMan->open("(Color) Colony")) {
 			warning("Color Colony resource fork not found — dashboard PICTs may be missing");
 		}
