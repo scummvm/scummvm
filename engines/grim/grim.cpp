@@ -161,6 +161,8 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_printLineDefaults.setFont(nullptr);
 	_printLineDefaults.setJustify(TextObject::LJUSTIFY);
 
+	_offscreenTextPos = getDefaultOffscreenTextPos();
+
 	_sayLineDefaults.setX(0);
 	_sayLineDefaults.setY(100);
 	_sayLineDefaults.setWidth(0);
@@ -1709,6 +1711,11 @@ void GrimEngine::pauseEngineIntern(bool pause) {
 		// It addresses bug #16667.
 		clearEventQueue();
 	}
+}
+
+Common::Point GrimEngine::getDefaultOffscreenTextPos() const {
+	// EMI shows them at the top of the screen
+	return Common::Point(320, _gameType == GType_MONKEY4 ? 30 : 450);
 }
 
 void GrimEngine::debugLua(const Common::String &str) {

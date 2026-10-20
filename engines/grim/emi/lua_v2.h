@@ -168,6 +168,7 @@ protected:
 	DECLARE_LUA_OPCODE(GetFontDimensions) override;
 	DECLARE_LUA_OPCODE(GetTextObjectDimensions) override;
 	DECLARE_LUA_OPCODE(GetTextCharPosition) override;
+	DECLARE_LUA_OPCODE(SetOffscreenTextPos) override;
 	DECLARE_LUA_OPCODE(SetActorRestChore) override;
 	DECLARE_LUA_OPCODE(SetActorWalkChore) override;
 	DECLARE_LUA_OPCODE(SetActorTurnChores) override;
