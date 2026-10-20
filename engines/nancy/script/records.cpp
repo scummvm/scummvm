@@ -127,9 +127,7 @@ void RecordGraphic::setScriptZ(double z, const SceneContext &context) {
 }
 
 // Where something that was placed in the viewport ends up once the transform
-// of its record has moved it.
-// TODO: Movies only take their place from the transform. Draw what it rotates
-// and scales as well.
+// of its record has moved it
 static Common::Rect getTransformedDest(const ScriptRect &dest, const ScriptMatrix &transform, int width, int height) {
 	// Far enough for anything a script moves around, and safe to add a size to
 	const int kLimit = 16000;
@@ -1551,10 +1549,36 @@ void MovieRecord::readTable(int tableIndex) {
 	readField(L, tableIndex, "pauseOnLastFrame", _pausesOnLastFrame);
 	readField(L, tableIndex, "visible", _isVisible);
 
+	// The whole of every frame, unless a part of it is asked for
+	_source = ScriptRect(0, 0, _player.getWidth(), _player.getHeight());
+	if (pushField(L, tableIndex, "source")) {
+		_source = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	double volume = 0.85;
+	readField(L, tableIndex, "volume", volume);
+	_player.setVolume((byte)CLIP<int>((int)(volume * 100.0 + 0.5), 0, 100));
+
+	// true is forever, false once, and a number that many times
+	lua_getfield(L, tableIndex, "loop");
+	if (lua_isboolean(L, -1)) {
+		_numLoops = lua_toboolean(L, -1) ? 0 : 1;
+	} else if (lua_isnumber(L, -1)) {
+		_numLoops = lua_tointeger(L, -1);
+	} else if (!lua_isnil(L, -1)) {
+		luaL_error(L, "loop must be either a boolean or a number");
+	}
+
+	lua_pop(L, 1);
+
+	if (pushField(L, tableIndex, "modColor")) {
+		_modColor = checkColor(L, -1);
+		lua_pop(L, 1);
+	}
+
 	_graphic.init();
-	_graphic._drawSurface.create(_player.getWidth(), _player.getHeight(), g_nancy->_graphics->getScreenPixelFormat());
 	_graphic.setVisible(false);
-	applyPosition();
 	onZChanged();
 	_graphic.registerGraphics();
 
@@ -1562,15 +1586,45 @@ void MovieRecord::readTable(int tableIndex) {
 	drawFrame();
 }
 
-void MovieRecord::applyPosition() {
-	_graphic.moveTo(getTransformedDest(_dest, getTransform(), _player.getWidth(), _player.getHeight()));
+// Scripts hide a movie that keeps playing with a color without any alpha
+bool MovieRecord::isSeeThrough() const {
+	return (_modColor >> 24) == 0;
 }
 
 void MovieRecord::drawFrame() {
-	// A frame with see-through parts would let the one before it show
-	_graphic._drawSurface.clear(0);
-	_player.drawFrame(_graphic._drawSurface, Common::Point(0, 0));
-	_graphic.setNeedsRedraw(true);
+	if (isSeeThrough()) {
+		return;
+	}
+
+	const ScriptMatrix transform = getTransform();
+	const Common::Rect source = _source.toRect();
+
+	if (transform.isTranslation() && _modColor == kNoModColor) {
+		Graphics::ManagedSurface &surface = _graphic._drawSurface;
+		if (surface.w != source.width() || surface.h != source.height() || !surface.getPixels()) {
+			surface.create(MAX<int>(source.width(), 1), MAX<int>(source.height(), 1), g_nancy->_graphics->getScreenPixelFormat());
+		}
+
+		// A frame with see-through parts would let the one before it show
+		surface.clear(0);
+		_player.drawFrame(surface, source, Common::Point(0, 0));
+		_graphic.setTransparent(false);
+		_graphic.moveTo(getTransformedDest(_dest, transform, source.width(), source.height()));
+		_graphic.setNeedsRedraw(true);
+		return;
+	}
+
+	// Turned, resized or colored frames get drawn anew, the way overlays are
+	if (_frame.w != _player.getWidth() || _frame.h != _player.getHeight()) {
+		_frame.create(_player.getWidth(), _player.getHeight(), g_nancy->_graphics->getScreenPixelFormat());
+	}
+
+	_frame.clear(0);
+	_player.drawFrame(_frame, Common::Point(0, 0));
+
+	Common::Rect clipped = source;
+	clipped.clip(Common::Rect(_frame.w, _frame.h));
+	placePicture(_graphic, _frame, clipped, _dest, transform, _modColor);
 }
 
 void MovieRecord::runOnce() {
@@ -1578,9 +1632,9 @@ void MovieRecord::runOnce() {
 	drawFrame();
 }
 
-// A movie that plays through and ends
+// A movie that plays through and ends; one that loops forever never does
 bool MovieRecord::isSkippable() const {
-	return isActive() && hasStarted() && !_isPaused && !_pausesOnLastFrame;
+	return isActive() && hasStarted() && !_isPaused && !_pausesOnLastFrame && _numLoops != 0;
 }
 
 void MovieRecord::run(double sceneTime, double elapsedTime) {
@@ -1619,6 +1673,14 @@ void MovieRecord::run(double sceneTime, double elapsedTime) {
 		return;
 	}
 
+	// Another time through
+	++_numPlayed;
+	if (_numLoops == 0 || _numPlayed < _numLoops) {
+		_player.playRange(_firstFrame, _lastFrame);
+		drawFrame();
+		return;
+	}
+
 	if (!_pausesOnLastFrame) {
 		_endTime = sceneTime;
 		finish();
@@ -1631,6 +1693,7 @@ void MovieRecord::run(double sceneTime, double elapsedTime) {
 
 bool MovieRecord::prepareReset() {
 	_endTime = 0.0;
+	_numPlayed = 0;
 	_skipFrame = -1;
 	_isPaused = false;
 	_hasCalledOnPause = false;
@@ -1644,7 +1707,7 @@ void MovieRecord::onZChanged() {
 }
 
 void MovieRecord::updateGraphics() {
-	_graphic.setVisible(isActive() && _isVisible);
+	_graphic.setVisible(isActive() && _isVisible && !isSeeThrough());
 }
 
 // movie:Play() and movie:Pause()
@@ -1673,6 +1736,10 @@ bool MovieRecord::getField(const Common::String &key) {
 		lua_pushstring(L, _name.c_str());
 	} else if (key == "onScreen") {
 		pushRect(L, _dest);
+	} else if (key == "source") {
+		pushRect(L, _source);
+	} else if (key == "modColor") {
+		pushColor(L, _modColor);
 	} else if (key == "Play") {
 		lua_pushcfunction(L, moviePlay);
 	} else if (key == "Pause") {
@@ -1710,6 +1777,21 @@ bool MovieRecord::setField(const Common::String &key) {
 			_dest = dest;
 			applyPosition();
 		}
+	} else if (key == "source" && g_nancy->getGameType() >= kGameTypeNancy21) {
+		// Earlier games only take the part of the frames when the movie is made
+		const ScriptRect source = checkRect(L, 3);
+		if (source != _source) {
+			_source = source;
+			drawFrame();
+		}
+	} else if (key == "modColor") {
+		const uint32 modColor = checkColor(L, 3);
+		if (modColor != _modColor) {
+			_modColor = modColor;
+			drawFrame();
+		}
+	} else if (key == "volume") {
+		_player.setVolume((byte)CLIP<int>((int)(luaL_checknumber(L, 3) * 100.0 + 0.5), 0, 100));
 	} else if (key == "pauseOnLastFrame") {
 		_pausesOnLastFrame = lua_toboolean(L, 3) != 0;
 	} else if (key == "visible") {

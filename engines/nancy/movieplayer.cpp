@@ -344,4 +344,16 @@ void MoviePlayer::drawFrame(Graphics::ManagedSurface &dst, const Common::Point &
 	}
 }
 
+void MoviePlayer::drawFrame(Graphics::ManagedSurface &dst, const Common::Rect &source, const Common::Point &pos) const {
+	if (!_currentSurface) {
+		return;
+	}
+
+	Common::Rect area = source;
+	area.clip(Common::Rect(_currentSurface->w, _currentSurface->h));
+	if (!area.isEmpty()) {
+		dst.blitFrom(*_currentSurface, area, Common::Point(pos.x + area.left - source.left, pos.y + area.top - source.top));
+	}
+}
+
 } // End of namespace Nancy

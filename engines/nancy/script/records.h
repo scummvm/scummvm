@@ -379,8 +379,7 @@ private:
 	uint _numRevealed = 0;
 };
 
-// Plays a movie in the viewport
-// TODO: Handle the source, volume, loop and modColor fields.
+// Plays a part of a movie in the viewport, once, a number of times or forever
 class MovieRecord : public Record {
 public:
 	MovieRecord(SceneContext &context) : Record(context, "ND.Movie") {}
@@ -402,13 +401,22 @@ protected:
 	bool setField(const Common::String &key) override;
 
 private:
+	bool isSeeThrough() const;
 	void drawFrame();
-	void applyPosition();
+	void applyPosition() { drawFrame(); }
 
 	Common::String _name;
 	MoviePlayer _player;
 	RecordGraphic _graphic;
+	ScriptRect _source;
 	ScriptRect _dest;
+	uint32 _modColor = 0xFFFFFFFF;	// what the colors of the frames get multiplied with
+
+	// What a turned, resized or colored frame gets drawn from
+	Graphics::ManagedSurface _frame;
+
+	int _numLoops = 1;		// 0 for forever
+	int _numPlayed = 0;
 	int _skipFrame = -1;	// the frame a skipped movie is at; -1 when not skipped
 
 	int _firstFrame = 0;

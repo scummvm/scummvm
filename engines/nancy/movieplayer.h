@@ -113,6 +113,7 @@ public:
 	bool isRangePlaying() const { return _rangePlaying; }
 	int getCurrentFrame() const { return getCurFrame(); }
 	void drawFrame(Graphics::ManagedSurface &dst, const Common::Point &pos) const;
+	void drawFrame(Graphics::ManagedSurface &dst, const Common::Rect &source, const Common::Point &pos) const;	// a part of it
 
 private:
 	friend class BinkCacheLoader;
