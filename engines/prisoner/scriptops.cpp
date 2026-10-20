@@ -984,10 +984,11 @@ int16 ScriptOpcodes::op_togglePathSystem(Script *script) {
 }
 
 int16 ScriptOpcodes::op_startMusicE(Script *script) {
-	debug("ARGS!"); // TODO
 	ARG_EVALUATE(musicIndex);
+	if (musicIndex == -2)
+		return 0;
 	_vm->playMusic(musicIndex);
-	return 0;
+	return musicIndex;
 }
 
 int16 ScriptOpcodes::op_unloadMusic(Script *script) {
@@ -1110,10 +1111,9 @@ int16 ScriptOpcodes::op_playActorAnimationAtPos(Script *script) {
 
 int16 ScriptOpcodes::op_startMusic(Script *script) {
 	ARG_EVALUATE(musicIndex);
-	ARG_EVALUATE(unk);
- 	// TODO
-	_vm->playMusic(musicIndex);
-	return 0;
+	ARG_EVALUATE(loopCount);
+	_vm->playMusic(musicIndex, true, loopCount);
+	return musicIndex;
 }
 
 int16 ScriptOpcodes::op_setBackgroundCameraLocked(Script *script) {

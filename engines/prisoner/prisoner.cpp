@@ -71,6 +71,9 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_rnd = new Common::RandomSource("prisoner");
 
+	// TODO: Make this configurable like the original's music type setting
+	_digitalMusic = true;
+
 	_menuFunctionArray[MAIN_PANEL] = &PrisonerEngine::updateMainMenu;
 	_menuFunctionArray[OPTIONS_PANEL] = &PrisonerEngine::updateOptionsMenu;
 }

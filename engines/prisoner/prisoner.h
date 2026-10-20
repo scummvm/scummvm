@@ -516,8 +516,10 @@ struct MusicSlot {
 	bool isPlaying;
 	bool shouldResume;
 	bool moduleWide;
+	bool isDigital;
+	Audio::SoundHandle handle;
 	bool isEmpty() const { return resourceCacheSlot == -1; }
-	void clear() { resourceCacheSlot = -1; }
+	void clear() { resourceCacheSlot = -1; isPlaying = false; isDigital = false; }
 };
 
 const int16 kMaxMusics = 3;
@@ -806,6 +808,8 @@ public:
 
 	/* Music */
 	MidiPlayer *_midi;
+	// Play the digital ("W" pak) music like the original's digital music mode
+	bool _digitalMusic;
 
 	/* Font colors */
 	FontColorDef _dialogFontColor, _dialogHoverFontColor, _inventoryFontColor,
@@ -1137,7 +1141,7 @@ public:
 	void shutdownMidi();
 
 	ObjectStorage<MusicSlot, kMaxMusics> _musics;
-	void playMusic(int16 musicIndex);
+	void playMusic(int16 musicIndex, bool loop = false, int16 loopCount = 0);
 	void stopMusic(int16 musicIndex);
 	void stopMusics();
 	bool isMusicPlaying(int16 musicIndex);

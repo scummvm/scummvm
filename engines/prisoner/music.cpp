@@ -25,40 +25,60 @@
 
 #include "common/stream.h"
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+
 #include "prisoner/prisoner.h"
 #include "prisoner/resource.h"
 #include "prisoner/midi.h"
 
 namespace Prisoner {
 
-void PrisonerEngine::playMusic(int16 musicIndex) {
+void PrisonerEngine::playMusic(int16 musicIndex, bool loop, int16 loopCount) {
 	if (musicIndex >= 0) {
 		MusicSlot &musicSlot = _musics[musicIndex];
-		stopSound(musicIndex);
+		stopMusic(musicIndex);
 		// If no other volume was set use the default one
 		if (!musicSlot.volumeFlag)
-			setMusicVolume(musicIndex, 100);
+			setMusicVolume(musicIndex, 100); // TODO
 		musicSlot.isPlaying = true;
 		musicSlot.shouldResume = false;
-		MidiResource *midiResource = _res->get<MidiResource>(musicSlot.resourceCacheSlot);
-		_midi->playMusic(midiResource, musicSlot.volume, true);
+		if (musicSlot.isDigital) {
+			// The original restarts a looping track at its end and decrements the
+			// loop count each time; a count <= 0 loops forever, otherwise the track
+			// plays loopCount + 1 times.
+			uint loops = 1;
+			if (loop)
+				loops = loopCount <= 0 ? 0 : loopCount + 1;
+			SoundResource *soundResource = _res->get<SoundResource>(musicSlot.resourceCacheSlot);
+			Audio::AudioStream *audioStream = soundResource->createLoopingAudioStream(loops);
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &musicSlot.handle,
+				audioStream, -1, Audio::Mixer::kMaxChannelVolume / 100 * musicSlot.volume, 0, DisposeAfterUse::YES);
+		} else {
+			MidiResource *midiResource = _res->get<MidiResource>(musicSlot.resourceCacheSlot);
+			_midi->playMusic(midiResource, musicSlot.volume, loop);
+		}
 	}
 }
 
 void PrisonerEngine::stopMusic(int16 musicIndex) {
 	if (musicIndex >= 0) {
 		MusicSlot &musicSlot = _musics[musicIndex];
-		_midi->stopMusic();
+		if (musicSlot.isDigital) {
+			if (_mixer->isSoundHandleActive(musicSlot.handle))
+				_mixer->stopHandle(musicSlot.handle);
+		} else {
+			_midi->stopMusic();
+		}
 		musicSlot.isPlaying = false;
 		musicSlot.shouldResume = false;
 	}
 }
 
 void PrisonerEngine::stopMusics() {
-	int16 index = 0;
-	while (!_musics[index++].isEmpty()) {
-		if (_musics[index].isPlaying) {
-			stopMusic(index);
+	for (int16 musicIndex = 0; musicIndex < kMaxMusics; musicIndex++) {
+		if (!_musics[musicIndex].isEmpty() && _musics[musicIndex].isPlaying) {
+			stopMusic(musicIndex);
 		}
 	}
 }
@@ -66,6 +86,8 @@ void PrisonerEngine::stopMusics() {
 bool PrisonerEngine::isMusicPlaying(int16 musicIndex) {
 	if (musicIndex >= 0) {
 		MusicSlot &musicSlot = _musics[musicIndex];
+		if (musicSlot.isDigital)
+			return _mixer->isSoundHandleActive(musicSlot.handle);
 		return musicSlot.isPlaying;
 	} else
 		return false;
@@ -78,16 +100,33 @@ void PrisonerEngine::setMusicVolume(int16 musicIndex, uint volume) {
 		musicSlot.volumeFlag = true;
 		// Update the volume if the sound is playing
 		if (musicSlot.isPlaying) {
-			_midi->setVolume(volume);
+			if (musicSlot.isDigital) {
+				if (_mixer->isSoundHandleActive(musicSlot.handle))
+					_mixer->setChannelVolume(musicSlot.handle, Audio::Mixer::kMaxChannelVolume / 100 * volume);
+			} else {
+				_midi->setVolume(volume);
+			}
 		}
 	}
 }
 
 int16 PrisonerEngine::loadMusic(Common::String &pakName, int16 pakSlot, bool moduleWide) {
-	int16 musicIndex = _musics.getFreeSlot();
+	// The original only has one music slot and always replaces what's in it
+	const int16 musicIndex = 0;
+	if (!_musics[musicIndex].isEmpty())
+		unloadMusic(musicIndex);
 	MusicSlot &musicSlot = _musics[musicIndex];
-	musicSlot.resourceCacheSlot = _res->load<MidiResource>(pakName, pakSlot, 12);
+	musicSlot.isDigital = _digitalMusic;
+	if (musicSlot.isDigital) {
+		// Digital music lives in the "W" paks ("MUS02" -> "WUS02"), same slot
+		Common::String digiPakName = pakName;
+		digiPakName.setChar('W', 0);
+		musicSlot.resourceCacheSlot = _res->load<SoundResource>(digiPakName, pakSlot, 12);
+	} else {
+		musicSlot.resourceCacheSlot = _res->load<MidiResource>(pakName, pakSlot, 13);
+	}
 	musicSlot.moduleWide = moduleWide;
+	musicSlot.isPlaying = false;
 	musicSlot.shouldResume = false;
 	musicSlot.volumeFlag = false;
 	return musicIndex;

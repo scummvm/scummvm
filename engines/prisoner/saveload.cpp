@@ -1044,7 +1044,15 @@ void PrisonerEngine::loadgame(const char *filename) {
 		MusicSlot &musicSlot = _musics[musicIndex];
 		musicSlot.resourceCacheSlot = in->readUint16LE();
 		if (musicSlot.resourceCacheSlot != -1) {
-			musicSlot.resourceCacheSlot = loadResourceCacheSlotInfo<MidiResource>(_res, in);
+			Common::String pakName;
+			int16 pakSlot;
+			readResourceCacheSlotInfo(in, pakName, pakSlot);
+			// Digital music is loaded from the "W" paks, MIDI from the "M" paks
+			musicSlot.isDigital = pakName.hasPrefix("W");
+			if (musicSlot.isDigital)
+				musicSlot.resourceCacheSlot = _res->load<SoundResource>(pakName, pakSlot, 12);
+			else
+				musicSlot.resourceCacheSlot = _res->load<MidiResource>(pakName, pakSlot, 13);
 			musicSlot.volumeFlag = in->readByte() != 0;
 			musicSlot.volume = in->readUint16LE();
 			musicSlot.shouldResume = in->readByte() != 0;
