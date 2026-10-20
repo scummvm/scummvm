@@ -97,7 +97,7 @@ protected:
 	/** Depart with accepted room occupants after completion. */
 	void onGoButtonActivated() override;
 	/** Describe the generated room rules for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
 	/** Describe the Hotel Dimensia built-in debug actions. */
 	Common::String debugGetBuiltinDebugCommandHelp() const override;
 	/** Run one Hotel Dimensia built-in debug action. */

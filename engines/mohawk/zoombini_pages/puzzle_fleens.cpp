@@ -1569,7 +1569,7 @@ bool ZoombiniPuzzleFleens::debugSetChances(int16 remaining) {
 	return true;
 }
 
-Common::String ZoombiniPuzzleFleens::debugGetAnswer() const {
+Common::String ZoombiniPuzzleFleens::debugGetAnswer(const Common::Array<Common::String> &) const {
 	Common::String answer = getDebugBanner();
 	answer += Common::String::format(", lured %d/3:\n", _matchedTargetCount);
 

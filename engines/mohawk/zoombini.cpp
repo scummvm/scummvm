@@ -1231,6 +1231,38 @@ MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
 	return _midiMhk;
 }
 
+bool MohawkEngine_Zoombini::debugRetryPuzzle() {
+	if (!_state->isGameStateReady())
+		return false;
+
+	// Active page is not a puzzle.
+	if (!dynamic_cast<ZoombiniPuzzle *>(_activePage))
+		return false;
+
+	// The page is in a transition, or a dialog is open.
+	if (!_pageQueue.empty() || _activePage->isClosed() || hasDialogOpened())
+		return false;
+
+	// Do not retry while quitting is requested or already in progress.
+	if (_quitEventState != kQuitEventNone || _pendingQuitRequest != kPendingQuitNone || shouldQuit())
+		return false;
+
+	// Preserve every current party member.
+	_activePage->saveSnoidsToPack(true);
+
+	// Journey mode retains ordinary dirty tracking and offers to save before quitting.
+	if (!_state->inPracticeMode()) {
+		_state->getCurrentState()._isDirty = true;
+		_state->markSaveBeforeQuitPending();
+	}
+
+	// Reopen the same puzzle through the normal page lifecycle.
+	// Keep the destination unchanged even in the v1.1US demo's practice mode.
+	queueNextPage(_activePage->getPageType());
+	_activePage->close();
+	return true;
+}
+
 void MohawkEngine_Zoombini::loadNextPage() {
 	if (_quitEventState == kQuitEventRunning) {
 		_quitEventState = kQuitEventDone;
@@ -1451,6 +1483,10 @@ void MohawkEngine_Zoombini::setNextPage(ZoombiniPageType type) {
 			_state->markSaveBeforeQuitPending();
 	}
 
+	queueNextPage(type);
+}
+
+void MohawkEngine_Zoombini::queueNextPage(ZoombiniPageType type) {
 	_pageQueue.clear();
 	_pageQueue.push(type);
 	debugC(2, MohawkEngine_Zoombini::kDebugPage02, "engine: queued page type %d", static_cast<int>(type));

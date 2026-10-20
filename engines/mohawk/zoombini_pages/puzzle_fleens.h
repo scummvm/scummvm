@@ -240,7 +240,7 @@ protected:
 	/** Continue the Fleen controller while the departure sound is active. */
 	bool runsControllerDuringDeparture() const override { return true; }
 	/** Describe the target trait assignments for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
 	/** Describe the Fleens built-in debug actions. */
 	Common::String debugGetBuiltinDebugCommandHelp() const override;
 	/** Run one Fleens built-in debug action. */

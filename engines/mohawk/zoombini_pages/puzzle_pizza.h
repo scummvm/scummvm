@@ -110,17 +110,13 @@ protected:
 	/** Begin the departure sequence for accepted deliveries. */
 	void onGoButtonActivated() override;
 	/** Describe the inferred troll orders for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
 	/** Report Pizza Pass mistake-budget usage for diagnostics. */
 	ZmbChanceInfo debugGetChances() const override;
 	/** Pizza Pass supports debugger chance adjustment. */
 	bool debugCanSetChances() const override { return true; }
 	/** Set Pizza Pass mistake-budget usage for diagnostics. */
 	bool debugSetChances(int16 remaining) override;
-	/** Handle Pizza-specific delivery setup commands. */
-	bool debugDoPageCommand(int argc, const char **argv, Common::String &output) override;
-	/** Describe Pizza-specific delivery setup commands. */
-	Common::String debugGetPageCommandHelp() const override;
 	/** Run a Pizza built-in debug action. */
 	bool debugDoBuiltinDebugCommand(int argc, const char **argv, Common::String &output) override;
 	/** Describe Pizza built-in debug actions. */

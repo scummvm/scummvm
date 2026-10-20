@@ -432,7 +432,7 @@ void ZoombiniPuzzleNet::updateChanceVisualAnimation() {
 	}
 }
 
-Common::String ZoombiniPuzzleNet::debugGetAnswer() const {
+Common::String ZoombiniPuzzleNet::debugGetAnswer(const Common::Array<Common::String> &) const {
 	Common::String s = getDebugBanner();
 	s += Common::String::format(": %d target(s)\n", _targetCount);
 

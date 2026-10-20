@@ -63,8 +63,13 @@ public:
 	const ZoombiniPage::ScriptSoundPriorityRanges &getScriptSoundPriorityRanges() const override;
 	/** Describe the Picker debugger subcommand. */
 	Common::String debugGetPageCommandHelp() const override;
-	/** Handle a Picker debugger subcommand from the console's page command. */
-	bool debugDoPageCommand(int argc, const char **argv, Common::String &output) override;
+	/**
+	 * Handle a Picker debugger subcommand from the console's page command.
+	 * @param args Page subcommand followed by its arguments; excludes the registered page/puzzle command.
+	 * @param output Diagnostic result or usage text to print in the debugger.
+	 * @return True to keep the debugger open; false to resume the game.
+	 */
+	bool debugDoPageCommand(const Common::Array<Common::String> &args, Common::String &output) override;
 	/** Describe the Picker built-in debug actions. */
 	Common::String debugGetBuiltinDebugCommandHelp() const override;
 	/** Run one Picker built-in debug action. */

@@ -201,7 +201,7 @@ protected:
 	/** Return the sound priority used by page SCRB playback. */
 	const ZoombiniPage::ScriptSoundPriorityRanges &getScriptSoundPriorityRanges() const override;
 	/** Describe the generated mirror comparison for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
 	/** Describe the Mirror Machine built-in debug actions. */
 	Common::String debugGetBuiltinDebugCommandHelp() const override;
 	/** Run one Mirror Machine built-in debug action. */

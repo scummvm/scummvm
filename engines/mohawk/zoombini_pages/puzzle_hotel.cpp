@@ -316,7 +316,7 @@ bool ZoombiniPuzzleHotel::debugSetChances(int16 remaining) {
 	return true;
 }
 
-Common::String ZoombiniPuzzleHotel::debugGetAnswer() const {
+Common::String ZoombiniPuzzleHotel::debugGetAnswer(const Common::Array<Common::String> &) const {
 	const bool axis1Valid = isValidTraitAxis(_axis1TraitAxis);
 	const bool axis2Valid = isValidTraitAxis(_axis2TraitAxis);
 	const bool axis3Valid = isValidTraitAxis(_axis3TraitAxis);

@@ -57,8 +57,13 @@ public:
 	/** Return the original Town script-sound range priority. */
 	const ZoombiniPage::ScriptSoundPriorityRanges &getScriptSoundPriorityRanges() const override;
 
-	/** Handle Town-specific state controls exposed through the page debugger command. */
-	bool debugDoPageCommand(int argc, const char **argv, Common::String &output) override;
+	/**
+	 * Handle Town-specific state controls exposed through the page debugger command.
+	 * @param args Page subcommand followed by its arguments; excludes the registered page/puzzle command.
+	 * @param output Diagnostic result or usage text to print in the debugger.
+	 * @return True to keep the debugger open; false to resume the game.
+	 */
+	bool debugDoPageCommand(const Common::Array<Common::String> &args, Common::String &output) override;
 	/** Describe Town-specific debugger subcommands for the top-level page help. */
 	Common::String debugGetPageCommandHelp() const override;
 

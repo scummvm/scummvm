@@ -443,12 +443,36 @@ void ZoombiniPuzzleMaze::debugMazeInitializePlanState(const ZoombiniPuzzleMaze::
 	}
 }
 
+ZoombiniPuzzleMaze::SolverBudget::SolverBudget(uint32 searchTimeLimit)
+	: timeLimit(searchTimeLimit) {
+	if (timeLimit)
+		started = g_system->getMillis(true);
+}
+
+bool ZoombiniPuzzleMaze::SolverBudget::isExpired() const {
+	return timeLimit && timeLimit <= static_cast<uint32>(g_system->getMillis(true) - started);
+}
+
+bool ZoombiniPuzzleMaze::parseDebugSearchTimeLimit(const Common::Array<Common::String> &args, uint32 &timeLimit) {
+	if (args.empty()) {
+		timeLimit = 5000;
+		return true;
+	}
+	if (args.size() != 1 || args[0].empty())
+		return false;
+	uint32 seconds = 0;
+	if (!ZmbResource::parseUnsignedInt(args[0].c_str(), seconds) || seconds < 1 || 60 < seconds)
+		return false;
+	timeLimit = seconds * 1000;
+	return true;
+}
+
 bool ZoombiniPuzzleMaze::debugMazeApplyPlanLaunch(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverPlanState &state, int16 snoidIdx, int16 seatIdx, ZoombiniPuzzleMaze::SolverPlanAction &action, ZoombiniPuzzleMaze::SolverBudget &budget) {
 	action.clear();
 
 	// Count every simulated launch so the answer can report the search cost.
-	// A zero limit only disables the cap, not the count.
-	if (budget.limit && budget.limit <= budget.steps)
+	// Answer searches and condition-repair probes share their caller's deadline.
+	if (budget.isExpired())
 		return false;
 	budget.steps += 1;
 	if (snoidIdx < 0 || context.snoidCount <= snoidIdx || !context.snoids[snoidIdx] ||
@@ -478,6 +502,8 @@ bool ZoombiniPuzzleMaze::debugMazeApplyPlanLaunch(const ZoombiniPuzzleMaze::Solv
 
 	// Finish every resulting movement before testing this candidate's final state.
 	while (0 < movingCount) {
+		if (budget.isExpired())
+			return false;
 		movingCount -= 1;
 		ZoombiniPuzzleMaze::SolverMovingSnoid moving = movingQueue[movingCount];
 		bool routeEnded = false;
@@ -704,6 +730,8 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeL4Plan(const ZoombiniPuzzleMaz
 					debugMazePlanIsStagingKey(stagingKeys, stagingKeyCount, finalKey))
 					continue;
 				for (int16 highwaySeat = 0; highwaySeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; highwaySeat++) {
+					if (budget.isExpired())
+						return false;
 					if (!context.seatActive[highwaySeat] || context.seatCorner[highwaySeat] != 0)
 						continue;
 					// Ordinary deliveries must finish without changing the switches needed by the reserved keys.
@@ -729,6 +757,8 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeL4Plan(const ZoombiniPuzzleMaz
 
 					// The rescue switch must deliver its key and leave each staging key accepted or ready for final release.
 					for (int16 rescueSeat = 0; rescueSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; rescueSeat++) {
+						if (budget.isExpired())
+							return false;
 						if (!context.seatActive[rescueSeat] || context.seatCorner[rescueSeat] != 0)
 							continue;
 						ZoombiniPuzzleMaze::SolverPlanState rescueState = batchState;
@@ -754,6 +784,8 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeL4Plan(const ZoombiniPuzzleMaz
 
 						// Push the primary key to safety and retain the pusher in the final sticky group.
 						for (int16 pusherSeat = 0; pusherSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; pusherSeat++) {
+							if (budget.isExpired())
+								return false;
 							if (!context.seatActive[pusherSeat] || context.seatCorner[pusherSeat] != 0)
 								continue;
 							ZoombiniPuzzleMaze::SolverPlanState pushState = rescueState;
@@ -766,6 +798,8 @@ bool ZoombiniPuzzleMaze::debugCompleteExpandedMazeL4Plan(const ZoombiniPuzzleMaz
 
 							// Keep a relay only when its last switch releases the pusher and completes the entire pack.
 							for (int16 finalSeat = 0; finalSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; finalSeat++) {
+								if (budget.isExpired())
+									return false;
 								if (!context.seatActive[finalSeat] || context.seatCorner[finalSeat] != 0)
 									continue;
 								ZoombiniPuzzleMaze::SolverPlanState finalState = pushState;
@@ -825,6 +859,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 	// Transfer the staging key to a corner with an onward launcher before operating the primary switch.
 	for (int16 stagingKey = 0; stagingKey < context.snoidCount; stagingKey++) {
 		for (int16 stagingSeat = 0; stagingSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; stagingSeat++) {
+			if (budget.isExpired())
+				return false;
 			if (!context.seatActive[stagingSeat] || context.seatCorner[stagingSeat] != 0)
 				continue;
 			ZoombiniPuzzleMaze::SolverPlanState stagedState = initialState;
@@ -835,6 +871,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 			const int16 stagingCorner = stagedState.snoids[stagingKey].corner;
 			bool hasStagingLauncher = false;
 			for (int16 seatIdx = 0; seatIdx < ZoombiniPuzzleMaze::kDebugMazeSeatCount; seatIdx++) {
+				if (budget.isExpired())
+					return false;
 				if (context.seatActive[seatIdx] && context.seatCorner[seatIdx] == stagingCorner) {
 					hasStagingLauncher = true;
 					break;
@@ -848,6 +886,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 				if (primaryKey == stagingKey)
 					continue;
 				for (int16 primarySeat = 0; primarySeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; primarySeat++) {
+					if (budget.isExpired())
+						return false;
 					if (!context.seatActive[primarySeat] || context.seatCorner[primarySeat] != 0)
 						continue;
 					ZoombiniPuzzleMaze::SolverPlanState primaryState = stagedState;
@@ -859,6 +899,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 
 					// Relaunch the staged key to open the highway and establish the staging sticky group.
 					for (int16 stagingExitSeat = 0; stagingExitSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; stagingExitSeat++) {
+						if (budget.isExpired())
+							return false;
 						if (!context.seatActive[stagingExitSeat] ||
 							context.seatCorner[stagingExitSeat] != stagingCorner)
 							continue;
@@ -881,6 +923,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 										continue;
 									// Deliver every non-key Zoombini while preserving the open highway's switch state.
 									for (int16 highwaySeat = 0; highwaySeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; highwaySeat++) {
+										if (budget.isExpired())
+											return false;
 										if (!context.seatActive[highwaySeat] || context.seatCorner[highwaySeat] != 0)
 											continue;
 										ZoombiniPuzzleMaze::SolverPlanState batchState = highwayState;
@@ -904,6 +948,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 
 										// The rescue must make the primary key's escape safe without stranding the staging key.
 										for (int16 rescueSeat = 0; rescueSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; rescueSeat++) {
+											if (budget.isExpired())
+												return false;
 											if (!context.seatActive[rescueSeat] || context.seatCorner[rescueSeat] != 0)
 												continue;
 											ZoombiniPuzzleMaze::SolverPlanState rescueState = batchState;
@@ -920,6 +966,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 
 											// Replace the primary key with a pusher whose stored direction permits a safe release.
 											for (int16 pusherSeat = 0; pusherSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; pusherSeat++) {
+												if (budget.isExpired())
+													return false;
 												if (!context.seatActive[pusherSeat] || context.seatCorner[pusherSeat] != 0)
 													continue;
 												ZoombiniPuzzleMaze::SolverPlanState pushState = rescueState;
@@ -932,6 +980,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 
 												// Validate the final release against the whole pack before publishing the named relay stages.
 												for (int16 finalSeat = 0; finalSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; finalSeat++) {
+													if (budget.isExpired())
+														return false;
 													if (!context.seatActive[finalSeat] || context.seatCorner[finalSeat] != 0)
 														continue;
 													ZoombiniPuzzleMaze::SolverPlanState finalState = pushState;
@@ -1032,6 +1082,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 						continue;
 					bool hasStagingLauncher = false;
 					for (int16 seatIdx = 0; seatIdx < ZoombiniPuzzleMaze::kDebugMazeSeatCount; seatIdx++) {
+						if (budget.isExpired())
+							return false;
 						if (context.seatActive[seatIdx] && context.seatCorner[seatIdx] == stagedRelay.stagingCorner) {
 							hasStagingLauncher = true;
 							break;
@@ -1044,6 +1096,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 						if (debugMazePlanIsStagingKey(stagedRelay.stagingKeys, stagedRelay.stagingKeyCount, primaryKey))
 							continue;
 						for (int16 primarySeat = 0; primarySeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; primarySeat++) {
+							if (budget.isExpired())
+								return false;
 							if (!context.seatActive[primarySeat] || context.seatCorner[primarySeat] != 0)
 								continue;
 							ZoombiniPuzzleMaze::SolverPlanState primaryState = stagedState;
@@ -1062,6 +1116,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 									continue;
 								// Test each highway order from the same primary state; failed orders must not affect later trials.
 								for (int16 permutationIdx = 0; permutationIdx < 24; permutationIdx++) {
+									if (budget.isExpired())
+										return false;
 									stagedRelay.postHighwayState = primaryState;
 									bool highwayValid = true;
 									bool highwaySwitchPressed = false;
@@ -1108,11 +1164,7 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4PlanForGroups(const ZoombiniPuzzleMaze:
 	return false;
 }
 
-bool ZoombiniPuzzleMaze::debugBuildMazeL4Plan(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverLevel4Plan &plan, bool &searchExhausted, uint32 &stepsUsed) {
-	ZoombiniPuzzleMaze::SolverBudget budget;
-	budget.steps = 0;
-	budget.limit = kDebugMazeSolverMaxSteps;
-	SolverStepCounter stepCounter(budget, stepsUsed);
+bool ZoombiniPuzzleMaze::debugBuildMazeL4Plan(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverLevel4Plan &plan, ZoombiniPuzzleMaze::SolverBudget &budget) {
 	// Classify switch groups by their devices before assigning the four distinct relay roles.
 	int16 switchCellsByGroup[9];
 	int16 branchCounts[9];
@@ -1163,13 +1215,10 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4Plan(const ZoombiniPuzzleMaze::SolverPl
 						ZoombiniPuzzleMaze::SolverLevel4Plan candidate;
 						if (debugBuildMazeL4PlanForGroups(context, groupSel, candidate, budget)) {
 							plan = candidate;
-							budget.limit = 0;
 							return true;
 						}
-						if (kDebugMazeSolverMaxSteps <= budget.steps) {
+						if (budget.isExpired()) {
 							// Every role combination shares one budget so a difficult pack cannot restart the cap repeatedly.
-							budget.limit = 0;
-							searchExhausted = true;
 							return false;
 						}
 					}
@@ -1177,8 +1226,6 @@ bool ZoombiniPuzzleMaze::debugBuildMazeL4Plan(const ZoombiniPuzzleMaze::SolverPl
 			}
 		}
 	}
-	budget.limit = 0;
-	searchExhausted = kDebugMazeSolverMaxSteps <= budget.steps;
 	return false;
 }
 
@@ -1201,35 +1248,79 @@ bool ZoombiniPuzzleMaze::debugMazePlanMatchesTrait(const ZoombiniPuzzleMaze::Sol
 	return (debugMazeTraitValue(context.snoids[snoidIdx]->_trait, category) == value) == matched;
 }
 
-uint64 ZoombiniPuzzleMaze::debugMazePlanStateHash(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverPlanState &state) {
-	// FNV-1a starts with the offset basis, then XORs each encoded byte and multiplies by the FNV prime.
-	// Unsigned multiplication wraps modulo 2^64; no bit range in the result represents an individual field.
-	// For valid solver states, every value below fits in one byte after its encoding offset is applied.
-	// Hash logical bytes rather than struct memory, so padding and native byte order do not affect the fingerprint.
-	uint64 hash = kSolverHashOffsetBasis;
+ZoombiniPuzzleMaze::SolverStateKey::SolverStateKey() = default;
 
-	// Mix the full arrow grid first, in row-major order, with direction codes shifted by 5.
-	for (int16 row = 0; row < ZoombiniPuzzleMaze::kDebugMazeRows; row++) {
-		for (int16 col = 0; col < ZoombiniPuzzleMaze::kDebugMazeCols; col++) {
-			hash ^= static_cast<uint64>(state.directions[row][col] + 5);
-			hash *= kSolverHashPrime;
-		}
+ZoombiniPuzzleMaze::SolverStateKey::SolverStateKey(const SolverStateKey &other)
+	: _hash(other._hash), _size(other._size) {
+	memcpy(_encoding, other._encoding, _size);
+}
+
+ZoombiniPuzzleMaze::SolverStateKey &ZoombiniPuzzleMaze::SolverStateKey::operator=(const SolverStateKey &other) {
+	if (this != &other) {
+		// Deep copy from the other struct.
+		_hash = other._hash;
+		_size = other._size;
+		memcpy(_encoding, other._encoding, _size);
+	}
+	return *this;
+}
+
+// Inline byte appends in unoptimized builds as well, since every state records many fields.
+FORCEINLINE void ZoombiniPuzzleMaze::SolverStateKey::appendByte(byte value) {
+	_encoding[_size] = value;
+	_size += 1;
+}
+
+void ZoombiniPuzzleMaze::SolverStateKey::updateHash() {
+	FNV1a32Hasher hasher;
+	hasher.addBytes(_encoding, _size);
+	_hash = hasher.getHash();
+}
+
+uint32 ZoombiniPuzzleMaze::SolverStateKey::getHash() const {
+	return _hash;
+}
+
+bool ZoombiniPuzzleMaze::SolverStateKey::operator==(const SolverStateKey &other) const {
+	// Reject different hashes before reading the stored bytes; matching hashes still require exact equality.
+	if (_hash != other._hash || _size != other._size)
+		return false;
+	return memcmp(_encoding, other._encoding, _size) == 0;
+}
+
+uint ZoombiniPuzzleMaze::SolverStateKeyHash::operator()(const SolverStateKey &key) const {
+	return key.getHash();
+}
+
+ZoombiniPuzzleMaze::SolverStateKey ZoombiniPuzzleMaze::SolverStateKey::fromPlanState(const SolverPlanContext &context, const SolverPlanState &state) {
+	// Encode logical bytes rather than struct memory, so padding and native byte order do not affect equality.
+	SolverStateKey key;
+	assert(static_cast<uint32>(context.cellCount + context.snoidCount * 3) <= kMaxEncodingSize);
+
+	// Direction changes are confined to layout cells; omitting the rest of the grid avoids hashing fixed data.
+	for (int16 cellIdx = 0; cellIdx < context.cellCount; cellIdx++) {
+		const MazeCellState &cell = context.cells[cellIdx];
+		key.appendByte(static_cast<byte>(state.directions[cell.row][cell.col] + 5));
 	}
 
-	// Mix positions in pack order, preserving each Zoombini's identity for this accepted-only search.
-	// Each slot contributes corner + 5, held-cell index + 2 (-1 means not held), and accepted as 0 or 1.
-	// The offsets encode negative position markers as positive bytes; they are not part of the FNV algorithm.
-	// For example, corner 0 with no held cell and accepted == false contributes bytes 5, 1, 0.
+	// Append three bytes per Zoombini in pack order after the cell directions.
+	// In the final byte, bit zero marks acceptance and the remaining bits encode held heading + 1, or zero when not held.
 	for (int16 snoidIdx = 0; snoidIdx < context.snoidCount; snoidIdx++) {
 		const ZoombiniPuzzleMaze::SolverPlanSnoidState &snoidState = state.snoids[snoidIdx];
-		hash ^= static_cast<uint64>(snoidState.corner + 5);
-		hash *= kSolverHashPrime;
-		hash ^= static_cast<uint64>(snoidState.heldCellIdx + 2);
-		hash *= kSolverHashPrime;
-		hash ^= snoidState.accepted ? 1 : 0;
-		hash *= kSolverHashPrime;
+		// Byte 0: current corner, offset by 5.
+		key.appendByte(static_cast<byte>(snoidState.corner + 5));
+		// Byte 1: held-cell index, offset by 2.
+		key.appendByte(static_cast<byte>(snoidState.heldCellIdx + 2));
+		// Byte 2: acceptance in bit 0; heading bits initially zero.
+		byte flags = snoidState.accepted ? 1 : 0;
+		// Store held heading + 1 in bits 1 and above.
+		if (0 <= snoidState.heldCellIdx)
+			flags |= static_cast<byte>((snoidState.direction + 1) << 1);
+		key.appendByte(flags);
 	}
-	return hash;
+	assert(key._size == static_cast<uint32>(context.cellCount + context.snoidCount * 3));
+	key.updateHash();
+	return key;
 }
 
 bool ZoombiniPuzzleMaze::debugMazePlanActionPressesOnly(const ZoombiniPuzzleMaze::SolverPlanAction &action, int16 switchGroup) {
@@ -1238,7 +1329,7 @@ bool ZoombiniPuzzleMaze::debugMazePlanActionPressesOnly(const ZoombiniPuzzleMaze
 
 bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverPlanState &state, ZoombiniPuzzleMaze::SolverAcceptedPlanSearch &search, ZoombiniPuzzleMaze::SolverBudget &budget) {
 	static constexpr int32 kMaxVisitedStates = 200000;
-	if (kMaxVisitedStates <= search.visitedStateCount)
+	if (budget.isExpired() || kMaxVisitedStates <= search.visitedStateCount)
 		return false;
 
 	// Finish the required deliveries before allowing the reserved key to change the final switch group.
@@ -1255,6 +1346,8 @@ bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::Sol
 			return true;
 		}
 		for (int16 seatIdx = 0; seatIdx < ZoombiniPuzzleMaze::kDebugMazeSeatCount; seatIdx++) {
+			if (budget.isExpired())
+				return false;
 			if (!context.seatActive[seatIdx] ||
 				context.seatCorner[seatIdx] != state.snoids[search.finalSnoid].corner)
 				continue;
@@ -1272,11 +1365,12 @@ bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::Sol
 	}
 
 	// Different launch orders can leave the same arrows, positions, and remaining deliveries.
-	// Skip an already visited fingerprint instead of repeating that continuation; full states are not compared for hash collisions.
-	const uint64 stateHash = debugMazePlanStateHash(context, state);
-	if (search.visited.contains(stateHash))
+	// The cached hash locates entries; complete encoding equality prevents collisions from skipping a different state.
+	const SolverStateKey stateKey = SolverStateKey::fromPlanState(context, state);
+	bool &wasVisited = search.visited.getOrCreateVal(stateKey);
+	if (wasVisited)
 		return false;
-	search.visited[stateHash] = true;
+	wasVisited = true;
 	search.visitedStateCount += 1;
 
 	for (int16 snoidIdx = 0; snoidIdx < context.snoidCount; snoidIdx++) {
@@ -1298,6 +1392,8 @@ bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::Sol
 
 		// Each branch owns its simulated state; only the current action list needs explicit backtracking.
 		for (int16 seatIdx = 0; seatIdx < ZoombiniPuzzleMaze::kDebugMazeSeatCount; seatIdx++) {
+			if (budget.isExpired())
+				return false;
 			if (!context.seatActive[seatIdx] ||
 				context.seatCorner[seatIdx] != state.snoids[snoidIdx].corner)
 				continue;
@@ -1404,6 +1500,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeSwitchPlan(const ZoombiniPuzzleMaze::Solv
 				if (precursorInPriorityGroup && priorityCount < 3)
 					continue;
 				for (int16 precursorSeat = 0; precursorSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; precursorSeat++) {
+					if (budget.isExpired())
+						return false;
 					if (!context.seatActive[precursorSeat] || context.seatCorner[precursorSeat] != 0)
 						continue;
 					ZoombiniPuzzleMaze::SolverPlanState precursorState = initialState;
@@ -1430,6 +1528,8 @@ bool ZoombiniPuzzleMaze::debugBuildMazeSwitchPlan(const ZoombiniPuzzleMaze::Solv
 								!debugMazePlanMatchesTrait(context, victim, traitCell.traitCategory, traitCell.traitValue, priorityMatched))
 								continue;
 							for (int16 victimSeat = 0; victimSeat < ZoombiniPuzzleMaze::kDebugMazeSeatCount; victimSeat++) {
+								if (budget.isExpired())
+									return false;
 								if (!context.seatActive[victimSeat] || context.seatCorner[victimSeat] != precursorState.snoids[victim].corner)
 									continue;
 								// Compare the same route before and after the opening key to justify the protected launch's order.
@@ -1639,7 +1739,7 @@ void ZoombiniPuzzleMaze::debugMazeTraceRoute(const ZoombiniPuzzleMaze::SolverPla
 	route.terminal = ZoombiniPuzzleMaze::kDebugMazeRouteRejected;
 }
 
-bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverTables &tables) {
+bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverBudget &budget) {
 	// Cache active launchers and immutable directions shared by every route trace.
 	tables.controlCellCount = 0;
 	tables.stickyCount = 0;
@@ -1740,6 +1840,8 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 	for (int16 slot = 0; slot < tables.controlCellCount; slot++)
 		tables.controlStates[0][slot] = tables.baseDirections[tables.controlRows[slot]][tables.controlCols[slot]];
 	for (int16 stateIdx = 0; stateIdx < tables.controlStateCount; stateIdx++) {
+		if (budget.isExpired())
+			return false;
 		for (int16 transitionIdx = 0; transitionIdx < transitionCount; transitionIdx++) {
 			int16 candidate[ZoombiniPuzzleMaze::kDebugMazeMaxControlCells];
 			for (int16 slot = 0; slot < tables.controlCellCount; slot++)
@@ -1800,6 +1902,8 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 		for (int16 seatSlot = 0; seatSlot < tables.seatCount; seatSlot++) {
 			const int16 seatIdx = tables.seats[seatSlot];
 			for (int16 stateIdx = 0; stateIdx < tables.controlStateCount; stateIdx++) {
+				if (budget.isExpired())
+					return false;
 				ZoombiniPuzzleMaze::SolverDirectionGrid grid;
 				debugMazeApplyControlState(tables, stateIdx, grid);
 				ZoombiniPuzzleMaze::SolverMovingSnoid routeStart;
@@ -1824,6 +1928,8 @@ bool ZoombiniPuzzleMaze::debugMazeBuildSolverTables(const ZoombiniPuzzleMaze::So
 		for (int16 slot = 0; slot < tables.stickyCount; slot++) {
 			for (int16 direction = 0; direction < 4; direction++) {
 				for (int16 stateIdx = 0; stateIdx < tables.controlStateCount; stateIdx++) {
+					if (budget.isExpired())
+						return false;
 					ZoombiniPuzzleMaze::SolverDirectionGrid grid;
 					debugMazeApplyControlState(tables, stateIdx, grid);
 					ZoombiniPuzzleMaze::SolverMovingSnoid routeStart;
@@ -1957,7 +2063,7 @@ int16 ZoombiniPuzzleMaze::debugMazeSolverUncovered(const ZoombiniPuzzleMaze::Sol
 	return count;
 }
 
-uint64 ZoombiniPuzzleMaze::debugMazeSolverNodeKey(const ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverSearchNode &node) {
+ZoombiniPuzzleMaze::SolverStateKey ZoombiniPuzzleMaze::SolverStateKey::fromSearchNode(const SolverTables &tables, const SolverSearchNode &node) {
 	// Count equivalent Zoombinis by class, position, and coverage to merge permutations of the same search state.
 	// Each corner has an uncovered/covered bucket pair; covered means an earlier direct delivery opportunity was recorded.
 	// Buckets: 0/1 lower-left, 2/3 upper-left, 4/5 lower-right, 6 accepted, 7 unused.
@@ -1979,32 +2085,33 @@ uint64 ZoombiniPuzzleMaze::debugMazeSolverNodeKey(const ZoombiniPuzzleMaze::Solv
 		counts[tables.classOf[snoidIdx]][bucket] += 1;
 	}
 
-	// Apply 64-bit FNV-1a to this canonical byte sequence: control state, class/bucket counts, then sticky-slot state.
-	// Each XOR is followed by multiplication modulo 2^64, using the same basis and prime as the accepted-only search.
-	// Valid encoded values fit in one byte; the resulting uint64 is a fingerprint, not a bit-packed node.
-	// Hash logical bytes rather than struct memory, so padding and native byte order do not affect the fingerprint.
-	uint64 hash = kSolverHashOffsetBasis;
-	// State 0 becomes byte 1; count 0 likewise becomes byte 1 in the class-major, bucket-minor sequence.
-	hash ^= static_cast<uint64>(node.controlState + 1);
-	hash *= kSolverHashPrime;
+	// Retain the complete canonical encoding so hash collisions can be resolved without storing the full search node.
+	SolverStateKey key;
+	assert(static_cast<uint32>(1 + tables.classCount * 8 + tables.stickyCount * 2) <= kMaxEncodingSize);
+	// Byte 0: control-state index, offset by 1.
+	key.appendByte(static_cast<byte>(node.controlState + 1));
+	// Each route class occupies eight bytes after byte 0.
 	for (int16 classIdx = 0; classIdx < tables.classCount; classIdx++) {
+		// Within each class record, write buckets 0 through 7 in order.
 		for (int16 bucket = 0; bucket < 8; bucket++) {
-			hash ^= static_cast<uint64>(counts[classIdx][bucket] + 1);
-			hash *= kSolverHashPrime;
+			// This class's bucket count, offset by 1.
+			key.appendByte(static_cast<byte>(counts[classIdx][bucket] + 1));
 		}
 	}
 
+	// Append sticky-slot records after the control-state byte and route-class records.
 	// Sticky position and heading remain significant even when the occupant's pack identity is interchangeable.
-	// Preserve slot order: empty occupant class -1 becomes byte 1, class 0 becomes byte 2, and heading 0 becomes byte 1.
 	for (int16 slot = 0; slot < tables.stickyCount; slot++) {
 		const int8 holder = node.stickyHolder[slot];
 		const int16 holderClass = (0 <= holder) ? tables.classOf[holder] : -1;
-		hash ^= static_cast<uint64>(holderClass + 2);
-		hash *= kSolverHashPrime;
-		hash ^= static_cast<uint64>(node.stickyDirection[slot] + 1);
-		hash *= kSolverHashPrime;
+		// Slot byte 0: occupant route class + 2; empty class -1 becomes byte 1.
+		key.appendByte(static_cast<byte>(holderClass + 2));
+		// Slot byte 1: held heading, offset by 1.
+		key.appendByte(static_cast<byte>(node.stickyDirection[slot] + 1));
 	}
-	return hash;
+	assert(key._size == static_cast<uint32>(1 + tables.classCount * 8 + tables.stickyCount * 2));
+	key.updateHash();
+	return key;
 }
 
 bool ZoombiniPuzzleMaze::debugMazeSolverAddState(ZoombiniPuzzleMaze::SolverReachSet &reach, int16 stateIdx) {
@@ -2016,13 +2123,17 @@ bool ZoombiniPuzzleMaze::debugMazeSolverAddState(ZoombiniPuzzleMaze::SolverReach
 	return true;
 }
 
-void ZoombiniPuzzleMaze::debugMazeSolverExpandReach(const ZoombiniPuzzleMaze::SolverTables &tables, ZoombiniPuzzleMaze::SolverReachSet &reach) {
+void ZoombiniPuzzleMaze::debugMazeSolverExpandReach(const ZoombiniPuzzleMaze::SolverTables &tables, ZoombiniPuzzleMaze::SolverReachSet &reach, const ZoombiniPuzzleMaze::SolverBudget &budget) {
 	// Allow each available trait class to be launched repeatedly, ignoring the number of actual Zoombinis.
 	// This overestimate can prune an unreachable goal but cannot establish a complete plan.
 	bool changed = true;
 	while (changed) {
+		if (budget.isExpired())
+			return;
 		changed = false;
 		for (int16 stateSlot = 0; stateSlot < reach.stateCount; stateSlot++) {
+			if (budget.isExpired())
+				return;
 			const int16 stateIdx = reach.stateList[stateSlot];
 			// Propagate corner launches, possible sticky occupants, and headings enabled by pushes or switches.
 			for (int16 classIdx = 0; classIdx < tables.classCount; classIdx++) {
@@ -2110,7 +2221,7 @@ void ZoombiniPuzzleMaze::debugMazeSolverExpandReach(const ZoombiniPuzzleMaze::So
 	}
 }
 
-bool ZoombiniPuzzleMaze::debugMazeSolverGoalReachable(const ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverSearchNode &node) {
+bool ZoombiniPuzzleMaze::debugMazeSolverGoalReachable(const ZoombiniPuzzleMaze::SolverTables &tables, const ZoombiniPuzzleMaze::SolverSearchNode &node, const ZoombiniPuzzleMaze::SolverBudget &budget) {
 	// Seed the optimistic model with the actual corners and captives of this node.
 	ZoombiniPuzzleMaze::SolverReachSet reach;
 	memset(&reach, 0, sizeof(reach));
@@ -2125,7 +2236,9 @@ bool ZoombiniPuzzleMaze::debugMazeSolverGoalReachable(const ZoombiniPuzzleMaze::
 		if (0 <= holder)
 			reach.occupant[slot][tables.classOf[holder]][node.stickyDirection[slot]] = true;
 	}
-	debugMazeSolverExpandReach(tables, reach);
+	debugMazeSolverExpandReach(tables, reach, budget);
+	if (budget.isExpired())
+		return false;
 
 	// Reject a branch only if a remaining Zoombini fails even this relaxed reachability test.
 	for (int16 snoidIdx = 0; snoidIdx < tables.snoidCount; snoidIdx++) {
@@ -2239,7 +2352,7 @@ bool ZoombiniPuzzleMaze::debugMazeSolverGoalReachable(const ZoombiniPuzzleMaze::
 	return true;
 }
 
-bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverTables &tables, const Common::Array<ZoombiniPuzzleMaze::SolverKeyLaunch> &keyLaunches, ZoombiniPuzzleMaze::SolverGenericPlan &plan) {
+bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::SolverPlanContext &context, const ZoombiniPuzzleMaze::SolverTables &tables, const Common::Array<ZoombiniPuzzleMaze::SolverKeyLaunch> &keyLaunches, ZoombiniPuzzleMaze::SolverGenericPlan &plan, ZoombiniPuzzleMaze::SolverBudget &budget) {
 	// First locate direct delivery opportunities along the selected control-launch sequence.
 	const int16 keyCount = static_cast<int16>(keyLaunches.size());
 	int16 coverStep[ZoombiniPuzzleMaze::kDebugMazeMaxSnoids];
@@ -2249,7 +2362,6 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 		coverSeat[snoidIdx] = -1;
 	}
 
-	ZoombiniPuzzleMaze::SolverBudget budget;
 	ZoombiniPuzzleMaze::SolverPlanState state;
 	debugMazeInitializePlanState(context, state);
 	ZoombiniPuzzleMaze::SolverSearchNode node;
@@ -2291,7 +2403,6 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 	plan.controlStepCount = keyCount;
 	ZoombiniPuzzleMaze::SolverPlanState replay;
 	debugMazeInitializePlanState(context, replay);
-	ZoombiniPuzzleMaze::SolverBudget replayBudget;
 	for (int16 position = 0; position <= keyCount; position++) {
 		for (int16 snoidIdx = 0; snoidIdx < tables.snoidCount; snoidIdx++) {
 			if (coverStep[snoidIdx] != position || replay.snoids[snoidIdx].accepted)
@@ -2301,7 +2412,7 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 			step.launcherSeatIdx = coverSeat[snoidIdx];
 			step.controlStep = false;
 			ZoombiniPuzzleMaze::SolverPlanAction action;
-			if (!debugMazeApplyPlanLaunch(context, replay, snoidIdx, coverSeat[snoidIdx], action, replayBudget))
+			if (!debugMazeApplyPlanLaunch(context, replay, snoidIdx, coverSeat[snoidIdx], action, budget))
 				return false;
 			if (!replay.snoids[snoidIdx].accepted || !action.switchGroups.empty() ||
 				!action.pushedSnoids.empty() || !action.releasedSnoids.empty())
@@ -2319,7 +2430,7 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 		step.launcherSeatIdx = keyLaunch.launcherSeatIdx;
 		step.controlStep = true;
 		ZoombiniPuzzleMaze::SolverPlanAction action;
-		if (!debugMazeApplyPlanLaunch(context, replay, step.snoidIdx, step.launcherSeatIdx, action, replayBudget))
+		if (!debugMazeApplyPlanLaunch(context, replay, step.snoidIdx, step.launcherSeatIdx, action, budget))
 			return false;
 		step.outcome = action.rootOutcome;
 		step.switchGroups = action.switchGroups;
@@ -2341,22 +2452,27 @@ bool ZoombiniPuzzleMaze::debugMazeGenericPlanFromKeys(const ZoombiniPuzzleMaze::
 	return true;
 }
 
-bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverGenericPlan &plan, const ZoombiniPuzzleMaze::SolverGenericSearchLimits &limits, ZoombiniPuzzleMaze::SolverGenericSearchResult &result) {
+bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::SolverPlanContext &context, ZoombiniPuzzleMaze::SolverGenericPlan &plan,
+												   const ZoombiniPuzzleMaze::SolverSearchMemoryLimits &memoryLimits,
+												   ZoombiniPuzzleMaze::SolverGenericSearchResult &result, ZoombiniPuzzleMaze::SolverBudget &budget) {
 	result.searchExhausted = false;
 	result.limitReached = false;
+	result.timeLimitReached = false;
 	result.stepsUsed = 0;
 	// Route tables are large; keep them on the heap and share them across all search nodes.
 	ZoombiniPuzzleMaze::SolverTables *tables = new ZoombiniPuzzleMaze::SolverTables();
 	if (!tables)
 		return false;
-	if (!debugMazeBuildSolverTables(context, *tables)) {
+	if (budget.isExpired() || !debugMazeBuildSolverTables(context, *tables, budget)) {
+		result.timeLimitReached = budget.isExpired();
+		result.limitReached = result.timeLimitReached;
 		delete tables;
 		return false;
 	}
 
 	// Bucket nodes by undeliverable Zoombinis so promising states are explored first.
 	Common::Array<ZoombiniPuzzleMaze::SolverSearchNode> nodes;
-	Common::HashMap<uint64, bool> visited;
+	SolverVisitedStates visited;
 	Common::Array<uint32> buckets[ZoombiniPuzzleMaze::kDebugMazeMaxSnoids + 1];
 	uint32 bucketHead[ZoombiniPuzzleMaze::kDebugMazeMaxSnoids + 1];
 	for (int16 bucketIdx = 0; bucketIdx <= ZoombiniPuzzleMaze::kDebugMazeMaxSnoids; bucketIdx++)
@@ -2375,13 +2491,18 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 	root.keySnoid = -1;
 	root.keySeat = -1;
 	debugMazeSolverUpdateCover(*tables, root);
-	visited[debugMazeSolverNodeKey(*tables, root)] = true;
+	visited[SolverStateKey::fromSearchNode(*tables, root)] = true;
 	nodes.push_back(root);
 	buckets[debugMazeSolverUncovered(*tables, root)].push_back(0);
 
 	uint32 steps = 0;
 	int32 goalNode = -1;
 	while (goalNode < 0 && !result.limitReached) {
+		if (budget.isExpired()) {
+			result.limitReached = true;
+			result.timeLimitReached = true;
+			break;
+		}
 		int32 currentIdx = -1;
 		for (int16 bucketIdx = 0; bucketIdx <= ZoombiniPuzzleMaze::kDebugMazeMaxSnoids; bucketIdx++) {
 			if (bucketHead[bucketIdx] < buckets[bucketIdx].size()) {
@@ -2421,17 +2542,17 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 				if (route.terminal == ZoombiniPuzzleMaze::kDebugMazeRouteGoal && route.pressedGroups == 0)
 					continue; // Direct deliveries are inserted when the selected control sequence is replayed.
 
-				steps += 1;
-				result.stepsUsed = steps;
-				if (limits.maxSteps <= steps) {
+				if (budget.isExpired()) {
 					result.limitReached = true;
+					result.timeLimitReached = true;
 					break;
 				}
+				steps += 1;
+				result.stepsUsed = steps;
 				// Full simulation resolves sticky interactions that the single-route tables do not model.
 				ZoombiniPuzzleMaze::SolverPlanState childState;
 				debugMazeSolverNodeToPlanState(context, *tables, current, childState);
 				ZoombiniPuzzleMaze::SolverPlanAction action;
-				ZoombiniPuzzleMaze::SolverBudget budget;
 				if (!debugMazeApplyPlanLaunch(context, childState, snoidIdx, seatIdx, action, budget))
 					continue;
 				ZoombiniPuzzleMaze::SolverSearchNode child = current;
@@ -2448,14 +2569,15 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 				}
 				debugMazeSolverUpdateCover(*tables, child);
 				// Merge equivalent states and discard branches that cannot finish even under relaxed assumptions.
-				// The visited key is the canonical FNV-1a fingerprint; no full-node comparison resolves fingerprint collisions.
-				const uint64 key = debugMazeSolverNodeKey(*tables, child);
-				if (visited.contains(key))
+				// Cached hashes locate entries; complete canonical encodings distinguish colliding states.
+				const SolverStateKey key = SolverStateKey::fromSearchNode(*tables, child);
+				bool &wasVisited = visited.getOrCreateVal(key);
+				if (wasVisited)
 					continue;
-				visited[key] = true;
-				if (!debugMazeSolverGoalReachable(*tables, child))
+				wasVisited = true;
+				if (!debugMazeSolverGoalReachable(*tables, child, budget))
 					continue;
-				if (limits.maxNodes <= nodes.size()) {
+				if (memoryLimits.maxRetainedNodes <= nodes.size()) {
 					result.limitReached = true;
 					break;
 				}
@@ -2480,28 +2602,25 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 		for (uint frontIdx = 0; frontIdx < keyLaunches.size() / 2; frontIdx++) {
 			SWAP(keyLaunches[frontIdx], keyLaunches[keyLaunches.size() - 1 - frontIdx]);
 		}
-		built = debugMazeGenericPlanFromKeys(context, *tables, keyLaunches, plan);
+		built = debugMazeGenericPlanFromKeys(context, *tables, keyLaunches, plan, budget);
 		if (!built) {
 			// Coverage alone is insufficient if the complete replay rejects the assembled order.
 			result.searchExhausted = false;
-			result.limitReached = false;
+			result.timeLimitReached = budget.isExpired();
+			result.limitReached = result.timeLimitReached;
 		}
 	}
 	delete tables;
 	return built;
 }
 
-bool ZoombiniPuzzleMaze::isMazeLayoutSolvable(uint32 &stepsUsed) const {
+bool ZoombiniPuzzleMaze::isMazeLayoutSolvable(SolverBudget &budget) const {
 	ZoombiniPuzzleMaze::SolverPlanContext context = {};
 	debugBuildMazePlanContext(context);
 	ZoombiniPuzzleMaze::SolverGenericPlan plan;
-	const ZoombiniPuzzleMaze::SolverGenericSearchLimits limits = {
-		kMazeRepairProbeMaxSteps,
-		kMazeRepairProbeMaxNodes};
+	const SolverSearchMemoryLimits memoryLimits = {kMazeRepairMaxRetainedNodes};
 	ZoombiniPuzzleMaze::SolverGenericSearchResult result;
-	const bool solvable = debugBuildMazeGenericPlan(context, plan, limits, result);
-	stepsUsed = result.stepsUsed;
-	return solvable;
+	return debugBuildMazeGenericPlan(context, plan, memoryLimits, result, budget);
 }
 
 void ZoombiniPuzzleMaze::setConditionCellTrait(int16 cellIdx, int16 category, int16 value) {
@@ -2523,12 +2642,11 @@ bool ZoombiniPuzzleMaze::repairRestoredL4LayoutConditionCell() {
 	if (_layoutLevel != kMazeLayoutLevel4 || _mazeLayoutRegsId != kResRegs16607_MazeLayoutL4Unused)
 		return false;
 
-	uint32 probeSteps = 0;
-	if (isMazeLayoutSolvable(probeSteps))
+	SolverBudget budget(kMazeRepairTimeLimit);
+	if (isMazeLayoutSolvable(budget))
 		return false;
 
 	// Prefer another value in the same trait category, then try other categories if necessary.
-	uint32 spentSteps = probeSteps;
 	for (int16 sameCategoryPass = 1; 0 <= sameCategoryPass; sameCategoryPass -= 1) {
 		for (int16 cellIdx = 0; cellIdx < _cellStateCount; cellIdx++) {
 			MazeCellState &cell = _cellStates[cellIdx];
@@ -2543,29 +2661,33 @@ bool ZoombiniPuzzleMaze::repairRestoredL4LayoutConditionCell() {
 					continue;
 				if ((category == authoredCategory) != (sameCategoryPass == 1))
 					continue;
-				if (kMazeRepairTotalMaxSteps <= spentSteps) {
-					warning("maze: REGS %d condition repair gave up after %u simulated launches", _mazeLayoutRegsId, static_cast<uint>(spentSteps));
+				if (budget.isExpired()) {
+					setConditionCellTrait(cellIdx, authoredCategory, authoredValue);
+					warning("maze: REGS %d condition repair reached its %u ms limit after %u simulated launches",
+							_mazeLayoutRegsId, budget.timeLimit, budget.steps);
 					return false;
 				}
 				setConditionCellTrait(cellIdx, category, value);
-				uint32 candidateSteps = 0;
-				if (isMazeLayoutSolvable(candidateSteps)) {
+				if (isMazeLayoutSolvable(budget)) {
 					// Keep only a substitution with a verified full plan, and retain the authored test for the answer log.
 					MazeConditionSubstitution substitution;
 					substitution.cellIdx = cellIdx;
 					substitution.fromCategory = authoredCategory;
 					substitution.fromValue = authoredValue;
 					_conditionSubstitutions.push_back(substitution);
-					logConditionSubstitutions(spentSteps + candidateSteps);
+					logConditionSubstitutions(budget.steps);
 					return true;
 				}
-				spentSteps += candidateSteps;
 			}
 			// Restore unsuccessful trials before trying a different cell.
 			setConditionCellTrait(cellIdx, authoredCategory, authoredValue);
 		}
 	}
-	warning("maze: REGS %d has no single-condition repair for this pack; at least one Zoombini cannot reach the goal", _mazeLayoutRegsId);
+	if (budget.isExpired())
+		warning("maze: REGS %d condition repair reached its %u ms limit after %u simulated launches",
+				_mazeLayoutRegsId, budget.timeLimit, budget.steps);
+	else
+		warning("maze: REGS %d has no verified single-condition repair for this pack", _mazeLayoutRegsId);
 	return false;
 }
 
@@ -2906,7 +3028,25 @@ void ZoombiniPuzzleMaze::debugBuildMazePlanContext(ZoombiniPuzzleMaze::SolverPla
 	}
 }
 
-Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
+Common::String ZoombiniPuzzleMaze::debugGetPageCommandHelp() const {
+	return "  answer [seconds]\n"
+		   "      Find a launch order within 1 to 60 seconds (default: 5).\n"
+		   "      Report search time and iteration counts.\n";
+}
+
+Common::String ZoombiniPuzzleMaze::debugGetAnswerCommandHelp() const {
+	return "Usage: page|puzzle answer [seconds]\n"
+		   "  seconds: integer from 1 to 60 (default: 5).\n"
+		   "Find a launch order for the current Maze layout and party.\n"
+		   "All search phases share the time budget; iteration counts are also reported.\n"
+		   "Reaching the time limit leaves the answer undecided. Game state is unchanged.\n"
+		   "  -h, --help  Show this help text.\n";
+}
+
+Common::String ZoombiniPuzzleMaze::debugGetAnswer(const Common::Array<Common::String> &args) const {
+	uint32 timeLimit = 0;
+	if (!parseDebugSearchTimeLimit(args, timeLimit))
+		return debugGetAnswerCommandHelp();
 	Common::String s = getDebugBanner();
 	s += "\n";
 	const bool includeRegion = _layoutLevel == kMazeLayoutLevel4;
@@ -2949,39 +3089,52 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 	// Derive a complete plan from the starting layout, then compare it with live progress below.
 	ZoombiniPuzzleMaze::SolverPlanContext planContext = {};
 	debugBuildMazePlanContext(planContext);
+	SolverBudget budget(timeLimit);
 	ZoombiniPuzzleMaze::SolverLevel4Plan l4Plan;
 	bool l4SearchLimitReached = false;
 	uint32 l4Steps = 0;
 	ZoombiniPuzzleMaze::SolverGenericPlan genericPlan;
-	const ZoombiniPuzzleMaze::SolverGenericSearchLimits genericSearchLimits = {
-		kDebugMazeGenericSolverMaxSteps,
-		kDebugMazeGenericSolverMaxNodes};
+	const SolverSearchMemoryLimits memoryLimits = {kDebugMazeMaxRetainedNodes};
 	ZoombiniPuzzleMaze::SolverGenericSearchResult genericSearch;
 	bool genericSearchRan = false;
+	bool searchTimedOut = false;
 	if (_layoutLevel == kMazeLayoutLevel4) {
 		// Announce the search cap because the debugger receives the assembled answer only after the search finishes.
 		GUI::Debugger *debugger = _vm->getDebugger();
 		if (debugger)
-			debugger->debugPrintf("Finding... (max %u simulated launches)\n",
-								  static_cast<uint>(kDebugMazeSolverMaxSteps));
-		debugBuildMazeL4Plan(planContext, l4Plan, l4SearchLimitReached, l4Steps);
+			debugger->debugPrintf("Finding... (max %u seconds total)\n", timeLimit / 1000);
+		// Reserve half the query budget for the fallback without restarting the clock.
+		budget.timeLimit = timeLimit / 2;
+		debugBuildMazeL4Plan(planContext, l4Plan, budget);
+		l4SearchLimitReached = !l4Plan.valid && budget.isExpired();
+		l4Steps = budget.steps;
+		budget.timeLimit = timeLimit;
 		if (!l4Plan.valid) {
 			// Failure to find the named relay does not rule out another launch order, especially on the restored layout.
 			if (debugger)
-				debugger->debugPrintf("Finding a direct launch order... (max %u simulated launches)\n",
-									  static_cast<uint>(kDebugMazeGenericSolverMaxSteps));
+				debugger->debugPrintf("Finding a direct launch order... (using the remaining time)\n");
 			genericSearchRan = true;
-			debugBuildMazeGenericPlan(planContext, genericPlan, genericSearchLimits, genericSearch);
+			debugBuildMazeGenericPlan(planContext, genericPlan, memoryLimits, genericSearch, budget);
+			searchTimedOut = genericSearch.timeLimitReached;
 		}
-		s += Common::String::format("  Staged relay search: %u steps used (max %u).\n", static_cast<uint>(l4Steps), static_cast<uint>(kDebugMazeSolverMaxSteps));
+		s += Common::String::format("  Staged relay search: %u iterations.\n", l4Steps);
 		if (genericSearchRan)
-			s += Common::String::format("  Direct launch-order search: %u steps used (max %u).\n", static_cast<uint>(genericSearch.stepsUsed), static_cast<uint>(kDebugMazeGenericSolverMaxSteps));
+			s += Common::String::format("  Direct launch-order search: %u iterations.\n", budget.steps - l4Steps);
 	}
 	ZoombiniPuzzleMaze::SolverLevel123Plan l123Plan;
 	if (_layoutLevel <= kMazeLayoutLevel3) {
-		ZoombiniPuzzleMaze::SolverBudget budget123;
-		debugBuildMazePlan(planContext, l123Plan, budget123);
-		s += Common::String::format("  Routing search: %u steps used (uncapped).\n", static_cast<uint>(budget123.steps));
+		debugBuildMazePlan(planContext, l123Plan, budget);
+		searchTimedOut = !l123Plan.valid && budget.isExpired();
+		s += Common::String::format("  Routing search: %u iterations.\n", budget.steps);
+	}
+	s += Common::String::format("  Search time: %u ms (limit: %u ms), %u iterations.\n",
+								g_system->getMillis(true) - budget.started, timeLimit, budget.steps);
+	if (searchTimedOut) {
+		s += "  Unknown: the time limit was reached; this does not prove the pack cannot finish.\n";
+		if (timeLimit < 60000)
+			s += "  Try a longer time limit with 'page answer 60' (maximum: 60 seconds).\n";
+		else
+			s += "  The maximum time limit of 60 seconds is already in use.\n";
 	}
 
 	struct DebugLaunchPrediction {
@@ -3268,15 +3421,15 @@ Common::String ZoombiniPuzzleMaze::debugGetAnswer() const {
 			s += "    reachable control state, so at least one Zoombini has to be given up here.\n";
 			s += "    Inspect the colored branches, sticky cells, and launcher routes below.\n";
 		} else if (genericSearch.limitReached) {
-			s += Common::String::format("    Neither the staged relay plan nor a direct launch order was found. The direct\n"
-										"    search stopped at its own bound of %u simulated launches or %u search nodes,\n"
-										"    so this pack is undecided rather than proven impossible.\n",
-										static_cast<uint>(kDebugMazeGenericSolverMaxSteps),
-										static_cast<uint>(kDebugMazeGenericSolverMaxNodes));
+			s += "    Neither the staged relay plan nor a direct launch order was found.\n";
+			if (genericSearch.timeLimitReached)
+				s += "    The shared search time limit was reached, so this pack is undecided.\n";
+			else
+				s += Common::String::format("    The search reached its pool limit of %u nodes, so this pack is undecided.\n",
+											static_cast<uint>(kDebugMazeMaxRetainedNodes));
 			s += "    Inspect the colored branches, sticky cells, and launcher routes below.\n";
 		} else if (l4SearchLimitReached) {
-			s += Common::String::format("    The level-4 relay plan search stopped without finding a plan after %u simulated launches.\n",
-										static_cast<uint>(kDebugMazeSolverMaxSteps));
+			s += "    The level-4 relay plan search reached its share of the time budget without finding a plan.\n";
 			s += "    Inspect the colored branches, sticky cells, and launcher routes below.\n";
 		} else {
 			s += "    The full level-4 relay plan could not be derived from this layout and pack.\n";

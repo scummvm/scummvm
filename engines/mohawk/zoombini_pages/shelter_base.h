@@ -52,8 +52,13 @@ class ZoombiniShelterBasecamp : public ZoombiniShelter {
 public:
 	/** Describe the common Basecamp debugger subcommand. */
 	Common::String debugGetPageCommandHelp() const override;
-	/** Handle the common Basecamp pedestal debugger subcommands. */
-	bool debugDoPageCommand(int argc, const char **argv, Common::String &output) override;
+	/**
+	 * Handle the common Basecamp pedestal debugger subcommands.
+	 * @param args Page subcommand followed by its arguments; excludes the registered page/puzzle command.
+	 * @param output Diagnostic result or usage text to print in the debugger.
+	 * @return True to keep the debugger open; false to resume the game.
+	 */
+	bool debugDoPageCommand(const Common::Array<Common::String> &args, Common::String &output) override;
 	/** Preserve residents and debit the selected party before a debugger transfer. */
 	void debugPreparePackForXfer();
 
@@ -272,9 +277,15 @@ protected:
 	 * @return Number returned, or -1 when the command could not run.
 	 */
 	int16 debugUnseatSeatedZoombinis(ZmbStateStoredChunk &chunk, int16 *runtimeStoredCount, Common::String &output);
-	/** Parse and run one shared Basecamp pedestal debugger command. */
-	int16 debugRunPedestalCommand(int argc, const char **argv, ZmbStateStoredChunk &chunk,
-								  int16 *runtimeStoredCount, Common::String &output);
+	/**
+	 * Parse and run one shared Basecamp pedestal debugger command.
+	 * @param args Page subcommand followed by its arguments; excludes the registered page/puzzle command.
+	 * @param chunk Basecamp storage chunk supplying or receiving Zoombinis.
+	 * @param runtimeStoredCount Optional page-local storage count, updated for Basecamp Two.
+	 * @param output Diagnostic result or usage text to print in the debugger.
+	 * @return Number of Zoombinis moved, or -1 when the command could not run.
+	 */
+	int16 debugRunPedestalCommand(const Common::Array<Common::String> &args, ZmbStateStoredChunk &chunk, int16 *runtimeStoredCount, Common::String &output);
 	/**
 	 * Reject a pedestal debugger command while page input, departure, or Zoombini
 	 * animations are active.

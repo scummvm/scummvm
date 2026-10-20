@@ -344,9 +344,11 @@ private:
 	static constexpr const char *kCmdPuzzle = "puzzle";
 	/** Page subcommand exposing built-in page-local debug actions. */
 	static constexpr const char *kSubCmdPageBuiltinDebug = "builtin_debug";
+	/** Recreate the current puzzle with the current party. */
+	static constexpr const char *kSubCmdPagePuzzleRetry = "retry";
 	/** Finish the current puzzle. */
 	static constexpr const char *kSubCmdPagePuzzleFinish = "finish";
-	/** Inspect or set the current puzzle answer. */
+	/** Inspect the current puzzle answer with optional page-specific arguments. */
 	static constexpr const char *kSubCmdPagePuzzleAnswer = "answer";
 	/** Inspect or set the current puzzle chances. */
 	static constexpr const char *kSubCmdPagePuzzleChance = "chance";
@@ -358,9 +360,11 @@ private:
 	bool Cmd_PagePuzzle(int argc, const char **argv);
 	/** Dispatch a built-in page-local debug action to its owning page. */
 	bool CmdSub_PageBuiltinDebug(int argc, const char **argv);
+	/** Retry the current puzzle through the engine's page replacement path. */
+	bool CmdSub_Puzzle_Retry(int argc, const char **argv);
 	/** Finish the current puzzle through its owning page. */
 	bool CmdSub_Puzzle_Finish(int argc, const char **argv);
-	/** Set or display the current puzzle answer through the debugger. */
+	/** Display the current puzzle answer, passing only its extra arguments to the page for parsing. */
 	bool CmdSub_Puzzle_Answer(int argc, const char **argv);
 	/** Set or display the current puzzle chance or resource budget. */
 	bool CmdSub_Puzzle_Chances(int argc, const char **argv);
