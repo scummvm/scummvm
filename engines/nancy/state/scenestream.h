@@ -27,8 +27,13 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/puzzledata.h"
+#include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/action/actionmanager.h"
+
+#ifdef ENABLE_NANCY_V4
+#include "engines/nancy/script/mathtypes.h"
+#endif
 
 namespace Common {
 class SeekableReadStream;
@@ -116,6 +121,10 @@ public:
 	const Common::String &getSceneName() const { return _sceneName; }
 	SceneChangeDescription &getSceneInfo() { return _sceneInfo; }
 	Action::ActionManager &getActionManager() { return _actionManager; }
+#ifdef ENABLE_NANCY_V4
+	Script::ScriptMatrix &getTransform() { return _transform; }
+#endif
+	ViewTransform &getViewTransform() { return _viewTransform; }
 
 	Common::Array<Child> _children;
 
@@ -141,7 +150,12 @@ private:
 #ifdef ENABLE_NANCY_V4
 	// Nancy19: the script of the scene, which takes the place of the action records
 	Script::SceneContext *_scriptScene = nullptr;
+
+	Script::ScriptMatrix _transform;	// Nancy21
 #endif
+
+	// The zoom of everything the stream draws
+	ViewTransform _viewTransform;
 
 	// Every stream has generic event flags of its own
 	Common::Array<byte> _genericFlags;
@@ -200,6 +214,16 @@ public:
 	bool skipMovies();
 #endif
 
+#ifdef ENABLE_NANCY_V4
+	// Nancy21: what the scripts move and scale everything in a stream with; null
+	// when there is no such stream. Only the scaling and the offset get drawn.
+	const Script::ScriptMatrix *getTransform(const Common::String &name);
+	void setTransform(const Common::String &name, const Script::ScriptMatrix &transform);
+#endif
+
+	// What a stream gets drawn with; null when there is no such stream
+	const ViewTransform *getViewTransform(const Common::String &name);
+
 	// Nancy21: where a stream is among the others. Every stream is a step closer
 	// than the one that began it, and the main stream is at 0.
 	double getZ(const Common::String &name) const;
@@ -218,6 +242,11 @@ private:
 	Common::Array<SceneStream::Child> _mainStreamChildren;
 	SceneStream *_running = nullptr;
 	Common::String _environment;
+
+#ifdef ENABLE_NANCY_V4
+	Script::ScriptMatrix _mainStreamTransform;
+#endif
+	ViewTransform _mainStreamViewTransform;
 };
 
 } // End of namespace State

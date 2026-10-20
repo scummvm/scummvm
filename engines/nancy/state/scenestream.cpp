@@ -233,6 +233,7 @@ void SceneStream::loadBackground(const Common::Path &videoFile) {
 		_background->setZOrder(Script::RecordGraphic::getBackgroundZOrder(_zOffset));
 	}
 #endif
+	_background->setViewTransform(&_viewTransform);
 	_background->loadVideo(videoFile, _sceneInfo.frameID, 0, kPanNone, kLargeVideoFormat);
 	_background->registerGraphics();
 }
@@ -336,6 +337,41 @@ const char *SceneStreamManager::getUIStreamName() {
 }
 
 #ifdef ENABLE_NANCY_V4
+const Script::ScriptMatrix *SceneStreamManager::getTransform(const Common::String &name) {
+	if (name.equalsIgnoreCase(kMainStreamName)) {
+		return &_mainStreamTransform;
+	}
+
+	SceneStream *stream = find(name);
+	return stream ? &stream->getTransform() : nullptr;
+}
+
+void SceneStreamManager::setTransform(const Common::String &name, const Script::ScriptMatrix &transform) {
+	Script::ScriptMatrix *matrix = nullptr;
+	ViewTransform *view = nullptr;
+
+	if (name.equalsIgnoreCase(kMainStreamName)) {
+		matrix = &_mainStreamTransform;
+		view = &_mainStreamViewTransform;
+	} else {
+		SceneStream *stream = find(name);
+		if (!stream) {
+			return;
+		}
+
+		matrix = &stream->getTransform();
+		view = &stream->getViewTransform();
+	}
+
+	*matrix = transform;
+	view->scaleX = transform.m[0][0];
+	view->scaleY = transform.m[1][1];
+	view->offsetX = transform.m[3][0];
+	view->offsetY = transform.m[3][1];
+}
+#endif
+
+#ifdef ENABLE_NANCY_V4
 bool SceneStream::skipSpeech() {
 	return _scriptScene && !_isEnded && _scriptScene->skipSpeech();
 }
@@ -366,6 +402,15 @@ bool SceneStreamManager::skipMovies() {
 	return hasSkipped;
 }
 #endif
+
+const ViewTransform *SceneStreamManager::getViewTransform(const Common::String &name) {
+	if (name.equalsIgnoreCase(kMainStreamName)) {
+		return &_mainStreamViewTransform;
+	}
+
+	SceneStream *stream = find(name);
+	return stream ? &stream->getViewTransform() : nullptr;
+}
 
 double SceneStreamManager::getZ(const Common::String &name) const {
 	const SceneStream *stream = find(name);

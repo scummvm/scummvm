@@ -142,6 +142,9 @@ private:
 	static void filterDirtyRects(Common::List<Common::Rect> &rects);
 	void drawObjects(Graphics::ManagedSurface &target, const Common::List<Common::Rect> &rects, Layer layer);
 	void blitObject(Graphics::ManagedSurface &target, const RenderObject &src, Common::Rect dest);
+
+	// Where an object gets drawn, which is somewhere else for one that is zoomed into
+	Common::Rect getDrawnPosition(const RenderObject &object) const;
 	void blitGameToScreen(Common::Rect screenRect);
 
 	static int objectComparator(const void *a, const void *b);
@@ -172,6 +175,7 @@ private:
 	uint32 _transColor = 0;
 
 	bool _isSuppressed;
+	bool _wasZoomed = false;	// whether something was zoomed into the last time
 };
 
 } // End of namespace Nancy

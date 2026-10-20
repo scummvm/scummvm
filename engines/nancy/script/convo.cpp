@@ -231,7 +231,7 @@ bool ConvoRecord::loadXSheet(const Common::String &name) {
 // The first part is drawn over the ones after it
 void ConvoRecord::onZChanged() {
 	for (uint i = 0; i < _trees.size(); ++i) {
-		_trees[i]->graphic.setScriptZ(getZ() + (i == 0 ? 1 : 0), getContext().getZOffset());
+		_trees[i]->graphic.setScriptZ(getZ() + (i == 0 ? 1 : 0), getContext());
 	}
 }
 

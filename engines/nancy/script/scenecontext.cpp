@@ -428,6 +428,10 @@ void SceneContext::deleteDroppedRecords() {
 	}
 }
 
+const ViewTransform *SceneContext::getViewTransform() const {
+	return NancySceneState.getStreams().getViewTransform(_streamName);
+}
+
 GraphNode *SceneContext::createGraphNode() {
 	GraphNode *node = new GraphNode(*this);
 	_graphNodes.push_back(node);

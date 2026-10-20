@@ -77,8 +77,9 @@ public:
 	RecordGraphic() : RenderObject(0) {}
 	virtual ~RecordGraphic() {}
 
-	// Scripts order what they draw with numbers of their own
-	void setScriptZ(double z, int32 streamZOffset);
+	// Scripts order what they draw with numbers of their own. The scene also
+	// tells which stream it is in, which can zoom into what it draws.
+	void setScriptZ(double z, const SceneContext &context);
 
 	// The z order of a script z in a stream that is the given steps in front
 	static uint16 getScriptZOrder(double z, int32 zOffset);

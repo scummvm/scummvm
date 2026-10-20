@@ -30,6 +30,18 @@ namespace Nancy {
 class NancyEngine;
 class GraphicsManager;
 
+// Nancy21 can zoom into the viewport, with everything in some of the streams
+// of scenes: what is drawn gets scaled around the top left of the viewport, then
+// moved by the offset, in viewport pixels
+struct ViewTransform {
+	double scaleX = 1.0;
+	double scaleY = 1.0;
+	double offsetX = 0.0;
+	double offsetY = 0.0;
+
+	bool isIdentity() const { return scaleX == 1.0 && scaleY == 1.0 && offsetX == 0.0 && offsetY == 0.0; }
+};
+
 // Loosely equivalent to the original engine's ZRenderStructs.
 // A subclass of this will be automatically updated and drawn from the graphics manager,
 // but initialization needs to be done manually.
@@ -96,6 +108,11 @@ public:
 	// Needed for proper handling of objects inside the viewport
 	virtual bool isViewportRelative() const { return false; }
 
+	// The zoom the object gets drawn with, if any. It belongs to whoever set it.
+	const ViewTransform *getViewTransform() const { return _viewTransform; }
+	void setViewTransform(const ViewTransform *viewTransform) { _viewTransform = viewTransform; }
+	bool isZoomed() const { return _viewTransform && !_viewTransform->isIdentity(); }
+
 protected:
 	bool _needsRedraw;
 	bool _isVisible;
@@ -105,6 +122,7 @@ protected:
 	Common::Rect _drawnScreenPosition;
 	Common::Rect _previousScreenPosition;
 	Common::Rect _screenPosition;
+	const ViewTransform *_viewTransform = nullptr;
 };
 
 } // End of namespace Nancy

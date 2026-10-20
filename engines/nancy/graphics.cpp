@@ -154,10 +154,12 @@ void GraphicsManager::draw(bool updateScreen) {
 
 	// Update graphics for all RenderObjects and determine
 	// the areas of the screen that need to be redrawn
+	bool isZoomed = false;
 	for (auto it : _objects) {
 		RenderObject &current = *it;
 
 		current.updateGraphics();
+		isZoomed |= current.isVisible() && current.isZoomed();
 
 		if (current.needsRedraw()) {
 			const Common::Rect &drawnPosition = current.getDrawnScreenPosition();
@@ -181,6 +183,14 @@ void GraphicsManager::draw(bool updateScreen) {
 		current.setHasMoved(false);
 		current.updatePreviousScreenPosition();
 	}
+
+	// While anything is zoomed into, and once it stops being, all of the
+	// viewport gets drawn anew
+	if (isZoomed || _wasZoomed) {
+		_dirtyRects.push_back(NancySceneState.getViewport().getScreenPosition());
+	}
+
+	_wasZoomed = isZoomed;
 
 	filterDirtyRects(_dirtyRects);
 
@@ -273,7 +283,7 @@ void GraphicsManager::drawObjects(Graphics::ManagedSurface &target, const Common
 
 		DrawnObject entry;
 		entry.object = object;
-		entry.position = object->getScreenPosition();
+		entry.position = getDrawnPosition(*object);
 		entry.isOpaque = !object->_drawSurface.hasTransparentColor() && object->_drawSurface.format != _transparentPixelFormat;
 		if (!entry.position.isEmpty()) {
 			drawn.push_back(entry);
@@ -774,7 +784,50 @@ void GraphicsManager::blitObject(Graphics::ManagedSurface &target, const RenderO
 		return;
 	}
 
-	target.blitFrom(src._drawSurface, src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(screenRect)), screenRect);
+	if (!src.isZoomed()) {
+		target.blitFrom(src._drawSurface, src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(screenRect)), screenRect);
+		return;
+	}
+
+	// A zoomed object gets stretched from where it would be without the zoom
+	const ViewTransform &view = *src.getViewTransform();
+	const Common::Rect viewport = NancySceneState.getViewport().getScreenPosition();
+
+	Common::Rect unzoomed;
+	unzoomed.left = viewport.left + (int)floor((screenRect.left - viewport.left - view.offsetX) / view.scaleX);
+	unzoomed.top = viewport.top + (int)floor((screenRect.top - viewport.top - view.offsetY) / view.scaleY);
+	unzoomed.right = viewport.left + (int)ceil((screenRect.right - viewport.left - view.offsetX) / view.scaleX);
+	unzoomed.bottom = viewport.top + (int)ceil((screenRect.bottom - viewport.top - view.offsetY) / view.scaleY);
+	if (unzoomed.isEmpty()) {
+		return;
+	}
+
+	const Common::Rect source = src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(unzoomed));
+	if (!source.isEmpty()) {
+		target.blitFrom(src._drawSurface, source, screenRect);
+	}
+}
+
+Common::Rect GraphicsManager::getDrawnPosition(const RenderObject &object) const {
+	const Common::Rect position = object.getScreenPosition();
+	if (!object.isZoomed() || position.isEmpty()) {
+		return position;
+	}
+
+	const ViewTransform &view = *object.getViewTransform();
+	const Common::Rect viewport = NancySceneState.getViewport().getScreenPosition();
+	if (view.scaleX <= 0.0 || view.scaleY <= 0.0) {
+		return Common::Rect();
+	}
+
+	// Scaled around the top left of the viewport, then moved, and kept inside it
+	Common::Rect zoomed;
+	zoomed.left = viewport.left + (int)floor((position.left - viewport.left) * view.scaleX + view.offsetX);
+	zoomed.top = viewport.top + (int)floor((position.top - viewport.top) * view.scaleY + view.offsetY);
+	zoomed.right = viewport.left + (int)ceil((position.right - viewport.left) * view.scaleX + view.offsetX);
+	zoomed.bottom = viewport.top + (int)ceil((position.bottom - viewport.top) * view.scaleY + view.offsetY);
+	zoomed.clip(viewport);
+	return zoomed;
 }
 
 int GraphicsManager::objectComparator(const void *a, const void *b) {

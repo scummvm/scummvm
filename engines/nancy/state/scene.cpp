@@ -2307,6 +2307,9 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 	const bool hasBackground = !summary->getBackgroundName().empty();
 	_viewport.setVisible(hasBackground);
 
+	// Nancy21's camera can zoom into the main stream
+	_viewport.setViewTransform(_streams.getViewTransform(SceneStreamManager::getMainStreamName()));
+
 	if (hasBackground) {
 		_viewport.loadVideo(_sceneState.summary.videoFile, _sceneState.currentScene.frameID, 0, kPanNone, kLargeVideoFormat);
 	}

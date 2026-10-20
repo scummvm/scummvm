@@ -1176,11 +1176,26 @@ static int streamsGetZ(lua_State *L) {
 	return 1;
 }
 
+// Streams:GetTransform(stream) and Streams:SetTransform(stream, matrix), Nancy21
+static int streamsGetTransform(lua_State *L) {
+	const ScriptMatrix *transform = NancySceneState.getStreams().getTransform(luaL_checkstring(L, 2));
+	pushMatrix(L, transform ? *transform : ScriptMatrix());
+	return 1;
+}
+
+static int streamsSetTransform(lua_State *L) {
+	const char *streamName = luaL_checkstring(L, 2);
+	NancySceneState.getStreams().setTransform(streamName, checkMatrix(L, 3));
+	return 0;
+}
+
 static const luaL_Reg kStreamsFunctions[] = {
 	{ "__index", streamsIndex },
 	{ "GetScene", streamsGetScene },
 	{ "GetStreams", streamsGetStreams },
 	{ "GetZ", streamsGetZ },
+	{ "GetTransform", streamsGetTransform },
+	{ "SetTransform", streamsSetTransform },
 	{ nullptr, nullptr }
 };
 

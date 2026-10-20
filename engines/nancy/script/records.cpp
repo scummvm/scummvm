@@ -121,8 +121,9 @@ uint16 RecordGraphic::getBackgroundZOrder(int32 zOffset) {
 	return getScriptZOrder(kBackgroundScriptZ, zOffset);
 }
 
-void RecordGraphic::setScriptZ(double z, int32 streamZOffset) {
-	setZOrder(getScriptZOrder(z, streamZOffset));
+void RecordGraphic::setScriptZ(double z, const SceneContext &context) {
+	setZOrder(getScriptZOrder(z, context.getZOffset()));
+	setViewTransform(context.getViewTransform());
 }
 
 // Where something that was placed in the viewport ends up once the transform
@@ -737,7 +738,7 @@ bool OverrideRecord::hasMessagingName(const Common::String &name) {
 
 void OverrideRecord::onZChanged() {
 	if (_canvas) {
-		_canvas->setScriptZ(getZ(), getContext().getZOffset());
+		_canvas->setScriptZ(getZ(), getContext());
 	}
 }
 
@@ -769,7 +770,7 @@ void OverrideRecord::updateGraphics() {
 		_canvas->init();
 		_canvas->_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getTransparentPixelFormat());
 		_canvas->moveTo(bounds);
-		_canvas->setScriptZ(getZ(), getContext().getZOffset());
+		_canvas->setScriptZ(getZ(), getContext());
 		_canvas->registerGraphics();
 	}
 
@@ -862,7 +863,7 @@ void OverlayRecord::applyRects() {
 }
 
 void OverlayRecord::onZChanged() {
-	_graphic.setScriptZ(getZ(), getContext().getZOffset());
+	_graphic.setScriptZ(getZ(), getContext());
 }
 
 void OverlayRecord::updateGraphics() {
@@ -1095,7 +1096,7 @@ bool AnimOverlayRecord::prepareReset() {
 }
 
 void AnimOverlayRecord::onZChanged() {
-	_graphic.setScriptZ(getZ(), getContext().getZOffset());
+	_graphic.setScriptZ(getZ(), getContext());
 }
 
 void AnimOverlayRecord::updateGraphics() {
@@ -1448,7 +1449,7 @@ void TextRecord::run(double sceneTime, double elapsedTime) {
 }
 
 void TextRecord::onZChanged() {
-	_graphic.setScriptZ(getZ(), getContext().getZOffset());
+	_graphic.setScriptZ(getZ(), getContext());
 }
 
 void TextRecord::updateGraphics() {
@@ -1639,7 +1640,7 @@ bool MovieRecord::prepareReset() {
 }
 
 void MovieRecord::onZChanged() {
-	_graphic.setScriptZ(getZ(), getContext().getZOffset());
+	_graphic.setScriptZ(getZ(), getContext());
 }
 
 void MovieRecord::updateGraphics() {

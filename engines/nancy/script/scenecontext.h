@@ -34,6 +34,7 @@ struct lua_State;
 namespace Nancy {
 
 struct NancyInput;
+struct ViewTransform;
 
 namespace Script {
 
@@ -99,6 +100,9 @@ public:
 	uint getFrame() const { return _frame; }
 	void setFrame(uint frame) { _frame = frame; }
 	int32 getZOffset() const { return _zOffset; }
+
+	// Nancy21: the zoom of the stream the scene is in
+	const ViewTransform *getViewTransform() const;
 
 	// The seconds the scene has been running for
 	double getTime() const { return _time; }
