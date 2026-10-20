@@ -28,6 +28,7 @@
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "dgds/dgds.h"
 
@@ -70,24 +71,41 @@ struct KeybindingRecord {
 };
 
 Common::KeymapArray DgdsMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Dgds;
+
 	const KeybindingRecord DGDS_KEYS[] = {
-		{ Dgds::kDgdsKeyLoad, "LOAD", _("Load game"), "F7", "C+l" },
-		{ Dgds::kDgdsKeySave, "SAVE", _("Save game"), "F5", "C+s" },
-		{ Dgds::kDgdsKeyToggleMenu, "TOGGLE_MENU", _("Toggle Menu"), "ESCAPE", nullptr },
-		{ Dgds::kDgdsKeyToggleClock, "TOGGLE_CLOCK", _("Toggle Clock"), "c", nullptr },
-		{ Dgds::kDgdsKeyNextChoice, "NEXT_CHOICE", _("Next dialog / menu item"), "DOWN", "s" },
-		{ Dgds::kDgdsKeyPrevChoice, "PREV_CHOICE", _("Previous dialog / menu item"), "UP", "a" },
-		{ Dgds::kDgdsKeyNextItem, "NEXT_ITEM", _("Next object"), "TAB", "w" },
-		{ Dgds::kDgdsKeyPrevItem, "PREV_ITEM", _("Previous object"), "S+TAB", "q" },
-		{ Dgds::kDgdsKeyPickUp, "PICK_UP", _("Pick up / Operate"), "SPACE", "KP5" },
-		{ Dgds::kDgdsKeyLook, "LOOK", _("Look"), "RETURN", "," },
-		{ Dgds::kDgdsKeyActivate, "ACTIVATE", _("Activate Inventory Object"), "BACKSPACE", nullptr },
+		{ kDgdsKeyLoad, "LOAD", _("Load game"), "F7", "C+l" },
+		{ kDgdsKeySave, "SAVE", _("Save game"), "F5", "C+s" },
+		{ kDgdsKeyToggleMenu, "TOGGLE_MENU", _("Toggle Menu"), "ESCAPE", nullptr },
+		{ kDgdsKeyToggleClock, "TOGGLE_CLOCK", _("Toggle Clock"), "c", nullptr },
+		{ kDgdsKeyNextChoice, "NEXT_CHOICE", _("Next dialog / menu item"), "DOWN", "s" },
+		{ kDgdsKeyPrevChoice, "PREV_CHOICE", _("Previous dialog / menu item"), "UP", "a" },
+		{ kDgdsKeyNextItem, "NEXT_ITEM", _("Next object"), "TAB", "w" },
+		{ kDgdsKeyPrevItem, "PREV_ITEM", _("Previous object"), "S+TAB", "q" },
+		{ kDgdsKeyPickUp, "PICK_UP", _("Pick up / Operate"), "SPACE", "KP5" },
+		{ kDgdsKeyLook, "LOOK", _("Look"), "RETURN", "," },
+		{ kDgdsKeyActivate, "ACTIVATE", _("Activate Inventory Object"), "BACKSPACE", nullptr },
 	};
 
-	Common::Keymap *map = new Common::Keymap(Common::Keymap::kKeymapTypeGame, target, _("Game Keys"));
+	Keymap *map = new Keymap(Keymap::kKeymapTypeGame, target, _("Game Keys"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	map->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	map->addAction(act);
 
 	for (const auto &k : DGDS_KEYS) {
-		Common::Action *act = new Common::Action(k._id, k._desc);
+		act = new Action(k._id, k._desc);
 		act->setCustomEngineActionEvent(k._action);
 		act->addDefaultInputMapping(k._key);
 		if (k._altKey)
@@ -95,7 +113,7 @@ Common::KeymapArray DgdsMetaEngine::initKeymaps(const char *target) const {
 		map->addAction(act);
 	}
 
-	return Common::Keymap::arrayOf(map);
+	return Keymap::arrayOf(map);
 }
 
 //
