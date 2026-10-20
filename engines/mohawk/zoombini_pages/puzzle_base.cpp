@@ -27,6 +27,33 @@
 
 namespace Mohawk {
 
+FNV1a32Hasher::FNV1a32Hasher() {
+	clear();
+}
+
+void FNV1a32Hasher::clear() {
+	_hash = kOffsetBasis;
+}
+
+void FNV1a32Hasher::addByte(byte value) {
+	_hash ^= value;
+	_hash *= kPrime;
+}
+
+void FNV1a32Hasher::addBytes(const byte *data, uint32 size) {
+	// Keep the bulk loop local so debug builds also avoid a function call per byte.
+	for (uint32 i = 0; i < size; i++)
+		_hash = (_hash ^ data[i]) * kPrime;
+}
+
+void FNV1a32Hasher::addBytes(const Common::Array<byte> &data) {
+	addBytes(data.begin(), data.size());
+}
+
+uint32 FNV1a32Hasher::getHash() const {
+	return _hash;
+}
+
 ZoombiniPuzzle::ZoombiniPuzzle(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType, ZmbSrcPageKind departXferSrcSiPage)
 	: ZoombiniInteractive(vm, pageType), _puzzleLevel(static_cast<ZmbPuzzleLevel>(vm->_state->readPageRouteLevel(pageType) + 1)) {
 	_departXferSrcSiPage = departXferSrcSiPage;

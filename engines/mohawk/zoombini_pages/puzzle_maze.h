@@ -23,6 +23,7 @@
 #define MOHAWK_ZOOMBINI_PAGES_PUZZLE_MAZE_H
 
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "mohawk/zoombini_pages/grid_traversal.h"
 #include "mohawk/zoombini_pages/puzzle_base.h"
 
@@ -47,56 +48,18 @@ public:
 	static constexpr const char *kPageName = ZmbXferRouteInfo::kXferPageNameBubblewonderAbyss;
 	static constexpr int kRouteNumber = 4;
 	static constexpr int kRoutePuzzleIdx = 3;
-	/**
-	 * Upper bound for one level-4 answer plan search in simulated launches.
-	 *
-	 * Measured with temporary instrumentation that ran the search on each
-	 * level-4 layout and logged the step count and wall time:
-	 *
-	 * CPU: AMD Ryzen 9 9950X
-	 * - REGS 16606 (authored): 349,897 steps, plan found, 146 ms
-	 * - REGS 16608 (authored): 349,901 steps, plan found, 233 ms
-	 * - REGS 16607 (restored): 3,000,000 steps, budget exhausted, 1,813 ms
-	 */
-	static constexpr uint32 kDebugMazeSolverMaxSteps = 1500000;
-	/**
-	 * Upper bound for the generic level-4 answer plan search in simulated launches.
-	 *
-	 * The generic search runs only when the staged relay search above finds no
-	 * plan, which happens for packs the restored layout REGS 16607 does not fit
-	 * into the staged relay shape. It branches only on launches that change the
-	 * control state, so a solvable pack is normally answered within a few
-	 * hundred simulated launches; the bound matters only when the search has to
-	 * prove that no perfect run exists.
-	 *
-	 * Measured on the level-4 practice page with sixteen Zoombinis, timing the
-	 * whole answer:
-	 *
-	 * CPU: AMD Ryzen 9 9950X
-	 * - REGS 16607, solvable pack: direct launch order of 17 launches, 852 ms
-	 * - REGS 16607, unsolvable pack: search exhausted, 822 ms to 2,599 ms
-	 */
-	static constexpr uint32 kDebugMazeGenericSolverMaxSteps = 2000000;
-	/** Upper bound for the generic search node pool. */
-	static constexpr uint32 kDebugMazeGenericSolverMaxNodes = 320000;
-	/**
-	 * Bounds for one solvability probe made while repairing REGS 16607.
-	 *
-	 * The probe runs during page setup, so it must answer quickly. A pack that
-	 * can be completed is answered within about two thousand simulated
-	 * launches, measured across the captured level-4 packs, so this bound
-	 * carries roughly a tenfold margin while an unsolvable candidate is
-	 * abandoned instead of proven impossible.
-	 */
-	static const uint32 kMazeRepairProbeMaxSteps = 20000;
-	/** Node pool for one solvability probe made while repairing REGS 16607. */
-	static const uint32 kMazeRepairProbeMaxNodes = 20000;
-	/** Total simulated launches one REGS 16607 repair may spend. */
-	static const uint32 kMazeRepairTotalMaxSteps = 300000;
+	/** Memory cap on retained nodes in the generic answer search. */
+	static constexpr uint32 kDebugMazeMaxRetainedNodes = 320000;
+	/** Memory cap on retained nodes in each condition-repair probe. */
+	static constexpr uint32 kMazeRepairMaxRetainedNodes = 20000;
+	/** Shared wall-clock budget in milliseconds for the original-layout probe and all condition-repair candidates. */
+	static constexpr uint32 kMazeRepairTimeLimit = 10000;
 	/** Return the puzzle name used by debug answer descriptions. */
 	const char *getPageName() const override { return kPageName; }
 	int getRouteNumber() const override { return kRouteNumber; }
 	int getRoutePuzzleIdx() const override { return kRoutePuzzleIdx; }
+	/** Describe page-specific debugger commands. */
+	Common::String debugGetPageCommandHelp() const override;
 
 	/** Generate the device grid and initialize the active pack. */
 	void open() override;
@@ -120,8 +83,14 @@ protected:
 	bool getShapeInterpolationGroup(ZmbFeature *feature, const ZmbHotspot &hotspot, uint32 &key, uint32 &leader) const override;
 	/** Move surviving runners to the accepted exit side for debug Go handling. */
 	void debugPrepareForDeparture() override;
-	/** Describe the generated maze rule for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	/**
+	 * Describe the generated maze and search for a complete launch order.
+	 * @param[in] args Optional time budget in seconds, from 1 through 60; empty uses five seconds.
+	 * @return Answer text with search time and iteration counts, or command usage for invalid arguments.
+	 */
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
+	/** Describe the answer command and its optional search-time budget. */
+	Common::String debugGetAnswerCommandHelp() const override;
 	/** Process cell, collision, and exit animation callbacks. */
 	void onFeatureAnimEvent(ZmbFeature *feature, int16 eventCode) override;
 	/**
@@ -1348,14 +1317,6 @@ private:
 	/** Control launches one generic plan may contain. */
 	static const int kDebugMazeMaxControlSteps = 40;
 
-	/**
-	 * Standard 64-bit FNV-1a offset basis shared by both solver state fingerprints.
-	 * @see https://datatracker.ietf.org/doc/html/rfc9923#section-2
-	 */
-	static constexpr uint64 kSolverHashOffsetBasis = 14695981039346656037ULL;
-	/** Standard 64-bit FNV prime used after XORing each encoded state byte. */
-	static constexpr uint64 kSolverHashPrime = 1099511628211ULL;
-
 	// Plan builders advance private simulation state; the live page is read only when constructing the context.
 
 	/** Read-only layout and pack snapshot shared by the answer-plan builders. */
@@ -1655,31 +1616,164 @@ private:
 		SolverGenericPlan() = default;
 	};
 
-	/** Search caps for one layout-agnostic answer-plan search. */
-	struct SolverGenericSearchLimits {
-		/** Maximum expanded control launches before the search stops. */
-		uint32 maxSteps;
-		/** Maximum retained search nodes before the search stops. */
-		uint32 maxNodes;
+	/** Memory bound for one layout-agnostic launch-order search. */
+	struct SolverSearchMemoryLimits {
+		/** Maximum retained nodes; limits memory usage independently of the wall-clock budget. */
+		uint32 maxRetainedNodes;
 	};
 
 	/** Status published by one layout-agnostic answer-plan search. */
 	struct SolverGenericSearchResult {
 		/** Whether all queued search nodes were exhausted without finding a plan. */
 		bool searchExhausted = false;
-		/** Whether a configured step or node cap stopped the search. */
+		/** Whether the time budget or memory cap stopped the search. */
 		bool limitReached = false;
+		/** Whether the shared deadline stopped the search, retained independently of later output formatting. */
+		bool timeLimitReached = false;
 		/** Number of candidate control launches examined by the search. */
 		uint32 stepsUsed = 0;
 
 		SolverGenericSearchResult() = default;
 	};
 
-	/** Step budget for one bounded answer-plan search; limit 0 disables the cap. */
+	/** Shared wall-clock budget and simulated-launch count for one answer query or internal probe. */
 	struct SolverBudget {
-		uint32 limit = 0;
+		/**
+		 * Start the clock for a bounded search, or create an untimed simulation.
+		 * @param[in] searchTimeLimit Budget in milliseconds; zero disables the time cap.
+		 */
+		explicit SolverBudget(uint32 searchTimeLimit = 0);
+		/** Return whether the wall-clock budget has elapsed, accounting for unsigned clock wraparound. */
+		bool isExpired() const;
+		/** Millisecond clock value at the start of the query; shared by every search phase. */
+		uint32 started = 0;
+		/** Time budget in milliseconds; zero disables the cap for untimed simulations. */
+		uint32 timeLimit;
+		/** Simulated-launch attempts, including verification replays; retained on every return path. */
 		uint32 steps = 0;
 	};
+
+	/**
+	 * Parse the answer command's optional search-time budget.
+	 * @param[in] args Arguments after answer; empty uses five seconds, otherwise one integer from 1 through 60.
+	 * @param[out] timeLimit Receives the budget in milliseconds on success.
+	 * @return True for valid arguments; false requests the command's usage text.
+	 */
+	static bool parseDebugSearchTimeLimit(const Common::Array<Common::String> &args, uint32 &timeLimit);
+
+	/**
+	 * Canonical state bytes stored inline, with a cached hash and exact equality.
+	 * Each layout below describes one complete key; each record field occupies one byte.
+	 * Factories append fields with @ref ZoombiniPuzzleMaze::SolverStateKey::appendByte, then compute the hash.
+	 *
+	 * @ref ZoombiniPuzzleMaze::SolverStateKey::fromPlanState writes:
+	 * @code
+	 * [cell directions: cellCount bytes][Zoombini 0: 3 bytes][Zoombini 1: 3 bytes]...
+	 * Zoombini record: [corner + 5][heldCellIdx + 2][flags]
+	 * Total bytes: cellCount + snoidCount * 3
+	 * @endcode
+	 * Cell directions use layout-cell order and are stored as direction + 5; Zoombini records use pack order.
+	 * Flag bit 0 marks acceptance; remaining bits store held heading + 1, or zero when not held.
+	 *
+	 * @ref ZoombiniPuzzleMaze::SolverStateKey::fromSearchNode writes:
+	 * @code
+	 * [control state: 1 byte][route class 0: 8 bytes]...[sticky slot 0: 2 bytes]...
+	 * Route-class record: [bucket 0 + 1]...[bucket 7 + 1]
+	 * Sticky-slot record: [occupant class + 2][heading + 1]
+	 * Total bytes: 1 + classCount * 8 + stickyCount * 2
+	 * @endcode
+	 * The control-state index is stored as index + 1; route-class records use class order.
+	 * Bucket pairs 0/1, 2/3, and 4/5 count uncovered/covered Zoombinis at the lower-left, upper-left, and lower-right corners.
+	 * Bucket 6 counts accepted Zoombinis; bucket 7 is unused.
+	 * Held Zoombinis are represented by sticky-slot records in slot order; an empty slot has occupant class -1.
+	 */
+	class SolverStateKey {
+	public:
+		/**
+		 * Copy only the active encoding bytes and cached hash.
+		 * @param[in] other Completed state key to copy.
+		 */
+		SolverStateKey(const SolverStateKey &other);
+		/**
+		 * Replace this key without copying unused buffer capacity.
+		 * @param[in] other Completed state key to copy; may be this key.
+		 * @return This key after assignment.
+		 */
+		SolverStateKey &operator=(const SolverStateKey &other);
+		/**
+		 * Build an exact routing-state key for the accepted-only search's visited set.
+		 * Encode directions in layout-cell order, then each pack slot's corner, held-cell index, accepted flag, and held heading.
+		 * Only layout cells can change direction; other grid entries remain fixed within one search.
+		 * Held-cell positions and occupants follow from the cell indices; non-held headings are replaced on the next launch.
+		 * The layout, traits, launchers, and delivery requirements are fixed within one search and are not encoded again.
+		 * @param[in] context Fixed layout and active pack size for this search.
+		 * @param[in] state Simulated routing state; pack identity remains significant.
+		 * @return Inline state bytes with a cached 32-bit FNV-1a hash; equality compares the bytes as well.
+		 */
+		static SolverStateKey fromPlanState(const SolverPlanContext &context, const SolverPlanState &state);
+		/**
+		 * Build an exact canonical key for the generic search's visited set.
+		 * Encode the control-state index, class counts by corner and coverage, then each sticky slot's occupant class and heading.
+		 * Zoombinis with identical trait-test results are interchangeable, so their pack identities are omitted.
+		 * The layout and route-class tables are fixed within one search and are not encoded again.
+		 * Search parents, launch records, and depth describe how a node was reached and are omitted.
+		 * @param[in] tables Fixed route classes and active sticky slots for this search.
+		 * @param[in] node Routing state whose equivalent class-member permutations share one key.
+		 * @return Inline canonical bytes with a cached 32-bit FNV-1a hash; equality compares the bytes as well.
+		 */
+		static SolverStateKey fromSearchNode(const SolverTables &tables, const SolverSearchNode &node);
+		/** Return the cached hash used to locate a visited-state entry. */
+		uint32 getHash() const;
+		/**
+		 * Compare complete encodings only when their hashes and lengths match.
+		 * @param[in] other State key to compare with this key.
+		 * @return True only for identical canonical byte sequences.
+		 */
+		bool operator==(const SolverStateKey &other) const;
+
+	private:
+		/** Start an empty key for one of the canonical state factories. */
+		SolverStateKey();
+		/**
+		 * Append one serialized state byte and increase the used length.
+		 * Factories validate the complete encoding length before appending to the fixed buffer.
+		 * Call only while building a key, before @ref ZoombiniPuzzleMaze::SolverStateKey::updateHash.
+		 * @param[in] value Encoded state byte to append.
+		 */
+		void appendByte(byte value);
+		/** Compute the 32-bit FNV-1a hash once, after the factory finishes encoding the state. */
+		void updateHash();
+		/** Upper bound for either canonical encoding; generic class counts require more bytes than the plan state. */
+		static constexpr uint32 kMaxEncodingSize = 1 + kDebugMazeMaxSnoids * 8 + kDebugMazeMaxStickyCells * 2;
+		/**
+		 * Cached 32-bit FNV-1a hash of the serialized state bytes
+		 * in @ref ZoombiniPuzzleMaze::SolverStateKey::_encoding.
+		 */
+		uint32 _hash = 0;
+		/**
+		 * Number of bytes used by the serialized state
+		 * in @ref ZoombiniPuzzleMaze::SolverStateKey::_encoding.
+		 */
+		uint32 _size = 0;
+		/**
+		 * Serialized representation of the current search state, used for hashing and exact comparison.
+		 * Only the first @ref ZoombiniPuzzleMaze::SolverStateKey::_size bytes are initialized, read, or copied.
+		 */
+		byte _encoding[kMaxEncodingSize];
+	};
+
+	/** Adapt cached state hashes to @ref Common::HashMap without rehashing the encoding. */
+	struct SolverStateKeyHash {
+		/**
+		 * Return a key's cached 32-bit hash for table lookup.
+		 * @param[in] key Canonical state key whose bytes have already been hashed.
+		 * @return Cached FNV-1a hash; key equality resolves hash collisions.
+		 */
+		uint operator()(const SolverStateKey &key) const;
+	};
+
+	/** Visited encodings; matching 32-bit hashes still require complete key equality. */
+	using SolverVisitedStates = Common::HashMap<SolverStateKey, bool, SolverStateKeyHash>;
 
 	/**
 	 * Mutable state shared by every recursive call in one accepted-only search.
@@ -1698,30 +1792,13 @@ private:
 		Common::Array<SolverPlanAction> actions;
 		/** Simulated state that reached the requested accepted-plan outcome. */
 		SolverPlanState resultState;
-		/** Hashes of states already explored by this search. */
-		Common::HashMap<uint64, bool> visited;
+		/** Canonical encodings of states already explored, with exact equality checks after hash lookup. */
+		SolverVisitedStates visited;
 		/** Number of states inserted into @ref ZoombiniPuzzleMaze::SolverAcceptedPlanSearch::visited. */
 		int32 visitedStateCount = 0;
 
+		/** Start with no required deliveries, reserved final key, actions, or visited states. */
 		SolverAcceptedPlanSearch() {}
-	};
-
-	/**
-	 * Publishes a search budget's step count on every exit path.
-	 * Copying the count on destruction includes successful, failed, and budget-limited returns.
-	 */
-	struct SolverStepCounter {
-		const SolverBudget &budget;
-		uint32 &target;
-
-		SolverStepCounter(const SolverBudget &searchBudget, uint32 &stepsUsed)
-			: budget(searchBudget), target(stepsUsed) {
-			target = 0;
-		}
-
-		~SolverStepCounter() {
-			target = budget.steps;
-		}
 	};
 
 	/**
@@ -1742,10 +1819,13 @@ private:
 	/** Search for a complete Level4 relay using the selected switch groups and shared @p budget. */
 	static bool debugBuildMazeL4PlanForGroups(const SolverPlanContext &context, const SolverLevel4GroupSelection &groupSel, SolverLevel4Plan &plan, SolverBudget &budget);
 	/**
-	 * Search switch-group combinations for a complete Level4 relay and report @p stepsUsed.
-	 * On failure, @p searchExhausted reports whether the simulated-launch budget was reached.
+	 * Search switch-group combinations for a complete Level4 relay within the shared @p budget.
+	 * @param[in] context Starting layout and party to analyze.
+	 * @param[out] plan Receives the complete relay plan on success.
+	 * @param[in,out] budget Query deadline and cumulative simulated-launch count.
+	 * @return True when a complete relay was found; false on failure or timeout.
 	 */
-	static bool debugBuildMazeL4Plan(const SolverPlanContext &context, SolverLevel4Plan &plan, bool &searchExhausted, uint32 &stepsUsed);
+	static bool debugBuildMazeL4Plan(const SolverPlanContext &context, SolverLevel4Plan &plan, SolverBudget &budget);
 	/**
 	 * Search recursively for accepted launches of all required Zoombinis without pressing switches.
 	 * An optional final key must reach the goal and press only its requested switch group.
@@ -1770,9 +1850,12 @@ private:
 	static void debugMazeTraceRoute(const SolverPlanContext &context, const SolverTables &tables, const SolverMovingSnoid &start, SolverDirectionGrid &grid, SolverRouteResult &route);
 	/**
 	 * Precompute control states, equivalent Zoombini classes, and launch and sticky-resume routes.
-	 * @return false when the context is invalid or exceeds the solver table capacities.
+	 * @param[in] context Starting layout and party to analyze.
+	 * @param[out] tables Receives the precomputed routes on success.
+	 * @param[in] budget Shared query deadline, including table preparation.
+	 * @return false when the context is invalid, exceeds table capacities, or the time budget expires.
 	 */
-	static bool debugMazeBuildSolverTables(const SolverPlanContext &context, SolverTables &tables);
+	static bool debugMazeBuildSolverTables(const SolverPlanContext &context, SolverTables &tables, const SolverBudget &budget);
 	/** Expand a compact search node into arrow directions, Zoombini positions, and sticky-cell occupants. */
 	static void debugMazeSolverNodeToPlanState(const SolverPlanContext &context, const SolverTables &tables, const SolverSearchNode &node, SolverPlanState &state);
 	/**
@@ -1786,43 +1869,60 @@ private:
 	static void debugMazeSolverUpdateCover(const SolverTables &tables, SolverSearchNode &node);
 	/** Count Zoombinis that are neither accepted nor covered by a previously found direct goal route. */
 	static int16 debugMazeSolverUncovered(const SolverTables &tables, const SolverSearchNode &node);
-	/**
-	 * Build a 64-bit FNV-1a fingerprint for the generic search's visited set.
-	 * Mix the control-state index, class counts by corner and coverage, then each sticky slot's occupant class and heading.
-	 * Zoombinis with identical trait-test results are interchangeable, so their pack identities are omitted.
-	 * The layout and route-class tables are fixed within one search and are not mixed again.
-	 * Search parents, launch records, and depth describe how a node was reached and do not contribute to its routing fingerprint.
-	 * @ref ZoombiniPuzzleMaze::debugBuildMazeGenericPlan skips nodes with an already visited fingerprint.
-	 * The fingerprint is not a packed state, and collisions are not checked against the full node.
-	 * A collision between distinct encodings can therefore suppress a different continuation.
-	 * @return The FNV-1a hash of the canonical state encoding described in the implementation.
-	 */
-	static uint64 debugMazeSolverNodeKey(const SolverTables &tables, const SolverSearchNode &node);
 	/** Add a valid, previously unseen control state to @p reach and return whether the set changed. */
 	static bool debugMazeSolverAddState(SolverReachSet &reach, int16 stateIdx);
-	/** Expand relaxed control-state, corner, and sticky-cell reachability until no new routes remain. */
-	static void debugMazeSolverExpandReach(const SolverTables &tables, SolverReachSet &reach);
+	/**
+	 * Expand relaxed reachability until no new routes remain or the time budget expires.
+	 * @param[in] tables Precomputed launch and sticky-resume routes.
+	 * @param[in,out] reach Reachable control states, corners, and sticky occupants.
+	 * @param[in] budget Shared query deadline.
+	 */
+	static void debugMazeSolverExpandReach(const SolverTables &tables, SolverReachSet &reach, const SolverBudget &budget);
 	/**
 	 * Check the remaining Zoombinis against the relaxed reachability model.
-	 * @return false when the node can be pruned; true allows further search without proving a complete plan.
+	 * @param[in] tables Precomputed launch and sticky-resume routes.
+	 * @param[in] node Candidate routing state to check.
+	 * @param[in] budget Shared query deadline.
+	 * @return False when the node can be pruned or time has expired; true permits further search without proving a complete plan.
 	 */
-	static bool debugMazeSolverGoalReachable(const SolverTables &tables, const SolverSearchNode &node);
-	/** Replay control launches, insert ordinary deliveries, and verify that the assembled plan accepts every Zoombini. */
-	static bool debugMazeGenericPlanFromKeys(const SolverPlanContext &context, const SolverTables &tables, const Common::Array<SolverKeyLaunch> &keyLaunches, SolverGenericPlan &plan);
+	static bool debugMazeSolverGoalReachable(const SolverTables &tables, const SolverSearchNode &node, const SolverBudget &budget);
 	/**
-	 * Search for a complete launch order using layout-derived tables within @p limits.
-	 * Store search cost and termination status in @p result; return true only for a verified complete plan.
+	 * Replay control launches, insert ordinary deliveries, and verify that every Zoombini is accepted.
+	 * @param[in] context Starting layout and party to analyze.
+	 * @param[in] tables Precomputed launch and sticky-resume routes.
+	 * @param[in] keyLaunches Control launches in their chosen order.
+	 * @param[out] plan Receives the complete plan on success; partial steps are invalid on failure.
+	 * @param[in,out] budget Shared query deadline and cumulative simulated-launch count.
+	 * @return True only when the complete plan has been verified within the time budget.
 	 */
-	static bool debugBuildMazeGenericPlan(const SolverPlanContext &context, SolverGenericPlan &plan, const SolverGenericSearchLimits &limits, SolverGenericSearchResult &result);
+	static bool debugMazeGenericPlanFromKeys(const SolverPlanContext &context, const SolverTables &tables,
+											 const Common::Array<SolverKeyLaunch> &keyLaunches, SolverGenericPlan &plan, SolverBudget &budget);
+	/**
+	 * Search for a complete launch order using layout-derived tables within @p memoryLimits and @p budget.
+	 * Store search cost and termination status in @p result; return true only for a verified complete plan.
+	 * @param[in] context Starting layout and party to analyze.
+	 * @param[out] plan Receives the complete launch order on success.
+	 * @param[in] memoryLimits Upper bound on retained search nodes.
+	 * @param[out] result Candidate-launch count and search termination status.
+	 * @param[in,out] budget Shared query deadline and cumulative simulated-launch count, including verification replays.
+	 */
+	static bool debugBuildMazeGenericPlan(const SolverPlanContext &context, SolverGenericPlan &plan,
+										  const SolverSearchMemoryLimits &memoryLimits, SolverGenericSearchResult &result, SolverBudget &budget);
 
 	/** Fill the search context from the current grid, launchers, and pack. */
 	void debugBuildMazePlanContext(SolverPlanContext &context) const;
-	/** Run a bounded solvability probe for the current layout and pack, reporting the simulated-launch count. */
-	bool isMazeLayoutSolvable(uint32 &stepsUsed) const;
+	/**
+	 * Run a solvability probe for the current layout and pack.
+	 * @param[in,out] budget Shared repair deadline and cumulative simulated-launch count.
+	 * @return True only when a complete launch order has been verified.
+	 */
+	bool isMazeLayoutSolvable(SolverBudget &budget) const;
 	/** Change a condition cell's trait test and synchronize the runtime and solver grids. */
 	void setConditionCellTrait(int16 cellIdx, int16 category, int16 value);
 	/**
 	 * Try one trait-condition substitution when the arriving pack cannot finish the restored Level4 layout as authored.
+	 * The original-layout probe and all candidates share a ten-second wall-clock budget.
+	 * Unsuccessful trials restore the authored condition, including when the budget expires.
 	 * @return true when a changed condition produces a verified complete plan.
 	 */
 	bool repairRestoredL4LayoutConditionCell();
@@ -1874,17 +1974,6 @@ private:
 	static bool debugMazePlanSameTraits(const SolverPlanContext &context, int16 firstSnoid, int16 secondSnoid);
 	/** Test whether a Zoombini satisfies the requested trait match or nonmatch. */
 	static bool debugMazePlanMatchesTrait(const SolverPlanContext &context, int16 snoidIdx, int16 category, int16 value, bool matched);
-	/**
-	 * Build a 64-bit FNV-1a fingerprint for the accepted-only search's visited set.
-	 * Mix arrow directions in row-major order, then each pack slot's corner, held-cell index, and accepted flag.
-	 * The layout, traits, launchers, and delivery requirements are fixed within one search and are not mixed again.
-	 * @ref ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan uses the fingerprint to skip repeated remaining-delivery searches.
-	 * Different launch orders can produce the same routing state and therefore the same continuation problem.
-	 * The fingerprint is not a packed state, and collisions are not checked against the full state.
-	 * A collision between distinct encodings can therefore suppress a different continuation.
-	 * @return The FNV-1a hash of the ordered state encoding described in the implementation.
-	 */
-	static uint64 debugMazePlanStateHash(const SolverPlanContext &context, const SolverPlanState &state);
 	/** Test whether a simulated action presses exactly one switch group and that group is @p switchGroup. */
 	static bool debugMazePlanActionPressesOnly(const SolverPlanAction &action, int16 switchGroup);
 	/** Return the first switch cell belonging to @p waveGroup, or -1 when no such cell exists. */

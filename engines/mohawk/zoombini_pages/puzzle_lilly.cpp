@@ -3487,7 +3487,7 @@ void ZoombiniPuzzleLilly::crabPreRenderShape(ZmbFeature *feature, ZmbHotspotGrou
 // Print the debug answer.
 // =================================================================
 
-Common::String ZoombiniPuzzleLilly::debugGetAnswer() const {
+Common::String ZoombiniPuzzleLilly::debugGetAnswer(const Common::Array<Common::String> &) const {
 	// Debug names for the three lily-pad attribute families and their values.
 	const auto padFamilyName = [](ZmbLillyGridWalker::PadAttrType attrType) -> const char * {
 		switch (attrType) {

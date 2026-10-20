@@ -113,7 +113,7 @@ protected:
 	/** Handle the lowercase s-o-v-l-e debug sequence. */
 	ZmbEventHandleResult onDebugKeyDown(const Common::KeyState &kbd) override;
 	/** Describe the generated Stone Rise arrangement for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
 	/** Stone Rise does not consume a finite mistake budget. */
 	ZmbChanceInfo debugGetChances() const override;
 	/** Begin travel after the arrangement is accepted. */

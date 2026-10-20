@@ -359,7 +359,7 @@ bool ZoombiniPuzzleBridge::debugSetChances(int16 remaining) {
 	return true;
 }
 
-Common::String ZoombiniPuzzleBridge::debugGetAnswer() const {
+Common::String ZoombiniPuzzleBridge::debugGetAnswer(const Common::Array<Common::String> &) const {
 	// Bridge assignment: @ref ZoombiniPuzzleBridge::testTraitMatch() returns true
 	// when the Zoombini is rejected from the target lane.
 	// Without a lane swap, matching traits cross the bottom bridge and

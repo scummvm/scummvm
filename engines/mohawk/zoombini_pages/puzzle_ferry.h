@@ -22,6 +22,8 @@
 #ifndef MOHAWK_ZOOMBINI_PAGES_PUZZLE_FERRY_H
 #define MOHAWK_ZOOMBINI_PAGES_PUZZLE_FERRY_H
 
+#include "common/array.h"
+
 #include "mohawk/zoombini_pages/puzzle_base.h"
 
 namespace Mohawk {
@@ -41,6 +43,15 @@ public:
 	ZoombiniPuzzleFerry(MohawkEngine_Zoombini *vm);
 	/** Release raft, captain, and Zoombini features. */
 	~ZoombiniPuzzleFerry() override;
+	/** Describe page-specific debugger commands. */
+	Common::String debugGetPageCommandHelp() const override;
+	/**
+	 * Handle a page-specific debugger command.
+	 * @param args Page subcommand followed by its arguments; excludes the registered page/puzzle command.
+	 * @param output Command result or usage text to print in the debugger.
+	 * @return True to keep the debugger open; false to resume the game.
+	 */
+	bool debugDoPageCommand(const Common::Array<Common::String> &args, Common::String &output) override;
 	/** Static puzzle name used by debug answer descriptions. */
 	static constexpr const char *kPageName = ZmbXferRouteInfo::kXferPageNameCaptainCajunsFerryboat;
 	static constexpr int kRouteNumber = 2;
@@ -96,8 +107,10 @@ protected:
 	void updateDepartureState() override;
 	/** Seat every remaining pack Snoid before the debugger forces departure. */
 	void debugPrepareForDeparture() override;
-	/** Describe the ferry adjacency rule for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	/** Find and describe one full-party seating, using an optional budget. */
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
+	/** Describe the Ferry answer command and its optional search budget. */
+	Common::String debugGetAnswerCommandHelp() const override;
 	/** Describe the Captain Cajun built-in debug actions. */
 	Common::String debugGetBuiltinDebugCommandHelp() const override;
 	/** Run one Captain Cajun built-in debug action. */
@@ -213,6 +226,174 @@ public:
 	};
 
 private:
+	/** Maximum number of vertices in each seat or passenger graph. */
+	static constexpr int kSolverMaxVertices = 16;
+
+	/** Existence of an adjacency-preserving bijection, or an interrupted search. */
+	enum class SolverResult {
+		/** An adjacency-preserving bijection was found. */
+		kSolvable,
+		/** The search proved that no adjacency-preserving bijection exists. */
+		kUnsolvable,
+		/** The time limit was reached before solvability could be determined. */
+		kUnknown,
+	};
+
+	/** Candidate bipartite graph for a subproblem proved to have no valid vertex mapping. */
+	struct SolverFailedState {
+		/** Adjacency masks from seat vertices to passenger vertices; an empty array marks an unused cache entry. */
+		Common::Array<uint32> candidateAdjacency;
+	};
+
+	/** Copied simple graphs and mutable state for one bounded graph-monomorphism search. */
+	struct SolverState {
+		/**
+		 * Copy two simple undirected graphs of equal order.
+		 * A solution is a bijection preserving seat edges; extra passenger edges are allowed.
+		 * Universal passenger vertices represent empty seats when the party is smaller.
+		 * @param[in] seatGraph Open-neighborhood masks indexed by seat vertex; its size is the graph order, from 1 through 16.
+		 * @param[in] passengerGraph Compatibility open-neighborhood masks indexed by passenger vertex; must match the seat graph's size.
+		 * @param[in] searchTimeLimit Wall-clock search budget in milliseconds.
+		 */
+		SolverState(const Common::Array<uint32> &seatGraph, const Common::Array<uint32> &passengerGraph, uint32 searchTimeLimit);
+		/** Release the owned graph, mapping, and failed-state arrays. */
+		~SolverState() = default;
+		/** Do not copy an active search. */
+		SolverState(const SolverState &) = delete;
+		/** Do not assign an active search. */
+		SolverState &operator=(const SolverState &) = delete;
+
+		/** Order derived from the input arrays, including universal passenger vertices representing empty seats. */
+		const int vertexCount;
+		/** Owned immutable open-neighborhood masks indexed by seat vertex; one entry per vertex. */
+		const Common::Array<uint32> seatAdjacency;
+		/** Owned immutable compatibility open-neighborhood masks indexed by passenger vertex; one entry per vertex. */
+		const Common::Array<uint32> passengerAdjacency;
+		/** Adjacency-preserving bijection indexed by seat vertex; sized to the graph order, with -1 marking an unavailable mapping. */
+		Common::Array<int> vertexMapping;
+		/** Search budget in milliseconds. */
+		uint32 timeLimit;
+		/** Clock value at the beginning of the current search. */
+		uint32 started = 0;
+		/** DP subset masks processed or backtracking nodes visited in the current query, excluding candidate preparation. */
+		uint32 iterations = 0;
+		/** Owned direct-mapped cache of 4096 rejected candidate graphs, allocated only for general graph search. */
+		Common::Array<SolverFailedState> failedStates;
+	};
+
+	/**
+	 * Return the cardinality of a vertex set represented by a bit mask.
+	 * @param[in] vertexSet Vertex set whose cardinality is required.
+	 */
+	static int debugFerrySetCardinality(uint32 vertexSet);
+	/**
+	 * Return the lowest-indexed vertex in @p vertexSet, which must be nonempty.
+	 * @param[in] vertexSet Nonempty vertex set represented by a bit mask.
+	 */
+	static int debugFerryFirstVertex(uint32 vertexSet);
+	/**
+	 * Find the connected component of @p startVertex after deleting @p excludedVertices.
+	 * A connected component is a maximal connected subgraph: all its vertices are reachable from one another by paths.
+	 * It includes every vertex reachable from @p startVertex; an isolated vertex forms a component by itself.
+	 * The result represents that component's vertex set as a bit mask.
+	 * Excluded vertices cannot be traversed, so their removal can split a component.
+	 *
+	 * @param[in] adjacency Adjacency masks indexed by vertex; bit j marks an edge to zero-based vertex j.
+	 * @param[in] startVertex Zero-based starting vertex, which must not be excluded.
+	 * @param[in] excludedVertices Mask of vertices omitted from traversal; zero excludes none.
+	 * @return Mask of reachable vertices, including the starting vertex.
+	 */
+	static uint32 debugFerryConnectedComponent(const Common::Array<uint32> &adjacency, int startVertex, uint32 excludedVertices = 0);
+	/**
+	 * Compute connected-component statistics after deleting one vertex.
+	 * Uses @ref ZoombiniPuzzleFerry::debugFerryConnectedComponent to partition the remaining vertices into connected components.
+	 * Component order means vertex count; vertex degree means the number of incident edges.
+	 * For vertices 0-5 with edges 0-1, 1-2, and 3-4, deleting vertex 1 leaves components {0}, {2}, {3, 4}, and {5}.
+	 * This gives @p componentCount = 4 and @p largestComponentOrder = 2, counting isolated vertices as components of order one.
+	 *
+	 * @param[in] adjacency Adjacency masks indexed by vertex; bit j marks an edge to zero-based vertex j.
+	 * @param[in] removedVertex Zero-based vertex index to exclude.
+	 * @param[out] componentCount Number of connected components remaining after removal.
+	 * @param[out] largestComponentOrder Order (vertex count) of the largest remaining component, or zero if none remain.
+	 */
+	static void debugFerryVertexDeletionComponents(const Common::Array<uint32> &adjacency, int removedVertex, int &componentCount, int &largestComponentOrder);
+	/**
+	 * Test the elapsed wall-clock budget, including unsigned clock wraparound.
+	 * @param[in] state Search start timestamp and time budget in milliseconds.
+	 * @return True when the elapsed time has reached or exceeded the budget.
+	 */
+	static bool debugFerrySolverExpired(const SolverState &state);
+	/**
+	 * Find an adjacency-preserving bijection from the seat graph to the passenger graph.
+	 * @param[in,out] state Input graphs and budget; resets timing and the vertex mapping, and retains a bijection on success.
+	 */
+	static SolverResult debugFerrySolve(SolverState &state);
+	/**
+	 * Find a Hamiltonian path or cycle in the passenger graph using subset dynamic programming.
+	 * @param[in,out] state Search state whose seat graph is a path or cycle; receives the corresponding vertex mapping on success.
+	 * @param[in] isCycle True when the seat graph is a cycle; false when it is a path.
+	 */
+	static SolverResult debugFerrySolveHamiltonianPathOrCycle(SolverState &state, bool isCycle);
+	/**
+	 * Reconstruct a Hamiltonian path or cycle and its corresponding vertex mapping.
+	 * @param[in,out] state Seat and passenger graphs; receives the reconstructed adjacency-preserving bijection.
+	 * @param[in] pathEndpoints DP table with one entry per vertex subset, indexed by subset mask; each entry contains possible path endpoints.
+	 * @param[in] isCycle Whether the Hamiltonian path must close into a cycle.
+	 */
+	static void debugFerryRestoreHamiltonianPathOrCycle(SolverState &state, const Common::Array<uint32> &pathEndpoints, bool isCycle);
+	/**
+	 * Enforce adjacency support and perfect-matching constraints to a fixed point.
+	 * @param[in] state Seat and passenger adjacency and the order of each graph.
+	 * @param[in,out] candidateAdjacency Candidate bipartite adjacency indexed by seat vertex; sized to the graph order and pruned in place.
+	 * @return True if pruning finishes without proving that no vertex mapping exists.
+	 */
+	static bool debugFerryPruneCandidateGraph(const SolverState &state, Common::Array<uint32> &candidateAdjacency);
+	/**
+	 * Augment the candidate bipartite matching along an augmenting path.
+	 * @param[in] seatVertex Seat vertex from which to search for an augmenting path.
+	 * @param[in] candidateAdjacency Adjacency masks from seat vertices to candidate passenger vertices.
+	 * @param[in,out] matchedSeatVertices Seat vertex matched to each passenger vertex; same size as the candidate graph, with -1 marking unmatched vertices.
+	 * @param[in,out] visitedPassengerVertices Passenger vertices visited by the current augmenting-path search.
+	 * @return True if an augmenting path was found and the matching was updated.
+	 */
+	static bool debugFerryAugmentMatching(int seatVertex, const Common::Array<uint32> &candidateAdjacency,
+										  Common::Array<int> &matchedSeatVertices, uint32 &visitedPassengerVertices);
+	/**
+	 * Prune candidate bipartite edges not contained in any perfect matching.
+	 * @param[in,out] candidateAdjacency Balanced bipartite adjacency indexed by seat vertex; edges absent from all perfect matchings are removed.
+	 * @param[in,out] changed Set to true when edges are removed; an existing true value is preserved.
+	 * @return True if a perfect matching exists; false if no such matching exists.
+	 */
+	static bool debugFerryFilterPerfectMatching(Common::Array<uint32> &candidateAdjacency, bool &changed);
+	/**
+	 * Branch on an undecided seat vertex of minimum candidate degree, caching only proved failures.
+	 * Break equal candidate degrees by maximum degree in the seat graph.
+	 * @param[in,out] state Search graphs, timing, and failed-state cache; receives an adjacency-preserving bijection on success.
+	 * @param[in,out] candidateAdjacency Candidate bipartite adjacency indexed by seat vertex; sized to the graph order and pruned before branching.
+	 */
+	static SolverResult debugFerrySearch(SolverState &state, Common::Array<uint32> &candidateAdjacency);
+
+	/**
+	 * Describe the shared search budget and either the answer or spoiler-free command.
+	 * @param[in] showSolution True for answer-command help; false for the spoiler-free solvable command.
+	 */
+	static Common::String getDebugSearchCommandHelp(bool showSolution);
+	/**
+	 * Parse the optional seconds argument after the command and subcommand.
+	 * An empty argument array uses five seconds.
+	 * Numeric syntax follows @ref ZmbResource::parseUnsignedInt.
+	 * @param[in] args Optional seconds argument, with the command and subcommand already removed.
+	 * @param[out] timeLimit The budget in milliseconds on success; unchanged on failure.
+	 * @return True for an omitted budget or an integer from 1 to 60; false for invalid arguments.
+	 */
+	static bool parseDebugSearchTimeLimit(const Common::Array<Common::String> &args, uint32 &timeLimit);
+	/**
+	 * Search copied live state, optionally describing one solution without applying it.
+	 * @param[in] timeLimit Search budget in milliseconds.
+	 * @param[in] showSolution True to include a successful seating with positions and traits; false for a spoiler-free result.
+	 */
+	Common::String debugCheckSolvability(uint32 timeLimit, bool showSolution) const;
+
 	/**
 	 * Ferry interpretation of @ref ZmbSnoid::_runnerStatus.
 	 * The same byte has different meanings on other pages; keep this enum page-local.

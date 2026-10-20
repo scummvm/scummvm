@@ -3223,6 +3223,8 @@ bool ZoombiniConsole::Cmd_PagePuzzle(int argc, const char **argv) {
 		debugPrintf("      Run a page-local builtin debug function.\n");
 		if (interactive && interactive->debugCanReplayActiveHelpSound())
 			debugPrintf("      The active page also accepts: replay-help\n");
+		debugPrintf("  %s\n", kSubCmdPagePuzzleRetry);
+		debugPrintf("      Recreate the current puzzle with the current party.\n");
 		debugPrintf("  %s\n", kSubCmdPagePuzzleFinish);
 		debugPrintf("      Trigger the active puzzle's departure path.\n");
 		debugPrintf("  %s\n", kSubCmdPagePuzzleAnswer);
@@ -3262,6 +3264,8 @@ bool ZoombiniConsole::Cmd_PagePuzzle(int argc, const char **argv) {
 
 	if (scumm_stricmp(argv[1], kSubCmdPageBuiltinDebug) == 0)
 		return CmdSub_PageBuiltinDebug(argc, argv);
+	if (scumm_stricmp(argv[1], kSubCmdPagePuzzleRetry) == 0)
+		return CmdSub_Puzzle_Retry(argc, argv);
 	if (scumm_stricmp(argv[1], kSubCmdPagePuzzleFinish) == 0)
 		return CmdSub_Puzzle_Finish(argc, argv);
 	else if (scumm_stricmp(argv[1], kSubCmdPagePuzzleAnswer) == 0)
@@ -3277,7 +3281,10 @@ bool ZoombiniConsole::Cmd_PagePuzzle(int argc, const char **argv) {
 	}
 
 	Common::String output;
-	const bool commandFailed = page->debugDoPageCommand(argc, argv, output);
+	Common::Array<Common::String> args;
+	for (int argIdx = 1; argIdx < argc; argIdx++)
+		args.push_back(argv[argIdx]);
+	const bool commandFailed = page->debugDoPageCommand(args, output);
 	if (!output.empty()) {
 		debugPrintf("%s", output.c_str());
 		if (output[output.size() - 1] != '\n')
@@ -3345,6 +3352,27 @@ bool ZoombiniConsole::CmdSub_PageBuiltinDebug(int argc, const char **argv) {
 
 // [*] Page/Puzzle subcommands
 
+bool ZoombiniConsole::CmdSub_Puzzle_Retry(int argc, const char **argv) {
+	if (hasHelpOption(argc, argv) || argc != 2) {
+		debugPrintf("Usage: %s|%s %s\n", kCmdPage, kCmdPuzzle, kSubCmdPagePuzzleRetry);
+		debugPrintf("Recreate the current puzzle while retaing the active party and level.\n");
+		debugPrintf("The puzzle and chances are initialized again.\n");
+		return true;
+	}
+	if (!requireGameStateReady(Common::String::format("%s %s", argv[0], argv[1])))
+		return true;
+	if (!dynamic_cast<ZoombiniPuzzle *>(_vm->getActivePage())) {
+		debugPrintf("Current page is not a puzzle page.\n\n");
+		return true;
+	}
+	if (!_vm->debugRetryPuzzle()) {
+		debugPrintf("Cannot retry while the page is closing, a dialog is open, or a page change or quit is pending.\n\n");
+		return true;
+	}
+	debugPrintf("Retrying the current puzzle.\n\n");
+	return false;
+}
+
 bool ZoombiniConsole::CmdSub_Puzzle_Finish(int argc, const char **argv) {
 	if (hasHelpOption(argc, argv)) {
 		debugPrintf("Trigger the active interactive puzzle's departure path.\n");
@@ -3384,12 +3412,21 @@ bool ZoombiniConsole::CmdSub_Puzzle_Finish(int argc, const char **argv) {
 }
 
 bool ZoombiniConsole::CmdSub_Puzzle_Answer(int argc, const char **argv) {
+	ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(_vm->getActivePage());
 	if (hasHelpOption(argc, argv)) {
+		if (interactive) {
+			const Common::String pageHelp = interactive->debugGetAnswerCommandHelp();
+			if (!pageHelp.empty()) {
+				debugPrintf("%s\n", pageHelp.c_str());
+				return true;
+			}
+		}
 		debugPrintf("Print the generated answer for the active puzzle.\n");
-		debugPrintf("Usage: %s|%s %s\n", kCmdPage, kCmdPuzzle, kSubCmdPagePuzzleAnswer);
+		debugPrintf("Usage: %s|%s %s [arguments]\n", kCmdPage, kCmdPuzzle, kSubCmdPagePuzzleAnswer);
 		debugPrintf("\n");
 		debugPrintf("The answer is formatted for the debugger console and does not\n");
 		debugPrintf("change game state. It requires a created game or a loaded save.\n");
+		debugPrintf("Additional arguments are interpreted by the active page.\n");
 		debugPrintf("\n");
 		debugPrintf("Options:\n");
 		printHelpOption();
@@ -3406,14 +3443,16 @@ bool ZoombiniConsole::CmdSub_Puzzle_Answer(int argc, const char **argv) {
 		return true;
 	}
 
-	ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(page);
 	if (!interactive) {
 		debugPrintf("Current page is not an interactive page.\n");
 		debugPrintf("\n");
 		return true;
 	}
 
-	Common::String answer = formatZoombiniDebugAnswer(interactive->debugGetAnswer());
+	Common::Array<Common::String> args;
+	for (int argIdx = 2; argIdx < argc; argIdx++)
+		args.push_back(argv[argIdx]);
+	Common::String answer = formatZoombiniDebugAnswer(interactive->debugGetAnswer(args));
 	debugPrintf("%s", answer.c_str());
 	if (answer.empty() || answer[answer.size() - 1] != '\n')
 		debugPrintf("\n");

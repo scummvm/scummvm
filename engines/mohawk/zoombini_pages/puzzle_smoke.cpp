@@ -493,7 +493,7 @@ bool ZoombiniPuzzleSmoke::advanceDebugFilterPermutation(int16 values[6]) {
 	return true;
 }
 
-Common::String ZoombiniPuzzleSmoke::debugGetAnswer() const {
+Common::String ZoombiniPuzzleSmoke::debugGetAnswer(const Common::Array<Common::String> &) const {
 	Common::String answer = getDebugBanner();
 	answer += ": current comparison state\n";
 

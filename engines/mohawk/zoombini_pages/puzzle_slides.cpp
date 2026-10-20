@@ -426,7 +426,7 @@ ZmbChanceInfo ZoombiniPuzzleSlides::debugGetChances() const {
 	return {ZmbChanceInfo::ZmbChanceType::kInfinite};
 }
 
-Common::String ZoombiniPuzzleSlides::debugGetAnswer() const {
+Common::String ZoombiniPuzzleSlides::debugGetAnswer(const Common::Array<Common::String> &) const {
 	int16 requiredLinkCount = 0;
 	for (int16 cellIdx = 0; cellIdx < kNumCells; cellIdx++) {
 		const int16 base = cellIdx * kFieldsPerCell;

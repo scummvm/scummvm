@@ -21,7 +21,9 @@
 
 #include "mohawk/zoombini_pages/puzzle_ferry.h"
 
+#include "common/algorithm.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"
@@ -359,22 +361,593 @@ void ZoombiniPuzzleFerry::debugPrepareForDeparture() {
 	setGoButtonsEnabled(0 < _acceptedSnoidCount);
 }
 
+Common::String ZoombiniPuzzleFerry::debugGetPageCommandHelp() const {
+	// Describe full-party seating searches and spoiler-free solvability checks.
+	return "  answer [seconds]\n"
+		   "      Show one valid full-party seating.\n"
+		   "      Search is a best-effort.\n"
+		   "      Default budget is 5 seconds, maximum 60 seconds.\n"
+		   "  solvable [seconds]\n"
+		   "      Shows whether the entire party can board a ferry, without showing a solution.\n"
+		   "      Search is a best-effort.\n"
+		   "      Default budget is 5 seconds, maximum 60 seconds.\n";
+}
+
+bool ZoombiniPuzzleFerry::debugDoPageCommand(const Common::Array<Common::String> &args, Common::String &output) {
+	if (args.empty() || !args[0].equalsIgnoreCase("solvable"))
+		return ZoombiniPuzzle::debugDoPageCommand(args, output);
+
+	Common::Array<Common::String> searchArgs;
+	for (uint argIdx = 1; argIdx < args.size(); argIdx++)
+		searchArgs.push_back(args[argIdx]);
+	uint32 timeLimit = 0;
+	if (!parseDebugSearchTimeLimit(searchArgs, timeLimit)) {
+		output = getDebugSearchCommandHelp(false);
+		return true;
+	}
+	// Test whether the full party can board after rearrangement, without revealing a seating.
+	output = debugCheckSolvability(timeLimit, false);
+	return true;
+}
+
+Common::String ZoombiniPuzzleFerry::getDebugSearchCommandHelp(bool showSolution) {
+	Common::String output;
+	if (showSolution)
+		output = "Usage: page|puzzle answer [seconds]\n";
+	else
+		output = "Usage: page solvable [seconds]\n";
+	output += "  seconds: integer from 1 to 60 (default: 5).\n"
+			  "Check whether every current party member can board the current Ferry layout.\n"
+			  "Already seated Zoombinis may be rearranged; unused seats may remain empty.\n";
+	if (showSolution)
+		output += "Show one valid seating when a solution is found. Game state is unchanged.\n";
+	else
+		output += "No seating, traits, or solution steps are shown. Game state is unchanged.\n";
+	output += "Solvable and Unsolvable are proven results. Unknown means the time limit was reached.\n"
+			  "The game waits while the check runs.\n"
+			  "  -h, --help  Show this help text.\n";
+	return output;
+}
+
+bool ZoombiniPuzzleFerry::parseDebugSearchTimeLimit(const Common::Array<Common::String> &args, uint32 &timeLimit) {
+	if (args.empty()) {
+		timeLimit = 5000;
+		return true;
+	}
+	if (args.size() != 1 || args[0].empty())
+		return false;
+
+	uint32 seconds = 0;
+	if (!ZmbResource::parseUnsignedInt(args[0].c_str(), seconds) || seconds < 1 || 60 < seconds)
+		return false;
+	timeLimit = seconds * 1000;
+	return true;
+}
+
+ZoombiniPuzzleFerry::SolverState::SolverState(const Common::Array<uint32> &seatGraph, const Common::Array<uint32> &passengerGraph, uint32 searchTimeLimit)
+	: vertexCount(static_cast<int>(seatGraph.size())), seatAdjacency(seatGraph), passengerAdjacency(passengerGraph),
+	  vertexMapping(seatGraph.size(), -1), timeLimit(searchTimeLimit) {
+	assert(!seatGraph.empty() && seatGraph.size() <= kSolverMaxVertices);
+	assert(seatGraph.size() == passengerGraph.size());
+}
+
+int ZoombiniPuzzleFerry::debugFerrySetCardinality(uint32 vertexSet) {
+	int cardinality = 0;
+	while (vertexSet) {
+		vertexSet &= vertexSet - 1;
+		cardinality += 1;
+	}
+	return cardinality;
+}
+
+int ZoombiniPuzzleFerry::debugFerryFirstVertex(uint32 vertexSet) {
+	assert(vertexSet);
+	int vtx = 0;
+	while (!(vertexSet & 1)) {
+		vertexSet >>= 1;
+		vtx += 1;
+	}
+	return vtx;
+}
+
+uint32 ZoombiniPuzzleFerry::debugFerryConnectedComponent(const Common::Array<uint32> &adjacency, int startVertex, uint32 excludedVertices) {
+	// The result contains all discovered vertices; the frontier contains those still awaiting expansion.
+	uint32 componentVtxs = 1u << startVertex;
+	uint32 frontierVtxs = componentVtxs;
+	while (frontierVtxs) {
+		const int vtx = debugFerryFirstVertex(frontierVtxs);
+		frontierVtxs &= frontierVtxs - 1;
+		// Skip discovered vertices to avoid cycles, and block excluded vertices so paths cannot pass through them.
+		const uint32 newVtxs = adjacency[vtx] & ~componentVtxs & ~excludedVertices;
+		componentVtxs |= newVtxs;
+		frontierVtxs |= newVtxs;
+	}
+	return componentVtxs;
+}
+
+void ZoombiniPuzzleFerry::debugFerryVertexDeletionComponents(const Common::Array<uint32> &adjacency, int removedVertex, int &componentCount, int &largestComponentOrder) {
+	// Restrict traversal to the induced subgraph obtained by deleting this vertex, without changing the adjacency array.
+	const uint32 excludedVtxs = 1u << removedVertex;
+	uint32 unvisitedVtxs = ((1u << adjacency.size()) - 1) & ~excludedVtxs;
+	// The component count and largest order supply necessary bounds for candidate vertex mappings.
+	componentCount = 0;
+	largestComponentOrder = 0;
+	while (unvisitedVtxs) {
+		// Each remaining seed reaches one complete component; remove it before selecting the next seed to avoid counting it twice.
+		const uint32 componentVtxs = debugFerryConnectedComponent(adjacency, debugFerryFirstVertex(unvisitedVtxs), excludedVtxs);
+		unvisitedVtxs &= ~componentVtxs;
+		componentCount += 1;
+		const int componentOrder = debugFerrySetCardinality(componentVtxs);
+		if (largestComponentOrder < componentOrder)
+			largestComponentOrder = componentOrder;
+	}
+}
+
+bool ZoombiniPuzzleFerry::debugFerrySolverExpired(const SolverState &state) {
+	return state.timeLimit <= static_cast<uint32>(g_system->getMillis(true) - state.started);
+}
+
+/**
+ * Solver pipeline shared by the answer and solvability commands:
+ *
+ * @ref ZoombiniPuzzleFerry::debugCheckSolvability copies the live layout into seat and passenger graphs of equal order.
+ * Both graphs use adjacency bit masks indexed by vertex.
+ * Seat edges impose adjacency constraints; passenger edges connect pairs that share a trait.
+ * Universal passenger vertices represent empty seats when the party is smaller than the seat graph.
+ * The goal is an adjacency-preserving bijection from seats to passengers; extra passenger edges are allowed.
+ *
+ * This entry point seeds a candidate bipartite graph using necessary degree and connected-component bounds.
+ * Each candidate edge connects a seat vertex to a passenger vertex still available for that seat.
+ * If the seat graph is a connected path or cycle, @ref ZoombiniPuzzleFerry::debugFerrySolveHamiltonianPathOrCycle
+ * uses subset dynamic programming to find the corresponding Hamiltonian path or cycle in the passenger graph.
+ * Otherwise, @ref ZoombiniPuzzleFerry::debugFerrySearch repeatedly prunes candidates and branches on one seat assignment.
+ * Its pruning combines adjacency support with perfect-matching constraints, and it caches only proved failures.
+ *
+ * Both search paths retain one successful bijection in @ref ZoombiniPuzzleFerry::SolverState::vertexMapping.
+ * Exhaustive rejection proves Unsolvable; reaching the time budget returns Unknown without caching an interrupted subproblem.
+ * The caller formats the result and optionally the seating, leaving live game state unchanged.
+ */
+ZoombiniPuzzleFerry::SolverResult ZoombiniPuzzleFerry::debugFerrySolve(SolverState &state) {
+	// Start a fresh timed query; an interrupted search must not expose a previous vertex mapping.
+	Common::fill(state.vertexMapping.begin(), state.vertexMapping.end(), -1);
+	state.started = g_system->getMillis(true);
+	state.iterations = 0;
+	Common::Array<uint32> candidateAdjacency(state.vertexCount, 0);
+	Common::Array<int> passengerComponentCounts(state.vertexCount, 0);
+	Common::Array<int> passengerLargestComponentOrders(state.vertexCount, 0);
+	// Reuse each passenger's vertex-deletion statistics when comparing it with every seat.
+	for (int passengerVtx = 0; passengerVtx < state.vertexCount; passengerVtx++)
+		debugFerryVertexDeletionComponents(state.passengerAdjacency, passengerVtx, passengerComponentCounts[passengerVtx], passengerLargestComponentOrders[passengerVtx]);
+	// A connected graph with degree at most two at every vertex is a path or cycle; a cycle has degree two everywhere.
+	bool isPathOrCycle = debugFerryConnectedComponent(state.seatAdjacency, 0) == (1u << state.vertexCount) - 1;
+	bool isCycle = isPathOrCycle;
+	for (int seatVtx = 0; seatVtx < state.vertexCount; seatVtx++) {
+		const int seatDegree = debugFerrySetCardinality(state.seatAdjacency[seatVtx]);
+		isPathOrCycle = isPathOrCycle && seatDegree <= 2;
+		isCycle = isCycle && seatDegree == 2;
+		const uint32 componentVtxs = debugFerryConnectedComponent(state.seatAdjacency, seatVtx);
+		const int componentOrder = debugFerrySetCardinality(componentVtxs);
+		// Compare the same deletion statistics in the seat and passenger graphs.
+		int seatComponentCount = 0;
+		int seatLargestComponentOrder = 0;
+		debugFerryVertexDeletionComponents(state.seatAdjacency, seatVtx, seatComponentCount, seatLargestComponentOrder);
+		for (int passengerVtx = 0; passengerVtx < state.vertexCount; passengerVtx++) {
+			// Preserving seat edges requires at least the seat degree and connected-component order.
+			// After deleting corresponding vertices, extra passenger edges may merge components but cannot split them.
+			if (seatDegree <= debugFerrySetCardinality(state.passengerAdjacency[passengerVtx]) &&
+				componentOrder <= debugFerrySetCardinality(debugFerryConnectedComponent(state.passengerAdjacency, passengerVtx)) &&
+				passengerComponentCounts[passengerVtx] <= seatComponentCount &&
+				seatLargestComponentOrder <= passengerLargestComponentOrders[passengerVtx])
+				candidateAdjacency[seatVtx] |= 1u << passengerVtx;
+		}
+		// A seat with no candidate rules out every complete bijection.
+		if (!candidateAdjacency[seatVtx])
+			return SolverResult::kUnsolvable;
+	}
+	// Include candidate preparation in the budget before dispatching to either search algorithm.
+	if (debugFerrySolverExpired(state))
+		return SolverResult::kUnknown;
+	if (isPathOrCycle)
+		return debugFerrySolveHamiltonianPathOrCycle(state, isCycle);
+	// Only general graph search needs the cache of exhaustively rejected subproblems.
+	if (state.failedStates.empty())
+		state.failedStates.resize(4096);
+	return debugFerrySearch(state, candidateAdjacency);
+}
+
+ZoombiniPuzzleFerry::SolverResult ZoombiniPuzzleFerry::debugFerrySolveHamiltonianPathOrCycle(SolverState &state, bool isCycle) {
+	// Each subset stores endpoints of paths visiting every vertex in that subset exactly once.
+	// Prefixes with the same subset and endpoint have identical possible extensions and share one DP state.
+	const uint32 subsetCount = 1u << state.vertexCount;
+	Common::Array<uint32> pathEndpoints(subsetCount, 0);
+	// Paths may start anywhere; fixing vertex zero removes equivalent rotations when searching for a cycle.
+	for (int passengerVtx = 0; passengerVtx < state.vertexCount; passengerVtx++) {
+		if (!isCycle || passengerVtx == 0)
+			pathEndpoints[1u << passengerVtx] = 1u << passengerVtx;
+	}
+	SolverResult result = SolverResult::kUnsolvable;
+	// Adding a vertex increases the subset mask, so each predecessor is processed before its extensions.
+	for (uint32 vtxSubset = 1; vtxSubset < subsetCount; vtxSubset++) {
+		// Check the time budget every 1024 subset masks to reduce clock reads.
+		if (vtxSubset % 1024 == 0 && debugFerrySolverExpired(state)) {
+			result = SolverResult::kUnknown;
+			break;
+		}
+		state.iterations += 1;
+		if (!pathEndpoints[vtxSubset])
+			continue;
+		// Visiting the full subset gives a Hamiltonian path; a cycle also needs an edge back to vertex zero.
+		if (vtxSubset == subsetCount - 1) {
+			if (!isCycle || (pathEndpoints[vtxSubset] & state.passengerAdjacency[0]))
+				result = SolverResult::kSolvable;
+			break;
+		}
+		// Append an unused passenger if it is adjacent to any reachable endpoint of the current subset.
+		uint32 unvisitedVtxs = (subsetCount - 1) & ~vtxSubset;
+		while (unvisitedVtxs) {
+			const int nextVtx = debugFerryFirstVertex(unvisitedVtxs);
+			const uint32 vertexBit = 1u << nextVtx;
+			unvisitedVtxs &= unvisitedVtxs - 1;
+			if (state.passengerAdjacency[nextVtx] & pathEndpoints[vtxSubset])
+				pathEndpoints[vtxSubset | vertexBit] |= vertexBit;
+		}
+	}
+	// Reconstruct only a complete solution; partial DP states remain internal when the budget expires.
+	if (result == SolverResult::kSolvable)
+		debugFerryRestoreHamiltonianPathOrCycle(state, pathEndpoints, isCycle);
+	return result;
+}
+
+void ZoombiniPuzzleFerry::debugFerryRestoreHamiltonianPathOrCycle(SolverState &state, const Common::Array<uint32> &pathEndpoints, bool isCycle) {
+	assert(pathEndpoints.size() == (1u << state.vertexCount));
+	// Trace backward from a full-subset endpoint; a cycle endpoint must be adjacent to its fixed start at vertex zero.
+	uint32 remainingVtxs = (1u << state.vertexCount) - 1;
+	uint32 endpointVtxs = pathEndpoints[remainingVtxs];
+	if (isCycle)
+		endpointVtxs &= state.passengerAdjacency[0];
+	int passengerVtx = debugFerryFirstVertex(endpointVtxs);
+	int seatVtx = 0;
+	if (!isCycle && 1 < state.vertexCount) {
+		// Start a nontrivial seat path at an endpoint so walking unused seat edges visits the entire path.
+		while (debugFerrySetCardinality(state.seatAdjacency[seatVtx]) != 1)
+			seatVtx += 1;
+	}
+	uint32 visitedSeatVtxs = 0;
+	// Pair the backward passenger path with a traversal of the seat path or cycle.
+	while (remainingVtxs) {
+		state.vertexMapping[seatVtx] = passengerVtx;
+		remainingVtxs &= ~(1u << passengerVtx);
+		visitedSeatVtxs |= 1u << seatVtx;
+		if (!remainingVtxs)
+			break;
+		// Removing the current passenger exposes the preceding DP subset; choose a compatible endpoint from it.
+		passengerVtx = debugFerryFirstVertex(pathEndpoints[remainingVtxs] & state.passengerAdjacency[passengerVtx]);
+		// Continue along an unvisited seat edge to preserve adjacency in the restored mapping.
+		seatVtx = debugFerryFirstVertex(state.seatAdjacency[seatVtx] & ~visitedSeatVtxs);
+	}
+}
+
+bool ZoombiniPuzzleFerry::debugFerryAugmentMatching(int seatVertex, const Common::Array<uint32> &candidateAdjacency, Common::Array<int> &matchedSeatVertices, uint32 &visitedPassengerVertices) {
+	// Search an alternating path from this seat to an unmatched passenger.
+	uint32 candidateVtxs = candidateAdjacency[seatVertex] & ~visitedPassengerVertices;
+	while (candidateVtxs) {
+		const int passengerVtx = debugFerryFirstVertex(candidateVtxs);
+		candidateVtxs &= candidateVtxs - 1;
+		const uint32 passengerBit = 1u << passengerVtx;
+		// Recursive rerouting may have visited another passenger from this saved candidate mask.
+		if (visitedPassengerVertices & passengerBit)
+			continue;
+		visitedPassengerVertices |= passengerBit;
+		// An unmatched passenger ends the augmenting path; otherwise reroute its matched seat before taking its place.
+		if (matchedSeatVertices[passengerVtx] < 0 ||
+			debugFerryAugmentMatching(matchedSeatVertices[passengerVtx], candidateAdjacency, matchedSeatVertices, visitedPassengerVertices)) {
+			matchedSeatVertices[passengerVtx] = seatVertex;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool ZoombiniPuzzleFerry::debugFerryFilterPerfectMatching(Common::Array<uint32> &candidateAdjacency, bool &changed) {
+	const int vertexCount = static_cast<int>(candidateAdjacency.size());
+	Common::Array<int> matchedSeatVtxs(vertexCount, -1);
+	// Augment once for each seat to obtain a perfect matching; failure proves that no bijection is possible.
+	for (int seatVtx = 0; seatVtx < vertexCount; seatVtx++) {
+		uint32 visitedPassengerVtxs = 0;
+		if (!debugFerryAugmentMatching(seatVtx, candidateAdjacency, matchedSeatVtxs, visitedPassengerVtxs))
+			return false;
+	}
+	// An unmatched candidate edge belongs to a perfect matching exactly when it lies on an alternating cycle.
+	// Contract each matched pair into its seat vertex and compute the directed alternating graph's transitive closure.
+	Common::Array<uint32> alternatingReachability(vertexCount, 0);
+	for (int seatVtx = 0; seatVtx < vertexCount; seatVtx++) {
+		for (int passengerVtx = 0; passengerVtx < vertexCount; passengerVtx++) {
+			if (candidateAdjacency[seatVtx] & (1u << passengerVtx))
+				alternatingReachability[seatVtx] |= 1u << matchedSeatVtxs[passengerVtx];
+		}
+	}
+	// Compute reachability between contracted pairs; a return path closes an alternating cycle.
+	for (int intermediateVtx = 0; intermediateVtx < vertexCount; intermediateVtx++) {
+		for (int seatVtx = 0; seatVtx < vertexCount; seatVtx++) {
+			if (alternatingReachability[seatVtx] & (1u << intermediateVtx))
+				alternatingReachability[seatVtx] |= alternatingReachability[intermediateVtx];
+		}
+	}
+	// Keep matched edges and unmatched edges on alternating cycles; all other edges occur in no perfect matching.
+	for (int seatVtx = 0; seatVtx < vertexCount; seatVtx++) {
+		const uint32 previousNeighbors = candidateAdjacency[seatVtx];
+		for (int passengerVtx = 0; passengerVtx < vertexCount; passengerVtx++) {
+			if (!(alternatingReachability[matchedSeatVtxs[passengerVtx]] & (1u << seatVtx)))
+				candidateAdjacency[seatVtx] &= ~(1u << passengerVtx);
+		}
+		changed = changed || candidateAdjacency[seatVtx] != previousNeighbors;
+	}
+	return true;
+}
+
+bool ZoombiniPuzzleFerry::debugFerryPruneCandidateGraph(const SolverState &state, Common::Array<uint32> &candidateAdjacency) {
+	assert(candidateAdjacency.size() == state.seatAdjacency.size());
+	// Removing an edge can invalidate support elsewhere, so alternate both filters until no edge changes.
+	bool changed = true;
+	while (changed) {
+		changed = false;
+		for (int seatVtx = 0; seatVtx < state.vertexCount; seatVtx++) {
+			uint32 candidateVtxs = candidateAdjacency[seatVtx];
+			while (candidateVtxs) {
+				const int passengerVtx = debugFerryFirstVertex(candidateVtxs);
+				candidateVtxs &= candidateVtxs - 1;
+				// Tentatively assign this passenger and require compatible candidates at every neighboring seat.
+				uint32 adjacentSeatVtxs = state.seatAdjacency[seatVtx];
+				uint32 supportVtxs = 0;
+				bool hasSupport = true;
+				while (adjacentSeatVtxs) {
+					const int adjacentSeatVtx = debugFerryFirstVertex(adjacentSeatVtxs);
+					adjacentSeatVtxs &= adjacentSeatVtxs - 1;
+					const uint32 compatibleVtxs = candidateAdjacency[adjacentSeatVtx] & state.passengerAdjacency[passengerVtx];
+					if (!compatibleVtxs) {
+						hasSupport = false;
+						break;
+					}
+					supportVtxs |= compatibleVtxs;
+				}
+				// Enough distinct compatible passengers must remain to serve all adjacent seats.
+				if (!hasSupport || debugFerrySetCardinality(supportVtxs) < debugFerrySetCardinality(state.seatAdjacency[seatVtx])) {
+					candidateAdjacency[seatVtx] &= ~(1u << passengerVtx);
+					changed = true;
+				}
+			}
+			// An empty candidate neighborhood makes a complete assignment impossible.
+			if (!candidateAdjacency[seatVtx])
+				return false;
+		}
+		// Local support checks may reuse one passenger for several seats; a perfect matching enforces global uniqueness.
+		if (!debugFerryFilterPerfectMatching(candidateAdjacency, changed))
+			return false;
+	}
+	return true;
+}
+
+ZoombiniPuzzleFerry::SolverResult ZoombiniPuzzleFerry::debugFerrySearch(SolverState &state, Common::Array<uint32> &candidateAdjacency) {
+	if (debugFerrySolverExpired(state))
+		return SolverResult::kUnknown;
+	state.iterations += 1;
+
+	// Resolve forced assignments and contradictions before creating child subproblems.
+	if (!debugFerryPruneCandidateGraph(state, candidateAdjacency))
+		return SolverResult::kUnsolvable;
+
+	// Hash candidate masks in seat order using their native byte representation and standard 32-bit FNV-1a.
+	FNV1a32Hasher hasher;
+
+	// Select an undecided seat of minimum candidate degree while hashing the pruned graph.
+	// Break ties by maximum seat degree to constrain more neighboring seats with the next assignment.
+	int branchSeatVtx = -1;
+	int minCandidateDegree = state.vertexCount + 1;
+	int maxSeatDegree = -1;
+	for (int seatVtx = 0; seatVtx < state.vertexCount; seatVtx++) {
+		// We don't care about the endian here, this key is in-process only.
+		const uint32 candidateMask = candidateAdjacency[seatVtx];
+		hasher.addBytes(reinterpret_cast<const byte *>(&candidateMask), sizeof(candidateMask));
+		const int candidateDegree = debugFerrySetCardinality(candidateAdjacency[seatVtx]);
+		const int seatDegree = debugFerrySetCardinality(state.seatAdjacency[seatVtx]);
+		if (1 < candidateDegree && (candidateDegree < minCandidateDegree || (candidateDegree == minCandidateDegree && maxSeatDegree < seatDegree))) {
+			branchSeatVtx = seatVtx;
+			minCandidateDegree = candidateDegree;
+			maxSeatDegree = seatDegree;
+		}
+	}
+	// If no seat needs branching, each has one candidate and the perfect-matching constraint guarantees a bijection.
+	if (branchSeatVtx < 0) {
+		for (int seatVtx = 0; seatVtx < state.vertexCount; seatVtx++)
+			state.vertexMapping[seatVtx] = debugFerryFirstVertex(candidateAdjacency[seatVtx]);
+		return SolverResult::kSolvable;
+	}
+	// The hash selects one of 4096 direct-mapped cache slots; it does not establish state equality.
+	SolverFailedState &failedState = state.failedStates[hasher.getHash() & 4095];
+	// Compare the complete candidate graph so a hash collision cannot reject an unrelated subproblem.
+	if (failedState.candidateAdjacency == candidateAdjacency)
+		return SolverResult::kUnsolvable;
+
+	uint32 candidateVtxs = candidateAdjacency[branchSeatVtx];
+	while (candidateVtxs) {
+		// Try the passenger that leaves the most compatible candidates at adjacent seats first.
+		int selectedPassengerVtx = -1;
+		int maxSupportScore = -1;
+		for (int passengerVtx = 0; passengerVtx < state.vertexCount; passengerVtx++) {
+			if (!(candidateVtxs & (1u << passengerVtx)))
+				continue;
+			int supportScore = 0;
+			for (int seatVtx = 0; seatVtx < state.vertexCount; seatVtx++) {
+				if (state.seatAdjacency[branchSeatVtx] & (1u << seatVtx))
+					supportScore += debugFerrySetCardinality(candidateAdjacency[seatVtx] & state.passengerAdjacency[passengerVtx]);
+			}
+			if (maxSupportScore < supportScore) {
+				selectedPassengerVtx = passengerVtx;
+				maxSupportScore = supportScore;
+			}
+		}
+		candidateVtxs &= ~(1u << selectedPassengerVtx);
+		// Twin vertices in the passenger graph are interchangeable only when their
+		// neighborhoods in the candidate bipartite graph are also identical.
+		for (int twinVtx = 0; twinVtx < state.vertexCount; twinVtx++) {
+			const uint32 twinVtxs = (1u << selectedPassengerVtx) | (1u << twinVtx);
+			// Swapping the pair preserves their adjacency to each other, so compare only neighbors outside the pair.
+			if (!(candidateVtxs & (1u << twinVtx)) ||
+				((state.passengerAdjacency[selectedPassengerVtx] ^ state.passengerAdjacency[twinVtx]) & ~twinVtxs))
+				continue;
+			bool sameCandidateNeighborhood = true;
+			// Symmetry is safe only if every seat permits both passengers or neither.
+			for (int seatVtx = 0; seatVtx < state.vertexCount; seatVtx++) {
+				const uint32 candidateTwins = candidateAdjacency[seatVtx] & twinVtxs;
+				if (candidateTwins && candidateTwins != twinVtxs)
+					sameCandidateNeighborhood = false;
+			}
+			if (sameCandidateNeighborhood)
+				candidateVtxs &= ~(1u << twinVtx);
+		}
+		// Fix one assignment in a private copy so recursive pruning leaves sibling branches unchanged.
+		Common::Array<uint32> branchAdjacency(candidateAdjacency);
+		branchAdjacency[branchSeatVtx] = 1u << selectedPassengerVtx;
+		const SolverResult result = debugFerrySearch(state, branchAdjacency);
+		// A witness or timeout returns immediately; only a proved failure permits trying the next candidate.
+		if (result != SolverResult::kUnsolvable)
+			return result;
+	}
+	// Every distinct branch failed; successful or interrupted branches return before this cache write.
+	failedState.candidateAdjacency = candidateAdjacency;
+	return SolverResult::kUnsolvable;
+}
+
+Common::String ZoombiniPuzzleFerry::debugCheckSolvability(uint32 timeLimit, bool showSolution) const {
+	Common::String output = getDebugBanner() + "\n";
+	if (showSolution)
+		output += "  Rule: every pair of occupied adjacent seats must share one or more Zoombini traits.\n";
+	// Only construct bounded vertex bitsets after the active layout and adjacency data are available.
+	if (!_pageActive || !_seatAdjacencyReady || _drawOnRegCount < 1 || kSolverMaxVertices < _drawOnRegCount) {
+		return output + "  Unavailable: the Ferry layout is not ready.\n";
+	}
+
+	const int vertexCount = _drawOnRegCount;
+	// Collect the whole party, including seated members, so the query can rearrange everyone.
+	Common::Array<const ZmbSnoid *> party;
+	party.reserve(vertexCount);
+	for (ZmbFeatureList<ZmbSnoid>::const_iterator it = _snoidMap.begin(); it != _snoidMap.end(); it++) {
+		const ZmbSnoid *snoid = *it;
+		if (!snoid || !snoid->isPackSnoid())
+			continue;
+		// More passengers than seat vertices is impossible regardless of compatibility.
+		if (party.size() == static_cast<uint>(vertexCount))
+			return output + "  Unsolvable: there are more party members than seats.\n";
+		party.push_back(snoid);
+	}
+	if (party.empty())
+		return output + "  Unavailable: there are no party members on this page.\n";
+	const int partyCount = static_cast<int>(party.size());
+
+	// Build equal-order seat and passenger-compatibility graphs; each adjacency entry is a neighbor bitset.
+	// The solver seeks a bijection preserving every seat edge; additional passenger edges are allowed.
+	Common::Array<uint32> seatAdjacency(vertexCount, 0);
+	Common::Array<uint32> passengerAdjacency(vertexCount, 0);
+	// Copy the live seat-neighbor table into undirected edges, rejecting invalid endpoints before shifting.
+	for (int seatVtx = 0; seatVtx < vertexCount; seatVtx++) {
+		for (int slot = 0; slot < 8; slot++) {
+			const int adjacentSeatVtx = _seatNeighborIndices[seatVtx][slot];
+			if (adjacentSeatVtx < 0)
+				continue;
+			if (vertexCount <= adjacentSeatVtx || adjacentSeatVtx == seatVtx)
+				return output + "  Unavailable: the Ferry adjacency data is invalid.\n";
+			// Insert both directions even if the live table lists an edge only once.
+			seatAdjacency[seatVtx] |= 1u << adjacentSeatVtx;
+			seatAdjacency[adjacentSeatVtx] |= 1u << seatVtx;
+		}
+	}
+	// Give each real passenger a vertex, then pad to the seat count with interchangeable empty-seat vertices.
+	for (int vtx1 = 0; vtx1 < vertexCount; vtx1++) {
+		for (int vtx2 = vtx1 + 1; vtx2 < vertexCount; vtx2++) {
+			// Empty-seat placeholders satisfy every adjacency rule and remain interchangeable.
+			bool match = partyCount <= vtx1 || partyCount <= vtx2;
+			// A real-passenger edge exists when at least one of the four traits matches.
+			if (!match) {
+				for (int trait = 0; trait < 4; trait++) {
+					if (party[vtx1]->_trait[trait] == party[vtx2]->_trait[trait])
+						match = true;
+				}
+			}
+			if (match) {
+				// Bit j in entry i marks neighbor j; shifting 1u selects that bit.
+				// Set both directions without clearing existing neighbors, since the graph is undirected.
+				passengerAdjacency[vtx1] |= 1u << vtx2;
+				passengerAdjacency[vtx2] |= 1u << vtx1;
+			}
+		}
+	}
+	output += Common::String::format("  Checking all %d party members on %d seats; rearrangement allowed.\n", partyCount, vertexCount);
+	// Search copied graphs and keep the witness separately from live placements.
+	const uint32 started = g_system->getMillis(true);
+	SolverState solver(seatAdjacency, passengerAdjacency, timeLimit);
+	const SolverResult result = debugFerrySolve(solver);
+	output += Common::String::format("  Check time: %u ms (limit: %u ms), %u iterations.\n",
+									 g_system->getMillis(true) - started, timeLimit, solver.iterations);
+	// Distinguish a proved failure from an incomplete search stopped by its time limit.
+	if (result == SolverResult::kSolvable) {
+		output += "  Solvable: everyone can board.\n";
+	} else if (result == SolverResult::kUnsolvable) {
+		output += "  Unsolvable: some party members cannot board.\n";
+	} else {
+		output += "  Unknown: the time limit was reached.\n";
+		if (timeLimit < 60000)
+			output += Common::String::format("  Try a longer time limit with 'page %s 60' (maximum: 60 seconds).\n", showSolution ? "answer" : "solvable");
+		else
+			output += "  The maximum time limit of 60 seconds is already in use.\n";
+	}
+	output += "\n";
+	// Keep the solvability query spoiler-free; only the answer query expands a successful witness.
+	if (showSolution && result == SolverResult::kSolvable) {
+		output += "  One valid seating (top to bottom, then left to right):\n";
+		output += "    Return seated Zoombinis to the dock first, then fill the seats below in any order.\n";
+		output += "    Coordinates are game-screen positions; Zoombini positions are from this query.\n";
+		output += "    Traits are listed as hair, eyes, nose, feet. Identical appearances are interchangeable.\n";
+		// Order seats for display independently of the graph's vertex numbering.
+		uint32 listedSeatVtxs = 0;
+		for (int ordinal = 0; ordinal < vertexCount; ordinal++) {
+			int nextSeatVtx = -1;
+			// Select the next unlisted vertex by (y, x): top to bottom, then left to right.
+			for (int seatVtx = 0; seatVtx < vertexCount; seatVtx++) {
+				if (listedSeatVtxs & (1u << seatVtx))
+					continue;
+				const Common::Point &position = _drawOnRegSnapPositions[seatVtx];
+				if (nextSeatVtx < 0 || position.y < _drawOnRegSnapPositions[nextSeatVtx].y ||
+					(position.y == _drawOnRegSnapPositions[nextSeatVtx].y && position.x < _drawOnRegSnapPositions[nextSeatVtx].x))
+					nextSeatVtx = seatVtx;
+			}
+			listedSeatVtxs |= 1u << nextSeatVtx;
+			const Common::Point &position = _drawOnRegSnapPositions[nextSeatVtx];
+			// Resolve the seat-to-passenger witness; vertices after the real party are empty-seat placeholders.
+			const int passengerVtx = solver.vertexMapping[nextSeatVtx];
+			output += Common::String::format("    Seat %2d (%3d, %3d):\n", ordinal + 1, position.x, position.y);
+			if (passengerVtx < partyCount)
+				output += Common::String::format("      %s\n", party[passengerVtx]->toStr(true).c_str());
+			else
+				output += "      Leave empty.\n";
+		}
+	}
+	return output;
+}
+
 ZmbChanceInfo ZoombiniPuzzleFerry::debugGetChances() const {
 	// Captain Cajun allows the player to rearrange the seats without a failed placement consuming a limited resource.
 	return {ZmbChanceInfo::ZmbChanceType::kInfinite};
 }
 
-Common::String ZoombiniPuzzleFerry::debugGetAnswer() const {
-	// There is no generated target arrangement.
-	// Every locally valid seating is an answer.
-	// Some packs cannot fill every seat in a connected layout.
-	const int16 seatCount = CLIP<int16>(_drawOnRegCount, 0, 20);
-	Common::String answer = getDebugBanner();
-	answer += Common::String::format(": %d seats\n", seatCount);
-	answer += "  Rule: every pair of occupied adjacent seats must share one or more Zoombini traits.\n";
-	answer += "  Every locally valid arrangement is an answer.\n";
-	answer += "  Note: Some active packs cannot fill every seat in a connected layout.\n";
-	return answer;
+Common::String ZoombiniPuzzleFerry::debugGetAnswer(const Common::Array<Common::String> &args) const {
+	uint32 timeLimit = 0;
+	if (!parseDebugSearchTimeLimit(args, timeLimit))
+		return getDebugSearchCommandHelp(true);
+	return debugCheckSolvability(timeLimit, true);
+}
+
+Common::String ZoombiniPuzzleFerry::debugGetAnswerCommandHelp() const {
+	return getDebugSearchCommandHelp(true);
 }
 
 Common::String ZoombiniPuzzleFerry::debugGetBuiltinDebugCommandHelp() const {

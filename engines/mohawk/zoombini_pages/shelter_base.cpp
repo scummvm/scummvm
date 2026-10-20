@@ -48,8 +48,8 @@ Common::String ZoombiniShelterBasecamp::debugGetPageCommandHelp() const {
 	return output;
 }
 
-bool ZoombiniShelterBasecamp::debugDoPageCommand(int argc, const char **argv, Common::String &output) {
-	const int16 changedCount = debugRunPedestalCommand(argc, argv, getBasecampStorageChunk(), getBasecampRuntimeStoredCount(), output);
+bool ZoombiniShelterBasecamp::debugDoPageCommand(const Common::Array<Common::String> &args, Common::String &output) {
+	const int16 changedCount = debugRunPedestalCommand(args, getBasecampStorageChunk(), getBasecampRuntimeStoredCount(), output);
 	if (0 <= changedCount) {
 		refreshBasecampStorageState();
 		updateBasecampGoButtonState(getBasecampFieldSnoidCount(), getBasecampAvailableSnoidCount());
@@ -834,16 +834,13 @@ Common::String ZoombiniShelterBasecamp::debugGetPedestalCommandsHelp() const {
 	return output;
 }
 
-int16 ZoombiniShelterBasecamp::debugRunPedestalCommand(int argc, const char **argv,
-													   ZmbStateStoredChunk &chunk,
-													   int16 *runtimeStoredCount, Common::String &output) {
-	if (argc != 2 || (scumm_stricmp(argv[1], kPageCommandAutoseat) != 0 &&
-					  scumm_stricmp(argv[1], kPageCommandAutounseat) != 0)) {
+int16 ZoombiniShelterBasecamp::debugRunPedestalCommand(const Common::Array<Common::String> &args, ZmbStateStoredChunk &chunk, int16 *runtimeStoredCount, Common::String &output) {
+	if (args.size() != 1 || (!args[0].equalsIgnoreCase(kPageCommandAutoseat) && !args[0].equalsIgnoreCase(kPageCommandAutounseat))) {
 		output = debugGetPedestalCommandsHelp();
 		return -1;
 	}
 
-	if (scumm_stricmp(argv[1], kPageCommandAutoseat) == 0)
+	if (args[0].equalsIgnoreCase(kPageCommandAutoseat))
 		return debugSeatStoredZoombinis(chunk, runtimeStoredCount, output);
 	return debugUnseatSeatedZoombinis(chunk, runtimeStoredCount, output);
 }

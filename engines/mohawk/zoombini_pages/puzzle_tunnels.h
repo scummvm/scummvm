@@ -113,7 +113,7 @@ protected:
 	/** Depart with Zoombinis that passed their tunnel guards. */
 	void onGoButtonActivated() override;
 	/** Describe the generated tunnel guards for diagnostics. */
-	Common::String debugGetAnswer() const override;
+	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
 	/** Report tunnel mistake-budget usage for diagnostics. */
 	ZmbChanceInfo debugGetChances() const override;
 	/** Stone Cold Caves supports debugger chance adjustment. */
