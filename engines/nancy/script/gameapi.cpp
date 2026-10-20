@@ -1160,8 +1160,39 @@ static const luaL_Reg kStreamsFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+// Hands a message to the scene or the record it is for, or else to the UI.
+// Returns whether a scene or a record took it.
+static bool deliverMessage(lua_State *L, const char *actionName, UI::NDUI::Action &action) {
+	// The targets that answer do so to the control whose event is being handled
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	if (ui) {
+		action.sender = ui->getEventSender();
+	}
+
+	// The scripts of a scene send in its name, and the ones of the UI in the
+	// name of that control
+	Message message;
+	message.action = actionName;
+	message.target = action.target;
+	message.text = action.text;
+	message.value = action.value;
+
+	const SceneContext *context = LuaState::getContext(L);
+	if (context && !context->getStreamName().equalsIgnoreCase(State::SceneStreamManager::getUIStreamName())) {
+		message.sender = context->getSceneName();
+	} else {
+		message.sender = action.sender;
+	}
+
+	bool wasTaken = false;
+	if (!NancySceneState.receiveMessage(message, wasTaken) && ui) {
+		ui->takeAction(action);
+	}
+
+	return wasTaken;
+}
+
 // Player, who is the character being played unless a function is told otherwise
-// TODO: AddCellPhoneNumber
 
 // The number of a character, or -1 when there is none of that name
 static int findCharacter(const char *name) {
@@ -1389,9 +1420,36 @@ static int playerNewIndex(lua_State *L) {
 	return 0;
 }
 
+// The phone book and the text messages of the cell phone are kept by a record of
+// the scripts, which goes by the name "PhoneManager"
+static const char *const kPhoneManagerName = "PhoneManager";
+
+// Player:AddCellPhoneNumber(contact[, character])
+static int playerAddCellPhoneNumber(lua_State *L) {
+	UI::NDUI::Action action;
+	action.type = UI::NDUI::kActionSetText;
+	action.target = kPhoneManagerName;
+	action.text = luaL_checkstring(L, 2);
+	deliverMessage(L, "setText", action);
+	return 0;
+}
+
+// Player:SendCellPhoneText(message[, character]), where the message is a number
+static int playerSendCellPhoneText(lua_State *L) {
+	UI::NDUI::Action action;
+	action.type = UI::NDUI::kActionSetValue;
+	action.target = kPhoneManagerName;
+	action.hasValue = true;
+	action.value = luaL_checkinteger(L, 2);
+	deliverMessage(L, "setValue", action);
+	return 0;
+}
+
 static const luaL_Reg kPlayerFunctions[] = {
 	{ "__index", playerIndex },
 	{ "__newindex", playerNewIndex },
+	{ "AddCellPhoneNumber", playerAddCellPhoneNumber },
+	{ "SendCellPhoneText", playerSendCellPhoneText },
 	{ "Switch", playerSwitch },
 	{ "HasInventoryItem", playerHasInventoryItem },
 	{ "AddInventoryItem", playerAddInventoryItem },
@@ -1440,9 +1498,6 @@ static const MessageActionName kMessageActionNames[] = {
 	{ "hideItem", UI::NDUI::kActionHideItem }
 };
 
-// The stream the scripts of the UI run in
-static const char *const kUIStreamName = "UIStream";
-
 // Message:Send(action, target[, value[, text[, isTextKey]]])
 // The target is a scene, a record that was given a name for it, or a part of
 // the UI. Returns whether a scene or a record took the message.
@@ -1484,33 +1539,7 @@ static int messageSend(lua_State *L) {
 		}
 	}
 
-	// The targets that answer do so to the control whose event is being handled
-	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
-	if (ui) {
-		action.sender = ui->getEventSender();
-	}
-
-	// The scripts of a scene send in its name, and the ones of the UI in the
-	// name of that control
-	Message message;
-	message.action = named->name;
-	message.target = action.target;
-	message.text = action.text;
-	message.value = action.value;
-
-	const SceneContext *context = LuaState::getContext(L);
-	if (context && !context->getStreamName().equalsIgnoreCase(kUIStreamName)) {
-		message.sender = context->getSceneName();
-	} else {
-		message.sender = action.sender;
-	}
-
-	bool wasTaken = false;
-	if (!NancySceneState.receiveMessage(message, wasTaken) && ui) {
-		ui->takeAction(action);
-	}
-
-	lua_pushboolean(L, wasTaken);
+	lua_pushboolean(L, deliverMessage(L, named->name, action));
 	return 1;
 }
 
