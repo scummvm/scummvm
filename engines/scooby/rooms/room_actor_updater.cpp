@@ -916,15 +916,19 @@ void RoomActorUpdater::updateCompanionActor() {
 		return;
 	}
 
-	if ((_state.VideoFlags & kVideoCompanionCopyMask) != 0) {
+	// Scooby walks beside Shaggy. Used in Maze room.
+	if ((_state.VideoFlags & kVideoScoobyShaggySideBySideWalking) != 0) {
 		_state.ActorXFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
 			_state.ActorXFixedCoordinates[kCompanionActorSlot],
 			getIntegerCoordinate(_state.ActorXFixedCoordinates[kLeadActorSlot]));
 		_state.ActorYFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
 			_state.ActorYFixedCoordinates[kCompanionActorSlot],
 			getIntegerCoordinate(_state.ActorYFixedCoordinates[kLeadActorSlot]));
+		// Ghidra 0x00006D4E-0x00006D8E: controller input is active-low, so all four direction bits set means no
+		// direction is held. With no direction held, or with the interaction display open, select the lead
+		// pose's steady animation (+4); otherwise select its walking animation (+0).
 		int16 animationOffset = _state.ActorPositionIndices[kLeadActorSlot];
-		if ((_state.ControllerOneInput & kDirectionMask) != kDirectionMask ||
+		if ((_state.ControllerOneInput & kDirectionMask) == kDirectionMask ||
 			(_state.DisplayFlags & kDisplayInterfaceMask) != 0) {
 			animationOffset += 4;
 		}

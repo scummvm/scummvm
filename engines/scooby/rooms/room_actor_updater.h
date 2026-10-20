@@ -100,7 +100,7 @@ private:
 	static const uint8 kTransitionForegroundPolarityMask = 0x01;
 	static const uint8 kTransitionHideLeadMask = 0x10;
 	static const uint8 kTransitionSkipCompactScaleMask = 0x02;
-	static const uint8 kVideoCompanionCopyMask = 0x40;
+	static const uint8 kVideoScoobyShaggySideBySideWalking = 0x40;
 	static const uint8 kVideoCompanionUpdateBlockMask = 0x04;
 
 	// Replaces the C# (short X, short Y) tuple return of ReadAndAdvancePathRecord.

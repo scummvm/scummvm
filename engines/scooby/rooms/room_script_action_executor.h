@@ -137,8 +137,8 @@ private:
 	void executeRoomScriptAction39();
 	void executeRoomScriptAction3A();
 	void executeRoomScriptAction3B();
-	void executeRoomScriptAction3C();
-	void executeRoomScriptAction3D();
+	void scriptAction3CEnableScoobyAndShaggyWalkingSideBySide();
+	void scriptAction3DDisableScoobyAndShaggyWalkingSideBySide();
 	bool waitForRoomVerticalBlank();
 	void requestSessionExit(SessionExit exit) { _requestedSessionExit = exit; }
 	static void playAudioCommand(int command);

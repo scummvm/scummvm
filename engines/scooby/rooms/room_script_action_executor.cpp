@@ -83,8 +83,8 @@ RoomScriptActionExecutor::RoomScriptActionExecutor(
 	  _action39Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction39),
 	  _action3AFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction3A),
 	  _action3BFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction3B),
-	  _action3CFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction3C),
-	  _action3DFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction3D),
+	  _action3CFunctor(this, &RoomScriptActionExecutor::scriptAction3CEnableScoobyAndShaggyWalkingSideBySide),
+	  _action3DFunctor(this, &RoomScriptActionExecutor::scriptAction3DDisableScoobyAndShaggyWalkingSideBySide),
 	  _action05Or0CFunctor(&_action05Or0CExecutor, &RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C),
 	  _action07Functor(&_foregroundOverrideExecutor, &RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn),
 	  _action08Functor(&_foregroundOverrideExecutor, &RoomScriptForegroundOverrideExecutor::scriptAction08FlashlightModeOff),
@@ -884,9 +884,9 @@ void RoomScriptActionExecutor::executeRoomScriptAction3B() {
 // Enables actor-slot-one synchronization until action 0x3D restores normal updates.
 //
 // Ghidra: executeRoomScriptAction3C (0x00002FAE).
-void RoomScriptActionExecutor::executeRoomScriptAction3C() {
+void RoomScriptActionExecutor::scriptAction3CEnableScoobyAndShaggyWalkingSideBySide() {
 	// Ghidra 0x00002FAE-0x00002FB5: set only the actor-slot-one synchronization flag.
-	_state.VideoFlags |= 0x40;
+	_state.VideoFlags |= 0x40; // Used in maze room. kVideoScoobyShaggySideBySideWalking
 
 	// Ghidra 0x00002FB6-0x00002FB7: return to ExecuteRoomScriptCommand0C.
 }
@@ -894,7 +894,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction3C() {
 // Restores normal actor-slot-one updates after action 0x3C synchronization.
 //
 // Ghidra: executeRoomScriptAction3D (0x00002FB8).
-void RoomScriptActionExecutor::executeRoomScriptAction3D() {
+void RoomScriptActionExecutor::scriptAction3DDisableScoobyAndShaggyWalkingSideBySide() {
 	// Ghidra 0x00002FB8-0x00002FBF: clear only the actor-slot-one synchronization flag.
 	_state.VideoFlags &= 0xBF;
 
