@@ -446,7 +446,6 @@ static const luaL_Reg kGameFunctions[] = {
 };
 
 // Draw, for the "Render" functions of the records
-// TODO: Draw:Tri
 
 static Graphics::ManagedSurface *checkDrawTarget(lua_State *L) {
 	Graphics::ManagedSurface *target = getDrawTarget();
@@ -506,6 +505,56 @@ static int drawLine(lua_State *L) {
 	return 0;
 }
 
+// Draw:Tri(a, b, c, color[, colorB[, colorC]]), Nancy19: a filled triangle.
+// From Nancy20 on, each corner can have a color of its own, and the color goes
+// from one corner to the others. The corners given no color take the first one.
+static int drawTri(lua_State *L) {
+	double x[3], y[3];
+	for (int i = 0; i < 3; ++i) {
+		checkDrawPlace(L, i + 2, x[i], y[i]);
+	}
+
+	uint32 colors[3];
+	colors[0] = checkColor(L, 5);
+	colors[1] = lua_isnoneornil(L, 6) ? colors[0] : checkColor(L, 6);
+	colors[2] = lua_isnoneornil(L, 7) ? colors[0] : checkColor(L, 7);
+	Graphics::ManagedSurface *target = checkDrawTarget(L);
+
+	const double area = (x[1] - x[0]) * (y[2] - y[0]) - (x[2] - x[0]) * (y[1] - y[0]);
+	if (area == 0.0) {
+		return 0;
+	}
+
+	const int minX = MAX<int>(0, (int)floor(MIN(x[0], MIN(x[1], x[2]))));
+	const int maxX = MIN<int>(target->w - 1, (int)ceil(MAX(x[0], MAX(x[1], x[2]))));
+	const int minY = MAX<int>(0, (int)floor(MIN(y[0], MIN(y[1], y[2]))));
+	const int maxY = MIN<int>(target->h - 1, (int)ceil(MAX(y[0], MAX(y[1], y[2]))));
+
+	for (int py = minY; py <= maxY; ++py) {
+		for (int px = minX; px <= maxX; ++px) {
+			// How much of each corner the middle of the pixel has
+			const double cx = px + 0.5;
+			const double cy = py + 0.5;
+			const double w0 = ((x[1] - cx) * (y[2] - cy) - (x[2] - cx) * (y[1] - cy)) / area;
+			const double w1 = ((x[2] - cx) * (y[0] - cy) - (x[0] - cx) * (y[2] - cy)) / area;
+			const double w2 = 1.0 - w0 - w1;
+			if (w0 < 0.0 || w1 < 0.0 || w2 < 0.0) {
+				continue;
+			}
+
+			uint32 argb = 0;
+			for (int shift = 0; shift < 32; shift += 8) {
+				const double channel = w0 * ((colors[0] >> shift) & 0xFF) + w1 * ((colors[1] >> shift) & 0xFF) + w2 * ((colors[2] >> shift) & 0xFF);
+				argb |= (uint32)CLIP<int>((int)(channel + 0.5), 0, 255) << shift;
+			}
+
+			target->setPixel(px, py, getDrawColor(*target, argb));
+		}
+	}
+
+	return 0;
+}
+
 // Draw:Circle(circle, color), Nancy20, where the circle is a table with a
 // center and a radius. Only the outline is drawn, as a polygon of 19 sides.
 static int drawCircle(lua_State *L) {
@@ -548,6 +597,7 @@ static const luaL_Reg kDrawFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Rect", drawRect },
 	{ "Line", drawLine },
+	{ "Tri", drawTri },
 	{ "Circle", drawCircle },
 	{ nullptr, nullptr }
 };
