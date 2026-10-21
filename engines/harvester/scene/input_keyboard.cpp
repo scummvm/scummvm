@@ -78,7 +78,7 @@ InputResult Input::handleGameAction(GameAction action, bool pressed, bool &needs
 	static const Common::KeyCode keys[] = {
 		Common::KEYCODE_LEFT, Common::KEYCODE_RIGHT, Common::KEYCODE_UP, Common::KEYCODE_DOWN,
 		Common::KEYCODE_LCTRL, Common::KEYCODE_RSHIFT, Common::KEYCODE_LALT,
-		Common::KEYCODE_i, Common::KEYCODE_ESCAPE
+		Common::KEYCODE_i, Common::KEYCODE_ESCAPE, Common::KEYCODE_F1
 	};
 	if ((uint)action >= ARRAYSIZE(keys))
 		return InputResult();
@@ -161,6 +161,9 @@ InputResult Input::handleGameplayKeyDown(const Common::KeyState &key,
 	else if (gameAction && key.keycode == Common::KEYCODE_DOWN)
 		inputState.moveDown = true;
 
+	if (gameAction && key.keycode == Common::KEYCODE_F1)
+		return openHelpScreen(needsRedraw);
+
 	if (_session.isPlayerCombatLocked())
 		return InputResult();
 
@@ -230,6 +233,19 @@ InputResult Input::applyCheatActivation(InteractionResult &cheatInteraction,
 		if (_flow.hasPendingMainMenuReturn())
 			return InputResult::leaveRoom(Common::kNoError);
 	}
+	needsRedraw = true;
+	return InputResult();
+}
+
+InputResult Input::openHelpScreen(bool &needsRedraw) {
+	Common::Error helpError = _flow.runHelpScreen(_scene.palette, _scene.targetPaletteBrightness);
+	_session.getInputState().clearHeldActions();
+	if (helpError.getCode() != Common::kNoError)
+		return InputResult::leaveRoom(helpError);
+	// Stow the carried item after help returns.
+	if (!_roomItems.stowCarriedRoomItemToInventory())
+		return InputResult::leaveRoom(Common::kReadingFailed);
+	_inventory.clearSelection();
 	needsRedraw = true;
 	return InputResult();
 }

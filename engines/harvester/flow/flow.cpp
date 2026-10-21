@@ -22,9 +22,11 @@
 #include "harvester/flow/flow.h"
 
 #include "common/algorithm.h"
+#include "common/debug.h"
 #include "common/events.h"
 #include "common/memstream.h"
 #include "common/serializer.h"
+#include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/scene/input.h"
 #include "harvester/entity.h"
@@ -162,6 +164,17 @@ Common::Error Flow::run() {
 
 Common::Error Flow::runMainMenu() {
 	return _menu.runMainMenu(*this);
+}
+
+Common::Error Flow::runHelpScreen(const byte *palette, float paletteBrightness) {
+	EntityManager *entityManager = _engine.getRuntimeEntities();
+	if (entityManager)
+		entityManager->pauseTimerCountdowns();
+	Common::Error result = _menu.runHelpScreen(palette, paletteBrightness, *this);
+	if (entityManager)
+		entityManager->resumeTimerCountdowns();
+	debugC(1, kDebugRoom, "Harvester: help screen close error=%d", result.getCode());
+	return result;
 }
 
 Common::Error Flow::runRoomMenu(const IndexedBitmap &backdrop, const byte *palette,

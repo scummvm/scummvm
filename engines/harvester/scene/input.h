@@ -63,6 +63,7 @@ enum GameAction {
 	kActionSpeedUp,
 	kActionInventory,
 	kActionMenu,
+	kActionHelp,
 	kActionHighAttack,
 	kActionMediumAttack,
 	kActionLowAttack,
@@ -149,6 +150,7 @@ private:
 	InputResult applyCheatActivation(InteractionResult &cheatInteraction,
 		const CheatActivation &cheatActivation, bool &needsRedraw);
 	InputResult openRoomMenu(bool &needsRedraw);
+	InputResult openHelpScreen(bool &needsRedraw);
 	void beginInspectText(const ObjectRecord &object, const ResolvedText &text);
 	InputResult finishInspectText(bool &needsRedraw);
 	InputResult applyObjectInteraction(InteractionResult &interaction, bool &needsRedraw);

@@ -71,6 +71,7 @@ public:
 	bool requestDebugRoomChange(const Common::String &roomName);
 
 	Common::Error runDemoEnding();
+	Common::Error runHelpScreen(const byte *palette, float paletteBrightness);
 	Common::Error runRoomMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, bool canSaveGame);
 	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,

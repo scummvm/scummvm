@@ -93,6 +93,7 @@ public:
 		const Common::Array<Common::String> &menuItems);
 
 	Common::Error runMainMenu(Flow &flow);
+	Common::Error runHelpScreen(const byte *palette, float paletteBrightness, Flow &flow);
 	Common::Error runRoomMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow, bool canSaveGame);
 	Common::Error validateParentalPassword(Flow &flow);
@@ -155,7 +156,6 @@ private:
 		Flow &flow, bool &loadedGame);
 	Common::Error runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow);
-	Common::Error runHelpScreen(const byte *palette, float paletteBrightness, Flow &flow);
 	Common::Error runSaveGameMenu(const byte *palette, float paletteBrightness,
 		Flow &flow, bool &savedGame);
 	Common::Error restoreRoomBackdropAfterSave(const IndexedBitmap &backdrop, const byte *palette,

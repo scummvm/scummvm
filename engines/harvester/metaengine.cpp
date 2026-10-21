@@ -88,14 +88,15 @@ Common::KeymapArray HarvesterMetaEngine::initKeymaps(const char *target) const {
 		{ "RIGHT", _s("Move right"), kActionMoveRight, "RIGHT", "JOY_RIGHT" },
 		{ "UP", _s("Move up"), kActionMoveUp, "UP", "JOY_UP" },
 		{ "DOWN", _s("Move down"), kActionMoveDown, "DOWN", "JOY_DOWN" },
-		{ "ATTACK", _s("Attack modifier"), kActionAttackModifier, "LCTRL", "RCTRL" },
-		{ "EVADE", _s("Evasive movement modifier"), kActionEvasiveModifier, "RSHIFT", nullptr },
 		{ "SPEEDUP", _s("Speed up"), kActionSpeedUp, "LALT", "RALT" },
 		{ "INVENTORY", _s("Inventory"), kActionInventory, "i", nullptr },
 		{ "MENU", _s("Game menu"), kActionMenu, "ESCAPE", "JOY_Y" },
+		{ "HELP", _s("Help menu"), kActionHelp, "F1", nullptr },
+		{ "ATTACK", _s("Attack modifier"), kActionAttackModifier, "LCTRL", "RCTRL" },
 		{ "HIGHATTACK", _s("High attack"), kActionHighAttack, nullptr, nullptr },
 		{ "MEDIUMATTACK", _s("Medium attack"), kActionMediumAttack, nullptr, nullptr },
 		{ "LOWATTACK", _s("Low attack"), kActionLowAttack, nullptr, nullptr },
+		{ "EVADE", _s("Evasive movement modifier"), kActionEvasiveModifier, "RSHIFT", nullptr },
 		{ "DUCK", _s("Duck"), kActionDuck, nullptr, nullptr },
 		{ "JUMP", _s("Jump"), kActionJump, nullptr, nullptr }
 	};
