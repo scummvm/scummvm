@@ -941,7 +941,6 @@ void PrisonerEngine::setUserInput(bool enabled) {
 }
 
 void PrisonerEngine::playMux(Common::String filename) {
-	// TODO: bool oldVoicesEnabled = ???;
 	MuxPlayer *muxPlayer;
 
 	debug("playMux('%s')", filename.c_str());
@@ -954,10 +953,9 @@ void PrisonerEngine::playMux(Common::String filename) {
 		leaveScene();
 	}
 	if (!_screensaverRunning) {
-		// TODO: stopMusicItems();
-		// TODO: pauseSoundItems();
-		// TODO: oldVoicesEnabled = ???;
-		// TODO: updateVoicesVolume(false);
+		suspendMusics();
+		suspendSounds();
+		setVoicesMuted(true);
 	}
 	CursorMan.showMouse(false);
 	// TODO: resetDirtyRects();
@@ -979,9 +977,9 @@ void PrisonerEngine::playMux(Common::String filename) {
 		// TODO: drawDirtyRects(0);
 	}
 	if (!_screensaverRunning) {
-		// TODO: resumeSoundItems();
-		// TODO: resumeMusicItems();
-		// TODO: updateVoicesVolume(oldVoicesEnabled)
+		resumeSounds();
+		resumeMusics();
+		setVoicesMuted(false);
 	}
 	if (_moduleScriptCalled) {
 		_mainMenuRequested = true;

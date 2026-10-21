@@ -32,6 +32,7 @@
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "audio/mixer.h"
 
@@ -497,6 +498,11 @@ extern const byte constPalette1[768];
 
 /* Sounds */
 
+// Scripts use volumes from 0 to 100, the mixer uses 0 to kMaxChannelVolume
+inline byte toMixerVolume(uint volume) {
+	return MIN<uint>(volume, 100) * Audio::Mixer::kMaxChannelVolume / 100;
+}
+
 struct SoundSlot {
 	Audio::SoundHandle handle;
 	int16 resourceCacheSlot;
@@ -520,9 +526,11 @@ struct MusicSlot {
 	bool shouldResume;
 	bool moduleWide;
 	bool isDigital;
+	bool loop;
+	int16 loopCount;
 	Audio::SoundHandle handle;
 	bool isEmpty() const { return resourceCacheSlot == -1; }
-	void clear() { resourceCacheSlot = -1; isPlaying = false; isDigital = false; }
+	void clear() { resourceCacheSlot = -1; isPlaying = false; isDigital = false; loop = false; loopCount = 0; }
 };
 
 const int16 kMaxMusics = 3;
@@ -797,6 +805,7 @@ public:
 	int16 _talkieDataResourceCacheSlot;
 	bool _talkieSpeechPlayNow;
 	Audio::AudioStream *_talkieSpeechAudioStream;
+	void setVoicesMuted(bool muted);
 
 	/* LipSync */
 	int16 _lipSyncScriptNumber;
@@ -1159,6 +1168,8 @@ public:
 	int16 loadSound(Common::String &pakName, int16 pakSlot, bool moduleWide);
 	void unloadSound(int16 soundIndex);
 	void unloadSounds(bool all);
+	void suspendSounds();
+	void resumeSounds();
 
 	/* Music */
 	void initializeMidi();
@@ -1173,6 +1184,8 @@ public:
 	int16 loadMusic(Common::String &pakName, int16 pakSlot, bool moduleWide);
 	void unloadMusic(int16 musicIndex);
 	void unloadMusics(bool all);
+	void suspendMusics();
+	void resumeMusics();
 
 
 	/* Font colors */

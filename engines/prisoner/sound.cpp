@@ -41,7 +41,7 @@ void PrisonerEngine::playSound(int16 soundIndex) {
 		SoundResource *soundResource = _res->get<SoundResource>(soundSlot.resourceCacheSlot);
 		Audio::AudioStream *audioStream = soundResource->createAudioStream();
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundSlot.handle,
-			audioStream, -1, soundSlot.volume, 0, DisposeAfterUse::YES);
+			audioStream, -1, toMixerVolume(soundSlot.volume), 0, DisposeAfterUse::YES);
 	}
 }
 
@@ -57,7 +57,7 @@ void PrisonerEngine::playLoopingSound(int16 soundIndex, int16 loops) {
 		SoundResource *soundResource = _res->get<SoundResource>(soundSlot.resourceCacheSlot);
 		Audio::AudioStream *audioStream = soundResource->createLoopingAudioStream(loops);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundSlot.handle,
-			audioStream, -1, soundSlot.volume, 0, DisposeAfterUse::YES);
+			audioStream, -1, toMixerVolume(soundSlot.volume), 0, DisposeAfterUse::YES);
 	}
 }
 
@@ -85,7 +85,7 @@ void PrisonerEngine::setSoundVolume(int16 soundIndex, uint volume) {
 		soundSlot.volumeFlag = true;
 		// Update the volume if the sound is playing
 		if (_mixer->isSoundHandleActive(soundSlot.handle)) {
-			_mixer->setChannelVolume(soundSlot.handle, Audio::Mixer::kMaxChannelVolume / 100 * volume);
+			_mixer->setChannelVolume(soundSlot.handle, toMixerVolume(volume));
 		}
 	}
 }
@@ -119,6 +119,29 @@ void PrisonerEngine::unloadSounds(bool all) {
 			stopSound(soundIndex);
 			_res->unload(soundSlot.resourceCacheSlot);
 			soundSlot.resourceCacheSlot = -1;
+		}
+	}
+}
+
+// Stops all sounds but keeps their resume flag (original: stopSounds)
+void PrisonerEngine::suspendSounds() {
+	for (int16 soundIndex = 0; soundIndex < kMaxSounds; soundIndex++) {
+		SoundSlot &soundSlot = _sounds[soundIndex];
+		if (soundSlot.resourceCacheSlot != -1) {
+			bool shouldResume = soundSlot.shouldResume;
+			stopSound(soundIndex);
+			soundSlot.shouldResume = shouldResume;
+		}
+	}
+}
+
+// Restarts the endlessly looping sounds stopped by suspendSounds (original: resumeSounds)
+void PrisonerEngine::resumeSounds() {
+	for (int16 soundIndex = 0; soundIndex < kMaxSounds; soundIndex++) {
+		SoundSlot &soundSlot = _sounds[soundIndex];
+		if (soundSlot.resourceCacheSlot != -1 && soundSlot.shouldResume) {
+			setSoundVolume(soundIndex, soundSlot.volume);
+			playLoopingSound(soundIndex, 0);
 		}
 	}
 }

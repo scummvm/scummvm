@@ -43,6 +43,8 @@ void PrisonerEngine::playMusic(int16 musicIndex, bool loop, int16 loopCount) {
 			setMusicVolume(musicIndex, 100); // TODO
 		musicSlot.isPlaying = true;
 		musicSlot.shouldResume = false;
+		musicSlot.loop = loop;
+		musicSlot.loopCount = loopCount;
 		if (musicSlot.isDigital) {
 			// The original restarts a looping track at its end and decrements the
 			// loop count each time; a count <= 0 loops forever, otherwise the track
@@ -53,7 +55,7 @@ void PrisonerEngine::playMusic(int16 musicIndex, bool loop, int16 loopCount) {
 			SoundResource *soundResource = _res->get<SoundResource>(musicSlot.resourceCacheSlot);
 			Audio::AudioStream *audioStream = soundResource->createLoopingAudioStream(loops);
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &musicSlot.handle,
-				audioStream, -1, Audio::Mixer::kMaxChannelVolume / 100 * musicSlot.volume, 0, DisposeAfterUse::YES);
+				audioStream, -1, toMixerVolume(musicSlot.volume), 0, DisposeAfterUse::YES);
 		} else {
 			MidiResource *midiResource = _res->get<MidiResource>(musicSlot.resourceCacheSlot);
 			_midi->playMusic(midiResource, musicSlot.volume, loop);
@@ -102,7 +104,7 @@ void PrisonerEngine::setMusicVolume(int16 musicIndex, uint volume) {
 		if (musicSlot.isPlaying) {
 			if (musicSlot.isDigital) {
 				if (_mixer->isSoundHandleActive(musicSlot.handle))
-					_mixer->setChannelVolume(musicSlot.handle, Audio::Mixer::kMaxChannelVolume / 100 * volume);
+					_mixer->setChannelVolume(musicSlot.handle, toMixerVolume(volume));
 			} else {
 				_midi->setVolume(volume);
 			}
@@ -129,6 +131,8 @@ int16 PrisonerEngine::loadMusic(Common::String &pakName, int16 pakSlot, bool mod
 	musicSlot.isPlaying = false;
 	musicSlot.shouldResume = false;
 	musicSlot.volumeFlag = false;
+	musicSlot.loop = false;
+	musicSlot.loopCount = 0;
 	return musicIndex;
 }
 
@@ -148,6 +152,29 @@ void PrisonerEngine::unloadMusics(bool all) {
 			stopMusic(musicIndex);
 			_res->unload(musicSlot.resourceCacheSlot);
 			musicSlot.resourceCacheSlot = -1;
+		}
+	}
+}
+
+// Stops the music and remembers whether it was playing (original: stopMusics)
+void PrisonerEngine::suspendMusics() {
+	for (int16 musicIndex = 0; musicIndex < kMaxMusics; musicIndex++) {
+		MusicSlot &musicSlot = _musics[musicIndex];
+		if (!musicSlot.isEmpty()) {
+			bool wasPlaying = isMusicPlaying(musicIndex);
+			stopMusic(musicIndex);
+			musicSlot.shouldResume = wasPlaying;
+		}
+	}
+}
+
+// Restarts the music stopped by suspendMusics with its loop setting (original: resumeMusics)
+void PrisonerEngine::resumeMusics() {
+	for (int16 musicIndex = 0; musicIndex < kMaxMusics; musicIndex++) {
+		MusicSlot &musicSlot = _musics[musicIndex];
+		if (!musicSlot.isEmpty() && musicSlot.shouldResume) {
+			setMusicVolume(musicIndex, musicSlot.volume);
+			playMusic(musicIndex, musicSlot.loop, musicSlot.loopCount);
 		}
 	}
 }

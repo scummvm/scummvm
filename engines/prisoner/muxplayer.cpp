@@ -128,6 +128,15 @@ bool MuxPlayer::play() {
 
 	startTick = _vm->_system->getMillis();
 
+	// One audio chunk of soundBufSize samples is stored every 4 frames, so the
+	// frame rate is 4 * soundFreq / soundBufSize (5 to 12 fps in the game's videos)
+	uint32 frameRateNum = 12;
+	uint32 frameRateDen = 1;
+	if (_header.soundFreq != 0 && _header.soundBufSize != 0) {
+		frameRateNum = 4 * _header.soundFreq;
+		frameRateDen = _header.soundBufSize;
+	}
+
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sound, _stream);
 
 	for (uint curFrame = 0; curFrame < _header.frameCount && !aborted; curFrame++) {
@@ -148,8 +157,7 @@ bool MuxPlayer::play() {
 				elapsedTime = _vm->_system->getMillis() - startTick;
 			}
 
-			// TODO: Figure out real framerate from header, 12fps is a good guess
-			if (elapsedTime >= (curFrame * 1000) / 12)
+			if ((uint64)elapsedTime * frameRateNum >= (uint64)curFrame * 1000 * frameRateDen)
 				break;
 
 			aborted = _vm->handleMuxInput();

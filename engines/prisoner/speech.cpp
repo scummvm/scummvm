@@ -76,6 +76,12 @@ void PrisonerEngine::stopTalkieSpeech() {
 	_lipSyncChannelStatus.clear();
 }
 
+// Silences or restores the current voice without stopping it (original: toggleVoices)
+void PrisonerEngine::setVoicesMuted(bool muted) {
+	if (_mixer->isSoundHandleActive(_talkieSoundHandle))
+		_mixer->setChannelVolume(_talkieSoundHandle, muted ? 0 : Audio::Mixer::kMaxChannelVolume);
+}
+
 void PrisonerEngine::updateTalkieSpeech(int16 &pakSlot, uint32 &finishedTime, int16 resourceCacheSlot) {
 
 	if (pakSlot == -1)
