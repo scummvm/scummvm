@@ -8,7 +8,7 @@ Scooby-Doo Mystery Todo List
     - [x] BUG: Two Scooby's on screen at once in final scene of Blake's Hotel
   - [ ] Ha Ha carnival
 - [ ] Mouse only control scheme
-- [ ] Add Music and Sfx support
+- [x] Add Music and Sfx support
 - [x] BUG: Characters don't start talking automatically in intro van scene
 - [x] BUG: End credits not scrolling properly
 - [ ] refactor code to make it more understandable

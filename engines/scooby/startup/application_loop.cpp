@@ -38,6 +38,11 @@ void ApplicationLoop::run() {
 		// Ghidra RunStartupSequence 0x000008E2-0x000008FF: every (re)start reloads and starts the
 		// GEMS Z80 driver with the cartridge's sound banks.
 		gemsInit();
+		// Ghidra RunStartupSequence 0x00000904-0x00000915: g_lResumeAudioCommand = 0x2F, then PlayAudioCommand
+		// starts that title song before the intro, so it plays under the logos and continues into the main menu.
+		// RunAdventure's InitializeAudioDriver stops it when a session (including a loaded save) begins.
+		_state.ResumeAudioCommand = 0x2F;
+		gemsStartSong(_state.ResumeAudioCommand);
 		FrameClock clock;
 		if (!_state._saveGameData.shouldLoadGameData) {
 			IntroSequence intro(_rom, _scene);
