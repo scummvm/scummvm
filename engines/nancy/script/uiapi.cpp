@@ -45,10 +45,10 @@ namespace Script {
 // A description gets written out the way a chunk has it, and read by the panel
 // or control it is for.
 //
-// TODO: The textShadow and captureClicks fields, the ways of arranging controls
-// other than left to right and right to left, and the events the controls don't
-// send yet: mouseEnter and mouseLeave. Controls don't tell about being enabled
-// or disabled either.
+// TODO: The textShadow field, the ways of arranging controls other than left to
+// right and right to left, and the events the controls don't send yet: mouseEnter,
+// mouseLeave, and enable and disable for a control of its own; only whole panels
+// send those.
 
 static const char *const kPanelType = "ND.Panel";
 
@@ -708,6 +708,11 @@ static int newPanel(lua_State *L, byte kind) {
 	bool savesState = true;
 	if (readField(L, 2, "save", savesState)) {
 		panel->setSavesState(savesState);
+	}
+
+	bool capturesClicks = true;
+	if (readField(L, 2, "captureClicks", capturesClicks)) {
+		panel->setCapturesClicks(capturesClicks);
 	}
 
 	if (pushField(L, 2, "createObject")) {

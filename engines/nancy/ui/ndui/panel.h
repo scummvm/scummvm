@@ -86,6 +86,9 @@ public:
 
 	bool hasControl(const Common::String &name) const;
 
+	// Nancy19: a panel that doesn't capture clicks only takes the mouse over its controls
+	void setCapturesClicks(bool capturesClicks) { _capturesClicks = capturesClicks; }
+
 	// Nancy17 keeps the items apart from the panel that shows them, which comes
 	// with nothing but a template for their buttons
 	void addItemButtons(const Common::Array<byte> &buttonTemplate);
@@ -148,6 +151,7 @@ private:
 	byte _kind;
 	bool _isPlaced = false;
 	bool _savesState = true;
+	bool _capturesClicks = true;
 	ObjectFactory *_objectFactory = nullptr;
 	const INVD::Item *_newItem = nullptr;	// the item whose button is being made
 

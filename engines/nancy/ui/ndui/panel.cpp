@@ -792,7 +792,7 @@ bool Panel::handleInput(NancyInput &input, bool canHover, bool &isOverControl) {
 	Control *hovered = (isInside && _enabled) ? getControlAt(pos) : nullptr;
 	if (isInside && !hovered) {
 		Common::Point unscrolledPos(pos.x, pos.y - _scrollOffset);
-		isInside = _background->_bounds.contains(unscrolledPos);
+		isInside = _capturesClicks && _background->_bounds.contains(unscrolledPos);
 	}
 
 	for (Control *control : _controls) {
