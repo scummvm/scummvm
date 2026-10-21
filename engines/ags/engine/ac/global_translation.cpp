@@ -19,18 +19,19 @@
  *
  */
 
-#include "ags/shared/ac/common.h"
+#include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/game_state.h"
-#include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/translation.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/globals.h"
 #include "ags/plugins/ags_plugin_evts.h"
 #include "ags/plugins/plugin_engine.h"
+#include "ags/shared/ac/common.h"
 #include "ags/shared/util/memory.h"
-#include "ags/engine/ac/string.h"
-#include "ags/globals.h"
+
+#include "ags/engine/util/ags_translator.h"
 
 namespace AGS3 {
 
@@ -50,6 +51,11 @@ const char *get_translation(const char *text) {
 		return plResult;
 	}
 #endif
+
+	const char *translated = AgsTranslator::getInstance().getTranslation(text);
+	if (translated != text) {
+		return translated;
+	}
 
 	const auto &transtree = get_translation_tree();
 	const auto it = transtree.find(String::Wrapper(text));
