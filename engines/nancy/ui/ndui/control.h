@@ -94,6 +94,11 @@ protected:
 	virtual bool isOwnEvent(int32 eventType) const { return false; }
 
 	ControlState getState() const;
+
+	// Nancy21: what a "setImage" action asks for. A text picks another texture,
+	// and a value above 0 a source rect.
+	void setImage(uint element, const Action &action);
+
 	void drawSprite(Graphics::ManagedSurface &surface, uint element, const Common::Rect &dest) const;
 	void drawSprite(Graphics::ManagedSurface &surface, uint element, const Common::Rect &src, const Common::Rect &dest) const;
 

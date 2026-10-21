@@ -45,6 +45,31 @@ void Action::read(Common::SeekableReadStream &stream) {
 	readFilename(stream, text);
 }
 
+double encodeRect(int32 left, int32 top, int32 right, int32 bottom) {
+	if (left >= 0xFFFF || top >= 0xFFFF || right >= 0xFFFF || bottom >= 0xFFFF) {
+		return -1.0;
+	}
+
+	const uint64 bits = (uint64)(uint16)left | ((uint64)(uint16)top << 16) |
+		((uint64)(uint16)right << 32) | ((uint64)(uint16)bottom << 48);
+
+	double value;
+	memcpy(&value, &bits, sizeof(value));
+	return value;
+}
+
+Common::Rect decodeRect(double value) {
+	uint64 bits;
+	memcpy(&bits, &value, sizeof(bits));
+
+	Common::Rect rect;
+	rect.left = (int16)(bits & 0xFFFF);
+	rect.top = (int16)((bits >> 16) & 0xFFFF);
+	rect.right = (int16)((bits >> 32) & 0xFFFF);
+	rect.bottom = (int16)((bits >> 48) & 0xFFFF);
+	return rect;
+}
+
 static void addStateChange(Common::Array<UIStateData::Change> &changes, const Common::String &name, int32 action) {
 	UIStateData::Change change;
 	change.name = name;

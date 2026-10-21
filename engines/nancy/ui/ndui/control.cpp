@@ -181,6 +181,23 @@ void Control::sendEvent(int32 eventType) {
 	}
 }
 
+void Control::setImage(uint element, const Action &action) {
+	if (element >= _elements.size()) {
+		return;
+	}
+
+	Element &elem = _elements[element];
+	if (!action.text.empty()) {
+		elem.setTextureName(action.text);
+	}
+
+	if (action.value > 0) {
+		elem._src = decodeRect(action.value);
+	}
+
+	_panel->setDirty();
+}
+
 ControlState Control::getState() const {
 	if (!_enabled || !_panel->isEnabled()) {
 		return kStateDisabled;
@@ -238,6 +255,9 @@ bool Static::doAction(const Action &action) {
 	case kActionSetTexture:
 		_elements[0].setTextureName(action.text);
 		_panel->setDirty();
+		return true;
+	case kActionSetImage:
+		setImage(0, action);
 		return true;
 	default:
 		return Control::doAction(action);

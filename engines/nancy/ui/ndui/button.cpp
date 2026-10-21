@@ -103,6 +103,9 @@ bool Button::doAction(const Action &action) {
 	case kActionSetText:
 		setText(action.text);
 		return true;
+	case kActionSetImage:
+		setImage(1, action);
+		return true;
 	default:
 		return Control::doAction(action);
 	}

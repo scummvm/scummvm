@@ -1555,7 +1555,6 @@ bool findText(const Common::String &key, Common::String &text) {
 }
 
 // Message, which has the UI do something to one of its panels or controls
-// TODO: Message:EncodeRect
 
 struct MessageActionName {
 	const char *name;
@@ -1573,6 +1572,7 @@ static const MessageActionName kMessageActionNames[] = {
 	{ "addText", UI::NDUI::kActionAddText },
 	{ "setText", UI::NDUI::kActionSetText },
 	{ "setValue", UI::NDUI::kActionSetValue },
+	{ "setImage", UI::NDUI::kActionSetImage },
 	{ "getValue", UI::NDUI::kActionQuery },
 	{ "showItem", UI::NDUI::kActionShowItem },
 	{ "hideItem", UI::NDUI::kActionHideItem }
@@ -1623,9 +1623,17 @@ static int messageSend(lua_State *L) {
 	return 1;
 }
 
+// Message:EncodeRect(rect), the value "setImage" takes a source rect as
+static int messageEncodeRect(lua_State *L) {
+	const ScriptRect &rect = checkRect(L, 2);
+	lua_pushnumber(L, UI::NDUI::encodeRect(rect.left, rect.top, rect.right, rect.bottom));
+	return 1;
+}
+
 static const luaL_Reg kMessageFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Send", messageSend },
+	{ "EncodeRect", messageEncodeRect },
 	{ nullptr, nullptr }
 };
 
