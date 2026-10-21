@@ -127,6 +127,8 @@ void Manager::takeEngineAction(const Action &action) {
 		onSaveQueryAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_SaveOverwrite")) {
 		onSaveOverwriteAction(action);
+	} else if (action.target.equalsIgnoreCase("Engine_ExitQuery")) {
+		onExitQueryAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_GameWindow")) {
 		onGameWindowAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_Matte")) {

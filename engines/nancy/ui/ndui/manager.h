@@ -187,6 +187,7 @@ private:
 	void onSaverAction(const Action &action);
 	void onSaveQueryAction(const Action &action);
 	void onSaveOverwriteAction(const Action &action);
+	void onExitQueryAction(const Action &action);
 	void onGameWindowAction(const Action &action);
 	void onCellPhoneAction(const Action &action);
 	void onItemStreamClicked(const InvButton &button);
@@ -239,6 +240,10 @@ private:
 	// What the player was about to do when asked whether to save first
 	bool _hasPendingAction = false;
 	Action _pendingAction;
+
+	// Nancy21: the scripts say when the game can't be saved, e.g. during a
+	// cutscene. Leaving the game then asks whether to leave without saving.
+	bool _isSavingAllowed = true;
 
 	Request _request;
 };

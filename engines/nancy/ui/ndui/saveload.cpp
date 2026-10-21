@@ -59,7 +59,12 @@ void Manager::askToSaveFirst(const Action &action) {
 	_pendingAction.hasValue = true;
 	_pendingAction.value = -1;
 	_hasPendingAction = true;
-	takeAction(kActionShow, "SaveQueryDialog", 0.0);
+
+	if (!_isSavingAllowed && findPanel("ExitQueryDialog")) {
+		takeAction(kActionShow, "ExitQueryDialog", 0.0);
+	} else {
+		takeAction(kActionShow, "SaveQueryDialog", 0.0);
+	}
 }
 
 void Manager::runPendingAction() {
@@ -81,6 +86,22 @@ void Manager::onSaveQueryAction(const Action &action) {
 		break;
 	case kActionDisable:
 		takeAction(kActionHide, "SaveQueryDialog", 0.0);
+		_hasPendingAction = false;
+		break;
+	default:
+		break;
+	}
+}
+
+// The answer to whether to go on without saving
+void Manager::onExitQueryAction(const Action &action) {
+	switch (action.type) {
+	case kActionEnable:
+		takeAction(kActionHide, "ExitQueryDialog", 0.0);
+		runPendingAction();
+		break;
+	case kActionDisable:
+		takeAction(kActionHide, "ExitQueryDialog", 0.0);
 		_hasPendingAction = false;
 		break;
 	default:
@@ -278,6 +299,12 @@ void Manager::onSaverAction(const Action &action) {
 		takeAction(kActionSetText, "SaveList", Common::String());
 		_typedSaveName.clear();
 		runPendingAction();
+		break;
+	case kActionEnable:
+		_isSavingAllowed = true;
+		break;
+	case kActionDisable:
+		_isSavingAllowed = false;
 		break;
 	case kActionSetText:
 		// Save names must work as file names; a bad one gets undone
