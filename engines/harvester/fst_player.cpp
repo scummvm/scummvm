@@ -34,7 +34,9 @@
 #include "common/textconsole.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
+#include "harvester/detection.h"
 #include "harvester/harvester.h"
+#include "harvester/media/media_manager.h"
 #include "harvester/resources.h"
 #include "image/pcx.h"
 
@@ -582,6 +584,15 @@ bool FstPlayer::play(const Common::String &path) {
 		_vm.pauseMusic(false);
 	if (shouldSwitchToMovieDisplay)
 		_vm.setDisplayMode(previousDisplayWidth, previousDisplayHeight);
+
+	// play_fst_sequence consumes FADE_IN after playback; callers perform the fade.
+	MediaManager *media = _vm.getMedia();
+	media->finishMoviePlayback();
+	if (media->isRoomPaletteFadePending()) {
+		_vm.getScreen()->clearPalette();
+		g_system->updateScreen();
+		debugC(2, kDebugRoom, "Harvester: movie '%s' deferring room palette restoration", path.c_str());
+	}
 
 	return !_vm.shouldQuit();
 }

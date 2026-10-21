@@ -103,7 +103,7 @@ private:
 	void syncAnimatedRoomActorPlacement();
 	void requestPlayerGameOver(const char *reason, const Common::String &sourceName);
 	void updateRoomInterface(bool &needsRedraw);
-	bool drawRoomFrame(bool &needsRedraw);
+	InputResult drawRoomFrame(bool &needsRedraw);
 	InputResult pollRoomEvents(Input &input, bool &needsRedraw);
 	PlayerControlState preparePlayerControlState();
 	Common::Error tryActivatePendingRegion(bool &needsRedraw);

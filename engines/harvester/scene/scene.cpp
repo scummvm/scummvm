@@ -33,6 +33,7 @@
 #include "harvester/flow/flow.h"
 #include "harvester/harvester.h"
 #include "harvester/inventory.h"
+#include "harvester/media/media_manager.h"
 #include "harvester/player/player.h"
 #include "harvester/combat/combat.h"
 #include "harvester/entity.h"
@@ -407,15 +408,16 @@ void Scene::updateRoomInterface(bool &needsRedraw) {
 	}
 }
 
-bool Scene::drawRoomFrame(bool &needsRedraw) {
+InputResult Scene::drawRoomFrame(bool &needsRedraw) {
 	const RoomPlayerState &playerState = _player.getState();
 	const RoomIdleAnimationState &idleState = _player.getIdleState();
-	if (!needsRedraw)
-		return true;
+	const bool fadeIn = _engine.getMedia()->isRoomPaletteFadePending();
+	if (!needsRedraw && !fadeIn)
+		return InputResult();
 
 	Graphics::Screen *activeScreen = _engine.getScreen();
 	if (!activeScreen)
-		return false;
+		return InputResult::leaveRoom(Common::kNoError);
 
 	const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
 	const bool inventorySelectionActive = _inventory.hasSelection();
@@ -489,7 +491,7 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 				: hoverState.cursorSequence);
 	}
 
-	RoomPresentation::drawRoomScene(_engine, *activeScreen, _scene, _scene.targetPaletteBrightness);
+	RoomPresentation::drawRoomScene(_engine, *activeScreen, _scene, fadeIn ? 0.0f : _scene.targetPaletteBrightness);
 	_combatEffects.drawCombatDamagePopups(*activeScreen, _engine.isCombatDebugEnabled());
 	if (_engine.getScript() && playerState.entity) {
 		drawCombatLoadoutResourceIcons(*activeScreen, *_view.art, *_engine.getScript(),
@@ -528,7 +530,14 @@ bool Scene::drawRoomFrame(bool &needsRedraw) {
 	activeScreen->update();
 	needsRedraw = false;
 
-	return true;
+	if (fadeIn) {
+		_engine.getMedia()->clearRoomPaletteFade();
+		debugC(2, kDebugRoom, "Harvester: fading room '%s' in after movie", _scene.state.roomName.c_str());
+		Common::Error fadeError = _flow.fadeInRoomScene(_scene.palette, _scene.targetPaletteBrightness);
+		if (fadeError.getCode() != Common::kNoError)
+			return InputResult::leaveRoom(fadeError);
+	}
+	return InputResult();
 }
 
 InputResult Scene::pollRoomEvents(Input &input, bool &needsRedraw) {
@@ -783,8 +792,9 @@ InputResult Scene::runRoomFrames(const Common::String &currentRoomTarget) {
 			needsRedraw = true;
 		}
 		updateRoomInterface(needsRedraw);
-		if (!drawRoomFrame(needsRedraw))
-			return InputResult::leaveRoom(Common::kNoError);
+		const InputResult drawResult = drawRoomFrame(needsRedraw);
+		if (drawResult.returnFromRoom)
+			return drawResult;
 
 		const InputResult inputResult = pollRoomEvents(input, needsRedraw);
 		if (inputResult.returnFromRoom)
@@ -880,6 +890,11 @@ void Scene::syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTi
 }
 
 bool Scene::captureDialogueBackdrop(IndexedBitmap &backdrop) {
+	if (_engine.getMedia()->isRoomPaletteFadePending()) {
+		bool needsRedraw = true;
+		if (drawRoomFrame(needsRedraw).returnFromRoom)
+			return false;
+	}
 	return _presentation.captureDialogueBackdrop(backdrop);
 }
 
@@ -1013,6 +1028,7 @@ Common::Error SceneRunner::runRoomLoop(Flow &flow, const Common::String &targetN
 		if (transitionError.getCode() != Common::kNoError)
 			return transitionError;
 
+		_engine.getMedia()->resetMoviePaletteState();
 		SceneState scene;
 		if (!SceneEntities::loadRoomSceneResources(state, *_engine.getResources(), scene))
 			return Common::kReadingFailed;

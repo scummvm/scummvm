@@ -35,6 +35,7 @@
 #include "harvester/entity.h"
 #include "harvester/flow/flow.h"
 #include "harvester/harvester.h"
+#include "harvester/media/media_manager.h"
 #include "harvester/palette_utils.h"
 #include "harvester/player/player.h"
 #include "harvester/resources.h"
@@ -473,6 +474,7 @@ Common::Error RoomPresentation::applyLightingCommand(StartupLightingCommand ligh
 	case kStartupLightingCommandNone:
 		return Common::kNoError;
 	case kStartupLightingCommandDim:
+		_engine.getMedia()->clearRoomPaletteFade();
 		_scene.targetPaletteBrightness = kDimPaletteBrightness;
 		drawRoomScene(_engine, *activeScreen, _scene, _scene.targetPaletteBrightness);
 		setScaledRoomPalette(*activeScreen, _scene.palette, _scene.targetPaletteBrightness);
@@ -480,6 +482,7 @@ Common::Error RoomPresentation::applyLightingCommand(StartupLightingCommand ligh
 		activeScreen->update();
 		return Common::kNoError;
 	case kStartupLightingCommandNormal:
+		_engine.getMedia()->clearRoomPaletteFade();
 		if (ResourceManager *resources = _engine.getResources()) {
 			if (!_scene.state.palettePath.empty() &&
 					!loadPaletteResource(*resources, _scene.state.palettePath, _scene.palette)) {
@@ -502,8 +505,8 @@ Common::Error RoomPresentation::applyLightingCommand(StartupLightingCommand ligh
 		return Common::kNoError;
 	}
 	case kStartupLightingCommandFadeIn:
-		debugC(1, kDebugRoom,
-			"Harvester: CHANGE_LIGHTING FADE_IN has no direct room-side equivalent yet; preserving control flow");
+		_engine.getMedia()->requestRoomFadeAfterMovie();
+		debugC(2, kDebugRoom, "Harvester: room palette fade queued for the next movie");
 		return Common::kNoError;
 	}
 

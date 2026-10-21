@@ -54,6 +54,11 @@ public:
 	static float mapGammaLevelToBrightnessScale(int level);
 
 	void resetScreen(int width, int height);
+	void requestRoomFadeAfterMovie() { _fadeRoomAfterNextMovie = true; }
+	void finishMoviePlayback();
+	bool isRoomPaletteFadePending() const { return _roomPaletteFadePending; }
+	void clearRoomPaletteFade() { _roomPaletteFadePending = false; }
+	void resetMoviePaletteState();
 	bool loadArt();
 	bool loadText();
 	bool loadQuickTipsResources(bool useTextboxPanel);
@@ -85,6 +90,8 @@ private:
 	Graphics::Screen *_screen = nullptr;
 	int _displayWidth = 0;
 	int _displayHeight = 0;
+	bool _fadeRoomAfterNextMovie = false;
+	bool _roomPaletteFadePending = false;
 	Art *_art = nullptr;
 	Text *_text = nullptr;
 	Audio::SoundHandle _musicHandle;

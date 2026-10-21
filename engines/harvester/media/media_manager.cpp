@@ -72,6 +72,16 @@ void MediaManager::resetScreen(int width, int height) {
 	_displayHeight = height;
 }
 
+void MediaManager::finishMoviePlayback() {
+	_roomPaletteFadePending = _fadeRoomAfterNextMovie;
+	_fadeRoomAfterNextMovie = false;
+}
+
+void MediaManager::resetMoviePaletteState() {
+	_fadeRoomAfterNextMovie = false;
+	_roomPaletteFadePending = false;
+}
+
 bool MediaManager::loadArt() {
 	Common::ScopedPtr<Art> art(new Art());
 	if (!art->load(_resources))
