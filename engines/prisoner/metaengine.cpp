@@ -71,7 +71,8 @@ bool Prisoner::PrisonerEngine::hasFeature(EngineFeature f) const {
 	return
 //		(f == kSupportsRTL) || // TODO: Not yet...
 		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsSubtitleOptions);
 }
 
 SaveStateList PrisonerMetaEngine::listSaves(const char *target) const {

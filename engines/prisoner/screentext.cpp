@@ -252,7 +252,8 @@ void PrisonerEngine::updateScreenTexts() {
 			// TODO: Talkie code/auto advance text
 			//debug("getTicks = %d; finishedTime = %d", getTicks(), screenText->finishedTime);
 			// TODO: More...
-			if (getTicks() >= screenText->finishedTime)
+			// With speech muted the player clicks through the text at their own pace
+			if (!_speechMuted && getTicks() >= screenText->finishedTime)
 				_autoAdvanceScreenTexts = true;
 		}
 

@@ -76,6 +76,7 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_menuFunctionArray[MAIN_PANEL] = &PrisonerEngine::updateMainMenu;
 	_menuFunctionArray[OPTIONS_PANEL] = &PrisonerEngine::updateOptionsMenu;
+	_menuFunctionArray[OPTGFX_PANEL] = &PrisonerEngine::updateDisplaySettingsMenu;
 }
 
 PrisonerEngine::~PrisonerEngine() {
@@ -109,6 +110,10 @@ Common::Error PrisonerEngine::run() {
 	_screenBackupSurface = new Graphics::Surface();
 	_screenBackupSurface->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	_screenBackedup = false;
+
+	_menuBackgroundSurface = new Graphics::Surface();
+	_menuBackgroundSurface->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+	_menuBackgroundSaved = false;
 
 	_screen->initPaletteTransTable(65);
 	memcpy(_effectPalette, constPalette1, 768);
@@ -160,13 +165,16 @@ Common::Error PrisonerEngine::run() {
 	CursorMan.showMouse(true);
 	loadMouseCursors();
 
-	_talkieEnabled = false;
+	// Sets _talkieEnabled and _speechMuted from ScummVM's settings
+	syncSoundSettings();
 
 	_menuMouseCursorActive = false;
 	_menuMouseCursor = -1;
 	_updateDirtyRectsFlag = true;
 	_autoSaveRequested = false;
 	_mainMenuRequested = false;
+	_currOptionsMenuIndex = 0;
+	_optionsOpenedFromGame = false;
 	_isDialogMenuShowing = false;
 	_inGame = false;
 	_mainLoopDone = false;
@@ -180,7 +188,7 @@ Common::Error PrisonerEngine::run() {
 
 	_screensaverRunning = false;
 	_screensaverAborted = false;
-	_screensaverTime = 6000;
+	_screensaverTime = kTicksPerMinute;
 
 	_cameraFollowsActorIndex = -1;
 	_backgroundResourceCacheSlot = -1;
@@ -246,7 +254,8 @@ Common::Error PrisonerEngine::run() {
 	_cameraFocusActor = false;
 	_cameraFollowsActorIndex = -1;
 
-	_updateScreenValue = true;
+	_halfScreenScrolling = true;
+	loadDisplaySettings();
 
 	_currModuleIndex = -1;
 	_currSceneIndex = -1;
@@ -334,6 +343,8 @@ Common::Error PrisonerEngine::run() {
 #endif
 
 	shutdownMidi();
+	_menuBackgroundSurface->free();
+	delete _menuBackgroundSurface;
 	delete _screenBackupSurface;
 	delete _pathSystem;
 	delete _scriptOpcodes;
@@ -349,8 +360,18 @@ const Common::String PrisonerEngine::getGlobalText(Common::String &identifier) {
 	return textResource->getText(identifier)->getChunkLineString(0, 0);
 }
 
+void PrisonerEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	bool mute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+	_speechMuted = mute || ConfMan.getBool("speech_mute");
+	// In the original's talkie mode spoken lines are shown without text
+	_talkieEnabled = !_speechMuted && !ConfMan.getBool("subtitles");
+}
+
 void PrisonerEngine::checkScreensaver() {
-	if (_screensaverTime < (int32)getTicks() - _lastInputTicks) {
+	// A stand-by time of 0 disables the screensaver
+	if (_screensaverTime > 0 && _screensaverTime < (int32)getTicks() - _lastInputTicks) {
 		_mainMenuRequested = false;
 		_screensaverRunning = true;
 		playIntroVideos();
@@ -367,6 +388,13 @@ void PrisonerEngine::mainLoop() {
 			updateFrameTime();
 			updateAnimationFrameTicks();
 			checkScreensaver();
+
+			// Start each menu frame from what was behind the menu, so a panel never
+			// shows through the one drawn after it
+			if (_menuBackgroundSaved)
+				memcpy(_screen->getScreen()->getPixels(), _menuBackgroundSurface->getPixels(), 640 * 480);
+			else
+				_screen->clear();
 
 			if (_menuFunctionArray[_selectedMenuIndex]) {
 				(this->*_menuFunctionArray[_selectedMenuIndex])(67, 77);
@@ -388,6 +416,9 @@ void PrisonerEngine::mainLoop() {
 
 			continue;
 		}
+
+		// Only the game screen captured by openMainMenu() in this frame is valid
+		_menuBackgroundSaved = false;
 
 		if (isPaused()) {
 			handleInput(_cameraX + _mouseX, _cameraY + _mouseY);
@@ -500,18 +531,38 @@ int16 PrisonerEngine::getSysVar(int16 varIndex) {
 	}
 }
 
+// Polls the events once per frame. A key or button that is pressed and released within
+// the same poll stays down until the next poll, so quick taps and clicks aren't lost.
 void PrisonerEngine::updateEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
+	bool keyPressed = false;
+	uint16 buttonsPressed = 0;
+
+	if (_keyReleasePending) {
+		_keyState = Common::KEYCODE_INVALID;
+		_keyReleasePending = false;
+	}
+	_buttonState &= ~_buttonReleasePending;
+	_buttonReleasePending = 0;
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			this->_lastInputTicks = getTicks();
 			_keyState = event.kbd.keycode;
+			_keyReleasePending = false;
+			keyPressed = true;
 			break;
 		case Common::EVENT_KEYUP:
-			_keyState = Common::KEYCODE_INVALID;
+			if (keyPressed) {
+				_keyReleasePending = true;
+			} else {
+				_keyState = Common::KEYCODE_INVALID;
+				// The key is up, so a pending wait for its release is over
+				_inpKeybWaitRelease = false;
+				_inpKeybPulseRelease = false;
+			}
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			this->_lastInputTicks = getTicks();
@@ -519,17 +570,29 @@ void PrisonerEngine::updateEvents() {
 			_mouseY = event.mouse.y;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			_buttonState |= kLeftButton;
+		case Common::EVENT_RBUTTONDOWN: {
+			uint16 button = event.type == Common::EVENT_LBUTTONDOWN ? kLeftButton : kRightButton;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			_buttonState |= button;
+			_buttonReleasePending &= ~button;
+			buttonsPressed |= button;
 			break;
+		}
 		case Common::EVENT_LBUTTONUP:
-			_buttonState &= ~kLeftButton;
+		case Common::EVENT_RBUTTONUP: {
+			uint16 button = event.type == Common::EVENT_LBUTTONUP ? kLeftButton : kRightButton;
+			if (buttonsPressed & button) {
+				_buttonReleasePending |= button;
+			} else {
+				_buttonState &= ~button;
+				if (_buttonState == 0) {
+					_inpMouseWaitRelease = false;
+					_inpMousePulseRelease = false;
+				}
+			}
 			break;
-		case Common::EVENT_RBUTTONDOWN:
-			_buttonState |= kRightButton;
-			break;
-		case Common::EVENT_RBUTTONUP:
-			_buttonState &= ~kRightButton;
-			break;
+		}
 		case Common::EVENT_QUIT:
 			_system->quit();
 			break;
@@ -619,6 +682,8 @@ void PrisonerEngine::initInput() {
 
 	_buttonState = 0;
 	_keyState = Common::KEYCODE_INVALID;
+	_keyReleasePending = false;
+	_buttonReleasePending = 0;
 
 	_inpKeybWaitRelease = false;
 	_inpMouseWaitRelease = false;
@@ -698,9 +763,12 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 	if (_queuedZoneAction.used == 1)
 		checkQueuedZoneAction();
 
-	if (x - _cameraX > 610 && y - _cameraY <= 82) {
-		// TODO: Open main menu and return the menu result
-		//debug("TODO: Open main menu and return the menu result");
+	if (!_mainMenuRequested && x - _cameraX > 610 && y - _cameraY <= 82) {
+		// Clicking the top right corner opens the main menu
+		if (_inGame && buttonState != 0) {
+			inpMouseSetWaitRelease(true);
+			openMainMenu();
+		}
 		return 0;
 	}
 
@@ -722,11 +790,11 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 	}
 
 	if (_inGame) {
-		if (keyState == Common::KEYCODE_ESCAPE) {
+		// The display settings screen handles Escape itself (cancel)
+		if (keyState == Common::KEYCODE_ESCAPE && !(_mainMenuRequested && _selectedMenuIndex == OPTGFX_PANEL)) {
 			inpKeybSetWaitRelease(true);
-			_mainMenuRequested = !_mainMenuRequested;
-			if (_mainMenuRequested) {
-				this->pauseGame();
+			if (!_mainMenuRequested) {
+				openMainMenu();
 			} else {
 				// TODO CLEAR MENU (MAYBE VIA DIRTY RECTS?)
 				this->resumeGame();
@@ -739,7 +807,7 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 			loadGameDialog();
 		} else if (keyState == Common::KEYCODE_F4) {
 			inpKeybSetWaitRelease(true);
-			//TODO: Options
+			openOptionsMenuFromGame();
 		} else if (keyState == Common::KEYCODE_p) {
 			inpKeybSetWaitRelease(true);
 			if (isPaused()) {
@@ -959,6 +1027,7 @@ void PrisonerEngine::pauseGame() {
 
 void PrisonerEngine::resumeGame() {
 	_mainMenuRequested = false;
+	_selectedMenuIndex = MAIN_PANEL;
 	this->_screen->clear();
 	_pauseToken.clear();
 }

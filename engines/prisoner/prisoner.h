@@ -489,6 +489,9 @@ struct PaletteTask {
 
 const int16 kMaxPaletteTasks = 5;
 
+// getTicks() counts in 1/100 seconds
+const int32 kTicksPerMinute = 6000;
+
 /* Globals */
 extern const byte constPalette1[768];
 
@@ -558,6 +561,7 @@ public:
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	bool hasFeature(EngineFeature f) const;
+	void syncSoundSettings() override;
 
 	Common::RandomSource *_rnd;
 
@@ -569,6 +573,8 @@ public:
 
 	Common::KeyCode _keyState;
 	uint16 _buttonState;
+	bool _keyReleasePending;
+	uint16 _buttonReleasePending;
 
 	char _languageChar;
 	int16 _animationSpeed;
@@ -580,6 +586,14 @@ public:
 	bool _mainLoopDone;
 	int8 _currMenuIndex;
 	int8 _selectedMenuIndex;
+	int8 _currOptionsMenuIndex;
+	bool _optionsOpenedFromGame;
+
+	/* Display settings screen, edited copies of the settings */
+	bool _displayScrolling;
+	int16 _displayStandbyMinutes;
+	int16 _displaySpeedIndex;
+	int8 _displayRow;
 
 
 	Common::String _muxFilename;
@@ -599,7 +613,9 @@ public:
 
 	bool _updateDirtyRectsFlag;
 
+	// Set from ScummVM's subtitle/speech settings in syncSoundSettings()
 	bool _talkieEnabled;
+	bool _speechMuted;
 
 	bool _loadingSavegame;
 
@@ -665,7 +681,9 @@ public:
 	bool _backgroundNoScrollFlag1, _backgroundNoScrollFlag2;
 	int16 _backgroundDrawX, _backgroundDrawY;
 	int16 _backgroundDrawWidth, _backgroundDrawHeight;
-	bool _updateScreenValue; // always true
+	// The "Scrolling" display option: the camera jumps by half screens when true (the
+	// default), and follows the actor smoothly when false
+	bool _halfScreenScrolling;
 	int16 _cameraX, _cameraY;
 	int16 _cameraDeltaX, _cameraDeltaY;
 	bool _cameraFocusActor;
@@ -679,6 +697,9 @@ public:
 	byte _effectPalette[768], _scenePalette[768];
 
 	Graphics::Surface *_screenBackupSurface;
+	// The game screen behind the main menu, redrawn before each menu frame
+	Graphics::Surface *_menuBackgroundSurface;
+	bool _menuBackgroundSaved;
 	bool _screenBackedup;
 
 	/* Actors */
@@ -819,6 +840,8 @@ public:
 	int16 _menuPanelResourceCacheSlots[MENU_PANELS::PANEL_SIZE_END];
 	Common::StringArray _menuItems;
 	Common::Array<bool> _activeMenuItems;
+	Common::StringArray _optionsMenuItems;
+	Common::StringArray _displayMenuItems;
 	typedef void (PrisonerEngine::*MenuFunction)(int16, int16);
 	MenuFunction _menuFunctionArray[MENU_PANELS::PANEL_SIZE_END];
 
@@ -826,6 +849,7 @@ public:
 	Common::StringArray _dialogStrings;
 	AnimationResource *_dialogPanel;
 	bool _isDialogMenuShowing;
+	int8 _dialogMenuFocus;
 	typedef void (PrisonerEngine::*DialogAction)();
 	PrisonerEngine::DialogAction _dialogActionCallback;
 
@@ -1162,7 +1186,19 @@ public:
 	void displayDialog(DIALOG_TYPE type, Common::String &titleStrId, Common::String &actionStrId, DialogAction dlgAction);
 	void loadDialogData();
 	void loadMenuPanels();
-	void loadOptionsMenu();
+	void loadOptionsMenu(bool fromGame);
+	void openMainMenu();
+	void openOptionsMenuFromGame();
+	void handleOptionsMenuInput();
+	void doOptionsMenuAction(int8 itemIndex);
+	void closeOptionsMenu();
+	void openConfigDialog();
+	void loadDisplaySettings();
+	void loadDisplaySettingsMenu();
+	void closeDisplaySettingsMenu(bool apply);
+	void changeDisplaySetting(int16 delta);
+	void handleDisplaySettingsInput();
+	void updateDisplaySettingsMenu(int16 x, int16 y);
 	void loadOnscreenMenuText();
 	void runMainMenu_initMessages();
 	void runMainMenu_addClickBoxes(int16 x, int16 y);
@@ -1176,6 +1212,7 @@ public:
 	/* Dialog */
 	void updateDialogMenu(int16 x, int16 y);
 	void handleDialogMenuInput();
+	void closeDialogMenu(bool confirmed);
 	void dialogActionNewGame();
 	void dialogActionExit();
 

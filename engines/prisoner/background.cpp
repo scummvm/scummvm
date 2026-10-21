@@ -121,7 +121,7 @@ void PrisonerEngine::setBackgroundCameraLocked(bool value) {
 
 void PrisonerEngine::updateBackground(bool fullRedraw) {
 
-	if ((!_updateScreenValue && _backgroundNoScrollFlag2) || _backgroundNoScrollFlag1)
+	if ((!_halfScreenScrolling && _backgroundNoScrollFlag2) || _backgroundNoScrollFlag1)
 		fullRedraw = true;
 
 	if (_backgroundResourceCacheSlot == -1) {
@@ -166,6 +166,32 @@ void PrisonerEngine::updateCameraFollowing() {
 	int16 absActorY = _actors[_cameraFollowsActorIndex].actorSprite->y - _cameraY + _cameraDeltaY - _backgroundDrawY;
 	int16 origCameraX = _cameraX;
 	int16 origCameraY = _cameraY;
+
+	if (!_halfScreenScrolling) {
+		// Smooth scrolling: each frame the camera covers half the distance to centering the
+		// actor. updateBackground() redraws the whole background in this mode.
+		int16 deltaX = (absActorX - _backgroundDrawWidth / 2) / 2;
+		int16 deltaY = (absActorY - _backgroundDrawHeight / 2) / 2;
+		if (deltaX > 0) {
+			_cameraX += deltaX;
+			if (_cameraX > _backgroundWidth - _backgroundDrawWidth)
+				_cameraX = _backgroundWidth - _backgroundDrawWidth;
+		} else if (deltaX < 0) {
+			_cameraX += deltaX;
+			if (_cameraX < 0)
+				_cameraX = 0;
+		}
+		if (deltaY > 0) {
+			_cameraY += deltaY;
+			if (_cameraY > _backgroundHeight - _backgroundDrawHeight)
+				_cameraY = _backgroundHeight - _backgroundDrawHeight;
+		} else if (deltaY < 0) {
+			_cameraY += deltaY;
+			if (_cameraY < 0)
+				_cameraY = 0;
+		}
+		return;
+	}
 
 	if (absActorX > _backgroundDrawWidth - scrollX) {
 		_cameraX += _backgroundDrawWidth / 2;
