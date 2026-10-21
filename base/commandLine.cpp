@@ -1096,6 +1096,7 @@ static void listGames(const Common::String &engineID, bool jsonOutput) {
 			"------------------------------ -----------------------------------------------------------\n");
 	}
 
+	bool first = true;
 	// The uncached plugin manager keeps only one engine plugin in memory at a time
 	PluginMan.loadFirstPlugin();
 	do {
@@ -1109,7 +1110,6 @@ static void listGames(const Common::String &engineID, bool jsonOutput) {
 
 			if (all || Common::find(engines.begin(), engines.end(), p->getName()) != engines.end()) {
 				PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
-				bool first = true;
 				for (const auto &v : list) {
 					const Common::String &gameId = buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v.gameId);
 					if (jsonOutput) {
