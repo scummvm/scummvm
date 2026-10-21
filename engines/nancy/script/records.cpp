@@ -1425,11 +1425,18 @@ void TextRecord::readTable(int tableIndex) {
 	_graphic.registerGraphics();
 }
 
+// The transform moves the text, like the scrolling lists of the UI do with theirs
 void TextRecord::applyDest() {
 	const Common::Rect dest = _dest.toRect();
-	_graphic._drawSurface.create(MAX<int>(dest.width(), 1), MAX<int>(dest.height(), 1), g_nancy->_graphics->getTransparentPixelFormat());
-	_graphic.moveTo(dest);
-	_isDirty = true;
+	const int width = MAX<int>(dest.width(), 1);
+	const int height = MAX<int>(dest.height(), 1);
+	if (_graphic._drawSurface.w != width || _graphic._drawSurface.h != height) {
+		_graphic._drawSurface.create(width, height, g_nancy->_graphics->getTransparentPixelFormat());
+		_isDirty = true;
+	}
+
+	_graphic.moveTo(getTransformedDest(_dest, getTransform(), width, height));
+	_graphic.setNeedsRedraw(true);
 }
 
 void TextRecord::setText(const Common::String &text) {

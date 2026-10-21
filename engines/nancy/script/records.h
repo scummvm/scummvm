@@ -351,6 +351,8 @@ protected:
 	void readTable(int tableIndex) override;
 	void run(double sceneTime, double elapsedTime) override;
 	void onZChanged() override;
+	bool hasTransform() const override { return true; }
+	void onTransformChanged() override { applyDest(); }
 	bool prepareReset() override;
 	bool getField(const Common::String &key) override;
 	bool setField(const Common::String &key) override;
