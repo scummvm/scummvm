@@ -254,11 +254,14 @@ bool ListBox::doAction(const Action &action) {
 		addItem(action.text, action.value < 0);
 		_panel->setDirty();
 		return true;
+	// From Nancy20 on, "collapse" empties a list box, e.g. the list of saved games
+	case kActionCollapse:
 	case kActionSetText:
 		_items.clear();
 		_selected = -1;
 		_hovered = -1;
 		_scrollBar->setRange(0);
+		_panel->setDirty();
 		return true;
 	case kActionSetValue:
 		_selected = CLIP<int>((int)action.value, -1, (int)_items.size() - 1);

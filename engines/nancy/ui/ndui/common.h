@@ -103,6 +103,9 @@ enum ActionType {
 	kActionHide				= 2,
 	kActionToggle			= 3,
 	kActionSetRange			= 5,	// scroll bars
+	kActionExpand			= 5,	// Nancy20 panels, which can be collapsed...
+	kActionCollapse			= 6,
+	kActionToggleCollapsed	= 7,	// ...to their caption, which script panels don't have
 	kActionEnable			= 8,
 	kActionDisable			= 9,
 	kActionToggleEnabled	= 10,

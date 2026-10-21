@@ -1573,6 +1573,9 @@ static const MessageActionName kMessageActionNames[] = {
 	{ "setText", UI::NDUI::kActionSetText },
 	{ "setValue", UI::NDUI::kActionSetValue },
 	{ "setImage", UI::NDUI::kActionSetImage },
+	{ "expand", UI::NDUI::kActionExpand },
+	{ "collapse", UI::NDUI::kActionCollapse },
+	{ "toggleCollapsed", UI::NDUI::kActionToggleCollapsed },
 	{ "getValue", UI::NDUI::kActionQuery },
 	{ "showItem", UI::NDUI::kActionShowItem },
 	{ "hideItem", UI::NDUI::kActionHideItem }

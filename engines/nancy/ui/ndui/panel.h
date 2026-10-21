@@ -138,6 +138,7 @@ private:
 	void readControl(Common::SeekableReadStream &stream);
 	void show();
 	void hide();
+	void setCollapsed(bool isCollapsed);
 	void fireEvent(int32 eventType);
 	void redraw();
 	Control *getControlAt(const Common::Point &pos) const;
@@ -169,6 +170,11 @@ private:
 	int32 _scrollOffset = 0;
 
 	int32 _initialState = kStartVisible;
+
+	// A collapsed panel stays out of sight, and shows again when it gets
+	// expanded, if it would have been showing by then
+	bool _isCollapsed = false;
+	bool _isShownWhenExpanded = false;
 	int _showCount = 0;
 	bool _enabled = true;
 	uint32 _lastUpdateTime = 0;

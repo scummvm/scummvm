@@ -476,6 +476,15 @@ bool Panel::takeAction(const Action &action) {
 	case kActionDisable:
 		_enabled = false;
 		break;
+	case kActionExpand:
+		setCollapsed(false);
+		break;
+	case kActionCollapse:
+		setCollapsed(true);
+		break;
+	case kActionToggleCollapsed:
+		setCollapsed(!_isCollapsed);
+		break;
 	case kActionSetValue:
 		// A scroll panel follows its scroll bar, a whole step at a time
 		if (_scrollBarName.empty()) {
@@ -553,15 +562,39 @@ void Panel::finishBlending() {
 // Every show needs a matching hide before the panel goes away
 void Panel::show() {
 	++_showCount;
-	setVisible(true);
+	if (_isCollapsed) {
+		_isShownWhenExpanded = true;
+	} else {
+		setVisible(true);
+	}
+
 	arrangeControls();
 	fireEvent(kEventShow);
+}
+
+void Panel::setCollapsed(bool isCollapsed) {
+	if (isCollapsed == _isCollapsed) {
+		return;
+	}
+
+	_isCollapsed = isCollapsed;
+	if (isCollapsed) {
+		_isShownWhenExpanded = isVisible();
+		setVisible(false);
+		if (_capture) {
+			_capture->_isPressed = false;
+			_capture = nullptr;
+		}
+	} else {
+		setVisible(_isShownWhenExpanded);
+	}
 }
 
 void Panel::hide() {
 	--_showCount;
 	if (_showCount == 0) {
 		setVisible(false);
+		_isShownWhenExpanded = false;
 		if (_capture) {
 			_capture->_isPressed = false;
 			_capture = nullptr;
