@@ -284,6 +284,11 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 	while (*s) {
 		firstLineIndent = 0;
 
+		// Freeze the line indent at its first text, so a later indent tag
+		// belonging to the next line does not retroactively change this one.
+		int lineIndent = indentSize;
+		bool lineIndentLocked = false;
+
 		tmp.clear();
 
 		MacTextLine *curTextLine = &_text[curLine];
@@ -344,6 +349,12 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 			curTextLine = &_text[curLine];
 
 			firstLineIndent = curTextLine->firstLineIndent;
+
+			// Once real text has been added to the line, freeze its indent.
+			if (!lineIndentLocked && !tmp.empty()) {
+				lineIndent = indentSize;
+				lineIndentLocked = true;
+			}
 
 			tmp.clear();
 
@@ -590,7 +601,8 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 
 			D(9, "*** splitString: text[%d] indent: %d, fi: %d", curLine, indentSize, firstLineIndent);
 
-			curTextLine->indent = indentSize;
+			// Use the frozen per-line indent (see above).
+			curTextLine->indent = lineIndent;
 			curTextLine->firstLineIndent = firstLineIndent;
 
 			// Push new formatting
@@ -624,8 +636,13 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 
 			curTextLine = &_text[curLine];
 
-			curTextLine->indent = indentSize;
-			curTextLine->firstLineIndent = firstLineIndent;
+			curTextLine->indent = lineIndent;
+			// Clear the bullet's negative firstLineIndent once outside a list, so a
+			// heading following a list is not shifted left. Kept while inside a list.
+			if (indentSize == 0)
+				curTextLine->firstLineIndent = 0;
+			else
+				curTextLine->firstLineIndent = firstLineIndent;
 		}
 	}
 
