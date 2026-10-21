@@ -33,13 +33,13 @@
 
 namespace Scooby {
 
-class MenuUnlockSequence {
+class DebugMenuUnlockSequence {
 public:
 	// Advances on the exact next held input, retains progress across release or a held prior
 	// step, and resets on every other nonempty input.
 	// activeLowInput: current controller-one byte in the original active-low representation.
 	// Returns true when the eleventh and final input is reached.
-	bool Observe(uint8 activeLowInput) {
+	bool checkCheatCode(uint8 activeLowInput) {
 		uint8 expectedInput = static_cast<uint8>(~kInputSequence[static_cast<size_t>(
 			_progress)]);
 		if (activeLowInput == expectedInput) {

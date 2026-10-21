@@ -28,7 +28,7 @@ MODULE_OBJS = \
     main_menu/reveal/menu_reveal_compositor.o \
     main_menu/room_selection/room_selection_catalog.o \
     main_menu/room_selection/room_selection_controller.o \
-    main_menu/selection/menu_unlock_sequence.o \
+    main_menu/selection/debug_menu_unlock_sequence.o \
     main_menu/sound_test/sound_test_catalog.o \
     main_menu/sound_test/sound_test_controller.o \
     main_menu/vblank/main_menu_vblank_handler.o \

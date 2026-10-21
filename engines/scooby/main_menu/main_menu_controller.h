@@ -94,7 +94,7 @@ private:
 	};
 
 	static const uint8 kAlternateMenuMask = 0x01;
-	static const uint8 kExtendedAlternateMenuMask = 0x02;
+	static const uint8 kDebugMenuMask = 0x02;
 	static const int16 kInventoryRoomId = 1;
 	static const uint8 kRevealCompleteMask = 0x10;
 	static const uint8 kRevealInputMask = 0xF0;

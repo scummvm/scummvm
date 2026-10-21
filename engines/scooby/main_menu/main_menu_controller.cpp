@@ -26,7 +26,7 @@
 #include "common/array.h"
 #include "common/func.h"
 
-#include "selection/menu_unlock_sequence.h"
+#include "selection/debug_menu_unlock_sequence.h"
 
 namespace Scooby {
 const Common::Array<uint16> MainMenuController::kSelectionCursorFrameOffsets{
@@ -193,7 +193,7 @@ MainMenuExit MainMenuController::presentOptionsAndDispatch() {
 		dispatchTable = DispatchTable::Primary;
 	} else {
 		dispatchTable = DispatchTable::Alternate;
-		if ((_state.InitializationFlags & kExtendedAlternateMenuMask) == 0) {
+		if ((_state.InitializationFlags & kDebugMenuMask) == 0) {
 			assetOffset = 0x18BFA;
 			optionCount = 2;
 		} else {
@@ -301,7 +301,7 @@ MainMenuExit MainMenuController::dispatchSelection(DispatchTable dispatchTable, 
 
 Optional<int> MainMenuController::selectMainMenuOption(int optionCount, int baseTileIndex) {
 	// Ghidra 0x00008D6A-0x00008D8D: initialize sequence, cursor, cadence, limit, and input-baseline state.
-	MenuUnlockSequence unlockSequence;
+	DebugMenuUnlockSequence debugMenuUnlockSequence;
 	int cursorFrameIndex = 0;
 	int selectionOffset = 0;
 	int cursorFrameCountdown = 1;
@@ -314,9 +314,9 @@ Optional<int> MainMenuController::selectMainMenuOption(int optionCount, int base
 		_menuPresentation.composeNarrowMenuRevealTiles(_menuPresentation.animatedRowMaskOffset(), 0);
 		while (_state.RetraceCountdown >= 0) {
 			uint8 currentInput = _state.ControllerOneInput;
-			if ((_state.InitializationFlags & kExtendedAlternateMenuMask) == 0 &&
-				unlockSequence.Observe(currentInput)) {
-				_state.InitializationFlags |= kExtendedAlternateMenuMask;
+			if ((_state.InitializationFlags & kDebugMenuMask) == 0 &&
+				debugMenuUnlockSequence.checkCheatCode(currentInput)) {
+				_state.InitializationFlags |= kDebugMenuMask;
 				playAudioCommand(3);
 			}
 

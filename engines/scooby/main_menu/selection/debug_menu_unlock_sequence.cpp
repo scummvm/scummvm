@@ -19,10 +19,10 @@
  *
  */
 
-#include "menu_unlock_sequence.h"
+#include "debug_menu_unlock_sequence.h"
 
 namespace Scooby {
-const Common::Array<uint8> MenuUnlockSequence::kInputSequence{
+const Common::Array<uint8> DebugMenuUnlockSequence::kInputSequence{
 	static_cast<uint8>(ControllerButtons::A),
 	static_cast<uint8>(ControllerButtons::B),
 	static_cast<uint8>(ControllerButtons::A),
