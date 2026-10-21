@@ -70,6 +70,7 @@ public:
 	int16 getItemID() const { return _itemID; }
 	int32 getKind() const { return _kind; }
 	uint16 getScene() const { return (uint16)_scene; }
+	const Common::String &getSceneName() const { return _sceneName; }	// Nancy17
 	int16 getValueIndex() const { return _valueIndex; }
 
 protected:
@@ -80,6 +81,7 @@ protected:
 	int16 _itemID = -1;
 	int32 _kind = kItemPickUp;
 	int32 _scene = 0;
+	Common::String _sceneName;	// e.g. "s4823", or in Nancy21 the name of a script
 	int16 _valueIndex = 0;
 };
 

@@ -141,9 +141,11 @@ void InvButton::setItem(const INVD::Item &item) {
 	_kind = item.kind;
 	_valueIndex = item.valueIndex;
 
-	// The scene is named after its number, e.g. "s6200"
-	const Common::String sceneName = item.sceneName.toString();
-	_scene = sceneName.size() > 1 ? atoi(sceneName.c_str() + 1) : 0;
+	// The scene is named after its number, e.g. "s6200", up to Nancy20. Nancy21
+	// names the script of the scene instead, e.g. "INV_Article_V_SC".
+	_sceneName = item.sceneName.toString();
+	uint16 sceneID = 0;
+	_scene = parseSceneName(_sceneName, sceneID) ? sceneID : 0;
 
 	_elements[1].setTexture(_elements[1]._textureName, item.sourceRect);
 }

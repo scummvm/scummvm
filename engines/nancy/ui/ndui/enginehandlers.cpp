@@ -217,7 +217,7 @@ void Manager::viewInventoryItem(int16 itemID) {
 void Manager::onItemStreamClicked(const InvButton &button) {
 	const int16 itemID = button.getItemID();
 	const Common::String streamName = "INVSTR_" + button.getName();
-	const Common::String sceneName = Common::String::format("s%u", button.getScene());
+	const Common::String &sceneName = button.getSceneName();
 
 	// On top of everything the scenes below draw
 	static const int32 kItemStreamZOffset = 15;
