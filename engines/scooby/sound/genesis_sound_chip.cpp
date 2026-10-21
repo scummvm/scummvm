@@ -41,13 +41,21 @@ const uint8 kTimerAEnable = 0x05;
 
 // Output levels. TownsPC98_FmSynth outputs a full-volume FM carrier at about +/-32672, four times the
 // YM2612's 14-bit channel range (+/-8192), so its output is scaled by kFmGain to match the chip. The DAC
-// replaces channel 6 at the same full-scale level ((sample - 0x80) << 6 on the real chip), and a full
-// PSG channel is mixed at about half of a full FM channel, the balance commonly used by Genesis
-// emulators. Tweak these constants to rebalance the mix.
+// replaces channel 6 at the same full-scale level ((sample - 0x80) << 6 on the real chip). A full PSG
+// channel is mixed at about a fifth of a full FM channel, the FM/PSG balance measured from a BlastEm
+// recording of song 0x2F. Tweak these constants to rebalance the mix.
 const int kFmGainNumerator = 1;
 const int kFmGainDenominator = 4;
 const int32 kDacScale = 64;
-const int32 kPsgMaxLevel = 4096;
+const int32 kPsgMaxLevel = 1630;
+
+// Output low-pass: the model 1 console filters its audio output, and BlastEm emulates that with a one-pole
+// RC filter at 3390 Hz on both FM and PSG. The same filter is applied here to the mixed output at the
+// render rate. Besides matching the console, it removes the high-frequency content (for example, operators
+// whose detuned frequency wraps around) that TownsPC98_FmSynth would otherwise alias when it decimates to
+// the mixer rate. Coefficient in 16.16 fixed point: alpha = dt / (dt + rc), with dt = 72 / kFmClock and
+// rc = 1 / (2 * pi * 3390).
+const int64 kLowPassAlpha = 10920;
 
 // Render-sample to PSG-step conversion. The PSG counters decrement at kPsgClock / 16 Hz while the FM
 // core renders at kFmClock / 72 Hz, so each rendered sample advances the PSG by
@@ -63,7 +71,7 @@ GenesisSoundChip::GenesisSoundChip(Audio::Mixer *mixer, GenesisSoundChipClient *
 	: TownsPC98_FmSynth(mixer, TownsPC98_FmSynth::kTypeTowns), _client(client), _psgNoiseControl(0),
 	  _psgNoiseAttenuation(0x0F), _psgNoiseCounter(1), _psgNoiseHigh(false),
 	  _psgNoiseShift(kPsgNoiseInitialShift), _psgLatch(0), _psgPhase(0), _dacEnabled(false), _dacData(0x80),
-	  _outputVolume(255), _chipReady(false) {
+	  _lowPassLeft(0), _lowPassRight(0), _outputVolume(255), _chipReady(false) {
 	// The SN76489 attenuates in 2 dB steps; attenuation 15 is silence.
 	for (int i = 0; i < 15; i++) {
 		_psgLevels[i] = static_cast<int32>(kPsgMaxLevel * pow(10.0, -0.1 * i));
@@ -88,6 +96,7 @@ bool GenesisSoundChip::init() {
 	resetPsg();
 	_dacEnabled = false;
 	_dacData = 0x80;
+	_lowPassLeft = _lowPassRight = 0;
 
 	writeReg(0, 0x24, kVerticalBlankTimerHigh);
 	writeReg(0, 0x25, kVerticalBlankTimerLow);
@@ -102,6 +111,7 @@ void GenesisSoundChip::reset() {
 	resetPsg();
 	_dacEnabled = false;
 	_dacData = 0x80;
+	_lowPassLeft = _lowPassRight = 0;
 
 	// TownsPC98_FmSynth::reset() stops both timers; restart the vertical-blank timer.
 	writeReg(0, 0x24, kVerticalBlankTimerHigh);
@@ -245,6 +255,11 @@ void GenesisSoundChip::nextTickEx(int32 *buffer, uint32 bufferSize) {
 				buffer[i * 2 + 1] += dac;
 			}
 		}
+
+		_lowPassLeft += static_cast<int32>(((buffer[i * 2] - _lowPassLeft) * kLowPassAlpha) >> 16);
+		_lowPassRight += static_cast<int32>(((buffer[i * 2 + 1] - _lowPassRight) * kLowPassAlpha) >> 16);
+		buffer[i * 2] = _lowPassLeft;
+		buffer[i * 2 + 1] = _lowPassRight;
 	}
 }
 

@@ -122,6 +122,10 @@ private:
 	bool _dacEnabled;
 	uint8 _dacData;
 
+	// Output low-pass filter state.
+	int32 _lowPassLeft;
+	int32 _lowPassRight;
+
 	int _outputVolume;
 	bool _chipReady;
 };
