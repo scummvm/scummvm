@@ -22,16 +22,42 @@
 #ifndef SCOOBY_SPAN_H
 #define SCOOBY_SPAN_H
 
-// #include <cstddef>
+#include "common/scummsys.h"
 #include "common/type_traits.h"
 
 #include "common/array.h"
 
 // A tiny, non-owning contiguous-range view standing in for .NET's
-// Span<T>/ReadOnlySpan<T> (std::span is C++20, unavailable at C++11).
+// Span<T>/ReadOnlySpan<T> (the standard library span is C++20, unavailable at C++11).
 // ReadOnlySpan<T> becomes Span<const T>; Span<T> stays Span<T>.
 
 namespace Scooby {
+
+namespace SpanDetail {
+
+// Minimal C++11 equivalents of the standard enable_if and is_same traits, which ScummVM's
+// common/type_traits.h does not provide.
+template<bool Condition, typename T = void>
+struct EnableIf {
+};
+
+template<typename T>
+struct EnableIf<true, T> {
+	typedef T type;
+};
+
+template<typename T, typename U>
+struct IsSame {
+	static const bool value = false;
+};
+
+template<typename T>
+struct IsSame<T, T> {
+	static const bool value = true;
+};
+
+} // namespace SpanDetail
+
 template<typename T>
 class Span {
 public:
@@ -41,39 +67,39 @@ public:
 	Span() : _data(nullptr), _size(0) {
 	}
 
-	Span(T *data, std::size_t size) : _data(data), _size(size) {
+	Span(T *data, size_t size) : _data(data), _size(size) {
 	}
 
 	// Allows Span<T> to convert to Span<const T> implicitly, matching the
 	// ReadOnlySpan<T> conversion the C# source relies on everywhere.
 	template<typename U>
 	Span(const Span<U> &other,
-		 typename std::enable_if<std::is_same<T, const U>::value>::type * = nullptr)
+		 typename SpanDetail::EnableIf<SpanDetail::IsSame<T, const U>::value>::type * = nullptr)
 		: _data(other.data()), _size(other.size()) {
 	}
 
 	T *data() const { return _data; }
-	std::size_t size() const { return _size; }
+	size_t size() const { return _size; }
 	bool empty() const { return _size == 0; }
 	bool isEmpty() const { return _size == 0; }
 
-	T &operator[](std::size_t index) const { return _data[index]; }
+	T &operator[](size_t index) const { return _data[index]; }
 
 	iterator begin() const { return _data; }
 	iterator end() const { return _data + _size; }
 
-	Span<T> slice(std::size_t start) const { return Span<T>(_data + start, _size - start); }
+	Span<T> slice(size_t start) const { return Span<T>(_data + start, _size - start); }
 
-	Span<T> slice(std::size_t start, std::size_t length) const { return Span<T>(_data + start, length); }
+	Span<T> slice(size_t start, size_t length) const { return Span<T>(_data + start, length); }
 
 	void fill(const T &value) const {
-		for (std::size_t i = 0; i < _size; ++i) {
+		for (size_t i = 0; i < _size; ++i) {
 			_data[i] = value;
 		}
 	}
 
 	void copyTo(const Span<T> &destination) const {
-		for (std::size_t i = 0; i < _size; ++i) {
+		for (size_t i = 0; i < _size; ++i) {
 			destination[i] = _data[i];
 		}
 	}
@@ -84,7 +110,7 @@ public:
 
 private:
 	T *_data;
-	std::size_t _size;
+	size_t _size;
 };
 
 template<typename T>
@@ -97,7 +123,7 @@ inline Span<const T> MakeSpan(const Common::Array<T> &a) {
 	return Span<const T>(a.data(), a.size());
 }
 
-template<typename T, std::size_t N>
+template<typename T, size_t N>
 inline Span<T> MakeSpan(T (&a)[N]) {
 	return Span<T>(a, N);
 }
