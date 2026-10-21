@@ -90,7 +90,6 @@ MODULE_OBJS = \
     sound/gems_driver.o \
     sound/genesis_sound_chip.o \
     startup/application_loop.o \
-    startup/executable_directory.o \
     startup/intro_sequence.o \
     startup/studio_logo_sequence.o \
 	metaengine.o
