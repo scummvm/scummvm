@@ -169,10 +169,9 @@ void Panel::addBuiltInTooltip() {
 	static const double kHideAfter = 10.0;
 	static const char *const kFontName = "UIFont";
 
-	// TODO: The colors of the original aren't known; these are the usual ones
-	// of a tooltip
-	static const uint32 kBackgroundColor = 0xFFFFFFE1;
-	static const uint32 kTextColor = 0xFF000000;
+	// White text with nothing behind it
+	static const uint32 kBackgroundColor = 0x00000000;
+	static const uint32 kTextColor = 0xFFFFFFFF;
 
 	// Centered, and on a single line
 	static const int32 kAlignCenter = 2;

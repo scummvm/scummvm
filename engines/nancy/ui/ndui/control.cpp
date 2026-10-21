@@ -275,7 +275,8 @@ bool Tooltip::isPrevented() const {
 }
 
 void Tooltip::render(Graphics::ManagedSurface &surface, const Common::String &text) {
-	static const int kPadding = 3;
+	// From Nancy19 on, the tooltip is just as large as its text
+	const int kPadding = g_nancy->getGameType() >= kGameTypeNancy19 ? 0 : 3;
 
 	const Graphics::Font *font = _elements[0].getSystemFont();
 	int width = (font ? font->getStringWidth(text) : 0) + 2 * kPadding;
