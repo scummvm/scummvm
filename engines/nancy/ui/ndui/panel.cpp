@@ -472,9 +472,11 @@ bool Panel::takeAction(const Action &action) {
 		break;
 	case kActionEnable:
 		_enabled = true;
+		fireEvent(kEventEnable);
 		break;
 	case kActionDisable:
 		_enabled = false;
+		fireEvent(kEventDisable);
 		break;
 	case kActionExpand:
 		setCollapsed(false);

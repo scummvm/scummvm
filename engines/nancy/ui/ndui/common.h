@@ -94,6 +94,8 @@ enum EventType {
 	kEventShow			= 16,	// the panel holding the control was shown
 	kEventHide			= 17,	// the panel holding the control was hidden
 	kEventUpdate		= 18,	// sent every frame while the panel is visible; "load" to Nancy19 scripts
+	kEventEnable		= 19,	// Nancy20: the panel holding the control was enabled...
+	kEventDisable		= 20,	// ...or disabled
 	kEventActionRecord	= 100	// sent by a scene's action record
 };
 

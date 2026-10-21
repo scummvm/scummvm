@@ -47,7 +47,8 @@ namespace Script {
 //
 // TODO: The textShadow and captureClicks fields, the ways of arranging controls
 // other than left to right and right to left, and the events the controls don't
-// send yet: enable, disable, mouseEnter and mouseLeave.
+// send yet: mouseEnter and mouseLeave. Controls don't tell about being enabled
+// or disabled either.
 
 static const char *const kPanelType = "ND.Panel";
 
@@ -75,7 +76,9 @@ static const NamedValue kEventNames[] = {
 	{ "scrollBarValueChanged", UI::NDUI::kEventScrolled },
 	{ "show", UI::NDUI::kEventShow },
 	{ "hide", UI::NDUI::kEventHide },
-	{ "load", UI::NDUI::kEventUpdate }
+	{ "load", UI::NDUI::kEventUpdate },
+	{ "enable", UI::NDUI::kEventEnable },
+	{ "disable", UI::NDUI::kEventDisable }
 };
 
 static const NamedValue kInitialStates[] = {
