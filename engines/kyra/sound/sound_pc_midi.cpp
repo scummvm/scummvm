@@ -105,6 +105,13 @@ SoundMidiPC::~SoundMidiPC() {
 bool SoundMidiPC::init() {
 	_output = Audio::MidiDriver_Miles_MIDI_create(_type == kMidiGM ? MT_GM : MT_MT32, "");
 	assert(_output);
+
+	if (_vm->game() == GI_KYRA1) {
+		// For Kyrandia 1, some files use pitch bend but not all music files
+		// reset pitch bend at the start of the track.
+		_output->setControllerDefault(MidiDriver_Multisource::ControllerDefaultType::CONTROLLER_DEFAULT_PITCH_BEND);
+	}
+
 	int returnCode = _output->open(_driver, _nativeMT32);
 	if (returnCode > 0) {
 		return false;
@@ -254,10 +261,11 @@ void SoundMidiPC::loadSoundFile(const Common::Path &file) {
 
 	_music->loadMusic(_musicFile, fileSize);
 
-	// WORKAROUND The track playing during the character selection screen has a
-	// bug: towards the end of the track, pitch bend events are sent on two
-	// channels, but pitch bend is not reset to neutral when the track loops.
-	// This causes two instruments to be out of tune after the track loops.
+	// WORKAROUND The track playing during the Lands of Lore character selection
+	// screen has a bug: towards the end of the track, pitch bend events are
+	// sent on two channels, but pitch bend is not reset to neutral when the
+	// track loops. This causes two instruments to be out of tune after the
+	// track loops.
 	// This occurs in both the MT-32 and GM versions, but in the GM version the
 	// pitch bend is smaller, so it is much less noticeable. It was fixed in the
 	// CD version for MT-32 by adding pitch bend neutral events to the end of
