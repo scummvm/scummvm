@@ -32,6 +32,7 @@ MODULE_OBJS = \
 	menu/menu_save.o \
 	metaengine.o \
 	monster.o \
+	patches.o \
 	player/player.o \
 	player/player_animation.o \
 	player/player_attack.o \

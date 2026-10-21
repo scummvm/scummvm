@@ -25,6 +25,7 @@
 #include "common/debug.h"
 #include "harvester/detection.h"
 #include "harvester/parse_utils.h"
+#include "harvester/patches.h"
 #include "harvester/resources.h"
 
 namespace Harvester {
@@ -484,8 +485,9 @@ void Script::parseObjectRecord(ResourceManager &resources,
 	object.currentOwnerOrRoom = object.initialOwnerOrRoom;
 	object.runtimeVisible = object.visible;
 	object.identShown = object.identTextKey.empty();
+	applyObjectPatches(object);
 	if (object.objectName.empty()) {
-		// Native room scripts use unnamed OBJECT entries as blocker rectangles.
+		// Room scripts use unnamed OBJECT entries as blocker rectangles.
 		object.objectName = Common::String::format("__ANON_OBJECT_%u", anonymousObjectId++);
 	}
 	if (!object.initialOwnerOrRoom.empty())
