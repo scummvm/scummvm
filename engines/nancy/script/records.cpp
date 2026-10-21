@@ -23,10 +23,13 @@
 #include "common/random.h"
 #include "common/textconsole.h"
 
+#include "image/png.h"
+
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/puzzledata.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 
@@ -810,6 +813,39 @@ bool OverrideRecord::setField(const Common::String &key) {
 
 // Overlay
 
+// The "LOADSAVE" tree holds the pictures the camera took, which are kept with
+// the saved game
+static const char *const kPictureTreeName = "LOADSAVE";
+
+static bool loadOverlayImage(const Common::String &name, const Common::String &treeName, Graphics::ManagedSurface &image) {
+	if (!treeName.equalsIgnoreCase(kPictureTreeName)) {
+		return g_nancy->_resource->loadImage(Common::Path(name), image, treeName);
+	}
+
+#ifdef USE_PNG
+	const ScriptPictureData *pictures = (const ScriptPictureData *)NancySceneState.getPuzzleData(ScriptPictureData::getTag());
+	if (!pictures->pictures.contains(name)) {
+		warning("Could not find picture %s amongst the saved ones", name.c_str());
+		return false;
+	}
+
+	const Common::Array<byte> &data = pictures->pictures[name];
+	Common::MemoryReadStream stream(data.data(), data.size());
+	Image::PNGDecoder decoder;
+	if (!decoder.loadStream(stream)) {
+		return false;
+	}
+
+	Graphics::Surface *converted = decoder.getSurface()->convertTo(g_nancy->_graphics->getInputPixelFormat(32));
+	GraphicsManager::copyToManaged(*converted, image);
+	converted->free();
+	delete converted;
+	return true;
+#else
+	return false;
+#endif
+}
+
 void OverlayRecord::readTable(int tableIndex) {
 	lua_State *L = getLua();
 
@@ -818,7 +854,11 @@ void OverlayRecord::readTable(int tableIndex) {
 		luaL_error(L, "OverlayAR must be created with a ovl parameter");
 	}
 
-	if (!g_nancy->_resource->loadImage(Common::Path(imageName), _image)) {
+	// Nancy21 can name the tree the image is in
+	Common::String treeName;
+	readField(L, tableIndex, "tree", treeName);
+
+	if (!loadOverlayImage(imageName, treeName, _image)) {
 		luaL_error(L, "Could not load overlay %s", imageName.c_str());
 	}
 
@@ -1017,7 +1057,11 @@ void AnimOverlayRecord::readTable(int tableIndex) {
 		luaL_error(L, "AnimOverlays must have a ovl field");
 	}
 
-	if (!g_nancy->_resource->loadImage(Common::Path(imageName), _image)) {
+	// Nancy21 can name the tree the image is in
+	Common::String treeName;
+	readField(L, tableIndex, "tree", treeName);
+
+	if (!loadOverlayImage(imageName, treeName, _image)) {
 		luaL_error(L, "Could not load overlay %s", imageName.c_str());
 	}
 

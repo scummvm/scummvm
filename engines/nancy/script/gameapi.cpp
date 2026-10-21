@@ -20,9 +20,14 @@
  */
 
 #include "common/debug.h"
+#include "common/memstream.h"
+#include "common/system.h"
+
+#include "image/png.h"
 
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/enginedata.h"
+#include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/puzzledata.h"
@@ -730,10 +735,46 @@ static int saveGame(lua_State *L) {
 	return 0;
 }
 
+// Save:Screenshot(rect[, name]), Nancy21: keeps a picture of a part of the
+// viewport with the game, for the camera of the cell phone. Overlays show it
+// from the "LOADSAVE" tree. Gives the name of the picture, or an empty one when
+// it couldn't be taken.
+static int saveScreenshot(lua_State *L) {
+	const ScriptRect &rect = checkRect(L, 2);
+	const Common::String name = lua_gettop(L) > 2 ? Common::String(luaL_checkstring(L, 3)) : Common::String::format("%u_OVL", g_system->getMillis());
+
+	// The viewport as it was drawn last, before it got scaled onto the screen
+	const Graphics::ManagedSurface &image = g_nancy->_graphics->getGameImage();
+	Common::Rect area = NancySceneState.getViewport().convertViewportToScreen(rect.toRect());
+	area.clip(Common::Rect(image.w, image.h));
+
+	bool isTaken = false;
+	if (!area.isEmpty()) {
+		const Graphics::Surface part = image.rawSurface().getSubArea(area);
+		Graphics::Surface *picture = part.convertTo(Graphics::PixelFormat::createFormatRGB24());
+
+		Common::MemoryWriteStreamDynamic png(DisposeAfterUse::YES);
+		if (Image::writePNG(png, *picture)) {
+			ScriptPictureData *pictures = (ScriptPictureData *)NancySceneState.getPuzzleData(ScriptPictureData::getTag());
+			Common::Array<byte> &data = pictures->pictures[name];
+			data.resize((uint)png.size());
+			memcpy(data.data(), png.getData(), png.size());
+			isTaken = true;
+		}
+
+		picture->free();
+		delete picture;
+	}
+
+	lua_pushstring(L, isTaken ? name.c_str() : "");
+	return 1;
+}
+
 static const luaL_Reg kSaveFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Data", saveData },
 	{ "Game", saveGame },
+	{ "Screenshot", saveScreenshot },
 	{ nullptr, nullptr }
 };
 

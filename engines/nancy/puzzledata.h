@@ -700,6 +700,15 @@ struct ScriptSavedData : public PuzzleData {
 	Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> values;
 };
 
+// Nancy21. The pictures the camera of the cell phone took, as PNG files, which
+// the scripts show from the "LOADSAVE" tree
+struct ScriptPictureData : public PuzzleData {
+	static constexpr uint32 getTag() { return MKTAG('S', 'C', 'P', 'C'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> pictures;
+};
+
 // Nancy19. The journal entries and the tasks the scripts gave every player
 // character. A script only hands them out while its conditions hold, so they
 // are kept with the game.

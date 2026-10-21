@@ -99,6 +99,9 @@ public:
 	// Objects and the mouse are in game coordinates, unless they are at the screen's
 	// resolution. For the other games the two are the same.
 	bool isGameScaled() const { return !_gameSurface.empty(); }
+
+	// What the game drew last, at its own resolution
+	const Graphics::ManagedSurface &getGameImage() const { return isGameScaled() ? _gameSurface : _screen; }
 	Common::Rect getGameBounds() const;
 	Common::Point screenToGame(const Common::Point &pos) const;
 	Common::Point gameToScreen(const Common::Point &pos) const;
