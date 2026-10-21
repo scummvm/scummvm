@@ -28,7 +28,7 @@ RoomSelectionCatalog::RoomSelectionCatalog(const ScoobyDooRom &rom)
 	Common::String limboLabel = rom.readNullTerminatedAscii(kLimboLabelOffset);
 	Common::String playerInventoryLabel = rom.readNullTerminatedAscii(kPlayerInventoryLabelOffset);
 	for (int episodeIndex = 0; episodeIndex < static_cast<int>(_episodeRoomLabels.size()); episodeIndex++) {
-		_episodeRoomLabels[static_cast<std::size_t>(episodeIndex)] =
+		_episodeRoomLabels[static_cast<size_t>(episodeIndex)] =
 			decodeEpisode(rom, episodeIndex, limboLabel, playerInventoryLabel);
 	}
 }
@@ -45,13 +45,13 @@ Common::Array<Common::String> RoomSelectionCatalog::decodeEpisode(
 	int nameBaseOffset = static_cast<int>(rom.readUInt32(descriptorOffset + kDescriptorRoomNameBaseField));
 	int maximumRoomId = (recordEndOffset - recordStartOffset) / kRoomRecordSize;
 
-	Common::Array<Common::String> labels(static_cast<std::size_t>(maximumRoomId + 1));
+	Common::Array<Common::String> labels(static_cast<size_t>(maximumRoomId + 1));
 	labels[0] = limboLabel;
 	labels[1] = playerInventoryLabel;
 	for (int roomId = 2; roomId <= maximumRoomId; roomId++) {
 		int recordOffset = recordStartOffset + (roomId - 2) * kRoomRecordSize;
 		int labelOffset = nameBaseOffset + static_cast<int>(rom.readUInt32(recordOffset));
-		labels[static_cast<std::size_t>(roomId)] = rom.readNullTerminatedAscii(labelOffset);
+		labels[static_cast<size_t>(roomId)] = rom.readNullTerminatedAscii(labelOffset);
 	}
 
 	return labels;

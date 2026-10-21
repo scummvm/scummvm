@@ -26,15 +26,15 @@
 namespace Scooby {
 namespace {
 inline void WriteUInt16BigEndian(Common::Array<uint8> &output, int offset, uint16 value) {
-	output[static_cast<std::size_t>(offset)] = static_cast<uint8>(value >> 8);
-	output[static_cast<std::size_t>(offset + 1)] = static_cast<uint8>(value);
+	output[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
+	output[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
 
 inline void WriteUInt32BigEndian(Common::Array<uint8> &output, int offset, uint32 value) {
-	output[static_cast<std::size_t>(offset)] = static_cast<uint8>(value >> 24);
-	output[static_cast<std::size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
-	output[static_cast<std::size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
-	output[static_cast<std::size_t>(offset + 3)] = static_cast<uint8>(value);
+	output[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 24);
+	output[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
+	output[static_cast<size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
+	output[static_cast<size_t>(offset + 3)] = static_cast<uint8>(value);
 }
 } // namespace
 
@@ -47,7 +47,7 @@ Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite48UsingPrimaryLa
 	const Common::Array<uint8> &decodedPixels, int sourceOffset) const {
 	// Ghidra 0x0000D3F0-0x0000D3FF: select the primary 480-word output permutation, the decoded pixel
 	// workspace, and the terminal-inclusive 0x01DF DBF count.
-	Common::Array<uint8> output(static_cast<std::size_t>(kOutputBytes48), 0);
+	Common::Array<uint8> output(static_cast<size_t>(kOutputBytes48), 0);
 	for (int sourceRow = 0; sourceRow < kSourceHeight48; ++sourceRow) {
 		for (int longword = 0; longword < kOutputLongwordsPerRow48; ++longword) {
 			// Ghidra 0x0000D400-0x0000D425: shift and OR eight source bytes into two independent 16-bit
@@ -57,9 +57,9 @@ Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite48UsingPrimaryLa
 			uint16 packedLowWord = 0;
 			for (int pixel = 0; pixel < 4; ++pixel) {
 				packedHighWord <<= 4;
-				packedHighWord |= decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + pixel)];
+				packedHighWord |= decodedPixels[static_cast<size_t>(sourceLongwordOffset + pixel)];
 				packedLowWord <<= 4;
-				packedLowWord |= decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + 4 + pixel)];
+				packedLowWord |= decodedPixels[static_cast<size_t>(sourceLongwordOffset + 4 + pixel)];
 			}
 
 			int destinationOffset = sourceRow < 32
@@ -80,7 +80,7 @@ Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite80UsingSecondary
 	const Common::Array<uint8> &decodedPixels, int sourceOffset) const {
 	// Ghidra 0x0000D42C-0x0000D43B: select the secondary 480-word output permutation, the decoded pixel
 	// workspace, and the terminal-inclusive 0x01DF DBF count.
-	Common::Array<uint8> output(static_cast<std::size_t>(kOutputBytes80), 0);
+	Common::Array<uint8> output(static_cast<size_t>(kOutputBytes80), 0);
 	for (int sourceRow = 0; sourceRow < kSourceHeight80; ++sourceRow) {
 		for (int longword = 0; longword < kOutputLongwordsPerRow80; ++longword) {
 			// Ghidra 0x0000D43C-0x0000D465: shift and OR eight source bytes into two independent 16-bit
@@ -90,9 +90,9 @@ Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite80UsingSecondary
 			uint16 packedLowWord = 0;
 			for (int pixel = 0; pixel < 4; ++pixel) {
 				packedHighWord <<= 4;
-				packedHighWord |= decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + pixel)];
+				packedHighWord |= decodedPixels[static_cast<size_t>(sourceLongwordOffset + pixel)];
 				packedLowWord <<= 4;
-				packedLowWord |= decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + 4 + pixel)];
+				packedLowWord |= decodedPixels[static_cast<size_t>(sourceLongwordOffset + 4 + pixel)];
 			}
 
 			int destinationOffset =
@@ -115,7 +115,7 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite48(
 	uint16 verticalScale) const {
 	// Ghidra 0x0000D468-0x0000D499: select the vertical and horizontal fixed-point mask records and
 	// initialize the 80-row source traversal plus the original 480-word destination permutation.
-	Common::Array<uint8> output(static_cast<std::size_t>(kOutputBytes48), 0);
+	Common::Array<uint8> output(static_cast<size_t>(kOutputBytes48), 0);
 	Common::Array<uint8> selectedPixels(kSourceWidth48);
 	int destinationRow = 0;
 	for (int sourceRow = 0; sourceRow < kSourceHeight48; ++sourceRow) {
@@ -129,8 +129,8 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite48(
 		int sourceRowOffset = sourceOffset + sourceRow * kSourceWidth48;
 		for (int sourceColumn = 0; sourceColumn < kSourceWidth48; ++sourceColumn) {
 			if (maskSelects(horizontalScale, sourceColumn)) {
-				selectedPixels[static_cast<std::size_t>(selectedPixelCount++)] =
-					decodedPixels[static_cast<std::size_t>(sourceRowOffset + sourceColumn)];
+				selectedPixels[static_cast<size_t>(selectedPixelCount++)] =
+					decodedPixels[static_cast<size_t>(sourceRowOffset + sourceColumn)];
 			}
 		}
 
@@ -141,7 +141,7 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite48(
 				packedPixels <<= 4;
 				int selectedPixel = firstPixel + pixel;
 				if (selectedPixel < selectedPixelCount) {
-					packedPixels |= selectedPixels[static_cast<std::size_t>(selectedPixel)];
+					packedPixels |= selectedPixels[static_cast<size_t>(selectedPixel)];
 				}
 			}
 
@@ -170,7 +170,7 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite80(
 	uint16 verticalScale) const {
 	// Ghidra 0x0000DA6A-0x0000DAA7: select the vertical and horizontal fixed-point mask records and
 	// initialize the 48-row source traversal plus the original 480-word destination permutation.
-	Common::Array<uint8> output(static_cast<std::size_t>(kOutputBytes80), 0);
+	Common::Array<uint8> output(static_cast<size_t>(kOutputBytes80), 0);
 	Common::Array<uint8> selectedPixels(kSourceWidth80);
 	int destinationRow = 0;
 	for (int sourceRow = 0; sourceRow < kSourceHeight80; ++sourceRow) {
@@ -184,8 +184,8 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite80(
 		int sourceRowOffset = sourceOffset + sourceRow * kSourceWidth80;
 		for (int sourceColumn = 0; sourceColumn < kSourceWidth80; ++sourceColumn) {
 			if (maskSelects(horizontalScale, sourceColumn)) {
-				selectedPixels[static_cast<std::size_t>(selectedPixelCount++)] =
-					decodedPixels[static_cast<std::size_t>(sourceRowOffset + sourceColumn)];
+				selectedPixels[static_cast<size_t>(selectedPixelCount++)] =
+					decodedPixels[static_cast<size_t>(sourceRowOffset + sourceColumn)];
 			}
 		}
 
@@ -196,7 +196,7 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite80(
 				packedPixels <<= 4;
 				int selectedPixel = firstPixel + pixel;
 				if (selectedPixel < selectedPixelCount) {
-					packedPixels |= selectedPixels[static_cast<std::size_t>(selectedPixel)];
+					packedPixels |= selectedPixels[static_cast<size_t>(selectedPixel)];
 				}
 			}
 
@@ -218,6 +218,6 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite80(
 
 bool ActorSpriteTransformer::maskSelects(uint16 scale, int sourceIndex) const {
 	int maskOffset = scale * kScaleMaskRecordSize + sourceIndex / 8;
-	return (_scaleSelectionMasks[static_cast<std::size_t>(maskOffset)] & (0x80 >> sourceIndex % 8)) != 0;
+	return (_scaleSelectionMasks[static_cast<size_t>(maskOffset)] & (0x80 >> sourceIndex % 8)) != 0;
 }
 } // namespace Scooby

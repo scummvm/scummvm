@@ -28,7 +28,7 @@
 namespace Scooby {
 
 void RuntimeState::xorProgressStateWord(int byteOffset, uint16 mask) {
-	std::size_t offset = static_cast<std::size_t>(byteOffset);
+	uint offset = static_cast<uint>(byteOffset);
 	uint16 current = static_cast<uint16>((uint16(ProgressStateBytes[offset]) << 8) |
 										 uint16(ProgressStateBytes[offset + 1]));
 	uint16 updated = static_cast<uint16>(current ^ mask);

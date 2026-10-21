@@ -38,6 +38,6 @@ int16 ResolveLeadPositionTransition(int16 previousPositionIndex, int16 nextPosit
 	int16 byteOffset = static_cast<int16>(
 		previousPositionIndex * kPositionCount * static_cast<int>(sizeof(int16)) +
 		nextPositionIndex * static_cast<int>(sizeof(int16)));
-	return kAnimationOffsets[static_cast<std::size_t>(byteOffset / static_cast<int>(sizeof(int16)))];
+	return kAnimationOffsets[static_cast<size_t>(byteOffset / static_cast<int>(sizeof(int16)))];
 }
 } // namespace Scooby

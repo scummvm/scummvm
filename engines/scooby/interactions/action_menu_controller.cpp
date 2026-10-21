@@ -33,12 +33,12 @@ const Common::Array<VerbEnum> ActionMenuController::kActionIconByCommand{NONE, T
 
 namespace {
 void WriteUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
-	bytes[static_cast<std::size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<std::size_t>(offset + 1)] = static_cast<uint8>(value);
+	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
+	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
 
 void CopyBytes(Span<const uint8> source, Span<uint8> destination) {
-	for (std::size_t i = 0; i < source.size(); ++i) {
+	for (size_t i = 0; i < source.size(); ++i) {
 		destination[i] = source[i];
 	}
 }
@@ -88,7 +88,7 @@ bool ActionMenuController::updateActionMenu() {
 		}
 
 		if ((_state.ControllerOneInput & 0x10) == 0) {
-			VerbEnum selectedAction = kActionIconByCommand[static_cast<std::size_t>(command)];
+			VerbEnum selectedAction = kActionIconByCommand[static_cast<size_t>(command)];
 			if (_state.activeVerbIcon == 0) {
 				_state.pendingVerbIcon = _state.cachedVerbIcon;
 				drawSelectedActionIcon(0);
@@ -139,7 +139,7 @@ bool ActionMenuController::updateActionMenu() {
 		int menuIndex = _state.MenuPage * 4 + adjustedCommand;
 		int16 interaction = menuIndex == 0 || menuIndex > static_cast<int>(_state.InventoryObjectIndices.size())
 								? static_cast<int16>(0)
-								: static_cast<int16>(_state.InventoryObjectIndices[static_cast<std::size_t>(
+								: static_cast<int16>(_state.InventoryObjectIndices[static_cast<size_t>(
 														 menuIndex - 1)] +
 													 3);
 		if ((_state.InteractionFlags & kAlternateInteractionMask) == 0) {
@@ -195,9 +195,9 @@ void ActionMenuController::composeInventoryGrid() {
 			// no further item or all eight slots are consumed, and retain the zero-graphic no-write branch.
 			do {
 				int32 roomObjectIndex =
-					_state.InventoryObjectIndices[static_cast<std::size_t>(inventoryListIndex++)];
+					_state.InventoryObjectIndices[static_cast<size_t>(inventoryListIndex++)];
 				int16 graphicIndex =
-					_state.RoomObjects[static_cast<std::size_t>(roomObjectIndex)].InventoryGraphicIndex;
+					_state.RoomObjects[static_cast<size_t>(roomObjectIndex)].InventoryGraphicIndex;
 				if (graphicIndex != 0) {
 					int graphicRecordOffset = graphicTableOffset + static_cast<int16>(
 																	   static_cast<uint16>(graphicIndex - 1) * kInventoryGraphicRecordSize);
@@ -205,8 +205,8 @@ void ActionMenuController::composeInventoryGrid() {
 					CopyBytes(_rom.readBytes(graphicRecordOffset + static_cast<int>(sizeof(uint16)),
 											 kInventoryGraphicTileByteCount),
 							  _graphicsWorkspace.inventoryPatterns().slice(
-								  static_cast<std::size_t>(patternDestinationOffset),
-								  static_cast<std::size_t>(kInventoryGraphicTileByteCount)));
+								  static_cast<size_t>(patternDestinationOffset),
+								  static_cast<size_t>(kInventoryGraphicTileByteCount)));
 					patternDestinationOffset += kInventoryGraphicTileByteCount;
 
 					int slotByteOffset = (composedSlotCount % 4) * kInventorySlotColumnByteCount;
@@ -286,7 +286,7 @@ void ActionMenuController::refreshActionPrompts() {
 	// Ghidra 0x00005BA2-0x00005BC1: scan the complete inclusive object table and count every inventory
 	// object whose room ID is exactly one, preserving the original word-width accumulator.
 	int16 inventoryObjectCount = 0;
-	for (std::size_t index = 0; index < _state.RoomObjects.size(); index++) {
+	for (size_t index = 0; index < _state.RoomObjects.size(); index++) {
 		const RoomObject &roomObject = _state.RoomObjects[index];
 		if (roomObject.RoomId == 1) {
 			inventoryObjectCount++;
@@ -318,7 +318,7 @@ void ActionMenuController::drawSelectedActionIcon(int mode) {
 	// Ghidra 0x00005BE6-0x00005C31: retain low-word mode multiplication, linear icon lookup, both row-band
 	// branches, and the exact ten-byte horizontal slot stride.
 	int iconIndex = 0;
-	while (kActionIconByCommand[static_cast<std::size_t>(iconIndex + 1)] != _state.pendingVerbIcon) {
+	while (kActionIconByCommand[static_cast<size_t>(iconIndex + 1)] != _state.pendingVerbIcon) {
 		iconIndex++;
 	}
 

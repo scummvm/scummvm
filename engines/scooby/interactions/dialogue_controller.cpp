@@ -262,8 +262,8 @@ Optional<SessionExit> DialogueController::waitForDialogueDismissal() {
 		// publish wrapping subtraction, and return only when the original unsigned operation borrowed.
 		int16 timingOffset = _state.DialogueTimingTableOffset;
 		uint16 countdownStep = static_cast<uint16>(
-			(kDialogueCountdownStepBytes[static_cast<std::size_t>(timingOffset)] << 8) |
-			kDialogueCountdownStepBytes[static_cast<std::size_t>(timingOffset + 1)]);
+			(kDialogueCountdownStepBytes[static_cast<size_t>(timingOffset)] << 8) |
+			kDialogueCountdownStepBytes[static_cast<size_t>(timingOffset + 1)]);
 		uint16 countdown = static_cast<uint16>(_state.TextDisplayCountdown);
 		_state.TextDisplayCountdown = static_cast<int16>(countdown - countdownStep);
 		if (countdown < countdownStep) {

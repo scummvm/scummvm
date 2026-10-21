@@ -96,7 +96,7 @@ bool RoomSelectionController::publishPage(Span<const Common::String> labels, int
 	int firstRoomId = pageIndex * kPageSize;
 	int rowIndex = 0;
 	for (; rowIndex <= lastRowIndex; rowIndex++) {
-		_presentation.replacePriorityTileRow(labels[static_cast<std::size_t>(firstRoomId + rowIndex)],
+		_presentation.replacePriorityTileRow(labels[static_cast<size_t>(firstRoomId + rowIndex)],
 											 kDisplayColumn, kFirstDisplayRow + rowIndex);
 	}
 

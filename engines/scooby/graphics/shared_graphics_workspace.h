@@ -59,8 +59,8 @@ public:
 	}
 
 private:
-	static const std::size_t kInterfaceTileBlockByteCount = 0x180;
-	static const std::size_t kInventoryPatternByteCount = 0xC00;
+	static const size_t kInterfaceTileBlockByteCount = 0x180;
+	static const size_t kInventoryPatternByteCount = 0xC00;
 
 	Common::Array<uint8> _bytes;
 };

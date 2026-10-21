@@ -41,15 +41,15 @@ const Common::Array<DuelRoomScriptActionExecutor::DuelMovementDelta>
 
 namespace {
 void WriteUInt32BigEndian(Span<uint8> bytes, int offset, uint32 value) {
-	bytes[static_cast<std::size_t>(offset)] = static_cast<uint8>(value >> 24);
-	bytes[static_cast<std::size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
-	bytes[static_cast<std::size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<std::size_t>(offset + 3)] = static_cast<uint8>(value);
+	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 24);
+	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
+	bytes[static_cast<size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
+	bytes[static_cast<size_t>(offset + 3)] = static_cast<uint8>(value);
 }
 
 void WriteUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
-	bytes[static_cast<std::size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<std::size_t>(offset + 1)] = static_cast<uint8>(value);
+	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
+	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
 } // namespace
 
@@ -309,9 +309,9 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 		// momentum and knockback vectors with signed word wrap, stage the integer result, and preserve both
 		// collision-condition outcomes and the second-impact call edge.
 		_duelCollisionFlags &= 0xFC;
-		DuelMovementDelta secondMomentumDelta = kDuelMovementDeltas[static_cast<std::size_t>(
+		DuelMovementDelta secondMomentumDelta = kDuelMovementDeltas[static_cast<size_t>(
 			_state.ActorAnimationOffsets[kDuelSecondActorSlot] * 8 + _duelMomentum[kDuelSecondActor])];
-		DuelMovementDelta secondKnockbackDelta = kDuelMovementDeltas[static_cast<std::size_t>(
+		DuelMovementDelta secondKnockbackDelta = kDuelMovementDeltas[static_cast<size_t>(
 			_state.ActorPositionIndices[kDuelSecondActorSlot] * 8 + _duelKnockback[kDuelSecondActor])];
 		_stagedCollisionX = static_cast<int16>(
 			getIntegerCoordinate(_state.ActorXFixedCoordinates[kDuelSecondActorSlot]) + secondMomentumDelta.X +
@@ -330,9 +330,9 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 
 		// Ghidra 0x00003724-0x0000378F: independently apply the first actor's two vectors, stage and
 		// publish its wrapped integer coordinates, and retain both first-impact outcomes.
-		DuelMovementDelta firstMomentumDelta = kDuelMovementDeltas[static_cast<std::size_t>(
+		DuelMovementDelta firstMomentumDelta = kDuelMovementDeltas[static_cast<size_t>(
 			_state.ActorAnimationOffsets[kDuelFirstActorSlot] * 8 + _duelMomentum[kDuelFirstActor])];
-		DuelMovementDelta firstKnockbackDelta = kDuelMovementDeltas[static_cast<std::size_t>(
+		DuelMovementDelta firstKnockbackDelta = kDuelMovementDeltas[static_cast<size_t>(
 			_state.ActorPositionIndices[kDuelFirstActorSlot] * 8 + _duelKnockback[kDuelFirstActor])];
 		_stagedCollisionX = static_cast<int16>(
 			getIntegerCoordinate(_state.ActorXFixedCoordinates[kDuelFirstActorSlot]) + firstMomentumDelta.X +
@@ -412,7 +412,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 
 	// Ghidra 0x000038A4-0x000038DB: retain both signed-health terminal branches, their distinct actor
 	// animation/restart bits and first-room-object result, and the selected hold-bit index.
-	_state.ActorAnimationOffsets[static_cast<std::size_t>(defeatedActorSlot)] = 8;
+	_state.ActorAnimationOffsets[static_cast<size_t>(defeatedActorSlot)] = 8;
 	_state.ActorAnimationRestartFlags |= static_cast<uint8>(1 << defeatedActorSlot);
 	_state.RoomObjects[0].ScriptStateWords[0] =
 		defeatedActorSlot == kDuelSecondActorSlot ? static_cast<int16>(1) : static_cast<int16>(0);
@@ -494,7 +494,7 @@ void DuelRoomScriptActionExecutor::initializeDuelPresentation() {
 
 void DuelRoomScriptActionExecutor::writeDuelFrameCells(int sourceOffset, int startColumn, int row) {
 	Common::Array<TileCell> cells(4);
-	for (std::size_t index = 0; index < cells.size(); ++index) {
+	for (size_t index = 0; index < cells.size(); ++index) {
 		uint16 tileOffset =
 			_rom.readUInt16(sourceOffset + static_cast<int>(index) * static_cast<int>(sizeof(uint16)));
 		cells[index] =
@@ -586,7 +586,7 @@ void DuelRoomScriptActionExecutor::buildDuelHealthTiles(Span<uint8> tiles, int16
 			health--;
 		}
 
-		Span<uint8> tile = tiles.slice(static_cast<std::size_t>(tileIndex * 0x20), 0x20);
+		Span<uint8> tile = tiles.slice(static_cast<size_t>(tileIndex * 0x20), 0x20);
 		tile.fill(0);
 		for (int row = 2; row < 6; row++) {
 			WriteUInt32BigEndian(tile, row * static_cast<int>(sizeof(uint32)), packedRow);
@@ -599,7 +599,7 @@ int16 DuelRoomScriptActionExecutor::lookupDuelFacingDirection() {
 	int16 relativeDirection = computeDuelRelativeDirection();
 
 	// Ghidra 0x00003A6C-0x00003A79: double the word index and return the opposite-facing table entry.
-	return kOppositeDuelFacingDirections[static_cast<std::size_t>(relativeDirection)];
+	return kOppositeDuelFacingDirections[static_cast<size_t>(relativeDirection)];
 }
 
 int16 DuelRoomScriptActionExecutor::computeDuelRelativeDirection() {
@@ -667,7 +667,7 @@ void DuelRoomScriptActionExecutor::resolveDuelActorCollision() {
 	_state.DuelStateFlags |= 0xC0;
 	playAudioCommand(0x72);
 	int16 relativeDirection = computeDuelRelativeDirection();
-	int16 oppositeDirection = kOppositeDuelFacingDirections[static_cast<std::size_t>(relativeDirection)];
+	int16 oppositeDirection = kOppositeDuelFacingDirections[static_cast<size_t>(relativeDirection)];
 
 	// Ghidra 0x00003B14-0x00003B41: weight first-actor momentum against both facings and subtract the
 	// resulting word from second-actor health with 16-bit wrapping.
@@ -717,7 +717,7 @@ void DuelRoomScriptActionExecutor::resolveDuelActorCollision() {
 	// Ghidra 0x00003BEA-0x00003C61: publish the relative second-actor direction, convert it to the
 	// first direction, then preserve the cleared-momentum copy, clamp, cooldown, and random-flag order.
 	_state.ActorPositionIndices[kDuelSecondActorSlot] = relativeDirection;
-	int16 firstActorDirection = kOppositeDuelFacingDirections[static_cast<std::size_t>(
+	int16 firstActorDirection = kOppositeDuelFacingDirections[static_cast<size_t>(
 		relativeDirection)];
 	_duelKnockback[kDuelFirstActor] = _duelMomentum[kDuelSecondActor];
 	if (_duelKnockback[kDuelFirstActor] < 4) {
@@ -755,7 +755,7 @@ void DuelRoomScriptActionExecutor::resolveDuelFirstActorImpact() {
 
 	// Ghidra 0x00003CE6-0x00003CFD: publish the opposite of the first actor's current authored facing.
 	_state.ActorPositionIndices[kDuelFirstActorSlot] =
-		kOppositeDuelFacingDirections[static_cast<std::size_t>(_state.ActorAnimationOffsets[kDuelFirstActorSlot])];
+		kOppositeDuelFacingDirections[static_cast<size_t>(_state.ActorAnimationOffsets[kDuelFirstActorSlot])];
 }
 
 void DuelRoomScriptActionExecutor::resolveDuelSecondActorImpact() {
@@ -779,7 +779,7 @@ void DuelRoomScriptActionExecutor::resolveDuelSecondActorImpact() {
 
 	// Ghidra 0x00003D74-0x00003D85: publish the opposite of the second actor's current authored facing.
 	_state.ActorPositionIndices[kDuelSecondActorSlot] =
-		kOppositeDuelFacingDirections[static_cast<std::size_t>(_state.ActorAnimationOffsets[kDuelSecondActorSlot])];
+		kOppositeDuelFacingDirections[static_cast<size_t>(_state.ActorAnimationOffsets[kDuelSecondActorSlot])];
 }
 
 bool DuelRoomScriptActionExecutor::testDuelActorOverlap() {
@@ -799,14 +799,14 @@ DuelRoomScriptActionExecutor::DuelActorBounds DuelRoomScriptActionExecutor::read
 																								int descriptorOffset) {
 	int16 frameTableEntryOffset = static_cast<int16>(
 		_rom.readUInt16(descriptorOffset + kDuelAnimationFrameTableOffsetField) +
-		_state.ActorAnimationOffsets[static_cast<std::size_t>(actorSlot)] * static_cast<int>(sizeof(
+		_state.ActorAnimationOffsets[static_cast<size_t>(actorSlot)] * static_cast<int>(sizeof(
 																				int16)));
 	int16 frameOffset = _rom.readInt16(descriptorOffset + frameTableEntryOffset);
 	int boundsOffset = descriptorOffset + frameOffset + kDuelCollisionBoundsFrameOffset;
 	int16 actorX = getIntegerCoordinate(
-		_state.ActorXFixedCoordinates[static_cast<std::size_t>(actorSlot)]);
+		_state.ActorXFixedCoordinates[static_cast<size_t>(actorSlot)]);
 	int16 actorY = getIntegerCoordinate(
-		_state.ActorYFixedCoordinates[static_cast<std::size_t>(actorSlot)]);
+		_state.ActorYFixedCoordinates[static_cast<size_t>(actorSlot)]);
 
 	DuelActorBounds bounds;
 	bounds.Left = static_cast<int16>(actorX - _rom.readInt16(boundsOffset));

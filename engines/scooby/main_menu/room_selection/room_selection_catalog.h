@@ -49,7 +49,7 @@ public:
 	// episodeIndex: managed equivalent of original episode word 0xFF06AA.
 	// Returns labels for room IDs zero through the descriptor's maximum selectable ID.
 	Span<const Common::String> getRoomLabels(int episodeIndex) const {
-		return MakeSpan(_episodeRoomLabels[static_cast<std::size_t>(episodeIndex)]);
+		return MakeSpan(_episodeRoomLabels[static_cast<size_t>(episodeIndex)]);
 	}
 
 private:

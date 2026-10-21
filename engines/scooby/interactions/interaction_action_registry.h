@@ -42,10 +42,10 @@ public:
 	int count() const { return _count; }
 
 	// Returns one backing-table entry without narrowing access to the current registered count.
-	const InteractionAction &operator[](int index) const { return _entries[static_cast<std::size_t>(index)]; }
+	const InteractionAction &operator[](int index) const { return _entries[static_cast<size_t>(index)]; }
 
 	// Appends an entry after command 02 has proved that the original five-entry bound permits it.
-	void registerEntry(const InteractionAction &entry) { _entries[static_cast<std::size_t>(_count++)] = entry; }
+	void registerEntry(const InteractionAction &entry) { _entries[static_cast<size_t>(_count++)] = entry; }
 
 	// Starts a fresh scan while preserving backing entries for original raw-table indexing branches.
 	void reset() { _count = 0; }

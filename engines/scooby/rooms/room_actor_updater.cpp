@@ -34,12 +34,12 @@
 namespace Scooby {
 namespace {
 void WriteUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
-	bytes[static_cast<std::size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<std::size_t>(offset + 1)] = static_cast<uint8>(value);
+	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
+	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
 
 inline uint16 ReadBigEndian16(const Common::Array<uint8> &bytes, int offset) {
-	std::size_t o = static_cast<std::size_t>(offset);
+	size_t o = static_cast<size_t>(offset);
 	return static_cast<uint16>((uint16(bytes[o]) << 8) | uint16(bytes[o + 1]));
 }
 } // namespace
@@ -1304,7 +1304,7 @@ void RoomActorUpdater::updateActorPriority(int actor) {
 	// of indexing outside the managed map.
 	const Common::Array<uint8> &collisionCells = _state.ActiveRoomScene->CollisionCells;
 	if (byteOffset < 0 ||
-		static_cast<std::size_t>(byteOffset) + sizeof(uint16) > collisionCells.size()) {
+		static_cast<size_t>(byteOffset) + sizeof(uint16) > collisionCells.size()) {
 		return;
 	}
 

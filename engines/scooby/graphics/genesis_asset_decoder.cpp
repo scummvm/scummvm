@@ -28,15 +28,15 @@ const int kPackedBytesPerTile = 32;
 } // namespace
 
 Common::Array<uint8> decodeTiles(Span<const uint8> packedTiles) {
-	std::size_t tileCount = packedTiles.size() / static_cast<std::size_t>(kPackedBytesPerTile);
-	Common::Array<uint8> pixels(tileCount * static_cast<std::size_t>(kDecodedPixelsPerTile));
-	for (std::size_t tile = 0; tile < tileCount; ++tile) {
+	size_t tileCount = packedTiles.size() / static_cast<size_t>(kPackedBytesPerTile);
+	Common::Array<uint8> pixels(tileCount * static_cast<size_t>(kDecodedPixelsPerTile));
+	for (size_t tile = 0; tile < tileCount; ++tile) {
 		for (int packedIndex = 0; packedIndex < kPackedBytesPerTile; ++packedIndex) {
 			uint8 packedPixels =
-				packedTiles[tile * static_cast<std::size_t>(kPackedBytesPerTile) + static_cast<std::size_t>(
+				packedTiles[tile * static_cast<size_t>(kPackedBytesPerTile) + static_cast<size_t>(
 																					   packedIndex)];
-			std::size_t pixelIndex =
-				tile * static_cast<std::size_t>(kDecodedPixelsPerTile) + static_cast<std::size_t>(
+			size_t pixelIndex =
+				tile * static_cast<size_t>(kDecodedPixelsPerTile) + static_cast<size_t>(
 																			 packedIndex) *
 																			 2;
 			pixels[pixelIndex] = static_cast<uint8>(packedPixels >> 4);
@@ -49,8 +49,8 @@ Common::Array<uint8> decodeTiles(Span<const uint8> packedTiles) {
 
 TileCell decodeTileCell(Span<const uint8> packedCells, int byteOffset) {
 	uint16 entry = static_cast<uint16>(
-		(uint16(packedCells[static_cast<std::size_t>(byteOffset)]) << 8) |
-		uint16(packedCells[static_cast<std::size_t>(byteOffset) + 1]));
+		(uint16(packedCells[static_cast<size_t>(byteOffset)]) << 8) |
+		uint16(packedCells[static_cast<size_t>(byteOffset) + 1]));
 	return decodeTileCell(entry);
 }
 
@@ -68,8 +68,8 @@ uint16 encodeTileCell(const TileCell &cell) {
 }
 
 Common::Array<PaletteColor> readPalette(const ScoobyDooRom &rom, int romOffset, int colorCount) {
-	Common::Array<PaletteColor> palette(static_cast<std::size_t>(colorCount));
-	for (std::size_t index = 0; index < palette.size(); ++index) {
+	Common::Array<PaletteColor> palette(static_cast<size_t>(colorCount));
+	for (size_t index = 0; index < palette.size(); ++index) {
 		uint16 packedColor = rom.readUInt16(
 			romOffset + static_cast<int>(index) * static_cast<int>(sizeof(uint16)));
 		palette[index] = PaletteColor(static_cast<uint8>((packedColor >> 1) & 7),

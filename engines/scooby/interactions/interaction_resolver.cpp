@@ -47,7 +47,7 @@ int16 InteractionResolver::findAdjustedCursorInteraction() {
 		selectedInteraction = 2;
 	}
 
-	for (std::size_t index = 0; index < _state.RoomObjects.size(); index++) {
+	for (size_t index = 0; index < _state.RoomObjects.size(); index++) {
 		const RoomObject &roomObject = _state.RoomObjects[index];
 		if (roomObject.RoomId != _state.RoomId) {
 			continue;
@@ -77,7 +77,7 @@ int16 InteractionResolver::findAutomaticInteraction() {
 		_rom.readUInt32(episodeDescriptorOffset + kEpisodeRoomShapeOffsetTableField));
 	int shapeDataOffset = static_cast<int>(_rom.readUInt32(episodeDescriptorOffset + kEpisodeRoomShapeDataField));
 	int16 selectedInteraction = 0;
-	for (std::size_t index = 0; index < _state.RoomObjects.size(); index++) {
+	for (size_t index = 0; index < _state.RoomObjects.size(); index++) {
 		const RoomObject &roomObject = _state.RoomObjects[index];
 		if (roomObject.RoomId == _state.RoomId && (roomObject.Flags & 0x02) == 0 &&
 			containsDynamicObject(roomObject, tileX, tileY, shapeOffsetTableOffset, shapeDataOffset)) {

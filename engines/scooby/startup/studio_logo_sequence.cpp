@@ -140,8 +140,8 @@ StudioLogoSequence::StepResult StudioLogoSequence::waitForFrame() {
 
 void StudioLogoSequence::uploadStagedTilemapBand(Span<const uint8> source, int band) {
 	const int bandByteCount = 20 * 5 * static_cast<int>(sizeof(uint16));
-	_scene.loadLayerRows(source.slice(static_cast<std::size_t>(band) * static_cast<std::size_t>(bandByteCount),
-									  static_cast<std::size_t>(bandByteCount)),
+	_scene.loadLayerRows(source.slice(static_cast<size_t>(band) * static_cast<size_t>(bandByteCount),
+									  static_cast<size_t>(bandByteCount)),
 						 TileLayer::Foreground, 8, 8, 20, 5);
 }
 } // namespace Scooby

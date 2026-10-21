@@ -37,7 +37,7 @@ void RoomScriptCommand05MoveObject::scriptCommand05MoveObject(int mode) {
 			// Ghidra 0x000028C4-0x000028DD: resolve the 0x1A-byte record through the original low-word
 			// multiply and select its fixed-position or portable-object ecosystem from flag bit one.
 			int objectIndex = objectId - 3;
-			RoomObject &roomObject = _state.RoomObjects[static_cast<std::size_t>(objectIndex)];
+			RoomObject &roomObject = _state.RoomObjects[static_cast<size_t>(objectIndex)];
 			int16 newRoomId = _rom.readInt16(commandOffset + 4);
 			if ((roomObject.Flags & kFixedPositionMask) != 0) {
 				if (!relocateFixedObject(roomObject, newRoomId)) {
@@ -96,19 +96,19 @@ bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, 
 	// aliases and preallocated graphics-work pointers with typed movement state and on-demand tile storage.
 	int dynamicActorIndex = actorSlot - kDynamicActorFirstSlot;
 	uint8 actorMask = static_cast<uint8>(1 << actorSlot);
-	_state.RoomObjectActorHorizontalSteps[static_cast<std::size_t>(dynamicActorIndex)] =
+	_state.RoomObjectActorHorizontalSteps[static_cast<size_t>(dynamicActorIndex)] =
 		static_cast<int32>(horizontalStep);
-	_state.RoomObjectActorVerticalSteps[static_cast<std::size_t>(dynamicActorIndex)] =
+	_state.RoomObjectActorVerticalSteps[static_cast<size_t>(dynamicActorIndex)] =
 		static_cast<int32>(horizontalStep >> 1);
-	_state.ActorAnimationDescriptorOffsets[static_cast<std::size_t>(actorSlot)] = descriptorOffset;
-	_state.ActorAnimationOffsets[static_cast<std::size_t>(actorSlot)] = roomObject.TilePatchIndex;
-	_state.ActorXFixedCoordinates[static_cast<std::size_t>(actorSlot)] = replaceIntegerCoordinate(
-		_state.ActorXFixedCoordinates[static_cast<std::size_t>(actorSlot)], roomObject.FixedX);
-	_state.ActorYFixedCoordinates[static_cast<std::size_t>(actorSlot)] = replaceIntegerCoordinate(
-		_state.ActorYFixedCoordinates[static_cast<std::size_t>(actorSlot)], roomObject.FixedY);
-	_state.ActorAnimationDelays[static_cast<std::size_t>(actorSlot)] = -1;
-	_state.ActorTargetXCoordinates[static_cast<std::size_t>(actorSlot)] = roomObject.FixedX;
-	_state.ActorTargetYCoordinates[static_cast<std::size_t>(actorSlot)] = roomObject.FixedY;
+	_state.ActorAnimationDescriptorOffsets[static_cast<size_t>(actorSlot)] = descriptorOffset;
+	_state.ActorAnimationOffsets[static_cast<size_t>(actorSlot)] = roomObject.TilePatchIndex;
+	_state.ActorXFixedCoordinates[static_cast<size_t>(actorSlot)] = replaceIntegerCoordinate(
+		_state.ActorXFixedCoordinates[static_cast<size_t>(actorSlot)], roomObject.FixedX);
+	_state.ActorYFixedCoordinates[static_cast<size_t>(actorSlot)] = replaceIntegerCoordinate(
+		_state.ActorYFixedCoordinates[static_cast<size_t>(actorSlot)], roomObject.FixedY);
+	_state.ActorAnimationDelays[static_cast<size_t>(actorSlot)] = -1;
+	_state.ActorTargetXCoordinates[static_cast<size_t>(actorSlot)] = roomObject.FixedX;
+	_state.ActorTargetYCoordinates[static_cast<size_t>(actorSlot)] = roomObject.FixedY;
 	roomObject.FixedPositionIndex = static_cast<int8>(dynamicActorIndex);
 	_state.ActorCompactFrameFlags &= static_cast<uint8>(~actorMask);
 	if ((roomObject.Flags & kCompactActorMask) != 0) {
@@ -171,7 +171,7 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 	// Ghidra 0x00002A44-0x00002A69: inventory departure scans until the exact object index, then shifts every
 	// later entry left through the original sentinel position. The typed list removes that sentinel.
 	if (previousRoomId == kInventoryRoomId) {
-		std::size_t inventoryIndex = 0;
+		size_t inventoryIndex = 0;
 		while (_state.InventoryObjectIndices[inventoryIndex] != objectIndex) {
 			inventoryIndex++;
 		}
@@ -193,7 +193,7 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 		return false;
 	}
 
-	std::size_t inventoryObjectCount = _state.InventoryObjectIndices.size();
+	size_t inventoryObjectCount = _state.InventoryObjectIndices.size();
 	_state.InventoryObjectIndices.push_back(objectIndex);
 	int16 inventoryPage = static_cast<int16>(inventoryObjectCount >> 2);
 	if (static_cast<int16>(_state.MenuPage + 1) != inventoryPage) {

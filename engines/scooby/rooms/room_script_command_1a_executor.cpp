@@ -49,18 +49,18 @@ void RoomScriptCommand1AExecutor::executeRoomScriptCommand1A(int mode) {
 				uint16 colorCount =
 					static_cast<uint16>(_rom.readUInt16(commandOffset + 6) - startIndex);
 				_scene.replacePaletteRange(MakeSpan(_state.TargetPalette)
-											   .slice(static_cast<std::size_t>(paletteIndex),
-													  static_cast<std::size_t>(colorCount)),
+											   .slice(static_cast<size_t>(paletteIndex),
+													  static_cast<size_t>(colorCount)),
 										   paletteIndex);
 			} else {
 				// Ghidra 0x00002660-0x00002687: write the selected start and end, initialize the live
 				// countdown before its identical reload interval, then enable the bit after every field.
-				_state.AnimatedPaletteRangeStartIndices[static_cast<std::size_t>(rangeIndex)] =
+				_state.AnimatedPaletteRangeStartIndices[static_cast<size_t>(rangeIndex)] =
 					_rom.readUInt16(commandOffset + 4);
-				_state.AnimatedPaletteRangeEndIndices[static_cast<std::size_t>(rangeIndex)] =
+				_state.AnimatedPaletteRangeEndIndices[static_cast<size_t>(rangeIndex)] =
 					_rom.readUInt16(commandOffset + 6);
-				_state.AnimatedPaletteRangeCountdowns[static_cast<std::size_t>(rangeIndex)] = interval;
-				_state.AnimatedPaletteRangeIntervals[static_cast<std::size_t>(rangeIndex)] = interval;
+				_state.AnimatedPaletteRangeCountdowns[static_cast<size_t>(rangeIndex)] = interval;
+				_state.AnimatedPaletteRangeIntervals[static_cast<size_t>(rangeIndex)] = interval;
 				_state.AnimatedPaletteRangeFlags |= rangeMask;
 			}
 		}

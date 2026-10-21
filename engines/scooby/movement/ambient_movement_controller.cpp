@@ -47,7 +47,7 @@ bool AmbientMovementController::tryStartRandomMove() {
 	uint16 packedMove = _rom.readUInt16(moveAddress);
 	uint16 rotatedMove = static_cast<uint16>((packedMove << 4) | (packedMove >> 12));
 	_state.RandomMoveDirection = static_cast<int16>(rotatedMove & 0x03);
-	_state.RandomMoveAnimation = kAnimationByPackedIndex[static_cast<std::size_t>((rotatedMove & 0x0C) >> 2)];
+	_state.RandomMoveAnimation = kAnimationByPackedIndex[static_cast<size_t>((rotatedMove & 0x0C) >> 2)];
 	int16 targetX = static_cast<int16>((packedMove & 0x0FFF) << 3);
 	int16 targetY = static_cast<int16>(_rom.readInt16(moveAddress + 2) << 3);
 	return _movement.movePlayerToRoomPosition(targetX, targetY, 1, 0).Completed;

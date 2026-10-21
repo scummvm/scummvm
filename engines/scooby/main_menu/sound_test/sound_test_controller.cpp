@@ -98,10 +98,10 @@ bool SoundTestController::runLoop() {
 
 		// Ghidra 0x000096C4-0x000096EF: write the two hexadecimal selector cells at C51E and C520.
 		_presentation.writeIndexedTile(
-			static_cast<uint8>(kHexDigits[static_cast<std::size_t>(group)]),
+			static_cast<uint8>(kHexDigits[static_cast<size_t>(group)]),
 			kSelectionColumn, kSelectionRow);
 		_presentation.writeIndexedTile(
-			static_cast<uint8>(kHexDigits[static_cast<std::size_t>(index)]),
+			static_cast<uint8>(kHexDigits[static_cast<size_t>(index)]),
 			kSelectionColumn + 1, kSelectionRow);
 	}
 }

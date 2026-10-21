@@ -24,6 +24,7 @@
 #include "genesis_asset_decoder.h"
 #include "scooby/common/contracts.h"
 #include "common/algorithm.h"
+#include "common/util.h"
 
 namespace Scooby {
 
@@ -64,16 +65,16 @@ void TileScene::clearContent() {
 	_layerColumns = kDefaultLayerColumns;
 	_layerRows = kDefaultLayerRows;
 	_backgroundLayer = Common::Array<TileCell>(
-		static_cast<std::size_t>(kDefaultLayerColumns) * static_cast<std::size_t>(kDefaultLayerRows),
+		static_cast<size_t>(kDefaultLayerColumns) * static_cast<size_t>(kDefaultLayerRows),
 		TileCell());
 	_foregroundLayer = Common::Array<TileCell>(
-		static_cast<std::size_t>(kDefaultLayerColumns) * static_cast<std::size_t>(kDefaultLayerRows),
+		static_cast<size_t>(kDefaultLayerColumns) * static_cast<size_t>(kDefaultLayerRows),
 		TileCell());
 	_interfaceLayer = Common::Array<TileCell>(
-		static_cast<std::size_t>(kDefaultLayerColumns) * static_cast<std::size_t>(kDefaultLayerRows),
+		static_cast<size_t>(kDefaultLayerColumns) * static_cast<size_t>(kDefaultLayerRows),
 		TileCell());
 	_windowLayer = Common::Array<TileCell>(
-		static_cast<std::size_t>(kWindowLayerColumns) * static_cast<std::size_t>(kWindowLayerRows),
+		static_cast<size_t>(kWindowLayerColumns) * static_cast<size_t>(kWindowLayerRows),
 		TileCell());
 	_spriteLayer.clear();
 	_dynamicSprites.clear();
@@ -96,9 +97,9 @@ void TileScene::loadTiles(Span<const uint8> packedTiles) {
 
 void TileScene::loadTilesAt(Span<const uint8> packedTiles, int startTileIndex) {
 	Common::Array<uint8> pixels = decodeTiles(packedTiles);
-	std::size_t destinationOffset = static_cast<std::size_t>(startTileIndex) * static_cast<std::size_t>(
+	size_t destinationOffset = static_cast<size_t>(startTileIndex) * static_cast<size_t>(
 																				   kPixelsPerTile);
-	std::size_t requiredLength = destinationOffset + pixels.size();
+	size_t requiredLength = destinationOffset + pixels.size();
 	if (_tilePixels.size() < requiredLength) {
 		_tilePixels.resize(requiredLength);
 	}
@@ -108,15 +109,15 @@ void TileScene::loadTilesAt(Span<const uint8> packedTiles, int startTileIndex) {
 
 void TileScene::overwritePackedPatternBytes(Span<const uint8> packedTileBytes,
 											int destinationByteOffset) {
-	std::size_t destinationOffset = static_cast<std::size_t>(destinationByteOffset) * 2;
-	std::size_t requiredLength = destinationOffset + packedTileBytes.size() * 2;
+	size_t destinationOffset = static_cast<size_t>(destinationByteOffset) * 2;
+	size_t requiredLength = destinationOffset + packedTileBytes.size() * 2;
 	if (_tilePixels.size() < requiredLength) {
 		_tilePixels.resize(requiredLength);
 	}
 
-	for (std::size_t index = 0; index < packedTileBytes.size(); ++index) {
+	for (size_t index = 0; index < packedTileBytes.size(); ++index) {
 		uint8 packedByte = packedTileBytes[index];
-		std::size_t pixelOffset = destinationOffset + index * 2;
+		size_t pixelOffset = destinationOffset + index * 2;
 		_tilePixels[pixelOffset] = static_cast<uint8>(packedByte >> 4);
 		_tilePixels[pixelOffset + 1] = static_cast<uint8>(packedByte & 0x0F);
 	}
@@ -142,20 +143,20 @@ TileScene::ContentReplacementGuard::ContentReplacementGuard(TileScene *scene)
 }
 
 TileScene::ContentReplacementGuard::ContentReplacementGuard(ContentReplacementGuard &&other) noexcept
-	: _scene(other._scene), _backgroundLayer(std::move(other._backgroundLayer)),
+	: _scene(other._scene), _backgroundLayer(Common::move(other._backgroundLayer)),
 	  _backgroundHorizontalOffset(other._backgroundHorizontalOffset),
-	  _backgroundLineHorizontalOffsets(std::move(other._backgroundLineHorizontalOffsets)),
+	  _backgroundLineHorizontalOffsets(Common::move(other._backgroundLineHorizontalOffsets)),
 	  _backgroundVerticalOffset(other._backgroundVerticalOffset),
 	  _horizontalDisplayMode(other._horizontalDisplayMode),
-	  _dynamicSprites(std::move(other._dynamicSprites)), _foregroundLayer(std::move(other._foregroundLayer)),
+	  _dynamicSprites(Common::move(other._dynamicSprites)), _foregroundLayer(Common::move(other._foregroundLayer)),
 	  _foregroundHorizontalOffset(other._foregroundHorizontalOffset),
-	  _foregroundLineHorizontalOffsets(std::move(other._foregroundLineHorizontalOffsets)),
+	  _foregroundLineHorizontalOffsets(Common::move(other._foregroundLineHorizontalOffsets)),
 	  _foregroundVerticalOffset(other._foregroundVerticalOffset),
-	  _interfaceLayer(std::move(other._interfaceLayer)),
+	  _interfaceLayer(Common::move(other._interfaceLayer)),
 	  _layerColumns(other._layerColumns), _layerRows(other._layerRows),
 	  _roomInterfaceVisible(other._roomInterfaceVisible),
 	  _spriteVerticalOffset(other._spriteVerticalOffset), _spritesVisible(other._spritesVisible),
-	  _tilePixels(std::move(other._tilePixels)), _windowLayer(std::move(other._windowLayer)),
+	  _tilePixels(Common::move(other._tilePixels)), _windowLayer(Common::move(other._windowLayer)),
 	  _windowVerticalPositionBits(other._windowVerticalPositionBits),
 	  _interfaceHorizontalScroll(other._interfaceHorizontalScroll) {
 	other._scene = nullptr;
@@ -165,24 +166,24 @@ TileScene::ContentReplacementGuard &TileScene::ContentReplacementGuard::operator
 	ContentReplacementGuard &&other) noexcept {
 	if (this != &other) {
 		_scene = other._scene;
-		_backgroundLayer = std::move(other._backgroundLayer);
+		_backgroundLayer = Common::move(other._backgroundLayer);
 		_backgroundHorizontalOffset = other._backgroundHorizontalOffset;
-		_backgroundLineHorizontalOffsets = std::move(other._backgroundLineHorizontalOffsets);
+		_backgroundLineHorizontalOffsets = Common::move(other._backgroundLineHorizontalOffsets);
 		_backgroundVerticalOffset = other._backgroundVerticalOffset;
 		_horizontalDisplayMode = other._horizontalDisplayMode;
-		_dynamicSprites = std::move(other._dynamicSprites);
-		_foregroundLayer = std::move(other._foregroundLayer);
+		_dynamicSprites = Common::move(other._dynamicSprites);
+		_foregroundLayer = Common::move(other._foregroundLayer);
 		_foregroundHorizontalOffset = other._foregroundHorizontalOffset;
-		_foregroundLineHorizontalOffsets = std::move(other._foregroundLineHorizontalOffsets);
+		_foregroundLineHorizontalOffsets = Common::move(other._foregroundLineHorizontalOffsets);
 		_foregroundVerticalOffset = other._foregroundVerticalOffset;
-		_interfaceLayer = std::move(other._interfaceLayer);
+		_interfaceLayer = Common::move(other._interfaceLayer);
 		_layerColumns = other._layerColumns;
 		_layerRows = other._layerRows;
 		_roomInterfaceVisible = other._roomInterfaceVisible;
 		_spriteVerticalOffset = other._spriteVerticalOffset;
 		_spritesVisible = other._spritesVisible;
-		_tilePixels = std::move(other._tilePixels);
-		_windowLayer = std::move(other._windowLayer);
+		_tilePixels = Common::move(other._tilePixels);
+		_windowLayer = Common::move(other._windowLayer);
 		_windowVerticalPositionBits = other._windowVerticalPositionBits;
 		_interfaceHorizontalScroll = other._interfaceHorizontalScroll;
 		other._scene = nullptr;
@@ -246,8 +247,8 @@ void TileScene::loadLayerRows(Span<const uint8> packedCells, TileLayer layer, in
 	for (int row = 0; row < rowCount; ++row) {
 		for (int column = 0; column < columnCount; ++column) {
 			int sourceOffset = (row * columnCount + column) * static_cast<int>(sizeof(uint16));
-			std::size_t destinationIndex =
-				static_cast<std::size_t>((startRow + row) * destinationColumns + startColumn + column);
+			size_t destinationIndex =
+				static_cast<size_t>((startRow + row) * destinationColumns + startColumn + column);
 			destination[destinationIndex] = decodeTileCell(packedCells, sourceOffset);
 		}
 	}
@@ -262,7 +263,7 @@ void TileScene::fillLayer(const TileCell &cell, TileLayer layer) {
 void TileScene::fillWindow(const TileCell &cell) { Common::fill(_windowLayer.begin(), _windowLayer.end(), cell); }
 
 void TileScene::setWindowCell(const TileCell &cell, int column, int row) {
-	_windowLayer[static_cast<std::size_t>(row * kWindowLayerColumns + column)] = cell;
+	_windowLayer[static_cast<size_t>(row * kWindowLayerColumns + column)] = cell;
 }
 
 void TileScene::setWindowVerticalPosition(uint8 positionBits) {
@@ -276,9 +277,9 @@ void TileScene::copyPackedLayerRows(Span<uint8> destination, TileLayer layer, in
 	for (int row = 0; row < rowCount; ++row) {
 		for (int column = 0; column < columnCount; ++column) {
 			uint16 packedCell = encodeTileCell(
-				source[static_cast<std::size_t>((startRow + row) * sourceColumns + startColumn + column)]);
-			std::size_t destinationOffset =
-				static_cast<std::size_t>((row * columnCount + column) * static_cast<int>(sizeof(
+				source[static_cast<size_t>((startRow + row) * sourceColumns + startColumn + column)]);
+			size_t destinationOffset =
+				static_cast<size_t>((row * columnCount + column) * static_cast<int>(sizeof(
 																			uint16)));
 			destination[destinationOffset] = static_cast<uint8>(packedCell >> 8);
 			destination[destinationOffset + 1] = static_cast<uint8>(packedCell);
@@ -293,7 +294,7 @@ void TileScene::fillLayerRows(const TileCell &cell, TileLayer layer, int startCo
 	int destinationColumns = layer == TileLayer::Interface ? kDefaultLayerColumns : _layerColumns;
 	_roomInterfaceVisible = _roomInterfaceVisible || layer == TileLayer::Interface;
 	for (int row = 0; row < rowCount; ++row) {
-		std::size_t rowStart = static_cast<std::size_t>((startRow + row) * destinationColumns + startColumn);
+		size_t rowStart = static_cast<size_t>((startRow + row) * destinationColumns + startColumn);
 		Common::fill(destination.begin() + static_cast<long>(rowStart),
 				  destination.begin() + static_cast<long>(rowStart) + columnCount, cell);
 	}
@@ -307,10 +308,10 @@ void TileScene::replaceCompleteLayers(Span<const uint8> backgroundCells,
 	_backgroundLayer = decodeLayer(backgroundCells, columnCount, rowCount);
 	_foregroundLayer = decodeLayer(foregroundCells, columnCount, rowCount);
 	_interfaceLayer = Common::Array<TileCell>(
-		static_cast<std::size_t>(kDefaultLayerColumns) * static_cast<std::size_t>(kDefaultLayerRows),
+		static_cast<size_t>(kDefaultLayerColumns) * static_cast<size_t>(kDefaultLayerRows),
 		TileCell());
 	_windowLayer = Common::Array<TileCell>(
-		static_cast<std::size_t>(kWindowLayerColumns) * static_cast<std::size_t>(kWindowLayerRows),
+		static_cast<size_t>(kWindowLayerColumns) * static_cast<size_t>(kWindowLayerRows),
 		TileCell());
 	_backgroundHorizontalOffset = 0;
 	_backgroundLineHorizontalOffsets.clear();
@@ -324,29 +325,29 @@ void TileScene::replaceLayerRow(Span<const TileCell> cells, TileLayer layer, int
 	Common::Array<TileCell> &destination = layerFor(layer);
 	int destinationColumns = layer == TileLayer::Interface ? kDefaultLayerColumns : _layerColumns;
 	_roomInterfaceVisible = _roomInterfaceVisible || layer == TileLayer::Interface;
-	std::size_t start = static_cast<std::size_t>(row * destinationColumns + startColumn);
-	for (std::size_t i = 0; i < cells.size(); ++i) {
+	size_t start = static_cast<size_t>(row * destinationColumns + startColumn);
+	for (size_t i = 0; i < cells.size(); ++i) {
 		destination[start + i] = cells[i];
 	}
 }
 
 void TileScene::replacePaletteRange(Span<const PaletteColor> colors, int startIndex) {
-	for (std::size_t i = 0; i < colors.size(); ++i) {
-		_palette[static_cast<std::size_t>(startIndex) + i] = colors[i];
+	for (size_t i = 0; i < colors.size(); ++i) {
+		_palette[static_cast<size_t>(startIndex) + i] = colors[i];
 	}
 }
 
 void TileScene::rotatePaletteRangeLeft(int startIndex, int colorCount) {
-	std::size_t start = static_cast<std::size_t>(startIndex);
+	size_t start = static_cast<size_t>(startIndex);
 	PaletteColor first = _palette[start];
 	for (int i = 0; i < colorCount - 1; ++i) {
-		_palette[start + static_cast<std::size_t>(i)] = _palette[start + static_cast<std::size_t>(i) + 1];
+		_palette[start + static_cast<size_t>(i)] = _palette[start + static_cast<size_t>(i) + 1];
 	}
-	_palette[start + static_cast<std::size_t>(colorCount) - 1] = first;
+	_palette[start + static_cast<size_t>(colorCount) - 1] = first;
 }
 
 void TileScene::advancePaletteToward(Span<const PaletteColor> target) {
-	for (std::size_t index = 0; index < _palette.size(); ++index) {
+	for (size_t index = 0; index < _palette.size(); ++index) {
 		PaletteColor current = _palette[index];
 		PaletteColor desired = target[index];
 		_palette[index] = PaletteColor(stepLevel(current.redLevel, desired.redLevel),
@@ -356,7 +357,7 @@ void TileScene::advancePaletteToward(Span<const PaletteColor> target) {
 }
 
 void TileScene::advancePaletteTowardBlack() {
-	for (std::size_t index = 0; index < _palette.size(); ++index) {
+	for (size_t index = 0; index < _palette.size(); ++index) {
 		PaletteColor current = _palette[index];
 		_palette[index] =
 			PaletteColor(stepLevel(current.redLevel, 0), stepLevel(current.greenLevel, 0),
@@ -367,7 +368,7 @@ void TileScene::advancePaletteTowardBlack() {
 void TileScene::rotateFirstLogoRamp() {
 	PaletteColor last = _palette[10];
 	for (int index = 10; index > 3; --index) {
-		_palette[static_cast<std::size_t>(index)] = _palette[static_cast<std::size_t>(index) - 1];
+		_palette[static_cast<size_t>(index)] = _palette[static_cast<size_t>(index) - 1];
 	}
 	_palette[3] = last;
 }
@@ -455,8 +456,8 @@ int TileScene::contentWidth() const {
 
 Common::Array<TileCell> TileScene::decodeLayer(Span<const uint8> packedCells, int columnCount,
 											   int rowCount) {
-	Common::Array<TileCell> cells(static_cast<std::size_t>(columnCount) * static_cast<std::size_t>(rowCount));
-	for (std::size_t index = 0; index < cells.size(); ++index) {
+	Common::Array<TileCell> cells(static_cast<size_t>(columnCount) * static_cast<size_t>(rowCount));
+	for (size_t index = 0; index < cells.size(); ++index) {
 		cells[index] = decodeTileCell(packedCells,
 									  static_cast<int>(index) * static_cast<int>(sizeof(
 																	uint16)));
@@ -498,11 +499,11 @@ void TileScene::drawLayer(IndexedFrame &frame, const Common::Array<TileCell> &la
 		int pixelY = sourceY % kTileSize;
 		int lineHorizontalOffset = lineHorizontalOffsets.isEmpty()
 									   ? horizontalOffset
-									   : lineHorizontalOffsets[static_cast<std::size_t>(y)];
+									   : lineHorizontalOffsets[static_cast<size_t>(y)];
 		for (int x = 0; x < contentWidth; ++x) {
 			int sourceX = mod(x - lineHorizontalOffset, layerWidth);
 			int cellX = sourceX / kTileSize;
-			const TileCell &cell = layer[static_cast<std::size_t>(cellY * columnCount + cellX)];
+			const TileCell &cell = layer[static_cast<size_t>(cellY * columnCount + cellX)];
 			if (cell.highPriority != highPriority) {
 				continue;
 			}
@@ -522,9 +523,9 @@ void TileScene::drawLayer(IndexedFrame &frame, const Common::Array<TileCell> &la
 				continue;
 			}
 
-			uint8 color = _tilePixels[static_cast<std::size_t>(tilePixelOffset)];
+			uint8 color = _tilePixels[static_cast<size_t>(tilePixelOffset)];
 			if (color != 0) {
-				frame._pixels[static_cast<std::size_t>(y * IndexedFrame::Width + outputLeft + x)] =
+				frame._pixels[static_cast<size_t>(y * IndexedFrame::Width + outputLeft + x)] =
 					static_cast<uint8>(cell.paletteIndex * 16 + color);
 			}
 		}

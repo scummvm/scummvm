@@ -38,10 +38,10 @@ public:
 	static Common::ScopedPtr<ScoobyDooRom> load(const Common::Path &path, Common::String &outError);
 
 	Span<const uint8> readBytes(int offset, int length) const {
-		return Span<const uint8>(_bytes.data() + offset, static_cast<std::size_t>(length));
+		return Span<const uint8>(_bytes.data() + offset, static_cast<size_t>(length));
 	}
 
-	uint8 readByte(int offset) const { return _bytes[static_cast<std::size_t>(offset)]; }
+	uint8 readByte(int offset) const { return _bytes[static_cast<size_t>(offset)]; }
 
 	// Number of bytes in the cartridge image.
 	int size() const { return static_cast<int>(_bytes.size()); }
@@ -49,12 +49,12 @@ public:
 	int16 readInt16(int offset) const { return static_cast<int16>(readUInt16(offset)); }
 
 	uint16 readUInt16(int offset) const {
-		return static_cast<uint16>((uint16(_bytes[static_cast<std::size_t>(offset)]) << 8) |
-								   uint16(_bytes[static_cast<std::size_t>(offset) + 1]));
+		return static_cast<uint16>((uint16(_bytes[static_cast<size_t>(offset)]) << 8) |
+								   uint16(_bytes[static_cast<size_t>(offset) + 1]));
 	}
 
 	uint32 readUInt32(int offset) const {
-		std::size_t o = static_cast<std::size_t>(offset);
+		uint o = static_cast<uint>(offset);
 		return (uint32(_bytes[o]) << 24) | (uint32(_bytes[o + 1]) << 16) |
 			   (uint32(_bytes[o + 2]) << 8) | uint32(_bytes[o + 3]);
 	}

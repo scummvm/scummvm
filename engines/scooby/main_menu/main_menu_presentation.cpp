@@ -35,7 +35,7 @@
 #include "scooby/graphics/tile_layer.h"
 
 namespace Scooby {
-const Common::String MainMenuPresentation::kBlankTileRow(static_cast<std::size_t>(kMenuPlaneColumns), ' ');
+const Common::String MainMenuPresentation::kBlankTileRow(static_cast<size_t>(kMenuPlaneColumns), ' ');
 
 int MainMenuPresentation::loadInitialAssets() {
 	_scene.reset(HorizontalDisplayMode::H32);
@@ -112,8 +112,8 @@ void MainMenuPresentation::restoreLightningPatch(int column, int row, int width,
 																				  uint16));
 		Span<const uint8> patch =
 			MakeSpan(_fixedBackgroundMap)
-				.slice(static_cast<std::size_t>(sourceOffset),
-					   static_cast<std::size_t>(width * static_cast<int>(sizeof(uint16))));
+				.slice(static_cast<size_t>(sourceOffset),
+					   static_cast<size_t>(width * static_cast<int>(sizeof(uint16))));
 		_scene.loadLayerRows(patch, TileLayer::Background, column, row + rowOffset, width, 1);
 	}
 }
@@ -165,11 +165,11 @@ void MainMenuPresentation::updatePasswordGridCursors(int gridColumn, int gridRow
 
 void MainMenuPresentation::writeIndexedTileRow(const Common::String &text, int columnIndex, int rowIndex) {
 	int characterCount = getCharacterCount(text);
-	Common::Array<TileCell> cells(static_cast<std::size_t>(characterCount));
+	Common::Array<TileCell> cells(static_cast<size_t>(characterCount));
 	for (int index = 0; index < static_cast<int>(cells.size()); index++) {
 		uint16 packedAttributes = static_cast<uint16>(
-			_textAttributes + static_cast<uint8>(text[static_cast<std::size_t>(index)]));
-		cells[static_cast<std::size_t>(index)] =
+			_textAttributes + static_cast<uint8>(text[static_cast<size_t>(index)]));
+		cells[static_cast<size_t>(index)] =
 			decodeTileCell(packedAttributes);
 	}
 
@@ -178,7 +178,7 @@ void MainMenuPresentation::writeIndexedTileRow(const Common::String &text, int c
 		int rowLength = MIN(static_cast<int>(cells.size()) - sourceOffset,
 							kMenuPlaneColumns - columnIndex);
 		Span<const TileCell> rowCells = MakeSpan(cells).slice(
-			static_cast<std::size_t>(sourceOffset), static_cast<std::size_t>(rowLength));
+			static_cast<size_t>(sourceOffset), static_cast<size_t>(rowLength));
 		_scene.replaceLayerRow(rowCells, TileLayer::Foreground, columnIndex, rowIndex);
 		sourceOffset += rowLength;
 		columnIndex = 0;
@@ -203,7 +203,7 @@ void MainMenuPresentation::writePriorityTileRow(const Common::String &text, int 
 void MainMenuPresentation::updateCatalogSelectionHighlight(int rowIndex) {
 	Common::Array<SpriteInstance> sprites(kCatalogSelectionHighlightSegmentCount);
 	for (int index = 0; index < static_cast<int>(sprites.size()); index++) {
-		sprites[static_cast<std::size_t>(index)] = SpriteInstance(
+		sprites[static_cast<size_t>(index)] = SpriteInstance(
 			index * kCatalogSelectionHighlightSegmentWidth * 8, kCatalogSelectionHighlightBaseY + rowIndex * 8,
 			kCatalogSelectionHighlightSegmentWidth, 1, kCatalogSelectionHighlightTileIndex, 0, false, false,
 			false);
@@ -244,7 +244,7 @@ void MainMenuPresentation::stageInitialMenuAssets(int firstAdditionalTileIndex,
 	}
 
 	restoreBinaryMaskTiles();
-	Common::Array<uint8> solidTiles(static_cast<std::size_t>(4 * kPackedBytesPerTile), 0xAA);
+	Common::Array<uint8> solidTiles(static_cast<size_t>(4 * kPackedBytesPerTile), 0xAA);
 	_scene.loadTilesAt(MakeSpan(solidTiles), 0x7D0);
 	_scene.loadLayerRows(MakeSpan(fixedTileBlock), TileLayer::Background, 0, 0, 32, 28);
 	_scene.loadSprites(MakeSpan(_menuLayout));

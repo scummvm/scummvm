@@ -180,7 +180,7 @@ RoomScriptActionExecutor::RoomScriptActionExecutor(
 }
 
 Optional<SessionExit> RoomScriptActionExecutor::execute(uint16 action) {
-	(*_handlers[static_cast<std::size_t>(action)])();
+	(*_handlers[static_cast<size_t>(action)])();
 	return _requestedSessionExit;
 }
 

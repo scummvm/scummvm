@@ -28,7 +28,7 @@
 namespace Scooby {
 namespace {
 inline uint16 ReadBigEndian16(const Common::Array<uint8> &bytes, int offset) {
-	std::size_t o = static_cast<std::size_t>(offset);
+	size_t o = static_cast<size_t>(offset);
 	return static_cast<uint16>((uint16(bytes[o]) << 8) | uint16(bytes[o + 1]));
 }
 } // namespace
@@ -105,7 +105,7 @@ bool RoomCollisionProbe::probeStagedCollision(int16 x, int16 y) const {
 	// shared 0xFFE000 workspace. Treat positions beyond the decoded map like negative ones: blocked.
 	const Common::Array<uint8> &collisionCells = _state.ActiveRoomScene->CollisionCells;
 	if (collisionByteOffset < 0 ||
-		static_cast<std::size_t>(collisionByteOffset) + sizeof(uint16) > collisionCells.size()) {
+		static_cast<size_t>(collisionByteOffset) + sizeof(uint16) > collisionCells.size()) {
 		return true;
 	}
 

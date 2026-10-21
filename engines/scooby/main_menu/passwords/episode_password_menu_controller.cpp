@@ -23,7 +23,6 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
-#include <cstring>
 
 #include "common/array.h"
 
@@ -197,16 +196,14 @@ Optional<MainMenuExit> EpisodePasswordMenuController::exitPasswordGridToMenu() {
 // copying the recovered state and tail-branching to CommitSelectedRoom at 0x00008CD6.
 Optional<MainMenuExit> EpisodePasswordMenuController::validatePasswordEntry() {
 	// Ghidra 0x00009298-0x000092D1: map both grouped display rows back to 50 five-bit symbol indices.
-	Common::Array<uint8> symbols(static_cast<std::size_t>(kPasswordPositionCount * kPasswordRowCount));
+	Common::Array<uint8> symbols(static_cast<size_t>(kPasswordPositionCount * kPasswordRowCount));
 	int destinationIndex = 0;
 	for (int rowIndex = 0; rowIndex < kPasswordRowCount; rowIndex++) {
 		for (int symbolIndex = 0; symbolIndex < kPasswordPositionCount; symbolIndex++) {
 			int displayIndex = symbolIndex + symbolIndex / kSymbolsPerGroup;
-			char rowCharacter = _passwordDisplay.Rows()[static_cast<std::size_t>(rowIndex)][static_cast<
-				std::size_t>(
-				displayIndex)];
-			const char *found = std::strchr(kSymbols, rowCharacter);
-			symbols[static_cast<std::size_t>(destinationIndex++)] =
+			char rowCharacter = _passwordDisplay.Rows()[static_cast<size_t>(rowIndex)][static_cast<size_t>(displayIndex)];
+			const char *found = strchr(kSymbols, rowCharacter);
+			symbols[static_cast<size_t>(destinationIndex++)] =
 				static_cast<uint8>(found - kSymbols);
 		}
 	}
@@ -215,7 +212,7 @@ Optional<MainMenuExit> EpisodePasswordMenuController::validatePasswordEntry() {
 	Common::Array<uint8> packedPassword(kPackedPasswordByteCount);
 	int bitOffset = 0;
 	for (int index = 0; index < static_cast<int>(packedPassword.size()); index++) {
-		packedPassword[static_cast<std::size_t>(index)] =
+		packedPassword[static_cast<size_t>(index)] =
 			ReadPasswordByteFromSymbols(MakeSpan(symbols), bitOffset);
 	}
 
@@ -229,7 +226,7 @@ Optional<MainMenuExit> EpisodePasswordMenuController::validatePasswordEntry() {
 	for (int index = 0; index < kPasswordStateByteCount; index++) {
 		uint8 previousRollingByte = rollingByte;
 		rollingByte = static_cast<uint8>(((rollingByte << 1) | (carry ? 1 : 0)) ^
-										 packedPassword[static_cast<std::size_t>(index + 2)]);
+										 packedPassword[static_cast<size_t>(index + 2)]);
 		carry = (previousRollingByte & 0x80) != 0;
 	}
 

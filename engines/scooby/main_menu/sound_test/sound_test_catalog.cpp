@@ -31,7 +31,7 @@ const Common::Array<uint8> SoundTestCatalog::kAudioCommands{
 	0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7F};
 
 SoundTestCatalog::SoundTestCatalog(const ScoobyDooRom &rom) {
-	_names.resize(static_cast<std::size_t>(kNameCount));
+	_names.resize(static_cast<size_t>(kNameCount));
 	int offset = kNameTableOffset;
 	for (int index = 0; index < static_cast<int>(_names.size()); index++) {
 		int endOffset = offset;
@@ -40,7 +40,7 @@ SoundTestCatalog::SoundTestCatalog(const ScoobyDooRom &rom) {
 		}
 
 		Span<const uint8> nameBytes = rom.readBytes(offset, endOffset - offset);
-		_names[static_cast<std::size_t>(index)] = Common::String(
+		_names[static_cast<size_t>(index)] = Common::String(
 			reinterpret_cast<const char *>(nameBytes.data()), static_cast<uint32>(nameBytes.size()));
 		offset = endOffset + 1;
 	}

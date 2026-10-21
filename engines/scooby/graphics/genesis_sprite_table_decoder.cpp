@@ -26,7 +26,7 @@ namespace {
 const int kEntryByteCount = 8;
 const int kVisibleCoordinateBias = 128;
 
-inline uint16 ReadBigEndian16(Span<const uint8> entry, std::size_t offset) {
+inline uint16 ReadBigEndian16(Span<const uint8> entry, size_t offset) {
 	return static_cast<uint16>((uint16(entry[offset]) << 8) | uint16(
 																  entry[offset + 1]));
 }
@@ -38,8 +38,8 @@ Common::Array<SpriteInstance> decode(Span<const uint8> packedEntries) {
 	while (true) {
 		Span<const uint8> entry =
 			packedEntries.slice(
-				static_cast<std::size_t>(entryIndex) * static_cast<std::size_t>(kEntryByteCount),
-				static_cast<std::size_t>(kEntryByteCount));
+				static_cast<size_t>(entryIndex) * static_cast<size_t>(kEntryByteCount),
+				static_cast<size_t>(kEntryByteCount));
 		uint16 packedY = ReadBigEndian16(entry, 0);
 		uint16 sizeAndLink = ReadBigEndian16(entry, 2);
 		uint16 attributes = ReadBigEndian16(entry, 4);

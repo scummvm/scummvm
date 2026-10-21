@@ -135,16 +135,16 @@ bool RoomScriptCommand0EOr1BExecutor::placeActorDirectly(int actorSlot, int16 ta
 														 int16 animationOffset,
 														 int16 initialDelay,
 														 uint8 actorMask) {
-	_state.ActorXFixedCoordinates[static_cast<std::size_t>(actorSlot)] =
-		replaceIntegerCoordinate(_state.ActorXFixedCoordinates[static_cast<std::size_t>(actorSlot)], targetX);
-	_state.ActorYFixedCoordinates[static_cast<std::size_t>(actorSlot)] =
-		replaceIntegerCoordinate(_state.ActorYFixedCoordinates[static_cast<std::size_t>(actorSlot)], targetY);
+	_state.ActorXFixedCoordinates[static_cast<size_t>(actorSlot)] =
+		replaceIntegerCoordinate(_state.ActorXFixedCoordinates[static_cast<size_t>(actorSlot)], targetX);
+	_state.ActorYFixedCoordinates[static_cast<size_t>(actorSlot)] =
+		replaceIntegerCoordinate(_state.ActorYFixedCoordinates[static_cast<size_t>(actorSlot)], targetY);
 	if (animationOffset < 0) {
 		return true;
 	}
 
-	_state.ActorAnimationOffsets[static_cast<std::size_t>(actorSlot)] = animationOffset;
-	_state.ActorAnimationDelays[static_cast<std::size_t>(actorSlot)] = initialDelay;
+	_state.ActorAnimationOffsets[static_cast<size_t>(actorSlot)] = animationOffset;
+	_state.ActorAnimationDelays[static_cast<size_t>(actorSlot)] = initialDelay;
 	_state.ActorAnimationRestartFlags |= actorMask;
 	while (true) {
 		_updateActorAnimationFrames();

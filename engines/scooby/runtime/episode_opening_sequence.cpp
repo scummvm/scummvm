@@ -167,7 +167,7 @@ void EpisodeOpeningSequence::advanceVerticalPhase() {
 	}
 
 	_sequenceState.VerticalPhase =
-		kVerticalPhases[static_cast<std::size_t>(_state.ScrollAnimationPhaseOffset / static_cast<int>(sizeof(
+		kVerticalPhases[static_cast<size_t>(_state.ScrollAnimationPhaseOffset / static_cast<int>(sizeof(
 																						 int16)))];
 	_state.ScrollAnimationPhaseOffset += static_cast<int>(sizeof(int16));
 	if (_state.ScrollAnimationPhaseOffset ==
@@ -179,7 +179,7 @@ void EpisodeOpeningSequence::advanceVerticalPhase() {
 		return;
 	}
 
-	_state.ScrollAnimationDelay = kScrollDelays[static_cast<std::size_t>(_state.ScrollAnimationDelayCursor)];
+	_state.ScrollAnimationDelay = kScrollDelays[static_cast<size_t>(_state.ScrollAnimationDelayCursor)];
 	_state.ScrollAnimationDelayCursor++;
 	if (_state.ScrollAnimationDelayCursor == static_cast<int>(kScrollDelays.size())) {
 		_state.ScrollAnimationDelayCursor = 0;
@@ -258,12 +258,12 @@ void EpisodeOpeningSequence::writeEpisodeOpeningSpriteTable() {
 		static_cast<int16>(_sequenceState.VerticalPhase + 0x6F + _sequenceState.SpriteYBase),
 		kSpriteTileBankStart);
 	writeEpisodeOpeningSpriteGroup(
-		spriteSpan.slice(static_cast<std::size_t>(kSpriteGroupSize), kSpriteGroupSize),
+		spriteSpan.slice(static_cast<size_t>(kSpriteGroupSize), kSpriteGroupSize),
 		static_cast<int16>(_sequenceState.HorizontalOffset + 0x80),
 		static_cast<int16>(_sequenceState.SpriteYBase + 0x80),
 		kSpriteTileBankStart + kAnimationTileBankStride + _sequenceState.AnimationTileOffset);
 	writeEpisodeOpeningSpriteGroup(
-		spriteSpan.slice(static_cast<std::size_t>(kSpriteGroupSize) * 2, kSpriteGroupSize),
+		spriteSpan.slice(static_cast<size_t>(kSpriteGroupSize) * 2, kSpriteGroupSize),
 		static_cast<int16>(_sequenceState.HorizontalOffset + 0xCA),
 		static_cast<int16>(_sequenceState.SpriteYBase + 0x79),
 		kSpriteTileBankStart + kAnimationTileBankStride * (3 + _sequenceState.VerticalPhase));
@@ -287,7 +287,7 @@ void EpisodeOpeningSequence::writeEpisodeOpeningSpriteGroup(Span<SpriteInstance>
 		uint16 publishedX = packedX == 0
 								? static_cast<uint16>(0xFFFF)
 								: static_cast<uint16>(packedX);
-		destination[static_cast<std::size_t>(index)] = SpriteInstance(
+		destination[static_cast<size_t>(index)] = SpriteInstance(
 			(publishedX & 0x01FF) - kSpriteCoordinateBias,
 			(static_cast<uint16>(packedY) & 0x03FF) - kSpriteCoordinateBias, ((shape >> 10) & 0x03) + 1,
 			((shape >> 8) & 0x03) + 1, attributes & 0x07FF,

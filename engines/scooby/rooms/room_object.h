@@ -122,7 +122,7 @@ public:
 		case 0x18:
 			return static_cast<uint16>((Flags << 8) | static_cast<uint8>(FixedPositionIndex));
 		default:
-			return static_cast<uint16>(ScriptStateWords[static_cast<std::size_t>((byteOffset - 0x0C) /
+			return static_cast<uint16>(ScriptStateWords[static_cast<size_t>((byteOffset - 0x0C) /
 																				 static_cast<int>(sizeof(int16)))]);
 		}
 	}
@@ -177,7 +177,7 @@ public:
 			FixedPositionIndex = static_cast<int8>(value);
 			break;
 		default:
-			ScriptStateWords[static_cast<std::size_t>((byteOffset - 0x0C) / static_cast<int>(sizeof(
+			ScriptStateWords[static_cast<size_t>((byteOffset - 0x0C) / static_cast<int>(sizeof(
 																				int16)))] =
 				static_cast<int16>(value);
 			break;

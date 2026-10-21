@@ -41,7 +41,7 @@ public:
 	static const int Height = 224;
 
 	IndexedFrame(Graphics::Screen &screen) : _palette(64), _screen(screen) {
-		_pixels.resize(static_cast<std::size_t>(Width) * static_cast<std::size_t>(Height), 0);
+		_pixels.resize(static_cast<size_t>(Width) * static_cast<size_t>(Height), 0);
 		Common::fill(_palette.begin(), _palette.end(), PaletteColor());
 	}
 

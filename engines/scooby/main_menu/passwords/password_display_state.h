@@ -53,8 +53,8 @@ public:
 	// symbolIndex: zero-based symbol position selected by original register D4.
 	// symbol: alphabet character selected from the four-by-eight grid.
 	void insertSymbol(int16 rowIndex, int16 symbolIndex, char symbol) {
-		Common::String &row = _rows[static_cast<std::size_t>(rowIndex)];
-		row[static_cast<std::size_t>(symbolIndex + symbolIndex / kSymbolsPerGroup)] = symbol;
+		Common::String &row = _rows[static_cast<size_t>(rowIndex)];
+		row[static_cast<size_t>(symbolIndex + symbolIndex / kSymbolsPerGroup)] = symbol;
 	}
 
 private:

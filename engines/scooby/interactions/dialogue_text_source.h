@@ -64,7 +64,7 @@ public:
 		const Common::String &text = _text.value();
 		return index == static_cast<int>(text.size())
 				   ? static_cast<uint8>(0)
-				   : static_cast<uint8>(text[static_cast<std::size_t>(index)]);
+				   : static_cast<uint8>(text[static_cast<size_t>(index)]);
 	}
 
 private:

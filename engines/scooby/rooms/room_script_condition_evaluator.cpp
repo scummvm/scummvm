@@ -36,7 +36,7 @@ bool RoomScriptConditionEvaluator::evaluateRoomScriptCondition() {
 		int16 byteOffset = _rom.readInt16(commandOffset + 6);
 		int bitMask = 1 << (_rom.readUInt16(commandOffset + 8) & 0x07);
 		left = 0;
-		if ((_state.ProgressStateBytes[static_cast<std::size_t>(byteOffset)] & bitMask) != 0) {
+		if ((_state.ProgressStateBytes[static_cast<size_t>(byteOffset)] & bitMask) != 0) {
 			left = 1;
 		}
 	} else if ((flags & 0x02) != 0) {
@@ -67,7 +67,7 @@ bool RoomScriptConditionEvaluator::evaluateRoomScriptCondition() {
 		int16 byteOffset = _rom.readInt16(commandOffset + 10);
 		int bitMask = 1 << (_rom.readUInt16(commandOffset + 12) & 0x07);
 		right = 0;
-		if ((_state.ProgressStateBytes[static_cast<std::size_t>(byteOffset)] & bitMask) != 0) {
+		if ((_state.ProgressStateBytes[static_cast<size_t>(byteOffset)] & bitMask) != 0) {
 			right = 1;
 		}
 	} else if ((flags & 0x08) != 0) {

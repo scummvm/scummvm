@@ -70,6 +70,6 @@ RoomScriptCommand09Executor::RoomObjectByteLocation RoomScriptCommand09Executor:
 		byteOffset += RoomObject::kRecordSize;
 	}
 
-	return RoomObjectByteLocation(_state.RoomObjects[static_cast<std::size_t>(objectIndex)], byteOffset);
+	return RoomObjectByteLocation(_state.RoomObjects[static_cast<size_t>(objectIndex)], byteOffset);
 }
 } // namespace Scooby

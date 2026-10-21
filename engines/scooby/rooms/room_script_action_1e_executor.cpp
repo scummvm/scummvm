@@ -32,13 +32,13 @@
 namespace Scooby {
 namespace {
 uint16 ReadUInt16BigEndian(const Common::Array<uint8> &bytes, int offset) {
-	return static_cast<uint16>((bytes[static_cast<std::size_t>(offset)] << 8) |
-							   bytes[static_cast<std::size_t>(offset + 1)]);
+	return static_cast<uint16>((bytes[static_cast<size_t>(offset)] << 8) |
+							   bytes[static_cast<size_t>(offset + 1)]);
 }
 
 void WriteUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value) {
-	bytes[static_cast<std::size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<std::size_t>(offset + 1)] = static_cast<uint8>(value);
+	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
+	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
 } // namespace
 
@@ -64,7 +64,7 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 	Common::Array<uint8> packedRows =
 		decompressRingLz(_rom, kCellStreamOffset);
 	uint16 tileBaseAttribute = _state.RoomDynamicTileBaseAttribute;
-	for (std::size_t byteOffset = 0; byteOffset < packedRows.size(); byteOffset += sizeof(uint16)) {
+	for (size_t byteOffset = 0; byteOffset < packedRows.size(); byteOffset += sizeof(uint16)) {
 		uint16 cell = ReadUInt16BigEndian(packedRows, static_cast<int>(byteOffset));
 		WriteUInt16BigEndian(packedRows, static_cast<int>(byteOffset),
 							 static_cast<uint16>(cell + tileBaseAttribute));
@@ -76,7 +76,7 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 	int16 verticalScroll = 0;
 	int destinationRow = kInitialDestinationRow;
 	bool oddRetrace = false;
-	std::size_t sourceByteOffset = 0;
+	size_t sourceByteOffset = 0;
 	while (sourceByteOffset < packedRows.size()) {
 		_state.ForegroundVerticalScroll = verticalScroll;
 		_updateActorAnimationFrames();
@@ -97,9 +97,9 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 
 		destinationRow = (destinationRow + 1) & kLayerRowMask;
 		_scene.loadLayerRows(
-			MakeSpan(packedRows).slice(sourceByteOffset, static_cast<std::size_t>(kRowByteCount)),
+			MakeSpan(packedRows).slice(sourceByteOffset, static_cast<size_t>(kRowByteCount)),
 			TileLayer::Foreground, 0, destinationRow, kCellsPerRow, 1);
-		sourceByteOffset += static_cast<std::size_t>(kRowByteCount);
+		sourceByteOffset += static_cast<size_t>(kRowByteCount);
 	}
 
 	// Ghidra 0x00004250-0x00004263: set the inclusive 300-retrace countdown, update animations before every

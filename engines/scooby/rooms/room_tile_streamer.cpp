@@ -249,8 +249,8 @@ void RoomTileStreamer::publishViewport(Span<const uint8> packedCells, TileLayer 
 									   int destinationStartRow) {
 	for (int row = 0; row < kViewportHeightTiles; ++row) {
 		_scene.loadLayerRows(
-			packedCells.slice(static_cast<std::size_t>(sourceByteOffset + row * sourceRowByteStride),
-							  static_cast<std::size_t>(kViewportWidthTiles *
+			packedCells.slice(static_cast<size_t>(sourceByteOffset + row * sourceRowByteStride),
+							  static_cast<size_t>(kViewportWidthTiles *
 													   static_cast<int>(sizeof(uint16)))),
 			layer, destinationColumn, (destinationStartRow + row) & (kNameTableRowCount - 1),
 			kViewportWidthTiles,
@@ -311,7 +311,7 @@ void RoomTileStreamer::publishMapCell(Span<const uint8> packedCells, TileLayer l
 										  static_cast<int>(sizeof(uint16)));
 	Span<const uint8> sourceCell =
 		static_cast<uint32>(sourceByteOffset) <= boundary
-			? packedCells.slice(static_cast<std::size_t>(sourceByteOffset), sizeof(uint16))
+			? packedCells.slice(static_cast<size_t>(sourceByteOffset), sizeof(uint16))
 			: MakeSpan(kEmptyPackedCell);
 	_scene.loadLayerRows(sourceCell, layer, destinationColumn, destinationRow, 1, 1);
 }

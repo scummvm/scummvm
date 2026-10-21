@@ -50,7 +50,7 @@ public:
 	// episodeIndex: managed equivalent of original episode word 0xFF06AA.
 	// Returns all labels for the selected episode's room-object records.
 	Span<const Common::String> getLabels(int episodeIndex) const {
-		return MakeSpan(_episodeObjectLabels[static_cast<std::size_t>(episodeIndex)]);
+		return MakeSpan(_episodeObjectLabels[static_cast<size_t>(episodeIndex)]);
 	}
 
 private:

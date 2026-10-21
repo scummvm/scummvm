@@ -148,7 +148,7 @@ Optional<SessionExit> RoomScriptCommandExecutor::execute(uint16 command, int mod
 	if (command != 1 && command != 3 && command != 2 && _state.AutomaticInteractionFlags & 0x10 == 0) {
 		debug("executing command: %x, mode: %d", command, mode);
 	}
-	(*_handlers[static_cast<std::size_t>(command)])(mode);
+	(*_handlers[static_cast<size_t>(command)])(mode);
 	return _requestedSessionExit;
 }
 

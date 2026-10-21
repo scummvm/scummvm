@@ -39,7 +39,7 @@ bool ReadNextPasswordBit(Span<const uint8> symbols, int &bitOffset) {
 	// Ghidra 0x0000939C-0x000093A1: advance the cursor and return the shifted bit through managed state.
 	bitOffset++;
 	return symbolIndex < static_cast<int>(symbols.size()) &&
-		   (symbols[static_cast<std::size_t>(symbolIndex)] & (1 << bitIndex)) != 0;
+		   (symbols[static_cast<size_t>(symbolIndex)] & (1 << bitIndex)) != 0;
 }
 } // namespace
 
@@ -50,7 +50,7 @@ void DecodePasswordSymbolXorChain(Span<uint8> packedPassword) {
 
 	// Ghidra 0x00008784-0x0000879D: invert all 29 chained state bytes using encoded predecessors.
 	for (int index = 0; index < kPasswordStateByteCount; index++) {
-		std::size_t packedIndex = static_cast<std::size_t>(index + 2);
+		size_t packedIndex = static_cast<size_t>(index + 2);
 		uint8 encodedByte = packedPassword[packedIndex];
 		packedPassword[packedIndex] = static_cast<uint8>(encodedByte ^ previousEncodedByte);
 		previousEncodedByte = encodedByte;

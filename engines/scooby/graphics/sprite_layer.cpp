@@ -29,9 +29,9 @@ namespace Scooby {
 
 SpriteLayer::SpriteLayer()
 	: _highPriority(
-		  static_cast<std::size_t>(IndexedFrame::Width) * static_cast<std::size_t>(IndexedFrame::Height),
+		  static_cast<size_t>(IndexedFrame::Width) * static_cast<size_t>(IndexedFrame::Height),
 		  false),
-	  _pixels(static_cast<std::size_t>(IndexedFrame::Width) * static_cast<std::size_t>(IndexedFrame::Height), 0) {
+	  _pixels(static_cast<size_t>(IndexedFrame::Width) * static_cast<size_t>(IndexedFrame::Height), 0) {
 }
 
 void SpriteLayer::clear() { _sprites.clear(); }
@@ -47,17 +47,17 @@ void SpriteLayer::compose(Span<const uint8> tilePixels, int contentWidth, int ve
 	Common::fill(_pixels.begin(), _pixels.end(), 0);
 	Common::fill(_highPriority.begin(), _highPriority.end(), false);
 	int outputLeft = (IndexedFrame::Width - contentWidth) / 2;
-	for (std::size_t i = 0; i < _sprites.size(); ++i) {
+	for (size_t i = 0; i < _sprites.size(); ++i) {
 		composeSprite(tilePixels, contentWidth, outputLeft, _sprites[i], verticalOffset);
 	}
 
-	for (std::size_t i = 0; i < dynamicSprites.size(); ++i) {
+	for (size_t i = 0; i < dynamicSprites.size(); ++i) {
 		composeSprite(tilePixels, contentWidth, outputLeft, dynamicSprites[i], 0);
 	}
 }
 
 void SpriteLayer::drawPass(IndexedFrame &frame, bool highPriority) {
-	for (std::size_t index = 0; index < _pixels.size(); ++index) {
+	for (size_t index = 0; index < _pixels.size(); ++index) {
 		if (_pixels[index] != 0 && _highPriority[index] == highPriority) {
 			frame._pixels[index] = _pixels[index];
 		}
@@ -80,9 +80,9 @@ void SpriteLayer::composeSprite(Span<const uint8> tilePixels, int contentWidth, 
 				continue;
 			}
 
-			std::size_t targetOffset =
-				static_cast<std::size_t>(targetY) * static_cast<std::size_t>(IndexedFrame::Width) +
-				static_cast<std::size_t>(outputLeft) + static_cast<std::size_t>(logicalX);
+			size_t targetOffset =
+				static_cast<size_t>(targetY) * static_cast<size_t>(IndexedFrame::Width) +
+				static_cast<size_t>(outputLeft) + static_cast<size_t>(logicalX);
 			if (_pixels[targetOffset] != 0) {
 				continue;
 			}
@@ -96,7 +96,7 @@ void SpriteLayer::composeSprite(Span<const uint8> tilePixels, int contentWidth, 
 				continue;
 			}
 
-			uint8 color = tilePixels[static_cast<std::size_t>(tilePixelOffset)];
+			uint8 color = tilePixels[static_cast<size_t>(tilePixelOffset)];
 			if (color == 0) {
 				continue;
 			}

@@ -56,12 +56,12 @@ void RoomScriptCoordinateSpriteExecutor::scriptAction18ShowObjectAltSprite() {
 	// Ghidra 0x000042E8-0x00004305: replace both 0x40-word VRAM writes with one exact eight-tile logical
 	// publication. The original rewinds A0 after the first write, so indices 0x7F8-0x7FF contain two copies
 	// of the same alternate four-tile frame.
-	Common::Array<uint8> packedTiles(static_cast<std::size_t>(kPatternFrameByteCount) * 2);
+	Common::Array<uint8> packedTiles(static_cast<size_t>(kPatternFrameByteCount) * 2);
 	Span<const uint8> patternFrame =
 		_rom.readBytes(kAlternatePatternFrameOffset, kPatternFrameByteCount);
-	for (std::size_t i = 0; i < patternFrame.size(); ++i) {
+	for (size_t i = 0; i < patternFrame.size(); ++i) {
 		packedTiles[i] = patternFrame[i];
-		packedTiles[i + static_cast<std::size_t>(kPatternFrameByteCount)] = patternFrame[i];
+		packedTiles[i + static_cast<size_t>(kPatternFrameByteCount)] = patternFrame[i];
 	}
 	_scene.loadTilesAt(MakeSpan(packedTiles), kPatternTileIndex);
 

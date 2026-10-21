@@ -45,12 +45,12 @@ void RoomScriptCommand21Executor::executeRoomScriptCommand21(int mode) {
 
 		// Ghidra 0x0000496E-0x000049A3: install the inline stream, seed both cadence arrays from the command
 		// word's low byte, and restart traversal at byte offset zero for the exact selected slot.
-		_state.ActorPathStreamOffsets[static_cast<std::size_t>(actorSlot)] = commandOffset + 8;
+		_state.ActorPathStreamOffsets[static_cast<size_t>(actorSlot)] = commandOffset + 8;
 		uint8 cadence = static_cast<uint8>(_rom.readUInt16(commandOffset + 6));
-		_state.ActorPathCadenceCountdowns[static_cast<std::size_t>(actorSlot)] = static_cast<int8>(
+		_state.ActorPathCadenceCountdowns[static_cast<size_t>(actorSlot)] = static_cast<int8>(
 			cadence);
-		_state.ActorPathCadenceReloads[static_cast<std::size_t>(actorSlot)] = cadence;
-		_state.ActorPathRecordOffsets[static_cast<std::size_t>(actorSlot)] = 0;
+		_state.ActorPathCadenceReloads[static_cast<size_t>(actorSlot)] = cadence;
+		_state.ActorPathRecordOffsets[static_cast<size_t>(actorSlot)] = 0;
 
 		// Ghidra 0x000049A4-0x000049AF: clear a stale one-shot loop exit before setting path traversal.
 		uint8 actorMask = static_cast<uint8>(1 << (actorSlot & 0x07));

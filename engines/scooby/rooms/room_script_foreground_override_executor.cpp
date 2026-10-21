@@ -33,13 +33,13 @@
 namespace Scooby {
 namespace {
 uint16 ReadUInt16BigEndian(const Common::Array<uint8> &bytes, int offset) {
-	return static_cast<uint16>((bytes[static_cast<std::size_t>(offset)] << 8) |
-							   bytes[static_cast<std::size_t>(offset + 1)]);
+	return static_cast<uint16>((bytes[static_cast<size_t>(offset)] << 8) |
+							   bytes[static_cast<size_t>(offset + 1)]);
 }
 
 void WriteUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value) {
-	bytes[static_cast<std::size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<std::size_t>(offset + 1)] = static_cast<uint8>(value);
+	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
+	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
 } // namespace
 
@@ -75,7 +75,7 @@ void RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn() { //
 		_rom.readBytes(kForegroundMapOffset, kForegroundMapColumnCount * kForegroundMapRowCount *
 												 static_cast<int>(sizeof(uint16)))
 			.toArray();
-	for (std::size_t byteOffset = 0; byteOffset < packedForeground.size(); byteOffset += sizeof(uint16)) {
+	for (size_t byteOffset = 0; byteOffset < packedForeground.size(); byteOffset += sizeof(uint16)) {
 		WriteUInt16BigEndian(
 			packedForeground, static_cast<int>(byteOffset),
 			static_cast<uint16>(ReadUInt16BigEndian(packedForeground, static_cast<int>(byteOffset)) +

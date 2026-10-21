@@ -26,7 +26,7 @@ namespace Scooby {
 RoomObjectSelectionCatalog::RoomObjectSelectionCatalog(const ScoobyDooRom &rom)
 	: _episodeObjectLabels(kEpisodeCount) {
 	for (int episodeIndex = 0; episodeIndex < static_cast<int>(_episodeObjectLabels.size()); episodeIndex++) {
-		_episodeObjectLabels[static_cast<std::size_t>(episodeIndex)] = decodeEpisodeObjectLabels(rom, episodeIndex);
+		_episodeObjectLabels[static_cast<size_t>(episodeIndex)] = decodeEpisodeObjectLabels(rom, episodeIndex);
 	}
 }
 
@@ -49,13 +49,13 @@ Common::Array<Common::String> RoomObjectSelectionCatalog::decodeEpisodeObjectLab
 		descriptorOffset + kDescriptorObjectLabelBaseField));
 	int labelTableOffset = static_cast<int>(rom.readUInt32(
 		descriptorOffset + kDescriptorObjectLabelTableField));
-	Common::Array<Common::String> labels(static_cast<std::size_t>(objectCount));
+	Common::Array<Common::String> labels(static_cast<size_t>(objectCount));
 	for (int objectIndex = 0; objectIndex < static_cast<int>(labels.size()); objectIndex++) {
 		int recordOffset = labelTableOffset + objectIndex * kObjectLabelRecordSize;
 		int labelOffset =
 			labelBaseOffset + static_cast<int>(rom.readUInt32(
 								  recordOffset + static_cast<int>(sizeof(uint32))));
-		labels[static_cast<std::size_t>(objectIndex)] = rom.readNullTerminatedAscii(labelOffset);
+		labels[static_cast<size_t>(objectIndex)] = rom.readNullTerminatedAscii(labelOffset);
 	}
 
 	return labels;

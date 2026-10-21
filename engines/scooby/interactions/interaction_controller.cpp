@@ -448,7 +448,7 @@ Optional<SessionExit> InteractionController::processAutomaticInteractions() {
 		static_cast<int>(_rom.readUInt32(descriptorOffset + kEpisodeInteractionRecordTableField));
 	int interactionScriptBaseOffset =
 		static_cast<int>(_rom.readUInt32(descriptorOffset + kEpisodeInteractionScriptBaseField));
-	for (std::size_t objectIndex = 0; objectIndex + 1 < _state.RoomObjects.size(); objectIndex++) {
+	for (size_t objectIndex = 0; objectIndex + 1 < _state.RoomObjects.size(); objectIndex++) {
 		RoomObject &roomObject = _state.RoomObjects[objectIndex];
 
 		// Ghidra 0x0000B006-0x0000B023: every rejected flag and room branch still advances both native

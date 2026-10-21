@@ -27,26 +27,26 @@ namespace Scooby {
 Common::Array<uint8> decompressByteRle(const ScoobyDooRom &rom, int sourceOffset) {
 	Common::Array<uint8> output(rom.readUInt16(sourceOffset + static_cast<int>(sizeof(uint16))));
 	sourceOffset += static_cast<int>(sizeof(uint32));
-	std::size_t outputOffset = 0;
+	size_t outputOffset = 0;
 	while (outputOffset < output.size()) {
 		uint8 control = rom.readByte(sourceOffset++);
 		if (static_cast<int8>(control) >= 0) {
 			int literalCount = static_cast<int>(control) + 1;
 			Span<const uint8> literals = rom.readBytes(sourceOffset, literalCount);
 			for (int i = 0; i < literalCount; ++i) {
-				output[outputOffset + static_cast<std::size_t>(i)] = literals[static_cast<std::size_t>(i)];
+				output[outputOffset + static_cast<size_t>(i)] = literals[static_cast<size_t>(i)];
 			}
 			sourceOffset += literalCount;
-			outputOffset += static_cast<std::size_t>(literalCount);
+			outputOffset += static_cast<size_t>(literalCount);
 			continue;
 		}
 
 		int repeatCount = 0x101 - static_cast<int>(control);
 		uint8 repeatedByte = rom.readByte(sourceOffset++);
 		for (int i = 0; i < repeatCount; ++i) {
-			output[outputOffset + static_cast<std::size_t>(i)] = repeatedByte;
+			output[outputOffset + static_cast<size_t>(i)] = repeatedByte;
 		}
-		outputOffset += static_cast<std::size_t>(repeatCount);
+		outputOffset += static_cast<size_t>(repeatCount);
 	}
 
 	return output;

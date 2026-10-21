@@ -74,7 +74,7 @@ void RoomActorAnimator::coupleTransitionAnimation() {
 
 	_state.ActorAnimationDelays[2] = _state.ActorAnimationDelays[0];
 	_state.ActorAnimationOffsets[2] =
-		kTransitionAnimationByOffset[static_cast<std::size_t>(static_cast<uint16>(_state.ActorAnimationOffsets[0]))];
+		kTransitionAnimationByOffset[static_cast<size_t>(static_cast<uint16>(_state.ActorAnimationOffsets[0]))];
 	_state.ActorAnimationRestartFlags |= 0x04;
 }
 

@@ -22,7 +22,7 @@
 #ifndef SCOOBY_OPTIONAL_H
 #define SCOOBY_OPTIONAL_H
 
-// A tiny std::optional<T> replacement for C++11 (std::optional is C++17).
+// A tiny replacement for the standard library optional<T> for C++11 (it is C++17).
 // Used wherever the original C# source declares a nullable value type
 // (e.g. "int? offset"). Intentionally minimal: this project only ever
 // stores small, trivially-copyable value types (ints, enums) in it.

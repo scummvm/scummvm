@@ -103,20 +103,20 @@ void RoomVBlankHandler::rotateAnimatedPaletteRanges() {
 
 		// Ghidra 0x0000A7DE-0x0000A7F1: decrement with word wrapping, skip nonnegative results, and
 		// reload the matching interval only after the live countdown becomes negative.
-		_state.AnimatedPaletteRangeCountdowns[static_cast<std::size_t>(rangeIndex)]--;
-		if (_state.AnimatedPaletteRangeCountdowns[static_cast<std::size_t>(rangeIndex)] >= 0) {
+		_state.AnimatedPaletteRangeCountdowns[static_cast<size_t>(rangeIndex)]--;
+		if (_state.AnimatedPaletteRangeCountdowns[static_cast<size_t>(rangeIndex)] >= 0) {
 			continue;
 		}
 
-		_state.AnimatedPaletteRangeCountdowns[static_cast<std::size_t>(rangeIndex)] =
-			_state.AnimatedPaletteRangeIntervals[static_cast<std::size_t>(rangeIndex)];
+		_state.AnimatedPaletteRangeCountdowns[static_cast<size_t>(rangeIndex)] =
+			_state.AnimatedPaletteRangeIntervals[static_cast<size_t>(rangeIndex)];
 
 		// Ghidra 0x0000A7F2-0x0000A81F: rotate the inclusive unsigned start/end range left by one color.
 		// TileScene mutation replaces both the Work RAM copy loop and its exact-range CRAM publication.
-		uint16 startIndex = _state.AnimatedPaletteRangeStartIndices[static_cast<std::size_t>(
+		uint16 startIndex = _state.AnimatedPaletteRangeStartIndices[static_cast<size_t>(
 			rangeIndex)];
 		uint16 colorCount = static_cast<uint16>(
-			_state.AnimatedPaletteRangeEndIndices[static_cast<std::size_t>(rangeIndex)] - startIndex + 1);
+			_state.AnimatedPaletteRangeEndIndices[static_cast<size_t>(rangeIndex)] - startIndex + 1);
 		_scene.rotatePaletteRangeLeft(startIndex, colorCount);
 	}
 
@@ -185,7 +185,7 @@ void RoomVBlankHandler::publishActionPromptCells(int16 promptIndex, int template
 			uint16 packedCell = static_cast<uint16>(
 				_rom.readUInt16(sourceOffset + column * static_cast<int>(sizeof(uint16))) +
 				_state.ActionPromptTileAttributes);
-			cells[static_cast<std::size_t>(column)] = decodeTileCell(
+			cells[static_cast<size_t>(column)] = decodeTileCell(
 				packedCell);
 		}
 
@@ -201,7 +201,7 @@ void RoomVBlankHandler::updateRoomObjectAnimations() {
 	int16 roomIdSnapshot = _state.RoomId;
 	Common::Array<RoomObject> &roomObjects = _state.RoomObjects;
 
-	for (std::size_t objectIndex = 0; objectIndex < roomObjects.size(); objectIndex++) {
+	for (size_t objectIndex = 0; objectIndex < roomObjects.size(); objectIndex++) {
 		RoomObject &roomObject = roomObjects[objectIndex];
 
 		// Ghidra 0x00007C16-0x00007C31: leave a previously negative countdown and bit two unchanged.

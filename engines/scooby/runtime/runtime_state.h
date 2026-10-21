@@ -52,7 +52,7 @@
 // over as that file is ported. RoomSceneData? -> Common::ScopedPtr (single
 // owner, nullable, replaced wholesale by LoadRoomScene) per this project's
 // no-raw-owning-pointers rule; every other C# nullable value type (T?)
-// becomes Optional<T> (C++11 has no std::optional).
+// becomes Optional<T> (C++11 has no standard optional).
 
 namespace Scooby {
 

@@ -83,7 +83,7 @@ void BuildPasswordChecksumAndPrefixXor(Span<uint8> packedPassword) {
 
 	// Ghidra 0x00008756-0x0000875F: select the 29-byte state range and its inclusive DBF bound.
 	// Ghidra 0x00008760-0x00008769: XOR every source byte with the preceding encoded value in place.
-	for (std::size_t index = 2; index < packedPassword.size(); index++) {
+	for (size_t index = 2; index < packedPassword.size(); index++) {
 		prefixXor ^= packedPassword[index];
 		packedPassword[index] = prefixXor;
 	}
@@ -100,7 +100,7 @@ Common::Array<Common::String> Build(int16 roomId, Span<const uint8> passwordStat
 	for (int index = 0; index < kPasswordStateByteCount; index++) {
 		uint8 previousRollingByte = rollingByte;
 		rollingByte = static_cast<uint8>(((rollingByte << 1) | (carry ? 1 : 0)) ^
-										 passwordStateBytes[static_cast<std::size_t>(index)]);
+										 passwordStateBytes[static_cast<size_t>(index)]);
 		carry = (previousRollingByte & 0x80) != 0;
 	}
 
@@ -115,7 +115,7 @@ Common::Array<Common::String> Build(int16 roomId, Span<const uint8> passwordStat
 	int availableBitCount = 0;
 	Common::Array<Common::String> rows(kRowCount);
 	for (int rowIndex = 0; rowIndex < kRowCount; rowIndex++) {
-		Common::String characters(static_cast<std::size_t>(kCharactersPerRow), ' ');
+		Common::String characters(static_cast<size_t>(kCharactersPerRow), ' ');
 		for (int symbolIndex = 0; symbolIndex < kSymbolsPerRow; symbolIndex++) {
 			uint16 symbolAccumulator = 0;
 
@@ -132,11 +132,11 @@ Common::Array<Common::String> Build(int16 roomId, Span<const uint8> passwordStat
 
 				// Ghidra 0x000086C4-0x000086CE: read the next big-endian word and derive the remaining count.
 				// Original scratch byte 0xFF003D supplies the two zero bits beyond the 31-byte payload.
-				sourceBits = static_cast<uint16>(packedBytes[static_cast<std::size_t>(
+				sourceBits = static_cast<uint16>(packedBytes[static_cast<size_t>(
 													 packedSourceOffset)]
 												 << 8);
 				if (packedSourceOffset + 1 < static_cast<int>(packedBytes.size())) {
-					sourceBits |= packedBytes[static_cast<std::size_t>(packedSourceOffset + 1)];
+					sourceBits |= packedBytes[static_cast<size_t>(packedSourceOffset + 1)];
 				}
 
 				packedSourceOffset += static_cast<int>(sizeof(uint16));
@@ -147,14 +147,14 @@ Common::Array<Common::String> Build(int16 roomId, Span<const uint8> passwordStat
 			}
 
 			int characterIndex = symbolIndex + symbolIndex / kSymbolsPerGroup;
-			characters[static_cast<std::size_t>(characterIndex)] =
+			characters[static_cast<size_t>(characterIndex)] =
 				kSymbols[symbolAccumulator];
 			if (symbolIndex % kSymbolsPerGroup == kSymbolsPerGroup - 1) {
-				characters[static_cast<std::size_t>(characterIndex + 1)] = ' ';
+				characters[static_cast<size_t>(characterIndex + 1)] = ' ';
 			}
 		}
 
-		rows[static_cast<std::size_t>(rowIndex)] = characters;
+		rows[static_cast<size_t>(rowIndex)] = characters;
 	}
 
 	for (int i =0; i < kRowCount; i++) {

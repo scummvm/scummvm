@@ -58,7 +58,7 @@ void RoomActorInitializer::initializeRoomActors() {
 	uint8 compactFrameFlags = 0x03;
 	int actorSlot = kDynamicActorFirstSlot;
 
-	for (std::size_t objectIndex = 0; objectIndex < _state.RoomObjects.size(); ++objectIndex) {
+	for (size_t objectIndex = 0; objectIndex < _state.RoomObjects.size(); ++objectIndex) {
 		RoomObject &roomObject = _state.RoomObjects[objectIndex];
 
 		// Ghidra 0x00007B42-0x00007B7B: only fixed-position objects enter activation, but every such object is

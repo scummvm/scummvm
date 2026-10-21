@@ -91,7 +91,7 @@ Common::Array<uint8> decompressRingLz(const ScoobyDooRom &rom, int sourceOffset)
 
 	auto writeByte = [&](uint8 value) {
 		output.push_back(value);
-		window[static_cast<std::size_t>(writeOffset)] = value;
+		window[static_cast<size_t>(writeOffset)] = value;
 		writeOffset = (writeOffset + 1) & (kWindowSize - 1);
 	};
 
@@ -108,7 +108,7 @@ Common::Array<uint8> decompressRingLz(const ScoobyDooRom &rom, int sourceOffset)
 
 		int copyLength = reader.read(4) + 2;
 		for (int index = 0; index < copyLength; ++index) {
-			writeByte(window[static_cast<std::size_t>((copyOffset + index) & (kWindowSize - 1))]);
+			writeByte(window[static_cast<size_t>((copyOffset + index) & (kWindowSize - 1))]);
 		}
 	}
 }

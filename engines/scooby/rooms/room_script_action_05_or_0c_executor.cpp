@@ -92,28 +92,28 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 		// hardware plane clears.
 		_state.CameraX = 0;
 		_state.CameraY = 0;
-		Common::Array<uint8> foregroundPlane(static_cast<std::size_t>(kPlaneColumns) *
-											 static_cast<std::size_t>(kPlaneRows) * sizeof(uint16));
+		Common::Array<uint8> foregroundPlane(static_cast<size_t>(kPlaneColumns) *
+											 static_cast<size_t>(kPlaneRows) * sizeof(uint16));
 		Common::Array<uint8> backgroundPlane(foregroundPlane.size());
 
 		// Ghidra 0x00004652-0x0000468D: copy the 64x19 foreground map into rows 1-19. For each of 19
 		// background rows, preserve both original writes by copying its 32-cell source into each half.
 		Span<const uint8> foregroundMap = _rom.readBytes(
 			kForegroundMapOffset, kPlaneColumns * kForegroundMapRows * static_cast<int>(sizeof(uint16)));
-		for (std::size_t i = 0; i < foregroundMap.size(); ++i) {
-			foregroundPlane[static_cast<std::size_t>(kPlaneRowBytes) + i] = foregroundMap[i];
+		for (size_t i = 0; i < foregroundMap.size(); ++i) {
+			foregroundPlane[static_cast<size_t>(kPlaneRowBytes) + i] = foregroundMap[i];
 		}
 
 		Span<const uint8> backgroundHalfMap =
 			_rom.readBytes(kBackgroundHalfMapOffset, kBackgroundHalfRowBytes * kBackgroundMapRows);
 		for (int row = 0; row < kBackgroundMapRows; row++) {
 			Span<const uint8> sourceRow =
-				backgroundHalfMap.slice(static_cast<std::size_t>(row * kBackgroundHalfRowBytes),
-										static_cast<std::size_t>(kBackgroundHalfRowBytes));
-			std::size_t destinationOffset = static_cast<std::size_t>((row + 1) * kPlaneRowBytes);
-			for (std::size_t i = 0; i < sourceRow.size(); ++i) {
+				backgroundHalfMap.slice(static_cast<size_t>(row * kBackgroundHalfRowBytes),
+										static_cast<size_t>(kBackgroundHalfRowBytes));
+			size_t destinationOffset = static_cast<size_t>((row + 1) * kPlaneRowBytes);
+			for (size_t i = 0; i < sourceRow.size(); ++i) {
 				backgroundPlane[destinationOffset + i] = sourceRow[i];
-				backgroundPlane[destinationOffset + static_cast<std::size_t>(kBackgroundHalfRowBytes) + i] =
+				backgroundPlane[destinationOffset + static_cast<size_t>(kBackgroundHalfRowBytes) + i] =
 					sourceRow[i];
 			}
 		}
@@ -153,8 +153,8 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 			_scene.replacePaletteRange(MakeSpan(animatedPalette), 0);
 			PaletteColor firstAnimatedColor = animatedPalette[40];
 			for (int color = 40; color < 47; color++) {
-				animatedPalette[static_cast<std::size_t>(color)] =
-					animatedPalette[static_cast<std::size_t>(color + 1)];
+				animatedPalette[static_cast<size_t>(color)] =
+					animatedPalette[static_cast<size_t>(color + 1)];
 			}
 
 			animatedPalette[47] = firstAnimatedColor;

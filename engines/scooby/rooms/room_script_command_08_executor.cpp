@@ -38,7 +38,7 @@ void RoomScriptCommand08Executor::scriptCommand08SetVariable(int mode) {
 		if ((flags & 0x04) != 0) {
 			int16 sourceByteOffset = _rom.readInt16(commandOffset + 6);
 			int sourceBitMask = 1 << (_rom.readUInt16(commandOffset + 8) & 0x07);
-			sourceValue = (_state.ProgressStateBytes[static_cast<std::size_t>(sourceByteOffset)] &
+			sourceValue = (_state.ProgressStateBytes[static_cast<size_t>(sourceByteOffset)] &
 						   sourceBitMask) != 0
 							  ? static_cast<uint16>(1)
 							  : static_cast<uint16>(0);
@@ -67,10 +67,10 @@ void RoomScriptCommand08Executor::scriptCommand08SetVariable(int mode) {
 				// independent nonzero set and zero clear outcomes with bit-number modulo eight.
 				uint8 destinationBitMask = static_cast<uint8>(1 << (destinationBit & 0x07));
 				if (sourceValue != 0) {
-					_state.ProgressStateBytes[static_cast<std::size_t>(destinationByteOffset)] |=
+					_state.ProgressStateBytes[static_cast<size_t>(destinationByteOffset)] |=
 						destinationBitMask;
 				} else {
-					_state.ProgressStateBytes[static_cast<std::size_t>(destinationByteOffset)] &=
+					_state.ProgressStateBytes[static_cast<size_t>(destinationByteOffset)] &=
 						static_cast<uint8>(~destinationBitMask);
 				}
 			} else {
@@ -119,7 +119,7 @@ RoomScriptCommand08Executor::RoomObjectWordAddress RoomScriptCommand08Executor::
 		static_cast<uint16>(fieldOffset + (objectId - 3) * RoomObject::kRecordSize);
 	tableByteOffset &= 0xFFFE;
 	return RoomObjectWordAddress(
-		_state.RoomObjects[static_cast<std::size_t>(tableByteOffset / RoomObject::kRecordSize)],
+		_state.RoomObjects[static_cast<size_t>(tableByteOffset / RoomObject::kRecordSize)],
 		tableByteOffset % RoomObject::kRecordSize);
 }
 } // namespace Scooby

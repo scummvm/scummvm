@@ -178,8 +178,8 @@ int16 RoomScriptAction27Executor::getIntegerWord(int coordinate) {
 
 void RoomScriptAction27Executor::setIntegerWord(Common::Array<int32> &coordinates, int actorSlot,
 												int16 integer) {
-	coordinates[static_cast<std::size_t>(actorSlot)] =
-		(coordinates[static_cast<std::size_t>(actorSlot)] & 0x0000FFFF) | (static_cast<int32>(integer) << 16);
+	coordinates[static_cast<size_t>(actorSlot)] =
+		(coordinates[static_cast<size_t>(actorSlot)] & 0x0000FFFF) | (static_cast<int32>(integer) << 16);
 }
 
 void RoomScriptAction27Executor::setPairedActorX(int16 integer) {

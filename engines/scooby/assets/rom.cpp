@@ -18,13 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "rom.h"
 
 #include "common/file.h"
-
-#include <cstdio>
+#include "common/util.h"
 
 #include "scooby/common/make_unique.h"
 
@@ -35,7 +32,7 @@ const long kExpectedLength = 0x200000;
 } // namespace
 
 ScoobyDooRom::ScoobyDooRom(Common::Array<uint8> bytes)
-	: _bytes(std::move(bytes)) {
+	: _bytes(Common::move(bytes)) {
 }
 
 Common::ScopedPtr<ScoobyDooRom> ScoobyDooRom::load(const Common::Path &path, Common::String &outError) {
@@ -44,21 +41,12 @@ Common::ScopedPtr<ScoobyDooRom> ScoobyDooRom::load(const Common::Path &path, Com
 		outError = "Could not open the original ROM";
 		return nullptr;
 	}
-	// FILE *file = std::fopen(path.c_str(), "rb");
-	// if (file == nullptr) {
-	// 	outError = "Could not open the original ROM: unable to open '" + path + "'.";
-	// 	return nullptr;
-	// }
 	long fileLength = fd.size();
-
-	// std::fseek(file, 0, SEEK_END);
-	// long fileLength = std::ftell(file);
-	// std::fseek(file, 0, SEEK_SET);
 
 	Common::Array<uint8> bytes;
 	if (fileLength > 0) {
-		bytes.resize(static_cast<std::size_t>(fileLength));
-		std::size_t readCount = fd.read(bytes.data(), fileLength);
+		bytes.resize(static_cast<size_t>(fileLength));
+		size_t readCount = fd.read(bytes.data(), fileLength);
 		if (readCount != bytes.size()) {
 			fd.close();
 			outError = "Could not open the original ROM: short read";
@@ -68,18 +56,15 @@ Common::ScopedPtr<ScoobyDooRom> ScoobyDooRom::load(const Common::Path &path, Com
 	fd.close();
 
 	if (static_cast<long>(bytes.size()) != kExpectedLength) {
-		char message[256];
-		std::snprintf(message, sizeof(message),
-					  "Unsupported ROM length %zu; the analyzed US image is %ld bytes.",
-					  static_cast<std::size_t>(bytes.size()), kExpectedLength);
-		outError = message;
+		outError = Common::String::format("Unsupported ROM length %u; the analyzed US image is %ld bytes.",
+										  bytes.size(), kExpectedLength);
 		return nullptr;
 	}
 
 	// ScoobyDooRom's constructor is private (this is its only caller), so it
 	// is constructed directly here rather than through MakeUnique,
 	// which as a free function has no access to a private constructor.
-	return Common::ScopedPtr<ScoobyDooRom>(new ScoobyDooRom(std::move(bytes)));
+	return Common::ScopedPtr<ScoobyDooRom>(new ScoobyDooRom(Common::move(bytes)));
 }
 
 } // namespace Scooby

@@ -80,11 +80,11 @@ void RoomSpriteRenderer::refreshRoomSprites() {
 			continue;
 		}
 
-		std::size_t transferByteCount = static_cast<std::size_t>(
-			_state.ActorTileTransferWordCounts[static_cast<std::size_t>(actor)] * sizeof(uint16));
-		Common::Array<uint8> &actorTileData = _state.ActorTileData[static_cast<std::size_t>(actor)];
+		size_t transferByteCount = static_cast<size_t>(
+			_state.ActorTileTransferWordCounts[static_cast<size_t>(actor)] * sizeof(uint16));
+		Common::Array<uint8> &actorTileData = _state.ActorTileData[static_cast<size_t>(actor)];
 		_scene.loadTilesAt(MakeSpan(actorTileData).slice(0, transferByteCount),
-						   kActorTileDestinationIndices[static_cast<std::size_t>(actor)]);
+						   kActorTileDestinationIndices[static_cast<size_t>(actor)]);
 		pendingFlags &= static_cast<uint8>(~actorMask);
 		_state.ActorFramePublicationLatchFlags &= static_cast<uint8>(~actorMask);
 		readyFlags |= actorMask;
@@ -107,8 +107,8 @@ void RoomSpriteRenderer::refreshRoomSprites() {
 	// Ghidra 0x0000AFC4-0x0000AFD9: visit all six signed delays independently, decrement only positive values,
 	// preserve zero and negative values, and return.
 	for (int actor = 0; actor < kActorCount; actor++) {
-		if (_state.ActorAnimationDelays[static_cast<std::size_t>(actor)] > 0) {
-			_state.ActorAnimationDelays[static_cast<std::size_t>(actor)]--;
+		if (_state.ActorAnimationDelays[static_cast<size_t>(actor)] > 0) {
+			_state.ActorAnimationDelays[static_cast<size_t>(actor)]--;
 		}
 	}
 }
@@ -157,7 +157,7 @@ void RoomSpriteRenderer::buildRoomSpriteTable() {
 			}
 
 			int16 actorY =
-				static_cast<int16>(_state.ActorYFixedCoordinates[static_cast<std::size_t>(actor)] >> 16);
+				static_cast<int16>(_state.ActorYFixedCoordinates[static_cast<size_t>(actor)] >> 16);
 			if (greatestY >= actorY) {
 				continue;
 			}
@@ -334,7 +334,7 @@ void RoomSpriteRenderer::addPackedSprite(Common::Array<SpriteInstance> &sprites,
 
 void RoomSpriteRenderer::appendRoomActorSprites(Common::Array<SpriteInstance> &sprites, int actor) {
 	uint8 actorMask = static_cast<uint8>(1 << actor);
-	int baseTileIndex = kActorTileDestinationIndices[static_cast<std::size_t>(actor)];
+	int baseTileIndex = kActorTileDestinationIndices[static_cast<size_t>(actor)];
 
 	// Ghidra 0x0000AD16-0x0000AD53: derive the actor's base tile. Preserve all three independent pending gates
 	// before latching and snapshotting pending frame identity, scale, and compact-frame anchors.
@@ -342,33 +342,33 @@ void RoomSpriteRenderer::appendRoomActorSprites(Common::Array<SpriteInstance> &s
 		if ((_state.ActorCompactConversionPendingFlags & actorMask) == 0) {
 			if ((_state.ActorTileUploadPendingFlags & actorMask) == 0) {
 				_state.ActorFramePublicationLatchFlags |= actorMask;
-				_state.ActorCurrentFrameDataOffsets[static_cast<std::size_t>(actor)] =
-					_state.ActorPendingFrameDataOffsets[static_cast<std::size_t>(actor)];
-				_state.ActorPreviousHorizontalScales[static_cast<std::size_t>(actor)] =
-					_state.ActorHorizontalScaleFactors[static_cast<std::size_t>(actor)];
-				_state.ActorPreviousVerticalScales[static_cast<std::size_t>(actor)] =
-					_state.ActorVerticalScaleFactors[static_cast<std::size_t>(actor)];
-				_state.ActorPublishedFrameAnchorX[static_cast<std::size_t>(actor)] =
-					_state.ActorFrameAnchorX[static_cast<std::size_t>(actor)];
-				_state.ActorPublishedFrameAnchorY[static_cast<std::size_t>(actor)] =
-					_state.ActorFrameAnchorY[static_cast<std::size_t>(actor)];
+				_state.ActorCurrentFrameDataOffsets[static_cast<size_t>(actor)] =
+					_state.ActorPendingFrameDataOffsets[static_cast<size_t>(actor)];
+				_state.ActorPreviousHorizontalScales[static_cast<size_t>(actor)] =
+					_state.ActorHorizontalScaleFactors[static_cast<size_t>(actor)];
+				_state.ActorPreviousVerticalScales[static_cast<size_t>(actor)] =
+					_state.ActorVerticalScaleFactors[static_cast<size_t>(actor)];
+				_state.ActorPublishedFrameAnchorX[static_cast<size_t>(actor)] =
+					_state.ActorFrameAnchorX[static_cast<size_t>(actor)];
+				_state.ActorPublishedFrameAnchorY[static_cast<size_t>(actor)] =
+					_state.ActorFrameAnchorY[static_cast<size_t>(actor)];
 			}
 		}
 	}
 
 	// Ghidra 0x0000AD54-0x0000AD59: a negative frame-pointer high byte terminates this actor immediately.
-	if (!_state.ActorCurrentFrameDataOffsets[static_cast<std::size_t>(actor)].hasValue()) {
+	if (!_state.ActorCurrentFrameDataOffsets[static_cast<size_t>(actor)].hasValue()) {
 		return;
 	}
-	int32 frameDataOffset = _state.ActorCurrentFrameDataOffsets[static_cast<std::size_t>(actor)].value();
+	int32 frameDataOffset = _state.ActorCurrentFrameDataOffsets[static_cast<size_t>(actor)].value();
 
 	// Ghidra 0x0000AD5A-0x0000AD8F: derive signed camera-relative coordinates and retain each of the four
 	// viewport rejection branches independently.
 	int16 relativeX = static_cast<int16>(
-		static_cast<int16>(_state.ActorXFixedCoordinates[static_cast<std::size_t>(actor)] >> 16) -
+		static_cast<int16>(_state.ActorXFixedCoordinates[static_cast<size_t>(actor)] >> 16) -
 		_state.CameraX);
 	int16 relativeY = static_cast<int16>(
-		static_cast<int16>(_state.ActorYFixedCoordinates[static_cast<std::size_t>(actor)] >> 16) -
+		static_cast<int16>(_state.ActorYFixedCoordinates[static_cast<size_t>(actor)] >> 16) -
 		_state.CameraY);
 	if (relativeX < -0x50) {
 		return;
@@ -391,8 +391,8 @@ void RoomSpriteRenderer::appendRoomActorSprites(Common::Array<SpriteInstance> &s
 	int16 packedX = static_cast<int16>(relativeX + 0x80);
 	int16 packedY = static_cast<int16>(relativeY + 0x90);
 	if ((_state.ActorCompactFrameFlags & actorMask) != 0) {
-		packedX -= _state.ActorPublishedFrameAnchorX[static_cast<std::size_t>(actor)];
-		packedY -= _state.ActorPublishedFrameAnchorY[static_cast<std::size_t>(actor)];
+		packedX -= _state.ActorPublishedFrameAnchorX[static_cast<size_t>(actor)];
+		packedY -= _state.ActorPublishedFrameAnchorY[static_cast<size_t>(actor)];
 	} else {
 		packedX -= _rom.readInt16(frameDataOffset);
 		packedY -= _rom.readInt16(frameDataOffset + static_cast<int>(sizeof(int16)));

@@ -38,10 +38,10 @@ const int kWideSourceHeight = 40;
 const int kWideSourceWidth = 120;
 
 void WriteUInt32BigEndian(Common::Array<uint8> &output, int offset, uint32 value) {
-	output[static_cast<std::size_t>(offset)] = static_cast<uint8>(value >> 24);
-	output[static_cast<std::size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
-	output[static_cast<std::size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
-	output[static_cast<std::size_t>(offset + 3)] = static_cast<uint8>(value);
+	output[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 24);
+	output[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
+	output[static_cast<size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
+	output[static_cast<size_t>(offset + 3)] = static_cast<uint8>(value);
 }
 
 bool MaskSelects(const ScoobyDooRom &rom, int maskOffset, int index) {
@@ -59,7 +59,7 @@ void PackRow(const ScoobyDooRom &rom, Span<const uint8> selectedPixels,
 			packedPixels <<= 4;
 			int selectedIndex = firstPixel + pixel;
 			if (selectedIndex < selectedPixelCount) {
-				packedPixels |= selectedPixels[static_cast<std::size_t>(selectedIndex)];
+				packedPixels |= selectedPixels[static_cast<size_t>(selectedIndex)];
 			}
 		}
 
@@ -77,8 +77,8 @@ Common::Array<uint8> Compose(const ScoobyDooRom &rom,
 							 int rowShiftDirection,
 							 int outputOffsetTable) {
 	int longwordsPerRow = sourceWidth / 8;
-	Common::Array<uint8> output(static_cast<std::size_t>(sourceWidth * sourceHeight / 2));
-	Common::Array<uint8> selectedPixels(static_cast<std::size_t>(sourceWidth));
+	Common::Array<uint8> output(static_cast<size_t>(sourceWidth * sourceHeight / 2));
+	Common::Array<uint8> selectedPixels(static_cast<size_t>(sourceWidth));
 	int rowMask = kMaskTableOffset + rowMaskOffset * kMaskStride;
 	int columnMask = kMaskTableOffset + columnMaskOffset * kMaskStride;
 	int destinationRow = 0;
@@ -100,9 +100,9 @@ Common::Array<uint8> Compose(const ScoobyDooRom &rom,
 			}
 
 			int sourceIndex = shiftedRowStart + sourceColumn;
-			selectedPixels[static_cast<std::size_t>(selectedPixelCount++)] =
-				static_cast<std::size_t>(sourceIndex) < source.size()
-					? source[static_cast<std::size_t>(sourceIndex)]
+			selectedPixels[static_cast<size_t>(selectedPixelCount++)] =
+				static_cast<size_t>(sourceIndex) < source.size()
+					? source[static_cast<size_t>(sourceIndex)]
 					: static_cast<uint8>(0);
 		}
 

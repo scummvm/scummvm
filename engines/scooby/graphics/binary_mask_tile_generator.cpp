@@ -32,7 +32,7 @@ Common::Array<uint8> generate(const ScoobyDooRom &rom, uint8 nonzeroPaletteIndex
 	Span<const uint8> source =
 		rom.readBytes(kSourceOffset, kSourceWordCount * static_cast<int>(sizeof(uint16)));
 	Common::Array<uint8> output = source.toArray();
-	for (std::size_t index = 0; index < output.size(); ++index) {
+	for (size_t index = 0; index < output.size(); ++index) {
 		uint8 packedPixels = output[index];
 		uint8 highPaletteIndex = (packedPixels & 0xF0) == 0 ? zeroPaletteIndex : nonzeroPaletteIndex;
 		uint8 lowPaletteIndex = (packedPixels & 0x0F) == 0 ? zeroPaletteIndex : nonzeroPaletteIndex;

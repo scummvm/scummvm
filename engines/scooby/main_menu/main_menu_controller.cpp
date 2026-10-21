@@ -296,7 +296,7 @@ MainMenuExit MainMenuController::dispatchSelection(DispatchTable dispatchTable, 
 		targets.push_back(&runRoomObjectRelocationMenuFunctor);
 	}
 
-	return (*targets[static_cast<std::size_t>(selection)])();
+	return (*targets[static_cast<size_t>(selection)])();
 }
 
 Optional<int> MainMenuController::selectMainMenuOption(int optionCount, int baseTileIndex) {
@@ -356,7 +356,7 @@ Optional<int> MainMenuController::selectMainMenuOption(int optionCount, int base
 		// Ghidra 0x00008E82-0x00008EDB: commit and publish terminal sprite 12 with its two-commit frame cadence.
 		_menuPresentation.commitMenuSceneBuffers();
 		uint16 cursorAttributes = static_cast<uint16>(
-			baseTileIndex + kSelectionCursorFrameOffsets[static_cast<std::size_t>(cursorFrameIndex)]);
+			baseTileIndex + kSelectionCursorFrameOffsets[static_cast<size_t>(cursorFrameIndex)]);
 		_menuPresentation.updateSelectionCursor(selectionOffset,
 												Optional<uint16>(cursorAttributes));
 		cursorFrameCountdown--;
@@ -459,7 +459,7 @@ MainMenuExit MainMenuController::runRoomObjectRelocationMenu() {
 	// Ghidra 0x00008C60-0x00008C7F: preserve the selected object index and record context while the
 	// room catalog receives that object's current room as its initial selection.
 	RoomObject &roomObject =
-		_state.RoomObjects[static_cast<std::size_t>(selectedObjectIndex.value())];
+		_state.RoomObjects[static_cast<size_t>(selectedObjectIndex.value())];
 	Optional<int16> selectedRoomId = _roomSelection.select(roomObject.RoomId);
 	if (!selectedRoomId.hasValue()) {
 		return MainMenuExit::HostClosed;
@@ -469,7 +469,7 @@ MainMenuExit MainMenuController::runRoomObjectRelocationMenu() {
 	// to the exact object and shifts every later index left; entering room one appends at the sentinel.
 	if (selectedRoomId.value() != roomObject.RoomId) {
 		if (roomObject.RoomId == kInventoryRoomId) {
-			std::size_t inventoryIndex = 0;
+			size_t inventoryIndex = 0;
 			while (_state.InventoryObjectIndices[inventoryIndex] != selectedObjectIndex.value()) {
 				inventoryIndex++;
 			}

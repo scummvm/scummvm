@@ -42,7 +42,7 @@ int16 Resolve(const Common::Array<int16> &offsets, int16 previousPositionIndex,
 	int16 byteOffset = static_cast<int16>(
 		previousPositionIndex * kPositionCount * static_cast<int>(sizeof(int16)) +
 		nextPositionIndex * static_cast<int>(sizeof(int16)));
-	return offsets[static_cast<std::size_t>(byteOffset / static_cast<int>(sizeof(int16)))];
+	return offsets[static_cast<size_t>(byteOffset / static_cast<int>(sizeof(int16)))];
 }
 } // namespace
 

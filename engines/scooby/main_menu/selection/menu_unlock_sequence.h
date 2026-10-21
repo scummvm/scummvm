@@ -40,7 +40,7 @@ public:
 	// activeLowInput: current controller-one byte in the original active-low representation.
 	// Returns true when the eleventh and final input is reached.
 	bool Observe(uint8 activeLowInput) {
-		uint8 expectedInput = static_cast<uint8>(~kInputSequence[static_cast<std::size_t>(
+		uint8 expectedInput = static_cast<uint8>(~kInputSequence[static_cast<size_t>(
 			_progress)]);
 		if (activeLowInput == expectedInput) {
 			_progress++;
@@ -49,7 +49,7 @@ public:
 
 		if (_progress != 0) {
 			uint8 priorInput =
-				static_cast<uint8>(~kInputSequence[static_cast<std::size_t>(_progress - 1)]);
+				static_cast<uint8>(~kInputSequence[static_cast<size_t>(_progress - 1)]);
 			if (activeLowInput == priorInput) {
 				return false;
 			}

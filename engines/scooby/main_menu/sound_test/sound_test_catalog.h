@@ -41,12 +41,12 @@ public:
 
 	// Returns the authored label for one normalized sound-test selection.
 	// selection: selection in the recovered inclusive range 0-86.
-	const Common::String &getName(int selection) const { return _names[static_cast<std::size_t>(selection)]; }
+	const Common::String &getName(int selection) const { return _names[static_cast<size_t>(selection)]; }
 
 	// Returns the original audio command paired with one normalized selection.
 	// selection: selection in the recovered inclusive range 0-86.
 	uint8 getAudioCommand(int selection) const {
-		return kAudioCommands[static_cast<std::size_t>(selection)];
+		return kAudioCommands[static_cast<size_t>(selection)];
 	}
 
 private:

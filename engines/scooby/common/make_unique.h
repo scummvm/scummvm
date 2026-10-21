@@ -25,7 +25,7 @@
 #include "common/ptr.h"
 #include "common/util.h"
 
-// std::make_unique is C++14; this project targets C++11. Herb Sutter's
+// The standard library make_unique is C++14; this project targets C++11. Herb Sutter's
 // well-known polyfill, scoped to our namespace so it can't collide with a
 // standard library that already provides one under a newer -std flag.
 

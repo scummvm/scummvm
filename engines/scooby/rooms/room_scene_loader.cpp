@@ -35,8 +35,8 @@
 namespace Scooby {
 namespace {
 void WriteUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
-	bytes[static_cast<std::size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<std::size_t>(offset + 1)] = static_cast<uint8>(value);
+	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
+	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
 } // namespace
 
@@ -86,7 +86,7 @@ void RoomSceneLoader::loadRoomScene() {
 	int reservedRoomTileByteCount = MAX(static_cast<int>(roomTiles.size()), kMinimumRoomTileByteCount);
 	int transferredRoomTileByteCount =
 		(static_cast<uint16>(reservedRoomTileByteCount) >> 1) * static_cast<int>(sizeof(uint16));
-	Common::Array<uint8> publishedRoomTiles(static_cast<std::size_t>(transferredRoomTileByteCount), 0);
+	Common::Array<uint8> publishedRoomTiles(static_cast<size_t>(transferredRoomTileByteCount), 0);
 	int copyByteCount = MIN(static_cast<int>(roomTiles.size()),
 								 static_cast<int>(publishedRoomTiles.size()));
 	Common::copy(roomTiles.begin(), roomTiles.begin() + copyByteCount, publishedRoomTiles.begin());
@@ -113,7 +113,7 @@ void RoomSceneLoader::loadRoomScene() {
 		static_cast<uint16>(static_cast<int>(actionPromptTiles.size()) >> 1);
 	int actionPromptByteCount = actionPromptWordCount * static_cast<int>(sizeof(uint16));
 	_scene.overwritePackedPatternBytes(
-		MakeSpan(actionPromptTiles).slice(0, static_cast<std::size_t>(actionPromptByteCount)),
+		MakeSpan(actionPromptTiles).slice(0, static_cast<size_t>(actionPromptByteCount)),
 		patternByteOffset);
 	patternByteOffset += actionPromptWordCount + actionPromptWordCount;
 	_state.CursorSpriteTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |
@@ -134,7 +134,7 @@ void RoomSceneLoader::loadRoomScene() {
 
 	// Ghidra 0x0000773C-0x00007759: materialize the all-one blank tile and reserve the following tile as
 	// the dynamic room-script pattern base.
-	Common::Array<uint8> blankTile(static_cast<std::size_t>(kBlankTileByteCount),
+	Common::Array<uint8> blankTile(static_cast<size_t>(kBlankTileByteCount),
 								   static_cast<uint8>(0x11));
 	_scene.overwritePackedPatternBytes(MakeSpan(blankTile), patternByteOffset);
 	_state.RoomDynamicTileBaseAttribute = static_cast<uint16>(((patternByteOffset >> 5) + 1) |
@@ -145,7 +145,7 @@ void RoomSceneLoader::loadRoomScene() {
 	uint16 repeatedInterfaceCell =
 		static_cast<uint16>(_rom.readUInt16(kInterfaceTemplateOffset) + _state.ActionPromptTileAttributes);
 	Common::Array<uint8> packedInterfaceCells(
-		static_cast<std::size_t>(kInterfaceTemplateRowCount * kInterfaceTemplateColumnCount *
+		static_cast<size_t>(kInterfaceTemplateRowCount * kInterfaceTemplateColumnCount *
 								 static_cast<int>(sizeof(uint16))),
 		0);
 	Span<uint8> packedInterfaceCellsSpan = MakeSpan(packedInterfaceCells);
