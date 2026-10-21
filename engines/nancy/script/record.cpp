@@ -350,7 +350,6 @@ int Record::setScriptField() {
 }
 
 // The functions scripts can give a record for what the player does
-// TODO: OnMouseScroll
 static const char *const kEventFunctionNames[kNumRecordEvents] = {
 	"OnLeftClick", "OnRightClick", "OnLeftDown", "OnLeftUp", "OnRightDown", "OnRightUp",
 	"OnKeyDown", "OnKey", "OnKeyUp"
@@ -418,6 +417,21 @@ bool Record::sendMouseEvent(RecordEvent event, const ScriptPoint &point, bool in
 	const bool isHandled = lua_toboolean(L, -1) != 0;
 	lua_pop(L, 1);
 	return isHandled;
+}
+
+// Only the records made of script functions handle mouse wheel events
+void Record::sendMouseScroll(const ScriptPoint &point, bool inViewport, int notches) {
+	if (!isActive() || !isScripted()) {
+		return;
+	}
+
+	_hasStarted = true;
+
+	lua_State *L = getLua();
+	pushPoint(L, point);
+	lua_pushboolean(L, inViewport);
+	lua_pushinteger(L, notches);
+	callFunction("OnMouseScroll", 3);
 }
 
 bool Record::sendKeyEvent(RecordEvent event, Common::KeyCode key) {

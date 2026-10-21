@@ -144,6 +144,7 @@ public:
 	bool sendChangeCursor(const ScriptPoint &point, bool inViewport, uint &cursorType, bool &isHot);
 	bool sendMouseEvent(RecordEvent event, const ScriptPoint &point, bool inViewport);
 	bool sendKeyEvent(RecordEvent event, Common::KeyCode key);
+	void sendMouseScroll(const ScriptPoint &point, bool inViewport, int notches);
 
 	// Where the record puts what it shows, for the kinds that show something,
 	// after the nodes it is under moved it

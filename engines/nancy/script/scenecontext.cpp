@@ -537,6 +537,14 @@ void SceneContext::handleInput(NancyInput &input) {
 		sendMouseEvent(kEventRightClick, point, inViewport);
 	}
 
+	// Every record tracks mouse wheel events, one notch at a time; up is 1
+	if (input.input & NancyInput::kMouseWheel) {
+		const int notches = (input.input & NancyInput::kMouseWheelUp) ? 1 : -1;
+		for (Record *record : _inputOrder) {
+			record->sendMouseScroll(point, inViewport, notches);
+		}
+	}
+
 	// The keys that went down last frame have no release of their own
 	for (Common::KeyCode key : _pressedKeys) {
 		sendKeyEvent(kEventKeyUp, key);
