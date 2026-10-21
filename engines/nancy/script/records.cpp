@@ -36,6 +36,7 @@
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/convo.h"
 #include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/particles.h"
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/ref.h"
 #include "engines/nancy/script/scenecontext.h"
@@ -98,8 +99,9 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 		return new ConvoRecord(context, false);
 	case kRecordText:
 		return new TextRecord(context);
+	case kRecordParticle:
+		return new ParticleRecord(context);
 	default:
-		// TODO: The Particle record
 		return nullptr;
 	}
 }

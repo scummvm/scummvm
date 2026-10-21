@@ -193,6 +193,7 @@ MODULE_OBJS += \
   script/luabind.o \
   script/luastate.o \
   script/mathtypes.o \
+  script/particles.o \
   script/record.o \
   script/records.o \
   script/ref.o \
