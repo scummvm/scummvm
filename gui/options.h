@@ -76,7 +76,6 @@ public:
 	const Common::String& getDomain() const { return _domain; }
 
 	void reflowLayout() override;
-	void iterateDumpStates(DialogDumpStateCallback &callback) override;
 
 protected:
 	/** Config domain this dialog is used to edit. */
@@ -268,7 +267,6 @@ public:
 	void handleTickle() override;
 
 	void reflowLayout() override;
-	void iterateDumpStates(DialogDumpStateCallback &callback) override;
 
 protected:
 	void build() override;
@@ -415,4 +413,3 @@ protected:
 } // End of namespace GUI
 
 #endif
-

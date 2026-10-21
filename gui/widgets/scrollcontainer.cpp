@@ -107,6 +107,16 @@ void ScrollContainerWidget::applyScrollPos() {
 	g_gui.scheduleTopDialogRedraw();
 }
 
+int ScrollContainerWidget::getMaxScrollPos() const {
+	return MAX(0, _verticalScroll->_numEntries - _limitH);
+}
+
+void ScrollContainerWidget::setScrollPos(int pos) {
+	_fluidScroller->stopAnimation();
+	_scrollPos = _fluidScroller->setPosition((float)CLIP(pos, 0, getMaxScrollPos()));
+	applyScrollPos();
+}
+
 void ScrollContainerWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (_isMouseDown && _isDragging) {
 		_fluidScroller->startFling();
@@ -290,41 +300,6 @@ Widget *ScrollContainerWidget::findWidget(int x, int y) {
 
 void ScrollContainerWidget::setBackgroundType(ThemeEngine::WidgetBackground backgroundType) {
 	_backgroundType = backgroundType;
-}
-
-void ScrollContainerWidget::dumpWidget(Graphics::Surface &surf, const Common::String &baseName,
-		const Common::String &lang, int width, int height) {
-	Widget *firstWidget = _firstWidget;
-	const int maxScroll = MAX(0, _verticalScroll->_numEntries - _limitH);
-
-	if (maxScroll > 0) {
-		// Capture the top of the content, and the bottom if it does not fit.
-		int oldScrollPos = _scrolledY;
-		Common::String suffix = Common::String::format("__scroll-top__%dx%d__%s.png", width, height, lang.c_str());
-		saveWidgetSnapshot(surf, baseName + suffix);
-
-		if (maxScroll > (int)oldScrollPos) {
-			_fluidScroller->stopAnimation();
-			_scrolledY = maxScroll;
-			_verticalScroll->_currentPos = maxScroll;
-			_verticalScroll->setPos(_w, _scrolledY);
-			_verticalScroll->recalc();
-			g_gui.redrawFull();
-			g_system->grabOverlay(surf);
-			suffix = Common::String::format("__scroll-bottom__%dx%d__%s.png", width, height, lang.c_str());
-			saveWidgetSnapshot(surf, baseName + suffix);
-		}
-
-		// Restore the previous scroll position and the overlay contents.
-		_scrolledY = oldScrollPos;
-		_verticalScroll->_currentPos = MIN<int>(oldScrollPos, maxScroll);
-		_verticalScroll->setPos(_w, _scrolledY);
-		_verticalScroll->recalc();
-		g_gui.redrawFull();
-	}
-
-	// Dump the states of child widgets which manage their own state.
-	dumpWidgetChain(firstWidget, surf, baseName, lang, width, height);
 }
 
 } // End of namespace GUI

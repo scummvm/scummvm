@@ -61,6 +61,10 @@ public:
 
 	void setBackgroundType(ThemeEngine::WidgetBackground backgroundType);
 
+	int getScrollPos() const { return _scrolledY; }
+	int getMaxScrollPos() const;
+	void setScrollPos(int pos);
+
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
@@ -80,10 +84,6 @@ public:
 
 	void draw() override;
 	void markAsDirty() override;
-
-	void dumpWidget(Graphics::Surface &surf, const Common::String &baseName,
-			const Common::String &lang, int width, int height) override;
-	bool hasDumpableChildren() const override { return true; }
 
 protected:
 	void drawWidget() override;

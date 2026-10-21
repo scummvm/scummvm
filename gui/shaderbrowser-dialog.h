@@ -31,6 +31,11 @@ class ListWidget;
 class EditTextWidget;
 class CommandSender;
 
+enum {
+	kFBModeLoad = 0,
+	kFBModeSave
+};
+
 class ShaderBrowserDialog : public Dialog {
 public:
 	ShaderBrowserDialog(const Common::Path &initialSelection);

@@ -28,7 +28,6 @@
 #include "common/keyboard.h"
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
-#include "graphics/surface.h"
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
 #include "common/text-to-speech.h"
@@ -195,26 +194,6 @@ protected:
 
 	virtual void drawWidget() = 0;
 
-public:
-	/**
-	 * Dump the currently rendered state of this widget as a PNG file.
-	 *
-	 * The dialog the widget belongs to must be open and rendered; the state
-	 * of the overlay is what gets captured. The default implementation
-	 * does nothing, as plain widgets are captured as part of the dialog.
-	 * Containers which hold their own list of children (e.g. TabWidget)
-	 * override this and set hasDumpableChildren() to true, in which case
-	 * the tree walk leaves them and their own state handling alone.
-	 */
-	virtual void dumpWidget(Graphics::Surface &surf, const Common::String &baseName,
-			const Common::String &lang, int width, int height);
-	virtual bool hasDumpableChildren() const { return false; }
-
-	/** Call dumpWidget() on every widget of the chain which has states of its own. */
-	static void dumpWidgetChain(Widget *first, Graphics::Surface &surf, const Common::String &baseName,
-			const Common::String &lang, int width, int height);
-
-protected:
 	virtual void receivedFocusWidget() {}
 	virtual void lostFocusWidget() {}
 
@@ -621,17 +600,6 @@ protected:
 };
 
 ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x=0, int y=0, int w=0, int h=0, bool scale = false);
-
-/**
- * Write a PNG file in the snapshots/ directory.
- * Returns true when the file was written successfully, false otherwise.
- */
-bool saveWidgetSnapshot(Graphics::Surface &surf, const Common::String &fileName);
-
-/**
- * Set the directory snapshots are written to (defaults to "snapshots").
- */
-void setSnapshotDirectory(const Common::String &dir);
 
 } // End of namespace GUI
 
