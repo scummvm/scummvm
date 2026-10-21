@@ -111,6 +111,9 @@ protected:
 	const int _numChan;
 	const int _numSSG;
 	const bool _hasPercussion;
+	// YM2612 only: the sum of the block-shifted frequency and the detune wraps at 17 bits
+	// Not confirmed for the YM2203/YM2608, so those keep the previous behavior.
+	const bool _wrapDetunedFrequency;
 
 	Common::Mutex &_mutex;
 	int _mixerThreadLockCounter;

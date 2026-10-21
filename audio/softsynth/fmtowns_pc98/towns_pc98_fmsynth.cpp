@@ -27,7 +27,8 @@
 class TownsPC98_FmSynthOperator {
 public:
 	TownsPC98_FmSynthOperator(const uint32 tickLength, const uint32 envduration, const uint8 *rateTable,	const uint8 *shiftTable,
-		const uint8 *attackDecayTable, const uint32 *frqTable, const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable);
+		const uint8 *attackDecayTable, const uint32 *frqTable, const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable,
+		const uint32 frequencyMask);
 	~TownsPC98_FmSynthOperator() {}
 
 	void keyOn();
@@ -87,6 +88,9 @@ protected:
 	const uint32 *_sinTbl;
 	const int32 *_tLvlTbl;
 	const int32 *_detnTbl;
+	// Mask applied to the sum of frequency and detune. On the YM2612 the sum wraps at 17 bits, so a negative
+	// detune on a very low frequency yields a very high one; other chip types use 0xFFFFFFFF (no wrap).
+	const uint32 _frqMask;
 
 	const uint32 _tickLength;
 	const uint32 _envDuration;
@@ -100,9 +104,10 @@ protected:
 };
 
 TownsPC98_FmSynthOperator::TownsPC98_FmSynthOperator(const uint32 tickLength, const uint32 envduration, const uint8 *rateTable, const uint8 *shiftTable,
-	const uint8 *attackDecayTable, const uint32 *frqTable, const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable) :
+	const uint8 *attackDecayTable, const uint32 *frqTable, const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable,
+	const uint32 frequencyMask) :
 	_envDuration(envduration), _rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable), _sinTbl(sineTable),
-	_tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(tickLength), _specifiedAttackRate(0), _specifiedDecayRate(0),
+	_tLvlTbl(tlevelOut), _detnTbl(detuneTable), _frqMask(frequencyMask), _tickLength(tickLength), _specifiedAttackRate(0), _specifiedDecayRate(0),
 	_specifiedReleaseRate(0), _envelopeShapeSpecs(0), _specifiedSustainRate(0), _sustainLevel(0), _phase(0), _shapeState(0),
 	_shapeScale(0), _state(kEnvReady), _keyOn(false), _timer(0), _keyScale1(0), _keyScale2(0), _freqTemp(0),
 	_currentLevel(1023), _ampMod(false), _tickCount(0), _phaseIncrement(0) {
@@ -155,7 +160,7 @@ void TownsPC98_FmSynthOperator::frequency(int freq) {
 }
 
 void TownsPC98_FmSynthOperator::updatePhaseIncrement() {
-	_phaseIncrement = ((_frequency + _detn[_kcode]) * _multiple) >> 1;
+	_phaseIncrement = (((uint32)((int32)_frequency + _detn[_kcode]) & _frqMask) * _multiple) >> 1;
 	uint8 keyscale = _kcode >> _keyScale1;
 	if (_keyScale2 != keyscale) {
 		_keyScale2 = keyscale;
@@ -953,7 +958,7 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	_prc(nullptr),
 #endif
 	_numChan(type == kType26 ? 3 : 6), _numSSG(type == kTypeTowns ? 0 : 3),
-	_hasPercussion(type == kType86 ? true : false),
+	_hasPercussion(type == kType86 ? true : false), _wrapDetunedFrequency(type == kTypeTowns),
 	_oprRates(nullptr), _oprRateshift(nullptr), _oprAttackDecay(nullptr), _oprFrq(nullptr), _oprSinTbl(nullptr), _oprLevelOut(nullptr), _oprDetune(nullptr),
 	_internalRate((type == kTypeTowns ? 7670454 : (type == kType86 ? 7987000 : 3993600))),
 	_renderBuffer(nullptr), _renderBufferSize(0), _numPending(0), _offsPending(0),
@@ -1013,10 +1018,13 @@ bool TownsPC98_FmSynth::init() {
 
 	generateTables();
 
+	// The operator frequencies are the chip's 17-bit block-shifted frequency scaled by 1 << (6 - _rateScale).
+	const uint32 frequencyMask = _wrapDetunedFrequency ? (0x1FFFFu << (6 - _rateScale)) : 0xFFFFFFFFu;
+
 	_chanInternal = new ChanInternal[_numChan];
 	for (int i = 0; i < _numChan; i++) {
 		for (int j = 0; j < 4; ++j)
-			_chanInternal[i].opr[j] = new TownsPC98_FmSynthOperator(48 >> _rateScale, 0x90, _oprRates, _oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune);
+			_chanInternal[i].opr[j] = new TownsPC98_FmSynthOperator(48 >> _rateScale, 0x90, _oprRates, _oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune, frequencyMask);
 	}
 
 	if (_numSSG) {
@@ -1390,7 +1398,9 @@ void TownsPC98_FmSynth::writeRegInternal(uint8 part, uint8 regAddress, uint8 val
 		checkAddress = true;
 	} else if (h == 0xA0 && (_registers[0x27][0] & 0x40) && (l > 7 || l == 2 || l == 6)) {
 		c = &_chanInternal[3 * part + 2];
-		o = c->opr[l < 8 ? 3 : 2 - (l & 3)];
+		// Channel 3 special mode: A2/A6 set slot 4, A8/AC slot 3, A9/AD slot 1 and AA/AE slot 2.
+		static const uint8 ch3Ordr[] = { 2, 0, 1 };
+		o = c->opr[l < 8 ? 3 : ch3Ordr[l & 3]];
 	} else if (h != 0xA0 && h > 0x20) {
 		o = c->opr[oprOrdr[(l & ~3) >> 2]];
 		checkAddress = true;
