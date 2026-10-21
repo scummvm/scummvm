@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-20 22:09+0000\n"
+"POT-Creation-Date: 2026-10-21 10:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3728,7 +3728,7 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
-#: engines/metaengine.cpp:105 engines/harvester/metaengine.cpp:95
+#: engines/metaengine.cpp:105 engines/harvester/metaengine.cpp:93
 #: engines/parallaction/metaengine.cpp:163
 #: engines/ultima/ultima8/metaengine.cpp:47
 msgid "Game menu"
@@ -5955,7 +5955,7 @@ msgstr ""
 #: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:521
-#: engines/grim/grim.cpp:621 engines/harvester/metaengine.cpp:94
+#: engines/grim/grim.cpp:621 engines/harvester/metaengine.cpp:92
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179
 #: engines/macs2/metaengine.cpp:64 engines/petka/metaengine.cpp:173
@@ -6742,7 +6742,7 @@ msgstr ""
 msgid "Select / Kick / Run"
 msgstr ""
 
-#: engines/awe/metaengine.cpp:62 engines/harvester/metaengine.cpp:100
+#: engines/awe/metaengine.cpp:62 engines/harvester/metaengine.cpp:101
 #: engines/hpl1/metaengine.cpp:83
 msgid "Jump"
 msgstr ""
@@ -9419,16 +9419,16 @@ msgstr ""
 msgid "Gameplay"
 msgstr ""
 
-#: engines/harvester/metaengine.cpp:91
-msgid "Attack modifier"
-msgstr ""
-
-#: engines/harvester/metaengine.cpp:92
-msgid "Evasive movement modifier"
-msgstr ""
-
-#: engines/harvester/metaengine.cpp:93 engines/ultima/ultima4/metaengine.cpp:82
+#: engines/harvester/metaengine.cpp:91 engines/ultima/ultima4/metaengine.cpp:82
 msgid "Speed up"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:94
+msgid "Help menu"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:95
+msgid "Attack modifier"
 msgstr ""
 
 #: engines/harvester/metaengine.cpp:96
@@ -9444,6 +9444,10 @@ msgid "Low attack"
 msgstr ""
 
 #: engines/harvester/metaengine.cpp:99
+msgid "Evasive movement modifier"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:100
 msgid "Duck"
 msgstr ""
 
