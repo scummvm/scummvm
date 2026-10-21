@@ -40,10 +40,10 @@ struct TileCell {
 				 highPriority(false) {
 	}
 
-	TileCell(int16 tileIndex, uint8 paletteIndex, bool flipHorizontally, bool flipVertically,
-			 bool highPriority)
-		: tileIndex(tileIndex), paletteIndex(paletteIndex), flipHorizontally(flipHorizontally),
-		  flipVertically(flipVertically), highPriority(highPriority) {
+	TileCell(int16 tileIndex_, uint8 paletteIndex_, bool flipHorizontally_, bool flipVertically_,
+			 bool highPriority_)
+		: tileIndex(tileIndex_), paletteIndex(paletteIndex_), flipHorizontally(flipHorizontally_),
+		  flipVertically(flipVertically_), highPriority(highPriority_) {
 	}
 };
 } // namespace Scooby

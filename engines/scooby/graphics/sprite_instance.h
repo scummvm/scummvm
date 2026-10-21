@@ -44,13 +44,11 @@ struct SpriteInstance {
 		  flipVertically(false), highPriority(false) {
 	}
 
-	SpriteInstance(int32 x, int32 y, int32 widthInTiles, int32 heightInTiles,
-				   int32 tileIndex, uint8 paletteIndex, bool flipHorizontally,
-				   bool flipVertically,
-				   bool highPriority)
-		: x(x), y(y), widthInTiles(widthInTiles), heightInTiles(heightInTiles), tileIndex(tileIndex),
-		  paletteIndex(paletteIndex), flipHorizontally(flipHorizontally), flipVertically(flipVertically),
-		  highPriority(highPriority) {
+	SpriteInstance(int32 x_, int32 y_, int32 widthInTiles_, int32 heightInTiles_, int32 tileIndex_,
+				   uint8 paletteIndex_, bool flipHorizontally_, bool flipVertically_, bool highPriority_)
+		: x(x_), y(y_), widthInTiles(widthInTiles_), heightInTiles(heightInTiles_), tileIndex(tileIndex_),
+		  paletteIndex(paletteIndex_), flipHorizontally(flipHorizontally_), flipVertically(flipVertically_),
+		  highPriority(highPriority_) {
 	}
 };
 } // namespace Scooby

@@ -38,8 +38,8 @@ struct PaletteColor {
 	PaletteColor() : redLevel(0), greenLevel(0), blueLevel(0) {
 	}
 
-	PaletteColor(uint8 redLevel, uint8 greenLevel, uint8 blueLevel)
-		: redLevel(redLevel), greenLevel(greenLevel), blueLevel(blueLevel) {
+	PaletteColor(uint8 redLevel_, uint8 greenLevel_, uint8 blueLevel_)
+		: redLevel(redLevel_), greenLevel(greenLevel_), blueLevel(blueLevel_) {
 	}
 };
 } // namespace Scooby
