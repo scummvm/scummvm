@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-21 10:58+0000\n"
+"POT-Creation-Date: 2026-10-21 17:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6061,7 +6061,7 @@ msgstr ""
 #: engines/efh/metaengine.cpp:44 engines/glk/metaengine.cpp:205
 #: engines/gob/metaengine.cpp:57 engines/got/metaengine.cpp:48
 #: engines/griffon/metaengine.cpp:40 engines/hugo/metaengine.cpp:56
-#: engines/macs2/dialogs.cpp:39 engines/made/metaengine.cpp:51
+#: engines/macs2/dialogs.cpp:51 engines/made/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:91 engines/mortevielle/metaengine.cpp:37
 #: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:221
 #: engines/scumm/dialogs.cpp:1256 engines/scumm/metaengine.cpp:908
@@ -6098,7 +6098,7 @@ msgstr ""
 #: engines/drascula/metaengine.cpp:42 engines/dreamweb/metaengine.cpp:48
 #: engines/fool/metaengine.cpp:38 engines/got/metaengine.cpp:35
 #: engines/groovie/metaengine.cpp:53 engines/m4/metaengine.cpp:37
-#: engines/macs2/dialogs.cpp:34 engines/mads/metaengine.cpp:110
+#: engines/macs2/dialogs.cpp:46 engines/mads/metaengine.cpp:110
 #: engines/nancy/metaengine.cpp:104 engines/neverhood/dialogs.cpp:47
 #: engines/pelrock/metaengine.cpp:35 engines/phoenixvr/metaengine.cpp:47
 #: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:47
@@ -6114,7 +6114,7 @@ msgstr ""
 #: engines/drascula/metaengine.cpp:43 engines/dreamweb/metaengine.cpp:49
 #: engines/fool/metaengine.cpp:39 engines/got/metaengine.cpp:36
 #: engines/groovie/metaengine.cpp:54 engines/m4/metaengine.cpp:38
-#: engines/macs2/dialogs.cpp:35 engines/mads/metaengine.cpp:111
+#: engines/macs2/dialogs.cpp:47 engines/mads/metaengine.cpp:111
 #: engines/nancy/metaengine.cpp:105 engines/neverhood/dialogs.cpp:48
 #: engines/pelrock/metaengine.cpp:36 engines/phoenixvr/metaengine.cpp:48
 #: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:48
@@ -10468,50 +10468,58 @@ msgstr ""
 msgid "Quit the game?"
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:40
+#: engines/macs2/dialogs.cpp:36
+msgid "Translation:"
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:39
+msgid "Original"
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:52
 msgid "Use TTS to read the dialogue (if TTS is available)"
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:44 engines/scumm/dialogs.cpp:1167
+#: engines/macs2/dialogs.cpp:56 engines/scumm/dialogs.cpp:1167
 msgid "Enhancements:"
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:50 engines/scumm/dialogs.cpp:1172
+#: engines/macs2/dialogs.cpp:62 engines/scumm/dialogs.cpp:1172
 msgid "Fix original bugs"
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:51 engines/scumm/dialogs.cpp:1173
+#: engines/macs2/dialogs.cpp:63 engines/scumm/dialogs.cpp:1173
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:55 engines/scumm/dialogs.cpp:1176
+#: engines/macs2/dialogs.cpp:67 engines/scumm/dialogs.cpp:1176
 msgid "Audio-visual improvements"
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:56
+#: engines/macs2/dialogs.cpp:68
 msgid ""
 "Optional generated dialogue speech (SPEECH/*.wav) and other audio/visual "
 "polish."
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:60 engines/scumm/dialogs.cpp:1180
+#: engines/macs2/dialogs.cpp:72 engines/scumm/dialogs.cpp:1180
 #: engines/scumm/metaengine.cpp:954 engines/scumm/metaengine.cpp:981
 msgid "Restored content"
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:61 engines/scumm/dialogs.cpp:1181
+#: engines/macs2/dialogs.cpp:73 engines/scumm/dialogs.cpp:1181
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:65 engines/scumm/dialogs.cpp:1184
+#: engines/macs2/dialogs.cpp:77 engines/scumm/dialogs.cpp:1184
 msgid "Modern UI/UX adjustments"
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:66
+#: engines/macs2/dialogs.cpp:78
 msgid "Activates some modern comforts for a smoother user experience."
 msgstr ""
 
