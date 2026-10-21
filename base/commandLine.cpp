@@ -1096,33 +1096,37 @@ static void listGames(const Common::String &engineID, bool jsonOutput) {
 			"------------------------------ -----------------------------------------------------------\n");
 	}
 
-	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
-	for (const auto &plugin : plugins) {
-		const Plugin *p = EngineMan.findDetectionPlugin(plugin->getName());
-		/* If for some reason, we can't find the MetaEngineDetection for this Engine, just ignore it */
-		if (!p) {
-			continue;
-		}
+	// The uncached plugin manager keeps only one engine plugin in memory at a time
+	PluginMan.loadFirstPlugin();
+	do {
+		const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+		for (const auto &plugin : plugins) {
+			const Plugin *p = EngineMan.findDetectionPlugin(plugin->getName());
+			/* If for some reason, we can't find the MetaEngineDetection for this Engine, just ignore it */
+			if (!p) {
+				continue;
+			}
 
-		if (all || Common::find(engines.begin(), engines.end(), p->getName()) != engines.end()) {
-			PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
-			bool first = true;
-			for (const auto &v : list) {
-				const Common::String &gameId = buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v.gameId);
-				if (jsonOutput) {
-					if (!first) {
-						printf(",\n");
+			if (all || Common::find(engines.begin(), engines.end(), p->getName()) != engines.end()) {
+				PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
+				bool first = true;
+				for (const auto &v : list) {
+					const Common::String &gameId = buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v.gameId);
+					if (jsonOutput) {
+						if (!first) {
+							printf(",\n");
+						} else {
+							printf("\n");
+						}
+						first = false;
+						printf("  \"%s\": \"%s\"", gameId.c_str(), v.description);
 					} else {
-						printf("\n");
+						printf("%-30s %s\n", gameId.c_str(), v.description);
 					}
-					first = false;
-					printf("  \"%s\": \"%s\"", gameId.c_str(), v.description);
-				} else {
-					printf("%-30s %s\n", gameId.c_str(), v.description);
 				}
 			}
 		}
-	}
+	} while (PluginMan.loadNextPlugin());
 	if (jsonOutput) {
 		printf("\n}\n");
 	}
@@ -1162,28 +1166,32 @@ static void listEngines(bool jsonOutput) {
 			"--------------- ------------------------------------------------------\n");
 	}
 
-	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	bool first = true;
-	for (const auto &plugin : plugins) {
-		const Plugin *p = EngineMan.findDetectionPlugin(plugin->getName());
-		/* If for some reason, we can't find the MetaEngineDetection for this Engine, just ignore it */
-		if (!p) {
-			continue;
-		}
-
-		if (jsonOutput) {
-			if (!first) {
-				printf(",\n");
-			} else {
-				printf("\n");
-				first = false;
+	// The uncached plugin manager keeps only one engine plugin in memory at a time
+	PluginMan.loadFirstPlugin();
+	do {
+		const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+		for (const auto &plugin : plugins) {
+			const Plugin *p = EngineMan.findDetectionPlugin(plugin->getName());
+			/* If for some reason, we can't find the MetaEngineDetection for this Engine, just ignore it */
+			if (!p) {
+				continue;
 			}
-			printf("  \"%s\": \"%s\"", p->get<MetaEngineDetection>().getName(),
-			       p->get<MetaEngineDetection>().getEngineName());
-		} else {
-			printf("%-15s %s\n", p->get<MetaEngineDetection>().getName(), p->get<MetaEngineDetection>().getEngineName());
+
+			if (jsonOutput) {
+				if (!first) {
+					printf(",\n");
+				} else {
+					printf("\n");
+					first = false;
+				}
+				printf("  \"%s\": \"%s\"", p->get<MetaEngineDetection>().getName(),
+				       p->get<MetaEngineDetection>().getEngineName());
+			} else {
+				printf("%-15s %s\n", p->get<MetaEngineDetection>().getName(), p->get<MetaEngineDetection>().getEngineName());
+			}
 		}
-	}
+	} while (PluginMan.loadNextPlugin());
 	if (jsonOutput) {
 		printf("\n}\n");
 	}
