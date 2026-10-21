@@ -573,6 +573,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "wallobee4",			"Wallobee Jack: Secret of the Sphinx" },
 	{ "wallobeetemple",		"The temple of Monakumba: Starring Wallobee Jack" },
 	{ "warlock",			"Spaceship Warlock" },
+	{ "whostolehanukkah",	"Who Stole Hanukkah?!" },
 	{ "wiggles1",			"A Day with the Wiggles" },
 	{ "willywabbit",		"Willy Wabbit & His Magical Books" },
 	{ "willywabbit2",		"Around the World With Willy Wabbit" },
@@ -8243,6 +8244,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	//found on TKKG1 De Schat van de Maya's by Lannoo (Belgium)
 	WINDEMO1_l("welkom", "",  "lannoo/welkom/DEMO.exe",	"t:39126441ec01512d70275280292d7028",  1309296, Common::NL_NLD, 500),
+
+	WINGAME2("whostolehanukkah", "", "WSH.EXE", "t:66e7df5111942df6067305e8a6cd3709", 1410503,
+								   "HGAME/START.DIR", "6e4e09b183e30f9bc1decf776ea91714", 423672, 501),
+	WINGAME2_l("whostolehanukkah", "", "HGAMEW95.EXE", "t:66e7df5111942df6067305e8a6cd3709", 1410503,
+									  "Hgame/Start.dxr", "62aa207f9aa4c8d062c0818d52339e34", 409758, Common::RU_RUS, 501),
 
 	// 1996 Thai release is trilingual (Thai, French, English)
 	MACGAME1t_l("willywabbit", "", "Willy Wabbit  (Click Me!)", "65a01326b96bdf4b7764af0129a6223d", 705415, Common::TH_THA, 505),
