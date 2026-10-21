@@ -26,6 +26,7 @@
 #include "scooby/runtime/session_controller.h"
 #include "scooby/runtime/session_exit.h"
 #include "scooby/scooby.h"
+#include "scooby/sound/gems_audio.h"
 
 namespace Scooby {
 
@@ -34,6 +35,9 @@ void ApplicationLoop::run() {
 		 _state = RuntimeState{};
 		DeterministicRandom random;
 		initializeRuntimeState(_state, random);
+		// Ghidra RunStartupSequence 0x000008E2-0x000008FF: every (re)start reloads and starts the
+		// GEMS Z80 driver with the cartridge's sound banks.
+		gemsInit();
 		FrameClock clock;
 		if (!_state._saveGameData.shouldLoadGameData) {
 			IntroSequence intro(_rom, _scene);

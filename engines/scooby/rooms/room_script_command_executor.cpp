@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 
 #include "room_object.h"
+#include "scooby/sound/gems_audio.h"
 
 namespace Scooby {
 
@@ -376,11 +377,11 @@ void RoomScriptCommandExecutor::scriptCommand0DPlayOrStopAudio(int mode) {
 		// Ghidra 0x000048BA-0x000048BF: retain both outcomes of the signed command-word test.
 		int16 encodedCommand = _rom.readInt16(commandOffset + 2);
 		if (encodedCommand < 0) {
-			// Ghidra 0x000048C0-0x000048CB: clear only bit 15, extend the result, and call the silent
+			// Ghidra 0x000048C0-0x000048CB: clear only bit 15, extend the result, and call the
 			// StopAudioPlayback handover before bypassing the play branch.
 			stopAudioPlayback(static_cast<uint16>(encodedCommand) & 0x7FFF);
 		} else {
-			// Ghidra 0x000048CC-0x000048D1: extend the nonnegative word unchanged and call the silent
+			// Ghidra 0x000048CC-0x000048D1: extend the nonnegative word unchanged and call the
 			// PlayAudioCommand handover.
 			playAudioCommand(encodedCommand);
 		}
@@ -390,14 +391,14 @@ void RoomScriptCommandExecutor::scriptCommand0DPlayOrStopAudio(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 
+// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
 void RoomScriptCommandExecutor::playAudioCommand(int command) {
-	// AUDIO FRONTIER: Preserve command ordering while the PC audio domain remains deliberately deferred.
-	(void)command;
+	gemsStartSong(command);
 }
 
+// Ghidra StopAudioPlayback (gemsStopSong, 0x00009776).
 void RoomScriptCommandExecutor::stopAudioPlayback(int command) {
-	// AUDIO FRONTIER: Preserve command ordering while the PC audio domain remains deliberately deferred.
-	(void)command;
+	gemsStopSong(command);
 }
 
 void RoomScriptCommandExecutor::scriptCommand11ChangeRoom(int mode) {

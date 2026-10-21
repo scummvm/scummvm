@@ -43,6 +43,9 @@ public:
 
 	uint8 readByte(int offset) const { return _bytes[static_cast<std::size_t>(offset)]; }
 
+	// Number of bytes in the cartridge image.
+	int size() const { return static_cast<int>(_bytes.size()); }
+
 	int16 readInt16(int offset) const { return static_cast<int16>(readUInt16(offset)); }
 
 	uint16 readUInt16(int offset) const {

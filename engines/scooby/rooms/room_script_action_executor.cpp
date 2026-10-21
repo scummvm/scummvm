@@ -22,6 +22,7 @@
 #include "room_script_action_executor.h"
 
 #include "common/scummsys.h"
+#include "scooby/sound/gems_audio.h"
 
 namespace Scooby {
 
@@ -364,7 +365,7 @@ void RoomScriptActionExecutor::scriptAction13PlaySfx1() {
 	uint16 selection = _random.scaleNextRandomValue(2);
 
 	// Ghidra 0x0000437A-0x00004385: preserve the complete nonzero branch, add command base 0x26
-	// with word arithmetic, and replace the original tail branch with the silent managed audio handover.
+	// with word arithmetic, and replace the original tail branch with the managed audio handover.
 	if (selection != 0) {
 		playAudioCommand(static_cast<uint16>(selection + 0x26));
 		return;
@@ -382,7 +383,7 @@ void RoomScriptActionExecutor::scriptAction14PlaySfx2() {
 	uint16 selection = _random.scaleNextRandomValue(2);
 
 	// Ghidra 0x00004396-0x000043A1: preserve the complete nonzero branch, add command base 0x29
-	// with word arithmetic, and replace the original tail branch with the silent managed audio handover.
+	// with word arithmetic, and replace the original tail branch with the managed audio handover.
 	if (selection != 0) {
 		playAudioCommand(static_cast<uint16>(selection + 0x29));
 		return;
@@ -911,9 +912,8 @@ bool RoomScriptActionExecutor::waitForRoomVerticalBlank() {
 	return false;
 }
 
-// Defers Ghidra PlayAudioCommand at 0x00009762 without blocking room-script flow.
+// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
 void RoomScriptActionExecutor::playAudioCommand(int command) {
-	// AUDIO FRONTIER: command ordering is retained while audio playback remains deferred.
-	(void)command;
+	gemsStartSong(command);
 }
 } // namespace Scooby

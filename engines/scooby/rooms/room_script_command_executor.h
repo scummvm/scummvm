@@ -181,8 +181,8 @@ private:
 	// Routes one encoded audio command to its play or stop boundary.
 	// mode: zero scans past the command; nonzero dispatches its audio request.
 	//
-	// Ghidra: executeRoomScriptCommand0D (0x000048B6). Audio playback remains an explicitly
-	// deferred nonthrowing domain, while the encoded sign branch and command ordering remain intact.
+	// Ghidra: executeRoomScriptCommand0D (0x000048B6). A negative word stops sequence (word & 0x7FFF);
+	// otherwise the word starts that sequence through the GEMS driver.
 	void scriptCommand0DPlayOrStopAudio(int mode);
 
 	static void playAudioCommand(int command);

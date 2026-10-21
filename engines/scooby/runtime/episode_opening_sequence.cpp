@@ -109,7 +109,7 @@ bool EpisodeOpeningSequence::runEpisodeOpeningSequence() {
 		_state.TargetPalette[0] = PaletteColor();
 	}
 
-	// Ghidra 0x00001576-0x000015A5: publish initial scroll and sprites, preserve both silent audio commands,
+	// Ghidra 0x00001576-0x000015A5: publish initial scroll and sprites, preserve both audio commands,
 	// and fade through callback-aware retraces.
 	updateEpisodeOpeningScene();
 	writeEpisodeOpeningSpriteTable();

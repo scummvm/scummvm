@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 
 #include "common/array.h"
+#include "scooby/sound/gems_audio.h"
 
 namespace Scooby {
 
@@ -196,8 +197,8 @@ bool RoomScriptAction27Executor::waitForRoomVerticalBlank() {
 	return false;
 }
 
+// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
 void RoomScriptAction27Executor::playAudioCommand(int command) {
-	// AUDIO FRONTIER: Preserve command ordering until the PC audio domain is implemented.
-	(void)command;
+	gemsStartSong(command);
 }
 } // namespace Scooby

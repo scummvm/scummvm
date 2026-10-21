@@ -40,6 +40,7 @@
 namespace Scooby {
 
 struct ScoobyGameDescription;
+class GemsDriver;
 
 enum ScoobyAction {
 	kScoobyActionNone,
@@ -63,6 +64,7 @@ private:
 
 	Graphics::FrameLimiter *_limiter;
 	ApplicationLoop *_applicationLoop;
+	GemsDriver *_gemsDriver;
 
 	uint32 _nextUpdatetime;
 
@@ -98,6 +100,11 @@ public:
 		return true;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+
+	void syncSoundSettings() override;
+
+	// The GEMS sound driver, or nullptr while the engine is not running.
+	GemsDriver *getGemsDriver() const { return _gemsDriver; }
 
 	/**
 	 * Uses a serializer to allow implementing savegame

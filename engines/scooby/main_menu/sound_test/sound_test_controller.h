@@ -44,8 +44,8 @@ public:
 	// input: controller sampler whose semantic Back binding is scoped to this menu.
 	// state: shared controller and signed-retrace state used by the installed callback.
 	// waitForVerticalBlank: host wait that invokes the installed main-menu callback once.
-	// initializeAudioDriver: silent audio-driver boundary retained at each original call site.
-	// playAudioCommand: silent audio-command boundary retained at each original call site.
+	// initializeAudioDriver: gemsStopAll boundary retained at each original call site.
+	// playAudioCommand: gemsStartSong boundary retained at each original call site.
 	SoundTestController(const SoundTestCatalog &catalog, MainMenuPresentation &presentation,
 						ControllerInput &input, RuntimeState &state,
 						Common::Functor0<bool> &waitForVerticalBlank,

@@ -46,6 +46,7 @@
 #include "sound_test/sound_test_catalog.h"
 #include "sound_test/sound_test_controller.h"
 #include "vblank/main_menu_vblank_handler.h"
+#include "scooby/sound/gems_audio.h"
 
 // Owns the complete control flow of Ghidra RunMainMenu at 0x00008196 while its meaningful visual,
 // selection, and dispatch callees are recovered one at a time. Audio is an explicitly deferred
@@ -144,9 +145,9 @@ private:
 	void invokeMainMenuVBlank();
 	bool isRevealAnimationEnabled() const { return (_state.InitializationFlags & kRevealCompleteMask) != 0; }
 
-	// Defers Ghidra PlayAudioCommand at 0x00009762 without blocking menu flow.
+	// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
 	// command: original audio command supplied in register D0.
-	void playAudioCommand(int command) { (void)command; }
+	void playAudioCommand(int command) { gemsStartSong(command); }
 
 	// Common::Functor1Mem binding target combining waitForFrames with the installed main-menu VBlank
 	// callback that the nested lambda previously captured.
@@ -195,9 +196,8 @@ private:
 	// word while preserving scan, shift, and append order.
 	MainMenuExit runRoomObjectRelocationMenu();
 
-	// Defers Ghidra InitializeAudioDriver without blocking recovered menu control flow.
-	void initializeAudioDriver() {
-	}
+	// Ghidra InitializeAudioDriver (gemsStopAll, 0x001F6F52).
+	void initializeAudioDriver() { gemsStopAll(); }
 
 	const ScoobyDooRom &_rom;
 	MainMenuPresentation &_menuPresentation;

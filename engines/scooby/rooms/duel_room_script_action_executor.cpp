@@ -29,6 +29,7 @@
 #include "scooby/common/span.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/graphics/tile_layer.h"
+#include "scooby/sound/gems_audio.h"
 
 namespace Scooby {
 const Common::Array<int16> DuelRoomScriptActionExecutor::kOppositeDuelFacingDirections{
@@ -97,7 +98,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 		}
 	}
 
-	// Ghidra 0x00003328-0x00003371: retain every silent audio handover, the room callback, both nested
+	// Ghidra 0x00003328-0x00003371: retain every audio handover, the room callback, both nested
 	// actions, and the DBF-inclusive 51- and 101-retrace waits in their original order.
 	stopAudioPlayback(0x58);
 	stopAudioPlayback(0x71);
@@ -542,22 +543,24 @@ int32 DuelRoomScriptActionExecutor::replaceIntegerCoordinate(
 	return (coordinate & 0x0000FFFF) | (static_cast<int32>(integer) << 16);
 }
 
+// Ghidra gemsPauseAll (0x001F6F2A).
 void DuelRoomScriptActionExecutor::pauseAudioDriver() {
-	// AUDIO FRONTIER: Preserve pause ordering until the PC audio domain is implemented.
+	gemsPauseAll();
 }
 
+// Ghidra gemsResumeAll (0x001F6F3E).
 void DuelRoomScriptActionExecutor::resumeAudioDriver() {
-	// AUDIO FRONTIER: Preserve resume ordering until the PC audio domain is implemented.
+	gemsResumeAll();
 }
 
+// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
 void DuelRoomScriptActionExecutor::playAudioCommand(int command) {
-	// AUDIO FRONTIER: Preserve command ordering until the PC audio domain is implemented.
-	(void)command;
+	gemsStartSong(command);
 }
 
+// Ghidra StopAudioPlayback (gemsStopSong, 0x00009776).
 void DuelRoomScriptActionExecutor::stopAudioPlayback(int command) {
-	// AUDIO FRONTIER: Preserve stop ordering until the PC audio domain is implemented.
-	(void)command;
+	gemsStopSong(command);
 }
 
 void DuelRoomScriptActionExecutor::buildDuelStatusBarTiles() {

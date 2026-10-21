@@ -26,6 +26,7 @@
 #include "common/array.h"
 
 #include "scooby/compression/byte_rle_decoder.h"
+#include "scooby/sound/gems_audio.h"
 
 namespace Scooby {
 namespace {
@@ -340,13 +341,13 @@ int RoomActorAnimator::replaceIntegerCoordinate(int coordinate, int16 integer) {
 	return (coordinate & 0x0000FFFF) | (integer << 16);
 }
 
+// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
 void RoomActorAnimator::playAudioCommand(int command) {
-	(void)command;
-	// AUDIO FRONTIER: Preserve command ordering while the PC audio domain remains deliberately deferred.
+	gemsStartSong(command);
 }
 
+// Ghidra StopAudioPlayback (gemsStopSong, 0x00009776).
 void RoomActorAnimator::stopAudioPlayback(int command) {
-	(void)command;
-	// AUDIO FRONTIER: Preserve command ordering while the PC audio domain remains deliberately deferred.
+	gemsStopSong(command);
 }
 } // namespace Scooby

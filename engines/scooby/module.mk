@@ -7,6 +7,7 @@ MODULE_OBJS = \
     compression/byte_rle_decoder.o \
     compression/ring_lz_decoder.o \
     graphics/binary_mask_tile_generator.o \
+    graphics/indexed_frame.o \
     graphics/genesis_asset_decoder.o \
     graphics/genesis_sprite_table_decoder.o \
     graphics/sprite_layer.o \
@@ -85,6 +86,9 @@ MODULE_OBJS = \
     runtime/episode_opening_sequence.o \
     runtime/runtime_state.o \
     runtime/session_controller.o \
+    sound/gems_audio.o \
+    sound/gems_driver.o \
+    sound/genesis_sound_chip.o \
     startup/application_loop.o \
     startup/executable_directory.o \
     startup/intro_sequence.o \

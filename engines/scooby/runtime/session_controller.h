@@ -54,6 +54,7 @@
 #include "scooby/rooms/room_sprite_renderer.h"
 #include "scooby/rooms/room_tile_streamer.h"
 #include "scooby/rooms/vblank/room_vblank_handler.h"
+#include "scooby/sound/gems_audio.h"
 #include "scooby/startup/restart_sequence.h"
 #include "scooby/startup/studio_logo_sequence.h"
 #include "session_exit.h"
@@ -149,21 +150,20 @@ private:
 	// and produce 155. Each record has seven big-endian words plus optional fixed X/Y when flags mask
 	// 0x0200 is set, and becomes one 26-byte logical runtime record. Descriptor field +0x30 selects
 	// initial script headers 0x0014F5DC or 0x001BAD9C; the episode opening runs before the ordered
-	// silent stop-audio handover.
+	// stop-audio handover.
 	bool loadRoomObjectTable();
 
-	// Defers Ghidra StopAudioPlayback at 0x00009776 without blocking room startup.
+	// Ghidra StopAudioPlayback (gemsStopSong, 0x00009776).
 	// command: original audio command supplied in D0.
-	static void stopAudioPlayback(int command) { (void)command; }
+	static void stopAudioPlayback(int command) { gemsStopSong(command); }
 
 	// Initializes the six actor animation slots and publishes their first room frame.
 	//
 	// Ghidra: initializeRoomRuntimeState (0x0000801A).
 	void initializeRoomRuntimeState();
 
-	// Defers Ghidra InitializeAudioDriver at 0x001F6F52 without blocking recovered control flow.
-	void initializeAudioDriver() {
-	}
+	// Ghidra InitializeAudioDriver (gemsStopAll, 0x001F6F52).
+	void initializeAudioDriver() { gemsStopAll(); }
 
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;

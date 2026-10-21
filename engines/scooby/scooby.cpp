@@ -33,6 +33,7 @@
 #include "graphics/tile_scene.h"
 #include "scooby/console.h"
 #include "scooby/detection.h"
+#include "scooby/sound/gems_driver.h"
 #include "startup/application_loop.h"
 
 namespace Scooby {
@@ -40,12 +41,13 @@ namespace Scooby {
 ScoobyEngine *g_engine;
 
 ScoobyEngine::ScoobyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Scooby"), _applicationLoop(nullptr) {
+	_gameDescription(gameDesc), _randomSource("Scooby"), _applicationLoop(nullptr), _gemsDriver(nullptr) {
 	g_engine = this;
 }
 
 ScoobyEngine::~ScoobyEngine() {
 	delete _applicationLoop;
+	delete _gemsDriver;
 }
 
 uint32 ScoobyEngine::getFeatures() const {
@@ -73,6 +75,11 @@ Common::Error ScoobyEngine::run() {
 	TileScene scene;
 	IndexedFrame frame(screen);
 
+	// The GEMS driver reads its banks from the ROM in the mixer thread, so it must be destroyed
+	// before the ROM goes out of scope at the end of run().
+	_gemsDriver = new GemsDriver(*rom, _mixer);
+	syncSoundSettings();
+
 	_applicationLoop = new ApplicationLoop(*rom, scene, frame, input);
 
 	// Set the engine's debugger console
@@ -85,7 +92,19 @@ Common::Error ScoobyEngine::run() {
 
 	_applicationLoop->run();
 
+	delete _gemsDriver;
+	_gemsDriver = nullptr;
+
 	return Common::kNoError;
+}
+
+void ScoobyEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	if (_gemsDriver) {
+		bool mute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+		_gemsDriver->setVolume(mute ? 0 : ConfMan.getInt("music_volume"));
+	}
 }
 
 bool ScoobyEngine::canSaveGameStateCurrently(Common::U32String *msg) {

@@ -34,6 +34,7 @@
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/main_menu/vblank/main_menu_vblank_handler.h"
 #include "scooby/presentation/frame_presenter.h"
+#include "scooby/sound/gems_audio.h"
 
 // Owns the selected episode's animated handover from menu state to room startup.
 
@@ -143,7 +144,8 @@ private:
 
 	void advanceVerticalPhase();
 	void invokeOpeningVBlank();
-	static void playAudioCommand(int command) { (void)command; }
+	// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
+	static void playAudioCommand(int command) { gemsStartSong(command); }
 	void updateEpisodeOpeningScene();
 	bool waitForOpeningVerticalBlank();
 	void writeEpisodeOpeningSpriteTable();
