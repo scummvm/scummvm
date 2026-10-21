@@ -223,7 +223,7 @@ void dumpDialogs(const Common::String &message, const Common::String &lang) {
 
 	// MessageDialogWithURL
 	GUI::MessageDialogWithURL messageDialogWithURL(message, "https://www.scummvm.org");
-	handleSimpleDialog(messageDialogWithURL, "messageDialogWithURL-" + suffix, surf);
+	handleSimpleDialog(messageDialogWithURL, "messageDialogWithURL" + suffix, surf);
 
 	// RemovalConfirmationDialog
 	Common::StringArray gameTitles;
@@ -232,60 +232,60 @@ void dumpDialogs(const Common::String &message, const Common::String &lang) {
 	Common::U32String removalMessage = Common::U32String::format(
 		_("Do you really want to remove the following %d game configurations?\n\n"), (int)gameTitles.size());
 	GUI::RemovalConfirmationDialog removalConfirmationDialog(removalMessage, gameTitles);
-	handleSimpleDialog(removalConfirmationDialog, "removalConfirmationDialog-" + suffix, surf);
+	handleSimpleDialog(removalConfirmationDialog, "removalConfirmationDialog" + suffix, surf);
 
 	// UnknownGameDialog
 	DetectedGame detectedGame("scumm", "monkey", "The Secret of Monkey Island", Common::EN_ANY, Common::kPlatformDOS);
 	detectedGame.hasUnknownFiles = true;
 	detectedGame.canBeAdded = true;
 	GUI::UnknownGameDialog unknownGameDialog(detectedGame);
-	handleSimpleDialog(unknownGameDialog, "unknownGameDialog-" + suffix, surf);
+	handleSimpleDialog(unknownGameDialog, "unknownGameDialog" + suffix, surf);
 
 	// HelpDialog
 	GUI::HelpDialog helpDialog;
-	handleSimpleDialog(helpDialog, "helpDialog-" + suffix, surf);
+	loopThroughTabs(helpDialog, lang, surf, "helpDialog");
 
 	// PredictiveDialog
 	GUI::PredictiveDialog predictiveDialog;
-	handleSimpleDialog(predictiveDialog, "predictiveDialog-" + suffix, surf);
+	handleSimpleDialog(predictiveDialog, "predictiveDialog" + suffix, surf);
 
 	// PrintingDialog
 	Graphics::ManagedSurface printSurface(64, 64, g_system->getOverlayFormat());
 	GUI::PrintingDialog printingDialog(printSurface, true, true, kPageOrientationPortrait);
-	handleSimpleDialog(printingDialog, "printingDialog-" + suffix, surf);
+	handleSimpleDialog(printingDialog, "printingDialog" + suffix, surf);
 
 	// SavenameDialog
 	GUI::SavenameDialog savenameDialog;
-	handleSimpleDialog(savenameDialog, "savenameDialog-" + suffix, surf);
+	handleSimpleDialog(savenameDialog, "savenameDialog" + suffix, surf);
 
 	// ShaderBrowserDialog
 	GUI::ShaderBrowserDialog shaderBrowserDialog((Common::Path()));
-	handleSimpleDialog(shaderBrowserDialog, "shaderBrowserDialog-" + suffix, surf);
+	handleSimpleDialog(shaderBrowserDialog, "shaderBrowserDialog" + suffix, surf);
 
 #ifdef USE_DLC
 	// DLCsDialog
 	GUI::DLCsDialog dlcsDialog;
-	handleSimpleDialog(dlcsDialog, "dlcsDialog-" + suffix, surf);
+	handleSimpleDialog(dlcsDialog, "dlcsDialog" + suffix, surf);
 
 	// DownloadDLCsDialog
 	GUI::DownloadDLCsDialog downloadDLCsDialog;
-	handleSimpleDialog(downloadDLCsDialog, "downloadDLCsDialog-" + suffix, surf);
+	handleSimpleDialog(downloadDLCsDialog, "downloadDLCsDialog" + suffix, surf);
 #endif
 
 #ifdef ENABLE_EVENTRECORDER
 	// RecorderDialog
 	GUI::RecorderDialog recorderDialog;
-	handleSimpleDialog(recorderDialog, "recorderDialog-" + suffix, surf);
+	handleSimpleDialog(recorderDialog, "recorderDialog" + suffix, surf);
 
 	// EditRecordDialog
 	GUI::EditRecordDialog editRecordDialog(_("Unknown Author"), "Name", "Notes");
-	handleSimpleDialog(editRecordDialog, "editRecordDialog-" + suffix, surf);
+	handleSimpleDialog(editRecordDialog, "editRecordDialog" + suffix, surf);
 #endif
 
 #ifdef USE_UPDATES
 	// UpdatesDialog
 	GUI::UpdatesDialog updatesDialog;
-	handleSimpleDialog(updatesDialog, "updatesDialog-" + suffix, surf);
+	handleSimpleDialog(updatesDialog, "updatesDialog" + suffix, surf);
 #endif
 
 	// GlobalOptionsDialog
