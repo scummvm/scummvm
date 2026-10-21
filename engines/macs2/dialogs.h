@@ -24,6 +24,8 @@
 
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
+#include "gui/widgets/popup.h"
+#include "macs2/translation.h"
 
 namespace Macs2 {
 
@@ -46,6 +48,8 @@ private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 
 	GUI::CheckboxWidget *_originalMenusCheckbox = nullptr;
+	GUI::PopUpWidget *_translationPopUp = nullptr;
+	Common::Array<TranslationPackage> _translationPackages;
 #ifdef USE_TTS
 	GUI::CheckboxWidget *_ttsCheckbox = nullptr;
 #endif

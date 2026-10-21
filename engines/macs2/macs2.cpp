@@ -48,6 +48,7 @@
 #include "macs2/detection.h"
 #include "macs2/hotspot_names.h"
 #include "macs2/music.h"
+#include "macs2/translation.h"
 #include "macs2/view1.h"
 
 namespace Macs2 {
@@ -2455,9 +2456,23 @@ int Macs2Engine::computeStringIndex(Common::MemoryReadStream *stream, int target
 }
 
 void Macs2Engine::loadTranslation() {
-	Common::SeekableReadStream *f = SearchMan.createReadStreamForMember("macs2_translation.dat");
+	const Common::String code = ConfMan.get(kTranslationConfigKey);
+	if (code.empty() || isAmiga())
+		return;
+
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	const Common::Array<TranslationPackage> packages = listTranslationPackages(gameDataDir, getGameId());
+	Common::String fileName;
+	for (const TranslationPackage &package : packages) {
+		if (package.code.equalsIgnoreCase(code)) {
+			fileName = package.fileName;
+			break;
+		}
+	}
+
+	Common::SeekableReadStream *f = fileName.empty() ? nullptr : gameDataDir.getChild(fileName).createReadStream();
 	if (!f) {
-		warning("Cannot open macs2_translation.dat");
+		warning("Cannot open %s translation package for '%s'", getGameId().c_str(), code.c_str());
 		return;
 	}
 
@@ -2465,14 +2480,14 @@ void Macs2Engine::loadTranslation() {
 	char magic[4];
 	f->read(magic, 4);
 	if (memcmp(magic, "MCS2", 4) != 0) {
-		warning("Invalid macs2_translation.dat magic");
+		warning("Invalid %s magic", fileName.c_str());
 		delete f;
 		return;
 	}
 
 	const uint16 version = f->readUint16LE();
 	if (version != 1) {
-		warning("Unsupported macs2_translation.dat version %u", version);
+		warning("Unsupported %s version %u", fileName.c_str(), version);
 		delete f;
 		return;
 	}
@@ -2515,7 +2530,7 @@ void Macs2Engine::loadTranslation() {
 			for (uint16 k = 0; k < len; k++) {
 				s += (char)f->readByte();
 			}
-			entry.strings.push_back(s);
+			entry.strings.push_back(normalizeTranslationString(s));
 		}
 		stringDataEnd = MAX(stringDataEnd, (uint32)f->pos());
 		_sceneTranslations[sceneIndex[i].id] = entry;
@@ -2531,7 +2546,7 @@ void Macs2Engine::loadTranslation() {
 			for (uint16 k = 0; k < len; k++) {
 				s += (char)f->readByte();
 			}
-			entry.strings.push_back(s);
+			entry.strings.push_back(normalizeTranslationString(s));
 		}
 		stringDataEnd = MAX(stringDataEnd, (uint32)f->pos());
 		_objectTranslations[objectIndex[i].id] = entry;
@@ -2550,7 +2565,7 @@ void Macs2Engine::loadTranslation() {
 				val += (char)f->readByte();
 			}
 			if (!key.empty() && !val.empty()) {
-				out[key] = val;
+				out[key] = normalizeTranslationString(val);
 			}
 		}
 	};
@@ -2564,12 +2579,12 @@ void Macs2Engine::loadTranslation() {
 	readLabelMap(numUiLabels, _uiLabelTranslations);
 
 	delete f;
-	debug("Loaded macs2_translation.dat: %u scenes, %u objects, %u overlay labels, %u UI labels",
-		  numScenes, numObjects, (uint)_hotspotLabelTranslations.size(), (uint)_uiLabelTranslations.size());
+	debug("Loaded %s: %u scenes, %u objects, %u overlay labels, %u UI labels",
+		  fileName.c_str(), numScenes, numObjects, (uint)_hotspotLabelTranslations.size(), (uint)_uiLabelTranslations.size());
 }
 
 Common::String Macs2Engine::translateHotspotLabel(const Common::String &cp850Name) const {
-	if (cp850Name.empty() || !(getFeatures() & GF_TRANSLATED)) {
+	if (cp850Name.empty()) {
 		return cp850Name;
 	}
 	auto it = _hotspotLabelTranslations.find(cp850Name);
@@ -2580,7 +2595,7 @@ Common::String Macs2Engine::translateHotspotLabel(const Common::String &cp850Nam
 }
 
 Common::String Macs2Engine::translateUiLabel(const Common::String &source) const {
-	if (source.empty() || !(getFeatures() & GF_TRANSLATED)) {
+	if (source.empty()) {
 		return source;
 	}
 	auto it = _uiLabelTranslations.find(source);
@@ -2620,17 +2635,22 @@ Common::StringArray Macs2Engine::decodeStrings(Common::MemoryReadStream *stream,
 	}
 
 	// Apply translation if available
-	if (getFeatures() & GF_TRANSLATED) {
+	if (!_sceneTranslations.empty() || !_objectTranslations.empty()) {
 		const int baseIndex = computeStringIndex(stream, offset);
 		const TranslationEntry *entry = nullptr;
-		if (objectId != 0 && _objectTranslations.contains(objectId)) {
-			entry = &_objectTranslations[objectId];
+		const int translationObjectId = isDemo() ? remapDemoTranslationObjectId(objectId) : objectId;
+		bool sceneTranslation = false;
+		if (translationObjectId != 0 && _objectTranslations.contains(translationObjectId)) {
+			entry = &_objectTranslations[translationObjectId];
 		} else if (sceneId != 0 && _sceneTranslations.contains(sceneId)) {
 			entry = &_sceneTranslations[sceneId];
+			sceneTranslation = true;
 		}
 		if (entry) {
 			for (int i = 0; i < numStrings; i++) {
-				const int idx = baseIndex + i;
+				int idx = baseIndex + i;
+				if (isDemo() && sceneTranslation)
+					idx = remapDemoTranslationSceneStringIndex(sceneId, idx);
 				if (idx >= 0 && idx < (int)entry->strings.size() && !entry->strings[idx].empty()) {
 					result[i] = entry->strings[idx];
 				}
@@ -3026,10 +3046,7 @@ Common::Error Macs2Engine::run() {
 	loadBootstrapResources();
 	initInventoryIconIndices();
 
-	// Load translation data if available
-	if (getFeatures() & GF_TRANSLATED) {
-		loadTranslation();
-	}
+	loadTranslation();
 
 	// Initialize graphics mode (taller framebuffer when action bar verb UI is enabled)
 	int gfxH = screenHeight();

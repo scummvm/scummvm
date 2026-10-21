@@ -52,6 +52,21 @@ bool Text::findGlyph(char c, GlyphData &out, const GlyphData *glyphs, uint16 num
 }
 
 void Text::addDialogueFontFallbacks() {
+	GlyphData existingPunctuation, colon, comma;
+	if (_numGlyphs < kMaxGlyphs && !findGlyph(';', existingPunctuation) &&
+		findGlyph(':', colon) && findGlyph(',', comma) &&
+		colon._width == comma._width && colon._height > comma._height / 2) {
+		// Combine the colon's upper dot with the comma's tail.
+		GlyphData &semicolon = _glyphs[_numGlyphs++];
+		semicolon = comma;
+		semicolon._ascii = ';';
+		const uint rows = comma._height / 2 + 1;
+		for (uint y = 0; y < rows; ++y) {
+			for (uint x = 0; x < comma._width; ++x)
+				semicolon._data[y * comma._width + x] = colon._data[y * colon._width + x];
+		}
+	}
+
 	// Swedish CP850 characters missing from the original DOS dialogue font.
 	// Match its transparent/outline/foreground palette entries and cell
 	// dimensions to preserve text alignment and line spacing.
