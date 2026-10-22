@@ -1002,6 +1002,7 @@ public:
 	int16 addActorAltAnimation(Common::String &pakName, int16 pakSlot);
 	void unloadActorAltAnimation(int16 altActorAnimationIndex);
 	void setActorAltAnimationAtPos(int16 actorIndex, int16 altAnimationIndex, int16 frameListIndex, int16 x, int16 y);
+	void setActorAltAnimationAtNode(int16 actorIndex, int16 altAnimationIndex, int16 frameListIndex, int16 nodeIndex);
 
 	/* BackgroundObject */
 	void setBackgroundObjects(Common::String &pakName, int16 pakSlot);

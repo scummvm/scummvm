@@ -939,6 +939,32 @@ void PrisonerEngine::setActorAltAnimationAtPos(int16 actorIndex, int16 altAnimat
 
 }
 
+// Like setActorAltAnimationAtPos, but places the actor on a path node. With node -1 the
+// actor stays where it is and keeps its path position (original: setActorAltAnimationAtNode).
+void PrisonerEngine::setActorAltAnimationAtNode(int16 actorIndex, int16 altAnimationIndex, int16 frameListIndex, int16 nodeIndex) {
+	Actor *actor = &_actors[actorIndex];
+	int16 x = actor->actorSprite->x;
+	int16 y = actor->actorSprite->y;
+	int16 pathNodeIndex = actor->pathNodeIndex;
+	int16 pathEdgeIndex = actor->pathEdgeIndex;
+	int16 pathPolyIndex = actor->pathPolyIndex;
+
+	if (nodeIndex != -1) {
+		PathNode *node = _pathSystem->getNode(nodeIndex);
+		x = node->x;
+		y = node->y;
+		pathNodeIndex = nodeIndex;
+		pathEdgeIndex = -1;
+		pathPolyIndex = -1;
+	}
+
+	setActorAltAnimationAtPos(actorIndex, altAnimationIndex, frameListIndex, x, y);
+
+	actor->pathNodeIndex = pathNodeIndex;
+	actor->pathEdgeIndex = pathEdgeIndex;
+	actor->pathPolyIndex = pathPolyIndex;
+}
+
 /* ActorFrameSounds */
 
 void PrisonerEngine::updateActorFrameSounds() {

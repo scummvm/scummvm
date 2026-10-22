@@ -186,7 +186,7 @@ protected:
 	int16 op_waitForActorAnimation(Script *script);
 	int16 op_addActorAltAnimation(Script *script);
 	int16 op_unloadActorAltAnimation(Script *script);
-	int16 op_sub_21D2D(Script *script);
+	int16 op_setActorAltAnimationAtNode(Script *script);
 	int16 op_setActorAltAnimationAtPos(Script *script);
 	int16 op_actor21E0D(Script *script);
 	int16 op_addZoneAction91(Script *script);

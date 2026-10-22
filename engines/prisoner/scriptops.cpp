@@ -180,7 +180,7 @@ void ScriptOpcodes::setupOpcodes() {
 	Opcode(op_waitForActorAnimation);
 	Opcode(op_addActorAltAnimation);
 	Opcode(op_unloadActorAltAnimation);
-	Opcode(op_sub_21D2D);
+	Opcode(op_setActorAltAnimationAtNode);
 	Opcode(op_setActorAltAnimationAtPos);
 	Opcode(op_actor21E0D);
 	Opcode(op_addZoneAction91);
@@ -1356,8 +1356,16 @@ int16 ScriptOpcodes::op_unloadActorAltAnimation(Script *script) {
 	return altActorAnimationIndex;
 }
 
-int16 ScriptOpcodes::op_sub_21D2D(Script *script) {
-	debug("ARGS!"); // TODO
+int16 ScriptOpcodes::op_setActorAltAnimationAtNode(Script *script) {
+	ARG_EVALUATE(actorIndex);
+	ARG_EVALUATE(altAnimationIndex);
+	ARG_EVALUATE(frameListIndex);
+	ARG_EVALUATE(nodeIndex);
+	_vm->setActorAltAnimationAtNode(actorIndex, altAnimationIndex, frameListIndex, nodeIndex);
+	script->actorIndex2 = actorIndex;
+	script->altAnimationIndex = altAnimationIndex;
+	script->actorIndex = actorIndex;
+	script->status = kScriptStatus12;
 	return 0;
 }
 
