@@ -64,15 +64,15 @@ protected:
 	}
 
 	enum ZoneType {
-		kZoneChangeScene	= 0x00,
-		kZoneSound			= 0x05,	// only plays its sound
-		kZoneFlag			= 0x0b,
-		kZoneOverlay		= 0x0d,
-		kZoneBoundary		= 0x14,
-		kZoneDamage			= 0x15,
-		kZoneTiledOverlay	= 0x17,	// repeated across the whole width of the view
-		kZonePointer		= 0x18,	// arrow at a fixed place in the view, pointing at the zone
-		kZoneNoRandomZones	= 0x19
+		kSnowZoneChangeScene	= 0x00,
+		kSnowZoneSound			= 0x05,	// only plays its sound
+		kSnowZoneFlag			= 0x0b,
+		kSnowZoneOverlay		= 0x0d,
+		kSnowZoneBoundary		= 0x14,
+		kSnowZoneDamage			= 0x15,
+		kSnowZoneTiledOverlay	= 0x17,	// repeated across the whole width of the view
+		kSnowZonePointer		= 0x18,	// arrow at a fixed place in the view, pointing at the zone
+		kSnowZoneNoRandomZones	= 0x19
 	};
 
 	struct Zone {
@@ -84,23 +84,23 @@ protected:
 		byte conditionValue = 0;
 		RandomSoundBlock sound;		// played on entering
 
-		uint16 sceneID = kNoScene;	// kZoneChangeScene
+		uint16 sceneID = kNoScene;	// kSnowZoneChangeScene
 
-		int16 flagLabel = -1;		// kZoneFlag
+		int16 flagLabel = -1;		// kSnowZoneFlag
 		byte flagValue = 0;
 
-		int32 minDamage = 0;		// kZoneDamage
+		int32 minDamage = 0;		// kSnowZoneDamage
 		int32 maxDamage = 0;
 
 		// Overlays
 		uint imageID = 0;
 		Common::Rect32 src;
-		Common::Rect32 dest;				// on the field; in the view for kZonePointer
+		Common::Rect32 dest;				// on the field; in the view for kSnowZonePointer
 		int32 layer = 0;			// 0 is below the snowmobiles, 1 above
 		bool hasImplicitRect = false;
 
 		bool isActive = false;
-		Math::Vector2d target;				// kZonePointer
+		Math::Vector2d target;				// kSnowZonePointer
 		int32 cellX = 0;			// for zones from a random set
 		int32 cellY = 0;
 

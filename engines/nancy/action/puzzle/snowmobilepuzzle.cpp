@@ -67,9 +67,9 @@ void SnowmobilePuzzle::Zone::centerOn(const Math::Vector2d &pos) {
 	int32 dy = (int32)(pos.getY() - rect.center().y);
 	rect.translate(dx, dy);
 
-	if (type == kZoneOverlay || type == kZoneTiledOverlay) {
+	if (type == kSnowZoneOverlay || type == kSnowZoneTiledOverlay) {
 		dest.translate(dx, dy);
-	} else if (type == kZonePointer) {
+	} else if (type == kSnowZonePointer) {
 		target = Math::Vector2d(rect.center().x, rect.center().y);
 	}
 }
@@ -112,21 +112,21 @@ void SnowmobilePuzzle::readZone(Common::SeekableReadStream &stream, Zone &zone) 
 	zone.sound.readData(stream);
 
 	switch (zone.type) {
-	case kZoneChangeScene:
+	case kSnowZoneChangeScene:
 		zone.sceneID = stream.readUint16LE();
 		stream.skip(1);
 		break;
-	case kZoneFlag:
+	case kSnowZoneFlag:
 		zone.flagLabel = stream.readSint16LE();
 		zone.flagValue = stream.readByte();
 		break;
-	case kZoneDamage:
+	case kSnowZoneDamage:
 		zone.minDamage = stream.readSint32LE();
 		zone.maxDamage = stream.readSint32LE();
 		break;
-	case kZoneOverlay:
-	case kZoneTiledOverlay:
-	case kZonePointer: {
+	case kSnowZoneOverlay:
+	case kSnowZoneTiledOverlay:
+	case kSnowZonePointer: {
 		Common::String imageName;
 		readFilename(stream, imageName);
 		zone.imageID = loadSheet(imageName);
@@ -144,9 +144,9 @@ void SnowmobilePuzzle::readZone(Common::SeekableReadStream &stream, Zone &zone) 
 		zone.layer = stream.readSint32LE();
 		break;
 	}
-	case kZoneSound:
-	case kZoneBoundary:
-	case kZoneNoRandomZones:
+	case kSnowZoneSound:
+	case kSnowZoneBoundary:
+	case kSnowZoneNoRandomZones:
 		break;
 	default:
 		error("SnowmobilePuzzle: unhandled zone type %d", zone.type);
@@ -247,7 +247,7 @@ void SnowmobilePuzzle::readData(Common::SeekableReadStream &stream) {
 }
 
 void SnowmobilePuzzle::finalizeZone(Zone &zone) const {
-	if (zone.type != kZoneOverlay && zone.type != kZoneTiledOverlay && zone.type != kZonePointer) {
+	if (zone.type != kSnowZoneOverlay && zone.type != kSnowZoneTiledOverlay && zone.type != kSnowZonePointer) {
 		return;
 	}
 
@@ -304,7 +304,7 @@ void SnowmobilePuzzle::init() {
 
 		// The first pointer follows the chased snowmobile
 		for (uint i = 0; i < _numFixedZones; ++i) {
-			if (_zones[i].type == kZonePointer) {
+			if (_zones[i].type == kSnowZonePointer) {
 				_pointerZone = i;
 				_zones[i].centerOn(_chaserPos);
 				break;
@@ -395,7 +395,7 @@ void SnowmobilePuzzle::updateField() {
 bool SnowmobilePuzzle::isCellExcluded(int32 cellX, int32 cellY) const {
 	Common::Rect32 cell(cellX * _cellSize, cellY * _cellSize, (cellX + 1) * _cellSize, (cellY + 1) * _cellSize);
 	for (uint i = 0; i < _numFixedZones; ++i) {
-		if (_zones[i].type == kZoneNoRandomZones && _zones[i].rect.intersects(cell)) {
+		if (_zones[i].type == kSnowZoneNoRandomZones && _zones[i].rect.intersects(cell)) {
 			return true;
 		}
 	}
@@ -513,7 +513,7 @@ void SnowmobilePuzzle::move(double ticks) {
 bool SnowmobilePuzzle::isFree() const {
 	Common::Rect32 bounds = _car.getBounds();
 	for (const Zone &zone : _zones) {
-		if (zone.type == kZoneBoundary && zone.isActive && zone.rect.intersects(bounds)) {
+		if (zone.type == kSnowZoneBoundary && zone.isActive && zone.rect.intersects(bounds)) {
 			return false;
 		}
 	}
@@ -583,12 +583,12 @@ bool SnowmobilePuzzle::isInZone(const Zone &zone) const {
 	int32 y = (int32)_car.pos.getY();
 
 	switch (zone.type) {
-	case kZoneBoundary:
+	case kSnowZoneBoundary:
 		return true;
-	case kZonePointer:
+	case kSnowZonePointer:
 		// Shown while the snowmobile is away from what the arrow points at
 		return !zone.rect.contains(x, y);
-	case kZoneTiledOverlay:
+	case kSnowZoneTiledOverlay:
 		if (zone.hasImplicitRect) {
 			return y > zone.rect.top && y < zone.rect.bottom;
 		}
@@ -603,11 +603,11 @@ bool SnowmobilePuzzle::isInZone(const Zone &zone) const {
 void SnowmobilePuzzle::seedZones() {
 	for (Zone &zone : _zones) {
 		switch (zone.type) {
-		case kZoneChangeScene:
-		case kZoneSound:
-		case kZoneFlag:
-		case kZoneDamage:
-		case kZoneNoRandomZones:
+		case kSnowZoneChangeScene:
+		case kSnowZoneSound:
+		case kSnowZoneFlag:
+		case kSnowZoneDamage:
+		case kSnowZoneNoRandomZones:
 			zone.isActive = isInZone(zone);
 			break;
 		default:
@@ -631,13 +631,13 @@ void SnowmobilePuzzle::updateZones() {
 
 void SnowmobilePuzzle::enterZone(Zone &zone) {
 	switch (zone.type) {
-	case kZoneChangeScene:
+	case kSnowZoneChangeScene:
 		changeScene(zone.sceneID);
 		break;
-	case kZoneFlag:
+	case kSnowZoneFlag:
 		NancySceneState.setEventFlag(zone.flagLabel, zone.flagValue ? g_nancy->_true : g_nancy->_false);
 		break;
-	case kZoneDamage:
+	case kSnowZoneDamage:
 		_car.damage += zone.minDamage;
 		if (zone.maxDamage > zone.minDamage) {
 			_car.damage += g_nancy->_randomSource->getRandomNumber(zone.maxDamage - zone.minDamage - 1);
@@ -880,13 +880,13 @@ void SnowmobilePuzzle::drawZones(int32 layer) {
 		const Graphics::ManagedSurface &image = *_sheets[zone.imageID];
 
 		switch (zone.type) {
-		case kZoneOverlay:
+		case kSnowZoneOverlay:
 			if (zone.dest.intersects(view)) {
 				drawSprite(image, zone.src, zone.dest.left - view.left, zone.dest.top - view.top);
 			}
 
 			break;
-		case kZoneTiledOverlay: {
+		case kSnowZoneTiledOverlay: {
 			int32 step = zone.dest.width();
 			if (step <= 0) {
 				break;
@@ -903,7 +903,7 @@ void SnowmobilePuzzle::drawZones(int32 layer) {
 
 			break;
 		}
-		case kZonePointer: {
+		case kSnowZonePointer: {
 			Common::Rect dest(zone.dest.left, zone.dest.top, zone.dest.right, zone.dest.bottom);
 			drawRotated(image, zone.src, dest, angleOf(zone.target - _car.pos));
 			break;
