@@ -838,6 +838,11 @@ void MirrorLightData::synchronize(Common::Serializer &ser) {
 		ser.syncAsDoubleLE(angles[i]);
 }
 
+void MultiBuildPuzzleData::synchronize(Common::Serializer &ser) {
+	ser.syncAsUint16LE(sceneID);
+	syncInt16Array(ser, placeCounts);
+}
+
 void BuildPuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncAsUint16LE(sceneID);
 	ser.syncAsSint16LE(placedCount);
@@ -1145,6 +1150,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new DragSurfaceData();
 	case BuildPuzzleData::getTag():
 		return new BuildPuzzleData();
+	case MultiBuildPuzzleData::getTag():
+		return new MultiBuildPuzzleData();
 	case MirrorLightData::getTag():
 		return new MirrorLightData();
 	case DrivingData::getTag():

@@ -596,6 +596,18 @@ struct MirrorLightData : public PuzzleData {
 	Common::Array<double> angles;	// radians, indexed by mirror
 };
 
+// Nancy10 MultiBuildPuzzle (AR 235). How many times each ingredient went in when
+// the puzzle was last left. A record with its retain byte set picks the counts
+// back up when it runs in the same scene (cake mixing, after "add more
+// ingredients"); any other record starts over.
+struct MultiBuildPuzzleData : public PuzzleData {
+	static constexpr uint32 getTag() { return MKTAG('M', 'B', 'L', 'D'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	uint16 sceneID = kNoScene;
+	Common::Array<int16> placeCounts;
+};
+
 // Nancy14 BuildPuzzle (AR 166). The board as it was after the last drop. A puzzle
 // scene that re-runs picks it back up, as long as it is still the last build
 // puzzle entered and its resume flag is set; otherwise the puzzle starts over.

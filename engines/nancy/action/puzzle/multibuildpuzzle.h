@@ -104,9 +104,9 @@ protected:
 	bool _hasCloseupImage = false;
 
 	// Nancy 10 additions
-	// Parsed for correct chunk alignment but not acted upon: no shipping N10/N11
-	// MultiBuild puzzle sets it (cake mixing and cake cooking both have it clear),
-	// so the save/restore of placement counts is deliberately not implemented.
+	// Picks up the placement counts the puzzle was last left with in this scene.
+	// Cake mixing has two records: a fresh one, and a retaining one that runs
+	// after the player backs away and chooses to add more ingredients.
 	bool _retainState = false;
 	Common::Path _animImageName;    // Completion animation sprite sheet
 	bool _hasAnimImage = false;
@@ -211,6 +211,9 @@ protected:
 
 	void checkIfSolved();
 	void checkIfSolvedOnExit();
+	// Nancy 10: keep the placement counts for a retaining record to pick up.
+	void saveState();
+	void restoreState();
 	// Nancy 13: ring the order up through the first exit hotspot.
 	void submitPuzzle();
 	// Nancy 13: return every piece to its slot and drop the counter clones.
@@ -218,6 +221,9 @@ protected:
 	// Updates the min-count/solve event flags. Returns true when every piece
 	// satisfies its own placement rule.
 	bool updateSolveFlags();
+	// Writes the flag's value when isSet, its opposite otherwise, unless it
+	// already holds what was last written.
+	void writeSolveFlag(const FlagDescription &flag, bool isSet, int &lastValue);
 	void updatePieceRender(int pieceIdx);
 	static void rotateSurface90CW(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dst);
 	// Clone an existing piece at the end of _pieces (counter-piece respawn).
