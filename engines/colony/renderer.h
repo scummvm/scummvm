@@ -37,6 +37,7 @@ namespace Colony {
 
 // CALCROBO.C projects both axes with (coordinate << 8) / depth.
 const float kProjectionFocalLength = 256.0f;
+const float kProjectionNearClip = 1.0f;
 
 class Renderer {
 public:
@@ -77,6 +78,7 @@ public:
 	virtual void setFeatureClipX(int left, int right) {}
 	virtual void clearFeatureClipX() {}
 	virtual void setSquarePixelViewport(bool enable) = 0;
+	virtual void setCanvasSize(int width, int height) = 0;
 	virtual void computeScreenViewport() = 0;
 
 	// Window-pixel rect the logical canvas is currently drawn into.
@@ -101,6 +103,9 @@ protected:
 // clamp to the nearest canvas edge.
 Common::Point windowToCanvas(const Common::Rect &viewport, const Common::Point &p, int canvasW, int canvasH);
 Common::Point canvasToWindow(const Common::Rect &viewport, const Common::Point &p, int canvasW, int canvasH);
+
+Common::Rect computeScreenViewport(OSystem *system, int width, int height, bool squarePixels);
+Common::Point computeMacCanvasSize(int screenWidth, int screenHeight, bool widescreen);
 
 // Factory function (follows Freescape pattern: picks best available renderer)
 Renderer *createRenderer(OSystem *system, int width, int height);

@@ -34,6 +34,7 @@
 #include "engines/nancy/script/convo.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/records.h"
+#include "engines/nancy/script/ref.h"
 #include "engines/nancy/script/scenecontext.h"
 #include "engines/nancy/script/types.h"
 
@@ -482,6 +483,12 @@ void NavLogicRecord::readCursor(int valueIndex) {
 	_hasCursor = testCursor(getLua(), valueIndex, _cursorType, _cursorIsHot);
 }
 
+void NavLogicRecord::readRef(int valueIndex) {
+	lua_State *L = getLua();
+
+	_ref = lua_isnil(L, valueIndex) ? nullptr : getContext().loadRef(luaL_checkstring(L, valueIndex));
+}
+
 void NavLogicRecord::readTable(int tableIndex) {
 	lua_State *L = getLua();
 
@@ -502,6 +509,24 @@ void NavLogicRecord::readTable(int tableIndex) {
 		_hotspot = checkRect(L, -1);
 		lua_pop(L, 1);
 	}
+
+	if (pushField(L, tableIndex, "ref")) {
+		readRef(-1);
+		lua_pop(L, 1);
+	}
+
+	if (pushField(L, tableIndex, "refColor")) {
+		_refColor = checkColor(L, -1);
+		_hasRefColor = true;
+		lua_pop(L, 1);
+	}
+
+	if (pushField(L, tableIndex, "source")) {
+		_source = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	readField(L, tableIndex, "rightClick", _isRightClick);
 
 	// The flags to set, by name
 	if (pushField(L, tableIndex, "flags")) {
@@ -526,13 +551,41 @@ void NavLogicRecord::readTable(int tableIndex) {
 
 void NavLogicRecord::run(double sceneTime, double elapsedTime) {
 	// Without a place to click, there is nothing to wait for
-	if (_hotspot.isEmpty()) {
+	if (_hotspot.isEmpty() && !_ref) {
 		trigger();
 	}
 }
 
 bool NavLogicRecord::isOver(const ScriptPoint &point) const {
-	return transformRect(_hotspot, getTransform()).contains(point.x, point.y);
+	if (!_ref) {
+		return transformRect(_hotspot, getTransform()).contains(point.x, point.y);
+	}
+
+	double x = point.x;
+	double y = point.y;
+	getTransform().inverse().transformPoint(x, y);
+
+	int refX = (int)x;
+	int refY = (int)y;
+	if (!_source.isEmpty() || !_hotspot.isEmpty()) {
+		if (!_hotspot.contains(refX, refY)) {
+			return false;
+		}
+
+		refX += _source.left - _hotspot.left;
+		refY += _source.top - _hotspot.top;
+	}
+
+	uint32 pixel;
+	if (!_ref->getPixel(refX, refY, pixel)) {
+		return false;
+	}
+
+	return _hasRefColor ? pixel == _refColor : (pixel >> 24) != 0;
+}
+
+void NavLogicRecord::onMouseMove(const ScriptPoint &point, bool inViewport) {
+	_isMouseOver = inViewport && isOver(point);
 }
 
 bool NavLogicRecord::getCursor(const ScriptPoint &point, bool inViewport, uint &cursorType, bool &isHot) {
@@ -546,7 +599,8 @@ bool NavLogicRecord::getCursor(const ScriptPoint &point, bool inViewport, uint &
 }
 
 bool NavLogicRecord::onMouseEvent(RecordEvent event, const ScriptPoint &point, bool inViewport) {
-	if (event != kEventLeftClick || !isOver(point)) {
+	const RecordEvent clickEvent = _isRightClick ? kEventRightClick : kEventLeftClick;
+	if (event != clickEvent || !isOver(point)) {
 		return false;
 	}
 
@@ -579,6 +633,14 @@ bool NavLogicRecord::getField(const Common::String &key) {
 		lua_pushinteger(L, _frame);
 	} else if (key == "onScreen") {
 		pushRect(L, _hotspot);
+	} else if (key == "mouseOver") {
+		lua_pushboolean(L, _isMouseOver);
+	} else if (key == "refColor" && _hasRefColor) {
+		pushColor(L, _refColor);
+	} else if (key == "source") {
+		pushRect(L, _source);
+	} else if (key == "rightClick") {
+		lua_pushboolean(L, _isRightClick);
 	} else {
 		return false;
 	}
@@ -599,6 +661,15 @@ bool NavLogicRecord::setField(const Common::String &key) {
 		_frame = luaL_checkint(L, 3);
 	} else if (key == "onScreen") {
 		_hotspot = checkRect(L, 3);
+	} else if (key == "ref") {
+		readRef(3);
+	} else if (key == "refColor") {
+		_hasRefColor = !lua_isnil(L, 3);
+		_refColor = _hasRefColor ? checkColor(L, 3) : 0;
+	} else if (key == "source") {
+		_source = checkRect(L, 3);
+	} else if (key == "rightClick") {
+		_isRightClick = lua_toboolean(L, 3) != 0;
 	} else {
 		return false;
 	}
@@ -979,6 +1050,7 @@ void AnimOverlayRecord::run(double sceneTime, double elapsedTime) {
 	if (_numLoops != 0 && _numLoopsDone >= _numLoops) {
 		if (_pausesOnLastFrame) {
 			_isPaused = true;
+			callFunction("OnPause");
 		} else {
 			finish();
 		}
@@ -1483,15 +1555,24 @@ void MovieRecord::run(double sceneTime, double elapsedTime) {
 		drawFrame();
 	}
 
-	if (!_player.isRangePlaying() && !_pausesOnLastFrame) {
+	if (_player.isRangePlaying()) {
+		return;
+	}
+
+	if (!_pausesOnLastFrame) {
 		_endTime = sceneTime;
 		finish();
+	} else if (!_hasCalledOnPause) {
+		// Nancy20 scripts can be told once that the movie stopped on its last frame
+		_hasCalledOnPause = true;
+		callFunction("OnPause");
 	}
 }
 
 bool MovieRecord::prepareReset() {
 	_endTime = 0.0;
 	_isPaused = false;
+	_hasCalledOnPause = false;
 	_player.goToFrame(_firstFrame);
 	drawFrame();
 	return true;

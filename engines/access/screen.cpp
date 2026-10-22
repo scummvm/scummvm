@@ -118,11 +118,11 @@ void Screen::setInitialPalettte() {
 
 void Screen::setManPalette() {
 	// Player palette is colors 224~246 in MM
-	if (_vm->getGameID() == kGameMartianMemorandum) {
+	if (_vm->gameIs(kGameMartianMemorandum)) {
 		for (int i = 0; i < 0x42; i++) {
 			_rawPalette[0x2a0 + i] = PALETTE_6BIT_TO_8BIT(_manPal[i]);
 		}
-	} else if (_vm->getGameID() == kGameNoctropolis) {
+	} else if (_vm->gameIs(kGameNoctropolis)) {
 		for (int i = 0; i < 0x84; i++) {
 			_rawPalette[0x240 + i] = PALETTE_6BIT_TO_8BIT(_manPal[i]);
 		}
@@ -130,7 +130,7 @@ void Screen::setManPalette() {
 }
 
 void Screen::setStilPalette() {
-	assert(_vm->getGameID() == kGameNoctropolis);
+	assert(_vm->gameIs(kGameNoctropolis));
 	for (int i = 0; i < 99; i++) {
 		_rawPalette[0x1e0 + i] = PALETTE_6BIT_TO_8BIT(_stilPal[i]);
 	}
@@ -138,11 +138,11 @@ void Screen::setStilPalette() {
 
 void Screen::setIconPalette() {
 	// Icon palette is colors 247~255
-	if (_vm->getGameID() == kGameMartianMemorandum) {
+	if (_vm->gameIs(kGameMartianMemorandum)) {
 		for (int i = 0; i < 0x1B; i++) {
 			_rawPalette[741 + i] = PALETTE_6BIT_TO_8BIT(Martian::ICON_PALETTE[i]);
 		}
-	} else if (_vm->getGameID() == kGameNoctropolis) {
+	} else if (_vm->gameIs(kGameNoctropolis)) {
 		for (int i = 0; i < 60; i++) {
 			_rawPalette[708 + i] = Noctropolis::ICON_PALETTE[i];
 		}
@@ -165,7 +165,7 @@ void Screen::loadPalette(int fileNum, int subfile, int srcOffset) {
 	Resource *res = _vm->_files->loadFile(fileNum, subfile);
 	const byte *palette = res->data() + srcOffset;
 
-	if (_vm->getGameID() == kGameMartianMemorandum) {
+	if (_vm->gameIs(kGameMartianMemorandum)) {
 		for (int i = 0; i < _numColors * 3; i++)
 			_rawPalette[_startColor * 3 + i] = PALETTE_6BIT_TO_8BIT(palette[i]);
 	} else {

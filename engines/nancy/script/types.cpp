@@ -20,6 +20,7 @@
  */
 
 #include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/mathtypes.h"
 #include "engines/nancy/script/types.h"
 
 namespace Nancy {
@@ -71,6 +72,30 @@ static ScriptPoint checkPointArguments(lua_State *L, int index) {
 	return point;
 }
 
+// The same, without rounding the numbers
+static void checkPlaceArguments(lua_State *L, int index, double &x, double &y) {
+	if (lua_gettop(L) != index) {
+		x = luaL_checknumber(L, index);
+		y = luaL_checknumber(L, index + 1);
+		return;
+	}
+
+	if (lua_type(L, index) == LUA_TUSERDATA || lua_type(L, index) == LUA_TTABLE) {
+		lua_getfield(L, index, "x");
+		lua_getfield(L, index, "y");
+		const bool hasBoth = lua_isnumber(L, -1) && lua_isnumber(L, -2);
+		x = lua_tonumber(L, -2);
+		y = lua_tonumber(L, -1);
+		lua_pop(L, 2);
+
+		if (hasBoth) {
+			return;
+		}
+	}
+
+	luaL_argerror(L, index, "Single parameter must be a Point or a table with x and y fields");
+}
+
 static int rectNew(lua_State *L) {
 	ScriptRect rect;
 	rect.left = luaL_checkint(L, 2);
@@ -109,6 +134,21 @@ static int rectIndex(lua_State *L) {
 		lua_pushinteger(L, rect.height());
 	} else if (key == "center") {
 		pushPoint(L, ScriptPoint(rect.left + rect.width() / 2, rect.top + rect.height() / 2));
+	} else if (key == "centerV") {
+		// Not rounded, unlike "center"
+		ScriptVector center;
+		center.size = 2;
+		center.v[0] = rect.left + rect.width() * 0.5f;
+		center.v[1] = rect.top + rect.height() * 0.5f;
+		pushVector(L, center);
+	} else if (key == "leftTop") {
+		pushPoint(L, ScriptPoint(rect.left, rect.top));
+	} else if (key == "rightTop") {
+		pushPoint(L, ScriptPoint(rect.right, rect.top));
+	} else if (key == "leftBottom") {
+		pushPoint(L, ScriptPoint(rect.left, rect.bottom));
+	} else if (key == "rightBottom") {
+		pushPoint(L, ScriptPoint(rect.right, rect.bottom));
 	} else {
 		return indexFunctions(L);
 	}
@@ -187,6 +227,45 @@ static int rectCenteredOn(lua_State *L) {
 	return 1;
 }
 
+// rect:Expand(amount) grows the rectangle by as much on every side
+static int rectExpand(lua_State *L) {
+	ScriptRect rect = checkRect(L, 1);
+	const int32 amount = luaL_checkint(L, 2);
+	pushRect(L, ScriptRect(rect.left - amount, rect.top - amount, rect.right + amount, rect.bottom + amount));
+	return 1;
+}
+
+// rect:CenterSet(place) moves the rectangle so that its middle is at the place
+static int rectCenterSet(lua_State *L) {
+	ScriptRect rect = checkRect(L, 1);
+	double x, y;
+	checkPlaceArguments(L, 2, x, y);
+
+	const float centerX = rect.left + rect.width() * 0.5f;
+	const float centerY = rect.top + rect.height() * 0.5f;
+	rect.translate((int32)(x - centerX), (int32)(y - centerY));
+	pushRect(L, rect);
+	return 1;
+}
+
+// rect:LeftTopSet(place) and rect:LeftBottomSet(place) move the rectangle so that
+// that corner is at the place
+static int rectLeftTopSet(lua_State *L) {
+	const ScriptRect &rect = checkRect(L, 1);
+	double x, y;
+	checkPlaceArguments(L, 2, x, y);
+	pushRect(L, ScriptRect((int32)x, (int32)y, (int32)(rect.width() + x), (int32)(rect.height() + y)));
+	return 1;
+}
+
+static int rectLeftBottomSet(lua_State *L) {
+	const ScriptRect &rect = checkRect(L, 1);
+	double x, y;
+	checkPlaceArguments(L, 2, x, y);
+	pushRect(L, ScriptRect((int32)x, (int32)(y - rect.height()), (int32)(rect.width() + x), (int32)y));
+	return 1;
+}
+
 static const luaL_Reg kRectFunctions[] = {
 	{ "__index", rectIndex },
 	{ "__newindex", rectNewIndex },
@@ -195,6 +274,10 @@ static const luaL_Reg kRectFunctions[] = {
 	{ "Offset", rectOffset },
 	{ "Intersect", rectIntersect },
 	{ "CenteredOn", rectCenteredOn },
+	{ "Expand", rectExpand },
+	{ "CenterSet", rectCenterSet },
+	{ "LeftTopSet", rectLeftTopSet },
+	{ "LeftBottomSet", rectLeftBottomSet },
 	{ nullptr, nullptr }
 };
 
@@ -236,10 +319,19 @@ bool readPoint(lua_State *L, int index, ScriptPoint &point) {
 	return hasBoth;
 }
 
+// Point:New(x, y), or Point:New(place) in Nancy20
 static int pointNew(lua_State *L) {
 	ScriptPoint point;
-	point.x = luaL_checkint(L, 2);
-	point.y = luaL_checkint(L, 3);
+	if (lua_gettop(L) == 2) {
+		double x, y;
+		checkPlaceArguments(L, 2, x, y);
+		point.x = (int32)x;
+		point.y = (int32)y;
+	} else {
+		point.x = luaL_checkint(L, 2);
+		point.y = luaL_checkint(L, 3);
+	}
+
 	pushPoint(L, point);
 	return 1;
 }
@@ -339,7 +431,19 @@ static int getColorComponentShift(const Common::String &name) {
 	return -1;
 }
 
+// Color:New(a, r, g, b), or Color:New(color) in Nancy20, where the color can
+// also be one number holding all four
 static int colorNew(lua_State *L) {
+	if (lua_gettop(L) == 2) {
+		if (lua_isnumber(L, 2)) {
+			pushColor(L, (uint32)(int64)lua_tonumber(L, 2));
+		} else {
+			pushColor(L, checkColor(L, 2));
+		}
+
+		return 1;
+	}
+
 	uint32 a = luaL_checkint(L, 2) & 0xFF;
 	uint32 r = luaL_checkint(L, 3) & 0xFF;
 	uint32 g = luaL_checkint(L, 4) & 0xFF;

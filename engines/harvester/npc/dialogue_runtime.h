@@ -3,7 +3,7 @@
 
 #include "common/error.h"
 #include "common/str.h"
-#include "harvester/script.h"
+#include "harvester/script/script.h"
 
 namespace Harvester {
 

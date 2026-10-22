@@ -25,7 +25,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/system.h"
 #include "graphics/font.h"
 #include "graphics/surface.h"
@@ -118,6 +117,7 @@ public:
 		applyScissorRect(_active3DViewport);
 	}
 	void setSquarePixelViewport(bool enable) override;
+	void setCanvasSize(int width, int height) override;
 	void computeScreenViewport() override;
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
 	Graphics::Surface *getScreenshot() override;
@@ -127,9 +127,7 @@ public:
 
 private:
 	void useColor(uint32 color);
-	// Set glLineWidth scaled to window/logical ratio. Mirrors Freescape
-	// (gfx_opengl_shaders.cpp:692). Cached so back-to-back same-width
-	// line draws don't re-issue the GL call.
+	// Scale line widths with the canvas, excluding letterboxing.
 	void applyLineWidthForLines();
 	float _lineWidth = 1.0f;
 	GLuint _overlayTexId = 0;
@@ -201,10 +199,7 @@ void OpenGLRenderer::useColor(uint32 color) {
 }
 
 void OpenGLRenderer::applyLineWidthForLines() {
-	const int sysW = _system ? _system->getWidth() : 0;
-	float w = 1.0f;
-	if (sysW > _width)
-		w = MAX(1.0f, (float)sysW / (float)_width);
+	const float w = MAX(1.0f, (float)_screenViewport.width() / _width);
 	if (w != _lineWidth) {
 		glLineWidth(w);
 		_lineWidth = w;
@@ -312,7 +307,7 @@ void OpenGLRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY
 	
 	// The original projection is center + (coordinate << 8) / depth, so
 	// derive the frustum from its fixed 256-logical-pixel focal length.
-	const float nearClip = 1.0f;
+	const float nearClip = kProjectionNearClip;
 	const float farClip = 10000.0f;
 	const float xmax = nearClip * viewport.width() * 0.5f / kProjectionFocalLength;
 	const float ymax = nearClip * viewport.height() * 0.5f / kProjectionFocalLength;
@@ -583,44 +578,22 @@ void OpenGLRenderer::setSquarePixelViewport(bool enable) {
 }
 
 void OpenGLRenderer::computeScreenViewport() {
-	int32 screenWidth = _system->getWidth();
-	int32 screenHeight = _system->getHeight();
-
-	bool widescreen = ConfMan.getBool("widescreen_mod");
-
-	if (_squarePixelViewport) {
-		// Animation bitmaps use square pixels. Fit the uncorrected logical
-		// canvas so their authored 416x264 geometry matches the Mac version.
-		const int32 viewportWidth = MIN<int32>(screenWidth,
-			(screenHeight * _width + _height / 2) / _height);
-		const int32 viewportHeight = MIN<int32>(screenHeight,
-			(screenWidth * _height + _width / 2) / _width);
-		_screenViewport = Common::Rect(viewportWidth, viewportHeight);
-		_screenViewport.translate((screenWidth - viewportWidth) / 2,
-			(screenHeight - viewportHeight) / 2);
-	} else if (widescreen) {
-		// Widescreen is a 16:9 presentation even when fullscreen uses a
-		// taller or wider display. Keep it centered instead of stretching it.
-		const int32 viewportWidth = MIN<int32>(screenWidth, (screenHeight * 16 + 4) / 9);
-		const int32 viewportHeight = MIN<int32>(screenHeight, (screenWidth * 9 + 8) / 16);
-		_screenViewport = Common::Rect(viewportWidth, viewportHeight);
-		_screenViewport.translate((screenWidth - viewportWidth) / 2,
-			(screenHeight - viewportHeight) / 2);
-	} else if (_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
-		// Aspect ratio correction (4:3)
-		int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * 4 / 3);
-		int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * 3 / 4);
-		_screenViewport = Common::Rect(viewportWidth, viewportHeight);
-
-		// Pillarboxing/Letterboxing
-		_screenViewport.translate((screenWidth - viewportWidth) / 2,
-			(screenHeight - viewportHeight) / 2);
-	} else {
-		_screenViewport = Common::Rect(screenWidth, screenHeight);
-	}
+	const int screenHeight = _system->getHeight();
+	_screenViewport = Colony::computeScreenViewport(_system, _width, _height, _squarePixelViewport);
 
 	glViewport(_screenViewport.left, screenHeight - _screenViewport.bottom, _screenViewport.width(), _screenViewport.height());
 	glScissor(_screenViewport.left, screenHeight - _screenViewport.bottom, _screenViewport.width(), _screenViewport.height());
+}
+
+void OpenGLRenderer::setCanvasSize(int width, int height) {
+	_width = width;
+	_height = height;
+	computeScreenViewport();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _width, _height, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 void OpenGLRenderer::drawEllipse(int x, int y, int rx, int ry, uint32 color) {
@@ -697,10 +670,14 @@ void OpenGLRenderer::fillEllipse(int x, int y, int rx, int ry, uint32 color) {
 void OpenGLRenderer::fillDitherRect(const Common::Rect &rect, uint32 color1, uint32 color2) {
 	fillRect(rect, color1);
 	useColor(color2);
-	glBegin(GL_POINTS);
+	// Each checker covers a logical pixel, even on a scaled viewport.
+	glBegin(GL_QUADS);
 	for (int y = rect.top; y < rect.bottom; y++) {
 		for (int x = rect.left + (y % 2); x < rect.right; x += 2) {
 			glVertex2i(x, y);
+			glVertex2i(x + 1, y);
+			glVertex2i(x + 1, y + 1);
+			glVertex2i(x, y + 1);
 		}
 	}
 	glEnd();

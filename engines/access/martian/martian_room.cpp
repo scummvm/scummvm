@@ -62,9 +62,7 @@ void MartianRoom::reloadRoom1() {
 	_vm->_player->_playerOff = false;
 
 	_vm->_screen->forceFadeOut();
-	_vm->_events->hideCursor();
 	_vm->_screen->clearScreen();
-	_vm->_events->showCursor();
 	roomInit();
 	_vm->_player->load();
 

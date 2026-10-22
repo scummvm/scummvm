@@ -32,6 +32,17 @@ static const char *const kVectorType = "ND.Vector";
 static const char *const kVectorHelperType = "ND.VectorHelper";
 static const char *const kMatrixType = "ND.Matrix";
 static const char *const kMatrixHelperType = "ND.MatrixHelper";
+static const char *const kQuaternionType = "ND.Quaternion";
+static const char *const kQuaternionHelperType = "ND.QuaternionHelper";
+
+// Nancy20. A rotation, kept in single precision as the DirectX math of the
+// original does
+struct ScriptQuaternion {
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+	float w = 1.0f;
+};
 
 ScriptMatrix::ScriptMatrix() {
 	for (int row = 0; row < 4; ++row) {
@@ -126,10 +137,31 @@ static ScriptVector &checkVector(lua_State *L, int index) {
 	return *(ScriptVector *)checkUserData(L, index, kVectorType);
 }
 
-// Vector:New(x, y[, z[, w]])
+// Vector:New(x, y[, z[, w]]), or Vector:New(vector or place) in Nancy20
 static int vectorNew(lua_State *L) {
 	ScriptVector vector;
 	vector.size = lua_gettop(L) - 1;
+	if (vector.size == 1) {
+		// A copy of a vector, or a place made into a 2D vector
+		const ScriptVector *other = testVector(L, 2);
+		if (other) {
+			pushVector(L, *other);
+			return 1;
+		}
+
+		lua_getfield(L, 2, "x");
+		lua_getfield(L, 2, "y");
+		if (!lua_isnumber(L, -2) || !lua_isnumber(L, -1)) {
+			return luaL_argerror(L, 2, "Single parameter must be a Vector, a Point or a table with x and y fields");
+		}
+
+		vector.size = 2;
+		vector.v[0] = lua_tonumber(L, -2);
+		vector.v[1] = lua_tonumber(L, -1);
+		pushVector(L, vector);
+		return 1;
+	}
+
 	if (vector.size < 2 || vector.size > 4) {
 		return luaL_error(L, "Only 2D, 3D and 4D vectors are supported");
 	}
@@ -358,6 +390,25 @@ static int vectorLerp(lua_State *L) {
 	return 1;
 }
 
+// vector:Reflect(normal), the vector bounced off a surface facing that way
+static int vectorReflect(lua_State *L) {
+	ScriptVector result = checkVector(L, 1);
+	const ScriptVector &normal = checkVector(L, 2);
+	checkSameSize(L, result, normal);
+
+	double dot = 0.0;
+	for (int i = 0; i < result.size; ++i) {
+		dot += result.v[i] * normal.v[i];
+	}
+
+	for (int i = 0; i < result.size; ++i) {
+		result.v[i] -= 2.0 * dot * normal.v[i];
+	}
+
+	pushVector(L, result);
+	return 1;
+}
+
 // Moves a vector by a matrix, as a place ("coord") or as a direction ("normal")
 static int pushTransformedVector(lua_State *L, const ScriptVector &vector, const ScriptMatrix &matrix, const char *kind) {
 	bool isPlace;
@@ -411,12 +462,23 @@ static const luaL_Reg kVectorFunctions[] = {
 	{ "Norm", vectorNormalize },
 	{ "Normalize", vectorNormalize },
 	{ "Lerp", vectorLerp },
+	{ "Reflect", vectorReflect },
 	{ "Transform", vectorTransform },
 	{ nullptr, nullptr }
 };
 
+// Vector.origin is a new vector every time, since scripts can change vectors
+static int vectorHelperIndex(lua_State *L) {
+	if (lua_type(L, 2) == LUA_TSTRING && strcmp(lua_tostring(L, 2), "origin") == 0) {
+		pushVector(L, ScriptVector(0.0, 0.0, 0.0));
+		return 1;
+	}
+
+	return indexFunctions(L);
+}
+
 static const luaL_Reg kVectorHelperFunctions[] = {
-	{ "__index", indexFunctions },
+	{ "__index", vectorHelperIndex },
 	{ "New", vectorNew },
 	{ nullptr, nullptr }
 };
@@ -498,6 +560,57 @@ static int matrixRotateAngle(lua_State *L) {
 	return 1;
 }
 
+// A rotation around the vector v, which RotateAxis and RotateQuaternion both
+// come down to: a multiple of v times itself, a number on the diagonal, and the
+// turn, which goes in the same direction as RotateAngle
+static ScriptMatrix makeRotation(const double v[3], double outer, double diagonal, double turn) {
+	ScriptMatrix matrix;
+	for (int row = 0; row < 3; ++row) {
+		for (int column = 0; column < 3; ++column) {
+			matrix.m[row][column] = outer * v[row] * v[column];
+		}
+
+		matrix.m[row][row] += diagonal;
+	}
+
+	matrix.m[0][1] += turn * v[2];
+	matrix.m[1][0] -= turn * v[2];
+	matrix.m[2][0] += turn * v[1];
+	matrix.m[0][2] -= turn * v[1];
+	matrix.m[1][2] += turn * v[0];
+	matrix.m[2][1] -= turn * v[0];
+	return matrix;
+}
+
+// Matrix:RotateAxis(axis, angle), a turn by the angle in radians around a 3D vector
+static int matrixRotateAxis(lua_State *L) {
+	const ScriptVector *axis = testVector(L, 2);
+	if (!axis || axis->size != 3) {
+		return luaL_argerror(L, 2, "Axis must be a 3D vector");
+	}
+
+	const double angle = luaL_checknumber(L, 3);
+
+	const double length = getVectorLength(*axis);
+	double n[3];
+	for (int i = 0; i < 3; ++i) {
+		n[i] = length != 0.0 ? axis->v[i] / length : axis->v[i];
+	}
+
+	pushMatrix(L, makeRotation(n, 1.0 - cos(angle), cos(angle), sin(angle)));
+	return 1;
+}
+
+// Matrix:RotateQuaternion(quaternion)
+static int matrixRotateQuaternion(lua_State *L) {
+	const ScriptQuaternion &q = *(ScriptQuaternion *)checkUserData(L, 2, kQuaternionType);
+
+	const double v[3] = { q.x, q.y, q.z };
+	const double lengthSquared = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+	pushMatrix(L, makeRotation(v, 2.0, 1.0 - 2.0 * lengthSquared, 2.0 * q.w));
+	return 1;
+}
+
 // A row of the matrix, as a vector
 static int matrixIndex(lua_State *L) {
 	const ScriptMatrix &matrix = checkMatrix(L, 1);
@@ -565,9 +678,8 @@ static int matrixTranspose(lua_State *L) {
 	return 1;
 }
 
-// The matrix that undoes this one; one that can't be undone comes back as it is
-static int matrixInverse(lua_State *L) {
-	ScriptMatrix work = checkMatrix(L, 1);
+ScriptMatrix ScriptMatrix::inverse() const {
+	ScriptMatrix work = *this;
 	ScriptMatrix result;
 
 	for (int column = 0; column < 4; ++column) {
@@ -580,8 +692,7 @@ static int matrixInverse(lua_State *L) {
 		}
 
 		if (work.m[pivot][column] == 0.0) {
-			pushMatrix(L, checkMatrix(L, 1));
-			return 1;
+			return *this;
 		}
 
 		for (int i = 0; i < 4; ++i) {
@@ -608,7 +719,11 @@ static int matrixInverse(lua_State *L) {
 		}
 	}
 
-	pushMatrix(L, result);
+	return result;
+}
+
+static int matrixInverse(lua_State *L) {
+	pushMatrix(L, checkMatrix(L, 1).inverse());
 	return 1;
 }
 
@@ -630,8 +745,18 @@ static const luaL_Reg kMatrixFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+// Matrix.identity is a new matrix every time, since scripts can change matrices
+static int matrixHelperIndex(lua_State *L) {
+	if (lua_type(L, 2) == LUA_TSTRING && strcmp(lua_tostring(L, 2), "identity") == 0) {
+		pushMatrix(L, ScriptMatrix());
+		return 1;
+	}
+
+	return indexFunctions(L);
+}
+
 static const luaL_Reg kMatrixHelperFunctions[] = {
-	{ "__index", indexFunctions },
+	{ "__index", matrixHelperIndex },
 	{ "New", matrixNew },
 	{ "Translation", matrixTranslate },
 	{ "Translate", matrixTranslate },
@@ -639,6 +764,80 @@ static const luaL_Reg kMatrixHelperFunctions[] = {
 	{ "Scale", matrixScale },
 	{ "RotationAngle", matrixRotateAngle },
 	{ "RotateAngle", matrixRotateAngle },
+	{ "RotationAxis", matrixRotateAxis },
+	{ "RotateAxis", matrixRotateAxis },
+	{ "RotationQuaternion", matrixRotateQuaternion },
+	{ "RotateQuaternion", matrixRotateQuaternion },
+	{ nullptr, nullptr }
+};
+
+// Quaternion, which the puzzles of Nancy20 blend rotations with
+
+static void pushQuaternion(lua_State *L, const ScriptQuaternion &quaternion) {
+	pushValue(L, kQuaternionType, quaternion);
+}
+
+static const ScriptQuaternion &checkQuaternion(lua_State *L, int index) {
+	return *(ScriptQuaternion *)checkUserData(L, index, kQuaternionType);
+}
+
+// Quaternion:New(quaternion), a copy
+static int quaternionNew(lua_State *L) {
+	pushQuaternion(L, checkQuaternion(L, 2));
+	return 1;
+}
+
+// Quaternion:RotateZ(angle), a turn by the angle in radians around the z axis
+static int quaternionRotateZ(lua_State *L) {
+	const float angle = (float)luaL_checknumber(L, 2);
+
+	ScriptQuaternion quaternion;
+	quaternion.z = sinf(angle / 2.0f);
+	quaternion.w = cosf(angle / 2.0f);
+	pushQuaternion(L, quaternion);
+	return 1;
+}
+
+// quaternion:Slerp(other, amount), the rotation that far along the way to the
+// other one, going the short way around
+static int quaternionSlerp(lua_State *L) {
+	const ScriptQuaternion &a = checkQuaternion(L, 1);
+	const ScriptQuaternion &b = checkQuaternion(L, 2);
+	float amount = (float)luaL_checknumber(L, 3);
+	float rest = 1.0f - amount;
+
+	float dot = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+	if (dot < 0.0f) {
+		amount = -amount;
+		dot = -dot;
+	}
+
+	if (1.0f - dot > 0.001f) {
+		const float theta = acosf(dot);
+		rest = sinf(theta * rest) / sinf(theta);
+		amount = sinf(theta * amount) / sinf(theta);
+	}
+
+	ScriptQuaternion result;
+	result.x = rest * a.x + amount * b.x;
+	result.y = rest * a.y + amount * b.y;
+	result.z = rest * a.z + amount * b.z;
+	result.w = rest * a.w + amount * b.w;
+	pushQuaternion(L, result);
+	return 1;
+}
+
+static const luaL_Reg kQuaternionFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "Slerp", quaternionSlerp },
+	{ nullptr, nullptr }
+};
+
+static const luaL_Reg kQuaternionHelperFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "New", quaternionNew },
+	{ "RotationZ", quaternionRotateZ },
+	{ "RotateZ", quaternionRotateZ },
 	{ nullptr, nullptr }
 };
 
@@ -655,10 +854,8 @@ void registerMathTypes(lua_State *L) {
 	registerType(L, kMatrixType, kMatrixFunctions);
 	registerGlobal(L, "Matrix", kMatrixHelperType, kMatrixHelperFunctions);
 
-	luaL_getmetatable(L, kMatrixHelperType);
-	pushMatrix(L, ScriptMatrix());
-	lua_setfield(L, -2, "identity");
-	lua_pop(L, 1);
+	registerType(L, kQuaternionType, kQuaternionFunctions);
+	registerGlobal(L, "Quaternion", kQuaternionHelperType, kQuaternionHelperFunctions);
 
 	// Rectangles can be moved by a matrix as well
 	luaL_getmetatable(L, "ND.Rect");

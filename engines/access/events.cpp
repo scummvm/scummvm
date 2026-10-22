@@ -84,7 +84,7 @@ void EventsManager::setCursor(CursorType cursorId) {
 		cursorSurface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		byte *destP = (byte *)cursorSurface.getPixels();
 
-		if (_vm->getGameID() != kGameNoctropolis) {
+		if (!_vm->gameIs(kGameNoctropolis)) {
 			Common::fill(destP, destP + width * height, 0);
 			// Loop to build up the cursor
 			for (int y = 0; y < height; ++y) {
@@ -313,7 +313,7 @@ void EventsManager::nextTimer() {
 	_vm->_animation->updateTimers();
 	_vm->_timers.updateTimers();
 	_vm->_player->updateTimers();
-	if (_vm->getGameID() == kGameNoctropolis)
+	if (_vm->gameIs(kGameNoctropolis))
 		((Noctropolis::NoctropolisEngine *)_vm)->_stil->updateTimers();
 }
 

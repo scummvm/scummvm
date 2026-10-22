@@ -145,9 +145,9 @@ void AmazonRoom::roomMenu() {
 }
 
 void AmazonRoom::mainAreaLClick() {
-	Common::Point &mousePos = _vm->_events->_mousePos;
+	const Common::Point &mousePos = _vm->_events->_mousePos;
 	Common::Point pt = _vm->_events->calcRawMouse();
-	Screen &screen = *_vm->_screen;
+	const Screen &screen = *_vm->_screen;
 	Player &player = *_vm->_player;
 
 	if (_selectCommand == -1) {

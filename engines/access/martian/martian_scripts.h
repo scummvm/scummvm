@@ -48,11 +48,11 @@ private:
 
 protected:
 	bool executeSpecial(int commandIndex, int param1, int param2) override;
-	void executeCommand(int commandIndex) override;
 
 public:
 	MartianScripts(AccessEngine *vm);
 	~MartianScripts();
+
 };
 
 } // End of namespace Martian

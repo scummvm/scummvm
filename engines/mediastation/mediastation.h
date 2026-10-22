@@ -58,6 +58,7 @@ class HotspotActor;
 class RootStage;
 class PixMapImage;
 class ImtGod;
+class ImtDeviceOwner;
 class EventLoop;
 class Debugger;
 
@@ -102,6 +103,7 @@ public:
 	Document *getDocument() { return _document; }
 	TimerService *getTimerService() { return _timerService; }
 	ImtGod *getImtGod() { return _imtGod; }
+	ImtDeviceOwner *getDeviceOwner() { return _deviceOwner; }
 
 	void registerAudioSequence(AudioSequence *sequence);
 	void unregisterAudioSequence(AudioSequence *sequence);

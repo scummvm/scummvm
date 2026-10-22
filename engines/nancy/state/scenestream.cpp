@@ -71,18 +71,30 @@ bool SceneStream::update() {
 
 	processRecords();
 
-	if (_hasNextScene && !_isEnded) {
-		_hasNextScene = false;
-
-		if (loadScene()) {
-			processRecords();
-		} else if (_sceneName.empty()) {
-			// There was nothing to run in the first place
-			_isEnded = true;
-		}
+	if (loadNextScene()) {
+		processRecords();
 	}
 
 	return !_isEnded;
+}
+
+bool SceneStream::loadNextScene() {
+	if (!_hasNextScene || _isEnded) {
+		return false;
+	}
+
+	_hasNextScene = false;
+
+	if (loadScene()) {
+		return true;
+	}
+
+	if (_sceneName.empty()) {
+		// There was nothing to run in the first place
+		_isEnded = true;
+	}
+
+	return false;
 }
 
 void SceneStream::processRecords() {
@@ -186,10 +198,7 @@ bool SceneStream::loadScriptedScene() {
 // Takes the stream from the scene it was running to the one it asked for
 void SceneStream::beginScene() {
 	// The streams that were started for the outgoing scene end with it
-	const bool hadScene = !_sceneName.empty();
-	clearScene();
-
-	if (hadScene) {
+	if (!_sceneName.empty()) {
 		for (uint i = 0; i < _children.size(); ) {
 			if (_children[i].lifetime == StreamFlags::kEndsWithParentScene) {
 				NancySceneState.getStreams().end(_children[i].name);
@@ -200,13 +209,15 @@ void SceneStream::beginScene() {
 		}
 	}
 
+	endScene();
+	clearScene();
+
 	_sceneName = _nextSceneName;
 	_sceneInfo.frameID = _nextFrameID;
 
 	// Numbered scenes are named after their number
 	_sceneInfo.sceneID = kNoSceneID;
-	if (_sceneName.size() > 1 && tolower(_sceneName[0]) == 's' && Common::isDigit(_sceneName[1])) {
-		_sceneInfo.sceneID = atoi(_sceneName.c_str() + 1);
+	if (parseSceneName(_sceneName, _sceneInfo.sceneID)) {
 		NancySceneState.addSceneVisit(_sceneInfo.sceneID);
 	}
 
@@ -278,6 +289,14 @@ bool SceneStream::loadScene() {
 	return true;
 }
 
+void SceneStream::endScene() {
+#ifdef ENABLE_NANCY_V4
+	if (_scriptScene) {
+		_scriptScene->end();
+	}
+#endif
+}
+
 void SceneStream::clearScene() {
 	// Nothing of a stream's scene carries over to the next one
 	for (Action::ActionRecord *record : _actionManager._records) {
@@ -339,6 +358,18 @@ void SceneStreamManager::begin(const Common::String &name, const Common::String 
 	}
 }
 
+void SceneStreamManager::loadNow(const Common::String &name) {
+	SceneStream *stream = find(name);
+	if (!stream) {
+		return;
+	}
+
+	SceneStream *running = _running;
+	_running = stream;
+	stream->loadNextScene();
+	_running = running;
+}
+
 void SceneStreamManager::end(const Common::String &name) {
 	SceneStream *stream = name.empty() ? _running : find(name);
 	if (!stream) {
@@ -378,6 +409,14 @@ void SceneStreamManager::changeScene(const Common::String &name, const Common::S
 	SceneStream *stream = name.empty() ? _running : find(name);
 	if (stream) {
 		stream->changeScene(sceneName, frameID);
+#ifdef ENABLE_NANCY_V4
+	} else if (name.empty() || name.equalsIgnoreCase(kMainStreamName)) {
+		// Nancy20 has scenes of the main stream that go by name
+		SceneStream *running = _running;
+		_running = nullptr;
+		NancySceneState.changeScene(sceneName, frameID);
+		_running = running;
+#endif
 	} else {
 		warning("Tried to change the scene of stream %s, which is not running", name.c_str());
 	}
@@ -385,7 +424,7 @@ void SceneStreamManager::changeScene(const Common::String &name, const Common::S
 
 Common::String SceneStreamManager::getSceneName(const Common::String &name) const {
 	if (name.equalsIgnoreCase(kMainStreamName)) {
-		return Common::String::format("s%u", NancySceneState.getMainSceneInfo().sceneID);
+		return NancySceneState.getMainSceneName();
 	}
 
 	const SceneStream *stream = name.empty() ? _running : find(name);
@@ -417,6 +456,7 @@ void SceneStreamManager::process() {
 
 	for (uint i = 0; i < _streams.size(); ) {
 		if (_streams[i] && _streams[i]->isEnded()) {
+			_streams[i]->endScene();
 			delete _streams[i];
 			_streams.remove_at(i);
 		} else {

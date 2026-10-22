@@ -46,7 +46,6 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	_btnUpPos = Common::Rect(0, 0, 0, 0);
 	_btnDownPos = Common::Rect(0, 0, 0, 0);
 	_startItem = _startBox = 0;
-	_charCol = 0;
 	_rowOff = 0;
 }
 
@@ -56,38 +55,40 @@ void BubbleBox::load(Common::SeekableReadStream *stream) {
 }
 
 void BubbleBox::clearBubbles() {
+	Screen &screen = *_vm->_screen;
+
 	// Loop through the bubble list to restore the screen areas
 	if (_vm->getGameID() == kGameNoctropolis) {
 		for (Common::Rect r: _bubbles) {
 
 			// clear the areas outside the background if the bubble went outside it
-			if (r.left < _vm->_screen->_windowXAdd || r.top < _vm->_screen->_windowYAdd) {
-				_vm->_screen->fillRect(Common::Rect(0, 0, _vm->_screen->w, _vm->_screen->_windowYAdd), 0);
-				_vm->_screen->fillRect(Common::Rect(0, 0, _vm->_screen->_windowXAdd, _vm->_screen->h), 0);
+			if (r.left < screen._windowXAdd || r.top < screen._windowYAdd) {
+				screen.fillRect(Common::Rect(0, 0, screen.w, screen._windowYAdd), 0);
+				screen.fillRect(Common::Rect(0, 0, screen._windowXAdd, screen.h), 0);
 			}
-			if (r.right > _vm->_screen->w - _vm->_screen->_windowXAdd || r.bottom > _vm->_screen->h - _vm->_screen->_windowYAdd) {
-				_vm->_screen->fillRect(Common::Rect(_vm->_screen->w - _vm->_screen->_windowXAdd, 0, _vm->_screen->w, _vm->_screen->h), 0);
-				_vm->_screen->fillRect(Common::Rect(0, _vm->_screen->h - _vm->_screen->_windowYAdd, _vm->_screen->w, _vm->_screen->h), 0);
+			if (r.right > screen.w - screen._windowXAdd || r.bottom > screen.h - screen._windowYAdd) {
+				screen.fillRect(Common::Rect(screen.w - screen._windowXAdd, 0, screen.w, screen.h), 0);
+				screen.fillRect(Common::Rect(0, screen.h - screen._windowYAdd, screen.w, screen.h), 0);
 			}
 
-			_vm->_screen->_screenYOff = 0;
-			r.left -= (MIN((int)r.left, 2) + _vm->_screen->_windowXAdd);
-			r.right = MIN(r.right, (int16)(_vm->_screen->w - _vm->_screen->_windowXAdd));
-			r.top -= _vm->_screen->_windowYAdd;
-			r.bottom -= _vm->_screen->_windowYAdd;
+			screen._screenYOff = 0;
+			r.left -= (MIN((int)r.left, 2) + screen._windowXAdd);
+			r.right = MIN(r.right, (int16)(screen.w - screen._windowXAdd));
+			r.top -= screen._windowYAdd;
+			r.bottom -= screen._windowYAdd;
 
-			r.clip(Common::Rect(_vm->_screen->w, _vm->_screen->h));
+			r.clip(Common::Rect(screen.w, screen.h));
 
 			// then copy in the bit we need from the draw buffer.
-			_vm->_screen->copyBlock(&_vm->_buffer2, r);
+			screen.copyBlock(&_vm->_buffer2, r);
 		}
 	} else {
 		for (Common::Rect r: _bubbles) {
-			_vm->_screen->_screenYOff = 0;
+			screen._screenYOff = 0;
 			r.left -= 2;
-			r.right = MIN(r.right, (int16)_vm->_screen->w);
+			r.right = MIN(r.right, (int16)screen.w);
 
-			_vm->_screen->copyBlock(&_vm->_buffer1, r);
+			screen.copyBlock(&_vm->_buffer1, r);
 		}
 	}
 
@@ -111,12 +112,12 @@ void BubbleBox::placeBubble1(const Common::String &msg) {
 	_bubbles.clear();
 	_vm->_fonts._charSet._lo = 1;
 	_vm->_fonts._charSet._hi = 8;
-	_vm->_fonts._charFor._lo = (_vm->getGameID() == kGameMartianMemorandum) ? 247 : 29;
-	_vm->_fonts._charFor._hi = (_vm->getGameID() == kGameMartianMemorandum) ? 255 : 32;
+	_vm->_fonts._charFor._lo = (_vm->gameIs(kGameMartianMemorandum) ? 247 : 29);
+	_vm->_fonts._charFor._hi = (_vm->gameIs(kGameMartianMemorandum) ? 255 : 32);
 
 	calcBubble(msg);
 
-	if (_vm->getGameID() != kGameNoctropolis) {
+	if (!_vm->gameIs(kGameNoctropolis)) {
 		// Noctropolis bounds are different and might have the extra box
 		// decoration, so we save them during the render step (in doBox_v3)
 		Common::Rect r = _bubbles[0];
@@ -285,10 +286,10 @@ void BubbleBox::printBubble_v2(const Common::String &msg) {
 		lastLine = font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
 
 		// Set font colors
-		font2._fontColors[0] = 0;
-		font2._fontColors[1] = 27;
-		font2._fontColors[2] = 28;
-		font2._fontColors[3] = 29;
+		Font::_fontColors[0] = 0;
+		Font::_fontColors[1] = 27;
+		Font::_fontColors[2] = 28;
+		Font::_fontColors[3] = 29;
 
 		int xp = _vm->_screen->_printOrg.x;
 		if (_type == kBoxTypeFileDialog)
@@ -455,11 +456,10 @@ void BubbleBox::doBox_v2(int item, int box) {
 	_startBox = box;
 
 	// Save state information
-	FontVal charSet = fonts._charSet;
-	FontVal charFor = fonts._charFor;
+	const FontVal charSet = fonts._charSet;
+	const FontVal charFor = fonts._charFor;
 	const Common::Point printOrg = screen._printOrg;
 	const Common::Point printStart = screen._printStart;
-	int charCol = _charCol;
 	int rowOff = _rowOff;
 
 	_vm->_screen->saveScreen();
@@ -529,10 +529,10 @@ void BubbleBox::doBox_v2(int item, int box) {
 	// Handle drawing title
 	int titleWidth = _vm->_fonts._font2->stringWidth(_bubbleDisplStr);
 	const Font &font2 = *_vm->_fonts._font2;
-	font2._fontColors[0] = 0;
-	font2._fontColors[1] = 3;
-	font2._fontColors[2] = 2;
-	font2._fontColors[3] = 1;
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 3;
+	Font::_fontColors[2] = 2;
+	Font::_fontColors[3] = 1;
 	font2.drawString(_vm->_screen, _bubbleDisplStr, Common::Point(
 		_bounds.left + (_bounds.width() / 2) - (titleWidth / 2), _bounds.top + 1));
 
@@ -541,7 +541,6 @@ void BubbleBox::doBox_v2(int item, int box) {
 	fonts._charFor = charFor;
 	screen._printOrg = printOrg;
 	screen._printStart = printStart;
-	_charCol = charCol;
 	_rowOff = rowOff;
 	_vm->_screen->restoreScreen();
 }
@@ -575,7 +574,7 @@ void BubbleBox::displayBoxData() {
 		return;
 
 	int idx = 0;
-	if ((_type == TYPE_1) || (_type == TYPE_3)) {
+	if ((_type == kBoxTypeList) || (_type == kBoxTypeFileList)) {
 		_vm->_bcnt = 0;
 
 		if (_tempList[idx].size() == 0) {
@@ -583,15 +582,12 @@ void BubbleBox::displayBoxData() {
 			return;
 		}
 
-		_vm->_events->hideCursor();
-
 		_vm->_screen->_orgX1 = _boxStartX;
 		_vm->_screen->_orgX2 = _boxEndX + 1;
 		_vm->_screen->_orgY1 = _boxStartY;
 		_vm->_screen->_orgY2 = _boxEndY;
 		_vm->_screen->_lColor = 0xFA;
 		_vm->_screen->drawRect();
-		_vm->_events->showCursor();
 	}
 
 	_vm->_events->hideCursor();
@@ -626,11 +622,10 @@ void BubbleBox::drawSelectBox() {
 	if (_tempList[0].size() == 0)
 		return;
 
-	if (((_type != TYPE_1) && (_type != TYPE_3)) || !_vm->_bcnt)
+	if (((_type != kBoxTypeList) && (_type != kBoxTypeFileList)) || !_vm->_bcnt)
 		return;
 
 	if (_vm->_boxSelectYOld != -1) {
-		_vm->_events->hideCursor();
 		_vm->_screen->_lColor = 0xFA;
 
 		int val = _vm->_boxSelectYOld + _boxPStartY + 1;
@@ -639,10 +634,8 @@ void BubbleBox::drawSelectBox() {
 		_vm->_screen->_orgX1 = _boxStartX;
 		_vm->_screen->_orgX2 = _boxEndX;
 		_vm->_screen->drawBox();
-		_vm->_events->showCursor();
 	}
 
-	_vm->_events->hideCursor();
 	_vm->_boxSelectYOld = _vm->_boxSelectY;
 	int val = _boxPStartY + _vm->_boxSelectY + 1;
 	_vm->_screen->_orgY1 = (val << 3) + 2;
@@ -651,9 +644,8 @@ void BubbleBox::drawSelectBox() {
 	_vm->_screen->_orgX2 = _boxEndX;
 	_vm->_screen->_lColor = 0xFE;
 	_vm->_screen->drawBox();
-	_vm->_events->showCursor();
 
-	if (_type == TYPE_3)
+	if (_type == kBoxTypeFileList)
 		warning("TODO: List filenames");
 }
 
@@ -661,19 +653,22 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	static constexpr int ICONW[] = { 0, 11, 28, 19, 19, 15 };
 
 	FontManager &fonts = _vm->_fonts;
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+
 	int retval_ = -1;
 
 	_startItem = item;
 	_startBox = box;
 
-	const Common::Point origPrintStart = _vm->_screen->_printStart;
-	const Common::Point origPrintOrg = _vm->_screen->_printOrg;
+	const Common::Point origPrintStart = screen._printStart;
+	const Common::Point origPrintOrg = screen._printOrg;
 
-	_vm->_events->hideCursor();
+	events.hideCursor();
 
 	// Save state information
-	_vm->_screen->saveScreen();
-	_vm->_screen->setDisplayScan();
+	screen.saveScreen();
+	screen.setDisplayScan();
 
 	fonts._charFor._hi = 0xff;
 	fonts._charSet._lo = 1;
@@ -681,72 +676,72 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 
 	_vm->_destIn = _vm->_screen;	// TODO: Redundant
 
-	if (_type != TYPE_2) {
+	if (_type != kBoxTypeNormal) {
 		Common::Rect r = _bounds;
 		r.left -= 2;
-		_vm->_screen->saveBlock(r);
+		screen.saveBlock(r);
 	}
 
 	// Set the up boundaries and color to use for the box background
-	_vm->_screen->_orgX1 = _bounds.left - 2;
-	_vm->_screen->_orgY1 = _bounds.top;
-	_vm->_screen->_orgX2 = _bounds.right - 2;
-	_vm->_screen->_orgY2 = _bounds.bottom;
-	_vm->_screen->_lColor = 0xFB;
+	screen._orgX1 = _bounds.left - 2;
+	screen._orgY1 = _bounds.top;
+	screen._orgX2 = _bounds.right - 2;
+	screen._orgY2 = _bounds.bottom;
+	screen._lColor = 0xFB;
 
 	// Draw a background for the entire area
-	_vm->_screen->drawRect();
+	screen.drawRect();
 
 	// Draw the inner box;
-	++_vm->_screen->_orgX1;
-	++_vm->_screen->_orgY1;
-	_vm->_screen->_orgX2 -= 2;
-	_vm->_screen->_orgY2 -= 2;
-	_vm->_screen->_lColor = 0xF9;
+	++screen._orgX1;
+	++screen._orgY1;
+	screen._orgX2 -= 2;
+	screen._orgY2 -= 2;
+	screen._lColor = 0xF9;
 
 	// Draw the inner border
-	_vm->_screen->drawBox();
+	screen.drawBox();
 
 	const SpriteResource *icons = _vm->getIcons();
 
 	// Draw upper border
-	_vm->_bcnt = (_vm->_screen->_orgX2 - _vm->_screen->_orgX1) >> 4;
-	int oldX = _vm->_screen->_orgX1;
+	_vm->_bcnt = (screen._orgX2 - screen._orgX1) >> 4;
+	int oldX = screen._orgX1;
 	for ( ;_vm->_bcnt > 0; --_vm->_bcnt) {
-		_vm->_screen->plotImage(icons, 16, Common::Point(_vm->_screen->_orgX1, _vm->_screen->_orgY1));
-		_vm->_screen->_orgX1 += 16;
+		screen.plotImage(icons, 16, Common::Point(screen._orgX1, screen._orgY1));
+		screen._orgX1 += 16;
 	}
 
-	_vm->_screen->_orgX1 = oldX;
-	int oldY = _vm->_screen->_orgY2;
-	_vm->_screen->_orgY2 = _vm->_screen->_orgY1 + 8;
-	_vm->_screen->_lColor = 0xF9;
+	screen._orgX1 = oldX;
+	int oldY = screen._orgY2;
+	screen._orgY2 = screen._orgY1 + 8;
+	screen._lColor = 0xF9;
 
-	_boxStartY = _vm->_screen->_orgY2 + 1;
-	_vm->_screen->_orgY2 = oldY;
+	_boxStartY = screen._orgY2 + 1;
+	screen._orgY2 = oldY;
 
 	int tmpX = 0;
 	int tmpY = 0;
-	if (_type != TYPE_2) {
+	if (_type != kBoxTypeNormal) {
 		// Draw the button background at the bottom
-		oldY = _vm->_screen->_orgY1;
+		oldY = screen._orgY1;
 		// Original does this here, but we need bottom/right offset by 1.
-		//--_vm->_screen->_orgY2;
-		_vm->_screen->_orgY1 = _vm->_screen->_orgY2 - 8;
-		if (_type == TYPE_3)
-			_vm->_screen->_orgY1 -= 8;
-		_vm->_screen->drawRect();
-		tmpX = _bIconStartX = _vm->_screen->_orgX1;
+		//--screen._orgY2;
+		screen._orgY1 = screen._orgY2 - 8;
+		if (_type == kBoxTypeFileList)
+			screen._orgY1 -= 8;
+		screen.drawRect();
+		tmpX = _bIconStartX = screen._orgX1;
 
 		_boxStartX = tmpX + 1;
-		tmpY = _boxEndY = _vm->_screen->_orgY1;
+		tmpY = _boxEndY = screen._orgY1;
 
-		if (_type == TYPE_3)
+		if (_type == kBoxTypeFileList)
 			_bIconStartY = tmpY + 9;
 		else
 			_bIconStartY = tmpY + 1;
 
-		if (_type == TYPE_3) {
+		if (_type == kBoxTypeFileList) {
 			_fileStart = Common::Point((tmpX + 2) >> 3, (tmpY + 2) >> 3);
 			int rowOff = tmpY - (_fileStart.y << 3) + 1;
 			if (rowOff == 8) {
@@ -760,57 +755,57 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			printString("FILE:           ");
 			_vm->_fonts._charFor._hi = 0xFF;
 		}
-		_vm->_screen->_orgY1 = oldY;
+		screen._orgY1 = oldY;
 	}
 
-	if ((_type != TYPE_0) && (_type != TYPE_2)) {
-		_vm->_screen->_orgY1 += 8;
-		if (_type == TYPE_3)
-			_vm->_screen->_orgY2 -= 8;
+	if ((_type != kBoxTypeNone) && (_type != kBoxTypeNormal)) {
+		screen._orgY1 += 8;
+		if (_type == kBoxTypeFileList)
+			screen._orgY2 -= 8;
 
-		_vm->_screen->_orgY2 -= 8;
-		_btnUpPos.right = _btnDownPos.right = _vm->_screen->_orgX2;
-		_btnUpPos.left = _btnDownPos.left = _vm->_screen->_orgX1 = _vm->_screen->_orgX2 - 8;
-		_boxEndX = _vm->_screen->_orgX1 - 1;
-		_vm->_screen->drawBox();
+		screen._orgY2 -= 8;
+		_btnUpPos.right = _btnDownPos.right = screen._orgX2;
+		_btnUpPos.left = _btnDownPos.left = screen._orgX1 = screen._orgX2 - 8;
+		_boxEndX = screen._orgX1 - 1;
+		screen.drawBox();
 
-		_vm->_screen->_orgY1 += 6;
-		_vm->_screen->_orgY2 -= 6;
-		_vm->_screen->drawBox();
+		screen._orgY1 += 6;
+		screen._orgY2 -= 6;
+		screen.drawBox();
 
-		_btnUpPos.bottom = _vm->_screen->_orgY1 + 1;
+		_btnUpPos.bottom = screen._orgY1 + 1;
 		_btnUpPos.top = _btnUpPos.bottom - 5;
-		_btnDownPos.top = _vm->_screen->_orgY2 + 1;
+		_btnDownPos.top = screen._orgY2 + 1;
 		_btnDownPos.bottom = _btnDownPos.top + 6;
 
-		_vm->_screen->_orgX1 += 4;
-		_vm->_screen->_orgX2 = _vm->_screen->_orgX1;
-		_vm->_screen->_orgY1 -= 4;
-		_vm->_screen->_orgY2 += 2;
-		_vm->_screen->drawLine();
+		screen._orgX1 += 4;
+		screen._orgX2 = screen._orgX1;
+		screen._orgY1 -= 4;
+		screen._orgY2 += 2;
+		screen.drawLine();
 
-		++_vm->_screen->_orgY1;
-		--_vm->_screen->_orgX1;
-		++_vm->_screen->_orgX2;
-		_vm->_screen->drawLine();
+		++screen._orgY1;
+		--screen._orgX1;
+		++screen._orgX2;
+		screen.drawLine();
 
-		++_vm->_screen->_orgY1;
-		--_vm->_screen->_orgX1;
-		++_vm->_screen->_orgX2;
-		_vm->_screen->drawLine();
+		++screen._orgY1;
+		--screen._orgX1;
+		++screen._orgX2;
+		screen.drawLine();
 
-		_vm->_screen->_orgY1 = _vm->_screen->_orgY2;
-		_vm->_screen->drawLine();
+		screen._orgY1 = screen._orgY2;
+		screen.drawLine();
 
-		++_vm->_screen->_orgX1;
-		--_vm->_screen->_orgX2;
-		++_vm->_screen->_orgY1;
-		_vm->_screen->drawLine();
+		++screen._orgX1;
+		--screen._orgX2;
+		++screen._orgY1;
+		screen.drawLine();
 
-		++_vm->_screen->_orgX1;
-		--_vm->_screen->_orgX2;
-		++_vm->_screen->_orgY1;
-		_vm->_screen->drawLine();
+		++screen._orgX1;
+		--screen._orgX2;
+		++screen._orgY1;
+		screen.drawLine();
 	}
 
 	// Draw the box title
@@ -831,13 +826,13 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	setCursorPos(newX, _boxPStartY);
 
 	Font::_fontColors[1] = _vm->_fonts._charFor._lo = 0xFF;
-	_vm->_fonts._bitFont->drawString(_vm->_screen, _bubbleDisplStr, _vm->_screen->_printOrg);
+	_vm->_fonts._bitFont->drawString(_vm->_screen, _bubbleDisplStr, screen._printOrg);
 
-	if (_type == TYPE_2) {
-		_vm->_events->showCursor();
-		_vm->_screen->_printStart = origPrintStart;
-		_vm->_screen->_printOrg = origPrintOrg;
-		_vm->_screen->restoreScreen();
+	if (_type == kBoxTypeNormal) {
+		events.showCursor();
+		screen._printStart = origPrintStart;
+		screen._printOrg = origPrintOrg;
+		screen.restoreScreen();
 		return retval_;
 	}
 
@@ -855,49 +850,49 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		ICON1T = _btnId1;
 		ICON1X = _bIconStartX + _btnX1;
 		ICON1Y = _bIconStartY;
-		_vm->_screen->plotImage(icons, ICON1T + 10, Common::Point(ICON1X, ICON1Y));
+		screen.plotImage(icons, ICON1T + 10, Common::Point(ICON1X, ICON1Y));
 
 		if (_btnId2) {
 			ICON2T = _btnId2;
 			ICON2X = _bIconStartX + _btnX2;
-			_vm->_screen->plotImage(icons, ICON2T + 10, Common::Point(ICON2X, _bIconStartY));
+			screen.plotImage(icons, ICON2T + 10, Common::Point(ICON2X, _bIconStartY));
 
 			if (_btnId3) {
 				ICON3T = _btnId3;
 				ICON3X = _bIconStartX + _btnX3;
-				_vm->_screen->plotImage(icons, ICON3T + 10, Common::Point(ICON3X, _bIconStartY));
+				screen.plotImage(icons, ICON3T + 10, Common::Point(ICON3X, _bIconStartY));
 			}
 		}
 	}
 
-	_vm->_screen->restoreScreen();
+	screen.restoreScreen();
 	_vm->_boxDataStart = _startItem;
 	_vm->_boxSelectYOld = -1;
 	_vm->_boxSelectY = _startBox;
 
 	_vm->_numLines = (_bounds.height() / 8) - 2;
-	if (_type == TYPE_3)
+	if (_type == kBoxTypeFileList)
 		--_vm->_numLines;
 
-	_vm->_events->showCursor();
+	events.showCursor();
 	displayBoxData();
 	drawSelectBox();
 
 	while (!_vm->shouldQuit()) {
-		_vm->_events->pollEvents();
-		if (!_vm->_events->_leftButton && !_vm->_events->_wheelDown && !_vm->_events->_wheelUp && !_vm->_events->isKeyActionPending())
+		events.pollEvents();
+		if (!events._leftButton && !events._wheelDown && !events._wheelUp && !events.isKeyActionPending())
 			continue;
 
 		//
 		// Slight enhancement from original - we also allow mouse wheel and
 		// keyboard events to scroll up/down.
 		//
-		if (((_type == TYPE_1) || (_type == TYPE_3)) && (_vm->_timers[2]._flag == 0)) {
+		if (((_type == kBoxTypeList) || (_type == kBoxTypeFileList)) && (_vm->_timers[2]._flag == 0)) {
 			++_vm->_timers[2]._flag;
 
 			Common::CustomEventType action = kActionNone;
-			_vm->_events->getAction(action);
-			if (_btnUpPos.contains(_vm->_events->_mousePos) || _vm->_events->_wheelUp || action == kActionMoveUp) {
+			events.getAction(action);
+			if (_btnUpPos.contains(events._mousePos) || events._wheelUp || action == kActionMoveUp) {
 				if (_vm->_bcnt) {
 					if (_vm->_boxSelectY != 0) {
 						--_vm->_boxSelectY;
@@ -909,7 +904,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 					}
 				}
 				continue;
-			} else if (_btnDownPos.contains(_vm->_events->_mousePos) || _vm->_events->_wheelDown || action == kActionMoveDown) {
+			} else if (_btnDownPos.contains(events._mousePos) || events._wheelDown || action == kActionMoveDown) {
 				if (_vm->_bcnt) {
 					if (_vm->_bcnt == _vm->_numLines) {
 						if (_vm->_bcnt != _vm->_boxSelectY + 1) {
@@ -929,68 +924,66 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			}
 		}
 
-		if (!_vm->_events->_leftButton)
+		if (!events._leftButton)
 			continue;
 
-		if ((_vm->_events->_mousePos.x >= _boxStartX) && (_vm->_events->_mousePos.x <= _boxEndX)
-		&&  (_vm->_events->_mousePos.y >= _boxStartY) && (_vm->_events->_mousePos.y <= _boxEndY)) {
-			int val = (_vm->_events->_mousePos.y >> 3) - _boxPStartY;
+		if ((events._mousePos.x >= _boxStartX) && (events._mousePos.x <= _boxEndX)
+		&&  (events._mousePos.y >= _boxStartY) && (events._mousePos.y <= _boxEndY)) {
+			int val = (events._mousePos.y >> 3) - _boxPStartY;
 			if (val > _vm->_bcnt)
 				continue;
 			--val;
-			if (_type == TYPE_3)
+			if (_type == kBoxTypeFileList)
 				_vm->_boxSelect = val;
 			else {
 				btnSelected = 1;
 				if (_vm->_boxSelectY == val)
 					break;
 				_vm->_boxSelectY = val;
-				_vm->_events->debounceLeft();
+				events.debounceLeft();
 				drawSelectBox();
 				continue;
 			}
 		}
 
-		if ((_vm->_events->_mousePos.y >= ICON1Y) && (_vm->_events->_mousePos.y <= ICON1Y + 8)
-		&&  (_vm->_events->_mousePos.x >= ICON1X)) {
+		if ((events._mousePos.y >= ICON1Y) && (events._mousePos.y <= ICON1Y + 8)
+		&&  (events._mousePos.x >= ICON1X)) {
 			btnSelected = 1;
-			if (_vm->_events->_mousePos.x < ICON1X + ICONW[ICON1T])
+			if (events._mousePos.x < ICON1X + ICONW[ICON1T])
 				break;
 
-			if ((_vm->_events->_mousePos.x >= ICON2X) && (_vm->_events->_mousePos.x < ICON2X + ICONW[ICON2T])) {
+			if ((events._mousePos.x >= ICON2X) && (events._mousePos.x < ICON2X + ICONW[ICON2T])) {
 				btnSelected = 2;
 				break;
 			}
 
-			if ((_vm->_events->_mousePos.x >= ICON3X) && (_vm->_events->_mousePos.x < ICON3X + ICONW[ICON3T])) {
+			if ((events._mousePos.x >= ICON3X) && (events._mousePos.x < ICON3X + ICONW[ICON3T])) {
 				btnSelected = 3;
 				break;
 			}
 
-			if (_type != TYPE_3)
+			if (_type != kBoxTypeFileList)
 				continue;
 
-			if ((_vm->_events->_mousePos.x < tmpX) || (_vm->_events->_mousePos.x > tmpX + 144))
+			if ((events._mousePos.x < tmpX) || (events._mousePos.x > tmpX + 144))
 				continue;
 
-			if ((_vm->_events->_mousePos.y < tmpY) || (_vm->_events->_mousePos.y > tmpY + 8))
+			if ((events._mousePos.y < tmpY) || (events._mousePos.y > tmpY + 8))
 				continue;
 
 			warning("TODO: sub175B5 - List of files");
 		}
 	}
 
-	_vm->_events->hideCursor();
-	_vm->_screen->restoreBlock();
-	_vm->_events->showCursor();
-	_vm->_events->debounceLeft();
+	screen.restoreBlock();
+	events.debounceLeft();
 	if (_vm->_bcnt == 0)
 		retval_ = -1;
 	else
 		retval_ = _vm->_boxDataStart + _vm->_boxSelectY;
 
-	_vm->_screen->_printStart = origPrintStart;
-	_vm->_screen->_printOrg = origPrintOrg;
+	screen._printStart = origPrintStart;
+	screen._printOrg = origPrintOrg;
 
 	return retval_;
 }

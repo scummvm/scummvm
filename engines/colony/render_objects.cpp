@@ -111,7 +111,7 @@ bool projectCorridorPointRaw(const Common::Rect &screenR, uint8 look, int8 lookY
 	const float eyeX = side;
 	const float eyeY = dz * cosPitch + forward * sinPitch;
 	const float eyeZ = dz * sinPitch - forward * cosPitch;
-	if (eyeZ >= -1.0f)
+	if (eyeZ >= -kProjectionNearClip)
 		return false;
 
 	const float centerX = screenR.left + screenR.width() * 0.5f;
@@ -1344,7 +1344,7 @@ void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool u
 		transformedX[i] = (float)(rx + thing.where.xloc);
 		transformedY[i] = (float)(ry + thing.where.yloc);
 		transformedZ[i] = (float)(oz - 160);
-		projected[i] = projectCorridorPointRaw(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
+		projected[i] = projectCorridorPointRaw(_screenR, _me.look, _me.lookY, _sint, _cost, _renderCamera.x, _renderCamera.y,
 			transformedX[i], transformedY[i], transformedZ[i],
 			projectedX[i], projectedY[i]);
 	}
@@ -1494,7 +1494,7 @@ void ColonyEngine::drawDOSEyeSlit3D(Thing &thing, const PrismPartDef &irisDef, b
 void ColonyEngine::drawEyeOverlays3D(Thing &thing, const PrismPartDef &irisDef, int irisColorOverride,
 		const PrismPartDef &pupilDef, int pupilColorOverride, bool useLook, bool dosFill) {
 	if (!isProjectedPrismSurfaceVisible(_screenR, thing, irisDef, useLook, 0,
-			_me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost)) {
+			_me.look, _me.lookY, _renderCamera.x, _renderCamera.y, _sint, _cost)) {
 		return;
 	}
 
@@ -1521,8 +1521,8 @@ void ColonyEngine::drawEnemyEye3D(Thing &obj, Thing &eye, int eyeballColor, int 
 		const uint8 eyeAng = obj.where.ang + 32;
 		const int32 eyeBaseX = obj.where.xloc + (_cost[eyeAng] >> 1);
 		const int32 eyeBaseY = obj.where.yloc + (_sint[eyeAng] >> 1);
-		const int64 dx = eyeBaseX - _me.xloc;
-		const int64 dy = eyeBaseY - _me.yloc;
+		const int64 dx = eyeBaseX - _renderCamera.x;
+		const int64 dy = eyeBaseY - _renderCamera.y;
 		dosFill = dx * dx + dy * dy > 64 * 64;
 	}
 
@@ -1940,7 +1940,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		// surface is facing the camera, because each part uses a separate
 		// depth range bucket rather than true inter-part depth sorting.
 		const bool lensFrontVisible = isProjectedPrismSurfaceVisible(_screenR, obj, kProjectorParts[2], false, 6,
-															_me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+															_me.look, _me.lookY, _renderCamera.x, _renderCamera.y, _sint, _cost);
 		_gfx->setDepthRange(0.008f, 1.0f);
 		draw3DPrism(obj, kTableParts[1], false, -1, true, false); // table base
 		_gfx->setDepthRange(0.006f, 1.0f);
@@ -1985,7 +1985,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kObjPToilet: {
 		// MakePToilet draws the two-sided partition first when it is behind the toilet.
 		const bool partitionBehind = isProjectedPrismSurfaceVisible(_screenR, obj, kPToiletParts[4], false, 0,
-			_me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			_me.look, _me.lookY, _renderCamera.x, _renderCamera.y, _sint, _cost);
 		for (int i = 0; i < 5; i++) {
 			const int part = partitionBehind ? (i == 0 ? 4 : i - 1) : i;
 			_gfx->setDepthRange((4 - i) * 0.002f, 1.0f);
@@ -2011,8 +2011,8 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	// === Robot types (1-20) ===
 	case kRobEye:
-		if ((obj.where.xloc - _me.xloc) * (obj.where.xloc - _me.xloc) +
-			(obj.where.yloc - _me.yloc) * (obj.where.yloc - _me.yloc) <= 64 * 64) {
+		if ((obj.where.xloc - _renderCamera.x) * (obj.where.xloc - _renderCamera.x) +
+			(obj.where.yloc - _renderCamera.y) * (obj.where.yloc - _renderCamera.y) <= 64 * 64) {
 			break;
 		}
 		// Writes off, as in drawEnemyEye3D().
@@ -2120,7 +2120,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	case kRobQueen:
 		{
-			EnemyEyePair eyes = buildEnemyEyePair(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			EnemyEyePair eyes = buildEnemyEyePair(_screenR, obj, _me.look, _me.lookY, _renderCamera.x, _renderCamera.y, _sint, _cost);
 			Thing &firstEye = eyes.leftFirst ? eyes.left : eyes.right;
 			Thing &secondEye = eyes.leftFirst ? eyes.right : eyes.left;
 			const PrismPartDef &firstWing = eyes.leftFirst ? kQLWingDef : kQRWingDef;
@@ -2150,7 +2150,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 				draw3DPrism(obj, kQAbdomenDef, false, -1, true, false);
 			};
 
-			const int body = queenBodyOrder(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			const int body = queenBodyOrder(_screenR, obj, _me.look, _me.lookY, _renderCamera.x, _renderCamera.y, _sint, _cost);
 			if (body == 0) {
 				drawThorax();
 				drawAbdomen();
@@ -2158,7 +2158,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			drawWingEye(firstEye, firstWing);
 			if (body == 1) {
 				const bool abdomenBackVisible = prismSurfaceVisible(_screenR, obj, kQAbdomenDef, 8,
-					_me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+					_me.look, _me.lookY, _renderCamera.x, _renderCamera.y, _sint, _cost);
 				if (abdomenBackVisible) {
 					drawAbdomen();
 					drawThorax();
@@ -2177,7 +2177,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	case kRobDrone:
 		{
-			EnemyEyePair eyes = buildEnemyEyePair(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			EnemyEyePair eyes = buildEnemyEyePair(_screenR, obj, _me.look, _me.lookY, _renderCamera.x, _renderCamera.y, _sint, _cost);
 			Thing &firstEye = eyes.leftFirst ? eyes.left : eyes.right;
 			Thing &secondEye = eyes.leftFirst ? eyes.right : eyes.left;
 			const int enemyEyeballColor = isMacRenderMode() ? eyeballColor : 5;
@@ -2194,7 +2194,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 				drawEnemyEye3D(obj, eye, enemyEyeballColor, kColorDroneEye, pupilColor);
 			};
 
-			const int body = droneBodyOrder(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			const int body = droneBodyOrder(_screenR, obj, _me.look, _me.lookY, _renderCamera.x, _renderCamera.y, _sint, _cost);
 			if (body == 0)
 				drawBody();
 			drawEye(firstEye);
@@ -2225,12 +2225,12 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			const PrismPartDef leftPincerDef = {4, leftPincerPts, 4, kDLPincerSurf};
 			const PrismPartDef rightPincerDef = {4, rightPincerPts, 4, kDRPincerSurf};
 
-			EnemyEyePair eyes = buildEnemyEyePair(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			EnemyEyePair eyes = buildEnemyEyePair(_screenR, obj, _me.look, _me.lookY, _renderCamera.x, _renderCamera.y, _sint, _cost);
 			Thing &firstEye = eyes.leftFirst ? eyes.left : eyes.right;
 			Thing &secondEye = eyes.leftFirst ? eyes.right : eyes.left;
 			const int enemyEyeballColor = isMacRenderMode() ? eyeballColor : 5;
-			const float leftPincerDepth = prismPointForwardDepth(obj, leftPincerDef, 1, _me.look, _me.xloc, _me.yloc, _sint, _cost);
-			const float rightPincerDepth = prismPointForwardDepth(obj, rightPincerDef, 1, _me.look, _me.xloc, _me.yloc, _sint, _cost);
+			const float leftPincerDepth = prismPointForwardDepth(obj, leftPincerDef, 1, _me.look, _renderCamera.x, _renderCamera.y, _sint, _cost);
+			const float rightPincerDepth = prismPointForwardDepth(obj, rightPincerDef, 1, _me.look, _renderCamera.x, _renderCamera.y, _sint, _cost);
 			int layer = 8;
 			auto setNextDepthRange = [&]() {
 				_gfx->setDepthRange((layer--) * 0.002f, 1.0f);
@@ -2257,7 +2257,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 				}
 			};
 
-			const int body = droneBodyOrder(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			const int body = droneBodyOrder(_screenR, obj, _me.look, _me.lookY, _renderCamera.x, _renderCamera.y, _sint, _cost);
 			switch (body) {
 			case 0:
 				drawBody();

@@ -960,7 +960,7 @@ next4:
 			};
 			const bool flag = flags[area - 1] != 0;
 			if (flag && (area == 3 || area == 9))
-				player_set_commands_allowed(true);
+				player_set_commands_allowed(false);
 
 			interface_hide();
 			hotspot_hide_all();
@@ -983,9 +983,9 @@ next4:
 				digiName = getXAreaDigi2();
 			}
 
-			if (getXAreaNum() == 3 && caseFlag) {
+			if (getXAreaNum() == 3 && flag) {
 				digi_play("305r23", 1, 255, 2);
-			} else if (getXAreaNum() == 9 && caseFlag) {
+			} else if (getXAreaNum() == 9 && flag) {
 				digi_play("305r29", 1, 255, 3);
 			} else {
 				digi_play(digiName.c_str(), 1);
@@ -1005,11 +1005,13 @@ next4:
 				digi_play("305r29a", 1, 255, 4);
 			} else {
 				digi_play("305r29a", 1);
+				player_set_commands_allowed(true);
 			}
 			break;
 
 		case 4:
-			digi_play("305r29a", 1);
+			digi_play("305r29b", 1);
+			player_set_commands_allowed(true);
 			break;
 
 		default:

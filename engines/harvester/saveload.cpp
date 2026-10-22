@@ -24,9 +24,9 @@
 #include "common/algorithm.h"
 #include "common/serializer.h"
 #include "harvester/detection.h"
-#include "harvester/flow.h"
+#include "harvester/flow/flow.h"
 #include "harvester/resources.h"
-#include "harvester/script.h"
+#include "harvester/script/script.h"
 
 namespace Harvester {
 

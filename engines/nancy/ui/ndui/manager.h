@@ -186,6 +186,7 @@ private:
 	void onLoaderAction(const Action &action);
 	void onSaverAction(const Action &action);
 	void onSaveQueryAction(const Action &action);
+	void onSaveOverwriteAction(const Action &action);
 	void onGameWindowAction(const Action &action);
 	void onCellPhoneAction(const Action &action);
 	void onItemStreamClicked(const InvButton &button);

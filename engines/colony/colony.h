@@ -38,6 +38,7 @@
 #include "graphics/surface.h"
 
 namespace Common {
+struct Event;
 class MacResManager;
 class SeekableReadStreamEndian;
 }
@@ -652,7 +653,12 @@ private:
 	Graphics::MacMenu *_macMenu = nullptr;
 	Graphics::ManagedSurface *_menuSurface = nullptr;
 	int _menuBarHeight = 0;
+	int _pendingMenuAction = 0;
+	int _pendingLoadSlot = -1;
 	void initMacMenus();
+	void drawMacMenuBar();
+	bool processMacMenuEvent(const Common::Event &event);
+	void processPendingMenuAction();
 	void loadMacCursorResources();
 	void handleMenuAction(int action);
 	static void menuCommandsCallback(int action, Common::String &text, void *data);
@@ -668,6 +674,7 @@ private:
 	int _direction = 0;
 
 	float _eyeDepthPull = 0.0f; // world units the eye parts are pulled at the camera
+	Common::Point _renderCamera;
 	// think.c: the snoop's snout bobs while it hunts (sniff/csniff).
 	int _snoopSnoutZ = 0;
 	int _snoopSniff = 5;
@@ -686,9 +693,9 @@ private:
 	int _powerWidth = 0;     // width of each of the 3 power bar columns
 	int _powerHeight = 0;    // pixel height per power bar unit (max 5)
 
-	// Cached decoded PICT surfaces for dashboard panels (Mac color mode)
+	// Cached Mac dashboard surfaces
 	Graphics::Surface *_pictPower = nullptr;      // PICT -32755 (normal) or -32760 (trouble)
-	Graphics::Surface *_pictPowerNoArmor = nullptr; // PICT -32761 (no armor, color)
+	Graphics::Surface *_pictPowerNoArmor = nullptr; // B&W panel from DrawInfo()
 	Graphics::Surface *_pictCompass = nullptr;     // PICT -32757
 	int _pictPowerID = 0;   // Track which PICT is cached
 	Graphics::Surface *loadPictSurface(int resID);
@@ -729,6 +736,8 @@ private:
 	bool drawStaticObjectPrisms3D(Thing &obj);
 	void initRobots();
 	void renderCorridor3D();
+	void computeRenderCamera();
+	void separateRenderCameraFromWall(int x, int y, uint8 bit, int separation, bool featuresVisible);
 	void drawWallFeatures3D();
 	bool isWallFeatureFacingCamera(int cellX, int cellY, int direction) const;
 	void drawWallFeature3D(int cellX, int cellY, int direction);
@@ -736,6 +745,7 @@ private:
 	void getWallFace3D(int cellX, int cellY, int direction, float corners[4][3]);
 	bool isVisibleRecessFeature(int x, int y, int direction) const;
 	bool wallSegmentIsOpenWell(int x, int y, uint8 bit) const;
+	bool wallSegmentIsRendered(int x, int y, uint8 bit) const;
 	void getWallRecess3D(const float corners[4][3], float farC[4][3]) const;
 	void recessPoint(const float nearC[4][3], const float farC[4][3], float u, float v, float depth, float out[3]) const;
 	void recessLine(const float nearC[4][3], const float farC[4][3], float u1, float v1, float d1,
@@ -810,8 +820,10 @@ private:
 	void updateMouseCapture(bool recenter = true);
 	Common::Point getAimPoint() const;
 	void updateViewportLayout();
+	bool updateScreenSize();
 	void drawDashboardStep1();
 	void drawDashboardMac();
+	void drawMacNoArmorPanel();
 	void drawDOSBarGraph(int x, int y, int height);
 	void updateDOSPowerBars();
 	void drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac, const Common::Rect *clip = nullptr);

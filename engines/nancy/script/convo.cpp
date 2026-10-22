@@ -51,6 +51,30 @@ static const uint kXSheetFrameCountOffset = 0x22;
 static const uint kXSheetMaxTrees = 4;
 //static const uint kXSheetNameSize = 33;
 
+// The sound of a video conversation is named after its XSheet. In Nancy20 the
+// two names end differently: GFL01_XS goes with the sound GFL01_SFX.
+static Common::String xsheetToSoundName(const Common::String &xsheetName) {
+	if (g_nancy->getGameType() <= kGameTypeNancy19) {
+		return xsheetName;
+	}
+
+	Common::String soundName = xsheetName;
+	soundName.toUppercase();
+	Common::replace(soundName, "_XS", "_SFX");
+	return soundName;
+}
+
+static Common::String soundToXSheetName(const Common::String &soundName) {
+	if (g_nancy->getGameType() <= kGameTypeNancy19) {
+		return soundName;
+	}
+
+	Common::String xsheetName = soundName;
+	xsheetName.toUppercase();
+	Common::replace(xsheetName, "_SFX", "_XS");
+	return xsheetName;
+}
+
 // The record a conversation or a response keeps for later, which has to be a NavLogic
 static Record *checkHeldRecord(lua_State *L, int index) {
 	Record *record = checkRecord(L, index);
@@ -96,10 +120,9 @@ void ConvoRecord::readTable(int tableIndex) {
 		lua_pop(L, 1);
 	}
 
-	// The sound of a video conversation is named after its XSheet
 	Common::String xsheetName;
 	if (readField(L, tableIndex, "xsheet", xsheetName)) {
-		_soundNames.push_back(xsheetName);
+		_soundNames.push_back(xsheetToSoundName(xsheetName));
 	}
 
 	if (pushField(L, tableIndex, "sounds")) {
@@ -144,6 +167,11 @@ bool ConvoRecord::loadXSheet(const Common::String &name) {
 	Common::Array<Common::String> treeNames(kXSheetMaxTrees);
 	for (Common::String &treeName : treeNames) {
 		readFilename(*xsheet, treeName);
+	}
+
+	// Nancy20 lines the rectangles up on four bytes
+	if (g_nancy->getGameType() >= kGameTypeNancy20) {
+		xsheet->skip(2);
 	}
 
 	// Where each part goes in the viewport; the right and bottom edge are left out
@@ -306,7 +334,7 @@ void ConvoRecord::runOnce() {
 	context.setConvo(this);
 
 	if (_isVideo) {
-		loadXSheet(_soundNames[0]);
+		loadXSheet(soundToXSheetName(_soundNames[0]));
 	}
 
 	// The scripts named by the record add the responses they have to its own

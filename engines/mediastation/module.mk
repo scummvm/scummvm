@@ -38,11 +38,12 @@ MODULE_OBJS = \
 	mediascript/scriptvalue.o \
 	mediastation.o \
 	metaengine.o \
+	minigames/barbiemaze.o \
 	minigames/checkers.o \
+	minigames/dalmatiansmaze.o \
 	minigames/dotgame.o \
 	minigames/sophie.o \
 	minigames/stalkingzazu.o \
-	minigames/maze.o \
 	profile.o
 
 # This module can be built as a plugin

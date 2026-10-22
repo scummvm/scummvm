@@ -23,6 +23,7 @@
 
 #include "common/algorithm.h"
 #include "common/debug.h"
+#include "common/ptr.h"
 #include "common/system.h"
 #include "graphics/blit.h"
 #include "graphics/screen.h"
@@ -788,11 +789,9 @@ void EntityManager::clearSceneEntities(bool preserveGlobalTimers) {
 Entity *EntityManager::spawnAbmEntityFromResource(const Common::String &name,
 		const Common::String &resourcePath, int classId, const Common::Point &position, float z,
 		int animationRate, bool looping, bool pingPong) {
-	Entity *entity = new Entity();
-	if (!entity->loadAbmResource(_resources, resourcePath)) {
-		delete entity;
+	Common::ScopedPtr<Entity> entity(new Entity());
+	if (!entity->loadAbmResource(_resources, resourcePath))
 		return nullptr;
-	}
 
 	entity->setName(name);
 	entity->setClassId(classId);
@@ -800,21 +799,19 @@ Entity *EntityManager::spawnAbmEntityFromResource(const Common::String &name,
 	entity->setLooping(looping);
 	entity->setPingPong(pingPong);
 	entity->setAnimationRate(animationRate);
-	return entity;
+	return entity.release();
 }
 
 Entity *EntityManager::spawnBitmapEntityFromResource(const Common::String &name,
 		const Common::String &resourcePath, int classId, const Common::Point &position, float z) {
-	Entity *entity = new Entity();
-	if (!entity->loadBitmapResource(_resources, resourcePath)) {
-		delete entity;
+	Common::ScopedPtr<Entity> entity(new Entity());
+	if (!entity->loadBitmapResource(_resources, resourcePath))
 		return nullptr;
-	}
 
 	entity->setName(name);
 	entity->setClassId(classId);
 	entity->setPosition(position.x, position.y, z);
-	return entity;
+	return entity.release();
 }
 
 Entity *EntityManager::spawnCursorEntity(const Common::Point &position) {

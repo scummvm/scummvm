@@ -211,7 +211,7 @@ void Room405::daemon() {
 		break;
 
 	case 33:
-		digi_play("405b03", 1, 255, 34);
+		digi_play("405r03", 1, 255, 34);
 		break;
 
 	case 34:

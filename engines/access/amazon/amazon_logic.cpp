@@ -99,10 +99,7 @@ void CampScene::mWhileDoOpen() {
 		_vm->establishCenter(0, 1);
 	}
 
-	Resource *data = _vm->_files->loadFile(1, 0);
-	_vm->_objectsTable[1] = new SpriteResource(_vm, data);
-	delete data;
-
+	_vm->_objectsTable[1] = new SpriteResource(_vm, 1, 0);
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(1, 2);
 	_vm->_buffer2.blitFrom(*_vm->_screen);
@@ -110,9 +107,7 @@ void CampScene::mWhileDoOpen() {
 
 	// Load animation data
 	_vm->_animation->freeAnimationData();
-	Resource *animResource = _vm->_files->loadFile(1, 1);
-	_vm->_animation->loadAnimations(animResource);
-	delete animResource;
+	_vm->_animation->loadAnimations(1, 1);
 
 	_xTrack = 8;
 	_yTrack = -3;
@@ -187,14 +182,9 @@ void CampScene::mWhileDoOpen() {
 	if (_vm->isCD()) {
 		if (_vm->_conversation == 2) {
 			// Cutscene at end of Chapter 6
-			Resource *spriteData = _vm->_files->loadFile(28, 37);
-			_vm->_objectsTable[28] = new SpriteResource(_vm, spriteData);
-			delete spriteData;
-
+			_vm->_objectsTable[28] = new SpriteResource(_vm, 28, 37);
 			_vm->_animation->freeAnimationData();
-			animResource = _vm->_files->loadFile(28, 38);
-			_vm->_animation->loadAnimations(animResource);
-			delete animResource;
+			_vm->_animation->loadAnimations(28, 38);
 		}
 	} else {
 		_vm->freeCells();
@@ -336,9 +326,7 @@ void Opening::doTitle() {
 
 		_vm->_sound->playSound(1, true);
 
-		Resource *spriteData = _vm->_files->loadFile(0, 2);
-		_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
-		delete spriteData;
+		_vm->_objectsTable[0] = new SpriteResource(_vm, 0, 2);
 
 		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(0, 4);
@@ -573,7 +561,7 @@ Plane::Plane(AmazonEngine *vm) : PannedScene(vm) {
 
 
 void Plane::doFlyCell() {
-	SpriteResource *sprites = _vm->_objectsTable[15];
+	const SpriteResource *sprites = _vm->_objectsTable[15];
 
 	if (_pCount <= 40) {
 		_vm->_buffer2.plotImage(sprites, 3, Common::Point(70, 74));
@@ -1277,12 +1265,8 @@ void Cast::doCast(int param1) {
 	screen.setPanel(3);
 	_vm->_chapter = 14;
 
-	Resource *spriteData = _vm->_files->loadFile(91, 0);
-	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
-	spriteData = _vm->_files->loadFile(91, 1);
-	_vm->_objectsTable[1] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[0] = new SpriteResource(_vm, 91, 0);
+	_vm->_objectsTable[1] = new SpriteResource(_vm, 91, 1);
 
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(58, 1);

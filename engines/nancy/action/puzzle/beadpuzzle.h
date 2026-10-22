@@ -72,8 +72,10 @@ protected:
 
 	uint16 _solution[kMaxSlots] = {}; // expected bead type per slot (file stores type+1; we store the raw value)
 
+	int16 _beadCursorType = 0; // cursor over the beads and the needle while playing
+
 	SoundDescription _pickupSound;   // played while a bead is held next to the cursor
-	SoundDescription _placeSound;    // played when a bead is placed onto the thread
+	SoundDescription _placeSound;    // loops while a placed bead slides along the thread
 	SoundDescription _removeSound;   // played when a bead is taken off the thread
 
 	int16 _mistakeThreshold = 0;
@@ -90,6 +92,7 @@ protected:
 	enum SubState {
 		kPlaying = 0,
 		kDroppingBead,
+		kRemovingBead,
 		kShowingResult,
 		kPerfectWaitSound,
 		kExitToSolved,
@@ -102,8 +105,10 @@ protected:
 	int16 _heldBead = -1;
 	MouseFollowObject _heldBeadObject;
 
-	int16  _dropCurrentSlot = 0;
-	uint32 _dropNextTick    = 0;
+	// The bead sliding along the thread while it is placed or removed
+	int16  _movingBead     = -1;
+	int16  _movingSlot     = 0;
+	uint32 _moveNextTick   = 0;
 
 	enum ResultKind { kNoResult, kPerfect, kPartial, kWrong };
 	ResultKind _resultKind = kNoResult;
@@ -114,6 +119,7 @@ protected:
 	void redraw();
 	void holdBead(int16 bead, NancyInput *input);
 	void evaluate();
+	void playResultSound(const SoundDescription &sound);
 	void persistState();
 };
 

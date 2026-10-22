@@ -20,11 +20,15 @@
  */
 
 #include "base/plugins.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "common/translation.h"
 #include "harvester/detection.h"
 #include "harvester/metaengine.h"
 #include "harvester/harvester.h"
+#include "harvester/scene/input.h"
 
 static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
@@ -55,6 +59,61 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 
 const char *HarvesterMetaEngine::getName() const {
 	return "harvester";
+}
+
+Common::KeymapArray HarvesterMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Harvester;
+
+	KeymapArray keymaps = MetaEngine::initKeymaps(target);
+	Keymap *gameplay = new Keymap(Keymap::kKeymapTypeGame, "harvester-gameplay", _("Gameplay"));
+	Action *click = new Action(kStandardActionLeftClick, _("Left click"));
+	click->setLeftClickEvent();
+	click->addDefaultInputMapping("MOUSE_LEFT");
+	click->addDefaultInputMapping("JOY_A");
+	gameplay->addAction(click);
+	click = new Action(kStandardActionRightClick, _("Right click"));
+	click->setRightClickEvent();
+	click->addDefaultInputMapping("MOUSE_RIGHT");
+	click->addDefaultInputMapping("JOY_B");
+	gameplay->addAction(click);
+	const struct {
+		const char *id;
+		const char *description;
+		GameAction action;
+		const char *mapping;
+		const char *alternateMapping;
+	} bindings[] = {
+		{ "LEFT", _s("Move left"), kActionMoveLeft, "LEFT", "JOY_LEFT" },
+		{ "RIGHT", _s("Move right"), kActionMoveRight, "RIGHT", "JOY_RIGHT" },
+		{ "UP", _s("Move up"), kActionMoveUp, "UP", "JOY_UP" },
+		{ "DOWN", _s("Move down"), kActionMoveDown, "DOWN", "JOY_DOWN" },
+		{ "SPEEDUP", _s("Speed up"), kActionSpeedUp, "LALT", "RALT" },
+		{ "INVENTORY", _s("Inventory"), kActionInventory, "i", nullptr },
+		{ "MENU", _s("Game menu"), kActionMenu, "ESCAPE", "JOY_Y" },
+		{ "HELP", _s("Help menu"), kActionHelp, "F1", nullptr },
+		{ "ATTACK", _s("Attack modifier"), kActionAttackModifier, "LCTRL", "RCTRL" },
+		{ "HIGHATTACK", _s("High attack"), kActionHighAttack, nullptr, nullptr },
+		{ "MEDIUMATTACK", _s("Medium attack"), kActionMediumAttack, nullptr, nullptr },
+		{ "LOWATTACK", _s("Low attack"), kActionLowAttack, nullptr, nullptr },
+		{ "EVADE", _s("Evasive movement modifier"), kActionEvasiveModifier, "RSHIFT", nullptr },
+		{ "DUCK", _s("Duck"), kActionDuck, nullptr, nullptr },
+		{ "JUMP", _s("Jump"), kActionJump, nullptr, nullptr }
+	};
+	for (const auto &binding : bindings) {
+		Action *action = new Action(binding.id, _(binding.description));
+		action->setCustomEngineActionEvent(binding.action);
+		if (binding.action <= kActionSpeedUp || binding.action >= kActionHighAttack)
+			action->allowKbdRepeats();
+		if (binding.mapping)
+			action->addDefaultInputMapping(binding.mapping);
+		if (binding.alternateMapping)
+			action->addDefaultInputMapping(binding.alternateMapping);
+		gameplay->addAction(action);
+	}
+	gameplay->setEnabled(false);
+	keymaps.push_back(gameplay);
+	return keymaps;
 }
 
 const ADExtraGuiOptionsMap *HarvesterMetaEngine::getAdvancedExtraGuiOptions() const {

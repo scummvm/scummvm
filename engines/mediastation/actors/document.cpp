@@ -21,6 +21,7 @@
 
 #include "mediastation/mediastation.h"
 #include "mediastation/actors/document.h"
+#include "mediastation/clients.h"
 
 namespace MediaStation {
 
@@ -47,11 +48,17 @@ ScriptValue DocumentActor::callMethod(BuiltInMethod methodId, Common::Array<Scri
 		break;
 	}
 
-	case kDocumentSetMultipleStreamsMethod:
+	case kDocumentSetMultipleStreamsMethod: {
+		ARGCOUNTCHECK(1);
+		bool allowMultipleStreams = args[0].asBool();
+		g_engine->getDeviceOwner()->setMultipleStreams(allowMultipleStreams);
+		break;
+	}
+
 	case kDocumentSetMultipleSoundsMethod: {
 		ARGCOUNTCHECK(1);
-		bool value = args[0].asBool();
-		warning("[%s] %s: STUB: %s: %d", debugName(), __func__, builtInMethodToStr(methodId), value);
+		bool allowMultipleSounds = args[0].asBool();
+		g_engine->getDeviceOwner()->setMultipleSounds(allowMultipleSounds);
 		break;
 	}
 

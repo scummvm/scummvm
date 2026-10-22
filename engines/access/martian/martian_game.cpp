@@ -243,9 +243,7 @@ void MartianEngine::doCredits() {
 	_screen->setDisplayScan();
 	_events->hideCursor();
 	_screen->forceFadeOut();
-	Resource *data = _files->loadFile(41, 1);
-	_objectsTable[41] = new SpriteResource(this, data);
-	delete data;
+	_objectsTable[41] = new SpriteResource(this, 41, 1);
 
 	_files->loadScreen(41, 0);
 	_buffer2.copyFrom(*_screen);
@@ -402,22 +400,6 @@ Common::Error MartianEngine::synchronize(Common::Serializer &s) {
 	for (int i = 0; i < ARRAYSIZE(_ask); i++) {
 		s.syncAsByte(_ask[i]);
 	}
-
-	/*
-	TODO: Do any of these need to be synchronized here?
-	Mostly involved in modal dialogs.
-	_startTravelItem
-	_startTravelBox
-	_startAboutItem
-	_startAboutBox
-	_byte26CB5
-	_bcnt
-	_boxDataStart
-	_boxDataEnd
-	_boxSelectY
-	_boxSelectYOld
-	_numLines
-	*/
 
 	return Common::kNoError;
 }

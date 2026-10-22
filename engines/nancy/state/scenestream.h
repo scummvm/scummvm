@@ -94,6 +94,13 @@ public:
 	void end() { _isEnded = true; }
 	bool isEnded() const { return _isEnded; }
 
+	// Nancy20: lets the records of the scene know that it is being left
+	void endScene();
+
+	// Loads the scene the stream was asked to go to, without running it.
+	// Returns whether there was one, and it could be loaded.
+	bool loadNextScene();
+
 	void setEventFlag(int16 index, byte flag);
 	byte getEventFlag(int16 index) const;
 
@@ -146,6 +153,11 @@ class SceneStreamManager {
 public:
 	void begin(const Common::String &name, const Common::String &sceneName, uint16 frameID, const StreamFlags &flags);
 	void end(const Common::String &name);
+
+	// Loads the scene a stream that was just begun starts with right away,
+	// instead of with the next frame
+	void loadNow(const Common::String &name);
+
 	void changeScene(const Common::String &name, const SceneChangeDescription &sceneDescription);
 	void changeScene(const Common::String &name, const Common::String &sceneName, uint16 frameID);
 	Common::String getSceneName(const Common::String &name) const;

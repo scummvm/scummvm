@@ -6,26 +6,69 @@ MODULE_OBJS = \
 	cft_font.o \
 	cheats.o \
 	console.o \
-	dialogue.o \
-	flow.o \
+	dialogue/dialogue.o \
+	dialogue/dialogue_menu.o \
+	dialogue/dialogue_playback.o \
+	dialogue/dialogue_render.o \
+	dialogue/dialogue_session.o \
+	flow/flow.o \
+	flow/flow_debug.o \
+	flow/flow_map.o \
+	flow/flow_scene.o \
+	flow/flow_startup.o \
+	flow/flow_transition.o \
 	fst_player.o \
 	harvester.o \
 	inventory.o \
-	media_manager.o \
-	menu.o \
+	media/audio_decoder.o \
+	media/media_manager.o \
+	media/media_playback.o \
+	menu/menu.o \
+	menu/menu_config.o \
+	menu/menu_navigation.o \
+	menu/menu_options.o \
+	menu/menu_prompts.o \
+	menu/menu_render.o \
+	menu/menu_save.o \
 	metaengine.o \
 	monster.o \
-	player.o \
+	patches.o \
+	player/player.o \
+	player/player_animation.o \
+	player/player_attack.o \
+	player/player_idle.o \
+	player/player_keyboard.o \
+	player/player_movement.o \
+	player/player_reactions.o \
+	player/player_target.o \
 	resources.o \
-	combat.o \
-	interaction.o \
-	input.o \
-	room_presentation.o \
-	scene_entities.o \
-	scene.o \
+	combat/combat.o \
+	combat/combat_contact.o \
+	combat/combat_effects.o \
+	combat/combat_geometry.o \
+	combat/combat_hud.o \
+	combat/combat_monsters.o \
+	combat/combat_reactions.o \
+	combat/combat_targeting.o \
+	scene/interaction.o \
+	scene/interaction_effects.o \
+	scene/interaction_outcomes.o \
+	scene/interaction_transitions.o \
+	scene/input.o \
+	scene/input_inventory.o \
+	scene/input_keyboard.o \
+	scene/room_presentation.o \
+	scene/scene_entities.o \
+	scene/scene.o \
 	entity.o \
 	saveload.o \
-	script.o \
+	script/script.o \
+	script/script_actors.o \
+	script/script_commands.o \
+	script/script_records.o \
+	script/script_room.o \
+	script/script_runtime.o \
+	script/script_save.o \
 	text.o \
 	xfile_archive.o \
 	npc/authority_dialogue.o \

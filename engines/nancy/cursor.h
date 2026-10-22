@@ -105,6 +105,7 @@ public:
 		kNewPuzzleSlideLeft		= 51,	// Type 25 hotspot
 		kNewPuzzleSlideRight	= 53,	// Type 26 hotspot
 		kNewDropHand			= 64,	// Type 32 — Hand shown when a held piece is dropped (briefly set on the drop action)
+		kNewDropHandHotspot		= 65,	// Type 32 hotspot — Hand shown over a slot a held piece can be dropped into
 		kNewBlank				= 72,	// Type 36 — Empty sprite, used while a puzzle draws a carried piece at the mouse itself
 
 		// Cursor types in Nancy13 and newer games. Nancy13 rebuilt the CURS

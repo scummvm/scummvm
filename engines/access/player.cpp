@@ -52,7 +52,7 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerSprites1 = nullptr;
 	_manPal1 = nullptr;
 	_frameNumber = 0;
-	_rawTempL = 0;
+	_rawXTempL = 0;
 	_rawXTemp = 0;
 	_rawYTempL = 0;
 	_rawYTemp = 0;
@@ -136,7 +136,7 @@ void Player::load() {
 
 	_playerSprites = _playerSprites1;
 	if (_manPal1) {
-		if (_vm->getGameID() == kGameNoctropolis) {
+		if (_vm->gameIs(kGameNoctropolis)) {
 			//if (_vm->_room->_roomFlag & kRoomFlagStiletto) {
 			//	Common::copy(_manPal1 + 0x1e0, _manPal1 + 0x1e0 + 99, _vm->_screen->_stilPal);
 			//}
@@ -200,7 +200,7 @@ void Player::removeSprite1() {
 
 bool Player::isMMHover() const {
 	// Whether or not this is MM and the player is on the hoverboard.
-	return (_vm->getGameID() == kGameMartianMemorandum &&
+	return (_vm->gameIs(kGameMartianMemorandum) &&
 		_vm->_flags[174] == 1);
 }
 
@@ -211,7 +211,7 @@ void Player::calcManScale() {
 		_vm->_screen->setScaleTable(_vm->_scale);
 
 		_playerOffset.x = _vm->_screen->_scaleTable1[20];
-		_playerOffset.y = _vm->_screen->_scaleTable1[(_vm->getGameID() == kGameMartianMemorandum) ? 62 : 67];
+		_playerOffset.y = _vm->_screen->_scaleTable1[(_vm->gameIs(kGameMartianMemorandum)) ? 62 : 67];
 		_inactiveYOff = _playerOffset.y;
 	}
 }
@@ -260,7 +260,7 @@ void Player::jetpack() {
 void Player::walk() {
 	_collideFlag = false;
 
-	if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[173] == 1) {
+	if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[173] == 1) {
 		// Special case for MM Jetpack
 		jetpack();
 		return;
@@ -344,9 +344,10 @@ void Player::walkUp() {
 
 		calcManScale();
 
-		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 8 || _frame == 12))
+		// Note: Flag 174 is Hoverboard.
+		if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[174] == 0 && (_frame == 8 || _frame == 12))
 			_vm->_sound->playSound(0);
-		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 17 || _frame == 21))
+		else if (_vm->gameIs(kGameAmazon) && _vm->_currentMan != 3 && (_frame == 17 || _frame == 21))
 			_vm->_sound->playSound(0);
 
 		if (++_frame > _upWalkMax)
@@ -375,9 +376,9 @@ void Player::walkDown() {
 
 		calcManScale();
 
-		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 17 || _frame == 21))
+		if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[174] == 0 && (_frame == 17 || _frame == 21))
 			_vm->_sound->playSound(0);
-		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 10 || _frame == 14))
+		else if (_vm->gameIs(kGameAmazon) && _vm->_currentMan != 3 && (_frame == 10 || _frame == 14))
 			_vm->_sound->playSound(0);
 
 		if (++_frame > _downWalkMax)
@@ -402,7 +403,7 @@ void Player::walkLeft() {
 	if (flag) {
 		int walkOffset = _walkOffLeft[_frame - _sideWalkMin];
 		int tempL = _rawPlayerLow.x - (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOffset]);
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x - (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOffset]) -
 			(tempL < 0 ? 1 : 0);
 	} else {
@@ -414,12 +415,12 @@ void Player::walkLeft() {
 		plotCom2();
 	} else {
 		_rawPlayer.x = _rawXTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		++_frame;
 
-		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
+		if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
 			_vm->_sound->playSound(0);
-		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+		else if (_vm->gameIs(kGameAmazon) && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
 			_vm->_sound->playSound(0);
 
 		if (_frame > _sideWalkMax)
@@ -444,7 +445,7 @@ void Player::walkRight() {
 	if (flag) {
 		int walkOffset = _walkOffRight[_frame - _sideWalkMin];
 		int tempL = _rawPlayerLow.x + (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOffset]);
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x + (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOffset]) +
 			(tempL >= 0x100 ? 1 : 0);
 	} else {
@@ -456,12 +457,12 @@ void Player::walkRight() {
 		plotCom2();
 	} else {
 		_rawPlayer.x = _rawXTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		++_frame;
 
-		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
+		if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
 			_vm->_sound->playSound(0);
-		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+		else if (_vm->gameIs(kGameAmazon) && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
 			_vm->_sound->playSound(0);
 
 		// Useless check removed
@@ -488,7 +489,7 @@ void Player::walkUpLeft() {
 	if (flag) {
 		walkOffset = _walkOffUL[_frame - _diagUpWalkMin].x;
 		tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
 			(tempL < 0 ? 1 : 0);
 	} else {
@@ -506,7 +507,7 @@ void Player::walkUpLeft() {
 	} else {
 		_rawPlayer.x = _rawXTemp;
 		_rawPlayer.y = _rawYTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		_rawPlayerLow.y = _rawYTempL;
 
 		++_frame;
@@ -538,7 +539,7 @@ void Player::walkDownLeft() {
 	if (flag) {
 		walkOffset = _walkOffDL[_frame - _sideWalkMin].x;
 		tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
 			(tempL < 0 ? 1 : 0);
 	} else {
@@ -556,7 +557,7 @@ void Player::walkDownLeft() {
 	} else {
 		_rawPlayer.x = _rawXTemp;
 		_rawPlayer.y = _rawYTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		_rawPlayerLow.y = _rawYTempL;
 
 		++_frame;
@@ -588,7 +589,7 @@ void Player::walkUpRight() {
 	if (flag) {
 		walkOffset = _walkOffUR[_frame - _diagUpWalkMin].x;
 		tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
 			(tempL >= 0x100 ? 1 : 0);
 	} else {
@@ -606,7 +607,7 @@ void Player::walkUpRight() {
 	} else {
 		_rawPlayer.x = _rawXTemp;
 		_rawPlayer.y = _rawYTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		_rawPlayerLow.y = _rawYTempL;
 
 		++_frame;
@@ -638,7 +639,7 @@ void Player::walkDownRight() {
 	if (flag) {
 		walkOffset = _walkOffUR[_frame - _diagDownWalkMin].x;
 		tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
 			(tempL >= 0x100 ? 1 : 0);
 	} else {
@@ -656,7 +657,7 @@ void Player::walkDownRight() {
 	} else {
 		_rawPlayer.x = _rawXTemp;
 		_rawPlayer.y = _rawYTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		_rawPlayerLow.y = _rawYTempL;
 
 		calcManScale();
@@ -749,11 +750,11 @@ void Player::plotCom(int flags) {
 }
 
 void Player::plotCom0() {
-	plotCom(_vm->getGameID() == kGameAmazon ? 0 : IMGFLAG_BACKWARDS);
+	plotCom(_vm->gameIs(kGameAmazon) ? 0 : IMGFLAG_BACKWARDS);
 }
 
 void Player::plotCom1() {
-	plotCom(_vm->getGameID() == kGameAmazon ? IMGFLAG_BACKWARDS : 0);
+	plotCom(_vm->gameIs(kGameAmazon) ? IMGFLAG_BACKWARDS : 0);
 }
 
 void Player::plotCom2() {

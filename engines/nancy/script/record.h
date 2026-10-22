@@ -82,6 +82,12 @@ public:
 	// Pushes an object for the scripts that stands for this record
 	void push();
 
+	// Nancy20: a record made with "scriptOwns" lives only as long as scripts can
+	// still reach it. Once the last object standing for it has been collected, it
+	// stops and is taken out of the scene.
+	void onObjectCollected();
+	bool isDropped() const { return _isDropped; }
+
 	// One frame. Times are in seconds.
 	void update(double sceneTime, double elapsedTime);
 
@@ -103,6 +109,9 @@ public:
 	// The game is about to be saved, which is when the records that keep
 	// something across scenes store it
 	virtual void onSave() {}
+
+	// The scene of the record is being taken down
+	virtual void onDie() {}
 
 	// Whether messages sent to the given name are for this record
 	virtual bool hasMessagingName(const Common::String &name) { return false; }
@@ -197,6 +206,10 @@ private:
 	bool _wasActive = false;
 	bool _isDone = false;
 	bool _hasRunOnce = false;
+
+	bool _isScriptOwned = false;
+	uint _numObjects = 0;	// the objects standing for the record that Lua still has
+	bool _isDropped = false;
 };
 
 // Makes the "AR" object, and the types of the records

@@ -132,15 +132,12 @@ void ScriptValue::copyFrom(const ScriptValue &other) {
 		break;
 
 	case kScriptValueTypeFloat:
+	case kScriptValueTypeTime:
 		_u.d = other._u.d;
 		break;
 
 	case kScriptValueTypeBool:
 		_u.b = other._u.b;
-		break;
-
-	case kScriptValueTypeTime:
-		_u.d = other._u.d;
 		break;
 
 	case kScriptValueTypeParamToken:
@@ -368,27 +365,23 @@ Common::String ScriptValue::getDebugString(bool includeDefaultName) const {
 }
 
 bool ScriptValue::compare(Opcode op, const ScriptValue &lhs, const ScriptValue &rhs) {
-	if (lhs.getType() != rhs.getType()) {
-		warning("%s: Attempt to compare mismatched values: %s; %s",
-			__func__, lhs.getDebugString().c_str(), rhs.getDebugString().c_str());
-	}
-
 	bool result = false;
 	switch (lhs.getType()) {
 	case kScriptValueTypeEmpty:
+		if (lhs.getType() != rhs.getType()) {
+			warning("%s: Attempt to compare mismatched values: %s; %s",
+				__func__, lhs.getDebugString().c_str(), rhs.getDebugString().c_str());
+		}
 		result = compareEmptyValues(op);
 		break;
 
 	case kScriptValueTypeFloat:
+	case kScriptValueTypeTime:
 		result = compare(op, lhs.asFloatOrTime(), rhs.asFloatOrTime());
 		break;
 
 	case kScriptValueTypeBool:
 		result = compare(op, lhs.asBool(), rhs.asBool());
-		break;
-
-	case kScriptValueTypeTime:
-		result = compare(op, lhs.asFloatOrTime(), rhs.asFloatOrTime());
 		break;
 
 	case kScriptValueTypeParamToken:

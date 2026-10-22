@@ -423,6 +423,7 @@ void ColonyEngine::playAnimation() {
 	_rotateRight = false;
 
 	_animationRunning = true;
+	syncMacMenuChecks();
 	_animExitPressed = _animExitInside = false;
 	_animExitStrip = _animExitButton = Common::Rect();
 	_coderCursor = 0;
@@ -602,15 +603,47 @@ void ColonyEngine::playAnimation() {
 	uint32 lastDrawTime = 0;
 	bool needsDraw = true;
 	while (_animationRunning && !shouldQuit()) {
+		if (updateScreenSize()) {
+			_animExitPressed = _animExitInside = false;
+			_coderPressed = -1;
+			_coderPressInside = false;
+			drawAnimation();
+			needsDraw = true;
+		}
 		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
+		while (_animationRunning && _system->getEventManager()->pollEvent(event)) {
 			if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_animationRunning = false;
 				break;
-			} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
+			}
+			if (event.type == Common::EVENT_SCREEN_CHANGED) {
 				_gfx->computeScreenViewport();
+				if (updateScreenSize()) {
+					_animExitPressed = _animExitInside = false;
+					_coderPressed = -1;
+					_coderPressInside = false;
+				}
+				drawAnimation();
 				needsDraw = true;
-			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+				continue;
+			}
+			// Only an open menu captures input; the menu bar stays visible.
+			if (_macMenu && _macMenu->hasAllFocus() && event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
+					event.customType == kActionEscape) {
+				_macMenu->closeMenu();
+				needsDraw = true;
+				continue;
+			}
+			if (processMacMenuEvent(event)) {
+				needsDraw = true;
+				if (!_animationRunning || shouldQuit())
+					break;
+				continue;
+			}
+			if (_macMenu && _macMenu->hasAllFocus())
+				continue;
+
+			if (event.type == Common::EVENT_LBUTTONDOWN) {
 				const Common::Point pt = eventMouseToLogical(event.mouse);
 				_messageSourceRect = Common::Rect();
 				if (handleColonyCoderClick(pt)) {
@@ -738,11 +771,14 @@ void ColonyEngine::playAnimation() {
 
 	if (useSquarePixelViewport)
 		_gfx->setSquarePixelViewport(false);
-	_system->lockMouse(true);
-	CursorMan.showMouse(false);
+	_animationRunning = false;
+	if (_macMenu)
+		_macMenu->closeMenu();
 	CursorMan.popAllCursors();
+	updateMouseCapture(true);
+	syncMacMenuChecks();
 
-	// Purge pending mouse/keyboard events AFTER re-locking the mouse,
+	// Purge pending mouse/keyboard events after restoring mouse capture,
 	// so that any synthetic events from the lock transition are also
 	// drained and don't trigger actions (e.g. cShoot) in the main loop.
 	_system->getEventManager()->purgeMouseEvents();
@@ -798,6 +834,9 @@ uint32 ColonyEngine::resolveAnimColor(int16 bmEntry) const {
 void ColonyEngine::drawAnimation() {
 	// Full clear required: OpenGL framebuffer is undefined between frames.
 	_gfx->clear(0);
+
+	if (isMacRenderMode())
+		drawDashboardStep1();
 
 	// Center 416x264 animation area on screen (from original InitDejaVu)
 	int ox = _screenR.left + (_screenR.width() - 416) / 2;
@@ -906,6 +945,7 @@ void ColonyEngine::drawAnimation() {
 
 	drawAnimationExitButton(ox, oy);
 	drawColonyCoder(ox, oy);
+	drawMacMenuBar();
 }
 
 // gamesprt.c DrawButton(): 30px strip below the 416x264 scene with a framed

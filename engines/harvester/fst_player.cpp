@@ -34,7 +34,9 @@
 #include "common/textconsole.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
+#include "harvester/detection.h"
 #include "harvester/harvester.h"
+#include "harvester/media/media_manager.h"
 #include "harvester/resources.h"
 #include "image/pcx.h"
 
@@ -257,6 +259,9 @@ static bool pumpVideoEvents(HarvesterEngine &vm, bool &skipRequested, bool &defe
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
+			if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode != Common::KEYCODE_ESCAPE)
+				break;
+
 			if (allowSkipInput) {
 				skipRequested = true;
 			} else {
@@ -448,11 +453,11 @@ bool FstPlayer::play(const Common::String &path) {
 	uint nextCensorshipToggleIndex = 0;
 
 	Audio::SoundHandle audioHandle;
-	Audio::QueuingAudioStream *audioStream = nullptr;
+	Common::ScopedPtr<Audio::QueuingAudioStream> audioStream;
 	const bool hasPcmAudio = header.sampleRate != 0 && header.bitsPerSample == 16;
 	const uint32 trailingAudioFrameSkip = hasPcmAudio ? getTrailingFstAudioFrameSkip(frames) : 0;
 	if (hasPcmAudio)
-		audioStream = Audio::makeQueuingAudioStream(header.sampleRate, false);
+		audioStream.reset(Audio::makeQueuingAudioStream(header.sampleRate, false));
 	else if (header.sampleRate != 0 && header.bitsPerSample != 0)
 		warning("Harvester: unsupported FST audio format %u-bit in '%s'", header.bitsPerSample, path.c_str());
 
@@ -489,7 +494,7 @@ bool FstPlayer::play(const Common::String &path) {
 				Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 
 			if (!audioStarted) {
-				mixer->playStream(Audio::Mixer::kSFXSoundType, &audioHandle, audioStream, -1,
+				mixer->playStream(Audio::Mixer::kSFXSoundType, &audioHandle, audioStream.get(), -1,
 					Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 				audioStarted = true;
 			}
@@ -574,11 +579,20 @@ bool FstPlayer::play(const Common::String &path) {
 
 	if (audioStarted)
 		mixer->stopHandle(audioHandle);
-	delete audioStream;
+	audioStream.reset();
 	if (resumeMusicAfterPlayback)
 		_vm.pauseMusic(false);
 	if (shouldSwitchToMovieDisplay)
 		_vm.setDisplayMode(previousDisplayWidth, previousDisplayHeight);
+
+	// play_fst_sequence consumes FADE_IN after playback; callers perform the fade.
+	MediaManager *media = _vm.getMedia();
+	media->finishMoviePlayback();
+	if (media->isRoomPaletteFadePending()) {
+		_vm.getScreen()->clearPalette();
+		g_system->updateScreen();
+		debugC(2, kDebugRoom, "Harvester: movie '%s' deferring room palette restoration", path.c_str());
+	}
 
 	return !_vm.shouldQuit();
 }

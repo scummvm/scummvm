@@ -26,12 +26,15 @@
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
+#include "engines/nancy/util.h"
 
 #include "engines/nancy/script/convo.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/luastate.h"
 #include "engines/nancy/script/record.h"
 #include "engines/nancy/script/records.h"
+#include "engines/nancy/script/ref.h"
 #include "engines/nancy/script/scenecontext.h"
 
 #include "engines/nancy/state/scene.h"
@@ -71,7 +74,25 @@ SceneContext::~SceneContext() {
 		delete response;
 	}
 
+	for (auto &ref : _refs) {
+		delete ref._value;
+	}
+
 	delete _lua;
+}
+
+const RefImage *SceneContext::loadRef(const Common::String &name) {
+	RefImage *ref = _refs.getValOrDefault(name, nullptr);
+	if (!ref) {
+		ref = new RefImage();
+		if (!g_nancy->_resource->loadImage(Common::Path(name), ref->image)) {
+			warning("Could not load Ref %s", name.c_str());
+		}
+
+		_refs.setVal(name, ref);
+	}
+
+	return ref;
 }
 
 lua_State *SceneContext::getLua() const {
@@ -79,6 +100,16 @@ lua_State *SceneContext::getLua() const {
 }
 
 bool SceneContext::load() {
+	// Nancy20 runs a few shared scripts in every scene before its own
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	if (boot) {
+		for (const Common::String &name : boot->includeFileNames) {
+			if (!_lua->runScript(name)) {
+				return false;
+			}
+		}
+	}
+
 	if (!_lua->runScript(_sceneName)) {
 		return false;
 	}
@@ -183,6 +214,12 @@ bool SceneContext::skipMovies() {
 	}
 
 	return true;
+}
+
+void SceneContext::end() {
+	for (Record *record : _records) {
+		record->onDie();
+	}
 }
 
 // A scene that has a function for it runs that in place of its records
@@ -304,10 +341,20 @@ void SceneContext::runFrame(double elapsedTime) {
 	lua_State *L = getLua();
 
 	_time += elapsedTime;
+	_elapsedTime = elapsedTime;
 
 	// The records made since the last frame join in
 	_records.push_back(_newRecords);
 	_newRecords.clear();
+
+	// Nancy20 collects what the scripts let go of once a frame, and only then.
+	// That takes out the records that belonged to the scripts.
+	if (g_nancy->getGameType() >= kGameTypeNancy20) {
+		lua_gc(L, LUA_GCRESTART, 0);
+		lua_gc(L, LUA_GCCOLLECT, 0);
+		lua_gc(L, LUA_GCSTOP, 0);
+		deleteDroppedRecords();
+	}
 
 	// The records run in the order they were made, but what the player does
 	// goes to the ones closest to them first, and among the ones just as close
@@ -340,6 +387,27 @@ void SceneContext::runFrame(double elapsedTime) {
 		for (Record *record : _records) {
 			record->update(_time, elapsedTime);
 		}
+	}
+}
+
+void SceneContext::deleteDroppedRecords() {
+	for (uint i = 0; i < _records.size(); ) {
+		Record *record = _records[i];
+		if (!record->isDropped()) {
+			++i;
+			continue;
+		}
+
+		if (record == _summary) {
+			_summary = nullptr;
+		}
+
+		if (record == _convo) {
+			_convo = nullptr;
+		}
+
+		_records.remove_at(i);
+		delete record;
 	}
 }
 
@@ -457,10 +525,11 @@ void SceneContext::changeScene(const Common::String &streamName, const Common::S
 
 	_hasChangedScene = true;
 
-	// The scenes of the main stream go by number
-	if (sceneName.size() > 1 && tolower(sceneName[0]) == 's' && Common::isDigit(sceneName[1])) {
+	// The scenes of the main stream mostly go by number
+	uint16 sceneID;
+	if (parseSceneName(sceneName, sceneID)) {
 		SceneChangeDescription scene;
-		scene.sceneID = (uint16)atoi(sceneName.c_str() + 1);
+		scene.sceneID = sceneID;
 		scene.frameID = frame;
 		scene.continueSceneSound = kContinueSceneSound;
 		streams.changeScene(streamName, scene);

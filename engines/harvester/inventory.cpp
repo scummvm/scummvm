@@ -27,8 +27,8 @@
 #include "graphics/screen.h"
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
-#include "harvester/menu.h"
-#include "harvester/player.h"
+#include "harvester/menu/menu.h"
+#include "harvester/player/player.h"
 #include "harvester/resources.h"
 #include "harvester/art.h"
 

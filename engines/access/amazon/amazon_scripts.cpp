@@ -33,8 +33,37 @@ namespace Amazon {
 AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (AmazonEngine *)_vm;
 
-	setOpcodes_v2();
 }
+
+
+
+void AmazonScripts::setOpcodes() {
+	#define Opcode(func) Common::SharedPtr<Common::Functor0<void>>( \
+		new Common::Functor0Mem<void, AmazonScripts>(this, &AmazonScripts::func))
+
+	Scripts::setOpcodes();
+
+	_opcodes.resize(80);
+	// Modify command list for Amazon
+	_opcodes[3] = Opcode(cmdJumpHelp);
+	_opcodes[9] = Opcode(cmdPrint_v2);
+	_opcodes[15] = Opcode(cmdSetInventory);
+	_opcodes[28] = Opcode(cmdDispInv_v2);
+	_opcodes[29] = Opcode(cmdSetTimer);
+	_opcodes[32] = Opcode(cmdJumpGoto);
+	_opcodes[40] = Opcode(cmdVideoEnded);
+	_opcodes[45] = _opcodes[46] = Opcode(cmdSpecial);
+	_opcodes[63] = _opcodes[64] = _opcodes[65] = _opcodes[66] = _opcodes[67] = Opcode(cmdPushLocation_v2);
+
+	_opcodes[73] = Opcode(cmdHelp_v2);
+	_opcodes[74] = Opcode(cmdCycleBack);
+	_opcodes[75] = Opcode(cmdChapter);
+	_opcodes[76] = Opcode(cmdSetHelp);
+	_opcodes[77] = Opcode(cmdCenterPanel);
+	_opcodes[78] = Opcode(cmdMainPanel);
+	_opcodes[79] = Opcode(cmdRetFlash);
+}
+
 
 void AmazonScripts::cLoop() {
 	searchForSequence();
@@ -59,9 +88,7 @@ void AmazonScripts::mWhile1() {
 	_vm->_screen->setIconPalette();
 	_vm->_screen->forceFadeIn();
 
-	Resource *spriteData = _vm->_files->loadFile(14, 6);
-	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[0] = new SpriteResource(_vm, 14, 6);
 
 	_vm->_images.clear();
 	_vm->_oldRects.clear();
@@ -77,9 +104,7 @@ void AmazonScripts::mWhile1() {
 
 	_game->establish(-1, 14);
 
-	spriteData = _vm->_files->loadFile(14, 7);
-	_vm->_objectsTable[1] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[1] = new SpriteResource(_vm, 14, 7);
 
 	_vm->_sound->playSound(0);
 	_vm->_screen->setDisplayScan();
@@ -115,9 +140,7 @@ void AmazonScripts::mWhile1() {
 	_vm->_screen->setIconPalette();
 	_vm->freeCells();
 
-	spriteData = _vm->_files->loadFile(14, 8);
-	_vm->_objectsTable[2] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[2] = new SpriteResource(_vm, 14, 8);
 
 	_vm->_images.clear();
 	_vm->_oldRects.clear();
@@ -130,9 +153,7 @@ void AmazonScripts::mWhile1() {
 	} while (_vm->_flags[52] == 3);
 
 	_vm->freeCells();
-	spriteData = _vm->_files->loadFile(14, 9);
-	_vm->_objectsTable[3] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[3] = new SpriteResource(_vm, 14, 9);
 
 	_vm->_screen->setDisplayScan();
 	_vm->_events->hideCursor();
@@ -167,9 +188,7 @@ void AmazonScripts::mWhile2() {
 	_vm->_screen->setIconPalette();
 	_vm->_screen->forceFadeIn();
 
-	Resource *spriteData = _vm->_files->loadFile(14, 6);
-	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[0] = new SpriteResource(_vm, 14, 6);
 
 	_vm->_images.clear();
 	_vm->_oldRects.clear();
@@ -182,9 +201,7 @@ void AmazonScripts::mWhile2() {
 
 	_vm->_screen->fadeOut();
 	_vm->freeCells();
-	spriteData = _vm->_files->loadFile(14, 9);
-	_vm->_objectsTable[3] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[3] = new SpriteResource(_vm, 14, 9);
 
 	_vm->_screen->setDisplayScan();
 	_vm->_events->hideCursor();
@@ -376,22 +393,6 @@ bool AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	return false;
 }
 
-typedef void(AmazonScripts::*AmazonScriptMethodPtr)();
-
-void AmazonScripts::executeCommand(int commandIndex) {
-	static const AmazonScriptMethodPtr AMAZON_COMMAND_LIST[] = {
-		&AmazonScripts::cmdHelp_v2, &AmazonScripts::cmdCycleBack,
-		&AmazonScripts::cmdChapter, &AmazonScripts::cmdSetHelp,
-		&AmazonScripts::cmdCenterPanel, &AmazonScripts::cmdMainPanel,
-		&AmazonScripts::CMDRETFLASH
-	};
-
-	if (commandIndex >= 73)
-		(this->*AMAZON_COMMAND_LIST[commandIndex - 73])();
-	else
-		Scripts::executeCommand(commandIndex);
-}
-
 void AmazonScripts::cmdHelp_v2() {
 	Common::String helpMessage = _data->readString();
 
@@ -469,6 +470,19 @@ void AmazonScripts::cmdHelp_v2() {
 	findNull();
 }
 
+void AmazonScripts::cmdPushLocation_v2() {
+	// TODO: Double-check this code.  It doesn't seem to match function
+	// sub13BC0 in Amazon?
+	debugC(1, kDebugScripts, "cmdPushLocation()");
+	_choiceStart = _data->pos() - 1;
+}
+
+void AmazonScripts::cmdDispInv_v2() {
+	debugC(1, kDebugScripts, "cmdDispInv_v2()");
+	_vm->_inventory->displayInv();
+	_vm->_events->forceSetCursor(CURSOR_ARROW);
+}
+
 void AmazonScripts::cmdCycleBack() {
 	if (_vm->_startup == -1)
 		_vm->_screen->cyclePaletteBackwards();
@@ -526,7 +540,7 @@ void AmazonScripts::cmdMainPanel() {
 	}
 }
 
-void AmazonScripts::CMDRETFLASH() {
+void AmazonScripts::cmdRetFlash() {
 	error("TODO CMDRETFLASH");
 }
 

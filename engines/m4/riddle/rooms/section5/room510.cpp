@@ -232,6 +232,7 @@ void Room510::parser() {
 		digi_play("510R02", 1);
 	} else if (lookFlag && player_said_any("ALTAR POST", "ALTAR POST ", "ALTAR")) {
 		digi_play(_G(flags)[V165] == 1 ? "510R03A" : "510R03", 1);
+		_G(flags)[V165] = 1;
 	} else if (lookFlag && player_said("TROUGH")) {
 		if (_G(flags)[V166] == 1) {
 			digi_play("510R04A", 1);

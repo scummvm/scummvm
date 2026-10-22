@@ -1,0 +1,195 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HARVESTER_MENU_H
+#define HARVESTER_MENU_H
+
+#include "common/array.h"
+#include "common/error.h"
+#include "common/rect.h"
+#include "common/str.h"
+#include "harvester/art.h"
+
+namespace Graphics {
+class Font;
+}
+
+namespace Common {
+struct Event;
+}
+
+namespace Harvester {
+
+class HarvesterEngine;
+class Flow;
+class ResourceManager;
+
+struct MenuTextConfig {
+	Common::Array<Common::String> optionItems;
+	Common::String yesLabel = "YES";
+	Common::String noLabel = "NO";
+	Common::String clickLabel = "CLICK";
+	Common::String onLabel = "On";
+	Common::String offLabel = "Off";
+	Common::String enterPasswordLabel = "ENTER PASSWORD";
+	Common::String newGamePrompt = "NEW GAME";
+	Common::String quitGamePrompt = "QUIT GAME";
+	Common::String talkToVerb = "Talk to";
+	Common::String examineVerb = "Examine";
+	Common::String examineTheVerb = "Examine the";
+	Common::String operateVerb = "Operate the";
+	Common::String pickUpVerb = "Pick up the";
+	Common::String useVerb = "Use";
+	Common::String useOnPreposition = "on";
+	Common::String dialogueOtherLabel = "Other";
+	Common::String dialogueResponsesLabel = "Responses";
+	Common::String dialogueKeywordLabel;
+	Common::Array<Common::String> weekdayLabels;
+	Common::String quickTipsExitLabel = "Exit";
+	Common::String quickTipsNextLabel = "Next";
+	Common::String quickTipsOnLabel = "Show Tips ON";
+	Common::String quickTipsOffLabel = "Show Tips OFF";
+	Common::String quickTipsHeader;
+
+	bool hasDialogueKeywordLabel() const { return !dialogueKeywordLabel.empty(); }
+	bool hasQuickTipsHeader() const { return !quickTipsHeader.empty(); }
+};
+
+struct QuickTipsLayout {
+	Common::Rect exitRect;
+	Common::Rect nextRect;
+	Common::Rect toggleRect;
+};
+
+bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config);
+Common::String buildUseItemPrompt(const MenuTextConfig &config,
+	const Common::String &itemLabel, const Common::String &targetLabel);
+bool resolveQuickTipsLayout(HarvesterEngine &engine, const MenuTextConfig &config,
+	QuickTipsLayout &layout);
+void drawQuickTipsPanel(HarvesterEngine &engine, const MenuTextConfig &config,
+	const QuickTipsLayout &layout, const Common::String &tipText);
+
+class MenuSystem {
+public:
+	MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
+		const Common::Array<Common::String> &menuItems);
+
+	Common::Error runMainMenu(Flow &flow);
+	Common::Error runHelpScreen(const byte *palette, float paletteBrightness, Flow &flow);
+	Common::Error runRoomMenu(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &flow, bool canSaveGame);
+	Common::Error validateParentalPassword(Flow &flow);
+	Common::Error showCdChangePrompt(int discNumber, ResourceManager &resources,
+		Flow &flow, bool &promptCompleted);
+
+private:
+	static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *palette);
+	struct MenuSelection;
+	struct MainMenu;
+	struct RoomMenu;
+	struct RoomMenuActivationResult;
+	enum MenuNavigationCommand { kNoMenuCommand, kActivateMenuItem, kCloseMenu };
+	MenuNavigationCommand handleMenuNavigationEvent(MenuSelection &selection,
+		const Common::Event &event, bool useBackdrop) const;
+	bool captureMainMenuBackdrop(MainMenu &menu, IndexedBitmap &backdrop);
+	Common::Error runMainMenuRoomLoop(MainMenu &menu, const Common::String &targetName);
+	Common::Error startNewGameFromMainMenu(MainMenu &menu, const byte *menuPalette);
+	Common::Error loadGameFromMainMenu(MainMenu &menu, const byte *menuPalette);
+	Common::Error activateMainMenuItem(MainMenu &menu);
+	RoomMenuActivationResult startNewGameFromRoomMenu(RoomMenu &menu);
+	RoomMenuActivationResult saveGameFromRoomMenu(RoomMenu &menu);
+	RoomMenuActivationResult activateRoomMenuItem(RoomMenu &menu);
+
+	static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap);
+	static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFont, uint itemCount,
+		const Common::Point &mousePos);
+
+	struct OptionsMenu;
+	void updateOptionsSlider(OptionsMenu &menu, int sliderIndex);
+	void cycleOptionsTextMode(OptionsMenu &menu);
+	void toggleOptionsGore(OptionsMenu &menu);
+	void toggleOptionsPassword(OptionsMenu &menu);
+	Common::Error activateOptionsItem(OptionsMenu &menu);
+	Common::Error handleOptionsQuickTipsEvent(OptionsMenu &menu, const Common::Event &event);
+	void handleOptionsMouseMove(OptionsMenu &menu, const Graphics::Font &selectedFont);
+	Common::Error handleOptionsMouseDown(OptionsMenu &menu, const Graphics::Font &selectedFont);
+	Common::Error handleOptionsKey(OptionsMenu &menu, const Common::Event &event, bool &closed);
+	Common::Error handleOptionsEvent(OptionsMenu &menu, const Common::Event &event,
+		const Graphics::Font &selectedFont, bool &closed);
+
+	struct SaveSlotMenu;
+	struct SaveSlotEventResult;
+	enum SaveLoadMode { kSaveMode, kLoadMode };
+	enum SaveSlotCommand { kNoSlotCommand, kConfirmSlot, kCancelSlot };
+
+	SaveSlotEventResult handleSaveSlotEvent(SaveSlotMenu &menu, SaveLoadMode mode,
+		const Common::Event &event) const;
+	Common::Error runSaveSlotMenu(Flow &flow, SaveLoadMode mode, bool &completed);
+	void reloadSaveSlotTitles(SaveSlotMenu &menu) const;
+	int getSaveSlotAt(const Common::Point &mousePos) const;
+	SaveSlotCommand getSaveSlotCommand(const Common::Event &event) const;
+	void renderSaveSlotMenu(const SaveSlotMenu &menu, const Common::String *editingText = nullptr) const;
+	Common::Error runSaveSlotEditor(SaveSlotMenu &menu, Flow &flow,
+		Common::String &editedTitle, bool &confirmed);
+	Common::Error saveSelectedSlot(SaveSlotMenu &menu, Flow &flow, bool &saved);
+	void loadSelectedSlot(SaveSlotMenu &menu, bool &loaded);
+
+	Common::Error runLoadGameMenu(const byte *palette, float paletteBrightness,
+		Flow &flow, bool &loadedGame);
+	Common::Error runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &flow);
+	Common::Error runSaveGameMenu(const byte *palette, float paletteBrightness,
+		Flow &flow, bool &savedGame);
+	Common::Error restoreRoomBackdropAfterSave(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &flow) const;
+	Common::Error runConfirmPrompt(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &flow, const Common::String &promptText,
+		bool &confirmed);
+	Common::Error runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &flow);
+	struct PasswordPromptResult {
+		Common::String password;
+		bool accepted = false;
+	};
+	Common::Error runPasswordPrompt(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &flow, bool drawLogo, PasswordPromptResult &prompt) const;
+	Common::Error showGameOverBackdrop(Flow &flow);
+	void clearMainMenuBackdrop();
+	void renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,
+		bool drawCursor, const Common::Array<Common::String> &menuItems) const;
+	void renderBackdropMenuScreen(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, const Common::Array<Common::String> &menuItems,
+		int selectedItem) const;
+	int getMenuItemAt(const Common::Point &mousePos, const Common::Array<Common::String> &menuItems) const;
+	int getBackdropMenuItemAt(const Common::Point &mousePos,
+		const Common::Array<Common::String> &menuItems) const;
+
+	HarvesterEngine &_engine;
+	Common::Point &_mousePos;
+	const Common::Array<Common::String> &_menuItems;
+	IndexedBitmap _mainMenuBackdrop;
+	byte _mainMenuBackdropPalette[256 * 3] = { 0 };
+	bool _hasMainMenuBackdrop = false;
+};
+
+} // End of namespace Harvester
+
+#endif // HARVESTER_MENU_H

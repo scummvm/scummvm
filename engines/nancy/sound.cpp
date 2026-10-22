@@ -133,7 +133,8 @@ bool readHISHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &
 	size = stream->readUint32LE();
 
 	if (hasType) {
-		uint16 tp = stream->readUint16LE();
+		// Nancy20 made the type 32 bits wide
+		uint32 tp = g_nancy->getGameType() >= kGameTypeNancy20 ? stream->readUint32LE() : stream->readUint16LE();
 		switch (tp) {
 		case 1:
 			type = kSoundTypeRaw;
@@ -142,7 +143,7 @@ bool readHISHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &
 			type = kSoundTypeOgg;
 			break;
 		default:
-			warning("Unsupported sound type %d found in HIS file", tp);
+			warning("Unsupported sound type %u found in HIS file", tp);
 			return false;
 		}
 	} else
@@ -341,6 +342,7 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 	chan.playCommands = description.playCommands;
 	chan.numLoops = description.numLoops;
 	chan.volume = description.volume;
+	chan.requestedVolume = description.volume;
 	chan.panAnchorFrame = description.panAnchorFrame;
 	chan.isPanning = description.isPanning;
 
@@ -356,6 +358,12 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 	Common::String soundName = resolveMusicMix(description.name);
 	if (soundName.empty() || soundName == "NO SOUND") {
 		// The mix maps this location to silence
+		return;
+	}
+
+	// Nancy19 and up play nothing for a sound named "silence", which only
+	// stops the channel
+	if (g_nancy->getGameType() >= kGameTypeNancy19 && soundName == "silence") {
 		return;
 	}
 
@@ -573,10 +581,19 @@ byte SoundManager::getVolume(const Common::String &chunkName) {
 }
 
 void SoundManager::setVolume(uint16 channelID, uint16 volume) {
-	if (channelID >= _channels.size() || !isSoundPlaying(channelID))
+	if (channelID >= _channels.size())
+		return;
+
+	_channels[channelID].requestedVolume = volume;
+
+	if (!isSoundPlaying(channelID))
 		return;
 
 	_mixer->setChannelVolume(_channels[channelID].handle, getAdjustedVolume(volume) * 255 / 100);
+}
+
+uint16 SoundManager::getRequestedVolume(uint16 channelID) const {
+	return channelID < _channels.size() ? _channels[channelID].requestedVolume : 0;
 }
 
 void SoundManager::setVolume(const SoundDescription &description, uint16 volume) {

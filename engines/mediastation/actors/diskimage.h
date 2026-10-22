@@ -25,6 +25,7 @@
 #include "mediastation/actor.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/datafile.h"
+#include "mediastation/clients.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
@@ -47,13 +48,14 @@ struct StripImageNode {
 // Despite the name from the original, this is not a "disk image" but
 // a set of graphics (like a large background) that are streamed from
 // disk in a very particular way.
-class DiskImageActor : public SpatialEntity, public ChannelClient {
+class DiskImageActor : public SpatialEntity, public ChannelClient, public ImtDeviceUser {
 public:
 	DiskImageActor() : SpatialEntity(kActorTypeDiskImage) {};
 	~DiskImageActor();
 
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+	virtual bool giveUpDevice() override { return false; }
 
 	virtual void onEvent(const ActorEvent &event) override;
 	virtual void timerEvent(const TimerEvent &event) override;

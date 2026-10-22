@@ -465,6 +465,9 @@ void Room605::parser() {
 	} else if (takeFlag && player_said_any("pupil", "obsidian disk") &&
 			_G(flags)[V203] != 2 && takePupilDisk()) {
 		// No implementation
+	} else if (takeFlag && player_said_any("pupil", "OBSIDIAN DISK") &&
+			_G(flags)[V203] == 2 && takePupilDiskTt()) {
+		// No implementation
 	} else if (player_said("SLEEVE") && player_said_any("pupil", "OBSIDIAN DISK") &&
 			_G(flags)[V203] == 2 && sleeveDisk1()) {
 		// No implementation
@@ -683,6 +686,57 @@ bool Room605::takePupilDisk() {
 	return true;
 }
 
+bool Room605::takePupilDiskTt() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("OBSIDIAN DISK")) {
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_ripHandOnIris = series_load("RIP BURNS HAND ON IRIS");
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, false,
+				triggerMachineByHashCallback, "take pupil");
+			sendWSMessage_10000(1, _ripley, _ripHandOnIris, 1, 26, 2,
+				_ripHandOnIris, 26, 26, 1);
+			kernel_timing_trigger(60, 1);
+			return true;
+		}
+		break;
+
+	case 1:
+		_ttShould = 7;
+		return true;
+
+	case 2:
+		sendWSMessage_10000(1, _ripley, _ripHandOnIris, 27, 41, 6,
+			_ripHandOnIris, 41, 41, 1);
+		digi_play("605r15", 1, 255, 4);
+		return true;
+
+	case 4:
+		_ttShould = 6;
+		digi_play("605t06", 1, 255, 8);
+		return true;
+
+	case 6:
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		return true;
+
+	case 8:
+		series_unload(_ripHandOnIris);
+		_ttShould = 0;
+		kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
+		player_set_commands_allowed(true);
+		_G(flags)[V197] = 1;
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
 bool Room605::sleeveDisk1() {
 	switch (_G(kernel).trigger) {
 	case -1:
@@ -730,6 +784,7 @@ bool Room605::sleeveDisk1() {
 	case 9:
 		_ttShould = 7;
 		kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
+		ws_hide_walker();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, false,
 			triggerMachineByHashCallback, "take pupil");
 		sendWSMessage_10000(1, _ripley, _ripGetsIrisWithCloth, 1, 41, 10,
@@ -743,8 +798,6 @@ bool Room605::sleeveDisk1() {
 		return true;
 
 	case 11:
-		_ttShould = 0;
-		kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
 		inv_move_object("OBSIDIAN DISK", 605);
 		_pupil = series_show("605eye", 0x600, 16);
 		hotspot_set_active("PUPIL", true);
@@ -754,10 +807,16 @@ bool Room605::sleeveDisk1() {
 		return true;
 
 	case 12:
-		terminateMachineAndNull(_ripley);
-		series_unload(_ripGetsIrisWithCloth);
 		digi_unload("605_s01");
 		digi_unload("605_s02");
+		terminateMachineAndNull(_ripley);
+		series_unload(_ripGetsIrisWithCloth);
+		ws_unhide_walker();
+		digi_play("605r17", 1, 255, 13);
+		return true;
+
+	case 13:
+		_ttShould = 0;
 		player_set_commands_allowed(true);
 		return true;
 

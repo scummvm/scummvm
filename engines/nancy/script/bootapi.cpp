@@ -22,6 +22,7 @@
 #include "common/algorithm.h"
 
 #include "engines/nancy/enginedata.h"
+#include "engines/nancy/nancy.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
@@ -105,9 +106,22 @@ static int bootCreate(lua_State *L) {
 	ScriptBootData &boot = *s_tables->boot;
 
 	readField(L, 2, "windowName", boot.windowName);
-	requireField(L, readField(L, 2, "saveFolderName", boot.saveFolderName), "saveFolderName");
 	requireField(L, readField(L, 2, "playerTimeScale", boot.playerTimeScale), "playerTimeScale");
 	requireField(L, readField(L, 2, "diagFontNum", boot.diagnosticFontID), "diagFontNum");
+
+	if (g_nancy->getGameType() <= kGameTypeNancy19) {
+		requireField(L, readField(L, 2, "saveFolderName", boot.saveFolderName), "saveFolderName");
+		return 0;
+	}
+
+	// Nancy20 names the files of texts, and the scripts every scene starts with
+	requireField(L, pushField(L, 2, "textFiles"), "textFiles");
+	readStringList(L, -1, boot.textFileNames);
+	lua_pop(L, 1);
+
+	requireField(L, pushField(L, 2, "includeFiles"), "includeFiles");
+	readStringList(L, -1, boot.includeFileNames);
+	lua_pop(L, 1);
 	return 0;
 }
 
@@ -553,6 +567,20 @@ static const InitObject kInitObjects[] = {
 	{ "AutotextInit", "ND.AutotextInit", autotextCreate }
 };
 
+// Nancy20 sets InventoryInit.addToFront before the items get made. It picks
+// where new item buttons go in the inventory, and the only value used is the
+// one the earlier games always had, so it is only taken in.
+static int inventorySetField(lua_State *L) {
+	checkUserData(L, 1, "ND.InventoryInit");
+	const char *name = luaL_checkstring(L, 2);
+	if (scumm_stricmp(name, "addToFront") != 0) {
+		luaL_error(L, "InventoryInit has no field %s", name);
+	}
+
+	luaL_checktype(L, 3, LUA_TBOOLEAN);
+	return 0;
+}
+
 void registerBootAPI(lua_State *L) {
 	for (const InitObject &object : kInitObjects) {
 		const luaL_Reg functions[] = {
@@ -563,6 +591,11 @@ void registerBootAPI(lua_State *L) {
 
 		registerGlobal(L, object.globalName, object.typeName, functions);
 	}
+
+	luaL_getmetatable(L, "ND.InventoryInit");
+	lua_pushcfunction(L, inventorySetField);
+	lua_setfield(L, -2, "__newindex");
+	lua_pop(L, 1);
 
 	static const luaL_Reg kCursorInitFunctions[] = {
 		{ "__index", indexFunctions },

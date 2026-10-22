@@ -606,6 +606,7 @@ fbear	Fatty Bear's Birthday Surprise
 	4f1d6f8b38343dba405472538b5037ed	7717	en	DOS	HE 62	-	-	George Kormendi
 	ef74d9071d4e564b037cb44bd6774de7	-1	he	DOS	HE 62	-	-	sev
 	3df6ead57930488bc61e6e41901d0e97	-1	en	Mac	HE 62	-	-	khalek
+	af1da28105fa678dc03eed498156dc9f	7722	en	Mac	HE 62	Floppy	-	HerbFargus
 	179879b6e35c1ead0d93aab26db0951b	13381	en	Windows	HE 70	-	-	khalek
 
 	47e75b1bdcb44c78cb94883d1731ccf8	6203	en	DOS	HE 62	Demo	-	khalek
@@ -909,6 +910,7 @@ puttmoon	Putt-Putt Goes to the Moon
 	b9bb68c5d2c9b6e2d9c513a29a754a57	7828	en	DOS	-	-	-	George Kormendi
 	697c9b7c55a05d8199c48b48e379d2c8	-1	he	DOS	-	-	-	sev
 	9dc02577bf50d4cfaf3de3fbac06fbe2	-1	en	Mac	-	-	-	khalek
+	6ccc80f0cddc4f6d31908b29313ac04e	7693	en	Mac	-	Floppy	-	HerbFargus
 	9c92eeaf517a31b7221ec2546ab669fd	12161	en	Windows	HE 70	-	-	khalek
 	3c4c471342bd95505a42334367d8f127	12161	ru	Windows	HE 70	-	-	sev
 
@@ -936,8 +938,10 @@ puttputt	Putt-Putt Joins the Parade
 	be2abe172f58db170de3a037daa1dd27	-1	ja	3DO	HE 61	-	-	clone2727
 	ee41f6afbc5b26fa475754b56fe92048	8032	ja	3DO	HE 61	-	-	George Kormendi
 	9708cf716ed8bcc9ff3fcfc69413b746	8117	en	DOS	HE 62	-	-	khalek
+	be0b1191b42109c30b8d9122dae0bef5	8117	en	DOS	HE 62	Floppy v1.1	-	HerbFargus
 	e361a7058ed8e8ebb462663c0a3ae8d6	-1	he	DOS	HE 62	-	-	sev
 	684732efb5799c0f78804c99d8de9aba	-1	en	Mac	HE 62	-	-	khalek
+	3b7c14d1ffba2f56fe7cc18bf938173e	8112	en	Mac	HE 60	Floppy	-	HerbFargus
 	6a30a07f353a75cdc602db27d73e1b42	12728	en	Windows	HE 70	-	-	khalek
 
 	31aa57f460a3d12429f0552a46a90b39	6150	en	DOS	Demo	Demo	-

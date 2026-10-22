@@ -304,9 +304,50 @@ void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
 	_sceneState.nextScene = sceneDescription;
 	_state = kLoad;
 
+#ifdef ENABLE_NANCY_V4
+	// A numbered scene, which no name of an earlier change may stand in for
+	_nextScriptSceneName.clear();
+#endif
+
 	if (_viewportFader) {
 		_viewportFader->onSceneChange();
 	}
+}
+
+#ifdef ENABLE_NANCY_V4
+void Scene::changeScene(const Common::String &sceneName, uint16 frameID) {
+	SceneChangeDescription scene;
+	scene.frameID = frameID;
+	scene.continueSceneSound = kContinueSceneSound;
+
+	if (parseSceneName(sceneName, scene.sceneID)) {
+		changeScene(scene);
+		return;
+	}
+
+	if (_state == kLoad) {
+		return;
+	}
+
+	// The name stands for the scene; its number stays kNoScene
+	_sceneState.nextScene = scene;
+	_nextScriptSceneName = sceneName;
+	_state = kLoad;
+
+	if (_viewportFader) {
+		_viewportFader->onSceneChange();
+	}
+}
+#endif
+
+Common::String Scene::getMainSceneName() const {
+#ifdef ENABLE_NANCY_V4
+	if (!_scriptSceneName.empty()) {
+		return _scriptSceneName;
+	}
+#endif
+
+	return Common::String::format("s%u", _sceneState.currentScene.sceneID);
 }
 
 void Scene::pushScene(int16 itemID) {
@@ -1657,6 +1698,17 @@ void Scene::synchronize(Common::Serializer &ser) {
 		}
 	}
 
+#ifdef ENABLE_NANCY_V4
+	// Nancy20 has scenes that go by name, which no saved game of the earlier
+	// games can be in
+	if (g_nancy->getGameType() >= kGameTypeNancy20) {
+		ser.syncString(_scriptSceneName);
+
+		// The scene gets loaded again below, from nextScene and this name
+		_nextScriptSceneName = _scriptSceneName;
+	}
+#endif
+
 	if (ser.isLoading()) {
 		_sceneState.currentScene.continueSceneSound = kLoadSceneSound;
 		_sceneState.nextScene = _sceneState.currentScene;
@@ -2199,7 +2251,9 @@ void Scene::load(bool fromSaveFile) {
 // Nancy19 scenes are Lua scripts. A script makes the records of its scene when
 // it is run, the first of which names the background.
 void Scene::loadScriptedScene(bool fromSaveFile) {
-	const Common::String sceneName = Common::String::format("s%u", _sceneState.nextScene.sceneID);
+	// A scene that goes by name has no number; see _nextScriptSceneName
+	const Common::String sceneName = _nextScriptSceneName.empty() ?
+		Common::String::format("s%u", _sceneState.nextScene.sceneID) : _nextScriptSceneName;
 
 	Script::SceneContext *scriptScene = new Script::SceneContext("MainStream", sceneName, _sceneState.nextScene.frameID, 0);
 	if (!scriptScene->load()) {
@@ -2217,15 +2271,24 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 
 	clearSceneData();
 
+	// The streams of the outgoing scene end first, then the scene itself
+	_streams.onMainSceneChange();
+	if (_scriptScene) {
+		_scriptScene->end();
+	}
+
 	delete _scriptScene;
 	_scriptScene = scriptScene;
 
-	_streams.onMainSceneChange();
 	g_nancy->_graphics->suppressNextDraw();
 
 	debugC(0, kDebugScene, "Loading new scene %s, frame %i", sceneName.c_str(), _sceneState.nextScene.frameID);
 
+	// The name moves along with the description, so the two always describe the
+	// same scene
 	_sceneState.currentScene = _sceneState.nextScene;
+	_scriptSceneName = _nextScriptSceneName;
+	_nextScriptSceneName.clear();
 
 	Script::SummaryRecord *summary = _scriptScene->getSummary();
 	_sceneState.summary.description = sceneName;
@@ -2247,7 +2310,8 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 	_timers.sceneTime = 0;
 	g_nancy->_sound->clearListenerPositionOverride();
 
-	if (!fromSaveFile) {
+	// Only numbered scenes are counted, since the others have no number to count
+	if (!fromSaveFile && _scriptSceneName.empty()) {
 		_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
 	}
 
@@ -3038,7 +3102,10 @@ void Scene::initUI() {
 #ifdef ENABLE_NANCY_V4
 		_isScriptedUIReady = false;
 #endif
+		// The panels are there before the first frame of the scene, which can
+		// hide some of them right away
 		_streams.begin("UIStream", pcui->uiName.toString(), 0, StreamFlags());
+		_streams.loadNow("UIStream");
 		return;
 	}
 

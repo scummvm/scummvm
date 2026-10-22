@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	saveload.o \
 	scriptexecutor.o \
 	text.o \
+	translation.o \
 	actionbar.o \
 	view1.o
 

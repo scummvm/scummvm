@@ -24,7 +24,7 @@
 
 #include "harvester/npc/dialogue_flags.h"
 #include "harvester/npc/dialogue_runtime.h"
-#include "harvester/script.h"
+#include "harvester/script/script.h"
 
 namespace Harvester {
 

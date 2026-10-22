@@ -286,7 +286,7 @@ bool AnimationTracker::step() {
 				}
 #endif
 				_blocked = true;
-				_curr = collision.GetInterpolatedCoords(end, start);
+				_curr = collision.GetInterpolatedCoords(start, end);
 				return false;
 			}
 		}

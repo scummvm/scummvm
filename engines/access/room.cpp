@@ -69,7 +69,6 @@ void Room::freeTileData() {
 
 void Room::clearCamera() {
 	_vm->_player->_scrollFlag = true;
-	_vm->_events->hideCursor();
 
 	_vm->_screen->_orgX1 = 48;
 	_vm->_screen->_orgY1 = 24;
@@ -77,8 +76,6 @@ void Room::clearCamera() {
 	_vm->_screen->_orgY2 = 152;
 	_vm->_screen->_lColor = 0;
 	_vm->_screen->drawRect();
-
-	_vm->_events->showCursor();
 
 	_vm->_events->_vbCount = 4;
 	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
@@ -166,8 +163,8 @@ void Room::doRoom() {
 	bool reloadFlag = false;
 
 	// Noctropolis doesn't have an icon bar at the bottom, so never set arrow cursor
-	int mouseCursorArrowYThreshold = (_vm->getGameID() == kGameMartianMemorandum) ? 184 :
-		((_vm->getGameID() == kGameAmazon) ? 177 : 1000);
+	int mouseCursorArrowYThreshold = (_vm->gameIs(kGameMartianMemorandum)) ? 184 :
+		((_vm->gameIs(kGameAmazon)) ? 177 : 1000);
 
 	while (!_vm->shouldQuit()) {
 		if (!reloadFlag) {
@@ -210,11 +207,11 @@ void Room::doRoom() {
 				_vm->_scripts->_continuenceFlag = false;
 			} else*/
 			{
-				if ((_vm->getGameID() == kGameMartianMemorandum) && (_vm->_player->_roomNumber == 47)) {
+				if ((_vm->gameIs(kGameMartianMemorandum)) && (_vm->_player->_roomNumber == 47)) {
 					takePicture();
 				} else {
 					_vm->_player->walk();
-					if (_vm->getGameID() == kGameNoctropolis)
+					if (_vm->gameIs(kGameNoctropolis))
 						((Noctropolis::NoctropolisEngine *)_vm)->stilWalk();
 					_vm->_midi->midiRepeat();
 					_vm->_player->checkScroll();
@@ -230,7 +227,7 @@ void Room::doRoom() {
 				// DOROOMFLASHBACK jump point in Amazon
 				// NoctRoomEngine::afterDoCommandsTick in Noctropolis
 
-				if (_vm->getGameID() == kGameNoctropolis) {
+				if (_vm->gameIs(kGameNoctropolis)) {
 					// TODO: Need to check the
 					if (_vm->_flags[200] && !_vm->_timers[0x12]._flag) {
 						warning("TODO: Work out when to call DeadMeat1");
@@ -238,20 +235,20 @@ void Room::doRoom() {
 				}
 
 				if (_function == FN_CLEAR1) {
-					if (_vm->getGameID() == kGameNoctropolis)
+					if (_vm->gameIs(kGameNoctropolis))
 						_vm->_screen->fadeOut();
 					clearRoom();
 					break;
 				} else if (_function == FN_CLEAR2) {
 					clearRoom();
-					if (_vm->getGameID() == kGameNoctropolis)
+					if (_vm->gameIs(kGameNoctropolis))
 						((Noctropolis::NoctropolisEngine *)_vm)->doTravel();
 					return;
 				} else if (_function == FN_RELOAD) {
 					reloadRoom1();
 					// WORKAROUND: This doesn't seem to restore the palette
 					// correctly in MM abduction scene (special 0)
-					if (_vm->getGameID() == kGameMartianMemorandum)
+					if (_vm->gameIs(kGameMartianMemorandum))
 						_vm->_screen->setPalette();
 					reloadFlag = true;
 					break;
@@ -349,7 +346,7 @@ void Room::loadRoomData(const byte *roomData) {
 	_roomFlag = roomInfo._roomFlag;
 	_palIntensity = roomInfo._palIntensity;
 
-	if (_vm->getGameID() == kGameNoctropolis && _roomFlag & kRoomFlagStiletto) {
+	if (_vm->gameIs(kGameNoctropolis) && _roomFlag & kRoomFlagStiletto) {
 		// Load _vm->_screen->_stilPal
 		Resource *stilPal = _vm->_files->loadFile(0xfd, _palIntensity + 6);
 		const byte *stilPalData = stilPal->data();
@@ -360,11 +357,8 @@ void Room::loadRoomData(const byte *roomData) {
 		Player *stil = ((Noctropolis::NoctropolisEngine *)_vm)->_stil;
 		((Noctropolis::NoctropolisPlayer *)stil)->loadAnimation(0xfd, 0);
 
-		for (int subFileNum = 1; subFileNum < 6; subFileNum++) {
-			Resource *data = _vm->_files->loadFile(0xfd, subFileNum);
-			_vm->_objectsTable[0x6d + subFileNum] = new SpriteResource(_vm, data);
-			delete data;
-		}
+		for (int subFileNum = 1; subFileNum < 6; subFileNum++)
+			_vm->_objectsTable[0x6d + subFileNum] = new SpriteResource(_vm, 0xfd, subFileNum);
 	}
 
 	_vm->_establishFlag = false;
@@ -391,8 +385,7 @@ void Room::loadRoomData(const byte *roomData) {
 	_vm->_scaleT1 = ((_vm->_scaleH1 - _vm->_scaleH2) << 8) / _vm->_scaleN1;
 
 	if (roomInfo._playFieldFile._fileNum != -1) {
-		loadPlayField(roomInfo._playFieldFile._fileNum,
-			roomInfo._playFieldFile._subFile);
+		loadPlayField(roomInfo._playFieldFile);
 		setupRoom();
 
 		_vm->_scaleMaxY = _playFieldHeight << 4;
@@ -411,9 +404,7 @@ void Room::loadRoomData(const byte *roomData) {
 	// Load animation data
 	_vm->_animation->freeAnimationData();
 	if (roomInfo._animFile._fileNum != -1) {
-		Resource *anim = _vm->_files->loadFile(roomInfo._animFile);
-		_vm->_animation->loadAnimations(anim);
-		delete anim;
+		_vm->_animation->loadAnimations(roomInfo._animFile._fileNum, roomInfo._animFile._subFile);
 	}
 
 	_vm->_scale = _vm->_scaleI = roomInfo._scaleI;
@@ -476,7 +467,7 @@ void Room::setupRoom() {
 	screen.setScaleTable(_vm->_scale);
 	screen.setBufferScan();
 
-	if (_roomFlag != 2 || _vm->getGameID() == kGameNoctropolis)
+	if (_roomFlag != 2 || _vm->gameIs(kGameNoctropolis))
 		screen.setIconPalette();
 
 	if (screen._vWindowWidth == _playFieldWidth) {
@@ -623,8 +614,8 @@ static void loadHeader(RoomHeader &hdr, Common::SeekableReadStream *stream, uint
 	}
 }
 
-void Room::loadPlayField(int fileNum, int subfile) {
-	Resource *playData = _vm->_files->loadFile(fileNum, subfile);
+void Room::loadPlayField(const FileIdent &file) {
+	Resource *playData = _vm->_files->loadFile(file);
 
 	RoomHeader header;
 	loadHeader(header, playData->_stream, _vm->getGameID());
@@ -634,7 +625,7 @@ void Room::loadPlayField(int fileNum, int subfile) {
 	screen.loadRawPalette(playData->_stream);
 	// WORKAROUND: Screen 46 in Noctropolis has a color 0 of (0, 0, 63) which
 	// causes the background to be blue?
-	if (_vm->getGameID() == kGameNoctropolis && fileNum == 46) {
+	if (_vm->gameIs(kGameNoctropolis) && file._fileNum == 46) {
 		screen.clearColor0();
 	}
 
@@ -646,7 +637,7 @@ void Room::loadPlayField(int fileNum, int subfile) {
 	// Copy off the playfield data
 	_matrixSize = (int)header._tilesWidth * header._tilesHeight;
 	_playField = new uint16[_matrixSize];
-	if (_vm->getGameID() == kGameNoctropolis) {
+	if (_vm->gameIs(kGameNoctropolis)) {
 		for (int i = 0; i < _matrixSize; i++) {
 			_playField[i] = playData->_stream->readUint16LE();
 		}
@@ -729,7 +720,7 @@ void Room::doCommands() {
 		handleCommand(7);
 
 	} else if (_vm->_events->_leftButton) {
-		if (_vm->getGameID() != kGameNoctropolis && _vm->_events->_mouseRow >= 22) {
+		if (!_vm->gameIs(kGameNoctropolis) && _vm->_events->_mouseRow >= 22) {
 			// Mouse in user interface area
 			for (commandId = 0; commandId < 10; ++commandId) {
 				if (_vm->_events->_mousePos.x >= _rMouse[commandId][0] &&
@@ -776,7 +767,7 @@ void Room::handleCommand(int commandId) {
 		// Only open if allowed at the moment.
 		if (_vm->_canSaveLoad)
 			_vm->openMainMenuDialog();
-	} else if ((commandId == 9) || (_vm->getGameID() == kGameNoctropolis && commandId == 10)) {
+	} else if ((commandId == 9) || (_vm->gameIs(kGameNoctropolis) && commandId == 10)) {
 		// Open Options menu (in all games)
 		// NOTE: In Noctropolis we map both "Options" and "Disk" to this.
 		// If we implement original dialogs we can split these cases.
@@ -799,7 +790,7 @@ void Room::executeCommand(int commandId) {
 	Screen &screen = *_vm->_screen;
 	_selectCommand = commandId;
 
-	if (_vm->getGameID() == kGameMartianMemorandum) {
+	if (_vm->gameIs(kGameMartianMemorandum)) {
 		switch (commandId) {
 		case 4:
 			events.setCursor(CURSOR_ARROW);
@@ -850,7 +841,7 @@ void Room::executeCommand(int commandId) {
 			events.setCursor(CURSOR_CROSSHAIRS);
 			break;
 		}
-	} else if (_vm->getGameID() == kGameAmazon) {
+	} else if (_vm->gameIs(kGameAmazon)) {
 		switch (commandId) {
 		case 0:
 		case 1:
@@ -885,7 +876,7 @@ void Room::executeCommand(int commandId) {
 			break;
 		}
 	} else {
-		assert(_vm->getGameID() == kGameNoctropolis);
+		assert(_vm->gameIs(kGameNoctropolis));
 		// See the code in NoctRoomEngine::afterDoCommandsTick / CheckCommand
 		if (commandId == Noctropolis::kNoctCmdInventory) {
 			while (!_vm->shouldQuitOrRestart()) {
@@ -946,16 +937,16 @@ void Room::executeCommand(int commandId) {
 	const SpriteResource *icons = _vm->getIcons();
 
 	// Draw the button as selected (except in Noctropolis)
-	if (_vm->getGameID() == kGameMartianMemorandum) {
+	if (_vm->gameIs(kGameMartianMemorandum)) {
 		screen.plotImage(icons, 0, Common::Point(5, 184));
 		screen.plotImage(icons, 1, Common::Point(155, 184));
-	} else if (_vm->getGameID() == kGameAmazon) {
+	} else if (_vm->gameIs(kGameAmazon)) {
 		screen.plotImage(icons, 0, Common::Point(0, 177));
 		screen.plotImage(icons, 1, Common::Point(143, 177));
 	}
-	if (_vm->getGameID() != kGameNoctropolis)
+	if (!_vm->gameIs(kGameNoctropolis))
 		screen.plotImage(icons, _selectCommand + 2,
-			Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == kGameMartianMemorandum) ? 184 : 176));
+			Common::Point(_rMouse[_selectCommand][0], (_vm->gameIs(kGameMartianMemorandum)) ? 184 : 176));
 
 	_vm->_screen->restoreScreen();
 	_vm->_boxSelect = true;
@@ -982,7 +973,7 @@ void Room::walkCursor() {
 void Room::commandOff() {
 	_selectCommand = -1;
 	_vm->_events->forceSetCursor(CURSOR_CROSSHAIRS);
-	if (_vm->getGameID() != kGameNoctropolis)
+	if (!_vm->gameIs(kGameNoctropolis))
 		roomMenu();
 }
 

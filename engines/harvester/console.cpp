@@ -269,43 +269,42 @@ static void buildActionChainLines(const Script &script, const Common::String &ta
 	appendCommandChain(lines, truncated, script, tag, 1, activeTags, remainingSteps);
 }
 
-static void collectSortedRoomNames(const Script &script, Common::Array<Common::String> &roomNames) {
-	roomNames.clear();
+struct DebugRoomTarget {
+	DebugRoomTarget(const Common::String &name, int disc) : roomName(name), discNumber(disc) {}
 
-	for (const RoomRecord &room : script.getRooms()) {
-		if (room.roomName.empty())
-			continue;
+	Common::String roomName;
+	int discNumber;
+};
 
-		bool alreadyPresent = false;
-		for (const Common::String &existingName : roomNames) {
-			if (existingName.equalsIgnoreCase(room.roomName)) {
-				alreadyPresent = true;
-				break;
-			}
+static void collectDebugRoomTargets(const Script &activeScript, int activeDisc,
+		Common::Array<DebugRoomTarget> &targets) {
+	ResourceManager resources;
+	Script probeScript;
+	for (int disc = ResourceManager::kFirstDiscNumber; disc <= ResourceManager::kLastDiscNumber; ++disc) {
+		const Script *script = &activeScript;
+		if (disc != activeDisc) {
+			if (!resources.setCurrentDisc(disc) || !probeScript.load(resources))
+				continue;
+			script = &probeScript;
 		}
-		if (!alreadyPresent)
-			roomNames.push_back(room.roomName);
+		for (const RoomRecord &room : script->getRooms()) {
+			if (room.roomName.empty())
+				continue;
+			bool alreadyPresent = false;
+			for (const DebugRoomTarget &target : targets) {
+				if (target.discNumber == disc && target.roomName.equalsIgnoreCase(room.roomName)) {
+					alreadyPresent = true;
+					break;
+				}
+			}
+			if (!alreadyPresent)
+				targets.push_back(DebugRoomTarget(room.roomName, disc));
+		}
 	}
-
-	Common::sort(roomNames.begin(), roomNames.end(), [](const Common::String &lhs, const Common::String &rhs) {
-		Common::String upperLhs = lhs;
-		Common::String upperRhs = rhs;
-		upperLhs.toUppercase();
-		upperRhs.toUppercase();
-		return upperLhs < upperRhs;
+	Common::sort(targets.begin(), targets.end(), [](const DebugRoomTarget &lhs, const DebugRoomTarget &rhs) {
+		const int order = lhs.roomName.compareToIgnoreCase(rhs.roomName);
+		return order != 0 ? order < 0 : lhs.discNumber < rhs.discNumber;
 	});
-}
-
-static bool findRoomName(const Script &script, const Common::String &candidate, Common::String &roomName) {
-	for (const RoomRecord &room : script.getRooms()) {
-		if (!room.roomName.equalsIgnoreCase(candidate))
-			continue;
-
-		roomName = room.roomName;
-		return true;
-	}
-
-	return false;
 }
 
 static void printDebugCommandUsage(Console &console) {
@@ -548,48 +547,57 @@ bool Console::Cmd_debugCommand(int argc, const char **argv) {
 }
 
 bool Console::Cmd_gotoRoom(int argc, const char **argv) {
-	if (argc > 2) {
-		debugPrintf("Usage: GOTO_ROOM [room_name]\n");
+	if (argc > 3 || (argc == 3 &&
+			(argv[2][0] < '1' || argv[2][0] > '3' || argv[2][1] != '\0'))) {
+		debugPrintf("Usage: GOTO_ROOM [room_name [disc: 1-3]]\n");
 		return true;
 	}
 
 	Script *script = getActiveStartupScript();
-	if (!script) {
+	ResourceManager *resources = g_engine ? g_engine->getResources() : nullptr;
+	if (!script || !resources) {
 		debugPrintf("Harvester engine is not active\n");
 		return true;
 	}
 
-	Common::Array<Common::String> roomNames;
-	collectSortedRoomNames(*script, roomNames);
-	if (roomNames.empty()) {
-		debugPrintf("No rooms were found in HARVEST.SCR\n");
-		return true;
-	}
-
-	if (argc == 1) {
-		debugPrintf("Rooms from HARVEST.SCR (%u):\n", (uint)roomNames.size());
-		for (const Common::String &roomName : roomNames)
-			debugPrintf("  %s\n", roomName.c_str());
-		return true;
-	}
-
-	if (!g_engine || !g_engine->hasCurrentSaveRoomState()) {
+	if (argc > 1 && !g_engine->hasCurrentSaveRoomState()) {
 		debugPrintf("GOTO_ROOM is only available while a room is active\n");
 		return true;
 	}
 
-	Common::String roomName;
-	if (!findRoomName(*script, argv[1], roomName)) {
-		debugPrintf("Unknown room target '%s'\n", argv[1]);
+	Common::Array<DebugRoomTarget> targets;
+	collectDebugRoomTargets(*script, resources->getCurrentDisc(), targets);
+	if (argc == 1) {
+		debugPrintf("Rooms from available disc scripts (lowest disc is the default):\n");
+		for (uint i = 0; i < targets.size();) {
+			const Common::String roomName = targets[i].roomName;
+			Common::String discs;
+			do {
+				if (!discs.empty())
+					discs += ", ";
+				discs += Common::String::format("%d", targets[i++].discNumber);
+			} while (i < targets.size() && targets[i].roomName.equalsIgnoreCase(roomName));
+			debugPrintf("  %s [%s]\n", roomName.c_str(), discs.c_str());
+		}
 		return true;
 	}
 
-	if (!g_engine->requestDebugRoomChange(roomName)) {
-		debugPrintf("Unable to queue room change to '%s'\n", roomName.c_str());
+	const int requestedDisc = argc == 3 ? argv[2][0] - '0' : 0;
+	for (const DebugRoomTarget &target : targets) {
+		if (!target.roomName.equalsIgnoreCase(argv[1]) ||
+				(requestedDisc != 0 && target.discNumber != requestedDisc))
+			continue;
+		if (!g_engine->requestDebugRoomChange(target.roomName, target.discNumber)) {
+			debugPrintf("Unable to queue room change to '%s' on disc %d\n",
+				target.roomName.c_str(), target.discNumber);
+		} else {
+			debugPrintf("Queued room change to %s on disc %d\n", target.roomName.c_str(), target.discNumber);
+		}
 		return true;
 	}
 
-	debugPrintf("Queued room change to %s\n", roomName.c_str());
+	debugPrintf("Unknown room target '%s'%s\n", argv[1],
+		requestedDisc ? Common::String::format(" on disc %d", requestedDisc).c_str() : " on available discs");
 	return true;
 }
 

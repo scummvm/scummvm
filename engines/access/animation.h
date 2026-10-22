@@ -47,6 +47,7 @@ public:
 	~AnimationManager();
 	void freeAnimationData();
 	void loadAnimations(Resource *res);
+	void loadAnimations(int fileNum, int subfile);
 
 	Animation *findAnimation(int animId);
 	Animation *setAnimation(int animId);

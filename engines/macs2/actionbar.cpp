@@ -37,7 +37,7 @@ namespace Macs2 {
 
 namespace {
 
-// German source keys for macs2_translation.dat msgctxt "uilabel".
+// German source keys for sis-translation-<lang>.dat msgctxt "uilabel".
 Common::String uiText(const char *source) {
 	if (g_engine)
 		return g_engine->translateUiLabel(source);

@@ -23,6 +23,7 @@
 #define NANCY_SCRIPT_SCENECONTEXT_H
 
 #include "common/array.h"
+#include "common/hash-str.h"
 #include "common/keyboard.h"
 #include "common/str.h"
 
@@ -38,6 +39,7 @@ namespace Script {
 
 class LuaState;
 class Record;
+struct RefImage;
 class ConvoRecord;
 struct ConvoResponse;
 class SummaryRecord;
@@ -62,6 +64,17 @@ public:
 
 	// Tells the records that the game is about to be saved
 	void onSave();
+
+	// Tells the records that the scene is being left, while the game goes on.
+	// They use it to undo what they did to the rest of the game, the UI for one.
+	void end();
+
+	// The scene is being deleted
+	bool isEnding() const { return _isEnding; }
+
+	// The Ref image of that name, which the records of the scene share. Places
+	// outside of it take the nearest pixel.
+	const RefImage *loadRef(const Common::String &name);
 
 	// Hands a message to the scene when it is the one it names, and to the
 	// records that go by that name otherwise, until one of them takes it.
@@ -88,6 +101,7 @@ public:
 
 	// The seconds the scene has been running for
 	double getTime() const { return _time; }
+	double getElapsedTime() const { return _elapsedTime; }	// of the last frame
 
 	// Enhancement: skips the movies that are playing. They are played through
 	// a frame at a time, without their sounds, so that everything the scripts
@@ -122,6 +136,7 @@ private:
 	bool callSceneFunction(const char *name, int numArgs);
 	void pushMessage(const Message &message);
 	void runFrame(double elapsedTime);
+	void deleteDroppedRecords();
 	void renderAttachment();
 	bool hasSkippableRecord() const;
 	void pushSceneFunctions();
@@ -141,8 +156,10 @@ private:
 	SummaryRecord *_summary = nullptr;
 	ConvoRecord *_convo = nullptr;
 	Common::Array<ConvoResponse *> _convoResponses;
+	Common::HashMap<Common::String, RefImage *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _refs;
 
 	double _time = 0.0;
+	double _elapsedTime = 0.0;
 	bool _hasRunOnce = false;
 	bool _makesUI = false;
 	bool _isSkipping = false;

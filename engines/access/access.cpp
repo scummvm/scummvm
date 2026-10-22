@@ -106,7 +106,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	ARRAYCLEAR(_ask);
 	ARRAYCLEAR(_asked);
 	_startAboutItem = _startAboutBox = 0;
-	_keepAskPosition = false;
 	_bcnt = 0;
 	_boxDataStart = 0;
 	_boxDataEnd = false;
@@ -174,13 +173,13 @@ void AccessEngine::initialize() {
 
 	// Create sub-objects of the engine
 	_animation = new AnimationManager(this);
-	_bubbleBox = new BubbleBox(this, TYPE_2, 64, 32, 130, 122, 0, 0, 0, 0, "");
+	_bubbleBox = new BubbleBox(this, kBoxTypeNormal, 64, 32, 130, 122, 0, 0, 0, 0, "");
 	if (getGameID() == kGameMartianMemorandum) {
 		// Note: add 1 more pixel to width and height to get the right box size.
-		_helpBox = new BubbleBox(this, TYPE_1, 64, 24, 147, 123, 1, 32, 2, 76, "HELP");
-		_travelBox = new BubbleBox(this, TYPE_1, 64, 32, 195, 123, 1, 24, 2, 74, "TRAVEL");
-		_invBox = new BubbleBox(this, TYPE_1, 64, 32, 147, 123, 1, 32, 2, 76, "INVENTORY");
-		_aboutBox = new BubbleBox(this, TYPE_1, 64, 32, 195, 123, 1, 32, 2, 76, "ASK ABOUT");
+		_helpBox = new BubbleBox(this, kBoxTypeList, 64, 24, 147, 123, 1, 32, 2, 76, "HELP");
+		_travelBox = new BubbleBox(this, kBoxTypeList, 64, 32, 195, 123, 1, 24, 2, 74, "TRAVEL");
+		_invBox = new BubbleBox(this, kBoxTypeList, 64, 32, 147, 123, 1, 32, 2, 76, "INVENTORY");
+		_aboutBox = new BubbleBox(this, kBoxTypeList, 64, 32, 195, 123, 1, 32, 2, 76, "ASK ABOUT");
 	} else {
 		_helpBox = nullptr;
 		_travelBox = nullptr;
@@ -251,10 +250,8 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 
 void AccessEngine::loadCells(const Common::Array<CellIdent> &cells) {
 	for (const auto &cell : cells) {
-		Resource *spriteData = _files->loadFile(cell);
 		assert(_objectsTable[cell._cell] == nullptr); // ensure no leaks
-		_objectsTable[cell._cell] = new SpriteResource(this, spriteData);
-		delete spriteData;
+		_objectsTable[cell._cell] = new SpriteResource(this, cell._fileNum, cell._subFile);
 	}
 }
 
@@ -366,10 +363,10 @@ void AccessEngine::printText(BaseSurface *s, const Common::String &msg) {
 		bool lastLine = _fonts._font2->getLine(lines, s->_maxChars * 6, line, width);
 
 		// Set font colors
-		_fonts._font2->_fontColors[0] = 0;
-		_fonts._font2->_fontColors[1] = 28;
-		_fonts._font2->_fontColors[2] = 29;
-		_fonts._font2->_fontColors[3] = 30;
+		Font::_fontColors[0] = 0;
+		Font::_fontColors[1] = 28;
+		Font::_fontColors[2] = 29;
+		Font::_fontColors[3] = 30;
 		_fonts._font2->drawString(s, line, s->_printOrg);
 
 		s->_printOrg = Common::Point(s->_printStart.x, s->_printOrg.y + 9);

@@ -298,11 +298,35 @@ void Manager::onSaverAction(const Action &action) {
 		takeAction(kActionHide, "SaveDialog", 0.0);
 		takeAction(kActionSetText, "SaveList", Common::String());
 
+		// Nancy20 asks first before saving over a game of the same name. The
+		// answer comes back with a value of 0.
+		if (action.value > 0 && findPanel("SaveOverwriteDialog") && findSaveSlot(_typedSaveName) != -1) {
+			takeAction(kActionShow, "SaveOverwriteDialog", 0.0);
+			break;
+		}
+
 		requestSave(_typedSaveName);
 		_lastSaveName = _typedSaveName;
 		_typedSaveName.clear();
 		break;
 	}
+	default:
+		break;
+	}
+}
+
+// The answer to whether to save over a game: yes saves, no goes back to the
+// dialog for saving
+void Manager::onSaveOverwriteAction(const Action &action) {
+	switch (action.type) {
+	case kActionEnable:
+		takeAction(kActionHide, "SaveOverwriteDialog", 0.0);
+		takeAction(kActionSetValue, "Engine_Saver", 0.0);
+		break;
+	case kActionDisable:
+		takeAction(kActionHide, "SaveOverwriteDialog", 0.0);
+		takeAction(kActionShow, "Engine_Saver", 0.0);
+		break;
 	default:
 		break;
 	}

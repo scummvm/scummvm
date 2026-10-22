@@ -54,6 +54,7 @@ private:
 
 	void conv605a();
 	bool takePupilDisk();
+	bool takePupilDiskTt();
 	bool sleeveDisk1();
 	bool sleeveDisk2();
 	bool parserMisc();

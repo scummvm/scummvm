@@ -21,6 +21,7 @@
 
 #include "mediastation/actors/movie.h"
 #include "mediastation/debugchannels.h"
+#include "mediastation/clients.h"
 #include "mediastation/mediastation.h"
 
 namespace MediaStation {
@@ -91,6 +92,7 @@ MovieFrameImage::MovieFrameImage(Chunk &chunk, uint index, uint keyframeEndInMil
 }
 
 StreamMovieActor::~StreamMovieActor() {
+	g_engine->getDeviceOwner()->releaseDevice(this, kImtDeviceTypeSound);
 	unregisterWithStreamManager();
 	unregisterForSyncCalls();
 	if (_streamFeed != nullptr) {
@@ -337,6 +339,8 @@ ScriptValue StreamMovieActor::callMethod(BuiltInMethod methodId, Common::Array<S
 void StreamMovieActor::onEvent(const ActorEvent &event) {
 	switch (event.type) {
 	case kMovieEndEvent:
+		g_engine->getDeviceOwner()->releaseDevice(this, kImtDeviceTypeSound);
+		_isPlaying = false;
 		triggerRemainingTimerEvents();
 		break;
 
@@ -351,6 +355,7 @@ void StreamMovieActor::onEvent(const ActorEvent &event) {
 	case kMovieStoppedEvent:
 	case kMovieAbortEvent:
 	case kMovieFailureEvent:
+		g_engine->getDeviceOwner()->releaseDevice(this, kImtDeviceTypeSound);
 		_isPlaying = false;
 		break;
 
@@ -368,14 +373,26 @@ void StreamMovieActor::timerEvent(const TimerEvent &event) {
 	setupNextScriptResponseTimer();
 }
 
+bool StreamMovieActor::giveUpDevice() {
+	debugC(5, kDebugEvents, "[%s] %s: Stopping playback to give up sound device", debugName(), __func__);
+	timeStop(false);
+	return false;
+}
+
 void StreamMovieActor::timePlay() {
+	if (_isPlaying) {
+		return;
+	}
+
+	bool deviceGrantFailed = g_engine->getDeviceOwner()->grantDevice(this, kImtDeviceTypeSound);
+	if (deviceGrantFailed) {
+		warning("[%s] %s: Device grant failed", debugName(), __func__);
+		return;
+	}
+
 	if (_streamFeed == nullptr) {
 		_streamFeed = g_engine->getStreamFeedManager()->openStreamFeed(_id);
 		_streamFeed->readData();
-	}
-
-	if (_isPlaying) {
-		return;
 	}
 
 	setupNextScriptResponseTimer();
@@ -406,6 +423,7 @@ void StreamMovieActor::timeStop(bool isMovieEnd) {
 	}
 
 	_isPlaying = false;
+	g_engine->getDeviceOwner()->releaseDevice(this, kImtDeviceTypeSound);
 	_streamSound->getAudioSequence().stop();
 	g_engine->getTimerService()->stopTimer(_timer);
 	unregisterForSyncCalls();

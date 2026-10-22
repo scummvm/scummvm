@@ -50,9 +50,6 @@ endif
 ifdef ENABLE_PRINCE
 DIST_FILES_LIST += dists/engine-data/prince_translation.dat
 endif
-ifdef ENABLE_MACS2
-DIST_FILES_LIST += dists/engine-data/macs2_translation.dat
-endif
 ifdef ENABLE_QUEEN
 DIST_FILES_LIST += dists/engine-data/queen.tbl
 endif

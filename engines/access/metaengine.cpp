@@ -49,6 +49,10 @@ AccessGameType AccessEngine::getGameID() const {
 	return (AccessGameType)(_gameDescription->gameID);
 }
 
+bool AccessEngine::gameIs(AccessGameType game) const {
+	return getGameID() == game;
+}
+
 uint32 AccessEngine::getGameFeatures() const {
 	return _gameDescription->features;
 }
@@ -66,7 +70,9 @@ bool AccessEngine::isDemo() const {
 }
 
 Common::Language AccessEngine::getLanguage() const {
-	return _lang;
+	if (_lang != Common::UNK_LANG)
+		return _lang;
+	return Common::EN_ANY;
 }
 
 Common::Platform AccessEngine::getPlatform() const {

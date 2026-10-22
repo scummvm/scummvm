@@ -70,6 +70,10 @@ enum RoomFlag {
 
 class Room : public Manager {
 private:
+	Common::Array<JetFrame> _jetFrame;
+	int _matrixSize;
+
+private:
 	void roomLoop();
 
 	void cmdExitContinuance();
@@ -131,21 +135,22 @@ protected:
 	virtual void mainAreaRClick() {};
 
 	virtual void walkCursor();
+
 public:
-	Plotter _plotter;
-	Common::Array<JetFrame> _jetFrame;
-	Function _function;
-	int _roomFlag;
+	int _rMouse[10][2];
 	byte _palIntensity;
 	uint16 *_playField;
-	int _matrixSize;
+	Plotter _plotter;
+	byte *_tile;
+	Function _function;
+	int _roomFlag;
 	int _playFieldWidth;
 	int _playFieldHeight;
-	byte *_tile;
 	int _selectCommand;
 	bool _conFlag; // not the same as script->_continuenceFlag which is used in Noctropolis
-	int _rMouse[10][2];
+
 public:
+
 	Room(AccessEngine *vm);
 
 	virtual ~Room();
@@ -187,7 +192,7 @@ public:
 	*/
 	void handleCommand(int commandId);
 
-	void loadPlayField(int fileNum, int subfile);
+	void loadPlayField(const FileIdent &file);
 
 	int checkBoxes1(const Common::Point &pt);
 };

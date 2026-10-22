@@ -722,7 +722,7 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 		if (!Graphics::crossBlit(tmp, (const byte *)buf,
 									tw * _pfRGB3444.bytesPerPixel,
 									w * _pfCursor.bytesPerPixel,
-									tw, th, _pfRGB3444, _pfCursor)) {
+									w, h, _pfRGB3444, _pfCursor)) {
 			printf("crossBlit failed (cursor)\n");
 			::abort();
 		}

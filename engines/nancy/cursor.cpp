@@ -228,11 +228,13 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool s
 	// each item getting one [idle, hotspot] pair. Held items only
 	// override the cursor for kNormal / kHotspot; directional /
 	// rotate / arrow types render their system sprite directly even
-	// while the player is carrying something.
+	// while the player is carrying something. A script cursor of type
+	// 0/1 is a hotspot's hover cursor, so the item takes its highlighted
+	// sprite.
 	if (itemID != -1 && (type == kNormal || type == kHotspot)) {
 		_hasItem = true;
 		const uint itemsOffset = (uint)_numCursorTypes * 2;
-		const uint variant = (type == kHotspot) ? 1 : 0;
+		const uint variant = (setFromScript ? hotspotVariant : type == kHotspot) ? 1 : 0;
 		return itemsOffset + (uint)itemID * 2 + variant;
 	}
 
@@ -283,6 +285,7 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool s
 	case kNewPuzzleSlideLeft:   return kNewPuzzleSlideLeft;
 	case kNewPuzzleSlideRight:  return kNewPuzzleSlideRight;
 	case kDropHand:             return kNewDropHand;
+	case kNewDropHandHotspot:   return kNewDropHandHotspot;
 	default:
 		return kNewNormal;
 	}
@@ -291,11 +294,12 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool s
 uint CursorManager::resolveNancy13CursorID(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant) {
 	// Held-item cursors: the item block follows the 45 system-cursor pairs;
 	// each item owns an [idle, hotspot] pair now indexing _invCursorsSurface
-	// (chosen by applyCursor()).
+	// (chosen by applyCursor()). A script cursor of type 0/1 is a hotspot's
+	// hover cursor, so the item takes its highlighted sprite.
 	if (itemID != -1 && (type == kNormal || type == kHotspot)) {
 		_hasItem = true;
 		const uint itemsOffset = (uint)_numCursorTypes * 2;
-		const uint variant = (type == kHotspot) ? 1 : 0;
+		const uint variant = (setFromScript ? hotspotVariant : type == kHotspot) ? 1 : 0;
 		return itemsOffset + (uint)itemID * 2 + variant;
 	}
 

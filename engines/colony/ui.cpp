@@ -38,6 +38,7 @@
 #include "graphics/macgui/macwindowborder.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/palette.h"
+#include "graphics/primitives.h"
 #include "image/pict.h"
 
 #include "colony/colony.h"
@@ -394,21 +395,6 @@ void ColonyEngine::updateViewportLayout() {
 		// Load PICT surfaces (cached after first load)
 		if (!_pictCompass)
 			_pictCompass = loadPictSurface(-32757);
-		if (!_pictPower) {
-			// power.c DrawInfo(): armor → -32755/-32760; !armor → -32752/-32761
-			// In B&W, -32752 doesn't exist. The original GetPicture returns null
-			// and DrawPicture is a no-op — the panel stays blank until armor > 0.
-			// Only fall back to -32755 when armored.
-			int wantID;
-			if (_armor > 0)
-				wantID = -32755;
-			else
-				wantID = isMacColorMode() ? -32761 : -32752;
-			_pictPower = loadPictSurface(wantID);
-			if (!_pictPower && _armor > 0 && wantID != -32755)
-				_pictPower = loadPictSurface(-32755);
-			_pictPowerID = _pictPower ? wantID : 0;
-		}
 
 		// Keep the ScummVM dashboard's bottom moveWindow placement. The original
 		// Mac window resource is for a compact 512x342 desktop and should not
@@ -608,10 +594,56 @@ void ColonyEngine::drawDashboardStep1() {
 	}
 }
 
-// --- Mac Color path ---
-// Uses actual PICT resources from the Mac resource fork as panel backgrounds,
-// matching the original power.c DrawInfo() and compass.c DrawCompass() exactly.
-// Original Mac had two floating windows (infoWindow + moveWindow) over gray desktop.
+void ColonyEngine::drawMacNoArmorPanel() {
+	const int width = _powerRect.width();
+	const int height = _powerRect.height();
+	const uint32 black = _wm->_colorBlack;
+	const uint32 white = _wm->_colorWhite;
+
+	if (!_pictPowerNoArmor || _pictPowerNoArmor->w != width || _pictPowerNoArmor->h != height) {
+		Graphics::ManagedSurface panel(width, height, _gfx->getPixelFormat());
+		const Common::Rect bounds(width, height);
+		Common::Rect inner = bounds;
+		inner.grow(-8);
+		panel.fillRect(bounds, white);
+
+		// Original B&W power.c DrawInfo(): gray inset with four patterned bevels.
+		Graphics::Primitives &primitives = _wm->getDrawPrimitives();
+		Graphics::MacPlotData plot(&panel, nullptr, &_wm->getPatterns(),
+			Graphics::kPatternCheckers, 0, 0, Common::Point(1, 1), white);
+		primitives.drawFilledRect(inner, black, &plot);
+
+		const int x[4][4] = {
+			{ inner.left, inner.right, bounds.right, bounds.left },
+			{ inner.left, inner.left, bounds.left, bounds.left },
+			{ inner.left, bounds.left, bounds.right, inner.right },
+			{ inner.right, inner.right, bounds.right, bounds.right }
+		};
+		const int y[4][4] = {
+			{ inner.top, inner.top, bounds.top, bounds.top },
+			{ inner.top, inner.bottom, bounds.bottom, bounds.top },
+			{ inner.bottom, bounds.bottom, bounds.bottom, inner.bottom },
+			{ inner.bottom, inner.top, bounds.top, bounds.bottom }
+		};
+		for (int side = 0; side < 4; side++) {
+			plot.fillType = side < 2 ? Graphics::kPatternLightGray : Graphics::kPatternDarkGray;
+			primitives.drawPolygonScan(x[side], y[side], 4, bounds, black, &plot);
+			plot.fillType = Graphics::kPatternSolid;
+			for (int edge = 0; edge < 4; edge++) {
+				const int next = (edge + 1) % 4;
+				primitives.drawLine(x[side][edge], y[side][edge], x[side][next], y[side][next], black, &plot);
+			}
+		}
+
+		if (!_pictPowerNoArmor)
+			_pictPowerNoArmor = new Graphics::Surface();
+		_pictPowerNoArmor->copyFrom(panel.rawSurface());
+	}
+
+	_gfx->drawSurface(_pictPowerNoArmor, _powerRect.left, _powerRect.top);
+	_gfx->fillRect(Common::Rect(_powerRect.left - 1, _powerRect.top - 1, _powerRect.right + 1, _powerRect.top), black);
+	_gfx->fillRect(Common::Rect(_powerRect.left - 1, _powerRect.top, _powerRect.left, _powerRect.bottom), black);
+}
 
 void ColonyEngine::drawDashboardMac() {
 	const bool macColor = isMacColorMode();
@@ -632,21 +664,11 @@ void ColonyEngine::drawDashboardMac() {
 	// ===== Power panel (infoWindow) =====
 	// power.c DrawInfo(): FillRect(&clr,white) → DrawPicture(PICT) → ForeColor(blue) → bars
 	// armor && !trouble → PICT -32755; armor && trouble → PICT -32760;
-	// !armor && depth>=8 → PICT -32761; !armor && depth<8 → PICT -32752
+	// Without armor, B&W draws patterns; color uses PICT -32761.
 	if (_powerRect.width() > 4 && _powerRect.height() > 4) {
 		// power.c: FillRect(&clr, white)  white background under PICT
 		_gfx->fillRect(_powerRect, colWhite);
 
-		// Select correct PICT based on armor/trouble state
-		// power.c: !armor && FindDepth()>=8 → -32761 (color); FindDepth()<8 → -32752 (B&W)
-		auto qlog = [](int32 x) -> int {
-			int i = 0;
-			while (x > 0) {
-				x >>= 1;
-				i++;
-			}
-			return i;
-		};
 		// power.c DrawInfo(): epower[i] = qlog(Me.power[i]) — player suit power, NOT corepower.
 		const int ePower[3] = { qlog(_me.power[0]), qlog(_me.power[1]), qlog(_me.power[2]) };
 		const bool trouble = (ePower[1] < 6);
@@ -654,7 +676,7 @@ void ColonyEngine::drawDashboardMac() {
 		if (_armor > 0)
 			wantPictID = trouble ? -32760 : -32755;
 		else
-			wantPictID = macColor ? -32761 : -32752;
+			wantPictID = macColor ? -32761 : 0;
 
 		// Reload PICT if state changed (fall back to -32755 only when armored)
 		if (_pictPowerID != wantPictID) {
@@ -663,7 +685,7 @@ void ColonyEngine::drawDashboardMac() {
 				delete _pictPower;
 				_pictPower = nullptr;
 			}
-			_pictPower = loadPictSurface(wantPictID);
+			_pictPower = wantPictID ? loadPictSurface(wantPictID) : nullptr;
 			if (!_pictPower && _armor > 0 && wantPictID != -32755)
 				_pictPower = loadPictSurface(-32755);
 			_pictPowerID = wantPictID;
@@ -672,9 +694,9 @@ void ColonyEngine::drawDashboardMac() {
 		// power.c: SetRect(&info, -2, -2, xSize-2, ySize-2); DrawPicture(inf, &info)
 		// — art pixel (2,2) sits at the window origin, so color blits at -2.
 		// The B&W path keeps its screenshot-calibrated +1 offset.
-		// In the original B&W game, GetPicture(-32752) returns null when !armor,
-		// so DrawPicture is a no-op — the window just shows white fill.
-		if (_pictPower) {
+		if (!macColor && !_armor) {
+			drawMacNoArmorPanel();
+		} else if (_pictPower) {
 			if (macColor)
 				drawPictAt(_pictPower, _powerRect.left - 2, _powerRect.top - 2);
 			else

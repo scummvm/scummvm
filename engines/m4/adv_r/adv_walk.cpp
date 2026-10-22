@@ -464,8 +464,12 @@ void adv_hyperwalk_to_final_destination(void *, void *) {
 		_G(globals)[GLB_TEMP_3] = s;
 		_G(globals)[GLB_TEMP_4] = (facing > 0 && facing < 13) ? directions[facing] << 16 : 0;
 
+		// Leave waiting_for_walk set: the walker only goes idle after
+		// finishing a sequence, and its "walk finished" callback clears
+		// it then. Clearing it here runs the parser while the walker is
+		// still busy, so it drops the pose messages (11/12) sent by
+		// sendWSMessage_B0000/C0000 and the action never completes.
 		sendWSMessage(HYPERWALK << 16, 0, _G(my_walker), 0, nullptr, 1);
-		_G(player).waiting_for_walk = false;
 	} else {
 		// This will make player goto x,y,facing. when that happens, trigger will return
 		ws_demand_location_and_facing(_G(my_walker), x, y, facing);

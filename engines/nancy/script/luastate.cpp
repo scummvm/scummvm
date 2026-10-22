@@ -50,6 +50,99 @@ static void removeGlobal(lua_State *L, const char *name) {
 	lua_setglobal(L, name);
 }
 
+static void setLibraryFunction(lua_State *L, const char *library, const char *name, lua_CFunction function) {
+	lua_getglobal(L, library);
+	lua_pushcfunction(L, function);
+	lua_setfield(L, -2, name);
+	lua_pop(L, 1);
+}
+
+// Whether the comparison function of a sort puts the value at index a in
+// front of the one at index b. It gets told the table, then each key with its value.
+static bool sortsBefore(lua_State *L, int a, int b) {
+	lua_pushvalue(L, 2);
+	lua_pushvalue(L, 1);
+	lua_pushinteger(L, a);
+	lua_pushinteger(L, a);
+	lua_gettable(L, 1);
+	lua_pushinteger(L, b);
+	lua_pushinteger(L, b);
+	lua_gettable(L, 1);
+	lua_call(L, 5, 1);
+
+	bool result = lua_toboolean(L, -1);
+	lua_pop(L, 1);
+	return result;
+}
+
+// Nancy20's table.sort(table, function) leaves the table as it is, and gives
+// back a new one with the values in order. Values the function finds equal keep
+// their order.
+//
+// The values are Lua tables, and only the function of the script knows how they
+// compare, so the keys are sorted here and each comparison is a call to Lua.
+// The sort is a merge sort rather than Common::sort, since that one doesn't keep
+// equal values in their order.
+static int tableSort(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TTABLE);
+	luaL_checktype(L, 2, LUA_TFUNCTION);
+	lua_settop(L, 2);
+
+	const int count = lua_objlen(L, 1);
+
+	// The keys in order, and room to merge them. A failing comparison leaves
+	// with a longjmp, which a Common::Array wouldn't survive, so Lua keeps them.
+	int *order = (int *)lua_newuserdata(L, 2 * count * sizeof(int));
+	int *merged = order + count;
+	for (int i = 0; i < count; ++i) {
+		order[i] = i + 1;
+	}
+
+	for (int width = 1; width < count; width *= 2) {
+		for (int low = 0; low < count; low += 2 * width) {
+			const int middle = MIN(low + width, count);
+			const int high = MIN(low + 2 * width, count);
+
+			int left = low;
+			int right = middle;
+			int out = low;
+			while (left < middle && right < high) {
+				if (sortsBefore(L, order[right], order[left])) {
+					merged[out++] = order[right++];
+				} else {
+					merged[out++] = order[left++];
+				}
+			}
+
+			while (left < middle) {
+				merged[out++] = order[left++];
+			}
+
+			while (right < high) {
+				merged[out++] = order[right++];
+			}
+		}
+
+		memcpy(order, merged, count * sizeof(int));
+	}
+
+	lua_createtable(L, count, 0);
+	for (int i = 0; i < count; ++i) {
+		lua_pushinteger(L, order[i]);
+		lua_gettable(L, 1);
+		lua_rawseti(L, -2, i + 1);
+	}
+
+	return 1;
+}
+
+// Nancy20's math.isnan(number)
+static int mathIsNaN(lua_State *L) {
+	const lua_Number number = luaL_checknumber(L, 1);
+	lua_pushboolean(L, number != number);
+	return 1;
+}
+
 LuaState::LuaState(SceneContext *context) {
 	_state = luaL_newstate();
 	if (!_state) {
@@ -62,6 +155,11 @@ LuaState::LuaState(SceneContext *context) {
 	openLibrary(_state, luaopen_table, LUA_TABLIBNAME);
 	openLibrary(_state, luaopen_string, LUA_STRLIBNAME);
 	openLibrary(_state, luaopen_math, LUA_MATHLIBNAME);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy20) {
+		setLibraryFunction(_state, LUA_TABLIBNAME, "sort", tableSort);
+		setLibraryFunction(_state, LUA_MATHLIBNAME, "isnan", mathIsNaN);
+	}
 
 	removeGlobal(_state, "collectgarbage");
 	removeGlobal(_state, "dofile");

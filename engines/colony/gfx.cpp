@@ -58,6 +58,48 @@ Common::Point canvasToWindow(const Common::Rect &viewport, const Common::Point &
 		viewport.top + (int)((int64)p.y * viewport.height() / canvasH));
 }
 
+Common::Rect computeScreenViewport(OSystem *system, int width, int height, bool squarePixels) {
+	const int screenWidth = system->getWidth();
+	const int screenHeight = system->getHeight();
+	int viewportWidth = screenWidth;
+	int viewportHeight = screenHeight;
+
+	// Fractional enlargement makes bitmap fonts and dithering uneven.
+	if (squarePixels) {
+		const int scale = MIN(screenWidth / width, screenHeight / height);
+		if (scale >= 1) {
+			viewportWidth = width * scale;
+			viewportHeight = height * scale;
+		} else {
+			// Fit smaller windows without cropping the UI.
+			viewportWidth = MIN(screenWidth, (screenHeight * width + height / 2) / height);
+			viewportHeight = MIN(screenHeight, (screenWidth * height + width / 2) / width);
+		}
+	} else if (ConfMan.getBool("widescreen_mod")) {
+		viewportWidth = MIN(screenWidth, (screenHeight * 16 + 4) / 9);
+		viewportHeight = MIN(screenHeight, (screenWidth * 9 + 8) / 16);
+	} else if (system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
+		viewportWidth = MIN(screenWidth, screenHeight * 4 / 3);
+		viewportHeight = MIN(screenHeight, screenWidth * 3 / 4);
+	}
+
+	Common::Rect viewport(viewportWidth, viewportHeight);
+	viewport.translate((screenWidth - viewportWidth) / 2, (screenHeight - viewportHeight) / 2);
+	return viewport;
+}
+
+Common::Point computeMacCanvasSize(int screenWidth, int screenHeight, bool widescreen) {
+	if (!widescreen) {
+		const int width = MIN(screenWidth, screenHeight * 4 / 3);
+		screenHeight = MIN(screenHeight, screenWidth * 3 / 4);
+		screenWidth = width;
+	}
+
+	// Grow the layout to fill the window while keeping bitmap pixels uniform.
+	const int scale = MAX(1, MIN(screenWidth / 640, screenHeight / 480));
+	return Common::Point(MAX(640, screenWidth / scale), MAX(480, screenHeight / scale));
+}
+
 // Pick the renderer type. Honors --renderer=<code> on the command line /
 // ConfMan key, restricted to what was compiled in.
 //

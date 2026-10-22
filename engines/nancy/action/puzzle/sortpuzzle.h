@@ -40,6 +40,7 @@ public:
 	virtual ~SortPuzzle() {}
 
 	void init() override;
+	void registerGraphics() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void readDataNancy12(Common::SeekableReadStream &stream);
@@ -131,6 +132,8 @@ protected:
 
 	Cell _held;
 	bool _hasHeld   = false;
+	int  _heldFromRow = -1; // The slot the held piece was picked up from, empty while it is carried
+	int  _heldFromCol = -1;
 	bool _isSolved  = false;
 
 	MouseFollowObject _heldObject;

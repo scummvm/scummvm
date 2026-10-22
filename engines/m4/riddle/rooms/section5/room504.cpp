@@ -740,7 +740,7 @@ void Room504::daemon() {
 	case 521:
 		series_unload(_mzTakesEmerald);
 		_menendezShould = 4;
-		digi_play("504Z15", 1, 255, 522);
+		digi_play("504Z14", 1, 255, 522);
 		break;
 
 	case 522:
@@ -1602,6 +1602,8 @@ void Room504::daemon() {
 		setVines();
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Rope Rising");
+		sendWSMessage_10000(1, _vineMachine2, _leftVineTie, 1, 9, 644,
+			_leftVineTie, 9, 9, 0);
 		sendWSMessage_120000(640);
 		break;
 

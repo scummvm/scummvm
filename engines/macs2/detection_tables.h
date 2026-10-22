@@ -36,7 +36,7 @@ const ADGameDescription gameDescriptions[] = {
 	 Common::DE_DEU,
 	 Common::kPlatformDOS,
 	 ADGF_TESTING,
-	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
+	 GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_TRANSLATION)},
 
 	// GMACS II Interpreter V1.00 - Written & Copyright (C) 1993 by Arndt Hasch - Copyright by LINEL
 	{"sis",
@@ -45,17 +45,7 @@ const ADGameDescription gameDescriptions[] = {
 	 Common::DE_DEU,
 	 Common::kPlatformDOS,
 	 ADGF_DEMO | ADGF_TESTING,
-	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
-
-	// English fan translation (original + macs2_translation.dat)
-	{"sis",
-	 "w/translation",
-	 AD_ENTRY2s("RESOURCE.MCS", "b8646d5cc2e45442a414220b1a65ba73", 8621636,
-	            "macs2_translation.dat", nullptr, AD_NO_SIZE),
-	 Common::EN_ANY,
-	 Common::kPlatformDOS,
-	 GF_TRANSLATED | ADGF_TESTING,
-	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
+	 GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_TRANSLATION)},
 
 	// Amiga demo - DataA (MXMF) + Mdir (MXDR). GMACS II / LINEL.
 	{"sis",

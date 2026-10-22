@@ -22,11 +22,16 @@
 #include "mediastation/audio.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/actors/sound.h"
+#include "mediastation/clients.h"
 #include "mediastation/mediastation.h"
 
 namespace MediaStation {
 
 SoundActor::~SoundActor() {
+	if (_playState == kSoundPlayStatePlaying) {
+		stop();
+	}
+
 	unregisterWithStreamManager();
 	if (_streamFeed != nullptr) {
 		g_engine->getStreamFeedManager()->closeStreamFeed(_streamFeed);
@@ -87,6 +92,7 @@ void SoundActor::soundPlayStateChanged(SoundPlayState state, SoundStopReason sto
 	case kSoundPlayStateStopped: {
 		_playState = kSoundPlayStateStopped;
 		g_engine->getTimerService()->stopTimer(_timer);
+		g_engine->getDeviceOwner()->releaseDevice(this, kImtDeviceTypeSound);
 
 		EventType eventType = kEventTypeInvalid;
 		switch (stopReason) {
@@ -221,21 +227,29 @@ void SoundActor::timerEvent(const TimerEvent &event) {
 	setupNextScriptResponseTimer();
 }
 
+bool SoundActor::giveUpDevice() {
+	debugC(5, kDebugEvents, "[%s] %s: Stopping playback to give up sound device", debugName(), __func__);
+	stop();
+	return false;
+}
+
 void SoundActor::start() {
 	if (_loadIsComplete) {
 		if (_playState == kSoundPlayStatePlaying || _playState == kSoundPlayStatePaused) {
 			stop();
 		}
 
-		openStream();
-		_playState = kSoundPlayStatePlaying;
-		_startTime = g_engine->getTotalPlayTime();
-		_lastProcessedTime = 0;
-		setupNextScriptResponseTimer();
-		_sequence.start();
+		bool deviceGrantFailed = g_engine->getDeviceOwner()->grantDevice(this, kImtDeviceTypeSound);
+		if (!deviceGrantFailed) {
+			openStream();
+			_startTime = g_engine->getTotalPlayTime();
+			_lastProcessedTime = 0;
+			setupNextScriptResponseTimer();
+			_sequence.start();
+		} else {
+			warning("[%s] %s: Device grant failed", debugName(), __func__);
+		}
 
-		ActorEvent actorEvent(_id, kSoundBeginEvent);
-		g_engine->getEventLoop()->queueEvent(actorEvent);
 	} else {
 		warning("[%s] %s: Attempted to play sound before it was loaded", debugName(), __func__);
 	}
@@ -243,7 +257,6 @@ void SoundActor::start() {
 
 void SoundActor::stop() {
 	if (_playState == kSoundPlayStatePlaying || _playState == kSoundPlayStatePaused) {
-		_playState = kSoundPlayStateStopped;
 		_sequence.stop();
 		g_engine->getTimerService()->stopTimer(_timer);
 	}
@@ -254,13 +267,19 @@ void SoundActor::pause() {
 		_sequence.pause();
 		_sequence.sleep();
 		// There don't seem to be script events to trigger in this instance.
+		g_engine->getDeviceOwner()->releaseDevice(this, kImtDeviceTypeSound);
 	}
 }
 
 void SoundActor::resume(bool restart) {
 	if (_playState == kSoundPlayStatePaused) {
-		_sequence.awake();
-		_sequence.resume();
+		bool deviceGrantFailed = g_engine->getDeviceOwner()->grantDevice(this, kImtDeviceTypeSound);
+		if (!deviceGrantFailed) {
+			_sequence.awake();
+			_sequence.resume();
+		} else {
+			warning("[%s] %s: Device grant failed", debugName(), __func__);
+		}
 	} else if (restart) {
 		start();
 	}

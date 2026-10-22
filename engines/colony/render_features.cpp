@@ -109,8 +109,8 @@ void ColonyEngine::getWallRecess3D(const float corners[4][3], float farC[4][3]) 
 	ny /= len;
 	nz /= len;
 
-	const float awayX = corners[0][0] - (float)_me.xloc;
-	const float awayY = corners[0][1] - (float)_me.yloc;
+	const float awayX = corners[0][0] - (float)_renderCamera.x;
+	const float awayY = corners[0][1] - (float)_renderCamera.y;
 	const float awayZ = corners[0][2];
 	if (nx * awayX + ny * awayY + nz * awayZ < 0.0f) {
 		nx = -nx;
@@ -171,7 +171,7 @@ void ColonyEngine::clipToWallFace(const float corners[4][3]) {
 	for (int i = 0; i < 4; i++) {
 		int sx = 0;
 		int sy = 0;
-		projectCorridorPointClamped(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
+		projectCorridorPointClamped(_screenR, _me.look, _me.lookY, _sint, _cost, _renderCamera.x, _renderCamera.y,
 			corners[i][0], corners[i][1], corners[i][2], sx, sy);
 		if (i == 0) {
 			minX = sx;
@@ -603,13 +603,13 @@ bool ColonyEngine::isWallFeatureFacingCamera(int cellX, int cellY, int direction
 	// Keep features visible while standing on the boundary.
 	switch (direction) {
 	case kDirNorth:
-		return _me.yloc <= (cellY + 1) * 256;
+		return _renderCamera.y <= (cellY + 1) * 256;
 	case kDirSouth:
-		return _me.yloc >= cellY * 256;
+		return _renderCamera.y >= cellY * 256;
 	case kDirWest:
-		return _me.xloc >= cellX * 256;
+		return _renderCamera.x >= cellX * 256;
 	case kDirEast:
-		return _me.xloc <= (cellX + 1) * 256;
+		return _renderCamera.x <= (cellX + 1) * 256;
 	default:
 		return true;
 	}

@@ -41,6 +41,8 @@ class Viewport;
 
 namespace Script {
 
+struct RefImage;
+
 // The kinds of records a script can make, in the order of the names below
 enum RecordKind {
 	kRecordNavLogic		= 0,
@@ -149,6 +151,7 @@ protected:
 	bool getField(const Common::String &key) override;
 	bool setField(const Common::String &key) override;
 
+	void onMouseMove(const ScriptPoint &point, bool inViewport) override;
 	bool getCursor(const ScriptPoint &point, bool inViewport, uint &cursorType, bool &isHot) override;
 	bool onMouseEvent(RecordEvent event, const ScriptPoint &point, bool inViewport) override;
 
@@ -160,6 +163,7 @@ private:
 
 	void readScene(int valueIndex);
 	void readCursor(int valueIndex);
+	void readRef(int valueIndex);
 	bool isOver(const ScriptPoint &point) const;
 	void trigger();
 
@@ -171,6 +175,18 @@ private:
 	bool _hasCursor = false;
 	uint _cursorType = 0;
 	bool _cursorIsHot = false;
+
+	// Nancy20 can take the shape of the hotspot from a Ref image: where it isn't
+	// transparent, or where it has the given color. The part of the image named
+	// by the source is laid over the hotspot; without both, the image covers
+	// the viewport.
+	const RefImage *_ref = nullptr;
+	bool _hasRefColor = false;
+	uint32 _refColor = 0;
+	ScriptRect _source;
+
+	bool _isRightClick = false;	// Nancy20: the right button clicks it, not the left
+	bool _isMouseOver = false;
 
 	Common::Array<Flag> _flags;
 };
@@ -184,6 +200,7 @@ public:
 
 	void updateGraphics() override;
 	void onSave() override { callFunction("OnSave"); }
+	void onDie() override { callFunction("OnDie"); }
 	bool hasMessagingName(const Common::String &name) override;
 
 protected:
@@ -390,6 +407,7 @@ private:
 	int _firstFrame = 0;
 	int _lastFrame = 0;
 	bool _pausesOnLastFrame = false;
+	bool _hasCalledOnPause = false;
 	bool _isPaused = false;
 	bool _isVisible = true;
 	double _endTime = 0.0;

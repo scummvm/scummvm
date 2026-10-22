@@ -28,6 +28,7 @@
 #include "mediastation/audio.h"
 #include "mediastation/datafile.h"
 #include "mediastation/bitmap.h"
+#include "mediastation/clients.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
@@ -128,7 +129,7 @@ private:
 	StreamMovieActor *_parent = nullptr;
 };
 
-class StreamMovieActor : public SpatialEntity, public ChannelClient, public PreDisplaySyncClient {
+class StreamMovieActor : public SpatialEntity, public ChannelClient, public PreDisplaySyncClient, public ImtDeviceUser {
 friend class StreamMovieActorFrames;
 friend class StreamMovieActorSound;
 
@@ -141,6 +142,7 @@ public:
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual bool isActive() const override { return _isPlaying; }
+	virtual bool giveUpDevice() override;
 
 	virtual PreDisplaySyncState preDisplaySync() override;
 	virtual void onEvent(const ActorEvent &event) override;
@@ -170,6 +172,8 @@ private:
 	Common::SortedArray<MovieFrame *, const MovieFrame *> _framesOnScreen;
 
 	// Script method implementations.
+	bool grantStreamDevice();
+	void releaseStreamDevice();
 	void timePlay();
 	void timeStop(bool isMovieEnd);
 

@@ -35,12 +35,14 @@ namespace Access {
 
 class AccessEngine;
 
+// MM/Amazon uses an enum, Noctropolis uses flags.
 enum BoxType {
-	TYPE_0 = 0,
-	TYPE_1 = 1,
-	TYPE_2 = 2,
-	TYPE_3 = 3,
+	kBoxTypeNone = 0,
+	kBoxTypeList = 1,
+	kBoxTypeNormal = 2,
+	kBoxTypeFileList = 3,
 	kBoxTypeFileDialog = 4,
+
 	kTextBoxNoctPlain = 1,
 	kTextBoxNoctCaption = 2,
 	kTextBoxNoctCenter = 4,
@@ -49,13 +51,23 @@ enum BoxType {
 class BubbleBox : public Manager {
 private:
 	int _startItem, _startBox;
-	int _charCol, _rowOff;
+	int _rowOff;
 	Common::Point _fileStart;
 	Common::Point _fileOff;
 	int _boxStartX, _boxStartY;
 	int _boxEndX, _boxEndY;
 	int _bIconStartX, _bIconStartY;
 	int _boxPStartX, _boxPStartY;
+
+	int _btnId1;
+	int _btnX1;
+	int _btnId2;
+	int _btnX2;
+	int _btnId3;
+	int _btnX3;
+
+	Common::Rect _btnUpPos;
+	Common::Rect _btnDownPos;
 
 	void displayBoxData();
 	void drawSelectBox();
@@ -74,14 +86,6 @@ public:
 	Common::String _bubbleDisplStr; // the title that will be drawn on the next bubble
 	Common::String _tempList[60];
 	int _tempListIdx[60];
-	int _btnId1;
-	int _btnX1;
-	int _btnId2;
-	int _btnX2;
-	int _btnId3;
-	int _btnX3;
-	Common::Rect _btnUpPos;
-	Common::Rect _btnDownPos;
 	Common::Array<Common::Rect> _bubbles;
 public:
 	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, const char *title);
@@ -97,11 +101,6 @@ public:
 	 * Calculate the size of a bubble needed to hold a given string
 	 */
 	void calcBubble(const Common::String &msg);
-
-	/**
-	 * Noctropolis version of bubble calculation
-	 */
-	//void calcBubble_v3(const Common::String &msg);
 
 	/**
 	 * Prints a text bubble and it's contents

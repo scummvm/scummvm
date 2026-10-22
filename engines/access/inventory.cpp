@@ -204,7 +204,7 @@ void InventoryManager::showAllItems() {
 }
 
 void InventoryManager::putInvIcon(int itemIndex, int itemId) {
-	SpriteResource *spr = _vm->_objectsTable[99];
+	const SpriteResource *spr = _vm->_objectsTable[99];
 	assert(spr);
 	Common::Point pt((itemIndex % 6) * 46 + 23, (itemIndex / 6) * 35 + 15);
 	_vm->_buffer2.plotImage(spr, itemId, pt);
@@ -282,10 +282,10 @@ void InventoryManager::outlineIcon(int itemIndex) {
 	const Font &font = *_vm->_fonts._font2;
 	int strWidth = font.stringWidth(s);
 
-	font._fontColors[0] = 0;
-	font._fontColors[1] = 10;
-	font._fontColors[2] = 11;
-	font._fontColors[3] = 12;
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 10;
+	Font::_fontColors[2] = 11;
+	Font::_fontColors[3] = 12;
 	font.drawString(&screen, s, Common::Point((screen.w - strWidth) / 2, 184));
 }
 
@@ -309,7 +309,7 @@ void InventoryManager::combineItems() {
 	Common::Point lastBox(inv.left, inv.top);
 
 	_vm->_buffer2.copyBlock(&_vm->_buffer1, r);
-	SpriteResource *sprites = _vm->_objectsTable[99];
+	const SpriteResource *sprites = _vm->_objectsTable[99];
 	int invItem = _items[_boxNum];
 	events.pollEvents();
 
@@ -377,7 +377,7 @@ void InventoryManager::combineItems() {
 void InventoryManager::zoomIcon(int zoomItem, int backItem, int zoomBox, bool shrink) {
 	Screen &screen = *_vm->_screen;
 	screen._screenYOff = 0;
-	SpriteResource *sprites = _vm->_objectsTable[99];
+	const SpriteResource *sprites = _vm->_objectsTable[99];
 
 	int oldScale = _vm->_scale;
 	int zoomScale = shrink ? 255 : 1;

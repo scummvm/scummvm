@@ -206,15 +206,11 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_screen->forceFadeIn();
 
 	// Load objects specific to this special scene
-	Resource *data = _vm->_files->loadFile(40, 2);
-	_game->_objectsTable[40] = new SpriteResource(_vm, data);
-	delete data;
+	_game->_objectsTable[40] = new SpriteResource(_vm, 40, 2);
 
 	// Load animation data
 	_vm->_animation->freeAnimationData();
-	Resource *animResource = _vm->_files->loadFile(40, 1);
-	_vm->_animation->loadAnimations(animResource);
-	delete animResource;
+	_vm->_animation->loadAnimations(40, 1);
 
 	// Load script
 	Resource *newScript = _vm->_files->loadFile(40, 0);
@@ -369,11 +365,6 @@ bool MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	return false;
 }
 
-typedef void(MartianScripts::*MartianScriptMethodPtr)();
-
-void MartianScripts::executeCommand(int commandIndex) {
-	Scripts::executeCommand(commandIndex);
-}
 
 } // End of namespace Martian
 

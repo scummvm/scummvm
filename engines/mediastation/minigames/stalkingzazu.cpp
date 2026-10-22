@@ -34,7 +34,7 @@ namespace MediaStation {
 namespace StalkingZazuMinigame {
 
 Direction::Direction(uint directionToken) {
-	switch(directionToken) {
+	switch (directionToken) {
 	case 0x44c:
 		_value = Direction::kWest;
 		break;
@@ -979,8 +979,8 @@ Direction StalkingZazuActor::directionOfVector(const Common::Point &dest) {
 	if (angle >= 90.0) return Direction::kWest;
 	else if (angle >= -22.5) return Direction::kEast;
 	else if (angle >= -67.5) return Direction::kNorthEast;
-	else if (angle >=-112.5) return Direction::kNorth;
-	else if (angle >=-157.5) return Direction::kNorthWest;
+	else if (angle >= -112.5) return Direction::kNorth;
+	else if (angle >= -157.5) return Direction::kNorthWest;
 	else return Direction::kWest;
 }
 
