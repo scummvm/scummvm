@@ -19,8 +19,9 @@
  *
  */
 
-#include "igor/floppy_font.h"
 #include "graphics/surface.h"
+
+#include "igor/floppy_font.h"
 
 namespace Igor {
 

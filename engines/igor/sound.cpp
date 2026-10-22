@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "backends/audiocd/audiocd.h"

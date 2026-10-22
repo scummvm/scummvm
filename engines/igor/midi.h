@@ -21,13 +21,12 @@
 #ifndef IGOR_MIDI_H
 #define IGOR_MIDI_H
 
-#include "common/util.h"
-#include "common/mutex.h"
-
 #include "audio/fmopl.h"
-#include "audio/softsynth/emumidi.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "audio/softsynth/emumidi.h"
+#include "common/mutex.h"
+#include "common/util.h"
 
 namespace Igor {
 

@@ -21,8 +21,9 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "igor/igor.h"
+
 #include "igor/floppy_menu.h"
+#include "igor/igor.h"
 
 namespace Igor {
 

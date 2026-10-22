@@ -18,8 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "common/endian.h"
 #include "common/textconsole.h"
+
 #include "igor/midi.h"
 
 #ifndef DISABLE_NUKED_OPL

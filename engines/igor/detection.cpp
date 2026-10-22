@@ -26,6 +26,7 @@
 #include "common/str-array.h"
 #include "common/translation.h"
 #include "common/util.h"
+
 #include "igor/detection.h"
 #include "igor/detection_tables.h"
 

@@ -26,9 +26,9 @@
 #include "common/system.h"
 #include "engines/util.h"
 
-#include "igor/igor.h"
 #include "igor/console.h"
 #include "igor/detection.h"
+#include "igor/igor.h"
 #include "igor/midi.h"
 
 

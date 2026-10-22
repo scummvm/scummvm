@@ -19,8 +19,9 @@
  *
  */
 
-#include "igor/font.h"
 #include "graphics/surface.h"
+
+#include "igor/font.h"
 
 namespace Igor {
 
