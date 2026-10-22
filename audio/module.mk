@@ -35,7 +35,6 @@ MODULE_OBJS := \
 	decoders/adpcm.o \
 	decoders/aiff.o \
 	decoders/apc.o \
-	decoders/asf.o \
 	decoders/flac.o \
 	decoders/g711.o \
 	decoders/iff_sound.o \

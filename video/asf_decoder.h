@@ -19,27 +19,38 @@
  *
  */
 
-// Based on xoreos' ASF code
+#ifndef VIDEO_ASF_DECODER_H
+#define VIDEO_ASF_DECODER_H
 
-#ifndef AUDIO_DECODERS_ASF_H
-#define AUDIO_DECODERS_ASF_H
+#include "video/video_decoder.h"
+#include "video/asf.h"
+#include "common/queue.h"
 
-namespace Audio {
+namespace Video {
 
-/**
- * Try to load a ASF from the given seekable stream and create a RewindableAudioStream
- * from that data.
- *
- * @param stream          The SeekableReadStream from which to read the ASF data.
- * @param disposeAfterUse Whether to delete the stream after use.
- *
- * @return A new SeekableAudioStream, or 0, if an error occurred.
- */
+class ASFDecoder : public VideoDecoder {
+public:
+	ASFDecoder();
+	~ASFDecoder() override;
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
+protected:
+	void readNextPacket() override;
+private:
+	class ASFVideoTrack;
+	class ASFAudioTrack;
+	bool prepareFrame();
+	bool readObject(ASFDemuxer::Object &object);
+	void bufferPackets();
+	Common::SeekableReadStream *_input;
+	ASFDemuxer _demux;
+	Common::Queue<ASFDemuxer::Object> _videoObjects;
+	uint32 _videoQueueBytes;
+	ASFVideoTrack *_video;
+	ASFAudioTrack *_audio;
+	uint8 _videoID, _audioID;
+	bool _ended;
+};
 
-SeekableAudioStream *makeASFStream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse);
-
-} // End of namespace Audio
-
-#endif // AUDIO_DECODERS_ASF_H
+} // End of namespace Video
+#endif

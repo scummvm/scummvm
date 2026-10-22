@@ -26,12 +26,13 @@
 #include "engines/myst3/state.h"
 
 #include "audio/audiostream.h"
-#include "audio/decoders/asf.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/wave.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+
+#include "video/asf.h"
 
 namespace Myst3 {
 
@@ -511,7 +512,7 @@ Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String
 		return NULL;
 #endif
 	} else if (isWMA) {
-		return Audio::makeASFStream(s, DisposeAfterUse::YES);
+		return Video::makeASFAudioStream(s, DisposeAfterUse::YES);
 	} else {
 		return Audio::makeWAVStream(s, DisposeAfterUse::YES);
 	}

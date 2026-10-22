@@ -21,7 +21,9 @@
 
 #include "common/events.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "engines/util.h"
+#include "video/asf_decoder.h"
 #include "video/avi_decoder.h"
 #include "video/dxa_decoder.h"
 #include "video/flic_decoder.h"
@@ -43,6 +45,10 @@
 namespace Testbed {
 
 Common::Error Videotests::videoTest(const Common::Path &path) {
+	const Common::FSNode node(path);
+	if (node.exists() && !node.isDirectory())
+		return videoTest(node);
+
 	Common::File *file = new Common::File();
 	if (!file->open(path)) {
 		warning("Cannot open file %s", path.toString(Common::Path::kNativeSeparator).c_str());
@@ -66,7 +72,20 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 	Video::QuickTimeDecoder *qtVideo = nullptr;
 	Video::VideoDecoder *video = nullptr;
 
-	if (name.hasSuffixIgnoreCase(".avi")) {
+	// ASF movies may use game-specific extensions such as .dat.
+	static const byte asfHeader[] = {
+		0x30, 0x26, 0xb2, 0x75, 0x8e, 0x66, 0xcf, 0x11,
+		0xa6, 0xd9, 0x00, 0xaa, 0x00, 0x62, 0xce, 0x6c
+	};
+	byte header[sizeof(asfHeader)];
+	const int64 start = stream->pos();
+	const bool isASF = stream->read(header, sizeof(header)) == sizeof(header) &&
+		memcmp(header, asfHeader, sizeof(header)) == 0;
+	stream->seek(start);
+
+	if (isASF) {
+		video = new Video::ASFDecoder();
+	} else if (name.hasSuffixIgnoreCase(".avi")) {
 		video = new Video::AVIDecoder();
 	} else if (name.hasSuffixIgnoreCase(".dxa")) {
 		video = new Video::DXADecoder();
@@ -208,8 +227,8 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 				}
 			}
 			g_system->updateScreen();
-			video->delayMillis(10);
 		}
+		video->delayMillis(10);
 	}
 	video->close();
 	delete video;
