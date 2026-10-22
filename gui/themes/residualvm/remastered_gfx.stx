@@ -140,6 +140,8 @@
 	</bitmaps>
 
 	<fonts>
+		<fallback file = 'Unifont-Regular.otf' optional = 'true'/>
+
 		<font	resolution = 'y>=H'
 				id = 'text_default'
 				file = 'helvb12.bdf'>
