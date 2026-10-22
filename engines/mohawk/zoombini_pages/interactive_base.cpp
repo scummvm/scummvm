@@ -56,6 +56,10 @@ ZoombiniInteractive::ZoombiniInteractive(MohawkEngine_Zoombini *vm, ZoombiniPage
 	_goMapButtonStateMap[kThreeButtons_SecondGo] = ButtonState();
 	_goMapButtonStateMap[kThreeButtons_Map] = ButtonState();
 	_helpButtonStateMap[kThreeButtons_Help] = ButtonState();
+
+	_notiBoxLongRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kNotiBoxLongLayout).apply(_notiBoxLongRect);
+	if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kJapanV10))
+		_notiBoxLongShape = kSystemShape3001_03_NotiBoxWide;
 }
 
 ZoombiniInteractive::~ZoombiniInteractive() {
@@ -90,6 +94,14 @@ ZmbEventHandleResult ZoombiniInteractive::onKeyDown(const Common::KeyState &kbd,
 			break;
 		case Common::KEYCODE_n: // New Game (CTRL-N)
 			_vm->_state->startNewGame(true);
+			break;
+		case Common::KEYCODE_m: // Japanese/Latin generated names (CTRL-M)
+			if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kJapanV10)) {
+				const bool japaneseNames = _vm->_text->toggleJapaneseNames();
+				showNotiBoxLong(japaneseNames ? ZoombiniText::kNotiBoxJapaneseNames : ZoombiniText::kNotiBoxEnglishNames);
+			} else {
+				result = ZmbEventHandleResult::kPassthrough;
+			}
 			break;
 		case Common::KEYCODE_l: // Load Game (CTRL-L)
 			_vm->openLoadDialogWithSavePrompt();
@@ -1038,15 +1050,15 @@ void ZoombiniInteractive::routeNonOccupiedToRestingPack() {
 			// The v1.1US and v2.0US layouts use four persisted counters and advance after three perfect route passes.
 			// Europe v1.0 and its 16-bit Europe v1.1 update have no counters in their 44549-byte save layout, and advance after one perfect pass.
 			if (static_cast<int16>(routeLevel) < 3) {
-				if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kUsV1) || _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) { // v1.1US based and v2.0TLC
+				if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1)) { // Europe v1.x
+					if (_vm->_state->advanceRouteLevel(routeId))
+						debugC(1, MohawkEngine_Zoombini::kDebugState03, "state: route %d advanced to level %d", routeIdx, f._routeLevels[routeIdx - 1]);
+				} else if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kUsV1) || _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) { // v1.1US based and v2.0TLC
 					f._routePerfectCounters[routeIdx - 1] += 1;
 					if (3 <= f._routePerfectCounters[routeIdx - 1]) {
 						if (_vm->_state->advanceRouteLevel(routeId))
 							debugC(1, MohawkEngine_Zoombini::kDebugState03, "state: route %d advanced to level %d", routeIdx, f._routeLevels[routeIdx - 1]);
 					}
-				} else if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1)) { // Europe v1.x
-					if (_vm->_state->advanceRouteLevel(routeId))
-						debugC(1, MohawkEngine_Zoombini::kDebugState03, "state: route %d advanced to level %d", routeIdx, f._routeLevels[routeIdx - 1]);
 				} else {
 					error("interactive: unknown Zoombini game variant 0x%08X - cannot determine route-level advancement rules", _vm->getFeatures());
 					return;
@@ -1259,7 +1271,7 @@ void ZoombiniInteractive::showNotiBox(const Common::U32String &ustr, bool isNoti
 
 		Common::Array<ZmbHotspot> hotspots;
 		hotspots.push_back(ZmbHotspot(kHotspotNotiBoxShort, kSystemShape3001_01_NotiBoxShort, 0, _notiBoxShortRect));
-		hotspots.push_back(ZmbHotspot(kHotspotNotiBoxLong, kSystemShape3001_02_NotiBoxLong, 0, _notiBoxLongRect));
+		hotspots.push_back(ZmbHotspot(kHotspotNotiBoxLong, _notiBoxLongShape, 0, _notiBoxLongRect));
 
 		_notiBoxFeature = loadScrbFeature(ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap3001_NotiBox), 0,
 										  hotspots, 0,
@@ -1284,7 +1296,7 @@ void ZoombiniInteractive::notiBox_preRenderShape(ZmbFeature *feature, ZmbHotspot
 	}
 
 	hotspots[kHotspotNotiBoxShort]._shapeIdx = kSystemShape3001_01_NotiBoxShort;
-	hotspots[kHotspotNotiBoxLong]._shapeIdx = kSystemShape3001_02_NotiBoxLong;
+	hotspots[kHotspotNotiBoxLong]._shapeIdx = _notiBoxLongShape;
 	uint16 hideShapeIdx = _isNotiBoxLong ? kHotspotNotiBoxShort : kHotspotNotiBoxLong;
 	hotspots[hideShapeIdx]._shapeIdx = ZmbHotspot::kShapeNone;
 }
@@ -1301,10 +1313,7 @@ void ZoombiniInteractive::notiBox_onPostRender(ZmbFeature *feature) {
 	tc._vAlign = Graphics::kTextAlignCenter;
 	tc._hAlign = Graphics::kTextAlignCenter;
 	Common::Rect textRect = _isNotiBoxLong ? _notiBoxLongRect : _notiBoxShortRect;
-	// The Korean release offsets the top edge by 3 pixels before centered rendering.
-	// Z1-11U and Z1-20U use the selected rectangle unchanged.
-	if (_vm->getLanguage() == Common::KO_KOR)
-		textRect.top += 3;
+	textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kNotiBoxTextLayout).apply(textRect);
 	_vm->_gfx->drawText(screenKind, _notiBoxText, textRect, tc);
 }
 

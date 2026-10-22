@@ -496,6 +496,8 @@ public:
 	virtual ZmbEventHandleResult onKeyDown(const Common::KeyState &kbd, bool kbdRepeat);
 	/** Handle a page-local key release. */
 	virtual ZmbEventHandleResult onKeyUp(const Common::KeyState &kbd, bool kbdRepeat);
+	/** Release held input when focus is lost or a modal takes input ownership. */
+	virtual void onInputReset() {}
 #if ZOOMBINI_ENABLE_IME_COMPOSITION
 	/**
 	 * Update, commit, or cancel IME composition owned by this page.
@@ -1162,6 +1164,8 @@ public:
 
 		kSystemShape3001_01_NotiBoxShort = 1,
 		kSystemShape3001_02_NotiBoxLong = 2,
+		/** Wide notification background used by Japanese name-mode messages. */
+		kSystemShape3001_03_NotiBoxWide = 3,
 	};
 
 	// [*] NODE: Waypoint Paths for Snoid Animation

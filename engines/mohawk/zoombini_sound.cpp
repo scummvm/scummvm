@@ -21,8 +21,6 @@
 
 #include "mohawk/resource.h"
 
-#include "common/config-manager.h"
-
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_metaengine.h"
 #include "mohawk/zoombini_page.h"
@@ -384,9 +382,7 @@ void ZoombiniMidiPlayer::playMidi(ZmbResource resource) {
 	}
 	// The Macintosh MIDI profile (MIDIMAC.MHK) has no inline GM/GS setup, so manually issue a GM reset per song.
 	// The Windows profile (MIDIMPC.MHK) re-inits itself, so it does not need a reset.
-	const int midiSoundtrackVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack);
-	const MohawkMetaEngine_Zoombini::MidiSoundtrack midiSoundtrack = static_cast<MohawkMetaEngine_Zoombini::MidiSoundtrack>(midiSoundtrackVal);
-	setResetChannelsOnPlay(midiSoundtrack == MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh);
+	setResetChannelsOnPlay(_vm->_midiMhkUsesMacProfile);
 	playMidiStream(_vm->getResource(ID_TMID, resource), static_cast<uint16>(resource._id));
 	syncBgmVolume(!_vm->_state || _vm->_state->getEnableMusic());
 }

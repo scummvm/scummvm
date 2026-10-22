@@ -126,10 +126,8 @@ void ZoombiniDialogMsgBox::initButtons(ZoombiniText::Key yesKey, ZoombiniText::K
 }
 
 Common::Rect ZoombiniDialogMsgBox::getBodyTextRect() const {
-	if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kEuropeV10, Common::IT_ITA))
-		return Common::Rect(0x009A, 0x0082, 0x01E7, 0x00EB);
-
-	return Common::Rect(0x009A, 0x0091, 0x01E7, 0x00DC);
+	static const Common::Rect bodyTextRect(0x009A, 0x0091, 0x01E7, 0x00DC);
+	return _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMsgBoxBodyLayout).apply(bodyTextRect);
 }
 
 ZoombiniDialogMsgBox::~ZoombiniDialogMsgBox() {

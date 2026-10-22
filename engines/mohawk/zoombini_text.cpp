@@ -29,6 +29,7 @@
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/keyboard.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
@@ -53,8 +54,10 @@ const ZoombiniText::CreditLimits ZoombiniText::kV11USCreditLimits = {248, 27, 23
 const ZoombiniText::CreditLimits ZoombiniText::kV111KRCreditLimits = {258, 35, 2541};
 const ZoombiniText::CreditLimits ZoombiniText::kV20USCreditLimits = {360, 49, 4105};
 const ZoombiniText::CreditLimits ZoombiniText::kV20PLCreditLimits = {360, 63, 4300};
-constexpr uint32 ZoombiniText::kV10ITCreditEntryCount;
-constexpr uint32 ZoombiniText::kV10BRDemoCreditEntryCount;
+constexpr uint32 ZoombiniText::kEuropeITCreditEntryCount;
+constexpr uint32 ZoombiniText::kEuropeBRCreditEntryCount;
+constexpr uint32 ZoombiniText::kEuropeFRCreditEntryCount;
+constexpr uint32 ZoombiniText::kEuropeGECreditEntryCount;
 
 ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::inFile(const char *srcFileName, uint32 srcExpectedSize) const {
 	ExeTextSource source = *this;
@@ -111,6 +114,11 @@ ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withMacRomanTrademarkBy
 	return *this;
 }
 
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withWindows1252StrokeByteD8Decode() {
+	decodeWindows1252StrokeByteD8 = true;
+	return *this;
+}
+
 ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditAnchor(const char *anchor) {
 	creditSourceKind = CreditSourceKind::kExecutableAnchorSequence;
 	creditAnchor = anchor;
@@ -152,13 +160,14 @@ void ZoombiniText::patchSpanish10ExeText() {
 }
 
 void ZoombiniText::patchKoreanExeCredits() {
-	const uint paragraphIndex = 36;
-	const uint lineIndex = 19;
-	if (_creditParagraphs.size() <= paragraphIndex || _creditParagraphs[paragraphIndex]._lines.size() <= lineIndex)
+	// One Korean programmer line omitted the closing parenthesis.
+	// Patch: "이인선(프로그래머" -> "이인선(프로그래머)"
+	const uint pIdx = 36;
+	const uint lIdx = 19;
+	if (_creditParagraphs.size() <= pIdx || _creditParagraphs[pIdx]._lines.size() <= lIdx)
 		return;
 
-	// One Korean programmer line omitted the closing parenthesis.
-	_creditParagraphs[paragraphIndex]._lines[lineIndex] = U"이인선(프로그래머)";
+	_creditParagraphs[pIdx]._lines[lIdx] += U')';
 }
 
 const ZoombiniText::ResTextEntry ZoombiniText::kV10EU_ResTextEntries[] = {
@@ -351,6 +360,20 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11GE_NETextEntries[] = {
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10IT_NETextEntries[] = {
 	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0, 0}, // NO-OP
 	{ZoombiniText::kNewGame, 0xD78DE, 13},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10JP_PETextEntries[] = {
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0, 0}, // NO-OP
+	{ZoombiniText::kNewGame, 0x88551, 10},
+	{ZoombiniText::kNotiBoxEnglishNames, 0x8D597, 10},
+	{ZoombiniText::kNotiBoxJapaneseNames, 0x8D5A2, 12},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10JPMacDemoTextEntries[] = {
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0, 0}, // NO-OP
+	{ZoombiniText::kNewGame, 150003, 10},
+	{ZoombiniText::kNotiBoxEnglishNames, 145252, 10},
+	{ZoombiniText::kNotiBoxJapaneseNames, 145239, 12},
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10ES_PETextEntries[] = {
@@ -1882,19 +1905,51 @@ bool ZoombiniText::readBoundedStrlString(Common::SeekableReadStream *stream, Com
 	return false;
 }
 
-bool ZoombiniText::readStrlBody(Common::SeekableReadStream *stream, uint16 stringCount, Common::CodePage codePage, Common::Array<Common::U32String> &texts) {
+template<typename T>
+bool ZoombiniText::hasSingleExtendedByte(const T *bytes, uint32 length, byte expectedByte) {
+	// Match an isolated high byte; this is not general MBCS detection.
+	bool foundExtendedByte = false;
+	for (uint32 byteIdx = 0; byteIdx < length; byteIdx++) {
+		const byte value = static_cast<byte>(bytes[byteIdx]);
+		if (value < 0x80)
+			continue;
+		if (foundExtendedByte || value != expectedByte)
+			return false;
+		foundExtendedByte = true;
+	}
+	return foundExtendedByte;
+}
+
+Common::CodePage ZoombiniText::selectExeCodePage(const byte *bytes, uint32 length, Common::CodePage codePage) {
+	// Korean EXE credits retain CP1252 0xD8 (Ø) in "BrØderbund".
+	if (codePage == Common::kWindows949 && hasSingleExtendedByte(bytes, length, 0xD8))
+		return Common::kWindows1252;
+	return codePage;
+}
+
+Common::CodePage ZoombiniText::selectCreditCodePage(const Common::String &text, Common::CodePage codePage) {
+	// Japanese credits retain MacRoman 0x9F (ü) in the "Jürgen Kiel".
+	if (codePage == Common::kWindows932 && hasSingleExtendedByte(text.c_str(), text.size(), 0x9F))
+		return Common::kMacRoman;
+	return codePage;
+}
+
+bool ZoombiniText::readStrlBody(Common::SeekableReadStream *stream, uint16 stringCount, Common::CodePage codePage, Common::Array<Common::U32String> &texts, bool decodeMacRomanUmlautByte9F) {
 	texts.clear();
 	texts.reserve(stringCount);
-	for (uint16 stringIndex = 0; stringIndex < stringCount; stringIndex++) {
+	for (uint16 strIdx = 0; strIdx < stringCount; strIdx++) {
 		Common::String str;
-		if (!readBoundedStrlString(stream, str, stringCount - stringIndex))
+		if (!readBoundedStrlString(stream, str, stringCount - strIdx))
 			return false;
-		texts.push_back(str.decode(codePage));
+		Common::CodePage stringCodePage = codePage;
+		if (decodeMacRomanUmlautByte9F)
+			stringCodePage = selectCreditCodePage(str, codePage);
+		texts.push_back(str.decode(stringCodePage));
 	}
 	return true;
 }
 
-bool ZoombiniText::readTextStrStrings(MohawkArchive &archive, int16 resourceId, Common::CodePage codePage, Common::Array<Common::U32String> &texts) {
+bool ZoombiniText::readTextStrStrings(MohawkArchive &archive, int16 resourceId, Common::CodePage codePage, Common::Array<Common::U32String> &texts, bool decodeMacRomanUmlautByte9F) {
 	texts.clear();
 	if (!archive.hasResource(ID_STRL, resourceId))
 		return false;
@@ -1909,7 +1964,7 @@ bool ZoombiniText::readTextStrStrings(MohawkArchive &archive, int16 resourceId, 
 
 	const byte stringCount = stringStream->readByte();
 	Common::Array<Common::U32String> parsedTexts;
-	if (!readStrlBody(stringStream, stringCount, codePage, parsedTexts)) {
+	if (!readStrlBody(stringStream, stringCount, codePage, parsedTexts, decodeMacRomanUmlautByte9F)) {
 		delete stringStream;
 		return false;
 	}
@@ -1918,8 +1973,8 @@ bool ZoombiniText::readTextStrStrings(MohawkArchive &archive, int16 resourceId, 
 	// The v1.0BR/v1.1BR TEXTSTR.MHK credit STRL 2022 has an incorrect string count in its header.
 	// It declares 142 strings but contains 145, including two trailing empty strings and the final '*' marker.
 	// Accept only this known suffix so the malformed original resource remains readable.
-	const bool allowBritishCreditTerminator = _vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1) &&
-											  _lang == Common::EN_GRB && resourceId == 2022 && stringCount == 142;
+	const bool allowBritishCreditTerminator = _relInfo.isFamily(ZmbReleaseInfo::kEuropeV1) &&
+											  _relInfo.getLanguage() == Common::EN_GRB && resourceId == 2022 && stringCount == 142;
 	if (!consumedExactly && allowBritishCreditTerminator && ZmbResource::hasBytes(stringStream, 4)) {
 		const bool hasCreditTerminatorSuffix = stringStream->readByte() == 0 && stringStream->readByte() == 0 && stringStream->readByte() == '*' &&
 											   stringStream->readByte() == 0 && stringStream->pos() == stringStream->size();
@@ -1956,18 +2011,8 @@ bool ZoombiniText::findBytes(const Common::Array<byte> &data, const char *needle
 
 Common::U32String ZoombiniText::decodeExecutableStringBytes(const byte *bytes, uint32 length, const ZoombiniText::ExeTextSource &source) {
 	Common::CodePage decodeCodePage = source.codePage;
-	if (source.codePage == Common::kWindows949) {
-		uint32 extendedByteCount = 0;
-		for (uint32 byteIndex = 0; byteIndex < length; byteIndex++) {
-			if (0x80 <= bytes[byteIndex])
-				extendedByteCount += 1;
-		}
-
-		// If there is just one extended byte, the text is likely Windows-1252.
-		// Example: byte 0xD8 in the Broderbund QA credit line.
-		if (extendedByteCount <= 1)
-			decodeCodePage = Common::kWindows1252;
-	}
+	if (source.decodeWindows1252StrokeByteD8)
+		decodeCodePage = selectExeCodePage(bytes, length, source.codePage);
 
 	// The table stores a fixed byte span, not a NUL-terminated C string.
 	// Copy it to a temporary buffer and add a terminator only when the span does
@@ -1981,12 +2026,11 @@ Common::U32String ZoombiniText::decodeExecutableStringBytes(const byte *bytes, u
 	Common::U32String text(terminatedBytes, decodeCodePage);
 	delete[] terminatedBytes;
 	if (source.escapeMacRomanTrademarkByteAA) {
-		// Z1-20U stores TouchSense's U+2122 as byte 0xAA. The source is otherwise
-		// Windows-1252, where 0xAA decodes as U+00AA, so keep this as a narrow
-		// source-specific escape instead of decoding all v2.0 text as MacRoman.
-		for (uint32 byteIndex = 0; byteIndex < length && byteIndex < text.size(); byteIndex++) {
-			if (bytes[byteIndex] == 0xAA)
-				text.setChar(0x2122, byteIndex);
+		// TLC v2.0 US, Polish and US demo strings retain MacRoman 0xAA (™).
+		// Decode other bytes with the source's Windows-1252 or Windows-1250 code page.
+		for (uint32 byteIdx = 0; byteIdx < length && byteIdx < text.size(); byteIdx++) {
+			if (bytes[byteIdx] == 0xAA)
+				text.setChar(0x2122, byteIdx);
 		}
 	}
 
@@ -2183,7 +2227,7 @@ bool ZoombiniText::compareLocalizedStrings(const LocalizedString &left, const Lo
 	return left._key < right._key;
 }
 
-bool ZoombiniText::initArchiveStrings(uint32 creditEntryCount) {
+bool ZoombiniText::initArchiveStrings(const StringSources &sources) {
 	const Common::Path textStrMhkPath = Common::Path(_vm->getArchiveRoot()).append(ZMB_MHK_TEXTSTR);
 	MohawkArchive textStrArchive;
 	if (!textStrArchive.openFile(textStrMhkPath))
@@ -2210,12 +2254,12 @@ bool ZoombiniText::initArchiveStrings(uint32 creditEntryCount) {
 	}
 
 	Common::Array<CreditParagraph> archiveCredits;
-	if (creditEntryCount) {
+	if (sources.textStrCreditEntryCount) {
 		static constexpr int16 creditResourceIds[] = {2020, 2021};
 		Common::Array<Common::U32String> creditStrings;
 		for (uint resourceIndex = 0; resourceIndex < ARRAYSIZE(creditResourceIds); resourceIndex += 1) {
 			Common::Array<Common::U32String> resourceStrings;
-			if (!readTextStrStrings(textStrArchive, creditResourceIds[resourceIndex], _resCodePage, resourceStrings)) {
+			if (!readTextStrStrings(textStrArchive, creditResourceIds[resourceIndex], _resCodePage, resourceStrings, sources.decodeMacRomanUmlautByte9F)) {
 				warning("ZoombiniText: failed to load TEXTSTR.MHK credit STRL %d", creditResourceIds[resourceIndex]);
 				return false;
 			}
@@ -2224,7 +2268,7 @@ bool ZoombiniText::initArchiveStrings(uint32 creditEntryCount) {
 				creditStrings.push_back(text);
 		}
 
-		if (!buildCreditParagraphsFromStrings(creditStrings, archiveCredits, CreditSourceKind::kTextStrResourceSequence, creditEntryCount)) {
+		if (!buildCreditParagraphsFromStrings(creditStrings, archiveCredits, CreditSourceKind::kTextStrResourceSequence, sources.textStrCreditEntryCount)) {
 			warning("ZoombiniText: failed to build TEXTSTR.MHK credit paragraphs");
 			return false;
 		}
@@ -2237,7 +2281,7 @@ bool ZoombiniText::initArchiveStrings(uint32 creditEntryCount) {
 		if (entry.key != kNewGame)
 			_strMap[entry.key] = archiveStrings[entryIndex];
 	}
-	if (creditEntryCount)
+	if (sources.textStrCreditEntryCount)
 		_creditParagraphs = archiveCredits;
 
 	return true;
@@ -2245,6 +2289,8 @@ bool ZoombiniText::initArchiveStrings(uint32 creditEntryCount) {
 
 Common::CodePage ZoombiniText::getExeCodePage(Common::Language language) {
 	switch (language) {
+	case Common::JA_JPN:
+		return Common::kWindows932;
 	case Common::KO_KOR:
 		return Common::kWindows949;
 	case Common::PL_POL:
@@ -2257,6 +2303,8 @@ Common::CodePage ZoombiniText::getExeCodePage(Common::Language language) {
 const char *ZoombiniText::getCodePageName(Common::CodePage codePage) {
 	// FIXME: Move it to the ScummVM core?
 	switch (codePage) {
+	case Common::kWindows932:
+		return "CP932";
 	case Common::kWindows949:
 		return "CP949";
 	case Common::kWindows1250:
@@ -2276,52 +2324,62 @@ Common::CodePage ZoombiniText::getResCodePage(Common::Language language) {
 	case Common::FR_FRA:
 	case Common::DE_DEU:
 	case Common::IT_ITA:
-		// Europe TEXTSTR.MHK strings are encoded as MacRoman.
+		// European TEXTSTR.MHK strings are encoded as MacRoman.
 		return Common::kMacRoman;
+	case Common::JA_JPN:
+		return Common::kWindows932;
 	case Common::KO_KOR:
 		return Common::kWindows949;
 	case Common::PL_POL:
 		return Common::kWindows1250;
 	case Common::ES_ESP:
+	case Common::PT_PRT:
 	case Common::EN_USA:
 	default:
 		return Common::kWindows1252;
 	}
 }
 
-ZoombiniText::ZoombiniText(MohawkEngine_Zoombini *vm, Common::Language lang)
-	: _vm(vm), _lang(lang), _exeCodePage(getExeCodePage(lang)), _resCodePage(getResCodePage(lang)) {
+ZoombiniText::ZoombiniText(MohawkEngine_Zoombini *vm)
+	: _vm(vm), _relInfo(vm->getRelInfo()), _exeCodePage(getExeCodePage(_relInfo.getLanguage())), _resCodePage(getResCodePage(_relInfo.getLanguage())) {
 	initFonts();
 
-	const StringSources sources = createStringSources(_vm->getRelInfo());
+	const StringSources sources = createStringSources(_relInfo);
 	// Load the release-specific strings embedded in the game executable.
 	if (!initExecutableStrings(sources.executables)) {
 		error("ZoombiniText: the original executable is missing, malformed, or does not match this release");
 		return;
 	}
 
-	applyStringOverrides(_vm->getRelInfo());
+	applyStringOverrides(_relInfo);
 
 	// Load mapped strings after the generic fallback maps so archive text wins.
-	if (sources.textStrArchive && !initArchiveStrings(sources.textStrCreditEntryCount)) {
+	if (sources.textStrArchive && !initArchiveStrings(sources)) {
 		error("ZoombiniText: required TEXTSTR.MHK is missing or malformed");
 		return;
 	}
 }
 
 void ZoombiniText::initFonts() {
-	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	const Common::Language language = _relInfo.getLanguage();
 	static constexpr const char *kFontNameCornerstone = "CornerStone";
-	static constexpr const char *kFontNameGulimChe = "GulimChe";
-	static constexpr const char *kFontNameTahoma = "Tahoma";
+	static constexpr const char *kFontNameGulimChe = "GulimChe";  // for v1.11KR
+	static constexpr const char *kFontNameMsGothic = "MS Gothic"; // for v1.0JP
+	static constexpr const char *kFontNameTahoma = "Tahoma";      // for v2.0PL
+	// I18N: %s is a required file name or a list of alternative paths within the installer disk directory.
 	const Common::U32String srcInstTemplate = _("Please provide an installer disk directory containing: %s.");
 	Graphics::TTFSizeMode fontSizeMode;
-	if (relInfo.isFamily(ZmbReleaseInfo::kTlcV2) && _lang == Common::PL_POL)
+	if (_relInfo.isVariant(ZmbReleaseInfo::kTlcV20, Common::PL_POL))
 		fontSizeMode = Graphics::kTTFSizeModeCell;
 	else
 		fontSizeMode = Graphics::kTTFSizeModeCharacter;
 
 #if defined(WIN32)
+	// FIXME: Is loading required fonts from the Windows font archive acceptable in ScummVM?
+	// I18N: %s is a font file name; %S is the complete localized instruction for obtaining that font.
+	const Common::U32String systemFontWarnTemplate = _("ScummVM found required '%s' in the Windows font archive.\n"
+													   "This setup is not portable and not recommended.\n\n"
+													   "%S");
 	Common::String systemFontWarn;
 #endif
 	Common::String fontSrcInst;
@@ -2337,89 +2395,23 @@ void ZoombiniText::initFonts() {
 	// - 2.0 TLC: found in /INSTALL/HD/CORNER.TTF
 	//   * Polish release contains Tahoma in name of CORNER.TTF.
 	// - 2.0 TLC demo: found in /CORNER.TTF
-	if (relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) { // The Learning Company v2.0 release family
-		if (relInfo.isDemo(ZmbReleaseInfo::kTlcV20)) {
-			// I18N: %s is one or more paths that the installer directory must contain.
-			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-		} else if (_lang == Common::EN_USA) {
-			// I18N: %s is one or more paths that the installer directory must contain.
-			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/INSTALL/HD/CORNER.TTF'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new FileTTFLoader("INSTALL/HD/CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-		} else if (_lang == Common::PL_POL) {
-			// Polish Zoombini uses Tahoma, a font distributed with Windows.
-			// Strange enough, Tahoma is embedded in CD-ROM named as 'CORNER.TTF'.
-			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/INSTALL/HD/CORNER.TTF'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new FileTTFLoader("INSTALL/HD/CORNER.TTF", kFontNameTahoma, fontSrcInst, false, 0, fontSizeMode));
-			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameTahoma, fontSrcInst, false, 0, fontSizeMode));
-			_optimalTTFLoaders.push_back(new FileTTFLoader("tahoma.ttf", kFontNameTahoma, fontSrcInst, false, 0, fontSizeMode));
-#if defined(WIN32)
-			systemFontWarn = Common::U32String::format(
-								 _("ScummVM found required '%s' in the Windows font archive.\n"
-								   "This setup is not portable and not recommended.\n\n"
-								   "%S"),
-								 "tahoma.ttf", fontSrcInst.c_str())
-								 .encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new WinSysTTFLoader("tahoma.ttf", kFontNameTahoma, systemFontWarn, false, 0, fontSizeMode));
-#endif
-		} else {
-			error("ZoombiniText: unsupported language (%s) for The Learning Company v2.0 based release", Common::getLanguageDescription(_lang));
-			return;
-		}
-	} else if (relInfo.isFamily(ZmbReleaseInfo::kUsV1)) { // Broderbund v1.1 US release
-		if (_lang == Common::KO_KOR) {
-			// Korean Zoombini used GulimChe font named as 'gulim.ttc'.
-			// The font is distributed with Windows and is not included on the game CD.
-			// Users have to source the required font themselves!
-
-			// GulimChe combines vector TTF outlines with TBM bitmaps for common sizes.
-			// The original engine uses the 12-point TBM bitmap via GDI.
-			// FreeType cannot load a TBM bitmaps, so this path cannot be pixel-identical.
-
-			fontSrcInst = Common::U32String::format(srcInstTemplate, "'gulim.ttc'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new FileTTFLoader("gulim.ttc", kFontNameGulimChe, fontSrcInst, true, 1, fontSizeMode));
-#if defined(WIN32)
-			systemFontWarn = Common::U32String::format(
-								 _("ScummVM found required '%s' in the Windows font archive.\n"
-								   "This setup is not portable and not recommended.\n\n"
-								   "%S"),
-								 "gulim.ttc", fontSrcInst.c_str())
-								 .encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new WinSysTTFLoader("gulim.ttc", kFontNameGulimChe, systemFontWarn, true, 1, fontSizeMode));
-#endif
-			_textFont.point = 12;
-			_titleFont.point = 18;
-			_fallbackTTFLoaders.push_back(new FileTTFLoader("D2CodingBold.ttf", "D2Coding", true, 0, fontSizeMode));
-			// Without hinting, quality of Noto Sans KR rendering in low resolution is terrible.
-			// Thus, prefer light hinting for Noto Sans KR when RGB rendering is available.
-			// ZoombiniGraphics will utilize temporary 4bpp surface to acheive a best-effort hinting on CLUT8 surface.
-			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansKR-Bold.otf", "Noto Sans KR Bold", Graphics::kTTFRenderModeLight, fontSizeMode));
-			// TODO: Unifont support? The font is small while supporting every possible Unicode glyphs.
-		} else if (_lang == Common::EN_USA) {
-			if (relInfo.isDemo(ZmbReleaseInfo::kUsV11)) {
-				fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
-				_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-			} else {
-				fontSrcInst = Common::U32String::format(srcInstTemplate, "'/ZBARC32.Z', '/ZBARC16.Z', or '/SETUP/data1.cab'").encode(Common::kUtf8);
-				_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC32.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-				_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC16.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-				_optimalTTFLoaders.push_back(new ISCabTTFLoader("SETUP/data1.cab", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-				_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-			}
-		} else {
-			error("ZoombiniText: unsupported language (%s) for Broderbund v1.1 US-based release", Common::getLanguageDescription(_lang));
-			return;
-		}
-	} else if (relInfo.isFamily(ZmbReleaseInfo::kEuropeV1)) { // Europe v1.0, v1.1 releases
+	if (_relInfo.isFamily(ZmbReleaseInfo::kEuropeV1)) { // Europe v1.0, v1.1 releases and v1.0JP.
 		// English releases load CornerStone at 13/18 pt for text/title.
 		// French, German, and Italian branches use 13/16 pt for text/title.
 		// Portuguese v1.0 uses 10/14 pt for text/title.
-		if (relInfo.isVariant(ZmbReleaseInfo::kEsPtV10) && _lang == Common::PT_PRT) {
+		// Japanese v1.0 uses MS Gothic at 12/15 pt for text/title.
+		if (_relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::PT_PRT)) {
+			// FIXME: CornerStone's ascender is 904/1000 em, or 9.04 pixels at size 10.
+			// GDI rounds this to 9 pixels; FreeType rounds up to 10 and uses that ascent for cached glyph Y offsets.
+			// Both have an 11-pixel line height, but FreeType places the Portuguese glyph baseline one pixel lower.
+			// This font-metric difference remains a known issue; do not compensate with layout rectangles.
 			_textFont.point = 10;
 			_titleFont.point = 14;
+		} else if (_relInfo.isVariant(ZmbReleaseInfo::kJapanV10)) {
+			_textFont.point = 12;
+			_titleFont.point = 15;
 		} else {
-			switch (_lang) {
+			switch (language) {
 			case Common::FR_FRA:
 			case Common::DE_DEU:
 			case Common::IT_ITA:
@@ -2430,16 +2422,99 @@ void ZoombiniText::initFonts() {
 			}
 		}
 
-		if (relInfo.isVariant(ZmbReleaseInfo::kFranceV11_2002)) { // French 2002 v1.1 release
+		if (_relInfo.isVariant(ZmbReleaseInfo::kFranceV11_2002)) { // French 2002 v1.1 release
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/data1.cab'").encode(Common::kUtf8);
 			_optimalTTFLoaders.push_back(new ISCabTTFLoader("data1.cab", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
 			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+		} else if (_relInfo.isDemo(ZmbReleaseInfo::kJapanV10)) {
+			// Known issue: classic Osaka uses Mac Japanese character codes without a Unicode cmap.
+			// The shared TTF loader's 8-bit mapping cannot cover Japanese text; use macOS Osaka.ttf.
+			// Known issue: QuickDraw size selection and metrics remain unverified.
+			_optimalTTFLoaders.push_back(new FileTTFLoader("Osaka.ttf", "Osaka", false, 0, fontSizeMode));
+			// Prefer the Japanese Windows release's MS Gothic as a substitute.
+			_optimalTTFLoaders.push_back(new FileTTFLoader("msgothic.ttc", kFontNameMsGothic, false, 0, fontSizeMode));
+#if defined(WIN32)
+			systemFontWarn = Common::U32String::format(systemFontWarnTemplate, "msgothic.ttc", fontSrcInst.decode(Common::kUtf8).c_str()).encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", kFontNameMsGothic, systemFontWarn, false, 0, fontSizeMode));
+#endif
+			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", Graphics::kTTFRenderModeLight, fontSizeMode));
+		} else if (_relInfo.isVariant(ZmbReleaseInfo::kJapanV10)) { // v1.0JP
+			// Japanese Zoombini depends on 'MS Gothic' font named as 'msgothic.ttc'.
+			// The font is distributed with Windows and is not included on the game CD.
+			// Users have to source the required font themselves!
+			fontSrcInst = Common::U32String::format(srcInstTemplate, "'msgothic.ttc'").encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new FileTTFLoader("msgothic.ttc", kFontNameMsGothic, fontSrcInst, false, 0, fontSizeMode));
+#if defined(WIN32)
+			systemFontWarn = Common::U32String::format(systemFontWarnTemplate, "msgothic.ttc", fontSrcInst.decode(Common::kUtf8).c_str()).encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", kFontNameMsGothic, systemFontWarn, false, 0, fontSizeMode));
+#endif
+			// Without hinting, quality of Noto Sans rendering in low resolution is terrible.
+			// Thus, prefer light hinting for Noto Sans when RGB rendering is available.
+			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", Graphics::kTTFRenderModeLight, fontSizeMode));
 		} else {
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
 			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
 		}
+	} else if (_relInfo.isFamily(ZmbReleaseInfo::kUsV1)) { // Broderbund v1.1 US release
+		if (language == Common::EN_USA) {
+			if (_relInfo.isDemo(ZmbReleaseInfo::kUsV11)) { // v1.1US Demo
+				fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
+				_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			} else { // Retail releases
+				fontSrcInst = Common::U32String::format(srcInstTemplate, "'/ZBARC32.Z', '/ZBARC16.Z', or '/SETUP/data1.cab'").encode(Common::kUtf8);
+				_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC32.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+				_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC16.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+				_optimalTTFLoaders.push_back(new ISCabTTFLoader("SETUP/data1.cab", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+				_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			}
+		} else if (language == Common::KO_KOR) {
+			// Korean Zoombini depends on GulimChe font named as 'gulim.ttc'.
+			// The font is distributed with Windows and is not included on the game CD.
+			// Users have to source the required font themselves!
+
+			// FreeType loads TrueType scaler bitmaps (sbits) from gulim.ttc's EBDT/EBLC tables.
+			// It uses the matching strike (the bitmap set for a given size) when available.
+			fontSrcInst = Common::U32String::format(srcInstTemplate, "'gulim.ttc'").encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new FileTTFLoader("gulim.ttc", kFontNameGulimChe, fontSrcInst, true, 1, fontSizeMode));
+#if defined(WIN32)
+			systemFontWarn = Common::U32String::format(systemFontWarnTemplate, "gulim.ttc", fontSrcInst.decode(Common::kUtf8).c_str()).encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new WinSysTTFLoader("gulim.ttc", kFontNameGulimChe, systemFontWarn, true, 1, fontSizeMode));
+#endif
+			_textFont.point = 12;
+			_titleFont.point = 18;
+			// Without hinting, quality of Noto Sans rendering in low resolution is terrible.
+			// Thus, prefer light hinting for Noto Sans when RGB rendering is available.
+			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansKR-Bold.otf", "Noto Sans KR Bold", Graphics::kTTFRenderModeLight, fontSizeMode));
+			// TODO: Unifont support? The font is small while supporting every possible Unicode glyphs.
+		} else {
+			error("ZoombiniText: unsupported language (%s) for Broderbund v1.1 US-based release", Common::getLanguageDescription(language));
+			return;
+		}
+	} else if (_relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) { // The Learning Company v2.0 release family
+		if (_relInfo.isDemo(ZmbReleaseInfo::kTlcV20)) {
+			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+		} else if (language == Common::EN_USA) {
+			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/INSTALL/HD/CORNER.TTF'").encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new FileTTFLoader("INSTALL/HD/CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+		} else if (language == Common::PL_POL) {
+			// Polish Zoombini uses Tahoma, a font distributed with Windows.
+			// Strange enough, Tahoma is embedded in CD-ROM named as 'CORNER.TTF'.
+			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/INSTALL/HD/CORNER.TTF'").encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new FileTTFLoader("INSTALL/HD/CORNER.TTF", kFontNameTahoma, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameTahoma, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("tahoma.ttf", kFontNameTahoma, fontSrcInst, false, 0, fontSizeMode));
+#if defined(WIN32)
+			systemFontWarn = Common::U32String::format(systemFontWarnTemplate, "tahoma.ttf", fontSrcInst.decode(Common::kUtf8).c_str()).encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new WinSysTTFLoader("tahoma.ttf", kFontNameTahoma, systemFontWarn, false, 0, fontSizeMode));
+#endif
+		} else {
+			error("ZoombiniText: unsupported language (%s) for The Learning Company v2.0 based release", Common::getLanguageDescription(language));
+			return;
+		}
 	} else {
-		error("ZoombiniText: unsupported release (%s, %s)", Common::getLanguageDescription(_lang), _vm->_gameDescription->desc.extra);
+		error("ZoombiniText: unsupported release (%s, %s)", Common::getLanguageDescription(language), _vm->_gameDescription->desc.extra);
 		return;
 	}
 
@@ -2470,6 +2545,7 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 	static constexpr uint32 kV10EUExeSize = 934416;
 	static constexpr uint32 kV10BRDemoExeSize = 932368;
 	static constexpr uint32 kV10ITExeSize = 935952;
+	static constexpr uint32 kV10JPExeSize = 1273147;
 	static constexpr uint32 kV10ESExeSize = 634400;
 	static constexpr uint32 kV10PTExeSize = 635424;
 	static constexpr uint32 kV11EUExeSize = 934928;
@@ -2486,18 +2562,32 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 	const Common::Language language = relInfo.getLanguage();
 	if (relInfo.isFamily(ZmbReleaseInfo::kEuropeV1)) {
 		sources.textStrArchive = !relInfo.isVariant(ZmbReleaseInfo::kEsPtV10);
-		// v1.0IT and v1.0BR Demo store complete credits in TEXTSTR.MHK.
-		if (relInfo.isDemo(ZmbReleaseInfo::kEuropeV10))
-			sources.textStrCreditEntryCount = kV10BRDemoCreditEntryCount;
-		else if (relInfo.isVariant(ZmbReleaseInfo::kEuropeV10, Common::IT_ITA))
-			sources.textStrCreditEntryCount = kV10ITCreditEntryCount;
+		// These releases concatenate STRL 2020/2021, including blanks and the final '*' marker.
+		if (relInfo.isVariant(ZmbReleaseInfo::kEuropeV10) || relInfo.isVariant(ZmbReleaseInfo::kEuropeV11) ||
+			relInfo.isVariant(ZmbReleaseInfo::kFranceV11_2002)) {
+			switch (language) {
+			case Common::EN_GRB:
+				sources.textStrCreditEntryCount = kEuropeBRCreditEntryCount;
+				break;
+			case Common::FR_FRA:
+				sources.textStrCreditEntryCount = kEuropeFRCreditEntryCount;
+				break;
+			case Common::DE_DEU:
+				sources.textStrCreditEntryCount = kEuropeGECreditEntryCount;
+				break;
+			case Common::IT_ITA:
+				sources.textStrCreditEntryCount = kEuropeITCreditEntryCount;
+				break;
+			default:
+				break;
+			}
+		}
 
-		if (relInfo.isDemo(ZmbReleaseInfo::kEuropeV10)) {
+		if (relInfo.isDemo(ZmbReleaseInfo::kEuropeV10)) { // v1.0BR Demo
 			const ExeTextSource source = ExeTextSource()
 											 .withTextTable(Common::kWindows1252, kV10BRDemo_NETextEntries)
 											 .withRequiredBytes(0xD72C8, "New Game");
-			sources.executables = {
-				source.inFile("ZOOMBINI.EXE", kV10BRDemoExeSize)};
+			sources.executables = {source.inFile("ZOOMBINI.EXE", kV10BRDemoExeSize)};
 		} else if (relInfo.isVariant(ZmbReleaseInfo::kEuropeV10)) {
 			ExeTextSource source;
 			uint32 executableSize = kV10EUExeSize;
@@ -2529,34 +2619,6 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 			sources.executables = {
 				source.inFile("ZOOMBINI.EXE", executableSize),
 				source.inFile("ZOOMBINI._EX", executableSize)};
-		} else if (relInfo.isVariant(ZmbReleaseInfo::kEsPtV10)) {
-			switch (language) {
-			case Common::ES_ESP: {
-				const ExeTextSource source = ExeTextSource()
-												 .withTextTable(Common::kWindows1252, kV10ES_PETextEntries)
-												 .withRequiredBytes(0x888EA, "Nueva Partida")
-												 .withTextPatches(&ZoombiniText::patchSpanish10ExeText)
-												 .withCreditAnchor(kExeSpanishCreditParagraphsAnchor)
-												 .withCreditLimits(kV10ESCreditLimits);
-				sources.executables = {
-					source.inFile("ZOOMBI32._EX", kV10ESExeSize),
-					source.inFile("ZOOMBI32.EXE", kV10ESExeSize)};
-				break;
-			}
-			case Common::PT_PRT: {
-				const ExeTextSource source = ExeTextSource()
-												 .withTextTable(Common::kWindows1252, kV10PT_PETextEntries)
-												 .withRequiredBytes(0x888EA, "Novo Jogo")
-												 .withCreditAnchor(kExePortugueseCreditParagraphsAnchor)
-												 .withCreditLimits(kV10PTCreditLimits);
-				sources.executables = {
-					source.inArchiveMember("ZBARCHIV.Z", "zoombi32.exe", kV10PTExeSize),
-					source.inFile("zoombi32.exe", kV10PTExeSize)};
-				break;
-			}
-			default:
-				return sources;
-			}
 		} else if (relInfo.isVariant(ZmbReleaseInfo::kEuropeV11)) {
 			ExeTextSource source;
 			switch (language) {
@@ -2585,6 +2647,50 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 											 .withRequiredBytes(883901, "Nouvelle Partie");
 			sources.executables = {
 				source.inCabinetMember("data1.cab", "ZOOMBINI.EXE", kV11EUExeSize)};
+		} else if (relInfo.isVariant(ZmbReleaseInfo::kEsPtV10)) {
+			switch (language) {
+			case Common::ES_ESP: {
+				const ExeTextSource source = ExeTextSource()
+												 .withTextTable(Common::kWindows1252, kV10ES_PETextEntries)
+												 .withRequiredBytes(0x888EA, "Nueva Partida")
+												 .withTextPatches(&ZoombiniText::patchSpanish10ExeText)
+												 .withCreditAnchor(kExeSpanishCreditParagraphsAnchor)
+												 .withCreditLimits(kV10ESCreditLimits);
+				sources.executables = {
+					source.inFile("ZOOMBI32._EX", kV10ESExeSize),
+					source.inFile("ZOOMBI32.EXE", kV10ESExeSize)};
+				break;
+			}
+			case Common::PT_PRT: {
+				const ExeTextSource source = ExeTextSource()
+												 .withTextTable(Common::kWindows1252, kV10PT_PETextEntries)
+												 .withRequiredBytes(0x888EA, "Novo Jogo")
+												 .withCreditAnchor(kExePortugueseCreditParagraphsAnchor)
+												 .withCreditLimits(kV10PTCreditLimits);
+				sources.executables = {
+					source.inArchiveMember("ZBARCHIV.Z", "zoombi32.exe", kV10PTExeSize),
+					source.inFile("zoombi32.exe", kV10PTExeSize)};
+				break;
+			}
+			default:
+				return sources;
+			}
+		} else if (relInfo.isVariant(ZmbReleaseInfo::kJapanV10)) {
+			sources.textStrCreditEntryCount = kEuropeJPCreditEntryCount;
+			sources.decodeMacRomanUmlautByte9F = true;
+			if (relInfo.isDemo()) {
+				const ExeTextSource source = ExeTextSource()
+												 .withTextTable(Common::kWindows932, kV10JPMacDemoTextEntries)
+												 .withRequiredBytes(150070, "Osaka");
+				sources.executables = {source.inFile("Zoombini", 722944)};
+				return sources;
+			}
+			const ExeTextSource source = ExeTextSource()
+											 .withTextTable(Common::kWindows932, kV10JP_PETextEntries)
+											 .withRequiredBytes(0x88427, "Japanese");
+			sources.executables = {
+				source.inArchiveMember("ZBARCHIV.Z", "zoombi32.exe", kV10JPExeSize),
+				source.inFile("zoombi32.exe", kV10JPExeSize)};
 		}
 	} else if (relInfo.isFamily(ZmbReleaseInfo::kUsV1)) {
 		if (language == Common::EN_USA && relInfo.isDemo(ZmbReleaseInfo::kUsV11)) {
@@ -2614,11 +2720,13 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 		} else if (language == Common::KO_KOR) {
 			const ExeTextSource peSource = ExeTextSource()
 											   .withTextTable(Common::kWindows949, kV111KR_PETextEntries)
+											   .withWindows1252StrokeByteD8Decode()
 											   .withCreditLinePatches(&ZoombiniText::patchKoreanExeCredits)
 											   .withCreditAnchor(kExeCreditParagraphsAnchor)
 											   .withCreditLimits(kV111KRCreditLimits);
 			const ExeTextSource neSource = ExeTextSource()
 											   .withTextTable(Common::kWindows949, kV111KR_NETextEntries)
+											   .withWindows1252StrokeByteD8Decode()
 											   .withCreditLinePatches(&ZoombiniText::patchKoreanExeCredits)
 											   .withCreditAnchor(kExeCreditParagraphsAnchor)
 											   .withCreditLimits(kV111KRCreditLimits);
@@ -2633,13 +2741,17 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 			const ExeTextSource source = ExeTextSource()
 											 .withTextTable(Common::kWindows1252, kV20USDemo_PETextEntries)
 											 .withRequiredBytes(0x909B8, "NEW GAME")
-											 .withMacRomanTrademarkByteAAEscape();
+											 .withMacRomanTrademarkByteAAEscape()
+											 .withCreditPtrTable(0x8F09C, 0x400000, 0)
+											 .withCreditPtrBlankAddress(0x4A180C)
+											 .withCreditLimits(kV20USCreditLimits);
 			sources.executables = {
 				source.inFile("Zoom.exe", kV20USDemoExeSize)};
 		} else if (language == Common::PL_POL) {
 			const ExeTextSource source = ExeTextSource()
 											 .withTextTable(Common::kWindows1250, kV20PL_PETextEntries)
 											 .withRequiredBytes(0xC9AF4, "Bez nazwy")
+											 .withMacRomanTrademarkByteAAEscape()
 											 .withCreditPtrTable(0xCA190, 0x413000, 21)
 											 .withCreditPtrBlankAddressRange(0x4DD234, 0x4DD3F4)
 											 .withCreditLimits(kV20PLCreditLimits);
@@ -2840,11 +2952,14 @@ bool ZoombiniText::fontUsesAntialiasing(ZoombiniFontUsage fontUsage) const {
 }
 
 const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgBox) {
-	if (_optimalTTFLoaders.empty() || !_optimalTTFLoaders.front()) {
+	const bool isJapaneseMacDemo = _relInfo.isDemo(ZmbReleaseInfo::kJapanV10);
+	TTFLoader *firstOptimalLoader = nullptr;
+	if (!_optimalTTFLoaders.empty())
+		firstOptimalLoader = _optimalTTFLoaders.front();
+	if (!firstOptimalLoader) {
 		error("ZoombiniText: no primary font loader is configured");
 		return nullptr;
 	}
-	TTFLoader *firstOptimalLoader = _optimalTTFLoaders.front();
 	for (TTFLoader *loader : _optimalTTFLoaders) {
 		const Graphics::Font *font = loader->loadFont(state.point);
 		if (!font)
@@ -2855,30 +2970,49 @@ const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgB
 		return font;
 	}
 
-	// Look up fallback fonts when the optimal font is unavailable.
-	Common::U32String noFontMsg = Common::U32String::format(_("Zoombini (%s, %s) requires the font '%s' to display text correctly, but ScummVM cannot access it."),
-															Common::getLanguageDescription(_lang), _vm->_gameDescription->desc.extra,
-															firstOptimalLoader->_filePath.baseName().c_str());
-	noFontMsg += U"\n\n";
-	// I18N: %s is the file name of the required font.
-	noFontMsg += Common::U32String::format(_("Copy the required font '%s' into ScummVM's extras directory, or into the game directory."), firstOptimalLoader->_filePath.baseName().c_str());
-	if (_lang == Common::KO_KOR && _vm->getRelInfo().isFamily(ZmbReleaseInfo::kUsV1)) {
+	Common::U32String noFontMsg;
+	if (isJapaneseMacDemo) {
+		// I18N: Osaka and MS Gothic are font names; 'Osaka.ttf' and 'msgothic.ttc' are literal file names.
+		noFontMsg = _("The Japanese Macintosh demo requires 'Osaka.ttf' from modern macOS.\n\n"
+					  "Copy 'Osaka.ttf' into ScummVM's extras directory or the game directory.\n"
+					  "Classic Macintosh Osaka fonts are not supported yet.\n"
+					  "MS Gothic ('msgothic.ttc') from Windows is the preferred substitute.");
+	} else {
+		// I18N: The three %s placeholders are the game language, release label (e.g. v1.11KR), and required font file name, in that order.
+		noFontMsg = Common::U32String::format(_("Zoombini (%s, %s) requires the font '%s' to display text correctly, but ScummVM cannot access it."),
+											  Common::getLanguageDescription(_relInfo.getLanguage()), _vm->_gameDescription->desc.extra,
+											  firstOptimalLoader->_filePath.baseName().c_str());
+		noFontMsg += U"\n\n";
+		// I18N: %s is the file name of the required font.
+		noFontMsg += Common::U32String::format(_("Copy the required font '%s' into ScummVM's extras directory, or into the game directory."), firstOptimalLoader->_filePath.baseName().c_str());
+	}
+	if (_relInfo.isVariant(ZmbReleaseInfo::kUsV11, Common::KO_KOR)) {
 		noFontMsg += U"\n";
+		// I18N: 'GulimChe' is a font name; 'gulim.ttc' is a literal file name and must not be translated.
 		noFontMsg += _("The Korean release requires the GulimChe ('gulim.ttc') font from the Windows font archive.");
+	} else if (_relInfo.isVariant(ZmbReleaseInfo::kJapanV10) && !_relInfo.isDemo()) {
+		noFontMsg += U"\n";
+		// I18N: 'MS Gothic' is a font name; 'msgothic.ttc' is a literal file name and must not be translated.
+		noFontMsg += _("The Japanese release requires the MS Gothic ('msgothic.ttc') font from the Windows font archive.");
 	}
 
+	const char *primaryFontSourceInstruction = firstOptimalLoader->_srcInst.c_str();
+
+	// Look up fallback fonts when the optimal font is unavailable.
 	for (TTFLoader *loader : _fallbackTTFLoaders) {
 		const Graphics::Font *font = loader->loadFont(state.point);
 		if (!font)
 			continue;
 
 		if (showWarnMsgBox) {
-			const char *srcInst = firstOptimalLoader->_srcInst.c_str();
+			const char *srcInst = primaryFontSourceInstruction;
 			if (srcInst[0] == '\0')
 				srcInst = loader->_srcInst.c_str();
 
 			Common::U32String fontSourceInstruction = Common::String(srcInst).decode(Common::kUtf8);
-			Common::U32String warnMsg = Common::U32String::format(_("%S\nScummVM will use the fallback font '%s' instead. Text layout may be incorrect.\n\n%S"),
+			// I18N: The first %S is the complete localized missing-font message; %s is the fallback font file name.
+			// The final %S is the complete localized instruction for obtaining the required font.
+			Common::U32String warnMsg = Common::U32String::format(_("%S\nScummVM will use the fallback font '%s' instead.\nText layout may be incorrect.\n\n%S"),
 																  noFontMsg.c_str(), loader->_filePath.baseName().c_str(), fontSourceInstruction.c_str());
 			warning("%s", warnMsg.encode(Common::kUtf8).c_str());
 			GUI::MessageDialog dialog(warnMsg);
@@ -2890,7 +3024,7 @@ const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgB
 		return font;
 	}
 
-	error("ZoombiniText: failed to load required font\n\n%s\n\n%s", noFontMsg.encode(Common::kUtf8).c_str(), firstOptimalLoader->_srcInst.c_str());
+	error("ZoombiniText: failed to load required font\n\n%s\n\n%s", noFontMsg.encode(Common::kUtf8).c_str(), primaryFontSourceInstruction);
 	return nullptr;
 }
 
@@ -2937,8 +3071,9 @@ bool ZoombiniText::getStrl(Common::Array<Common::U32String> &outStrs, ZmbResourc
 
 	Common::Array<Common::U32String> parsedStrs;
 	if (resource._archiveKind == ZmbResource::kSystem && resource._id == ZoombiniPage::kSysResStrl2900_HelpPickerUpdate && subStrCount == 1 &&
-		stringStream->size() == 1 && _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && _lang == Common::PL_POL) {
-		// The Polish v2.0 update entry is an authored one-byte placeholder for one empty string.
+		stringStream->size() == 1 && _relInfo.isVariant(ZmbReleaseInfo::kTlcV20, Common::PL_POL)) {
+		// Polish v2.0 STRL s:2900 (Picker update help) contains only the count byte (01), with no string or NUL terminator.
+		// Treat this specific resource as one empty string.
 		parsedStrs.push_back(Common::U32String());
 		delete stringStream;
 		outStrs = parsedStrs;
@@ -2966,36 +3101,24 @@ bool ZoombiniText::getStrl(Common::U32String &outStr, ZmbResource resource, uint
 	return true;
 }
 
-Common::U32String ZoombiniText::getZoombiniName(int16 snoidId) {
-	// @p snoidId ranges from 0 through 624.
-	if (snoidId < 0 || 625 <= snoidId) {
-		error("ZoombiniText: invalid SnoidID(%d); expected a value between 0 and 624", snoidId);
-		return Common::U32String();
-	}
+Common::U32String ZoombiniText::pickNextZoombiniName() {
+	return pickNextZoombiniName(kJPFixedNameNone);
+}
 
-	Common::HashMap<int16, Common::U32String>::iterator it = _nameCache.find(snoidId);
-	if (it != _nameCache.end())
-		return it->_value;
+Common::U32String ZoombiniText::pickNextZoombiniName(JPFixedNameKind jpFixedName) {
+	if (_relInfo.isVariant(ZmbReleaseInfo::kJapanV10) && _useJapaneseNames)
+		return generateJapaneseZoombiniName(jpFixedName);
 
-	// Each STRL resource stores up to 100 names; 30000-30006 cover IDs 0-624.
-	int16 nameResId = static_cast<int16>(snoidId / 100 + ZoombiniPage::kSysResStrl30000_ZoombiniNames); // 30000 ~ 30006
-	uint nameStrId = static_cast<uint>(snoidId % 100);
-
-	Common::Array<Common::U32String> zmbNames;
-	if (!getStrl(zmbNames, ZmbResource(ZmbResource::kSystem, nameResId)) || zmbNames.size() <= nameStrId) {
-		error("ZoombiniText: cannot get name of SnoidID(%d)", snoidId);
-		return Common::U32String();
-	}
-
-	int16 baseKey = snoidId - (snoidId % 100);
-	for (uint i = 0; i < zmbNames.size(); i++)
-		_nameCache[baseKey + i] = zmbNames[i];
-
-	return zmbNames[nameStrId];
+	// Only v1.11KR release has the STRL name pool.
+	// Use resource presence rather than a version check so the fallback remains capability-based.
+	if (_vm->hasResource(ID_STRL, ZmbResource(ZmbResource::kSystem, ZoombiniPage::kSysResStrl30000_ZoombiniNames)))
+		return getKoreanZoombiniName();
+	else
+		return generateLatinZoombiniName();
 }
 
 /**
- * Procedural Zoombini name generation tables.
+ * Generate a Latin Zoombini name from the original syllable tables.
  *
  * Releases without STRL 30000-30006 generate names from these syllable tables.
  *
@@ -3008,91 +3131,91 @@ Common::U32String ZoombiniText::getZoombiniName(int16 snoidId) {
  *   - Name length: random [4, 8].
  */
 
-// 31 entries, 2 bytes each.  When the 2nd byte is a space (0x20),
-// only the 1st byte is emitted (weighted single vowel).
-static constexpr char kVowelPairs[] =
-	"a a a "   // a x3
-	"e e e e " // e x4
-	"i i i "   // i x3
-	"o o o "   // o x3
-	"u u "     // u x2
-	"y "       // y x1
-	"ee"
-	"oo"
-	"yo"
-	"ya"
-	"ye"
-	"ei"
-	"ie"
-	"ai"
-	"ia"
-	"au"
-	"ua"
-	"uo"
-	"ou"
-	"ae"
-	"ea";
+Common::U32String ZoombiniText::generateLatinZoombiniName() {
+	// 31 entries, 2 bytes each.  When the 2nd byte is a space (0x20),
+	// only the 1st byte is emitted (weighted single vowel).
+	static constexpr char kVowelPairs[] =
+		"a a a "   // a x3
+		"e e e e " // e x4
+		"i i i "   // i x3
+		"o o o "   // o x3
+		"u u "     // u x2
+		"y "       // y x1
+		"ee"
+		"oo"
+		"yo"
+		"ya"
+		"ye"
+		"ei"
+		"ie"
+		"ai"
+		"ia"
+		"au"
+		"ua"
+		"uo"
+		"ou"
+		"ae"
+		"ea";
 
-// 32 weighted single consonants (some appear multiple times).
-static constexpr char kSingleConsonants[] = "bbccdddfghjkkllmmnnprrssssttvwxz";
+	// 32 weighted single consonants (some appear multiple times).
+	static constexpr char kSingleConsonants[] = "bbccdddfghjkkllmmnnprrssssttvwxz";
 
-// 6 simple vowels, used to replace a trailing consonant blend.
-static constexpr char kSimpleVowels[] = "aeiouy";
+	// 6 simple vowels, used to replace a trailing consonant blend.
+	static constexpr char kSimpleVowels[] = "aeiouy";
 
-// 40 consonant blends, 2 bytes each.
-static constexpr char kConsonantBlends[] =
-	"bl"
-	"br"
-	"ch"
-	"cl"
-	"cr"
-	"dr"
-	"dw"
-	"fl"
-	"fr"
-	"gh"
-	"gl"
-	"gr"
-	"kl"
-	"kn"
-	"kr"
-	"kw"
-	"ld"
-	"mp"
-	"nd"
-	"nh"
-	"nn"
-	"ph"
-	"pl"
-	"pr"
-	"qu"
-	"qu"
-	"rh"
-	"rn"
-	"sc"
-	"sl"
-	"sm"
-	"sn"
-	"sp"
-	"sr"
-	"st"
-	"sw"
-	"th"
-	"tr"
-	"tw"
-	"wr";
+	// 40 consonant blends, 2 bytes each.
+	static constexpr char kConsonantBlends[] =
+		"bl"
+		"br"
+		"ch"
+		"cl"
+		"cr"
+		"dr"
+		"dw"
+		"fl"
+		"fr"
+		"gh"
+		"gl"
+		"gr"
+		"kl"
+		"kn"
+		"kr"
+		"kw"
+		"ld"
+		"mp"
+		"nd"
+		"nh"
+		"nn"
+		"ph"
+		"pl"
+		"pr"
+		"qu"
+		"qu"
+		"rh"
+		"rn"
+		"sc"
+		"sl"
+		"sm"
+		"sn"
+		"sp"
+		"sr"
+		"st"
+		"sw"
+		"th"
+		"tr"
+		"tw"
+		"wr";
 
-static constexpr int kNumVowelPairs = 31;
-static constexpr int kNumSingleConsonants = 32;
-static constexpr int kNumSimpleVowels = 6;
-static constexpr int kNumConsonantBlends = 40;
-static constexpr int kMaxNameLen = 10;
+	static constexpr int kNumVowelPairs = 31;
+	static constexpr int kNumSingleConsonants = 32;
+	static constexpr int kNumSimpleVowels = 6;
+	static constexpr int kNumConsonantBlends = 40;
+	static constexpr int kMaxNameLen = 10;
 
-Common::U32String ZoombiniText::generateRandomName() {
 	char buf[kMaxNameLen];
 	memset(buf, 0, sizeof(buf));
 
-	// Choose a name length from 4 through 8, bounded by @ref ZoombiniText::kMaxNameLen.
+	// Choose a name length from 4 through 8, bounded by kMaxNameLen.
 	int16 nameLen = _vm->_rnd->getRandomNumber(4, kMaxNameLen - 2);
 	int pos = 0;
 
@@ -3146,12 +3269,7 @@ Common::U32String ZoombiniText::generateRandomName() {
 	return Common::U32String(buf, Common::kASCII);
 }
 
-Common::U32String ZoombiniText::pickNextZoombiniName() {
-	// Only v1.11KR release has the STRL name pool.
-	// Use resource presence rather than a version check so the fallback remains capability-based.
-	if (!_vm->hasResource(ID_STRL, ZmbResource(ZmbResource::kSystem, ZoombiniPage::kSysResStrl30000_ZoombiniNames)))
-		return generateRandomName();
-
+Common::U32String ZoombiniText::getKoreanZoombiniName() {
 	// Track drawn IDs for one complete cycle, independently of names assigned to saved Zoombinis.
 	byte *drawnFlags = _vm->_state->_nameIdDrawnFlags;
 
@@ -3171,7 +3289,85 @@ Common::U32String ZoombiniText::pickNextZoombiniName() {
 	} while (drawnFlags[nameId]);
 	drawnFlags[nameId] = 1;
 
-	return getZoombiniName(nameId);
+	Common::HashMap<int16, Common::U32String>::iterator it = _nameCache.find(nameId);
+	if (it != _nameCache.end())
+		return it->_value;
+
+	// Each STRL resource stores up to 100 names; 30000-30006 cover IDs 0-624.
+	int16 nameResId = static_cast<int16>(nameId / 100 + ZoombiniPage::kSysResStrl30000_ZoombiniNames); // 30000 ~ 30006
+	uint nameStrId = static_cast<uint>(nameId % 100);
+
+	Common::Array<Common::U32String> zmbNames;
+	if (!getStrl(zmbNames, ZmbResource(ZmbResource::kSystem, nameResId)) || zmbNames.size() <= nameStrId) {
+		error("ZoombiniText: cannot get Korean Zoombini name for ID %d", nameId);
+		return Common::U32String();
+	}
+
+	int16 baseKey = nameId - (nameId % 100);
+	for (uint i = 0; i < zmbNames.size(); i++)
+		_nameCache[baseKey + i] = zmbNames[i];
+
+	return zmbNames[nameStrId];
+}
+
+Common::U32String ZoombiniText::generateJapaneseZoombiniName(JPFixedNameKind jpFixedName) {
+	if (jpFixedName == kJPFixedJPNameChobi)
+		return Common::U32String(U"チョビ"); // "Chobi", a Japanese nickname suggesting "little one".
+
+	if (jpFixedName == kJPFixedJPNameFumiaki)
+		return Common::U32String(U"史昭"); // Likely a kanji-name test using localizer Fumiaki Utsunomiya's name.
+
+	static constexpr char32_t kInitialKana[] = U"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾜ";
+	static constexpr char32_t kNormalKana[] = U"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾜﾝ";
+	static constexpr char32_t kSemiVoicedKana[] = U"ﾊﾋﾌﾍﾎ";
+	static constexpr char32_t kVoicedKana[] = U"ｶｷｸｹｺｻｼｽｾｿﾀﾃﾄﾊﾋﾌﾍﾎ";
+	static constexpr char32_t kContractedKana[] = U"ｷｼﾁﾆﾋﾐ";
+	static constexpr char32_t kSmallKana[] = U"ｬｭｮ";
+	char32_t name[8] = {};
+	const int16 targetLength = 6 - _vm->_rnd->getRandomNumber(0, 3);
+	bool previousContractedKana = false;
+	bool previousLongVowel = false;
+	int pos;
+	// The inclusive bound ARRAYSIZE(table) - 2 excludes the terminating NUL from all kana tables except kSmallKana.
+	for (pos = 0; pos < targetLength; pos++) {
+		if (pos == 0) {
+			name[pos] = kInitialKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kInitialKana) - 2)];
+			continue;
+		}
+		const int16 roll = _vm->_rnd->getRandomNumber(0, 100);
+		if (90 < roll) {
+			name[pos] = kSemiVoicedKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kSemiVoicedKana) - 2)];
+			if (pos < targetLength) {
+				pos += 1;
+				name[pos] = U'ﾟ';
+			}
+		} else if (80 < roll) {
+			name[pos] = kVoicedKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kVoicedKana) - 2)];
+			if (pos < targetLength) {
+				pos += 1;
+				name[pos] = U'ﾞ';
+			}
+		} else if (60 < roll && !previousLongVowel) {
+			name[pos] = U'ｰ';
+			previousLongVowel = true;
+			continue;
+		} else if (40 < roll && roll <= 60 && !previousContractedKana) {
+			previousContractedKana = true;
+			name[pos] = kContractedKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kContractedKana) - 2)];
+			if (pos < targetLength) {
+				pos += 1;
+				// The inclusive bound ARRAYSIZE(kSmallKana) - 1 includes NUL, preserving the original early-termination choice.
+				name[pos] = kSmallKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kSmallKana) - 1)];
+			}
+			continue;
+		} else {
+			name[pos] = kNormalKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kNormalKana) - 2)];
+		}
+		previousContractedKana = false;
+		previousLongVowel = false;
+	}
+	name[pos] = 0;
+	return Common::U32String(name);
 }
 
 Common::U32String ZoombiniText::getPageName(ZoombiniPageType pageType) const {

@@ -435,6 +435,8 @@ public:
 	Common::String getArchiveRoot() const { return _mhkArchiveRoot; }
 	/** Return whether a ScummVM engine feature is supported. */
 	bool hasFeature(EngineFeature f) const override;
+	/** Release page-held input when a ScummVM dialog or debugger pauses the engine. */
+	void pauseEngineIntern(bool pause) override;
 	/** Synchronize mixer and MIDI settings with ScummVM volumes and Zoombini audio gates. */
 	void syncSoundSettings() override;
 	/** Apply engine settings that affect the active Zoombini services. */

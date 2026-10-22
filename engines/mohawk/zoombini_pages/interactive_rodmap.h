@@ -114,8 +114,8 @@ protected:
 	void clearHoveredPage(bool reloadPageIcons);
 	/** Return whether the route-map entry at the given index can be selected. */
 	bool isPageHoverable(uint32 pageIndex);
-	/** Return the fixed practice level for a v1.1 demo page, or zero when the page is unavailable. */
-	static uint16 getV11DemoPracticeLevel(ZoombiniPageType pageType);
+	/** Return the fixed practice level for a demo-map page, or zero when the page is unavailable. */
+	static uint16 getDemoPracticeLevel(ZoombiniPageType pageType);
 	/** Return whether practice mode may leave the map through the page type. */
 	bool isPracticeExitAvailable(ZoombiniPageType pageType) const;
 	/** Read the completed difficulty for a page from a saved state. */
@@ -256,22 +256,15 @@ protected:
 	ZoombiniPageType _lastHoveredPageType = ZoombiniPageType::kNone;
 
 	/**
-	 * Immutable layout rectangles are instance members because Common::Rect
+	 * Baseline layout rectangles are instance members because Common::Rect
 	 * requires runtime construction and ScummVM prohibits global C++ constructors.
 	 */
-	/** Screen rectangles for the four journey route labels. */
-	const Common::Rect _routeNameRects[4] = {
+	/** Screen rectangles for the four journey route labels, adjusted for the release. */
+	Common::Rect _routeNameRects[4] = {
 		Common::Rect(15, 247, 140, 275),
 		Common::Rect(214, 47, 384, 62),
 		Common::Rect(327, 414, 439, 444),
 		Common::Rect(507, 193, 587, 223),
-	};
-	/** Screen rectangles for the localized European route labels. */
-	const Common::Rect _europeRouteNameRects[4] = {
-		Common::Rect(10, 150, 170, 275),
-		Common::Rect(214, 47, 384, 62),
-		Common::Rect(327, 390, 439, 480),
-		Common::Rect(490, 195, 610, 253),
 	};
 	/** Text keys for the four route labels. */
 	static constexpr ZoombiniText::Key _routeNameTextKey[4] = {
@@ -289,19 +282,12 @@ protected:
 		0x00EE,
 	};
 	// Clickable Pos & Rect
-	/** Clickable rectangles for the US difficulty legend. */
-	const Common::Rect _levelLegendClickRects[4] = {
+	/** Clickable rectangles for the difficulty legend, adjusted for the release. */
+	Common::Rect _levelLegendClickRects[4] = {
 		Common::Rect(0x01D0, 0x018B, 0x0264, 0x0199),
 		Common::Rect(0x01D0, 0x0199, 0x0264, 0x01A8),
 		Common::Rect(0x01D0, 0x01A8, 0x0264, 0x01B6),
 		Common::Rect(0x01D0, 0x01B6, 0x0264, 0x01C6),
-	};
-	/** Clickable rectangles for the European difficulty legend. */
-	const Common::Rect _europeLevelLegendClickRects[4] = {
-		Common::Rect(449, 395, 597, 409),
-		Common::Rect(449, 409, 597, 424),
-		Common::Rect(449, 424, 597, 438),
-		Common::Rect(449, 438, 597, 454),
 	};
 	/** Map coordinates used as the centers of the sixteen page icons. */
 	static constexpr Common::Point _pageClickPoints[16] = {
@@ -427,34 +413,14 @@ protected:
 	void buildPageRouteLevelMap();
 
 private:
-	/** Text geometry relative to the level-legend feature bounds. */
+	/** Text wrapping for the level legend. */
 	struct LegendLayout {
-		/** Vertical title offset in pixels from the legend feature's top edge. */
-		int16 titleTopOffset = 3;
-		/** Height in pixels of the legend title's text rectangle. */
-		int16 titleHeight = 15;
-		/** Vertical offset in pixels from the feature's top edge to the first level label. */
-		int16 rowTopOffset = 22;
-		/** Extra pixels added beyond the feature's right edge for level labels. */
-		int16 rowRightExtension = 0;
 		/** Whether the four difficulty labels may wrap within their rows. */
 		bool rowWordWrap = false;
 	};
 
-	/** Statistics and practice-description geometry relative to the panel bounds. */
+	/** Labels and wrapping for statistics and practice descriptions. */
 	struct StatsLayout {
-		/** Vertical title offset in pixels from the statistics panel's top edge. */
-		int16 titleTopOffset = 3;
-		/** Height in pixels of the statistics or practice title's text rectangle. */
-		int16 titleHeight = 15;
-		/** Vertical offset in pixels from the panel's top edge to its first text row. */
-		int16 rowTopOffset = 26;
-		/** Initial text-row height and vertical advance in pixels. */
-		int16 rowHeight = 18;
-		/** Width in pixels of the journey-label and general practice-description column. */
-		int16 labelWidth = 115;
-		/** The top advances by rowHeight; a larger bottom step grows the practice rectangle. */
-		int16 practiceRowBottomStep = 18;
 		/** Whether the statistics or practice title may wrap. */
 		bool titleWordWrap = false;
 		/** Enable wrapping for every journey label and practice-description row. */
@@ -471,10 +437,8 @@ private:
 			ZoombiniText::kTown};
 	};
 
-	/** Page-name tooltip placement and wrapping. */
+	/** Page-name tooltip wrapping. */
 	struct TooltipLayout {
-		/** Vertical translation in pixels applied to the tooltip feature's text bounds. */
-		int16 topOffset = 0;
 		/** Whether the hovered page name may wrap within the tooltip. */
 		bool wordWrap = false;
 	};
@@ -484,14 +448,12 @@ private:
 	 * @ref ZoombiniInteractiveRodMap::createTextLayout applies the differences for other releases.
 	 */
 	struct TextLayout {
-		/** Geometry and wrapping for the difficulty legend. */
+		/** Wrapping for the difficulty legend. */
 		LegendLayout legend;
-		/** Geometry, labels, and wrapping for journey statistics and practice instructions. */
+		/** Labels and wrapping for journey statistics and practice instructions. */
 		StatsLayout stats;
-		/** Placement and wrapping for the hovered page name. */
+		/** Wrapping for the hovered page name. */
 		TooltipLayout tooltip;
-		/** Whether route names use the wider European text rectangles. */
-		bool wideRouteNameRects = false;
 	};
 
 	/** Resolve text settings independently of resource numbering and input behavior. */
