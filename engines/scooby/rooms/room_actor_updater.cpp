@@ -871,6 +871,12 @@ void RoomActorUpdater::tryOpenInteractionInterface() {
 		shouldOpen = isNewPress(kActionButtonMask);
 	}
 
+	// Managed-only mouse support: the pointer opens the cursor interface like an A/B press would
+	// (input/room_mouse_controller.h).
+	if (!shouldOpen) {
+		shouldOpen = _state.MouseOpenInterfaceRequest;
+	}
+
 	if (!shouldOpen) {
 		return;
 	}

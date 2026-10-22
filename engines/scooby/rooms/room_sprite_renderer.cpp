@@ -195,6 +195,11 @@ void RoomSpriteRenderer::appendCursorOrLowerInterfaceSprite(Common::Array<Sprite
 	if (_state.CursorY < 0x00A8) {
 		_state.CursorHorizontalStep = 2;
 		_state.CursorVerticalStep = 2;
+		// Managed-only mouse support: the host cursor already shows this crosshair at the pointer.
+		if (_state.MouseCursorActive) {
+			return;
+		}
+
 		addPackedSprite(sprites, static_cast<uint16>(_state.CursorX + kVisibleCoordinateBias),
 						static_cast<uint16>(_state.CursorY + kVisibleCoordinateBias), 0x0500,
 						_state.CursorSpriteTileAttributes);

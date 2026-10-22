@@ -163,6 +163,44 @@ void MainMenuPresentation::updatePasswordGridCursors(int gridColumn, int gridRow
 	_scene.setDynamicSprites(MakeSpan(cursors));
 }
 
+Optional<int> MainMenuPresentation::selectionRowAt(const Common::Point &pos, int rowCount, int rowSpacing) const {
+	// Managed-only mouse support: the 32x32 selection cursor sits left of each option row's text.
+	if (pos.x < kSelectionCursorX || pos.x >= kMenuContentWidth - kSelectionCursorX ||
+		pos.y < kSelectionCursorBaseY || pos.y >= kSelectionCursorBaseY + rowCount * rowSpacing) {
+		return Optional<int>();
+	}
+
+	return Optional<int>((pos.y - kSelectionCursorBaseY) / rowSpacing);
+}
+
+bool MainMenuPresentation::passwordGridCellAt(const Common::Point &pos, int columnCount, int rowCount,
+											  int &column, int &row) const {
+	// Managed-only mouse support: one 8x16 grid cursor cell per symbol.
+	int x = pos.x - kPasswordGridCursorBaseX;
+	int y = pos.y - kPasswordGridCursorBaseY;
+	if (x < 0 || y < 0 || x >= columnCount * 8 || y >= rowCount * kPasswordGridCursorHeightInTiles * 8) {
+		return false;
+	}
+
+	column = x / 8;
+	row = y / (kPasswordGridCursorHeightInTiles * 8);
+	return true;
+}
+
+bool MainMenuPresentation::passwordEntryPositionAt(const Common::Point &pos, int displayPositionCount,
+												   int &displayPosition, int &row) const {
+	// Managed-only mouse support: one 8x8 entry cursor cell per displayed character, two rows.
+	int x = pos.x - kPasswordEntryCursorBaseX;
+	int y = pos.y - kPasswordEntryCursorBaseY;
+	if (x < 0 || y < 0 || x >= displayPositionCount * 8 || y >= 2 * 8) {
+		return false;
+	}
+
+	displayPosition = x / 8;
+	row = y / 8;
+	return true;
+}
+
 void MainMenuPresentation::writeIndexedTileRow(const Common::String &text, int columnIndex, int rowIndex) {
 	int characterCount = getCharacterCount(text);
 	Common::Array<TileCell> cells(static_cast<size_t>(characterCount));

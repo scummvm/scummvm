@@ -69,7 +69,7 @@ void RoomVBlankHandler::handleRoomVBlank() {
 
 	// Ghidra 0x0000A6C0-0x0000A6D7: sample active-low controls and latch room-script bit zero only
 	// while Start is held; the released branch leaves every script flag unchanged.
-	_input.pollControllers(_state);
+	_input.pollControllers(_state, InputScreen::Room);
 	if ((_state.ControllerOneInput & kStartButtonMask) == 0) {
 		_state.RoomScriptFlags |= 0x01;
 	}

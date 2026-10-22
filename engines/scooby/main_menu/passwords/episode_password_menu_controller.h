@@ -113,6 +113,8 @@ private:
 	static const int16 kGridRowCount = 5;
 	static const int kPackedPasswordByteCount = 32;
 	static const int16 kPasswordPositionCount = 25;
+	// Managed-only mouse support: displayed characters per password row, including the four group gaps.
+	static const int kDisplayPositionCount = kPasswordPositionCount + kPasswordPositionCount / 5 - 1;
 	static const int kPasswordRowCount = 2;
 	static const int kPasswordGridMenuPlaneOffset = 0x18E48;
 	static const uint8 kPasswordResumeMask = 0x04;

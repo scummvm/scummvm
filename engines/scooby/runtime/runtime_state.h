@@ -76,6 +76,16 @@ public:
 	// that is part-way through moving objects or updating progress bits.
 	bool SaveAllowed = false;
 
+	// Managed-only mouse support (input/mouse_input.h), never saved. True while the mouse is the active
+	// device in a room: the host cursor then shows the targeting crosshair at the pointer, so
+	// RoomSpriteRenderer omits the original crosshair sprite instead of drawing a second copy.
+	bool MouseCursorActive = false;
+
+	// Managed-only mouse support, never saved. Set for exactly one actor update when the pointer wants the
+	// cursor interface open; RoomActorUpdater::tryOpenInteractionInterface honours it only where the original
+	// A/B press would open the interface.
+	bool MouseOpenInterfaceRequest = false;
+
 	// The active action icon from Ghidra g_wActiveActionIcon at 0xFF06C0–0xFF06C1. Original RAM has no image-
 	// backed value; runtime setup clears it before interaction updates. Command 0x09 queues any nonzero value
 	// as pending before clearing this word.

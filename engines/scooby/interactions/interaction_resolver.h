@@ -22,6 +22,7 @@
 #ifndef SCOOBY_INTERACTION_RESOLVER_H
 #define SCOOBY_INTERACTION_RESOLVER_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 
 #include "scooby/assets/rom.h"
@@ -56,6 +57,10 @@ public:
 	// Ghidra: RunAdventure at 0x000012CC-0x00001359 reloads the same two active-episode shape pointers before
 	// scanning every object through the inclusive final runtime index.
 	int16 findAutomaticInteraction();
+
+	// Managed-only mouse support (input/room_mouse_controller.h): the half-open tile rectangle of a dynamic
+	// room object's shape, as tested by containsDynamicObject. Returns false when the object has no shape.
+	bool getDynamicObjectTileBounds(const RoomObject &roomObject, Common::Rect &tileBounds) const;
 
 private:
 	static const int kEpisodeRoomShapeDataField = 0x1C;

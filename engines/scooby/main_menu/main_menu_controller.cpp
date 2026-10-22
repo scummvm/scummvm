@@ -307,6 +307,8 @@ Optional<int> MainMenuController::selectMainMenuOption(int optionCount, int base
 	int cursorFrameCountdown = 1;
 	int lastSelectionOffset = (optionCount - 1) * kMenuOptionSpacing;
 	_menuInputState.beginSelection();
+	// Managed-only mouse support: this loop reads hover and clicks itself (input/mouse_input.h).
+	MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::Handled);
 	while (true) {
 		// Ghidra 0x00008D8E-0x00008E11: stage both menu buffers and advance the original unlock sequence.
 		_state.RetraceCountdown = kSelectionCommitCountdown;
@@ -320,6 +322,28 @@ Optional<int> MainMenuController::selectMainMenuOption(int optionCount, int base
 				playAudioCommand(3);
 			}
 
+			// Managed-only mouse support: hovering a row selects it; clicking a row accepts it like Start.
+			bool mouseAccepted = false;
+			{
+				MouseInput &mouse = _input.mouse();
+				Common::Point click;
+				if (mouse.takeMoved()) {
+					Optional<int> row = _menuPresentation.selectionRowAt(mouse.contentPosition(), optionCount,
+																		 kMenuOptionSpacing);
+					if (row.hasValue()) {
+						selectionOffset = row.value() * kMenuOptionSpacing;
+					}
+				}
+
+				if (mouse.takeLeftClick(click)) {
+					Optional<int> row = _menuPresentation.selectionRowAt(click, optionCount, kMenuOptionSpacing);
+					if (row.hasValue()) {
+						selectionOffset = row.value() * kMenuOptionSpacing;
+						mouseAccepted = true;
+					}
+				}
+			}
+
 			// Ghidra 0x00008E12-0x00008E49: move one 24-pixel row on bounded Up and Down press edges.
 			if (_menuInputState.wasPressed(ControllerButtons::Up) && selectionOffset != 0) {
 				selectionOffset -= kMenuOptionSpacing;
@@ -331,7 +355,7 @@ Optional<int> MainMenuController::selectMainMenuOption(int optionCount, int base
 			}
 
 			// Ghidra 0x00008E4A-0x00008E69: accept only a newly pressed active-low Start bit.
-			if (_menuInputState.wasPressed(ControllerButtons::Start)) {
+			if (_menuInputState.wasPressed(ControllerButtons::Start) || mouseAccepted) {
 				// Ghidra 0x00008EDC-0x00008F13: drain, commit, return the row index, and hide terminal sprite 12.
 				if (!waitForPendingCommit()) {
 					_menuPresentation.updateSelectionCursor(selectionOffset, Optional<uint16>());

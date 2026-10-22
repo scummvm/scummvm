@@ -24,6 +24,7 @@
 
 #include "common/keyboard.h"
 #include "controller_buttons.h"
+#include "mouse_input.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns the host-input replacement for Ghidra PollControllers at 0x00009D34
@@ -52,13 +53,18 @@ public:
 	// Reimplements Ghidra PollControllers at 0x00009D34, retaining its
 	// current, previous, baseline, and accumulated-change states without
 	// its controller-port or Z80-bus operations.
-	void pollControllers(RuntimeState &state);
+	// Managed-only mouse support: screen selects the cursor image and how mouse activity maps onto the
+	// controller (mouse_input.h).
+	void pollControllers(RuntimeState &state, InputScreen screen);
 
 	// Consumes one Escape press used to skip exactly one current intro
 	// presentation. True only on the key-down edge reported by raylib.
 	// Every queued event is consumed through the same key-state tracking as getControllerButtons, so key
 	// releases that arrive during the intro are not lost (a lost release would leave that button held).
 	bool isIntroSkipPressed();
+
+	// Managed-only mouse support (mouse_input.h).
+	MouseInput &mouse() { return _mouse; }
 
 private:
 	// Samples the backend-neutral player controls from keyboard, mouse
@@ -77,6 +83,8 @@ private:
 	ControllerButtons _buttons = ControllerButtons::None;
 	// The controller button the currently held Escape key is mapped to, or None.
 	ControllerButtons _escapeButton = ControllerButtons::None;
+	// Managed-only mouse support (mouse_input.h).
+	MouseInput _mouse;
 };
 } // namespace Scooby
 

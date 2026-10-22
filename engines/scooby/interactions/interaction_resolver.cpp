@@ -106,6 +106,26 @@ bool InteractionResolver::containsDynamicObject(const RoomObject &roomObject, in
 	return x >= left && y >= top && x < right && y < bottom;
 }
 
+bool InteractionResolver::getDynamicObjectTileBounds(const RoomObject &roomObject,
+													 Common::Rect &tileBounds) const {
+	// Managed-only mouse support: the same shape lookup as containsDynamicObject.
+	if (roomObject.ShapeIndex == 0) {
+		return false;
+	}
+
+	int32 episodeDescriptorOffset = _state.ActiveEpisodeDescriptorOffset;
+	int shapeOffsetTableOffset = static_cast<int>(
+		_rom.readUInt32(episodeDescriptorOffset + kEpisodeRoomShapeOffsetTableField));
+	int shapeDataOffset = static_cast<int>(_rom.readUInt32(episodeDescriptorOffset + kEpisodeRoomShapeDataField));
+	int shapeAddress = shapeDataOffset + static_cast<int>(_rom.readUInt32(
+		shapeOffsetTableOffset + (roomObject.ShapeIndex - 1) * static_cast<int>(sizeof(uint32))));
+	int16 left = _rom.readInt16(shapeAddress);
+	int16 top = _rom.readInt16(shapeAddress + 2);
+	tileBounds = Common::Rect(left, top, static_cast<int16>(left + _rom.readInt16(shapeAddress + 4)),
+							  static_cast<int16>(top + _rom.readInt16(shapeAddress + 6)));
+	return true;
+}
+
 bool InteractionResolver::containsFixedObject(const RoomObject &roomObject, int16 worldX,
 											  int16 worldY) const {
 	int shapeIndex = roomObject.ShapeIndex - 1;

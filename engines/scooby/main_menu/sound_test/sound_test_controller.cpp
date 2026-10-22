@@ -30,6 +30,8 @@ const char SoundTestController::kHexDigits[17] = "0123456789ABCDEF";
 bool SoundTestController::run() {
 	ControllerButtons previousBackButton = _input._backButton;
 	_input._backButton = ControllerButtons::C;
+	// Managed-only mouse support: left click plays, right click leaves, the wheel steps the track.
+	MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::SoundTest);
 	bool result = runLoop();
 	_input._backButton = previousBackButton;
 	_presentation.setTextPriority(false);

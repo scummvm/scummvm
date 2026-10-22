@@ -26,6 +26,7 @@
 
 #include "common/array.h"
 #include "common/func.h"
+#include "common/rect.h"
 #include "common/str.h"
 
 #include "animation/menu_animation_state.h"
@@ -166,6 +167,16 @@ public:
 	// passwordRow: selected zero-based password row.
 	void updatePasswordGridCursors(int gridColumn, int gridRow, int displayPosition, int passwordRow);
 
+	// Managed-only mouse support (input/mouse_input.h): hit tests in content coordinates, derived from the
+	// cursor geometry used by updateSelectionCursor and updatePasswordGridCursors.
+	// Returns the option row under pos in a list of rowCount rows spaced rowSpacing pixels apart.
+	Optional<int> selectionRowAt(const Common::Point &pos, int rowCount, int rowSpacing) const;
+	// Returns true with the symbol-grid cell under pos.
+	bool passwordGridCellAt(const Common::Point &pos, int columnCount, int rowCount, int &column, int &row) const;
+	// Returns true with the password-entry display position (group gaps included) and row under pos.
+	bool passwordEntryPositionAt(const Common::Point &pos, int displayPositionCount, int &displayPosition,
+								 int &row) const;
+
 	// Writes one NUL-terminated byte string as sequential plane-A cells using Ghidra
 	// WriteIndexedTileRow at 0x00009F72.
 	// text: display characters supplied through original register A0.
@@ -267,6 +278,8 @@ private:
 	static const int kSelectionCursorBaseY = 80;
 	static const int kSelectionCursorSizeInTiles = 4;
 	static const int kSelectionCursorX = 40;
+	// Managed-only mouse support: width of the H32 menu content (selectionRowAt).
+	static const int kMenuContentWidth = 256;
 	static const int kWideRevealTileIndex = 0x780;
 
 	// Original formatting row at 0x0002FFF4-0x00030014, excluding its terminal NUL in managed text.

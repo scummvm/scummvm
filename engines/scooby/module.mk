@@ -13,6 +13,8 @@ MODULE_OBJS = \
     graphics/sprite_layer.o \
     graphics/tile_scene.o \
     input/controller_input.o \
+    input/mouse_input.o \
+    input/room_mouse_controller.o \
     interactions/action_menu_controller.o \
     interactions/dialogue_controller.o \
     interactions/interaction_action_menu_executor.o \

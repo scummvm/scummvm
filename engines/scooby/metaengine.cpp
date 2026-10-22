@@ -74,14 +74,13 @@ Common::KeymapArray ScoobyMetaEngine::initKeymaps(const char *target) const {
 
 	act = new Action(kStandardActionLeftClick, _("Select"));
 	act->setCustomEngineActionEvent(Scooby::kScoobyActionSelect);
-	act->addDefaultInputMapping("MOUSE_LEFT");
+	// The mouse buttons are handled directly by the engine (input/mouse_input.h), not mapped here.
 	act->addDefaultInputMapping("JOY_B");
 	act->addDefaultInputMapping("x");
 	engineKeyMap->addAction(act);
 
 	act = new Action("CANCEL", _("Cancel"));
 	act->setCustomEngineActionEvent(Scooby::kScoobyActionCancel);
-	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_A");
 	act->addDefaultInputMapping("z");
 	engineKeyMap->addAction(act);

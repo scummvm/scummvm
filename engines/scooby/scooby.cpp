@@ -41,7 +41,7 @@ namespace Scooby {
 ScoobyEngine *g_engine;
 
 ScoobyEngine::ScoobyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Scooby"), _applicationLoop(nullptr), _gemsDriver(nullptr) {
+	_gameDescription(gameDesc), _randomSource("Scooby"), _applicationLoop(nullptr), _gemsDriver(nullptr), _input(nullptr) {
 	g_engine = this;
 }
 
@@ -75,6 +75,10 @@ Common::Error ScoobyEngine::run() {
 	TileScene scene;
 	IndexedFrame frame(screen);
 
+	// Managed-only mouse support: crosshair image and content-coordinate conversion (input/mouse_input.h).
+	input.mouse().attach(*rom, scene);
+	_input = &input;
+
 	// The GEMS driver reads its banks from the ROM in the mixer thread, so it must be destroyed
 	// before the ROM goes out of scope at the end of run().
 	_gemsDriver = new GemsDriver(*rom, _mixer);
@@ -94,8 +98,13 @@ Common::Error ScoobyEngine::run() {
 
 	delete _gemsDriver;
 	_gemsDriver = nullptr;
+	_input = nullptr;
 
 	return Common::kNoError;
+}
+
+MouseInput &ScoobyEngine::getMouseInput() {
+	return _input->mouse();
 }
 
 void ScoobyEngine::syncSoundSettings() {

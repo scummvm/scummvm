@@ -39,7 +39,7 @@ void MainMenuVBlankHandler::handleMainMenuVBlank() {
 
 void MainMenuVBlankHandler::handleInputVBlankTail() {
 	// Ghidra 0x0000A4A4-0x0000A4A7: publish the next active-low host input sample.
-	_input.pollControllers(_state);
+	_input.pollControllers(_state, InputScreen::Menu);
 
 	// Ghidra 0x0000A4A8-0x0000A4BB: a held Start button sets room-script flag bit zero.
 	if ((_state.ControllerOneInput & static_cast<uint8>(ControllerButtons::Start)) == 0) {

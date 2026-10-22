@@ -193,6 +193,9 @@ public:
 	// Composes the current logical layers and palette into one backend-neutral indexed frame.
 	void render(IndexedFrame &frame);
 
+	// Managed-only mouse support: left edge of the visible H32/H40 content within the 320-pixel frame.
+	int contentLeft() const;
+
 private:
 	static const int kDefaultLayerColumns = 64;
 	static const int kDefaultLayerRows = 32;

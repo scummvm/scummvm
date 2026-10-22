@@ -28,6 +28,7 @@
 
 #include "password_alphabet.h"
 #include "password_entry_decoder.h"
+#include "scooby/scooby.h"
 
 namespace Scooby {
 
@@ -67,12 +68,43 @@ MainMenuExit EpisodePasswordMenuController::runSharedEpisodePasswordMenu() {
 	int16 gridRow = 0;
 	int16 passwordRow = 0;
 	int16 passwordPosition = 0;
+	// Managed-only mouse support: this loop reads hover and clicks itself (input/mouse_input.h).
+	MouseInput &mouse = g_engine->getMouseInput();
+	MouseModeScope mouseMode(mouse, MouseInput::Mode::Handled);
 	while (true) {
 		// Ghidra 0x0000903A-0x00009051: compose one five-retrace password-grid update cycle.
 		_state.RetraceCountdown = kSelectionCommitCountdown;
 		_presentation.composeWideMenuRevealTiles(_presentation.animatedRowMaskOffset(), 0);
 		_presentation.composeNarrowMenuRevealTiles(_presentation.animatedRowMaskOffset(), 0);
 		while (_state.RetraceCountdown >= 0) {
+			// Managed-only mouse support: hovering a grid entry selects it and clicking it activates it like B;
+			// clicking a character of the entered password moves the entry cursor there.
+			bool mouseActivated = false;
+			{
+				Common::Point click;
+				int column;
+				int row;
+				if (mouse.takeMoved() && _presentation.passwordGridCellAt(mouse.contentPosition(), kGridColumnCount,
+																		  kGridRowCount, column, row)) {
+					gridColumn = static_cast<int16>(column);
+					gridRow = static_cast<int16>(row);
+				}
+
+				if (mouse.takeLeftClick(click)) {
+					int displayPosition;
+					if (_presentation.passwordGridCellAt(click, kGridColumnCount, kGridRowCount, column, row)) {
+						gridColumn = static_cast<int16>(column);
+						gridRow = static_cast<int16>(row);
+						mouseActivated = true;
+					} else if (_presentation.passwordEntryPositionAt(click, kDisplayPositionCount, displayPosition, row) &&
+							   displayPosition % 6 != 5) {
+						// Display positions add one gap after every five characters (displayPosition below).
+						passwordRow = static_cast<int16>(row);
+						passwordPosition = static_cast<int16>(displayPosition - displayPosition / 6);
+					}
+				}
+			}
+
 			// Ghidra 0x00009052-0x0000912D: process buffered directional presses with exact wrapping.
 			if (_inputState.acceptBufferedPress(ControllerButtons::Up)) {
 				gridRow--;
@@ -97,7 +129,7 @@ MainMenuExit EpisodePasswordMenuController::runSharedEpisodePasswordMenu() {
 			}
 
 			// Ghidra 0x0000912E-0x00009161 and 0x00009184-0x000091C9: dispatch or insert a symbol.
-			if (_inputState.wasAnyPressed(kActivationButtonsMask)) {
+			if (_inputState.wasAnyPressed(kActivationButtonsMask) || mouseActivated) {
 				if (gridRow == kGridRowCount - 1) {
 					Optional<MainMenuExit> exit = runPasswordGridAction(
 						gridColumn, passwordPosition, passwordRow);

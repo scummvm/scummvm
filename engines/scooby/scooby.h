@@ -41,6 +41,8 @@ namespace Scooby {
 
 struct ScoobyGameDescription;
 class GemsDriver;
+class ControllerInput;
+class MouseInput;
 
 enum ScoobyAction {
 	kScoobyActionNone,
@@ -65,6 +67,7 @@ private:
 	Graphics::FrameLimiter *_limiter;
 	ApplicationLoop *_applicationLoop;
 	GemsDriver *_gemsDriver;
+	ControllerInput *_input;
 
 	uint32 _nextUpdatetime;
 
@@ -105,6 +108,9 @@ public:
 
 	// The GEMS sound driver, or nullptr while the engine is not running.
 	GemsDriver *getGemsDriver() const { return _gemsDriver; }
+
+	// Managed-only mouse support: the shared mouse owner for loops without a ControllerInput reference.
+	MouseInput &getMouseInput();
 
 	/**
 	 * Uses a serializer to allow implementing savegame

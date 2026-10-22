@@ -26,17 +26,23 @@
 
 namespace Scooby {
 
-void ControllerInput::pollControllers(RuntimeState &state) {
+void ControllerInput::pollControllers(RuntimeState &state, InputScreen screen) {
 	state.PreviousControllerOneInput = state.ControllerOneInput;
-	state.ControllerOneInput =
-		static_cast<uint8>(~static_cast<uint8>(getControllerButtons(_backButton)));
+	// Managed-only mouse support: merge the controller presses produced by mouse activity (mouse_input.h).
+	_mouse.beginPoll();
+	ControllerButtons buttons = getControllerButtons(_backButton);
+	buttons |= _mouse.sampleControllerButtons(state, screen);
+	state.ControllerOneInput = static_cast<uint8>(~static_cast<uint8>(buttons));
 	state.ControllerOneAccumulatedChanges |= state.ControllerOneChangeBaseline ^ state.ControllerOneInput;
 }
 
 bool ControllerInput::isIntroSkipPressed() {
 	// Drain the queue through the shared key-state tracking so key releases seen during the intro still
 	// clear held buttons. Escape is the skip key here and is deliberately not mapped to a controller button.
-	return processEvents(ControllerButtons::None, false);
+	bool escapePressed = processEvents(ControllerButtons::None, false);
+	// Managed-only mouse support: a left click skips like Escape.
+	bool clicked = _mouse.takeIntroSkipClick();
+	return escapePressed || clicked;
 }
 
 ControllerButtons ControllerInput::getControllerButtons(ControllerButtons backButton) {
@@ -116,7 +122,14 @@ bool ControllerInput::processEvents(ControllerButtons backButton, bool mapEscape
 			// } else {
 			// 	// _buttons &= buttonMask(keyToButton(e.kbd.keycode));
 			// }
+		} else if (e.type == Common::EVENT_MOUSEMOVE || e.type == Common::EVENT_LBUTTONDOWN ||
+				   e.type == Common::EVENT_RBUTTONDOWN || e.type == Common::EVENT_WHEELUP ||
+				   e.type == Common::EVENT_WHEELDOWN) {
+			// Managed-only mouse support (mouse_input.h).
+			_mouse.handleEvent(e);
 		} else if (e.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+			// Managed-only mouse support: keyboard or pad use hides the pointer (mouse_input.h).
+			_mouse.handleKeyboardOrPadInput();
 			if (e.customType == kScoobyActionSkipCutscene) {
 				if (e.kbdRepeat) {
 					continue;

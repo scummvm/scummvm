@@ -29,8 +29,44 @@
 #include "scooby/graphics/binary_mask_tile_generator.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/graphics/tile_layer.h"
+#include "scooby/scooby.h"
 
 namespace Scooby {
+
+namespace {
+
+// Managed-only mouse support (input/mouse_input.h): finds the unused entry drawn on the choice-strip line
+// under pos, using the strip geometry of RoomSpriteRenderer::appendInteractionStripSprites (eight-pixel
+// lines from y 0xA8) and the drawing order above, which skips used entries.
+const int kInteractionStripTopY = 0xA8;
+const int kInteractionStripLineHeight = 8;
+
+bool findInteractionActionAt(const Common::Point &pos, int usedFlags, const Common::Array<int16> &lineCounts,
+							 int actionCount, int16 &actionIndex, int16 &actionRow) {
+	if (pos.y < kInteractionStripTopY) {
+		return false;
+	}
+
+	int line = (pos.y - kInteractionStripTopY) / kInteractionStripLineHeight;
+	int visibleRow = 0;
+	for (int index = 0; index < actionCount && visibleRow < InteractionActionRegistry::Capacity; index++) {
+		if ((usedFlags & (1 << index)) != 0) {
+			continue;
+		}
+
+		if (line >= visibleRow && line < visibleRow + lineCounts[index]) {
+			actionIndex = static_cast<int16>(index);
+			actionRow = static_cast<int16>(visibleRow);
+			return true;
+		}
+
+		visibleRow += lineCounts[index];
+	}
+
+	return false;
+}
+
+} // namespace
 
 InteractionActionMenuExecutor::InteractionActionMenuExecutor(
 	const ScoobyDooRom &rom, TileScene &scene,
@@ -166,11 +202,38 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 			}
 		}
 
+		// Managed-only mouse support: this choice loop reads hover and clicks itself (input/mouse_input.h).
+		MouseInput &mouse = g_engine->getMouseInput();
+		MouseInput::Mode previousMouseMode = mouse.mode();
+		mouse.setMode(MouseInput::Mode::Handled);
 		while (true) {
 			// Ghidra 0x00001DAA-0x00001E57: request one strip publication, update actor frames, preserve
 			// both edge-triggered direction branches and every used-entry skip, then wait for bit zero to clear.
 			_state.DisplayFlags |= kInteractionStripPublicationMask;
 			_updateActorAnimationFrames();
+
+			// Managed-only mouse support: hovering an entry selects it; clicking it chooses it like B.
+			bool mouseChose = false;
+			{
+				Common::Point click;
+				int16 index;
+				int16 row;
+				if (mouse.takeMoved() &&
+					findInteractionActionAt(mouse.contentPosition(), currentFrame.UsedFlags, lineCounts,
+											_state.InteractionActions.count(), index, row)) {
+					selectedIndex = index;
+					selectedRow = row;
+				}
+
+				if (mouse.takeLeftClick(click) &&
+					findInteractionActionAt(click, currentFrame.UsedFlags, lineCounts,
+											_state.InteractionActions.count(), index, row)) {
+					selectedIndex = index;
+					selectedRow = row;
+					mouseChose = true;
+				}
+			}
+
 			bool movedUp = false;
 			if ((_state.ControllerOneInput & kUpDirectionMask) == 0 &&
 				(_state.PreviousControllerOneInput & kUpDirectionMask) != 0 && selectedIndex != 0) {
@@ -217,13 +280,16 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 			// Ghidra 0x00001E5A-0x00001E79: either held action button selects; both released repeat the
 			// complete publication loop. The strip is hidden before any selected-entry side effect.
 			if ((_state.ControllerOneInput & kAlternateActionButtonMask) != 0 &&
-				(_state.ControllerOneInput & kActionButtonMask) != 0) {
+				(_state.ControllerOneInput & kActionButtonMask) != 0 && !mouseChose) {
 				continue;
 			}
 
 			_state.InteractionStripColumn = -1;
 			break;
 		}
+
+		// Managed-only mouse support: dialogue after the choice takes clicks again.
+		mouse.setMode(previousMouseMode);
 
 		// Ghidra 0x00001E7A-0x00001EF5: mark the exact selected bit, preserve the separate fill, mask,
 		// text, random-animation, and dismissal boundaries, then restart actor zero at position plus four.

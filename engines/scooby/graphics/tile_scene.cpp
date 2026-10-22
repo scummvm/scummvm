@@ -443,6 +443,10 @@ uint8 TileScene::stepLevel(uint8 current, uint8 target) {
 	return static_cast<uint8>(static_cast<int>(current) + sign);
 }
 
+int TileScene::contentLeft() const {
+	return (IndexedFrame::Width - contentWidth()) / 2;
+}
+
 int TileScene::contentWidth() const {
 	switch (_horizontalDisplayMode) {
 	case HorizontalDisplayMode::H32:

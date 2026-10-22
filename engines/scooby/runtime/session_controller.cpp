@@ -424,7 +424,12 @@ SessionExit SessionController::runGame() {
 		// Managed-only: this is the one point where no script or interaction is mid-flight, so allow ScummVM
 		// saves during this wait unless an interaction is already queued to run.
 		_state.SaveAllowed = (_state.DisplayFlags & kInteractionPendingMask) == 0;
-		bool frameCompleted = waitForRoomVerticalBlank();
+		bool frameCompleted;
+		{
+			// Managed-only mouse support: this retrace is the idle room loop (input/mouse_input.h).
+			MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::RoomIdle);
+			frameCompleted = waitForRoomVerticalBlank();
+		}
 		_state.SaveAllowed = false;
 		if (!frameCompleted) {
 			return SessionExit::HostClosed;
@@ -485,6 +490,8 @@ SessionExit SessionController::runGame() {
 		}
 
 		if ((_state.DisplayFlags & kInteractionDisplayMask) != 0) {
+			// Managed-only mouse support: the action-bar retrace inside is also the idle room loop.
+			MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::RoomIdle);
 			if (!_interactions.updateCursorInteraction()) {
 				return SessionExit::HostClosed;
 			}
