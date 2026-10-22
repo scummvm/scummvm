@@ -918,6 +918,9 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 	for (uint i = 0; i < _boxes.size() && !mouseOverHotspot; ++i) {
 		if (_boxes[i].correct && !isNancy15)
 			continue;
+		// From Nancy 10 the box being typed in is not clickable and keeps the normal cursor
+		if (i == _currentBox && g_nancy->getGameType() >= kGameTypeNancy10)
+			continue;
 		Common::Rect screenRect = NancySceneState.getViewport().convertViewportToScreen(_boxes[i].rect);
 		if (!screenRect.contains(input.mousePos))
 			continue;
