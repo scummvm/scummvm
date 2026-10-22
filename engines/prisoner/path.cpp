@@ -1174,11 +1174,22 @@ void PathSystem::setPathEdgeOrPolygonEnabled(int16 type, int16 index, bool enabl
 		if (_pathPolygons[index].enabled != enabled) {
 			if (_pathSystemBuilt)
 				clearPathSystem();
-			// TODO: setPathPolygonEnabled(index, enabled);
+			setPathPolygonEnabled(index, enabled);
 			if (_pathSystemBuilt)
 				buildPathSystem();
 		}
 	}
+}
+
+// Enabling a polygon adds it to the polygon count of its three edges, disabling removes it
+// (original: path2521E)
+void PathSystem::setPathPolygonEnabled(int16 polyIndex, bool enabled) {
+	PathPolygon *poly = &_pathPolygons[polyIndex];
+	int16 delta = enabled ? 1 : -1;
+	poly->enabled = enabled;
+	_pathEdges[poly->edgeIndex1].polyCount += delta;
+	_pathEdges[poly->edgeIndex2].polyCount += delta;
+	_pathEdges[poly->edgeIndex3].polyCount += delta;
 }
 
 void PathSystem::setPathEdgeEnabled(int16 edgeIndex, bool enabled) {

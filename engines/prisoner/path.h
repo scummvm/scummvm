@@ -169,6 +169,7 @@ public:
 	void clearPathSystem();
 	void setPathEdgeOrPolygonEnabled(int16 type, int16 index, bool enabled);
 	void setPathEdgeEnabled(int16 edgeIndex, bool enabled);
+	void setPathPolygonEnabled(int16 polyIndex, bool enabled);
 	void togglePathSystem(int16 flag);
 
 	PathNode *getNode(int16 nodeIndex) { return &_pathNodes[nodeIndex]; }
