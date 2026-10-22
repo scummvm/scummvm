@@ -130,8 +130,8 @@ public:
 	MohawkArchive *_helpMhk = nullptr;
 	/** Shared v1 archive containing the tMID resources used by music and the built-in MIDI test. */
 	MohawkArchive *_midiMhk = nullptr;
-	/** Whether the currently opened shared MIDI archive uses the Macintosh profile. */
-	bool _midiMhkUsesMacProfile = false;
+	/** Soundtrack of the currently opened shared MIDI archive. */
+	MohawkMetaEngine_Zoombini::MidiSoundtrack _midiMhkSoundtrack = MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC;
 
 	/**
 	 * Registration-point offsets for system snoid shapes (tBMP 3000 in ZOOMBINI.MHK).
@@ -443,7 +443,7 @@ public:
 	void applyGameSettings() override;
 	/** Build the engine keymaps for the selected target. */
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
-	/** Return the selected palette filter. */
+	/** Return the effective palette filter, fixed to raw colors on Macintosh. */
 	MohawkMetaEngine_Zoombini::PaletteFilter getPaletteFilter() const { return _paletteFilter; }
 	/** Return whether enhanced keyboard shortcuts are enabled. */
 	bool useEnhancedKbdShortcuts() const;
@@ -524,6 +524,8 @@ private:
 	void processEvent(ZoombiniPage *page, const Common::Event &event);
 	/** Update the platform IME composition state exposed to text-entry dialogs. */
 	void updateImeCompositionState();
+	/** Read the palette setting, retaining the Macintosh engine's unmodified colors. */
+	MohawkMetaEngine_Zoombini::PaletteFilter getConfiguredPaletteFilter() const;
 	/** Start the quit transition for a page that has received a quit request. */
 	void beginQuitEvent(ZoombiniPage *page);
 	/** Advance the pending quit state machine after the current frame. */

@@ -28,6 +28,7 @@
 #include "common/compression/installshield_cab.h"
 #include "common/compression/installshieldv3_archive.h"
 #include "common/fs.h"
+#include "common/macresman.h"
 #include "common/platform.h"
 #include "graphics/fontman.h"
 #include "graphics/fonts/ttf.h"
@@ -143,6 +144,25 @@ const Graphics::Font *FileTTFLoader::loadFontCore(int point) {
 #endif
 #endif
 	return font;
+}
+
+MacResForkTTFLoader::MacResForkTTFLoader(const Common::String &application, const Common::String &faceName, uint16 resourceId,
+										 Graphics::TTFSizeMode sizeMode)
+	: FileTTFLoader(application, faceName, false, 0, sizeMode), _resourceId(resourceId) {
+}
+
+bool MacResForkTTFLoader::hasStream() {
+	Common::SeekableReadStream *stream = getStream();
+	const bool found = stream != nullptr;
+	delete stream;
+	return found;
+}
+
+Common::SeekableReadStream *MacResForkTTFLoader::getStream() {
+	Common::MacResManager application;
+	if (!application.open(_filePath))
+		return nullptr;
+	return application.getResource(MKTAG('s', 'f', 'n', 't'), _resourceId);
 }
 
 ISCabTTFLoader::ISCabTTFLoader(const Common::String &iscabFile,
