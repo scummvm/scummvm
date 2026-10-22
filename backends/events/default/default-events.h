@@ -67,6 +67,7 @@ public:
 	void pushEvent(const Common::Event &event) override;
 	void purgeMouseEvents() override;
 	void purgeKeyboardEvents() override;
+	void purgeImeCompositionEvents() override;
 
 	Common::Point getMousePos() const override { return _mousePos; }
 	int getButtonState() const override { return _buttonState; }
