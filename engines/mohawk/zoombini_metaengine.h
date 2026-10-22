@@ -23,8 +23,10 @@
 #define MOHAWK_ZOOMBINI_METAENGINE_H
 
 #include "common/language.h"
+#include "common/platform.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
+#include "common/str-enc.h"
 
 namespace Common {
 
@@ -148,7 +150,7 @@ public:
 	Common::U32String formatMemorialDate(uint16 year, const Common::U32String &monthText, byte day) const;
 	/** Return edge adjustments for a fixed page layout element. */
 	LayoutAdjustment getLayoutAdjustment(LayoutElement element) const;
-	/** 
+	/**
 	 * Return the adjustment for one of the four zero-based map route labels.
 	 * @param routeIdx 0-based index for each four routes.
 	 */
@@ -157,6 +159,18 @@ public:
 	LayoutAdjustment getOptionsLabelLayoutAdjustment(uint32 buttonIdx) const;
 	/** Language used by the engine, including the unknown-language fallback. */
 	Common::Language getLanguage() const { return _lang; }
+	/** Platform recorded by the detector. */
+	Common::Platform getPlatform() const { return _platform; }
+	/** Code page used by this release's executable strings and save names. */
+	Common::CodePage getExeCodePage() const { return getExeCodePage(_lang, _platform); }
+	/** Code page used by this release's string resources. */
+	Common::CodePage getResCodePage() const { return getResCodePage(_lang, _platform); }
+	/** Select the executable/save-name code page when only target language and platform are available. */
+	static Common::CodePage getExeCodePage(Common::Language language, Common::Platform platform);
+	/** Select the resource code page for a target language and platform. */
+	static Common::CodePage getResCodePage(Common::Language language, Common::Platform platform);
+	/** Return the display name for a code page used by Zoombini text and save names. */
+	static const char *getCodePageName(Common::CodePage codePage);
 	/** Compact family label used in diagnostic output. */
 	const char *getFamilyName() const;
 
@@ -164,7 +178,9 @@ private:
 	/** Detector feature bits retained for release-family and variant queries. */
 	const uint32 _features;
 	/** Detector language normalized to US English when unknown. */
-	const Common::Language _lang;
+	Common::Language _lang;
+	/** Detector platform used for release-specific text encodings. */
+	const Common::Platform _platform;
 	/** Whether the detector marks this release as a demo. */
 	const bool _demo;
 };
@@ -257,11 +273,11 @@ public:
 	/** Persisted palette-filter selection. */
 	enum class PaletteFilter : uint32 {
 		/**
-		 * Original engine's palette brightening filter.
+		 * Original Windows engine's palette brightening filter.
 		 */
 		kBrightenPalette = 0,
 		/**
-		 * Do not apply any filtering.
+		 * Do not apply any filtering, as in the original Macintosh engine.
 		 */
 		kRawPalette = 1,
 	};
@@ -301,6 +317,8 @@ public:
 	 * @remarks Broderbund v1.x only; TLC v2.0 rebuild does not contain any MIDI resources.
 	 */
 	static constexpr const char *kOptionMidiSoundtrack = "midi_soundtrack";
+	/** Override the soundtrack for a known single-midi-archive v1 demo; otherwise leave it unchanged and return false. */
+	static bool getFixedDemoMidiSoundtrack(Common::Platform platform, Common::Language language, MidiSoundtrack &soundtrack);
 	/** Enable color-blind presentation adjustments. */
 	constexpr static const char *kOptionColorBlindMode = "color_blind_mode";
 	/** Always play the Maze completion celebration sound. */

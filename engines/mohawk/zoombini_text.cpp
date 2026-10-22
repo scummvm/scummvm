@@ -30,6 +30,8 @@
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/keyboard.h"
+#include "common/macresman.h"
+#include "common/ptr.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
@@ -76,6 +78,12 @@ ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::inArchiveMember(const c
 	source.archiveMemberName = srcMemberName;
 	source.archiveIsCabinet = false;
 	source.expectedSize = srcExpectedSize;
+	return source;
+}
+
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::inMacDataResFork(const char *srcFileName, uint32 srcExpectedSize) const {
+	ExeTextSource source = inFile(srcFileName, srcExpectedSize);
+	source.macDataResFork = true;
 	return source;
 }
 
@@ -130,6 +138,12 @@ ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditPtrTable(uint
 	creditPointerTableOffset = tableOffset;
 	creditPointerBaseAddress = baseAddress;
 	creditPointerFirstIndex = firstIndex;
+	return *this;
+}
+
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withMacA5RelativeCreditPtrTable(uint32 tableOffset) {
+	withCreditPtrTable(tableOffset, 0, 0);
+	creditSourceKind = CreditSourceKind::kMacRleA5RelativePointerStream;
 	return *this;
 }
 
@@ -970,6 +984,158 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11US_NETextEntries[] = {
 	{ZoombiniText::kNotiBoxTransitionsOff, 0xDD9B4, 15},
 	{ZoombiniText::kNotiBoxAutoStickeyOn, 0xDD9C4, 14},
 	{ZoombiniText::kNotiBoxAutoStickeyOff, 0xDD9D3, 15},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV11USMacDemoTextEntries[] = {
+	{ZoombiniText::kTown, 36270, 13},
+	{ZoombiniText::kPicker, 36638, 13},
+	{ZoombiniText::kBridge, 35128, 15},
+	{ZoombiniText::kTunnels, 35159, 16},
+	{ZoombiniText::kPizza, 36977, 10},
+	{ZoombiniText::kBasecamp1, 36616, 12},
+	{ZoombiniText::kFerry, 36938, 25},
+	{ZoombiniText::kLilly, 36915, 22},
+	{ZoombiniText::kSlides, 36904, 10},
+	{ZoombiniText::kFleens, 36896, 7},
+	{ZoombiniText::kHotel, 34386, 14},
+	{ZoombiniText::kNet, 34232, 12},
+	{ZoombiniText::kBasecamp2, 36856, 10},
+	{ZoombiniText::kCaves, 36840, 15},
+	{ZoombiniText::kSmoke, 34000, 14},
+	{ZoombiniText::kMaze, 34135, 18},
+	{ZoombiniText::kNewGame, 28089, 8},
+	{ZoombiniText::kEuropeJourneyStatZoombiniIsle, 36638, 13},
+	{ZoombiniText::kEuropeJourneyStatShelterRock, 36616, 12},
+	{ZoombiniText::kEuropeJourneyStatShadeTree, 36856, 10},
+	{ZoombiniText::kEuropeJourneyStatZoombiniton, 36270, 13},
+	{ZoombiniText::kPracticeMode, 32811, 13},
+	{ZoombiniText::kEuropePracticeReturnInitial1, 36692, 18},
+	{ZoombiniText::kEuropePracticeReturnInitial2, 36632, 19},
+	{ZoombiniText::kEuropePracticeReturnInitial3, 61, 1},
+	{ZoombiniText::kEuropePracticeReturnInitial4, 61, 1},
+	{ZoombiniText::kEuropePracticeReturnShelterRock1, 36692, 18},
+	{ZoombiniText::kEuropePracticeReturnShelterRock2, 36632, 19},
+	{ZoombiniText::kEuropePracticeReturnShelterRock3, 36654, 15},
+	{ZoombiniText::kEuropePracticeReturnShelterRock4, 61, 1},
+	{ZoombiniText::kEuropePracticeReturnShadeTree1, 36692, 18},
+	{ZoombiniText::kEuropePracticeReturnShadeTree2, 36632, 20},
+	{ZoombiniText::kEuropePracticeReturnShadeTree3, 36616, 15},
+	{ZoombiniText::kEuropePracticeReturnShadeTree4, 36856, 10},
+	{ZoombiniText::kEuropePracticeReturnZoombiniton1, 36692, 18},
+	{ZoombiniText::kEuropePracticeReturnZoombiniton2, 36632, 20},
+	{ZoombiniText::kEuropePracticeReturnZoombiniton3, 36599, 16},
+	{ZoombiniText::kEuropePracticeReturnZoombiniton4, 36582, 16},
+	{ZoombiniText::kTerrainKey, 36486, 11},
+	{ZoombiniText::kChooseLevel, 36470, 14},
+	{ZoombiniText::kLevel1, 36458, 11},
+	{ZoombiniText::kLevel2, 36446, 11},
+	{ZoombiniText::kLevel3, 36426, 9},
+	{ZoombiniText::kLevel4, 36420, 15},
+	{ZoombiniText::kRoute1, 36364, 31},
+	{ZoombiniText::kRoute2, 36352, 11},
+	{ZoombiniText::kRoute3, 36334, 17},
+	{ZoombiniText::kRoute4, 36312, 20},
+	{ZoombiniText::kXferVillePopulation, 36270, 24},
+	{ZoombiniText::kMemorialJanuary, 36258, 7},
+	{ZoombiniText::kMemorialFebruary, 36248, 8},
+	{ZoombiniText::kMemorialMarch, 36242, 5},
+	{ZoombiniText::kMemorialApril, 36236, 5},
+	{ZoombiniText::kMemorialMay, 36232, 3},
+	{ZoombiniText::kMemorialJune, 36226, 4},
+	{ZoombiniText::kMemorialJuly, 36221, 4},
+	{ZoombiniText::kMemorialAugust, 36214, 6},
+	{ZoombiniText::kMemorialSeptember, 36204, 9},
+	{ZoombiniText::kMemorialOctober, 36196, 7},
+	{ZoombiniText::kMemorialNovember, 36187, 8},
+	{ZoombiniText::kMemorialDecember, 36178, 8},
+	{ZoombiniText::kMemorialWhenLevel, 36110, 18},
+	{ZoombiniText::kMemorialHonorMonument, 36038, 50},
+	{ZoombiniText::kMemorialHonorWindmill, 35984, 53},
+	{ZoombiniText::kMemorialHonorObservatory, 35939, 44},
+	{ZoombiniText::kMemorialHonorBowlingAlley, 35894, 44},
+	{ZoombiniText::kMemorialHonorGeneralStore, 35840, 53},
+	{ZoombiniText::kMemorialHonorSwimmingPool, 35794, 45},
+	{ZoombiniText::kMemorialHonorPlayground, 35738, 55},
+	{ZoombiniText::kMemorialHonorBandShell, 35684, 53},
+	{ZoombiniText::kMemorialHonorSchool, 35640, 43},
+	{ZoombiniText::kMemorialHonorLibrary, 35588, 51},
+	{ZoombiniText::kMemorialHonorFire, 35546, 40},
+	{ZoombiniText::kMemorialHonorOpera, 35493, 52},
+	{ZoombiniText::kMemorialHonorCityHall, 35448, 44},
+	{ZoombiniText::kMemorialHonorClockTower, 35392, 55},
+	{ZoombiniText::kMemorialHonorMuseum, 35337, 54},
+	{ZoombiniText::kMemorialHonorCourt, 35282, 54},
+	{ZoombiniText::kMemorialRoute1Level1, 35116, 100},
+	{ZoombiniText::kMemorialRoute1Level2, 35009, 106},
+	{ZoombiniText::kMemorialRoute1Level3, 34906, 102},
+	{ZoombiniText::kMemorialRoute1Level4, 34792, 113},
+	{ZoombiniText::kMemorialRoute2Level1, 34724, 66},
+	{ZoombiniText::kMemorialRoute2Level2, 34642, 81},
+	{ZoombiniText::kMemorialRoute2Level3, 34549, 92},
+	{ZoombiniText::kMemorialRoute2Level4, 34724, 66},
+	{ZoombiniText::kMemorialRoute3Level1, 34442, 106},
+	{ZoombiniText::kMemorialRoute3Level2, 34348, 93},
+	{ZoombiniText::kMemorialRoute3Level3, 34253, 94},
+	{ZoombiniText::kMemorialRoute3Level4, 34154, 98},
+	{ZoombiniText::kMemorialRoute4Level1, 34050, 103},
+	{ZoombiniText::kMemorialRoute4Level2, 33938, 110},
+	{ZoombiniText::kMemorialRoute4Level3, 33846, 91},
+	{ZoombiniText::kMemorialRoute4Level4, 33710, 134},
+	{ZoombiniText::kDialogBodyGoMapWillLost, 33580, 64},
+	{ZoombiniText::kDialogButtonLoseThem, 33570, 9},
+	{ZoombiniText::kDialogButtonKeepThem, 33560, 9},
+	{ZoombiniText::kDialogButtonOkay, 10509, 2},
+	{ZoombiniText::kDialogButtonCancel, 33550, 6},
+	{ZoombiniText::kDialogButtonYes, 33124, 3},
+	{ZoombiniText::kDialogButtonNo, 9386, 2},
+	{ZoombiniText::kDialogButtonQuit, 32770, 4},
+	{ZoombiniText::kDialogButtonLoad, 33210, 4},
+	{ZoombiniText::kDialogButtonSave, 33222, 4},
+	{ZoombiniText::kOptionsTitle, 33532, 7},
+	{ZoombiniText::kOptionsLegendOn, 33526, 4},
+	{ZoombiniText::kOptionsLegendOff, 33520, 5},
+	{ZoombiniText::kOptionsNewGame, 33486, 17},
+	{ZoombiniText::kOptionsLoadGame, 33467, 18},
+	{ZoombiniText::kOptionsSaveGame, 33448, 18},
+	{ZoombiniText::kOptionsQuit, 33434, 13},
+	{ZoombiniText::kOptionsToggle, 33504, 15},
+	{ZoombiniText::kOptionsSound, 33406, 26},
+	{ZoombiniText::kOptionsMusic, 33380, 25},
+	{ZoombiniText::kOptionsStickyMouse, 33358, 21},
+	{ZoombiniText::kOptionsTransitions, 33337, 20},
+	{ZoombiniText::kOptionsCredits, 33152, 7},
+	{ZoombiniText::kDialogBodyNoSavedGames, 33322, 14},
+	{ZoombiniText::kDialogBodyCreateAndSaveNewGame, 33265, 56},
+	{ZoombiniText::kDialogButtonNewGame, 32972, 8},
+	{ZoombiniText::kDialogButtonReplaceTitle, 33248, 7},
+	{ZoombiniText::kDialogTitleSave, 33236, 11},
+	{ZoombiniText::kDialogTitleSaveAs, 33222, 13},
+	{ZoombiniText::kDialogTitleLoad, 33210, 11},
+	{ZoombiniText::kDialogBodyReplaceGame, 33160, 48},
+	{ZoombiniText::kDialogBodySaveCurrentGame, 33128, 23},
+	{ZoombiniText::kDialogBodyCannotSaveInPractice, 32983, 42},
+	{ZoombiniText::kDialogBodyCreateNewGame, 32940, 42},
+	{ZoombiniText::kDialogBodyCannotSaveMoreGame, 32869, 70},
+	{ZoombiniText::kDialogBodyCannotLoadInPractice, 32826, 42},
+	{ZoombiniText::kDialogBodyCannotCreateNewInPractice, 32777, 48},
+	{ZoombiniText::kDialogBodyNewGame, 32972, 8},
+	{ZoombiniText::kDialogBodyReallyQuit, 32748, 28},
+	{ZoombiniText::kDialogBodySaveBeforeQuit, 33030, 87},
+	{ZoombiniText::kDialogHelpLevel, 12904, 5},
+	{ZoombiniText::kNotiBoxMusicOn, 29480, 8},
+	{ZoombiniText::kNotiBoxMusicOff, 29470, 9},
+	{ZoombiniText::kNotiBoxSoundOn, 29460, 8},
+	{ZoombiniText::kNotiBoxSoundOff, 29450, 9},
+	{ZoombiniText::kNotiBoxLessAction, 29438, 11},
+	{ZoombiniText::kNotiBoxMoreAction, 29426, 11},
+	{ZoombiniText::kNotiBoxHideCursor, 29414, 11},
+	{ZoombiniText::kNotiBoxShowCursor, 29402, 11},
+	{ZoombiniText::kNotiBoxStickeyMouse, 29375, 12},
+	{ZoombiniText::kNotiBoxNonStickeyMouse, 29371, 16},
+	{ZoombiniText::kNotiBoxTransitionsOn, 29356, 14},
+	{ZoombiniText::kNotiBoxTransitionsOff, 29340, 15},
+	{ZoombiniText::kNotiBoxAutoStickeyOn, 29324, 14},
+	{ZoombiniText::kNotiBoxAutoStickeyOff, 29308, 15},
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV11USDemo_NETextEntries[] = {
@@ -1995,6 +2161,108 @@ bool ZoombiniText::readExecutableData(Common::SeekableReadStream *exeStream, uin
 	return exeStream->seek(0) && exeStream->read(data.data(), expectedSize) == expectedSize && exeStream->pos() == exeStream->size();
 }
 
+bool ZoombiniText::readMacA5WorldSizes(Common::SeekableReadStream *codeStream, uint32 &bytesAboveA5, uint32 &bytesBelowA5) {
+	if (!codeStream || codeStream->size() < 8 || !codeStream->seek(0))
+		return false;
+
+	bytesAboveA5 = codeStream->readUint32BE();
+	bytesBelowA5 = codeStream->readUint32BE();
+	return !codeStream->err();
+}
+
+bool ZoombiniText::expandMacResForkRleGlobals(Common::Array<byte> &data, uint32 bytesAboveA5, uint32 bytesBelowA5) {
+	const uint64 a5WorldSize = static_cast<uint64>(bytesBelowA5) + bytesAboveA5;
+	if (bytesAboveA5 == 0 || UINT32_MAX < a5WorldSize)
+		return false;
+
+	// Commands 1..4 expand the original eight-byte pointer/jump-table templates.
+	// -1 preserves the destination byte, -2 consumes one literal byte, and other entries emit a fixed byte.
+	static constexpr int16 kTemplates[4][8] = {
+		{-1, -1, -1, -1, 255, 255, -2, -2},
+		{-1, -1, -1, -1, 255, -2, -2, -2},
+		{169, 240, -1, -1, -2, -2, -1, -2},
+		{169, 240, -1, -2, -2, -2, -1, -2},
+	};
+	Common::Array<byte> a5World;
+	a5World.resize(static_cast<uint32>(a5WorldSize));
+	// Skipped destinations retain zeros or bytes written by an earlier block.
+	memset(a5World.data(), 0, a5World.size());
+	// Decode all three blocks, including empty ones.
+	uint32 srcOffset = 4;
+	for (uint block = 0; block < 3; block++) {
+		if (data.size() < srcOffset + 4)
+			return false;
+		// Each block starts with a signed BE32 displacement from A5, which lies bytesBelowA5 bytes into a5World.
+		const int64 blockOffset = static_cast<int64>(bytesBelowA5) + READ_BE_INT32(data.data() + srcOffset);
+		srcOffset += 4;
+		if (blockOffset < 0 || static_cast<int64>(a5World.size()) < blockOffset)
+			return false;
+		uint32 dest = static_cast<uint32>(blockOffset);
+		while (true) {
+			if (data.size() <= srcOffset)
+				return false;
+			const byte cmd = data[srcOffset];
+			srcOffset += 1;
+			// Zero ends this block, not the entire three-block stream.
+			if (cmd == kMacDataEndBlock_00)
+				break;
+			if (cmd <= kMacDataTemplateLast_04) {
+				if (a5World.size() - dest < 8)
+					return false;
+				for (uint i = 0; i < 8; i++) {
+					const int16 value = kTemplates[cmd - kMacDataTemplateFirst_01][i];
+					if (value == -2) {
+						if (data.size() <= srcOffset)
+							return false;
+						a5World[dest + i] = data[srcOffset];
+						srcOffset += 1;
+					} else if (0 <= value) {
+						a5World[dest + i] = static_cast<byte>(value);
+					}
+				}
+				dest += 8;
+				continue;
+			}
+			// Run commands encode their length as an offset from the command range's base.
+			// Check bases in descending order so each byte selects exactly one command.
+			uint32 count;
+			byte value = 255;
+			if (kMacDataCopyLiteralsBase_128 <= cmd) {
+				count = cmd - kMacDataCopyLiteralsBase_128 + 1;
+			} else if (kMacDataSkipBase_64 <= cmd) {
+				count = cmd - kMacDataSkipBase_64 + 1;
+			} else if (kMacDataRepeatByteBase_32 <= cmd) {
+				count = cmd - kMacDataRepeatByteBase_32 + 2;
+				if (data.size() <= srcOffset)
+					return false;
+				value = data[srcOffset];
+				srcOffset += 1;
+			} else if (kMacDataRepeatFFBase_16 <= cmd) {
+				count = cmd - kMacDataRepeatFFBase_16 + 1;
+			} else {
+				// Commands 5..15 are invalid; the original reports SysError 15.
+				return false;
+			}
+			if (a5World.size() - dest < count)
+				return false;
+			if (kMacDataCopyLiteralsBase_128 <= cmd) {
+				if (data.size() - srcOffset < count)
+					return false;
+				memcpy(a5World.data() + dest, data.data() + srcOffset, count);
+				srcOffset += count;
+			} else if (cmd < kMacDataSkipBase_64) {
+				memset(a5World.data() + dest, value, count);
+			}
+			dest += count;
+		}
+	}
+	// Relocation streams follow these blocks. Static text uses the unrelocated A5-relative offsets.
+	// Drop the below-A5 region so string offsets and credit pointers index data directly from A5 at index 0.
+	data.resize(bytesAboveA5);
+	memcpy(data.data(), a5World.data() + bytesBelowA5, bytesAboveA5);
+	return true;
+}
+
 bool ZoombiniText::findBytes(const Common::Array<byte> &data, const char *needle, uint32 &offset) {
 	const uint32 needleLength = static_cast<uint32>(strlen(needle));
 	if (needleLength < 1 || data.size() < needleLength)
@@ -2114,7 +2382,12 @@ bool ZoombiniText::readCreditStringsFromPointerTable(const Common::Array<byte> &
 		if (data.size() < tableEntryOffset + 4)
 			return false;
 
-		const uint32 stringAddress = READ_LE_UINT32(data.data() + tableEntryOffset);
+		uint32 stringAddress;
+		const bool srcMacRleA5RelativePtrs = source.creditSourceKind == CreditSourceKind::kMacRleA5RelativePointerStream;
+		if (srcMacRleA5RelativePtrs)
+			stringAddress = READ_BE_UINT32(data.data() + tableEntryOffset);
+		else
+			stringAddress = READ_LE_UINT32(data.data() + tableEntryOffset);
 		if (source.creditPointerBlankAddressFirst &&
 			source.creditPointerBlankAddressFirst <= stringAddress && stringAddress <= source.creditPointerBlankAddressLast) {
 			if (!reachedIcons)
@@ -2133,12 +2406,12 @@ bool ZoombiniText::readCreditStringsFromPointerTable(const Common::Array<byte> &
 			return false;
 		totalByteCount += byteLength;
 		if (isCreditTerminator(text)) {
-			if (nextIconIndex != 5 || creditStrings.empty())
+			if ((!srcMacRleA5RelativePtrs && nextIconIndex != 5) || creditStrings.empty())
 				return false;
 			creditStrings.push_back(text);
 			return true;
 		}
-		if (isTlcCreditIconMarker(text)) {
+		if (!srcMacRleA5RelativePtrs && isTlcCreditIconMarker(text)) {
 			const uint32 iconIndex = static_cast<uint32>(text[4] - U'0');
 			if (iconIndex != nextIconIndex)
 				return false;
@@ -2210,6 +2483,7 @@ bool ZoombiniText::loadOriginalExecutableCredits(const Common::Array<byte> &data
 			return false;
 		break;
 	case CreditSourceKind::kExecutablePointerStream:
+	case CreditSourceKind::kMacRleA5RelativePointerStream:
 		if (!readCreditStringsFromPointerTable(data, source, creditStrings))
 			return false;
 		break;
@@ -2287,61 +2561,8 @@ bool ZoombiniText::initArchiveStrings(const StringSources &sources) {
 	return true;
 }
 
-Common::CodePage ZoombiniText::getExeCodePage(Common::Language language) {
-	switch (language) {
-	case Common::JA_JPN:
-		return Common::kWindows932;
-	case Common::KO_KOR:
-		return Common::kWindows949;
-	case Common::PL_POL:
-		return Common::kWindows1250;
-	default:
-		return Common::kWindows1252;
-	}
-}
-
-const char *ZoombiniText::getCodePageName(Common::CodePage codePage) {
-	// FIXME: Move it to the ScummVM core?
-	switch (codePage) {
-	case Common::kWindows932:
-		return "CP932";
-	case Common::kWindows949:
-		return "CP949";
-	case Common::kWindows1250:
-		return "CP1250";
-	case Common::kWindows1252:
-		return "CP1252";
-	case Common::kMacRoman:
-		return "MacRoman";
-	default:
-		return "Unknown";
-	}
-}
-
-Common::CodePage ZoombiniText::getResCodePage(Common::Language language) {
-	switch (language) {
-	case Common::EN_GRB:
-	case Common::FR_FRA:
-	case Common::DE_DEU:
-	case Common::IT_ITA:
-		// European TEXTSTR.MHK strings are encoded as MacRoman.
-		return Common::kMacRoman;
-	case Common::JA_JPN:
-		return Common::kWindows932;
-	case Common::KO_KOR:
-		return Common::kWindows949;
-	case Common::PL_POL:
-		return Common::kWindows1250;
-	case Common::ES_ESP:
-	case Common::PT_PRT:
-	case Common::EN_USA:
-	default:
-		return Common::kWindows1252;
-	}
-}
-
 ZoombiniText::ZoombiniText(MohawkEngine_Zoombini *vm)
-	: _vm(vm), _relInfo(vm->getRelInfo()), _exeCodePage(getExeCodePage(_relInfo.getLanguage())), _resCodePage(getResCodePage(_relInfo.getLanguage())) {
+	: _vm(vm), _relInfo(vm->getRelInfo()), _exeCodePage(_relInfo.getExeCodePage()), _resCodePage(_relInfo.getResCodePage()) {
 	initFonts();
 
 	const StringSources sources = createStringSources(_relInfo);
@@ -2457,9 +2678,20 @@ void ZoombiniText::initFonts() {
 		}
 	} else if (_relInfo.isFamily(ZmbReleaseInfo::kUsV1)) { // Broderbund v1.1 US release
 		if (language == Common::EN_USA) {
-			if (_relInfo.isDemo(ZmbReleaseInfo::kUsV11)) { // v1.1US Demo
-				fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
-				_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			if (_relInfo.isDemo()) {
+				switch (_vm->getPlatform()) {
+				case Common::kPlatformMacintosh: // v1.1US Mac Demo
+					_textFont.point = 12;
+					_optimalTTFLoaders.push_back(new MacResForkTTFLoader("Zoom", "Cornerstone", 2863, fontSizeMode));
+					break;
+				case Common::kPlatformWindows: // v1.1US Windows Demo
+					fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
+					_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+					break;
+				default:
+					error("ZoombiniText::initFonts: unknown platform(%d) for v1.1US Demo", _vm->getPlatform());
+					break;
+				}
 			} else { // Retail releases
 				fontSrcInst = Common::U32String::format(srcInstTemplate, "'/ZBARC32.Z', '/ZBARC16.Z', or '/SETUP/data1.cab'").encode(Common::kUtf8);
 				_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC32.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
@@ -2560,6 +2792,8 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 
 	StringSources sources;
 	const Common::Language language = relInfo.getLanguage();
+	const Common::Platform platform = relInfo.getPlatform();
+	const Common::CodePage exeCodePage = relInfo.getExeCodePage();
 	if (relInfo.isFamily(ZmbReleaseInfo::kEuropeV1)) {
 		sources.textStrArchive = !relInfo.isVariant(ZmbReleaseInfo::kEsPtV10);
 		// These releases concatenate STRL 2020/2021, including blanks and the final '*' marker.
@@ -2585,7 +2819,7 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 
 		if (relInfo.isDemo(ZmbReleaseInfo::kEuropeV10)) { // v1.0BR Demo
 			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(Common::kWindows1252, kV10BRDemo_NETextEntries)
+											 .withTextTable(exeCodePage, kV10BRDemo_NETextEntries)
 											 .withRequiredBytes(0xD72C8, "New Game");
 			sources.executables = {source.inFile("ZOOMBINI.EXE", kV10BRDemoExeSize)};
 		} else if (relInfo.isVariant(ZmbReleaseInfo::kEuropeV10)) {
@@ -2594,22 +2828,22 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 			switch (language) {
 			case Common::EN_GRB:
 				source = ExeTextSource()
-							 .withTextTable(Common::kWindows1252, kV10BR_NETextEntries)
+							 .withTextTable(exeCodePage, kV10BR_NETextEntries)
 							 .withRequiredBytes(0xD6840, "New Game");
 				break;
 			case Common::FR_FRA:
 				source = ExeTextSource()
-							 .withTextTable(Common::kWindows1252, kV10FR_NETextEntries)
+							 .withTextTable(exeCodePage, kV10FR_NETextEntries)
 							 .withRequiredBytes(0xD6849, "Nouvelle Partie");
 				break;
 			case Common::DE_DEU:
 				source = ExeTextSource()
-							 .withTextTable(Common::kWindows1252, kV10GE_NETextEntries)
+							 .withTextTable(exeCodePage, kV10GE_NETextEntries)
 							 .withRequiredBytes(0xD6859, "Neues Spiel");
 				break;
 			case Common::IT_ITA:
 				source = ExeTextSource()
-							 .withTextTable(Common::kWindows1252, kV10IT_NETextEntries)
+							 .withTextTable(exeCodePage, kV10IT_NETextEntries)
 							 .withRequiredBytes(0xD78DE, "Nuova partita");
 				executableSize = kV10ITExeSize;
 				break;
@@ -2624,17 +2858,17 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 			switch (language) {
 			case Common::EN_GRB:
 				source = ExeTextSource()
-							 .withTextTable(Common::kWindows1252, kV11BR_NETextEntries)
+							 .withTextTable(exeCodePage, kV11BR_NETextEntries)
 							 .withRequiredBytes(883892, "New Game");
 				break;
 			case Common::FR_FRA:
 				source = ExeTextSource()
-							 .withTextTable(Common::kWindows1252, kV11FR_NETextEntries)
+							 .withTextTable(exeCodePage, kV11FR_NETextEntries)
 							 .withRequiredBytes(883901, "Nouvelle Partie");
 				break;
 			case Common::DE_DEU:
 				source = ExeTextSource()
-							 .withTextTable(Common::kWindows1252, kV11GE_NETextEntries)
+							 .withTextTable(exeCodePage, kV11GE_NETextEntries)
 							 .withRequiredBytes(883917, "Neues Spiel");
 				break;
 			default:
@@ -2643,7 +2877,7 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 			sources.executables = {source.inFile("ZOOMBINI._EX", kV11EUExeSize)};
 		} else if (relInfo.isVariant(ZmbReleaseInfo::kFranceV11_2002)) {
 			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(Common::kWindows1252, kV11FR_NETextEntries)
+											 .withTextTable(exeCodePage, kV11FR_NETextEntries)
 											 .withRequiredBytes(883901, "Nouvelle Partie");
 			sources.executables = {
 				source.inCabinetMember("data1.cab", "ZOOMBINI.EXE", kV11EUExeSize)};
@@ -2651,7 +2885,7 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 			switch (language) {
 			case Common::ES_ESP: {
 				const ExeTextSource source = ExeTextSource()
-												 .withTextTable(Common::kWindows1252, kV10ES_PETextEntries)
+												 .withTextTable(exeCodePage, kV10ES_PETextEntries)
 												 .withRequiredBytes(0x888EA, "Nueva Partida")
 												 .withTextPatches(&ZoombiniText::patchSpanish10ExeText)
 												 .withCreditAnchor(kExeSpanishCreditParagraphsAnchor)
@@ -2663,7 +2897,7 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 			}
 			case Common::PT_PRT: {
 				const ExeTextSource source = ExeTextSource()
-												 .withTextTable(Common::kWindows1252, kV10PT_PETextEntries)
+												 .withTextTable(exeCodePage, kV10PT_PETextEntries)
 												 .withRequiredBytes(0x888EA, "Novo Jogo")
 												 .withCreditAnchor(kExePortugueseCreditParagraphsAnchor)
 												 .withCreditLimits(kV10PTCreditLimits);
@@ -2680,13 +2914,13 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 			sources.decodeMacRomanUmlautByte9F = true;
 			if (relInfo.isDemo()) {
 				const ExeTextSource source = ExeTextSource()
-												 .withTextTable(Common::kWindows932, kV10JPMacDemoTextEntries)
-												 .withRequiredBytes(150070, "Osaka");
+												 .withTextTable(exeCodePage, kV10JPMacDemoTextEntries)
+												 .withRequiredBytes(93593, "1.0  1996 Broderbund Software.");
 				sources.executables = {source.inFile("Zoombini", 722944)};
 				return sources;
 			}
 			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(Common::kWindows932, kV10JP_PETextEntries)
+											 .withTextTable(exeCodePage, kV10JP_PETextEntries)
 											 .withRequiredBytes(0x88427, "Japanese");
 			sources.executables = {
 				source.inArchiveMember("ZBARCHIV.Z", "zoombi32.exe", kV10JPExeSize),
@@ -2694,21 +2928,38 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 		}
 	} else if (relInfo.isFamily(ZmbReleaseInfo::kUsV1)) {
 		if (language == Common::EN_USA && relInfo.isDemo(ZmbReleaseInfo::kUsV11)) {
-			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(Common::kWindows1252, kV11USDemo_NETextEntries)
-											 .withRequiredBytes(0xD9758, "NEW GAME")
-											 .withCreditAnchor(kExeCreditParagraphsAnchor)
-											 .withCreditLimits(kV11USCreditLimits);
-			sources.executables = {
-				source.inFile("ZOOM.EXE", kV11USDemoNEExeSize)};
+			switch (platform) {
+			case Common::kPlatformMacintosh: {
+				static constexpr CreditLimits kMacCreditLimits = {248, 27, 2349};
+				const ExeTextSource source = ExeTextSource()
+												 .withTextTable(exeCodePage, kV11USMacDemoTextEntries)
+												 .withRequiredBytes(33486, "NEW GAME (CTRL N)")
+												 .withMacA5RelativeCreditPtrTable(29490)
+												 .withCreditLimits(kMacCreditLimits);
+				sources.executables = {source.inMacDataResFork("Zoom", 33120)};
+				break;
+			}
+			case Common::kPlatformWindows: {
+				const ExeTextSource source = ExeTextSource()
+												 .withTextTable(exeCodePage, kV11USDemo_NETextEntries)
+												 .withRequiredBytes(0xD9758, "NEW GAME")
+												 .withCreditAnchor(kExeCreditParagraphsAnchor)
+												 .withCreditLimits(kV11USCreditLimits);
+				sources.executables = {source.inFile("ZOOM.EXE", kV11USDemoNEExeSize)};
+				break;
+			}
+			default:
+				error("ZoombiniText::createStringSources: unknown platform(%d) for v1.1US Demo", platform);
+				break;
+			}
 		} else if (language == Common::EN_USA) {
 			const ExeTextSource peSource = ExeTextSource()
-											   .withTextTable(Common::kWindows1252, kV11US_PETextEntries)
+											   .withTextTable(exeCodePage, kV11US_PETextEntries)
 											   .withRequiredBytes(0x8B9FC, "NEW GAME")
 											   .withCreditAnchor(kExeCreditParagraphsAnchor)
 											   .withCreditLimits(kV11USCreditLimits);
 			const ExeTextSource neSource = ExeTextSource()
-											   .withTextTable(Common::kWindows1252, kV11US_NETextEntries)
+											   .withTextTable(exeCodePage, kV11US_NETextEntries)
 											   .withRequiredBytes(0xDCBB2, "NEW GAME")
 											   .withCreditAnchor(kExeCreditParagraphsAnchor)
 											   .withCreditLimits(kV11USCreditLimits);
@@ -2719,13 +2970,13 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 				neSource.inFile("ZOOMBINI.EXE", kV11USNEExeSize)};
 		} else if (language == Common::KO_KOR) {
 			const ExeTextSource peSource = ExeTextSource()
-											   .withTextTable(Common::kWindows949, kV111KR_PETextEntries)
+											   .withTextTable(exeCodePage, kV111KR_PETextEntries)
 											   .withWindows1252StrokeByteD8Decode()
 											   .withCreditLinePatches(&ZoombiniText::patchKoreanExeCredits)
 											   .withCreditAnchor(kExeCreditParagraphsAnchor)
 											   .withCreditLimits(kV111KRCreditLimits);
 			const ExeTextSource neSource = ExeTextSource()
-											   .withTextTable(Common::kWindows949, kV111KR_NETextEntries)
+											   .withTextTable(exeCodePage, kV111KR_NETextEntries)
 											   .withWindows1252StrokeByteD8Decode()
 											   .withCreditLinePatches(&ZoombiniText::patchKoreanExeCredits)
 											   .withCreditAnchor(kExeCreditParagraphsAnchor)
@@ -2739,7 +2990,7 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 	} else if (relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) {
 		if (relInfo.isDemo(ZmbReleaseInfo::kTlcV20)) {
 			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(Common::kWindows1252, kV20USDemo_PETextEntries)
+											 .withTextTable(exeCodePage, kV20USDemo_PETextEntries)
 											 .withRequiredBytes(0x909B8, "NEW GAME")
 											 .withMacRomanTrademarkByteAAEscape()
 											 .withCreditPtrTable(0x8F09C, 0x400000, 0)
@@ -2749,7 +3000,7 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 				source.inFile("Zoom.exe", kV20USDemoExeSize)};
 		} else if (language == Common::PL_POL) {
 			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(Common::kWindows1250, kV20PL_PETextEntries)
+											 .withTextTable(exeCodePage, kV20PL_PETextEntries)
 											 .withRequiredBytes(0xC9AF4, "Bez nazwy")
 											 .withMacRomanTrademarkByteAAEscape()
 											 .withCreditPtrTable(0xCA190, 0x413000, 21)
@@ -2759,7 +3010,7 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 				source.inFile("INSTALL/HD/Zoombinis Logical Journey.exe", kV20PLExeSize)};
 		} else {
 			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(Common::kWindows1252, kV20US_PETextEntries)
+											 .withTextTable(exeCodePage, kV20US_PETextEntries)
 											 .withMacRomanTrademarkByteAAEscape()
 											 .withCreditPtrTable(0x90080, 0x400000, 21)
 											 .withCreditPtrBlankAddress(0x4A286C)
@@ -2781,8 +3032,18 @@ bool ZoombiniText::initExecutableStrings(const Common::Array<ExeTextSource> &sou
 
 bool ZoombiniText::tryExecutableSource(const ExeTextSource &source) {
 	Common::SeekableReadStream *exeStream = nullptr;
+	Common::MacResManager macApplication;
+	uint32 bytesAboveA5 = 0;
+	uint32 bytesBelowA5 = 0;
 
-	if (source.fileName) {
+	if (source.macDataResFork) {
+		if (!macApplication.open(Common::Path(source.fileName)))
+			return false;
+		Common::ScopedPtr<Common::SeekableReadStream> codeStream(macApplication.getResource(MKTAG('C', 'O', 'D', 'E'), 0));
+		if (!readMacA5WorldSizes(codeStream.get(), bytesAboveA5, bytesBelowA5))
+			return false;
+		exeStream = macApplication.getResource(MKTAG('D', 'A', 'T', 'A'), 0);
+	} else if (source.fileName) {
 		Common::File *file = new Common::File();
 		if (file->open(Common::Path(source.fileName)))
 			exeStream = file;
@@ -2793,7 +3054,7 @@ bool ZoombiniText::tryExecutableSource(const ExeTextSource &source) {
 	if (!exeStream && source.archiveName) {
 		Common::Archive *archive = nullptr;
 		if (source.archiveIsCabinet) {
-			// TODO: Pass source.expectedSize after the shared InstallShield reader supports caller-provided exact extraction sizes.
+			// FIXME: Pass source.expectedSize after the shared InstallShield reader supports caller-provided exact extraction sizes.
 			archive = Common::makeInstallShieldArchive(Common::Path(source.archiveName));
 		} else {
 			Common::InstallShieldV3 *v3Archive = new Common::InstallShieldV3();
@@ -2813,6 +3074,10 @@ bool ZoombiniText::tryExecutableSource(const ExeTextSource &source) {
 
 	Common::Array<byte> exeData;
 	if (!readExecutableData(exeStream, source.expectedSize, exeData)) {
+		delete exeStream;
+		return false;
+	}
+	if (source.macDataResFork && !expandMacResForkRleGlobals(exeData, bytesAboveA5, bytesBelowA5)) {
 		delete exeStream;
 		return false;
 	}
