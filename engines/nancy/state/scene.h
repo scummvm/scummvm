@@ -471,14 +471,8 @@ private:
 		int16 primaryVideoResponsePicked = -1;
 	};
 
-	struct InventorySoundOverride {
-		bool isDefault = false; // When true, other fields are ignored
-		SoundDescription sound;
-		Common::String caption;
-	};
-
-	// The overrides of the character being played
-	Common::HashMap<uint16, InventorySoundOverride> &activeSoundOverrides();
+	// The inventory sound overrides of the character being played
+	Common::HashMap<uint16, InventorySoundOverrideData::Override> &activeSoundOverrides();
 
 	// UI
 	UI::FullScreenImage _frame;
@@ -516,9 +510,6 @@ private:
 	int16 _lastHintCharacter;
 	int16 _lastHintID;
 	NancyState::NancyState _gameStateRequested;
-	// One set of overrides per player character; everything before Nancy15 only
-	// ever touches the first
-	Common::HashMap<uint16, InventorySoundOverride> _inventorySoundOverrides[kMaxPlayerCharacters];
 
 	Misc::Lightning *_lightning;
 	Misc::ViewportFader *_viewportFader;

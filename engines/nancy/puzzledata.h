@@ -497,6 +497,29 @@ struct PlayerCharacterData : public PuzzleData {
 	Common::String designs[kMaxPlayerCharacters];
 };
 
+// Inventory "can't" sound overrides, installed by AR 123 (InventorySoundOverride).
+// An override stays in place until another record replaces or removes it, so it
+// has to survive both scene changes and a save/load. One set per player character;
+// everything before Nancy15 only ever touches the first.
+struct InventorySoundOverrideData : public PuzzleData {
+	struct Override {
+		bool isDefault = false; // When true, other fields are ignored
+		SoundDescription sound;
+		Common::String caption;
+	};
+
+	InventorySoundOverrideData() {}
+	virtual ~InventorySoundOverrideData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('I', 'S', 'N', 'D'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::HashMap<uint16, Override> overrides[kMaxPlayerCharacters];
+
+private:
+	static void syncOverride(Common::Serializer &ser, Override &override);
+};
+
 // Nancy13+ WordFindPuzzle (AR 170). The puzzle is solved one word at a time across
 // several scene visits; this remembers which word is currently active so progress
 // survives leaving and re-entering the scene (and saving/loading).

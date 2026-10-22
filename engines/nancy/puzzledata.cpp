@@ -761,6 +761,42 @@ void PlayerCharacterData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void InventorySoundOverrideData::synchronize(Common::Serializer &ser) {
+	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
+		uint16 count = overrides[i].size();
+		ser.syncAsUint16LE(count);
+
+		if (ser.isSaving()) {
+			for (auto &entry : overrides[i]) {
+				uint16 itemID = entry._key;
+				ser.syncAsUint16LE(itemID);
+				syncOverride(ser, entry._value);
+			}
+		} else {
+			overrides[i].clear();
+
+			for (uint j = 0; j < count; ++j) {
+				uint16 itemID = 0;
+				ser.syncAsUint16LE(itemID);
+				syncOverride(ser, overrides[i].getOrCreateVal(itemID));
+			}
+		}
+	}
+}
+
+void InventorySoundOverrideData::syncOverride(Common::Serializer &ser, Override &override) {
+	ser.syncAsByte(override.isDefault);
+	ser.syncString(override.caption);
+	ser.syncString(override.sound.name);
+	ser.syncAsUint16LE(override.sound.channelID);
+	ser.syncAsUint16LE(override.sound.playCommands);
+	ser.syncAsUint16LE(override.sound.numLoops);
+	ser.syncAsUint16LE(override.sound.volume);
+	ser.syncAsUint16LE(override.sound.panAnchorFrame);
+	ser.syncAsUint32LE(override.sound.samplesPerSec);
+	ser.syncAsByte(override.sound.isPanning);
+}
+
 void WordFindPuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncAsSint16LE(currentWord);
 }
@@ -1161,6 +1197,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new TaskbarData();
 	case PlayerCharacterData::getTag():
 		return new PlayerCharacterData();
+	case InventorySoundOverrideData::getTag():
+		return new InventorySoundOverrideData();
 	default:
 		return nullptr;
 	}

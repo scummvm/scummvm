@@ -859,13 +859,14 @@ int32 Scene::getCharacterUIResource(uint characterIndex, uint index) {
 
 void Scene::installInventorySoundOverride(byte command, const SoundDescription &sound,
 		const Common::String &caption, uint16 itemID, byte characterIndex) {
-	InventorySoundOverride newOverride;
+	InventorySoundOverrideData::Override newOverride;
 
 	// An override can be installed on a character who isn't being played, so it
 	// waits in their own set until they are
 	uint targetCharacter = characterIndex < kMaxPlayerCharacters ?
 		characterIndex : MIN<uint>(g_nancy->getPlayerCharacter(), kMaxPlayerCharacters - 1);
-	Common::HashMap<uint16, InventorySoundOverride> &overrides = _inventorySoundOverrides[targetCharacter];
+	auto *overrideData = (InventorySoundOverrideData *)getPuzzleData(InventorySoundOverrideData::getTag());
+	Common::HashMap<uint16, InventorySoundOverrideData::Override> &overrides = overrideData->overrides[targetCharacter];
 
 	switch (command) {
 	case kInvSoundOverrideCommandNoSound :
@@ -921,8 +922,9 @@ static Common::String getSoundSubtitle(const Common::String &soundName, const Co
 	return fallback;
 }
 
-Common::HashMap<uint16, Scene::InventorySoundOverride> &Scene::activeSoundOverrides() {
-	return _inventorySoundOverrides[MIN<uint>(g_nancy->getPlayerCharacter(), kMaxPlayerCharacters - 1)];
+Common::HashMap<uint16, InventorySoundOverrideData::Override> &Scene::activeSoundOverrides() {
+	auto *overrideData = (InventorySoundOverrideData *)getPuzzleData(InventorySoundOverrideData::getTag());
+	return overrideData->overrides[MIN<uint>(g_nancy->getPlayerCharacter(), kMaxPlayerCharacters - 1)];
 }
 
 // Nancy15 moved the "can't" responses out of the inventory data and into the
@@ -970,7 +972,7 @@ void Scene::playPlayerCantSound(int16 itemID) {
 	Common::String caption;
 
 	if (itemID >= 0 && activeSoundOverrides().contains(itemID)) {
-		InventorySoundOverride &override = activeSoundOverrides()[itemID];
+		InventorySoundOverrideData::Override &override = activeSoundOverrides()[itemID];
 
 		if (override.isDefault) {
 			// Back to the character's generic response
@@ -1050,7 +1052,7 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 	} else if ((uint)itemID < _flags.items.size()) {
 		if (activeSoundOverrides().contains(itemID)) {
 			// We have an override installed
-			InventorySoundOverride &override = activeSoundOverrides()[itemID];
+			InventorySoundOverrideData::Override &override = activeSoundOverrides()[itemID];
 			if (!override.isDefault) {
 				// Not set to the default sound, play the override
 				g_nancy->_sound->loadSound(override.sound);
@@ -2219,13 +2221,6 @@ void Scene::load(bool fromSaveFile) {
 		if (_viewport.getMaxScroll() == 0) {
 			_viewport.disableEdges(kUp | kDown);
 		}
-	}
-
-	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
-		for (auto &override : _inventorySoundOverrides[i]) {
-			g_nancy->_sound->stopSound(override._value.sound);
-		}
-		_inventorySoundOverrides[i].clear();
 	}
 
 	_timers.sceneTime = 0;
