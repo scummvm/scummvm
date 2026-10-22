@@ -275,16 +275,23 @@ bool Combat::updateMonsterAttack(Script &script, const MonsterRecord &monster,
 	if (!combatState.attackContactResolved &&
 			combatState.attackContactFrame >= 0 &&
 			currentFrame >= combatState.attackContactFrame) {
-		combatState.attackContactResolved = true;
-		combatState.attackContactFrame = -1;
+		const bool projectile = (monster.damageType & 4) != 0;
 		const bool hasTrackedPlayerTarget =
 			playerState.entity &&
 			!combatState.attackTargetName.empty() &&
 			playerState.entity->getName().equalsIgnoreCase(combatState.attackTargetName);
-		if (!playerAlive || !hasTrackedPlayerTarget) {
-			debugC(1, kDebugCombat,
-				"Harvester: combat monster attack miss monster='%s' frame=%d player_hp=%d reason='no live target'",
-				monster.monsterName.c_str(), currentFrame, script.getPlayerCurrentHitPoints());
+		const bool hasContact = playerAlive && !playerState.deathActive && hasTrackedPlayerTarget &&
+			(projectile || entity.overlapsEntity(*playerState.entity));
+		if (hasContact || projectile) {
+			combatState.attackContactResolved = true;
+			combatState.attackContactFrame = -1;
+		}
+		if (!hasContact) {
+			if (entity.didAnimationAdvanceLastTick()) {
+				debugC(3, kDebugCombat,
+					"Harvester: combat monster attack miss monster='%s' frame=%d player_hp=%d reason='no live contact'",
+					monster.monsterName.c_str(), currentFrame, script.getPlayerCurrentHitPoints());
+			}
 		} else {
 			const int playerHitPointsBefore = script.getPlayerCurrentHitPoints();
 			const bool damageDisabled = _cheats.isPlayerDamageDisabled();
@@ -314,8 +321,8 @@ bool Combat::updateMonsterAttack(Script &script, const MonsterRecord &monster,
 					"combat_monster_hit", monster.monsterName, monster.damageType);
 				return true;
 			}
+			needsRedraw = true;
 		}
-		needsRedraw = true;
 	}
 	if (currentFrame == combatState.attackLastFrame) {
 		clearRoomMonsterAttackState(combatState);
