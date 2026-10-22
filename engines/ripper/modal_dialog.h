@@ -85,9 +85,6 @@ public:
 		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
 		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone,
 		bool present = true);
-	bool drawRetainedTitlePanel(uint titleResourceId,
-		const Common::Rect &bounds, PresentationStyle style,
-		bool present = true);
 	bool drawRetainedTitlePanelText(const Common::String &title,
 		const Common::Rect &bounds, PresentationStyle style,
 		bool present = true);

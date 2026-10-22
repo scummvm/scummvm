@@ -598,7 +598,7 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 	applyModalPalette();
 	_engine->getCursor()->update(kModalCursor);
 	debugC(1, kDebugScene,
-		"Ripper: entered binary prompt function=RunBinaryPromptChooser@0x1803c "
+		"Ripper: entered binary prompt "
 		"resource=%u prompt='%s' default=%u bounds=%d,%d,%d,%d",
 		promptResourceId, prompt.c_str(), selectedIndex,
 		bounds.left, bounds.top, bounds.width(), bounds.height());

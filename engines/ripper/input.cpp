@@ -88,15 +88,13 @@ InputManager::InputManager(Common::EventManager *eventManager) : _eventManager(e
 }
 
 uint16 translateKeyToCommand(const Common::KeyState &key) {
-	// PollInteractionAndResolveSelection at 0x13fc7 and
-	// ServiceMediaPresentationTextControl at 0x17014 consume the DOS control
-	// character values for the v1.05 replay, text, and auto-scroll shortcuts.
+	// Replay, text, and auto-scroll shortcuts use DOS control characters.
 	if ((key.flags & Common::KBD_CTRL) != 0 &&
 			key.keycode >= Common::KEYCODE_a && key.keycode <= Common::KEYCODE_z)
 		return key.keycode - Common::KEYCODE_a + 1;
 
-	// RIPPER.LE uses BIOS AX commands: Alt letters carry the Set 1 scan code in
-	// the high byte. Toolbar shortcuts and the web puzzle depend on this form.
+	// Alt letters carry the Set 1 scan code in the high byte of a BIOS command.
+	// Toolbar shortcuts and the web puzzle depend on this form.
 	if ((key.flags & Common::KBD_ALT) != 0) {
 		const uint16 letterScanCode = altLetterScanCode(key.keycode);
 		if (letterScanCode != 0)

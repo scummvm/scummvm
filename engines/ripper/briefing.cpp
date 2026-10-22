@@ -58,8 +58,6 @@ BriefingManager::~BriefingManager() {
 }
 
 bool BriefingManager::initialize(ResourceManager &resources, bool demoVariant) {
-	// RIPPER.LE uses toolbar4.pl; RIP.EXE reads the third toolbar3.pl frame set
-	// at 0x698fc for the same lower-band control.
 	const char *assetName = demoVariant ? "toolbar3.pl" : "toolbar4.pl";
 	if (!resources.loadInterfaceBitmapSequence(assetName, _frames) ||
 			_frames.frames.empty())

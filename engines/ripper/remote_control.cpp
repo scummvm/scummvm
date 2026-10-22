@@ -63,9 +63,7 @@ struct ControlLayout {
 	uint16 command;
 };
 
-// g_take2IniSliderSetupUiLayoutTemplate at 0x1860a stores coordinates in the
-// original display service's transposed order. These are the physical screen
-// positions produced by adding menu origin (212,126) to its six control rows.
+// Physical screen positions include the modal origin at (212, 126).
 static const ControlLayout kControlLayouts[] = {
 	{ 270, 213, 0x001b },
 	{ 338, 214, 0x1300 },
@@ -102,8 +100,7 @@ bool RemoteControlManager::initialize(ResourceManager &resources) {
 		uint hitWidth = _controls[i].frame.width;
 		uint hitHeight = _controls[i].frame.height;
 		if (i == 4) {
-			// The fifth row at 0x1863a clips the shared +/- rocker to 27 by 19
-			// in the display service's transposed coordinates: 19 by 27 here.
+			// The increase control covers only the upper half of the shared rocker.
 			hitWidth = MIN<uint>(19, hitWidth);
 			hitHeight = MIN<uint>(27, hitHeight);
 		}
@@ -139,9 +136,8 @@ void RemoteControlManager::restoreDisplay() {
 }
 
 void RemoteControlManager::applyPalette() {
-	// REMOTE.SMK draws only with the shared interface bands patched by
-	// ApplySharedDisplayPalettePatch at 0x205d0. Its unused palette entries are
-	// chroma-key green and must not replace the suspended scene palette.
+	// REMOTE.SMK uses only the shared interface palette bands. Its unused
+	// chroma-key green entries must not replace the suspended scene palette.
 	if (_videoPaletteChanged && _engine->getSettings()->restoreVideoPalette())
 		return;
 	_savedDisplay.restorePalette();
@@ -169,9 +165,7 @@ void RemoteControlManager::drawText(byte *screen, uint pitch, int x, int y,
 }
 
 int RemoteControlManager::findControl(const Common::Point &point) const {
-	// AppendUiControlStateToList and FindUiControlStateAtPoint at 0x4aae8
-	// retain insertion order and return the first hit. This matters for the
-	// clipped increase control placed over the full-height decrease rocker.
+	// The clipped increase control must win over the full-height decrease rocker.
 	for (uint i = 0; i < _controls.size(); ++i) {
 		const Control &control = _controls[i];
 		if (!control.bounds.contains(point))
@@ -238,7 +232,7 @@ bool RemoteControlManager::run() {
 	if (!_initialized || !captureDisplay())
 		return false;
 	debugC(1, kDebugGeneral,
-		"Ripper: entering RunTake2IniSliderSetupMenu controls=%u", _controls.size());
+		"Ripper: entering Remote Control controls=%u", _controls.size());
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->publishMouseState();
 	Common::Array<byte> remotePalette;
@@ -329,7 +323,7 @@ bool RemoteControlManager::run() {
 	restoreDisplay();
 	_engine->getCursor()->update(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
-	debugC(1, kDebugGeneral, "Ripper: exited RunTake2IniSliderSetupMenu");
+	debugC(1, kDebugGeneral, "Ripper: exited Remote Control");
 	return !_engine->shouldQuit();
 }
 

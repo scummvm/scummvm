@@ -47,7 +47,6 @@ struct MenuControlBounds {
 	int16 width;
 };
 
-// RunStartupFrontEndLoop at 0x10778 reads this layout from the table at 0x1001b.
 static const MenuControlBounds kMenuControlBounds[] = {
 	{ 64, 248, 48, 366 },
 	{ 122, 248, 48, 366 },
@@ -128,8 +127,7 @@ MainMenuAction MainMenu::run() {
 	auto finishMenu = [&](MainMenuAction action) {
 		g_system->getMixer()->stopHandle(titleAudioHandle);
 		_engine->getCursor()->setVisible(false);
-		// RIPPER.LE clears without presenting, so the next controlled AVI captures
-		// a blank backing instead of the final RIP_OPEN.SMK frame.
+		// Clear without presenting so the next controlled AVI captures a blank backing.
 		g_system->fillScreen(0);
 		debugC(2, kDebugVideo,
 			"Ripper: cleared startup menu logical page action=%d", action);

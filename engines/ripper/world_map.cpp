@@ -42,7 +42,6 @@ static const uint kTravelLocationNameResource = 100;
 static const uint kTravelDetailResource = 116;
 static const uint kTravelTargetResource = 150;
 static const uint kWorldMapCursor = 16;
-// RIPPER.LE layout 0x207ac stores these controls in display-service Y/X order.
 static const int kLocationListLeft = 45;
 static const int kLocationListTop = 305;
 static const int kLocationListRight = 235;
@@ -61,8 +60,6 @@ static const int kScrollControlDown = 1;
 static const byte kListTextColor = 4;
 static const byte kSelectedTextColor = 254;
 
-// RunSceneSelectionMenu at 0x20808 copies this table from
-// g_sceneSelectionEntryGroupIds at 0x20702 before testing flags 20..44.
 static const byte kSceneEntryGroups[kSceneEntryCount] = {
 	0, 1, 2, 2, 3, 4, 4, 4, 4, 4, 5, 5, 6,
 	7, 8, 9, 9, 9, 9, 10, 11, 12, 12, 13, 14
@@ -105,10 +102,6 @@ bool WorldMap::initialize(ResourceManager &resources) {
 		kScrollUpLeft, kScrollDownTop, kScrollUpLeft + kScrollButtonWidth,
 		kScrollDownTop + kScrollButtonHeight, kListTextColor, kSelectedTextColor);
 	return true;
-}
-
-bool WorldMap::isLocationAvailable(uint locationIndex) const {
-	return locationIndex < _locations.size() && _locations[locationIndex].available;
 }
 
 const Common::String &WorldMap::locationName(uint locationIndex) const {
@@ -324,8 +317,6 @@ void WorldMap::updateFirstVisible() {
 }
 
 uint WorldMap::resolveChapter() const {
-	// ResolveHighestSetSelectionFlag at 0x20394 checks named flags 4 through 1
-	// and supplies the highest set value to the destination script pattern.
 	for (uint flag = kMilestoneCompletedAct3; flag != 0; --flag) {
 		if (_engine->getMilestones()->isSet(flag))
 			return flag;

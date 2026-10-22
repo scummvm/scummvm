@@ -149,14 +149,11 @@ bool RipperEngine::waitForDemoEndingInput() {
 }
 
 bool RipperEngine::runDemoEnding() {
-	// RIP.EXE 0x100d7 shows SOON.PCX, waits 0x48 ticks or a key, shows
-	// RIPBOX.PCX, plays RIPBOX.WAV, then waits again. The PCX files are in
-	// INTERFAC.PL and the WAV is in SOUND.PL.
 	_cursor->setVisible(false);
 	_toolbar->leave();
 	_sceneAudio->clearAll(true);
 	debugC(1, kDebugGeneral,
-		"Ripper: entering demo ending sequence coordinator=RunGameStartupAndMainLoop@0x100d7");
+		"Ripper: entering demo ending sequence");
 	if (!_media->displayInterfacePcx("soon.pcx") || !waitForDemoEndingInput())
 		return false;
 	if (!_media->displayInterfacePcx("ripbox.pcx") ||
@@ -205,13 +202,11 @@ Common::Error RipperEngine::run() {
 		return Common::kReadingFailed;
 	if (!_milestones->initialize(*_resources))
 		return Common::kReadingFailed;
-	// RIPPER.LE initializes a provisional identity before the front end; loading
-	// a save later replaces it with the identity serialized in that game.
+	// Loading a save replaces this provisional identity with the saved identity.
 	if (!isDemo && !selectRandomRipperIdentity("startup-initialization"))
 		return Common::kUnknownError;
 	if (!_modalDialog->initialize(*_resources, !isDemo))
 		return Common::kReadingFailed;
-	// FUN_0001084a in the demo RIP.EXE installs exactly 0x12 cursor rows.
 	if (!_cursor->initialize(*_resources, isDemo ? 0x12 : 24))
 		return Common::kReadingFailed;
 	if (!isDemo && !_inventory->initialize(*_resources))
@@ -228,8 +223,6 @@ Common::Error RipperEngine::run() {
 	_cursor->setVisible(false);
 	bool startGameplay = isDemo;
 	if (isDemo) {
-		// The demo RIP.EXE entry path calls FUN_000113cf with RIPPER.RUN directly;
-		// it has neither the full game's LOGO.AVI nor its front-end menu loop.
 		debugC(1, kDebugGeneral,
 			"Ripper: demo startup entering loose RIPPER.RUN directly");
 	} else {
@@ -239,7 +232,7 @@ Common::Error RipperEngine::run() {
 				"Ripper: skipping startup presentation logo.avi by game option");
 		} else {
 			debugC(1, kDebugVideo,
-				"Ripper: startup presentation logo.avi from RunGameStartupAndMainLoop at 0x100c2");
+				"Ripper: startup presentation logo.avi");
 			if (!_media->play("logo.avi", true))
 				return shouldQuit() ? Common::kNoError : Common::kUnknownError;
 		}
@@ -266,8 +259,6 @@ Common::Error RipperEngine::run() {
 				startGameplay = true;
 				break;
 			case kMainMenuContinue:
-				// RunGameStartupAndMainLoop at 0x100c2 restores its dedicated emergency
-				// save directly instead of entering the manual slot chooser.
 				if (!_saveFileMan->exists(getSaveStateName(getAutosaveSlot()))) {
 					debugC(1, kDebugSaveLoad,
 						"Ripper: Continue requested without emergency slot=%d",
@@ -292,7 +283,7 @@ Common::Error RipperEngine::run() {
 				break;
 			case kMainMenuViewIntro:
 				debugC(1, kDebugVideo,
-					"Ripper: startup menu plays proint.avi from RunGameStartupAndMainLoop at 0x100c2");
+					"Ripper: startup menu plays proint.avi");
 				if (!_media->play("proint.avi", true))
 					return shouldQuit() ? Common::kNoError : Common::kUnknownError;
 				break;

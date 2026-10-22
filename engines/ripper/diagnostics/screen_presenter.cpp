@@ -145,11 +145,6 @@ void ScreenPresenter::showMessage(const Common::String &message) {
 		message.c_str(), _queue.pendingCount());
 }
 
-void ScreenPresenter::clearMessages() {
-	_queue.clear();
-	resetMessageSurface();
-}
-
 void ScreenPresenter::pause(bool paused) {
 	if (paused)
 		_queue.pause(g_system->getMillis());

@@ -40,7 +40,6 @@ public:
 	bool initialize(ResourceManager &resources);
 	bool run(Common::String &targetScript, uint &chapter);
 	uint locationCount() const { return _locations.size(); }
-	bool isLocationAvailable(uint locationIndex) const;
 	const Common::String &locationName(uint locationIndex) const;
 
 private:

@@ -67,8 +67,7 @@ bool CursorManager::initialize(ResourceManager &resources, uint assetCount) {
 }
 
 void CursorManager::setSelectionIndex(int cursorIndex) {
-	// SetUiSelectionIndex at 0x4a3fe clamps and stores the requested row without
-	// applying its cursor presentation. Scene action 36 performs that second step.
+	// Store the selection without applying it. Scene action 36 applies the cursor.
 	if (cursorIndex < 0)
 		cursorIndex = 0;
 	else if ((uint)cursorIndex >= ARRAYSIZE(kCursorAssetNames))
@@ -79,8 +78,7 @@ void CursorManager::setSelectionIndex(int cursorIndex) {
 }
 
 void CursorManager::dispatchSelectionIndexChange(int cursorIndex) {
-	// DispatchUiSelectionIndexChange at 0x4a630 ignores out-of-range rows and
-	// applies a valid row independently of the stored current-selection index.
+	// Apply the cursor without changing the stored selection index.
 	if (cursorIndex < 0 || (uint)cursorIndex >= ARRAYSIZE(kCursorAssetNames)) {
 		debugC(3, kDebugCursor,
 			"Ripper: ignored invalid UI selection dispatch index=%d count=%u",

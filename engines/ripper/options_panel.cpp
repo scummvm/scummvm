@@ -232,7 +232,7 @@ bool OptionsPanelManager::initializeDemo(ResourceManager &resources) {
 			_demoFrames.size());
 	} else {
 		debugC(1, kDebugGeneral,
-			"Ripper: initialized demo Options Panel function=RunTake2IniSliderSetupMenu@0x17fc0 controls=%u frames=%u",
+			"Ripper: initialized demo Options Panel controls=%u frames=%u",
 			_controls.size(), _demoFrames.size());
 	}
 	return _initialized;
@@ -274,7 +274,6 @@ void OptionsPanelManager::drawBitmap(const BitmapAssetFrame &frame, int x, int y
 }
 
 void OptionsPanelManager::drawState(const State &state) {
-	// Select these fixed anchor frames from the four strip animations.
 	drawBitmap(_toggleFrames[state.bufferedVideo ? 8 : 0], 68, 64);
 	drawBitmap(_videoModeFrames[state.videoMode * 8], 54, 90);
 	drawBitmap(_combatFrames[(state.combatLevel - 1) * 6], 125, 340);
@@ -489,11 +488,10 @@ bool OptionsPanelManager::runDemo() {
 		settings->getDemoSlider(RipperSettings::kDemoMusicVolume);
 
 	debugC(1, kDebugGeneral,
-		"Ripper: entering demo Options function=RunTake2IniSliderSetupMenu@0x17fc0 controls=%u sound=%d music=%d mouse=%d",
+		"Ripper: entering demo Options controls=%u sound=%d music=%d mouse=%d",
 		_controls.size(), state.sliders[RipperSettings::kDemoSoundVolume],
 		state.sliders[RipperSettings::kDemoMusicVolume],
 		state.sliders[RipperSettings::kDemoMouseSensitivity]);
-	// The demo installs cursor rows 0..17 and selects row 14 on entry.
 	_engine->getCursor()->update(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
 	drawDemoState(state);
@@ -645,7 +643,7 @@ bool OptionsPanelManager::runDemo() {
 	_engine->getCursor()->update(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
 	debugC(1, kDebugGeneral,
-		"Ripper: exited demo RunTake2IniSliderSetupMenu committed=%d quit=%d",
+		"Ripper: exited demo Options Panel committed=%d quit=%d",
 		committed, _engine->shouldQuit());
 	return !_engine->shouldQuit();
 }
@@ -677,7 +675,7 @@ bool OptionsPanelManager::runRetail() {
 		state.actionKeys[i] = settings->getActionKey(i);
 
 	debugC(1, kDebugGeneral,
-		"Ripper: entering RunOptionsMenu controls=%u bufferedVideo=%d videoMode=%u combat=%u puzzle=%u",
+		"Ripper: entering Options Panel controls=%u bufferedVideo=%d videoMode=%u combat=%u puzzle=%u",
 		_controls.size(), state.bufferedVideo, state.videoMode,
 		state.combatLevel, state.puzzleLevel);
 	_engine->getCursor()->update(kBusyCursor);
@@ -805,7 +803,7 @@ bool OptionsPanelManager::runRetail() {
 	restoreDisplay();
 	_engine->getCursor()->update(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
-	debugC(1, kDebugGeneral, "Ripper: exited RunOptionsMenu committed=%d",
+	debugC(1, kDebugGeneral, "Ripper: exited Options Panel committed=%d",
 		!_engine->shouldQuit());
 	return !_engine->shouldQuit();
 }

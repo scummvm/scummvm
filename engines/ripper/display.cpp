@@ -164,8 +164,7 @@ bool IndexedBitmapRenderer::drawNineSlice(byte *pixels, uint pitch,
 			if (!drawBitmap(pixels, pitch, tile, x, y, clip))
 				return false;
 			lastTile = &tile;
-			// TileChooserControlFrame at 0x54fbe snaps the final column and
-			// row after rendering their penultimate tiles.
+			// Anchor border tiles to the bounds even when the size is not a tile multiple.
 			if (column == columns - 2)
 				x = bounds.right - tile.width;
 			else

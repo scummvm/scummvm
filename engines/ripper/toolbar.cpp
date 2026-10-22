@@ -53,18 +53,6 @@ static const uint kToolbarHelpActionIndex = 7;
 static const uint kToolbarExitActionIndex = 8;
 static const uint kToolbarExitPromptResourceId = 0x3f;
 
-static const char *const kToolbarHandlerNames[kRetailToolbarActionCount] = {
-	"RunTake2IniSliderSetupMenu",
-	"HandleSceneSelectionAction",
-	"RunUnlockGatedSelectionMenu",
-	"RunWacFrontEndLoop",
-	"RunSaveRestoreSlotMenu(save)",
-	"RunSaveRestoreSlotMenu(restore)",
-	"RunOptionsMenu",
-	"RunModalSelectionTableDialogWithRestore",
-	"RunBinaryPromptChooser"
-};
-
 ToolbarManager::ToolbarManager(RipperEngine *engine) : _sessionStartMillis(0), _lastFrameMillis(0),
 		_enabledActionMask(0), _hoveredAction(-1), _pressedAction(-1),
 		_active(false), _previewEnabled(false), _demoVariant(false),
@@ -115,9 +103,6 @@ bool ToolbarManager::initialize(ResourceManager &resources, bool demoVariant) {
 }
 
 void ToolbarManager::layoutActions(uint enabledActionMask) {
-	// RunFrontEndActionMenu at 0x18b3a packs only the enabled controls from
-	// right to left, subtracting each bitmap width and a five-pixel gap from
-	// x=630, then centers the bitmap in the 50-pixel toolbar band.
 	int x = kToolbarRightEdge;
 	for (int i = (int)_actions.size() - 1; i >= 0; --i) {
 		if ((enabledActionMask & (1 << i)) == 0) {
@@ -154,10 +139,7 @@ void ToolbarManager::enter(uint32 now, uint enabledActionMask) {
 		memcpy(_topBacking.data() + y * 640, screen->getBasePtr(0, y), 640);
 	g_system->unlockScreen();
 
-	// RunFrontEndActionMenu at 0x18b3a constructs fresh UiControlState entries
-	// from each toolbar resource's base pointer on every invocation, so the
-	// initial dirty-region update always presents frame zero. Do not carry a
-	// partially advanced hover animation into the next toolbar session.
+	// Do not carry a hover animation into the next toolbar session.
 	for (uint i = 0; i < _actions.size(); ++i)
 		_actions[i].frameIndex = 0;
 
@@ -258,9 +240,6 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 	const Common::String &label = _actions[_hoveredAction].label;
 	const int width = measureText(label) + 4;
 	const int height = _font.lineHeight + 4;
-	// RunFrontEndActionMenu publishes coordinates in transposed
-	// fields. RenderFrontEndActionPreviewSprite therefore adds 20 to the
-	// vertical coordinate, placing the preview below the pointer.
 	int x = point.x;
 	int y = point.y + 20;
 	if (x + width > 640)
@@ -295,12 +274,9 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 
 void ToolbarManager::dispatchAction(uint actionIndex) {
 	if (_demoVariant) {
-		// The demo's DispatchFrontEndAction at 0x16a2f uses eight controls with
-		// a different mapping from RIPPER.LE. Preserve its two explicit no-op rows
-		// rather than shifting the full-game action table over the demo icons.
 		if (actionIndex == 0) {
 			debugC(1, kDebugScene,
-				"Ripper: demo toolbar action=1 id=0x514 label='%s' entering RunSceneSelectionMenu",
+				"Ripper: demo toolbar action=1 id=0x514 label='%s' opening world map",
 				_actions[actionIndex].label.c_str());
 			if (!_engine->getScripts()->openWorldMap())
 				warning("Ripper: demo toolbar scene-selection action failed");
@@ -308,14 +284,14 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		}
 		if (actionIndex == 1 || actionIndex == 6) {
 			debugC(2, kDebugScene,
-				"Ripper: demo toolbar action=%u id=0x%x label='%s' completed as original no-op",
+				"Ripper: demo toolbar action=%u id=0x%x label='%s' completed as no-op",
 				actionIndex + 1, actionIndex + 0x514,
 				_actions[actionIndex].label.c_str());
 			return;
 		}
 		if (actionIndex == 2) {
 			debugC(1, kDebugWac,
-				"Ripper: demo toolbar action=3 id=0x516 label='%s' entering RunWacFrontEndLoop",
+				"Ripper: demo toolbar action=3 id=0x516 label='%s' opening WAC",
 				_actions[actionIndex].label.c_str());
 			_engine->getWac()->run();
 			return;
@@ -323,7 +299,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		if (actionIndex == 3 || actionIndex == 4) {
 			const bool saving = actionIndex == 3;
 			debugC(1, kDebugSaveLoad,
-				"Ripper: demo toolbar action=%u id=0x%x label='%s' entering RunSaveRestoreSlotMenu mode=%s",
+				"Ripper: demo toolbar action=%u id=0x%x label='%s' opening save/restore dialog mode=%s",
 				actionIndex + 1, actionIndex + 0x514,
 				_actions[actionIndex].label.c_str(), saving ? "save" : "restore");
 			leave();
@@ -332,13 +308,13 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 				_engine->loadGameDialog();
 			_engine->getInput()->discardMouseTransitions();
 			debugC(1, kDebugSaveLoad,
-				"Ripper: demo toolbar RunSaveRestoreSlotMenu mode=%s completed=%d",
+				"Ripper: demo toolbar save/restore dialog mode=%s completed=%d",
 				saving ? "save" : "restore", completed);
 			return;
 		}
 		if (actionIndex == 5) {
 			debugC(1, kDebugGeneral,
-				"Ripper: demo toolbar action=6 id=0x519 label='%s' entering RunTake2IniSliderSetupMenu@0x17fc0",
+				"Ripper: demo toolbar action=6 id=0x519 label='%s' opening Options",
 				_actions[actionIndex].label.c_str());
 			leave();
 			_engine->getInput()->discardMouseTransitions();
@@ -349,7 +325,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		}
 		if (actionIndex == 7) {
 			debugC(1, kDebugGeneral,
-				"Ripper: demo toolbar action=8 id=0x51b label='%s' entering RunBinaryPromptChooser",
+				"Ripper: demo toolbar action=8 id=0x51b label='%s' opening quit prompt",
 				_actions[actionIndex].label.c_str());
 			leave();
 			_engine->getInput()->discardMouseTransitions();
@@ -367,15 +343,13 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 
 	if (actionIndex == 0) {
 		debugC(1, kDebugGeneral,
-			"Ripper: toolbar action=1 id=0x514 label='%s' entering RunTake2IniSliderSetupMenu",
+			"Ripper: toolbar action=1 id=0x514 label='%s' opening Remote Control",
 			_actions[actionIndex].label.c_str());
 		if (!_remoteControl->run())
 			warning("Ripper: Remote Control action failed");
 		return;
 	}
 	if (actionIndex == kToolbarExitActionIndex && _engine->getScripts()->isCyberActive()) {
-		// DispatchFrontEndAction at 0x190b7 bypasses the normal binary prompt
-		// for action 0x51c while the Cyber transition flag is set.
 		debugC(1, kDebugCyber,
 			"Ripper: toolbar action=9 id=0x51c exiting Cyber nested runtime");
 		leave();
@@ -384,7 +358,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 	}
 	if (actionIndex == 1) {
 		debugC(1, kDebugScene,
-			"Ripper: toolbar action=2 id=0x515 label='%s' entering HandleSceneSelectionAction",
+			"Ripper: toolbar action=2 id=0x515 label='%s' opening world map",
 			_actions[actionIndex].label.c_str());
 		if (!_engine->getScripts()->openWorldMap())
 			warning("Ripper: toolbar world map action failed");
@@ -392,7 +366,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 	}
 	if (actionIndex == 2) {
 		debugC(1, kDebugScene,
-			"Ripper: toolbar action=3 id=0x516 label='%s' entering RunUnlockGatedSelectionMenu",
+			"Ripper: toolbar action=3 id=0x516 label='%s' opening inventory",
 			_actions[actionIndex].label.c_str());
 		if (!_engine->getScripts()->openInventory())
 			warning("Ripper: toolbar inventory action failed");
@@ -400,7 +374,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 	}
 	if (actionIndex == 3) {
 		debugC(1, kDebugWac,
-			"Ripper: toolbar action=4 id=0x517 label='%s' entering RunWacFrontEndLoop",
+			"Ripper: toolbar action=4 id=0x517 label='%s' opening WAC",
 			_actions[actionIndex].label.c_str());
 		_engine->getWac()->run();
 		return;
@@ -408,26 +382,22 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 	if (actionIndex == 4 || actionIndex == 5) {
 		const bool saving = actionIndex == 4;
 		debugC(1, kDebugSaveLoad,
-			"Ripper: toolbar action=%u id=0x%x label='%s' entering RunSaveRestoreSlotMenu mode=%s",
+			"Ripper: toolbar action=%u id=0x%x label='%s' opening save/restore dialog mode=%s",
 			actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str(),
 			saving ? "save" : "restore");
-		// RunFrontEndActionMenu at 0x18b3a removes its toolbar presentation before
-		// DispatchFrontEndAction at 0x190b7 opens the modal slot menu.
 		leave();
 		_engine->getInput()->discardMouseTransitions();
 		const bool completed = saving ? _engine->saveGameDialog() : _engine->loadGameDialog();
 		_engine->getInput()->discardMouseTransitions();
 		debugC(1, kDebugSaveLoad,
-			"Ripper: toolbar RunSaveRestoreSlotMenu mode=%s completed=%d",
+			"Ripper: toolbar save/restore dialog mode=%s completed=%d",
 			saving ? "save" : "restore", completed);
 		return;
 	}
 	if (actionIndex == 6) {
 		debugC(1, kDebugGeneral,
-			"Ripper: toolbar action=7 id=0x51a label='%s' entering RunOptionsMenu",
+			"Ripper: toolbar action=7 id=0x51a label='%s' opening Options Panel",
 			_actions[actionIndex].label.c_str());
-		// RunFrontEndActionMenu at 0x18b3a removes the toolbar presentation
-		// before DispatchFrontEndAction at 0x190b7 enters the full-screen panel.
 		leave();
 		_engine->getInput()->discardMouseTransitions();
 		if (!_optionsPanel->run())
@@ -436,24 +406,16 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		return;
 	}
 	if (actionIndex == kToolbarHelpActionIndex) {
-		// DispatchFrontEndAction at 0x190b7 selects resource 0x19b while
-		// SceneRuntime+0x189 bit 0x20 marks a prompt/chooser as active;
-		// otherwise it presents the general help resource 400.
 		debugC(1, kDebugScene,
-			"Ripper: toolbar action=8 id=0x51b label='%s' entering "
-			"RunModalSelectionTableDialogWithRestore",
+			"Ripper: toolbar action=8 id=0x51b label='%s' opening help",
 			_actions[actionIndex].label.c_str());
 		if (!_engine->getScripts()->showHelp("toolbar"))
 			warning("Ripper: toolbar help action failed");
 		return;
 	}
 	if (actionIndex == kToolbarExitActionIndex) {
-		// DispatchFrontEndAction at 0x190b7 resolves GAMETEXT.TF resource
-		// 0x3f ("Quit Game?") and calls RunBinaryPromptChooser at 0x1803c
-		// with "No" selected. The Cyber path above bypasses this prompt.
 		debugC(1, kDebugGeneral,
-			"Ripper: toolbar action=9 id=0x51c label='%s' entering "
-			"RunBinaryPromptChooser",
+			"Ripper: toolbar action=9 id=0x51c label='%s' opening quit prompt",
 			_actions[actionIndex].label.c_str());
 		leave();
 		_engine->getInput()->discardMouseTransitions();
@@ -468,19 +430,14 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		return;
 	}
 	debugC(1, kDebugScene,
-		"Ripper: toolbar action=%u id=0x%x label='%s' handler=%s is stubbed",
-		actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str(),
-		kToolbarHandlerNames[actionIndex]);
+		"Ripper: unhandled toolbar action=%u id=0x%x label='%s'",
+		actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str());
 }
 
 int ToolbarManager::resolveActionKey(uint16 command, uint enabledActionMask) const {
 	if (command == 0)
 		return -1;
 
-	// ResolveFrontEndActionIdFromInput at 0x14001 scans RIPPER.LE's persistent
-	// command words in action order and accepts the first match whose bit is set
-	// in the active scene mask. The demo resolver at 0x1241e uses its shifted
-	// eight-word table without a mask parameter.
 	for (uint actionIndex = 0; actionIndex < _actions.size(); ++actionIndex) {
 		const uint settingsIndex = _demoVariant ? actionIndex + 1 : actionIndex;
 		if ((!_demoVariant && (enabledActionMask & (1 << actionIndex)) == 0) ||

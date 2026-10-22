@@ -136,8 +136,6 @@ bool Inventory::grant(uint unlockFlag, const char *source) {
 			unlockFlag, kFirstUnlockFlag, kLastUnlockFlag);
 		return false;
 	}
-	// DispatchSceneEntryAction at 0x36892 action 3 sets the unlock bit and
-	// clears its paired consumed bit before opening RunUnlockGatedSelectionMenu.
 	if (!_engine->getMilestones()->set(unlockFlag, true, source) ||
 			!_engine->getMilestones()->set(unlockFlag + kConsumedFlagOffset,
 				false, source))
@@ -270,9 +268,7 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
 	IndexedBitmapRenderer::drawNineSlice(pixels, screen->pitch, _skin,
 		_menuBounds, screenBounds);
-	// DrawPromptChooserTemplateLabelCallback at 0x16d0f confines its title
-	// pass to the label strip over the tiled MNU frame. Preserve those frame
-	// pixels here instead of replacing the full heading interior.
+	// Keep the tiled MNU heading visible behind the title.
 	for (int y = _menuBounds.top + kHeadingHeight;
 			y < _menuBounds.bottom - kBottomPadding; ++y)
 		memset(screen->getBasePtr(_menuBounds.left + kLeftPadding, y),
@@ -343,10 +339,7 @@ void Inventory::closePresentation(const char *reason) {
 }
 
 bool Inventory::runQcsMag2UnlockMediaScreen() {
-	// RunQcsMag2UnlockMediaScreen at 0x3bb08 preserves the active page and
-	// palette around two retained IAVF presentations. Its control uses the
-	// original vertical/horizontal layout (50,100,300,440), corresponding to
-	// the physical scene rectangle x=100..539, y=50..349.
+	// Both movies retain their final frames until dismissal restores the caller.
 	const Common::Rect exitBounds(100, 50, 540, 350);
 	IndexedDisplaySnapshot savedDisplay;
 	if (!savedDisplay.capture()) {
@@ -431,9 +424,6 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 	const uint choiceId = unlockFlag - kFirstUnlockFlag;
 	const Common::String &requiredSceneLabel =
 		_gameText[kSceneLabelResourceBase + choiceId - 1];
-	// ExecuteUnlockSelectionChoice at 0x364be resolves the active frame's
-	// labelOffset (+5 in the compiled 0x22-byte frame record) and compares it
-	// case-insensitively with startup resource 270 + choice ID.
 	if (!sceneLabel.equalsIgnoreCase(requiredSceneLabel)) {
 		debugC(2, kDebugScene,
 			"Ripper: rejected inventory item=%u unlockFlag=%u sceneLabel='%s' requiredLabel='%s'",
@@ -452,9 +442,7 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 		return kChoiceRejected;
 	}
 
-	// ExecuteUnlockSelectionChoice at 0x364be leaves the chooser active for an
-	// invalid-use dialog, but accepted branches release it before presenting
-	// item-specific media.
+	// Rejected uses keep the chooser open; accepted uses dismiss it before media.
 	restoreDisplay();
 	if (!_engine->getMilestones()->set(unlockFlag + kConsumedFlagOffset,
 			true, "inventory-use"))
@@ -470,8 +458,6 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 		if (!presented || !reusable)
 			return kChoiceFailed;
 	} else if (choiceId == 5) {
-		// ExecuteUnlockSelectionChoice at 0x364be presents EBU2.PCX for the
-		// EB_HEAD Bug branch and then blocks on EYE_BUG.WAV.
 		if (!_engine->getMedia()->displayScenePcx(kEbHeadMedia) ||
 				!_engine->getMedia()->playBlockingAudio(kEbBugAudio))
 			return kChoiceFailed;
@@ -484,8 +470,6 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 					false, "inventory-reusable-item"))
 			return kChoiceFailed;
 	} else if (choiceId == 8) {
-		// The EB_HEAD Eyeball branch uses the same retained PCX without the
-		// Bug branch's audio presentation.
 		if (!_engine->getMedia()->displayScenePcx(kEbHeadMedia))
 			return kChoiceFailed;
 	}

@@ -65,7 +65,6 @@ public:
 	~ScreenPresenter();
 
 	void showMessage(const Common::String &message);
-	void clearMessages();
 	void pause(bool paused);
 	void presentScreen();
 	uint pendingMessageCount() const { return _queue.pendingCount(); }
