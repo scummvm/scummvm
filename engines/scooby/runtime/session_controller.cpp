@@ -346,9 +346,12 @@ void SessionController::initializeRoomRuntimeState() {
 SessionExit SessionController::runGame() {
 	bool loadingSavedGame = _state._saveGameData.shouldLoadGameData;
 	if (loadingSavedGame) {
+		// Managed-only save games: resume through the original password path with the password-equivalent
+		// progress bytes; the rest of the saved world is applied before the saved room loads (below).
 		_state.EpisodeIndex = _state._saveGameData.episodeIdx;
-		Common::copy(_state._saveGameData.data.begin(), _state._saveGameData.data.begin() + 29,
-				  _state.ProgressStateBytes.begin());
+		Common::copy(_state._saveGameData.progressBytes.begin(),
+					 _state._saveGameData.progressBytes.begin() + SaveGameData::kPasswordProgressByteCount,
+					 _state.ProgressStateBytes.begin());
 		_state.InitialRoomId = _state._saveGameData.roomId;
 		_state.InitializationFlags |= 0x01;
 		_state.InitializationFlags |= 4; // resume game
@@ -400,6 +403,12 @@ SessionExit SessionController::runGame() {
 	if ((_state.InitializationFlags & 0x04) != 0) {
 		_state.InitialRoomPositionCoordinateOffset = 0;
 		_state.RoomId = _state.InitialRoomId;
+		// Managed-only save games: replace the world the password resume scripts rebuilt with the saved one
+		// (all progress bytes, room objects, inventory and entry position), so the room loads from it.
+		if (loadingSavedGame) {
+			_state._saveGameData.applyWorldState(_state);
+		}
+
 		Optional<SessionExit> resetExit = resetRoomStateForReload();
 		if (resetExit.hasValue()) {
 			return resetExit.value();

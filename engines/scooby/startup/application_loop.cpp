@@ -27,6 +27,7 @@
 #include "scooby/runtime/session_exit.h"
 #include "scooby/scooby.h"
 #include "scooby/sound/gems_audio.h"
+#include "scooby/runtime/save_game_data.h"
 
 namespace Scooby {
 
@@ -72,30 +73,28 @@ void ApplicationLoop::run() {
 }
 
 Common::Error ApplicationLoop::syncGame(Common::Serializer &s) {
+	// Managed-only save games: the complete persistent world (runtime/save_game_data.h).
 	if (s.isLoading()) {
+		SaveGameData loaded;
+		if (!loaded.sync(s)) {
+			return Common::Error(Common::kReadingFailed, "Incompatible or damaged Scooby-Doo Mystery save");
+		}
+
+		// The running session sees the flag and restarts; initializeRuntimeState then hands the data over.
+		_loadGameData = loaded;
 		_loadGameData.shouldLoadGameData = true;
 		_state._saveGameData.shouldLoadGameData = true;
-		s.syncAsUint16LE(_loadGameData.episodeIdx);
-		s.syncAsUint16LE(_loadGameData.roomId);
-		s.syncArray(_loadGameData.data.data(), 29, Common::Serializer::Byte);
-
-		Common::String debugStr;
-		for (int i = 0; i < 29; i++) {
-			debugStr += Common::String::format("%2x ", _loadGameData.data[i]);
-		}
-		debug("load state bytes = %s", debugStr.c_str());
+		debug(1, "Scooby: loaded save for episode %d, room %d", _loadGameData.episodeIdx, _loadGameData.roomId);
 	} else {
-		// save here.
-		s.syncAsUint16LE(_state.EpisodeIndex);
-		s.syncAsUint16LE(_state.RoomId);
-		s.syncArray(_state.ProgressStateBytes.data(), 29, Common::Serializer::Byte);
-
-		Common::String debugStr;
-		for (int i = 0; i < 29; i++) {
-			debugStr += Common::String::format("%2x ", _state.ProgressStateBytes[i]);
+		SaveGameData snapshot;
+		snapshot.capture(_state);
+		if (!snapshot.sync(s)) {
+			return Common::Error(Common::kWritingFailed);
 		}
-		debug("save state bytes = %s", debugStr.c_str());
+
+		debug(1, "Scooby: saved episode %d, room %d", snapshot.episodeIdx, snapshot.roomId);
 	}
+
 	return Common::kNoError;
 }
 
@@ -120,10 +119,7 @@ void ApplicationLoop::initializeRuntimeState(RuntimeState &state,
 	state.resetRuntimeState(_rom);
 
 	if (_loadGameData.shouldLoadGameData) {
-		state._saveGameData.shouldLoadGameData = true;
-		state._saveGameData.episodeIdx = _loadGameData.episodeIdx;
-		state._saveGameData.roomId = _loadGameData.roomId;
-		state._saveGameData.data = _loadGameData.data;
+		state._saveGameData = _loadGameData;
 		_loadGameData.shouldLoadGameData = false;
 	}
 }

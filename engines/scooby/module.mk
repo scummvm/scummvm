@@ -87,6 +87,7 @@ MODULE_OBJS = \
     runtime/episode_initializer.o \
     runtime/episode_opening_sequence.o \
     runtime/runtime_state.o \
+    runtime/save_game_data.o \
     runtime/session_controller.o \
     sound/gems_audio.o \
     sound/gems_driver.o \

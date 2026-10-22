@@ -36,6 +36,7 @@
 #include "scooby/rooms/room_object.h"
 #include "scooby/rooms/room_scene_data.h"
 #include "scooby/rooms/scripted_coordinate_sprite_state.h"
+#include "scooby/runtime/save_game_data.h"
 
 // Preserves the shared RAM and register-backed state recovered from Ghidra
 // RunAdventure at 0x00000BF4 and its callees.
@@ -56,24 +57,18 @@
 
 namespace Scooby {
 
-struct SaveGameData {
-	bool shouldLoadGameData = false;
-	uint16 episodeIdx;
-	uint16 roomId;
-	Common::Array<uint8> data = Common::Array<uint8>(29);
-};
-
 class RuntimeState {
 public:
 	RuntimeState() {
 	}
 
+	// Managed-only: a loaded ScummVM save waiting to be applied by the next session (save_game_data.h).
 	SaveGameData _saveGameData;
 
 	// Managed-only: true solely while the main room loop is idle at its top-of-loop retrace wait, with no
 	// room script, interaction, dialogue, or menu in progress. ScummVM saves (including autosaves) are only
-	// permitted then, because a save stores just the password-equivalent state and cannot capture a script
-	// that is part-way through moving objects or updating progress bits.
+	// permitted then, because a save stores the world between scripts and cannot capture a script that is
+	// part-way through moving objects or updating progress bits.
 	bool SaveAllowed = false;
 
 	// Managed-only mouse support (input/mouse_input.h), never saved. True while the mouse is the active
