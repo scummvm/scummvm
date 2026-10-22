@@ -32,6 +32,8 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
+#include "graphics/paletteman.h"
+#include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 
 #include "audio/mixer.h"
@@ -622,7 +624,18 @@ void PrisonerEngine::savegame(const char *filename, const char *description) {
 	out->writeByte(descriptionLen);
 	out->write(description, descriptionLen);
 
-	Graphics::saveThumbnail(*out);
+	if (_menuBackgroundSaved) {
+		// Saving from the main menu: take the thumbnail from the game screen behind the menu
+		byte palette[256 * 3];
+		g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+		Graphics::Surface thumbnail;
+		::createThumbnail(&thumbnail, (const byte *)_menuBackgroundSurface->getPixels(),
+			_menuBackgroundSurface->w, _menuBackgroundSurface->h, palette);
+		Graphics::saveThumbnail(*out, thumbnail);
+		thumbnail.free();
+	} else {
+		Graphics::saveThumbnail(*out);
+	}
 
 	// Not used yet, reserved for future usage
 	out->writeByte(0);
@@ -1097,6 +1110,22 @@ void PrisonerEngine::loadgame(const char *filename) {
 
 	delete in;
 
+}
+
+// Saving needs a running game in a stable state: a scene is loaded and no scene change,
+// video, inventory screen or confirmation box is in progress. The ScummVM menu can still be
+// opened in all of these (and ScummVM's periodic autosave asks here too).
+bool PrisonerEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return _inGame && _inScene && _currModuleIndex != -1 && _currSceneIndex != -1 &&
+		_newModuleIndex == -1 && _newSceneIndex == -1 &&
+		!_isPlayingMux && !_needToPlayMux && !_screensaverRunning &&
+		!_inventoryInputRunning && !_isDialogMenuShowing;
+}
+
+// Loading also works from the main menu before a game has started
+bool PrisonerEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return !_isPlayingMux && !_needToPlayMux && !_screensaverRunning &&
+		!_inventoryInputRunning && !_isDialogMenuShowing;
 }
 
 Common::Error PrisonerEngine::loadGameState(int slot) {

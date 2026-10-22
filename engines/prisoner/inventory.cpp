@@ -185,6 +185,8 @@ void PrisonerEngine::handleInventoryInput() {
 	bool canLeave = true, backedupScreen;
 	int16 oldInventoryItemCursor;
 
+	_inventoryInputRunning = true;
+
 	// TODO: resetDirtyRects();
 	_inventoryWarpMouse = false;
 	_buildInventoryClickBoxes = true;
@@ -313,6 +315,8 @@ void PrisonerEngine::handleInventoryInput() {
 	restoreScreen(backedupScreen);
 
 	updateScreen(true, -1, -1);
+
+	_inventoryInputRunning = false;
 
 	debug("inv done");
 

@@ -94,7 +94,9 @@ SaveStateList PrisonerMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (Prisoner::PrisonerEngine::readSaveHeader(in, false, header) == Prisoner::PrisonerEngine::kRSHENoError) {
-					saveList.push_back(SaveStateDescriptor(this, slotNum, header.description));
+					SaveStateDescriptor desc(this, slotNum, header.description);
+					desc.setAutosave(slotNum == getAutosaveSlot());
+					saveList.push_back(desc);
 				}
 				delete in;
 			}
@@ -158,8 +160,9 @@ SaveStateDescriptor PrisonerMetaEngine::querySaveMetaInfos(const char *target, i
 		if (error == Prisoner::PrisonerEngine::kRSHENoError) {
 			SaveStateDescriptor desc(this, slot, header.description);
 
+			// The constructor write-protects the autosave slot; only the engine writes there
 			desc.setDeletableFlag(false);
-			desc.setWriteProtectedFlag(false);
+			desc.setAutosave(slot == getAutosaveSlot());
 			desc.setThumbnail(header.thumbnail);
 
 			return desc;

@@ -95,7 +95,8 @@ Common::Error PrisonerEngine::run() {
 
 	_currModuleIndex = 2;
 
-	_isSaveAllowed = true;
+	_isPlayingMux = false;
+	_inventoryInputRunning = false;
 
 	_cameraX = 0;
 	_cameraY = 0;
@@ -259,6 +260,8 @@ Common::Error PrisonerEngine::run() {
 
 	_currModuleIndex = -1;
 	_currSceneIndex = -1;
+	_newModuleIndex = -1;
+	_newSceneIndex = -1;
 
 	// Note: These are now set via the main menu
 	// TODO: Remove after debugging
@@ -966,7 +969,9 @@ void PrisonerEngine::playMux(Common::String filename) {
 	}
 	muxPlayer = new MuxPlayer(this);
 	muxPlayer->open(filename.c_str());
+	_isPlayingMux = true;
 	muxPlayer->play();
+	_isPlayingMux = false;
 	muxPlayer->close();
 	delete muxPlayer;
 	// TODO: resetDirtyRects();
@@ -1053,7 +1058,7 @@ void PrisonerEngine::performAutoSave() {
 	addDirtyRect(0, 398, 540, 82, 1);
 	_screen->update();
 
-	saveGameState(100, savegameDescription);
+	saveGameState(getAutosaveSlot(), savegameDescription, true);
 
 }
 

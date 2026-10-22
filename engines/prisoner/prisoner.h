@@ -568,7 +568,7 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
 
 	Common::RandomSource *_rnd;
@@ -1246,12 +1246,17 @@ public:
 		Graphics::Surface *thumbnail;
 	};
 
-	bool _isSaveAllowed;
+	// Set while a video plays or the inventory runs its own input loop, when the ScummVM
+	// menu can still be opened but saving or loading would leave the engine in a bad state
+	bool _isPlayingMux;
+	bool _inventoryInputRunning;
 
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) { return _isSaveAllowed; }
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false);
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	// Both the game's own autosaves and ScummVM's periodic autosave use ScummVM's default slot 0
+	int getAutosaveSlot() const override { return 0; }
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 	void savegame(const char *filename, const char *description);
 	void loadgame(const char *filename);
 	const char *getSavegameFilename(int num);
