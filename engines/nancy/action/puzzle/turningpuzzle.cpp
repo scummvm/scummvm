@@ -469,8 +469,7 @@ void TurningPuzzle::execute() {
 			} else if (_solveAnimate) {
 				_solveState = kWaitForAnimation;
 			} else {
-				_solveState = kWaitForSound;
-				_shouldSetSolveFlag = true;
+				_solveState = kWaitBeforeSound;
 			}
 			_objectCurrentlyTurning = -1;
 			_turnFrameID = 0;
