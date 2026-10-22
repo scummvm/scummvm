@@ -13193,7 +13193,7 @@ static void guess_dc(ERContext *s, int16 *dc, int w, int h, ptrdiff_t stride, in
 			weight_sum = 0;
 			guess = 0;
 			for (j = 0; j < 4; j++) {
-				int64 weight = 256 * 256 * 256 * 16 / MAX(dist[b_x + b_y * stride][j], 1U);
+				int64 weight = 256 * 256 * 256 * 16 / MAX<uint32>(dist[b_x + b_y * stride][j], 1);
 				guess += weight * (int64)col[b_x + b_y * stride][j];
 				weight_sum += weight;
 			}
