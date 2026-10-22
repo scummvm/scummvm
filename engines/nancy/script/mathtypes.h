@@ -32,6 +32,9 @@ namespace Script {
 // The vectors and matrices of the scripts. Scripts move what they draw around
 // with matrices: every record that shows something has a "transform", and the
 // puzzles and the map of Nancy19 are built on changing those.
+// The original does its math with D3DX, the math library of the DirectX SDK, and
+// the functions here follow its conventions and formulas, e.g. Matrix:Perspective
+// is D3DXMatrixPerspectiveFovLH.
 
 // Two to four numbers
 struct ScriptVector {

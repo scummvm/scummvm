@@ -36,6 +36,8 @@ namespace NDUI {
 // set of panels, each holding a list of controls, described by NDUI chunks spread
 // over one IFF per widget. Controls react to the player by firing events, each of
 // which performs an action on a named panel or control, or hands it to the engine.
+// The original's toolkit, Ndui.dll, is built on the DXUT widgets of the DirectX SDK
+// (CDXUTDialog and its controls), which the panels and controls here follow.
 
 enum ControlType {
 	kControlButton		= 1,
