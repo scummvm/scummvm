@@ -56,6 +56,10 @@ ZoombiniDialogSaveLoad::ZoombiniDialogSaveLoad(MohawkEngine_Zoombini *vm, SaveLo
 		break;
 	}
 
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	_titleRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kSaveLoadTitleLayout).apply(_titleRect);
+	_saveTextBoxRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kSaveNameInputLayout).apply(_saveTextBoxRect);
+
 	ZmbResource soundResId = ZmbResource(ZmbResource::kSystem, kSysResSound0999_ButtonSFX);
 	_scrollButtonStateMap[kSaveLoadDialogButton01_ScrollUp] = ButtonState(soundResId, 0, 2, kSystemShape0001_16_SaveLoadScrollUpButtonNormal, kSystemShape0001_17_SaveLoadScrollUpButtonPressed);
 	_scrollButtonStateMap[kSaveLoadDialogButton02_ScrollDown] = ButtonState(soundResId, 1, 3, kSystemShape0001_18_SaveLoadScrollDownButtonNormal, kSystemShape0001_19_SaveLoadScrollDownButtonPressed);

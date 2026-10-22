@@ -36,6 +36,12 @@ constexpr uint16 ZoombiniInteractiveRodMap::_pageClickShapes[16];
 
 ZoombiniInteractiveRodMap::ZoombiniInteractiveRodMap(MohawkEngine_Zoombini *vm)
 	: ZoombiniInteractive(vm, ZoombiniPageType::kRodMap), _textLayout(createTextLayout(vm->getRelInfo())) {
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	for (uint32 i = 0; i < ARRAYSIZE(_routeNameRects); i++)
+		_routeNameRects[i] = relInfo.getMapRouteLayoutAdjustment(i).apply(_routeNameRects[i]);
+	const ZmbReleaseInfo::LayoutAdjustment legendClickAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kMapLegendClickLayout);
+	for (Common::Rect &rect : _levelLegendClickRects)
+		rect = legendClickAdjustment.apply(rect);
 	// Clickable Pos & Rect
 	for (uint32 i = 0; i < ARRAYSIZE(_pageClickPoints); i++) {
 		_pageClickRects[i] = Common::Rect(_pageClickPoints[i].x - 20, _pageClickPoints[i].y - 15, _pageClickPoints[i].x + 20, _pageClickPoints[i].y + 15);
@@ -50,52 +56,28 @@ ZoombiniInteractiveRodMap::~ZoombiniInteractiveRodMap() {
 ZoombiniInteractiveRodMap::TextLayout ZoombiniInteractiveRodMap::createTextLayout(const ZmbReleaseInfo &relInfo) {
 	TextLayout layout;
 	const bool classicResArchives = usesMapArchive(relInfo);
-	const bool espt10 = relInfo.isVariant(ZmbReleaseInfo::kEsPtV10);
-	const bool v11UsDemo = relInfo.isDemo(ZmbReleaseInfo::kUsV11);
-
-	// The demo shares the wide route-name rectangles, but uses compact panel text.
-	layout.wideRouteNameRects = classicResArchives && !espt10;
 	if (classicResArchives) {
-		layout.stats.titleHeight = 18;
 		layout.stats.wrapLastJourneyRow = false;
 		layout.stats.practiceReturnInsts = true;
 		layout.stats.journeyLabelKeys[0] = ZoombiniText::kEuropeJourneyStatZoombiniIsle;
 		layout.stats.journeyLabelKeys[1] = ZoombiniText::kEuropeJourneyStatShelterRock;
 		layout.stats.journeyLabelKeys[2] = ZoombiniText::kEuropeJourneyStatShadeTree;
 		layout.stats.journeyLabelKeys[3] = ZoombiniText::kEuropeJourneyStatZoombiniton;
-
-		if (v11UsDemo) {
-			layout.legend.titleHeight = 18;
-		} else if (!espt10) {
-			// SCRB 1003 in MAP.MHK has a 38-pixel title area above the four level rows.
-			layout.legend.titleTopOffset = -3;
-			layout.legend.titleHeight = 38;
-			layout.legend.rowTopOffset = 33;
-			layout.legend.rowRightExtension = 25;
-			layout.stats.practiceRowBottomStep = 38;
-		}
 	}
 
-	if (relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::ES_ESP)) {
-		layout.legend.titleHeight = 18;
-	} else if (relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::PT_PRT)) {
-		layout.legend.titleTopOffset = 2;
-		layout.legend.titleHeight = 23;
+	if (relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::PT_PRT)) {
 		layout.legend.rowWordWrap = true;
-		layout.stats.titleTopOffset = 2;
-		layout.stats.titleHeight = 23;
-		layout.stats.rowTopOffset = 20;
-		layout.stats.rowHeight = 23;
-		layout.stats.labelWidth = 120;
-		layout.stats.practiceRowBottomStep = 23;
+		layout.stats.titleWordWrap = true;
+		layout.stats.descWordWrap = true;
+		layout.tooltip.wordWrap = true;
+	} else if (relInfo.isVariant(ZmbReleaseInfo::kJapanV10)) {
+		layout.legend.rowWordWrap = true;
 		layout.stats.titleWordWrap = true;
 		layout.stats.descWordWrap = true;
 		layout.tooltip.wordWrap = true;
 	} else if (relInfo.isVariant(ZmbReleaseInfo::kTlcV20, Common::PL_POL)) {
 		// Polish labels wrap within the legend rows and stop before the statistics numeric column.
-		layout.legend.titleHeight = 18;
 		layout.legend.rowWordWrap = true;
-		layout.stats.titleHeight = 18;
 		layout.stats.titleWordWrap = true;
 		layout.stats.descWordWrap = true;
 		layout.stats.journeyLabelKeys[0] = ZoombiniText::kPolishJourneyStatPicker;
@@ -103,10 +85,6 @@ ZoombiniInteractiveRodMap::TextLayout ZoombiniInteractiveRodMap::createTextLayou
 		layout.stats.journeyLabelKeys[2] = ZoombiniText::kPolishJourneyStatBasecamp2;
 		layout.stats.journeyLabelKeys[3] = ZoombiniText::kPolishJourneyStatTown;
 	}
-
-	// The Korean tooltip rectangle moves down by two pixels before centered rendering.
-	if (relInfo.isVariant(ZmbReleaseInfo::kUsV11, Common::KO_KOR))
-		layout.tooltip.topOffset = 2;
 	return layout;
 }
 
@@ -134,7 +112,7 @@ void ZoombiniInteractiveRodMap::setBackgroundBitmap() {
 
 void ZoombiniInteractiveRodMap::initStates() {
 	// The demo rebuilds its RodMap state at level 1 on every entry.
-	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11))
+	if (_vm->getRelInfo().hasDemoPracticeMap())
 		_vm->_state->_practiceLevel = 1;
 }
 
@@ -155,8 +133,6 @@ const Common::Rect &ZoombiniInteractiveRodMap::getRouteNameRect(uint32 routeIdx)
 		error("rodmap: invalid route-name index %u", routeIdx);
 		return _routeNameRects[0];
 	}
-	if (_textLayout.wideRouteNameRects)
-		return _europeRouteNameRects[routeIdx];
 	return _routeNameRects[routeIdx];
 }
 
@@ -165,7 +141,7 @@ const Common::Rect &ZoombiniInteractiveRodMap::getLevelLegendClickRect(uint32 le
 		error("rodmap: invalid level-legend index %u", levelIdx);
 		return _levelLegendClickRects[0];
 	}
-	return usesMapArchive(_vm->getRelInfo()) ? _europeLevelLegendClickRects[levelIdx] : _levelLegendClickRects[levelIdx];
+	return _levelLegendClickRects[levelIdx];
 }
 
 void ZoombiniInteractiveRodMap::loadRodmapPanelFeatures() {
@@ -174,8 +150,8 @@ void ZoombiniInteractiveRodMap::loadRodmapPanelFeatures() {
 	ZmbFeature::EventHooks hooks1004;
 	hooks1004.setPreRenderShapeFunc(&ZoombiniInteractiveRodMap::patchSelectedLevelShape1004_preRenderShape);
 	hooks1004.setPostRenderFunc(&ZoombiniInteractiveRodMap::textLegend1004_postRender);
-	// The v1.1 US demo displays the level legend but keeps its initial practice level fixed.
-	if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11)) {
+	// These demos display the level legend but keep their initial practice level fixed.
+	if (!_vm->getRelInfo().hasDemoPracticeMap()) {
 		hooks1004.setLButtonDownFunc(&ZoombiniInteractiveRodMap::legendLevel1004_onLButtonDown);
 		hooks1004.setKeyDownFunc(&ZoombiniInteractiveRodMap::legendLevel1004_onKeyDown);
 	}
@@ -250,7 +226,7 @@ void ZoombiniInteractiveRodMap::loadFeatures() {
 	_hoverNameFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1000), getHoverTooltipScrbId(), 6,
 										ZmbFeature::FLAG_00100000_PLAY_ONCE,
 										hooks1005);
-	if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11)) {
+	if (!_vm->getRelInfo().hasDemoPracticeMap()) {
 		// Europe MAP.MHK uses SCRB 1005; US RODMAP.MHK uses SCRB 1006.
 		ZmbFeature::EventHooks hooks1006;
 		hooks1006.setPreRenderShapeFunc(&ZoombiniInteractiveRodMap::optionButton1006_preRenderShape);
@@ -319,7 +295,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::onKeyDown(const Common::KeyState
 			// Retail RODMAP.MHK releases provide a full practice toggle.
 			// The classic MAP.MHK route screen only turns practice on here and leaves it when a hub page is selected.
 			// Enhanced shortcuts add a two-way toggle; otherwise keep the original turn-on-only behavior.
-			if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11) ||
+			if (_vm->getRelInfo().hasDemoPracticeMap() ||
 				(usesMapArchive(_vm->getRelInfo()) && !_vm->useEnhancedKbdShortcuts()))
 				setPracticeMode(true);
 			else
@@ -593,7 +569,7 @@ void ZoombiniInteractiveRodMap::redrawRouteNames() {
 	_routeNamesFeature->setNeedsRedraw(true);
 }
 
-uint16 ZoombiniInteractiveRodMap::getV11DemoPracticeLevel(ZoombiniPageType pageType) {
+uint16 ZoombiniInteractiveRodMap::getDemoPracticeLevel(ZoombiniPageType pageType) {
 	switch (pageType) {
 	case ZoombiniPageType::kPicker:
 	case ZoombiniPageType::kPizza:
@@ -612,8 +588,8 @@ bool ZoombiniInteractiveRodMap::isPageHoverable(uint32 pageIndex) {
 		return false;
 	}
 
-	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11))
-		return getV11DemoPracticeLevel(_pageClickTypes[pageIndex]) != 0;
+	if (_vm->getRelInfo().hasDemoPracticeMap())
+		return getDemoPracticeLevel(_pageClickTypes[pageIndex]) != 0;
 
 	if (_pageClickTypes[pageIndex] == ZoombiniPageType::kPicker)
 		return true;
@@ -746,8 +722,8 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFea
 			continue;
 
 		ZoombiniPageType nextType = _pageClickTypes[i];
-		if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11)) {
-			_vm->_state->_practiceLevel = getV11DemoPracticeLevel(nextType);
+		if (_vm->getRelInfo().hasDemoPracticeMap()) {
+			_vm->_state->_practiceLevel = getDemoPracticeLevel(nextType);
 			if (nextType == ZoombiniPageType::kPicker)
 				_vm->_state->beginPracticeState();
 			else
@@ -886,9 +862,7 @@ void ZoombiniInteractiveRodMap::textPageName1005_postRender(ZmbFeature *feature)
 		error("rodmap: page-name SCRB has no draw record");
 		return;
 	}
-	Common::Rect textRect = record->_drawnRect;
-	textRect.top += _textLayout.tooltip.topOffset;
-	textRect.bottom += _textLayout.tooltip.topOffset;
+	const Common::Rect textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapTooltipLayout).apply(record->_drawnRect);
 
 	ZoombiniGraphics::TextConf tc;
 	tc._textPalette = ZoombiniGraphics::kColor2D_Black;
@@ -1013,8 +987,9 @@ void ZoombiniInteractiveRodMap::textLegend1004_postRender(ZmbFeature *feature) {
 
 	ZmbDrawRecord *record = feature->getDrawRecord(0, 0);
 	Common::Rect legendTitleRect = record->_drawnRect;
-	legendTitleRect.top += layout.titleTopOffset;
-	legendTitleRect.setHeight(layout.titleHeight);
+	legendTitleRect.top += 3;
+	legendTitleRect.setHeight(15);
+	legendTitleRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapLegendTitleLayout).apply(legendTitleRect);
 
 	ZoombiniGraphics::TextConf ttc;
 	ttc._hAlign = Graphics::kTextAlignCenter;
@@ -1024,10 +999,10 @@ void ZoombiniInteractiveRodMap::textLegend1004_postRender(ZmbFeature *feature) {
 
 	// Level Descriptions
 	Common::Rect levelRect = record->_drawnRect;
-	levelRect.top += layout.rowTopOffset;
+	levelRect.top += 22;
 	levelRect.setHeight(14);
 	levelRect.left += 36;
-	levelRect.right += layout.rowRightExtension;
+	levelRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapLegendRowLayout).apply(levelRect);
 	for (uint32 i = 0; i < 4; i++) {
 		ZoombiniText::Key lKey = static_cast<ZoombiniText::Key>(ZoombiniText::kLevel1 + i);
 
@@ -1121,8 +1096,9 @@ void ZoombiniInteractiveRodMap::textJourneyStat1002_postRender(ZmbFeature *featu
 	const StatsLayout &layout = _textLayout.stats;
 	const Common::Rect &panelRect = feature->getDrawRecord(0, 0)->_drawnRect;
 	Common::Rect titleRect = panelRect;
-	titleRect.top += layout.titleTopOffset;
-	titleRect.setHeight(layout.titleHeight);
+	titleRect.top += 3;
+	titleRect.setHeight(15);
+	titleRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsTitleLayout).apply(titleRect);
 
 	Common::U32String title;
 	if (_vm->_state->inPracticeMode()) {
@@ -1180,9 +1156,11 @@ void ZoombiniInteractiveRodMap::drawPracticeReturnInstructions(const Common::Rec
 		firstStringKey = ZoombiniText::kEuropePracticeReturnInitial1;
 
 	Common::Rect descRect = panelRect;
-	descRect.top += layout.rowTopOffset;
-	descRect.setHeight(layout.rowHeight);
+	descRect.top += 26;
+	descRect.setHeight(18);
 	descRect.left += 5;
+	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsRowLayout).apply(descRect);
+	const ZmbReleaseInfo::LayoutAdjustment rowStep = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapPracticeRowStepLayout);
 	for (uint16 i = 0; i < 4; i++) {
 		ZoombiniGraphics::TextConf descConf;
 		descConf._hAlign = Graphics::kTextAlignLeft;
@@ -1190,8 +1168,8 @@ void ZoombiniInteractiveRodMap::drawPracticeReturnInstructions(const Common::Rec
 		const ZoombiniText::Key descKey = static_cast<ZoombiniText::Key>(firstStringKey + i);
 		_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, descKey, descRect, descConf);
 		// Standard European rows grow by 20 pixels; demo and Spanish/Portuguese rows keep a fixed height.
-		descRect.top += layout.rowHeight;
-		descRect.bottom += layout.practiceRowBottomStep;
+		descRect.translate(0, 18);
+		descRect = rowStep.apply(descRect);
 	}
 }
 
@@ -1203,29 +1181,34 @@ void ZoombiniInteractiveRodMap::drawPracticeDesc(const Common::Rect &panelRect) 
 		ZoombiniText::kPracticeDesc3,
 		ZoombiniText::kPracticeDesc4};
 	Common::Rect descRect = panelRect;
-	descRect.top += layout.rowTopOffset;
-	descRect.setHeight(layout.rowHeight);
+	descRect.top += 26;
+	descRect.setHeight(18);
 	descRect.left += 7;
-	descRect.setWidth(layout.labelWidth);
+	descRect.setWidth(115);
+	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsRowLayout).apply(descRect);
+	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsLabelLayout).apply(descRect);
+	const int16 rowHeight = descRect.height();
 	for (uint32 i = 0; i < ARRAYSIZE(kDescKeys); i++) {
 		ZoombiniGraphics::TextConf descConf;
 		descConf._hAlign = Graphics::kTextAlignLeft;
 		descConf._wordWrap = layout.descWordWrap || (i == 3);
 		_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, kDescKeys[i], descRect, descConf);
-		descRect.top += layout.rowHeight;
-		descRect.bottom += layout.rowHeight;
+		descRect.translate(0, rowHeight);
 	}
 }
 
 void ZoombiniInteractiveRodMap::drawJourneyStatistics(const Common::Rect &panelRect) {
 	const StatsLayout &layout = _textLayout.stats;
 	Common::Rect descRect = panelRect;
-	descRect.top += layout.rowTopOffset;
-	descRect.setHeight(layout.rowHeight);
+	descRect.top += 26;
+	descRect.setHeight(18);
 	descRect.left += 7;
-	descRect.setWidth(layout.labelWidth);
+	descRect.setWidth(115);
+	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsRowLayout).apply(descRect);
+	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsLabelLayout).apply(descRect);
+	const int16 rowHeight = descRect.height();
 	Common::Rect valueRect = descRect;
-	valueRect.left += layout.labelWidth;
+	valueRect.left += descRect.width();
 	valueRect.right = panelRect.right - 7;
 	const int16 storedBasecamp1 = _vm->_state->getCurrentState()._zmbStoredBC1Count;
 	const int16 storedBasecamp2 = _vm->_state->getCurrentState()._zmbStoredBC2Count;
@@ -1247,10 +1230,8 @@ void ZoombiniInteractiveRodMap::drawJourneyStatistics(const Common::Rect &panelR
 		valueConf._wordWrap = false;
 		_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, Common::U32String::format("%d", values[i]), valueRect, valueConf);
 
-		descRect.top += layout.rowHeight;
-		descRect.bottom += layout.rowHeight;
-		valueRect.top += layout.rowHeight;
-		valueRect.bottom += layout.rowHeight;
+		descRect.translate(0, rowHeight);
+		valueRect.translate(0, rowHeight);
 	}
 }
 

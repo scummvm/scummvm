@@ -753,11 +753,11 @@ void ZoombiniPage::dispatchFeatureSound(ZmbFeature *feature, ZmbResource resourc
 	if (soundType == Audio::Mixer::kSpeechSoundType) {
 		const bool isZoombiniVoice = dynamic_cast<const ZmbSnoid *>(feature) && resource._archiveKind == ZmbResource::kSystem &&
 									 kSysResSound0100_ZoombiniVoiceBase <= resource._id && resource._id <= kSysResSound0499_ZoombiniVoiceLast;
-		// The v1.1 US demo leaves Zoombini voices silent while retaining page-local character speech.
-		if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11) && isZoombiniVoice)
-			return;
 		// The v1.0 British demo retains script voice events whose system SND resources were removed.
 		if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kEuropeV10) && !_vm->hasResource(ID_SND, resource))
+			return;
+		// The v1.1 US demo leaves Zoombini voices silent while retaining page-local character speech.
+		if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11) && isZoombiniVoice)
 			return;
 	}
 

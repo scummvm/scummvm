@@ -34,10 +34,11 @@ class SeekableReadStream;
 
 namespace Mohawk {
 
-constexpr const char *ZMB_MHK_ROOT_EUR_GB = "ENGLISH/";
-constexpr const char *ZMB_MHK_ROOT_EUR_FR = "FRENCH/";
-constexpr const char *ZMB_MHK_ROOT_EUR_GE = "GERMAN/";
-constexpr const char *ZMB_MHK_ROOT_EUR_IT = "ITALIAN/";
+constexpr const char *ZMB_MHK_ROOT_LANG_GB = "ENGLISH/";
+constexpr const char *ZMB_MHK_ROOT_LANG_FR = "FRENCH/";
+constexpr const char *ZMB_MHK_ROOT_LANG_GE = "GERMAN/";
+constexpr const char *ZMB_MHK_ROOT_LANG_IT = "ITALIAN/";
+constexpr const char *ZMB_MHK_ROOT_LANG_JP = "JAPANESE/";
 constexpr const char *ZMB_MHK_ROOT_GENERIC = "DATA/";
 
 constexpr const char *ZMB_VIDEO_CDTOONS = "LOGO025.MOV";    // Broderbund v1.x releases only

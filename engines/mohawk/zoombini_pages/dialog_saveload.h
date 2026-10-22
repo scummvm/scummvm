@@ -158,8 +158,8 @@ private:
 	 */
 	/** Rectangle containing the save-as caption. */
 	const Common::Rect _saveAsCaptionRect = Common::Rect(0x00BB, 0x010F, 0x017C, 0x0122);
-	/** Rectangle containing the editable save-name field. */
-	const Common::Rect _saveTextBoxRect = Common::Rect(0x00C0, 0x012A, 0x01C8, 0x013C);
+	/** Rectangle containing the editable save-name field, with Japanese vertical placement. */
+	Common::Rect _saveTextBoxRect = Common::Rect(0x00C0, 0x012A, 0x01C8, 0x013C);
 	/** Left edge of a save-entry row. */
 	static constexpr uint16 _saveEntryLeft = 192;
 	/** Right edge of a save-entry row. */

@@ -842,6 +842,25 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
+	// Portuguese Windows, v1.0 Europe-based (Broderbund release)
+	// The executable is an InstallShield v3 archive member.
+	{
+		{
+			"zoombini",
+			"v1.0PT",
+			AD_ENTRY2s("DATA/ZOOMBINI.MHK", "464c122b28be74559a9b52e773089a12", 23439171,
+					   "is3:ZBARCHIV.Z:zoombi32.exe", "A:1177fd23ba82b0c41c01321e289edeee", 635424),
+			Common::PT_PRT,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		GF_ZMB_10_ESPT,
+		0
+	},
+
+	// Logical Journey of the Zoombinis
 	// Italian Windows, v1.0 Europe-based (Broderbund release)
 	// From Hajin Jang
 	{
@@ -862,21 +881,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
-	// Portuguese Windows, v1.0 Europe-based (Broderbund release)
-	// The executable is an InstallShield v3 archive member.
+	// Japanese Windows, v1.0 Europe-based (INTERPROG release)
+	// The Win32 executable is an InstallShield v3 archive member.
 	{
 		{
 			"zoombini",
-			"v1.0PT",
-			AD_ENTRY2s("DATA/ZOOMBINI.MHK", "464c122b28be74559a9b52e773089a12", 23439171,
-					   "is3:ZBARCHIV.Z:zoombi32.exe", "A:1177fd23ba82b0c41c01321e289edeee", 635424),
-			Common::PT_PRT,
+			"v1.0JP",
+			AD_ENTRY2s("JAPANESE/ZOOMBINI.MHK", "3133e8d164958f8a3f740cb1f4e49f15", 24120142,
+					   "is3:ZBARCHIV.Z:zoombi32.exe", "A:e7005b017f9854b422ffca1ec8b36cf2", 1273147),
+			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GAMEOPTION_ZMB_V10JP)
 		},
 		GType_ZOOMBINI,
-		GF_ZMB_10_ESPT,
+		GF_ZMB_10_JP,
 		0
 	},
 
@@ -986,7 +1005,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
-	// Korean Windows, v1.11 (Arisumedia release)
+	// Korean Windows, v1.11 KR (Arisumedia release)
 	// From Hajin Jang
 	{
 		{
@@ -1028,7 +1047,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
-	// Polish Windows, v2.0 (The Learning Company release)
+	// Polish Windows, v2.0 Poland (The Learning Company release)
+	// From Hajin Jang
 	{
 		{
 			"zoombini",
@@ -1046,7 +1066,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
-	// English Windows, v2.0 USA demo (The Learning Company re-release)
+	// English Windows, v2.0 USA demo (The Learning Company release)
 	// Retrieved from the Zoombinis: Mountain Rescue disk
 	// From Hajin Jang
 	{
@@ -1059,13 +1079,15 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_ZMB_V20)
+			GUIO3(GUIO_NOASPECT, GAMEOPTION_DEMO, GAMEOPTION_ZMB_V20)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_20_US,
 		0
 	},
 
+	// Logical Journey of the Zoombinis
+	// English Macintosh, v1.1 USA demo
 	{
 		{
 			"zoombini",
@@ -1074,13 +1096,16 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "ab6ba48edb4a93ca034c63905f615865", 4538864),
 			Common::EN_USA,
 			Common::kPlatformMacintosh,
-			ADGF_DEMO,
-			GUIO1(GUIO_NOASPECT)
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_US,
 		0
 	},
+
+	// Logical Journey of the Zoombinis
+	// English Windows, v1.0 Europe demo
 	{
 		{
 			"zoombini",
@@ -1090,12 +1115,15 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
 		0
 	},
+
+	// Logical Journey of the Zoombinis
+	// English Windows, v1.1 USA demo
 	{
 		{
 			"zoombini",
@@ -1105,24 +1133,29 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_US,
 		0
 	},
+
+	// Logical Journey of the Zoombinis
+	// Japanese Macintosh, v1.0 Europe-based demo (INTERPROG release)
+	// No original Macintosh runtime is available for GroundTruth validation.
 	{
 		{
 			"zoombini",
-			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
-			AD_ENTRY1s("ZOOMBINI.MHK", "3133e8d164958f8a3f740cb1f4e49f15", 24120142),
+			"v1.0JP Demo",
+			AD_ENTRY2s("JAPANESE/ZOOMBINI.MHK", "3133e8d164958f8a3f740cb1f4e49f15", 24120142,
+					   "Zoombini", "6cec7f51ebff7778175866e2d277c238", 722944),
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
-			ADGF_UNSUPPORTED | ADGF_DEMO,
-			GUIO1(GUIO_NOASPECT)
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO3(GUIO_NOASPECT, GAMEOPTION_DEMO, GAMEOPTION_ZMB_V10JP)
 		},
 		GType_ZOOMBINI,
-		0,
+		GF_ZMB_10_JP,
 		0
 	},
 

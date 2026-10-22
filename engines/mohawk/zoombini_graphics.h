@@ -483,6 +483,7 @@ public:
 	};
 
 	// [*] Draw TrueType Text
+	/** Font, colors, layout, and optional clipping for a text draw and its retained replay. */
 	struct TextConf {
 		/** Font family selected for the text draw. */
 		ZoombiniFontUsage _fontUsage = ZoombiniFontUsage::kFontText;
@@ -516,6 +517,21 @@ public:
 		 * To mitigate this
 		 */
 		bool _wordWrap = false;
+		/**
+		 * Apply @ref _clipRect as an additional pixel clip after text layout.
+		 * When false, @ref _clipRect is ignored; when true, an empty clip draws nothing.
+		 */
+		bool _hasClipRect = false;
+		/**
+		 * Additional clipping bounds in game-screen pixels, enabled by @ref _hasClipRect.
+		 *
+		 * The destination rectangle supplies the full width and height for wrapping and alignment.
+		 * This clip restricts glyphs, outlines, background fill, and reported draw/dirty bounds after layout.
+		 * Credits can wrap within a 330-pixel row while clipping to its 300-pixel scroll viewport
+		 * and the original 15-pixel row, keeping line breaks and alignment stable during scrolling.
+		 * Retained draw-command replay translates this rectangle with the text position.
+		 */
+		Common::Rect _clipRect;
 	};
 
 	/**
@@ -604,17 +620,58 @@ public:
 	}
 	/** Replay a frozen drawing command with the position-interpolation offset within the active render clip. */
 	void replayDrawCommand(const DrawCommand &drawCmd, const Common::Point &offset);
-	/** Draw a localized text key with default text configuration. */
+	/**
+	 * Draw a localized text key with default text configuration.
+	 *
+	 * @param screenKind Internal screen buffer to draw into.
+	 * @param textKey Localized string key resolved by ZoombiniText::getLocalizedString().
+	 * @param destRect Layout bounds in game-screen pixels, using the default TextConf.
+	 */
 	void drawText(ScreenKind screenKind, uint32 textKey, const Common::Rect &destRect);
-	/** Draw a localized text key with explicit text configuration. */
+	/**
+	 * Draw a localized text key with explicit text configuration.
+	 *
+	 * @param screenKind Internal screen buffer to draw into.
+	 * @param textKey Localized string key resolved by ZoombiniText::getLocalizedString().
+	 * @param destRect Original layout bounds in game-screen pixels; @ref TextConf::_clipRect only limits output after layout.
+	 * @param tc Font, colors, outline, background, layout, and optional pixel-clipping settings.
+	 */
 	void drawText(ScreenKind screenKind, uint32 textKey, const Common::Rect &destRect, const TextConf &tc);
-	/** Draw UTF-32 text with default text configuration. */
+	/**
+	 * Draw UTF-32 text with default text configuration.
+	 *
+	 * @param screenKind Internal screen buffer to draw into.
+	 * @param text UTF-32 content; CR, LF, and CRLF delimit explicit lines.
+	 * @param destRect Layout bounds in game-screen pixels, using the default TextConf.
+	 */
 	void drawText(ScreenKind screenKind, const Common::U32String &text, const Common::Rect &destRect);
-	/** Draw UTF-32 text with explicit text configuration. */
+	/**
+	 * Draw UTF-32 text with explicit text configuration.
+	 *
+	 * Wrapping and alignment use the full @p destRect, independently of @ref TextConf::_clipRect.
+	 * An enabled clip limits output pixels and reported bounds after layout, preserving line breaks
+	 * and alignment when only part of the text is visible inside a scroll viewport.
+	 *
+	 * @param screenKind Internal screen buffer to draw into.
+	 * @param text UTF-32 content; CR, LF, and CRLF delimit explicit lines.
+	 * @param destRect Original layout bounds in game-screen pixels, retained independently of the optional pixel clip.
+	 * @param tc Font, colors, outline, background, layout, and optional pixel-clipping settings.
+	 */
 	void drawText(ScreenKind screenKind, const Common::U32String &text, const Common::Rect &destRect, const TextConf &tc);
-	/** Measure text width using the selected font and text configuration. */
+	/**
+	 * Measure an unwrapped string using the selected font.
+	 *
+	 * @param text UTF-32 string passed directly to the font's width measurement.
+	 * @param tc Selects the font through TextConf::_fontUsage; other formatting fields are ignored.
+	 * @return String width in pixels, without outline expansion or clipping.
+	 */
 	int getTextWidth(const Common::U32String &text, const TextConf &tc);
-	/** Return the selected font height for a text configuration. */
+	/**
+	 * Return the selected font's line height.
+	 *
+	 * @param tc Selects the font through TextConf::_fontUsage; other formatting fields are ignored.
+	 * @return Font height in pixels, also used to advance between prepared text lines.
+	 */
 	int16 getFontHeight(const TextConf &tc);
 
 	// [*] Transitions and effects
@@ -683,32 +740,84 @@ protected:
 private:
 	/** Apply one partial palette fade step. */
 	void applyPartialPaletteFade(const FadeEffect &fadeEffect, uint16 blendIndex);
-	/** Expand an unwrapped text rectangle according to horizontal alignment. */
+	/**
+	 * Expand an unwrapped text rectangle according to horizontal alignment.
+	 *
+	 * @param[in,out] rect Game-screen layout bounds; widened only when narrower than textWidth.
+	 * @param textWidth Required unwrapped text width in pixels.
+	 * @param hAlign Alignment anchor to preserve: left, center, or right, including start/end aliases.
+	 */
 	static void expandUnwrappedTextRect(Common::Rect &rect, int textWidth, Graphics::TextAlign hAlign);
-	/** Split text into renderable lines with optional word wrapping. */
+	/**
+	 * Split text into renderable lines with optional word wrapping.
+	 *
+	 * @param text UTF-32 content split at CR, LF, or CRLF, preserving explicit empty lines.
+	 * @param font Borrowed font used to measure wrap candidates; required when wordWrap is true.
+	 * @param wordWrap Whether to subdivide explicit lines to fit targetWidth.
+	 * @param targetWidth Wrapping width in pixels; an exactly fitting line is accepted. Ignored without wrapping.
+	 * @return Prepared lines in drawing order, without applying alignment or clipping.
+	 */
 	Common::Array<Common::U32String> prepareTextLines(const Common::U32String &text, const Graphics::Font *font, bool wordWrap, int16 targetWidth);
-	/** Calculate total draw height and max draw width */
+	/**
+	 * Calculate the maximum line width and total line height.
+	 *
+	 * @param font Non-null borrowed font supplying glyph bounds and line height.
+	 * @param outlineEffect Whether to add two pixels to both dimensions for a one-pixel outline on each side.
+	 * @param lines Prepared UTF-32 lines; each entry, including an empty one, contributes one font height.
+	 * @return Pixel dimensions as Point(width, height), before alignment or clipping.
+	 */
 	Common::Point getTextLinesBounds(const Graphics::Font *font, bool outlineEffect, const Common::Array<Common::U32String> &lines);
-	/** Draw prepared text lines and optionally fill their background. */
-	void drawTextLines(ScreenKind screenKind, const Graphics::Font *font, const Common::Array<Common::U32String> &lines, const Common::Rect &destRect, uint32 color, Graphics::TextAlign hAlign, bool useAntialiasing, uint32 fillBackgroundColor = kTransparentKey);
-	/** Copy text pixels while preserving the game transparency convention. */
+	/**
+	 * Draw prepared text lines and optionally fill their background.
+	 *
+	 * Lines are already wrapped and vertically positioned by @ref ZoombiniGraphics::drawTextToScreen.
+	 * The optional @p clipRect trims output without changing their placement or horizontal alignment width.
+	 *
+	 * @param screenKind Internal indexed screen buffer to draw into.
+	 * @param font Non-null borrowed font used to rasterize glyphs and advance between lines.
+	 * @param lines Prepared UTF-32 lines in drawing order; wrapping is already complete.
+	 * @param destRect Positioned raster bounds in game-screen pixels, retaining the layout width for horizontal alignment.
+	 * @param color Palette index used for glyphs, including the outline color during an outline pass.
+	 * @param hAlign Horizontal alignment within destRect; vertical placement is already reflected in destRect.
+	 * @param useAA Whether to render alpha coverage and quantize it to the palette.
+	 * @param fillBackgroundColor Palette index for each line's glyph bounds; kTransparentKey disables background fill.
+	 * @param clipRect Optional borrowed, read-only clip in game-screen pixels; nullptr disables only this extra clip.
+	 * An empty non-null rectangle suppresses output. The rectangle is used only during this call and is not retained.
+	 * The destination, screen bounds, and active render region still constrain output without changing text layout.
+	 */
+	void drawTextLines(ScreenKind screenKind, const Graphics::Font *font, const Common::Array<Common::U32String> &lines,
+					   const Common::Rect &destRect, uint32 color, Graphics::TextAlign hAlign, bool useAA,
+					   uint32 fillBackgroundColor = kTransparentKey, const Common::Rect *clipRect = nullptr);
+	/**
+	 * Copy indexed text pixels while preserving kTransparentKey pixels on the destination.
+	 *
+	 * @param textSurface Non-null borrowed CLUT8 source surface, read without modification.
+	 * @param screen Non-null borrowed CLUT8 destination surface receiving nontransparent pixels.
+	 * @param destRect Game-screen placement of textSurface; its top-left maps to source pixel (0, 0).
+	 * @param copyRect Game-screen area to copy, already clipped by the caller to valid source and destination bounds.
+	 */
 	static void copyTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect);
 #ifdef USE_RGB_COLOR
 	/**
 	 * Quantize 32-bit text coverage into a CLUT8 screen using the supplied RGB palette.
 	 * This preserves antialiased TrueType output on indexed surfaces.
 	 *
-	 * @param textSurface 4bpp surface containing the rendered text pixels, representing hinting with glyph alpha coverage.
-	 * @param screen CLUT8 dest surface, which will have text rendered with best-effort hinting.
-	 * @param destRect Screen rect corresponding to the origin of textSurface.
-	 * @param copyRect Screen-space portion of destRect to quantize.
-	 * @param paletteBytes A palette buffer of @ref screen containing RGB triplets.
-	 * @param paletteColorCount Number of RGB colors in paletteBytes.
-	 * @param color Palette index of foreground color.
+	 * @param textSurface Non-null borrowed 32-bit source surface whose alpha channel supplies glyph coverage.
+	 * @param screen Non-null borrowed CLUT8 destination, read for background colors and updated with blended palette indices.
+	 * @param destRect Game-screen placement of textSurface; its top-left maps to source pixel (0, 0).
+	 * @param copyRect Game-screen area to quantize, already clipped by the caller to valid source and destination bounds.
+	 * @param paletteBytes Non-null borrowed RGB triplets for the destination's active palette.
+	 * @param paletteColorCount Number of valid palette entries, from 1 through Graphics::PALETTE_COUNT.
+	 * @param color Foreground palette index, less than paletteColorCount; fully covered pixels use this exact index.
 	 */
 	void quantizeHintedTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect, const byte *paletteBytes, uint paletteColorCount, uint32 color);
 #endif
-	/** Record one text draw rectangle in the selected screen's dirty set. */
+	/**
+	 * Record a drawn rectangle for dirty tracking and screen or background invalidation.
+	 *
+	 * @param screenKind Internal screen modified by the draw; selects composite damage or background invalidation.
+	 * @param rect Game-screen draw bounds, clipped to the selected screen before recording; empty bounds are ignored.
+	 */
 	void recordDirtyRect(ScreenKind screenKind, const Common::Rect &rect);
 	/** Copy pixels using the requested Color Assist palette remap. */
 	void copyRectToSurfaceWithColorAssistPaletteRemap(Graphics::Surface *screen, Graphics::Surface *source, int destX, int destY, const Common::Rect &sourceRect, PaletteRemapMode remapMode);
@@ -785,7 +894,18 @@ private:
 	void drawLineToScreen(ScreenKind screenKind, const DrawCommand &drawCmd, const Common::Point &offset);
 	/** Fill pixels through the active render clip without recording another command. */
 	void fillRectToScreen(ScreenKind screenKind, const Common::Rect &rect, uint32 color);
-	/** Draw text and return its complete painted coverage, including outlines. */
+	/**
+	 * Draw text immediately and record its dirty bounds without capturing another command.
+	 *
+	 * Wrap and align the complete text using @p destRect before applying @ref TextConf::_clipRect.
+	 * Clipping affects output pixels and reported draw/dirty bounds without changing the computed layout.
+	 *
+	 * @param screenKind Internal screen buffer to draw into.
+	 * @param text UTF-32 content split into explicit lines and optionally word-wrapped.
+	 * @param destRect Original layout bounds in game-screen pixels, retained independently of the optional pixel clip.
+	 * @param tc Font, colors, outline, background, layout, and optional pixel-clipping settings.
+	 * @return Logical draw bounds including outlines and the optional text clip, before screen/render-region clipping.
+	 */
 	Common::Rect drawTextToScreen(ScreenKind screenKind, const Common::U32String &text, const Common::Rect &destRect, const TextConf &tc);
 	/** Whether the current dirty-tracking pass has recorded any bounds. */
 	bool _hasTrackedDirtyBounds = false;

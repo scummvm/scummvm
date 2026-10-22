@@ -230,13 +230,16 @@ bool ZoombiniGameState::hasCompletionCounters(ZmbSaveFormat format) {
 }
 
 ZoombiniGameState::ZmbSaveFormat ZoombiniGameState::getTargetSaveFormat(const MohawkEngine_Zoombini *vm) {
-	if (vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
-		return ZmbSaveFormat::kTlcV20;
+	const ZmbReleaseInfo &relInfo = vm->getRelInfo();
 
-	// The native 16-bit Europe v1.1 executable keeps the v1.0 save layout.
+	// The Europe v1.1 executables keeps the v1.0 save layout.
 	// ScummVM still accepts other recognized source layouts when loading.
-	if (vm->getRelInfo().isFamily(ZmbReleaseInfo::kUsV1) && !vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1))
+	if (relInfo.isFamily(ZmbReleaseInfo::kEuropeV1))
+		return ZmbSaveFormat::kEuV10;
+	if (relInfo.isFamily(ZmbReleaseInfo::kUsV1))
 		return ZmbSaveFormat::kUsV11;
+	if (relInfo.isFamily(ZmbReleaseInfo::kTlcV2))
+		return ZmbSaveFormat::kTlcV20;
 
 	return ZmbSaveFormat::kEuV10;
 }
@@ -1984,9 +1987,8 @@ bool ZoombiniGameState::loadState(int slot) {
 	upgradeStateForVariant(loadedState, sourceFormat, targetFormat);
 	loadedState._isDirty = false;
 
-	const bool usesKoreanNamePool = _vm->_text->getExeCodePage() == Common::kWindows949;
 	const Common::U32String convPromptBody = _vm->_text->getLocalizedString(ZoombiniText::kSvmDialogBodyAskConvertUnreadableZoombiniNames);
-	if (!usesKoreanNamePool && hasNonAsciiZoombiniName(loadedState) &&
+	if (!_vm->getRelInfo().supportsLocalizedNames() && hasNonAsciiZoombiniName(loadedState) &&
 		_vm->openConfirmMsgBoxDialog(convPromptBody) == ZoombiniDialogResult::kYes) {
 		replaceZoombiniNamesWithStandardNames(loadedState);
 		loadedState._isDirty = true;
