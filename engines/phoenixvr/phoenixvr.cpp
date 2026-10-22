@@ -1258,7 +1258,7 @@ Graphics::ManagedSurface *PhoenixVREngine::loadSurface(const Common::String &pat
 		dec.reset(new Image::PCXDecoder);
 	} else if (filename.hasSuffixIgnoreCase(".gif")) {
 		dec.reset(new Image::GIFDecoder);
-	} else if (filename.hasSuffixIgnoreCase(".cur") || filename.hasSuffixIgnoreCase(".spr")) {
+	} else if (filename.hasSuffixIgnoreCase(".cur") || filename.hasSuffixIgnoreCase(".spr") || filename.hasSuffixIgnoreCase(".tga")) {
 		dec.reset(new Image::TGADecoder);
 	} else {
 		warning("can't find decoder for %s", filename.c_str());

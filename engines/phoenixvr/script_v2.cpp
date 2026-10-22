@@ -179,7 +179,7 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			_warpNames.push_back(vr);
 			_currentTest.reset();
 			_currentTestScope = nullptr;
-		} else if (p.maybe("test]:")) {
+		} else if (p.maybe("test]:") || p.maybe("stest]:")) {
 			if (!_currentWarp)
 				error("test without warp");
 			auto idx = p.nextInt();
@@ -260,6 +260,8 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 		} else if (p.maybe('(')) {
 			auto args = p.readStringList();
 			p.expect(')');
+			if (name.hasPrefixIgnoreCase("sh_"))
+				name = name.substr(3);
 			command = createV2Command(name, args, lineno);
 		} else
 			error("invalid syntax at %d", lineno);
