@@ -114,7 +114,7 @@ public:
 	bool isTimerDebugEnabled() const { return _timerDebugEnabled; }
 	bool toggleTimerDebugEnabled();
 	bool requestDebugCommand(const CommandRecord &command);
-	bool requestDebugRoomChange(const Common::String &roomName);
+	bool requestDebugRoomChange(const Common::String &roomName, int discNumber);
 	void captureCurrentSaveRoomState(const Common::String &entranceName,
 		const Common::String &roomName, int playerX, int playerY, int playerZ,
 		int playerFacing, int discNumber, const Common::String &musicPath);

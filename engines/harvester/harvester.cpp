@@ -297,10 +297,10 @@ bool HarvesterEngine::requestDebugCommand(const CommandRecord &command) {
 	return _activeFlow->queueDebugInteraction(interaction);
 }
 
-bool HarvesterEngine::requestDebugRoomChange(const Common::String &roomName) {
+bool HarvesterEngine::requestDebugRoomChange(const Common::String &roomName, int discNumber) {
 	return _activeFlow &&
 		_currentSaveRoomState.valid &&
-		_activeFlow->requestDebugRoomChange(roomName);
+		_activeFlow->requestDebugRoomChange(roomName, discNumber);
 }
 
 void HarvesterEngine::setDisplayMode(int width, int height) {
