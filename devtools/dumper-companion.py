@@ -655,10 +655,11 @@ def convert_cue_to_iso(cue_path: Path, iso_path: Path) -> None:
     Converts a BIN/CUE image into an ISO image for the primary data track,
     and extracts any audio tracks to WAV format in the same directory.
     """
+    print("Converting CUE/BIN file to ISO ...")
     tracks = parse_cue_sheet(cue_path)
     if not tracks:
         raise ValueError("No valid tracks found in the CUE sheet.")
-
+    print(f"Parsed {len(tracks)} tracks from CUE")
     os.makedirs(iso_path.parent, exist_ok=True)
     data_track_extracted = False
 
@@ -711,6 +712,7 @@ def convert_cue_to_iso(cue_path: Path, iso_path: Path) -> None:
                     f"skip additional data track {track.number:02d}; only primary data track is supported."
                 )
                 continue
+            print(f"Dumping audio track {track.number:02d}")
             data_offset = 0
             payload_size = 2352
             out_path = iso_path.parent / f"{cue_path.stem}_track_{track.number:02d}.wav"
@@ -1027,11 +1029,13 @@ def convert_mds_to_iso(mds_path: Path, iso_path: Path) -> None:
     """
     Converts an MDS image into an ISO image for the primary data track.
     """
+    print("Converting MDS file to ISO ...")
     image = parse_mds(mds_path)
     if not image.sessions:
         raise ValueError("No sessions found in MDS image.")
 
     session = image.sessions[0]
+    print(f"Parsed {len(image.sessions)} session(s) and {len(session.tracks)} track(s) from MDS")
     data_track = None
 
     for track in session.tracks:
@@ -1852,6 +1856,7 @@ def extract3do(args: argparse.Namespace) -> None:
         offset = 0
         for block in range(totalBlocks):
             if checkHeader(f, block, offset):
+                print("3DO image detected")
                 offset = block * SIZE_OF_BLOCK
                 f.seek(offset + 0x64)
                 root = f.read(4)
