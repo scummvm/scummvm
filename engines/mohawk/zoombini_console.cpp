@@ -3662,6 +3662,10 @@ bool ZoombiniConsole::Cmd_ManShortcuts(int argc, const char **argv) {
 	printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionToggleLessMoreAction);
 	debugPrintf("  Ctrl+H      Hide or show the cursor\n");
 	printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionToggleCursor);
+	if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kJapanV10)) {
+		debugPrintf("  Ctrl+M      Toggle Japanese/Latin Zoombini name generation\n");
+		printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionToggleJapaneseNames);
+	}
 
 	debugPrintf("\n[Help Shortcuts]\n");
 	debugPrintf("  F1          Replay the active puzzle's help voice, when one is available\n");

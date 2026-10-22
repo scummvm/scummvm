@@ -47,8 +47,8 @@ class ZmbReleaseInfo;
 /** Provide release-specific strings, credits, fonts, text encoding, and Zoombini names. */
 class ZoombiniText : private Common::NonCopyable {
 public:
-	/** Load localized text sources for the selected engine language. */
-	ZoombiniText(MohawkEngine_Zoombini *vm, Common::Language lang);
+	/** Load localized text sources and fonts for the engine's release. */
+	explicit ZoombiniText(MohawkEngine_Zoombini *vm);
 	/** Release loaded fonts, strings, and name caches. */
 	~ZoombiniText();
 
@@ -263,6 +263,10 @@ public:
 		kNotiBoxTouchSenseOn,
 		/** (v2.0TLC-only) text key. ScummVM does not implement TouchSense. */
 		kNotiBoxTouchSenseOff,
+		/** (v1.0JP-only) Japanese release notification for procedural Latin names. */
+		kNotiBoxEnglishNames,
+		/** (v1.0JP-only) Japanese release notification for procedural halfwidth katakana names. */
+		kNotiBoxJapaneseNames,
 		// ScummVM-only text keys
 		kSvmDialogBodyAskSaveAfterDebugStateMutation = 2000,
 		kSvmDialogBodyLoadNewerSaveFormat,
@@ -344,17 +348,56 @@ public:
 	bool getStrl(Common::Array<Common::U32String> &outStrs, ZmbResource resource);
 	/** Decode one indexed string from a STRL resource. */
 	bool getStrl(Common::U32String &outStr, ZmbResource resource, uint16 subStrIdx);
-	/** Return the localized name for a canonical Zoombini ID. */
-	Common::U32String getZoombiniName(int16 zmbid);
 
 	// [*] Zoombini names
 	/**
-	 * Pick the next name for a preview Zoombini.
-	 * Korean: draws each of the 625 STRL name IDs once per cycle, then clears the draw history.
-	 * Different IDs may contain equal strings, and existing Zoombini names do not restrict selection.
-	 * English: generates a name procedurally from syllable tables.
+	 * Fixed Japanese name requested by Picker when generating a new name.
+	 * Possibly a v1.0JP debug-only feature.
 	 */
+	enum JPFixedNameKind {
+		/**
+		 * Generate a random name without a fixed-name override.
+		 */
+		kJPFixedNameNone,
+		/**
+		 * Select the fixed Japanese name "Chobi".
+		 */
+		kJPFixedJPNameChobi,
+		/**
+		 * Select the fixed Japanese name requested by F2; F1 takes priority if both keys are held.
+		 * One possible reading is "Fumiaki".
+		 * Likely a kanji-name test using Japanese localization programmer Fumiaki Utsunomiya's given name.
+		 */
+		kJPFixedJPNameFumiaki
+	};
+	/** Generate a name without Picker-held key overrides. */
 	Common::U32String pickNextZoombiniName();
+	/**
+	 * Pick the next name for a preview Zoombini.
+	 * Different IDs may contain equal strings, and existing Zoombini names do not restrict selection.
+	 *
+	 * Latin: generates a name procedurally from syllable tables.
+	 * Korean: draws each of the 625 STRL name IDs once per cycle, then clears the draw history.
+	 * Japanese: generates halfwidth katakana or returns the requested fixed name.
+	 *
+	 * Ctrl+M selects Latin generation instead; fixed-name requests then have no effect.
+	 */
+	Common::U32String pickNextZoombiniName(JPFixedNameKind requestedFixedName);
+	/** Toggle Japanese versus Latin procedural names and return the selected Japanese-name state. */
+	bool toggleJapaneseNames() {
+		_useJapaneseNames = !_useJapaneseNames;
+		return _useJapaneseNames;
+	}
+
+	/** Generate a Latin Zoombini name procedurally from syllable tables. */
+	Common::U32String generateLatinZoombiniName();
+	/**
+	 * Draw an unused Korean name ID, and return its cached or loaded STRL name.
+	 * The cycle is restarted when exhausted.
+	 */
+	Common::U32String getKoreanZoombiniName();
+	/** Generate a Japanese Zoombini name from weighted halfwidth katakana or the requested fixed name. */
+	Common::U32String generateJapaneseZoombiniName(JPFixedNameKind requestedFixedName);
 
 	// [*] Text getters
 	/** Return the localized display name for a page type. */
@@ -477,8 +520,10 @@ private:
 		ExeTextPatchFunction textPatches = nullptr;
 		/** Optional patch callback applied to credit lines after decoding. */
 		ExeTextPatchFunction creditLinePatches = nullptr;
-		/** Whether a Mac Roman 0xAA trademark byte must be escaped during decoding. */
+		/** Whether a MacRoman 0xAA (™) byte must be escaped during decoding. */
 		bool escapeMacRomanTrademarkByteAA = false;
+		/** Whether executable strings retain a Windows-1252 0xD8 (Ø) byte. */
+		bool decodeWindows1252StrokeByteD8 = false;
 
 		/** Storage and traversal method owning the credit sequence. */
 		CreditSourceKind creditSourceKind = CreditSourceKind::kNone;
@@ -513,8 +558,10 @@ private:
 		ExeTextSource withTextPatches(ExeTextPatchFunction patch);
 		/** Set the credit-line patch callback, returning the updated descriptor. */
 		ExeTextSource withCreditLinePatches(ExeTextPatchFunction patch);
-		/** Enable the MacRoman trademark-byte escape, returning the updated descriptor. */
+		/** Enable the MacRoman trademark-byte (™) escape, returning the updated descriptor. */
 		ExeTextSource withMacRomanTrademarkByteAAEscape();
+		/** Enable the Windows-1252 0xD8 (Ø) byte quirk, returning the updated descriptor. */
+		ExeTextSource withWindows1252StrokeByteD8Decode();
 		/** Set the anchor-based credit lookup, returning the updated descriptor. */
 		ExeTextSource withCreditAnchor(const char *anchor);
 
@@ -536,6 +583,8 @@ private:
 		bool textStrArchive = false;
 		/** Exact TEXTSTR.MHK credit entry count, or zero to retain executable credits. */
 		uint32 textStrCreditEntryCount = 0;
+		/** Whether archive credits retain a MacRoman 0x9F (ü) byte. */
+		bool decodeMacRomanUmlautByte9F = false;
 	};
 
 	/** One localized replacement and its release applicability. */
@@ -567,9 +616,15 @@ private:
 	/** Bounds measured from the Polish v2.0 retail executable credit source. */
 	static const CreditLimits kV20PLCreditLimits;
 	/** Exact entry count of the Italian v1.0 STRL 2020 and 2021 credit source. */
-	static constexpr uint32 kV10ITCreditEntryCount = 278;
-	/** Exact entry count of the British v1.0 demo STRL 2020 and 2021 credit source. */
-	static constexpr uint32 kV10BRDemoCreditEntryCount = 282;
+	static constexpr uint32 kEuropeITCreditEntryCount = 278;
+	/** Exact entry count of the Japanese v1.0 STRL 2020 and 2021 credit source. */
+	static constexpr uint32 kEuropeJPCreditEntryCount = 296;
+	/** Exact entry count of British v1.0/v1.1 and v1.0 demo STRL 2020/2021 credits. */
+	static constexpr uint32 kEuropeBRCreditEntryCount = 282;
+	/** Exact entry count of French v1.0/v1.1, including 2002, STRL 2020/2021 credits. */
+	static constexpr uint32 kEuropeFRCreditEntryCount = 285;
+	/** Exact entry count of German v1.0/v1.1 STRL 2020/2021 credits. */
+	static constexpr uint32 kEuropeGECreditEntryCount = 291;
 	/** Anchor for flat v1.x executable credit string sequences. */
 	static constexpr const char *const kExeCreditParagraphsAnchor = "PRODUCT CONCEPT AND DESIGN";
 	/** Anchor for the Spanish v1.0 executable credit string sequence. */
@@ -595,6 +650,10 @@ private:
 	static const ExeTextEntry kV10ES_PETextEntries[];
 	/** v1.0IT NE Key-address-size map. */
 	static const ExeTextEntry kV10IT_NETextEntries[];
+	/** v1.0JP PE32 default-game name and name-mode notifications. */
+	static const ExeTextEntry kV10JP_PETextEntries[];
+	/** Japanese Macintosh v1.0 demo strings in the original MacBinary executable. */
+	static const ExeTextEntry kV10JPMacDemoTextEntries[];
 	/** v1.0PT PE32 Key-address-size map. */
 	static const ExeTextEntry kV10PT_PETextEntries[];
 	/** v1.1US PE32 Key-address-size map. */
@@ -618,10 +677,17 @@ private:
 	static bool compareLocalizedStrings(const LocalizedString &left, const LocalizedString &right);
 	/** Return whether an ASCII byte sequence matches at an offset. */
 	static bool bytesMatchAt(const Common::Array<byte> &data, uint32 offset, const char *bytes);
-	/** Decode the declared STRL body, leaving resource-specific trailing-byte checks to the caller. */
-	static bool readStrlBody(Common::SeekableReadStream *stream, uint16 stringCount, Common::CodePage codePage, Common::Array<Common::U32String> &texts);
-	/** Decode every string in one TextSTR STRL resource using a specified code page. */
-	bool readTextStrStrings(MohawkArchive &archive, int16 resourceId, Common::CodePage codePage, Common::Array<Common::U32String> &texts);
+	/** Return whether the string contains exactly one high byte, matching @ref expectedByte. */
+	template<typename T>
+	static bool hasSingleExtendedByte(const T *bytes, uint32 length, byte expectedByte);
+	/** Select CP1252 for the isolated 0xD8 (Ø) byte retained in Korean executable credits. */
+	static Common::CodePage selectExeCodePage(const byte *bytes, uint32 length, Common::CodePage codePage);
+	/** Select MacRoman for the isolated 0x9F (ü) byte retained in Japanese archive credits. */
+	static Common::CodePage selectCreditCodePage(const Common::String &text, Common::CodePage codePage);
+	/** Decode the STRL body with the optional source-specific MacRoman 0x9F (ü) quirk. */
+	static bool readStrlBody(Common::SeekableReadStream *stream, uint16 stringCount, Common::CodePage codePage, Common::Array<Common::U32String> &texts, bool decodeMacRomanUmlautByte9F = false);
+	/** Decode a TextSTR STRL resource using its source code page and optional MacRoman 0x9F (ü) quirk. */
+	bool readTextStrStrings(MohawkArchive &archive, int16 resourceId, Common::CodePage codePage, Common::Array<Common::U32String> &texts, bool decodeMacRomanUmlautByte9F = false);
 	/** Read one NUL-terminated STRL string while reserving one terminator byte for every following string. */
 	static bool readBoundedStrlString(Common::SeekableReadStream *stream, Common::String &text, uint16 remainingStringCount);
 	/** Configure release-specific font sources and load the normal and title fonts. */
@@ -638,8 +704,8 @@ private:
 	static StringOverrideMap createStringOverrides();
 	/** Select executable candidates and TEXTSTR.MHK settings without reading files. */
 	static StringSources createStringSources(const ZmbReleaseInfo &relInfo);
-	/** Load mapped TEXTSTR.MHK strings and, for a nonzero entry count, archive credits. */
-	bool initArchiveStrings(uint32 creditEntryCount);
+	/** Load mapped TEXTSTR.MHK strings and archive credits using the selected source settings. */
+	bool initArchiveStrings(const StringSources &sources);
 	/** Try the selected executable candidates in order. */
 	bool initExecutableStrings(const Common::Array<ExeTextSource> &sources);
 	/** Validate and decode one candidate, committing strings and credits only on success. */
@@ -672,13 +738,12 @@ private:
 	/** Correct the Korean executable credit directly in the loaded paragraphs. */
 	void patchKoreanExeCredits();
 
-	/** Generate a localized procedural Zoombini name. */
-	Common::U32String generateRandomName();
-
 	/** Engine instance that owns resource and executable text access. */
 	MohawkEngine_Zoombini *_vm;
-	/** Language selected for this engine instance. */
-	Common::Language _lang;
+	/** Engine-owned immutable release identity, which outlives this text service. */
+	const ZmbReleaseInfo &_relInfo;
+	/** Session-wide Japanese procedural-name selection, toggled with Ctrl+M. */
+	bool _useJapaneseNames = true;
 	/** Cached code page used to decode Zoombini executable strings (EXE). */
 	Common::CodePage _exeCodePage;
 	/** Cached code page used to decode Zoombini string resources (STRL). */

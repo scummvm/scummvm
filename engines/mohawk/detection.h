@@ -57,6 +57,8 @@ enum MohawkGameType {
  * Marker flag set only on the Zoombinis v2.0 (TLC rebuild) detection entry.
  */
 #define GAMEOPTION_ZMB_V20 GUIO_GAMEOPTIONS4
+/** Marker for Japanese Zoombinis v1.0. */
+#define GAMEOPTION_ZMB_V10JP GUIO_GAMEOPTIONS5
 
 enum MohawkGameFeatures {
 	GF_ME             = (1 << 0), // Myst Masterpiece Edition
@@ -105,6 +107,16 @@ enum MohawkGameFeatures {
 	 */
 	GF_ZMB_10_ESPT    = (1 << 8),
 	/**
+	 * Logical Journey of the Zoombinis v1.0 (Japan).
+	 * - v1.0JP
+	 * @remarks
+	 * This release retains the Europe v1.0 game-state, but has patched UI layouts.
+	 * It carries Japanese resources under JAPANESE/, while retaining the Europe v1.x resources.
+	 * Localized UI text is still stored in JAPANESE/TEXTSTR.MHK.
+	 * The CD contains a 16-bit installer and 16/32-bit executable.
+	 */
+	GF_ZMB_10_JP      = (1 << 9),
+	/**
 	 * Versions based on Logical Journey of the Zoombinis v1.1 (US)
 	 * - v1.1US
 	 * - v1.11KR
@@ -112,9 +124,9 @@ enum MohawkGameFeatures {
 	 * v1.1US has additional features and balance patched on Europe v1.0.
 	 * v1.11KR is a Korean localization based on v1.1US.
 	 * It added IME support for Hangul input and word dictionary for Korean Zoombini names.
-	 * The CD contains both 16/32-bit installer and executable.
+	 * The CD contains a 16-bit installer and 16/32-bit executable.
 	 */
-	GF_ZMB_11_US      = (1 << 9),
+	GF_ZMB_11_US      = (1 << 10),
 	/**
 	 * Logical Journey of the Zoombinis v2.0 (The Learning Company rebuild)
 	 * - v2.0US
@@ -124,7 +136,7 @@ enum MohawkGameFeatures {
 	 * and have better compatibility with modern NT-based Windows.
 	 * The CD contains only 32-bit installer and executable.
 	 */
-	GF_ZMB_20_US      = (1 << 10),
+	GF_ZMB_20_US      = (1 << 11),
 };
 
 struct MohawkGameDescription {

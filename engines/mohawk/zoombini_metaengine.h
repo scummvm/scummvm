@@ -23,13 +23,20 @@
 #define MOHAWK_ZOOMBINI_METAENGINE_H
 
 #include "common/language.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
+
+namespace Common {
+
+class U32String;
+
+} // End of namespace Common
 
 namespace Mohawk {
 
 struct MohawkGameDescription;
 
-/** Immutable release identity derived from the detector, independent of page behavior. */
+/** Immutable release identity and release-specific conventions derived from the detector. */
 class ZmbReleaseInfo {
 public:
 	/** Broad implementation lineages; localized variants retain their parent family. */
@@ -37,7 +44,7 @@ public:
 		/**
 		 * v1.0BR, v1.0FR, v1.0GE, v1.0BR Demo,
 		 * v1.1BR, v1.1FR, v1.1GE, v1.1FR_2002,
-		 * v1.0ES, v1.0PT and v1.0IT.
+		 * v1.0ES, v1.0PT, v1.0IT, and v1.0JP.
 		 */
 		kEuropeV1,
 		/** v1.1US, v1.11KR, and v1.1US Demo. */
@@ -56,10 +63,67 @@ public:
 		kFranceV11_2002,
 		/** v1.0ES, v1.0PT. */
 		kEsPtV10,
+		/** v1.0JP. */
+		kJapanV10,
 		/** v1.1US, v1.11KR, and v1.1US Demo. */
 		kUsV11,
 		/** v2.0US, v2.0PL, and v2.0US Demo. */
-		kTlcV20
+		kTlcV20,
+	};
+
+	/** Page elements whose fixed rects need release-specific adjustments. */
+	enum LayoutElement {
+		/** Credit Dialog: text-line drawing rect in @ref Mohawk::ZoombiniDialogCredits. */
+		kCreditsTextLayout,
+		/** Credit Dialog: text clipping area to scroll in @ref Mohawk::ZoombiniDialogCredits. */
+		kCreditsScrollLayout,
+		/** MsgBox Dialog: body text rect in @ref Mohawk::ZoombiniDialogMsgBox. */
+		kMsgBoxBodyLayout,
+		/** Options Dialog: title text rect in @ref Mohawk::ZoombiniDialogOptions. */
+		kOptionsTitleLayout,
+		/** Save/load Dialog: title text rect in @ref Mohawk::ZoombiniDialogSaveLoad. */
+		kSaveLoadTitleLayout,
+		/** Save Dialog: editable save-name text/caret rect in @ref Mohawk::ZoombiniDialogSaveLoad. */
+		kSaveNameInputLayout,
+		/** RODMAP: hit rects for the practice level selection in @ref Mohawk::ZoombiniInteractiveRodMap. */
+		kMapLegendClickLayout,
+		/** RODMAP: legend title rect in @ref Mohawk::ZoombiniInteractiveRodMap. */
+		kMapLegendTitleLayout,
+		/** RODMAP: text rect for each four level labels of the legend in @ref Mohawk::ZoombiniInteractiveRodMap. */
+		kMapLegendRowLayout,
+		/** RODMAP: panel title rect for the save name or practice heading in @ref Mohawk::ZoombiniInteractiveRodMap. */
+		kMapStatsTitleLayout,
+		/** RODMAP: initial row Y position and height for statistics and practice descriptions in @ref Mohawk::ZoombiniInteractiveRodMap. */
+		kMapStatsRowLayout,
+		/** RODMAP: label-column width shared by journey statistics and practice descriptions in @ref Mohawk::ZoombiniInteractiveRodMap. */
+		kMapStatsLabelLayout,
+		/** RODMAP: per-row vertical advance and height growth for practice return instructions in @ref Mohawk::ZoombiniInteractiveRodMap. */
+		kMapPracticeRowStepLayout,
+		/** RODMAP: text rect for map-icon hover puzzle-name tooltip in @ref Mohawk::ZoombiniInteractiveRodMap. */
+		kMapTooltipLayout,
+		/** PICKER: text rect for Zoombini name preview in @ref Mohawk::ZoombiniShelterPicker. */
+		kPickerNameLayout,
+		/** NotiBox: long noti box bounds for its background and redraw area in @ref Mohawk::ZoombiniInteractive. */
+		kNotiBoxLongLayout,
+		/** NotiBox: text rect inside either noti box size in @ref Mohawk::ZoombiniInteractive. */
+		kNotiBoxTextLayout,
+		/** Help Dialog: rect adjustment for the dialog title and page heading in @ref Mohawk::ZoombiniDialogHelp. */
+		kHelpHeadingLayout,
+		/** Help Dialog: instruction body text rect in @ref Mohawk::ZoombiniDialogHelp. */
+		kHelpBodyLayout,
+		/** Help Dialog: Previous, Next and Okay button text rects in @ref Mohawk::ZoombiniDialogHelp. */
+		kHelpButtonTextLayout,
+	};
+
+	/** Independent offsets added to the four edges of a page-owned rectangle. */
+	struct LayoutAdjustment {
+		int16 leftOffset = 0;
+		int16 topOffset = 0;
+		int16 rightOffset = 0;
+		int16 bottomOffset = 0;
+
+		/** Return the rectangle with this release's edge adjustments applied. */
+		Common::Rect apply(const Common::Rect &rect) const;
 	};
 
 	/** Snapshot detector flags and normalize an unknown language to US English. */
@@ -76,6 +140,21 @@ public:
 	bool isDemo() const { return _demo; }
 	/** Match a demo without implicitly restricting its language. */
 	bool isDemo(Variant variant) const;
+	/** Whether the demo starts at a map with fixed practice levels. */
+	bool hasDemoPracticeMap() const;
+	/** Whether this release supports localized Zoombini names. */
+	bool supportsLocalizedNames() const;
+	/** Format a memorial date using the original release's order and punctuation. */
+	Common::U32String formatMemorialDate(uint16 year, const Common::U32String &monthText, byte day) const;
+	/** Return edge adjustments for a fixed page layout element. */
+	LayoutAdjustment getLayoutAdjustment(LayoutElement element) const;
+	/** 
+	 * Return the adjustment for one of the four zero-based map route labels.
+	 * @param routeIdx 0-based index for each four routes.
+	 */
+	LayoutAdjustment getMapRouteLayoutAdjustment(uint32 routeIdx) const;
+	/** Return the adjustment for a zero-based Options navigation or toggle label. */
+	LayoutAdjustment getOptionsLabelLayoutAdjustment(uint32 buttonIdx) const;
 	/** Language used by the engine, including the unknown-language fallback. */
 	Common::Language getLanguage() const { return _lang; }
 	/** Compact family label used in diagnostic output. */
@@ -93,35 +172,37 @@ private:
 class MohawkMetaEngine_Zoombini {
 public:
 	/** Confirm the currently focused dialog action. */
-	static const char *const kActionConfirm;
+	static constexpr const char *kActionConfirm = "RETURN";
 	/** Toggle dialog visibility and sound effects. */
-	static const char *const kActionToggleDialogAndSfx;
+	static constexpr const char *kActionToggleDialogAndSfx = "TG_SFX";
 	/** Toggle background music. */
-	static const char *const kActionToggleMusic;
+	static constexpr const char *kActionToggleMusic = "TG_BGM";
 	/** Toggle sticky-mouse input. */
-	static const char *const kActionToggleStickyMouse;
+	static constexpr const char *kActionToggleStickyMouse = "TG_STKM";
 	/** Toggle automatic sticky-mouse input. */
-	static const char *const kActionToggleAutoStickyMouse;
+	static constexpr const char *kActionToggleAutoStickyMouse = "TG_AT_STKM";
 	/** Toggle transition effects. */
-	static const char *const kActionToggleTransitions;
+	static constexpr const char *kActionToggleTransitions = "TG_TRNST";
 	/** Toggle reduced-action mode. */
-	static const char *const kActionToggleLessMoreAction;
+	static constexpr const char *kActionToggleLessMoreAction = "TG_ACTN";
 	/** Toggle in-game cursor visibility. */
-	static const char *const kActionToggleCursor;
+	static constexpr const char *kActionToggleCursor = "TG_CURS";
+	/** v1.0JP only: Select Japanese or Latin procedural Zoombini names. */
+	static constexpr const char *kActionToggleJapaneseNames = "TG_JPN_NAMES";
 	/** Replay the puzzle instructions heard before entering the current puzzle. */
-	static const char *const kActionReplayPuzzleInstructions;
+	static constexpr const char *kActionReplayPuzzleInstructions = "REPLAY_PUZ_INST";
 	/** v2.0US only: Toggle the page narration in the Help dialog. */
-	static const char *const kActionToggleHelpDialogNarration;
-	/** Toggle touch-sense behavior. */
-	static const char *const kActionToggleTouchSense;
+	static constexpr const char *kActionToggleHelpDialogNarration = "TG_HLP_DLG_NAR";
+	/** v2.0US only: Toggle touch-sense behavior. */
+	static constexpr const char *kActionToggleTouchSense = "TG_TSENSE";
 	/** Enter practice mode. */
-	static const char *const kActionPracticeMode;
+	static constexpr const char *kActionPracticeMode = "PRACTICE";
 	/** Start a new game. */
-	static const char *const kActionNewGame;
+	static constexpr const char *kActionNewGame = "NEWGAME";
 	/** Remove the selected save. */
-	static const char *const kActionRemoveSave;
+	static constexpr const char *kActionRemoveSave = "DELSAVE";
 	/** Request engine quit. */
-	static const char *const kActionQuit;
+	static constexpr const char *kActionQuit = "QUIT";
 
 	// Bug fixes.
 	/**
@@ -151,7 +232,7 @@ public:
 	/** Select the animation tick timing. */
 	static constexpr const char *kOptionTickRate = "tick_rate";
 	/** Enable position interpolation for Zoombinis and their selected moving companions. */
-	static constexpr const char *kOptionPosInterpolation = "position_interpolation";
+	static constexpr const char *kOptionPositionInterpolation = "position_interpolation";
 	/** Requested presentation frequency in Hz, independent of animation tick timing. */
 	static constexpr const char *kOptionTargetFrameRate = "target_frame_rate";
 	/** Persisted presentation frequencies, all integer multiples of the 60 Hz animation clock. */

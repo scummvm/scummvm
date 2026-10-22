@@ -30,24 +30,11 @@ namespace Mohawk {
 ZoombiniDialogHelp::ZoombiniDialogHelp(MohawkEngine_Zoombini *vm, ZoombiniPageType forPage)
 	: ZoombiniDialog(vm, ZoombiniPageType::kDialogHelp), _forPageType(forPage),
 	  _showPickerHeaderEasterEgg(vm->consumePickerUpdateHelpRequest()) {
-
-	_helpStrlMap[ZoombiniPageType::kPicker] = kSysResStrl1300_HelpPicker;
-	_helpStrlMap[ZoombiniPageType::kBasecamp1] = kSysResStrl1400_HelpBasecamp1;
-	_helpStrlMap[ZoombiniPageType::kBasecamp2] = kSysResStrl1500_HelpBasecamp2;
-	_helpStrlMap[ZoombiniPageType::kTown] = kSysResStrl1600_HelpTown;
-	_helpStrlMap[ZoombiniPageType::kBridge] = kSysResStrl1700_HelpBridge;
-	_helpStrlMap[ZoombiniPageType::kCaves] = kSysResStrl2600_HelpCaves;
-	_helpStrlMap[ZoombiniPageType::kPizza] = kSysResStrl1900_HelpPizza;
-	_helpStrlMap[ZoombiniPageType::kFerry] = kSysResStrl2000_HelpFerry;
-	_helpStrlMap[ZoombiniPageType::kLilly] = kSysResStrl2100_HelpLilly;
-	_helpStrlMap[ZoombiniPageType::kSlides] = kSysResStrl2200_HelpSlides;
-	_helpStrlMap[ZoombiniPageType::kFleens] = kSysResStrl2300_HelpFleens;
-	_helpStrlMap[ZoombiniPageType::kHotel] = kSysResStrl2400_HelpHotel;
-	_helpStrlMap[ZoombiniPageType::kNet] = kSysResStrl2500_HelpNet;
-	_helpStrlMap[ZoombiniPageType::kTunnels] = kSysResStrl1800_HelpTunnels;
-	_helpStrlMap[ZoombiniPageType::kSmoke] = kSysResStrl2700_HelpSmoke;
-	_helpStrlMap[ZoombiniPageType::kMaze] = kSysResStrl2800_HelpMaze;
-	_helpStrlMap[ZoombiniPageType::kLogo] = kSysResStrl2900_HelpPickerUpdate;
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	const ZmbReleaseInfo::LayoutAdjustment headingAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kHelpHeadingLayout);
+	_helpDialogTitleRect = headingAdjustment.apply(_helpDialogTitleRect);
+	_helpDialogHeadRect = headingAdjustment.apply(_helpDialogHeadRect);
+	_helpDialogBodyRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kHelpBodyLayout).apply(_helpDialogBodyRect);
 }
 
 ZoombiniDialogHelp::~ZoombiniDialogHelp() {
@@ -99,6 +86,45 @@ void ZoombiniDialogHelp::loadHelpStrings() {
 	}
 }
 
+ZoombiniPage::SystemResourceId ZoombiniDialogHelp::getHelpStrlBaseId(ZoombiniPageType pageType) {
+	switch (pageType) {
+	case ZoombiniPageType::kPicker:
+		return kSysResStrl1300_HelpPicker;
+	case ZoombiniPageType::kBasecamp1:
+		return kSysResStrl1400_HelpBasecamp1;
+	case ZoombiniPageType::kBasecamp2:
+		return kSysResStrl1500_HelpBasecamp2;
+	case ZoombiniPageType::kTown:
+		return kSysResStrl1600_HelpTown;
+	case ZoombiniPageType::kBridge:
+		return kSysResStrl1700_HelpBridge;
+	case ZoombiniPageType::kCaves:
+		return kSysResStrl2600_HelpCaves;
+	case ZoombiniPageType::kPizza:
+		return kSysResStrl1900_HelpPizza;
+	case ZoombiniPageType::kFerry:
+		return kSysResStrl2000_HelpFerry;
+	case ZoombiniPageType::kLilly:
+		return kSysResStrl2100_HelpLilly;
+	case ZoombiniPageType::kSlides:
+		return kSysResStrl2200_HelpSlides;
+	case ZoombiniPageType::kFleens:
+		return kSysResStrl2300_HelpFleens;
+	case ZoombiniPageType::kHotel:
+		return kSysResStrl2400_HelpHotel;
+	case ZoombiniPageType::kNet:
+		return kSysResStrl2500_HelpNet;
+	case ZoombiniPageType::kTunnels:
+		return kSysResStrl1800_HelpTunnels;
+	case ZoombiniPageType::kSmoke:
+		return kSysResStrl2700_HelpSmoke;
+	case ZoombiniPageType::kMaze:
+		return kSysResStrl2800_HelpMaze;
+	default:
+		error("help: cannot find help strings for pageType(%u)", static_cast<uint16>(pageType));
+	}
+}
+
 void ZoombiniDialogHelp::loadRegularHelpStrings() {
 	uint16 routeLevel = 0;
 	switch (_forPageType) {
@@ -112,13 +138,7 @@ void ZoombiniDialogHelp::loadRegularHelpStrings() {
 		break;
 	}
 
-	Common::HashMap<ZoombiniPageType, SystemResourceId>::const_iterator it = _helpStrlMap.find(_forPageType);
-	if (it == _helpStrlMap.end()) {
-		error("help: cannot find help strings for pageType(%u)", static_cast<uint16>(_forPageType));
-		return;
-	}
-
-	_helpStrlResId = static_cast<uint16>(it->_value) + 20 * routeLevel;
+	_helpStrlResId = static_cast<uint16>(getHelpStrlBaseId(_forPageType)) + 20 * routeLevel;
 	Common::Array<Common::U32String> parsedHelpBodyStrs;
 	if (_vm->_text->getStrl(parsedHelpBodyStrs, ZmbResource(ZmbResource::kSystem, _helpStrlResId))) {
 		_pageHelpBodyStrs = parsedHelpBodyStrs;
@@ -239,10 +259,7 @@ Common::Rect ZoombiniDialogHelp::helpDialog_getButtonTextRect(ZmbFeature *featur
 	else
 		textRect = _helpDialogButtonRects[bsIdx];
 
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
-		textRect.top += 3;
-		textRect.bottom += 3;
-	}
+	textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kHelpButtonTextLayout).apply(textRect);
 	if (bs.isAnimating()) {
 		textRect.top += 2;
 		textRect.bottom += 2;
@@ -251,19 +268,11 @@ Common::Rect ZoombiniDialogHelp::helpDialog_getButtonTextRect(ZmbFeature *featur
 }
 
 const Common::Rect &ZoombiniDialogHelp::helpDialog_getTitleRect() const {
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
-		return _helpDialogTlcTitleRect;
-	} else {
-		return _helpDialogTitleRect;
-	}
+	return _helpDialogTitleRect;
 }
 
 const Common::Rect &ZoombiniDialogHelp::helpDialog_getHeadRect() const {
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
-		return _helpDialogTlcHeadRect;
-	} else {
-		return _helpDialogHeadRect;
-	}
+	return _helpDialogHeadRect;
 }
 
 Common::U32String ZoombiniDialogHelp::helpDialog_getHeading() const {
@@ -289,11 +298,7 @@ Common::U32String ZoombiniDialogHelp::helpDialog_getHeading() const {
 }
 
 const Common::Rect &ZoombiniDialogHelp::helpDialog_getBodyRect() const {
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
-		return _helpDialogTlcBodyRect;
-	} else {
-		return _helpDialogBodyRect;
-	}
+	return _helpDialogBodyRect;
 }
 
 ZmbEventHandleResult ZoombiniDialogHelp::helpDialog_onMouseLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos) {

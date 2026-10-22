@@ -23,6 +23,7 @@
 #define MOHAWK_ZOOMBINI_PAGES_SHELTER_PICKER_H
 
 #include "mohawk/zoombini_pages/shelter_base.h"
+#include "mohawk/zoombini_text.h"
 
 namespace Mohawk {
 
@@ -150,6 +151,8 @@ protected:
 
 	/** Process Picker-specific keyboard input before shared interactive shortcuts. */
 	ZmbEventHandleResult onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) override;
+	/** Clear Picker-held name overrides and Shift state when input ownership ends. */
+	void onInputReset() override;
 	/** Update Picker hover state and cursor feedback. */
 	ZmbEventHandleResult onMouseMove(const Common::Point &absPos, const Common::Point &relPos) override;
 	/** Dispatch a Picker click to the active controls or dragged Zoombini. */
@@ -534,6 +537,10 @@ protected:
 
 	/** Materialized Zoombini used by the trait preview. */
 	ZmbSnoid _previewSnoid;
+	/** Held F1 state for v1.0JP-only fixed-name selection; sampled at name generation and given priority over F2. */
+	bool _v10jpKbd_F1Held = false;
+	/** Held F2 state for v1.0JP-only fixed-name selection; sampled at name generation, with F1 taking priority. */
+	bool _v10jpKbd_F2Held = false;
 	/** Whether Shift currently selects Dice rapid fill. */
 	bool _shiftRapidFillActive = false;
 	/** Whether the pending Dice animation should execute rapid fill. */
@@ -577,21 +584,6 @@ protected:
 	void updatePendingGoWalkCompletion();
 	/** Release the bounded rapid-fill burst when Go begins. */
 	void releaseRapidFillBurstForGo();
-
-private:
-	/** Release-selected text insets for the generated Zoombini name. */
-	struct TextLayout {
-		/** Pixels added to the left edge of @ref ZoombiniShelterPicker::_nameBoxRect for name text. */
-		int16 nameLeftInset = 4;
-		/** Pixels added to the top edge of @ref ZoombiniShelterPicker::_nameBoxRect for name text. */
-		int16 nameTopInset = 4;
-	};
-
-	/** Resolve text settings independently of Picker control behavior. */
-	static TextLayout createTextLayout(const ZmbReleaseInfo &relInfo);
-
-	/** Text geometry selected once when the page is constructed. */
-	const TextLayout _textLayout;
 };
 
 } // End of namespace Mohawk

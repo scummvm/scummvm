@@ -103,22 +103,17 @@ ZoombiniDialogOptions::~ZoombiniDialogOptions() {
 
 ZoombiniDialogOptions::Layout ZoombiniDialogOptions::createLayout(const ZmbReleaseInfo &relInfo) {
 	Layout layout;
+	layout.titleRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kOptionsTitleLayout).apply(layout.titleRect);
 	layout.wordWrap = relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::PT_PRT);
+	layout.textTops = {0x0066, 0x007C, 0x0091, 0x00A6, 0x00DD, 0x00F3, 0x0108, 0x011D};
 	if (relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) {
-		layout.titleRect = Common::Rect(0x00B9, 0x003A, 0x01BD, 0x0050);
-		layout.textTops = {
-			0x005A, 0x006F, 0x0084, 0x0099,
-			0x00BE, 0x00D3, 0x00E8, 0x00FD,
-			0x0112, 0x0127};
+		layout.textTops.push_back(0x0112);
+		layout.textTops.push_back(0x0127);
 		layout.redPressedBaseIdx = 10;
 		layout.togglePressedBaseIdx = 14;
 		layout.showToggleTitle = false;
 		layout.showTouchSense = true;
 		layout.showHelpAudio = true;
-	} else {
-		layout.textTops = {
-			0x0066, 0x007C, 0x0091, 0x00A6,
-			0x00DD, 0x00F3, 0x0108, 0x011D};
 	}
 	return layout;
 }
@@ -228,7 +223,8 @@ Common::Rect ZoombiniDialogOptions::redButtons_textRect(ZmbFeature *feature, uin
 	(void)bs;
 
 	uint16 top = getOptionDialogTextTop(bsIdx);
-	return Common::Rect(_layout.textLeft, top, _layout.textRight, top + drawnRect.height());
+	const Common::Rect textRect(_layout.textLeft, top, _layout.textRight, top + drawnRect.height());
+	return _vm->getRelInfo().getOptionsLabelLayoutAdjustment(bsIdx).apply(textRect);
 }
 
 Common::Rect ZoombiniDialogOptions::toggleButtons_textRect(ZmbFeature *feature, uint32 bsIdx, ToggleButtonState &bs, const Common::Rect &drawnRect) {
@@ -236,7 +232,8 @@ Common::Rect ZoombiniDialogOptions::toggleButtons_textRect(ZmbFeature *feature, 
 	(void)bs;
 
 	uint16 top = getOptionDialogTextTop(bsIdx);
-	return Common::Rect(_layout.textLeft, top, _layout.textRight, top + drawnRect.height());
+	const Common::Rect textRect(_layout.textLeft, top, _layout.textRight, top + drawnRect.height());
+	return _vm->getRelInfo().getOptionsLabelLayoutAdjustment(bsIdx).apply(textRect);
 }
 
 const char *ZoombiniDialogOptions::getOptionDialogActionId(ZoombiniText::Key textKey) const {

@@ -29,6 +29,13 @@ namespace Mohawk {
 
 ZoombiniDialogCredits::ZoombiniDialogCredits(MohawkEngine_Zoombini *vm)
 	: ZoombiniDialog(vm, ZoombiniPageType::kCreditScreen) {
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	_textRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kCreditsTextLayout).apply(_textRect);
+
+	const ZmbReleaseInfo::LayoutAdjustment scrollAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kCreditsScrollLayout);
+	_scrollDestRect = scrollAdjustment.apply(_scrollDestRect);
+	_scrollSrcRect = scrollAdjustment.apply(_scrollSrcRect);
+	_blitRect = scrollAdjustment.apply(_blitRect);
 }
 
 ZoombiniDialogCredits::~ZoombiniDialogCredits() {
@@ -59,7 +66,6 @@ void ZoombiniDialogCredits::onPreTickFrame() {
 	// Invalidate the fixed scroll viewport explicitly so the previous and next text rows are both cleared and redrawn during this frame.
 	Common::Rect dirtyRect = _scrollSrcRect;
 	dirtyRect.extend(_scrollDestRect);
-	dirtyRect.extend(getCreditLineRect());
 	addExternalDirtyRect(dirtyRect);
 }
 
@@ -72,24 +78,24 @@ void ZoombiniDialogCredits::updateCreditScrollElapsedFrames() {
 }
 
 void ZoombiniDialogCredits::drawCreditLine(const Common::U32String &lineText, bool isTitle, int16 topY) {
+	Common::Rect drawRect = _textRect;
+	drawRect.top = topY;
+	drawRect.bottom = static_cast<int16>(topY + _textRect.height());
+	Common::Rect clipRect = drawRect;
+	clipRect.clip(_blitRect);
+	if (clipRect.isEmpty())
+		return;
+
 	ZoombiniGraphics::TextConf tc;
 	tc._fontUsage = ZoombiniFontUsage::kFontText;
 	tc._hAlign = Graphics::kTextAlignCenter;
 	tc._vAlign = Graphics::kTextAlignCenter;
 	tc._textPalette = isTitle ? ZoombiniGraphics::kColor26_DarkRed : ZoombiniGraphics::kColor23_DarkOrange;
-	tc._wordWrap = false;
-
-	Common::Rect drawRect = getCreditLineRect();
-	drawRect.top = topY;
-	drawRect.bottom = static_cast<int16>(drawRect.top + 16);
+	// GDI clips the vertically centered, wrapped text to the original row and scroll viewport.
+	tc._wordWrap = true;
+	tc._hasClipRect = true;
+	tc._clipRect = clipRect;
 	_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, lineText, drawRect, tc);
-}
-
-Common::Rect ZoombiniDialogCredits::getCreditLineRect() const {
-	Common::Rect lineRect = _textRect;
-	lineRect.left = 0;
-	lineRect.right = ZoombiniGraphics::kScreenWidth;
-	return lineRect;
 }
 
 uint32 ZoombiniDialogCredits::getCreditScrollLineCount() const {
@@ -132,8 +138,8 @@ void ZoombiniDialogCredits::loadFeatures() {
 		_totalCreditLines += paragraph.getTotalLineCount();
 
 	// [Deliberate animation difference]
-	// In original, the textline are rendered only if their y pixels can be fully drawn, creating a "crolling in by line" effect.
-	// In ScummVM, the textlines are rendered regardless of their y pixels, creating a smooth "scrolling in by pixels" effect.
+	// In the original, each new text line is drawn as a complete row, creating a "scrolling in by line" effect.
+	// In ScummVM, partially visible text lines are also drawn, creating a smooth "scrolling in by pixels" effect.
 
 	// [Deliberate timing adaptation]
 	// Elapsed-frame scrolling replaces the fixed-tick gate
@@ -216,15 +222,16 @@ ZmbRenderResult ZoombiniDialogCredits::creditScreen_render(ZmbFeature *feature) 
 
 	const int32 scrollLineCount = static_cast<int32>(getCreditScrollLineCount());
 
-	// Draw one credit line every 16 frames.
-	// - lineIdx = frameCounter / 16
-	// In each frame, the text pixel rects are scrolled up by 1 pixel to create scrolling effect.
-	// - (scroll) y: 16 ~ 467 to 15 ~ 466, (text) y: 451 ~ 466
-	// That implementation lags behind if the frame rate is lower than 60.
+	// Original engines draw one complete credit line every 15 runner ticks.
+	// In each tick, the existing text pixel rects are scrolled up by 1 pixel to create the scrolling effect.
+	// - (scroll) y: 16 ~ 467 to 15 ~ 466, (text) y: 451 ~ 466 (bottom bounds excluded)
+	// That implementation lags behind if runner updates cannot keep up with the animation tick.
 
-	// So instead, we determines which/how many lines to draw based on elapsed frames.
-	// The text area patterns at frames divided by 16 should behave like:
-	// - y: 451 - 466 (line N), 451-16 ~ 466-16 (line N-1), 451-32 ~ 466-32 (line N-2), ...
+	// So instead, in ScummVM, we determine which/how many lines to draw based on elapsed animation ticks.
+	// With the original 15-pixel line step, advance one logical line every 15 elapsed ticks at normal speed.
+	// - lineIdx = frameCounter / 15 (frameCounter counts elapsed scroll ticks, not render calls)
+	// The text area patterns at frames divisible by 15 should behave like:
+	// - y: 451 ~ 466 (line N), 451-15 ~ 466-15 (line N-1), 451-30 ~ 466-30 (line N-2), ...
 
 	// Find the lines to be drawn
 	const int32 elapsedFrames = _creditScrollElapsedFrames;
@@ -280,15 +287,15 @@ ZmbRenderResult ZoombiniDialogCredits::creditScreen_render(ZmbFeature *feature) 
 }
 
 int32 ZoombiniDialogCredits::drawLines_getLinePosY(int32 elapsedFrames, int32 lineIdx) {
-	return _textRect.top - elapsedFrames + 16 * lineIdx;
+	return _textRect.top - elapsedFrames + kCreditLineStep * lineIdx;
 }
 
 int32 ZoombiniDialogCredits::drawLines_getStartLineIdx(int32 elapsedFrames) {
-	return (elapsedFrames - _textRect.top) / 16;
+	return (elapsedFrames - _textRect.top) / kCreditLineStep;
 }
 
 int32 ZoombiniDialogCredits::drawLines_getEndLineIdx(int32 elapsedFrames) {
-	return (ZoombiniGraphics::kScreenHeight + elapsedFrames - _textRect.top) / 16;
+	return (ZoombiniGraphics::kScreenHeight + elapsedFrames - _textRect.top) / kCreditLineStep;
 }
 
 } // End of namespace Mohawk

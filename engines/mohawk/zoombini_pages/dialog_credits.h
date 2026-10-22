@@ -65,13 +65,13 @@ protected:
 	static constexpr int16 kTlcCreditsBinkLogoX = 203;
 	/** X coordinate of the TLC Miles logo. */
 	static constexpr int16 kTlcCreditsMilesLogoX = 349;
+		/** Vertical distance in pixels between consecutive logical credit lines. */
+	static constexpr int16 kCreditLineStep = 15;
 
 	/** Advance the deterministic credits scroll counter. */
 	void updateCreditScrollElapsedFrames();
 	/** Draw one credit line at the requested screen position. */
 	void drawCreditLine(const Common::U32String &lineText, bool isTitle, int16 topY);
-	/** Return the clipped rectangle used by the credit text. */
-	Common::Rect getCreditLineRect() const;
 	/** Return the total number of logical lines in the credits. */
 	uint32 getCreditScrollLineCount() const;
 	/** Draw TLC end logos whose lines intersect the current scroll window. */
@@ -99,13 +99,13 @@ protected:
 	 * C++ constructors in ScummVM.
 	 */
 	/** Screen rectangle containing the scrolling credit text. */
-	const Common::Rect _textRect = Common::Rect(0x00BE, 0x01C3, 0x01C2, 0x01D2);
+	Common::Rect _textRect = Common::Rect(0x00BE, 0x01C3, 0x01C2, 0x01D2);
 	/** Destination rectangle used when scrolling the credit surface. */
-	const Common::Rect _scrollDestRect = Common::Rect(0x00BE, 0x0010, 0x01C2, 0x01D3);
+	Common::Rect _scrollDestRect = Common::Rect(0x00BE, 0x0010, 0x01C2, 0x01D3);
 	/** Source rectangle used when scrolling the credit surface. */
-	const Common::Rect _scrollSrcRect = Common::Rect(0x00BE, 0x000F, 0x01C2, 0x01D2);
+	Common::Rect _scrollSrcRect = Common::Rect(0x00BE, 0x000F, 0x01C2, 0x01D2);
 	/** Rectangle copied when restoring the credits surface. */
-	const Common::Rect _blitRect = Common::Rect(0x00BE, 0x000F, 0x01C2, 0x01D2);
+	Common::Rect _blitRect = Common::Rect(0x00BE, 0x000F, 0x01C2, 0x01D2);
 
 	/** Localized credit paragraphs and their title flags. */
 	Common::Array<ZoombiniText::CreditParagraph> _creditParagraphs;

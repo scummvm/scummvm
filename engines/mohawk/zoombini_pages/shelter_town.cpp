@@ -431,6 +431,7 @@ void ZoombiniShelterTown::initStates() {
 
 void ZoombiniShelterTown::loadFeatures() {
 	ZmbStateFile &f = _vm->_state->getCurrentState();
+	const bool populationBasedCelebrations = _vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1);
 
 	// Preload images
 	_vm->_gfx->preloadShapes(ZmbResource(ZmbResource::kPage, kResBitmapShape2000_Cursors));
@@ -676,14 +677,12 @@ void ZoombiniShelterTown::loadFeatures() {
 			break;
 		}
 		}
-	} else if (sfxGroupFlags == ZmbSfxGroupFlags::kHardFirstTrigger_02) {
+	} else if (sfxGroupFlags == ZmbSfxGroupFlags::kHardFirstTrigger_02 || sfxGroupFlags == ZmbSfxGroupFlags::kHardSecondTrigger_12) {
 		int16 r = _vm->_rnd->getRandomNumber(1, 2);
 		if (r == 1)
 			_entrySoundRes = ZmbResource(ZmbResource::kSystem, kSysResSound20087_Voice);
 		else
 			_entrySoundRes = ZmbResource(ZmbResource::kSystem, kSysResSound20088_Voice);
-	} else if (sfxGroupFlags == ZmbSfxGroupFlags::kHardSecondTrigger_12) {
-		// A second hard-group arrival leaves the pending entry sound empty.
 	} else if (sfxGroupFlags == ZmbSfxGroupFlags::kPractice_05) {
 		_entrySoundRes = ZmbResource(ZmbResource::kSystem, kSysResSound20086_Voice);
 	} else {
@@ -704,6 +703,11 @@ void ZoombiniShelterTown::loadFeatures() {
 	_developAnimTimer = 0;
 	if (_allZoombinisInTown) {
 		_developAnimTimer = 20;
+	} else if (populationBasedCelebrations) {
+		for (int16 tier = 1; tier <= 5; tier++) {
+			if (100 * tier < f._zmbStoredTownCount)
+				_developAnimTimer += tier;
+		}
 	} else {
 		if (f._zmbStoredTownCount < 17 && !f._townDevelopLevel) {
 			f._townDevelopLevel = 1;
@@ -744,7 +748,8 @@ void ZoombiniShelterTown::loadFeatures() {
 	for (int i = 0; i < 3; i++)
 		_celebWalkerFeatures[i] = nullptr;
 
-	if (_entrySoundRes.hasId() && _playEntrySoundImmediately && !_developAnimTimer) {
+	const bool queueEntrySound = populationBasedCelebrations || (_playEntrySoundImmediately && !_developAnimTimer);
+	if (_entrySoundRes.hasId() && queueEntrySound) {
 		queueTownSound(_entrySoundRes);
 		_ambientSoundDone = true;
 	}
@@ -779,9 +784,13 @@ void ZoombiniShelterTown::onPostRenderFrame() {
 			_ambientSoundDelay = static_cast<uint32>(_vm->_rnd->getRandomNumber(150, 300));
 			_ambientSoundDone = false;
 
-			// After an ambient sound completes, full Town refills the pending celebration count with fifty walkers.
-			if (_allZoombinisInTown)
-				_developAnimTimer = 50;
+			// Full Town schedules another celebration after each ambient sound completes.
+			if (_allZoombinisInTown) {
+				if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1))
+					_developAnimTimer = 40;
+				else
+					_developAnimTimer = 50;
+			}
 		}
 
 		if (_ambientSoundDelay < getCurrentFrameCounter() - _ambientSoundLastTime) {
@@ -1534,29 +1543,15 @@ void ZoombiniShelterTown::memorialCard_onPostRender(ZmbFeature *feature) {
 	const Common::U32String monthText = _vm->_text->getLocalizedString(static_cast<uint32>(ZoombiniText::kMemorialJanuary) + monthIdx);
 	const byte memorialDay = stateFile._memorialDays[memorialDataSlotIdx];
 	const uint16 memorialYear = stateFile._memorialYears[memorialDataSlotIdx];
-	const bool usesDayMonthYear = _vm->getRelInfo().isVariant(ZmbReleaseInfo::kEuropeV10) ||
-								  _vm->getRelInfo().isVariant(ZmbReleaseInfo::kEuropeV11) ||
-								  _vm->getRelInfo().isVariant(ZmbReleaseInfo::kFranceV11_2002);
-
-	Common::U32String dateText;
-	if (usesDayMonthYear) {
-		dateText = Common::U32String::format("%u ", memorialDay);
-		dateText += monthText;
-		dateText += Common::U32String::format(" %u", memorialYear);
-	} else {
-		dateText = monthText;
-		dateText += Common::U32String::format(" %u", memorialDay);
-		if (_vm->getLanguage() == Common::KO_KOR)
-			dateText += Common::U32String(U"일");
-		dateText += Common::U32String::format(", %u", memorialYear);
-	}
+	const Common::U32String dateText = _vm->getRelInfo().formatMemorialDate(memorialYear, monthText, memorialDay);
 
 	const Common::U32String rowText[5] = {
 		_vm->_text->getLocalizedString(honorKey),
 		_vm->_text->getLocalizedString(routeLevelKey),
 		_vm->_text->getLocalizedString(ZoombiniText::kMemorialWhenLevel),
 		_vm->_text->getLocalizedString(levelKey),
-		dateText};
+		dateText,
+	};
 	const ZoombiniFontUsage rowFont[5] = {
 		ZoombiniFontUsage::kFontText,
 		ZoombiniFontUsage::kFontTitle,
@@ -1570,6 +1565,7 @@ void ZoombiniShelterTown::memorialCard_onPostRender(ZmbFeature *feature) {
 	textConf._outlinePalette = outlinePalette;
 	textConf._hAlign = Graphics::kTextAlignCenter;
 	textConf._vAlign = Graphics::kTextAlignCenter;
+	textConf._wordWrap = true;
 
 	for (uint16 rowIdx = 0; rowIdx < 5; rowIdx++) {
 		Common::Rect textRect(cardRect.left, cardRect.top + topOffset + kTownMemorialCardRowTopY[rowIdx],

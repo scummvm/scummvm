@@ -27,6 +27,7 @@
 #include "common/fs.h"
 #include "common/language.h"
 #include "common/noncopyable.h"
+#include "common/platform.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -1017,8 +1018,17 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 														 _("MIDI soundtrack:"), midiSoundtrackTooltip);
 		_midiSoundtrackLabel->setAlign(Graphics::TextAlign::kTextAlignEnd);
 		_midiSoundtrackPopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MidiSoundtrack", midiSoundtrackTooltip);
-		_midiSoundtrackPopUp->appendEntry(_("Windows MPC"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
-		_midiSoundtrackPopUp->appendEntry(_("Macintosh"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
+		// Mac Demo releases have only MIDIMAC.MHK, so always set this option to use Macintosh MIDI.
+		const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
+		const bool alwaysUseMacMidi = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions) && platform == Common::kPlatformMacintosh;
+		if (alwaysUseMacMidi) {
+			_midiSoundtrackPopUp->appendEntry(_("Macintosh"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
+			_midiSoundtrackPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
+			_midiSoundtrackPopUp->setEnabled(false);
+		} else {
+			_midiSoundtrackPopUp->appendEntry(_("Windows MPC"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
+			_midiSoundtrackPopUp->appendEntry(_("Macintosh"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
+		}
 	}
 
 	_colorBlindModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ColorBlindMode",
@@ -1188,7 +1198,7 @@ void ZoombiniOptionsWidget::load() {
 	if (_fixCavesL4MidiSilentBugCheckbox)
 		_fixCavesL4MidiSilentBugCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixCavesL4MidiSilentBug, _domain));
 	_tickRatePopUp->setSelectedTag(ConfMan.getInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionTickRate, _domain));
-	_posInterpolationCheckbox->setState(ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionPosInterpolation, _domain));
+	_posInterpolationCheckbox->setState(ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionPositionInterpolation, _domain));
 	const MohawkMetaEngine_Zoombini::TargetFrameRate targetFrameRate =
 		MohawkMetaEngine_Zoombini::normalizeTargetFrameRate(ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionTargetFrameRate, _domain));
 	_targetFrameRatePopUp->setSelectedTag(static_cast<uint32>(targetFrameRate));
@@ -1219,7 +1229,7 @@ bool ZoombiniOptionsWidget::save() {
 	if (_fixCavesL4MidiSilentBugCheckbox)
 		ConfMan.setBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixCavesL4MidiSilentBug, _fixCavesL4MidiSilentBugCheckbox->getState(), _domain);
 	ConfMan.setInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionTickRate, static_cast<int>(tickRate), _domain);
-	ConfMan.setBool(MohawkMetaEngine_Zoombini::kOptionPosInterpolation, _posInterpolationCheckbox->getState(), _domain);
+	ConfMan.setBool(MohawkMetaEngine_Zoombini::kOptionPositionInterpolation, _posInterpolationCheckbox->getState(), _domain);
 	ConfMan.setInt(MohawkMetaEngine_Zoombini::kOptionTargetFrameRate, static_cast<int>(targetFrameRate), _domain);
 	ConfMan.setBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionEnhancedKbdShortcuts, _enhancedKbdShortcutsCheckbox->getState(), _domain);
 	ConfMan.setBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionShowRemappedOptionDialogShortcuts,

@@ -32,6 +32,7 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/fs.h"
+#include "common/gui_options.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -225,20 +226,23 @@ Common::Error MohawkEngine_Zoombini::run() {
 	if (_relInfo.isFamily(ZmbReleaseInfo::kEuropeV1)) {
 		switch (lang) {
 		case Common::EN_GRB:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_EUR_GB;
+			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_GB;
 			break;
 		case Common::FR_FRA:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_EUR_FR;
+			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_FR;
 			break;
 		case Common::DE_DEU:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_EUR_GE;
+			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_GE;
+			break;
+		case Common::IT_ITA:
+			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_IT;
 			break;
 		case Common::ES_ESP:
 		case Common::PT_PRT:
 			_mhkArchiveRoot = ZMB_MHK_ROOT_GENERIC;
 			break;
-		case Common::IT_ITA:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_EUR_IT;
+		case Common::JA_JPN:
+			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_JP;
 			break;
 		default:
 			error("engine: unsupported language for v1.x Europe variant: %s", Common::getLanguageLocale(lang));
@@ -253,7 +257,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 	_midi = new ZoombiniMidiPlayer(this);
 	_rnd = new ZoombiniRandom(getGameId());
 	_state = new ZoombiniGameState(this, _saveFileMan);
-	_text = new ZoombiniText(this, lang);
+	_text = new ZoombiniText(this);
 	applyGameSettings();
 
 	// Load ZOOMBINI.MHK
@@ -319,7 +323,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 			_state->generateRandomPack();
 			_state->markGameStateReady();
 			startPage = ZoombiniPageType::kPizza;
-		} else if (_relInfo.isDemo(ZmbReleaseInfo::kUsV11)) {
+		} else if (_relInfo.hasDemoPracticeMap()) {
 			_state->_practiceLevel = 1;
 			_state->beginPracticeState();
 			_state->markGameStateReady();
@@ -392,7 +396,7 @@ void MohawkEngine_Zoombini::processEvents(ZoombiniPage *page) {
 }
 
 void MohawkEngine_Zoombini::processEvent(ZoombiniPage *page, const Common::Event &event) {
-	// Reset the fidget threshold and idle timer on mouse or keyboard input.
+	// Reset the fidget threshold and idle timing on user input.
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
@@ -466,6 +470,9 @@ void MohawkEngine_Zoombini::processEvent(ZoombiniPage *page, const Common::Event
 		break;
 	case Common::EVENT_KEYUP:
 		page->onKeyUp(event.kbd, event.kbdRepeat);
+		break;
+	case Common::EVENT_FOCUS_LOST:
+		page->onInputReset();
 		break;
 #if ZOOMBINI_ENABLE_IME_COMPOSITION
 	case Common::EVENT_IME_COMPOSITION:
@@ -833,6 +840,12 @@ ZoombiniPage *MohawkEngine_Zoombini::getCurrentPage() const {
 	return _activePage;
 }
 
+void MohawkEngine_Zoombini::pauseEngineIntern(bool pause) {
+	MohawkEngine::pauseEngineIntern(pause);
+	if (pause && getCurrentPage())
+		getCurrentPage()->onInputReset();
+}
+
 void MohawkEngine_Zoombini::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
@@ -886,7 +899,7 @@ void MohawkEngine_Zoombini::applyGameSettings() {
 	}
 
 	const bool interpolationWasEnabled = isPosInterpolationEnabled();
-	const bool posInterpolation = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionPosInterpolation);
+	const bool posInterpolation = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionPositionInterpolation);
 	const MohawkMetaEngine_Zoombini::TargetFrameRate targetFrameRate =
 		MohawkMetaEngine_Zoombini::normalizeTargetFrameRate(ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionTargetFrameRate));
 	if (_posInterpolation != posInterpolation || _targetFrameRate != targetFrameRate) {
@@ -918,6 +931,8 @@ void MohawkEngine_Zoombini::applyGameSettings() {
 
 Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
 	using namespace Common;
+
+	const String guiOptions = ConfMan.get("guioptions", target);
 
 	Keymap *defaultKeymap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymappings"));
 	defaultKeymap->setPartialMatchAllowed(false);
@@ -1044,6 +1059,13 @@ Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("C+h");
 	shortcutKeymap->addAction(act);
 
+	if (checkGameGUIOption(GAMEOPTION_ZMB_V10JP, guiOptions)) {
+		act = new Action(MohawkMetaEngine_Zoombini::kActionToggleJapaneseNames, _c("Toggle Japanese names", "zoombini-keymap"));
+		act->setKeyEvent(KeyState(KEYCODE_m, 'm', KBD_CTRL));
+		act->addDefaultInputMapping("C+m");
+		shortcutKeymap->addAction(act);
+	}
+
 	// F1 replays the puzzle instruction voice selected for the current page.
 	act = new Action(MohawkMetaEngine_Zoombini::kActionReplayPuzzleInstructions, _c("Replay puzzle instructions SFX", "zoombini-keymap"));
 	act->setKeyEvent(KEYCODE_F1);
@@ -1051,7 +1073,6 @@ Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("JOY_RIGHT_STICK");
 	shortcutKeymap->addAction(act);
 
-	String guiOptions = ConfMan.get("guioptions", target);
 	if (checkGameGUIOption(GAMEOPTION_ZMB_V20, guiOptions)) {
 		// TLC v2 adds page narration to the Help dialog and exposes its Ctrl+A toggle.
 		act = new Action(MohawkMetaEngine_Zoombini::kActionToggleHelpDialogNarration, _c("Toggle Help dialog narration", "zoombini-keymap"));
@@ -1210,7 +1231,9 @@ MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
 
 	const int midiSoundtrackVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack);
 	const MohawkMetaEngine_Zoombini::MidiSoundtrack midiSoundtrack = static_cast<MohawkMetaEngine_Zoombini::MidiSoundtrack>(midiSoundtrackVal);
-	const bool useMac = midiSoundtrack == MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh;
+	// The Macintosh demos ship only MIDIMAC.MHK in their game resource directory.
+	const bool macMidiOnly = _relInfo.isDemo() && getPlatform() == Common::kPlatformMacintosh;
+	const bool useMac = macMidiOnly || midiSoundtrack == MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh;
 	if (_midiMhk && _midiMhkUsesMacProfile == useMac)
 		return _midiMhk;
 	if (_midiMhk) {
@@ -1456,8 +1479,8 @@ Common::Language MohawkEngine_Zoombini::getLanguage() const {
 }
 
 void MohawkEngine_Zoombini::setNextPage(ZoombiniPageType type) {
-	// Practice pages in the v1.1 demo return to its route map instead of entering an archive that the demo does not ship.
-	if (_relInfo.isDemo(ZmbReleaseInfo::kUsV11) && _state->inPracticeMode() &&
+	// Demo practice pages return to their route map instead of entering an archive that the demo does not ship.
+	if (_relInfo.hasDemoPracticeMap() && _state->inPracticeMode() &&
 		_activePage && _activePage->getPageType() != ZoombiniPageType::kRodMap &&
 		type != ZoombiniPageType::kPicker && type != ZoombiniPageType::kLogo)
 		type = ZoombiniPageType::kRodMap;
@@ -1695,8 +1718,10 @@ ZoombiniDialogResult MohawkEngine_Zoombini::loadModalDialog(ZoombiniDialog *dial
 	_sound->pauseActiveSoundsForDialog();
 	// Modal input uses the standard cursor instead of a page-local hover cursor.
 	ZoombiniPage *inputPage = _dialogPageStack.empty() ? _activePage : _dialogPageStack.top();
-	if (inputPage)
+	if (inputPage) {
+		inputPage->onInputReset();
 		inputPage->clearHoverCursor();
+	}
 	_cursor->setDefaultCursor();
 	dialogPage->open();
 	dialogPage->setBackgroundBitmap();

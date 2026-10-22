@@ -606,8 +606,12 @@ Common::Rect ZoombiniGraphics::executeDrawCommand(ScreenKind screenKind, const D
 	case DrawCommand::Kind::kFill:
 		fillRectToScreen(screenKind, bounds, drawCmd._color);
 		break;
-	case DrawCommand::Kind::kText:
-		return drawTextToScreen(screenKind, drawCmd._text, bounds, drawCmd._textConf);
+	case DrawCommand::Kind::kText: {
+		TextConf tc = drawCmd._textConf;
+		if (tc._hasClipRect)
+			tc._clipRect.translate(offset.x, offset.y);
+		return drawTextToScreen(screenKind, drawCmd._text, bounds, tc);
+	}
 	case DrawCommand::Kind::kLine:
 	case DrawCommand::Kind::kThickLine:
 		drawLineToScreen(screenKind, drawCmd, offset);
@@ -1036,15 +1040,20 @@ Common::Rect ZoombiniGraphics::drawTextToScreen(ScreenKind screenKind, const Com
 		error("gfx: cannot open fontfile of kind %u", static_cast<uint32>(tc._fontUsage));
 		return Common::Rect();
 	}
-	const bool useAntialiasing = _vm->_text->fontUsesAntialiasing(tc._fontUsage);
+	const bool useAA = _vm->_text->fontUsesAntialiasing(tc._fontUsage);
+	const Common::Rect *clipRect = nullptr;
+	if (tc._hasClipRect)
+		clipRect = &tc._clipRect;
 
+	// Lay out against the full caller rectangle before applying the optional pixel clip.
+	// Shrinking it to the visible area would change line breaks and alignment during scrolling.
 	const Common::Array<Common::U32String> &lines = prepareTextLines(text, font, tc._wordWrap, destRect.width());
 
 	// Align all passes from the unexpanded text bounds.
 	// Offset only the four outline passes so the main text does not move.
 	const Common::Point boundSize = getTextLinesBounds(font, false, lines);
 
-	// Keep the caller rectangle unchanged for normal wrapped text so alignment and clipping share the same bounds.
+	// Retain the caller's layout width for wrapped text; the optional clip only limits output after positioning.
 	Common::Rect drawRect = destRect;
 	if (!tc._wordWrap)
 		expandUnwrappedTextRect(drawRect, boundSize.x, tc._hAlign);
@@ -1054,7 +1063,7 @@ Common::Rect ZoombiniGraphics::drawTextToScreen(ScreenKind screenKind, const Com
 	if (tc._fillBackground)
 		fillBackgroundPalette = tc._fillBackgroundKey;
 
-	// Virtualize Vertical Aligment
+	// Position the complete text block within the caller's layout bounds, including portions later clipped.
 	if (0 < text.size()) {
 		switch (tc._vAlign) {
 		case Graphics::kTextAlignStart:
@@ -1062,7 +1071,8 @@ Common::Rect ZoombiniGraphics::drawTextToScreen(ScreenKind screenKind, const Com
 			// Do nothing
 			break;
 		case Graphics::kTextAlignCenter:
-			drawRect.top = (drawRect.top + drawRect.bottom - boundSize.y) / 2;
+			// The original GDI wrapper halves each height separately before subtracting.
+			drawRect.top += drawRect.height() / 2 - boundSize.y / 2;
 			drawRect.bottom = drawRect.top + boundSize.y;
 			break;
 		case Graphics::kTextAlignEnd:
@@ -1076,6 +1086,7 @@ Common::Rect ZoombiniGraphics::drawTextToScreen(ScreenKind screenKind, const Com
 	}
 
 	// Draw the four one-pixel outline passes before the main text.
+	// All passes share the output clip, which also limits their dirty bounds.
 	if (tc._outlineEffect) {
 		for (uint32 i = 0; i < 4; i++) {
 			Common::Rect outlineRect = drawRect;
@@ -1100,15 +1111,23 @@ Common::Rect ZoombiniGraphics::drawTextToScreen(ScreenKind screenKind, const Com
 			outlineRect.top += yDelta;
 			outlineRect.bottom += yDelta;
 
-			recordDirtyRect(screenKind, outlineRect);
-			drawTextLines(screenKind, font, lines, outlineRect, tc._outlinePalette, tc._hAlign, useAntialiasing, fillBackgroundPalette);
+			Common::Rect dirtyRect = outlineRect;
+			if (clipRect)
+				dirtyRect.clip(*clipRect);
+			recordDirtyRect(screenKind, dirtyRect);
+			drawTextLines(screenKind, font, lines, outlineRect, tc._outlinePalette, tc._hAlign, useAA, fillBackgroundPalette, clipRect);
 		}
 	}
 
-	recordDirtyRect(screenKind, drawRect);
-	drawTextLines(screenKind, font, lines, drawRect, tc._textPalette, tc._hAlign, useAntialiasing, fillBackgroundPalette);
+	Common::Rect dirtyRect = drawRect;
+	if (clipRect)
+		dirtyRect.clip(*clipRect);
+	recordDirtyRect(screenKind, dirtyRect);
+	drawTextLines(screenKind, font, lines, drawRect, tc._textPalette, tc._hAlign, useAA, fillBackgroundPalette, clipRect);
 	if (tc._outlineEffect)
 		drawRect.grow(1);
+	if (clipRect)
+		drawRect.clip(*clipRect);
 	return drawRect;
 }
 
@@ -1157,30 +1176,18 @@ void ZoombiniGraphics::expandUnwrappedTextRect(Common::Rect &rect, int textWidth
 }
 
 Common::Array<Common::U32String> ZoombiniGraphics::prepareTextLines(const Common::U32String &text, const Graphics::Font *font, bool wordWrap, int16 targetWidth) {
-	// Tokenize strings with CR, LF or CRLF
-	Common::Array<Common::U32String> lines = ZoombiniText::tokenizeLines(text);
 	if (!wordWrap)
-		return lines;
+		return ZoombiniText::tokenizeLines(text);
 
 	// GDI DrawTextA with DT_WORDBREAK accepts a line whose extent exactly equals the caller rectangle width.
 	// @ref Graphics::Font::wordWrapText() treats that equality as overflow because its width test uses >=.
 	// Add one pixel only for the line-break decision; drawing still uses the caller's rectangle and clipping.
 	const int wordWrapWidth = targetWidth + 1;
-	Common::Array<Common::U32String> newLines;
-	for (const Common::U32String &line : lines) {
-		// An explicit empty source line still advances the text by one line.
-		// Font::wordWrapText() returns no entries for it, so preserve it here.
-		if (line.empty()) {
-			newLines.push_back(line);
-			continue;
-		}
-
-		// Splice rawLine into a word-wrapped lines
-		Common::Array<Common::U32String> wrapLines;
-		font->wordWrapText(line, wordWrapWidth, wrapLines);
-		newLines.push_back(wrapLines);
-	}
-	return newLines;
+	// Wrap before splitting explicit breaks: an overflowing space followed by CR consumes a blank line in GDI.
+	// Splitting first would discard that line (for example, the Portuguese RodMap's fourth route name).
+	Common::Array<Common::U32String> lines;
+	font->wordWrapText(text, wordWrapWidth, lines);
+	return lines;
 }
 
 Common::Point ZoombiniGraphics::getTextLinesBounds(const Graphics::Font *font, bool outlineEffect, const Common::Array<Common::U32String> &lines) {
@@ -1258,25 +1265,26 @@ void ZoombiniGraphics::quantizeHintedTextPixels(Graphics::Surface *textSurface, 
 }
 #endif
 
-void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font *font, const Common::Array<Common::U32String> &lines, const Common::Rect &destRect, uint32 color, Graphics::TextAlign hAlign, bool useAntialiasing, uint32 fillBackgroundColor) {
-	// Clip text to the caller's destination rectangle.
+void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font *font, const Common::Array<Common::U32String> &lines,
+									 const Common::Rect &destRect, uint32 color, Graphics::TextAlign hAlign, bool useAA,
+									 uint32 fillBackgroundColor, const Common::Rect *clipRect) {
+	// The destination already contains the layout width and computed vertical position.
 	if (destRect.isEmpty())
 		return;
 
 	Graphics::Surface *screen = _vm->_gfx->getScreen(screenKind);
 	assert(screen->format.bytesPerPixel == 1);
 #ifdef USE_RGB_COLOR
-	if (useAntialiasing)
+	if (useAA)
 		assert(color < 256);
 #endif
 
-	// Render to a transparent local surface first.
-	// This gives every text path the same exact caller-rectangle clipping that GDI applies,
-	// including partially visible glyphs at the top, bottom, left and right edges.
+	// Rasterize at the full layout width, preserving horizontal alignment on the local surface.
+	// The separate pixel clip is applied when writing to the screen, including partially visible glyphs.
 	Graphics::Surface textSurface;
 	do {
 #ifdef USE_RGB_COLOR
-		if (useAntialiasing) {
+		if (useAA) {
 			// Text hinting on CLUT surfaces are achieved by these pipeline:
 			// - Render texts on a temporary BGRA32 surface, with hinting.
 			// - Quantize a temp BGRA32 surface to a target CLUT surface with its palettes.
@@ -1308,11 +1316,15 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 			const Common::Rect bbox = font->getBoundingBox(line, 0, localTop, destRect.width(), hAlign);
 			do {
 #ifdef USE_RGB_COLOR
-				if (useAntialiasing) {
+				// @ref ZoombiniGraphics::quantizeHintedTextPixels treats source alpha as glyph coverage and blends against the screen.
+				// Fill the screen first so antialiased edges blend with this background; an opaque surface fill would become the text color.
+				if (useAA) {
 					Common::Rect screenBBox = bbox;
 					screenBBox.translate(destRect.left, destRect.top);
 					screenBBox.clip(destRect);
 					screenBBox.clip(_screenRect);
+					if (clipRect)
+						screenBBox.clip(*clipRect);
 					fillRectToScreen(screenKind, screenBBox, fillBackgroundColor);
 					break;
 				}
@@ -1323,7 +1335,7 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 
 		do {
 #ifdef USE_RGB_COLOR
-			if (useAntialiasing) {
+			if (useAA) {
 				const byte textRed = _paletteBytes[color * 3 + 0];
 				const byte textGreen = _paletteBytes[color * 3 + 1];
 				const byte textBlue = _paletteBytes[color * 3 + 2];
@@ -1341,8 +1353,11 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 		}
 	}
 
+	// Trim the output area after layout and rasterization; keep the surface origin and text position unchanged.
 	Common::Rect screenRect = destRect;
 	screenRect.clip(_screenRect);
+	if (clipRect)
+		screenRect.clip(*clipRect);
 	if (screenRect.isEmpty()) {
 		textSurface.free();
 		return;
@@ -1357,7 +1372,7 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 				if (!clipped.isEmpty()) {
 					do {
 #ifdef USE_RGB_COLOR
-						if (useAntialiasing) {
+						if (useAA) {
 							quantizeHintedTextPixels(&textSurface, screen, destRect, clipped, _paletteBytes, ARRAYSIZE(_paletteBytes) / 3, color);
 							break;
 						}
@@ -1370,7 +1385,7 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 	} else {
 		do {
 #ifdef USE_RGB_COLOR
-			if (useAntialiasing) {
+			if (useAA) {
 				quantizeHintedTextPixels(&textSurface, screen, destRect, screenRect, _paletteBytes, ARRAYSIZE(_paletteBytes) / 3, color);
 				break;
 			}

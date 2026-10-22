@@ -37,8 +37,7 @@ constexpr Common::Point ZoombiniShelterPicker::_caveMarkRegPoint;
 constexpr Common::Point ZoombiniShelterPicker::_zoombiniSeatPoints[16];
 
 ZoombiniShelterPicker::ZoombiniShelterPicker(MohawkEngine_Zoombini *vm)
-	: ZoombiniShelter(vm, ZoombiniPageType::kPicker), _previewSnoid(vm, 0, ZmbFeature::FLAG_00000001_TYPE_SNOID),
-	  _textLayout(createTextLayout(vm->getRelInfo())) {
+	: ZoombiniShelter(vm, ZoombiniPageType::kPicker), _previewSnoid(vm, 0, ZmbFeature::FLAG_00000001_TYPE_SNOID) {
 	_clickZoneRadius = kPickerClickZoneRadius;
 	_isFirstVisit = _vm->_state->isFirstLaunch();
 	if (_isFirstVisit && 0 < _vm->_state->_r.getEntryCount() && _vm->_state->_currentSaveSlot == ZoombiniGameState::kUnsavedNewGame) {
@@ -71,15 +70,6 @@ ZoombiniShelterPicker::ZoombiniShelterPicker(MohawkEngine_Zoombini *vm)
 }
 
 ZoombiniShelterPicker::~ZoombiniShelterPicker() {
-}
-
-ZoombiniShelterPicker::TextLayout ZoombiniShelterPicker::createTextLayout(const ZmbReleaseInfo &relInfo) {
-	TextLayout layout;
-	if (relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::PT_PRT) ||
-		relInfo.isVariant(ZmbReleaseInfo::kTlcV20, Common::PL_POL)) {
-		layout.nameTopInset = 1;
-	}
-	return layout;
 }
 
 const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniShelterPicker::getScriptSoundPriorityRanges() const {
@@ -513,8 +503,9 @@ void ZoombiniShelterPicker::pickerButtons_onPostRender(ZmbFeature *feature) {
 	// Draw the name only when all four traits form a generatable combination.
 	if (isZoombiniTraitGeneratable(_previewSnoid._trait)) {
 		Common::Rect nameTextRect = _nameBoxRect;
-		nameTextRect.left += _textLayout.nameLeftInset;
-		nameTextRect.top += _textLayout.nameTopInset;
+		nameTextRect.left += 4;
+		nameTextRect.top += 4;
+		nameTextRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kPickerNameLayout).apply(nameTextRect);
 
 		ZoombiniGraphics::TextConf tc;
 		tc._hAlign = Graphics::TextAlign::kTextAlignCenter;
@@ -740,7 +731,19 @@ ZmbEventHandleResult ZoombiniShelterPicker::pickerButtons_onLButtonDown(ZmbFeatu
 }
 
 ZmbEventHandleResult ZoombiniShelterPicker::pickerButtons_onKeyDown(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat) {
-	(void)kbdRepeat;
+	if (kbdRepeat)
+		return ZmbEventHandleResult::kPassthrough;
+
+	switch (kbd.keycode) {
+	case Common::KEYCODE_F1:
+		_v10jpKbd_F1Held = true;
+		break;
+	case Common::KEYCODE_F2:
+		_v10jpKbd_F2Held = true;
+		break;
+	default:
+		break;
+	}
 
 	if (kbd.hasFlags(Common::KBD_SHIFT)) {
 		_shiftRapidFillActive = true;
@@ -753,12 +756,31 @@ ZmbEventHandleResult ZoombiniShelterPicker::pickerButtons_onKeyDown(ZmbFeature *
 ZmbEventHandleResult ZoombiniShelterPicker::pickerButtons_onKeyUp(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat) {
 	(void)kbdRepeat;
 
+	switch (kbd.keycode) {
+	case Common::KEYCODE_F1:
+		_v10jpKbd_F1Held = false;
+		break;
+	case Common::KEYCODE_F2:
+		_v10jpKbd_F2Held = false;
+		break;
+	default:
+		break;
+	}
+
 	if (!kbd.hasFlags(Common::KBD_SHIFT)) {
 		_shiftRapidFillActive = false;
 		updateDiceButtonVisual(feature);
 	}
 
 	return ZmbEventHandleResult::kPassthrough;
+}
+
+void ZoombiniShelterPicker::onInputReset() {
+	_v10jpKbd_F1Held = false;
+	_v10jpKbd_F2Held = false;
+	_shiftRapidFillActive = false;
+	if (_pickerUIFeature)
+		updateDiceButtonVisual(_pickerUIFeature);
 }
 
 void ZoombiniShelterPicker::updateDiceButtonVisual(ZmbFeature *feature) {
@@ -1346,7 +1368,14 @@ bool ZoombiniShelterPicker::isZoombiniTraitGeneratable(ZmbTrait trait) const {
 }
 
 void ZoombiniShelterPicker::generateZoombiniName() {
-	_previewSnoid._name = _vm->_text->pickNextZoombiniName();
+	ZoombiniText::JPFixedNameKind requestedFixedName = ZoombiniText::kJPFixedNameNone;
+	if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kJapanV10)) {
+		if (_v10jpKbd_F1Held)
+			requestedFixedName = ZoombiniText::kJPFixedJPNameChobi;
+		else if (_v10jpKbd_F2Held)
+			requestedFixedName = ZoombiniText::kJPFixedJPNameFumiaki;
+	}
+	_previewSnoid._name = _vm->_text->pickNextZoombiniName(requestedFixedName);
 }
 
 int16 ZoombiniShelterPicker::loadZoombinisFromPack(ZmbStateActivePack &pack) {

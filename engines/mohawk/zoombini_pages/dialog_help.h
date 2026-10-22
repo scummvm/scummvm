@@ -22,8 +22,6 @@
 #ifndef MOHAWK_ZOOMBINI_PAGES_DIALOG_HELP_H
 #define MOHAWK_ZOOMBINI_PAGES_DIALOG_HELP_H
 
-#include "common/hashmap.h"
-
 #include "mohawk/zoombini_pages/dialog_base.h"
 
 namespace Mohawk {
@@ -98,9 +96,6 @@ protected:
 	/** Load the page's normal localized Help STRL resource. */
 	void loadRegularHelpStrings();
 
-	/** Base Help STRL resource ID keyed by the page whose Help dialog is open. */
-	Common::HashMap<ZoombiniPageType, SystemResourceId> _helpStrlMap;
-
 	// MapRect & MapSave data
 	enum HelpDialogButtonIdx : uint32 {
 		/** Previous help paragraph. */
@@ -114,13 +109,11 @@ protected:
 	/** Pressed and enabled state of the previous, next, and okay buttons. */
 	Common::StableMap<uint32, ButtonState> _helpDialogButtonStateMap;
 	/**
-	 * Immutable dialog layout rectangles are instance members because Common::Rect
+	 * Baseline dialog layout rectangles are instance members because Common::Rect
 	 * requires runtime construction and ScummVM prohibits global C++ constructors.
 	 */
-	/** Standard help-dialog title rectangle. */
-	const Common::Rect _helpDialogTitleRect = Common::Rect(0x0104, 0x003E, 0x0174, 0x005B);
-	/** TLC help-dialog title rectangle. */
-	const Common::Rect _helpDialogTlcTitleRect = Common::Rect(0x0104, 0x0035, 0x0174, 0x0052);
+	/** Help-dialog title rectangle, adjusted for the release. */
+	Common::Rect _helpDialogTitleRect = Common::Rect(0x0104, 0x003E, 0x0174, 0x005B);
 	/** Click rectangles for the three help-dialog buttons. */
 	const Common::Rect _helpDialogButtonRects[3] = {
 		Common::Rect(0x009A, 0x013F, 0x00F5, 0x0162),
@@ -132,14 +125,17 @@ protected:
 		Common::Rect(0x00AD, 0x013F, 0x00F0, 0x0162),
 		Common::Rect(0x010F, 0x013F, 0x0152, 0x0162),
 	};
-	/** Standard help-dialog heading rectangle. */
-	const Common::Rect _helpDialogHeadRect = Common::Rect(0x00AA, 0x0063, 0x01DB, 0x0074);
-	/** TLC help-dialog heading rectangle. */
-	const Common::Rect _helpDialogTlcHeadRect = Common::Rect(0x00AA, 0x005A, 0x01DB, 0x006B);
-	/** Standard help-dialog body rectangle. */
-	const Common::Rect _helpDialogBodyRect = Common::Rect(0x00AA, 0x0079, 0x01DB, 0x0127);
-	/** TLC help-dialog body rectangle. */
-	const Common::Rect _helpDialogTlcBodyRect = Common::Rect(0x00AA, 0x0070, 0x01DB, 0x0127);
+	/** Help-dialog heading rectangle, adjusted for the release. */
+	Common::Rect _helpDialogHeadRect = Common::Rect(0x00AA, 0x0063, 0x01DB, 0x0074);
+	/** Help-dialog body rectangle, adjusted for the release. */
+	Common::Rect _helpDialogBodyRect = Common::Rect(0x00AA, 0x0079, 0x01DB, 0x0127);
+
+private:
+	/**
+	 * Return the page's base Help STRL resource ID without constructing a lookup table.
+	 * The caller should apply the puzzle level offset.
+	 */
+	static SystemResourceId getHelpStrlBaseId(ZoombiniPageType pageType);
 };
 
 } // End of namespace Mohawk

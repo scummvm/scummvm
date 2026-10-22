@@ -918,8 +918,13 @@ private:
 
 	/** Short notification-box rectangle. */
 	const Common::Rect _notiBoxShortRect = Common::Rect(0x0115, 0x01CA, 0x016C, 0x01DD);
-	/** Long notification-box rectangle. */
-	const Common::Rect _notiBoxLongRect = Common::Rect(0x0101, 0x01CA, 0x0183, 0x01DD);
+	/** 
+	 * Long notification-box rectangle.
+	 * In v1.0JP, this rect is widened.
+	 */
+	Common::Rect _notiBoxLongRect = Common::Rect(0x0101, 0x01CA, 0x0183, 0x01DD);
+	/** Background shape selected for long notifications in the active release. */
+	uint16 _notiBoxLongShape = kSystemShape3001_02_NotiBoxLong;
 	/** Frame at which the current notification expires. */
 	uint32 _notiBoxShowUntilFrame = 0;
 	/** Text currently displayed in the notification box. */
