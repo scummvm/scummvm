@@ -26,6 +26,7 @@
 #include "common/fs.h"
 #include "common/language.h"
 #include "common/memstream.h"
+#include "common/platform.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/system.h"
@@ -36,6 +37,7 @@
 #include "gui/message.h"
 
 #include "mohawk/zoombini.h"
+#include "mohawk/zoombini_metaengine.h"
 #include "mohawk/zoombini_page.h"
 #include "mohawk/zoombini_pages/interactive_base.h"
 #include "mohawk/zoombini_random.h"
@@ -132,7 +134,8 @@ bool ZmbXferRouteInfo::entersContainer() const {
 
 Common::CodePage ZoombiniGameState::getSaveNameCodePage(const Common::String &target) {
 	const Common::Language language = Common::parseLanguage(ConfMan.get("language", target));
-	return ZoombiniText::getExeCodePage(language);
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	return ZmbReleaseInfo::getExeCodePage(language, platform);
 }
 
 Common::U32String ZoombiniGameState::trimSaveName(const Common::U32String &name) {

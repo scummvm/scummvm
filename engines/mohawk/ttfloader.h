@@ -101,6 +101,22 @@ protected:
 };
 
 /**
+ * Load an 'sfnt' font resource from a Macintosh application's resource fork.
+ */
+class MacResForkTTFLoader : public FileTTFLoader {
+public:
+	MacResForkTTFLoader(const Common::String &application, const Common::String &faceName, uint16 resourceId,
+						Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
+	bool hasStream() override;
+
+protected:
+	Common::SeekableReadStream *getStream() override;
+
+private:
+	uint16 _resourceId;
+};
+
+/**
  * Load TTF font from InstallShield cab file.
  */
 class ISCabTTFLoader : public FileTTFLoader {

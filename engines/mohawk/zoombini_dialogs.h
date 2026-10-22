@@ -232,10 +232,10 @@ private:
 	/** Enable interpolation with the accurate clock, and target controls when interpolation is checked. */
 	void updatePosInterpolationEnabled();
 
-	// True for Broderbund v1.x releases; false for the TLC v2.0 rebuild. Gates
-	// the v1.x-only MIDI settings, which are meaningless for v2.0 (no MIDI).
 	/** Whether the selected release family exposes the v1.x MIDI settings. */
-	bool _isV1x;
+	bool _isV1x = true;
+	/** Demos omit the pages targeted by the page-specific options. */
+	bool _isDemo = false;
 
 	/** Save-file section header. */
 	GUI::StaticTextWidget *_saveFilesHeader = nullptr;
@@ -248,7 +248,7 @@ private:
 	/** Audio-pop compatibility option control. */
 	GUI::CheckboxWidget *_audioPopFixCheckbox;
 	/** Fleens tree-descending feet compatibility option control. */
-	GUI::CheckboxWidget *_fixFleensTreeDescendFeetBugCheckbox;
+	GUI::CheckboxWidget *_fixFleensTreeDescendFeetBugCheckbox = nullptr;
 	/** Hotel MIDI-halt compatibility option control. */
 	GUI::CheckboxWidget *_fixHotelMidiHaltBugCheckbox = nullptr;
 	/** Caves level 4 MIDI compatibility option control. */
@@ -282,15 +282,15 @@ private:
 	/** Color-blind mode option control. */
 	GUI::CheckboxWidget *_colorBlindModeCheckbox;
 	/** Maze celebration SFX option control. */
-	GUI::CheckboxWidget *_alwaysMazePlayCelebrationSfxCheckbox;
+	GUI::CheckboxWidget *_alwaysMazePlayCelebrationSfxCheckbox = nullptr;
 	/** Town memorial SFX option control. */
-	GUI::CheckboxWidget *_alwaysTownPlayMemorialSfxCheckbox;
+	GUI::CheckboxWidget *_alwaysTownPlayMemorialSfxCheckbox = nullptr;
 	/** Maze unused level-4 layout option control. */
-	GUI::CheckboxWidget *_mazeRestoreUnusedL4LayoutCheckbox;
+	GUI::CheckboxWidget *_mazeRestoreUnusedL4LayoutCheckbox = nullptr;
 	/** Maze initial-layout randomization option control. */
-	GUI::CheckboxWidget *_mazeRandomizeInitialLayoutCheckbox;
+	GUI::CheckboxWidget *_mazeRandomizeInitialLayoutCheckbox = nullptr;
 	/** Ferry trait-match highlight option control. */
-	GUI::CheckboxWidget *_ferryHighlightTraitMatchCheckbox;
+	GUI::CheckboxWidget *_ferryHighlightTraitMatchCheckbox = nullptr;
 	/** Button that restores all engine options to their defaults. */
 	GUI::ButtonWidget *_resetButton = nullptr;
 };

@@ -173,6 +173,8 @@ bool MohawkEngine_Zoombini::tryAddZoombiniIsoRootSearchPath(const Common::FSNode
 
 MohawkEngine_Zoombini::MohawkEngine_Zoombini(OSystem *syst, const MohawkGameDescription *gameDesc)
 	: MohawkEngine(syst, gameDesc), _relInfo(*gameDesc) {
+	_paletteFilter = getConfiguredPaletteFilter();
+
 #if ZOOMBINI_ENABLE_IME_COMPOSITION
 	// Opt in before page initialization so ordinary pages use direct key events.
 	// Editable text fields enable composition only while they own keyboard input.
@@ -862,6 +864,15 @@ void MohawkEngine_Zoombini::syncSoundSettings() {
 		_midi->syncBgmVolume(musicEnabled);
 }
 
+MohawkMetaEngine_Zoombini::PaletteFilter MohawkEngine_Zoombini::getConfiguredPaletteFilter() const {
+	// The original Macintosh binaries does not apply any palette filter.
+	if (_relInfo.getPlatform() == Common::kPlatformMacintosh)
+		return MohawkMetaEngine_Zoombini::PaletteFilter::kRawPalette;
+
+	const int paletteFilterVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionPaletteFilter);
+	return static_cast<MohawkMetaEngine_Zoombini::PaletteFilter>(paletteFilterVal);
+}
+
 void MohawkEngine_Zoombini::applyGameSettings() {
 	bool needsRedraw = false;
 
@@ -871,8 +882,7 @@ void MohawkEngine_Zoombini::applyGameSettings() {
 		_rnd->setAlgorithm(prngAlgorithm);
 	}
 
-	const int paletteFilterVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionPaletteFilter);
-	const MohawkMetaEngine_Zoombini::PaletteFilter paletteFilter = static_cast<MohawkMetaEngine_Zoombini::PaletteFilter>(paletteFilterVal);
+	const MohawkMetaEngine_Zoombini::PaletteFilter paletteFilter = getConfiguredPaletteFilter();
 	if (_paletteFilter != paletteFilter) {
 		_paletteFilter = paletteFilter;
 		if (_gfx) {
@@ -1230,17 +1240,34 @@ MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
 		return nullptr;
 
 	const int midiSoundtrackVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack);
-	const MohawkMetaEngine_Zoombini::MidiSoundtrack midiSoundtrack = static_cast<MohawkMetaEngine_Zoombini::MidiSoundtrack>(midiSoundtrackVal);
-	// The Macintosh demos ship only MIDIMAC.MHK in their game resource directory.
-	const bool macMidiOnly = _relInfo.isDemo() && getPlatform() == Common::kPlatformMacintosh;
-	const bool useMac = macMidiOnly || midiSoundtrack == MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh;
-	if (_midiMhk && _midiMhkUsesMacProfile == useMac)
+	MohawkMetaEngine_Zoombini::MidiSoundtrack midiSoundtrack = static_cast<MohawkMetaEngine_Zoombini::MidiSoundtrack>(midiSoundtrackVal);
+	switch (midiSoundtrack) {
+	case MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC:
+	case MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh:
+		break;
+	default:
+		midiSoundtrack = MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC;
+		break;
+	}
+	// Lock MIDI soundtrack switching in a demo with one MIDI archive.
+	if (_relInfo.isDemo())
+		MohawkMetaEngine_Zoombini::getFixedDemoMidiSoundtrack(getPlatform(), _relInfo.getLanguage(), midiSoundtrack);
+	if (_midiMhk && _midiMhkSoundtrack == midiSoundtrack)
 		return _midiMhk;
 	if (_midiMhk) {
 		delete _midiMhk;
 		_midiMhk = nullptr;
 	}
-	const char *archiveName = useMac ? ZMB_MHK_MIDIMAC : ZMB_MHK_MIDIMPC;
+	const char *archiveName;
+	switch (midiSoundtrack) {
+	case MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh:
+		archiveName = ZMB_MHK_MIDIMAC;
+		break;
+	case MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC:
+	default:
+		archiveName = ZMB_MHK_MIDIMPC;
+		break;
+	}
 	const Common::Path archivePath = Common::Path(_mhkArchiveRoot).append(archiveName);
 	MohawkArchive *mhkArchive = new MohawkArchive();
 	if (!mhkArchive->openFile(archivePath)) {
@@ -1250,7 +1277,7 @@ MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
 	}
 
 	_midiMhk = mhkArchive;
-	_midiMhkUsesMacProfile = useMac;
+	_midiMhkSoundtrack = midiSoundtrack;
 	return _midiMhk;
 }
 
@@ -1321,8 +1348,7 @@ void MohawkEngine_Zoombini::loadNextPage() {
 	}
 
 	// Cache the setting before the page loads its first palette.
-	const int paletteFilterVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionPaletteFilter);
-	_paletteFilter = static_cast<MohawkMetaEngine_Zoombini::PaletteFilter>(paletteFilterVal);
+	_paletteFilter = getConfiguredPaletteFilter();
 
 	assert(!_pageQueue.empty());
 	ZoombiniPageType nextPageType = _pageQueue.pop();

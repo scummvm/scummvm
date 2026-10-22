@@ -382,7 +382,7 @@ void ZoombiniMidiPlayer::playMidi(ZmbResource resource) {
 	}
 	// The Macintosh MIDI profile (MIDIMAC.MHK) has no inline GM/GS setup, so manually issue a GM reset per song.
 	// The Windows profile (MIDIMPC.MHK) re-inits itself, so it does not need a reset.
-	setResetChannelsOnPlay(_vm->_midiMhkUsesMacProfile);
+	setResetChannelsOnPlay(_vm->_midiMhkSoundtrack == MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh);
 	playMidiStream(_vm->getResource(ID_TMID, resource), static_cast<uint16>(resource._id));
 	syncBgmVolume(!_vm->_state || _vm->_state->getEnableMusic());
 }

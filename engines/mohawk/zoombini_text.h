@@ -25,6 +25,7 @@
 #include "common/hashmap.h"
 #include "common/language.h"
 #include "common/noncopyable.h"
+#include "common/platform.h"
 #include "common/scummsys.h"
 #include "common/str-enc.h"
 #include "graphics/fontman.h"
@@ -308,12 +309,6 @@ public:
 			: _key(key), _text(text) {}
 	};
 
-	/** Return the code page used by executable strings for a Zoombini language. */
-	static Common::CodePage getExeCodePage(Common::Language lang);
-	/** Return the code page used by string resources for a Zoombini language. */
-	static Common::CodePage getResCodePage(Common::Language lang);
-	/** Return the display name for a code page used by Zoombini text and save names. */
-	static const char *getCodePageName(Common::CodePage codePage);
 	/** Return the normal text font loaded during initialization. */
 	const Graphics::Font *getTextFont();
 	/** Return the title font loaded during initialization. */
@@ -457,10 +452,12 @@ private:
 		uint16 stringIndex;
 	};
 
-	/** One Key-address-size entry in an executable text table. */
+	/** One Key-offset-size entry in an executable text table. */
 	struct ExeTextEntry {
 		Key key;
-		/** Raw file offset of the first text byte. */
+		/** Offset in the source image.
+		 * - From file: Raw file offset of the first text byte.
+		 * - From Mac resource fork: A5-relative for expanded Macintosh globals. */
 		uint32 offset;
 		/** Number of text bytes, excluding the trailing NUL terminator. */
 		uint16 length;
@@ -475,6 +472,20 @@ private:
 		kExecutableAnchorSequence,
 		/** Executable strings reached through a sequential pointer stream. */
 		kExecutablePointerStream,
+		/**
+		 * Credit strings from the Macintosh resource-fork, reached through big-endian A5-relative offsets.
+		 * Classic Motorola 68k Mac applications use the A5 address register as their global-data base
+		 * (the "A5 world"): an offset denotes the address A5 + offset.
+		 *
+		 * For executables with compressed resource-fork DATA 0, expandMacResForkRleGlobals() restores
+		 * the globals using the A5-world sizes from CODE 0 before reading the strings.
+		 * Its output starts at the original A5 position, so A5 + offset becomes data[offset].
+		 * These offsets address expanded globals, not raw resource-fork bytes.
+		 * This expansion handles initialized globals in DATA 0; sfnt and STRL resources use their own loaders.
+		 *
+		 * @see https://developer.apple.com/library/archive/documentation/mac/pdf/Processes/Processes_GL.pdf
+		 */
+		kMacRleA5RelativePointerStream,
 		/** Flat strings loaded sequentially from TEXTSTR.MHK STRL resources. */
 		kTextStrResourceSequence,
 	};
@@ -491,7 +502,7 @@ private:
 
 	/**
 	 * Internal source and decoding metadata for executable text.
-	 * Keyed UI strings are read from fixed byte ranges in the executable.
+	 * Keyed UI strings use fixed byte ranges in the executable or expanded Macintosh globals.
 	 */
 	struct ExeTextSource {
 		/** Loose executable file name when the text comes from a standalone EXE. */
@@ -504,10 +515,12 @@ private:
 		bool archiveIsCabinet = false;
 		/** Exact byte size of the release-matched executable image. */
 		uint32 expectedSize = 0;
+		/** Whether to read and expand DATA 0 from the Macintosh application's resource fork before text lookup. */
+		bool macDataResFork = false;
 
 		/** Code page used to decode the keyed executable strings. */
 		Common::CodePage codePage = Common::kWindows1252;
-		/** Table of keyed string offsets and lengths within the executable image. */
+		/** Table of keyed string offsets and lengths within the source image. */
 		const ExeTextEntry *entries = nullptr;
 		/** Number of entries in @ref entries. */
 		uint entryCount = 0;
@@ -529,7 +542,7 @@ private:
 		CreditSourceKind creditSourceKind = CreditSourceKind::kNone;
 		/** Known first line locating an anchor-based credit string sequence. */
 		const char *creditAnchor = nullptr;
-		/** File offset of the address-to-string pointer table for pointer-based credits. */
+		/** Pointer-table offset in the source image; A5-relative for expanded Macintosh globals. */
 		uint32 creditPointerTableOffset = 0;
 		/** Executable image base address used to translate pointer-table values. */
 		uint32 creditPointerBaseAddress = 0;
@@ -544,6 +557,8 @@ private:
 
 		/** Copy these decoding settings to a candidate in a loose executable file. */
 		ExeTextSource inFile(const char *srcFileName, uint32 srcExpectedSize) const;
+		/** Select compressed DATA 0 from a Macintosh application's resource fork for expansion before text lookup. */
+		ExeTextSource inMacDataResFork(const char *srcFileName, uint32 srcExpectedSize) const;
 		/** Copy these decoding settings to a candidate in an InstallShield v3 .Z archive. */
 		ExeTextSource inArchiveMember(const char *srcArchiveName, const char *srcMemberName, uint32 srcExpectedSize) const;
 		/** Copy these decoding settings to a candidate in an InstallShield cabinet. */
@@ -567,6 +582,8 @@ private:
 
 		/** Set the pointer-stream credit lookup and first consumed index, returning the updated descriptor. */
 		ExeTextSource withCreditPtrTable(uint32 tableOffset, uint32 baseAddress, uint32 firstIndex);
+		/** Select credits whose table offset and BE32 entries are relative to the original 68k A5 register value. */
+		ExeTextSource withMacA5RelativeCreditPtrTable(uint32 tableOffset);
 		/** Set the blank-entry pointer value, returning the updated descriptor. */
 		ExeTextSource withCreditPtrBlankAddress(uint32 address);
 		/** Set the inclusive blank-entry pointer range, returning the updated descriptor. */
@@ -662,6 +679,8 @@ private:
 	static const ExeTextEntry kV11US_NETextEntries[];
 	/** v1.1US Win16 demo Key-address-size map. */
 	static const ExeTextEntry kV11USDemo_NETextEntries[];
+	/** v1.1US Macintosh demo strings at A5-relative offsets in the expanded resource-fork DATA 0. */
+	static const ExeTextEntry kV11USMacDemoTextEntries[];
 	/** v1.11KR PE32 Key-address-size map. */
 	static const ExeTextEntry kV111KR_PETextEntries[];
 	/** v1.11KR NE Key-address-size map. */
@@ -712,6 +731,72 @@ private:
 	bool tryExecutableSource(const ExeTextSource &source);
 	/** Read a release-matched executable image of the exact configured size into memory. */
 	static bool readExecutableData(Common::SeekableReadStream *exeStream, uint32 expectedSize, Common::Array<byte> &data);
+	/** Read the first two BE32 fields in CODE 0: bytes above A5, then bytes below A5. The caller owns the stream. */
+	static bool readMacA5WorldSizes(Common::SeekableReadStream *codeStream, uint32 &bytesAboveA5, uint32 &bytesBelowA5);
+	/**
+	 * Command codes and run-command range bases in a Macintosh application's enhanced-RLE-compressed DATA 0.
+	 * Each byte selects one command, not a combination of flags. Codes 1..4 select templates; 5..15 are invalid.
+	 * Run commands occupy ranges 16..31, 32..63, 64..127 and 128..255. Select the highest matching range base.
+	 * The count is code - base + 1, except RepeatByte, which uses code - base + 2.
+	 */
+	enum MacDataCommandCode : uint8 {
+		/** End the current block. */
+		kMacDataEndBlock_00 = 0,
+		/** First of four eight-byte templates, indexed by code - TemplateFirst. */
+		kMacDataTemplateFirst_01 = 1,
+		/** Preserve four bytes, emit 255, then copy three literal bytes. */
+		kMacDataTemplate_02 = 2,
+		/** Emit 169, 240; preserve two bytes; copy two literals; preserve one byte; copy one literal. */
+		kMacDataTemplate_03 = 3,
+		/** Last template command, inclusive. */
+		kMacDataTemplateLast_04 = 4,
+		/** Codes 16..31 emit 1..16 copies of byte 255. */
+		kMacDataRepeatFFBase_16 = 16,
+		/** Codes 32..63 consume one source byte and repeat it 2..33 times. */
+		kMacDataRepeatByteBase_32 = 32,
+		/** Codes 64..127 preserve/skip 1..64 destination bytes without a source payload. */
+		kMacDataSkipBase_64 = 64,
+		/** Codes 128..255 copy the following 1..128 literal bytes. */
+		kMacDataCopyLiteralsBase_128 = 128,
+	};
+
+	/**
+	 * Expand enhanced-RLE-compressed globals from a Macintosh application's resource-fork DATA 0.
+	 * Required for text lookup: offsets are relative to the global-data base in the original 68k A5 register.
+	 * Keep the bytes at/above A5 with A5 mapped to index 0, so those offsets index data directly.
+	 *
+	 * The caller reads bytesAboveA5 and bytesBelowA5 from CODE 0 with readMacA5WorldSizes(), then
+	 * gets the DATA 0 payload stream from MacResManager::getResource() and copies its compressed bytes
+	 * into data with readExecutableData(). The sizes describe the executable's memory layout, not the RLE format.
+	 *
+	 * @remarks
+	 * CODE 0 header used by the caller:
+	 *   Bytes 0..3: BE32 bytes above A5.
+	 *   Bytes 4..7: BE32 bytes below A5.
+	 *
+	 * DATA 0 input layout:
+	 *   Bytes 0..3: prefix skipped by the original startup.
+	 *   From byte 4: three blocks, each [signed BE32 offset from A5][RLE commands][end command 0].
+	 *   After the third block: relocation streams, which are not parsed here.
+	 * Commands may consume literal payload bytes; only a zero read as a command ends a block.
+	 *
+	 * A5 is the original 68k global-data base.
+	 * Decode into a zero-filled temporary image with bytesBelowA5 bytes below A5 and bytesAboveA5 above it;
+	 * a block's signed offset n starts at a5World[bytesBelowA5 + n].
+	 * Literal copies, repeated-byte runs, skips and eight-byte templates reconstruct the globals in that image.
+	 * On success, replace data with bytesAboveA5 bytes at/above A5, mapping A5 + offset to data[offset].
+	 * Keyed strings and BE32 credit pointers can then use their A5-relative offsets directly,
+	 * without applying the original runtime's address relocations or executing its startup code.
+	 *
+	 * Related references:
+	 * - Apple, Building and Managing Programs in MPW, 2nd ed., p. 8-16: compressed A5-global initialization in MPW.
+	 *   https://oldapplestuff.com/download/Macintosh/Macintosh_Garden/manuals/Building_and_Managing_Programs_in_MPW_2ed.pdf#page=182
+	 * - Theodore Ts'o, The PRC Format, "The Data Resource": related Palm 68k enhanced-RLE layout and command table.
+	 *   https://web.mit.edu/~tytso/www/pilot/prc-format.html
+	 * These describe related initialization formats; they do not identify an executable's compiler or runtime version.
+	 * Unlike the Palm description's zero-fill, this decoder preserves skipped bytes and template holes, matching the verified Mac startup.
+	 */
+	static bool expandMacResForkRleGlobals(Common::Array<byte> &data, uint32 bytesAboveA5, uint32 bytesBelowA5);
 	/** Find an ASCII byte sequence in executable data. */
 	static bool findBytes(const Common::Array<byte> &data, const char *needle, uint32 &offset);
 	/** Decode an executable byte string through its source code page. */

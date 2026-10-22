@@ -23,12 +23,114 @@
 #include "mohawk/detection.h"
 
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 #include "common/ustr.h"
 
 Mohawk::ZmbReleaseInfo::ZmbReleaseInfo(const MohawkGameDescription &gameDesc)
 	: _features(gameDesc.features),
-	  _lang(gameDesc.desc.language == Common::UNK_LANG ? Common::EN_USA : gameDesc.desc.language),
+	  _lang(gameDesc.desc.language), _platform(gameDesc.desc.platform),
 	  _demo((gameDesc.desc.flags & ADGF_DEMO) != 0) {
+	if (_lang == Common::UNK_LANG)
+		_lang = Common::EN_USA;
+}
+
+Common::CodePage Mohawk::ZmbReleaseInfo::getExeCodePage(Common::Language language, Common::Platform platform) {
+	switch (platform) {
+	case Common::kPlatformMacintosh:
+		switch (language) {
+		case Common::JA_JPN:
+			// FIXME: Implement proper MacJapanese support.
+			// Fortunately, the v1.0JP demo's Japanese text decodes correctly with CP932,
+			// as CP932 and MacJapanese are both based on Shift-JIS, but with minor different extensions.
+			return Common::kWindows932;
+		default:
+			return Common::kMacRoman;
+		}
+	case Common::kPlatformWindows:
+		switch (language) {
+		case Common::JA_JPN:
+			return Common::kWindows932;
+		case Common::KO_KOR:
+			return Common::kWindows949;
+		case Common::PL_POL:
+			return Common::kWindows1250;
+		default:
+			return Common::kWindows1252;
+		}
+	default:
+		error("ZmbReleaseInfo::getExeCodePage: unsupported platform %d", static_cast<int>(platform));
+		break;
+	}
+	return Common::kCodePageInvalid;
+}
+
+Common::CodePage Mohawk::ZmbReleaseInfo::getResCodePage(Common::Language language, Common::Platform platform) {
+	switch (platform) {
+	case Common::kPlatformMacintosh:
+		return getExeCodePage(language, platform);
+	case Common::kPlatformWindows:
+		switch (language) {
+		case Common::EN_GRB:
+		case Common::FR_FRA:
+		case Common::DE_DEU:
+		case Common::IT_ITA:
+			// European TEXTSTR.MHK strings are encoded as MacRoman.
+			return Common::kMacRoman;
+		case Common::JA_JPN:
+			return Common::kWindows932;
+		case Common::KO_KOR:
+			return Common::kWindows949;
+		case Common::PL_POL:
+			return Common::kWindows1250;
+		case Common::ES_ESP:
+		case Common::PT_PRT:
+		case Common::EN_USA:
+		default:
+			return Common::kWindows1252;
+		}
+	default:
+		error("ZmbReleaseInfo::getResCodePage: unsupported platform %d", static_cast<int>(platform));
+		break;
+	}
+	return Common::kCodePageInvalid;
+}
+
+const char *Mohawk::ZmbReleaseInfo::getCodePageName(Common::CodePage codePage) {
+	// FIXME: Move it to the ScummVM core?
+	switch (codePage) {
+	case Common::kWindows932:
+		return "CP932";
+	case Common::kWindows949:
+		return "CP949";
+	case Common::kWindows1250:
+		return "CP1250";
+	case Common::kWindows1252:
+		return "CP1252";
+	case Common::kMacRoman:
+		return "MacRoman";
+	default:
+		return "Unknown";
+	}
+}
+
+bool Mohawk::MohawkMetaEngine_Zoombini::getFixedDemoMidiSoundtrack(Common::Platform platform, Common::Language language, MidiSoundtrack &soundtrack) {
+	switch (platform) {
+	case Common::kPlatformMacintosh:
+		if (language == Common::EN_USA || language == Common::JA_JPN) { // v1.1US Demo, v1.0JP Demo
+			soundtrack = MidiSoundtrack::kMacintosh;
+			return true;
+		}
+		break;
+	case Common::kPlatformWindows:
+		if (language == Common::EN_USA) { // v1.1US Demo
+			soundtrack = MidiSoundtrack::kWindowsMPC;
+			return true;
+		}
+		break;
+	default:
+		break;
+	}
+	return false;
 }
 
 bool Mohawk::ZmbReleaseInfo::isVariant(Variant variant) const {
