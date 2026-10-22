@@ -288,22 +288,22 @@ const Graphics::Surface *Indeo3Decoder::decodeFrame(Common::SeekableReadStream &
 			chromaWidth + 1);
 
 	// Blit the frame onto the surface
-	uint32 scaleWidth  = _surface->w / fWidth;
-	uint32 scaleHeight = _surface->h / fHeight;
+	uint32 scaleWidth  = MAX<uint32>(_surface->w / fWidth, 1);
+	uint32 scaleHeight = MAX<uint32>(_surface->h / fHeight, 1);
 
-	if (scaleWidth == 1 && scaleHeight == 1) {
+	if (scaleWidth == 1 && scaleHeight == 1 && fWidth <= _surface->w && fHeight <= _surface->h) {
 		// Shortcut: Don't need to scale so we can decode straight to the surface
 		YUVToRGBMan.convert410(_surface, Graphics::YUVToRGBManager::kScaleITU, srcY, tempU, tempV,
 				fWidth, fHeight, fWidth, chromaWidth + 1);
 	} else {
-		// Need to upscale, so decode to a temp surface first
+		// Need to upscale or crop, so decode to a temp surface first
 		Graphics::Surface tempSurface;
 		tempSurface.create(fWidth, fHeight, _surface->format);
 
 		YUVToRGBMan.convert410(&tempSurface, Graphics::YUVToRGBManager::kScaleITU, srcY, tempU, tempV,
 				fWidth, fHeight, fWidth, chromaWidth + 1);
 
-		// Upscale
+		// Upscale or crop
 		for (int y = 0; y < _surface->h; y++) {
 			for (int x = 0; x < _surface->w; x++) {
 				if (_surface->format.bytesPerPixel == 1)
