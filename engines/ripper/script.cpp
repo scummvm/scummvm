@@ -47,9 +47,6 @@
 
 namespace Ripper {
 
-// RunStartupFrontEndLoop at 0x10778 uses selection cursor 0xe for the white
-// menu pointer. PollInteractionAndResolveSelection at 0x13c8d enters the same
-// front-end action service for the top 50-pixel band of every scene frame.
 static const uint kToolbarCursor = 14;
 static const uint kDialogueCursor = 16;
 static const uint16 kHelpCommand = 0x3b00;
@@ -904,9 +901,6 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 				result = -3;
 				return true;
 			}
-			// Opcode 0x1d is always turned into a scene handoff when the command belongs to
-			// the concurrent runtime. The third argument only selects this path
-			// when the active scene issues the command.
 			if (&script == &_runtime.concurrentScript || command.arguments[2].value == 0) {
 				_runtime.pendingSceneMember = compiledScriptMemberName(target);
 				_runtime.pendingSceneEntryLabel = entryLabel;
@@ -1095,7 +1089,6 @@ bool ScriptManager::handleActiveRuntimeExit(int result, const CompiledScript &sc
 	if (result != -4)
 		return false;
 
-	// -4 is a normal active-runtime exit. 
 	if (_runtime.cyberActive) {
 		if (!_runtime.cyberExitRequested)
 			return false;
@@ -1233,8 +1226,8 @@ bool ScriptManager::performPendingSceneTransition() {
 bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 	_engine->getCursor()->setVisible(false);
 	_runtime.hoveredInteraction = -1;
-	// -2 re-enters this unbounded loop so the concurrent runtime runs before the
-	// next active frame
+	// Re-enter on callback result -2 so the concurrent runtime runs before the
+	// next active frame.
 	while (!_engine->shouldQuit()) {
 		if (!executeConcurrentFrame())
 			return false;
@@ -1427,8 +1420,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				_dialogue->rebuildPresentationBands("controlled-avi-complete");
 			} else if (allowEscSpace) {
 				debugC(2, kDebugScene,
-					"Ripper: retained controlled sequence display media='%s' "
-					"route=RunMediaSequence@0x1e516",
+					"Ripper: retained controlled sequence display media='%s'",
 					mediaPath.c_str());
 			}
 			if (frame.interactionCount != 0 && !_runtime.awaitingInteraction) {

@@ -155,12 +155,7 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 
 	if (action == kSceneActionCircuitChipPuzzle) {
 		CircuitChipPuzzle puzzle(engine);
-		const CircuitChipPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: circuit chip puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != CircuitChipPuzzle::kLoadFailed;
+		return puzzle.run(argument) != CircuitChipPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionWorldMap) {
 		if (!manager.openWorldMap())
@@ -175,206 +170,103 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		return manager.openInventory(argument, true);
 	if (action == kSceneActionCalculatorPuzzle) {
 		CalculatorPuzzle puzzle(engine);
-		const CalculatorPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: calculator puzzle scene action completed result=%d milestone=%u",
-			result, argument);
-		return result != CalculatorPuzzle::kLoadFailed;
+		return puzzle.run(argument) != CalculatorPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionRolodexPuzzle) {
 		RolodexPuzzle puzzle(engine);
-		const RolodexPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: rolodex puzzle scene action completed result=%d milestone=%u",
-			result, argument);
-		return result != RolodexPuzzle::kLoadFailed;
+		return puzzle.run(argument) != RolodexPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionCyberMenu) {
-		const CyberManager::Result result = engine->getCyber()->run();
-		debugC(1, kDebugCyber, "Ripper: Cyber menu scene action completed result=%d", result);
-		return result != CyberManager::kLoadFailed;
+		return engine->getCyber()->run() != CyberManager::kLoadFailed;
 	}
 	if (action == kSceneActionClockPuzzle) {
 		ClockPuzzle puzzle(engine);
-		const ClockPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: clock puzzle scene action completed result=%d milestone=%u", result, argument);
-		return result != ClockPuzzle::kLoadFailed;
+		return puzzle.run(argument) != ClockPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionKdShootingGallery) {
 		KdShootingGallery gallery(engine);
-		const KdShootingGallery::Result result = gallery.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: KD shooting-gallery scene action completed result=%d milestone=%u",
-			result, argument);
-		return result != KdShootingGallery::kLoadFailed;
+		return gallery.run(argument) != KdShootingGallery::kLoadFailed;
 	}
 	if (action == kSceneActionGcCshPuzzle) {
 		GcCshPuzzle puzzle(engine);
-		const GcCshPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: GC/CSH puzzle scene action completed result=%d milestone=%u", result, argument);
-		return result != GcCshPuzzle::kLoadFailed;
+		return puzzle.run(argument) != GcCshPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionTableGatePuzzle) {
 		TableGatePuzzle puzzle(engine);
-		const TableGatePuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: table gate puzzle scene action completed result=%d milestone=%u", result, argument);
-		return result != TableGatePuzzle::kLoadFailed;
+		return puzzle.run(argument) != TableGatePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionCdInBookPuzzle) {
 		CdInBookPuzzle puzzle(engine);
-		const CdInBookPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: CD-in-book puzzle scene action completed result=%d milestone=%u",
-			result, argument);
-		return result != CdInBookPuzzle::kLoadFailed;
+		return puzzle.run(argument) != CdInBookPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionBoardArrangementPuzzle) {
 		BoardArrangementPuzzle puzzle(engine);
-		const BoardArrangementPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: board arrangement puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != BoardArrangementPuzzle::kLoadFailed;
+		return puzzle.run(argument) != BoardArrangementPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionKjBlobShooter) {
 		KjBlobShooter shooter(engine);
-		const KjBlobShooter::Result result = shooter.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: KJ blob-shooter scene action completed result=%d milestone=%u",
-			result, argument);
-		return result != KjBlobShooter::kLoadFailed;
+		return shooter.run(argument) != KjBlobShooter::kLoadFailed;
 	}
 	if (action == kSceneActionEbz2sMenu) {
 		Ebz2sScene scene(engine);
-		const Ebz2sScene::Result result = scene.run(argument);
-		debugC(1, kDebugScene,
-			"Ripper: EBZ2S action-menu scene action completed result=%d argument=%u",
-			result, argument);
-		return result != Ebz2sScene::kLoadFailed;
+		return scene.run(argument) != Ebz2sScene::kLoadFailed;
 	}
 	if (action == kSceneActionMechiniCombat) {
 		MechiniEncounter encounter(engine);
-		const MechiniEncounter::Result result = encounter.run(argument);
-		debugC(1, kDebugCombat,
-			"Ripper: Mechini combat scene action completed result=%d milestone=%u", result, argument);
-		return result != MechiniEncounter::kLoadFailed;
+		return encounter.run(argument) != MechiniEncounter::kLoadFailed;
 	}
 	if (action == kSceneActionKeyGroupPuzzle ||
 			action == kSceneActionKeyGroupPuzzleAlias) {
 		KeyGroupPuzzle puzzle(engine);
-		const KeyGroupPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: key group puzzle scene action completed "
-			"action=%u result=%d milestone=%u",
-			action, result, argument);
-		return result != KeyGroupPuzzle::kLoadFailed;
+		return puzzle.run(argument) != KeyGroupPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionDateSelectionPuzzle) {
 		DateSelectionPuzzle puzzle(engine);
-		const DateSelectionPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: date-selection puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != DateSelectionPuzzle::kLoadFailed;
+		return puzzle.run(argument) != DateSelectionPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionKiSkullMazePuzzle) {
 		KiSkullMazePuzzle puzzle(engine);
-		const KiSkullMazePuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: KI skull-maze scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != KiSkullMazePuzzle::kLoadFailed;
+		return puzzle.run(argument) != KiSkullMazePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionRatiniCombat) {
 		RatiniEncounter encounter(engine);
-		const RatiniEncounter::Result result = encounter.run(argument);
-		debugC(1, kDebugCombat,
-			"Ripper: Ratini combat scene action completed result=%d milestone=%u",
-			result, argument);
-		return result != RatiniEncounter::kLoadFailed;
+		return encounter.run(argument) != RatiniEncounter::kLoadFailed;
 	}
 	if (action == kSceneActionAtkiniCombat) {
 		AtkiniEncounter encounter(engine);
-		const AtkiniEncounter::Result result = encounter.run(argument);
-		debugC(1, kDebugCombat,
-			"Ripper: Atkini combat scene action completed result=%d milestone=%u",
-			result, argument);
-		return result != AtkiniEncounter::kLoadFailed;
+		return encounter.run(argument) != AtkiniEncounter::kLoadFailed;
 	}
 	if (action == kSceneActionWebGridShiftPuzzle) {
 		WebGridShiftPuzzle puzzle(engine);
-		const WebGridShiftPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: web grid shift puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != WebGridShiftPuzzle::kLoadFailed;
+		return puzzle.run(argument) != WebGridShiftPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionHorusWordPuzzle) {
 		HorusWordPuzzle puzzle(engine);
-		const HorusWordPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: Horus word puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != HorusWordPuzzle::kLoadFailed;
+		return puzzle.run(argument) != HorusWordPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionSixDigitCodePuzzle) {
 		SixDigitCodePuzzle puzzle(engine);
-		const SixDigitCodePuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: six-digit code puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != SixDigitCodePuzzle::kLoadFailed;
+		return puzzle.run(argument) != SixDigitCodePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionShockLeverPuzzle) {
 		ShockLeverPuzzle puzzle(engine);
-		const ShockLeverPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: shock lever puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != ShockLeverPuzzle::kLoadFailed;
+		return puzzle.run(argument) != ShockLeverPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionTarotCardPuzzle) {
 		TarotCardsPuzzle puzzle(engine);
-		const TarotCardsPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: tarot-card puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != TarotCardsPuzzle::kLoadFailed;
+		return puzzle.run(argument) != TarotCardsPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionTubeSwitchScene) {
 		TubeScene scene(engine);
-		const TubeScene::Result result = scene.run(argument);
-		debugC(1, kDebugScene,
-			"Ripper: tube switch scene action completed result=%d milestone=%u", result, argument);
-		return result != TubeScene::kLoadFailed;
+		return scene.run(argument) != TubeScene::kLoadFailed;
 	}
 	if (action == kSceneActionKkTileMatchPuzzle) {
 		KkTileMatchPuzzle puzzle(engine);
-		const KkTileMatchPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: KK tile-match puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != KkTileMatchPuzzle::kLoadFailed;
+		return puzzle.run(argument) != KkTileMatchPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionGymSelector) {
 		GymScene scene(engine);
-		const GymScene::Result result = scene.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: gym selector scene action completed result=%d milestone=%u",
-			result, argument);
-		return result != GymScene::kLoadFailed;
+		return scene.run(argument) != GymScene::kLoadFailed;
 	}
 	if (action == kSceneActionCrystalPuzzle) {
 		CrystalPuzzle puzzle(engine);
@@ -401,21 +293,11 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	}
 	if (action == kSceneActionStainedGlassPuzzle) {
 		StainedGlassPuzzle puzzle(engine);
-		const StainedGlassPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: stained glass puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != StainedGlassPuzzle::kLoadFailed;
+		return puzzle.run(argument) != StainedGlassPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionKeypadSequencePuzzle) {
 		KeypadSequencePuzzle puzzle(engine);
-		const KeypadSequencePuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: keypad sequence puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != KeypadSequencePuzzle::kLoadFailed;
+		return puzzle.run(argument) != KeypadSequencePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionSetUiSelectionIndex) {
 		engine->getCursor()->setSelectionIndex(argument);
@@ -440,12 +322,7 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	}
 	if (action == kSceneActionBoardGame) {
 		BoardGamePuzzle puzzle(engine);
-		const BoardGamePuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: board-game puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != BoardGamePuzzle::kLoadFailed;
+		return puzzle.run(argument) != BoardGamePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionKaDialogue) {
 		const CyberManager::Result result = engine->getCyber()->runProgram(action, "ka", argument);
@@ -494,25 +371,16 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	}
 	if (action == kSceneActionEightButtonSequencePuzzle) {
 		EightButtonSequencePuzzle puzzle(engine);
-		const EightButtonSequencePuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: eight-button sequence puzzle scene action completed "
-			"result=%d milestone=%u",
-			result, argument);
-		return result != EightButtonSequencePuzzle::kLoadFailed;
+		return puzzle.run(argument) != EightButtonSequencePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionCainDialogue) {
 		CainScene scene(engine);
-		const CainScene::Result result = scene.run(argument);
-		debugC(1, kDebugDialogue,
-			"Ripper: Cain dialogue scene action completed result=%d argument=%u",
-			result, argument);
-		return result != CainScene::kLoadFailed;
+		return scene.run(argument) != CainScene::kLoadFailed;
 	}
 	if (action == kSceneActionAppendNotebookText)
 		return engine->getWac()->appendNotebookResourceString(argument);
 	if (manager._demoScriptAbi && action == 200) {
-		// Action 200 starts one-shot R_P_L1.WAV. It survives the scene handoff; action 201 stops it.
+		// Keep this one-shot cue playing across scene handoffs until action 201.
 		SceneAudioManager *sceneAudio = engine->getSceneAudio();
 		return sceneAudio->load("r_p_l1.wav", true) &&
 			sceneAudio->configure("r_p_l1", 100, 0, 0);
