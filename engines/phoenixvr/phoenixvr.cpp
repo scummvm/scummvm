@@ -317,7 +317,6 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 		_levels.push_back({"level3", "Level 3"});
 		_levels.push_back({"level4", "Level 4"});
 		_levels.push_back({"level5", "Level 5"});
-		setNextLevel();
 	} else if (gameIdMatches("pharaohcurse")) {
 		Common::INIFile file;
 		Common::String filename((_gameDescription->flags & ADGF_DEMO) ? "demo.wbm" : "pharaohs.wbm");
@@ -435,8 +434,9 @@ Common::SeekableReadStream *PhoenixVREngine::open(const Common::String &filename
 	debug("open %s", filename.c_str());
 	Common::SeekableReadStream *stream = nullptr;
 
+	auto sep = filename.contains('/') ? '/' : '\\';
 	if (!_currentScriptPath.empty()) {
-		stream = tryOpen(_currentScriptPath.append(filename, '\\').normalize(), origName);
+		stream = tryOpen(_currentScriptPath.append(filename, sep).normalize(), origName);
 		if (stream)
 			return stream;
 	}
@@ -451,7 +451,7 @@ Common::SeekableReadStream *PhoenixVREngine::open(const Common::String &filename
 			return stream;
 	}
 
-	stream = tryOpen(Common::Path{filename}, origName);
+	stream = tryOpen(Common::Path{filename, sep}, origName);
 	if (stream)
 		return stream;
 

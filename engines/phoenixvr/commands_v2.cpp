@@ -279,6 +279,21 @@ struct Cursor_Load : public Command {
 	}
 };
 
+struct Load_Cursors : public Command {
+	Load_Cursors(const Common::Array<Common::String> &args) {}
+	void exec(ExecutionContext &ctx) const override {
+		if (g_engine->gameIdMatches("mysteryofmummy")) {
+			g_engine->loadCursor(0, "Sprites/cursor_none.tga", 12, 19);
+			g_engine->loadCursor(1, "Sprites/cursor_action.tga", 4, 6);
+			g_engine->loadCursor(2, "Sprites/cursor_take.tga", 10, 16);
+			g_engine->loadCursor(3, "Sprites/cursor_look.tga", 10, 11);
+			g_engine->loadCursor(4, "Sprites/cursor_tool.tga", 1, 7);
+		} else {
+			warning("Load_Cursors is not implemented for this game");
+		}
+	}
+};
+
 struct Cursor_Set : public Command {
 	Common::String type;
 	Common::String index;
@@ -350,6 +365,9 @@ struct Sprite_Load : public Command {
 		g_engine->spriteLoad(name, path);
 	}
 };
+struct Sprite_LoadV : public Sprite_Load {
+	Sprite_LoadV(const Common::Array<Common::String> &args) : Sprite_Load(args) {}
+};
 
 struct Sprite_Screen : public Command {
 	int index;
@@ -367,6 +385,10 @@ struct Sprite_Screen : public Command {
 	void exec(ExecutionContext &ctx) const override {
 		g_engine->spriteScreen(index, name, x, y);
 	}
+};
+
+struct Sprite_ScreenV : public Sprite_Screen {
+	Sprite_ScreenV(const Common::Array<Common::String> &args) : Sprite_Screen(args) {}
 };
 
 struct Set_Lens : public Command {
@@ -572,7 +594,6 @@ static const char *const kUnhandledV2Commands[] = {
 	"GET_MOUSE_BUTTON",
 	"GOTO_REF",
 	"INTERPOLATE_VIEW",
-	"LOAD_CURSORS",
 	"LOAD_LETTERS",
 	"MUL",
 	"NOT",
@@ -614,6 +635,7 @@ static const char *const kUnhandledV2Commands[] = {
 	E(Leave_Save)       \
 	E(Limit_View)       \
 	E(Load_Context)     \
+	E(Load_Cursors)     \
 	E(Load_Slot)        \
 	E(Play_3DSound)     \
 	E(Play_Amb)         \
@@ -631,7 +653,9 @@ static const char *const kUnhandledV2Commands[] = {
 	E(Set_Lensflare)    \
 	E(Set_View_Angle)   \
 	E(Sprite_Load)      \
+	E(Sprite_LoadV)     \
 	E(Sprite_Screen)    \
+	E(Sprite_ScreenV)   \
 	E(Start_Light)      \
 	E(Start_Timer)      \
 	E(Stop_All_Sounds)  \
