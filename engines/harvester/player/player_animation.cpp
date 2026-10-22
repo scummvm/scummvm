@@ -38,6 +38,12 @@ namespace {
 static const int kRoomPlayerWalkAnimationRate = 17;
 static const int kRoomPlayerFastAnimationRate = 30;
 
+static int applyEvasiveFrameMovement(Entity &entity, const Common::Rect &previousBounds, int xStep) {
+	const int dx = MIN(MAX(xStep, 20 - previousBounds.left), 619 - previousBounds.right);
+	entity.setPosition(entity.getX() + dx, entity.getY(), entity.getZ());
+	return dx;
+}
+
 struct PlayerTurnAnimationRange {
 	PlayerTurnAnimationRange() {}
 	PlayerTurnAnimationRange(int firstFrame, int lastFrame, bool playBackwards)
@@ -175,10 +181,14 @@ bool Player::startEvasiveAnimation(bool moveLeft, bool moveRight, bool moveUp, b
 	playerState.walkHorizontalDirection = 0;
 	playerState.walkDepthDirection = 0;
 	playerState.nextMovementTick = 0;
+	const Common::Rect previousBounds = playerState.entity->getScreenRect();
 	playerState.entity->setAnimationFrameRange(firstFrame, lastFrame, false);
 	playerState.entity->setPlayBackwards(backwards);
 	playerState.entity->setAnimationRate(playerState.animationRate);
-	playerState.entity->setCurrentFrame(backwards ? lastFrame : firstFrame);
+	playerState.entity->setCurrentFrame(backwards ? lastFrame : firstFrame, true);
+	(void)applyEvasiveFrameMovement(*playerState.entity, previousBounds, playerState.evasiveXStep);
+	playerState.evasiveFrameBounds = playerState.entity->getScreenRect();
+	syncAnimationPlacement();
 	debugC(2, kDebugPlayer, "Harvester: player evasive state=0x%x facing=%d frames=%d..%d backwards=%d",
 		actorState, playerState.facing, firstFrame, lastFrame, backwards);
 	return true;
@@ -192,12 +202,13 @@ bool Player::updateEvasiveAnimation(HarvesterEngine &engine) {
 
 	Entity &entity = *playerState.entity;
 	const int actorState = playerState.evasiveState;
-	if (playerState.evasiveXStep != 0) {
-		entity.setPosition(entity.getX() + playerState.evasiveXStep, entity.getY(), entity.getZ());
-		syncAnimationPlacement();
-		reinsertPlayerSceneEntity(engine, playerState);
+	const int dx = applyEvasiveFrameMovement(entity, playerState.evasiveFrameBounds, playerState.evasiveXStep);
+	playerState.evasiveFrameBounds = entity.getScreenRect();
+	syncAnimationPlacement();
+	reinsertPlayerSceneEntity(engine, playerState);
+	if (dx != 0) {
 		debugC(3, kDebugPlayer, "Harvester: player evasive step state=0x%x frame=%d dx=%d",
-			actorState, entity.getCurrentFrame(), playerState.evasiveXStep);
+			actorState, entity.getCurrentFrame(), dx);
 	}
 	const bool backwards = actorState == 0x08 || actorState == 0x0f;
 	if (entity.getCurrentFrame() == (backwards ? playerState.evasiveFirstFrame : playerState.evasiveLastFrame)) {
@@ -207,7 +218,7 @@ bool Player::updateEvasiveAnimation(HarvesterEngine &engine) {
 	}
 
 	const int frameLeft = computePlayerFrameLeftX(playerState);
-	if ((actorState == 0x08 && frameLeft > 20) || (actorState == 0x0f && frameLeft < 620)) {
+	if ((actorState == 0x08 && frameLeft > 20) || (actorState == 0x0f && frameLeft < 500)) {
 		playerState.evasiveXStep = (int)(entity.getDepthScale() * (actorState == 0x08 ? -8.0f : 8.0f));
 	} else if (entity.getCurrentFrame() > playerState.evasiveFirstFrame + 2 &&
 			((actorState == 0x12 && frameLeft > 36) || (actorState == 0x13 && frameLeft < 616))) {

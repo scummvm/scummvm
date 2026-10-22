@@ -45,6 +45,7 @@ struct RoomPlayerState {
 	int evasiveFirstFrame = -1;
 	int evasiveLastFrame = -1;
 	int evasiveXStep = 0;
+	Common::Rect evasiveFrameBounds;
 	uint32 nextMovementTick = 0;
 	int keyboardWalkRequest = -1;
 	int walkHorizontalDirection = 0;
