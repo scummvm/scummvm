@@ -1285,7 +1285,7 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
             if dopunycode:
                 filename = punyencode(filename)
 
-            iso_file_path = os.path.join(dirname, file)
+            iso_file_path = os.path.join(dirname, file).replace("\\", "/")
             out_file_path = os.path.join(pwd, filename)
 
             if not silent:
