@@ -86,12 +86,9 @@ Font *FontManager::getTTFont(unsigned int fontnum) {
 
 Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int pointsize, bool antialiasing) {
 #ifdef USE_FREETYPE2
-	TTFId id;
-	id._filename = filename;
-	id._pointSize = pointsize;
-
-	TTFFonts::iterator iter;
-	iter = _ttfFonts.find(id);
+	Graphics::TTFRenderMode mode = antialiasing ? Graphics::kTTFRenderModeNormal : Graphics::kTTFRenderModeMonochrome;
+	Common::String key = filename.toString() + Common::String::format(":%d:%d", pointsize, mode);
+	auto iter = _ttfFonts.find(key);
 
 	if (iter != _ttfFonts.end())
 		return iter->_value;
@@ -105,7 +102,6 @@ Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int point
 
 	// open font using ScummVM TTF API
 	// Note: The RWops and ReadStream will be deleted by the TTF_Font
-	Graphics::TTFRenderMode mode = antialiasing ? Graphics::kTTFRenderModeNormal : Graphics::kTTFRenderModeMonochrome;
 	Graphics::Font *font = Graphics::loadTTFFont(fontids, DisposeAfterUse::YES, pointsize, Graphics::kTTFSizeModeCharacter, 0, 0, mode, 0, false);
 
 	if (!font) {
@@ -114,7 +110,7 @@ Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int point
 		return nullptr;
 	}
 
-	_ttfFonts[id] = font;
+	_ttfFonts[key] = font;
 
 	debugC(kDebugGraphics, "Opened TTF: %s.", filename.toString().c_str());
 	return font;

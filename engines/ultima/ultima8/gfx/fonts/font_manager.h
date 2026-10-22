@@ -23,6 +23,7 @@
 #define ULTIMA8_GFX_FONTS_FONTMANAGER_H
 
 #include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/path.h"
 #include "graphics/font.h"
 
@@ -39,31 +40,7 @@ class TTFont;
 
 class FontManager {
 private:
-	struct TTFId {
-		Common::Path _filename;
-		int _pointSize;
-		bool operator<(const TTFId &other) const {
-			return (_pointSize < other._pointSize ||
-			        (_pointSize == other._pointSize &&
-			         _filename < other._filename));
-		}
-	};
-
-	struct TTFHash {
-		uint operator()(const TTFId &x) const {
-			// TODO: See if something better can be used as a hash key
-			int64 val = (int64)&x;
-			return (uint)val;
-		}
-	};
-	struct TTFEqual {
-		bool operator()(const TTFId &x, const TTFId &y) const {
-			return x._filename == y._filename && x._pointSize == y._pointSize;
-		}
-	};
-
-	typedef Common::HashMap<TTFId, Graphics::Font *, TTFHash, TTFEqual> TTFFonts;
-	TTFFonts _ttfFonts;
+	Common::HashMap<Common::String, Graphics::Font *> _ttfFonts;
 
 	//! Get a (possibly cached) TTF_Font structure for filename/pointsize,
 	//! loading it if necessary.
