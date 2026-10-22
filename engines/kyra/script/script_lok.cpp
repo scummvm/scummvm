@@ -1265,11 +1265,10 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 		}
 
 		if (_brandonStatusBit & 2) {
-			if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 &&
-			        _currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 &&
-			        (_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
-				palIndex = 14;
-			}
+			if ((!(_flags.isTalkie || _flags.platform == Common::kPlatformMacintosh || _flags.platform == Common::kPlatformFMTowns) ||
+				(_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 && _currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173)) &&
+					(_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198))
+						palIndex = 14;
 		}
 
 		_screen->getPalette(1).copy(_specialPalettes[palIndex], 0, 15, 228);
