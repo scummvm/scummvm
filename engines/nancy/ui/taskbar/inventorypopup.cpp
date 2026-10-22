@@ -82,6 +82,9 @@ void InventoryPopup::open() {
 		return;
 
 	_currentPage = 0;
+	_scrollPos = 0.0f;
+	_scrollbarDragging = false;
+	_scrollbarHovered = false;
 
 	rebuildVisibleList();
 	refreshGrid();
