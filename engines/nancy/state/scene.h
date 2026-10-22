@@ -144,6 +144,11 @@ public:
 	// Nancy17 streams: scenes that run next to the one the player walks around in,
 	// which is the main stream
 	SceneStreamManager &getStreams() { return _streams; }
+
+#ifdef ENABLE_NANCY_V4
+	// Nancy19: the script of the main scene; null while there is none
+	Script::SceneContext *getScriptScene() const { return _scriptScene; }
+#endif
 	void addSceneVisit(uint16 sceneID) { _flags.sceneCounts.getOrCreateVal(sceneID)++; }
 	void pushScene(int16 itemID = -1);
 

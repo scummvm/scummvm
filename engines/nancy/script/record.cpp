@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/algorithm.h"
+
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/graphnode.h"
 #include "engines/nancy/script/luabind.h"
@@ -26,6 +28,7 @@
 #include "engines/nancy/script/record.h"
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/scenecontext.h"
+#include "engines/nancy/script/types.h"
 
 namespace Nancy {
 namespace Script {
@@ -453,7 +456,7 @@ bool Record::sendKeyEvent(RecordEvent event, Common::KeyCode key) {
 	return isHandled;
 }
 
-Record *checkRecord(lua_State *L, int index) {
+Record *toRecord(lua_State *L, int index) {
 	Record **object = (Record **)lua_touserdata(L, index);
 	if (object && lua_getmetatable(L, index)) {
 		lua_getfield(L, -1, kRecordMarker);
@@ -465,8 +468,109 @@ Record *checkRecord(lua_State *L, int index) {
 		}
 	}
 
-	luaL_typerror(L, index, "AR");
 	return nullptr;
+}
+
+Record *checkRecord(lua_State *L, int index) {
+	Record *record = toRecord(L, index);
+	if (!record) {
+		luaL_typerror(L, index, "AR");
+	}
+
+	return record;
+}
+
+// Only the scale and the move, which is what scripts mostly use
+static Common::String describeMatrix(const ScriptMatrix &matrix) {
+	return Common::String::format("Matrix(scale %g %g, move %g %g %g)",
+		matrix.m[0][0], matrix.m[1][1], matrix.m[3][0], matrix.m[3][1], matrix.m[3][2]);
+}
+
+Common::String describeValue(lua_State *L, int index) {
+	switch (lua_type(L, index)) {
+	case LUA_TNIL:
+		return "nil";
+	case LUA_TBOOLEAN:
+		return lua_toboolean(L, index) ? "true" : "false";
+	case LUA_TNUMBER:
+		return Common::String::format("%g", lua_tonumber(L, index));
+	case LUA_TSTRING:
+		return Common::String::format("\"%s\"", lua_tostring(L, index));
+	case LUA_TFUNCTION:
+		return "function";
+	case LUA_TTABLE:
+		return Common::String::format("table (%d)", (int)lua_objlen(L, index));
+	default:
+		break;
+	}
+
+	Record *record = toRecord(L, index);
+	if (record) {
+		return Common::String::format("AR %s", record->getTypeName());
+	}
+
+	const ScriptRect *rect = testRect(L, index);
+	if (rect) {
+		return Common::String::format("Rect(%d, %d, %d, %d)", rect->left, rect->top, rect->right, rect->bottom);
+	}
+
+	const ScriptVector *vector = testVector(L, index);
+	if (vector) {
+		Common::String text = "Vector(";
+		for (int i = 0; i < vector->size; ++i) {
+			text += Common::String::format(i ? ", %g" : "%g", vector->v[i]);
+		}
+
+		return text + ")";
+	}
+
+	const ScriptMatrix *matrix = testMatrix(L, index);
+	if (matrix) {
+		return describeMatrix(*matrix);
+	}
+
+	const uint32 *color = testColor(L, index);
+	if (color) {
+		return Common::String::format("Color(%u, %u, %u, %u)", *color >> 24, (*color >> 16) & 0xFF, (*color >> 8) & 0xFF, *color & 0xFF);
+	}
+
+	// The types of the scripts that print themselves, like Rect
+	if (luaL_callmeta(L, index, "__tostring")) {
+		const Common::String text = lua_isstring(L, -1) ? lua_tostring(L, -1) : "?";
+		lua_pop(L, 1);
+		return text;
+	}
+
+	return lua_typename(L, lua_type(L, index));
+}
+
+void Record::describeFields(Common::Array<Common::String> &lines) {
+	lua_State *L = getLua();
+	const int top = lua_gettop(L);
+
+	// The kind of record can have a newer value than the one it was made with
+	pushStorage();
+	lua_pushnil(L);
+	while (lua_next(L, -2)) {
+		if (lua_type(L, -2) == LUA_TSTRING) {
+			const Common::String key = lua_tostring(L, -2);
+			const bool hasNewerValue = getField(key);
+			lines.push_back(Common::String::format("%s = %s", key.c_str(), describeValue(L, -1).c_str()));
+			if (hasNewerValue) {
+				lua_pop(L, 1);
+			}
+		}
+
+		lua_pop(L, 1);
+	}
+
+	lua_settop(L, top);
+
+	if (hasTransform()) {
+		lines.push_back("world transform = " + describeMatrix(getTransform()));
+	}
+
+	Common::sort(lines.begin(), lines.end());
 }
 
 static int recordIndex(lua_State *L) {

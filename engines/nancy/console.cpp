@@ -43,6 +43,11 @@
 
 #include "engines/nancy/action/actionrecord.h"
 
+#ifdef ENABLE_NANCY_V4
+#include "engines/nancy/script/record.h"
+#include "engines/nancy/script/scenecontext.h"
+#endif
+
 namespace Nancy {
 
 NancyConsole::NancyConsole() : GUI::Debugger() {
@@ -61,6 +66,10 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("load_scene", WRAP_METHOD(NancyConsole, Cmd_loadScene));
 	registerCmd("scene_id", WRAP_METHOD(NancyConsole, Cmd_sceneID));
 	registerCmd("list_actionrecords", WRAP_METHOD(NancyConsole, Cmd_listActionRecords));
+#ifdef ENABLE_NANCY_V4
+	registerCmd("list_records", WRAP_METHOD(NancyConsole, Cmd_listRecords));
+	registerCmd("script_export", WRAP_METHOD(NancyConsole, Cmd_scriptExport));
+#endif
 	registerCmd("actionrecord_export", WRAP_METHOD(NancyConsole, Cmd_actionRecordExport));
 	registerCmd("scan_ar_type", WRAP_METHOD(NancyConsole, Cmd_scanForActionRecordType));
 	registerCmd("list_includes", WRAP_METHOD(NancyConsole, Cmd_listIncludes));
@@ -457,18 +466,23 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::Path sceneName(Common::String::format("S%s", argv[1]));
-	IFF *iff = g_nancy->_resource->loadIFF(sceneName);
-	if (!iff) {
-		debugPrintf("Invalid scene S%s\n", argv[1]);
-		return true;
+	// Nancy19 and later scenes are scripts, and one that can't be loaded leaves
+	// the player where they are
+	if (g_nancy->getGameType() < kGameTypeNancy19) {
+		Common::Path sceneName(Common::String::format("S%s", argv[1]));
+		IFF *iff = g_nancy->_resource->loadIFF(sceneName);
+		if (!iff) {
+			debugPrintf("Invalid scene S%s\n", argv[1]);
+			return true;
+		}
+
+		delete iff;
 	}
 
 	SceneChangeDescription scene;
 	scene.sceneID = (uint16)atoi(argv[1]);
 	NancySceneState.changeScene(scene);
 	NancySceneState.setState(State::Scene::kLoad);
-	delete iff;
 	return cmdExit(0, nullptr);
 }
 
@@ -691,6 +705,137 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 		debugPrintf("\n\t\t\torFlag == %s", dep.orFlag == true ? "true" : "false");
 	}
 }
+
+#ifdef ENABLE_NANCY_V4
+// The records of the scripted scenes: those of every stream, or with the fields
+// the scripts gave them, those of one stream or one record of it
+bool NancyConsole::Cmd_listRecords(int argc, const char **argv) {
+	if (argc > 3) {
+		debugPrintf("Lists the records of the scene scripts, in Nancy19 and later.\n");
+		debugPrintf("Usage: %s [stream] [record name or kind]\n", argv[0]);
+		debugPrintf("Without a stream, the records of every stream are listed; with one, also their fields.\n");
+		debugPrintf("The main scene is the stream %s.\n", State::SceneStreamManager::getMainStreamName());
+		return true;
+	}
+
+	if (g_nancy->getGameType() < kGameTypeNancy19) {
+		debugPrintf("This game has action records; use list_actionrecords\n");
+		return true;
+	}
+
+	if (g_nancy->getState() != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	State::SceneStreamManager &streams = NancySceneState.getStreams();
+	Common::Array<Common::String> streamNames;
+	if (argc >= 2) {
+		streamNames.push_back(argv[1]);
+	} else {
+		streams.getStreamNames(streamNames, true);
+	}
+
+	const bool showsFields = argc >= 2;
+	const Common::String wantedRecord = argc == 3 ? argv[2] : "";
+
+	for (const Common::String &streamName : streamNames) {
+		Script::SceneContext *context = nullptr;
+		if (streamName.equalsIgnoreCase(State::SceneStreamManager::getMainStreamName())) {
+			context = NancySceneState.getScriptScene();
+		} else {
+			State::SceneStream *stream = streams.find(streamName);
+			context = stream ? stream->getScriptScene() : nullptr;
+		}
+
+		if (!context) {
+			debugPrintf("No running stream %s\n", streamName.c_str());
+			continue;
+		}
+
+		const Common::Array<Script::Record *> &records = context->getRecords();
+		debugPrintf("%s, scene %s: %u records\n", streamName.c_str(), context->getSceneName().c_str(), records.size());
+
+		for (uint i = 0; i < records.size(); ++i) {
+			Script::Record *record = records[i];
+			const Common::String globalName = context->findGlobalName(record);
+
+			// "ND.MovieAR" is a Movie
+			Common::String typeName = record->getTypeName();
+			if (typeName.hasPrefix("ND.")) {
+				typeName.erase(0, 3);
+			}
+
+			if (typeName.hasSuffix("AR")) {
+				typeName.erase(typeName.size() - 2);
+			}
+
+			// A record is asked for by its name, or by its kind
+			if (!wantedRecord.empty() && !globalName.equalsIgnoreCase(wantedRecord) && !typeName.equalsIgnoreCase(wantedRecord)) {
+				continue;
+			}
+
+			const char *state = "inactive";
+			if (record->isDone()) {
+				state = "done";
+			} else if (record->isActive()) {
+				state = record->hasStarted() ? "running" : "active";
+			}
+
+			debugPrintf("  %u: %s %s (%s, z %g)\n", i, typeName.c_str(),
+				globalName.empty() ? "-" : globalName.c_str(), state, record->getZ());
+
+			if (showsFields) {
+				Common::Array<Common::String> fields;
+				record->describeFields(fields);
+				for (const Common::String &field : fields) {
+					debugPrintf("      %s\n", field.c_str());
+				}
+			}
+		}
+
+		debugPrintf("\n");
+	}
+
+	return true;
+}
+
+// Writes a script as it is, compiled, to a file
+bool NancyConsole::Cmd_scriptExport(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Exports a script of Nancy19 and later\n");
+		debugPrintf("Usage: %s <script name or scene number>\n", argv[0]);
+		debugPrintf("The scripts are compiled Lua 5.1, which a decompiler like unluac turns into Lua code.\n");
+		return true;
+	}
+
+	// Scenes are named after their number
+	Common::String name = argv[1];
+	if (Common::isDigit(name.firstChar())) {
+		name = "s" + name;
+	}
+
+	Common::SeekableReadStream *script = g_nancy->_resource->loadScript(Common::Path(name));
+	if (!script) {
+		debugPrintf("Failed to find script '%s'\n", name.c_str());
+		return true;
+	}
+
+	Common::String filename = Common::String::format("%s_%s.luac", g_nancy->getGameId(), name.c_str());
+	Common::DumpFile dumpfile;
+	if (!dumpfile.open(Common::Path(filename))) {
+		debugPrintf("Failed to write '%s'\n", filename.c_str());
+		delete script;
+		return true;
+	}
+
+	dumpfile.writeStream(script);
+	dumpfile.close();
+	delete script;
+	debugPrintf("Wrote %s\n", filename.c_str());
+	return true;
+}
+#endif
 
 bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 	using namespace Action;

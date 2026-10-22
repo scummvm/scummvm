@@ -142,6 +142,38 @@ bool SceneContext::load() {
 	return true;
 }
 
+Common::String SceneContext::findGlobalName(const Record *record) const {
+	lua_State *L = getLua();
+	const int top = lua_gettop(L);
+	Common::String name;
+
+	lua_pushnil(L);
+	while (name.empty() && lua_next(L, LUA_GLOBALSINDEX)) {
+		if (lua_type(L, -2) == LUA_TSTRING) {
+			if (toRecord(L, -1) == record) {
+				name = lua_tostring(L, -2);
+			} else if (lua_istable(L, -1)) {
+				lua_pushnil(L);
+				while (name.empty() && lua_next(L, -2)) {
+					if (toRecord(L, -1) == record) {
+						const Common::String key = lua_type(L, -2) == LUA_TSTRING ?
+							Common::String::format("\"%s\"", lua_tostring(L, -2)) :
+							Common::String::format("%g", lua_tonumber(L, -2));
+						name = Common::String::format("%s[%s]", lua_tostring(L, -4), key.c_str());
+					}
+
+					lua_pop(L, 1);
+				}
+			}
+		}
+
+		lua_pop(L, 1);
+	}
+
+	lua_settop(L, top);
+	return name;
+}
+
 bool SceneContext::include(const Common::String &name) {
 	return _lua->runScript(name);
 }

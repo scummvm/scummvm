@@ -118,6 +118,9 @@ public:
 	const Common::String &getName() const { return _name; }
 	const StreamFlags &getFlags() const { return _flags; }
 	int32 getZOffset() const { return _zOffset; }
+#ifdef ENABLE_NANCY_V4
+	Script::SceneContext *getScriptScene() const { return _scriptScene; }
+#endif
 	const Common::String &getSceneName() const { return _sceneName; }
 	SceneChangeDescription &getSceneInfo() { return _sceneInfo; }
 	Action::ActionManager &getActionManager() { return _actionManager; }
@@ -200,6 +203,9 @@ public:
 	// stream is left out unless asked for.
 	void getStreamNames(Common::Array<Common::String> &names, bool withUI) const;
 
+	// The running stream of that name; null when there is none
+	SceneStream *find(const Common::String &name) const;
+
 	static const char *getMainStreamName();
 	static const char *getUIStreamName();
 
@@ -233,7 +239,6 @@ public:
 	void restore();
 
 private:
-	SceneStream *find(const Common::String &name) const;
 	void endChildren(const Common::Array<SceneStream::Child> &children);
 
 	// Every stream in the order they run and get input in. The main stream is

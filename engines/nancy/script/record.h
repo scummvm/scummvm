@@ -174,6 +174,9 @@ public:
 	// whether the record was saying something.
 	virtual bool skipSpeech() { return false; }
 
+	// For the debugger: what the scripts gave the record, as "name = value"
+	void describeFields(Common::Array<Common::String> &lines);
+
 protected:
 	lua_State *getLua() const;
 
@@ -240,6 +243,12 @@ void registerRecordAPI(lua_State *L);
 
 // The record a script handed in, or a script error
 Record *checkRecord(lua_State *L, int index);
+
+// The record a value stands for, or null when it is something else
+Record *toRecord(lua_State *L, int index);
+
+// For the debugger: a value of the scripts as text
+Common::String describeValue(lua_State *L, int index);
 
 } // End of namespace Script
 } // End of namespace Nancy

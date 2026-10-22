@@ -56,6 +56,10 @@ private:
 	bool Cmd_loadScene(int argc, const char **argv);
 	bool Cmd_sceneID(int argc, const char **argv);
 	bool Cmd_listActionRecords(int argc, const char **argv);
+#ifdef ENABLE_NANCY_V4
+	bool Cmd_listRecords(int argc, const char **argv);
+	bool Cmd_scriptExport(int argc, const char **argv);
+#endif
 	bool Cmd_actionRecordExport(int argc, const char **argv);
 	bool Cmd_scanForActionRecordType(int argc, const char **argv);
 	bool Cmd_listIncludes(int argc, const char **argv);

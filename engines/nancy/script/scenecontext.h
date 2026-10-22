@@ -92,6 +92,10 @@ public:
 	bool hasRecords() const { return !_records.empty() || !_newRecords.empty(); }
 	const Common::Array<Record *> &getRecords() const { return _records; }
 
+	// For the debugger: the global a script keeps the record in, like "doorNAV",
+	// or an entry of a table in one, like "laptopSFX[2]"; empty for none
+	Common::String findGlobalName(const Record *record) const;
+
 	// The record that describes the scene, which is always the first one
 	SummaryRecord *getSummary() const { return _summary; }
 
