@@ -19,8 +19,9 @@
  *
  */
 
-#include "igor/igor.h"
 #include "common/debug-channels.h"
+
+#include "igor/igor.h"
 
 namespace Igor {
 

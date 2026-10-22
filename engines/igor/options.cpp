@@ -18,13 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "audio/softsynth/pcspk.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "graphics/scaler.h"
 
-#include "igor/igor.h"
 #include "igor/floppy_menu.h"
+#include "igor/igor.h"
 
 namespace Igor {
 

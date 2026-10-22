@@ -21,9 +21,9 @@
 
 #include "common/translation.h"
 
-#include "igor/metaengine.h"
 #include "igor/detection.h"
 #include "igor/igor.h"
+#include "igor/metaengine.h"
 
 namespace Igor {
 

@@ -22,6 +22,9 @@
 #ifndef IGOR_H
 #define IGOR_H
 
+#include "audio/mididrv_ms.h"
+#include "audio/midiparser.h"
+#include "audio/mixer.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -37,13 +40,9 @@
 #include "engines/savestate.h"
 #include "graphics/screen.h"
 
-#include "audio/mididrv_ms.h"
-#include "audio/midiparser.h"
-#include "audio/mixer.h"
-
 #include "igor/detection.h"
-#include "igor/font.h"
 #include "igor/floppy_font.h"
+#include "igor/font.h"
 #include "igor/resource_ids.h"
 
 namespace Igor {

@@ -19,10 +19,11 @@
  *
  */
 
-#include "igor/igor.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
+
+#include "igor/igor.h"
 
 namespace Igor {
 

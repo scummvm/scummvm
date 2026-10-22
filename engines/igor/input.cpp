@@ -23,6 +23,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
+
 #include "igor/igor.h"
 
 namespace Igor {
