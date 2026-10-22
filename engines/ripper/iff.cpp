@@ -27,7 +27,7 @@ namespace Ripper {
 
 void IFFDecoder::loadPBMBitmap(Common::SeekableReadStream &stream, byte *data, uint16 outPitch) {
 	const Image::IFFDecoder::Header *header = getHeader();
-	// ReadIffBitmapHeaderAndPayloadBuffer at 0x6a6d4 rounds each PBM row to an even byte count.
+	// PBM rows include a padding byte when the width is odd.
 	const uint16 scanlinePitch = (header->width + 1) & ~1;
 	Common::Array<byte> scanline(scanlinePitch);
 

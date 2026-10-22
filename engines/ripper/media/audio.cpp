@@ -54,7 +54,8 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
 			path.c_str());
 		return false;
 	}
-	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(audioStream, DisposeAfterUse::YES);
+	Common::ScopedPtr<Audio::SeekableAudioStream> stream(
+		Audio::makeWAVStream(audioStream, DisposeAfterUse::YES));
 	if (!stream)
 		return false;
 	const uint32 durationMs = stream->getLength().msecs();
@@ -62,19 +63,16 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
 		displayTop);
 	IndexedDisplaySnapshot textBacking;
 	if (textControl.isActive()) {
-		if (!textBacking.capture()) {
-			delete stream;
+		if (!textBacking.capture())
 			return false;
-		}
 		textControl.configureSegment(1, durationMs, 0, 0,
 			_engine->getSettings()->getVideoMode());
 		textControl.applySharedPalettePatch();
 	}
 
 	Audio::SoundHandle handle;
-	// PlayBlockingAudioWithOptionalText at 0x206e0 [1.05] uses the same category as
-	// packetized dialogue/video audio, which the Remote Control names VIDEO VOL.
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, stream);
+	// VIDEO VOL controls both blocking audio and movie dialogue.
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, stream.release());
 	if (showCursor)
 		_engine->getCursor()->update(kBlockingAudioCursor);
 	else

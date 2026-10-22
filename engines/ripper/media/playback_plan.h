@@ -115,9 +115,6 @@ struct SmackerPlaybackPlan {
 	SmackerLoopPolicy loop;
 	SmackerCallbackPolicy callback;
 	SmackerRenderingPolicy rendering;
-	const char *retailRoute;
-
-	SmackerPlaybackPlan() : retailRoute("RunMediaSequence@0x1e516") {}
 };
 
 Common::String describeSmackerPlaybackPlan(const SmackerPlaybackPlan &plan);

@@ -24,11 +24,11 @@ namespace Ripper {
 
 Common::String describeSmackerPlaybackPlan(const SmackerPlaybackPlan &plan) {
 	return Common::String::format(
-		"route=%s position=%d,%d originY=%d scale=%u controls=%d "
+		"position=%d,%d originY=%d scale=%u controls=%d "
 		"sceneUi=%d palette=interface:%d,wac:%d,preserve:%d,remember:%d "
 		"frames=%u..%u previewLimit=%u loop=start:%u,fromStart:%d,bounded:%u "
 		"timeline=%d callback=%d transparent=%d,retainFinal=%d",
-		plan.retailRoute, plan.placement.x, plan.placement.y,
+		plan.placement.x, plan.placement.y,
 		plan.placement.originY, plan.placement.displayScale,
 		plan.input.allowEscSpace, plan.input.serviceSceneUi,
 		plan.palette.patchInterfacePalette, plan.palette.patchWacMediaPalette,

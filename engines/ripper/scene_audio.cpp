@@ -154,8 +154,7 @@ bool SceneAudioManager::start(Slot &slot) {
 	if ((slot.control & 1) != 0)
 		stream = Audio::makeLoopingAudioStream(wavStream, 0);
 	const byte volume = (byte)(slot.volumePercent * Audio::Mixer::kMaxChannelVolume / 100);
-	// StartAudioTriggerSlot at 0x37297 uses control bit 0 for indefinitely
-	// repeating scene beds. One-shot trigger slots use the SFX profile.
+	// Looping scene beds use music volume; one-shot triggers use SFX volume.
 	const Audio::Mixer::SoundType soundType = (slot.control & 1) ?
 		Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 	_mixer->playStream(soundType, &slot.handle, stream, -1, volume);
@@ -266,8 +265,7 @@ void SceneAudioManager::setVolume(const Common::String &key, uint targetVolumePe
 }
 
 void SceneAudioManager::service(uint frame) {
-	// RunMediaSequence at 0x1e516 publishes one-based frame counters to
-	// ServiceSceneFrameAudioAndBriefingTriggers at 0x138c9 after each frame.
+	// Frame counters are one-based and published after presentation.
 	for (uint i = 0; i < kSlotCount; ++i) {
 		Slot &slot = _slots[i];
 		if (!slot.occupied)

@@ -257,8 +257,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			name.c_str(), firstFrame, lastFrame, frameCount);
 		return false;
 	}
-	// RIPPER.LE chooses scale per packetized branch, not from the IAVF container.
-	// In 640x400 mode, branches smaller than 321x201 use 2:1 scaling.
+	// Each packetized branch chooses its own scale, regardless of the IAVF canvas.
 	if (displayScale == kAutoPacketizedDisplayScale)
 		displayScale = decoder.getHeight() < 0xc9 && decoder.getWidth() < 0x141 ? 2 : 1;
 	const uint outputWidth = decoder.getWidth() * displayScale;
@@ -442,8 +441,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		if (!sequenceCallback)
 			presentScreen();
 	};
-	// Hide the shared cursor before AVI playback.
-	// A branch callback may own a cursor during playback.
+	// A branch callback may show its own cursor during playback.
 	if (!serviceSceneUi &&
 			(!sequenceCallback || !sequenceCallback->keepsCursorVisible()))
 		_engine->getCursor()->setVisible(false);

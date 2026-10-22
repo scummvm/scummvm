@@ -172,9 +172,7 @@ static bool parseIavfInternal(Common::SeekableReadStream &stream, const Common::
 		case 0x75:
 			if (descriptor.arg0 != 0 || descriptor.arg1 != 0 || descriptor.arg2 != 0)
 				return false;
-			// RunPacketizedMediaPlaybackCore at 0x5b592 prebuffers the packet
-			// stream here. playIavf reconstructs every parsed branch before it
-			// starts the shared audio timeline.
+			// Playback reconstructs every branch before starting the audio timeline.
 			debugC(2, kDebugVideo, "Ripper: IAVF '%s' reached prebuffer command 0x75", name.c_str());
 			break;
 
@@ -243,8 +241,7 @@ static bool parseIavfInternal(Common::SeekableReadStream &stream, const Common::
 				!activeSegment || !hasPendingFrame ||
 				activeSegment->frameSizes.size() >= activeSegment->expectedFrames)
 				return false;
-			// LoadCustomPacketPaletteStateBlock at 0x6c430 consumes opcode 0x6c,
-			// while 0x77 reaches RenderCustomPacketFrameAndOverlays at 0x6c486.
+			// Commit the frame only when its render command follows opcode 0x6c.
 			activeSegment->frameSizes.push_back(pendingFramePayload.size());
 			activeSegment->framePayloads.push_back(Common::move(pendingFramePayload));
 			activeSegment->frameAudioOffsets.push_back(pendingFrameAudioOffset);

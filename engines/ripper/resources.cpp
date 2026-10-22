@@ -295,7 +295,6 @@ bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
 
 bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
 		PresentationFrameRegionTable &table) {
-	// Skip the 0x64-byte tool header, then separates frameCount * 6 state bytes from 9-byte regions.
 	table.frames.clear();
 	if (stream.size() < 0x68)
 		return false;

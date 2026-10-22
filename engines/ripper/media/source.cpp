@@ -133,8 +133,8 @@ bool MediaPlayer::playValidatedSmacker(Common::SeekableReadStream *stream,
 	}
 
 	debugC(3, kDebugVideo,
-		"Ripper: validated %s Smacker media='%s' route=%s",
-		description, name.c_str(), plan.retailRoute);
+		"Ripper: validated %s Smacker media='%s'",
+		description, name.c_str());
 	return playSmacker(ownedStream.release(), name, plan);
 }
 

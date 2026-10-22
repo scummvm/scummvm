@@ -52,8 +52,6 @@ public:
 	bool syncGame(Common::Serializer &serializer);
 
 private:
-	// InitializeAudioTriggerSlotFromPath at 0x37174 and the scene handlers at
-	// 0x15e48..0x160cc operate on g_audioTriggerSlots[20].
 	struct Slot {
 		Common::String path;
 		Common::String key;

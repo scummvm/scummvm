@@ -75,8 +75,7 @@ const Graphics::Surface *RipperSmackerDecoder::restartAtFrame(uint frame) {
 }
 
 void RipperSmackerDecoder::repairEfw4FrameTable(const Common::String &name) {
-	// Original game treats frame-table DWORDs as byte counts. EFW4 frame 62's
-	// 0x2000a070 crosses EOF; 0x8070 ends there. Match the full signature.
+	// EFW4.SMK's damaged frame-size entry makes the declared payloads exceed EOF.
 	const uint kFrame = 62;
 	const uint32 kDamagedSize = 0x2000a070;
 	const uint32 kRepairedSize = 0x8070;

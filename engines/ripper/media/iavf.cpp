@@ -101,7 +101,6 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		*command = 0;
 	for (uint i = 0; i < movie.segments.size() && !_engine->shouldQuit(); ++i) {
 		if (movie.segments[i].clearDisplayBefore) {
-			// Handles IAVF opcode 0x68 by clearing the active logical page through display command 0x14.
 			g_system->fillScreen(0);
 			presentScreen();
 			debugC(2, kDebugVideo,
@@ -151,7 +150,6 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			frameAudioOffsets = &relativeAudioOffsets;
 		}
 		SmackerPlaybackPlan plan;
-		plan.retailRoute = "RunPacketizedMediaPlaybackCore@0x5b592";
 		plan.input.allowEscSpace = allowEscSpace;
 		plan.placement.x = segmentX;
 		plan.placement.y = segmentY;
@@ -201,8 +199,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		}
 		completedFinalSegment = i + 1 == movie.segments.size();
 	}
-	// Opcode 0x70 ends packet dispatch, not presentation lifetime.
-	// Keeps the final frame until managed audio ends; KA_BOOK.AVI relies on it.
+	// Keep the final frame until managed audio ends; KA_BOOK.AVI relies on it.
 	if (result && completedFinalSegment && audioActive &&
 			!_engine->shouldQuit() && !_engine->getScripts()->hasPendingSceneTransition() &&
 			_mixer->isSoundHandleActive(audioHandle)) {
