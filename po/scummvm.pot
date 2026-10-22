@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-21 17:05+0000\n"
+"POT-Creation-Date: 2026-10-22 16:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1041,12 +1041,12 @@ msgid "GUI"
 msgstr ""
 
 #. I18N: Action in In Cold Blood
-#: gui/gui-manager.cpp:163 engines/hpl1/metaengine.cpp:91
-#: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173
-#: engines/lab/metaengine.cpp:160 engines/macs2/metaengine.cpp:46
-#: engines/mohawk/myst.cpp:572 engines/mohawk/riven.cpp:853
-#: engines/sludge/keymapper_tables.h:43 engines/supernova/metaengine.cpp:226
-#: engines/teenagent/metaengine.cpp:207
+#: gui/gui-manager.cpp:163 engines/harold/metaengine.cpp:57
+#: engines/hpl1/metaengine.cpp:91 engines/icb/icb.cpp:95
+#: engines/icb/icb.cpp:173 engines/lab/metaengine.cpp:160
+#: engines/macs2/metaengine.cpp:46 engines/mohawk/myst.cpp:572
+#: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:43
+#: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:207
 #: engines/ultima/ultima4/metaengine.cpp:42
 #: engines/ultima/ultima4/metaengine.cpp:147 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
@@ -2551,8 +2551,8 @@ msgstr ""
 
 #: gui/options.cpp:2977 engines/engine.cpp:648
 #: engines/access/metaengine.cpp:325 engines/drascula/metaengine.cpp:255
-#: engines/queen/metaengine.cpp:269 engines/sherlock/metaengine.cpp:410
-#: engines/ultima/nuvie/metaengine.cpp:71
+#: engines/harold/metaengine.cpp:76 engines/queen/metaengine.cpp:269
+#: engines/sherlock/metaengine.cpp:410 engines/ultima/nuvie/metaengine.cpp:71
 msgid "Move"
 msgstr ""
 
@@ -6768,13 +6768,13 @@ msgstr ""
 #: engines/bagel/metaengine.cpp:59 engines/bagel/metaengine.cpp:65
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
 #: engines/freescape/movement.cpp:117 engines/got/metaengine.cpp:78
-#: engines/hugo/metaengine.cpp:197 engines/lure/metaengine.cpp:209
-#: engines/mads/metaengine.cpp:282 engines/mm/mm1/metaengine.cpp:42
-#: engines/mm/mm1/metaengine.cpp:48 engines/saga/metaengine.cpp:328
-#: engines/tinsel/metaengine.cpp:258 engines/tsage/metaengine.cpp:190
-#: engines/tucker/metaengine.cpp:221 engines/twine/metaengine.cpp:388
-#: engines/ultima/ultima0/metaengine.cpp:40 engines/vcruise/metaengine.cpp:164
-#: engines/wintermute/keymapper_tables.h:63
+#: engines/harold/metaengine.cpp:63 engines/hugo/metaengine.cpp:197
+#: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:282
+#: engines/mm/mm1/metaengine.cpp:42 engines/mm/mm1/metaengine.cpp:48
+#: engines/saga/metaengine.cpp:328 engines/tinsel/metaengine.cpp:258
+#: engines/tsage/metaengine.cpp:190 engines/tucker/metaengine.cpp:221
+#: engines/twine/metaengine.cpp:388 engines/ultima/ultima0/metaengine.cpp:40
+#: engines/vcruise/metaengine.cpp:164 engines/wintermute/keymapper_tables.h:63
 msgid "Escape"
 msgstr ""
 
@@ -9393,6 +9393,46 @@ msgstr ""
 
 #: engines/hadesch/rooms/troy.cpp:505
 msgid "The Troy minigame is not supported yet. Skipping"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:54
+msgid "J.B. Harold: Blue Chicago Blues"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:70
+msgid "Skip / Advance"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:86
+msgid "Choice 1"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:86
+msgid "Choice 2"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:86
+msgid "Choice 3"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:87
+msgid "Choice 4"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:87
+msgid "Choice 5"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:87
+msgid "Choice 6"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:88
+msgid "Choice 7"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:88
+msgid "Choice 8"
 msgstr ""
 
 #: engines/harvester/metaengine.cpp:37
