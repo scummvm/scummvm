@@ -43,6 +43,9 @@
 #include "image/codecs/svq1.h"
 #include "image/codecs/truemotion1.h"
 #include "image/codecs/xan.h"
+#ifdef USE_VC1
+#include "image/codecs/vc1.h"
+#endif
 
 #include "common/endian.h"
 #include "common/system.h"
@@ -96,6 +99,24 @@ Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, in
 		return new MSMPEG4Decoder(width, height, bitsPerPixel);
 #else
 		missingCodec = "Microsoft MPEG-4 v3";
+		break;
+#endif
+
+	case MKTAG('W', 'M', 'V', '3'):
+	case MKTAG('w', 'm', 'v', '3'):
+#ifdef USE_VC1
+		return new WMV3Decoder(width, height);
+#else
+		missingCodec = "WMV3";
+		break;
+#endif
+	case MKTAG('W', 'V', 'C', '1'):
+	case MKTAG('w', 'v', 'c', '1'):
+	case MKTAG('W', 'M', 'V', 'A'):
+#ifdef USE_VC1
+		return new WMV3Decoder(width, height, true);
+#else
+		missingCodec = "VC-1";
 		break;
 #endif
 
@@ -212,6 +233,24 @@ Codec *createQuickTimeCodec(uint32 tag, int width, int height, int bitsPerPixel)
 	case MKTAG('r','a','w',' '):
 		// Used my L-Zone-mac (Director game)
 		return new BitmapRawDecoder(width, height, bitsPerPixel, true, true);
+	case MKTAG('W', 'M', 'V', '3'):
+	case MKTAG('w', 'm', 'v', '3'):
+#ifdef USE_VC1
+		return new WMV3Decoder(width, height);
+#else
+		missingCodec = "WMV3";
+		break;
+#endif
+	case MKTAG('W', 'V', 'C', '1'):
+	case MKTAG('w', 'v', 'c', '1'):
+	case MKTAG('W', 'M', 'V', 'A'):
+#ifdef USE_VC1
+		return new WMV3Decoder(width, height, true);
+#else
+		missingCodec = "VC-1";
+		break;
+#endif
+
 	case MKTAG('I','V','3','2'):
 #ifdef USE_INDEO3
 		// Indeo 3: Used by Team Xtreme: Operation Weather Disaster (Spanish)
