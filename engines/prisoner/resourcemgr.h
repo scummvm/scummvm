@@ -31,6 +31,7 @@
 #include "common/util.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 #include "prisoner/kroarchive.h"
 
@@ -85,6 +86,9 @@ public:
 			uint32 dataSize;
 			slotIndex = add(pakName, pakSlot, type);
 			data = _loader->load(pakName, pakSlot, type, dataSize);
+			// Unused slots in the game data hold a 5-byte "dummy" placeholder instead of a resource
+			if (dataSize == 5 && !memcmp(data, "dummy", 5))
+				error("ResourceManager::load() %s slot %d is an unused 'dummy' placeholder in the game data", pakName.c_str(), pakSlot);
 			Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::YES);
 			_slots[slotIndex].resource = new T();
 			_slots[slotIndex].resource->load(stream);
