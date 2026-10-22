@@ -187,6 +187,7 @@ void Manager::onInventoryClicked(int16 itemID) {
 		break;
 	default:
 		NancySceneState.removeItemFromInventory(itemID, true);
+		g_nancy->_sound->playSound("BUOK");
 		break;
 	}
 }
@@ -253,6 +254,7 @@ void Manager::onItemStreamClicked(const InvButton &button) {
 		break;
 	default:
 		NancySceneState.removeItemFromInventory(itemID, true);
+		g_nancy->_sound->playSound("BUOK");
 		break;
 	}
 }

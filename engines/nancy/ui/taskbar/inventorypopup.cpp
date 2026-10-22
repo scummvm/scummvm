@@ -550,11 +550,11 @@ void InventoryPopup::handleInput(NancyInput &input) {
 
 			const bool pickUp = item.keepItem != kInvItemNewSceneView;
 			NancySceneState.removeItemFromInventory(itemID, pickUp);
+			g_nancy->_sound->playSound("BUOK");
 
 			if (item.keepItem == kInvItemNewSceneView) {
 				// Close-up view: stash the item and warp to its scene, which
 				// dismisses the popup.
-				g_nancy->_sound->playSound("BUOK");
 				NancySceneState.pushScene(itemID);
 				SceneChangeDescription sceneChange;
 				sceneChange.sceneID = item.sceneID;

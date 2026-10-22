@@ -134,7 +134,11 @@ void InventoryBox::handleInput(NancyInput &input) {
 
 					if (!disabled) {
 						// Item is not disabled
-						NancySceneState.removeItemFromInventory(itemID, item.keepItem != kInvItemNewSceneView);
+						bool pickUp = item.keepItem != kInvItemNewSceneView;
+						NancySceneState.removeItemFromInventory(itemID, pickUp);
+						if (pickUp) {
+							g_nancy->_sound->playSound("BUOK");
+						}
 						hoveredHotspot = -1;
 
 						if (item.keepItem == kInvItemNewSceneView) {

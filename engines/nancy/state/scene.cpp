@@ -583,12 +583,12 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 	if (_flags.items[id] == g_nancy->_true || getHeldItem() == id) {
 		_flags.items[id] = g_nancy->_false;
 
+		// Unlike adding an item, this is silent: the inventory UI plays the
+		// click itself when the player takes an item out
 		if (pickUp) {
 			setHeldItem(id);
-			g_nancy->_sound->playSound("BUOK");
 		} else if (getHeldItem() == id) {
 			setHeldItem(-1);
-			g_nancy->_sound->playSound("BUOK");
 		}
 
 		if (_ndui) {

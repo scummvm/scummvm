@@ -926,7 +926,7 @@ void ConversationSound::ConversationFlag::set() const {
 		if (flag.flag == g_nancy->_true) {
 			NancySceneState.addItemToInventory(flag.label);
 		} else {
-			NancySceneState.removeItemFromInventory(flag.label);
+			NancySceneState.removeItemFromInventory(flag.label, false);
 		}
 
 		break;
