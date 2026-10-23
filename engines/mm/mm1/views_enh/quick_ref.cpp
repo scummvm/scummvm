@@ -105,6 +105,12 @@ void QuickRef::writeCharacterLine(int charNum) {
 
 	setTextColor(c.conditionColor());
 	Common::String condStr = c.getConditionString(c.worstCondition());
+
+	// Keep long condition names within their column
+	if (condStr == "Stone")
+		condStr = "Ston";
+	else if (condStr.size() > 5)
+		condStr = Common::String(condStr.c_str(), 5);
 	writeString(COLUMN_CONDITION, yp, condStr);
 
 	setTextColor(0);
