@@ -61,12 +61,12 @@ bool Hacker::msgGame(const GameMessage &msg) {
 		int questNum = g_globals->_party[0]._quest;
 		Common::String line;
 
-		if (questNum >= 8 && questNum <= 14)
+		if (questNum >= 15 && questNum <= 21)
 			line = map.checkQuestComplete();
 		else
 			line = STRING["maps.map36.hacker4"];
 
-		g_maps->_mapPos.y++;
+		g_maps->_mapPos.x--;
 		map.redrawGame();
 
 		addText(line);
@@ -81,8 +81,15 @@ bool Hacker::msgKeypress(const KeypressMessage &msg) {
 	if (_mode == CAN_ACCEPT) {
 		if (msg.keycode == Common::KEYCODE_y) {
 			map.acceptQuest();
-			_mode = ACCEPTED_QUEST;
 
+			// Asking for an eighth quest is a punishment, which
+			// leaves the quest at zero
+			if (!g_globals->_party[0]._quest) {
+				close();
+				return true;
+			}
+
+			_mode = ACCEPTED_QUEST;
 			clearButtons();
 			Common::String line = Common::String::format("%s %s",
 				STRING["maps.map36.hacker3"].c_str(),

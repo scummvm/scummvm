@@ -158,7 +158,7 @@ void Map36::acceptQuest() {
 			Character &c = g_globals->_party[i];
 			c._flags[9] = CHARFLAG9_80;
 			c._flags[6] = CHARFLAG6_80;
-			c._backpack.empty();
+			c._backpack.clear();
 		}
 
 		send(SoundMessage(
@@ -196,7 +196,7 @@ Common::String Map36::checkQuestComplete() {
 		}
 
 		return Common::String::format(
-			STRING["maps.map36.inspectron6"].c_str(),
+			STRING["maps.map36.hacker6"].c_str(),
 			QUEST_EXPERIENCE[qIndex]);
 	} else {
 		// The quest isn't yet complete
