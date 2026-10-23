@@ -239,11 +239,7 @@ endif
 
 ifndef RISCOS
 ifndef KOLIBRIOS
-ifdef USE_ATARI_PLUGIN_PROVIDER
-MODULE_OBJS += plugins/atari/atari-provider.o
-else ifdef USE_FIREBEE_PLUGIN_PROVIDER
-MODULE_OBJS += plugins/firebee/firebee-provider.o
-else
+ifndef SDL_ATARI
 MODULE_OBJS += plugins/sdl/sdl-provider.o
 endif
 endif
@@ -264,6 +260,14 @@ ifdef USE_DISCORD
 MODULE_OBJS += \
 	presence/discord/discord.o
 endif
+endif
+
+ifdef SDL_ATARI
+MODULE_OBJS += \
+	fs/atari/atari-fs.o \
+	fs/atari/atari-fs-factory.o \
+	plugins/atari/atari-provider.o \
+	plugins/firebee/firebee-provider.o
 endif
 
 ifdef KOLIBRIOS

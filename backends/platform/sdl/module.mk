@@ -54,6 +54,12 @@ MODULE_OBJS += \
 	miyoo/miyoo.o
 endif
 
+ifdef SDL_ATARI
+MODULE_OBJS += \
+	atari/atari-main.o \
+	atari/atari.o
+endif
+
 ifdef MORPHOS
 MODULE_OBJS += \
 	morphos/morphos-main.o \
