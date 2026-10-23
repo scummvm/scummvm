@@ -80,12 +80,18 @@ bool SceneScriptNR07::ClickedOnActor(int actorId) {
 			if (Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)) {
 				DM_Add_To_List_Never_Repeat_Once_Selected(1130, 3, 5, 7); // BLACK SEDAN
 			}
-			if (_vm->_cutContent
-				&& Game_Flag_Query(kFlagAR02DektoraBoughtScorpions) // if Dektora bought the scorpions
-				&& ((Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow) // and McCoy saw her with the box
-					 && Actor_Clue_Query(kActorMcCoy, kClueScorpions))
-					|| Actor_Clue_Query(kActorMcCoy, kClueScorpionbox)) // or saw the box in her room (always there)
-			) {
+			bool canAskAboutScorpions;
+			if (_vm->_cutContent) {
+				// Can ask this if Dektora bought the scorpions and McCoy saw her with the box
+				// or he saw the box in the outer dressing room (it's there in all cases).
+				canAskAboutScorpions = Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
+					&& ((Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow) && Actor_Clue_Query(kActorMcCoy, kClueScorpions))
+						|| Actor_Clue_Query(kActorMcCoy, kClueScorpionbox));
+			} else {
+				// This flag is never set.
+				canAskAboutScorpions = Game_Flag_Query(kFlagNotUsed510);
+			}
+			if (canAskAboutScorpions) {
 				DM_Add_To_List_Never_Repeat_Once_Selected(1140, 1, 4, 7); // SCORPIONS
 			}
 		} else {
