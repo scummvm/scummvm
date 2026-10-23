@@ -36,16 +36,6 @@ CombatEncounter::MeterConfig::MeterConfig() : charge(0), discharge(0),
 		damage[i] = 0;
 }
 
-Common::String CombatEncounter::configString(const Common::INIFile &ini,
-		const char *section, const char *key, const Common::String &fallback) const {
-	return getIniString(ini, section, key, fallback);
-}
-
-int CombatEncounter::configInt(const Common::INIFile &ini, const char *section,
-		const char *key, int fallback) const {
-	return getIniInt(ini, section, key, fallback);
-}
-
 bool CombatEncounter::loadConfig(const Common::String &name, Common::INIFile &ini) {
 	Common::File file;
 	if (!file.open(Common::Path(name))) {
@@ -64,12 +54,12 @@ void CombatEncounter::loadMeterConfig(const Common::INIFile &ini, const char *se
 		MeterConfig &config) {
 	for (uint i = 0; i < kDamageCount; ++i) {
 		const Common::String key = Common::String::format("damage%u", i + 1);
-		config.damage[i] = configInt(ini, section, key.c_str(), 0);
+		config.damage[i] = getIniInt(ini, section, key.c_str(), 0);
 	}
-	config.charge = configInt(ini, section, "charge", 0);
-	config.discharge = configInt(ini, section, "discharge", 0);
-	config.chargeTicks = configInt(ini, section, "charge time", 0);
-	config.dischargeTicks = configInt(ini, section, "discharge time", 0);
+	config.charge = getIniInt(ini, section, "charge", 0);
+	config.discharge = getIniInt(ini, section, "discharge", 0);
+	config.chargeTicks = getIniInt(ini, section, "charge time", 0);
+	config.dischargeTicks = getIniInt(ini, section, "discharge time", 0);
 }
 
 bool CombatEncounter::loadFrameRegions(const Common::String &name, SceneData &scene) {
@@ -215,7 +205,7 @@ bool CombatEncounter::loadResources(const Common::String &configName, uint diffi
 	_scenes.clear();
 	for (uint i = 1; ; ++i) {
 		const Common::String key = Common::String::format("scene%u", i);
-		const Common::String basename = configString(ini, "SCENE", key.c_str());
+		const Common::String basename = getIniString(ini, "SCENE", key.c_str());
 		if (basename.empty())
 			break;
 		SceneData scene;
@@ -233,19 +223,19 @@ bool CombatEncounter::loadResources(const Common::String &configName, uint diffi
 	loadMeterConfig(ini, "CREATURE", _meterConfig[kCreatureMeter]);
 	loadMeterConfig(ini, "WEAPON", _meterConfig[kWeaponMeter]);
 	loadMeterConfig(ini, "SHIELD", _meterConfig[kShieldMeter]);
-	_weaponRapidFireTicks = configInt(ini, "WEAPON", "rapid fire", 0);
-	_ambientSound = configString(ini, "SCENE", "sound", _definition.ambientSound);
-	_creatureSound = configString(ini, "CREATURE", "sound", _definition.creatureSound);
-	_weaponSound = configString(ini, "WEAPON", "sound", _definition.weaponSound);
-	_shieldSound = configString(ini, "SHIELD", "sound", _definition.shieldSound);
+	_weaponRapidFireTicks = getIniInt(ini, "WEAPON", "rapid fire", 0);
+	_ambientSound = getIniString(ini, "SCENE", "sound", _definition.ambientSound);
+	_creatureSound = getIniString(ini, "CREATURE", "sound", _definition.creatureSound);
+	_weaponSound = getIniString(ini, "WEAPON", "sound", _definition.weaponSound);
+	_shieldSound = getIniString(ini, "SHIELD", "sound", _definition.shieldSound);
 	for (uint i = 0; i < kEffectGroupCount; ++i) {
 		const Common::String key = Common::String::format("hit%u", i + 1);
-		_creatureHitSounds[i] = configString(ini, "CREATURE", key.c_str());
+		_creatureHitSounds[i] = getIniString(ini, "CREATURE", key.c_str());
 	}
 	for (uint i = 0; i < kDamageCount; ++i) {
 		const Common::String key = Common::String::format("hit%u", i + 1);
-		_shieldHitSounds[i] = configString(ini, "SHIELD", key.c_str());
-		_healthHitSounds[i] = configString(ini, "HEALTH", key.c_str());
+		_shieldHitSounds[i] = getIniString(ini, "SHIELD", key.c_str());
+		_healthHitSounds[i] = getIniString(ini, "HEALTH", key.c_str());
 	}
 	for (uint meter = 0; meter < kMeterCount; ++meter) {
 		const MeterConfig &config = _meterConfig[meter];

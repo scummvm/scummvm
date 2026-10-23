@@ -30,10 +30,6 @@
 #include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
-namespace Common {
-class INIFile;
-}
-
 namespace Ripper {
 
 class KdShootingGallery : public Puzzle, public MediaSequenceCallback {
@@ -66,8 +62,6 @@ private:
 	bool loadResources(uint difficulty);
 	bool loadFrameData();
 	bool loadVisualAssets();
-	int configInt(const Common::INIFile &ini, const char *section,
-		const char *key, int fallback = 0) const;
 	static Common::String basenameFromPath(const Common::String &path);
 	static Common::String formatScore(int score);
 

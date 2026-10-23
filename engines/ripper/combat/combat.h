@@ -130,10 +130,6 @@ private:
 	bool loadBitmapAssets();
 	void loadMeterConfig(const Common::INIFile &ini, const char *section,
 		MeterConfig &config);
-	Common::String configString(const Common::INIFile &ini, const char *section,
-		const char *key, const Common::String &fallback = Common::String()) const;
-	int configInt(const Common::INIFile &ini, const char *section,
-		const char *key, int fallback = 0) const;
 	static Common::String basenameFromPath(const Common::String &path);
 	static Common::String normalizeCueName(const Common::String &path);
 	static const char *meterName(uint meter);

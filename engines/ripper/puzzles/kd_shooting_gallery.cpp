@@ -131,11 +131,6 @@ KdShootingGallery::KdShootingGallery(RipperEngine *engine) : Puzzle(engine),
 	}
 }
 
-int KdShootingGallery::configInt(const Common::INIFile &ini,
-		const char *section, const char *key, int fallback) const {
-	return getIniInt(ini, section, key, fallback);
-}
-
 bool KdShootingGallery::loadConfig(uint difficulty) {
 	const Common::String name = Common::String::format("kd%u.ini", difficulty);
 	Common::File file;
@@ -150,18 +145,18 @@ bool KdShootingGallery::loadConfig(uint difficulty) {
 		return false;
 
 	_config = Config();
-	_config.frameRate = configInt(ini, "SCENE", "frame rate");
-	_config.requiredHits[0] = configInt(ini, "SCORE", "shots1");
-	_config.requiredHits[1] = configInt(ini, "SCORE", "shots2");
-	_config.points[0] = configInt(ini, "SCORE", "points1");
-	_config.points[1] = configInt(ini, "SCORE", "points2");
-	_config.goal = configInt(ini, "SCORE", "goal");
+	_config.frameRate = getIniInt(ini, "SCENE", "frame rate");
+	_config.requiredHits[0] = getIniInt(ini, "SCORE", "shots1");
+	_config.requiredHits[1] = getIniInt(ini, "SCORE", "shots2");
+	_config.points[0] = getIniInt(ini, "SCORE", "points1");
+	_config.points[1] = getIniInt(ini, "SCORE", "points2");
+	_config.goal = getIniInt(ini, "SCORE", "goal");
 	// The configured penalty does not affect the score.
-	_config.unusedPenalty = configInt(ini, "SCORE", "penalty");
-	_config.rapidFireTicks = configInt(ini, "WEAPON", "rapid fire");
-	_config.weaponDischarge = configInt(ini, "WEAPON", "discharge");
-	_config.weaponCharge = configInt(ini, "WEAPON", "charge");
-	_config.weaponChargeTicks = configInt(ini, "WEAPON", "charge time");
+	_config.unusedPenalty = getIniInt(ini, "SCORE", "penalty");
+	_config.rapidFireTicks = getIniInt(ini, "WEAPON", "rapid fire");
+	_config.weaponDischarge = getIniInt(ini, "WEAPON", "discharge");
+	_config.weaponCharge = getIniInt(ini, "WEAPON", "charge");
+	_config.weaponChargeTicks = getIniInt(ini, "WEAPON", "charge time");
 	if (_config.frameRate < 0 ||
 			_config.requiredHits[0] < 0 || _config.requiredHits[1] < 0 ||
 			_config.points[0] < 0 || _config.points[1] < 0 ||

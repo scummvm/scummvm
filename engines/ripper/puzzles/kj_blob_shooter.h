@@ -30,10 +30,6 @@
 #include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
-namespace Common {
-class INIFile;
-}
-
 namespace Ripper {
 
 class KjBlobShooter : public Puzzle, public MediaSequenceCallback {
@@ -87,8 +83,6 @@ private:
 	bool loadConfig(uint difficulty);
 	bool loadResources(uint difficulty);
 	bool loadVisualAssets();
-	int configInt(const Common::INIFile &ini, const char *section,
-		const char *key, int fallback) const;
 
 	uint16 serviceKeyboard(uint backgroundFrame);
 	void serviceWeapon(const Common::Point &point, bool firing, uint32 now);

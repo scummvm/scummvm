@@ -91,11 +91,6 @@ KjBlobShooter::KjBlobShooter(RipperEngine *engine) :
 		_scriptedAutoHit(false), _result(kExited) {
 }
 
-int KjBlobShooter::configInt(const Common::INIFile &ini,
-		const char *section, const char *key, int fallback) const {
-	return getIniInt(ini, section, key, fallback);
-}
-
 bool KjBlobShooter::loadConfig(uint difficulty) {
 	Common::String name = Common::String::format("kj%u.ini", difficulty);
 	Common::File file;
@@ -119,29 +114,29 @@ bool KjBlobShooter::loadConfig(uint difficulty) {
 		return false;
 
 	_config = Config();
-	_config.frameRate = configInt(ini, "SCENE", "frame rate", _config.frameRate);
+	_config.frameRate = getIniInt(ini, "SCENE", "frame rate", _config.frameRate);
 	_config.startWhooshFrame =
-		configInt(ini, "SCENE", "start whoosh", _config.startWhooshFrame);
+		getIniInt(ini, "SCENE", "start whoosh", _config.startWhooshFrame);
 	_config.spawnDelayTicks =
-		configInt(ini, "SCORE", "spawn delay", _config.spawnDelayTicks);
+		getIniInt(ini, "SCORE", "spawn delay", _config.spawnDelayTicks);
 	_config.spawnDecreaseDelayTicks =
-		configInt(ini, "SCORE", "spawn dec delay", _config.spawnDecreaseDelayTicks);
+		getIniInt(ini, "SCORE", "spawn dec delay", _config.spawnDecreaseDelayTicks);
 	_config.spawnDecreaseTicks =
-		configInt(ini, "SCORE", "spawn dec", _config.spawnDecreaseTicks);
+		getIniInt(ini, "SCORE", "spawn dec", _config.spawnDecreaseTicks);
 	_config.missesAllowed =
-		configInt(ini, "SCORE", "misses allowed", _config.missesAllowed);
+		getIniInt(ini, "SCORE", "misses allowed", _config.missesAllowed);
 	_config.shotsPerBlob =
-		configInt(ini, "SCORE", "shots", _config.shotsPerBlob);
+		getIniInt(ini, "SCORE", "shots", _config.shotsPerBlob);
 	_config.winRateTicks =
-		configInt(ini, "SCORE", "win rate", _config.winRateTicks);
+		getIniInt(ini, "SCORE", "win rate", _config.winRateTicks);
 	_config.rapidFireTicks =
-		configInt(ini, "WEAPON", "rapid fire", _config.rapidFireTicks);
+		getIniInt(ini, "WEAPON", "rapid fire", _config.rapidFireTicks);
 	_config.weaponDischarge =
-		configInt(ini, "WEAPON", "discharge", _config.weaponDischarge);
+		getIniInt(ini, "WEAPON", "discharge", _config.weaponDischarge);
 	_config.weaponCharge =
-		configInt(ini, "WEAPON", "charge", _config.weaponCharge);
+		getIniInt(ini, "WEAPON", "charge", _config.weaponCharge);
 	_config.weaponChargeTicks =
-		configInt(ini, "WEAPON", "charge time", _config.weaponChargeTicks);
+		getIniInt(ini, "WEAPON", "charge time", _config.weaponChargeTicks);
 
 	if (_config.frameRate <= 0 || _config.startWhooshFrame < 0 ||
 			_config.spawnDelayTicks < 0 ||
