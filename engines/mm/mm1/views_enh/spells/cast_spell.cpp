@@ -254,10 +254,16 @@ void CastSpell::castSpell(Character *target) {
 }
 
 void CastSpell::spellError() {
-	g_events->drawElements();
-
 	Common::String msg = getSpellError();
-	send(SoundMessage(msg, ALIGN_MIDDLE));
+
+	if (isInCombat()) {
+		// A global drawElements() here can redraw the underlying
+		// dungeon/outdoor scene over the battle screen
+		send("Combat", GameMessage("SPELL_RESULT", msg, 0));
+	} else {
+		g_events->drawElements();
+		send(SoundMessage(msg, ALIGN_MIDDLE));
+	}
 }
 
 } // namespace Spells
