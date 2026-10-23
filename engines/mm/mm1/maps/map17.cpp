@@ -31,6 +31,8 @@ namespace Maps {
 
 #define VAL1 509
 #define CORRECT_ANSWERS 511
+#define COLOR_BRIDGE_VISITED_OFFSET (6 * MAP_W + 4)
+#define COLOR_BRIDGE_DISCOVERED 0x80
 
 void Map17::special() {
 	Game::Encounter &enc = g_globals->_encounters;
@@ -78,6 +80,10 @@ void Map17::special00() {
 }
 
 void Map17::special01() {
+	// Record that the Hooded Figure / Color Bridge has been discovered,
+	// using a fixed bit in the saved visit data
+	_visited[COLOR_BRIDGE_VISITED_OFFSET] |= COLOR_BRIDGE_DISCOVERED;
+
 	SoundMessage msg(STRING["maps.map17.bridge"],
 		[]() {
 			g_events->addView("ColorQuestions");
@@ -163,6 +169,12 @@ void Map17::askQuestion(uint partyIndex) {
 	}
 }
 */
+bool Map17::colorBridgeVisited() const {
+	const byte visited = _visited[COLOR_BRIDGE_VISITED_OFFSET];
+	return (visited & COLOR_BRIDGE_DISCOVERED) != 0 ||
+		(visited & 0x7f) != 0;
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM

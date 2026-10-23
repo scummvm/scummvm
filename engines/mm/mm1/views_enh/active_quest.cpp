@@ -22,6 +22,8 @@
 #include "mm/mm1/views_enh/active_quest.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/maps/map06.h"
+#include "mm/mm1/maps/map17.h"
+#include "mm/mm1/maps/map23.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/metaengine.h"
 
@@ -51,6 +53,14 @@ Maps::Map06 &crazedWizardMap() {
 
 Maps::Map &clericsMap() {
 	return *g_maps->getMap(47);
+}
+
+Maps::Map17 &colorBridgeMap() {
+	return *static_cast<Maps::Map17 *>(g_maps->getMap(17));
+}
+
+Maps::Map23 &gypsyMap() {
+	return *static_cast<Maps::Map23 *>(g_maps->getMap(23));
 }
 
 byte partyFlags(int index) {
@@ -289,6 +299,47 @@ void addAlamarStory(Common::Array<QuestLogEntry> &entries, bool done) {
 	}
 }
 
+void addSigns(Common::Array<QuestLogEntry> &entries, bool done) {
+	const bool gypsySeen = gypsyMap().gypsyVisited();
+	const bool hoodedSeen = colorBridgeMap().colorBridgeVisited();
+	const bool hasCoralKey = g_globals->_party.hasItem(CORAL_KEY_ID);
+	int assigned = 0;
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		if (g_globals->_party[i]._flags[4] & CHARFLAG4_ASSIGNED)
+			++assigned;
+	}
+
+	// Assigned signs also prove a Gypsy visit in older saves.
+	const bool gypsyKnown = gypsySeen || assigned != 0;
+	const bool started = gypsyKnown || hoodedSeen || hasCoralKey;
+	const bool finished = hasCoralKey;
+
+	if (done != finished || (!done && !started))
+		return;
+
+	Common::String details;
+	if (done) {
+		details = "Passed the Color Bridge challenge and obtained the Coral Key.";
+	} else if (gypsyKnown && hoodedSeen) {
+		if (assigned == (int)g_globals->_party.size()) {
+			details = "The party knows all its signs. Use them to answer the Hooded Figure's Color Bridge challenge and claim the Coral Key.";
+		} else {
+			details = Common::String::format(
+				"The Hooded Figure guards the Color Bridge. Return to the Gypsy and learn every current party member's sign. Signs known: %d/%d.",
+				assigned, (int)g_globals->_party.size());
+		}
+	} else if (hoodedSeen) {
+		details = "The Hooded Figure at the Color Bridge demands each character's sign. Find the Gypsy and learn them.";
+	} else {
+		details = Common::String::format(
+			"The Gypsy has revealed signs for %d/%d current party members. Learn the remaining signs and/or discover where they are needed.",
+			assigned, (int)g_globals->_party.size());
+	}
+
+	addEntry(entries, done, "The Color Bridge", details);
+}
+
 void addRanalou(Common::Array<QuestLogEntry> &entries, bool done) {
 	struct PrisonerJudgmentRecord {
 		byte _flag;
@@ -380,6 +431,7 @@ void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	addClerics(entries, false);
 	addCourier(entries, false);
 	addAlamarStory(entries, false);
+	addSigns(entries, false);
 	addRanalou(entries, false);
 
 	// Completed history follows and remains selectable with Up/Down
@@ -388,6 +440,7 @@ void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	addClerics(entries, true);
 	addCourier(entries, true);
 	addAlamarStory(entries, true);
+	addSigns(entries, true);
 	addRanalou(entries, true);
 	addOtherReliableCompletions(entries);
 }

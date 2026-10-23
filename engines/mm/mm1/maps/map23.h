@@ -66,6 +66,12 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * True once the Gypsy event has been encountered.
+	 * Ordinary visited-cell state is accepted for pre-patch save recovery.
+	 */
+	bool gypsyVisited() const;
 };
 
 } // namespace Maps

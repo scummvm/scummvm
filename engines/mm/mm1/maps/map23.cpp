@@ -31,6 +31,8 @@ namespace Maps {
 
 #define VAL1 107
 #define VAL2 108
+#define GYPSY_VISITED_OFFSET (11 * MAP_W + 9)
+#define COLOR_BRIDGE_DISCOVERED 0x80
 
 void Map23::special() {
 	// Scan for special actions on the map cell
@@ -81,6 +83,7 @@ void Map23::special01() {
 }
 
 void Map23::special02() {
+	_visited[GYPSY_VISITED_OFFSET] |= COLOR_BRIDGE_DISCOVERED;
 	g_events->addView("Gypsy");
 }
 
@@ -205,6 +208,12 @@ void Map23::fountain() {
 			g_events->send(InfoMessage(16, 2, STRING["maps.map23.cheers"]));
 		}
 	));
+}
+
+bool Map23::gypsyVisited() const {
+	const byte visited = _visited[GYPSY_VISITED_OFFSET];
+	return (visited & COLOR_BRIDGE_DISCOVERED) != 0 ||
+		(visited & 0x7f) != 0;
 }
 
 } // namespace Maps
