@@ -202,30 +202,6 @@ HorusWordPuzzle::HorusWordPuzzle(RipperEngine *engine) :
 		_exitRequested(false) {
 }
 
-bool HorusWordPuzzle::loadBitmap(const Common::String &name,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(name));
-	if (!stream || !decodeBitmapAsset(*stream, frame)) {
-		warning("Ripper: could not decode Horus word bitmap '%s'",
-			name.c_str());
-		return false;
-	}
-	return true;
-}
-
-bool HorusWordPuzzle::loadPcx(const Common::String &name,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(name));
-	if (!stream || !decodePcxAsset(*stream, frame)) {
-		warning("Ripper: could not decode Horus word PCX '%s'",
-			name.c_str());
-		return false;
-	}
-	return true;
-}
-
 bool HorusWordPuzzle::loadAssets() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_engine->getResources()->createReadStreamForPath(kLibraryName));
@@ -234,8 +210,8 @@ bool HorusWordPuzzle::loadAssets() {
 			kLibraryName);
 		return false;
 	}
-	if (!loadBitmap(kBackgroundName, _background) ||
-			!loadBitmap(kMaskName, _mask))
+	if (!_library.loadBitmap(kBackgroundName, _background) ||
+			!_library.loadBitmap(kMaskName, _mask))
 		return false;
 	if (_background.width != kRipperScreenWidth ||
 			_background.height != kRipperScreenHeight ||
@@ -249,9 +225,9 @@ bool HorusWordPuzzle::loadAssets() {
 	}
 
 	for (uint letter = 0; letter < kLetterCount; ++letter) {
-		if (!loadBitmap(Common::String::format("but%u", letter + 1),
+		if (!_library.loadBitmap(Common::String::format("but%u", letter + 1),
 				_buttons[letter]) ||
-				!loadPcx(Common::String::format("%c", 'a' + letter),
+				!_library.loadPcx(Common::String::format("%c", 'a' + letter),
 				_letters[letter]))
 			return false;
 	}

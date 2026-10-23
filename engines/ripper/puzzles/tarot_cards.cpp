@@ -108,28 +108,6 @@ bool TarotCardsPuzzle::loadConfiguration() {
 	return true;
 }
 
-bool TarotCardsPuzzle::loadBitmap(const Common::String &name,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(name));
-	if (!stream || !decodeBitmapAsset(*stream, frame)) {
-		warning("Ripper: could not decode tarot bitmap '%s'", name.c_str());
-		return false;
-	}
-	return true;
-}
-
-bool TarotCardsPuzzle::loadPcx(const Common::String &name,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(name));
-	if (!stream || !decodePcxAsset(*stream, frame)) {
-		warning("Ripper: could not decode tarot PCX '%s'", name.c_str());
-		return false;
-	}
-	return true;
-}
-
 bool TarotCardsPuzzle::loadAssets() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_engine->getResources()->createReadStreamForPath(kLibraryName));
@@ -137,7 +115,7 @@ bool TarotCardsPuzzle::loadAssets() {
 		warning("Ripper: could not open tarot library '%s'", kLibraryName);
 		return false;
 	}
-	if (!loadPcx(kBackgroundName, _background))
+	if (!_library.loadPcx(kBackgroundName, _background))
 		return false;
 	if (_background.width != kRipperScreenWidth ||
 			_background.height != kSceneHeight ||
@@ -149,9 +127,9 @@ bool TarotCardsPuzzle::loadAssets() {
 	}
 
 	for (uint card = 0; card < TarotCardsModel::kCardCount; ++card) {
-		if (!loadBitmap(Common::String::format("si%u", card + 1),
+		if (!_library.loadBitmap(Common::String::format("si%u", card + 1),
 				_smallCards[card]) ||
-				!loadBitmap(Common::String::format("bi%u", card + 1),
+				!_library.loadBitmap(Common::String::format("bi%u", card + 1),
 					_largeCards[card]))
 			return false;
 	}

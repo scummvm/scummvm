@@ -193,30 +193,6 @@ bool StainedGlassPuzzle::loadConfiguration() {
 	return true;
 }
 
-bool StainedGlassPuzzle::loadPcx(const Common::String &name,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(name));
-	if (!stream || !decodePcxAsset(*stream, frame)) {
-		warning("Ripper: could not decode stained glass PCX '%s'",
-			name.c_str());
-		return false;
-	}
-	return true;
-}
-
-bool StainedGlassPuzzle::loadBitmap(const Common::String &name,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(name));
-	if (!stream || !decodeBitmapAsset(*stream, frame)) {
-		warning("Ripper: could not decode stained glass bitmap '%s'",
-			name.c_str());
-		return false;
-	}
-	return true;
-}
-
 bool StainedGlassPuzzle::loadAssets() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_engine->getResources()->createReadStreamForPath(kLibraryName));
@@ -225,8 +201,8 @@ bool StainedGlassPuzzle::loadAssets() {
 			kLibraryName);
 		return false;
 	}
-	if (!loadPcx(kBackgroundName, _background) ||
-			!loadPcx(kTransitionMaskName, _transitionMask))
+	if (!_library.loadPcx(kBackgroundName, _background) ||
+			!_library.loadPcx(kTransitionMaskName, _transitionMask))
 		return false;
 	if (_background.width != kRipperScreenWidth ||
 			_background.height != kRipperScreenHeight ||
@@ -240,11 +216,11 @@ bool StainedGlassPuzzle::loadAssets() {
 	}
 
 	for (uint tile = 0; tile < kTileCount; ++tile) {
-		if (!loadBitmap(Common::String::format("p%02u.bbm", tile + 1),
+		if (!_library.loadBitmap(Common::String::format("p%02u.bbm", tile + 1),
 				_tiles[tile]))
 			return false;
 	}
-	if (!loadBitmap("p17.bbm", _blankTile))
+	if (!_library.loadBitmap("p17.bbm", _blankTile))
 		return false;
 	for (uint cue = 0; cue < kCueCount; ++cue) {
 		const Common::String name = Common::String::format("glas%u.wav", cue);

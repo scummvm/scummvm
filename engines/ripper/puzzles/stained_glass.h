@@ -41,8 +41,6 @@ public:
 private:
 	bool loadConfiguration();
 	bool loadAssets();
-	bool loadPcx(const Common::String &name, BitmapAssetFrame &frame);
-	bool loadBitmap(const Common::String &name, BitmapAssetFrame &frame);
 	bool buildPuzzleBacking();
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y) const;

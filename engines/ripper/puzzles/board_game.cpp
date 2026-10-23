@@ -247,17 +247,6 @@ BoardGamePuzzle::BoardGamePuzzle(RipperEngine *engine) :
 		_savedCursorVisible(true), _movingActive(false) {
 }
 
-bool BoardGamePuzzle::loadBitmap(const Common::String &name,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(name));
-	if (!stream || !decodeBitmapAsset(*stream, frame)) {
-		warning("Ripper: could not decode board-game bitmap '%s'", name.c_str());
-		return false;
-	}
-	return true;
-}
-
 bool BoardGamePuzzle::loadSelectionShading() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_library.createReadStreamForMember(kSelectionShadingName));
@@ -286,8 +275,8 @@ bool BoardGamePuzzle::loadAssets() {
 		warning("Ripper: could not open board-game library '%s'", kLibraryName);
 		return false;
 	}
-	if (!loadBitmap(kBackgroundName, _background) ||
-			!loadBitmap(kHitMapName, _hitMap) ||
+	if (!_library.loadBitmap(kBackgroundName, _background) ||
+			!_library.loadBitmap(kHitMapName, _hitMap) ||
 			!loadSelectionShading())
 		return false;
 	if (_background.width != kRipperScreenWidth ||
@@ -304,7 +293,7 @@ bool BoardGamePuzzle::loadAssets() {
 		for (uint type = 0; type < 5; ++type) {
 			const Common::String name = Common::String::format(
 				"part_%c%02u", side == 0 ? 'a' : 'b', type);
-			if (!loadBitmap(name, _pieces[side][type]))
+			if (!_library.loadBitmap(name, _pieces[side][type]))
 				return false;
 		}
 	}

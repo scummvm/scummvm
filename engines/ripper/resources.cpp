@@ -612,6 +612,53 @@ Common::SeekableReadStream *AssetLibrary::createReadStreamForMember(const Common
 		DisposeAfterUse::YES);
 }
 
+bool AssetLibrary::loadBitmap(const Common::String &memberName,
+		BitmapAssetFrame &frame) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		createReadStreamForMember(memberName));
+	if (!stream || !decodeBitmapAsset(*stream, frame)) {
+		warning("Ripper: could not decode bitmap '%s' from library '%s'",
+			memberName.c_str(), _filename.toString().c_str());
+		return false;
+	}
+	debugC(2, kDebugResources,
+		"Ripper: decoded bitmap '%s' from library '%s' size=%ux%u colors=%u",
+		memberName.c_str(), _filename.toString().c_str(), frame.width,
+		frame.height, frame.palette.size() / 3);
+	return true;
+}
+
+bool AssetLibrary::loadBitmapSequence(const Common::String &memberName,
+		BitmapAssetSequence &sequence) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		createReadStreamForMember(memberName));
+	if (!stream || !decodeBitmapAssetSequence(*stream, sequence)) {
+		warning("Ripper: could not decode bitmap sequence '%s' from library '%s'",
+			memberName.c_str(), _filename.toString().c_str());
+		return false;
+	}
+	debugC(2, kDebugResources,
+		"Ripper: decoded bitmap sequence '%s' from library '%s' frames=%u",
+		memberName.c_str(), _filename.toString().c_str(), sequence.frames.size());
+	return true;
+}
+
+bool AssetLibrary::loadPcx(const Common::String &memberName,
+		BitmapAssetFrame &frame) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		createReadStreamForMember(memberName));
+	if (!stream || !decodePcxAsset(*stream, frame)) {
+		warning("Ripper: could not decode PCX '%s' from library '%s'",
+			memberName.c_str(), _filename.toString().c_str());
+		return false;
+	}
+	debugC(2, kDebugResources,
+		"Ripper: decoded PCX '%s' from library '%s' size=%ux%u colors=%u",
+		memberName.c_str(), _filename.toString().c_str(), frame.width,
+		frame.height, frame.palette.size() / 3);
+	return true;
+}
+
 void AssetLibrary::listMembersWithPrefix(const Common::String &prefix,
 		Common::Array<Common::String> &members) const {
 	members.clear();
@@ -731,34 +778,14 @@ Common::SeekableReadStream *ResourceManager::createReadStreamForPath(
 	return nullptr;
 }
 
-static bool loadBitmapSequenceFromLibrary(const AssetLibrary &library,
-		const char *libraryName, const Common::String &memberName,
-		BitmapAssetSequence &sequence) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		library.createReadStreamForMember(memberName));
-	if (!stream || !decodeBitmapAssetSequence(*stream, sequence)) {
-		warning("Ripper: could not decode %s bitmap sequence '%s'",
-			libraryName, memberName.c_str());
-		return false;
-	}
-
-	debugC(2, kDebugResources, "Ripper: decoded %s bitmap sequence '%s' frames=%u",
-		libraryName, memberName.c_str(), sequence.frames.size());
-	return true;
-}
-
-static bool loadPcxFromLibrary(const AssetLibrary &library,
-		const char *libraryName, const Common::String &memberName,
-		BitmapAssetFrame &frame);
-
 bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const {
-	return loadBitmapSequenceFromLibrary(_interface, "interface", memberName, sequence);
+	return _interface.loadBitmapSequence(memberName, sequence);
 }
 
 bool ResourceManager::loadOptionsBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const {
-	return loadBitmapSequenceFromLibrary(_options, "options", memberName, sequence);
+	return _options.loadBitmapSequence(memberName, sequence);
 }
 
 bool ResourceManager::loadBitmap(const Common::String &memberName,
@@ -801,12 +828,8 @@ bool ResourceManager::loadBitmapLibrary(const Common::String &libraryName,
 	library.listMembersWithPrefix("", members);
 	frames.clear();
 	for (uint member = 0; member < members.size(); ++member) {
-		Common::ScopedPtr<Common::SeekableReadStream> stream(
-			library.createReadStreamForMember(members[member]));
 		BitmapAssetFrame frame;
-		if (!stream || !decodeBitmapAsset(*stream, frame)) {
-			warning("Ripper: could not decode bitmap library '%s' member '%s'",
-				libraryName.c_str(), members[member].c_str());
+		if (!library.loadBitmap(members[member], frame)) {
 			frames.clear();
 			return false;
 		}
@@ -838,29 +861,12 @@ bool ResourceManager::loadInterfaceBitmapSet(const Common::String &prefix,
 
 bool ResourceManager::loadInterfacePcx(const Common::String &memberName,
 		BitmapAssetFrame &frame) const {
-	return loadPcxFromLibrary(_interface, "interface", memberName, frame);
+	return _interface.loadPcx(memberName, frame);
 }
 
 bool ResourceManager::loadOptionsPcx(const Common::String &memberName,
 		BitmapAssetFrame &frame) const {
-	return loadPcxFromLibrary(_options, "options", memberName, frame);
-}
-
-static bool loadPcxFromLibrary(const AssetLibrary &library,
-		const char *libraryName, const Common::String &memberName,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		library.createReadStreamForMember(memberName));
-	if (!stream || !decodePcxAsset(*stream, frame)) {
-		warning("Ripper: could not decode %s PCX '%s'", libraryName, memberName.c_str());
-		return false;
-	}
-
-	debugC(2, kDebugResources,
-		"Ripper: decoded %s PCX '%s' width=%u height=%u colors=%u",
-		libraryName, memberName.c_str(), frame.width, frame.height,
-		frame.palette.size() / 3);
-	return true;
+	return _options.loadPcx(memberName, frame);
 }
 
 bool ResourceManager::loadInterfaceBitmapFont(const Common::String &memberName,

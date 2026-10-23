@@ -358,18 +358,6 @@ bool KkTileMatchPuzzle::loadConfiguration() {
 	return true;
 }
 
-bool KkTileMatchPuzzle::loadBitmap(const Common::String &name,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(name));
-	if (!stream || !decodeBitmapAsset(*stream, frame)) {
-		warning("Ripper: could not decode KK tile-match bitmap '%s'",
-			name.c_str());
-		return false;
-	}
-	return true;
-}
-
 bool KkTileMatchPuzzle::loadAssets() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_engine->getResources()->createReadStreamForPath(kLibraryName));
@@ -378,8 +366,8 @@ bool KkTileMatchPuzzle::loadAssets() {
 			kLibraryName);
 		return false;
 	}
-	if (!loadBitmap(kBackgroundName, _background) ||
-			!loadBitmap(kClosedTileName, _closedTile))
+	if (!_library.loadBitmap(kBackgroundName, _background) ||
+			!_library.loadBitmap(kClosedTileName, _closedTile))
 		return false;
 	if (_background.width != kRipperScreenWidth ||
 			_background.height != kRipperScreenHeight ||

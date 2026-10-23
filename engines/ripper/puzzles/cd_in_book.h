@@ -41,7 +41,6 @@ public:
 private:
 	bool loadAssets();
 	bool loadBackground();
-	bool loadBitmap(const Common::String &name, BitmapAssetFrame &frame);
 	bool drawBackground();
 	bool captureControls();
 	void drawFrame(const BitmapAssetFrame &frame, int x, int y);

@@ -94,17 +94,6 @@ ShockLeverPuzzle::ShockLeverPuzzle(RipperEngine *engine) :
 		_leverFrame[lever] = 3;
 }
 
-bool ShockLeverPuzzle::loadBitmap(AssetLibrary &library,
-		const Common::String &name, BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		library.createReadStreamForMember(name));
-	if (!stream || !decodeBitmapAsset(*stream, frame)) {
-		warning("Ripper: could not decode shock lever bitmap '%s'", name.c_str());
-		return false;
-	}
-	return true;
-}
-
 bool ShockLeverPuzzle::loadLever(uint lever) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_library.createReadStreamForMember(
@@ -122,7 +111,7 @@ bool ShockLeverPuzzle::loadLever(uint lever) {
 		BitmapAssetFrame frame;
 		const Common::String member =
 			Common::String::format("%u", frameIndex + 1);
-		if (!loadBitmap(leverLibrary, member, frame))
+		if (!leverLibrary.loadBitmap(member, frame))
 			return false;
 		_leverFrames[lever].push_back(Common::move(frame));
 	}
@@ -137,8 +126,8 @@ bool ShockLeverPuzzle::loadAssets() {
 			kLibraryName);
 		return false;
 	}
-	if (!loadBitmap(_library, kBackgroundName, _background) ||
-			!loadBitmap(_library, kSubmitName, _submit))
+	if (!_library.loadBitmap(kBackgroundName, _background) ||
+			!_library.loadBitmap(kSubmitName, _submit))
 		return false;
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
 		if (!loadLever(lever))

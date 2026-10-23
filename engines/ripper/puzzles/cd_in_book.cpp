@@ -112,16 +112,6 @@ bool CdInBookPuzzle::loadBackground() {
 	return true;
 }
 
-bool CdInBookPuzzle::loadBitmap(const Common::String &name, BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(name));
-	if (!stream || !decodeBitmapAsset(*stream, frame)) {
-		warning("Ripper: could not decode CD-in-book bitmap '%s'", name.c_str());
-		return false;
-	}
-	return true;
-}
-
 bool CdInBookPuzzle::loadAssets() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_engine->getResources()->createReadStreamForPath(kLibraryName));
@@ -133,11 +123,11 @@ bool CdInBookPuzzle::loadAssets() {
 		return false;
 
 	for (uint button = 0; button < kButtonCount; ++button) {
-		if (!loadBitmap(Common::String::format("p%02u.bbm", button + 1),
+		if (!_library.loadBitmap(Common::String::format("p%02u.bbm", button + 1),
 				_buttonFrames[button]))
 			return false;
 	}
-	if (!loadBitmap("p07.bbm", _feedbackFrame))
+	if (!_library.loadBitmap("p07.bbm", _feedbackFrame))
 		return false;
 	for (uint cue = 0; cue < kAudioCueCount; ++cue) {
 		if (!_library.hasMember(kAudioNames[cue])) {

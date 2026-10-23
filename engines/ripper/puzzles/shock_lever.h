@@ -48,8 +48,6 @@ private:
 	};
 
 	bool loadAssets();
-	bool loadBitmap(AssetLibrary &library, const Common::String &name,
-		BitmapAssetFrame &frame);
 	bool loadLever(uint lever);
 	bool drawBackground();
 	void drawOverlays();

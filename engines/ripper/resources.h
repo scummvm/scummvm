@@ -126,6 +126,10 @@ public:
 	bool openLooseFiles(const Common::Archive &archive);
 	bool hasMember(const Common::String &memberName) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &memberName) const;
+	bool loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const;
+	bool loadBitmapSequence(const Common::String &memberName,
+		BitmapAssetSequence &sequence) const;
+	bool loadPcx(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	void listMembersWithPrefix(const Common::String &prefix,
 		Common::Array<Common::String> &members) const;
 
