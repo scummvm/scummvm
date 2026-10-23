@@ -175,6 +175,9 @@ struct CachedFile {
 	{ "pingu1", Common::kPlatformWindows, "PINGUDRV.PNG", (const byte *)"C:\\\r\nC:\\\r\nD:\\\r\n", -1},
 	{ "pingu1", Common::kPlatformWindows, "CHECKDRV.PNG", (const byte *)"D:\\\r\n", -1},
 
+	{ "frankenstein", Common::kPlatformWindows, "GAMEFILE/VOLUME", (const byte *)"D:\\", -1},
+	{ "frankenstein", Common::kPlatformMacintosh, "GAMEFILE/VOLUME", (const byte *)"@", -1},
+
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
