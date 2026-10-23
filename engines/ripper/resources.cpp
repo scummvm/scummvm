@@ -41,14 +41,6 @@ static const uint32 kModernLibraryMagic = 0x4c494232;
 static const uint32 kCustomBitmapHeaderSize = 0x1c;
 static const uint32 kCustomBitmapExtendedHeaderSize = 0xc;
 
-static bool hasDirectorySeparator(const Common::String &path) {
-	for (uint i = 0; i < path.size(); ++i) {
-		if (path[i] == '/' || path[i] == '\\' || path[i] == ':')
-			return true;
-	}
-	return false;
-}
-
 static bool readStream(Common::SeekableReadStream &stream, Common::Array<byte> &data) {
 	if (stream.size() < 0 || (uint64)stream.size() > 0xffffffffULL)
 		return false;
@@ -388,11 +380,8 @@ Common::String AssetLibrary::readFixedString(const char *data, uint length) {
 }
 
 Common::String AssetLibrary::normalizeMemberName(const Common::String &memberName, bool includeExtension) {
-	uint baseStart = 0;
-	for (uint i = 0; i < memberName.size(); ++i) {
-		if (memberName[i] == '/' || memberName[i] == '\\' || memberName[i] == ':')
-			baseStart = i + 1;
-	}
+	const size_t separator = memberName.findLastOf("/\\:");
+	const uint baseStart = separator == Common::String::npos ? 0 : separator + 1;
 
 	uint dot = memberName.size();
 	for (uint i = baseStart; i < memberName.size(); ++i) {
@@ -749,7 +738,7 @@ Common::SeekableReadStream *ResourceManager::createReadStreamForPath(
 	const Common::Path directPath(memberName);
 	if (SearchMan.hasFile(directPath))
 		return SearchMan.createReadStreamForMember(directPath);
-	if (hasDirectorySeparator(memberName))
+	if (memberName.findFirstOf("/\\:") != Common::String::npos)
 		return nullptr;
 
 	for (uint i = 0; i < _searchDirectories.size(); ++i) {

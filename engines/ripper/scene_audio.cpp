@@ -49,18 +49,10 @@ SceneAudioManager::~SceneAudioManager() {
 }
 
 Common::String SceneAudioManager::keyFromPath(const Common::String &path) {
-	uint start = 0;
-	for (uint i = 0; i < path.size(); ++i) {
-		if (path[i] == '/' || path[i] == '\\' || path[i] == ':')
-			start = i + 1;
-	}
-	uint end = path.size();
-	for (uint i = start; i < path.size(); ++i) {
-		if (path[i] == '.') {
-			end = i;
-			break;
-		}
-	}
+	const size_t separator = path.findLastOf("/\\:");
+	const size_t start = separator == Common::String::npos ? 0 : separator + 1;
+	const size_t dot = path.findFirstOf('.', start);
+	const size_t end = dot == Common::String::npos ? path.size() : dot;
 	return path.substr(start, end - start);
 }
 

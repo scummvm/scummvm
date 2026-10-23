@@ -253,12 +253,8 @@ bool KdShootingGallery::loadResources(uint difficulty) {
 }
 
 Common::String KdShootingGallery::basenameFromPath(const Common::String &path) {
-	uint start = 0;
-	for (uint i = 0; i < path.size(); ++i) {
-		if (path[i] == '/' || path[i] == '\\' || path[i] == ':')
-			start = i + 1;
-	}
-	return path.substr(start);
+	const size_t separator = path.findLastOf("/\\:");
+	return path.substr(separator == Common::String::npos ? 0 : separator + 1);
 }
 
 Common::String KdShootingGallery::formatScore(int score) {
