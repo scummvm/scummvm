@@ -1344,6 +1344,7 @@ void Combat::lightningBolt() {
 	ss._mmVal1++;
 	ss._resistanceTypeOrTargetCount = 3;
 	ss._resistanceIndex = 2;
+	ss._damage = 0;
 
 	levelAdjust();
 }
