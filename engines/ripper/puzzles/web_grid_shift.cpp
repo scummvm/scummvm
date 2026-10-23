@@ -506,14 +506,7 @@ bool WebGridShiftPuzzle::handleKeyword(uint16 command, uint completionFlag,
 		_keywordProgress = 0;
 		return false;
 	}
-	char character = command & 0xff;
-	if (character >= 'A' && character <= 'Z')
-		character += 'a' - 'A';
-	if (character == kCompletionKeyword[_keywordProgress])
-		++_keywordProgress;
-	else
-		_keywordProgress = 0;
-	if (kCompletionKeyword[_keywordProgress] != '\0')
+	if (!advanceKeyword(command, kCompletionKeyword, _keywordProgress))
 		return false;
 
 	debugC(1, kDebugPuzzles,

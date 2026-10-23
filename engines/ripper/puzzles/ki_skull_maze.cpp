@@ -633,14 +633,7 @@ bool KiSkullMazePuzzle::handleKeyword(uint16 command, uint completionFlag,
 		_keywordIndex = 0;
 		return false;
 	}
-	char character = command & 0xff;
-	if (character >= 'A' && character <= 'Z')
-		character += 'a' - 'A';
-	if (character == kCompletionKeyword[_keywordIndex])
-		++_keywordIndex;
-	else
-		_keywordIndex = 0;
-	if (kCompletionKeyword[_keywordIndex] != '\0')
+	if (!advanceKeyword(command, kCompletionKeyword, _keywordIndex))
 		return false;
 
 	debugC(1, kDebugPuzzles,

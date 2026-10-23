@@ -309,15 +309,8 @@ uint16 KjBlobShooter::serviceKeyboard(uint backgroundFrame) {
 		if (command > 0xff)
 			continue;
 
-		byte character = command;
-		if (character >= 'A' && character <= 'Z')
-			character += 'a' - 'A';
 		static const char keyword[] = "caffeine";
-		if (character == keyword[_keywordIndex])
-			++_keywordIndex;
-		else
-			_keywordIndex = 0;
-		if (_keywordIndex == sizeof(keyword) - 1) {
+		if (advanceKeyword(command, keyword, _keywordIndex)) {
 			if (!markSolved("kj-blob-shooter-keyword"))
 				return kFailureCommand;
 			debugC(1, kDebugPuzzles,

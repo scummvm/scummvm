@@ -321,14 +321,7 @@ bool KeyGroupPuzzle::complete(uint completionFlag, const char *source) {
 bool KeyGroupPuzzle::serviceKeyword(uint16 command) {
 	if (command > 0xff)
 		return false;
-	char character = (char)command;
-	if (character >= 'A' && character <= 'Z')
-		character += 'a' - 'A';
-	if (character == kCompletionKeyword[_keywordIndex])
-		++_keywordIndex;
-	else
-		_keywordIndex = 0;
-	if (_keywordIndex + 1 != ARRAYSIZE(kCompletionKeyword))
+	if (!advanceKeyword(command, kCompletionKeyword, _keywordIndex))
 		return false;
 	_keywordIndex = 0;
 	debugC(1, kDebugPuzzles,

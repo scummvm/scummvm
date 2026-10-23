@@ -47,6 +47,8 @@ struct MouseState {
 
 uint16 translateKeyToCommand(const Common::KeyState &key);
 Common::String formatKeyCommandLabel(uint16 command);
+bool advanceKeyword(byte character, const char *keyword, uint &progress,
+	bool restartOnFirstCharacter = false);
 
 class InputManager {
 public:

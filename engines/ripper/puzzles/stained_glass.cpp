@@ -549,14 +549,7 @@ bool StainedGlassPuzzle::applyMove(uint selectedTile) {
 bool StainedGlassPuzzle::serviceKeyword(uint16 command) {
 	if (command > 0xff)
 		return false;
-	char character = (char)command;
-	if (character >= 'A' && character <= 'Z')
-		character += 'a' - 'A';
-	if (character == kCompletionKeyword[_keywordIndex])
-		++_keywordIndex;
-	else
-		_keywordIndex = 0;
-	if (_keywordIndex + 1 == ARRAYSIZE(kCompletionKeyword)) {
+	if (advanceKeyword(command, kCompletionKeyword, _keywordIndex)) {
 		_keywordIndex = 0;
 		debugC(1, kDebugPuzzles,
 			"Ripper: stained glass completion keyword matched keyword='%s'",

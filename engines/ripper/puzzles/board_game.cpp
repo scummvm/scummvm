@@ -436,14 +436,7 @@ void BoardGamePuzzle::updateCursor(const Common::Point &point) {
 bool BoardGamePuzzle::serviceKeyword(uint16 command) {
 	if (command > 0xff)
 		return false;
-	char character = (char)command;
-	if (character >= 'A' && character <= 'Z')
-		character += 'a' - 'A';
-	if (character == kCompletionKeyword[_keywordIndex])
-		++_keywordIndex;
-	else
-		_keywordIndex = character == kCompletionKeyword[0] ? 1 : 0;
-	if (_keywordIndex + 1 == ARRAYSIZE(kCompletionKeyword)) {
+	if (advanceKeyword(command, kCompletionKeyword, _keywordIndex, true)) {
 		_keywordIndex = 0;
 		debugC(1, kDebugPuzzles,
 			"Ripper: board-game completion keyword matched keyword='%s'",

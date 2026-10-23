@@ -84,6 +84,17 @@ uint16 functionKeyCommand(Common::KeyCode keycode, byte flags) {
 
 } // End of anonymous namespace
 
+bool advanceKeyword(byte character, const char *keyword, uint &progress,
+		bool restartOnFirstCharacter) {
+	if (character >= 'A' && character <= 'Z')
+		character += 'a' - 'A';
+	if (character == keyword[progress])
+		++progress;
+	else
+		progress = restartOnFirstCharacter && character == keyword[0] ? 1 : 0;
+	return keyword[progress] == '\0';
+}
+
 InputManager::InputManager(Common::EventManager *eventManager) : _eventManager(eventManager) {
 }
 

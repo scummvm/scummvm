@@ -403,14 +403,7 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 				render();
 				continue;
 			}
-			char character = command & 0xff;
-			if (character >= 'A' && character <= 'Z')
-				character += 'a' - 'A';
-			if (character == kCompletionKeyword[_keywordIndex])
-				++_keywordIndex;
-			else
-				_keywordIndex = 0;
-			if (kCompletionKeyword[_keywordIndex] == '\0') {
+			if (advanceKeyword(command & 0xff, kCompletionKeyword, _keywordIndex)) {
 				debugC(1, kDebugPuzzles,
 					"Ripper: crystal puzzle solved by hidden keyword");
 				result = complete(completionFlag) ? kSolved : kLoadFailed;

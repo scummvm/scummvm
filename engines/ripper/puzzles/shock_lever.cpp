@@ -503,14 +503,7 @@ uint16 ShockLeverPuzzle::serviceKeyboard() {
 		if (command > 0xff)
 			continue;
 
-		char character = (char)command;
-		if (character >= 'A' && character <= 'Z')
-			character += 'a' - 'A';
-		if (character == kCheatKeyword[_keywordIndex])
-			++_keywordIndex;
-		else
-			_keywordIndex = 0;
-		if (_keywordIndex + 1 == ARRAYSIZE(kCheatKeyword)) {
+		if (advanceKeyword(command, kCheatKeyword, _keywordIndex)) {
 			debugC(1, kDebugPuzzles,
 				"Ripper: shock lever completion keyword matched keyword='%s'",
 				kCheatKeyword);
