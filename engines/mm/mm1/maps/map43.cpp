@@ -119,7 +119,7 @@ void Map43::special05() {
 void Map43::special06() {
 	if (_data[TREASURE_STATE]) {
 		g_globals->_treasure.setGold(18000);
-		g_maps->clearSpecial();
+		g_maps->clearSpecialAndRememberReward();
 		g_events->addAction(KEYBIND_SEARCH);
 	} else {
 		Game::Encounter &enc = g_globals->_encounters;

@@ -152,6 +152,7 @@ void Map49::special16() {
 }
 
 void Map49::special20() {
+	g_maps->clearSpecialAndRememberReward();
 	g_globals->_treasure.setGold(12000);
 	g_events->addAction(KEYBIND_SEARCH);
 }

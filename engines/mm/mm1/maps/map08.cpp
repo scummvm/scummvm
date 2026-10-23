@@ -52,11 +52,11 @@ void Map08::special() {
 		}
 	}
 
-	g_maps->clearSpecial();
-
 	if (g_maps->_mapPos.x == 0 || g_maps->_mapPos.x == 15) {
+		g_maps->clearSpecial();
 		g_globals->_encounters.execute();
 	} else {
+		g_maps->clearSpecialAndRememberReward();
 		addTreasure();
 	}
 }
@@ -122,7 +122,7 @@ void Map08::special08() {
 }
 
 void Map08::special20() {
-	g_maps->clearSpecial();
+	g_maps->clearSpecialAndRememberReward();
 	g_globals->_treasure._items[2] = getRandomNumber(48);
 	g_globals->_treasure._trapType = 1;
 	g_globals->_treasure._container = SILVER_BOX;

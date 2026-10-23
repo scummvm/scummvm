@@ -164,7 +164,7 @@ void Map18::special08() {
 }
 
 void Map18::special09() {
-	g_maps->clearSpecial();
+	g_maps->clearSpecialAndRememberReward();
 	g_globals->_treasure._items[2] = SILVER_KEY_ID;
 	g_globals->_treasure._trapType = 4;
 	g_globals->_treasure._container = IRON_BOX;

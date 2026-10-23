@@ -183,7 +183,7 @@ void Map23::special12() {
 }
 
 void Map23::special13() {
-	g_maps->clearSpecial();
+	g_maps->clearSpecialAndRememberReward();
 	g_globals->_treasure._container = IRON_BOX;
 	g_globals->_treasure._items[0] = 171;
 	g_globals->_treasure._items[1] = 183;

@@ -59,6 +59,7 @@ void Trivia::answerEntered() {
 	close();
 
 	if (_answer.equalsIgnoreCase(_correctAnswer)) {
+		g_maps->clearSpecialAndRememberReward();
 		send(InfoMessage(STRING["maps.map21.correct"]));
 		g_globals->_party[0]._gems += 50;
 		Sound::sound(SOUND_3);

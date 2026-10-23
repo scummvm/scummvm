@@ -117,7 +117,7 @@ void Map10::special19() {
 }
 
 void Map10::special20() {
-	g_maps->clearSpecial();
+	g_maps->clearSpecialAndRememberReward();
 	g_globals->_treasure._items[2] = 252;
 	g_globals->_treasure.setGems(20);
 	g_globals->_treasure._container = SILVER_CHEST;
@@ -160,6 +160,7 @@ void Map10::special29() {
 }
 
 void Map10::special30() {
+	g_maps->clearSpecial();
 	Game::Encounter &enc = g_globals->_encounters;
 	int monsterCount = getRandomNumber(4) + 3;
 	g_globals->_treasure._items[2] = THUNDRANIUM_ID;
@@ -178,6 +179,7 @@ void Map10::special31() {
 }
 
 void Map10::special32() {
+	g_maps->clearSpecial();
 	Game::Encounter &enc = g_globals->_encounters;
 	int monsterCount = getRandomNumber(4) + 3;
 	g_globals->_treasure._items[2] = LASER_BLASTER_ID;

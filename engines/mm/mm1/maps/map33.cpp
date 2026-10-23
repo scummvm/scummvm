@@ -170,7 +170,7 @@ void Map33::special03() {
 }
 
 void Map33::special04() {
-	g_maps->clearSpecial();
+	g_maps->clearSpecialAndRememberReward();
 
 	send(SoundMessage(
 		STRING["maps.map33.corpse"],
@@ -195,6 +195,10 @@ void Map33::search(const Common::String &msg) {
 			Map33 &map = *static_cast<Map33 *>(g_maps->_currentMap);
 			Game::Encounter &enc = g_globals->_encounters;
 			int monsterCount = g_events->getRandomNumber(6) + 7;
+
+			// Consume the special for this map visit before combat,
+			// so winning cannot immediately retrigger it
+			g_maps->clearSpecial();
 
 			enc.clearMonsters();
 			enc.addMonster(map[VAL1], map[VAL2]);

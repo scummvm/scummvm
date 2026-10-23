@@ -125,6 +125,10 @@ void Map51::special14() {
 }
 
 void Map51::special17() {
+	// The endpoint is both a hard-coded encounter and the Thundranium reward.
+	// Preload the item before combat, as with Ranalou's Thundranium cache
+	g_maps->clearSpecialAndRememberReward();
+	g_globals->_treasure._items[2] = THUNDRANIUM_ID;
 	encounter(&_data[000], &_data[000]);
 }
 

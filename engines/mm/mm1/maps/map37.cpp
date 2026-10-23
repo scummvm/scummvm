@@ -167,7 +167,7 @@ void Map37::special15() {
 }
 
 void Map37::special16() {
-	g_maps->clearSpecial();
+	g_maps->clearSpecialAndRememberReward();
 	g_globals->_treasure._container = GOLD_BOX;
 	g_globals->_treasure.setGems(100);
 	g_events->addAction(KEYBIND_SEARCH);

@@ -48,7 +48,7 @@ void Map04::special() {
 	send(SoundMessage(
 		STRING["maps.map04.treasure"],
 		[]() {
-			g_maps->clearSpecial();
+			g_maps->clearSpecialAndRememberReward();
 			if ((*g_maps->_currentMap)[MAP04_TREASURE_STOLEN] < 255)
 				(*g_maps->_currentMap)[MAP04_TREASURE_STOLEN]++;
 			g_globals->_treasure.setGold(600);

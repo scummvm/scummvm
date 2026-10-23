@@ -107,12 +107,13 @@ void Map22::special02() {
 	send(SoundMessage(
 		STRING["maps.map22.wagons"],
 		[]() {
-			g_maps->clearSpecial();
 			if (g_maps->_mapPos.x == 5) {
+				g_maps->clearSpecialAndRememberReward();
 				g_globals->_treasure._items[2] = MERCHANTS_PASS_ID;
 				g_events->addAction(KEYBIND_SEARCH);
 
 			} else {
+				g_maps->clearSpecial();
 				InfoMessage msg1(
 					16, 2, STRING["maps.map22.ambush"],
 					[]() {

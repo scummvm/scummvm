@@ -428,6 +428,16 @@ void Maps::changeMap(uint16 id, byte section, bool loadingSave) {
 	}
 	if (loadingSave)
 		_currentMap->restoreVisitState();
+	if (loadingSave && _mapId == 4) {
+		// The theft count lives in overlay data that is reloaded from disk,
+		// so rebuild it from the claimed treasure squares
+		byte stolenCount = 0;
+		for (uint i = 0; i < MAP_SIZE && stolenCount < 255; ++i) {
+			if (_currentMap->_visited[i] & VISITED_REWARD_CLAIMED)
+				++stolenCount;
+		}
+		(*_currentMap)[MAP04_TREASURE_STOLEN] = stolenCount;
+	}
 
 	loadTiles();
 

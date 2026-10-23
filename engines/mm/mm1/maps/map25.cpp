@@ -120,8 +120,8 @@ void Map25::special() {
 		send(SoundMessage(
 			STRING["maps.map25.ship"],
 			[]() {
-				g_maps->clearSpecial();
 				if (g_maps->_mapOffset == 216) {
+					g_maps->clearSpecialAndRememberReward();
 					g_events->send(SoundMessage(STRING["maps.map25.jolly_raven"]));
 
 					for (uint i = 0; i < g_globals->_party.size(); ++i) {
@@ -131,6 +131,7 @@ void Map25::special() {
 
 					g_globals->_treasure.setGems(20);
 				} else {
+					g_maps->clearSpecial();
 					g_globals->_activeSpells._s.cursed = 10;
 					g_globals->_encounters.execute();
 				}
