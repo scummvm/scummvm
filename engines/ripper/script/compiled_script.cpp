@@ -63,10 +63,8 @@ Common::String CompiledScript::getString(uint32 offset) const {
 	if (offset >= _data.size())
 		return Common::String();
 
-	Common::String value;
-	while (offset < _data.size() && _data[offset] != 0)
-		value += (char)_data[offset++];
-	return value;
+	const char *text = (const char *)_data.data() + offset;
+	return Common::String(text, Common::strnlen(text, _data.size() - offset));
 }
 
 Common::String CompiledScript::getPresentationText(uint32 offset) const {
@@ -175,9 +173,8 @@ bool CompiledScript::parseHeader() {
 	for (uint i = 0; i < interactionCount; ++i) {
 		const uint32 offset = interactionOffset + i * kInteractionRecordSize;
 		ScriptInteraction interaction;
-		interaction.label.clear();
-		for (uint labelIndex = 0; labelIndex < 0xb && _data[offset + labelIndex] != 0; ++labelIndex)
-			interaction.label += (char)_data[offset + labelIndex];
+		const char *label = (const char *)_data.data() + offset;
+		interaction.label = Common::String(label, Common::strnlen(label, 0xb));
 		interaction.x = readSint16(offset + 0xb);
 		interaction.y = readSint16(offset + 0xd);
 		interaction.width = readSint16(offset + 0xf);

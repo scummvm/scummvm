@@ -475,10 +475,10 @@ bool ScriptManager::runWorldMapCheckpoint(uint chapter) {
 }
 
 Common::String ScriptManager::argumentString(const ScriptArgument &argument) {
-	Common::String value;
-	for (uint i = 0; i < argument.data.size() && argument.data[i] != 0; ++i)
-		value += (char)argument.data[i];
-	return value;
+	if (argument.data.empty())
+		return Common::String();
+	const char *text = (const char *)argument.data.data();
+	return Common::String(text, Common::strnlen(text, argument.data.size()));
 }
 
 bool ScriptManager::isScenePlayed(const Common::String &scene) const {

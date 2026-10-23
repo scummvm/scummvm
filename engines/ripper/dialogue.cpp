@@ -171,9 +171,9 @@ bool DialogueChooser::execute(const ScriptCommand &command,
 		if (command.arguments.size() < 2 || command.arguments[0].data.empty())
 			return false;
 		Choice choice;
-		for (uint i = 0; i < command.arguments[0].data.size() &&
-				command.arguments[0].data[i] != 0; ++i)
-			choice.text += (char)command.arguments[0].data[i];
+		const char *text = (const char *)command.arguments[0].data.data();
+		choice.text = Common::String(text,
+			Common::strnlen(text, command.arguments[0].data.size()));
 		choice.result = command.arguments[1].value & 0xffff;
 		if (includeChoice) {
 			appendChoice(choice.text, choice.result);

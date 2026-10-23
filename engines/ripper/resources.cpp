@@ -367,10 +367,7 @@ bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream,
 		char path[60];
 		if (stream.read(path, sizeof(path)) != sizeof(path))
 			return false;
-		uint length = 0;
-		while (length < sizeof(path) && path[length] != '\0')
-			++length;
-		map.sounds.push_back(Common::String(path, path + length));
+		map.sounds.push_back(Common::String(path, Common::strnlen(path, sizeof(path))));
 	}
 
 	map.cues.resize(frameCount);
@@ -387,10 +384,7 @@ AssetLibrary::AssetLibrary() : _looseArchive(nullptr), _modernFormat(false) {
 }
 
 Common::String AssetLibrary::readFixedString(const char *data, uint length) {
-	uint actualLength = 0;
-	while (actualLength < length && data[actualLength] != '\0')
-		++actualLength;
-	return Common::String(data, data + actualLength);
+	return Common::String(data, Common::strnlen(data, length));
 }
 
 Common::String AssetLibrary::normalizeMemberName(const Common::String &memberName, bool includeExtension) {
