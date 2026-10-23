@@ -59,7 +59,7 @@ public:
 	Treasure _treasure;
 	byte _delay = 5;
 	int _nonCombatEffectCtr = 0, _combatEffectCtr = 0;
-	bool _minimapOn = false;
+	bool _minimapOn = true;
 	Common::Array<SuggestedName> *_suggestedNames = nullptr;
 
 	// Console flags

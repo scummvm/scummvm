@@ -106,7 +106,7 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 
 	{ KEYBIND_SPELL, "CAST", _s("Cast spell"), "c", nullptr },
 	{ KEYBIND_MAP, "MAP", _s("Show map"), "m", nullptr },
-	{ KEYBIND_MINIMAP, "MINIMAP", _s("Toggle minimap"), "=", nullptr },
+	{ KEYBIND_MINIMAP, "MINIMAP", _s("Toggle minimap"), "F9", nullptr },
 	{ KEYBIND_ORDER, "ORDER", _s("Reorder party"), "o", nullptr },
 	// I18N: Action of hero party in Might & Magic 1
 	{ KEYBIND_PROTECT, "PROTECT", _s("Protect"), "p", nullptr },
