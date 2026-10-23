@@ -30,6 +30,17 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
+static uint combatMessageDelayFrames() {
+	// MM1's DELAY command is an ordinal 0-9 message-duration control:
+	// 0 is shortest, 5 is the default and 9 is longest. The original
+	// manual does not define those values as literal seconds.
+	//
+	// Preserve ScummVM's existing default action-result pace by mapping
+	// setting 5 to 3.0 seconds, then scale in half-second steps.
+	// This gives 0 -> 0.5 sec ... 5 -> 3.0 sec ... 9 -> 5.0 sec.
+	return ((uint)g_globals->_delay + 1) * FRAME_RATE / 2;
+}
+
 Combat::Combat() : TextView("Combat") {
 }
 
@@ -110,7 +121,7 @@ void Combat::draw() {
 		writeMonsters();
 		resetBottom();
 		highlightNextRound();
-		delaySeconds(1);
+		delayFrames(combatMessageDelayFrames());
 		return;
 	case MONSTER_ADVANCES:
 		writeString(0, 20, _monsterName);
@@ -118,37 +129,37 @@ void Combat::draw() {
 		writeSpaces(30);
 		writeRound();
 		writeMonsters();
-		delaySeconds(2);
+		delayFrames(combatMessageDelayFrames());
 		return;
 	case MONSTERS_AFFECTED:
 		writeMonsterEffects();
-		delaySeconds(2);
+		delayFrames(combatMessageDelayFrames());
 		return;
 	case MONSTER_SPELL:
 		writeMonsterSpell();
-		delaySeconds(2);
+		delayFrames(combatMessageDelayFrames());
 		return;
 	case INFILTRATION:
 		writeInfiltration();
-		delaySeconds(3);
+		delayFrames(combatMessageDelayFrames());
 		return;
 	case WAITS_FOR_OPENING:
 		writeWaitsForOpening();
-		delaySeconds(2);
+		delayFrames(combatMessageDelayFrames());
 		return;
 	case CHAR_ATTACKS:
 		writeMonsters();
 		writeCharAttackDamage();
-		delaySeconds(3);
+		delayFrames(combatMessageDelayFrames());
 		return;
 	case NO_EFFECT:
 		writeCharAttackNoEffect();
-		delaySeconds(3);
+		delayFrames(combatMessageDelayFrames());
 		return;
 	case DEFEATED_MONSTERS:
 		writeDefeat();
 		Sound::sound2(SOUND_3);
-		delaySeconds(3);
+		delayFrames(combatMessageDelayFrames());
 		return;
 	default:
 		break;
@@ -170,18 +181,18 @@ void Combat::draw() {
 	case SPELL_RESULT:
 		writeSpellResult();
 		if (_spellResult._delaySeconds)
-			delaySeconds(_spellResult._delaySeconds);
+			delayFrames(combatMessageDelayFrames());
 		break;
 
 	case MONSTER_ATTACK:
 		writeMonsterAttack();
-		delaySeconds(2);
+		delayFrames(combatMessageDelayFrames());
 		break;
 
 	case MONSTER_FLEES:
 	case MONSTER_WANDERS:
 		writeMonsterAction(_mode == MONSTER_FLEES);
-		delaySeconds(2);
+		delayFrames(combatMessageDelayFrames());
 		break;
 
 	default:
