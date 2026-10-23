@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	display.o \
 	ini.o \
 	iavf.o \
-	iff.o \
 	input.o \
 	inventory.o \
 	media/audio.o \

@@ -24,16 +24,17 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/formats/iff_container.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/substream.h"
 #include "graphics/surface.h"
+#include "image/iff.h"
 #include "image/pcx.h"
 
 #include "ripper/detection.h"
-#include "ripper/iff.h"
 
 namespace Ripper {
 
@@ -217,6 +218,32 @@ bool decodePcxAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &frame)
 	return decoder.loadStream(stream) &&
 		copyIndexedSurface(decoder.getSurface(), decoder.getPalette(), 0, frame);
 }
+
+namespace {
+
+class IFFDecoder : public Image::IFFDecoder {
+protected:
+	void loadPBMBitmap(Common::SeekableReadStream &stream, byte *data, uint16 outPitch) override {
+		const Image::IFFDecoder::Header *header = getHeader();
+		// PBM rows include a padding byte when the width is odd.
+		const uint16 scanlinePitch = (header->width + 1) & ~1;
+		Common::Array<byte> scanline(scanlinePitch);
+
+		for (uint16 i = 0; i < header->height; ++i) {
+			if (header->compression) {
+				Common::PackBitsReadStream packStream(stream);
+				packStream.read(scanline.data(), scanlinePitch);
+			} else {
+				stream.read(scanline.data(), scanlinePitch);
+			}
+
+			memcpy(data, scanline.data(), outPitch);
+			data += outPitch;
+		}
+	}
+};
+
+} // End of anonymous namespace
 
 static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
 	IFFDecoder decoder;
