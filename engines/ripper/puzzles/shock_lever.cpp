@@ -24,7 +24,6 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "ripper/cursor.h"
@@ -33,7 +32,6 @@
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
-#include "ripper/settings.h"
 #include "ripper/toolbar.h"
 
 namespace Ripper {
@@ -211,13 +209,7 @@ bool ShockLeverPuzzle::drawBackground() {
 		0, kSceneOriginY, false);
 	g_system->unlockScreen();
 
-	Common::Array<byte> palette = _background.palette;
-	_engine->applySharedPalettePatch(palette.data(),
-		kRipperPaletteColorCount);
-	_engine->getSettings()->applyVideoPalette(palette.data(),
-		kRipperPaletteColorCount, true);
-	g_system->getPaletteManager()->setPalette(palette.data(), 0,
-		kRipperPaletteColorCount);
+	_engine->installScenePalette(_background.palette);
 	drawOverlays();
 	return true;
 }

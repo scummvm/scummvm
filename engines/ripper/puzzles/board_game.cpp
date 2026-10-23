@@ -24,7 +24,6 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "ripper/cursor.h"
@@ -319,16 +318,6 @@ bool BoardGamePuzzle::loadAssets() {
 	return true;
 }
 
-void BoardGamePuzzle::applyPalette() {
-	Common::Array<byte> palette = _background.palette;
-	_engine->applySharedPalettePatch(palette.data(),
-		kRipperPaletteColorCount);
-	_engine->getSettings()->applyVideoPalette(palette.data(),
-		kRipperPaletteColorCount, true);
-	g_system->getPaletteManager()->setPalette(palette.data(), 0,
-		kRipperPaletteColorCount);
-}
-
 void BoardGamePuzzle::drawFrame(byte *screen, uint pitch,
 		const BitmapAssetFrame &frame, int x, int y,
 		bool translucent) const {
@@ -414,7 +403,7 @@ void BoardGamePuzzle::render() {
 	if (movingPiecePending)
 		drawPiece(pixels, screen->pitch, _movingPiece, _movingAnchor);
 	g_system->unlockScreen();
-	applyPalette();
+	_engine->installScenePalette(_background.palette);
 	_engine->getCursor()->setVisible(true);
 	presentScreen();
 }

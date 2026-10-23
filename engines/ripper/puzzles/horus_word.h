@@ -60,7 +60,6 @@ private:
 	bool loadPcx(const Common::String &name, BitmapAssetFrame &frame);
 	bool loadBitmap(const Common::String &name, BitmapAssetFrame &frame);
 	bool loadAssets();
-	void applyPalette() const;
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y, int opacity = -1) const;
 	byte blendPixel(byte source, byte destination, uint opacity) const;

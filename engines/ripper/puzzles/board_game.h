@@ -61,7 +61,6 @@ private:
 	bool loadAssets();
 	bool loadBitmap(const Common::String &name, BitmapAssetFrame &frame);
 	bool loadSelectionShading();
-	void applyPalette();
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y, bool translucent = false) const;
 	byte blendSelectionPixel(byte source, byte destination) const;

@@ -112,7 +112,6 @@ private:
 	bool loadAssets();
 	bool loadBitmap(const Common::String &name, BitmapAssetFrame &frame);
 	bool loadFlipAnimation(uint state);
-	void applyPalette() const;
 	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y) const;
 	void drawAnimationFrame(byte *screen, uint pitch,

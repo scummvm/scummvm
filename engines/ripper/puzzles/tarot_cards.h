@@ -43,7 +43,6 @@ private:
 	bool loadAssets();
 	bool loadBitmap(const Common::String &name, BitmapAssetFrame &frame);
 	bool loadPcx(const Common::String &name, BitmapAssetFrame &frame);
-	void applyPalette() const;
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y) const;
 	void drawScaledFrame(byte *screen, uint pitch,

@@ -28,12 +28,14 @@
 #include "common/system.h"
 
 #include "engines/util.h"
+#include "graphics/paletteman.h"
 
 #include "ripper/detection.h"
 #include "ripper/console.h"
 #include "ripper/cursor.h"
 #include "ripper/cyber.h"
 #include "ripper/diagnostics/milestone_overlay.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/inventory.h"
 #include "ripper/media.h"
@@ -166,6 +168,14 @@ bool RipperEngine::runDemoEnding() {
 
 void RipperEngine::applySharedPalettePatch(byte *palette, uint colorCount) const {
 	_modalDialog->applySharedPalettePatch(palette, colorCount);
+}
+
+void RipperEngine::installScenePalette(const Common::Array<byte> &sourcePalette) {
+	Common::Array<byte> palette = sourcePalette;
+	applySharedPalettePatch(palette.data(), kRipperPaletteColorCount);
+	_settings->applyVideoPalette(palette.data(), kRipperPaletteColorCount, true);
+	g_system->getPaletteManager()->setPalette(palette.data(), 0,
+		kRipperPaletteColorCount);
 }
 
 bool RipperEngine::selectRandomRipperIdentity(const char *source) {

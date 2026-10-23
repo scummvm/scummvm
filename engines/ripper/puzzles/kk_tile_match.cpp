@@ -25,7 +25,6 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
 
@@ -456,16 +455,6 @@ bool KkTileMatchPuzzle::loadFlipAnimation(uint state) {
 	return true;
 }
 
-void KkTileMatchPuzzle::applyPalette() const {
-	Common::Array<byte> palette = _background.palette;
-	_engine->applySharedPalettePatch(palette.data(),
-		kRipperPaletteColorCount);
-	_engine->getSettings()->applyVideoPalette(palette.data(),
-		kRipperPaletteColorCount, true);
-	g_system->getPaletteManager()->setPalette(palette.data(), 0,
-		kRipperPaletteColorCount);
-}
-
 void KkTileMatchPuzzle::drawBitmap(byte *screen, uint pitch,
 		const BitmapAssetFrame &frame, int x, int y) const {
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
@@ -849,7 +838,7 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
-	applyPalette();
+	_engine->installScenePalette(_background.palette);
 	debugC(1, kDebugPuzzles,
 		"Ripper: entered KK tile-match puzzle "
 		"completionFlag=%u controls=%u help=0x%x states=[%s] puzzleHelp=%d",
@@ -885,7 +874,7 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 					kHelpSelectionTable);
 				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: KK tile-match modal help failed");
-				applyPalette();
+				_engine->installScenePalette(_background.palette);
 				renderBoard();
 				continue;
 			}

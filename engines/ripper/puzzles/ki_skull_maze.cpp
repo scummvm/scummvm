@@ -28,7 +28,6 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
 
@@ -401,16 +400,6 @@ bool KiSkullMazePuzzle::loadAssets() {
 	return true;
 }
 
-void KiSkullMazePuzzle::applyPalette() const {
-	Common::Array<byte> palette = _background.palette;
-	_engine->applySharedPalettePatch(palette.data(),
-		kRipperPaletteColorCount);
-	_engine->getSettings()->applyVideoPalette(palette.data(),
-		kRipperPaletteColorCount, true);
-	g_system->getPaletteManager()->setPalette(palette.data(), 0,
-		kRipperPaletteColorCount);
-}
-
 void KiSkullMazePuzzle::drawFrame(byte *screen, uint pitch,
 		const BitmapAssetFrame &frame, int x, int y,
 		byte transparentColor) const {
@@ -758,7 +747,7 @@ KiSkullMazePuzzle::Result KiSkullMazePuzzle::run(uint completionFlag) {
 	cursor->setSelectionIndex(kDefaultCursor);
 	cursor->dispatchSelectionIndexChange(kDefaultCursor);
 	cursor->setVisible(false);
-	applyPalette();
+	_engine->installScenePalette(_background.palette);
 	render();
 	cursor->setVisible(true);
 
@@ -812,7 +801,7 @@ KiSkullMazePuzzle::Result KiSkullMazePuzzle::run(uint completionFlag) {
 				kHelpSelectionTable);
 			if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 				warning("Ripper: KI skull-maze modal help failed");
-			applyPalette();
+			_engine->installScenePalette(_background.palette);
 			render();
 		} else if (_movementDirection == 0 && _toggleStep == 0 &&
 				_terminalState == 0 &&

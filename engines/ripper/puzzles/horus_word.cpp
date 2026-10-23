@@ -24,7 +24,6 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "ripper/cursor.h"
@@ -34,7 +33,6 @@
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
-#include "ripper/settings.h"
 #include "ripper/toolbar.h"
 
 namespace Ripper {
@@ -292,16 +290,6 @@ bool HorusWordPuzzle::loadAssets() {
 	return true;
 }
 
-void HorusWordPuzzle::applyPalette() const {
-	Common::Array<byte> palette = _background.palette;
-	_engine->applySharedPalettePatch(palette.data(),
-		kRipperPaletteColorCount);
-	_engine->getSettings()->applyVideoPalette(palette.data(),
-		kRipperPaletteColorCount, true);
-	g_system->getPaletteManager()->setPalette(palette.data(), 0,
-		kRipperPaletteColorCount);
-}
-
 byte HorusWordPuzzle::blendPixel(byte source, byte destination,
 		uint opacity) const {
 	const byte *palette = _shading.data();
@@ -373,7 +361,7 @@ void HorusWordPuzzle::render() const {
 	_debugHelper.draw(*this, pixels, screen->pitch);
 
 	g_system->unlockScreen();
-	applyPalette();
+	_engine->installScenePalette(_background.palette);
 	presentScreen();
 }
 

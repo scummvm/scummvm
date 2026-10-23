@@ -62,7 +62,6 @@ private:
 	bool playAmbient();
 	void stopAudio();
 	bool serviceKeyword(uint16 command);
-	void applyPalette();
 	void clearDisplay();
 
 	AssetLibrary _library;

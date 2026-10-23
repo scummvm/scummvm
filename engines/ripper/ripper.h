@@ -21,6 +21,7 @@
 #ifndef RIPPER_RIPPER_H
 #define RIPPER_RIPPER_H
 
+#include "common/array.h"
 #include "common/ptr.h"
 #include "common/random.h"
 #include "engines/engine.h"
@@ -80,6 +81,7 @@ public:
 	WacManager *getWac() const { return _wac.get(); }
 	WorldMap *getWorldMap() const { return _worldMap.get(); }
 	void applySharedPalettePatch(byte *palette, uint colorCount) const;
+	void installScenePalette(const Common::Array<byte> &sourcePalette);
 	bool isDemo() const;
 	bool isPuzzleHelpEnabled() const { return _puzzleHelpEnabled; }
 	void setPuzzleHelpEnabled(bool enabled) { _puzzleHelpEnabled = enabled; }

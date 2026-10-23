@@ -58,7 +58,6 @@ private:
 	bool loadPiece(uint piece);
 	void loadPersistentState();
 	void storePersistentState() const;
-	void applyPalette() const;
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y) const;
 	bool render() const;

@@ -25,7 +25,6 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "ripper/cursor.h"
@@ -287,16 +286,6 @@ bool StainedGlassPuzzle::buildPuzzleBacking() {
 	return true;
 }
 
-void StainedGlassPuzzle::applyPalette() {
-	Common::Array<byte> palette = _background.palette;
-	_engine->applySharedPalettePatch(palette.data(),
-		kRipperPaletteColorCount);
-	_engine->getSettings()->applyVideoPalette(palette.data(),
-		kRipperPaletteColorCount, true);
-	g_system->getPaletteManager()->setPalette(palette.data(), 0,
-		kRipperPaletteColorCount);
-}
-
 void StainedGlassPuzzle::renderOrder(const uint *order) {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1 ||
@@ -319,7 +308,7 @@ void StainedGlassPuzzle::renderOrder(const uint *order) {
 			kTilePositions[position].x, kTilePositions[position].y);
 	}
 	g_system->unlockScreen();
-	applyPalette();
+	_engine->installScenePalette(_background.palette);
 	presentScreen();
 }
 
@@ -370,7 +359,7 @@ void StainedGlassPuzzle::renderTransition(const uint *previousOrder,
 		}
 	}
 	g_system->unlockScreen();
-	applyPalette();
+	_engine->installScenePalette(_background.palette);
 	presentScreen();
 }
 

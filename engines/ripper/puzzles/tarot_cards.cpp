@@ -25,7 +25,6 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "ripper/cursor.h"
@@ -189,16 +188,6 @@ bool TarotCardsPuzzle::loadAssets() {
 		TarotCardsModel::kCardCount,
 		(uint)ARRAYSIZE(kSceneCueNames) + TarotCardsModel::kCardCount + 1);
 	return true;
-}
-
-void TarotCardsPuzzle::applyPalette() const {
-	Common::Array<byte> palette = _background.palette;
-	_engine->applySharedPalettePatch(palette.data(),
-		kRipperPaletteColorCount);
-	_engine->getSettings()->applyVideoPalette(palette.data(),
-		kRipperPaletteColorCount, true);
-	g_system->getPaletteManager()->setPalette(palette.data(), 0,
-		kRipperPaletteColorCount);
 }
 
 void TarotCardsPuzzle::drawFrame(byte *screen, uint pitch,
@@ -395,7 +384,7 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 		return kLoadFailed;
 	}
 
-	applyPalette();
+	_engine->installScenePalette(_background.palette);
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
